@@ -1,0 +1,100 @@
+.notification-bar {
+    --max-h: calc(100dvh - calc(var(--popover-margin) * 2));
+    --max-w: min(720px, calc(100dvw - calc(var(--popover-margin) * 2)));
+    background-color: rgb(var(--color-sur));
+    border: none;
+    border-radius: 20px;
+    width: max-content;
+    box-shadow: var(--elevation1);
+    left: 50%;
+    max-height: var(--max-h);
+    max-width: var(--max-w);
+    opacity: 0;
+    outline: none;
+    overflow: hidden;
+    bottom: 8px;
+    top: auto;
+    transition: all .2s, top 0s, right 0s, bottom 0s, left 0s, transform 0s;
+    
+    &::backdrop {
+        background-color: transparent;
+    }
+    
+    &[data-open] {
+        transition: all .2s, top 0s, right 0s, bottom 0s, left 0s;
+    }
+    
+    &[data-move] {
+        opacity: 1;
+        transition: all .2s, top 0s, right 0s, bottom 0s, left 0s;
+    }
+
+    > div {
+        background-color: rgb(var(--color-bac));
+        max-height: calc(var(--max-h) - 2px);
+        max-width: calc(var(--max-w) - 2px);
+        overflow: auto;
+        display: flex;
+        flex-direction: column;
+
+        :root[data-theme=dark] & {
+            background-color: rgba(var(--color-on-sur), var(--opacity1));
+        }
+        
+        :root[data-theme=system] & {
+            @media (prefers-color-scheme: dark) {
+                background-color: rgba(var(--color-on-sur), var(--opacity1));
+            }
+        }
+
+        > .list {
+            min-height: 0;
+            padding: 24px;
+
+            > .list-leading > .icon {
+                font-size: 24px;
+            }
+
+            > .list-content {
+                > .list-title {
+                    font-weight: 500;
+                    font-size: var(--font-size-m);
+                    
+                    &:empty {
+                        display: none;
+                    }
+                }
+                
+                > .list-subtitle {
+                    color: rgb(var(--color-on-sur));
+                }
+            }
+        }
+    }
+}
+
+.notification-bar-actions {
+    display: flex;
+    width: 100%;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 24px;
+    border-top: 1px solid rgba(var(--color-on-sur), var(--opacity-border));
+
+    &:empty {
+        display: none;
+    }
+
+    > * {
+        min-width: 100px;
+        flex: 1;
+        width: 100%;
+        max-width: 360px;
+
+        &:is(.btn) {
+            border-radius: 20px;
+        }
+    }
+}

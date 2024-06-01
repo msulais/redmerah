@@ -1,0 +1,296 @@
+// Priority state (lowest: important):
+// - Normal
+// - Focus
+// - Selected | Unselected
+// - Hover
+// - Active (pressed)
+// - Disabled
+
+.btn {
+    --padding: 4px 12px;
+    --icon-animation: none;
+
+    align-items: center;
+    border-radius: 8px;
+    display: flex;
+    font-size: var(--font-size-xs);
+    justify-content: center;
+    min-height: 40px;
+    position: relative;
+    scrollbar-width: none;
+    transition: all .2s;
+    -ms-overflow-style: none;
+
+    @media (hover:hover) {
+        &:hover:not(:disabled) {
+            cursor: pointer;
+
+            > .btn-layer > .icon {
+                animation: var(--icon-animation);
+            }
+        }
+    }
+
+    &:active:not([data-noscale]) > .btn-layer {
+        scale: .85;
+    }
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
+    &[data-icon] {
+        --padding: 4px 10px;
+    }
+
+    &[data-compact] {
+        --padding: 0 8px;
+        min-height: 32px;
+
+        &[data-icon] {
+            --padding: 0 6px;
+        }
+    }
+
+    &[data-elevation='1']{
+        box-shadow: var(--elevation1);
+    }
+
+    &[data-elevation='2']{
+        box-shadow: var(--elevation2);
+    }
+
+    &[data-elevation='3']{
+        box-shadow: var(--elevation3);
+    }
+
+    &[data-elevation='4']{
+        box-shadow: var(--elevation4);
+    }
+
+    &[data-elevation='5']{
+        box-shadow: var(--elevation5);
+    }
+
+    &::before {
+        --weight: 4px;
+        --size: calc(100% - 16px);
+        --border-radius: var(--weight);
+
+        background-color: rgb(var(--color-acc));
+        border-radius: var(--border-radius);
+        content: '';
+        height: 0;
+        opacity: 0;
+        position: absolute;
+        transition: all .2s;
+        width: 0;
+
+    }
+
+    &[data-selected]::before {
+        opacity: 1;
+    }
+
+    &:is(.btn-filled)::before {
+        background-color: rgb(var(--color-on-acc));
+    }
+
+    &:is([data-indicator=top],[data-indicator=bottom])::before {
+        --size: calc(100% - 24px);
+    }
+
+    &[data-indicator=top]{
+        &::before {
+            left: 50%;
+            min-height: var(--weight);
+            top: 0;
+            transform: translateX(-50%);
+            width: var(--size);
+        }
+
+        &:not(.btn-transparent:not([data-focus]))::before {
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+        }
+    }
+
+    &[data-indicator=bottom]{
+        &::before {
+            bottom: 0;
+            left: 50%;
+            min-height: var(--weight);
+            transform: translateX(-50%);
+            width: var(--size);
+        }
+
+        &:not(.btn-transparent:not([data-focus]))::before {
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+        }
+    }
+
+    &[data-indicator=left]{
+        &::before {
+            height: var(--size);
+            left: 0;
+            min-width: var(--weight);
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        &:not(.btn-transparent:not([data-focus]))::before {
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+        }
+    }
+
+    &[data-indicator=right]{
+        &::before {
+            height: var(--size);
+            min-width: var(--weight);
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        &:not(.btn-transparent:not([data-focus]))::before {
+            border-radius: var(--border-radius) 0 0 var(--border-radius);
+        }
+    }
+}
+
+.btn-transparent {
+    --bg-color: var(--color-on-sur);
+
+    &:disabled {
+        color: rgba(var(--color-on-sur), var(--opacity5));
+    }
+
+    &:not(:disabled){
+        &[data-focus] {
+            --bg-opacity: var(--opacity2);
+            --border-color: var(--color-on-sur);
+            --border-opacity: var(--opacity1);
+        }
+
+        @media (hover:hover) {
+            &:hover {
+                --bg-opacity: var(--opacity1);
+            }
+        }
+
+        &:active {
+            --bg-opacity: var(--opacity0);
+            --border-color: var(--color-on-sur);
+            --border-opacity: var(--opacity1);
+        }
+    }
+}
+
+.btn-filled {
+    --bg-opacity: 1;
+    --bg-color: var(--color-acc);
+    --border-color: var(--color-on-sur);
+    --border-opacity: var(--opacity1);
+    color: rgb(var(--color-on-acc));
+
+    &:disabled {
+        --bg-color: var(--color-on-sur);
+        --bg-opacity: var(--opacity1);
+        color: rgba(var(--color-on-sur), var(--opacity-inv5));
+    }
+
+    &:not(:disabled){
+        &[data-focus] {
+            --bg-opacity: var(--opacity-inv3);
+        }
+
+        @media (hover:hover) {
+            &:hover {
+                --bg-opacity: var(--opacity-inv0);
+            }
+        }
+
+        &:active {
+            --bg-opacity: var(--opacity-inv2);
+        }
+    }
+}
+
+.btn-filled-tonal {
+    --bg-color: var(--color-on-sur);
+    --bg-opacity: var(--opacity2);
+
+    &:disabled {
+        --bg-opacity: var(--opacity0);
+        color: rgba(var(--color-on-sur), var(--opacity5));
+    }
+
+    &:not(:disabled){
+        &[data-focus] {
+            --bg-opacity: var(--opacity0);
+            --border-color: var(--color-on-sur);
+            --border-opacity: var(--opacity1);
+        }
+
+        @media (hover:hover) {
+            &:hover {
+                --bg-opacity: var(--opacity3);
+            }
+        }
+
+        &:active {
+            --bg-opacity: var(--opacity1);
+            --border-color: var(--color-on-sur);
+            --border-opacity: var(--opacity1);
+        }
+    }
+}
+
+.btn-layer {
+    align-items: center;
+    border-radius: inherit;
+    display: flex;
+    font-size: inherit;
+    font-weight: inherit;
+    gap: 8px;
+    height: 100%;
+    justify-content: center;
+    overflow: hidden;
+    padding: var(--padding);
+    transition: all .2s;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
+    > .icon {
+        position: relative
+    }
+}
+
+.btn-outlined {
+    --bg-color: var(--color-on-sur);
+    --border-color: var(--color-on-sur);
+    --border-opacity: var(--opacity-border);
+
+    &:disabled {
+        color: rgba(var(--color-on-sur), var(--opacity5));
+        --border-color: var(--color-on-sur);
+        --border-opacity: var(--opacity5);
+    }
+
+    &:not(:disabled){
+        &[data-focus] {
+            --bg-opacity: var(--opacity2);
+        }
+
+        @media (hover:hover) {
+            &:hover {
+                --bg-opacity: var(--opacity1);
+            }
+        }
+
+        &:active {
+            --bg-opacity: var(--opacity0);
+        }
+    }
+}

@@ -1,0 +1,309 @@
+.color-picker {
+    --max-h: calc(100dvh - calc(var(--popover-margin) * 2));
+    --max-w: calc(100dvw - calc(var(--popover-margin) * 2));
+    background-color: rgb(var(--color-sur));
+    border: 1px solid rgba(var(--color-on-sur), var(--opacity2));
+    border-radius: 16px;
+    box-shadow: var(--elevation1);
+    left: 0;
+    max-height: var(--max-h);
+    max-width: var(--max-w);
+    opacity: 0;
+    outline: none;
+    overflow: hidden;
+    top: 0;
+    transform: var(--initial-translate);
+    transition: all .2s, left 0s, top 0s, transform 0s;
+    
+    &::backdrop {
+        background-color: transparent;
+    }
+    
+    &[data-open] {
+        transition: all .2s, left 0s, top 0s;
+    }
+    
+    &[data-move] {
+        opacity: 1;
+        transition: all .2s;
+    }
+
+    > div {
+        background-color: rgb(var(--color-bac));
+        max-height: calc(var(--max-h) - 2px);
+        max-width: calc(var(--max-w) - 2px);
+        overflow: auto;
+        padding: 8px 0;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        align-items: stretch;
+        justify-content: flex-start;
+
+        :root[data-theme=dark] & {
+            background-color: rgba(var(--color-on-sur), var(--opacity1));
+        }
+        
+        :root[data-theme=system] & {
+            @media (prefers-color-scheme: dark) {
+                background-color: rgba(var(--color-on-sur), var(--opacity1));
+            }
+        }
+    }
+}
+
+.color-picker-actions {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    padding: 8px 8px 0 8px;
+    border-top: 1px solid rgba(var(--color-on-sur), var(--opacity-border));
+    width: 332px;
+}
+
+.color-picker-color {
+    --color: #ff0000;
+    min-width: 260px;
+    min-height: 200px;
+    max-width: 260px;
+    max-height: 200px;
+    background: 
+        linear-gradient(to top, #000, transparent), 
+        linear-gradient(to right, #fff, transparent), 
+        var(--color)
+    ;
+    border-radius: 8px;
+    position: relative;
+    box-shadow: var(--elevation1);
+    
+    &[data-hsl] {
+        background: 
+            linear-gradient(to bottom, #ffffff, #ffffff00 50%, #00000000 50%, #000000), 
+            linear-gradient(to right, #808080, var(--color))
+        ;
+    }
+
+    @media (hover: hover) {
+        &:hover {
+            cursor: crosshair;
+        }
+    }
+
+    &:active > div {
+        scale: .85;
+    }
+
+    > div {
+        width: 20px;
+        height: 20px;
+        border-radius: 10px;
+        position: absolute;
+        border: 2px solid white;
+        z-index: 3;
+        box-shadow: var(--elevation1), inset var(--elevation1);
+        transition: backdrop-filter .2s, scale .2s;
+
+        @media (hover: hover) {
+            &:hover {
+                cursor: pointer;
+            }
+        }
+    }
+}
+
+.color-picker-content {
+    &:empty {
+        display: none;
+    }
+}
+
+.color-picker-control {
+    display: flex;
+    padding: 0 8px 8px 8px;
+    gap: 8px;
+
+    &[data-hide-color] {
+        > .color-picker-color {
+            display: none;
+        }
+
+        > div:not(.color-picker-color) {
+            display: flex;
+            align-items: center;
+        }
+    }
+}
+
+.color-picker-hue {
+    width: 12px;
+    height: 144px;
+    border-radius: 8px;
+    background: linear-gradient(to bottom, 
+        rgb(255,   0,   0)   0%, 
+        rgb(255, 255,   0)  17%, 
+        rgb(  0, 255,   0)  33%, 
+        rgb(  0, 255, 255)  50%, 
+        rgb(  0,   0, 255)  67%, 
+        rgb(255,   0, 255)  83%, 
+        rgb(255,   0,   0) 100%
+    );
+    position: relative;
+    box-shadow: var(--elevation1);
+
+    &:active > div {
+        scale: .85;
+    }
+
+    &:hover {
+        cursor: crosshair;
+    }
+
+    > div {
+        width: 20px;
+        height: 20px;
+        border-radius: 10px;
+        position: absolute;
+        border: 2px solid rgb(var(--color-on-sur));
+        z-index: 3;
+        box-shadow: var(--elevation1), inset var(--elevation1);
+        transition: backdrop-filter .2s, scale .2s;
+
+        @media (hover: hover) {
+            &:hover {
+                cursor: pointer;
+            }
+        }
+    }
+}
+
+.color-picker-input {
+    display: flex;
+    gap: 8px;
+    padding: 0 8px;
+    width: 332px;
+
+    > :first-child {
+        flex: 1;
+    }
+
+    > :nth-child(2) {
+        width: 100px;
+    }
+
+    &[data-hide-opacity] {
+        > :nth-child(2) {
+            display: none;
+        }
+    }
+
+    & input {
+        min-width: 0 !important;
+    }
+}
+
+.color-picker-opacity {
+    width: 12px;
+    background: linear-gradient(to bottom, #000 0%, #fff 100%);
+    height: 144px;
+    border-radius: 8px;
+    position: relative;
+    box-shadow: var(--elevation1);
+
+    &:active > div {
+        scale: .85;
+    }
+
+    &:hover {
+        cursor: crosshair;
+    }
+
+    > div {
+        width: 20px;
+        height: 20px;
+        border-radius: 10px;
+        position: absolute;
+        border: 2px solid rgb(var(--color-on-sur));
+        z-index: 3;
+        box-shadow: var(--elevation1), inset var(--elevation1);
+        transition: backdrop-filter .2s, scale .2s;
+
+        @media (hover: hover) {
+            &:hover {
+                cursor: pointer;
+            }
+        }
+    }
+}
+
+.color-picker-range {
+    height: 100%;
+    display: flex;
+    justify-content: space-around;
+    width: 48px;
+
+    &[data-hide-color] {
+        flex-direction: column;
+        width: 260px;
+
+        > .color-picker-hue {
+            background: linear-gradient(to right, 
+                rgb(255,   0,   0)   0%, 
+                rgb(255, 255,   0)  17%, 
+                rgb(  0, 255,   0)  33%, 
+                rgb(  0, 255, 255)  50%, 
+                rgb(  0,   0, 255)  67%, 
+                rgb(255,   0, 255)  83%, 
+                rgb(255,   0,   0) 100%
+            );
+            width: 260px;
+            height: 12px;
+        }
+
+        > .color-picker-opacity {
+            background: linear-gradient(to right, #000 0%, #fff 100%);
+            width: 260px;
+            height: 12px;
+        }
+
+        &[data-hide-opacity] {
+            > .color-picker-opacity {
+                display: none;
+            }
+
+            > .color-picker-hue {
+                height: 40px;
+
+                > div {
+                    height: 48px;
+                }
+            }
+        }
+    }
+
+    &[data-hide-opacity]:not([data-hide-color]) {
+        > .color-picker-hue {
+            width: 40px;
+
+            > div {
+                width: 48px;
+            }
+        }
+        > .color-picker-opacity {
+            display: none;
+        }
+    }
+}
+
+.color-picker-selected-color {
+    min-width: 48px;
+    max-width: 48px;
+    min-height: 48px;
+    max-height: 48px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    box-shadow: var(--elevation1);
+
+    &[data-hide-color] {
+        margin: 0 8px 0 0;
+    }
+}

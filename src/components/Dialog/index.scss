@@ -1,0 +1,94 @@
+.dialog {
+    --max-w: min(720px, calc(100dvw - calc(var(--popover-margin) * 8)));
+    --max-h: calc(100dvh - calc(var(--popover-margin) * 8));
+    background-color: rgb(var(--color-sur));
+    border: none;
+    border-radius: 16px;
+    width: max-content;
+    box-shadow: var(--elevation3);
+    left: 50%;
+    max-height: var(--max-h);
+    max-width: var(--max-w);
+    opacity: 0;
+    outline: none;
+    overflow: hidden;
+    top: 50%;
+    transform: translate(-50%, calc(-50% - 12px));
+    transition: all .2s;
+
+    &::backdrop {
+        background-color: transparent;
+        transition: all .2s;
+    }
+    
+    &[data-open] {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+
+        &::backdrop {
+            background-color: rgb(0 0 0 / var(--opacity-inv3));
+        }
+    }
+
+    > div {
+        max-height: var(--max-h);
+        max-width: var(--max-w);
+        overflow: auto;
+        position: relative;
+
+        > div:empty {
+            display: none;
+        }
+    }
+}
+
+
+.dialog-actions {
+    align-items: center;
+    background-color: rgb(var(--color-sur));
+    border-top: 1px solid rgba(var(--color-on-sur), var(--opacity2));
+    bottom: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-end;
+    padding: 12px;
+    position: sticky;
+    z-index: var(--z-index-dialog-actions);
+
+    &[data-justify] > * {
+        flex: 1;
+    }
+
+    > * {
+        max-width: 340px;
+        min-width: 100px;
+    }
+}
+
+.dialog-content {
+    padding: 4px 24px 24px 24px;
+}
+
+.dialog-header {
+    backdrop-filter: blur(24px);
+    background-color: rgba(var(--color-sur), var(--opacity-inv2));
+    font-size: var(--font-size-xm);
+    padding: 24px 24px 12px 24px;
+    position: sticky;
+    top: 0;
+    z-index: var(--z-index-dialog-header);
+
+    &[data-close-btn] {
+        padding-right: 56px;
+    }
+}
+
+.dialog-close-btn[data-icon] {
+    border-radius: 4px;
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    border-radius: 20px;
+    z-index: var(--z-index-dialog-close-btn);
+}

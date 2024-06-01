@@ -1,0 +1,171 @@
+:root {
+    // background color
+    --color-bac-light: 250, 250, 250;
+    --color-bac-dark: 26, 26, 26;
+
+    // surface colors
+    --color-sur-light: 255, 255, 255; 
+    --color-on-sur-light: 31, 31, 31; 
+    --color-sur-dark: 31, 31, 31; 
+    --color-on-sur-dark: 250, 250, 250; 
+
+    // accent colors
+    --color-acc-light: 0, 117, 23; 
+    --color-on-acc-light: 255, 255, 255; 
+    --color-acc-dark: 0, 230, 46; 
+    --color-on-acc-dark: 0, 0, 0;
+    
+    // error colors
+    --color-err-light: 168, 0, 0; 
+    --color-on-err-light: 255, 255, 255; 
+    --color-err-dark: 255, 148, 148; 
+    --color-on-err-dark: 0, 0, 0;
+
+    --color-bac: var(--color-bac-light);
+    --color-acc: var(--color-acc-light); 
+    --color-on-acc: var(--color-on-acc-light); 
+    --color-sur: var(--color-sur-light); 
+    --color-on-sur: var(--color-on-sur-light); 
+    --color-err: var(--color-err-light); 
+    --color-on-err: var(--color-on-err-light); 
+
+    // opacity level 
+    --opacity0: .02;
+    --opacity1: .04;
+    --opacity2: .08;
+    --opacity3: .12;
+    --opacity4: .16;
+    --opacity5: .20;
+    --opacity-inv0: .92;
+    --opacity-inv1: .84;
+    --opacity-inv2: .76;
+    --opacity-inv3: .68;
+    --opacity-inv4: .60;
+    --opacity-inv5: .52;
+    --opacity-border: .32;
+
+    // font family
+    --font-family-sans-serif: 
+        system-ui, 
+        -apple-system, 
+        BlinkMacSystemFont, 
+        "Segoe UI", 
+        "Roboto", 
+        "Oxygen", 
+        "Ubuntu", 
+        "Cantarell", 
+        "Fira Sans", 
+        "Droid Sans", 
+        "Helvetica Neue", 
+        Arial, 
+        sans-serif
+    ;
+    --font-family-monospace:  
+        ui-monospace, 
+        Menlo, 
+        Monaco, 
+        "Cascadia Mono", 
+        "Segoe UI Mono", 
+        "Roboto Mono", 
+        "Oxygen Mono", 
+        "Ubuntu Monospace", 
+        "Source Code Pro",
+        "Fira Mono", 
+        "Droid Sans Mono", 
+        "Courier New", 
+        monospace
+    ;
+
+    // font sizes
+    
+    // s: small
+    --font-size-s: 12px; 
+    --font-size-xs: 14px;
+    --font-size-xxs: 16px;
+
+    // m: medium
+    --font-size-m: 20px;
+    --font-size-xm: 24px;
+    --font-size-xxm: 28px;
+    
+    // l: large
+    --font-size-l: 32px;
+    --font-size-xl: 36px;
+    --font-size-xxl: 40px;
+
+    // d: display
+    --font-size-d: 44px;
+    --font-size-xd: 48px;
+    --font-size-xxd: 52px;
+
+    // elevation
+    --elevation1: 0 4px 8px #00000026;     
+    --elevation2: 0 4px 12px #00000026;      
+    --elevation3: 0 4px 16px #00000026;      
+    --elevation4: 0 4px 20px #00000026;      
+    --elevation5: 0 4px 24px #00000026;
+
+    // fixed size
+    --popover-margin: 8px;
+    --max-content-width: 1440px;
+    --appbar-height: 58px;
+
+    // z-index
+    --z-index-appbar: 10;
+    --z-index-tooltip: 100;
+    --z-index-dialog-header: 2;
+    --z-index-dialog-actions: 2;
+    --z-index-dialog-close-btn: 3;
+
+    background-color: rgb(var(--color-bac));
+    font-family: var(--font-family-sans-serif);
+    color: rgb(var(--color-on-sur));
+
+    &[data-theme="dark"] {
+        // elevation
+        --elevation1: 0 4px 8px #00000080;             
+        --elevation2: 0 4px 12px #00000080;      
+        --elevation3: 0 4px 16px #00000080;      
+        --elevation4: 0 4px 20px #00000080;      
+        --elevation5: 0 4px 24px #00000080;
+        
+        --color-bac: var(--color-bac-dark);
+        --color-acc: var(--color-acc-dark); 
+        --color-on-acc: var(--color-on-acc-dark); 
+        --color-sur: var(--color-sur-dark); 
+        --color-on-sur: var(--color-on-sur-dark); 
+        --color-err: var(--color-err-dark); 
+        --color-on-err: var(--color-on-err-dark);
+
+        color-scheme: dark;
+
+        & * {
+            color-scheme: dark;
+        }
+    }
+
+    &[data-theme="system"] {
+        @media (prefers-color-scheme: dark) {
+            // elevation
+            --elevation1: 0 4px 8px #00000080;      
+            --elevation2: 0 4px 12px #00000080;      
+            --elevation3: 0 4px 16px #00000080;      
+            --elevation4: 0 4px 20px #00000080;      
+            --elevation5: 0 4px 24px #00000080;      
+
+            --color-bac: var(--color-bac-dark);
+            --color-acc: var(--color-acc-dark); 
+            --color-on-acc: var(--color-on-acc-dark); 
+            --color-sur: var(--color-sur-dark); 
+            --color-on-sur: var(--color-on-sur-dark); 
+            --color-err: var(--color-err-dark); 
+            --color-on-err: var(--color-on-err-dark);
+    
+            color-scheme: dark;
+    
+            & * {
+                color-scheme: dark;
+            }
+        }
+    }
+}
