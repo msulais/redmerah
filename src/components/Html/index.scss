@@ -27,7 +27,7 @@ a, button, .icon, :is(a, button, .icon) * {
     border: 1px solid;
     border-color: transparent;
     border-color: rgba(var(--border-color), var(--border-opacity));
-    display: block;
+    display: flex;
     outline-offset: 4px;
 
     &:hover:not(:disabled) {
