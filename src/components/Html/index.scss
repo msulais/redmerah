@@ -11,7 +11,6 @@
     margin: 0;
     padding: 0;
     scroll-behavior: smooth;
-    
     -webkit-tap-highlight-color: transparent;
 }
 
@@ -55,10 +54,31 @@ body {
         pointer-events: none !important;
     }
 }
+
 code {
     font-family: var(--font-family-monospace);
 }
 
 img {
     display: block;
+}
+
+kbd {
+    border-radius: .3em;
+    background-color: rgb(var(--color-on-sur));
+    font-weight: bold;
+    font-size: .85em;
+    color: rgb(var(--color-sur));
+    padding: .2em .4em;
+    box-shadow: 0 .1em .3em -.15em rgba(var(--color-on-sur), 1);
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
 }

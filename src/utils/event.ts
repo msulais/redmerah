@@ -1,7 +1,15 @@
 import { _addEventListener, _preventDefault, _removeEventListener, _stopImmediatePropagation, _stopPropagation } from "@/data/string"
 
+type HasEventElement = 
+    Element | 
+    Window | 
+    Document | 
+    MediaQueryList | 
+    FileReader
+
+
 export function addEventListener(
-        element: Element | Window | Document, 
+        element: HasEventElement, 
         type: string, 
         listener: EventListenerOrEventListenerObject, 
         options?: boolean | AddEventListenerOptions | undefined
@@ -10,7 +18,7 @@ export function addEventListener(
 }
 
 export function removeEventListener(
-        element: Element | Window | Document, 
+        element: HasEventElement, 
         type: string, 
         listener: EventListenerOrEventListenerObject, 
         options?: boolean | AddEventListenerOptions | undefined

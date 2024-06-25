@@ -1,3 +1,11 @@
+// root attributes
+// * data-theme=light|dark|system (default: light)
+// * data-corner=sharp|semi-round|round|full-round (default: round)
+//      sharp=0px
+//      semi-round=4px
+//      round=8px
+//      full-round=50%|9999999...px
+
 :root {
     // background color
     --color-bac-light: 250, 250, 250;
@@ -8,17 +16,11 @@
     --color-on-sur-light: 31, 31, 31; 
     --color-sur-dark: 31, 31, 31; 
     --color-on-sur-dark: 250, 250, 250; 
-
-    // accent colors
-    --color-acc-light: 0, 117, 23; 
-    --color-on-acc-light: 255, 255, 255; 
-    --color-acc-dark: 0, 230, 46; 
-    --color-on-acc-dark: 0, 0, 0;
     
     // error colors
-    --color-err-light: 168, 0, 0; 
-    --color-on-err-light: 255, 255, 255; 
-    --color-err-dark: 255, 148, 148; 
+    --color-err-light: 194, 0, 0;
+    --color-err-dark: 255, 148, 148;
+    --color-on-err-light: 255, 255, 255;
     --color-on-err-dark: 0, 0, 0;
 
     --color-bac: var(--color-bac-light);
@@ -46,6 +48,7 @@
 
     // font family
     --font-family-sans-serif: 
+        InstrumentSans,
         system-ui, 
         -apple-system, 
         BlinkMacSystemFont, 
@@ -76,6 +79,9 @@
         monospace
     ;
 
+    // transitions
+    --transition-spring: cubic-bezier(.15, 0, 0, 1); 
+
     // font sizes
     
     // s: small
@@ -104,18 +110,6 @@
     --elevation3: 0 4px 16px #00000026;      
     --elevation4: 0 4px 20px #00000026;      
     --elevation5: 0 4px 24px #00000026;
-
-    // fixed size
-    --popover-margin: 8px;
-    --max-content-width: 1440px;
-    --appbar-height: 58px;
-
-    // z-index
-    --z-index-appbar: 10;
-    --z-index-tooltip: 100;
-    --z-index-dialog-header: 2;
-    --z-index-dialog-actions: 2;
-    --z-index-dialog-close-btn: 3;
 
     background-color: rgb(var(--color-bac));
     font-family: var(--font-family-sans-serif);

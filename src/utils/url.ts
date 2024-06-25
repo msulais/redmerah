@@ -1,4 +1,4 @@
-import { _forEach, _searchParams } from "@/data/string"
+import { _createObjectURL, _forEach, _revokeObjectURL, _searchParams } from "@/data/string"
 
 export function encodeURL(text: string): string {
     return encodeURIComponent(text)
@@ -27,4 +27,12 @@ export function getUrlQuery(url: string, key: string): string | null {
     }
 
     return null
+}
+
+export function createObjectURL(obj: Blob | MediaSource): string {
+    return URL[_createObjectURL](obj)
+}
+
+export function revokeObjectURL(url: string): void {
+    return URL[_revokeObjectURL](url)
 }

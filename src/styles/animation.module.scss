@@ -1,0 +1,26 @@
+.btn_rotate_icon {
+    --icon-animation: rotate-icon .8s var(--transition-spring);
+}
+
+@keyframes rotate-icon {
+     50% { rotate: 180deg; }
+    100% { rotate:   0deg; }
+}
+
+.btn_move_right_icon {
+    --icon-animation: move-right-icon .8s var(--transition-spring);
+}
+
+@keyframes move-right-icon {
+     50% { transform: translateX(8px); }
+    100% { transform: translateX(0px); }
+}
+
+.btn_scale_up_icon {
+    --icon-animation: scale-up-icon .8s var(--transition-spring);
+}
+
+@keyframes scale-up-icon {
+     50% { scale: 1.3; }
+    100% { scale:   1; }
+}

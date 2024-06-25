@@ -1,3 +1,9 @@
+/**
+ * Resources: 
+ * http://www.easyrgb.com/en/math.php
+ * https://www.myndex.com/WEB/LuminanceContrast
+ */
+
 import { _padStart, _slice, _startsWith, _substring, _test, _toString } from "@/data/string"
 import type { RGBColor, HSLColor, HSVColor } from "@/types/color"
 import { mathFloor, mathMax, mathMin, mathPow, mathRound, numberParse } from "./math"
@@ -12,9 +18,6 @@ export function testHexColor(hex: string): void {
     throw new Error("Invalid hex color format!")
 }
 
-/**
- * https://www.myndex.com/WEB/LuminanceContrast
- */
 export function getLuminance(rgb: RGBColor) {
 
     const r = mathPow(rgb.r / 255, 2.2)
@@ -26,8 +29,6 @@ export function getLuminance(rgb: RGBColor) {
 }
 
 /**
- * https://www.myndex.com/WEB/LuminanceContrast
- * 
  * `Y` = Luminance
  */
 export function YtoLstar(Y: number): number {
@@ -36,8 +37,6 @@ export function YtoLstar(Y: number): number {
 }
 
 /**
- * https://www.myndex.com/WEB/LuminanceContrast
- * 
  * Result value is between `0` (low contrast) to `100` (high contrast)
  */
 export function getContrastRatio(rgb1: RGBColor, rgb2: RGBColor): number {
@@ -51,7 +50,6 @@ export function hexToHSL(hex: string): HSLColor {
     return rgbToHsl(hexToRgb(hex))
 }
 
-// https://www.easyrgb.com/en/math.php?MATH=M19#text19
 export function rgbToHsl(rgb: RGBColor): HSLColor {
     let h = 0, s = 0, l = 0
     const r = rgb.r / 255
@@ -98,9 +96,6 @@ export function hexToRgb(hex: string): RGBColor {
     return { r, g, b }
 }
 
-/**
- * http://www.easyrgb.com/en/math.php?MATH=M19#text19
- */ 
 export function hueToRgb(v1: number, v2: number, vH: number) {
     while (vH < 0) vH += 1
     while (vH > 1) vH -= 1
@@ -111,9 +106,6 @@ export function hueToRgb(v1: number, v2: number, vH: number) {
     return v1
 }
 
-/**
- * http://www.easyrgb.com/en/math.php?MATH=M19#text19
- */ 
 export function hslToRgb(hsl: HSLColor) {
     let r, g, b
     
@@ -148,7 +140,6 @@ export function rgbToHex(rgb: RGBColor){
     )
 }
 
-// https://www.easyrgb.com/en/math.php?MATH=M19#text19
 export function rgbToHsv(rgb: RGBColor): HSVColor {
     let h: number = 0
     let s: number = 0
@@ -186,7 +177,6 @@ export function rgbToHsv(rgb: RGBColor): HSVColor {
     return {h, s, v}
 }
 
-// https://www.easyrgb.com/en/math.php?MATH=M19#text19
 export function hsvToRgb(hsv: HSVColor): RGBColor {
     let r, g, b
 
@@ -271,10 +261,10 @@ export function generateColor(hex: string): { color: string; onColor: string; co
             if (brightness > 50) lightness = i / 100
             else lightness = 1 - (i / 100)
 
-            if (getContrastRatio(hslToRgb(hsl), hslToRgb({...hsl, l: lightness})) < contrast) break
+            if (getContrastRatio(hslToRgb(hsl), hslToRgb({...hsl, l: lightness})) <= contrast) break
         }
 
-        return mathMax(0.0, mathMin(1.0, lightness))
+        return mathMax(0, mathMin(1, lightness))
     }
 
     /**
@@ -290,21 +280,21 @@ export function generateColor(hex: string): { color: string; onColor: string; co
             if (highToLow) {
                 lightness = 1 - (i / 100)
                 hsl = {...hsl, l: lightness}
-                if (brightness(hsl) <= contrast) break
+                if (brightness(hsl) <= contrast) break;
+                continue
             }
-            else {
-                lightness = i / 100
-                hsl = {...hsl, l: lightness}
-                if (brightness(hsl) >= contrast) break
-            }
+            
+            lightness = i / 100
+            hsl = {...hsl, l: lightness}
+            if (brightness(hsl) >= contrast) break
         }
 
         return hsl
     }
 
-    const color = getColor(hsl, 44)
+    const color = getColor(hsl, 88 - getContrastRatio(hslToRgb(hsl), {r: 255, g: 255, b: 255}))
     const onColor = {...color, l: getLightness(color, 100)}
-    const colorDark = getColor(hsl, 80)
+    const colorDark = getColor(color, 72)
     const onColorDark = {...colorDark, l: getLightness(colorDark, 100)}
 
     return { 

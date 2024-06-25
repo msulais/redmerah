@@ -1,31 +1,50 @@
 ---
 import { ThemeData } from '@/enums/theme'
-import '@/styles/variables.scss'
-import '@/styles/animations.scss'
-import '@/styles/index.scss'
+import { generateColor, hexToRgb } from '@/utils/color'
+import { CornerData } from '@/enums/corner'
+import { ElementIds } from '@/enums/ids'
+import './fonts.scss'
+import './variables.scss'
+import './index.scss'
 
 type Props = {
     title?: string
     description?: string
     lang?: string
     theme?: ThemeData
+    accentColor?: string
+    corner?: CornerData
 }
 
 const {
     title = 'Redmerah - Get most of your useful tools here',
     description = 'Get most of your useful tools here',
-    lang = 'en',
-    theme = ThemeData.system
+    lang = 'id-ID',
+    theme = ThemeData.system,
+    accentColor = '#FF0000',
+    corner = CornerData.round
 } = Astro.props
+
+const colors = generateColor(accentColor)
+const colorToCSS = (hex: string) => {
+    const rgb = hexToRgb(hex)
+    return `${rgb.r}, ${rgb.g}, ${rgb.b}`
+}
 ---
 
-<html lang={ lang } data-theme={ theme }>
+<html lang={ lang } data-theme={ theme } data-corner={ corner }>
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#000000" />
+        <meta name="theme-color" content={ accentColor } />
         <meta name="description" content={ description }>
         <title>{ title }</title>
+        <style id={ElementIds.color_accent} set:html={`:root{
+--color-acc-light: ${colorToCSS(colors.color)};
+--color-acc-dark: ${colorToCSS(colors.colorDark)};
+--color-on-acc-light: ${colorToCSS(colors.onColor)};
+--color-on-acc-dark: ${colorToCSS(colors.onColorDark)};
+}`}/>
         <slot name="favicon">
             <link rel="shortcut icon" type="image/ico" href="/favicon/favicon.ico" />
             <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">

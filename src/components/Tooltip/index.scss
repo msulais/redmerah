@@ -7,31 +7,44 @@
     inset: unset;
     color: rgb(var(--color-sur));
     background-color: rgb(var(--color-on-sur));
-    max-height: calc(100dvh - calc(var(--popover-margin) * 2));
-    max-width: calc(100dvw - calc(var(--popover-margin) * 2));
+    max-height: calc(100dvh - 16px);
+    max-width: calc(100% - 16px);
     opacity: 0;
     padding: 8px;
     font-size: var(--font-size-s);
     line-height: var(--font-size-s);
+    font-weight: 500;
     outline: none;
     overflow: hidden;
     pointer-events: none;
     width: fit-content;
     height: fit-content;
     position: fixed;
-    transition: all .2s, left 0s, top 0s, transform 0s, padding 0s, gap 0s;
-    white-space: pre;
+    transition: all .3s var(--transition-spring), left 0s, top 0s, transform 0s, padding 0s, gap 0s;
+    white-space: pre-wrap;
     z-index: var(--z-index-tooltip);
-    
-    &[data-open] {
-        transition: all .2s, left 0s, top 0s;
+
+    [data-corner=sharp] & {
+        border-radius: 0;
     }
-    
+
+    [data-corner=semi-round] & {
+        border-radius: 4px;
+    }
+
+    [data-corner=full-round] & {
+        border-radius: 14px;
+    }
+
+    &[data-open] {
+        transition: all .3s var(--transition-spring), left 0s, top 0s;
+    }
+
     &[data-move] {
         opacity: 1;
     }
 
-    &.tooltip-keyboard-shortcuts { 
+    &.tooltip-keyboard-shortcuts {
         padding: 6px 6px 6px 12px;
         gap: 4px;
 

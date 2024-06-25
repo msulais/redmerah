@@ -1,0 +1,20 @@
+---
+import { toggleAttribute } from '@/utils/attributes'
+import './index.scss'
+
+type Props = astroHTML.JSX.HTMLAttributes & {
+    compact?: boolean
+    classList?: string[]
+}
+
+const { compact, classList = [], ...other } = Astro.props
+---
+
+<div class:list={['list', ...classList]} data-compact={toggleAttribute(compact)} {...other}>
+    <div class='list-leading'><slot name="leading" /></div>
+    <div class='list-content'>
+        <div class='list-title'><slot /></div>
+        <div class='list-subtitle'><slot name="subtitle"/></div>
+    </div>
+    <div class='list-trailing'><slot name="trailing" /></div>
+</div>

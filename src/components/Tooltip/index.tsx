@@ -5,7 +5,7 @@ import { addEventListener, removeEventListener, stopPropagation } from "@/utils/
 import { getBoundingClientRect, getElementById, setStyleProperty } from "@/utils/element"
 import { clearTimeDelayed, setTimeDelayed, timeout } from "@/utils/timeout"
 import { getPopoverPosition } from "@/utils/popover"
-import { _shortcuts, _text, _class, _join, _map, _CENTER_TOP, _anchor, _anchorId, _appendChild, _body, _bottom, _children, _clientX, _clientY, _createElement, _currentTarget, _delayDuration, _height, _hidePopover, _id, _innerHTML, _isFollowingPointer, _left, _mousedown, _mouseleave, _mouseover, _move, _open, _popover, _position, _px, _right, _showPopover, _timeoutId, _top, _touchcancel, _touchend, _touches, _touchstart, _transform, _trim, _width } from "@/data/string"
+import { _shortcuts, _text, _class, _join, _map, _CENTER_TOP, _anchor, _anchorId, _appendChild, _body, _bottom, _children, _clientX, _clientY, _createElement, _currentTarget, _delayDuration, _height, _hidePopover, _id, _innerHTML, _isFollowingPointer, _left, _mousedown, _mouseleave, _mouseover, _move, _open, _popover, _position, _px, _right, _showPopover, _timeoutId, _top, _touchcancel, _touchend, _touches, _touchstart, _transform, _trim, _width, _manual, _hasTooltip } from "@/data/string"
 import { getDocument, getDocumentBody } from "@/data/window"
 import { numberParse } from "@/utils/math"
 import { PopoverPosition } from "@/enums/position"
@@ -37,6 +37,10 @@ enum TooltipAttributes {
     anchorId = 'data-anchor-id',
     move = 'data-move',
     position = 'data-position'
+}
+
+enum TooltipAnchorAttributes {
+    hasTooltip = 'data-has-tooltip'
 }
 
 export const KeyboardShortcutTooltip: ParentComponent<KeyboardShortcutTooltipProps> = ($props) => {
@@ -116,7 +120,7 @@ const Tooltip: ParentComponent<TooltipProps> = ($props) => {
         if (immediate == true) {
             animate()
             removeAttribute(tooltip, TooltipAttributes[_move])
-            await timeout(3E2)
+            await timeout(5E2)
             removeAttribute(tooltip, TooltipAttributes[_open])
             tooltip[_hidePopover]()
             return
@@ -126,7 +130,7 @@ const Tooltip: ParentComponent<TooltipProps> = ($props) => {
             clearTimeout()
             animate()
             removeAttribute(tooltip, TooltipAttributes[_move])
-            await timeout(3E2)
+            await timeout(5E2)
             removeAttribute(tooltip, TooltipAttributes[_open])
             tooltip[_hidePopover]()
         }, 5E2)
@@ -147,6 +151,11 @@ const Tooltip: ParentComponent<TooltipProps> = ($props) => {
         const t = setTimeDelayed(async () => {
             if (isOpen()) await hide(true)
             tooltip[_showPopover]()
+
+            // set to (0, 0) to calculate new text size
+            setStyleProperty(tooltip, _top, '0')
+            setStyleProperty(tooltip, _left, '0')
+
             tooltip[_innerHTML] = props[_text]
             setAttribute(tooltip, _class, props[_class])
             if (!props[_isFollowingPointer]) setAttribute(tooltip, TooltipAttributes[_position], `${props[_position]}`)
@@ -203,10 +212,10 @@ const Tooltip: ParentComponent<TooltipProps> = ($props) => {
 
     onMount(async () => {
         if (!getElementById(id)){
-            const tooltipEl = getDocument[_createElement]('div')
+            const tooltipEl = getDocument()[_createElement]('div')
             tooltipEl[_id] = id
-            tooltipEl[_popover] = 'manual'
-            getDocumentBody[_appendChild](tooltipEl)
+            tooltipEl[_popover] = _manual
+            getDocumentBody()[_appendChild](tooltipEl)
             tooltip = tooltipEl
             return
         }
@@ -219,9 +228,11 @@ const Tooltip: ParentComponent<TooltipProps> = ($props) => {
         anchor = props[_anchor] as HTMLElement
         isEventInitiated = true
 
-        if (anchor[_id][_trim]() == '') {
-            anchor[_id] = createUniqueId()
-        }
+        if (anchor[_id][_trim]() == '') anchor[_id] = createUniqueId()
+
+        if (hasAttribute(anchor, TooltipAnchorAttributes[_hasTooltip])) return;
+        setAttribute(anchor, TooltipAnchorAttributes[_hasTooltip])
+
         addEventListener(anchor, _mouseover, ev => show(ev))
         addEventListener(anchor, _mouseleave, () => hide())
         addEventListener(anchor, _mousedown, () => hide())

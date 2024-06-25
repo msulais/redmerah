@@ -1,0 +1,18 @@
+---
+import Html from '@/components/Html/index.astro';
+import { App } from './_components'
+---
+
+<Html 
+	title='Randomizer' 
+	accentColor='#00FF48' 
+	description='Explore our Randomizer Hub for a variety of tools that add a touch of unpredictability to your life. Generate random strings, words, numbers, colors, and even assemble teams. Embrace the unexpected!'>
+	<Fragment slot="favicon">
+		<link rel="shortcut icon" type="image/ico" href="/favicon/randomizer/favicon.ico" />
+		<link rel="apple-touch-icon" sizes="180x180" href="/favicon/randomizer/apple-touch-icon.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/favicon/randomizer/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/favicon/randomizer/favicon-16x16.png">
+		<link rel="manifest" href="/favicon/randomizer/site.webmanifest">
+	</Fragment>
+	<App client:only="solid-js"/>
+</Html>

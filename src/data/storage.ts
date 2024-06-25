@@ -1,1 +1,1 @@
-export const getLocalStorage = localStorage
+export const getLocalStorage: () => Storage = () => localStorage

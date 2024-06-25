@@ -17,7 +17,6 @@ const List: ParentComponent<ListProps> = ($props) => {
     
     return (<div 
         class='list' 
-        data-trailing={toggleAttribute(props[_trailing])}
         data-compact={toggleAttribute(props[_compact])} 
         {...other}>
         <div class='list-leading'>{props[_leading]}</div>

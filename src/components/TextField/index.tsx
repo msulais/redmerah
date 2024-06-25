@@ -1,12 +1,12 @@
-import { type JSX, type ParentComponent, createSignal, createUniqueId, mergeProps, onCleanup, onMount, splitProps, type VoidComponent } from 'solid-js'
+import { type JSX, type ParentComponent, createSignal, createUniqueId, mergeProps, onCleanup, onMount, splitProps, type VoidComponent, children, createEffect, Show } from 'solid-js'
 
+import type { ComponentEvent } from '@/types/event'
 import { toggleAttribute } from '@/utils/attributes'
 import { clearTimeDelayed, clearTimeInterval, setTimeDelayed, setTimeInterval } from '@/utils/timeout'
-import { addEventListener, preventDefault, removeEventListener } from '@/utils/event'
+import { addEventListener, preventDefault, removeEventListener, stopImmediatePropagation, stopPropagation } from '@/utils/event'
 import { openPopover } from '@/utils/popover'
 import { PopoverPosition } from '@/enums/position'
-import type { ComponentEvent } from '@/types/event'
-import { _CENTER_BOTTOM, _CENTER_CENTER_LEFT, _autoHideLabel, _autocomplete, _changeValueTooltip, _checkValidity, _children, _classList, _currentTarget, _decreaseTooltip, _disabled, _focus, _id, _increaseTooltip, _isIntOnly, _isNaN, _labelElement, _labelText, _leading, _max, _messageText, _min, _onBlur, _onFinalValueChanged, _onFocus, _onInput, _onValueChanged, _placeholder, _readOnly, _ref, _step, _text, _trailing, _type, _value } from '@/data/string'
+import { _CENTER_BOTTOM, _CENTER_CENTER_LEFT, _autoHideLabel, _autoShowClearBtn, _autocomplete, _button, _changeValueTooltip, _checkValidity, _children, _classList, _clearTooltip, _currentTarget, _decreaseTooltip, _disabled, _dispatchEvent, _focus, _id, _increaseTooltip, _input, _isIntOnly, _isNaN, _labelElement, _labelText, _leading, _length, _max, _messageText, _min, _off, _onBlur, _onFinalValueChanged, _onFocus, _onInput, _onValueChanged, _placeholder, _readOnly, _ref, _step, _text, _trailing, _type, _value, _valuechange } from '@/data/string'
 import { numberParse } from '@/utils/math'
 
 import Icon from '@/components/Icon'
@@ -15,13 +15,15 @@ import Button from '@/components/Button'
 import Menu from '@/components/Menu'
 import './index.scss'
 
-type TextFieldProps = JSX.InputHTMLAttributes<HTMLInputElement> & {
+export type TextFieldProps = Omit<JSX.InputHTMLAttributes<HTMLInputElement>, 'type' | 'ref' | 'onInput' | 'onFocus' | 'onBlur' | 'children'> & {
     leading?: JSX.Element
     trailing?: JSX.Element
     labelText?: JSX.Element
     messageText?: JSX.Element
     focus?: boolean
+    autoShowClearBtn?: boolean
     autoHideLabel?: boolean
+    clearTooltip?: string
     type?: 'text' | 'password' | 'tel' | 'email' | 'url'
     ref?: (el: HTMLInputElement) => void
     labelElement?: JSX.LabelHTMLAttributes<HTMLLabelElement>
@@ -30,7 +32,7 @@ type TextFieldProps = JSX.InputHTMLAttributes<HTMLInputElement> & {
     onBlur?: (ev: ComponentEvent<FocusEvent, HTMLInputElement, HTMLInputElement>) => void
 }
 
-type NumberTextFieldProps = Omit<JSX.InputHTMLAttributes<HTMLInputElement>, 'children'> & {
+type NumberTextFieldProps = Omit<JSX.InputHTMLAttributes<HTMLInputElement>, 'type' | 'ref' | 'onInput' | 'onFocus' | 'onBlur' | 'children'> & {
     leading?: JSX.Element
     trailing?: JSX.Element
     labelText?: JSX.Element
@@ -54,10 +56,6 @@ type NumberTextFieldProps = Omit<JSX.InputHTMLAttributes<HTMLInputElement>, 'chi
     onBlur?: (ev: ComponentEvent<FocusEvent, HTMLInputElement, HTMLInputElement>) => void
 }
 
-enum TextFieldEvents {
-    valuechange = 'valuechange'
-}
-
 /**
  * I recommend using this function to change <TextField> value
  * when not in focus mode to trigger value change.
@@ -66,9 +64,9 @@ enum TextFieldEvents {
  * @param value
  */
 export function changeTextFieldValue(el: HTMLInputElement, value: string): void {
-    el.value = value
-    const event = new Event(TextFieldEvents.valuechange,{cancelable: true})
-    el.dispatchEvent(event)
+    el[_value] = value
+    const event = new Event(_input, { bubbles: true });
+    el[_dispatchEvent](event)
 }
 
 export const TextFieldTrailingButton: ParentComponent<JSX.ButtonHTMLAttributes<HTMLButtonElement>> = ($props) => {
@@ -202,7 +200,7 @@ export const NumberTextField: ParentComponent<NumberTextFieldProps> = ($props) =
                     anchor: ev[_currentTarget],
                     popover: actionMenuRef,
                     position: PopoverPosition[_CENTER_CENTER_LEFT]
-                })}><Icon>&#xE406;</Icon></TextFieldTrailingButton>
+                })}><Icon code={0xE406}/></TextFieldTrailingButton>
                 { props[_trailing] }
             </>}
             {...other}
@@ -218,7 +216,7 @@ export const NumberTextField: ParentComponent<NumberTextFieldProps> = ($props) =
                 onTouchEnd={() => stopContinuousChangeLength()}
                 onTouchStart={() => changeLength('+', true)}
                 onClick={() => changeLength('+')}>
-                <Icon>&#xE404;</Icon>
+                <Icon code={0xE404} />
             </Button>
             <Tooltip text={props[_decreaseTooltip]} position={PopoverPosition[_CENTER_BOTTOM]} anchor={decreaseBtnRef()}/>
             <Button
@@ -230,7 +228,7 @@ export const NumberTextField: ParentComponent<NumberTextFieldProps> = ($props) =
                 onTouchEnd={() => stopContinuousChangeLength()}
                 onTouchStart={() => changeLength('-', true)}
                 onClick={() => changeLength('-')}>
-                <Icon>&#xE3FC;</Icon>
+                <Icon code={0xE3FC} />
             </Button>
         </Menu>
     </>)
@@ -243,72 +241,74 @@ const TextField: ParentComponent<TextFieldProps> = ($props) => {
         _autocomplete, _id, _messageText, _trailing,
         _type, _labelElement, _disabled, _readOnly,
         _onFocus, _onBlur, _placeholder, _autoHideLabel,
-        _value, _ref
+        _value, _ref, _autoShowClearBtn, _clearTooltip
     ])
     const [isFocus, setIsFocus] = createSignal<boolean>(false)
     const [isInvalid, setIsInvalid] = createSignal<boolean>(false)
+    const [clearBtnRef, setClearBtnRef] = createSignal<HTMLButtonElement | null>(null)
     const [value, setValue] = createSignal<string>('')
+    const trailingComponents = children(() => props[_trailing])
     let textfieldRef!: HTMLInputElement
 
-    onMount(() => {
-        setValue(props[_value] as string ?? '')
-
-        // custom listener
-        addEventListener(textfieldRef, TextFieldEvents.valuechange, (ev) => {
-            setValue((ev[_currentTarget] as HTMLInputElement)[_value])
-        })
-
-        onCleanup(() => {
-            removeEventListener(textfieldRef, TextFieldEvents.valuechange, (ev) => {
-                setValue((ev[_currentTarget] as HTMLInputElement)[_value])
-            })
-        })
-    })
+    onMount(() => setValue(props[_value] as string ?? ''))
+    createEffect(() => setValue(props[_value] as string ?? ''))
 
     return (<label
         class='text-field'
         for={props[_id]}
-        data-focus={toggleAttribute(props[_focus] ?? isFocus())}
-        data-invalid={toggleAttribute(isInvalid())}
-        data-disabled={toggleAttribute(props[_disabled])}
-        data-trailing={toggleAttribute(props[_trailing])}
-        data-readonly={toggleAttribute(props[_readOnly])}
         {...props[_labelElement]}
     >
-        <div class='text-field-message-text'>{props[_messageText]}</div>
-        <div class='text-field-label-text'>{props[_autoHideLabel] && value().length == 0 && !props[_placeholder]? '' : props[_labelText]}</div>
-        <div class='text-field-leading'>{props[_leading]}</div>
-        <input
-            id={props[_id]}
-            ref={(r) => {
-                textfieldRef = r
-                if (props[_ref]) props[_ref](r)
-            }}
-            onInput={(ev) => {
-                setValue(ev[_currentTarget][_value])
-                setIsInvalid(!ev[_currentTarget][_checkValidity]())
-                if (props[_onInput]) props[_onInput](ev)
-            }}
-            onFocus={(ev) => {
-                setValue(ev[_currentTarget][_value])
-                setIsInvalid(!ev[_currentTarget][_checkValidity]())
-                setIsFocus(true)
-                    if (props[_onFocus]) props[_onFocus](ev)
+        <div
+            data-focus={toggleAttribute(props[_focus] ?? isFocus())}
+            data-invalid={toggleAttribute(isInvalid())}
+            data-disabled={toggleAttribute(props[_disabled])}
+            data-trailing={toggleAttribute(trailingComponents() || (props[_clearTooltip] ?? 'Clear'))}
+            data-readonly={toggleAttribute(props[_readOnly])}>
+            <div class='text-field-label-text'>{props[_autoHideLabel] && value().length == 0 && !props[_placeholder]? '' : props[_labelText]}</div>
+            <div class='text-field-leading'>{props[_leading]}</div>
+            <input
+                id={props[_id]}
+                ref={(r) => {
+                    textfieldRef = r
+                    if (props[_ref]) props[_ref](r)
                 }}
-            onBlur={(ev) => {
-                setValue(ev[_currentTarget][_value])
-                setIsFocus(false)
-                if (props[_onBlur]) props[_onBlur](ev)
-            }}
-            type={props[_type]}
-            disabled={props[_disabled]}
-            autocomplete={props[_autocomplete] ?? 'off'}
-            readOnly={props[_readOnly]}
-            value={props[_value]}
-            placeholder={props[_placeholder] ?? (props[_autoHideLabel] && props[_labelText]? `${props[_labelText]}` : undefined)}
-            {...other}
-        />
-        <div class='text-field-trailing'>{props[_trailing]}</div>
+                onInput={(ev) => {
+                    setValue(ev[_currentTarget][_value])
+                    console.log(value())
+                    setIsInvalid(!ev[_currentTarget][_checkValidity]())
+                    if (props[_onInput]) props[_onInput](ev)
+                }}
+                onFocus={(ev) => {
+                    setValue(ev[_currentTarget][_value])
+                    setIsInvalid(!ev[_currentTarget][_checkValidity]())
+                    setIsFocus(true)
+                        if (props[_onFocus]) props[_onFocus](ev)
+                    }}
+                onBlur={(ev) => {
+                    setValue(ev[_currentTarget][_value])
+                    setIsFocus(false)
+                    if (props[_onBlur]) props[_onBlur](ev)
+                }}
+                type={props[_type]}
+                disabled={props[_disabled]}
+                autocomplete={props[_autocomplete] ?? _off}
+                readOnly={props[_readOnly]}
+                value={props[_value]}
+                placeholder={props[_placeholder] ?? (props[_autoHideLabel] && props[_labelText]? `${props[_labelText]}` : undefined)}
+                {...other}
+            />
+            <div class='text-field-trailing'>
+                {trailingComponents()}
+                <Show when={props[_autoShowClearBtn] && value()[_length] > 0}>
+                    <Tooltip text={props[_clearTooltip] ?? 'Clear'} anchor={clearBtnRef()}/>
+                    <TextFieldTrailingButton ref={r => setClearBtnRef(r)} type={_button} onClick={(ev) => {
+                        changeTextFieldValue(textfieldRef, '')
+                        preventDefault(ev)
+                    }}><Icon code={0xE5E9}/></TextFieldTrailingButton>
+                </Show>
+            </div>
+        </div>
+        <div class='text-field-message-text'>{props[_messageText]}</div>
     </label>)
 }
 

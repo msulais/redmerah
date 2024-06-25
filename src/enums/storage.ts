@@ -1,7 +1,10 @@
 export enum LocalStorageKeys {
     theme = 'theme', 
-    color = 'color'
+    color = 'color', 
+    corner = 'corner', 
+    pinnedApps = 'pinned-apps'
 }
 
 export enum DatabaseNames {
+    markdownConverter = 'markdown-converter'
 }

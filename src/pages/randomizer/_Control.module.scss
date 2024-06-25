@@ -1,0 +1,49 @@
+.control {
+    padding-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-right: 8px;
+
+    &[data-randomizer=string] {
+        @media (max-width: 560px) {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+
+            & :global(.text-field) {
+                width: 100% !important;
+            }
+        }
+    }
+
+    &[data-randomizer=numbers] {
+        @media (max-width: 500px) {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+
+            & :global(.text-field) {
+                width: 100% !important;
+            }
+        }
+    }
+
+    &[data-randomizer=colors] {
+        > :global(.text-field) {
+            width: min(100%, 164px);
+        }
+
+        @media (max-width: 700px) {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            row-gap: 12px;
+
+            > :global(.text-field) {
+                width: 100% !important;
+            }
+        }
+    }
+}
+
+.string_custom_character {
+    padding: 8px 12px;
+}

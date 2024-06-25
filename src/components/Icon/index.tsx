@@ -1,28 +1,24 @@
-import { type Component, type JSX, Show, splitProps } from "solid-js"
+import { type JSX, Show, splitProps, type VoidComponent } from "solid-js"
 
 import { toggleAttribute } from '@/utils/attributes'
-import { _children, _filled, _inline, _fromCharCode, _charCodeAt } from "@/data/string"
+import { _children, _filled, _inline, _fromCharCode, _charCodeAt, _code } from "@/data/string"
 
 import './index.scss'
 
-type IconProps = JSX.HTMLAttributes<HTMLElement> & {
-    children: string | JSX.Element
+type IconProps = Omit<JSX.HTMLAttributes<HTMLElement>, 'children'> & {
     filled?: boolean
     inline?: boolean
+    code: number
 }
 
-const Icon: Component<IconProps> = ($props) => {
-    const [props, other] = splitProps($props, [_children, _filled, _inline])
+const Icon: VoidComponent<IconProps> = ($props) => {
+    const [props, other] = splitProps($props, [_filled, _inline, _code])
 
     return (<i 
         class='icon' 
         data-inline={toggleAttribute(props[_inline])} 
         {...other}>
-        <Show 
-            fallback={props[_children]} 
-            when={ props[_filled] }>
-            { String[_fromCharCode](`${props[_children]}`[_charCodeAt](0) - 1) }
-        </Show>
+        { String[_fromCharCode](props[_code] - (props[_filled]? 1 : 0)) }
     </i>)
 }
 

@@ -50,3 +50,5 @@ export type HSVColor = {
      */
     v: number
 }
+
+export type HEXColor = `#${string}`

@@ -1,6 +1,6 @@
 .color-picker {
-    --max-h: calc(100dvh - calc(var(--popover-margin) * 2));
-    --max-w: calc(100dvw - calc(var(--popover-margin) * 2));
+    --max-h: calc(100dvh - 16px);
+    --max-w: calc(100% - 16px);
     background-color: rgb(var(--color-sur));
     border: 1px solid rgba(var(--color-on-sur), var(--opacity2));
     border-radius: 16px;
@@ -9,31 +9,51 @@
     max-height: var(--max-h);
     max-width: var(--max-w);
     opacity: 0;
-    outline: none;
+    outline: 1px solid rgba(var(--color-on-sur), var(--opacity2));
     overflow: hidden;
     top: 0;
     transform: var(--initial-translate);
-    transition: all .2s, left 0s, top 0s, transform 0s;
-    
+
+    [data-corner=sharp] & {
+        border-radius: 0;
+    }
+
+    [data-corner=semi-round] & {
+        border-radius: 8px;
+    }
+
+    [data-corner=full-round] & {
+        border-radius: 16px 16px 24px 24px;
+    }
+
     &::backdrop {
         background-color: transparent;
     }
-    
+
     &[data-open] {
-        transition: all .2s, left 0s, top 0s;
+        transition: 
+            transform .3s var(--transition-spring), 
+            opacity .3s var(--transition-spring)
+        ;
     }
-    
+
     &[data-move] {
         opacity: 1;
-        transition: all .2s;
+        transition: 
+            transform .3s var(--transition-spring), 
+            opacity .3s var(--transition-spring), 
+            top .3s var(--transition-spring), 
+            left .3s var(--transition-spring)
+        ;
     }
 
     > div {
-        background-color: rgb(var(--color-bac));
-        max-height: calc(var(--max-h) - 2px);
-        max-width: calc(var(--max-w) - 2px);
+        background-color: rgb(var(--color-sur));
+        max-height: inherit;
+        max-width: 100%;
+        width: 100%;
         overflow: auto;
-        padding: 8px 0;
+        padding: 8px 0 0 0;
         display: flex;
         flex-direction: column;
         gap: 8px;
@@ -43,7 +63,7 @@
         :root[data-theme=dark] & {
             background-color: rgba(var(--color-on-sur), var(--opacity1));
         }
-        
+
         :root[data-theme=system] & {
             @media (prefers-color-scheme: dark) {
                 background-color: rgba(var(--color-on-sur), var(--opacity1));
@@ -56,8 +76,9 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 8px;
-    padding: 8px 8px 0 8px;
-    border-top: 1px solid rgba(var(--color-on-sur), var(--opacity-border));
+    padding: 8px;
+    border-top: 1px solid rgba(var(--color-on-sur), var(--opacity2));
+    background-color: rgba(var(--color-on-sur), var(--opacity1));
     width: 332px;
 }
 
@@ -67,20 +88,28 @@
     min-height: 200px;
     max-width: 260px;
     max-height: 200px;
-    background: 
-        linear-gradient(to top, #000, transparent), 
-        linear-gradient(to right, #fff, transparent), 
+    background:
+        linear-gradient(to top, #000, transparent),
+        linear-gradient(to right, #fff, transparent),
         var(--color)
     ;
     border-radius: 8px;
     position: relative;
     box-shadow: var(--elevation1);
-    
+
     &[data-hsl] {
-        background: 
-            linear-gradient(to bottom, #ffffff, #ffffff00 50%, #00000000 50%, #000000), 
+        background:
+            linear-gradient(to bottom, #ffffff, #ffffff00 50%, #00000000 50%, #000000),
             linear-gradient(to right, #808080, var(--color))
         ;
+    }
+
+    [data-corner=sharp] & {
+        border-radius: 0;
+    }
+
+    [data-corner=semi-round] & {
+        border-radius: 4px;
     }
 
     @media (hover: hover) {
@@ -101,7 +130,15 @@
         border: 2px solid white;
         z-index: 3;
         box-shadow: var(--elevation1), inset var(--elevation1);
-        transition: backdrop-filter .2s, scale .2s;
+        transition: backdrop-filter .3s var(--transition-spring), scale .3s var(--transition-spring);
+
+        [data-corner=sharp] & {
+            border-radius: 0;
+        }
+
+        [data-corner=semi-round] & {
+            border-radius: 4px;
+        }
 
         @media (hover: hover) {
             &:hover {
@@ -138,13 +175,13 @@
     width: 12px;
     height: 144px;
     border-radius: 8px;
-    background: linear-gradient(to bottom, 
-        rgb(255,   0,   0)   0%, 
-        rgb(255, 255,   0)  17%, 
-        rgb(  0, 255,   0)  33%, 
-        rgb(  0, 255, 255)  50%, 
-        rgb(  0,   0, 255)  67%, 
-        rgb(255,   0, 255)  83%, 
+    background: linear-gradient(to bottom,
+        rgb(255,   0,   0)   0%,
+        rgb(255, 255,   0)  17%,
+        rgb(  0, 255,   0)  33%,
+        rgb(  0, 255, 255)  50%,
+        rgb(  0,   0, 255)  67%,
+        rgb(255,   0, 255)  83%,
         rgb(255,   0,   0) 100%
     );
     position: relative;
@@ -158,6 +195,14 @@
         cursor: crosshair;
     }
 
+    [data-corner=sharp] & {
+        border-radius: 0;
+    }
+
+    [data-corner=semi-round] & {
+        border-radius: 4px;
+    }
+
     > div {
         width: 20px;
         height: 20px;
@@ -166,7 +211,15 @@
         border: 2px solid rgb(var(--color-on-sur));
         z-index: 3;
         box-shadow: var(--elevation1), inset var(--elevation1);
-        transition: backdrop-filter .2s, scale .2s;
+        transition: backdrop-filter .3s var(--transition-spring), scale .3s var(--transition-spring);
+
+        [data-corner=sharp] & {
+            border-radius: 0;
+        }
+
+        [data-corner=semi-round] & {
+            border-radius: 4px;
+        }
 
         @media (hover: hover) {
             &:hover {
@@ -217,6 +270,14 @@
         cursor: crosshair;
     }
 
+    [data-corner=sharp] & {
+        border-radius: 0;
+    }
+
+    [data-corner=semi-round] & {
+        border-radius: 4px;
+    }
+
     > div {
         width: 20px;
         height: 20px;
@@ -225,7 +286,15 @@
         border: 2px solid rgb(var(--color-on-sur));
         z-index: 3;
         box-shadow: var(--elevation1), inset var(--elevation1);
-        transition: backdrop-filter .2s, scale .2s;
+        transition: backdrop-filter .3s var(--transition-spring), scale .3s var(--transition-spring);
+
+        [data-corner=sharp] & {
+            border-radius: 0;
+        }
+
+        [data-corner=semi-round] & {
+            border-radius: 4px;
+        }
 
         @media (hover: hover) {
             &:hover {
@@ -246,13 +315,13 @@
         width: 260px;
 
         > .color-picker-hue {
-            background: linear-gradient(to right, 
-                rgb(255,   0,   0)   0%, 
-                rgb(255, 255,   0)  17%, 
-                rgb(  0, 255,   0)  33%, 
-                rgb(  0, 255, 255)  50%, 
-                rgb(  0,   0, 255)  67%, 
-                rgb(255,   0, 255)  83%, 
+            background: linear-gradient(to right,
+                rgb(255,   0,   0)   0%,
+                rgb(255, 255,   0)  17%,
+                rgb(  0, 255,   0)  33%,
+                rgb(  0, 255, 255)  50%,
+                rgb(  0,   0, 255)  67%,
+                rgb(255,   0, 255)  83%,
                 rgb(255,   0,   0) 100%
             );
             width: 260px;
@@ -305,5 +374,13 @@
 
     &[data-hide-color] {
         margin: 0 8px 0 0;
+    }
+
+    [data-corner=sharp] & {
+        border-radius: 0;
+    }
+
+    [data-corner=semi-round] & {
+        border-radius: 4px;
     }
 }

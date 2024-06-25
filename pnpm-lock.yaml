@@ -17,9 +17,18 @@ importers:
       astro:
         specifier: ^4.9.2
         version: 4.9.2(sass@1.77.4)(typescript@5.4.5)
+      gray-matter:
+        specifier: ^4.0.3
+        version: 4.0.3
+      marked:
+        specifier: ^12.0.2
+        version: 12.0.2
       sass:
         specifier: ^1.77.4
         version: 1.77.4
+      simply-beautiful:
+        specifier: ^0.2.14
+        version: 0.2.14
       solid-js:
         specifier: ^1.8.17
         version: 1.8.17
@@ -1354,6 +1363,11 @@ packages:
   markdown-table@3.0.3:
     resolution: {integrity: sha512-Z1NL3Tb1M9wH4XESsCDEksWoKTdlUafKc4pt0GRwjUyXaCFZ+dc3g2erqB6zm3szA2IUSi7VnPI+o/9jnxh9hw==}
 
+  marked@12.0.2:
+    resolution: {integrity: sha512-qXUm7e/YKFoqFPYPa3Ukg9xlI5cyAtGmyEIzMfW//m6kXwCy2Ps9DYf5ioijFKQ8qyuscrHoY04iJGctu2Kg0Q==}
+    engines: {node: '>= 18'}
+    hasBin: true
+
   mdast-util-definitions@6.0.0:
     resolution: {integrity: sha512-scTllyX6pnYNZH/AIp/0ePz6s4cZtARxImwoPJ7kS42n+MnVsI4XbnG6d4ibehRIldYMWM2LD7ImQblVhUejVQ==}
 
@@ -1760,6 +1774,10 @@ packages:
 
   simple-swizzle@0.2.2:
     resolution: {integrity: sha512-JA//kQgZtbuY83m+xT+tXJkmJncGMTFT+C+g2h2R9uxkYIrE2yy9sgmcLhCnw57/WSD+Eh3J97FPEDFnbXnDUg==}
+
+  simply-beautiful@0.2.14:
+    resolution: {integrity: sha512-1tBTg4hYV2MaxC7emzFG9i9hu/PLScUKSb7iRMZqyFszpbLnXl5E95a6GxW2YuPpgL72E1lnypXnLrxwHpMH0Q==}
+    engines: {node: '>=6.0.0'}
 
   sisteransi@1.0.5:
     resolution: {integrity: sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==}
@@ -3473,6 +3491,8 @@ snapshots:
 
   markdown-table@3.0.3: {}
 
+  marked@12.0.2: {}
+
   mdast-util-definitions@6.0.0:
     dependencies:
       '@types/mdast': 4.0.4
@@ -4130,6 +4150,8 @@ snapshots:
     dependencies:
       is-arrayish: 0.3.2
     optional: true
+
+  simply-beautiful@0.2.14: {}
 
   sisteransi@1.0.5: {}
 

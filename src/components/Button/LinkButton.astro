@@ -1,0 +1,53 @@
+---
+import './index.scss'
+import { ButtonVariant } from '.'
+import { Position } from '@/enums/position'
+import { toggleAttribute } from '@/utils/attributes'
+
+type Props = astroHTML.JSX.AnchorHTMLAttributes  & {
+    variant?: ButtonVariant
+    focus?: boolean
+    iconOnly?: boolean
+    compact?: boolean
+    openInNewTab?: boolean
+    selected?: boolean
+    disableScale?: boolean
+    indicatorPosition?: Position
+    elevation?: 1 | 2 | 3 | 4 | 5
+    layerAttr?: astroHTML.JSX.HTMLAttributes
+    classList?: string[]
+}
+
+const {
+    openInNewTab, 
+    indicatorPosition = Position.bottom, 
+    variant = ButtonVariant.transparent, 
+    focus,
+    compact, 
+    selected, 
+    elevation, 
+    iconOnly, 
+    layerAttr, 
+    disableScale, 
+    classList = [], 
+    ...other
+} = Astro.props
+
+---
+
+<a 
+    class:list={['btn', `btn-${variant}`, ...classList]}
+    data-icon={toggleAttribute(iconOnly)}
+    data-indicator={selected? indicatorPosition : undefined}
+    data-selected={toggleAttribute(selected)}
+    data-elevation={toggleAttribute(elevation, true)}
+    data-focus={toggleAttribute(focus)}
+    data-noscale={toggleAttribute(disableScale)}
+    data-compact={toggleAttribute(compact)}
+    target={openInNewTab? '_blank' : undefined}
+    rel={openInNewTab? 'noopener noreferrer' : undefined}
+    {...other}>
+    <div class="btn-layer" {...layerAttr}>
+        <slot/>
+    </div>
+</a>

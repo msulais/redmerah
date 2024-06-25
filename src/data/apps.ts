@@ -1,0 +1,30 @@
+import markdown_converter_logo from '@/assets/apps/markdown-converter-logo.svg'
+import randomizer_converter_logo from '@/assets/apps/randomizer-logo.svg'
+import color_generator_logo from '@/assets/apps/color-generator-logo.svg'
+import { _src } from './string'
+import type { AppItem } from '@/types/apps'
+import { RoutesLinks } from '@/enums/links'
+
+export const apps: AppItem[] = [
+    {
+        logoURL: randomizer_converter_logo[_src],
+        title: 'Randomizer', 
+        description: 'Explore our Randomizer Hub for a variety of tools that add a touch of unpredictability to your life. Generate random strings, words, numbers, colors, and even assemble teams. Embrace the unexpected!',
+        link: RoutesLinks.randomizer, 
+        color: '#00FF48'
+    },
+    {
+        logoURL: color_generator_logo[_src],
+        title: 'Color generator', 
+        description: 'Generate accent pallete color for your app. Including color for light and dark mode.',
+        link: RoutesLinks.colorGenerator, 
+        color: '#39BBFF'
+    },
+    {
+        logoURL: markdown_converter_logo[_src],
+        title: 'Markdown converter', 
+        description: 'Convert markdown to HTML effortlessly with our online markdown converter. Create beautifully formatted web content from plain text using our user-friendly tool.',
+        link: RoutesLinks.markdownConverter, 
+        color: '#6000FD'
+    },
+]

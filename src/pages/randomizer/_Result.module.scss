@@ -1,0 +1,53 @@
+.colors {
+    display: grid;
+    gap: 12px;
+    padding: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+
+    > div {
+        padding: 48px 12px 12px 12px;
+        border-radius: 4px;
+
+        > code {
+            display: block;
+            font-weight: normal;
+            background-color: rgba(var(--color-sur), var(--opacity-inv3));
+            padding: 8px;
+        }
+    }
+}
+
+.string, .numbers {
+    font-size: var(--font-size-xxl);
+    overflow-wrap: anywhere;
+    padding: 8px 16px;
+
+    @media (max-width: 500px) {
+        font-size: var(--font-size-xm);
+    }
+}
+
+.result {
+    flex: 1;
+    max-height: 100%;
+    overflow-y: auto;
+    height: 100%;
+    background-color: rgb(var(--color-sur));
+    border-radius: 16px 0 0 0;
+    border: 1px solid rgba(var(--color-on-sur), var(--opacity1));
+    border-right: none;
+    border-bottom: none;
+    max-width: 100%;
+
+    [data-corner=sharp] & {
+        border-radius: 0;
+    }
+
+    [data-corner=semi-round] & {
+        border-radius: 8px 0 0 0;
+    }
+
+    [data-corner=full-round] & {
+        border-radius: 20px 0 0 0;
+    }
+}

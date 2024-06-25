@@ -1,30 +1,33 @@
-import { type Component, type JSX, Match, type ParentComponent, Show, Switch, createSignal, createUniqueId, mergeProps, onCleanup, onMount, splitProps } from "solid-js"
+import { type Component, type JSX, Match, type ParentComponent, Show, Switch, createSignal, createUniqueId, mergeProps, onCleanup, onMount, splitProps, type VoidComponent, For, children } from "solid-js"
 import { Portal } from "solid-js/web"
 
+import type { ComponentEvent } from "@/types/event"
 import { preventDefault, stopPropagation } from "@/utils/event"
 import { clearTimeDelayed, setTimeDelayed } from "@/utils/timeout"
-import { closePopover, initPopover, openPopover } from "@/utils/popover"
-import { querySelector } from "@/utils/element"
-import { PopoverAttributes } from "@/enums/attributes"
-import { hasAttribute } from "@/utils/attributes"
-import { PopoverPosition } from "@/enums/position"
-import type { ComponentEvent } from "@/types/event"
-import { _checked, _selected, _leading, _children, _trailing, _subtitle, _indent, _classList, _RIGHT_CENTER_TO_BOTTOM, _disconnect, _dismiss, _id, _item, _level, _manual, _observe, _onCancel, _onClick, _onClose, _onToggle, _open, _ref, _wrapperAttr, _auto } from "@/data/string"
+import { closePopover, initPopover, openPopover, repositionPopover } from "@/utils/popover"
+import { getBoundingClientRect, querySelector, setStyleProperty } from "@/utils/element"
+import { BodyAttributes, PopoverAttributes } from "@/enums/attributes"
+import { getAttribute, hasAttribute, removeAttribute, setAttribute, toggleAttribute } from "@/utils/attributes"
+import { PopoverPosition, Position } from "@/enums/position"
+import { _checked, _selected, _leading, _children, _trailing, _subtitle, _indent, _classList, _RIGHT_CENTER_TO_BOTTOM, _disconnect, _dismiss, _id, _item, _level, _manual, _observe, _onCancel, _onClick, _onClose, _onToggle, _open, _ref, _wrapperAttr, _auto, _shortcuts, _currentTarget, _none, _left, _filledTonal, _dragable, _clientX, _clientY, _color, _hue, _initialColor, _isDrag, _mousemove, _mouseup, _noPointerEvent, _opacity, _touchend, _touches, _touchmove, _value, _valuechange, _top, _px, _anchorId, _body, _bottom, _clientWidth, _height, _innerHeight, _right, _width, _focus } from "@/data/string"
+import { isVarHasValue } from "@/utils/data"
+import { getDocument, getDocumentBody, getWindow } from "@/data/window"
+import { addEventListener, removeEventListener } from "@/utils/event"
 
-import Button, { LinkButton } from "@/components/Button"
-import List from "@/components/List"
 import Icon from "@/components/Icon"
+import Button, { ButtonVariant, LinkButton } from "@/components/Button"
 import './index.scss'
 
-type MenuProps = JSX.DialogHtmlAttributes<HTMLDialogElement> & {
+export type MenuProps = Omit<JSX.DialogHtmlAttributes<HTMLDialogElement>, 'ref' | 'onToggle' | 'onClose' | 'onCancel'> & {
     dismiss?: 'manual' | 'auto'
+    dragable?: boolean
     ref?: (el: HTMLDialogElement) => void
     onToggle?: (value: boolean) => unknown
     onClose?: (ev: ComponentEvent<Event, HTMLDialogElement>) => unknown
     onCancel?: (ev: ComponentEvent<Event, HTMLDialogElement>) => unknown
 }
 
-type NestedMenuProps = JSX.HTMLAttributes<HTMLDivElement> & {
+type NestedMenuProps = Omit<JSX.HTMLAttributes<HTMLDivElement>, 'onClick' | 'ref' | 'onToggle'> & {
     level: number
     item: JSX.Element
     onClick?: (ev: ComponentEvent<MouseEvent, HTMLDivElement>) => void
@@ -35,23 +38,15 @@ type NestedMenuProps = JSX.HTMLAttributes<HTMLDivElement> & {
 
 type MenuItemProps = JSX.ButtonHTMLAttributes<HTMLButtonElement> & {
     leading?: JSX.Element
-    subtitle?: JSX.Element
     trailing?: JSX.Element
+    focus?: boolean
     indent?: boolean
     selected?: boolean
     checked?: boolean
 }
 
-type NestedMenuItemProps = MenuItemProps & {
-    selected?: boolean
-    checked?: boolean
-    focus?: boolean
-    onClick?: (ev: ComponentEvent<MouseEvent, HTMLButtonElement>) => unknown
-}
-
 type MenuItemLinkProps = JSX.AnchorHTMLAttributes<HTMLAnchorElement> & {
     leading?: JSX.Element
-    subtitle?: JSX.Element
     trailing?: JSX.Element
     openInNewTab?: boolean
     checked?: boolean
@@ -59,67 +54,77 @@ type MenuItemLinkProps = JSX.AnchorHTMLAttributes<HTMLAnchorElement> & {
     indent?: boolean
 }
 
+type MenuItemTrailingKeyboardShortcutProps = JSX.HTMLAttributes<HTMLDivElement> & {
+    shortcuts: string[]
+}
+
+export const MenuItemTrailingKeyboardShortcut: VoidComponent<MenuItemTrailingKeyboardShortcutProps> = ($props) => {
+    const [props, other] = splitProps($props, [_shortcuts])
+    return (<div class="menu-item-trailing-keyboard-shortcut" {...other}>
+        <For each={props[_shortcuts]}>{s => <kbd>{s}</kbd>}</For>
+    </div>)
+}
+
 export const MenuItem: ParentComponent<MenuItemProps> = ($props) => {
-    const [props, other] = splitProps($props, [_checked, _selected, _leading, _children, _trailing, _subtitle, _indent, _classList])
-    return (<Button compact disableScale classList={{'menu-item': true, ...props[_classList]}} {...other}>
-        <List 
-            leading={<>
-                <Switch>
-                    <Match when={props[_checked] == true}>
-                        <Icon style={{color: 'rgb(var(--color-acc))'}} filled>&#xE3CC;</Icon>
-                    </Match>
-                    <Match when={props[_checked] == false}>
-                        <Icon>&#xE3D4;</Icon>
-                    </Match>
-                </Switch>
-                <Switch>
-                    <Match when={props[_selected] == true}>
-                        <Icon style={{color: 'rgb(var(--color-acc))'}} filled>&#xE41C;</Icon>
-                    </Match>
-                    <Match when={props[_selected] == false}>
-                        <MenuIndent/>
-                    </Match>
-                </Switch>
-                <Show when={props[_indent]} fallback={props[_leading]}>
-                    <MenuIndent/>
-                </Show>
-            </>}
-            subtitle={props[_subtitle]}
-            trailing={props[_trailing]}>
-            { props[_children] }
-        </List>
+    const [props, other] = splitProps($props, [_checked, _selected, _leading, _focus, _children, _trailing, _indent, _classList])
+    const trailingComponent = children(() => props[_trailing])
+
+    return (<Button 
+        variant={props[_selected]? ButtonVariant[_filledTonal] : undefined} 
+        selected={props[_selected]} 
+        focus={props[_focus]}
+        indicatorPosition={isVarHasValue(props[_selected])? Position[_left] : undefined} 
+        disableScale={trailingComponent()? true : undefined} 
+        compact 
+        data-trailing={toggleAttribute(trailingComponent())}
+        classList={{'menu-item': true, ...props[_classList]}} 
+        {...other}>
+        <Show when={isVarHasValue(props[_checked])}>
+            <Icon 
+                style={{color: props[_checked]? 'rgb(var(--color-acc))' : undefined}} 
+                filled={props[_checked]} 
+                code={props[_checked]? 0xE3CC : 0xE3D4}
+            />
+        </Show>
+        <Show when={props[_indent]} fallback={props[_leading]}>
+            <MenuIndent/>
+        </Show>
+        { props[_children] }
+        <Show when={trailingComponent()}>
+            <div style={{flex: 1}} />
+        </Show>
+        { trailingComponent() }
     </Button>)
 }
 
 export const MenuItemLink: ParentComponent<MenuItemLinkProps> = ($props) => {
-    const [props, other] = splitProps($props, [_leading, _checked, _selected, _children, _trailing, _subtitle, _indent, _classList])
-    return (<LinkButton disableScale compact classList={{'menu-item': true, ...props[_classList]}} {...other}>
-        <List 
-            leading={<>
-                <Switch>
-                    <Match when={props[_checked] == true}>
-                        <Icon style={{color: 'rgb(var(--color-acc))'}} filled>&#xE3CC;</Icon>
-                    </Match>
-                    <Match when={props[_checked] == false}>
-                        <Icon>&#xE3D4;</Icon>
-                    </Match>
-                </Switch>
-                <Switch>
-                    <Match when={props[_selected] == true}>
-                        <Icon style={{color: 'rgb(var(--color-acc))'}} filled>&#xE41C;</Icon>
-                    </Match>
-                    <Match when={props[_selected] == false}>
-                        <MenuIndent/>
-                    </Match>
-                </Switch>
-                <Show when={props[_indent]} fallback={props[_leading]}>
-                    <MenuIndent/>
-                </Show>
-            </>}
-            subtitle={props[_subtitle]}
-            trailing={props[_trailing]}>
-            { props[_children] }
-        </List>
+    const [props, other] = splitProps($props, [_leading, _checked, _selected, _children, _trailing, _indent, _classList])
+    const trailingComponent = children(() => props[_trailing])
+
+    return (<LinkButton 
+        variant={props[_selected]? ButtonVariant[_filledTonal] : undefined} 
+        selected={props[_selected]} 
+        indicatorPosition={isVarHasValue(props[_selected])? Position[_left] : undefined} 
+        disableScale={trailingComponent()? true : undefined} 
+        compact 
+        data-trailing={toggleAttribute(trailingComponent())}
+        classList={{'menu-item': true, ...props[_classList]}} 
+        {...other}>
+        <Show when={isVarHasValue(props[_checked])}>
+            <Icon 
+                style={{color: props[_checked]? 'rgb(var(--color-acc))' : undefined}} 
+                filled={props[_checked]} 
+                code={props[_checked]? 0xE3CC : 0xE3D4}
+            />
+        </Show>
+        <Show when={props[_indent]} fallback={props[_leading]}>
+            <MenuIndent/>
+        </Show>
+        { props[_children] }
+        <Show when={trailingComponent()}>
+            <div style={{flex: 1}} />
+        </Show>
+        { trailingComponent() }
     </LinkButton>)
 }
 
@@ -136,56 +141,6 @@ export const MenuHeader: ParentComponent<JSX.HTMLAttributes<HTMLDivElement>> = (
 
     const [props, other] = splitProps($props, [_children])
     return (<div class="menu-header" {...other}>{props[_children]}</div>)
-}
-
-export const NestedMenuItem: ParentComponent<NestedMenuItemProps> = ($props) => {
-    const [props, other] = splitProps($props, [
-        _classList,
-        _checked, 
-        _checked, 
-        _leading,
-        _trailing, 
-        _indent, 
-        _subtitle, 
-        _children, 
-        _selected
-    ])
-
-    return (<Button 
-        compact 
-        disableScale
-        classList={{
-            'menu-item': true, 
-            ...props[_classList]
-        }} 
-        {...other}>
-        <List 
-            leading={<>
-                <Switch>
-                    <Match when={props[_checked] == true}>
-                        <Icon style={{color: 'rgb(var(--color-acc))'}} filled>&#xE3CC;</Icon>
-                    </Match>
-                    <Match when={props[_checked] == false}>
-                        <Icon>&#xE3D4;</Icon>
-                    </Match>
-                </Switch>
-                <Switch>
-                    <Match when={props[_selected] == true}>
-                        <Icon style={{color: 'rgb(var(--color-acc))'}} filled>&#xE41C;</Icon>
-                    </Match>
-                    <Match when={props[_selected] == false}>
-                        <MenuIndent/>
-                    </Match>
-                </Switch>
-                <Show when={props[_indent]} fallback={props[_leading]}>
-                    <MenuIndent/>
-                </Show>
-            </>}
-            subtitle={props[_subtitle]}
-            trailing={props[_trailing]}>
-            { props[_children] }
-        </List>
-    </Button>)
 }
 
 export const NestedMenu: ParentComponent<NestedMenuProps> = ($props) => {
@@ -298,9 +253,80 @@ const Menu: ParentComponent<MenuProps> = ($props) => {
     const $$props = mergeProps({dismiss: _auto}, $props)
     const [props, other] = splitProps($$props, [
         _onClose, _onToggle, _onCancel, 
-        _dismiss, _children, _ref
+        _dismiss, _children, _ref, 
+        _dragable
     ])
+    const [isDragging, setIsDragging] = createSignal<boolean>(false)
     let menuRef!: HTMLDialogElement
+
+    // different of mouse position to top-left of menu position
+    let diffPositionX: number = 0
+    let diffPositionY: number = 0
+
+    function fixPosition(): void {
+        const popoverRect = getBoundingClientRect(menuRef)
+        const screen = {
+            width: getDocument()[_body][_clientWidth],
+            height: getWindow()[_innerHeight]
+        }
+        if (popoverRect[_left  ] < 8) setStyleProperty(menuRef, _left, 8 + _px)
+        if (popoverRect[_top   ] < 8) setStyleProperty(menuRef, _top , 8 + _px)
+        if (popoverRect[_right ] > screen[_width ]) setStyleProperty(menuRef, _left, (screen[_width ] - popoverRect[_width ] - 8) + _px)
+        if (popoverRect[_bottom] > screen[_height]) setStyleProperty(menuRef, _top , (screen[_height] - popoverRect[_height] - 8) + _px)
+    }
+
+    function changePosition(x: number, y: number) {
+        setStyleProperty(menuRef, _left, (x - diffPositionX) + _px)
+        setStyleProperty(menuRef, _top, (y - diffPositionY) + _px)
+    }
+
+    function initDragListener() {
+        addEventListener(getDocument(), _touchmove, (ev) => {
+            if (!isDragging()) return;
+            changePosition((ev as TouchEvent)[_touches][0][_clientX], (ev as TouchEvent)[_touches][0][_clientY])
+        })
+
+        addEventListener(getDocument(), _touchend, () => {
+            removeAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
+            setIsDragging(false)
+            fixPosition()
+        })
+
+        addEventListener(getDocument(), _mousemove, ev => {
+            if (!isDragging()) return;
+            changePosition((ev as MouseEvent)[_clientX], (ev as MouseEvent)[_clientY])
+        })
+
+        addEventListener(getDocument(), _mouseup, () => {
+            removeAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
+            setIsDragging(false)
+            fixPosition()
+        })
+        
+        onCleanup(() => {
+            removeEventListener(getDocument(), _touchmove, (ev) => {
+                if (!isDragging()) return;
+                changePosition((ev as TouchEvent)[_touches][0][_clientX], (ev as TouchEvent)[_touches][0][_clientY])
+            })
+
+            removeEventListener(getDocument(), _touchend, () => {
+                removeAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
+                setIsDragging(false)
+                fixPosition()
+            })
+
+            removeEventListener(getDocument(), _mousemove, ev => {
+                if (!isDragging()) return;
+                changePosition((ev as MouseEvent)[_clientX], (ev as MouseEvent)[_clientY])
+            })
+
+            removeEventListener(getDocument(), _mouseup, () => {
+                removeAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
+                setIsDragging(false)
+                fixPosition()
+            })
+        })
+    }
 
     onMount(() => {
         let timeout: null | number = null
@@ -315,6 +341,11 @@ const Menu: ParentComponent<MenuProps> = ($props) => {
             }, 50)
         })
         isOpenObserver[_observe](menuRef, {attributes: true})
+
+        if (props[_dragable]) {
+            initDragListener()
+        }
+
         onCleanup(() => {
             if (observer) observer[_disconnect]();
             isOpenObserver[_disconnect]();
@@ -333,15 +364,35 @@ const Menu: ParentComponent<MenuProps> = ($props) => {
             if (props[_onClose]) props[_onClose](ev)
             if (props[_onToggle]) props[_onToggle](false)
         }}
+        data-is-dragging={toggleAttribute(isDragging())}
         onCancel={(ev) => {
             preventDefault(ev)
             if (props[_onCancel]) props[_onCancel](ev)
-            if (props[_dismiss] == 'manual') return
+            if (props[_dismiss] == _manual) return
             if (props[_onToggle]) props[_onToggle](false)
-            closePopover(ev.currentTarget)
+            closePopover(ev[_currentTarget])
         }}
         {...other}>
-        <div>
+        <div data-dragable={toggleAttribute(props[_dragable])}>
+            <Show when={props[_dragable]}>
+                <div 
+                    class="menu-drag-handle"
+                    onMouseDown={(ev) => {
+                        const rect = getBoundingClientRect(menuRef)
+                        setIsDragging(true)
+                        setAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
+                        diffPositionX = ev[_clientX] - rect.x
+                        diffPositionY = ev[_clientY] - rect.y
+                    }}
+                    onTouchStart={ev => {
+                        const rect = getBoundingClientRect(menuRef)
+                        setIsDragging(true)
+                        setAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
+                        diffPositionX = ev[_touches][0][_clientX] - rect.x
+                        diffPositionY = ev[_touches][0][_clientY] - rect.y
+                    }}
+                />
+            </Show>
             { props[_children] }
         </div>
     </dialog></Portal>)

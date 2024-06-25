@@ -28,13 +28,13 @@ export function setCookie(key: CookieKeys, value: string, options: CookieOptions
     if (options[_secure]  ) cookie += (`; ${_secure}`)
     if (options[_httpOnly]) cookie += (`; ${_httpOnly}`)
 
-    getDocument[_cookie] = cookie
+    getDocument()[_cookie] = cookie
 }
 
 export function getCookie(key: CookieKeys): string | null {
 
     const cookieName = key + "="
-    const cookies = getDocument[_cookie][_split](';')
+    const cookies = getDocument()[_cookie][_split](';')
 
     for (let i = 0; i < cookies[_length]; i++) {
         const cookie = cookies[i][_trim]()

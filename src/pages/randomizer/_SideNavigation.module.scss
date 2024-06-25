@@ -1,0 +1,18 @@
+.side_navigation {
+    padding: 8px;
+    min-width: 56px;
+    max-width: 100%;
+    display: flex;
+    gap: 8px;
+    flex-direction: column;
+    max-height: 100%;
+    overflow: auto;
+
+    & :global(.btn) {
+        outline-offset: 0px;
+
+        &[data-selected] {
+            color: rgb(var(--color-acc))
+        }
+    }
+}

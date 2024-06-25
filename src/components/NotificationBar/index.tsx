@@ -1,9 +1,10 @@
-import { type JSX, type ParentComponent, splitProps } from "solid-js";
+import { type JSX, type ParentComponent, splitProps, children } from "solid-js";
 import { Portal } from "solid-js/web";
 
-import { _leading, _trailing, _children, _header, _actions } from "@/data/string";
+import { _leading, _trailing, _children, _header, _actions, _manual } from "@/data/string";
+import { toggleAttribute } from "@/utils/attributes";
 
-import List from "../List";
+import List from "@/components/List";
 import './index.scss'
 
 type NotificationBarProps = JSX.HTMLAttributes<HTMLDivElement> & {
@@ -15,14 +16,16 @@ type NotificationBarProps = JSX.HTMLAttributes<HTMLDivElement> & {
 
 const NotificationBar: ParentComponent<NotificationBarProps> = ($props) => {
     const [props, other] = splitProps($props, [
-        _leading, _trailing, _children, 
+        _leading, _trailing, _children,
         _header, _actions
     ])
+    const actionsComponent = children(() => props[_actions])
 
     return (<Portal>
-        <div 
-            class="notification-bar" 
-            popover="manual" 
+        <div
+            class="notification-bar"
+            popover={_manual}
+            data-actions={toggleAttribute(actionsComponent())}
             {...other}>
             <div>
                 <List
@@ -32,7 +35,7 @@ const NotificationBar: ParentComponent<NotificationBarProps> = ($props) => {
                     { props.header }
                 </List>
                 <div class="notification-bar-actions">
-                    { props[_actions] }
+                    { actionsComponent() }
                 </div>
             </div>
         </div>

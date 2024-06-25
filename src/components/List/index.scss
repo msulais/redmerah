@@ -5,7 +5,15 @@
     align-items: center;
     justify-content: space-between;
     padding: 4px 12px;
-    border-radius: 4px;
+    border-radius: 8px;
+    
+    [data-corner=sharp] & {
+        border-radius: 0;
+    }
+    
+    [data-corner=semi-round] & {
+        border-radius: 4px;
+    }
 
     &[data-compact] {
         padding: 4px 8px;
@@ -35,7 +43,7 @@
 }
 
 .list-subtitle {
-    color: rgba(var(--color-on-sur), var(--opacity-inv3));
+    color: rgba(var(--color-on-sur), var(--opacity-inv2));
     font-size: var(--font-size-xs);
     text-align: start;
 }
@@ -51,12 +59,7 @@
     justify-content: flex-end;
     gap: 4px;
     height: 100%;
-    color: rgba(var(--color-on-sur), var(--opacity-inv3));
     font-size: var(--font-size-xs);
-
-    & * {
-        color: rgb(var(--color-on-sur));
-    }
 
     &:empty {
         display: none;

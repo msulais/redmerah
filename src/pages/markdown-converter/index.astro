@@ -1,0 +1,18 @@
+---
+import Html from '@/components/Html/index.astro';
+import { App }  from './_components'
+---
+
+<Html 
+	title='Markdown Converter' 
+	accentColor='#00FF3A' 
+	description='Convert markdown to HTML effortlessly with our online markdown converter. Create beautifully formatted web content from plain text using our user-friendly tool.'>
+	<Fragment slot="favicon">
+		<link rel="shortcut icon" type="image/ico" href="/favicon/markdown-converter/favicon.ico" />
+		<link rel="apple-touch-icon" sizes="180x180" href="/favicon/markdown-converter/apple-touch-icon.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/favicon/markdown-converter/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/favicon/markdown-converter/favicon-16x16.png">
+		<link rel="manifest" href="/favicon/markdown-converter/site.webmanifest">
+	</Fragment>
+	<App client:only="solid-js" />
+</Html>

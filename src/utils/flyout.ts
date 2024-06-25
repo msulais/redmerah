@@ -6,14 +6,14 @@ import { addEventListener } from "./event"
 import { ElementSelector } from "@/enums/selector"
 import { clearTimeDelayed, setTimeDelayed } from "./timeout"
 import { closeModal } from "./modal"
-import { _flyoutListener, _flyout, _open, _noPointerEvent, _clientX, _touches, _clientY, _focus, _x, _left, _right, _y, _top, _bottom, _modal, _popover, _activeElement, _flyoutOpen, _scrollY, _documentElement, _scrollTop, _scrollTo, _anchorId, _position, _observe } from "@/data/string"
+import { _flyoutListener, _flyout, _open, _noPointerEvent, _clientX, _touches, _clientY, _focus, _x, _left, _right, _y, _top, _bottom, _modal, _popover, _activeElement, _flyoutOpen, _scrollY, _documentElement, _scrollTop, _scrollTo, _anchorId, _position, _observe, _click, _scroll, _resize, _join, _instant } from "@/data/string"
 import { getDocument, getDocumentBody, getWindow } from "@/data/window"
 
 export function initFlyout(): void {
     const data_dismiss_auto = '[data-dismiss="auto"]'
 
-    if (hasAttribute(getDocumentBody, BodyAttributes[_flyoutListener])) return;
-    setAttribute(getDocumentBody, BodyAttributes[_flyoutListener], '')
+    if (hasAttribute(getDocumentBody(), BodyAttributes[_flyoutListener])) return;
+    setAttribute(getDocumentBody(), BodyAttributes[_flyoutListener], '')
 
     const selector: string = ElementSelector[_flyout] + `:is([${_open}],[${PopoverAttributes[_open]}])`
     let isFlyoutOpen: boolean = false
@@ -21,10 +21,9 @@ export function initFlyout(): void {
     let timeoutId: number | null = null
 
     // used for clicked outside flyout
-    addEventListener(getDocument, 'click', async (ev: Event) => {
-        if (hasAttribute(getDocumentBody, BodyAttributes[_noPointerEvent])) {
-            return
-        }
+    addEventListener(getDocument(), _click, async (ev: Event) => {
+        if (hasAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])) 
+            return;
 
         const pointer = {
             x: (ev as MouseEvent)[_clientX] ?? (ev as TouchEvent)[_touches][0][_clientX] ?? 0,
@@ -37,46 +36,44 @@ export function initFlyout(): void {
 
             // if clicked inside, nothing happen
             const flyoutRect = getBoundingClientRect(flyout)
-            if (pointer[_x] >= flyoutRect[_left] && 
-                pointer[_x] <= flyoutRect[_right] && 
-                pointer[_y] >= flyoutRect[_top] && 
+            if (pointer[_x] >= flyoutRect[_left  ] && 
+                pointer[_x] <= flyoutRect[_right ] && 
+                pointer[_y] >= flyoutRect[_top   ] && 
                 pointer[_y] <= flyoutRect[_bottom]
-            ) {
-                break
-            }
+            ) break;
 
             if (hasAttribute(flyout, ModalAttributes[_modal])) await closeModal(flyout as HTMLDialogElement)
             if (hasAttribute(flyout, PopoverAttributes[_popover])) await closePopover(flyout as HTMLElement)
 
             for (const d of querySelectorAll(selector + data_dismiss_auto)) {
                 (d as HTMLElement)[_focus]()
-                if (getDocument[_activeElement] == d) break
+                if (getDocument()[_activeElement] == d) break
             }
 
             flyout = querySelector(selector + `${data_dismiss_auto}:${_focus}`)
         }
 
         if (!querySelector(selector)) {
-            removeAttribute(getDocumentBody, BodyAttributes[_flyoutOpen])
+            removeAttribute(getDocumentBody(), BodyAttributes[_flyoutOpen])
         }
     })
 
-    addEventListener(getDocument, 'scroll', () => {
+    addEventListener(getDocument(), _scroll, () => {
         if (!isFlyoutOpen) {
-            scrollTop = getWindow[_scrollY] || getDocument[_documentElement][_scrollTop]
+            scrollTop = getWindow()[_scrollY] || getDocument()[_documentElement][_scrollTop]
             return
         }
-        getWindow[_scrollTo]({ top: scrollTop, behavior: 'instant' })
+        getWindow()[_scrollTo]({ top: scrollTop, behavior: _instant })
     })
 
-    addEventListener(getWindow, 'resize', () => {
+    addEventListener(getWindow(), _resize, () => {
         if (timeoutId) {
             clearTimeDelayed(timeoutId)
             timeoutId = null
         }
 
         timeoutId = setTimeDelayed(() => {
-            for (const popover of querySelectorAll(`[` + [PopoverAttributes[_anchorId], PopoverAttributes[_popover], PopoverAttributes[_position]].join('][') + ']')) {
+            for (const popover of querySelectorAll(`[` + [PopoverAttributes[_popover], PopoverAttributes[_position]][_join]('][') + ']')) {
                 repositionPopover(popover as HTMLElement)
             }
             timeoutId = null
@@ -84,6 +81,6 @@ export function initFlyout(): void {
     })
 
     new MutationObserver(() => {
-        isFlyoutOpen = hasAttribute(getDocumentBody, BodyAttributes[_flyoutOpen])
-    })[_observe](getDocumentBody, { subtree: true, attributes: true })
+        isFlyoutOpen = hasAttribute(getDocumentBody(), BodyAttributes[_flyoutOpen])
+    })[_observe](getDocumentBody(), { subtree: true, attributes: true })
 }

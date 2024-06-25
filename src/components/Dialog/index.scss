@@ -1,6 +1,6 @@
 .dialog {
-    --max-w: min(720px, calc(100dvw - calc(var(--popover-margin) * 8)));
-    --max-h: calc(100dvh - calc(var(--popover-margin) * 8));
+    --max-w: min(720px, calc(100% - 16px));
+    --max-h: calc(100dvh - 16px);
     background-color: rgb(var(--color-sur));
     border: none;
     border-radius: 16px;
@@ -10,17 +10,29 @@
     max-height: var(--max-h);
     max-width: var(--max-w);
     opacity: 0;
-    outline: none;
+    outline: 1px solid rgba(var(--color-on-sur), var(--opacity2));
     overflow: hidden;
     top: 50%;
     transform: translate(-50%, calc(-50% - 12px));
-    transition: all .2s;
+    transition: all .3s var(--transition-spring);
+
+    [data-corner=sharp] & {
+        border-radius: 0;
+    }
+
+    [data-corner=semi-round] & {
+        border-radius: 8px;
+    }
+
+    [data-corner=full-round] & {
+        border-radius: 44px;
+    }
 
     &::backdrop {
         background-color: transparent;
-        transition: all .2s;
+        transition: all .3s var(--transition-spring);
     }
-    
+
     &[data-open] {
         opacity: 1;
         transform: translate(-50%, -50%);
@@ -31,10 +43,14 @@
     }
 
     > div {
-        max-height: var(--max-h);
-        max-width: var(--max-w);
-        overflow: auto;
+        max-height: inherit;
+        max-width: 100%;
+        width: 100%;
+        overflow: hidden;
         position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
 
         > div:empty {
             display: none;
@@ -44,51 +60,43 @@
 
 
 .dialog-actions {
+    width: 100%;
     align-items: center;
-    background-color: rgb(var(--color-sur));
+    background-color: rgba(var(--color-on-sur), var(--opacity1));
     border-top: 1px solid rgba(var(--color-on-sur), var(--opacity2));
-    bottom: 0;
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
     justify-content: flex-end;
-    padding: 12px;
-    position: sticky;
-    z-index: var(--z-index-dialog-actions);
-
-    &[data-justify] > * {
-        flex: 1;
-    }
+    padding: 24px;
 
     > * {
+        flex: 1 1 100px;
         max-width: 340px;
-        min-width: 100px;
     }
 }
 
 .dialog-content {
-    padding: 4px 24px 24px 24px;
+    padding: 24px;
+    flex: 1;
+    max-height: 100%;
+    overflow: auto;
 }
 
 .dialog-header {
-    backdrop-filter: blur(24px);
-    background-color: rgba(var(--color-sur), var(--opacity-inv2));
+    width: 100%;
     font-size: var(--font-size-xm);
-    padding: 24px 24px 12px 24px;
-    position: sticky;
-    top: 0;
-    z-index: var(--z-index-dialog-header);
+    font-weight: 500;
+    padding: 24px 24px 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 
-    &[data-close-btn] {
-        padding-right: 56px;
+    &:not(:empty) + .dialog-content {
+        padding-top: 8px !important;
     }
-}
 
-.dialog-close-btn[data-icon] {
-    border-radius: 4px;
-    position: absolute;
-    right: 8px;
-    top: 8px;
-    border-radius: 20px;
-    z-index: var(--z-index-dialog-close-btn);
+    > .btn {
+        right: -10px;
+    }
 }

@@ -1,0 +1,18 @@
+---
+import Html from '@/components/Html/index.astro';
+import { App } from './_components'
+---
+
+<Html 
+	title='Color Generator' 
+	accentColor='#00FF3A' 
+	description='Generate accent pallete color for your app. Including color for light and dark mode.'>
+	<Fragment slot="favicon">
+		<link rel="shortcut icon" type="image/ico" href="/favicon/color-generator/favicon.ico" />
+		<link rel="apple-touch-icon" sizes="180x180" href="/favicon/color-generator/apple-touch-icon.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/favicon/color-generator/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/favicon/color-generator/favicon-16x16.png">
+		<link rel="manifest" href="/favicon/color-generator/site.webmanifest">
+	</Fragment>
+	<App client:only="solid-js"/>
+</Html>

@@ -35,7 +35,7 @@ export function isNotificationOpen(notificationBar: HTMLDivElement): boolean {
     return hasAttribute(notificationBar, NotificationBarAttributes[_open])
 }
 
-export async function dismissNotification(notificationBar: HTMLDivElement): Promise<void> {
+export async function closeNotification(notificationBar: HTMLDivElement): Promise<void> {
     
     // clear timeout
     const timeoutId = getAttribute(notificationBar, NotificationBarAttributes[_timeoutId])
@@ -48,7 +48,7 @@ export async function dismissNotification(notificationBar: HTMLDivElement): Prom
     notificationBar[_hidePopover]()
 }
 
-export async function showNotification({
+export async function openNotification({
         notificationBar, 
         duration = 3E3, 
         position = PopoverPosition[_CENTER_CENTER_BOTTOM], 
@@ -69,7 +69,7 @@ export async function showNotification({
     removeAttribute(notificationBar, NotificationBarAttributes[_timeoutId])
 
     if (isNotificationOpen(notificationBar)) {
-        await dismissNotification(notificationBar)
+        await closeNotification(notificationBar)
     }
 
     notificationBar[_showPopover]()
@@ -147,7 +147,7 @@ export async function showNotification({
     if (!autoClose) return;
 
     const t = setTimeDelayed(() => {
-        dismissNotification(notificationBar)
+        closeNotification(notificationBar)
     }, duration)
 
     setAttribute(notificationBar, NotificationBarAttributes[_timeoutId], `${t}`)
