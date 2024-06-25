@@ -196,6 +196,12 @@
     }
 }
 
-.number-text-field-menu > div {
-    padding: 4px;
+.number-text-field-menu {
+    [data-corner=full-round] & {
+        border-radius: 24px !important;
+    }
+
+    > div {
+        padding: 4px !important;
+    }
 }
