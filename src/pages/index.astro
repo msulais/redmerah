@@ -1,11 +1,4 @@
 ---
-import Html from '@/components/Html/index.astro';
-import Icon from '@/components/Icon/index.astro';
-import LinkButton from '@/components/Button/LinkButton.astro';
-import { ButtonVariant } from '@/components/Button';
-import { SettingsElement } from './_components'
-import CSSAnimation from '@/styles/animation.module.scss'
-import CSS from './_index.module.scss'
 
 import { ExternalLinks, RoutesLinks } from '@/enums/links';
 import androidLogo from '@/assets/android-logo.svg'
@@ -16,7 +9,13 @@ import featuresImg_uiUx from '@/assets/features/ui-ux.svg'
 import { getDate_Y } from '@/utils/datetime';
 import { apps } from '@/data/apps';
 
-export const prerender = true;
+import Html from '@/components/Html/index.astro';
+import Icon from '@/components/Icon/index.astro';
+import LinkButton from '@/components/Button/LinkButton.astro';
+import { ButtonVariant } from '@/components/Button';
+import { SettingsElement } from './_components'
+import CSSAnimation from '@/styles/animation.module.scss'
+import CSS from './_index.module.scss'
 
 const features = [
     {
