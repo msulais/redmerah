@@ -10,12 +10,13 @@ import CSS from './_index.module.scss'
 import { ExternalLinks, RoutesLinks } from '@/enums/links';
 import androidLogo from '@/assets/android-logo.svg'
 import logo from '@/assets/logo.svg'
-import markdownConverterLogo from '@/assets/markdown-converter/logo.svg'
 import featuresImg_workOffline from '@/assets/features/work-offline.svg'
 import featuresImg_keepDataLocal from '@/assets/features/keep-data-local.svg'
 import featuresImg_uiUx from '@/assets/features/ui-ux.svg'
 import { getDate_Y } from '@/utils/datetime';
 import { apps } from '@/data/apps';
+
+export const prerender = true;
 
 const features = [
     {
