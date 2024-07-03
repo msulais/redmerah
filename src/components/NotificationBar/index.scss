@@ -15,7 +15,8 @@
     overflow: hidden;
     bottom: 8px;
     top: auto;
-    transition: all .3s var(--transition-spring), top 0s, right 0s, bottom 0s, left 0s, transform 0s;
+    transition-duration: .3s, 0s, 0s, 0s, 0s, 0s;
+    transition-property: all, top, right, bottom, left, transform;
 
     [data-corner=sharp] & {
         border-radius: 0;
@@ -30,12 +31,14 @@
     }
 
     &[data-open] {
-        transition: all .3s var(--transition-spring), top 0s, right 0s, bottom 0s, left 0s;
+        transition-duration: .3s, 0s, 0s, 0s, 0s;
+        transition-property: all, top, right, bottom, left;
     }
 
     &[data-move] {
         opacity: 1;
-        transition: all .3s var(--transition-spring), top 0s, right 0s, bottom 0s, left 0s;
+        transition-duration: .3s, 0s, 0s, 0s, 0s;
+        transition-property: all, top, right, bottom, left;
     }
 
     > div {

@@ -11,6 +11,7 @@
     margin: 0;
     padding: 0;
     scroll-behavior: smooth;
+    transition-timing-function: var(--transition-spring);
     -webkit-tap-highlight-color: transparent;
 }
 

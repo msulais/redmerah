@@ -30,27 +30,19 @@
     }
 
     &[data-open] {
-        transition: 
-            transform .3s var(--transition-spring), 
-            opacity .3s var(--transition-spring)
-        ;
+        transition-duration: .3s;
+        transition-property: transform, opacity;
     }
 
     &[data-move] {
         opacity: 1;
-        transition: 
-            transform .3s var(--transition-spring), 
-            opacity .3s var(--transition-spring), 
-            top .3s var(--transition-spring), 
-            left .3s var(--transition-spring)
-        ;
+        transition-duration: .3s;
+        transition-property: transform, opacity, top, left;
     }
 
     &[data-is-dragging] {
-        transition: 
-            transform .3s var(--transition-spring), 
-            opacity .3s var(--transition-spring)
-        ;
+        transition-duration: .3s;
+        transition-property: transform, opacity;
     }
 
     > div {

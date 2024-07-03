@@ -20,7 +20,8 @@
     width: fit-content;
     height: fit-content;
     position: fixed;
-    transition: all .3s var(--transition-spring), left 0s, top 0s, transform 0s, padding 0s, gap 0s;
+    transition-duration: .3s,   0s,  0s,        0s,      0s,  0s;
+    transition-property: all, left, top, transform, padding, gap;
     white-space: pre-wrap;
     z-index: var(--z-index-tooltip);
 

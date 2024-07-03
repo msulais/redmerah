@@ -14,7 +14,7 @@
     overflow: hidden;
     top: 50%;
     transform: translate(-50%, calc(-50% - 12px));
-    transition: all .3s var(--transition-spring);
+    transition-duration: .3s;
 
     [data-corner=sharp] & {
         border-radius: 0;
@@ -30,7 +30,7 @@
 
     &::backdrop {
         background-color: transparent;
-        transition: all .3s var(--transition-spring);
+        transition-duration: .3s;
     }
 
     &[data-open] {

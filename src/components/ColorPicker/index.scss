@@ -31,20 +31,14 @@
     }
 
     &[data-open] {
-        transition: 
-            transform .3s var(--transition-spring), 
-            opacity .3s var(--transition-spring)
-        ;
+        transition-duration: .3s;
+        transition-property: transform, opacity;
     }
 
     &[data-move] {
         opacity: 1;
-        transition: 
-            transform .3s var(--transition-spring), 
-            opacity .3s var(--transition-spring), 
-            top .3s var(--transition-spring), 
-            left .3s var(--transition-spring)
-        ;
+        transition-duration: .3s;
+        transition-property: transform, opacity, top, left;
     }
 
     > div {
@@ -130,7 +124,8 @@
         border: 2px solid white;
         z-index: 3;
         box-shadow: var(--elevation1), inset var(--elevation1);
-        transition: backdrop-filter .3s var(--transition-spring), scale .3s var(--transition-spring);
+        transition-duration: .3s;
+        transition-property: backdrop-filter, scale;
 
         [data-corner=sharp] & {
             border-radius: 0;
@@ -211,7 +206,8 @@
         border: 2px solid rgb(var(--color-on-sur));
         z-index: 3;
         box-shadow: var(--elevation1), inset var(--elevation1);
-        transition: backdrop-filter .3s var(--transition-spring), scale .3s var(--transition-spring);
+        transition-duration: .3s;
+        transition-property: backdrop-filter, scale;
 
         [data-corner=sharp] & {
             border-radius: 0;
@@ -286,7 +282,8 @@
         border: 2px solid rgb(var(--color-on-sur));
         z-index: 3;
         box-shadow: var(--elevation1), inset var(--elevation1);
-        transition: backdrop-filter .3s var(--transition-spring), scale .3s var(--transition-spring);
+        transition-duration: .3s;
+        transition-property: backdrop-filter, scale;
 
         [data-corner=sharp] & {
             border-radius: 0;

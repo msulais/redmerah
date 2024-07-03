@@ -6,7 +6,7 @@
 
 .expander-content {
     overflow: hidden;
-    transition: all .3s var(--transition-spring);
+    transition-duration: .3s;
     border-radius: 0 0 8px 8px;
     
     [data-corner=sharp] & {
@@ -38,7 +38,7 @@
 
 .expander-header {
     border: 1px solid transparent;
-    transition: all .3s var(--transition-spring);
+    transition-duration: .3s;
     user-select: none;
 
     &[data-open]:not([data-variant=transparent]) {
