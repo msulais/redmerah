@@ -1,0 +1,39 @@
+.desktop_only {
+    @media (max-width: 540px) {
+        display: none !important;
+    }
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    width: 1440px;
+    max-width: 100%;
+
+    > :global(.btn){ 
+        --padding: 4px 12px 4px 8px;
+        font-size: var(--font-size-m);
+
+        & img {
+            width: 24px;
+        }
+    }
+
+    > :is(nav, div) {
+        display: flex;
+        align-items: center;
+        gap: 1px;
+    }
+
+    > nav {
+        flex: 1;
+    }
+}
+
+.mobile_only {
+    @media (min-width: 541px) {
+        display: none !important;
+    }
+}
