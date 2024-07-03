@@ -1,4 +1,4 @@
-.text-field {
+.textfield {
     display: block;
 
     > div:first-child {
@@ -139,7 +139,7 @@
     }
 }
 
-.text-field-btn[data-compact] {
+.textfield-btn[data-compact] {
     --padding: 0 6px;
     min-height: 28px;
     border-radius: 4px;
@@ -153,7 +153,7 @@
     }
 }
 
-:is(.text-field-leading, .text-field-trailing) {
+:is(.textfield-leading, .textfield-trailing) {
     display: flex;
     align-items: center;
     gap: 4px;
@@ -163,13 +163,13 @@
     }
 }
 
-:is(.text-field-message-text, .text-field-label-text){
+:is(.textfield-message-text, .textfield-label-text){
     &:empty {
         display: none;
     }
 }
 
-.text-field-label-text {
+.textfield-label-text {
     position: absolute;
     bottom: 100%;
     transform: translateY(0.64em);
@@ -187,7 +187,7 @@
     }
 }
 
-.text-field-message-text {
+.textfield-message-text {
     padding: 0 12px;
     font-size: var(--font-size-xs);
     
@@ -196,7 +196,7 @@
     }
 }
 
-.number-text-field-menu {
+.number-textfield-menu {
     [data-corner=full-round] & {
         border-radius: 24px !important;
     }

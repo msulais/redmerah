@@ -71,7 +71,7 @@ export function changeTextFieldValue(el: HTMLInputElement, value: string): void 
 
 export const TextFieldTrailingButton: ParentComponent<JSX.ButtonHTMLAttributes<HTMLButtonElement>> = ($props) => {
     const [props, other] = splitProps($props, [_children, _classList])
-    return (<Button {...other} compact classList={{'text-field-btn': true, ...props[_classList]}}>
+    return (<Button {...other} compact classList={{'textfield-btn': true, ...props[_classList]}}>
         { props[_children] }
     </Button>)
 }
@@ -205,7 +205,7 @@ export const NumberTextField: ParentComponent<NumberTextFieldProps> = ($props) =
             </>}
             {...other}
         />
-        <Menu ref={r => actionMenuRef = r} classList={{'number-text-field-menu': true}} onToggle={(v) => setIsActionMenuOpen(v)}>
+        <Menu ref={r => actionMenuRef = r} classList={{'number-textfield-menu': true}} onToggle={(v) => setIsActionMenuOpen(v)}>
             <Tooltip text={props[_increaseTooltip]} anchor={increaseBtnRef()}/>
             <Button
                 iconOnly
@@ -254,7 +254,7 @@ const TextField: ParentComponent<TextFieldProps> = ($props) => {
     createEffect(() => setValue(props[_value] as string ?? ''))
 
     return (<label
-        class='text-field'
+        class='textfield'
         for={props[_id]}
         {...props[_labelElement]}
     >
@@ -264,8 +264,8 @@ const TextField: ParentComponent<TextFieldProps> = ($props) => {
             data-disabled={toggleAttribute(props[_disabled])}
             data-trailing={toggleAttribute(trailingComponents() || (props[_clearTooltip] ?? 'Clear'))}
             data-readonly={toggleAttribute(props[_readOnly])}>
-            <div class='text-field-label-text'>{props[_autoHideLabel] && value().length == 0 && !props[_placeholder]? '' : props[_labelText]}</div>
-            <div class='text-field-leading'>{props[_leading]}</div>
+            <div class='textfield-label-text'>{props[_autoHideLabel] && value().length == 0 && !props[_placeholder]? '' : props[_labelText]}</div>
+            <div class='textfield-leading'>{props[_leading]}</div>
             <input
                 id={props[_id]}
                 ref={(r) => {
@@ -297,7 +297,7 @@ const TextField: ParentComponent<TextFieldProps> = ($props) => {
                 placeholder={props[_placeholder] ?? (props[_autoHideLabel] && props[_labelText]? `${props[_labelText]}` : undefined)}
                 {...other}
             />
-            <div class='text-field-trailing'>
+            <div class='textfield-trailing'>
                 {trailingComponents()}
                 <Show when={props[_autoShowClearBtn] && value()[_length] > 0}>
                     <Tooltip text={props[_clearTooltip] ?? 'Clear'} anchor={clearBtnRef()}/>
@@ -308,7 +308,7 @@ const TextField: ParentComponent<TextFieldProps> = ($props) => {
                 </Show>
             </div>
         </div>
-        <div class='text-field-message-text'>{props[_messageText]}</div>
+        <div class='textfield-message-text'>{props[_messageText]}</div>
     </label>)
 }
 

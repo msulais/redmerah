@@ -10,7 +10,7 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
 
-            & :global(.text-field) {
+            & :global(.textfield) {
                 width: 100% !important;
             }
         }
@@ -21,14 +21,14 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
 
-            & :global(.text-field) {
+            & :global(.textfield) {
                 width: 100% !important;
             }
         }
     }
 
     &[data-randomizer=colors] {
-        > :global(.text-field) {
+        > :global(.textfield) {
             width: min(100%, 164px);
         }
 
@@ -37,7 +37,7 @@
             grid-template-columns: 1fr 1fr;
             row-gap: 12px;
 
-            > :global(.text-field) {
+            > :global(.textfield) {
                 width: 100% !important;
             }
         }
