@@ -1,9 +1,15 @@
 ---
 import Html from '@/components/Html/index.astro';
+import Appbar from '@/components/Appbar/index.astro';
+import BottomBar from '@/components/BottomBar/index.astro';
+import Main from '@/components/Main/index.astro';
+import { RoutesLinks } from '@/enums/links';
 
 export const prerender = true;
 ---
 
 <Html>
-	
+	<Appbar route={RoutesLinks.about} />
+    <Main></Main>
+    <BottomBar />
 </Html>

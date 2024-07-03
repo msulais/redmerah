@@ -2,7 +2,7 @@ import { For, Index, Match, Switch, createEffect, createMemo, createSignal, merg
 import { Portal } from "solid-js/web";
 
 import type { ComponentEvent } from "@/types/event";
-import { _auto, _onClose, _onToggle, _onCancel, _dismiss, _children, _ref, _open, _observe, _disconnect, _currentTarget, _manual, _initialDate, _firstDate, _lastDate, _getFullYear, _day, _locales, _month, _year, _getDay, _includes, _setFullYear, _setMonth, _fill, _onSubmit, _outlined, _filled, _onSelectDate } from "@/data/string";
+import { _auto, _onClose, _onToggle, _onCancel, _dismiss, _children, _ref, _open, _observe, _disconnect, _currentTarget, _manual, _initialDate, _firstDate, _lastDate, _getFullYear, _day, _locales, _month, _year, _getDay, _includes, _setFullYear, _setMonth, _fill, _onSubmit, _outlined, _filled, _onSelectDate, _substring } from "@/data/string";
 import { PopoverAttributes } from "@/enums/attributes";
 import { hasAttribute } from "@/utils/attributes";
 import { preventDefault } from "@/utils/event";
@@ -131,7 +131,7 @@ const DatePicker: VoidComponent<DatePickerProps> = ($props) => {
     const DaysDate: VoidComponent = () => {
         return (<>
             <div class="date-picker-days-name">
-                <For each={weekDays}>{d => <p>{d.substring(0, 2)}</p>}</For>
+                <For each={weekDays}>{d => <p>{d[_substring](0, 2)}</p>}</For>
             </div>
             <div class="date-picker-days">
                 <For each={Array(startDay())[_fill](0)}>{v => <div/>}</For>

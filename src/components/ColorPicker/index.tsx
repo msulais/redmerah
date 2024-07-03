@@ -19,6 +19,10 @@ import Button, { ButtonVariant } from "@/components/Button"
 import TextField from "@/components/TextField"
 import './index.scss'
 
+const COLOR_BOX_WIDTH: number = 260
+const COLOR_BOX_HEIGHT: number = 200
+const DEFAULT_HEX_COLOR: HEXColor = '#FF0000'
+
 type ColorPickerProps = Omit<JSX.DialogHtmlAttributes<HTMLDialogElement>, 'children' | 'ref' | 'onToggle' | 'onClose' | 'onCancel'> & {
     ref?: (el: HTMLDialogElement) => void
     initialColor?: HEXColor
@@ -37,12 +41,12 @@ type Picker = {
         position: {
 
             /**
-             * 0-colorBoxHeight
+             * 0-COLOR_BOX_HEIGHT
              */
             top: number
 
             /**
-             * 0-colorBoxWidth
+             * 0-COLOR_BOX_WIDTH
              */
             left: number
         }
@@ -93,9 +97,7 @@ export function changeColorPickerValue(colorPicker: HTMLElement, value: HEXColor
 }
 
 const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
-    const colorBoxWidth: number = 260
-    const colorBoxHeight: number = 200
-    const $$props = mergeProps({initialColor: '#FF0000'}, $props)
+    const $$props = mergeProps({initialColor: DEFAULT_HEX_COLOR}, $props)
     const [props, other] = splitProps($$props, [
         _onCancel, _children, _disabledOpacityControl, _onToggle,
         _onSelectColor, _initialColor, _disabledColorControl, _ref,
@@ -103,13 +105,13 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
     ])
     const [colorModel, setColorMode] = createSignal<'HEX' | 'RGB' | 'HSL'>(_HEX)
     const [hslColor, setHslColor] = createSignal<HSLColor>({h: 0, s: 1, l: 0.5})
-    const [hexColor, setHexColor] = createSignal<HEXColor>('#FF0000')
+    const [hexColor, setHexColor] = createSignal<HEXColor>(DEFAULT_HEX_COLOR)
     const [opacity, setOpacity] = createSignal<number>(100) // 0 - 100
     const [picker, setPicker] = createStore<Picker>({
         color: {
             rect: null,
             isDrag: false,
-            position: {left: colorBoxWidth, top: 0},
+            position: {left: COLOR_BOX_WIDTH, top: 0},
         },
         hue: {
             rect: null,
@@ -141,16 +143,16 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 
         if (colorModel() == _HSL){
             setPicker(_color, _position, {
-                left: colorBoxWidth * hslColor().s,
-                top: colorBoxHeight * (1 - hslColor().l)
+                left: COLOR_BOX_WIDTH * hslColor().s,
+                top: COLOR_BOX_HEIGHT * (1 - hslColor().l)
             })
             return
         }
 
         const hsv = hslToHsv(hslColor())
         setPicker(_color, _position, {
-            left: colorBoxWidth * hsv.s,
-            top: colorBoxHeight * (1 - hsv.v)
+            left: COLOR_BOX_WIDTH * hsv.s,
+            top: COLOR_BOX_HEIGHT * (1 - hsv.v)
         })
     }
 
@@ -186,8 +188,8 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 
     function setPosition(clientX: number, clientY: number): void {
         if (picker[_color][_isDrag]) setPicker(_color, _position, {
-            left: mathMax(mathMin(clientX - picker[_color][_rect]![_left], colorBoxWidth), 0),
-            top: mathMax(mathMin(clientY - picker[_color][_rect]![_top], colorBoxHeight), 0)
+            left: mathMax(mathMin(clientX - picker[_color][_rect]![_left], COLOR_BOX_WIDTH), 0),
+            top: mathMax(mathMin(clientY - picker[_color][_rect]![_top], COLOR_BOX_HEIGHT), 0)
         })
         else if (picker[_hue][_isDrag]) setPicker(_hue, _position, mathMax(mathMin(props[_disabledColorControl]
             ? clientX - picker[_hue][_rect]![_left]
@@ -203,8 +205,8 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
         updateInputs(() => {
             const hsl: HSLColor = {
                 h: picker[_hue][_position] / sliderSize(),
-                s: picker[_color][_position][_left] / colorBoxWidth,
-                l: 1 - picker[_color][_position][_top] / colorBoxHeight
+                s: picker[_color][_position][_left] / COLOR_BOX_WIDTH,
+                l: 1 - picker[_color][_position][_top] / COLOR_BOX_HEIGHT
             }
 
             if (colorModel() != _HSL) {

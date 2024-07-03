@@ -1,4 +1,4 @@
-import { Show, createEffect, createSignal, mergeProps, onMount, splitProps, type JSX, type ParentComponent } from "solid-js"
+import { Show, createEffect, createSignal, mergeProps, splitProps, type JSX, type ParentComponent } from "solid-js"
 
 import { _check, _children, _compact, _disabled, _onValueChanged, _type, _value } from "@/data/string"
 import { toggleAttribute } from "@/utils/attributes"

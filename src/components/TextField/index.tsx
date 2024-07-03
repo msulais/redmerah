@@ -101,18 +101,14 @@ export const NumberTextField: ParentComponent<NumberTextFieldProps> = ($props) =
 
     function changeLength(operator: '+' | '-', continuous: boolean = false): void {
         const changeValue = () => {
-            let n = value()
-            switch (operator) {
-                case '+':
-                    n += (props[_step] ?? 1);
-                    break;
-                case '-':
-                    n -= (props[_step] ?? 1);
-                    break;
-            }
+            let n = value() + (operator == '+'
+                ? (props[_step] ?? 1) 
+                : -(props[_step] ?? 1)
+            )
 
             if (props[_min] != undefined && n < props[_min]) n = props[_min]
             if (props[_max] != undefined && n > props[_max]) n = props[_max]
+            
             setValue(n)
             if (props[_onValueChanged]) props[_onValueChanged](n)
             changeTextFieldValue(inputRef, `${n}`)

@@ -451,8 +451,11 @@ export function getPopoverPosition({
 }: GetPopoverPositionParams): PopoverPositionResult {
     const POPOVER_MARGIN = 8
 
-    if (!anchor && !pointer) {
-        throw new Error('`anchor` or `pointer` is not exist')
+    if (!anchor && !pointer) return {
+        top: 0, 
+        right: 0, 
+        bottom: 0, 
+        left: 0
     }
 
     const rect = {
@@ -516,7 +519,9 @@ export function getPopoverPosition({
             else left = edgePosition[_left]
         }
 
-    } else if ([
+    } 
+    
+    else if ([
         PopoverPosition[_CENTER_TOP_TO_RIGHT],
         PopoverPosition[_CENTER_CENTER_LEFT_TOP],
         PopoverPosition[_CENTER_CENTER_LEFT],
@@ -529,7 +534,9 @@ export function getPopoverPosition({
             if (middlePosition[_element][_left] > middlePosition[_screen][_left]) left = rect[_element][_right] - rect[_popover][_width] + padding
             else left = edgePosition[_right] - rect[_popover][_width]
         }
-    } else if ([
+    } 
+    
+    else if ([
         PopoverPosition[_CENTER_TOP],
         PopoverPosition[_CENTER_CENTER_TOP],
         PopoverPosition[_CENTER_CENTER],
@@ -537,7 +544,9 @@ export function getPopoverPosition({
         PopoverPosition[_CENTER_BOTTOM]
     ][_includes](position)) {
         left = rect[_element][_left] + (rect[_element][_width] / 2) - (rect[_popover][_width] / 2)
-    } else if ([
+    } 
+    
+    else if ([
         PopoverPosition[_CENTER_TOP_TO_LEFT],
         PopoverPosition[_CENTER_CENTER_RIGHT_TOP],
         PopoverPosition[_CENTER_CENTER_RIGHT],
@@ -550,7 +559,9 @@ export function getPopoverPosition({
             if (middlePosition[_element][_left] < middlePosition[_screen][_left]) left = rect[_element][_left] - padding
             else left = edgePosition[_left]
         }
-    } else if ([
+    } 
+    
+    else if ([
         PopoverPosition[_RIGHT_TOP],
         PopoverPosition[_RIGHT_CENTER_TO_BOTTOM],
         PopoverPosition[_RIGHT_CENTER],
@@ -577,7 +588,9 @@ export function getPopoverPosition({
             if (middlePosition[_element][_top] < middlePosition[_screen][_top]) top = rect[_element][_bottom] + gap
             else top = edgePosition[_top]
         }
-    } else if ([
+    } 
+    
+    else if ([
         PopoverPosition[_LEFT_CENTER_TO_BOTTOM],
         PopoverPosition[_CENTER_CENTER_LEFT_TOP],
         PopoverPosition[_CENTER_CENTER_TOP],
@@ -590,7 +603,9 @@ export function getPopoverPosition({
             if (middlePosition[_element][_top] > middlePosition[_screen][_top]) top = rect[_element][_bottom] - rect[_popover][_height] + padding
             else top = edgePosition[_bottom] - rect[_popover][_height]
         }
-    } else if ([
+    } 
+    
+    else if ([
         PopoverPosition[_LEFT_CENTER],
         PopoverPosition[_CENTER_CENTER_LEFT],
         PopoverPosition[_CENTER_CENTER],
@@ -598,7 +613,9 @@ export function getPopoverPosition({
         PopoverPosition[_RIGHT_CENTER]
     ][_includes](position)) {
         top = rect[_element][_top] + (rect[_element][_height] / 2) - (rect[_popover][_height] / 2)
-    } else if ([
+    } 
+    
+    else if ([
         PopoverPosition[_LEFT_CENTER_TO_TOP],
         PopoverPosition[_CENTER_CENTER_LEFT_BOTTOM],
         PopoverPosition[_CENTER_CENTER_BOTTOM],
@@ -611,7 +628,9 @@ export function getPopoverPosition({
             if (middlePosition[_element][_top] < middlePosition[_screen][_top]) top = rect[_element][_top] - padding
             else top = edgePosition[_top]
         }
-    } else if ([
+    } 
+    
+    else if ([
         PopoverPosition[_LEFT_BOTTOM],
         PopoverPosition[_CENTER_BOTTOM_TO_RIGHT],
         PopoverPosition[_CENTER_BOTTOM],

@@ -4,12 +4,12 @@ import { Show, children, createEffect, createMemo, createSignal, mergeProps, onC
 import { _children, _classList, _disconnect, _filledTonal, _header, _height, _isOpen, _leading, _observe, _onToggle, _openByDefault, _px, _ref, _showExpandIcon, _subtitle, _title, _trailing, _variant } from "@/data/string";
 import { getBoundingClientRect } from "@/utils/element";
 import { stopPropagation } from "@/utils/event";
+import { toggleAttribute } from "@/utils/attributes";
+import { clearTimeDelayed, setTimeDelayed } from "@/utils/timeout";
 
 import Icon from "@/components/Icon";
 import List from "@/components/List";
 import './index.scss'
-import { toggleAttribute } from "@/utils/attributes";
-import { clearTimeDelayed, setTimeDelayed } from "@/utils/timeout";
 
 type ExpanderProps = Omit<JSX.HTMLAttributes<HTMLDivElement>, 'onToggle' | 'ref' | 'title'> & {
     title?: JSX.Element
