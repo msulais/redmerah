@@ -1,0 +1,41 @@
+.checkbox {
+    display: flex;
+    font-size: var(--font-size-xs);
+    gap: 4px;
+    align-items: center;
+    user-select: none;
+
+    &[data-disabled] {
+        color: rgba(var(--color-on-sur), var(--opacity5));
+        cursor: not-allowed;
+
+        & * {
+            cursor: not-allowed;
+        }
+    }
+
+    &:not([data-disabled]) {
+        @media (hover: hover) {
+            &:hover {
+                cursor: pointer;
+
+                > .checkbox-icon {
+                    --bg-opacity: var(--opacity1);
+                }
+            }
+        }
+
+        &:active > .checkbox-icon {
+            --bg-opacity: var(--opacity0);
+            --border-opacity: var(--opacity1);
+
+            &:not([data-noscale]) > .btn-layer {
+                scale: .85;
+            }
+        }
+
+        &[data-selected] > .checkbox-icon {
+            color: rgb(var(--color-acc));
+        }
+    }
+}
