@@ -43,6 +43,10 @@
         }
     }
 
+    & :is(ul, ol) {
+        margin-left: 2em;
+    }
+
     > h1 {
         font-size: var(--font-size-xxd);
         margin-bottom: 1em;

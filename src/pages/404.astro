@@ -1,9 +1,25 @@
 ---
 import Html from '@/components/Html/index.astro';
+import Icon from '@/components/Icon/index.astro';
+import LinkButton from '@/components/Button/LinkButton.astro';
+import { ButtonVariant } from '@/components/Button';
+import Appbar from '@/components/Appbar/index.astro';
+import Main from '@/components/Main/index.astro';
+import BottomBar from '@/components/BottomBar/index.astro';
+import CSS from './_404.module.scss'
+import { RoutesLinks } from '@/enums/links';
 
 export const prerender = true;
 ---
 
 <Html>
-	
+	<Appbar/>
+    <Main classList={[CSS.main]}>
+        <h1><span>PAGE&nbsp;&nbsp;&nbsp;&nbsp;<br/>NOT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><br/>FOUND</h1>
+        <LinkButton href={RoutesLinks.home} variant={ButtonVariant.filled}>
+            <Icon code={0xE8E2} filled/>
+            Back to home
+        </LinkButton>
+    </Main>
+    <BottomBar/>
 </Html>

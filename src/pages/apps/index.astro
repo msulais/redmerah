@@ -3,12 +3,13 @@ import Html from '@/components/Html/index.astro';
 import { MainElement } from './_components'
 import Appbar from '@/components/Appbar/index.astro'
 import BottomBar from '@/components/BottomBar/index.astro'
+import { RoutesLinks } from '@/enums/links';
 
 export const prerender = true;
 ---
 
 <Html>
-	<Appbar/>
+	<Appbar route={RoutesLinks.apps}/>
     <MainElement client:only="solid-js"/>
     <BottomBar/>
 </Html>

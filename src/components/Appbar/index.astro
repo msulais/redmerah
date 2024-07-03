@@ -7,17 +7,23 @@ import CSS from './_index.module.scss'
 
 import { RoutesLinks, ExternalLinks } from '@/enums/links';
 import logo from '@/assets/logo.svg'
+
+type Props = {
+    route?: RoutesLinks
+}
+
+const { route } = Astro.props
 ---
 
 <header class={CSS.header}>
     <LinkButton href={RoutesLinks.home}><img src={logo.src} alt="Redmerah logo" /> Redmerah</LinkButton>
     <nav>
-        <LinkButton classList={[CSS.desktop_only]} selected href={RoutesLinks.apps} variant={ButtonVariant.filledTonal}><Icon code={0xE063} filled/>Apps</LinkButton>
-        <LinkButton classList={[CSS.desktop_only]} href={RoutesLinks.about}><Icon code={0xE930}/>About</LinkButton>
+        <LinkButton classList={[CSS.desktop_only]} selected={route == RoutesLinks.apps} href={RoutesLinks.apps} variant={ButtonVariant.filledTonal}><Icon code={0xE063} filled/>Apps</LinkButton>
+        <LinkButton classList={[CSS.desktop_only]} selected={route == RoutesLinks.about} href={RoutesLinks.about}><Icon code={0xE930}/>About</LinkButton>
         <LinkButton classList={[CSS.desktop_only]} href={ExternalLinks.donate} openInNewTab><Icon code={0xE84B}/>Donate</LinkButton>
     </nav>
     <div>
         <SettingsElement client:only="solid-js"/>
-        <NavigationMenu client:only="solid-js"/>
+        <NavigationMenu client:only="solid-js" route={route}/>
     </div>
 </header>

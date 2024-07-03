@@ -11,6 +11,11 @@
     padding: 8px;
     width: 1440px;
     max-width: 100%;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background-color: rgba(var(--color-bac), var(--opacity-inv1));
+    backdrop-filter: blur(8px);
 
     > :global(.btn){ 
         --padding: 4px 12px 4px 8px;

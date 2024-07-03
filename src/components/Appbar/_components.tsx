@@ -9,7 +9,7 @@ import CSSAnimation from '@/styles/animation.module.scss'
 import CSS from './_index.module.scss'
 
 import type { HEXColor, RGBColor } from "@/types/color";
-import { _CENTER_BOTTOM_TO_LEFT, _CENTER_BOTTOM_TO_RIGHT, _CENTER_CENTER_LEFT_TOP, _LEFT_CENTER_TO_BOTTOM, _clipboard, _color, _color_accent, _corner, _currentTarget, _dark, _filled, _filledTonal, _fullRound, _hostname, _includes, _innerHTML, _join, _light, _link, _open, _outlined, _pinnedApps, _round, _semiRound, _share, _sharp, _some, _split, _system, _test, _theme, _title, _toLowerCase, _trim, _value, _writeText } from "@/data/string";
+import { _CENTER_BOTTOM_TO_LEFT, _CENTER_BOTTOM_TO_RIGHT, _CENTER_CENTER_LEFT_TOP, _LEFT_CENTER_TO_BOTTOM, _clipboard, _color, _color_accent, _corner, _currentTarget, _dark, _filled, _filledTonal, _fullRound, _hostname, _includes, _innerHTML, _join, _light, _link, _open, _outlined, _pinnedApps, _round, _route, _semiRound, _share, _sharp, _some, _split, _system, _test, _theme, _title, _toLowerCase, _trim, _value, _writeText } from "@/data/string";
 import { getLocalStorageItem, setLocalStorageItem } from "@/utils/storage";
 import { generateColor, hexToRgb, testHexColor } from "@/utils/color";
 import { setAttribute, toggleAttribute } from "@/utils/attributes";
@@ -24,7 +24,11 @@ import { CornerData } from "@/enums/corner";
 import { ThemeData } from "@/enums/theme";
 import { getRoot } from "@/data/window";
 
-export const NavigationMenu: VoidComponent = () => {
+type NavigationMenuProps = {
+    route?: RoutesLinks
+}
+
+export const NavigationMenu: VoidComponent<NavigationMenuProps> = (props) => {
     const [navBtnRef, setNavBtnRef] = createSignal<HTMLButtonElement | null>(null)
     const [isNavMenuOpen, setIsNavMenuOpen] = createSignal<boolean>(false)
     let navMenuRef: HTMLDialogElement
@@ -40,8 +44,8 @@ export const NavigationMenu: VoidComponent = () => {
         })} ref={r => setNavBtnRef(r)} iconOnly><Icon code={0xE4F7}/></Button>
         <Menu style={{width: '164px'}} ref={r => navMenuRef = r} onToggle={v => setIsNavMenuOpen(v)}>
             <MenuHeader>Navigation</MenuHeader>
-            <MenuItemLink href={RoutesLinks.apps} selected leading={<Icon code={0xE063}/>}>Apps</MenuItemLink>
-            <MenuItemLink href={RoutesLinks.about} selected={false} leading={<Icon code={0xE930}/>}>About</MenuItemLink>
+            <MenuItemLink href={RoutesLinks.apps} selected={props[_route] == RoutesLinks.apps} leading={<Icon code={0xE063}/>}>Apps</MenuItemLink>
+            <MenuItemLink href={RoutesLinks.about} selected={props[_route] == RoutesLinks.about} leading={<Icon code={0xE930}/>}>About</MenuItemLink>
             <MenuDivider />
             <MenuItemLink onClick={(ev) => closePopover(navMenuRef)} href={ExternalLinks.donate} selected={false} openInNewTab leading={<Icon code={0xE84B}/>}>Donate</MenuItemLink>
         </Menu>
