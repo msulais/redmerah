@@ -6,14 +6,14 @@ import logo from '@/assets/logo.svg'
 import featuresImg_workOffline from '@/assets/features/work-offline.svg'
 import featuresImg_keepDataLocal from '@/assets/features/keep-data-local.svg'
 import featuresImg_uiUx from '@/assets/features/ui-ux.svg'
-import { getDate_Y } from '@/utils/datetime';
 import { apps } from '@/data/apps';
 
 import Html from '@/components/Html/index.astro';
 import Icon from '@/components/Icon/index.astro';
 import LinkButton from '@/components/Button/LinkButton.astro';
 import { ButtonVariant } from '@/components/Button';
-import { SettingsElement } from './_components'
+import Appbar from '@/components/Appbar/index.astro';
+import BottomBar from '@/components/BottomBar/index.astro';
 import CSSAnimation from '@/styles/animation.module.scss'
 import CSS from './_index.module.scss'
 
@@ -37,6 +37,7 @@ const features = [
 ---
 
 <Html>
+    <Appbar />
     <div class={CSS.body}>
         <header class={CSS.header}>
             <div>
@@ -45,7 +46,6 @@ const features = [
                 <nav>
                     <LinkButton href={RoutesLinks.apps} variant={ButtonVariant.filledTonal}><Icon filled code={0xE063}/>Apps</LinkButton>
                     <LinkButton openInNewTab href={ExternalLinks.androidApps} variant={ButtonVariant.filledTonal}><img src={androidLogo.src} width="24"/>Android apps</LinkButton>
-                    <SettingsElement client:only="solid-js"/>
                 </nav>
             </div>
             <img src={logo.src} width={170} alt="Redmerah logo" />
@@ -81,18 +81,7 @@ const features = [
                 { 'We are also users. What’s good for you, good for us too.'.split(' ').map(v => <><span>{v}</span> </>) }
             </q></p>
         </main>
-        <footer class={CSS.footer}>
-            <p>&copy; { getDate_Y() } Redmerah</p>
-            <div>
-                <a href={RoutesLinks.about}>About</a>
-                <a href={RoutesLinks.apps}>Apps</a>
-                <a href={ExternalLinks.androidApps}>Android apps</a>
-                <a href={RoutesLinks.privacy}>Privacy</a>
-                <a href={RoutesLinks.terms}>Terms</a>
-                <a href={ExternalLinks.contactEmail}>Contact</a>
-                <a href={ExternalLinks.donate}>Donate</a>
-            </div>
-        </footer>
+        <BottomBar />
     </div>
 </Html>
 

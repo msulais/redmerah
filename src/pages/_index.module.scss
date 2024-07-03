@@ -111,49 +111,6 @@
     }
 }
 
-.footer {
-    padding: 0 32px 64px 32px;
-
-    > p {
-        text-align: center;
-        color: rgb(var(--color-acc));
-        font-weight: bold;
-        text-shadow: var(--elevation1);
-    }
-
-    > div {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 16px;
-        padding-top: 8px;
-        flex-wrap: wrap;
-    }
-
-    & a {
-        display: inline-block;
-        border-bottom: 2px solid rgb(var(--color-acc));
-        padding-top: 8px;
-        transition: all .3s var(--transition-spring);
-
-        @media (hover: hover) {
-            &:hover {
-                color: rgb(var(--color-acc));
-                padding-top: 0;
-                padding-bottom: 8px;
-            }
-        }
-
-        &:active {
-            color: rgb(var(--color-acc));
-            padding-top: 0;
-            padding-bottom: 8px;
-            border-bottom-style: dashed;
-            letter-spacing: 1px;
-        }
-    }
-}
-
 .header {
     display: flex;
     gap: 64px;
