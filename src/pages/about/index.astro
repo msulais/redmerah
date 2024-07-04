@@ -4,12 +4,42 @@ import Appbar from '@/components/Appbar/index.astro';
 import BottomBar from '@/components/BottomBar/index.astro';
 import Main from '@/components/Main/index.astro';
 import { RoutesLinks } from '@/enums/links';
+import CSS from './_index.module.scss'
 
 export const prerender = true;
 ---
 
 <Html>
 	<Appbar route={RoutesLinks.about} />
-    <Main></Main>
+    <Main>
+        <article class={CSS.article}>
+            <h1>Redmerah: Empowering Your Productivity</h1>
+            <p>Welcome to Redmerah, your go-to platform for powerful tools and applications. Our mission is to enhance your productivity and simplify your tasks. Here&#39;s what sets us apart:</p>
+            <section>
+                <h2 id="Cutting-Edge-Technology"><a href="#Cutting-Edge-Technology">Cutting-Edge Technology</a></h2>
+                <p>At Redmerah, we stay at the forefront of web technology. Our applications leverage the latest advancements, ensuring seamless performance and robust functionality. Whether you&#39;re online or offline, our tools are there to assist you.</p>
+                <blockquote>
+                    <p>If it can be done locally, why not?</p>
+                </blockquote>
+            </section>
+            <section>
+                <h2 id="User-Centric-Design"><a href="#User-Centric-Design">User-Centric Design</a></h2>
+                <p>We obsess over UI/UX (User Interface &amp; User Experience). Our applications are meticulously designed to be responsive across devices—desktop, tablet, and mobile. We believe in intuitive interfaces that make your experience delightful.</p>
+            </section>
+            <section>
+                <h2 id="Ad-Free-Experience"><a href="#Ad-Free-Experience">Ad-Free Experience</a></h2>
+                <p>Unlike other platforms, we don&#39;t clutter our apps with ads. Redmerah is about functionality, not distractions. You won&#39;t find annoying pop-ups or banners here.</p>
+            </section>
+            <section>
+                <h2 id="Support-Us"><a href="#Support-Us">Support Us</a></h2>
+                <p>Redmerah operates on donations and sponsorships. If you appreciate our work, consider becoming a sponsor. Reach out to us at <a href="mailto:daundua2@gmail.com">daundua2@gmail.com</a>. Your support fuels our passion for creating more useful tools.</p>
+            </section>
+            <section>
+                <h2 id="Your-Feedback-Matters"><a href="#Your-Feedback-Matters">Your Feedback Matters</a></h2>
+                <p>Have an idea for a feature? Encountered a bug? We&#39;re all ears! Contact us at <a href="mailto:daundua2@gmail.com">daundua2@gmail.com</a>, and we&#39;ll listen. Our motto: <q>You suggest, we build.</q></p>
+                <p>Thank you for being part of the Redmerah community!</p>
+            </section>
+        </article>
+    </Main>
     <BottomBar />
 </Html>

@@ -10,7 +10,7 @@
         padding: 16px;
         display: flex;
         flex-direction: column;
-        transition: all .3s var(--transition-spring);
+        transition-duration: .3s;
 
         [data-corner=sharp] & {
             border-radius: 0;
@@ -193,7 +193,7 @@
 
         & span {
             display: inline-block;
-            transition: all .3s var(--transition-spring);
+            transition-duration: .3s;
             position: relative;
 
             @media (hover: hover) {
