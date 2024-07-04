@@ -15,15 +15,17 @@ import { ExternalLinks, RoutesLinks } from '@/enums/links'
 import { ThemeData } from '@/enums/theme'
 import { getLocalStorageItem, setLocalStorageItem } from '@/utils/storage'
 import { DatabaseNames, LocalStorageKeys } from '@/enums/storage'
-import { _CENTER_BOTTOM, _RIGHT_CENTER, _RIGHT_CENTER_TO_BOTTOM, _URL, _accept, _add, _altKey, _boolean, _change, _click, _clientWidth, _clientX, _clipboard, _code, _contentWindow, _corner, _css, _ctrlKey, _currentTarget, _dark, _db, _download, _exitFullscreen, _file, _files, _fontSize, _fullRound, _fullscreenElement, _fullscreenchange, _href, _html, _includes, _input, _keydown, _length, _light, _load, _markdown, _matches, _metaKey, _min, _mousemove, _mouseup, _noPointerEvent, _number, _preview, _print, _px, _query, _readAsText, _requestFullscreen, _reset, _resize, _result, _round, _semiRound, _setting, _share, _sharp, _shiftKey, _src, _system, _target, _text, _textWrap, _theme, _toggleAttribute, _touchend, _touches, _touchmove, _type, _update, _value, _writeText } from '@/data/string'
+import { _CENTER_BOTTOM, _RIGHT_CENTER, _RIGHT_CENTER_TO_BOTTOM, _URL, _accept, _add, _altKey, _boolean, _change, _click, _clientWidth, _clientX, _clipboard, _code, _contentWindow, _corner, _createObjectStore, _css, _ctrlKey, _currentTarget, _dark, _db, _download, _exitFullscreen, _file, _files, _fontSize, _fullRound, _fullscreenElement, _fullscreenchange, _get, _href, _html, _includes, _input, _key, _keydown, _length, _light, _load, _markdown, _matches, _metaKey, _min, _mousemove, _mouseup, _newVersion, _noPointerEvent, _number, _objectStore, _oldVersion, _open, _preview, _print, _put, _px, _query, _readAsText, _readonly, _readwrite, _requestFullscreen, _reset, _resize, _result, _round, _semiRound, _setting, _settings, _share, _sharp, _shiftKey, _src, _system, _target, _text, _textWrap, _theme, _toggleAttribute, _touchend, _touches, _touchmove, _transaction, _type, _update, _value, _writeText } from '@/data/string'
 import { setTimeDelayed } from '@/utils/timeout'
 import { getDocument, getDocumentBody, getNavigator, getRoot, getWindow } from '@/data/window'
 import { mathMax, mathMin } from '@/utils/math'
 import { createObjectURL, encodeURL, revokeObjectURL } from '@/utils/url'
 import { isMatchMedia } from '@/utils/window'
 import { getDate_Y } from '@/utils/datetime'
-import { RedmerahDB } from '@/class/redmerah-db'
+import { IDB } from '@/class/indexeddb'
 import { CornerData } from '@/enums/corner'
+import { ObjectStoreKeys, ObjectStoreNames } from './_storage'
+import { isBoolean, isNumber } from '@/utils/typecheck'
 import logo from '@/assets/markdown-converter/logo.svg'
 import redmerahLogo from '@/assets/logo.svg'
 import cssLogo from '@/assets/css-logo.svg'
@@ -35,6 +37,15 @@ import Button from '@/components/Button'
 import Menu, { MenuDivider, MenuHeader, MenuItem, MenuItemLink, MenuItemTrailingKeyboardShortcut, NestedMenu } from '@/components/Menu'
 import CSSAnimation from '@/styles/animation.module.scss'
 import CSS from './_index.module.scss'
+
+const _settings_fontSize = 'settings_fontSize'
+const _settings_textWrap = 'settings_textWrap'
+const _isSmallScreen = 'isSmallScreen'
+const _onOpenFile = 'onOpenFile'
+const _onChangeFontSize = 'onChangeFontSize'
+const _isTouchDevice = 'isTouchDevice'
+const _onDownloadFile = 'onDownloadFile'
+const _onCopyAll = 'onCopyAll'
 
 type Settings = {
     textWrap: boolean
@@ -50,19 +61,10 @@ type MenuBarProps = {
     onDownloadFile: (type: 'css' | 'markdown' | 'html') => void
     onChangeFontSize: (type: 'add' | 'min' | 'reset') => void
     onCopyAll: (type: 'css' | 'markdown' | 'html') => void
-    db: RedmerahDB<{setting: string, value: unknown}>
+    db: IDB
 }
 
 const MenuBar: Component<MenuBarProps> = (props) => {
-    const 
-        _isSmallScreen = 'isSmallScreen', 
-        _onOpenFile = 'onOpenFile', 
-        _onChangeFontSize = 'onChangeFontSize', 
-        _isTouchDevice = 'isTouchDevice', 
-        _onDownloadFile = 'onDownloadFile', 
-        _onCopyAll = 'onCopyAll',
-        _settings = 'settings'
-    ;
     const [isFileFocus, setIsFileFocus] = createSignal<boolean>(false)
     const [isFileDownloadFocus, setIsFileDownloadFocus] = createSignal<boolean>(false)
     const [isFileCopyAllFocus, setIsFileCopyAllFocus] = createSignal<boolean>(false)
@@ -185,26 +187,26 @@ const MenuBar: Component<MenuBarProps> = (props) => {
 
             // Ctrl+Alt+P
             if (checkKey([ctrl, alt, !shift, !meta]) && evt[_code] == 'KeyP') {
-                const iframe = getElementById('preview') as HTMLIFrameElement
+                const iframe = getElementById(_preview) as HTMLIFrameElement
                 if (iframe[_contentWindow]) iframe[_contentWindow][_print]()
                 return
             }
 
             // Ctrl+Alt+ =
             if (checkKey([ctrl, alt, !shift, !meta]) && evt[_code] == 'Equal') {
-                props[_onChangeFontSize]('reset')
+                props[_onChangeFontSize](_reset)
                 return
             }
 
             // Ctrl+ <
             if (checkKey([ctrl, !alt, !shift, !meta]) && evt[_code] == 'Comma') {
-                props[_onChangeFontSize]('min')
+                props[_onChangeFontSize](_min)
                 return
             }
 
             // Ctrl+ >
             if (checkKey([ctrl, !alt, !shift, !meta]) && evt[_code] == 'Period') {
-                props[_onChangeFontSize]('add')
+                props[_onChangeFontSize](_add)
                 return
             }
         })
@@ -335,12 +337,14 @@ const MenuBar: Component<MenuBarProps> = (props) => {
         <MenuItem
             onClick={() => {
                 props[_settings][1](_textWrap, t => !t)
-                props[_db][_update]({
-                    where: (s) => s[_setting] == _textWrap, 
-                    columns: [_value], 
-                    args: [props[_settings][0][_textWrap]]
-                })
                 closePopover(viewMenuRef)
+
+                const settingsObjectStoreWrite = props[_db]![_transaction](ObjectStoreNames[_settings], _readwrite)![_objectStore](ObjectStoreNames[_settings])
+                if (!settingsObjectStoreWrite) return;
+                props[_db][_put](
+                    settingsObjectStoreWrite, 
+                    {key: ObjectStoreKeys[_settings_textWrap], value: props[_settings][0][_textWrap]}
+                )
             }}
             checked={props[_settings][0][_textWrap]}>
             Text wrap
@@ -576,7 +580,7 @@ const MenuBar: Component<MenuBarProps> = (props) => {
 }
 
 export const App: Component = () => {
-    const db = new RedmerahDB<{setting: string; value: unknown}>(DatabaseNames.markdownConverter)
+    const db = new IDB(DatabaseNames.markdownConverter, 1)
     const menuBarWidth = 48 + 2 // 2 = gap
     const minEditorWidth = 240
     const defaultFontSize = 14
@@ -660,11 +664,11 @@ export const App: Component = () => {
         if (type == _add) setSettings(_fontSize, s => s + 2)
         else if (type == _min) setSettings(_fontSize, s => s - 2)
         else if (type == _reset) setSettings(_fontSize, defaultFontSize)
-        db[_update]({
-            where: (s) => s[_setting] == _fontSize, 
-            columns: [_value], 
-            args: [settings[_fontSize]]
-        })
+
+            
+        const settingsObjectStoreWrite = db![_transaction](ObjectStoreNames[_settings], _readwrite)![_objectStore](ObjectStoreNames[_settings])
+        if (!settingsObjectStoreWrite) return;
+        db[_put](settingsObjectStoreWrite, {key: ObjectStoreKeys[_settings_fontSize], value: settings[_fontSize]})
     }
 
     function onCopyAll(type: "html" | "markdown" | "css"): void {
@@ -734,19 +738,29 @@ export const App: Component = () => {
         })
     }
 
+    async function initDatabase(): Promise<void> {
+        await db[_open]({onUpgradeNeeded(ev, db) {
+            if (!(ev[_oldVersion] == 0 && ev[_newVersion] == 1 && db)) return;
+
+            db[_createObjectStore]({
+                name: ObjectStoreNames[_settings], 
+                keyPath: _key, 
+                indexs: [_key, _value]
+            })
+        }})
+    }
+
     async function initSettings(): Promise<void> {
+        const settingsObjectStoreRead = db![_transaction](ObjectStoreNames[_settings], _readonly)![_objectStore](ObjectStoreNames[_settings])
+        if (!settingsObjectStoreRead) return;
+
         try {
-            const textWrap = await db[_query]({where: (s) => s[_setting] == _textWrap, limit: 1})
-            const fontSize = await db[_query]({where: (s) => s[_setting] == _fontSize, limit: 1})
+            const textWrap = await db[_get]<{key: string; value: boolean}>(settingsObjectStoreRead, ObjectStoreKeys[_settings_textWrap])
+            if (isBoolean(textWrap[_value])) setSettings(_textWrap, textWrap[_value])
 
-            if (textWrap != null && textWrap[_length] > 0 && typeof textWrap[0][_value] == _boolean){
-                setSettings(_textWrap, t => textWrap[0][_value] as boolean)
-            }
-
-            if (fontSize != null && fontSize[_length] > 0 && typeof fontSize[0][_value] == _number){
-                setSettings(_fontSize, t => fontSize[0][_value] as number)
-            }
-        } catch (e) { return }
+            const fontSize = await db[_get]<{key: string; value: number}>(settingsObjectStoreRead, ObjectStoreKeys[_settings_fontSize])
+            if (isNumber(fontSize[_value])) setSettings(_fontSize, fontSize[_value])
+        } catch (e) { }
     }
 
     createEffect(() => {
@@ -760,15 +774,16 @@ export const App: Component = () => {
         getDocumentBody()[_toggleAttribute](BodyAttributes[_noPointerEvent], isDragging())
     })
 
-    onMount(() => {
-        initSettings()
+    onMount(async () => {
         initDragListener()
         initScreenWidthListener()
         initDeviceTypeListener()
         setInputEditorWidth((getDocumentBody()[_clientWidth] - menuBarWidth) / 2)
         updateOutput()
-
         if (isSmallScreen()) setOutputTab(null)
+
+        await initDatabase()
+        initSettings()
     })
 
     const Tabs: Component = () => {
