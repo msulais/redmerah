@@ -3,19 +3,19 @@ import type { SetStoreFunction } from "solid-js/store";
 
 import type { Settings } from "./_types";
 import { clearTimeDelayed, setTimeDelayed } from "@/utils/timeout";
-import { setAttribute, toggleAttribute } from "@/utils/attributes";
+import { removeAttribute, setAttribute, toggleAttribute } from "@/utils/attributes";
 import { closePopover, openPopover } from "@/utils/popover";
 import { addClassListModule } from "@/utils/element";
 import { PopoverPosition } from "@/enums/position";
-import { RootAttributes } from "@/enums/attributes";
+import { BodyAttributes, RootAttributes } from "@/enums/attributes";
 import { ExternalLinks, RoutesLinks } from "@/enums/links";
 import { ThemeData } from "@/enums/theme";
 import { getLocalStorageItem, setLocalStorageItem } from "@/utils/storage";
 import { LocalStorageKeys } from "@/enums/storage";
 import { RandomizerType, NumbersRandomizerSort, NumbersRandomizerNumberType, WordsRandomizerWordCase, ColorsRandomizerColorModel, Commands } from "./_enums";
-import { _CENTER_BOTTOM_TO_LEFT, _RIGHT_CENTER_TO_BOTTOM, _URL, _actions, _animation, _ascending, _binary, _color, _colorModel, _colors, _command, _contactEmail, _corner, _currentTarget, _dark, _decimal, _descending, _donate, _filled, _fullRound, _getFullYear, _hex, _hexadecimal, _history, _hsl, _includes, _light, _logo, _lowercase, _minDecimalLength, _none, _numberType, _numbers, _octal, _onCopyResult, _onGenerate, _onStopGenerate, _prefix, _randomizerType, _repeat, _rgb, _round, _selection, _semiRound, _separator, _settings, _share, _sharp, _sort, _src, _string, _suffix, _system, _teams, _theme, _then, _titlecase, _togglecase, _uppercase, _value, _wordCase, _words } from "@/data/string";
+import { _CENTER_BOTTOM_TO_LEFT, _RIGHT_CENTER_TO_BOTTOM, _URL, _actions, _animation, _ascending, _binary, _color, _colorModel, _colors, _command, _contactEmail, _corner, _currentTarget, _dark, _decimal, _descending, _donate, _filled, _fullRound, _getFullYear, _hex, _hexadecimal, _history, _hsl, _includes, _light, _logo, _lowercase, _minDecimalLength, _noPointerEvent, _none, _numberType, _numbers, _octal, _onCopyResult, _onGenerate, _onStopGenerate, _prefix, _randomizerType, _repeat, _rgb, _round, _selection, _semiRound, _separator, _settings, _share, _sharp, _sort, _src, _string, _suffix, _system, _teams, _theme, _then, _titlecase, _togglecase, _uppercase, _value, _wordCase, _words } from "@/data/string";
 import { encodeURL } from "@/utils/url";
-import { getDocument, getNavigator, getRoot } from "@/data/window";
+import { getDocument, getDocumentBody, getNavigator, getRoot } from "@/data/window";
 import { CornerData } from "@/enums/corner";
 import type { IDB } from "@/class/indexeddb";
 import logo from '@/assets/apps/randomizer-logo.svg'
@@ -169,14 +169,19 @@ const C: Component<Props> = (props) => {
         <header class={ CSS.appbar }>
             <div class={ CSS[_logo] }><img src={logo[_src]} alt="Randomizer" />Randomizer</div>
             <div class={ CSS[_actions] }>
-                <Button variant={ButtonVariant[_filled]} onClick={() => {
+                <Button data-keep-pointer-event={toggleAttribute(isGenerating())} variant={ButtonVariant[_filled]} onClick={() => {
                     if (isGenerating()) {
                         props[_onStopGenerate]()
                         setIsGenerating(false)
+                        removeAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
                         return
                     }
                     setIsGenerating(true)
-                    props[_onGenerate]()[_then](() => setIsGenerating(false))
+                    setAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
+                    props[_onGenerate]()[_then](() => {
+                        setIsGenerating(false)
+                        removeAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
+                    })
                 }}><Icon 
                     filled 
                     classList={addClassListModule(CSS.generate_icon)} 

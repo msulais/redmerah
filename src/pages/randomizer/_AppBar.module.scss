@@ -26,7 +26,7 @@
 
 .generate_icon {
     &[data-rotate] {
-        animation: rotate-animation 1s infinite linear;
+        animation: rotate-animation 1s infinite linear !important;
     }
 }
 

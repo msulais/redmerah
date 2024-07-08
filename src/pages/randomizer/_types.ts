@@ -76,10 +76,7 @@ export type Result = {
     string: string
     numbers: string
     words: string
-    selection: {
-        selected: boolean
-        text: string
-    }[]
+    selection: string[]
     colors: HEXColor[]
     teams: {
         name: string

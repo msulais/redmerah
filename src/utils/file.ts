@@ -23,7 +23,7 @@ export async function openFile(accept: string, multiple: boolean = false): Promi
 export function readFileAsText(blob: Blob, encoding?: string): Promise<string> {
     return new Promise((ok) => {
         const reader = new FileReader()
-        reader[_readAsText](blob)
+        reader[_readAsText](blob, encoding)
         reader[_onload] = (ev) => {
             const t = ev[_target]
             if (!t) return ok('');

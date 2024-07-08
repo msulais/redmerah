@@ -51,8 +51,12 @@ body {
     flex-direction: column;
     max-width: 100%; 
 
-    &[data-no-pointer-event] :not([data-keep-pointer-event]) {
-        pointer-events: none !important;
+    &[data-no-pointer-event] {
+        pointer-events: none;
+
+        & :is([data-keep-pointer-event], [data-keep-pointer-event] *) {
+            pointer-events: auto;
+        }
     }
 }
 

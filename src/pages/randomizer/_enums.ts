@@ -172,4 +172,12 @@ export enum Commands {
     @param min `number`
     @param max `number` */
     change_settings_colors_range_rgb_b,
+    
+    /** 
+    @param list `ListItems` */
+    change_settings_selection_list, 
+    
+    /** 
+    @param count `number` */
+    change_settings_selection_count,
 }

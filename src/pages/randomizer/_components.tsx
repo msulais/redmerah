@@ -267,10 +267,27 @@ export const App: VoidComponent = () => {
 
                 return settings[_words][_prefix] + text + settings[_words][_suffix]
             })[_join](settings[_words][_separator]))
+        } 
+        
+        else if (randomizerType() == RandomizerType[_selection]) {
+            const items = [...settings[_selection][_list][_items]]
+            const selectedItems: string[] = []
 
-        } else if (randomizerType() == RandomizerType[_selection]) {
-            // TODO: add selection generator
-        } else if (randomizerType() == RandomizerType[_teams]) {
+            if (settings[_selection][_count] == items[_length]) {
+                setResult(_selection, [...items])
+                return
+            }
+
+            for (let i = 0; i < settings[_selection][_count]; i++) {
+                const index = mathFloor(mathRandom() * (items[_length] - 1))
+                selectedItems[_push](items[index])
+                items[_splice](index, 1)
+            }
+
+            setResult(_selection, [...selectedItems])
+        } 
+        
+        else if (randomizerType() == RandomizerType[_teams]) {
             // TODO: add teams generator
         }
     }
@@ -312,7 +329,7 @@ export const App: VoidComponent = () => {
                 if (i >= duration / step) {
                     clearTimeInterval(intervalId()!)
                     addResultToDB()
-                    ok()
+                    return ok()
                 }
                 generate()
                 ++i
@@ -338,9 +355,7 @@ export const App: VoidComponent = () => {
             if (randomizerType() == RandomizerType[_string]) await copy(result[_string])
             else if (randomizerType() == RandomizerType[_numbers]) await copy(result[_numbers])
             else if (randomizerType() == RandomizerType[_words]) await copy(result[_words])
-            else if (randomizerType() == RandomizerType[_selection]) {
-                // TODO: selection -- on copy result
-            }
+            else if (randomizerType() == RandomizerType[_selection]) await copy(settings[_selection][_list][_items][_map](v => result[_selection][_includes](v)? (v + ' [selected]') : v)[_join]('\n'))
             else if (randomizerType() == RandomizerType[_colors]) await copy(result[_colors][_join]('\n'))
             else if (randomizerType() == RandomizerType[_teams]) {
                 // TODO: teams -- on copy result
@@ -450,7 +465,7 @@ export const App: VoidComponent = () => {
         db[_get]<{key: string; value: string}>(lastResultObjectStore, ObjectStoreKeys[_lastResult_words])[_then](
             (v) => setResult(_words, w => v? v[_value] : w)
         )
-        db[_get]<{key:string; value: {selected: boolean;text: string}[]}>(lastResultObjectStore, ObjectStoreKeys[_lastResult_selection])[_then](
+        db[_get]<{key:string; value: string[]}>(lastResultObjectStore, ObjectStoreKeys[_lastResult_selection])[_then](
             (v) => setResult(_selection, s => v? v[_value] : s)
         )
         db[_get]<{key: string; value: HEXColor[]}>(lastResultObjectStore, ObjectStoreKeys[_lastResult_colors])[_then](
@@ -633,12 +648,8 @@ export const App: VoidComponent = () => {
         const newLists: ListItems = {id, name, items}
         setLists(l => [...(l[_filter](v => v[_id] != id)), newLists])
 
-        if (settings[_words][_list][_id] == id) {
-            command(Commands.change_settings_words_list, newLists)
-        }
-        if (settings[_selection][_list][_id] == id) {
-            // TODO: change selection list
-        }
+        if (settings[_words][_list][_id] == id) command(Commands.change_settings_words_list, newLists)
+        if (settings[_selection][_list][_id] == id) command(Commands.change_settings_selection_list, newLists)
         if (settings[_teams][_namesList][_id] == id) {
             // TODO: change teams names list
         }
@@ -672,9 +683,10 @@ export const App: VoidComponent = () => {
             isNoMoreLists? {id: -1, name: '', items: []} : {...lists[0]}
         )
 
-        if (settings[_selection][_list][_id] == list[_id]) {
-            // TODO: change selection list
-        }
+        if (settings[_selection][_list][_id] == list[_id]) command(
+            Commands.change_settings_selection_list, 
+            isNoMoreLists? {id: -1, name: '', items: []} : {...lists[0]}
+        )
         if (settings[_teams][_namesList][_id] == list[_id]) {
             // TODO: change teams names list
         }
@@ -1065,6 +1077,26 @@ export const App: VoidComponent = () => {
                 [ObjectStoreKeys[_settings_string_characters_alphabetUppercase], true],
                 [ObjectStoreKeys[_settings_string_characters_numbers], true],
             )
+        }
+
+        // change_settings_selection_list
+        else if (type == Commands.change_settings_selection_list) {
+            setSettings(_selection, _list, args[0] as ListItems)
+            if ((args[0] as ListItems)[_items][_length] < settings[_selection][_count]) {
+                setSettings(_selection, _count, (args[0] as ListItems)[_items][_length])
+                saveSettings(
+                    [ObjectStoreKeys[_settings_selection_listId], (args[0] as ListItems)[_id]],
+                    [ObjectStoreKeys[_settings_selection_count], (args[0] as ListItems)[_items][_length]]
+                )
+                return 
+            }
+            saveSettings([ObjectStoreKeys[_settings_selection_listId], (args[0] as ListItems)[_id]])
+        }
+
+        // change_settings_selection_count
+        else if (type == Commands.change_settings_selection_count) {
+            setSettings(_selection, _count, args[0] as number)
+            saveSettings([ObjectStoreKeys[_settings_selection_count], args[0] as number])
         }
     }
 

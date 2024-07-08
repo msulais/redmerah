@@ -39,15 +39,10 @@ type Picker = {
         rect: DOMRect | null
         isDrag: boolean
         position: {
-
-            /**
-             * 0-COLOR_BOX_HEIGHT
-             */
+            /** `0 -> COLOR_BOX_HEIGHT` */
             top: number
 
-            /**
-             * 0-COLOR_BOX_WIDTH
-             */
+            /** `0 -> COLOR_BOX_WIDTH` */
             left: number
         }
     }
@@ -55,18 +50,14 @@ type Picker = {
         rect: DOMRect | null
         isDrag: boolean
 
-        /**
-         * 0-slider
-         */
+        /** `0 -> slider` */
         position: number
     }
     opacity: {
         rect: DOMRect | null
         isDrag: boolean
 
-        /**
-         * 0-slider
-         */
+        /** `0 -> slider` */
         position: number
     }
 }
