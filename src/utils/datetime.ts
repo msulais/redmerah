@@ -41,28 +41,40 @@ export function isSameDate_Y(date1: Date, date2: Date): boolean {
     )
 }
 
-export function isOutDate_YMD(date: Date, min: Date, max: Date): boolean {
+export function isInDate_YMD(date: Date, min: Date, max: Date): boolean {
     const dateValue = getDateValue(new Date(getDate_Y(date), getDate_M(date), getDate_D(date)))
     const minValue = getDateValue(new Date(getDate_Y(min), getDate_M(min), getDate_D(min)))
     const maxValue = getDateValue(new Date(getDate_Y(max), getDate_M(max), getDate_D(max)))
 
-    return !(minValue <= dateValue && dateValue <= maxValue)
+    return minValue <= dateValue && dateValue <= maxValue
 }
 
-export function isOutDate_YM(date: Date, min: Date, max: Date): boolean {
+export function isOutDate_YMD(date: Date, min: Date, max: Date): boolean {
+    return !isInDate_YMD(date, min, max)
+}
+
+export function isInDate_YM(date: Date, min: Date, max: Date): boolean {
     const dateValue = getDateValue(new Date(getDate_Y(date), getDate_M(date)))
     const minValue = getDateValue(new Date(getDate_Y(min), getDate_M(min)))
     const maxValue = getDateValue(new Date(getDate_Y(max), getDate_M(max)))
 
-    return !(minValue <= dateValue && dateValue <= maxValue)
+    return minValue <= dateValue && dateValue <= maxValue
 }
 
-export function isOutDate_Y(date: Date, min: Date, max: Date): boolean {
+export function isOutDate_YM(date: Date, min: Date, max: Date): boolean {
+    return !isInDate_YM(date, min, max)
+}
+
+export function isInDate_Y(date: Date, min: Date, max: Date): boolean {
     const dateValue = getDate_Y(date)
     const minValue = getDate_Y(min)
     const maxValue = getDate_Y(max)
 
-    return !(minValue <= dateValue && dateValue <= maxValue)
+    return minValue <= dateValue && dateValue <= maxValue
+}
+
+export function isOutDate_Y(date: Date, min: Date, max: Date): boolean {
+    return !isInDate_Y(date, min, max)
 }
 
 export function getWeekdayNames(locales: Intl.LocalesArgument = 'en-US'): string[] {

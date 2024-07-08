@@ -5,7 +5,7 @@
  */
 
 import { _padStart, _slice, _startsWith, _substring, _test, _toString } from "@/data/string"
-import type { RGBColor, HSLColor, HSVColor } from "@/types/color"
+import type { RGBColor, HSLColor, HSVColor, HEXColor } from "@/types/color"
 import { mathFloor, mathMax, mathMin, mathPow, mathRound, numberParse } from "./math"
 
 export function testHexColorWithAlpha(hex: string): void {
@@ -18,7 +18,7 @@ export function testHexColor(hex: string): void {
     throw new Error("Invalid hex color format!")
 }
 
-export function getLuminance(rgb: RGBColor) {
+export function getLuminance(rgb: RGBColor): number {
 
     const r = mathPow(rgb.r / 255, 2.2)
     const g = mathPow(rgb.g / 255, 2.2)
@@ -106,7 +106,7 @@ export function hueToRgb(v1: number, v2: number, vH: number) {
     return v1
 }
 
-export function hslToRgb(hsl: HSLColor) {
+export function hslToRgb(hsl: HSLColor): RGBColor {
     let r, g, b
     
     if (hsl.s == 0) r = g = b = hsl.l
@@ -128,16 +128,16 @@ export function hslToRgb(hsl: HSLColor) {
     }
 } 
 
-export function hslToHex(hsl: HSLColor){
+export function hslToHex(hsl: HSLColor): HEXColor {
     return rgbToHex(hslToRgb(hsl))
 }
 
-export function rgbToHex(rgb: RGBColor){
+export function rgbToHex(rgb: RGBColor): HEXColor {
     return ('#' 
         + rgb.r[_toString](16)[_padStart](2, '0') 
         + rgb.g[_toString](16)[_padStart](2, '0') 
         + rgb.b[_toString](16)[_padStart](2, '0')
-    )
+    ) as HEXColor
 }
 
 export function rgbToHsv(rgb: RGBColor): HSVColor {

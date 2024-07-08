@@ -1,14 +1,14 @@
-.textfield {
+:is(.textfield, .textareafield) {
     display: block;
 
     > div:first-child {
-        --bg-color: var(--color-on-sur);
+        --bg-color: var(--color-on-surface);
         --bg-opacity: var(--opacity1);
         display: flex;
         position: relative;
         align-items: center;
         min-height: 40px;
-        border: 1px solid rgba(var(--color-on-sur), var(--opacity1));
+        border: 1px solid rgba(var(--color-on-surface), var(--opacity1));
         padding: 4px 12px;
         border-radius: 8px;
         gap: 8px;
@@ -32,7 +32,7 @@
             content: '';
             position: absolute;
             border-radius: 1.5px;
-            background-color: rgb(var(--color-on-sur));
+            background-color: rgb(var(--color-on-surface));
             width: calc(100% - 16px);
             bottom: -2px;
             min-height: 3px;
@@ -61,12 +61,12 @@
         }
 
         &[data-disabled] {
-            color: rgba(var(--color-on-sur), var(--opacity5));
-            border: 1px solid rgba(var(--color-on-sur), var(--opacity2));
+            color: rgba(var(--color-on-surface), var(--opacity5));
+            border: 1px solid rgba(var(--color-on-surface), var(--opacity2));
             cursor: not-allowed;
 
             > input::placeholder {
-                color: rgba(var(--color-on-sur), var(--opacity5));
+                color: rgba(var(--color-on-surface), var(--opacity5));
             }
 
             & * {
@@ -77,11 +77,11 @@
         &:not([data-disabled], [data-readonly]){
             &[data-focus] {
                 --bg-opacity: 1;
-                --bg-color: var(--color-sur);
-                border-color: rgba(var(--color-on-sur), var(--opacity2));
+                --bg-color: var(--color-surface);
+                border-color: rgba(var(--color-on-surface), var(--opacity2));
     
                 &::before {
-                    background-color: rgb(var(--color-acc));
+                    background-color: rgb(var(--color-accent));
                     animation: input-start-focus .3s var(--transition-spring);
                     
                     [data-corner=full-round] & {
@@ -101,11 +101,11 @@
             }
 
             &[data-invalid] {
-                border-color: rgba(var(--color-err));
+                border-color: rgba(var(--color-error));
             }
         }
 
-        > input {
+        > :is(input, textarea) {
             width: 100%;
             flex: 1;
             min-width: 0;
@@ -115,10 +115,25 @@
             transition-duration: .3s;
 
             &::placeholder {
-                color: rgba(var(--color-on-sur), var(--opacity-inv3));
+                color: rgba(var(--color-on-surface), var(--opacity-inv3));
+            }
+        }
+
+        > textarea {
+            margin: 7px 0;
+            transition-duration: .3s, 0s;
+            transition-property: all, height;
+            resize: none;
+
+            &[data-resize] {
+                resize: vertical;
             }
         }
     }
+}
+
+.textareafield > div:first-child {
+    align-items: flex-start;
 }
 
 @keyframes input-start-focus {
@@ -140,7 +155,7 @@
 }
 
 .textfield-btn[data-compact] {
-    --padding: 0 6px;
+    --btn-padding: 0 6px;
     min-height: 28px;
     border-radius: 4px;
 
@@ -153,28 +168,31 @@
     }
 }
 
-:is(.textfield-leading, .textfield-trailing) {
+:is(.textfield-leading, .textfield-trailing, .textareafield-leading, .textareafield-trailing) {
     display: flex;
     align-items: center;
     gap: 4px;
+    
+    &:empty {
+        display: none;
+    }
+}
+.textareafield-leading {
+    margin: 7px 0;
+}
 
+:is(.textfield-message-text, .textfield-label-text, .textareafield-message-text, .textareafield-label-text){
     &:empty {
         display: none;
     }
 }
 
-:is(.textfield-message-text, .textfield-label-text){
-    &:empty {
-        display: none;
-    }
-}
-
-.textfield-label-text {
+:is(.textfield-label-text, .textareafield-label-text) {
     position: absolute;
     bottom: 100%;
     transform: translateY(0.64em);
     left: 8px;
-    background-color: rgb(var(--color-bac));
+    background-color: rgb(var(--color-background));
     max-width: calc(100% - 12px);
     border-radius: 4px;
     line-height: var(--font-size-s);
@@ -187,7 +205,7 @@
     }
 }
 
-.textfield-message-text {
+:is(.textfield-message-text, .textareafield-message-text) {
     padding: 0 12px;
     font-size: var(--font-size-xs);
     

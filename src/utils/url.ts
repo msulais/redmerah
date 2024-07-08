@@ -1,4 +1,5 @@
-import { _createObjectURL, _forEach, _revokeObjectURL, _searchParams } from "@/data/string"
+import { _click, _remove, _createObjectURL, _download, _forEach, _href, _id, _revokeObjectURL, _searchParams } from "@/data/string"
+import { getElementById, createElement } from "./element"
 
 export function encodeURL(text: string): string {
     return encodeURIComponent(text)
@@ -35,4 +36,12 @@ export function createObjectURL(obj: Blob | MediaSource): string {
 
 export function revokeObjectURL(url: string): void {
     return URL[_revokeObjectURL](url)
+}
+
+export function downloadFileByURL(url: string, filename: string): void {
+    const link = createElement("a")
+    link[_href] = url
+    link[_download] = filename
+    link[_click]()
+    link[_remove]()
 }

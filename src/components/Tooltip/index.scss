@@ -5,8 +5,8 @@
     box-shadow: var(--elevation1);
     display: flex;
     inset: unset;
-    color: rgb(var(--color-sur));
-    background-color: rgb(var(--color-on-sur));
+    color: rgb(var(--color-surface));
+    background-color: rgb(var(--color-on-surface));
     max-height: calc(100dvh - 16px);
     max-width: calc(100% - 16px);
     opacity: 0;
@@ -14,7 +14,8 @@
     font-size: var(--font-size-s);
     line-height: var(--font-size-s);
     font-weight: 500;
-    outline: none;
+    outline: 1px solid rgba(var(--color-surface), var(--opacity2));
+    outline-offset: -1px;
     overflow: hidden;
     pointer-events: none;
     width: fit-content;
@@ -23,7 +24,7 @@
     transition-duration: .3s,   0s,  0s,        0s,      0s,  0s;
     transition-property: all, left, top, transform, padding, gap;
     white-space: pre-wrap;
-    z-index: var(--z-index-tooltip);
+    z-index: 99;
 
     [data-corner=sharp] & {
         border-radius: 0;
@@ -38,7 +39,8 @@
     }
 
     &[data-open] {
-        transition: all .3s var(--transition-spring), left 0s, top 0s;
+        transition-duration: .3s, 0s, 0s;
+        transition-property: all, left, top;
     }
 
     &[data-move] {
@@ -61,9 +63,9 @@
 
     &:is(.tooltip-keyboard-shortcuts, .tooltip-keyboard-shortcuts-only) > kbd {
         border-radius: 2px;
-        background-color: rgba(var(--color-sur), var(--opacity3));
-        border: 1px solid rgba(var(--color-sur), var(--opacity2));
+        background-color: rgba(var(--color-surface), var(--opacity3));
+        border: 1px solid rgba(var(--color-surface), var(--opacity2));
         padding: 0 .4em;
-        box-shadow: 0 .15em 0 rgba(var(--color-sur), var(--opacity-inv5));
+        box-shadow: 0 .15em 0 rgba(var(--color-surface), var(--opacity-inv5));
     }
 }

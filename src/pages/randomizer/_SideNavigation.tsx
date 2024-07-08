@@ -2,7 +2,7 @@ import { type Component, For, createSignal } from "solid-js";
 
 import { PopoverPosition, Position } from "@/enums/position";
 import { RandomizerType } from "./_enums";
-import { _RIGHT_CENTER, _colors, _filledTonal, _icon, _left, _numbers, _selection, _string, _teams, _tooltip, _type, _words } from "@/data/string";
+import { _RIGHT_CENTER, _colors, _filledTonal, _icon, _left, _numbers, _onChangeRandomizer, _randomizerType, _selection, _string, _teams, _tooltip, _type, _words } from "@/data/string";
 
 import Icon from "@/components/Icon";
 import Button, { ButtonVariant } from "@/components/Button";
@@ -15,10 +15,6 @@ type Props = {
 }
 
 const C: Component<Props> = (props) => {
-    const
-        _randomizerType = 'randomizerType',
-        _onChangeRandomizer = 'onChangeRandomizer'
-    ;
     const randomizerTypes = [
         { icon: 0xF155, type: RandomizerType[_string], tooltip: 'String' },
         { icon: 0xE4AE, type: RandomizerType[_words], tooltip: 'Words' },

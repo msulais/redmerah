@@ -103,10 +103,10 @@ export const SettingsElement: VoidComponent = () => {
         const acc = generateColor(hexColor)
         const accentColorStyleEl = getElementById(ElementIds[_color_accent])!
         accentColorStyleEl[_innerHTML] = `:root{
---color-acc-light: ${rgbToCSSValue(hexToRgb(acc.color))};
---color-acc-dark: ${rgbToCSSValue(hexToRgb(acc.colorDark))};
---color-on-acc-light: ${rgbToCSSValue(hexToRgb(acc.onColor))};
---color-on-acc-dark: ${rgbToCSSValue(hexToRgb(acc.onColorDark))};
+--color-accent-light: ${rgbToCSSValue(hexToRgb(acc.color))};
+--color-accent-dark: ${rgbToCSSValue(hexToRgb(acc.colorDark))};
+--color-on-accent-light: ${rgbToCSSValue(hexToRgb(acc.onColor))};
+--color-on-accent-dark: ${rgbToCSSValue(hexToRgb(acc.onColorDark))};
 }`;
         setLocalStorageItem(LocalStorageKeys[_color], hexColor)
         closePopover(settingsMenuRef)

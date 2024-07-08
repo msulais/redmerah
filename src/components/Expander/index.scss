@@ -18,15 +18,15 @@
     }
 
     &[data-variant=filled] {
-        background-color: rgba(var(--color-acc), var(--opacity3));
+        background-color: rgba(var(--color-accent), var(--opacity3));
     }
 
     &[data-variant=filled-tonal] {
-        background-color: rgba(var(--color-on-sur), var(--opacity1));
+        background-color: rgba(var(--color-on-surface), var(--opacity1));
     }
 
     &[data-variant=outlined][data-open] {
-        border: 1px solid rgba(var(--color-on-sur), var(--opacity-border));
+        border: 1px solid rgba(var(--color-on-surface), var(--opacity-border));
         border-top: none;
     }
 
@@ -47,28 +47,28 @@
     }
 
     &[data-variant=transparent] {
-        --bg-color: var(--color-on-sur);
+        --bg-color: var(--color-on-surface);
     }
 
     &[data-variant=filled] {
         --bg-opacity: 1;
-        --bg-color: var(--color-acc);
-        border-color: rgba(var(--color-on-sur), var(--opacity1));
-        color: rgb(var(--color-on-acc));
+        --bg-color: var(--color-accent);
+        border-color: rgba(var(--color-on-surface), var(--opacity1));
+        color: rgb(var(--color-on-accent));
 
         & .list-subtitle {
-            color: rgba(var(--color-on-acc), var(--opacity-inv3));
+            color: rgba(var(--color-on-accent), var(--opacity-inv3));
         }
     }
 
     &[data-variant=filled-tonal] {
-        --bg-color: var(--color-on-sur);
+        --bg-color: var(--color-on-surface);
         --bg-opacity: var(--opacity2);
     }
 
     &[data-variant=outlined] {
-        --bg-color: var(--color-on-sur);
-        border-color: rgba(var(--color-on-sur), var(--opacity-border));
+        --bg-color: var(--color-on-surface);
+        border-color: rgba(var(--color-on-surface), var(--opacity-border));
     }
 
     @media (hover:hover) {
@@ -92,7 +92,7 @@
     &:active {
         &[data-variant=transparent] {
             --bg-opacity: var(--opacity0);
-            border-color: rgba(var(--color-on-sur), var(--opacity1));
+            border-color: rgba(var(--color-on-surface), var(--opacity1));
         }
             
         &[data-variant=filled] {
@@ -101,7 +101,7 @@
                 
         &[data-variant=filled-tonal] {
             --bg-opacity: var(--opacity1);
-            border-color: rgba(var(--color-on-sur), var(--opacity1));
+            border-color: rgba(var(--color-on-surface), var(--opacity1));
         }
 
         &[data-variant=outlined] {
@@ -111,5 +111,5 @@
 }
 
 .expander-header-icon {
-    transition: all .3s var(--transition-spring);
+    transition-duration: .3s;
 }

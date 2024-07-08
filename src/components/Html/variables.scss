@@ -8,28 +8,28 @@
 
 :root {
     // background color
-    --color-bac-light: 250, 250, 250;
-    --color-bac-dark: 26, 26, 26;
+    --color-background-light: 250, 250, 250;
+    --color-background-dark: 26, 26, 26;
 
     // surface colors
-    --color-sur-light: 255, 255, 255; 
-    --color-on-sur-light: 31, 31, 31; 
-    --color-sur-dark: 31, 31, 31; 
-    --color-on-sur-dark: 250, 250, 250; 
+    --color-surface-light: 255, 255, 255; 
+    --color-on-surface-light: 31, 31, 31; 
+    --color-surface-dark: 31, 31, 31; 
+    --color-on-surface-dark: 250, 250, 250; 
     
     // error colors
-    --color-err-light: 194, 0, 0;
-    --color-err-dark: 255, 148, 148;
-    --color-on-err-light: 255, 255, 255;
-    --color-on-err-dark: 0, 0, 0;
+    --color-error-light: 194, 0, 0;
+    --color-error-dark: 255, 148, 148;
+    --color-on-error-light: 255, 255, 255;
+    --color-on-error-dark: 0, 0, 0;
 
-    --color-bac: var(--color-bac-light);
-    --color-acc: var(--color-acc-light); 
-    --color-on-acc: var(--color-on-acc-light); 
-    --color-sur: var(--color-sur-light); 
-    --color-on-sur: var(--color-on-sur-light); 
-    --color-err: var(--color-err-light); 
-    --color-on-err: var(--color-on-err-light); 
+    --color-background: var(--color-background-light);
+    --color-accent: var(--color-accent-light); 
+    --color-on-accent: var(--color-on-accent-light); 
+    --color-surface: var(--color-surface-light); 
+    --color-on-surface: var(--color-on-surface-light); 
+    --color-error: var(--color-error-light); 
+    --color-on-error: var(--color-on-error-light); 
 
     // opacity level 
     --opacity0: .02;
@@ -111,9 +111,9 @@
     --elevation4: 0 4px 20px #00000026;      
     --elevation5: 0 4px 24px #00000026;
 
-    background-color: rgb(var(--color-bac));
+    background-color: rgb(var(--color-background));
     font-family: var(--font-family-sans-serif);
-    color: rgb(var(--color-on-sur));
+    color: rgb(var(--color-on-surface));
 
     &[data-theme="dark"] {
         // elevation
@@ -123,13 +123,13 @@
         --elevation4: 0 4px 20px #00000080;      
         --elevation5: 0 4px 24px #00000080;
         
-        --color-bac: var(--color-bac-dark);
-        --color-acc: var(--color-acc-dark); 
-        --color-on-acc: var(--color-on-acc-dark); 
-        --color-sur: var(--color-sur-dark); 
-        --color-on-sur: var(--color-on-sur-dark); 
-        --color-err: var(--color-err-dark); 
-        --color-on-err: var(--color-on-err-dark);
+        --color-background: var(--color-background-dark);
+        --color-accent: var(--color-accent-dark); 
+        --color-on-accent: var(--color-on-accent-dark); 
+        --color-surface: var(--color-surface-dark); 
+        --color-on-surface: var(--color-on-surface-dark); 
+        --color-error: var(--color-error-dark); 
+        --color-on-error: var(--color-on-error-dark);
 
         color-scheme: dark;
 
@@ -147,13 +147,13 @@
             --elevation4: 0 4px 20px #00000080;      
             --elevation5: 0 4px 24px #00000080;      
 
-            --color-bac: var(--color-bac-dark);
-            --color-acc: var(--color-acc-dark); 
-            --color-on-acc: var(--color-on-acc-dark); 
-            --color-sur: var(--color-sur-dark); 
-            --color-on-sur: var(--color-on-sur-dark); 
-            --color-err: var(--color-err-dark); 
-            --color-on-err: var(--color-on-err-dark);
+            --color-background: var(--color-background-dark);
+            --color-accent: var(--color-accent-dark); 
+            --color-on-accent: var(--color-on-accent-dark); 
+            --color-surface: var(--color-surface-dark); 
+            --color-on-surface: var(--color-on-surface-dark); 
+            --color-error: var(--color-error-dark); 
+            --color-on-error: var(--color-on-error-dark);
     
             color-scheme: dark;
     

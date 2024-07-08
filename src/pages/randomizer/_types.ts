@@ -1,3 +1,4 @@
+import type { HEXColor } from "@/types/color"
 import type { NumbersRandomizerNumberType, NumbersRandomizerSort, WordsRandomizerWordCase, ColorsRandomizerColorModel } from "./_enums"
 
 export type Settings = {
@@ -22,15 +23,12 @@ export type Settings = {
         suffix: string
         separator: string
         minDecimalLength: number
-        range: {
-            min: number
-            max: number
-        }
+        range: { min: number; max: number }
     }
     words: {
         count: number
         animation: boolean
-        listId: string
+        list: ListItems
         repeat: boolean
         wordCase: WordsRandomizerWordCase
         prefix: string
@@ -39,7 +37,7 @@ export type Settings = {
     },
     selection: {
         count: number
-        listId: string
+        list: ListItems
         animation: boolean
     },
     colors: {
@@ -47,46 +45,31 @@ export type Settings = {
         animation: boolean
         colorModel: ColorsRandomizerColorModel
         range: {
-            hex: {
-                min: number
-                max: number
-            }
+            hex: { min: number; max: number }
             hsl: {
-                h: {
-                    min: number
-                    max: number
-                }
-                s: {
-                    min: number
-                    max: number
-                }
-                l: {
-                    min: number
-                    max: number
-                }
+                h: { min: number; max: number }
+                s: { min: number; max: number }
+                l: { min: number; max: number }
             }
             rgb: {
-                r: {
-                    min: number
-                    max: number
-                }
-                g: {
-                    min: number
-                    max: number
-                }
-                b: {
-                    min: number
-                    max: number
-                }
+                r: { min: number; max: number }
+                g: { min: number; max: number }
+                b: { min: number; max: number }
             }
         }
     },
     teams: {
         count: number
-        namesListId: string
-        membersListId: string
+        namesList: ListItems
+        membersList: ListItems
         animation: boolean
     }
+}
+
+export type ListItems = {
+    id: number
+    name: string
+    items: string[]
 }
 
 export type Result = {
@@ -97,7 +80,7 @@ export type Result = {
         selected: boolean
         text: string
     }[]
-    colors: string[]
+    colors: HEXColor[]
     teams: {
         name: string
         members: string[]

@@ -6,7 +6,7 @@
     user-select: none;
 
     &[data-disabled] {
-        color: rgba(var(--color-on-sur), var(--opacity5));
+        color: rgba(var(--color-on-surface), var(--opacity5));
         cursor: not-allowed;
 
         & * {
@@ -27,7 +27,7 @@
 
         &:active > .checkbox-icon {
             --bg-opacity: var(--opacity0);
-            --border-opacity: var(--opacity1);
+            --btn-border-opacity: var(--opacity1);
 
             &:not([data-noscale]) > .btn-layer {
                 scale: .85;
@@ -35,7 +35,7 @@
         }
 
         &[data-selected] > .checkbox-icon {
-            color: rgb(var(--color-acc));
+            color: rgb(var(--color-accent));
         }
     }
 }

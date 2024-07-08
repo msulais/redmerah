@@ -1,5 +1,5 @@
 .btn_rotate_icon {
-    --icon-animation: rotate-icon .8s var(--transition-spring);
+    --btn-icon-animation: rotate-icon .8s var(--transition-spring);
 }
 
 @keyframes rotate-icon {
@@ -8,7 +8,7 @@
 }
 
 .btn_move_right_icon {
-    --icon-animation: move-right-icon .8s var(--transition-spring);
+    --btn-icon-animation: move-right-icon .8s var(--transition-spring);
 }
 
 @keyframes move-right-icon {
@@ -17,7 +17,7 @@
 }
 
 .btn_scale_up_icon {
-    --icon-animation: scale-up-icon .8s var(--transition-spring);
+    --btn-icon-animation: scale-up-icon .8s var(--transition-spring);
 }
 
 @keyframes scale-up-icon {

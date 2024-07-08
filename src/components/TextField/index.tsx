@@ -6,14 +6,16 @@ import { clearTimeDelayed, clearTimeInterval, setTimeDelayed, setTimeInterval } 
 import { addEventListener, preventDefault, removeEventListener, stopImmediatePropagation, stopPropagation } from '@/utils/event'
 import { openPopover } from '@/utils/popover'
 import { PopoverPosition } from '@/enums/position'
-import { _CENTER_BOTTOM, _CENTER_CENTER_LEFT, _autoHideLabel, _autoShowClearBtn, _autocomplete, _button, _changeValueTooltip, _checkValidity, _children, _classList, _clearTooltip, _currentTarget, _decreaseTooltip, _disabled, _dispatchEvent, _focus, _id, _increaseTooltip, _input, _isIntOnly, _isNaN, _labelElement, _labelText, _leading, _length, _max, _messageText, _min, _off, _onBlur, _onFinalValueChanged, _onFocus, _onInput, _onValueChanged, _placeholder, _readOnly, _ref, _step, _text, _trailing, _type, _value, _valuechange } from '@/data/string'
-import { numberParse } from '@/utils/math'
+import { _CENTER_BOTTOM, _CENTER_CENTER_LEFT, _autoHideLabel, _autoShowClearBtn, _autocomplete, _button, _changeValueTooltip, _checkValidity, _children, _classList, _clearTooltip, _currentTarget, _decreaseTooltip, _disabled, _dispatchEvent, _focus, _id, _increaseTooltip, _input, _isIntOnly, _isNaN, _labelElement, _labelText, _leading, _length, _max, _maxLine, _messageText, _min, _minLine, _off, _onBlur, _onFinalValueChanged, _onFocus, _onInput, _onValueChanged, _placeholder, _px, _readOnly, _ref, _resize, _rows, _scrollHeight, _step, _text, _trailing, _type, _value, _valuechange } from '@/data/string'
+import { mathMax, mathMin, numberParse } from '@/utils/math'
 
 import Icon from '@/components/Icon'
 import Tooltip from '@/components/Tooltip'
 import Button from '@/components/Button'
 import Menu from '@/components/Menu'
 import './index.scss'
+
+const HEIGHT_TEXT_INPUT_PER_LINE = 18
 
 export type TextFieldProps = Omit<JSX.InputHTMLAttributes<HTMLInputElement>, 'type' | 'ref' | 'onInput' | 'onFocus' | 'onBlur' | 'children'> & {
     leading?: JSX.Element
@@ -30,6 +32,25 @@ export type TextFieldProps = Omit<JSX.InputHTMLAttributes<HTMLInputElement>, 'ty
     onInput?: (ev: ComponentEvent<InputEvent, HTMLInputElement, HTMLInputElement>) => void
     onFocus?: (ev: ComponentEvent<FocusEvent, HTMLInputElement, HTMLInputElement>) => void
     onBlur?: (ev: ComponentEvent<FocusEvent, HTMLInputElement, HTMLInputElement>) => void
+}
+
+export type TextAreaFieldProps = Omit<JSX.TextareaHTMLAttributes<HTMLTextAreaElement>, 'ref' | 'onInput' | 'onFocus' | 'onBlur' | 'children' | 'rows' | 'columns'> & {
+    leading?: JSX.Element
+    trailing?: JSX.Element
+    labelText?: JSX.Element
+    messageText?: JSX.Element
+    focus?: boolean
+    minLine?: number
+    maxLine?: number
+    resize?: boolean
+    autoShowClearBtn?: boolean
+    autoHideLabel?: boolean
+    clearTooltip?: string
+    ref?: (el: HTMLTextAreaElement) => void
+    labelElement?: JSX.LabelHTMLAttributes<HTMLLabelElement>
+    onInput?: (ev: ComponentEvent<InputEvent, HTMLTextAreaElement, HTMLTextAreaElement>) => void
+    onFocus?: (ev: ComponentEvent<FocusEvent, HTMLTextAreaElement, HTMLTextAreaElement>) => void
+    onBlur?: (ev: ComponentEvent<FocusEvent, HTMLTextAreaElement, HTMLTextAreaElement>) => void
 }
 
 type NumberTextFieldProps = Omit<JSX.InputHTMLAttributes<HTMLInputElement>, 'type' | 'ref' | 'onInput' | 'onFocus' | 'onBlur' | 'children'> & {
@@ -69,11 +90,106 @@ export function changeTextFieldValue(el: HTMLInputElement, value: string): void 
     el[_dispatchEvent](event)
 }
 
+export function changeTextAreaFieldValue(el: HTMLTextAreaElement, value: string): void {
+    el[_value] = value
+    const event = new Event(_input, { bubbles: true });
+    el[_dispatchEvent](event)
+}
+
 export const TextFieldTrailingButton: ParentComponent<JSX.ButtonHTMLAttributes<HTMLButtonElement>> = ($props) => {
     const [props, other] = splitProps($props, [_children, _classList])
     return (<Button {...other} compact classList={{'textfield-btn': true, ...props[_classList]}}>
         { props[_children] }
     </Button>)
+}
+
+export const TextAreaField: VoidComponent<TextAreaFieldProps> = ($props) => {
+    const $$props = mergeProps({autoHideLabel: true, id: createUniqueId()}, $props)
+    const [props, other] = splitProps($$props, [
+        _leading, _onInput, _labelText, _focus,
+        _autocomplete, _id, _messageText, _trailing,
+        _labelElement, _disabled, _readOnly, _resize,
+        _onFocus, _onBlur, _placeholder, _autoHideLabel,
+        _value, _ref, _autoShowClearBtn, _clearTooltip, 
+        _minLine, _maxLine
+    ])
+    const [isFocus, setIsFocus] = createSignal<boolean>(false)
+    const [isInvalid, setIsInvalid] = createSignal<boolean>(false)
+    const [clearBtnRef, setClearBtnRef] = createSignal<HTMLButtonElement | null>(null)
+    const [value, setValue] = createSignal<string>('')
+    const [height, setHeight] = createSignal<number>(0)
+    const trailingComponents = children(() => props[_trailing])
+    let textareafieldRef!: HTMLTextAreaElement
+
+    createEffect(() => {
+        setValue(props[_value] as string ?? '')
+        setHeight(h => props[_minLine]? (HEIGHT_TEXT_INPUT_PER_LINE * props[_minLine]) : h)
+    })
+
+    return (<label
+        class='textareafield'
+        for={props[_id]}
+        {...props[_labelElement]}
+    >
+        <div
+            data-focus={toggleAttribute(props[_focus] ?? isFocus())}
+            data-invalid={toggleAttribute(isInvalid())}
+            data-disabled={toggleAttribute(props[_disabled])}
+            data-trailing={toggleAttribute(trailingComponents() || (props[_clearTooltip] ?? 'Clear'))}
+            data-readonly={toggleAttribute(props[_readOnly])}>
+            <div class='textareafield-label-text'>{props[_autoHideLabel] && value()[_length] == 0 && !props[_placeholder]? '' : props[_labelText]}</div>
+            <div class='textareafield-leading'>{props[_leading]}</div>
+            <textarea
+                id={props[_id]}
+                ref={(r) => {
+                    textareafieldRef = r
+                    if (props[_ref]) props[_ref](r)
+                }}
+                onInput={(ev) => {
+                    setValue(ev[_currentTarget][_value])
+                    setIsInvalid(!ev[_currentTarget][_checkValidity]())
+                    if (props[_onInput]) props[_onInput](ev)
+                    setHeight(HEIGHT_TEXT_INPUT_PER_LINE)
+                    setHeight(mathMax(ev[_currentTarget][_scrollHeight], HEIGHT_TEXT_INPUT_PER_LINE))
+                }}
+                onFocus={(ev) => {
+                    setValue(ev[_currentTarget][_value])
+                    setIsInvalid(!ev[_currentTarget][_checkValidity]())
+                    setIsFocus(true)
+                    if (props[_onFocus]) props[_onFocus](ev)
+                }}
+                onBlur={(ev) => {
+                    setValue(ev[_currentTarget][_value])
+                    setIsFocus(false)
+                    if (props[_onBlur]) props[_onBlur](ev)
+                }}
+                rows={props[_minLine] ?? 1}
+                data-resize={toggleAttribute(props[_resize])}
+                disabled={props[_disabled]}
+                autocomplete={props[_autocomplete] ?? _off}
+                readOnly={props[_readOnly]}
+                value={props[_value]}
+                style={{
+                    "height": height() + _px,
+                    "min-height": props[_minLine]? ((HEIGHT_TEXT_INPUT_PER_LINE * props[_minLine]) + _px) : undefined,
+                    "max-height": props[_maxLine] && props[_maxLine] >= (props[_minLine] ?? 1)? ((HEIGHT_TEXT_INPUT_PER_LINE * props[_maxLine]) + _px) : undefined
+                }}
+                placeholder={props[_placeholder] ?? (props[_autoHideLabel] && props[_labelText]? `${props[_labelText]}` : undefined)}
+                {...other}></textarea>
+            <div class='textareafield-trailing'>
+                {trailingComponents()}
+                <Show when={props[_autoShowClearBtn] && value()[_length] > 0}>
+                    <Tooltip text={props[_clearTooltip] ?? 'Clear'} anchor={clearBtnRef()}/>
+                    <TextFieldTrailingButton ref={r => setClearBtnRef(r)} type={_button} onClick={(ev) => {
+                        textareafieldRef[_value] = ''
+                        setValue('')
+                        preventDefault(ev)
+                    }}><Icon code={0xE5E9}/></TextFieldTrailingButton>
+                </Show>
+            </div>
+        </div>
+        <div class='textareafield-message-text'>{props[_messageText]}</div>
+    </label>)
 }
 
 export const NumberTextField: ParentComponent<NumberTextFieldProps> = ($props) => {
@@ -260,7 +376,7 @@ const TextField: ParentComponent<TextFieldProps> = ($props) => {
             data-disabled={toggleAttribute(props[_disabled])}
             data-trailing={toggleAttribute(trailingComponents() || (props[_clearTooltip] ?? 'Clear'))}
             data-readonly={toggleAttribute(props[_readOnly])}>
-            <div class='textfield-label-text'>{props[_autoHideLabel] && value().length == 0 && !props[_placeholder]? '' : props[_labelText]}</div>
+            <div class='textfield-label-text'>{props[_autoHideLabel] && value()[_length] == 0 && !props[_placeholder]? '' : props[_labelText]}</div>
             <div class='textfield-leading'>{props[_leading]}</div>
             <input
                 id={props[_id]}
@@ -270,7 +386,6 @@ const TextField: ParentComponent<TextFieldProps> = ($props) => {
                 }}
                 onInput={(ev) => {
                     setValue(ev[_currentTarget][_value])
-                    console.log(value())
                     setIsInvalid(!ev[_currentTarget][_checkValidity]())
                     if (props[_onInput]) props[_onInput](ev)
                 }}

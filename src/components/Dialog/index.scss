@@ -1,16 +1,14 @@
 .dialog {
-    --max-w: min(720px, calc(100% - 16px));
-    --max-h: calc(100dvh - 16px);
-    background-color: rgb(var(--color-sur));
+    background-color: rgb(var(--color-surface));
     border: none;
     border-radius: 16px;
     width: max-content;
     box-shadow: var(--elevation3);
     left: 50%;
-    max-height: var(--max-h);
-    max-width: var(--max-w);
+    max-height: calc(100dvh - 16px);
+    max-width: min(720px, calc(100% - 16px));
     opacity: 0;
-    outline: 1px solid rgba(var(--color-on-sur), var(--opacity2));
+    outline: none;
     overflow: hidden;
     top: 50%;
     transform: translate(-50%, calc(-50% - 12px));
@@ -42,7 +40,15 @@
         }
     }
 
+    &[data-focus] > div {
+        outline-color: rgb(var(--color-accent));
+        outline-width: 4px;
+        outline-offset: -4px;
+        animation: flyout-focus 1s;
+    }
+
     > div {
+        border-radius: inherit;
         max-height: inherit;
         max-width: 100%;
         width: 100%;
@@ -51,6 +57,8 @@
         display: flex;
         flex-direction: column;
         align-items: flex-start;
+        outline: 1px solid rgba(var(--color-on-surface), var(--opacity2));
+        outline-offset: -1px;
 
         > div:empty {
             display: none;
@@ -58,12 +66,12 @@
     }
 }
 
-
 .dialog-actions {
     width: 100%;
     align-items: center;
-    background-color: rgba(var(--color-on-sur), var(--opacity1));
-    border-top: 1px solid rgba(var(--color-on-sur), var(--opacity2));
+    // background-color: rgba(var(--color-on-surface), var(--opacity1));
+    background-color: rgb(var(--color-background));
+    border-top: 1px solid rgba(var(--color-on-surface), var(--opacity2));
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
@@ -80,6 +88,7 @@
     padding: 24px;
     flex: 1;
     max-height: 100%;
+    width: 100%;
     overflow: auto;
 }
 

@@ -2,10 +2,6 @@ import { getLocalStorage } from "@/data/storage"
 import { _clear, _getItem, _mode, _objectStore, _removeItem, _setItem, _transaction } from "@/data/string"
 import { LocalStorageKeys } from "@/enums/storage"
 
-type TransactionOptions = IDBTransactionOptions & {
-    mode?: IDBTransactionMode
-}
-
 export function setLocalStorageItem(key: LocalStorageKeys, value: string): void {
     return getLocalStorage()[_setItem](key, value)
 }
@@ -20,12 +16,4 @@ export function clearLocalStorage(): void {
 
 export function removeLocalStorageItem(key: LocalStorageKeys): void {
     return getLocalStorage()[_removeItem](key)
-}
-
-export function getIndexedDBObjectStore(db: IDBDatabase, name: string, options?: TransactionOptions): IDBObjectStore {
-    return db[_transaction](
-        name, 
-        options?.mode, 
-        options && {durability: options.durability}
-    )[_objectStore](name)
 }

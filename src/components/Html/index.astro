@@ -5,6 +5,7 @@ import { CornerData } from '@/enums/corner'
 import { ElementIds } from '@/enums/ids'
 import './fonts.scss'
 import './variables.scss'
+import './animations.scss'
 import './index.scss'
 
 type Props = {
@@ -40,10 +41,10 @@ const colorToCSS = (hex: string) => {
         <meta name="description" content={ description }>
         <title>{ title }</title>
         <style id={ElementIds.color_accent} set:html={`:root{
---color-acc-light: ${colorToCSS(colors.color)};
---color-acc-dark: ${colorToCSS(colors.colorDark)};
---color-on-acc-light: ${colorToCSS(colors.onColor)};
---color-on-acc-dark: ${colorToCSS(colors.onColorDark)};
+--color-accent-light: ${colorToCSS(colors.color)};
+--color-accent-dark: ${colorToCSS(colors.colorDark)};
+--color-on-accent-light: ${colorToCSS(colors.onColor)};
+--color-on-accent-dark: ${colorToCSS(colors.onColorDark)};
 }`}/>
         <slot name="favicon">
             <link rel="shortcut icon" type="image/ico" href="/favicon/favicon.ico" />

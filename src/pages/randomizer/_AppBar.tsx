@@ -1,6 +1,7 @@
 import { type Component, Match, Show, Switch, createMemo, createSignal, onMount } from "solid-js";
 import type { SetStoreFunction } from "solid-js/store";
 
+import type { Settings } from "./_types";
 import { clearTimeDelayed, setTimeDelayed } from "@/utils/timeout";
 import { setAttribute, toggleAttribute } from "@/utils/attributes";
 import { closePopover, openPopover } from "@/utils/popover";
@@ -11,11 +12,12 @@ import { ExternalLinks, RoutesLinks } from "@/enums/links";
 import { ThemeData } from "@/enums/theme";
 import { getLocalStorageItem, setLocalStorageItem } from "@/utils/storage";
 import { LocalStorageKeys } from "@/enums/storage";
-import { RandomizerType, NumbersRandomizerSort, NumbersRandomizerNumberType, WordsRandomizerWordCase, ColorsRandomizerColorModel } from "./_enums";
-import { _CENTER_BOTTOM_TO_LEFT, _RIGHT_CENTER_TO_BOTTOM, _URL, _actions, _animation, _ascending, _binary, _color, _colorModel, _colors, _contactEmail, _corner, _currentTarget, _dark, _decimal, _descending, _donate, _filled, _fullRound, _getFullYear, _hex, _hexadecimal, _history, _hsl, _includes, _light, _logo, _lowercase, _none, _numberType, _numbers, _octal, _prefix, _repeat, _rgb, _round, _selection, _semiRound, _separator, _settings, _share, _sharp, _sort, _src, _string, _suffix, _system, _teams, _theme, _titlecase, _togglecase, _uppercase, _value, _wordCase, _words } from "@/data/string";
+import { RandomizerType, NumbersRandomizerSort, NumbersRandomizerNumberType, WordsRandomizerWordCase, ColorsRandomizerColorModel, Commands } from "./_enums";
+import { _CENTER_BOTTOM_TO_LEFT, _RIGHT_CENTER_TO_BOTTOM, _URL, _actions, _animation, _ascending, _binary, _color, _colorModel, _colors, _command, _contactEmail, _corner, _currentTarget, _dark, _decimal, _descending, _donate, _filled, _fullRound, _getFullYear, _hex, _hexadecimal, _history, _hsl, _includes, _light, _logo, _lowercase, _minDecimalLength, _none, _numberType, _numbers, _octal, _onCopyResult, _onGenerate, _onStopGenerate, _prefix, _randomizerType, _repeat, _rgb, _round, _selection, _semiRound, _separator, _settings, _share, _sharp, _sort, _src, _string, _suffix, _system, _teams, _theme, _then, _titlecase, _togglecase, _uppercase, _value, _wordCase, _words } from "@/data/string";
 import { encodeURL } from "@/utils/url";
 import { getDocument, getNavigator, getRoot } from "@/data/window";
-import type { Settings } from "./_types";
+import { CornerData } from "@/enums/corner";
+import type { IDB } from "@/class/indexeddb";
 import logo from '@/assets/apps/randomizer-logo.svg'
 import redmerahLogo from '@/assets/logo.svg'
 
@@ -25,26 +27,18 @@ import Tooltip from "@/components/Tooltip";
 import Menu, { MenuDivider, MenuHeader, MenuIndent, MenuItem, MenuItemLink, NestedMenu } from "@/components/Menu";
 import TextField, { NumberTextField, changeTextFieldValue } from "@/components/TextField";
 import CSS from './_AppBar.module.scss';
-import { CornerData } from "@/enums/corner";
 
 type Props = {
     onGenerate: () => Promise<void>
     onStopGenerate: () => void
     onCopyResult: () => Promise<boolean>
-    onBookmarkResult: () => Promise<boolean>
     randomizerType: RandomizerType
     settings: [Settings, SetStoreFunction<Settings>]
+    command: (type: Commands, ...args: unknown[]) => unknown
+    db: IDB
 }
 
 const C: Component<Props> = (props) => {
-    const
-        _textfield_menu_item = 'textfield_menu_item',
-        _onStopGenerate = 'onStopGenerate',
-        _onCopyResult   = 'onCopyResult',
-        _onGenerate     = 'onGenerate',
-        _randomizerType = 'randomizerType',
-        _minDecimalLength = 'minDecimalLength'
-    ;
     let infoMenuRef: HTMLElement
     let settingsMenuRef: HTMLElement
     let settingsThemeMenuRef: HTMLElement
@@ -54,7 +48,6 @@ const C: Component<Props> = (props) => {
     let settingsColorModelMenuRef: HTMLElement
     const [theme                        , setTheme                          ] = createSignal<ThemeData>(ThemeData[_system])
     const [isInfoMenuOpen               , setIsInfoMenuOpen                 ] = createSignal<boolean>(false)
-    const [isMoreMenuOpen               , setIsMoreMenuOpen                 ] = createSignal<boolean>(false)
     const [isSettingsMenuOpen           , setIsSettingsMenuOpen             ] = createSignal<boolean>(false)
     const [isSettingsThemeMenuOpen      , setIsSettingsThemeMenuOpen        ] = createSignal<boolean>(false)
     const [isSettingsCornerMenuOpen     , setIsSettingsCornerMenuOpen       ] = createSignal<boolean>(false)
@@ -63,6 +56,7 @@ const C: Component<Props> = (props) => {
     const [isSettingsSortMenuOpen       , setIsSettingsSortMenuOpen         ] = createSignal<boolean>(false)
     const [isSettingsNumberTypeMenuOpen , setIsSettingsNumberTypeMenuOpen   ] = createSignal<boolean>(false)
     const [copyTimeoutId                , setCopyTimeoutId                  ] = createSignal<number | null>(null)
+    const [copyErrorTimeoutId           , setCopyErrorTimeoutId             ] = createSignal<number | null>(null)
     const [isGenerating                 , setIsGenerating                   ] = createSignal<boolean>(false)
     const [infoBtnRef, setInfoBtnRef] = createSignal<HTMLButtonElement | null>(null)
     const [settingsBtnRef, setSettingsBtnRef] = createSignal<HTMLButtonElement | null>(null)
@@ -93,25 +87,6 @@ const C: Component<Props> = (props) => {
     let separatorInputRef: HTMLInputElement | undefined
     let decimalLengthInputRef: HTMLInputElement | undefined
     let settingsCornerMenuRef: HTMLElement
-
-    function toggleAnimation(): void {
-        const s = setSettings()
-        const randomizerType = props[_randomizerType]
-        if (randomizerType == RandomizerType[_numbers   ]) s(_numbers    , _animation, a => !a)
-        if (randomizerType == RandomizerType[_words     ]) s(_words      , _animation, a => !a)
-        if (randomizerType == RandomizerType[_string    ]) s(_string     , _animation, a => !a)
-        if (randomizerType == RandomizerType[_selection ]) s(_selection  , _animation, a => !a)
-        if (randomizerType == RandomizerType[_colors    ]) s(_colors     , _animation, a => !a)
-        if (randomizerType == RandomizerType[_teams     ]) s(_teams      , _animation, a => !a)
-    }
-
-    function toggleRepeat(): void {
-        const s = props[_settings][1]
-        switch (props[_randomizerType]){
-            case RandomizerType[_numbers]: return s(_numbers, _repeat, r => !r)
-            case RandomizerType[_words  ]: return s(_words  , _repeat, r => !r)
-        }
-    }
 
     async function changeTheme(theme: ThemeData): Promise<void> {
         setTheme(theme)
@@ -148,33 +123,15 @@ const C: Component<Props> = (props) => {
     }
 
     async function changeNumbersSort(sort: NumbersRandomizerSort): Promise<void> {
-        setSettings()(_numbers, _sort, sort)
+        props[_command](Commands.change_settings_numbers_sort, sort)
         await closePopover(settingsSortMenuRef)
         await closePopover(settingsMenuRef)
     }
 
     async function changeNumbersType(type: NumbersRandomizerNumberType): Promise<void> {
-        setSettings()(_numbers, _numberType, type)
+        props[_command](Commands.change_settings_numbers_type, type)
         await closePopover(settingsNumberTypeMenuRef)
         await closePopover(settingsMenuRef)
-    }
-
-    function onPrefixInputBlur(ev: Event): void {
-        if (props[_randomizerType] == RandomizerType[_numbers]){
-            setSettings()(_numbers, _prefix, (ev[_currentTarget] as HTMLInputElement)[_value])
-        }
-    }
-
-    function onSuffixInputBlur(ev: Event): void {
-        if (props[_randomizerType] == RandomizerType[_numbers]){
-            setSettings()(_numbers, _suffix, (ev[_currentTarget] as HTMLInputElement)[_value])
-        }
-    }
-
-    function onSeparatorLengthInputBlur(ev: Event): void {
-        if (props[_randomizerType] == RandomizerType[_numbers]){
-            setSettings()(_numbers, _separator, (ev[_currentTarget] as HTMLInputElement)[_value])
-        }
     }
 
     function initInputs(): void {
@@ -192,13 +149,13 @@ const C: Component<Props> = (props) => {
     }
 
     async function changeWordsWordCase(wordCase: WordsRandomizerWordCase): Promise<void> {
-        setSettings()(_words, _wordCase, wordCase)
+        props[_command](Commands.change_settings_words_wordCase, wordCase)
         await closePopover(settingsWordCaseMenuRef)
         await closePopover(settingsMenuRef)
     }
 
     async function changeColorsColorModel(colorModel: ColorsRandomizerColorModel): Promise<void> {
-        setSettings()(_colors, _colorModel, colorModel)
+        props[_command](Commands.change_settings_colors_colorModel, colorModel)
         await closePopover(settingsColorModelMenuRef)
         await closePopover(settingsMenuRef)
     }
@@ -212,15 +169,14 @@ const C: Component<Props> = (props) => {
         <header class={ CSS.appbar }>
             <div class={ CSS[_logo] }><img src={logo[_src]} alt="Randomizer" />Randomizer</div>
             <div class={ CSS[_actions] }>
-                <Button variant={ButtonVariant[_filled]} onClick={async () => {
+                <Button variant={ButtonVariant[_filled]} onClick={() => {
                     if (isGenerating()) {
                         props[_onStopGenerate]()
                         setIsGenerating(false)
                         return
                     }
                     setIsGenerating(true)
-                    await props[_onGenerate]()
-                    setIsGenerating(false)
+                    props[_onGenerate]()[_then](() => setIsGenerating(false))
                 }}><Icon 
                     filled 
                     classList={addClassListModule(CSS.generate_icon)} 
@@ -253,7 +209,14 @@ const C: Component<Props> = (props) => {
                 <Tooltip text="Copy result" anchor={copyBtnRef()}/>
                 <Button iconOnly ref={r => setCopyBtnRef(r)} onClick={async () => {
                     const success = await props[_onCopyResult]()
-                    if (!success) return;
+                    if (!success) {
+                        if (copyErrorTimeoutId()) clearTimeDelayed(copyErrorTimeoutId()!)
+    
+                        setCopyErrorTimeoutId(setTimeDelayed(() => {
+                            setCopyErrorTimeoutId(null)
+                        }, 1000))
+                        return
+                    }
 
                     if (copyTimeoutId()) clearTimeDelayed(copyTimeoutId()!)
 
@@ -261,7 +224,15 @@ const C: Component<Props> = (props) => {
                         setCopyTimeoutId(null)
                     }, 1000))
                 }}>
-                    <Show when={copyTimeoutId()} fallback={<Icon code={0xE51B}/>}><Icon code={0xE3D8}/></Show>
+                    <Show 
+                        when={copyTimeoutId()} 
+                        fallback={<Show 
+                            when={copyErrorTimeoutId()} 
+                            fallback={<Icon code={0xE51B}/>}>
+                            <Icon code={0xE5E9}/>
+                        </Show>}>
+                        <Icon code={0xE3D8}/>
+                    </Show>
                 </Button>
             </div>
         </header>
@@ -346,7 +317,7 @@ const C: Component<Props> = (props) => {
                 <MenuItem
                     checked={isRepeat()}
                     leading={<Icon code={0xE0A1}/>}
-                    onClick={() => toggleRepeat()}
+                    onClick={() => props[_command](Commands.toggle_settings_repeat)}
                     trailing={<MenuIndent/>}>
                     Repeat
                 </MenuItem>
@@ -354,7 +325,7 @@ const C: Component<Props> = (props) => {
 
             <MenuItem
                 checked={isAnimation()}
-                onClick={() => toggleAnimation()}
+                onClick={() => props[_command](Commands.toggle_settings_animation)}
                 leading={<Icon code={0xECBA}/>}
                 trailing={<MenuIndent/>}>
                 Animation
@@ -561,27 +532,27 @@ const C: Component<Props> = (props) => {
 
             <Show when={props[_randomizerType] == RandomizerType[_numbers] || props[_randomizerType] == RandomizerType[_words]}>
                 <MenuDivider/>
-                <div class={ CSS[_textfield_menu_item] }>
+                <div class={ CSS.textfield_menu_item }>
                     <TextField
                         ref={r => prefixInputRef = r}
                         labelText="Prefix"
-                        onBlur={onPrefixInputBlur}
+                        onBlur={(ev) => props[_command](Commands.change_settings_prefix, ev[_currentTarget][_value])}
                         leading={<Icon code={0xE043}/>}
                     />
                 </div>
-                <div class={ CSS[_textfield_menu_item] }>
+                <div class={ CSS.textfield_menu_item }>
                     <TextField
                         ref={r => suffixInputRef = r}
                         labelText="Suffix"
-                        onBlur={onSuffixInputBlur}
+                        onBlur={(ev) => props[_command](Commands.change_settings_suffix, ev[_currentTarget][_value])}
                         leading={<Icon code={0xE02D}/>}
                     />
                 </div>
-                <div class={ CSS[_textfield_menu_item] }>
+                <div class={ CSS.textfield_menu_item }>
                     <TextField
                         ref={r => separatorInputRef = r}
                         labelText="Separator"
-                        onBlur={onSeparatorLengthInputBlur}
+                        onBlur={(ev) => props[_command](Commands.change_settings_separator, ev[_currentTarget][_value])}
                         leading={<Icon code={0xE4CF}/>}
                     />
                 </div>
@@ -592,7 +563,7 @@ const C: Component<Props> = (props) => {
                         ref={r => decimalLengthInputRef = r}
                         min={0}
                         labelText="Min decimal length"
-                        onFinalValueChanged={(v) => setSettings()(_numbers, _minDecimalLength, v)}
+                        onFinalValueChanged={(v) => props[_command](Commands.change_settings_numbers_minDecimalLength, v)}
                         leading={<Icon code={0xE599}/>}
                     />
                 </div>

@@ -5,7 +5,7 @@
 
     & p > a {
         border-bottom: 1px solid;
-        color: rgb(var(--color-acc));     
+        color: rgb(var(--color-accent));     
         position: relative;
         transition-duration: .3s;
         
@@ -25,7 +25,7 @@
         scroll-margin-top: 64px;
 
         &:target {
-            color: rgb(var(--color-acc));
+            color: rgb(var(--color-accent));
         }
 
         > a {
@@ -44,7 +44,7 @@
     }
 
     & blockquote {
-        background-color: rgba(var(--color-on-sur), .04);
+        background-color: rgba(var(--color-on-surface), .04);
         padding: 8px 8px 8px 36px;
         border-radius: 4px;
         position: relative;

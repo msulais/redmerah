@@ -1,17 +1,15 @@
 .color-picker {
-    --max-h: calc(100dvh - 16px);
-    --max-w: calc(100% - 16px);
-    background-color: rgb(var(--color-sur));
-    border: 1px solid rgba(var(--color-on-sur), var(--opacity2));
+    background-color: rgb(var(--color-surface));
+    border: none;
     border-radius: 16px;
     box-shadow: var(--elevation1);
     left: 0;
-    max-height: var(--max-h);
-    max-width: var(--max-w);
+    max-height: calc(100dvh - 16px);
+    max-width: calc(100% - 16px);
     opacity: 0;
-    outline: 1px solid rgba(var(--color-on-sur), var(--opacity2));
     overflow: hidden;
     top: 0;
+    outline: none;
     transform: var(--initial-translate);
 
     [data-corner=sharp] & {
@@ -41,8 +39,15 @@
         transition-property: transform, opacity, top, left;
     }
 
+    &[data-focus] > div {
+        outline-color: rgb(var(--color-accent));
+        outline-width: 4px;
+        outline-offset: -4px;
+        animation: flyout-focus 1s;
+    }
+
     > div {
-        background-color: rgb(var(--color-sur));
+        background-color: rgb(var(--color-surface));
         max-height: inherit;
         max-width: 100%;
         width: 100%;
@@ -53,14 +58,17 @@
         gap: 8px;
         align-items: stretch;
         justify-content: flex-start;
+        outline: 1px solid rgba(var(--color-on-surface), var(--opacity2));
+        outline-offset: -1px;
+        border-radius: inherit;
 
         :root[data-theme=dark] & {
-            background-color: rgba(var(--color-on-sur), var(--opacity1));
+            background-color: rgba(var(--color-on-surface), var(--opacity1));
         }
 
         :root[data-theme=system] & {
             @media (prefers-color-scheme: dark) {
-                background-color: rgba(var(--color-on-sur), var(--opacity1));
+                background-color: rgba(var(--color-on-surface), var(--opacity1));
             }
         }
     }
@@ -71,13 +79,13 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 8px;
     padding: 8px;
-    border-top: 1px solid rgba(var(--color-on-sur), var(--opacity2));
-    background-color: rgba(var(--color-on-sur), var(--opacity1));
+    border-top: 1px solid rgba(var(--color-on-surface), var(--opacity2));
+    background-color: rgba(var(--color-on-surface), var(--opacity1));
     width: 332px;
 }
 
 .color-picker-color {
-    --color: #ff0000;
+    --color-picker-color: #ff0000;
     min-width: 260px;
     min-height: 200px;
     max-width: 260px;
@@ -85,7 +93,7 @@
     background:
         linear-gradient(to top, #000, transparent),
         linear-gradient(to right, #fff, transparent),
-        var(--color)
+        var(--color-picker-color)
     ;
     border-radius: 8px;
     position: relative;
@@ -94,7 +102,7 @@
     &[data-hsl] {
         background:
             linear-gradient(to bottom, #ffffff, #ffffff00 50%, #00000000 50%, #000000),
-            linear-gradient(to right, #808080, var(--color))
+            linear-gradient(to right, #808080, var(--color-picker-color))
         ;
     }
 
@@ -203,7 +211,7 @@
         height: 20px;
         border-radius: 10px;
         position: absolute;
-        border: 2px solid rgb(var(--color-on-sur));
+        border: 2px solid rgb(var(--color-on-surface));
         z-index: 3;
         box-shadow: var(--elevation1), inset var(--elevation1);
         transition-duration: .3s;
@@ -279,7 +287,7 @@
         height: 20px;
         border-radius: 10px;
         position: absolute;
-        border: 2px solid rgb(var(--color-on-sur));
+        border: 2px solid rgb(var(--color-on-surface));
         z-index: 3;
         box-shadow: var(--elevation1), inset var(--elevation1);
         transition-duration: .3s;

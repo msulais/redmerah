@@ -1,0 +1,13 @@
+@keyframes flyout-focus {
+    0% {outline-color: rgba(var(--color-on-surface), var(--opacity2))}
+    10% {outline-color: rgb(var(--color-accent))}
+    20% {outline-color: rgba(var(--color-on-surface), var(--opacity2))}
+    30% {outline-color: rgb(var(--color-accent))}
+    40% {outline-color: rgba(var(--color-on-surface), var(--opacity2))}
+    50% {outline-color: rgb(var(--color-accent))}
+    60% {outline-color: rgba(var(--color-on-surface), var(--opacity2))}
+    70% {outline-color: rgb(var(--color-accent))}
+    80% {outline-color: rgba(var(--color-on-surface), var(--opacity2))}
+    90% {outline-color: rgb(var(--color-accent))}
+    100% {outline-color: rgba(var(--color-on-surface), var(--opacity2))}
+}

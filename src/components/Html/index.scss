@@ -23,11 +23,11 @@ a, button, .icon, :is(a, button, .icon) * {
 }
 
 :is(button, .btn) {
-    --border-color: 0, 0, 0;
-    --border-opacity: 0;
+    --btn-border-color: 0, 0, 0;
+    --btn-border-opacity: 0;
     border: 1px solid;
     border-color: transparent;
-    border-color: rgba(var(--border-color), var(--border-opacity));
+    border-color: rgba(var(--btn-border-color), var(--btn-border-opacity));
     display: flex;
     outline-offset: 4px;
 
@@ -66,12 +66,12 @@ img {
 
 kbd {
     border-radius: .3em;
-    background-color: rgb(var(--color-on-sur));
+    background-color: rgb(var(--color-on-surface));
     font-weight: bold;
     font-size: .85em;
-    color: rgb(var(--color-sur));
+    color: rgb(var(--color-surface));
     padding: .2em .4em;
-    box-shadow: 0 .1em .3em -.15em rgba(var(--color-on-sur), 1);
+    box-shadow: 0 .1em .3em -.15em rgba(var(--color-on-surface), 1);
 }
 
 .no-scrollbar {

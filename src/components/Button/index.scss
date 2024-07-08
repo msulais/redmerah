@@ -7,8 +7,8 @@
 // - Disabled
 
 .btn {
-    --padding: 4px 12px;
-    --icon-animation: none;
+    --btn-padding: 4px 12px;
+    --btn-icon-animation: none;
 
     align-items: center;
     border-radius: 8px;
@@ -39,7 +39,7 @@
             cursor: pointer;
 
             > .btn-layer > .icon {
-                animation: var(--icon-animation);
+                animation: var(--btn-icon-animation);
             }
         }
     }
@@ -53,7 +53,7 @@
     }
 
     &[data-icon] {
-        --padding: 0;
+        --btn-padding: 0;
         min-height: 40px;
         max-height: 40px;
         min-width: 40px;
@@ -61,7 +61,7 @@
     }
 
     &[data-compact] {
-        --padding: 0 8px;
+        --btn-padding: 0 8px;
         min-height: 32px;
 
         &[data-icon] {
@@ -76,33 +76,19 @@
         }
     }
 
-    &[data-elevation='1']{
-        box-shadow: var(--elevation1);
-    }
-
-    &[data-elevation='2']{
-        box-shadow: var(--elevation2);
-    }
-
-    &[data-elevation='3']{
-        box-shadow: var(--elevation3);
-    }
-
-    &[data-elevation='4']{
-        box-shadow: var(--elevation4);
-    }
-
-    &[data-elevation='5']{
-        box-shadow: var(--elevation5);
-    }
+    &[data-elevation='1']{ box-shadow: var(--elevation1) }
+    &[data-elevation='2']{ box-shadow: var(--elevation2) }
+    &[data-elevation='3']{ box-shadow: var(--elevation3) }
+    &[data-elevation='4']{ box-shadow: var(--elevation4) }
+    &[data-elevation='5']{ box-shadow: var(--elevation5) }
 
     &::before {
-        --weight: 4px;
-        --size: calc(100% - 16px);
-        --border-radius: var(--weight);
+        --btn-indicator-weight: 4px;
+        --btn-indicator-size: max(16px, calc(100% - 20px));
+        --btn-indicator-border-radius: var(--btn-indicator-weight);
 
-        background-color: rgb(var(--color-acc));
-        border-radius: var(--border-radius);
+        background-color: rgb(var(--color-accent));
+        border-radius: var(--btn-indicator-border-radius);
         content: '';
         height: 0;
         opacity: 0;
@@ -111,7 +97,11 @@
         width: 0;
 
         [data-corner=sharp] & {
-            --border-radius: 0;
+            --btn-indicator-border-radius: 0;
+        }
+
+        [data-corner=full-round] & {
+            --btn-indicator-size: max(var(--btn-indicator-weight), calc(100% - 40px));
         }
     }
 
@@ -120,24 +110,34 @@
     }
 
     &:is(.btn-filled)::before {
-        background-color: rgb(var(--color-on-acc));
+        background-color: rgb(var(--color-on-accent));
     }
 
     &:is([data-indicator=top],[data-indicator=bottom])::before {
-        --size: calc(100% - 24px);
+        --btn-indicator-size: calc(100% - 24px);
+
+        [data-corner=full-round] & {
+            --btn-indicator-size: max(var(--btn-indicator-weight), calc(100% - 40px));
+        }
+    }
+
+    &.btn-transparent:not([data-focus]):is([data-indicator=top],[data-indicator=bottom])::before {
+        [data-corner=full-round] & {
+            --btn-indicator-size: calc(100% - 24px);
+        }
     }
 
     &[data-indicator=top]{
         &::before {
             left: 50%;
-            min-height: var(--weight);
+            min-height: var(--btn-indicator-weight);
             top: 0;
             transform: translateX(-50%);
-            width: var(--size);
+            width: var(--btn-indicator-size);
         }
 
         &:not(.btn-transparent:not([data-focus]))::before {
-            border-radius: 0 0 var(--border-radius) var(--border-radius);
+            border-radius: 0 0 var(--btn-indicator-border-radius) var(--btn-indicator-border-radius);
         }
     }
 
@@ -145,31 +145,27 @@
         &::before {
             bottom: 0;
             left: 50%;
-            min-height: var(--weight);
+            min-height: var(--btn-indicator-weight);
             transform: translateX(-50%);
-            width: var(--size);
+            width: var(--btn-indicator-size);
         }
 
         &:not(.btn-transparent:not([data-focus]))::before {
-            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            border-radius: var(--btn-indicator-border-radius) var(--btn-indicator-border-radius) 0 0;
         }
     }
 
     &[data-indicator=left]{
         &::before {
-            height: var(--size);
+            height: var(--btn-indicator-size);
             left: 0;
-            min-width: var(--weight);
+            min-width: var(--btn-indicator-weight);
             top: 50%;
             transform: translateY(-50%);
-
-            [data-corner=full-round] & {
-                height: var(--weight);
-            }
         }
 
         &:not(.btn-transparent:not([data-focus]))::before {
-            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            border-radius: 0 var(--btn-indicator-border-radius) var(--btn-indicator-border-radius) 0;
             
             [data-corner=full-round] & {
                 border-radius: 999px;
@@ -179,19 +175,15 @@
 
     &[data-indicator=right]{
         &::before {
-            height: var(--size);
-            min-width: var(--weight);
+            height: var(--btn-indicator-size);
+            min-width: var(--btn-indicator-weight);
             right: 0;
             top: 50%;
             transform: translateY(-50%);
-
-            [data-corner=full-round] & {
-                height: var(--weight);
-            }
         }
 
         &:not(.btn-transparent:not([data-focus]))::before {
-            border-radius: var(--border-radius) 0 0 var(--border-radius);
+            border-radius: var(--btn-indicator-border-radius) 0 0 var(--btn-indicator-border-radius);
             
             [data-corner=full-round] & {
                 border-radius: 999px;
@@ -201,17 +193,21 @@
 }
 
 .btn-transparent {
-    --bg-color: var(--color-on-sur);
-    --border-color: var(--color-on-sur);
+    --bg-color: var(--color-on-surface);
+    --btn-border-color: var(--color-on-surface);
 
     &:disabled {
-        color: rgba(var(--color-on-sur), var(--opacity5));
+        color: rgba(var(--color-on-surface), var(--opacity5));
     }
 
     &:not(:disabled){
+        &[data-selected]:not([data-focus]) {
+            color: rgb(var(--color-accent))
+        }
+        
         &[data-focus] {
             --bg-opacity: var(--opacity2);
-            --border-opacity: var(--opacity1);
+            --btn-border-opacity: var(--opacity1);
         }
 
         @media (hover:hover) {
@@ -222,23 +218,23 @@
 
         &:active {
             --bg-opacity: var(--opacity0);
-            --border-opacity: var(--opacity1);
+            --btn-border-opacity: var(--opacity1);
         }
     }
 }
 
 .btn-filled {
     --bg-opacity: 1;
-    --bg-color: var(--color-acc);
-    --border-color: var(--color-on-sur);
-    --border-opacity: var(--opacity1);
+    --bg-color: var(--color-accent);
+    --btn-border-color: var(--color-on-surface);
+    --btn-border-opacity: var(--opacity1);
     font-weight: 500;
-    color: rgb(var(--color-on-acc));
+    color: rgb(var(--color-on-accent));
 
     &:disabled {
-        --bg-color: var(--color-on-sur);
+        --bg-color: var(--color-on-surface);
         --bg-opacity: var(--opacity1);
-        color: rgba(var(--color-on-sur), var(--opacity-inv5));
+        color: rgba(var(--color-on-surface), var(--opacity-inv5));
     }
 
     &:not(:disabled){
@@ -259,14 +255,14 @@
 }
 
 .btn-filled-tonal {
-    --bg-color: var(--color-on-sur);
-    --border-color: var(--color-on-sur);
+    --bg-color: var(--color-on-surface);
+    --btn-border-color: var(--color-on-surface);
     --bg-opacity: var(--opacity1);
-    --border-opacity: var(--opacity1);
+    --btn-border-opacity: var(--opacity1);
 
     &:disabled {
         --bg-opacity: var(--opacity0);
-        color: rgba(var(--color-on-sur), var(--opacity5));
+        color: rgba(var(--color-on-surface), var(--opacity5));
     }
 
     &:not(:disabled){
@@ -282,8 +278,8 @@
 
         &:active {
             --bg-opacity: var(--opacity1);
-            --border-color: var(--color-on-sur);
-            --border-opacity: var(--opacity1);
+            --btn-border-color: var(--color-on-surface);
+            --btn-border-opacity: var(--opacity1);
         }
     }
 }
@@ -299,7 +295,7 @@
     height: 100%;
     justify-content: center;
     overflow: hidden;
-    padding: var(--padding);
+    padding: var(--btn-padding);
     transition-duration: .3s;
 
     &::-webkit-scrollbar {
@@ -312,14 +308,14 @@
 }
 
 .btn-outlined {
-    --bg-color: var(--color-on-sur);
-    --border-color: var(--color-on-sur);
-    --border-opacity: var(--opacity-border);
+    --bg-color: var(--color-on-surface);
+    --btn-border-color: var(--color-on-surface);
+    --btn-border-opacity: var(--opacity-border);
 
     &:disabled {
-        color: rgba(var(--color-on-sur), var(--opacity5));
-        --border-color: var(--color-on-sur);
-        --border-opacity: var(--opacity5);
+        color: rgba(var(--color-on-surface), var(--opacity5));
+        --btn-border-color: var(--color-on-surface);
+        --btn-border-opacity: var(--opacity5);
     }
 
     &:not(:disabled){

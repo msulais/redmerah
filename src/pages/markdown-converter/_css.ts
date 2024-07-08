@@ -1,19 +1,19 @@
 export const cssTextDefault = `:root {
-    --color-bac-light: 250, 250, 250;
-    --color-bac-dark: 26, 26, 26;
-    --color-sur-light: 255, 255, 255;
-    --color-on-sur-light: 31, 31, 31;
-    --color-sur-dark: 31, 31, 31;
-    --color-on-sur-dark: 250, 250, 250;
-    --color-acc-light: 0, 97, 29;
-    --color-on-acc-light: 255, 255, 255;
-    --color-acc-dark: 0, 204, 61;
-    --color-on-acc-dark: 0, 0, 0;
-    --color-bac: var(--color-bac-light);
-    --color-acc: var(--color-acc-light);
-    --color-on-acc: var(--color-on-acc-light);
-    --color-sur: var(--color-sur-light);
-    --color-on-sur: var(--color-on-sur-light);
+    --color-background-light: 250, 250, 250;
+    --color-background-dark: 26, 26, 26;
+    --color-surface-light: 255, 255, 255;
+    --color-on-surface-light: 31, 31, 31;
+    --color-surface-dark: 31, 31, 31;
+    --color-on-surface-dark: 250, 250, 250;
+    --color-accent-light: 0, 97, 29;
+    --color-on-accent-light: 255, 255, 255;
+    --color-accent-dark: 0, 204, 61;
+    --color-on-accent-dark: 0, 0, 0;
+    --color-background: var(--color-background-light);
+    --color-accent: var(--color-accent-light);
+    --color-on-accent: var(--color-on-accent-light);
+    --color-surface: var(--color-surface-light);
+    --color-on-surface: var(--color-on-surface-light);
     --opacity0: .02;
     --opacity1: .04;
     --opacity2: .08;
@@ -30,18 +30,18 @@ export const cssTextDefault = `:root {
     --font-family-sans-serif: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
     --font-family-monospace: ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono", "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace", "Source Code Pro", "Fira Mono", "Droid Sans Mono", "Courier New", monospace ;
 
-    background-color: rgb(var(--color-bac));
+    background-color: rgb(var(--color-background));
     font-family: var(--font-family-sans-serif);
-    color: rgb(var(--color-on-sur));
+    color: rgb(var(--color-on-surface));
 }
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --color-bac: var(--color-bac-dark);
-        --color-acc: var(--color-acc-dark);
-        --color-on-acc: var(--color-on-acc-dark);
-        --color-sur: var(--color-sur-dark);
-        --color-on-sur: var(--color-on-sur-dark);
+        --color-background: var(--color-background-dark);
+        --color-accent: var(--color-accent-dark);
+        --color-on-accent: var(--color-on-accent-dark);
+        --color-surface: var(--color-surface-dark);
+        --color-on-surface: var(--color-on-surface-dark);
 
         color-scheme: dark;
     }
@@ -147,13 +147,13 @@ ul, ol {
 code {
     padding: 0 0.2em;
     border-radius: 0.2em;
-    background-color: rgba(var(--color-on-sur), 0.04);
-    border: 1px solid rgba(var(--color-on-sur), 0.04);
+    background-color: rgba(var(--color-on-surface), 0.04);
+    border: 1px solid rgba(var(--color-on-surface), 0.04);
 }
 
 pre {
-    background-color: rgba(var(--color-on-sur), 0.04);
-    border: 1px solid rgba(var(--color-on-sur), 0.04);
+    background-color: rgba(var(--color-on-surface), 0.04);
+    border: 1px solid rgba(var(--color-on-surface), 0.04);
     padding: 8px 12px;
     border-radius: 4px;
     overflow: auto;
@@ -166,11 +166,11 @@ pre code {
 }
 
 a {
-    --border-color: rgba(var(--color-acc), .08);
+    --border-color: rgba(var(--color-accent), .08);
 
     text-decoration: underline;
     border: 1px solid transparent;
-    color: rgb(var(--color-acc));
+    color: rgb(var(--color-accent));
     transition: all 0.2s;
     padding: 0 0.2em;
     border-radius: 0.2em;
@@ -178,18 +178,18 @@ a {
 
 @media (hover: hover) {
     a:hover {
-        background-color: rgba(var(--color-acc), 0.12);
+        background-color: rgba(var(--color-accent), 0.12);
         border-color: var(--border-color);
     }
 }
 
 a:active {
     border-color: var(--border-color);
-    background-color: rgba(var(--color-acc), 0.04);
+    background-color: rgba(var(--color-accent), 0.04);
 }
 
 blockquote {
-    border: 1px solid rgb(var(--color-acc));
+    border: 1px solid rgb(var(--color-accent));
     border-left-width: 4px;
     padding: 8px;
     border-radius: 4px;
@@ -211,12 +211,12 @@ blockquote blockquote::after {
 }
 
 hr {
-    border-color: rgba(var(--color-on-sur), 0.32);
+    border-color: rgba(var(--color-on-surface), 0.32);
     border-style: dashed;
 }
 
 table {
-    --border-color: rgba(var(--color-on-sur), .32);
+    --border-color: rgba(var(--color-on-surface), .32);
 
     border: 1px solid var(--border-color);
     border-collapse: separate;
@@ -227,7 +227,7 @@ table {
 }
 
 th {
-    background-color: rgba(var(--color-on-sur), 0.04);
+    background-color: rgba(var(--color-on-surface), 0.04);
     border: none;
     padding: 8px 12px;
     text-align: start;

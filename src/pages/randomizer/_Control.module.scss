@@ -42,6 +42,17 @@
             }
         }
     }
+
+    &[data-randomizer=words] {
+        @media (max-width: 500px) {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+
+            & :global(.textfield) {
+                width: 100% !important;
+            }
+        }
+    }
 }
 
 .string_custom_character {

@@ -4,11 +4,11 @@ import { getAttribute, hasAttribute, removeAttribute, setAttribute } from "./att
 import { getBoundingClientRect, getElementById, querySelector, setStyleProperty } from "./element";
 import { BodyAttributes, PopoverAttributes } from "@/enums/attributes";
 import { stopImmediatePropagation } from "./event";
-import { setTimeDelayed, timeout } from "./timeout";
+import { clearTimeDelayed, setTimeDelayed, timeout } from "./timeout";
 import { PopoverPosition } from "@/enums/position"
 import { ElementSelector } from "@/enums/selector";
 import { initFlyout } from "./flyout";
-import { _anchorId, _position, _gap, _padding, _top, _px, _left, _body, _bottom, _clientX, _clientY, _flyoutOpen, _height, _id, _move, _open, _right, _touches, _transform, _trim, _width, _focus, _showModal, _showPopover, _isNaN, _hidePopover, _close, _flyout, _CENTER_BOTTOM, _CENTER_BOTTOM_TO_LEFT, _CENTER_BOTTOM_TO_RIGHT, _CENTER_CENTER, _CENTER_CENTER_BOTTOM, _CENTER_CENTER_LEFT, _CENTER_CENTER_LEFT_BOTTOM, _CENTER_CENTER_LEFT_TOP, _CENTER_CENTER_RIGHT, _CENTER_CENTER_RIGHT_BOTTOM, _CENTER_CENTER_RIGHT_TOP, _CENTER_CENTER_TOP, _CENTER_TOP, _CENTER_TOP_TO_LEFT, _CENTER_TOP_TO_RIGHT, _LEFT_BOTTOM, _LEFT_CENTER, _LEFT_CENTER_TO_BOTTOM, _LEFT_CENTER_TO_TOP, _LEFT_TOP, _RIGHT_BOTTOM, _RIGHT_CENTER, _RIGHT_CENTER_TO_BOTTOM, _RIGHT_CENTER_TO_TOP, _RIGHT_TOP, _clientWidth, _element, _includes, _innerHeight, _popover, _screen, _x, _y, _observe, _anchor, _notAllowHideAnchor, _hasMaxHeight, _hasMaxWidth, _maxHeight, _maxWidth, _style, _max_height, _max_width } from "@/data/string";
+import { _anchorId, _position, _gap, _padding, _top, _px, _left, _body, _bottom, _clientX, _clientY, _flyoutOpen, _height, _id, _move, _open, _right, _touches, _transform, _trim, _width, _focus, _showModal, _showPopover, _isNaN, _hidePopover, _close, _flyout, _CENTER_BOTTOM, _CENTER_BOTTOM_TO_LEFT, _CENTER_BOTTOM_TO_RIGHT, _CENTER_CENTER, _CENTER_CENTER_BOTTOM, _CENTER_CENTER_LEFT, _CENTER_CENTER_LEFT_BOTTOM, _CENTER_CENTER_LEFT_TOP, _CENTER_CENTER_RIGHT, _CENTER_CENTER_RIGHT_BOTTOM, _CENTER_CENTER_RIGHT_TOP, _CENTER_CENTER_TOP, _CENTER_TOP, _CENTER_TOP_TO_LEFT, _CENTER_TOP_TO_RIGHT, _LEFT_BOTTOM, _LEFT_CENTER, _LEFT_CENTER_TO_BOTTOM, _LEFT_CENTER_TO_TOP, _LEFT_TOP, _RIGHT_BOTTOM, _RIGHT_CENTER, _RIGHT_CENTER_TO_BOTTOM, _RIGHT_CENTER_TO_TOP, _RIGHT_TOP, _clientWidth, _element, _includes, _innerHeight, _popover, _screen, _x, _y, _observe, _anchor, _notAllowHideAnchor, _hasMaxHeight, _hasMaxWidth, _maxHeight, _maxWidth, _style, _max_height, _max_width, _focusTimeoutId } from "@/data/string";
 import { numberParse } from "./math";
 import { getDocument, getWindow } from "@/data/window";
 
@@ -41,6 +41,22 @@ type OpenPopoverParams = {
      * `<input>` will focused by browser by default when dialog open
      **/
     inputAutoFocus?: boolean
+}
+
+export function focusPopover(popover: HTMLElement): void {
+    if (hasAttribute(popover, PopoverAttributes[_focusTimeoutId])) {
+        clearTimeDelayed(numberParse(getAttribute(popover, PopoverAttributes[_focusTimeoutId])!, true))
+        removeAttribute(popover, PopoverAttributes[_focus])
+    }
+
+    setTimeDelayed(() => {
+        setAttribute(popover, PopoverAttributes[_focus])
+        const t = setTimeDelayed(() => {
+            removeAttribute(popover, PopoverAttributes[_focus])
+            removeAttribute(popover, PopoverAttributes[_focusTimeoutId])
+        }, 1000)
+        setAttribute(popover, PopoverAttributes[_focusTimeoutId], `${t}`)
+    })
 }
 
 export function initPopover(popover: HTMLElement): MutationObserver | null {

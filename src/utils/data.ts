@@ -4,7 +4,7 @@ export function isVarHasValue(data: unknown): boolean {
     return data != undefined && data != null
 }
 
-export function createObject<T>(...data: [keyof T, unknown][]): T {
+export function createObject<T>(...data: [key: keyof T, value: unknown][]): T {
     const obj = {} as Record<keyof T, unknown>
 
     for (let i = 0; i < data[_length]; i++) {

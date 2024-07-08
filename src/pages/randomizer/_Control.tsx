@@ -1,36 +1,186 @@
-import { type Component, Match, Switch, type VoidComponent, createEffect, createMemo, createSignal } from "solid-js";
-import type { SetStoreFunction } from "solid-js/store/types/store";
+import { type Component, Match, Show, Switch, type VoidComponent, createEffect, createMemo, createSignal } from "solid-js";
+import type { SetStoreFunction, Store } from "solid-js/store/types/store";
 
 import { getBoundingClientRect } from "@/utils/element";
 import { PopoverPosition } from "@/enums/position";
 import { toggleAttribute } from "@/utils/attributes";
-import { openPopover } from "@/utils/popover";
+import { closePopover, openPopover } from "@/utils/popover";
 import type { ComponentEvent } from "@/types/event";
-import { RandomizerType, ColorsRandomizerColorModel } from "./_enums";
-import type { Settings } from "./_types";
-import { _settings, _string, _numbers, _length, _push, _join, _width, _currentTarget, _CENTER_BOTTOM_TO_LEFT, _value, _characters, _symbols, _colors, _match, _max, _min, _replace, _range, _count, _colorModel, _hex, _hsl, _isNaN, _rgb } from "@/data/string";
+import { RandomizerType, ColorsRandomizerColorModel, Commands } from "./_enums";
+import type { ListItems, Settings } from "./_types";
+import { _settings, _string, _numbers, _length, _push, _join, _width, _currentTarget, _CENTER_BOTTOM_TO_LEFT, _value, _characters, _symbols, _colors, _match, _max, _min, _replace, _range, _count, _colorModel, _hex, _hsl, _isNaN, _rgb, _words, _lists, _alphabetLowercase, _alphabetUppercase, _customCharacter, _randomizerType, _id, _list, _members, _name, _db, _objectStore, _put, _transaction, _readwrite, _command, _CENTER_BOTTOM_TO_RIGHT, _oncontextmenu, _items } from "@/data/string";
 
 import Icon from "@/components/Icon";
 import Tooltip from "@/components/Tooltip";
 import TextField, { NumberTextField, TextFieldTrailingButton, changeTextFieldValue } from "@/components/TextField";
 import Menu, { MenuDivider, MenuHeader, MenuItem } from "@/components/Menu";
 import CSS from './_Control.module.scss'
+import type { ObjectStoreLists } from "./_storage";
+import Dropdown, { type DropdownItem } from "@/components/Dropdown";
+import type { IDB } from "@/class/indexeddb";
+import { numberIsNaN, numberParse } from "@/utils/math";
+import { _add_list, _delete_list, _edit_list, _settings_words_listId } from "./_string";
+import { preventDefault } from "@/utils/event";
 
 type Props = {
     randomizerType: RandomizerType
     settings: [Settings, SetStoreFunction<Settings>]
+    lists: [Store<ObjectStoreLists[]>, SetStoreFunction<ObjectStoreLists[]>]
+    command: (type: Commands, ...args: unknown[]) => unknown
 }
 
 type $StringProps = {
     settings: [Settings, SetStoreFunction<Settings>]
+    command: (type: Commands, ...args: unknown[]) => unknown
 }
 
 type NumbersProps = {
     settings: [Settings, SetStoreFunction<Settings>]
+    command: (type: Commands, ...args: unknown[]) => unknown
 }
 
 type ColorsProps = {
     settings: [Settings, SetStoreFunction<Settings>]
+    command: (type: Commands, ...args: unknown[]) => unknown
+}
+
+type WordsProps = {
+    settings: [Settings, SetStoreFunction<Settings>]
+    lists: [Store<ObjectStoreLists[]>, SetStoreFunction<ObjectStoreLists[]>]
+    command: (type: Commands, ...args: unknown[]) => unknown
+}
+
+const Words: VoidComponent<WordsProps> = (props) => {
+    const [list, setList] = createSignal<ListItems | null>(null)
+    let dropdownMenuRef: HTMLDialogElement
+    let actionMenuRef: HTMLDialogElement
+
+    function ListItemsToDropdownList(list: ListItems[]): DropdownItem[] {
+        const items: DropdownItem[] = []
+
+        for (const l of list) {
+            items[_push]([`${l[_id]}`, l[_name], l[_items][_length] + ''])
+        }
+
+        return items
+    }
+
+    function changeList(id: string): void {
+        for (const li of props[_lists][0]) {
+            if (`${li.id}` != id) continue;
+            setList(li)
+            break
+        }
+        props[_command](Commands.change_settings_words_list, list())
+    }
+
+    return (<>
+        <Dropdown 
+            labelText="List" 
+            selectedValues={[`${props[_settings][0][_words][_list][_id]}`]} 
+            items={[...ListItemsToDropdownList(props[_lists][0])]} 
+            labelElement={{ style: { width: 'min(100%, 164px)' } }}
+            onValueChanged={id => changeList(id[0])}
+            dropdownAttr={{ ref: (r) => dropdownMenuRef = r }}
+            refs={(r, value) => {
+                r[_oncontextmenu] = (ev) => {
+                    for (const li of props[_lists][0]) {
+                        if (`${li.id}` != value) continue;
+                        setList(li)
+                        break
+                    }
+                    openPopover({
+                        event: ev, 
+                        popover: actionMenuRef, 
+                        position: PopoverPosition[_CENTER_BOTTOM_TO_RIGHT]
+                    })
+                    preventDefault(ev)
+                }
+            }}
+            header={<Show when={props[_lists][0][_length] > 0}><MenuHeader>Select list</MenuHeader></Show>}
+            footer={<>
+                <Show when={props[_lists][0][_length] > 0}>
+                    <MenuDivider />
+                </Show>
+                <MenuItem 
+                    onClick={(ev) => {
+                        props[_command](Commands.add_list, ev)
+                        closePopover(dropdownMenuRef)
+                    }}
+                    leading={<Icon code={0xE007} />}>
+                    Add new list
+                </MenuItem>
+
+                <Show when={props[_lists][0][_length] == 0}>
+                    <MenuItem 
+                        onClick={(ev) => {
+                            props[_command](Commands.reset_list)
+                            closePopover(dropdownMenuRef)
+                        }}
+                        leading={<Icon code={0xF09A} />}>
+                        Reset all list
+                    </MenuItem>
+                </Show>
+                
+                <Show when={props[_lists][0][_length] > 0}>
+                    <MenuItem 
+                        onClick={(ev) => {
+                            props[_command](Commands.edit_list, ev)
+                            closePopover(dropdownMenuRef)
+                        }}
+                        leading={<Icon code={0xE069}/>}>
+                        Edit list
+                    </MenuItem>
+                </Show>
+            </>}
+        />
+        <Menu ref={r => actionMenuRef = r} style={{width: '164px'}}>
+            <Show when={list() && list()![_id] != props[_settings][0][_words][_list][_id]}>
+                <MenuItem onClick={async () => {
+                    await closePopover(actionMenuRef)
+                    await closePopover(dropdownMenuRef)
+                    changeList(list()![_id] + '')
+                }} leading={<Icon code={0xE3CC}/>}>Select</MenuItem>
+                <MenuDivider />
+            </Show>
+            <MenuItem 
+                onClick={async (ev) => {
+                    await closePopover(actionMenuRef)
+                    await closePopover(dropdownMenuRef)
+                    props[_command](Commands.view_list, ev, list())
+                }} 
+                leading={<Icon code={0xE77B}/>}>
+                View list
+            </MenuItem>
+            <MenuItem 
+                onClick={async () => {
+                    await closePopover(actionMenuRef)
+                    await closePopover(dropdownMenuRef)
+                    props[_command](Commands.export_list, list())
+                }} 
+                leading={<Icon code={0xE0CF}/>}
+                trailing="*.csv">
+                Export list
+            </MenuItem>
+            <MenuItem onClick={async (ev) => {
+                    props[_command](Commands.edit_list, ev, list())
+                    await closePopover(actionMenuRef)
+                    await closePopover(dropdownMenuRef)
+                }} leading={<Icon code={0xF09C}/>}>Edit list</MenuItem>
+            <MenuItem onClick={async (ev) => {
+                    props[_command](Commands.delete_list, ev, list())
+                    await closePopover(actionMenuRef)
+                    await closePopover(dropdownMenuRef)
+                }} leading={<Icon code={0xE59D}/>}>Delete list</MenuItem>
+        </Menu>
+        <NumberTextField 
+            labelText="Count" 
+            min={1}
+            onFinalValueChanged={(v) => props[_command](Commands.change_settings_words_count, v)}
+            labelElement={{ style: { width: 'min(100%, 164px)' } }}
+            value={props[_settings][0][_words][_count]} 
+        />
+    </>)
 }
 
 const Colors: VoidComponent<ColorsProps> = (props) => {
@@ -42,11 +192,11 @@ const Colors: VoidComponent<ColorsProps> = (props) => {
         const r = value[_replace](unnecesaryChar, '')[_match](rangeRegex)
         if (r == null) return {min, max}
 
-        min = parseInt(r[1])
-        max = parseInt(r[2])
+        min = numberParse(r[1], true)
+        max = numberParse(r[2], true)
 
-        if (Number[_isNaN](min)) min = defaultValue[_min]
-        if (Number[_isNaN](max)) min = defaultValue[_max]
+        if (numberIsNaN(min)) min = defaultValue[_min]
+        if (numberIsNaN(max)) min = defaultValue[_max]
         if (min < 0) min = 0
         if (max < 0) max = 0
         if (min > maxValue) min = maxValue
@@ -61,7 +211,7 @@ const Colors: VoidComponent<ColorsProps> = (props) => {
             min={1}
             labelText="Count"
             value={props[_settings][0][_colors][_count]}
-            onFinalValueChanged={(v) => props[_settings][1](_colors, _count, v)}
+            onFinalValueChanged={(v) => props[_command](Commands.change_settings_colors_count, v)}
         />
         <Switch>
             <Match when={props[_settings][0][_colors][_colorModel] == ColorsRandomizerColorModel[_hex]}>
@@ -77,7 +227,7 @@ const Colors: VoidComponent<ColorsProps> = (props) => {
                                 max: props[_settings][0][_colors][_range][_hex][_max]
                             }
                         )
-                        props[_settings][1](_colors, _range, _hex, values)
+                        props[_command](Commands.change_settings_colors_range_hex, values[_min], values[_max])
                         changeTextFieldValue(ev[_currentTarget], [values[_min], values[_max]][_join](' - '))
                     }}
                     value={[
@@ -99,7 +249,7 @@ const Colors: VoidComponent<ColorsProps> = (props) => {
                                 max: props[_settings][0][_colors][_range][_hsl].h[_max]
                             }
                         )
-                        props[_settings][1](_colors, _range, _hsl, 'h', values)
+                        props[_command](Commands.change_settings_colors_range_hsl_h, values[_min], values[_max])
                         changeTextFieldValue(ev[_currentTarget], [values[_min], values[_max]][_join](' - '))
                     }}
                     value={[
@@ -119,7 +269,7 @@ const Colors: VoidComponent<ColorsProps> = (props) => {
                                 max: props[_settings][0][_colors][_range][_hsl].s[_max]
                             }
                         )
-                        props[_settings][1](_colors, _range, _hsl, 's', values)
+                        props[_command](Commands.change_settings_colors_range_hsl_s, values[_min], values[_max])
                         changeTextFieldValue(ev[_currentTarget], [values[_min], values[_max]][_join](' - '))
                     }}
                     value={[
@@ -139,7 +289,7 @@ const Colors: VoidComponent<ColorsProps> = (props) => {
                                 max: props[_settings][0][_colors][_range][_hsl].l[_max]
                             }
                         )
-                        props[_settings][1](_colors, _range, _hsl, 'l', values)
+                        props[_command](Commands.change_settings_colors_range_hsl_l, values[_min], values[_max])
                         changeTextFieldValue(ev[_currentTarget], [values[_min], values[_max]][_join](' - '))
                     }}
                     value={[
@@ -161,7 +311,7 @@ const Colors: VoidComponent<ColorsProps> = (props) => {
                                 max: props[_settings][0][_colors][_range][_rgb].r[_max]
                             }
                         )
-                        props[_settings][1](_colors, _range, _rgb, 'r', values)
+                        props[_command](Commands.change_settings_colors_range_rgb_r, values[_min], values[_max])
                         changeTextFieldValue(ev[_currentTarget], [values[_min], values[_max]][_join](' - '))
                     }}
                     value={[
@@ -181,7 +331,7 @@ const Colors: VoidComponent<ColorsProps> = (props) => {
                                 max: props[_settings][0][_colors][_range][_rgb].g[_max]
                             }
                         )
-                        props[_settings][1](_colors, _range, _rgb, 'g', values)
+                        props[_command](Commands.change_settings_colors_range_rgb_g, values[_min], values[_max])
                         changeTextFieldValue(ev[_currentTarget], [values[_min], values[_max]][_join](' - '))
                     }}
                     value={[
@@ -201,7 +351,7 @@ const Colors: VoidComponent<ColorsProps> = (props) => {
                                 max: props[_settings][0][_colors][_range][_rgb].b[_max]
                             }
                         )
-                        props[_settings][1](_colors, _range, _rgb, 'b', values)
+                        props[_command](Commands.change_settings_colors_range_rgb_b, values[_min], values[_max])
                         changeTextFieldValue(ev[_currentTarget], [values[_min], values[_max]][_join](' - '))
                     }}
                     value={[
@@ -232,7 +382,7 @@ const Numbers: VoidComponent<NumbersProps> = (props) => {
 
         if (min > max) min = max
 
-        props[_settings][1](_numbers, _range, { min, max })
+        props[_command](Commands.change_settings_numbers_range, min, max)
         changeTextFieldValue(ev[_currentTarget], [min, max][_join](' - '))
     }
 
@@ -246,7 +396,7 @@ const Numbers: VoidComponent<NumbersProps> = (props) => {
         <NumberTextField
             labelText="Count"
             min={1}
-            onFinalValueChanged={(v) => props[_settings][1](_numbers, _count, v)}
+            onFinalValueChanged={(v) => props[_command](Commands.change_settings_numbers_count, v)}
             labelElement={{ style: { width: 'min(100%, 164px)' } }}
             value={props[_settings][0][_numbers][_count]}
         />
@@ -254,11 +404,6 @@ const Numbers: VoidComponent<NumbersProps> = (props) => {
 }
 
 const $String: Component<$StringProps> = (props) => {
-    const
-        _alphabetLowercase = 'alphabetLowercase',
-        _alphabetUppercase = 'alphabetUppercase',
-        _customCharacter = 'customCharacter'
-    ;
     const [isCharactersMenuOpen, setIsCharactersMenuOpen] = createSignal<boolean>(false)
     const [charactersMenuWidth, setCharactersMenuWidth] = createSignal<number>(0)
     const [charactersBtnRef, setCharactersBtnRef] = createSignal<HTMLButtonElement | null>(null)
@@ -276,12 +421,7 @@ const $String: Component<$StringProps> = (props) => {
         const customCharacter = s[_characters][_customCharacter]
 
         if (!lowercase && !uppercase && !numbers && !symbols && customCharacter[_length] == 0) {
-            props[_settings][1](_string, _characters, c => {return {
-                ...c,
-                alphabetLowercase: true,
-                alphabetUppercase: true,
-                numbers: true,
-            }})
+            props[_command](Commands.change_settings_string_characters_toDefault)
         }
 
         const text: string[] = []
@@ -298,7 +438,7 @@ const $String: Component<$StringProps> = (props) => {
         <NumberTextField
             labelElement={{ style: { width: 'min(100%, 164px)' } }}
             value={settings()[_length]}
-            onFinalValueChanged={(v) => props[_settings][1](_string, _length, v)}
+            onFinalValueChanged={(v) => props[_command](Commands.change_settings_string_length, v)}
             min={1}
             labelText="Length"
         />
@@ -332,27 +472,27 @@ const $String: Component<$StringProps> = (props) => {
             <MenuItem
                 checked={settings()[_characters][_alphabetUppercase]}
                 trailing="A-Z"
-                onClick={() => props[_settings][1](_string, _characters, _alphabetUppercase, s => !s)}>Uppercase</MenuItem>
+                onClick={() => props[_command](Commands.toggle_settings_string_characters_alphabetUppercase)}>Uppercase</MenuItem>
             <MenuItem
                 checked={settings()[_characters][_alphabetLowercase]}
                 trailing="a-z"
-                onClick={() => props[_settings][1](_string, _characters, _alphabetLowercase, s => !s)}>Lowercase</MenuItem>
+                onClick={() => props[_command](Commands.toggle_settings_string_characters_alphabetLowercase)}>Lowercase</MenuItem>
             <MenuDivider />
             <MenuItem
                 checked={settings()[_characters][_numbers]}
                 trailing="0-9"
-                onClick={() => props[_settings][1](_string, _characters, _numbers, s => !s)}>Numbers</MenuItem>
+                onClick={() => props[_command](Commands.toggle_settings_string_characters_numbers)}>Numbers</MenuItem>
             <MenuDivider />
             <MenuItem
                 checked={settings()[_characters][_symbols]}
                 trailing={"<({[!@#$%^&*_-+=~`\\|\"':;?/.,]})>"}
-                onClick={() => props[_settings][1](_string, _characters, _symbols, s => !s)}>Symbol</MenuItem>
+                onClick={() => props[_command](Commands.toggle_settings_string_characters_symbols)}>Symbol</MenuItem>
             <MenuDivider />
             <div class={ CSS.string_custom_character}>
                 <TextField
                     labelText="Custom characters"
                     placeholder="#d(23'[])sdf"
-                    onInput={(ev) => props[_settings][1](_string, _characters, _customCharacter, ev[_currentTarget][_value])}
+                    onInput={(ev) => props[_command](Commands.change_settings_string_characters_customCharacters, ev[_currentTarget][_value])}
                     value={settings()[_characters][_customCharacter]}
                 />
             </div>
@@ -360,23 +500,23 @@ const $String: Component<$StringProps> = (props) => {
     </>)
 }
 
-const C: Component<Props> = (props) => {
-    const
-        _randomizerType = 'randomizerType'
-    ;
+const Control: Component<Props> = (props) => {
     return (<div class={CSS.control} data-randomizer={props[_randomizerType]}>
         <Switch>
             <Match when={props[_randomizerType] == RandomizerType[_string]}>
-                <$String settings={props[_settings]}/>
+                <$String command={props[_command]} settings={props[_settings]}/>
             </Match>
             <Match when={props[_randomizerType] == RandomizerType[_numbers]}>
-                <Numbers settings={props[_settings]} />
+                <Numbers command={props[_command]} settings={props[_settings]} />
             </Match>
             <Match when={props[_randomizerType] == RandomizerType[_colors]}>
-                <Colors settings={props[_settings]} />
+                <Colors command={props[_command]} settings={props[_settings]} />
+            </Match>
+            <Match when={props[_randomizerType] == RandomizerType[_words]}>
+                <Words command={props[_command]} settings={props[_settings]} lists={props[_lists]} />
             </Match>
         </Switch>
     </div>)
 }
 
-export default C
+export default Control

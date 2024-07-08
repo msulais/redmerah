@@ -22,10 +22,14 @@ export enum PopoverAttributes {
     notAllowHideAnchor = 'data-not-allow-hide-anchor',
     move = 'data-move',
     popover = 'data-popover',
-    gap = 'data-gap'
+    gap = 'data-gap',
+    focus = 'data-focus',
+    focusTimeoutId = 'data-focus-timeout-id'
 }
 
 export enum ModalAttributes {
     open = 'data-open', 
-    modal = 'data-modal'
+    modal = 'data-modal',
+    focus = 'data-focus', 
+    focusTimeoutId = 'data-focus-timeout-id'
 }

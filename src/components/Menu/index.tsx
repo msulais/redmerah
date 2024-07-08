@@ -2,7 +2,7 @@ import { type Component, type JSX, Match, type ParentComponent, Show, Switch, cr
 import { Portal } from "solid-js/web"
 
 import type { ComponentEvent } from "@/types/event"
-import { preventDefault, stopPropagation } from "@/utils/event"
+import { preventDefault, stopImmediatePropagation, stopPropagation } from "@/utils/event"
 import { clearTimeDelayed, setTimeDelayed } from "@/utils/timeout"
 import { closePopover, initPopover, openPopover, repositionPopover } from "@/utils/popover"
 import { getBoundingClientRect, querySelector, setStyleProperty } from "@/utils/element"
@@ -81,7 +81,7 @@ export const MenuItem: ParentComponent<MenuItemProps> = ($props) => {
         {...other}>
         <Show when={isVarHasValue(props[_checked])}>
             <Icon 
-                style={{color: props[_checked]? 'rgb(var(--color-acc))' : undefined}} 
+                style={{color: props[_checked]? 'rgb(var(--color-accent))' : undefined}} 
                 filled={props[_checked]} 
                 code={props[_checked]? 0xE3CC : 0xE3D4}
             />
@@ -112,7 +112,7 @@ export const MenuItemLink: ParentComponent<MenuItemLinkProps> = ($props) => {
         {...other}>
         <Show when={isVarHasValue(props[_checked])}>
             <Icon 
-                style={{color: props[_checked]? 'rgb(var(--color-acc))' : undefined}} 
+                style={{color: props[_checked]? 'rgb(var(--color-accent))' : undefined}} 
                 filled={props[_checked]} 
                 code={props[_checked]? 0xE3CC : 0xE3D4}
             />
@@ -227,11 +227,13 @@ export const NestedMenu: ParentComponent<NestedMenuProps> = ($props) => {
             id={props[_id]}
             onClick={(ev) => {
                 stopPropagation(ev)
+                stopImmediatePropagation(ev)
                 if (props[_onClick]) props[_onClick](ev)
             }}
             class="menu" 
             popover={_manual}
             data-dismiss={_manual}
+            data-popover
             data-level={props[_level]}
             {...other}>
             <div>

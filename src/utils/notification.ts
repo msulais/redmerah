@@ -50,8 +50,8 @@ export async function closeNotification(notificationBar: HTMLDivElement): Promis
 
 export async function openNotification({
         notificationBar, 
-        duration = 3E3, 
-        position = PopoverPosition[_CENTER_CENTER_BOTTOM], 
+        duration = 5E3, 
+        position = PopoverPosition[_CENTER_CENTER_TOP], 
         autoClose = true
     }: NotificationOptions): Promise<void> {
     const

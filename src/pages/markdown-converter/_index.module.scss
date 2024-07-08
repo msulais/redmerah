@@ -14,7 +14,7 @@ $small-screen: 650px;
         font-weight: 500;
 
         &:target {
-            color: rgb(var(--color-acc));
+            color: rgb(var(--color-accent));
         }
     }
 
@@ -23,24 +23,23 @@ $small-screen: 650px;
     }
 
     & a {
-        --border-color: rgba(var(--color-acc), var(--opacity2));
         text-decoration: underline;
         border: 1px solid transparent;
-        color: rgb(var(--color-acc));
+        color: rgb(var(--color-accent));
         transition: all .2s;
         padding: 0 .2em;
         border-radius: .2em;
 
         @media (hover:hover) {
             &:hover {
-                background-color: rgba(var(--color-acc), var(--opacity3));
-                border-color: var(--border-color);
+                background-color: rgba(var(--color-accent), var(--opacity3));
+                border-color: rgba(var(--color-accent), var(--opacity2));
             }
         }
 
         &:active {
-            border-color: var(--border-color);
-            background-color: rgba(var(--color-acc), var(--opacity1));
+            border-color: rgba(var(--color-accent), var(--opacity2));
+            background-color: rgba(var(--color-accent), var(--opacity1));
         }
     }
 }
@@ -87,23 +86,23 @@ $small-screen: 650px;
 
     @media (hover: hover) {
         &:hover {
-            color: rgb(var(--color-acc));
+            color: rgb(var(--color-accent));
             cursor: ew-resize;
 
             > div {
                 opacity: 1;
-                background-color: rgb(var(--color-acc));
+                background-color: rgb(var(--color-accent));
             }
         }
     }
 
     &:active {
-        color: rgb(var(--color-acc));
+        color: rgb(var(--color-accent));
         cursor: ew-resize;
 
         > div {
             opacity: 1;
-            background-color: rgb(var(--color-acc));
+            background-color: rgb(var(--color-accent));
         }
     }
 
@@ -118,7 +117,7 @@ $small-screen: 650px;
         border-radius: 2px;
         margin: 0 2px;
         pointer-events: none;
-        background-color: rgba(var(--color-on-sur), var(--opacity-inv3));
+        background-color: rgba(var(--color-on-surface), var(--opacity-inv3));
 
         [data-corner=sharp] {
             border-radius: 0;
@@ -155,8 +154,8 @@ $small-screen: 650px;
 
 .input {
     --i-border-radius: 16px;
-    background-color: rgb(var(--color-sur));
-    border: 1px solid rgba(var(--color-on-sur), var(--opacity1));
+    background-color: rgb(var(--color-surface));
+    border: 1px solid rgba(var(--color-on-surface), var(--opacity1));
     border-bottom: none;
     border-radius: var(--i-border-radius) var(--i-border-radius) 0 0;
     overflow: hidden;
@@ -181,7 +180,7 @@ $small-screen: 650px;
     }
 
     &:focus-within {
-        outline: 2px solid rgb(var(--color-acc));
+        outline: 2px solid rgb(var(--color-accent));
     }
 
     @media (max-width: $small-screen) {
@@ -207,7 +206,7 @@ $small-screen: 650px;
         }
 
         &::placeholder {
-            color: rgba(var(--color-on-sur), var(--opacity-inv3));
+            color: rgba(var(--color-on-surface), var(--opacity-inv3));
         }
 
         &:not([data-text-wrap]) {
@@ -247,8 +246,8 @@ $small-screen: 650px;
     --o-border-radius: 16px;
 
     flex: 1;
-    background-color: rgb(var(--color-sur));
-    border: 1px solid rgba(var(--color-on-sur), var(--opacity1));
+    background-color: rgb(var(--color-surface));
+    border: 1px solid rgba(var(--color-on-surface), var(--opacity1));
     border-bottom: none;
     border-right: none;
     border-radius: var(--o-border-radius) 0 0 0;

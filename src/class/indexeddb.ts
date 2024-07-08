@@ -9,10 +9,10 @@ type CreateObjectStoreParams<T> = {
 }
 
 type Listeners = {
-    onSuccess?: (ev: Event, db?: IDB) => unknown
-    onBlocked?: (ev: IDBVersionChangeEvent, db?: IDB) => unknown
-    onError?: (ev: Event, db?: IDB) => unknown
-    onUpgradeNeeded?: (ev: IDBVersionChangeEvent, db?: IDB) => unknown
+    onSuccess?: (ev: Event, db: IDB) => unknown
+    onBlocked?: (ev: IDBVersionChangeEvent, db: IDB) => unknown
+    onError?: (ev: Event, db: IDB) => unknown
+    onUpgradeNeeded?: (ev: IDBVersionChangeEvent, db: IDB) => unknown
 }
 
 const __db = '_db'

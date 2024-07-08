@@ -5,7 +5,7 @@
 
     > div {
         flex: 1 1 240px;
-        border: 1px solid rgba(var(--color-on-sur), var(--opacity-border));
+        border: 1px solid rgba(var(--color-on-surface), var(--opacity-border));
         border-radius: 16px;
         padding: 16px;
         display: flex;
@@ -26,7 +26,7 @@
 
         @media (hover: hover) {
             &:hover {
-                border-color: rgba(var(--color-on-sur), var(--opacity-inv2));
+                border-color: rgba(var(--color-on-surface), var(--opacity-inv2));
             }
         }
 
@@ -198,9 +198,9 @@
 
             @media (hover: hover) {
                 &:hover {
-                    color: rgb(var(--color-sur));
+                    color: rgb(var(--color-surface));
                     padding: 0 .3em;
-                    background-color: rgb(var(--color-on-sur));
+                    background-color: rgb(var(--color-on-surface));
                     scale: 1.15;
                 }
             }

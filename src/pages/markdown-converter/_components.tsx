@@ -15,11 +15,11 @@ import { ExternalLinks, RoutesLinks } from '@/enums/links'
 import { ThemeData } from '@/enums/theme'
 import { getLocalStorageItem, setLocalStorageItem } from '@/utils/storage'
 import { DatabaseNames, LocalStorageKeys } from '@/enums/storage'
-import { _CENTER_BOTTOM, _RIGHT_CENTER, _RIGHT_CENTER_TO_BOTTOM, _URL, _accept, _add, _altKey, _boolean, _change, _click, _clientWidth, _clientX, _clipboard, _code, _contentWindow, _corner, _createObjectStore, _css, _ctrlKey, _currentTarget, _dark, _db, _download, _exitFullscreen, _file, _files, _fontSize, _fullRound, _fullscreenElement, _fullscreenchange, _get, _href, _html, _includes, _input, _key, _keydown, _length, _light, _load, _markdown, _matches, _metaKey, _min, _mousemove, _mouseup, _newVersion, _noPointerEvent, _number, _objectStore, _oldVersion, _open, _preview, _print, _put, _px, _query, _readAsText, _readonly, _readwrite, _requestFullscreen, _reset, _resize, _result, _round, _semiRound, _setting, _settings, _share, _sharp, _shiftKey, _src, _system, _target, _text, _textWrap, _theme, _toggleAttribute, _touchend, _touches, _touchmove, _transaction, _type, _update, _value, _writeText } from '@/data/string'
+import { _CENTER_BOTTOM, _RIGHT_CENTER, _RIGHT_CENTER_TO_BOTTOM, _URL, _accept, _add, _altKey, _boolean, _change, _click, _clientWidth, _clientX, _clipboard, _code, _contentWindow, _corner, _createObjectStore, _css, _ctrlKey, _currentTarget, _dark, _db, _download, _exitFullscreen, _file, _files, _fontSize, _fullRound, _fullscreenElement, _fullscreenchange, _get, _href, _html, _id, _includes, _input, _key, _keydown, _length, _light, _load, _markdown, _matches, _metaKey, _min, _mousemove, _mouseup, _newVersion, _noPointerEvent, _number, _objectStore, _oldVersion, _open, _preview, _print, _put, _px, _query, _readAsText, _readonly, _readwrite, _requestFullscreen, _reset, _resize, _result, _round, _semiRound, _setting, _settings, _share, _sharp, _shiftKey, _src, _system, _target, _text, _textWrap, _theme, _toggleAttribute, _touchend, _touches, _touchmove, _transaction, _type, _update, _value, _writeText } from '@/data/string'
 import { setTimeDelayed } from '@/utils/timeout'
 import { getDocument, getDocumentBody, getNavigator, getRoot, getWindow } from '@/data/window'
 import { mathMax, mathMin } from '@/utils/math'
-import { createObjectURL, encodeURL, revokeObjectURL } from '@/utils/url'
+import { createObjectURL, downloadFileByURL, encodeURL, revokeObjectURL } from '@/utils/url'
 import { isMatchMedia } from '@/utils/window'
 import { getDate_Y } from '@/utils/datetime'
 import { IDB } from '@/class/indexeddb'
@@ -274,7 +274,7 @@ const MenuBar: Component<MenuBarProps> = (props) => {
                 <MenuItem 
                     onClick={() => downloadFile(_markdown)}
                     leading={<svg width={20} viewBox="0 0 2560 2560" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M2375.4 2067.68H184.6C82.8 2067.68 0 1984.88 0 1883.08V676.92C0 575.12 82.8 492.32 184.6 492.32H2375.36C2477.16 492.32 2559.96 575.12 2559.96 676.92V1883.08C2560 1984.88 2477.2 2067.68 2375.4 2067.68ZM615.4 1698.48V1218.48L861.56 1526.16L1107.72 1218.48V1698.48H1353.88V861.52H1107.72L861.56 1169.2L615.4 861.52H369.24V1698.44H615.4V1698.48ZM2264.6 1280H2018.44V861.52H1772.28V1280H1526.12L1895.36 1710.76L2264.6 1280Z" fill="rgb(var(--color-on-sur))"/>
+                        <path d="M2375.4 2067.68H184.6C82.8 2067.68 0 1984.88 0 1883.08V676.92C0 575.12 82.8 492.32 184.6 492.32H2375.36C2477.16 492.32 2559.96 575.12 2559.96 676.92V1883.08C2560 1984.88 2477.2 2067.68 2375.4 2067.68ZM615.4 1698.48V1218.48L861.56 1526.16L1107.72 1218.48V1698.48H1353.88V861.52H1107.72L861.56 1169.2L615.4 861.52H369.24V1698.44H615.4V1698.48ZM2264.6 1280H2018.44V861.52H1772.28V1280H1526.12L1895.36 1710.76L2264.6 1280Z" fill="rgb(var(--color-on-surface))"/>
                     </svg>}>
                     Markdown
                 </MenuItem>
@@ -303,7 +303,7 @@ const MenuBar: Component<MenuBarProps> = (props) => {
                 <MenuItem 
                     onClick={() => copyAll(_markdown)}
                     leading={<svg width={20} viewBox="0 0 2560 2560" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M2375.4 2067.68H184.6C82.8 2067.68 0 1984.88 0 1883.08V676.92C0 575.12 82.8 492.32 184.6 492.32H2375.36C2477.16 492.32 2559.96 575.12 2559.96 676.92V1883.08C2560 1984.88 2477.2 2067.68 2375.4 2067.68ZM615.4 1698.48V1218.48L861.56 1526.16L1107.72 1218.48V1698.48H1353.88V861.52H1107.72L861.56 1169.2L615.4 861.52H369.24V1698.44H615.4V1698.48ZM2264.6 1280H2018.44V861.52H1772.28V1280H1526.12L1895.36 1710.76L2264.6 1280Z" fill="rgb(var(--color-on-sur))"/>
+                        <path d="M2375.4 2067.68H184.6C82.8 2067.68 0 1984.88 0 1883.08V676.92C0 575.12 82.8 492.32 184.6 492.32H2375.36C2477.16 492.32 2559.96 575.12 2559.96 676.92V1883.08C2560 1984.88 2477.2 2067.68 2375.4 2067.68ZM615.4 1698.48V1218.48L861.56 1526.16L1107.72 1218.48V1698.48H1353.88V861.52H1107.72L861.56 1169.2L615.4 861.52H369.24V1698.44H615.4V1698.48ZM2264.6 1280H2018.44V861.52H1772.28V1280H1526.12L1895.36 1710.76L2264.6 1280Z" fill="rgb(var(--color-on-surface))"/>
                     </svg>}>
                     Markdown
                 </MenuItem>
@@ -710,14 +710,8 @@ export const App: Component = () => {
 
         const blob = new Blob([text], { type: 'text/' + type })
         const url = createObjectURL(blob)
-
-        const link = createElement("a")
-        link[_href] = url
-        link[_download] = "markdown-converter." + ext
-
-        link[_click]();
-
-        revokeObjectURL(url);
+        downloadFileByURL(url, "markdown-converter." + ext)
+        revokeObjectURL(url)
     }
 
     function initScreenWidthListener() {
