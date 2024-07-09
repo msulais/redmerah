@@ -34,14 +34,6 @@ export enum ColorsRandomizerColorModel {
     hex
 }
 
-/**
- * 
- * @param x 
- */
-function a(x: number): void {
-    console.log(x)
-}
-
 export enum Commands {
     reset_list,
 
@@ -180,4 +172,16 @@ export enum Commands {
     /** 
     @param count `number` */
     change_settings_selection_count,
+     
+    /** 
+    @param list `ListItems` */
+    change_settings_teams_namesList, 
+     
+    /** 
+    @param list `ListItems` */
+    change_settings_teams_membersList, 
+     
+    /** 
+    @param count `number` */
+    change_settings_teams_count, 
 }

@@ -3,7 +3,7 @@ import { type Component, For, Match, Show, Switch, type VoidComponent, createMem
 
 import { hexToHSL, hexToRgb } from "@/utils/color";
 import type { HEXColor, HSLColor, RGBColor } from "@/types/color";
-import { _result, _string, _numbers, _colors, _hex, _toUpperCase, _randomizerType, _words, _length, _join, _list, _map, _members, _settings, _prefix, _separator, _suffix, _lowercase, _titlecase, _togglecase, _uppercase, _wordCase, _items, _selection, _some } from "@/data/string";
+import { _result, _string, _numbers, _colors, _hex, _toUpperCase, _randomizerType, _words, _length, _join, _list, _map, _members, _settings, _prefix, _separator, _suffix, _lowercase, _titlecase, _togglecase, _uppercase, _wordCase, _items, _selection, _some, _teams, _name, _membersList, _namesList } from "@/data/string";
 import { RandomizerType, WordsRandomizerWordCase } from "./_enums";
 import type { Result, Settings } from "./_types";
 import { mathRound } from "@/utils/math";
@@ -86,6 +86,36 @@ const C: Component<Props> = (props) => {
                     <For each={settings()[_selection][_list][_items]}>{item =>
                         <div data-selected={toggleAttribute(selection_isSelected(item))}>
                             { item }
+                        </div>
+                    }</For>
+                </div>
+            </Match>
+            <Match when={props[_randomizerType] == RandomizerType[_teams]}>
+                <Show when={result()[_teams][_length] == 0}>
+                    <div class={CSS.teams_empty}>
+                        <h2>Names</h2>
+                        <div>
+                            <For each={settings()[_teams][_namesList][_items]}>{i => 
+                                <div>{i}</div>
+                            }</For>
+                        </div>
+                        <h2>Members</h2>
+                        <div>
+                            <For each={settings()[_teams][_membersList][_items]}>{i => 
+                                <div>{i}</div>
+                            }</For>
+                        </div>
+                    </div>
+                </Show>
+                <div class={CSS[_teams]}>
+                    <For each={result()[_teams]}>{t => 
+                        <div>
+                            <h3>{t[_name]}</h3>
+                            <ul>
+                                <For each={t[_members]}>{m => 
+                                    <li>{m}</li>
+                                }</For>
+                            </ul>
                         </div>
                     }</For>
                 </div>

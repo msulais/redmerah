@@ -57,7 +57,6 @@ export const
     _settings_colors_range_rgb_b_min = 'settings_colors_range_rgb_b_min',
     _settings_colors_range_rgb_b_max = 'settings_colors_range_rgb_b_max',
     _settings_teams_count = 'settings_teams_count',
-    __settings_teams_namesListId = 'settings_teams_namesListId',
     _settings_teams_membersListId = 'settings_teams_membersListId',
     _settings_teams_animation = 'settings_teams_animation'
 ;

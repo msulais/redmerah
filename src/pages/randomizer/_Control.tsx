@@ -8,7 +8,7 @@ import { closePopover, openPopover } from "@/utils/popover";
 import type { ComponentEvent } from "@/types/event";
 import { RandomizerType, ColorsRandomizerColorModel, Commands } from "./_enums";
 import type { ListItems, Settings } from "./_types";
-import { _settings, _string, _numbers, _length, _push, _join, _width, _currentTarget, _CENTER_BOTTOM_TO_LEFT, _value, _characters, _symbols, _colors, _match, _max, _min, _replace, _range, _count, _colorModel, _hex, _hsl, _isNaN, _rgb, _words, _lists, _alphabetLowercase, _alphabetUppercase, _customCharacter, _randomizerType, _id, _list, _members, _name, _db, _objectStore, _put, _transaction, _readwrite, _command, _CENTER_BOTTOM_TO_RIGHT, _oncontextmenu, _items, _selection } from "@/data/string";
+import { _settings, _string, _numbers, _length, _push, _join, _width, _currentTarget, _CENTER_BOTTOM_TO_LEFT, _value, _characters, _symbols, _colors, _match, _max, _min, _replace, _range, _count, _colorModel, _hex, _hsl, _isNaN, _rgb, _words, _lists, _alphabetLowercase, _alphabetUppercase, _customCharacter, _randomizerType, _id, _list, _members, _name, _db, _objectStore, _put, _transaction, _readwrite, _command, _CENTER_BOTTOM_TO_RIGHT, _oncontextmenu, _items, _selection, _teams, _namesList, _membersList } from "@/data/string";
 
 import Icon from "@/components/Icon";
 import Tooltip from "@/components/Tooltip";
@@ -54,6 +54,225 @@ type SelectionProps = {
     settings: [Settings, SetStoreFunction<Settings>]
     lists: [Store<ObjectStoreLists[]>, SetStoreFunction<ObjectStoreLists[]>]
     command: (type: Commands, ...args: unknown[]) => unknown
+}
+
+type TeamsProps = {
+    settings: [Settings, SetStoreFunction<Settings>]
+    lists: [Store<ObjectStoreLists[]>, SetStoreFunction<ObjectStoreLists[]>]
+    command: (type: Commands, ...args: unknown[]) => unknown
+}
+
+const Teams: VoidComponent<TeamsProps> = (props) => {
+    const [list, setList] = createSignal<ListItems | null>(null)
+    const [isActionOpenForNamesList, setIsActionOpenForNamesList] = createSignal<boolean>(false)
+    const settings = createMemo(() => props[_settings][0][_teams])
+    let dropdownMenu_namesLists_ref: HTMLDialogElement
+    let dropdownMenu_membersLists_ref: HTMLDialogElement
+    let actionMenuRef: HTMLDialogElement
+
+    function ListItemsToDropdownList(list: ListItems[]): DropdownItem[] {
+        const items: DropdownItem[] = []
+
+        for (const l of list) {
+            items[_push]([`${l[_id]}`, l[_name], l[_items][_length] + ''])
+        }
+
+        return items
+    }
+
+    function getListById(id: string): void {
+        for (const li of props[_lists][0]) {
+            if (`${li[_id]}` != id) continue;
+            setList(li)
+            break
+        }
+    }
+
+    function changeNamesList(id: string): void {
+        getListById(id)
+        props[_command](Commands.change_settings_teams_namesList, list())
+    }
+    
+    function changeMembersList(id: string): void {
+        getListById(id)
+        props[_command](Commands.change_settings_teams_membersList, list())
+    }
+
+    return (<>
+        <Dropdown 
+            labelText="Names" 
+            selectedValues={[`${settings()[_namesList][_id]}`]} 
+            items={[...ListItemsToDropdownList(props[_lists][0])]} 
+            labelElement={{ style: { width: 'min(100%, 164px)' } }}
+            onValueChanged={id => changeNamesList(id[0])}
+            dropdownAttr={{ ref: (r) => dropdownMenu_namesLists_ref = r }}
+            refs={(r, value) => {
+                r[_oncontextmenu] = (ev) => {
+                    for (const li of props[_lists][0]) {
+                        if (`${li[_id]}` != value) continue;
+                        setList(li)
+                        break
+                    }
+                    setIsActionOpenForNamesList(true)
+                    openPopover({
+                        event: ev, 
+                        popover: actionMenuRef, 
+                        position: PopoverPosition[_CENTER_BOTTOM_TO_RIGHT]
+                    })
+                    preventDefault(ev)
+                }
+            }}
+            header={<Show when={props[_lists][0][_length] > 0}><MenuHeader>Select list</MenuHeader></Show>}
+            footer={<>
+                <Show when={props[_lists][0][_length] > 0}>
+                    <MenuDivider />
+                </Show>
+                <MenuItem 
+                    onClick={(ev) => {
+                        props[_command](Commands.add_list, ev)
+                        closePopover(dropdownMenu_namesLists_ref)
+                    }}
+                    leading={<Icon code={0xE007} />}>
+                    Add new list
+                </MenuItem>
+
+                <Show when={props[_lists][0][_length] == 0}>
+                    <MenuItem 
+                        onClick={(ev) => {
+                            props[_command](Commands.reset_list)
+                            closePopover(dropdownMenu_namesLists_ref)
+                        }}
+                        leading={<Icon code={0xF09A} />}>
+                        Reset all list
+                    </MenuItem>
+                </Show>
+                
+                <Show when={props[_lists][0][_length] > 0}>
+                    <MenuItem 
+                        onClick={(ev) => {
+                            props[_command](Commands.edit_list, ev)
+                            closePopover(dropdownMenu_namesLists_ref)
+                        }}
+                        leading={<Icon code={0xE069}/>}>
+                        Edit list
+                    </MenuItem>
+                </Show>
+            </>}
+        />
+        <Dropdown 
+            labelText="Members" 
+            selectedValues={[`${settings()[_membersList][_id]}`]} 
+            items={[...ListItemsToDropdownList(props[_lists][0])]} 
+            labelElement={{ style: { width: 'min(100%, 164px)' } }}
+            onValueChanged={id => changeMembersList(id[0])}
+            dropdownAttr={{ ref: (r) => dropdownMenu_membersLists_ref = r }}
+            refs={(r, value) => {
+                r[_oncontextmenu] = (ev) => {
+                    for (const li of props[_lists][0]) {
+                        if (`${li[_id]}` != value) continue;
+                        setList(li)
+                        break
+                    }
+                    setIsActionOpenForNamesList(false)
+                    openPopover({
+                        event: ev, 
+                        popover: actionMenuRef, 
+                        position: PopoverPosition[_CENTER_BOTTOM_TO_RIGHT]
+                    })
+                    preventDefault(ev)
+                }
+            }}
+            header={<Show when={props[_lists][0][_length] > 0}><MenuHeader>Select list</MenuHeader></Show>}
+            footer={<>
+                <Show when={props[_lists][0][_length] > 0}>
+                    <MenuDivider />
+                </Show>
+                <MenuItem 
+                    onClick={(ev) => {
+                        props[_command](Commands.add_list, ev)
+                        closePopover(dropdownMenu_membersLists_ref)
+                    }}
+                    leading={<Icon code={0xE007} />}>
+                    Add new list
+                </MenuItem>
+
+                <Show when={props[_lists][0][_length] == 0}>
+                    <MenuItem 
+                        onClick={(ev) => {
+                            props[_command](Commands.reset_list)
+                            closePopover(dropdownMenu_membersLists_ref)
+                        }}
+                        leading={<Icon code={0xF09A} />}>
+                        Reset all list
+                    </MenuItem>
+                </Show>
+                
+                <Show when={props[_lists][0][_length] > 0}>
+                    <MenuItem 
+                        onClick={(ev) => {
+                            props[_command](Commands.edit_list, ev)
+                            closePopover(dropdownMenu_membersLists_ref)
+                        }}
+                        leading={<Icon code={0xE069}/>}>
+                        Edit list
+                    </MenuItem>
+                </Show>
+            </>}
+        />
+        <NumberTextField 
+            labelText="Count" 
+            min={1}
+            max={settings()[_membersList][_items][_length]}
+            onFinalValueChanged={(v) => props[_command](Commands.change_settings_teams_count, v)}
+            labelElement={{ style: { width: 'min(100%, 164px)' } }}
+            value={settings()[_count]} 
+        />
+        <Menu ref={r => actionMenuRef = r} style={{width: '164px'}}>
+            <Show when={list() && list()![_id] != (isActionOpenForNamesList()? settings()[_namesList][_id] : settings()[_membersList][_id])}>
+                <MenuItem onClick={async () => {
+                    await closePopover(actionMenuRef)
+                    await closePopover(dropdownMenu_namesLists_ref)
+                    await closePopover(dropdownMenu_membersLists_ref)
+                    if (isActionOpenForNamesList()) changeNamesList(list()![_id] + '')
+                    else changeMembersList(list()![_id] + '')
+                }} leading={<Icon code={0xE3CC}/>}>Select</MenuItem>
+                <MenuDivider />
+            </Show>
+            <MenuItem 
+                onClick={async (ev) => {
+                    await closePopover(actionMenuRef)
+                    await closePopover(dropdownMenu_namesLists_ref)
+                    await closePopover(dropdownMenu_membersLists_ref)
+                    props[_command](Commands.view_list, ev, list())
+                }} 
+                leading={<Icon code={0xE77B}/>}>
+                View list
+            </MenuItem>
+            <MenuItem 
+                onClick={async () => {
+                    await closePopover(actionMenuRef)
+                    await closePopover(dropdownMenu_namesLists_ref)
+                    await closePopover(dropdownMenu_membersLists_ref)
+                    props[_command](Commands.export_list, list())
+                }} 
+                leading={<Icon code={0xE0CF}/>}
+                trailing="*.csv">
+                Export list
+            </MenuItem>
+            <MenuItem onClick={async (ev) => {
+                    props[_command](Commands.edit_list, ev, list())
+                    await closePopover(actionMenuRef)
+                    await closePopover(dropdownMenu_namesLists_ref)
+                    await closePopover(dropdownMenu_membersLists_ref)
+                }} leading={<Icon code={0xF09C}/>}>Edit list</MenuItem>
+            <MenuItem onClick={async (ev) => {
+                    props[_command](Commands.delete_list, ev, list())
+                    await closePopover(actionMenuRef)
+                    await closePopover(dropdownMenu_namesLists_ref)
+                    await closePopover(dropdownMenu_membersLists_ref)
+                }} leading={<Icon code={0xE59D}/>}>Delete list</MenuItem>
+        </Menu>
+    </>)
 }
 
 const Selection: VoidComponent<SelectionProps> = (props) => {
@@ -657,6 +876,9 @@ const Control: Component<Props> = (props) => {
             </Match>
             <Match when={props[_randomizerType] == RandomizerType[_selection]}>
                 <Selection command={props[_command]} settings={props[_settings]} lists={props[_lists]} />
+            </Match>
+            <Match when={props[_randomizerType] == RandomizerType[_teams]}>
+                <Teams command={props[_command]} settings={props[_settings]} lists={props[_lists]} />
             </Match>
         </Switch>
     </div>)

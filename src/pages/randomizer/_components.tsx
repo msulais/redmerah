@@ -288,7 +288,41 @@ export const App: VoidComponent = () => {
         } 
         
         else if (randomizerType() == RandomizerType[_teams]) {
-            // TODO: add teams generator
+            const names: string[] = [...settings[_teams][_namesList][_items]]
+            const members: string[] = [...settings[_teams][_membersList][_items]]
+            const teams: {name: string; members: string[]}[] = []
+            const minimumMembers = mathFloor(members[_length] / settings[_teams][_count])
+
+            if (names[_length] > settings[_teams][_count]) {
+                names[_splice](names[_length] - (names[_length] - settings[_teams][_count]))
+            }
+
+            names[_sort]()
+
+            const range = settings[_teams][_count] - names[_length]
+            for (let i = 0; i < range; i++) {
+                names[_push]('Team #' + (i + 1))
+            }  
+
+            for (const name of names) {
+                const m: string[] = []
+
+                for (let i = 0; i < minimumMembers; i++) {
+                    const index = mathFloor(mathRandom() * (members[_length] - 1))
+                    m[_push](members[index])
+                    members[_splice](index, 1)
+                }
+
+                m[_sort]()
+
+                teams[_push]({name, members: m})
+            }
+
+            for (const i in members) {
+                teams[i][_members][_push](members[i])
+            }
+
+            setResult(_teams, [...teams])
         }
     }
 
@@ -357,9 +391,7 @@ export const App: VoidComponent = () => {
             else if (randomizerType() == RandomizerType[_words]) await copy(result[_words])
             else if (randomizerType() == RandomizerType[_selection]) await copy(settings[_selection][_list][_items][_map](v => result[_selection][_includes](v)? (v + ' [selected]') : v)[_join]('\n'))
             else if (randomizerType() == RandomizerType[_colors]) await copy(result[_colors][_join]('\n'))
-            else if (randomizerType() == RandomizerType[_teams]) {
-                // TODO: teams -- on copy result
-            }
+            else if (randomizerType() == RandomizerType[_teams]) await copy(result[_teams][_map](v => '# ' + v[_name] + '\n' + v[_members][_join]('\n') )[_join]('\n\n'))
             return true
         } catch (e) {}
 
@@ -404,7 +436,7 @@ export const App: VoidComponent = () => {
         })
         else if (randomizerType() == RandomizerType[_teams]) lastResultObjectStore[_put]({
             key: ObjectStoreKeys[_lastResult_teams], 
-            value: [...result[_teams]]
+            value: [...result[_teams][_map](v => {return {name: v[_name], members: [...v[_members]]}})]
         })
     }
 
@@ -650,12 +682,8 @@ export const App: VoidComponent = () => {
 
         if (settings[_words][_list][_id] == id) command(Commands.change_settings_words_list, newLists)
         if (settings[_selection][_list][_id] == id) command(Commands.change_settings_selection_list, newLists)
-        if (settings[_teams][_namesList][_id] == id) {
-            // TODO: change teams names list
-        }
-        if (settings[_teams][_membersList][_id] == id) {
-            // TODO: change teams members list
-        }
+        if (settings[_teams][_namesList][_id] == id) command(Commands.change_settings_teams_namesList, newLists)
+        if (settings[_teams][_membersList][_id] == id) command(Commands.change_settings_teams_membersList, newLists)
 
         openNotification({notificationBar: notif_listEdited_ref})
 
@@ -676,23 +704,14 @@ export const App: VoidComponent = () => {
         setLists(lists => lists[_filter](v => v[_id] != list[_id]))
 
         const isNoMoreLists = lists[_length] == 0
+        const newList = isNoMoreLists? {id: -1, name: '', items: []} : lists[0]
         if (isNoMoreLists) closeModal(dialog_lists_ref)
+            
 
-        if (settings[_words][_list][_id] == list[_id]) command(
-            Commands.change_settings_words_list, 
-            isNoMoreLists? {id: -1, name: '', items: []} : {...lists[0]}
-        )
-
-        if (settings[_selection][_list][_id] == list[_id]) command(
-            Commands.change_settings_selection_list, 
-            isNoMoreLists? {id: -1, name: '', items: []} : {...lists[0]}
-        )
-        if (settings[_teams][_namesList][_id] == list[_id]) {
-            // TODO: change teams names list
-        }
-        if (settings[_teams][_membersList][_id] == list[_id]) {
-            // TODO: change teams members list
-        }
+        if (settings[_words][_list][_id]        == list[_id]) command(Commands.change_settings_words_list       , {...newList})
+        if (settings[_selection][_list][_id]    == list[_id]) command(Commands.change_settings_selection_list   , {...newList})
+        if (settings[_teams][_namesList][_id]   == list[_id]) command(Commands.change_settings_teams_namesList  , {...newList})
+        if (settings[_teams][_membersList][_id] == list[_id]) command(Commands.change_settings_teams_membersList, {...newList})
 
         openNotification({notificationBar: notif_listDeleted_ref})
 
@@ -1097,6 +1116,32 @@ export const App: VoidComponent = () => {
         else if (type == Commands.change_settings_selection_count) {
             setSettings(_selection, _count, args[0] as number)
             saveSettings([ObjectStoreKeys[_settings_selection_count], args[0] as number])
+        }
+
+        // change_settings_teams_namesList
+        else if (type == Commands.change_settings_teams_namesList) {
+            setSettings(_teams, _namesList, args[0] as ListItems)
+            saveSettings([ObjectStoreKeys[_settings_teams_namesListId], (args[0] as ListItems)[_id]])
+        }
+
+        // change_settings_teams_membersList
+        else if (type == Commands.change_settings_teams_membersList) {
+            setSettings(_teams, _membersList, args[0] as ListItems)
+            if ((args[0] as ListItems)[_items][_length] < settings[_teams][_count]) {
+                setSettings(_teams, _count, (args[0] as ListItems)[_items][_length])
+                saveSettings(
+                    [ObjectStoreKeys[_settings_teams_membersListId], (args[0] as ListItems)[_id]],
+                    [ObjectStoreKeys[_settings_teams_count], (args[0] as ListItems)[_items][_length]]
+                )
+                return 
+            }
+            saveSettings([ObjectStoreKeys[_settings_teams_membersListId], (args[0] as ListItems)[_id]])
+        }
+
+        // change_settings_teams_count
+        else if (type == Commands.change_settings_teams_count) {
+            setSettings(_teams, _count, args[0] as number)
+            saveSettings([ObjectStoreKeys[_settings_teams_count], args[0] as number])
         }
     }
 
