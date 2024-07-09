@@ -13,7 +13,7 @@ export enum ButtonVariant {
     transparent = 'transparent'
 }
 
-type ButtonProps = JSX.ButtonHTMLAttributes<HTMLButtonElement> & {
+export type ButtonProps = JSX.ButtonHTMLAttributes<HTMLButtonElement> & {
     variant?: ButtonVariant
     focus?: boolean
     iconOnly?: boolean
