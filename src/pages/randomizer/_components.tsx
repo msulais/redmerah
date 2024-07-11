@@ -1,6 +1,6 @@
 import { createSignal, For, onMount, Show, type VoidComponent } from "solid-js";
 
-import { _string, _characters, _numbers, _symbols, _length, _floor, _range, _max, _min, _count, _repeat, _includes, _push, _sort, _ascending, _descending, _map, _prefix, _toString, _numberType, _padStart, _suffix, _join, _separator, _colors, _round, _colorModel, _hex, _rgb, _hsl, _words, _selection, _teams, _animation, _result, _settings, _decimal, _none, _open, _key, _value, _createObjectStore, _id, _list, _lists, _lastResult, _isOpen, _readonly, _objectStore, _transaction, _get, _then, _color, _readwrite, _put, _add, _name, _members, _getAll, _namesList, _membersList, _alphabetLowercase, _alphabetUppercase, _customCharacter, _minDecimalLength, _splice, _lowercase, _titlecase, _togglecase, _uppercase, _wordCase, _h, _l, _s, _r, _b, _g, _cursor, _test, _filledTonal, _filled, _manual, _items, _accept, _file, _input, _type, _readAsText, _target, _onerror, _onabort, _onload, _replace, _split, _substring, _filter, _trim, _focus, _delete, _clipboard, _writeText, _noPointerEvent } from "@/data/string";
+import { _string, _characters, _numbers, _symbols, _length, _floor, _range, _max, _min, _count, _repeat, _includes, _push, _sort, _ascending, _descending, _map, _prefix, _toString, _numberType, _padStart, _suffix, _join, _separator, _colors, _round, _colorModel, _hex, _rgb, _hsl, _words, _selection, _teams, _animation, _result, _settings, _decimal, _none, _open, _key, _value, _createObjectStore, _id, _list, _lists, _lastResult, _isOpen, _readonly, _objectStore, _transaction, _get, _then, _color, _readwrite, _put, _add, _name, _members, _getAll, _namesList, _membersList, _alphabetLowercase, _alphabetUppercase, _customCharacter, _minDecimalLength, _splice, _lowercase, _titlecase, _togglecase, _uppercase, _wordCase, _h, _l, _s, _r, _b, _g, _cursor, _test, _filledTonal, _filled, _manual, _items, _accept, _file, _input, _type, _readAsText, _target, _onerror, _onabort, _onload, _replace, _split, _substring, _filter, _trim, _focus, _delete, _clipboard, _writeText, _noPointerEvent, _generate, _stopGenerate } from "@/data/string";
 import { rgbToHex, hslToHex } from "@/utils/color";
 import { setTimeInterval, clearTimeInterval } from "@/utils/timeout";
 import { createStore } from "solid-js/store";
@@ -9,7 +9,7 @@ import type { ListItems, Result, Settings } from "./_types";
 import { mathFloor, mathRandom } from "@/utils/math";
 import { PERSON_NAMES, TEAMS_NAMES, COLORS, ANIMALS, LOREM_IPSUM } from "./_data";
 import { ObjectStoreNames, ObjectStoreKeys, type ObjectStoreLists, type ObjectStoreSettings, type ObjectStoreLastResult } from "./_storage";
-import { _settings_lastPage, _lastResult_string, _lastResult_numbers, _lastResult_words, _lastResult_selection, _lastResult_colors, _lastResult_teams, _settings_words_listId, _settings_selection_listId, _settings_teams_membersListId, _settings_teams_namesListId, _settings_numbers_repeat, _settings_words_repeat, _settings_numbers_sort, _settings_numbers_animation, _settings_words_animation, _settings_string_animation, _settings_selection_animation, _settings_colors_animation, _settings_teams_animation, _settings_numbers_numberType, _settings_numbers_prefix, _settings_words_prefix, _settings_numbers_suffix, _settings_words_suffix, _settings_numbers_separator, _settings_words_separator, _settings_words_wordCase, _settings_colors_colorModel, _settings_string_length, _settings_string_characters_symbols, _settings_string_characters_numbers, _settings_string_characters_alphabetLowercase, _settings_string_characters_alphabetUppercase, _settings_numbers_count, _settings_numbers_minDecimalLength, _settings_numbers_range_min, _settings_numbers_range_max, _settings_words_count, _settings_colors_count, _settings_colors_range_hex_min, _settings_colors_range_hex_max, _settings_colors_range_hsl_h_min, _settings_colors_range_hsl_h_max, _settings_colors_range_hsl_l_max, _settings_colors_range_hsl_l_min, _settings_colors_range_hsl_s_max, _settings_colors_range_hsl_s_min, _settings_colors_range_rgb_r_max, _settings_colors_range_rgb_r_min, _settings_colors_range_rgb_b_max, _settings_colors_range_rgb_b_min, _settings_colors_range_rgb_g_max, _settings_colors_range_rgb_g_min, _settings_string_characters_customCharacter, _settings_selection_count, _settings_teams_count } from "./_string";
+import { _settings_lastPage, _lastResult_string, _lastResult_numbers, _lastResult_words, _lastResult_selection, _lastResult_colors, _lastResult_teams, _settings_words_listId, _settings_selection_listId, _settings_teams_membersListId, _settings_teams_namesListId, _settings_numbers_repeat, _settings_words_repeat, _settings_numbers_sort, _settings_numbers_animation, _settings_words_animation, _settings_string_animation, _settings_selection_animation, _settings_colors_animation, _settings_teams_animation, _settings_numbers_numberType, _settings_numbers_prefix, _settings_words_prefix, _settings_numbers_suffix, _settings_words_suffix, _settings_numbers_separator, _settings_words_separator, _settings_words_wordCase, _settings_colors_colorModel, _settings_string_length, _settings_string_characters_symbols, _settings_string_characters_numbers, _settings_string_characters_alphabetLowercase, _settings_string_characters_alphabetUppercase, _settings_numbers_count, _settings_numbers_minDecimalLength, _settings_numbers_range_min, _settings_numbers_range_max, _settings_words_count, _settings_colors_count, _settings_colors_range_hex_min, _settings_colors_range_hex_max, _settings_colors_range_hsl_h_min, _settings_colors_range_hsl_h_max, _settings_colors_range_hsl_l_max, _settings_colors_range_hsl_l_min, _settings_colors_range_hsl_s_max, _settings_colors_range_hsl_s_min, _settings_colors_range_rgb_r_max, _settings_colors_range_rgb_r_min, _settings_colors_range_rgb_b_max, _settings_colors_range_rgb_b_min, _settings_colors_range_rgb_g_max, _settings_colors_range_rgb_g_min, _settings_string_characters_customCharacter, _settings_selection_count, _settings_teams_count, _add_list, _change_settings_colors_colorModel, _change_settings_colors_count, _change_settings_colors_range_hex, _change_settings_colors_range_hsl_h, _change_settings_colors_range_hsl_l, _change_settings_colors_range_hsl_s, _change_settings_colors_range_rgb_b, _change_settings_colors_range_rgb_g, _change_settings_colors_range_rgb_r, _change_settings_numbers_count, _change_settings_numbers_minDecimalLength, _change_settings_numbers_range, _change_settings_numbers_sort, _change_settings_numbers_type, _change_settings_prefix, _change_settings_selection_count, _change_settings_selection_list, _change_settings_separator, _change_settings_string_characters_customCharacters, _change_settings_string_characters_toDefault, _change_settings_string_length, _change_settings_suffix, _change_settings_teams_count, _change_settings_teams_membersList, _change_settings_teams_namesList, _change_settings_words_count, _change_settings_words_list, _change_settings_words_wordCase, _delete_list, _edit_list, _export_list, _reset_list, _toggle_navigation_expand, _toggle_settings_animation, _toggle_settings_repeat, _toggle_settings_string_characters_alphabetLowercase, _toggle_settings_string_characters_alphabetUppercase, _toggle_settings_string_characters_numbers, _toggle_settings_string_characters_symbols, _view_list } from "./_string";
 import { stringToLowerCase, stringToUpperCase, stringToToggleCase, stringToTitleCase } from "@/utils/string";
 import { createObjectURL, downloadFileByURL, revokeObjectURL } from "@/utils/url";
 import { addClassListModule } from "@/utils/element";
@@ -695,10 +695,10 @@ export const MainApp: VoidComponent = () => {
         const newLists: ListItems = {id, name, items}
         setLists(l => [...(l[_filter](v => v[_id] != id)), newLists])
 
-        if (settings[_words][_list][_id] == id) command(Commands.change_settings_words_list, newLists)
-        if (settings[_selection][_list][_id] == id) command(Commands.change_settings_selection_list, newLists)
-        if (settings[_teams][_namesList][_id] == id) command(Commands.change_settings_teams_namesList, newLists)
-        if (settings[_teams][_membersList][_id] == id) command(Commands.change_settings_teams_membersList, newLists)
+        if (settings[_words][_list][_id] == id) command(Commands[_change_settings_words_list], newLists)
+        if (settings[_selection][_list][_id] == id) command(Commands[_change_settings_selection_list], newLists)
+        if (settings[_teams][_namesList][_id] == id) command(Commands[_change_settings_teams_namesList], newLists)
+        if (settings[_teams][_membersList][_id] == id) command(Commands[_change_settings_teams_membersList], newLists)
 
         openNotification({notificationBar: notif_listEdited_ref})
 
@@ -723,10 +723,10 @@ export const MainApp: VoidComponent = () => {
         if (isNoMoreLists) closeModal(dialog_lists_ref)
             
 
-        if (settings[_words][_list][_id]        == list[_id]) command(Commands.change_settings_words_list       , {...newList})
-        if (settings[_selection][_list][_id]    == list[_id]) command(Commands.change_settings_selection_list   , {...newList})
-        if (settings[_teams][_namesList][_id]   == list[_id]) command(Commands.change_settings_teams_namesList  , {...newList})
-        if (settings[_teams][_membersList][_id] == list[_id]) command(Commands.change_settings_teams_membersList, {...newList})
+        if (settings[_words][_list][_id]        == list[_id]) command(Commands[_change_settings_words_list]       , {...newList})
+        if (settings[_selection][_list][_id]    == list[_id]) command(Commands[_change_settings_selection_list]   , {...newList})
+        if (settings[_teams][_namesList][_id]   == list[_id]) command(Commands[_change_settings_teams_namesList]  , {...newList})
+        if (settings[_teams][_membersList][_id] == list[_id]) command(Commands[_change_settings_teams_membersList], {...newList})
 
         openNotification({notificationBar: notif_listDeleted_ref})
 
@@ -830,38 +830,38 @@ export const MainApp: VoidComponent = () => {
 
     function command(type: Commands, ...args: unknown[]): unknown {
         // add_list
-        if (type == Commands.add_list) {
+        if (type == Commands[_add_list]) {
             openAddDialog(args[0] as Event)
         }
 
         // reset_list
-        else if (type == Commands.reset_list) {
+        else if (type == Commands[_reset_list]) {
             resetLists()
         }
 
         // view_list
-        else if (type == Commands.view_list) {
+        else if (type == Commands[_view_list]) {
             viewList(args[0] as Event, args[1] as ListItems)
         }
 
         // edit_list
-        else if (type == Commands.edit_list) {
+        else if (type == Commands[_edit_list]) {
             if (args[_length] > 1) return openEditDialog(args[0] as Event, args[1] as ListItems)
             openModal(args[0] as Event, dialog_lists_ref)
         } 
 
         // delete_list
-        else if (type == Commands.delete_list) {
+        else if (type == Commands[_delete_list]) {
             openDeleteDialog(args[0] as Event, args[1] as ListItems)
         }
 
         // export_list
-        else if (type == Commands.export_list) {
+        else if (type == Commands[_export_list]) {
             exportList(args[0] as ListItems)
         }
 
         // toggle_settings_animation
-        else if (type == Commands.toggle_settings_animation) {
+        else if (type == Commands[_toggle_settings_animation]) {
             if (randomizerType() == RandomizerType[_numbers]) {
                 setSettings(_numbers, _animation, a => !a)
                 saveSettings([ObjectStoreKeys[_settings_numbers_animation], settings[_numbers][_animation]])
@@ -889,7 +889,7 @@ export const MainApp: VoidComponent = () => {
         }
 
         // toggle_settings_repeat
-        else if (type == Commands.toggle_settings_repeat) {
+        else if (type == Commands[_toggle_settings_repeat]) {
             if (randomizerType() == RandomizerType[_numbers]) {
                 setSettings(_numbers, _repeat, r => !r)
                 saveSettings([ObjectStoreKeys[_settings_numbers_repeat], settings[_numbers][_repeat]])
@@ -901,19 +901,19 @@ export const MainApp: VoidComponent = () => {
         }
 
         // change_settings_numbers_sort
-        else if (type == Commands.change_settings_numbers_sort) {
+        else if (type == Commands[_change_settings_numbers_sort]) {
             setSettings(_numbers, _sort, args[0] as NumbersRandomizerSort)
             saveSettings([ObjectStoreKeys[_settings_numbers_sort], args[0]])
         }
         
         // change_settings_numbers_type
-        else if (type == Commands.change_settings_numbers_type) {
+        else if (type == Commands[_change_settings_numbers_type]) {
             setSettings(_numbers, _numberType, args[0] as NumbersRandomizerNumberType)
             saveSettings([ObjectStoreKeys[_settings_numbers_numberType], args[0]])
         }
         
         // change_settings_prefix
-        else if (type == Commands.change_settings_prefix) {
+        else if (type == Commands[_change_settings_prefix]) {
             if (randomizerType() == RandomizerType[_numbers]) {
                 setSettings(_numbers, _prefix, args[0] as string)
                 saveSettings([ObjectStoreKeys[_settings_numbers_prefix], args[0]])
@@ -925,7 +925,7 @@ export const MainApp: VoidComponent = () => {
         }
 
         // change_settings_suffix
-        else if (type == Commands.change_settings_suffix) {
+        else if (type == Commands[_change_settings_suffix]) {
             if (randomizerType() == RandomizerType[_numbers]) {
                 setSettings(_numbers, _suffix, args[0] as string)
                 saveSettings([ObjectStoreKeys[_settings_numbers_suffix], args[0]])
@@ -937,7 +937,7 @@ export const MainApp: VoidComponent = () => {
         }
 
         // change_settings_separator
-        else if (type == Commands.change_settings_separator) {
+        else if (type == Commands[_change_settings_separator]) {
             if (randomizerType() == RandomizerType[_numbers]) {
                 setSettings(_numbers, _separator, args[0] as string)
                 saveSettings([ObjectStoreKeys[_settings_numbers_separator], args[0]])
@@ -949,73 +949,73 @@ export const MainApp: VoidComponent = () => {
         }
 
         // change_settings_words_wordCase
-        else if (type == Commands.change_settings_words_wordCase) {
+        else if (type == Commands[_change_settings_words_wordCase]) {
             setSettings(_words, _wordCase, args[0] as WordsRandomizerWordCase)
             saveSettings([ObjectStoreKeys[_settings_words_wordCase], args[0]])
         }
 
         // change_settings_colors_colorModel
-        else if (type == Commands.change_settings_colors_colorModel) {
+        else if (type == Commands[_change_settings_colors_colorModel]) {
             setSettings(_colors, _colorModel, args[0] as ColorsRandomizerColorModel)
             saveSettings([ObjectStoreKeys[_settings_colors_colorModel], args[0]])
         }
         
         // change_settings_words_listId
-        else if (type == Commands.change_settings_words_list) {
+        else if (type == Commands[_change_settings_words_list]) {
             setSettings(_words, _list, args[0] as ListItems)
             saveSettings([ObjectStoreKeys[_settings_words_listId], (args[0] as ListItems)[_id]])
         }
 
         // change_settings_string_length
-        else if (type == Commands.change_settings_string_length) {
+        else if (type == Commands[_change_settings_string_length]) {
             setSettings(_string, _length, args[0] as number)
             saveSettings([ObjectStoreKeys[_settings_string_length], args[0]])
         }
 
         // change_settings_string_characters_customCharacters
-        else if (type == Commands.change_settings_string_characters_customCharacters) {
+        else if (type == Commands[_change_settings_string_characters_customCharacters]) {
             setSettings(_string, _characters, _customCharacter, args[0] as string)
             saveSettings([ObjectStoreKeys[_settings_string_characters_customCharacter], args[0]])
         }
 
         // toggle_settings_string_characters_symbols
-        else if (type == Commands.toggle_settings_string_characters_symbols) {
+        else if (type == Commands[_toggle_settings_string_characters_symbols]) {
             setSettings(_string, _characters, _symbols, v => !v)
             saveSettings([ObjectStoreKeys[_settings_string_characters_symbols], settings[_string][_characters][_symbols]])
         }
         
         // toggle_settings_string_characters_numbers
-        else if (type == Commands.toggle_settings_string_characters_numbers) {
+        else if (type == Commands[_toggle_settings_string_characters_numbers]) {
             setSettings(_string, _characters, _numbers, v => !v)
             saveSettings([ObjectStoreKeys[_settings_string_characters_numbers], settings[_string][_characters][_numbers]])
         }
         
         // toggle_settings_string_characters_alphabetLowercase
-        else if (type == Commands.toggle_settings_string_characters_alphabetLowercase) {
+        else if (type == Commands[_toggle_settings_string_characters_alphabetLowercase]) {
             setSettings(_string, _characters, _alphabetLowercase, v => !v)
             saveSettings([ObjectStoreKeys[_settings_string_characters_alphabetLowercase], settings[_string][_characters][_alphabetLowercase]])
         }
         
         // toggle_settings_string_characters_alphabetUppercase
-        else if (type == Commands.toggle_settings_string_characters_alphabetUppercase) {
+        else if (type == Commands[_toggle_settings_string_characters_alphabetUppercase]) {
             setSettings(_string, _characters, _alphabetUppercase, v => !v)
             saveSettings([ObjectStoreKeys[_settings_string_characters_alphabetUppercase], settings[_string][_characters][_alphabetUppercase]])
         }
 
         // change_settings_numbers_count
-        else if (type == Commands.change_settings_numbers_count) {
+        else if (type == Commands[_change_settings_numbers_count]) {
             setSettings(_numbers, _count, args[0] as number)
             saveSettings([ObjectStoreKeys[_settings_numbers_count], args[0]])
         }
 
         // change_settings_numbers_minDecimalLength
-        else if (type == Commands.change_settings_numbers_minDecimalLength) {
+        else if (type == Commands[_change_settings_numbers_minDecimalLength]) {
             setSettings(_numbers, _minDecimalLength, args[0] as number)
             saveSettings([ObjectStoreKeys[_settings_numbers_minDecimalLength], args[0]])
         }
 
         // change_settings_numbers_range
-        else if (type == Commands.change_settings_numbers_range) {
+        else if (type == Commands[_change_settings_numbers_range]) {
             setSettings(_numbers, _range, {min: args[0] as number, max: args[1] as number})
             saveSettings(
                 [ObjectStoreKeys[_settings_numbers_range_min], args[0]], 
@@ -1024,19 +1024,19 @@ export const MainApp: VoidComponent = () => {
         }
 
         // change_settings_words_count
-        else if (type == Commands.change_settings_words_count) {
+        else if (type == Commands[_change_settings_words_count]) {
             setSettings(_words, _count, args[0] as number)
             saveSettings([ObjectStoreKeys[_settings_words_count], args[0]])
         }
 
         // change_settings_colors_count
-        else if (type == Commands.change_settings_colors_count) {
+        else if (type == Commands[_change_settings_colors_count]) {
             setSettings(_colors, _count, args[0] as number)
             saveSettings([ObjectStoreKeys[_settings_colors_count], args[0]])
         }
 
         // change_settings_colors_range_hex
-        else if (type == Commands.change_settings_colors_range_hex) {
+        else if (type == Commands[_change_settings_colors_range_hex]) {
             setSettings(_colors, _range, _hex, { min: args[0] as number, max: args[1] as number })
             saveSettings(
                 [ObjectStoreKeys[_settings_colors_range_hex_min], args[0]],
@@ -1045,7 +1045,7 @@ export const MainApp: VoidComponent = () => {
         }
 
         // change_settings_colors_range_hsl_h
-        else if (type == Commands.change_settings_colors_range_hsl_h) {
+        else if (type == Commands[_change_settings_colors_range_hsl_h]) {
             setSettings(_colors, _range, _hsl, _h, { min: args[0] as number, max: args[1] as number })
             saveSettings(
                 [ObjectStoreKeys[_settings_colors_range_hsl_h_min], args[0]],
@@ -1054,7 +1054,7 @@ export const MainApp: VoidComponent = () => {
         }
 
         // change_settings_colors_range_hsl_s
-        else if (type == Commands.change_settings_colors_range_hsl_s) {
+        else if (type == Commands[_change_settings_colors_range_hsl_s]) {
             setSettings(_colors, _range, _hsl, _s, { min: args[0] as number, max: args[1] as number })
             saveSettings(
                 [ObjectStoreKeys[_settings_colors_range_hsl_s_min], args[0]],
@@ -1063,7 +1063,7 @@ export const MainApp: VoidComponent = () => {
         }
 
         // change_settings_colors_range_hsl_l
-        else if (type == Commands.change_settings_colors_range_hsl_l) {
+        else if (type == Commands[_change_settings_colors_range_hsl_l]) {
             setSettings(_colors, _range, _hsl, _l, { min: args[0] as number, max: args[1] as number })
             saveSettings(
                 [ObjectStoreKeys[_settings_colors_range_hsl_l_min], args[0]],
@@ -1072,7 +1072,7 @@ export const MainApp: VoidComponent = () => {
         }
 
         // change_settings_colors_range_rgb_r
-        else if (type == Commands.change_settings_colors_range_rgb_r) {
+        else if (type == Commands[_change_settings_colors_range_rgb_r]) {
             setSettings(_colors, _range, _rgb, _r, { min: args[0] as number, max: args[1] as number })
             saveSettings(
                 [ObjectStoreKeys[_settings_colors_range_rgb_r_min], args[0]],
@@ -1081,7 +1081,7 @@ export const MainApp: VoidComponent = () => {
         }
 
         // change_settings_colors_range_rgb_g
-        else if (type == Commands.change_settings_colors_range_rgb_g) {
+        else if (type == Commands[_change_settings_colors_range_rgb_g]) {
             setSettings(_colors, _range, _rgb, _g, { min: args[0] as number, max: args[1] as number })
             saveSettings(
                 [ObjectStoreKeys[_settings_colors_range_rgb_g_min], args[0]],
@@ -1090,7 +1090,7 @@ export const MainApp: VoidComponent = () => {
         }
 
         // change_settings_colors_range_rgb_b
-        else if (type == Commands.change_settings_colors_range_rgb_b) {
+        else if (type == Commands[_change_settings_colors_range_rgb_b]) {
             setSettings(_colors, _range, _rgb, _b, { min: args[0] as number, max: args[1] as number })
             saveSettings(
                 [ObjectStoreKeys[_settings_colors_range_rgb_b_min], args[0]],
@@ -1099,7 +1099,7 @@ export const MainApp: VoidComponent = () => {
         }
 
         // change_settings_string_characters_toDefault
-        else if (type == Commands.change_settings_string_characters_toDefault) {
+        else if (type == Commands[_change_settings_string_characters_toDefault]) {
             setSettings(_string, _characters, c => { return {
                 ...c,
                 alphabetLowercase: true,
@@ -1114,7 +1114,7 @@ export const MainApp: VoidComponent = () => {
         }
 
         // change_settings_selection_list
-        else if (type == Commands.change_settings_selection_list) {
+        else if (type == Commands[_change_settings_selection_list]) {
             setSettings(_selection, _list, args[0] as ListItems)
             if ((args[0] as ListItems)[_items][_length] < settings[_selection][_count]) {
                 setSettings(_selection, _count, (args[0] as ListItems)[_items][_length])
@@ -1128,19 +1128,19 @@ export const MainApp: VoidComponent = () => {
         }
 
         // change_settings_selection_count
-        else if (type == Commands.change_settings_selection_count) {
+        else if (type == Commands[_change_settings_selection_count]) {
             setSettings(_selection, _count, args[0] as number)
             saveSettings([ObjectStoreKeys[_settings_selection_count], args[0] as number])
         }
 
         // change_settings_teams_namesList
-        else if (type == Commands.change_settings_teams_namesList) {
+        else if (type == Commands[_change_settings_teams_namesList]) {
             setSettings(_teams, _namesList, args[0] as ListItems)
             saveSettings([ObjectStoreKeys[_settings_teams_namesListId], (args[0] as ListItems)[_id]])
         }
 
         // change_settings_teams_membersList
-        else if (type == Commands.change_settings_teams_membersList) {
+        else if (type == Commands[_change_settings_teams_membersList]) {
             setSettings(_teams, _membersList, args[0] as ListItems)
             if ((args[0] as ListItems)[_items][_length] < settings[_teams][_count]) {
                 setSettings(_teams, _count, (args[0] as ListItems)[_items][_length])
@@ -1154,23 +1154,23 @@ export const MainApp: VoidComponent = () => {
         }
 
         // change_settings_teams_count
-        else if (type == Commands.change_settings_teams_count) {
+        else if (type == Commands[_change_settings_teams_count]) {
             setSettings(_teams, _count, args[0] as number)
             saveSettings([ObjectStoreKeys[_settings_teams_count], args[0] as number])
         }
 
         // toggle_navigation_expand
-        else if (type == Commands.toggle_navigation_expand) {
+        else if (type == Commands[_toggle_navigation_expand]) {
             setIsExpandNavigation(v => !v)
         }
 
         // generate
-        else if (type == Commands.generate) {
+        else if (type == Commands[_generate]) {
             return onGenerate()
         }
 
         // stopGenerate
-        else if (type == Commands.stopGenerate) {
+        else if (type == Commands[_stopGenerate]) {
             return onStopGenerate()
         }
     }
@@ -1366,8 +1366,8 @@ export const MainApp: VoidComponent = () => {
                 data-keep-pointer-event={toggleAttribute(isGenerating())} 
                 variant={ButtonVariant[_filled]} 
                 onClick={() => {
-                    if (isGenerating()) return command(Commands.stopGenerate)
-                    command(Commands.generate)
+                    if (isGenerating()) return command(Commands[_stopGenerate])
+                    command(Commands[_generate])
                 }}>
                 <Icon 
                     filled 

@@ -19,7 +19,7 @@ import type { ObjectStoreLists } from "./_storage";
 import Dropdown, { type DropdownItem } from "@/components/Dropdown";
 import type { IDB } from "@/class/indexeddb";
 import { numberIsNaN, numberParse } from "@/utils/math";
-import { _add_list, _delete_list, _edit_list, _settings_words_listId } from "./_string";
+import { _add_list, _change_settings_colors_count, _change_settings_colors_range_hex, _change_settings_colors_range_hsl_h, _change_settings_colors_range_hsl_l, _change_settings_colors_range_hsl_s, _change_settings_colors_range_rgb_b, _change_settings_colors_range_rgb_g, _change_settings_colors_range_rgb_r, _change_settings_numbers_count, _change_settings_numbers_range, _change_settings_selection_count, _change_settings_selection_list, _change_settings_string_characters_customCharacters, _change_settings_string_characters_toDefault, _change_settings_string_length, _change_settings_teams_count, _change_settings_teams_membersList, _change_settings_teams_namesList, _change_settings_words_count, _change_settings_words_list, _delete_list, _edit_list, _export_list, _reset_list, _settings_words_listId, _toggle_settings_string_characters_alphabetLowercase, _toggle_settings_string_characters_alphabetUppercase, _toggle_settings_string_characters_numbers, _toggle_settings_string_characters_symbols, _view_list } from "./_string";
 import { preventDefault } from "@/utils/event";
 
 type Props = {
@@ -90,12 +90,12 @@ const Teams: VoidComponent<TeamsProps> = (props) => {
 
     function changeNamesList(id: string): void {
         getListById(id)
-        props[_command](Commands.change_settings_teams_namesList, list())
+        props[_command](Commands[_change_settings_teams_namesList], list())
     }
     
     function changeMembersList(id: string): void {
         getListById(id)
-        props[_command](Commands.change_settings_teams_membersList, list())
+        props[_command](Commands[_change_settings_teams_membersList], list())
     }
 
     return (<>
@@ -103,7 +103,7 @@ const Teams: VoidComponent<TeamsProps> = (props) => {
             labelText="Count" 
             min={1}
             max={settings()[_membersList][_items][_length]}
-            onFinalValueChanged={(v) => props[_command](Commands.change_settings_teams_count, v)}
+            onFinalValueChanged={(v) => props[_command](Commands[_change_settings_teams_count], v)}
             labelElement={{ style: { width: 'min(100%, 164px)' } }}
             value={settings()[_count]} 
         />
@@ -137,7 +137,7 @@ const Teams: VoidComponent<TeamsProps> = (props) => {
                 </Show>
                 <MenuItem 
                     onClick={(ev) => {
-                        props[_command](Commands.add_list, ev)
+                        props[_command](Commands[_add_list], ev)
                         closePopover(dropdownMenu_namesLists_ref)
                     }}
                     leading={<Icon code={0xE007} />}>
@@ -147,7 +147,7 @@ const Teams: VoidComponent<TeamsProps> = (props) => {
                 <Show when={props[_lists][0][_length] == 0}>
                     <MenuItem 
                         onClick={(ev) => {
-                            props[_command](Commands.reset_list)
+                            props[_command](Commands[_reset_list])
                             closePopover(dropdownMenu_namesLists_ref)
                         }}
                         leading={<Icon code={0xF09A} />}>
@@ -158,7 +158,7 @@ const Teams: VoidComponent<TeamsProps> = (props) => {
                 <Show when={props[_lists][0][_length] > 0}>
                     <MenuItem 
                         onClick={(ev) => {
-                            props[_command](Commands.edit_list, ev)
+                            props[_command](Commands[_edit_list], ev)
                             closePopover(dropdownMenu_namesLists_ref)
                         }}
                         leading={<Icon code={0xE069}/>}>
@@ -197,7 +197,7 @@ const Teams: VoidComponent<TeamsProps> = (props) => {
                 </Show>
                 <MenuItem 
                     onClick={(ev) => {
-                        props[_command](Commands.add_list, ev)
+                        props[_command](Commands[_add_list], ev)
                         closePopover(dropdownMenu_membersLists_ref)
                     }}
                     leading={<Icon code={0xE007} />}>
@@ -207,7 +207,7 @@ const Teams: VoidComponent<TeamsProps> = (props) => {
                 <Show when={props[_lists][0][_length] == 0}>
                     <MenuItem 
                         onClick={(ev) => {
-                            props[_command](Commands.reset_list)
+                            props[_command](Commands[_reset_list])
                             closePopover(dropdownMenu_membersLists_ref)
                         }}
                         leading={<Icon code={0xF09A} />}>
@@ -218,7 +218,7 @@ const Teams: VoidComponent<TeamsProps> = (props) => {
                 <Show when={props[_lists][0][_length] > 0}>
                     <MenuItem 
                         onClick={(ev) => {
-                            props[_command](Commands.edit_list, ev)
+                            props[_command](Commands[_edit_list], ev)
                             closePopover(dropdownMenu_membersLists_ref)
                         }}
                         leading={<Icon code={0xE069}/>}>
@@ -243,7 +243,7 @@ const Teams: VoidComponent<TeamsProps> = (props) => {
                     await closePopover(actionMenuRef)
                     await closePopover(dropdownMenu_namesLists_ref)
                     await closePopover(dropdownMenu_membersLists_ref)
-                    props[_command](Commands.view_list, ev, list())
+                    props[_command](Commands[_view_list], ev, list())
                 }} 
                 leading={<Icon code={0xE77B}/>}>
                 View list
@@ -253,20 +253,20 @@ const Teams: VoidComponent<TeamsProps> = (props) => {
                     await closePopover(actionMenuRef)
                     await closePopover(dropdownMenu_namesLists_ref)
                     await closePopover(dropdownMenu_membersLists_ref)
-                    props[_command](Commands.export_list, list())
+                    props[_command](Commands[_export_list], list())
                 }} 
                 leading={<Icon code={0xE0CF}/>}
                 trailing="*.csv">
                 Export list
             </MenuItem>
             <MenuItem onClick={async (ev) => {
-                    props[_command](Commands.edit_list, ev, list())
+                    props[_command](Commands[_edit_list], ev, list())
                     await closePopover(actionMenuRef)
                     await closePopover(dropdownMenu_namesLists_ref)
                     await closePopover(dropdownMenu_membersLists_ref)
                 }} leading={<Icon code={0xF09C}/>}>Edit list</MenuItem>
             <MenuItem onClick={async (ev) => {
-                    props[_command](Commands.delete_list, ev, list())
+                    props[_command](Commands[_delete_list], ev, list())
                     await closePopover(actionMenuRef)
                     await closePopover(dropdownMenu_namesLists_ref)
                     await closePopover(dropdownMenu_membersLists_ref)
@@ -296,7 +296,7 @@ const Selection: VoidComponent<SelectionProps> = (props) => {
             setList(li)
             break
         }
-        props[_command](Commands.change_settings_selection_list, list())
+        props[_command](Commands[_change_settings_selection_list], list())
     }
 
     return (<>
@@ -329,7 +329,7 @@ const Selection: VoidComponent<SelectionProps> = (props) => {
                 </Show>
                 <MenuItem 
                     onClick={(ev) => {
-                        props[_command](Commands.add_list, ev)
+                        props[_command](Commands[_add_list], ev)
                         closePopover(dropdownMenuRef)
                     }}
                     leading={<Icon code={0xE007} />}>
@@ -339,7 +339,7 @@ const Selection: VoidComponent<SelectionProps> = (props) => {
                 <Show when={props[_lists][0][_length] == 0}>
                     <MenuItem 
                         onClick={(ev) => {
-                            props[_command](Commands.reset_list)
+                            props[_command](Commands[_reset_list])
                             closePopover(dropdownMenuRef)
                         }}
                         leading={<Icon code={0xF09A} />}>
@@ -350,7 +350,7 @@ const Selection: VoidComponent<SelectionProps> = (props) => {
                 <Show when={props[_lists][0][_length] > 0}>
                     <MenuItem 
                         onClick={(ev) => {
-                            props[_command](Commands.edit_list, ev)
+                            props[_command](Commands[_edit_list], ev)
                             closePopover(dropdownMenuRef)
                         }}
                         leading={<Icon code={0xE069}/>}>
@@ -372,7 +372,7 @@ const Selection: VoidComponent<SelectionProps> = (props) => {
                 onClick={async (ev) => {
                     await closePopover(actionMenuRef)
                     await closePopover(dropdownMenuRef)
-                    props[_command](Commands.view_list, ev, list())
+                    props[_command](Commands[_view_list], ev, list())
                 }} 
                 leading={<Icon code={0xE77B}/>}>
                 View list
@@ -381,19 +381,19 @@ const Selection: VoidComponent<SelectionProps> = (props) => {
                 onClick={async () => {
                     await closePopover(actionMenuRef)
                     await closePopover(dropdownMenuRef)
-                    props[_command](Commands.export_list, list())
+                    props[_command](Commands[_export_list], list())
                 }} 
                 leading={<Icon code={0xE0CF}/>}
                 trailing="*.csv">
                 Export list
             </MenuItem>
             <MenuItem onClick={async (ev) => {
-                    props[_command](Commands.edit_list, ev, list())
+                    props[_command](Commands[_edit_list], ev, list())
                     await closePopover(actionMenuRef)
                     await closePopover(dropdownMenuRef)
                 }} leading={<Icon code={0xF09C}/>}>Edit list</MenuItem>
             <MenuItem onClick={async (ev) => {
-                    props[_command](Commands.delete_list, ev, list())
+                    props[_command](Commands[_delete_list], ev, list())
                     await closePopover(actionMenuRef)
                     await closePopover(dropdownMenuRef)
                 }} leading={<Icon code={0xE59D}/>}>Delete list</MenuItem>
@@ -402,7 +402,7 @@ const Selection: VoidComponent<SelectionProps> = (props) => {
             labelText="Count" 
             min={1}
             max={props[_settings][0][_selection][_list][_items][_length]}
-            onFinalValueChanged={(v) => props[_command](Commands.change_settings_selection_count, v)}
+            onFinalValueChanged={(v) => props[_command](Commands[_change_settings_selection_count], v)}
             labelElement={{ style: { width: 'min(100%, 164px)' } }}
             value={props[_settings][0][_selection][_count]} 
         />
@@ -430,7 +430,7 @@ const Words: VoidComponent<WordsProps> = (props) => {
             setList(li)
             break
         }
-        props[_command](Commands.change_settings_words_list, list())
+        props[_command](Commands[_change_settings_words_list], list())
     }
 
     return (<>
@@ -463,7 +463,7 @@ const Words: VoidComponent<WordsProps> = (props) => {
                 </Show>
                 <MenuItem 
                     onClick={(ev) => {
-                        props[_command](Commands.add_list, ev)
+                        props[_command](Commands[_add_list], ev)
                         closePopover(dropdownMenuRef)
                     }}
                     leading={<Icon code={0xE007} />}>
@@ -473,7 +473,7 @@ const Words: VoidComponent<WordsProps> = (props) => {
                 <Show when={props[_lists][0][_length] == 0}>
                     <MenuItem 
                         onClick={(ev) => {
-                            props[_command](Commands.reset_list)
+                            props[_command](Commands[_reset_list])
                             closePopover(dropdownMenuRef)
                         }}
                         leading={<Icon code={0xF09A} />}>
@@ -484,7 +484,7 @@ const Words: VoidComponent<WordsProps> = (props) => {
                 <Show when={props[_lists][0][_length] > 0}>
                     <MenuItem 
                         onClick={(ev) => {
-                            props[_command](Commands.edit_list, ev)
+                            props[_command](Commands[_edit_list], ev)
                             closePopover(dropdownMenuRef)
                         }}
                         leading={<Icon code={0xE069}/>}>
@@ -506,7 +506,7 @@ const Words: VoidComponent<WordsProps> = (props) => {
                 onClick={async (ev) => {
                     await closePopover(actionMenuRef)
                     await closePopover(dropdownMenuRef)
-                    props[_command](Commands.view_list, ev, list())
+                    props[_command](Commands[_view_list], ev, list())
                 }} 
                 leading={<Icon code={0xE77B}/>}>
                 View list
@@ -515,19 +515,19 @@ const Words: VoidComponent<WordsProps> = (props) => {
                 onClick={async () => {
                     await closePopover(actionMenuRef)
                     await closePopover(dropdownMenuRef)
-                    props[_command](Commands.export_list, list())
+                    props[_command](Commands[_export_list], list())
                 }} 
                 leading={<Icon code={0xE0CF}/>}
                 trailing="*.csv">
                 Export list
             </MenuItem>
             <MenuItem onClick={async (ev) => {
-                    props[_command](Commands.edit_list, ev, list())
+                    props[_command](Commands[_edit_list], ev, list())
                     await closePopover(actionMenuRef)
                     await closePopover(dropdownMenuRef)
                 }} leading={<Icon code={0xF09C}/>}>Edit list</MenuItem>
             <MenuItem onClick={async (ev) => {
-                    props[_command](Commands.delete_list, ev, list())
+                    props[_command](Commands[_delete_list], ev, list())
                     await closePopover(actionMenuRef)
                     await closePopover(dropdownMenuRef)
                 }} leading={<Icon code={0xE59D}/>}>Delete list</MenuItem>
@@ -535,7 +535,7 @@ const Words: VoidComponent<WordsProps> = (props) => {
         <NumberTextField 
             labelText="Count" 
             min={1}
-            onFinalValueChanged={(v) => props[_command](Commands.change_settings_words_count, v)}
+            onFinalValueChanged={(v) => props[_command](Commands[_change_settings_words_count], v)}
             labelElement={{ style: { width: 'min(100%, 164px)' } }}
             value={props[_settings][0][_words][_count]} 
         />
@@ -570,7 +570,7 @@ const Colors: VoidComponent<ColorsProps> = (props) => {
             min={1}
             labelText="Count"
             value={props[_settings][0][_colors][_count]}
-            onFinalValueChanged={(v) => props[_command](Commands.change_settings_colors_count, v)}
+            onFinalValueChanged={(v) => props[_command](Commands[_change_settings_colors_count], v)}
         />
         <Switch>
             <Match when={props[_settings][0][_colors][_colorModel] == ColorsRandomizerColorModel[_hex]}>
@@ -586,7 +586,7 @@ const Colors: VoidComponent<ColorsProps> = (props) => {
                                 max: props[_settings][0][_colors][_range][_hex][_max]
                             }
                         )
-                        props[_command](Commands.change_settings_colors_range_hex, values[_min], values[_max])
+                        props[_command](Commands[_change_settings_colors_range_hex], values[_min], values[_max])
                         changeTextFieldValue(ev[_currentTarget], [values[_min], values[_max]][_join](' - '))
                     }}
                     value={[
@@ -608,7 +608,7 @@ const Colors: VoidComponent<ColorsProps> = (props) => {
                                 max: props[_settings][0][_colors][_range][_hsl].h[_max]
                             }
                         )
-                        props[_command](Commands.change_settings_colors_range_hsl_h, values[_min], values[_max])
+                        props[_command](Commands[_change_settings_colors_range_hsl_h], values[_min], values[_max])
                         changeTextFieldValue(ev[_currentTarget], [values[_min], values[_max]][_join](' - '))
                     }}
                     value={[
@@ -628,7 +628,7 @@ const Colors: VoidComponent<ColorsProps> = (props) => {
                                 max: props[_settings][0][_colors][_range][_hsl].s[_max]
                             }
                         )
-                        props[_command](Commands.change_settings_colors_range_hsl_s, values[_min], values[_max])
+                        props[_command](Commands[_change_settings_colors_range_hsl_s], values[_min], values[_max])
                         changeTextFieldValue(ev[_currentTarget], [values[_min], values[_max]][_join](' - '))
                     }}
                     value={[
@@ -648,7 +648,7 @@ const Colors: VoidComponent<ColorsProps> = (props) => {
                                 max: props[_settings][0][_colors][_range][_hsl].l[_max]
                             }
                         )
-                        props[_command](Commands.change_settings_colors_range_hsl_l, values[_min], values[_max])
+                        props[_command](Commands[_change_settings_colors_range_hsl_l], values[_min], values[_max])
                         changeTextFieldValue(ev[_currentTarget], [values[_min], values[_max]][_join](' - '))
                     }}
                     value={[
@@ -670,7 +670,7 @@ const Colors: VoidComponent<ColorsProps> = (props) => {
                                 max: props[_settings][0][_colors][_range][_rgb].r[_max]
                             }
                         )
-                        props[_command](Commands.change_settings_colors_range_rgb_r, values[_min], values[_max])
+                        props[_command](Commands[_change_settings_colors_range_rgb_r], values[_min], values[_max])
                         changeTextFieldValue(ev[_currentTarget], [values[_min], values[_max]][_join](' - '))
                     }}
                     value={[
@@ -690,7 +690,7 @@ const Colors: VoidComponent<ColorsProps> = (props) => {
                                 max: props[_settings][0][_colors][_range][_rgb].g[_max]
                             }
                         )
-                        props[_command](Commands.change_settings_colors_range_rgb_g, values[_min], values[_max])
+                        props[_command](Commands[_change_settings_colors_range_rgb_g], values[_min], values[_max])
                         changeTextFieldValue(ev[_currentTarget], [values[_min], values[_max]][_join](' - '))
                     }}
                     value={[
@@ -710,7 +710,7 @@ const Colors: VoidComponent<ColorsProps> = (props) => {
                                 max: props[_settings][0][_colors][_range][_rgb].b[_max]
                             }
                         )
-                        props[_command](Commands.change_settings_colors_range_rgb_b, values[_min], values[_max])
+                        props[_command](Commands[_change_settings_colors_range_rgb_b], values[_min], values[_max])
                         changeTextFieldValue(ev[_currentTarget], [values[_min], values[_max]][_join](' - '))
                     }}
                     value={[
@@ -741,7 +741,7 @@ const Numbers: VoidComponent<NumbersProps> = (props) => {
 
         if (min > max) min = max
 
-        props[_command](Commands.change_settings_numbers_range, min, max)
+        props[_command](Commands[_change_settings_numbers_range], min, max)
         changeTextFieldValue(ev[_currentTarget], [min, max][_join](' - '))
     }
 
@@ -755,7 +755,7 @@ const Numbers: VoidComponent<NumbersProps> = (props) => {
         <NumberTextField
             labelText="Count"
             min={1}
-            onFinalValueChanged={(v) => props[_command](Commands.change_settings_numbers_count, v)}
+            onFinalValueChanged={(v) => props[_command](Commands[_change_settings_numbers_count], v)}
             labelElement={{ style: { width: 'min(100%, 164px)' } }}
             value={props[_settings][0][_numbers][_count]}
         />
@@ -780,7 +780,7 @@ const $String: Component<$StringProps> = (props) => {
         const customCharacter = s[_characters][_customCharacter]
 
         if (!lowercase && !uppercase && !numbers && !symbols && customCharacter[_length] == 0) {
-            props[_command](Commands.change_settings_string_characters_toDefault)
+            props[_command](Commands[_change_settings_string_characters_toDefault])
         }
 
         const text: string[] = []
@@ -797,7 +797,7 @@ const $String: Component<$StringProps> = (props) => {
         <NumberTextField
             labelElement={{ style: { width: 'min(100%, 164px)' } }}
             value={settings()[_length]}
-            onFinalValueChanged={(v) => props[_command](Commands.change_settings_string_length, v)}
+            onFinalValueChanged={(v) => props[_command](Commands[_change_settings_string_length], v)}
             min={1}
             labelText="Length"
         />
@@ -831,27 +831,27 @@ const $String: Component<$StringProps> = (props) => {
             <MenuItem
                 checked={settings()[_characters][_alphabetUppercase]}
                 trailing="A-Z"
-                onClick={() => props[_command](Commands.toggle_settings_string_characters_alphabetUppercase)}>Uppercase</MenuItem>
+                onClick={() => props[_command](Commands[_toggle_settings_string_characters_alphabetUppercase])}>Uppercase</MenuItem>
             <MenuItem
                 checked={settings()[_characters][_alphabetLowercase]}
                 trailing="a-z"
-                onClick={() => props[_command](Commands.toggle_settings_string_characters_alphabetLowercase)}>Lowercase</MenuItem>
+                onClick={() => props[_command](Commands[_toggle_settings_string_characters_alphabetLowercase])}>Lowercase</MenuItem>
             <MenuDivider />
             <MenuItem
                 checked={settings()[_characters][_numbers]}
                 trailing="0-9"
-                onClick={() => props[_command](Commands.toggle_settings_string_characters_numbers)}>Numbers</MenuItem>
+                onClick={() => props[_command](Commands[_toggle_settings_string_characters_numbers])}>Numbers</MenuItem>
             <MenuDivider />
             <MenuItem
                 checked={settings()[_characters][_symbols]}
                 trailing={"<({[!@#$%^&*_-+=~`\\|\"':;?/.,]})>"}
-                onClick={() => props[_command](Commands.toggle_settings_string_characters_symbols)}>Symbol</MenuItem>
+                onClick={() => props[_command](Commands[_toggle_settings_string_characters_symbols])}>Symbol</MenuItem>
             <MenuDivider />
             <div class={ CSS.string_custom_character}>
                 <TextField
                     labelText="Custom characters"
                     placeholder="#d(23'[])sdf"
-                    onInput={(ev) => props[_command](Commands.change_settings_string_characters_customCharacters, ev[_currentTarget][_value])}
+                    onInput={(ev) => props[_command](Commands[_change_settings_string_characters_customCharacters], ev[_currentTarget][_value])}
                     value={settings()[_characters][_customCharacter]}
                 />
             </div>

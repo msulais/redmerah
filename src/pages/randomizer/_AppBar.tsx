@@ -13,7 +13,7 @@ import { ThemeData } from "@/enums/theme";
 import { getLocalStorageItem, setLocalStorageItem } from "@/utils/storage";
 import { LocalStorageKeys } from "@/enums/storage";
 import { RandomizerType, NumbersRandomizerSort, NumbersRandomizerNumberType, WordsRandomizerWordCase, ColorsRandomizerColorModel, Commands } from "./_enums";
-import { _CENTER_BOTTOM_TO_LEFT, _RIGHT_CENTER_TO_BOTTOM, _URL, _actions, _animation, _ascending, _binary, _change, _color, _colorModel, _colors, _command, _contactEmail, _corner, _currentTarget, _dark, _decimal, _descending, _donate, _filled, _fullRound, _getFullYear, _hex, _hexadecimal, _history, _hsl, _icon, _includes, _isGenerating, _light, _logo, _lowercase, _matches, _minDecimalLength, _noPointerEvent, _none, _numberType, _numbers, _octal, _onChangeRandomizer, _onCopyResult, _onGenerate, _onStopGenerate, _prefix, _randomizerType, _repeat, _rgb, _round, _selection, _semiRound, _separator, _settings, _share, _sharp, _sort, _src, _string, _suffix, _system, _teams, _text, _theme, _then, _titlecase, _togglecase, _type, _uppercase, _value, _wordCase, _words } from "@/data/string";
+import { _CENTER_BOTTOM_TO_LEFT, _RIGHT_CENTER_TO_BOTTOM, _URL, _actions, _animation, _ascending, _binary, _change, _color, _colorModel, _colors, _command, _contactEmail, _corner, _currentTarget, _dark, _decimal, _descending, _donate, _filled, _fullRound, _generate, _getFullYear, _hex, _hexadecimal, _history, _hsl, _icon, _includes, _isGenerating, _light, _logo, _lowercase, _matches, _minDecimalLength, _noPointerEvent, _none, _numberType, _numbers, _octal, _onChangeRandomizer, _onCopyResult, _onGenerate, _onStopGenerate, _prefix, _randomizerType, _repeat, _rgb, _round, _selection, _semiRound, _separator, _settings, _share, _sharp, _sort, _src, _stopGenerate, _string, _suffix, _system, _teams, _text, _theme, _then, _titlecase, _togglecase, _type, _uppercase, _value, _wordCase, _words } from "@/data/string";
 import { encodeURL } from "@/utils/url";
 import { getDocument, getDocumentBody, getNavigator, getRoot } from "@/data/window";
 import { CornerData } from "@/enums/corner";
@@ -34,6 +34,7 @@ import { RANDOMIZER_TYPES, SIZE_SIDE_NAVIGATION_NONE } from "./_data";
 import { addEventListener } from "@/utils/event";
 import Drawer, { DrawerItem } from "@/components/Drawer";
 import { closeModal, openModal } from "@/utils/modal";
+import { _change_settings_numbers_sort, _change_settings_numbers_type, _change_settings_words_wordCase, _change_settings_colors_colorModel, _toggle_navigation_expand, _toggle_settings_repeat, _toggle_settings_animation, _change_settings_prefix, _change_settings_suffix, _change_settings_separator, _change_settings_numbers_minDecimalLength } from "./_string";
 
 type Props = {
     isGenerating: boolean
@@ -131,13 +132,13 @@ const C: Component<Props> = (props) => {
     }
 
     async function changeNumbersSort(sort: NumbersRandomizerSort): Promise<void> {
-        props[_command](Commands.change_settings_numbers_sort, sort)
+        props[_command](Commands[_change_settings_numbers_sort], sort)
         await closePopover(menu_sortSettings_ref)
         await closePopover(menu_settings_ref)
     }
 
     async function changeNumbersType(type: NumbersRandomizerNumberType): Promise<void> {
-        props[_command](Commands.change_settings_numbers_type, type)
+        props[_command](Commands[_change_settings_numbers_type], type)
         await closePopover(menu_numberTypeSettings_ref)
         await closePopover(menu_settings_ref)
     }
@@ -157,13 +158,13 @@ const C: Component<Props> = (props) => {
     }
 
     async function changeWordsWordCase(wordCase: WordsRandomizerWordCase): Promise<void> {
-        props[_command](Commands.change_settings_words_wordCase, wordCase)
+        props[_command](Commands[_change_settings_words_wordCase], wordCase)
         await closePopover(menu_wordCaseSettings_ref)
         await closePopover(menu_settings_ref)
     }
 
     async function changeColorsColorModel(colorModel: ColorsRandomizerColorModel): Promise<void> {
-        props[_command](Commands.change_settings_colors_colorModel, colorModel)
+        props[_command](Commands[_change_settings_colors_colorModel], colorModel)
         await closePopover(menu_colorModelSettings_ref)
         await closePopover(menu_settings_ref)
     }
@@ -187,7 +188,7 @@ const C: Component<Props> = (props) => {
                     ref={r => set_button_menu_ref(r)} 
                     onClick={(ev) => {
                         if (isSideNavigationHidden()) return openModal(ev, drawer_navigation_ref)
-                        props[_command](Commands.toggle_navigation_expand)
+                        props[_command](Commands[_toggle_navigation_expand])
                     }} 
                     classList={addClassListModule(CSSAnimation.btn_shrink_horizontal_icon)} 
                     iconOnly>
@@ -202,8 +203,8 @@ const C: Component<Props> = (props) => {
                     data-keep-pointer-event={toggleAttribute(props[_isGenerating])} 
                     variant={ButtonVariant[_filled]} 
                     onClick={() => {
-                        if (props[_isGenerating]) return props[_command](Commands.stopGenerate)
-                        props[_command](Commands.generate)
+                        if (props[_isGenerating]) return props[_command](Commands[_stopGenerate])
+                        props[_command](Commands[_generate])
                     }}>
                     <Icon 
                         filled 
@@ -363,7 +364,7 @@ const C: Component<Props> = (props) => {
                 <MenuItem
                     checked={isRepeat()}
                     leading={<Icon code={0xE0A1}/>}
-                    onClick={() => props[_command](Commands.toggle_settings_repeat)}
+                    onClick={() => props[_command](Commands[_toggle_settings_repeat])}
                     trailing={<MenuIndent/>}>
                     Repeat
                 </MenuItem>
@@ -371,7 +372,7 @@ const C: Component<Props> = (props) => {
 
             <MenuItem
                 checked={isAnimation()}
-                onClick={() => props[_command](Commands.toggle_settings_animation)}
+                onClick={() => props[_command](Commands[_toggle_settings_animation])}
                 leading={<Icon code={0xECBA}/>}
                 trailing={<MenuIndent/>}>
                 Animation
@@ -582,7 +583,7 @@ const C: Component<Props> = (props) => {
                     <TextField
                         ref={r => textfield_prefix_ref = r}
                         labelText="Prefix"
-                        onBlur={(ev) => props[_command](Commands.change_settings_prefix, ev[_currentTarget][_value])}
+                        onBlur={(ev) => props[_command](Commands[_change_settings_prefix], ev[_currentTarget][_value])}
                         leading={<Icon code={0xE043}/>}
                     />
                 </div>
@@ -590,7 +591,7 @@ const C: Component<Props> = (props) => {
                     <TextField
                         ref={r => textfield_suffix_ref = r}
                         labelText="Suffix"
-                        onBlur={(ev) => props[_command](Commands.change_settings_suffix, ev[_currentTarget][_value])}
+                        onBlur={(ev) => props[_command](Commands[_change_settings_suffix], ev[_currentTarget][_value])}
                         leading={<Icon code={0xE02D}/>}
                     />
                 </div>
@@ -598,7 +599,7 @@ const C: Component<Props> = (props) => {
                     <TextField
                         ref={r => textfield_separator_ref = r}
                         labelText="Separator"
-                        onBlur={(ev) => props[_command](Commands.change_settings_separator, ev[_currentTarget][_value])}
+                        onBlur={(ev) => props[_command](Commands[_change_settings_separator], ev[_currentTarget][_value])}
                         leading={<Icon code={0xE4CF}/>}
                     />
                 </div>
@@ -609,7 +610,7 @@ const C: Component<Props> = (props) => {
                         ref={r => textfield_decimalLength_ref = r}
                         min={0}
                         labelText="Min decimal length"
-                        onFinalValueChanged={(v) => props[_command](Commands.change_settings_numbers_minDecimalLength, v)}
+                        onFinalValueChanged={(v) => props[_command](Commands[_change_settings_numbers_minDecimalLength], v)}
                         leading={<Icon code={0xE599}/>}
                     />
                 </div>

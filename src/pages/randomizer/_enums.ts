@@ -15,177 +15,177 @@ export enum NumbersRandomizerNumberType {
 }
 
 export enum NumbersRandomizerSort {
-    ascending,
-    descending,
-    none,
+    ascending = 'asc',
+    descending = 'desc',
+    none = 'none',
 }
 
 export enum WordsRandomizerWordCase {
-    uppercase,
-    lowercase,
-    titlecase,
-    togglecase,
-    none
+    uppercase = 'upper',
+    lowercase = 'lower',
+    titlecase = 'title',
+    togglecase = 'toggle',
+    none = 'none'
 }
 
 export enum ColorsRandomizerColorModel {
-    rgb,
-    hsl,
-    hex
+    rgb = 'rgb',
+    hsl = 'hsl',
+    hex = 'hex'
 }
 
 export enum Commands {
-    reset_list,
+    reset_list = 'a',
 
     /** 
     @param event `Event` */
-    add_list,
+    add_list = 'b',
 
     /** 
     @param list `ListItems` */
-    export_list, 
+    export_list = 'c', 
 
     /** 
     @param event `Event`
     @param list `ListItems | undefined` */
-    edit_list, 
+    edit_list = 'd', 
 
     /** 
     @param event `Event`
     @param list `ListItems` */
-    view_list, 
+    view_list = 'e', 
     
     /** 
     @param event `Event`
     @param list `ListItems` */
-    delete_list,
+    delete_list = 'f',
 
-    toggle_settings_animation,
-    toggle_settings_repeat, 
+    toggle_settings_animation = 'g',
+    toggle_settings_repeat = 'h', 
     
     /** 
     @param sort `NumbersRandomizerSort` */
-    change_settings_numbers_sort,
+    change_settings_numbers_sort = 'i',
     
     /** 
     @param type `NumbersRandomizerNumberType` */
-    change_settings_numbers_type, 
+    change_settings_numbers_type = 'j', 
     
     /** 
     @param value `string` */
-    change_settings_prefix,
+    change_settings_prefix = 'k',
     
     /** 
     @param value `string` */
-    change_settings_suffix,
+    change_settings_suffix = 'l',
     
     /** 
     @param value `string` */
-    change_settings_separator,
+    change_settings_separator = 'm',
 
     /** 
     @param wordCase `WordsRandomizerWordCase` */
-    change_settings_words_wordCase, 
+    change_settings_words_wordCase = 'n', 
     
     /** 
     @param colorModel `ColorsRandomizerColorModel` */
-    change_settings_colors_colorModel,
+    change_settings_colors_colorModel = 'o',
     
     /** 
     @param list `ListItems` */
-    change_settings_words_list,
+    change_settings_words_list = 'p',
     
     /** 
     @param length `number` */
-    change_settings_string_length,
+    change_settings_string_length = 'q',
     
     /** 
     @param characters `string` */
-    change_settings_string_characters_customCharacters,
+    change_settings_string_characters_customCharacters = 'r',
     
-    toggle_settings_string_characters_symbols,
-    toggle_settings_string_characters_numbers,
-    toggle_settings_string_characters_alphabetLowercase,
-    toggle_settings_string_characters_alphabetUppercase,
-    change_settings_string_characters_toDefault,
+    toggle_settings_string_characters_symbols = 's',
+    toggle_settings_string_characters_numbers = 't',
+    toggle_settings_string_characters_alphabetLowercase = 'u',
+    toggle_settings_string_characters_alphabetUppercase = 'v',
+    change_settings_string_characters_toDefault = 'w',
     
     /** 
     @param count `number` */
-    change_settings_numbers_count,
+    change_settings_numbers_count = 'x',
     
     /** 
     @param length `number` */
-    change_settings_numbers_minDecimalLength,
+    change_settings_numbers_minDecimalLength = 'y',
     
     /** 
     @param min `number`
     @param max `number` */
-    change_settings_numbers_range,
+    change_settings_numbers_range = 'z',
     
     /** 
     @param count `number` */
-    change_settings_words_count,
+    change_settings_words_count = 'aa',
     
     /** 
     @param count `number` */
-    change_settings_colors_count,
+    change_settings_colors_count = 'ab',
     
     /** 
     @param min `number`
     @param max `number` */
-    change_settings_colors_range_hex,
+    change_settings_colors_range_hex = 'ac',
     
     /** 
     @param min `number`
     @param max `number` */
-    change_settings_colors_range_hsl_h,
+    change_settings_colors_range_hsl_h = 'ad',
     
     /** 
     @param min `number`
     @param max `number` */
-    change_settings_colors_range_hsl_s,
+    change_settings_colors_range_hsl_s = 'ae',
     
     /** 
     @param min `number`
     @param max `number` */
-    change_settings_colors_range_hsl_l,
+    change_settings_colors_range_hsl_l = 'af',
     
     /** 
     @param min `number`
     @param max `number` */
-    change_settings_colors_range_rgb_r,
+    change_settings_colors_range_rgb_r = 'ag',
     
     /** 
     @param min `number`
     @param max `number` */
-    change_settings_colors_range_rgb_g,
+    change_settings_colors_range_rgb_g = 'ah',
     
     /** 
     @param min `number`
     @param max `number` */
-    change_settings_colors_range_rgb_b,
+    change_settings_colors_range_rgb_b = 'ai',
     
     /** 
     @param list `ListItems` */
-    change_settings_selection_list, 
+    change_settings_selection_list = 'aj', 
     
     /** 
     @param count `number` */
-    change_settings_selection_count,
+    change_settings_selection_count = 'ak',
      
     /** 
     @param list `ListItems` */
-    change_settings_teams_namesList, 
+    change_settings_teams_namesList = 'al', 
      
     /** 
     @param list `ListItems` */
-    change_settings_teams_membersList, 
+    change_settings_teams_membersList = 'am', 
      
     /** 
     @param count `number` */
-    change_settings_teams_count, 
+    change_settings_teams_count = 'an', 
 
-    toggle_navigation_expand,
-    generate, 
-    stopGenerate
+    toggle_navigation_expand = 'ao',
+    generate = 'ap', 
+    stopGenerate = 'aq'
 }
