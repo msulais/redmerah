@@ -1,5 +1,5 @@
 .dialog {
-    background-color: rgb(var(--color-surface));
+    background-color: rgb(var(--color-background));
     border: none;
     border-radius: 16px;
     width: max-content;
@@ -67,11 +67,10 @@
 }
 
 .dialog-actions {
-    width: 100%;
     align-items: center;
-    // background-color: rgba(var(--color-on-surface), var(--opacity1));
-    background-color: rgb(var(--color-background));
+    background-color: rgba(var(--color-on-surface), var(--opacity1));
     border-top: 1px solid rgba(var(--color-on-surface), var(--opacity2));
+    width: 100%;
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
@@ -94,7 +93,7 @@
 
 .dialog-header {
     width: 100%;
-    font-size: var(--font-size-xm);
+    font-size: var(--font-size-m);
     font-weight: 500;
     padding: 24px 24px 0 24px;
     display: flex;

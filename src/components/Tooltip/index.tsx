@@ -5,7 +5,7 @@ import { addEventListener, removeEventListener, stopPropagation } from "@/utils/
 import { getBoundingClientRect, getElementById, setStyleProperty } from "@/utils/element"
 import { clearTimeDelayed, setTimeDelayed, timeout } from "@/utils/timeout"
 import { getPopoverPosition } from "@/utils/popover"
-import { _shortcuts, _text, _class, _join, _map, _CENTER_TOP, _anchor, _anchorId, _appendChild, _body, _bottom, _children, _clientX, _clientY, _createElement, _currentTarget, _delayDuration, _height, _hidePopover, _id, _innerHTML, _isFollowingPointer, _left, _mousedown, _mouseleave, _mouseover, _move, _open, _popover, _position, _px, _right, _showPopover, _timeoutId, _top, _touchcancel, _touchend, _touches, _touchstart, _transform, _trim, _width, _manual, _hasTooltip } from "@/data/string"
+import { _shortcuts, _text, _class, _join, _map, _CENTER_TOP, _anchor, _anchorId, _appendChild, _body, _bottom, _children, _clientX, _clientY, _createElement, _currentTarget, _delayDuration, _height, _hidePopover, _id, _innerHTML, _isFollowingPointer, _left, _mousedown, _mouseleave, _mouseover, _move, _open, _popover, _position, _px, _right, _showPopover, _timeoutId, _top, _touchcancel, _touchend, _touches, _touchstart, _transform, _trim, _width, _manual, _hasTooltip, _mousemove, _touchmove } from "@/data/string"
 import { getDocument, getDocumentBody } from "@/data/window"
 import { numberParse } from "@/utils/math"
 import { PopoverPosition } from "@/enums/position"
@@ -60,8 +60,9 @@ const Tooltip: ParentComponent<TooltipProps> = ($props) => {
     const props = mergeProps({
         delayDuration: 5E2,
         position: PopoverPosition[_CENTER_TOP],
-        isFollowingPointer: false
+        isFollowingPointer: true
     }, $props)
+    let pointer: {x: number; y: number} = {x: 0, y: 0}
     let tooltip!: HTMLDivElement
     let anchor: HTMLElement | undefined
     let isEventInitiated: boolean = false
@@ -139,7 +140,7 @@ const Tooltip: ParentComponent<TooltipProps> = ($props) => {
 
     async function show(ev: Event): Promise<void> {
         const anchor = ev[_currentTarget] as Element
-        const pointer = {
+        pointer = {
             x: (ev as MouseEvent)[_clientX] ?? (ev as TouchEvent)[_touches][0][_clientX] ?? 0,
             y: (ev as MouseEvent)[_clientY] ?? (ev as TouchEvent)[_touches][0][_clientY] ?? 0
         }
@@ -166,7 +167,7 @@ const Tooltip: ParentComponent<TooltipProps> = ($props) => {
             const pos = getPopoverPosition({
                 popover: tooltipRect,
                 anchor: anchorRect,
-                gap: 16,
+                gap: 40,
                 position: props[_position],
                 pointer: props[_isFollowingPointer]? pointer : undefined
             })
@@ -236,6 +237,7 @@ const Tooltip: ParentComponent<TooltipProps> = ($props) => {
         addEventListener(anchor, _mouseover, ev => show(ev))
         addEventListener(anchor, _mouseleave, () => hide())
         addEventListener(anchor, _mousedown, () => hide())
+        addEventListener(anchor, _mousemove, (ev) => pointer = {x: (ev as MouseEvent)[_clientX], y: (ev as MouseEvent)[_clientY]})
         addEventListener(anchor, _touchstart, ev => show(ev), {passive: true})
         addEventListener(anchor, _touchend, () => hide())
         addEventListener(anchor, _touchcancel, () => hide())
@@ -246,6 +248,7 @@ const Tooltip: ParentComponent<TooltipProps> = ($props) => {
         removeEventListener(anchor, _mouseover, ev => show(ev))
         removeEventListener(anchor, _mouseleave, () => hide())
         removeEventListener(anchor, _mousedown, () => hide())
+        removeEventListener(anchor, _mousemove, (ev) => pointer = {x: (ev as MouseEvent)[_clientX], y: (ev as MouseEvent)[_clientY]})
         removeEventListener(anchor, _touchstart, ev => show(ev), {passive: true})
         removeEventListener(anchor, _touchend, () => hide())
         removeEventListener(anchor, _touchcancel, () => hide())

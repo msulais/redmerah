@@ -99,6 +99,14 @@ const Teams: VoidComponent<TeamsProps> = (props) => {
     }
 
     return (<>
+        <NumberTextField 
+            labelText="Count" 
+            min={1}
+            max={settings()[_membersList][_items][_length]}
+            onFinalValueChanged={(v) => props[_command](Commands.change_settings_teams_count, v)}
+            labelElement={{ style: { width: 'min(100%, 164px)' } }}
+            value={settings()[_count]} 
+        />
         <Dropdown 
             labelText="Names" 
             selectedValues={[`${settings()[_namesList][_id]}`]} 
@@ -218,14 +226,6 @@ const Teams: VoidComponent<TeamsProps> = (props) => {
                     </MenuItem>
                 </Show>
             </>}
-        />
-        <NumberTextField 
-            labelText="Count" 
-            min={1}
-            max={settings()[_membersList][_items][_length]}
-            onFinalValueChanged={(v) => props[_command](Commands.change_settings_teams_count, v)}
-            labelElement={{ style: { width: 'min(100%, 164px)' } }}
-            value={settings()[_count]} 
         />
         <Menu ref={r => actionMenuRef = r} style={{width: '164px'}}>
             <Show when={list() && list()![_id] != (isActionOpenForNamesList()? settings()[_namesList][_id] : settings()[_membersList][_id])}>

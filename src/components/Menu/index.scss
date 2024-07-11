@@ -1,6 +1,7 @@
 .menu {
-    background-color: rgb(var(--color-surface));
-    border: none;
+    background-color: rgba(var(--color-surface), var(--opacity-inv2));
+    backdrop-filter: blur(32px);
+    border: 1px solid rgba(var(--color-on-surface), var(--opacity2));
     border-radius: 12px;
     box-shadow: var(--elevation1);
     left: 0;
@@ -51,7 +52,6 @@
     }
 
     > div {
-        background-color: rgb(var(--color-background));
         max-height: inherit;
         max-width: 100%;
         overflow: auto;
@@ -63,21 +63,9 @@
         align-items: stretch;
         justify-content: flex-start;
         border-radius: inherit;
-        outline: 1px solid rgba(var(--color-on-surface), var(--opacity2));
-        outline-offset: -1px;
 
         &[data-dragable] {
             padding-top: 12px;
-        }
-
-        :root[data-theme=dark] & {
-            background-color: rgba(var(--color-on-surface), var(--opacity1));
-        }
-
-        :root[data-theme=system] & {
-            @media (prefers-color-scheme: dark) {
-                background-color: rgba(var(--color-on-surface), var(--opacity1));
-            }
         }
     }
 }

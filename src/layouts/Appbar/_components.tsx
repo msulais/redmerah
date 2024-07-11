@@ -199,6 +199,13 @@ export const SettingsElement: VoidComponent = () => {
                 position: PopoverPosition[_LEFT_CENTER_TO_BOTTOM]
             })} leading={<Icon style={{color: color()}} filled code={0xE408}/>}>{color()}</MenuItem>
         </Menu>
-        <ColorPicker disabledColorControl disabledOpacityControl onSelectColor={v => changeColor(v)} ref={r => colorPickerMenuRef = r} onToggle={(v) => setIsColorPickerMenuOpen(v)} />
+        <ColorPicker 
+            disabledColorControl 
+            disabledOpacityControl 
+            onSelectColor={v => changeColor(v)} 
+            ref={r => colorPickerMenuRef = r} 
+            onToggle={(v) => setIsColorPickerMenuOpen(v)} 
+            onClose={() => closePopover(settingsMenuRef)}
+        />
     </>)
 }

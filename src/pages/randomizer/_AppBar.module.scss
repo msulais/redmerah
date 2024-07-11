@@ -1,3 +1,5 @@
+@use '_size.scss';
+
 .actions {
     justify-content: flex-end;
     gap: 4px;
@@ -21,6 +23,12 @@
     > div {
         display: flex;
         align-items: center;
+    }
+}
+
+.generate_btn {
+    @media (max-width: size.$appbar_generate_btn_none) {
+        display: none !important;
     }
 }
 

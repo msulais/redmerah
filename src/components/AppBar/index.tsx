@@ -15,7 +15,7 @@ const AppBar: ParentComponent<AppBarProps> = ($props) => {
     const [props, other] = splitProps($props, [_children, _leading, _trailing, _headline])
     return (<div class="appbar" {...other}>
         <div class="appbar-leading">{props[_leading]}</div>
-        <div>
+        <div class="appbar-headline">
             <Show when={props[_headline]}>
                 <h2>{props[_headline]}</h2>
             </Show>

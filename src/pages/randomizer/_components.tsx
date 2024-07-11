@@ -1,13 +1,13 @@
 import { createSignal, For, onMount, Show, type VoidComponent } from "solid-js";
 
-import { _string, _characters, _numbers, _symbols, _length, _floor, _range, _max, _min, _count, _repeat, _includes, _push, _sort, _ascending, _descending, _map, _prefix, _toString, _numberType, _padStart, _suffix, _join, _separator, _colors, _round, _colorModel, _hex, _rgb, _hsl, _words, _selection, _teams, _animation, _result, _settings, _decimal, _none, _open, _key, _value, _createObjectStore, _id, _list, _lists, _lastResult, _isOpen, _readonly, _objectStore, _transaction, _get, _then, _color, _readwrite, _put, _add, _name, _members, _getAll, _namesList, _membersList, _alphabetLowercase, _alphabetUppercase, _customCharacter, _minDecimalLength, _splice, _lowercase, _titlecase, _togglecase, _uppercase, _wordCase, _h, _l, _s, _r, _b, _g, _cursor, _test, _filledTonal, _filled, _manual, _items, _accept, _file, _input, _type, _readAsText, _target, _onerror, _onabort, _onload, _replace, _split, _substring, _filter, _trim, _focus, _delete, _clipboard, _writeText } from "@/data/string";
+import { _string, _characters, _numbers, _symbols, _length, _floor, _range, _max, _min, _count, _repeat, _includes, _push, _sort, _ascending, _descending, _map, _prefix, _toString, _numberType, _padStart, _suffix, _join, _separator, _colors, _round, _colorModel, _hex, _rgb, _hsl, _words, _selection, _teams, _animation, _result, _settings, _decimal, _none, _open, _key, _value, _createObjectStore, _id, _list, _lists, _lastResult, _isOpen, _readonly, _objectStore, _transaction, _get, _then, _color, _readwrite, _put, _add, _name, _members, _getAll, _namesList, _membersList, _alphabetLowercase, _alphabetUppercase, _customCharacter, _minDecimalLength, _splice, _lowercase, _titlecase, _togglecase, _uppercase, _wordCase, _h, _l, _s, _r, _b, _g, _cursor, _test, _filledTonal, _filled, _manual, _items, _accept, _file, _input, _type, _readAsText, _target, _onerror, _onabort, _onload, _replace, _split, _substring, _filter, _trim, _focus, _delete, _clipboard, _writeText, _noPointerEvent } from "@/data/string";
 import { rgbToHex, hslToHex } from "@/utils/color";
 import { setTimeInterval, clearTimeInterval } from "@/utils/timeout";
 import { createStore } from "solid-js/store";
 import { RandomizerType, WordsRandomizerWordCase, NumbersRandomizerNumberType, NumbersRandomizerSort, ColorsRandomizerColorModel, Commands } from "./_enums";
 import type { ListItems, Result, Settings } from "./_types";
 import { mathFloor, mathRandom } from "@/utils/math";
-import { person_names, teams_names, colors, animals, lorem_ipsum } from "./_data";
+import { PERSON_NAMES, TEAMS_NAMES, COLORS, ANIMALS, LOREM_IPSUM } from "./_data";
 import { ObjectStoreNames, ObjectStoreKeys, type ObjectStoreLists, type ObjectStoreSettings, type ObjectStoreLastResult } from "./_storage";
 import { _settings_lastPage, _lastResult_string, _lastResult_numbers, _lastResult_words, _lastResult_selection, _lastResult_colors, _lastResult_teams, _settings_words_listId, _settings_selection_listId, _settings_teams_membersListId, _settings_teams_namesListId, _settings_numbers_repeat, _settings_words_repeat, _settings_numbers_sort, _settings_numbers_animation, _settings_words_animation, _settings_string_animation, _settings_selection_animation, _settings_colors_animation, _settings_teams_animation, _settings_numbers_numberType, _settings_numbers_prefix, _settings_words_prefix, _settings_numbers_suffix, _settings_words_suffix, _settings_numbers_separator, _settings_words_separator, _settings_words_wordCase, _settings_colors_colorModel, _settings_string_length, _settings_string_characters_symbols, _settings_string_characters_numbers, _settings_string_characters_alphabetLowercase, _settings_string_characters_alphabetUppercase, _settings_numbers_count, _settings_numbers_minDecimalLength, _settings_numbers_range_min, _settings_numbers_range_max, _settings_words_count, _settings_colors_count, _settings_colors_range_hex_min, _settings_colors_range_hex_max, _settings_colors_range_hsl_h_min, _settings_colors_range_hsl_h_max, _settings_colors_range_hsl_l_max, _settings_colors_range_hsl_l_min, _settings_colors_range_hsl_s_max, _settings_colors_range_hsl_s_min, _settings_colors_range_rgb_r_max, _settings_colors_range_rgb_r_min, _settings_colors_range_rgb_b_max, _settings_colors_range_rgb_b_min, _settings_colors_range_rgb_g_max, _settings_colors_range_rgb_g_min, _settings_string_characters_customCharacter, _settings_selection_count, _settings_teams_count } from "./_string";
 import { stringToLowerCase, stringToUpperCase, stringToToggleCase, stringToTitleCase } from "@/utils/string";
@@ -19,12 +19,14 @@ import { IDB } from "@/class/indexeddb";
 import { DatabaseNames } from "@/enums/storage";
 import type { HEXColor } from "@/types/color";
 import { closeModal, openModal } from "@/utils/modal";
+import { getDocumentBody, getNavigator } from "@/data/window";
 
+import App from "@/components/App";
 import Tooltip from "@/components/Tooltip";
 import Icon from "@/components/Icon";
 import Divider from "@/components/Divider";
 import Dialog from "@/components/Dialog";
-import Button, { ButtonVariant } from "@/components/Button";
+import Button, { ButtonVariant, FloatingActionButton } from "@/components/Button";
 import List from "@/components/List";
 import TextField, { changeTextAreaFieldValue, changeTextFieldValue, TextAreaField } from "@/components/TextField";
 import NotificationBar from "@/components/NotificationBar";
@@ -32,22 +34,26 @@ import AppBar from './_AppBar'
 import SideNavigation from './_SideNavigation'
 import Control from './_Control'
 import ResultComponent from './_Result'
+import CSSAnimation from "@/styles/animation.module.scss";
 import CSS from './_index.module.scss'
-import { getNavigator } from "@/data/window";
+import { removeAttribute, setAttribute, toggleAttribute } from "@/utils/attributes";
+import { BodyAttributes } from "@/enums/attributes";
 
-export const App: VoidComponent = () => {
+export const MainApp: VoidComponent = () => {
     const db = new IDB(DatabaseNames.randomizer, 1)
     const [randomizerType, setRandomizerType] = createSignal<RandomizerType>(RandomizerType[_string])
     const [intervalId, setIntervaldId] = createSignal<number | null>(null)
     const [viewListItems, setViewListItems] = createSignal<ListItems>({id: -1, items: [], name: ''})
     const [selectedListToDelete, setSelectedListToDelete] = createSignal<ListItems>({id: -1, items: [], name: ''})
     const [selectedListToEdit, setSelectedListToEdit] = createSignal<ListItems>({id: -1, items: [], name: ''})
+    const [isExpandNavigation, setIsExpandNavigation] = createSignal<boolean>(true)
+    const [isGenerating, setIsGenerating] = createSignal<boolean>(false)
     const [lists, setLists] = createStore<ListItems[]>([
-        { id: 1, name: 'Person'     , items: [...person_names] },
-        { id: 2, name: 'Teams'      , items: [...teams_names ] },
-        { id: 3, name: 'Colors'     , items: [...colors      ] },
-        { id: 4, name: 'Animals'    , items: [...animals     ] },
-        { id: 5, name: 'Lorem Ipsum', items: [...lorem_ipsum ] },
+        { id: 1, name: 'Person'     , items: [...PERSON_NAMES] },
+        { id: 2, name: 'Teams'      , items: [...TEAMS_NAMES ] },
+        { id: 3, name: 'Colors'     , items: [...COLORS      ] },
+        { id: 4, name: 'Animals'    , items: [...ANIMALS     ] },
+        { id: 5, name: 'Lorem Ipsum', items: [...LOREM_IPSUM ] },
     ])
     const [settings, setSettings] = createStore<Settings>({
         string: {
@@ -64,7 +70,7 @@ export const App: VoidComponent = () => {
         words: {
             animation: true,
             count: 3,
-            list: {id: 5, name: 'Lorem Ipsum', items: [...lorem_ipsum ]},
+            list: {id: 5, name: 'Lorem Ipsum', items: [...LOREM_IPSUM ]},
             prefix: '',
             repeat: true,
             separator: ' ',
@@ -107,13 +113,13 @@ export const App: VoidComponent = () => {
         selection: {
             animation: true,
             count: 4,
-            list: {id: 4, name: 'Animals', items: [...animals]},
+            list: {id: 4, name: 'Animals', items: [...ANIMALS]},
         },
         teams: {
             animation: true,
             count: 3,
-            membersList: {id: 1, name: 'Person', items: [...person_names]},
-            namesList: {id: 2, name: 'Teams', items: [...teams_names]}, 
+            membersList: {id: 1, name: 'Person', items: [...PERSON_NAMES]},
+            namesList: {id: 2, name: 'Teams', items: [...TEAMS_NAMES]}, 
         }
     })
     const [result, setResult] = createStore<Result>({
@@ -327,6 +333,9 @@ export const App: VoidComponent = () => {
     }
 
     async function onGenerate(): Promise<void> { return new Promise((ok) => {
+        setIsGenerating(true)
+        setAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
+
         let type = _string
         if (randomizerType() == RandomizerType[_string]) type = _string
         else if (randomizerType() == RandomizerType[_numbers]) type = _numbers
@@ -363,6 +372,8 @@ export const App: VoidComponent = () => {
                 if (i >= duration / step) {
                     clearTimeInterval(intervalId()!)
                     addResultToDB()
+                    setIsGenerating(false)
+                    removeAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
                     return ok()
                 }
                 generate()
@@ -374,10 +385,14 @@ export const App: VoidComponent = () => {
 
         generate()
         addResultToDB()
+        removeAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
+        setIsGenerating(false)
         ok()
     })}
 
     function onStopGenerate(): void {
+        setIsGenerating(false)
+        removeAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
         clearTimeInterval(intervalId()!)
         addResultToDB()
     }
@@ -465,7 +480,7 @@ export const App: VoidComponent = () => {
                     indexs: [_id, _name, _items]
                 })
 
-                for (const list of [['Person', person_names], ['Teams', teams_names], ['Colors', colors], ['Animals', animals], ['Lorem Ipsum', lorem_ipsum]]) {
+                for (const list of [['Person', PERSON_NAMES], ['Teams', TEAMS_NAMES], ['Colors', COLORS], ['Animals', ANIMALS], ['Lorem Ipsum', LOREM_IPSUM]]) {
                     lists![_put]({ 
                         name: list[0] as string, 
                         items: [...list[1] as string[]]
@@ -794,11 +809,11 @@ export const App: VoidComponent = () => {
 
     function resetLists(): void {
         setLists([
-            { id: 1, name: 'Person'     , items: [...person_names] },
-            { id: 2, name: 'Teams'      , items: [...teams_names ] },
-            { id: 3, name: 'Colors'     , items: [...colors      ] },
-            { id: 4, name: 'Animals'    , items: [...animals     ] },
-            { id: 5, name: 'Lorem Ipsum', items: [...lorem_ipsum ] },
+            { id: 1, name: 'Person'     , items: [...PERSON_NAMES] },
+            { id: 2, name: 'Teams'      , items: [...TEAMS_NAMES ] },
+            { id: 3, name: 'Colors'     , items: [...COLORS      ] },
+            { id: 4, name: 'Animals'    , items: [...ANIMALS     ] },
+            { id: 5, name: 'Lorem Ipsum', items: [...LOREM_IPSUM ] },
         ])
 
         const listsObjectStore = db[_transaction](ObjectStoreNames[_lists], _readwrite)![_objectStore](ObjectStoreNames[_lists])
@@ -1143,6 +1158,21 @@ export const App: VoidComponent = () => {
             setSettings(_teams, _count, args[0] as number)
             saveSettings([ObjectStoreKeys[_settings_teams_count], args[0] as number])
         }
+
+        // toggle_navigation_expand
+        else if (type == Commands.toggle_navigation_expand) {
+            setIsExpandNavigation(v => !v)
+        }
+
+        // generate
+        else if (type == Commands.generate) {
+            return onGenerate()
+        }
+
+        // stopGenerate
+        else if (type == Commands.stopGenerate) {
+            return onStopGenerate()
+        }
     }
 
     onMount(() => {
@@ -1322,21 +1352,37 @@ export const App: VoidComponent = () => {
     }
 
     return (<>
-        <AppBar
-            onGenerate={onGenerate}
-            onStopGenerate={onStopGenerate}
-            randomizerType={randomizerType()}
-            onCopyResult={onCopyResult}
-            settings={[settings, setSettings]}
-            db={db}
-            command={command}
-        />
-        <div class={ CSS.body }>
-            <SideNavigation
+        <App
+            appBar={<AppBar
+                isGenerating={isGenerating()}
+                randomizerType={randomizerType()}
+                onCopyResult={onCopyResult}
+                settings={[settings, setSettings]}
+                command={command}
+                onChangeRandomizer={onChangeRandomizer}
+            />}
+            floatingActionButton={<FloatingActionButton 
+                classList={addClassListModule(CSSAnimation.btn_rotate_full_icon, CSS.fab)} 
+                data-keep-pointer-event={toggleAttribute(isGenerating())} 
+                variant={ButtonVariant[_filled]} 
+                onClick={() => {
+                    if (isGenerating()) return command(Commands.stopGenerate)
+                    command(Commands.generate)
+                }}>
+                <Icon 
+                    filled 
+                    classList={addClassListModule(CSS.generate_icon)} 
+                    data-rotate={toggleAttribute(isGenerating())}
+                    code={0xE143}
+                />
+                <Show when={isGenerating()} fallback="Generate">Generating</Show>
+            </FloatingActionButton>}
+            leftSideBar={<SideNavigation
+                expand={isExpandNavigation()}
                 randomizerType={randomizerType()}
                 onChangeRandomizer={onChangeRandomizer}
-            />
-            <main class={ CSS.main }>
+            />}>
+            <div class={CSS.body}>
                 <Control
                     randomizerType={randomizerType()}
                     settings={[settings, setSettings]}
@@ -1348,8 +1394,8 @@ export const App: VoidComponent = () => {
                     result={[result, setResult]}
                     settings={[settings, setSettings]}
                 />
-            </main>
-        </div>
+            </div>
+        </App>
         <Dialogs />
         <NotificationBars />
     </>)

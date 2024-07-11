@@ -330,7 +330,7 @@ export const NumberTextField: ParentComponent<NumberTextFieldProps> = ($props) =
                 onClick={() => changeLength('+')}>
                 <Icon code={0xE404} />
             </Button>
-            <Tooltip text={props[_decreaseTooltip]} position={PopoverPosition[_CENTER_BOTTOM]} anchor={decreaseBtnRef()}/>
+            <Tooltip text={props[_decreaseTooltip]} anchor={decreaseBtnRef()}/>
             <Button
                 iconOnly
                 ref={r => setDecreaseBtnRef(r)}

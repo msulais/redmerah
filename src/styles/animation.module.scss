@@ -7,6 +7,14 @@
     100% { rotate:   0deg; }
 }
 
+.btn_rotate_full_icon {
+    --btn-icon-animation: rotate-full-icon .8s var(--transition-spring);
+}
+
+@keyframes rotate-full-icon {
+    to { rotate: 360deg; }
+}
+
 .btn_move_right_icon {
     --btn-icon-animation: move-right-icon .8s var(--transition-spring);
 }
@@ -23,4 +31,13 @@
 @keyframes scale-up-icon {
      50% { scale: 1.3; }
     100% { scale:   1; }
+}
+
+.btn_shrink_horizontal_icon {
+    --btn-icon-animation: shrink-horizontal-icon .8s var(--transition-spring);
+}
+
+@keyframes shrink-horizontal-icon {
+     50% { transform: scaleX(.5) }
+    100% { transform: scaleX(1) }
 }

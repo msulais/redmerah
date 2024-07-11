@@ -25,6 +25,8 @@ export type ButtonProps = JSX.ButtonHTMLAttributes<HTMLButtonElement> & {
     layerAttr?: JSX.HTMLAttributes<HTMLDivElement>
 }
 
+type FloatingActionButtonProps = ButtonProps
+
 type LinkButtonProps = JSX.AnchorHTMLAttributes<HTMLAnchorElement>  & {
     variant?: ButtonVariant
     focus?: boolean
@@ -37,6 +39,11 @@ type LinkButtonProps = JSX.AnchorHTMLAttributes<HTMLAnchorElement>  & {
     elevation?: 1 | 2 | 3 | 4 | 5
     layerAttr?: JSX.HTMLAttributes<HTMLDivElement>
 }
+
+export const FloatingActionButton: ParentComponent<FloatingActionButtonProps> = ($props) => {
+    const [props, other] = splitProps($props, [_classList])
+    return (<Button classList={{'btn-fab': true, ...props[_classList]}} {...other}/>)
+} 
 
 const Button: ParentComponent<ButtonProps> = ($props) => {
     const $$props = mergeProps({variant: ButtonVariant[_transparent], indicatorPosition: Position[_bottom]}, $props)

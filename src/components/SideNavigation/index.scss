@@ -1,0 +1,38 @@
+.side-navigation {
+    display: grid;
+    grid-template-columns: 1fr;
+    padding: 8px;
+    gap: 4px;
+    width: 56px;
+    max-width: 56px;
+    transition: .3s;
+    
+    &[data-expand] {
+        width: 240px;
+        max-width: 240px;
+    }
+}
+
+.side-navigation-item:not([data-icon]) {
+    --btn-padding: 4px 8px;
+    justify-content: flex-start;
+    width: 100%;
+
+    > .btn-layer {
+        white-space: nowrap;
+    }
+
+    @media (hover: none) {
+        min-height: 40px !important;
+
+        [data-corner=full-round] & {
+            border-radius: 20px !important;
+        }
+    }
+
+    &[data-trailing]{
+        > .btn-layer {
+            width: 100%;
+        }
+    }
+}

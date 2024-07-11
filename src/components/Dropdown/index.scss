@@ -65,22 +65,9 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
-    position: sticky;
-    z-index: 50;
-    background-color: rgb(var(--color-background));
 
     &:empty {
         display: none;
-    }
-    
-    :root[data-theme=dark] & {
-        background-color: #282828;
-    }
-
-    :root[data-theme=system] & {
-        @media (prefers-color-scheme: dark) {
-            background-color: #282828;
-        }
     }
 }
 
@@ -104,4 +91,14 @@
     &:has(> .dropdown-footer:empty) {
         padding-bottom: 4px;
     }
+}
+
+.dropdown-items {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 4px;
+    flex: 1;
+    max-height: 100%;
+    width: 100%;
+    overflow: auto;
 }

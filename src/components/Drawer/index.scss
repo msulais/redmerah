@@ -1,13 +1,14 @@
 .drawer {
-    background-color: rgb(var(--color-surface));
-    border: none;
+    background-color: rgba(var(--color-surface), var(--opacity-inv2));
+    backdrop-filter: blur(32px);
+    border: 1px solid rgba(var(--color-on-surface), var(--opacity2));
     border-radius: 0 12px 12px 0;
-    width: 360px;
-    height: var(--max-h);
+    width: 240px;
+    height: 100dvh;
     box-shadow: var(--elevation3);
     left: 0;
     max-height: 100dvh;
-    max-width: min(360px, calc(100% - 80px));
+    max-width: min(240px, calc(100% - 80px));
     overflow: hidden;
     top: 0;
     outline: none;
@@ -21,10 +22,13 @@
     [data-corner=semi-round] & {
         border-radius: 0 8px 8px 0;
     }
+    
+    [data-corner=full-round] & {
+        border-radius: 0 28px 28px 0;
+    }
 
     &::backdrop {
         background-color: transparent;
-        transition-duration: .3s;
     }
 
     &[data-right] {
@@ -36,14 +40,14 @@
         [data-corner=semi-round] & {
             border-radius: 8px 0 0 8px;
         }
+    
+        [data-corner=full-round] & {
+            border-radius: 28px 0 0 28px;
+        }
     }
 
     &[data-open] {
         transform: translateX(0%);
-
-        &::backdrop {
-            background-color: rgb(0 0 0 / var(--opacity-inv3));
-        }
     }
 
     &[data-focus] > div {
@@ -54,17 +58,17 @@
     }
 
     > div {
+        border-radius: inherit;
         max-height: inherit;
         max-width: 100%;
         width: 100%;
-        overflow: auto;
+        height: inherit;
+        overflow: hidden;
         position: relative;
         display: flex;
+        gap: 4px;
         flex-direction: column;
-        height: 100dvh;
-        outline: 1px solid rgba(var(--color-on-surface), var(--opacity2));
-        outline-offset: -1px;
-        border-radius: inherit;
+        align-items: flex-start;
 
         > div:empty {
             display: none;
@@ -72,54 +76,59 @@
     }
 }
 
-
-.drawer-actions {
-    align-items: center;
-    background-color: rgb(var(--color-surface));
-    border-top: 1px solid rgba(var(--color-on-surface), var(--opacity2));
-    bottom: 0;
+.drawer-footer {
+    width: 100%;
     display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: center;
-    padding: 16px;
-    position: sticky;
-    z-index: 10;
-
-    > * {
-        flex: 1 1 100px;
-    }
+    flex-direction: column;
+    gap: 4px;
+    padding: 8px;
 }
 
 .drawer-content {
-    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 8px;
     flex: 1;
-    
-    > .btn {
-        justify-content: flex-start;
-
-        &:not(:last-child) {
-            margin-bottom: 4px;
-        }
-    }
+    max-height: 100%;
+    width: 100%;
+    overflow: auto;
 }
 
 .drawer-header {
-    background-color: rgb(var(--color-surface));
-    font-size: var(--font-size-xm);
+    width: 100%;
+    font-size: var(--font-size-m);
     font-weight: 500;
-    padding: 16px 16px 0 16px;
-    position: sticky;
-    top: 0;
-    z-index: 10;
+    padding: 8px 8px 0 8px;
     display: flex;
     align-items: center;
     gap: 8px;
 
-    > div {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        gap: 8px;
+    &:not(:empty) + .drawer-content {
+        padding-top: 8px !important;
+    }
+}
+
+.drawer-item {
+    --btn-padding: 4px 8px;
+    justify-content: flex-start;
+    width: 100%;
+
+    > .btn-layer {
+        white-space: nowrap;
+    }
+
+    @media (hover: none) {
+        min-height: 40px !important;
+
+        [data-corner=full-round] & {
+            border-radius: 20px !important;
+        }
+    }
+
+    &[data-trailing]{
+        > .btn-layer {
+            width: 100%;
+        }
     }
 }

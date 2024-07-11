@@ -5,7 +5,7 @@ import TextField, { TextFieldTrailingButton, type TextFieldProps } from "@/compo
 import Menu, { MenuDivider, MenuHeader, MenuItem, type MenuProps } from "@/components/Menu";
 import './index.scss'
 
-import { _auto, _CENTER_BOTTOM, _CENTER_BOTTOM_TO_RIGHT, _children, _classList, _currentTarget, _disabled, _disconnect, _dividerIndexs, _dropdownAttr, _filter, _firstElementChild, _footer, _header, _headers, _includes, _item, _items, _join, _labelElement, _length, _map, _maxHeight, _multiple, _observe, _onClick, _onClicks, _onValueChanged, _push, _px, _readOnly, _ref, _refs, _scrollTo, _scrollTop, _selectedItems, _selectedValues, _some, _trailing, _trailings, _width } from "@/data/string";
+import { _auto, _CENTER_BOTTOM, _CENTER_BOTTOM_TO_RIGHT, _children, _classList, _currentTarget, _disabled, _disconnect, _dividerIndexs, _dropdownAttr, _filter, _firstElementChild, _footer, _header, _headers, _includes, _item, _items, _join, _labelElement, _length, _map, _maxHeight, _multiple, _observe, _onClick, _onClicks, _onValueChanged, _optionIconTooltip, _push, _px, _readOnly, _ref, _refs, _scrollTo, _scrollTop, _selectedItems, _selectedValues, _some, _trailing, _trailings, _width } from "@/data/string";
 import { closePopover, openPopover, repositionPopover } from "@/utils/popover";
 import { addClassListModule, getBoundingClientRect } from "@/utils/element";
 import { PopoverPosition } from "@/enums/position";
@@ -13,6 +13,7 @@ import type { ComponentEvent } from "@/types/event";
 import { removeAttribute, setAttribute, toggleAttribute } from "@/utils/attributes";
 import { createStore } from "solid-js/store";
 import { clearTimeDelayed, setTimeDelayed } from "@/utils/timeout";
+import Tooltip from "../Tooltip";
 
 const _data_dropdown_readonly = 'data-dropdown-readonly'
 
@@ -26,6 +27,7 @@ type DropdownProps = Omit<TextFieldProps, 'value'> & {
     multiple?: boolean
     header?: JSX.Element
     footer?: JSX.Element
+    optionIconTooltip?: string
     refs?: (el: HTMLButtonElement, value: string) => unknown
     onClicks?: (ev: ComponentEvent<MouseEvent, HTMLButtonElement>) => boolean | unknown
     onValueChanged?: (values: string[]) => unknown
@@ -42,11 +44,12 @@ const Dropdown: VoidComponent<DropdownProps> = ($props) => {
         _refs, _trailings, _dividerIndexs, _headers, _readOnly, 
         _footer, _header, _disabled, _onValueChanged, _items, 
         _selectedValues, _labelElement, _multiple, _trailing, 
-        _onClicks, _dropdownAttr
+        _onClicks, _dropdownAttr, _optionIconTooltip
     ])
     const [selectedItems, setSelectedItems] = createStore<DropdownItem[]>([])
     const [width, setWidth] = createSignal<number>(0)
     const [isFocus, setIsFocus] = createSignal<boolean>(false)
+    const [button_options_ref, set_button_option_ref] = createSignal<HTMLButtonElement | null>(null)
     const isSelected = createSelector<DropdownItem[], string>(
         () => selectedItems, 
         (item, items) => items[_some]((a) => a[0] == item)
@@ -160,7 +163,8 @@ const Dropdown: VoidComponent<DropdownProps> = ($props) => {
             trailing={<>
                 {props[_trailing]}
                 <Show when={!props[_readOnly]}>
-                    <TextFieldTrailingButton data-focus={toggleAttribute(isFocus())} onClick={ev => openDropdownMenu(ev)}><Icon code={0xE362} filled/></TextFieldTrailingButton>
+                    <Tooltip anchor={button_options_ref()} text={props[_optionIconTooltip] ?? "Show options"}/>
+                    <TextFieldTrailingButton ref={r => set_button_option_ref(r)} data-focus={toggleAttribute(isFocus())} onClick={ev => openDropdownMenu(ev)}><Icon code={0xE362} filled/></TextFieldTrailingButton>
                 </Show>
             </>} 
             {...other}
@@ -174,33 +178,35 @@ const Dropdown: VoidComponent<DropdownProps> = ($props) => {
             }} style={{'min-width': width() + _px}}
             classList={{'dropdown-menu': true}}>
             <div class="dropdown-header">{ props[_header] }</div>
-            <For each={props[_items]}>{(i, index) => <>
+            <div class="dropdown-items">
+                <For each={props[_items]}>{(i, index) => <>
 
-                {/* TODO: fix this ugly code */}
-                <For each={props[_headers]}>{h => <Show when={index() == h[0]}>
-                    <MenuHeader>{h[1]}</MenuHeader>
-                </Show>}</For>
+                    {/* TODO: fix this ugly code */}
+                    <For each={props[_headers]}>{h => <Show when={index() == h[0]}>
+                        <MenuHeader>{h[1]}</MenuHeader>
+                    </Show>}</For>
 
-                <MenuItem 
-                    ref={(r) => {
-                        if (props[_refs]) props[_refs](r, i[0])
-                    }}
-                    onClick={(ev) => {
-                        if (props[_onClicks]) {
-                            const isContinue = props[_onClicks](ev)
-                            if (isContinue == false) return
-                        }
-                        selectItem(i)
-                    }} 
-                    trailing={i[2]}
-                    selected={!props[_multiple]? isSelected(i[0]) : undefined}
-                    checked={props[_multiple]? isSelected(i[0]) : undefined}>
-                    {i[1]}
-                </MenuItem>
-                <Show when={(props[_dividerIndexs] as number[])[_includes](index())}>
-                    <MenuDivider />
-                </Show>
-            </>}</For>
+                    <MenuItem 
+                        ref={(r) => {
+                            if (props[_refs]) props[_refs](r, i[0])
+                        }}
+                        onClick={(ev) => {
+                            if (props[_onClicks]) {
+                                const isContinue = props[_onClicks](ev)
+                                if (isContinue == false) return
+                            }
+                            selectItem(i)
+                        }} 
+                        trailing={i[2]}
+                        selected={!props[_multiple]? isSelected(i[0]) : undefined}
+                        checked={props[_multiple]? isSelected(i[0]) : undefined}>
+                        {i[1]}
+                    </MenuItem>
+                    <Show when={(props[_dividerIndexs] as number[])[_includes](index())}>
+                        <MenuDivider />
+                    </Show>
+                </>}</For>
+            </div>
             <div class="dropdown-footer">{ props[_footer] }</div>
         </Menu>
     </>)

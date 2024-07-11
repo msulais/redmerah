@@ -223,6 +223,26 @@
     }
 }
 
+.btn-fab {
+    --btn-padding: 4px 16px;
+    min-height: 56px;
+    box-shadow: var(--elevation3);
+    border-radius: 16px;
+    min-width: 80px;
+
+    [data-corner=sharp] & {
+        border-radius: 0;
+    }
+
+    [data-corner=semi-round] & {
+        border-radius: 8px;
+    }
+
+    [data-corner=full-round] & {
+        border-radius: 28px;
+    }
+}
+
 .btn-filled {
     --bg-opacity: 1;
     --bg-color: var(--color-accent);

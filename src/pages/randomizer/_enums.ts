@@ -184,4 +184,8 @@ export enum Commands {
     /** 
     @param count `number` */
     change_settings_teams_count, 
+
+    toggle_navigation_expand,
+    generate, 
+    stopGenerate
 }

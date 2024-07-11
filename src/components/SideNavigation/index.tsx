@@ -1,6 +1,6 @@
 import { children, mergeProps, Show, splitProps, type JSX, type ParentComponent } from "solid-js";
 
-import { _checked, _children, _classList, _filledTonal, _focus, _iconOnly, _indent, _indicatorPosition, _leading, _left, _selected, _trailing } from "@/data/string"
+import { _checked, _children, _classList, _expand, _filledTonal, _focus, _iconOnly, _indent, _indicatorPosition, _leading, _left, _selected, _trailing } from "@/data/string"
 import { toggleAttribute } from "@/utils/attributes";
 import { isVarHasValue } from "@/utils/data";
 import { Position } from "@/enums/position"
@@ -8,23 +8,26 @@ import { Position } from "@/enums/position"
 import Button, { ButtonVariant } from "@/components/Button";
 import './index.scss'
 
-type SideNavigationProps = JSX.HTMLAttributes<HTMLDivElement>
+type SideNavigationProps = JSX.HTMLAttributes<HTMLDivElement> & {
+    expand?: boolean
+}
 
 type SideNavigationItemProps = JSX.ButtonHTMLAttributes<HTMLButtonElement> & {
     leading?: JSX.Element
     trailing?: JSX.Element
     selected?: boolean
     iconOnly?: boolean
+    indicatorPosition?: Position
 }
 
 export const SideNavigationItem: ParentComponent<SideNavigationItemProps> = ($props) => {
-    const [props, other] = splitProps($props, [_selected, _leading, _children, _trailing, _classList, _iconOnly])
+    const [props, other] = splitProps($props, [_indicatorPosition, _selected, _leading, _children, _trailing, _classList, _iconOnly])
     const trailingComponent = children(() => props[_trailing])
 
     return (<Button 
         variant={props[_selected]? ButtonVariant[_filledTonal] : undefined} 
         selected={props[_selected]} 
-        indicatorPosition={isVarHasValue(props[_selected])? Position[_left] : undefined} 
+        indicatorPosition={isVarHasValue(props[_selected])? (props[_indicatorPosition] ?? Position[_left]) : undefined} 
         disableScale={trailingComponent()? true : undefined} 
         iconOnly={props[_iconOnly]}
         data-trailing={toggleAttribute(trailingComponent())}
@@ -42,9 +45,9 @@ export const SideNavigationItem: ParentComponent<SideNavigationItemProps> = ($pr
 }
 
 const SideNavigation: ParentComponent<SideNavigationProps> = ($props) => {
-    const [props, other] = splitProps($props, [_children])
+    const [props, other] = splitProps($props, [_children, _expand])
 
-    return (<div class="side-navigation" {...other}>
+    return (<div class="side-navigation" data-expand={toggleAttribute(props[_expand])} {...other}>
         {props[_children]}
     </div>)
 }
