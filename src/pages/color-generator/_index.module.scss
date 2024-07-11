@@ -1,149 +1,47 @@
-.actions {
-    justify-content: flex-end;
-    gap: 4px;
-}
+@use '_size.scss';
 
-.body {
-    width: 100%;
-    max-width: 100%;
-}
-
-.color_list {
-    width: 560px;
-
-    & :global(.list){
-        --color: transparent;
-
-        background-color: var(--color);
-        border: 1px solid transparent;
-        transition-duration: .3s;
-        transition-property: background-color;
-
-        &:not(:last-child) {
-            margin-bottom: 4px;
-        }
-
-        &:nth-child(even) {
-            --color: rgba(var(--color-on-surface), var(--opacity1));
-            border-color: var(--color);
-        }
-
-        @media (hover: hover) {
-            &:hover {
-                --color: rgba(var(--color-on-surface), var(--opacity0));
-                border-color: rgba(var(--color-on-surface), var(--opacity1));
-
-                & :global(.list-trailing) {
-                    opacity: 1;
-                }
-            }
-        }
-    }
-
-    & :global(.list-leading) > div {
-        width: 20px;
-        height: 20px;
-        border-radius: 10px;
-        box-shadow: var(--elevation1);
-    }
-
-    & :global(.list-trailing) {
-        @media (hover: hover) {
-            opacity: 0
-        }
-    }
-
-    & :global(.list-subtitle) {
-        display: flex;
-        column-gap: 8px;
-        row-gap: 0;
-        flex-wrap: wrap;
-
-        > div {
-            display: flex;
-            gap: 4px;
-            align-items: center;
-
-            > div {
-                width: 14px;
-                height: 14px;
-                border-radius: 7px;
-                box-shadow: var(--elevation1);
-            }
-        }
-    }
-}
-
-.color_picker {
-    justify-content: center;
-    gap: 4px;
-
-    @media (max-width: 500px) {
+.appbar_select_color {
+    @media (max-width: size.$appbar_colorpicker_button_none) {
         display: none !important;
     }
 }
 
-.dialog {
-    width: 720px;
-}
-
-.footer {
-    display: none;
-    padding: 8px;
-    gap: 8px;
+.dialog_colors {
+    display: flex;
     align-items: center;
-    position: sticky;
-    bottom: 0;
-    background-color: rgb(var(--color-background));
-
-    @media (max-width: 500px) {
-        display: flex;
-    }
-
-    > :global(.btn):first-child {
-        flex: 1;
-    }
-}
-
-.header {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    padding: 8px;
-    gap: 8px;
-    position: sticky;
-    top: 0;
-    background-color: rgb(var(--color-background));
-    z-index: 9;
-
-    @media (max-width: 500px) {
-        display: flex;
-        justify-content: space-between;
-    }
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 4px 0;
 
     > div {
-        display: flex;
-        align-items: center;
+        padding: 4px 8px;
+        font-weight: bold;
+        border-radius: 8px;
+
+        [data-corner=sharp] & {
+            border-radius: 0;
+        }
+
+        [data-corner=semi-round] & {
+            border-radius: 4px;
+        }
+
+        [data-corner=full-round] & {
+            border-radius: 20px;
+        }
     }
 }
 
-.logo {
-    font-weight: 600;
-    gap: 8px !important;
-    white-space: nowrap;
-    padding-right: 8px;
-
-    & img {
-        width: 32px;
-        aspect-ratio: 1;
+.fab {
+    @media (min-width: (size.$appbar_colorpicker_button_none + 1px)) {
+        display: none !important;
     }
 }
 
 .main {
-    --h: calc(100dvh - 56px);
-    height: var(--h);
-    max-height: var(--h);
     padding: 0 8px 8px 8px;
     gap: 8px;
+    height: 100%;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
 
@@ -166,7 +64,7 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        transition: all .3s var(--transition-spring);
+        transition-duration: .3s;
 
         [data-corner=sharp] & {
             border-radius: 0;
@@ -205,10 +103,21 @@
 }
 
 .seed {
-    min-width: 20px;
-    max-width: 20px;
-    min-height: 20px;
-    max-height: 20px;
-    border-radius: 10px;
-    border: 1px solid rgba(var(--color-on-surface), var(--opacity1));
+    min-width: 40px;
+    max-width: 40px;
+    min-height: 40px;
+    max-height: 40px;
+    border-radius: 8px;
+
+    [data-corner=sharp] & {
+        border-radius: 0;
+    }
+
+    [data-corner=semi-round] & {
+        border-radius: 4px;
+    }
+
+    [data-corner=full-round] & {
+        border-radius: 20px;
+    }
 }

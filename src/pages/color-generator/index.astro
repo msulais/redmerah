@@ -1,6 +1,6 @@
 ---
 import Html from '@/layouts/Html/index.astro';
-import { App } from './_components'
+import { MainApp } from './_components'
 
 export const prerender = true;
 ---
@@ -16,5 +16,5 @@ export const prerender = true;
 		<link rel="icon" type="image/png" sizes="16x16" href="/favicon/color-generator/favicon-16x16.png">
 		<link rel="manifest" href="/favicon/color-generator/site.webmanifest">
 	</Fragment>
-	<App client:only="solid-js"/>
+	<MainApp client:only="solid-js"/>
 </Html>

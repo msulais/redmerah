@@ -7,5 +7,6 @@ export enum LocalStorageKeys {
 
 export enum DatabaseNames {
     markdownConverter = 'markdown-converter', 
-    randomizer = 'randomizer'
+    randomizer = 'randomizer',
+    colorGenerator = 'color-generator'
 }
