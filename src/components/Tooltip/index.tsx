@@ -1,11 +1,11 @@
-import { mergeProps, onMount, type ParentComponent, onCleanup, createUniqueId, children, splitProps, createEffect } from "solid-js"
+import { mergeProps, onMount, type ParentComponent, onCleanup, createUniqueId, children, splitProps, createEffect, createMemo } from "solid-js"
 
 import { getAttribute, hasAttribute, removeAttribute, setAttribute } from "@/utils/attributes"
 import { addEventListener, removeEventListener, stopPropagation } from "@/utils/event"
 import { getBoundingClientRect, getElementById, setStyleProperty } from "@/utils/element"
 import { clearTimeDelayed, setTimeDelayed, timeout } from "@/utils/timeout"
 import { getPopoverPosition } from "@/utils/popover"
-import { _shortcuts, _text, _class, _join, _map, _CENTER_TOP, _anchor, _anchorId, _appendChild, _body, _bottom, _children, _clientX, _clientY, _createElement, _currentTarget, _delayDuration, _height, _hidePopover, _id, _innerHTML, _isFollowingPointer, _left, _mousedown, _mouseleave, _mouseover, _move, _open, _popover, _position, _px, _right, _showPopover, _timeoutId, _top, _touchcancel, _touchend, _touches, _touchstart, _transform, _trim, _width, _manual, _hasTooltip, _mousemove, _touchmove } from "@/data/string"
+import { _shortcuts, _text, _class, _join, _map, _CENTER_TOP, _anchor, _anchorId, _appendChild, _body, _bottom, _children, _clientX, _clientY, _createElement, _currentTarget, _delayDuration, _height, _hidePopover, _id, _innerHTML, _isFollowingPointer, _left, _mousedown, _mouseleave, _mouseover, _move, _open, _popover, _position, _px, _right, _showPopover, _timeoutId, _top, _touchcancel, _touchend, _touches, _touchstart, _transform, _trim, _width, _manual, _hasTooltip, _mousemove, _touchmove, _disabled } from "@/data/string"
 import { getDocument, getDocumentBody } from "@/data/window"
 import { numberParse } from "@/utils/math"
 import { PopoverPosition } from "@/enums/position"
@@ -40,7 +40,8 @@ enum TooltipAttributes {
 }
 
 enum TooltipAnchorAttributes {
-    hasTooltip = 'data-has-tooltip'
+    hasTooltip = 'data-has-tooltip', 
+    disabled = 'data-tooltip-disabled'
 }
 
 export const KeyboardShortcutTooltip: ParentComponent<KeyboardShortcutTooltipProps> = ($props) => {
@@ -62,6 +63,7 @@ const Tooltip: ParentComponent<TooltipProps> = ($props) => {
         position: PopoverPosition[_CENTER_TOP],
         isFollowingPointer: true
     }, $props)
+    const isDisabled = (anchor: HTMLElement) => hasAttribute(anchor, TooltipAnchorAttributes[_disabled])
     let pointer: {x: number; y: number} = {x: 0, y: 0}
     let tooltip!: HTMLDivElement
     let anchor: HTMLElement | undefined
@@ -139,14 +141,14 @@ const Tooltip: ParentComponent<TooltipProps> = ($props) => {
     }
 
     async function show(ev: Event): Promise<void> {
-        const anchor = ev[_currentTarget] as Element
+        const anchor = ev[_currentTarget] as HTMLElement
         pointer = {
             x: (ev as MouseEvent)[_clientX] ?? (ev as TouchEvent)[_touches][0][_clientX] ?? 0,
             y: (ev as MouseEvent)[_clientY] ?? (ev as TouchEvent)[_touches][0][_clientY] ?? 0
         }
-        stopPropagation(ev)
+        // stopPropagation(ev)
 
-        if (isOpen() && getAttribute(tooltip, TooltipAttributes[_anchorId]) == anchor[_id]) return;
+        if ((isOpen() && getAttribute(tooltip, TooltipAttributes[_anchorId]) == anchor[_id]) || isDisabled(anchor)) return;
 
         clearTimeout()
         const t = setTimeDelayed(async () => {
@@ -222,6 +224,8 @@ const Tooltip: ParentComponent<TooltipProps> = ($props) => {
         }
 
         tooltip = getElementById(id)! as HTMLDivElement
+        if (props[_anchor] == null || isEventInitiated) return;
+        removeAttribute(props[_anchor] as HTMLElement, TooltipAnchorAttributes[_disabled])
     })
 
     createEffect((): unknown => {
@@ -245,13 +249,14 @@ const Tooltip: ParentComponent<TooltipProps> = ($props) => {
 
     onCleanup(() => {
         if (!anchor || !(anchor instanceof HTMLElement)) return
-        removeEventListener(anchor, _mouseover, ev => show(ev))
-        removeEventListener(anchor, _mouseleave, () => hide())
-        removeEventListener(anchor, _mousedown, () => hide())
-        removeEventListener(anchor, _mousemove, (ev) => pointer = {x: (ev as MouseEvent)[_clientX], y: (ev as MouseEvent)[_clientY]})
-        removeEventListener(anchor, _touchstart, ev => show(ev), {passive: true})
-        removeEventListener(anchor, _touchend, () => hide())
-        removeEventListener(anchor, _touchcancel, () => hide())
+        setAttribute(anchor, TooltipAnchorAttributes[_disabled])
+        // removeEventListener(anchor, _mouseover, ev => show(ev))
+        // removeEventListener(anchor, _mouseleave, () => hide())
+        // removeEventListener(anchor, _mousedown, () => hide())
+        // removeEventListener(anchor, _mousemove, (ev) => pointer = {x: (ev as MouseEvent)[_clientX], y: (ev as MouseEvent)[_clientY]})
+        // removeEventListener(anchor, _touchstart, ev => show(ev), {passive: true})
+        // removeEventListener(anchor, _touchend, () => hide())
+        // removeEventListener(anchor, _touchcancel, () => hide())
     })
 
     return (<>
