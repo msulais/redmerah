@@ -733,15 +733,22 @@ export const App: Component = () => {
     }
 
     async function initDatabase(): Promise<void> {
-        await db[_open]({onUpgradeNeeded(ev, db) {
-            if (!(ev[_oldVersion] == 0 && ev[_newVersion] == 1 && db)) return;
-
-            db[_createObjectStore]({
-                name: ObjectStoreNames[_settings], 
-                keyPath: _key, 
-                indexs: [_key, _value]
+        try {
+            await db[_open]({
+                onSuccess(ev, db) {
+                    initSettings()
+                },
+                onUpgradeNeeded(ev, db) {
+                    if (!(ev[_oldVersion] == 0 && ev[_newVersion] == 1 && db)) return;
+                    
+                    db[_createObjectStore]({
+                        name: ObjectStoreNames[_settings], 
+                        keyPath: _key, 
+                        indexs: [_key, _value]
+                    })
+                }
             })
-        }})
+        } catch (e) {}
     }
 
     async function initSettings(): Promise<void> {
@@ -777,7 +784,6 @@ export const App: Component = () => {
         if (isSmallScreen()) setOutputTab(null)
 
         await initDatabase()
-        initSettings()
     })
 
     const Tabs: Component = () => {
