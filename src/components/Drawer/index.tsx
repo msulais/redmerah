@@ -1,4 +1,4 @@
-import { type JSX, type ParentComponent, Show, mergeProps, onMount, splitProps, createSignal, children } from "solid-js"
+import { type JSX, type ParentComponent, Show, mergeProps, onMount, splitProps, children } from "solid-js"
 import { Portal } from "solid-js/web"
 
 import type { ComponentEvent } from "@/types/event"
@@ -8,12 +8,10 @@ import { initFlyout } from "@/utils/flyout"
 import { closeModal } from "@/utils/modal"
 import { _onCancel, _header, _dismiss, _actions, _children, _showCloseButton, _justifyActions, _ref, _position, _right, _closeTooltip, _auto, _manual, _classList, _filledTonal, _indicatorPosition, _leading, _left, _selected, _trailing, _footer } from "@/data/string"
 import { Position } from "@/enums/position"
+import { isVarHasValue } from "@/utils/data"
 
-import Icon from "@/components/Icon"
-import Tooltip from "@/components/Tooltip"
 import Button, { ButtonVariant } from "@/components/Button"
 import './index.scss'
-import { isVarHasValue } from "@/utils/data"
 
 type DrawerProps = Omit<JSX.DialogHtmlAttributes<HTMLDialogElement>, 'ref' | 'onCancel'> & {
     header?: JSX.Element

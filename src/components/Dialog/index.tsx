@@ -6,9 +6,9 @@ import { preventDefault } from "@/utils/event"
 import { initFlyout } from "@/utils/flyout"
 import { closeModal } from "@/utils/modal"
 import { _onCancel, _header, _dismiss, _actions, _children, _showCloseButton, _justifyActions, _ref, _manual, _auto, _closeTooltip } from "@/data/string"
+import { toggleAttribute } from "@/utils/attributes"
 
 import './index.scss'
-import { toggleAttribute } from "@/utils/attributes"
 
 type DialogProps = Omit<JSX.DialogHtmlAttributes<HTMLDialogElement>, 'ref' | 'onCancel'> & {
     header?: JSX.Element

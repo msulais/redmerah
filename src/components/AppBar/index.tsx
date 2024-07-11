@@ -4,7 +4,6 @@ import { _children, _leading, _trailing, _headline } from "@/data/string"
 
 import './index.scss'
 
-
 type AppBarProps = JSX.HTMLAttributes<HTMLDivElement> & {
     leading?: JSX.Element
     trailing?: JSX.Element
