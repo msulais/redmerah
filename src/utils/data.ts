@@ -7,7 +7,7 @@ export function isVarHasValue(data: unknown): boolean {
 export function createObject<T>(...data: [key: keyof T, value: unknown][]): T {
     const obj = {} as Record<keyof T, unknown>
 
-    for (let i = 0; i < data[_length]; i++) {
+    for (const i in data) {
         obj[data[i][0]] = data[i][1]
     }
 

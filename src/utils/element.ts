@@ -15,7 +15,7 @@ export function isElementOverflow(el: HTMLElement): boolean {
 
 export function addClassListModule(...arr: string[]): Record<string, boolean> {
     const classList: Record<string, boolean> = {}
-    for (let i = 0; i < arr[_length]; i++) {
+    for (const i in arr) {
         classList[arr[i]] = true
     }
     return classList

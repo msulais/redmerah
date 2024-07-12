@@ -36,7 +36,7 @@ export function getCookie(key: CookieKeys): string | null {
     const cookieName = key + "="
     const cookies = getDocument()[_cookie][_split](';')
 
-    for (let i = 0; i < cookies[_length]; i++) {
+    for (const i in cookies) {
         const cookie = cookies[i][_trim]()
 
         if (cookie[_indexOf](cookieName) === 0) {
