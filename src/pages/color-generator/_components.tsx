@@ -51,45 +51,45 @@ const Body: Component<BodyProps> = (props) => {
     }
 
     return (<main class={CSS.main}>
-        <div style={{ "background-color": props.accentLight, color: props.onAccentLight }}>
-            <h2>Accent Light<br />{props.accentLight}</h2>
+        <div style={{ "background-color": props[_accentLight], color: props[_onAccentLight] }}>
+            <h2>Accent Light<br />{props[_accentLight]}</h2>
             <Button
                 variant={ButtonVariant[_filledTonal]}
-                style={{'--color-on-surface': hexToCSSValue(props.onAccentLight)}}
-                onClick={() => copyColor(props.accentLight, accLightTimeoutId)}>
+                style={{'--color-on-surface': hexToCSSValue(props[_onAccentLight])}}
+                onClick={() => copyColor(props[_accentLight], accLightTimeoutId)}>
                 <Show when={accLightTimeoutId[0]()} fallback={<><Icon code={0xE51B}/>Copy</>}>
                     <Icon code={0xE3D8}/>Copied
                 </Show>
             </Button>
         </div>
-        <div style={{ "background-color": props.onAccentLight, color: props.accentLight }}>
-            <h2>On Accent Light<br />{props.onAccentLight}</h2>
+        <div style={{ "background-color": props[_onAccentLight], color: props[_accentLight] }}>
+            <h2>On Accent Light<br />{props[_onAccentLight]}</h2>
             <Button
                 variant={ButtonVariant[_filledTonal]}
-                style={{'--color-on-surface': hexToCSSValue(props.accentLight)}}
-                onClick={() => copyColor(props.onAccentLight, onAccLightTimeoutId)}>
+                style={{'--color-on-surface': hexToCSSValue(props[_accentLight])}}
+                onClick={() => copyColor(props[_onAccentLight], onAccLightTimeoutId)}>
                 <Show when={onAccLightTimeoutId[0]()} fallback={<><Icon code={0xE51B}/>Copy</>}>
                     <Icon code={0xE3D8}/>Copied
                 </Show>
             </Button>
         </div>
-        <div style={{ "background-color": props.accentDark, color: props.onAccentDark }}>
-            <h2>Accent Dark<br />{props.accentDark}</h2>
+        <div style={{ "background-color": props[_accentDark], color: props[_onAccentDark] }}>
+            <h2>Accent Dark<br />{props[_accentDark]}</h2>
             <Button
                 variant={ButtonVariant[_filledTonal]}
-                style={{'--color-on-surface': hexToCSSValue(props.onAccentDark)}}
-                onClick={() => copyColor(props.accentDark, accDarkTimeoutId)}>
+                style={{'--color-on-surface': hexToCSSValue(props[_onAccentDark])}}
+                onClick={() => copyColor(props[_accentDark], accDarkTimeoutId)}>
                 <Show when={accDarkTimeoutId[0]()} fallback={<><Icon code={0xE51B}/>Copy</>}>
                     <Icon code={0xE3D8}/>Copied
                 </Show>
             </Button>
         </div>
-        <div style={{ "background-color": props.onAccentDark, color: props.accentDark }}>
-            <h2>On Accent Dark<br />{props.onAccentDark}</h2>
+        <div style={{ "background-color": props[_onAccentDark], color: props[_accentDark] }}>
+            <h2>On Accent Dark<br />{props[_onAccentDark]}</h2>
             <Button
                 variant={ButtonVariant[_filledTonal]}
-                style={{'--color-on-surface': hexToCSSValue(props.accentDark)}}
-                onClick={() => copyColor(props.onAccentDark, onAccDarkTimeoutId)}>
+                style={{'--color-on-surface': hexToCSSValue(props[_accentDark])}}
+                onClick={() => copyColor(props[_onAccentDark], onAccDarkTimeoutId)}>
                 <Show when={onAccDarkTimeoutId[0]()} fallback={<><Icon code={0xE51B}/>Copy</>}>
                     <Icon code={0xE3D8}/>Copied
                 </Show>
