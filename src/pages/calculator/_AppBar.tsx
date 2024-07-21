@@ -181,7 +181,7 @@ const _: VoidComponent<Props> = (props) => {
                 <MenuDivider />
                 <MenuItem
                     onClick={() => {
-                        getNavigator()[_share]({ title: 'Randomizer', text: 'Randomizer', url: getDocument()[_URL] })
+                        getNavigator()[_share]({ title: 'Calculator', text: 'Calculator', url: getDocument()[_URL] })
                         closePopover(menu_info_ref)
                     }}
                     leading={<Icon code={0xEE23}/>}>
@@ -189,7 +189,7 @@ const _: VoidComponent<Props> = (props) => {
                 </MenuItem>
                 <MenuItemLink
                     onClick={() => closePopover(menu_info_ref)}
-                    href={'mailto:' + ExternalLinks[_contactEmail] + '?subject=' + encodeURL('Color Generator')}
+                    href={'mailto:' + ExternalLinks[_contactEmail] + '?subject=' + encodeURL('Calculator')}
                     leading={<Icon code={0xE3A0}/>}>
                     Send feedback
                 </MenuItemLink>
