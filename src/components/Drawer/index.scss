@@ -27,12 +27,10 @@
     }
 
     [data-theme=dark] & {
-        background-color: rgba(36, 36, 36, var(--opacity-inv1));
         border: 1px solid rgba(0, 0, 0, var(--opacity-inv5));
     }
     [data-theme=system] & {
         @media (prefers-color-scheme: dark) {
-            background-color: rgba(36, 36, 36, var(--opacity-inv1));
             border: 1px solid rgba(0, 0, 0, var(--opacity-inv5));
         }
     }
