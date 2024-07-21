@@ -9,7 +9,7 @@
     flex-wrap: wrap;
 
     &[data-hidden] {
-        display: none;
+        display: none !important;
     }
 }
 
@@ -77,7 +77,7 @@
     [data-corner=full-round] & {border-radius: 20px;}
 
     > div[data-hide] {
-        display: none;
+        display: none !important;
     }
 
     & p {
@@ -161,7 +161,7 @@
     gap: 4px;
 
     &[data-hidden] {
-        display: none;
+        display: none !important;
     }
 }
 

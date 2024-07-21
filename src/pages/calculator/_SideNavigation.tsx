@@ -1,14 +1,14 @@
 import { For, Show, type VoidComponent, createSignal } from "solid-js";
 
 import { _RIGHT_CENTER, _calculator, _colors, _expand, _filledTonal, _icon, _left, _numbers, _onChangeCalculator, _onChangeRandomizer, _randomizerType, _selection, _string, _teams, _text, _tooltip, _type, _words } from "@/data/string";
+import { addClassListModule } from "@/utils/element";
+import type { CalculatorType } from "./_enums";
+import { CALCULATOR_TYPES } from "./_data";
 
 import Icon from "@/components/Icon";
 import Tooltip from "@/components/Tooltip";
 import SideNavigation, { SideNavigationItem } from "@/components/SideNavigation";
 import CSS from './_SideNavigation.module.scss'
-import { addClassListModule } from "@/utils/element";
-import type { CalculatorType } from "./_enums";
-import { CALCULATOR_TYPES } from "./_data";
 
 type Props = {
     calculator: CalculatorType

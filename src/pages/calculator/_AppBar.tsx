@@ -212,7 +212,6 @@ const _: VoidComponent<Props> = (props) => {
                     Scientific notation
                 </MenuItem>
 
-                {/* TODO: add memory button option settings */}
                 <Tooltip anchor={button_settingsMemoryButtons_ref()} text={"Show or hide memory button (M, M+, M-, MR, MC)"}/>
                 <MenuItem 
                     ref={r => set_button_settingsMemoryButtons_ref(r)} 

@@ -107,7 +107,7 @@ $small-screen: 650px;
     }
 
     @media (max-width: $small-screen) {
-        display: none;
+        display: none !important;
     }
 
     > div {
@@ -116,7 +116,7 @@ $small-screen: 650px;
         min-height: calc(100% - 20px);
         border-radius: 2px;
         margin: 0 2px;
-        pointer-events: none;
+        pointer-events: none !important;
         background-color: rgba(var(--color-on-surface), var(--opacity-inv3));
 
         [data-corner=sharp] {
@@ -141,7 +141,7 @@ $small-screen: 650px;
 }
 
 .flex {
-    display: none;
+    display: none !important;
 
     @media (max-width: $small-screen) {
         display: flex;
@@ -171,7 +171,7 @@ $small-screen: 650px;
     }
 
     &[data-hide] {
-        display: none;
+        display: none !important;
     }
 
     &[data-only] {
@@ -274,7 +274,7 @@ $small-screen: 650px;
         height: 100%;
 
         &[data-hide] {
-            display: none;
+            display: none !important;
         }
 
         @media print {
@@ -293,7 +293,7 @@ $small-screen: 650px;
         white-space: pre-wrap;
 
         &[data-hide] {
-            display: none;
+            display: none !important;
         }
 
         @media (max-width: $small-screen) {

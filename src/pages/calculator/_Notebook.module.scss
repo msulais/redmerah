@@ -15,7 +15,7 @@
     }
 
     @media (max-width: size.$side_notebook_none) {
-        display: none;
+        display: none !important;
     }
     
     & textarea {
