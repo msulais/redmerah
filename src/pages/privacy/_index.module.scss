@@ -1,28 +1,45 @@
 .article {
     padding: 32px 16px 64px 16px;
-    width: 720px;
+    width: 1080px;
     max-width: 100%;
 
-    & p > a {
-        border-bottom: 1px solid;
-        color: rgb(var(--color-accent));     
-        position: relative;
-        transition-duration: .3s;
-        
-        @media (hover: hover) {
-            &:hover {
-                border-bottom-style: dashed;
-            }
+    & :is(p, li) { 
+        font-size: 20px;
+        text-align: justify;
+
+        @media (max-width: 500px) {
+            font-size: 16px;
         }
 
-        &:active {
-            border-bottom-style: dashed;
-            letter-spacing: .05em;
+        > a {
+            border-bottom: .1em solid;
+            color: rgb(var(--color-accent));     
+            position: relative;
+            transition-duration: .3s;
+            
+            @media (hover: hover) {
+                &:hover {
+                    border-bottom-style: dashed;
+                }
+            }
+
+            &:active {
+                border-bottom-style: none;
+                background-color: rgb(var(--color-accent));
+                color: rgb(var(--color-on-accent));
+            }
         }
     }
 
     & h2 {
         scroll-margin-top: 64px;
+        font-size: 48px;
+        margin-top: 1em;
+        font-weight: 500;
+
+        @media (max-width: 500px) {
+            font-size: 32px;
+        }
 
         &:target {
             color: rgb(var(--color-accent));
@@ -43,9 +60,22 @@
         }
     }
 
+    & :is(ul, ol) {
+        margin-left: 2em;
+    }
+
     > h1 {
-        font-size: var(--font-size-xxd);
+        font-size: 108px;
+        text-wrap: balance;
         margin-bottom: 1em;
+        background: linear-gradient(94.87deg, #F81111 0%, #B235FF 120.44%);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+
+        @media (max-width: 500px) {
+            font-size: 64px;
+        }
     }
 
     > :not(h1) {
@@ -55,5 +85,4 @@
     > section > :not(:first-child) {
         margin-top: 1em;
     }
-
 }
