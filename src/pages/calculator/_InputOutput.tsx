@@ -608,7 +608,9 @@ const ConverterCalculator: VoidComponent<ConverterCalculatorProps> = (props) => 
                 onClick={ev => openPopover({
                     event: ev, 
                     popover: menu_converterType_ref, 
-                    anchor: ev[_currentTarget], 
+                    anchor: ev[_currentTarget],
+                    position: PopoverPosition[_CENTER_BOTTOM_TO_RIGHT],
+                    allowHideAnchor: false 
                 })}
                 ref={r => set_button_converterType_ref(r)} 
                 variant={ButtonVariant[_filledTonal]}>
@@ -635,6 +637,8 @@ const ConverterCalculator: VoidComponent<ConverterCalculatorProps> = (props) => 
                         event: ev, 
                         popover: menu_inputUnit_ref, 
                         anchor: ev[_currentTarget],
+                        position: PopoverPosition[_CENTER_BOTTOM_TO_RIGHT],
+                        allowHideAnchor: false
                     })} 
                     style={{color: 'rgb(var(--color-accent))'}}
                     ref={r => set_button_inputUnit_ref(r)}>{props[_settings][_converter][_inputUnit][_name] + ` (${props[_settings][_converter][_inputUnit][_symbol]})`}</Button>
@@ -665,6 +669,8 @@ const ConverterCalculator: VoidComponent<ConverterCalculatorProps> = (props) => 
                         event: ev, 
                         popover: menu_outputUnit_ref, 
                         anchor: ev[_currentTarget],
+                        position: PopoverPosition[_CENTER_BOTTOM_TO_RIGHT],
+                        allowHideAnchor: false
                     })} 
                     style={{color: 'rgb(var(--color-accent))'}}
                     ref={r => set_button_outputUnit_ref(r)}>{props[_settings][_converter][_outputUnit][_name] + ` (${props[_settings][_converter][_outputUnit][_symbol]})`}</Button>
