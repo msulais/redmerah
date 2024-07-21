@@ -7,24 +7,23 @@ import { addClassListModule } from "@/utils/element"
 import { closePopover, openPopover } from "@/utils/popover"
 import { PopoverPosition, Position } from "@/enums/position"
 import { toggleAttribute } from "@/utils/attributes"
-import { CONVERTER_TYPES } from "./_data"
+import { _add_memory, _change_calculator_input, _change_settings_converter_inputUnit, _change_settings_converter_outputUnit, _change_settings_converter_swapUnit, _change_settings_converter_type, _change_settings_date_operation, _change_settings_programmer_numberType, _clear_memory, _subtract_memory, _toggle_settings_scientific_angle, CONVERTER_TYPES } from "./_data"
 import { ConverterType, UNIT_ANGLE, UNIT_AREA, UNIT_FREQUENCY, UNIT_LENGTH, UNIT_PRESSURE, UNIT_TEMPERATURE, UNIT_TIME, UNIT_VOLUME, UNIT_WEIGHT, type ConverterUnit } from "./_converter"
 import { stringToTitleCase } from "@/utils/string"
 import { preventDefault } from "@/utils/event"
 import { getNavigator } from "@/data/window"
 import { floatToBinary, formatNumber, mathFloor, numberParse, numberToRealDigit } from "@/utils/math"
+import { getDate_Y, getDateString_YMD } from "@/utils/datetime"
 
 import Tooltip from "@/components/Tooltip"
 import Icon from "@/components/Icon"
 import Button, { ButtonVariant } from "@/components/Button"
+import { changeTextFieldValue, NumberTextField } from "@/components/TextField"
 import Menu, { MenuDivider, MenuItem } from "@/components/Menu"
+import Dropdown from "@/components/Dropdown"
+import DatePicker from "@/components/DatePicker"
 import CSSMiscellaneous from '@/styles/miscellaneous.module.scss'
 import CSS from './_InputOutput.module.scss'
-import DatePicker from "@/components/DatePicker"
-import { getDate_Y, getDateString_YMD } from "@/utils/datetime"
-import CheckBox from "@/components/CheckBox"
-import Dropdown from "@/components/Dropdown"
-import TextField, { changeTextFieldValue, NumberTextField } from "@/components/TextField"
 
 type Props = {
     calculator: CalculatorType
@@ -112,7 +111,7 @@ const ActionButtons: ParentComponent<ActionButtonsProps> = (props) => {
             <Tooltip anchor={button_memoryClear_ref()} text="Memory clear"/>
             <Button     
                 ref={r => set_button_memoryClear_ref(r)} 
-                onClick={() => props[_command](Commands.clear_memory)}>
+                onClick={() => props[_command](Commands[_clear_memory])}>
                 MC
             </Button>
 
@@ -126,14 +125,14 @@ const ActionButtons: ParentComponent<ActionButtonsProps> = (props) => {
             <Tooltip anchor={button_memoryAdd_ref()} text="Memory add"/>
             <Button 
                 ref={r => set_button_memoryAdd_ref(r)} 
-                onClick={() => props[_command](Commands.add_memory)}>
+                onClick={() => props[_command](Commands[_add_memory])}>
                 M+
             </Button>
 
             <Tooltip anchor={button_memorySubtract_ref()} text="Memory subtract"/>
             <Button 
                 ref={r => set_button_memorySubtract_ref(r)} 
-                onClick={() => props[_command](Commands.subtract_memory)}>
+                onClick={() => props[_command](Commands[_subtract_memory])}>
                 M-
             </Button>
         </div>
@@ -152,7 +151,7 @@ const BasicCalculator: VoidComponent<BasicCalculatorProps> = (props) => {
         caretPos += char[_length]
         input_ref[_setSelectionRange](caretPos, caretPos)
         input_ref[_focus]()
-        props[_command](Commands.change_calculator_input, value)
+        props[_command](Commands[_change_calculator_input], value)
     }
 
     function backspace(): void {
@@ -164,7 +163,7 @@ const BasicCalculator: VoidComponent<BasicCalculatorProps> = (props) => {
         if (caretPos < 0) caretPos = 0
         input_ref[_setSelectionRange](caretPos, caretPos)
         input_ref[_focus]()
-        props[_command](Commands.change_calculator_input, value)
+        props[_command](Commands[_change_calculator_input], value)
     }
 
     function clear(): void {
@@ -172,7 +171,7 @@ const BasicCalculator: VoidComponent<BasicCalculatorProps> = (props) => {
         input_ref[_value] = ''
         input_ref[_setSelectionRange](caretPos, caretPos)
         input_ref[_focus]()
-        props[_command](Commands.change_calculator_input, '')
+        props[_command](Commands[_change_calculator_input], '')
     }
 
     function equal(): void {
@@ -182,7 +181,7 @@ const BasicCalculator: VoidComponent<BasicCalculatorProps> = (props) => {
         input_ref[_value] = props[_output][_toString]()
         input_ref[_setSelectionRange](caretPos, caretPos)
         input_ref[_focus]()
-        props[_command](Commands.change_calculator_input, numberToRealDigit(props[_output]))
+        props[_command](Commands[_change_calculator_input], numberToRealDigit(props[_output]))
     }
 
     createEffect(() => {
@@ -203,7 +202,7 @@ const BasicCalculator: VoidComponent<BasicCalculatorProps> = (props) => {
             }}
             onFocus={ev => caretPos = ev[_currentTarget][_selectionStart] ?? caretPos}
             onBlur={ev => caretPos = ev[_currentTarget][_selectionStart] ?? caretPos}
-            onInput={ev => props[_command](Commands.change_calculator_input, ev[_currentTarget][_value])}
+            onInput={ev => props[_command](Commands[_change_calculator_input], ev[_currentTarget][_value])}
         />
         <div 
             class={[
@@ -290,7 +289,7 @@ const ScientificCalculator: VoidComponent<ScientificCalculatorProps> = (props) =
         caretPos += char[_length]
         input_ref[_setSelectionRange](caretPos, caretPos)
         input_ref[_focus]()
-        props[_command](Commands.change_calculator_input, value)
+        props[_command](Commands[_change_calculator_input], value)
     }
 
     function backspace(): void {
@@ -302,7 +301,7 @@ const ScientificCalculator: VoidComponent<ScientificCalculatorProps> = (props) =
         if (caretPos < 0) caretPos = 0
         input_ref[_setSelectionRange](caretPos, caretPos)
         input_ref[_focus]()
-        props[_command](Commands.change_calculator_input, value)
+        props[_command](Commands[_change_calculator_input], value)
     }
 
     function clear(): void {
@@ -310,7 +309,7 @@ const ScientificCalculator: VoidComponent<ScientificCalculatorProps> = (props) =
         input_ref[_value] = ''
         input_ref[_setSelectionRange](caretPos, caretPos)
         input_ref[_focus]()
-        props[_command](Commands.change_calculator_input, '')
+        props[_command](Commands[_change_calculator_input], '')
     }
 
     function equal(): void {
@@ -320,7 +319,7 @@ const ScientificCalculator: VoidComponent<ScientificCalculatorProps> = (props) =
         input_ref[_value] = props[_output][_toString]()
         input_ref[_setSelectionRange](caretPos, caretPos)
         input_ref[_focus]()
-        props[_command](Commands.change_calculator_input, numberToRealDigit(props[_output]))
+        props[_command](Commands[_change_calculator_input], numberToRealDigit(props[_output]))
     }
 
     createEffect(() => {
@@ -341,7 +340,7 @@ const ScientificCalculator: VoidComponent<ScientificCalculatorProps> = (props) =
             }}
             onFocus={ev => caretPos = ev[_currentTarget][_selectionStart] ?? caretPos}
             onBlur={ev => caretPos = ev[_currentTarget][_selectionStart] ?? caretPos}
-            onInput={ev => props[_command](Commands.change_calculator_input, ev[_currentTarget][_value])}
+            onInput={ev => props[_command](Commands[_change_calculator_input], ev[_currentTarget][_value])}
         />
         <div 
             class={[
@@ -396,7 +395,7 @@ const ScientificCalculator: VoidComponent<ScientificCalculatorProps> = (props) =
             </Menu>
 
             <Tooltip anchor={button_angleMode_ref()} text="Angle mode"/>
-            <Button ref={r => set_button_angleMode_ref(r)} style={{width: '68px'}} onClick={() => props[_command](Commands.toggle_settings_scientific_angle)}>{props[_settings][_scientific][_angle]}</Button>
+            <Button ref={r => set_button_angleMode_ref(r)} style={{width: '68px'}} onClick={() => props[_command](Commands[_toggle_settings_scientific_angle])}>{props[_settings][_scientific][_angle]}</Button>
         </ActionButtons>
         <div class={CSS.scientific_buttons}>
             <Button onClick={() => addChar('mod')}>mod</Button>
@@ -484,7 +483,7 @@ const ConverterCalculator: VoidComponent<ConverterCalculatorProps> = (props) => 
         caretPos += char[_length]
         input_ref[_setSelectionRange](caretPos, caretPos)
         input_ref[_focus]()
-        props[_command](Commands.change_calculator_input, value)
+        props[_command](Commands[_change_calculator_input], value)
     }
 
     function backspace(): void {
@@ -496,7 +495,7 @@ const ConverterCalculator: VoidComponent<ConverterCalculatorProps> = (props) => 
         if (caretPos < 0) caretPos = 0
         input_ref[_setSelectionRange](caretPos, caretPos)
         input_ref[_focus]()
-        props[_command](Commands.change_calculator_input, value)
+        props[_command](Commands[_change_calculator_input], value)
     }
 
     function clear(): void {
@@ -504,7 +503,7 @@ const ConverterCalculator: VoidComponent<ConverterCalculatorProps> = (props) => 
         input_ref[_value] = ''
         input_ref[_setSelectionRange](caretPos, caretPos)
         input_ref[_focus]()
-        props[_command](Commands.change_calculator_input, '')
+        props[_command](Commands[_change_calculator_input], '')
     }
 
     function equal(): void {
@@ -514,7 +513,7 @@ const ConverterCalculator: VoidComponent<ConverterCalculatorProps> = (props) => 
         input_ref[_value] = props[_output][_toString]()
         input_ref[_setSelectionRange](caretPos, caretPos)
         input_ref[_focus]()
-        props[_command](Commands.change_calculator_input, numberToRealDigit(props[_output]))
+        props[_command](Commands[_change_calculator_input], numberToRealDigit(props[_output]))
     }
 
     function plusMinus(): void {
@@ -554,7 +553,7 @@ const ConverterCalculator: VoidComponent<ConverterCalculatorProps> = (props) => 
         input_ref[_value] = value
         input_ref[_setSelectionRange](caretPos, caretPos)
         input_ref[_focus]()
-        props[_command](Commands.change_calculator_input, value)
+        props[_command](Commands[_change_calculator_input], value)
     }
 
     createEffect(() => {
@@ -575,7 +574,7 @@ const ConverterCalculator: VoidComponent<ConverterCalculatorProps> = (props) => 
             }}
             onFocus={ev => caretPos = ev[_currentTarget][_selectionStart] ?? caretPos}
             onBlur={ev => caretPos = ev[_currentTarget][_selectionStart] ?? caretPos}
-            onInput={ev => props[_command](Commands.change_calculator_input, ev[_currentTarget][_value])}
+            onInput={ev => props[_command](Commands[_change_calculator_input], ev[_currentTarget][_value])}
         />
         <div 
             class={[
@@ -620,7 +619,7 @@ const ConverterCalculator: VoidComponent<ConverterCalculatorProps> = (props) => 
                 <MenuItem 
                     selected={c[_type] == props[_settings][_converter][_type]}
                     onClick={() => {
-                        props[_command](Commands.change_settings_converter_type, c[_type])
+                        props[_command](Commands[_change_settings_converter_type], c[_type])
                         closePopover(menu_converterType_ref)
                     }}
                     leading={<Icon code={c[_icon]}/>}>
@@ -643,7 +642,7 @@ const ConverterCalculator: VoidComponent<ConverterCalculatorProps> = (props) => 
                 <Menu ref={r => menu_inputUnit_ref = r} onToggle={v => setIs_menu_inputUnit_open(v)}><For each={getUnits()}>{u => 
                     <MenuItem 
                         onClick={() => {
-                            props[_command](Commands.change_settings_converter_inputUnit, u)
+                            props[_command](Commands[_change_settings_converter_inputUnit], u)
                             closePopover(menu_inputUnit_ref)
                         }}
                         selected={u[_equals](props[_settings][_converter][_inputUnit])}>
@@ -653,7 +652,7 @@ const ConverterCalculator: VoidComponent<ConverterCalculatorProps> = (props) => 
 
                 <Tooltip anchor={button_swapUnit_ref()} text="Swap unit"/>
                 <Button 
-                    onClick={() => props[_command](Commands.change_settings_converter_swapUnit)}
+                    onClick={() => props[_command](Commands[_change_settings_converter_swapUnit])}
                     ref={r => set_button_swapUnit_ref(r)} 
                     iconOnly>
                     <Icon code={0xE115}/>
@@ -674,7 +673,7 @@ const ConverterCalculator: VoidComponent<ConverterCalculatorProps> = (props) => 
             <Menu ref={r => menu_outputUnit_ref = r} onToggle={v => setIs_menu_outputUnit_open(v)}><For each={getUnits()}>{u => 
                 <MenuItem 
                     onClick={() => {
-                        props[_command](Commands.change_settings_converter_outputUnit, u)
+                        props[_command](Commands[_change_settings_converter_outputUnit], u)
                         closePopover(menu_outputUnit_ref)
                     }}
                     selected={u[_equals](props[_settings][_converter][_outputUnit])}>
@@ -743,7 +742,7 @@ const ProgrammerCalculator: VoidComponent<ProgrammerCalculatorProps> = (props) =
         caretPos += char[_length]
         input_ref[_setSelectionRange](caretPos, caretPos)
         input_ref[_focus]()
-        props[_command](Commands.change_calculator_input, value)
+        props[_command](Commands[_change_calculator_input], value)
     }
 
     function backspace(): void {
@@ -755,7 +754,7 @@ const ProgrammerCalculator: VoidComponent<ProgrammerCalculatorProps> = (props) =
         if (caretPos < 0) caretPos = 0
         input_ref[_setSelectionRange](caretPos, caretPos)
         input_ref[_focus]()
-        props[_command](Commands.change_calculator_input, value)
+        props[_command](Commands[_change_calculator_input], value)
     }
 
     function clear(): void {
@@ -763,7 +762,7 @@ const ProgrammerCalculator: VoidComponent<ProgrammerCalculatorProps> = (props) =
         input_ref[_value] = ''
         input_ref[_setSelectionRange](caretPos, caretPos)
         input_ref[_focus]()
-        props[_command](Commands.change_calculator_input, '')
+        props[_command](Commands[_change_calculator_input], '')
     }
 
     function equal(): void {
@@ -779,7 +778,7 @@ const ProgrammerCalculator: VoidComponent<ProgrammerCalculatorProps> = (props) =
         input_ref[_value] = output[_toString]()
         input_ref[_setSelectionRange](caretPos, caretPos)
         input_ref[_focus]()
-        props[_command](Commands.change_calculator_input, output)
+        props[_command](Commands[_change_calculator_input], output)
     }
 
     function onRecallMemory(value: number): void {
@@ -812,7 +811,7 @@ const ProgrammerCalculator: VoidComponent<ProgrammerCalculatorProps> = (props) =
             }}
             onFocus={ev => caretPos = ev[_currentTarget][_selectionStart] ?? caretPos}
             onBlur={ev => caretPos = ev[_currentTarget][_selectionStart] ?? caretPos}
-            onInput={ev => props[_command](Commands.change_calculator_input, ev[_currentTarget][_value])}
+            onInput={ev => props[_command](Commands[_change_calculator_input], ev[_currentTarget][_value])}
         />
         <div 
             class={[
@@ -824,7 +823,7 @@ const ProgrammerCalculator: VoidComponent<ProgrammerCalculatorProps> = (props) =
                 compact 
                 disableScale 
                 indicatorPosition={Position[_right]} 
-                onClick={() => props[_command](Commands.change_settings_programmer_numberType, NumberType[_decimal])}
+                onClick={() => props[_command](Commands[_change_settings_programmer_numberType], NumberType[_decimal])}
                 onContextMenu={(ev) => {
                     preventDefault(ev)
                     textToCopy = getDecimalOutput()
@@ -838,7 +837,7 @@ const ProgrammerCalculator: VoidComponent<ProgrammerCalculatorProps> = (props) =
                 compact 
                 disableScale 
                 indicatorPosition={Position[_right]} 
-                onClick={() => props[_command](Commands.change_settings_programmer_numberType, NumberType[_hexadecimal])}
+                onClick={() => props[_command](Commands[_change_settings_programmer_numberType], NumberType[_hexadecimal])}
                 onContextMenu={(ev) => {
                     preventDefault(ev)
                     if (props[_output] == null) return;
@@ -854,7 +853,7 @@ const ProgrammerCalculator: VoidComponent<ProgrammerCalculatorProps> = (props) =
                 compact 
                 disableScale 
                 indicatorPosition={Position[_right]}
-                onClick={() => props[_command](Commands.change_settings_programmer_numberType, NumberType[_octal])} 
+                onClick={() => props[_command](Commands[_change_settings_programmer_numberType], NumberType[_octal])} 
                 onContextMenu={(ev) => {
                     preventDefault(ev)
                     if (props[_output] == null) return;
@@ -870,7 +869,7 @@ const ProgrammerCalculator: VoidComponent<ProgrammerCalculatorProps> = (props) =
                 compact 
                 disableScale 
                 indicatorPosition={Position[_right]} 
-                onClick={() => props[_command](Commands.change_settings_programmer_numberType, NumberType[_binary])} 
+                onClick={() => props[_command](Commands[_change_settings_programmer_numberType], NumberType[_binary])} 
                 onContextMenu={(ev) => {
                     preventDefault(ev)
                     if (props[_output] == null) return;
@@ -959,7 +958,7 @@ const DateCalculator: VoidComponent<DateCalculatorProps> = (props) => {
         <Dropdown 
             labelText="Operation" 
             selectedValues={[props[_settings][_date][_operation]]} 
-            onValueChanged={(values) => props[_command](Commands.change_settings_date_operation, values[0])}
+            onValueChanged={(values) => props[_command](Commands[_change_settings_date_operation], values[0])}
             items={[
                 [DateOperation[_add], 'Add'],
                 [DateOperation[_subtract], 'Subtract'],
@@ -985,19 +984,19 @@ const DateCalculator: VoidComponent<DateCalculatorProps> = (props) => {
                 ref={r => numberTextField_year_ref = r} 
                 min={0} 
                 labelText="Year" 
-                onFinalValueChanged={(v) => props[_command](Commands.change_calculator_input, {...props[_input], year: v})}
+                onFinalValueChanged={(v) => props[_command](Commands[_change_calculator_input], {...props[_input], year: v})}
             />
             <NumberTextField 
                 ref={r => numberTextField_month_ref = r} 
                 min={0} 
                 labelText="Month" 
-                onFinalValueChanged={(v) => props[_command](Commands.change_calculator_input, {...props[_input], month: v})}
+                onFinalValueChanged={(v) => props[_command](Commands[_change_calculator_input], {...props[_input], month: v})}
             />
             <NumberTextField 
                 ref={r => numberTextField_day_ref = r} 
                 min={0} 
                 labelText="Day" 
-                onFinalValueChanged={(v) => props[_command](Commands.change_calculator_input, {...props[_input], day: v})}
+                onFinalValueChanged={(v) => props[_command](Commands[_change_calculator_input], {...props[_input], day: v})}
             />
         </div>
         <div data-hide={toggleAttribute(props[_settings][_date][_operation] != DateOperation[_difference])}>
@@ -1023,14 +1022,14 @@ const DateCalculator: VoidComponent<DateCalculatorProps> = (props) => {
             initialDate={props[_input][_from]} 
             firstDate={new Date(getDate_Y() - 1000, 0, 1)}
             lastDate={new Date(getDate_Y() + 1000, 11, 31)}
-            onSelectDate={(value) => props[_command](Commands.change_calculator_input, {...props[_input], from: value})}
+            onSelectDate={(value) => props[_command](Commands[_change_calculator_input], {...props[_input], from: value})}
         />
         <DatePicker 
             ref={r => datePicker_to_ref = r} 
             initialDate={props[_input][_to]}
             firstDate={new Date(getDate_Y() - 1000, 0, 1)}
             lastDate={new Date(getDate_Y() + 1000, 11, 31)} 
-            onSelectDate={(value) => props[_command](Commands.change_calculator_input, {...props[_input], to: value})}
+            onSelectDate={(value) => props[_command](Commands[_change_calculator_input], {...props[_input], to: value})}
         />
     </div>)
 }
