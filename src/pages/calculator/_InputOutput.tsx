@@ -948,17 +948,8 @@ const ProgrammerCalculator: VoidComponent<ProgrammerCalculatorProps> = (props) =
 }
 
 const DateCalculator: VoidComponent<DateCalculatorProps> = (props) => {
-    let numberTextField_year_ref: HTMLInputElement
-    let numberTextField_month_ref: HTMLInputElement
-    let numberTextField_day_ref: HTMLInputElement
     let datePicker_from_ref: HTMLDialogElement
     let datePicker_to_ref: HTMLDialogElement
-
-    onMount(() => {
-        changeTextFieldValue(numberTextField_year_ref, props[_input][_year] + '')
-        changeTextFieldValue(numberTextField_month_ref, props[_input][_month] + '')
-        changeTextFieldValue(numberTextField_day_ref, props[_input][_day] + '')
-    })
 
     return (<div class={CSS.date_calculator}>
         <Dropdown 
@@ -987,20 +978,20 @@ const DateCalculator: VoidComponent<DateCalculatorProps> = (props) => {
         </div>
         <div class={CSS.date_inputs} data-hide={toggleAttribute(props[_settings][_date][_operation] == DateOperation[_difference])}>
             <NumberTextField 
-                ref={r => numberTextField_year_ref = r} 
                 min={0} 
+                value={props[_input][_year] + ''}
                 labelText="Year" 
                 onFinalValueChanged={(v) => props[_command](Commands[_change_calculator_input], {...props[_input], year: v})}
             />
             <NumberTextField 
-                ref={r => numberTextField_month_ref = r} 
                 min={0} 
+                value={props[_input][_month] + ''}
                 labelText="Month" 
                 onFinalValueChanged={(v) => props[_command](Commands[_change_calculator_input], {...props[_input], month: v})}
             />
             <NumberTextField 
-                ref={r => numberTextField_day_ref = r} 
                 min={0} 
+                value={props[_input][_day] + ''}
                 labelText="Day" 
                 onFinalValueChanged={(v) => props[_command](Commands[_change_calculator_input], {...props[_input], day: v})}
             />
