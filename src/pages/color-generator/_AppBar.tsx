@@ -64,8 +64,8 @@ const _AppBar: VoidComponent<_AppBarProps> = (props) => {
         }
         try {
             await getNavigator()[_clipboard][_writeText]([
-                    '--seed: ' + props[_palette][_seed],
-                    '--accent-light: ' + props[_palette][_accentLight],
+                '--seed: ' + props[_palette][_seed],
+                '--accent-light: ' + props[_palette][_accentLight],
                 '--on-accent-light: ' + props[_palette][_onAccentLight],
                 '--accent-dark: ' + props[_palette][_accentDark],
                 '--on-accent-dark: ' + props[_palette][_onAccentDark],
@@ -279,7 +279,7 @@ const _AppBar: VoidComponent<_AppBarProps> = (props) => {
             <MenuDivider/>
             <MenuItem
                 onClick={() => {
-                    getNavigator()[_share]({text: 'Color Generator', url: getDocument()[_URL]})
+                    getNavigator()[_share]({text: 'Color Generator', title: 'Color Generator', url: getDocument()[_URL]})
                     closePopover(menu_settings_ref)
                 }}
                 leading={<Icon code={0xEE23}/>}>
