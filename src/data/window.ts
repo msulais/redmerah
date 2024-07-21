@@ -7,3 +7,4 @@ export const getRoot        : () => HTMLElement = () => getDocument()[_documentE
 export const getNavigator   : () => Navigator   = () => navigator
 export const getLocation    : () => Location    = () => location
 export const getIndexedDB   : () => IDBFactory  = () => indexedDB
+export const getConsole     : () => Console     = () => console

@@ -1,0 +1,211 @@
+@use '_size.scss';
+
+.action_buttons {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 4px;
+    width: 100%;
+    flex-wrap: wrap;
+
+    &[data-hidden] {
+        display: none;
+    }
+}
+
+:is(.basic_buttons, .scientific_buttons, .converter_buttons, .programmer_buttons) {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    flex: 1;
+    height: 100%;
+    gap: 4px;
+    background-color: rgb(var(--color-surface));
+    padding: 8px;
+    border-radius: 16px;
+    border: 1px solid rgba(var(--color-on-surface), var(--opacity1));
+
+    [data-corner=sharp] & {
+        border-radius: 0;
+    }
+
+    [data-corner=semi-round] & {
+        border-radius: 12px;
+    }
+
+    [data-corner=full-round] & {
+        border-radius: 28px;
+    }
+
+    > :global(.btn) {
+        --btn-padding: 0;
+        font-size: min(var(--font-size-xxl), max(var(--font-size-m), 4vmin));
+
+        & :global(.icon) {
+            font-size: min(var(--font-size-xxl), max(var(--font-size-m), 4vmin));
+        }
+    }
+}
+
+.converter_units {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+:is(.scientific_buttons, .programmer_buttons) {
+    grid-template-columns: repeat(5, 1fr);
+}
+
+.converter_buttons {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.date_calculator {
+    gap: 16px;
+    height: 100%;
+    background-color: rgb(var(--color-surface));
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(var(--color-on-surface), var(--opacity1));
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+
+    [data-corner=sharp] & {border-radius: 0;}
+    [data-corner=semi-round] & {border-radius: 4px;}
+    [data-corner=full-round] & {border-radius: 20px;}
+
+    > div[data-hide] {
+        display: none;
+    }
+
+    & p {
+        color: rgb(var(--color-accent));
+        font-weight: bold;
+        margin-bottom: 4px;
+    }
+
+    & h2 {
+        font-weight: 500;
+    }
+}
+
+.date_inputs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    max-width: 100%;
+    width: 360px;
+}
+
+.scientific_function_menu {
+    > div {
+        > .grid_3 {
+            display: grid;
+            padding: 0 4px;
+            gap: 4px;
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        > .trigonometry_options {
+            display: flex;
+            padding: 0 4px;
+            gap: 4px;
+            justify-content: flex-start;
+
+            > *:last-child {
+                flex: 1;
+            }
+        }
+    }
+
+    & :global(.menu-item) {
+        margin: 0;
+        width: auto;
+    }
+}
+
+:is(.basic_text_input, .scientific_text_input, .converter_text_input, .programmer_text_input) {
+    width: 100%;
+    text-align: end;
+    font-size: var(--font-size-xxl);
+    outline: none;
+    border: none;
+}
+
+:is(.basic_text_output, .scientific_text_output, .converter_text_output) {
+    text-align: end;
+    overflow: auto;
+    font-size: var(--font-size-xxl);
+    color: rgb(var(--color-accent));
+    margin-bottom: 8px;
+    min-height: 49px;
+    text-wrap: nowrap;
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 8px 8px 8px 0;
+
+    @media (max-width: size.$side_navigation_none) {
+        padding: 8px;
+    }
+}
+
+.memory_buttons {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 4px;
+
+    &[data-hidden] {
+        display: none;
+    }
+}
+
+.memory_menu { 
+    min-width: 164px;
+
+    > div {
+        padding: 8px;
+
+        & p {
+            font-size: var(--font-size-xs);
+            font-weight: 500;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+    }
+}
+
+.programmer_text_output {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1px;
+
+    > :global(.btn) {
+        justify-content: flex-end;
+        max-width: 100%;
+        width: 100%;
+        overflow: hidden;
+
+        > div { 
+            > div {
+                flex: 1;
+                overflow: auto;
+            }
+
+            > span {
+                display: block;
+                width: 32px;
+                text-align: start;
+            }
+        }
+    }
+}
+
+.remove_symbol {
+    color: rgb(var(--color-error))
+}

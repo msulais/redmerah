@@ -1,7 +1,7 @@
 .color-picker {
-    background-color: rgba(var(--color-surface), var(--opacity-inv2));
-    backdrop-filter: blur(32px);
-    border: 1px solid rgba(var(--color-on-surface), var(--opacity2));
+    background-color: rgba(var(--color-surface), var(--opacity-inv1));
+    backdrop-filter: blur(64px);
+    border: 1px solid rgba(var(--color-on-surface), var(--opacity3));
     border-radius: 16px;
     box-shadow: var(--elevation1);
     left: 0;
@@ -13,16 +13,19 @@
     outline: none;
     transform: var(--initial-translate);
 
-    [data-corner=sharp] & {
-        border-radius: 0;
-    }
+    [data-corner=sharp] & { border-radius: 0 }
+    [data-corner=semi-round] & { border-radius: 8px }
+    [data-corner=full-round] & { border-radius: 16px 16px 24px 24px }
 
-    [data-corner=semi-round] & {
-        border-radius: 8px;
+    [data-theme=dark] & {
+        background-color: rgba(36, 36, 36, var(--opacity-inv1));
+        border: 1px solid rgba(0, 0, 0, var(--opacity-inv5));
     }
-
-    [data-corner=full-round] & {
-        border-radius: 16px 16px 24px 24px;
+    [data-theme=system] & {
+        @media (prefers-color-scheme: dark) {
+            background-color: rgba(36, 36, 36, var(--opacity-inv1));
+            border: 1px solid rgba(0, 0, 0, var(--opacity-inv5));
+        }
     }
 
     &::backdrop {

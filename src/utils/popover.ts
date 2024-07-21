@@ -9,7 +9,7 @@ import { PopoverPosition } from "@/enums/position"
 import { ElementSelector } from "@/enums/selector";
 import { initFlyout } from "./flyout";
 import { _anchorId, _position, _gap, _padding, _top, _px, _left, _body, _bottom, _clientX, _clientY, _flyoutOpen, _height, _id, _move, _open, _right, _touches, _transform, _trim, _width, _focus, _showModal, _showPopover, _isNaN, _hidePopover, _close, _flyout, _CENTER_BOTTOM, _CENTER_BOTTOM_TO_LEFT, _CENTER_BOTTOM_TO_RIGHT, _CENTER_CENTER, _CENTER_CENTER_BOTTOM, _CENTER_CENTER_LEFT, _CENTER_CENTER_LEFT_BOTTOM, _CENTER_CENTER_LEFT_TOP, _CENTER_CENTER_RIGHT, _CENTER_CENTER_RIGHT_BOTTOM, _CENTER_CENTER_RIGHT_TOP, _CENTER_CENTER_TOP, _CENTER_TOP, _CENTER_TOP_TO_LEFT, _CENTER_TOP_TO_RIGHT, _LEFT_BOTTOM, _LEFT_CENTER, _LEFT_CENTER_TO_BOTTOM, _LEFT_CENTER_TO_TOP, _LEFT_TOP, _RIGHT_BOTTOM, _RIGHT_CENTER, _RIGHT_CENTER_TO_BOTTOM, _RIGHT_CENTER_TO_TOP, _RIGHT_TOP, _clientWidth, _element, _includes, _innerHeight, _popover, _screen, _x, _y, _observe, _anchor, _notAllowHideAnchor, _hasMaxHeight, _hasMaxWidth, _maxHeight, _maxWidth, _style, _max_height, _max_width, _focusTimeoutId } from "@/data/string";
-import { numberParse } from "./math";
+import { mathAbs, numberParse } from "./math";
 import { getDocument, getWindow } from "@/data/window";
 
 type GetPopoverPositionParams = {
@@ -35,7 +35,7 @@ type OpenPopoverParams = {
     position?: PopoverPosition
     gap?: number
     padding?: number
-    allowHideAnchor?: boolean
+    allowHideAnchor?: boolean // BUG: max-width not correct 
 
     /**
      * `<input>` will focused by browser by default when dialog open
@@ -273,7 +273,6 @@ export async function openPopover({
             bottom: pos[_top] + popoverRect[_height],
             right: pos[_left] + popoverRect[_width]
         }
-
         const anchorMidPosition = {
             x: anchorRect![_left] + (anchorRect![_width] / 2),
             y: anchorRect![_top] + (anchorRect![_height] / 2),
@@ -282,52 +281,61 @@ export async function openPopover({
             x: popoverPosition[_left] + (popoverRect[_width] / 2),
             y: popoverPosition[_top] + (popoverRect[_height] / 2),
         }
+        const rangeX = mathAbs(popoverMidPosition.x - anchorMidPosition.x)
+        const rangeY = mathAbs(popoverMidPosition.y - anchorMidPosition.y)
+        const isLeftSide = popoverMidPosition.x < anchorMidPosition.x
+        const isRightSide = popoverMidPosition.x > anchorMidPosition.x
+        const isTopSide = popoverMidPosition.y < anchorMidPosition.y
+        const isBottomSide = popoverMidPosition.y > anchorMidPosition.y
+        // const anchorBottom = getWindow()[_innerHeight] - anchorRect![_bottom]
+        // const anchorRight = getDocument()[_body][_clientWidth] - anchorRect![_right]
+        // const anchorTop = anchorRect![_top]
+        // const anchorLeft = anchorRect![_left]
+        
+        // BUG: fix this shit -- i'm wasting my 3-hour trying to figure this out. fuck
+        // There is problem with position of popover when in almost edge of screen. For 
+        // example: the mid position is in bottom side, but because the mid position of 
+        // popover also slightly move right (e.g. 4px), it will also considered by program 
+        // as right side too. I just want the bottom side program to run, not both. Unless
+        // the `position` argumen is set to edge (left-top|right-top|left-bottom|right-bottom).
 
         let maxWidth: string = ''
         let maxHeight: string = ''
 
         // left side
-        if (popoverMidPosition.x < anchorMidPosition.x && popoverPosition[_right] > anchorRect![_left]) {
+        if (isLeftSide && popoverPosition[_right] > anchorRect![_left]) {
             maxWidth = (anchorRect![_left] - POPOVER_MARGIN - gap) + _px
 
             const attrHasMaxWidth = getAttribute(popover, PopoverAttributes[_hasMaxWidth])
-            if (attrHasMaxWidth != null) {
-                maxWidth = `min(${maxWidth}, ${attrHasMaxWidth})`
-            }
+            if (attrHasMaxWidth != null) maxWidth = `min(${maxWidth}, ${attrHasMaxWidth})`
 
             setStyleProperty(popover, _max_width, maxWidth)
         }  
         // right side
-        else if (popoverMidPosition.x > anchorMidPosition.x && popoverPosition[_left] < anchorRect![_right]) {
+        else if (isRightSide && popoverPosition[_left] < anchorRect![_right]) {
             maxWidth = ((getDocument()[_body][_clientWidth] - anchorRect![_right]) - POPOVER_MARGIN - gap) + _px
 
             const attrHasMaxWidth = getAttribute(popover, PopoverAttributes[_hasMaxWidth])
-            if (attrHasMaxWidth != null) {
-                maxWidth = `min(${maxWidth}, ${attrHasMaxWidth})`
-            }
+            if (attrHasMaxWidth != null) maxWidth = `min(${maxWidth}, ${attrHasMaxWidth})`
 
             setStyleProperty(popover, _max_width, maxWidth)
         }
 
         // top side
-        if (popoverMidPosition.y < anchorMidPosition.y && popoverPosition[_bottom] > anchorRect![_top]) {
+        if (isTopSide && popoverPosition[_bottom] > anchorRect![_top]) {
             maxHeight = (anchorRect![_top] - POPOVER_MARGIN - gap) + _px
 
             const attrHasMaxHeight = getAttribute(popover, PopoverAttributes[_hasMaxHeight])
-            if (attrHasMaxHeight != null) {
-                maxHeight = `min(${maxHeight}, ${attrHasMaxHeight})`
-            }
+            if (attrHasMaxHeight != null) maxHeight = `min(${maxHeight}, ${attrHasMaxHeight})`
 
             setStyleProperty(popover, _max_height, maxHeight)
         }  
         // bottom side
-        else if (popoverMidPosition.y > anchorMidPosition.y && popoverPosition[_top] < anchorRect![_bottom]) {
+        else if (isBottomSide && popoverPosition[_top] < anchorRect![_bottom]) {
             maxHeight = ((getWindow()[_innerHeight] - anchorRect![_bottom]) - POPOVER_MARGIN - gap) + _px
 
             const attrHasMaxHeight = getAttribute(popover, PopoverAttributes[_hasMaxHeight])
-            if (attrHasMaxHeight != null) {
-                maxHeight = `min(${maxHeight}, ${attrHasMaxHeight})`
-            }
+            if (attrHasMaxHeight != null) maxHeight = `min(${maxHeight}, ${attrHasMaxHeight})`
 
             setStyleProperty(popover, _max_height, maxHeight)
         }
@@ -356,7 +364,7 @@ export async function openPopover({
         let id = anchor[_id]
         if (anchor[_id][_trim]() == '') {
             id = createUniqueId()
-            anchor[_id] = id // it may take some time, just play safe -- idk
+            anchor[_id] = id 
         }
         setAttribute(popover, PopoverAttributes[_anchorId], id)
     }
@@ -395,7 +403,7 @@ export async function openPopover({
 }
 
 export async function closePopover(popover: HTMLElement): Promise<void> {
-    const isDialog: boolean = !hasAttribute(popover, 'popover')
+    const isDialog: boolean = !hasAttribute(popover, _popover)
     const anchorId = getAttribute(popover, PopoverAttributes[_anchorId])
 
     if (!isPopoverOpen(popover)) return

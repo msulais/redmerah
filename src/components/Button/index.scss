@@ -207,7 +207,6 @@
         
         &[data-focus] {
             --bg-opacity: var(--opacity2);
-            --btn-border-opacity: var(--opacity1);
         }
 
         @media (hover:hover) {
@@ -276,9 +275,7 @@
 
 .btn-filled-tonal {
     --bg-color: var(--color-on-surface);
-    --btn-border-color: var(--color-on-surface);
     --bg-opacity: var(--opacity1);
-    --btn-border-opacity: var(--opacity1);
 
     &:disabled {
         --bg-opacity: var(--opacity0);

@@ -117,7 +117,7 @@ export const TextAreaField: VoidComponent<TextAreaFieldProps> = ($props) => {
     const [isInvalid, setIsInvalid] = createSignal<boolean>(false)
     const [clearBtnRef, setClearBtnRef] = createSignal<HTMLButtonElement | null>(null)
     const [value, setValue] = createSignal<string>('')
-    const [height, setHeight] = createSignal<number>(0)
+    const [height, setHeight] = createSignal<number>(HEIGHT_TEXT_INPUT_PER_LINE)
     const trailingComponents = children(() => props[_trailing])
     let textareafieldRef!: HTMLTextAreaElement
 

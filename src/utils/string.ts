@@ -1,4 +1,4 @@
-import { _join, _map, _push, _split, _substring, _toLowerCase, _toUpperCase } from "@/data/string";
+import { _join, _length, _map, _match, _push, _reverse, _split, _substring, _toLowerCase, _toUpperCase } from "@/data/string";
 
 export function stringToLowerCase(text: string): string {
     return text[_toLowerCase]()
@@ -15,10 +15,18 @@ export function stringToTitleCase(text: string): string {
 }
 
 export function stringToToggleCase(text: string): string {
-    const result: string[] = [];
-    for (let char of text) {
+    const result: string[] = []
+    for (const char of text) {
         const isLower = char === stringToLowerCase(char)
-        result[_push](isLower ? stringToUpperCase(char) : stringToLowerCase(char));
+        result[_push](isLower ? stringToUpperCase(char) : stringToLowerCase(char))
     }
-    return result[_join]('');
+    return result[_join]('')
+}
+
+export function stringCount(str: string, regex: RegExp): number {
+    return (str[_match](regex) || [])[_length]
+}
+
+export function stringReverse(str: string): string {
+    return [...str][_reverse]()[_join]('')
 }

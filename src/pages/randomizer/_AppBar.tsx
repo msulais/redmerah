@@ -47,7 +47,7 @@ type Props = {
 
 const C: Component<Props> = (props) => {
     const [is_menu_info_open, setIs_menu_info_open] = createSignal<boolean>(false)
-    const [is_menu_settings_open, setIsSettingsMenuOpen] = createSignal<boolean>(false)
+    const [is_menu_settings_open, setIs_menu_settings_open] = createSignal<boolean>(false)
     const [is_menu_themeSettings_open, setIs_menu_themeSettings_open] = createSignal<boolean>(false)
     const [is_menu_cornerSettings_open, setIs_menu_cornerSettings_open] = createSignal<boolean>(false)
     const [is_menu_colorModelSettings_open, setIs_menu_colorModelSettings_open] = createSignal<boolean>(false)
@@ -289,7 +289,7 @@ const C: Component<Props> = (props) => {
                 href={RoutesLinks.home}
                 openInNewTab
                 trailing={<Icon code={0xEB51}/>}
-                leading={<img src={redmerahLogo[_src]} width={20} alt='Redmerah logo'/>}>
+                leading={<img src={redmerahLogo[_src]} width={16} alt='Redmerah logo'/>}>
                 Redmerah (homepage)
             </MenuItemLink>
             <MenuItemLink
@@ -349,7 +349,7 @@ const C: Component<Props> = (props) => {
             </MenuItemLink>
             <MenuHeader>&copy; {new Date()[_getFullYear]()} Redmerah</MenuHeader>
         </Menu>
-        <Menu ref={r => menu_settings_ref = r} onToggle={(v) => setIsSettingsMenuOpen(v)}>
+        <Menu ref={r => menu_settings_ref = r} onToggle={(v) => setIs_menu_settings_open(v)}>
             <MenuHeader>
                 <Switch>
                     <Match when={props[_randomizerType] == RandomizerType[_string]}>String</Match>

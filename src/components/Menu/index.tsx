@@ -81,7 +81,7 @@ export const MenuItem: ParentComponent<MenuItemProps> = ($props) => {
         {...other}>
         <Show when={isVarHasValue(props[_checked])}>
             <Icon 
-                style={{color: props[_checked]? 'rgb(var(--color-accent))' : undefined}} 
+                style={{color: 'rgb(var(--color-accent))'}} 
                 filled={props[_checked]} 
                 code={props[_checked]? 0xE3CC : 0xE3D4}
             />

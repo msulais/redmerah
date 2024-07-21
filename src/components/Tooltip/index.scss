@@ -10,9 +10,8 @@
     max-height: calc(100dvh - 16px);
     max-width: calc(100% - 16px);
     opacity: 0;
-    padding: 8px;
+    padding: 6px 8px;
     font-size: var(--font-size-s);
-    line-height: var(--font-size-s);
     font-weight: 500;
     outline: 1px solid rgba(var(--color-surface), var(--opacity2));
     outline-offset: -1px;

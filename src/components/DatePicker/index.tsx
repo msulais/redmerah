@@ -1,24 +1,24 @@
-import { For, Index, Match, Switch, createEffect, createMemo, createSignal, mergeProps, onCleanup, onMount, splitProps, type JSX, type VoidComponent } from "solid-js";
-import { Portal } from "solid-js/web";
+import { For, Index, Match, Switch, createEffect, createMemo, createSignal, mergeProps, onCleanup, onMount, splitProps, type JSX, type VoidComponent } from "solid-js"
+import { Portal } from "solid-js/web"
 
-import type { ComponentEvent } from "@/types/event";
-import { _auto, _onClose, _onToggle, _onCancel, _dismiss, _children, _ref, _open, _observe, _disconnect, _currentTarget, _manual, _initialDate, _firstDate, _lastDate, _getFullYear, _day, _locales, _month, _year, _getDay, _includes, _setFullYear, _setMonth, _fill, _onSubmit, _outlined, _filled, _onSelectDate, _substring } from "@/data/string";
-import { PopoverAttributes } from "@/enums/attributes";
-import { hasAttribute } from "@/utils/attributes";
-import { preventDefault } from "@/utils/event";
-import { closePopover, initPopover } from "@/utils/popover";
-import { clearTimeDelayed, setTimeDelayed } from "@/utils/timeout";
-import { mathMax } from "@/utils/math";
-import { getWeekdayNames, getMonthNames, getDate_Y, getCurrentDate, getDate_M, getMonthText, isOutDate_YMD, isSameDate_YMD, isSameDate_YM, isOutDate_YM, isOutDate_Y, isSameDate_Y } from "@/utils/datetime";
+import type { ComponentEvent } from "@/types/event"
+import { _auto, _onClose, _onToggle, _onCancel, _dismiss, _children, _ref, _open, _observe, _disconnect, _currentTarget, _manual, _initialDate, _firstDate, _lastDate, _getFullYear, _day, _locales, _month, _year, _getDay, _includes, _setFullYear, _setMonth, _fill, _onSubmit, _outlined, _filled, _onSelectDate, _substring } from "@/data/string"
+import { PopoverAttributes } from "@/enums/attributes"
+import { hasAttribute } from "@/utils/attributes"
+import { preventDefault } from "@/utils/event"
+import { closePopover, initPopover } from "@/utils/popover"
+import { clearTimeDelayed, setTimeDelayed } from "@/utils/timeout"
+import { mathMax } from "@/utils/math"
+import { getWeekdayNames, getMonthNames, getDate_Y, getCurrentDate, getDate_M, getMonthText, isOutDate_YMD, isSameDate_YMD, isSameDate_YM, isOutDate_YM, isOutDate_Y, isSameDate_Y } from "@/utils/datetime"
 
-import Icon from "@/components/Icon";
-import Button, { ButtonVariant } from "@/components/Button";
+import Icon from "@/components/Icon"
+import Button, { ButtonVariant } from "@/components/Button"
 import './index.scss'
 
 enum DatePickerOption {
-    year, 
-    month, 
-    day
+    year = 'y', 
+    month = 'm', 
+    day = 'd'
 }
 
 type DatePickerProps = Omit<JSX.DialogHtmlAttributes<HTMLDialogElement>, 'ref' | 'onToggle' | 'onClose' | 'onCancel'> & {
@@ -37,7 +37,7 @@ const DatePicker: VoidComponent<DatePickerProps> = ($props) => {
     const $$props = mergeProps({
         locales:'en-US',
         initialDate: getCurrentDate(),
-        firstDate: new Date(mathMax(1970, getDate_Y() - 100), 0, 1),
+        firstDate: new Date(getDate_Y() - 100, 0, 1),
         lastDate: new Date(getDate_Y() + 100, 11, 31),
     }, $props)
     const [props, other] = splitProps($$props, [
@@ -55,61 +55,42 @@ const DatePicker: VoidComponent<DatePickerProps> = ($props) => {
     let datePickerRef: HTMLDialogElement
 
     function updateDateView(): void {
-        setDaysPerMonth(31) // reset to default
+        let daysPerMonth = 31 // reset to default
         setStartDay(new Date(getDate_Y(currentDate()), getDate_M(currentDate()), 1)[_getDay]())
 
         // february
         if (getDate_M(currentDate()) == 1) {
-            setDaysPerMonth(28)
-
-            if (getDate_Y(currentDate()) % 4 == 0){
-                setDaysPerMonth(29)
-            }
+            daysPerMonth = 28
+            if (getDate_Y(currentDate()) % 4 == 0) daysPerMonth = 29
+        } 
 
         // april, june, september, november
-        } else if ([3, 5, 8, 10][_includes](getDate_M(currentDate()))){
-            setDaysPerMonth(30)
-        }
+        else if ([3, 5, 8, 10][_includes](getDate_M(currentDate()))) daysPerMonth = 30
+
+        setDaysPerMonth(daysPerMonth)
     }
 
     function next(): void {
         const newDate = new Date(currentDate())
+        if (dateOption() == DatePickerOption[_day]) newDate[_setMonth](getDate_M(newDate) + 1)
+        else if (dateOption() == DatePickerOption[_month]) newDate[_setFullYear](getDate_Y(newDate) + 1)
+        else if (dateOption() == DatePickerOption[_year]) newDate[_setFullYear](getDate_Y(newDate) + 16)
 
-        if (dateOption() == DatePickerOption[_day]) {
-            newDate[_setMonth](getDate_M(newDate) + 1)
-        } else if (dateOption() == DatePickerOption[_month]) {
-            newDate[_setFullYear](getDate_Y(newDate) + 1)
-        } else if (dateOption() == DatePickerOption[_year]) {
-            newDate[_setFullYear](getDate_Y(newDate) + 16)
-        }
         setCurrentDate(newDate)
         updateDateView()
     }
 
     function previous(): void {
         const newDate = new Date(currentDate())
+        if (dateOption() == DatePickerOption[_day]) newDate[_setMonth](getDate_M(newDate) - 1)
+        else if (dateOption() == DatePickerOption[_month]) newDate[_setFullYear](getDate_Y(newDate) - 1)
+        else if (dateOption() == DatePickerOption[_year]) newDate[_setFullYear](getDate_Y(newDate) - 16)
 
-        if (dateOption() == DatePickerOption[_day]) {
-            newDate[_setMonth](getDate_M(newDate) - 1)
-        } else if (dateOption() == DatePickerOption[_month]) {
-            newDate[_setFullYear](getDate_Y(newDate) - 1)
-        } else if (dateOption() == DatePickerOption[_year]) {
-            newDate[_setFullYear](getDate_Y(newDate) - 16)
-        }
         setCurrentDate(newDate)
         updateDateView()
     }
 
-    function changeDateOption(){
-        setDateOption(d => {
-            if (d == DatePickerOption[_month]) return DatePickerOption[_year]
-            return DatePickerOption[_month]
-        })
-    }
-
     onMount(() => {
-        setCurrentDate(props[_initialDate])
-        updateDateView()
         let timeout: null | number = null
         const observer = initPopover(datePickerRef)
         const isOpenObserver = new MutationObserver(() => {
@@ -119,13 +100,20 @@ const DatePicker: VoidComponent<DatePickerProps> = ($props) => {
             timeout = setTimeDelayed(() => {
                 const isOpen = hasAttribute(datePickerRef, PopoverAttributes[_open])
                 if (props[_onToggle]) props[_onToggle](isOpen)
+                if (isOpen) {
+                    updateDateView()
+                }
             }, 50)
         })
         isOpenObserver[_observe](datePickerRef, {attributes: true})
         onCleanup(() => {
-            if (observer) observer[_disconnect]();
-            isOpenObserver[_disconnect]();
+            if (observer) observer[_disconnect]()
+            isOpenObserver[_disconnect]()
         })
+    })
+
+    createEffect(() => {
+        setCurrentDate(props[_initialDate])
     })
 
     const DaysDate: VoidComponent = () => {
@@ -212,6 +200,7 @@ const DatePicker: VoidComponent<DatePickerProps> = ($props) => {
         onClose={(ev) => {
             if (props[_onClose]) props[_onClose](ev)
             if (props[_onToggle]) props[_onToggle](false)
+            setDateOption(DatePickerOption[_day])
         }}
         onCancel={(ev) => {
             preventDefault(ev)
@@ -222,7 +211,11 @@ const DatePicker: VoidComponent<DatePickerProps> = ($props) => {
         {...other}>
         <div>
             <div class="date-picker-header">
-                <Button onClick={() => changeDateOption()}>
+                <Button 
+                    onClick={() => setDateOption(d => {
+                        if (d == DatePickerOption[_month]) return DatePickerOption[_year]
+                        return DatePickerOption[_month]
+                    })}>
                     <Switch>
                         <Match when={dateOption() == DatePickerOption[_day]}>
                             {getMonthText(currentDate(), props[_locales]) + ' ' + getDate_Y(currentDate())}

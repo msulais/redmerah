@@ -1,14 +1,14 @@
 .drawer {
     background-color: rgba(var(--color-surface), var(--opacity-inv2));
-    backdrop-filter: blur(32px);
-    border: 1px solid rgba(var(--color-on-surface), var(--opacity2));
+    backdrop-filter: blur(64px);
+    border: 1px solid rgba(var(--color-on-surface), var(--opacity3));
     border-radius: 0 12px 12px 0;
-    width: 240px;
+    width: 280px;
     height: 100dvh;
     box-shadow: var(--elevation3);
     left: 0;
     max-height: 100dvh;
-    max-width: min(240px, calc(100% - 80px));
+    max-width: min(280px, calc(100% - 80px));
     overflow: hidden;
     top: 0;
     outline: none;
@@ -27,8 +27,18 @@
         border-radius: 0 28px 28px 0;
     }
 
+    [data-theme=dark] & {
+        border: 1px solid rgba(0, 0, 0, var(--opacity-inv5));
+    }
+    [data-theme=system] & {
+        @media (prefers-color-scheme: dark) {
+            border: 1px solid rgba(0, 0, 0, var(--opacity-inv5));
+        }
+    }
+
     &::backdrop {
         background-color: transparent;
+        transition-duration: .3s;
     }
 
     &[data-right] {
@@ -48,6 +58,10 @@
 
     &[data-open] {
         transform: translateX(0%);
+
+        &::backdrop {
+            background-color: rgba(0, 0, 0, var(--opacity-inv5));
+        }
     }
 
     &[data-focus] > div {
@@ -114,8 +128,8 @@
     justify-content: flex-start;
     width: 100%;
 
-    > .btn-layer {
-        white-space: nowrap;
+    &[data-selected] > .btn-layer > .icon:first-child {
+        color: rgb(var(--color-accent));
     }
 
     @media (hover: none) {
@@ -130,5 +144,9 @@
         > .btn-layer {
             width: 100%;
         }
+    }
+
+    > .btn-layer {
+        white-space: nowrap;
     }
 }

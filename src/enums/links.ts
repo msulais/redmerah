@@ -9,7 +9,8 @@ export enum RoutesLinks {
     // apps
     randomizer = '/randomizer',
     markdownConverter = '/markdown-converter',
-    colorGenerator = '/color-generator'
+    colorGenerator = '/color-generator',
+    calculator = '/calculator'
 }
 
 export enum ExternalLinks {

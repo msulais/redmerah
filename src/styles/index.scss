@@ -77,13 +77,3 @@ kbd {
     padding: .2em .4em;
     box-shadow: 0 .1em .3em -.15em rgba(var(--color-on-surface), 1);
 }
-
-.no-scrollbar {
-    -ms-overflow-style: none;
-
-    scrollbar-width: none;
-
-    &::-webkit-scrollbar {
-        display: none;
-    }
-}

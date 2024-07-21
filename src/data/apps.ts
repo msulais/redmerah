@@ -1,11 +1,19 @@
 import markdown_converter_logo from '@/assets/apps/markdown-converter-logo.svg'
 import randomizer_converter_logo from '@/assets/apps/randomizer-logo.svg'
 import color_generator_logo from '@/assets/apps/color-generator-logo.svg'
+import calculator_logo from '@/assets/apps/calculator-logo.svg'
 import { _src } from './string'
 import type { AppItem } from '@/types/apps'
 import { RoutesLinks } from '@/enums/links'
 
 export const apps: AppItem[] = [
+    {
+        logoURL: calculator_logo[_src],
+        title: 'Calculator', 
+        description: 'Looking for a reliable and comprehensive calculator app? Look no further than our all-in-one calculator! With 5 calculators in one app, you can tackle any calculation that comes your way.',
+        link: RoutesLinks.calculator, 
+        color: '#026BE3'
+    },
     {
         logoURL: randomizer_converter_logo[_src],
         title: 'Randomizer', 

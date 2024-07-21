@@ -240,7 +240,7 @@ const _AppBar: VoidComponent<_AppBarProps> = (props) => {
                 href={RoutesLinks.home}
                 openInNewTab
                 trailing={<Icon code={0xEB51}/>}
-                leading={<img src={redmerahLogo[_src]} width={20} alt='Redmerah logo'/>}>
+                leading={<img src={redmerahLogo[_src]} width={16} alt='Redmerah logo'/>}>
                 Redmerah (homepage)
             </MenuItemLink>
             <MenuItemLink

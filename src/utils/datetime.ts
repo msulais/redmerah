@@ -1,4 +1,5 @@
-import { _format, _getDate, _getFullYear, _getMonth, _long, _numeric, _push, _toLocaleDateString, _valueOf } from "@/data/string"
+import { _format, _getDate, _getFullYear, _getMonth, _long, _numeric, _push, _toLocaleDateString, _UTC, _valueOf } from "@/data/string"
+import { mathFloor } from "./math"
 
 export function getCurrentDate(): Date {
     return new Date()
@@ -111,4 +112,12 @@ export function getMonthText(date: Date, locales: Intl.LocalesArgument = 'en-US'
 
 export function getDateString_YMD(date: Date, locales: Intl.LocalesArgument = 'en-US'): string {
     return date[_toLocaleDateString](locales, {day: _numeric, month: _long, year: _numeric})
+}
+
+export function dateDifferenceInDays(date1: Date, date2: Date): number {
+    const MS_PER_DAY = 1000 * 60 * 60 * 24
+    const utc1 = Date[_UTC](getDate_Y(date1), getDate_M(date1), getDate_D(date1))
+    const utc2 = Date[_UTC](getDate_Y(date2), getDate_M(date2), getDate_D(date2))
+
+    return mathFloor((utc2 - utc1) / MS_PER_DAY)
 }
