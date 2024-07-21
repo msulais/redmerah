@@ -336,7 +336,7 @@ const C: Component<Props> = (props) => {
             </MenuItem>
             <MenuItemLink
                 onClick={() => closePopover(menu_info_ref)}
-                href={'mailto:' + ExternalLinks[_contactEmail] + '?subject=' + encodeURL('Color Generator')}
+                href={'mailto:' + ExternalLinks[_contactEmail] + '?subject=' + encodeURL('Randomizer')}
                 leading={<Icon code={0xE3A0}/>}>
                 Send feedback
             </MenuItemLink>
