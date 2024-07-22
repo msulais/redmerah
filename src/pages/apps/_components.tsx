@@ -1,4 +1,4 @@
-import { For, Show, createSelector, createSignal, onMount, type VoidComponent } from "solid-js";
+import { For, Show, createMemo, createSelector, createSignal, onMount, type VoidComponent } from "solid-js";
 
 import Icon from "@/components/Icon";
 import Button, { ButtonVariant, LinkButton } from "@/components/Button";
@@ -6,7 +6,7 @@ import Menu, { MenuDivider, MenuItem, MenuItemLink } from "@/components/Menu";
 import TextField from "@/components/TextField";
 import CSS from './_index.module.scss'
 
-import { _CENTER_BOTTOM_TO_LEFT, _CENTER_BOTTOM_TO_RIGHT, _CENTER_CENTER_LEFT_TOP, _LEFT_CENTER_TO_BOTTOM, _clipboard, _color, _color_accent, _corner, _currentTarget, _dark, _description, _filled, _filledTonal, _fullRound, _hostname, _includes, _innerHTML, _join, _light, _link, _open, _outlined, _pinnedApps, _round, _semiRound, _share, _sharp, _some, _split, _system, _test, _theme, _title, _toLowerCase, _trim, _value, _writeText } from "@/data/string";
+import { _CENTER_BOTTOM_TO_LEFT, _CENTER_BOTTOM_TO_RIGHT, _CENTER_CENTER_LEFT_TOP, _LEFT_CENTER_TO_BOTTOM, _clipboard, _color, _color_accent, _corner, _currentTarget, _dark, _description, _filled, _filledTonal, _filter, _fullRound, _hostname, _includes, _innerHTML, _join, _light, _link, _open, _outlined, _pinnedApps, _round, _semiRound, _share, _sharp, _some, _split, _system, _test, _theme, _title, _toLowerCase, _trim, _value, _writeText } from "@/data/string";
 import { getLocalStorageItem, setLocalStorageItem } from "@/utils/storage";
 import { toggleAttribute } from "@/utils/attributes";
 import { closePopover, openPopover } from "@/utils/popover";
@@ -25,12 +25,14 @@ export const MainElement: VoidComponent = () => {
     const [selectedApp, setSelectedApp] = createSignal<AppItem | null>(null)
     const [searchText, setSearchText] = createSignal<string>('')
     const isSelected = createSelector<string[], string>(pinnedApps, (a, b) => b[_some]((v) => v == a))
+    const getSelectedLink = createMemo(() => selectedApp()? selectedApp()![_link] : '')
+    const getSelectedTitle = createMemo(() => selectedApp()? selectedApp()![_title] : '')
     let infoDialogRef: HTMLDialogElement
     let actionMenuRef: HTMLDialogElement
     let timeoutId: number | null = null
 
     function pinApp(link: string): void {
-        setPinnedApps(v => isSelected(link)? v.filter(a => a != link) :  [...v, link])
+        setPinnedApps(v => isSelected(link)? v[_filter](a => a != link) :  [...v, link])
         setLocalStorageItem(LocalStorageKeys[_pinnedApps], pinnedApps()[_join](';'))
     }
 
@@ -43,8 +45,8 @@ export const MainElement: VoidComponent = () => {
 
     function share(): void {
         getNavigator()[_share]({
-            text: selectedApp()?.title, 
-            url: selectedApp()![_link]
+            text: getSelectedTitle(), 
+            url: getSelectedLink()
         })
         closePopover(actionMenuRef)
     }
@@ -73,7 +75,7 @@ export const MainElement: VoidComponent = () => {
             <LinkButton 
                 data-pinned={toggleAttribute(isSelected(app[_link]))}
                 href={app[_link]}
-                focus={selectedApp()![_link] == app[_link]}
+                focus={getSelectedLink() == app[_link]}
                 onContextMenu={ev => {
                     setSelectedApp(app)
                     openPopover({
@@ -93,17 +95,17 @@ export const MainElement: VoidComponent = () => {
         <Menu dragable ref={r => actionMenuRef = r} onToggle={v => setSelectedApp(a => v? a : null)}>
             <MenuItem 
                 onClick={() => {
-                    pinApp(selectedApp()![_link] ?? '#')
+                    pinApp(getSelectedLink() ?? '#')
                     closePopover(actionMenuRef)
                 }}
-                leading={<Show when={isSelected(selectedApp()![_link] ?? '#')} fallback={<Icon code={0xECA2}/>}><Icon code={0xECA4}/></Show>}>
-                <Show when={isSelected(selectedApp()![_link] ?? '#')} fallback="Pin">Unpin</Show> app
+                leading={<Show when={isSelected(getSelectedLink() ?? '#')} fallback={<Icon code={0xECA2}/>}><Icon code={0xECA4}/></Show>}>
+                <Show when={isSelected(getSelectedLink() ?? '#')} fallback="Pin">Unpin</Show> app
             </MenuItem>
             <MenuDivider/>
-            <MenuItemLink href={selectedApp()![_link] ?? '#'} leading={<Icon code={0xEB53}/>}>Open</MenuItemLink>
+            <MenuItemLink href={getSelectedLink() ?? '#'} leading={<Icon code={0xEB53}/>}>Open</MenuItemLink>
             <MenuItem 
                 onClick={() => {
-                    getWindow()[_open](selectedApp()![_link] ?? '#', '_blank', 'noopener noreferrer')
+                    getWindow()[_open](getSelectedLink() ?? '#', '_blank', 'noopener noreferrer')
                     closePopover(actionMenuRef)
                 }} 
                 leading={<Icon code={0xEB51}/>}>
@@ -112,7 +114,7 @@ export const MainElement: VoidComponent = () => {
             <MenuDivider/>
             <MenuItem 
                 onClick={() => {
-                    getNavigator()[_clipboard][_writeText]('https://' + getLocation()[_hostname] + (selectedApp()![_link] ?? '#'))
+                    getNavigator()[_clipboard][_writeText]('https://' + getLocation()[_hostname] + (getSelectedLink() ?? '#'))
                     closePopover(actionMenuRef)
                 }}
                 leading={<Icon code={0xE51B}/>}>
@@ -132,7 +134,7 @@ export const MainElement: VoidComponent = () => {
         </Menu>
         <Dialog 
             ref={r => infoDialogRef = r} 
-            header={selectedApp()![_title]}
+            header={getSelectedTitle()}
             onClose={() => closePopover(actionMenuRef)}
             style={{width: '500px'}}
             actions={<>
@@ -145,9 +147,9 @@ export const MainElement: VoidComponent = () => {
                     variant={ButtonVariant[_filledTonal]}>
                     Share
                 </Button>
-                <LinkButton href={selectedApp()![_link]} variant={ButtonVariant[_filled]}>Open</LinkButton>
+                <LinkButton href={getSelectedLink()} variant={ButtonVariant[_filled]}>Open</LinkButton>
             </>}>
-            { selectedApp()![_description] }
+            { selectedApp() && selectedApp()![_description] }
         </Dialog>
     </main>)
 }
