@@ -1,4 +1,4 @@
-.dropdown {
+.textfield.dropdown {
     &:not([data-dropdown-readonly]){
         > div:first-child {
             
@@ -81,7 +81,7 @@
     padding-top: 4px;
 }
 
-.dropdown-menu > div {
+.menu.dropdown-menu > div {
     padding: 0;
 
     &:has(> .dropdown-header:empty) {

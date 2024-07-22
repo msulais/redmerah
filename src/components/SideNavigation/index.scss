@@ -13,7 +13,7 @@
     }
 }
 
-.side-navigation-item {
+.btn.side-navigation-item {
     &[data-selected] > .btn-layer > .icon:first-child {
         color: rgb(var(--color-accent));
     }

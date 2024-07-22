@@ -36,7 +36,7 @@
     }
 }
 
-.expander-header {
+.list.expander-header {
     border: 1px solid transparent;
     transition-duration: .3s;
     user-select: none;
@@ -110,6 +110,6 @@
     }
 }
 
-.expander-header-icon {
+.icon.expander-header-icon {
     transition-duration: .3s;
 }

@@ -19,13 +19,13 @@
             &:hover {
                 cursor: pointer;
 
-                > .checkbox-icon {
+                > .btn.checkbox-icon {
                     --bg-opacity: var(--opacity1);
                 }
             }
         }
 
-        &:active > .checkbox-icon {
+        &:active > .btn.checkbox-icon {
             --bg-opacity: var(--opacity0);
             --btn-border-opacity: var(--opacity1);
 
@@ -34,7 +34,7 @@
             }
         }
 
-        &[data-selected] > .checkbox-icon {
+        &[data-selected] > .btn.checkbox-icon {
             color: rgb(var(--color-accent));
         }
     }

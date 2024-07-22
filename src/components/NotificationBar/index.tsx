@@ -32,7 +32,7 @@ const NotificationBar: ParentComponent<NotificationBarProps> = ($props) => {
                     leading={props[_leading]}
                     trailing={props[_trailing]}
                     subtitle={props[_children]}>
-                    { props.header }
+                    { props[_header] }
                 </List>
                 <div class="notification-bar-actions">
                     { actionsComponent() }
