@@ -45,7 +45,7 @@ const features = [
                 <p>Discover a suite of powerful apps designed to simplify your tasks and enhance your productivity. Whether you’re a developer, designer, or just someone who loves efficiency, our app has something for you.</p>
                 <nav>
                     <LinkButton href={RoutesLinks.apps} variant={ButtonVariant.filledTonal}><Icon filled code={0xE063}/>Apps</LinkButton>
-                    <LinkButton openInNewTab href={ExternalLinks.androidApps} variant={ButtonVariant.filledTonal}><img src={androidLogo.src} width="24"/>Android apps</LinkButton>
+                    <LinkButton openInNewTab href={ExternalLinks.androidApps} variant={ButtonVariant.filledTonal}><img src={androidLogo.src} alt="Android logo" width="24"/>Android apps</LinkButton>
                 </nav>
             </div>
             <img src={logo.src} width={170} alt="Redmerah logo" />
@@ -56,7 +56,7 @@ const features = [
                 <p>Apps that we recommended for you.</p>
                 <div class={CSS.apps}>
                     {apps.map((v, i) => <>{i < 3 && <div>
-                        <img src={v.logoURL} />
+                        <img src={v.logoURL} alt={v.title} />
                         <h3>{v.title}</h3>
                         <p>{v.description}</p>
                         <div>
@@ -71,7 +71,7 @@ const features = [
                 <p>Discover our diverse features for an enhanced user experience.</p>
                 <div class={CSS.features}>
                     {features.map(v => <div>
-                        <img src={v.image} />
+                        <img src={v.image} alt={v.title} />
                         <h3>{v.title}</h3>
                         <p>{v.description}</p>
                     </div>)}
@@ -90,11 +90,10 @@ const features = [
     import { _length, _isIntersecting, _animate, _observe } from '@/data/string'
 
     const quote = getElementById('quote') as HTMLParagraphElement
+    const spans = querySelectorAll<HTMLSpanElement>('#quote span')
     const viewObserver = new IntersectionObserver((entries) => {
         for (const entry of entries) {
             if (!entry[_isIntersecting]) continue;
-
-            const spans = querySelectorAll<HTMLSpanElement>('#quote span')
             for (let i = 0; i < spans[_length]; i++) {
                 spans[i][_animate]([{ 
                     transform: 'translateY(-0.4em)', 
