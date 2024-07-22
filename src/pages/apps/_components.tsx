@@ -6,7 +6,7 @@ import Menu, { MenuDivider, MenuItem, MenuItemLink } from "@/components/Menu";
 import TextField from "@/components/TextField";
 import CSS from './_index.module.scss'
 
-import { _CENTER_BOTTOM_TO_LEFT, _CENTER_BOTTOM_TO_RIGHT, _CENTER_CENTER_LEFT_TOP, _LEFT_CENTER_TO_BOTTOM, _clipboard, _color, _color_accent, _corner, _currentTarget, _dark, _filled, _filledTonal, _fullRound, _hostname, _includes, _innerHTML, _join, _light, _link, _open, _outlined, _pinnedApps, _round, _semiRound, _share, _sharp, _some, _split, _system, _test, _theme, _title, _toLowerCase, _trim, _value, _writeText } from "@/data/string";
+import { _CENTER_BOTTOM_TO_LEFT, _CENTER_BOTTOM_TO_RIGHT, _CENTER_CENTER_LEFT_TOP, _LEFT_CENTER_TO_BOTTOM, _clipboard, _color, _color_accent, _corner, _currentTarget, _dark, _description, _filled, _filledTonal, _fullRound, _hostname, _includes, _innerHTML, _join, _light, _link, _open, _outlined, _pinnedApps, _round, _semiRound, _share, _sharp, _some, _split, _system, _test, _theme, _title, _toLowerCase, _trim, _value, _writeText } from "@/data/string";
 import { getLocalStorageItem, setLocalStorageItem } from "@/utils/storage";
 import { toggleAttribute } from "@/utils/attributes";
 import { closePopover, openPopover } from "@/utils/popover";
@@ -44,7 +44,7 @@ export const MainElement: VoidComponent = () => {
     function share(): void {
         getNavigator()[_share]({
             text: selectedApp()?.title, 
-            url: selectedApp()?.link
+            url: selectedApp()![_link]
         })
         closePopover(actionMenuRef)
     }
@@ -69,11 +69,11 @@ export const MainElement: VoidComponent = () => {
             leading={<Icon code={0xEDDF} />} 
             labelText="Search apps" 
         />
-        <div><For each={apps}>{app => <Show when={searchText()[_trim]() == '' || new RegExp(searchText()[_trim]()[_split](' ')[_join]('|'))[_test](app[_title][_toLowerCase]())}>
+        <div><For each={apps}>{app => <Show when={searchText()[_trim]() == '' || new RegExp(searchText()[_toLowerCase]()[_trim]()[_split](' ')[_join]('|'))[_test](app[_title][_toLowerCase]())}>
             <LinkButton 
                 data-pinned={toggleAttribute(isSelected(app[_link]))}
                 href={app[_link]}
-                focus={selectedApp()?.link == app[_link]}
+                focus={selectedApp()![_link] == app[_link]}
                 onContextMenu={ev => {
                     setSelectedApp(app)
                     openPopover({
@@ -93,17 +93,17 @@ export const MainElement: VoidComponent = () => {
         <Menu dragable ref={r => actionMenuRef = r} onToggle={v => setSelectedApp(a => v? a : null)}>
             <MenuItem 
                 onClick={() => {
-                    pinApp(selectedApp()?.link ?? '#')
+                    pinApp(selectedApp()![_link] ?? '#')
                     closePopover(actionMenuRef)
                 }}
-                leading={<Show when={isSelected(selectedApp()?.link ?? '#')} fallback={<Icon code={0xECA2}/>}><Icon code={0xECA4}/></Show>}>
-                <Show when={isSelected(selectedApp()?.link ?? '#')} fallback="Pin">Unpin</Show> app
+                leading={<Show when={isSelected(selectedApp()![_link] ?? '#')} fallback={<Icon code={0xECA2}/>}><Icon code={0xECA4}/></Show>}>
+                <Show when={isSelected(selectedApp()![_link] ?? '#')} fallback="Pin">Unpin</Show> app
             </MenuItem>
             <MenuDivider/>
-            <MenuItemLink href={selectedApp()?.link ?? '#'} leading={<Icon code={0xEB53}/>}>Open</MenuItemLink>
+            <MenuItemLink href={selectedApp()![_link] ?? '#'} leading={<Icon code={0xEB53}/>}>Open</MenuItemLink>
             <MenuItem 
                 onClick={() => {
-                    getWindow()[_open](selectedApp()?.link ?? '#', '_blank', 'noopener noreferrer')
+                    getWindow()[_open](selectedApp()![_link] ?? '#', '_blank', 'noopener noreferrer')
                     closePopover(actionMenuRef)
                 }} 
                 leading={<Icon code={0xEB51}/>}>
@@ -112,7 +112,7 @@ export const MainElement: VoidComponent = () => {
             <MenuDivider/>
             <MenuItem 
                 onClick={() => {
-                    getNavigator()[_clipboard][_writeText]('https://' + getLocation()[_hostname] + (selectedApp()?.link ?? '#'))
+                    getNavigator()[_clipboard][_writeText]('https://' + getLocation()[_hostname] + (selectedApp()![_link] ?? '#'))
                     closePopover(actionMenuRef)
                 }}
                 leading={<Icon code={0xE51B}/>}>
@@ -132,7 +132,7 @@ export const MainElement: VoidComponent = () => {
         </Menu>
         <Dialog 
             ref={r => infoDialogRef = r} 
-            header={selectedApp()?.title}
+            header={selectedApp()![_title]}
             onClose={() => closePopover(actionMenuRef)}
             style={{width: '500px'}}
             actions={<>
@@ -145,9 +145,9 @@ export const MainElement: VoidComponent = () => {
                     variant={ButtonVariant[_filledTonal]}>
                     Share
                 </Button>
-                <LinkButton href={selectedApp()?.link} variant={ButtonVariant[_filled]}>Open</LinkButton>
+                <LinkButton href={selectedApp()![_link]} variant={ButtonVariant[_filled]}>Open</LinkButton>
             </>}>
-            { selectedApp()?.description }
+            { selectedApp()![_description] }
         </Dialog>
     </main>)
 }
