@@ -14,6 +14,6 @@ let {inline, filled, code, classList = [], ...other} = Astro.props
 if (filled) code -= 1
 ---
 
-<i class:list={["icon", ...classList]} data-inline={toggleAttribute(inline)} {...other}>{
+<i class:list={["icon", ...classList]} translate="no" data-inline={toggleAttribute(inline)} {...other}>{
     String.fromCharCode(code)
 }</i>
