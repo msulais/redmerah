@@ -10,12 +10,30 @@ export enum RoutesLinks {
     randomizer = '/randomizer',
     markdownConverter = '/markdown-converter',
     colorGenerator = '/color-generator',
-    calculator = '/calculator'
+    calculator = '/calculator', 
+    tasks = '/tasks', 
+
+    // TODO: create these apps
+    sassToCss = '/sass-to-css',
+    codeFormatter = '/code-formatter',
+    qrCode = '/qr-code',
+    notes = '/notes',
+    whiteboard = '/whiteboard',
+    voiceRecorder = '/voice-recorder', 
+    clock = '/clock',
+    stopwatch = '/stopwatch',
+    weather = '/weather',
+    calendar = '/calendar',
+    deadPixelTest = '/dead-pixel-test', 
+    document = '/document',
+    sheet = '/sheet',
+    presentation = '/presentation',
+    favicon = '/favicon'
 }
 
 export enum ExternalLinks {
     siteUrl = 'https://redmerah.com',
-    contactEmail = 'mailto:daundua2@gmail.com',
-    donate = 'https://www.buymeacoffee.com/msulais', 
+    contactEmail = 'mailto:redmerah1813@gmail.com',
+    donate = 'https://buymeacoffee.com/redmerah', 
     androidApps = 'https://play.google.com/store/apps/dev?id=8392660381147653639'
 }

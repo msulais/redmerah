@@ -6,12 +6,13 @@ import { preventDefault } from "@/utils/event"
 import { toggleAttribute } from "@/utils/attributes"
 import { initFlyout } from "@/utils/flyout"
 import { closeModal } from "@/utils/modal"
-import { _onCancel, _header, _dismiss, _actions, _children, _showCloseButton, _justifyActions, _ref, _position, _right, _closeTooltip, _auto, _manual, _classList, _filledTonal, _indicatorPosition, _leading, _left, _selected, _trailing, _footer } from "@/data/string"
+import { _onCancel, _header, _dismiss, _actions, _children, _showCloseButton, _justifyActions, _ref, _position, _right, _closeTooltip, _auto, _manual, _classList, _filledTonal, _indicatorPosition, _leading, _left, _selected, _trailing, _footer, _iconCode } from "@/data/string"
 import { Position } from "@/enums/position"
 import { isVarHasValue } from "@/utils/data"
 
 import Button, { ButtonVariant } from "@/components/Button"
 import './index.scss'
+import Icon from "../Icon"
 
 type DrawerProps = Omit<JSX.DialogHtmlAttributes<HTMLDialogElement>, 'ref' | 'onCancel'> & {
     header?: JSX.Element
@@ -27,10 +28,11 @@ type DrawerItemProps = JSX.ButtonHTMLAttributes<HTMLButtonElement> & {
     trailing?: JSX.Element
     selected?: boolean
     indicatorPosition?: Position
+    iconCode?: number
 }
 
 export const DrawerItem: ParentComponent<DrawerItemProps> = ($props) => {
-    const [props, other] = splitProps($props, [_indicatorPosition, _selected, _leading, _children, _trailing, _classList])
+    const [props, other] = splitProps($props, [_indicatorPosition, _selected, _leading, _children, _trailing, _classList, _iconCode])
     const trailingComponent = children(() => props[_trailing])
 
     return (<Button 
@@ -41,6 +43,13 @@ export const DrawerItem: ParentComponent<DrawerItemProps> = ($props) => {
         data-trailing={toggleAttribute(trailingComponent())}
         classList={{'drawer-item': true, ...props[_classList]}} 
         {...other}>
+        <Show when={props[_iconCode] != null}>
+            <Icon
+                style={{color: props[_selected]? 'rgb(var(--color-accent))' : undefined}} 
+                filled={props[_selected]} 
+                code={props[_iconCode]!}
+            />
+        </Show>
         { props[_leading] }
         { props[_children] }
         <Show when={trailingComponent()}>
@@ -64,6 +73,7 @@ const Drawer: ParentComponent<DrawerProps> = (_props) => {
     return (<Portal><dialog
         data-right={toggleAttribute(props[_position] == Position[_right])}
         class="drawer"
+        // TODO: implement onKeyDown
         ref={r => {
             modalRef = r
             if (props[_ref]) props[_ref](r)

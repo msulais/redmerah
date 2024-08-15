@@ -246,7 +246,7 @@ export function hsvToHsl(hsv: HSVColor): HSLColor {
  * - Color Dark
  * - On Color Dark
 */
-export function generateColor(hex: string): { color: string; onColor: string; colorDark: string; onColorDark: string }{
+export function generateColor(hex: HEXColor): { color: HEXColor; onColor: HEXColor; colorDark: HEXColor; onColorDark: HEXColor }{
     testHexColor(hex)
     const hsl = {...hexToHSL(hex), s: 1}
 

@@ -21,7 +21,7 @@ enum DatePickerOption {
     day = 'd'
 }
 
-type DatePickerProps = Omit<JSX.DialogHtmlAttributes<HTMLDialogElement>, 'ref' | 'onToggle' | 'onClose' | 'onCancel'> & {
+type DatePickerProps = Omit<JSX.DialogHtmlAttributes<HTMLDialogElement>, 'ref' | 'onToggle' | 'onClose' | 'onCancel' | 'children'> & {
     initialDate?: Date
     firstDate?: Date
     lastDate?: Date
@@ -195,6 +195,7 @@ const DatePicker: VoidComponent<DatePickerProps> = ($props) => {
             datePickerRef = r
             if (props[_ref]) props[_ref](r)
         }}
+        // TODO: implement onKeyDown
         data-popover
         data-dismiss={_auto}
         onClose={(ev) => {

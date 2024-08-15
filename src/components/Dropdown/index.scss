@@ -19,8 +19,8 @@
 
             &[data-readonly] {
                 &::before {
-                    bottom: -2px;
-                    min-height: 3px;
+                    bottom: 0;
+                    min-height: 2px;
                 }
             }
 

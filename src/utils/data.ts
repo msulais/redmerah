@@ -13,3 +13,7 @@ export function createObject<T>(...data: [key: keyof T, value: unknown][]): T {
 
     return obj as T
 }
+
+export function deepClone<T = unknown>(value: T, options?: StructuredSerializeOptions): T {
+    return structuredClone(value, options)
+}

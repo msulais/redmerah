@@ -34,7 +34,7 @@
             }
         }
 
-        &[data-selected] > .btn.checkbox-icon {
+        > .btn.checkbox-icon {
             color: rgb(var(--color-accent));
         }
     }

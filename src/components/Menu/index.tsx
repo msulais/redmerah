@@ -9,7 +9,7 @@ import { getBoundingClientRect, querySelector, setStyleProperty } from "@/utils/
 import { BodyAttributes, PopoverAttributes } from "@/enums/attributes"
 import { hasAttribute, removeAttribute, setAttribute, toggleAttribute } from "@/utils/attributes"
 import { PopoverPosition, Position } from "@/enums/position"
-import { _checked, _selected, _leading, _children, _trailing, _subtitle, _indent, _classList, _RIGHT_CENTER_TO_BOTTOM, _disconnect, _dismiss, _id, _item, _level, _manual, _observe, _onCancel, _onClick, _onClose, _onToggle, _open, _ref, _wrapperAttr, _auto, _shortcuts, _currentTarget, _none, _left, _filledTonal, _dragable, _clientX, _clientY, _color, _hue, _initialColor, _isDrag, _mousemove, _mouseup, _noPointerEvent, _opacity, _touchend, _touches, _touchmove, _value, _valuechange, _top, _px, _anchorId, _body, _bottom, _clientWidth, _height, _innerHeight, _right, _width, _focus } from "@/data/string"
+import { _checked, _selected, _leading, _children, _trailing, _subtitle, _indent, _classList, _RIGHT_CENTER_TO_BOTTOM, _disconnect, _dismiss, _id, _item, _level, _manual, _observe, _onCancel, _onClick, _onClose, _onToggle, _open, _ref, _wrapperAttr, _auto, _shortcuts, _currentTarget, _none, _left, _filledTonal, _dragable, _clientX, _clientY, _color, _hue, _initialColor, _isDrag, _mousemove, _mouseup, _noPointerEvent, _opacity, _touchend, _touches, _touchmove, _value, _valuechange, _top, _px, _anchorId, _body, _bottom, _clientWidth, _height, _innerHeight, _right, _width, _focus, _iconCode } from "@/data/string"
 import { isVarHasValue } from "@/utils/data"
 import { getDocument, getDocumentBody, getWindow } from "@/data/window"
 import { addEventListener, removeEventListener } from "@/utils/event"
@@ -21,7 +21,7 @@ import './index.scss'
 export type MenuProps = Omit<JSX.DialogHtmlAttributes<HTMLDialogElement>, 'ref' | 'onToggle' | 'onClose' | 'onCancel'> & {
     dismiss?: 'manual' | 'auto'
     dragable?: boolean
-    ref?: (el: HTMLDialogElement) => void
+    ref?: (el: HTMLDialogElement) => unknown
     onToggle?: (value: boolean) => unknown
     onClose?: (ev: ComponentEvent<Event, HTMLDialogElement>) => unknown
     onCancel?: (ev: ComponentEvent<Event, HTMLDialogElement>) => unknown
@@ -30,8 +30,8 @@ export type MenuProps = Omit<JSX.DialogHtmlAttributes<HTMLDialogElement>, 'ref' 
 type NestedMenuProps = Omit<JSX.HTMLAttributes<HTMLDivElement>, 'onClick' | 'ref' | 'onToggle'> & {
     level: number
     item: JSX.Element
-    onClick?: (ev: ComponentEvent<MouseEvent, HTMLDivElement>) => void
-    ref?: (el: HTMLDivElement) => void
+    onClick?: (ev: ComponentEvent<MouseEvent, HTMLDivElement>) => unknown
+    ref?: (el: HTMLDivElement) => unknown
     onToggle?: (value: boolean) => unknown
     wrapperAttr?: JSX.HTMLAttributes<HTMLDivElement>
 }
@@ -40,9 +40,9 @@ type MenuItemProps = JSX.ButtonHTMLAttributes<HTMLButtonElement> & {
     leading?: JSX.Element
     trailing?: JSX.Element
     focus?: boolean
-    indent?: boolean
     selected?: boolean
     checked?: boolean
+    iconCode?: number
 }
 
 type MenuItemLinkProps = JSX.AnchorHTMLAttributes<HTMLAnchorElement> & {
@@ -51,7 +51,7 @@ type MenuItemLinkProps = JSX.AnchorHTMLAttributes<HTMLAnchorElement> & {
     openInNewTab?: boolean
     checked?: boolean
     selected?: boolean
-    indent?: boolean
+    iconCode?: number
 }
 
 type MenuItemTrailingKeyboardShortcutProps = JSX.HTMLAttributes<HTMLDivElement> & {
@@ -66,7 +66,10 @@ export const MenuItemTrailingKeyboardShortcut: VoidComponent<MenuItemTrailingKey
 }
 
 export const MenuItem: ParentComponent<MenuItemProps> = ($props) => {
-    const [props, other] = splitProps($props, [_checked, _selected, _leading, _focus, _children, _trailing, _indent, _classList])
+    const [props, other] = splitProps($props, [
+        _checked, _selected, _leading, _focus, _children, 
+        _trailing, _classList, _iconCode
+    ])
     const trailingComponent = children(() => props[_trailing])
 
     return (<Button 
@@ -86,9 +89,14 @@ export const MenuItem: ParentComponent<MenuItemProps> = ($props) => {
                 code={props[_checked]? 0xE3CC : 0xE3D4}
             />
         </Show>
-        <Show when={props[_indent]} fallback={props[_leading]}>
-            <MenuIndent/>
+        <Show when={props[_iconCode] != null}>
+            <Icon
+                style={{color: props[_selected]? 'rgb(var(--color-accent))' : undefined}} 
+                filled={props[_selected]} 
+                code={props[_iconCode]!}
+            />
         </Show>
+        { props[_leading] }
         { props[_children] }
         <Show when={trailingComponent()}>
             <div style={{flex: 1}} />
@@ -98,7 +106,10 @@ export const MenuItem: ParentComponent<MenuItemProps> = ($props) => {
 }
 
 export const MenuItemLink: ParentComponent<MenuItemLinkProps> = ($props) => {
-    const [props, other] = splitProps($props, [_leading, _checked, _selected, _children, _trailing, _indent, _classList])
+    const [props, other] = splitProps($props, [
+        _leading, _checked, _selected, _children, _trailing, 
+        _classList, _iconCode
+    ])
     const trailingComponent = children(() => props[_trailing])
 
     return (<LinkButton 
@@ -117,9 +128,14 @@ export const MenuItemLink: ParentComponent<MenuItemLinkProps> = ($props) => {
                 code={props[_checked]? 0xE3CC : 0xE3D4}
             />
         </Show>
-        <Show when={props[_indent]} fallback={props[_leading]}>
-            <MenuIndent/>
+        <Show when={props[_iconCode] != null}>
+            <Icon
+                style={{color: props[_selected]? 'rgb(var(--color-accent))' : undefined}} 
+                filled={props[_selected]} 
+                code={props[_iconCode]!}
+            />
         </Show>
+        { props[_leading] }
         { props[_children] }
         <Show when={trailingComponent()}>
             <div style={{flex: 1}} />
@@ -356,6 +372,7 @@ const Menu: ParentComponent<MenuProps> = ($props) => {
 
     return (<Portal><dialog 
         class="menu" 
+        // TODO: implement onKeyDown
         ref={(r) => {
             menuRef = r
             if (props[_ref]) props[_ref](r)

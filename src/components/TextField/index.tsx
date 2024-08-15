@@ -6,7 +6,7 @@ import { clearTimeDelayed, clearTimeInterval, setTimeDelayed, setTimeInterval } 
 import { addEventListener, preventDefault, removeEventListener, stopImmediatePropagation, stopPropagation } from '@/utils/event'
 import { openPopover } from '@/utils/popover'
 import { PopoverPosition } from '@/enums/position'
-import { _CENTER_BOTTOM, _CENTER_CENTER_LEFT, _autoHideLabel, _autoShowClearBtn, _autocomplete, _button, _changeValueTooltip, _checkValidity, _children, _classList, _clearTooltip, _currentTarget, _decreaseTooltip, _disabled, _dispatchEvent, _focus, _id, _increaseTooltip, _input, _isIntOnly, _isNaN, _labelElement, _labelText, _leading, _length, _max, _maxLine, _messageText, _min, _minLine, _off, _onBlur, _onFinalValueChanged, _onFocus, _onInput, _onValueChanged, _placeholder, _px, _readOnly, _ref, _resize, _rows, _scrollHeight, _step, _text, _trailing, _type, _value, _valuechange } from '@/data/string'
+import { _CENTER_BOTTOM, _CENTER_CENTER_LEFT, _autoHideLabel, _autoShowClearBtn, _autocomplete, _button, _changeValueTooltip, _checkValidity, _children, _classList, _clearTooltip, _currentTarget, _decreaseTooltip, _disabled, _dispatchEvent, _focus, _id, _increaseTooltip, _input, _isIntOnly, _isNaN, _labelElement, _labelText, _leading, _length, _max, _maxLine, _messageText, _min, _minLine, _off, _onBlur, _onFinalValueChanged, _onFocus, _onInput, _onValueChanged, _placeholder, _px, _readOnly, _ref, _resize, _rows, _scrollHeight, _split, _step, _text, _trailing, _trim, _type, _value, _valuechange } from '@/data/string'
 import { mathMax, mathMin, numberParse } from '@/utils/math'
 
 import Icon from '@/components/Icon'
@@ -14,6 +14,7 @@ import Tooltip from '@/components/Tooltip'
 import Button from '@/components/Button'
 import Menu from '@/components/Menu'
 import './index.scss'
+import { isVarHasValue } from '@/utils/data'
 
 const HEIGHT_TEXT_INPUT_PER_LINE = 18
 
@@ -122,8 +123,9 @@ export const TextAreaField: VoidComponent<TextAreaFieldProps> = ($props) => {
     let textareafieldRef!: HTMLTextAreaElement
 
     createEffect(() => {
+        const lines = ((props[_value] as string) ?? '')[_trim]()[_split]('\n')[_length]
+        setHeight(lines * HEIGHT_TEXT_INPUT_PER_LINE)
         setValue(props[_value] as string ?? '')
-        setHeight(h => props[_minLine]? (HEIGHT_TEXT_INPUT_PER_LINE * props[_minLine]) : h)
     })
 
     return (<label
@@ -149,7 +151,7 @@ export const TextAreaField: VoidComponent<TextAreaFieldProps> = ($props) => {
                     setValue(ev[_currentTarget][_value])
                     setIsInvalid(!ev[_currentTarget][_checkValidity]())
                     if (props[_onInput]) props[_onInput](ev)
-                    setHeight(HEIGHT_TEXT_INPUT_PER_LINE)
+                    setHeight(HEIGHT_TEXT_INPUT_PER_LINE) // set to one line: to calculate the scroll height
                     setHeight(mathMax(ev[_currentTarget][_scrollHeight], HEIGHT_TEXT_INPUT_PER_LINE))
                 }}
                 onFocus={(ev) => {

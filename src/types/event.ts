@@ -1,4 +1,4 @@
-export type ComponentEvent<T = Event, U = HTMLElement, V = Element> = T & {
-    currentTarget: U 
-    target: V
+export type ComponentEvent<EventType = Event, CurrentTarget = HTMLElement, Target = Element> = EventType & {
+    currentTarget: CurrentTarget
+    target: Target
 }

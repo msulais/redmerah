@@ -4,18 +4,19 @@ import { Portal } from "solid-js/web"
 import type { ComponentEvent } from "@/types/event"
 import { preventDefault } from "@/utils/event"
 import { initFlyout } from "@/utils/flyout"
-import { closeModal } from "@/utils/modal"
-import { _onCancel, _header, _dismiss, _actions, _children, _showCloseButton, _justifyActions, _ref, _manual, _auto, _closeTooltip } from "@/data/string"
+import { closeModal, focusModal } from "@/utils/modal"
+import { _onCancel, _header, _dismiss, _actions, _children, _showCloseButton, _justifyActions, _ref, _manual, _auto, _closeTooltip, _onKeyDown, _Escape, _altKey, _ctrlKey, _key, _metaKey, _shiftKey } from "@/data/string"
 import { toggleAttribute } from "@/utils/attributes"
 
 import './index.scss'
 
-type DialogProps = Omit<JSX.DialogHtmlAttributes<HTMLDialogElement>, 'ref' | 'onCancel'> & {
+type DialogProps = Omit<JSX.DialogHtmlAttributes<HTMLDialogElement>, 'ref' | 'onCancel' | 'onKeyDown'> & {
     header?: JSX.Element
     actions?: JSX.Element
     dismiss?: 'manual' | 'auto'
-    ref?: (el: HTMLDialogElement) => void
-    onCancel?: (ev: ComponentEvent<Event, HTMLDialogElement>) => void
+    onKeyDown?: (ev: ComponentEvent<KeyboardEvent, HTMLDialogElement>) => unknown
+    ref?: (el: HTMLDialogElement) => unknown
+    onCancel?: (ev: ComponentEvent<Event, HTMLDialogElement>) => unknown
 }
 
 const Dialog: ParentComponent<DialogProps> = (_props) => {
@@ -23,6 +24,7 @@ const Dialog: ParentComponent<DialogProps> = (_props) => {
     const [props, other] = splitProps(__props, [
         _onCancel, _header, _dismiss,
         _actions, _children, _ref,
+        _onKeyDown
     ])
     const actionsComponent = children(() => props[_actions])
     let modalRef: HTMLDialogElement
@@ -37,6 +39,19 @@ const Dialog: ParentComponent<DialogProps> = (_props) => {
         }}
         data-modal
         data-dismiss={props[_dismiss]}
+        onKeyDown={(ev) => {
+            if (props[_onKeyDown]) props[_onKeyDown](ev)
+            if (ev[_key] == _Escape 
+                && !ev[_altKey] 
+                && !ev[_ctrlKey] 
+                && !ev[_metaKey] 
+                && !ev[_shiftKey]
+                && props[_dismiss] == _manual
+            ){ 
+                focusModal(modalRef)
+                preventDefault(ev)
+            }
+        }}
         onCancel={(ev) => {
             if (props[_onCancel]) props[_onCancel](ev)
             if (props[_dismiss] == _manual) {

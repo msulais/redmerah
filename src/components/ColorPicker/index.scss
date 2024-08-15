@@ -70,7 +70,7 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 8px;
     padding: 8px;
-    background-color: rgba(var(--color-on-surface), var(--opacity1));
+    background-color: rgb(var(--color-background));
     border-top: 1px solid rgba(var(--color-on-surface), var(--opacity2));
     width: 332px;
 }
@@ -143,6 +143,8 @@
 }
 
 .color-picker-content {
+    padding: 0 8px;
+    
     &:empty {
         display: none;
     }

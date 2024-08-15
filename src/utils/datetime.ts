@@ -1,4 +1,4 @@
-import { _format, _getDate, _getFullYear, _getMonth, _long, _numeric, _push, _toLocaleDateString, _UTC, _valueOf } from "@/data/string"
+import { _format, _getDate, _getFullYear, _getHours, _getMinutes, _getMonth, _long, _numeric, _push, _toLocaleDateString, _UTC, _valueOf } from "@/data/string"
 import { mathFloor } from "./math"
 
 export function getCurrentDate(): Date {
@@ -15,6 +15,14 @@ export function getDate_M(date: Date = new Date()): number {
 
 export function getDate_D(date: Date = new Date()): number {
     return date[_getDate]()
+}
+
+export function getDate_H(date: Date = new Date()): number {
+    return date[_getHours]()
+}
+
+export function getDate_Min(date: Date = new Date()): number {
+    return date[_getMinutes]()
 }
 
 export function getDateValue(date: Date): number {
@@ -50,8 +58,20 @@ export function isInDate_YMD(date: Date, min: Date, max: Date): boolean {
     return minValue <= dateValue && dateValue <= maxValue
 }
 
+export function isInDate_YMD_HM(date: Date, min: Date, max: Date): boolean {
+    const dateValue = getDateValue(new Date(getDate_Y(date), getDate_M(date), getDate_D(date), getDate_H(date), getDate_Min(date)))
+    const minValue = getDateValue(new Date(getDate_Y(min), getDate_M(min), getDate_D(min), getDate_H(min), getDate_Min(min)))
+    const maxValue = getDateValue(new Date(getDate_Y(max), getDate_M(max), getDate_D(max), getDate_H(max), getDate_Min(max)))
+
+    return minValue <= dateValue && dateValue <= maxValue
+}
+
 export function isOutDate_YMD(date: Date, min: Date, max: Date): boolean {
     return !isInDate_YMD(date, min, max)
+}
+
+export function isOutDate_YMD_HM(date: Date, min: Date, max: Date): boolean {
+    return !isInDate_YMD_HM(date, min, max)
 }
 
 export function isInDate_YM(date: Date, min: Date, max: Date): boolean {
@@ -112,6 +132,10 @@ export function getMonthText(date: Date, locales: Intl.LocalesArgument = 'en-US'
 
 export function getDateString_YMD(date: Date, locales: Intl.LocalesArgument = 'en-US'): string {
     return date[_toLocaleDateString](locales, {day: _numeric, month: _long, year: _numeric})
+}
+
+export function getDateString_YMD_HM(date: Date, locales: Intl.LocalesArgument = 'en-US'): string {
+    return date[_toLocaleDateString](locales, {day: _numeric, month: _long, year: _numeric, hour: '2-digit', minute: '2-digit'})
 }
 
 export function dateDifferenceInDays(date1: Date, date2: Date): number {

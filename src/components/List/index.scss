@@ -1,5 +1,5 @@
 .list {
-    min-height: 56px;
+    min-height: 40px;
     display: flex;
     gap: 12px;
     align-items: center;
@@ -8,13 +8,9 @@
     border-radius: 8px;
     width: 100%;
     
-    [data-corner=sharp] & {
-        border-radius: 0;
-    }
-    
-    [data-corner=semi-round] & {
-        border-radius: 4px;
-    }
+    [data-corner=sharp] & {border-radius: 0}
+    [data-corner=semi-round] & {border-radius: 4px}
+    [data-corner=full-round] & {border-radius: 20px}
 
     &[data-compact] {
         gap: 8px;

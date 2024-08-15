@@ -1,0 +1,277 @@
+$side_navigation_none: 680px;
+
+.appbarSearch {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding-left: 16px;
+
+    > :global(.textfield) {
+        width: min(100%, 720px)
+    }
+}
+
+.body {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: calc(100dvh - 56px);
+    background-color: rgb(var(--color-surface));
+    border: 1px solid rgba(var(--color-on-surface), var(--opacity1));
+    border-right: 0;
+    border-bottom: 0;
+    border-radius: 8px 0 0 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    [data-corner=sharp] & { border-radius: 0 }
+    [data-corner=semi-round] & { border-radius: 4px 0 0 0 }
+    [data-corner=full-round] & { border-radius: 20px 0 0 0 }
+
+    @media (max-width: $side_navigation_none) {
+        border-top-left-radius: 0 !important;
+        border: none;
+    }
+}
+
+.body_appbar {
+    padding-left: 12px;
+    padding-right: 4px;
+    width: 1080px;
+    max-width: calc(100% - 48px);
+    transition-duration: .3s;
+}
+
+.body_dialog_edit {
+    > div > :global(.dialog-content) {
+        > :is(:global(.btn), :global(.textfield), :global(.textareafield)) {
+            margin-bottom: 8px;
+        }
+
+        > div { 
+            &:not(:last-child) {
+                margin-bottom: 4px;
+            }
+            
+            > :global(.list) {
+                padding-left: 12px;
+            }
+
+            & :global(.list-title) {
+                font-size: var(--font-size-xs);
+            }
+
+            &[data-subtasks] {
+                > :global(.list) {
+                    padding-left: 4px;
+                    gap: 1px;
+                }
+
+                & :global(.list-leading) {
+                    color: rgb(var(--color-accent));
+                }
+            }
+
+
+            > :global(.btn) {
+                color: rgb(var(--color-accent));
+
+                > :global(.btn-layer) {
+                    gap: 12px;
+                }
+            }
+        }
+    }
+}
+
+.body_empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    > :global(.icon) {
+        color: rgb(var(--color-accent));
+        font-size: var(--font-size-xxl);
+        margin-bottom: 8px;
+    }
+
+    > p {
+        text-align: center;
+    }
+}
+
+.body_file_list_item {
+    & :global(.list-title) {
+        color: rgb(var(--color-accent));
+        line-break: anywhere;
+    }
+
+    & :global(.list-subtitle) {
+        font-family: var(--font-family-monospace);
+        line-break: anywhere;
+    }
+}
+
+.body_group_task_list {
+    // TODO: add styles
+    
+    &[data-empty] {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+    }
+}
+
+.body_task_item:global(.expander) {
+    width: 1080px;
+    max-width: calc(100% - 48px);
+    transition-duration: .3s;
+
+    @media (max-width: 500px) {
+        max-width: calc(100% - 16px);
+    }
+
+    &[data-done] :global(.list-title) {
+        text-decoration: line-through;
+    }
+
+    > :global(.list.expander-header) {
+        gap: 4px;
+        padding: 4px;
+        border-radius: 12px;
+        
+        [data-corner=sharp] & {border-radius: 0}
+        [data-corner=semi-round] & {border-radius: 8px}
+        [data-corner=full-round] & {border-radius: 25px}
+
+        &[data-open]:not([data-variant=transparent]) {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+
+        &:has( :global(.btn):hover) {
+            --bg-opacity: var(--opacity1);
+        } 
+
+        &:has( :global(.btn):active) {
+            border-color: transparent;
+        } 
+
+        > :global(.list-leading) {
+            color: rgb(var(--color-accent));
+        }
+    }
+
+    > :global(.expander-content){ 
+        border-radius: 0 0 12px 12px;
+
+        [data-corner=sharp] & {border-radius: 0}
+        [data-corner=semi-round] & {border-radius: 0 0 8px 8px}
+        [data-corner=full-round] & {border-radius: 0 0 25px 25px}
+
+        > div {
+            padding: 4px 4px 4px 40px;
+        }
+    }
+}
+
+.body_task_item_tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 4px;
+
+    &:empty {
+        display: none;
+    }
+
+    > :global(.btn) {
+        --btn-padding: 4px 8px;
+
+        font-size: var(--font-size-s);
+        color: rgb(var(--color-on-surface));
+        min-height: 0;
+        
+        &:is(:global(.btn-filled)) {
+            color: rgb(var(--color-on-accent));
+            
+            > :global(.btn-layer) > :global(.icon) {
+                color: rgb(var(--color-on-accent));
+            }
+        }
+
+        > :global(.btn-layer) {
+            gap: 4px;
+
+            > :global(.icon) {
+                color: rgb(var(--color-accent));
+            }
+        }
+    }
+}
+
+.body_single_task_list {
+    display: flex;
+    grid-template-columns: 1fr;
+    gap: 4px;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+    max-height: calc(100dvh - 56px);
+    height: calc(100dvh - 56px);
+    overflow: auto;
+
+    &[data-empty] {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        height: 100%;
+    }
+
+    > .body_appbar {
+        position: sticky;
+        top: 0;
+        background-color: rgb(var(--color-surface));
+        z-index: 9;
+
+        @media (max-width: 500px) {
+            max-width: calc(100% - 16px);
+        }
+    }
+
+    > form {
+        width: 100%;
+        max-width: 100%;
+        padding: 8px 24px 24px 24px;
+        background-color: rgba(var(--color-surface), var(--opacity-inv2));
+        -webkit-backdrop-filter: blur(24px);
+        backdrop-filter: blur(24px);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: sticky;
+        bottom: 0px;
+        left: 0;
+        transition-duration: .3s;
+
+        @media (max-width: 500px) {
+            padding: 8px;
+        }
+
+        > :global(.textfield) {
+            width: 1080px;
+            max-width: 100%;
+        }
+    }
+}
+
+.sideNavigation {
+    @media (max-width: $side_navigation_none) {
+        display: none !important;
+    }
+}

@@ -1,7 +1,7 @@
 import { type ParentComponent, type JSX, mergeProps, splitProps } from 'solid-js'
 
 import { toggleAttribute } from '@/utils/attributes'
-import { _children, _indicatorPosition, _variant, _focus, _compact, _selected, _elevation, _iconOnly, _layerAttr, _disableScale, _openInNewTab, _transparent, _bottom, _classList, _filledTonal, _outlined, _filled } from '@/data/string'
+import { _children, _indicatorPosition, _variant, _focus, _compact, _selected, _elevation, _iconOnly, _layerAttr, _disableScale, _openInNewTab, _transparent, _bottom, _classList, _filledTonal, _outlined, _filled, _button, _type } from '@/data/string'
 import { Position } from '@/enums/position'
 
 import './index.scss'
@@ -46,12 +46,12 @@ export const FloatingActionButton: ParentComponent<FloatingActionButtonProps> = 
 } 
 
 const Button: ParentComponent<ButtonProps> = ($props) => {
-    const $$props = mergeProps({variant: ButtonVariant[_transparent], indicatorPosition: Position[_bottom]}, $props)
+    const $$props = mergeProps({type: _button, variant: ButtonVariant[_transparent], indicatorPosition: Position[_bottom]}, $props)
     const [props, other] = splitProps($$props, [
         _children, _indicatorPosition, _variant, 
         _focus, _compact, _selected, _elevation, 
         _iconOnly, _layerAttr, _disableScale, 
-        _classList
+        _classList, _type
     ])
 
     return (<button 
@@ -63,6 +63,7 @@ const Button: ParentComponent<ButtonProps> = ($props) => {
             'btn-outlined': props[_variant] == ButtonVariant[_outlined], 
             ...props[_classList]
         }}
+        type={props[_type] as ("button" | "submit" | "reset" | undefined)}
         data-icon={toggleAttribute(props[_iconOnly])}
         data-indicator={props[_selected]? props[_indicatorPosition] : undefined}
         data-selected={toggleAttribute(props[_selected])}

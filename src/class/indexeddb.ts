@@ -4,7 +4,7 @@ import type { DatabaseNames } from "@/enums/storage"
 
 type CreateObjectStoreParams<T> = {
     name: string
-    keyPath: string | (keyof T)
+    keyPath: (keyof T) | string
     indexs: (keyof T)[]
 }
 
@@ -99,8 +99,8 @@ export class IDB {
         return objectStore
     }
 
-    async get<T>(objectStore: IDBObjectStore, query: IDBValidKey | IDBKeyRange): Promise<T> {
-        return new Promise<T>((ok, err) => {
+    async get<T>(objectStore: IDBObjectStore, query: IDBValidKey | IDBKeyRange): Promise<T | undefined> {
+        return new Promise<T | undefined>((ok, err) => {
             const getRequest = objectStore[_get](query)
             getRequest[_onsuccess] = ev => ok(getRequest[_result] as T)
             getRequest[_onerror] = ev => err(ev)
@@ -145,7 +145,7 @@ export class IDB {
 
             openCursorRequest[_onerror] = ev => err(ev)
             openCursorRequest[_onsuccess] = ev => {
-                const cursor = openCursorRequest[_result];
+                const cursor = openCursorRequest[_result]
                 if (!cursor) {
                     result(cursor, ev)
                     ok()

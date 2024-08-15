@@ -1,11 +1,12 @@
 import { _input, _oncancel, _onchange, _remove, _multiple, _type, _accept, _file, _files, _click, _onabort, _onerror, _onload, _readAsText, _result, _target } from "@/data/string"
 import { createElement } from "./element"
+import { createObjectURL, downloadFileByURL, revokeObjectURL } from "./url"
 
-export async function openFile(accept: string, multiple: boolean = false): Promise<FileList | null> {
+export async function openFile(accept: string | null, multiple: boolean = false): Promise<FileList | null> {
     return new Promise<FileList | null>((ok) => {
         const filePickerRef = createElement(_input) 
         filePickerRef[_type] = _file
-        filePickerRef[_accept] = accept
+        if (accept != null) filePickerRef[_accept] = accept
         filePickerRef[_multiple] = multiple
         filePickerRef[_click]()
         
@@ -18,6 +19,12 @@ export async function openFile(accept: string, multiple: boolean = false): Promi
             filePickerRef[_remove]()
         }
     })
+}
+
+export function downloadFile(blob: Blob, filename: string): void {
+    const url = createObjectURL(blob)
+    downloadFileByURL(url, filename)
+    revokeObjectURL(url)
 }
 
 export function readFileAsText(blob: Blob, encoding?: string): Promise<string> {

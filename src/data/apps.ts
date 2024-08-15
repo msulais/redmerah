@@ -2,11 +2,19 @@ import markdown_converter_logo from '@/assets/apps/markdown-converter-logo.svg'
 import randomizer_converter_logo from '@/assets/apps/randomizer-logo.svg'
 import color_generator_logo from '@/assets/apps/color-generator-logo.svg'
 import calculator_logo from '@/assets/apps/calculator-logo.svg'
+import tasks_logo from '@/assets/apps/tasks-logo.svg'
 import { _src } from './string'
 import type { AppItem } from '@/types/apps'
 import { RoutesLinks } from '@/enums/links'
 
 export const apps: AppItem[] = [
+    {
+        logoURL: tasks_logo[_src],
+        title: 'Tasks',
+        description: 'Tasks is a simple and easy-to-use app that helps you stay organized and on track. With Tasks, you can create tasks, add them to lists, and mark them as completed.',
+        link: RoutesLinks.tasks, 
+        color: '#9735E4'
+    },
     {
         logoURL: calculator_logo[_src],
         title: 'Calculator', 

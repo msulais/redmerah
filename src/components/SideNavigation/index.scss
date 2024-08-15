@@ -1,16 +1,44 @@
 .side-navigation {
-    display: grid;
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
     padding: 8px;
     gap: 4px;
     width: 56px;
     max-width: 56px;
-    transition: .3s;
+    height: 100%;
+    transition-duration: .3s;
     
     &[data-expand] {
         width: 280px;
         max-width: 280px;
     }
+
+    &:not([data-expand]) > div {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
+
+    > div {
+        width: 100%;
+        max-width: inherit;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+
+        &:empty {
+            display: none;
+        }
+    }
+}
+
+.side-navigation-content {
+    flex: 1;
+    overflow: auto;
+    align-items: start;
 }
 
 .btn.side-navigation-item {

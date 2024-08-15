@@ -9,5 +9,6 @@ export enum DatabaseNames {
     markdownConverter = 'markdown-converter', 
     randomizer = 'randomizer',
     colorGenerator = 'color-generator', 
-    calculator = 'calculator'
+    calculator = 'calculator', 
+    tasks = 'tasks'
 }

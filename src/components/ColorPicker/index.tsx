@@ -23,7 +23,7 @@ const COLOR_BOX_WIDTH: number = 260
 const COLOR_BOX_HEIGHT: number = 200
 const DEFAULT_HEX_COLOR: HEXColor = '#FF0000'
 
-type ColorPickerProps = Omit<JSX.DialogHtmlAttributes<HTMLDialogElement>, 'children' | 'ref' | 'onToggle' | 'onClose' | 'onCancel'> & {
+type ColorPickerProps = Omit<JSX.DialogHtmlAttributes<HTMLDialogElement>, 'ref' | 'onToggle' | 'onClose' | 'onCancel'> & {
     ref?: (el: HTMLDialogElement) => void
     initialColor?: HEXColor
     disabledOpacityControl?: boolean
@@ -291,7 +291,7 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
             setOpacity(mathRound(opacity * 100))
         }
 
-        if (props[_disabledColorControl]) setHslColor(hsl => {return {...hsl, s: 1, l: 0.5}})
+        if (props[_disabledColorControl]) setHslColor(hsl => ({...hsl, s: 1, l: 0.5}))
 
         updateInputs()
         updatePosition()
@@ -416,7 +416,7 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
         return (<div class="color-picker-control" data-hide-color={toggleAttribute(props[_disabledColorControl])}>
             <div
                 class="color-picker-color"
-                style={{'--color': hexColorCanvas()}}
+                style={{'--color-picker-color': hexColorCanvas()}}
                 onMouseDown={(ev) => {
                     setPicker(_color, _isDrag, true)
                     setPicker(_color, _rect, getBoundingClientRect(ev[_currentTarget]))
@@ -551,6 +551,7 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
             colorPickerRef = r
             if (props[_ref]) props[_ref](r)
         }}
+        // TODO: implement onKeyDown
         class="color-picker"
         data-popover
         data-dismiss={_auto}
