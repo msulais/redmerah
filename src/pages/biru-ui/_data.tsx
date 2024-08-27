@@ -1,0 +1,26 @@
+import { _button, _checkBox, _colorPicker, _datePicker, _dateTimePicker, _dialog, _divider, _drawer, _dropdown, _emoji, _emojiPicker, _expander, _icon, _list, _menu, _modal, _popover, _textField, _toast, _tooltip } from "@/data/string"
+import { Pages } from "./_enums"
+
+export const SIZE_SIDE_NAVIGATION_NONE = 640
+export const PAGES = [
+    {type: Pages[_button], text: 'Buttons'},
+    {type: Pages[_checkBox], text: 'CheckBox'},
+    {type: Pages[_colorPicker], text: 'ColorPicker'},
+    {type: Pages[_datePicker], text: 'DatePicker'},
+    {type: Pages[_dateTimePicker], text: 'DateTimePicker'},
+    {type: Pages[_dialog], text: 'Dialog'},
+    {type: Pages[_divider], text: 'Divider'},
+    {type: Pages[_drawer], text: 'Drawer'},
+    {type: Pages[_dropdown], text: 'Dropdown'},
+    {type: Pages[_emoji], text: 'Emoji'},
+    {type: Pages[_emojiPicker], text: 'EmojiPicker'},
+    {type: Pages[_expander], text: 'Expander'},
+    {type: Pages[_icon], text: 'Icon'},
+    {type: Pages[_list], text: 'List'},
+    {type: Pages[_menu], text: 'Menu'},
+    {type: Pages[_modal], text: 'Modal'},
+    {type: Pages[_popover], text: 'Popover'},
+    {type: Pages[_textField], text: 'TextField'},
+    {type: Pages[_toast], text: 'Toast'},
+    {type: Pages[_tooltip], text: 'Tooltip'},
+]

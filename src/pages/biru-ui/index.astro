@@ -1,0 +1,13 @@
+---
+import Html from '@/layouts/Html/index.astro';
+import App from './_App'
+
+export const prerender = true;
+---
+
+<Html 
+	title='BiruUI' 
+	accentColor='#0093FF' 
+	description='We test our UI here'>
+	<App client:only="solid-js"/>
+</Html>
