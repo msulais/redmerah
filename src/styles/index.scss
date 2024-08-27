@@ -22,28 +22,6 @@ a, button, .icon, :is(a, button, .icon) * {
     -webkit-tap-highlight-color: transparent;
 }
 
-:is(button, .btn) {
-    --btn-border-color: 0, 0, 0;
-    --btn-border-opacity: 0;
-    border: 1px solid;
-    border-color: transparent;
-    border-color: rgba(var(--btn-border-color), var(--btn-border-opacity));
-    display: flex;
-    outline-offset: 4px;
-
-    &:hover:not(:disabled) {
-        cursor: pointer;
-    }
-
-    &:disabled {
-        cursor: not-allowed;
-        
-        & * {
-            cursor: not-allowed;
-        }
-    }
-}
-
 body {
     align-items: center;
     min-height: 100dvh;
@@ -56,6 +34,7 @@ body {
 
         & :is([data-keep-pointer-event], [data-keep-pointer-event] *) {
             pointer-events: auto;
+            user-select: none;
         }
     }
 }
@@ -71,7 +50,6 @@ img {
 kbd {
     border-radius: .3em;
     background-color: rgb(var(--color-on-surface));
-    font-weight: bold;
     font-size: .85em;
     color: rgb(var(--color-surface));
     padding: .2em .4em;

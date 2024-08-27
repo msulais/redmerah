@@ -1,53 +1,76 @@
 import { createSignal, onMount, type VoidComponent } from "solid-js";
 
 import Icon from "@/components/Icon";
-import Button, {  } from "@/components/Button";
+import Button, { IconButton } from "@/components/Button";
 import Tooltip from "@/components/Tooltip";
-import Menu, { MenuDivider, MenuHeader, MenuItem, MenuItemLink } from "@/components/Menu";
-import ColorPicker, { changeColorPickerValue } from "@/components/ColorPicker";
+import Menu, { closeMenu, LinkMenuItem, MenuDivider, MenuHeader, MenuItem, openMenu } from "@/components/Menu";
+import ColorPicker, { openColorPicker } from "@/components/ColorPicker";
 import CSSAnimation from '@/styles/animation.module.scss'
 import CSS from './_index.module.scss'
 
 import type { HEXColor, RGBColor } from "@/types/color";
-import { _CENTER_BOTTOM_TO_LEFT, _CENTER_BOTTOM_TO_RIGHT, _CENTER_CENTER_LEFT_TOP, _LEFT_CENTER_TO_BOTTOM, _clipboard, _color, _color_accent, _corner, _currentTarget, _dark, _filled, _filledTonal, _fullRound, _hostname, _includes, _innerHTML, _join, _light, _link, _open, _outlined, _pinnedApps, _round, _route, _semiRound, _share, _sharp, _some, _split, _system, _test, _theme, _title, _toLowerCase, _trim, _value, _writeText } from "@/data/string";
+import { _centerBottomToLeft, _centerBottomToRight, _centerCenterLeftTop, _leftCenterToBottom, _about, _apps, _clipboard, _color, _colorDark, _color_accent, _corner, _currentTarget, _dark, _donate, _filled, _filledTonal, _fullRound, _hostname, _includes, _innerHTML, _join, _light, _link, _onColor, _onColorDark, _open, _outlined, _pinnedApps, _round, _route, _semiRound, _share, _sharp, _some, _split, _system, _test, _theme, _title, _toLowerCase, _trim, _value, _writeText } from "@/data/string";
 import { getLocalStorageItem, setLocalStorageItem } from "@/utils/storage";
 import { generateColor, hexToRgb, testHexColor } from "@/utils/color";
 import { setAttribute, toggleAttribute } from "@/utils/attributes";
 import { ExternalLinks, RoutesLinks } from "@/enums/links";
-import { closePopover, openPopover } from "@/utils/popover";
 import { LocalStorageKeys } from "@/enums/storage";
-import { PopoverPosition } from "@/enums/position";
 import { RootAttributes } from "@/enums/attributes";
 import { addClassListModule, getElementById } from "@/utils/element";
 import { ElementIds } from "@/enums/ids";
 import { CornerData } from "@/enums/corner";
 import { ThemeData } from "@/enums/theme";
 import { getRoot } from "@/data/window";
+import { FlyoutPosition } from "@/enums/position";
+import { closePopover, openPopover } from "@/components/Popover";
 
 type NavigationMenuProps = {
     route?: RoutesLinks
 }
 
 export const NavigationMenu: VoidComponent<NavigationMenuProps> = (props) => {
-    const [navBtnRef, setNavBtnRef] = createSignal<HTMLButtonElement | null>(null)
-    const [isNavMenuOpen, setIsNavMenuOpen] = createSignal<boolean>(false)
-    let navMenuRef: HTMLDialogElement
+    const [button_navigation_ref, set_button_navigation_ref] = createSignal<HTMLButtonElement | null>(null)
+    const [is_menu_navigation_open, setIs_menu_navigation_open] = createSignal<boolean>(false)
+    let menu_navigation_ref: HTMLDialogElement
 
     return (<>
-        <Tooltip text="Open navigation menu" anchor={navBtnRef()} />
-        <Button classList={addClassListModule(CSS.mobile_only)} focus={isNavMenuOpen()} onClick={(ev) => openPopover({
-            event: ev, 
-            popover: navMenuRef, 
-            anchor: ev[_currentTarget], 
-            padding: 0, 
-            position: PopoverPosition[_CENTER_BOTTOM_TO_LEFT]
-        })} ref={r => setNavBtnRef(r)} iconOnly><Icon code={0xE4F7}/></Button>
-        <Menu style={{width: '164px'}} ref={r => navMenuRef = r} onToggle={v => setIsNavMenuOpen(v)}>
+        <Tooltip text="Open navigation menu" anchor={button_navigation_ref()} />
+        <IconButton 
+            classList={addClassListModule(CSS.mobile_only)} 
+            focus={is_menu_navigation_open()} 
+            onClick={(ev) => openMenu(ev, menu_navigation_ref, {
+                anchor: ev[_currentTarget], 
+                padding: 0, 
+                position: FlyoutPosition[_centerBottomToLeft]
+            })} 
+            ref={r => set_button_navigation_ref(r)} 
+            code={0xE4F7}
+        />
+        <Menu 
+            style={{width: '164px'}} 
+            ref={r => menu_navigation_ref = r} 
+            onToggleOpen={v => setIs_menu_navigation_open(v)}>
             <MenuHeader>Navigation</MenuHeader>
-            <MenuItemLink href={RoutesLinks.apps} selected={props[_route] == RoutesLinks.apps} leading={<Icon code={0xE063}/>}>Apps</MenuItemLink>
-            <MenuItemLink href={RoutesLinks.about} selected={props[_route] == RoutesLinks.about} leading={<Icon code={0xE930}/>}>About</MenuItemLink>
+            <LinkMenuItem 
+                href={RoutesLinks[_apps]} 
+                selected={props[_route] == RoutesLinks[_apps]} 
+                iconCode={0xE063}>
+                Apps
+            </LinkMenuItem>
+            <LinkMenuItem 
+                href={RoutesLinks[_about]} 
+                selected={props[_route] == RoutesLinks[_about]} 
+                iconCode={0xE930}>
+                About
+            </LinkMenuItem>
             <MenuDivider />
-            <MenuItemLink onClick={(ev) => closePopover(navMenuRef)} href={ExternalLinks.donate} selected={false} openInNewTab leading={<Icon code={0xE84B}/>}>Donate</MenuItemLink>
+            <LinkMenuItem 
+                onClick={() => closeMenu(menu_navigation_ref)} 
+                href={ExternalLinks[_donate]} 
+                openInNewTab 
+                iconCode={0xE84B}>
+                Donate
+            </LinkMenuItem>
         </Menu>
     </>)
 }
@@ -56,24 +79,24 @@ export const SettingsElement: VoidComponent = () => {
     const [color, setColor] = createSignal<HEXColor>('#FF0000')
     const [theme, setTheme] = createSignal<ThemeData>(ThemeData[_system])
     const [corner, setCorner] = createSignal<CornerData>(CornerData[_round])
-    const [settingsBtnRef, setSettingsBtnRef] = createSignal<HTMLButtonElement | null>(null)
-    const [isSettingsMenuOpen, setIsSettingsMenuOpen] = createSignal<boolean>(false)
-    const [isColorPickerMenuOpen, setIsColorPickerMenuOpen] = createSignal<boolean>(false)
-    let settingsMenuRef: HTMLDialogElement
-    let colorPickerMenuRef: HTMLDialogElement
+    const [button_settings_ref, set_button_settings_ref] = createSignal<HTMLButtonElement | null>(null)
+    const [is_menu_settings_open, setIs_menu_settings_open] = createSignal<boolean>(false)
+    const [is_colorPicker_open, setIs_colorPicker_open] = createSignal<boolean>(false)
+    let menu_settings_ref: HTMLDialogElement
+    let colorPicker_ref: HTMLDialogElement
 
     function changeTheme(theme: ThemeData): void {
         setTheme(theme)
         setAttribute(getRoot(), RootAttributes[_theme], theme)
         setLocalStorageItem(LocalStorageKeys[_theme], theme)
-        closePopover(settingsMenuRef)
+        closeMenu(menu_settings_ref)
     }
 
     function changeCorner(corner: CornerData): void {
         setCorner(corner)
         setAttribute(getRoot(), RootAttributes[_corner], corner)
         setLocalStorageItem(LocalStorageKeys[_corner], corner)
-        closePopover(settingsMenuRef)
+        closeMenu(menu_settings_ref)
     }
 
     function initTheme(): void {
@@ -103,13 +126,13 @@ export const SettingsElement: VoidComponent = () => {
         const acc = generateColor(hexColor)
         const accentColorStyleEl = getElementById(ElementIds[_color_accent])!
         accentColorStyleEl[_innerHTML] = `:root{
---color-accent-light: ${rgbToCSSValue(hexToRgb(acc.color))};
---color-accent-dark: ${rgbToCSSValue(hexToRgb(acc.colorDark))};
---color-on-accent-light: ${rgbToCSSValue(hexToRgb(acc.onColor))};
---color-on-accent-dark: ${rgbToCSSValue(hexToRgb(acc.onColorDark))};
+--color-accent-light: ${rgbToCSSValue(hexToRgb(acc[_color]))};
+--color-accent-dark: ${rgbToCSSValue(hexToRgb(acc[_colorDark]))};
+--color-on-accent-light: ${rgbToCSSValue(hexToRgb(acc[_onColor]))};
+--color-on-accent-dark: ${rgbToCSSValue(hexToRgb(acc[_onColorDark]))};
 }`;
         setLocalStorageItem(LocalStorageKeys[_color], hexColor)
-        closePopover(settingsMenuRef)
+        closeMenu(menu_settings_ref)
     }
 
     function initColor(): void {
@@ -118,7 +141,6 @@ export const SettingsElement: VoidComponent = () => {
         try {
             testHexColor(color ?? '')
             changeColor(color as HEXColor)
-            changeColorPickerValue(colorPickerMenuRef, color as HEXColor)
         } catch (e) {}
     }
 
@@ -129,38 +151,38 @@ export const SettingsElement: VoidComponent = () => {
     })
 
     return (<>
-        <Tooltip anchor={settingsBtnRef()} text="Open settings" />
-        <Button 
+        <Tooltip anchor={button_settings_ref()} text="Open settings" />
+        <IconButton 
             classList={addClassListModule(CSSAnimation.btn_rotate_icon)}
-            focus={isSettingsMenuOpen()} 
-            ref={r => setSettingsBtnRef(r)} 
-            iconOnly 
-            onClick={(ev) => openPopover({
-                event: ev, 
+            focus={is_menu_settings_open()} 
+            ref={r => set_button_settings_ref(r)} 
+            onClick={(ev) => openMenu(ev, menu_settings_ref, {
                 anchor: ev[_currentTarget], 
-                popover: settingsMenuRef, 
                 padding: 0,
-                position: PopoverPosition[_CENTER_BOTTOM_TO_RIGHT]
-            })}>
-            <Icon code={0xEE0F}/>
-        </Button>
-        <Menu style={{width: '200px'}} ref={r => settingsMenuRef = r} onToggle={(v) => setIsSettingsMenuOpen(v)}>
+                position: FlyoutPosition[_centerBottomToRight]
+            })}
+            code={0xEE0F}
+        />
+        <Menu 
+            style={{width: '200px'}} 
+            ref={r => menu_settings_ref = r} 
+            onToggleOpen={(v) => setIs_menu_settings_open(v)}>
             <MenuHeader>Theme</MenuHeader>
             <MenuItem
                 selected={theme() == ThemeData[_light]}
-                leading={<Icon code={0xF2CD}/>}
+                iconCode={0xF2CD}
                 onClick={() => changeTheme(ThemeData[_light])}>
                 Light
             </MenuItem>
             <MenuItem
                 selected={theme() == ThemeData[_dark]}
-                leading={<Icon code={0xF2B3}/>}
+                iconCode={0xF2B3}
                 onClick={() => changeTheme(ThemeData[_dark])}>
                 Dark
             </MenuItem>
             <MenuItem
                 selected={theme() == ThemeData[_system]}
-                leading={<Icon code={0xE96D}/>}
+                iconCode={0xE96D}
                 onClick={() => changeTheme(ThemeData[_system])}>
                 System theme
             </MenuItem>
@@ -168,44 +190,47 @@ export const SettingsElement: VoidComponent = () => {
             <MenuHeader>Corner style</MenuHeader>
             <MenuItem
                 selected={corner() == CornerData[_sharp]}
-                leading={<Icon code={0xEA99}/>}
+                iconCode={0xEA99}
                 onClick={() => changeCorner(CornerData[_sharp])}>
                 Sharp
             </MenuItem>
             <MenuItem
                 selected={corner() == CornerData[_semiRound]}
-                leading={<Icon code={0xEEF7}/>}
+                iconCode={0xEEF7}
                 onClick={() => changeCorner(CornerData[_semiRound])}>
                 Semi round
             </MenuItem>
             <MenuItem
                 selected={corner() == CornerData[_round]}
-                leading={<Icon code={0xF044}/>}
+                iconCode={0xF044}
                 onClick={() => changeCorner(CornerData[_round])}>
                 Round
             </MenuItem>
             <MenuItem
                 selected={corner() == CornerData[_fullRound]}
-                leading={<Icon code={0xE408}/>}
+                iconCode={0xE408}
                 onClick={() => changeCorner(CornerData[_fullRound])}>
                 Full round
             </MenuItem>
             <MenuDivider/>
             <MenuHeader>Accent color</MenuHeader>
-            <MenuItem data-focus={toggleAttribute(isColorPickerMenuOpen())} onClick={(ev) => openPopover({
-                event: ev, 
-                anchor: ev[_currentTarget], 
-                popover: colorPickerMenuRef, 
-                position: PopoverPosition[_LEFT_CENTER_TO_BOTTOM]
-            })} leading={<Icon style={{color: color()}} filled code={0xE408}/>}>{color()}</MenuItem>
+            <MenuItem 
+                focus={is_colorPicker_open()} 
+                onClick={(ev) => openColorPicker(ev, colorPicker_ref, {
+                    anchor: ev[_currentTarget], 
+                    position: FlyoutPosition[_leftCenterToBottom]
+                })} 
+                leading={<Icon style={{color: color()}} filled code={0xE408}/>}>
+                {color()}
+            </MenuItem>
         </Menu>
         <ColorPicker 
             disabledColorControl 
             disabledOpacityControl 
             onSelectColor={v => changeColor(v)} 
-            ref={r => colorPickerMenuRef = r} 
-            onToggle={(v) => setIsColorPickerMenuOpen(v)} 
-            onClose={() => closePopover(settingsMenuRef)}
+            ref={r => colorPicker_ref = r} 
+            onToggleOpen={(v) => setIs_colorPicker_open(v)} 
+            onClose={() => closeMenu(menu_settings_ref)}
         />
     </>)
 }

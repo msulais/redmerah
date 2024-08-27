@@ -7,13 +7,14 @@ import '@/styles/fonts.scss'
 import '@/styles/variables.scss'
 import '@/styles/animations.scss'
 import '@/styles/index.scss'
+import type { HEXColor } from '@/types/color'
 
 type Props = {
     title?: string
     description?: string
     lang?: string
     theme?: ThemeData
-    accentColor?: string
+    accentColor?: HEXColor
     corner?: CornerData
 }
 
