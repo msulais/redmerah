@@ -4,7 +4,7 @@ import type { ComponentEvent } from '@/types/event'
 import { toggleAttribute } from '@/utils/attributes'
 import { clearTimeDelayed, clearTimeInterval, setTimeDelayed, setTimeInterval } from '@/utils/timeout'
 import { preventDefault } from '@/utils/event'
-import { _centerBottom, _centerCenterLeft, _autoHideLabel, _autoShowClearBtn, _autocomplete, _button, _changeValueTooltip, _checkValidity, _children, _classList, _clearTooltip, _compact, _currentTarget, _decreaseTooltip, _disabled, _dispatchEvent, _focus, _focused, _id, _increaseTooltip, _input, _isIntOnly, _isNaN, _labelAttr, _labelElement, _labelText, _leading, _length, _max, _maxLine, _messageText, _min, _minLine, _off, _onBlur, _onFinalValueChanged, _onFocus, _onInput, _onValueChanged, _placeholder, _px, _readOnly, _ref, _resize, _rows, _scrollHeight, _split, _step, _text, _trailing, _trim, _type, _value, _valuechange, _result, _observe, _disconnect, _width, _menuAttr, _usePortal, _style, _bottom, _clientX, _clientY, _left, _right, _top, _touches, _x, _y, _click, _onToggleOpen, _target, _contains } from '@/data/string'
+import { _centerBottom, _centerCenterLeft, _autoHideLabel, _autoShowClearBtn, _autocomplete, _button, _changeValueTooltip, _checkValidity, _children, _classList, _clearTooltip, _compact, _currentTarget, _decreaseTooltip, _disabled, _dispatchEvent, _focus, _focused, _id, _increaseTooltip, _input, _isIntOnly, _isNaN, _labelAttr, _labelElement, _labelText, _leading, _length, _max, _maxLine, _messageText, _min, _minLine, _off, _onBlur, _onFinalValueChanged, _onFocus, _onInput, _onValueChanged, _placeholder, _px, _readOnly, _ref, _resize, _rows, _scrollHeight, _split, _step, _text, _trailing, _trim, _type, _value, _valuechange, _result, _observe, _disconnect, _width, _menuAttr, _usePortal, _style, _bottom, _clientX, _clientY, _left, _right, _top, _touches, _x, _y, _click, _onToggleOpen, _target, _contains, _isArray } from '@/data/string'
 import { mathMax, numberParse } from '@/utils/math'
 import { FlyoutPosition } from '@/enums/position'
 import { getBoundingClientRect } from '@/utils/element'
@@ -502,11 +502,15 @@ const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
     const [width, setWidth] = createSignal<number>(0)
     const resultComponents = children(() => props[_result])
     let is_popover_open: boolean = false
+    let isFocus = false
+    let event: FocusEvent
     let label_ref: HTMLLabelElement
     let menu_ref: HTMLDivElement
 
     function $openPopover(ev: Event): void {
         if (is_popover_open) return;
+
+        if (Array[_isArray](resultComponents()) && (resultComponents() as unknown[])[_length] == 0) return;
 
         setWidth(getBoundingClientRect(label_ref)[_width])
         openPopover(ev, menu_ref, {
@@ -559,6 +563,15 @@ const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
         initEvents()
     })
 
+    createEffect(() => {
+        const result = resultComponents()
+        if (!isFocus && !event) return;
+        if (Array[_isArray](result) && (result as unknown[])[_length] == 0) {
+            return closePopover(menu_ref)
+        }
+        $openPopover(event)
+    })
+
     return (<>
         <TextField 
             labelAttr={{
@@ -570,6 +583,8 @@ const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
             }}
             onFocus={ev => {
                 $openPopover(ev)
+                isFocus = isFocus
+                event = ev
                 if (props[_onFocus]) props[_onFocus](ev)
             }}
             {...other}
