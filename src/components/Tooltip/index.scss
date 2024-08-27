@@ -1,6 +1,6 @@
-#tooltip {
+#text-tooltip {
     align-items: center;
-    border-radius: 8px;
+    border-radius: 4px;
     border: none;
     box-shadow: var(--elevation1);
     display: flex;
@@ -23,19 +23,12 @@
     transition-duration: .3s,   0s,  0s,        0s,      0s,  0s;
     transition-property: all, left, top, transform, padding, gap;
     white-space: pre-wrap;
+    position: fixed;
     z-index: 99;
+    transition-timing-function: var(--transition-spring-bounce);
 
-    [data-corner=sharp] & {
-        border-radius: 0;
-    }
-
-    [data-corner=semi-round] & {
-        border-radius: 4px;
-    }
-
-    [data-corner=full-round] & {
-        border-radius: 14px;
-    }
+    [data-corner=sharp] & { border-radius: 0 }
+    [data-corner=full-round] & { border-radius: 14px }
 
     &[data-open] {
         transition-duration: .3s, 0s, 0s;
@@ -45,26 +38,17 @@
     &[data-move] {
         opacity: 1;
     }
+}
 
-    &.tooltip-keyboard-shortcuts {
-        padding: 6px 6px 6px 12px;
-        gap: 4px;
+.rich-tooltip {
+    box-shadow: var(--elevation1);
 
-        &-only {
-            padding: 6px;
-            gap: 4px;
-        }
-
-        > span {
-            padding-right: 8px;
-        }
+    > div {
+        padding: 12px;
+        font-size: var(--font-size-xs);
     }
+}
 
-    &:is(.tooltip-keyboard-shortcuts, .tooltip-keyboard-shortcuts-only) > kbd {
-        border-radius: 2px;
-        background-color: rgba(var(--color-surface), var(--opacity3));
-        border: 1px solid rgba(var(--color-surface), var(--opacity2));
-        padding: 0 .4em;
-        box-shadow: 0 .15em 0 rgba(var(--color-surface), var(--opacity-inv5));
-    }
+.tooltip {
+    display: contents;
 }

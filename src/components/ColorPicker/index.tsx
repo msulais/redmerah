@@ -1,37 +1,37 @@
-import { type Component, type JSX, type ParentComponent, createMemo, createSignal, mergeProps, onCleanup, onMount, splitProps } from "solid-js"
+import { type Component, type ParentComponent, createEffect, createMemo, createSignal, mergeProps, onCleanup, onMount, splitProps } from "solid-js"
 import { createStore } from "solid-js/store"
-import { Portal } from "solid-js/web"
 
 import type { HEXColor, HSLColor, RGBColor } from "@/types/color"
-import type { ComponentEvent } from "@/types/event"
+import { _children, _disabledOpacityControl, _onSelectColor, _disabledColorControl, _ref, _classList, _color, _HEX, _toString, _padStart, _toUpperCase, _hue, _position, _opacity, _HSL, _RGB, _value, _toFixed, _join, _substring, _isDrag, _rect, _left, _top, _touchmove, _touches, _clientX, _clientY, _touchend, _noPointerEvent, _mousemove, _mouseup, _length, _replace, _split, _push, _isNaN, _isFinite, _trim, _currentTarget, _px, _tonal, _filled } from "@/data/string"
 import { hexToHSL, hexToRgb, hslToHex, hslToHsv, hslToRgb, hsvToHsl, rgbToHsl, testHexColorWithAlpha } from "@/utils/color"
-import { getAttribute, hasAttribute, removeAttribute, setAttribute, toggleAttribute } from "@/utils/attributes"
+import { setTimeDelayed } from "@/utils/timeout"
+import { removeAttribute, setAttribute, toggleAttribute } from "@/utils/attributes"
 import { getBoundingClientRect } from "@/utils/element"
-import { addEventListener, preventDefault, removeEventListener } from '@/utils/event'
-import { BodyAttributes, PopoverAttributes } from "@/enums/attributes"
-import { closePopover, initPopover } from "@/utils/popover"
-import { clearTimeDelayed, setTimeDelayed } from "@/utils/timeout"
-import { _body, _onCancel, _children, _disabledOpacityControl, _onToggle, _onSelectColor, _initialColor, _disabledColorControl, _ref, _onClose, _HEX, _round, _toString, _padStart, _toUpperCase, _hue, _position, _opacity, _HSL, _color, _RGB, _value, _parseFloat, _toFixed, _join, _substring, _isDrag, _max, _min, _rect, _left, _top, _touchmove, _touches, _clientX, _clientY, _touchend, _noPointerEvent, _mousemove, _mouseup, _length, _parseInt, _replace, _split, _push, _isNaN, _isFinite, _trim, _open, _observe, _disconnect, _currentTarget, _px, _filledTonal, _filled, _auto, _dispatchEvent, _ariaValueText, _valuechange } from "@/data/string"
+import { addEventListener, removeEventListener } from '@/utils/event'
+import { BodyAttributes } from "@/enums/attributes"
 import { getDocument, getDocumentBody } from "@/data/window"
 import { mathMax, mathMin, mathRound, numberParse } from "@/utils/math"
 
 import Button, { ButtonVariant } from "@/components/Button"
 import TextField from "@/components/TextField"
+import Modal, { 
+    type ModalProps, 
+    closeModal, 
+    openModal, 
+    repositionModal, 
+    focusModal 
+} from "@/components/Modal"
 import './index.scss'
 
 const COLOR_BOX_WIDTH: number = 260
 const COLOR_BOX_HEIGHT: number = 200
 const DEFAULT_HEX_COLOR: HEXColor = '#FF0000'
 
-type ColorPickerProps = Omit<JSX.DialogHtmlAttributes<HTMLDialogElement>, 'ref' | 'onToggle' | 'onClose' | 'onCancel'> & {
-    ref?: (el: HTMLDialogElement) => void
-    initialColor?: HEXColor
+type ColorPickerProps = ModalProps & {
+    color?: HEXColor
     disabledOpacityControl?: boolean
     disabledColorControl?: boolean
-    onToggle?: (value: boolean) => unknown
-    onClose?: (ev: ComponentEvent<Event, HTMLDialogElement>) => unknown
     onSelectColor?: (color: HEXColor) => unknown
-    onCancel?: (ev: ComponentEvent<Event, HTMLDialogElement>) => unknown
 }
 
 type Picker = {
@@ -62,42 +62,18 @@ type Picker = {
     }
 }
 
-enum ColorPickerEvents {
-    valuechange = 'valuechange'
-}
-
-enum ColorPickerAttributes {
-    value = 'data-value'
-}
-
-/**
- * I recommend using this function to change `<ColorPicker>` value
- * when not in open state.
- *
- * @param colorPicker
- * @param value
- */
-export function changeColorPickerValue(colorPicker: HTMLElement, value: HEXColor): void {
-    
-    // To avoid being called before the event initiated
-    setTimeDelayed(() => {
-        setAttribute(colorPicker, ColorPickerAttributes[_value], value)
-        const event = new Event(ColorPickerEvents[_valuechange], {bubbles: true})
-        colorPicker[_dispatchEvent](event)
-    })
-}
-
 const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
-    const $$props = mergeProps({initialColor: DEFAULT_HEX_COLOR}, $props)
+    const $$props = mergeProps({color: DEFAULT_HEX_COLOR, disabledColorControl: false}, $props)
     const [props, other] = splitProps($$props, [
-        _onCancel, _children, _disabledOpacityControl, _onToggle,
-        _onSelectColor, _initialColor, _disabledColorControl, _ref,
-        _onClose
+        _children, _disabledOpacityControl, _onSelectColor, 
+        _disabledColorControl, _ref, _classList, _color
     ])
     const [colorModel, setColorMode] = createSignal<'HEX' | 'RGB' | 'HSL'>(_HEX)
     const [hslColor, setHslColor] = createSignal<HSLColor>({h: 0, s: 1, l: 0.5})
     const [hexColor, setHexColor] = createSignal<HEXColor>(DEFAULT_HEX_COLOR)
     const [opacity, setOpacity] = createSignal<number>(100) // 0 - 100
+    const [color, setColor] = createSignal<HEXColor>(DEFAULT_HEX_COLOR)
+    const [isDisabledColorControl, setIsDisabledColorControl] = createSignal<boolean>(false)
     const [picker, setPicker] = createStore<Picker>({
         color: {
             rect: null,
@@ -122,23 +98,20 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
         ;
         return (hslToHex(hslColor()) + $opacity)[_toUpperCase]()
     })
-    const sliderSize = createMemo<number>(() => props[_disabledColorControl]? 260 : 144)
-    const hexColorCanvas = createMemo(() => hslToHex({h: hslColor().h, s: 1, l: 0.5}))
-    let opacityInputRef: HTMLInputElement | undefined
-    let colorInputRef!: HTMLInputElement
-    let colorPickerRef: HTMLDialogElement
+    const getSliderSize = createMemo<number>(() => props[_disabledColorControl]? 260 : 144)
+    const getHexColorForCanvas = createMemo(() => hslToHex({h: hslColor().h, s: 1, l: 0.5}))
+    let textfield_opacity_ref: HTMLInputElement | undefined
+    let textfield_color_ref!: HTMLInputElement
+    let colorPicker_ref: HTMLDialogElement
 
     function updatePosition(): void {
-        setPicker(_hue, _position, hslColor().h * sliderSize())
-        setPicker(_opacity, _position, (1 - opacity() / 100) * sliderSize())
+        setPicker(_hue, _position, hslColor().h * getSliderSize())
+        setPicker(_opacity, _position, (1 - opacity() / 100) * getSliderSize())
 
-        if (colorModel() == _HSL){
-            setPicker(_color, _position, {
-                left: COLOR_BOX_WIDTH * hslColor().s,
-                top: COLOR_BOX_HEIGHT * (1 - hslColor().l)
-            })
-            return
-        }
+        if (colorModel() == _HSL) return setPicker(_color, _position, {
+            left: COLOR_BOX_WIDTH * hslColor().s,
+            top: COLOR_BOX_HEIGHT * (1 - hslColor().l)
+        })
 
         const hsv = hslToHsv(hslColor())
         setPicker(_color, _position, {
@@ -148,9 +121,10 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
     }
 
     function changeColorModel(): void {
-        if (colorModel() == _RGB) setColorMode(_HSL)
-        else if (colorModel() == _HSL) setColorMode(_HEX)
-        else if (colorModel() == _HEX) setColorMode(_RGB)
+        const c = colorModel()
+        if (c == _RGB) setColorMode(_HSL)
+        else if (c == _HSL) setColorMode(_HEX)
+        else if (c == _HEX) setColorMode(_RGB)
 
         updateInputs()
         updatePosition()
@@ -161,20 +135,20 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 
         if (colorModel() == _RGB){
             const rgb = hslToRgb(hslColor())
-            colorInputRef[_value] = `${rgb.r}, ${rgb.g}, ${rgb.b}`
+            textfield_color_ref[_value] = `${rgb.r}, ${rgb.g}, ${rgb.b}`
         }
         else if (colorModel() == _HSL){
-            colorInputRef[_value] = [
+            textfield_color_ref[_value] = [
                 mathRound(hslColor().h * 360),
                 numberParse((hslColor().s * 100)[_toFixed](2)) + '%',
                 numberParse((hslColor().l * 100)[_toFixed](2)) + '%'
             ][_join](', ')
         }
         else if (colorModel() == _HEX) {
-            colorInputRef[_value] = `${getHexColor()[_substring](0, 7)}`
+            textfield_color_ref[_value] = `${getHexColor()[_substring](0, 7)}`
         }
 
-        if (opacityInputRef) opacityInputRef[_value] = opacity() + '%'
+        if (textfield_opacity_ref) textfield_opacity_ref[_value] = opacity() + '%'
     }
 
     function setPosition(clientX: number, clientY: number): void {
@@ -185,17 +159,17 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
         else if (picker[_hue][_isDrag]) setPicker(_hue, _position, mathMax(mathMin(props[_disabledColorControl]
             ? clientX - picker[_hue][_rect]![_left]
             : clientY - picker[_hue][_rect]![_top],
-        sliderSize()), 0))
+        getSliderSize()), 0))
         else if (picker[_opacity][_isDrag]) setPicker(_opacity, _position, mathMax(mathMin(props[_disabledColorControl]
             ? clientX - picker[_opacity][_rect]![_left]
             : clientY - picker[_opacity][_rect]![_top],
-        sliderSize()), 0))
+        getSliderSize()), 0))
 
         if (!(picker[_color][_isDrag] || picker[_hue][_isDrag] || picker[_opacity][_isDrag])) return
 
         updateInputs(() => {
             const hsl: HSLColor = {
-                h: picker[_hue][_position] / sliderSize(),
+                h: picker[_hue][_position] / getSliderSize(),
                 s: picker[_color][_position][_left] / COLOR_BOX_WIDTH,
                 l: 1 - picker[_color][_position][_top] / COLOR_BOX_HEIGHT
             }
@@ -212,77 +186,57 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
             }
 
             setHslColor(hsl)
-            setOpacity(mathRound(100 - (picker[_opacity][_position] / sliderSize() * 100)))
+            setOpacity(mathRound(100 - (picker[_opacity][_position] / getSliderSize() * 100)))
+        })
+    }
+
+    function onTouchMove(ev: TouchEvent): void {
+        setPosition(ev[_touches][0][_clientX], ev[_touches][0][_clientY])
+    }
+
+    function onTouchEnd(ev: TouchEvent): void {
+        setPicker(_color, _isDrag, false)
+        setPicker(_hue, _isDrag, false)
+        setPicker(_opacity, _isDrag, false)
+
+        // should be run last because <Modal> will mark this to close
+        // when mouse position outside
+        setTimeDelayed(() => {
+            removeAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
+        })
+    }
+
+    function onMouseMove(ev: MouseEvent): void {
+        setPosition(ev[_clientX], ev[_clientY])
+    }
+
+    function onMouseUp(ev: MouseEvent): void {
+        setPicker(_color, _isDrag, false)
+        setPicker(_hue, _isDrag, false)
+        setPicker(_opacity, _isDrag, false)
+
+        // should be run last because <Modal> will mark this to close
+        // when mouse position outside
+        setTimeDelayed(() => {
+            removeAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
         })
     }
 
     function initListener() {
-        addEventListener(getDocument(), _touchmove, (ev) => setPosition(
-            (ev as TouchEvent)[_touches][0][_clientX],
-            (ev as TouchEvent)[_touches][0][_clientY]
-        ))
-
-        addEventListener(getDocument(), _touchend, () => {
-            removeAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
-            setPicker(_color, _isDrag, false)
-            setPicker(_hue, _isDrag, false)
-            setPicker(_opacity, _isDrag, false)
-        })
-
-        addEventListener(getDocument(), _mousemove, ev => setPosition(
-            (ev as MouseEvent)[_clientX],
-            (ev as MouseEvent)[_clientY]
-        ))
-
-        addEventListener(getDocument(), _mouseup, () => {
-            removeAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
-            setPicker(_color, _isDrag, false)
-            setPicker(_hue, _isDrag, false)
-            setPicker(_opacity, _isDrag, false)
-        })
-
-        addEventListener(colorPickerRef, ColorPickerEvents[_valuechange], ev => {
-            const color = getAttribute(colorPickerRef, ColorPickerAttributes[_value]) ?? props[_initialColor]
-            testHexColorWithAlpha(color)
-            setHexColor(color as HEXColor)
-            initColor()
-        })
+        addEventListener<TouchEvent>(getDocument(), _touchmove, onTouchMove)
+        addEventListener<TouchEvent>(getDocument(), _touchend, onTouchEnd)
+        addEventListener<MouseEvent>(getDocument(), _mousemove, onMouseMove)
+        addEventListener<MouseEvent>(getDocument(), _mouseup, onMouseUp)
         
         onCleanup(() => {
-            removeEventListener(colorPickerRef, ColorPickerEvents[_valuechange], ev => {
-                const color = getAttribute(colorPickerRef, ColorPickerAttributes[_value]) ?? props[_initialColor]
-                testHexColorWithAlpha(color)
-                setHexColor(color as HEXColor)
-                initColor()
-            })
-
-            removeEventListener(getDocument(), _touchmove, (ev) => setPosition(
-                (ev as TouchEvent)[_touches][0][_clientX],
-                (ev as TouchEvent)[_touches][0][_clientY]
-            ))
-
-            removeEventListener(getDocument(), _touchend, () => {
-                removeAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
-                setPicker(_color, _isDrag, false)
-                setPicker(_hue, _isDrag, false)
-                setPicker(_opacity, _isDrag, false)
-            })
-
-            removeEventListener(getDocument(), _mousemove, ev => setPosition(
-                (ev as MouseEvent)[_clientX],
-                (ev as MouseEvent)[_clientY]
-            ))
-
-            removeEventListener(getDocument(), _mouseup, () => {
-                removeAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
-                setPicker(_color, _isDrag, false)
-                setPicker(_hue, _isDrag, false)
-                setPicker(_opacity, _isDrag, false)
-            })
+            removeEventListener<TouchEvent>(getDocument(), _touchmove, onTouchMove)
+            removeEventListener<TouchEvent>(getDocument(), _touchend, onTouchEnd)
+            removeEventListener<MouseEvent>(getDocument(), _mousemove, onMouseMove)
+            removeEventListener<MouseEvent>(getDocument(), _mouseup, onMouseUp)
         })
     }
 
-    function initColor(): void {
+    function updateColor(): void {
         testHexColorWithAlpha(hexColor())
         setHslColor(hexToHSL(hexColor()[_substring](0, 7)))
 
@@ -389,34 +343,35 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
     }
 
     onMount(() => {
-        setHexColor(props[_initialColor] as HEXColor)
         initListener()
-        initColor()
+    })
 
-        let timeout: null | number = null
-        const observer = initPopover(colorPickerRef)
-        const isOpenObserver = new MutationObserver(() => {
-            if (timeout) clearTimeDelayed(timeout)
+    createEffect(() => {
+        const $isDisabledColorControl = props[_disabledColorControl]
+        const $$isDisabledColorControl = isDisabledColorControl()
+        const $hexColor = hexColor()
+        const $color = props[_color]
+        const $$color = color()
 
-            // [data-open] is not the only attribute that trigger this callback
-            timeout = setTimeDelayed(() => {
-                const isOpen = hasAttribute(colorPickerRef, PopoverAttributes[_open])
-                if (props[_onToggle]) props[_onToggle](isOpen)
-                timeout = null
-            }, 50)
-        })
-        isOpenObserver[_observe](colorPickerRef, {attributes: true})
-        onCleanup(() => {
-            if (observer) observer[_disconnect]();
-            isOpenObserver[_disconnect]();
-        })
+        if ($isDisabledColorControl != $$isDisabledColorControl) {
+            let color = hslToHex({...hexToHSL($hexColor), l: 1.0})
+            setHexColor(color)
+            updateColor()
+            setIsDisabledColorControl($isDisabledColorControl)
+        }
+        if ($color != $$color) {
+            testHexColorWithAlpha($color)
+            setColor($color)
+            setHexColor($$color)
+            updateColor()
+        }
     })
 
     const Control: Component = () => {
         return (<div class="color-picker-control" data-hide-color={toggleAttribute(props[_disabledColorControl])}>
             <div
                 class="color-picker-color"
-                style={{'--color-picker-color': hexColorCanvas()}}
+                style={{'--color-picker-color': getHexColorForCanvas()}}
                 onMouseDown={(ev) => {
                     setPicker(_color, _isDrag, true)
                     setPicker(_color, _rect, getBoundingClientRect(ev[_currentTarget]))
@@ -453,7 +408,7 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
                             setPicker(_hue, _position, mathMax(mathMin(props[_disabledColorControl]
                                 ? ev[_clientX] - picker[_hue][_rect]![_left]
                                 : ev[_clientY] - picker[_hue][_rect]![_top],
-                            sliderSize()), 0))
+                            getSliderSize()), 0))
                         }}
                         onMouseDown={(ev) => {
                             setPicker(_hue, _isDrag, true)
@@ -480,7 +435,7 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
                             setPicker(_opacity, _position, mathMax(mathMin(props[_disabledColorControl]
                                 ? ev[_clientX] - picker[_opacity][_rect]![_left]
                                 : ev[_clientY] - picker[_opacity][_rect]![_top],
-                            sliderSize()), 0))
+                            getSliderSize()), 0))
                         }}
                         onTouchStart={(ev) => {
                             setPicker(_opacity, _isDrag, true)
@@ -507,7 +462,7 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
     const Input: Component = () => {
         return (<div class="color-picker-input" data-hide-opacity={toggleAttribute(props[_disabledOpacityControl])}>
             <TextField
-                ref={r => colorInputRef = r}
+                ref={r => textfield_color_ref = r}
                 onInput={(ev) => onColorInputChange(ev[_currentTarget][_value])}
                 onBlur={() => updateInputs()}
                 labelText={colorModel() == _RGB? _RGB : colorModel() == _HEX? 'Hex' : _HSL}
@@ -516,7 +471,7 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
             <TextField
                 onInput={(ev) => onOpacityInputChange(ev[_currentTarget][_value])}
                 onBlur={() => updateInputs()}
-                ref={r => opacityInputRef = r}
+                ref={r => textfield_opacity_ref = r}
                 labelText="Opacity"
                 value="100%"
                 placeholder="0-100%"
@@ -526,12 +481,12 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 
     const Actions: Component = () => {
         return (<div class="color-picker-actions">
-            <Button onClick={changeColorModel} variant={ButtonVariant[_filledTonal]}>{colorModel()}</Button>
+            <Button onClick={changeColorModel} variant={ButtonVariant[_tonal]}>{colorModel()}</Button>
             <Button
-                variant={ButtonVariant[_filledTonal]}
+                variant={ButtonVariant[_tonal]}
                 onClick={() => {
-                    initColor()
-                    closePopover(colorPickerRef)
+                    updateColor()
+                    closeModal(colorPicker_ref)
                 }}>
                 Cancel
             </Button>
@@ -539,40 +494,38 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
                 variant={ButtonVariant[_filled]}
                 onClick={() => {
                     if (props[_onSelectColor]) props[_onSelectColor](getHexColor() as HEXColor)
-                    closePopover(colorPickerRef)
+                        closeModal(colorPicker_ref)
                 }}>
                 Select
             </Button>
         </div>)
     }
 
-    return (<Portal><dialog
+    return (<Modal
         ref={r => {
-            colorPickerRef = r
+            colorPicker_ref = r
             if (props[_ref]) props[_ref](r)
         }}
-        // TODO: implement onKeyDown
-        class="color-picker"
-        data-popover
-        data-dismiss={_auto}
-        onClose={(ev) => {
-            if (props[_onClose]) props[_onClose](ev)
-            if (props[_onToggle]) props[_onToggle](false)
-        }}
-        onCancel={(ev) => {
-            preventDefault(ev)
-            if (props[_onCancel]) props[_onCancel](ev)
-            if (props[_onToggle]) props[_onToggle](false)
-            closePopover(ev[_currentTarget])
+        classList={{
+            'color-picker': true,
+            ...props[_classList]
         }}
         {...other}>
-        <div>
-            <Control/>
-            <Input/>
-            <div class="color-picker-content">{ props[_children] }</div>
-            <Actions/>
-        </div>
-    </dialog></Portal>)
+        <Control/>
+        <Input/>
+        <div class="color-picker-content">{ props[_children] }</div>
+        <Actions/>
+    </Modal>)
 }
 
+export {
+    ColorPicker,
+    closeModal as closeColorPicker,
+    openModal as openColorPicker,
+    repositionModal as repositionColorPicker,
+    focusModal as focusColorPicker
+}
+export type {
+    ColorPickerProps,
+}
 export default ColorPicker

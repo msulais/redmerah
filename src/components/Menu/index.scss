@@ -1,127 +1,13 @@
-.menu {
-    background-color: rgba(var(--color-surface), var(--opacity-inv1));
-    backdrop-filter: blur(64px);
-    border: 1px solid rgba(var(--color-on-surface), var(--opacity3));
-    border-radius: 12px;
+:is(.modal,.popover).menu {
     box-shadow: var(--elevation1);
-    left: 0;
-    max-height: calc(100dvh - 16px);
-    max-width: calc(100% - 16px);
-    opacity: 0;
-    outline: none;
-    overflow: hidden;
-    top: 0;
-
-    [data-corner=sharp] & {border-radius: 0}
-    [data-corner=semi-round] & {border-radius: 8px}
-    [data-corner=full-round] & {border-radius: 20px}
-
-    [data-theme=dark] & {
-        background-color: rgba(36, 36, 36, var(--opacity-inv1));
-        border: 1px solid rgba(0, 0, 0, var(--opacity-inv5));
-    }
-    [data-theme=system] & {
-        @media (prefers-color-scheme: dark) {
-            background-color: rgba(36, 36, 36, var(--opacity-inv1));
-            border: 1px solid rgba(0, 0, 0, var(--opacity-inv5));
-        }
-    }
-
-    &::backdrop {
-        background-color: transparent;
-    }
-
-    &[data-open] {
-        transition-duration: .3s;
-        transition-property: transform, opacity;
-    }
-
-    &[data-move] {
-        opacity: 1;
-        transition-duration: .3s;
-        transition-property: transform, opacity, top, left;
-    }
-
-    &[data-is-dragging] {
-        transition-duration: .3s;
-        transition-property: transform, opacity;
-    }
-
-    &[data-focus] > div {
-        outline-color: rgb(var(--color-accent));
-        outline-width: 4px;
-        outline-offset: -4px;
-        animation: flyout-focus 1s;
-    }
-
+    
     > div {
-        max-height: inherit;
-        max-width: 100%;
-        overflow: auto;
-        width: 100%;
         padding: 4px 0;
         display: flex;
         flex-direction: column;
         gap: 4px;
         align-items: stretch;
         justify-content: flex-start;
-        border-radius: inherit;
-
-        &[data-dragable] {
-            padding-top: 12px;
-        }
-    }
-}
-
-.menu-divider {
-    min-height: 1px;
-    max-height: 1px;
-    min-width: 100%;
-    background-color: rgba(var(--color-on-surface), var(--opacity2));
-}
-
-.menu-drag-handle {
-    --menu-drag-handle-border-radius: 16px;
-    --menu-drag-handle-width: calc(100% - calc(calc(var(--menu-drag-handle-border-radius) * 2) + 32px));
-    --menu-drag-handle-width-hover: calc(100% - calc(calc(var(--menu-drag-handle-border-radius) * 2) + 8px));
-
-    width: min(64px, var(--menu-drag-handle-width));
-    height: 4px;
-    position: absolute;
-    top: 4px;
-    left: 50%;
-    transform: translateX(-50%);
-    box-shadow: var(--elevation1);
-    z-index: 5;
-    border-radius: 999px;
-    background-color: rgb(var(--color-accent));   
-    transition-duration: .3s;
-
-    [data-corner=sharp] & {
-        --menu-drag-handle-border-radius: 0px;
-        border-radius: 0px;
-    }
-    
-    [data-corner=semi-round] & {
-        --menu-drag-handle-border-radius: 8px;
-    }
-    
-    [data-corner=full-round] & {
-        --menu-drag-handle-border-radius: 20px;
-    }
-
-    @media (hover: hover) {
-        &:hover {
-            cursor: grab;
-            width: min(88px, var(--menu-drag-handle-width-hover));
-            height: 8px;
-        }
-    }
-    
-    &:active {
-        cursor: grabbing;
-        height: 8px;
-        width: min(80px, calc(var(--menu-drag-handle-width-hover) - 16px));
     }
 }
 
@@ -152,14 +38,6 @@
         white-space: nowrap;
     }
 
-    @media (hover: none) {
-        min-height: 40px !important;
-
-        [data-corner=full-round] & {
-            border-radius: 20px !important;
-        }
-    }
-
     &[data-trailing]{
         > .btn-layer {
             width: 100%;
@@ -167,13 +45,13 @@
     }
 }
 
-.menu-item-trailing-keyboard-shortcut {
+.menu-item-trailing-shortcut {
     display: flex;
     gap: 4px;
     padding: 6px 0;
 }
 
-.menu-nested {
+.popover.sub-menu {
     width: 100%;
 
     > .menu-item {

@@ -1,4 +1,4 @@
-import { type JSX, Show, splitProps, type VoidComponent } from "solid-js"
+import { type JSX, splitProps, type VoidComponent } from "solid-js"
 
 import { toggleAttribute } from '@/utils/attributes'
 import { _children, _filled, _inline, _fromCharCode, _charCodeAt, _code } from "@/data/string"

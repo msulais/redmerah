@@ -8,22 +8,22 @@ type HasEventElement =
     FileReader
 
 
-export function addEventListener(
+export function addEventListener<E = Event>(
         element: HasEventElement, 
         type: string, 
-        listener: EventListenerOrEventListenerObject, 
+        listener: (ev: E) => unknown, 
         options?: boolean | AddEventListenerOptions | undefined
     ): void {
-    return element[_addEventListener](type, listener, options)
+    return element[_addEventListener](type, listener as any, options)
 }
 
-export function removeEventListener(
+export function removeEventListener<E = Event>(
         element: HasEventElement, 
         type: string, 
-        listener: EventListenerOrEventListenerObject, 
+        listener: (ev: E) => unknown, 
         options?: boolean | AddEventListenerOptions | undefined
     ): void {
-    return element[_removeEventListener](type, listener, options)
+    return element[_removeEventListener](type, listener as any, options)
 }
 
 export function stopImmediatePropagation(event: Event): void {

@@ -1,73 +1,51 @@
-import { type JSX, type ParentComponent, Show, mergeProps, onMount, splitProps, createSignal, children } from "solid-js"
-import { Portal } from "solid-js/web"
+import { type JSX, type ParentComponent, splitProps, children } from "solid-js"
 
-import type { ComponentEvent } from "@/types/event"
-import { preventDefault } from "@/utils/event"
-import { initFlyout } from "@/utils/flyout"
-import { closeModal, focusModal } from "@/utils/modal"
-import { _onCancel, _header, _dismiss, _actions, _children, _showCloseButton, _justifyActions, _ref, _manual, _auto, _closeTooltip, _onKeyDown, _Escape, _altKey, _ctrlKey, _key, _metaKey, _shiftKey } from "@/data/string"
+import { _header, _actions, _children, _classList } from "@/data/string"
 import { toggleAttribute } from "@/utils/attributes"
 
+import { Modal, type ModalProps, openModal, closeModal, focusModal } from "@/components/Modal"
 import './index.scss'
 
-type DialogProps = Omit<JSX.DialogHtmlAttributes<HTMLDialogElement>, 'ref' | 'onCancel' | 'onKeyDown'> & {
-    header?: JSX.Element
-    actions?: JSX.Element
-    dismiss?: 'manual' | 'auto'
-    onKeyDown?: (ev: ComponentEvent<KeyboardEvent, HTMLDialogElement>) => unknown
-    ref?: (el: HTMLDialogElement) => unknown
-    onCancel?: (ev: ComponentEvent<Event, HTMLDialogElement>) => unknown
+function openDialog(ev: Event, dialog: HTMLDialogElement, options?: {
+    inputAutoFocus?: boolean
+    important?: boolean
+}): void {
+    openModal(ev, dialog, {
+        inputAutoFocus: options?.inputAutoFocus,
+        important: options?.important
+    })
 }
 
-const Dialog: ParentComponent<DialogProps> = (_props) => {
-    const __props = mergeProps({dismiss: _auto}, _props)
-    const [props, other] = splitProps(__props, [
-        _onCancel, _header, _dismiss,
-        _actions, _children, _ref,
-        _onKeyDown
+type DialogProps = ModalProps & {
+    header?: JSX.Element
+    actions?: JSX.Element
+}
+const Dialog: ParentComponent<DialogProps> = ($props) => {
+    const [props, other] = splitProps($props, [
+        _header, _actions, _children, _classList
     ])
     const actionsComponent = children(() => props[_actions])
-    let modalRef: HTMLDialogElement
 
-    onMount(() => initFlyout())
-
-    return (<Portal><dialog
-        class="dialog"
-        ref={r => {
-            modalRef = r
-            if (props[_ref]) props[_ref](r)
-        }}
-        data-modal
-        data-dismiss={props[_dismiss]}
-        onKeyDown={(ev) => {
-            if (props[_onKeyDown]) props[_onKeyDown](ev)
-            if (ev[_key] == _Escape 
-                && !ev[_altKey] 
-                && !ev[_ctrlKey] 
-                && !ev[_metaKey] 
-                && !ev[_shiftKey]
-                && props[_dismiss] == _manual
-            ){ 
-                focusModal(modalRef)
-                preventDefault(ev)
-            }
-        }}
-        onCancel={(ev) => {
-            if (props[_onCancel]) props[_onCancel](ev)
-            if (props[_dismiss] == _manual) {
-                preventDefault(ev)
-                return
-            }
-            closeModal(modalRef)
+    return (<Modal
+        classList={{
+            dialog: true, 
+            ...props[_classList]
         }}
         data-actions={toggleAttribute(actionsComponent())}
         {...other}>
-        <div>
-            <div class="dialog-header">{props[_header]}</div>
-            <div class="dialog-content">{props[_children]}</div>
-            <div class="dialog-actions">{actionsComponent()}</div>
-        </div>
-    </dialog></Portal>)
+        <div class="dialog-header">{props[_header]}</div>
+        <div class="dialog-content">{props[_children]}</div>
+        <div class="dialog-actions">{actionsComponent()}</div>
+    </Modal>)
 }
 
+export {
+    Dialog, 
+    openDialog, 
+    closeModal as closeDialog, 
+    focusModal as focusDialog
+}
+export type {
+    DialogProps
+}
 export default Dialog

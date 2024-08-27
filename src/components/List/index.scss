@@ -5,12 +5,16 @@
     align-items: center;
     justify-content: space-between;
     padding: 4px 0;
-    border-radius: 8px;
     width: 100%;
+    border-radius: 8px;
     
     [data-corner=sharp] & {border-radius: 0}
     [data-corner=semi-round] & {border-radius: 4px}
     [data-corner=full-round] & {border-radius: 20px}
+    
+    &[data-trailing] {
+        [data-corner=full-round] & {border-radius: 25px}
+    }
 
     &[data-compact] {
         gap: 8px;
@@ -40,7 +44,7 @@
 }
 
 .list-subtitle {
-    color: rgba(var(--color-on-surface), var(--opacity-inv2));
+    color: rgba(var(--color-on-surface), var(--opacity-inv3));
     font-size: var(--font-size-xs);
     text-align: start;
     width: 100%;

@@ -1,84 +1,53 @@
-import { type Component, type JSX, type ParentComponent, Show, createSignal, createUniqueId, mergeProps, onCleanup, onMount, splitProps, type VoidComponent, For, children } from "solid-js"
-import { Portal } from "solid-js/web"
+import { type Component, type JSX, type ParentComponent, Show, mergeProps, splitProps, type VoidComponent, For, children, createUniqueId } from "solid-js"
 
 import type { ComponentEvent } from "@/types/event"
-import { preventDefault, stopImmediatePropagation, stopPropagation } from "@/utils/event"
-import { clearTimeDelayed, setTimeDelayed } from "@/utils/timeout"
-import { closePopover, initPopover, openPopover } from "@/utils/popover"
-import { getBoundingClientRect, querySelector, setStyleProperty } from "@/utils/element"
-import { BodyAttributes, PopoverAttributes } from "@/enums/attributes"
-import { hasAttribute, removeAttribute, setAttribute, toggleAttribute } from "@/utils/attributes"
-import { PopoverPosition, Position } from "@/enums/position"
-import { _checked, _selected, _leading, _children, _trailing, _subtitle, _indent, _classList, _RIGHT_CENTER_TO_BOTTOM, _disconnect, _dismiss, _id, _item, _level, _manual, _observe, _onCancel, _onClick, _onClose, _onToggle, _open, _ref, _wrapperAttr, _auto, _shortcuts, _currentTarget, _none, _left, _filledTonal, _dragable, _clientX, _clientY, _color, _hue, _initialColor, _isDrag, _mousemove, _mouseup, _noPointerEvent, _opacity, _touchend, _touches, _touchmove, _value, _valuechange, _top, _px, _anchorId, _body, _bottom, _clientWidth, _height, _innerHeight, _right, _width, _focus, _iconCode } from "@/data/string"
+import { getAttribute, toggleAttribute } from "@/utils/attributes"
+import { FlyoutPosition, Position } from "@/enums/position"
+import { _checked, _selected, _leading, _children, _trailing, _subtitle, _indent, _classList, _rightCenterToBottom, _disconnect, _dismiss, _id, _item, _level, _manual, _observe, _onCancel, _onClick, _onClose, _onToggle, _open, _ref, _wrapperAttr, _auto, _shortcuts, _currentTarget, _none, _left, _tonal, _dragable, _clientX, _clientY, _color, _hue, _initialColor, _isDrag, _mousemove, _mouseup, _noPointerEvent, _opacity, _touchend, _touches, _touchmove, _value, _valuechange, _top, _px, _anchorId, _body, _bottom, _clientWidth, _height, _innerHeight, _right, _width, _focus, _iconCode, _compact, _variant, _indicatorPosition, _onMouseEnter, _onMouseLeave, _class, _disableScale, _desktopCompact, _gap, _position, _padding, _allowHideAnchor } from "@/data/string"
 import { isVarHasValue } from "@/utils/data"
-import { getDocument, getDocumentBody, getWindow } from "@/data/window"
-import { addEventListener, removeEventListener } from "@/utils/event"
+import { querySelectorAll } from "@/utils/element"
+import { stopImmediatePropagation, stopPropagation } from "@/utils/event"
+import { clearTimeDelayed, setTimeDelayed, timeout } from "@/utils/timeout"
+import { numberParse } from "@/utils/math"
 
+import Divider, { type DividerProps } from "@/components/Divider"
 import Icon from "@/components/Icon"
-import Button, { ButtonVariant, LinkButton } from "@/components/Button"
+import Button, { ButtonVariant, LinkButton, type ButtonProps, type LinkButtonProps } from "@/components/Button"
+import Popover, { type PopoverProps, closePopover, openPopover, repositionPopover } from "@/components/Popover"
+import Modal, { type ModalProps, closeModal, focusModal, openModal, repositionModal } from "@/components/Modal"
 import './index.scss'
 
-export type MenuProps = Omit<JSX.DialogHtmlAttributes<HTMLDialogElement>, 'ref' | 'onToggle' | 'onClose' | 'onCancel'> & {
-    dismiss?: 'manual' | 'auto'
-    dragable?: boolean
-    ref?: (el: HTMLDialogElement) => unknown
-    onToggle?: (value: boolean) => unknown
-    onClose?: (ev: ComponentEvent<Event, HTMLDialogElement>) => unknown
-    onCancel?: (ev: ComponentEvent<Event, HTMLDialogElement>) => unknown
-}
-
-type NestedMenuProps = Omit<JSX.HTMLAttributes<HTMLDivElement>, 'onClick' | 'ref' | 'onToggle'> & {
-    level: number
-    item: JSX.Element
-    onClick?: (ev: ComponentEvent<MouseEvent, HTMLDivElement>) => unknown
-    ref?: (el: HTMLDivElement) => unknown
-    onToggle?: (value: boolean) => unknown
-    wrapperAttr?: JSX.HTMLAttributes<HTMLDivElement>
-}
-
-type MenuItemProps = JSX.ButtonHTMLAttributes<HTMLButtonElement> & {
-    leading?: JSX.Element
-    trailing?: JSX.Element
-    focus?: boolean
-    selected?: boolean
-    checked?: boolean
-    iconCode?: number
-}
-
-type MenuItemLinkProps = JSX.AnchorHTMLAttributes<HTMLAnchorElement> & {
-    leading?: JSX.Element
-    trailing?: JSX.Element
-    openInNewTab?: boolean
-    checked?: boolean
-    selected?: boolean
-    iconCode?: number
-}
-
-type MenuItemTrailingKeyboardShortcutProps = JSX.HTMLAttributes<HTMLDivElement> & {
+type MenuItemTrailingShortcutProps = JSX.HTMLAttributes<HTMLDivElement> & {
     shortcuts: string[]
 }
-
-export const MenuItemTrailingKeyboardShortcut: VoidComponent<MenuItemTrailingKeyboardShortcutProps> = ($props) => {
+const MenuItemTrailingShortcut: VoidComponent<MenuItemTrailingShortcutProps> = ($props) => {
     const [props, other] = splitProps($props, [_shortcuts])
-    return (<div class="menu-item-trailing-keyboard-shortcut" {...other}>
+    return (<div class="menu-item-trailing-shortcut" {...other}>
         <For each={props[_shortcuts]}>{s => <kbd>{s}</kbd>}</For>
     </div>)
 }
 
-export const MenuItem: ParentComponent<MenuItemProps> = ($props) => {
+type MenuItemProps = ButtonProps & {
+    leading?: JSX.Element
+    trailing?: JSX.Element
+    checked?: boolean
+    iconCode?: number
+}
+const MenuItem: ParentComponent<MenuItemProps> = ($props) => {
     const [props, other] = splitProps($props, [
-        _checked, _selected, _leading, _focus, _children, 
-        _trailing, _classList, _iconCode
+        _checked, _selected, _leading, _children, 
+        _trailing, _classList, _iconCode, _variant, 
+        _indicatorPosition, _disableScale, 
+        _desktopCompact
     ])
     const trailingComponent = children(() => props[_trailing])
 
     return (<Button 
-        variant={props[_selected]? ButtonVariant[_filledTonal] : undefined} 
+        variant={props[_variant] ?? (props[_selected]? ButtonVariant[_tonal] : props[_variant])} 
         selected={props[_selected]} 
-        focus={props[_focus]}
-        indicatorPosition={isVarHasValue(props[_selected])? Position[_left] : undefined} 
-        disableScale={trailingComponent()? true : undefined} 
-        compact 
+        indicatorPosition={props[_indicatorPosition] ?? Position[_left]} 
+        disableScale={props[_disableScale] ?? (trailingComponent()? true : undefined)}
+        desktopCompact={props[_desktopCompact] ?? true}
         data-trailing={toggleAttribute(trailingComponent())}
         classList={{'menu-item': true, ...props[_classList]}} 
         {...other}>
@@ -105,19 +74,27 @@ export const MenuItem: ParentComponent<MenuItemProps> = ($props) => {
     </Button>)
 }
 
-export const MenuItemLink: ParentComponent<MenuItemLinkProps> = ($props) => {
+type LinkMenuItemProps = LinkButtonProps & {
+    leading?: JSX.Element
+    trailing?: JSX.Element
+    checked?: boolean
+    iconCode?: number
+}
+const LinkMenuItem: ParentComponent<LinkMenuItemProps> = ($props) => {
     const [props, other] = splitProps($props, [
-        _leading, _checked, _selected, _children, _trailing, 
-        _classList, _iconCode
+        _checked, _selected, _leading, _children, 
+        _trailing, _classList, _iconCode, _variant, 
+        _indicatorPosition, _disableScale, 
+        _desktopCompact
     ])
     const trailingComponent = children(() => props[_trailing])
 
     return (<LinkButton 
-        variant={props[_selected]? ButtonVariant[_filledTonal] : undefined} 
+        variant={props[_variant] ?? (props[_selected]? ButtonVariant[_tonal] : props[_variant])} 
         selected={props[_selected]} 
-        indicatorPosition={isVarHasValue(props[_selected])? Position[_left] : undefined} 
-        disableScale={trailingComponent()? true : undefined} 
-        compact 
+        indicatorPosition={props[_indicatorPosition] ?? Position[_left]} 
+        disableScale={props[_disableScale] ?? (trailingComponent()? true : undefined)} 
+        desktopCompact={props[_desktopCompact] ?? true}
         data-trailing={toggleAttribute(trailingComponent())}
         classList={{'menu-item': true, ...props[_classList]}} 
         {...other}>
@@ -144,277 +121,158 @@ export const MenuItemLink: ParentComponent<MenuItemLinkProps> = ($props) => {
     </LinkButton>)
 }
 
-export const MenuIndent: Component<JSX.HTMLAttributes<HTMLDivElement>> = (props) => {
+const MenuIndent: Component<JSX.HTMLAttributes<HTMLDivElement>> = (props) => {
     return (<div class="menu-indent" {...props}/>)
 }
 
-export const MenuDivider: Component<JSX.HTMLAttributes<HTMLDivElement>> = (props) => {
-    return (<div class="menu-divider" {...props}/>)
+const MenuDivider: Component<DividerProps> = (props) => {
+    return (<Divider {...props}/>)
 }
 
-export const MenuHeader: ParentComponent<JSX.HTMLAttributes<HTMLDivElement>> = ($props) => {
-    const _children = 'children';
-
-    const [props, other] = splitProps($props, [_children])
-    return (<div class="menu-header" {...other}>{props[_children]}</div>)
+const MenuHeader: ParentComponent<JSX.HTMLAttributes<HTMLDivElement>> = (props) => {
+    return (<div class="menu-header" {...props}/>)
 }
 
-export const NestedMenu: ParentComponent<NestedMenuProps> = ($props) => {
+type SubMenuProps = Omit<PopoverProps, 'onClick'> & {
+    level: number
+    item: JSX.Element
+    gap?: number
+    position?: FlyoutPosition
+    padding?: number
+    dragable?: boolean
+    allowHideAnchor?: boolean
+    onClick?: (ev: ComponentEvent<MouseEvent, HTMLDivElement>) => unknown
+    wrapperAttr?: Omit<JSX.HTMLAttributes<HTMLDivElement>, 'children' | 'ref' | 'onClick' | 'onMouseEnter' | 'onMouseLeave'> & {
+        ref?: (el: HTMLDivElement) => unknown
+        onClick?: (ev: ComponentEvent<MouseEvent, HTMLDivElement>) => unknown
+        onMouseEnter?: (ev: ComponentEvent<MouseEvent, HTMLDivElement>) => unknown
+        onMouseLeave?: (ev: ComponentEvent<MouseEvent, HTMLDivElement>) => unknown
+    }
+}
+const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
     const $$props = mergeProps({id: createUniqueId()}, $props)
     const [props, other] = splitProps($$props, [
-        _level, _item, _children, _onClick,
-        _onToggle, _wrapperAttr, _id, _ref
+        _classList, _level, _item, _wrapperAttr, 
+        _id, _onClick, _ref, _gap, _position,
+        _padding, _dragable, _allowHideAnchor
     ])
-    const [timeoutId, setTimeoutId] = createSignal<number | null>(null)
-    let nestedMenuRef!: HTMLDivElement
-    let anchorRef!: HTMLDivElement
+    let timeoutId: number | null = null
+    let div_ref: HTMLDivElement
+    let popover_ref: HTMLDivElement
 
     function cancelTimeout(): void {
-        if (timeoutId() == null) return
-        clearTimeDelayed(timeoutId()!)
-        setTimeoutId(null)
+        if (timeoutId == null) return;
+
+        clearTimeDelayed(timeoutId)
+        timeoutId = null
     }
 
-    async function openMenu(ev: Event): Promise<void> {
+    async function open(ev: Event): Promise<void> {
+        let isAnySubMenuOpen = false
+        for (const submenu of querySelectorAll(`.sub-menu>.menu[data-level]:not([id="${props[_id]}"]):popover-open`)) {
+            const level: number = numberParse(getAttribute(submenu, 'data-level')!, true)
+            if (level < props[_level]) continue;
 
-        // close other opened nested menu 
-        const popover = querySelector(`.menu[popover][data-level="${props[_level]}"][${PopoverAttributes[_open]}]:not([id="${props[_id]}"])`)
-        if (popover) {
-            await closePopover(popover)
+            isAnySubMenuOpen = true
+            closePopover(submenu as HTMLDivElement)
         }
+        if (isAnySubMenuOpen) await timeout(300)
 
-        openPopover({
-            event: ev, 
-            popover: nestedMenuRef, 
-            anchor: anchorRef,
-            position: PopoverPosition[_RIGHT_CENTER_TO_BOTTOM], 
-            gap: -8, 
-            padding: 4
+        openPopover(ev, popover_ref, {
+            anchor: div_ref, 
+            position: props[_position] ?? FlyoutPosition[_rightCenterToBottom],
+            gap: props[_gap] ?? -8, 
+            padding: props[_padding] ?? 4,
+            dragable: props[_dragable],
+            allowHideAnchor: props[_allowHideAnchor]
         })
     }
 
-    onMount(() => {
-        let timeout: null | number = null
-        const observer = initPopover(nestedMenuRef)
-        const isOpenObserver = new MutationObserver(() => {
-            if (timeout) clearTimeDelayed(timeout)
-            
-            // [data-open] is not the only attribute that trigger this callback
-            timeout = setTimeDelayed(() => {
-                const isOpen = hasAttribute(nestedMenuRef, PopoverAttributes[_open])
-                if (props[_onToggle]) props[_onToggle](isOpen)
-            }, 50)
-        })
-        isOpenObserver[_observe](nestedMenuRef, {attributes: true})
-        onCleanup(() => {
-            if (observer) observer[_disconnect]()
-            isOpenObserver[_disconnect]()
-        })
-    })
-
-    return (<div
-        class="menu-nested"
-        ref={(r) => anchorRef = r}
+    return (<div 
+        class={"sub-menu" + (props[_wrapperAttr] && props[_wrapperAttr][_class] != undefined? ` ${props[_wrapperAttr][_class]}` : '')}
+        ref={r => {
+            div_ref = r
+            if (props[_wrapperAttr] && props[_wrapperAttr][_ref]) props[_wrapperAttr][_ref](r)
+        }}
         onClick={(ev) => {
             cancelTimeout()
-            openMenu(ev)
+            open(ev)
+            if (props[_wrapperAttr] && props[_wrapperAttr][_onClick]) props[_wrapperAttr][_onClick](ev)
         }}
         onMouseEnter={(ev) => {
             cancelTimeout()
-            setTimeoutId(setTimeDelayed(() => {
-                openMenu(ev)
-                setTimeoutId(null)
-            }, 300))
+            timeoutId = setTimeDelayed(() => {
+                open(ev)
+                timeoutId = null
+            }, 300)
+            if (props[_wrapperAttr] && props[_wrapperAttr][_onMouseEnter]) props[_wrapperAttr][_onMouseEnter](ev)
         }}
-        onMouseLeave={() => {
+        onMouseLeave={(ev) => {
             cancelTimeout()
-            setTimeoutId(setTimeDelayed(() => {
-                closePopover(nestedMenuRef)
-                setTimeoutId(null)
-            }, 500))
+            timeoutId = setTimeDelayed(() => {
+                closePopover(popover_ref)
+                timeoutId = null
+            }, 500)
+            if (props[_wrapperAttr] && props[_wrapperAttr][_onMouseLeave]) props[_wrapperAttr][_onMouseLeave](ev)
         }}
         {...props[_wrapperAttr]}>
-        { props[_item] }
-        <div 
-            ref={(r) => {
-                nestedMenuRef = r
-                if (props[_ref]) props[_ref](r)
-            }}
+        {props[_item]}
+        <Popover
+            data-level={props[_level]}
+            usePortal={false}
             id={props[_id]}
             onClick={(ev) => {
                 stopPropagation(ev)
                 stopImmediatePropagation(ev)
                 if (props[_onClick]) props[_onClick](ev)
             }}
-            class="menu" 
-            popover={_manual}
-            data-dismiss={_manual}
-            data-popover
-            data-level={props[_level]}
-            {...other}>
-            <div>
-                { props[_children] }
-            </div>
-        </div>
+            ref={r => {
+                popover_ref = r
+                if (props[_ref]) props[_ref](r)
+            }}
+            classList={{
+                menu: true, 
+                ...props[_classList]
+            }}
+            {...other}
+        />
     </div>)
 }
 
-/**
- * **Important**: 
- * 
- * Don't put this component in closeable `onCleanup()` element
- * unless it needed. Because something strange will happens when 
- * you try open it with `openPopover()`. It will not crash, but
- * the behaviour will make you confuse.
- */
+type MenuProps = ModalProps
 const Menu: ParentComponent<MenuProps> = ($props) => {
-    const $$props = mergeProps({dismiss: _auto}, $props)
-    const [props, other] = splitProps($$props, [
-        _onClose, _onToggle, _onCancel, 
-        _dismiss, _children, _ref, 
-        _dragable
-    ])
-    const [isDragging, setIsDragging] = createSignal<boolean>(false)
-    let menuRef!: HTMLDialogElement
-
-    // different of mouse position to top-left of menu position
-    let diffPositionX: number = 0
-    let diffPositionY: number = 0
-
-    function fixPosition(): void {
-        const popoverRect = getBoundingClientRect(menuRef)
-        const screen = {
-            width: getDocument()[_body][_clientWidth],
-            height: getWindow()[_innerHeight]
-        }
-        if (popoverRect[_left  ] < 8) setStyleProperty(menuRef, _left, 8 + _px)
-        if (popoverRect[_top   ] < 8) setStyleProperty(menuRef, _top , 8 + _px)
-        if (popoverRect[_right ] > screen[_width ]) setStyleProperty(menuRef, _left, (screen[_width ] - popoverRect[_width ] - 8) + _px)
-        if (popoverRect[_bottom] > screen[_height]) setStyleProperty(menuRef, _top , (screen[_height] - popoverRect[_height] - 8) + _px)
-    }
-
-    function changePosition(x: number, y: number) {
-        setStyleProperty(menuRef, _left, (x - diffPositionX) + _px)
-        setStyleProperty(menuRef, _top, (y - diffPositionY) + _px)
-    }
-
-    function initDragListener() {
-        addEventListener(getDocument(), _touchmove, (ev) => {
-            if (!isDragging()) return;
-            changePosition((ev as TouchEvent)[_touches][0][_clientX], (ev as TouchEvent)[_touches][0][_clientY])
-        })
-
-        addEventListener(getDocument(), _touchend, () => {
-            removeAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
-            setIsDragging(false)
-            fixPosition()
-        })
-
-        addEventListener(getDocument(), _mousemove, ev => {
-            if (!isDragging()) return;
-            changePosition((ev as MouseEvent)[_clientX], (ev as MouseEvent)[_clientY])
-        })
-
-        addEventListener(getDocument(), _mouseup, () => {
-            removeAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
-            setIsDragging(false)
-            fixPosition()
-        })
-        
-        onCleanup(() => {
-            removeEventListener(getDocument(), _touchmove, (ev) => {
-                if (!isDragging()) return;
-                changePosition((ev as TouchEvent)[_touches][0][_clientX], (ev as TouchEvent)[_touches][0][_clientY])
-            })
-
-            removeEventListener(getDocument(), _touchend, () => {
-                removeAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
-                setIsDragging(false)
-                fixPosition()
-            })
-
-            removeEventListener(getDocument(), _mousemove, ev => {
-                if (!isDragging()) return;
-                changePosition((ev as MouseEvent)[_clientX], (ev as MouseEvent)[_clientY])
-            })
-
-            removeEventListener(getDocument(), _mouseup, () => {
-                removeAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
-                setIsDragging(false)
-                fixPosition()
-            })
-        })
-    }
-
-    onMount(() => {
-        let timeout: null | number = null
-        const observer = initPopover(menuRef)
-        const isOpenObserver = new MutationObserver(() => {
-            if (timeout) clearTimeDelayed(timeout)
-            
-            // [data-open] is not the only attribute that trigger this callback
-            timeout = setTimeDelayed(() => {
-                const isOpen = hasAttribute(menuRef, PopoverAttributes[_open])
-                if (props[_onToggle]) props[_onToggle](isOpen)
-            }, 50)
-        })
-        isOpenObserver[_observe](menuRef, {attributes: true})
-
-        if (props[_dragable]) {
-            initDragListener()
-        }
-
-        onCleanup(() => {
-            if (observer) observer[_disconnect]();
-            isOpenObserver[_disconnect]();
-        })
-    })
-
-    return (<Portal><dialog 
-        class="menu" 
-        // TODO: implement onKeyDown
-        ref={(r) => {
-            menuRef = r
-            if (props[_ref]) props[_ref](r)
+    const [props, other] = splitProps($props, [_classList])
+    return (<Modal 
+        classList={{
+            menu: true, 
+            ...props[_classList]
         }}
-        data-popover
-        data-dismiss={props[_dismiss]}
-        onClose={(ev) => {
-            if (props[_onClose]) props[_onClose](ev)
-            if (props[_onToggle]) props[_onToggle](false)
-        }}
-        data-is-dragging={toggleAttribute(isDragging())}
-        onCancel={(ev) => {
-            preventDefault(ev)
-            if (props[_onCancel]) props[_onCancel](ev)
-            if (props[_dismiss] == _manual) return
-            if (props[_onToggle]) props[_onToggle](false)
-            closePopover(ev[_currentTarget])
-        }}
-        {...other}>
-        <div data-dragable={toggleAttribute(props[_dragable])}>
-            <Show when={props[_dragable]}>
-                <div 
-                    class="menu-drag-handle"
-                    onMouseDown={(ev) => {
-                        const rect = getBoundingClientRect(menuRef)
-                        setIsDragging(true)
-                        setAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
-                        diffPositionX = ev[_clientX] - rect.x
-                        diffPositionY = ev[_clientY] - rect.y
-                    }}
-                    onTouchStart={ev => {
-                        const rect = getBoundingClientRect(menuRef)
-                        setIsDragging(true)
-                        setAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
-                        diffPositionX = ev[_touches][0][_clientX] - rect.x
-                        diffPositionY = ev[_touches][0][_clientY] - rect.y
-                    }}
-                />
-            </Show>
-            { props[_children] }
-        </div>
-    </dialog></Portal>)
+        {...other}
+    />)
 }
 
+export {
+    SubMenu,
+    Menu,
+    MenuItem,
+    MenuIndent,
+    MenuHeader,
+    MenuDivider,
+    LinkMenuItem,
+    MenuItemTrailingShortcut,
+    closePopover as closeSubMenu,
+    openPopover as openSubMenu, 
+    repositionPopover as repositionSubMenu,
+    focusModal as focusMenu,
+    openModal as openMenu,
+    closeModal as closeMenu, 
+    repositionModal as repositionMenu
+}
+export type {
+    MenuProps,
+    MenuItemProps,
+    SubMenuProps,
+    MenuItemTrailingShortcutProps,
+    LinkMenuItemProps, 
+}
 export default Menu

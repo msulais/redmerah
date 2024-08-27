@@ -4,11 +4,14 @@ export enum RootAttributes {
 }
 
 export enum BodyAttributes {
-    flyoutListener = 'data-flyout-listener',
-    flyoutOpen = 'data-flyout-open',
+    modalListener = 'data-modal-listener',
+    popoverListener = 'data-popover-listener',
+    tooltipListener = 'data-tooltip-listener',
+    emojiListener = 'data-emoji-listener',
 
-    // Disable all element pointer event. Except element
-    // that has [data-keep-pointer-event].
+    /**
+     * Disable all element pointer event. Except element that has [data-keep-pointer-event].
+     */
     noPointerEvent = 'data-no-pointer-event'
 }
 

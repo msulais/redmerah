@@ -1,72 +1,34 @@
-.dialog {
-    background-color: rgb(var(--color-surface));
-    border: 1px solid rgba(var(--color-on-surface), var(--opacity3));
+.modal.dialog {
+    transform: translate(-50%, calc(-50% - 12px)) !important;
+    background-color: rgb(var(--color-surface)) !important;
+    left: 50% !important;
+    top: 50% !important;
     border-radius: 16px;
     width: max-content;
     box-shadow: var(--elevation3);
-    left: 50%;
-    max-height: calc(100dvh - 16px);
-    max-width: min(720px, calc(100% - 16px));
-    opacity: 0;
-    outline: none;
-    overflow: hidden;
-    top: 50%;
-    transform: translate(-50%, calc(-50% - 12px));
     transition-duration: .3s;
-
-    [data-corner=sharp] & {
-        border-radius: 0;
-    }
-
-    [data-corner=semi-round] & {
-        border-radius: 8px;
-    }
-
-    [data-corner=full-round] & {
-        border-radius: 44px;
-    }
-
-    [data-theme=dark] & {
-        border: 1px solid rgba(0, 0, 0, var(--opacity-inv5));
-    }
-    [data-theme=system] & {
-        @media (prefers-color-scheme: dark) {
-            border: 1px solid rgba(0, 0, 0, var(--opacity-inv5));
-        }
-    }
-
+    
+    [data-corner=sharp] & { border-radius: 0 }
+    [data-corner=semi-round] & { border-radius: 8px }
+    [data-corner=full-round] & { border-radius: 44px }
+    
     &::backdrop {
-        background-color: transparent;
         transition-duration: .3s;
     }
-
-    &[data-open] {
-        opacity: 1;
-        transform: translate(-50%, -50%);
+    
+    &[data-move] {
+        transform: translate(-50%, -50%) !important;
 
         &::backdrop {
             background-color: rgba(0, 0, 0, var(--opacity-inv5));
         }
     }
 
-    &[data-focus] > div {
-        outline-color: rgb(var(--color-accent));
-        outline-width: 4px;
-        outline-offset: -4px;
-        animation: flyout-focus 1s;
-    }
-
     > div {
-        border-radius: inherit;
-        max-height: inherit;
-        max-width: 100%;
-        width: 100%;
         overflow: hidden;
-        position: relative;
         display: flex;
         flex-direction: column;
         align-items: flex-start;
-        outline: 1px solid transparent;
 
         > div:empty {
             display: none;
@@ -88,6 +50,10 @@
     > * {
         flex: 1 1 100px;
         max-width: 340px;
+
+        &:first-child:last-child {
+            max-width: 100%;
+        }
     }
 }
 

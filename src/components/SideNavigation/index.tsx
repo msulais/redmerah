@@ -1,41 +1,38 @@
-import { children, mergeProps, Show, splitProps, type JSX, type ParentComponent } from "solid-js";
+import { children, Show, splitProps, type JSX, type ParentComponent } from "solid-js"
 
-import { _checked, _children, _classList, _expand, _filledTonal, _focus, _footer, _header, _iconCode, _iconOnly, _indent, _indicatorPosition, _leading, _left, _selected, _trailing } from "@/data/string"
-import { toggleAttribute } from "@/utils/attributes";
-import { isVarHasValue } from "@/utils/data";
+import { _checked, _children, _classList, _disableScale, _expand, _tonal, _focus, _footer, _header, _iconCode, _iconOnly, _indent, _indicatorPosition, _leading, _left, _selected, _trailing, _variant } from "@/data/string"
+import { toggleAttribute } from "@/utils/attributes"
 import { Position } from "@/enums/position"
 
-import Button, { ButtonVariant } from "@/components/Button";
+import Icon from "@/components/Icon"
+import Button, { ButtonVariant, type ButtonProps } from "@/components/Button"
 import './index.scss'
-import Icon from "../Icon";
 
-type SideNavigationProps = JSX.HTMLAttributes<HTMLDivElement> & {
-    header?: JSX.Element
-    footer?: JSX.Element
-    expand?: boolean
-}
-
-type SideNavigationItemProps = JSX.ButtonHTMLAttributes<HTMLButtonElement> & {
+type SideNavigationItemProps = ButtonProps & {
     leading?: JSX.Element
     trailing?: JSX.Element
-    selected?: boolean
-    iconOnly?: boolean
     iconCode?: number
-    indicatorPosition?: Position
+    iconOnly?: boolean
 }
-
-export const SideNavigationItem: ParentComponent<SideNavigationItemProps> = ($props) => {
-    const [props, other] = splitProps($props, [_indicatorPosition, _selected, _leading, _children, _trailing, _classList, _iconOnly, _iconCode])
+const SideNavigationItem: ParentComponent<SideNavigationItemProps> = ($props) => {
+    const [props, other] = splitProps($props, [
+        _indicatorPosition, _selected, _leading, _children, 
+        _trailing, _classList, _iconCode, _iconOnly, 
+        _variant, _disableScale
+    ])
     const trailingComponent = children(() => props[_trailing])
 
     return (<Button 
-        variant={props[_selected]? ButtonVariant[_filledTonal] : undefined} 
-        selected={props[_selected]} 
-        indicatorPosition={isVarHasValue(props[_selected])? (props[_indicatorPosition] ?? Position[_left]) : undefined} 
-        disableScale={trailingComponent()? true : undefined} 
-        iconOnly={props[_iconOnly]}
+        variant={props[_variant] ?? (props[_selected]? ButtonVariant[_tonal] : undefined)} 
+        indicatorPosition={props[_indicatorPosition] ?? Position[_left]} 
+        selected={props[_selected]}
+        disableScale={props[_disableScale] ?? (trailingComponent()? true : undefined)} 
         data-trailing={toggleAttribute(trailingComponent())}
-        classList={{'side-navigation-item': true, ...props[_classList]}} 
+        classList={{
+            'side-navigation-item': true, 
+            'icon-btn': props[_iconOnly] ?? false,
+            ...props[_classList]
+        }} 
         {...other}>
         <Show when={props[_iconCode] != null}>
             <Icon
@@ -55,8 +52,15 @@ export const SideNavigationItem: ParentComponent<SideNavigationItemProps> = ($pr
     </Button>)
 }
 
+type SideNavigationProps = JSX.HTMLAttributes<HTMLDivElement> & {
+    header?: JSX.Element
+    footer?: JSX.Element
+    expand?: boolean
+}
 const SideNavigation: ParentComponent<SideNavigationProps> = ($props) => {
-    const [props, other] = splitProps($props, [_children, _expand, _header, _footer])
+    const [props, other] = splitProps($props, [
+        _children, _expand, _header, _footer
+    ])
 
     return (<div class="side-navigation" data-expand={toggleAttribute(props[_expand])} {...other}>
         <div class="side-navigation-header">{props[_header]}</div>
@@ -65,4 +69,12 @@ const SideNavigation: ParentComponent<SideNavigationProps> = ($props) => {
     </div>)
 }
 
+export {
+    SideNavigation, 
+    SideNavigationItem
+}
+export type {
+    SideNavigationProps, 
+    SideNavigationItemProps
+}
 export default SideNavigation

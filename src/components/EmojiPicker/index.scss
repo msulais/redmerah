@@ -1,0 +1,45 @@
+.emoji-picker {
+    box-shadow: var(--elevation1);
+    width: 313px;
+}
+
+.emoji-picker-emojis {
+    min-height: 285px;
+    max-height: 285px;
+    overflow: auto;
+    
+    &[data-hidden] {
+        display: none;
+    }
+    
+    > div {
+        position: relative;
+        display: grid;
+        padding: 4px;
+        padding-top: 36px;
+        width: 100%;
+        justify-items: center;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 1px;
+
+        > h3 {
+            position: absolute;
+            left: 12px;
+            top: 10px;
+            font-weight: 500;
+        }
+    }
+}
+
+.emoji-picker-search {
+    padding: 0 12px 12px 12px;
+}
+
+.emoji-picker-tabs {
+    display: grid;
+    padding: 4px;
+    width: 100%;
+    justify-items: center;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+}

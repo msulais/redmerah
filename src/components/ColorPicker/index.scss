@@ -1,67 +1,13 @@
-.color-picker {
-    background-color: rgba(var(--color-surface), var(--opacity-inv1));
-    backdrop-filter: blur(64px);
-    border: 1px solid rgba(var(--color-on-surface), var(--opacity3));
-    border-radius: 16px;
+.modal.color-picker {
     box-shadow: var(--elevation1);
-    left: 0;
-    max-height: calc(100dvh - 16px);
-    max-width: calc(100% - 16px);
-    opacity: 0;
-    overflow: hidden;
-    top: 0;
-    outline: none;
-    transform: var(--initial-translate);
-
-    [data-corner=sharp] & { border-radius: 0 }
-    [data-corner=semi-round] & { border-radius: 8px }
-    [data-corner=full-round] & { border-radius: 16px 16px 24px 24px }
-
-    [data-theme=dark] & {
-        background-color: rgba(36, 36, 36, var(--opacity-inv1));
-        border: 1px solid rgba(0, 0, 0, var(--opacity-inv5));
-    }
-    [data-theme=system] & {
-        @media (prefers-color-scheme: dark) {
-            background-color: rgba(36, 36, 36, var(--opacity-inv1));
-            border: 1px solid rgba(0, 0, 0, var(--opacity-inv5));
-        }
-    }
-
-    &::backdrop {
-        background-color: transparent;
-    }
-
-    &[data-open] {
-        transition-duration: .3s;
-        transition-property: transform, opacity;
-    }
-
-    &[data-move] {
-        opacity: 1;
-        transition-duration: .3s;
-        transition-property: transform, opacity, top, left;
-    }
-
-    &[data-focus] > div {
-        outline-color: rgb(var(--color-accent));
-        outline-width: 4px;
-        outline-offset: -4px;
-        animation: flyout-focus 1s;
-    }
-
+    
     > div {
-        max-height: inherit;
-        max-width: 100%;
-        width: 100%;
-        overflow: auto;
         padding: 8px 0 0 0;
         display: flex;
         flex-direction: column;
         gap: 8px;
         align-items: stretch;
         justify-content: flex-start;
-        border-radius: inherit;
     }
 }
 
