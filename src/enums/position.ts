@@ -42,10 +42,3 @@ export enum FlyoutPosition {
     centerCenterRight = 'ccr',
     centerCenterRightBottom = 'ccrb'
 }
-
-export enum Position {
-    top = 'top', 
-    right = 'right', 
-    bottom = 'bottom', 
-    left = 'left'
-}
