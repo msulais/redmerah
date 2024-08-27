@@ -1,8 +1,8 @@
 ---
-import './index.scss'
-import { ButtonVariant } from '.'
-import { Position } from '@/enums/position'
 import { toggleAttribute } from '@/utils/attributes'
+
+import { ButtonVariant, ButtonIndicatorPosition } from '.'
+import './index.scss'
 
 type Props = astroHTML.JSX.AnchorHTMLAttributes  & {
     variant?: ButtonVariant
@@ -12,7 +12,7 @@ type Props = astroHTML.JSX.AnchorHTMLAttributes  & {
     openInNewTab?: boolean
     selected?: boolean
     disableScale?: boolean
-    indicatorPosition?: Position
+    indicatorPosition?: ButtonIndicatorPosition
     elevation?: 1 | 2 | 3 | 4 | 5
     layerAttr?: astroHTML.JSX.HTMLAttributes
     classList?: string[]
@@ -20,7 +20,7 @@ type Props = astroHTML.JSX.AnchorHTMLAttributes  & {
 
 const {
     openInNewTab, 
-    indicatorPosition = Position.bottom, 
+    indicatorPosition = ButtonIndicatorPosition.bottom, 
     variant = ButtonVariant.transparent, 
     focus,
     compact, 
@@ -36,7 +36,7 @@ const {
 ---
 
 <a 
-    class:list={['btn', `btn-${variant}`, ...classList]}
+    class:list={['btn', `${variant}-btn`, ...classList]}
     data-icon={toggleAttribute(iconOnly)}
     data-indicator={selected? indicatorPosition : undefined}
     data-selected={toggleAttribute(selected)}

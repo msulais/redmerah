@@ -3,7 +3,6 @@ import { type ParentComponent, type JSX, mergeProps, splitProps, type VoidCompon
 import type { ComponentEvent } from '@/types/event'
 import { _button, _transparent, _bottom, _children, _indicatorPosition, _variant, _focused, _compact, _selected, _layerAttr, _disableScale, _classList, _type, _class, _desktopCompact, _filled, _filledTonal, _outlined, _openInNewTab, _disabled, _onClick, _code, _tonal, _emoji } from '@/data/string'
 import { toggleAttribute } from '@/utils/attributes'
-import { Position } from '@/enums/position'
 import { preventDefault } from '@/utils/event'
 
 import Icon from '@/components/Icon'
@@ -17,6 +16,13 @@ enum ButtonVariant {
     transparent
 }
 
+enum ButtonIndicatorPosition {
+    top = 'top', 
+    right = 'right', 
+    bottom = 'bottom', 
+    left = 'left'
+}
+
 type ButtonProps = JSX.ButtonHTMLAttributes<HTMLButtonElement> & {
     variant?: ButtonVariant
     focused?: boolean
@@ -24,14 +30,14 @@ type ButtonProps = JSX.ButtonHTMLAttributes<HTMLButtonElement> & {
     compact?: boolean
     selected?: boolean
     desktopCompact?: boolean
-    indicatorPosition?: Position
+    indicatorPosition?: ButtonIndicatorPosition
     layerAttr?: JSX.HTMLAttributes<HTMLDivElement>
 } 
 const Button: ParentComponent<ButtonProps> = ($props) => {
     const $$props = mergeProps({
         type: _button, 
         variant: ButtonVariant[_transparent], 
-        indicatorPosition: Position[_bottom]
+        indicatorPosition: ButtonIndicatorPosition[_bottom]
     }, $props)
     const [props, other] = splitProps($$props, [
         _children, _indicatorPosition, _variant, 
@@ -68,14 +74,14 @@ type LinkButtonProps = Omit<JSX.AnchorHTMLAttributes<HTMLAnchorElement>, 'onClic
     openInNewTab?: boolean
     selected?: boolean
     disableScale?: boolean
-    indicatorPosition?: Position
+    indicatorPosition?: ButtonIndicatorPosition
     desktopCompact?: boolean
     layerAttr?: JSX.HTMLAttributes<HTMLDivElement>
     onClick?: (ev: ComponentEvent<MouseEvent, HTMLAnchorElement>) => unknown
 }
 
 const LinkButton: ParentComponent<LinkButtonProps> = ($props) => {
-    const $$props = mergeProps({variant: ButtonVariant[_transparent], indicatorPosition: Position[_bottom]}, $props)
+    const $$props = mergeProps({variant: ButtonVariant[_transparent], indicatorPosition: ButtonIndicatorPosition[_bottom]}, $props)
     const [props, other] = splitProps($$props, [
         _openInNewTab, _children, _indicatorPosition, 
         _variant, _focused, _compact, _selected, _layerAttr, 
@@ -188,7 +194,8 @@ export {
     LinkFloatingActionButton,
     EmojiButton,
     LinkEmojiButton,
-    ButtonVariant
+    ButtonVariant,
+    ButtonIndicatorPosition
 }
 export type { 
     IconButtonProps, 
