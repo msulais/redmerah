@@ -1,0 +1,1 @@
+export type Emoji = [emoji: string, name: string]
