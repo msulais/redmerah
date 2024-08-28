@@ -1,8 +1,8 @@
 import { createMemo, createSignal, onMount, type VoidComponent } from "solid-js"
 import { createStore } from "solid-js/store"
 
-import { _abs, _acos, _acosh, _acot, _acoth, _acsc, _acsch, _angle, _area, _asec, _asech, _asin, _asinh, _atan, _atanh, _basic, _calculator, _ceil, _clone, _comma, _converter, _copy, _cos, _cosh, _cot, _coth, _createObjectStore, _csc, _csch, _cursor, _date, _decimal, _DEG, _floor, _frequency, _get, _GRAD, _grouping, _includes, _inputUnit, _equals, _join, _key, _lastInput, _lastOutput, _length, _ln, _log, _match, _memoryButtons, _miscellaneous, _not, _number, _numberFormat, _objectStore, _open, _outputUnit, _PI, _point, _pow, _pressure, _programmer, _push, _put, _RAD, _raw, _readonly, _readwrite, _repeat, _replace, _replaceAll, _reverse, _round, _scientific, _scientificNotation, _sec, _sech, _settings, _sin, _sinh, _src, _substring, _tan, _tanh, _temperature, _test, _then, _time, _toString, _transaction, _type, _value, _volume, _warn, _weight, _JSON, _parseJSON, _numberType, _binary, _hexadecimal, _octal, _toUpperCase, _sqrt, _day, _month, _year, _from, _to, _parse, _toISOString, _difference, _operation, _add, _subtract } from "@/data/string"
 import type { CalculatorInput, CalculatorOutput, DateCalculatorInput, Settings } from "./_types"
+import { _abs, _acos, _acosh, _acot, _acoth, _acsc, _acsch, _angle, _area, _asec, _asech, _asin, _asinh, _atan, _atanh, _basic, _calculator, _ceil, _clone, _comma, _converter, _copy, _cos, _cosh, _cot, _coth, _createObjectStore, _csc, _csch, _cursor, _date, _decimal, _DEG, _floor, _frequency, _get, _GRAD, _grouping, _includes, _inputUnit, _equals, _join, _key, _lastInput, _lastOutput, _length, _ln, _log, _match, _memoryButtons, _miscellaneous, _not, _number, _numberFormat, _objectStore, _open, _outputUnit, _PI, _point, _pow, _pressure, _programmer, _push, _put, _RAD, _raw, _readonly, _readwrite, _repeat, _replace, _replaceAll, _reverse, _round, _scientific, _scientificNotation, _sec, _sech, _settings, _sin, _sinh, _src, _substring, _tan, _tanh, _temperature, _test, _then, _time, _toString, _transaction, _type, _value, _volume, _warn, _weight, _JSON, _parseJSON, _numberType, _binary, _hexadecimal, _octal, _toUpperCase, _sqrt, _day, _month, _year, _from, _to, _parse, _toISOString, _difference, _operation, _add, _subtract } from "@/data/string"
 import { CalculatorType, Commands, DateOperation, DecimalNumberFormat, GroupingNumberFormat, NumberType, ScientificAngleType } from "./_enums"
 import { IDB } from "@/class/indexeddb"
 import { DatabaseNames } from "@/enums/storage"
@@ -22,7 +22,6 @@ import AppBar from "./_AppBar"
 import SideNavigation from './_SideNavigation'
 import Notebook from './_Notebook'
 import InputOutput from './_InputOutput'
-import CSS from './_index.module.scss'
 
 export const MainApp: VoidComponent = () => {
     const db = new IDB(DatabaseNames[_calculator])
@@ -538,7 +537,6 @@ export const MainApp: VoidComponent = () => {
             if (/[89]/[_test](input)) throw Error()
 
             const re = /[0-7]+/g
-            const b = input
             input = input[_replace](re, (v) => numberParse(v, true, 8)[_toString]())
         }        
         else if (type == NumberType[_binary]) {

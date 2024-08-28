@@ -2,13 +2,13 @@ import { createSignal, createUniqueId, mergeProps, onCleanup, onMount, Show, spl
 import { Portal } from 'solid-js/web'
 
 import type { ComponentEvent } from '@/types/event'
-import { FlyoutPosition } from '@/enums/position'
+import { FlyoutPosition as ModalPosition } from '@/enums/position'
 import { getFlyoutPosition } from '@/utils/flyout'
 import { _altKey, _at, _body, _bottom, _centerBottom, _centerBottomToLeft, _centerBottomToRight, _centerTop, _centerTopToLeft, _centerTopToRight, _children, _class, _click, _clientWidth, _clientX, _clientY, _close, _closeModal, _ctrlKey, _detail, _disconnect, _dismiss, _dispatchEvent, _documentElement, _dragable, _element, _Escape, _findIndex, _flyout, _flyoutListener, _focus, _height, _important, _innerHeight, _instant, _isSameNode, _key, _left, _leftCenter, _leftCenterToBottom, _leftCenterToTop, _length, _manual, _max_height, _max_width, _maxHeight, _maxWidth, _metaKey, _modalListener, _modalOpen, _mousemove, _mouseup, _move, _noPointerEvent, _observe, _onCancel, _onClose, _onKeyDown, _onOpen, _onReposition, _onShortFocus, _onToggleOpen, _open, _openModal, _push, _px, _ref, _resize, _right, _rightCenter, _rightCenterToBottom, _rightCenterToTop, _scroll, _scrollTo, _scrollTop, _scrollY, _shiftKey, _showModal, _some, _splice, _style, _top, _touchend, _touches, _touchmove, _transform, _width, _x, _y } from '@/data/string'
 import { clearTimeDelayed, setTimeDelayed, timeout } from '@/utils/timeout'
 import { hasAttribute, removeAttribute, setAttribute, toggleAttribute } from '@/utils/attributes'
 import { getDocument, getDocumentBody, getWindow } from '@/data/window'
-import { getBoundingClientRect, querySelector, querySelectorAll, setStyleProperty } from '@/utils/element'
+import { getBoundingClientRect, querySelectorAll, setStyleProperty } from '@/utils/element'
 import { BodyAttributes } from '@/enums/attributes'
 import { addEventListener, preventDefault, removeEventListener, stopImmediatePropagation } from "@/utils/event"
 import { mathAbs } from '@/utils/math'
@@ -22,7 +22,7 @@ type ModalOpenDetail = {
     gap?: number
     padding?: number
     important?: boolean
-    position?: FlyoutPosition
+    position?: ModalPosition
     allowHideAnchor?: boolean
     dragable?: boolean
     inputAutoFocus?: boolean
@@ -175,7 +175,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
     let $important: boolean = false
     let $gap: number = 0
     let $padding: number = 0
-    let $position: FlyoutPosition = FlyoutPosition[_centerBottom]
+    let $position: ModalPosition = ModalPosition[_centerBottom]
     let notAllowHideAnchor: boolean = false
     let maxWidth: string | null = null
     let maxHeight: string | null = null
@@ -206,7 +206,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
         changePosition(ev[_touches][0][_clientX], ev[_touches][0][_clientY])
     }
 
-    function onTouchEnd(ev: TouchEvent): void {
+    function onTouchEnd(_ev: TouchEvent): void {
         removeAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
         setIsDragging(false)
         fixPosition()
@@ -218,13 +218,13 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
         changePosition((ev as MouseEvent)[_clientX], (ev as MouseEvent)[_clientY])
     }
 
-    function onMouseUp(ev: MouseEvent): void {
+    function onMouseUp(_ev: MouseEvent): void {
         removeAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
         setIsDragging(false)
         fixPosition()
     }
 
-    function customOnShortFocus(ev: CustomEvent): void {
+    function customOnShortFocus(_ev: CustomEvent): void {
         shortFocusModal()
     }
 
@@ -236,7 +236,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
         openModal(ev[_detail] as ModalOpenDetail)
     }
 
-    function customOnReposition(ev: CustomEvent): void {
+    function customOnReposition(_ev: CustomEvent): void {
         repositionModal()
     }
 
@@ -317,12 +317,12 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 
         if (rangeX > rangeY) {
             if ((modalMidPos.x < anchorCenterTop || modalMidPos.x > anchorCenterTop) && (
-                $position == FlyoutPosition[_centerBottom]
-                || $position == FlyoutPosition[_centerBottomToLeft]
-                || $position == FlyoutPosition[_centerBottomToRight]
-                || $position == FlyoutPosition[_centerTop]
-                || $position == FlyoutPosition[_centerTopToLeft]
-                || $position == FlyoutPosition[_centerTopToRight]
+                $position == ModalPosition[_centerBottom]
+                || $position == ModalPosition[_centerBottomToLeft]
+                || $position == ModalPosition[_centerBottomToRight]
+                || $position == ModalPosition[_centerTop]
+                || $position == ModalPosition[_centerTopToLeft]
+                || $position == ModalPosition[_centerTopToRight]
             )) {
                 if (modalMidPos.y > anchorCenterTop ) translate[_top]  = -12
                 if (modalMidPos.y < anchorCenterTop ) translate[_top]  = 12
@@ -332,12 +332,12 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
             }
         } else {
             if ((modalMidPos.y < anchorCenterLeft || modalMidPos.y > anchorCenterLeft) && (
-                $position == FlyoutPosition[_leftCenter]
-                || $position == FlyoutPosition[_leftCenterToBottom]
-                || $position == FlyoutPosition[_leftCenterToTop]
-                || $position == FlyoutPosition[_rightCenter]
-                || $position == FlyoutPosition[_rightCenterToBottom]
-                || $position == FlyoutPosition[_rightCenterToTop]
+                $position == ModalPosition[_leftCenter]
+                || $position == ModalPosition[_leftCenterToBottom]
+                || $position == ModalPosition[_leftCenterToTop]
+                || $position == ModalPosition[_rightCenter]
+                || $position == ModalPosition[_rightCenterToBottom]
+                || $position == ModalPosition[_rightCenterToTop]
             )) {
                 if (modalMidPos.x > anchorCenterLeft) translate[_left] = -12
                 if (modalMidPos.x < anchorCenterLeft) translate[_left] = 12
@@ -379,7 +379,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
             gap = 0, 
             important = false, 
             padding = 0, 
-            position = FlyoutPosition[_centerBottom],
+            position = ModalPosition[_centerBottom],
             inputAutoFocus = false 
         } = detail;
 
@@ -537,12 +537,12 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 
         if (rangeX > rangeY) {
             if ((modalMidPos.x < anchorCenterTop || modalMidPos.x > anchorCenterTop) && (
-                position == FlyoutPosition[_centerBottom]
-                || position == FlyoutPosition[_centerBottomToLeft]
-                || position == FlyoutPosition[_centerBottomToRight]
-                || position == FlyoutPosition[_centerTop]
-                || position == FlyoutPosition[_centerTopToLeft]
-                || position == FlyoutPosition[_centerTopToRight]
+                position == ModalPosition[_centerBottom]
+                || position == ModalPosition[_centerBottomToLeft]
+                || position == ModalPosition[_centerBottomToRight]
+                || position == ModalPosition[_centerTop]
+                || position == ModalPosition[_centerTopToLeft]
+                || position == ModalPosition[_centerTopToRight]
             )) {
                 if (modalMidPos.y > anchorCenterTop ) translate[_top]  = -12
                 if (modalMidPos.y < anchorCenterTop ) translate[_top]  = 12
@@ -552,12 +552,12 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
             }
         } else {
             if ((modalMidPos.y < anchorCenterLeft || modalMidPos.y > anchorCenterLeft) && (
-                position == FlyoutPosition[_leftCenter]
-                || position == FlyoutPosition[_leftCenterToBottom]
-                || position == FlyoutPosition[_leftCenterToTop]
-                || position == FlyoutPosition[_rightCenter]
-                || position == FlyoutPosition[_rightCenterToBottom]
-                || position == FlyoutPosition[_rightCenterToTop]
+                position == ModalPosition[_leftCenter]
+                || position == ModalPosition[_leftCenterToBottom]
+                || position == ModalPosition[_leftCenterToTop]
+                || position == ModalPosition[_rightCenter]
+                || position == ModalPosition[_rightCenterToBottom]
+                || position == ModalPosition[_rightCenterToTop]
             )) {
                 if (modalMidPos.x > anchorCenterLeft) translate[_left] = -12
                 if (modalMidPos.x < anchorCenterLeft) translate[_left] = 12
@@ -699,9 +699,9 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
         initMutationObserver()
     })
 
-    onCleanup(() => {
+    onCleanup(async () => {
         removeCustomEvent()
-        closeModal({})
+        await closeModal({})
     })
 
     return (<Portal><dialog
@@ -772,6 +772,7 @@ export {
     openModal,
     ModalAttributes,
     ModalEvents,
+    ModalPosition
 }
 export type {
     ModalProps,

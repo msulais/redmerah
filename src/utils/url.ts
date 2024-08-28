@@ -1,5 +1,5 @@
 import { _click, _remove, _createObjectURL, _download, _forEach, _href, _id, _revokeObjectURL, _searchParams } from "@/data/string"
-import { getElementById, createElement } from "./element"
+import { createElement } from "./element"
 
 export function encodeURL(text: string): string {
     return encodeURIComponent(text)

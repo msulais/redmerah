@@ -1,7 +1,7 @@
 import { createSignal, onMount, type VoidComponent } from "solid-js";
 
 import Icon from "@/components/Icon";
-import Button, { IconButton } from "@/components/Button";
+import { IconButton } from "@/components/Button";
 import Tooltip from "@/components/Tooltip";
 import Menu, { closeMenu, LinkMenuItem, MenuDivider, MenuHeader, MenuItem, openMenu } from "@/components/Menu";
 import ColorPicker, { openColorPicker } from "@/components/ColorPicker";
@@ -12,7 +12,7 @@ import type { HEXColor, RGBColor } from "@/types/color";
 import { _centerBottomToLeft, _centerBottomToRight, _centerCenterLeftTop, _leftCenterToBottom, _about, _apps, _clipboard, _color, _colorDark, _color_accent, _corner, _currentTarget, _dark, _donate, _filled, _filledTonal, _fullRound, _hostname, _includes, _innerHTML, _join, _light, _link, _onColor, _onColorDark, _open, _outlined, _pinnedApps, _round, _route, _semiRound, _share, _sharp, _some, _split, _system, _test, _theme, _title, _toLowerCase, _trim, _value, _writeText } from "@/data/string";
 import { getLocalStorageItem, setLocalStorageItem } from "@/utils/storage";
 import { generateColor, hexToRgb, testHexColor } from "@/utils/color";
-import { setAttribute, toggleAttribute } from "@/utils/attributes";
+import { setAttribute } from "@/utils/attributes";
 import { ExternalLinks, RoutesLinks } from "@/enums/links";
 import { LocalStorageKeys } from "@/enums/storage";
 import { RootAttributes } from "@/enums/attributes";
@@ -22,30 +22,28 @@ import { CornerData } from "@/enums/corner";
 import { ThemeData } from "@/enums/theme";
 import { getRoot } from "@/data/window";
 import { FlyoutPosition } from "@/enums/position";
-import { closePopover, openPopover } from "@/components/Popover";
 
 type NavigationMenuProps = {
     route?: RoutesLinks
 }
 
 export const NavigationMenu: VoidComponent<NavigationMenuProps> = (props) => {
-    const [button_navigation_ref, set_button_navigation_ref] = createSignal<HTMLButtonElement | null>(null)
     const [is_menu_navigation_open, setIs_menu_navigation_open] = createSignal<boolean>(false)
     let menu_navigation_ref: HTMLDialogElement
 
     return (<>
-        <Tooltip text="Open navigation menu" anchor={button_navigation_ref()} />
-        <IconButton 
-            classList={addClassListModule(CSS.mobile_only)} 
-            focus={is_menu_navigation_open()} 
-            onClick={(ev) => openMenu(ev, menu_navigation_ref, {
-                anchor: ev[_currentTarget], 
-                padding: 0, 
-                position: FlyoutPosition[_centerBottomToLeft]
-            })} 
-            ref={r => set_button_navigation_ref(r)} 
-            code={0xE4F7}
-        />
+        <Tooltip text="Open navigation menu">
+            <IconButton 
+                classList={addClassListModule(CSS.mobile_only)} 
+                focused={is_menu_navigation_open()} 
+                onClick={(ev) => openMenu(ev, menu_navigation_ref, {
+                    anchor: ev[_currentTarget], 
+                    padding: 0, 
+                    position: FlyoutPosition[_centerBottomToLeft]
+                })} 
+                code={0xE4F7}
+            />
+        </Tooltip>
         <Menu 
             style={{width: '164px'}} 
             ref={r => menu_navigation_ref = r} 
@@ -79,7 +77,6 @@ export const SettingsElement: VoidComponent = () => {
     const [color, setColor] = createSignal<HEXColor>('#FF0000')
     const [theme, setTheme] = createSignal<ThemeData>(ThemeData[_system])
     const [corner, setCorner] = createSignal<CornerData>(CornerData[_round])
-    const [button_settings_ref, set_button_settings_ref] = createSignal<HTMLButtonElement | null>(null)
     const [is_menu_settings_open, setIs_menu_settings_open] = createSignal<boolean>(false)
     const [is_colorPicker_open, setIs_colorPicker_open] = createSignal<boolean>(false)
     let menu_settings_ref: HTMLDialogElement
@@ -151,18 +148,18 @@ export const SettingsElement: VoidComponent = () => {
     })
 
     return (<>
-        <Tooltip anchor={button_settings_ref()} text="Open settings" />
-        <IconButton 
-            classList={addClassListModule(CSSAnimation.btn_rotate_icon)}
-            focus={is_menu_settings_open()} 
-            ref={r => set_button_settings_ref(r)} 
-            onClick={(ev) => openMenu(ev, menu_settings_ref, {
-                anchor: ev[_currentTarget], 
-                padding: 0,
-                position: FlyoutPosition[_centerBottomToRight]
-            })}
-            code={0xEE0F}
-        />
+        <Tooltip text="Open settings">
+            <IconButton 
+                classList={addClassListModule(CSSAnimation.btn_rotate_icon)}
+                focused={is_menu_settings_open()} 
+                onClick={(ev) => openMenu(ev, menu_settings_ref, {
+                    anchor: ev[_currentTarget], 
+                    padding: 0,
+                    position: FlyoutPosition[_centerBottomToRight]
+                })}
+                code={0xEE0F}
+            />
+        </Tooltip>
         <Menu 
             style={{width: '200px'}} 
             ref={r => menu_settings_ref = r} 
@@ -215,7 +212,7 @@ export const SettingsElement: VoidComponent = () => {
             <MenuDivider/>
             <MenuHeader>Accent color</MenuHeader>
             <MenuItem 
-                focus={is_colorPicker_open()} 
+                focused={is_colorPicker_open()} 
                 onClick={(ev) => openColorPicker(ev, colorPicker_ref, {
                     anchor: ev[_currentTarget], 
                     position: FlyoutPosition[_leftCenterToBottom]

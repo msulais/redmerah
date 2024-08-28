@@ -1,24 +1,21 @@
-import { For, Show, createMemo, createSelector, createSignal, onMount, type VoidComponent } from "solid-js";
+import { For, Show, createMemo, createSelector, createSignal, onMount, type VoidComponent } from "solid-js"
 
-import Icon from "@/components/Icon";
-import Button, { ButtonVariant, LinkButton } from "@/components/Button";
-import Menu, { MenuDivider, MenuItem, MenuItemLink } from "@/components/Menu";
-import TextField from "@/components/TextField";
+import type { AppItem } from "@/types/apps"
+import { _centerBottomToLeft, _centerBottomToRight, _centerCenterLeftTop, _leftCenterToBottom, _clipboard, _color, _color_accent, _corner, _currentTarget, _dark, _description, _filled, _tonal, _filter, _fullRound, _hostname, _includes, _innerHTML, _join, _light, _link, _open, _outlined, _pinnedApps, _round, _semiRound, _share, _sharp, _some, _split, _system, _test, _theme, _title, _toLowerCase, _trim, _value, _writeText } from "@/data/string"
+import { getLocalStorageItem, setLocalStorageItem } from "@/utils/storage"
+import { toggleAttribute } from "@/utils/attributes"
+import { LocalStorageKeys } from "@/enums/storage"
+import { getLocation, getNavigator, getWindow } from "@/data/window"
+import { apps } from "@/data/apps"
+import { preventDefault } from "@/utils/event"
+import { clearTimeDelayed, setTimeDelayed } from "@/utils/timeout"
+
+import Icon from "@/components/Icon"
+import Button, { ButtonVariant, LinkButton } from "@/components/Button"
+import TextField from "@/components/TextField"
+import Menu, { closeMenu, LinkMenuItem, MenuDivider, MenuItem, MenuPosition, openMenu } from "@/components/Menu"
+import Dialog, { closeDialog, openDialog } from "@/components/Dialog"
 import CSS from './_index.module.scss'
-
-import { _CENTER_BOTTOM_TO_LEFT, _CENTER_BOTTOM_TO_RIGHT, _CENTER_CENTER_LEFT_TOP, _LEFT_CENTER_TO_BOTTOM, _clipboard, _color, _color_accent, _corner, _currentTarget, _dark, _description, _filled, _filledTonal, _filter, _fullRound, _hostname, _includes, _innerHTML, _join, _light, _link, _open, _outlined, _pinnedApps, _round, _semiRound, _share, _sharp, _some, _split, _system, _test, _theme, _title, _toLowerCase, _trim, _value, _writeText } from "@/data/string";
-import { getLocalStorageItem, setLocalStorageItem } from "@/utils/storage";
-import { toggleAttribute } from "@/utils/attributes";
-import { closePopover, openPopover } from "@/utils/popover";
-import { LocalStorageKeys } from "@/enums/storage";
-import { PopoverPosition } from "@/enums/position";
-import { getLocation, getNavigator, getWindow } from "@/data/window";
-import { apps } from "@/data/apps";
-import { preventDefault } from "@/utils/event";
-import type { AppItem } from "@/types/apps";
-import { clearTimeDelayed, setTimeDelayed } from "@/utils/timeout";
-import Dialog from "@/components/Dialog";
-import { closeModal, openModal } from "@/utils/modal";
 
 export const MainElement: VoidComponent = () => {
     const [pinnedApps, setPinnedApps] = createSignal<string[]>([])
@@ -27,8 +24,8 @@ export const MainElement: VoidComponent = () => {
     const isSelected = createSelector<string[], string>(pinnedApps, (a, b) => b[_some]((v) => v == a))
     const getSelectedLink = createMemo(() => selectedApp()? selectedApp()![_link] : '')
     const getSelectedTitle = createMemo(() => selectedApp()? selectedApp()![_title] : '')
-    let infoDialogRef: HTMLDialogElement
-    let actionMenuRef: HTMLDialogElement
+    let dialog_info_ref: HTMLDialogElement
+    let menu_actions_ref: HTMLDialogElement
     let timeoutId: number | null = null
 
     function pinApp(link: string): void {
@@ -48,7 +45,7 @@ export const MainElement: VoidComponent = () => {
             text: getSelectedTitle(), 
             url: getSelectedLink()
         })
-        closePopover(actionMenuRef)
+        closeMenu(menu_actions_ref)
     }
 
     onMount(() => {
@@ -75,13 +72,12 @@ export const MainElement: VoidComponent = () => {
             <LinkButton 
                 data-pinned={toggleAttribute(isSelected(app[_link]))}
                 href={app[_link]}
-                focus={getSelectedLink() == app[_link]}
+                focused={getSelectedLink() == app[_link]}
                 onContextMenu={ev => {
                     setSelectedApp(app)
-                    openPopover({
-                        event: ev, 
-                        popover: actionMenuRef, 
-                        position: PopoverPosition[_CENTER_BOTTOM_TO_RIGHT]
+                    openMenu(ev, menu_actions_ref, {
+                        position: MenuPosition[_centerBottomToRight],
+                        dragable: true
                     })
                     preventDefault(ev)
                 }}>
@@ -92,21 +88,21 @@ export const MainElement: VoidComponent = () => {
                 </Show>
             </LinkButton>
         </Show>}</For></div>
-        <Menu dragable ref={r => actionMenuRef = r} onToggle={v => setSelectedApp(a => v? a : null)}>
+        <Menu ref={r => menu_actions_ref = r} onToggle={v => setSelectedApp(a => v? a : null)}>
             <MenuItem 
                 onClick={() => {
                     pinApp(getSelectedLink() ?? '#')
-                    closePopover(actionMenuRef)
+                    closeMenu(menu_actions_ref)
                 }}
                 leading={<Show when={isSelected(getSelectedLink() ?? '#')} fallback={<Icon code={0xECA2}/>}><Icon code={0xECA4}/></Show>}>
                 <Show when={isSelected(getSelectedLink() ?? '#')} fallback="Pin">Unpin</Show> app
             </MenuItem>
             <MenuDivider/>
-            <MenuItemLink href={getSelectedLink() ?? '#'} leading={<Icon code={0xEB53}/>}>Open</MenuItemLink>
+            <LinkMenuItem href={getSelectedLink() ?? '#'} leading={<Icon code={0xEB53}/>}>Open</LinkMenuItem>
             <MenuItem 
                 onClick={() => {
                     getWindow()[_open](getSelectedLink() ?? '#', '_blank', 'noopener noreferrer')
-                    closePopover(actionMenuRef)
+                    closeMenu(menu_actions_ref)
                 }} 
                 leading={<Icon code={0xEB51}/>}>
                 Open in new tab
@@ -115,7 +111,7 @@ export const MainElement: VoidComponent = () => {
             <MenuItem 
                 onClick={() => {
                     getNavigator()[_clipboard][_writeText]('https://' + getLocation()[_hostname] + (getSelectedLink() ?? '#'))
-                    closePopover(actionMenuRef)
+                    closeMenu(menu_actions_ref)
                 }}
                 leading={<Icon code={0xE51B}/>}>
                 Copy link
@@ -127,24 +123,24 @@ export const MainElement: VoidComponent = () => {
             </MenuItem>
             <MenuDivider/>
             <MenuItem
-                onClick={(ev) => openModal(ev, infoDialogRef)} 
+                onClick={(ev) => openDialog(ev, dialog_info_ref)} 
                 leading={<Icon code={0xE930}/>}>
                 About app
             </MenuItem>
         </Menu>
         <Dialog 
-            ref={r => infoDialogRef = r} 
+            ref={r => dialog_info_ref = r} 
             header={getSelectedTitle()}
-            onClose={() => closePopover(actionMenuRef)}
+            onClose={() => closeMenu(menu_actions_ref)}
             style={{width: '500px'}}
             actions={<>
-                <Button onClick={() => closeModal(infoDialogRef)} variant={ButtonVariant[_filledTonal]}>Close</Button>
+                <Button onClick={() => closeDialog(dialog_info_ref)} variant={ButtonVariant[_tonal]}>Close</Button>
                 <Button 
                     onClick={() => {
-                        closeModal(infoDialogRef)
+                        closeDialog(dialog_info_ref)
                         share()
                     }} 
-                    variant={ButtonVariant[_filledTonal]}>
+                    variant={ButtonVariant[_tonal]}>
                     Share
                 </Button>
                 <LinkButton href={getSelectedLink()} variant={ButtonVariant[_filled]}>Open</LinkButton>

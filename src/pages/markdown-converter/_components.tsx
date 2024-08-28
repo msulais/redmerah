@@ -4,19 +4,17 @@ import { marked } from 'marked'
 import beautiful from 'simply-beautiful'
 
 import { toggleAttribute, setAttribute } from '@/utils/attributes'
-import { closePopover, openPopover } from '@/utils/popover'
 import { markdownTextDefault } from './_markdown'
 import { addClassListModule, createElement, getElementById } from '@/utils/element'
 import { addEventListener } from '@/utils/event'
-import { PopoverPosition } from '@/enums/position'
 import { cssTextDefault } from './_css'
 import { BodyAttributes, RootAttributes } from '@/enums/attributes'
 import { ExternalLinks, RoutesLinks } from '@/enums/links'
 import { ThemeData } from '@/enums/theme'
 import { getLocalStorageItem, setLocalStorageItem } from '@/utils/storage'
 import { DatabaseNames, LocalStorageKeys } from '@/enums/storage'
-import { _CENTER_BOTTOM, _RIGHT_CENTER, _RIGHT_CENTER_TO_BOTTOM, _URL, _accept, _add, _altKey, _boolean, _change, _click, _clientWidth, _clientX, _clipboard, _code, _contentWindow, _corner, _createObjectStore, _css, _ctrlKey, _currentTarget, _dark, _db, _download, _exitFullscreen, _file, _files, _fontSize, _fullRound, _fullscreenElement, _fullscreenchange, _get, _href, _html, _id, _includes, _input, _key, _keydown, _length, _light, _load, _markdown, _matches, _metaKey, _min, _mousemove, _mouseup, _newVersion, _noPointerEvent, _number, _objectStore, _oldVersion, _open, _preview, _print, _put, _px, _query, _readAsText, _readonly, _readwrite, _requestFullscreen, _reset, _resize, _result, _round, _semiRound, _setting, _settings, _share, _sharp, _shiftKey, _src, _system, _target, _text, _textWrap, _theme, _toggleAttribute, _touchend, _touches, _touchmove, _transaction, _type, _update, _value, _writeText } from '@/data/string'
-import { setTimeDelayed } from '@/utils/timeout'
+import { _centerBottom, _rightCenter, _rightCenterToBottom, _URL, _accept, _add, _altKey, _boolean, _change, _click, _clientWidth, _clientX, _clipboard, _code, _contentWindow, _corner, _createObjectStore, _css, _ctrlKey, _currentTarget, _dark, _db, _download, _exitFullscreen, _file, _files, _fontSize, _fullRound, _fullscreenElement, _fullscreenchange, _get, _href, _html, _id, _includes, _input, _key, _keydown, _length, _light, _load, _markdown, _matches, _metaKey, _min, _mousemove, _mouseup, _newVersion, _noPointerEvent, _number, _objectStore, _oldVersion, _open, _preview, _print, _put, _px, _query, _readAsText, _readonly, _readwrite, _requestFullscreen, _reset, _resize, _result, _round, _semiRound, _setting, _settings, _share, _sharp, _shiftKey, _src, _system, _target, _text, _textWrap, _theme, _toggleAttribute, _touchend, _touches, _touchmove, _transaction, _type, _update, _value, _writeText, _home, _about, _apps, _contactEmail, _donate, _privacy, _terms } from '@/data/string'
+import { setTimeDelayed, timeout } from '@/utils/timeout'
 import { getDocument, getDocumentBody, getNavigator, getRoot, getWindow } from '@/data/window'
 import { mathMax, mathMin } from '@/utils/math'
 import { createObjectURL, downloadFileByURL, encodeURL, revokeObjectURL } from '@/utils/url'
@@ -31,10 +29,10 @@ import redmerahLogo from '@/assets/logo.svg'
 import cssLogo from '@/assets/css-logo.svg'
 import htmlLogo from '@/assets/html-logo.svg'
 
-import Tooltip from '@/components/Tooltip'
+import {TextTooltip} from '@/components/Tooltip'
 import Icon from '@/components/Icon'
-import Button from '@/components/Button'
-import Menu, { MenuDivider, MenuHeader, MenuItem, MenuItemLink, MenuItemTrailingKeyboardShortcut, NestedMenu } from '@/components/Menu'
+import Button, { IconButton } from '@/components/Button'
+import Menu, { MenuDivider, MenuHeader, MenuItem, LinkMenuItem, MenuItemTrailingShortcut, SubMenu, closeSubMenu, closeMenu, openMenu, MenuPosition,  } from '@/components/Menu'
 import CSSAnimation from '@/styles/animation.module.scss'
 import CSS from './_index.module.scss'
 
@@ -65,36 +63,32 @@ type MenuBarProps = {
 }
 
 const MenuBar: Component<MenuBarProps> = (props) => {
-    const [isFileFocus, setIsFileFocus] = createSignal<boolean>(false)
-    const [isFileDownloadFocus, setIsFileDownloadFocus] = createSignal<boolean>(false)
-    const [isFileCopyAllFocus, setIsFileCopyAllFocus] = createSignal<boolean>(false)
-    const [isViewFocus, setIsViewFocus] = createSignal<boolean>(false)
-    const [isSettingsFocus, setIsSettingsFocus] = createSignal<boolean>(false)
-    const [isSettingsThemeFocus, setIsSettingsThemeFocus] = createSignal<boolean>(false)
-    const [isSettingsCornerFocus, setIsSettingsCornerFocus] = createSignal<boolean>(false)
+    const [is_menu_file_open, setIs_menu_file_open] = createSignal<boolean>(false)
+    const [is_submenu_download_open, setIs_submenu_download_open] = createSignal<boolean>(false)
+    const [is_submenu_copyAll_open, setIs_submenu_copyAll_open] = createSignal<boolean>(false)
+    const [is_menu_view_open, setIs_menu_view_open] = createSignal<boolean>(false)
+    const [is_menu_settings_open, setIs_menu_settings_open] = createSignal<boolean>(false)
+    const [is_submenu_theme_open, setIs_submenu_theme_open] = createSignal<boolean>(false)
+    const [is_submenu_corner_open, setIs_submenu_corner_open] = createSignal<boolean>(false)
     const [isFullscreen, setIsFullscreen] = createSignal<boolean>(false)
-    const [theme, setTheme] = createSignal<ThemeData>(ThemeData.system)
-    const popoverPosition = createMemo<PopoverPosition>(() => props[_isSmallScreen]
-        ? PopoverPosition[_CENTER_BOTTOM]
-        : PopoverPosition[_RIGHT_CENTER_TO_BOTTOM]
+    const [theme, setTheme] = createSignal<ThemeData>(ThemeData[_system])
+    const popoverPosition = createMemo<MenuPosition>(() => props[_isSmallScreen]
+        ? MenuPosition[_centerBottom]
+        : MenuPosition[_rightCenterToBottom]
     )
-    const tooltipPosition = createMemo<PopoverPosition>(() => props[_isSmallScreen]
-        ? PopoverPosition[_CENTER_BOTTOM]
-        : PopoverPosition[_RIGHT_CENTER]
+    const tooltipPosition = createMemo<MenuPosition>(() => props[_isSmallScreen]
+        ? MenuPosition[_centerBottom]
+        : MenuPosition[_rightCenter]
     )
     const [corner, setCorner] = createSignal<CornerData>(CornerData[_round])
-    const [fileBtnRef, setFileBtnRef] = createSignal<HTMLButtonElement | null>(null)
-    const [viewBtnRef, setViewBtnRef] = createSignal<HTMLButtonElement | null>(null)
-    const [settingsBtnRef, setSettingsBtnRef] = createSignal<HTMLButtonElement | null>(null)
-    let openFileInputElement: HTMLInputElement
-    let newConverterRef: HTMLAnchorElement
-    let fileMenuRef: HTMLElement
-    let fileDownloadMenuRef: HTMLElement
-    let fileCopyAllMenuRef: HTMLElement
-    let viewMenuRef: HTMLElement
-    let settingsMenuRef: HTMLElement
-    let settingsThemeMenuRef: HTMLElement
-    let settingsCornerMenuRef: HTMLElement
+    let input_filePicker_ref: HTMLInputElement
+    let menu_file_ref: HTMLDialogElement
+    let submenu_download_ref: HTMLDivElement
+    let submenu_copyAll_ref: HTMLDivElement
+    let menu_view_ref: HTMLDialogElement
+    let menu_settings_ref: HTMLDialogElement
+    let submenu_theme_ref: HTMLDivElement
+    let submenu_corner_ref: HTMLDivElement
 
     function checkKey([ctrlKey, altKey, shiftKey, metaKey]: boolean[]): boolean {
         return ctrlKey && altKey && metaKey && shiftKey
@@ -102,48 +96,52 @@ const MenuBar: Component<MenuBarProps> = (props) => {
 
     async function downloadFile(type: 'markdown' | 'css' | 'html'): Promise<void> {
         props[_onDownloadFile](type)
-        await closePopover(fileDownloadMenuRef)
-        await closePopover(fileMenuRef)
+        closeSubMenu(submenu_download_ref)
+        await timeout(300)
+        closeMenu(menu_file_ref)
     }
 
     async function copyAll(type: 'markdown' | 'css' | 'html'): Promise<void> {
         props[_onCopyAll](type)
-        await closePopover(fileCopyAllMenuRef)
-        await closePopover(fileMenuRef)
+        closeSubMenu(submenu_copyAll_ref)
+        await timeout(300)
+        closeMenu(menu_file_ref)
     }
 
     async function changeTheme(theme: ThemeData): Promise<void> {
         setTheme(theme)
         setAttribute(getRoot(), RootAttributes[_theme], theme)
         setLocalStorageItem(LocalStorageKeys[_theme], theme)
-        await closePopover(settingsThemeMenuRef)
-        await closePopover(settingsMenuRef)
+        closeSubMenu(submenu_theme_ref)
+        await timeout(300)
+        closeMenu(menu_settings_ref)
     }
 
     async function changeCorner(corner: CornerData): Promise<void> {
         setCorner(corner)
         setAttribute(getRoot(), RootAttributes[_corner], corner)
         setLocalStorageItem(LocalStorageKeys[_corner], corner)
-        await closePopover(settingsCornerMenuRef)
-        await closePopover(settingsMenuRef)
+        closeSubMenu(submenu_corner_ref)
+        await timeout(300)
+        closeMenu(menu_settings_ref)
     }
 
     function initFullscreenListener(): void {
-        addEventListener(getRoot(), _fullscreenchange, ev => {
+        addEventListener(getRoot(), _fullscreenchange, _ev => {
             setIsFullscreen(getDocument()[_fullscreenElement] != null)
         })
     }
 
     function initAndListenFileInput() {
-        openFileInputElement = createElement(_input);
-        openFileInputElement[_type] = _file;
-        openFileInputElement[_accept] = 'text/markdown,.md'
+        input_filePicker_ref = createElement(_input);
+        input_filePicker_ref[_type] = _file;
+        input_filePicker_ref[_accept] = 'text/markdown,.md'
 
-        addEventListener(openFileInputElement, _change, () => {
-            if (openFileInputElement[_files]![_length] <= 0) return
+        addEventListener(input_filePicker_ref, _change, () => {
+            if (input_filePicker_ref[_files]![_length] <= 0) return
 
             const reader = new FileReader();
-            reader[_readAsText](openFileInputElement[_files]![0]);
+            reader[_readAsText](input_filePicker_ref[_files]![0]);
             addEventListener(reader, _load, ev => {
                 const t = (ev as ProgressEvent<FileReader>)[_target];
                 if (t == null) return;
@@ -175,13 +173,13 @@ const MenuBar: Component<MenuBarProps> = (props) => {
 
             // Ctrl+Alt+N
             if (checkKey([ctrl, alt, !shift, !meta]) && evt[_code] == 'KeyN') {
-                newConverterRef[_click]()
+                getWindow()[_open](getDocument()[_URL], '_blank', 'noopener noreferrer')
                 return
             }
 
             // Ctrl+Alt+O
             if (checkKey([ctrl, alt, !shift, !meta]) && evt[_code] == 'KeyO') {
-                openFileInputElement[_click]()
+                input_filePicker_ref[_click]()
                 return
             }
 
@@ -239,36 +237,38 @@ const MenuBar: Component<MenuBarProps> = (props) => {
     })
 
     const FileMenu: Component = () => (<>
-        <Menu style={{width: props[_isTouchDevice]? undefined : '240px'}} ref={r => fileMenuRef = r} onToggle={(v) => setIsFileFocus(v)}>
-            <MenuItemLink
-                ref={(r) => newConverterRef = r}
+        <Menu 
+            style={{width: props[_isTouchDevice]? undefined : '240px'}} 
+            ref={r => menu_file_ref = r} 
+            onToggleOpen={(v) => setIs_menu_file_open(v)}>
+            <LinkMenuItem
                 openInNewTab
                 href={getDocument()[_URL]}
-                onClick={() => closePopover(fileMenuRef)}
+                onClick={() => closeMenu(menu_file_ref)}
                 leading={<Icon code={0xEB51}/>}
-                trailing={props[_isTouchDevice] ? undefined : <MenuItemTrailingKeyboardShortcut shortcuts={['Ctrl', 'Alt', 'N']} />}>
+                trailing={props[_isTouchDevice] ? undefined : <MenuItemTrailingShortcut shortcuts={['Ctrl', 'Alt', 'N']} />}>
                 New
-            </MenuItemLink>
+            </LinkMenuItem>
 
             <MenuItem
                 onClick={() => {
-                    openFileInputElement[_click]()
-                    closePopover(fileMenuRef)
+                    input_filePicker_ref[_click]()
+                    closeMenu(menu_file_ref)
                 }}
                 leading={<Icon code={0xEB53}/>}
-                trailing={props[_isTouchDevice] ? undefined : <MenuItemTrailingKeyboardShortcut shortcuts={['Ctrl', 'Alt', 'O']} />}>
+                trailing={props[_isTouchDevice] ? undefined : <MenuItemTrailingShortcut shortcuts={['Ctrl', 'Alt', 'O']} />}>
                 Open
             </MenuItem>
             <MenuDivider />
-            <NestedMenu
-                ref={r => fileDownloadMenuRef = r}
+            <SubMenu
+                ref={r => submenu_download_ref = r}
                 level={1}
                 style={{width: '164px'}}
-                onToggle={v => setIsFileDownloadFocus(v)}
+                onToggleOpen={v => setIs_submenu_download_open(v)}
                 item={<MenuItem
                     leading={<Icon code={0xE0B3}/>}
                     trailing={<Icon filled code={0xE368}/>}
-                    data-focus={toggleAttribute(isFileDownloadFocus())}>
+                    focused={is_submenu_download_open()}>
                     Donwload
                 </MenuItem>}>
                 <MenuItem 
@@ -288,16 +288,16 @@ const MenuBar: Component<MenuBarProps> = (props) => {
                     leading={<img width={20} src={cssLogo[_src]} alt="CSS logo"/>}>
                     CSS
                 </MenuItem>
-            </NestedMenu>
-            <NestedMenu
-                ref={r => fileCopyAllMenuRef = r}
+            </SubMenu>
+            <SubMenu
+                ref={r => submenu_copyAll_ref = r}
                 level={1}
-                onToggle={v => setIsFileCopyAllFocus(v)}
+                onToggleOpen={v => setIs_submenu_copyAll_open(v)}
                 style={{width: '164px'}}
                 item={<MenuItem
                     leading={<Icon code={0xE51B}/>}
                     trailing={<Icon filled code={0xE368}/>}
-                    data-focus={toggleAttribute(isFileCopyAllFocus())}>
+                    data-focus={toggleAttribute(is_submenu_copyAll_open())}>
                     Copy all
                 </MenuItem>}>
                 <MenuItem 
@@ -317,27 +317,29 @@ const MenuBar: Component<MenuBarProps> = (props) => {
                     leading={<img width={20} src={cssLogo[_src]} alt="CSS logo"/>}>
                     CSS
                 </MenuItem>
-            </NestedMenu>
+            </SubMenu>
             <MenuDivider />
             <MenuItem
                 onClick={() => {
-                    closePopover(fileMenuRef)
+                    closeMenu(menu_file_ref)
                     const iframe = getElementById(_preview) as HTMLIFrameElement
                     if (iframe[_contentWindow]) iframe[_contentWindow][_print]()
                 }}
                 leading={<Icon code={0xECFF}/>}
-                trailing={props[_isTouchDevice] ? undefined : <MenuItemTrailingKeyboardShortcut shortcuts={['Ctrl', 'Alt', 'P']} />}>
+                trailing={props[_isTouchDevice] ? undefined : <MenuItemTrailingShortcut shortcuts={['Ctrl', 'Alt', 'P']} />}>
                 Print
             </MenuItem>
         </Menu>
     </>)
 
     const ViewMenu: Component = () => (<Menu 
-        ref={r => viewMenuRef = r} style={{width: props[_isTouchDevice]? undefined : '280px'}} onToggle={(v) => setIsViewFocus(v)}>
+        ref={r => menu_view_ref = r} 
+        style={{width: props[_isTouchDevice]? undefined : '280px'}} 
+        onToggleOpen={(v) => setIs_menu_view_open(v)}>
         <MenuItem
             onClick={() => {
                 props[_settings][1](_textWrap, t => !t)
-                closePopover(viewMenuRef)
+                closeMenu(menu_view_ref)
 
                 const settingsObjectStoreWrite = props[_db]![_transaction](ObjectStoreNames[_settings], _readwrite)![_objectStore](ObjectStoreNames[_settings])
                 if (!settingsObjectStoreWrite) return;
@@ -353,19 +355,19 @@ const MenuBar: Component<MenuBarProps> = (props) => {
         <MenuItem
             onClick={() => props[_onChangeFontSize](_add)}
             leading={<Icon code={0xF333}/>}
-            trailing={props[_isTouchDevice] ? undefined : <MenuItemTrailingKeyboardShortcut shortcuts={['Ctrl', '>']} />}>
+            trailing={props[_isTouchDevice] ? undefined : <MenuItemTrailingShortcut shortcuts={['Ctrl', '>']} />}>
             Increase font size
         </MenuItem>
         <MenuItem
             onClick={() => props[_onChangeFontSize](_min)}
             leading={<Icon code={0xF335}/>}
-            trailing={props[_isTouchDevice] ? undefined : <MenuItemTrailingKeyboardShortcut shortcuts={['Ctrl', '<']} />}>
+            trailing={props[_isTouchDevice] ? undefined : <MenuItemTrailingShortcut shortcuts={['Ctrl', '<']} />}>
             Decrease font size
         </MenuItem>
         <MenuItem
             onClick={() => props[_onChangeFontSize](_reset)}
             leading={<Icon code={0xEDDF}/>}
-            trailing={props[_isTouchDevice] ? undefined : <MenuItemTrailingKeyboardShortcut shortcuts={['Ctrl', 'Alt', '=']} />}>
+            trailing={props[_isTouchDevice] ? undefined : <MenuItemTrailingShortcut shortcuts={['Ctrl', 'Alt', '=']} />}>
             Reset font size
         </MenuItem>
         <MenuDivider />
@@ -374,32 +376,34 @@ const MenuBar: Component<MenuBarProps> = (props) => {
             fallback={<MenuItem
                 onClick={() => {
                     getDocument()[_exitFullscreen]()
-                    closePopover(viewMenuRef)
+                    closeMenu(menu_view_ref)
                 }}
                 leading={<Icon code={0xE833}/>}
-                trailing={props[_isTouchDevice] ? undefined : <MenuItemTrailingKeyboardShortcut shortcuts={['Ctrl', 'Alt', 'F']} />}>
+                trailing={props[_isTouchDevice] ? undefined : <MenuItemTrailingShortcut shortcuts={['Ctrl', 'Alt', 'F']} />}>
                 Exit fullscreen
             </MenuItem>}>
             <MenuItem
                 onClick={() => {
                     getRoot()[_requestFullscreen]()
-                    closePopover(viewMenuRef)
+                    closeMenu(menu_view_ref)
                 }}
                 leading={<Icon code={0xE831}/>}
-                trailing={props[_isTouchDevice] ? undefined : <MenuItemTrailingKeyboardShortcut shortcuts={['Ctrl', 'Alt', 'F']} />}>
+                trailing={props[_isTouchDevice] ? undefined : <MenuItemTrailingShortcut shortcuts={['Ctrl', 'Alt', 'F']} />}>
                 Fullscreen
             </MenuItem>
         </Show>
     </Menu>)
 
     const SettingsMenu: Component = () => (<>
-        <Menu ref={r => settingsMenuRef = r} onToggle={(v) => setIsSettingsFocus(v)}>
-            <NestedMenu
+        <Menu 
+            ref={r => menu_settings_ref = r} 
+            onToggleOpen={(v) => setIs_menu_settings_open(v)}>
+            <SubMenu
                 level={1}
-                ref={r => settingsThemeMenuRef = r}
-                onToggle={v => setIsSettingsThemeFocus(v)}
+                ref={r => submenu_theme_ref = r}
+                onToggleOpen={v => setIs_submenu_theme_open(v)}
                 item={<MenuItem
-                    data-focus={toggleAttribute(isSettingsThemeFocus())}
+                    data-focus={toggleAttribute(is_submenu_theme_open())}
                     leading={<Icon filled code={0xE28A}/>}
                     trailing={<Icon filled code={0xE368}/>}>
                     Theme
@@ -422,13 +426,13 @@ const MenuBar: Component<MenuBarProps> = (props) => {
                     onClick={() => changeTheme(ThemeData[_system])}>
                     System theme
                 </MenuItem>
-            </NestedMenu>
-            <NestedMenu
+            </SubMenu>
+            <SubMenu
                 level={1}
-                ref={r => settingsCornerMenuRef = r}
-                onToggle={v => setIsSettingsCornerFocus(v)}
+                ref={r => submenu_corner_ref = r}
+                onToggleOpen={v => setIs_submenu_corner_open(v)}
                 item={<MenuItem
-                    data-focus={toggleAttribute(isSettingsCornerFocus())}
+                    data-focus={toggleAttribute(is_submenu_corner_open())}
                     leading={<Icon code={0xF044}/>}
                     trailing={<Icon filled code={0xE368}/>}>
                     Corner style
@@ -457,71 +461,71 @@ const MenuBar: Component<MenuBarProps> = (props) => {
                     onClick={() => changeCorner(CornerData[_fullRound])}>
                     Full round
                 </MenuItem>
-            </NestedMenu>
+            </SubMenu>
             <MenuDivider />
-            <MenuItemLink
-                onClick={() => closePopover(settingsMenuRef)}
-                href={RoutesLinks.home}
+            <LinkMenuItem
+                onClick={() => closeMenu(menu_settings_ref)}
+                href={RoutesLinks[_home]}
                 openInNewTab
                 trailing={<Icon code={0xEB51}/>}
                 leading={<img src={redmerahLogo[_src]} width={20} alt='Redmerah logo'/>}>
                 Redmerah (homepage)
-            </MenuItemLink>
-            <MenuItemLink
-                onClick={() => closePopover(settingsMenuRef)}
-                href={RoutesLinks.apps}
+            </LinkMenuItem>
+            <LinkMenuItem
+                onClick={() => closeMenu(menu_settings_ref)}
+                href={RoutesLinks[_apps]}
                 openInNewTab
                 trailing={<Icon code={0xEB51}/>}
                 leading={<Icon code={0xE063}/>}>
                 More apps
-            </MenuItemLink>
-            <MenuItemLink
-                onClick={() => closePopover(settingsMenuRef)}
-                href={RoutesLinks.about}
+            </LinkMenuItem>
+            <LinkMenuItem
+                onClick={() => closeMenu(menu_settings_ref)}
+                href={RoutesLinks[_about]}
                 openInNewTab
                 trailing={<Icon code={0xEB51}/>}
                 leading={<Icon code={0xE930}/>}>
                 About us
-            </MenuItemLink>
+            </LinkMenuItem>
             <MenuDivider />
-            <MenuItemLink
-                onClick={() => closePopover(settingsMenuRef)}
-                href={RoutesLinks.privacy}
+            <LinkMenuItem
+                onClick={() => closeMenu(menu_settings_ref)}
+                href={RoutesLinks[_privacy]}
                 openInNewTab
                 trailing={<Icon code={0xEB51}/>}
                 leading={<Icon code={0xEE51}/>}>
                 Privacy policy
-            </MenuItemLink>
-            <MenuItemLink
-                onClick={() => closePopover(settingsMenuRef)}
-                href={RoutesLinks.terms}
+            </LinkMenuItem>
+            <LinkMenuItem
+                onClick={() => closeMenu(menu_settings_ref)}
+                href={RoutesLinks[_terms]}
                 openInNewTab
                 trailing={<Icon code={0xEB51}/>}
                 leading={<Icon code={0xED47}/>}>
                 Terms & conditions
-            </MenuItemLink>
+            </LinkMenuItem>
             <MenuDivider/>
             <MenuItem
                 onClick={() => {
                     getNavigator()[_share]({title: 'Markdown Converter', text: 'Markdown Converter', url: getDocument()[_URL]})
-                    closePopover(settingsMenuRef)
+                    closeMenu(menu_settings_ref)
                 }}
                 leading={<Icon code={0xEE23}/>}>
                 Share
             </MenuItem>
-            <MenuItemLink
-                onClick={() => closePopover(settingsMenuRef)}
-                href={'mailto:' + ExternalLinks.contactEmail + '?subject=' + encodeURL('Markdown Converter')}
+            <LinkMenuItem
+                onClick={() => closeMenu(menu_settings_ref)}
+                href={'mailto:' + ExternalLinks[_contactEmail] + '?subject=' + encodeURL('Markdown Converter')}
                 leading={<Icon code={0xE3A0}/>}>
                 Send feedback
-            </MenuItemLink>
-            <MenuItemLink
-                onClick={() => closePopover(settingsMenuRef)}
-                href={ExternalLinks.donate}
+            </LinkMenuItem>
+            <LinkMenuItem
+                onClick={() => closeMenu(menu_settings_ref)}
+                href={ExternalLinks[_donate]}
                 openInNewTab
                 leading={<Icon code={0xE84B}/>}>
                 Donate
-            </MenuItemLink>
+            </LinkMenuItem>
             <MenuHeader>&copy; {getDate_Y()} Redmerah</MenuHeader>
         </Menu>
     </>)
@@ -531,50 +535,41 @@ const MenuBar: Component<MenuBarProps> = (props) => {
             <img width={24} height={24} src={ logo.src } alt="Markdown converter logo icon" />
         </div>
         <div class={ CSS.flex }>Markdown Converter</div>
-        <Tooltip anchor={fileBtnRef()} text='File' position={tooltipPosition()}/>
-        <Button
-            focus={isFileFocus()}
-            ref={r => setFileBtnRef(r)}
-            iconOnly
-            onClick={(ev) => openPopover({
-                event: ev,
-                anchor: ev[_currentTarget],
-                popover: fileMenuRef,
-                position: popoverPosition()
-            })}>
-            <Icon code={0xEDA1}/>
-        </Button>
+        <TextTooltip text='File' position={tooltipPosition()}>
+            <IconButton
+                focused={is_menu_file_open()}
+                code={0xEDA1}
+                onClick={(ev) => openMenu(ev, menu_file_ref, {
+                    anchor: ev[_currentTarget],
+                    position: popoverPosition()
+                })}
+            />
+        </TextTooltip>
         <FileMenu/>
 
-        <Tooltip anchor={viewBtnRef()} text='View' position={tooltipPosition()}/>
-        <Button
-            iconOnly
-            ref={r => setViewBtnRef(r)}
-            focus={isViewFocus()}
-            onClick={(ev) => openPopover({
-                event: ev,
-                anchor: ev[_currentTarget],
-                popover: viewMenuRef,
-                position: popoverPosition()
-            })}>
-            <Icon code={0xE77B}/>
-        </Button>
+        <TextTooltip text='View' position={tooltipPosition()}>
+            <IconButton
+                focused={is_menu_view_open()}
+                onClick={(ev) => openMenu(ev, menu_view_ref, {
+                    anchor: ev[_currentTarget],
+                    position: popoverPosition()
+                })}
+                code={0xE77B}
+            />
+        </TextTooltip>
         <ViewMenu/>
 
-        <Tooltip anchor={settingsBtnRef()} text='Settings' position={tooltipPosition()}/>
-        <Button
-            iconOnly
-            classList={addClassListModule(CSSAnimation.btn_rotate_icon)}
-            ref={r => setSettingsBtnRef(r)}
-            focus={isSettingsFocus()}
-            onClick={(ev) => openPopover({
-                event: ev,
-                anchor: ev[_currentTarget],
-                popover: settingsMenuRef,
-                position: popoverPosition()
-            })}>
-            <Icon code={0xEE0F}/>
-        </Button>
+        <TextTooltip text='Settings' position={tooltipPosition()}>
+            <IconButton
+                code={0xEE0F}
+                classList={addClassListModule(CSSAnimation.btn_rotate_icon)}
+                focused={is_menu_settings_open()}
+                onClick={(ev) => openMenu(ev, menu_settings_ref, {
+                    anchor: ev[_currentTarget],
+                    position: popoverPosition()
+                })}
+            />
+        </TextTooltip>
         <SettingsMenu/>
     </div>)
 }
@@ -735,7 +730,7 @@ export const App: Component = () => {
     async function initDatabase(): Promise<void> {
         try {
             await db[_open]({
-                onSuccess(ev, db) {
+                onSuccess(_ev, _db) {
                     initSettings()
                 },
                 onUpgradeNeeded(ev, db) {
@@ -757,10 +752,10 @@ export const App: Component = () => {
 
         try {
             const textWrap = await db[_get]<{key: string; value: boolean}>(settingsObjectStoreRead, ObjectStoreKeys[_settings_textWrap])
-            if (isBoolean(textWrap[_value])) setSettings(_textWrap, textWrap[_value])
+            if (textWrap && isBoolean(textWrap[_value])) setSettings(_textWrap, textWrap[_value])
 
             const fontSize = await db[_get]<{key: string; value: number}>(settingsObjectStoreRead, ObjectStoreKeys[_settings_fontSize])
-            if (isNumber(fontSize[_value])) setSettings(_fontSize, fontSize[_value])
+            if (fontSize && isNumber(fontSize[_value])) setSettings(_fontSize, fontSize[_value])
         } catch (e) { }
     }
 

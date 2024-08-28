@@ -2,13 +2,12 @@ import { createSignal, onMount, Show, type VoidComponent } from "solid-js"
 
 import type { HEXColor } from "@/types/color"
 import type { Palette } from "./_types"
-import { _accentDark, _accentLight, _clipboard, _corner, _currentTarget, _dark, _filled, _fullRound, _includes, _join, _length, _light, _onAccentDark, _onAccentLight, _onCopyAll, _outlined, _palette, _paletteList, _round, _seed, _semiRound, _share, _sharp, _src, _system, _theme, _URL, _writeText } from "@/data/string"
+import { _about, _accentDark, _accentLight, _apps, _clipboard, _contactEmail, _corner, _currentTarget, _dark, _donate, _filled, _fullRound, _home, _includes, _join, _length, _light, _onAccentDark, _onAccentLight, _onAddColor, _onCopyAll, _outlined, _palette, _paletteList, _privacy, _round, _seed, _semiRound, _share, _sharp, _src, _system, _terms, _theme, _URL, _writeText } from "@/data/string"
 import { getDocument, getNavigator, getRoot } from "@/data/window"
 import { RootAttributes } from "@/enums/attributes"
 import { CornerData } from "@/enums/corner"
 import { LocalStorageKeys } from "@/enums/storage"
 import { ThemeData } from "@/enums/theme"
-import { closePopover, openPopover } from "@/utils/popover"
 import { setLocalStorageItem, getLocalStorageItem } from "@/utils/storage"
 import { setAttribute } from "solid-js/web"
 import { RoutesLinks, ExternalLinks } from "@/enums/links"
@@ -16,19 +15,20 @@ import { toggleAttribute } from "@/utils/attributes"
 import { getDate_Y } from "@/utils/datetime"
 import { encodeURL } from "@/utils/url"
 import { addClassListModule } from "@/utils/element"
-import { clearTimeDelayed, setTimeDelayed } from "@/utils/timeout"
-import { openModal } from "@/utils/modal"
+import { clearTimeDelayed, setTimeDelayed, timeout } from "@/utils/timeout"
 import { _dialog_colorList_ref, _colorPicker_ref } from "./_string"
 import redmerahLogo from '@/assets/logo.svg'
 import logo from '@/assets/apps/color-generator-logo.svg'
 
 import Icon from "@/components/Icon"
-import Tooltip from "@/components/Tooltip"
-import Button, { ButtonVariant } from "@/components/Button"
-import Menu, { NestedMenu, MenuItem, MenuDivider, MenuItemLink, MenuHeader } from "@/components/Menu"
+import {TextTooltip} from "@/components/Tooltip"
+import Button, { ButtonVariant, IconButton } from "@/components/Button"
+import Menu, { SubMenu, MenuItem, MenuDivider, LinkMenuItem, MenuHeader, closeMenu, closeSubMenu, openMenu } from "@/components/Menu"
 import AppBar from "@/components/AppBar"
 import CSSAnimation from '@/styles/animation.module.scss'
 import CSS from './_index.module.scss'
+import { openDialog } from "@/components/Dialog"
+import { openColorPicker } from "@/components/ColorPicker"
 
 type _AppBarProps = {
     onAddColor: () => unknown
@@ -48,14 +48,9 @@ const _AppBar: VoidComponent<_AppBarProps> = (props) => {
     const [is_menu_settings_open, setIs_menu_settings_open] = createSignal<boolean>(false)
     const [is_menu_themeSettings_open, setIs_menu_themeSettings_open] = createSignal<boolean>(false)
     const [is_menu_cornerSettings_open, setIs_cornerSettings_open] = createSignal<boolean>(false)
-    const [button_addColor_ref, set_button_addColor_ref] = createSignal<HTMLButtonElement | null>(null)
-    const [button_copyAll_ref, set_button_copyAll_ref] = createSignal<HTMLButtonElement | null>(null)
-    const [button_settings_ref, set_button_settings_ref] = createSignal<HTMLButtonElement | null>(null)
-    const [button_selectColor_ref, set_button_selectColor_ref] = createSignal<HTMLButtonElement | null>(null)
-    const [button_colorList_ref, set_button_colorList_ref] = createSignal<HTMLButtonElement | null>(null)
-    let menu_settings_ref: HTMLElement
-    let menu_themeSettings_ref: HTMLElement
-    let menu_cornerSettings_ref: HTMLElement
+    let menu_settings_ref: HTMLDialogElement
+    let submenu_themeSettings_ref: HTMLDivElement
+    let submenu_cornerSettings_ref: HTMLDivElement
 
     async function copyAll(): Promise<void> {
         if (copyTimeoutId() != null) {
@@ -78,16 +73,18 @@ const _AppBar: VoidComponent<_AppBarProps> = (props) => {
         setTheme(theme)
         setAttribute(getRoot(), RootAttributes[_theme], theme)
         setLocalStorageItem(LocalStorageKeys[_theme], theme)
-        await closePopover(menu_themeSettings_ref)
-        await closePopover(menu_settings_ref)
+        closeSubMenu(submenu_themeSettings_ref)
+        await timeout(300) 
+        closeMenu(menu_settings_ref)
     }
     
     async function changeCorner(corner: CornerData): Promise<void> {
         setCorner(corner)
         setAttribute(getRoot(), RootAttributes[_corner], corner)
         setLocalStorageItem(LocalStorageKeys[_corner], corner)
-        await closePopover(menu_cornerSettings_ref)
-        await closePopover(menu_settings_ref)
+        closeSubMenu(submenu_cornerSettings_ref)
+        await timeout(300)
+        closeMenu(menu_settings_ref)
     }
 
     function initTheme(): void {
@@ -117,63 +114,64 @@ const _AppBar: VoidComponent<_AppBarProps> = (props) => {
         <AppBar
             leading={<>
                 <Show when={props[_paletteList][_length] > 0}>
-                    <Tooltip anchor={button_colorList_ref()} text='Color list' />
-                    <Button iconOnly ref={r => set_button_colorList_ref(r)} onClick={(ev) => openModal(ev, props[_dialog_colorList_ref])}><Icon code={0xF098}/></Button>
+                    <TextTooltip text='Color list'>
+                        <IconButton 
+                            onClick={(ev) => openDialog(ev, props[_dialog_colorList_ref])}
+                            code={0xF098}
+                        />
+                    </TextTooltip>
                 </Show>
                 <img width={28} src={logo[_src]} alt="Color generator" />
             </>}
             headline="Color Generator"
             trailing={<>
+                <TextTooltip text='Select color'>
+                    <Button 
+                        classList={addClassListModule(CSS.appbar_select_color)} 
+                        variant={ButtonVariant[_filled]} 
+                        onClick={(ev) => openColorPicker(ev, props[_colorPicker_ref], {anchor: ev[_currentTarget]})}>
+                        {props[_seed]}
+                    </Button>
+                </TextTooltip>
 
-                <Tooltip anchor={button_selectColor_ref()} text='Select color' />
-                <Button classList={addClassListModule(CSS.appbar_select_color)} ref={r => set_button_selectColor_ref(r)} variant={ButtonVariant[_filled]} onClick={(ev) => openPopover({
-                        event: ev,
-                        anchor: ev[_currentTarget],
-                        popover: props[_colorPicker_ref],
-                    })}>
-                    {props[_seed]}
-                </Button>
+                <TextTooltip text='Add color to list'>
+                    <IconButton 
+                        onClick={() => {
+                            if (timeoutId()) {
+                                clearTimeDelayed(timeoutId()!)
+                                setTimeoutId(null)
+                            }
+                            props[_onAddColor]()
+                            setTimeoutId(setTimeDelayed(() => setTimeoutId(null), 1000))
+                        }} 
+                        code={timeoutId()? 0xE3D8 : 0xF08A}
+                    />
+                </TextTooltip>
 
-                <Tooltip anchor={button_addColor_ref()} text='Add color to list' />
-                <Button ref={r => set_button_addColor_ref(r)} onClick={() => {
-                    if (timeoutId()) {
-                        clearTimeDelayed(timeoutId()!)
-                        setTimeoutId(null)
-                    }
-                    props.onAddColor()
-                    setTimeoutId(setTimeDelayed(() => setTimeoutId(null), 1000))
-                }} iconOnly><Show when={timeoutId()} fallback={<Icon code={0xF08A}/>}><Icon code={0xE3D8}/></Show></Button>
+                <TextTooltip text='Copy all'>
+                    <IconButton
+                        onClick={() => copyAll()}
+                        code={copyTimeoutId()? 0xE3D8 : 0xE51B}
+                    />
+                </TextTooltip>
 
-                <Tooltip anchor={button_copyAll_ref()} text='Copy all' />
-                <Button
-                    iconOnly
-                    ref={r => set_button_copyAll_ref(r)}
-                    onClick={() => copyAll()}>
-                    <Show when={copyTimeoutId()} fallback={<Icon code={0xE51B}/>}>
-                        <Icon code={0xE3D8}/>
-                    </Show>
-                </Button>
-
-                <Tooltip anchor={button_settings_ref()} text='Open settings' />
-                <Button
-                    iconOnly
-                    classList={addClassListModule(CSSAnimation.btn_rotate_icon)}
-                    ref={r => set_button_settings_ref(r)}
-                    focus={is_menu_settings_open()}
-                    onClick={ev => openPopover({
-                        event: ev,
-                        anchor: ev[_currentTarget],
-                        popover: menu_settings_ref,
-                    })}>
-                    <Icon code={0xEE0F}/>
-                </Button>
+                <TextTooltip text='Open settings'>
+                    <IconButton
+                        classList={addClassListModule(CSSAnimation.btn_rotate_icon)}
+                        focused={is_menu_settings_open()}
+                        onClick={ev => openMenu(ev, menu_settings_ref, { anchor: ev[_currentTarget] })}
+                        code={0xEE0F} 
+                    />
+                </TextTooltip>
             </>}
         />
-        <Menu ref={r => menu_settings_ref = r} onToggle={(v) => setIs_menu_settings_open(v)}>
-            <NestedMenu
+        <Menu 
+            ref={r => menu_settings_ref = r} 
+            onToggleOpen={(v) => setIs_menu_settings_open(v)}>
+            <SubMenu
                 level={1}
-                ref={r => menu_themeSettings_ref = r}
-                onToggle={v => setIs_menu_themeSettings_open(v)}
+                ref={r => submenu_themeSettings_ref = r}
+                onToggleOpen={v => setIs_menu_themeSettings_open(v)}
                 item={<MenuItem
                     data-focus={toggleAttribute(is_menu_themeSettings_open())}
                     leading={<Icon filled code={0xE28A}/>}
@@ -198,11 +196,11 @@ const _AppBar: VoidComponent<_AppBarProps> = (props) => {
                     onClick={() => changeTheme(ThemeData[_system])}>
                     System theme
                 </MenuItem>
-            </NestedMenu>
-            <NestedMenu
+            </SubMenu>
+            <SubMenu
                 level={1}
-                ref={r => menu_cornerSettings_ref = r}
-                onToggle={v => setIs_cornerSettings_open(v)}
+                ref={r => submenu_cornerSettings_ref = r}
+                onToggleOpen={v => setIs_cornerSettings_open(v)}
                 item={<MenuItem
                     data-focus={toggleAttribute(is_menu_cornerSettings_open())}
                     leading={<Icon code={0xF044}/>}
@@ -233,71 +231,71 @@ const _AppBar: VoidComponent<_AppBarProps> = (props) => {
                     onClick={() => changeCorner(CornerData[_fullRound])}>
                     Full round
                 </MenuItem>
-            </NestedMenu>
+            </SubMenu>
             <MenuDivider />
-            <MenuItemLink
-                onClick={() => closePopover(menu_settings_ref)}
-                href={RoutesLinks.home}
+            <LinkMenuItem
+                onClick={() => closeMenu(menu_settings_ref)}
+                href={RoutesLinks[_home]}
                 openInNewTab
                 trailing={<Icon code={0xEB51}/>}
                 leading={<img src={redmerahLogo[_src]} width={16} alt='Redmerah logo'/>}>
                 Redmerah (homepage)
-            </MenuItemLink>
-            <MenuItemLink
-                onClick={() => closePopover(menu_settings_ref)}
-                href={RoutesLinks.apps}
+            </LinkMenuItem>
+            <LinkMenuItem
+                onClick={() => closeMenu(menu_settings_ref)}
+                href={RoutesLinks[_apps]}
                 openInNewTab
                 trailing={<Icon code={0xEB51}/>}
                 leading={<Icon code={0xE063}/>}>
                 More apps
-            </MenuItemLink>
-            <MenuItemLink
-                onClick={() => closePopover(menu_settings_ref)}
-                href={RoutesLinks.about}
+            </LinkMenuItem>
+            <LinkMenuItem
+                onClick={() => closeMenu(menu_settings_ref)}
+                href={RoutesLinks[_about]}
                 openInNewTab
                 trailing={<Icon code={0xEB51}/>}
                 leading={<Icon code={0xE930}/>}>
                 About us
-            </MenuItemLink>
+            </LinkMenuItem>
             <MenuDivider />
-            <MenuItemLink
-                onClick={() => closePopover(menu_settings_ref)}
-                href={RoutesLinks.privacy}
+            <LinkMenuItem
+                onClick={() => closeMenu(menu_settings_ref)}
+                href={RoutesLinks[_privacy]}
                 openInNewTab
                 trailing={<Icon code={0xEB51}/>}
                 leading={<Icon code={0xEE51}/>}>
                 Privacy policy
-            </MenuItemLink>
-            <MenuItemLink
-                onClick={() => closePopover(menu_settings_ref)}
-                href={RoutesLinks.terms}
+            </LinkMenuItem>
+            <LinkMenuItem
+                onClick={() => closeMenu(menu_settings_ref)}
+                href={RoutesLinks[_terms]}
                 openInNewTab
                 trailing={<Icon code={0xEB51}/>}
                 leading={<Icon code={0xED47}/>}>
                 Terms & conditions
-            </MenuItemLink>
+            </LinkMenuItem>
             <MenuDivider/>
             <MenuItem
                 onClick={() => {
                     getNavigator()[_share]({text: 'Color Generator', title: 'Color Generator', url: getDocument()[_URL]})
-                    closePopover(menu_settings_ref)
+                    closeMenu(menu_settings_ref)
                 }}
                 leading={<Icon code={0xEE23}/>}>
                 Share
             </MenuItem>
-            <MenuItemLink
-                onClick={() => closePopover(menu_settings_ref)}
-                href={'mailto:' + ExternalLinks.contactEmail + '?subject=' + encodeURL('Color Generator')}
+            <LinkMenuItem
+                onClick={() => closeMenu(menu_settings_ref)}
+                href={'mailto:' + ExternalLinks[_contactEmail] + '?subject=' + encodeURL('Color Generator')}
                 leading={<Icon code={0xE3A0}/>}>
                 Send feedback
-            </MenuItemLink>
-            <MenuItemLink
-                onClick={() => closePopover(menu_settings_ref)}
-                href={ExternalLinks.donate}
+            </LinkMenuItem>
+            <LinkMenuItem
+                onClick={() => closeMenu(menu_settings_ref)}
+                href={ExternalLinks[_donate]}
                 openInNewTab
                 leading={<Icon code={0xE84B}/>}>
                 Donate
-            </MenuItemLink>
+            </LinkMenuItem>
             <MenuHeader>&copy; {getDate_Y()} Redmerah</MenuHeader>
         </Menu>
     </>)

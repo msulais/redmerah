@@ -1,13 +1,12 @@
 import { createSignal, Show, type VoidComponent } from "solid-js"
 
 import { _centerBottom, _tonal, _currentTarget, _filled, _leftTop, _leftCenterToBottom, _leftCenter, _leftCenterToTop, _leftBottom, _rightTop, _rightCenterToBottom, _rightCenter, _rightCenterToTop, _rightBottom, _centerTopToRight, _centerTop, _centerTopToLeft, _centerBottomToRight, _centerBottomToLeft, _centerCenterLeftTop, _centerCenterLeft, _centerCenterLeftBottom, _centerCenterTop, _centerCenter, _centerCenterBottom, _centerCenterRightTop, _centerCenterRight, _centerCenterRightBottom, _includes } from "@/data/string"
-import { FlyoutPosition } from "@/enums/position"
 
 import Button, { ButtonVariant } from "@/components/Button"
 import CheckBox from "@/components/CheckBox"
 import TextField, { NumberTextField } from "@/components/TextField"
 import Dropdown from "@/components/Dropdown"
-import Modal, { closeModal, openModal } from "@/components/Modal"
+import Modal, { closeModal, ModalPosition, openModal } from "@/components/Modal"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
 
 const _: VoidComponent = () => {
@@ -17,7 +16,7 @@ const _: VoidComponent = () => {
     const [inputAutoFocus, setInputAutoFocus] = createSignal<boolean>(false)
     const [important, setImportant] = createSignal<boolean>(false)
     const [padding, setPadding] = createSignal<number>(0)
-    const [position, setPosition] = createSignal<FlyoutPosition>(FlyoutPosition[_centerBottom])
+    const [position, setPosition] = createSignal<ModalPosition>(ModalPosition[_centerBottom])
     const [anchor, setAnchor] = createSignal<boolean>(true)
     let modal_ref: HTMLDialogElement
 
@@ -39,61 +38,61 @@ const _: VoidComponent = () => {
                 <div style={{padding: '16px'}}>
                     <TextField placeholder="Feedback"/>
                     <p style={{margin: '8px 0'}}>Consequat commodo sint incididunt nulla duis commodo elit enim aliquip ex occaecat eiusmod.</p>
-                    <Button desktopCompact onClick={(ev) => closeModal(modal_ref)} variant={ButtonVariant[_filled]}>Close modal</Button>
+                    <Button desktopCompact onClick={(_ev) => closeModal(modal_ref)} variant={ButtonVariant[_filled]}>Close modal</Button>
                 </div>
             </Modal>
         </Playground>
         <PlaygroundOptions>
             <Dropdown
                 items={[
-                    [FlyoutPosition[_leftTop], 'Left top'],
-                    [FlyoutPosition[_leftCenterToBottom], 'Left center to bottom'],
-                    [FlyoutPosition[_leftCenter], 'Left center'],
-                    [FlyoutPosition[_leftCenterToTop], 'Left center to top'],
-                    [FlyoutPosition[_leftBottom], 'Left bottom'],
-                    [FlyoutPosition[_rightTop], 'Right top'],
-                    [FlyoutPosition[_rightCenterToBottom], 'Right center to bottom'],
-                    [FlyoutPosition[_rightCenter], 'Right center'],
-                    [FlyoutPosition[_rightCenterToTop], 'Right center to top'],
-                    [FlyoutPosition[_rightBottom], 'Right bottom'],
-                    [FlyoutPosition[_centerTopToRight], 'Center top to right'],
-                    [FlyoutPosition[_centerTop], 'Center top'],
-                    [FlyoutPosition[_centerTopToLeft], 'Center top to left'],
-                    [FlyoutPosition[_centerBottomToRight], 'Center bottom to right'],
-                    [FlyoutPosition[_centerBottom], 'Center bottom'],
-                    [FlyoutPosition[_centerBottomToLeft], 'Center bottom to left'],
-                    [FlyoutPosition[_centerCenterLeftTop], 'Center center left top'],
-                    [FlyoutPosition[_centerCenterLeft], 'Center center left'],
-                    [FlyoutPosition[_centerCenterLeftBottom], 'Center center left bottom'],
-                    [FlyoutPosition[_centerCenterTop], 'Center center top'],
-                    [FlyoutPosition[_centerCenter], 'Center center'],
-                    [FlyoutPosition[_centerCenterBottom], 'Center center bottom'],
-                    [FlyoutPosition[_centerCenterRightTop], 'Center center right top'],
-                    [FlyoutPosition[_centerCenterRight], 'Center center right'],
-                    [FlyoutPosition[_centerCenterRightBottom], 'Center center right bottom'],
+                    [ModalPosition[_leftTop], 'Left top'],
+                    [ModalPosition[_leftCenterToBottom], 'Left center to bottom'],
+                    [ModalPosition[_leftCenter], 'Left center'],
+                    [ModalPosition[_leftCenterToTop], 'Left center to top'],
+                    [ModalPosition[_leftBottom], 'Left bottom'],
+                    [ModalPosition[_rightTop], 'Right top'],
+                    [ModalPosition[_rightCenterToBottom], 'Right center to bottom'],
+                    [ModalPosition[_rightCenter], 'Right center'],
+                    [ModalPosition[_rightCenterToTop], 'Right center to top'],
+                    [ModalPosition[_rightBottom], 'Right bottom'],
+                    [ModalPosition[_centerTopToRight], 'Center top to right'],
+                    [ModalPosition[_centerTop], 'Center top'],
+                    [ModalPosition[_centerTopToLeft], 'Center top to left'],
+                    [ModalPosition[_centerBottomToRight], 'Center bottom to right'],
+                    [ModalPosition[_centerBottom], 'Center bottom'],
+                    [ModalPosition[_centerBottomToLeft], 'Center bottom to left'],
+                    [ModalPosition[_centerCenterLeftTop], 'Center center left top'],
+                    [ModalPosition[_centerCenterLeft], 'Center center left'],
+                    [ModalPosition[_centerCenterLeftBottom], 'Center center left bottom'],
+                    [ModalPosition[_centerCenterTop], 'Center center top'],
+                    [ModalPosition[_centerCenter], 'Center center'],
+                    [ModalPosition[_centerCenterBottom], 'Center center bottom'],
+                    [ModalPosition[_centerCenterRightTop], 'Center center right top'],
+                    [ModalPosition[_centerCenterRight], 'Center center right'],
+                    [ModalPosition[_centerCenterRightBottom], 'Center center right bottom'],
                 ]}
                 labelText="Position"
                 selectedValues={[position()]}
-                onSelectedItemsChanged={(items) => setPosition(items[0][0] as FlyoutPosition)}
+                onSelectedItemsChanged={(items) => setPosition(items[0][0] as ModalPosition)}
             />
             <NumberTextField style={{width: '100px'}} value={gap()} min={0} onFinalValueChanged={(v) => setGap(v)} labelText="Gap"/>
             <Show when={[
-                FlyoutPosition[_centerTopToRight],
-                FlyoutPosition[_centerCenterLeft],
-                FlyoutPosition[_centerBottomToRight],
-                FlyoutPosition[_centerTopToLeft],
-                FlyoutPosition[_centerCenterRight],
-                FlyoutPosition[_centerBottomToLeft],
-                FlyoutPosition[_leftCenterToBottom],
-                FlyoutPosition[_centerCenterLeftTop],
-                FlyoutPosition[_centerCenterTop],
-                FlyoutPosition[_centerCenterRightTop],
-                FlyoutPosition[_rightCenterToBottom],
-                FlyoutPosition[_leftCenterToTop],
-                FlyoutPosition[_centerCenterLeftBottom],
-                FlyoutPosition[_centerCenterBottom],
-                FlyoutPosition[_centerCenterRightBottom],
-                FlyoutPosition[_rightCenterToTop]
+                ModalPosition[_centerTopToRight],
+                ModalPosition[_centerCenterLeft],
+                ModalPosition[_centerBottomToRight],
+                ModalPosition[_centerTopToLeft],
+                ModalPosition[_centerCenterRight],
+                ModalPosition[_centerBottomToLeft],
+                ModalPosition[_leftCenterToBottom],
+                ModalPosition[_centerCenterLeftTop],
+                ModalPosition[_centerCenterTop],
+                ModalPosition[_centerCenterRightTop],
+                ModalPosition[_rightCenterToBottom],
+                ModalPosition[_leftCenterToTop],
+                ModalPosition[_centerCenterLeftBottom],
+                ModalPosition[_centerCenterBottom],
+                ModalPosition[_centerCenterRightBottom],
+                ModalPosition[_rightCenterToTop]
             ][_includes](position())}>
                 <NumberTextField value={padding()} style={{width: '100px'}} min={0} onFinalValueChanged={(v) => setPadding(v)} labelText="Padding"/>
             </Show>

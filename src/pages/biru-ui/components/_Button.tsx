@@ -1,11 +1,10 @@
 import { type VoidComponent, createSignal, Show } from "solid-js"
 
 import { _transparent, _bottom, _filled, _tonal, _outlined, _top, _right, _left } from "@/data/string"
-import { Position } from "@/enums/position"
 
 import { TextTooltip } from "@/components/Tooltip"
 import Icon from "@/components/Icon"
-import Button, { ButtonVariant, EmojiButton, FloatingActionButton, IconButton, LinkButton, LinkEmojiButton, LinkFloatingActionButton, LinkIconButton } from "@/components/Button"
+import Button, { ButtonIndicatorPosition, ButtonVariant, EmojiButton, FloatingActionButton, IconButton, LinkButton, LinkEmojiButton, LinkFloatingActionButton, LinkIconButton } from "@/components/Button"
 import CheckBox from "@/components/CheckBox"
 import Dropdown from "@/components/Dropdown"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
@@ -19,7 +18,7 @@ const _: VoidComponent = () => {
     const [disableScale, setDisableScale] = createSignal<boolean>(false)
     const [compact, setCompact] = createSignal<boolean>(false)
     const [desktopCompact, setDesktopCompact] = createSignal<boolean>(false)
-    const [indicatorPosition, setIndicatorPosition] = createSignal<Position>(Position[_bottom])
+    const [indicatorPosition, setIndicatorPosition] = createSignal<ButtonIndicatorPosition>(ButtonIndicatorPosition[_bottom])
     return (<Page
         title="Buttons"
         description="A button is an interactive UI element that triggers a specific action when clicked or tapped. It typically has a clear label indicating its function and provides visual feedback upon interaction. Buttons are essential for guiding users through an interface and facilitating user-system communication.">
@@ -170,12 +169,12 @@ const _: VoidComponent = () => {
                     labelText="Indicator position"
                     style={{width: '100px'}}
                     items={[
-                        [Position[_top], 'Top'],
-                        [Position[_right], 'Right'],
-                        [Position[_bottom], 'Bottom'],
-                        [Position[_left], 'Left'],
+                        [ButtonIndicatorPosition[_top], 'Top'],
+                        [ButtonIndicatorPosition[_right], 'Right'],
+                        [ButtonIndicatorPosition[_bottom], 'Bottom'],
+                        [ButtonIndicatorPosition[_left], 'Left'],
                     ]}
-                    onSelectedItemsChanged={(items) => setIndicatorPosition(items[0][0] as Position)}
+                    onSelectedItemsChanged={(items) => setIndicatorPosition(items[0][0] as ButtonIndicatorPosition)}
                     selectedValues={[indicatorPosition()]}
                 />
             </Show>

@@ -102,7 +102,7 @@ export class IDB {
     async get<T>(objectStore: IDBObjectStore, query: IDBValidKey | IDBKeyRange): Promise<T | undefined> {
         return new Promise<T | undefined>((ok, err) => {
             const getRequest = objectStore[_get](query)
-            getRequest[_onsuccess] = ev => ok(getRequest[_result] as T)
+            getRequest[_onsuccess] = () => ok(getRequest[_result] as T)
             getRequest[_onerror] = ev => err(ev)
         })
     }
@@ -110,7 +110,7 @@ export class IDB {
     async getAll<T>(objectStore: IDBObjectStore, query?: IDBValidKey | IDBKeyRange | null, count?: number): Promise<T[]> {
         return new Promise<T[]>((ok, err) => {
             const getAllRequest = objectStore[_getAll](query, count)
-            getAllRequest[_onsuccess] = ev => ok(getAllRequest[_result] as T[])
+            getAllRequest[_onsuccess] = () => ok(getAllRequest[_result] as T[])
             getAllRequest[_onerror] = ev => err(ev)
         })
     }

@@ -47,22 +47,14 @@
     max-height: 100%;
     overflow-y: auto;
     background-color: rgb(var(--color-surface));
-    border-radius: 16px 0 0 0;
     border: 1px solid rgba(var(--color-on-surface), var(--opacity1));
     border-right: none;
     border-bottom: none;
+    border-radius: 16px 0 0 0;
 
-    [data-corner=sharp] & {
-        border-radius: 0;
-    }
-
-    [data-corner=semi-round] & {
-        border-radius: 8px 0 0 0;
-    }
-
-    [data-corner=full-round] & {
-        border-radius: 20px 0 0 0;
-    }
+    [data-corner=sharp] & { border-radius: 0 }
+    [data-corner=semi-round] & { border-radius: 8px 0 0 0 }
+    [data-corner=full-round] & { border-radius: 20px 0 0 0 }
 
     @media (max-width: size.$side_navigation_none) {
         border-radius: 0 !important;

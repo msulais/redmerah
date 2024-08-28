@@ -15,7 +15,7 @@ import TextTooltip from '@/components/Tooltip'
 import EmojiC from '@/components/Emoji'
 import { ButtonVariant, EmojiButton, IconButton } from '@/components/Button'
 import { closeSearchMenu, SearchMenuItem, SearchTextField } from '@/components/TextField'
-import { Modal, type ModalProps, openModal, closeModal, repositionModal, focusModal } from '@/components/Modal'
+import { Modal, type ModalProps, openModal, closeModal, repositionModal, focusModal, ModalPosition as EmojiPickerPosition } from '@/components/Modal'
 import './index.scss'
 import { TransitionGroup } from 'solid-transition-group'
 import { AnimationEffectTiming } from '@/enums/animation'
@@ -231,6 +231,7 @@ export {
     closeModal as closeEmojiPicker,
     repositionModal as repositionEmojiPicker,
     focusModal as focusEmojiPicker,
+    EmojiPickerPosition
 }
 export type {
     EmojiPickerProps,

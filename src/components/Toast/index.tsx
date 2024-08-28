@@ -173,7 +173,7 @@ const Toast: ParentComponent<ToastProps> = ($props) => {
         openToast(ev[_detail] as ToastOpenDetail)
     }
 
-    function customOnClose(ev: CustomEvent): void {
+    function customOnClose(_ev: CustomEvent): void {
         closeToast()
     }
 

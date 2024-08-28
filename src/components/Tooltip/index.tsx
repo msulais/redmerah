@@ -7,7 +7,7 @@ import { addEventListener, stopPropagation } from "@/utils/event"
 import { getBoundingClientRect, setStyleProperty } from "@/utils/element"
 import { clearTimeDelayed, setTimeDelayed, timeout } from "@/utils/timeout"
 import { getDocument, getDocumentBody } from "@/data/window"
-import { FlyoutPosition } from "@/enums/position"
+import { FlyoutPosition as TooltipPosition } from "@/enums/position"
 import { getFlyoutPosition } from "@/utils/flyout"
 import { mathAbs } from "@/utils/math"
 import { BodyAttributes, PopoverAttributes } from "@/enums/attributes"
@@ -28,7 +28,7 @@ type TooltipOpenDetail = {
     tooltip?: HTMLDivElement
     text?: string
     useAnchor?: boolean
-    position?: FlyoutPosition
+    position?: TooltipPosition
     gap?: number
     startDelayDuration?: number
 }
@@ -44,7 +44,7 @@ function initTooltip(): void {
 
     let $anchor_ref: HTMLDivElement | null = null
     let $pointer = {x: 0, y: 0}
-    let $position: FlyoutPosition = FlyoutPosition[_centerTop]
+    let $position: TooltipPosition = TooltipPosition[_centerTop]
     let $gap: number = 40
     let $useAnchor: boolean = false
     let textTooltip_ref: HTMLDivElement
@@ -129,12 +129,12 @@ function initTooltip(): void {
 
         if (rangeX > rangeY) {
             if ((tooltipMidPos.x < anchorCenterTop || tooltipMidPos.x > anchorCenterTop) && (
-                $position == FlyoutPosition[_centerBottom]
-                || $position == FlyoutPosition[_centerBottomToLeft]
-                || $position == FlyoutPosition[_centerBottomToRight]
-                || $position == FlyoutPosition[_centerTop]
-                || $position == FlyoutPosition[_centerTopToLeft]
-                || $position == FlyoutPosition[_centerTopToRight]
+                $position == TooltipPosition[_centerBottom]
+                || $position == TooltipPosition[_centerBottomToLeft]
+                || $position == TooltipPosition[_centerBottomToRight]
+                || $position == TooltipPosition[_centerTop]
+                || $position == TooltipPosition[_centerTopToLeft]
+                || $position == TooltipPosition[_centerTopToRight]
             )) {
                 if (tooltipMidPos.y > anchorCenterTop ) translate[_top]  = -12
                 if (tooltipMidPos.y < anchorCenterTop ) translate[_top]  = 12
@@ -144,12 +144,12 @@ function initTooltip(): void {
             }
         } else {
             if ((tooltipMidPos.y < anchorCenterLeft || tooltipMidPos.y > anchorCenterLeft) && (
-                $position == FlyoutPosition[_leftCenter]
-                || $position == FlyoutPosition[_leftCenterToBottom]
-                || $position == FlyoutPosition[_leftCenterToTop]
-                || $position == FlyoutPosition[_rightCenter]
-                || $position == FlyoutPosition[_rightCenterToBottom]
-                || $position == FlyoutPosition[_rightCenterToTop]
+                $position == TooltipPosition[_leftCenter]
+                || $position == TooltipPosition[_leftCenterToBottom]
+                || $position == TooltipPosition[_leftCenterToTop]
+                || $position == TooltipPosition[_rightCenter]
+                || $position == TooltipPosition[_rightCenterToBottom]
+                || $position == TooltipPosition[_rightCenterToTop]
             )) {
                 if (tooltipMidPos.x > anchorCenterLeft) translate[_left] = -12
                 if (tooltipMidPos.x < anchorCenterLeft) translate[_left] = 12
@@ -170,9 +170,9 @@ function initTooltip(): void {
         addEventListener(getDocumentBody(), BodyEvents[_openTextTooltip], ev => {
             const { 
                 anchor,
-                text = '',
+                text,
                 gap = 40,
-                position = FlyoutPosition[_centerTop],
+                position = TooltipPosition[_centerTop],
                 startDelayDuration = 800,
                 useAnchor = false,
                 tooltip
@@ -181,6 +181,11 @@ function initTooltip(): void {
             if (timeoutId != null) clearTimeDelayed(timeoutId)
             timeoutId = setTimeDelayed(async () => {
                 if ($anchor_ref != null && anchor[_isSameNode]($anchor_ref) && isOpen) {
+                    timeoutId = null
+                    return
+                }
+
+                if (text == undefined && tooltip == undefined) {
                     timeoutId = null
                     return
                 }
@@ -198,7 +203,7 @@ function initTooltip(): void {
 
                 isOpen = true
 
-                if (tooltip == undefined) {
+                if (tooltip == undefined && text != undefined) {
                     textTooltip_ref[_textContent] = text
                 }
                 (tooltip ?? textTooltip_ref)[_showPopover]()
@@ -270,12 +275,12 @@ function initTooltip(): void {
         
                 if (rangeX > rangeY) {
                     if ((tooltipMidPos.x < anchorCenterTop || tooltipMidPos.x > anchorCenterTop) && (
-                        position == FlyoutPosition[_centerBottom]
-                        || position == FlyoutPosition[_centerBottomToLeft]
-                        || position == FlyoutPosition[_centerBottomToRight]
-                        || position == FlyoutPosition[_centerTop]
-                        || position == FlyoutPosition[_centerTopToLeft]
-                        || position == FlyoutPosition[_centerTopToRight]
+                        position == TooltipPosition[_centerBottom]
+                        || position == TooltipPosition[_centerBottomToLeft]
+                        || position == TooltipPosition[_centerBottomToRight]
+                        || position == TooltipPosition[_centerTop]
+                        || position == TooltipPosition[_centerTopToLeft]
+                        || position == TooltipPosition[_centerTopToRight]
                     )) {
                         if (tooltipMidPos.y > anchorCenterTop ) translate[_top]  = -12
                         if (tooltipMidPos.y < anchorCenterTop ) translate[_top]  = 12
@@ -285,12 +290,12 @@ function initTooltip(): void {
                     }
                 } else {
                     if ((tooltipMidPos.y < anchorCenterLeft || tooltipMidPos.y > anchorCenterLeft) && (
-                        position == FlyoutPosition[_leftCenter]
-                        || position == FlyoutPosition[_leftCenterToBottom]
-                        || position == FlyoutPosition[_leftCenterToTop]
-                        || position == FlyoutPosition[_rightCenter]
-                        || position == FlyoutPosition[_rightCenterToBottom]
-                        || position == FlyoutPosition[_rightCenterToTop]
+                        position == TooltipPosition[_leftCenter]
+                        || position == TooltipPosition[_leftCenterToBottom]
+                        || position == TooltipPosition[_leftCenterToTop]
+                        || position == TooltipPosition[_rightCenter]
+                        || position == TooltipPosition[_rightCenterToBottom]
+                        || position == TooltipPosition[_rightCenterToTop]
                     )) {
                         if (tooltipMidPos.x > anchorCenterLeft) translate[_left] = -12
                         if (tooltipMidPos.x < anchorCenterLeft) translate[_left] = 12
@@ -342,8 +347,8 @@ function initTooltip(): void {
 }
 
 type TextTooltipProps = {
-    text: string
-    position?: FlyoutPosition
+    text?: string
+    position?: TooltipPosition
     gap?: number
     startDelayDuration?: number
     endDelayDuration?: number
@@ -404,7 +409,7 @@ const TextTooltip: FlowComponent<TextTooltipProps> = (props) => {
 
 type RichTooltipProps = Omit<PopoverProps, 'onMouseMove' | 'onMouseLeave' | 'onMouseDown' | 'onTouchEnd' | 'onTouchCancel'> & {
     tooltip: JSX.Element
-    position?: FlyoutPosition
+    position?: TooltipPosition
     gap?: number
     startDelayDuration?: number
     endDelayDuration?: number
@@ -514,7 +519,8 @@ export {
     TooltipAttributes,
     TEXT_TOOLTIP_ID,
     TextTooltip,
-    RichTooltip
+    RichTooltip,
+    TooltipPosition
 }
 export type {
     TextTooltipProps,

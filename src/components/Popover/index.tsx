@@ -2,7 +2,7 @@ import { createSignal, createUniqueId, mergeProps, onCleanup, onMount, Show, spl
 import { Portal } from 'solid-js/web'
 
 import type { ComponentEvent } from '@/types/event'
-import { FlyoutPosition } from '@/enums/position'
+import { FlyoutPosition as PopoverPosition } from '@/enums/position'
 import { getFlyoutPosition } from '@/utils/flyout'
 import { _altKey, _body, _bottom, _centerBottom, _centerBottomToLeft, _centerBottomToRight, _centerTop, _centerTopToLeft, _centerTopToRight, _children, _class, _click, _clientWidth, _clientX, _clientY, _close, _closePopover, _ctrlKey, _detail, _disconnect, _dismiss, _dispatchEvent, _documentElement, _dragable, _element, _Escape, _findIndex, _flyout, _flyoutListener, _focus, _height, _hidePopover, _important, _innerHeight, _instant, _isSameNode, _key, _left, _leftCenter, _leftCenterToBottom, _leftCenterToTop, _length, _manual, _max_height, _max_width, _maxHeight, _maxWidth, _metaKey, _mousemove, _mouseup, _move, _newState, _noPointerEvent, _observe, _onCancel, _onClose, _onKeyDown, _onOpen, _onReposition, _onShortFocus, _onToggle, _onToggleOpen, _open, _openPopover, _popoverListener, _popoverOpen, _push, _px, _ref, _resize, _right, _rightCenter, _rightCenterToBottom, _rightCenterToTop, _scroll, _scrollTo, _scrollTop, _scrollY, _shiftKey, _showPopover, _some, _splice, _style, _top, _touchend, _touches, _touchmove, _transform, _usePortal, _width, _x, _y } from '@/data/string'
 import { clearTimeDelayed, setTimeDelayed, timeout } from '@/utils/timeout'
@@ -21,7 +21,7 @@ type PopoverOpenDetail = {
     anchor?: HTMLElement
     gap?: number
     padding?: number
-    position?: FlyoutPosition
+    position?: PopoverPosition
     allowHideAnchor?: boolean
     dragable?: boolean
     manualDismiss?: boolean
@@ -161,7 +161,7 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
     let anchor_ref: HTMLElement | null = null
     let $gap: number = 0
     let $padding: number = 0
-    let $position: FlyoutPosition = FlyoutPosition[_centerBottom]
+    let $position: PopoverPosition = PopoverPosition[_centerBottom]
     let notAllowHideAnchor: boolean = false
     let maxWidth: string | null = null
     let maxHeight: string | null = null
@@ -192,7 +192,7 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
         changePosition(ev[_touches][0][_clientX], ev[_touches][0][_clientY])
     }
 
-    function onTouchEnd(ev: TouchEvent): void {
+    function onTouchEnd(_ev: TouchEvent): void {
         removeAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
         setIsDragging(false)
         fixPosition()
@@ -204,13 +204,13 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
         changePosition((ev as MouseEvent)[_clientX], (ev as MouseEvent)[_clientY])
     }
 
-    function onMouseUp(ev: MouseEvent): void {
+    function onMouseUp(_ev: MouseEvent): void {
         removeAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
         setIsDragging(false)
         fixPosition()
     }
 
-    function customOnClose(ev: CustomEvent): void {
+    function customOnClose(_ev: CustomEvent): void {
         closePopover()
     }
 
@@ -218,7 +218,7 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
         openPopover(ev[_detail] as PopoverOpenDetail)
     }
 
-    function customOnReposition(ev: CustomEvent): void {
+    function customOnReposition(_ev: CustomEvent): void {
         repositionPopover()
     }
 
@@ -290,12 +290,12 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 
         if (rangeX > rangeY) {
             if ((popoverMidPos.x < anchorCenterTop || popoverMidPos.x > anchorCenterTop) && (
-                $position == FlyoutPosition[_centerBottom]
-                || $position == FlyoutPosition[_centerBottomToLeft]
-                || $position == FlyoutPosition[_centerBottomToRight]
-                || $position == FlyoutPosition[_centerTop]
-                || $position == FlyoutPosition[_centerTopToLeft]
-                || $position == FlyoutPosition[_centerTopToRight]
+                $position == PopoverPosition[_centerBottom]
+                || $position == PopoverPosition[_centerBottomToLeft]
+                || $position == PopoverPosition[_centerBottomToRight]
+                || $position == PopoverPosition[_centerTop]
+                || $position == PopoverPosition[_centerTopToLeft]
+                || $position == PopoverPosition[_centerTopToRight]
             )) {
                 if (popoverMidPos.y > anchorCenterTop ) translate[_top]  = -12
                 if (popoverMidPos.y < anchorCenterTop ) translate[_top]  = 12
@@ -305,12 +305,12 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
             }
         } else {
             if ((popoverMidPos.y < anchorCenterLeft || popoverMidPos.y > anchorCenterLeft) && (
-                $position == FlyoutPosition[_leftCenter]
-                || $position == FlyoutPosition[_leftCenterToBottom]
-                || $position == FlyoutPosition[_leftCenterToTop]
-                || $position == FlyoutPosition[_rightCenter]
-                || $position == FlyoutPosition[_rightCenterToBottom]
-                || $position == FlyoutPosition[_rightCenterToTop]
+                $position == PopoverPosition[_leftCenter]
+                || $position == PopoverPosition[_leftCenterToBottom]
+                || $position == PopoverPosition[_leftCenterToTop]
+                || $position == PopoverPosition[_rightCenter]
+                || $position == PopoverPosition[_rightCenterToBottom]
+                || $position == PopoverPosition[_rightCenterToTop]
             )) {
                 if (popoverMidPos.x > anchorCenterLeft) translate[_left] = -12
                 if (popoverMidPos.x < anchorCenterLeft) translate[_left] = 12
@@ -340,7 +340,7 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
             dragable = false, 
             gap = 0, 
             padding = 0, 
-            position = FlyoutPosition[_centerBottom],
+            position = PopoverPosition[_centerBottom],
             manualDismiss = false
         } = options;
 
@@ -495,12 +495,12 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 
         if (rangeX > rangeY) {
             if ((popoverMidPos.x < anchorCenterTop || popoverMidPos.x > anchorCenterTop) && (
-                position == FlyoutPosition[_centerBottom]
-                || position == FlyoutPosition[_centerBottomToLeft]
-                || position == FlyoutPosition[_centerBottomToRight]
-                || position == FlyoutPosition[_centerTop]
-                || position == FlyoutPosition[_centerTopToLeft]
-                || position == FlyoutPosition[_centerTopToRight]
+                position == PopoverPosition[_centerBottom]
+                || position == PopoverPosition[_centerBottomToLeft]
+                || position == PopoverPosition[_centerBottomToRight]
+                || position == PopoverPosition[_centerTop]
+                || position == PopoverPosition[_centerTopToLeft]
+                || position == PopoverPosition[_centerTopToRight]
             )) {
                 if (popoverMidPos.y > anchorCenterTop ) translate[_top]  = -12
                 if (popoverMidPos.y < anchorCenterTop ) translate[_top]  = 12
@@ -510,12 +510,12 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
             }
         } else {
             if ((popoverMidPos.y < anchorCenterLeft || popoverMidPos.y > anchorCenterLeft) && (
-                position == FlyoutPosition[_leftCenter]
-                || position == FlyoutPosition[_leftCenterToBottom]
-                || position == FlyoutPosition[_leftCenterToTop]
-                || position == FlyoutPosition[_rightCenter]
-                || position == FlyoutPosition[_rightCenterToBottom]
-                || position == FlyoutPosition[_rightCenterToTop]
+                position == PopoverPosition[_leftCenter]
+                || position == PopoverPosition[_leftCenterToBottom]
+                || position == PopoverPosition[_leftCenterToTop]
+                || position == PopoverPosition[_rightCenter]
+                || position == PopoverPosition[_rightCenterToBottom]
+                || position == PopoverPosition[_rightCenterToTop]
             )) {
                 if (popoverMidPos.x > anchorCenterLeft) translate[_left] = -12
                 if (popoverMidPos.x < anchorCenterLeft) translate[_left] = 12
@@ -657,9 +657,9 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
         initMutationObserver()
     })
 
-    onCleanup(() => {
+    onCleanup(async () => {
         removeCustomEvent()
-        closePopover()
+        await closePopover()
     })
 
     const C: VoidComponent = () => (<div
@@ -715,7 +715,8 @@ export {
     openPopover, 
     repositionPopover,
     closePopover, 
-    Popover
+    Popover,
+    PopoverPosition
 }
 export type { 
     PopoverOpenDetail, 

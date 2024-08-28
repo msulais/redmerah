@@ -1,40 +1,36 @@
-import { type Component, For, Match, Show, Switch, createMemo, createSignal, onMount } from "solid-js";
-import type { SetStoreFunction } from "solid-js/store";
+import { type Component, For, Match, Show, Switch, createMemo, createSignal, onMount } from "solid-js"
+import type { SetStoreFunction } from "solid-js/store"
 
-import type { Settings } from "./_types";
-import { clearTimeDelayed, setTimeDelayed } from "@/utils/timeout";
-import { removeAttribute, setAttribute, toggleAttribute } from "@/utils/attributes";
-import { closePopover, openPopover } from "@/utils/popover";
-import { addClassListModule } from "@/utils/element";
-import { PopoverPosition } from "@/enums/position";
-import { BodyAttributes, RootAttributes } from "@/enums/attributes";
-import { ExternalLinks, RoutesLinks } from "@/enums/links";
-import { ThemeData } from "@/enums/theme";
-import { getLocalStorageItem, setLocalStorageItem } from "@/utils/storage";
-import { LocalStorageKeys } from "@/enums/storage";
-import { RandomizerType, NumbersRandomizerSort, NumbersRandomizerNumberType, WordsRandomizerWordCase, ColorsRandomizerColorModel, Commands } from "./_enums";
-import { _CENTER_BOTTOM_TO_LEFT, _RIGHT_CENTER_TO_BOTTOM, _URL, _actions, _animation, _ascending, _binary, _change, _color, _colorModel, _colors, _command, _contactEmail, _corner, _currentTarget, _dark, _decimal, _descending, _donate, _filled, _fullRound, _generate, _getFullYear, _hex, _hexadecimal, _history, _hsl, _icon, _includes, _isGenerating, _light, _logo, _lowercase, _matches, _minDecimalLength, _noPointerEvent, _none, _numberType, _numbers, _octal, _onChangeRandomizer, _onCopyResult, _onGenerate, _onStopGenerate, _prefix, _randomizerType, _repeat, _rgb, _round, _selection, _semiRound, _separator, _settings, _share, _sharp, _sort, _src, _stopGenerate, _string, _suffix, _system, _teams, _text, _theme, _then, _titlecase, _togglecase, _type, _uppercase, _value, _wordCase, _words } from "@/data/string";
-import { encodeURL } from "@/utils/url";
-import { getDocument, getDocumentBody, getNavigator, getRoot } from "@/data/window";
-import { CornerData } from "@/enums/corner";
-import type { IDB } from "@/class/indexeddb";
+import type { Settings } from "./_types"
+import { clearTimeDelayed, setTimeDelayed, timeout } from "@/utils/timeout"
+import { setAttribute, toggleAttribute } from "@/utils/attributes"
+import { addClassListModule } from "@/utils/element"
+import { RootAttributes } from "@/enums/attributes"
+import { ExternalLinks, RoutesLinks } from "@/enums/links"
+import { ThemeData } from "@/enums/theme"
+import { getLocalStorageItem, setLocalStorageItem } from "@/utils/storage"
+import { LocalStorageKeys } from "@/enums/storage"
+import { RandomizerType, NumbersRandomizerSort, NumbersRandomizerNumberType, WordsRandomizerWordCase, ColorsRandomizerColorModel, Commands } from "./_enums"
+import { _change_settings_numbers_sort, _change_settings_numbers_type, _change_settings_words_wordCase, _change_settings_colors_colorModel, _toggle_navigation_expand, _toggle_settings_repeat, _toggle_settings_animation, _change_settings_prefix, _change_settings_suffix, _change_settings_separator, _change_settings_numbers_minDecimalLength } from "./_string"
+import { _centerBottomToLeft, _rightCenterToBottom, _URL, _actions, _animation, _ascending, _binary, _change, _color, _colorModel, _colors, _command, _contactEmail, _corner, _currentTarget, _dark, _decimal, _descending, _donate, _filled, _fullRound, _generate, _getFullYear, _hex, _hexadecimal, _history, _hsl, _icon, _includes, _isGenerating, _light, _logo, _lowercase, _matches, _minDecimalLength, _noPointerEvent, _none, _numberType, _numbers, _octal, _onChangeRandomizer, _onCopyResult, _onGenerate, _onStopGenerate, _prefix, _randomizerType, _repeat, _rgb, _round, _selection, _semiRound, _separator, _settings, _share, _sharp, _sort, _src, _stopGenerate, _string, _suffix, _system, _teams, _text, _theme, _then, _titlecase, _togglecase, _type, _uppercase, _value, _wordCase, _words, _apps, _home, _about, _privacy, _terms } from "@/data/string"
+import { encodeURL } from "@/utils/url"
+import { getDocument, getNavigator, getRoot } from "@/data/window"
+import { CornerData } from "@/enums/corner"
+import { isMatchMedia } from "@/utils/window"
+import { RANDOMIZER_TYPES, SIZE_SIDE_NAVIGATION_NONE } from "./_data"
+import { addEventListener } from "@/utils/event"
 import logo from '@/assets/apps/randomizer-logo.svg'
 import redmerahLogo from '@/assets/logo.svg'
 
-import Icon from "@/components/Icon";
-import Button, { ButtonVariant } from "@/components/Button";
-import Tooltip from "@/components/Tooltip";
-import Menu, { MenuDivider, MenuHeader, MenuIndent, MenuItem, MenuItemLink, NestedMenu } from "@/components/Menu";
-import TextField, { NumberTextField, changeTextFieldValue } from "@/components/TextField";
-import AppBar from "@/components/AppBar";
-import CSSAnimation from "@/styles/animation.module.scss";
-import CSS from './_AppBar.module.scss';
-import { isMatchMedia } from "@/utils/window";
-import { RANDOMIZER_TYPES, SIZE_SIDE_NAVIGATION_NONE } from "./_data";
-import { addEventListener } from "@/utils/event";
-import Drawer, { DrawerItem } from "@/components/Drawer";
-import { closeModal, openModal } from "@/utils/modal";
-import { _change_settings_numbers_sort, _change_settings_numbers_type, _change_settings_words_wordCase, _change_settings_colors_colorModel, _toggle_navigation_expand, _toggle_settings_repeat, _toggle_settings_animation, _change_settings_prefix, _change_settings_suffix, _change_settings_separator, _change_settings_numbers_minDecimalLength } from "./_string";
+import Icon from "@/components/Icon"
+import Button, { ButtonVariant, IconButton } from "@/components/Button"
+import { TextTooltip } from "@/components/Tooltip"
+import Menu, { MenuDivider, MenuHeader, MenuIndent, MenuItem, LinkMenuItem, SubMenu, closeSubMenu, closeMenu, openMenu, MenuPosition } from "@/components/Menu"
+import TextField, { NumberTextField, changeTextFieldValue } from "@/components/TextField"
+import Drawer, { closeDrawer, DrawerItem, openDrawer } from "@/components/Drawer"
+import AppBar from "@/components/AppBar"
+import CSSAnimation from "@/styles/animation.module.scss"
+import CSS from './_AppBar.module.scss'
 
 type Props = {
     isGenerating: boolean
@@ -48,17 +44,12 @@ type Props = {
 const C: Component<Props> = (props) => {
     const [is_menu_info_open, setIs_menu_info_open] = createSignal<boolean>(false)
     const [is_menu_settings_open, setIs_menu_settings_open] = createSignal<boolean>(false)
-    const [is_menu_themeSettings_open, setIs_menu_themeSettings_open] = createSignal<boolean>(false)
-    const [is_menu_cornerSettings_open, setIs_menu_cornerSettings_open] = createSignal<boolean>(false)
-    const [is_menu_colorModelSettings_open, setIs_menu_colorModelSettings_open] = createSignal<boolean>(false)
-    const [is_menu_wordCaseSettings_open, setIs_menu_wordCaseSettings_open] = createSignal<boolean>(false)
-    const [is_menu_sortSettings_open, setIs_menu_sortSettings_open] = createSignal<boolean>(false)
-    const [is_menu_numberTypeSettings_open, setIs_menu_numberTypeSettings_open] = createSignal<boolean>(false)
-    const [button_info_ref, set_button_info_ref] = createSignal<HTMLButtonElement | null>(null)
-    const [button_settings_ref, set_button_settings_ref] = createSignal<HTMLButtonElement | null>(null)
-    const [button_copy_ref, set_button_copy_ref] = createSignal<HTMLButtonElement | null>(null)
-    const [button_menu_ref, set_button_menu_ref] = createSignal<HTMLButtonElement | null>(null)
-    const [button_closeDrawer_ref, set_button_closeDrawer_ref] = createSignal<HTMLButtonElement | null>(null)
+    const [is_submenu_theme_open, setIs_submenu_theme_open] = createSignal<boolean>(false)
+    const [is_submenu_corner_open, setIs_submenu_corner_open] = createSignal<boolean>(false)
+    const [is_submenu_colorModel_open, setIs_submenu_colorModel_open] = createSignal<boolean>(false)
+    const [is_submenu_wordCase_open, setIs_submenu_wordCase_open] = createSignal<boolean>(false)
+    const [is_submenu_sort_open, setIs_submenu_sort_open] = createSignal<boolean>(false)
+    const [is_submenu_numberType_open, setIs_submenu_numberType_open] = createSignal<boolean>(false)
     const [theme, setTheme] = createSignal<ThemeData>(ThemeData[_system])
     const [copyTimeoutId, setCopyTimeoutId] = createSignal<number | null>(null)
     const [copyErrorTimeoutId, setCopyErrorTimeoutId] = createSignal<number | null>(null)
@@ -83,34 +74,36 @@ const C: Component<Props> = (props) => {
         if (randomizerType == RandomizerType[_teams     ]) return s[_teams      ][_animation]
         return false
     })
-    let textfield_prefix_ref: HTMLInputElement | undefined
-    let textfield_suffix_ref: HTMLInputElement | undefined
-    let textfield_separator_ref: HTMLInputElement | undefined
-    let textfield_decimalLength_ref: HTMLInputElement | undefined
+    let textfield_prefix_ref: HTMLInputElement
+    let textfield_suffix_ref: HTMLInputElement
+    let textfield_separator_ref: HTMLInputElement
+    let textfield_decimalLength_ref: HTMLInputElement
     let drawer_navigation_ref: HTMLDialogElement
-    let menu_cornerSettings_ref: HTMLElement
-    let menu_info_ref: HTMLElement
-    let menu_settings_ref: HTMLElement
-    let menu_themeSettings_ref: HTMLElement
-    let menu_wordCaseSettings_ref: HTMLElement
-    let menu_sortSettings_ref: HTMLElement
-    let menu_numberTypeSettings_ref: HTMLElement
-    let menu_colorModelSettings_ref: HTMLElement
+    let submenu_corner_ref: HTMLDivElement
+    let menu_info_ref: HTMLDialogElement
+    let menu_settings_ref: HTMLDialogElement
+    let submenu_theme_ref: HTMLDivElement
+    let submenu_wordCase_ref: HTMLDivElement
+    let submenu_sort_ref: HTMLDivElement
+    let submenu_numberType_ref: HTMLDivElement
+    let submenu_colorModel_ref: HTMLDivElement
 
     async function changeTheme(theme: ThemeData): Promise<void> {
         setTheme(theme)
         setAttribute(getRoot(), RootAttributes[_theme], theme)
         setLocalStorageItem(LocalStorageKeys[_theme], theme)
-        await closePopover(menu_themeSettings_ref)
-        await closePopover(menu_settings_ref)
+        closeSubMenu(submenu_theme_ref)
+        await timeout(300)
+        closeMenu(menu_settings_ref)
     }
 
     async function changeCorner(corner: CornerData): Promise<void> {
         setCorner(corner)
         setAttribute(getRoot(), RootAttributes[_corner], corner)
         setLocalStorageItem(LocalStorageKeys[_corner], corner)
-        await closePopover(menu_cornerSettings_ref)
-        await closePopover(menu_settings_ref)
+        closeSubMenu(submenu_corner_ref)
+        await timeout(300)
+        closeMenu(menu_settings_ref)
     }
 
     function initTheme(): void {
@@ -133,14 +126,16 @@ const C: Component<Props> = (props) => {
 
     async function changeNumbersSort(sort: NumbersRandomizerSort): Promise<void> {
         props[_command](Commands[_change_settings_numbers_sort], sort)
-        await closePopover(menu_sortSettings_ref)
-        await closePopover(menu_settings_ref)
+        closeSubMenu(submenu_sort_ref)
+        await timeout(300)
+        closeMenu(menu_settings_ref)
     }
 
     async function changeNumbersType(type: NumbersRandomizerNumberType): Promise<void> {
         props[_command](Commands[_change_settings_numbers_type], type)
-        await closePopover(menu_numberTypeSettings_ref)
-        await closePopover(menu_settings_ref)
+        closeSubMenu(submenu_numberType_ref)
+        await timeout(300)
+        closeMenu(menu_settings_ref)
     }
 
     function initInputs(): void {
@@ -159,14 +154,16 @@ const C: Component<Props> = (props) => {
 
     async function changeWordsWordCase(wordCase: WordsRandomizerWordCase): Promise<void> {
         props[_command](Commands[_change_settings_words_wordCase], wordCase)
-        await closePopover(menu_wordCaseSettings_ref)
-        await closePopover(menu_settings_ref)
+        closeSubMenu(submenu_wordCase_ref)
+        await timeout(300)
+        closeMenu(menu_settings_ref)
     }
 
     async function changeColorsColorModel(colorModel: ColorsRandomizerColorModel): Promise<void> {
         props[_command](Commands[_change_settings_colors_colorModel], colorModel)
-        await closePopover(menu_colorModelSettings_ref)
-        await closePopover(menu_settings_ref)
+        closeSubMenu(submenu_colorModel_ref)
+        await timeout(300)
+        closeMenu(menu_settings_ref)
     }
 
     function initSideNavigationListener(): void {
@@ -183,17 +180,16 @@ const C: Component<Props> = (props) => {
     return (<>
         <AppBar 
             leading={<>
-                <Tooltip text={isSideNavigationHidden()? "Open navigation" : "Expand/shrink navigation"} anchor={button_menu_ref()}/>
-                <Button 
-                    ref={r => set_button_menu_ref(r)} 
-                    onClick={(ev) => {
-                        if (isSideNavigationHidden()) return openModal(ev, drawer_navigation_ref)
-                        props[_command](Commands[_toggle_navigation_expand])
-                    }} 
-                    classList={addClassListModule(CSSAnimation.btn_shrink_horizontal_icon)} 
-                    iconOnly>
-                    <Icon code={0xEAFF}/>
-                </Button>
+                <TextTooltip text={isSideNavigationHidden()? "Open navigation" : "Expand/shrink navigation"}>
+                    <IconButton 
+                        onClick={(ev) => {
+                            if (isSideNavigationHidden()) return openDrawer(ev, drawer_navigation_ref)
+                            props[_command](Commands[_toggle_navigation_expand])
+                        }} 
+                        classList={addClassListModule(CSSAnimation.btn_shrink_horizontal_icon)} 
+                        code={0xEAFF}
+                    />
+                </TextTooltip>
                 <img width="28" src={logo[_src]} alt="Randomizer" />
             </>}
             headline="Randomizer"
@@ -214,142 +210,144 @@ const C: Component<Props> = (props) => {
                     />
                     <Show when={props[_isGenerating]} fallback="Generate">Generating</Show>
                 </Button>
-                <Tooltip text="Info" anchor={button_info_ref()}/>
-                <Button ref={r => set_button_info_ref(r)} focus={is_menu_info_open()} iconOnly onClick={(ev) => openPopover({
-                    event: ev,
-                    anchor: ev[_currentTarget],
-                    popover: menu_info_ref,
-                    padding: 4,
-                    position: PopoverPosition[_CENTER_BOTTOM_TO_LEFT]
-                })}><Icon code={0xE930}/></Button>
+                <TextTooltip text="Info">
+                    <IconButton 
+                        focused={is_menu_info_open()} 
+                        code={0xE930} 
+                        onClick={(ev) => openMenu(ev, menu_info_ref, {
+                            anchor: ev[_currentTarget],
+                            padding: 4,
+                            position: MenuPosition[_centerBottomToLeft]
+                        })}
+                    />
+                </TextTooltip>
 
-                <Tooltip text="Settings" anchor={button_settings_ref()}/>
-                <Button classList={addClassListModule(CSSAnimation.btn_rotate_icon)} ref={r => set_button_settings_ref(r)} focus={is_menu_settings_open()} iconOnly onClick={async (ev) => {
-                    await openPopover({
-                        event: ev,
-                        anchor: ev[_currentTarget],
-                        popover: menu_settings_ref,
-                        padding: 4,
-                        position: PopoverPosition[_CENTER_BOTTOM_TO_LEFT]
-                    })
-                    initInputs()
-                }}><Icon code={0xEE0F}/></Button>
+                <TextTooltip text="Settings">
+                    <IconButton 
+                        classList={addClassListModule(CSSAnimation.btn_rotate_icon)} 
+                        focused={is_menu_settings_open()} 
+                        onClick={async (ev) => {
+                            openMenu(ev, menu_settings_ref, {
+                                anchor: ev[_currentTarget],
+                                padding: 4,
+                                position: MenuPosition[_centerBottomToLeft]
+                            })
+                            await timeout(300)
+                            initInputs()
+                        }}
+                        code={0xEE0F}
+                    />
+                </TextTooltip>
 
-                <Tooltip text="Copy result" anchor={button_copy_ref()}/>
-                <Button iconOnly ref={r => set_button_copy_ref(r)} onClick={async () => {
-                    const success = await props[_onCopyResult]()
-                    if (!success) {
-                        if (copyErrorTimeoutId()) clearTimeDelayed(copyErrorTimeoutId()!)
-    
-                        setCopyErrorTimeoutId(setTimeDelayed(() => {
-                            setCopyErrorTimeoutId(null)
-                        }, 1000))
-                        return
-                    }
+                <TextTooltip text="Copy result">
+                    <IconButton 
+                        onClick={async () => {
+                            const success = await props[_onCopyResult]()
+                            if (!success) {
+                                if (copyErrorTimeoutId()) clearTimeDelayed(copyErrorTimeoutId()!)
+            
+                                setCopyErrorTimeoutId(setTimeDelayed(() => {
+                                    setCopyErrorTimeoutId(null)
+                                }, 1000))
+                                return
+                            }
 
-                    if (copyTimeoutId()) clearTimeDelayed(copyTimeoutId()!)
+                            if (copyTimeoutId()) clearTimeDelayed(copyTimeoutId()!)
 
-                    setCopyTimeoutId(setTimeDelayed(() => {
-                        setCopyTimeoutId(null)
-                    }, 1000))
-                }}>
-                    <Show 
-                        when={copyTimeoutId()} 
-                        fallback={<Show 
-                            when={copyErrorTimeoutId()} 
-                            fallback={<Icon code={0xE51B}/>}>
-                            <Icon code={0xE5E9}/>
-                        </Show>}>
-                        <Icon code={0xE3D8}/>
-                    </Show>
-                </Button>
+                            setCopyTimeoutId(setTimeDelayed(() => {
+                                setCopyTimeoutId(null)
+                            }, 1000))
+                        }}
+                        code={copyTimeoutId()? 0xE3D8 : copyErrorTimeoutId()? 0xE5E9 : 0xE51B}
+                    />
+                </TextTooltip>
             </>}
         />
         <Drawer 
-            header={<>
-                <Tooltip anchor={button_closeDrawer_ref()} text="Close navigation"/>
-                <Button ref={r => set_button_closeDrawer_ref(r)} classList={addClassListModule(CSSAnimation.btn_shrink_horizontal_icon)} iconOnly onClick={() => closeModal(drawer_navigation_ref)}><Icon code={0xEAFF}/></Button>
-            </>}
+            header={<TextTooltip text="Close navigation">
+                <IconButton 
+                    classList={addClassListModule(CSSAnimation.btn_shrink_horizontal_icon)} 
+                    onClick={() => closeDrawer(drawer_navigation_ref)}
+                    code={0xEAFF}
+                />
+            </TextTooltip>}
             ref={r => drawer_navigation_ref = r}>
             <For each={RANDOMIZER_TYPES}>{r => 
                 <DrawerItem 
                     onClick={() => {
                         if (props[_randomizerType] != r[_type]) props[_onChangeRandomizer](r[_type])
                         
-                        closeModal(drawer_navigation_ref)
+                        closeDrawer(drawer_navigation_ref)
                     } }
                     selected={props[_randomizerType] == r[_type]}>
                     <Icon filled={props[_randomizerType] == r[_type]} code={r[_icon]}/>{ r[_text] }
                 </DrawerItem>
             }</For>
         </Drawer>
-        <Menu ref={r => menu_info_ref = r} onToggle={(v) => setIs_menu_info_open(v)}>
-            <MenuItemLink
-                onClick={() => closePopover(menu_info_ref)}
-                href={RoutesLinks.home}
-                openInNewTab
+        <Menu ref={r => menu_info_ref = r} onToggleOpen={(v) => setIs_menu_info_open(v)}>
+            <LinkMenuItem
+                onClick={() => closeMenu(menu_info_ref)}
+                href={RoutesLinks[_home]}
                 trailing={<Icon code={0xEB51}/>}
                 leading={<img src={redmerahLogo[_src]} width={16} alt='Redmerah logo'/>}>
                 Redmerah (homepage)
-            </MenuItemLink>
-            <MenuItemLink
-                onClick={() => closePopover(menu_info_ref)}
-                href={RoutesLinks.apps}
-                openInNewTab
+            </LinkMenuItem>
+            <LinkMenuItem
+                onClick={() => closeMenu(menu_info_ref)}
+                href={RoutesLinks[_apps]}
                 trailing={<Icon code={0xEB51}/>}
                 leading={<Icon code={0xE063}/>}>
                 More apps
-            </MenuItemLink>
-            <MenuItemLink
-                onClick={() => closePopover(menu_info_ref)}
-                href={RoutesLinks.about}
-                openInNewTab
+            </LinkMenuItem>
+            <LinkMenuItem
+                onClick={() => closeMenu(menu_info_ref)}
+                href={RoutesLinks[_about]}
                 trailing={<Icon code={0xEB51}/>}
                 leading={<Icon code={0xE930}/>}>
                 About us
-            </MenuItemLink>
+            </LinkMenuItem>
             <MenuDivider />
-            <MenuItemLink
-                onClick={() => closePopover(menu_info_ref)}
-                href={RoutesLinks.privacy}
+            <LinkMenuItem
+                onClick={() => closeMenu(menu_info_ref)}
+                href={RoutesLinks[_privacy]}
                 openInNewTab
                 trailing={<Icon code={0xEB51}/>}
                 leading={<Icon code={0xEE51}/>}>
                 Privacy policy
-            </MenuItemLink>
-            <MenuItemLink
-                onClick={() => closePopover(menu_info_ref)}
-                href={RoutesLinks.terms}
+            </LinkMenuItem>
+            <LinkMenuItem
+                onClick={() => closeMenu(menu_info_ref)}
+                href={RoutesLinks[_terms]}
                 openInNewTab
                 trailing={<Icon code={0xEB51}/>}
                 leading={<Icon code={0xED47}/>}>
                 Terms & conditions
-            </MenuItemLink>
+            </LinkMenuItem>
             <MenuDivider />
             <MenuItem
                 onClick={() => {
                     getNavigator()[_share]({ title: 'Randomizer', text: 'Randomizer', url: getDocument()[_URL] })
-                    closePopover(menu_info_ref)
+                    closeMenu(menu_info_ref)
                 }}
                 leading={<Icon code={0xEE23}/>}>
                 Share
             </MenuItem>
-            <MenuItemLink
-                onClick={() => closePopover(menu_info_ref)}
+            <LinkMenuItem
+                onClick={() => closeMenu(menu_info_ref)}
                 href={'mailto:' + ExternalLinks[_contactEmail] + '?subject=' + encodeURL('Randomizer')}
                 leading={<Icon code={0xE3A0}/>}>
                 Send feedback
-            </MenuItemLink>
-            <MenuItemLink
-                onClick={() => closePopover(menu_info_ref)}
+            </LinkMenuItem>
+            <LinkMenuItem
+                onClick={() => closeMenu(menu_info_ref)}
                 href={ExternalLinks[_donate]}
                 openInNewTab
                 leading={<Icon code={0xE84B}/>}>
                 Donate
-            </MenuItemLink>
+            </LinkMenuItem>
             <MenuHeader>&copy; {new Date()[_getFullYear]()} Redmerah</MenuHeader>
         </Menu>
-        <Menu ref={r => menu_settings_ref = r} onToggle={(v) => setIs_menu_settings_open(v)}>
+        <Menu ref={r => menu_settings_ref = r} onToggleOpen={(v) => setIs_menu_settings_open(v)}>
             <MenuHeader>
                 <Switch>
                     <Match when={props[_randomizerType] == RandomizerType[_string]}>String</Match>
@@ -382,12 +380,12 @@ const C: Component<Props> = (props) => {
 
             {/* Numbers */}
             <Show when={props[_randomizerType] == RandomizerType[_numbers]}>
-                <NestedMenu 
-                    ref={r => menu_sortSettings_ref = r} 
+                <SubMenu 
+                    ref={r => submenu_sort_ref = r} 
                     level={1}
-                    onToggle={(v) => setIs_menu_sortSettings_open(v)}
+                    onToggleOpen={(v) => setIs_submenu_sort_open(v)}
                     item={<MenuItem
-                        focus={is_menu_sortSettings_open()}
+                        focused={is_submenu_sort_open()}
                         selected={false}
                         leading={<Icon code={0xE123}/>}
                         trailing={<Icon filled code={0xE368}/>}>
@@ -411,11 +409,11 @@ const C: Component<Props> = (props) => {
                         selected={settings()[_numbers][_sort] == NumbersRandomizerSort[_descending]}>
                         Descending
                     </MenuItem>
-                </NestedMenu>
-                <NestedMenu ref={r => menu_numberTypeSettings_ref = r} level={1}
-                    onToggle={(v) => setIs_menu_numberTypeSettings_open(v)}
+                </SubMenu>
+                <SubMenu ref={r => submenu_numberType_ref = r} level={1}
+                    onToggleOpen={(v) => setIs_submenu_numberType_open(v)}
                     item={<MenuItem
-                        focus={is_menu_numberTypeSettings_open()}
+                        focused={is_submenu_numberType_open()}
                         selected={false}
                         leading={<Icon code={0xEB4B}/>}
                         trailing={<Icon filled code={0xE368}/>}>
@@ -441,15 +439,15 @@ const C: Component<Props> = (props) => {
                         selected={settings()[_numbers][_numberType] == NumbersRandomizerNumberType[_binary]}>
                         Binary
                     </MenuItem>
-                </NestedMenu>
+                </SubMenu>
             </Show>
 
             {/* Words */}
             <Show when={props[_randomizerType] == RandomizerType[_words]}>
-                <NestedMenu ref={r => menu_wordCaseSettings_ref = r} level={1}
-                    onToggle={(v) => setIs_menu_wordCaseSettings_open(v)}
+                <SubMenu ref={r => submenu_wordCase_ref = r} level={1}
+                    onToggleOpen={(v) => setIs_submenu_wordCase_open(v)}
                     item={<MenuItem
-                        focus={is_menu_wordCaseSettings_open()}
+                        focused={is_submenu_wordCase_open()}
                         selected={false}
                         leading={<Icon code={0xF0FF}/>}
                         trailing={<Icon filled code={0xE368}/>}>
@@ -480,15 +478,15 @@ const C: Component<Props> = (props) => {
                         selected={settings()[_words][_wordCase] == WordsRandomizerWordCase[_togglecase]}>
                         tOGGLE cASE
                     </MenuItem>
-                </NestedMenu>
+                </SubMenu>
             </Show>
 
             {/* Colors */}
             <Show when={props[_randomizerType] == RandomizerType[_colors]}>
-                <NestedMenu ref={r => menu_colorModelSettings_ref = r} style={{width: '128px'}} level={1}
-                    onToggle={(v) => setIs_menu_colorModelSettings_open(v)}
+                <SubMenu ref={r => submenu_colorModel_ref = r} style={{width: '128px'}} level={1}
+                    onToggleOpen={(v) => setIs_submenu_colorModel_open(v)}
                     item={<MenuItem
-                        focus={is_menu_colorModelSettings_open()}
+                        focused={is_submenu_colorModel_open()}
                         selected={false}
                         leading={<Icon code={0xE4B6}/>}
                         trailing={<Icon filled code={0xE368}/>}>
@@ -509,15 +507,15 @@ const C: Component<Props> = (props) => {
                         selected={settings()[_colors][_colorModel] == ColorsRandomizerColorModel[_hsl]}>
                         HSL
                     </MenuItem>
-                </NestedMenu>
+                </SubMenu>
             </Show>
 
-            <NestedMenu
+            <SubMenu
                 level={1}
-                ref={r => menu_themeSettings_ref = r}
-                onToggle={v => setIs_menu_themeSettings_open(v)}
+                ref={r => submenu_theme_ref = r}
+                onToggleOpen={v => setIs_submenu_theme_open(v)}
                 item={<MenuItem
-                    data-focus={toggleAttribute(is_menu_themeSettings_open())}
+                    focused={is_submenu_theme_open()}
                     leading={<Icon filled code={0xE28A}/>}
                     trailing={<Icon filled code={0xE368}/>}>
                     Theme
@@ -540,13 +538,13 @@ const C: Component<Props> = (props) => {
                     onClick={() => changeTheme(ThemeData[_system])}>
                     System theme
                 </MenuItem>
-            </NestedMenu>
-            <NestedMenu
+            </SubMenu>
+            <SubMenu
                 level={1}
-                ref={r => menu_cornerSettings_ref = r}
-                onToggle={v => setIs_menu_cornerSettings_open(v)}
+                ref={r => submenu_corner_ref = r}
+                onToggleOpen={v => setIs_submenu_corner_open(v)}
                 item={<MenuItem
-                    focus={is_menu_cornerSettings_open()}
+                    focused={is_submenu_corner_open()}
                     leading={<Icon code={0xF044}/>}
                     trailing={<Icon filled code={0xE368}/>}>
                     Corner style
@@ -575,7 +573,7 @@ const C: Component<Props> = (props) => {
                     onClick={() => changeCorner(CornerData[_fullRound])}>
                     Full round
                 </MenuItem>
-            </NestedMenu>
+            </SubMenu>
 
             <Show when={props[_randomizerType] == RandomizerType[_numbers] || props[_randomizerType] == RandomizerType[_words]}>
                 <MenuDivider/>

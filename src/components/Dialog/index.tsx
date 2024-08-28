@@ -43,7 +43,7 @@ export {
     Dialog, 
     openDialog, 
     closeModal as closeDialog, 
-    focusModal as focusDialog
+    focusModal as focusDialog,
 }
 export type {
     DialogProps

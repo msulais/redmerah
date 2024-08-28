@@ -4,7 +4,7 @@ import { _ref, _date, _onSelectDate, _firstDate, _lastDate, _locales, _classList
 import { getCurrentDate, getDate_Y, getDate_M, getWeekdayNames, isOutDate_YMD, isSameDate_YMD, getMonthNames, isOutDate_YM, isSameDate_YM, isOutDate_Y, isSameDate_Y, getMonthText } from "@/utils/datetime"
 
 import Button, { ButtonVariant, IconButton } from "@/components/Button"
-import { repositionModal, closeModal, openModal, focusModal, Modal, type ModalProps } from "@/components/Modal"
+import { repositionModal, closeModal, openModal, focusModal, Modal, type ModalProps, ModalPosition as DatePickerPosition } from "@/components/Modal"
 import './index.scss'
 
 enum DatePickerOption {
@@ -90,8 +90,8 @@ const DatePicker: VoidComponent<DatePickerProps> = ($props) => {
                 <For each={getWeekdayNames(props[_locales])}>{d => <p>{d[_substring](0, 2)}</p>}</For>
             </div>
             <div class="date-picker-days">
-                <For each={Array(startDay())[_fill](0)}>{v => <div/>}</For>
-                <For each={Array(daysPerMonth())[_fill](0)}>{(v, i) => {
+                <For each={Array(startDay())[_fill](0)}>{_v => <div/>}</For>
+                <For each={Array(daysPerMonth())[_fill](0)}>{(_v, i) => {
                     const date = createMemo(() => new Date(getDate_Y(viewDate()), getDate_M(viewDate()), i() + 1))
                     return (<Button
                         onClick={() => {
@@ -138,7 +138,7 @@ const DatePicker: VoidComponent<DatePickerProps> = ($props) => {
 
     const YearsDate: VoidComponent = () => {
         return (<div class="date-picker-year">
-            <For each={Array(16)[_fill](0)}>{(v, i) => {
+            <For each={Array(16)[_fill](0)}>{(_, i) => {
                 const date = createMemo(() => new Date(getDate_Y(viewDate()) + i(), 0))
                 return (<Button
                     onClick={() => {
@@ -208,7 +208,8 @@ export {
     openModal as openDatePicker,
     closeModal as closeDatePicker,
     focusModal as focusDatePicker, 
-    repositionModal as repositionDatePicker
+    repositionModal as repositionDatePicker,
+    DatePickerPosition
 }
 export type {
     DatePickerProps

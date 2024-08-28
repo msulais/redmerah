@@ -1,14 +1,13 @@
 import { createSignal, For, onMount, type VoidComponent } from "solid-js"
 
-import { _calculator, _CENTER_BOTTOM_TO_LEFT, _change, _comma, _command, _contactEmail, _corner, _currentTarget, _dark, _decimal, _donate, _filled, _fullRound, _getFullYear, _grouping, _icon, _includes, _isNotebookExpand, _light, _matches, _memoryButtons, _none, _note, _numberFormat, _onChangeCalculator, _onChangeRandomizer, _onNoteChanged, _point, _randomizerType, _right, _round, _scientificNotation, _semiRound, _settings, _share, _sharp, _space, _src, _system, _text, _theme, _type, _underscore, _URL, _value } from "@/data/string"
+import type { Settings } from "./_types"
+import { _calculator, _centerBottomToLeft, _change, _comma, _command, _contactEmail, _corner, _currentTarget, _dark, _decimal, _donate, _filled, _fullRound, _getFullYear, _grouping, _icon, _includes, _isNotebookExpand, _light, _matches, _memoryButtons, _none, _note, _numberFormat, _onChangeCalculator, _onChangeRandomizer, _onNoteChanged, _point, _randomizerType, _right, _round, _scientificNotation, _semiRound, _settings, _share, _sharp, _space, _src, _system, _text, _theme, _type, _underscore, _URL, _value } from "@/data/string"
 import { addClassListModule } from "@/utils/element"
 import { addEventListener } from "@/utils/event"
 import { isMatchMedia, matchMedia } from "@/utils/window"
 import { CALCULATOR_TYPES, SIZE_SIDE_NAVIGATION_NONE, SIZE_SIDE_NOTEBOOK_NONE } from "./_data"
 import { getNavigator, getDocument, getRoot } from "@/data/window"
 import { RoutesLinks, ExternalLinks } from "@/enums/links"
-import { PopoverPosition, Position } from "@/enums/position"
-import { closePopover, openPopover } from "@/utils/popover"
 import { encodeURL } from "@/utils/url"
 import { CornerData } from "@/enums/corner"
 import { ThemeData } from "@/enums/theme"
@@ -16,21 +15,20 @@ import { setAttribute, toggleAttribute } from "@/utils/attributes"
 import { RootAttributes } from "@/enums/attributes"
 import { LocalStorageKeys } from "@/enums/storage"
 import { setLocalStorageItem, getLocalStorageItem } from "@/utils/storage"
+import { Commands, DecimalNumberFormat, GroupingNumberFormat, type CalculatorType } from "./_enums"
+import { timeout } from "@/utils/timeout"
 import redmerahLogo from '@/assets/logo.svg'
 import logo from '@/assets/apps/calculator-logo.svg'
 
 import Icon from "@/components/Icon"
-import Tooltip from "@/components/Tooltip"
-import Button, { ButtonVariant } from "@/components/Button"
-import Menu, { MenuItemLink, MenuDivider, MenuItem, MenuHeader, NestedMenu } from "@/components/Menu"
+import { TextTooltip } from "@/components/Tooltip"
+import { ButtonVariant, IconButton } from "@/components/Button"
+import { AreaTextField, changeAreaTextFieldValue } from "@/components/TextField"
+import Menu, {  MenuDivider, MenuItem, MenuHeader, closeMenu, LinkMenuItem, SubMenu, closeSubMenu, openMenu, MenuPosition } from "@/components/Menu"
+import Drawer, { closeDrawer, DrawerItem, DrawerPosition, openDrawer } from "@/components/Drawer"
 import AppBar from "@/components/AppBar"
 import CSSAnimation from "@/styles/animation.module.scss";
 import CSS from './_Appbar.module.scss'
-import { Commands, DecimalNumberFormat, GroupingNumberFormat, type CalculatorType } from "./_enums"
-import Drawer, { DrawerItem } from "@/components/Drawer"
-import { closeModal, openModal } from "@/utils/modal"
-import { changeTextAreaFieldValue, TextAreaField } from "@/components/TextField"
-import type { Settings } from "./_types"
 
 type Props = {
     onChangeCalculator: (type: CalculatorType) => unknown
@@ -43,14 +41,6 @@ type Props = {
 }
 
 const _: VoidComponent<Props> = (props) => {
-    const [button_menu_ref, set_button_menu_ref] = createSignal<HTMLButtonElement | null>(null)
-    const [button_info_ref, set_button_info_ref] = createSignal<HTMLButtonElement | null>(null)
-    const [button_notebook_ref, set_button_notebook_ref] = createSignal<HTMLButtonElement | null>(null)
-    const [button_settings_ref, set_button_settings_ref] = createSignal<HTMLButtonElement | null>(null)
-    const [button_settingsScientificNotation_ref, set_button_settingsScientificNotation_ref] = createSignal<HTMLButtonElement | null>(null)
-    const [button_settingsMemoryButtons_ref, set_button_settingsMemoryButtons_ref] = createSignal<HTMLButtonElement | null>(null)
-    const [button_closeNavigationDrawer_ref, set_button_closeNavigationDrawer_ref] = createSignal<HTMLButtonElement | null>(null)
-    const [button_closeNotebookDrawer_ref, set_button_closeNotebookDrawer_ref] = createSignal<HTMLButtonElement | null>(null)
     const [is_menu_info_open, setIs_menu_info_open] = createSignal<boolean>(false)
     const [is_menu_themeSettings_open, setIs_menu_themeSettings_open] = createSignal<boolean>(false)
     const [is_menu_cornerSettings_open, setIs_menu_cornerSettings_open] = createSignal<boolean>(false)
@@ -61,26 +51,28 @@ const _: VoidComponent<Props> = (props) => {
     const [isSideNotebookHidden, setIsSideNotebookHidden] = createSignal<boolean>(false)
     const [theme, setTheme] = createSignal<ThemeData>(ThemeData[_system])
     const [corner, setCorner] = createSignal<CornerData>(CornerData[_round])
-    let menu_info_ref: HTMLElement
-    let menu_settings_ref: HTMLElement
-    let menu_themeSettings_ref: HTMLElement
-    let menu_cornerSettings_ref: HTMLElement
-    let menu_decimalNumberFormatSettings_ref: HTMLElement
-    let menu_groupingNumberFormatSettings_ref: HTMLElement
+    let menu_info_ref: HTMLDialogElement
+    let menu_settings_ref: HTMLDialogElement
+    let submenu_themeSettings_ref: HTMLDivElement
+    let submenu_cornerSettings_ref: HTMLDivElement
+    let submenu_decimalNumberFormatSettings_ref: HTMLDivElement
+    let submenu_groupingNumberFormatSettings_ref: HTMLDivElement
     let drawer_navigation_ref: HTMLDialogElement
     let drawer_notebook_ref: HTMLDialogElement
-    let textareafield_notebook_ref: HTMLTextAreaElement
+    let areaTextField_notebook_ref: HTMLTextAreaElement
 
     async function changeDecimalNumberFormat(type: DecimalNumberFormat): Promise<void> {
         props[_command](Commands.change_settings_numberFormatDecimal, type)
-        await closePopover(menu_decimalNumberFormatSettings_ref)
-        await closePopover(menu_settings_ref)
+        closeSubMenu(submenu_decimalNumberFormatSettings_ref)
+        await timeout(300)
+        closeMenu(menu_settings_ref)
     }
 
     async function changeGroupingNumberFormat(type: GroupingNumberFormat): Promise<void> {
         props[_command](Commands.change_settings_numberFormatGrouping, type)
-        await closePopover(menu_groupingNumberFormatSettings_ref)
-        await closePopover(menu_settings_ref)
+        closeSubMenu(submenu_groupingNumberFormatSettings_ref)
+        await timeout(300)
+        closeMenu(menu_settings_ref)
     }
 
     function initSideNavigationListener(): void {
@@ -97,16 +89,18 @@ const _: VoidComponent<Props> = (props) => {
         setTheme(theme)
         setAttribute(getRoot(), RootAttributes[_theme], theme)
         setLocalStorageItem(LocalStorageKeys[_theme], theme)
-        await closePopover(menu_themeSettings_ref)
-        await closePopover(menu_settings_ref)
+        closeSubMenu(submenu_themeSettings_ref)
+        await timeout(300)
+        closeMenu(menu_settings_ref)
     }
 
     async function changeCorner(corner: CornerData): Promise<void> {
         setCorner(corner)
         setAttribute(getRoot(), RootAttributes[_corner], corner)
         setLocalStorageItem(LocalStorageKeys[_corner], corner)
-        await closePopover(menu_cornerSettings_ref)
-        await closePopover(menu_settings_ref)
+        closeSubMenu(submenu_cornerSettings_ref)
+        await timeout(300)
+        closeMenu(menu_settings_ref)
     }
 
     function initTheme(): void {
@@ -136,96 +130,96 @@ const _: VoidComponent<Props> = (props) => {
 
     const Menus: VoidComponent = () => {
         return (<>
-            <Menu ref={r => menu_info_ref = r} onToggle={(v) => setIs_menu_info_open(v)}>
-                <MenuItemLink
-                    onClick={() => closePopover(menu_info_ref)}
+            <Menu ref={r => menu_info_ref = r} onToggleOpen={(v) => setIs_menu_info_open(v)}>
+                <LinkMenuItem
+                    onClick={() => closeMenu(menu_info_ref)}
                     href={RoutesLinks.home}
                     openInNewTab
                     trailing={<Icon code={0xEB51}/>}
                     leading={<img src={redmerahLogo[_src]} width={16} alt='Redmerah logo'/>}>
                     Redmerah (homepage)
-                </MenuItemLink>
-                <MenuItemLink
-                    onClick={() => closePopover(menu_info_ref)}
+                </LinkMenuItem>
+                <LinkMenuItem
+                    onClick={() => closeMenu(menu_info_ref)}
                     href={RoutesLinks.apps}
                     openInNewTab
                     trailing={<Icon code={0xEB51}/>}
                     leading={<Icon code={0xE063}/>}>
                     More apps
-                </MenuItemLink>
-                <MenuItemLink
-                    onClick={() => closePopover(menu_info_ref)}
+                </LinkMenuItem>
+                <LinkMenuItem
+                    onClick={() => closeMenu(menu_info_ref)}
                     href={RoutesLinks.about}
                     openInNewTab
                     trailing={<Icon code={0xEB51}/>}
                     leading={<Icon code={0xE930}/>}>
                     About us
-                </MenuItemLink>
+                </LinkMenuItem>
                 <MenuDivider />
-                <MenuItemLink
-                    onClick={() => closePopover(menu_info_ref)}
+                <LinkMenuItem
+                    onClick={() => closeMenu(menu_info_ref)}
                     href={RoutesLinks.privacy}
                     openInNewTab
                     trailing={<Icon code={0xEB51}/>}
                     leading={<Icon code={0xEE51}/>}>
                     Privacy policy
-                </MenuItemLink>
-                <MenuItemLink
-                    onClick={() => closePopover(menu_info_ref)}
+                </LinkMenuItem>
+                <LinkMenuItem
+                    onClick={() => closeMenu(menu_info_ref)}
                     href={RoutesLinks.terms}
                     openInNewTab
                     trailing={<Icon code={0xEB51}/>}
                     leading={<Icon code={0xED47}/>}>
                     Terms & conditions
-                </MenuItemLink>
+                </LinkMenuItem>
                 <MenuDivider />
                 <MenuItem
                     onClick={() => {
                         getNavigator()[_share]({ title: 'Calculator', text: 'Calculator', url: getDocument()[_URL] })
-                        closePopover(menu_info_ref)
+                        closeMenu(menu_info_ref)
                     }}
                     leading={<Icon code={0xEE23}/>}>
                     Share
                 </MenuItem>
-                <MenuItemLink
-                    onClick={() => closePopover(menu_info_ref)}
+                <LinkMenuItem
+                    onClick={() => closeMenu(menu_info_ref)}
                     href={'mailto:' + ExternalLinks[_contactEmail] + '?subject=' + encodeURL('Calculator')}
                     leading={<Icon code={0xE3A0}/>}>
                     Send feedback
-                </MenuItemLink>
-                <MenuItemLink
-                    onClick={() => closePopover(menu_info_ref)}
+                </LinkMenuItem>
+                <LinkMenuItem
+                    onClick={() => closeMenu(menu_info_ref)}
                     href={ExternalLinks[_donate]}
                     openInNewTab
                     leading={<Icon code={0xE84B}/>}>
                     Donate
-                </MenuItemLink>
+                </LinkMenuItem>
                 <MenuHeader>&copy; {new Date()[_getFullYear]()} Redmerah</MenuHeader>
             </Menu>
 
-            <Menu style={{width: '224px'}} ref={r => menu_settings_ref = r} onToggle={(v) => setIs_menu_settings_open(v)}>
-                <Tooltip anchor={button_settingsScientificNotation_ref()} text={"Display result in scientific notation (e.g. 1.2E-29)"}/>
-                <MenuItem 
-                    ref={r => set_button_settingsScientificNotation_ref(r)} 
-                    onClick={() => props[_command](Commands.toggle_settings_scientificNotation)}
-                    checked={props[_settings][_scientificNotation]}>
-                    Scientific notation
-                </MenuItem>
+            <Menu style={{width: '224px'}} ref={r => menu_settings_ref = r} onToggleOpen={(v) => setIs_menu_settings_open(v)}>
+                <TextTooltip text={"Display result in scientific notation (e.g. 1.2E-29)"}>
+                    <MenuItem 
+                        onClick={() => props[_command](Commands.toggle_settings_scientificNotation)}
+                        checked={props[_settings][_scientificNotation]}>
+                        Scientific notation
+                    </MenuItem>
+                </TextTooltip>
 
-                <Tooltip anchor={button_settingsMemoryButtons_ref()} text={"Show or hide memory button (M, M+, M-, MR, MC)"}/>
-                <MenuItem 
-                    ref={r => set_button_settingsMemoryButtons_ref(r)} 
-                    onClick={() => props[_command](Commands.toggle_settings_memoryButtons)}
-                    checked={props[_settings][_memoryButtons]}>
-                    Memory buttons
-                </MenuItem>
+                <TextTooltip text={"Show or hide memory button (M, M+, M-, MR, MC)"}>
+                    <MenuItem 
+                        onClick={() => props[_command](Commands.toggle_settings_memoryButtons)}
+                        checked={props[_settings][_memoryButtons]}>
+                        Memory buttons
+                    </MenuItem>
+                </TextTooltip>
 
                 <MenuDivider/>
 
-                <NestedMenu
+                <SubMenu
                     level={1}
-                    ref={r => menu_themeSettings_ref = r}
-                    onToggle={v => setIs_menu_themeSettings_open(v)}
+                    ref={r => submenu_themeSettings_ref = r}
+                    onToggleOpen={v => setIs_menu_themeSettings_open(v)}
                     item={<MenuItem
                         data-focus={toggleAttribute(is_menu_themeSettings_open())}
                         leading={<Icon filled code={0xE28A}/>}
@@ -250,13 +244,13 @@ const _: VoidComponent<Props> = (props) => {
                         onClick={() => changeTheme(ThemeData[_system])}>
                         System theme
                     </MenuItem>
-                </NestedMenu>
-                <NestedMenu
+                </SubMenu>
+                <SubMenu
                     level={1}
-                    ref={r => menu_cornerSettings_ref = r}
-                    onToggle={v => setIs_menu_cornerSettings_open(v)}
+                    ref={r => submenu_cornerSettings_ref = r}
+                    onToggleOpen={v => setIs_menu_cornerSettings_open(v)}
                     item={<MenuItem
-                        focus={is_menu_cornerSettings_open()}
+                        focused={is_menu_cornerSettings_open()}
                         leading={<Icon code={0xF044}/>}
                         trailing={<Icon filled code={0xE368}/>}>
                         Corner style
@@ -285,18 +279,18 @@ const _: VoidComponent<Props> = (props) => {
                         onClick={() => changeCorner(CornerData[_fullRound])}>
                         Full round
                     </MenuItem>
-                </NestedMenu>
+                </SubMenu>
 
                 <MenuDivider />
                 <MenuHeader>Number format</MenuHeader>
 
-                <NestedMenu
+                <SubMenu
                     level={1}
                     style={{width: '132px'}}
-                    ref={r => menu_decimalNumberFormatSettings_ref = r}
-                    onToggle={v => setIs_menu_decimalNumberFormatSettings_open(v)}
+                    ref={r => submenu_decimalNumberFormatSettings_ref = r}
+                    onToggleOpen={v => setIs_menu_decimalNumberFormatSettings_open(v)}
                     item={<MenuItem
-                        focus={is_menu_decimalNumberFormatSettings_open()}
+                        focused={is_menu_decimalNumberFormatSettings_open()}
                         leading={<Icon code={0xE599}/>}
                         trailing={<Icon filled code={0xE368}/>}>
                         Decimal
@@ -311,15 +305,15 @@ const _: VoidComponent<Props> = (props) => {
                         selected={props[_settings][_numberFormat][_decimal] == DecimalNumberFormat[_point]}>
                         Point
                     </MenuItem>
-                </NestedMenu>
+                </SubMenu>
 
-                <NestedMenu
+                <SubMenu
                     level={1}
                     style={{width: '132px'}}
-                    ref={r => menu_groupingNumberFormatSettings_ref = r}
-                    onToggle={v => setIs_menu_groupingNumberFormatSettings_open(v)}
+                    ref={r => submenu_groupingNumberFormatSettings_ref = r}
+                    onToggleOpen={v => setIs_menu_groupingNumberFormatSettings_open(v)}
                     item={<MenuItem
-                        focus={is_menu_groupingNumberFormatSettings_open()}
+                        focused={is_menu_groupingNumberFormatSettings_open()}
                         leading={<Icon code={0xEB49}/>}
                         trailing={<Icon filled code={0xE368}/>}>
                         Grouping
@@ -349,7 +343,7 @@ const _: VoidComponent<Props> = (props) => {
                         selected={props[_settings][_numberFormat][_grouping] == GroupingNumberFormat[_underscore]}>
                         Underscore
                     </MenuItem>
-                </NestedMenu>
+                </SubMenu>
             </Menu>
         </>)
     }
@@ -357,16 +351,19 @@ const _: VoidComponent<Props> = (props) => {
     const Drawers: VoidComponent = () => {
         return (<>
             <Drawer 
-                header={<>
-                    <Tooltip anchor={button_closeNavigationDrawer_ref()} text="Close navigation"/>
-                    <Button ref={r => set_button_closeNavigationDrawer_ref(r)} classList={addClassListModule(CSSAnimation.btn_shrink_horizontal_icon)} iconOnly onClick={() => closeModal(drawer_navigation_ref)}><Icon code={0xEAFF}/></Button>
-                </>}
+                header={<TextTooltip text="Close navigation">
+                    <IconButton 
+                        classList={addClassListModule(CSSAnimation.btn_shrink_horizontal_icon)} 
+                        onClick={() => closeDrawer(drawer_navigation_ref)}
+                        code={0xEAFF}
+                    />
+                </TextTooltip>}
                 ref={r => drawer_navigation_ref = r}>
                 <For each={CALCULATOR_TYPES}>{r => 
                     <DrawerItem 
                         onClick={() => {
                             if (props[_calculator] != r[_type]) props[_onChangeCalculator](r[_type])
-                            closeModal(drawer_navigation_ref)
+                            closeDrawer(drawer_navigation_ref)
                         } }
                         selected={props[_calculator] == r[_type]}>
                         <Icon filled={props[_calculator] == r[_type]} code={r[_icon]}/>{ r[_text] }
@@ -376,14 +373,18 @@ const _: VoidComponent<Props> = (props) => {
             <Drawer 
                 classList={addClassListModule(CSS.notebook)} 
                 header={<>
-                    <Tooltip anchor={button_closeNotebookDrawer_ref()} text="Close notebook"/>
-                    <Button ref={r => set_button_closeNotebookDrawer_ref(r)} iconOnly onClick={() => closeModal(drawer_notebook_ref)}><Icon code={0xE5E9}/></Button>
+                    <TextTooltip text="Close notebook">
+                        <IconButton 
+                            onClick={() => closeDrawer(drawer_notebook_ref)} 
+                            code={0xE5E9}
+                        />
+                    </TextTooltip>
                     Notebook
                 </>}
                 ref={r => drawer_notebook_ref = r} 
-                position={Position[_right]}>
-                <TextAreaField 
-                    ref={r => textareafield_notebook_ref = r}
+                position={DrawerPosition[_right]}>
+                <AreaTextField 
+                    ref={r => areaTextField_notebook_ref = r}
                     labelText="Notebook" 
                     placeholder="Type your thought here ..." 
                     onInput={(ev) => props[_onNoteChanged](ev[_currentTarget][_value])}
@@ -395,53 +396,59 @@ const _: VoidComponent<Props> = (props) => {
     return (<>
         <AppBar 
             leading={<>
-                <Tooltip text={isSideNavigationHidden()? "Open navigation" : "Expand/shrink navigation"} anchor={button_menu_ref()}/>
-                <Button 
-                    ref={r => set_button_menu_ref(r)} 
-                    classList={addClassListModule(CSSAnimation.btn_shrink_horizontal_icon)} 
-                    onClick={(ev) => {
-                        if (isSideNavigationHidden()) return openModal(ev, drawer_navigation_ref)
-                        props[_command](Commands.toggle_navigation_expand)
-                    }} 
-                    iconOnly>
-                    <Icon code={0xEAFF}/>
-                </Button>
+                <TextTooltip text={isSideNavigationHidden()? "Open navigation" : "Expand/shrink navigation"}>
+                    <IconButton 
+                        classList={addClassListModule(CSSAnimation.btn_shrink_horizontal_icon)} 
+                        onClick={(ev) => {
+                            if (isSideNavigationHidden()) return openDrawer(ev, drawer_navigation_ref)
+                            props[_command](Commands.toggle_navigation_expand)
+                        }} 
+                        code={0xEAFF}
+                    />
+                </TextTooltip>
                 <img width={28} src={logo[_src]} alt="Calculator logo" />
             </>} 
             headline="Calculator"
             trailing={<>
-                <Tooltip text="Info" anchor={button_info_ref()}/>
-                <Button ref={r => set_button_info_ref(r)} focus={is_menu_info_open()} iconOnly onClick={(ev) => openPopover({
-                    event: ev,
-                    anchor: ev[_currentTarget],
-                    popover: menu_info_ref,
-                    padding: 4,
-                    position: PopoverPosition[_CENTER_BOTTOM_TO_LEFT]
-                })}><Icon code={0xE930}/></Button>
+                <TextTooltip text="Info">
+                    <IconButton 
+                        focused={is_menu_info_open()} 
+                        onClick={(ev) => openMenu(ev, menu_info_ref, {
+                            anchor: ev[_currentTarget],
+                            padding: 4,
+                            position: MenuPosition[_centerBottomToLeft]
+                        })}
+                        code={0xE930}
+                    />
+                </TextTooltip>
 
-                <Tooltip text="Settings" anchor={button_settings_ref()}/>
-                <Button classList={addClassListModule(CSSAnimation.btn_rotate_icon)} ref={r => set_button_settings_ref(r)} focus={is_menu_settings_open()} iconOnly onClick={async (ev) => {
-                    openPopover({
-                        event: ev,
-                        anchor: ev[_currentTarget],
-                        popover: menu_settings_ref,
-                        padding: 4,
-                        position: PopoverPosition[_CENTER_BOTTOM_TO_LEFT]
-                    })
-                }}><Icon code={0xEE0F}/></Button>
+                <TextTooltip text="Settings">
+                    <IconButton 
+                        classList={addClassListModule(CSSAnimation.btn_rotate_icon)} 
+                        focused={is_menu_settings_open()} 
+                        onClick={(ev) => openMenu(ev, menu_settings_ref, {
+                            anchor: ev[_currentTarget],
+                            padding: 4,
+                            position: MenuPosition[_centerBottomToLeft]
+                        })}
+                        code={0xEE0F}
+                    />
+                </TextTooltip>
 
-                <Tooltip text="Notebook" anchor={button_notebook_ref()}/>
-                <Button 
-                    onClick={ev => {
-                        if (isSideNotebookHidden()) {
-                            changeTextAreaFieldValue(textareafield_notebook_ref, props[_note])
-                            openModal(ev, drawer_notebook_ref)
-                            return
-                        }
-                        props[_command](Commands.toggle_notebook_expand)
-                    }} variant={props[_isNotebookExpand] && !isSideNotebookHidden()? ButtonVariant[_filled] : undefined} ref={r => set_button_notebook_ref(r)} iconOnly>
-                    <Icon filled={props[_isNotebookExpand] && !isSideNotebookHidden()} code={0xEB19}/>
-                </Button>
+                <TextTooltip text="Notebook">
+                    <IconButton 
+                        onClick={ev => {
+                            if (isSideNotebookHidden()) {
+                                changeAreaTextFieldValue(areaTextField_notebook_ref, props[_note])
+                                return openDrawer(ev, drawer_notebook_ref)
+                            }
+                            props[_command](Commands.toggle_notebook_expand)
+                        }} 
+                        variant={props[_isNotebookExpand] && !isSideNotebookHidden()? ButtonVariant[_filled] : undefined} 
+                        filled={props[_isNotebookExpand] && !isSideNotebookHidden()} 
+                        code={0xEB19}
+                    />
+                </TextTooltip>
             </>}
         />
         <Drawers />

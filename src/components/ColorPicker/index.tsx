@@ -19,7 +19,8 @@ import Modal, {
     closeModal, 
     openModal, 
     repositionModal, 
-    focusModal 
+    focusModal,
+    ModalPosition as ColorPickerPosition
 } from "@/components/Modal"
 import './index.scss'
 
@@ -194,7 +195,7 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
         setPosition(ev[_touches][0][_clientX], ev[_touches][0][_clientY])
     }
 
-    function onTouchEnd(ev: TouchEvent): void {
+    function onTouchEnd(): void {
         setPicker(_color, _isDrag, false)
         setPicker(_hue, _isDrag, false)
         setPicker(_opacity, _isDrag, false)
@@ -210,7 +211,7 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
         setPosition(ev[_clientX], ev[_clientY])
     }
 
-    function onMouseUp(ev: MouseEvent): void {
+    function onMouseUp(): void {
         setPicker(_color, _isDrag, false)
         setPicker(_hue, _isDrag, false)
         setPicker(_opacity, _isDrag, false)
@@ -523,7 +524,8 @@ export {
     closeModal as closeColorPicker,
     openModal as openColorPicker,
     repositionModal as repositionColorPicker,
-    focusModal as focusColorPicker
+    focusModal as focusColorPicker, 
+    ColorPickerPosition
 }
 export type {
     ColorPickerProps,

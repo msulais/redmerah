@@ -2,7 +2,6 @@ import { type Component, type JSX, type ParentComponent, Show, mergeProps, split
 
 import type { ComponentEvent } from "@/types/event"
 import { getAttribute, toggleAttribute } from "@/utils/attributes"
-import { FlyoutPosition, Position } from "@/enums/position"
 import { _checked, _selected, _leading, _children, _trailing, _subtitle, _indent, _classList, _rightCenterToBottom, _disconnect, _dismiss, _id, _item, _level, _manual, _observe, _onCancel, _onClick, _onClose, _onToggle, _open, _ref, _wrapperAttr, _auto, _shortcuts, _currentTarget, _none, _left, _tonal, _dragable, _clientX, _clientY, _color, _hue, _initialColor, _isDrag, _mousemove, _mouseup, _noPointerEvent, _opacity, _touchend, _touches, _touchmove, _value, _valuechange, _top, _px, _anchorId, _body, _bottom, _clientWidth, _height, _innerHeight, _right, _width, _focus, _iconCode, _compact, _variant, _indicatorPosition, _onMouseEnter, _onMouseLeave, _class, _disableScale, _desktopCompact, _gap, _position, _padding, _allowHideAnchor } from "@/data/string"
 import { isVarHasValue } from "@/utils/data"
 import { querySelectorAll } from "@/utils/element"
@@ -12,9 +11,9 @@ import { numberParse } from "@/utils/math"
 
 import Divider, { type DividerProps } from "@/components/Divider"
 import Icon from "@/components/Icon"
-import Button, { ButtonVariant, LinkButton, type ButtonProps, type LinkButtonProps } from "@/components/Button"
-import Popover, { type PopoverProps, closePopover, openPopover, repositionPopover } from "@/components/Popover"
-import Modal, { type ModalProps, closeModal, focusModal, openModal, repositionModal } from "@/components/Modal"
+import Button, { ButtonIndicatorPosition, ButtonVariant, LinkButton, type ButtonProps, type LinkButtonProps } from "@/components/Button"
+import Popover, { type PopoverProps, closePopover, openPopover, repositionPopover, PopoverPosition as SubMenuPosition } from "@/components/Popover"
+import Modal, { type ModalProps, closeModal, focusModal, openModal, repositionModal, ModalPosition as MenuPosition } from "@/components/Modal"
 import './index.scss'
 
 type MenuItemTrailingShortcutProps = JSX.HTMLAttributes<HTMLDivElement> & {
@@ -45,7 +44,7 @@ const MenuItem: ParentComponent<MenuItemProps> = ($props) => {
     return (<Button 
         variant={props[_variant] ?? (props[_selected]? ButtonVariant[_tonal] : props[_variant])} 
         selected={props[_selected]} 
-        indicatorPosition={props[_indicatorPosition] ?? Position[_left]} 
+        indicatorPosition={props[_indicatorPosition] ?? ButtonIndicatorPosition[_left]} 
         disableScale={props[_disableScale] ?? (trailingComponent()? true : undefined)}
         desktopCompact={props[_desktopCompact] ?? true}
         data-trailing={toggleAttribute(trailingComponent())}
@@ -92,7 +91,7 @@ const LinkMenuItem: ParentComponent<LinkMenuItemProps> = ($props) => {
     return (<LinkButton 
         variant={props[_variant] ?? (props[_selected]? ButtonVariant[_tonal] : props[_variant])} 
         selected={props[_selected]} 
-        indicatorPosition={props[_indicatorPosition] ?? Position[_left]} 
+        indicatorPosition={props[_indicatorPosition] ?? ButtonIndicatorPosition[_left]} 
         disableScale={props[_disableScale] ?? (trailingComponent()? true : undefined)} 
         desktopCompact={props[_desktopCompact] ?? true}
         data-trailing={toggleAttribute(trailingComponent())}
@@ -137,7 +136,7 @@ type SubMenuProps = Omit<PopoverProps, 'onClick'> & {
     level: number
     item: JSX.Element
     gap?: number
-    position?: FlyoutPosition
+    position?: SubMenuPosition
     padding?: number
     dragable?: boolean
     allowHideAnchor?: boolean
@@ -180,7 +179,7 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 
         openPopover(ev, popover_ref, {
             anchor: div_ref, 
-            position: props[_position] ?? FlyoutPosition[_rightCenterToBottom],
+            position: props[_position] ?? SubMenuPosition[_rightCenterToBottom],
             gap: props[_gap] ?? -8, 
             padding: props[_padding] ?? 4,
             dragable: props[_dragable],
@@ -266,7 +265,9 @@ export {
     focusModal as focusMenu,
     openModal as openMenu,
     closeModal as closeMenu, 
-    repositionModal as repositionMenu
+    repositionModal as repositionMenu,
+    SubMenuPosition, 
+    MenuPosition
 }
 export type {
     MenuProps,

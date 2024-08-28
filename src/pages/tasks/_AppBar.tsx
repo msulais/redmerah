@@ -1,12 +1,11 @@
 import { createSignal, For, onMount, Show, type VoidComponent } from "solid-js"
 
-import { _calculator, _CENTER_BOTTOM_TO_LEFT, _change, _command, _contactEmail, _corner, _currentTarget, _dark, _donate, _emoji, _expand, _expandNavigation, _filled, _filter, _fullRound, _getFullYear, _hiddenNavigation, _icon, _id, _includes, _isNotebookExpand, _isShowDeleteTaskWarning, _length, _light, _matches, _name, _note, _onChangeCalculator, _page, _round, _semiRound, _settings, _share, _sharp, _slice, _src, _system, _taskLists, _text, _theme, _type, _URL } from "@/data/string";
+import { _about, _apps, _calculator, _centerBottomToLeft, _change, _command, _contactEmail, _corner, _currentTarget, _dark, _donate, _emoji, _expand, _expandNavigation, _filled, _filter, _fullRound, _getFullYear, _hiddenNavigation, _home, _icon, _id, _includes, _isNotebookExpand, _isShowDeleteTaskWarning, _length, _light, _matches, _name, _note, _onChangeCalculator, _page, _privacy, _round, _semiRound, _settings, _share, _sharp, _slice, _src, _system, _taskLists, _terms, _text, _theme, _type, _URL } from "@/data/string";
 import { getDocument, getNavigator, getRoot } from "@/data/window";
 import { RootAttributes } from "@/enums/attributes";
 import { CornerData } from "@/enums/corner";
 import { LocalStorageKeys } from "@/enums/storage";
 import { ThemeData } from "@/enums/theme";
-import { closePopover, openPopover } from "@/utils/popover";
 import { setLocalStorageItem, getLocalStorageItem } from "@/utils/storage";
 import { setAttribute, toggleAttribute } from "@/utils/attributes";
 import { DEFAULT_TASK_LIST, SIZE_SIDE_NAVIGATION_NONE, TASKS_PAGES } from "./_data";
@@ -17,22 +16,21 @@ import redmerahLogo from '@/assets/logo.svg'
 
 import AppBar from "@/components/AppBar";
 import Icon from "@/components/Icon";
-import Menu, { MenuItemLink, MenuDivider, MenuItem, MenuHeader, NestedMenu, MenuIndent } from "@/components/Menu";
+import Menu, { LinkMenuItem, MenuDivider, MenuItem, MenuHeader, SubMenu, MenuIndent, closeSubMenu, closeMenu, MenuPosition, openMenu } from "@/components/Menu";
 import { RoutesLinks, ExternalLinks } from "@/enums/links";
 import { encodeURL } from "@/utils/url";
-import Button from "@/components/Button";
-import Tooltip from "@/components/Tooltip";
-import { PopoverPosition } from "@/enums/position";
+import Button, { IconButton } from "@/components/Button";
+import {TextTooltip} from "@/components/Tooltip";
 import { addClassListModule } from "@/utils/element";
 import CSSAnimation from "@/styles/animation.module.scss";
 import { Commands, Pages } from "./_enums";
-import Drawer, { DrawerItem } from "@/components/Drawer";
-import { closeModal, openModal } from "@/utils/modal";
+import Drawer, { closeDrawer, DrawerItem, openDrawer } from "@/components/Drawer";
 import type { Settings, TaskList } from "./_types";
 import Divider from "@/components/Divider";
 import Emoji from "@/components/Emoji";
 import TextField from "@/components/TextField";
 import CSS from './_styles.module.scss'
+import { timeout } from "@/utils/timeout";
 
 const _: VoidComponent<{
     taskLists: TaskList[]
@@ -41,10 +39,6 @@ const _: VoidComponent<{
     settings: Settings
     command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
-    const [button_menu_ref, set_button_menu_ref] = createSignal<HTMLButtonElement | null>(null)
-    const [button_info_ref, set_button_info_ref] = createSignal<HTMLButtonElement | null>(null)
-    const [button_settings_ref, set_button_settings_ref] = createSignal<HTMLButtonElement | null>(null)
-    const [button_closeNavigationDrawer_ref, set_button_closeNavigationDrawer_ref] = createSignal<HTMLButtonElement | null>(null)
     const [is_menu_info_open, setIs_menu_info_open] = createSignal<boolean>(false)
     const [is_menu_themeSettings_open, setIs_menu_themeSettings_open] = createSignal<boolean>(false)
     const [is_menu_cornerSettings_open, setIs_menu_cornerSettings_open] = createSignal<boolean>(false)
@@ -53,10 +47,10 @@ const _: VoidComponent<{
     const [theme, setTheme] = createSignal<ThemeData>(ThemeData[_system])
     const [corner, setCorner] = createSignal<CornerData>(CornerData[_round])
     let drawer_navigation_ref: HTMLDialogElement
-    let menu_info_ref: HTMLElement
-    let menu_settings_ref: HTMLElement
-    let menu_themeSettings_ref: HTMLElement
-    let menu_cornerSettings_ref: HTMLElement
+    let menu_info_ref: HTMLDialogElement
+    let menu_settings_ref: HTMLDialogElement
+    let submenu_theme_ref: HTMLDivElement
+    let submenu_corner_ref: HTMLDivElement
 
     function initSideNavigationListener(): void {
         setIsSideNavigationHidden(isMatchMedia(`(max-width: ${SIZE_SIDE_NAVIGATION_NONE}px)`))
@@ -67,16 +61,18 @@ const _: VoidComponent<{
         setTheme(theme)
         setAttribute(getRoot(), RootAttributes[_theme], theme)
         setLocalStorageItem(LocalStorageKeys[_theme], theme)
-        await closePopover(menu_themeSettings_ref)
-        await closePopover(menu_settings_ref)
+        closeSubMenu(submenu_theme_ref)
+        await timeout(300)
+        closeMenu(menu_settings_ref)
     }
 
     async function changeCorner(corner: CornerData): Promise<void> {
         setCorner(corner)
         setAttribute(getRoot(), RootAttributes[_corner], corner)
         setLocalStorageItem(LocalStorageKeys[_corner], corner)
-        await closePopover(menu_cornerSettings_ref)
-        await closePopover(menu_settings_ref)
+        closeSubMenu(submenu_corner_ref)
+        await timeout(300) 
+        closeMenu(menu_settings_ref)
     }
 
     function initTheme(): void {
@@ -105,68 +101,71 @@ const _: VoidComponent<{
     
     const Menus: VoidComponent = () => {
         return (<>
-            <Menu style={{width: '200px'}} ref={r => menu_info_ref = r} onToggle={(v) => setIs_menu_info_open(v)}>
-                <MenuItemLink
-                    onClick={() => closePopover(menu_info_ref)}
-                    href={RoutesLinks.home}
+            <Menu 
+                style={{width: '200px'}} 
+                ref={r => menu_info_ref = r} 
+                onToggleOpen={(v) => setIs_menu_info_open(v)}>
+                <LinkMenuItem
+                    onClick={() => closeMenu(menu_info_ref)}
+                    href={RoutesLinks[_home]}
                     leading={<img src={redmerahLogo[_src]} width={16} alt='Redmerah logo'/>}>
                     Redmerah
-                </MenuItemLink>
-                <MenuItemLink
-                    onClick={() => closePopover(menu_info_ref)}
-                    href={RoutesLinks.apps}
+                </LinkMenuItem>
+                <LinkMenuItem
+                    onClick={() => closeMenu(menu_info_ref)}
+                    href={RoutesLinks[_apps]}
                     leading={<Icon code={0xE063}/>}>
                     More apps
-                </MenuItemLink>
-                <MenuItemLink
-                    onClick={() => closePopover(menu_info_ref)}
-                    href={RoutesLinks.about}
+                </LinkMenuItem>
+                <LinkMenuItem
+                    onClick={() => closeMenu(menu_info_ref)}
+                    href={RoutesLinks[_about]}
                     leading={<Icon code={0xE930}/>}>
                     About us
-                </MenuItemLink>
+                </LinkMenuItem>
                 <MenuDivider />
-                <MenuItemLink
-                    onClick={() => closePopover(menu_info_ref)}
-                    href={RoutesLinks.privacy}
+                <LinkMenuItem
+                    onClick={() => closeMenu(menu_info_ref)}
+                    href={RoutesLinks[_privacy]}
                     leading={<Icon code={0xEE51}/>}>
                     Privacy policy
-                </MenuItemLink>
-                <MenuItemLink
-                    onClick={() => closePopover(menu_info_ref)}
-                    href={RoutesLinks.terms}
+                </LinkMenuItem>
+                <LinkMenuItem
+                    onClick={() => closeMenu(menu_info_ref)}
+                    href={RoutesLinks[_terms]}
                     leading={<Icon code={0xED47}/>}>
                     Terms & conditions
-                </MenuItemLink>
+                </LinkMenuItem>
                 <MenuDivider />
                 <MenuItem
                     onClick={() => {
                         getNavigator()[_share]({ title: 'Tasks', text: 'Tasks', url: getDocument()[_URL] })
-                        closePopover(menu_info_ref)
+                        closeMenu(menu_info_ref)
                     }}
                     leading={<Icon code={0xEE23}/>}>
                     Share
                 </MenuItem>
-                <MenuItemLink
-                    onClick={() => closePopover(menu_info_ref)}
+                <LinkMenuItem
+                    onClick={() => closeMenu(menu_info_ref)}
                     href={'mailto:' + ExternalLinks[_contactEmail] + '?subject=' + encodeURL('Tasks')}
                     leading={<Icon code={0xE3A0}/>}>
                     Send feedback
-                </MenuItemLink>
-                <MenuItemLink
-                    onClick={() => closePopover(menu_info_ref)}
+                </LinkMenuItem>
+                <LinkMenuItem
+                    onClick={() => closeMenu(menu_info_ref)}
                     href={ExternalLinks[_donate]}
                     openInNewTab
                     leading={<Icon code={0xE84B}/>}>
                     Donate
-                </MenuItemLink>
+                </LinkMenuItem>
                 <MenuHeader>&copy; {new Date()[_getFullYear]()} Redmerah</MenuHeader>
             </Menu>
 
-            <Menu ref={r => menu_settings_ref = r} onToggle={(v) => setIs_menu_settings_open(v)}>
-                <NestedMenu
+            <Menu ref={r => menu_settings_ref = r} onToggleOpen={(v) => setIs_menu_settings_open(v)}>
+                <SubMenu
                     level={1}
-                    ref={r => menu_themeSettings_ref = r}
-                    onToggle={v => setIs_menu_themeSettings_open(v)}
+                    ref={r => submenu_theme_ref = r}
+                    onToggleOpen={v => setIs_menu_themeSettings_open(v)}
                     item={<MenuItem
                         data-focus={toggleAttribute(is_menu_themeSettings_open())}
                         iconCode={0xE28A}
@@ -191,13 +190,13 @@ const _: VoidComponent<{
                         onClick={() => changeTheme(ThemeData[_system])}>
                         System theme
                     </MenuItem>
-                </NestedMenu>
-                <NestedMenu
+                </SubMenu>
+                <SubMenu
                     level={1}
-                    ref={r => menu_cornerSettings_ref = r}
-                    onToggle={v => setIs_menu_cornerSettings_open(v)}
+                    ref={r => submenu_corner_ref = r}
+                    onToggleOpen={v => setIs_menu_cornerSettings_open(v)}
                     item={<MenuItem
-                        focus={is_menu_cornerSettings_open()}
+                        focused={is_menu_cornerSettings_open()}
                         iconCode={0xF044}
                         trailing={<Icon filled code={0xE368}/>}>
                         Corner style
@@ -226,10 +225,10 @@ const _: VoidComponent<{
                         onClick={() => changeCorner(CornerData[_fullRound])}>
                         Full round
                     </MenuItem>
-                </NestedMenu>
+                </SubMenu>
                 <MenuItem 
                     onClick={ev => {
-                        closePopover(menu_settings_ref)
+                        closeMenu(menu_settings_ref)
                         props[_command](Commands.show_labels_options, ev)
                     }}
                     iconCode={0xF00D}>
@@ -266,41 +265,45 @@ const _: VoidComponent<{
     return (<>
         <AppBar 
             leading={<>
-                <Tooltip text={isSideNavigationHidden()? "Open navigation" : `${props[_expandNavigation]? 'Shrink' : 'Expand'} navigation`} anchor={button_menu_ref()}/>
-                <Button 
-                    ref={r => set_button_menu_ref(r)} 
-                    classList={addClassListModule(CSSAnimation.btn_shrink_horizontal_icon)} 
-                    onClick={(ev) => {
-                        if (isSideNavigationHidden()) return openModal(ev, drawer_navigation_ref)
-                        props[_command](Commands.toggle_navigation_expand)
-                    }} 
-                    iconOnly>
-                    <Icon code={0xEAFF}/>
-                </Button>
+                <TextTooltip text={isSideNavigationHidden()? "Open navigation" : `${props[_expandNavigation]? 'Shrink' : 'Expand'} navigation`}>
+                    <IconButton 
+                        classList={addClassListModule(CSSAnimation.btn_shrink_horizontal_icon)} 
+                        onClick={(ev) => {
+                            if (isSideNavigationHidden()) return openDrawer(ev, drawer_navigation_ref)
+                            props[_command](Commands.toggle_navigation_expand)
+                        }} 
+                        code={0xEAFF}
+                    />
+                </TextTooltip>
                 <img alt="Tasks logo" width={32} height={32} src={logo[_src]} />
             </>} 
             headline="Tasks"
             trailing={<>
                 
-                <Tooltip text="Info" anchor={button_info_ref()}/>
-                <Button ref={r => set_button_info_ref(r)} focus={is_menu_info_open()} iconOnly onClick={(ev) => openPopover({
-                    event: ev,
-                    anchor: ev[_currentTarget],
-                    popover: menu_info_ref,
-                    padding: 4,
-                    position: PopoverPosition[_CENTER_BOTTOM_TO_LEFT]
-                })}><Icon code={0xE930}/></Button>
+                <TextTooltip text="Info">
+                    <IconButton 
+                        focused={is_menu_info_open()} 
+                        code={0xE930} 
+                        onClick={(ev) => openMenu(ev, menu_info_ref, {
+                            anchor: ev[_currentTarget],
+                            padding: 4,
+                            position: MenuPosition[_centerBottomToLeft]
+                        })}
+                    />
+                </TextTooltip>
 
-                <Tooltip text="Settings" anchor={button_settings_ref()}/>
-                <Button classList={addClassListModule(CSSAnimation.btn_rotate_icon)} ref={r => set_button_settings_ref(r)} focus={is_menu_settings_open()} iconOnly onClick={async (ev) => {
-                    openPopover({
-                        event: ev,
+                <TextTooltip text="Settings">
+                <IconButton 
+                    classList={addClassListModule(CSSAnimation.btn_rotate_icon)} 
+                    focused={is_menu_settings_open()} 
+                    onClick={async (ev) => openMenu(ev, menu_settings_ref, {
                         anchor: ev[_currentTarget],
-                        popover: menu_settings_ref,
                         padding: 4,
-                        position: PopoverPosition[_CENTER_BOTTOM_TO_LEFT]
-                    })
-                }}><Icon code={0xEE0F}/></Button>
+                        position: MenuPosition[_centerBottomToLeft]
+                    })}
+                    code={0xEE0F}
+                    />
+                </TextTooltip>
             </>}
         >
             <div class={CSS.appbarSearch}>
@@ -314,8 +317,13 @@ const _: VoidComponent<{
         <Menus />
         <Drawer 
             header={<>
-                <Tooltip anchor={button_closeNavigationDrawer_ref()} text="Close navigation"/>
-                <Button ref={r => set_button_closeNavigationDrawer_ref(r)} classList={addClassListModule(CSSAnimation.btn_shrink_horizontal_icon)} iconOnly onClick={() => closeModal(drawer_navigation_ref)}><Icon code={0xEAFF}/></Button>
+                <TextTooltip text="Close navigation">
+                    <IconButton 
+                        classList={addClassListModule(CSSAnimation.btn_shrink_horizontal_icon)} 
+                        onClick={() => closeDrawer(drawer_navigation_ref)} 
+                        code={0xEAFF}
+                    />
+                </TextTooltip>
             </>}
             footer={<>
                 <DrawerItem 
@@ -329,7 +337,7 @@ const _: VoidComponent<{
                     iconCode={p[_icon]}
                     selected={props[_page] == p[_type]}
                     onClick={() => {
-                        closeModal(drawer_navigation_ref)
+                        closeDrawer(drawer_navigation_ref)
                         if (props[_page] == p[_type]) return;
                         props[_command](Commands.change_page, p[_type])
                     }}>
@@ -344,7 +352,7 @@ const _: VoidComponent<{
                     leading={<Show when={p[_emoji] != null}><Emoji emoji={p[_emoji]!} /></Show>} 
                     selected={props[_page] == p[_id]}
                     onClick={() => {
-                        closeModal(drawer_navigation_ref)
+                        closeDrawer(drawer_navigation_ref)
                         if (props[_page] == p[_id]) return;
                         props[_command](Commands.change_page, p[_id])
                     }}>

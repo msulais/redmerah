@@ -1,31 +1,29 @@
 import { type Component, For, Show, type Signal, createSignal, onMount } from 'solid-js'
 import { createStore } from 'solid-js/store'
 
+import type { HEXColor, RGBColor } from '@/types/color'
 import { clearTimeDelayed, setTimeDelayed } from '@/utils/timeout'
-import { openPopover } from '@/utils/popover'
 import { generateColor, hexToRgb, testHexColor } from '@/utils/color'
 import { addClassListModule, getElementById } from '@/utils/element'
-import type { HEXColor, RGBColor } from '@/types/color'
-import { _system, _theme, _corner, _dark, _fullRound, _includes, _light, _round, _semiRound, _sharp, _src, _URL, _share, _currentTarget, _seed, _paletteList, _length, _outlined, _filledTonal, _color, _color_accent, _innerHTML, _toUpperCase, _colorDark, _onColor, _onColorDark, _clipboard, _writeText, _join, _push, _palette, _filter, _filled, _accentDark, _accentLight, _onAccentDark, _onAccentLight, _open, _createObjectStore, _readonly, _objectStore, _transaction, _getAll, _then, _put, _readwrite, _manual, _clear, _delete } from '@/data/string'
+import { _system, _theme, _corner, _dark, _fullRound, _includes, _light, _round, _semiRound, _sharp, _src, _URL, _share, _currentTarget, _seed, _paletteList, _length, _outlined, _tonal, _color, _color_accent, _innerHTML, _toUpperCase, _colorDark, _onColor, _onColorDark, _clipboard, _writeText, _join, _push, _palette, _filter, _filled, _accentDark, _accentLight, _onAccentDark, _onAccentLight, _open, _createObjectStore, _readonly, _objectStore, _transaction, _getAll, _then, _put, _readwrite, _manual, _clear, _delete } from '@/data/string'
 import { getNavigator } from '@/data/window'
 import { DatabaseNames, LocalStorageKeys } from '@/enums/storage'
 import { getLocalStorageItem, setLocalStorageItem } from '@/utils/storage'
-import { closeModal, openModal } from '@/utils/modal'
 import { ElementIds } from '@/enums/ids'
-
-import Tooltip from '@/components/Tooltip'
-import Icon from '@/components/Icon'
-import Button, { ButtonVariant, FloatingActionButton } from '@/components/Button'
-import List from '@/components/List'
-import ColorPicker, { changeColorPickerValue } from '@/components/ColorPicker'
-import Dialog from '@/components/Dialog'
-import CSS from './_index.module.scss'
-import App from '@/components/App'
-import type { Palette } from './_types'
-import AppBar from './_AppBar'
-import Divider from '@/components/Divider'
 import { IDB } from '@/class/indexeddb'
 import { ObjectStoreNames, type ObjectStorePaletteList } from './_storage'
+import type { Palette } from './_types'
+
+import {TextTooltip} from '@/components/Tooltip'
+import Divider from '@/components/Divider'
+import Icon from '@/components/Icon'
+import Button, { ButtonVariant, FloatingActionButton, IconButton } from '@/components/Button'
+import List from '@/components/List'
+import ColorPicker, { closeColorPicker, openColorPicker } from '@/components/ColorPicker'
+import Dialog, { closeDialog, openDialog } from '@/components/Dialog'
+import App from '@/components/App'
+import AppBar from './_AppBar'
+import CSS from './_index.module.scss'
 
 type BodyProps = Palette
 
@@ -54,7 +52,7 @@ const Body: Component<BodyProps> = (props) => {
         <div style={{ "background-color": props[_accentLight], color: props[_onAccentLight] }}>
             <h2>Accent Light<br />{props[_accentLight]}</h2>
             <Button
-                variant={ButtonVariant[_filledTonal]}
+                variant={ButtonVariant[_tonal]}
                 style={{'--color-on-surface': hexToCSSValue(props[_onAccentLight])}}
                 onClick={() => copyColor(props[_accentLight], accLightTimeoutId)}>
                 <Show when={accLightTimeoutId[0]()} fallback={<><Icon code={0xE51B}/>Copy</>}>
@@ -65,7 +63,7 @@ const Body: Component<BodyProps> = (props) => {
         <div style={{ "background-color": props[_onAccentLight], color: props[_accentLight] }}>
             <h2>On Accent Light<br />{props[_onAccentLight]}</h2>
             <Button
-                variant={ButtonVariant[_filledTonal]}
+                variant={ButtonVariant[_tonal]}
                 style={{'--color-on-surface': hexToCSSValue(props[_accentLight])}}
                 onClick={() => copyColor(props[_onAccentLight], onAccLightTimeoutId)}>
                 <Show when={onAccLightTimeoutId[0]()} fallback={<><Icon code={0xE51B}/>Copy</>}>
@@ -76,7 +74,7 @@ const Body: Component<BodyProps> = (props) => {
         <div style={{ "background-color": props[_accentDark], color: props[_onAccentDark] }}>
             <h2>Accent Dark<br />{props[_accentDark]}</h2>
             <Button
-                variant={ButtonVariant[_filledTonal]}
+                variant={ButtonVariant[_tonal]}
                 style={{'--color-on-surface': hexToCSSValue(props[_onAccentDark])}}
                 onClick={() => copyColor(props[_accentDark], accDarkTimeoutId)}>
                 <Show when={accDarkTimeoutId[0]()} fallback={<><Icon code={0xE51B}/>Copy</>}>
@@ -87,7 +85,7 @@ const Body: Component<BodyProps> = (props) => {
         <div style={{ "background-color": props[_onAccentDark], color: props[_accentDark] }}>
             <h2>On Accent Dark<br />{props[_onAccentDark]}</h2>
             <Button
-                variant={ButtonVariant[_filledTonal]}
+                variant={ButtonVariant[_tonal]}
                 style={{'--color-on-surface': hexToCSSValue(props[_accentDark])}}
                 onClick={() => copyColor(props[_onAccentDark], onAccDarkTimeoutId)}>
                 <Show when={onAccDarkTimeoutId[0]()} fallback={<><Icon code={0xE51B}/>Copy</>}>
@@ -188,7 +186,7 @@ export const MainApp: Component = () => {
         try {
             testHexColor(color ?? '')
             onColorChange(color as HEXColor)
-            changeColorPickerValue(dialog_colorList_ref()!, color as HEXColor)
+            setPalette(_seed, color as HEXColor)
         } catch (e) {}
     }
 
@@ -204,10 +202,10 @@ export const MainApp: Component = () => {
     function initDatabase(): void {
         try {
             db[_open]({
-                onSuccess(ev, db) {
+                onSuccess(_ev, _db) {
                     initPaletteList()
                 },
-                onUpgradeNeeded(ev, db) {
+                onUpgradeNeeded(_ev, db) {
                     db[_createObjectStore]<ObjectStorePaletteList>({
                         name: ObjectStoreNames[_paletteList],
                         keyPath: _seed, 
@@ -225,12 +223,6 @@ export const MainApp: Component = () => {
 
     const ListItem: Component<{palette: Palette}> = (props) => {
         const [timeoutId, setTimeoutId] = createSignal<number | null>(null)
-        const [button_copy_ref, set_button_copy_ref] = createSignal<HTMLButtonElement | null>(null)
-        const [button_delete_ref, set_button_delete_ref] = createSignal<HTMLButtonElement | null>(null)
-        const [div_accentLight_ref, set_div_accentLight_ref] = createSignal<HTMLDivElement | null>(null)
-        const [div_onAccentLight_ref, set_div_onAccentLight_ref] = createSignal<HTMLDivElement | null>(null)
-        const [div_accentDark_ref, set_div_accentDark_ref] = createSignal<HTMLDivElement | null>(null)
-        const [div_onAccentDark_ref, set_div_onAccentDark_ref] = createSignal<HTMLDivElement | null>(null)
 
         async function copy(): Promise<void> {
             if (timeoutId()) {
@@ -252,7 +244,7 @@ export const MainApp: Component = () => {
             const p = {...props[_palette]}
             setPaletteList(l => l[_filter](v => v[_accentLight] != props[_palette][_accentLight]))
             if (paletteList()[_length] == 0) {
-                closeModal(dialog_colorList_ref()!)
+                closeColorPicker(dialog_colorList_ref()!)
             }
 
             const objectStore_paletteList = db[_transaction](ObjectStoreNames[_paletteList], _readwrite)![_objectStore](ObjectStoreNames[_paletteList])
@@ -263,41 +255,48 @@ export const MainApp: Component = () => {
 
         return (<List
             trailing={<>
-                <Tooltip anchor={button_copy_ref()} text='Copy' />
-                <Button iconOnly onClick={copy} ref={r => set_button_copy_ref(r)}>
-                    <Show when={timeoutId()} fallback={<Icon code={0xE51B}/>}>
-                        <Icon code={0xE3D8}/>
-                    </Show>
-                </Button>
+                <TextTooltip text='Copy'>
+                    <IconButton 
+                        onClick={copy} 
+                        code={timeoutId()? 0xE3D8 : 0xE51B}
+                    />
+                </TextTooltip>
 
-                <Tooltip anchor={button_delete_ref()} text='Delete' />
-                <Button ref={r => set_button_delete_ref(r)} iconOnly onClick={deleteColor}><Icon code={0xE59D}/></Button>
+                <TextTooltip text='Delete'>
+                    <IconButton 
+                        onClick={deleteColor} 
+                        code={0xE59D}
+                    />
+                </TextTooltip>
             </>}
             subtitle={<div class={CSS.dialog_colors}>
+                <TextTooltip text="Accent Light">
+                    <div style={{
+                        "background-color": props[_palette][_accentLight],
+                        color: props[_palette][_onAccentLight],
+                    }}>{props[_palette][_accentLight]}</div>
+                </TextTooltip>
 
-                <Tooltip anchor={div_accentLight_ref()} text="Accent Light"/>
-                <div ref={r => set_div_accentLight_ref(r)} style={{
-                    "background-color": props[_palette][_accentLight],
-                    color: props[_palette][_onAccentLight],
-                }}>{props[_palette][_accentLight]}</div>
+                <TextTooltip text="On Accent Light">
+                    <div style={{
+                        "background-color": props[_palette][_onAccentLight],
+                        color: props[_palette][_accentLight],
+                    }}>{props[_palette][_onAccentLight]}</div>
+                </TextTooltip>
 
-                <Tooltip anchor={div_onAccentLight_ref()} text="On Accent Light"/>
-                <div ref={r => set_div_onAccentLight_ref(r)} style={{
-                    "background-color": props[_palette][_onAccentLight],
-                    color: props[_palette][_accentLight],
-                }}>{props[_palette][_onAccentLight]}</div>
+                <TextTooltip text="Accent Dark">
+                    <div style={{
+                        "background-color": props[_palette][_accentDark],
+                        color: props[_palette][_onAccentDark],
+                    }}>{props[_palette][_accentDark]}</div>
+                </TextTooltip>
 
-                <Tooltip anchor={div_accentDark_ref()} text="Accent Dark"/>
-                <div ref={r => set_div_accentDark_ref(r)} style={{
-                    "background-color": props[_palette][_accentDark],
-                    color: props[_palette][_onAccentDark],
-                }}>{props[_palette][_accentDark]}</div>
-
-                <Tooltip anchor={div_onAccentDark_ref()} text="On Accent Dark"/>
-                <div ref={r => set_div_onAccentDark_ref(r)} style={{
-                    "background-color": props[_palette][_onAccentDark],
-                    color: props[_palette][_accentDark],
-                }}>{props[_palette][_onAccentDark]}</div>
+                <TextTooltip text="On Accent Dark">
+                    <div style={{
+                        "background-color": props[_palette][_onAccentDark],
+                        color: props[_palette][_accentDark],
+                    }}>{props[_palette][_onAccentDark]}</div>
+                </TextTooltip>
             </div>}
             leading={<div class={CSS.seed} style={{"background-color": props[_palette][_seed]}}/>}>
             { props[_palette][_seed] }
@@ -315,18 +314,17 @@ export const MainApp: Component = () => {
                 onColorChange={onColorChange}
                 paletteList={paletteList()}
             />}
-            floatingActionButton={<FloatingActionButton classList={addClassListModule(CSS.fab)} variant={ButtonVariant[_filled]} onClick={(ev) => openPopover({
-                event: ev,
-                anchor: ev[_currentTarget],
-                popover: colorPicker_ref()!,
-            })}>
+            floatingActionButton={<FloatingActionButton 
+                classList={addClassListModule(CSS.fab)} 
+                variant={ButtonVariant[_filled]} 
+                onClick={(ev) => openColorPicker(ev, colorPicker_ref()!, {anchor: ev[_currentTarget]})}>
                 {palette[_seed]}
             </FloatingActionButton>}>
             <Body {...palette} />
         </App>
         <ColorPicker
             ref={r => set_colorPicker_ref(r)}
-            initialColor={palette[_seed]}
+            color={palette[_seed]}
             disabledColorControl
             disabledOpacityControl
             onSelectColor={onColorChange}
@@ -336,13 +334,19 @@ export const MainApp: Component = () => {
             style={{width: '640px'}}
             header="Color list"
             actions={<>
-                <Button variant={ButtonVariant[_filledTonal]} onClick={(ev) => {
-                    openModal(ev, dialog_deleteAll_ref)
-                }}>Delete all</Button>
-                <Button variant={ButtonVariant[_filledTonal]} onClick={copyAllPaletteList}>
+                <Button 
+                    variant={ButtonVariant[_tonal]} 
+                    onClick={(ev) => openDialog(ev, dialog_deleteAll_ref, {important: true})}>
+                    Delete all
+                </Button>
+                <Button variant={ButtonVariant[_tonal]} onClick={copyAllPaletteList}>
                     <Show when={timeoutId()} fallback='Copy all'>Copied</Show>
                 </Button>
-                <Button variant={ButtonVariant[_filled]} onClick={() => closeModal(dialog_colorList_ref()!)}>Close</Button>
+                <Button     
+                    variant={ButtonVariant[_filled]} 
+                    onClick={() => closeDialog(dialog_colorList_ref()!)}>
+                    Close
+                </Button>
             </>}>
             <For each={paletteList()}>{(p, i) => <>
                 <Show when={i() > 0}><Divider /></Show>
@@ -352,12 +356,11 @@ export const MainApp: Component = () => {
         <Dialog 
             ref={r => dialog_deleteAll_ref = r}
             header="Delete all"
-            dismiss={_manual}
             actions={<>
-                <Button onClick={() => closeModal(dialog_deleteAll_ref)} variant={ButtonVariant[_filledTonal]}>Cancel</Button>
+                <Button onClick={() => closeDialog(dialog_deleteAll_ref)} variant={ButtonVariant[_tonal]}>Cancel</Button>
                 <Button onClick={() => {
-                    closeModal(dialog_deleteAll_ref)
-                    closeModal(dialog_colorList_ref()!)
+                    closeDialog(dialog_deleteAll_ref)
+                    closeDialog(dialog_colorList_ref()!)
                     deleteAllPaletteList()
                 }} variant={ButtonVariant[_filled]}>Delete all</Button>
             </>}>

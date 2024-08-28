@@ -1,9 +1,10 @@
-import { changeTextAreaFieldValue, TextAreaField } from "@/components/TextField"
 import { createEffect, type VoidComponent } from "solid-js"
 
-import CSS from './_Notebook.module.scss'
 import { toggleAttribute } from "@/utils/attributes"
 import { _currentTarget, _expand, _note, _onNoteChanged, _value } from "@/data/string"
+
+import { AreaTextField, changeAreaTextFieldValue } from "@/components/TextField"
+import CSS from './_Notebook.module.scss'
 
 type Props = {
     expand: boolean
@@ -17,12 +18,12 @@ const _: VoidComponent<Props> = (props) => {
     createEffect(() => {
         if (props[_note] == textarea_ref[_value]) return;
 
-        if (textarea_ref[_value] == '') return changeTextAreaFieldValue(textarea_ref, props[_note])
+        if (textarea_ref[_value] == '') return changeAreaTextFieldValue(textarea_ref, props[_note])
         textarea_ref[_value] = props[_note]
     })
 
     return (<div class={CSS.notebook} data-expand={toggleAttribute(props[_expand])}>
-        <TextAreaField 
+        <AreaTextField 
             ref={r => textarea_ref = r}
             labelText="Notebook" 
             placeholder="Type your thought here ..." 

@@ -6,7 +6,6 @@ import { clearTimeDelayed, clearTimeInterval, setTimeDelayed, setTimeInterval } 
 import { preventDefault } from '@/utils/event'
 import { _centerBottom, _centerCenterLeft, _autoHideLabel, _autoShowClearBtn, _autocomplete, _button, _changeValueTooltip, _checkValidity, _children, _classList, _clearTooltip, _compact, _currentTarget, _decreaseTooltip, _disabled, _dispatchEvent, _focus, _focused, _id, _increaseTooltip, _input, _isIntOnly, _isNaN, _labelAttr, _labelElement, _labelText, _leading, _length, _max, _maxLine, _messageText, _min, _minLine, _off, _onBlur, _onFinalValueChanged, _onFocus, _onInput, _onValueChanged, _placeholder, _px, _readOnly, _ref, _resize, _rows, _scrollHeight, _split, _step, _text, _trailing, _trim, _type, _value, _valuechange, _result, _observe, _disconnect, _width, _menuAttr, _usePortal, _style, _bottom, _clientX, _clientY, _left, _right, _top, _touches, _x, _y, _click, _onToggleOpen, _target, _contains, _isArray } from '@/data/string'
 import { mathMax, numberParse } from '@/utils/math'
-import { FlyoutPosition } from '@/enums/position'
 import { getBoundingClientRect } from '@/utils/element'
 import { getDocument } from '@/data/window'
 import { addEventListener, removeEventListener } from '@/utils/event'
@@ -14,8 +13,8 @@ import { addEventListener, removeEventListener } from '@/utils/event'
 import Icon from '@/components/Icon'
 import { TextTooltip } from '@/components/Tooltip'
 import Button, { IconButton, type ButtonProps } from '@/components/Button'
-import Popover, { closePopover, openPopover, repositionPopover, type PopoverProps } from '../Popover'
-import Menu, { MenuItem, LinkMenuItem, MenuDivider, MenuHeader, openMenu } from '@/components/Menu'
+import Popover, { closePopover, openPopover, PopoverPosition as SearchMenuPosition, repositionPopover, type PopoverProps } from '../Popover'
+import Menu, { MenuItem, LinkMenuItem, MenuDivider, MenuHeader, openMenu, MenuPosition } from '@/components/Menu'
 import './index.scss'
 
 const HEIGHT_TEXT_INPUT_PER_LINE = 18
@@ -428,7 +427,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
                             ev, 
                             menu_action_ref, 
                             {
-                                position: FlyoutPosition[_centerCenterLeft],
+                                position: MenuPosition[_centerCenterLeft],
                                 anchor: ev[_currentTarget]
                             })
                         }>
@@ -437,7 +436,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
                 </TextTooltip>
                 <Show when={props[_autoShowClearBtn] && value() != 0}>
                     <TextTooltip text={props[_clearTooltip] ?? 'Clear'}>
-                        <TextFieldButton onClick={(ev) => {
+                        <TextFieldButton onClick={(_ev) => {
                             let v = 0
                             if (props[_min] != undefined && v < props[_min]) v = props[_min]
                             if (props[_max] != undefined && v > props[_max]) v = props[_max]
@@ -516,7 +515,7 @@ const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
         openPopover(ev, menu_ref, {
             allowHideAnchor: false,
             anchor: label_ref,
-            position: FlyoutPosition[_centerBottom], 
+            position: SearchMenuPosition[_centerBottom], 
             manualDismiss: true,
         })
     }
@@ -627,7 +626,8 @@ export {
     MenuItem as SearchMenuItem,
     LinkMenuItem as LinkSearchMenuItem,
     MenuDivider as SearchMenuDivider,
-    MenuHeader as SearchMenuHeader
+    MenuHeader as SearchMenuHeader,
+    SearchMenuPosition
 }
 export type {
     TextFieldButtonProps, 

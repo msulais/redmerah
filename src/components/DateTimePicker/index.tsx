@@ -7,7 +7,7 @@ import { numberParse } from '@/utils/math'
 
 import Button, { ButtonVariant, IconButton } from '@/components/Button'
 import Dropdown from '@/components/Dropdown'
-import { closeModal, openModal, focusModal, Modal, type ModalProps, repositionModal } from '@/components/Modal'
+import { closeModal, openModal, focusModal, Modal, type ModalProps, repositionModal, ModalPosition as DateTimePickerPosition } from '@/components/Modal'
 import './index.scss'
 
 enum DatePickerOption {
@@ -96,8 +96,8 @@ const DateTimePicker: VoidComponent<DateTimePickerProps> = ($props) => {
                 <For each={getWeekdayNames(props[_locales])}>{d => <p>{d[_substring](0, 2)}</p>}</For>
             </div>
             <div class="datetime-picker-days">
-                <For each={Array(startDay())[_fill](0)}>{v => <div/>}</For>
-                <For each={Array(daysPerMonth())[_fill](0)}>{(v, i) => {
+                <For each={Array(startDay())[_fill](0)}>{_v => <div/>}</For>
+                <For each={Array(daysPerMonth())[_fill](0)}>{(_v, i) => {
                     const date = createMemo(() => new Date(getDate_Y(viewDate()), getDate_M(viewDate()), i() + 1))
                     return (<Button
                         onClick={() => {
@@ -145,7 +145,7 @@ const DateTimePicker: VoidComponent<DateTimePickerProps> = ($props) => {
 
     const YearsDate: VoidComponent = () => {
         return (<div class="datetime-picker-year">
-            <For each={Array(16)[_fill](0)}>{(v, i) => {
+            <For each={Array(16)[_fill](0)}>{(_v, i) => {
                 const date = createMemo(() => new Date(getDate_Y(viewDate()) + i(), 0))
                 return (<Button
                     onClick={() => {
@@ -216,14 +216,14 @@ const DateTimePicker: VoidComponent<DateTimePickerProps> = ($props) => {
                 onSelectedItemsChanged={(items) => setValue(v => (v[_setHours](numberParse(items[0][0] as string, true) + (isTimePMFormat()? 12 : 0)), v))}
                 items={[
                     ['0', '00'],
-                    ...new Array(isTime24HourFormat()? 23 : 11)[_fill](1)[_map]((v, i) => [`${i+1}`, `${i+1}`[_padStart](2, '0')] as [value: string, text: string]),
+                    ...new Array(isTime24HourFormat()? 23 : 11)[_fill](1)[_map]((_v, i) => [`${i+1}`, `${i+1}`[_padStart](2, '0')] as [value: string, text: string]),
                 ]}
             />
             <Dropdown 
                 labelText="Minute" 
                 selectedValues={[`${value()[_getMinutes]()}`]} 
                 onSelectedItemsChanged={(items) => setValue(v => (v[_setMinutes](numberParse(items[0][0] as string, true)), v))}
-                items={new Array(60)[_fill](1)[_map]((v, i) => [`${i}`, `${i}`[_padStart](2, '0')] as [value: string, text: string])}
+                items={new Array(60)[_fill](1)[_map]((_v, i) => [`${i}`, `${i}`[_padStart](2, '0')] as [value: string, text: string])}
             />
             <Dropdown 
                 selectedValues={[_AM]} 
@@ -276,7 +276,8 @@ export {
     focusModal as focusDateTimePicker,
     openModal as openDateTimePicker,
     closeModal as closeDateTimePicker,
-    repositionModal as repositionDateTimePicker
+    repositionModal as repositionDateTimePicker,
+    DateTimePickerPosition
 }
 export type {
     DateTimePickerProps

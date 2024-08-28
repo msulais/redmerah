@@ -1,11 +1,12 @@
 import { createSignal, For, onMount, Show, type VoidComponent } from "solid-js";
 
-import { _string, _characters, _numbers, _symbols, _length, _floor, _range, _max, _min, _count, _repeat, _includes, _push, _sort, _ascending, _descending, _map, _prefix, _toString, _numberType, _padStart, _suffix, _join, _separator, _colors, _round, _colorModel, _hex, _rgb, _hsl, _words, _selection, _teams, _animation, _result, _settings, _decimal, _none, _open, _key, _value, _createObjectStore, _id, _list, _lists, _lastResult, _isOpen, _readonly, _objectStore, _transaction, _get, _then, _color, _readwrite, _put, _add, _name, _members, _getAll, _namesList, _membersList, _alphabetLowercase, _alphabetUppercase, _customCharacter, _minDecimalLength, _splice, _lowercase, _titlecase, _togglecase, _uppercase, _wordCase, _h, _l, _s, _r, _b, _g, _cursor, _test, _filledTonal, _filled, _manual, _items, _accept, _file, _input, _type, _readAsText, _target, _onerror, _onabort, _onload, _replace, _split, _substring, _filter, _trim, _focus, _delete, _clipboard, _writeText, _noPointerEvent, _generate, _stopGenerate } from "@/data/string";
+import type { HEXColor } from "@/types/color";
+import type { ListItems, Result, Settings } from "./_types";
+import { _string, _characters, _numbers, _symbols, _length, _floor, _range, _max, _min, _count, _repeat, _includes, _push, _sort, _ascending, _descending, _map, _prefix, _toString, _numberType, _padStart, _suffix, _join, _separator, _colors, _round, _colorModel, _hex, _rgb, _hsl, _words, _selection, _teams, _animation, _result, _settings, _decimal, _none, _open, _key, _value, _createObjectStore, _id, _list, _lists, _lastResult, _isOpen, _readonly, _objectStore, _transaction, _get, _then, _color, _readwrite, _put, _add, _name, _members, _getAll, _namesList, _membersList, _alphabetLowercase, _alphabetUppercase, _customCharacter, _minDecimalLength, _splice, _lowercase, _titlecase, _togglecase, _uppercase, _wordCase, _h, _l, _s, _r, _b, _g, _cursor, _test, _tonal, _filled, _manual, _items, _accept, _file, _input, _type, _readAsText, _target, _onerror, _onabort, _onload, _replace, _split, _substring, _filter, _trim, _focus, _delete, _clipboard, _writeText, _noPointerEvent, _generate, _stopGenerate } from "@/data/string";
 import { rgbToHex, hslToHex } from "@/utils/color";
 import { setTimeInterval, clearTimeInterval } from "@/utils/timeout";
 import { createStore } from "solid-js/store";
 import { RandomizerType, WordsRandomizerWordCase, NumbersRandomizerNumberType, NumbersRandomizerSort, ColorsRandomizerColorModel, Commands } from "./_enums";
-import type { ListItems, Result, Settings } from "./_types";
 import { mathFloor, mathRandom } from "@/utils/math";
 import { PERSON_NAMES, TEAMS_NAMES, COLORS, ANIMALS, LOREM_IPSUM } from "./_data";
 import { ObjectStoreNames, ObjectStoreKeys, type ObjectStoreLists, type ObjectStoreSettings, type ObjectStoreLastResult } from "./_storage";
@@ -14,30 +15,27 @@ import { stringToLowerCase, stringToUpperCase, stringToToggleCase, stringToTitle
 import { createObjectURL, downloadFileByURL, revokeObjectURL } from "@/utils/url";
 import { addClassListModule } from "@/utils/element";
 import { openFile, readFileAsText } from "@/utils/file";
-import { openNotification } from "@/utils/notification";
 import { IDB } from "@/class/indexeddb";
 import { DatabaseNames } from "@/enums/storage";
-import type { HEXColor } from "@/types/color";
-import { closeModal, openModal } from "@/utils/modal";
 import { getDocumentBody, getNavigator } from "@/data/window";
+import { removeAttribute, setAttribute, toggleAttribute } from "@/utils/attributes";
+import { BodyAttributes } from "@/enums/attributes";
 
 import App from "@/components/App";
-import Tooltip from "@/components/Tooltip";
+import { TextTooltip } from "@/components/Tooltip";
 import Icon from "@/components/Icon";
 import Divider from "@/components/Divider";
-import Dialog from "@/components/Dialog";
-import Button, { ButtonVariant, FloatingActionButton } from "@/components/Button";
+import Dialog, { closeDialog, openDialog } from "@/components/Dialog";
+import Button, { ButtonVariant, FloatingActionButton, IconButton } from "@/components/Button";
 import List from "@/components/List";
-import TextField, { changeTextAreaFieldValue, changeTextFieldValue, TextAreaField } from "@/components/TextField";
-import NotificationBar from "@/components/NotificationBar";
+import TextField, { AreaTextField, changeAreaTextFieldValue, changeTextFieldValue } from "@/components/TextField";
+import Toast, { openToast } from "@/components/Toast";
 import AppBar from './_AppBar'
 import SideNavigation from './_SideNavigation'
 import Control from './_Control'
 import ResultComponent from './_Result'
 import CSSAnimation from "@/styles/animation.module.scss";
 import CSS from './_index.module.scss'
-import { removeAttribute, setAttribute, toggleAttribute } from "@/utils/attributes";
-import { BodyAttributes } from "@/enums/attributes";
 
 export const MainApp: VoidComponent = () => {
     const db = new IDB(DatabaseNames.randomizer, 1)
@@ -136,17 +134,17 @@ export const MainApp: VoidComponent = () => {
     let dialog_edit_ref: HTMLDialogElement
     let dialog_viewListItems_ref: HTMLDialogElement
     let dialog_previewListItems_ref: HTMLDialogElement
-    let notif_listNameEmpty_ref: HTMLDivElement
-    let notif_listHaveNoItems_ref: HTMLDivElement
-    let notif_listNameAlreadyExist_ref: HTMLDivElement
-    let notif_listEdited_ref: HTMLDivElement
-    let notif_listDeleted_ref: HTMLDivElement
-    let notif_newListAdded_ref: HTMLDivElement
-    let notif_noListSelected_ref: HTMLDivElement
-    let textarea_newListItems_ref: HTMLTextAreaElement
-    let textarea_editListItems_ref: HTMLTextAreaElement
-    let input_newListName_ref: HTMLInputElement
-    let input_editListName_ref: HTMLInputElement
+    let toast_listNameEmpty_ref: HTMLDivElement
+    let toast_listHaveNoItems_ref: HTMLDivElement
+    let toast_listNameAlreadyExist_ref: HTMLDivElement
+    let toast_listEdited_ref: HTMLDivElement
+    let toast_listDeleted_ref: HTMLDivElement
+    let toast_newListAdded_ref: HTMLDivElement
+    let toast_noListSelected_ref: HTMLDivElement
+    let areaTextField_newListItems_ref: HTMLTextAreaElement
+    let areaTextField_editListItems_ref: HTMLTextAreaElement
+    let textField_newListName_ref: HTMLInputElement
+    let textField_editListName_ref: HTMLInputElement
 
     function generate(): void {
         if (randomizerType() == RandomizerType[_string]) {
@@ -342,14 +340,14 @@ export const MainApp: VoidComponent = () => {
         else if (randomizerType() == RandomizerType[_words]) {
             type = _words
             if (settings[_words][_list][_id] == -1) {
-                openNotification({ notificationBar: notif_noListSelected_ref })
+                openToast(toast_noListSelected_ref)
                 return ok()
             }
         }
         else if (randomizerType() == RandomizerType[_selection]) {
             type = _selection
             if (settings[_selection][_list][_id] == -1) {
-                openNotification({ notificationBar: notif_noListSelected_ref })
+                openToast(toast_noListSelected_ref)
                 return ok()
             }
         }
@@ -357,7 +355,7 @@ export const MainApp: VoidComponent = () => {
         else if (randomizerType() == RandomizerType[_teams]) {
             type = _teams
             if (settings[_teams][_membersList][_id] == -1 || settings[_teams][_namesList][_id] == -1) {
-                openNotification({ notificationBar: notif_noListSelected_ref })
+                openToast(toast_noListSelected_ref)
                 return ok()
             }
         }
@@ -667,30 +665,30 @@ export const MainApp: VoidComponent = () => {
     }
 
     function editList(): void {
-        const name = input_editListName_ref[_value][_trim]()
+        const name = textField_editListName_ref[_value][_trim]()
         const id = selectedListToEdit()[_id]
         if (name[_length] == 0) {
-            input_editListName_ref[_focus]()
-            openNotification({notificationBar: notif_listNameEmpty_ref})
+            textField_editListName_ref[_focus]()
+            openToast(toast_listNameEmpty_ref)
             return
         }
 
-        const items: string[] = textarea_editListItems_ref[_value][_split](/[\n,]/gs)[_filter](v => v[_trim]()[_length] > 0)
+        const items: string[] = areaTextField_editListItems_ref[_value][_split](/[\n,]/gs)[_filter](v => v[_trim]()[_length] > 0)
         if (items[_length] == 0) {
-            textarea_editListItems_ref[_focus]()
-            openNotification({notificationBar: notif_listHaveNoItems_ref})
+            areaTextField_editListItems_ref[_focus]()
+            openToast(toast_listHaveNoItems_ref)
             return
         }
 
         for (const list of lists) {
             if (list[_name] != name || list[_id] == id) continue;
 
-            input_editListName_ref[_focus]()
-            openNotification({notificationBar: notif_listNameAlreadyExist_ref})
+            textField_editListName_ref[_focus]()
+            openToast(toast_listNameAlreadyExist_ref)
             return
         }
 
-        closeModal(dialog_edit_ref)
+        closeDialog(dialog_edit_ref)
 
         const newLists: ListItems = {id, name, items}
         setLists(l => [...(l[_filter](v => v[_id] != id)), newLists])
@@ -700,7 +698,7 @@ export const MainApp: VoidComponent = () => {
         if (settings[_teams][_namesList][_id] == id) command(Commands[_change_settings_teams_namesList], newLists)
         if (settings[_teams][_membersList][_id] == id) command(Commands[_change_settings_teams_membersList], newLists)
 
-        openNotification({notificationBar: notif_listEdited_ref})
+        openToast(toast_listEdited_ref)
 
         const listsObjectStore = db[_transaction](ObjectStoreNames[_lists], _readwrite)![_objectStore](ObjectStoreNames[_lists])
         if (!listsObjectStore) return
@@ -710,9 +708,11 @@ export const MainApp: VoidComponent = () => {
 
     function openEditDialog(ev: Event, list: ListItems): void {
         setSelectedListToEdit(list)
-        changeTextFieldValue(input_editListName_ref, list[_name])
-        changeTextAreaFieldValue(textarea_editListItems_ref, list[_items][_join](', '))
-        openModal(ev, dialog_edit_ref)
+        changeTextFieldValue(textField_editListName_ref, list[_name])
+        changeAreaTextFieldValue(areaTextField_editListItems_ref, list[_items][_join](', '))
+        openDialog(ev, dialog_edit_ref, {
+            important: true
+        })
     }
 
     function deleteList(list: ListItems): void {
@@ -720,7 +720,7 @@ export const MainApp: VoidComponent = () => {
 
         const isNoMoreLists = lists[_length] == 0
         const newList = isNoMoreLists? {id: -1, name: '', items: []} : lists[0]
-        if (isNoMoreLists) closeModal(dialog_lists_ref)
+        if (isNoMoreLists) closeDialog(dialog_lists_ref)
             
 
         if (settings[_words][_list][_id]        == list[_id]) command(Commands[_change_settings_words_list]       , {...newList})
@@ -728,7 +728,7 @@ export const MainApp: VoidComponent = () => {
         if (settings[_teams][_namesList][_id]   == list[_id]) command(Commands[_change_settings_teams_namesList]  , {...newList})
         if (settings[_teams][_membersList][_id] == list[_id]) command(Commands[_change_settings_teams_membersList], {...newList})
 
-        openNotification({notificationBar: notif_listDeleted_ref})
+        openToast(toast_listDeleted_ref)
 
         const listsObjectStore = db[_transaction](ObjectStoreNames[_lists], _readwrite)![_objectStore](ObjectStoreNames[_lists])
         if (!listsObjectStore) return
@@ -738,33 +738,35 @@ export const MainApp: VoidComponent = () => {
 
     function openDeleteDialog(ev: Event, list: ListItems): void {
         setSelectedListToDelete(list)
-        openModal(ev, dialog_deleteListWarning_ref)
+        openDialog(ev, dialog_deleteListWarning_ref, {
+            important: true
+        })
     }
 
     function addNewList(): void {
-        const name = input_newListName_ref[_value][_trim]()
+        const name = textField_newListName_ref[_value][_trim]()
         if (name[_length] == 0) {
-            input_newListName_ref[_focus]()
-            openNotification({notificationBar: notif_listNameEmpty_ref})
+            textField_newListName_ref[_focus]()
+            openToast(toast_listNameEmpty_ref)
             return
         }
 
-        const items: string[] = textarea_newListItems_ref[_value][_split](/[\n,]/gs)[_filter](v => v[_trim]()[_length] > 0)
+        const items: string[] = areaTextField_newListItems_ref[_value][_split](/[\n,]/gs)[_filter](v => v[_trim]()[_length] > 0)
         if (items[_length] == 0) {
-            textarea_newListItems_ref[_focus]()
-            openNotification({notificationBar: notif_listHaveNoItems_ref})
+            areaTextField_newListItems_ref[_focus]()
+            openToast(toast_listHaveNoItems_ref)
             return
         }
 
         for (const list of lists) {
             if (list[_name] != name) continue;
 
-            input_newListName_ref[_focus]()
-            openNotification({notificationBar: notif_listNameAlreadyExist_ref})
+            textField_newListName_ref[_focus]()
+            openToast(toast_listNameAlreadyExist_ref)
             return
         }
 
-        closeModal(dialog_add_ref)
+        closeDialog(dialog_add_ref)
 
         let id = 0
         for (const list of lists) {
@@ -773,7 +775,7 @@ export const MainApp: VoidComponent = () => {
         }
         id += 1
         const newLists: ListItems = {id, name, items}
-        openNotification({notificationBar: notif_newListAdded_ref})
+        openToast(toast_newListAdded_ref)
         setLists(l => [...l, {id, name, items}])
         const listsObjectStore = db[_transaction](ObjectStoreNames[_lists], _readwrite)![_objectStore](ObjectStoreNames[_lists])
         if (!listsObjectStore) return
@@ -782,14 +784,14 @@ export const MainApp: VoidComponent = () => {
     }
 
     function openAddDialog(ev: Event): void {
-        changeTextFieldValue(input_newListName_ref, '')
-        changeTextAreaFieldValue(textarea_newListItems_ref, '')
-        openModal(ev, dialog_add_ref)
+        changeTextFieldValue(textField_newListName_ref, '')
+        changeAreaTextFieldValue(areaTextField_newListItems_ref, '')
+        openDialog(ev, dialog_add_ref)
     }
 
     function viewList(ev: Event, list: ListItems): void {
         setViewListItems(list)
-        openModal(ev, dialog_viewListItems_ref)
+        openDialog(ev, dialog_viewListItems_ref)
     }
 
     async function listItemFromCSVFile(): Promise<string[]> {
@@ -847,7 +849,7 @@ export const MainApp: VoidComponent = () => {
         // edit_list
         else if (type == Commands[_edit_list]) {
             if (args[_length] > 1) return openEditDialog(args[0] as Event, args[1] as ListItems)
-            openModal(args[0] as Event, dialog_lists_ref)
+            openDialog(args[0] as Event, dialog_lists_ref)
         } 
 
         // delete_list
@@ -1179,29 +1181,27 @@ export const MainApp: VoidComponent = () => {
         initDatabase()
     })
 
-    const ListItemComponent: VoidComponent<ListItems> = (props) => {
-        const [exportBtnRef, setExportBtnRef] = createSignal<HTMLButtonElement | null>(null)
-        const [viewBtnRef, setViewBtnRef] = createSignal<HTMLButtonElement | null>(null)
-        const [editBtnRef, setEditBtnRef] = createSignal<HTMLButtonElement | null>(null)
-        const [deleteBtnRef, setDeleteBtnRef] = createSignal<HTMLButtonElement | null>(null)
-
+    const ListItem: VoidComponent<ListItems> = ($props) => {
         return (<List 
-            compact 
             trailing={<>
-                <Tooltip text="Export list" anchor={exportBtnRef()}/>
-                <Button onClick={() => exportList(props)} ref={r => setExportBtnRef(r)} iconOnly><Icon code={0xE0CF} /></Button>
+                <TextTooltip text="Export list">
+                    <IconButton onClick={() => exportList($props)} code={0xE0CF}/>
+                </TextTooltip>
 
-                <Tooltip text="View list" anchor={viewBtnRef()}/>
-                <Button onClick={(ev) => viewList(ev, props)} ref={r => setViewBtnRef(r)} iconOnly><Icon code={0xE77B} /></Button>
+                <TextTooltip text="View list">
+                    <IconButton onClick={(ev) => viewList(ev, $props)} code={0xE77B}/>
+                </TextTooltip>
 
-                <Tooltip text="Edit list" anchor={editBtnRef()}/>
-                <Button onClick={(ev) => openEditDialog(ev, props)} ref={r => setEditBtnRef(r)} iconOnly><Icon code={0xE739} /></Button>
+                <TextTooltip text="Edit list">
+                    <IconButton onClick={(ev) => openEditDialog(ev, $props)} code={0xE739}/>
+                </TextTooltip>
 
-                <Tooltip text="Delete list" anchor={deleteBtnRef()}/>
-                <Button onClick={(ev) => openDeleteDialog(ev, props)} ref={r => setDeleteBtnRef(r)} iconOnly><Icon code={0xE59D} /></Button>
+                <TextTooltip text="Delete list">
+                    <IconButton onClick={(ev) => openDeleteDialog(ev, $props)} code={0xE59D}/>
+                </TextTooltip>
             </>}
-            subtitle={props[_items][_length] + ' item' + (props[_items][_length] > 1? 's' : '')}>
-            {props[_name]}
+            subtitle={$props[_items][_length] + ' item' + ($props[_items][_length] > 1? 's' : '')}>
+            {$props[_name]}
         </List>)
     }
 
@@ -1212,10 +1212,10 @@ export const MainApp: VoidComponent = () => {
                 ref={r => dialog_lists_ref = r} 
                 header="Lists" 
                 actions={<>
-                    <Button onClick={() => closeModal(dialog_lists_ref)} variant={ButtonVariant[_filledTonal]}>Close</Button>
+                    <Button onClick={() => closeDialog(dialog_lists_ref)} variant={ButtonVariant[_tonal]}>Close</Button>
                     <Button 
                         onClick={(ev) => {
-                            closeModal(dialog_lists_ref)
+                            closeDialog(dialog_lists_ref)
                             openAddDialog(ev)
                         }} 
                         variant={ButtonVariant[_filled]}>
@@ -1224,16 +1224,15 @@ export const MainApp: VoidComponent = () => {
                 </>}>
                 <For each={lists}>{(l, i) => <>
                     <Show when={i() != 0}><Divider /></Show>
-                    <ListItemComponent {...l} />
+                    <ListItem {...l} />
                 </>}</For>
             </Dialog>
             <Dialog 
-                dismiss={_manual} 
                 ref={r => dialog_deleteListWarning_ref = r}
                 actions={<>
-                    <Button variant={ButtonVariant[_filledTonal]} onClick={() => closeModal(dialog_deleteListWarning_ref)}>Cancel</Button>
+                    <Button variant={ButtonVariant[_tonal]} onClick={() => closeDialog(dialog_deleteListWarning_ref)}>Cancel</Button>
                     <Button variant={ButtonVariant[_filled]} onClick={() => {
-                        closeModal(dialog_deleteListWarning_ref)
+                        closeDialog(dialog_deleteListWarning_ref)
                         deleteList(selectedListToDelete())
                     }}>Delete</Button>
                 </>}
@@ -1242,30 +1241,29 @@ export const MainApp: VoidComponent = () => {
                 <List classList={addClassListModule(CSS.delete_list)} subtitle={selectedListToDelete()[_items][_length] + ' item' + (selectedListToDelete()[_items][_length] > 1? 's' : '')}>{selectedListToDelete()[_name]}</List>
             </Dialog>
             <Dialog 
-                dismiss={_manual}
                 ref={r => dialog_add_ref = r}
                 style={{width: '500px'}}
                 actions={<>
-                    <Button variant={ButtonVariant[_filledTonal]} onClick={() => closeModal(dialog_add_ref)}>Cancel</Button>
-                    <Button variant={ButtonVariant[_filledTonal]} onClick={async () => {
+                    <Button variant={ButtonVariant[_tonal]} onClick={() => closeDialog(dialog_add_ref)}>Cancel</Button>
+                    <Button variant={ButtonVariant[_tonal]} onClick={async () => {
                         const text = await listItemFromCSVFile()
-                        changeTextAreaFieldValue(textarea_newListItems_ref, [textarea_newListItems_ref[_value], ...text][_filter](v => v[_trim]()[_length] > 0)[_join](', '))
+                        changeAreaTextFieldValue(areaTextField_newListItems_ref, [areaTextField_newListItems_ref[_value], ...text][_filter](v => v[_trim]()[_length] > 0)[_join](', '))
                     }}>Import CSV</Button>
                     <Button onClick={(ev) => {
                         setViewListItems({
                             id: -1, 
-                            name: input_newListName_ref[_value], 
-                            items: textarea_newListItems_ref[_value][_split](/[\n,]/gs)[_filter](v => v[_trim]()[_length] > 0)
+                            name: textField_newListName_ref[_value], 
+                            items: areaTextField_newListItems_ref[_value][_split](/[\n,]/gs)[_filter](v => v[_trim]()[_length] > 0)
                         })
-                        openModal(ev, dialog_previewListItems_ref)
-                    }} variant={ButtonVariant[_filledTonal]}>Preview</Button>
+                        openDialog(ev, dialog_previewListItems_ref)
+                    }} variant={ButtonVariant[_tonal]}>Preview</Button>
                     <Button onClick={() => addNewList()} variant={ButtonVariant[_filled]}>Save</Button>
                 </>}
                 header="New list">
-                <TextField ref={r => input_newListName_ref = r} labelText="List name" />
+                <TextField ref={r => textField_newListName_ref = r} labelText="List name" />
                 <div style={{"min-height": '16px'}}/>
-                <TextAreaField 
-                    ref={r => textarea_newListItems_ref = r}
+                <AreaTextField 
+                    ref={r => areaTextField_newListItems_ref = r}
                     labelText="Items" 
                     placeholder={"Item1, Item2,\nItem3, Item 4\nItem 5"}
                     messageText={"Info: Each item separated by comma or new line"}
@@ -1274,30 +1272,29 @@ export const MainApp: VoidComponent = () => {
                 />
             </Dialog>
             <Dialog 
-                dismiss={_manual}
                 ref={r => dialog_edit_ref = r}
                 style={{width: '500px'}}
                 actions={<>
-                    <Button variant={ButtonVariant[_filledTonal]} onClick={() => closeModal(dialog_edit_ref)}>Cancel</Button>
-                    <Button variant={ButtonVariant[_filledTonal]} onClick={async () => {
+                    <Button variant={ButtonVariant[_tonal]} onClick={() => closeDialog(dialog_edit_ref)}>Cancel</Button>
+                    <Button variant={ButtonVariant[_tonal]} onClick={async () => {
                         const text = await listItemFromCSVFile()
-                        changeTextAreaFieldValue(textarea_editListItems_ref, [textarea_newListItems_ref[_value], ...text][_filter](v => v[_trim]()[_length] > 0)[_join](', '))
+                        changeAreaTextFieldValue(areaTextField_editListItems_ref, [areaTextField_newListItems_ref[_value], ...text][_filter](v => v[_trim]()[_length] > 0)[_join](', '))
                     }}>Import CSV</Button>
                     <Button onClick={(ev) => {
                         setViewListItems({
                             id: -1, 
-                            name: input_editListName_ref[_value], 
-                            items: textarea_editListItems_ref[_value][_split](/[\n,]/gs)[_filter](v => v[_trim]()[_length] > 0)
+                            name: textField_editListName_ref[_value], 
+                            items: areaTextField_editListItems_ref[_value][_split](/[\n,]/gs)[_filter](v => v[_trim]()[_length] > 0)
                         })
-                        openModal(ev, dialog_previewListItems_ref)
-                    }} variant={ButtonVariant[_filledTonal]}>Preview</Button>
+                        openDialog(ev, dialog_previewListItems_ref)
+                    }} variant={ButtonVariant[_tonal]}>Preview</Button>
                     <Button onClick={() => editList()} variant={ButtonVariant[_filled]}>Save</Button>
                 </>}
                 header="Edit list">
-                <TextField ref={r => input_editListName_ref = r} placeholder={selectedListToEdit()[_name]} labelText="List name" />
+                <TextField ref={r => textField_editListName_ref = r} placeholder={selectedListToEdit()[_name]} labelText="List name" />
                 <div style={{"min-height": '16px'}}/>
-                <TextAreaField 
-                    ref={r => textarea_editListItems_ref = r}
+                <AreaTextField 
+                    ref={r => areaTextField_editListItems_ref = r}
                     labelText="Items" 
                     placeholder={selectedListToEdit()[_items][_join](', ')}
                     messageText={"Info: Each item separated by comma or new line"}
@@ -1309,10 +1306,10 @@ export const MainApp: VoidComponent = () => {
                 ref={r => dialog_viewListItems_ref = r} 
                 style={{width: '720px'}}
                 actions={<>
-                    <Button onClick={() => closeModal(dialog_viewListItems_ref)} variant={ButtonVariant[_filledTonal]}>Close</Button>
-                    <Button onClick={() => exportList(viewListItems())} variant={ButtonVariant[_filledTonal]}>Export</Button>
+                    <Button onClick={() => closeDialog(dialog_viewListItems_ref)} variant={ButtonVariant[_tonal]}>Close</Button>
+                    <Button onClick={() => exportList(viewListItems())} variant={ButtonVariant[_tonal]}>Export</Button>
                     <Button onClick={ev => {
-                        closeModal(dialog_viewListItems_ref)
+                        closeDialog(dialog_viewListItems_ref)
                         openEditDialog(ev, viewListItems())
                     }} variant={ButtonVariant[_filled]}>Edit</Button>
                 </>}
@@ -1327,7 +1324,7 @@ export const MainApp: VoidComponent = () => {
                 ref={r => dialog_previewListItems_ref = r} 
                 style={{width: '720px'}}
                 actions={<>
-                    <Button onClick={() => closeModal(dialog_previewListItems_ref)} variant={ButtonVariant[_filled]}>Close</Button>
+                    <Button onClick={() => closeDialog(dialog_previewListItems_ref)} variant={ButtonVariant[_filled]}>Close</Button>
                 </>}
                 header={viewListItems()[_name]}>
                 <div class={CSS.view_list}>
@@ -1339,15 +1336,15 @@ export const MainApp: VoidComponent = () => {
         </>)
     }
 
-    const NotificationBars: VoidComponent = () => {
+    const Toasts: VoidComponent = () => {
         return (<>
-            <NotificationBar leading={<Icon filled code={0xE4BE}/>} ref={r => notif_listNameEmpty_ref = r}>List name is empty</NotificationBar>
-            <NotificationBar leading={<Icon filled code={0xF0AA}/>} ref={r => notif_listHaveNoItems_ref = r}>List items is empty</NotificationBar>
-            <NotificationBar leading={<Icon filled code={0xEBA8}/>} ref={r => notif_listNameAlreadyExist_ref = r}>List name already exist</NotificationBar>
-            <NotificationBar leading={<Icon filled code={0xF09C}/>} ref={r => notif_listEdited_ref = r}>List edited</NotificationBar>
-            <NotificationBar leading={<Icon filled code={0xE59D}/>} ref={r => notif_listDeleted_ref = r}>List deleted</NotificationBar>
-            <NotificationBar leading={<Icon filled code={0xF0A6}/>} ref={r => notif_newListAdded_ref = r}>New list added</NotificationBar>
-            <NotificationBar leading={<Icon filled code={0xE069}/>} ref={r => notif_noListSelected_ref = r}>No list selected</NotificationBar>
+            <Toast leading={<Icon filled code={0xE4BE}/>} ref={r => toast_listNameEmpty_ref = r}>List name is empty</Toast>
+            <Toast leading={<Icon filled code={0xF0AA}/>} ref={r => toast_listHaveNoItems_ref = r}>List items is empty</Toast>
+            <Toast leading={<Icon filled code={0xEBA8}/>} ref={r => toast_listNameAlreadyExist_ref = r}>List name already exist</Toast>
+            <Toast leading={<Icon filled code={0xF09C}/>} ref={r => toast_listEdited_ref = r}>List edited</Toast>
+            <Toast leading={<Icon filled code={0xE59D}/>} ref={r => toast_listDeleted_ref = r}>List deleted</Toast>
+            <Toast leading={<Icon filled code={0xF0A6}/>} ref={r => toast_newListAdded_ref = r}>New list added</Toast>
+            <Toast leading={<Icon filled code={0xE069}/>} ref={r => toast_noListSelected_ref = r}>No list selected</Toast>
         </>)
     }
 
@@ -1397,6 +1394,6 @@ export const MainApp: VoidComponent = () => {
             </div>
         </App>
         <Dialogs />
-        <NotificationBars />
+        <Toasts />
     </>)
 }

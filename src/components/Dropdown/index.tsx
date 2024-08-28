@@ -6,13 +6,12 @@ import { _refs, _dividerIndexs, _labels, _readOnly, _footer, _header, _disabled,
 import { getBoundingClientRect } from "@/utils/element"
 import { toggleAttribute } from "@/utils/attributes"
 import { clearTimeDelayed, setTimeDelayed } from "@/utils/timeout"
-import { FlyoutPosition } from "@/enums/position"
 import { stopImmediatePropagation } from "@/utils/event"
 
 import { TextTooltip } from "@/components/Tooltip"
 import Icon from "@/components/Icon"
 import TextField, { TextFieldButton, type TextFieldProps } from "@/components/TextField"
-import Menu, { closeMenu, LinkMenuItem, MenuDivider, MenuHeader, MenuItem, openMenu, repositionMenu, type MenuProps } from "@/components/Menu"
+import Menu, { closeMenu, LinkMenuItem, MenuDivider, MenuHeader, MenuItem, openMenu, repositionMenu, type MenuProps, MenuPosition as DropdownPosition } from "@/components/Menu"
 import './index.scss'
 
 type Item = (
@@ -67,7 +66,7 @@ const Dropdown: VoidComponent<DropdownProps> = ($props) => {
         openMenu(ev, menu_dropdown_ref, {
             anchor: label_dropdown_ref,
             padding: 0, 
-            position: FlyoutPosition[_centerBottom],
+            position: DropdownPosition[_centerBottom],
             allowHideAnchor: false
         })
     }
@@ -226,7 +225,8 @@ export {
     MenuHeader as DropdownHeader,
     MenuItem as DropdownItem,
     MenuDivider as DropdownDivider,
-    LinkMenuItem as LinkDropdownItem
+    LinkMenuItem as LinkDropdownItem,
+    DropdownPosition
 }
 export type {
     DropdownProps, 

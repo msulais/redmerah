@@ -2,11 +2,10 @@ import { type JSX, type ParentComponent, Show, splitProps, children } from "soli
 
 import { _indicatorPosition, _selected, _leading, _children, _trailing, _classList, _iconCode, _variant, _disableScale, _tonal, _left, _header, _footer, _position, _right } from "@/data/string"
 import { toggleAttribute } from "@/utils/attributes"
-import { Position } from "@/enums/position"
 import { isVarHasValue } from "@/utils/data"
 
 import Icon from "@/components/Icon"
-import Button, { ButtonVariant, type ButtonProps } from "@/components/Button"
+import Button, { ButtonIndicatorPosition, ButtonVariant, type ButtonProps } from "@/components/Button"
 import { Modal, type ModalProps, openModal, closeModal, focusModal } from "@/components/Modal"
 import './index.scss'
 
@@ -38,7 +37,7 @@ const DrawerItem: ParentComponent<DrawerItemProps> = ($props) => {
     return (<Button 
         variant={props[_variant] ?? (props[_selected]? ButtonVariant[_tonal] : undefined)} 
         selected={props[_selected]} 
-        indicatorPosition={props[_indicatorPosition] ?? (isVarHasValue(props[_selected])? (props[_indicatorPosition] ?? Position[_left]) : undefined)} 
+        indicatorPosition={props[_indicatorPosition] ?? (isVarHasValue(props[_selected])? (props[_indicatorPosition] ?? ButtonIndicatorPosition[_left]) : undefined)} 
         disableScale={props[_disableScale] ?? (trailingComponent()? true : undefined)} 
         data-trailing={toggleAttribute(trailingComponent())}
         classList={{'drawer-item': true, ...props[_classList]}} 

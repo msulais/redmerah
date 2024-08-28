@@ -1,11 +1,10 @@
-import { type Component, For, Show, createSignal } from "solid-js";
+import { type Component, For } from "solid-js";
 
-import { PopoverPosition, Position } from "@/enums/position";
 import { RandomizerType } from "./_enums";
-import { _RIGHT_CENTER, _colors, _expand, _filledTonal, _icon, _left, _numbers, _onChangeRandomizer, _randomizerType, _selection, _string, _teams, _text, _tooltip, _type, _words } from "@/data/string";
+import { _rightCenter, _colors, _expand, _filledTonal, _icon, _left, _numbers, _onChangeRandomizer, _randomizerType, _selection, _string, _teams, _text, _tooltip, _type, _words } from "@/data/string";
 
 import Icon from "@/components/Icon";
-import Tooltip from "@/components/Tooltip";
+import {TextTooltip} from "@/components/Tooltip";
 import SideNavigation, { SideNavigationItem } from "@/components/SideNavigation";
 import CSS from './_index.module.scss'
 import { addClassListModule } from "@/utils/element";
@@ -20,13 +19,8 @@ type Props = {
 const C: Component<Props> = (props) => {
     return (<SideNavigation expand={props[_expand]} classList={addClassListModule(CSS.side_navigation)}>
         <For each={RANDOMIZER_TYPES}>{ r => {
-            const [button_ref, set_button_ref] = createSignal<HTMLButtonElement | null>(null)
-            return (<>
-                <Show when={!props[_expand]}>
-                    <Tooltip anchor={button_ref()} text={r[_text]} isFollowingPointer/>
-                </Show>
+            return (<TextTooltip text={!props[_expand]? r[_text] : undefined}>
                 <SideNavigationItem
-                    ref={r => set_button_ref(r)}
                     iconOnly={!props[_expand]}
                     onClick={() => {
                         if (props[_randomizerType] == r[_type]) return;
@@ -36,7 +30,7 @@ const C: Component<Props> = (props) => {
                     selected={props[_randomizerType] == r[_type]}>
                     { r[_text] }
                 </SideNavigationItem>
-            </>)
+            </TextTooltip>)
         }}</For>
     </SideNavigation>)
 }

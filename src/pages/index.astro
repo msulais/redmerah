@@ -44,8 +44,8 @@ const features = [
                 <h1>Redmerah</h1>
                 <p>Discover a suite of powerful apps designed to simplify your tasks and enhance your productivity. Whether you’re a developer, designer, or just someone who loves efficiency, our app has something for you.</p>
                 <nav>
-                    <LinkButton href={RoutesLinks.apps} variant={ButtonVariant.filledTonal}><Icon filled code={0xE063}/>Apps</LinkButton>
-                    <LinkButton openInNewTab href={ExternalLinks.androidApps} variant={ButtonVariant.filledTonal}><img src={androidLogo.src} alt="Android logo" width="24"/>Android apps</LinkButton>
+                    <LinkButton href={RoutesLinks.apps} variant={ButtonVariant.tonal}><Icon filled code={0xE063}/>Apps</LinkButton>
+                    <LinkButton openInNewTab href={ExternalLinks.androidApps} variant={ButtonVariant.tonal}><img src={androidLogo.src} alt="Android logo" width="24"/>Android apps</LinkButton>
                 </nav>
             </div>
             <img src={logo.src} width={170} alt="Redmerah logo" />
@@ -64,7 +64,7 @@ const features = [
                         </div>
                     </div>}</>)}
                 </div>
-                <LinkButton classList={[CSS.more_apps, CSSAnimation.btn_move_right_icon]} variant={ButtonVariant.filledTonal} href={RoutesLinks.apps}>See more apps <Icon filled code={0xE115}/></LinkButton>
+                <LinkButton classList={[CSS.more_apps, CSSAnimation.btn_move_right_icon]} variant={ButtonVariant.tonal} href={RoutesLinks.apps}>See more apps <Icon filled code={0xE115}/></LinkButton>
             </section>
             <section>
                 <h2>Features</h2>

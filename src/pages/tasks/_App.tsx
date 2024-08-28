@@ -6,28 +6,25 @@ import { createSignal, For, onMount, Show, type VoidComponent } from "solid-js"
 import type { TaskList, TaskLabel, Settings, Task, TaskFileMetaData, SubTask } from "./_types"
 import type { HEXColor } from "@/types/color"
 import { type ObjectStoreTaskLists, type ObjectStoreSettings, type ObjectStoreSubTasks, type ObjectStoreTasks, type ObjectStoreTaskLabels, type ObjectStoreFiles, type ObjectStoreTaskFileMetaData, type ObjectStoreMiscellaneous, ObjectStoreNames, ObjectStoreKeys, } from "./_storage"
-import { _add, _all, _ascending, _blob, _at, _clipboard, _color, _colorDark, _command, _complete, _completed, _concat, _contents, _createObjectStore, _creationDate, _currentTarget, _cursor, _delete, _descending, _description, _done, _emoji, _error, _fileName, _files, _filled, _filledTonal, _filter, _general, _get, _getAll, _getOwnPropertyNames, _hiddenNavigation, _home, _id, _images, _importance, _important, _includes, _isShowDeleteTaskWarning, _join, _key, _labelIds, _labels, _lastPage, _length, _listId, _lists, _localeCompare, _manual, _map, _miscellaneous, _name, _objectStore, _onColor, _onColorDark, _open, _planned, _push, _put, _readOnly, _readonly, _readwrite, _reminder, _result, _reverse, _settings, _size, _slice, _sort, _sortBy, _sortMode, _splice, _string, _subtasks, _tags, _target, _taskFileMetaData, _taskId, _taskLists, _tasks, _text, _then, _transaction, _trim, _type, _uncompleted, _value, _writeText } from "@/data/string"
+import { _add, _all, _ascending, _blob, _at, _clipboard, _color, _colorDark, _command, _complete, _completed, _concat, _contents, _createObjectStore, _creationDate, _currentTarget, _cursor, _delete, _descending, _description, _done, _emoji, _error, _fileName, _files, _filled, _tonal, _filter, _general, _get, _getAll, _getOwnPropertyNames, _hiddenNavigation, _home, _id, _images, _importance, _important, _includes, _isShowDeleteTaskWarning, _join, _key, _labelIds, _labels, _lastPage, _length, _listId, _lists, _localeCompare, _manual, _map, _miscellaneous, _name, _objectStore, _onColor, _onColorDark, _open, _planned, _push, _put, _readOnly, _readonly, _readwrite, _reminder, _result, _reverse, _settings, _size, _slice, _sort, _sortBy, _sortMode, _splice, _string, _subtasks, _tags, _target, _taskFileMetaData, _taskId, _taskLists, _tasks, _text, _then, _transaction, _trim, _type, _uncompleted, _value, _writeText } from "@/data/string"
 import { Commands, Pages, SortBy, SortMode } from "./_enums"
 import { DatabaseNames } from "@/enums/storage"
 import { DEFAULT_TASK_LIST } from "./_data"
 import { isVarHasValue } from "@/utils/data"
 import { toggleAttribute } from "@/utils/attributes"
-import { closePopover, openPopover } from "@/utils/popover"
 import { IDB } from "@/class/indexeddb"
 import { getDateString_YMD_HM } from "@/utils/datetime"
-import { closeModal, openModal } from "@/utils/modal"
 import { getNavigator } from "@/data/window"
 import { downloadFile } from "@/utils/file"
-import { openNotification } from "@/utils/notification"
 
-import Tooltip from "@/components/Tooltip"
+import {TextTooltip} from "@/components/Tooltip"
 import Icon from "@/components/Icon"
-import Button, { ButtonVariant } from "@/components/Button"
-import TextField, { changeTextFieldValue, TextFieldTrailingButton } from "@/components/TextField"
+import Button, { ButtonVariant, IconButton } from "@/components/Button"
+import TextField, { changeTextFieldValue, TextFieldButton } from "@/components/TextField"
 import List from "@/components/List"
-import NotificationBar from "@/components/NotificationBar"
-import Dialog from "@/components/Dialog"
-import ColorPicker, { changeColorPickerValue } from "@/components/ColorPicker"
+import Toast, { openToast } from "@/components/Toast"
+import Dialog, { closeDialog, openDialog } from "@/components/Dialog"
+import ColorPicker, { closeColorPicker, openColorPicker } from "@/components/ColorPicker"
 import App from "@/components/App"
 import AppBar from "./_AppBar"
 import SideNavigation from './_SideNavigation'
@@ -42,7 +39,6 @@ const _: VoidComponent = () => {
     const [labels, setLabels] = createStore<(TaskLabel | undefined)[]>([])
     const [lists, setLists] = createStore<TaskList[]>([DEFAULT_TASK_LIST])
     const [selectedLabel, setSelectedLabel] = createStore<TaskLabel>({id: -1, name: '', color: null})
-    const [button_newLabelColor_ref, set_button_newLabelColor_ref] = createSignal<HTMLButtonElement | null>(null)
     const [settings, setSettings] = createStore<Settings>({
         sortBy: SortBy[_name], 
         sortMode: SortMode[_ascending],
@@ -55,7 +51,7 @@ const _: VoidComponent = () => {
     let dialog_newLabel_ref: HTMLDialogElement
     let dialog_editLabel_ref: HTMLDialogElement
     let colorPicker_label_ref: HTMLDialogElement
-    let notification_noFile_ref: HTMLDivElement
+    let toast_noFile_ref: HTMLDivElement
 
     function sortTasks(tasks: Task[]): Task[] {
         const isReverse = settings[_sortMode] == SortMode[_descending]
@@ -572,7 +568,7 @@ const _: VoidComponent = () => {
                     store_taskFileMetaData[_delete](file[_id])
                 }
 
-                openNotification({notificationBar: notification_noFile_ref})
+                openToast(toast_noFile_ref)
                 return;
             }
 
@@ -597,7 +593,7 @@ const _: VoidComponent = () => {
                     store_taskFileMetaData[_delete](file[_id])
                 }
 
-                openNotification({notificationBar: notification_noFile_ref})
+                openToast(toast_noFile_ref)
                 return null
             }
 
@@ -742,19 +738,22 @@ const _: VoidComponent = () => {
 
         // add_label
         else if (type == Commands.add_label) {
-            openModal(args[0] as Event, dialog_newLabel_ref, true)
+            openDialog(args[0] as Event, dialog_newLabel_ref, {
+                inputAutoFocus: true, 
+                important: true
+            })
         }
 
         // edit_label
         else if (type == Commands.edit_label) {
             const label = args[1] as TaskLabel
-            if (label[_color] != null) {
-                changeColorPickerValue(colorPicker_label_ref, label[_color])
-            }
             
             changeTextFieldValue(textfield_editLabel_ref, label[_name])
             setSelectedLabel(label)
-            openModal(args[0] as Event, dialog_editLabel_ref, true)
+            openDialog(args[0] as Event, dialog_editLabel_ref, {
+                inputAutoFocus: true, 
+                important: true
+            })
         }
 
         // delete_label
@@ -764,7 +763,7 @@ const _: VoidComponent = () => {
 
         // show_labels_options
         else if (type == Commands.show_labels_options) {
-            openModal(args[0] as Event, dialog_labels_ref)
+            openDialog(args[0] as Event, dialog_labels_ref)
         }
 
         // add_files
@@ -1025,17 +1024,22 @@ const _: VoidComponent = () => {
     })
 
     const LabelItem: VoidComponent<TaskLabel> = (props) => {
-        const [button_editLabel_ref, set_button_editLabel_ref] = createSignal<HTMLButtonElement | null>(null)
-        const [button_deleteLabel_ref, set_button_deleteLabel_ref] = createSignal<HTMLButtonElement | null>(null)
-
         return (<List 
             leading={<Icon style={{color: props[_color] ?? undefined}} code={0xE407}/>}
             trailing={<>
-                <Tooltip anchor={button_editLabel_ref()} text="Edit label"/>
-                <Button ref={r => set_button_editLabel_ref(r)} onClick={(ev) => command(Commands.edit_label, ev, props)} iconOnly><Icon code={0xE739}/></Button>
+                <TextTooltip text="Edit label">
+                    <IconButton 
+                        onClick={(ev) => command(Commands.edit_label, ev, props)} 
+                        code={0xE739} 
+                    />
+                </TextTooltip>
 
-                <Tooltip anchor={button_deleteLabel_ref()} text="Delete label"/>
-                <Button ref={r => set_button_deleteLabel_ref(r)} onClick={() => command(Commands.delete_label, props)} iconOnly><Icon code={0xE59D}/></Button>
+                <TextTooltip text="Delete label">
+                    <IconButton 
+                        onClick={() => command(Commands.delete_label, props)} 
+                        code={0xE59D}
+                    />
+                </TextTooltip>
             </>}>
             {props[_name]}
         </List>)
@@ -1047,8 +1051,8 @@ const _: VoidComponent = () => {
             ref={r => dialog_labels_ref = r} 
             header="Labels"
             actions={<>
-                <Button onClick={() => closeModal(dialog_labels_ref)} variant={ButtonVariant[_filledTonal]}>Close</Button>
-                <Button onClick={ev => openModal(ev, dialog_newLabel_ref, true)} variant={ButtonVariant[_filled]}>Add label</Button>
+                <Button onClick={() => closeDialog(dialog_labels_ref)} variant={ButtonVariant[_tonal]}>Close</Button>
+                <Button onClick={ev => openDialog(ev, dialog_newLabel_ref, {inputAutoFocus: true, important: true})} variant={ButtonVariant[_filled]}>Add label</Button>
             </>}>
             <For each={labels} fallback={"No labels"}>{label => <Show when={label != undefined}><LabelItem {...label!}/></Show>}</For>
         </Dialog>
@@ -1060,18 +1064,17 @@ const _: VoidComponent = () => {
                 changeTextFieldValue(textfield_newLabel_ref, '')
                 setSelectedLabel(_color, null)
             }}
-            dismiss={_manual}
             actions={<>
                 <Button 
-                    onClick={() => closeModal(dialog_newLabel_ref)} 
-                    variant={ButtonVariant[_filledTonal]}>
+                    onClick={() => closeDialog(dialog_newLabel_ref)} 
+                    variant={ButtonVariant[_tonal]}>
                     Cancel
                 </Button>
                 <Button 
                     disabled={selectedLabel[_name][_trim]() == ''}
                     onClick={() => {
                         addLabel(selectedLabel[_name][_trim](), selectedLabel[_color])
-                        closeModal(dialog_newLabel_ref)
+                        closeDialog(dialog_newLabel_ref)
                     }} 
                     variant={ButtonVariant[_filled]}>
                     Add
@@ -1083,7 +1086,7 @@ const _: VoidComponent = () => {
                 if (selectedLabel[_name][_trim]() == '') return;
 
                 addLabel(selectedLabel[_name][_trim](), selectedLabel[_color])
-                closeModal(dialog_newLabel_ref)
+                closeDialog(dialog_newLabel_ref)
             }}>
                 <TextField 
                     ref={r => textfield_newLabel_ref = r} 
@@ -1092,19 +1095,15 @@ const _: VoidComponent = () => {
                     onInput={() => setSelectedLabel(_name, textfield_newLabel_ref[_value])}
                     autofocus
                     trailing={<>
-                        <Tooltip anchor={button_newLabelColor_ref()} text="Change label color"/>
-                        <TextFieldTrailingButton 
-                            data-focus={toggleAttribute(is_colorPicker_newLabel_open())}
-                            onClick={ev => {
-                                openPopover({
-                                    event: ev, 
-                                    popover: colorPicker_label_ref, 
+                        <TextTooltip text="Change label color">
+                            <TextFieldButton 
+                                focused={is_colorPicker_newLabel_open()}
+                                onClick={ev => openColorPicker(ev, colorPicker_label_ref, {
                                     anchor: ev[_currentTarget],
-                                })
-                            }}
-                            ref={r => set_button_newLabelColor_ref(r)}>
-                            <Icon style={{color: selectedLabel[_color] ?? undefined}} code={0xE407}/>
-                        </TextFieldTrailingButton>
+                                })}>
+                                <Icon style={{color: selectedLabel[_color] ?? undefined}} code={0xE407}/>
+                            </TextFieldButton>
+                        </TextTooltip>
                     </>}
                 />
             </form>
@@ -1117,11 +1116,10 @@ const _: VoidComponent = () => {
                 changeTextFieldValue(textfield_editLabel_ref, '')
                 setSelectedLabel(_color, null)
             }}
-            dismiss={_manual}
             actions={<>
                 <Button 
-                    onClick={() => closeModal(dialog_editLabel_ref)} 
-                    variant={ButtonVariant[_filledTonal]}>
+                    onClick={() => closeDialog(dialog_editLabel_ref)} 
+                    variant={ButtonVariant[_tonal]}>
                     Cancel
                 </Button>
                 <Button 
@@ -1131,7 +1129,7 @@ const _: VoidComponent = () => {
                             ...selectedLabel,
                             name: selectedLabel[_name][_trim](), 
                         } satisfies TaskLabel)
-                        closeModal(dialog_editLabel_ref)
+                        closeDialog(dialog_editLabel_ref)
                     }} 
                     variant={ButtonVariant[_filled]}>
                     Edit
@@ -1147,7 +1145,7 @@ const _: VoidComponent = () => {
                         ...selectedLabel,
                         name: selectedLabel[_name][_trim](), 
                     } satisfies TaskLabel)
-                    closeModal(dialog_editLabel_ref)
+                    closeDialog(dialog_editLabel_ref)
                 }}>
                 <TextField 
                     ref={r => textfield_editLabel_ref = r} 
@@ -1156,19 +1154,15 @@ const _: VoidComponent = () => {
                     onInput={() => setSelectedLabel(_name, textfield_editLabel_ref[_value])}
                     autofocus
                     trailing={<>
-                        <Tooltip anchor={button_newLabelColor_ref()} text="Change label color"/>
-                        <TextFieldTrailingButton
-                            data-focus={toggleAttribute(is_colorPicker_newLabel_open())}
-                            onClick={ev => {
-                                openPopover({
-                                    event: ev, 
-                                    popover: colorPicker_label_ref, 
+                        <TextTooltip text="Change label color">
+                            <TextFieldButton
+                                focused={is_colorPicker_newLabel_open()}
+                                onClick={ev => openColorPicker(ev, colorPicker_label_ref, {
                                     anchor: ev[_currentTarget],
-                                })
-                            }}
-                            ref={r => set_button_newLabelColor_ref(r)}>
-                            <Icon style={{color: selectedLabel[_color] ?? undefined}} code={0xE407}/>
-                        </TextFieldTrailingButton>
+                                })}>
+                                <Icon style={{color: selectedLabel[_color] ?? undefined}} code={0xE407}/>
+                            </TextFieldButton>
+                        </TextTooltip>
                     </>}
                 />
             </form>
@@ -1178,17 +1172,18 @@ const _: VoidComponent = () => {
     const ColorPickers: VoidComponent = () => {
         return (<>
             <ColorPicker 
-                onToggle={(isOpen) => setIs_colorPicker_newLabel_open(isOpen)} 
+                color={selectedLabel[_color] ?? undefined}
+                onToggleOpen={(isOpen) => setIs_colorPicker_newLabel_open(isOpen)} 
                 onSelectColor={(color) => setSelectedLabel(_color, color)} 
                 ref={r => colorPicker_label_ref = r}>
                 <Show when={selectedLabel[_color] != null}>
                     <Button 
                         style={{width: '100%'}} 
                         onClick={() => {
-                            closePopover(colorPicker_label_ref)
+                            closeColorPicker(colorPicker_label_ref)
                             setSelectedLabel(_color, null)
                         }}
-                        variant={ButtonVariant[_filledTonal]}>
+                        variant={ButtonVariant[_tonal]}>
                         <Icon code={0xE40C}/>No color
                     </Button>
                 </Show>
@@ -1196,13 +1191,13 @@ const _: VoidComponent = () => {
         </>)
     }
 
-    const NotificationBars: VoidComponent = () => {
+    const Toasts: VoidComponent = () => {
         return (<>
-            <NotificationBar 
-                ref={r => notification_noFile_ref = r} 
+            <Toast 
+                ref={r => toast_noFile_ref = r} 
                 leading={<Icon code={0xE631}/>}>
                 File is not exist
-            </NotificationBar>
+            </Toast>
         </>)
     }
 
@@ -1230,7 +1225,7 @@ const _: VoidComponent = () => {
         />
         <Dialogs/>
         <ColorPickers/>
-        <NotificationBars/>
+        <Toasts/>
     </App>)
 }
 

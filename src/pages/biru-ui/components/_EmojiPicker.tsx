@@ -3,11 +3,10 @@ import { createSignal, Show, type VoidComponent } from "solid-js"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
 import Button, { ButtonVariant } from "@/components/Button"
 import { _centerBottom, _centerBottomToLeft, _centerBottomToRight, _centerCenter, _centerCenterBottom, _centerCenterLeft, _centerCenterLeftBottom, _centerCenterLeftTop, _centerCenterRight, _centerCenterRightBottom, _centerCenterRightTop, _centerCenterTop, _centerTop, _centerTopToLeft, _centerTopToRight, _currentTarget, _includes, _leftBottom, _leftCenter, _leftCenterToBottom, _leftCenterToTop, _leftTop, _rightBottom, _rightCenter, _rightCenterToBottom, _rightCenterToTop, _rightTop, _tonal } from "@/data/string"
-import EmojiPicker, { openEmojiPicker } from "@/components/EmojiPicker"
+import EmojiPicker, { EmojiPickerPosition, openEmojiPicker } from "@/components/EmojiPicker"
 import type { Emoji } from "@/types/emoji"
 import Icon from "@/components/Icon"
 import EmojiC from "@/components/Emoji"
-import { FlyoutPosition } from "@/enums/position"
 import CheckBox from "@/components/CheckBox"
 import Dropdown from "@/components/Dropdown"
 import { NumberTextField } from "@/components/TextField"
@@ -19,7 +18,7 @@ const _: VoidComponent = () => {
     const [gap, setGap] = createSignal<number>(12)
     const [important, setImportant] = createSignal<boolean>(false)
     const [padding, setPadding] = createSignal<number>(0)
-    const [position, setPosition] = createSignal<FlyoutPosition>(FlyoutPosition[_centerBottom])
+    const [position, setPosition] = createSignal<EmojiPickerPosition>(EmojiPickerPosition[_centerBottom])
     const [anchor, setAnchor] = createSignal<boolean>(true)
     const [showCloseButton, setShowCloseButton] = createSignal<boolean>(false)
     const [emoji, setEmoji] = createSignal<Emoji | null>(null)
@@ -54,54 +53,54 @@ const _: VoidComponent = () => {
         <PlaygroundOptions>
             <Dropdown
                 items={[
-                    [FlyoutPosition[_leftTop], 'Left top'],
-                    [FlyoutPosition[_leftCenterToBottom], 'Left center to bottom'],
-                    [FlyoutPosition[_leftCenter], 'Left center'],
-                    [FlyoutPosition[_leftCenterToTop], 'Left center to top'],
-                    [FlyoutPosition[_leftBottom], 'Left bottom'],
-                    [FlyoutPosition[_rightTop], 'Right top'],
-                    [FlyoutPosition[_rightCenterToBottom], 'Right center to bottom'],
-                    [FlyoutPosition[_rightCenter], 'Right center'],
-                    [FlyoutPosition[_rightCenterToTop], 'Right center to top'],
-                    [FlyoutPosition[_rightBottom], 'Right bottom'],
-                    [FlyoutPosition[_centerTopToRight], 'Center top to right'],
-                    [FlyoutPosition[_centerTop], 'Center top'],
-                    [FlyoutPosition[_centerTopToLeft], 'Center top to left'],
-                    [FlyoutPosition[_centerBottomToRight], 'Center bottom to right'],
-                    [FlyoutPosition[_centerBottom], 'Center bottom'],
-                    [FlyoutPosition[_centerBottomToLeft], 'Center bottom to left'],
-                    [FlyoutPosition[_centerCenterLeftTop], 'Center center left top'],
-                    [FlyoutPosition[_centerCenterLeft], 'Center center left'],
-                    [FlyoutPosition[_centerCenterLeftBottom], 'Center center left bottom'],
-                    [FlyoutPosition[_centerCenterTop], 'Center center top'],
-                    [FlyoutPosition[_centerCenter], 'Center center'],
-                    [FlyoutPosition[_centerCenterBottom], 'Center center bottom'],
-                    [FlyoutPosition[_centerCenterRightTop], 'Center center right top'],
-                    [FlyoutPosition[_centerCenterRight], 'Center center right'],
-                    [FlyoutPosition[_centerCenterRightBottom], 'Center center right bottom'],
+                    [EmojiPickerPosition[_leftTop], 'Left top'],
+                    [EmojiPickerPosition[_leftCenterToBottom], 'Left center to bottom'],
+                    [EmojiPickerPosition[_leftCenter], 'Left center'],
+                    [EmojiPickerPosition[_leftCenterToTop], 'Left center to top'],
+                    [EmojiPickerPosition[_leftBottom], 'Left bottom'],
+                    [EmojiPickerPosition[_rightTop], 'Right top'],
+                    [EmojiPickerPosition[_rightCenterToBottom], 'Right center to bottom'],
+                    [EmojiPickerPosition[_rightCenter], 'Right center'],
+                    [EmojiPickerPosition[_rightCenterToTop], 'Right center to top'],
+                    [EmojiPickerPosition[_rightBottom], 'Right bottom'],
+                    [EmojiPickerPosition[_centerTopToRight], 'Center top to right'],
+                    [EmojiPickerPosition[_centerTop], 'Center top'],
+                    [EmojiPickerPosition[_centerTopToLeft], 'Center top to left'],
+                    [EmojiPickerPosition[_centerBottomToRight], 'Center bottom to right'],
+                    [EmojiPickerPosition[_centerBottom], 'Center bottom'],
+                    [EmojiPickerPosition[_centerBottomToLeft], 'Center bottom to left'],
+                    [EmojiPickerPosition[_centerCenterLeftTop], 'Center center left top'],
+                    [EmojiPickerPosition[_centerCenterLeft], 'Center center left'],
+                    [EmojiPickerPosition[_centerCenterLeftBottom], 'Center center left bottom'],
+                    [EmojiPickerPosition[_centerCenterTop], 'Center center top'],
+                    [EmojiPickerPosition[_centerCenter], 'Center center'],
+                    [EmojiPickerPosition[_centerCenterBottom], 'Center center bottom'],
+                    [EmojiPickerPosition[_centerCenterRightTop], 'Center center right top'],
+                    [EmojiPickerPosition[_centerCenterRight], 'Center center right'],
+                    [EmojiPickerPosition[_centerCenterRightBottom], 'Center center right bottom'],
                 ]}
                 labelText="Position"
                 selectedValues={[position()]}
-                onSelectedItemsChanged={(items) => setPosition(items[0][0] as FlyoutPosition)}
+                onSelectedItemsChanged={(items) => setPosition(items[0][0] as EmojiPickerPosition)}
             />
             <NumberTextField style={{width: '100px'}} value={gap()} min={0} onFinalValueChanged={(v) => setGap(v)} labelText="Gap"/>
             <Show when={[
-                FlyoutPosition[_centerTopToRight],
-                FlyoutPosition[_centerCenterLeft],
-                FlyoutPosition[_centerBottomToRight],
-                FlyoutPosition[_centerTopToLeft],
-                FlyoutPosition[_centerCenterRight],
-                FlyoutPosition[_centerBottomToLeft],
-                FlyoutPosition[_leftCenterToBottom],
-                FlyoutPosition[_centerCenterLeftTop],
-                FlyoutPosition[_centerCenterTop],
-                FlyoutPosition[_centerCenterRightTop],
-                FlyoutPosition[_rightCenterToBottom],
-                FlyoutPosition[_leftCenterToTop],
-                FlyoutPosition[_centerCenterLeftBottom],
-                FlyoutPosition[_centerCenterBottom],
-                FlyoutPosition[_centerCenterRightBottom],
-                FlyoutPosition[_rightCenterToTop]
+                EmojiPickerPosition[_centerTopToRight],
+                EmojiPickerPosition[_centerCenterLeft],
+                EmojiPickerPosition[_centerBottomToRight],
+                EmojiPickerPosition[_centerTopToLeft],
+                EmojiPickerPosition[_centerCenterRight],
+                EmojiPickerPosition[_centerBottomToLeft],
+                EmojiPickerPosition[_leftCenterToBottom],
+                EmojiPickerPosition[_centerCenterLeftTop],
+                EmojiPickerPosition[_centerCenterTop],
+                EmojiPickerPosition[_centerCenterRightTop],
+                EmojiPickerPosition[_rightCenterToBottom],
+                EmojiPickerPosition[_leftCenterToTop],
+                EmojiPickerPosition[_centerCenterLeftBottom],
+                EmojiPickerPosition[_centerCenterBottom],
+                EmojiPickerPosition[_centerCenterRightBottom],
+                EmojiPickerPosition[_rightCenterToTop]
             ][_includes](position())}>
                 <NumberTextField value={padding()} style={{width: '100px'}} min={0} onFinalValueChanged={(v) => setPadding(v)} labelText="Padding"/>
             </Show>

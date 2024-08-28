@@ -2,10 +2,9 @@ import { children, Show, splitProps, type JSX, type ParentComponent } from "soli
 
 import { _checked, _children, _classList, _disableScale, _expand, _tonal, _focus, _footer, _header, _iconCode, _iconOnly, _indent, _indicatorPosition, _leading, _left, _selected, _trailing, _variant } from "@/data/string"
 import { toggleAttribute } from "@/utils/attributes"
-import { Position } from "@/enums/position"
 
 import Icon from "@/components/Icon"
-import Button, { ButtonVariant, type ButtonProps } from "@/components/Button"
+import Button, { ButtonIndicatorPosition, ButtonVariant, type ButtonProps } from "@/components/Button"
 import './index.scss'
 
 type SideNavigationItemProps = ButtonProps & {
@@ -24,7 +23,7 @@ const SideNavigationItem: ParentComponent<SideNavigationItemProps> = ($props) =>
 
     return (<Button 
         variant={props[_variant] ?? (props[_selected]? ButtonVariant[_tonal] : undefined)} 
-        indicatorPosition={props[_indicatorPosition] ?? Position[_left]} 
+        indicatorPosition={props[_indicatorPosition] ?? ButtonIndicatorPosition[_left]} 
         selected={props[_selected]}
         disableScale={props[_disableScale] ?? (trailingComponent()? true : undefined)} 
         data-trailing={toggleAttribute(trailingComponent())}
