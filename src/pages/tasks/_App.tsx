@@ -6,12 +6,11 @@ import { createSignal, For, onMount, Show, type VoidComponent } from "solid-js"
 import type { TaskList, TaskLabel, Settings, Task, TaskFileMetaData, SubTask } from "./_types"
 import type { HEXColor } from "@/types/color"
 import { type ObjectStoreTaskLists, type ObjectStoreSettings, type ObjectStoreSubTasks, type ObjectStoreTasks, type ObjectStoreTaskLabels, type ObjectStoreFiles, type ObjectStoreTaskFileMetaData, type ObjectStoreMiscellaneous, ObjectStoreNames, ObjectStoreKeys, } from "./_storage"
-import { _add, _all, _ascending, _blob, _at, _clipboard, _color, _colorDark, _command, _complete, _completed, _concat, _contents, _createObjectStore, _creationDate, _currentTarget, _cursor, _delete, _descending, _description, _done, _emoji, _error, _fileName, _files, _filled, _tonal, _filter, _general, _get, _getAll, _getOwnPropertyNames, _hiddenNavigation, _home, _id, _images, _importance, _important, _includes, _isShowDeleteTaskWarning, _join, _key, _labelIds, _labels, _lastPage, _length, _listId, _lists, _localeCompare, _manual, _map, _miscellaneous, _name, _objectStore, _onColor, _onColorDark, _open, _planned, _push, _put, _readOnly, _readonly, _readwrite, _reminder, _result, _reverse, _settings, _size, _slice, _sort, _sortBy, _sortMode, _splice, _string, _subtasks, _tags, _target, _taskFileMetaData, _taskId, _taskLists, _tasks, _text, _then, _transaction, _trim, _type, _uncompleted, _value, _writeText } from "@/data/string"
+import { _add, _all, _ascending, _blob, _at, _clipboard, _color, _colorDark, _command, _complete, _completed, _concat, _contents, _createObjectStore, _creationDate, _currentTarget, _cursor, _delete, _descending, _description, _done, _emoji, _error, _fileName, _files, _filled, _tonal, _filter, _general, _get, _getAll, _getOwnPropertyNames, _hiddenNavigation, _home, _id, _images, _importance, _important, _includes, _isShowDeleteTaskWarning, _join, _key, _labelIds, _labels, _lastPage, _length, _listId, _lists, _localeCompare, _manual, _map, _miscellaneous, _name, _objectStore, _onColor, _onColorDark, _open, _planned, _push, _put, _readOnly, _readonly, _readwrite, _reminder, _result, _reverse, _settings, _size, _slice, _sort, _sortBy, _sortMode, _splice, _string, _subtasks, _tags, _target, _taskFileMetaData, _taskId, _taskLists, _tasks, _text, _then, _transaction, _trim, _type, _uncompleted, _value, _writeText, _keys, _defineProperty } from "@/data/string"
 import { Commands, Pages, SortBy, SortMode } from "./_enums"
 import { DatabaseNames } from "@/enums/storage"
 import { DEFAULT_TASK_LIST } from "./_data"
 import { isVarHasValue } from "@/utils/data"
-import { toggleAttribute } from "@/utils/attributes"
 import { IDB } from "@/class/indexeddb"
 import { getDateString_YMD_HM } from "@/utils/datetime"
 import { getNavigator } from "@/data/window"
@@ -30,12 +29,17 @@ import AppBar from "./_AppBar"
 import SideNavigation from './_SideNavigation'
 import Body from './_Body'
 import { preventDefault } from "@/utils/event"
+import { numberParse } from "@/utils/math"
+import { closeEmojiPicker, EmojiPicker, openEmojiPicker } from "@/components/EmojiPicker"
+import Emoji from "@/components/Emoji"
 
 const _: VoidComponent = () => {
     const db = new IDB(DatabaseNames[_tasks])
     const [is_colorPicker_newLabel_open, setIs_colorPicker_newLabel_open] = createSignal<boolean>(false)
     const [isExpandSideNavigation, setIsExpandSideNavigation] = createSignal<boolean>(true)
     const [page, setPage] = createSignal<Pages | number>(Pages[_tasks])
+    const [listNameText, setListNameText] = createSignal<string>('')
+    const [listEmoji, setListEmoji] = createSignal<string | null>(null)
     const [labels, setLabels] = createStore<(TaskLabel | undefined)[]>([])
     const [lists, setLists] = createStore<TaskList[]>([DEFAULT_TASK_LIST])
     const [selectedLabel, setSelectedLabel] = createStore<TaskLabel>({id: -1, name: '', color: null})
@@ -45,13 +49,16 @@ const _: VoidComponent = () => {
         isShowDeleteTaskWarning: true, 
         hiddenNavigation: []
     })
-    let dialog_labels_ref: HTMLDialogElement
     let textfield_newLabel_ref: HTMLInputElement
     let textfield_editLabel_ref: HTMLInputElement
+    let textfield_newList_ref: HTMLInputElement
+    let dialog_labels_ref: HTMLDialogElement
     let dialog_newLabel_ref: HTMLDialogElement
     let dialog_editLabel_ref: HTMLDialogElement
+    let dialog_newList_ref: HTMLDialogElement
     let colorPicker_label_ref: HTMLDialogElement
     let toast_noFile_ref: HTMLDivElement
+    let emojiPicker_ref: HTMLDialogElement
 
     function sortTasks(tasks: Task[]): Task[] {
         const isReverse = settings[_sortMode] == SortMode[_descending]
@@ -651,6 +658,33 @@ const _: VoidComponent = () => {
         }
     }
 
+    async function addNewTaskList(name: string, emoji: string | null): Promise<void> {
+        const store_tasks = db[_transaction]([ObjectStoreNames[_lists]], _readwrite)![_objectStore](ObjectStoreNames[_lists])
+        name = name[_trim]()
+        let count = 0
+        for (const list of lists) {
+            if (count == 0 && list[_name] == name) ++count
+            if (list[_name] == name + ` (${count})`) ++count
+        }
+        if (count > 0) name += ` (${count})`
+
+        try {
+            const id = ((await db[_add]<Omit<ObjectStoreTaskLists, 'id'>>(store_tasks, {
+                emoji, name
+            }))[_target]! as any)[_result] as number
+            setLists(values => [
+                ...values, 
+                {
+                    id,
+                    emoji,
+                    name, 
+                    tasks: []
+                } satisfies TaskList
+            ][_sort]((a, b) => a[_name][_localeCompare](b[_name])))
+            changePage(id)
+        } catch {}
+    }
+
     async function command(type: Commands, ...args: unknown[]): Promise<unknown> {
         // toggle_navigation_expand
         if (type == Commands.toggle_navigation_expand) {
@@ -795,6 +829,14 @@ const _: VoidComponent = () => {
         else if (type == Commands.add_subtask) {
             return await addSubtask(args[0] as SubTask, args[1] as number, args[2] as number)
         }
+
+        // add_taskList
+        else if (type == Commands.add_taskList) {
+            openDialog(args[0] as Event, dialog_newList_ref, {
+                important: true, 
+                inputAutoFocus: true
+            })
+        }
         
         return 
     }
@@ -909,6 +951,7 @@ const _: VoidComponent = () => {
         })
     }
 
+    // FIXME: To many iteration and I hate it. I don't find any better solution currently
     async function getTasks(all: boolean = false): Promise<void> {
         const transaction = db[_transaction]([
             ObjectStoreNames[_tasks], 
@@ -918,7 +961,6 @@ const _: VoidComponent = () => {
         const tasksStore = transaction[_objectStore](ObjectStoreNames[_tasks])
         const subTasksStore = transaction[_objectStore](ObjectStoreNames[_subtasks])
         const fileMetaDataStore = transaction[_objectStore](ObjectStoreNames[_taskFileMetaData])
-
         const isGetAll = (
             ([
                 Pages[_all], Pages[_completed], Pages[_uncompleted], 
@@ -927,85 +969,81 @@ const _: VoidComponent = () => {
             || all
         )
         const listId = page() == Pages[_tasks]? DEFAULT_TASK_LIST[_id] : page() as number
-        const $taskLists: TaskList[] = []
-        const hasNoTasks_taskListIds: number[] = []
-        let isEveryListHasTasks = true
+        const list_idIndex: {[id: number]: number} = {}
 
-        for (const list of [...lists]) {
-            $taskLists[list[_id]] = {
-                ...list,
-                tasks: [...list[_tasks]]
-            }
-            if (list[_tasks][_length] <= 0) {
-                hasNoTasks_taskListIds[_push](list[_id])
-                isEveryListHasTasks = false
+        for (let i = 0; i < lists[_length]; i++) {
+            if (lists[i][_tasks][_length] > 0) continue
+            if (isGetAll) list_idIndex[lists[i][_id]] = i
+            else if (lists[i][_id] == listId) {
+                list_idIndex[lists[i][_id]] = i
+                break
             }
         }
 
-        if (isEveryListHasTasks) return;
+        if (Object[_keys](list_idIndex)[_length] == 0) return;
 
-        try  {
+        try {
+
+            // TASKS
+            const tasks_idIndex: {[id: number]: number} = {}
+            const tasks: Task[] = []
             await db[_cursor](tasksStore, (cursor) => {
                 if (!cursor) return false
-                
-                const value = cursor[_value] as ObjectStoreTasks
+                const task = cursor[_value] as ObjectStoreTasks
                 const add = () => {
-                    if (!isVarHasValue($taskLists[value[_listId]])) return;
-                    if (value[_reminder] != null) value[_reminder] = new Date(value[_reminder])
-
-                    $taskLists[value[_listId]][_tasks][value[_id]] = {...value, subtasks: [], files: []}
+                    if (list_idIndex[task[_listId]] == undefined) return;
+                    tasks[_push]({...task, files: [], subtasks: []})
                 }
                 if (isGetAll) add()
-                else if (value[_listId] == listId) add()
-        
+                else if (task[_listId] == listId) add()
                 return true
-            })
+            }) 
+            sortTasks(tasks) 
+            for (let i = 0; i < tasks[_length]; i++) {
+                tasks_idIndex[tasks[i][_id]] = i
+            } 
 
+            // SUBTASKS
+            const subtasks: SubTask[] = []
             await db[_cursor](subTasksStore, (cursor) => {
                 if (!cursor) return false
-
-                const value = cursor[_value] as ObjectStoreSubTasks
+                const subtask = cursor[_value] as ObjectStoreSubTasks
                 const add = () => {
-                    if (!$taskLists[value[_listId]]) return;
-                    if (!$taskLists[value[_listId]][_tasks][value[_taskId]]) return;
-                    $taskLists[value[_listId]][_tasks][value[_taskId]][_subtasks][_push](value)
+                    if (list_idIndex[subtask[_listId]] == undefined) return;
+                    subtasks[_push](subtask)
                 }
                 if (isGetAll) add()
-                else if (value[_listId] == listId) add()
-
+                else if (subtask[_listId] == listId) add()
                 return true
-            })
-
-            await db[_cursor](fileMetaDataStore, (cursor) => {
-                if (!cursor) return false
-
-                const value = cursor[_value] as ObjectStoreTaskFileMetaData
-                const add = () => {
-                    if (!$taskLists[value[_listId]]) return;
-                    if (!$taskLists[value[_listId]][_tasks][value[_taskId]]) return;
-                    $taskLists[value[_listId]][_tasks][value[_taskId]][_files][_push]({...value})
-                }
-                if (isGetAll) add()
-                else if (value[_listId] == listId) add()
-
-                return true
-            })
-
-            const $$taskLists: TaskList[] = []
-            for (const list of $taskLists) {
-                if (list == undefined) continue;
-
-                sortTasks(list[_tasks])
-                if (hasNoTasks_taskListIds[_includes](list[_id])) list[_tasks] = list[_tasks][_filter](task => task != undefined)[_map](task => {
-                    task[_subtasks][_sort]((a, b) => a[_name][_localeCompare](b[_name]))
-                    task[_files][_sort]((a, b) => a[_name][_localeCompare](b[_name]))
-                    return task
-                })
-                $$taskLists[_push]({...list})
+            }) 
+            subtasks[_sort]((a, b) => a[_name][_localeCompare](b[_name])) 
+            for (const subtask of subtasks) {
+                tasks[tasks_idIndex[subtask[_taskId]]][_subtasks][_push](subtask)
             }
 
-            setLists([...$$taskLists[_sort]((a, b) => a[_name][_localeCompare](b[_name]))])
-        } catch (e) {console.error(e)} 
+            // FILES
+            const fileMetaDatas: TaskFileMetaData[] = []
+            await db[_cursor](fileMetaDataStore, (cursor) => {
+                if (!cursor) return false
+                const fileMetaData = cursor[_value] as ObjectStoreTaskFileMetaData
+                const add = () => {
+                    if (list_idIndex[fileMetaData[_listId]] == undefined) return;
+                    fileMetaDatas[_push]({...fileMetaData})
+                }
+                if (isGetAll) add()
+                else if (fileMetaData[_listId] == listId) add()
+                return true
+            })
+            fileMetaDatas[_sort]((a, b) => a[_name][_localeCompare](b[_name]))
+            for (const fileMetaData of fileMetaDatas) {
+                tasks[tasks_idIndex[fileMetaData[_taskId]]][_files][_push](fileMetaData)
+            }
+
+            for (const id of Object[_keys](list_idIndex)[_map](v => numberParse(v, true))) {
+                setLists(list_idIndex[id], _tasks, tasks[_filter](task => task[_listId] == id))
+            }
+
+        } catch (e) {console.log(e)}
     }
 
     function changePage(page: Pages | number): void {
@@ -1167,6 +1205,48 @@ const _: VoidComponent = () => {
                 />
             </form>
         </Dialog>
+        <Dialog
+            ref={r => dialog_newList_ref = r}
+            header="New list"
+            style={{width: '500px'}}
+            onClose={() => {
+                setListNameText('')
+                setListEmoji(null)
+                changeTextFieldValue(textfield_newList_ref, '')
+            }}
+            actions={<>
+                <Button onClick={() => closeDialog(dialog_newList_ref)} variant={ButtonVariant[_tonal]}>Cancel</Button>
+                <Button 
+                    onClick={() => {
+                        addNewTaskList(listNameText(), listEmoji())
+                        closeDialog(dialog_newList_ref)
+                    }} 
+                    disabled={listNameText()[_trim]() == ''}
+                    variant={ButtonVariant[_filled]}>
+                    Add
+                </Button>
+            </>}>
+            <form 
+                style={{display: _contents}}
+                onSubmit={(ev) => {
+                    preventDefault(ev)
+                    if (listNameText()[_trim]() == '') return;
+                    addNewTaskList(listNameText(), listEmoji())
+                }}>
+                <TextField 
+                    ref={r => textfield_newList_ref = r}
+                    placeholder="List name"
+                    onInput={ev => setListNameText(ev[_currentTarget][_value])}
+                    onFocus={ev => setListNameText(ev[_currentTarget][_value])}
+                    trailing={<TextFieldButton
+                        onClick={(ev) => openEmojiPicker(ev, emojiPicker_ref)}>
+                        <Show when={listEmoji() == null} fallback={<Emoji emoji={listEmoji()!}/>}>
+                            <Icon code={0xE747}/>
+                        </Show>
+                    </TextFieldButton>}
+                />
+            </form>
+        </Dialog>
     </>)
 
     const ColorPickers: VoidComponent = () => {
@@ -1191,13 +1271,29 @@ const _: VoidComponent = () => {
         </>)
     }
 
+    const EmojiPickers: VoidComponent = () => (<>
+        <EmojiPicker 
+            ref={r => emojiPicker_ref = r}
+            onSelectEmoji={e => setListEmoji(e)}>
+            <Show when={listEmoji() != null}>
+                <div style={{width: '100%', padding: '0 12px 12px 12px'}}>
+                    <Button 
+                        style={{width: '100%'}} 
+                        variant={ButtonVariant[_tonal]}
+                        onClick={(ev) => {
+                            setListEmoji(null)
+                            closeEmojiPicker(emojiPicker_ref)
+                        }}>
+                        <Icon code={0xE5E9}/>No emoji
+                    </Button>
+                </div>
+            </Show>
+        </EmojiPicker>
+    </>)
+
     const Toasts: VoidComponent = () => {
         return (<>
-            <Toast 
-                ref={r => toast_noFile_ref = r} 
-                leading={<Icon code={0xE631}/>}>
-                File is not exist
-            </Toast>
+            <Toast ref={r => toast_noFile_ref = r} leading={<Icon code={0xE631}/>}>File is not exist</Toast>
         </>)
     }
 
@@ -1226,6 +1322,7 @@ const _: VoidComponent = () => {
         <Dialogs/>
         <ColorPickers/>
         <Toasts/>
+        <EmojiPickers/>
     </App>)
 }
 

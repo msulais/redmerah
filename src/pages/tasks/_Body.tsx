@@ -1,9 +1,10 @@
 import { createEffect, createMemo, createSignal, For, Match, Show, Switch, type JSX, type VoidComponent } from "solid-js"
 import { createStore } from "solid-js/store"
+import { TransitionGroup } from "solid-transition-group"
 
 import type { TaskLabel, Settings, Task, TaskList, SubTask, TaskFileMetaData } from "./_types"
 import type { ComponentEvent } from "@/types/event"
-import { _all, _completed, _important, _planned, _tasks, _uncompleted, _includes, _page, _taskLists, _id, _length, _done, _reminder, _name, _taskList, _leading, _headline, _emoji, _currentTarget, _filled, _outlined, _settings, _sortBy, _creationDate, _importance, _descending, _ascending, _sortMode, _command, _onContextMenu, _centerBottomToRight, _task, _description, _files, _subtasks, _number, _value, _trim, _onEdit, _tonal, _text, _toFixed, _join, _size, _type, _listId, _onEditTask, _onContextMenuTask, _labelIds, _showModal, _onDelete, _onDeleteTask, _manual, _radio, _isShowDeleteTaskWarning, _isAnyTask, _isAnyCompletedTask, _isAnyUncompletedTask, _complete, _isGroup, _taskListIndex, _taskIndex, _onEditReminder, _onEditReminderTask, _labels, _centerBottomToLeft, _color, _filter, _onEditLabel, _then, _toUpperCase, _test, _replace, _map, _index, _taskId, _image, _startsWith, _video, _audio, _normal, _onEditFilesTask, _onEditFiles, _rightCenterToBottom, _subtask, _slice, _contents, _localeCompare, _sort } from "@/data/string"
+import { _all, _completed, _important, _planned, _tasks, _uncompleted, _includes, _page, _taskLists, _id, _length, _done, _reminder, _name, _taskList, _leading, _headline, _emoji, _currentTarget, _filled, _outlined, _settings, _sortBy, _creationDate, _importance, _descending, _ascending, _sortMode, _command, _onContextMenu, _centerBottomToRight, _task, _description, _files, _subtasks, _number, _value, _trim, _onEdit, _tonal, _text, _toFixed, _join, _size, _type, _listId, _onEditTask, _onContextMenuTask, _labelIds, _showModal, _onDelete, _onDeleteTask, _manual, _radio, _isShowDeleteTaskWarning, _isAnyTask, _isAnyCompletedTask, _isAnyUncompletedTask, _complete, _isGroup, _taskListIndex, _taskIndex, _onEditReminder, _onEditReminderTask, _labels, _centerBottomToLeft, _color, _filter, _onEditLabel, _then, _toUpperCase, _test, _replace, _map, _index, _taskId, _image, _startsWith, _video, _audio, _normal, _onEditFilesTask, _onEditFiles, _rightCenterToBottom, _subtask, _slice, _contents, _localeCompare, _sort, _animate, _finished, _spring, _some } from "@/data/string"
 import { Commands, Pages, SortBy, SortMode } from "./_enums"
 import { getCurrentDate, getDate_Y, getDateString_YMD_HM, isOutDate_YMD_HM } from "@/utils/datetime"
 import { preventDefault, stopPropagation } from "@/utils/event"
@@ -31,6 +32,7 @@ import Toast, { openToast } from "@/components/Toast"
 import DateTimePicker, { DateTimePickerPosition, openDateTimePicker } from "@/components/DateTimePicker"
 import AppBar from "@/components/AppBar"
 import CSS from './_styles.module.scss'
+import { AnimationEffectTiming } from "@/enums/animation"
 
 const AppbarTasks: VoidComponent<{
     page: Pages | number
@@ -541,7 +543,7 @@ const SingleTaskList: VoidComponent<{
                 fallback={<Emoji emoji={props[_taskList][_emoji]!} />}>
                 <Show 
                     when={props[_page] == Pages[_tasks]} 
-                    fallback={<Icon code={0xE3CC}/>}>
+                    fallback={<Icon code={0xF032}/>}>
                     <Icon code={0xE8E2}/>
                 </Show>
             </Show>} 
@@ -647,6 +649,15 @@ const _: VoidComponent<{
     const [selectedTask, setSelectedTask] = createStore<Task & {taskListIndex: number; taskIndex: number}>({complete: false, description: '', files: [], id: -1, important: false, labelIds: [], listId: DEFAULT_TASK_LIST[_id], name: '', reminder: null, subtasks: [], taskIndex: -1, taskListIndex: -1})
     const [selectedFile, setSelectedFile] = createStore<TaskFileMetaData & { index: number }>({id: -1, listId: -1, name: '', size: 0, taskId: -1, type: '', index: -1})
     const [selectedSubtask, setSelectedSubtask] = createStore<SubTask & {index: number}>({complete: false, id: -1, index: -1, listId: -1, name: '', taskId: -1})
+    const getTaskListIndex = createMemo<number | null>(() => {
+        const taskLists = props[_taskLists]
+        for (let i = 0; i < taskLists[_length]; i++) {
+            const taskList = taskLists[i]
+            if (props[_page] == Pages[_tasks] && taskList[_id] == DEFAULT_TASK_LIST[_id]) return i
+            if (isNumber(props[_page]) && taskList[_id] == props[_page]) return i
+        }
+        return null
+    })
     let textfield_newSubtask_ref: HTMLInputElement
     let textfield_editSubtask_ref: HTMLInputElement
     let textfield_renameFile_ref: HTMLInputElement
@@ -1688,28 +1699,19 @@ const _: VoidComponent<{
     </>)
 
     return (<div class={CSS.body}>
-        <For each={props[_taskLists]}>{(taskList, index) => <Show 
-            when={
-                (isNumber(props[_page]) && taskList[_id] == props[_page]) 
-                || (props[_page] == Pages[_tasks] && taskList[_id] == DEFAULT_TASK_LIST[_id])
-            } 
-            fallback={<GroupTaskList 
-                command={props[_command]} 
-                settings={props[_settings]} 
-                page={props[_page]} 
-                taskLists={props[_taskLists]}
-            />}>
-            <SingleTaskList 
+        <Show 
+            when={getTaskListIndex() == null}
+            fallback={<SingleTaskList 
                 lists={props[_taskLists]} 
                 command={props[_command]} 
                 settings={props[_settings]} 
                 page={props[_page]} 
                 labels={props[_labels]}
-                taskList={taskList} 
-                taskListIndex={index()}
-                onDeleteTask={(ev, task, taskIndex) => deleteTask(ev, task, index(), taskIndex)}
+                taskList={props[_taskLists][getTaskListIndex()!]} 
+                taskListIndex={getTaskListIndex()!}
+                onDeleteTask={(ev, task, taskIndex) => deleteTask(ev, task, getTaskListIndex()!, taskIndex)}
                 onEditLabel={(ev, label, task, taskIndex) => {
-                    setSelectedTask({...task, taskListIndex: index(), taskIndex})
+                    setSelectedTask({...task, taskListIndex: getTaskListIndex()!, taskIndex})
                     setSelectedLabel(label)
                     openMenu(ev, menu_labelAction2_ref, {
                         anchor: ev[_currentTarget],
@@ -1717,29 +1719,34 @@ const _: VoidComponent<{
                     })
                 }}
                 onEditFilesTask={(ev, task, taskIndex) => {
-                    setSelectedTask({...task, taskListIndex: index(), taskIndex})
+                    setSelectedTask({...task, taskListIndex: getTaskListIndex()!, taskIndex})
                     openMenu(ev, menu_fileAction2_ref, {
                         anchor: ev[_currentTarget],
                         position: MenuPosition[_centerBottomToRight]
                     })
                 }}
                 onEditReminderTask={(ev, task, taskIndex) => {
-                    setSelectedTask({...task, taskListIndex: index(), taskIndex})
+                    setSelectedTask({...task, taskListIndex: getTaskListIndex()!, taskIndex})
                     openMenu(ev, menu_reminder_ref, {
                         anchor: ev[_currentTarget],
                         position: MenuPosition[_centerBottomToRight]
                     })
                 }}
                 onContextMenuTask={(ev, task, taskIndex) => {
-                    setSelectedTask({...task, taskListIndex: index(), taskIndex})
+                    setSelectedTask({...task, taskListIndex: getTaskListIndex()!, taskIndex})
                     openMenu(ev, menu_taskAction_ref, {
                         position: MenuPosition[_centerBottomToRight]
                     })
                 }}
-                onEditTask={(ev, task, taskIndex) => editTask(ev, task, index(), taskIndex)}
+                onEditTask={(ev, task, taskIndex) => editTask(ev, task, getTaskListIndex()!, taskIndex)}
+            />}>
+            <GroupTaskList 
+                command={props[_command]} 
+                settings={props[_settings]} 
+                page={props[_page]} 
+                taskLists={props[_taskLists]}
             />
-            
-        </Show>}</For>
+        </Show>
         <Dialogs/>
         <Menus/>
         <DatePickers/>

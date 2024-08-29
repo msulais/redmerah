@@ -109,6 +109,9 @@ export enum Commands {
     @param {number} taskIndex `number` 
     @returns {SubTask} `Promise<SubTask>`*/
     add_subtask = 'y', 
+    
+    /** @param {Event} event `Event` */
+    add_taskList = 'z', 
 }
 
 export enum Pages {

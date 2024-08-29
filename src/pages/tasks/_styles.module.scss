@@ -64,6 +64,8 @@ $side_navigation_none: 680px;
             }
 
             &[data-subtasks] {
+                margin-top: 8px;
+                
                 > :global(.list) {
                     padding-left: 4px;
                     gap: 1px;
@@ -189,20 +191,12 @@ $side_navigation_none: 680px;
         display: none;
     }
 
-    > :global(.btn) {
+    & :global(.btn) {
         --btn-padding: 4px 8px;
 
         font-size: var(--font-size-s);
         color: rgb(var(--color-on-surface));
         min-height: 0;
-        
-        &:is(:global(.btn-filled)) {
-            color: rgb(var(--color-on-accent));
-            
-            > :global(.btn-layer) > :global(.icon) {
-                color: rgb(var(--color-on-accent));
-            }
-        }
 
         > :global(.btn-layer) {
             gap: 4px;
@@ -270,7 +264,7 @@ $side_navigation_none: 680px;
     }
 }
 
-.sideNavigation {
+.side_navigation {
     @media (max-width: $side_navigation_none) {
         display: none !important;
     }
