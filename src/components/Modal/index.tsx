@@ -70,6 +70,9 @@ function initModalListener(): void {
     let scrollTop: number = 0
     let timeoutId: number | null = null
 
+    // make sure not to close other modal after closing some modal
+    let removed = false
+
     addEventListener(getDocumentBody(), BodyEvents[_openModal], ev => {
         const element: HTMLDialogElement = (ev as any)[_detail][_element] as HTMLDialogElement
         const isExist = modals[_some](modal => modal[_isSameNode](element as Node))
@@ -84,6 +87,7 @@ function initModalListener(): void {
         if (index < 0) return;
 
         modals[_splice](index, 1)
+        removed = modals[_length] > 0
     })
 
     // use for click outside modal
@@ -93,7 +97,10 @@ function initModalListener(): void {
         // `[data-no-pointer-event]`, we have to disable it. This is useful 
         // if you have modal but `<body>` has `[data-no-pointer-event]`. 
         // Or when you drag something, modal will not automatically closed.
-        if (isNoPointerEvent || modals[_length] == 0) return;
+        if (isNoPointerEvent || modals[_length] == 0 || removed) {
+            removed = false
+            return
+        }
         const modal: HTMLDialogElement = modals[_at](-1)!
         const pointer = {
             x: (ev as MouseEvent)[_clientX],
@@ -717,7 +724,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
                 && !ev[_ctrlKey] 
                 && !ev[_metaKey] 
                 && !ev[_shiftKey]
-                && hasAttribute(modal_ref, ModalAttributes[_important])
+                && $important
             ){ 
                 focusModal(modal_ref)
                 preventDefault(ev)
@@ -725,7 +732,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
         }}
         onCancel={(ev) => {
             if (props[_onCancel]) props[_onCancel](ev)
-            if (hasAttribute(modal_ref, ModalAttributes[_important])) {
+            if ($important) {
                 preventDefault(ev)
                 return
             }
