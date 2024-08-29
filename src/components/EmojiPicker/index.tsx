@@ -1,14 +1,16 @@
-import { createMemo, createSignal, For, onCleanup, onMount, Show, splitProps, type VoidComponent } from 'solid-js'
+import { TransitionGroup } from 'solid-transition-group'
+import { createMemo, createSignal, For, onCleanup, onMount, Show, splitProps, type ParentComponent, type VoidComponent } from 'solid-js'
 
 import type { Emoji } from '@/types/emoji'
 import { activitiesEmojis, animalAndNatureEmojis, flagsEmojis, foodAndDrinkEmojis, objectsEmojis, personAndBodyEmojis, smileyAndEmotionEmojis, symbolsEmojis, travelAndPlacesEmojis } from '@/data/emoji'
-import { _activities, _addRecentEmoji, _animalAndNature, _animate, _category, _classList, _closeTooltip, _concat, _currentTarget, _detail, _dispatchEvent, _element, _emoji, _emojiListener, _emojis, _filled, _findIndex, _finished, _flags, _foodAndDrink, _getRecentEmoji, _iconCode, _join, _length, _localeCompare, _multiple, _objects, _onSelectEmoji, _onToggleOpen, _option, _personAndBody, _push, _recents, _ref, _removeRecentEmoji, _replace, _showCloseBtn, _showCloseButton, _slice, _smileyAndEmotion, _some, _sort, _splice, _split, _spring, _symbols, _test, _then, _tonal, _travelAndPlaces, _trim, _value } from '@/data/string'
+import { _activities, _addRecentEmoji, _animalAndNature, _animate, _category, _children, _classList, _closeTooltip, _concat, _currentTarget, _detail, _dispatchEvent, _element, _emoji, _emojiListener, _emojis, _filled, _findIndex, _finished, _flags, _foodAndDrink, _getRecentEmoji, _iconCode, _join, _length, _localeCompare, _multiple, _objects, _onSelectEmoji, _onToggleOpen, _option, _personAndBody, _push, _recents, _ref, _removeRecentEmoji, _replace, _showCloseBtn, _showCloseButton, _slice, _smileyAndEmotion, _some, _sort, _splice, _split, _spring, _symbols, _test, _then, _tonal, _travelAndPlaces, _trim, _value } from '@/data/string'
 import { hasAttribute, toggleAttribute,setAttribute } from '@/utils/attributes'
 import { getDocumentBody } from '@/data/window'
 import { BodyAttributes } from '@/enums/attributes'
 import { addEventListener, removeEventListener } from '@/utils/event'
 import { clearTimeDelayed, setTimeDelayed } from '@/utils/timeout'
 import { BodyEvents } from '@/enums/events'
+import { AnimationEffectTiming } from '@/enums/animation'
 
 import Divider from '@/components/Divider'
 import TextTooltip from '@/components/Tooltip'
@@ -17,8 +19,6 @@ import { ButtonVariant, EmojiButton, IconButton } from '@/components/Button'
 import { closeSearchMenu, SearchMenuItem, SearchTextField } from '@/components/TextField'
 import { Modal, type ModalProps, openModal, closeModal, repositionModal, focusModal, ModalPosition as EmojiPickerPosition } from '@/components/Modal'
 import './index.scss'
-import { TransitionGroup } from 'solid-transition-group'
-import { AnimationEffectTiming } from '@/enums/animation'
 
 const ALL_EMOJI: Emoji[] = ([] as Emoji[])[_concat](smileyAndEmotionEmojis, personAndBodyEmojis, animalAndNatureEmojis, foodAndDrinkEmojis, travelAndPlacesEmojis, activitiesEmojis, objectsEmojis, symbolsEmojis, flagsEmojis)[_sort]((a, b) => a[1][_localeCompare](b[1]))
 
@@ -69,10 +69,10 @@ type EmojiPickerProps = ModalProps & {
     showCloseButton?: boolean
     closeTooltip?: string
 }
-const EmojiPicker: VoidComponent<EmojiPickerProps> = ($props) => {
+const EmojiPicker: ParentComponent<EmojiPickerProps> = ($props) => {
     const [props, other] = splitProps($props, [
         _classList, _onSelectEmoji, _ref, _multiple, 
-        _showCloseButton, _closeTooltip
+        _showCloseButton, _closeTooltip, _children
     ])
     const [option, setOption] = createSignal<EmojiCategory>(EmojiCategory[_recents])
     const [recents, setRecents] = createSignal<Emoji[]>([])
@@ -211,6 +211,7 @@ const EmojiPicker: VoidComponent<EmojiPickerProps> = ($props) => {
                     </Show>}</For>
                 </TransitionGroup>}/>
         </div>
+        {props[_children]}
         <Divider />
         <Emojis emojis={recents()} option={EmojiCategory[_recents]}/>
         <Emojis emojis={smileyAndEmotionEmojis} option={EmojiCategory[_smileyAndEmotion]}/>
