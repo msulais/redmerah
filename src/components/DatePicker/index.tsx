@@ -1,11 +1,13 @@
-import { For, Match, Switch, createEffect, createMemo, createSignal, mergeProps, splitProps, type VoidComponent } from "solid-js"
+import { For, Match, Show, Switch, createEffect, createMemo, createSignal, mergeProps, splitProps, type VoidComponent } from "solid-js"
 
-import { _ref, _date, _onSelectDate, _firstDate, _lastDate, _locales, _classList, _children, _onClose, _day, _getDay, _includes, _setMonth, _month, _setFullYear, _year, _substring, _fill, _filled, _outlined } from "@/data/string"
-import { getCurrentDate, getDate_Y, getDate_M, getWeekdayNames, isOutDate_YMD, isSameDate_YMD, getMonthNames, isOutDate_YM, isSameDate_YM, isOutDate_Y, isSameDate_Y, getMonthText } from "@/utils/datetime"
+import { _ref, _date, _onSelectDate, _firstDate, _lastDate, _locales, _classList, _children, _onClose, _day, _getDay, _includes, _setMonth, _month, _setFullYear, _year, _substring, _fill, _filled, _outlined, _animate, _finished, _spring, _then } from "@/data/string"
+import { getCurrentDate, getDate_Y, getDate_M, getWeekdayNames, isOutDate_YMD, isSameDate_YMD, getMonthNames, isOutDate_YM, isSameDate_YM, isOutDate_Y, isSameDate_Y, getMonthText, isInDate_YM } from "@/utils/datetime"
 
 import Button, { ButtonVariant, IconButton } from "@/components/Button"
 import { repositionModal, closeModal, openModal, focusModal, Modal, type ModalProps, ModalPosition as DatePickerPosition } from "@/components/Modal"
 import './index.scss'
+import { AnimationEffectTiming } from "@/enums/animation"
+import { Transition } from "solid-transition-group"
 
 enum DatePickerOption {
     year,
@@ -57,6 +59,11 @@ const DatePicker: VoidComponent<DatePickerProps> = ($props) => {
         setDaysPerMonth(daysPerMonth)
     }
 
+    function gotoCurrentRealDate(): void {
+        setViewDate(new Date())
+        updateDateView()
+    }
+
     function next(): void {
         const newDate = new Date(viewDate())
         if (dateOption() == DatePickerOption[_day]) newDate[_setMonth](getDate_M(newDate) + 1)
@@ -85,7 +92,7 @@ const DatePicker: VoidComponent<DatePickerProps> = ($props) => {
     })
 
     const DaysDate: VoidComponent = () => {
-        return (<>
+        return (<div style={{display: 'contents'}}>
             <div class="date-picker-days-name">
                 <For each={getWeekdayNames(props[_locales])}>{d => <p>{d[_substring](0, 2)}</p>}</For>
             </div>
@@ -112,7 +119,7 @@ const DatePicker: VoidComponent<DatePickerProps> = ($props) => {
                     </Button>)
                 }}</For>
             </div>
-        </>)
+        </div>)
     }
 
     const MonthsDate: VoidComponent = () => {
@@ -191,14 +198,30 @@ const DatePicker: VoidComponent<DatePickerProps> = ($props) => {
                     </Match>
                 </Switch>
             </Button>
-            <IconButton filled code={0xE366} onClick={() => previous()}/>
-            <IconButton filled code={0xE368} onClick={() => next()}/>
+            <Show when={
+                (
+                    (dateOption() == DatePickerOption[_day] && !isSameDate_YM(viewDate(), new Date())) 
+                    || (dateOption() == DatePickerOption[_month] && !isSameDate_Y(viewDate(), new Date()))
+                    || (dateOption() == DatePickerOption[_year] && isOutDate_Y(new Date(), viewDate(), new Date(getDate_Y(viewDate()) + 15, 2, 3)))
+                )
+                && isInDate_YM(new Date(), props[_firstDate], props[_lastDate])}>
+                <IconButton code={0xE2E6} onClick={() => gotoCurrentRealDate()}/>
+            </Show>
+            <IconButton code={0xE400} onClick={() => previous()}/>
+            <IconButton code={0xE402} onClick={() => next()}/>
         </div>
-        <Switch>
-            <Match when={dateOption() == DatePickerOption[_day]}><DaysDate/></Match>
-            <Match when={dateOption() == DatePickerOption[_month]}><MonthsDate/></Match>
-            <Match when={dateOption() == DatePickerOption[_year]}><YearsDate/></Match>
-        </Switch>
+        <Transition
+            onEnter={(el, done) => {el[_animate](
+                { opacity: [0, 1], transform: ['translateY(-12px)', 'none'] }, 
+                { duration: 300, easing: AnimationEffectTiming[_spring] }
+            )[_finished][_then](done)}}
+            onExit={(el, done) => {el[_animate]({}, { duration: 0 })[_finished][_then](done)}}>
+            <Switch>
+                <Match when={dateOption() == DatePickerOption[_day]}><DaysDate/></Match>
+                <Match when={dateOption() == DatePickerOption[_month]}><MonthsDate/></Match>
+                <Match when={dateOption() == DatePickerOption[_year]}><YearsDate/></Match>
+            </Switch>
+        </Transition>
         {props[_children]}
     </Modal>)
 }

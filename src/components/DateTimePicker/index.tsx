@@ -1,12 +1,13 @@
-import { createEffect, createMemo, createSignal, For, Match, mergeProps, splitProps, Switch, type VoidComponent } from 'solid-js'
+import { Transition } from 'solid-transition-group'
+import { createEffect, createMemo, createSignal, For, Match, mergeProps, Show, splitProps, Switch, type VoidComponent } from 'solid-js'
 
-import { _ref, _datetime, _onSelectDateTime, _firstDate, _lastDate, _locales, _children, _classList, _onClose, _day, _getDay, _includes, _setMonth, _month, _setFullYear, _year, _substring, _fill, _setDate, _getDate, _getMonth, _getFullYear, _filled, _outlined, _getHours, _setHours, _map, _padStart, _getMinutes, _setMinutes, _AM, _PM, _$24hour, _tonal } from '@/data/string'
-import { getCurrentDate, getDate_Y, getDate_M, getWeekdayNames, isOutDate_YMD, isSameDate_YMD, getMonthNames, isOutDate_YM, isSameDate_YM, isOutDate_Y, isSameDate_Y, getMonthText } from '@/utils/datetime'
+import { _ref, _datetime, _onSelectDateTime, _firstDate, _lastDate, _locales, _children, _classList, _onClose, _day, _getDay, _includes, _setMonth, _month, _setFullYear, _year, _substring, _fill, _setDate, _getDate, _getMonth, _getFullYear, _filled, _outlined, _getHours, _setHours, _map, _padStart, _getMinutes, _setMinutes, _AM, _PM, _$24hour, _tonal, _animate, _finished, _spring, _then } from '@/data/string'
+import { getCurrentDate, getDate_Y, getDate_M, getWeekdayNames, isOutDate_YMD, isSameDate_YMD, getMonthNames, isOutDate_YM, isSameDate_YM, isOutDate_Y, isSameDate_Y, getMonthText, isInDate_YM } from '@/utils/datetime'
+import { AnimationEffectTiming } from '@/enums/animation'
 import { TimeFormat } from '@/enums/datetime'
-import { numberParse } from '@/utils/math'
 
 import Button, { ButtonVariant, IconButton } from '@/components/Button'
-import Dropdown from '@/components/Dropdown'
+import Dropdown, { type Item as $DropdownItem } from '@/components/Dropdown'
 import { closeModal, openModal, focusModal, Modal, type ModalProps, repositionModal, ModalPosition as DateTimePickerPosition } from '@/components/Modal'
 import './index.scss'
 
@@ -83,6 +84,11 @@ const DateTimePicker: VoidComponent<DateTimePickerProps> = ($props) => {
         updateDateView()
     }
 
+    function gotoCurrentRealDate(): void {
+        setViewDate(new Date())
+        updateDateView()
+    }
+
     createEffect(() => {
         const datetime = props[_datetime]
         
@@ -91,7 +97,7 @@ const DateTimePicker: VoidComponent<DateTimePickerProps> = ($props) => {
     })
 
     const DaysDate: VoidComponent = () => {
-        return (<>
+        return (<div style={{display: 'contents'}}>
             <div class="datetime-picker-days-name">
                 <For each={getWeekdayNames(props[_locales])}>{d => <p>{d[_substring](0, 2)}</p>}</For>
             </div>
@@ -119,7 +125,7 @@ const DateTimePicker: VoidComponent<DateTimePickerProps> = ($props) => {
                     </Button>)
                 }}</For>
             </div>
-        </>)
+        </div>)
     }
 
     const MonthsDate: VoidComponent = () => {
@@ -198,61 +204,77 @@ const DateTimePicker: VoidComponent<DateTimePickerProps> = ($props) => {
                     </Match>
                 </Switch>
             </Button>
-            <IconButton filled code={0xE366} onClick={() => previous()}/>
-            <IconButton filled code={0xE368} onClick={() => next()}/>
+            <Show when={
+                (
+                    (dateOption() == DatePickerOption[_day] && !isSameDate_YM(viewDate(), new Date())) 
+                    || (dateOption() == DatePickerOption[_month] && !isSameDate_Y(viewDate(), new Date()))
+                    || (dateOption() == DatePickerOption[_year] && isOutDate_Y(new Date(), viewDate(), new Date(getDate_Y(viewDate()) + 15, 2, 3)))
+                )
+                && isInDate_YM(new Date(), props[_firstDate], props[_lastDate])}>
+                <IconButton code={0xE2E6} onClick={() => gotoCurrentRealDate()}/>
+            </Show>
+            <IconButton code={0xE400} onClick={() => previous()}/>
+            <IconButton code={0xE402} onClick={() => next()}/>
         </div>
-        <Switch>
-            <Match when={dateOption() == DatePickerOption[_day]}><DaysDate/></Match>
-            <Match when={dateOption() == DatePickerOption[_month]}><MonthsDate/></Match>
-            <Match when={dateOption() == DatePickerOption[_year]}><YearsDate/></Match>
-        </Switch>
+        <Transition
+            onEnter={(el, done) => {el[_animate](
+                { opacity: [0, 1], transform: ['translateY(-12px)', 'none'] }, 
+                { duration: 300, easing: AnimationEffectTiming[_spring] }
+            )[_finished][_then](done)}}
+            onExit={(el, done) => {el[_animate]({}, { duration: 0 })[_finished][_then](done)}}>
+            <Switch>
+                <Match when={dateOption() == DatePickerOption[_day]}><DaysDate/></Match>
+                <Match when={dateOption() == DatePickerOption[_month]}><MonthsDate/></Match>
+                <Match when={dateOption() == DatePickerOption[_year]}><YearsDate/></Match>
+            </Switch>
+        </Transition>
         <div class="datetime-picker-time">
             <Dropdown 
                 labelText="Hour" 
-                selectedValues={[isTime24HourFormat()
-                    ? `${value()[_getHours]()}`
-                    : `${value()[_getHours]() - (value()[_getHours]() > 12? 12 : 0)}`
+                selectedValues={[
+                    value()[_getHours]() - (value()[_getHours]() >= 12 && !isTime24HourFormat()? 12 : 0)
                 ]} 
-                onSelectedItemsChanged={(items) => setValue(v => (v[_setHours](numberParse(items[0][0] as string, true) + (isTimePMFormat()? 12 : 0)), v))}
+                onSelectedItemsChanged={(items) => 
+                    setValue(v => (v[_setHours](items[0][0] as number + (isTimePMFormat()? 12 : 0)), v))
+                }
                 items={[
-                    ['0', '00'],
-                    ...new Array(isTime24HourFormat()? 23 : 11)[_fill](1)[_map]((_v, i) => [`${i+1}`, `${i+1}`[_padStart](2, '0')] as [value: string, text: string]),
+                    [0, '00'],
+                    ...new Array(isTime24HourFormat()? 23 : 11)[_fill](1)[_map]((_v, i) => 
+                        [i+1, `${i+1}`[_padStart](2, '0')] as $DropdownItem
+                    ),
                 ]}
             />
             <Dropdown 
                 labelText="Minute" 
-                selectedValues={[`${value()[_getMinutes]()}`]} 
-                onSelectedItemsChanged={(items) => setValue(v => (v[_setMinutes](numberParse(items[0][0] as string, true)), v))}
-                items={new Array(60)[_fill](1)[_map]((_v, i) => [`${i}`, `${i}`[_padStart](2, '0')] as [value: string, text: string])}
+                selectedValues={[value()[_getMinutes]()]} 
+                onSelectedItemsChanged={(items) => setValue(v => (v[_setMinutes](items[0][0] as number), v))}
+                items={new Array(60)[_fill](1)[_map]((_v, i) => [i, `${i}`[_padStart](2, '0')] as $DropdownItem)}
             />
             <Dropdown 
                 selectedValues={[_AM]} 
                 onSelectedItemsChanged={(items) => {
                     const hour = value()[_getHours]()
-                    // from AM to PM
-                    if (isTimeAMFormat() && items[0][0] == _PM) {
-                        setValue(v => (v[_setHours](hour + (hour > 0? 12 : 0)), v))
-                    }
+                    let $hour = hour
 
-                    // from PM to AM
-                    else if (!isTime24HourFormat() && isTimePMFormat() && items[0][0] == _AM) {
-                        setValue(v => (v[_setHours](hour - (hour > 0? 12 : 0)), v))
-                    }
+                    // from (AM | 24hour) to PM
+                    if (
+                        (isTimeAMFormat() || isTime24HourFormat()) 
+                        && items[0][0] == _PM 
+                        && $hour <= 12
+                    ) $hour += 12
+                    
+                    // from (PM | 24hour) to AM
+                    else if (
+                        (isTime24HourFormat() || isTimePMFormat()) 
+                        && items[0][0] == _AM 
+                        && $hour >= 12
+                    ) $hour -= 12
 
-                    // from 24hour to PM
-                    else if (isTime24HourFormat() && hour < 12 && items[0][0] == _PM) {
-                        setValue(v => (v[_setHours](hour + 12), v))
-                    }
-
-                    // from 24hour to AM
-                    else if (isTime24HourFormat() && hour > 12 && items[0][0] == _AM) {
-                        setValue(v => (v[_setHours](hour - 12), v))
-                    }
+                    if (hour != $hour) setValue(v => (v[_setHours]($hour), v))
 
                     setIsTime24HourFormat(items[0][0] == TimeFormat[_$24hour]) 
                     setIsTimePMFormat(items[0][0] == _PM)
                 }}
-
                 items={[[_AM, _AM], [_PM, _PM], [TimeFormat[_$24hour], '24 hour']]}
             />
         </div>
