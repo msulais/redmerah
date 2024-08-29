@@ -6,11 +6,10 @@ import { createSignal, For, onMount, Show, type VoidComponent } from "solid-js"
 import type { TaskList, TaskLabel, Settings, Task, TaskFileMetaData, SubTask } from "./_types"
 import type { HEXColor } from "@/types/color"
 import { type ObjectStoreTaskLists, type ObjectStoreSettings, type ObjectStoreSubTasks, type ObjectStoreTasks, type ObjectStoreTaskLabels, type ObjectStoreFiles, type ObjectStoreTaskFileMetaData, type ObjectStoreMiscellaneous, ObjectStoreNames, ObjectStoreKeys, } from "./_storage"
-import { _add, _all, _ascending, _blob, _at, _clipboard, _color, _colorDark, _command, _complete, _completed, _concat, _contents, _createObjectStore, _creationDate, _currentTarget, _cursor, _delete, _descending, _description, _done, _emoji, _error, _fileName, _files, _filled, _tonal, _filter, _general, _get, _getAll, _getOwnPropertyNames, _hiddenNavigation, _home, _id, _images, _importance, _important, _includes, _isShowDeleteTaskWarning, _join, _key, _labelIds, _labels, _lastPage, _length, _listId, _lists, _localeCompare, _manual, _map, _miscellaneous, _name, _objectStore, _onColor, _onColorDark, _open, _planned, _push, _put, _readOnly, _readonly, _readwrite, _reminder, _result, _reverse, _settings, _size, _slice, _sort, _sortBy, _sortMode, _splice, _string, _subtasks, _tags, _target, _taskFileMetaData, _taskId, _taskLists, _tasks, _text, _then, _transaction, _trim, _type, _uncompleted, _value, _writeText, _keys, _defineProperty } from "@/data/string"
+import { _add, _all, _ascending, _blob, _at, _clipboard, _color, _colorDark, _command, _complete, _completed, _concat, _contents, _createObjectStore, _creationDate, _currentTarget, _cursor, _delete, _descending, _description, _done, _emoji, _error, _fileName, _files, _filled, _tonal, _filter, _general, _get, _getAll, _getOwnPropertyNames, _hiddenNavigation, _home, _id, _images, _importance, _important, _includes, _isShowDeleteTaskWarning, _join, _key, _labelIds, _labels, _lastPage, _length, _listId, _lists, _localeCompare, _manual, _map, _miscellaneous, _name, _objectStore, _onColor, _onColorDark, _open, _planned, _push, _put, _readOnly, _readonly, _readwrite, _reminder, _result, _reverse, _settings, _size, _slice, _sort, _sortBy, _sortMode, _splice, _string, _subtasks, _tags, _target, _taskFileMetaData, _taskId, _taskLists, _tasks, _text, _then, _transaction, _trim, _type, _uncompleted, _value, _writeText, _keys, _defineProperty, _bold, _findIndex } from "@/data/string"
 import { Commands, Pages, SortBy, SortMode } from "./_enums"
 import { DatabaseNames } from "@/enums/storage"
 import { DEFAULT_TASK_LIST } from "./_data"
-import { isVarHasValue } from "@/utils/data"
 import { IDB } from "@/class/indexeddb"
 import { getDateString_YMD_HM } from "@/utils/datetime"
 import { getNavigator } from "@/data/window"
@@ -43,6 +42,7 @@ const _: VoidComponent = () => {
     const [labels, setLabels] = createStore<(TaskLabel | undefined)[]>([])
     const [lists, setLists] = createStore<TaskList[]>([DEFAULT_TASK_LIST])
     const [selectedLabel, setSelectedLabel] = createStore<TaskLabel>({id: -1, name: '', color: null})
+    const [selectedTaskListToDelete, setSelectedTaskListToDelete] = createSignal<TaskList>(DEFAULT_TASK_LIST)
     const [settings, setSettings] = createStore<Settings>({
         sortBy: SortBy[_name], 
         sortMode: SortMode[_ascending],
@@ -56,6 +56,7 @@ const _: VoidComponent = () => {
     let dialog_newLabel_ref: HTMLDialogElement
     let dialog_editLabel_ref: HTMLDialogElement
     let dialog_newList_ref: HTMLDialogElement
+    let dialog_deleteList_ref: HTMLDialogElement
     let colorPicker_label_ref: HTMLDialogElement
     let toast_noFile_ref: HTMLDivElement
     let emojiPicker_ref: HTMLDialogElement
@@ -837,6 +838,14 @@ const _: VoidComponent = () => {
                 inputAutoFocus: true
             })
         }
+
+        // delete_taskList
+        else if (type == Commands.delete_taskList) {
+            setSelectedTaskListToDelete(lists[args[1] as number])
+            openDialog(args[0] as Event, dialog_deleteList_ref, {
+                important: true
+            })
+        }
         
         return 
     }
@@ -949,6 +958,41 @@ const _: VoidComponent = () => {
             }
             setLabels(values)
         })
+    }
+
+    function deleteTaskList(list: TaskList): void {
+        const transaction = db[_transaction]([
+            ObjectStoreNames[_lists],
+            ObjectStoreNames[_tasks], 
+            ObjectStoreNames[_subtasks], 
+            ObjectStoreNames[_taskFileMetaData],
+            ObjectStoreNames[_files],
+        ], _readwrite)!
+        const listsStore = transaction[_objectStore](ObjectStoreNames[_lists])
+        const tasksStore = transaction[_objectStore](ObjectStoreNames[_tasks])
+        const subTasksStore = transaction[_objectStore](ObjectStoreNames[_subtasks])
+        const fileMetaDataStore = transaction[_objectStore](ObjectStoreNames[_taskFileMetaData])
+        const filesStore = transaction[_objectStore](ObjectStoreNames[_files])
+        changePage(Pages[_tasks])
+
+        const index = lists[_findIndex]((l) => l[_id] == list[_id])
+        if (index < 0) return;
+
+        listsStore[_delete](list[_id])
+        for (const task of list[_tasks]) {
+            tasksStore[_delete](task[_id])
+
+            for (const subtask of task[_subtasks]) {
+                subTasksStore[_delete](subtask[_id])
+            }
+
+            for (const fileMetaData of task[_files]) {
+                fileMetaDataStore[_delete](fileMetaData[_id])
+                filesStore[_delete](fileMetaData[_id])
+            }
+        }
+
+        setLists(lists => [...lists[_slice](0, index), ...lists[_slice](index + 1)])
     }
 
     // FIXME: To many iteration and I hate it. I don't find any better solution currently
@@ -1246,6 +1290,31 @@ const _: VoidComponent = () => {
                     </TextFieldButton>}
                 />
             </form>
+        </Dialog>
+        <Dialog 
+            ref={r => dialog_deleteList_ref = r}
+            style={{width: '500px'}}
+            header="Delete list"
+            actions={<>
+                <Button 
+                    variant={ButtonVariant[_tonal]}
+                    onClick={ev => {
+                        closeDialog(dialog_deleteList_ref)
+                    }}>
+                    Cancel
+                </Button>
+                <Button 
+                    variant={ButtonVariant[_filled]} 
+                    onClick={() => {
+                        closeDialog(dialog_deleteList_ref)
+                        deleteTaskList(selectedTaskListToDelete())
+                    }}>
+                    Delete
+                </Button>
+            </>}>
+            <>Are you sure want to delete <q style={{"font-weight": _bold, color: 'rgb(var(--color-accent))'}}>{selectedTaskListToDelete()[_name]}</q> list? </>
+            <>This list contains {selectedTaskListToDelete()[_tasks][_filter](v => !v[_complete])[_length]} uncompleted tasks </>
+            <>and {selectedTaskListToDelete()[_tasks][_filter](v => v[_complete])[_length]} completed tasks</>
         </Dialog>
     </>)
 

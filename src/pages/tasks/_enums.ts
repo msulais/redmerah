@@ -112,6 +112,11 @@ export enum Commands {
     
     /** @param {Event} event `Event` */
     add_taskList = 'z', 
+    
+    /** 
+    @param {Event} event `Event`
+    @param {number} taskListIndex `number` */
+    delete_taskList = 'aa', 
 }
 
 export enum Pages {

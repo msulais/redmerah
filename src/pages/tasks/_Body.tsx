@@ -167,9 +167,14 @@ const AppbarTasks: VoidComponent<{
 
                     {/* TODO: rename list */}
                     <MenuItem iconCode={0xF0FB}>Rename list</MenuItem>
-
-                    {/* TODO: delete list */}
-                    <MenuItem iconCode={0xE59D}>Delete list</MenuItem>
+                    <MenuItem 
+                        onClick={ev => {
+                            closeMenu(menu_more_ref)
+                            props[_command](Commands.delete_taskList, ev, props[_taskListIndex])
+                        }}
+                        iconCode={0xE59D}>
+                        Delete list
+                    </MenuItem>
                 </Show>
             </Menu>
         </>)
