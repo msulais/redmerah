@@ -124,7 +124,10 @@ const Dropdown: VoidComponent<DropdownProps> = ($props) => {
         if (selectedValues[_length] == 0) return setSelectedItems($items)
         
         if (multiple) $items = items[_filter](item => selectedValues[_includes](item[0] as never))                
-        else $items[_push](items[_find]((item) => item[0] == selectedValues[0])!)
+        else {
+            const item = items[_find]((item) => item[0] == selectedValues[0])
+            if (item) $items[_push](item)
+        }
 
         $selectedValues = $items[_map](v => v[0])
         setSelectedItems($items)
