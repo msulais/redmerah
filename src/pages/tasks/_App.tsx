@@ -866,8 +866,64 @@ const _: VoidComponent = () => {
                 inputAutoFocus: true
             })
         }
+
+        // move_task
+        else if (type == Commands.move_task) {
+            moveTask(args[0] as Task, args[1] as number, args[2] as number, args[3] as number)
+        }
         
         return 
+    }
+
+    function moveTask(task: Task, taskListIndex: number, taskIndex: number, targetTaskListIndex: number): void { 
+        const transaction = db[_transaction]([
+            ObjectStoreNames[_tasks], 
+            ObjectStoreNames[_subtasks], 
+            ObjectStoreNames[_taskFileMetaData],
+        ], _readwrite)!
+        const store_tasks = transaction[_objectStore](ObjectStoreNames[_tasks])
+        const store_subtasks = transaction[_objectStore](ObjectStoreNames[_subtasks])
+        const store_taskFileMetaData = transaction[_objectStore](ObjectStoreNames[_taskFileMetaData])
+        const targetList = lists[targetTaskListIndex]
+
+        // Update manually if list has tasks, because 
+        // `getTasks()` function only update empty list.
+        if (targetList[_tasks][_length] > 0) {
+            const subtasks = task[_subtasks][_map](subtask => ({...subtask, listId: targetList[_id]}))
+            const files = task[_files][_map](file => ({...file, listId: targetList[_id]}))
+            const $task: Task = {...task, subtasks, files}
+            setLists(targetTaskListIndex, _tasks, tasks => sortTasks([...tasks, $task]))
+        }
+        
+        setLists(
+            taskListIndex, 
+            _tasks, 
+            tasks => tasks[_slice](0, taskIndex)[_concat](tasks[_slice](taskIndex + 1))
+        )
+        store_tasks[_put]({
+            complete: task[_complete],
+            description: task[_description], 
+            id: task[_id], 
+            important: task[_important],
+            labelIds: [...task[_labelIds]],
+            listId: targetList[_id],
+            name: task[_name],
+            reminder: task[_reminder]
+        } satisfies ObjectStoreTasks)
+
+        for (const subtask of task[_subtasks]) {
+            store_subtasks[_put]({
+                ...subtask,
+                listId: targetList[_id]
+            } satisfies ObjectStoreSubTasks)
+        }
+
+        for (const file of task[_files]) {
+            store_taskFileMetaData[_put]({
+                ...file, 
+                listId: targetList[_id]
+            } satisfies ObjectStoreTaskFileMetaData)
+        }
     }
 
     function initDatabase(): void {

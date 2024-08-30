@@ -26,7 +26,7 @@ import CheckBox from "@/components/CheckBox"
 import List from "@/components/List"
 import Expander from "@/components/Expander"
 import TextField, { changeTextFieldValue, AreaTextField, TextFieldButton } from "@/components/TextField"
-import Menu, { closeMenu, MenuDivider, MenuHeader, MenuIndent, MenuItem, MenuPosition, openMenu, SubMenu } from "@/components/Menu"
+import Menu, { closeMenu, closeSubMenu, MenuDivider, MenuHeader, MenuIndent, MenuItem, MenuPosition, openMenu, SubMenu } from "@/components/Menu"
 import Dialog, { closeDialog, openDialog } from "@/components/Dialog"
 import Toast, { openToast } from "@/components/Toast"
 import DateTimePicker, { DateTimePickerPosition, openDateTimePicker } from "@/components/DateTimePicker"
@@ -681,6 +681,7 @@ const _: VoidComponent<{
     let menu_fileAction_ref: HTMLDialogElement
     let menu_fileAction2_ref: HTMLDialogElement
     let menu_fileAction3_ref: HTMLDialogElement
+    let submenu_moveTask_ref: HTMLDivElement
     let dateTimePicker_reminder_ref: HTMLDialogElement
     let dialog_fileRename_ref: HTMLDialogElement
     let dialog_editTask_ref: HTMLDialogElement
@@ -1472,6 +1473,8 @@ const _: VoidComponent<{
             <MenuDivider />
             <SubMenu
                 level={1}
+                ref={r => submenu_moveTask_ref = r}
+                style={{"min-width": '200px'}}
                 onToggleOpen={v => setIs_menu_taskActionMove_open(v)}
                 item={<MenuItem 
                     focused={is_menu_taskActionMove_open()} 
@@ -1479,8 +1482,37 @@ const _: VoidComponent<{
                     trailing={<Icon filled code={0xE368}/>}>
                     Move task to ...
                 </MenuItem>}>
-                {/* TODO: show all tasks */}
-                <MenuItem iconCode={0xE8E2}>Tasks</MenuItem>
+                <For each={props[_taskLists]}>{(list, i) => <>
+                    <MenuItem 
+                        onClick={() => {
+                            props[_command](
+                                Commands.move_task, 
+                                getTaskFromSelectedTask(), 
+                                selectedTask[_taskListIndex], 
+                                selectedTask[_taskIndex],
+                                i()
+                            )
+                            closeSubMenu(submenu_moveTask_ref)
+                            closeMenu(menu_taskAction_ref)
+                        }}
+                        style={{order: list[_id] == DEFAULT_TASK_LIST[_id]? '-2' : undefined}}
+                        iconCode={list[_id] == DEFAULT_TASK_LIST[_id]
+                            ? 0xE8E2
+                            : list[_emoji] == null
+                                ? 0xF032 
+                                : undefined
+                        }
+                        leading={<Show 
+                            when={list[_emoji] != null && list[_id] != DEFAULT_TASK_LIST[_id]}>
+                            <Emoji emoji={list[_emoji]!} />
+                        </Show>}
+                        selected={i() == getTaskListIndex()}>
+                        {list[_name]}
+                    </MenuItem>
+                    <Show when={props[_taskLists][_length] > 1 && list[_id] == DEFAULT_TASK_LIST[_id]}>
+                        <MenuDivider style={{order: '-1'}}/>
+                    </Show>
+                </>}</For>
             </SubMenu>
             <MenuDivider />
             <MenuItem 

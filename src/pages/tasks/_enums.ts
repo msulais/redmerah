@@ -122,6 +122,13 @@ export enum Commands {
     @param {Event} event `Event`
     @param {number} taskListIndex `number` */
     rename_taskList = 'ab', 
+    
+    /** 
+    @param {Task} task `Task`
+    @param {number} taskListIndex `number`
+    @param {number} taskIndex `number`
+    @param {number} targetTaskListIndex `number` */
+    move_task = 'ac'
 }
 
 export enum Pages {
