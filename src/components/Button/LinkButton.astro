@@ -7,7 +7,6 @@ import './index.scss'
 type Props = astroHTML.JSX.AnchorHTMLAttributes  & {
     variant?: ButtonVariant
     focus?: boolean
-    iconOnly?: boolean
     compact?: boolean
     openInNewTab?: boolean
     selected?: boolean
@@ -26,7 +25,6 @@ const {
     compact, 
     selected, 
     elevation, 
-    iconOnly, 
     layerAttr, 
     disableScale, 
     classList = [], 
@@ -36,8 +34,11 @@ const {
 ---
 
 <a 
-    class:list={['btn', `${variant}-btn`, ...classList]}
-    data-icon={toggleAttribute(iconOnly)}
+    class:list={['btn', {
+        'filled-btn': variant == ButtonVariant.filled, 
+        'tonal-btn': variant == ButtonVariant.tonal, 
+        'outlined-btn': variant == ButtonVariant.outlined
+    }, ...classList]}
     data-indicator={selected? indicatorPosition : undefined}
     data-selected={toggleAttribute(selected)}
     data-elevation={toggleAttribute(elevation, true)}
