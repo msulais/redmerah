@@ -115,7 +115,7 @@ const AppbarTasks: VoidComponent<{
                     Descending
                 </MenuItem>
             </Menu>
-            <Menu ref={r => menu_more_ref = r} onToggleOpen={(v) => setIs_menu_more_open(v)}>
+            <Menu style={{"min-width": '200px'}} ref={r => menu_more_ref = r} onToggleOpen={(v) => setIs_menu_more_open(v)}>
                 <Show when={props[_isAnyUncompletedTask]}>
                     <MenuItem 
                         onClick={async () => {
@@ -163,7 +163,9 @@ const AppbarTasks: VoidComponent<{
                 </Show>
 
                 <Show when={isNumber(props[_page])}>
-                    <MenuDivider />
+                    <Show when={props[_isAnyTask]}>
+                        <MenuDivider />
+                    </Show>
 
                     {/* TODO: rename list */}
                     <MenuItem iconCode={0xF0FB}>Rename list</MenuItem>
@@ -251,16 +253,16 @@ const AppbarTasks: VoidComponent<{
                             code={0xE51B}
                         />
                     </TextTooltip>
+                </Show>
 
-                    <Show when={!props[_isGroup]}>
-                        <TextTooltip text="More options">
-                            <IconButton 
-                                focused={is_menu_more_open()} 
-                                onClick={ev => openMenu(ev, menu_more_ref, {anchor: ev[_currentTarget]})}
-                                code={0xEAD9}
-                            />
-                        </TextTooltip>
-                    </Show>
+                <Show when={!props[_isGroup]}>
+                    <TextTooltip text="More options">
+                        <IconButton 
+                            focused={is_menu_more_open()} 
+                            onClick={ev => openMenu(ev, menu_more_ref, {anchor: ev[_currentTarget]})}
+                            code={0xEAD9}
+                        />
+                    </TextTooltip>
                 </Show>
             </>}
         />
