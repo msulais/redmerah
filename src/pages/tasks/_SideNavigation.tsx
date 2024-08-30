@@ -117,7 +117,7 @@ const _: VoidComponent<{
         </Show>
         <For each={props[_taskLists]}>{(p, i) => 
             <Show when={p[_id] != DEFAULT_TASK_LIST[_id]}>
-                <Item {...p} index={i() + 1}/>
+                <Item {...p} index={i()}/>
             </Show>
         }</For>
         <Menus/>
