@@ -1119,15 +1119,19 @@ const _: VoidComponent = () => {
 
     function renameTaskList(): void {
         const store = db[_transaction](ObjectStoreNames[_lists], _readwrite)![_objectStore](ObjectStoreNames[_lists])
-        const id = lists[selectedTaskListIndexToRename()][_id]
+        const list = lists[selectedTaskListIndexToRename()]
+        const id = list[_id]
         const emoji = editListEmoji()
         let name = editListNameText()[_trim]()
-        let count = 0
-        for (const list of lists) {
-            if (count == 0 && list[_name] == name) ++count
-            if (list[_name] == name + ` (${count})`) ++count
+
+        if (name != list[_name]) {
+            let count = 0
+            for (const list of lists) {
+                if (count == 0 && list[_name] == name) ++count
+                if (list[_name] == name + ` (${count})`) ++count
+            }
+            if (count > 0) name += ` (${count})`
         }
-        if (count > 0) name += ` (${count})`
 
         setLists(selectedTaskListIndexToRename(), list => ({...list, emoji, name}))
         store[_put]({emoji, id, name} satisfies ObjectStoreTaskLists)
