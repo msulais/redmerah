@@ -181,7 +181,7 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
             anchor: div_ref, 
             position: props[_position] ?? SubMenuPosition[_rightCenterToBottom],
             gap: props[_gap] ?? -8, 
-            padding: props[_padding] ?? 4,
+            padding: props[_padding] ?? 5,
             dragable: props[_dragable],
             allowHideAnchor: props[_allowHideAnchor]
         })
