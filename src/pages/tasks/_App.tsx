@@ -37,12 +37,17 @@ const _: VoidComponent = () => {
     const [is_colorPicker_newLabel_open, setIs_colorPicker_newLabel_open] = createSignal<boolean>(false)
     const [isExpandSideNavigation, setIsExpandSideNavigation] = createSignal<boolean>(true)
     const [page, setPage] = createSignal<Pages | number>(Pages[_tasks])
-    const [listNameText, setListNameText] = createSignal<string>('')
-    const [listEmoji, setListEmoji] = createSignal<string | null>(null)
+    const [newListNameText, setNewListNameText] = createSignal<string>('')
+    const [newListEmoji, setNewListEmoji] = createSignal<string | null>(null)
+    const [editListNameText, setEditListNameText] = createSignal<string>('')
+    const [editListEmoji, setEditListEmoji] = createSignal<string | null>(null)
     const [labels, setLabels] = createStore<(TaskLabel | undefined)[]>([])
     const [lists, setLists] = createStore<TaskList[]>([DEFAULT_TASK_LIST])
     const [selectedLabel, setSelectedLabel] = createStore<TaskLabel>({id: -1, name: '', color: null})
+
+    // TODO: use index instead
     const [selectedTaskListToDelete, setSelectedTaskListToDelete] = createSignal<TaskList>(DEFAULT_TASK_LIST)
+    const [selectedTaskListIndexToRename, setSelectedTaskListIndexToRename] = createSignal<number>(0)
     const [settings, setSettings] = createStore<Settings>({
         sortBy: SortBy[_name], 
         sortMode: SortMode[_ascending],
@@ -52,10 +57,12 @@ const _: VoidComponent = () => {
     let textfield_newLabel_ref: HTMLInputElement
     let textfield_editLabel_ref: HTMLInputElement
     let textfield_newList_ref: HTMLInputElement
+    let textfield_editList_ref: HTMLInputElement
     let dialog_labels_ref: HTMLDialogElement
     let dialog_newLabel_ref: HTMLDialogElement
     let dialog_editLabel_ref: HTMLDialogElement
     let dialog_newList_ref: HTMLDialogElement
+    let dialog_editList_ref: HTMLDialogElement
     let dialog_deleteList_ref: HTMLDialogElement
     let colorPicker_label_ref: HTMLDialogElement
     let toast_noFile_ref: HTMLDivElement
@@ -846,6 +853,19 @@ const _: VoidComponent = () => {
                 important: true
             })
         }
+
+        // rename_taskList
+        else if (type == Commands.rename_taskList) {
+            const list = lists[args[1] as number]
+            setSelectedTaskListIndexToRename(args[1] as number)
+            setEditListEmoji(list[_emoji])
+            setEditListNameText(list[_name])
+            changeTextFieldValue(textfield_editList_ref, list[_name])
+            openDialog(args[0] as Event, dialog_editList_ref, {
+                important: true, 
+                inputAutoFocus: true
+            })
+        }
         
         return 
     }
@@ -1101,6 +1121,22 @@ const _: VoidComponent = () => {
         })
     }
 
+    function renameTaskList(): void {
+        const store = db[_transaction](ObjectStoreNames[_lists], _readwrite)![_objectStore](ObjectStoreNames[_lists])
+        const id = lists[selectedTaskListIndexToRename()][_id]
+        const emoji = editListEmoji()
+        let name = editListNameText()[_trim]()
+        let count = 0
+        for (const list of lists) {
+            if (count == 0 && list[_name] == name) ++count
+            if (list[_name] == name + ` (${count})`) ++count
+        }
+        if (count > 0) name += ` (${count})`
+
+        setLists(selectedTaskListIndexToRename(), list => ({...list, emoji, name}))
+        store[_put]({emoji, id, name} satisfies ObjectStoreTaskLists)
+    }
+
     onMount(() => {
         initDatabase()
     })
@@ -1254,18 +1290,18 @@ const _: VoidComponent = () => {
             header="New list"
             style={{width: '500px'}}
             onClose={() => {
-                setListNameText('')
-                setListEmoji(null)
+                setNewListNameText('')
+                setNewListEmoji(null)
                 changeTextFieldValue(textfield_newList_ref, '')
             }}
             actions={<>
                 <Button onClick={() => closeDialog(dialog_newList_ref)} variant={ButtonVariant[_tonal]}>Cancel</Button>
                 <Button 
                     onClick={() => {
-                        addNewTaskList(listNameText(), listEmoji())
+                        addNewTaskList(newListNameText(), newListEmoji())
                         closeDialog(dialog_newList_ref)
                     }} 
-                    disabled={listNameText()[_trim]() == ''}
+                    disabled={newListNameText()[_trim]() == ''}
                     variant={ButtonVariant[_filled]}>
                     Add
                 </Button>
@@ -1274,17 +1310,65 @@ const _: VoidComponent = () => {
                 style={{display: _contents}}
                 onSubmit={(ev) => {
                     preventDefault(ev)
-                    if (listNameText()[_trim]() == '') return;
-                    addNewTaskList(listNameText(), listEmoji())
+                    if (newListNameText()[_trim]() == '') return;
+                    addNewTaskList(newListNameText(), newListEmoji())
                 }}>
                 <TextField 
                     ref={r => textfield_newList_ref = r}
                     placeholder="List name"
-                    onInput={ev => setListNameText(ev[_currentTarget][_value])}
-                    onFocus={ev => setListNameText(ev[_currentTarget][_value])}
+                    onInput={ev => setNewListNameText(ev[_currentTarget][_value])}
+                    onFocus={ev => setNewListNameText(ev[_currentTarget][_value])}
                     trailing={<TextFieldButton
                         onClick={(ev) => openEmojiPicker(ev, emojiPicker_ref)}>
-                        <Show when={listEmoji() == null} fallback={<Emoji emoji={listEmoji()!}/>}>
+                        <Show when={newListEmoji() == null} fallback={<Emoji emoji={newListEmoji()!}/>}>
+                            <Icon code={0xE747}/>
+                        </Show>
+                    </TextFieldButton>}
+                />
+            </form>
+        </Dialog>
+        <Dialog
+            ref={r => dialog_editList_ref = r}
+            header="Rename list"
+            style={{width: '500px'}}
+            actions={<>
+                <Button onClick={() => closeDialog(dialog_editList_ref)} variant={ButtonVariant[_tonal]}>Cancel</Button>
+                <Button 
+                    onClick={() => {
+                        renameTaskList()
+                        closeDialog(dialog_editList_ref)
+                    }} 
+                    disabled={
+                        editListNameText()[_trim]() == '' 
+                        || (
+                            editListNameText()[_trim]() == lists[selectedTaskListIndexToRename()][_name]
+                            && editListEmoji() == lists[selectedTaskListIndexToRename()][_emoji]
+                        )
+                    }
+                    variant={ButtonVariant[_filled]}>
+                    Rename
+                </Button>
+            </>}>
+            <form 
+                style={{display: _contents}}
+                onSubmit={(ev) => {
+                    preventDefault(ev)
+                    if (editListNameText()[_trim]() == '' 
+                        || (
+                            editListNameText()[_trim]() == lists[selectedTaskListIndexToRename()][_name]
+                            && editListEmoji() == lists[selectedTaskListIndexToRename()][_emoji]
+                        )
+                    ) return;
+                    renameTaskList()
+                }}>
+                <TextField 
+                    ref={r => textfield_editList_ref = r}
+                    placeholder="List name"
+                    onInput={ev => setEditListNameText(ev[_currentTarget][_value])}
+                    onFocus={ev => setEditListNameText(ev[_currentTarget][_value])}
+                    trailing={<TextFieldButton
+                        onClick={(ev) => openEmojiPicker(ev, emojiPicker_ref)}>
+                        <Show when={editListEmoji() == null} fallback={<Emoji emoji={editListEmoji()!}/>}>
                             <Icon code={0xE747}/>
                         </Show>
                     </TextFieldButton>}
@@ -1343,14 +1427,18 @@ const _: VoidComponent = () => {
     const EmojiPickers: VoidComponent = () => (<>
         <EmojiPicker 
             ref={r => emojiPicker_ref = r}
-            onSelectEmoji={e => setListEmoji(e)}>
-            <Show when={listEmoji() != null}>
+            onSelectEmoji={e => {
+                setNewListEmoji(e)
+                setEditListEmoji(e)
+            }}>
+            <Show when={newListEmoji() != null}>
                 <div style={{width: '100%', padding: '0 12px 12px 12px'}}>
                     <Button 
                         style={{width: '100%'}} 
                         variant={ButtonVariant[_tonal]}
                         onClick={(ev) => {
-                            setListEmoji(null)
+                            setNewListEmoji(null)
+                            setEditListEmoji(null)
                             closeEmojiPicker(emojiPicker_ref)
                         }}>
                         <Icon code={0xE5E9}/>No emoji

@@ -75,8 +75,14 @@ const _: VoidComponent<{
     const Menus: VoidComponent = () => (<>
         <Menu 
             ref={r => menu_listAction_ref = r}>
-            {/* TODO: rename list */}
-            <MenuItem iconCode={0xF0FB}>Rename list</MenuItem>
+            <MenuItem 
+                onClick={ev => {
+                    closeMenu(menu_listAction_ref)
+                    props[_command](Commands.rename_taskList, ev, selectedTaskListIndex)
+                }}
+                iconCode={0xF0FB}>
+                Rename list
+            </MenuItem>
             <MenuItem 
                 onClick={ev => {
                     closeMenu(menu_listAction_ref)

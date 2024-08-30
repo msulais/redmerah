@@ -166,9 +166,14 @@ const AppbarTasks: VoidComponent<{
                     <Show when={props[_isAnyTask]}>
                         <MenuDivider />
                     </Show>
-
-                    {/* TODO: rename list */}
-                    <MenuItem iconCode={0xF0FB}>Rename list</MenuItem>
+                    <MenuItem 
+                        onClick={ev => {
+                            closeMenu(menu_more_ref)
+                            props[_command](Commands.rename_taskList, ev, props[_taskListIndex])
+                        }}
+                        iconCode={0xF0FB}>
+                        Rename list
+                    </MenuItem>
                     <MenuItem 
                         onClick={ev => {
                             closeMenu(menu_more_ref)
