@@ -46,6 +46,8 @@ const _: VoidComponent = () => {
     const [selectedLabel, setSelectedLabel] = createStore<TaskLabel>({id: -1, name: '', color: null})
     const [selectedTaskListIndexToDelete, setSelectedTaskListIndexToDelete] = createSignal<number>(0)
     const [selectedTaskListIndexToRename, setSelectedTaskListIndexToRename] = createSignal<number>(0)
+    const [isNewListEmojiPickerOpen, setIsNewListEmojiPickerOpen] = createSignal<boolean>(false)
+    const [isEditListEmojiPickerOpen, setIsEditListEmojiPickerOpen] = createSignal<boolean>(false)
     const [settings, setSettings] = createStore<Settings>({
         sortBy: SortBy[_name], 
         sortMode: SortMode[_ascending],
@@ -1319,7 +1321,10 @@ const _: VoidComponent = () => {
                     onInput={ev => setNewListNameText(ev[_currentTarget][_value])}
                     onFocus={ev => setNewListNameText(ev[_currentTarget][_value])}
                     trailing={<TextFieldButton
-                        onClick={(ev) => openEmojiPicker(ev, emojiPicker_ref)}>
+                        onClick={(ev) => {
+                            setIsNewListEmojiPickerOpen(true)
+                            openEmojiPicker(ev, emojiPicker_ref)
+                        }}>
                         <Show when={newListEmoji() == null} fallback={<Emoji emoji={newListEmoji()!}/>}>
                             <Icon code={0xE747}/>
                         </Show>
@@ -1367,7 +1372,10 @@ const _: VoidComponent = () => {
                     onInput={ev => setEditListNameText(ev[_currentTarget][_value])}
                     onFocus={ev => setEditListNameText(ev[_currentTarget][_value])}
                     trailing={<TextFieldButton
-                        onClick={(ev) => openEmojiPicker(ev, emojiPicker_ref)}>
+                        onClick={(ev) => {
+                            setIsEditListEmojiPickerOpen(true)
+                            openEmojiPicker(ev, emojiPicker_ref)
+                        }}>
                         <Show when={editListEmoji() == null} fallback={<Emoji emoji={editListEmoji()!}/>}>
                             <Icon code={0xE747}/>
                         </Show>
@@ -1429,18 +1437,25 @@ const _: VoidComponent = () => {
     const EmojiPickers: VoidComponent = () => (<>
         <EmojiPicker 
             ref={r => emojiPicker_ref = r}
+            onClose={() => {
+                setIsNewListEmojiPickerOpen(false)
+                setIsEditListEmojiPickerOpen(false)
+            }}
             onSelectEmoji={e => {
-                setNewListEmoji(e)
-                setEditListEmoji(e)
+                if (isNewListEmojiPickerOpen()) setNewListEmoji(e)
+                if (isEditListEmojiPickerOpen()) setEditListEmoji(e)
             }}>
-            <Show when={newListEmoji() != null}>
+            <Show when={
+                (isNewListEmojiPickerOpen() && newListEmoji() != null) 
+                || (isEditListEmojiPickerOpen() && editListEmoji() != null)
+            }>
                 <div style={{width: '100%', padding: '0 12px 12px 12px'}}>
                     <Button 
                         style={{width: '100%'}} 
                         variant={ButtonVariant[_tonal]}
                         onClick={(ev) => {
-                            setNewListEmoji(null)
-                            setEditListEmoji(null)
+                            if (isNewListEmojiPickerOpen()) setNewListEmoji(null)
+                            if (isEditListEmojiPickerOpen()) setEditListEmoji(null)
                             closeEmojiPicker(emojiPicker_ref)
                         }}>
                         <Icon code={0xE5E9}/>No emoji
