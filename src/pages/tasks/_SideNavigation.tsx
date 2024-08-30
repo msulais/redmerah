@@ -115,7 +115,11 @@ const _: VoidComponent<{
         <Show when={props[_taskLists][_length] - 1 > 0}>
             <Divider />
         </Show>
-        <For each={props[_taskLists][_filter](v => v[_id] != DEFAULT_TASK_LIST[_id])}>{(p, i) => <Item {...p} index={i() + 1}/>}</For>
+        <For each={props[_taskLists]}>{(p, i) => 
+            <Show when={p[_id] != DEFAULT_TASK_LIST[_id]}>
+                <Item {...p} index={i() + 1}/>
+            </Show>
+        }</For>
         <Menus/>
     </SideNavigation>)
 }
