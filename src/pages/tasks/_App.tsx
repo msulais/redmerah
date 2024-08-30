@@ -44,9 +44,7 @@ const _: VoidComponent = () => {
     const [labels, setLabels] = createStore<(TaskLabel | undefined)[]>([])
     const [lists, setLists] = createStore<TaskList[]>([DEFAULT_TASK_LIST])
     const [selectedLabel, setSelectedLabel] = createStore<TaskLabel>({id: -1, name: '', color: null})
-
-    // TODO: use index instead
-    const [selectedTaskListToDelete, setSelectedTaskListToDelete] = createSignal<TaskList>(DEFAULT_TASK_LIST)
+    const [selectedTaskListIndexToDelete, setSelectedTaskListIndexToDelete] = createSignal<number>(0)
     const [selectedTaskListIndexToRename, setSelectedTaskListIndexToRename] = createSignal<number>(0)
     const [settings, setSettings] = createStore<Settings>({
         sortBy: SortBy[_name], 
@@ -848,7 +846,7 @@ const _: VoidComponent = () => {
 
         // delete_taskList
         else if (type == Commands.delete_taskList) {
-            setSelectedTaskListToDelete(lists[args[1] as number])
+            setSelectedTaskListIndexToDelete(args[1] as number)
             openDialog(args[0] as Event, dialog_deleteList_ref, {
                 important: true
             })
@@ -980,7 +978,7 @@ const _: VoidComponent = () => {
         })
     }
 
-    function deleteTaskList(list: TaskList): void {
+    function deleteTaskList(): void {
         const transaction = db[_transaction]([
             ObjectStoreNames[_lists],
             ObjectStoreNames[_tasks], 
@@ -993,10 +991,8 @@ const _: VoidComponent = () => {
         const subTasksStore = transaction[_objectStore](ObjectStoreNames[_subtasks])
         const fileMetaDataStore = transaction[_objectStore](ObjectStoreNames[_taskFileMetaData])
         const filesStore = transaction[_objectStore](ObjectStoreNames[_files])
+        const list = lists[selectedTaskListIndexToDelete()]
         changePage(Pages[_tasks])
-
-        const index = lists[_findIndex]((l) => l[_id] == list[_id])
-        if (index < 0) return;
 
         listsStore[_delete](list[_id])
         for (const task of list[_tasks]) {
@@ -1012,7 +1008,7 @@ const _: VoidComponent = () => {
             }
         }
 
-        setLists(lists => [...lists[_slice](0, index), ...lists[_slice](index + 1)])
+        setLists(lists => [...lists[_slice](0, selectedTaskListIndexToDelete()), ...lists[_slice](selectedTaskListIndexToDelete() + 1)])
     }
 
     // FIXME: To many iteration and I hate it. I don't find any better solution currently
@@ -1391,14 +1387,16 @@ const _: VoidComponent = () => {
                     variant={ButtonVariant[_filled]} 
                     onClick={() => {
                         closeDialog(dialog_deleteList_ref)
-                        deleteTaskList(selectedTaskListToDelete())
+                        deleteTaskList()
                     }}>
                     Delete
                 </Button>
             </>}>
-            <>Are you sure want to delete <q style={{"font-weight": _bold, color: 'rgb(var(--color-accent))'}}>{selectedTaskListToDelete()[_name]}</q> list? </>
-            <>This list contains {selectedTaskListToDelete()[_tasks][_filter](v => !v[_complete])[_length]} uncompleted tasks </>
-            <>and {selectedTaskListToDelete()[_tasks][_filter](v => v[_complete])[_length]} completed tasks</>
+            <Show when={lists[selectedTaskListIndexToDelete()]}>
+                <>Are you sure want to delete <q style={{"font-weight": _bold, color: 'rgb(var(--color-accent))'}}>{lists[selectedTaskListIndexToDelete()][_name]}</q> list? </>
+                <>This list contains {lists[selectedTaskListIndexToDelete()][_tasks][_filter](v => !v[_complete])[_length]} uncompleted tasks </>
+                <>and {lists[selectedTaskListIndexToDelete()][_tasks][_filter](v => v[_complete])[_length]} completed tasks</>
+            </Show>
         </Dialog>
     </>)
 
