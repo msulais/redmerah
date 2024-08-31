@@ -4,7 +4,7 @@ import { TransitionGroup } from "solid-transition-group"
 
 import type { TaskLabel, Settings, Task, TaskList, SubTask, TaskFileMetaData } from "./_types"
 import type { ComponentEvent } from "@/types/event"
-import { _all, _completed, _important, _planned, _tasks, _uncompleted, _includes, _page, _taskLists, _id, _length, _done, _reminder, _name, _taskList, _leading, _headline, _emoji, _currentTarget, _filled, _outlined, _settings, _sortBy, _creationDate, _importance, _descending, _ascending, _sortMode, _command, _onContextMenu, _centerBottomToRight, _task, _description, _files, _subtasks, _number, _value, _trim, _onEdit, _tonal, _text, _toFixed, _join, _size, _type, _listId, _onEditTask, _onContextMenuTask, _labelIds, _showModal, _onDelete, _onDeleteTask, _manual, _radio, _isShowDeleteTaskWarning, _isAnyTask, _isAnyCompletedTask, _isAnyUncompletedTask, _complete, _isGroup, _taskListIndex, _taskIndex, _onEditReminder, _onEditReminderTask, _labels, _centerBottomToLeft, _color, _filter, _onEditLabel, _then, _toUpperCase, _test, _replace, _map, _index, _taskId, _image, _startsWith, _video, _audio, _normal, _onEditFilesTask, _onEditFiles, _rightCenterToBottom, _subtask, _slice, _contents, _localeCompare, _sort, _animate, _finished, _spring, _some } from "@/data/string"
+import { _all, _completed, _important, _planned, _tasks, _uncompleted, _includes, _page, _taskLists, _id, _length, _done, _reminder, _name, _taskList, _leading, _headline, _emoji, _currentTarget, _filled, _outlined, _settings, _sortBy, _creationDate, _importance, _descending, _ascending, _sortMode, _command, _onContextMenu, _centerBottomToRight, _task, _description, _files, _subtasks, _number, _value, _trim, _onEdit, _tonal, _text, _toFixed, _join, _size, _type, _listId, _onEditTask, _onContextMenuTask, _labelIds, _showModal, _onDelete, _onDeleteTask, _manual, _radio, _isShowDeleteTaskWarning, _isAnyTask, _isAnyCompletedTask, _isAnyUncompletedTask, _complete, _isGroup, _taskListIndex, _taskIndex, _onEditReminder, _onEditReminderTask, _labels, _centerBottomToLeft, _color, _filter, _onEditLabel, _then, _toUpperCase, _test, _replace, _map, _index, _taskId, _image, _startsWith, _video, _audio, _normal, _onEditFilesTask, _onEditFiles, _rightCenterToBottom, _subtask, _slice, _contents, _localeCompare, _sort, _animate, _finished, _spring, _some, _findIndex, _concat, _file, _fileIndex, _subtaskIndex, _edit, _action, _chip } from "@/data/string"
 import { Commands, Pages, SortBy, SortMode } from "./_enums"
 import { getCurrentDate, getDate_Y, getDateString_YMD_HM, isOutDate_YMD_HM } from "@/utils/datetime"
 import { preventDefault, stopPropagation } from "@/utils/event"
@@ -657,10 +657,23 @@ const _: VoidComponent<{
     const [text_file, setText_file] = createSignal('')
     const [text_subtask, setText_subtask] = createSignal('')
     const [fileURLOrFileContent, setFileURLOrFileContent] = createSignal<string>('')
+
+    // 'edit' = open from left click to task
+    // 'action' = open from right click to task
+    // 'chip' = open from left click to reminder chip below task name
+    const [changeReminderOption, setChangeReminderOption] = createSignal<'edit' | 'action' | 'chip'>(_edit)
     const [selectedLabel, setSelectedLabel] = createStore<TaskLabel>({id: -1, name: '', color: null})
-    const [selectedTask, setSelectedTask] = createStore<Task & {taskListIndex: number; taskIndex: number}>({complete: false, description: '', files: [], id: -1, important: false, labelIds: [], listId: DEFAULT_TASK_LIST[_id], name: '', reminder: null, subtasks: [], taskIndex: -1, taskListIndex: -1})
-    const [selectedFile, setSelectedFile] = createStore<TaskFileMetaData & { index: number }>({id: -1, listId: -1, name: '', size: 0, taskId: -1, type: '', index: -1})
-    const [selectedSubtask, setSelectedSubtask] = createStore<SubTask & {index: number}>({complete: false, id: -1, index: -1, listId: -1, name: '', taskId: -1})
+    const [selectedTaskToEdit, setSelectedTaskToEdit] = createStore<{task: Task, taskListIndex: number, taskIndex: number}>({task: {complete: false, description: '', files: [], id: -1, important: false, labelIds: [], listId: -1, name: '', reminder: null, subtasks: []}, taskIndex: -1, taskListIndex: -1})
+    const [selectedTaskToAction, setSelectedTaskToAction] = createStore<{task: Task, taskListIndex: number, taskIndex: number}>({ task: {complete: false, description: '', files: [], id: -1, important: false, labelIds: [], listId: -1, name: '', reminder: null, subtasks: []}, taskIndex: -1, taskListIndex: -1 })
+    const [selectedTaskToDelete, setSelectedTaskToDelete] = createStore<{task: Task, taskListIndex: number, taskIndex: number}>({ task: {complete: false, description: '', files: [], id: -1, important: false, labelIds: [], listId: -1, name: '', reminder: null, subtasks: []}, taskIndex: -1, taskListIndex: -1 })
+    const [selectedTaskToFileAction, setSelectedTaskToFileAction] = createStore<{task: Task, taskListIndex: number, taskIndex: number}>({ task: {complete: false, description: '', files: [], id: -1, important: false, labelIds: [], listId: -1, name: '', reminder: null, subtasks: []}, taskIndex: -1, taskListIndex: -1 })
+    const [selectedTaskToChangeReminder, setSelectedTaskToChangeReminder] = createStore<{task: Task, taskListIndex: number, taskIndex: number}>({ task: {complete: false, description: '', files: [], id: -1, important: false, labelIds: [], listId: -1, name: '', reminder: null, subtasks: []}, taskIndex: -1, taskListIndex: -1 })
+    const [selectedTaskToEditLabel, setSelectedTaskToEditLabel] = createStore<{task: Task, taskListIndex: number, taskIndex: number}>({ task: {complete: false, description: '', files: [], id: -1, important: false, labelIds: [], listId: -1, name: '', reminder: null, subtasks: []}, taskIndex: -1, taskListIndex: -1 })
+    const [selectedFileToView, setSelectedFileToView] = createStore<{file: TaskFileMetaData, taskListIndex: number, taskIndex: number, fileIndex: number }>({file: {id: -1, listId: -1, name: '', size: 0, taskId: -1, type: ''}, taskListIndex: -1, taskIndex: -1, fileIndex: -1})
+    const [selectedFileToRename, setSelectedFileToRename] = createStore<{file: TaskFileMetaData, taskListIndex: number, taskIndex: number, fileIndex: number }>({file: {id: -1, listId: -1, name: '', size: 0, taskId: -1, type: ''}, taskListIndex: -1, taskIndex: -1, fileIndex: -1})
+    const [selectedFileToAction, setSelectedFileToAction] = createStore<{file: TaskFileMetaData, taskListIndex: number, taskIndex: number, fileIndex: number }>({file: {id: -1, listId: -1, name: '', size: 0, taskId: -1, type: ''}, taskListIndex: -1, taskIndex: -1, fileIndex: -1})
+    const [selectedFileToAction2, setSelectedFileToAction2] = createStore<{file: TaskFileMetaData, taskListIndex: number, taskIndex: number, fileIndex: number }>({file: {id: -1, listId: -1, name: '', size: 0, taskId: -1, type: ''}, taskListIndex: -1, taskIndex: -1, fileIndex: -1})
+    const [selectedSubtaskToEdit, setSelectedSubtaskToEdit] = createStore<{subtask: SubTask, taskListIndex: number, taskIndex: number, subtaskIndex: number}>({subtask: {complete: false, id: -1, listId: -1, name: '', taskId: -1}, taskListIndex: -1, taskIndex: -1, subtaskIndex: -1})
     const getTaskListIndex = createMemo<number | null>(() => {
         const taskLists = props[_taskLists]
         for (let i = 0; i < taskLists[_length]; i++) {
@@ -670,6 +683,10 @@ const _: VoidComponent<{
         }
         return null
     })
+    
+    // 'edit' = open from left click to task
+    // 'action' = open from left click to file chip below task name
+    let renameFileOption: 'edit' | 'action' = _edit
     let textfield_newSubtask_ref: HTMLInputElement
     let textfield_editSubtask_ref: HTMLInputElement
     let textfield_renameFile_ref: HTMLInputElement
@@ -690,30 +707,6 @@ const _: VoidComponent<{
     let dialog_newSubtask_ref: HTMLDialogElement
     let dialog_editSubtask_ref: HTMLDialogElement
 
-    function updateSelectedTask(): void {
-        try {
-            setSelectedTask(task => ({
-                ...task,
-                ...props[_taskLists][task[_taskListIndex]][_tasks][task[_taskIndex]]
-            }))
-        } catch {}
-    }
-
-    function getTaskFromSelectedTask(): Task {
-        return { 
-            complete: selectedTask[_complete], 
-            description: selectedTask[_description], 
-            files: selectedTask[_files], 
-            id: selectedTask[_id], 
-            important: selectedTask[_important], 
-            labelIds: selectedTask[_labelIds], 
-            listId: selectedTask[_listId], 
-            name: selectedTask[_name], 
-            reminder: selectedTask[_reminder], 
-            subtasks: selectedTask[_subtasks] 
-        }
-    }
-
     async function deleteTask(ev: Event, task: Task, taskListIndex: number, taskIndex: number): Promise<void> {
         if (!props[_settings][_isShowDeleteTaskWarning]) {
             closeDialog(dialog_deleteTaskWarning_ref)
@@ -723,55 +716,27 @@ const _: VoidComponent<{
             return
         }
 
-        setSelectedTask({
-            ...task, 
-            taskListIndex,
-            taskIndex
-        })
+        setSelectedTaskToDelete({task, taskListIndex, taskIndex})
         openDialog(ev, dialog_deleteTaskWarning_ref, {important: true})
     }
 
     function editTask(ev: Event, task: Task, taskListIndex: number, taskIndex: number): void {
-        setSelectedTask({
-            ...task, 
-            taskListIndex,
-            taskIndex
-        })
+        setSelectedTaskToEdit({task, taskListIndex, taskIndex})
         openDialog(ev, dialog_editTask_ref)
     }
 
-    function getTaskListBySelectedTask(): TaskList {
-        return props[_taskLists][selectedTask[_taskListIndex]] ?? {...DEFAULT_TASK_LIST}
-    }
-
-    function renameFile(ev: Event): void {
-        const text = selectedFile[_name][_replace](/\.[^\.]*$/, '')
-        changeTextFieldValue(textfield_renameFile_ref, text)
-        setText_file(text)
-        openDialog(ev, dialog_fileRename_ref, {
-            inputAutoFocus: true, 
-            important: true
-        })
-    }
-
-    async function viewFile(ev: Event, file: TaskFileMetaData & { index: number }): Promise<void> {
-        setSelectedFile(file)
+    async function viewFile(ev: Event, file: TaskFileMetaData, taskListIndex: number, taskIndex: number, fileIndex: number): Promise<void> {
+        setSelectedFileToView({file, taskListIndex, taskIndex, fileIndex})
         const blob = (await props[_command](
             Commands.get_file_blob, 
-            {   id: file[_id], 
-                listId: file[_listId],
-                name: file[_name], 
-                size: file[_size], 
-                taskId: file[_taskId],
-                type: file[_type]
-            } satisfies TaskFileMetaData, 
-            selectedTask[_taskListIndex], 
-            selectedTask[_taskIndex], 
-            file[_index]
+            file, 
+            taskListIndex, 
+            taskIndex, 
+            fileIndex
         ) as (Blob | null))
         if (blob == null) return;
 
-        if (selectedFile[_type][_startsWith](_text)) {
+        if (selectedFileToView[_file][_type][_startsWith](_text)) {
             setFileURLOrFileContent(await readFileAsText(blob))
         } else {
             setFileURLOrFileContent(createObjectURL(blob))
@@ -780,62 +745,21 @@ const _: VoidComponent<{
         openDialog(ev, dialog_viewFile_ref)
     }
 
-    function deleteFile(): void {
-        setSelectedTask(_files, files => [
-            ...files[_slice](0, selectedFile[_index]), 
-            ...files[_slice](selectedFile[_index] + 1)
-        ])
-        props[_command](
-            Commands.edit_task, 
-            getTaskFromSelectedTask() satisfies Task, 
-            selectedTask[_taskListIndex], 
-            selectedTask[_taskIndex]
-        )
-    }
-
     function deleteSubtask(index: number): void {
-        setSelectedTask(_subtasks, subtasks => [
+        setSelectedTaskToEdit(_task, _subtasks, subtasks => [
             ...subtasks[_slice](0, index), 
             ...subtasks[_slice](index + 1)
         ])
         props[_command](
             Commands.edit_task, 
-            getTaskFromSelectedTask() satisfies Task, 
-            selectedTask[_taskListIndex], 
-            selectedTask[_taskIndex]
+            selectedTaskToEdit[_task], 
+            selectedTaskToEdit[_taskListIndex], 
+            selectedTaskToEdit[_taskIndex]
         )
     }
 
-    function downloadFile(): void {
-        props[_command](
-            Commands.download_file, 
-            {
-                id: selectedFile[_id], 
-                listId: selectedFile[_listId],
-                name: selectedFile[_name], 
-                size: selectedFile[_size], 
-                taskId: selectedFile[_taskId],
-                type: selectedFile[_type]
-            } satisfies TaskFileMetaData, 
-            selectedTask[_taskListIndex], 
-            selectedTask[_taskIndex], 
-            selectedFile[_index]
-        )
-    }
-
-    function addFiles(): void {
-        const taskIndex = selectedTask[_taskIndex]
-        const taskListIndex = selectedTask[_taskListIndex]
-        const task = getTaskFromSelectedTask()
-        openFile(null, true)[_then](async (files) => {
-            if (files == null) return;
-            const result = await props[_command](Commands.add_files, files, task, taskListIndex, taskIndex) as TaskFileMetaData[]
-            setSelectedTask(_files, result)
-        })
-    }
-
-    function editSubtask(ev: Event, subtask: SubTask, index: number): void {
-        setSelectedSubtask({...subtask, index})
+    function editSubtask(ev: Event, subtask: SubTask, taskListIndex: number, taskIndex: number, subtaskIndex: number): void {
+        setSelectedSubtaskToEdit({subtask, taskListIndex, taskIndex, subtaskIndex})
         changeTextFieldValue(textfield_editSubtask_ref, subtask[_name])
         setText_subtask(subtask[_name])
         openDialog(ev, dialog_editSubtask_ref, {
@@ -848,17 +772,15 @@ const _: VoidComponent<{
         closeDialog(dialog_editSubtask_ref)
         props[_command](
             Commands.edit_subtask, 
-            {   name: text_subtask()[_trim](),
-                complete: selectedSubtask[_complete],
-                id: selectedSubtask[_id],
-                listId: selectedSubtask[_listId],
-                taskId: selectedSubtask[_taskId]
+            {   ...selectedSubtaskToEdit[_subtask], 
+                name: text_subtask()[_trim]()
             } satisfies SubTask,
-            selectedTask[_taskListIndex],
-            selectedTask[_taskIndex], 
-            selectedSubtask[_index]
+            selectedSubtaskToEdit[_taskListIndex],
+            selectedSubtaskToEdit[_taskIndex], 
+            selectedSubtaskToEdit[_subtaskIndex]
         )
-        updateSelectedTask()
+        
+        setSelectedTaskToEdit(_task, _subtasks, props[_taskLists][selectedSubtaskToEdit[_taskListIndex]][_tasks][selectedSubtaskToEdit[_taskIndex]][_subtasks])
     }
 
     async function confirmAddSubtask(): Promise<void> {
@@ -867,53 +789,54 @@ const _: VoidComponent<{
             Commands.add_subtask, 
             {   complete: false, 
                 id: -1,
-                listId: selectedTask[_listId],
+                listId: selectedTaskToEdit[_task][_listId],
                 name: text_subtask()[_trim](),
-                taskId: selectedTask[_id]
+                taskId: selectedTaskToEdit[_task][_id]
             } satisfies SubTask,
-            selectedTask[_taskListIndex],
-            selectedTask[_taskIndex]
+            selectedTaskToEdit[_taskListIndex],
+            selectedTaskToEdit[_taskIndex]
         ) as SubTask[])
 
-        updateSelectedTask()
+        setSelectedTaskToEdit(_task, _subtasks, subtasks)
     }
 
     function confirmFileRename(): void {
         closeDialog(dialog_fileRename_ref)
+
+        const s = selectedFileToRename
         const newFile: TaskFileMetaData = {
-            id: selectedFile[_id], 
-            listId: selectedFile[_listId],
-            name: text_file()[_trim]() + '.' + selectedFile[_name][_replace](/^[^\.]+\./gs, ''), 
-            size: selectedFile[_size], 
-            taskId: selectedFile[_taskId],
-            type: selectedFile[_type]
+            id: s[_file][_id], 
+            listId: s[_file][_listId],
+            name: text_file()[_trim]() + '.' + s[_file][_name][_replace](/^[^\.]+\./gs, ''), 
+            size: s[_file][_size], 
+            taskId: s[_file][_taskId],
+            type: s[_file][_type]
         }
-        props[_command](
-            Commands.edit_file, 
-            newFile, 
-            selectedTask[_taskListIndex], 
-            selectedTask[_taskIndex], 
-            selectedFile[_index]
-        )
-        updateSelectedTask()
+        props[_command](Commands.edit_file, newFile, s[_taskListIndex], s[_taskIndex], s[_fileIndex])
+
+        const files = props[_taskLists][s[_taskListIndex]][_tasks][s[_taskIndex]][_files]
+        if (renameFileOption == _edit) setSelectedTaskToEdit(_task, _files, files)
+        else if (renameFileOption == _action) setSelectedTaskToFileAction(_task, _files, files)
     }
 
     const SubtaskItem: VoidComponent<{
         subtask: SubTask
-        index: number
+        taskListIndex: number
+        taskIndex: number
+        subtaskIndex: number
     }> = ($props) => {
         return (<List 
             trailing={<>
                 <TextTooltip text='Edit subtask'>
                     <IconButton 
-                        onClick={ev => editSubtask(ev, $props[_subtask], $props[_index])}
+                        onClick={ev => editSubtask(ev, $props[_subtask], $props[_taskListIndex], $props[_taskIndex], $props[_subtaskIndex])}
                         code={0xE739}
                     />
                 </TextTooltip>
 
                 <TextTooltip text="Delete subtask">
                     <IconButton 
-                        onClick={() => deleteSubtask($props[_index])}
+                        onClick={() => deleteSubtask($props[_subtaskIndex])}
                         code={0xE59D}
                     />
                 </TextTooltip>
@@ -929,12 +852,12 @@ const _: VoidComponent<{
                             props[_command](
                                 Commands.edit_subtask, 
                                 subtask, 
-                                selectedTask[_taskListIndex], 
-                                selectedTask[_taskIndex], 
-                                $props[_index]
+                                $props[_taskListIndex], 
+                                $props[_taskIndex], 
+                                $props[_subtaskIndex]
                             )
 
-                            setSelectedTask(_subtasks, $props[_index], subtask)
+                            setSelectedTaskToEdit(_task, _subtasks, $props[_subtaskIndex], subtask)
                         }}
                         code={$props[_subtask][_complete]? 0xE3CB : 0xE3D4}/>
                 </TextTooltip>
@@ -943,10 +866,10 @@ const _: VoidComponent<{
         </List>)
     }
 
-    const FileItem: VoidComponent<TaskFileMetaData & { index: number }> = ($props) => {
-        const isTypeNotSupported = createMemo<boolean>(() => !/^(audio|image|video|text)/[_test]($props[_type]))
+    const FileItem: VoidComponent<{file: TaskFileMetaData, taskListIndex: number, taskIndex: number, fileIndex: number }> = ($props) => {
+        const isTypeNotSupported = createMemo<boolean>(() => !/^(audio|image|video|text)/[_test]($props[_file][_type]))
         const getSizeText = createMemo(() => {
-            const value = $props[_size]
+            const value = $props[_file][_size]
             const TERA = 1_000_000_000_000
             const GIGA = 1_000_000_000
             const MEGA = 1_000_000
@@ -966,16 +889,16 @@ const _: VoidComponent<{
                 <TextTooltip text={"View file" + (isTypeNotSupported()? ' (not supported)' : '')}>
                     <IconButton 
                         disabled={isTypeNotSupported()} 
-                        onClick={async (ev) => viewFile(ev, $props)}
+                        onClick={(ev) => viewFile(ev, $props[_file], $props[_taskListIndex], $props[_taskIndex], $props[_fileIndex])}
                         code={0xE77B}
                     />
                 </TextTooltip>
 
                 <TextTooltip text="More actions">
                     <IconButton 
-                        focused={selectedFile[_id] == $props[_id] && is_menu_fileAction_open()}
+                        focused={selectedFileToAction[_file][_id] == $props[_file][_id] && is_menu_fileAction_open()}
                         onClick={(ev) => {
-                            setSelectedFile($props)
+                            setSelectedFileToAction($props)
                             openMenu(ev, menu_fileAction_ref, {
                                 anchor: ev[_currentTarget], 
                             })
@@ -984,8 +907,8 @@ const _: VoidComponent<{
                     />
                 </TextTooltip>
             </>}
-            subtitle={[getSizeText(), $props[_type][_replace](/\/.+$/gs, '')][_join](" • ")}>
-            {$props[_name]}
+            subtitle={[getSizeText(), $props[_file][_type][_replace](/\/.+$/gs, '')][_join](" • ")}>
+            {$props[_file][_name]}
         </List>)
     }
 
@@ -1006,12 +929,15 @@ const _: VoidComponent<{
                 <TextTooltip text="Remove label from task">
                     <IconButton 
                         onClick={() => {
-                            setSelectedTask(_labelIds, ids => ids[_filter]((id) => id != $props[_id]))
+                            const index = selectedTaskToEdit[_task][_labelIds][_findIndex](id => id == $props[_id])
+                            if (index < 0) return;
+
+                            setSelectedTaskToEdit(_task, _labelIds, ids => ids[_slice](0, index)[_concat](ids[_slice](index + 1)))
                             props[_command](
                                 Commands.edit_task, 
-                                getTaskFromSelectedTask(), 
-                                selectedTask[_taskListIndex], 
-                                selectedTask[_taskIndex]
+                                selectedTaskToEdit[_task], 
+                                selectedTaskToEdit[_taskListIndex], 
+                                selectedTaskToEdit[_taskIndex]
                             )
                         }} 
                         code={0xE5E9}
@@ -1033,54 +959,53 @@ const _: VoidComponent<{
                 <Button variant={ButtonVariant[_filled]} onClick={() => {
                     props[_command](
                         Commands.edit_task, 
-                        {...getTaskFromSelectedTask(), complete: !selectedTask[_complete]} satisfies Task, 
-                        selectedTask[_taskListIndex], 
-                        selectedTask[_taskIndex]
+                        {...selectedTaskToEdit[_task], complete: !selectedTaskToEdit[_task][_complete]} satisfies Task, 
+                        selectedTaskToEdit[_taskListIndex], 
+                        selectedTaskToEdit[_taskIndex]
                     )
 
-                    const task = props[_taskLists][selectedTask[_taskListIndex]][_tasks][selectedTask[_taskIndex]]
-                    setSelectedTask(values => ({
-                        ...values, 
-                        ...task
-                    }))
-                }}>Mark as {selectedTask[_complete]? "not" : ''} completed</Button>
+                    setSelectedTaskToEdit(_task, props[_taskLists][selectedTaskToEdit[_taskListIndex]][_tasks][selectedTaskToEdit[_taskIndex]])
+                }}>Mark as {selectedTaskToEdit[_task][_complete]? "not" : ''} completed</Button>
             </>}>
 
-            {/* TODO: show list of tasklists */}
-            <Button variant={ButtonVariant[_tonal]}>{getTaskListBySelectedTask()[_name]}<Icon code={0xE3FC}/></Button>
             <TextField 
                 labelText="Task" 
-                value={selectedTask[_name]}
+                value={selectedTaskToEdit[_task][_name]}
                 onBlur={(ev) => {
-                    if (ev[_currentTarget][_value] == selectedTask[_name]) return;
-                    setSelectedTask(_name, ev[_currentTarget][_value])
+                    if (ev[_currentTarget][_value] == selectedTaskToEdit[_task][_name]) return;
+                    setSelectedTaskToEdit(_task, _name, ev[_currentTarget][_value])
                     props[_command](
                         Commands.edit_task, 
-                        getTaskFromSelectedTask(), 
-                        selectedTask[_taskListIndex], 
-                        selectedTask[_taskIndex]
+                        selectedTaskToEdit[_task], 
+                        selectedTaskToEdit[_taskListIndex], 
+                        selectedTaskToEdit[_taskIndex]
                     )
                 }}
             />
             <AreaTextField 
                 labelText="Description" 
                 maxLine={3} 
-                value={selectedTask[_description]}
+                value={selectedTaskToEdit[_task][_description]}
                 onBlur={(ev) => {
-                    if (ev[_currentTarget][_value] == selectedTask[_description]) return;
-                    setSelectedTask(_description, ev[_currentTarget][_value])
+                    if (ev[_currentTarget][_value] == selectedTaskToEdit[_task][_description]) return;
+                    setSelectedTaskToEdit(_task, _description, ev[_currentTarget][_value])
                     props[_command](
                         Commands.edit_task, 
-                        getTaskFromSelectedTask(), 
-                        selectedTask[_taskListIndex], 
-                        selectedTask[_taskIndex]
+                        selectedTaskToEdit[_task], 
+                        selectedTaskToEdit[_taskListIndex], 
+                        selectedTaskToEdit[_taskIndex]
                     )
                 }}
             />
 
             <div data-subtasks>
-                <For each={selectedTask[_subtasks]}>{ (subtask, i) => 
-                    <SubtaskItem subtask={subtask} index={i()} />
+                <For each={selectedTaskToEdit[_task][_subtasks]}>{ (subtask, index) => 
+                    <SubtaskItem 
+                        subtask={subtask} 
+                        taskListIndex={selectedTaskToEdit[_taskListIndex]} 
+                        taskIndex={selectedTaskToEdit[_taskIndex]} 
+                        subtaskIndex={index()} 
+                    />
                 }</For>
 
                 <Button 
@@ -1093,7 +1018,7 @@ const _: VoidComponent<{
             </div>
             <Divider />
             <div data-label>
-                <For each={selectedTask[_labelIds]}>{labelId => 
+                <For each={selectedTaskToEdit[_task][_labelIds]}>{labelId => 
                     <Show when={props[_labels][labelId] != undefined}>
                         <LabelItem {...props[_labels][labelId]!} />
                     </Show>
@@ -1110,23 +1035,29 @@ const _: VoidComponent<{
             <Divider />
             <div data-reminder>
                 <Show 
-                    when={selectedTask[_reminder] != null}
+                    when={selectedTaskToEdit[_task][_reminder] != null}
                     fallback={<Button
                         focused={is_dateTimePicker_reminder_open()}
-                        onClick={ev => openDateTimePicker(ev, dateTimePicker_reminder_ref, {
-                            anchor: ev[_currentTarget], 
-                            position: DateTimePickerPosition[_centerBottomToRight]
-                        })}>
+                        onClick={ev => {
+                            setChangeReminderOption(_edit)
+                            openDateTimePicker(ev, dateTimePicker_reminder_ref, {
+                                anchor: ev[_currentTarget], 
+                                position: DateTimePickerPosition[_centerBottomToRight]
+                            })
+                        }}>
                         <Icon code={0xE01D}/>Add reminder
                     </Button>}>
                     <List 
                         trailing={<>
                             <TextTooltip text="Change datetime reminder">
                                 <IconButton 
-                                    onClick={ev => openDateTimePicker(ev, dateTimePicker_reminder_ref, {
-                                        anchor: ev[_currentTarget], 
-                                        position: DateTimePickerPosition[_centerBottomToRight]
-                                    })}
+                                    onClick={ev => {
+                                        setChangeReminderOption(_edit)
+                                        openDateTimePicker(ev, dateTimePicker_reminder_ref, {
+                                            anchor: ev[_currentTarget], 
+                                            position: DateTimePickerPosition[_centerBottomToRight]
+                                        })
+                                    }}
                                     code={0xE2EA}
                                 />
                             </TextTooltip>
@@ -1134,15 +1065,12 @@ const _: VoidComponent<{
                             <TextTooltip text="Remove reminder">
                                 <IconButton 
                                     onClick={(ev) => {
-                                        setSelectedTask(v => ({
-                                            ...v!, 
-                                            reminder: null
-                                        }))
+                                        setSelectedTaskToEdit(_task, _reminder, null)
                                         props[_command](
                                             Commands.edit_task, 
-                                            getTaskFromSelectedTask(), 
-                                            selectedTask[_taskListIndex], 
-                                            selectedTask[_taskIndex]
+                                            selectedTaskToEdit[_task], 
+                                            selectedTaskToEdit[_taskListIndex], 
+                                            selectedTaskToEdit[_taskIndex]
                                         )
                                     }}
                                     code={0xE01F}
@@ -1152,44 +1080,60 @@ const _: VoidComponent<{
                         leading={<Icon code={0xE025}/>}>
                         <span style={{
                             color: isOutDate_YMD_HM(
-                                selectedTask[_reminder]!, 
+                                selectedTaskToEdit[_task][_reminder]!, 
                                 getCurrentDate(), 
                                 new Date(getDate_Y() + 100, 2, 2)
                             )? 'rgb(var(--color-error))' : undefined
-                        }}>{getDateString_YMD_HM(selectedTask[_reminder]!)}</span>
+                        }}>{getDateString_YMD_HM(selectedTaskToEdit[_task][_reminder]!)}</span>
                     </List>
                 </Show>
             </div>
             <Divider />
             <div data-file>
-                <For each={selectedTask[_files]}>{(file, index) => <FileItem {...file} index={index()}/>}</For>
+                <For each={selectedTaskToEdit[_task][_files]}>{(file, index) => 
+                    <FileItem 
+                        file={file}
+                        fileIndex={index()}
+                        taskIndex={selectedTaskToEdit[_taskIndex]}
+                        taskListIndex={selectedTaskToEdit[_taskListIndex]}
+                    />
+                }</For>
                 <Button 
-                    onClick={() => addFiles()}>
+                    onClick={() => {
+                        const taskIndex = selectedTaskToEdit[_taskIndex]
+                        const taskListIndex = selectedTaskToEdit[_taskListIndex]
+                        const task = selectedTaskToEdit[_task]
+                        openFile(null, true)[_then](async (files) => {
+                            if (files == null) return;
+                            const result = await props[_command](Commands.add_files, files, task, taskListIndex, taskIndex) as TaskFileMetaData[]
+                            setSelectedTaskToEdit(_task, _files, result)
+                        })
+                    }}>
                     <Icon code={0xE187}/>Add file
                 </Button>
             </div>
             <Divider />
             <div data-important>
                 <Button onClick={() => {
-                        setSelectedTask(_important, t => !t)
+                        setSelectedTaskToEdit(_task, _important, t => !t)
                         props[_command](
                             Commands.edit_task, 
-                            getTaskFromSelectedTask(), 
-                            selectedTask[_taskListIndex], 
-                            selectedTask[_taskIndex]
+                            selectedTaskToEdit[_task], 
+                            selectedTaskToEdit[_taskListIndex], 
+                            selectedTaskToEdit[_taskIndex]
                         )
                     }}>
-                    <Icon filled={selectedTask[_important]} code={0xEF1B}/>
-                    Mark as {selectedTask[_important]? 'not' : ''} important
+                    <Icon filled={selectedTaskToEdit[_task][_important]} code={0xEF1B}/>
+                    Mark as {selectedTaskToEdit[_task][_important]? 'not' : ''} important
                 </Button>
             </div>
             <div data-delete>
                 <Button 
                     onClick={(ev) => deleteTask(
                         ev, 
-                        getTaskFromSelectedTask(), 
-                        selectedTask[_taskListIndex], 
-                        selectedTask[_taskIndex]
+                        selectedTaskToEdit[_task], 
+                        selectedTaskToEdit[_taskListIndex], 
+                        selectedTaskToEdit[_taskIndex]
                     )} 
                     style={{color: 'rgb(var(--color-error))'}}>
                     <Icon code={0xE59D}/>
@@ -1207,10 +1151,10 @@ const _: VoidComponent<{
                     closeDialog(dialog_deleteTaskWarning_ref)
                     closeDialog(dialog_editTask_ref)
                     closeMenu(menu_taskAction_ref)
-                    props[_command](Commands.delete_task, getTaskFromSelectedTask(), selectedTask[_taskListIndex], selectedTask[_taskIndex])
+                    props[_command](Commands.delete_task, selectedTaskToDelete[_task], selectedTaskToDelete[_taskListIndex], selectedTaskToDelete[_taskIndex])
                 }} variant={ButtonVariant[_filled]}>Delete</Button>
             </>}>
-            Are you sure want to delete <q><span style={{color: 'rgb(var(--color-accent))', "font-weight": 'bold'}}>{(selectedTask && selectedTask[_name]) || ''}</span></q> task?
+            Are you sure want to delete <q><span style={{color: 'rgb(var(--color-accent))', "font-weight": 'bold'}}>{(selectedTaskToDelete[_task][_name]) || ''}</span></q> task?
             <CheckBox 
                 compact 
                 style={{"margin-top": '16px'}}
@@ -1253,10 +1197,10 @@ const _: VoidComponent<{
             style={{width: '720px'}}
             ref={r => dialog_viewFile_ref = r}
             onClose={() => {
-                if (!selectedFile[_type][_startsWith](_text)) revokeObjectURL(fileURLOrFileContent())
+                if (!selectedFileToView[_file][_type][_startsWith](_text)) revokeObjectURL(fileURLOrFileContent())
                 setFileURLOrFileContent('')
             }}
-            header={selectedFile[_name]}
+            header={selectedFileToView[_file][_name]}
             actions={<>
                 <Button 
                     onClick={() => closeDialog(dialog_viewFile_ref)} 
@@ -1268,17 +1212,10 @@ const _: VoidComponent<{
                     onClick={() => {
                         props[_command](
                             Commands.download_file, 
-                            {
-                                id: selectedFile[_id], 
-                                listId: selectedFile[_listId],
-                                name: selectedFile[_name], 
-                                size: selectedFile[_size], 
-                                taskId: selectedFile[_taskId],
-                                type: selectedFile[_type]
-                            } satisfies TaskFileMetaData, 
-                            selectedTask[_taskListIndex], 
-                            selectedTask[_taskIndex], 
-                            selectedFile[_index]
+                            selectedFileToView[_file],
+                            selectedFileToView[_taskListIndex], 
+                            selectedFileToView[_taskIndex], 
+                            selectedFileToView[_fileIndex]
                         )
                     }}>
                     Donwload
@@ -1286,16 +1223,16 @@ const _: VoidComponent<{
             </>}>
             <Show when={fileURLOrFileContent() != ''}>
                 <Switch>
-                    <Match when={selectedFile[_type][_startsWith](_image)}>
+                    <Match when={selectedFileToView[_file][_type][_startsWith](_image)}>
                         <img src={fileURLOrFileContent()} width={'100%'}/>
                     </Match>
-                    <Match when={selectedFile[_type][_startsWith](_video)}>
+                    <Match when={selectedFileToView[_file][_type][_startsWith](_video)}>
                         <video src={fileURLOrFileContent()} autoplay controls width={'100%'}></video>
                     </Match>
-                    <Match when={selectedFile[_type][_startsWith](_audio)}>
+                    <Match when={selectedFileToView[_file][_type][_startsWith](_audio)}>
                         <audio src={fileURLOrFileContent()} autoplay controls style={{width: '100%'}}></audio>
                     </Match>
-                    <Match when={selectedFile[_type][_startsWith](_text)}>
+                    <Match when={selectedFileToView[_file][_type][_startsWith](_text)}>
                         <pre><code style={{'white-space': _normal}}>{fileURLOrFileContent()}</code></pre>
                     </Match>
                 </Switch>
@@ -1375,36 +1312,36 @@ const _: VoidComponent<{
     const Menus: VoidComponent = () => (<>
         <Menu ref={r => menu_taskAction_ref = r}>
             <MenuItem 
-                iconCode={selectedTask && selectedTask[_complete]? 0xE3D4 : 0xE3CC} 
+                iconCode={selectedTaskToAction[_task][_complete]? 0xE3D4 : 0xE3CC} 
                 onClick={() => {
                     closeMenu(menu_taskAction_ref)
                     props[_command](
                         Commands.edit_task, 
-                        {   ...getTaskFromSelectedTask(), 
-                            complete: !selectedTask[_complete]
+                        {   ...selectedTaskToAction[_task], 
+                            complete: !selectedTaskToAction[_task][_complete]
                         } satisfies Task, 
-                        selectedTask[_taskListIndex], 
-                        selectedTask[_taskIndex]
+                        selectedTaskToAction[_taskListIndex], 
+                        selectedTaskToAction[_taskIndex]
                     )
                 }}
                 trailing={<MenuIndent />}>
-                Mark as {selectedTask && selectedTask[_complete]? 'not' : ''} completed
+                Mark as {selectedTaskToAction[_task][_complete]? 'not' : ''} completed
             </MenuItem>
             <MenuItem 
-                leading={<Icon code={0xEF1B} filled={!((selectedTask && selectedTask[_important]) || false)}/>} 
+                leading={<Icon code={0xEF1B} filled={!((selectedTaskToAction[_task][_important]) || false)}/>} 
                 onClick={() => {
                     closeMenu(menu_taskAction_ref)
                     props[_command](
                         Commands.edit_task, 
-                        {   ...getTaskFromSelectedTask(), 
-                            important: !selectedTask[_important]
+                        {   ...selectedTaskToAction[_task], 
+                            important: !selectedTaskToAction[_task][_important]
                         } satisfies Task, 
-                        selectedTask[_taskListIndex], 
-                        selectedTask[_taskIndex]
+                        selectedTaskToAction[_taskListIndex], 
+                        selectedTaskToAction[_taskIndex]
                     )
                 }}
                 trailing={<MenuIndent />}>
-                Mark as {selectedTask && selectedTask[_important]? 'not' : ''} important
+                Mark as {selectedTaskToAction[_task][_important]? 'not' : ''} important
             </MenuItem>
             <MenuDivider />
             <MenuItem 
@@ -1412,7 +1349,15 @@ const _: VoidComponent<{
                 trailing={<MenuIndent />} 
                 onClick={() => {
                     closeMenu(menu_taskAction_ref)
-                    addFiles()
+
+                    const taskIndex = selectedTaskToAction[_taskIndex]
+                    const taskListIndex = selectedTaskToAction[_taskListIndex]
+                    const task = selectedTaskToAction[_task]
+                    openFile(null, true)[_then](async (files) => {
+                        if (files == null) return;
+                        const result = await props[_command](Commands.add_files, files, task, taskListIndex, taskIndex) as TaskFileMetaData[]
+                        setSelectedTaskToAction(_task, _files, result)
+                    })
                 }}>
                 Add file
             </MenuItem>
@@ -1428,10 +1373,11 @@ const _: VoidComponent<{
                 }}>
                 Add subtask
             </MenuItem>
-            <Show when={selectedTask != null && selectedTask[_reminder] == null}>
+            <Show when={selectedTaskToAction[_task][_reminder] == null}>
                 <MenuItem 
                     onClick={(ev) => {
                         closeMenu(menu_taskAction_ref)
+                        setChangeReminderOption(_action)
                         openDateTimePicker(ev, dateTimePicker_reminder_ref)
                     }} 
                     iconCode={0xE01B}
@@ -1452,17 +1398,18 @@ const _: VoidComponent<{
                     <For each={[...props[_labels]][_sort]((a, b) => a == undefined || b == undefined? 0 : a[_name][_localeCompare](b[_name]))}>{label => <Show when={label != undefined}>
                         <MenuItem 
                             leading={<Icon style={{color: label![_color] ?? undefined}} code={0xE407}/>}
-                            checked={selectedTask != null && selectedTask[_labelIds][_includes](label![_id])}
+                            checked={selectedTaskToAction[_task][_labelIds][_includes](label![_id])}
                             onClick={() => {
-                                setSelectedTask(_labelIds, ids => ids[_includes](label![_id])
-                                    ? ids[_filter]((id) => id != label![_id]) 
+                                const index = selectedTaskToAction[_task][_labelIds][_findIndex](id => id == label![_id])
+                                setSelectedTaskToAction(_task, _labelIds, ids => index >= 0
+                                    ? ids[_slice](0, index)[_concat](ids[_slice](index + 1))
                                     : [...ids, label![_id]]
                                 )
                                 props[_command](
                                     Commands.edit_task, 
-                                    getTaskFromSelectedTask(), 
-                                    selectedTask[_taskListIndex], 
-                                    selectedTask[_taskIndex]
+                                    selectedTaskToAction[_task], 
+                                    selectedTaskToAction[_taskListIndex], 
+                                    selectedTaskToAction[_taskIndex]
                                 )
                             }}>
                             {label![_name]}
@@ -1487,9 +1434,9 @@ const _: VoidComponent<{
                         onClick={() => {
                             props[_command](
                                 Commands.move_task, 
-                                getTaskFromSelectedTask(), 
-                                selectedTask[_taskListIndex], 
-                                selectedTask[_taskIndex],
+                                selectedTaskToAction[_task], 
+                                selectedTaskToAction[_taskListIndex], 
+                                selectedTaskToAction[_taskIndex],
                                 i()
                             )
                             closeSubMenu(submenu_moveTask_ref)
@@ -1520,9 +1467,9 @@ const _: VoidComponent<{
                     closeMenu(menu_taskAction_ref)
                     editTask(
                         ev, 
-                        getTaskFromSelectedTask(), 
-                        selectedTask[_taskListIndex], 
-                        selectedTask[_taskIndex]
+                        selectedTaskToAction[_task], 
+                        selectedTaskToAction[_taskListIndex], 
+                        selectedTaskToAction[_taskIndex]
                     )
                 }} 
                 iconCode={0xE739} 
@@ -1534,9 +1481,9 @@ const _: VoidComponent<{
                 trailing={<MenuIndent />}
                 onClick={(ev) => deleteTask(
                     ev, 
-                    getTaskFromSelectedTask(), 
-                    selectedTask[_taskListIndex], 
-                    selectedTask[_taskIndex])
+                    selectedTaskToAction[_task], 
+                    selectedTaskToAction[_taskListIndex], 
+                    selectedTaskToAction[_taskIndex])
                 }>
                 Delete task
             </MenuItem>
@@ -1544,16 +1491,17 @@ const _: VoidComponent<{
         <Menu ref={r => menu_reminder_ref = r}>
             <MenuItem iconCode={0xE2EA} onClick={ev => {
                 closeMenu(menu_reminder_ref)
+                setChangeReminderOption(_chip)
                 openDateTimePicker(ev, dateTimePicker_reminder_ref)
             }}>Change datetime reminder</MenuItem>
             <MenuItem iconCode={0xE01F} onClick={() => {
                 closeMenu(menu_reminder_ref)
-                setSelectedTask(_reminder, null)
+                setSelectedTaskToChangeReminder(_task, _reminder, null)
                 props[_command](
                     Commands.edit_task, 
-                    getTaskFromSelectedTask(), 
-                    selectedTask[_taskListIndex], 
-                    selectedTask[_taskIndex]
+                    selectedTaskToChangeReminder[_task], 
+                    selectedTaskToChangeReminder[_taskListIndex], 
+                    selectedTaskToChangeReminder[_taskIndex]
                 )
             }}>Remove reminder</MenuItem>
         </Menu>
@@ -1578,7 +1526,7 @@ const _: VoidComponent<{
             <For each={[...props[_labels]][_sort]((a, b) => a == undefined || b == undefined? 0 : a[_name][_localeCompare](b[_name]))}>{label => <Show when={label != undefined}>
                 <MenuItem 
                     leading={<Icon style={{color: label![_color] ?? undefined}} code={0xE407}/>}
-                    checked={selectedTask != null && selectedTask[_labelIds][_includes](label![_id])}
+                    checked={selectedTaskToEdit[_task][_labelIds][_includes](label![_id])}
                     onContextMenu={ev => {
                         setSelectedLabel(label!)
                         preventDefault(ev)
@@ -1587,15 +1535,15 @@ const _: VoidComponent<{
                         })
                     }}
                     onClick={() => {
-                        setSelectedTask(_labelIds, ids => ids[_includes](label![_id])
-                            ? ids[_filter]((id) => id != label![_id]) 
-                            : [...ids, label![_id]]
-                        )
+                        const index = selectedTaskToEdit[_task][_labelIds][_findIndex](id => id == label![_id])
+                        if (index < 0) return;
+
+                        setSelectedTaskToEdit(_task, _labelIds, ids => ids[_slice](0, index)[_concat](ids[_slice](index + 1)))
                         props[_command](
                             Commands.edit_task, 
-                            getTaskFromSelectedTask(), 
-                            selectedTask[_taskListIndex], 
-                            selectedTask[_taskIndex]
+                            selectedTaskToEdit[_task], 
+                            selectedTaskToEdit[_taskListIndex], 
+                            selectedTaskToEdit[_taskIndex]
                         )
                     }}>
                     {label![_name]}
@@ -1634,12 +1582,15 @@ const _: VoidComponent<{
                 iconCode={0xE5E9}
                 onClick={() => {
                     closeMenu(menu_labelAction2_ref)
-                    setSelectedTask(_labelIds, ids => ids[_filter]((id) => id != selectedLabel[_id]))
+                    const index = selectedTaskToEditLabel[_task][_labelIds][_findIndex](v => v == selectedLabel[_id])
+                    if (index < 0) return;
+
+                    setSelectedTaskToEditLabel(_task, _labelIds, ids => ids[_slice](0, index)[_concat](ids[_slice](index + 1)))
                     props[_command](
                         Commands.edit_task, 
-                        getTaskFromSelectedTask(), 
-                        selectedTask[_taskListIndex], 
-                        selectedTask[_taskIndex]
+                        selectedTaskToEditLabel[_task], 
+                        selectedTaskToEditLabel[_taskListIndex],
+                        selectedTaskToEditLabel[_taskIndex],
                     )
                 }}>
                 Remove label from task
@@ -1650,7 +1601,13 @@ const _: VoidComponent<{
                 iconCode={0xE0B9}
                 onClick={() => {
                     closeMenu(menu_fileAction_ref)
-                    downloadFile()
+                    props[_command](
+                        Commands.download_file, 
+                        selectedFileToAction[_file],
+                        selectedFileToAction[_taskListIndex], 
+                        selectedFileToAction[_taskIndex], 
+                        selectedFileToAction[_fileIndex]
+                    )
                 }}>
                 Download
             </MenuItem>
@@ -1658,7 +1615,15 @@ const _: VoidComponent<{
                 iconCode={0xE739}
                 onClick={(ev) => {
                     closeMenu(menu_fileAction_ref)
-                    renameFile(ev)
+                    const text = selectedFileToAction[_file][_name][_replace](/\.[^\.]*$/, '')
+                    changeTextFieldValue(textfield_renameFile_ref, text)
+                    setText_file(text)
+                    setSelectedFileToRename({...selectedFileToAction})
+                    renameFileOption = _edit
+                    openDialog(ev, dialog_fileRename_ref, {
+                        inputAutoFocus: true, 
+                        important: true
+                    })
                 }}>
                 Rename
             </MenuItem>
@@ -1666,29 +1631,53 @@ const _: VoidComponent<{
                 iconCode={0xE59D} 
                 onClick={() => {
                     closeMenu(menu_fileAction_ref)
-                    deleteFile()
+                    setSelectedTaskToEdit(_task, _files, files => [
+                        ...files[_slice](0, selectedFileToAction[_fileIndex]), 
+                        ...files[_slice](selectedFileToAction[_fileIndex] + 1)
+                    ])
+                    props[_command](
+                        Commands.edit_task, 
+                        selectedTaskToEdit[_task], 
+                        selectedTaskToEdit[_taskListIndex], 
+                        selectedTaskToEdit[_taskIndex]
+                    )
                 }}>
                 Delete
             </MenuItem>
         </Menu>
         <Menu style={{'min-width': '164px'}} ref={r => menu_fileAction2_ref = r}>
-            <For each={selectedTask[_files]}>{(file, index) => 
-                <MenuItem focused={is_menu_fileAction3_open() && file[_id] == selectedFile[_id]} onClick={(ev) => {
-                    setSelectedFile({...file, index: index()})
-                    openMenu(ev, menu_fileAction3_ref, {
-                        anchor: ev[_currentTarget], 
-                        position: MenuPosition[_rightCenterToBottom]
-                    })
-                }}>{file[_name]}</MenuItem>
+            <For each={selectedTaskToFileAction[_task][_files]}>{(file, index) => 
+                <MenuItem 
+                    focused={is_menu_fileAction3_open() && file[_id] == selectedFileToAction2[_file][_id]} 
+                    onClick={(ev) => {
+                        setSelectedFileToAction2({
+                            file, 
+                            fileIndex: index(),
+                            taskIndex: selectedTaskToFileAction[_taskIndex],
+                            taskListIndex: selectedTaskToFileAction[_taskListIndex]
+                        })
+                        openMenu(ev, menu_fileAction3_ref, {
+                            anchor: ev[_currentTarget], 
+                            position: MenuPosition[_rightCenterToBottom]
+                        })
+                    }}>
+                    {file[_name]}
+                </MenuItem>
             }</For>
         </Menu>
         <Menu style={{'min-width': '164px'}} ref={r => menu_fileAction3_ref = r} onToggleOpen={(isOpen) => setIs_menu_fileAction3_open(isOpen)}>
-            <Show when={/^(audio|image|video|text)/[_test](selectedFile[_type])}>
+            <Show when={/^(audio|image|video|text)/[_test](selectedFileToAction2[_file][_type])}>
                 <MenuItem 
                     iconCode={0xE77B}
                     onClick={ev => {
                         closeMenu(menu_fileAction3_ref)
-                        viewFile(ev, selectedFile)
+                        viewFile(
+                            ev, 
+                            selectedFileToAction2[_file], 
+                            selectedFileToAction2[_taskListIndex],
+                            selectedFileToAction2[_taskIndex],
+                            selectedFileToAction2[_fileIndex]
+                        )
                     }}>
                     View
                 </MenuItem>
@@ -1697,7 +1686,15 @@ const _: VoidComponent<{
                 iconCode={0xE739}
                 onClick={(ev) => {
                     closeMenu(menu_fileAction3_ref)
-                    renameFile(ev)
+                    const text = selectedFileToAction2[_file][_name][_replace](/\.[^\.]*$/, '')
+                    changeTextFieldValue(textfield_renameFile_ref, text)
+                    setText_file(text)
+                    setSelectedFileToRename({...selectedFileToAction2})
+                    renameFileOption = _action
+                    openDialog(ev, dialog_fileRename_ref, {
+                        inputAutoFocus: true, 
+                        important: true
+                    })
                 }}>
                 Rename
             </MenuItem>
@@ -1705,7 +1702,13 @@ const _: VoidComponent<{
                 iconCode={0xE0B9} 
                 onClick={() => {
                     closeMenu(menu_fileAction3_ref)
-                    downloadFile()
+                    props[_command](
+                        Commands.download_file, 
+                        selectedFileToAction2[_file],
+                        selectedFileToAction2[_taskListIndex], 
+                        selectedFileToAction2[_taskIndex], 
+                        selectedFileToAction2[_fileIndex]
+                    )
                 }}>
                 Download
             </MenuItem>
@@ -1713,9 +1716,18 @@ const _: VoidComponent<{
                 iconCode={0xE59D} 
                 onClick={() => {
                     closeMenu(menu_fileAction3_ref)
-                    if (selectedTask[_files][_length] == 1) closeMenu(menu_fileAction2_ref)
+                    if (selectedTaskToFileAction[_task][_files][_length] == 1) closeMenu(menu_fileAction2_ref)
 
-                    deleteFile()
+                    setSelectedTaskToFileAction(_task, _files, files => [
+                        ...files[_slice](0, selectedFileToAction2[_fileIndex]), 
+                        ...files[_slice](selectedFileToAction2[_fileIndex] + 1)
+                    ])
+                    props[_command](
+                        Commands.edit_task, 
+                        selectedTaskToFileAction[_task], 
+                        selectedTaskToFileAction[_taskListIndex], 
+                        selectedTaskToFileAction[_taskIndex]
+                    )
                 }}>
                 Delete
             </MenuItem>
@@ -1725,19 +1737,39 @@ const _: VoidComponent<{
     const DatePickers: VoidComponent = () => (<>
         <DateTimePicker 
             onToggleOpen={(v) => setIs_dateTimePicker_reminder_open(v)}
-            datetime={selectedTask != null && selectedTask[_reminder]
-                ? selectedTask[_reminder]! 
-                : new Date()
-            }
+            datetime={(changeReminderOption() == _edit
+                ? selectedTaskToEdit[_task][_reminder]
+                : changeReminderOption() == _action
+                    ? selectedTaskToAction[_task][_reminder]
+                    : changeReminderOption() == _chip
+                        ? selectedTaskToChangeReminder[_task][_reminder]
+                        : new Date()
+            ) ?? new Date()}
             ref={r => dateTimePicker_reminder_ref = r} 
             onSelectDateTime={(date) => {
-                setSelectedTask(_reminder, date)
-                props[_command](
-                    Commands.edit_task, 
-                    getTaskFromSelectedTask(), 
-                    selectedTask[_taskListIndex], 
-                    selectedTask[_taskIndex]
-                )
+                let task: Task = {complete: false, description: '', files: [], id: -1, important: false, labelIds: [], listId: -1, name: '', reminder: null, subtasks: []}
+                let taskListIndex = 0
+                let taskIndex = 0
+                if (changeReminderOption() == _edit) {
+                    setSelectedTaskToEdit(_task, _reminder, date)
+                    taskListIndex = selectedTaskToEdit[_taskListIndex]
+                    taskIndex = selectedTaskToEdit[_taskIndex]
+                    task = selectedTaskToEdit[_task]
+                } 
+                else if (changeReminderOption() == _action) {
+                    setSelectedTaskToAction(_task, _reminder, date)
+                    taskListIndex = selectedTaskToAction[_taskListIndex]
+                    taskIndex = selectedTaskToAction[_taskIndex]
+                    task = selectedTaskToAction[_task]
+                } 
+                else if (changeReminderOption() == _chip) {
+                    setSelectedTaskToChangeReminder(_task, _reminder, date)
+                    taskListIndex = selectedTaskToChangeReminder[_taskListIndex]
+                    taskIndex = selectedTaskToChangeReminder[_taskIndex]
+                    task = selectedTaskToChangeReminder[_task]
+                }
+
+                props[_command](Commands.edit_task, task, taskListIndex, taskIndex)
             }}
         />
     </>)
@@ -1755,7 +1787,7 @@ const _: VoidComponent<{
                 taskListIndex={getTaskListIndex()!}
                 onDeleteTask={(ev, task, taskIndex) => deleteTask(ev, task, getTaskListIndex()!, taskIndex)}
                 onEditLabel={(ev, label, task, taskIndex) => {
-                    setSelectedTask({...task, taskListIndex: getTaskListIndex()!, taskIndex})
+                    setSelectedTaskToEditLabel({task, taskListIndex: getTaskListIndex()!, taskIndex})
                     setSelectedLabel(label)
                     openMenu(ev, menu_labelAction2_ref, {
                         anchor: ev[_currentTarget],
@@ -1763,21 +1795,21 @@ const _: VoidComponent<{
                     })
                 }}
                 onEditFilesTask={(ev, task, taskIndex) => {
-                    setSelectedTask({...task, taskListIndex: getTaskListIndex()!, taskIndex})
+                    setSelectedTaskToFileAction({task, taskListIndex: getTaskListIndex()!, taskIndex})
                     openMenu(ev, menu_fileAction2_ref, {
                         anchor: ev[_currentTarget],
                         position: MenuPosition[_centerBottomToRight]
                     })
                 }}
                 onEditReminderTask={(ev, task, taskIndex) => {
-                    setSelectedTask({...task, taskListIndex: getTaskListIndex()!, taskIndex})
+                    setSelectedTaskToChangeReminder({task, taskListIndex: getTaskListIndex()!, taskIndex})
                     openMenu(ev, menu_reminder_ref, {
                         anchor: ev[_currentTarget],
                         position: MenuPosition[_centerBottomToRight]
                     })
                 }}
                 onContextMenuTask={(ev, task, taskIndex) => {
-                    setSelectedTask({...task, taskListIndex: getTaskListIndex()!, taskIndex})
+                    setSelectedTaskToAction({task, taskListIndex: getTaskListIndex()!, taskIndex})
                     openMenu(ev, menu_taskAction_ref, {
                         position: MenuPosition[_centerBottomToRight]
                     })
