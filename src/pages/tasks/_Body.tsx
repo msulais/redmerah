@@ -260,7 +260,7 @@ const AppbarTasks: VoidComponent<{
                     </TextTooltip>
                 </Show>
 
-                <Show when={!props[_isGroup]}>
+                <Show when={!props[_isGroup] && ((props[_page] == Pages[_tasks] && props[_isAnyTask]) || isNumber(props[_page]))}>
                     <TextTooltip text="More options">
                         <IconButton 
                             focused={is_menu_more_open()} 
