@@ -17,3 +17,7 @@ export function clearTimeDelayed(id: number | undefined): void {
 export function clearTimeInterval(id: number | undefined): void {
     return clearInterval(id)
 }
+
+export function setMicrotask(callback: VoidFunction): void {
+    return queueMicrotask(callback)
+}
