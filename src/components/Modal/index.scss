@@ -2,6 +2,7 @@
     position: fixed;
     background-color: rgb(var(--color-surface));
     border: 1px solid rgba(var(--color-on-surface), var(--opacity3));
+    box-sizing: content-box;
     border-radius: 12px;
     left: 0;
     max-height: calc(100dvh - 16px);
