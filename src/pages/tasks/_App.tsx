@@ -1410,6 +1410,7 @@ const _: VoidComponent = () => {
                     preventDefault(ev)
                     if (newListNameText()[_trim]() == '') return;
                     addNewTaskList(newListNameText(), newListEmoji())
+                    closeDialog(dialog_newList_ref)
                 }}>
                 <TextField 
                     ref={r => textfield_newList_ref = r}
@@ -1461,6 +1462,7 @@ const _: VoidComponent = () => {
                         )
                     ) return;
                     renameTaskList()
+                    closeDialog(dialog_editList_ref)
                 }}>
                 <TextField 
                     ref={r => textfield_editList_ref = r}
