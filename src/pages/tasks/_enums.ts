@@ -49,7 +49,7 @@ export enum Commands {
     /** @param {number} taskListIndex `number` */
     delete_completed_task = 'n', 
 
-    /** @param {number} taskListIndex `number` */
+    /** @param {number?} taskListIndex `number?` */
     copy_tasks = 'o', 
     
     /** @param {Event} event `Event` */

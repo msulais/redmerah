@@ -251,7 +251,7 @@ const AppbarTasks: VoidComponent<{
                     <TextTooltip text="Copy tasks">
                         <IconButton 
                             onClick={() => {
-                                props[_command](Commands.copy_tasks, props[_taskListIndex])
+                                props[_command](Commands.copy_tasks, props[_isGroup]? undefined : props[_taskListIndex])
                                 openToast(toast_copied_ref)
                             }} 
                             code={0xE51B}

@@ -420,34 +420,49 @@ const _: VoidComponent = () => {
         }
     }
 
-    function copyTasks(taskListIndex: number): void {
-        const taskList = lists[taskListIndex]
-        let text = `${taskList[_emoji] != null ? taskList[_emoji] : '📑'} ${taskList[_name]}`
-
-        for (let i = 0; i < taskList[_tasks][_length]; i++) {
-            const task: Task = taskList[_tasks][i]
-            let additional: string = ''
-            text += (`\n${task[_complete] ? '✔️' : '❌'} ${task[_name]}`)
-
-            if (task[_description] != '') additional += `[🗒️ ${task[_description]}]`
-            if (task[_important]) additional +=  '[⭐ important]'
-            if (task[_reminder] != null) additional += `[🕒 ${getDateString_YMD_HM(task[_reminder]!)}]`
-            for (const file of task[_files]) {
-                additional += `[💾 ${file[_name]}]`
+    function copyTasks(taskListIndex?: number): void {
+        let text: string = ''
+        const getTextPerTaskList = (taskListIndex: number) => {
+            const taskList = lists[taskListIndex]
+            text += `${taskList[_emoji] != null ? taskList[_emoji] : '📑'} ${taskList[_name]}`
+    
+            for (let i = 0; i < taskList[_tasks][_length]; i++) {
+                const task: Task = taskList[_tasks][i]
+                let additional: string = ''
+                text += (`\n${task[_complete] ? '✔️' : '❌'} ${task[_name]}`)
+    
+                if (task[_description] != '') additional += `[🗒️ ${task[_description]}]`
+                if (task[_important]) additional +=  '[⭐ important]'
+                if (task[_reminder] != null) additional += `[🕒 ${getDateString_YMD_HM(task[_reminder]!)}]`
+                for (const file of task[_files]) {
+                    additional += `[💾 ${file[_name]}]`
+                }
+                
+                let j = 0
+                labels: for (const id of task[_labelIds]) {
+                    if (labels[id] == undefined) continue labels;
+                    if (j >= task[_labelIds][_length]) break labels;
+    
+                    additional += `[🔖 ${labels[id][_name]}]`
+                    j++
+                }
+    
+                if (additional != '') text = [text, additional][_join](' ')
+                for (const subtask of task[_subtasks]) {
+                    text += (`\n➡️${subtask[_complete] ? '✔️' : '❌'} ${subtask[_name]}`)
+                }
             }
-            
+        }
+
+        if (taskListIndex != undefined) {
+            getTextPerTaskList(taskListIndex)
+        } else {
             let j = 0
-            labels: for (const id of task[_labelIds]) {
-                if (labels[id] == undefined) continue labels;
-                if (j >= task[_labelIds][_length]) break labels;
-
-                additional += `[🔖 ${labels[id][_name]}]`
-                j++
-            }
-
-            if (additional != '') text = [text, additional][_join](' ')
-            for (const subtask of task[_subtasks]) {
-                text += (`\n➡️${subtask[_complete] ? '✔️' : '❌'} ${subtask[_name]}`)
+            for (let i = 0; i < lists[_length]; i++) {
+                if (lists[i][_tasks][_length] == 0) continue;
+                if (j > 0) text += '\n\n'
+                getTextPerTaskList(i)
+                ++j
             }
         }
 
@@ -775,7 +790,7 @@ const _: VoidComponent = () => {
 
         // copy_tasks
         else if (type == Commands.copy_tasks) {
-            copyTasks(args[0] as number)
+            copyTasks(args[0] as (number | undefined))
         }
 
         // add_label
