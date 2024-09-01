@@ -4,7 +4,7 @@ import { TransitionGroup } from "solid-transition-group"
 
 import type { TaskLabel, Settings, Task, TaskList, SubTask, TaskFileMetaData } from "./_types"
 import type { ComponentEvent } from "@/types/event"
-import { _all, _completed, _important, _planned, _tasks, _uncompleted, _includes, _page, _taskLists, _id, _length, _done, _reminder, _name, _taskList, _leading, _headline, _emoji, _currentTarget, _filled, _outlined, _settings, _sortBy, _creationDate, _importance, _descending, _ascending, _sortMode, _command, _onContextMenu, _centerBottomToRight, _task, _description, _files, _subtasks, _number, _value, _trim, _onEdit, _tonal, _text, _toFixed, _join, _size, _type, _listId, _onEditTask, _onContextMenuTask, _labelIds, _showModal, _onDelete, _onDeleteTask, _manual, _radio, _isShowDeleteTaskWarning, _isAnyTask, _isAnyCompletedTask, _isAnyUncompletedTask, _complete, _isGroup, _taskListIndex, _taskIndex, _onEditReminder, _onEditReminderTask, _labels, _centerBottomToLeft, _color, _filter, _onEditLabel, _then, _toUpperCase, _test, _replace, _map, _index, _taskId, _image, _startsWith, _video, _audio, _normal, _onEditFilesTask, _onEditFiles, _rightCenterToBottom, _subtask, _slice, _contents, _localeCompare, _sort, _animate, _finished, _spring, _some, _findIndex, _concat, _file, _fileIndex, _subtaskIndex, _edit, _action, _chip } from "@/data/string"
+import { _all, _completed, _important, _planned, _tasks, _uncompleted, _includes, _page, _taskLists, _id, _length, _done, _reminder, _name, _taskList, _leading, _headline, _emoji, _currentTarget, _filled, _outlined, _settings, _sortBy, _creationDate, _importance, _descending, _ascending, _sortMode, _command, _onContextMenu, _centerBottomToRight, _task, _description, _files, _subtasks, _number, _value, _trim, _onEdit, _tonal, _text, _toFixed, _join, _size, _type, _listId, _onEditTask, _onContextMenuTask, _labelIds, _showModal, _onDelete, _onDeleteTask, _manual, _radio, _isShowDeleteTaskWarning, _isAnyTask, _isAnyCompletedTask, _isAnyUncompletedTask, _complete, _isGroup, _taskListIndex, _taskIndex, _onEditReminder, _onEditReminderTask, _labels, _centerBottomToLeft, _color, _filter, _onEditLabel, _then, _toUpperCase, _test, _replace, _map, _index, _taskId, _image, _startsWith, _video, _audio, _normal, _onEditFilesTask, _onEditFiles, _rightCenterToBottom, _subtask, _slice, _contents, _localeCompare, _sort, _animate, _finished, _spring, _some, _findIndex, _concat, _file, _fileIndex, _subtaskIndex, _edit, _action, _chip, _condition } from "@/data/string"
 import { Commands, Pages, SortBy, SortMode } from "./_enums"
 import { getCurrentDate, getDate_Y, getDateString_YMD_HM, isOutDate_YMD_HM } from "@/utils/datetime"
 import { preventDefault, stopPropagation } from "@/utils/event"
@@ -32,7 +32,6 @@ import Toast, { openToast } from "@/components/Toast"
 import DateTimePicker, { DateTimePickerPosition, openDateTimePicker } from "@/components/DateTimePicker"
 import AppBar from "@/components/AppBar"
 import CSS from './_styles.module.scss'
-import { AnimationEffectTiming } from "@/enums/animation"
 
 const AppbarTasks: VoidComponent<{
     page: Pages | number
@@ -606,7 +605,14 @@ const SingleTaskList: VoidComponent<{
 const GroupTaskList: VoidComponent<{
     page: Pages | number
     taskLists: TaskList[]
+    labels: (TaskLabel | undefined)[]
     settings: Settings
+    onEditLabel: (ev: ComponentEvent<MouseEvent, HTMLButtonElement>, label: TaskLabel, task: Task, taskListIndex: number, taskIndex: number) => unknown
+    onDeleteTask: (ev: ComponentEvent<MouseEvent, HTMLButtonElement>, task: Task, taskListIndex: number, taskIndex: number) => unknown
+    onEditTask: (ev: ComponentEvent<MouseEvent, HTMLDivElement>, task: Task, taskListIndex: number, taskIndex: number) => unknown
+    onEditFilesTask: (ev: ComponentEvent<MouseEvent, HTMLButtonElement>, task: Task, taskListIndex: number, taskIndex: number) => unknown
+    onEditReminderTask: (ev: ComponentEvent<MouseEvent, HTMLButtonElement>, task: Task, taskListIndex: number, taskIndex: number) => unknown
+    onContextMenuTask: (ev: ComponentEvent<MouseEvent, HTMLDivElement>, task: Task, taskListIndex: number, taskIndex: number) => unknown
     command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
     const getIcon = createMemo<number>(() => {
@@ -619,14 +625,84 @@ const GroupTaskList: VoidComponent<{
 
         return 0xE3CC
     })
-    const [isEmpty, setIsEmpty] = createSignal<boolean>(true) // TODO: set default to false
+    const isNotEmpty = createMemo<boolean>(() => {
+        const page = props[_page]
+        const taskLists = props[_taskLists]
+        return taskLists[_some](taskList => {
+            if (page == Pages[_all]) return taskList[_tasks][_length] > 0
+            if (page == Pages[_completed]) return taskList[_tasks][_some](task => task[_complete])
+            if (page == Pages[_uncompleted]) return taskList[_tasks][_some](task => !task[_complete])
+            if (page == Pages[_important]) return taskList[_tasks][_some](task => task[_important])
+            if (page == Pages[_planned]) return taskList[_tasks][_some](task => task[_reminder] != null)
+            return false
+        })
+    })
 
-    return (<>
+    const TaskListGroup: VoidComponent<{
+        taskList: TaskList
+        taskListIndex: number
+    }> = ($props) => {
+        const getHeadline = createMemo<string>(() =>  props[_page] != Pages[_tasks]? $props[_taskList][_name] : 'Tasks')
+        const isAnyTask = createMemo<boolean>(() => {
+            const page = props[_page]
+            if (page == Pages[_all]) return $props[_taskList][_tasks][_length] > 0
+            if (page == Pages[_completed]) return $props[_taskList][_tasks][_some](task => task[_complete])
+            if (page == Pages[_uncompleted]) return $props[_taskList][_tasks][_some](task => !task[_complete])
+            if (page == Pages[_important]) return $props[_taskList][_tasks][_some](task => task[_important])
+            if (page == Pages[_planned]) return $props[_taskList][_tasks][_some](task => task[_reminder] != null)
+            return false
+        }) 
+
+        function taskCondition(task: Task): boolean {
+            const page = props[_page]
+            if (page == Pages[_completed]) return task[_complete]
+            if (page == Pages[_uncompleted]) return !task[_complete]
+            if (page == Pages[_important]) return task[_important]
+            if (page == Pages[_planned]) return task[_reminder] != null
+            return true
+        }
+
+        const Headline: VoidComponent = () => (<AppBar 
+            headline={getHeadline()}
+            leading={<Show 
+                when={$props[_taskList][_emoji] == null} 
+                fallback={<Emoji emoji={$props[_taskList][_emoji]!} />}>
+                <Show 
+                    when={$props[_taskList][_id] == DEFAULT_TASK_LIST[_id]} 
+                    fallback={<Icon code={0xF032}/>}>
+                    <Icon code={0xE8E2}/>
+                </Show>
+            </Show>} 
+        />)
+
+        return (<Show when={isAnyTask()}>
+            <Headline/>
+            <For each={$props[_taskList][_tasks]}>{(task, index) => 
+                <Show when={taskCondition(task)}>
+                    <TaskItem 
+                        command={props[_command]}
+                        task={task}
+                        labels={props[_labels]}
+                        taskIndex={index()}
+                        taskListIndex={$props[_taskListIndex]}
+                        onEditLabel={(ev, label) => props[_onEditLabel](ev, label, task, $props[_taskListIndex], index())}
+                        onEditFiles={(ev) => props[_onEditFilesTask](ev, task, $props[_taskListIndex], index())}
+                        onEditReminder={(ev) => props[_onEditReminderTask](ev, task, $props[_taskListIndex], index())}
+                        onEdit={(ev) => props[_onEditTask](ev, task, $props[_taskListIndex], index())}
+                        onContextMenu={(ev) => props[_onContextMenuTask](ev, task, $props[_taskListIndex], index())} 
+                        onDelete={ev => props[_onDeleteTask](ev, task, $props[_taskListIndex], index())}
+                    />
+                </Show>
+            }</For>
+        </Show>)
+    }
+
+    return (<div class={CSS.body_group_task_list} data-empty={toggleAttribute(!isNotEmpty())}>
         <AppbarTasks 
             taskListIndex={-1}        
-            isAnyTask={false /* TODO: is any task */}
-            isAnyCompletedTask={false /* TODO: is any completed task */}
-            isAnyUncompletedTask={false /* TODO: is any uncompleted task */}
+            isAnyTask={isNotEmpty()}
+            isAnyCompletedTask={false}
+            isAnyUncompletedTask={false}
             command={props[_command]} 
             isGroup={true}
             settings={props[_settings]} 
@@ -634,11 +710,15 @@ const GroupTaskList: VoidComponent<{
             leading={<Icon code={getIcon()}/>} 
             headline={stringToTitleCase(props[_page] as Pages)}
         />
-        <div class={CSS.body_group_task_list} data-empty={toggleAttribute(isEmpty())}>
-            {/* TODO: add task list */}
-            <Show when={isEmpty()}><EmptyTasks page={props[_page]} /></Show>
-        </div>
-    </>)
+        <Show when={isNotEmpty()} fallback={<EmptyTasks page={props[_page]} />}>
+            <For each={props[_taskLists]}>{(taskList, index) => 
+                <TaskListGroup 
+                    taskListIndex={index()} 
+                    taskList={taskList}
+                />
+            }</For>
+        </Show>
+    </div>)
 }
 
 const _: VoidComponent<{
@@ -817,6 +897,46 @@ const _: VoidComponent<{
         const files = props[_taskLists][s[_taskListIndex]][_tasks][s[_taskIndex]][_files]
         if (renameFileOption == _edit) setSelectedTaskToEdit(_task, _files, files)
         else if (renameFileOption == _action) setSelectedTaskToFileAction(_task, _files, files)
+    }
+
+    function onContextMenuTask(ev: ComponentEvent<MouseEvent, HTMLDivElement>, task: Task, taskListIndex: number, taskIndex: number): void {
+        setSelectedTaskToAction({task, taskListIndex, taskIndex})
+        openMenu(ev, menu_taskAction_ref, {
+            position: MenuPosition[_centerBottomToRight]
+        })
+    }
+
+    function onEditTask(ev: ComponentEvent<MouseEvent, HTMLDivElement>, task: Task, taskListIndex: number, taskIndex: number): void {
+        editTask(ev, task, getTaskListIndex()!, taskIndex)
+    }
+
+    function onEditReminderTask(ev: ComponentEvent<MouseEvent, HTMLButtonElement>, task: Task, taskListIndex: number, taskIndex: number): void {
+        setSelectedTaskToChangeReminder({task, taskListIndex, taskIndex})
+        openMenu(ev, menu_reminder_ref, {
+            anchor: ev[_currentTarget],
+            position: MenuPosition[_centerBottomToRight]
+        })
+    }
+
+    function onEditFilesTask(ev: ComponentEvent<MouseEvent, HTMLButtonElement>, task: Task, taskListIndex: number, taskIndex: number): void {
+        setSelectedTaskToFileAction({task, taskListIndex, taskIndex})
+        openMenu(ev, menu_fileAction2_ref, {
+            anchor: ev[_currentTarget],
+            position: MenuPosition[_centerBottomToRight]
+        })
+    }
+
+    function onEditLabel(ev: ComponentEvent<MouseEvent, HTMLButtonElement>, label: TaskLabel, task: Task, taskListIndex: number, taskIndex: number): void {
+        setSelectedTaskToEditLabel({task, taskListIndex, taskIndex})
+        setSelectedLabel(label)
+        openMenu(ev, menu_labelAction2_ref, {
+            anchor: ev[_currentTarget],
+            position: MenuPosition[_centerBottomToRight]
+        })
+    }
+
+    function onDeleteTask(ev: ComponentEvent<MouseEvent, HTMLButtonElement>, task: Task, taskListIndex: number, taskIndex: number): void {
+        deleteTask(ev, task, taskListIndex, taskIndex)
     }
 
     const SubtaskItem: VoidComponent<{
@@ -1785,42 +1905,25 @@ const _: VoidComponent<{
                 labels={props[_labels]}
                 taskList={props[_taskLists][getTaskListIndex()!]} 
                 taskListIndex={getTaskListIndex()!}
-                onDeleteTask={(ev, task, taskIndex) => deleteTask(ev, task, getTaskListIndex()!, taskIndex)}
-                onEditLabel={(ev, label, task, taskIndex) => {
-                    setSelectedTaskToEditLabel({task, taskListIndex: getTaskListIndex()!, taskIndex})
-                    setSelectedLabel(label)
-                    openMenu(ev, menu_labelAction2_ref, {
-                        anchor: ev[_currentTarget],
-                        position: MenuPosition[_centerBottomToRight]
-                    })
-                }}
-                onEditFilesTask={(ev, task, taskIndex) => {
-                    setSelectedTaskToFileAction({task, taskListIndex: getTaskListIndex()!, taskIndex})
-                    openMenu(ev, menu_fileAction2_ref, {
-                        anchor: ev[_currentTarget],
-                        position: MenuPosition[_centerBottomToRight]
-                    })
-                }}
-                onEditReminderTask={(ev, task, taskIndex) => {
-                    setSelectedTaskToChangeReminder({task, taskListIndex: getTaskListIndex()!, taskIndex})
-                    openMenu(ev, menu_reminder_ref, {
-                        anchor: ev[_currentTarget],
-                        position: MenuPosition[_centerBottomToRight]
-                    })
-                }}
-                onContextMenuTask={(ev, task, taskIndex) => {
-                    setSelectedTaskToAction({task, taskListIndex: getTaskListIndex()!, taskIndex})
-                    openMenu(ev, menu_taskAction_ref, {
-                        position: MenuPosition[_centerBottomToRight]
-                    })
-                }}
-                onEditTask={(ev, task, taskIndex) => editTask(ev, task, getTaskListIndex()!, taskIndex)}
+                onDeleteTask={(ev, task, taskIndex) => onDeleteTask(ev, task, getTaskListIndex()!, taskIndex)}
+                onEditLabel={(ev, label, task, taskIndex) => onEditLabel(ev, label, task, getTaskListIndex()!, taskIndex)}
+                onEditFilesTask={(ev, task, taskIndex) => onEditFilesTask(ev, task, getTaskListIndex()!, taskIndex)}
+                onEditReminderTask={(ev, task, taskIndex) => onEditReminderTask(ev, task, getTaskListIndex()!, taskIndex)}
+                onContextMenuTask={(ev, task, taskIndex) => onContextMenuTask(ev, task, getTaskListIndex()!, taskIndex)}
+                onEditTask={(ev, task, taskIndex) => onEditTask(ev, task, getTaskListIndex()!, taskIndex)}
             />}>
             <GroupTaskList 
                 command={props[_command]} 
                 settings={props[_settings]} 
                 page={props[_page]} 
                 taskLists={props[_taskLists]}
+                labels={props[_labels]}
+                onDeleteTask={onDeleteTask}
+                onEditLabel={onEditLabel}
+                onEditFilesTask={onEditFilesTask}
+                onEditReminderTask={onEditReminderTask}
+                onContextMenuTask={onContextMenuTask}
+                onEditTask={onEditTask}
             />
         </Show>
         <Dialogs/>

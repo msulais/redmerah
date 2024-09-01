@@ -42,6 +42,13 @@ $side_navigation_none: 680px;
     width: 1080px;
     max-width: calc(100% - 48px);
     transition-duration: .3s;
+
+    > :global(.appbar-leading) > :global(.icon) {
+        width: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 }
 
 .body_dialog_edit {
@@ -117,14 +124,50 @@ $side_navigation_none: 680px;
 }
 
 .body_group_task_list {
-    // TODO: add styles
-    
+    display: flex;
+    grid-template-columns: 1fr;
+    gap: 4px;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+    max-height: calc(100dvh - 56px);
+    height: calc(100dvh - 56px);
+    overflow: auto;
+    padding-bottom: 24px;
+
+    @media (max-width: $side_navigation_none) {
+        padding-bottom: 8px;
+    }
+
     &[data-empty] {
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
+        justify-content: space-between;
         height: 100%;
+    }
+
+    > .body_appbar {
+        position: sticky;
+        top: 0;
+        background-color: rgb(var(--color-surface));
+        z-index: 9;
+
+        @media (max-width: 500px) {
+            max-width: calc(100% - 16px);
+        }
+    }
+
+    > :global(.appbar):not(.body_appbar) {
+        padding-left: 12px;
+        padding-right: 4px;
+        width: 1080px;
+        max-width: calc(100% - 48px);
+        transition-duration: .3s;
+
+        @media (max-width: 500px) {
+            max-width: calc(100% - 16px);
+        }
     }
 }
 
