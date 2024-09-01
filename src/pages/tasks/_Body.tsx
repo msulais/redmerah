@@ -1686,9 +1686,14 @@ const _: VoidComponent<{
                     }}
                     onClick={() => {
                         const index = selectedTaskToEdit[_task][_labelIds][_findIndex](id => id == label![_id])
-                        if (index < 0) return;
+                        setSelectedTaskToEdit(
+                            _task, 
+                            _labelIds, 
+                            ids => index < 0
+                                ? [...ids, label![_id]] 
+                                : ids[_slice](0, index)[_concat](ids[_slice](index + 1))
+                        )
 
-                        setSelectedTaskToEdit(_task, _labelIds, ids => ids[_slice](0, index)[_concat](ids[_slice](index + 1)))
                         props[_command](
                             Commands.edit_task, 
                             selectedTaskToEdit[_task], 
