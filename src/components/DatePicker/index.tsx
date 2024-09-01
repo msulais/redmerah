@@ -59,8 +59,8 @@ const DatePicker: VoidComponent<DatePickerProps> = ($props) => {
         setDaysPerMonth(daysPerMonth)
     }
 
-    function gotoCurrentRealDate(): void {
-        setViewDate(new Date())
+    function gotoSelectedDate(): void {
+        setViewDate(value())
         updateDateView()
     }
 
@@ -200,12 +200,12 @@ const DatePicker: VoidComponent<DatePickerProps> = ($props) => {
             </Button>
             <Show when={
                 (
-                    (dateOption() == DatePickerOption[_day] && !isSameDate_YM(viewDate(), new Date())) 
-                    || (dateOption() == DatePickerOption[_month] && !isSameDate_Y(viewDate(), new Date()))
-                    || (dateOption() == DatePickerOption[_year] && isOutDate_Y(new Date(), viewDate(), new Date(getDate_Y(viewDate()) + 15, 2, 3)))
+                    (dateOption() == DatePickerOption[_day] && !isSameDate_YM(viewDate(), value())) 
+                    || (dateOption() == DatePickerOption[_month] && !isSameDate_Y(viewDate(), value()))
+                    || (dateOption() == DatePickerOption[_year] && isOutDate_Y(value(), viewDate(), new Date(getDate_Y(viewDate()) + 15, 2, 3)))
                 )
-                && isInDate_YM(new Date(), props[_firstDate], props[_lastDate])}>
-                <IconButton code={0xE2E6} onClick={() => gotoCurrentRealDate()}/>
+                && isInDate_YM(value(), props[_firstDate], props[_lastDate])}>
+                <IconButton code={0xE2E6} onClick={() => gotoSelectedDate()}/>
             </Show>
             <IconButton code={0xE400} onClick={() => previous()}/>
             <IconButton code={0xE402} onClick={() => next()}/>
