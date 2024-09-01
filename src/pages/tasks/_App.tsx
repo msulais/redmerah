@@ -695,15 +695,19 @@ const _: VoidComponent = () => {
             const id = ((await db[_add]<Omit<ObjectStoreTaskLists, 'id'>>(store_tasks, {
                 emoji, name
             }))[_target]! as any)[_result] as number
-            setLists(values => [
-                ...values, 
-                {
-                    id,
-                    emoji,
-                    name, 
-                    tasks: []
-                } satisfies TaskList
-            ][_sort]((a, b) => a[_name][_localeCompare](b[_name])))
+
+            // make the default list always on top
+            const index = lists[_findIndex](list => list[_id] == DEFAULT_TASK_LIST[_id])
+            if (index >= 0) {
+                const otherLists = lists[_slice](0, index)[_concat](lists[_slice](index + 1), { id, emoji, name, tasks: []} satisfies TaskList)
+                otherLists[_sort]((a, b) => a[_name][_localeCompare](b[_name]))
+                setLists([lists[index]][_concat](otherLists))
+            } else {
+                setLists(values => [
+                    ...values, 
+                    { id, emoji, name, tasks: []} satisfies TaskList
+                ][_sort]((a, b) => a[_name][_localeCompare](b[_name])))
+            }
             changePage(id)
         } catch {}
     }
@@ -1028,13 +1032,22 @@ const _: VoidComponent = () => {
         const store = db[_transaction](ObjectStoreNames[_lists], _readonly)![_objectStore](ObjectStoreNames[_lists])
         db[_getAll]<ObjectStoreTaskLists>(store)[_then]((v) => {
             if (!v) return;
-            const values: TaskList[] = []
-            for (const i of v) values[_push]({
+            let lists: TaskList[] = []
+            for (const i of v) lists[_push]({
                 ...i, 
                 tasks: []
             })
-            values[_sort]((a, b) => a[_name][_localeCompare](b[_name]))
-            setLists(values)
+
+            // just assume user able to explicitly delete default task list
+            const index = lists[_findIndex](list => list[_id] == DEFAULT_TASK_LIST[_id])
+            if (index >= 0) {
+                const otherLists = lists[_slice](0, index)[_concat](lists[_slice](index + 1))
+                otherLists[_sort]((a, b) => a[_name][_localeCompare](b[_name]))
+                lists = [lists[index]][_concat](otherLists)
+            } else {
+                lists[_sort]((a, b) => a[_name][_localeCompare](b[_name]))
+            }
+            setLists(lists)
             initLastPage()
         })
     }
@@ -1206,7 +1219,19 @@ const _: VoidComponent = () => {
             if (count > 0) name += ` (${count})`
         }
 
-        setLists(selectedTaskListIndexToRename(), list => ({...list, emoji, name}))
+        let $lists = [...lists]
+        $lists[selectedTaskListIndexToRename()] = {...$lists[selectedTaskListIndexToRename()], emoji, name}
+
+        // keep general tasks on top
+        const index = $lists[_findIndex](list => list[_id] == DEFAULT_TASK_LIST[_id])
+        if (index >= 0) {
+            const otherLists = $lists[_slice](0, index)[_concat]($lists[_slice](index + 1))
+            otherLists[_sort]((a, b) => a[_name][_localeCompare](b[_name]))
+            $lists = [$lists[index]][_concat](otherLists)
+        } else {
+            $lists[_sort]((a, b) => a[_name][_localeCompare](b[_name]))
+        }
+        setLists($lists)
         store[_put]({emoji, id, name} satisfies ObjectStoreTaskLists)
     }
 
