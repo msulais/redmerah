@@ -6,7 +6,7 @@ import { createSignal, For, onMount, Show, type VoidComponent } from "solid-js"
 import type { TaskList, TaskLabel, Settings, Task, TaskFileMetaData, SubTask } from "./_types"
 import type { HEXColor } from "@/types/color"
 import { type ObjectStoreTaskLists, type ObjectStoreSettings, type ObjectStoreSubTasks, type ObjectStoreTasks, type ObjectStoreTaskLabels, type ObjectStoreFiles, type ObjectStoreTaskFileMetaData, type ObjectStoreMiscellaneous, ObjectStoreNames, ObjectStoreKeys, } from "./_storage"
-import { _add, _all, _ascending, _blob, _at, _clipboard, _color, _colorDark, _command, _complete, _completed, _concat, _contents, _createObjectStore, _creationDate, _currentTarget, _cursor, _delete, _descending, _description, _done, _emoji, _error, _fileName, _files, _filled, _tonal, _filter, _general, _get, _getAll, _getOwnPropertyNames, _hiddenNavigation, _home, _id, _images, _importance, _important, _includes, _isShowDeleteTaskWarning, _join, _key, _labelIds, _labels, _lastPage, _length, _listId, _lists, _localeCompare, _manual, _map, _miscellaneous, _name, _objectStore, _onColor, _onColorDark, _open, _planned, _push, _put, _readOnly, _readonly, _readwrite, _reminder, _result, _reverse, _settings, _size, _slice, _sort, _sortBy, _sortMode, _splice, _string, _subtasks, _tags, _target, _taskFileMetaData, _taskId, _taskLists, _tasks, _text, _then, _transaction, _trim, _type, _uncompleted, _value, _writeText, _keys, _defineProperty, _bold, _findIndex } from "@/data/string"
+import { _add, _all, _ascending, _blob, _at, _clipboard, _color, _colorDark, _command, _complete, _completed, _concat, _contents, _createObjectStore, _creationDate, _currentTarget, _cursor, _delete, _descending, _description, _done, _emoji, _error, _fileName, _files, _filled, _tonal, _filter, _general, _get, _getAll, _getOwnPropertyNames, _hiddenNavigation, _home, _id, _images, _importance, _important, _includes, _isShowDeleteTaskWarning, _join, _key, _labelIds, _labels, _lastPage, _length, _listId, _lists, _localeCompare, _manual, _map, _miscellaneous, _name, _objectStore, _onColor, _onColorDark, _open, _planned, _push, _put, _readOnly, _readonly, _readwrite, _reminder, _result, _reverse, _settings, _size, _slice, _sort, _sortBy, _sortMode, _splice, _string, _subtasks, _tags, _target, _taskFileMetaData, _taskId, _taskLists, _tasks, _text, _then, _transaction, _trim, _type, _uncompleted, _value, _writeText, _keys, _defineProperty, _bold, _findIndex, _every } from "@/data/string"
 import { Commands, Pages, SortBy, SortMode } from "./_enums"
 import { DatabaseNames } from "@/enums/storage"
 import { DEFAULT_TASK_LIST } from "./_data"
@@ -421,6 +421,11 @@ const _: VoidComponent = () => {
     }
 
     function copyTasks(taskListIndex?: number): void {
+        const isGrouping = ([
+            Pages[_all], Pages[_completed], Pages[_uncompleted], 
+            Pages[_important], Pages[_planned]
+        ][_includes](page() as Pages))
+        
         let text: string = ''
         const getTextPerTaskList = (taskListIndex: number) => {
             const taskList = lists[taskListIndex]
@@ -428,15 +433,24 @@ const _: VoidComponent = () => {
     
             for (let i = 0; i < taskList[_tasks][_length]; i++) {
                 const task: Task = taskList[_tasks][i]
+
+                // skipping
+                if (isGrouping
+                    && (
+                        (page() == Pages[_completed] && !task[_complete])
+                        || (page() == Pages[_uncompleted] && task[_complete])
+                        || (page() == Pages[_important] && !task[_important])
+                        || (page() == Pages[_planned] && task[_reminder] == null)
+                    )
+                ) continue
+
                 let additional: string = ''
                 text += (`\n${task[_complete] ? '✔️' : '❌'} ${task[_name]}`)
     
                 if (task[_description] != '') additional += `[🗒️ ${task[_description]}]`
                 if (task[_important]) additional +=  '[⭐ important]'
                 if (task[_reminder] != null) additional += `[🕒 ${getDateString_YMD_HM(task[_reminder]!)}]`
-                for (const file of task[_files]) {
-                    additional += `[💾 ${file[_name]}]`
-                }
+                for (const file of task[_files]) additional += `[💾 ${file[_name]}]`
                 
                 let j = 0
                 labels: for (const id of task[_labelIds]) {
@@ -454,17 +468,25 @@ const _: VoidComponent = () => {
             }
         }
 
-        if (taskListIndex != undefined) {
-            getTextPerTaskList(taskListIndex)
-        } else {
+        if (taskListIndex == undefined) {
             let j = 0
             for (let i = 0; i < lists[_length]; i++) {
+                const taskList: TaskList = lists[i]
                 if (lists[i][_tasks][_length] == 0) continue;
+                if (isGrouping
+                    && (
+                        (page() == Pages[_completed] && taskList[_tasks][_every](task => !task[_complete]))
+                        || (page() == Pages[_uncompleted] && taskList[_tasks][_every](task => task[_complete]))
+                        || (page() == Pages[_important] && taskList[_tasks][_every](task => !task[_important]))
+                        || (page() == Pages[_planned] && taskList[_tasks][_every](task => task[_reminder] == null))
+                    )
+                ) continue;
                 if (j > 0) text += '\n\n'
                 getTextPerTaskList(i)
                 ++j
             }
         }
+        else getTextPerTaskList(taskListIndex)
 
         // # ⚠️ task-list-name #
         // ✔️ task-name [🗒️ description][⭐ important][🕒 reminder][💾 file1][💾 file2][🔖 label1][🔖 label2]

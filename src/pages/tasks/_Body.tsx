@@ -615,6 +615,8 @@ const GroupTaskList: VoidComponent<{
     onContextMenuTask: (ev: ComponentEvent<MouseEvent, HTMLDivElement>, task: Task, taskListIndex: number, taskIndex: number) => unknown
     command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
+    const [is_menu_more_open, setIs_menu_more_open] = createSignal<boolean>(false)
+    const [selectedTaskListToAction, setSelectedTaskListToAction] = createStore<{list: TaskList, taskListIndex: number}>({list: {emoji: null, id: -1, name: '', tasks: []}, taskListIndex: -1})
     const getIcon = createMemo<number>(() => {
         const page = props[_page]
         if (page == Pages[_all]) return 0xE069
@@ -637,6 +639,8 @@ const GroupTaskList: VoidComponent<{
             return false
         })
     })
+    let menu_more_ref: HTMLDialogElement
+    let toast_copied_ref: HTMLDivElement
 
     const TaskListGroup: VoidComponent<{
         taskList: TaskList
@@ -673,6 +677,18 @@ const GroupTaskList: VoidComponent<{
                     <Icon code={0xE8E2}/>
                 </Show>
             </Show>} 
+            trailing={<TextTooltip text="More options">
+                <IconButton 
+                    focused={is_menu_more_open() && selectedTaskListToAction[_taskListIndex] == $props[_taskListIndex]}
+                    onClick={(ev) => {
+                        setSelectedTaskListToAction({list: $props[_taskList], taskListIndex: $props[_taskListIndex]})
+                        openMenu(ev, menu_more_ref, {
+                            anchor: ev[_currentTarget]
+                        })
+                    }}
+                    code={0xEAD9}
+                />
+            </TextTooltip>}
         />)
 
         return (<Show when={isAnyTask()}>
@@ -718,6 +734,20 @@ const GroupTaskList: VoidComponent<{
                 />
             }</For>
         </Show>
+        <Menu 
+            ref={r => menu_more_ref = r}
+            onToggleOpen={isOpen => setIs_menu_more_open(isOpen)}>
+            <MenuItem
+                iconCode={0xE51B}
+                onClick={() => {
+                    props[_command](Commands.copy_tasks, selectedTaskListToAction[_taskListIndex])
+                    closeMenu(menu_more_ref)
+                    openToast(toast_copied_ref)
+                }}>
+                Copy tasks
+            </MenuItem>
+        </Menu>
+        <Toast ref={r => toast_copied_ref = r} leading={<Icon code={0xE51B}/>}>Tasks copied</Toast>
     </div>)
 }
 
