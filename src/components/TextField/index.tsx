@@ -20,20 +20,20 @@ import './index.scss'
 const HEIGHT_TEXT_INPUT_PER_LINE = 18
 
 enum TextFieldType {
-    text = 'text', 
-    password = 'password', 
-    telephone = 'tel', 
-    email = 'email', 
+    text = 'text',
+    password = 'password',
+    telephone = 'tel',
+    email = 'email',
     url = 'url'
 }
 
 /**
  * To trigger 'input' event
- * 
+ *
  * ```ts
  * // don't => (not trigger 'input' event)
  * textfield_ref.value = 'new value'
- * 
+ *
  * // do => (trigger 'input' event)
  * changeTextFieldValue(textfield_ref, 'new value')
  * ```
@@ -46,11 +46,11 @@ function changeTextFieldValue(el: HTMLInputElement, value: string): void {
 
 /**
  * To trigger 'input' event
- * 
+ *
  * ```ts
  * // don't => (not trigger 'input' event)
  * areatextfield_ref.value = 'new value'
- * 
+ *
  * // do => (trigger 'input' event)
  * changeAreaTextFieldValue(areatextfield_ref, 'new value')
  * ```
@@ -65,13 +65,13 @@ type TextFieldButtonProps = ButtonProps
 const TextFieldButton: ParentComponent<TextFieldButtonProps> = ($props) => {
     const $$props = mergeProps({compact: true}, $props)
     const [props, other] = splitProps($$props, [_classList, _compact])
-    return (<Button 
+    return (<Button
         compact={props[_compact]}
         classList={{
-            'textfield-btn': true, 
+            'textfield-btn': true,
             ...props[_classList]
         }}
-        {...other} 
+        {...other}
     />)
 }
 
@@ -99,9 +99,9 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
     const [props, other] = splitProps($$props, [
         _leading, _onInput, _labelText, _focused,
         _autocomplete, _id, _messageText, _trailing,
-        _labelAttr, _disabled, _readOnly, 
+        _labelAttr, _disabled, _readOnly,
         _onFocus, _onBlur, _placeholder, _autoHideLabel,
-        _value, _ref, _autoShowClearBtn, _clearTooltip, 
+        _value, _ref, _autoShowClearBtn, _clearTooltip,
         _minLine, _maxLine, _compact
     ])
     const [isFocus, setIsFocus] = createSignal<boolean>(false)
@@ -299,7 +299,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
     const $$props = mergeProps({
         increaseTooltip: 'Increase',
         decreaseTooltip: 'Decrease',
-        changeValueTooltip: 'Change value', 
+        changeValueTooltip: 'Change value',
     }, $props)
     const [props, other] = splitProps($$props, [
         _max, _min, _trailing, _onValueChanged, _autoShowClearBtn,
@@ -320,13 +320,13 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
     function changeLength(operator: '+' | '-', continuous: boolean = false): void {
         const changeValue = () => {
             let n = value() + (operator == '+'
-                ? (props[_step] ?? 1) 
+                ? (props[_step] ?? 1)
                 : -(props[_step] ?? 1)
             )
 
             if (props[_min] != undefined && n < props[_min]) n = props[_min]
             if (props[_max] != undefined && n > props[_max]) n = props[_max]
-            
+
             setValue(n)
             $value = n
             if (props[_onValueChanged]) props[_onValueChanged](n)
@@ -422,10 +422,10 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
             trailing={<>
                 { props[_trailing] }
                 <TextTooltip text={props[_changeValueTooltip]}>
-                    <TextFieldButton 
+                    <TextFieldButton
                         onClick={(ev) => openMenu(
-                            ev, 
-                            menu_action_ref, 
+                            ev,
+                            menu_action_ref,
                             {
                                 position: MenuPosition[_centerCenterLeft],
                                 anchor: ev[_currentTarget]
@@ -446,7 +446,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
                             changeTextFieldValue(numberTextField_ref, `${v}`)
                             setValue(v)
                             $value = v
-            
+
                             if (isChanged && props[_onFinalValueChanged]) props[_onFinalValueChanged](v)
                             if (isChanged && props[_onValueChanged]) props[_onValueChanged](v)
                         }}><Icon code={0xE5E9}/></TextFieldButton>
@@ -455,12 +455,12 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
             </>}
             {...other}
         />
-        <Menu 
-            ref={r => menu_action_ref = r} 
-            classList={{'number-textfield-menu': true}} 
+        <Menu
+            ref={r => menu_action_ref = r}
+            classList={{'number-textfield-menu': true}}
             onToggleOpen={(v) => setIsActionMenuOpen(v)}>
             <TextTooltip text={props[_increaseTooltip]}>
-                <IconButton 
+                <IconButton
                     disabled={props[_max] != undefined && value() >= props[_max]}
                     onMouseUp={() => stopContinuousChangeLength()}
                     onContextMenu={(ev) => preventDefault(ev)}
@@ -473,7 +473,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
             </TextTooltip>
 
             <TextTooltip text={props[_decreaseTooltip]}>
-                <IconButton 
+                <IconButton
                     disabled={props[_min] != undefined && value() <= props[_min]}
                     onMouseUp={() => stopContinuousChangeLength()}
                     onContextMenu={(ev) => preventDefault(ev)}
@@ -515,7 +515,7 @@ const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
         openPopover(ev, menu_ref, {
             allowHideAnchor: false,
             anchor: label_ref,
-            position: SearchMenuPosition[_centerBottom], 
+            position: SearchMenuPosition[_centerBottom],
             manualDismiss: true,
         })
     }
@@ -540,7 +540,7 @@ const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
 
     function onClick(ev: MouseEvent): void {
         if (!is_popover_open) return;
-        
+
         const target = ev[_target] as HTMLElement
         const isClickedInside = label_ref[_contains](target) || menu_ref[_contains](target)
 
@@ -572,7 +572,7 @@ const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
     })
 
     return (<>
-        <TextField 
+        <TextField
             labelAttr={{
                 ...props[_labelAttr],
                 ref: (r) => {
@@ -588,7 +588,7 @@ const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
             }}
             {...other}
         />
-        <Popover 
+        <Popover
             usePortal={props[_menuAttr] && props[_menuAttr][_usePortal]? props[_menuAttr][_usePortal] : false}
             onToggleOpen={isOpen => {
                 is_popover_open = isOpen
@@ -599,7 +599,7 @@ const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
                 if (props[_menuAttr] && props[_menuAttr][_ref]) props[_menuAttr][_ref](r)
             }}
             classList={{
-                'search-textfield-menu': true, 
+                'search-textfield-menu': true,
                 ...(props[_menuAttr]? props[_menuAttr][_classList] : {})
             }}
             style={{
@@ -613,13 +613,16 @@ const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
 }
 
 export {
-    changeTextFieldValue, 
-    changeAreaTextFieldValue, 
-    TextFieldButton, 
+    changeTextFieldValue,
+    changeAreaTextFieldValue,
+    TextFieldButton,
+    TextFieldButton as SearchTextFieldButton,
+    TextFieldButton as NumberTextFieldButton,
+    TextFieldButton as AreaTextFieldButton,
     AreaTextField,
-    NumberTextField, 
+    NumberTextField,
     TextField,
-    TextFieldType, 
+    TextFieldType,
     SearchTextField,
     openPopover as openSearchMenu,
     closePopover as closeSearchMenu,
@@ -630,9 +633,9 @@ export {
     SearchMenuPosition
 }
 export type {
-    TextFieldButtonProps, 
-    AreaTextFieldProps, 
-    NumberTextFieldProps, 
+    TextFieldButtonProps,
+    AreaTextFieldProps,
+    NumberTextFieldProps,
     TextFieldProps,
     SearchTextFieldProps
 }
