@@ -176,6 +176,11 @@ $side_navigation_none: 680px;
         align-items: center;
         justify-content: space-between;
         height: 100%;
+
+        > .body_empty {
+            flex: 1;
+            justify-content: center;
+        }
     }
 
     > .body_appbar {
