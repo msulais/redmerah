@@ -8,7 +8,7 @@ import { LocalStorageKeys } from "@/enums/storage";
 import { ThemeData } from "@/enums/theme";
 import { setLocalStorageItem, getLocalStorageItem } from "@/utils/storage";
 import { hasAttribute, setAttribute, toggleAttribute } from "@/utils/attributes";
-import { DEFAULT_TASK_LIST, SIZE_SIDE_NAVIGATION_NONE, TASKS_PAGES } from "./_data";
+import { DEFAULT_TASK_LIST, SIZE_SIDE_NAVIGATION_NONE, TASKS_PAGES } from "./_constants";
 import { isMatchMedia, matchMedia } from "@/utils/window";
 import { addEventListener } from '@/utils/event'
 import logo from '@/assets/apps/tasks-logo.svg'

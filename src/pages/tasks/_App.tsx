@@ -9,7 +9,7 @@ import { type ObjectStoreTaskLists, type ObjectStoreSettings, type ObjectStoreSu
 import { _add, _all, _ascending, _blob, _at, _clipboard, _color, _colorDark, _command, _complete, _completed, _concat, _contents, _createObjectStore, _creationDate, _currentTarget, _cursor, _delete, _descending, _description, _done, _emoji, _error, _fileName, _files, _filled, _tonal, _filter, _general, _get, _getAll, _getOwnPropertyNames, _hiddenNavigation, _home, _id, _images, _importance, _important, _includes, _isShowDeleteTaskWarning, _join, _key, _labelIds, _labels, _lastPage, _length, _listId, _lists, _localeCompare, _manual, _map, _miscellaneous, _name, _objectStore, _onColor, _onColorDark, _open, _planned, _push, _put, _readOnly, _readonly, _readwrite, _reminder, _result, _reverse, _settings, _size, _slice, _sort, _sortBy, _sortMode, _splice, _string, _subtasks, _tags, _target, _taskFileMetaData, _taskId, _taskLists, _tasks, _text, _then, _transaction, _trim, _type, _uncompleted, _value, _writeText, _keys, _defineProperty, _bold, _findIndex, _every } from "@/data/string"
 import { Commands, Pages, SortBy, SortMode } from "./_enums"
 import { DatabaseNames } from "@/enums/storage"
-import { DEFAULT_TASK_LIST } from "./_data"
+import { DEFAULT_TASK_LIST } from "./_constants"
 import { IDB } from "@/class/indexeddb"
 import { getDateString_YMD_HM } from "@/utils/datetime"
 import { getNavigator } from "@/data/window"

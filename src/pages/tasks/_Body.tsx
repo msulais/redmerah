@@ -8,7 +8,7 @@ import { _all, _completed, _important, _planned, _tasks, _uncompleted, _includes
 import { Commands, Pages, SortBy, SortMode } from "./_enums"
 import { getCurrentDate, getDate_Y, getDateString_YMD_HM, isOutDate_YMD_HM } from "@/utils/datetime"
 import { preventDefault, stopPropagation } from "@/utils/event"
-import { DEFAULT_TASK_LIST } from "./_data"
+import { DEFAULT_TASK_LIST } from "./_constants"
 import { toggleAttribute } from "@/utils/attributes"
 import { stringToTitleCase } from "@/utils/string"
 import { addClassListModule } from "@/utils/element"
@@ -65,58 +65,58 @@ const AppbarTasks: VoidComponent<{
 
     const Menus: VoidComponent = () => {
         return (<>
-            <Menu 
-                style={{width: '200px'}} 
-                ref={r => menu_sort_ref = r} 
+            <Menu
+                style={{width: '200px'}}
+                ref={r => menu_sort_ref = r}
                 onToggleOpen={(v) => setIs_menu_sort_open(v)}>
                 <MenuHeader>Sort by</MenuHeader>
-                <MenuItem 
-                    selected={props[_settings][_sortBy] == SortBy[_name]} 
-                    onClick={() => changeSortBy(SortBy[_name])} 
+                <MenuItem
+                    selected={props[_settings][_sortBy] == SortBy[_name]}
+                    onClick={() => changeSortBy(SortBy[_name])}
                     iconCode={0xF0B0}>
                     Name
                 </MenuItem>
-                <MenuItem 
-                    selected={props[_settings][_sortBy] == SortBy[_importance]} 
-                    onClick={() => changeSortBy(SortBy[_importance])} 
+                <MenuItem
+                    selected={props[_settings][_sortBy] == SortBy[_importance]}
+                    onClick={() => changeSortBy(SortBy[_importance])}
                     iconCode={0xEF1B}>
                     Importance
                 </MenuItem>
-                <MenuItem 
-                    selected={props[_settings][_sortBy] == SortBy[_creationDate]} 
-                    onClick={() => changeSortBy(SortBy[_creationDate])} 
+                <MenuItem
+                    selected={props[_settings][_sortBy] == SortBy[_creationDate]}
+                    onClick={() => changeSortBy(SortBy[_creationDate])}
                     iconCode={0xE310}>
                     Creation date
                 </MenuItem>
-                <MenuItem 
-                    selected={props[_settings][_sortBy] == SortBy[_completed]} 
-                    onClick={() => changeSortBy(SortBy[_completed])} 
+                <MenuItem
+                    selected={props[_settings][_sortBy] == SortBy[_completed]}
+                    onClick={() => changeSortBy(SortBy[_completed])}
                     iconCode={0xE3CC}>
                     Completed
                 </MenuItem>
-                <MenuItem 
-                    selected={props[_settings][_sortBy] == SortBy[_uncompleted]} 
-                    onClick={() => changeSortBy(SortBy[_uncompleted])} 
+                <MenuItem
+                    selected={props[_settings][_sortBy] == SortBy[_uncompleted]}
+                    onClick={() => changeSortBy(SortBy[_uncompleted])}
                     iconCode={0xE3D4}>
                     Uncompleted
                 </MenuItem>
                 <MenuDivider/>
-                <MenuItem 
-                    selected={props[_settings][_sortMode] == SortMode[_ascending]} 
-                    onClick={() => changeSortMode(SortMode[_ascending])} 
+                <MenuItem
+                    selected={props[_settings][_sortMode] == SortMode[_ascending]}
+                    onClick={() => changeSortMode(SortMode[_ascending])}
                     iconCode={0xF187}>
                     Ascending
                 </MenuItem>
-                <MenuItem 
-                    selected={props[_settings][_sortMode] == SortMode[_descending]} 
-                    onClick={() => changeSortMode(SortMode[_descending])} 
+                <MenuItem
+                    selected={props[_settings][_sortMode] == SortMode[_descending]}
+                    onClick={() => changeSortMode(SortMode[_descending])}
                     iconCode={0xF189}>
                     Descending
                 </MenuItem>
             </Menu>
             <Menu style={{"min-width": '200px'}} ref={r => menu_more_ref = r} onToggleOpen={(v) => setIs_menu_more_open(v)}>
                 <Show when={props[_isAnyUncompletedTask]}>
-                    <MenuItem 
+                    <MenuItem
                         onClick={async () => {
                             closeMenu(menu_more_ref)
                             props[_command](Commands.mark_all_completed, props[_taskListIndex])
@@ -127,7 +127,7 @@ const AppbarTasks: VoidComponent<{
                 </Show>
 
                 <Show when={props[_isAnyCompletedTask]}>
-                    <MenuItem 
+                    <MenuItem
                         onClick={async () => {
                             closeMenu(menu_more_ref)
                             props[_command](Commands.mark_all_uncompleted, props[_taskListIndex])
@@ -140,7 +140,7 @@ const AppbarTasks: VoidComponent<{
                 <Show when={props[_isAnyTask]}>
                     <MenuDivider />
 
-                    <MenuItem 
+                    <MenuItem
                         onClick={(ev) => {
                             openDialog(ev, dialog_clearTasks_ref, {important: true})
                             closeMenu(menu_more_ref)
@@ -151,7 +151,7 @@ const AppbarTasks: VoidComponent<{
                 </Show>
 
                 <Show when={props[_isAnyCompletedTask]}>
-                    <MenuItem 
+                    <MenuItem
                         onClick={(ev) => {
                             openDialog(ev, dialog_deleteCompletedTasks_ref, {important: true})
                             closeMenu(menu_more_ref)
@@ -165,7 +165,7 @@ const AppbarTasks: VoidComponent<{
                     <Show when={props[_isAnyTask]}>
                         <MenuDivider />
                     </Show>
-                    <MenuItem 
+                    <MenuItem
                         onClick={ev => {
                             closeMenu(menu_more_ref)
                             props[_command](Commands.rename_taskList, ev, props[_taskListIndex])
@@ -173,7 +173,7 @@ const AppbarTasks: VoidComponent<{
                         iconCode={0xF0FB}>
                         Rename list
                     </MenuItem>
-                    <MenuItem 
+                    <MenuItem
                         onClick={ev => {
                             closeMenu(menu_more_ref)
                             props[_command](Commands.delete_taskList, ev, props[_taskListIndex])
@@ -188,42 +188,42 @@ const AppbarTasks: VoidComponent<{
 
     const Dialogs: VoidComponent = () => {
         return (<>
-            <Dialog 
+            <Dialog
                 ref={r => dialog_clearTasks_ref = r}
                 header="Clear tasks"
                 style={{width: '500px'}}
                 actions={<>
-                    <Button 
-                        onClick={() => closeDialog(dialog_clearTasks_ref)} 
+                    <Button
+                        onClick={() => closeDialog(dialog_clearTasks_ref)}
                         variant={ButtonVariant[_tonal]}>
                         Cancel
                     </Button>
-                    <Button 
+                    <Button
                         onClick={() => {
                             props[_command](Commands.clear_tasks, props[_taskListIndex])
                             closeDialog(dialog_clearTasks_ref)
-                        }} 
+                        }}
                         variant={ButtonVariant[_filled]}>
                         Clear
                     </Button>
                 </>}>
                 Clearing all tasks will permanently delete them. Are you sure you want to continue?
             </Dialog>
-            <Dialog 
+            <Dialog
                 style={{width: '500px'}}
                 ref={r => dialog_deleteCompletedTasks_ref = r}
                 header={"Delete completed tasks"}
                 actions={<>
-                    <Button 
-                        onClick={() => closeDialog(dialog_deleteCompletedTasks_ref)} 
+                    <Button
+                        onClick={() => closeDialog(dialog_deleteCompletedTasks_ref)}
                         variant={ButtonVariant[_tonal]}>
                         Cancel
                     </Button>
-                    <Button 
+                    <Button
                         onClick={() => {
                             props[_command](Commands.delete_completed_task, props[_taskListIndex])
                             closeDialog(dialog_deleteCompletedTasks_ref)
-                        }} 
+                        }}
                         variant={ButtonVariant[_filled]}>
                         Delete
                     </Button>
@@ -234,26 +234,26 @@ const AppbarTasks: VoidComponent<{
     }
 
     return (<>
-        <AppBar 
+        <AppBar
             classList={addClassListModule(CSS.body_appbar)}
-            leading={props[_leading]} 
+            leading={props[_leading]}
             headline={props[_headline]}
             trailing={<>
                 <Show when={props[_isAnyTask]}>
                     <TextTooltip text="Sort by">
-                        <IconButton 
-                            focused={is_menu_sort_open()} 
+                        <IconButton
+                            focused={is_menu_sort_open()}
                             onClick={ev => openMenu(ev, menu_sort_ref, {anchor: ev[_currentTarget]})}
-                            code={0xE123} 
+                            code={0xE123}
                         />
                     </TextTooltip>
 
                     <TextTooltip text="Copy tasks">
-                        <IconButton 
+                        <IconButton
                             onClick={() => {
                                 props[_command](Commands.copy_tasks, props[_isGroup]? undefined : props[_taskListIndex])
                                 openToast(toast_copied_ref)
-                            }} 
+                            }}
                             code={0xE51B}
                         />
                     </TextTooltip>
@@ -261,8 +261,8 @@ const AppbarTasks: VoidComponent<{
 
                 <Show when={!props[_isGroup] && ((props[_page] == Pages[_tasks] && props[_isAnyTask]) || isNumber(props[_page]))}>
                     <TextTooltip text="More options">
-                        <IconButton 
-                            focused={is_menu_more_open()} 
+                        <IconButton
+                            focused={is_menu_more_open()}
                             onClick={ev => openMenu(ev, menu_more_ref, {anchor: ev[_currentTarget]})}
                             code={0xEAD9}
                         />
@@ -289,7 +289,7 @@ const TaskItem: VoidComponent<{
     onDelete: (ev: ComponentEvent<MouseEvent, HTMLButtonElement>) => unknown
     command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
-    return (<Expander 
+    return (<Expander
         data-done={toggleAttribute(props[_task][_complete])}
         headerAttr={{
             onClick(ev) {
@@ -304,56 +304,56 @@ const TaskItem: VoidComponent<{
         classList={addClassListModule(CSS.body_task_item)}
         leading={<>
             <TextTooltip text={`Mark as ${props[_task][_complete]? 'un' : ''}completed`}>
-                <IconButton 
+                <IconButton
                     onContextMenu={(ev) => {
                         stopPropagation(ev)
                         preventDefault(ev)
-                    }} 
+                    }}
                     onClick={ev => {
                         stopPropagation(ev)
                         props[_command](
-                            Commands.edit_task, 
-                            {   ...props[_task], 
+                            Commands.edit_task,
+                            {   ...props[_task],
                                 complete: !props[_task][_complete]
-                            } satisfies Task, 
-                            props[_taskListIndex], 
+                            } satisfies Task,
+                            props[_taskListIndex],
                             props[_taskIndex]
                         )
                     }}
                     code={props[_task][_complete]? 0xE3CB : 0xE3D4}
                 />
             </TextTooltip>
-        </>} 
-        title={props[_task][_name]} 
+        </>}
+        title={props[_task][_name]}
         trailing={<>
             <TextTooltip text={`Mark as ${props[_task][_important]? 'not ' : ''}important`}>
-                <IconButton 
+                <IconButton
                     onContextMenu={(ev) => {
                         stopPropagation(ev)
                         preventDefault(ev)
-                    }} 
+                    }}
                     onClick={ev => {
                         stopPropagation(ev)
                         props[_command](
-                            Commands.edit_task, 
-                            {   ...props[_task], 
+                            Commands.edit_task,
+                            {   ...props[_task],
                                 important: !props[_task][_important]
-                            } satisfies Task, 
-                            props[_taskListIndex], 
+                            } satisfies Task,
+                            props[_taskListIndex],
                             props[_taskIndex]
                         )
                     }}
-                    filled={props[_task][_important]} 
+                    filled={props[_task][_important]}
                     code={0xEF1B}
                 />
             </TextTooltip>
 
             <TextTooltip text="Delete task">
-                <IconButton 
+                <IconButton
                     onContextMenu={(ev) => {
                         stopPropagation(ev)
                         preventDefault(ev)
-                    }} 
+                    }}
                     onClick={ev => {
                         stopPropagation(ev)
                         props[_onDelete](ev)
@@ -369,19 +369,19 @@ const TaskItem: VoidComponent<{
                 <div class={CSS.body_task_item_tags}>
                     <Show when={props[_task][_reminder] != null}>
                         <TextTooltip text={"Task reminder" + (isOutDate_YMD_HM( props[_task][_reminder]!, getCurrentDate(), new Date(getDate_Y() + 100, 2, 2) )? " (outdated)" : "")}>
-                            <Button 
-                                compact 
+                            <Button
+                                compact
                                 style={{
                                     "border-color": isOutDate_YMD_HM(
-                                        props[_task][_reminder]!, 
-                                        getCurrentDate(), 
+                                        props[_task][_reminder]!,
+                                        getCurrentDate(),
                                         new Date(getDate_Y() + 100, 2, 2)
                                     )? 'rgb(var(--color-error))' : undefined
                                 }}
                                 onContextMenu={(ev) => {
                                     stopPropagation(ev)
                                     preventDefault(ev)
-                                }} 
+                                }}
                                 onClick={ev => {
                                     stopPropagation(ev)
                                     props[_onEditReminder](ev)
@@ -392,12 +392,12 @@ const TaskItem: VoidComponent<{
                         </TextTooltip>
                     </Show>
                     <Show when={props[_task][_files][_length] > 0}>
-                        <Button 
-                            compact 
+                        <Button
+                            compact
                             onContextMenu={(ev) => {
                                 stopPropagation(ev)
                                 preventDefault(ev)
-                            }} 
+                            }}
                             onClick={ev => {
                                 stopPropagation(ev)
                                 props[_onEditFiles](ev)
@@ -406,10 +406,10 @@ const TaskItem: VoidComponent<{
                             <Icon filled code={0xE187} inline/>{props[_task][_files][_length]} file{props[_task][_files][_length] > 1? "s" : ''}
                         </Button>
                     </Show>
-                    <For each={props[_task][_labelIds]}>{labelId => 
+                    <For each={props[_task][_labelIds]}>{labelId =>
                         <Show when={props[_labels][labelId] != undefined}>
-                            <Button 
-                                compact 
+                            <Button
+                                compact
                                 style={{
                                     "border-color": props[_labels][labelId]![_color] ?? undefined,
                                     "background-color": props[_labels][labelId]![_color] != null? props[_labels][labelId]![_color] + '14' : undefined
@@ -417,7 +417,7 @@ const TaskItem: VoidComponent<{
                                 onContextMenu={(ev) => {
                                     stopPropagation(ev)
                                     preventDefault(ev)
-                                }} 
+                                }}
                                 onClick={ev => {
                                     stopPropagation(ev)
                                     props[_onEditLabel](ev, props[_labels][labelId]!)
@@ -430,14 +430,14 @@ const TaskItem: VoidComponent<{
                 </div>
             </Show>
         </>}>
-        <For each={props[_task][_subtasks]}>{(subtask, index) => 
-            <CheckBox 
+        <For each={props[_task][_subtasks]}>{(subtask, index) =>
+            <CheckBox
                 value={subtask[_complete]}
                 onValueChanged={isChecked => props[_command](
-                    Commands.edit_subtask, 
-                    {...subtask, complete: isChecked} satisfies SubTask, 
-                    props[_taskListIndex], 
-                    props[_taskIndex], 
+                    Commands.edit_subtask,
+                    {...subtask, complete: isChecked} satisfies SubTask,
+                    props[_taskListIndex],
+                    props[_taskIndex],
                     index()
                 )}>
                 {subtask[_name]}
@@ -489,7 +489,7 @@ const SingleTaskList: VoidComponent<{
     command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
     const getHeadline = createMemo<string>(() =>  props[_page] != Pages[_tasks]? props[_taskList][_name] : 'Tasks')
-    const isAnyTask = createMemo<boolean>(() => props[_taskList][_tasks][_length] > 0) 
+    const isAnyTask = createMemo<boolean>(() => props[_taskList][_tasks][_length] > 0)
     const [isAnyCompletedTask, setIsAnyCompletedTask] = createSignal<boolean>(true)
     const [isAnyUncompletedTask, setIsAnyUncompletedTask] = createSignal<boolean>(true)
     let textfield_newTask_ref: HTMLInputElement
@@ -501,18 +501,18 @@ const SingleTaskList: VoidComponent<{
         ) return;
 
         const listId: number = (props[_page] == Pages[_tasks]
-            ? DEFAULT_TASK_LIST[_id] 
+            ? DEFAULT_TASK_LIST[_id]
             : props[_page] as number
         )
 
         props[_command](Commands.add_task, {
-            description: '', 
+            description: '',
             complete: false,
             files: [],
-            id: -1, 
+            id: -1,
             important: false,
             labelIds: [],
-            listId, 
+            listId,
             name: textfield_newTask_ref[_value][_trim](),
             reminder: null,
             subtasks: []
@@ -537,31 +537,31 @@ const SingleTaskList: VoidComponent<{
         setIsAnyUncompletedTask(isAnyUncompletedTask)
     })
 
-    return (<div 
-        class={CSS.body_single_task_list} 
+    return (<div
+        class={CSS.body_single_task_list}
         data-empty={toggleAttribute(!isAnyTask())}>
-        <AppbarTasks 
+        <AppbarTasks
             command={props[_command]}
             taskListIndex={props[_taskListIndex]}
-            page={props[_page]} 
+            page={props[_page]}
             isGroup={false}
             isAnyTask={isAnyTask()}
             isAnyCompletedTask={isAnyCompletedTask()}
             isAnyUncompletedTask={isAnyUncompletedTask()}
-            settings={props[_settings]} 
-            leading={<Show 
-                when={props[_taskList][_emoji] == null} 
+            settings={props[_settings]}
+            leading={<Show
+                when={props[_taskList][_emoji] == null}
                 fallback={<Emoji emoji={props[_taskList][_emoji]!} />}>
-                <Show 
-                    when={props[_page] == Pages[_tasks]} 
+                <Show
+                    when={props[_page] == Pages[_tasks]}
                     fallback={<Icon code={0xF032}/>}>
                     <Icon code={0xE8E2}/>
                 </Show>
-            </Show>} 
+            </Show>}
             headline={getHeadline()}
         />
-        <For each={props[_taskList][_tasks]}>{(task, index) => 
-            <TaskItem 
+        <For each={props[_taskList][_tasks]}>{(task, index) =>
+            <TaskItem
                 command={props[_command]}
                 task={task}
                 onEditLabel={(ev, label) => props[_onEditLabel](ev, label, task, index())}
@@ -571,11 +571,11 @@ const SingleTaskList: VoidComponent<{
                 onEditFiles={(ev) => props[_onEditFilesTask](ev, task, index())}
                 onEditReminder={(ev) => props[_onEditReminderTask](ev, task, index())}
                 onEdit={(ev) => props[_onEditTask](ev, task, index())}
-                onContextMenu={(ev) => props[_onContextMenuTask](ev, task, index())} 
+                onContextMenu={(ev) => props[_onContextMenuTask](ev, task, index())}
                 onDelete={ev => props[_onDeleteTask](ev, task, index())}
             />
         }</For>
-        
+
         <Show when={!isAnyTask()}>
             <EmptyTasks page={props[_page]} />
         </Show>
@@ -587,8 +587,8 @@ const SingleTaskList: VoidComponent<{
             addTask()
             preventDefault(ev)
         }}>
-            <TextField 
-                placeholder="Add task" 
+            <TextField
+                placeholder="Add task"
                 ref={r => textfield_newTask_ref = r}
                 trailing={<>
                     <TextTooltip text="Add task">
@@ -655,7 +655,7 @@ const GroupTaskList: VoidComponent<{
             if (page == Pages[_important]) return $props[_taskList][_tasks][_some](task => task[_important])
             if (page == Pages[_planned]) return $props[_taskList][_tasks][_some](task => task[_reminder] != null)
             return false
-        }) 
+        })
 
         function taskCondition(task: Task): boolean {
             const page = props[_page]
@@ -666,19 +666,19 @@ const GroupTaskList: VoidComponent<{
             return true
         }
 
-        const Headline: VoidComponent = () => (<AppBar 
+        const Headline: VoidComponent = () => (<AppBar
             headline={getHeadline()}
-            leading={<Show 
-                when={$props[_taskList][_emoji] == null} 
+            leading={<Show
+                when={$props[_taskList][_emoji] == null}
                 fallback={<Emoji emoji={$props[_taskList][_emoji]!} />}>
-                <Show 
-                    when={$props[_taskList][_id] == DEFAULT_TASK_LIST[_id]} 
+                <Show
+                    when={$props[_taskList][_id] == DEFAULT_TASK_LIST[_id]}
                     fallback={<Icon code={0xF032}/>}>
                     <Icon code={0xE8E2}/>
                 </Show>
-            </Show>} 
+            </Show>}
             trailing={<TextTooltip text="More options">
-                <IconButton 
+                <IconButton
                     focused={is_menu_more_open() && selectedTaskListToAction[_taskListIndex] == $props[_taskListIndex]}
                     onClick={(ev) => {
                         setSelectedTaskListToAction({list: $props[_taskList], taskListIndex: $props[_taskListIndex]})
@@ -693,9 +693,9 @@ const GroupTaskList: VoidComponent<{
 
         return (<Show when={isAnyTask()}>
             <Headline/>
-            <For each={$props[_taskList][_tasks]}>{(task, index) => 
+            <For each={$props[_taskList][_tasks]}>{(task, index) =>
                 <Show when={taskCondition(task)}>
-                    <TaskItem 
+                    <TaskItem
                         command={props[_command]}
                         task={task}
                         labels={props[_labels]}
@@ -705,7 +705,7 @@ const GroupTaskList: VoidComponent<{
                         onEditFiles={(ev) => props[_onEditFilesTask](ev, task, $props[_taskListIndex], index())}
                         onEditReminder={(ev) => props[_onEditReminderTask](ev, task, $props[_taskListIndex], index())}
                         onEdit={(ev) => props[_onEditTask](ev, task, $props[_taskListIndex], index())}
-                        onContextMenu={(ev) => props[_onContextMenuTask](ev, task, $props[_taskListIndex], index())} 
+                        onContextMenu={(ev) => props[_onContextMenuTask](ev, task, $props[_taskListIndex], index())}
                         onDelete={ev => props[_onDeleteTask](ev, task, $props[_taskListIndex], index())}
                     />
                 </Show>
@@ -714,27 +714,27 @@ const GroupTaskList: VoidComponent<{
     }
 
     return (<div class={CSS.body_group_task_list} data-empty={toggleAttribute(!isNotEmpty())}>
-        <AppbarTasks 
-            taskListIndex={-1}        
+        <AppbarTasks
+            taskListIndex={-1}
             isAnyTask={isNotEmpty()}
             isAnyCompletedTask={false}
             isAnyUncompletedTask={false}
-            command={props[_command]} 
+            command={props[_command]}
             isGroup={true}
-            settings={props[_settings]} 
-            page={props[_page]} 
-            leading={<Icon code={getIcon()}/>} 
+            settings={props[_settings]}
+            page={props[_page]}
+            leading={<Icon code={getIcon()}/>}
             headline={stringToTitleCase(props[_page] as Pages)}
         />
         <Show when={isNotEmpty()} fallback={<EmptyTasks page={props[_page]} />}>
-            <For each={props[_taskLists]}>{(taskList, index) => 
-                <TaskListGroup 
-                    taskListIndex={index()} 
+            <For each={props[_taskLists]}>{(taskList, index) =>
+                <TaskListGroup
+                    taskListIndex={index()}
                     taskList={taskList}
                 />
             }</For>
         </Show>
-        <Menu 
+        <Menu
             ref={r => menu_more_ref = r}
             onToggleOpen={isOpen => setIs_menu_more_open(isOpen)}>
             <MenuItem
@@ -793,7 +793,7 @@ const _: VoidComponent<{
         }
         return null
     })
-    
+
     // 'edit' = open from left click to task
     // 'action' = open from left click to file chip below task name
     let renameFileOption: 'edit' | 'action' = _edit
@@ -838,10 +838,10 @@ const _: VoidComponent<{
     async function viewFile(ev: Event, file: TaskFileMetaData, taskListIndex: number, taskIndex: number, fileIndex: number): Promise<void> {
         setSelectedFileToView({file, taskListIndex, taskIndex, fileIndex})
         const blob = (await props[_command](
-            Commands.get_file_blob, 
-            file, 
-            taskListIndex, 
-            taskIndex, 
+            Commands.get_file_blob,
+            file,
+            taskListIndex,
+            taskIndex,
             fileIndex
         ) as (Blob | null))
         if (blob == null) return;
@@ -857,13 +857,13 @@ const _: VoidComponent<{
 
     function deleteSubtask(index: number): void {
         setSelectedTaskToEdit(_task, _subtasks, subtasks => [
-            ...subtasks[_slice](0, index), 
+            ...subtasks[_slice](0, index),
             ...subtasks[_slice](index + 1)
         ])
         props[_command](
-            Commands.edit_task, 
-            selectedTaskToEdit[_task], 
-            selectedTaskToEdit[_taskListIndex], 
+            Commands.edit_task,
+            selectedTaskToEdit[_task],
+            selectedTaskToEdit[_taskListIndex],
             selectedTaskToEdit[_taskIndex]
         )
     }
@@ -873,7 +873,7 @@ const _: VoidComponent<{
         changeTextFieldValue(textfield_editSubtask_ref, subtask[_name])
         setText_subtask(subtask[_name])
         openDialog(ev, dialog_editSubtask_ref, {
-            important: true, 
+            important: true,
             inputAutoFocus: true
         })
     }
@@ -881,23 +881,23 @@ const _: VoidComponent<{
     function confirmEditSubtask(): void {
         closeDialog(dialog_editSubtask_ref)
         props[_command](
-            Commands.edit_subtask, 
-            {   ...selectedSubtaskToEdit[_subtask], 
+            Commands.edit_subtask,
+            {   ...selectedSubtaskToEdit[_subtask],
                 name: text_subtask()[_trim]()
             } satisfies SubTask,
             selectedSubtaskToEdit[_taskListIndex],
-            selectedSubtaskToEdit[_taskIndex], 
+            selectedSubtaskToEdit[_taskIndex],
             selectedSubtaskToEdit[_subtaskIndex]
         )
-        
+
         setSelectedTaskToEdit(_task, _subtasks, props[_taskLists][selectedSubtaskToEdit[_taskListIndex]][_tasks][selectedSubtaskToEdit[_taskIndex]][_subtasks])
     }
 
     async function confirmAddSubtask(): Promise<void> {
         closeDialog(dialog_newSubtask_ref)
         const subtasks = (await props[_command](
-            Commands.add_subtask, 
-            {   complete: false, 
+            Commands.add_subtask,
+            {   complete: false,
                 id: -1,
                 listId: selectedTaskToEdit[_task][_listId],
                 name: text_subtask()[_trim](),
@@ -915,10 +915,10 @@ const _: VoidComponent<{
 
         const s = selectedFileToRename
         const newFile: TaskFileMetaData = {
-            id: s[_file][_id], 
+            id: s[_file][_id],
             listId: s[_file][_listId],
-            name: text_file()[_trim]() + '.' + s[_file][_name][_replace](/^[^\.]+\./gs, ''), 
-            size: s[_file][_size], 
+            name: text_file()[_trim]() + '.' + s[_file][_name][_replace](/^[^\.]+\./gs, ''),
+            size: s[_file][_size],
             taskId: s[_file][_taskId],
             type: s[_file][_type]
         }
@@ -975,17 +975,17 @@ const _: VoidComponent<{
         taskIndex: number
         subtaskIndex: number
     }> = ($props) => {
-        return (<List 
+        return (<List
             trailing={<>
                 <TextTooltip text='Edit subtask'>
-                    <IconButton 
+                    <IconButton
                         onClick={ev => editSubtask(ev, $props[_subtask], $props[_taskListIndex], $props[_taskIndex], $props[_subtaskIndex])}
                         code={0xE739}
                     />
                 </TextTooltip>
 
                 <TextTooltip text="Delete subtask">
-                    <IconButton 
+                    <IconButton
                         onClick={() => deleteSubtask($props[_subtaskIndex])}
                         code={0xE59D}
                     />
@@ -993,17 +993,17 @@ const _: VoidComponent<{
             </>}
             leading={<>
                 <TextTooltip text={`Mark as ${$props[_subtask][_complete]? 'un' : ''}completed`}>
-                    <IconButton 
+                    <IconButton
                         onClick={() => {
-                            const subtask: SubTask = {   
+                            const subtask: SubTask = {
                                 ...$props[_subtask],
                                 complete: !$props[_subtask][_complete]
                             }
                             props[_command](
-                                Commands.edit_subtask, 
-                                subtask, 
-                                $props[_taskListIndex], 
-                                $props[_taskIndex], 
+                                Commands.edit_subtask,
+                                subtask,
+                                $props[_taskListIndex],
+                                $props[_taskIndex],
                                 $props[_subtaskIndex]
                             )
 
@@ -1032,25 +1032,25 @@ const _: VoidComponent<{
             else if (value >= KILO) unitValue = numberParse((value / KILO)[_toFixed](2)) + ' KB'
             return unitValue
         })
-        
-        return (<List 
+
+        return (<List
             classList={addClassListModule(CSS.body_file_list_item)}
             trailing={<>
                 <TextTooltip text={"View file" + (isTypeNotSupported()? ' (not supported)' : '')}>
-                    <IconButton 
-                        disabled={isTypeNotSupported()} 
+                    <IconButton
+                        disabled={isTypeNotSupported()}
                         onClick={(ev) => viewFile(ev, $props[_file], $props[_taskListIndex], $props[_taskIndex], $props[_fileIndex])}
                         code={0xE77B}
                     />
                 </TextTooltip>
 
                 <TextTooltip text="More actions">
-                    <IconButton 
+                    <IconButton
                         focused={selectedFileToAction[_file][_id] == $props[_file][_id] && is_menu_fileAction_open()}
                         onClick={(ev) => {
                             setSelectedFileToAction($props)
                             openMenu(ev, menu_fileAction_ref, {
-                                anchor: ev[_currentTarget], 
+                                anchor: ev[_currentTarget],
                             })
                         }}
                         code={0xEAD9}
@@ -1063,11 +1063,11 @@ const _: VoidComponent<{
     }
 
     const LabelItem: VoidComponent<TaskLabel> = ($props) => {
-        return (<List 
+        return (<List
             leading={<Icon style={{color: $props[_color] ?? undefined}} code={0xE407}/>}
             trailing={<>
                 <TextTooltip text="Edit label">
-                    <IconButton 
+                    <IconButton
                         onClick={(ev) => {
                             setSelectedLabel($props)
                             props[_command](Commands.edit_label, ev, selectedLabel)
@@ -1077,19 +1077,19 @@ const _: VoidComponent<{
                 </TextTooltip>
 
                 <TextTooltip text="Remove label from task">
-                    <IconButton 
+                    <IconButton
                         onClick={() => {
                             const index = selectedTaskToEdit[_task][_labelIds][_findIndex](id => id == $props[_id])
                             if (index < 0) return;
 
                             setSelectedTaskToEdit(_task, _labelIds, ids => ids[_slice](0, index)[_concat](ids[_slice](index + 1)))
                             props[_command](
-                                Commands.edit_task, 
-                                selectedTaskToEdit[_task], 
-                                selectedTaskToEdit[_taskListIndex], 
+                                Commands.edit_task,
+                                selectedTaskToEdit[_task],
+                                selectedTaskToEdit[_taskListIndex],
                                 selectedTaskToEdit[_taskIndex]
                             )
-                        }} 
+                        }}
                         code={0xE5E9}
                     />
                 </TextTooltip>
@@ -1099,8 +1099,8 @@ const _: VoidComponent<{
     }
 
     const Dialogs: VoidComponent = () => (<>
-        <Dialog 
-            ref={r => dialog_editTask_ref = r} 
+        <Dialog
+            ref={r => dialog_editTask_ref = r}
             header='Edit task'
             style={{width: '500px'}}
             classList={addClassListModule(CSS.body_dialog_edit)}
@@ -1108,9 +1108,9 @@ const _: VoidComponent<{
                 <Button variant={ButtonVariant[_tonal]} onClick={() => closeDialog(dialog_editTask_ref)}>Close</Button>
                 <Button variant={ButtonVariant[_filled]} onClick={() => {
                     props[_command](
-                        Commands.edit_task, 
-                        {...selectedTaskToEdit[_task], complete: !selectedTaskToEdit[_task][_complete]} satisfies Task, 
-                        selectedTaskToEdit[_taskListIndex], 
+                        Commands.edit_task,
+                        {...selectedTaskToEdit[_task], complete: !selectedTaskToEdit[_task][_complete]} satisfies Task,
+                        selectedTaskToEdit[_taskListIndex],
                         selectedTaskToEdit[_taskIndex]
                     )
 
@@ -1118,49 +1118,49 @@ const _: VoidComponent<{
                 }}>Mark as {selectedTaskToEdit[_task][_complete]? "not" : ''} completed</Button>
             </>}>
 
-            <TextField 
-                labelText="Task" 
+            <TextField
+                labelText="Task"
                 value={selectedTaskToEdit[_task][_name]}
                 onBlur={(ev) => {
                     if (ev[_currentTarget][_value] == selectedTaskToEdit[_task][_name]) return;
                     setSelectedTaskToEdit(_task, _name, ev[_currentTarget][_value])
                     props[_command](
-                        Commands.edit_task, 
-                        selectedTaskToEdit[_task], 
-                        selectedTaskToEdit[_taskListIndex], 
+                        Commands.edit_task,
+                        selectedTaskToEdit[_task],
+                        selectedTaskToEdit[_taskListIndex],
                         selectedTaskToEdit[_taskIndex]
                     )
                 }}
             />
-            <AreaTextField 
-                labelText="Description" 
-                maxLine={3} 
+            <AreaTextField
+                labelText="Description"
+                maxLine={3}
                 value={selectedTaskToEdit[_task][_description]}
                 onBlur={(ev) => {
                     if (ev[_currentTarget][_value] == selectedTaskToEdit[_task][_description]) return;
                     setSelectedTaskToEdit(_task, _description, ev[_currentTarget][_value])
                     props[_command](
-                        Commands.edit_task, 
-                        selectedTaskToEdit[_task], 
-                        selectedTaskToEdit[_taskListIndex], 
+                        Commands.edit_task,
+                        selectedTaskToEdit[_task],
+                        selectedTaskToEdit[_taskListIndex],
                         selectedTaskToEdit[_taskIndex]
                     )
                 }}
             />
 
             <div data-subtasks>
-                <For each={selectedTaskToEdit[_task][_subtasks]}>{ (subtask, index) => 
-                    <SubtaskItem 
-                        subtask={subtask} 
-                        taskListIndex={selectedTaskToEdit[_taskListIndex]} 
-                        taskIndex={selectedTaskToEdit[_taskIndex]} 
-                        subtaskIndex={index()} 
+                <For each={selectedTaskToEdit[_task][_subtasks]}>{ (subtask, index) =>
+                    <SubtaskItem
+                        subtask={subtask}
+                        taskListIndex={selectedTaskToEdit[_taskListIndex]}
+                        taskIndex={selectedTaskToEdit[_taskIndex]}
+                        subtaskIndex={index()}
                     />
                 }</For>
 
-                <Button 
+                <Button
                     onClick={(ev) => openDialog(ev, dialog_newSubtask_ref, {
-                        important: true, 
+                        important: true,
                         inputAutoFocus: true
                     })}>
                     <Icon code={0xE009}/>Add subtask
@@ -1168,15 +1168,15 @@ const _: VoidComponent<{
             </div>
             <Divider />
             <div data-label>
-                <For each={selectedTaskToEdit[_task][_labelIds]}>{labelId => 
+                <For each={selectedTaskToEdit[_task][_labelIds]}>{labelId =>
                     <Show when={props[_labels][labelId] != undefined}>
                         <LabelItem {...props[_labels][labelId]!} />
                     </Show>
                 }</For>
-                <Button 
-                    focused={is_menu_labels_open()} 
+                <Button
+                    focused={is_menu_labels_open()}
                     onClick={ev => openMenu(ev, menu_labels_ref, {
-                        anchor: ev[_currentTarget], 
+                        anchor: ev[_currentTarget],
                         position: MenuPosition[_centerBottomToRight]
                     })}>
                     <Icon code={0xF00D}/>Add label
@@ -1184,27 +1184,27 @@ const _: VoidComponent<{
             </div>
             <Divider />
             <div data-reminder>
-                <Show 
+                <Show
                     when={selectedTaskToEdit[_task][_reminder] != null}
                     fallback={<Button
                         focused={is_dateTimePicker_reminder_open()}
                         onClick={ev => {
                             setChangeReminderOption(_edit)
                             openDateTimePicker(ev, dateTimePicker_reminder_ref, {
-                                anchor: ev[_currentTarget], 
+                                anchor: ev[_currentTarget],
                                 position: DateTimePickerPosition[_centerBottomToRight]
                             })
                         }}>
                         <Icon code={0xE01D}/>Add reminder
                     </Button>}>
-                    <List 
+                    <List
                         trailing={<>
                             <TextTooltip text="Change datetime reminder">
-                                <IconButton 
+                                <IconButton
                                     onClick={ev => {
                                         setChangeReminderOption(_edit)
                                         openDateTimePicker(ev, dateTimePicker_reminder_ref, {
-                                            anchor: ev[_currentTarget], 
+                                            anchor: ev[_currentTarget],
                                             position: DateTimePickerPosition[_centerBottomToRight]
                                         })
                                     }}
@@ -1213,13 +1213,13 @@ const _: VoidComponent<{
                             </TextTooltip>
 
                             <TextTooltip text="Remove reminder">
-                                <IconButton 
+                                <IconButton
                                     onClick={(ev) => {
                                         setSelectedTaskToEdit(_task, _reminder, null)
                                         props[_command](
-                                            Commands.edit_task, 
-                                            selectedTaskToEdit[_task], 
-                                            selectedTaskToEdit[_taskListIndex], 
+                                            Commands.edit_task,
+                                            selectedTaskToEdit[_task],
+                                            selectedTaskToEdit[_taskListIndex],
                                             selectedTaskToEdit[_taskIndex]
                                         )
                                     }}
@@ -1230,8 +1230,8 @@ const _: VoidComponent<{
                         leading={<Icon code={0xE025}/>}>
                         <span style={{
                             color: isOutDate_YMD_HM(
-                                selectedTaskToEdit[_task][_reminder]!, 
-                                getCurrentDate(), 
+                                selectedTaskToEdit[_task][_reminder]!,
+                                getCurrentDate(),
                                 new Date(getDate_Y() + 100, 2, 2)
                             )? 'rgb(var(--color-error))' : undefined
                         }}>{getDateString_YMD_HM(selectedTaskToEdit[_task][_reminder]!)}</span>
@@ -1240,15 +1240,15 @@ const _: VoidComponent<{
             </div>
             <Divider />
             <div data-file>
-                <For each={selectedTaskToEdit[_task][_files]}>{(file, index) => 
-                    <FileItem 
+                <For each={selectedTaskToEdit[_task][_files]}>{(file, index) =>
+                    <FileItem
                         file={file}
                         fileIndex={index()}
                         taskIndex={selectedTaskToEdit[_taskIndex]}
                         taskListIndex={selectedTaskToEdit[_taskListIndex]}
                     />
                 }</For>
-                <Button 
+                <Button
                     onClick={() => {
                         const taskIndex = selectedTaskToEdit[_taskIndex]
                         const taskListIndex = selectedTaskToEdit[_taskListIndex]
@@ -1267,9 +1267,9 @@ const _: VoidComponent<{
                 <Button onClick={() => {
                         setSelectedTaskToEdit(_task, _important, t => !t)
                         props[_command](
-                            Commands.edit_task, 
-                            selectedTaskToEdit[_task], 
-                            selectedTaskToEdit[_taskListIndex], 
+                            Commands.edit_task,
+                            selectedTaskToEdit[_task],
+                            selectedTaskToEdit[_taskListIndex],
                             selectedTaskToEdit[_taskIndex]
                         )
                     }}>
@@ -1278,20 +1278,20 @@ const _: VoidComponent<{
                 </Button>
             </div>
             <div data-delete>
-                <Button 
+                <Button
                     onClick={(ev) => deleteTask(
-                        ev, 
-                        selectedTaskToEdit[_task], 
-                        selectedTaskToEdit[_taskListIndex], 
+                        ev,
+                        selectedTaskToEdit[_task],
+                        selectedTaskToEdit[_taskListIndex],
                         selectedTaskToEdit[_taskIndex]
-                    )} 
+                    )}
                     style={{color: 'rgb(var(--color-error))'}}>
                     <Icon code={0xE59D}/>
                     Delete task
                 </Button>
             </div>
         </Dialog>
-        <Dialog 
+        <Dialog
             header="Delete task"
             style={{width: '560px'}}
             ref={r => dialog_deleteTaskWarning_ref = r}
@@ -1305,24 +1305,24 @@ const _: VoidComponent<{
                 }} variant={ButtonVariant[_filled]}>Delete</Button>
             </>}>
             Are you sure want to delete <q><span style={{color: 'rgb(var(--color-accent))', "font-weight": 'bold'}}>{(selectedTaskToDelete[_task][_name]) || ''}</span></q> task?
-            <CheckBox 
-                compact 
+            <CheckBox
+                compact
                 style={{"margin-top": '16px'}}
                 onValueChanged={(value) => props[_command](Commands.toggle_deleteTaskWarning, !value)}>
                 Don't remind me again
             </CheckBox>
         </Dialog>
-        <Dialog 
+        <Dialog
             ref={r => dialog_fileRename_ref = r}
             style={{width: '500px'}}
             header="Rename file"
             actions={<>
-                <Button 
-                    variant={ButtonVariant[_tonal]} 
+                <Button
+                    variant={ButtonVariant[_tonal]}
                     onClick={() => closeDialog(dialog_fileRename_ref)}>
                     Cancel
                 </Button>
-                <Button 
+                <Button
                     variant={ButtonVariant[_filled]}
                     disabled={text_file()[_trim]() == ''}
                     onClick={() => confirmFileRename()}>
@@ -1335,7 +1335,7 @@ const _: VoidComponent<{
 
                 confirmFileRename()
             }}>
-                <TextField 
+                <TextField
                     ref={r => textfield_renameFile_ref = r}
                     autofocus
                     onInput={ev => setText_file(ev[_currentTarget][_value])}
@@ -1343,7 +1343,7 @@ const _: VoidComponent<{
                 />
             </form>
         </Dialog>
-        <Dialog 
+        <Dialog
             style={{width: '720px'}}
             ref={r => dialog_viewFile_ref = r}
             onClose={() => {
@@ -1352,19 +1352,19 @@ const _: VoidComponent<{
             }}
             header={selectedFileToView[_file][_name]}
             actions={<>
-                <Button 
-                    onClick={() => closeDialog(dialog_viewFile_ref)} 
+                <Button
+                    onClick={() => closeDialog(dialog_viewFile_ref)}
                     variant={ButtonVariant[_tonal]}>
                     Close
                 </Button>
-                <Button 
+                <Button
                     variant={ButtonVariant[_filled]}
                     onClick={() => {
                         props[_command](
-                            Commands.download_file, 
+                            Commands.download_file,
                             selectedFileToView[_file],
-                            selectedFileToView[_taskListIndex], 
-                            selectedFileToView[_taskIndex], 
+                            selectedFileToView[_taskListIndex],
+                            selectedFileToView[_taskIndex],
                             selectedFileToView[_fileIndex]
                         )
                     }}>
@@ -1388,7 +1388,7 @@ const _: VoidComponent<{
                 </Switch>
             </Show>
         </Dialog>
-        <Dialog 
+        <Dialog
             ref={r => dialog_newSubtask_ref = r}
             style={{width: '500px'}}
             header="New subtask"
@@ -1397,12 +1397,12 @@ const _: VoidComponent<{
                 changeTextFieldValue(textfield_newSubtask_ref, '')
             }}
             actions={<>
-                <Button 
+                <Button
                     variant={ButtonVariant[_tonal]}
                     onClick={() => closeDialog(dialog_newSubtask_ref)}>
                     Close
                 </Button>
-                <Button 
+                <Button
                     variant={ButtonVariant[_filled]}
                     disabled={text_subtask()[_trim]() == ''}
                     onClick={() => confirmAddSubtask()}>
@@ -1415,7 +1415,7 @@ const _: VoidComponent<{
 
                 confirmAddSubtask()
             }}>
-                <TextField 
+                <TextField
                     ref={r => textfield_newSubtask_ref = r}
                     placeholder="Subtask name"
                     onFocus={ev => setText_subtask(ev[_currentTarget][_value])}
@@ -1423,7 +1423,7 @@ const _: VoidComponent<{
                 />
             </form>
         </Dialog>
-        <Dialog 
+        <Dialog
             ref={r => dialog_editSubtask_ref = r}
             style={{width: '500px'}}
             header="Edit subtask"
@@ -1432,12 +1432,12 @@ const _: VoidComponent<{
                 changeTextFieldValue(textfield_editSubtask_ref, '')
             }}
             actions={<>
-                <Button 
+                <Button
                     variant={ButtonVariant[_tonal]}
                     onClick={() => closeDialog(dialog_editSubtask_ref)}>
                     Close
                 </Button>
-                <Button 
+                <Button
                     variant={ButtonVariant[_filled]}
                     disabled={text_subtask()[_trim]() == ''}
                     onClick={() => confirmEditSubtask()}>
@@ -1449,7 +1449,7 @@ const _: VoidComponent<{
                 if (text_subtask()[_trim]() == '') return;
                 confirmEditSubtask()
             }}>
-                <TextField 
+                <TextField
                     ref={r => textfield_editSubtask_ref = r}
                     placeholder="Subtask name"
                     onFocus={ev => setText_subtask(ev[_currentTarget][_value])}
@@ -1461,32 +1461,32 @@ const _: VoidComponent<{
 
     const Menus: VoidComponent = () => (<>
         <Menu ref={r => menu_taskAction_ref = r}>
-            <MenuItem 
-                iconCode={selectedTaskToAction[_task][_complete]? 0xE3D4 : 0xE3CC} 
+            <MenuItem
+                iconCode={selectedTaskToAction[_task][_complete]? 0xE3D4 : 0xE3CC}
                 onClick={() => {
                     closeMenu(menu_taskAction_ref)
                     props[_command](
-                        Commands.edit_task, 
-                        {   ...selectedTaskToAction[_task], 
+                        Commands.edit_task,
+                        {   ...selectedTaskToAction[_task],
                             complete: !selectedTaskToAction[_task][_complete]
-                        } satisfies Task, 
-                        selectedTaskToAction[_taskListIndex], 
+                        } satisfies Task,
+                        selectedTaskToAction[_taskListIndex],
                         selectedTaskToAction[_taskIndex]
                     )
                 }}
                 trailing={<MenuIndent />}>
                 Mark as {selectedTaskToAction[_task][_complete]? 'not' : ''} completed
             </MenuItem>
-            <MenuItem 
-                leading={<Icon code={0xEF1B} filled={!((selectedTaskToAction[_task][_important]) || false)}/>} 
+            <MenuItem
+                leading={<Icon code={0xEF1B} filled={!((selectedTaskToAction[_task][_important]) || false)}/>}
                 onClick={() => {
                     closeMenu(menu_taskAction_ref)
                     props[_command](
-                        Commands.edit_task, 
-                        {   ...selectedTaskToAction[_task], 
+                        Commands.edit_task,
+                        {   ...selectedTaskToAction[_task],
                             important: !selectedTaskToAction[_task][_important]
-                        } satisfies Task, 
-                        selectedTaskToAction[_taskListIndex], 
+                        } satisfies Task,
+                        selectedTaskToAction[_taskListIndex],
                         selectedTaskToAction[_taskIndex]
                     )
                 }}
@@ -1494,9 +1494,9 @@ const _: VoidComponent<{
                 Mark as {selectedTaskToAction[_task][_important]? 'not' : ''} important
             </MenuItem>
             <MenuDivider />
-            <MenuItem 
-                iconCode={0xE187} 
-                trailing={<MenuIndent />} 
+            <MenuItem
+                iconCode={0xE187}
+                trailing={<MenuIndent />}
                 onClick={() => {
                     closeMenu(menu_taskAction_ref)
 
@@ -1511,25 +1511,25 @@ const _: VoidComponent<{
                 }}>
                 Add file
             </MenuItem>
-            <MenuItem 
-                iconCode={0xE009} 
-                trailing={<MenuIndent />} 
+            <MenuItem
+                iconCode={0xE009}
+                trailing={<MenuIndent />}
                 onClick={(ev) => {
                     closeMenu(menu_taskAction_ref)
                     openDialog(ev, dialog_newSubtask_ref, {
-                        important: true, 
+                        important: true,
                         inputAutoFocus: true
                     })
                 }}>
                 Add subtask
             </MenuItem>
             <Show when={selectedTaskToAction[_task][_reminder] == null}>
-                <MenuItem 
+                <MenuItem
                     onClick={(ev) => {
                         closeMenu(menu_taskAction_ref)
                         setChangeReminderOption(_action)
                         openDateTimePicker(ev, dateTimePicker_reminder_ref)
-                    }} 
+                    }}
                     iconCode={0xE01B}
                     trailing={<MenuIndent />}>
                     Add reminder
@@ -1539,14 +1539,14 @@ const _: VoidComponent<{
                 <SubMenu
                     level={1}
                     onToggleOpen={v => setIs_menu_taskActionAddLabel_open(v)}
-                    item={<MenuItem 
-                        focused={is_menu_taskActionAddLabel_open()} 
-                        iconCode={0xF00D} 
+                    item={<MenuItem
+                        focused={is_menu_taskActionAddLabel_open()}
+                        iconCode={0xF00D}
                         trailing={<Icon filled code={0xE368}/>}>
                         Add label
                     </MenuItem>}>
                     <For each={[...props[_labels]][_sort]((a, b) => a == undefined || b == undefined? 0 : a[_name][_localeCompare](b[_name]))}>{label => <Show when={label != undefined}>
-                        <MenuItem 
+                        <MenuItem
                             leading={<Icon style={{color: label![_color] ?? undefined}} code={0xE407}/>}
                             checked={selectedTaskToAction[_task][_labelIds][_includes](label![_id])}
                             onClick={() => {
@@ -1556,9 +1556,9 @@ const _: VoidComponent<{
                                     : [...ids, label![_id]]
                                 )
                                 props[_command](
-                                    Commands.edit_task, 
-                                    selectedTaskToAction[_task], 
-                                    selectedTaskToAction[_taskListIndex], 
+                                    Commands.edit_task,
+                                    selectedTaskToAction[_task],
+                                    selectedTaskToAction[_taskListIndex],
                                     selectedTaskToAction[_taskIndex]
                                 )
                             }}>
@@ -1573,19 +1573,19 @@ const _: VoidComponent<{
                 ref={r => submenu_moveTask_ref = r}
                 style={{"min-width": '200px'}}
                 onToggleOpen={v => setIs_menu_taskActionMove_open(v)}
-                item={<MenuItem 
-                    focused={is_menu_taskActionMove_open()} 
-                    iconCode={0xE115} 
+                item={<MenuItem
+                    focused={is_menu_taskActionMove_open()}
+                    iconCode={0xE115}
                     trailing={<Icon filled code={0xE368}/>}>
                     Move task to ...
                 </MenuItem>}>
                 <For each={props[_taskLists]}>{(list, i) => <>
-                    <MenuItem 
+                    <MenuItem
                         onClick={() => {
                             props[_command](
-                                Commands.move_task, 
-                                selectedTaskToAction[_task], 
-                                selectedTaskToAction[_taskListIndex], 
+                                Commands.move_task,
+                                selectedTaskToAction[_task],
+                                selectedTaskToAction[_taskListIndex],
                                 selectedTaskToAction[_taskIndex],
                                 i()
                             )
@@ -1596,10 +1596,10 @@ const _: VoidComponent<{
                         iconCode={list[_id] == DEFAULT_TASK_LIST[_id]
                             ? 0xE8E2
                             : list[_emoji] == null
-                                ? 0xF032 
+                                ? 0xF032
                                 : undefined
                         }
-                        leading={<Show 
+                        leading={<Show
                             when={list[_emoji] != null && list[_id] != DEFAULT_TASK_LIST[_id]}>
                             <Emoji emoji={list[_emoji]!} />
                         </Show>}
@@ -1612,27 +1612,27 @@ const _: VoidComponent<{
                 </>}</For>
             </SubMenu>
             <MenuDivider />
-            <MenuItem 
+            <MenuItem
                 onClick={(ev) => {
                     closeMenu(menu_taskAction_ref)
                     editTask(
-                        ev, 
-                        selectedTaskToAction[_task], 
-                        selectedTaskToAction[_taskListIndex], 
+                        ev,
+                        selectedTaskToAction[_task],
+                        selectedTaskToAction[_taskListIndex],
                         selectedTaskToAction[_taskIndex]
                     )
-                }} 
-                iconCode={0xE739} 
+                }}
+                iconCode={0xE739}
                 trailing={<MenuIndent />}>
                 Edit task
             </MenuItem>
-            <MenuItem 
-                iconCode={0xE59D} 
+            <MenuItem
+                iconCode={0xE59D}
                 trailing={<MenuIndent />}
                 onClick={(ev) => deleteTask(
-                    ev, 
-                    selectedTaskToAction[_task], 
-                    selectedTaskToAction[_taskListIndex], 
+                    ev,
+                    selectedTaskToAction[_task],
+                    selectedTaskToAction[_taskListIndex],
                     selectedTaskToAction[_taskIndex])
                 }>
                 Delete task
@@ -1648,21 +1648,21 @@ const _: VoidComponent<{
                 closeMenu(menu_reminder_ref)
                 setSelectedTaskToChangeReminder(_task, _reminder, null)
                 props[_command](
-                    Commands.edit_task, 
-                    selectedTaskToChangeReminder[_task], 
-                    selectedTaskToChangeReminder[_taskListIndex], 
+                    Commands.edit_task,
+                    selectedTaskToChangeReminder[_task],
+                    selectedTaskToChangeReminder[_taskListIndex],
                     selectedTaskToChangeReminder[_taskIndex]
                 )
             }}>Remove reminder</MenuItem>
         </Menu>
         <Menu ref={r => menu_labels_ref = r} onToggleOpen={(isOpen) => setIs_menu_labels_open(isOpen)}>
-            <MenuItem 
-                iconCode={0xE007} 
+            <MenuItem
+                iconCode={0xE007}
                 onClick={(ev) => props[_command](Commands.add_label, ev)}>
                 New label
             </MenuItem>
             <Show when={props[_labels][_length] > 0}>
-                <MenuItem 
+                <MenuItem
                     iconCode={0xE739}
                     onClick={(ev) => {
                         closeDialog(dialog_editTask_ref)
@@ -1674,7 +1674,7 @@ const _: VoidComponent<{
                 <Divider/>
             </Show>
             <For each={[...props[_labels]][_sort]((a, b) => a == undefined || b == undefined? 0 : a[_name][_localeCompare](b[_name]))}>{label => <Show when={label != undefined}>
-                <MenuItem 
+                <MenuItem
                     leading={<Icon style={{color: label![_color] ?? undefined}} code={0xE407}/>}
                     checked={selectedTaskToEdit[_task][_labelIds][_includes](label![_id])}
                     onContextMenu={ev => {
@@ -1687,17 +1687,17 @@ const _: VoidComponent<{
                     onClick={() => {
                         const index = selectedTaskToEdit[_task][_labelIds][_findIndex](id => id == label![_id])
                         setSelectedTaskToEdit(
-                            _task, 
-                            _labelIds, 
+                            _task,
+                            _labelIds,
                             ids => index < 0
-                                ? [...ids, label![_id]] 
+                                ? [...ids, label![_id]]
                                 : ids[_slice](0, index)[_concat](ids[_slice](index + 1))
                         )
 
                         props[_command](
-                            Commands.edit_task, 
-                            selectedTaskToEdit[_task], 
-                            selectedTaskToEdit[_taskListIndex], 
+                            Commands.edit_task,
+                            selectedTaskToEdit[_task],
+                            selectedTaskToEdit[_taskListIndex],
                             selectedTaskToEdit[_taskIndex]
                         )
                     }}>
@@ -1706,7 +1706,7 @@ const _: VoidComponent<{
             </Show>}</For>
         </Menu>
         <Menu ref={r => menu_labelAction_ref = r}>
-            <MenuItem 
+            <MenuItem
                 iconCode={0xE739}
                 onClick={(ev) => {
                     closeMenu(menu_labelAction_ref)
@@ -1715,7 +1715,7 @@ const _: VoidComponent<{
                 Edit label
             </MenuItem>
 
-            <MenuItem 
+            <MenuItem
                 iconCode={0xE59D}
                 onClick={() => {
                     closeMenu(menu_labelAction_ref)
@@ -1725,7 +1725,7 @@ const _: VoidComponent<{
             </MenuItem>
         </Menu>
         <Menu ref={r => menu_labelAction2_ref = r}>
-            <MenuItem 
+            <MenuItem
                 iconCode={0xE739}
                 onClick={(ev) => {
                     closeMenu(menu_labelAction2_ref)
@@ -1733,7 +1733,7 @@ const _: VoidComponent<{
                 }}>
                 Edit label
             </MenuItem>
-            <MenuItem 
+            <MenuItem
                 iconCode={0xE5E9}
                 onClick={() => {
                     closeMenu(menu_labelAction2_ref)
@@ -1742,8 +1742,8 @@ const _: VoidComponent<{
 
                     setSelectedTaskToEditLabel(_task, _labelIds, ids => ids[_slice](0, index)[_concat](ids[_slice](index + 1)))
                     props[_command](
-                        Commands.edit_task, 
-                        selectedTaskToEditLabel[_task], 
+                        Commands.edit_task,
+                        selectedTaskToEditLabel[_task],
                         selectedTaskToEditLabel[_taskListIndex],
                         selectedTaskToEditLabel[_taskIndex],
                     )
@@ -1752,21 +1752,21 @@ const _: VoidComponent<{
             </MenuItem>
         </Menu>
         <Menu ref={r => menu_fileAction_ref = r} onToggleOpen={isOpen => setIs_menu_fileAction_open(isOpen)}>
-            <MenuItem 
+            <MenuItem
                 iconCode={0xE0B9}
                 onClick={() => {
                     closeMenu(menu_fileAction_ref)
                     props[_command](
-                        Commands.download_file, 
+                        Commands.download_file,
                         selectedFileToAction[_file],
-                        selectedFileToAction[_taskListIndex], 
-                        selectedFileToAction[_taskIndex], 
+                        selectedFileToAction[_taskListIndex],
+                        selectedFileToAction[_taskIndex],
                         selectedFileToAction[_fileIndex]
                     )
                 }}>
                 Download
             </MenuItem>
-            <MenuItem 
+            <MenuItem
                 iconCode={0xE739}
                 onClick={(ev) => {
                     closeMenu(menu_fileAction_ref)
@@ -1776,24 +1776,24 @@ const _: VoidComponent<{
                     setSelectedFileToRename({...selectedFileToAction})
                     renameFileOption = _edit
                     openDialog(ev, dialog_fileRename_ref, {
-                        inputAutoFocus: true, 
+                        inputAutoFocus: true,
                         important: true
                     })
                 }}>
                 Rename
             </MenuItem>
-            <MenuItem 
-                iconCode={0xE59D} 
+            <MenuItem
+                iconCode={0xE59D}
                 onClick={() => {
                     closeMenu(menu_fileAction_ref)
                     setSelectedTaskToEdit(_task, _files, files => [
-                        ...files[_slice](0, selectedFileToAction[_fileIndex]), 
+                        ...files[_slice](0, selectedFileToAction[_fileIndex]),
                         ...files[_slice](selectedFileToAction[_fileIndex] + 1)
                     ])
                     props[_command](
-                        Commands.edit_task, 
-                        selectedTaskToEdit[_task], 
-                        selectedTaskToEdit[_taskListIndex], 
+                        Commands.edit_task,
+                        selectedTaskToEdit[_task],
+                        selectedTaskToEdit[_taskListIndex],
                         selectedTaskToEdit[_taskIndex]
                     )
                 }}>
@@ -1801,18 +1801,18 @@ const _: VoidComponent<{
             </MenuItem>
         </Menu>
         <Menu style={{'min-width': '164px'}} ref={r => menu_fileAction2_ref = r}>
-            <For each={selectedTaskToFileAction[_task][_files]}>{(file, index) => 
-                <MenuItem 
-                    focused={is_menu_fileAction3_open() && file[_id] == selectedFileToAction2[_file][_id]} 
+            <For each={selectedTaskToFileAction[_task][_files]}>{(file, index) =>
+                <MenuItem
+                    focused={is_menu_fileAction3_open() && file[_id] == selectedFileToAction2[_file][_id]}
                     onClick={(ev) => {
                         setSelectedFileToAction2({
-                            file, 
+                            file,
                             fileIndex: index(),
                             taskIndex: selectedTaskToFileAction[_taskIndex],
                             taskListIndex: selectedTaskToFileAction[_taskListIndex]
                         })
                         openMenu(ev, menu_fileAction3_ref, {
-                            anchor: ev[_currentTarget], 
+                            anchor: ev[_currentTarget],
                             position: MenuPosition[_rightCenterToBottom]
                         })
                     }}>
@@ -1822,13 +1822,13 @@ const _: VoidComponent<{
         </Menu>
         <Menu style={{'min-width': '164px'}} ref={r => menu_fileAction3_ref = r} onToggleOpen={(isOpen) => setIs_menu_fileAction3_open(isOpen)}>
             <Show when={/^(audio|image|video|text)/[_test](selectedFileToAction2[_file][_type])}>
-                <MenuItem 
+                <MenuItem
                     iconCode={0xE77B}
                     onClick={ev => {
                         closeMenu(menu_fileAction3_ref)
                         viewFile(
-                            ev, 
-                            selectedFileToAction2[_file], 
+                            ev,
+                            selectedFileToAction2[_file],
                             selectedFileToAction2[_taskListIndex],
                             selectedFileToAction2[_taskIndex],
                             selectedFileToAction2[_fileIndex]
@@ -1837,7 +1837,7 @@ const _: VoidComponent<{
                     View
                 </MenuItem>
             </Show>
-            <MenuItem 
+            <MenuItem
                 iconCode={0xE739}
                 onClick={(ev) => {
                     closeMenu(menu_fileAction3_ref)
@@ -1847,40 +1847,40 @@ const _: VoidComponent<{
                     setSelectedFileToRename({...selectedFileToAction2})
                     renameFileOption = _action
                     openDialog(ev, dialog_fileRename_ref, {
-                        inputAutoFocus: true, 
+                        inputAutoFocus: true,
                         important: true
                     })
                 }}>
                 Rename
             </MenuItem>
-            <MenuItem 
-                iconCode={0xE0B9} 
+            <MenuItem
+                iconCode={0xE0B9}
                 onClick={() => {
                     closeMenu(menu_fileAction3_ref)
                     props[_command](
-                        Commands.download_file, 
+                        Commands.download_file,
                         selectedFileToAction2[_file],
-                        selectedFileToAction2[_taskListIndex], 
-                        selectedFileToAction2[_taskIndex], 
+                        selectedFileToAction2[_taskListIndex],
+                        selectedFileToAction2[_taskIndex],
                         selectedFileToAction2[_fileIndex]
                     )
                 }}>
                 Download
             </MenuItem>
-            <MenuItem 
-                iconCode={0xE59D} 
+            <MenuItem
+                iconCode={0xE59D}
                 onClick={() => {
                     closeMenu(menu_fileAction3_ref)
                     if (selectedTaskToFileAction[_task][_files][_length] == 1) closeMenu(menu_fileAction2_ref)
 
                     setSelectedTaskToFileAction(_task, _files, files => [
-                        ...files[_slice](0, selectedFileToAction2[_fileIndex]), 
+                        ...files[_slice](0, selectedFileToAction2[_fileIndex]),
                         ...files[_slice](selectedFileToAction2[_fileIndex] + 1)
                     ])
                     props[_command](
-                        Commands.edit_task, 
-                        selectedTaskToFileAction[_task], 
-                        selectedTaskToFileAction[_taskListIndex], 
+                        Commands.edit_task,
+                        selectedTaskToFileAction[_task],
+                        selectedTaskToFileAction[_taskListIndex],
                         selectedTaskToFileAction[_taskIndex]
                     )
                 }}>
@@ -1890,7 +1890,7 @@ const _: VoidComponent<{
     </>)
 
     const DatePickers: VoidComponent = () => (<>
-        <DateTimePicker 
+        <DateTimePicker
             onToggleOpen={(v) => setIs_dateTimePicker_reminder_open(v)}
             datetime={(changeReminderOption() == _edit
                 ? selectedTaskToEdit[_task][_reminder]
@@ -1900,7 +1900,7 @@ const _: VoidComponent<{
                         ? selectedTaskToChangeReminder[_task][_reminder]
                         : new Date()
             ) ?? new Date()}
-            ref={r => dateTimePicker_reminder_ref = r} 
+            ref={r => dateTimePicker_reminder_ref = r}
             onSelectDateTime={(date) => {
                 let task: Task = {complete: false, description: '', files: [], id: -1, important: false, labelIds: [], listId: -1, name: '', reminder: null, subtasks: []}
                 let taskListIndex = 0
@@ -1910,13 +1910,13 @@ const _: VoidComponent<{
                     taskListIndex = selectedTaskToEdit[_taskListIndex]
                     taskIndex = selectedTaskToEdit[_taskIndex]
                     task = selectedTaskToEdit[_task]
-                } 
+                }
                 else if (changeReminderOption() == _action) {
                     setSelectedTaskToAction(_task, _reminder, date)
                     taskListIndex = selectedTaskToAction[_taskListIndex]
                     taskIndex = selectedTaskToAction[_taskIndex]
                     task = selectedTaskToAction[_task]
-                } 
+                }
                 else if (changeReminderOption() == _chip) {
                     setSelectedTaskToChangeReminder(_task, _reminder, date)
                     taskListIndex = selectedTaskToChangeReminder[_taskListIndex]
@@ -1930,15 +1930,15 @@ const _: VoidComponent<{
     </>)
 
     return (<div class={CSS.body}>
-        <Show 
+        <Show
             when={getTaskListIndex() == null}
-            fallback={<SingleTaskList 
-                lists={props[_taskLists]} 
-                command={props[_command]} 
-                settings={props[_settings]} 
-                page={props[_page]} 
+            fallback={<SingleTaskList
+                lists={props[_taskLists]}
+                command={props[_command]}
+                settings={props[_settings]}
+                page={props[_page]}
                 labels={props[_labels]}
-                taskList={props[_taskLists][getTaskListIndex()!]} 
+                taskList={props[_taskLists][getTaskListIndex()!]}
                 taskListIndex={getTaskListIndex()!}
                 onDeleteTask={(ev, task, taskIndex) => onDeleteTask(ev, task, getTaskListIndex()!, taskIndex)}
                 onEditLabel={(ev, label, task, taskIndex) => onEditLabel(ev, label, task, getTaskListIndex()!, taskIndex)}
@@ -1947,10 +1947,10 @@ const _: VoidComponent<{
                 onContextMenuTask={(ev, task, taskIndex) => onContextMenuTask(ev, task, getTaskListIndex()!, taskIndex)}
                 onEditTask={(ev, task, taskIndex) => onEditTask(ev, task, getTaskListIndex()!, taskIndex)}
             />}>
-            <GroupTaskList 
-                command={props[_command]} 
-                settings={props[_settings]} 
-                page={props[_page]} 
+            <GroupTaskList
+                command={props[_command]}
+                settings={props[_settings]}
+                page={props[_page]}
                 taskLists={props[_taskLists]}
                 labels={props[_labels]}
                 onDeleteTask={onDeleteTask}
