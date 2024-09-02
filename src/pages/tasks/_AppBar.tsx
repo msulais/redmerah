@@ -1,13 +1,13 @@
-import { createSignal, For, onMount, Show, type VoidComponent } from "solid-js"
+import { createMemo, createSignal, For, onMount, Show, type VoidComponent } from "solid-js"
 
-import { _about, _apps, _calculator, _centerBottomToLeft, _change, _command, _contactEmail, _corner, _currentTarget, _dark, _donate, _emoji, _expand, _expandNavigation, _filled, _filter, _fullRound, _getFullYear, _hiddenNavigation, _home, _icon, _id, _includes, _isNotebookExpand, _isShowDeleteTaskWarning, _length, _light, _matches, _name, _note, _onChangeCalculator, _page, _privacy, _round, _semiRound, _settings, _share, _sharp, _slice, _src, _system, _taskLists, _terms, _text, _theme, _type, _URL } from "@/data/string";
+import { _about, _apps, _blur, _calculator, _centerBottomToLeft, _change, _command, _complete, _contactEmail, _corner, _currentTarget, _dark, _donate, _emoji, _expand, _expandNavigation, _filled, _filter, _focus, _fullRound, _getFullYear, _hiddenNavigation, _home, _icon, _id, _includes, _isNotebookExpand, _isShowDeleteTaskWarning, _length, _light, _matches, _name, _note, _onChangeCalculator, _open, _page, _privacy, _push, _replace, _round, _semiRound, _settings, _share, _sharp, _slice, _src, _system, _taskLists, _tasks, _terms, _test, _text, _theme, _trim, _type, _URL, _value } from "@/data/string";
 import { getDocument, getNavigator, getRoot } from "@/data/window";
 import { RootAttributes } from "@/enums/attributes";
 import { CornerData } from "@/enums/corner";
 import { LocalStorageKeys } from "@/enums/storage";
 import { ThemeData } from "@/enums/theme";
 import { setLocalStorageItem, getLocalStorageItem } from "@/utils/storage";
-import { setAttribute, toggleAttribute } from "@/utils/attributes";
+import { hasAttribute, setAttribute, toggleAttribute } from "@/utils/attributes";
 import { DEFAULT_TASK_LIST, SIZE_SIDE_NAVIGATION_NONE, TASKS_PAGES } from "./_data";
 import { isMatchMedia, matchMedia } from "@/utils/window";
 import { addEventListener } from '@/utils/event'
@@ -25,12 +25,13 @@ import { addClassListModule } from "@/utils/element";
 import CSSAnimation from "@/styles/animation.module.scss";
 import { Commands, Pages } from "./_enums";
 import Drawer, { closeDrawer, DrawerItem, openDrawer } from "@/components/Drawer";
-import type { Settings, TaskList } from "./_types";
+import type { Settings, Task, TaskList } from "./_types";
 import Divider from "@/components/Divider";
 import Emoji from "@/components/Emoji";
-import TextField from "@/components/TextField";
+import TextField, { closeSearchMenu, SearchMenuDivider, SearchMenuHeader, SearchMenuItem, SearchTextField, SearchTextFieldButton } from "@/components/TextField";
 import CSS from './_styles.module.scss'
-import { timeout } from "@/utils/timeout";
+import { clearTimeDelayed, setTimeDelayed, timeout } from "@/utils/timeout";
+import { PopoverAttributes } from "@/components/Popover";
 
 const _: VoidComponent<{
     taskLists: TaskList[]
@@ -43,14 +44,45 @@ const _: VoidComponent<{
     const [is_menu_themeSettings_open, setIs_menu_themeSettings_open] = createSignal<boolean>(false)
     const [is_menu_cornerSettings_open, setIs_menu_cornerSettings_open] = createSignal<boolean>(false)
     const [is_menu_settings_open, setIs_menu_settings_open] = createSignal<boolean>(false)
+    const [isSearching, setIsSearching] = createSignal<boolean>(false)
     const [isSideNavigationHidden, setIsSideNavigationHidden] = createSignal<boolean>(false)
     const [theme, setTheme] = createSignal<ThemeData>(ThemeData[_system])
     const [corner, setCorner] = createSignal<CornerData>(CornerData[_round])
+    const [searchText, setSearchText] = createSignal<string>('')
+    const getSearchResult = createMemo<(Omit<TaskList, 'tasks'> & {index: number, tasks: (Task & {index: number})[]})[]>(() => {
+        if (searchText() == '') return []
+
+        const regex = new RegExp(searchText()
+            [_replace](/[\\\.\[\]\(\)$*^+?\{\}|]/gs, s => '\\' + s)
+            [_replace](/ +/gs, '|')
+        , 'i')
+
+        const result: (Omit<TaskList, 'tasks'> & {index: number, tasks: (Task & {index: number})[]})[] = []
+        for (let i = 0; i < props[_taskLists][_length]; i++) {
+            const list = props[_taskLists][i]
+            const tasks: (Task & {index: number})[] = []
+            tasks: for (let j = 0; j < list[_tasks][_length]; j++) {
+                const task = list[_tasks][j]
+                if (!regex[_test](task[_name])) continue tasks;
+
+                tasks[_push]({...task, index: j})
+            }
+
+            if (tasks[_length] == 0) continue;
+            result[_push]({ emoji: list[_emoji], id: list[_id], index: i, name: list[_name], tasks })
+        }
+
+        return result
+    })
+    let is_searchTextFieldMenu_open = false
+    let searchTimeoutId: number | null = null
     let drawer_navigation_ref: HTMLDialogElement
     let menu_info_ref: HTMLDialogElement
     let menu_settings_ref: HTMLDialogElement
     let submenu_theme_ref: HTMLDivElement
     let submenu_corner_ref: HTMLDivElement
+    let searchTextField_ref: HTMLInputElement
+    let searchTextFieldMenu_ref: HTMLDivElement
 
     function initSideNavigationListener(): void {
         setIsSideNavigationHidden(isMatchMedia(`(max-width: ${SIZE_SIDE_NAVIGATION_NONE}px)`))
@@ -71,7 +103,7 @@ const _: VoidComponent<{
         setAttribute(getRoot(), RootAttributes[_corner], corner)
         setLocalStorageItem(LocalStorageKeys[_corner], corner)
         closeSubMenu(submenu_corner_ref)
-        await timeout(300) 
+        await timeout(300)
         closeMenu(menu_settings_ref)
     }
 
@@ -98,12 +130,12 @@ const _: VoidComponent<{
         initCorner()
         initSideNavigationListener()
     })
-    
+
     const Menus: VoidComponent = () => {
         return (<>
-            <Menu 
-                style={{width: '200px'}} 
-                ref={r => menu_info_ref = r} 
+            <Menu
+                style={{width: '200px'}}
+                ref={r => menu_info_ref = r}
                 onToggleOpen={(v) => setIs_menu_info_open(v)}>
                 <LinkMenuItem
                     onClick={() => closeMenu(menu_info_ref)}
@@ -167,7 +199,7 @@ const _: VoidComponent<{
                     ref={r => submenu_theme_ref = r}
                     onToggleOpen={v => setIs_menu_themeSettings_open(v)}
                     item={<MenuItem
-                        data-focus={toggleAttribute(is_menu_themeSettings_open())}
+                        focused={is_menu_themeSettings_open()}
                         iconCode={0xE28A}
                         trailing={<Icon filled code={0xE368}/>}>
                         Theme
@@ -226,7 +258,7 @@ const _: VoidComponent<{
                         Full round
                     </MenuItem>
                 </SubMenu>
-                <MenuItem 
+                <MenuItem
                     onClick={ev => {
                         closeMenu(menu_settings_ref)
                         props[_command](Commands.show_labels_options, ev)
@@ -236,13 +268,13 @@ const _: VoidComponent<{
                 </MenuItem>
                 <MenuDivider />
                 <MenuHeader>Navigation</MenuHeader>
-                <For each={TASKS_PAGES[_slice](1)}>{page => 
-                    <MenuItem 
+                <For each={TASKS_PAGES[_slice](1)}>{page =>
+                    <MenuItem
                         onClick={() => {
                             const hiddenNavigation = props[_settings][_hiddenNavigation]
                             const hidden = hiddenNavigation[_includes](page[_type])
                             props[_command](Commands.change_hiddenNavigation, hidden
-                                ? hiddenNavigation[_filter](a => a != page[_type]) 
+                                ? hiddenNavigation[_filter](a => a != page[_type])
                                 : [...hiddenNavigation, page[_type]]
                             )
                         }}
@@ -252,7 +284,7 @@ const _: VoidComponent<{
                 }</For>
                 <MenuDivider />
                 <MenuHeader>Dialog warning</MenuHeader>
-                <MenuItem 
+                <MenuItem
                     checked={props[_settings][_isShowDeleteTaskWarning]}
                     trailing={<MenuIndent />}
                     onClick={() => props[_command](Commands.toggle_deleteTaskWarning)}>
@@ -263,27 +295,39 @@ const _: VoidComponent<{
     }
 
     return (<>
-        <AppBar 
+        <AppBar
+            data-search={toggleAttribute(isSearching())}
+            classList={addClassListModule(CSS.appbar)}
             leading={<>
                 <TextTooltip text={isSideNavigationHidden()? "Open navigation" : `${props[_expandNavigation]? 'Shrink' : 'Expand'} navigation`}>
-                    <IconButton 
-                        classList={addClassListModule(CSSAnimation.btn_shrink_horizontal_icon)} 
+                    <IconButton
+                        classList={addClassListModule(CSSAnimation.btn_shrink_horizontal_icon)}
                         onClick={(ev) => {
                             if (isSideNavigationHidden()) return openDrawer(ev, drawer_navigation_ref)
                             props[_command](Commands.toggle_navigation_expand)
-                        }} 
+                        }}
                         code={0xEAFF}
                     />
                 </TextTooltip>
                 <img alt="Tasks logo" width={32} height={32} src={logo[_src]} />
-            </>} 
+            </>}
             headline="Tasks"
             trailing={<>
-                
+                <TextTooltip text="Search tasks">
+                    <IconButton
+                        onClick={() => {
+                            setIsSearching(true)
+                            searchTextField_ref[_focus]()
+                        }}
+                        classList={addClassListModule(CSS.appbar_search_btn)}
+                        code={0xEDDF}
+                    />
+                </TextTooltip>
+
                 <TextTooltip text="Info">
-                    <IconButton 
-                        focused={is_menu_info_open()} 
-                        code={0xE930} 
+                    <IconButton
+                        focused={is_menu_info_open()}
+                        code={0xE930}
                         onClick={(ev) => openMenu(ev, menu_info_ref, {
                             anchor: ev[_currentTarget],
                             padding: 4,
@@ -293,9 +337,9 @@ const _: VoidComponent<{
                 </TextTooltip>
 
                 <TextTooltip text="Settings">
-                <IconButton 
-                    classList={addClassListModule(CSSAnimation.btn_rotate_icon)} 
-                    focused={is_menu_settings_open()} 
+                <IconButton
+                    classList={addClassListModule(CSSAnimation.btn_rotate_icon)}
+                    focused={is_menu_settings_open()}
                     onClick={async (ev) => openMenu(ev, menu_settings_ref, {
                         anchor: ev[_currentTarget],
                         padding: 4,
@@ -304,36 +348,86 @@ const _: VoidComponent<{
                     code={0xEE0F}
                     />
                 </TextTooltip>
-            </>}
-        >
-            <div class={CSS.appbarSearch}>
-                {/* TODO: search tasks */}
-                <TextField 
-                    placeholder="Search tasks" 
+            </>}>
+            <div class={CSS.appbar_search}>
+                <SearchTextField
+                    placeholder="Search tasks"
+                    ref={r => searchTextField_ref = r}
                     leading={<Icon code={0xEDDF}/>}
+                    result={<For each={getSearchResult()}>{(list, i) => <>
+                        <Show when={i() > 0}><SearchMenuDivider /></Show>
+                        <SearchMenuHeader>{list[_name]}</SearchMenuHeader>
+                        <For each={list[_tasks]}>{task =>
+                            <SearchMenuItem
+                                checked={task[_complete]}
+                                onClick={async () => {
+                                    searchTextField_ref[_blur]()
+                                    if (is_searchTextFieldMenu_open) {
+                                        closeSearchMenu(searchTextFieldMenu_ref)
+                                        await timeout(300)
+                                    }
+                                    setIsSearching(false)
+                                    props[_command](
+                                        Commands.change_page,
+                                        list[_id] == DEFAULT_TASK_LIST[_id]? Pages[_tasks] : list[_id]
+                                    )
+                                }}>
+                                {task[_name]}
+                            </SearchMenuItem>
+                        }</For>
+                    </>}</For>}
+                    onInput={(ev) => {
+                        const text = ev[_currentTarget][_value]
+                        if (searchTimeoutId != null) clearTimeDelayed(searchTimeoutId)
+
+                        searchTimeoutId = setTimeDelayed(() => {
+                            setSearchText(text[_trim]())
+                            searchTimeoutId = null
+                        }, 1000)
+                    }}
+                    onFocus={() => props[_command](Commands.get_all_task)}
+                    menuAttr={{
+                        ref: r => searchTextFieldMenu_ref = r,
+                        onToggleOpen: isOpen => is_searchTextFieldMenu_open = isOpen
+                    }}
+                    trailing={<Show when={isSideNavigationHidden() && isSearching()}>
+                        <TextTooltip text="Close search">
+                            <SearchTextFieldButton
+                                onClick={async () => {
+                                    searchTextField_ref[_blur]()
+                                    if (is_searchTextFieldMenu_open) {
+                                        closeSearchMenu(searchTextFieldMenu_ref)
+                                        await timeout(300)
+                                    }
+                                    setIsSearching(false)
+                                }}>
+                                <Icon code={0xE5E9}/>
+                            </SearchTextFieldButton>
+                        </TextTooltip>
+                    </Show>}
                 />
             </div>
         </AppBar>
         <Menus />
-        <Drawer 
+        <Drawer
             header={<>
                 <TextTooltip text="Close navigation">
-                    <IconButton 
-                        classList={addClassListModule(CSSAnimation.btn_shrink_horizontal_icon)} 
-                        onClick={() => closeDrawer(drawer_navigation_ref)} 
+                    <IconButton
+                        classList={addClassListModule(CSSAnimation.btn_shrink_horizontal_icon)}
+                        onClick={() => closeDrawer(drawer_navigation_ref)}
                         code={0xEAFF}
                     />
                 </TextTooltip>
             </>}
             footer={<>
-                <DrawerItem 
+                <DrawerItem
                     leading={<Icon code={0xE007}/>}>
                     New list
                 </DrawerItem>
             </>}
             ref={r => drawer_navigation_ref = r}>
-            <For each={TASKS_PAGES[_filter](page => !props[_settings][_hiddenNavigation][_includes](page[_type]))}>{p => 
-                <DrawerItem 
+            <For each={TASKS_PAGES[_filter](page => !props[_settings][_hiddenNavigation][_includes](page[_type]))}>{p =>
+                <DrawerItem
                     iconCode={p[_icon]}
                     selected={props[_page] == p[_type]}
                     onClick={() => {
@@ -347,9 +441,9 @@ const _: VoidComponent<{
             <Show when={props[_taskLists][_length] - 1 > 0}>
                 <Divider />
             </Show>
-            <For each={props[_taskLists][_filter](v => v[_id] != DEFAULT_TASK_LIST[_id])}>{p => 
+            <For each={props[_taskLists][_filter](v => v[_id] != DEFAULT_TASK_LIST[_id])}>{p =>
                 <DrawerItem
-                    leading={<Show when={p[_emoji] != null}><Emoji emoji={p[_emoji]!} /></Show>} 
+                    leading={<Show when={p[_emoji] != null}><Emoji emoji={p[_emoji]!} /></Show>}
                     selected={props[_page] == p[_id]}
                     onClick={() => {
                         closeDrawer(drawer_navigation_ref)

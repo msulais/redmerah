@@ -1,6 +1,25 @@
 $side_navigation_none: 680px;
 
-.appbarSearch {
+.appbar[data-search] {
+    @media (max-width: $side_navigation_none) {
+        > :is(:global(.appbar-leading), :global(.appbar-trailing)) {
+            display: none;
+        }
+
+        > :global(.appbar-headline) {
+            > h2 {
+                display: none;
+            }
+
+            > .appbar_search {
+                display: flex;
+                padding-left: 0;
+            }
+        }
+    }
+}
+
+.appbar_search {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -9,6 +28,16 @@ $side_navigation_none: 680px;
 
     > :global(.textfield) {
         width: min(100%, 720px)
+    }
+
+    @media (max-width: $side_navigation_none) {
+        display: none;
+    }
+}
+
+.appbar_search_btn {
+    @media (min-width: ($side_navigation_none + 1px)) {
+        display: none;
     }
 }
 
@@ -57,11 +86,11 @@ $side_navigation_none: 680px;
             margin-bottom: 8px;
         }
 
-        > div { 
+        > div {
             &:not(:last-child) {
                 margin-bottom: 4px;
             }
-            
+
             > :global(.list) {
                 padding-left: 12px;
             }
@@ -72,7 +101,7 @@ $side_navigation_none: 680px;
 
             &[data-subtasks] {
                 margin-top: 8px;
-                
+
                 > :global(.list) {
                     padding-left: 4px;
                     gap: 1px;
@@ -135,6 +164,8 @@ $side_navigation_none: 680px;
     overflow: auto;
     padding-bottom: 24px;
 
+    // TODO: center if empty
+
     @media (max-width: $side_navigation_none) {
         padding-bottom: 8px;
     }
@@ -188,7 +219,7 @@ $side_navigation_none: 680px;
         gap: 4px;
         padding: 4px;
         border-radius: 12px;
-        
+
         [data-corner=sharp] & {border-radius: 0}
         [data-corner=semi-round] & {border-radius: 8px}
         [data-corner=full-round] & {border-radius: 25px}
@@ -200,18 +231,18 @@ $side_navigation_none: 680px;
 
         &:has( :global(.btn):hover) {
             --bg-opacity: var(--opacity1);
-        } 
+        }
 
         &:has( :global(.btn):active) {
             border-color: transparent;
-        } 
+        }
 
         > :global(.list-leading) {
             color: rgb(var(--color-accent));
         }
     }
 
-    > :global(.expander-content){ 
+    > :global(.expander-content){
         border-radius: 0 0 12px 12px;
 
         [data-corner=sharp] & {border-radius: 0}

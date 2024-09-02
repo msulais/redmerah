@@ -49,11 +49,12 @@ const _: VoidComponent = () => {
     const [isNewListEmojiPickerOpen, setIsNewListEmojiPickerOpen] = createSignal<boolean>(false)
     const [isEditListEmojiPickerOpen, setIsEditListEmojiPickerOpen] = createSignal<boolean>(false)
     const [settings, setSettings] = createStore<Settings>({
-        sortBy: SortBy[_name], 
+        sortBy: SortBy[_name],
         sortMode: SortMode[_ascending],
-        isShowDeleteTaskWarning: true, 
+        isShowDeleteTaskWarning: true,
         hiddenNavigation: []
     })
+    let isEveryTaskLoaded: boolean = false
     let textfield_newLabel_ref: HTMLInputElement
     let textfield_editLabel_ref: HTMLInputElement
     let textfield_newList_ref: HTMLInputElement
@@ -74,17 +75,17 @@ const _: VoidComponent = () => {
         if (settings[_sortBy] == SortBy[_completed]) {
             tasks[_sort]((a, b) => a[_name][_localeCompare](b[_name]))
             tasks[_sort]((a) => (a[_complete]? -1 : 1) * (isReverse? -1 : 1))
-        } 
+        }
         else if (settings[_sortBy] == SortBy[_name]) {
             tasks[_sort]((a, b) => (a[_name][_localeCompare](b[_name])) * (isReverse? -1 : 1))
-        } 
+        }
         else if (settings[_sortBy] == SortBy[_creationDate]) {
             tasks[_sort]((a, b) => !isReverse? b[_id] - a[_id] : a[_id] - b[_id])
-        } 
+        }
         else if (settings[_sortBy] == SortBy[_importance]) {
             tasks[_sort]((a, b) => a[_name][_localeCompare](b[_name]))
             tasks[_sort]((a, b) => (a[_important]? -1 : 1) * (isReverse? -1 : 1))
-        } 
+        }
         else if (settings[_sortBy] == SortBy[_uncompleted]) {
             tasks[_sort]((a, b) => b[_name][_localeCompare](a[_name]))
             tasks[_sort]((a) => (!a[_complete]? -1 : 1) * (isReverse? -1 : 1))
@@ -95,7 +96,7 @@ const _: VoidComponent = () => {
 
     function markAllTaskAs(taskListIndex: number, complete: boolean): void {
         const transaction = db[_transaction]([
-            ObjectStoreNames[_tasks], 
+            ObjectStoreNames[_tasks],
             ObjectStoreNames[_subtasks]
         ], _readwrite)!
         const tasksStore = transaction[_objectStore](ObjectStoreNames[_tasks])
@@ -105,7 +106,7 @@ const _: VoidComponent = () => {
         for (const task of lists[taskListIndex][_tasks]){
             if (task[_complete] == complete) {
                 tasks[_push](task)
-                continue 
+                continue
             }
 
             const t: Task = {
@@ -117,9 +118,9 @@ const _: VoidComponent = () => {
                     subTasksStore[_put]({...v} satisfies ObjectStoreSubTasks)
                     return subtask
                 })]
-            } 
+            }
             tasksStore[_put]({
-                id: t[_id], 
+                id: t[_id],
                 complete: t[_complete],
                 description: t[_description],
                 important: t[_important],
@@ -131,18 +132,18 @@ const _: VoidComponent = () => {
             tasks[_push](t)
         }
         setLists(
-            taskListIndex, 
-            _tasks,  
+            taskListIndex,
+            _tasks,
             [SortBy[_completed], SortBy[_uncompleted]][_includes](settings[_sortBy])
-                ? sortTasks(tasks) 
+                ? sortTasks(tasks)
                 : tasks
         )
     }
 
     function deleteCompletedTask(taskListIndex: number): void {
         const transaction = db[_transaction]([
-            ObjectStoreNames[_tasks], 
-            ObjectStoreNames[_subtasks], 
+            ObjectStoreNames[_tasks],
+            ObjectStoreNames[_subtasks],
             ObjectStoreNames[_taskFileMetaData],
             ObjectStoreNames[_files],
         ], _readwrite)!
@@ -176,8 +177,8 @@ const _: VoidComponent = () => {
         setLists(taskListIndex, _tasks, [])
 
         const transaction = db[_transaction]([
-            ObjectStoreNames[_tasks], 
-            ObjectStoreNames[_subtasks], 
+            ObjectStoreNames[_tasks],
+            ObjectStoreNames[_subtasks],
             ObjectStoreNames[_taskFileMetaData],
             ObjectStoreNames[_files],
         ], _readwrite)!
@@ -221,8 +222,8 @@ const _: VoidComponent = () => {
 
         try {
             const id = ((await db[_add]<Omit<ObjectStoreTasks, 'id'>>(store, {
-                description: task[_description], 
-                complete: task[_complete], 
+                description: task[_description],
+                complete: task[_complete],
                 important: task[_important],
                 labelIds: [...task[_labelIds]],
                 listId: task[_listId],
@@ -240,7 +241,7 @@ const _: VoidComponent = () => {
         const store_subtasks = transaction[_objectStore](ObjectStoreNames[_subtasks])
         const isNameChanged = subtask[_name] != lists[taskListIndex][_tasks][taskIndex][_subtasks][subtaskIndex][_name]
         const subtasks = (isNameChanged
-            ? [...lists[taskListIndex][_tasks][taskIndex][_subtasks]] 
+            ? [...lists[taskListIndex][_tasks][taskIndex][_subtasks]]
             : []
         )
 
@@ -257,26 +258,26 @@ const _: VoidComponent = () => {
 
         store_subtasks[_put]({...subtask})
         if (!(!subtask[_complete] && lists[taskListIndex][_tasks][taskIndex][_complete])) return;
-        
+
         const task: Task = {...lists[taskListIndex][_tasks][taskIndex], complete: false}
         if ([SortBy[_completed], SortBy[_uncompleted]][_includes](settings[_sortBy])) {
             const tasks: Task[] = [...lists[taskListIndex][_tasks]]
             tasks[taskIndex] = task
             setLists(taskListIndex, _tasks, sortTasks(tasks))
-        } 
+        }
         else {
             setLists(taskListIndex, _tasks, taskIndex, task)
         }
 
         store_tasks[_put]({
-            id: task[_id], 
-            description: task[_description], 
+            id: task[_id],
+            description: task[_description],
             complete: task[_complete],
-            important: task[_important], 
+            important: task[_important],
             labelIds: [...task[_labelIds]],
-            listId: task[_listId], 
-            name: task[_name], 
-            reminder: task[_reminder], 
+            listId: task[_listId],
+            name: task[_name],
+            reminder: task[_reminder],
         } satisfies ObjectStoreTasks)
     }
 
@@ -292,8 +293,8 @@ const _: VoidComponent = () => {
             files[_sort]((a, b) => a[_name][_localeCompare](b[_name]))
         }
 
-        setLists(taskListIndex, _tasks, taskIndex, _files, files) 
-        
+        setLists(taskListIndex, _tasks, taskIndex, _files, files)
+
         const store_taskFileMetaData = db[_transaction](ObjectStoreNames[_taskFileMetaData], _readwrite)![_objectStore](ObjectStoreNames[_taskFileMetaData])
         store_taskFileMetaData[_put]({...file})
     }
@@ -307,13 +308,13 @@ const _: VoidComponent = () => {
         const isTaskImportantChanged = pastTask[_important] != task[_important]
         const isTaskNameChanged = pastTask[_name] != task[_name]
         const changedSubtasks: SubTask[] = (isTaskCompleteChanged
-            ? task[_subtasks][_map](subtask => ({...subtask, complete: !pastTask[_complete] && task[_complete]} satisfies SubTask)) 
+            ? task[_subtasks][_map](subtask => ({...subtask, complete: !pastTask[_complete] && task[_complete]} satisfies SubTask))
             : [])
-        const deletedSubtasks: SubTask[] = [] 
-        const deletedFiles: TaskFileMetaData[] = [] 
+        const deletedSubtasks: SubTask[] = []
+        const deletedFiles: TaskFileMetaData[] = []
         const transaction = db[_transaction]([
-            ObjectStoreNames[_tasks], 
-            ObjectStoreNames[_subtasks], 
+            ObjectStoreNames[_tasks],
+            ObjectStoreNames[_subtasks],
             ObjectStoreNames[_taskFileMetaData],
             ObjectStoreNames[_files],
         ], _readwrite)!
@@ -343,7 +344,7 @@ const _: VoidComponent = () => {
         }
 
         const newTask: Task = {
-            ...task, 
+            ...task,
             reminder: task[_reminder] != null? new Date(task[_reminder]) : null,
             subtasks: isTaskCompleteChanged
                 ? [...changedSubtasks]
@@ -377,21 +378,21 @@ const _: VoidComponent = () => {
         }
 
         store_tasks[_put]({
-            id: task[_id], 
-            description: task[_description], 
+            id: task[_id],
+            description: task[_description],
             complete: task[_complete],
-            important: task[_important], 
-            listId: task[_listId], 
-            name: task[_name], 
-            reminder: task[_reminder], 
+            important: task[_important],
+            listId: task[_listId],
+            name: task[_name],
+            reminder: task[_reminder],
             labelIds: [...task[_labelIds]],
         } satisfies ObjectStoreTasks)
     }
 
     function deleteTask(task: Task, taskListIndex: number, taskIndex: number): void {
         const transaction = db[_transaction]([
-            ObjectStoreNames[_tasks], 
-            ObjectStoreNames[_files], 
+            ObjectStoreNames[_tasks],
+            ObjectStoreNames[_files],
             ObjectStoreNames[_taskFileMetaData],
             ObjectStoreNames[_subtasks]
         ], _readwrite)!
@@ -401,10 +402,10 @@ const _: VoidComponent = () => {
         const store_taskFileMetaData = transaction[_objectStore](ObjectStoreNames[_taskFileMetaData])
 
         setLists(
-            taskListIndex, 
-            _tasks, 
+            taskListIndex,
+            _tasks,
             tasks => [
-                ...tasks[_slice](0, taskIndex), 
+                ...tasks[_slice](0, taskIndex),
                 ...tasks[_slice](taskIndex + 1)
             ]
         )
@@ -422,15 +423,15 @@ const _: VoidComponent = () => {
 
     function copyTasks(taskListIndex?: number): void {
         const isGrouping = ([
-            Pages[_all], Pages[_completed], Pages[_uncompleted], 
+            Pages[_all], Pages[_completed], Pages[_uncompleted],
             Pages[_important], Pages[_planned]
         ][_includes](page() as Pages))
-        
+
         let text: string = ''
         const getTextPerTaskList = (taskListIndex: number) => {
             const taskList = lists[taskListIndex]
             text += `${taskList[_emoji] != null ? taskList[_emoji] : '📑'} ${taskList[_name]}`
-    
+
             for (let i = 0; i < taskList[_tasks][_length]; i++) {
                 const task: Task = taskList[_tasks][i]
 
@@ -446,21 +447,21 @@ const _: VoidComponent = () => {
 
                 let additional: string = ''
                 text += (`\n${task[_complete] ? '✔️' : '❌'} ${task[_name]}`)
-    
+
                 if (task[_description] != '') additional += `[🗒️ ${task[_description]}]`
                 if (task[_important]) additional +=  '[⭐ important]'
                 if (task[_reminder] != null) additional += `[🕒 ${getDateString_YMD_HM(task[_reminder]!)}]`
                 for (const file of task[_files]) additional += `[💾 ${file[_name]}]`
-                
+
                 let j = 0
                 labels: for (const id of task[_labelIds]) {
                     if (labels[id] == undefined) continue labels;
                     if (j >= task[_labelIds][_length]) break labels;
-    
+
                     additional += `[🔖 ${labels[id][_name]}]`
                     j++
                 }
-    
+
                 if (additional != '') text = [text, additional][_join](' ')
                 for (const subtask of task[_subtasks]) {
                     text += (`\n➡️${subtask[_complete] ? '✔️' : '❌'} ${subtask[_name]}`)
@@ -504,8 +505,8 @@ const _: VoidComponent = () => {
             let id: number = 1
             let isAdded = false
 
-            // since key generator value never decrease, 
-            // we have to check empty key to use it. 
+            // since key generator value never decrease,
+            // we have to check empty key to use it.
             // keep the labels compact.
             for (let i = 1; i < labels[_length]; i++) {
                 if (labels[i] != undefined) continue;
@@ -514,7 +515,7 @@ const _: VoidComponent = () => {
                 await db[_add]<ObjectStoreTaskLabels>(store, {id, name, color})
                 break
             }
-            
+
             if (!isAdded) {
                 id = ((await db[_add]<Omit<ObjectStoreTaskLabels, 'id'>>(store, {name, color}))[_target] as any)[_result] as number
             }
@@ -529,13 +530,13 @@ const _: VoidComponent = () => {
         const $labels = [...labels]
         $labels[label[_id]] = label
         setLabels($labels)
-        
+
         const store = db[_transaction](ObjectStoreNames[_labels], _readwrite)![_objectStore](ObjectStoreNames[_labels])
         store[_put]({...label})
     }
 
     function deleteLabel(label: TaskLabel): void {
-        const transaction = db[_transaction]([ObjectStoreNames[_tasks], ObjectStoreNames[_labels]], _readwrite)! 
+        const transaction = db[_transaction]([ObjectStoreNames[_tasks], ObjectStoreNames[_labels]], _readwrite)!
         const store_tasks = transaction[_objectStore](ObjectStoreNames[_tasks])
         const store_labels = transaction[_objectStore](ObjectStoreNames[_labels])
         const $labels = [...labels]
@@ -546,18 +547,18 @@ const _: VoidComponent = () => {
                 const task = lists[i][_tasks][j]
                 const labelIds = [...lists[i][_tasks][j][_labelIds]][_filter](id => id != label[_id])
                 setLists(
-                    i, _tasks, 
-                    j, _labelIds, 
+                    i, _tasks,
+                    j, _labelIds,
                     labelIds
                 )
                 store_tasks[_put]({
-                    id: task[_id], 
-                    description: task[_description], 
+                    id: task[_id],
+                    description: task[_description],
                     complete: task[_complete],
-                    important: task[_important], 
+                    important: task[_important],
                     labelIds: [...labelIds],
-                    listId: task[_listId], 
-                    name: task[_name], 
+                    listId: task[_listId],
+                    name: task[_name],
                     reminder: task[_reminder]
                 } satisfies ObjectStoreTasks)
             }
@@ -568,7 +569,7 @@ const _: VoidComponent = () => {
 
     async function addFiles(files: FileList, task: Task, taskListIndex: number, taskIndex: number): Promise<TaskFileMetaData[]> {
         if (files[_length] == 0) return []
-        
+
         const transaction = db[_transaction]([ObjectStoreNames[_taskFileMetaData], ObjectStoreNames[_files]], _readwrite)!
         const store_taskFileMetaData = transaction![_objectStore](ObjectStoreNames[_taskFileMetaData])
         const store_files = transaction![_objectStore](ObjectStoreNames[_files])
@@ -584,17 +585,17 @@ const _: VoidComponent = () => {
                     type: file[_type]
                 }))[_target]! as any)[_result] as number
 
-                store_files[_put]({ 
-                    id, 
+                store_files[_put]({
+                    id,
                     blob: new Blob([file])
                 } satisfies ObjectStoreFiles)
 
                 $files[_push]({
-                    id: id, 
-                    listId: task[_listId], 
+                    id: id,
+                    listId: task[_listId],
                     name: file[_name],
                     size: file[_size],
-                    taskId: task[_id], 
+                    taskId: task[_id],
                     type: file[_type]
                 })
             }
@@ -614,7 +615,7 @@ const _: VoidComponent = () => {
 
                     // This statement not update the file lists in <dialog>
                     setLists(taskListIndex, _tasks, taskIndex, _files, files => [
-                        ...files[_slice](0, fileIndex), 
+                        ...files[_slice](0, fileIndex),
                         ...files[_slice](fileIndex + 1)
                     ])
                     store_taskFileMetaData[_delete](file[_id])
@@ -639,7 +640,7 @@ const _: VoidComponent = () => {
 
                     // This statement not update the file lists in <dialog>
                     setLists(taskListIndex, _tasks, taskIndex, _files, files => [
-                        ...files[_slice](0, fileIndex), 
+                        ...files[_slice](0, fileIndex),
                         ...files[_slice](fileIndex + 1)
                     ])
                     store_taskFileMetaData[_delete](file[_id])
@@ -662,17 +663,17 @@ const _: VoidComponent = () => {
 
         try {
             const id = ((await db[_add]<Omit<ObjectStoreSubTasks, 'id'>>(store_subtasks, {
-                complete: subtask[_complete], 
+                complete: subtask[_complete],
                 listId: subtask[_listId],
-                name: subtask[_name], 
+                name: subtask[_name],
                 taskId: subtask[_taskId]
             }))[_target]! as any)[_result] as number
 
             const $subtask = {...subtask}
             $subtask[_id] = id
             setLists(
-                taskListIndex, _tasks, 
-                taskIndex, _subtasks, 
+                taskListIndex, _tasks,
+                taskIndex, _subtasks,
                 subtasks => [...subtasks, $subtask][_sort]((a, b) => a[_name][_localeCompare](b[_name]))
             )
 
@@ -682,7 +683,7 @@ const _: VoidComponent = () => {
                     const tasks: Task[] = [...lists[taskListIndex][_tasks]]
                     tasks[taskIndex] = task
                     setLists(taskListIndex, _tasks, sortTasks(tasks))
-                } 
+                }
                 else {
                     setLists(taskListIndex, _tasks, taskIndex, task)
                 }
@@ -726,7 +727,7 @@ const _: VoidComponent = () => {
                 setLists([lists[index]][_concat](otherLists))
             } else {
                 setLists(values => [
-                    ...values, 
+                    ...values,
                     { id, emoji, name, tasks: []} satisfies TaskList
                 ][_sort]((a, b) => a[_name][_localeCompare](b[_name])))
             }
@@ -753,7 +754,7 @@ const _: VoidComponent = () => {
             saveSettings([ObjectStoreKeys.settings_sortBy, sortBy])
             sortAllTasks()
         }
-        
+
         // change_sortMode
         else if (type == Commands.change_sortMode) {
             const sortMode = args[0] as SortMode
@@ -822,7 +823,7 @@ const _: VoidComponent = () => {
         // add_label
         else if (type == Commands.add_label) {
             openDialog(args[0] as Event, dialog_newLabel_ref, {
-                inputAutoFocus: true, 
+                inputAutoFocus: true,
                 important: true
             })
         }
@@ -830,11 +831,11 @@ const _: VoidComponent = () => {
         // edit_label
         else if (type == Commands.edit_label) {
             const label = args[1] as TaskLabel
-            
+
             changeTextFieldValue(textfield_editLabel_ref, label[_name])
             setSelectedLabel(label)
             openDialog(args[0] as Event, dialog_editLabel_ref, {
-                inputAutoFocus: true, 
+                inputAutoFocus: true,
                 important: true
             })
         }
@@ -863,7 +864,7 @@ const _: VoidComponent = () => {
         else if (type == Commands.edit_file) {
             editFile(args[0] as TaskFileMetaData, args[1] as number, args[2] as number, args[3] as number)
         }
-        
+
         // edit_subtask
         else if (type == Commands.edit_subtask) {
             editSubtask(args[0] as SubTask, args[1] as number, args[2] as number, args[3] as number)
@@ -882,7 +883,7 @@ const _: VoidComponent = () => {
         // add_taskList
         else if (type == Commands.add_taskList) {
             openDialog(args[0] as Event, dialog_newList_ref, {
-                important: true, 
+                important: true,
                 inputAutoFocus: true
             })
         }
@@ -903,7 +904,7 @@ const _: VoidComponent = () => {
             setEditListNameText(list[_name])
             changeTextFieldValue(textfield_editList_ref, list[_name])
             openDialog(args[0] as Event, dialog_editList_ref, {
-                important: true, 
+                important: true,
                 inputAutoFocus: true
             })
         }
@@ -912,14 +913,19 @@ const _: VoidComponent = () => {
         else if (type == Commands.move_task) {
             moveTask(args[0] as Task, args[1] as number, args[2] as number, args[3] as number)
         }
-        
-        return 
+
+        // get_all_task
+        else if (type == Commands.get_all_task) {
+            getTasks(true)
+        }
+
+        return
     }
 
-    function moveTask(task: Task, taskListIndex: number, taskIndex: number, targetTaskListIndex: number): void { 
+    function moveTask(task: Task, taskListIndex: number, taskIndex: number, targetTaskListIndex: number): void {
         const transaction = db[_transaction]([
-            ObjectStoreNames[_tasks], 
-            ObjectStoreNames[_subtasks], 
+            ObjectStoreNames[_tasks],
+            ObjectStoreNames[_subtasks],
             ObjectStoreNames[_taskFileMetaData],
         ], _readwrite)!
         const store_tasks = transaction[_objectStore](ObjectStoreNames[_tasks])
@@ -927,7 +933,7 @@ const _: VoidComponent = () => {
         const store_taskFileMetaData = transaction[_objectStore](ObjectStoreNames[_taskFileMetaData])
         const targetList = lists[targetTaskListIndex]
 
-        // Update manually if list has tasks, because 
+        // Update manually if list has tasks, because
         // `getTasks()` function only update empty list.
         if (targetList[_tasks][_length] > 0) {
             const subtasks = task[_subtasks][_map](subtask => ({...subtask, listId: targetList[_id]}))
@@ -935,16 +941,16 @@ const _: VoidComponent = () => {
             const $task: Task = {...task, subtasks, files}
             setLists(targetTaskListIndex, _tasks, tasks => sortTasks([...tasks, $task]))
         }
-        
+
         setLists(
-            taskListIndex, 
-            _tasks, 
+            taskListIndex,
+            _tasks,
             tasks => tasks[_slice](0, taskIndex)[_concat](tasks[_slice](taskIndex + 1))
         )
         store_tasks[_put]({
             complete: task[_complete],
-            description: task[_description], 
-            id: task[_id], 
+            description: task[_description],
+            id: task[_id],
             important: task[_important],
             labelIds: [...task[_labelIds]],
             listId: targetList[_id],
@@ -961,7 +967,7 @@ const _: VoidComponent = () => {
 
         for (const file of task[_files]) {
             store_taskFileMetaData[_put]({
-                ...file, 
+                ...file,
                 listId: targetList[_id]
             } satisfies ObjectStoreTaskFileMetaData)
         }
@@ -984,7 +990,7 @@ const _: VoidComponent = () => {
 
                 store![_put]({
                     id: DEFAULT_TASK_LIST[_id],
-                    name: DEFAULT_TASK_LIST[_name], 
+                    name: DEFAULT_TASK_LIST[_name],
                     emoji: DEFAULT_TASK_LIST[_emoji],
                 } satisfies ObjectStoreTaskLists)
 
@@ -1056,7 +1062,7 @@ const _: VoidComponent = () => {
             if (!v) return;
             let lists: TaskList[] = []
             for (const i of v) lists[_push]({
-                ...i, 
+                ...i,
                 tasks: []
             })
 
@@ -1089,8 +1095,8 @@ const _: VoidComponent = () => {
     function deleteTaskList(): void {
         const transaction = db[_transaction]([
             ObjectStoreNames[_lists],
-            ObjectStoreNames[_tasks], 
-            ObjectStoreNames[_subtasks], 
+            ObjectStoreNames[_tasks],
+            ObjectStoreNames[_subtasks],
             ObjectStoreNames[_taskFileMetaData],
             ObjectStoreNames[_files],
         ], _readwrite)!
@@ -1121,9 +1127,11 @@ const _: VoidComponent = () => {
 
     // FIXME: To many iteration and I hate it. I don't find any better solution currently
     async function getTasks(all: boolean = false): Promise<void> {
+        if (isEveryTaskLoaded) return;
+
         const transaction = db[_transaction]([
-            ObjectStoreNames[_tasks], 
-            ObjectStoreNames[_subtasks], 
+            ObjectStoreNames[_tasks],
+            ObjectStoreNames[_subtasks],
             ObjectStoreNames[_taskFileMetaData]
         ], _readonly)!
         const tasksStore = transaction[_objectStore](ObjectStoreNames[_tasks])
@@ -1131,9 +1139,9 @@ const _: VoidComponent = () => {
         const fileMetaDataStore = transaction[_objectStore](ObjectStoreNames[_taskFileMetaData])
         const isGetAll = (
             ([
-                Pages[_all], Pages[_completed], Pages[_uncompleted], 
+                Pages[_all], Pages[_completed], Pages[_uncompleted],
                 Pages[_important], Pages[_planned]
-            ][_includes](page() as Pages)) 
+            ][_includes](page() as Pages))
             || all
         )
         const listId = page() == Pages[_tasks]? DEFAULT_TASK_LIST[_id] : page() as number
@@ -1148,7 +1156,8 @@ const _: VoidComponent = () => {
             }
         }
 
-        if (Object[_keys](list_idIndex)[_length] == 0) return;
+        isEveryTaskLoaded = Object[_keys](list_idIndex)[_length] == 0
+        if (isEveryTaskLoaded) return;
 
         try {
 
@@ -1165,11 +1174,11 @@ const _: VoidComponent = () => {
                 if (isGetAll) add()
                 else if (task[_listId] == listId) add()
                 return true
-            }) 
-            sortTasks(tasks) 
+            })
+            sortTasks(tasks)
             for (let i = 0; i < tasks[_length]; i++) {
                 tasks_idIndex[tasks[i][_id]] = i
-            } 
+            }
 
             // SUBTASKS
             const subtasks: SubTask[] = []
@@ -1183,8 +1192,8 @@ const _: VoidComponent = () => {
                 if (isGetAll) add()
                 else if (subtask[_listId] == listId) add()
                 return true
-            }) 
-            subtasks[_sort]((a, b) => a[_name][_localeCompare](b[_name])) 
+            })
+            subtasks[_sort]((a, b) => a[_name][_localeCompare](b[_name]))
             for (const subtask of subtasks) {
                 tasks[tasks_idIndex[subtask[_taskId]]][_subtasks][_push](subtask)
             }
@@ -1262,19 +1271,19 @@ const _: VoidComponent = () => {
     })
 
     const LabelItem: VoidComponent<TaskLabel> = (props) => {
-        return (<List 
+        return (<List
             leading={<Icon style={{color: props[_color] ?? undefined}} code={0xE407}/>}
             trailing={<>
                 <TextTooltip text="Edit label">
-                    <IconButton 
-                        onClick={(ev) => command(Commands.edit_label, ev, props)} 
-                        code={0xE739} 
+                    <IconButton
+                        onClick={(ev) => command(Commands.edit_label, ev, props)}
+                        code={0xE739}
                     />
                 </TextTooltip>
 
                 <TextTooltip text="Delete label">
-                    <IconButton 
-                        onClick={() => command(Commands.delete_label, props)} 
+                    <IconButton
+                        onClick={() => command(Commands.delete_label, props)}
                         code={0xE59D}
                     />
                 </TextTooltip>
@@ -1284,9 +1293,9 @@ const _: VoidComponent = () => {
     }
 
     const Dialogs: VoidComponent = () => (<>
-        <Dialog 
-            style={{width: '500px'}} 
-            ref={r => dialog_labels_ref = r} 
+        <Dialog
+            style={{width: '500px'}}
+            ref={r => dialog_labels_ref = r}
             header="Labels"
             actions={<>
                 <Button onClick={() => closeDialog(dialog_labels_ref)} variant={ButtonVariant[_tonal]}>Close</Button>
@@ -1294,8 +1303,8 @@ const _: VoidComponent = () => {
             </>}>
             <For each={labels} fallback={"No labels"}>{label => <Show when={label != undefined}><LabelItem {...label!}/></Show>}</For>
         </Dialog>
-        <Dialog 
-            ref={r => dialog_newLabel_ref = r} 
+        <Dialog
+            ref={r => dialog_newLabel_ref = r}
             header="New label"
             onClose={() => {
                 setSelectedLabel(_name, '')
@@ -1303,17 +1312,17 @@ const _: VoidComponent = () => {
                 setSelectedLabel(_color, null)
             }}
             actions={<>
-                <Button 
-                    onClick={() => closeDialog(dialog_newLabel_ref)} 
+                <Button
+                    onClick={() => closeDialog(dialog_newLabel_ref)}
                     variant={ButtonVariant[_tonal]}>
                     Cancel
                 </Button>
-                <Button 
+                <Button
                     disabled={selectedLabel[_name][_trim]() == ''}
                     onClick={() => {
                         addLabel(selectedLabel[_name][_trim](), selectedLabel[_color])
                         closeDialog(dialog_newLabel_ref)
-                    }} 
+                    }}
                     variant={ButtonVariant[_filled]}>
                     Add
                 </Button>
@@ -1326,15 +1335,15 @@ const _: VoidComponent = () => {
                 addLabel(selectedLabel[_name][_trim](), selectedLabel[_color])
                 closeDialog(dialog_newLabel_ref)
             }}>
-                <TextField 
-                    ref={r => textfield_newLabel_ref = r} 
-                    labelText="Name" 
+                <TextField
+                    ref={r => textfield_newLabel_ref = r}
+                    labelText="Name"
                     onFocus={() => setSelectedLabel(_name, textfield_newLabel_ref[_value])}
                     onInput={() => setSelectedLabel(_name, textfield_newLabel_ref[_value])}
                     autofocus
                     trailing={<>
                         <TextTooltip text="Change label color">
-                            <TextFieldButton 
+                            <TextFieldButton
                                 focused={is_colorPicker_newLabel_open()}
                                 onClick={ev => openColorPicker(ev, colorPicker_label_ref, {
                                     anchor: ev[_currentTarget],
@@ -1346,8 +1355,8 @@ const _: VoidComponent = () => {
                 />
             </form>
         </Dialog>
-        <Dialog 
-            ref={r => dialog_editLabel_ref = r} 
+        <Dialog
+            ref={r => dialog_editLabel_ref = r}
             header="Edit label"
             onClose={() => {
                 setSelectedLabel(_name, '')
@@ -1355,39 +1364,39 @@ const _: VoidComponent = () => {
                 setSelectedLabel(_color, null)
             }}
             actions={<>
-                <Button 
-                    onClick={() => closeDialog(dialog_editLabel_ref)} 
+                <Button
+                    onClick={() => closeDialog(dialog_editLabel_ref)}
                     variant={ButtonVariant[_tonal]}>
                     Cancel
                 </Button>
-                <Button 
+                <Button
                     disabled={selectedLabel[_name][_trim]() == ''}
                     onClick={() => {
                         editLabel({
                             ...selectedLabel,
-                            name: selectedLabel[_name][_trim](), 
+                            name: selectedLabel[_name][_trim](),
                         } satisfies TaskLabel)
                         closeDialog(dialog_editLabel_ref)
-                    }} 
+                    }}
                     variant={ButtonVariant[_filled]}>
                     Edit
                 </Button>
             </>}>
-            <form 
-                style={{display: _contents}} 
+            <form
+                style={{display: _contents}}
                 onSubmit={ev => {
                     preventDefault(ev)
                     if (selectedLabel[_name][_trim]() == '') return;
 
                     editLabel({
                         ...selectedLabel,
-                        name: selectedLabel[_name][_trim](), 
+                        name: selectedLabel[_name][_trim](),
                     } satisfies TaskLabel)
                     closeDialog(dialog_editLabel_ref)
                 }}>
-                <TextField 
-                    ref={r => textfield_editLabel_ref = r} 
-                    labelText="Name" 
+                <TextField
+                    ref={r => textfield_editLabel_ref = r}
+                    labelText="Name"
                     onFocus={() => setSelectedLabel(_name, textfield_editLabel_ref[_value])}
                     onInput={() => setSelectedLabel(_name, textfield_editLabel_ref[_value])}
                     autofocus
@@ -1416,17 +1425,17 @@ const _: VoidComponent = () => {
             }}
             actions={<>
                 <Button onClick={() => closeDialog(dialog_newList_ref)} variant={ButtonVariant[_tonal]}>Cancel</Button>
-                <Button 
+                <Button
                     onClick={() => {
                         addNewTaskList(newListNameText(), newListEmoji())
                         closeDialog(dialog_newList_ref)
-                    }} 
+                    }}
                     disabled={newListNameText()[_trim]() == ''}
                     variant={ButtonVariant[_filled]}>
                     Add
                 </Button>
             </>}>
-            <form 
+            <form
                 style={{display: _contents}}
                 onSubmit={(ev) => {
                     preventDefault(ev)
@@ -1434,7 +1443,7 @@ const _: VoidComponent = () => {
                     addNewTaskList(newListNameText(), newListEmoji())
                     closeDialog(dialog_newList_ref)
                 }}>
-                <TextField 
+                <TextField
                     ref={r => textfield_newList_ref = r}
                     placeholder="List name"
                     onInput={ev => setNewListNameText(ev[_currentTarget][_value])}
@@ -1457,13 +1466,13 @@ const _: VoidComponent = () => {
             style={{width: '500px'}}
             actions={<>
                 <Button onClick={() => closeDialog(dialog_editList_ref)} variant={ButtonVariant[_tonal]}>Cancel</Button>
-                <Button 
+                <Button
                     onClick={() => {
                         renameTaskList()
                         closeDialog(dialog_editList_ref)
-                    }} 
+                    }}
                     disabled={
-                        editListNameText()[_trim]() == '' 
+                        editListNameText()[_trim]() == ''
                         || (
                             editListNameText()[_trim]() == lists[selectedTaskListIndexToRename()][_name]
                             && editListEmoji() == lists[selectedTaskListIndexToRename()][_emoji]
@@ -1473,11 +1482,11 @@ const _: VoidComponent = () => {
                     Rename
                 </Button>
             </>}>
-            <form 
+            <form
                 style={{display: _contents}}
                 onSubmit={(ev) => {
                     preventDefault(ev)
-                    if (editListNameText()[_trim]() == '' 
+                    if (editListNameText()[_trim]() == ''
                         || (
                             editListNameText()[_trim]() == lists[selectedTaskListIndexToRename()][_name]
                             && editListEmoji() == lists[selectedTaskListIndexToRename()][_emoji]
@@ -1486,7 +1495,7 @@ const _: VoidComponent = () => {
                     renameTaskList()
                     closeDialog(dialog_editList_ref)
                 }}>
-                <TextField 
+                <TextField
                     ref={r => textfield_editList_ref = r}
                     placeholder="List name"
                     onInput={ev => setEditListNameText(ev[_currentTarget][_value])}
@@ -1503,20 +1512,20 @@ const _: VoidComponent = () => {
                 />
             </form>
         </Dialog>
-        <Dialog 
+        <Dialog
             ref={r => dialog_deleteList_ref = r}
             style={{width: '500px'}}
             header="Delete list"
             actions={<>
-                <Button 
+                <Button
                     variant={ButtonVariant[_tonal]}
                     onClick={ev => {
                         closeDialog(dialog_deleteList_ref)
                     }}>
                     Cancel
                 </Button>
-                <Button 
-                    variant={ButtonVariant[_filled]} 
+                <Button
+                    variant={ButtonVariant[_filled]}
                     onClick={() => {
                         closeDialog(dialog_deleteList_ref)
                         deleteTaskList()
@@ -1534,14 +1543,14 @@ const _: VoidComponent = () => {
 
     const ColorPickers: VoidComponent = () => {
         return (<>
-            <ColorPicker 
+            <ColorPicker
                 color={selectedLabel[_color] ?? undefined}
-                onToggleOpen={(isOpen) => setIs_colorPicker_newLabel_open(isOpen)} 
-                onSelectColor={(color) => setSelectedLabel(_color, color)} 
+                onToggleOpen={(isOpen) => setIs_colorPicker_newLabel_open(isOpen)}
+                onSelectColor={(color) => setSelectedLabel(_color, color)}
                 ref={r => colorPicker_label_ref = r}>
                 <Show when={selectedLabel[_color] != null}>
-                    <Button 
-                        style={{width: '100%'}} 
+                    <Button
+                        style={{width: '100%'}}
                         onClick={() => {
                             closeColorPicker(colorPicker_label_ref)
                             setSelectedLabel(_color, null)
@@ -1555,7 +1564,7 @@ const _: VoidComponent = () => {
     }
 
     const EmojiPickers: VoidComponent = () => (<>
-        <EmojiPicker 
+        <EmojiPicker
             ref={r => emojiPicker_ref = r}
             onClose={() => {
                 setIsNewListEmojiPickerOpen(false)
@@ -1566,12 +1575,12 @@ const _: VoidComponent = () => {
                 if (isEditListEmojiPickerOpen()) setEditListEmoji(e)
             }}>
             <Show when={
-                (isNewListEmojiPickerOpen() && newListEmoji() != null) 
+                (isNewListEmojiPickerOpen() && newListEmoji() != null)
                 || (isEditListEmojiPickerOpen() && editListEmoji() != null)
             }>
                 <div style={{width: '100%', padding: '0 12px 12px 12px'}}>
-                    <Button 
-                        style={{width: '100%'}} 
+                    <Button
+                        style={{width: '100%'}}
                         variant={ButtonVariant[_tonal]}
                         onClick={(ev) => {
                             if (isNewListEmojiPickerOpen()) setNewListEmoji(null)
@@ -1591,24 +1600,24 @@ const _: VoidComponent = () => {
         </>)
     }
 
-    return (<App 
-        appBar={<AppBar 
+    return (<App
+        appBar={<AppBar
             taskLists={lists}
             expandNavigation={isExpandSideNavigation()}
             command={command}
             page={page()}
             settings={settings}
         />}
-        leftSideBar={<SideNavigation 
+        leftSideBar={<SideNavigation
             expand={isExpandSideNavigation()}
             taskLists={lists}
             command={command}
             page={page()}
             settings={settings}
-        />}>    
-        <Body 
+        />}>
+        <Body
             settings={settings}
-            page={page()} 
+            page={page()}
             labels={labels}
             taskLists={lists}
             command={command}
