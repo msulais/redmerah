@@ -173,7 +173,7 @@ function initTooltip(): void {
                 text,
                 gap = 40,
                 position = TooltipPosition[_centerTop],
-                startDelayDuration = 800,
+                startDelayDuration = isOpen? 300 : 800,
                 useAnchor = false,
                 tooltip
             } = ((ev as CustomEvent)[_detail] as TooltipOpenDetail)
@@ -322,7 +322,7 @@ function initTooltip(): void {
         })
 
         addEventListener(getDocumentBody(), BodyEvents[_closeTextTooltip], ev => {
-            const { endDelayDuration = 1000 } = ((ev as CustomEvent)[_detail] as TooltipCloseDetail)
+            const { endDelayDuration = 300 } = ((ev as CustomEvent)[_detail] as TooltipCloseDetail)
             
             if (timeoutId != null) clearTimeDelayed(timeoutId)
             timeoutId = setTimeDelayed(async () => {
