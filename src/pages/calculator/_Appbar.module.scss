@@ -1,8 +1,0 @@
-.notebook {
-    width: 360px;
-    min-width: min(360px, calc(100% - 80px));
-
-    & textarea {
-        min-height: calc(100dvh - 96px);
-    }
-}

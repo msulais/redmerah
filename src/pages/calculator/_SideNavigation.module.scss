@@ -1,7 +1,0 @@
-@use '_size.scss';
-
-.side_navigation {
-    @media (max-width: size.$side_navigation_none) {
-        display: none !important;
-    }
-}

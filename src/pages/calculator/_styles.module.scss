@@ -1,6 +1,16 @@
-@use '_size.scss';
+$side_navigation_none: 680px;
+$side_notebook_none: 760px;
 
-.action_buttons {
+.appbar_notebook {
+    width: 360px;
+    min-width: min(360px, calc(100% - 80px));
+
+    & textarea {
+        min-height: calc(100dvh - 96px);
+    }
+}
+
+.input_output_action_buttons {
     display: flex;
     align-items: center;
     gap: 4px;
@@ -13,7 +23,7 @@
     }
 }
 
-:is(.basic_buttons, .scientific_buttons, .converter_buttons, .programmer_buttons) {
+:is(.input_output_basic_buttons, .input_output_scientific_buttons, .input_output_converter_buttons, .input_output_programmer_buttons) {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     flex: 1;
@@ -46,21 +56,21 @@
     }
 }
 
-.converter_units {
+.input_output_converter_units {
     display: flex;
     align-items: center;
     gap: 4px;
 }
 
-:is(.scientific_buttons, .programmer_buttons) {
+:is(.input_output_scientific_buttons, .input_output_programmer_buttons) {
     grid-template-columns: repeat(5, 1fr);
 }
 
-.converter_buttons {
+.input_output_converter_buttons {
     grid-template-columns: repeat(3, 1fr);
 }
 
-.date_calculator {
+.input_output_date_calculator {
     gap: 16px;
     height: 100%;
     background-color: rgb(var(--color-surface));
@@ -91,7 +101,7 @@
     }
 }
 
-.date_inputs {
+.input_output_date_inputs {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 8px;
@@ -99,16 +109,16 @@
     width: 360px;
 }
 
-.scientific_function_menu {
+.input_output_scientific_function_menu {
     > div {
-        > .grid_3 {
+        > .input_output_grid_3 {
             display: grid;
             padding: 0 4px;
             gap: 4px;
             grid-template-columns: repeat(3, 1fr);
         }
 
-        > .trigonometry_options {
+        > .input_output_trigonometry_options {
             display: flex;
             padding: 0 4px;
             gap: 4px;
@@ -126,7 +136,7 @@
     }
 }
 
-:is(.basic_text_input, .scientific_text_input, .converter_text_input, .programmer_text_input) {
+:is(.input_output_basic_text_input, .input_output_scientific_text_input, .input_output_converter_text_input, .input_output_programmer_text_input) {
     width: 100%;
     text-align: end;
     font-size: var(--font-size-xxl);
@@ -134,7 +144,7 @@
     border: none;
 }
 
-:is(.basic_text_output, .scientific_text_output, .converter_text_output) {
+:is(.input_output_basic_text_output, .input_output_scientific_text_output, .input_output_converter_text_output) {
     text-align: end;
     overflow: auto;
     font-size: var(--font-size-xxl);
@@ -144,18 +154,18 @@
     text-wrap: nowrap;
 }
 
-.main {
+.input_output_main {
     display: flex;
     flex-direction: column;
     height: 100%;
     padding: 8px 8px 8px 0;
 
-    @media (max-width: size.$side_navigation_none) {
+    @media (max-width: $side_navigation_none) {
         padding: 8px;
     }
 }
 
-.memory_buttons {
+.input_output_memory_buttons {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 4px;
@@ -165,11 +175,11 @@
     }
 }
 
-.memory_menu { 
+.input_output_memory_menu {
     min-width: 164px;
 
     > div {
-        padding: 8px !important;
+        padding: 12px !important;
 
         & p {
             font-size: var(--font-size-xs);
@@ -180,7 +190,7 @@
     }
 }
 
-.programmer_text_output {
+.input_output_programmer_text_output {
     display: grid;
     grid-template-columns: 1fr;
     gap: 1px;
@@ -191,7 +201,7 @@
         width: 100%;
         overflow: hidden;
 
-        > div { 
+        > div {
             > div {
                 flex: 1;
                 overflow: auto;
@@ -206,6 +216,38 @@
     }
 }
 
-.remove_symbol {
+.input_output_remove_symbol {
     color: rgb(var(--color-error))
+}
+
+.notebook {
+    min-width: 360px;
+    max-width: 360px;
+    height: 100%;
+    padding: 8px 8px 0 0;
+    transition-duration: .3s;
+    overflow: hidden;
+
+    &:not([data-expand]) {
+        min-width: 0;
+        max-width: 0;
+        padding: 8px 0 0 0;
+    }
+
+    @media (max-width: $side_notebook_none) {
+        display: none !important;
+    }
+
+    & textarea {
+        height: calc(100dvh - 96px) !important;
+        max-height: calc(100dvh - 96px);
+        min-width: 360px - 32px !important;
+        max-width: 360px - 32px !important;
+    }
+}
+
+.side_navigation {
+    @media (max-width: $side_navigation_none) {
+        display: none !important;
+    }
 }

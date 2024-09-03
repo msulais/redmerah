@@ -2,10 +2,10 @@ import { createEffect, createMemo, createSignal, For, Match, Show, Switch, type 
 
 import type { CalculatorInput, CalculatorOutput, DateCalculatorInput, Settings } from "./_types"
 import { CalculatorType, Commands, DateOperation, DecimalNumberFormat, NumberType } from "./_enums"
-import { _abs, _angle, _area, _basic, _calculator, _ceil, _centerBottomToRight, _centerTop, _children, _comma, _command, _converter, _cos, _cot, _csc, _currentTarget, _date, _decimal, _filled, _tonal, _floor, _focus, _frequency, _grouping, _hide, _icon, _index, _input, _inputs, _inputUnit, _equals, _join, _length, _ln, _log, _match, _memory, _memoryButtons, _name, _none, _number, _numberFormat, _onRecallMemory, _output, _outputs, _outputUnit, _pressure, _programmer, _replace, _round, _scientific, _scientificNotation, _sec, _selectionEnd, _selectionStart, _setSelectionRange, _settings, _sin, _substring, _symbol, _tan, _temperature, _test, _text, _time, _toExponential, _toString, _toUpperCase, _trim, _type, _value, _volume, _weight, _right, _clipboard, _writeText, _hexadecimal, _numberType, _octal, _binary, _code, _shiftKey, _to, _from, _radio, _operation, _add, _difference, _subtract, _year, _day, _month } from "@/data/string"
+import { _hide, _children, _settings, _memoryButtons, _memory, _currentTarget, _command, _onRecallMemory, _value, _substring, _length, _setSelectionRange, _focus, _output, _toString, _input, _none, _text, _code, _shiftKey, _selectionStart, _join, _scientificNotation, _numberFormat, _decimal, _grouping, _test, _toUpperCase, _tonal, _comma, _filled, _sin, _cos, _tan, _csc, _sec, _cot, _centerBottomToRight, _abs, _log, _ln, _ceil, _round, _floor, _scientific, _angle, _type, _converter, _icon, _area, _volume, _temperature, _time, _weight, _frequency, _pressure, _match, _trim, _inputUnit, _name, _symbol, _equals, _outputUnit, _programmer, _numberType, _hexadecimal, _octal, _binary, _right, _clipboard, _writeText, _date, _operation, _add, _subtract, _difference, _from, _year, _month, _day, _to, _calculator, _basic, _inputs, _outputs } from "@/data/string"
 import { addClassListModule } from "@/utils/element"
 import { toggleAttribute } from "@/utils/attributes"
-import { _add_memory, _change_calculator_input, _change_settings_converter_inputUnit, _change_settings_converter_outputUnit, _change_settings_converter_swapUnit, _change_settings_converter_type, _change_settings_date_operation, _change_settings_programmer_numberType, _clear_memory, _subtract_memory, _toggle_settings_scientific_angle, CONVERTER_TYPES } from "./_data"
+import { CONVERTER_TYPES } from "./_constants"
 import { ConverterType, UNIT_ANGLE, UNIT_AREA, UNIT_FREQUENCY, UNIT_LENGTH, UNIT_PRESSURE, UNIT_TEMPERATURE, UNIT_TIME, UNIT_VOLUME, UNIT_WEIGHT, type ConverterUnit } from "./_converter"
 import { stringToTitleCase } from "@/utils/string"
 import { preventDefault } from "@/utils/event"
@@ -21,7 +21,7 @@ import Menu, { closeMenu, MenuDivider, MenuItem, MenuPosition, openMenu } from "
 import Dropdown from "@/components/Dropdown"
 import DatePicker, { openDatePicker } from "@/components/DatePicker"
 import CSSMiscellaneous from '@/styles/miscellaneous.module.scss'
-import CSS from './_InputOutput.module.scss'
+import CSS from './_styles.module.scss'
 
 const ActionButtons: ParentComponent<JSX.HTMLAttributes<HTMLDivElement> & {
     command: (type: Commands, ...args: unknown[]) => unknown
@@ -33,11 +33,11 @@ const ActionButtons: ParentComponent<JSX.HTMLAttributes<HTMLDivElement> & {
     const [is_menu_memory_open, setIs_menu_memory_open] = createSignal<boolean>(false)
     let menu_memory_ref: HTMLDialogElement
 
-    return (<div class={CSS.action_buttons} data-hidden={toggleAttribute(props[_hide])}>
+    return (<div class={CSS.input_output_action_buttons} data-hidden={toggleAttribute(props[_hide])}>
         {props[_children]}
-        <div class={CSS.memory_buttons} data-hidden={toggleAttribute(!props[_settings][_memoryButtons])}>
+        <div class={CSS.input_output_memory_buttons} data-hidden={toggleAttribute(!props[_settings][_memoryButtons])}>
             <TextTooltip text={"Memory value " + `(${props[_memory]})`}>
-                <Button 
+                <Button
                     focused={is_menu_memory_open()}
                     onClick={(ev) => openMenu(ev, menu_memory_ref, {
                         anchor: ev[_currentTarget],
@@ -45,39 +45,34 @@ const ActionButtons: ParentComponent<JSX.HTMLAttributes<HTMLDivElement> & {
                     M
                 </Button>
             </TextTooltip>
-
-            <Menu 
-                classList={addClassListModule(CSS.memory_menu)} 
-                onToggleOpen={(v) => setIs_menu_memory_open(v)} 
+            <Menu
+                classList={addClassListModule(CSS.input_output_memory_menu)}
+                onToggleOpen={(v) => setIs_menu_memory_open(v)}
                 ref={r => menu_memory_ref = r}>
                 <p>Memory value:</p>
                 <p>{props[_memory]}</p>
             </Menu>
-
             <TextTooltip text="Memory clear">
-                <Button     
-                    onClick={() => props[_command](Commands[_clear_memory])}>
+                <Button
+                    onClick={() => props[_command](Commands.clear_memory)}>
                     MC
                 </Button>
             </TextTooltip>
-
             <TextTooltip text="Memory recall">
-                <Button 
+                <Button
                     onClick={() => props[_onRecallMemory](props[_memory])}>
                     MR
                 </Button>
             </TextTooltip>
-
             <TextTooltip text="Memory add">
-                <Button 
-                    onClick={() => props[_command](Commands[_add_memory])}>
+                <Button
+                    onClick={() => props[_command](Commands.add_memory)}>
                     M+
                 </Button>
             </TextTooltip>
-
             <TextTooltip text="Memory subtract">
-                <Button 
-                    onClick={() => props[_command](Commands[_subtract_memory])}>
+                <Button
+                    onClick={() => props[_command](Commands.subtract_memory)}>
                     M-
                 </Button>
             </TextTooltip>
@@ -103,7 +98,7 @@ const BasicCalculator: VoidComponent<{
         caretPos += char[_length]
         input_ref[_setSelectionRange](caretPos, caretPos)
         input_ref[_focus]()
-        props[_command](Commands[_change_calculator_input], value)
+        props[_command](Commands.change_calculator_input, value)
     }
 
     function backspace(): void {
@@ -115,7 +110,7 @@ const BasicCalculator: VoidComponent<{
         if (caretPos < 0) caretPos = 0
         input_ref[_setSelectionRange](caretPos, caretPos)
         input_ref[_focus]()
-        props[_command](Commands[_change_calculator_input], value)
+        props[_command](Commands.change_calculator_input, value)
     }
 
     function clear(): void {
@@ -123,7 +118,7 @@ const BasicCalculator: VoidComponent<{
         input_ref[_value] = ''
         input_ref[_setSelectionRange](caretPos, caretPos)
         input_ref[_focus]()
-        props[_command](Commands[_change_calculator_input], '')
+        props[_command](Commands.change_calculator_input, '')
     }
 
     function equal(): void {
@@ -133,7 +128,7 @@ const BasicCalculator: VoidComponent<{
         input_ref[_value] = props[_output][_toString]()
         input_ref[_setSelectionRange](caretPos, caretPos)
         input_ref[_focus]()
-        props[_command](Commands[_change_calculator_input], numberToRealDigit(props[_output]))
+        props[_command](Commands.change_calculator_input, numberToRealDigit(props[_output]))
     }
 
     createEffect(() => {
@@ -142,10 +137,10 @@ const BasicCalculator: VoidComponent<{
     })
 
     return (<>
-        <input 
+        <input
             ref={r => input_ref = r}
             inputMode={_none}
-            class={CSS.basic_text_input}
+            class={CSS.input_output_basic_text_input}
             type={_text}
             onKeyDown={ev => {
                 if (!(ev[_code] == "Equal" && !ev[_shiftKey])) return
@@ -154,21 +149,21 @@ const BasicCalculator: VoidComponent<{
             }}
             onFocus={ev => caretPos = ev[_currentTarget][_selectionStart] ?? caretPos}
             onBlur={ev => caretPos = ev[_currentTarget][_selectionStart] ?? caretPos}
-            onInput={ev => props[_command](Commands[_change_calculator_input], ev[_currentTarget][_value])}
+            onInput={ev => props[_command](Commands.change_calculator_input, ev[_currentTarget][_value])}
         />
-        <div 
+        <div
             class={[
-                CSS.basic_text_output, 
+                CSS.input_output_basic_text_output,
                 CSSMiscellaneous.no_scrollbar
             ][_join](' ')}>
-            <Show 
-                when={props[_settings][_scientificNotation]} 
+            <Show
+                when={props[_settings][_scientificNotation]}
                 fallback={props[_output] != null && formatNumber(props[_output], {
                     decimalSeparator: props[_settings][_numberFormat][_decimal],
                     thousandSeparator: props[_settings][_numberFormat][_grouping]
                 })}>
                 {props[_output] != null && (/[eE]/[_test](props[_output][_toString]())
-                    ? props[_output][_toString]()[_toUpperCase]() 
+                    ? props[_output][_toString]()[_toUpperCase]()
                     : formatNumber(props[_output], {
                         decimalSeparator: props[_settings][_numberFormat][_decimal],
                         thousandSeparator: props[_settings][_numberFormat][_grouping]
@@ -176,18 +171,18 @@ const BasicCalculator: VoidComponent<{
                 )}
             </Show>
         </div>
-        <ActionButtons 
+        <ActionButtons
             command={props[_command]}
             memory={props[_memory]}
             onRecallMemory={(v) => addChar(numberToRealDigit(v))}
             settings={props[_settings]}
             hide={!props[_settings][_memoryButtons]}
         />
-        <div class={CSS.basic_buttons}>
+        <div class={CSS.input_output_basic_buttons}>
             <Button onClick={() => addChar('%')}>%</Button>
             <Button onClick={() => addChar('√')}>√</Button>
-            <Button onClick={() => clear()} classList={addClassListModule(CSS.remove_symbol)}>C</Button>
-            <Button onClick={() => backspace()} classList={addClassListModule(CSS.remove_symbol)}><Icon code={0xE199} /></Button>
+            <Button onClick={() => clear()} classList={addClassListModule(CSS.input_output_remove_symbol)}>C</Button>
+            <Button onClick={() => backspace()} classList={addClassListModule(CSS.input_output_remove_symbol)}><Icon code={0xE199} /></Button>
 
             <Button onClick={() => addChar('7')} variant={ButtonVariant[_tonal]}>7</Button>
             <Button onClick={() => addChar('8')} variant={ButtonVariant[_tonal]}>8</Button>
@@ -226,11 +221,11 @@ const ScientificCalculator: VoidComponent<{
         const i = () => isInverse()? 'a' : ''
         const h = () => isHyperbolic()? 'h' : ''
         return [
-            i() + _sin + h(), 
-            i() + _cos + h(), 
-            i() + _tan + h(), 
-            i() + _csc + h(), 
-            i() + _sec + h(), 
+            i() + _sin + h(),
+            i() + _cos + h(),
+            i() + _tan + h(),
+            i() + _csc + h(),
+            i() + _sec + h(),
             i() + _cot + h()
         ]
     })
@@ -246,7 +241,7 @@ const ScientificCalculator: VoidComponent<{
         caretPos += char[_length]
         input_ref[_setSelectionRange](caretPos, caretPos)
         input_ref[_focus]()
-        props[_command](Commands[_change_calculator_input], value)
+        props[_command](Commands.change_calculator_input, value)
     }
 
     function backspace(): void {
@@ -258,7 +253,7 @@ const ScientificCalculator: VoidComponent<{
         if (caretPos < 0) caretPos = 0
         input_ref[_setSelectionRange](caretPos, caretPos)
         input_ref[_focus]()
-        props[_command](Commands[_change_calculator_input], value)
+        props[_command](Commands.change_calculator_input, value)
     }
 
     function clear(): void {
@@ -266,7 +261,7 @@ const ScientificCalculator: VoidComponent<{
         input_ref[_value] = ''
         input_ref[_setSelectionRange](caretPos, caretPos)
         input_ref[_focus]()
-        props[_command](Commands[_change_calculator_input], '')
+        props[_command](Commands.change_calculator_input, '')
     }
 
     function equal(): void {
@@ -276,7 +271,7 @@ const ScientificCalculator: VoidComponent<{
         input_ref[_value] = props[_output][_toString]()
         input_ref[_setSelectionRange](caretPos, caretPos)
         input_ref[_focus]()
-        props[_command](Commands[_change_calculator_input], numberToRealDigit(props[_output]))
+        props[_command](Commands.change_calculator_input, numberToRealDigit(props[_output]))
     }
 
     createEffect(() => {
@@ -285,10 +280,10 @@ const ScientificCalculator: VoidComponent<{
     })
 
     return (<>
-        <input 
+        <input
             ref={r => input_ref = r}
             inputMode={_none}
-            class={CSS.scientific_text_input}
+            class={CSS.input_output_scientific_text_input}
             type={_text}
             onKeyDown={ev => {
                 if (!(ev[_code] == "Equal" && !ev[_shiftKey])) return
@@ -297,21 +292,21 @@ const ScientificCalculator: VoidComponent<{
             }}
             onFocus={ev => caretPos = ev[_currentTarget][_selectionStart] ?? caretPos}
             onBlur={ev => caretPos = ev[_currentTarget][_selectionStart] ?? caretPos}
-            onInput={ev => props[_command](Commands[_change_calculator_input], ev[_currentTarget][_value])}
+            onInput={ev => props[_command](Commands.change_calculator_input, ev[_currentTarget][_value])}
         />
-        <div 
+        <div
             class={[
-                CSS.scientific_text_output, 
+                CSS.input_output_scientific_text_output,
                 CSSMiscellaneous.no_scrollbar
             ][_join](' ')}>
-            <Show 
-                when={props[_settings][_scientificNotation]} 
+            <Show
+                when={props[_settings][_scientificNotation]}
                 fallback={props[_output] != null && formatNumber(props[_output], {
                     decimalSeparator: props[_settings][_numberFormat][_decimal],
                     thousandSeparator: props[_settings][_numberFormat][_grouping]
                 })}>
                 {props[_output] != null && (/[eE]/[_test](props[_output][_toString]())
-                    ? props[_output][_toString]()[_toUpperCase]() 
+                    ? props[_output][_toString]()[_toUpperCase]()
                     : formatNumber(props[_output], {
                         decimalSeparator: props[_settings][_numberFormat][_decimal],
                         thousandSeparator: props[_settings][_numberFormat][_grouping]
@@ -319,33 +314,33 @@ const ScientificCalculator: VoidComponent<{
                 )}
             </Show>
         </div>
-        <ActionButtons 
+        <ActionButtons
             command={props[_command]}
             memory={props[_memory]}
             onRecallMemory={(v) => addChar(numberToRealDigit(v))}
             settings={props[_settings]}>
-            <Button 
+            <Button
                 onClick={ev => openMenu(ev, menu_function_ref, {
-                    anchor: ev[_currentTarget], 
+                    anchor: ev[_currentTarget],
                     position: MenuPosition[_centerBottomToRight]
-                })} 
+                })}
                 focused={is_menu_function_open()}>
                 <Icon code={0xEA95}/>
                 Function
             </Button>
-            <Menu 
-                classList={addClassListModule(CSS.scientific_function_menu)} 
-                ref={r => menu_function_ref = r} 
+            <Menu
+                classList={addClassListModule(CSS.input_output_scientific_function_menu)}
+                ref={r => menu_function_ref = r}
                 onToggleOpen={(v) => setIs_menu_function_open(v)}>
-                <div class={CSS.trigonometry_options}>
+                <div class={CSS.input_output_trigonometry_options}>
                     <MenuItem checked={isInverse()} onClick={() => setIsInverse(v => !v)}>Invers</MenuItem>
                     <MenuItem checked={isHyperbolic()} onClick={() => setIsHyperbolic(v => !v)}>Hyperbolic</MenuItem>
                 </div>
-                <div class={CSS.grid_3}>
+                <div class={CSS.input_output_grid_3}>
                     <For each={getTrigonometry()}>{t => <MenuItem onClick={() => addChar(t + '(')}>{`${t}(x)`}</MenuItem>}</For>
                 </div>
                 <MenuDivider />
-                <div class={CSS.grid_3}>
+                <div class={CSS.input_output_grid_3}>
                     <MenuItem onClick={() => addChar(_abs + '(')}>abs(x)</MenuItem>
                     <MenuItem onClick={() => addChar(_log + '(')}>log(x)</MenuItem>
                     <MenuItem onClick={() => addChar(_ln + '(')}>ln(x)</MenuItem>
@@ -356,19 +351,19 @@ const ScientificCalculator: VoidComponent<{
             </Menu>
 
             <TextTooltip text="Angle mode">
-                <Button 
-                    style={{width: '68px'}} 
-                    onClick={() => props[_command](Commands[_toggle_settings_scientific_angle])}>
+                <Button
+                    style={{width: '68px'}}
+                    onClick={() => props[_command](Commands.toggle_settings_scientific_angle)}>
                     {props[_settings][_scientific][_angle]}
                 </Button>
             </TextTooltip>
         </ActionButtons>
-        <div class={CSS.scientific_buttons}>
+        <div class={CSS.input_output_scientific_buttons}>
             <Button onClick={() => addChar('mod')}>mod</Button>
             <Button onClick={() => addChar('(')}>{'('}</Button>
             <Button onClick={() => addChar(')')}>{')'}</Button>
-            <Button onClick={() => clear()} classList={addClassListModule(CSS.remove_symbol)}>C</Button>
-            <Button onClick={() => backspace()} classList={addClassListModule(CSS.remove_symbol)}><Icon code={0xE199} /></Button>
+            <Button onClick={() => clear()} classList={addClassListModule(CSS.input_output_remove_symbol)}>C</Button>
+            <Button onClick={() => backspace()} classList={addClassListModule(CSS.input_output_remove_symbol)}><Icon code={0xE199} /></Button>
 
             <Button onClick={() => addChar('%')}>%</Button>
             <Button onClick={() => addChar('10^')}>10^</Button>
@@ -421,15 +416,15 @@ const ConverterCalculator: VoidComponent<{
     })
     const getUnits = createMemo<ConverterUnit[]>(() => {
         const type = props[_settings][_converter][_type]
-        if (type == ConverterType[_length]) return [...UNIT_LENGTH]
-        if (type == ConverterType[_area]) return [...UNIT_AREA]
-        if (type == ConverterType[_volume]) return [...UNIT_VOLUME]
-        if (type == ConverterType[_temperature]) return [...UNIT_TEMPERATURE]
-        if (type == ConverterType[_time]) return [...UNIT_TIME]
-        if (type == ConverterType[_weight]) return [...UNIT_WEIGHT]
-        if (type == ConverterType[_frequency]) return [...UNIT_FREQUENCY]
-        if (type == ConverterType[_pressure]) return [...UNIT_PRESSURE]
-        if (type == ConverterType[_angle]) return [...UNIT_ANGLE]
+        if (type == ConverterType[_length]) return UNIT_LENGTH
+        if (type == ConverterType[_area]) return UNIT_AREA
+        if (type == ConverterType[_volume]) return UNIT_VOLUME
+        if (type == ConverterType[_temperature]) return UNIT_TEMPERATURE
+        if (type == ConverterType[_time]) return UNIT_TIME
+        if (type == ConverterType[_weight]) return UNIT_WEIGHT
+        if (type == ConverterType[_frequency]) return UNIT_FREQUENCY
+        if (type == ConverterType[_pressure]) return UNIT_PRESSURE
+        if (type == ConverterType[_angle]) return UNIT_ANGLE
         return []
     })
     const getConverterName = createMemo<string>(() => {
@@ -451,7 +446,7 @@ const ConverterCalculator: VoidComponent<{
         caretPos += char[_length]
         input_ref[_setSelectionRange](caretPos, caretPos)
         input_ref[_focus]()
-        props[_command](Commands[_change_calculator_input], value)
+        props[_command](Commands.change_calculator_input, value)
     }
 
     function backspace(): void {
@@ -463,7 +458,7 @@ const ConverterCalculator: VoidComponent<{
         if (caretPos < 0) caretPos = 0
         input_ref[_setSelectionRange](caretPos, caretPos)
         input_ref[_focus]()
-        props[_command](Commands[_change_calculator_input], value)
+        props[_command](Commands.change_calculator_input, value)
     }
 
     function clear(): void {
@@ -471,7 +466,7 @@ const ConverterCalculator: VoidComponent<{
         input_ref[_value] = ''
         input_ref[_setSelectionRange](caretPos, caretPos)
         input_ref[_focus]()
-        props[_command](Commands[_change_calculator_input], '')
+        props[_command](Commands.change_calculator_input, '')
     }
 
     function equal(): void {
@@ -481,7 +476,7 @@ const ConverterCalculator: VoidComponent<{
         input_ref[_value] = props[_output][_toString]()
         input_ref[_setSelectionRange](caretPos, caretPos)
         input_ref[_focus]()
-        props[_command](Commands[_change_calculator_input], numberToRealDigit(props[_output]))
+        props[_command](Commands.change_calculator_input, numberToRealDigit(props[_output]))
     }
 
     function plusMinus(): void {
@@ -491,14 +486,14 @@ const ConverterCalculator: VoidComponent<{
         if (props[_input][_trim]() == '') {
             value = '-'
             caretPos = 1
-        } 
+        }
         else if (match) {
             const pre = match[1] ?? ''
             const sign = match[2] ?? ''
             const number = match[3] ?? ''
 
             if (
-                sign == '+-' 
+                sign == '+-'
                 || sign == '-'
                 || sign == '-+'
             ) {
@@ -506,9 +501,9 @@ const ConverterCalculator: VoidComponent<{
                 if (pre == '') value = number
             }
             else if (
-                sign == '--' 
-                || sign == '+'  
-                || sign == '++' 
+                sign == '--'
+                || sign == '+'
+                || sign == '++'
                 || sign == ''
             ) value = '-' + number
 
@@ -521,7 +516,7 @@ const ConverterCalculator: VoidComponent<{
         input_ref[_value] = value
         input_ref[_setSelectionRange](caretPos, caretPos)
         input_ref[_focus]()
-        props[_command](Commands[_change_calculator_input], value)
+        props[_command](Commands.change_calculator_input, value)
     }
 
     createEffect(() => {
@@ -530,10 +525,10 @@ const ConverterCalculator: VoidComponent<{
     })
 
     return (<>
-        <input 
+        <input
             ref={r => input_ref = r}
             inputMode={_none}
-            class={CSS.converter_text_input}
+            class={CSS.input_output_converter_text_input}
             type={_text}
             onKeyDown={ev => {
                 if (!(ev[_code] == "Equal" && !ev[_shiftKey])) return
@@ -542,21 +537,21 @@ const ConverterCalculator: VoidComponent<{
             }}
             onFocus={ev => caretPos = ev[_currentTarget][_selectionStart] ?? caretPos}
             onBlur={ev => caretPos = ev[_currentTarget][_selectionStart] ?? caretPos}
-            onInput={ev => props[_command](Commands[_change_calculator_input], ev[_currentTarget][_value])}
+            onInput={ev => props[_command](Commands.change_calculator_input, ev[_currentTarget][_value])}
         />
-        <div 
+        <div
             class={[
-                CSS.converter_text_output, 
+                CSS.input_output_converter_text_output,
                 CSSMiscellaneous.no_scrollbar
             ][_join](' ')}>
-            <Show 
-                when={props[_settings][_scientificNotation]} 
+            <Show
+                when={props[_settings][_scientificNotation]}
                 fallback={props[_output] != null && formatNumber(props[_output], {
                     decimalSeparator: props[_settings][_numberFormat][_decimal],
                     thousandSeparator: props[_settings][_numberFormat][_grouping]
                 })}>
                 {props[_output] != null && (/[eE]/[_test](props[_output][_toString]())
-                    ? props[_output][_toString]()[_toUpperCase]() 
+                    ? props[_output][_toString]()[_toUpperCase]()
                     : formatNumber(props[_output], {
                         decimalSeparator: props[_settings][_numberFormat][_decimal],
                         thousandSeparator: props[_settings][_numberFormat][_grouping]
@@ -564,18 +559,18 @@ const ConverterCalculator: VoidComponent<{
                 )}
             </Show>
         </div>
-        <ActionButtons 
+        <ActionButtons
             command={props[_command]}
             memory={props[_memory]}
             onRecallMemory={(v) => addChar(numberToRealDigit(v))}
             settings={props[_settings]}>
             <TextTooltip text="Select converter type">
-                <Button 
+                <Button
                     focused={is_menu_converterType_open()}
                     onClick={ev => openMenu(ev, menu_converterType_ref, {
                         anchor: ev[_currentTarget],
                         position: MenuPosition[_centerBottomToRight],
-                        allowHideAnchor: false 
+                        allowHideAnchor: false
                     })}
                     variant={ButtonVariant[_tonal]}>
                     <Icon code={getConverterIcon()}/>
@@ -583,14 +578,14 @@ const ConverterCalculator: VoidComponent<{
                 </Button>
             </TextTooltip>
 
-            <Menu 
-                ref={r => menu_converterType_ref = r} 
+            <Menu
+                ref={r => menu_converterType_ref = r}
                 onToggleOpen={v => setIs_menu_converterType_open(v)}>
-                <For each={CONVERTER_TYPES}>{c => 
-                    <MenuItem 
+                <For each={CONVERTER_TYPES}>{c =>
+                    <MenuItem
                         selected={c[_type] == props[_settings][_converter][_type]}
                         onClick={() => {
-                            props[_command](Commands[_change_settings_converter_type], c[_type])
+                            props[_command](Commands.change_settings_converter_type, c[_type])
                             closeMenu(menu_converterType_ref)
                         }}
                         leading={<Icon code={c[_icon]}/>}>
@@ -599,27 +594,27 @@ const ConverterCalculator: VoidComponent<{
                 }</For>
             </Menu>
 
-            <div class={CSS.converter_units}>
+            <div class={CSS.input_output_converter_units}>
                 <TextTooltip text="Select input unit">
-                    <Button 
+                    <Button
                         focused={is_menu_inputUnit_open()}
                         onClick={ev => openMenu(ev, menu_inputUnit_ref, {
                             anchor: ev[_currentTarget],
                             position: MenuPosition[_centerBottomToRight],
                             allowHideAnchor: false
-                        })} 
+                        })}
                         style={{color: 'rgb(var(--color-accent))'}}>
                         {props[_settings][_converter][_inputUnit][_name] + ` (${props[_settings][_converter][_inputUnit][_symbol]})`}
                     </Button>
                 </TextTooltip>
 
-                <Menu 
-                    ref={r => menu_inputUnit_ref = r} 
+                <Menu
+                    ref={r => menu_inputUnit_ref = r}
                     onToggleOpen={v => setIs_menu_inputUnit_open(v)}>
-                    <For each={getUnits()}>{u => 
-                        <MenuItem 
+                    <For each={getUnits()}>{u =>
+                        <MenuItem
                             onClick={() => {
-                                props[_command](Commands[_change_settings_converter_inputUnit], u)
+                                props[_command](Commands.change_settings_converter_inputUnit, u)
                                 closeMenu(menu_inputUnit_ref)
                             }}
                             selected={u[_equals](props[_settings][_converter][_inputUnit])}>
@@ -629,8 +624,8 @@ const ConverterCalculator: VoidComponent<{
                 </Menu>
 
                 <TextTooltip text="Swap unit">
-                    <IconButton 
-                        onClick={() => props[_command](Commands[_change_settings_converter_swapUnit])}
+                    <IconButton
+                        onClick={() => props[_command](Commands.change_settings_converter_swapUnit)}
                         code={0xE115}
                     />
                 </TextTooltip>
@@ -642,20 +637,20 @@ const ConverterCalculator: VoidComponent<{
                             anchor: ev[_currentTarget],
                             position: MenuPosition[_centerBottomToRight],
                             allowHideAnchor: false
-                        })} 
+                        })}
                         style={{color: 'rgb(var(--color-accent))'}}>
                         {props[_settings][_converter][_outputUnit][_name] + ` (${props[_settings][_converter][_outputUnit][_symbol]})`}
                     </Button>
                 </TextTooltip>
             </div>
 
-            <Menu 
-                ref={r => menu_outputUnit_ref = r} 
+            <Menu
+                ref={r => menu_outputUnit_ref = r}
                 onToggleOpen={v => setIs_menu_outputUnit_open(v)}>
-                <For each={getUnits()}>{u => 
-                    <MenuItem 
+                <For each={getUnits()}>{u =>
+                    <MenuItem
                         onClick={() => {
-                            props[_command](Commands[_change_settings_converter_outputUnit], u)
+                            props[_command](Commands.change_settings_converter_outputUnit, u)
                             closeMenu(menu_outputUnit_ref)
                         }}
                         selected={u[_equals](props[_settings][_converter][_outputUnit])}>
@@ -664,10 +659,10 @@ const ConverterCalculator: VoidComponent<{
                 }</For>
             </Menu>
         </ActionButtons>
-        <div class={CSS.converter_buttons}>
+        <div class={CSS.input_output_converter_buttons}>
             <Button onClick={() => plusMinus()}>±</Button>
-            <Button onClick={() => clear()} classList={addClassListModule(CSS.remove_symbol)}>C</Button>
-            <Button onClick={() => backspace()} classList={addClassListModule(CSS.remove_symbol)}><Icon code={0xE199} /></Button>
+            <Button onClick={() => clear()} classList={addClassListModule(CSS.input_output_remove_symbol)}>C</Button>
+            <Button onClick={() => backspace()} classList={addClassListModule(CSS.input_output_remove_symbol)}><Icon code={0xE199} /></Button>
 
             <Button onClick={() => addChar('7')} variant={ButtonVariant[_tonal]}>7</Button>
             <Button onClick={() => addChar('8')} variant={ButtonVariant[_tonal]}>8</Button>
@@ -680,7 +675,7 @@ const ConverterCalculator: VoidComponent<{
             <Button onClick={() => addChar('1')} variant={ButtonVariant[_tonal]}>1</Button>
             <Button onClick={() => addChar('2')} variant={ButtonVariant[_tonal]}>2</Button>
             <Button onClick={() => addChar('3')} variant={ButtonVariant[_tonal]}>3</Button>
-            
+
             <Button onClick={() => addChar(props[_settings][_numberFormat][_decimal] == DecimalNumberFormat[_comma]? ',' : '.')} ><Show when={props[_settings][_numberFormat][_decimal] == DecimalNumberFormat[_comma]} fallback=".">,</Show></Button>
             <Button onClick={() => addChar('0')} variant={ButtonVariant[_tonal]}>0</Button>
             <Button onClick={() => equal()} variant={ButtonVariant[_filled]}>=</Button>
@@ -699,13 +694,13 @@ const ProgrammerCalculator: VoidComponent<{
         if (props[_output] == null) return ''
 
         if (props[_settings][_scientificNotation]) return (/[eE]/[_test](props[_output][_toString]())
-            ? props[_output][_toString]()[_toUpperCase]() 
+            ? props[_output][_toString]()[_toUpperCase]()
             : formatNumber(props[_output], {
                 decimalSeparator: props[_settings][_numberFormat][_decimal],
                 thousandSeparator: props[_settings][_numberFormat][_grouping]
             })
         )
-        
+
         return formatNumber(props[_output], {
             decimalSeparator: props[_settings][_numberFormat][_decimal],
             thousandSeparator: props[_settings][_numberFormat][_grouping]
@@ -731,7 +726,7 @@ const ProgrammerCalculator: VoidComponent<{
         caretPos += char[_length]
         input_ref[_setSelectionRange](caretPos, caretPos)
         input_ref[_focus]()
-        props[_command](Commands[_change_calculator_input], value)
+        props[_command](Commands.change_calculator_input, value)
     }
 
     function backspace(): void {
@@ -743,7 +738,7 @@ const ProgrammerCalculator: VoidComponent<{
         if (caretPos < 0) caretPos = 0
         input_ref[_setSelectionRange](caretPos, caretPos)
         input_ref[_focus]()
-        props[_command](Commands[_change_calculator_input], value)
+        props[_command](Commands.change_calculator_input, value)
     }
 
     function clear(): void {
@@ -751,7 +746,7 @@ const ProgrammerCalculator: VoidComponent<{
         input_ref[_value] = ''
         input_ref[_setSelectionRange](caretPos, caretPos)
         input_ref[_focus]()
-        props[_command](Commands[_change_calculator_input], '')
+        props[_command](Commands.change_calculator_input, '')
     }
 
     function equal(): void {
@@ -767,7 +762,7 @@ const ProgrammerCalculator: VoidComponent<{
         input_ref[_value] = output[_toString]()
         input_ref[_setSelectionRange](caretPos, caretPos)
         input_ref[_focus]()
-        props[_command](Commands[_change_calculator_input], output)
+        props[_command](Commands.change_calculator_input, output)
     }
 
     function onRecallMemory(value: number): void {
@@ -788,10 +783,10 @@ const ProgrammerCalculator: VoidComponent<{
     })
 
     return (<>
-        <input 
+        <input
             ref={r => input_ref = r}
             inputMode={_none}
-            class={CSS.programmer_text_input}
+            class={CSS.input_output_programmer_text_input}
             type={_text}
             onKeyDown={ev => {
                 if (!(ev[_code] == "Equal" && !ev[_shiftKey])) return
@@ -800,19 +795,19 @@ const ProgrammerCalculator: VoidComponent<{
             }}
             onFocus={ev => caretPos = ev[_currentTarget][_selectionStart] ?? caretPos}
             onBlur={ev => caretPos = ev[_currentTarget][_selectionStart] ?? caretPos}
-            onInput={ev => props[_command](Commands[_change_calculator_input], ev[_currentTarget][_value])}
+            onInput={ev => props[_command](Commands.change_calculator_input, ev[_currentTarget][_value])}
         />
-        <div 
+        <div
             class={[
-                CSS.programmer_text_output, 
+                CSS.input_output_programmer_text_output,
                 CSSMiscellaneous.no_scrollbar
             ][_join](' ')}>
-            <Button 
-                selected={props[_settings][_programmer][_numberType] == NumberType[_decimal]} 
-                compact 
-                disableScale 
-                indicatorPosition={ButtonIndicatorPosition[_right]} 
-                onClick={() => props[_command](Commands[_change_settings_programmer_numberType], NumberType[_decimal])}
+            <Button
+                selected={props[_settings][_programmer][_numberType] == NumberType[_decimal]}
+                compact
+                disableScale
+                indicatorPosition={ButtonIndicatorPosition[_right]}
+                onClick={() => props[_command](Commands.change_settings_programmer_numberType, NumberType[_decimal])}
                 onContextMenu={(ev) => {
                     preventDefault(ev)
                     textToCopy = getDecimalOutput()
@@ -821,12 +816,12 @@ const ProgrammerCalculator: VoidComponent<{
                 <div class={CSSMiscellaneous.no_scrollbar}>{getDecimalOutput()}</div>
                 <span>DEC</span>
             </Button>
-            <Button 
-                selected={props[_settings][_programmer][_numberType] == NumberType[_hexadecimal]} 
-                compact 
-                disableScale 
-                indicatorPosition={ButtonIndicatorPosition[_right]} 
-                onClick={() => props[_command](Commands[_change_settings_programmer_numberType], NumberType[_hexadecimal])}
+            <Button
+                selected={props[_settings][_programmer][_numberType] == NumberType[_hexadecimal]}
+                compact
+                disableScale
+                indicatorPosition={ButtonIndicatorPosition[_right]}
+                onClick={() => props[_command](Commands.change_settings_programmer_numberType, NumberType[_hexadecimal])}
                 onContextMenu={(ev) => {
                     preventDefault(ev)
                     if (props[_output] == null) return;
@@ -837,12 +832,12 @@ const ProgrammerCalculator: VoidComponent<{
                 <div class={CSSMiscellaneous.no_scrollbar}>{getHexadecimalOutput()}</div>
                 <span>HEX</span>
             </Button>
-            <Button 
-                selected={props[_settings][_programmer][_numberType] == NumberType[_octal]} 
-                compact 
-                disableScale 
+            <Button
+                selected={props[_settings][_programmer][_numberType] == NumberType[_octal]}
+                compact
+                disableScale
                 indicatorPosition={ButtonIndicatorPosition[_right]}
-                onClick={() => props[_command](Commands[_change_settings_programmer_numberType], NumberType[_octal])} 
+                onClick={() => props[_command](Commands.change_settings_programmer_numberType, NumberType[_octal])}
                 onContextMenu={(ev) => {
                     preventDefault(ev)
                     if (props[_output] == null) return;
@@ -853,12 +848,12 @@ const ProgrammerCalculator: VoidComponent<{
                 <div class={CSSMiscellaneous.no_scrollbar}>{getOctalOutput()}</div>
                 <span>OCT</span>
             </Button>
-            <Button 
-                selected={props[_settings][_programmer][_numberType] == NumberType[_binary]} 
-                compact 
-                disableScale 
-                indicatorPosition={ButtonIndicatorPosition[_right]} 
-                onClick={() => props[_command](Commands[_change_settings_programmer_numberType], NumberType[_binary])} 
+            <Button
+                selected={props[_settings][_programmer][_numberType] == NumberType[_binary]}
+                compact
+                disableScale
+                indicatorPosition={ButtonIndicatorPosition[_right]}
+                onClick={() => props[_command](Commands.change_settings_programmer_numberType, NumberType[_binary])}
                 onContextMenu={(ev) => {
                     preventDefault(ev)
                     if (props[_output] == null) return;
@@ -877,19 +872,19 @@ const ProgrammerCalculator: VoidComponent<{
                 }} leading={<Icon code={0xE51B}/>}>Copy</MenuItem>
             </Menu>
         </div>
-        <ActionButtons 
+        <ActionButtons
             command={props[_command]}
             memory={props[_memory]}
             onRecallMemory={onRecallMemory}
             hide={!props[_settings][_memoryButtons]}
             settings={props[_settings]}
         />
-        <div class={CSS.programmer_buttons}>
+        <div class={CSS.input_output_programmer_buttons}>
             <div />
             <Button onClick={() => addChar('(')}>{'('}</Button>
             <Button onClick={() => addChar(')')}>{')'}</Button>
-            <Button onClick={() => clear()} classList={addClassListModule(CSS.remove_symbol)}>C</Button>
-            <Button onClick={() => backspace()} classList={addClassListModule(CSS.remove_symbol)}><Icon code={0xE199} /></Button>
+            <Button onClick={() => clear()} classList={addClassListModule(CSS.input_output_remove_symbol)}>C</Button>
+            <Button onClick={() => backspace()} classList={addClassListModule(CSS.input_output_remove_symbol)}><Icon code={0xE199} /></Button>
 
             <Button disabled={!isHex()} onClick={() => addChar('F')} variant={ButtonVariant[_tonal]}>F</Button>
             <Button onClick={() => addChar('not(')}>not</Button>
@@ -939,11 +934,11 @@ const DateCalculator: VoidComponent<{
     let datePicker_from_ref: HTMLDialogElement
     let datePicker_to_ref: HTMLDialogElement
 
-    return (<div class={CSS.date_calculator}>
-        <Dropdown 
-            labelText="Operation" 
-            selectedValues={[props[_settings][_date][_operation]]} 
-            onSelectedItemsChanged={(items) => props[_command](Commands[_change_settings_date_operation], items[0][0])}
+    return (<div class={CSS.input_output_date_calculator}>
+        <Dropdown
+            labelText="Operation"
+            selectedValues={[props[_settings][_date][_operation]]}
+            onSelectedItemsChanged={(items) => props[_command](Commands.change_settings_date_operation, items[0][0])}
             items={[
                 [DateOperation[_add], 'Add'],
                 [DateOperation[_subtract], 'Subtract'],
@@ -952,7 +947,7 @@ const DateCalculator: VoidComponent<{
         />
         <div>
             <p>From</p>
-            <Button 
+            <Button
                 variant={ButtonVariant[_tonal]}
                 onClick={(ev) => openDatePicker(ev, datePicker_from_ref, {
                     anchor: ev[_currentTarget],
@@ -963,31 +958,31 @@ const DateCalculator: VoidComponent<{
             </Button>
         </div>
         <div class={CSS.date_inputs} data-hide={toggleAttribute(props[_settings][_date][_operation] == DateOperation[_difference])}>
-            <NumberTextField 
-                min={0} 
+            <NumberTextField
+                min={0}
                 value={props[_input][_year] + ''}
-                labelText="Year" 
-                onFinalValueChanged={(v) => props[_command](Commands[_change_calculator_input], {...props[_input], year: v})}
+                labelText="Year"
+                onFinalValueChanged={(v) => props[_command](Commands.change_calculator_input, {...props[_input], year: v})}
             />
-            <NumberTextField 
-                min={0} 
+            <NumberTextField
+                min={0}
                 value={props[_input][_month] + ''}
-                labelText="Month" 
-                onFinalValueChanged={(v) => props[_command](Commands[_change_calculator_input], {...props[_input], month: v})}
+                labelText="Month"
+                onFinalValueChanged={(v) => props[_command](Commands.change_calculator_input, {...props[_input], month: v})}
             />
-            <NumberTextField 
-                min={0} 
+            <NumberTextField
+                min={0}
                 value={props[_input][_day] + ''}
-                labelText="Day" 
-                onFinalValueChanged={(v) => props[_command](Commands[_change_calculator_input], {...props[_input], day: v})}
+                labelText="Day"
+                onFinalValueChanged={(v) => props[_command](Commands.change_calculator_input, {...props[_input], day: v})}
             />
         </div>
         <div data-hide={toggleAttribute(props[_settings][_date][_operation] != DateOperation[_difference])}>
             <p>To</p>
-            <Button 
+            <Button
                 variant={ButtonVariant[_tonal]}
                 onClick={(ev) => openDatePicker(ev, datePicker_to_ref, {
-                    anchor: ev[_currentTarget], 
+                    anchor: ev[_currentTarget],
                     position: MenuPosition[_centerBottomToRight]
                 })}>
                 <Icon code={0xE2CC}/>
@@ -998,19 +993,19 @@ const DateCalculator: VoidComponent<{
             <p><Show when={toggleAttribute(props[_settings][_date][_operation] != DateOperation[_difference])} fallback="Result">Difference</Show></p>
             <h2>{props[_output]}</h2>
         </div>
-        <DatePicker 
-            ref={r => datePicker_from_ref = r} 
-            date={props[_input][_from]} 
+        <DatePicker
+            ref={r => datePicker_from_ref = r}
+            date={props[_input][_from]}
             firstDate={new Date(getDate_Y() - 1000, 0, 1)}
             lastDate={new Date(getDate_Y() + 1000, 11, 31)}
-            onSelectDate={(value) => props[_command](Commands[_change_calculator_input], {...props[_input], from: value})}
+            onSelectDate={(value) => props[_command](Commands.change_calculator_input, {...props[_input], from: value})}
         />
-        <DatePicker 
-            ref={r => datePicker_to_ref = r} 
+        <DatePicker
+            ref={r => datePicker_to_ref = r}
             date={props[_input][_to]}
             firstDate={new Date(getDate_Y() - 1000, 0, 1)}
-            lastDate={new Date(getDate_Y() + 1000, 11, 31)} 
-            onSelectDate={(value) => props[_command](Commands[_change_calculator_input], {...props[_input], to: value})}
+            lastDate={new Date(getDate_Y() + 1000, 11, 31)}
+            onSelectDate={(value) => props[_command](Commands.change_calculator_input, {...props[_input], to: value})}
         />
     </div>)
 }
@@ -1023,10 +1018,10 @@ const _: VoidComponent<{
     memory: number
     command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
-    return (<main class={CSS.main}>
+    return (<main class={CSS.input_output_main}>
         <Switch>
             <Match when={props[_calculator] == CalculatorType[_basic]}>
-                <BasicCalculator 
+                <BasicCalculator
                     settings={props[_settings]}
                     input={props[_inputs][_basic]}
                     output={props[_outputs][_basic]}
@@ -1035,7 +1030,7 @@ const _: VoidComponent<{
                 />
             </Match>
             <Match when={props[_calculator] == CalculatorType[_scientific]}>
-                <ScientificCalculator 
+                <ScientificCalculator
                     settings={props[_settings]}
                     input={props[_inputs][_scientific]}
                     output={props[_outputs][_scientific]}
@@ -1044,7 +1039,7 @@ const _: VoidComponent<{
                 />
             </Match>
             <Match when={props[_calculator] == CalculatorType[_converter]}>
-                <ConverterCalculator 
+                <ConverterCalculator
                     settings={props[_settings]}
                     input={props[_inputs][_converter]}
                     output={props[_outputs][_converter]}

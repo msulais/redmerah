@@ -1,13 +1,13 @@
 ---
 import Html from '@/layouts/Html/index.astro';
-import { MainApp } from './_components'
+import App from './_App'
 
 export const prerender = true;
 ---
 
-<Html 
-	title='Calculator' 
-	accentColor='#026BE3' 
+<Html
+	title='Calculator'
+	accentColor='#026BE3'
 	description='Looking for a reliable and comprehensive calculator app? Look no further than our all-in-one calculator! With 5 calculators in one app, you can tackle any calculation that comes your way.'>
 	<Fragment slot="favicon">
 		<link rel="shortcut icon" type="image/ico" href="/favicon/calculator/favicon.ico" />
@@ -16,5 +16,5 @@ export const prerender = true;
 		<link rel="icon" type="image/png" sizes="16x16" href="/favicon/calculator/favicon-16x16.png">
 		<link rel="manifest" href="/favicon/calculator/site.webmanifest">
 	</Fragment>
-	<MainApp client:only="solid-js"/>
+	<App client:only="solid-js"/>
 </Html>

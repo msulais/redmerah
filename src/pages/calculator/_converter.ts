@@ -7,15 +7,15 @@ export type ConverterUnitType = {
 }
 
 export enum ConverterType {
-    length = 'length', 
+    length = 'length',
     area = 'area',
-    volume = 'volume', 
-    temperature = 'temperature', 
-    time = 'time', 
-    weight = 'weight', 
-    frequency = 'frequency', 
+    volume = 'volume',
+    temperature = 'temperature',
+    time = 'time',
+    weight = 'weight',
+    frequency = 'frequency',
     pressure = 'pressure',
-    angle = 'angle', 
+    angle = 'angle',
 }
 
 export class ConverterUnit {
@@ -36,19 +36,19 @@ export class ConverterUnit {
             && unit[_value] == this[_value]
         )
     }
-    
+
     get JSON(): ConverterUnitType {
         return {
-            name: this[_name], 
-            symbol: this[_symbol], 
+            name: this[_name],
+            symbol: this[_symbol],
             value: this[_value]
         }
     }
 
     static parseJSON(unit: ConverterUnitType): ConverterUnit {
         return new ConverterUnit(
-            unit[_name], 
-            unit[_symbol], 
+            unit[_name],
+            unit[_symbol],
             unit[_value]
         )
     }
@@ -72,7 +72,7 @@ export const UNIT_LENGTH = [
     UNIT_LENGTH_KILOMETER , UNIT_LENGTH_HECTOMETER, UNIT_LENGTH_DEKAMETER,
     UNIT_LENGTH_METER     , UNIT_LENGTH_DECIMETER , UNIT_LENGTH_CENTIMETER,
     UNIT_LENGTH_CENTIMETER, UNIT_LENGTH_MILLIMETER, UNIT_LENGTH_MICROMETER,
-    UNIT_LENGTH_NANOMETER , UNIT_LENGTH_PICOMETER , UNIT_LENGTH_MILE, 
+    UNIT_LENGTH_NANOMETER , UNIT_LENGTH_PICOMETER , UNIT_LENGTH_MILE,
     UNIT_LENGTH_INCH      , UNIT_LENGTH_YARD      , UNIT_LENGTH_FOOT
 ]
 
@@ -95,8 +95,8 @@ export const UNIT_AREA = [
     UNIT_AREA_KILOMETER , UNIT_AREA_HECTOMETER, UNIT_AREA_DEKAMETER,
     UNIT_AREA_METER     , UNIT_AREA_DECIMETER , UNIT_AREA_CENTIMETER,
     UNIT_AREA_CENTIMETER, UNIT_AREA_MILLIMETER, UNIT_AREA_MICROMETER,
-    UNIT_AREA_NANOMETER , UNIT_AREA_PICOMETER , UNIT_AREA_MILE, 
-    UNIT_AREA_INCH      , UNIT_AREA_YARD      , UNIT_AREA_FOOT, 
+    UNIT_AREA_NANOMETER , UNIT_AREA_PICOMETER , UNIT_AREA_MILE,
+    UNIT_AREA_INCH      , UNIT_AREA_YARD      , UNIT_AREA_FOOT,
     UNIT_AREA_HECTARE
 ]
 
@@ -120,7 +120,7 @@ export const UNIT_VOLUME = [
     UNIT_VOLUME_KILOMETER , UNIT_VOLUME_HECTOMETER, UNIT_VOLUME_DEKAMETER,
     UNIT_VOLUME_METER     , UNIT_VOLUME_DECIMETER , UNIT_VOLUME_CENTIMETER,
     UNIT_VOLUME_CENTIMETER, UNIT_VOLUME_MILLIMETER, UNIT_VOLUME_MICROMETER,
-    UNIT_VOLUME_NANOMETER , UNIT_VOLUME_PICOMETER , UNIT_VOLUME_MILE, 
+    UNIT_VOLUME_NANOMETER , UNIT_VOLUME_PICOMETER , UNIT_VOLUME_MILE,
     UNIT_VOLUME_INCH      , UNIT_VOLUME_YARD      , UNIT_VOLUME_FOOT,
     UNIT_VOLUME_LITER     , UNIT_VOLUME_MILLILITER
 ]
@@ -152,8 +152,8 @@ export const UNIT_TIME_MICROSECOND = new ConverterUnit("Microsecond", 'μs', 1E6
 export const UNIT_TIME_NANOSECOND = new ConverterUnit("Nanosecond", 'ns', 1E9)
 export const UNIT_TIME = [
     UNIT_TIME_CENTURY    , UNIT_TIME_DECADE     , UNIT_TIME_YEAR,
-    UNIT_TIME_MONTH      , UNIT_TIME_WEEK       , UNIT_TIME_DAY, 
-    UNIT_TIME_HOUR       , UNIT_TIME_MINUTE     , UNIT_TIME_SECOND, 
+    UNIT_TIME_MONTH      , UNIT_TIME_WEEK       , UNIT_TIME_DAY,
+    UNIT_TIME_HOUR       , UNIT_TIME_MINUTE     , UNIT_TIME_SECOND,
     UNIT_TIME_MILLISECOND, UNIT_TIME_MICROSECOND, UNIT_TIME_NANOSECOND
 ]
 
@@ -173,9 +173,9 @@ export const UNIT_WEIGHT_POUND = new ConverterUnit("Pound", 'lbs', 0.0022046244)
 export const UNIT_WEIGHT_CARRAT = new ConverterUnit("Carrat", 'ct', 5)
 export const UNIT_WEIGHT = [
     UNIT_WEIGHT_KILOGRAM, UNIT_WEIGHT_HECTOGRAM, UNIT_WEIGHT_DEKAGRAM,
-    UNIT_WEIGHT_GRAM, UNIT_WEIGHT_DECIGRAM, UNIT_WEIGHT_CENTIGRAM, 
+    UNIT_WEIGHT_GRAM, UNIT_WEIGHT_DECIGRAM, UNIT_WEIGHT_CENTIGRAM,
     UNIT_WEIGHT_MILLIGRAM, UNIT_WEIGHT_MICROGRAM, UNIT_WEIGHT_NANOGRAM,
-    UNIT_WEIGHT_PICOGRAM, UNIT_WEIGHT_TONNE, UNIT_WEIGHT_OUNCE, 
+    UNIT_WEIGHT_PICOGRAM, UNIT_WEIGHT_TONNE, UNIT_WEIGHT_OUNCE,
     UNIT_WEIGHT_POUND, UNIT_WEIGHT_CARRAT
 ]
 
@@ -185,7 +185,7 @@ export const UNIT_FREQUENCY_MEGAHERTZ = new ConverterUnit("Megahertz", 'MHz', 1E
 export const UNIT_FREQUENCY_KILOHERTZ = new ConverterUnit("Kilohertz", 'KHz', 1E-3)
 export const UNIT_FREQUENCY_HERTZ = new ConverterUnit("Hertz", 'Hz', 1)
 export const UNIT_FREQUENCY = [
-    UNIT_FREQUENCY_TERAHERTZ, UNIT_FREQUENCY_GIGAHERTZ, UNIT_FREQUENCY_MEGAHERTZ, 
+    UNIT_FREQUENCY_TERAHERTZ, UNIT_FREQUENCY_GIGAHERTZ, UNIT_FREQUENCY_MEGAHERTZ,
     UNIT_FREQUENCY_KILOHERTZ, UNIT_FREQUENCY_HERTZ
 ]
 
@@ -205,8 +205,8 @@ export const UNIT_PRESSURE_ATMOSPHERE = new ConverterUnit("Atmosphere", 'atm', 0
 export const UNIT_PRESSURE_TORR = new ConverterUnit("Torr", 'torr', 0.0075006168)
 export const UNIT_PRESSURE = [
     UNIT_PRESSURE_KILOPASCAL, UNIT_PRESSURE_HECTOPASCAL, UNIT_PRESSURE_DEKAPASCAL,
-    UNIT_PRESSURE_PASCAL, UNIT_PRESSURE_DECIPASCAL, UNIT_PRESSURE_CENTIPASCAL, 
-    UNIT_PRESSURE_MILLIPASCAL, UNIT_PRESSURE_MICROPASCAL, UNIT_PRESSURE_NANOPASCAL, 
+    UNIT_PRESSURE_PASCAL, UNIT_PRESSURE_DECIPASCAL, UNIT_PRESSURE_CENTIPASCAL,
+    UNIT_PRESSURE_MILLIPASCAL, UNIT_PRESSURE_MICROPASCAL, UNIT_PRESSURE_NANOPASCAL,
     UNIT_PRESSURE_PICOPASCAL, UNIT_PRESSURE_BAR, UNIT_PRESSURE_PSI,
     UNIT_PRESSURE_ATMOSPHERE, UNIT_PRESSURE_TORR
 ]

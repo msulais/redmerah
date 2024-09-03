@@ -184,9 +184,9 @@ export function formatNumber(num: number, options: {
     thousandSeparator?: string
     decimalSeparator?: string
   } = {}): string {
-    const { 
-        thousandSeparator = ',', 
-        decimalSeparator = '.' 
+    const {
+        thousandSeparator = ',',
+        decimalSeparator = '.'
     } = options
     const sign = num < 0 ? '-' : ''
     const absNumber = mathAbs(num)
@@ -195,18 +195,18 @@ export function formatNumber(num: number, options: {
 
     let decimalPart = ''
     if (parts[_length] > 1) decimalPart = parts[1]
-  
+
     return `${sign}${integerPart}${decimalPart[_length] > 0? decimalSeparator : ''}${decimalPart}`
 }
 
-export /**
-* Convert input with scientific notation to real digit. 
-* For example: `2.34e-3` become `0.00234`
-* 
-* @param input 
-* @returns 
-*/
-function numberToRealDigit(input: number): string {
+/**
+ * Convert input with scientific notation to real digit.
+ * For example: `2.34e-3` become `0.00234`
+ *
+ * @param input
+ * @returns
+ */
+export function numberToRealDigit(input: number): string {
    const regex = /([+-]?)(\d+)(\.\d+)?[Ee]([+\-])?(\d+)/
    const str: string = input[_toString]()
 
@@ -219,47 +219,47 @@ function numberToRealDigit(input: number): string {
    const expSign = result[4]
    const exponent = numberParse(result[5], true)
 
-   if (expSign == '-') return (sign 
-       + '0.' 
-       + '0'[_repeat](exponent-1) 
-       + num 
+   if (expSign == '-') return (sign
+       + '0.'
+       + '0'[_repeat](exponent-1)
+       + num
        + decimal[_substring](1)
    )
 
    const leftover = exponent - (decimal[_length] - 1)
-   return (sign 
-       + num 
-       + decimal[_substring](1, exponent+1) 
+   return (sign
+       + num
+       + decimal[_substring](1, exponent+1)
        + (leftover <= 0
-           ? '.' + decimal[_substring](exponent+1) 
+           ? '.' + decimal[_substring](exponent+1)
            : '0'[_repeat](leftover)
-       ) 
+       )
    )
 }
 
-export function binaryToFloat(input: string, bit: 32 | 64 = 64): number{  
+export function binaryToFloat(input: string, bit: 32 | 64 = 64): number{
     if (/^[10]+$/[_test](input)) throw Error('input not valid')
 
     if (input[_length] > bit) input = input[_substring](0, bit)
     if (input[_length] < bit) input = ('0'[_repeat](bit - input[_length])) + input
-  
+
     const sign   = input[_substring](0, 1)
     let exponent = input[_substring](1, bit == 32? 9 : 12)
     let mantissa = input[_substring](bit == 32? 9 : 12)
     let carry    = 0
-  
+
     // convert mantissa from bits to real numbers
-    for (let i = 1; i <= mantissa[_length]; i++) { 
+    for (let i = 1; i <= mantissa[_length]; i++) {
         if (mantissa[_substring](i - 1, i) != '1') continue
 
         carry = carry + mathPow(2, -i)
     }
-  
+
     // mantissa in real numbers (base10)
     mantissa = carry[_toString]()
     exponent = numberParse(exponent, true, 2)[_toString]()
-    
-    // denormalized 
+
+    // denormalized
     if (exponent == '0') return (
         mathPow(-1, numberParse(sign, true))
         * mathPow(2, (bit == 32? -126 : -1022))
@@ -267,12 +267,12 @@ export function binaryToFloat(input: string, bit: 32 | 64 = 64): number{
     )
 
     return (
-        mathPow(-1, numberParse(sign, true)) 
-        * mathPow(2, numberParse(exponent, true)-(bit == 32? 127 : 1023)) 
-        * (1 + numberParse(mantissa))  
+        mathPow(-1, numberParse(sign, true))
+        * mathPow(2, numberParse(exponent, true)-(bit == 32? 127 : 1023))
+        * (1 + numberParse(mantissa))
     )
 }
-  
+
 export function floatToBinary(input: number, bit: 32 | 64 = 64): string {
     const sign = input < 0? '1' : '0'
     let n = input[_toString](2)
@@ -282,7 +282,7 @@ export function floatToBinary(input: number, bit: 32 | 64 = 64): string {
     const indexDot = mantissa[_indexOf]('.')
     const indexOne = mantissa[_indexOf]('1')
     const substractForExp = (indexDot < indexOne
-        ? indexDot - indexOne 
+        ? indexDot - indexOne
         : indexDot - (indexOne + 1)
     )
     let more = false
@@ -298,29 +298,29 @@ export function floatToBinary(input: number, bit: 32 | 64 = 64): string {
             exponent = 0
         }
         exponent = exponent[_toString](2)
-    } 
+    }
     else exponent = '0'
-  
+
     // // example: [ exponent="101" ] => [ exponent="00000101"(Float32) exponent="00000000101"(Float64) ]
     if (exponent[_length] < (bit == 32? 8 : 11)) {
         exponent = ('0'[_repeat]((bit == 32? 8 : 11) - exponent[_length])) + exponent
     }
-  
+
     if (indexOne == -1) mantissa = mantissa[_substring](indexDot + 1)
     else {
         if (indexDot < indexOne) {
             if (less) mantissa = mantissa[_substring](indexDot + (bit == 32? 127 : 1023))
             else mantissa = mantissa[_substring](indexOne + 1)
         }
-  
+
         else if (indexDot > indexOne) {
             if (more) mantissa = mantissa[_substring](indexDot - (bit == 32? 127 : 1023), indexDot + 1);
             else mantissa = (
-                mantissa[_substring](indexOne + 1, indexDot) 
+                mantissa[_substring](indexOne + 1, indexDot)
                 + mantissa[_substring](indexDot + 1)
             )
         }
     }
-  
+
     return (sign + exponent + mantissa)[_substring](0, bit == 32? 32 : 64)
   }

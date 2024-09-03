@@ -1,7 +1,7 @@
 import { createMemo, createSignal, For, onMount, Show, type VoidComponent } from "solid-js"
 
 import type { Settings, Task, TaskList } from "./_types";
-import { _about, _apps, _blur, _calculator, _centerBottomToLeft, _change, _command, _complete, _contactEmail, _corner, _currentTarget, _dark, _donate, _emoji, _expand, _expandNavigation, _filled, _filter, _focus, _fullRound, _getFullYear, _hiddenNavigation, _home, _icon, _id, _includes, _isNotebookExpand, _isShowDeleteTaskWarning, _isSideNavigationExpanded, _length, _light, _matches, _name, _note, _onChangeCalculator, _open, _page, _privacy, _push, _replace, _round, _semiRound, _settings, _share, _sharp, _slice, _src, _system, _taskLists, _tasks, _terms, _test, _text, _theme, _trim, _type, _URL, _value } from "@/data/string";
+import { _system, _round, _replace, _taskLists, _length, _tasks, _test, _name, _push, _emoji, _id, _change, _matches, _theme, _corner, _light, _dark, _includes, _sharp, _semiRound, _fullRound, _home, _src, _apps, _about, _privacy, _terms, _share, _URL, _contactEmail, _donate, _getFullYear, _command, _slice, _settings, _hiddenNavigation, _type, _filter, _text, _isShowDeleteTaskWarning, _isSideNavigationExpanded, _focus, _currentTarget, _centerBottomToLeft, _complete, _blur, _value, _trim, _icon, _page } from "@/data/string";
 import { Commands, Pages } from "./_enums";
 import { getDocument, getNavigator, getRoot } from "@/data/window";
 import { RootAttributes } from "@/enums/attributes";
@@ -40,8 +40,8 @@ const _: VoidComponent<{
     command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
     const [is_menu_info_open, setIs_menu_info_open] = createSignal<boolean>(false)
-    const [is_menu_themeSettings_open, setIs_menu_themeSettings_open] = createSignal<boolean>(false)
-    const [is_menu_cornerSettings_open, setIs_menu_cornerSettings_open] = createSignal<boolean>(false)
+    const [is_submenu_themeSettings_open, setIs_submenu_themeSettings_open] = createSignal<boolean>(false)
+    const [is_submenu_cornerSettings_open, setIs_submenu_cornerSettings_open] = createSignal<boolean>(false)
     const [is_menu_settings_open, setIs_menu_settings_open] = createSignal<boolean>(false)
     const [isSearching, setIsSearching] = createSignal<boolean>(false)
     const [isSideNavigationHidden, setIsSideNavigationHidden] = createSignal<boolean>(false)
@@ -78,8 +78,8 @@ const _: VoidComponent<{
     let drawer_navigation_ref: HTMLDialogElement
     let menu_info_ref: HTMLDialogElement
     let menu_settings_ref: HTMLDialogElement
-    let submenu_theme_ref: HTMLDivElement
-    let submenu_corner_ref: HTMLDivElement
+    let submenu_themeSettings_ref: HTMLDivElement
+    let submenu_cornerSettings_ref: HTMLDivElement
     let searchTextField_ref: HTMLInputElement
     let searchTextFieldMenu_ref: HTMLDivElement
 
@@ -92,7 +92,7 @@ const _: VoidComponent<{
         setTheme(theme)
         setAttribute(getRoot(), RootAttributes[_theme], theme)
         setLocalStorageItem(LocalStorageKeys[_theme], theme)
-        closeSubMenu(submenu_theme_ref)
+        closeSubMenu(submenu_themeSettings_ref)
         await timeout(300)
         closeMenu(menu_settings_ref)
     }
@@ -101,7 +101,7 @@ const _: VoidComponent<{
         setCorner(corner)
         setAttribute(getRoot(), RootAttributes[_corner], corner)
         setLocalStorageItem(LocalStorageKeys[_corner], corner)
-        closeSubMenu(submenu_corner_ref)
+        closeSubMenu(submenu_cornerSettings_ref)
         await timeout(300)
         closeMenu(menu_settings_ref)
     }
@@ -191,14 +191,13 @@ const _: VoidComponent<{
                 </LinkMenuItem>
                 <MenuHeader>&copy; {new Date()[_getFullYear]()} Redmerah</MenuHeader>
             </Menu>
-
             <Menu ref={r => menu_settings_ref = r} onToggleOpen={(v) => setIs_menu_settings_open(v)}>
                 <SubMenu
                     level={1}
-                    ref={r => submenu_theme_ref = r}
-                    onToggleOpen={v => setIs_menu_themeSettings_open(v)}
+                    ref={r => submenu_themeSettings_ref = r}
+                    onToggleOpen={v => setIs_submenu_themeSettings_open(v)}
                     item={<MenuItem
-                        focused={is_menu_themeSettings_open()}
+                        focused={is_submenu_themeSettings_open()}
                         iconCode={0xE28A}
                         trailing={<Icon filled code={0xE368}/>}>
                         Theme
@@ -224,10 +223,10 @@ const _: VoidComponent<{
                 </SubMenu>
                 <SubMenu
                     level={1}
-                    ref={r => submenu_corner_ref = r}
-                    onToggleOpen={v => setIs_menu_cornerSettings_open(v)}
+                    ref={r => submenu_cornerSettings_ref = r}
+                    onToggleOpen={v => setIs_submenu_cornerSettings_open(v)}
                     item={<MenuItem
-                        focused={is_menu_cornerSettings_open()}
+                        focused={is_submenu_cornerSettings_open()}
                         iconCode={0xF044}
                         trailing={<Icon filled code={0xE368}/>}>
                         Corner style

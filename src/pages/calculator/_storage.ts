@@ -19,9 +19,9 @@ export type ObjectStoreMiscellaneous<T = unknown> = {
 }
 
 export enum ObjectStoreNames {
-    settings = 'settings', 
-    lastInput = 'lastInput', 
-    lastOutput = 'lastOutput', 
+    settings = 'settings',
+    lastInput = 'lastInput',
+    lastOutput = 'lastOutput',
     miscellaneous = 'miscellaneous'
 }
 
@@ -53,13 +53,13 @@ export enum ObjectStoreKeys {
 
     /** @param value `number` */
     lastInput_date_day = 'date/day',
-    
+
     /** @param value `number | null` */
     lastOutput_basic = 'basic',
-    
+
     /** @param value `number | null` */
     lastOutput_scientific = 'scientific',
-    
+
     /** @param value `number | null` */
     lastOutput_converter = 'converter',
 
@@ -68,24 +68,24 @@ export enum ObjectStoreKeys {
 
     /** @param value`string | null` */
     lastOutput_date = 'date',
-    
+
     /** @param {CalculatorType} value `CalculatorType` */
     miscellaneous_lastPage = 'lastPage',
-    
+
     /** @param value `string` */
     miscellaneous_note = 'note',
-    
+
     /** @param {DecimalNumberFormat} value `DecimalNumberFormat` */
     settings_numberFormat_decimal = 'numberFormat/decimal',
 
     /** @param {GroupingNumberFormat} value `GroupingNumberFormat` */
-    settings_numberFormat_grouping = 'numberFormat/grouping', 
-    
+    settings_numberFormat_grouping = 'numberFormat/grouping',
+
     /** @param value `boolean` */
     settings_scientificNotation = 'scientificNotation',
 
     /** @param value `boolean` */
-    settings_memoryButtons = 'memoryButtons', 
+    settings_memoryButtons = 'memoryButtons',
 
     /** @param {ConverterType} value `ConverterType` */
     settings_converter_type = 'converter/type',
@@ -97,7 +97,7 @@ export enum ObjectStoreKeys {
     settings_converter_outputUnit = 'converter/outputUnit',
 
     /** @param {ScientificAngleType} value `ScientificAngleType` */
-    settings_scientific_angle = 'scientific/angle', 
+    settings_scientific_angle = 'scientific/angle',
 
     /** @param {NumberType} value `NumberType` */
     settings_programmer_numberType = 'programmer/numberType',

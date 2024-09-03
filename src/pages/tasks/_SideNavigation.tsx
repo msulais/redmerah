@@ -2,7 +2,7 @@ import { For, Show, type VoidComponent } from "solid-js";
 import { TransitionGroup } from "solid-transition-group";
 
 import type { Settings, TaskList } from "./_types";
-import { _command, _emoji, _expand, _icon, _id, _length, _name, _page, _selectedTaskList, _tasks, _taskLists, _text, _type, _filter, _hiddenNavigation, _includes, _settings, _tonal, _filled, _trim, _currentTarget, _value, _manual, _animate, _finished, _spring, _then, _firstElementChild, _contents, _index, _centerBottomToRight } from "@/data/string";
+import { _expand, _text, _icon, _page, _type, _command, _name, _emoji, _id, _index, _centerBottomToRight, _firstElementChild, _animate, _spring, _finished, _then, _filter, _settings, _hiddenNavigation, _includes, _taskLists, _length } from "@/data/string";
 import { DEFAULT_TASK_LIST, TASKS_PAGES } from "./_constants";
 import { addClassListModule } from "@/utils/element";
 import { Commands, Pages } from "./_enums";

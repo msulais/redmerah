@@ -2,7 +2,7 @@ import { createMemo, createSignal, onMount, type VoidComponent } from "solid-js"
 import { createStore } from "solid-js/store"
 
 import type { CalculatorInput, CalculatorOutput, DateCalculatorInput, Settings } from "./_types"
-import { _abs, _acos, _acosh, _acot, _acoth, _acsc, _acsch, _angle, _area, _asec, _asech, _asin, _asinh, _atan, _atanh, _basic, _calculator, _ceil, _clone, _comma, _converter, _copy, _cos, _cosh, _cot, _coth, _createObjectStore, _csc, _csch, _cursor, _date, _decimal, _DEG, _floor, _frequency, _get, _GRAD, _grouping, _includes, _inputUnit, _equals, _join, _key, _lastInput, _lastOutput, _length, _ln, _log, _match, _memoryButtons, _miscellaneous, _not, _number, _numberFormat, _objectStore, _open, _outputUnit, _PI, _point, _pow, _pressure, _programmer, _push, _put, _RAD, _raw, _readonly, _readwrite, _repeat, _replace, _replaceAll, _reverse, _round, _scientific, _scientificNotation, _sec, _sech, _settings, _sin, _sinh, _src, _substring, _tan, _tanh, _temperature, _test, _then, _time, _toString, _transaction, _type, _value, _volume, _warn, _weight, _JSON, _parseJSON, _numberType, _binary, _hexadecimal, _octal, _toUpperCase, _sqrt, _day, _month, _year, _from, _to, _parse, _toISOString, _difference, _operation, _add, _subtract } from "@/data/string"
+import { _calculator, _basic, _point, _comma, _length, _RAD, _decimal, _difference, _scientific, _converter, _programmer, _date, _writeObjectStore, _miscellaneous, _put, _settings, _lastInput, _numberFormat, _grouping, _push, _scientificNotation, _memoryButtons, _from, _toISOString, _to, _year, _month, _day, _angle, _DEG, _GRAD, _type, _area, _volume, _temperature, _time, _weight, _frequency, _pressure, _JSON, _equals, _inputUnit, _outputUnit, _numberType, _test, _toString, _toUpperCase, _hexadecimal, _octal, _binary, _replace, _operation, _repeat, _replaceAll, _raw, _warn, _PI, _value, _add, _subtract, _not, _abs, _log, _ln, _ceil, _floor, _round, _sqrt, _sin, _cos, _tan, _csc, _sec, _cot, _sinh, _cosh, _tanh, _csch, _sech, _coth, _asin, _acos, _atan, _acsc, _asec, _acot, _asinh, _acosh, _atanh, _acsch, _asech, _acoth, _match, _pow, _lastOutput, _readObjectStore, _get, _then, _parseJSON, _parse, _open, _createObjectStore, _key } from "@/data/string"
 import { CalculatorType, Commands, DateOperation, DecimalNumberFormat, GroupingNumberFormat, NumberType, ScientificAngleType } from "./_enums"
 import { IDB } from "@/class/indexeddb"
 import { DatabaseNames } from "@/enums/storage"
@@ -10,7 +10,7 @@ import { ObjectStoreKeys, type ObjectStoreLastInput, type ObjectStoreLastOutput,
 import { dateDifferenceInDays, getCurrentDate, getDate_D, getDate_M, getDate_Y, getDateString_YMD } from "@/utils/datetime"
 import { clearTimeDelayed, setTimeDelayed } from "@/utils/timeout"
 import { stringCount, stringReverse } from "@/utils/string"
-import { _add_memory, _change_calculator_input, _change_settings_converter_inputUnit, _change_settings_converter_outputUnit, _change_settings_converter_swapUnit, _change_settings_converter_type, _change_settings_date_operation, _change_settings_numberFormatDecimal, _change_settings_numberFormatGrouping, _change_settings_programmer_numberType, _clear_memory, _lastInput_basic, _lastInput_converter, _lastInput_date_day, _lastInput_date_from, _lastInput_date_month, _lastInput_date_to, _lastInput_date_year, _lastInput_programmer, _lastInput_scientific, _lastOutput_basic, _lastOutput_converter, _lastOutput_date, _lastOutput_programmer, _lastOutput_scientific, _miscellaneous_lastPage, _miscellaneous_note, _settings_converter_inputUnit, _settings_converter_outputUnit, _settings_converter_type, _settings_date_operation, _settings_memoryButtons, _settings_numberFormat_decimal, _settings_numberFormat_grouping, _settings_programmer_numberType, _settings_scientific_angle, _settings_scientificNotation, _subtract_memory, _toggle_navigation_expand, _toggle_notebook_expand, _toggle_settings_memoryButtons, _toggle_settings_scientific_angle, _toggle_settings_scientificNotation, KEY_DIVISION, KEY_MULTIPLY } from "./_data"
+import { KEY_DIVISION, KEY_MULTIPLY } from "./_constants"
 import { floatToBinary, formatNumber, mathAbs, mathACos, mathACosH, mathACot, mathACotH, mathACsc, mathACscH, mathASec, mathASecH, mathASin, mathASinH, mathATan, mathATanH, mathCeil, mathCos, mathCosH, mathCot, mathCotH, mathCsc, mathCscH, mathFloor, mathLn, mathLog, mathNot, mathRound, mathSec, mathSecH, mathSin, mathSinH, mathSqrt, mathTan, mathTanH, numberParse, numberToRealDigit } from "@/utils/math"
 import { getMath, mathE, mathPI } from "@/data/math"
 import { getConsole } from "@/data/window"
@@ -23,10 +23,10 @@ import SideNavigation from './_SideNavigation'
 import Notebook from './_Notebook'
 import InputOutput from './_InputOutput'
 
-export const MainApp: VoidComponent = () => {
+const _: VoidComponent = () => {
     const db = new IDB(DatabaseNames[_calculator])
-    const [isNavigationExpand, setIsNavigationExpand] = createSignal<boolean>(true)
-    const [isNotebookExpand, setIsNotebookExpand] = createSignal<boolean>(false)
+    const [isSideNavigationExpanded, setIsSideNavigationExpanded] = createSignal<boolean>(true)
+    const [isNotebookExpanded, setIsNotebookExpanded] = createSignal<boolean>(false)
     const [calculator, setCalculatorType] = createSignal<CalculatorType>(CalculatorType[_basic])
     const [note, setNote] = createSignal<string>('')
     const [memory, setMemory] = createSignal<number>(0)
@@ -34,10 +34,10 @@ export const MainApp: VoidComponent = () => {
         numberFormat: {
             decimal: DecimalNumberFormat[_point],
             grouping: GroupingNumberFormat[_comma]
-        }, 
+        },
         converter: {
-            type: ConverterType[_length], 
-            inputUnit: UNIT_LENGTH_METER, 
+            type: ConverterType[_length],
+            inputUnit: UNIT_LENGTH_METER,
             outputUnit: UNIT_LENGTH_KILOMETER
         },
         scientific: {
@@ -49,27 +49,27 @@ export const MainApp: VoidComponent = () => {
         date: {
             operation: DateOperation[_difference]
         },
-        scientificNotation: false, 
+        scientificNotation: false,
         memoryButtons: true
     })
     const [inputs, setInputs] = createStore<CalculatorInput>({
-        basic: '', 
+        basic: '',
         converter: '',
-        scientific: '', 
-        programmer: '', 
+        scientific: '',
+        programmer: '',
         date: {
-            from: getCurrentDate(), 
-            to: getCurrentDate(), 
-            year: 0, 
-            day: 0, 
+            from: getCurrentDate(),
+            to: getCurrentDate(),
+            year: 0,
+            day: 0,
             month: 0
         }
     })
     const [outputs, setOutputs] = createStore<CalculatorOutput>({
-        basic: null, 
+        basic: null,
         converter: null,
-        scientific: null, 
-        programmer: null, 
+        scientific: null,
+        programmer: null,
         date: null
     })
     const getOutput = createMemo<number | string | null>(() => {
@@ -93,131 +93,134 @@ export const MainApp: VoidComponent = () => {
 
     function onChangeCalculator(type: CalculatorType): void {
         setCalculatorType(type)
-        const objectStore_miscellaneous = db[_transaction](ObjectStoreNames[_miscellaneous], _readwrite)![_objectStore](ObjectStoreNames[_miscellaneous])
-        if (!objectStore_miscellaneous) return;
+        const store_miscellaneous = db[_writeObjectStore](ObjectStoreNames[_miscellaneous])
+        if (store_miscellaneous == null) return
 
-        objectStore_miscellaneous[_put]({
-            key: ObjectStoreKeys[_miscellaneous_lastPage], 
+        store_miscellaneous[_put]({
+            key: ObjectStoreKeys.miscellaneous_lastPage,
             value: type
         })
     }
 
     function onNoteChanged(value: string): void {
         setNote(value)
-
         if (timeoutNoteId != null) clearTimeDelayed(timeoutNoteId)
-
         timeoutNoteId = setTimeDelayed(() => {
             timeoutNoteId = null
-            const objectStore_miscellaneous = db[_transaction](ObjectStoreNames[_miscellaneous], _readwrite)![_objectStore](ObjectStoreNames[_miscellaneous])
-            if (!objectStore_miscellaneous) return;
-            
-            objectStore_miscellaneous[_put]({key: ObjectStoreKeys[_miscellaneous_note], value})
+            const store_miscellaneous = db[_writeObjectStore](ObjectStoreNames[_miscellaneous])
+            if (store_miscellaneous == null) return
 
+            store_miscellaneous[_put]({key: ObjectStoreKeys.miscellaneous_note, value})
         }, 1000)
     }
 
     function saveSettings(...items: [key: ObjectStoreKeys, value: unknown][]): void {
-        const objectStore_settings = db[_transaction](ObjectStoreNames[_settings], _readwrite)![_objectStore](ObjectStoreNames[_settings])
-        if (!objectStore_settings) return;
+        const store_settings = db[_writeObjectStore](ObjectStoreNames[_settings])
+        if (!store_settings) return;
 
         for (const item of items) {
-            objectStore_settings[_put]({ key: item[0], value: item[1] })
+            store_settings[_put]({ key: item[0], value: item[1] })
         }
     }
 
     function saveInputs(...items: [key: ObjectStoreKeys, value: unknown][]): void {
-        const objectStore_lastInput = db[_transaction](ObjectStoreNames[_lastInput], _readwrite)![_objectStore](ObjectStoreNames[_lastInput])
-        if (!objectStore_lastInput) return;
+        const store_lastInput = db[_writeObjectStore](ObjectStoreNames[_lastInput])
+        if (!store_lastInput) return;
 
         for (const item of items) {
-            objectStore_lastInput[_put]({ key: item[0], value: item[1] })
+            store_lastInput[_put]({ key: item[0], value: item[1] })
         }
     }
 
     function command(type: Commands, ...args: unknown[]): unknown {
 
         // toggle_navigation_expand
-        if (type == Commands[_toggle_navigation_expand]) {
-            setIsNavigationExpand(v => !v)
-            if (isNavigationExpand()) setIsNotebookExpand(false)
+        if (type == Commands.toggle_navigation_expand) {
+            setIsSideNavigationExpanded(v => !v)
+            if (isSideNavigationExpanded()) setIsNotebookExpanded(false)
         }
 
         // toggle_notebook_expand
-        else if (type == Commands[_toggle_notebook_expand]) {
-            setIsNotebookExpand(v => !v)
-            if (isNotebookExpand()) setIsNavigationExpand(false)
+        else if (type == Commands.toggle_notebook_expand) {
+            setIsNotebookExpanded(v => !v)
+            if (isNotebookExpanded()) setIsSideNavigationExpanded(false)
         }
 
         // change_settings_numberFormatGrouping
-        else if (type == Commands[_change_settings_numberFormatGrouping]) {
-            const items: [key: ObjectStoreKeys, value: unknown][] = [[ObjectStoreKeys[_settings_numberFormat_grouping], args[0]]]
+        else if (type == Commands.change_settings_numberFormatGrouping) {
+            const items: [key: ObjectStoreKeys, value: unknown][] = [[ObjectStoreKeys.settings_numberFormat_grouping, args[0]]]
 
             setSettings(_numberFormat, _grouping, args[0] as GroupingNumberFormat)
             if (args[0] == settings[_numberFormat][_decimal]) {
-                setSettings(_numberFormat, _decimal, args[0] == GroupingNumberFormat[_comma]? DecimalNumberFormat[_point] : DecimalNumberFormat[_comma])
-                items[_push]([ObjectStoreKeys[_settings_numberFormat_decimal], settings[_numberFormat][_decimal]])
+                setSettings(
+                    _numberFormat,
+                    _decimal,
+                    args[0] == GroupingNumberFormat[_comma]
+                        ? DecimalNumberFormat[_point]
+                        : DecimalNumberFormat[_comma]
+                )
+                items[_push]([ObjectStoreKeys.settings_numberFormat_decimal, settings[_numberFormat][_decimal]])
             }
 
             saveSettings(...items)
         }
-        
+
         // change_settings_numberFormatDecimal
-        else if (type == Commands[_change_settings_numberFormatDecimal]) {
-            const items: [key: ObjectStoreKeys, value: unknown][] = [[ObjectStoreKeys[_settings_numberFormat_decimal], args[0]]]
+        else if (type == Commands.change_settings_numberFormatDecimal) {
+            const items: [key: ObjectStoreKeys, value: unknown][] = [[ObjectStoreKeys.settings_numberFormat_decimal, args[0]]]
 
             setSettings(_numberFormat, _decimal, args[0] as DecimalNumberFormat)
             if (args[0] == settings[_numberFormat][_grouping]) {
                 setSettings(_numberFormat, _grouping, args[0] == DecimalNumberFormat[_comma]? GroupingNumberFormat[_point] : GroupingNumberFormat[_comma])
-                items[_push]([ObjectStoreKeys[_settings_numberFormat_grouping], settings[_numberFormat][_grouping]])
+                items[_push]([ObjectStoreKeys.settings_numberFormat_grouping, settings[_numberFormat][_grouping]])
             }
 
             saveSettings(...items)
         }
 
         // toggle_settings_scientificNotation
-        else if (type == Commands[_toggle_settings_scientificNotation]) {
+        else if (type == Commands.toggle_settings_scientificNotation) {
             setSettings(_scientificNotation, v => !v)
-            saveSettings([ObjectStoreKeys[_settings_scientificNotation], settings[_scientificNotation]])
+            saveSettings([ObjectStoreKeys.settings_scientificNotation, settings[_scientificNotation]])
         }
 
         // toggle_settings_memoryButtons
-        else if (type == Commands[_toggle_settings_memoryButtons]) {
+        else if (type == Commands.toggle_settings_memoryButtons) {
             setSettings(_memoryButtons, v => !v)
-            saveSettings([ObjectStoreKeys[_settings_memoryButtons], settings[_memoryButtons]])
+            saveSettings([ObjectStoreKeys.settings_memoryButtons, settings[_memoryButtons]])
         }
 
         // change_calculator_input
-        else if (type == Commands[_change_calculator_input]) {
+        else if (type == Commands.change_calculator_input) {
             if (timeoutId) clearTimeDelayed(timeoutId)
             const value = args[0]
-            
+
             timeoutId = setTimeDelayed(() => {
                 if (calculator() == CalculatorType[_basic]) {
                     setInputs(_basic, value as string)
-                    saveInputs([ObjectStoreKeys[_lastInput_basic], value])
+                    saveInputs([ObjectStoreKeys.lastInput_basic, value])
                 }
                 else if (calculator() == CalculatorType[_scientific]) {
                     setInputs(_scientific, value as string)
-                    saveInputs([ObjectStoreKeys[_lastInput_scientific], value])
+                    saveInputs([ObjectStoreKeys.lastInput_scientific, value])
                 }
                 else if (calculator() == CalculatorType[_converter]) {
                     setInputs(_converter, value as string)
-                    saveInputs([ObjectStoreKeys[_lastInput_converter], value])
+                    saveInputs([ObjectStoreKeys.lastInput_converter, value])
                 }
                 else if (calculator() == CalculatorType[_programmer]) {
                     setInputs(_programmer, value as string)
-                    saveInputs([ObjectStoreKeys[_lastInput_programmer], value])
+                    saveInputs([ObjectStoreKeys.lastInput_programmer, value])
                 }
                 else if (calculator() == CalculatorType[_date]) {
                     const $value = value as DateCalculatorInput
                     setInputs(_date, {...$value})
                     saveInputs(
-                        [ObjectStoreKeys[_lastInput_date_from], $value[_from][_toISOString]()],
-                        [ObjectStoreKeys[_lastInput_date_to], $value[_to][_toISOString]()],
-                        [ObjectStoreKeys[_lastInput_date_year], $value[_year]],
-                        [ObjectStoreKeys[_lastInput_date_month], $value[_month]],
-                        [ObjectStoreKeys[_lastInput_date_day], $value[_day]],
+                        [ObjectStoreKeys.lastInput_date_from, $value[_from][_toISOString]()],
+                        [ObjectStoreKeys.lastInput_date_to, $value[_to][_toISOString]()],
+                        [ObjectStoreKeys.lastInput_date_year, $value[_year]],
+                        [ObjectStoreKeys.lastInput_date_month, $value[_month]],
+                        [ObjectStoreKeys.lastInput_date_day, $value[_day]],
                     )
                 }
                 generateOutput()
@@ -226,30 +229,31 @@ export const MainApp: VoidComponent = () => {
         }
 
         // add_memory
-        else if (type == Commands[_add_memory]) {
+        else if (type == Commands.add_memory) {
             if (getOutput() == null) return;
             setMemory(v => v + (getOutput() as number))
         }
 
         // subtract_memory
-        else if (type == Commands[_subtract_memory]) {
+        else if (type == Commands.subtract_memory) {
             if (getOutput() == null) return;
             setMemory(v => v - (getOutput() as number))
         }
 
         // clear_memory
-        else if (type == Commands[_clear_memory]) {
+        else if (type == Commands.clear_memory) {
             setMemory(0)
         }
 
         // toggle_settings_scientific_angle
-        else if (type == Commands[_toggle_settings_scientific_angle]) {
+        else if (type == Commands.toggle_settings_scientific_angle) {
             let value: ScientificAngleType = ScientificAngleType[_RAD]
-            if (settings[_scientific][_angle] == ScientificAngleType[_RAD]) value = ScientificAngleType[_DEG]
-            else if (settings[_scientific][_angle] == ScientificAngleType[_DEG]) value = ScientificAngleType[_GRAD]
-            else if (settings[_scientific][_angle] == ScientificAngleType[_GRAD]) value = ScientificAngleType[_RAD]
+            const angle = settings[_scientific][_angle]
+            if (angle == ScientificAngleType[_RAD]) value = ScientificAngleType[_DEG]
+            else if (angle == ScientificAngleType[_DEG]) value = ScientificAngleType[_GRAD]
+            else if (angle == ScientificAngleType[_GRAD]) value = ScientificAngleType[_RAD]
             setSettings(_scientific, _angle, value)
-            saveSettings([ObjectStoreKeys[_settings_scientific_angle], value])
+            saveSettings([ObjectStoreKeys.settings_scientific_angle, value])
 
             if (timeoutId) clearTimeDelayed(timeoutId)
             timeoutId = setTimeDelayed(() => {
@@ -259,7 +263,7 @@ export const MainApp: VoidComponent = () => {
         }
 
         // change_settings_converter_type
-        else if (type == Commands[_change_settings_converter_type]) {
+        else if (type == Commands.change_settings_converter_type) {
             const converter = args[0] as ConverterType
             if (converter == settings[_converter][_type]) return;
 
@@ -276,58 +280,58 @@ export const MainApp: VoidComponent = () => {
 
             setSettings(_converter, {type: converter, inputUnit: units[0], outputUnit: units[1]})
             saveSettings(
-                [ObjectStoreKeys[_settings_converter_type], converter],
-                [ObjectStoreKeys[_settings_converter_inputUnit], units[0][_JSON]],
-                [ObjectStoreKeys[_settings_converter_outputUnit], units[1][_JSON]],
+                [ObjectStoreKeys.settings_converter_type, converter],
+                [ObjectStoreKeys.settings_converter_inputUnit, units[0][_JSON]],
+                [ObjectStoreKeys.settings_converter_outputUnit, units[1][_JSON]],
             )
             generateOutput()
         }
 
         // change_settings_converter_inputUnit
-        else if (type == Commands[_change_settings_converter_inputUnit]) {
+        else if (type == Commands.change_settings_converter_inputUnit) {
             const unit = args[0] as ConverterUnit
             if (unit[_equals](settings[_converter][_inputUnit])) return;
 
             setSettings(_converter, _inputUnit, unit)
-            saveSettings([ObjectStoreKeys[_settings_converter_inputUnit], unit[_JSON]])
+            saveSettings([ObjectStoreKeys.settings_converter_inputUnit, unit[_JSON]])
             generateOutput()
         }
 
         // change_settings_converter_outputUnit
-        else if (type == Commands[_change_settings_converter_outputUnit]) {
+        else if (type == Commands.change_settings_converter_outputUnit) {
             const unit = args[0] as ConverterUnit
             if (unit[_equals](settings[_converter][_outputUnit])) return;
 
             setSettings(_converter, _outputUnit, unit)
-            saveSettings([ObjectStoreKeys[_settings_converter_outputUnit], unit[_JSON]])
+            saveSettings([ObjectStoreKeys.settings_converter_outputUnit, unit[_JSON]])
             generateOutput()
         }
 
         // change_settings_converter_swapUnit
-        else if (type == Commands[_change_settings_converter_swapUnit]) {
+        else if (type == Commands.change_settings_converter_swapUnit) {
             const inputUnit = settings[_converter][_outputUnit]
             const outputUnit = settings[_converter][_inputUnit]
             setSettings(_converter, c => {return {...c, inputUnit, outputUnit}})
             saveSettings(
-                [ObjectStoreKeys[_settings_converter_inputUnit], inputUnit[_JSON]],
-                [ObjectStoreKeys[_settings_converter_outputUnit], outputUnit[_JSON]],
+                [ObjectStoreKeys.settings_converter_inputUnit, inputUnit[_JSON]],
+                [ObjectStoreKeys.settings_converter_outputUnit, outputUnit[_JSON]],
             )
             generateOutput()
         }
 
         // change_settings_programmer_numberType
-        else if (type == Commands[_change_settings_programmer_numberType]) {
+        else if (type == Commands.change_settings_programmer_numberType) {
             const type = args[0] as NumberType
             const settingKeys: [key: ObjectStoreKeys, value: unknown][] = [
-                [ObjectStoreKeys[_settings_programmer_numberType], type]
+                [ObjectStoreKeys.settings_programmer_numberType, type]
             ]
             if (type == settings[_programmer][_numberType]) return;
 
             let input: null | string = null
             if (outputs[_programmer] != null){
                 if (type == NumberType[_decimal]) {
-                    if (settings[_scientificNotation] && /[eE]/[_test](outputs[_programmer][_toString]())) 
-                        input = outputs[_programmer][_toString]()[_toUpperCase]() 
+                    if (settings[_scientificNotation] && /[eE]/[_test](outputs[_programmer][_toString]()))
+                        input = outputs[_programmer][_toString]()[_toUpperCase]()
                     else input = formatNumber(outputs[_programmer], {
                         decimalSeparator: settings[_numberFormat][_decimal],
                         thousandSeparator: settings[_numberFormat][_grouping]
@@ -341,7 +345,7 @@ export const MainApp: VoidComponent = () => {
                     input = input![_replace](/\./g, settings[_numberFormat][_decimal])
                 }
 
-                settingKeys[_push]([ObjectStoreKeys[_lastInput_programmer], input ?? ''])
+                settingKeys[_push]([ObjectStoreKeys.lastInput_programmer, input ?? ''])
                 setInputs(_programmer, input ?? '')
             }
 
@@ -350,21 +354,21 @@ export const MainApp: VoidComponent = () => {
         }
 
         // change_settings_date_operation
-        else if (type == Commands[_change_settings_date_operation]) {
+        else if (type == Commands.change_settings_date_operation) {
             setSettings(_date, _operation, args[0] as DateOperation)
-            saveSettings([ObjectStoreKeys[_settings_date_operation], args[0]])
+            saveSettings([ObjectStoreKeys.settings_date_operation, args[0]])
             generateOutput()
         }
         return
     }
 
     /**
-     * Repair input before calculating. The `input` must follow these rules: 
-     * 
+     * Repair input before calculating. The `input` must follow these rules:
+     *
      * * If `input` include `e` (e.g. 2.324e+34), the `e` must convert to capital `E`
-     * 
-     * @param input 
-     * @returns 
+     *
+     * @param input
+     * @returns
      */
     function repairInput(input: string): string {
         const openBracketsCount = stringCount(input, /\(/g)
@@ -408,7 +412,7 @@ export const MainApp: VoidComponent = () => {
         // '123(456)' => '123×(456)'
         const implicitMultiplyRegex = [
             new RegExp(String[_raw]`(${NUMBER_REGEX}|[\)%!π]|(?<!\\)e)([\(π√\\]|(?<!\\)e|${FUNCTION_REGEX}(?=\())`, 'g'),
-            /([\)%π!]|(?<!\\)e)(\d+(?:\.\d+)?|[\(π√]|(?<!\\)e)/g, 
+            /([\)%π!]|(?<!\\)e)(\d+(?:\.\d+)?|[\(π√]|(?<!\\)e)/g,
         ]
         let iterator = 0
         while (implicitMultiplyRegex[0][_test](input) || implicitMultiplyRegex[1][_test](input)) {
@@ -420,8 +424,8 @@ export const MainApp: VoidComponent = () => {
             // I think the iterator will less than 5. But this is just to catch error in regex
             if (iterator > 20) {
                 getConsole()[_warn](
-                    'Iterator exceeded maximum value', 
-                    'iterator:', iterator, 
+                    'Iterator exceeded maximum value',
+                    'iterator:', iterator,
                     'input:', input
                 )
                 break
@@ -473,7 +477,7 @@ export const MainApp: VoidComponent = () => {
 
             return input
         }
-        
+
         return input * outputUnit[_value] / inputUnit[_value]
     }
 
@@ -486,14 +490,16 @@ export const MainApp: VoidComponent = () => {
                 getDate_M(d) + inputs[_date][_month],
                 getDate_D(d) + inputs[_date][_day]
             )))
-        } else if (operation == DateOperation[_subtract]) {
+        }
+        else if (operation == DateOperation[_subtract]) {
             const d = inputs[_date][_from]
             setOutputs(_date, getDateString_YMD(new Date(
                 getDate_Y(d) - inputs[_date][_year],
                 getDate_M(d) - inputs[_date][_month],
                 getDate_D(d) - inputs[_date][_day]
             )))
-        } else if (operation == DateOperation[_difference]) {
+        }
+        else if (operation == DateOperation[_difference]) {
             let output: string = ""
             let days: number = mathAbs(dateDifferenceInDays(inputs[_date][_from], inputs[_date][_to]))
             const diffInDays = days
@@ -520,7 +526,7 @@ export const MainApp: VoidComponent = () => {
             }
             if (diffInDays == 0) output = "Same date"
             else if (diffInDays >= 7) output += ` (${diffInDays} day${diffInDays > 1? "s" : ""})`
-            
+
             setOutputs(_date, output)
         }
     }
@@ -532,19 +538,19 @@ export const MainApp: VoidComponent = () => {
         if (type == NumberType[_hexadecimal]) {
             const re = /[0-9A-F]+/g
             input = input[_replace](re, (v) => numberParse(v, true, 16)[_toString]())
-        }        
+        }
         else if (type == NumberType[_octal]) {
             if (/[89]/[_test](input)) throw Error()
 
             const re = /[0-7]+/g
             input = input[_replace](re, (v) => numberParse(v, true, 8)[_toString]())
-        }        
+        }
         else if (type == NumberType[_binary]) {
             if (/[2-9]/[_test](input)) throw Error()
 
             const re = /[01]+/g
             input = input[_replace](re, (v) => numberParse(v, true, 2)[_toString]())
-        }        
+        }
         return input
     }
 
@@ -568,9 +574,10 @@ export const MainApp: VoidComponent = () => {
                     const angleToRadian = (value: number) => {
                         if (calculator() != CalculatorType[_scientific]) return value
 
+                        const angle = settings[_scientific][_angle]
                         let unit: ConverterUnit = UNIT_ANGLE_RADIAN
-                        if (settings[_scientific][_angle] == ScientificAngleType[_DEG]) unit = UNIT_ANGLE_DEGREE
-                        else if (settings[_scientific][_angle] == ScientificAngleType[_GRAD]) unit = UNIT_ANGLE_GRADIAN
+                        if (angle == ScientificAngleType[_DEG]) unit = UNIT_ANGLE_DEGREE
+                        else if (angle == ScientificAngleType[_GRAD]) unit = UNIT_ANGLE_GRADIAN
 
                         return convertUnit(value, unit, UNIT_ANGLE_RADIAN, ConverterType[_angle])
                     }
@@ -578,9 +585,11 @@ export const MainApp: VoidComponent = () => {
                     const radianToAngle = (value: number) => {
                         if (calculator() != CalculatorType[_scientific]) return value
 
+                        const angle = settings[_scientific][_angle]
                         let unit: ConverterUnit = UNIT_ANGLE_RADIAN
-                        if (settings[_scientific][_angle] == ScientificAngleType[_DEG]) unit = UNIT_ANGLE_DEGREE
-                        else if (settings[_scientific][_angle] == ScientificAngleType[_GRAD]) unit = UNIT_ANGLE_GRADIAN
+                        if (angle == ScientificAngleType[_DEG]) unit = UNIT_ANGLE_DEGREE
+                        else if (angle == ScientificAngleType[_GRAD]) unit = UNIT_ANGLE_GRADIAN
+
                         return convertUnit(value, UNIT_ANGLE_RADIAN, unit, ConverterType[_angle])
                     }
 
@@ -652,7 +661,7 @@ export const MainApp: VoidComponent = () => {
                 input = input[_replace](factorialRegex, (_, num1) => {
                     let n = numberParse(num1)
                     if (/\./[_test](numberToRealDigit(n)) || n < 0) throw Error()
-                    
+
                     let result = 1
                     while (n > 0) {
                         result *= n
@@ -672,8 +681,8 @@ export const MainApp: VoidComponent = () => {
 
                 while (expReverseRegex[_test](input)) {
                     input = input[_replace](expReverseRegex, (_, num2, num1) => stringReverse(numberToRealDigit(getMath[_pow](
-                        numberParse(stringReverse(num1)), 
-                        numberParse(stringReverse(num2)) 
+                        numberParse(stringReverse(num1)),
+                        numberParse(stringReverse(num2))
                     ))))
                 }
                 input = stringReverse(input)
@@ -684,9 +693,9 @@ export const MainApp: VoidComponent = () => {
             while (div_mul_mod_regex[_test](input)) {
                 hasOperation = true
                 input = input[_replace](div_mul_mod_regex, (_, num1, operator, num2) => {
-                    if (operator == 'mod') return numberToRealDigit(numberParse(num1) % numberParse(num2))   
-                    else if (/[*×]/[_test](operator)) return numberToRealDigit(numberParse(num1) * numberParse(num2))   
-                    else if (/[\/÷]/[_test](operator)) return numberToRealDigit(numberParse(num1) / numberParse(num2))   
+                    if (operator == 'mod') return numberToRealDigit(numberParse(num1) % numberParse(num2))
+                    else if (/[*×]/[_test](operator)) return numberToRealDigit(numberParse(num1) * numberParse(num2))
+                    else if (/[\/÷]/[_test](operator)) return numberToRealDigit(numberParse(num1) / numberParse(num2))
                     return _
                 })
             }
@@ -697,8 +706,8 @@ export const MainApp: VoidComponent = () => {
             while (add_sub_regex[_test](input)) {
                 hasOperation = true
                 input = input[_replace](add_sub_regex, (_, num1, operator, num2) => {
-                    if (operator == '+') return numberToRealDigit(numberParse(num1) + numberParse(num2))   
-                    if (operator == '-') return numberToRealDigit(numberParse(num1) - numberParse(num2))   
+                    if (operator == '+') return numberToRealDigit(numberParse(num1) + numberParse(num2))
+                    if (operator == '-') return numberToRealDigit(numberParse(num1) - numberParse(num2))
                     return _
                 })
             }
@@ -711,8 +720,8 @@ export const MainApp: VoidComponent = () => {
                     const $num1: number = numberParse(num1)
                     const $num2: number = numberParse(num2)
                     if (/\./[_test](num1) || /\./[_test](num2)) throw Error()
-                    if (/^(lsh|<<)$/[_test](operator)) return numberToRealDigit($num1 << $num2)   
-                    if (/^(rsh|>>)$/[_test](operator)) return numberToRealDigit($num1 >> $num2)   
+                    if (/^(lsh|<<)$/[_test](operator)) return numberToRealDigit($num1 << $num2)
+                    if (/^(rsh|>>)$/[_test](operator)) return numberToRealDigit($num1 >> $num2)
                     return _
                 })
             }
@@ -757,9 +766,9 @@ export const MainApp: VoidComponent = () => {
         else if (calculator() == CalculatorType[_programmer]) setOutputs(_programmer, isValidValue(input)? numberParse(input) : null)
         else if (calculator() == CalculatorType[_converter]) {
             input = numberToRealDigit(convertUnit(
-                numberParse(input), 
-                settings[_converter][_inputUnit], 
-                settings[_converter][_outputUnit], 
+                numberParse(input),
+                settings[_converter][_inputUnit],
+                settings[_converter][_outputUnit],
                 settings[_converter][_type]
             ))
             setOutputs(_converter, isValidValue(input)? numberParse(input) : null)
@@ -767,37 +776,37 @@ export const MainApp: VoidComponent = () => {
     }
 
     function saveOutput(): void {
-        const objectStore_lastOutput = db[_transaction](ObjectStoreNames[_lastOutput], _readwrite)![_objectStore](ObjectStoreNames[_lastOutput])
-        if (!objectStore_lastOutput) return;
+        const store_lastOutput = db[_writeObjectStore](ObjectStoreNames[_lastOutput])
+        if (store_lastOutput == null) return
 
-        let key = ObjectStoreKeys[_lastOutput_basic]
+        let key = ObjectStoreKeys.lastOutput_basic
         let value = null
         if (calculator() == CalculatorType[_basic]) {
-            key = ObjectStoreKeys[_lastOutput_basic]
+            key = ObjectStoreKeys.lastOutput_basic
             value = outputs[_basic]
         }
         else if (calculator() == CalculatorType[_scientific]) {
-            key = ObjectStoreKeys[_lastOutput_scientific]
+            key = ObjectStoreKeys.lastOutput_scientific
             value = outputs[_scientific]
         }
         else if (calculator() == CalculatorType[_converter]) {
-            key = ObjectStoreKeys[_lastOutput_converter]
+            key = ObjectStoreKeys.lastOutput_converter
             value = outputs[_converter]
         }
         else if (calculator() == CalculatorType[_programmer]) {
-            key = ObjectStoreKeys[_lastOutput_programmer]
+            key = ObjectStoreKeys.lastOutput_programmer
             value = outputs[_programmer]
         }
         else if (calculator() == CalculatorType[_date]) {
-            key = ObjectStoreKeys[_lastOutput_date]
+            key = ObjectStoreKeys.lastOutput_date
             value = outputs[_date]
         }
 
-        objectStore_lastOutput[_put]({key, value})
+        store_lastOutput[_put]({key, value})
     }
 
     function generateOutput(): void {
-        try { calculate() } 
+        try { calculate() }
         catch (e) {
             let $calculator: 'basic' | 'scientific' | 'converter' | 'programmer' | 'date' = _basic
             if (calculator() == CalculatorType[_basic]) $calculator = _basic
@@ -812,59 +821,111 @@ export const MainApp: VoidComponent = () => {
     }
 
     function initNote(): void {
-        const objectStore_miscellaneous = db[_transaction](ObjectStoreNames[_miscellaneous], _readonly)![_objectStore](ObjectStoreNames[_miscellaneous])
-        if (!objectStore_miscellaneous) return;
+        const store_miscellaneous = db[_readObjectStore](ObjectStoreNames[_miscellaneous])
+        if (store_miscellaneous == null) return
 
-        db[_get]<ObjectStoreMiscellaneous<string>>(objectStore_miscellaneous, ObjectStoreKeys[_miscellaneous_note])[_then]((v) => setNote(r => v? v[_value] : r))
+        db[_get]<ObjectStoreMiscellaneous<string>>(store_miscellaneous, ObjectStoreKeys.miscellaneous_note)[_then](
+            (v) => setNote(r => v? v[_value] : r)
+        )
     }
 
     function initLastPage(): void {
-        const objectStore_miscellaneous = db[_transaction](ObjectStoreNames[_miscellaneous], _readonly)![_objectStore](ObjectStoreNames[_miscellaneous])
-        if (!objectStore_miscellaneous) return;
+        const store_miscellaneous = db[_readObjectStore](ObjectStoreNames[_miscellaneous])
+        if (store_miscellaneous == null) return
 
-        db[_get]<ObjectStoreMiscellaneous<CalculatorType>>(objectStore_miscellaneous, ObjectStoreKeys[_miscellaneous_lastPage])[_then]((v) => setCalculatorType(r => v? v[_value] : r))
+        db[_get]<ObjectStoreMiscellaneous<CalculatorType>>(store_miscellaneous, ObjectStoreKeys.miscellaneous_lastPage)[_then](
+            (v) => setCalculatorType(r => v? v[_value] : r)
+        )
     }
 
     function initSettings(): void {
-        const objectStore_settings = db[_transaction](ObjectStoreNames[_settings], _readonly)![_objectStore](ObjectStoreNames[_settings])
-        if (!objectStore_settings) return;
+        const store_settings = db[_readObjectStore](ObjectStoreNames[_settings])
+        if (store_settings == null) return;
 
-        db[_get]<ObjectStoreSettings<DecimalNumberFormat>>(objectStore_settings, ObjectStoreKeys[_settings_numberFormat_decimal])[_then]((v) => setSettings(_numberFormat, _decimal, d => v? v[_value] : d))
-        db[_get]<ObjectStoreSettings<GroupingNumberFormat>>(objectStore_settings, ObjectStoreKeys[_settings_numberFormat_grouping])[_then]((v) => setSettings(_numberFormat, _grouping, d => v? v[_value] : d))
-        db[_get]<ObjectStoreSettings<boolean>>(objectStore_settings, ObjectStoreKeys[_settings_scientificNotation])[_then]((v) => setSettings(_scientificNotation, d => v? v[_value] : d))
-        db[_get]<ObjectStoreSettings<boolean>>(objectStore_settings, ObjectStoreKeys[_settings_memoryButtons])[_then]((v) => setSettings(_memoryButtons, d => v? v[_value] : d))
-        db[_get]<ObjectStoreSettings<ConverterType>>(objectStore_settings, ObjectStoreKeys[_settings_converter_type])[_then]((v) => setSettings(_converter, _type, d => v? v[_value] : d))
-        db[_get]<ObjectStoreSettings<ConverterUnitType>>(objectStore_settings, ObjectStoreKeys[_settings_converter_inputUnit])[_then]((v) => setSettings(_converter, _inputUnit, d => v? ConverterUnit[_parseJSON](v[_value]) : d))
-        db[_get]<ObjectStoreSettings<ConverterUnitType>>(objectStore_settings, ObjectStoreKeys[_settings_converter_outputUnit])[_then]((v) => setSettings(_converter, _outputUnit, d => v? ConverterUnit[_parseJSON](v[_value]) : d))
-        db[_get]<ObjectStoreSettings<ScientificAngleType>>(objectStore_settings, ObjectStoreKeys[_settings_scientific_angle])[_then]((v) => setSettings(_scientific, _angle, d => v? v[_value] : d))
-        db[_get]<ObjectStoreSettings<NumberType>>(objectStore_settings, ObjectStoreKeys[_settings_programmer_numberType])[_then]((v) => setSettings(_programmer, _numberType, d => v? v[_value] : d))
-        db[_get]<ObjectStoreSettings<DateOperation>>(objectStore_settings, ObjectStoreKeys[_settings_date_operation])[_then]((v) => setSettings(_date, _operation, d => v? v[_value] : d))
+        db[_get]<ObjectStoreSettings<DecimalNumberFormat>>(store_settings, ObjectStoreKeys.settings_numberFormat_decimal)[_then](
+            (v) => setSettings(_numberFormat, _decimal, d => v? v[_value] : d)
+        )
+        db[_get]<ObjectStoreSettings<GroupingNumberFormat>>(store_settings, ObjectStoreKeys.settings_numberFormat_grouping)[_then](
+            (v) => setSettings(_numberFormat, _grouping, d => v? v[_value] : d)
+        )
+        db[_get]<ObjectStoreSettings<boolean>>(store_settings, ObjectStoreKeys.settings_scientificNotation)[_then](
+            (v) => setSettings(_scientificNotation, d => v? v[_value] : d)
+        )
+        db[_get]<ObjectStoreSettings<boolean>>(store_settings, ObjectStoreKeys.settings_memoryButtons)[_then](
+            (v) => setSettings(_memoryButtons, d => v? v[_value] : d)
+        )
+        db[_get]<ObjectStoreSettings<ConverterType>>(store_settings, ObjectStoreKeys.settings_converter_type)[_then](
+            (v) => setSettings(_converter, _type, d => v? v[_value] : d)
+        )
+        db[_get]<ObjectStoreSettings<ConverterUnitType>>(store_settings, ObjectStoreKeys.settings_converter_inputUnit)[_then](
+            (v) => setSettings(_converter, _inputUnit, d => v? ConverterUnit[_parseJSON](v[_value]) : d)
+        )
+        db[_get]<ObjectStoreSettings<ConverterUnitType>>(store_settings, ObjectStoreKeys.settings_converter_outputUnit)[_then](
+            (v) => setSettings(_converter, _outputUnit, d => v? ConverterUnit[_parseJSON](v[_value]) : d)
+        )
+        db[_get]<ObjectStoreSettings<ScientificAngleType>>(store_settings, ObjectStoreKeys.settings_scientific_angle)[_then](
+            (v) => setSettings(_scientific, _angle, d => v? v[_value] : d)
+        )
+        db[_get]<ObjectStoreSettings<NumberType>>(store_settings, ObjectStoreKeys.settings_programmer_numberType)[_then](
+            (v) => setSettings(_programmer, _numberType, d => v? v[_value] : d)
+        )
+        db[_get]<ObjectStoreSettings<DateOperation>>(store_settings, ObjectStoreKeys.settings_date_operation)[_then](
+            (v) => setSettings(_date, _operation, d => v? v[_value] : d)
+        )
     }
 
     function initLastOuptut(): void {
-        const objectStore_lastOutput = db[_transaction](ObjectStoreNames[_lastOutput], _readonly)![_objectStore](ObjectStoreNames[_lastOutput])
-        if (!objectStore_lastOutput) return;
+        const store_lastOutput = db[_readObjectStore](ObjectStoreNames[_lastOutput])
+        if (store_lastOutput == null) return
 
-        db[_get]<ObjectStoreLastOutput<number>>(objectStore_lastOutput, ObjectStoreKeys[_lastOutput_basic])[_then]((v) => setOutputs(_basic, o => v? v[_value] : o))
-        db[_get]<ObjectStoreLastOutput<number>>(objectStore_lastOutput, ObjectStoreKeys[_lastOutput_scientific])[_then]((v) => setOutputs(_scientific, o => v? v[_value] : o))
-        db[_get]<ObjectStoreLastOutput<number>>(objectStore_lastOutput, ObjectStoreKeys[_lastOutput_converter])[_then]((v) => setOutputs(_converter, o => v? v[_value] : o))
-        db[_get]<ObjectStoreLastOutput<number>>(objectStore_lastOutput, ObjectStoreKeys[_lastOutput_programmer])[_then]((v) => setOutputs(_programmer, o => v? v[_value] : o))
-        db[_get]<ObjectStoreLastOutput<string>>(objectStore_lastOutput, ObjectStoreKeys[_lastOutput_date])[_then]((v) => setOutputs(_date, o => v? v[_value] : o))
+        db[_get]<ObjectStoreLastOutput<number>>(store_lastOutput, ObjectStoreKeys.lastOutput_basic)[_then](
+            (v) => setOutputs(_basic, o => v? v[_value] : o)
+        )
+        db[_get]<ObjectStoreLastOutput<number>>(store_lastOutput, ObjectStoreKeys.lastOutput_scientific)[_then](
+            (v) => setOutputs(_scientific, o => v? v[_value] : o)
+        )
+        db[_get]<ObjectStoreLastOutput<number>>(store_lastOutput, ObjectStoreKeys.lastOutput_converter)[_then](
+            (v) => setOutputs(_converter, o => v? v[_value] : o)
+        )
+        db[_get]<ObjectStoreLastOutput<number>>(store_lastOutput, ObjectStoreKeys.lastOutput_programmer)[_then](
+            (v) => setOutputs(_programmer, o => v? v[_value] : o)
+        )
+        db[_get]<ObjectStoreLastOutput<string>>(store_lastOutput, ObjectStoreKeys.lastOutput_date)[_then](
+            (v) => setOutputs(_date, o => v? v[_value] : o)
+        )
     }
 
     function initLastInput(): void {
-        const objectStore_lastInput = db[_transaction](ObjectStoreNames[_lastInput], _readonly)![_objectStore](ObjectStoreNames[_lastInput])
-        if (!objectStore_lastInput) return;
+        const store_lastInput = db[_readObjectStore](ObjectStoreNames[_lastInput])
+        if (store_lastInput == null) return;
 
-        db[_get]<ObjectStoreLastInput<string>>(objectStore_lastInput, ObjectStoreKeys[_lastInput_basic])[_then]((v) => setInputs(_basic, b => v? v[_value] : b))
-        db[_get]<ObjectStoreLastInput<string>>(objectStore_lastInput, ObjectStoreKeys[_lastInput_scientific])[_then]((v) => setInputs(_scientific, b => v? v[_value] : b))
-        db[_get]<ObjectStoreLastInput<string>>(objectStore_lastInput, ObjectStoreKeys[_lastInput_converter])[_then]((v) => setInputs(_converter, b => v? v[_value] : b))
-        db[_get]<ObjectStoreLastInput<string>>(objectStore_lastInput, ObjectStoreKeys[_lastInput_programmer])[_then]((v) => setInputs(_programmer, b => v? v[_value] : b))
-        db[_get]<ObjectStoreLastInput<number>>(objectStore_lastInput, ObjectStoreKeys[_lastInput_date_year])[_then]((v) => setInputs(_date, _year, b => v? v[_value] : b))
-        db[_get]<ObjectStoreLastInput<number>>(objectStore_lastInput, ObjectStoreKeys[_lastInput_date_month])[_then]((v) => setInputs(_date, _month, b => v? v[_value] : b))
-        db[_get]<ObjectStoreLastInput<number>>(objectStore_lastInput, ObjectStoreKeys[_lastInput_date_day])[_then]((v) => setInputs(_date, _day, b => v? v[_value] : b))
-        db[_get]<ObjectStoreLastInput<string>>(objectStore_lastInput, ObjectStoreKeys[_lastInput_date_from])[_then]((v) => setInputs(_date, _from, b => v? new Date(Date[_parse](v[_value])) : b))
-        db[_get]<ObjectStoreLastInput<string>>(objectStore_lastInput, ObjectStoreKeys[_lastInput_date_to])[_then]((v) => setInputs(_date, _to, b => v? new Date(Date[_parse](v[_value])) : b))
+        db[_get]<ObjectStoreLastInput<string>>(store_lastInput, ObjectStoreKeys.lastInput_basic)[_then](
+            (v) => setInputs(_basic, b => v? v[_value] : b)
+        )
+        db[_get]<ObjectStoreLastInput<string>>(store_lastInput, ObjectStoreKeys.lastInput_scientific)[_then](
+            (v) => setInputs(_scientific, b => v? v[_value] : b)
+        )
+        db[_get]<ObjectStoreLastInput<string>>(store_lastInput, ObjectStoreKeys.lastInput_converter)[_then](
+            (v) => setInputs(_converter, b => v? v[_value] : b)
+        )
+        db[_get]<ObjectStoreLastInput<string>>(store_lastInput, ObjectStoreKeys.lastInput_programmer)[_then](
+            (v) => setInputs(_programmer, b => v? v[_value] : b)
+        )
+        db[_get]<ObjectStoreLastInput<number>>(store_lastInput, ObjectStoreKeys.lastInput_date_year)[_then](
+            (v) => setInputs(_date, _year, b => v? v[_value] : b)
+        )
+        db[_get]<ObjectStoreLastInput<number>>(store_lastInput, ObjectStoreKeys.lastInput_date_month)[_then](
+            (v) => setInputs(_date, _month, b => v? v[_value] : b)
+        )
+        db[_get]<ObjectStoreLastInput<number>>(store_lastInput, ObjectStoreKeys.lastInput_date_day)[_then](
+            (v) => setInputs(_date, _day, b => v? v[_value] : b)
+        )
+        db[_get]<ObjectStoreLastInput<string>>(store_lastInput, ObjectStoreKeys.lastInput_date_from)[_then](
+            (v) => setInputs(_date, _from, b => v? new Date(Date[_parse](v[_value])) : b)
+        )
+        db[_get]<ObjectStoreLastInput<string>>(store_lastInput, ObjectStoreKeys.lastInput_date_to)[_then](
+            (v) => setInputs(_date, _to, b => v? new Date(Date[_parse](v[_value])) : b)
+        )
     }
 
     function initDatabase(): void {
@@ -877,10 +938,26 @@ export const MainApp: VoidComponent = () => {
                 initLastPage()
             },
             onUpgradeNeeded(_, db) {
-                db[_createObjectStore]<ObjectStoreSettings>({name: ObjectStoreNames[_settings], keyPath: _key, indexs: [_key, _value]})
-                db[_createObjectStore]<ObjectStoreLastInput>({name: ObjectStoreNames[_lastInput], keyPath: _key, indexs: [_key, _value]})
-                db[_createObjectStore]<ObjectStoreLastOutput>({name: ObjectStoreNames[_lastOutput], keyPath: _key, indexs: [_key, _value]})
-                db[_createObjectStore]<ObjectStoreMiscellaneous>({name: ObjectStoreNames[_miscellaneous], keyPath: _key, indexs: [_key, _value]})
+                db[_createObjectStore]<ObjectStoreSettings>({
+                    name: ObjectStoreNames[_settings],
+                    keyPath: _key,
+                    indexs: [_key, _value]
+                })
+                db[_createObjectStore]<ObjectStoreLastInput>({
+                    name: ObjectStoreNames[_lastInput],
+                    keyPath: _key,
+                    indexs: [_key, _value]
+                })
+                db[_createObjectStore]<ObjectStoreLastOutput>({
+                    name: ObjectStoreNames[_lastOutput],
+                    keyPath: _key,
+                    indexs: [_key, _value]
+                })
+                db[_createObjectStore]<ObjectStoreMiscellaneous>({
+                    name: ObjectStoreNames[_miscellaneous],
+                    keyPath: _key,
+                    indexs: [_key, _value]
+                })
             },
         })
     }
@@ -889,27 +966,27 @@ export const MainApp: VoidComponent = () => {
         initDatabase()
     })
 
-    return (<App 
-        appBar={<AppBar 
-            onChangeCalculator={onChangeCalculator} 
+    return (<App
+        appBar={<AppBar
+            onChangeCalculator={onChangeCalculator}
             calculator={calculator()}
             command={command}
             settings={settings}
             note={note()}
             onNoteChanged={onNoteChanged}
-            isNotebookExpand={isNotebookExpand()}
+            isNotebookExpanded={isNotebookExpanded()}
         />}
         leftSideBar={<SideNavigation
             calculator={calculator()}
-            onChangeCalculator={onChangeCalculator} 
-            expand={isNavigationExpand()}
+            onChangeCalculator={onChangeCalculator}
+            expand={isSideNavigationExpanded()}
         />}
-        rightSideBar={<Notebook 
-            expand={isNotebookExpand()}
+        rightSideBar={<Notebook
+            expand={isNotebookExpanded()}
             note={note()}
             onNoteChanged={onNoteChanged}
         />}>
-        <InputOutput 
+        <InputOutput
             calculator={calculator()}
             settings={settings}
             memory={memory()}
@@ -919,3 +996,5 @@ export const MainApp: VoidComponent = () => {
         />
     </App>)
 }
+
+export default _

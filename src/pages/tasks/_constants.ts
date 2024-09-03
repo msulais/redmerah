@@ -12,7 +12,7 @@ export const TASKS_PAGES = [
     { type: Pages[_planned    ], text: 'Planned'    , icon: 0xE01B },
 ]
 export const DEFAULT_TASK_LIST: TaskList = {
-    id: 0, 
+    id: 0,
     name: 'Tasks',
     tasks: [],
     emoji: null
