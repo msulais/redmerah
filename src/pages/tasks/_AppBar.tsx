@@ -421,7 +421,11 @@ const _: VoidComponent<{
             </>}
             footer={<>
                 <DrawerItem
-                    leading={<Icon code={0xE007}/>}>
+                    leading={<Icon code={0xE007}/>}
+                    onClick={(ev) => {
+                        closeDrawer(drawer_navigation_ref)
+                        props[_command](Commands.add_taskList, ev)
+                    }}>
                     New list
                 </DrawerItem>
             </>}
