@@ -6,4 +6,6 @@ export type AppItem = {
     description: string
     link: string
     color: HEXColor
+    buildNumber: number
+    buildVersion: `${string}.${string}.${string}`
 }
