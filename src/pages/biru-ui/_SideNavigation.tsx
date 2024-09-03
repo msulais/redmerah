@@ -6,7 +6,7 @@ import { Commands, Pages } from "./_enums";
 
 import SideNavigation, { SideNavigationItem } from "@/components/SideNavigation";
 import CSS from './_styles.module.scss'
-import { PAGES } from "./_data";
+import { PAGES } from "./_constants";
 
 const _: VoidComponent<{
     page: Pages
@@ -16,9 +16,9 @@ const _: VoidComponent<{
         style={{"padding-top": '0'}}
         classList={addClassListModule(CSS.side_navigation)}
         expand={true}>
-        <For each={PAGES}>{page => 
-            <SideNavigationItem 
-                desktopCompact 
+        <For each={PAGES}>{page =>
+            <SideNavigationItem
+                desktopCompact
                 onClick={() => props[_command](Commands.change_page, page[_type])}
                 selected={props[_page] == page[_type]}>
                 {page[_text]}

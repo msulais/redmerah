@@ -12,7 +12,7 @@ import { isMatchMedia, matchMedia } from "@/utils/window"
 import { addEventListener } from '@/utils/event'
 import { FlyoutPosition } from "@/enums/position"
 import { Commands, Pages } from "./_enums"
-import { PAGES, SIZE_SIDE_NAVIGATION_NONE } from "./_data"
+import { PAGES, SIZE_SIDE_NAVIGATION_NONE } from "./_constants"
 import { timeout } from "@/utils/timeout"
 import { addClassListModule } from "@/utils/element"
 import { RoutesLinks, ExternalLinks } from "@/enums/links"
@@ -91,12 +91,12 @@ const _: VoidComponent<{
         initCorner()
         initSideNavigationListener()
     })
-    
+
     const Menus: VoidComponent = () => {
         return (<>
-            <Menu 
-                style={{width: '200px'}} 
-                ref={r => menu_info_ref = r} 
+            <Menu
+                style={{width: '200px'}}
+                ref={r => menu_info_ref = r}
                 onToggleOpen={(v) => setIs_menu_info_open(v)}>
                 <LinkMenuItem
                     onClick={() => closeMenu(menu_info_ref)}
@@ -154,8 +154,8 @@ const _: VoidComponent<{
                 <MenuHeader>&copy; {new Date()[_getFullYear]()} Redmerah</MenuHeader>
             </Menu>
 
-            <Menu 
-                ref={r => menu_settings_ref = r} 
+            <Menu
+                ref={r => menu_settings_ref = r}
                 onToggleOpen={(v) => setIs_menu_settings_open(v)}>
                 <SubMenu
                     level={1}
@@ -226,72 +226,69 @@ const _: VoidComponent<{
     }
 
     return (<>
-        <AppBar 
+        <AppBar
             leading={<>
                 <Show when={isSideNavigationHidden()}>
                     <Tooltip text="Open navigation">
-                        <IconButton 
-                            classList={addClassListModule(CSSAnimation.btn_shrink_horizontal_icon)} 
+                        <IconButton
+                            classList={addClassListModule(CSSAnimation.btn_shrink_horizontal_icon)}
                             onClick={(ev) => {
                                 openDrawer(ev, drawer_navigation_ref)
-                            }} 
-                            code={0xEAFF} 
+                            }}
+                            code={0xEAFF}
                         />
                     </Tooltip>
                 </Show>
                 <img alt="BiruUI logo" width={32} height={32} src={logo[_src]} />
-            </>} 
+            </>}
             headline="BiruUI"
             trailing={<>
                 <Tooltip text="Info">
-                    <IconButton 
-                        focused={is_menu_info_open()} 
+                    <IconButton
+                        focused={is_menu_info_open()}
                         code={0xE930}
                         onClick={(ev) => openMenu(ev, menu_info_ref, {
                             anchor: ev[_currentTarget],
                             padding: 4,
                             position: FlyoutPosition[_centerBottomToLeft]
-                        })} 
+                        })}
                     />
                 </Tooltip>
-
                 <Tooltip text="Settings">
-                    <IconButton 
-                        class={CSSAnimation.btn_rotate_icon} 
-                        focused={is_menu_settings_open()} 
+                    <IconButton
+                        class={CSSAnimation.btn_rotate_icon}
+                        focused={is_menu_settings_open()}
                         code={0xEE0F}
                         onClick={(ev) => openMenu(ev, menu_settings_ref, {
                             anchor: ev[_currentTarget],
                             padding: 4,
                             position: FlyoutPosition[_centerBottomToLeft]
-                        })} 
+                        })}
                     />
                 </Tooltip>
             </>}
         >
         </AppBar>
         <Menus />
-        <Drawer 
-            header={<>
-                <Tooltip text="Close navigation">
-                    <IconButton 
-                        classList={addClassListModule(CSSAnimation.btn_shrink_horizontal_icon)} 
-                        code={0xEAFF} 
-                        onClick={() => closeDrawer(drawer_navigation_ref)}
-                    />
-                </Tooltip>
-            </>}
+        <Drawer
+            header={<Tooltip text="Close navigation">
+                <IconButton
+                    classList={addClassListModule(CSSAnimation.btn_shrink_horizontal_icon)}
+                    code={0xEAFF}
+                    onClick={() => closeDrawer(drawer_navigation_ref)}
+                />
+            </Tooltip>}
             ref={r => drawer_navigation_ref = r}>
-                <For each={PAGES}>{page => 
-                    <DrawerItem 
-                        onClick={() => {
-                            props[_command](Commands.change_page, page[_type])
-                            closeDrawer(drawer_navigation_ref)
-                        }}
-                        selected={props[_page] == page[_type]}>
-                        {page[_text]}
-                    </DrawerItem>
-                }</For>
+            <For each={PAGES}>{page =>
+                <DrawerItem
+                    onClick={() => {
+                        props[_command](Commands.change_page, page[_type])
+                        closeDrawer(drawer_navigation_ref)
+                    }}
+                    selected={props[_page] == page[_type]}>
+                    {page[_text]}
+                </DrawerItem>
+            }</For>
         </Drawer>
     </>)
 }
