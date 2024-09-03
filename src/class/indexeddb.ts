@@ -1,4 +1,4 @@
-import { _add, _close, _continue, _createIndex, _createObjectStore, _databaseName, _delete, _deleteDatabase, _get, _getAll, _includes, _isOpen, _onblocked, _onBlocked, _onerror, _onError, _onSuccess, _onsuccess, _onupgradeneeded, _onUpgradeNeeded, _onversionchange, _open, _openCursor, _put, _result, _transaction, _version } from "@/data/string"
+import { _add, _close, _continue, _createIndex, _createObjectStore, _databaseName, _delete, _deleteDatabase, _get, _getAll, _includes, _isOpen, _objectStore, _onblocked, _onBlocked, _onerror, _onError, _onSuccess, _onsuccess, _onupgradeneeded, _onUpgradeNeeded, _onversionchange, _open, _openCursor, _put, _readonly, _readwrite, _result, _transaction, _version } from "@/data/string"
 import { getIndexedDB } from "@/data/window"
 import type { DatabaseNames } from "@/enums/storage"
 
@@ -86,7 +86,7 @@ export class IDB {
         keyPath = String(keyPath)
 
         const objectStore = this[__db]![_createObjectStore](name, {
-            autoIncrement: true, 
+            autoIncrement: true,
             keyPath: keyPath
         })
 
@@ -149,7 +149,7 @@ export class IDB {
                 if (!cursor) {
                     result(cursor, ev)
                     ok()
-                    return 
+                    return
                 }
 
                 const isContinue = result(cursor, ev)
@@ -183,7 +183,23 @@ export class IDB {
     transaction(storeNames: string | string[], mode?: IDBTransactionMode, options?: IDBTransactionOptions): IDBTransaction | null {
         if (!this[__db]) return null;
 
-        return this[__db][_transaction](storeNames, mode, options)
+        try {
+            return this[__db][_transaction](storeNames, mode, options)
+        } catch { return null }
+    }
+
+    readObjectStore(storeName: string, options?: IDBTransactionOptions): IDBObjectStore | null {
+        const transaction = this[_transaction](storeName, _readonly, options)
+        if (transaction == null) return null
+
+        return transaction[_objectStore](storeName)
+    }
+
+    writeObjectStore(storeName: string, options?: IDBTransactionOptions): IDBObjectStore | null {
+        const transaction = this[_transaction](storeName, _readwrite, options)
+        if (transaction == null) return null
+
+        return transaction[_objectStore](storeName)
     }
 
     get isOpen(): boolean {
