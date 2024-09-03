@@ -4,13 +4,13 @@ import { createObjectURL, downloadFileByURL, revokeObjectURL } from "./url"
 
 export async function openFile(accept: string | null, multiple: boolean = false): Promise<FileList | null> {
     return new Promise<FileList | null>((ok) => {
-        const filePickerRef = createElement(_input) 
+        const filePickerRef = createElement(_input)
         filePickerRef[_type] = _file
         if (accept != null) filePickerRef[_accept] = accept
         filePickerRef[_multiple] = multiple
         filePickerRef[_click]()
-        
-        filePickerRef[_onchange] = (ev) => {
+
+        filePickerRef[_onchange] = () => {
             ok(filePickerRef[_files])
             filePickerRef[_remove]()
         }
@@ -40,4 +40,4 @@ export function readFileAsText(blob: Blob, encoding?: string): Promise<string> {
         reader[_onerror] = () => ok('')
         reader[_onabort] = () => ok('')
     })
-} 
+}

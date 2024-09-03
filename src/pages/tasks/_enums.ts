@@ -1,6 +1,3 @@
-import type { HEXColor } from "@/types/color";
-import type { SubTask, Task, TaskFileMetaData, TaskLabel, TaskList } from "./_types";
-
 export enum Commands {
     toggle_navigation_expand = 'a',
 

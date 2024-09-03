@@ -1,42 +1,41 @@
 import { createMemo, createSignal, For, onMount, Show, type VoidComponent } from "solid-js"
 
-import { _about, _apps, _blur, _calculator, _centerBottomToLeft, _change, _command, _complete, _contactEmail, _corner, _currentTarget, _dark, _donate, _emoji, _expand, _expandNavigation, _filled, _filter, _focus, _fullRound, _getFullYear, _hiddenNavigation, _home, _icon, _id, _includes, _isNotebookExpand, _isShowDeleteTaskWarning, _length, _light, _matches, _name, _note, _onChangeCalculator, _open, _page, _privacy, _push, _replace, _round, _semiRound, _settings, _share, _sharp, _slice, _src, _system, _taskLists, _tasks, _terms, _test, _text, _theme, _trim, _type, _URL, _value } from "@/data/string";
+import type { Settings, Task, TaskList } from "./_types";
+import { _about, _apps, _blur, _calculator, _centerBottomToLeft, _change, _command, _complete, _contactEmail, _corner, _currentTarget, _dark, _donate, _emoji, _expand, _expandNavigation, _filled, _filter, _focus, _fullRound, _getFullYear, _hiddenNavigation, _home, _icon, _id, _includes, _isNotebookExpand, _isShowDeleteTaskWarning, _isSideNavigationExpanded, _length, _light, _matches, _name, _note, _onChangeCalculator, _open, _page, _privacy, _push, _replace, _round, _semiRound, _settings, _share, _sharp, _slice, _src, _system, _taskLists, _tasks, _terms, _test, _text, _theme, _trim, _type, _URL, _value } from "@/data/string";
+import { Commands, Pages } from "./_enums";
 import { getDocument, getNavigator, getRoot } from "@/data/window";
 import { RootAttributes } from "@/enums/attributes";
 import { CornerData } from "@/enums/corner";
 import { LocalStorageKeys } from "@/enums/storage";
 import { ThemeData } from "@/enums/theme";
 import { setLocalStorageItem, getLocalStorageItem } from "@/utils/storage";
-import { hasAttribute, setAttribute, toggleAttribute } from "@/utils/attributes";
+import { setAttribute, toggleAttribute } from "@/utils/attributes";
 import { DEFAULT_TASK_LIST, SIZE_SIDE_NAVIGATION_NONE, TASKS_PAGES } from "./_constants";
 import { isMatchMedia, matchMedia } from "@/utils/window";
 import { addEventListener } from '@/utils/event'
+import { clearTimeDelayed, setTimeDelayed, timeout } from "@/utils/timeout";
+import { RoutesLinks, ExternalLinks } from "@/enums/links";
+import { encodeURL } from "@/utils/url";
+import { addClassListModule } from "@/utils/element";
 import logo from '@/assets/apps/tasks-logo.svg'
 import redmerahLogo from '@/assets/logo.svg'
 
 import AppBar from "@/components/AppBar";
 import Icon from "@/components/Icon";
 import Menu, { LinkMenuItem, MenuDivider, MenuItem, MenuHeader, SubMenu, MenuIndent, closeSubMenu, closeMenu, MenuPosition, openMenu } from "@/components/Menu";
-import { RoutesLinks, ExternalLinks } from "@/enums/links";
-import { encodeURL } from "@/utils/url";
-import Button, { IconButton } from "@/components/Button";
-import {TextTooltip} from "@/components/Tooltip";
-import { addClassListModule } from "@/utils/element";
-import CSSAnimation from "@/styles/animation.module.scss";
-import { Commands, Pages } from "./_enums";
-import Drawer, { closeDrawer, DrawerItem, openDrawer } from "@/components/Drawer";
-import type { Settings, Task, TaskList } from "./_types";
+import { IconButton } from "@/components/Button";
+import { TextTooltip } from "@/components/Tooltip";
 import Divider from "@/components/Divider";
 import Emoji from "@/components/Emoji";
-import TextField, { closeSearchMenu, SearchMenuDivider, SearchMenuHeader, SearchMenuItem, SearchTextField, SearchTextFieldButton } from "@/components/TextField";
+import { closeSearchMenu, SearchMenuDivider, SearchMenuHeader, SearchMenuItem, SearchTextField, SearchTextFieldButton } from "@/components/TextField";
+import Drawer, { closeDrawer, DrawerItem, openDrawer } from "@/components/Drawer";
+import CSSAnimation from "@/styles/animation.module.scss";
 import CSS from './_styles.module.scss'
-import { clearTimeDelayed, setTimeDelayed, timeout } from "@/utils/timeout";
-import { PopoverAttributes } from "@/components/Popover";
 
 const _: VoidComponent<{
     taskLists: TaskList[]
     page: Pages | number
-    expandNavigation: boolean
+    isSideNavigationExpanded: boolean
     settings: Settings
     command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
@@ -146,26 +145,26 @@ const _: VoidComponent<{
                 <LinkMenuItem
                     onClick={() => closeMenu(menu_info_ref)}
                     href={RoutesLinks[_apps]}
-                    leading={<Icon code={0xE063}/>}>
+                    iconCode={0xE063}>
                     More apps
                 </LinkMenuItem>
                 <LinkMenuItem
                     onClick={() => closeMenu(menu_info_ref)}
                     href={RoutesLinks[_about]}
-                    leading={<Icon code={0xE930}/>}>
+                    iconCode={0xE930}>
                     About us
                 </LinkMenuItem>
                 <MenuDivider />
                 <LinkMenuItem
                     onClick={() => closeMenu(menu_info_ref)}
                     href={RoutesLinks[_privacy]}
-                    leading={<Icon code={0xEE51}/>}>
+                    iconCode={0xEE51}>
                     Privacy policy
                 </LinkMenuItem>
                 <LinkMenuItem
                     onClick={() => closeMenu(menu_info_ref)}
                     href={RoutesLinks[_terms]}
-                    leading={<Icon code={0xED47}/>}>
+                    iconCode={0xED47}>
                     Terms & conditions
                 </LinkMenuItem>
                 <MenuDivider />
@@ -174,20 +173,20 @@ const _: VoidComponent<{
                         getNavigator()[_share]({ title: 'Tasks', text: 'Tasks', url: getDocument()[_URL] })
                         closeMenu(menu_info_ref)
                     }}
-                    leading={<Icon code={0xEE23}/>}>
+                    iconCode={0xEE23}>
                     Share
                 </MenuItem>
                 <LinkMenuItem
                     onClick={() => closeMenu(menu_info_ref)}
                     href={'mailto:' + ExternalLinks[_contactEmail] + '?subject=' + encodeURL('Tasks')}
-                    leading={<Icon code={0xE3A0}/>}>
+                    iconCode={0xE3A0}>
                     Send feedback
                 </LinkMenuItem>
                 <LinkMenuItem
                     onClick={() => closeMenu(menu_info_ref)}
                     href={ExternalLinks[_donate]}
                     openInNewTab
-                    leading={<Icon code={0xE84B}/>}>
+                    iconCode={0xE84B}>
                     Donate
                 </LinkMenuItem>
                 <MenuHeader>&copy; {new Date()[_getFullYear]()} Redmerah</MenuHeader>
@@ -299,7 +298,10 @@ const _: VoidComponent<{
             data-search={toggleAttribute(isSearching())}
             classList={addClassListModule(CSS.appbar)}
             leading={<>
-                <TextTooltip text={isSideNavigationHidden()? "Open navigation" : `${props[_expandNavigation]? 'Shrink' : 'Expand'} navigation`}>
+                <TextTooltip text={isSideNavigationHidden()
+                    ? "Open navigation"
+                    : `${props[_isSideNavigationExpanded]? 'Shrink' : 'Expand'} navigation`
+                }>
                     <IconButton
                         classList={addClassListModule(CSSAnimation.btn_shrink_horizontal_icon)}
                         onClick={(ev) => {
@@ -323,29 +325,27 @@ const _: VoidComponent<{
                         code={0xEDDF}
                     />
                 </TextTooltip>
-
                 <TextTooltip text="Info">
                     <IconButton
                         focused={is_menu_info_open()}
                         code={0xE930}
-                        onClick={(ev) => openMenu(ev, menu_info_ref, {
+                        onClick={ev => openMenu(ev, menu_info_ref, {
                             anchor: ev[_currentTarget],
                             padding: 4,
                             position: MenuPosition[_centerBottomToLeft]
                         })}
                     />
                 </TextTooltip>
-
                 <TextTooltip text="Settings">
-                <IconButton
-                    classList={addClassListModule(CSSAnimation.btn_rotate_icon)}
-                    focused={is_menu_settings_open()}
-                    onClick={async (ev) => openMenu(ev, menu_settings_ref, {
-                        anchor: ev[_currentTarget],
-                        padding: 4,
-                        position: MenuPosition[_centerBottomToLeft]
-                    })}
-                    code={0xEE0F}
+                    <IconButton
+                        classList={addClassListModule(CSSAnimation.btn_rotate_icon)}
+                        focused={is_menu_settings_open()}
+                        onClick={ev => openMenu(ev, menu_settings_ref, {
+                            anchor: ev[_currentTarget],
+                            padding: 4,
+                            position: MenuPosition[_centerBottomToLeft]
+                        })}
+                        code={0xEE0F}
                     />
                 </TextTooltip>
             </>}>
@@ -410,25 +410,21 @@ const _: VoidComponent<{
         </AppBar>
         <Menus />
         <Drawer
-            header={<>
-                <TextTooltip text="Close navigation">
-                    <IconButton
-                        classList={addClassListModule(CSSAnimation.btn_shrink_horizontal_icon)}
-                        onClick={() => closeDrawer(drawer_navigation_ref)}
-                        code={0xEAFF}
-                    />
-                </TextTooltip>
-            </>}
-            footer={<>
-                <DrawerItem
-                    leading={<Icon code={0xE007}/>}
-                    onClick={(ev) => {
-                        closeDrawer(drawer_navigation_ref)
-                        props[_command](Commands.add_taskList, ev)
-                    }}>
-                    New list
-                </DrawerItem>
-            </>}
+            header={<TextTooltip text="Close navigation">
+                <IconButton
+                    classList={addClassListModule(CSSAnimation.btn_shrink_horizontal_icon)}
+                    onClick={() => closeDrawer(drawer_navigation_ref)}
+                    code={0xEAFF}
+                />
+            </TextTooltip>}
+            footer={<DrawerItem
+                leading={<Icon code={0xE007}/>}
+                onClick={(ev) => {
+                    closeDrawer(drawer_navigation_ref)
+                    props[_command](Commands.add_taskList, ev)
+                }}>
+                New list
+            </DrawerItem>}
             ref={r => drawer_navigation_ref = r}>
             <For each={TASKS_PAGES[_filter](page => !props[_settings][_hiddenNavigation][_includes](page[_type]))}>{p =>
                 <DrawerItem
@@ -442,9 +438,7 @@ const _: VoidComponent<{
                     {p[_text]}
                 </DrawerItem>
             }</For>
-            <Show when={props[_taskLists][_length] - 1 > 0}>
-                <Divider />
-            </Show>
+            <Show when={props[_taskLists][_length] - 1 > 0}><Divider /></Show>
             <For each={props[_taskLists][_filter](v => v[_id] != DEFAULT_TASK_LIST[_id])}>{p =>
                 <DrawerItem
                     leading={<Show when={p[_emoji] != null}><Emoji emoji={p[_emoji]!} /></Show>}
@@ -452,6 +446,7 @@ const _: VoidComponent<{
                     onClick={() => {
                         closeDrawer(drawer_navigation_ref)
                         if (props[_page] == p[_id]) return;
+
                         props[_command](Commands.change_page, p[_id])
                     }}>
                     {p[_name]}

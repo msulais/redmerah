@@ -1,25 +1,20 @@
-import { createMemo, createSignal, For, Show, type VoidComponent } from "solid-js";
+import { For, Show, type VoidComponent } from "solid-js";
+import { TransitionGroup } from "solid-transition-group";
 
 import type { Settings, TaskList } from "./_types";
 import { _command, _emoji, _expand, _icon, _id, _length, _name, _page, _selectedTaskList, _tasks, _taskLists, _text, _type, _filter, _hiddenNavigation, _includes, _settings, _tonal, _filled, _trim, _currentTarget, _value, _manual, _animate, _finished, _spring, _then, _firstElementChild, _contents, _index, _centerBottomToRight } from "@/data/string";
 import { DEFAULT_TASK_LIST, TASKS_PAGES } from "./_constants";
 import { addClassListModule } from "@/utils/element";
 import { Commands, Pages } from "./_enums";
+import { preventDefault } from "@/utils/event";
+import { AnimationEffectTiming } from "@/enums/animation";
 
 import { TextTooltip } from "@/components/Tooltip";
 import Divider from "@/components/Divider";
 import Emoji from "@/components/Emoji";
+import Menu, { closeMenu, MenuItem, MenuPosition, openMenu } from "@/components/Menu";
 import SideNavigation, { SideNavigationItem } from "@/components/SideNavigation";
 import CSS from './_styles.module.scss'
-import Dialog, { closeDialog, openDialog } from "@/components/Dialog";
-import Button, { ButtonVariant } from "@/components/Button";
-import TextField, { changeTextFieldValue, TextFieldButton } from "@/components/TextField";
-import Icon from "@/components/Icon";
-import { TransitionGroup } from "solid-transition-group";
-import { AnimationEffectTiming } from "@/enums/animation";
-import EmojiPicker, { closeEmojiPicker, openEmojiPicker } from "@/components/EmojiPicker";
-import { preventDefault } from "@/utils/event";
-import Menu, { closeMenu, MenuItem, MenuPosition, openMenu } from "@/components/Menu";
 
 const _: VoidComponent<{
     expand: boolean
@@ -112,9 +107,7 @@ const _: VoidComponent<{
                 {p => <Page {...p}/>}
             </For>
         </TransitionGroup>
-        <Show when={props[_taskLists][_length] - 1 > 0}>
-            <Divider />
-        </Show>
+        <Show when={props[_taskLists][_length] - 1 > 0}><Divider /></Show>
         <For each={props[_taskLists]}>{(p, i) =>
             <Show when={p[_id] != DEFAULT_TASK_LIST[_id]}>
                 <Item {...p} index={i()}/>

@@ -1,4 +1,3 @@
-import type { SortBy } from "./_enums"
 import type { SubTask, Task, TaskFileMetaData, TaskLabel, TaskList } from "./_types"
 
 export type ObjectStoreSettings<T = unknown> = {
@@ -20,30 +19,30 @@ export type ObjectStoreFiles = {
 }
 
 export enum ObjectStoreNames {
-    settings = 'settings', 
+    settings = 'settings',
     miscellaneous = 'miscellaneous',
     tasks = 'tasks',
     subtasks = 'subtasks',
-    lists = 'lists', 
-    labels = 'labels', 
+    taskLists = 'taskLists',
+    labels = 'labels',
     taskFileMetaData = 'taskFileMetaData',
     files = 'files'
 }
 
 export enum ObjectStoreKeys {
-    
+
     /** @param {SortBy} value `SortBy` */
     settings_sortBy = 'sortBy',
 
     /** @param {SortMode} value `SortMode` */
-    settings_sortMode = 'sortMode', 
+    settings_sortMode = 'sortMode',
 
     /** @param {boolean} value `boolean` */
-    settings_isShowDeleteTaskWarning = 'isShowDeleteTaskWarning', 
+    settings_isShowDeleteTaskWarning = 'isShowDeleteTaskWarning',
 
     /** @param {Pages[]} value `Pages[]` */
-    settings_hiddenNavigation = 'hiddenNavigation', 
-    
+    settings_hiddenNavigation = 'hiddenNavigation',
+
     /** @param {boolean} value `boolean` */
     miscellaneous_isSideNavigationExpand = 'isSideNavigationExpand',
 

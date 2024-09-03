@@ -2,7 +2,6 @@ import { type Component, Match, Show, Switch, type VoidComponent, createEffect, 
 import type { SetStoreFunction, Store } from "solid-js/store/types/store";
 
 import { getBoundingClientRect } from "@/utils/element";
-import { toggleAttribute } from "@/utils/attributes";
 import type { ComponentEvent } from "@/types/event";
 import { RandomizerType, ColorsRandomizerColorModel, Commands } from "./_enums";
 import type { ListItems, Settings } from "./_types";
@@ -89,25 +88,25 @@ const Teams: VoidComponent<TeamsProps> = (props) => {
         getListById(id)
         props[_command](Commands[_change_settings_teams_namesList], list())
     }
-    
+
     function changeMembersList(id: string): void {
         getListById(id)
         props[_command](Commands[_change_settings_teams_membersList], list())
     }
 
     return (<>
-        <NumberTextField 
-            labelText="Count" 
+        <NumberTextField
+            labelText="Count"
             min={1}
             max={settings()[_membersList][_items][_length]}
             onFinalValueChanged={(v) => props[_command](Commands[_change_settings_teams_count], v)}
             labelAttr={{ style: { width: 'min(100%, 164px)' } }}
-            value={settings()[_count]} 
+            value={settings()[_count]}
         />
-        <Dropdown 
-            labelText="Names" 
-            selectedValues={[`${settings()[_namesList][_id]}`]} 
-            items={[...ListItemsToDropdownList(props[_lists][0])]} 
+        <Dropdown
+            labelText="Names"
+            selectedValues={[`${settings()[_namesList][_id]}`]}
+            items={[...ListItemsToDropdownList(props[_lists][0])]}
             labelAttr={{ style: { width: 'min(100%, 164px)' } }}
             onSelectedItemsChanged={(items) => changeNamesList(items[0][0] as string)}
             menuAttr={{ ref: (r) => dropdownMenu_namesLists_ref = r }}
@@ -130,7 +129,7 @@ const Teams: VoidComponent<TeamsProps> = (props) => {
                 <Show when={props[_lists][0][_length] > 0}>
                     <MenuDivider />
                 </Show>
-                <MenuItem 
+                <MenuItem
                     onClick={(ev) => {
                         props[_command](Commands[_add_list], ev)
                         closeMenu(dropdownMenu_namesLists_ref)
@@ -140,7 +139,7 @@ const Teams: VoidComponent<TeamsProps> = (props) => {
                 </MenuItem>
 
                 <Show when={props[_lists][0][_length] == 0}>
-                    <MenuItem 
+                    <MenuItem
                         onClick={(_ev) => {
                             props[_command](Commands[_reset_list])
                             closeMenu(dropdownMenu_namesLists_ref)
@@ -149,9 +148,9 @@ const Teams: VoidComponent<TeamsProps> = (props) => {
                         Reset all list
                     </MenuItem>
                 </Show>
-                
+
                 <Show when={props[_lists][0][_length] > 0}>
-                    <MenuItem 
+                    <MenuItem
                         onClick={(ev) => {
                             props[_command](Commands[_edit_list], ev)
                             closeMenu(dropdownMenu_namesLists_ref)
@@ -162,10 +161,10 @@ const Teams: VoidComponent<TeamsProps> = (props) => {
                 </Show>
             </>}
         />
-        <Dropdown 
-            labelText="Members" 
-            selectedValues={[`${settings()[_membersList][_id]}`]} 
-            items={[...ListItemsToDropdownList(props[_lists][0])]} 
+        <Dropdown
+            labelText="Members"
+            selectedValues={[`${settings()[_membersList][_id]}`]}
+            items={[...ListItemsToDropdownList(props[_lists][0])]}
             labelAttr={{ style: { width: 'min(100%, 164px)' } }}
             onSelectedItemsChanged={items => changeMembersList(items[0][0] as string)}
             menuAttr={{ ref: (r) => dropdownMenu_membersLists_ref = r }}
@@ -188,7 +187,7 @@ const Teams: VoidComponent<TeamsProps> = (props) => {
                 <Show when={props[_lists][0][_length] > 0}>
                     <MenuDivider />
                 </Show>
-                <MenuItem 
+                <MenuItem
                     onClick={(ev) => {
                         props[_command](Commands[_add_list], ev)
                         closeMenu(dropdownMenu_membersLists_ref)
@@ -198,7 +197,7 @@ const Teams: VoidComponent<TeamsProps> = (props) => {
                 </MenuItem>
 
                 <Show when={props[_lists][0][_length] == 0}>
-                    <MenuItem 
+                    <MenuItem
                         onClick={(_ev) => {
                             props[_command](Commands[_reset_list])
                             closeMenu(dropdownMenu_membersLists_ref)
@@ -207,9 +206,9 @@ const Teams: VoidComponent<TeamsProps> = (props) => {
                         Reset all list
                     </MenuItem>
                 </Show>
-                
+
                 <Show when={props[_lists][0][_length] > 0}>
-                    <MenuItem 
+                    <MenuItem
                         onClick={(ev) => {
                             props[_command](Commands[_edit_list], ev)
                             closeMenu(dropdownMenu_membersLists_ref)
@@ -231,23 +230,23 @@ const Teams: VoidComponent<TeamsProps> = (props) => {
                 }} leading={<Icon code={0xE3CC}/>}>Select</MenuItem>
                 <MenuDivider />
             </Show>
-            <MenuItem 
+            <MenuItem
                 onClick={async (ev) => {
                     closeMenu(menu_action_ref)
                     closeMenu(dropdownMenu_namesLists_ref)
                     closeMenu(dropdownMenu_membersLists_ref)
                     props[_command](Commands[_view_list], ev, list())
-                }} 
+                }}
                 leading={<Icon code={0xE77B}/>}>
                 View list
             </MenuItem>
-            <MenuItem 
+            <MenuItem
                 onClick={async () => {
                     closeMenu(menu_action_ref)
                     closeMenu(dropdownMenu_namesLists_ref)
                     closeMenu(dropdownMenu_membersLists_ref)
                     props[_command](Commands[_export_list], list())
-                }} 
+                }}
                 leading={<Icon code={0xE0CF}/>}
                 trailing="*.csv">
                 Export list
@@ -293,10 +292,10 @@ const Selection: VoidComponent<SelectionProps> = (props) => {
     }
 
     return (<>
-        <Dropdown 
-            labelText="List" 
-            selectedValues={[`${props[_settings][0][_selection][_list][_id]}`]} 
-            items={[...ListItemsToDropdownList(props[_lists][0])]} 
+        <Dropdown
+            labelText="List"
+            selectedValues={[`${props[_settings][0][_selection][_list][_id]}`]}
+            items={[...ListItemsToDropdownList(props[_lists][0])]}
             labelAttr={{ style: { width: 'min(100%, 164px)' } }}
             onSelectedItemsChanged={items => changeList(items[0][0] as string)}
             menuAttr={{ ref: (r) => menu_dropdown_ref = r }}
@@ -318,7 +317,7 @@ const Selection: VoidComponent<SelectionProps> = (props) => {
                 <Show when={props[_lists][0][_length] > 0}>
                     <MenuDivider />
                 </Show>
-                <MenuItem 
+                <MenuItem
                     onClick={(ev) => {
                         props[_command](Commands[_add_list], ev)
                         closeMenu(menu_dropdown_ref)
@@ -328,7 +327,7 @@ const Selection: VoidComponent<SelectionProps> = (props) => {
                 </MenuItem>
 
                 <Show when={props[_lists][0][_length] == 0}>
-                    <MenuItem 
+                    <MenuItem
                         onClick={(_ev) => {
                             props[_command](Commands[_reset_list])
                             closeMenu(menu_dropdown_ref)
@@ -337,9 +336,9 @@ const Selection: VoidComponent<SelectionProps> = (props) => {
                         Reset all list
                     </MenuItem>
                 </Show>
-                
+
                 <Show when={props[_lists][0][_length] > 0}>
-                    <MenuItem 
+                    <MenuItem
                         onClick={(ev) => {
                             props[_command](Commands[_edit_list], ev)
                             closeMenu(menu_dropdown_ref)
@@ -359,21 +358,21 @@ const Selection: VoidComponent<SelectionProps> = (props) => {
                 }} leading={<Icon code={0xE3CC}/>}>Select</MenuItem>
                 <MenuDivider />
             </Show>
-            <MenuItem 
+            <MenuItem
                 onClick={async (ev) => {
                     closeMenu(menu_action_ref)
                     closeMenu(menu_dropdown_ref)
                     props[_command](Commands[_view_list], ev, list())
-                }} 
+                }}
                 leading={<Icon code={0xE77B}/>}>
                 View list
             </MenuItem>
-            <MenuItem 
+            <MenuItem
                 onClick={async () => {
                     closeMenu(menu_action_ref)
                     closeMenu(menu_dropdown_ref)
                     props[_command](Commands[_export_list], list())
-                }} 
+                }}
                 leading={<Icon code={0xE0CF}/>}
                 trailing="*.csv">
                 Export list
@@ -389,13 +388,13 @@ const Selection: VoidComponent<SelectionProps> = (props) => {
                     closeMenu(menu_dropdown_ref)
                 }} leading={<Icon code={0xE59D}/>}>Delete list</MenuItem>
         </Menu>
-        <NumberTextField 
-            labelText="Count" 
+        <NumberTextField
+            labelText="Count"
             min={1}
             max={props[_settings][0][_selection][_list][_items][_length]}
             onFinalValueChanged={(v) => props[_command](Commands[_change_settings_selection_count], v)}
             labelAttr={{ style: { width: 'min(100%, 164px)' } }}
-            value={props[_settings][0][_selection][_count]} 
+            value={props[_settings][0][_selection][_count]}
         />
     </>)
 }
@@ -425,10 +424,10 @@ const Words: VoidComponent<WordsProps> = (props) => {
     }
 
     return (<>
-        <Dropdown 
-            labelText="List" 
-            selectedValues={[`${props[_settings][0][_words][_list][_id]}`]} 
-            items={[...ListItemsToDropdownList(props[_lists][0])]} 
+        <Dropdown
+            labelText="List"
+            selectedValues={[`${props[_settings][0][_words][_list][_id]}`]}
+            items={[...ListItemsToDropdownList(props[_lists][0])]}
             labelAttr={{ style: { width: 'min(100%, 164px)' } }}
             onSelectedItemsChanged={items => changeList(items[0][0] as string)}
             menuAttr={{ ref: (r) => menu_dropdown_ref = r }}
@@ -450,7 +449,7 @@ const Words: VoidComponent<WordsProps> = (props) => {
                 <Show when={props[_lists][0][_length] > 0}>
                     <MenuDivider />
                 </Show>
-                <MenuItem 
+                <MenuItem
                     onClick={(ev) => {
                         props[_command](Commands[_add_list], ev)
                         closeMenu(menu_dropdown_ref)
@@ -460,7 +459,7 @@ const Words: VoidComponent<WordsProps> = (props) => {
                 </MenuItem>
 
                 <Show when={props[_lists][0][_length] == 0}>
-                    <MenuItem 
+                    <MenuItem
                         onClick={(_ev) => {
                             props[_command](Commands[_reset_list])
                             closeMenu(menu_dropdown_ref)
@@ -469,9 +468,9 @@ const Words: VoidComponent<WordsProps> = (props) => {
                         Reset all list
                     </MenuItem>
                 </Show>
-                
+
                 <Show when={props[_lists][0][_length] > 0}>
-                    <MenuItem 
+                    <MenuItem
                         onClick={(ev) => {
                             props[_command](Commands[_edit_list], ev)
                             closeMenu(menu_dropdown_ref)
@@ -491,21 +490,21 @@ const Words: VoidComponent<WordsProps> = (props) => {
                 }} leading={<Icon code={0xE3CC}/>}>Select</MenuItem>
                 <MenuDivider />
             </Show>
-            <MenuItem 
+            <MenuItem
                 onClick={async (ev) => {
                     closeMenu(menu_action_ref)
                     closeMenu(menu_dropdown_ref)
                     props[_command](Commands[_view_list], ev, list())
-                }} 
+                }}
                 leading={<Icon code={0xE77B}/>}>
                 View list
             </MenuItem>
-            <MenuItem 
+            <MenuItem
                 onClick={async () => {
                     closeMenu(menu_action_ref)
                     closeMenu(menu_dropdown_ref)
                     props[_command](Commands[_export_list], list())
-                }} 
+                }}
                 leading={<Icon code={0xE0CF}/>}
                 trailing="*.csv">
                 Export list
@@ -521,12 +520,12 @@ const Words: VoidComponent<WordsProps> = (props) => {
                     closeMenu(menu_dropdown_ref)
                 }} leading={<Icon code={0xE59D}/>}>Delete list</MenuItem>
         </Menu>
-        <NumberTextField 
-            labelText="Count" 
+        <NumberTextField
+            labelText="Count"
             min={1}
             onFinalValueChanged={(v) => props[_command](Commands[_change_settings_words_count], v)}
             labelAttr={{ style: { width: 'min(100%, 164px)' } }}
-            value={props[_settings][0][_words][_count]} 
+            value={props[_settings][0][_words][_count]}
         />
     </>)
 }
@@ -801,8 +800,8 @@ const $String: Component<$StringProps> = (props) => {
             labelText="Characters"
             trailing={<>
                 <TextTooltip text="More character options">
-                    <TextFieldButton 
-                        focused={isCharactersMenuOpen()} 
+                    <TextFieldButton
+                        focused={isCharactersMenuOpen()}
                         onClick={(ev) => {
                             setCharactersMenuWidth(getBoundingClientRect(charactersLabelRef!)[_width])
                             openMenu(ev, menu_characters_ref, {
