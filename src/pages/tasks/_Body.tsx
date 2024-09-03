@@ -4,7 +4,7 @@ import { TransitionGroup } from "solid-transition-group"
 
 import type { TaskLabel, Settings, Task, TaskList, SubTask, TaskFileMetaData } from "./_types"
 import type { ComponentEvent } from "@/types/event"
-import { _all, _completed, _important, _planned, _tasks, _uncompleted, _includes, _page, _taskLists, _id, _length, _done, _reminder, _name, _taskList, _leading, _headline, _emoji, _currentTarget, _filled, _outlined, _settings, _sortBy, _creationDate, _importance, _descending, _ascending, _sortMode, _command, _onContextMenu, _centerBottomToRight, _task, _description, _files, _subtasks, _number, _value, _trim, _onEdit, _tonal, _text, _toFixed, _join, _size, _type, _listId, _onEditTask, _onContextMenuTask, _labelIds, _showModal, _onDelete, _onDeleteTask, _manual, _radio, _isShowDeleteTaskWarning, _isAnyTask, _isAnyCompletedTask, _isAnyUncompletedTask, _complete, _isGroup, _taskListIndex, _taskIndex, _onEditReminder, _onEditReminderTask, _labels, _centerBottomToLeft, _color, _filter, _onEditLabel, _then, _toUpperCase, _test, _replace, _map, _index, _taskId, _image, _startsWith, _video, _audio, _normal, _onEditFilesTask, _onEditFiles, _rightCenterToBottom, _subtask, _slice, _contents, _localeCompare, _sort, _animate, _finished, _spring, _some, _findIndex, _concat, _file, _fileIndex, _subtaskIndex, _edit, _action, _chip, _condition } from "@/data/string"
+import { _all, _completed, _important, _planned, _tasks, _uncompleted, _includes, _page, _taskLists, _id, _length, _done, _reminder, _name, _taskList, _leading, _headline, _emoji, _currentTarget, _filled, _outlined, _settings, _sortBy, _creationDate, _importance, _descending, _ascending, _sortMode, _command, _onContextMenu, _centerBottomToRight, _task, _description, _files, _subtasks, _number, _value, _trim, _onEdit, _tonal, _text, _toFixed, _join, _size, _type, _listId, _onEditTask, _onContextMenuTask, _labelIds, _showModal, _onDelete, _onDeleteTask, _manual, _radio, _isShowDeleteTaskWarning, _isAnyTask, _isAnyCompletedTask, _isAnyUncompletedTask, _complete, _isGroup, _taskListIndex, _taskIndex, _onEditReminder, _onEditReminderTask, _labels, _centerBottomToLeft, _color, _filter, _onEditLabel, _then, _toUpperCase, _test, _replace, _map, _index, _taskId, _image, _startsWith, _video, _audio, _normal, _onEditFilesTask, _onEditFiles, _rightCenterToBottom, _subtask, _slice, _contents, _localeCompare, _sort, _animate, _finished, _spring, _some, _findIndex, _concat, _file, _fileIndex, _subtaskIndex, _edit, _action, _chip, _condition, _isFileDBError } from "@/data/string"
 import { Commands, Pages, SortBy, SortMode } from "./_enums"
 import { getCurrentDate, getDate_Y, getDateString_YMD_HM, isOutDate_YMD_HM } from "@/utils/datetime"
 import { preventDefault, stopPropagation } from "@/utils/event"
@@ -755,6 +755,7 @@ const _: VoidComponent<{
     page: Pages | number
     taskLists: TaskList[]
     settings: Settings
+    isFileDBError: boolean
     labels: (TaskLabel | undefined)[]
     command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
@@ -1239,30 +1240,32 @@ const _: VoidComponent<{
                 </Show>
             </div>
             <Divider />
-            <div data-file>
-                <For each={selectedTaskToEdit[_task][_files]}>{(file, index) =>
-                    <FileItem
-                        file={file}
-                        fileIndex={index()}
-                        taskIndex={selectedTaskToEdit[_taskIndex]}
-                        taskListIndex={selectedTaskToEdit[_taskListIndex]}
-                    />
-                }</For>
-                <Button
-                    onClick={() => {
-                        const taskIndex = selectedTaskToEdit[_taskIndex]
-                        const taskListIndex = selectedTaskToEdit[_taskListIndex]
-                        const task = selectedTaskToEdit[_task]
-                        openFile(null, true)[_then](async (files) => {
-                            if (files == null) return;
-                            const result = await props[_command](Commands.add_files, files, task, taskListIndex, taskIndex) as TaskFileMetaData[]
-                            setSelectedTaskToEdit(_task, _files, result)
-                        })
-                    }}>
-                    <Icon code={0xE187}/>Add file
-                </Button>
-            </div>
-            <Divider />
+            <Show when={!props[_isFileDBError]}>
+                <div data-file>
+                    <For each={selectedTaskToEdit[_task][_files]}>{(file, index) =>
+                        <FileItem
+                            file={file}
+                            fileIndex={index()}
+                            taskIndex={selectedTaskToEdit[_taskIndex]}
+                            taskListIndex={selectedTaskToEdit[_taskListIndex]}
+                        />
+                    }</For>
+                    <Button
+                        onClick={() => {
+                            const taskIndex = selectedTaskToEdit[_taskIndex]
+                            const taskListIndex = selectedTaskToEdit[_taskListIndex]
+                            const task = selectedTaskToEdit[_task]
+                            openFile(null, true)[_then](async (files) => {
+                                if (files == null) return;
+                                const result = await props[_command](Commands.add_files, files, task, taskListIndex, taskIndex) as TaskFileMetaData[]
+                                setSelectedTaskToEdit(_task, _files, result)
+                            })
+                        }}>
+                        <Icon code={0xE187}/>Add file
+                    </Button>
+                </div>
+                <Divider />
+            </Show>
             <div data-important>
                 <Button onClick={() => {
                         setSelectedTaskToEdit(_task, _important, t => !t)
@@ -1494,23 +1497,25 @@ const _: VoidComponent<{
                 Mark as {selectedTaskToAction[_task][_important]? 'not' : ''} important
             </MenuItem>
             <MenuDivider />
-            <MenuItem
-                iconCode={0xE187}
-                trailing={<MenuIndent />}
-                onClick={() => {
-                    closeMenu(menu_taskAction_ref)
+            <Show when={!props[_isFileDBError]}>
+                <MenuItem
+                    iconCode={0xE187}
+                    trailing={<MenuIndent />}
+                    onClick={() => {
+                        closeMenu(menu_taskAction_ref)
 
-                    const taskIndex = selectedTaskToAction[_taskIndex]
-                    const taskListIndex = selectedTaskToAction[_taskListIndex]
-                    const task = selectedTaskToAction[_task]
-                    openFile(null, true)[_then](async (files) => {
-                        if (files == null) return;
-                        const result = await props[_command](Commands.add_files, files, task, taskListIndex, taskIndex) as TaskFileMetaData[]
-                        setSelectedTaskToAction(_task, _files, result)
-                    })
-                }}>
-                Add file
-            </MenuItem>
+                        const taskIndex = selectedTaskToAction[_taskIndex]
+                        const taskListIndex = selectedTaskToAction[_taskListIndex]
+                        const task = selectedTaskToAction[_task]
+                        openFile(null, true)[_then](async (files) => {
+                            if (files == null) return;
+                            const result = await props[_command](Commands.add_files, files, task, taskListIndex, taskIndex) as TaskFileMetaData[]
+                            setSelectedTaskToAction(_task, _files, result)
+                        })
+                    }}>
+                    Add file
+                </MenuItem>
+            </Show>
             <MenuItem
                 iconCode={0xE009}
                 trailing={<MenuIndent />}

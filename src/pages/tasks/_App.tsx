@@ -46,6 +46,7 @@ const _: VoidComponent = () => {
     const [selectedTaskListIndexToRename, setSelectedTaskListIndexToRename] = createSignal<number>(0)
     const [isNewListEmojiPickerOpen, setIsNewListEmojiPickerOpen] = createSignal<boolean>(false)
     const [isEditListEmojiPickerOpen, setIsEditListEmojiPickerOpen] = createSignal<boolean>(false)
+    const [isFileDBError, setIsFileDBError] = createSignal<boolean>(true)
     const [settings, setSettings] = createStore<Settings>({
         sortBy: SortBy[_name],
         sortMode: SortMode[_ascending],
@@ -588,7 +589,6 @@ const _: VoidComponent = () => {
         const store_files = transaction != null? transaction[_objectStore](ObjectStoreNames[_files]) : null
         const $files: TaskFileMetaData[] = [...lists[taskListIndex][_tasks][taskIndex][_files]]
 
-        // TODO: db error should not accept any file
         try {
             if (store_taskFileMetaData == null || store_files == null) return $files
             for (const file of files) {
@@ -1017,11 +1017,15 @@ const _: VoidComponent = () => {
 
     function initDatabase(): void {
         db[_open]({
-            onSuccess() {
+            onSuccess(ev, db) {
                 initLists()
                 initLabels()
                 initSettings()
                 initMiscellaneous()
+                setIsFileDBError(db[_readObjectStore](ObjectStoreNames[_taskFileMetaData]) == null)
+            },
+            onError(ev, db) {
+                setIsFileDBError(true)
             },
             onUpgradeNeeded(_, db) {
                 const store = db[_createObjectStore]<ObjectStoreTaskLists>({
@@ -1672,6 +1676,7 @@ const _: VoidComponent = () => {
         />}>
         <Body
             settings={settings}
+            isFileDBError={isFileDBError()}
             page={page()}
             labels={labels}
             taskLists={lists}
