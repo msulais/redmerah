@@ -1,12 +1,10 @@
-// TODO: handle all db error
-
 import { createStore } from "solid-js/store"
 import { createSignal, For, onMount, Show, type VoidComponent } from "solid-js"
 
 import type { TaskList, TaskLabel, Settings, Task, TaskFileMetaData, SubTask } from "./_types"
 import type { HEXColor } from "@/types/color"
 import { type ObjectStoreTaskLists, type ObjectStoreSettings, type ObjectStoreSubTasks, type ObjectStoreTasks, type ObjectStoreTaskLabels, type ObjectStoreFiles, type ObjectStoreTaskFileMetaData, type ObjectStoreMiscellaneous, ObjectStoreNames, ObjectStoreKeys, } from "./_storage"
-import { _add, _all, _ascending, _blob, _at, _clipboard, _color, _colorDark, _command, _complete, _completed, _concat, _contents, _createObjectStore, _creationDate, _currentTarget, _cursor, _delete, _descending, _description, _done, _emoji, _error, _fileName, _files, _filled, _tonal, _filter, _general, _get, _getAll, _getOwnPropertyNames, _hiddenNavigation, _home, _id, _images, _importance, _important, _includes, _isShowDeleteTaskWarning, _join, _key, _labelIds, _labels, _lastPage, _length, _listId, _lists, _localeCompare, _manual, _map, _miscellaneous, _name, _objectStore, _onColor, _onColorDark, _open, _planned, _push, _put, _readOnly, _readonly, _readwrite, _reminder, _result, _reverse, _settings, _size, _slice, _sort, _sortBy, _sortMode, _splice, _string, _subtasks, _tags, _target, _taskFileMetaData, _taskId, _taskLists, _tasks, _text, _then, _transaction, _trim, _type, _uncompleted, _value, _writeText, _keys, _defineProperty, _bold, _findIndex, _every } from "@/data/string"
+import { _add, _all, _ascending, _blob, _at, _clipboard, _color, _colorDark, _command, _complete, _completed, _concat, _contents, _createObjectStore, _creationDate, _currentTarget, _cursor, _delete, _descending, _description, _done, _emoji, _error, _fileName, _files, _filled, _tonal, _filter, _general, _get, _getAll, _getOwnPropertyNames, _hiddenNavigation, _home, _id, _images, _importance, _important, _includes, _isShowDeleteTaskWarning, _join, _key, _labelIds, _labels, _lastPage, _length, _listId, _lists, _localeCompare, _manual, _map, _miscellaneous, _name, _objectStore, _onColor, _onColorDark, _open, _planned, _push, _put, _readOnly, _readonly, _readwrite, _reminder, _result, _reverse, _settings, _size, _slice, _sort, _sortBy, _sortMode, _splice, _string, _subtasks, _tags, _target, _taskFileMetaData, _taskId, _taskLists, _tasks, _text, _then, _transaction, _trim, _type, _uncompleted, _value, _writeText, _keys, _defineProperty, _bold, _findIndex, _every, _writeObjectStore, _readObjectStore } from "@/data/string"
 import { Commands, Pages, SortBy, SortMode } from "./_enums"
 import { DatabaseNames } from "@/enums/storage"
 import { DEFAULT_TASK_LIST } from "./_constants"
@@ -98,9 +96,9 @@ const _: VoidComponent = () => {
         const transaction = db[_transaction]([
             ObjectStoreNames[_tasks],
             ObjectStoreNames[_subtasks]
-        ], _readwrite)!
-        const tasksStore = transaction[_objectStore](ObjectStoreNames[_tasks])
-        const subTasksStore = transaction[_objectStore](ObjectStoreNames[_subtasks])
+        ], _readwrite)
+        const tasksStore = transaction != null? transaction[_objectStore](ObjectStoreNames[_tasks]) : null
+        const subTasksStore = transaction != null? transaction[_objectStore](ObjectStoreNames[_subtasks]) : null
         const tasks: Task[] = []
 
         for (const task of lists[taskListIndex][_tasks]){
@@ -115,11 +113,11 @@ const _: VoidComponent = () => {
                 subtasks: [...task[_subtasks][_map]((v) => {
                     const subtask = {...v}
                     subtask[_complete] = complete
-                    subTasksStore[_put]({...v} satisfies ObjectStoreSubTasks)
+                    if (subTasksStore != null) subTasksStore[_put]({...v} satisfies ObjectStoreSubTasks)
                     return subtask
                 })]
             }
-            tasksStore[_put]({
+            if (tasksStore != null) tasksStore[_put]({
                 id: t[_id],
                 complete: t[_complete],
                 description: t[_description],
@@ -146,11 +144,11 @@ const _: VoidComponent = () => {
             ObjectStoreNames[_subtasks],
             ObjectStoreNames[_taskFileMetaData],
             ObjectStoreNames[_files],
-        ], _readwrite)!
-        const store_tasks = transaction[_objectStore](ObjectStoreNames[_tasks])
-        const store_subtasks = transaction[_objectStore](ObjectStoreNames[_subtasks])
-        const store_files = transaction[_objectStore](ObjectStoreNames[_files])
-        const store_taskFileMetaData = transaction[_objectStore](ObjectStoreNames[_taskFileMetaData])
+        ], _readwrite)
+        const store_tasks = transaction != null? transaction[_objectStore](ObjectStoreNames[_tasks]) : null
+        const store_subtasks = transaction != null? transaction[_objectStore](ObjectStoreNames[_subtasks]) : null
+        const store_files = transaction != null? transaction[_objectStore](ObjectStoreNames[_files]) : null
+        const store_taskFileMetaData = transaction != null? transaction[_objectStore](ObjectStoreNames[_taskFileMetaData]) : null
         const tasks: Task[] = []
 
         for (const task of lists[taskListIndex][_tasks]){
@@ -158,16 +156,15 @@ const _: VoidComponent = () => {
                 tasks[_push](task)
                 continue
             }
-
-            store_tasks[_delete](task[_id])
-
-            for (const subtask of task[_subtasks]) {
-                store_subtasks[_delete](subtask[_id])
+            if (store_tasks != null) store_tasks[_delete](task[_id])
+            if (store_subtasks != null){
+                for (const subtask of task[_subtasks]) {
+                    store_subtasks[_delete](subtask[_id])
+                }
             }
-
             for (const file of task[_files]) {
-                store_taskFileMetaData[_delete](file[_id])
-                store_files[_delete](file[_id])
+                if (store_taskFileMetaData != null) store_taskFileMetaData[_delete](file[_id])
+                if (store_files != null) store_files[_delete](file[_id])
             }
         }
         setLists(taskListIndex, _tasks, tasks)
@@ -181,27 +178,29 @@ const _: VoidComponent = () => {
             ObjectStoreNames[_subtasks],
             ObjectStoreNames[_taskFileMetaData],
             ObjectStoreNames[_files],
-        ], _readwrite)!
-        const store_tasks = transaction[_objectStore](ObjectStoreNames[_tasks])
-        const store_subtasks = transaction[_objectStore](ObjectStoreNames[_subtasks])
-        const store_taskFileMetaData = transaction[_objectStore](ObjectStoreNames[_taskFileMetaData])
-        const store_files = transaction[_objectStore](ObjectStoreNames[_files])
+        ], _readwrite)
+        const store_tasks = transaction != null? transaction[_objectStore](ObjectStoreNames[_tasks]) : null
+        const store_subtasks = transaction != null? transaction[_objectStore](ObjectStoreNames[_subtasks]) : null
+        const store_taskFileMetaData = transaction != null? transaction[_objectStore](ObjectStoreNames[_taskFileMetaData]) : null
+        const store_files = transaction != null? transaction[_objectStore](ObjectStoreNames[_files]) : null
+
         for (const task of lists[taskListIndex][_tasks]){
-            store_tasks[_delete](task[_id])
-
-            for (const subtask of task[_subtasks]) {
-                store_subtasks[_delete](subtask[_id])
+            if (store_tasks != null) store_tasks[_delete](task[_id])
+            if (store_subtasks != null){
+                for (const subtask of task[_subtasks]) {
+                    store_subtasks[_delete](subtask[_id])
+                }
             }
-
             for (const file of task[_files]) {
-                store_taskFileMetaData[_delete](file[_id])
-                store_files[_delete](file[_id])
+                if (store_taskFileMetaData != null) store_taskFileMetaData[_delete](file[_id])
+                if (store_files != null) store_files[_delete](file[_id])
             }
         }
     }
 
     function saveSettings(...items: [key: ObjectStoreKeys, value: unknown][]): void {
-        const store = db[_transaction](ObjectStoreNames[_settings], _readwrite)![_objectStore](ObjectStoreNames[_settings])
+        const store = db[_writeObjectStore](ObjectStoreNames[_settings])
+        if (store == null) return;
 
         for (const item of items) {
             store[_put]({ key: item[0], value: item[1] })
@@ -209,7 +208,8 @@ const _: VoidComponent = () => {
     }
 
     function saveMiscellaneous(...items: [key: ObjectStoreKeys, value: unknown][]): void {
-        const store = db[_transaction](ObjectStoreNames[_miscellaneous], _readwrite)![_objectStore](ObjectStoreNames[_miscellaneous])
+        const store = db[_writeObjectStore](ObjectStoreNames[_miscellaneous])
+        if (store == null) return;
 
         for (const item of items) {
             store[_put]({ key: item[0], value: item[1] })
@@ -217,11 +217,11 @@ const _: VoidComponent = () => {
     }
 
     async function addTask(task: Task, taskListIndex: number): Promise<void> {
-        const store = db[_transaction](ObjectStoreNames[_tasks], _readwrite)![_objectStore](ObjectStoreNames[_tasks])
-        // TODO: handle indexed db not accessable
+        const store = db[_writeObjectStore](ObjectStoreNames[_tasks])
 
         try {
-            const id = ((await db[_add]<Omit<ObjectStoreTasks, 'id'>>(store, {
+            let id = 0
+            if (store != null) id = ((await db[_add]<Omit<ObjectStoreTasks, 'id'>>(store, {
                 description: task[_description],
                 complete: task[_complete],
                 important: task[_important],
@@ -230,15 +230,27 @@ const _: VoidComponent = () => {
                 name: task[_name],
                 reminder: task[_reminder]
             }))[_target]! as any)[_result] as number
+
+            else for (const list of lists) {
+                tasks: for (const task of list[_tasks]) {
+                    if (task[_id] < id) continue tasks;
+
+                    id = task[_id] + 1
+                }
+            }
+
             const $$task: Task = {...task, id, subtasks: []}
             setLists(taskListIndex, _tasks, t => sortTasks([...t, $$task]))
         } catch {}
     }
 
     function editSubtask(subtask: SubTask, taskListIndex: number, taskIndex: number, subtaskIndex: number): void {
-        const transaction = db[_transaction]([ObjectStoreNames[_tasks], ObjectStoreNames[_subtasks]], _readwrite)!
-        const store_tasks = transaction[_objectStore](ObjectStoreNames[_tasks])
-        const store_subtasks = transaction[_objectStore](ObjectStoreNames[_subtasks])
+        const transaction = db[_transaction]([
+            ObjectStoreNames[_tasks],
+            ObjectStoreNames[_subtasks]
+        ], _readwrite)
+        const store_tasks = transaction != null? transaction[_objectStore](ObjectStoreNames[_tasks]) : null
+        const store_subtasks = transaction != null? transaction[_objectStore](ObjectStoreNames[_subtasks]) : null
         const isNameChanged = subtask[_name] != lists[taskListIndex][_tasks][taskIndex][_subtasks][subtaskIndex][_name]
         const subtasks = (isNameChanged
             ? [...lists[taskListIndex][_tasks][taskIndex][_subtasks]]
@@ -250,13 +262,10 @@ const _: VoidComponent = () => {
             subtasks[_sort]((a, b) => a[_name][_localeCompare](b[_name]))
         }
 
-        if (isNameChanged) {
-            setLists(taskListIndex, _tasks, taskIndex, _subtasks, subtasks)
-        } else {
-            setLists(taskListIndex, _tasks, taskIndex, _subtasks, subtaskIndex, {...subtask})
-        }
+        if (isNameChanged) setLists(taskListIndex, _tasks, taskIndex, _subtasks, subtasks)
+        else setLists(taskListIndex, _tasks, taskIndex, _subtasks, subtaskIndex, {...subtask})
 
-        store_subtasks[_put]({...subtask})
+        if (store_subtasks != null) store_subtasks[_put]({...subtask})
         if (!(!subtask[_complete] && lists[taskListIndex][_tasks][taskIndex][_complete])) return;
 
         const task: Task = {...lists[taskListIndex][_tasks][taskIndex], complete: false}
@@ -265,11 +274,9 @@ const _: VoidComponent = () => {
             tasks[taskIndex] = task
             setLists(taskListIndex, _tasks, sortTasks(tasks))
         }
-        else {
-            setLists(taskListIndex, _tasks, taskIndex, task)
-        }
+        else setLists(taskListIndex, _tasks, taskIndex, task)
 
-        store_tasks[_put]({
+        if (store_tasks != null) store_tasks[_put]({
             id: task[_id],
             description: task[_description],
             complete: task[_complete],
@@ -295,8 +302,8 @@ const _: VoidComponent = () => {
 
         setLists(taskListIndex, _tasks, taskIndex, _files, files)
 
-        const store_taskFileMetaData = db[_transaction](ObjectStoreNames[_taskFileMetaData], _readwrite)![_objectStore](ObjectStoreNames[_taskFileMetaData])
-        store_taskFileMetaData[_put]({...file})
+        const store_taskFileMetaData = db[_writeObjectStore](ObjectStoreNames[_taskFileMetaData])
+        if (store_taskFileMetaData != null) store_taskFileMetaData[_put]({...file})
     }
 
     /**
@@ -317,11 +324,11 @@ const _: VoidComponent = () => {
             ObjectStoreNames[_subtasks],
             ObjectStoreNames[_taskFileMetaData],
             ObjectStoreNames[_files],
-        ], _readwrite)!
-        const store_tasks = transaction[_objectStore](ObjectStoreNames[_tasks])
-        const store_subtasks = transaction[_objectStore](ObjectStoreNames[_subtasks])
-        const store_taskFileMetaData = transaction[_objectStore](ObjectStoreNames[_taskFileMetaData])
-        const store_files = transaction[_objectStore](ObjectStoreNames[_files])
+        ], _readwrite)
+        const store_tasks = transaction != null? transaction[_objectStore](ObjectStoreNames[_tasks]) : null
+        const store_subtasks = transaction != null? transaction[_objectStore](ObjectStoreNames[_subtasks]) : null
+        const store_taskFileMetaData = transaction != null? transaction[_objectStore](ObjectStoreNames[_taskFileMetaData]) : null
+        const store_files = transaction != null? transaction[_objectStore](ObjectStoreNames[_files]) : null
 
         if (pastTask[_subtasks][_length] > task[_subtasks][_length]) {
             const ids = task[_subtasks][_map](subtask => subtask[_id])
@@ -364,20 +371,22 @@ const _: VoidComponent = () => {
             setLists(taskListIndex, _tasks, taskIndex, newTask)
         }
 
-        for (const subtask of changedSubtasks) {
-            store_subtasks[_put]({...subtask})
-        }
+        if (store_subtasks != null) {
+            for (const subtask of changedSubtasks) {
+                store_subtasks[_put]({...subtask})
+            }
 
-        for (const subtask of deletedSubtasks) {
-            store_subtasks[_delete](subtask[_id])
+            for (const subtask of deletedSubtasks) {
+                store_subtasks[_delete](subtask[_id])
+            }
         }
 
         for (const file of deletedFiles) {
-            store_taskFileMetaData[_delete](file[_id])
-            store_files[_delete](file[_id])
+            if (store_taskFileMetaData != null) store_taskFileMetaData[_delete](file[_id])
+            if (store_files != null) store_files[_delete](file[_id])
         }
 
-        store_tasks[_put]({
+        if (store_tasks != null) store_tasks[_put]({
             id: task[_id],
             description: task[_description],
             complete: task[_complete],
@@ -395,11 +404,11 @@ const _: VoidComponent = () => {
             ObjectStoreNames[_files],
             ObjectStoreNames[_taskFileMetaData],
             ObjectStoreNames[_subtasks]
-        ], _readwrite)!
-        const store_tasks = transaction[_objectStore](ObjectStoreNames[_tasks])
-        const store_subtasks = transaction[_objectStore](ObjectStoreNames[_subtasks])
-        const store_files = transaction[_objectStore](ObjectStoreNames[_files])
-        const store_taskFileMetaData = transaction[_objectStore](ObjectStoreNames[_taskFileMetaData])
+        ], _readwrite)
+        const store_tasks = transaction != null? transaction[_objectStore](ObjectStoreNames[_tasks]) : null
+        const store_subtasks = transaction != null? transaction[_objectStore](ObjectStoreNames[_subtasks]) : null
+        const store_files = transaction != null? transaction[_objectStore](ObjectStoreNames[_files]) : null
+        const store_taskFileMetaData = transaction != null? transaction[_objectStore](ObjectStoreNames[_taskFileMetaData]) : null
 
         setLists(
             taskListIndex,
@@ -410,14 +419,14 @@ const _: VoidComponent = () => {
             ]
         )
 
-        store_tasks[_delete](task[_id])
-        for (const subtask of task[_subtasks]) {
+        if (store_tasks != null) store_tasks[_delete](task[_id])
+        if (store_subtasks != null) for (const subtask of task[_subtasks]) {
             store_subtasks[_delete](subtask[_id])
         }
 
         for (const file of task[_files]) {
-            store_files[_delete](file[_id])
-            store_taskFileMetaData[_delete](file[_id])
+            if (store_files != null) store_files[_delete](file[_id])
+            if (store_taskFileMetaData != null) store_taskFileMetaData[_delete](file[_id])
         }
     }
 
@@ -498,8 +507,7 @@ const _: VoidComponent = () => {
     }
 
     async function addLabel(name: string, color: HEXColor | null): Promise<void> {
-        const store = db[_transaction](ObjectStoreNames[_labels], _readwrite)![_objectStore](ObjectStoreNames[_labels])
-        // TODO: handle indexed db not accessable
+        const store = db[_writeObjectStore](ObjectStoreNames[_labels])
 
         try {
             let id: number = 1
@@ -512,12 +520,17 @@ const _: VoidComponent = () => {
                 if (labels[i] != undefined) continue;
                 isAdded = true
                 id = i
-                await db[_add]<ObjectStoreTaskLabels>(store, {id, name, color})
+                if (store != null) await db[_add]<ObjectStoreTaskLabels>(store, {id, name, color})
                 break
             }
 
             if (!isAdded) {
-                id = ((await db[_add]<Omit<ObjectStoreTaskLabels, 'id'>>(store, {name, color}))[_target] as any)[_result] as number
+                if (store != null) id = ((await db[_add]<Omit<ObjectStoreTaskLabels, 'id'>>(store, {name, color}))[_target] as any)[_result] as number
+                else for (const label of labels){
+                    if (label == undefined) continue
+                    if (label[_id] < id) continue
+                    id = label[_id] + 1
+                }
             }
 
             const $labels: (TaskLabel | undefined)[] = [...labels]
@@ -531,14 +544,14 @@ const _: VoidComponent = () => {
         $labels[label[_id]] = label
         setLabels($labels)
 
-        const store = db[_transaction](ObjectStoreNames[_labels], _readwrite)![_objectStore](ObjectStoreNames[_labels])
-        store[_put]({...label})
+        const store = db[_writeObjectStore](ObjectStoreNames[_labels])
+        if (store != null) store[_put]({...label})
     }
 
     function deleteLabel(label: TaskLabel): void {
-        const transaction = db[_transaction]([ObjectStoreNames[_tasks], ObjectStoreNames[_labels]], _readwrite)!
-        const store_tasks = transaction[_objectStore](ObjectStoreNames[_tasks])
-        const store_labels = transaction[_objectStore](ObjectStoreNames[_labels])
+        const transaction = db[_transaction]([ObjectStoreNames[_tasks], ObjectStoreNames[_labels]], _readwrite)
+        const store_tasks = transaction != null? transaction[_objectStore](ObjectStoreNames[_tasks]) : null
+        const store_labels = transaction != null? transaction[_objectStore](ObjectStoreNames[_labels]) : null
         const $labels = [...labels]
         $labels[_splice](label[_id], 1)
 
@@ -551,7 +564,7 @@ const _: VoidComponent = () => {
                     j, _labelIds,
                     labelIds
                 )
-                store_tasks[_put]({
+                if (store_tasks != null) store_tasks[_put]({
                     id: task[_id],
                     description: task[_description],
                     complete: task[_complete],
@@ -564,18 +577,20 @@ const _: VoidComponent = () => {
             }
         }
         setLabels($labels)
-        store_labels[_delete](label[_id])
+        if (store_labels != null) store_labels[_delete](label[_id])
     }
 
     async function addFiles(files: FileList, task: Task, taskListIndex: number, taskIndex: number): Promise<TaskFileMetaData[]> {
         if (files[_length] == 0) return []
 
-        const transaction = db[_transaction]([ObjectStoreNames[_taskFileMetaData], ObjectStoreNames[_files]], _readwrite)!
-        const store_taskFileMetaData = transaction![_objectStore](ObjectStoreNames[_taskFileMetaData])
-        const store_files = transaction![_objectStore](ObjectStoreNames[_files])
+        const transaction = db[_transaction]([ObjectStoreNames[_taskFileMetaData], ObjectStoreNames[_files]], _readwrite)
+        const store_taskFileMetaData = transaction != null? transaction[_objectStore](ObjectStoreNames[_taskFileMetaData]) : null
+        const store_files = transaction != null? transaction[_objectStore](ObjectStoreNames[_files]) : null
         const $files: TaskFileMetaData[] = [...lists[taskListIndex][_tasks][taskIndex][_files]]
 
+        // TODO: db error should not accept any file
         try {
+            if (store_taskFileMetaData == null || store_files == null) return $files
             for (const file of files) {
                 const id = ((await db[_add]<Omit<ObjectStoreTaskFileMetaData, 'id'>>(store_taskFileMetaData, {
                     listId: task[_listId],
@@ -606,9 +621,14 @@ const _: VoidComponent = () => {
     }
 
     function downloadTaskFile(file: TaskFileMetaData, taskListIndex: number, taskIndex: number, fileIndex: number): void {
-        const transaction = db[_transaction]([ObjectStoreNames[_files], ObjectStoreNames[_taskFileMetaData]], _readonly)!
-        const store_files = transaction[_objectStore](ObjectStoreNames[_files])
-        const store_taskFileMetaData = transaction[_objectStore](ObjectStoreNames[_taskFileMetaData])
+        const transaction = db[_transaction]([
+            ObjectStoreNames[_files],
+            ObjectStoreNames[_taskFileMetaData]
+        ], _readonly)
+        const store_files = transaction == null? null : transaction[_objectStore](ObjectStoreNames[_files])
+        const store_taskFileMetaData = transaction == null? null : transaction[_objectStore](ObjectStoreNames[_taskFileMetaData])
+        if (store_files == null || store_taskFileMetaData == null) return;
+
         db[_get]<ObjectStoreFiles>(store_files, file[_id])[_then]((result) => {
             if (!result) {
                 if (file[_id] == lists[taskListIndex][_tasks][taskIndex][_files][fileIndex][_id]) {
@@ -630,9 +650,14 @@ const _: VoidComponent = () => {
     }
 
     async function getBlob(file: TaskFileMetaData, taskListIndex: number, taskIndex: number, fileIndex: number): Promise<Blob | null> {
-        const transaction = db[_transaction]([ObjectStoreNames[_files], ObjectStoreNames[_taskFileMetaData]], _readonly)!
-        const store_files = transaction[_objectStore](ObjectStoreNames[_files])
-        const store_taskFileMetaData = transaction[_objectStore](ObjectStoreNames[_taskFileMetaData])
+        const transaction = db[_transaction]([
+            ObjectStoreNames[_files],
+            ObjectStoreNames[_taskFileMetaData]],
+        _readonly)
+        const store_files = transaction == null? null : transaction[_objectStore](ObjectStoreNames[_files])
+        const store_taskFileMetaData = transaction == null? null : transaction[_objectStore](ObjectStoreNames[_taskFileMetaData])
+        if (store_files == null || store_taskFileMetaData == null) return null
+
         try {
             const result = await db[_get]<ObjectStoreFiles>(store_files, file[_id])
             if (!result) {
@@ -657,17 +682,30 @@ const _: VoidComponent = () => {
     }
 
     async function addSubtask(subtask: SubTask, taskListIndex: number, taskIndex: number): Promise<SubTask[]> {
-        const transaction = db[_transaction]([ObjectStoreNames[_tasks], ObjectStoreNames[_subtasks]], _readwrite)!
-        const store_tasks = transaction[_objectStore](ObjectStoreNames[_tasks])
-        const store_subtasks = transaction[_objectStore](ObjectStoreNames[_subtasks])
+        const transaction = db[_transaction]([
+            ObjectStoreNames[_tasks],
+            ObjectStoreNames[_subtasks]
+        ], _readwrite)
+        const store_tasks = transaction == null? null : transaction[_objectStore](ObjectStoreNames[_tasks])
+        const store_subtasks = transaction == null? null : transaction[_objectStore](ObjectStoreNames[_subtasks])
 
         try {
-            const id = ((await db[_add]<Omit<ObjectStoreSubTasks, 'id'>>(store_subtasks, {
+            let id = 0
+            if (store_subtasks != null) id = ((await db[_add]<Omit<ObjectStoreSubTasks, 'id'>>(store_subtasks, {
                 complete: subtask[_complete],
                 listId: subtask[_listId],
                 name: subtask[_name],
                 taskId: subtask[_taskId]
             }))[_target]! as any)[_result] as number
+
+            else for (const list of lists){
+                for (const task of list[_tasks]){
+                    subtasks: for (const subtask of task[_subtasks]){
+                        if (subtask[_id] < id) continue subtasks
+                        id = subtask[_id] + 1
+                    }
+                }
+            }
 
             const $subtask = {...subtask}
             $subtask[_id] = id
@@ -684,9 +722,7 @@ const _: VoidComponent = () => {
                     tasks[taskIndex] = task
                     setLists(taskListIndex, _tasks, sortTasks(tasks))
                 }
-                else {
-                    setLists(taskListIndex, _tasks, taskIndex, task)
-                }
+                else setLists(taskListIndex, _tasks, taskIndex, task)
             }
         } catch {}
         return lists[taskListIndex][_tasks][taskIndex][_subtasks]
@@ -705,7 +741,7 @@ const _: VoidComponent = () => {
     }
 
     async function addNewTaskList(name: string, emoji: string | null): Promise<void> {
-        const store_tasks = db[_transaction]([ObjectStoreNames[_lists]], _readwrite)![_objectStore](ObjectStoreNames[_lists])
+        const store_tasks = db[_writeObjectStore](ObjectStoreNames[_lists])
         name = name[_trim]()
         let count = 0
         for (const list of lists) {
@@ -715,9 +751,16 @@ const _: VoidComponent = () => {
         if (count > 0) name += ` (${count})`
 
         try {
-            const id = ((await db[_add]<Omit<ObjectStoreTaskLists, 'id'>>(store_tasks, {
+            let id = 0
+            if (store_tasks != null) id = ((await db[_add]<Omit<ObjectStoreTaskLists, 'id'>>(store_tasks, {
                 emoji, name
             }))[_target]! as any)[_result] as number
+
+            else for (const list of lists) {
+                if (list[_id] < id) continue
+
+                id = list[_id] + 1
+            }
 
             // make the default list always on top
             const index = lists[_findIndex](list => list[_id] == DEFAULT_TASK_LIST[_id])
@@ -725,12 +768,11 @@ const _: VoidComponent = () => {
                 const otherLists = lists[_slice](0, index)[_concat](lists[_slice](index + 1), { id, emoji, name, tasks: []} satisfies TaskList)
                 otherLists[_sort]((a, b) => a[_name][_localeCompare](b[_name]))
                 setLists([lists[index]][_concat](otherLists))
-            } else {
-                setLists(values => [
-                    ...values,
-                    { id, emoji, name, tasks: []} satisfies TaskList
-                ][_sort]((a, b) => a[_name][_localeCompare](b[_name])))
             }
+            else setLists(values => [
+                ...values,
+                { id, emoji, name, tasks: []} satisfies TaskList
+            ][_sort]((a, b) => a[_name][_localeCompare](b[_name])))
             changePage(id)
         } catch {}
     }
@@ -927,10 +969,10 @@ const _: VoidComponent = () => {
             ObjectStoreNames[_tasks],
             ObjectStoreNames[_subtasks],
             ObjectStoreNames[_taskFileMetaData],
-        ], _readwrite)!
-        const store_tasks = transaction[_objectStore](ObjectStoreNames[_tasks])
-        const store_subtasks = transaction[_objectStore](ObjectStoreNames[_subtasks])
-        const store_taskFileMetaData = transaction[_objectStore](ObjectStoreNames[_taskFileMetaData])
+        ], _readwrite)
+        const store_tasks = transaction == null? null : transaction[_objectStore](ObjectStoreNames[_tasks])
+        const store_subtasks = transaction == null? null : transaction[_objectStore](ObjectStoreNames[_subtasks])
+        const store_taskFileMetaData = transaction == null? null : transaction[_objectStore](ObjectStoreNames[_taskFileMetaData])
         const targetList = lists[targetTaskListIndex]
 
         // Update manually if list has tasks, because
@@ -947,7 +989,7 @@ const _: VoidComponent = () => {
             _tasks,
             tasks => tasks[_slice](0, taskIndex)[_concat](tasks[_slice](taskIndex + 1))
         )
-        store_tasks[_put]({
+        if (store_tasks != null) store_tasks[_put]({
             complete: task[_complete],
             description: task[_description],
             id: task[_id],
@@ -958,14 +1000,14 @@ const _: VoidComponent = () => {
             reminder: task[_reminder]
         } satisfies ObjectStoreTasks)
 
-        for (const subtask of task[_subtasks]) {
+        if (store_subtasks != null) for (const subtask of task[_subtasks]) {
             store_subtasks[_put]({
                 ...subtask,
                 listId: targetList[_id]
             } satisfies ObjectStoreSubTasks)
         }
 
-        for (const file of task[_files]) {
+        if (store_taskFileMetaData != null) for (const file of task[_files]) {
             store_taskFileMetaData[_put]({
                 ...file,
                 listId: targetList[_id]
@@ -1034,7 +1076,9 @@ const _: VoidComponent = () => {
     }
 
     function initLastPage(): void {
-        const store = db[_transaction](ObjectStoreNames[_miscellaneous], _readonly)![_objectStore](ObjectStoreNames[_miscellaneous])
+        const store = db[_readObjectStore](ObjectStoreNames[_miscellaneous])
+        if (store == null) return;
+
         db[_get]<ObjectStoreMiscellaneous<Pages | number>>(store, ObjectStoreKeys.miscellaneous_lastPage)[_then]((v) => {
             if (!v) return getTasks()
 
@@ -1044,12 +1088,16 @@ const _: VoidComponent = () => {
     }
 
     function initMiscellaneous(): void {
-        const store = db[_transaction](ObjectStoreNames[_miscellaneous], _readonly)![_objectStore](ObjectStoreNames[_miscellaneous])
+        const store = db[_readObjectStore](ObjectStoreNames[_miscellaneous])
+        if (store == null) return;
+
         db[_get]<ObjectStoreMiscellaneous<boolean>>(store, ObjectStoreKeys.miscellaneous_isSideNavigationExpand)[_then]((v) => setIsExpandSideNavigation(d => v? v[_value] : d))
     }
 
     function initSettings(): void {
-        const store = db[_transaction](ObjectStoreNames[_settings], _readonly)![_objectStore](ObjectStoreNames[_settings])
+        const store = db[_readObjectStore](ObjectStoreNames[_settings])
+        if (store == null) return;
+
         db[_get]<ObjectStoreSettings<SortBy>>(store, ObjectStoreKeys.settings_sortBy)[_then]((v) => setSettings(_sortBy, d => v? v[_value] : d))
         db[_get]<ObjectStoreSettings<SortMode>>(store, ObjectStoreKeys.settings_sortMode)[_then]((v) => setSettings(_sortMode, d => v? v[_value] : d))
         db[_get]<ObjectStoreSettings<boolean>>(store, ObjectStoreKeys.settings_isShowDeleteTaskWarning)[_then]((v) => setSettings(_isShowDeleteTaskWarning, d => v? v[_value] : d))
@@ -1057,7 +1105,9 @@ const _: VoidComponent = () => {
     }
 
     function initLists(): void {
-        const store = db[_transaction](ObjectStoreNames[_lists], _readonly)![_objectStore](ObjectStoreNames[_lists])
+        const store = db[_readObjectStore](ObjectStoreNames[_lists])
+        if (store == null) return;
+
         db[_getAll]<ObjectStoreTaskLists>(store)[_then]((v) => {
             if (!v) return;
             let lists: TaskList[] = []
@@ -1081,7 +1131,9 @@ const _: VoidComponent = () => {
     }
 
     function initLabels(): void {
-        const store = db[_transaction](ObjectStoreNames[_labels], _readonly)![_objectStore](ObjectStoreNames[_labels])
+        const store = db[_readObjectStore](ObjectStoreNames[_labels])
+        if (store == null) return;
+
         db[_getAll]<ObjectStoreTaskLabels>(store)[_then]((v) => {
             if (!v) return;
             const values: TaskLabel[] = []
@@ -1099,26 +1151,27 @@ const _: VoidComponent = () => {
             ObjectStoreNames[_subtasks],
             ObjectStoreNames[_taskFileMetaData],
             ObjectStoreNames[_files],
-        ], _readwrite)!
-        const listsStore = transaction[_objectStore](ObjectStoreNames[_lists])
-        const tasksStore = transaction[_objectStore](ObjectStoreNames[_tasks])
-        const subTasksStore = transaction[_objectStore](ObjectStoreNames[_subtasks])
-        const fileMetaDataStore = transaction[_objectStore](ObjectStoreNames[_taskFileMetaData])
-        const filesStore = transaction[_objectStore](ObjectStoreNames[_files])
+        ], _readwrite)
+        const listsStore = transaction == null? null : transaction[_objectStore](ObjectStoreNames[_lists])
+        const tasksStore = transaction == null? null : transaction[_objectStore](ObjectStoreNames[_tasks])
+        const subTasksStore = transaction == null? null : transaction[_objectStore](ObjectStoreNames[_subtasks])
+        const fileMetaDataStore = transaction == null? null : transaction[_objectStore](ObjectStoreNames[_taskFileMetaData])
+        const filesStore = transaction == null? null : transaction[_objectStore](ObjectStoreNames[_files])
         const list = lists[selectedTaskListIndexToDelete()]
         changePage(Pages[_tasks])
 
-        listsStore[_delete](list[_id])
-        for (const task of list[_tasks]) {
-            tasksStore[_delete](task[_id])
+        if (listsStore != null) listsStore[_delete](list[_id])
 
-            for (const subtask of task[_subtasks]) {
-                subTasksStore[_delete](subtask[_id])
+        for (const task of list[_tasks]) {
+            if (tasksStore != null) tasksStore[_delete](task[_id])
+
+            if (subTasksStore != null) {
+                for (const subtask of task[_subtasks]) subTasksStore[_delete](subtask[_id])
             }
 
             for (const fileMetaData of task[_files]) {
-                fileMetaDataStore[_delete](fileMetaData[_id])
-                filesStore[_delete](fileMetaData[_id])
+                if (fileMetaDataStore != null) fileMetaDataStore[_delete](fileMetaData[_id])
+                if (filesStore != null) filesStore[_delete](fileMetaData[_id])
             }
         }
 
@@ -1133,10 +1186,10 @@ const _: VoidComponent = () => {
             ObjectStoreNames[_tasks],
             ObjectStoreNames[_subtasks],
             ObjectStoreNames[_taskFileMetaData]
-        ], _readonly)!
-        const tasksStore = transaction[_objectStore](ObjectStoreNames[_tasks])
-        const subTasksStore = transaction[_objectStore](ObjectStoreNames[_subtasks])
-        const fileMetaDataStore = transaction[_objectStore](ObjectStoreNames[_taskFileMetaData])
+        ], _readonly)
+        const tasksStore = transaction == null? null : transaction[_objectStore](ObjectStoreNames[_tasks])
+        const subTasksStore = transaction == null? null : transaction[_objectStore](ObjectStoreNames[_subtasks])
+        const fileMetaDataStore = transaction == null? null : transaction[_objectStore](ObjectStoreNames[_taskFileMetaData])
         const isGetAll = (
             ([
                 Pages[_all], Pages[_completed], Pages[_uncompleted],
@@ -1157,7 +1210,7 @@ const _: VoidComponent = () => {
         }
 
         isEveryTaskLoaded = Object[_keys](list_idIndex)[_length] == 0
-        if (isEveryTaskLoaded) return;
+        if (isEveryTaskLoaded || tasksStore == null) return;
 
         try {
 
@@ -1182,7 +1235,7 @@ const _: VoidComponent = () => {
 
             // SUBTASKS
             const subtasks: SubTask[] = []
-            await db[_cursor](subTasksStore, (cursor) => {
+            if (subTasksStore != null) await db[_cursor](subTasksStore, (cursor) => {
                 if (!cursor) return false
                 const subtask = cursor[_value] as ObjectStoreSubTasks
                 const add = () => {
@@ -1200,7 +1253,7 @@ const _: VoidComponent = () => {
 
             // FILES
             const fileMetaDatas: TaskFileMetaData[] = []
-            await db[_cursor](fileMetaDataStore, (cursor) => {
+            if (fileMetaDataStore != null) await db[_cursor](fileMetaDataStore, (cursor) => {
                 if (!cursor) return false
                 const fileMetaData = cursor[_value] as ObjectStoreTaskFileMetaData
                 const add = () => {
@@ -1227,7 +1280,9 @@ const _: VoidComponent = () => {
         setPage(page)
         getTasks()
 
-        const store = db[_transaction](ObjectStoreNames[_miscellaneous], _readwrite)![_objectStore](ObjectStoreNames[_miscellaneous])
+        const store = db[_writeObjectStore](ObjectStoreNames[_miscellaneous])
+        if (store == null) return;
+
         store[_put]({
             key: ObjectStoreKeys.miscellaneous_lastPage,
             value: page
@@ -1235,7 +1290,7 @@ const _: VoidComponent = () => {
     }
 
     function renameTaskList(): void {
-        const store = db[_transaction](ObjectStoreNames[_lists], _readwrite)![_objectStore](ObjectStoreNames[_lists])
+        const store = db[_writeObjectStore](ObjectStoreNames[_lists])
         const list = lists[selectedTaskListIndexToRename()]
         const id = list[_id]
         const emoji = editListEmoji()
@@ -1263,7 +1318,7 @@ const _: VoidComponent = () => {
             $lists[_sort]((a, b) => a[_name][_localeCompare](b[_name]))
         }
         setLists($lists)
-        store[_put]({emoji, id, name} satisfies ObjectStoreTaskLists)
+        if (store != null) store[_put]({emoji, id, name} satisfies ObjectStoreTaskLists)
     }
 
     onMount(() => {
