@@ -65,7 +65,7 @@ $side_navigation_none: 680px;
     }
 }
 
-.body_appbar {
+:global(.appbar).body_appbar {
     padding-left: 12px;
     padding-right: 4px;
     width: 1080px;
@@ -181,7 +181,7 @@ $side_navigation_none: 680px;
         }
     }
 
-    > .body_appbar {
+    > :global(.appbar).body_appbar {
         position: sticky;
         top: 0;
         background-color: rgb(var(--color-surface));
@@ -304,7 +304,7 @@ $side_navigation_none: 680px;
         height: 100%;
     }
 
-    > .body_appbar {
+    > :global(.appbar).body_appbar {
         position: sticky;
         top: 0;
         background-color: rgb(var(--color-surface));
