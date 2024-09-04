@@ -15,7 +15,7 @@ export const apps: AppItem[] = [
         link: RoutesLinks.tasks,
         color: '#9735E4',
         buildNumber: 1,
-        buildVersion: '0.1.0',
+        buildVersion: '0.1.1',
     },
     {
         logoURL: calculator_logo[_src],
