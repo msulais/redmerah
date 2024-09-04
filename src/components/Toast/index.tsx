@@ -1,51 +1,46 @@
 import { type JSX, type ParentComponent, splitProps, children, onMount, onCleanup } from "solid-js"
 
-import { _dispatchEvent, _onOpen, _onClose, _leading, _trailing, _children, _header, _actions, _classList, _ref, _onToggleOpen, _move, _open, _hidePopover, _centerCenterTop, _showPopover, _auto, _leftTop, _leftBottom, _centerTop, _centerBottom, _rightTop, _rightBottom, _left, _top, _right, _bottom, _transform, _detail, _includes } from "@/data/string"
-import { removeAttribute, setAttribute, toggleAttribute } from "@/utils/attributes"
+import { _dispatchEvent, _onOpen, _onClose, _leading, _trailing, _children, _header, _actions, _classList, _ref, _onToggleOpen, _centerTop, _centerCenterTop, _leftTop, _centerCenterLeftTop, _leftBottom, _centerCenterLeftBottom, _centerBottom, _centerCenterBottom, _rightTop, _centerCenterRightTop, _rightBottom, _centerCenterRightBottom, _detail } from "@/data/string"
+import { toggleAttribute } from "@/utils/attributes"
 import { addEventListener, removeEventListener } from "@/utils/event"
-import { clearTimeDelayed, setTimeDelayed, timeout } from "@/utils/timeout"
-import { setStyleProperty } from "@/utils/element"
+import { clearTimeDelayed, setTimeDelayed } from "@/utils/timeout"
+import { getDocumentBody } from "@/data/window"
 
 import List from "@/components/List"
-import Popover, { type PopoverProps } from "@/components/Popover"
+import Popover, { type PopoverProps, closePopover, openPopover, PopoverPosition } from "@/components/Popover"
 import './index.scss'
 
-const
-    _12px = '12px',
-    _min12px = '-12px',
-    _8px = '8px',
-    _50persen = '50%', 
-    _min50persen = '-50%', 
-    _0 = '0'
-;
-
 enum ToastPosition {
-    leftTop, 
+    leftTop,
     centerTop,
-    rightTop, 
-    leftBottom, 
-    centerBottom, 
+    rightTop,
+    leftBottom,
+    centerBottom,
     rightBottom
 }
 
 type ToastOpenDetail = {
+    event: Event
     autoClose?: boolean
     duration?: number
     position?: ToastPosition
 }
 
 enum ToastEvents {
-    onOpen = 'on-open-toast', 
+    onOpen = 'on-open-toast',
     onClose = 'on-close-toast'
 }
 
 enum ToastAttributes {
-    open = 'data-open', 
+    open = 'data-open',
     move = 'data-move',
 }
 
-function openToast(toast: HTMLDivElement, options?: ToastOpenDetail): void {
-    toast[_dispatchEvent](new CustomEvent(ToastEvents[_onOpen], {detail: {...options}}))
+function openToast(event: Event, toast: HTMLDivElement, options?: Omit<ToastOpenDetail, 'event'>): void {
+    toast[_dispatchEvent](new CustomEvent(
+        ToastEvents[_onOpen],
+        {detail: {event, ...options} satisfies ToastOpenDetail}
+    ))
 }
 
 function closeToast(toast: HTMLDivElement): void {
@@ -61,104 +56,45 @@ type ToastProps = PopoverProps & {
 const Toast: ParentComponent<ToastProps> = ($props) => {
     const [props, other] = splitProps($props, [
         _leading, _trailing, _children,
-        _header, _actions, _classList, 
+        _header, _actions, _classList,
         _ref, _onToggleOpen
     ])
     const actionsComponent = children(() => props[_actions])
     let toast_ref: HTMLDivElement
     let isOpen = false
-    let gPosition: ToastPosition = ToastPosition[_centerTop]
     let timeoutId: number | null = null
 
     async function closeToast(): Promise<void> {
         if (!isOpen) return;
-        isOpen = false
-
         if (timeoutId != null) {
             clearTimeDelayed(timeoutId)
             timeoutId = null
         }
-
-        const isCenter = gPosition == ToastPosition[_centerTop] || gPosition == ToastPosition[_centerBottom]
-        const isTop = ([
-            ToastPosition[_leftTop], 
-            ToastPosition[_centerTop], 
-            ToastPosition[_rightTop]
-        ][_includes](gPosition))
-
-        setStyleProperty(toast_ref, _transform, `translate(${isCenter? _min50persen : '0'}, ${isTop? _min12px : _12px})`)
-        removeAttribute(toast_ref, ToastAttributes[_move])
-        await timeout(5E2)
-        removeAttribute(toast_ref, ToastAttributes[_open])
-        toast_ref[_hidePopover]()
+        closePopover(toast_ref)
     }
 
     async function openToast(options: ToastOpenDetail): Promise<void> {
-        if (isOpen) {
-            await closeToast()
-        }
-        isOpen = true
+        if (isOpen) return
 
-        const { 
+        const {
+            event,
             position = ToastPosition[_centerTop],
-            autoClose = true, 
+            autoClose = true,
             duration = 5E3
         } = options;
 
-        gPosition = position
-        toast_ref[_showPopover]()
+        let $position = PopoverPosition[_centerCenterTop]
+        if (position == ToastPosition[_leftTop]) $position = PopoverPosition[_centerCenterLeftTop]
+        else if (position == ToastPosition[_leftBottom]) $position = PopoverPosition[_centerCenterLeftBottom]
+        else if (position == ToastPosition[_centerTop]) $position = PopoverPosition[_centerCenterTop]
+        else if (position == ToastPosition[_centerBottom]) $position = PopoverPosition[_centerCenterBottom]
+        else if (position == ToastPosition[_rightTop]) $position = PopoverPosition[_centerCenterRightTop]
+        else if (position == ToastPosition[_rightBottom]) $position = PopoverPosition[_centerCenterRightBottom]
 
-        let left: string = _auto
-        let top: string = _auto
-        let right: string = _auto
-        let bottom: string = _auto
-        let transform: string | null = null
-        let transformAfter: string | null = null
-        const translate = (left: string, top: string) => `translate(${left}, ${top})`
-        if (position == ToastPosition[_leftTop]){
-            top = _8px
-            left = _8px
-            transform = translate(_0, _min12px)
-        }
-        else if (position == ToastPosition[_leftBottom]){
-            bottom = _8px
-            left = _8px
-            transform = translate(_0, _12px)
-        }
-        else if (position == ToastPosition[_centerTop]){
-            top = _8px
-            left = _50persen
-            transform = translate(_min50persen, _min12px)
-            transformAfter = translate(_min50persen, _0)
-        }
-        else if (position == ToastPosition[_centerBottom]){
-            bottom = _8px
-            left = _50persen
-            transform = translate(_min50persen, _12px)
-            transformAfter = translate(_min50persen, _0)
-        }
-        else if (position == ToastPosition[_rightTop]){
-            right = _8px
-            top = _8px
-            transform = translate(_0, _min12px)
-        }
-        else if (position == ToastPosition[_rightBottom]){
-            bottom = _8px
-            right = _8px
-            transform = translate(_0, _12px)
-        }
-
-        setStyleProperty(toast_ref, _left, left)
-        setStyleProperty(toast_ref, _top, top)
-        setStyleProperty(toast_ref, _right, right)
-        setStyleProperty(toast_ref, _bottom, bottom)
-        setStyleProperty(toast_ref, _transform, transform)
-
-        setTimeDelayed(async () => {
-            setAttribute(toast_ref, ToastAttributes[_open], '')
-            await timeout(20)
-            setAttribute(toast_ref, ToastAttributes[_move], '')
-            setStyleProperty(toast_ref, _transform, transformAfter)
+        openPopover(event, toast_ref, {
+            anchor: getDocumentBody(),
+            manualDismiss: true,
+            position: $position
         })
 
         if (!autoClose) return;
@@ -180,7 +116,7 @@ const Toast: ParentComponent<ToastProps> = ($props) => {
     function initCustomEvent(): void {
         addEventListener<CustomEvent>(toast_ref, ToastEvents[_onOpen], customOnOpen)
         addEventListener<CustomEvent>(toast_ref, ToastEvents[_onClose], customOnClose)
-        
+
         onCleanup(() => {
             removeEventListener<CustomEvent>(toast_ref, ToastEvents[_onOpen], customOnOpen)
             removeEventListener<CustomEvent>(toast_ref, ToastEvents[_onClose], customOnClose)
@@ -220,12 +156,12 @@ const Toast: ParentComponent<ToastProps> = ($props) => {
 
 export {
     Toast,
-    openToast, 
-    closeToast, 
+    openToast,
+    closeToast,
     ToastPosition
 }
 export type {
-    ToastProps, 
+    ToastProps,
     ToastEvents,
     ToastAttributes
 }

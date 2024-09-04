@@ -1,4 +1,4 @@
-.emoji-picker {
+.modal.emoji-picker {
     box-shadow: var(--elevation1);
     width: 313px;
 }
@@ -7,11 +7,11 @@
     min-height: 285px;
     max-height: 285px;
     overflow: auto;
-    
+
     &[data-hidden] {
         display: none;
     }
-    
+
     > div {
         position: relative;
         display: grid;

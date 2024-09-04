@@ -20,27 +20,22 @@
     width: fit-content;
     height: fit-content;
     position: fixed;
-    transition-duration: .3s,   0s,  0s,        0s,      0s,  0s;
-    transition-property: all, left, top, transform, padding, gap;
     white-space: pre-wrap;
     position: fixed;
     z-index: 99;
+    transition-property: opacity;
+    transition-duration: .3s;
     transition-timing-function: var(--transition-spring-bounce);
 
     [data-corner=sharp] & { border-radius: 0 }
     [data-corner=full-round] & { border-radius: 14px }
 
     &[data-open] {
-        transition-duration: .3s, 0s, 0s;
-        transition-property: all, left, top;
-    }
-
-    &[data-move] {
         opacity: 1;
     }
 }
 
-.rich-tooltip {
+.popover.rich-tooltip {
     box-shadow: var(--elevation1);
 
     > div {

@@ -1,29 +1,31 @@
 import { onCleanup, onMount, splitProps, type FlowComponent, type JSX } from "solid-js"
 
 import type { ComponentEvent } from "@/types/event"
-import { _textTooltipListener, _centerTop, _createElement, _div, _id, _popover, _manual, _appendChild, _top, _height, _left, _width, _centerBottom, _centerBottomToLeft, _centerBottomToRight, _centerTopToLeft, _centerTopToRight, _leftCenter, _leftCenterToBottom, _leftCenterToTop, _rightCenter, _rightCenterToBottom, _rightCenterToTop, _move, _open, _hidePopover, _openTextTooltip, _detail, _isSameNode, _textContent, _showPopover, _px, _transform, _closeTextTooltip, _updatePointerTextTooltip, _pointer, _dispatchEvent, _useAnchor, _gap, _position, _startDelayDuration, _text, _endDelayDuration, _clientX, _clientY, _children, _tooltip, _classList, _ref, _usePortal, _tooltipListener, _onMouseLeave, _onMouseDown, _onMouseMove, _onTouchCancel, _onTouchEnd, _bottom, _right, _contains } from "@/data/string"
+import { _textTooltipListener, _centerTop, _createElement, _div, _id, _popover, _manual, _appendChild, _top, _height, _left, _width, _centerBottom, _centerBottomToLeft, _centerBottomToRight, _centerTopToLeft, _centerTopToRight, _leftCenter, _leftCenterToBottom, _leftCenterToTop, _rightCenter, _rightCenterToBottom, _rightCenterToTop, _move, _open, _hidePopover, _openTextTooltip, _detail, _isSameNode, _textContent, _showPopover, _px, _transform, _closeTextTooltip, _updatePointerTextTooltip, _pointer, _dispatchEvent, _useAnchor, _gap, _position, _startDelayDuration, _text, _endDelayDuration, _clientX, _clientY, _children, _tooltip, _classList, _ref, _usePortal, _tooltipListener, _onMouseLeave, _onMouseDown, _onMouseMove, _onTouchCancel, _onTouchEnd, _bottom, _right, _contains, _openDone, _animate, _finished, _springBounce, _then, _none } from "@/data/string"
 import { hasAttribute, removeAttribute, setAttribute } from "@/utils/attributes"
 import { addEventListener, stopPropagation } from "@/utils/event"
 import { getBoundingClientRect, setStyleProperty } from "@/utils/element"
-import { clearTimeDelayed, setTimeDelayed, timeout } from "@/utils/timeout"
+import { clearTimeDelayed, setTimeDelayed } from "@/utils/timeout"
 import { getDocument, getDocumentBody } from "@/data/window"
 import { FlyoutPosition as TooltipPosition } from "@/enums/position"
 import { getFlyoutPosition } from "@/utils/flyout"
 import { mathAbs } from "@/utils/math"
-import { BodyAttributes, PopoverAttributes } from "@/enums/attributes"
+import { BodyAttributes } from "@/enums/attributes"
 import { BodyEvents } from "@/enums/events"
 
-import { Popover, type PopoverProps } from "@/components/Popover"
+import { closePopover, openPopover, Popover, type PopoverProps } from "@/components/Popover"
 import './index.scss'
+import { AnimationEffectTiming } from "@/enums/animation"
 
 enum TooltipAttributes {
     open = 'data-open',
-    move = 'data-move',
+    openDone = 'data-open-done',
 }
 
 const TEXT_TOOLTIP_ID = 'text-tooltip'
 
 type TooltipOpenDetail = {
+    event: Event
     anchor: HTMLDivElement
     tooltip?: HTMLDivElement
     text?: string
@@ -35,7 +37,6 @@ type TooltipOpenDetail = {
 
 type TooltipCloseDetail = {
     endDelayDuration?: number
-    tooltip?: HTMLDivElement
 }
 
 function initTooltip(): void {
@@ -61,39 +62,45 @@ function initTooltip(): void {
         textTooltip_ref = div
     }
 
-    async function closeTooltip(tooltip?: HTMLDivElement): Promise<void> {
-        let anchorRect: DOMRect | undefined = $useAnchor? getBoundingClientRect($anchor_ref!) : undefined
-        if ($useAnchor) {
-            let left = 0, top = 0, right = 0, bottom = 0
-            let isInitiate = false
-            for (const child of $anchor_ref![_children]) {
-                if (child[_classList][_contains]('rich-tooltip')) continue;
-                
-                const rect = getBoundingClientRect(child)
-                if (!isInitiate) {
-                    left = rect[_left]
-                    top = rect[_top]
-                    right = rect[_right]
-                    bottom = rect[_bottom]
-                    isInitiate = true
-                }
-                
-                if (rect[_left] < left) left = rect[_left]
-                if (rect[_top] < top) top = rect[_top]
-                if (rect[_right] > right) right = rect[_right]
-                if (rect[_bottom] > bottom) bottom = rect[_bottom]
+    function getAnchorRect(anchor: HTMLDivElement): DOMRect {
+        let left = 0, top = 0, right = 0, bottom = 0
+        let isInitiated = false
+        for (const child of anchor[_children]) {
+            if (child[_classList][_contains]('rich-tooltip')) continue;
+
+            const rect = getBoundingClientRect(child)
+            if (!isInitiated) {
+                left = rect[_left]
+                top = rect[_top]
+                right = rect[_right]
+                bottom = rect[_bottom]
+                isInitiated = true
             }
 
-            const $anchorRect = { 
-                width: right - left, 
-                height: bottom - top, 
-                bottom, left, right, top, 
-                x: left, y: top 
-            }
-
-            anchorRect = $anchorRect as DOMRect
+            if (rect[_left] < left) left = rect[_left]
+            if (rect[_top] < top) top = rect[_top]
+            if (rect[_right] > right) right = rect[_right]
+            if (rect[_bottom] > bottom) bottom = rect[_bottom]
         }
-        const tooltipRect = getBoundingClientRect(tooltip ?? textTooltip_ref)
+
+        const $anchorRect = {
+            width: right - left,
+            height: bottom - top,
+            bottom, left, right, top,
+            x: left, y: top
+        }
+
+        return $anchorRect as DOMRect
+    }
+
+    async function closeTooltip(): Promise<void> {
+        if (!isOpen) return;
+        isOpen = false
+
+        if (richTooltip_ref != undefined) return closePopover(richTooltip_ref)
+
+        const anchorRect: DOMRect | undefined = $useAnchor? getAnchorRect($anchor_ref!) : undefined
+        const tooltipRect = getBoundingClientRect(textTooltip_ref)
         const pos = getFlyoutPosition({
             flyout: tooltipRect,
             anchor: $useAnchor? anchorRect : undefined,
@@ -159,16 +166,20 @@ function initTooltip(): void {
             }
         }
 
-        setStyleProperty(tooltip ?? textTooltip_ref, _transform, `translate(${translate[_left]}px, ${translate[_top]}px)`)
-        removeAttribute(tooltip ?? textTooltip_ref, TooltipAttributes[_move])
-        await timeout(5E2)
-        removeAttribute(tooltip ?? textTooltip_ref, TooltipAttributes[_open]);
-        (tooltip ?? textTooltip_ref)[_hidePopover]()
+        removeAttribute(textTooltip_ref, TooltipAttributes[_open])
+        removeAttribute(textTooltip_ref, TooltipAttributes[_openDone])
+        $anchor_ref = null
+        await textTooltip_ref[_animate](
+            { transform: `translate(${translate[_left]}px, ${translate[_top]}px)` },
+            { duration: 300, easing: AnimationEffectTiming[_springBounce] }
+        )[_finished]
+        textTooltip_ref[_hidePopover]()
     }
 
     function initEvents(): void {
-        addEventListener(getDocumentBody(), BodyEvents[_openTextTooltip], ev => {
-            const { 
+        addEventListener(getDocumentBody(), BodyEvents[_openTextTooltip], (ev: CustomEvent<TooltipOpenDetail>) => {
+            const {
+                event,
                 anchor,
                 text,
                 gap = 40,
@@ -176,78 +187,43 @@ function initTooltip(): void {
                 startDelayDuration = isOpen? 300 : 800,
                 useAnchor = false,
                 tooltip
-            } = ((ev as CustomEvent)[_detail] as TooltipOpenDetail)
-            
+            } = ev[_detail]
+
             if (timeoutId != null) clearTimeDelayed(timeoutId)
             timeoutId = setTimeDelayed(async () => {
-                if ($anchor_ref != null && anchor[_isSameNode]($anchor_ref) && isOpen) {
-                    timeoutId = null
-                    return
-                }
+                timeoutId = null
+                if ($anchor_ref != null && anchor[_isSameNode]($anchor_ref) && isOpen) return
+                if (text == undefined && tooltip == undefined) return
 
-                if (text == undefined && tooltip == undefined) {
-                    timeoutId = null
-                    return
-                }
-
-                if (isOpen) {
-                    if (richTooltip_ref != undefined) await closeTooltip(richTooltip_ref)
-                    await closeTooltip()
-                }
+                await closeTooltip()
 
                 $anchor_ref = anchor
                 $gap = gap
                 $position = position
                 $useAnchor = useAnchor
                 richTooltip_ref = tooltip
-
                 isOpen = true
 
-                if (tooltip == undefined && text != undefined) {
-                    textTooltip_ref[_textContent] = text
-                }
-                (tooltip ?? textTooltip_ref)[_showPopover]()
+                if (richTooltip_ref != undefined) return openPopover(event, richTooltip_ref, {
+                    manualDismiss: true,
+                    anchorRect: useAnchor? getAnchorRect(anchor) : undefined,
+                    pointer: $pointer,
+                    gap,
+                    position,
+                })
 
-                const tooltipRect: DOMRect = getBoundingClientRect(tooltip ?? textTooltip_ref)
-                let anchorRect: DOMRect | undefined = useAnchor? getBoundingClientRect(anchor) : undefined
-                if ($useAnchor) {
-                    let left = 0, top = 0, right = 0, bottom = 0
-                    let isInitiate = false
-                    for (const child of $anchor_ref![_children]) {
-                        if (child[_classList][_contains]('rich-tooltip')) continue;
-                        
-                        const rect = getBoundingClientRect(child)
-                        if (!isInitiate) {
-                            left = rect[_left]
-                            top = rect[_top]
-                            right = rect[_right]
-                            bottom = rect[_bottom]
-                            isInitiate = true
-                        }
-                        
-                        if (rect[_left] < left) left = rect[_left]
-                        if (rect[_top] < top) top = rect[_top]
-                        if (rect[_right] > right) right = rect[_right]
-                        if (rect[_bottom] > bottom) bottom = rect[_bottom]
-                    }
-        
-                    const $anchorRect = { 
-                        width: right - left, 
-                        height: bottom - top, 
-                        bottom, left, right, top, 
-                        x: left, y: top 
-                    }
+                if (text != undefined) textTooltip_ref[_textContent] = text
+                textTooltip_ref[_showPopover]()
 
-                    anchorRect = $anchorRect as DOMRect
-                }
-                let pos = getFlyoutPosition({
+                const tooltipRect: DOMRect = getBoundingClientRect(textTooltip_ref)
+                const anchorRect: DOMRect | undefined = useAnchor? getAnchorRect(anchor) : undefined
+                const pos = getFlyoutPosition({
                     flyout: tooltipRect,
                     anchor: useAnchor? anchorRect : undefined,
                     gap,
                     pointer: useAnchor? undefined : $pointer,
                     position
                 })
-
                 const tooltipPos = {
                     ...pos,
                     bottom: pos[_top] + tooltipRect[_height],
@@ -261,18 +237,18 @@ function initTooltip(): void {
                     left: 0,
                     top: 0
                 }
-        
+
                 let anchorCenterLeft =  $pointer.x
                 let anchorCenterTop =  $pointer.y
-        
+
                 if (useAnchor) {
                     anchorCenterLeft = anchorRect![_left] + (anchorRect![_width] / 2)
                     anchorCenterTop = anchorRect![_top] + (anchorRect![_height] / 2)
                 }
-        
+
                 const rangeX = mathAbs(tooltipMidPos.x - anchorCenterLeft)
                 const rangeY = mathAbs(tooltipMidPos.y - anchorCenterTop)
-        
+
                 if (rangeX > rangeY) {
                     if ((tooltipMidPos.x < anchorCenterTop || tooltipMidPos.x > anchorCenterTop) && (
                         position == TooltipPosition[_centerBottom]
@@ -304,41 +280,33 @@ function initTooltip(): void {
                         if (tooltipMidPos.y < anchorCenterTop ) translate[_top]  = 12
                     }
                 }
-        
-                setStyleProperty(tooltip ?? textTooltip_ref, _top, pos[_top] + _px)
-                setStyleProperty(tooltip ?? textTooltip_ref, _left, pos[_left] + _px)
-                setStyleProperty(tooltip ?? textTooltip_ref, _transform, `translate(${translate[_left]}px, ${translate[_top]}px)`)
-        
-                // This should be run after all inline style applied
-                setTimeDelayed(async () => {
-                    setAttribute(tooltip ?? textTooltip_ref, PopoverAttributes[_open], '')
-                    await timeout(20)
-                    setAttribute(tooltip ?? textTooltip_ref, PopoverAttributes[_move], '')
-                    setStyleProperty(tooltip ?? textTooltip_ref, _transform, 'translate(0, 0)')
-                })
 
-                timeoutId = null
+                setStyleProperty(textTooltip_ref, _top, pos[_top] + _px)
+                setStyleProperty(textTooltip_ref, _left, pos[_left] + _px)
+                setAttribute(textTooltip_ref, TooltipAttributes[_open])
+                textTooltip_ref[_animate](
+                    { transform: [`translate(${translate[_left]}px, ${translate[_top]}px)`, _none] },
+                    { duration: 300, easing: AnimationEffectTiming[_springBounce] }
+                )[_finished][_then](() => setAttribute(textTooltip_ref, TooltipAttributes[_openDone]))
             }, startDelayDuration)
         })
 
-        addEventListener(getDocumentBody(), BodyEvents[_closeTextTooltip], ev => {
-            const { endDelayDuration = 300 } = ((ev as CustomEvent)[_detail] as TooltipCloseDetail)
-            
+        addEventListener(getDocumentBody(), BodyEvents[_closeTextTooltip], (ev: CustomEvent<TooltipCloseDetail>) => {
+            const { endDelayDuration = 300 } = ev[_detail]
+
             if (timeoutId != null) clearTimeDelayed(timeoutId)
             timeoutId = setTimeDelayed(async () => {
-                if (isOpen) {
-                    if (richTooltip_ref != undefined) closeTooltip(richTooltip_ref)
-                    closeTooltip()
-                }
+                closeTooltip()
                 richTooltip_ref = undefined
                 isOpen = false
                 timeoutId = null
             }, endDelayDuration)
         })
 
-        addEventListener(getDocumentBody(), BodyEvents[_updatePointerTextTooltip], ev => {
-            const pointer = ((ev as CustomEvent)[_detail][_pointer] as {x: number; y: number})
-            $pointer = pointer
+        addEventListener(getDocumentBody(), BodyEvents[_updatePointerTextTooltip], (ev: CustomEvent<{pointer: {x: number; y: number}}>) => {
+            const pointer = ev[_detail][_pointer]
+            $pointer.x = pointer.x
+            $pointer.y = pointer.y
         })
     }
 
@@ -357,17 +325,17 @@ type TextTooltipProps = {
 const TextTooltip: FlowComponent<TextTooltipProps> = (props) => {
     let div_ref: HTMLDivElement
 
-    function openTextTooltip(ev?: Event): void {
+    function openTextTooltip(ev: Event): void {
         getDocumentBody()[_dispatchEvent](new CustomEvent(BodyEvents[_openTextTooltip], {detail: {
-            anchor: div_ref, 
+            event: ev,
+            anchor: div_ref,
             useAnchor: props[_useAnchor],
             gap: props[_gap],
             position: props[_position],
             startDelayDuration: props[_startDelayDuration],
             text: props[_text],
         } satisfies TooltipOpenDetail}))
-        if (ev) stopPropagation(ev)
-        
+        stopPropagation(ev)
     }
 
     function closeTextTooltip(ev: Event): void {
@@ -393,7 +361,7 @@ const TextTooltip: FlowComponent<TextTooltipProps> = (props) => {
         } satisfies TooltipCloseDetail}))
     })
 
-    return (<div 
+    return (<div
         class="tooltip"
         ref={r => div_ref = r}
         onMouseOver={ev => openTextTooltip(ev)}
@@ -424,7 +392,7 @@ const RichTooltip: FlowComponent<RichTooltipProps> = ($props) => {
     const [props, other] = splitProps($props, [
         _tooltip, _position, _gap, _startDelayDuration,
         _endDelayDuration, _useAnchor, _children,
-        _classList, _ref, _usePortal, _onMouseMove, 
+        _classList, _ref, _usePortal, _onMouseMove,
         _onMouseLeave, _onMouseDown, _onTouchEnd,
         _onTouchCancel
     ])
@@ -433,7 +401,8 @@ const RichTooltip: FlowComponent<RichTooltipProps> = ($props) => {
 
     function openRichTooltip(ev: Event): void {
         getDocumentBody()[_dispatchEvent](new CustomEvent(BodyEvents[_openTextTooltip], {detail: {
-            anchor: div_ref, 
+            event: ev,
+            anchor: div_ref,
             useAnchor: props[_useAnchor],
             gap: props[_gap],
             position: props[_position],
@@ -446,7 +415,6 @@ const RichTooltip: FlowComponent<RichTooltipProps> = ($props) => {
     function closeRichTooltip(ev: Event): void {
         getDocumentBody()[_dispatchEvent](new CustomEvent(BodyEvents[_closeTextTooltip], {detail: {
             endDelayDuration: props[_endDelayDuration],
-            tooltip: tooltip_ref
         } satisfies TooltipCloseDetail}))
         stopPropagation(ev)
     }
@@ -464,11 +432,10 @@ const RichTooltip: FlowComponent<RichTooltipProps> = ($props) => {
     onCleanup(() => {
         getDocumentBody()[_dispatchEvent](new CustomEvent(BodyEvents[_closeTextTooltip], {detail: {
             endDelayDuration: props[_endDelayDuration],
-            tooltip: tooltip_ref
         } satisfies TooltipCloseDetail}))
     })
 
-    return (<div 
+    return (<div
         class="tooltip"
         ref={r => div_ref = r}
         onMouseOver={ev => openRichTooltip(ev)}
@@ -480,7 +447,7 @@ const RichTooltip: FlowComponent<RichTooltipProps> = ($props) => {
         onTouchCancel={ev => closeRichTooltip(ev)}>
         {props[_children]}
         <Popover
-            usePortal={props[_usePortal] ?? false} 
+            usePortal={props[_usePortal] ?? false}
             onMouseMove={ev => {
                 stopPropagation(ev)
                 if (props[_onMouseMove]) props[_onMouseMove](ev)
@@ -506,7 +473,7 @@ const RichTooltip: FlowComponent<RichTooltipProps> = ($props) => {
                 if (props[_ref]) props[_ref](r)
             }}
             classList={{
-                'rich-tooltip': true, 
+                'rich-tooltip': true,
                 ...props[_classList]
             }}
             {...other}>

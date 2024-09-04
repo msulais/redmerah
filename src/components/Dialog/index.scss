@@ -1,24 +1,20 @@
 .modal.dialog {
-    transform: translate(-50%, calc(-50% - 12px)) !important;
     background-color: rgb(var(--color-surface)) !important;
-    left: 50% !important;
-    top: 50% !important;
     border-radius: 16px;
     width: max-content;
     box-shadow: var(--elevation3);
+    transform: translate(-50%, -50%);
     transition-duration: .3s;
-    
+
     [data-corner=sharp] & { border-radius: 0 }
     [data-corner=semi-round] & { border-radius: 8px }
     [data-corner=full-round] & { border-radius: 44px }
-    
+
     &::backdrop {
         transition-duration: .3s;
     }
-    
-    &[data-move] {
-        transform: translate(-50%, -50%) !important;
 
+    &[data-open] {
         &::backdrop {
             background-color: rgba(0, 0, 0, var(--opacity-inv5));
         }
