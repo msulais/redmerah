@@ -117,7 +117,7 @@ export const MainApp: VoidComponent = () => {
             animation: true,
             count: 3,
             membersList: {id: 1, name: 'Person', items: [...PERSON_NAMES]},
-            namesList: {id: 2, name: 'Teams', items: [...TEAMS_NAMES]}, 
+            namesList: {id: 2, name: 'Teams', items: [...TEAMS_NAMES]},
         }
     })
     const [result, setResult] = createStore<Result>({
@@ -163,8 +163,8 @@ export const MainApp: VoidComponent = () => {
             }
 
             setResult(_string, text)
-        } 
-        
+        }
+
         else if (randomizerType() == RandomizerType[_numbers]) {
             const numbers: number[] = []
             const range: number = settings[_numbers][_range][_max] - settings[_numbers][_range][_min]
@@ -189,7 +189,7 @@ export const MainApp: VoidComponent = () => {
                 ++iteration
             }
 
-            if (settings[_numbers][_sort] == NumbersRandomizerSort[_ascending]) 
+            if (settings[_numbers][_sort] == NumbersRandomizerSort[_ascending])
                 numbers[_sort]((a, b) => a - b)
             else if (settings[_numbers][_sort] == NumbersRandomizerSort[_descending])
                 numbers[_sort]((a, b) => b - a)
@@ -199,8 +199,8 @@ export const MainApp: VoidComponent = () => {
                 stringToUpperCase(v[_toString](settings[_numbers][_numberType])[_padStart](settings[_numbers][_minDecimalLength], '0')) +
                 settings[_numbers][_suffix]
             )[_join](settings[_numbers][_separator]))
-        } 
-        
+        }
+
         else if (randomizerType() == RandomizerType[_colors]) {
             const s = settings[_colors]
             const colors: HEXColor[] = []
@@ -232,8 +232,8 @@ export const MainApp: VoidComponent = () => {
             }
 
             setResult(_colors, [...colors])
-        } 
-        
+        }
+
         else if (randomizerType() == RandomizerType[_words]) {
             const words: string[] = []
             let members: string[] = [...settings[_words][_list][_items]]
@@ -260,19 +260,19 @@ export const MainApp: VoidComponent = () => {
             }
 
             setResult(_words, [...words][_map](text => {
-                if (settings[_words][_wordCase] == WordsRandomizerWordCase[_lowercase]) 
+                if (settings[_words][_wordCase] == WordsRandomizerWordCase[_lowercase])
                     text = stringToLowerCase(text)
-                else if (settings[_words][_wordCase] == WordsRandomizerWordCase[_uppercase]) 
+                else if (settings[_words][_wordCase] == WordsRandomizerWordCase[_uppercase])
                     text = stringToUpperCase(text)
-                else if (settings[_words][_wordCase] == WordsRandomizerWordCase[_togglecase]) 
+                else if (settings[_words][_wordCase] == WordsRandomizerWordCase[_togglecase])
                     text = stringToToggleCase(text)
-                else if (settings[_words][_wordCase] == WordsRandomizerWordCase[_titlecase]) 
+                else if (settings[_words][_wordCase] == WordsRandomizerWordCase[_titlecase])
                     text = stringToTitleCase(text)
 
                 return settings[_words][_prefix] + text + settings[_words][_suffix]
             })[_join](settings[_words][_separator]))
-        } 
-        
+        }
+
         else if (randomizerType() == RandomizerType[_selection]) {
             const items = [...settings[_selection][_list][_items]]
             const selectedItems: string[] = []
@@ -289,8 +289,8 @@ export const MainApp: VoidComponent = () => {
             }
 
             setResult(_selection, [...selectedItems])
-        } 
-        
+        }
+
         else if (randomizerType() == RandomizerType[_teams]) {
             const names: string[] = [...settings[_teams][_namesList][_items]]
             const members: string[] = [...settings[_teams][_membersList][_items]]
@@ -306,7 +306,7 @@ export const MainApp: VoidComponent = () => {
             const range = settings[_teams][_count] - names[_length]
             for (let i = 0; i < range; i++) {
                 names[_push]('Team #' + (i + 1))
-            }  
+            }
 
             for (const name of names) {
                 const m: string[] = []
@@ -330,7 +330,7 @@ export const MainApp: VoidComponent = () => {
         }
     }
 
-    async function onGenerate(): Promise<void> { return new Promise((ok) => {
+    async function onGenerate(ev: Event): Promise<void> { return new Promise((ok) => {
         setIsGenerating(true)
         setAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
 
@@ -340,14 +340,14 @@ export const MainApp: VoidComponent = () => {
         else if (randomizerType() == RandomizerType[_words]) {
             type = _words
             if (settings[_words][_list][_id] == -1) {
-                openToast(toast_noListSelected_ref)
+                openToast(ev, toast_noListSelected_ref)
                 return ok()
             }
         }
         else if (randomizerType() == RandomizerType[_selection]) {
             type = _selection
             if (settings[_selection][_list][_id] == -1) {
-                openToast(toast_noListSelected_ref)
+                openToast(ev, toast_noListSelected_ref)
                 return ok()
             }
         }
@@ -355,7 +355,7 @@ export const MainApp: VoidComponent = () => {
         else if (randomizerType() == RandomizerType[_teams]) {
             type = _teams
             if (settings[_teams][_membersList][_id] == -1 || settings[_teams][_namesList][_id] == -1) {
-                openToast(toast_noListSelected_ref)
+                openToast(ev, toast_noListSelected_ref)
                 return ok()
             }
         }
@@ -379,7 +379,7 @@ export const MainApp: VoidComponent = () => {
             }, step)
             setIntervaldId(t)
             return
-        } 
+        }
 
         generate()
         addResultToDB()
@@ -417,7 +417,7 @@ export const MainApp: VoidComponent = () => {
 
         if (!settingsObjectStore) return;
         settingsObjectStore[_put]({
-            key: ObjectStoreKeys[_settings_lastPage], 
+            key: ObjectStoreKeys[_settings_lastPage],
             value: randomizerType()
         })
     }
@@ -428,59 +428,59 @@ export const MainApp: VoidComponent = () => {
         if (!lastResultObjectStore) return;
 
         if (randomizerType() == RandomizerType[_string]) lastResultObjectStore[_put]({
-            key: ObjectStoreKeys[_lastResult_string], 
+            key: ObjectStoreKeys[_lastResult_string],
             value: result[_string]
         })
         else if (randomizerType() == RandomizerType[_numbers]) lastResultObjectStore[_put]({
-            key: ObjectStoreKeys[_lastResult_numbers], 
+            key: ObjectStoreKeys[_lastResult_numbers],
             value: result[_numbers]
         })
         else if (randomizerType() == RandomizerType[_words]) lastResultObjectStore[_put]({
-            key: ObjectStoreKeys[_lastResult_words], 
+            key: ObjectStoreKeys[_lastResult_words],
             value: result[_words]
         })
         else if (randomizerType() == RandomizerType[_selection]) lastResultObjectStore[_put]({
-            key: ObjectStoreKeys[_lastResult_selection], 
+            key: ObjectStoreKeys[_lastResult_selection],
             value: [...result[_selection]]
         })
         else if (randomizerType() == RandomizerType[_colors]) lastResultObjectStore[_put]({
-            key: ObjectStoreKeys[_lastResult_colors], 
+            key: ObjectStoreKeys[_lastResult_colors],
             value: [...result[_colors]]
         })
         else if (randomizerType() == RandomizerType[_teams]) lastResultObjectStore[_put]({
-            key: ObjectStoreKeys[_lastResult_teams], 
+            key: ObjectStoreKeys[_lastResult_teams],
             value: [...result[_teams][_map](v => {return {name: v[_name], members: [...v[_members]]}})]
         })
     }
 
     async function initDatabase(): Promise<void> {
         try { await db[_open]({
-            onSuccess() { 
-                initLastResult() 
+            onSuccess() {
+                initLastResult()
                 initLastPage()
                 getLists()
                 initSettings()
             },
             onUpgradeNeeded(_, db) {
                 db[_createObjectStore]<ObjectStoreSettings>({
-                    name: ObjectStoreNames[_settings], 
-                    keyPath: _key, 
+                    name: ObjectStoreNames[_settings],
+                    keyPath: _key,
                     indexs: [_key, _value]
                 })
                 db[_createObjectStore]<ObjectStoreLastResult>({
-                    name: ObjectStoreNames[_lastResult], 
-                    keyPath: _key, 
+                    name: ObjectStoreNames[_lastResult],
+                    keyPath: _key,
                     indexs: [_key, _value]
                 })
                 const lists = db[_createObjectStore]<ObjectStoreLists>({
-                    name: ObjectStoreNames[_lists], 
-                    keyPath: _id, 
+                    name: ObjectStoreNames[_lists],
+                    keyPath: _id,
                     indexs: [_id, _name, _items]
                 })
 
                 for (const list of [['Person', PERSON_NAMES], ['Teams', TEAMS_NAMES], ['Colors', COLORS], ['Animals', ANIMALS], ['Lorem Ipsum', LOREM_IPSUM]]) {
-                    lists![_put]({ 
-                        name: list[0] as string, 
+                    lists![_put]({
+                        name: list[0] as string,
                         items: [...list[1] as string[]]
                     } satisfies Omit<ObjectStoreLists, 'id'> )
                 }
@@ -538,7 +538,7 @@ export const MainApp: VoidComponent = () => {
 
         db[_get]<ObjectStoreSettings>(settingsObjectStore, ObjectStoreKeys[_settings_words_listId])[_then]((v) => {
             if (!v) return;
-            
+
             const id = (v[_value] as number)
             for (const list of lists) {
                 if (list[_id] == id) return setSettings(_words, _list, list)
@@ -563,7 +563,7 @@ export const MainApp: VoidComponent = () => {
             for (const list of lists) {
                 if (list[_id] == id) return setSettings(_teams, _namesList, list)
             }
-        
+
             return setSettings(_teams, _namesList, {id: -1, items: [], name: ''})
         })
         db[_get]<ObjectStoreSettings>(settingsObjectStore, ObjectStoreKeys[_settings_teams_membersListId])[_then]((v) => {
@@ -573,7 +573,7 @@ export const MainApp: VoidComponent = () => {
             for (const list of lists) {
                 if (list[_id] == id) return setSettings(_teams, _membersList, list)
             }
-        
+
             return setSettings(_teams, _membersList, {id: -1, items: [], name: ''})
         })
     }
@@ -647,7 +647,7 @@ export const MainApp: VoidComponent = () => {
 
     function saveSettings(...items: [key: ObjectStoreKeys, value: unknown][]): void {
         const settingsObjectStore = db[_transaction](ObjectStoreNames[_settings], _readwrite)![_objectStore](ObjectStoreNames[_settings])
-    
+
         if (!settingsObjectStore) return;
 
         for (const item of items) {
@@ -657,26 +657,26 @@ export const MainApp: VoidComponent = () => {
 
     function exportList(list: ListItems): void {
         const url = createObjectURL(new Blob(
-            [list[_items][_join]('\n')], 
+            [list[_items][_join]('\n')],
             { type: 'text/csv'}
         ))
         downloadFileByURL(url, 'list.csv')
         revokeObjectURL(url)
     }
 
-    function editList(): void {
+    function editList(ev: Event): void {
         const name = textField_editListName_ref[_value][_trim]()
         const id = selectedListToEdit()[_id]
         if (name[_length] == 0) {
             textField_editListName_ref[_focus]()
-            openToast(toast_listNameEmpty_ref)
+            openToast(ev, toast_listNameEmpty_ref)
             return
         }
 
         const items: string[] = areaTextField_editListItems_ref[_value][_split](/[\n,]/gs)[_filter](v => v[_trim]()[_length] > 0)
         if (items[_length] == 0) {
             areaTextField_editListItems_ref[_focus]()
-            openToast(toast_listHaveNoItems_ref)
+            openToast(ev, toast_listHaveNoItems_ref)
             return
         }
 
@@ -684,7 +684,7 @@ export const MainApp: VoidComponent = () => {
             if (list[_name] != name || list[_id] == id) continue;
 
             textField_editListName_ref[_focus]()
-            openToast(toast_listNameAlreadyExist_ref)
+            openToast(ev, toast_listNameAlreadyExist_ref)
             return
         }
 
@@ -698,11 +698,11 @@ export const MainApp: VoidComponent = () => {
         if (settings[_teams][_namesList][_id] == id) command(Commands[_change_settings_teams_namesList], newLists)
         if (settings[_teams][_membersList][_id] == id) command(Commands[_change_settings_teams_membersList], newLists)
 
-        openToast(toast_listEdited_ref)
+        openToast(ev, toast_listEdited_ref)
 
         const listsObjectStore = db[_transaction](ObjectStoreNames[_lists], _readwrite)![_objectStore](ObjectStoreNames[_lists])
         if (!listsObjectStore) return
-        
+
         listsObjectStore[_put](newLists)
     }
 
@@ -715,24 +715,24 @@ export const MainApp: VoidComponent = () => {
         })
     }
 
-    function deleteList(list: ListItems): void {
+    function deleteList(ev: Event, list: ListItems): void {
         setLists(lists => lists[_filter](v => v[_id] != list[_id]))
 
         const isNoMoreLists = lists[_length] == 0
         const newList = isNoMoreLists? {id: -1, name: '', items: []} : lists[0]
         if (isNoMoreLists) closeDialog(dialog_lists_ref)
-            
+
 
         if (settings[_words][_list][_id]        == list[_id]) command(Commands[_change_settings_words_list]       , {...newList})
         if (settings[_selection][_list][_id]    == list[_id]) command(Commands[_change_settings_selection_list]   , {...newList})
         if (settings[_teams][_namesList][_id]   == list[_id]) command(Commands[_change_settings_teams_namesList]  , {...newList})
         if (settings[_teams][_membersList][_id] == list[_id]) command(Commands[_change_settings_teams_membersList], {...newList})
 
-        openToast(toast_listDeleted_ref)
+        openToast(ev, toast_listDeleted_ref)
 
         const listsObjectStore = db[_transaction](ObjectStoreNames[_lists], _readwrite)![_objectStore](ObjectStoreNames[_lists])
         if (!listsObjectStore) return
-        
+
         listsObjectStore[_delete](list[_id])
     }
 
@@ -743,18 +743,18 @@ export const MainApp: VoidComponent = () => {
         })
     }
 
-    function addNewList(): void {
+    function addNewList(ev: MouseEvent): void {
         const name = textField_newListName_ref[_value][_trim]()
         if (name[_length] == 0) {
             textField_newListName_ref[_focus]()
-            openToast(toast_listNameEmpty_ref)
+            openToast(ev, toast_listNameEmpty_ref)
             return
         }
 
         const items: string[] = areaTextField_newListItems_ref[_value][_split](/[\n,]/gs)[_filter](v => v[_trim]()[_length] > 0)
         if (items[_length] == 0) {
             areaTextField_newListItems_ref[_focus]()
-            openToast(toast_listHaveNoItems_ref)
+            openToast(ev, toast_listHaveNoItems_ref)
             return
         }
 
@@ -762,7 +762,7 @@ export const MainApp: VoidComponent = () => {
             if (list[_name] != name) continue;
 
             textField_newListName_ref[_focus]()
-            openToast(toast_listNameAlreadyExist_ref)
+            openToast(ev, toast_listNameAlreadyExist_ref)
             return
         }
 
@@ -775,11 +775,11 @@ export const MainApp: VoidComponent = () => {
         }
         id += 1
         const newLists: ListItems = {id, name, items}
-        openToast(toast_newListAdded_ref)
+        openToast(ev, toast_newListAdded_ref)
         setLists(l => [...l, {id, name, items}])
         const listsObjectStore = db[_transaction](ObjectStoreNames[_lists], _readwrite)![_objectStore](ObjectStoreNames[_lists])
         if (!listsObjectStore) return
-        
+
         listsObjectStore[_put](newLists)
     }
 
@@ -798,11 +798,11 @@ export const MainApp: VoidComponent = () => {
         let text = ''
 
         try {
-            const files = await openFile('text/csv', true) 
+            const files = await openFile('text/csv', true)
             if (!files) return [];
-            
+
             for (const file of files!) {
-                if (file[_type] != 'text/csv') continue; 
+                if (file[_type] != 'text/csv') continue;
                 text += await readFileAsText(file)
             }
         } catch (e) {}
@@ -820,14 +820,14 @@ export const MainApp: VoidComponent = () => {
 
         const listsObjectStore = db[_transaction](ObjectStoreNames[_lists], _readwrite)![_objectStore](ObjectStoreNames[_lists])
         if (!listsObjectStore) return
-        
+
         for (const list of lists){
             listsObjectStore[_put]({
-                id: list[_id], 
-                name: list[_name], 
+                id: list[_id],
+                name: list[_name],
                 items: [...list[_items]]
             } satisfies ListItems)
-        } 
+        }
     }
 
     function command(type: Commands, ...args: unknown[]): unknown {
@@ -850,7 +850,7 @@ export const MainApp: VoidComponent = () => {
         else if (type == Commands[_edit_list]) {
             if (args[_length] > 1) return openEditDialog(args[0] as Event, args[1] as ListItems)
             openDialog(args[0] as Event, dialog_lists_ref)
-        } 
+        }
 
         // delete_list
         else if (type == Commands[_delete_list]) {
@@ -907,13 +907,13 @@ export const MainApp: VoidComponent = () => {
             setSettings(_numbers, _sort, args[0] as NumbersRandomizerSort)
             saveSettings([ObjectStoreKeys[_settings_numbers_sort], args[0]])
         }
-        
+
         // change_settings_numbers_type
         else if (type == Commands[_change_settings_numbers_type]) {
             setSettings(_numbers, _numberType, args[0] as NumbersRandomizerNumberType)
             saveSettings([ObjectStoreKeys[_settings_numbers_numberType], args[0]])
         }
-        
+
         // change_settings_prefix
         else if (type == Commands[_change_settings_prefix]) {
             if (randomizerType() == RandomizerType[_numbers]) {
@@ -961,7 +961,7 @@ export const MainApp: VoidComponent = () => {
             setSettings(_colors, _colorModel, args[0] as ColorsRandomizerColorModel)
             saveSettings([ObjectStoreKeys[_settings_colors_colorModel], args[0]])
         }
-        
+
         // change_settings_words_listId
         else if (type == Commands[_change_settings_words_list]) {
             setSettings(_words, _list, args[0] as ListItems)
@@ -985,19 +985,19 @@ export const MainApp: VoidComponent = () => {
             setSettings(_string, _characters, _symbols, v => !v)
             saveSettings([ObjectStoreKeys[_settings_string_characters_symbols], settings[_string][_characters][_symbols]])
         }
-        
+
         // toggle_settings_string_characters_numbers
         else if (type == Commands[_toggle_settings_string_characters_numbers]) {
             setSettings(_string, _characters, _numbers, v => !v)
             saveSettings([ObjectStoreKeys[_settings_string_characters_numbers], settings[_string][_characters][_numbers]])
         }
-        
+
         // toggle_settings_string_characters_alphabetLowercase
         else if (type == Commands[_toggle_settings_string_characters_alphabetLowercase]) {
             setSettings(_string, _characters, _alphabetLowercase, v => !v)
             saveSettings([ObjectStoreKeys[_settings_string_characters_alphabetLowercase], settings[_string][_characters][_alphabetLowercase]])
         }
-        
+
         // toggle_settings_string_characters_alphabetUppercase
         else if (type == Commands[_toggle_settings_string_characters_alphabetUppercase]) {
             setSettings(_string, _characters, _alphabetUppercase, v => !v)
@@ -1020,7 +1020,7 @@ export const MainApp: VoidComponent = () => {
         else if (type == Commands[_change_settings_numbers_range]) {
             setSettings(_numbers, _range, {min: args[0] as number, max: args[1] as number})
             saveSettings(
-                [ObjectStoreKeys[_settings_numbers_range_min], args[0]], 
+                [ObjectStoreKeys[_settings_numbers_range_min], args[0]],
                 [ObjectStoreKeys[_settings_numbers_range_max], args[1]]
             )
         }
@@ -1124,7 +1124,7 @@ export const MainApp: VoidComponent = () => {
                     [ObjectStoreKeys[_settings_selection_listId], (args[0] as ListItems)[_id]],
                     [ObjectStoreKeys[_settings_selection_count], (args[0] as ListItems)[_items][_length]]
                 )
-                return 
+                return
             }
             saveSettings([ObjectStoreKeys[_settings_selection_listId], (args[0] as ListItems)[_id]])
         }
@@ -1150,7 +1150,7 @@ export const MainApp: VoidComponent = () => {
                     [ObjectStoreKeys[_settings_teams_membersListId], (args[0] as ListItems)[_id]],
                     [ObjectStoreKeys[_settings_teams_count], (args[0] as ListItems)[_items][_length]]
                 )
-                return 
+                return
             }
             saveSettings([ObjectStoreKeys[_settings_teams_membersListId], (args[0] as ListItems)[_id]])
         }
@@ -1168,7 +1168,7 @@ export const MainApp: VoidComponent = () => {
 
         // generate
         else if (type == Commands[_generate]) {
-            return onGenerate()
+            return onGenerate(args[0] as Event)
         }
 
         // stopGenerate
@@ -1182,7 +1182,7 @@ export const MainApp: VoidComponent = () => {
     })
 
     const ListItem: VoidComponent<ListItems> = ($props) => {
-        return (<List 
+        return (<List
             trailing={<>
                 <TextTooltip text="Export list">
                     <IconButton onClick={() => exportList($props)} code={0xE0CF}/>
@@ -1207,17 +1207,17 @@ export const MainApp: VoidComponent = () => {
 
     const Dialogs: VoidComponent = () => {
         return (<>
-            <Dialog 
-                style={{width: '500px'}} 
-                ref={r => dialog_lists_ref = r} 
-                header="Lists" 
+            <Dialog
+                style={{width: '500px'}}
+                ref={r => dialog_lists_ref = r}
+                header="Lists"
                 actions={<>
                     <Button onClick={() => closeDialog(dialog_lists_ref)} variant={ButtonVariant[_tonal]}>Close</Button>
-                    <Button 
+                    <Button
                         onClick={(ev) => {
                             closeDialog(dialog_lists_ref)
                             openAddDialog(ev)
-                        }} 
+                        }}
                         variant={ButtonVariant[_filled]}>
                         Add new list
                     </Button>
@@ -1227,20 +1227,20 @@ export const MainApp: VoidComponent = () => {
                     <ListItem {...l} />
                 </>}</For>
             </Dialog>
-            <Dialog 
+            <Dialog
                 ref={r => dialog_deleteListWarning_ref = r}
                 actions={<>
                     <Button variant={ButtonVariant[_tonal]} onClick={() => closeDialog(dialog_deleteListWarning_ref)}>Cancel</Button>
-                    <Button variant={ButtonVariant[_filled]} onClick={() => {
+                    <Button variant={ButtonVariant[_filled]} onClick={(ev) => {
                         closeDialog(dialog_deleteListWarning_ref)
-                        deleteList(selectedListToDelete())
+                        deleteList(ev, selectedListToDelete())
                     }}>Delete</Button>
                 </>}
                 header="Delete list">
                 Are you sure want to delete this list?
                 <List classList={addClassListModule(CSS.delete_list)} subtitle={selectedListToDelete()[_items][_length] + ' item' + (selectedListToDelete()[_items][_length] > 1? 's' : '')}>{selectedListToDelete()[_name]}</List>
             </Dialog>
-            <Dialog 
+            <Dialog
                 ref={r => dialog_add_ref = r}
                 style={{width: '500px'}}
                 actions={<>
@@ -1251,27 +1251,27 @@ export const MainApp: VoidComponent = () => {
                     }}>Import CSV</Button>
                     <Button onClick={(ev) => {
                         setViewListItems({
-                            id: -1, 
-                            name: textField_newListName_ref[_value], 
+                            id: -1,
+                            name: textField_newListName_ref[_value],
                             items: areaTextField_newListItems_ref[_value][_split](/[\n,]/gs)[_filter](v => v[_trim]()[_length] > 0)
                         })
                         openDialog(ev, dialog_previewListItems_ref)
                     }} variant={ButtonVariant[_tonal]}>Preview</Button>
-                    <Button onClick={() => addNewList()} variant={ButtonVariant[_filled]}>Save</Button>
+                    <Button onClick={(ev) => addNewList(ev)} variant={ButtonVariant[_filled]}>Save</Button>
                 </>}
                 header="New list">
                 <TextField ref={r => textField_newListName_ref = r} labelText="List name" />
                 <div style={{"min-height": '16px'}}/>
-                <AreaTextField 
+                <AreaTextField
                     ref={r => areaTextField_newListItems_ref = r}
-                    labelText="Items" 
+                    labelText="Items"
                     placeholder={"Item1, Item2,\nItem3, Item 4\nItem 5"}
                     messageText={"Info: Each item separated by comma or new line"}
                     minLine={5}
                     maxLine={5}
                 />
             </Dialog>
-            <Dialog 
+            <Dialog
                 ref={r => dialog_edit_ref = r}
                 style={{width: '500px'}}
                 actions={<>
@@ -1282,28 +1282,28 @@ export const MainApp: VoidComponent = () => {
                     }}>Import CSV</Button>
                     <Button onClick={(ev) => {
                         setViewListItems({
-                            id: -1, 
-                            name: textField_editListName_ref[_value], 
+                            id: -1,
+                            name: textField_editListName_ref[_value],
                             items: areaTextField_editListItems_ref[_value][_split](/[\n,]/gs)[_filter](v => v[_trim]()[_length] > 0)
                         })
                         openDialog(ev, dialog_previewListItems_ref)
                     }} variant={ButtonVariant[_tonal]}>Preview</Button>
-                    <Button onClick={() => editList()} variant={ButtonVariant[_filled]}>Save</Button>
+                    <Button onClick={(ev) => editList(ev)} variant={ButtonVariant[_filled]}>Save</Button>
                 </>}
                 header="Edit list">
                 <TextField ref={r => textField_editListName_ref = r} placeholder={selectedListToEdit()[_name]} labelText="List name" />
                 <div style={{"min-height": '16px'}}/>
-                <AreaTextField 
+                <AreaTextField
                     ref={r => areaTextField_editListItems_ref = r}
-                    labelText="Items" 
+                    labelText="Items"
                     placeholder={selectedListToEdit()[_items][_join](', ')}
                     messageText={"Info: Each item separated by comma or new line"}
                     minLine={5}
                     maxLine={5}
                 />
             </Dialog>
-            <Dialog 
-                ref={r => dialog_viewListItems_ref = r} 
+            <Dialog
+                ref={r => dialog_viewListItems_ref = r}
                 style={{width: '720px'}}
                 actions={<>
                     <Button onClick={() => closeDialog(dialog_viewListItems_ref)} variant={ButtonVariant[_tonal]}>Close</Button>
@@ -1315,20 +1315,20 @@ export const MainApp: VoidComponent = () => {
                 </>}
                 header={viewListItems()[_name]}>
                 <div class={CSS.view_list}>
-                    <For each={[...viewListItems()[_items]][_sort]()}>{l => 
+                    <For each={[...viewListItems()[_items]][_sort]()}>{l =>
                         <div>{l}</div>
                     }</For>
                 </div>
             </Dialog>
-            <Dialog 
-                ref={r => dialog_previewListItems_ref = r} 
+            <Dialog
+                ref={r => dialog_previewListItems_ref = r}
                 style={{width: '720px'}}
                 actions={<>
                     <Button onClick={() => closeDialog(dialog_previewListItems_ref)} variant={ButtonVariant[_filled]}>Close</Button>
                 </>}
                 header={viewListItems()[_name]}>
                 <div class={CSS.view_list}>
-                    <For each={[...viewListItems()[_items]][_sort]()}>{l => 
+                    <For each={[...viewListItems()[_items]][_sort]()}>{l =>
                         <div>{l}</div>
                     }</For>
                 </div>
@@ -1358,17 +1358,17 @@ export const MainApp: VoidComponent = () => {
                 command={command}
                 onChangeRandomizer={onChangeRandomizer}
             />}
-            floatingActionButton={<FloatingActionButton 
-                classList={addClassListModule(CSSAnimation.btn_rotate_full_icon, CSS.fab)} 
-                data-keep-pointer-event={toggleAttribute(isGenerating())} 
-                variant={ButtonVariant[_filled]} 
+            floatingActionButton={<FloatingActionButton
+                classList={addClassListModule(CSSAnimation.btn_rotate_full_icon, CSS.fab)}
+                data-keep-pointer-event={toggleAttribute(isGenerating())}
+                variant={ButtonVariant[_filled]}
                 onClick={() => {
                     if (isGenerating()) return command(Commands[_stopGenerate])
                     command(Commands[_generate])
                 }}>
-                <Icon 
-                    filled 
-                    classList={addClassListModule(CSS.generate_icon)} 
+                <Icon
+                    filled
+                    classList={addClassListModule(CSS.generate_icon)}
                     data-rotate={toggleAttribute(isGenerating())}
                     code={0xE143}
                 />

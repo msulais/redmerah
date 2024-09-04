@@ -178,15 +178,15 @@ const C: Component<Props> = (props) => {
     })
 
     return (<>
-        <AppBar 
+        <AppBar
             leading={<>
                 <TextTooltip text={isSideNavigationHidden()? "Open navigation" : "Expand/shrink navigation"}>
-                    <IconButton 
+                    <IconButton
                         onClick={(ev) => {
                             if (isSideNavigationHidden()) return openDrawer(ev, drawer_navigation_ref)
                             props[_command](Commands[_toggle_navigation_expand])
-                        }} 
-                        classList={addClassListModule(CSSAnimation.btn_shrink_horizontal_icon)} 
+                        }}
+                        classList={addClassListModule(CSSAnimation.btn_shrink_horizontal_icon)}
                         code={0xEAFF}
                     />
                 </TextTooltip>
@@ -194,26 +194,26 @@ const C: Component<Props> = (props) => {
             </>}
             headline="Randomizer"
             trailing={<>
-                <Button 
-                    classList={addClassListModule(CSSAnimation.btn_rotate_full_icon, CSS.generate_btn)} 
-                    data-keep-pointer-event={toggleAttribute(props[_isGenerating])} 
-                    variant={ButtonVariant[_filled]} 
-                    onClick={() => {
+                <Button
+                    classList={addClassListModule(CSSAnimation.btn_rotate_full_icon, CSS.generate_btn)}
+                    data-keep-pointer-event={toggleAttribute(props[_isGenerating])}
+                    variant={ButtonVariant[_filled]}
+                    onClick={(ev) => {
                         if (props[_isGenerating]) return props[_command](Commands[_stopGenerate])
-                        props[_command](Commands[_generate])
+                        props[_command](Commands[_generate], ev)
                     }}>
-                    <Icon 
-                        filled 
-                        classList={addClassListModule(CSS.generate_icon)} 
+                    <Icon
+                        filled
+                        classList={addClassListModule(CSS.generate_icon)}
                         data-rotate={toggleAttribute(props[_isGenerating])}
                         code={0xE143}
                     />
                     <Show when={props[_isGenerating]} fallback="Generate">Generating</Show>
                 </Button>
                 <TextTooltip text="Info">
-                    <IconButton 
-                        focused={is_menu_info_open()} 
-                        code={0xE930} 
+                    <IconButton
+                        focused={is_menu_info_open()}
+                        code={0xE930}
                         onClick={(ev) => openMenu(ev, menu_info_ref, {
                             anchor: ev[_currentTarget],
                             padding: 4,
@@ -223,9 +223,9 @@ const C: Component<Props> = (props) => {
                 </TextTooltip>
 
                 <TextTooltip text="Settings">
-                    <IconButton 
-                        classList={addClassListModule(CSSAnimation.btn_rotate_icon)} 
-                        focused={is_menu_settings_open()} 
+                    <IconButton
+                        classList={addClassListModule(CSSAnimation.btn_rotate_icon)}
+                        focused={is_menu_settings_open()}
                         onClick={async (ev) => {
                             openMenu(ev, menu_settings_ref, {
                                 anchor: ev[_currentTarget],
@@ -240,12 +240,12 @@ const C: Component<Props> = (props) => {
                 </TextTooltip>
 
                 <TextTooltip text="Copy result">
-                    <IconButton 
+                    <IconButton
                         onClick={async () => {
                             const success = await props[_onCopyResult]()
                             if (!success) {
                                 if (copyErrorTimeoutId()) clearTimeDelayed(copyErrorTimeoutId()!)
-            
+
                                 setCopyErrorTimeoutId(setTimeDelayed(() => {
                                     setCopyErrorTimeoutId(null)
                                 }, 1000))
@@ -263,20 +263,20 @@ const C: Component<Props> = (props) => {
                 </TextTooltip>
             </>}
         />
-        <Drawer 
+        <Drawer
             header={<TextTooltip text="Close navigation">
-                <IconButton 
-                    classList={addClassListModule(CSSAnimation.btn_shrink_horizontal_icon)} 
+                <IconButton
+                    classList={addClassListModule(CSSAnimation.btn_shrink_horizontal_icon)}
                     onClick={() => closeDrawer(drawer_navigation_ref)}
                     code={0xEAFF}
                 />
             </TextTooltip>}
             ref={r => drawer_navigation_ref = r}>
-            <For each={RANDOMIZER_TYPES}>{r => 
-                <DrawerItem 
+            <For each={RANDOMIZER_TYPES}>{r =>
+                <DrawerItem
                     onClick={() => {
                         if (props[_randomizerType] != r[_type]) props[_onChangeRandomizer](r[_type])
-                        
+
                         closeDrawer(drawer_navigation_ref)
                     } }
                     selected={props[_randomizerType] == r[_type]}>
@@ -380,8 +380,8 @@ const C: Component<Props> = (props) => {
 
             {/* Numbers */}
             <Show when={props[_randomizerType] == RandomizerType[_numbers]}>
-                <SubMenu 
-                    ref={r => submenu_sort_ref = r} 
+                <SubMenu
+                    ref={r => submenu_sort_ref = r}
                     level={1}
                     onToggleOpen={(v) => setIs_submenu_sort_open(v)}
                     item={<MenuItem

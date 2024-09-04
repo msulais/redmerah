@@ -244,9 +244,9 @@ const AppbarTasks: VoidComponent<{
                     </TextTooltip>
                     <TextTooltip text="Copy tasks">
                         <IconButton
-                            onClick={() => {
+                            onClick={(ev) => {
                                 props[_command](Commands.copy_tasks, props[_isGroup]? undefined : props[_taskListIndex])
-                                openToast(toast_copied_ref)
+                                openToast(ev, toast_copied_ref)
                             }}
                             code={0xE51B}
                         />
@@ -724,10 +724,10 @@ const GroupTaskList: VoidComponent<{
             onToggleOpen={isOpen => setIs_menu_more_open(isOpen)}>
             <MenuItem
                 iconCode={0xE51B}
-                onClick={() => {
+                onClick={(ev) => {
                     props[_command](Commands.copy_tasks, selectedTaskListToAction[_taskListIndex])
                     closeMenu(menu_more_ref)
-                    openToast(toast_copied_ref)
+                    openToast(ev, toast_copied_ref)
                 }}>
                 Copy tasks
             </MenuItem>
@@ -829,6 +829,7 @@ const _: VoidComponent<{
         setSelectedFileToView({file, taskListIndex, taskIndex, fileIndex})
         const blob = (await props[_command](
             Commands.get_file_blob,
+            ev,
             file,
             taskListIndex,
             taskIndex,
@@ -1363,8 +1364,9 @@ const _: VoidComponent<{
                 </Button>
                 <Button
                     variant={ButtonVariant[_filled]}
-                    onClick={() => props[_command](
+                    onClick={(ev) => props[_command](
                         Commands.download_file,
+                        ev,
                         selectedFileToView[_file],
                         selectedFileToView[_taskListIndex],
                         selectedFileToView[_taskIndex],
@@ -1769,10 +1771,11 @@ const _: VoidComponent<{
         <Menu ref={r => menu_fileAction_ref = r} onToggleOpen={isOpen => setIs_menu_fileAction_open(isOpen)}>
             <MenuItem
                 iconCode={0xE0B9}
-                onClick={() => {
+                onClick={(ev) => {
                     closeMenu(menu_fileAction_ref)
                     props[_command](
                         Commands.download_file,
+                        ev,
                         selectedFileToAction[_file],
                         selectedFileToAction[_taskListIndex],
                         selectedFileToAction[_taskIndex],
@@ -1870,10 +1873,11 @@ const _: VoidComponent<{
             </MenuItem>
             <MenuItem
                 iconCode={0xE0B9}
-                onClick={() => {
+                onClick={(ev) => {
                     closeMenu(menu_fileAction3_ref)
                     props[_command](
                         Commands.download_file,
+                        ev,
                         selectedFileToAction2[_file],
                         selectedFileToAction2[_taskListIndex],
                         selectedFileToAction2[_taskIndex],

@@ -72,6 +72,7 @@ export enum Commands {
     add_files = 't',
 
     /**
+    @param {Event} event `Event`
     @param {TaskFileMetaData} file `TaskFileMetaData`
     @param {number} taskListIndex `number`
     @param {number} taskIndex `number`
@@ -93,6 +94,7 @@ export enum Commands {
     edit_subtask = 'w',
 
     /**
+    @param {Event} event `Event`
     @param {TaskFileMetaData} file `TaskFileMetaData`
     @param {number} taskListIndex `number`
     @param {number} taskIndex `number`

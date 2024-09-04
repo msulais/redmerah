@@ -625,7 +625,7 @@ const _: VoidComponent = () => {
         return $files
     }
 
-    function downloadTaskFile(file: TaskFileMetaData, taskListIndex: number, taskIndex: number, fileIndex: number): void {
+    function downloadTaskFile(ev: Event, file: TaskFileMetaData, taskListIndex: number, taskIndex: number, fileIndex: number): void {
         const transaction = db[_transaction]([
             ObjectStoreNames[_files],
             ObjectStoreNames[_taskFileMetaData]
@@ -646,7 +646,7 @@ const _: VoidComponent = () => {
                     store_taskFileMetaData[_delete](file[_id])
                 }
 
-                openToast(toast_noFile_ref)
+                openToast(ev, toast_noFile_ref)
                 return;
             }
 
@@ -654,7 +654,7 @@ const _: VoidComponent = () => {
         })
     }
 
-    async function getBlob(file: TaskFileMetaData, taskListIndex: number, taskIndex: number, fileIndex: number): Promise<Blob | null> {
+    async function getBlob(ev: Event, file: TaskFileMetaData, taskListIndex: number, taskIndex: number, fileIndex: number): Promise<Blob | null> {
         const transaction = db[_transaction]([
             ObjectStoreNames[_files],
             ObjectStoreNames[_taskFileMetaData]],
@@ -676,7 +676,7 @@ const _: VoidComponent = () => {
                     store_taskFileMetaData[_delete](file[_id])
                 }
 
-                openToast(toast_noFile_ref)
+                openToast(ev, toast_noFile_ref)
                 return null
             }
 
@@ -906,7 +906,7 @@ const _: VoidComponent = () => {
 
         // download_file
         else if (type == Commands.download_file) {
-            downloadTaskFile(args[0] as TaskFileMetaData, args[1] as number, args[2] as number, args[3] as number)
+            downloadTaskFile(args[0] as Event, args[1] as TaskFileMetaData, args[2] as number, args[3] as number, args[4] as number)
         }
 
         // edit_file
@@ -921,7 +921,7 @@ const _: VoidComponent = () => {
 
         // get_file_blob
         else if (type == Commands.get_file_blob) {
-            return await getBlob(args[0] as TaskFileMetaData, args[1] as number, args[2] as number, args[3] as number)
+            return await getBlob(args[0] as Event, args[1] as TaskFileMetaData, args[2] as number, args[3] as number, args[4] as number)
         }
 
         // add_subtask

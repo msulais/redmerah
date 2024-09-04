@@ -24,16 +24,16 @@ const _: VoidComponent = () => {
         title="Toast"
         description="A toast is a lightweight notification that appears briefly at the bottom or top of the screen. It provides users with short messages or alerts without interrupting their primary workflow. Toasts are typically used to display success messages, errors, or informational updates.">
         <Playground>
-            <Button 
+            <Button
                 variant={ButtonVariant[_tonal]}
-                onClick={() => openToast(toast_ref, {
+                onClick={ev => openToast(ev, toast_ref, {
                     autoClose: autoClose(),
                     duration: duration(),
                     position: position()
                 })}>
                 Open toast
             </Button>
-            <Toast 
+            <Toast
                 ref={r => toast_ref = r}
                 header={<Show when={header()}>Warning</Show>}
                 trailing={<Show when={trailing()}>
@@ -55,7 +55,7 @@ const _: VoidComponent = () => {
             <Show when={autoClose()}>
                 <NumberTextField labelText="Duration" style={{width: '100px'}} value={duration()} step={100} min={100} onFinalValueChanged={v => setDuration(v)} trailing="ms"/>
             </Show>
-            <Dropdown 
+            <Dropdown
                 labelText="Position"
                 items={[
                     [ToastPosition[_centerBottom], 'Center bottom'],
