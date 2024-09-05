@@ -33,7 +33,7 @@ export const apps: AppItem[] = [
         link: RoutesLinks.randomizer,
         color: '#00FF48',
         buildNumber: 1,
-        buildVersion: '0.1.0',
+        buildVersion: '0.1.1',
     },
     {
         logoURL: color_generator_logo[_src],
