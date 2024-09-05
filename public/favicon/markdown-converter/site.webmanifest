@@ -3,6 +3,7 @@
     "short_name": "Markdown Converter",
     "id": "/markdown-converter",
     "start_url": "/markdown-converter",
+    "description": "Convert markdown to HTML effortlessly with our online markdown converter. Create beautifully formatted web content from plain text using our user-friendly tool.",
     "icons": [
         {
             "src": "/favicon/markdown-converter/favicon-16x16.png",

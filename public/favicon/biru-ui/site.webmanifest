@@ -3,6 +3,7 @@
     "short_name": "Biru UI",
     "id": "/biru-ui",
     "start_url": "/biru-ui",
+    "description": "We test our UI here",
     "icons": [
         {
             "src": "/favicon/biru-ui/favicon-16x16.png",

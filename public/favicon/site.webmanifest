@@ -1,6 +1,7 @@
 {
     "name": "Redmerah",
     "short_name": "Redmerah",
+    "description": "Get things done faster with zero interruptions! Redmerah offers powerful, privacy-focused tools to boost your productivity. Free, secure & data stays local.",
     "icons": [
         {
             "src": "/favicon/favicon-16x16.png",

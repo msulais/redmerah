@@ -3,6 +3,7 @@
     "short_name": "Randomizer",
     "id": "/randomizer",
     "start_url": "/randomizer",
+    "description": "Explore our Randomizer Hub for a variety of tools that add a touch of unpredictability to your life. Generate random strings, words, numbers, colors, and even assemble teams. Embrace the unexpected!",
     "icons": [
         {
             "src": "/favicon/randomizer/favicon-16x16.png",

@@ -3,6 +3,7 @@
     "short_name": "Color Generator",
     "id": "/color-generator",
     "start_url": "/color-generator",
+    "description": "Generate accent pallete color for your app. Including color for light and dark mode.",
     "icons": [
         {
             "src": "/favicon/color-generator/favicon-16x16.png",
