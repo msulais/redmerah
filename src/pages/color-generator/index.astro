@@ -1,13 +1,13 @@
 ---
 import Html from '@/layouts/Html/index.astro';
-import { MainApp } from './_components'
+import App from './_App'
 
 export const prerender = true;
 ---
 
-<Html 
-	title='Color Generator' 
-	accentColor='#39BBFF' 
+<Html
+	title='Color Generator'
+	accentColor='#39BBFF'
 	description='Generate accent pallete color for your app. Including color for light and dark mode.'>
 	<Fragment slot="favicon">
 		<link rel="shortcut icon" type="image/ico" href="/favicon/color-generator/favicon.ico" />
@@ -16,5 +16,5 @@ export const prerender = true;
 		<link rel="icon" type="image/png" sizes="16x16" href="/favicon/color-generator/favicon-16x16.png">
 		<link rel="manifest" href="/favicon/color-generator/site.webmanifest">
 	</Fragment>
-	<MainApp client:only="solid-js"/>
+	<App client:only="solid-js"/>
 </Html>

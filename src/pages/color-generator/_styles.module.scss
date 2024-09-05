@@ -1,12 +1,6 @@
-@use '_size.scss';
+$appbar_colorpicker_button_none: 500px;
 
-.appbar_select_color {
-    @media (max-width: size.$appbar_colorpicker_button_none) {
-        display: none !important;
-    }
-}
-
-.dialog_colors {
+.app_dialog_colors {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
@@ -32,13 +26,39 @@
     }
 }
 
-.fab {
-    @media (min-width: (size.$appbar_colorpicker_button_none + 1px)) {
+.app_fab {
+    @media (min-width: ($appbar_colorpicker_button_none + 1px)) {
         display: none !important;
     }
 }
 
-.main {
+.app_seed {
+    min-width: 40px;
+    max-width: 40px;
+    min-height: 40px;
+    max-height: 40px;
+    border-radius: 8px;
+
+    [data-corner=sharp] & {
+        border-radius: 0;
+    }
+
+    [data-corner=semi-round] & {
+        border-radius: 4px;
+    }
+
+    [data-corner=full-round] & {
+        border-radius: 20px;
+    }
+}
+
+.appbar_select_color {
+    @media (max-width: $appbar_colorpicker_button_none) {
+        display: none !important;
+    }
+}
+
+.body_main {
     padding: 0 8px 8px 8px;
     gap: 8px;
     height: 100%;
@@ -99,25 +119,5 @@
         font-size: var(--font-size-m);
         text-align: center;
         margin-bottom: 16px;
-    }
-}
-
-.seed {
-    min-width: 40px;
-    max-width: 40px;
-    min-height: 40px;
-    max-height: 40px;
-    border-radius: 8px;
-
-    [data-corner=sharp] & {
-        border-radius: 0;
-    }
-
-    [data-corner=semi-round] & {
-        border-radius: 4px;
-    }
-
-    [data-corner=full-round] & {
-        border-radius: 20px;
     }
 }

@@ -1,103 +1,32 @@
-import { type Component, For, Show, type Signal, createSignal, onMount } from 'solid-js'
+import { type Component, For, Show, type Signal, type VoidComponent, createSignal, onMount } from 'solid-js'
 import { createStore } from 'solid-js/store'
 
 import type { HEXColor, RGBColor } from '@/types/color'
+import type { Palette } from './_types'
 import { clearTimeDelayed, setTimeDelayed } from '@/utils/timeout'
 import { generateColor, hexToRgb, testHexColor } from '@/utils/color'
 import { addClassListModule, getElementById } from '@/utils/element'
-import { _system, _theme, _corner, _dark, _fullRound, _includes, _light, _round, _semiRound, _sharp, _src, _URL, _share, _currentTarget, _seed, _paletteList, _length, _outlined, _tonal, _color, _color_accent, _innerHTML, _toUpperCase, _colorDark, _onColor, _onColorDark, _clipboard, _writeText, _join, _push, _palette, _filter, _filled, _accentDark, _accentLight, _onAccentDark, _onAccentLight, _open, _createObjectStore, _readonly, _objectStore, _transaction, _getAll, _then, _put, _readwrite, _manual, _clear, _delete } from '@/data/string'
+import { _system, _theme, _corner, _dark, _fullRound, _includes, _light, _round, _semiRound, _sharp, _src, _URL, _share, _currentTarget, _seed, _paletteList, _length, _outlined, _tonal, _color, _color_accent, _innerHTML, _toUpperCase, _colorDark, _onColor, _onColorDark, _clipboard, _writeText, _join, _push, _palette, _filter, _filled, _accentDark, _accentLight, _onAccentDark, _onAccentLight, _open, _createObjectStore, _readonly, _objectStore, _transaction, _getAll, _then, _put, _readwrite, _manual, _clear, _delete, _colorGenerator, _writeObjectStore, _readObjectStore } from '@/data/string'
 import { getNavigator } from '@/data/window'
 import { DatabaseNames, LocalStorageKeys } from '@/enums/storage'
 import { getLocalStorageItem, setLocalStorageItem } from '@/utils/storage'
 import { ElementIds } from '@/enums/ids'
 import { IDB } from '@/class/indexeddb'
 import { ObjectStoreNames, type ObjectStorePaletteList } from './_storage'
-import type { Palette } from './_types'
 
 import {TextTooltip} from '@/components/Tooltip'
 import Divider from '@/components/Divider'
-import Icon from '@/components/Icon'
 import Button, { ButtonVariant, FloatingActionButton, IconButton } from '@/components/Button'
 import List from '@/components/List'
 import ColorPicker, { closeColorPicker, openColorPicker } from '@/components/ColorPicker'
 import Dialog, { closeDialog, openDialog } from '@/components/Dialog'
 import App from '@/components/App'
 import AppBar from './_AppBar'
-import CSS from './_index.module.scss'
+import Body from './_Body'
+import CSS from './_styles.module.scss'
 
-type BodyProps = Palette
-
-const Body: Component<BodyProps> = (props) => {
-    const accLightTimeoutId: Signal<number | null> = createSignal<number | null>(null)
-    const onAccLightTimeoutId: Signal<number | null> = createSignal<number | null>(null)
-    const accDarkTimeoutId: Signal<number | null> = createSignal<number | null>(null)
-    const onAccDarkTimeoutId: Signal<number | null> = createSignal<number | null>(null)
-
-    async function copyColor(color: string, timeoutId: Signal<number | null>): Promise<void> {
-        if (timeoutId[0]()) {
-            clearTimeDelayed(timeoutId[0]()!)
-            timeoutId[1](null)
-        }
-
-        await getNavigator()[_clipboard][_writeText](color)
-        timeoutId[1](setTimeDelayed(() => timeoutId[1](null), 1000))
-    }
-
-    function hexToCSSValue(hexColor: HEXColor): string {
-        const rgb = hexToRgb(hexColor) 
-        return `${rgb.r}, ${rgb.g}, ${rgb.b}`
-    }
-
-    return (<main class={CSS.main}>
-        <div style={{ "background-color": props[_accentLight], color: props[_onAccentLight] }}>
-            <h2>Accent Light<br />{props[_accentLight]}</h2>
-            <Button
-                variant={ButtonVariant[_tonal]}
-                style={{'--color-on-surface': hexToCSSValue(props[_onAccentLight])}}
-                onClick={() => copyColor(props[_accentLight], accLightTimeoutId)}>
-                <Show when={accLightTimeoutId[0]()} fallback={<><Icon code={0xE51B}/>Copy</>}>
-                    <Icon code={0xE3D8}/>Copied
-                </Show>
-            </Button>
-        </div>
-        <div style={{ "background-color": props[_onAccentLight], color: props[_accentLight] }}>
-            <h2>On Accent Light<br />{props[_onAccentLight]}</h2>
-            <Button
-                variant={ButtonVariant[_tonal]}
-                style={{'--color-on-surface': hexToCSSValue(props[_accentLight])}}
-                onClick={() => copyColor(props[_onAccentLight], onAccLightTimeoutId)}>
-                <Show when={onAccLightTimeoutId[0]()} fallback={<><Icon code={0xE51B}/>Copy</>}>
-                    <Icon code={0xE3D8}/>Copied
-                </Show>
-            </Button>
-        </div>
-        <div style={{ "background-color": props[_accentDark], color: props[_onAccentDark] }}>
-            <h2>Accent Dark<br />{props[_accentDark]}</h2>
-            <Button
-                variant={ButtonVariant[_tonal]}
-                style={{'--color-on-surface': hexToCSSValue(props[_onAccentDark])}}
-                onClick={() => copyColor(props[_accentDark], accDarkTimeoutId)}>
-                <Show when={accDarkTimeoutId[0]()} fallback={<><Icon code={0xE51B}/>Copy</>}>
-                    <Icon code={0xE3D8}/>Copied
-                </Show>
-            </Button>
-        </div>
-        <div style={{ "background-color": props[_onAccentDark], color: props[_accentDark] }}>
-            <h2>On Accent Dark<br />{props[_onAccentDark]}</h2>
-            <Button
-                variant={ButtonVariant[_tonal]}
-                style={{'--color-on-surface': hexToCSSValue(props[_accentDark])}}
-                onClick={() => copyColor(props[_onAccentDark], onAccDarkTimeoutId)}>
-                <Show when={onAccDarkTimeoutId[0]()} fallback={<><Icon code={0xE51B}/>Copy</>}>
-                    <Icon code={0xE3D8}/>Copied
-                </Show>
-            </Button>
-        </div>
-    </main>)
-}
-
-export const MainApp: Component = () => {
-    const db = new IDB(DatabaseNames.colorGenerator, 1)
+const _: VoidComponent = () => {
+    const db = new IDB(DatabaseNames[_colorGenerator], 1)
     const [palette, setPalette] = createStore<Palette>({
         seed: '#00FFF0',
         accentLight: '#005C56',
@@ -113,10 +42,8 @@ export const MainApp: Component = () => {
 
     function deleteAllPaletteList(): void {
         setPaletteList([])
-        const objectStore_paletteList = db[_transaction](ObjectStoreNames[_paletteList], _readwrite)![_objectStore](ObjectStoreNames[_paletteList])
-        if (!objectStore_paletteList) return;
-        
-        objectStore_paletteList[_clear]()
+        const store_paletteList = db[_writeObjectStore](ObjectStoreNames[_paletteList])
+        if (store_paletteList != null) store_paletteList[_clear]()
     }
 
     function rgbToCSSValue(rgb: RGBColor): string {
@@ -124,7 +51,6 @@ export const MainApp: Component = () => {
     }
 
     function onColorChange(hexColor: HEXColor): void {
-        
         const acc = generateColor(hexColor)
         const accentColorStyleEl = getElementById(ElementIds[_color_accent])!
         accentColorStyleEl[_innerHTML] = `:root{
@@ -134,7 +60,6 @@ export const MainApp: Component = () => {
 --color-on-accent-dark: ${rgbToCSSValue(hexToRgb(acc[_onColorDark]))};
 }`;
         setLocalStorageItem(LocalStorageKeys[_color], hexColor)
-
         setPalette({
             seed: hexColor[_toUpperCase]() as HEXColor,
             accentLight: acc[_color][_toUpperCase]() as HEXColor,
@@ -173,11 +98,9 @@ export const MainApp: Component = () => {
 
         setPaletteList(l => [...l, {...palette}])
 
-        
-        const objectStore_paletteList = db[_transaction](ObjectStoreNames[_paletteList], _readwrite)![_objectStore](ObjectStoreNames[_paletteList])
-        if (!objectStore_paletteList) return;
 
-        objectStore_paletteList[_put]({...palette})
+        const store_paletteList = db[_writeObjectStore](ObjectStoreNames[_paletteList])
+        if (store_paletteList != null) store_paletteList[_put]({...palette})
     }
 
     function initColor(): void {
@@ -191,29 +114,27 @@ export const MainApp: Component = () => {
     }
 
     function initPaletteList(): void {
-        const objectStore_paletteList = db[_transaction](ObjectStoreNames[_paletteList], _readonly)![_objectStore](ObjectStoreNames[_paletteList])
-        if (!objectStore_paletteList) return;
+        const store_paletteList = db[_readObjectStore](ObjectStoreNames[_paletteList])
+        if (store_paletteList == null) return;
 
-        db[_getAll]<ObjectStorePaletteList>(objectStore_paletteList)[_then]((values) => {
+        db[_getAll]<ObjectStorePaletteList>(store_paletteList)[_then]((values) => {
             setPaletteList(v => values? [...values] : v)
         })
     }
 
     function initDatabase(): void {
-        try {
-            db[_open]({
-                onSuccess(_ev, _db) {
-                    initPaletteList()
-                },
-                onUpgradeNeeded(_ev, db) {
-                    db[_createObjectStore]<ObjectStorePaletteList>({
-                        name: ObjectStoreNames[_paletteList],
-                        keyPath: _seed, 
-                        indexs: [_seed, _accentLight, _onAccentLight, _accentDark, _onAccentDark]
-                    })
-                },
-            })
-        } catch (e) {}
+        db[_open]({
+            onSuccess(_ev, _db) {
+                initPaletteList()
+            },
+            onUpgradeNeeded(_ev, db) {
+                db[_createObjectStore]<ObjectStorePaletteList>({
+                    name: ObjectStoreNames[_paletteList],
+                    keyPath: _seed,
+                    indexs: [_seed, _accentLight, _onAccentLight, _accentDark, _onAccentDark]
+                })
+            },
+        })
     }
 
     onMount(() => {
@@ -247,50 +168,44 @@ export const MainApp: Component = () => {
                 closeColorPicker(dialog_colorList_ref()!)
             }
 
-            const objectStore_paletteList = db[_transaction](ObjectStoreNames[_paletteList], _readwrite)![_objectStore](ObjectStoreNames[_paletteList])
-            if (!objectStore_paletteList) return;
-
-            objectStore_paletteList[_delete](p[_seed])
+            const store_paletteList = db[_writeObjectStore](ObjectStoreNames[_paletteList])
+            if (store_paletteList != null) store_paletteList[_delete](p[_seed])
         }
 
         return (<List
             trailing={<>
                 <TextTooltip text='Copy'>
-                    <IconButton 
-                        onClick={copy} 
+                    <IconButton
+                        onClick={copy}
                         code={timeoutId()? 0xE3D8 : 0xE51B}
                     />
                 </TextTooltip>
-
                 <TextTooltip text='Delete'>
-                    <IconButton 
-                        onClick={deleteColor} 
+                    <IconButton
+                        onClick={deleteColor}
                         code={0xE59D}
                     />
                 </TextTooltip>
             </>}
-            subtitle={<div class={CSS.dialog_colors}>
+            subtitle={<div class={CSS.app_dialog_colors}>
                 <TextTooltip text="Accent Light">
                     <div style={{
                         "background-color": props[_palette][_accentLight],
                         color: props[_palette][_onAccentLight],
                     }}>{props[_palette][_accentLight]}</div>
                 </TextTooltip>
-
                 <TextTooltip text="On Accent Light">
                     <div style={{
                         "background-color": props[_palette][_onAccentLight],
                         color: props[_palette][_accentLight],
                     }}>{props[_palette][_onAccentLight]}</div>
                 </TextTooltip>
-
                 <TextTooltip text="Accent Dark">
                     <div style={{
                         "background-color": props[_palette][_accentDark],
                         color: props[_palette][_onAccentDark],
                     }}>{props[_palette][_accentDark]}</div>
                 </TextTooltip>
-
                 <TextTooltip text="On Accent Dark">
                     <div style={{
                         "background-color": props[_palette][_onAccentDark],
@@ -298,7 +213,7 @@ export const MainApp: Component = () => {
                     }}>{props[_palette][_onAccentDark]}</div>
                 </TextTooltip>
             </div>}
-            leading={<div class={CSS.seed} style={{"background-color": props[_palette][_seed]}}/>}>
+            leading={<div class={CSS.app_seed} style={{"background-color": props[_palette][_seed]}}/>}>
             { props[_palette][_seed] }
         </List>)
     }
@@ -314,9 +229,9 @@ export const MainApp: Component = () => {
                 onColorChange={onColorChange}
                 paletteList={paletteList()}
             />}
-            floatingActionButton={<FloatingActionButton 
-                classList={addClassListModule(CSS.fab)} 
-                variant={ButtonVariant[_filled]} 
+            floatingActionButton={<FloatingActionButton
+                classList={addClassListModule(CSS.app_fab)}
+                variant={ButtonVariant[_filled]}
                 onClick={(ev) => openColorPicker(ev, colorPicker_ref()!, {anchor: ev[_currentTarget]})}>
                 {palette[_seed]}
             </FloatingActionButton>}>
@@ -334,16 +249,16 @@ export const MainApp: Component = () => {
             style={{width: '640px'}}
             header="Color list"
             actions={<>
-                <Button 
-                    variant={ButtonVariant[_tonal]} 
+                <Button
+                    variant={ButtonVariant[_tonal]}
                     onClick={(ev) => openDialog(ev, dialog_deleteAll_ref, {important: true})}>
                     Delete all
                 </Button>
                 <Button variant={ButtonVariant[_tonal]} onClick={copyAllPaletteList}>
                     <Show when={timeoutId()} fallback='Copy all'>Copied</Show>
                 </Button>
-                <Button     
-                    variant={ButtonVariant[_filled]} 
+                <Button
+                    variant={ButtonVariant[_filled]}
                     onClick={() => closeDialog(dialog_colorList_ref()!)}>
                     Close
                 </Button>
@@ -353,7 +268,7 @@ export const MainApp: Component = () => {
                 <ListItem palette={p}/>
             </>}</For>
         </Dialog>
-        <Dialog 
+        <Dialog
             ref={r => dialog_deleteAll_ref = r}
             header="Delete all"
             actions={<>
@@ -368,3 +283,5 @@ export const MainApp: Component = () => {
         </Dialog>
     </>)
 }
+
+export default _

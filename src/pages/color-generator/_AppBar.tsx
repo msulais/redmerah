@@ -24,13 +24,13 @@ import Icon from "@/components/Icon"
 import {TextTooltip} from "@/components/Tooltip"
 import Button, { ButtonVariant, IconButton } from "@/components/Button"
 import Menu, { SubMenu, MenuItem, MenuDivider, LinkMenuItem, MenuHeader, closeMenu, closeSubMenu, openMenu } from "@/components/Menu"
-import AppBar from "@/components/AppBar"
-import CSSAnimation from '@/styles/animation.module.scss'
-import CSS from './_index.module.scss'
 import { openDialog } from "@/components/Dialog"
 import { openColorPicker } from "@/components/ColorPicker"
+import AppBar from "@/components/AppBar"
+import CSSAnimation from '@/styles/animation.module.scss'
+import CSS from './_styles.module.scss'
 
-type _AppBarProps = {
+const _: VoidComponent<{
     onAddColor: () => unknown
     palette: Palette
     onColorChange: (color: HEXColor) => unknown
@@ -38,16 +38,14 @@ type _AppBarProps = {
     colorPicker_ref: HTMLDialogElement
     dialog_colorList_ref: HTMLDialogElement
     seed: string
-}
-
-const _AppBar: VoidComponent<_AppBarProps> = (props) => {
+}> = (props) => {
     const [theme, setTheme] = createSignal<ThemeData>(ThemeData[_system])
     const [timeoutId, setTimeoutId] = createSignal<number | null>(null)
     const [copyTimeoutId, setCopyTimeoutId] = createSignal<number | null>(null)
     const [corner, setCorner] = createSignal<CornerData>(CornerData[_round])
     const [is_menu_settings_open, setIs_menu_settings_open] = createSignal<boolean>(false)
-    const [is_menu_themeSettings_open, setIs_menu_themeSettings_open] = createSignal<boolean>(false)
-    const [is_menu_cornerSettings_open, setIs_cornerSettings_open] = createSignal<boolean>(false)
+    const [is_submenu_themeSettings_open, setIs_submenu_themeSettings_open] = createSignal<boolean>(false)
+    const [is_submenu_cornerSettings_open, setIs_submenu_cornerSettings_open] = createSignal<boolean>(false)
     let menu_settings_ref: HTMLDialogElement
     let submenu_themeSettings_ref: HTMLDivElement
     let submenu_cornerSettings_ref: HTMLDivElement
@@ -110,6 +108,133 @@ const _AppBar: VoidComponent<_AppBarProps> = (props) => {
         initCorner()
     })
 
+    const Menus: VoidComponent = () => (<>
+        <Menu
+            ref={r => menu_settings_ref = r}
+            onToggleOpen={(v) => setIs_menu_settings_open(v)}
+            style={{"min-width": '200px'}}>
+            <SubMenu
+                level={1}
+                ref={r => submenu_themeSettings_ref = r}
+                onToggleOpen={v => setIs_submenu_themeSettings_open(v)}
+                item={<MenuItem
+                    focused={is_submenu_themeSettings_open()}
+                    iconCode={0xE28A}
+                    trailing={<Icon filled code={0xE368}/>}>
+                    Theme
+                </MenuItem>}>
+                <MenuItem
+                    selected={theme() == ThemeData[_light]}
+                    iconCode={0xF2CD}
+                    onClick={() => changeTheme(ThemeData[_light])}>
+                    Light
+                </MenuItem>
+                <MenuItem
+                    selected={theme() == ThemeData[_dark]}
+                    iconCode={0xF2B3}
+                    onClick={() => changeTheme(ThemeData[_dark])}>
+                    Dark
+                </MenuItem>
+                <MenuItem
+                    selected={theme() == ThemeData[_system]}
+                    iconCode={0xE96D}
+                    onClick={() => changeTheme(ThemeData[_system])}>
+                    System theme
+                </MenuItem>
+            </SubMenu>
+            <SubMenu
+                level={1}
+                ref={r => submenu_cornerSettings_ref = r}
+                onToggleOpen={v => setIs_submenu_cornerSettings_open(v)}
+                item={<MenuItem
+                    focused={is_submenu_cornerSettings_open()}
+                    iconCode={0xF044}
+                    trailing={<Icon filled code={0xE368}/>}>
+                    Corner style
+                </MenuItem>}>
+                <MenuItem
+                    selected={corner() == CornerData[_sharp]}
+                    iconCode={0xEA99}
+                    onClick={() => changeCorner(CornerData[_sharp])}>
+                    Sharp
+                </MenuItem>
+                <MenuItem
+                    selected={corner() == CornerData[_semiRound]}
+                    iconCode={0xEEF7}
+                    onClick={() => changeCorner(CornerData[_semiRound])}>
+                    Semi round
+                </MenuItem>
+                <MenuItem
+                    selected={corner() == CornerData[_round]}
+                    iconCode={0xF044}
+                    onClick={() => changeCorner(CornerData[_round])}>
+                    Round
+                </MenuItem>
+                <MenuItem
+                    selected={corner() == CornerData[_fullRound]}
+                    iconCode={0xE408}
+                    onClick={() => changeCorner(CornerData[_fullRound])}>
+                    Full round
+                </MenuItem>
+            </SubMenu>
+            <MenuDivider />
+            <LinkMenuItem
+                onClick={() => closeMenu(menu_settings_ref)}
+                href={RoutesLinks[_home]}
+                leading={<img src={redmerahLogo[_src]} width={16} alt='Redmerah logo'/>}>
+                Redmerah
+            </LinkMenuItem>
+            <LinkMenuItem
+                onClick={() => closeMenu(menu_settings_ref)}
+                href={RoutesLinks[_apps]}
+                iconCode={0xE063}>
+                More apps
+            </LinkMenuItem>
+            <LinkMenuItem
+                onClick={() => closeMenu(menu_settings_ref)}
+                href={RoutesLinks[_about]}
+                iconCode={0xE930}>
+                About us
+            </LinkMenuItem>
+            <MenuDivider />
+            <LinkMenuItem
+                onClick={() => closeMenu(menu_settings_ref)}
+                href={RoutesLinks[_privacy]}
+                iconCode={0xEE51}>
+                Privacy policy
+            </LinkMenuItem>
+            <LinkMenuItem
+                onClick={() => closeMenu(menu_settings_ref)}
+                href={RoutesLinks[_terms]}
+                iconCode={0xED47}>
+                Terms & conditions
+            </LinkMenuItem>
+            <MenuDivider/>
+            <MenuItem
+                onClick={() => {
+                    getNavigator()[_share]({text: 'Color Generator', title: 'Color Generator', url: getDocument()[_URL]})
+                    closeMenu(menu_settings_ref)
+                }}
+                iconCode={0xEE23}>
+                Share
+            </MenuItem>
+            <LinkMenuItem
+                onClick={() => closeMenu(menu_settings_ref)}
+                href={'mailto:' + ExternalLinks[_contactEmail] + '?subject=' + encodeURL('Color Generator')}
+                iconCode={0xE3A0}>
+                Send feedback
+            </LinkMenuItem>
+            <LinkMenuItem
+                onClick={() => closeMenu(menu_settings_ref)}
+                href={ExternalLinks[_donate]}
+                openInNewTab
+                iconCode={0xE84B}>
+                Donate
+            </LinkMenuItem>
+            <MenuHeader>&copy; {getDate_Y()} Redmerah</MenuHeader>
+        </Menu>
+    </>)
+
     return (<>
         <AppBar
             leading={<>
@@ -121,7 +246,7 @@ const _AppBar: VoidComponent<_AppBarProps> = (props) => {
                         />
                     </TextTooltip>
                 </Show>
-                <img width={32} src={logo[_src]} alt="Color generator" />
+                <img width={32} src={logo[_src]} alt="Color generator logo" />
             </>}
             headline="Color Generator"
             trailing={<>
@@ -133,7 +258,6 @@ const _AppBar: VoidComponent<_AppBarProps> = (props) => {
                         {props[_seed]}
                     </Button>
                 </TextTooltip>
-
                 <TextTooltip text='Add color to list'>
                     <IconButton
                         onClick={() => {
@@ -147,14 +271,12 @@ const _AppBar: VoidComponent<_AppBarProps> = (props) => {
                         code={timeoutId()? 0xE3D8 : 0xF08A}
                     />
                 </TextTooltip>
-
                 <TextTooltip text='Copy all'>
                     <IconButton
                         onClick={() => copyAll()}
                         code={copyTimeoutId()? 0xE3D8 : 0xE51B}
                     />
                 </TextTooltip>
-
                 <TextTooltip text='Open settings'>
                     <IconButton
                         classList={addClassListModule(CSSAnimation.btn_rotate_icon)}
@@ -165,140 +287,8 @@ const _AppBar: VoidComponent<_AppBarProps> = (props) => {
                 </TextTooltip>
             </>}
         />
-        <Menu
-            ref={r => menu_settings_ref = r}
-            onToggleOpen={(v) => setIs_menu_settings_open(v)}>
-            <SubMenu
-                level={1}
-                ref={r => submenu_themeSettings_ref = r}
-                onToggleOpen={v => setIs_menu_themeSettings_open(v)}
-                item={<MenuItem
-                    data-focus={toggleAttribute(is_menu_themeSettings_open())}
-                    leading={<Icon filled code={0xE28A}/>}
-                    trailing={<Icon filled code={0xE368}/>}>
-                    Theme
-                </MenuItem>}>
-                <MenuItem
-                    selected={theme() == ThemeData[_light]}
-                    leading={<Icon code={0xF2CD}/>}
-                    onClick={() => changeTheme(ThemeData[_light])}>
-                    Light
-                </MenuItem>
-                <MenuItem
-                    selected={theme() == ThemeData[_dark]}
-                    leading={<Icon code={0xF2B3}/>}
-                    onClick={() => changeTheme(ThemeData[_dark])}>
-                    Dark
-                </MenuItem>
-                <MenuItem
-                    selected={theme() == ThemeData[_system]}
-                    leading={<Icon code={0xE96D}/>}
-                    onClick={() => changeTheme(ThemeData[_system])}>
-                    System theme
-                </MenuItem>
-            </SubMenu>
-            <SubMenu
-                level={1}
-                ref={r => submenu_cornerSettings_ref = r}
-                onToggleOpen={v => setIs_cornerSettings_open(v)}
-                item={<MenuItem
-                    data-focus={toggleAttribute(is_menu_cornerSettings_open())}
-                    leading={<Icon code={0xF044}/>}
-                    trailing={<Icon filled code={0xE368}/>}>
-                    Corner style
-                </MenuItem>}>
-                <MenuItem
-                    selected={corner() == CornerData[_sharp]}
-                    leading={<Icon code={0xEA99}/>}
-                    onClick={() => changeCorner(CornerData[_sharp])}>
-                    Sharp
-                </MenuItem>
-                <MenuItem
-                    selected={corner() == CornerData[_semiRound]}
-                    leading={<Icon code={0xEEF7}/>}
-                    onClick={() => changeCorner(CornerData[_semiRound])}>
-                    Semi round
-                </MenuItem>
-                <MenuItem
-                    selected={corner() == CornerData[_round]}
-                    leading={<Icon code={0xF044}/>}
-                    onClick={() => changeCorner(CornerData[_round])}>
-                    Round
-                </MenuItem>
-                <MenuItem
-                    selected={corner() == CornerData[_fullRound]}
-                    leading={<Icon code={0xE408}/>}
-                    onClick={() => changeCorner(CornerData[_fullRound])}>
-                    Full round
-                </MenuItem>
-            </SubMenu>
-            <MenuDivider />
-            <LinkMenuItem
-                onClick={() => closeMenu(menu_settings_ref)}
-                href={RoutesLinks[_home]}
-                openInNewTab
-                trailing={<Icon code={0xEB51}/>}
-                leading={<img src={redmerahLogo[_src]} width={16} alt='Redmerah logo'/>}>
-                Redmerah (homepage)
-            </LinkMenuItem>
-            <LinkMenuItem
-                onClick={() => closeMenu(menu_settings_ref)}
-                href={RoutesLinks[_apps]}
-                openInNewTab
-                trailing={<Icon code={0xEB51}/>}
-                leading={<Icon code={0xE063}/>}>
-                More apps
-            </LinkMenuItem>
-            <LinkMenuItem
-                onClick={() => closeMenu(menu_settings_ref)}
-                href={RoutesLinks[_about]}
-                openInNewTab
-                trailing={<Icon code={0xEB51}/>}
-                leading={<Icon code={0xE930}/>}>
-                About us
-            </LinkMenuItem>
-            <MenuDivider />
-            <LinkMenuItem
-                onClick={() => closeMenu(menu_settings_ref)}
-                href={RoutesLinks[_privacy]}
-                openInNewTab
-                trailing={<Icon code={0xEB51}/>}
-                leading={<Icon code={0xEE51}/>}>
-                Privacy policy
-            </LinkMenuItem>
-            <LinkMenuItem
-                onClick={() => closeMenu(menu_settings_ref)}
-                href={RoutesLinks[_terms]}
-                openInNewTab
-                trailing={<Icon code={0xEB51}/>}
-                leading={<Icon code={0xED47}/>}>
-                Terms & conditions
-            </LinkMenuItem>
-            <MenuDivider/>
-            <MenuItem
-                onClick={() => {
-                    getNavigator()[_share]({text: 'Color Generator', title: 'Color Generator', url: getDocument()[_URL]})
-                    closeMenu(menu_settings_ref)
-                }}
-                leading={<Icon code={0xEE23}/>}>
-                Share
-            </MenuItem>
-            <LinkMenuItem
-                onClick={() => closeMenu(menu_settings_ref)}
-                href={'mailto:' + ExternalLinks[_contactEmail] + '?subject=' + encodeURL('Color Generator')}
-                leading={<Icon code={0xE3A0}/>}>
-                Send feedback
-            </LinkMenuItem>
-            <LinkMenuItem
-                onClick={() => closeMenu(menu_settings_ref)}
-                href={ExternalLinks[_donate]}
-                openInNewTab
-                leading={<Icon code={0xE84B}/>}>
-                Donate
-            </LinkMenuItem>
-            <MenuHeader>&copy; {getDate_Y()} Redmerah</MenuHeader>
-        </Menu>
+        <Menus />
     </>)
 }
 
-export default _AppBar
+export default _
