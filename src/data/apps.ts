@@ -42,7 +42,7 @@ export const apps: AppItem[] = [
         link: RoutesLinks.colorGenerator,
         color: '#39BBFF',
         buildNumber: 1,
-        buildVersion: '0.1.0',
+        buildVersion: '0.1.1',
     },
     {
         logoURL: markdown_converter_logo[_src],
