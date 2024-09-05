@@ -74,10 +74,10 @@ const _AppBar: VoidComponent<_AppBarProps> = (props) => {
         setAttribute(getRoot(), RootAttributes[_theme], theme)
         setLocalStorageItem(LocalStorageKeys[_theme], theme)
         closeSubMenu(submenu_themeSettings_ref)
-        await timeout(300) 
+        await timeout(300)
         closeMenu(menu_settings_ref)
     }
-    
+
     async function changeCorner(corner: CornerData): Promise<void> {
         setCorner(corner)
         setAttribute(getRoot(), RootAttributes[_corner], corner)
@@ -109,33 +109,33 @@ const _AppBar: VoidComponent<_AppBarProps> = (props) => {
         initTheme()
         initCorner()
     })
-    
+
     return (<>
         <AppBar
             leading={<>
                 <Show when={props[_paletteList][_length] > 0}>
                     <TextTooltip text='Color list'>
-                        <IconButton 
+                        <IconButton
                             onClick={(ev) => openDialog(ev, props[_dialog_colorList_ref])}
                             code={0xF098}
                         />
                     </TextTooltip>
                 </Show>
-                <img width={28} src={logo[_src]} alt="Color generator" />
+                <img width={32} src={logo[_src]} alt="Color generator" />
             </>}
             headline="Color Generator"
             trailing={<>
                 <TextTooltip text='Select color'>
-                    <Button 
-                        classList={addClassListModule(CSS.appbar_select_color)} 
-                        variant={ButtonVariant[_filled]} 
+                    <Button
+                        classList={addClassListModule(CSS.appbar_select_color)}
+                        variant={ButtonVariant[_filled]}
                         onClick={(ev) => openColorPicker(ev, props[_colorPicker_ref], {anchor: ev[_currentTarget]})}>
                         {props[_seed]}
                     </Button>
                 </TextTooltip>
 
                 <TextTooltip text='Add color to list'>
-                    <IconButton 
+                    <IconButton
                         onClick={() => {
                             if (timeoutId()) {
                                 clearTimeDelayed(timeoutId()!)
@@ -143,7 +143,7 @@ const _AppBar: VoidComponent<_AppBarProps> = (props) => {
                             }
                             props[_onAddColor]()
                             setTimeoutId(setTimeDelayed(() => setTimeoutId(null), 1000))
-                        }} 
+                        }}
                         code={timeoutId()? 0xE3D8 : 0xF08A}
                     />
                 </TextTooltip>
@@ -160,13 +160,13 @@ const _AppBar: VoidComponent<_AppBarProps> = (props) => {
                         classList={addClassListModule(CSSAnimation.btn_rotate_icon)}
                         focused={is_menu_settings_open()}
                         onClick={ev => openMenu(ev, menu_settings_ref, { anchor: ev[_currentTarget] })}
-                        code={0xEE0F} 
+                        code={0xEE0F}
                     />
                 </TextTooltip>
             </>}
         />
-        <Menu 
-            ref={r => menu_settings_ref = r} 
+        <Menu
+            ref={r => menu_settings_ref = r}
             onToggleOpen={(v) => setIs_menu_settings_open(v)}>
             <SubMenu
                 level={1}

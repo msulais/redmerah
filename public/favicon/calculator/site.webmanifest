@@ -1,7 +1,19 @@
 {
-    "name": "Calculator - Redmerah",
+    "name": "Calculator",
     "short_name": "Calculator",
+    "id": "/calculator",
+    "start_url": "/calculator",
     "icons": [
+        {
+            "src": "/favicon/calculator/favicon-16x16.png",
+            "sizes": "16x16",
+            "type": "image/png"
+        },
+        {
+            "src": "/favicon/calculator/favicon-32x32.png",
+            "sizes": "32x32",
+            "type": "image/png"
+        },
         {
             "src": "/favicon/calculator/android-chrome-192x192.png",
             "sizes": "192x192",

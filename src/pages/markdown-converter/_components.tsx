@@ -237,9 +237,9 @@ const MenuBar: Component<MenuBarProps> = (props) => {
     })
 
     const FileMenu: Component = () => (<>
-        <Menu 
-            style={{width: props[_isTouchDevice]? undefined : '240px'}} 
-            ref={r => menu_file_ref = r} 
+        <Menu
+            style={{width: props[_isTouchDevice]? undefined : '240px'}}
+            ref={r => menu_file_ref = r}
             onToggleOpen={(v) => setIs_menu_file_open(v)}>
             <LinkMenuItem
                 openInNewTab
@@ -271,19 +271,19 @@ const MenuBar: Component<MenuBarProps> = (props) => {
                     focused={is_submenu_download_open()}>
                     Donwload
                 </MenuItem>}>
-                <MenuItem 
+                <MenuItem
                     onClick={() => downloadFile(_markdown)}
                     leading={<svg width={20} viewBox="0 0 2560 2560" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M2375.4 2067.68H184.6C82.8 2067.68 0 1984.88 0 1883.08V676.92C0 575.12 82.8 492.32 184.6 492.32H2375.36C2477.16 492.32 2559.96 575.12 2559.96 676.92V1883.08C2560 1984.88 2477.2 2067.68 2375.4 2067.68ZM615.4 1698.48V1218.48L861.56 1526.16L1107.72 1218.48V1698.48H1353.88V861.52H1107.72L861.56 1169.2L615.4 861.52H369.24V1698.44H615.4V1698.48ZM2264.6 1280H2018.44V861.52H1772.28V1280H1526.12L1895.36 1710.76L2264.6 1280Z" fill="rgb(var(--color-on-surface))"/>
                     </svg>}>
                     Markdown
                 </MenuItem>
-                <MenuItem 
+                <MenuItem
                     onClick={() => downloadFile(_html)}
                     leading={<img width={20} src={htmlLogo[_src]} alt="HTML logo"/>}>
                     HTML
                 </MenuItem>
-                <MenuItem 
+                <MenuItem
                     onClick={() => downloadFile(_css)}
                     leading={<img width={20} src={cssLogo[_src]} alt="CSS logo"/>}>
                     CSS
@@ -300,19 +300,19 @@ const MenuBar: Component<MenuBarProps> = (props) => {
                     data-focus={toggleAttribute(is_submenu_copyAll_open())}>
                     Copy all
                 </MenuItem>}>
-                <MenuItem 
+                <MenuItem
                     onClick={() => copyAll(_markdown)}
                     leading={<svg width={20} viewBox="0 0 2560 2560" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M2375.4 2067.68H184.6C82.8 2067.68 0 1984.88 0 1883.08V676.92C0 575.12 82.8 492.32 184.6 492.32H2375.36C2477.16 492.32 2559.96 575.12 2559.96 676.92V1883.08C2560 1984.88 2477.2 2067.68 2375.4 2067.68ZM615.4 1698.48V1218.48L861.56 1526.16L1107.72 1218.48V1698.48H1353.88V861.52H1107.72L861.56 1169.2L615.4 861.52H369.24V1698.44H615.4V1698.48ZM2264.6 1280H2018.44V861.52H1772.28V1280H1526.12L1895.36 1710.76L2264.6 1280Z" fill="rgb(var(--color-on-surface))"/>
                     </svg>}>
                     Markdown
                 </MenuItem>
-                <MenuItem 
+                <MenuItem
                     onClick={() => copyAll(_html)}
                     leading={<img width={20} src={htmlLogo[_src]} alt="HTML logo"/>}>
                     HTML
                 </MenuItem>
-                <MenuItem 
+                <MenuItem
                     onClick={() => copyAll(_css)}
                     leading={<img width={20} src={cssLogo[_src]} alt="CSS logo"/>}>
                     CSS
@@ -332,9 +332,9 @@ const MenuBar: Component<MenuBarProps> = (props) => {
         </Menu>
     </>)
 
-    const ViewMenu: Component = () => (<Menu 
-        ref={r => menu_view_ref = r} 
-        style={{width: props[_isTouchDevice]? undefined : '280px'}} 
+    const ViewMenu: Component = () => (<Menu
+        ref={r => menu_view_ref = r}
+        style={{width: props[_isTouchDevice]? undefined : '280px'}}
         onToggleOpen={(v) => setIs_menu_view_open(v)}>
         <MenuItem
             onClick={() => {
@@ -344,7 +344,7 @@ const MenuBar: Component<MenuBarProps> = (props) => {
                 const settingsObjectStoreWrite = props[_db]![_transaction](ObjectStoreNames[_settings], _readwrite)![_objectStore](ObjectStoreNames[_settings])
                 if (!settingsObjectStoreWrite) return;
                 props[_db][_put](
-                    settingsObjectStoreWrite, 
+                    settingsObjectStoreWrite,
                     {key: ObjectStoreKeys[_settings_textWrap], value: props[_settings][0][_textWrap]}
                 )
             }}
@@ -395,8 +395,8 @@ const MenuBar: Component<MenuBarProps> = (props) => {
     </Menu>)
 
     const SettingsMenu: Component = () => (<>
-        <Menu 
-            ref={r => menu_settings_ref = r} 
+        <Menu
+            ref={r => menu_settings_ref = r}
             onToggleOpen={(v) => setIs_menu_settings_open(v)}>
             <SubMenu
                 level={1}
@@ -532,7 +532,7 @@ const MenuBar: Component<MenuBarProps> = (props) => {
 
     return (<div class={CSS.menuBar}>
         <div class={ CSS.logo }>
-            <img width={24} height={24} src={ logo.src } alt="Markdown converter logo icon" />
+            <img width={32} src={ logo[_src] } alt="Markdown converter logo icon" />
         </div>
         <div class={ CSS.flex }>Markdown Converter</div>
         <TextTooltip text='File' position={tooltipPosition()}>
@@ -589,9 +589,9 @@ export const App: Component = () => {
     const [markdownText, setMarkdownText] = createSignal<string>(markdownTextDefault)
     const [inputText, setInputText] = createSignal<string>(markdownTextDefault)
     const [outputText, setOutputText] = createSignal<string>('')
-    const [settings, setSettings] = createStore<Settings>({ 
-        textWrap: true, 
-        fontSize: defaultFontSize 
+    const [settings, setSettings] = createStore<Settings>({
+        textWrap: true,
+        fontSize: defaultFontSize
     })
     const [isSmallScreen, setIsSmallScreen] = createSignal<boolean>(false)
     const [isTouchDevice, setIsTouchDevice] = createSignal<boolean>(false)
@@ -631,7 +631,7 @@ export const App: Component = () => {
         addEventListener(getDocument(), _touchend, () => setIsDragging(true))
         addEventListener(getDocument(), _touchmove, ev => {
             if (!isDragging()) return;
-            
+
             setInputEditorWidth(mathMin(
                 mathMax(minEditorWidth, (ev as TouchEvent)[_touches][0][_clientX] - menuBarWidth),
                 getDocumentBody()[_clientWidth] - menuBarWidth - minEditorWidth
@@ -642,7 +642,7 @@ export const App: Component = () => {
             if (!isDragging()) return;
 
             setInputEditorWidth(mathMin(
-                mathMax(minEditorWidth, (ev as MouseEvent)[_clientX] - menuBarWidth), 
+                mathMax(minEditorWidth, (ev as MouseEvent)[_clientX] - menuBarWidth),
                 getDocumentBody()[_clientWidth] - menuBarWidth - minEditorWidth
             ))
         })
@@ -660,7 +660,7 @@ export const App: Component = () => {
         else if (type == _min) setSettings(_fontSize, s => s - 2)
         else if (type == _reset) setSettings(_fontSize, defaultFontSize)
 
-            
+
         const settingsObjectStoreWrite = db![_transaction](ObjectStoreNames[_settings], _readwrite)![_objectStore](ObjectStoreNames[_settings])
         if (!settingsObjectStoreWrite) return;
         db[_put](settingsObjectStoreWrite, {key: ObjectStoreKeys[_settings_fontSize], value: settings[_fontSize]})
@@ -735,10 +735,10 @@ export const App: Component = () => {
                 },
                 onUpgradeNeeded(ev, db) {
                     if (!(ev[_oldVersion] == 0 && ev[_newVersion] == 1 && db)) return;
-                    
+
                     db[_createObjectStore]({
-                        name: ObjectStoreNames[_settings], 
-                        keyPath: _key, 
+                        name: ObjectStoreNames[_settings],
+                        keyPath: _key,
                         indexs: [_key, _value]
                     })
                 }

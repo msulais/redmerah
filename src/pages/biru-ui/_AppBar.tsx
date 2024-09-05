@@ -239,7 +239,7 @@ const _: VoidComponent<{
                         />
                     </Tooltip>
                 </Show>
-                <img alt="BiruUI logo" width={32} height={32} src={logo[_src]} />
+                <img alt="BiruUI logo" width={32} src={logo[_src]} />
             </>}
             headline="BiruUI"
             trailing={<>

@@ -1,7 +1,19 @@
 {
-    "name": "Color Generator - Redmerah",
+    "name": "Color Generator",
     "short_name": "Color Generator",
+    "id": "/color-generator",
+    "start_url": "/color-generator",
     "icons": [
+        {
+            "src": "/favicon/color-generator/favicon-16x16.png",
+            "sizes": "16x16",
+            "type": "image/png"
+        },
+        {
+            "src": "/favicon/color-generator/favicon-32x32.png",
+            "sizes": "32x32",
+            "type": "image/png"
+        },
         {
             "src": "/favicon/color-generator/android-chrome-192x192.png",
             "sizes": "192x192",

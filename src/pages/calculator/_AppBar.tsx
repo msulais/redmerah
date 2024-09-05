@@ -395,7 +395,7 @@ const _: VoidComponent<{
                         code={0xEAFF}
                     />
                 </TextTooltip>
-                <img width={28} src={logo[_src]} alt="Calculator logo" />
+                <img width={32} src={logo[_src]} alt="Calculator logo" />
             </>}
             headline="Calculator"
             trailing={<>

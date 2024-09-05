@@ -1,7 +1,19 @@
 {
-    "name": "Markdown Converter - Redmerah",
+    "name": "Markdown Converter",
     "short_name": "Markdown Converter",
+    "id": "/markdown-converter",
+    "start_url": "/markdown-converter",
     "icons": [
+        {
+            "src": "/favicon/markdown-converter/favicon-16x16.png",
+            "sizes": "16x16",
+            "type": "image/png"
+        },
+        {
+            "src": "/favicon/markdown-converter/favicon-32x32.png",
+            "sizes": "32x32",
+            "type": "image/png"
+        },
         {
             "src": "/favicon/markdown-converter/android-chrome-192x192.png",
             "sizes": "192x192",
@@ -13,7 +25,7 @@
             "type": "image/png"
         }
     ],
-    "theme_color": "#6000FD",
+    "theme_color": "#01B92A",
     "background_color": "#ffffff",
     "display": "standalone"
 }

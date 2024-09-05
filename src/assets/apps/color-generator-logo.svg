@@ -1,30 +1,25 @@
-<svg viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g clip-path="url(#clip0_55_2)">
-<circle cx="256.318" cy="311.06" r="162.542" fill="url(#paint0_radial_55_2)"/>
-<circle cx="257.074" cy="311.816" r="111.889" fill="#56FAFA"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M92.2707 201.374C71.2566 232.741 59 270.469 59 311.06C59 420.036 147.342 508.378 256.318 508.378C332.658 508.378 398.873 465.025 431.686 401.596C409.503 406.155 386.198 408.585 362.159 408.585C213.725 408.585 93.2773 315.947 92.2707 201.374Z" fill="url(#paint1_linear_55_2)"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M279.754 507.001C377.683 495.412 453.636 412.106 453.636 311.06C453.636 259.913 434.176 213.312 402.257 178.256C407.162 195.471 409.788 213.646 409.788 232.435C409.788 317.783 355.601 390.474 279.754 417.984V507.001Z" fill="url(#paint2_radial_55_2)"/>
-<path d="M184.497 112.23C198.768 58.5498 249.095 13.1894 272.95 5.63286C302.434 129.618 420.12 193.257 426.205 303.396C432.29 413.534 342.632 538.951 201.885 500.818C280.717 460.053 303.001 342.182 251.428 263.645C223.369 220.915 170.226 165.91 184.497 112.23Z" fill="url(#paint3_radial_55_2)"/>
-</g>
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="16.0198" cy="19.0893" r="10.1588" fill="url(#paint0_radial_539_213)"/>
+<circle cx="16.0672" cy="19.1364" r="6.99307" fill="#56FAFA"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M5.76692 12.2339C4.45354 14.1943 3.6875 16.5523 3.6875 19.0893C3.6875 25.9002 9.20889 31.4216 16.0199 31.4216C20.7911 31.4216 24.9296 28.7121 26.9803 24.7478C25.5939 25.0327 24.1374 25.1846 22.6349 25.1846C13.3578 25.1846 5.82983 19.3947 5.76692 12.2339Z" fill="url(#paint1_linear_539_213)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M17.4846 31.3354C23.6052 30.6111 28.3522 25.4044 28.3522 19.0891C28.3522 15.8924 27.136 12.9798 25.141 10.7888C25.4476 11.8648 25.6117 13.0007 25.6117 14.175C25.6117 19.5092 22.2251 24.0525 17.4846 25.7718V31.3354Z" fill="url(#paint2_radial_539_213)"/>
+<path d="M11.5311 6.66232C12.423 3.30731 15.5684 0.472281 17.0594 0C18.9021 7.74908 26.2575 11.7265 26.6378 18.6102C27.0181 25.4938 21.4145 33.3324 12.6178 30.9491C17.5448 28.4012 18.9375 21.0343 15.7143 16.1258C13.9606 13.4552 10.6391 10.0173 11.5311 6.66232Z" fill="url(#paint3_radial_539_213)"/>
 <defs>
-<radialGradient id="paint0_radial_55_2" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(256.318 311.06) rotate(90) scale(162.542)">
+<radialGradient id="paint0_radial_539_213" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(16.0198 19.0893) rotate(90) scale(10.1588)">
 <stop offset="0.395" stop-color="#3DD9ED"/>
 <stop offset="1" stop-color="#9501F1"/>
 </radialGradient>
-<linearGradient id="paint1_linear_55_2" x1="23.7141" y1="305.016" x2="401.308" y2="510.012" gradientUnits="userSpaceOnUse">
+<linearGradient id="paint1_linear_539_213" x1="1.48213" y1="18.7115" x2="25.0818" y2="31.5238" gradientUnits="userSpaceOnUse">
 <stop stop-color="#31F8EC"/>
 <stop offset="1" stop-color="#9403F1"/>
 </linearGradient>
-<radialGradient id="paint2_radial_55_2" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(509.581 283.844) rotate(143.399) scale(355.025 396.878)">
+<radialGradient id="paint2_radial_539_213" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(31.8488 17.3881) rotate(143.399) scale(22.1891 24.8049)">
 <stop offset="0.265" stop-color="#0EE1DC"/>
 <stop offset="1" stop-color="#9404F1"/>
 </radialGradient>
-<radialGradient id="paint3_radial_55_2" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(266.113 10.4556) rotate(88.8065) scale(491.04 655.117)">
+<radialGradient id="paint3_radial_539_213" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(16.632 0.301423) rotate(88.8065) scale(30.69 40.9448)">
 <stop stop-color="#30F7EB"/>
 <stop offset="1" stop-color="#9500F0"/>
 </radialGradient>
-<clipPath id="clip0_55_2">
-<rect width="512" height="512" fill="white"/>
-</clipPath>
 </defs>
 </svg>

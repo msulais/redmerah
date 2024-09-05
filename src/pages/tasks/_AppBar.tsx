@@ -310,7 +310,7 @@ const _: VoidComponent<{
                         code={0xEAFF}
                     />
                 </TextTooltip>
-                <img alt="Tasks logo" width={32} height={32} src={logo[_src]} />
+                <img alt="Tasks logo" width={32} src={logo[_src]} />
             </>}
             headline="Tasks"
             trailing={<>
