@@ -1,6 +1,8 @@
 {
-    "name": "Tasks - Redmerah",
+    "name": "Tasks",
     "short_name": "Tasks",
+    "id": "/tasks",
+    "start_url": "/tasks",
     "icons": [
         {
             "src": "/favicon/tasks/android-chrome-192x192.png",
