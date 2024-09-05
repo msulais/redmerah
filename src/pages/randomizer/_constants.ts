@@ -1,7 +1,7 @@
 import { _string, _words, _numbers, _colors, _selection, _teams } from "@/data/string";
 import { RandomizerType } from "./_enums";
 
-export const 
+export const
     ANIMALS = [ "Lion", "Elephant", "Tiger", "Bear", "Wolf", "Gorilla", "Chimpanzee", "Orangutan", "Dolphin", "Whale", "Zebra", "Giraffe", "Kangaroo", "Koala", "Panda", "Snake", "Eagle", "Owl", "Parrot", "Komodo", "Anoa", ],
     COLORS = [ "Red", "Green", "Blue", "Yellow", "Purple", "Orange", "Pink", "Black", "White", "Gray" ],
     TEAMS_NAMES = [ 'Alpha', 'Beta', 'Delta' ],
@@ -15,5 +15,12 @@ export const
         { icon: 0xE4B6, type: RandomizerType[_colors], text: 'Colors' },
         { icon: 0xF098, type: RandomizerType[_selection], text: 'Selection' },
         { icon: 0xEBC6, type: RandomizerType[_teams], text: 'Teams' },
+    ],
+    DEFAULT_LISTS = [
+        { id: 1, name: 'Person'     , items: [...PERSON_NAMES] },
+        { id: 2, name: 'Teams'      , items: [...TEAMS_NAMES ] },
+        { id: 3, name: 'Colors'     , items: [...COLORS      ] },
+        { id: 4, name: 'Animals'    , items: [...ANIMALS     ] },
+        { id: 5, name: 'Lorem Ipsum', items: [...LOREM_IPSUM ] },
     ]
 ;

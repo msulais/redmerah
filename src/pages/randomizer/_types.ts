@@ -28,7 +28,7 @@ export type Settings = {
     words: {
         count: number
         animation: boolean
-        list: ListItems
+        list: ItemList
         repeat: boolean
         wordCase: WordsRandomizerWordCase
         prefix: string
@@ -37,7 +37,7 @@ export type Settings = {
     },
     selection: {
         count: number
-        list: ListItems
+        list: ItemList
         animation: boolean
     },
     colors: {
@@ -60,13 +60,13 @@ export type Settings = {
     },
     teams: {
         count: number
-        namesList: ListItems
-        membersList: ListItems
+        namesList: ItemList
+        membersList: ItemList
         animation: boolean
     }
 }
 
-export type ListItems = {
+export type ItemList = {
     id: number
     name: string
     items: string[]

@@ -35,6 +35,8 @@ export enum ColorsRandomizerColorModel {
 }
 
 export enum Commands {
+    /**
+    @param event `Event` */
     reset_list = 'a',
 
     /**

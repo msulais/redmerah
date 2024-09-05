@@ -1,11 +1,11 @@
-import type { ListItems } from "./_types"
+import type { ItemList } from "./_types"
 
 export type ObjectStoreSettings = {
     key: string
     value: unknown
 }
 
-export type ObjectStoreLists = ListItems
+export type ObjectStoreLists = ItemList
 
 export type ObjectStoreLastResult = {
     key: string
@@ -13,8 +13,8 @@ export type ObjectStoreLastResult = {
 }
 
 export enum ObjectStoreNames {
-    settings = 'settings', 
-    lists = 'lists', 
+    settings = 'settings',
+    lists = 'lists',
     lastResult = 'lastResult'
 }
 
@@ -27,7 +27,7 @@ export enum ObjectStoreKeys {
     lastResult_teams = 'teams',
 
     settings_lastPage = 'lastPage',
-    settings_string_length = 'string/length', 
+    settings_string_length = 'string/length',
     settings_string_animation = 'string/animation',
     settings_string_characters_customCharacter = 'string/characters/customCharacter',
     settings_string_characters_symbols = 'string/characters/symbols',

@@ -1,25 +1,23 @@
-import { type Component, For } from "solid-js";
+import { For, type VoidComponent } from "solid-js";
 
 import { RandomizerType } from "./_enums";
 import { _rightCenter, _colors, _expand, _filledTonal, _icon, _left, _numbers, _onChangeRandomizer, _randomizerType, _selection, _string, _teams, _text, _tooltip, _type, _words } from "@/data/string";
+import { addClassListModule } from "@/utils/element";
+import { RANDOMIZER_TYPES } from "./_constants";
 
 import Icon from "@/components/Icon";
 import {TextTooltip} from "@/components/Tooltip";
 import SideNavigation, { SideNavigationItem } from "@/components/SideNavigation";
-import CSS from './_index.module.scss'
-import { addClassListModule } from "@/utils/element";
-import { RANDOMIZER_TYPES } from "./_data";
+import CSS from './_styles.module.scss'
 
-type Props = {
+const _: VoidComponent<{
     randomizerType: RandomizerType
     onChangeRandomizer: (type: RandomizerType) => void
     expand: boolean
-}
-
-const C: Component<Props> = (props) => {
+}> = (props) => {
     return (<SideNavigation expand={props[_expand]} classList={addClassListModule(CSS.side_navigation)}>
-        <For each={RANDOMIZER_TYPES}>{ r => {
-            return (<TextTooltip text={!props[_expand]? r[_text] : undefined}>
+        <For each={RANDOMIZER_TYPES}>{ r =>
+            <TextTooltip text={!props[_expand]? r[_text] : undefined}>
                 <SideNavigationItem
                     iconOnly={!props[_expand]}
                     onClick={() => {
@@ -30,9 +28,9 @@ const C: Component<Props> = (props) => {
                     selected={props[_randomizerType] == r[_type]}>
                     { r[_text] }
                 </SideNavigationItem>
-            </TextTooltip>)
-        }}</For>
+            </TextTooltip>
+        }</For>
     </SideNavigation>)
 }
 
-export default C
+export default _

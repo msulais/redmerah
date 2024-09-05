@@ -1,13 +1,13 @@
 ---
 import Html from '@/layouts/Html/index.astro';
-import { MainApp } from './_components'
+import App from './_App'
 
 export const prerender = true;
 ---
 
-<Html 
-	title='Randomizer' 
-	accentColor='#00FF48' 
+<Html
+	title='Randomizer'
+	accentColor='#00FF48'
 	description='Explore our Randomizer for a variety of tools that add a touch of unpredictability to your life. Generate random strings, words, numbers, colors, and even assemble teams. Embrace the unexpected!'>
 	<Fragment slot="favicon">
 		<link rel="shortcut icon" type="image/ico" href="/favicon/randomizer/favicon.ico" />
@@ -16,5 +16,5 @@ export const prerender = true;
 		<link rel="icon" type="image/png" sizes="16x16" href="/favicon/randomizer/favicon-16x16.png">
 		<link rel="manifest" href="/favicon/randomizer/site.webmanifest">
 	</Fragment>
-	<MainApp client:only="solid-js"/>
+	<App client:only="solid-js"/>
 </Html>
