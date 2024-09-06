@@ -1,4 +1,4 @@
-import { _add, _close, _continue, _createIndex, _createObjectStore, _databaseName, _delete, _deleteDatabase, _get, _getAll, _includes, _isOpen, _objectStore, _onblocked, _onBlocked, _onerror, _onError, _onSuccess, _onsuccess, _onupgradeneeded, _onUpgradeNeeded, _onversionchange, _open, _openCursor, _put, _readonly, _readwrite, _result, _transaction, _version } from "@/data/string"
+import { _add, _close, _contains, _continue, _createIndex, _createObjectStore, _databaseName, _delete, _deleteDatabase, _deleteIndex, _get, _getAll, _includes, _indexNames, _isOpen, _objectStore, _objectStoreNames, _onblocked, _onBlocked, _onerror, _onError, _onSuccess, _onsuccess, _onupgradeneeded, _onUpgradeNeeded, _onversionchange, _open, _openCursor, _put, _readonly, _readwrite, _result, _transaction, _version, _writeObjectStore } from "@/data/string"
 import { getIndexedDB } from "@/data/window"
 import type { DatabaseNames } from "@/enums/storage"
 
@@ -81,21 +81,39 @@ export class IDB {
      * Only called this inside `onUpgradeNeeded()`
      */
     createObjectStore<T>({name, indexs, keyPath}: CreateObjectStoreParams<T>): IDBObjectStore | null {
-        if (!this[__db]) return null;
-
+        if (!this[__db]) return null
         keyPath = String(keyPath)
 
-        const objectStore = this[__db]![_createObjectStore](name, {
-            autoIncrement: true,
-            keyPath: keyPath
-        })
+        let objectStore = this[_writeObjectStore](name)
+        if (objectStore != null) {
+            const $indexs = objectStore[_indexNames]
+            for (const index of indexs) {
+                const indexName = String(index)
+                if ($indexs[_contains](indexName)) continue
+                objectStore[_createIndex](indexName, indexName)
+            }
 
-        for (const i of indexs) {
-            const name = String(i)
-            objectStore[_createIndex](name, name, {unique: name == keyPath})
+            for (const index of $indexs) {
+                if (indexs[_includes](index as keyof T) || index == keyPath) continue
+                objectStore[_deleteIndex](index)
+            }
+        }
+        else {
+            objectStore = this[__db][_createObjectStore](name, {
+                autoIncrement: true,
+                keyPath: keyPath
+            })
+
+            for (const index of indexs) {
+                const indexName = String(index)
+                objectStore[_createIndex](indexName, indexName, {unique: indexName == keyPath})
+            }
         }
 
-        if (!indexs[_includes](keyPath as keyof T)) objectStore[_createIndex](keyPath, keyPath, {unique: true})
+        if (!indexs[_includes](keyPath as keyof T)) {
+            objectStore[_createIndex](keyPath, keyPath, {unique: true})
+        }
+
         return objectStore
     }
 
@@ -208,5 +226,11 @@ export class IDB {
 
     get db(): IDBDatabase | null {
         return this[__db]
+    }
+
+    get objectStoreNames(): DOMStringList | null {
+        if (this[__db] == null) return null
+
+        return this[__db][_objectStoreNames]
     }
 }
