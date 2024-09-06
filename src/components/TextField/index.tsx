@@ -399,6 +399,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
                 if (Number[_isNaN](v)) v = 0
                 if (props[_min] != undefined && v < props[_min]) v = props[_min]
                 if (props[_max] != undefined && v > props[_max]) v = props[_max]
+                setValue(v)
 
                 return v
             })()}
