@@ -85,7 +85,9 @@ export class IDB {
         keyPath = String(keyPath)
 
         let objectStore = this[_writeObjectStore](name)
-        if (objectStore != null) {
+        if (this[__db][_objectStoreNames][_contains](name)) {
+            if (objectStore == null) return objectStore
+
             const $indexs = objectStore[_indexNames]
             for (const index of indexs) {
                 const indexName = String(index)
