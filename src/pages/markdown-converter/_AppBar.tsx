@@ -1,6 +1,6 @@
-import AppBar from "@/components/AppBar";
-import Icon from "@/components/Icon";
-import Menu, { closeSubMenu, closeMenu, LinkMenuItem, MenuDivider, MenuHeader, MenuItem, SubMenu, openMenu, MenuPosition } from "@/components/Menu";
+import { createSignal, onMount, type VoidComponent } from "solid-js";
+
+import type { Settings } from "./_types";
 import { _system, _round, _theme, _corner, _light, _dark, _includes, _sharp, _semiRound, _fullRound, _about, _apps, _contactEmail, _donate, _getFullYear, _home, _privacy, _share, _src, _terms, _URL, _centerBottomToLeft, _currentTarget, _settings, _textWrap, _command, _fontSize, _contentWindow, _print, _markdown, _html, _csc, _css } from "@/data/string";
 import { getDocument, getNavigator, getRoot } from "@/data/window";
 import { RootAttributes } from "@/enums/attributes";
@@ -11,20 +11,22 @@ import { ThemeData } from "@/enums/theme";
 import { setLocalStorageItem, getLocalStorageItem } from "@/utils/storage";
 import { timeout } from "@/utils/timeout";
 import { encodeURL } from "@/utils/url";
-import { createSignal, onMount, type VoidComponent } from "solid-js";
 import { setAttribute } from "solid-js/web";
-import logo from '@/assets/apps/markdown-converter-logo.svg'
-import redmerahLogo from '@/assets/logo.svg'
-import { IconButton } from "@/components/Button";
-import Tooltip from "@/components/Tooltip";
-import CSSAnimation from "@/styles/animation.module.scss"
-import cssLogo from '@/assets/css-logo.svg'
-import htmlLogo from '@/assets/html-logo.svg'
-import type { Settings } from "./_types";
 import { Commands } from "./_enums";
 import { NumberTextField } from "@/components/TextField";
 import { IFRAME_PREVIEW_ID } from "./_constants";
 import { getElementById } from "@/utils/element";
+import logo from '@/assets/apps/markdown-converter-logo.svg'
+import redmerahLogo from '@/assets/logo.svg'
+import Tooltip from "@/components/Tooltip";
+import CSSAnimation from "@/styles/animation.module.scss"
+import cssLogo from '@/assets/css-logo.svg'
+import htmlLogo from '@/assets/html-logo.svg'
+
+import Icon from "@/components/Icon";
+import { IconButton } from "@/components/Button";
+import Menu, { closeSubMenu, closeMenu, LinkMenuItem, MenuDivider, MenuHeader, MenuItem, SubMenu, openMenu } from "@/components/Menu";
+import AppBar from "@/components/AppBar";
 
 const _: VoidComponent<{
     settings: Settings

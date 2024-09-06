@@ -1,22 +1,23 @@
 import { createSignal, onMount, type VoidComponent } from "solid-js";
 import { marked } from 'marked'
 
-import App from "@/components/App";
-import AppBar from './_AppBar'
-import Body from './_Body'
+import type { Settings } from "./_types";
 import { IDB } from "@/class/indexeddb";
 import { DatabaseNames } from "@/enums/storage";
 import { _clipboard, _contains, _createObjectStore, _css, _db, _fontSize, _get, _html, _key, _lastInput, _length, _markdown, _markdownConverter, _newVersion, _objectStore, _objectStoreNames, _oldVersion, _open, _put, _readObjectStore, _readonly, _settings, _textWrap, _then, _transaction, _value, _writeObjectStore, _writeText } from "@/data/string";
 import { ObjectStoreKeys, ObjectStoreNames, type ObjectStoreLastInput, type ObjectStoreSettings } from "./_storage";
-import type { Settings } from "./_types";
 import { createStore } from "solid-js/store";
 import { Commands } from "./_enums";
 import { defaultCSSText } from "./_css";
 import { defaultMarkdownText } from "./_markdown";
 import { downloadFile, openFile, readFileAsText } from "@/utils/file";
-import Toast, { openToast } from "@/components/Toast";
-import Icon from "@/components/Icon";
 import { getNavigator } from "@/data/window";
+
+import Icon from "@/components/Icon";
+import Toast, { openToast } from "@/components/Toast";
+import App from "@/components/App";
+import AppBar from './_AppBar'
+import Body from './_Body'
 
 const _: VoidComponent = () => {
     const db = new IDB(DatabaseNames[_markdownConverter], 2)
@@ -176,12 +177,12 @@ const _: VoidComponent = () => {
                 initSettings()
                 initLastInputs()
             },
-            onError(ev, db) {
+            onError() {
                 setMarkdownText(defaultMarkdownText)
                 setCssText(defaultCSSText)
                 updateOutput()
             },
-            onUpgradeNeeded(ev, db) {
+            onUpgradeNeeded(_, db) {
                 db[_createObjectStore]({
                     name: ObjectStoreNames[_settings],
                     keyPath: _key,
