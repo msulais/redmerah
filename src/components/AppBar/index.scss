@@ -15,10 +15,14 @@
 .appbar-headline {
     gap: 8px;
     flex: 1;
+    overflow: hidden;
 
     > h2 {
         font-size: var(--font-size-m);
         font-weight: 500;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-wrap: nowrap;
     }
 }
 
