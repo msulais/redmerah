@@ -267,8 +267,7 @@ const _: VoidComponent<{
                     />
                 </Tooltip>
             </>}
-        >
-        </AppBar>
+        />
         <Menus />
         <Drawer
             header={<Tooltip text="Close navigation">
