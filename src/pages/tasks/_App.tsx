@@ -4,7 +4,7 @@ import { createSignal, For, onMount, Show, type VoidComponent } from "solid-js"
 import type { TaskList, TaskLabel, Settings, Task, TaskFileMetaData, SubTask } from "./_types"
 import type { HEXColor } from "@/types/color"
 import { type ObjectStoreTaskLists, type ObjectStoreSettings, type ObjectStoreSubTasks, type ObjectStoreTasks, type ObjectStoreTaskLabels, type ObjectStoreFiles, type ObjectStoreTaskFileMetaData, type ObjectStoreMiscellaneous, ObjectStoreNames, ObjectStoreKeys, } from "./_storage"
-import { _tasks, _new, _name, _ascending, _sortMode, _descending, _sortBy, _completed, _sort, _localeCompare, _complete, _creationDate, _id, _importance, _important, _uncompleted, _transaction, _subtasks, _readwrite, _objectStore, _push, _map, _put, _description, _labelIds, _listId, _reminder, _includes, _taskFileMetaData, _files, _delete, _writeObjectStore, _settings, _miscellaneous, _add, _target, _result, _length, _slice, _all, _planned, _emoji, _join, _every, _clipboard, _writeText, _labels, _splice, _findIndex, _concat, _size, _type, _readonly, _get, _then, _blob, _taskId, _reverse, _taskLists, _trim, _isShowDeleteTaskWarning, _hiddenNavigation, _open, _readObjectStore, _createObjectStore, _key, _value, _color, _getAll, _keys, _cursor, _filter, _tonal, _filled, _contents, _currentTarget, _edit, _bold } from "@/data/string"
+import { _tasks, _new, _name, _ascending, _sortMode, _descending, _sortBy, _completed, _sort, _localeCompare, _complete, _creationDate, _id, _importance, _important, _uncompleted, _transaction, _subtasks, _readwrite, _objectStore, _push, _map, _put, _description, _labelIds, _listId, _reminder, _includes, _taskFileMetaData, _files, _delete, _writeObjectStore, _settings, _miscellaneous, _add, _target, _result, _length, _slice, _all, _planned, _emoji, _join, _every, _clipboard, _writeText, _labels, _splice, _findIndex, _concat, _size, _type, _readonly, _get, _then, _blob, _taskId, _reverse, _taskLists, _trim, _isShowDeleteTaskWarning, _hiddenNavigation, _open, _readObjectStore, _createObjectStore, _key, _value, _color, _getAll, _keys, _cursor, _filter, _tonal, _filled, _contents, _currentTarget, _edit, _bold, _remove, _splash } from "@/data/string"
 import { Commands, Pages, SortBy, SortMode } from "./_enums"
 import { DatabaseNames } from "@/enums/storage"
 import { DEFAULT_TASK_LIST } from "./_constants"
@@ -29,6 +29,9 @@ import App from "@/components/App"
 import AppBar from "./_AppBar"
 import SideNavigation from './_SideNavigation'
 import Body from './_Body'
+import { setMicrotask } from "@/utils/timeout"
+import { getElementById } from "@/utils/element"
+import { ElementIds } from "@/enums/ids"
 
 const _: VoidComponent = () => {
     const db = new IDB(DatabaseNames[_tasks])
@@ -1326,8 +1329,16 @@ const _: VoidComponent = () => {
         if (store_taskLists != null) store_taskLists[_put]({emoji, id, name} satisfies ObjectStoreTaskLists)
     }
 
+    function removeSplashScreen(): void {
+        setMicrotask(() => {
+            const splash_ref = getElementById(ElementIds[_splash]) as HTMLDivElement
+            splash_ref[_remove]()
+        })
+    }
+
     onMount(() => {
         initDatabase()
+        removeSplashScreen()
     })
 
     const LabelItem: VoidComponent<TaskLabel> = (props) => {

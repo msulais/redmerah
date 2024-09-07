@@ -1,19 +1,25 @@
 $side_navigation_none: 680px;
 
-.appbar[data-search] {
-    @media (max-width: $side_navigation_none) {
-        > :is(:global(.appbar-leading), :global(.appbar-trailing)) {
-            display: none;
-        }
+.appbar {
+    & h2 {
+        min-width: fit-content;
+    }
 
-        > :global(.appbar-headline) {
-            > h2 {
+    &[data-search] {
+        @media (max-width: $side_navigation_none) {
+            > :is(:global(.appbar-leading), :global(.appbar-trailing)) {
                 display: none;
             }
 
-            > .appbar_search {
-                display: flex;
-                padding-left: 0;
+            > :global(.appbar-headline) {
+                > h2 {
+                    display: none;
+                }
+
+                > .appbar_search {
+                    display: flex;
+                    padding-left: 0;
+                }
             }
         }
     }
