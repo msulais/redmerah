@@ -1,0 +1,28 @@
+---
+import { ElementIds } from '@/enums/ids'
+
+type Props = {
+    src: string
+    alt: string
+}
+const {
+    alt = 'Splash icon',
+    src = '#'
+} = Astro.props
+---
+<div
+    id={ElementIds.splash}
+    style={{
+        zIndex: 999,
+        width: '100%',
+        height: '100dvh',
+        backgroundColor: 'rgb(var(--color-background))',
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+    }}>
+    <img width="160" src={src} alt={alt} />
+</div>
