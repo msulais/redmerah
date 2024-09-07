@@ -1,5 +1,8 @@
 ---
+import icon from '@/assets/apps/calculator-splash.svg'
+
 import Html from '@/layouts/Html/index.astro';
+import Splash from '@/layouts/Splash/index.astro';
 import App from './_App'
 
 export const prerender = true;
@@ -17,4 +20,5 @@ export const prerender = true;
 		<link rel="manifest" href="/favicon/calculator/site.webmanifest">
 	</Fragment>
 	<App client:only="solid-js"/>
+	<Splash src={icon.src} alt="Calculator icon splash"/>
 </Html>

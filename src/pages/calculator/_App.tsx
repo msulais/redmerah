@@ -2,13 +2,13 @@ import { createMemo, createSignal, onMount, type VoidComponent } from "solid-js"
 import { createStore } from "solid-js/store"
 
 import type { CalculatorInput, CalculatorOutput, DateCalculatorInput, Settings } from "./_types"
-import { _calculator, _basic, _point, _comma, _length, _RAD, _decimal, _difference, _scientific, _converter, _programmer, _date, _writeObjectStore, _miscellaneous, _put, _settings, _lastInput, _numberFormat, _grouping, _push, _scientificNotation, _memoryButtons, _from, _toISOString, _to, _year, _month, _day, _angle, _DEG, _GRAD, _type, _area, _volume, _temperature, _time, _weight, _frequency, _pressure, _JSON, _equals, _inputUnit, _outputUnit, _numberType, _test, _toString, _toUpperCase, _hexadecimal, _octal, _binary, _replace, _operation, _repeat, _replaceAll, _raw, _warn, _PI, _value, _add, _subtract, _not, _abs, _log, _ln, _ceil, _floor, _round, _sqrt, _sin, _cos, _tan, _csc, _sec, _cot, _sinh, _cosh, _tanh, _csch, _sech, _coth, _asin, _acos, _atan, _acsc, _asec, _acot, _asinh, _acosh, _atanh, _acsch, _asech, _acoth, _match, _pow, _lastOutput, _readObjectStore, _get, _then, _parseJSON, _parse, _open, _createObjectStore, _key } from "@/data/string"
+import { _calculator, _basic, _point, _comma, _length, _RAD, _decimal, _difference, _scientific, _converter, _programmer, _date, _writeObjectStore, _miscellaneous, _put, _settings, _lastInput, _numberFormat, _grouping, _push, _scientificNotation, _memoryButtons, _from, _toISOString, _to, _year, _month, _day, _angle, _DEG, _GRAD, _type, _area, _volume, _temperature, _time, _weight, _frequency, _pressure, _JSON, _equals, _inputUnit, _outputUnit, _numberType, _test, _toString, _toUpperCase, _hexadecimal, _octal, _binary, _replace, _operation, _repeat, _replaceAll, _raw, _warn, _PI, _value, _add, _subtract, _not, _abs, _log, _ln, _ceil, _floor, _round, _sqrt, _sin, _cos, _tan, _csc, _sec, _cot, _sinh, _cosh, _tanh, _csch, _sech, _coth, _asin, _acos, _atan, _acsc, _asec, _acot, _asinh, _acosh, _atanh, _acsch, _asech, _acoth, _match, _pow, _lastOutput, _readObjectStore, _get, _then, _parseJSON, _parse, _open, _createObjectStore, _key, _remove, _splash, _animate, _finished, _spring } from "@/data/string"
 import { CalculatorType, Commands, DateOperation, DecimalNumberFormat, GroupingNumberFormat, NumberType, ScientificAngleType } from "./_enums"
 import { IDB } from "@/utils/indexeddb"
 import { DatabaseNames } from "@/enums/storage"
 import { ObjectStoreKeys, type ObjectStoreLastInput, type ObjectStoreLastOutput, type ObjectStoreMiscellaneous, ObjectStoreNames, type ObjectStoreSettings } from "./_storage"
 import { dateDifferenceInDays, getCurrentDate, getDate_D, getDate_M, getDate_Y, getDateString_YMD } from "@/utils/datetime"
-import { clearTimeDelayed, setTimeDelayed } from "@/utils/timeout"
+import { clearTimeDelayed, setMicrotask, setTimeDelayed } from "@/utils/timeout"
 import { stringCount, stringReverse } from "@/utils/string"
 import { KEY_DIVISION, KEY_MULTIPLY } from "./_constants"
 import { floatToBinary, formatNumber, mathAbs, mathACos, mathACosH, mathACot, mathACotH, mathACsc, mathACscH, mathASec, mathASecH, mathASin, mathASinH, mathATan, mathATanH, mathCeil, mathCos, mathCosH, mathCot, mathCotH, mathCsc, mathCscH, mathFloor, mathLn, mathLog, mathNot, mathRound, mathSec, mathSecH, mathSin, mathSinH, mathSqrt, mathTan, mathTanH, numberParse, numberToRealDigit } from "@/utils/math"
@@ -16,12 +16,15 @@ import { getMath, mathE, mathPI } from "@/data/math"
 import { getConsole } from "@/data/window"
 import { ConverterType, ConverterUnit, UNIT_ANGLE, UNIT_ANGLE_DEGREE, UNIT_ANGLE_GRADIAN, UNIT_ANGLE_RADIAN, UNIT_AREA, UNIT_FREQUENCY, UNIT_LENGTH, UNIT_LENGTH_KILOMETER, UNIT_LENGTH_METER, UNIT_PRESSURE, UNIT_TEMPERATURE, UNIT_TEMPERATURE_CELCIUS, UNIT_TEMPERATURE_DELISLE, UNIT_TEMPERATURE_FAHRENHEIT, UNIT_TEMPERATURE_KELVIN, UNIT_TEMPERATURE_RANKINE, UNIT_TEMPERATURE_REAMUR, UNIT_TEMPERATURE_ROMER, UNIT_TIME, UNIT_VOLUME, UNIT_WEIGHT, type ConverterUnitType } from "./_converter"
 import { FUNCTION_REGEX, NUMBER_REGEX } from "./_regex"
+import { ElementIds } from "@/enums/ids"
+import { getElementById } from "@/utils/element"
 
 import App from "@/components/App"
 import AppBar from "./_AppBar"
 import SideNavigation from './_SideNavigation'
 import Notebook from './_Notebook'
 import InputOutput from './_InputOutput'
+import { AnimationEffectTiming } from "@/enums/animation"
 
 const _: VoidComponent = () => {
     const db = new IDB(DatabaseNames[_calculator])
@@ -962,8 +965,22 @@ const _: VoidComponent = () => {
         })
     }
 
+    function removeSplashScreen(): void {
+        setMicrotask(() => {
+            const splash_ref = getElementById(ElementIds[_splash]) as HTMLDivElement
+            splash_ref[_animate](
+                {opacity: 0},
+                {
+                    duration: 1000,
+                    easing: AnimationEffectTiming[_spring]
+                }
+            )[_finished][_then](() => splash_ref[_remove]())
+        })
+    }
+
     onMount(() => {
         initDatabase()
+        removeSplashScreen()
     })
 
     return (<App
