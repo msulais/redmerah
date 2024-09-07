@@ -957,7 +957,7 @@ const DateCalculator: VoidComponent<{
                 {getDateString_YMD(props[_input][_from])}
             </Button>
         </div>
-        <div class={CSS.date_inputs} data-hide={toggleAttribute(props[_settings][_date][_operation] == DateOperation[_difference])}>
+        <div class={CSS.input_output_date_inputs} data-hide={toggleAttribute(props[_settings][_date][_operation] == DateOperation[_difference])}>
             <NumberTextField
                 min={0}
                 value={props[_input][_year] + ''}
