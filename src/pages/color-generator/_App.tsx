@@ -11,7 +11,7 @@ import { getNavigator } from '@/data/window'
 import { DatabaseNames, LocalStorageKeys } from '@/enums/storage'
 import { getLocalStorageItem, setLocalStorageItem } from '@/utils/storage'
 import { ElementIds } from '@/enums/ids'
-import { IDB } from '@/class/indexeddb'
+import { IDB } from '@/utils/indexeddb'
 import { ObjectStoreNames, type ObjectStorePaletteList } from './_storage'
 
 import {TextTooltip} from '@/components/Tooltip'

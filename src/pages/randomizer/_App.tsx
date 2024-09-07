@@ -15,7 +15,7 @@ import { stringToLowerCase, stringToUpperCase, stringToToggleCase, stringToTitle
 import { createObjectURL, downloadFileByURL, revokeObjectURL } from "@/utils/url";
 import { addClassListModule } from "@/utils/element";
 import { openFile, readFileAsText } from "@/utils/file";
-import { IDB } from "@/class/indexeddb";
+import { IDB } from "@/utils/indexeddb";
 import { DatabaseNames } from "@/enums/storage";
 import { getDocumentBody, getNavigator } from "@/data/window";
 import { removeAttribute, setAttribute, toggleAttribute } from "@/utils/attributes";

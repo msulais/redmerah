@@ -2,7 +2,7 @@ import { createSignal, onMount, type VoidComponent } from "solid-js";
 import { marked } from 'marked'
 
 import type { Settings } from "./_types";
-import { IDB } from "@/class/indexeddb";
+import { IDB } from "@/utils/indexeddb";
 import { DatabaseNames } from "@/enums/storage";
 import { _clipboard, _contains, _createObjectStore, _css, _db, _fontSize, _get, _html, _key, _lastInput, _length, _markdown, _markdownConverter, _newVersion, _objectStore, _objectStoreNames, _oldVersion, _open, _put, _readObjectStore, _readonly, _settings, _textWrap, _then, _transaction, _value, _writeObjectStore, _writeText } from "@/data/string";
 import { ObjectStoreKeys, ObjectStoreNames, type ObjectStoreLastInput, type ObjectStoreSettings } from "./_storage";

@@ -8,7 +8,7 @@ import { _tasks, _new, _name, _ascending, _sortMode, _descending, _sortBy, _comp
 import { Commands, Pages, SortBy, SortMode } from "./_enums"
 import { DatabaseNames } from "@/enums/storage"
 import { DEFAULT_TASK_LIST } from "./_constants"
-import { IDB } from "@/class/indexeddb"
+import { IDB } from "@/utils/indexeddb"
 import { getDateString_YMD_HM } from "@/utils/datetime"
 import { getNavigator } from "@/data/window"
 import { downloadFile } from "@/utils/file"
