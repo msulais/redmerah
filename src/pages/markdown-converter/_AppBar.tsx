@@ -341,7 +341,7 @@ const _: VoidComponent<{
     return (<>
         <AppBar
             leading={<img alt="Markdown converter logo" width={32} src={logo[_src]} />}
-            headline="Markdown converter"
+            headline="Markdown Converter"
             trailing={<>
                 <Tooltip text="Info">
                     <IconButton
