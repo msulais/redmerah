@@ -2,9 +2,9 @@ import { createSignal, For, onMount, Show, type VoidComponent } from "solid-js";
 
 import type { HEXColor } from "@/types/color";
 import type { ItemList, Result, Settings } from "./_types";
-import { _string, _characters, _numbers, _symbols, _length, _floor, _range, _max, _min, _count, _repeat, _includes, _push, _sort, _ascending, _descending, _map, _prefix, _toString, _numberType, _padStart, _suffix, _join, _separator, _colors, _round, _colorModel, _hex, _rgb, _hsl, _words, _selection, _teams, _animation, _result, _settings, _decimal, _none, _open, _key, _value, _createObjectStore, _id, _list, _lists, _lastResult, _isOpen, _readonly, _objectStore, _transaction, _get, _then, _color, _readwrite, _put, _add, _name, _members, _getAll, _namesList, _membersList, _alphabetLowercase, _alphabetUppercase, _customCharacter, _minDecimalLength, _splice, _lowercase, _titlecase, _togglecase, _uppercase, _wordCase, _h, _l, _s, _r, _b, _g, _cursor, _test, _tonal, _filled, _manual, _items, _accept, _file, _input, _type, _readAsText, _target, _onerror, _onabort, _onload, _replace, _split, _substring, _filter, _trim, _focus, _delete, _clipboard, _writeText, _noPointerEvent, _generate, _stopGenerate, _randomizer, _writeObjectStore, _readObjectStore, _findIndex, _concat, _slice, _localeCompare } from "@/data/string";
+import { _string, _characters, _numbers, _symbols, _length, _floor, _range, _max, _min, _count, _repeat, _includes, _push, _sort, _ascending, _descending, _map, _prefix, _toString, _numberType, _padStart, _suffix, _join, _separator, _colors, _round, _colorModel, _hex, _rgb, _hsl, _words, _selection, _teams, _animation, _result, _settings, _decimal, _none, _open, _key, _value, _createObjectStore, _id, _list, _lists, _lastResult, _isOpen, _readonly, _objectStore, _transaction, _get, _then, _color, _readwrite, _put, _add, _name, _members, _getAll, _namesList, _membersList, _alphabetLowercase, _alphabetUppercase, _customCharacter, _minDecimalLength, _splice, _lowercase, _titlecase, _togglecase, _uppercase, _wordCase, _h, _l, _s, _r, _b, _g, _cursor, _test, _tonal, _filled, _manual, _items, _accept, _file, _input, _type, _readAsText, _target, _onerror, _onabort, _onload, _replace, _split, _substring, _filter, _trim, _focus, _delete, _clipboard, _writeText, _noPointerEvent, _generate, _stopGenerate, _randomizer, _writeObjectStore, _readObjectStore, _findIndex, _concat, _slice, _localeCompare, _animate, _finished, _remove, _splash, _spring } from "@/data/string";
 import { rgbToHex, hslToHex } from "@/utils/color";
-import { setTimeInterval, clearTimeInterval } from "@/utils/timeout";
+import { setTimeInterval, clearTimeInterval, setMicrotask } from "@/utils/timeout";
 import { createStore } from "solid-js/store";
 import { RandomizerType, WordsRandomizerWordCase, NumbersRandomizerNumberType, NumbersRandomizerSort, ColorsRandomizerColorModel, Commands } from "./_enums";
 import { mathFloor, mathRandom } from "@/utils/math";
@@ -13,13 +13,15 @@ import { ObjectStoreNames, ObjectStoreKeys, type ObjectStoreLists, type ObjectSt
 import { _settings_lastPage, _lastResult_string, _lastResult_numbers, _lastResult_words, _lastResult_selection, _lastResult_colors, _lastResult_teams, _settings_words_listId, _settings_selection_listId, _settings_teams_membersListId, _settings_teams_namesListId, _settings_numbers_repeat, _settings_words_repeat, _settings_numbers_sort, _settings_numbers_animation, _settings_words_animation, _settings_string_animation, _settings_selection_animation, _settings_colors_animation, _settings_teams_animation, _settings_numbers_numberType, _settings_numbers_prefix, _settings_words_prefix, _settings_numbers_suffix, _settings_words_suffix, _settings_numbers_separator, _settings_words_separator, _settings_words_wordCase, _settings_colors_colorModel, _settings_string_length, _settings_string_characters_symbols, _settings_string_characters_numbers, _settings_string_characters_alphabetLowercase, _settings_string_characters_alphabetUppercase, _settings_numbers_count, _settings_numbers_minDecimalLength, _settings_numbers_range_min, _settings_numbers_range_max, _settings_words_count, _settings_colors_count, _settings_colors_range_hex_min, _settings_colors_range_hex_max, _settings_colors_range_hsl_h_min, _settings_colors_range_hsl_h_max, _settings_colors_range_hsl_l_max, _settings_colors_range_hsl_l_min, _settings_colors_range_hsl_s_max, _settings_colors_range_hsl_s_min, _settings_colors_range_rgb_r_max, _settings_colors_range_rgb_r_min, _settings_colors_range_rgb_b_max, _settings_colors_range_rgb_b_min, _settings_colors_range_rgb_g_max, _settings_colors_range_rgb_g_min, _settings_string_characters_customCharacter, _settings_selection_count, _settings_teams_count, _add_list, _change_settings_colors_colorModel, _change_settings_colors_count, _change_settings_colors_range_hex, _change_settings_colors_range_hsl_h, _change_settings_colors_range_hsl_l, _change_settings_colors_range_hsl_s, _change_settings_colors_range_rgb_b, _change_settings_colors_range_rgb_g, _change_settings_colors_range_rgb_r, _change_settings_numbers_count, _change_settings_numbers_minDecimalLength, _change_settings_numbers_range, _change_settings_numbers_sort, _change_settings_numbers_type, _change_settings_prefix, _change_settings_selection_count, _change_settings_selection_list, _change_settings_separator, _change_settings_string_characters_customCharacters, _change_settings_string_characters_toDefault, _change_settings_string_length, _change_settings_suffix, _change_settings_teams_count, _change_settings_teams_membersList, _change_settings_teams_namesList, _change_settings_words_count, _change_settings_words_list, _change_settings_words_wordCase, _delete_list, _edit_list, _export_list, _reset_list, _toggle_navigation_expand, _toggle_settings_animation, _toggle_settings_repeat, _toggle_settings_string_characters_alphabetLowercase, _toggle_settings_string_characters_alphabetUppercase, _toggle_settings_string_characters_numbers, _toggle_settings_string_characters_symbols, _view_list } from "./_string";
 import { stringToLowerCase, stringToUpperCase, stringToToggleCase, stringToTitleCase } from "@/utils/string";
 import { createObjectURL, downloadFileByURL, revokeObjectURL } from "@/utils/url";
-import { addClassListModule } from "@/utils/element";
+import { addClassListModule, getElementById } from "@/utils/element";
 import { openFile, readFileAsText } from "@/utils/file";
 import { IDB } from "@/utils/indexeddb";
 import { DatabaseNames } from "@/enums/storage";
 import { getDocumentBody, getNavigator } from "@/data/window";
 import { removeAttribute, setAttribute, toggleAttribute } from "@/utils/attributes";
 import { BodyAttributes } from "@/enums/attributes";
+import { AnimationEffectTiming } from "@/enums/animation";
+import { ElementIds } from "@/enums/ids";
 
 import App from "@/components/App";
 import { TextTooltip } from "@/components/Tooltip";
@@ -1166,8 +1168,22 @@ const _: VoidComponent = () => {
         }
     }
 
+    function removeSplashScreen(): void {
+        setMicrotask(() => {
+            const splash_ref = getElementById(ElementIds[_splash]) as HTMLDivElement
+            splash_ref[_animate](
+                {opacity: 0},
+                {
+                    duration: 1000,
+                    easing: AnimationEffectTiming[_spring]
+                }
+            )[_finished][_then](() => splash_ref[_remove]())
+        })
+    }
+
     onMount(() => {
         initDatabase()
+        removeSplashScreen()
     })
 
     const ListItem: VoidComponent<ItemList> = ($props) => {
