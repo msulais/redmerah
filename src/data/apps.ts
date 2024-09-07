@@ -23,8 +23,8 @@ export const apps: AppItem[] = [
         description: 'Looking for a reliable and comprehensive calculator app? Look no further than our all-in-one calculator! With 5 calculators in one app, you can tackle any calculation that comes your way.',
         link: RoutesLinks.calculator,
         color: '#026BE3',
-        buildNumber: 2,
-        buildVersion: '0.1.1',
+        buildNumber: 3,
+        buildVersion: '0.1.2',
     },
     {
         logoURL: randomizer_converter_logo[_src],
