@@ -60,7 +60,7 @@ export const apps: AppItem[] = [
         description: 'Convert markdown to HTML effortlessly with our online markdown converter. Create beautifully formatted web content from plain text using our user-friendly tool.',
         link: RoutesLinks.markdownConverter,
         color: '#01B92A',
-        buildNumber: 4,
-        buildVersion: '0.1.3',
+        buildNumber: 5,
+        buildVersion: '0.1.4',
     },
 ]
