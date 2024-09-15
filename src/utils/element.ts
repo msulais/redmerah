@@ -1,5 +1,5 @@
-import { _clientHeight, _clientWidth, _createElement, _getBoundingClientRect, _getElementById, _length, _querySelector, _querySelectorAll, _scrollHeight, _scrollWidth, _setProperty, _style } from "@/data/string"
-import { getDocument } from "@/data/window"
+import { _clientHeight, _clientWidth, _createElement, _getBoundingClientRect, _getElementById, _length, _querySelector, _querySelectorAll, _scrollHeight, _scrollWidth, _setProperty, _style } from "@/constants/string"
+import { getDocument } from "@/constants/window"
 
 export function isElementOverflowX(el: HTMLElement): boolean {
     return el[_clientWidth] < el[_scrollWidth]
@@ -42,9 +42,9 @@ export function getBoundingClientRect(element: Element): DOMRect {
 }
 
 export function setStyleProperty(
-        element: HTMLElement, 
-        property: string, 
-        value: string | null, 
+        element: HTMLElement,
+        property: string,
+        value: string | null,
         priority?: string | undefined
     ): void {
     return element[_style][_setProperty](property, value, priority)

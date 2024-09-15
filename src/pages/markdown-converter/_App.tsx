@@ -4,14 +4,14 @@ import { marked } from 'marked'
 import type { Settings } from "./_types";
 import { IDB } from "@/utils/indexeddb";
 import { DatabaseNames } from "@/enums/storage";
-import { _animate, _clipboard, _contains, _createObjectStore, _css, _db, _finished, _fontSize, _get, _html, _key, _lastInput, _length, _markdown, _markdownConverter, _newVersion, _objectStore, _objectStoreNames, _oldVersion, _open, _put, _readObjectStore, _readonly, _remove, _settings, _splash, _spring, _textWrap, _then, _transaction, _value, _writeObjectStore, _writeText } from "@/data/string";
+import { _animate, _clipboard, _contains, _createObjectStore, _css, _db, _finished, _fontSize, _get, _html, _key, _lastInput, _length, _markdown, _markdownConverter, _newVersion, _objectStore, _objectStoreNames, _oldVersion, _open, _put, _readObjectStore, _readonly, _remove, _settings, _splash, _spring, _textWrap, _then, _transaction, _value, _writeObjectStore, _writeText } from "@/constants/string";
 import { ObjectStoreKeys, ObjectStoreNames, type ObjectStoreLastInput, type ObjectStoreSettings } from "./_storage";
 import { createStore } from "solid-js/store";
 import { Commands } from "./_enums";
 import { defaultCSSText } from "./_css";
 import { defaultMarkdownText } from "./_markdown";
 import { downloadFile, openFile, readFileAsText } from "@/utils/file";
-import { getNavigator } from "@/data/window";
+import { getNavigator } from "@/constants/window";
 import { AnimationEffectTiming } from "@/enums/animation";
 import { ElementIds } from "@/enums/ids";
 import { getElementById } from "@/utils/element";

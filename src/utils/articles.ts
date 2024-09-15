@@ -1,7 +1,7 @@
 import matter from "gray-matter"
 import { marked } from "marked"
 import type { HTMLmd, Heading } from "@/types/articles"
-import { _content, _data, _match, _matchAll, _push, _replace } from "@/data/string"
+import { _content, _data, _match, _matchAll, _push, _replace } from "@/constants/string"
 
 export async function markdownToHTML<T = object>(markdown: string): Promise<HTMLmd<T>> {
     const markdownData = matter(markdown)

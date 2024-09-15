@@ -1,7 +1,7 @@
 import { createSignal, type VoidComponent } from "solid-js"
 
 import { Commands, Pages } from "./_enums"
-import { _button } from "@/data/string"
+import { _button } from "@/constants/string"
 
 import App from "@/components/App"
 import AppBar from './_AppBar'
@@ -15,16 +15,16 @@ const _: VoidComponent = () => {
         if (type == Commands.change_page) {
             setPage(args[0] as Pages)
         }
-        return 
+        return
     }
 
     return (<App
         class={CSS.app}
-        appBar={<AppBar 
+        appBar={<AppBar
             page={page()}
-            command={command} 
+            command={command}
         />}
-        leftSideBar={<SideNavigation 
+        leftSideBar={<SideNavigation
             page={page()}
             command={command}
         />}>

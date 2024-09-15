@@ -1,9 +1,9 @@
 import { createMemo, createSignal, For, onMount, Show, type VoidComponent } from "solid-js"
 
 import type { Settings, Task, TaskList } from "./_types";
-import { _system, _round, _replace, _taskLists, _length, _tasks, _test, _name, _push, _emoji, _id, _change, _matches, _theme, _corner, _light, _dark, _includes, _sharp, _semiRound, _fullRound, _home, _src, _apps, _about, _privacy, _terms, _share, _URL, _contactEmail, _donate, _getFullYear, _command, _slice, _settings, _hiddenNavigation, _type, _filter, _text, _isShowDeleteTaskWarning, _isSideNavigationExpanded, _focus, _currentTarget, _centerBottomToLeft, _complete, _blur, _value, _trim, _icon, _page } from "@/data/string";
+import { _system, _round, _replace, _taskLists, _length, _tasks, _test, _name, _push, _emoji, _id, _change, _matches, _theme, _corner, _light, _dark, _includes, _sharp, _semiRound, _fullRound, _home, _src, _apps, _about, _privacy, _terms, _share, _URL, _contactEmail, _donate, _getFullYear, _command, _slice, _settings, _hiddenNavigation, _type, _filter, _text, _isShowDeleteTaskWarning, _isSideNavigationExpanded, _focus, _currentTarget, _centerBottomToLeft, _complete, _blur, _value, _trim, _icon, _page } from "@/constants/string";
 import { Commands, Pages } from "./_enums";
-import { getDocument, getNavigator, getRoot } from "@/data/window";
+import { getDocument, getNavigator, getRoot } from "@/constants/window";
 import { RootAttributes } from "@/enums/attributes";
 import { CornerData } from "@/enums/corner";
 import { LocalStorageKeys } from "@/enums/storage";

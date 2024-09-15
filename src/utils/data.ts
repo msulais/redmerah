@@ -1,4 +1,4 @@
-import { _length } from "@/data/string"
+import { _length } from "@/constants/string"
 
 export function isVarHasValue(data: unknown): boolean {
     return data != undefined && data != null

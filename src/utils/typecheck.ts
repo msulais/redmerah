@@ -1,4 +1,4 @@
-import { _bigint, _boolean, _function, _isArray, _number, _object, _string, _symbol } from "@/data/string";
+import { _bigint, _boolean, _function, _isArray, _number, _object, _string, _symbol } from "@/constants/string";
 
 export function isArray(arg: unknown): boolean {
     return Array[_isArray](arg)

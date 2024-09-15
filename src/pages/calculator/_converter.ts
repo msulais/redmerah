@@ -1,4 +1,4 @@
-import { _name, _symbol, _value } from "@/data/string"
+import { _name, _symbol, _value } from "@/constants/string"
 
 export type ConverterUnitType = {
     name: string

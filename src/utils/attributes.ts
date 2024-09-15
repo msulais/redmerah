@@ -1,9 +1,9 @@
-import { _getAttribute, _removeAttribute, _setAttribute } from "@/data/string"
+import { _getAttribute, _removeAttribute, _setAttribute } from "@/constants/string"
 import { isVarHasValue } from "./data"
 import { isBoolean } from "./typecheck"
 
 export function toggleAttribute(value: unknown, showValue: boolean = false): string | undefined {
-    if (!isVarHasValue(value)) 
+    if (!isVarHasValue(value))
         return undefined
 
     if (isBoolean(value) && !showValue)

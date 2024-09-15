@@ -1,6 +1,6 @@
 import { createSignal, type VoidComponent } from "solid-js"
 
-import { _centerTop, _tonal, _leftTop, _leftCenterToBottom, _leftCenter, _leftCenterToTop, _leftBottom, _rightTop, _rightCenterToBottom, _rightCenter, _rightCenterToTop, _rightBottom, _centerTopToRight, _centerTopToLeft, _centerBottomToRight, _centerBottom, _centerBottomToLeft, _centerCenterLeftTop, _centerCenterLeft, _centerCenterLeftBottom, _centerCenterTop, _centerCenter, _centerCenterBottom, _centerCenterRightTop, _centerCenterRight, _centerCenterRightBottom } from "@/data/string"
+import { _centerTop, _tonal, _leftTop, _leftCenterToBottom, _leftCenter, _leftCenterToTop, _leftBottom, _rightTop, _rightCenterToBottom, _rightCenter, _rightCenterToTop, _rightBottom, _centerTopToRight, _centerTopToLeft, _centerBottomToRight, _centerBottom, _centerBottomToLeft, _centerCenterLeftTop, _centerCenterLeft, _centerCenterLeftBottom, _centerCenterTop, _centerCenter, _centerCenterBottom, _centerCenterRightTop, _centerCenterRight, _centerCenterRightBottom } from "@/constants/string"
 
 import { RichTooltip, TextTooltip, TooltipPosition } from "@/components/Tooltip"
 import Icon from "@/components/Icon"
@@ -16,12 +16,12 @@ const _: VoidComponent = () => {
     const [gap, setGap] = createSignal<number>(40)
     const [startDelayDuration, setStartDelayDuration] = createSignal<number>(500)
     const [endDelayDuration, setEndDelayDuration] = createSignal<number>(500)
-    
+
     return (<Page
         title="Tooltip"
         description="A tooltip is a small, temporary window that appears when a user hovers over an element. It provides a brief explanation or description of the element's purpose or function. Tooltips are often used to clarify the meaning of icons, buttons, or other UI elements.">
         <Playground>
-            <TextTooltip 
+            <TextTooltip
                 text="This is tooltip"
                 endDelayDuration={endDelayDuration()}
                 gap={gap()}
@@ -29,8 +29,8 @@ const _: VoidComponent = () => {
                 startDelayDuration={startDelayDuration()}
                 useAnchor={useAnchor()}>
                 <Button>
-                    Hover me please 
-                    <TextTooltip 
+                    Hover me please
+                    <TextTooltip
                         text="This is icon"
                         endDelayDuration={endDelayDuration()}
                         gap={gap()}
@@ -41,7 +41,7 @@ const _: VoidComponent = () => {
                     </TextTooltip>
                 </Button>
             </TextTooltip>
-            <RichTooltip 
+            <RichTooltip
                 style={{width: '240px'}}
                 endDelayDuration={endDelayDuration()}
                 gap={gap()}

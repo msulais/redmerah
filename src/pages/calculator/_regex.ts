@@ -1,4 +1,4 @@
-import { _raw } from "@/data/string"
+import { _raw } from "@/constants/string"
 
 export const NUMBER_REGEX = String[_raw]`\d+(?:\.\d+)?`
 export const WORD_OPERATOR_REGEX = String[_raw]`(?:or|xor|and|lsh|rsh|mod)`

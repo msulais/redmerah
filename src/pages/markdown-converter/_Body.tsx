@@ -3,9 +3,9 @@ import beautiful from 'simply-beautiful'
 
 import type { Settings } from "./_types"
 import { addEventListener } from "@/utils/event"
-import { _change, _clientX, _command, _css, _cssText, _fontSize, _html, _htmlText, _markdown, _markdownText, _matches, _mousemove, _mouseup, _noPointerEvent, _preview, _px, _replace, _settings, _textWrap, _tonal, _touchend, _touches, _touchmove, _value } from "@/data/string"
+import { _change, _clientX, _command, _css, _cssText, _fontSize, _html, _htmlText, _markdown, _markdownText, _matches, _mousemove, _mouseup, _noPointerEvent, _preview, _px, _replace, _settings, _textWrap, _tonal, _touchend, _touches, _touchmove, _value } from "@/constants/string"
 import { removeAttribute, setAttribute, toggleAttribute } from "@/utils/attributes"
-import { getDocument, getDocumentBody } from "@/data/window"
+import { getDocument, getDocumentBody } from "@/constants/window"
 import { BodyAttributes } from "@/enums/attributes"
 import { clearTimeDelayed, setTimeDelayed } from "@/utils/timeout"
 import { Commands } from "./_enums"

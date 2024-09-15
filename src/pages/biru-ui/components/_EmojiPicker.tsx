@@ -2,7 +2,7 @@ import { createSignal, Show, type VoidComponent } from "solid-js"
 
 import { Page, Playground, PlaygroundOptions } from "../_Body"
 import Button, { ButtonVariant } from "@/components/Button"
-import { _centerBottom, _centerBottomToLeft, _centerBottomToRight, _centerCenter, _centerCenterBottom, _centerCenterLeft, _centerCenterLeftBottom, _centerCenterLeftTop, _centerCenterRight, _centerCenterRightBottom, _centerCenterRightTop, _centerCenterTop, _centerTop, _centerTopToLeft, _centerTopToRight, _currentTarget, _includes, _leftBottom, _leftCenter, _leftCenterToBottom, _leftCenterToTop, _leftTop, _rightBottom, _rightCenter, _rightCenterToBottom, _rightCenterToTop, _rightTop, _tonal } from "@/data/string"
+import { _centerBottom, _centerBottomToLeft, _centerBottomToRight, _centerCenter, _centerCenterBottom, _centerCenterLeft, _centerCenterLeftBottom, _centerCenterLeftTop, _centerCenterRight, _centerCenterRightBottom, _centerCenterRightTop, _centerCenterTop, _centerTop, _centerTopToLeft, _centerTopToRight, _currentTarget, _includes, _leftBottom, _leftCenter, _leftCenterToBottom, _leftCenterToTop, _leftTop, _rightBottom, _rightCenter, _rightCenterToBottom, _rightCenterToTop, _rightTop, _tonal } from "@/constants/string"
 import EmojiPicker, { EmojiPickerPosition, openEmojiPicker } from "@/components/EmojiPicker"
 import type { Emoji } from "@/types/emoji"
 import Icon from "@/components/Icon"
@@ -27,9 +27,9 @@ const _: VoidComponent = () => {
         title="EmojiPicker"
         description="An EmojiPicker is a UI element that allows users to select and insert emojis into text fields or other input areas. It typically presents a grid of emojis that can be searched, filtered, or categorized for easy selection.">
         <Playground>
-            <Button 
+            <Button
                 variant={ButtonVariant[_tonal]}
-                onClick={ev => openEmojiPicker(ev, emojiPicker_ref, { 
+                onClick={ev => openEmojiPicker(ev, emojiPicker_ref, {
                     anchor: anchor()? ev[_currentTarget] : undefined,
                     allowHideAnchor: allowHideAnchor(),
                     dragable: dragable(),
@@ -43,8 +43,8 @@ const _: VoidComponent = () => {
                     {emoji()![1]}
                 </Show>
             </Button>
-            <EmojiPicker 
-                ref={r => emojiPicker_ref = r} 
+            <EmojiPicker
+                ref={r => emojiPicker_ref = r}
                 onSelectEmoji={(emoji, name) => setEmoji([emoji, name])}
                 multiple={multiple()}
                 showCloseButton={showCloseButton()}

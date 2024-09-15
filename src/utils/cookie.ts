@@ -1,7 +1,7 @@
 import { CookieKeys } from "@/enums/cookies"
 import { decodeURL, encodeURL } from "./url";
-import { _maxAge, _path, _domain, _sameSite, _secure, _httpOnly, _length, _expires, _getTime, _setTime, _toUTCString, _cookie, _substring, _indexOf, _split, _trim } from "@/data/string";
-import { getDocument } from "@/data/window";
+import { _maxAge, _path, _domain, _sameSite, _secure, _httpOnly, _length, _expires, _getTime, _setTime, _toUTCString, _cookie, _substring, _indexOf, _split, _trim } from "@/constants/string";
+import { getDocument } from "@/constants/window";
 
 type CookieOptions = {
     domain?: string,

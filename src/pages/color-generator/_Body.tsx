@@ -2,8 +2,8 @@ import { type VoidComponent, type Signal, createSignal, Show } from "solid-js"
 
 import type { HEXColor } from "@/types/color"
 import type { Palette } from "./_types"
-import { _clipboard, _writeText, _accentLight, _onAccentLight, _tonal, _accentDark, _onAccentDark } from "@/data/string"
-import { getNavigator } from "@/data/window"
+import { _clipboard, _writeText, _accentLight, _onAccentLight, _tonal, _accentDark, _onAccentDark } from "@/constants/string"
+import { getNavigator } from "@/constants/window"
 import { hexToRgb } from "@/utils/color"
 import { clearTimeDelayed, setTimeDelayed } from "@/utils/timeout"
 

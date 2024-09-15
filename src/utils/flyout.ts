@@ -1,5 +1,5 @@
-import { _flyoutListener, _flyout, _open, _noPointerEvent, _clientX, _touches, _clientY, _focus, _x, _left, _right, _y, _top, _bottom, _modal, _popover, _activeElement, _flyoutOpen, _scrollY, _documentElement, _scrollTop, _scrollTo, _anchorId, _position, _observe, _click, _scroll, _resize, _join, _instant, _manual, _body, _centerBottom, _centerBottomToLeft, _centerBottomToRight, _centerCenter, _centerCenterBottom, _centerCenterLeft, _centerCenterLeftBottom, _centerCenterLeftTop, _centerCenterRight, _centerCenterRightBottom, _centerCenterRightTop, _centerCenterTop, _centerTop, _centerTopToLeft, _centerTopToRight, _clientWidth, _element, _height, _includes, _innerHeight, _leftBottom, _leftCenter, _leftCenterToBottom, _leftCenterToTop, _leftTop, _rightBottom, _rightCenter, _rightCenterToBottom, _rightCenterToTop, _rightTop, _screen, _width } from "@/data/string"
-import { getDocument, getWindow } from "@/data/window"
+import { _flyoutListener, _flyout, _open, _noPointerEvent, _clientX, _touches, _clientY, _focus, _x, _left, _right, _y, _top, _bottom, _modal, _popover, _activeElement, _flyoutOpen, _scrollY, _documentElement, _scrollTop, _scrollTo, _anchorId, _position, _observe, _click, _scroll, _resize, _join, _instant, _manual, _body, _centerBottom, _centerBottomToLeft, _centerBottomToRight, _centerCenter, _centerCenterBottom, _centerCenterLeft, _centerCenterLeftBottom, _centerCenterLeftTop, _centerCenterRight, _centerCenterRightBottom, _centerCenterRightTop, _centerCenterTop, _centerTop, _centerTopToLeft, _centerTopToRight, _clientWidth, _element, _height, _includes, _innerHeight, _leftBottom, _leftCenter, _leftCenterToBottom, _leftCenterToTop, _leftTop, _rightBottom, _rightCenter, _rightCenterToBottom, _rightCenterToTop, _rightTop, _screen, _width } from "@/constants/string"
+import { getDocument, getWindow } from "@/constants/window"
 import { FlyoutPosition } from "@/enums/position"
 
 type GetFlyoutPositionParams = {
@@ -29,9 +29,9 @@ export function getFlyoutPosition({
     const POPOVER_MARGIN = 8
 
     if (!anchor && !pointer) return {
-        top: 0, 
-        right: 0, 
-        bottom: 0, 
+        top: 0,
+        right: 0,
+        bottom: 0,
         left: 0
     }
 
@@ -96,8 +96,8 @@ export function getFlyoutPosition({
             else left = edgePosition[_left]
         }
 
-    } 
-    
+    }
+
     else if ([
         FlyoutPosition[_centerTopToRight],
         FlyoutPosition[_centerCenterLeftTop],
@@ -111,8 +111,8 @@ export function getFlyoutPosition({
             if (middlePosition[_element][_left] > middlePosition[_screen][_left]) left = rect[_element][_right] - rect[_flyout][_width] + padding
             else left = edgePosition[_right] - rect[_flyout][_width]
         }
-    } 
-    
+    }
+
     else if ([
         FlyoutPosition[_centerTop],
         FlyoutPosition[_centerCenterTop],
@@ -121,8 +121,8 @@ export function getFlyoutPosition({
         FlyoutPosition[_centerBottom]
     ][_includes](position)) {
         left = rect[_element][_left] + (rect[_element][_width] / 2) - (rect[_flyout][_width] / 2)
-    } 
-    
+    }
+
     else if ([
         FlyoutPosition[_centerTopToLeft],
         FlyoutPosition[_centerCenterRightTop],
@@ -136,8 +136,8 @@ export function getFlyoutPosition({
             if (middlePosition[_element][_left] < middlePosition[_screen][_left]) left = rect[_element][_left] - padding
             else left = edgePosition[_left]
         }
-    } 
-    
+    }
+
     else if ([
         FlyoutPosition[_rightTop],
         FlyoutPosition[_rightCenterToBottom],
@@ -165,8 +165,8 @@ export function getFlyoutPosition({
             if (middlePosition[_element][_top] < middlePosition[_screen][_top]) top = rect[_element][_bottom] + gap
             else top = edgePosition[_top]
         }
-    } 
-    
+    }
+
     else if ([
         FlyoutPosition[_leftCenterToBottom],
         FlyoutPosition[_centerCenterLeftTop],
@@ -180,8 +180,8 @@ export function getFlyoutPosition({
             if (middlePosition[_element][_top] > middlePosition[_screen][_top]) top = rect[_element][_bottom] - rect[_flyout][_height] + padding
             else top = edgePosition[_bottom] - rect[_flyout][_height]
         }
-    } 
-    
+    }
+
     else if ([
         FlyoutPosition[_leftCenter],
         FlyoutPosition[_centerCenterLeft],
@@ -190,8 +190,8 @@ export function getFlyoutPosition({
         FlyoutPosition[_rightCenter]
     ][_includes](position)) {
         top = rect[_element][_top] + (rect[_element][_height] / 2) - (rect[_flyout][_height] / 2)
-    } 
-    
+    }
+
     else if ([
         FlyoutPosition[_leftCenterToTop],
         FlyoutPosition[_centerCenterLeftBottom],
@@ -205,8 +205,8 @@ export function getFlyoutPosition({
             if (middlePosition[_element][_top] < middlePosition[_screen][_top]) top = rect[_element][_top] - padding
             else top = edgePosition[_top]
         }
-    } 
-    
+    }
+
     else if ([
         FlyoutPosition[_leftBottom],
         FlyoutPosition[_centerBottomToRight],

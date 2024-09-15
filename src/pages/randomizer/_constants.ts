@@ -1,4 +1,4 @@
-import { _string, _words, _numbers, _colors, _selection, _teams } from "@/data/string";
+import { _string, _words, _numbers, _colors, _selection, _teams } from "@/constants/string";
 import { RandomizerType } from "./_enums";
 
 export const

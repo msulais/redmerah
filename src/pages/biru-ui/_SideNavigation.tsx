@@ -1,6 +1,6 @@
 import { For, type VoidComponent } from "solid-js";
 
-import { _command, _expand, _icon, _page, _text, _type } from "@/data/string";
+import { _command, _expand, _icon, _page, _text, _type } from "@/constants/string";
 import { addClassListModule } from "@/utils/element";
 import { Commands, Pages } from "./_enums";
 

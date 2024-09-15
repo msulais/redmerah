@@ -1,7 +1,7 @@
 import { Transition } from 'solid-transition-group'
 import { createEffect, createMemo, createSignal, For, Match, mergeProps, Show, splitProps, Switch, type VoidComponent } from 'solid-js'
 
-import { _ref, _datetime, _onSelectDateTime, _firstDate, _lastDate, _locales, _children, _classList, _onClose, _day, _getDay, _includes, _setMonth, _month, _setFullYear, _year, _substring, _fill, _setDate, _getDate, _getMonth, _getFullYear, _filled, _outlined, _getHours, _setHours, _map, _padStart, _getMinutes, _setMinutes, _AM, _PM, _$24hour, _tonal, _animate, _finished, _spring, _then } from '@/data/string'
+import { _ref, _datetime, _onSelectDateTime, _firstDate, _lastDate, _locales, _children, _classList, _onClose, _day, _getDay, _includes, _setMonth, _month, _setFullYear, _year, _substring, _fill, _setDate, _getDate, _getMonth, _getFullYear, _filled, _outlined, _getHours, _setHours, _map, _padStart, _getMinutes, _setMinutes, _AM, _PM, _$24hour, _tonal, _animate, _finished, _spring, _then } from '@/constants/string'
 import { getCurrentDate, getDate_Y, getDate_M, getWeekdayNames, isOutDate_YMD, isSameDate_YMD, getMonthNames, isOutDate_YM, isSameDate_YM, isOutDate_Y, isSameDate_Y, getMonthText, isInDate_YM } from '@/utils/datetime'
 import { AnimationEffectTiming } from '@/enums/animation'
 import { TimeFormat } from '@/enums/datetime'
@@ -12,8 +12,8 @@ import { closeModal, openModal, focusModal, Modal, type ModalProps, repositionMo
 import './index.scss'
 
 enum DatePickerOption {
-    year, 
-    month, 
+    year,
+    month,
     day
 }
 
@@ -34,7 +34,7 @@ const DateTimePicker: VoidComponent<DateTimePickerProps> = ($props) => {
     }, $props)
     const [props, other] = splitProps($$props, [
         _ref, _datetime, _onSelectDateTime,
-        _firstDate, _lastDate, _locales, 
+        _firstDate, _lastDate, _locales,
         _children, _classList, _onClose
     ])
     const [value, setValue] = createSignal<Date>(getCurrentDate())
@@ -56,7 +56,7 @@ const DateTimePicker: VoidComponent<DateTimePickerProps> = ($props) => {
         if (getDate_M(viewDate()) == 1) {
             daysPerMonth = 28
             if (getDate_Y(viewDate()) % 4 == 0) daysPerMonth = 29
-        } 
+        }
 
         // april, june, september, november
         else if ([3, 5, 8, 10][_includes](getDate_M(viewDate()))) daysPerMonth = 30
@@ -91,7 +91,7 @@ const DateTimePicker: VoidComponent<DateTimePickerProps> = ($props) => {
 
     createEffect(() => {
         const datetime = props[_datetime]
-        
+
         setViewDate(datetime)
         setValue(datetime)
     })
@@ -178,7 +178,7 @@ const DateTimePicker: VoidComponent<DateTimePickerProps> = ($props) => {
             if (props[_ref]) props[_ref](r)
         }}
         classList={{
-            'datetime-picker': true, 
+            'datetime-picker': true,
             ...props[_classList]
         }}
         onClose={(ev) => {
@@ -187,7 +187,7 @@ const DateTimePicker: VoidComponent<DateTimePickerProps> = ($props) => {
         }}
         {...other}>
         <div class="datetime-picker-header">
-            <Button 
+            <Button
                 onClick={() => setDateOption(d => {
                     if (d == DatePickerOption[_month]) return DatePickerOption[_year]
                     return DatePickerOption[_month]
@@ -206,7 +206,7 @@ const DateTimePicker: VoidComponent<DateTimePickerProps> = ($props) => {
             </Button>
             <Show when={
                 (
-                    (dateOption() == DatePickerOption[_day] && !isSameDate_YM(viewDate(), value())) 
+                    (dateOption() == DatePickerOption[_day] && !isSameDate_YM(viewDate(), value()))
                     || (dateOption() == DatePickerOption[_month] && !isSameDate_Y(viewDate(), value()))
                     || (dateOption() == DatePickerOption[_year] && isOutDate_Y(value(), viewDate(), new Date(getDate_Y(viewDate()) + 15, 2, 3)))
                 )
@@ -218,7 +218,7 @@ const DateTimePicker: VoidComponent<DateTimePickerProps> = ($props) => {
         </div>
         <Transition
             onEnter={(el, done) => {el[_animate](
-                { opacity: [0, 1], transform: ['translateY(-12px)', 'none'] }, 
+                { opacity: [0, 1], transform: ['translateY(-12px)', 'none'] },
                 { duration: 300, easing: AnimationEffectTiming[_spring] }
             )[_finished][_then](done)}}
             onExit={(el, done) => {el[_animate]({}, { duration: 0 })[_finished][_then](done)}}>
@@ -229,50 +229,50 @@ const DateTimePicker: VoidComponent<DateTimePickerProps> = ($props) => {
             </Switch>
         </Transition>
         <div class="datetime-picker-time">
-            <Dropdown 
-                labelText="Hour" 
+            <Dropdown
+                labelText="Hour"
                 selectedValues={[
                     value()[_getHours]() - (value()[_getHours]() >= 12 && !isTime24HourFormat()? 12 : 0)
-                ]} 
-                onSelectedItemsChanged={(items) => 
+                ]}
+                onSelectedItemsChanged={(items) =>
                     setValue(v => (v[_setHours](items[0][0] as number + (isTimePMFormat()? 12 : 0)), v))
                 }
                 items={[
                     [0, '00'],
-                    ...new Array(isTime24HourFormat()? 23 : 11)[_fill](1)[_map]((_v, i) => 
+                    ...new Array(isTime24HourFormat()? 23 : 11)[_fill](1)[_map]((_v, i) =>
                         [i+1, `${i+1}`[_padStart](2, '0')] as $DropdownItem
                     ),
                 ]}
             />
-            <Dropdown 
-                labelText="Minute" 
-                selectedValues={[value()[_getMinutes]()]} 
+            <Dropdown
+                labelText="Minute"
+                selectedValues={[value()[_getMinutes]()]}
                 onSelectedItemsChanged={(items) => setValue(v => (v[_setMinutes](items[0][0] as number), v))}
                 items={new Array(60)[_fill](1)[_map]((_v, i) => [i, `${i}`[_padStart](2, '0')] as $DropdownItem)}
             />
-            <Dropdown 
-                selectedValues={[_AM]} 
+            <Dropdown
+                selectedValues={[_AM]}
                 onSelectedItemsChanged={(items) => {
                     const hour = value()[_getHours]()
                     let $hour = hour
 
                     // from (AM | 24hour) to PM
                     if (
-                        (isTimeAMFormat() || isTime24HourFormat()) 
-                        && items[0][0] == _PM 
+                        (isTimeAMFormat() || isTime24HourFormat())
+                        && items[0][0] == _PM
                         && $hour <= 12
                     ) $hour += 12
-                    
+
                     // from (PM | 24hour) to AM
                     else if (
-                        (isTime24HourFormat() || isTimePMFormat()) 
-                        && items[0][0] == _AM 
+                        (isTime24HourFormat() || isTimePMFormat())
+                        && items[0][0] == _AM
                         && $hour >= 12
                     ) $hour -= 12
 
                     if (hour != $hour) setValue(v => (v[_setHours]($hour), v))
 
-                    setIsTime24HourFormat(items[0][0] == TimeFormat[_$24hour]) 
+                    setIsTime24HourFormat(items[0][0] == TimeFormat[_$24hour])
                     setIsTimePMFormat(items[0][0] == _PM)
                 }}
                 items={[[_AM, _AM], [_PM, _PM], [TimeFormat[_$24hour], '24 hour']]}
@@ -281,8 +281,8 @@ const DateTimePicker: VoidComponent<DateTimePickerProps> = ($props) => {
         {props[_children]}
         <div class="datetime-picker-actions">
             <Button variant={ButtonVariant[_tonal]} onClick={() => closeModal(dateTimePicker_ref)}>Cancel</Button>
-            <Button 
-                variant={ButtonVariant[_filled]} 
+            <Button
+                variant={ButtonVariant[_filled]}
                 onClick={() => {
                     if (props[_onSelectDateTime]) props[_onSelectDateTime](value())
                     closeModal(dateTimePicker_ref)
@@ -294,7 +294,7 @@ const DateTimePicker: VoidComponent<DateTimePickerProps> = ($props) => {
 }
 
 export {
-    DateTimePicker, 
+    DateTimePicker,
     focusModal as focusDateTimePicker,
     openModal as openDateTimePicker,
     closeModal as closeDateTimePicker,

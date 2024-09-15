@@ -2,7 +2,7 @@ import { createSignal, For, onMount, Show, type VoidComponent } from "solid-js";
 
 import type { HEXColor } from "@/types/color";
 import type { ItemList, Result, Settings } from "./_types";
-import { _string, _characters, _numbers, _symbols, _length, _floor, _range, _max, _min, _count, _repeat, _includes, _push, _sort, _ascending, _descending, _map, _prefix, _toString, _numberType, _padStart, _suffix, _join, _separator, _colors, _round, _colorModel, _hex, _rgb, _hsl, _words, _selection, _teams, _animation, _result, _settings, _decimal, _none, _open, _key, _value, _createObjectStore, _id, _list, _lists, _lastResult, _isOpen, _readonly, _objectStore, _transaction, _get, _then, _color, _readwrite, _put, _add, _name, _members, _getAll, _namesList, _membersList, _alphabetLowercase, _alphabetUppercase, _customCharacter, _minDecimalLength, _splice, _lowercase, _titlecase, _togglecase, _uppercase, _wordCase, _h, _l, _s, _r, _b, _g, _cursor, _test, _tonal, _filled, _manual, _items, _accept, _file, _input, _type, _readAsText, _target, _onerror, _onabort, _onload, _replace, _split, _substring, _filter, _trim, _focus, _delete, _clipboard, _writeText, _noPointerEvent, _generate, _stopGenerate, _randomizer, _writeObjectStore, _readObjectStore, _findIndex, _concat, _slice, _localeCompare, _animate, _finished, _remove, _splash, _spring } from "@/data/string";
+import { _string, _characters, _numbers, _symbols, _length, _floor, _range, _max, _min, _count, _repeat, _includes, _push, _sort, _ascending, _descending, _map, _prefix, _toString, _numberType, _padStart, _suffix, _join, _separator, _colors, _round, _colorModel, _hex, _rgb, _hsl, _words, _selection, _teams, _animation, _result, _settings, _decimal, _none, _open, _key, _value, _createObjectStore, _id, _list, _lists, _lastResult, _isOpen, _readonly, _objectStore, _transaction, _get, _then, _color, _readwrite, _put, _add, _name, _members, _getAll, _namesList, _membersList, _alphabetLowercase, _alphabetUppercase, _customCharacter, _minDecimalLength, _splice, _lowercase, _titlecase, _togglecase, _uppercase, _wordCase, _h, _l, _s, _r, _b, _g, _cursor, _test, _tonal, _filled, _manual, _items, _accept, _file, _input, _type, _readAsText, _target, _onerror, _onabort, _onload, _replace, _split, _substring, _filter, _trim, _focus, _delete, _clipboard, _writeText, _noPointerEvent, _generate, _stopGenerate, _randomizer, _writeObjectStore, _readObjectStore, _findIndex, _concat, _slice, _localeCompare, _animate, _finished, _remove, _splash, _spring } from "@/constants/string";
 import { rgbToHex, hslToHex } from "@/utils/color";
 import { setTimeInterval, clearTimeInterval, setMicrotask } from "@/utils/timeout";
 import { createStore } from "solid-js/store";
@@ -17,7 +17,7 @@ import { addClassListModule, getElementById } from "@/utils/element";
 import { openFile, readFileAsText } from "@/utils/file";
 import { IDB } from "@/utils/indexeddb";
 import { DatabaseNames } from "@/enums/storage";
-import { getDocumentBody, getNavigator } from "@/data/window";
+import { getDocumentBody, getNavigator } from "@/constants/window";
 import { removeAttribute, setAttribute, toggleAttribute } from "@/utils/attributes";
 import { BodyAttributes } from "@/enums/attributes";
 import { AnimationEffectTiming } from "@/enums/animation";

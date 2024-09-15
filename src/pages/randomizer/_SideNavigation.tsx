@@ -1,7 +1,7 @@
 import { For, type VoidComponent } from "solid-js";
 
 import { RandomizerType } from "./_enums";
-import { _rightCenter, _colors, _expand, _filledTonal, _icon, _left, _numbers, _onChangeRandomizer, _randomizerType, _selection, _string, _teams, _text, _tooltip, _type, _words } from "@/data/string";
+import { _rightCenter, _colors, _expand, _filledTonal, _icon, _left, _numbers, _onChangeRandomizer, _randomizerType, _selection, _string, _teams, _text, _tooltip, _type, _words } from "@/constants/string";
 import { addClassListModule } from "@/utils/element";
 import { RANDOMIZER_TYPES } from "./_constants";
 

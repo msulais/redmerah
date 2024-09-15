@@ -1,26 +1,26 @@
-import { _addEventListener, _preventDefault, _removeEventListener, _stopImmediatePropagation, _stopPropagation } from "@/data/string"
+import { _addEventListener, _preventDefault, _removeEventListener, _stopImmediatePropagation, _stopPropagation } from "@/constants/string"
 
-type HasEventElement = 
-    Element | 
-    Window | 
-    Document | 
-    MediaQueryList | 
+type HasEventElement =
+    Element |
+    Window |
+    Document |
+    MediaQueryList |
     FileReader
 
 
 export function addEventListener<E = Event>(
-        element: HasEventElement, 
-        type: string, 
-        listener: (ev: E) => unknown, 
+        element: HasEventElement,
+        type: string,
+        listener: (ev: E) => unknown,
         options?: boolean | AddEventListenerOptions | undefined
     ): void {
     return element[_addEventListener](type, listener as any, options)
 }
 
 export function removeEventListener<E = Event>(
-        element: HasEventElement, 
-        type: string, 
-        listener: (ev: E) => unknown, 
+        element: HasEventElement,
+        type: string,
+        listener: (ev: E) => unknown,
         options?: boolean | AddEventListenerOptions | undefined
     ): void {
     return element[_removeEventListener](type, listener as any, options)

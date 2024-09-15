@@ -1,5 +1,5 @@
-import { getLocalStorage } from "@/data/storage"
-import { _clear, _getItem, _mode, _objectStore, _removeItem, _setItem, _transaction } from "@/data/string"
+import { getLocalStorage } from "@/constants/storage"
+import { _clear, _getItem, _mode, _objectStore, _removeItem, _setItem, _transaction } from "@/constants/string"
 import { LocalStorageKeys } from "@/enums/storage"
 
 export function setLocalStorageItem(key: LocalStorageKeys, value: string): void {

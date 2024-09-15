@@ -1,6 +1,6 @@
 import { type JSX, type ParentComponent, Show, splitProps, children, mergeProps } from "solid-js"
 
-import { _indicatorPosition, _selected, _leading, _children, _trailing, _classList, _iconCode, _variant, _disableScale, _tonal, _left, _header, _footer, _position, _right, _openAnimation, _closeAnimation, _spring, _animate, _none, _finished, _then, _auto, _style, _top } from "@/data/string"
+import { _indicatorPosition, _selected, _leading, _children, _trailing, _classList, _iconCode, _variant, _disableScale, _tonal, _left, _header, _footer, _position, _right, _openAnimation, _closeAnimation, _spring, _animate, _none, _finished, _then, _auto, _style, _top } from "@/constants/string"
 import { toggleAttribute } from "@/utils/attributes"
 import { isVarHasValue } from "@/utils/data"
 

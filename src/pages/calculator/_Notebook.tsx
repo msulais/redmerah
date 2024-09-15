@@ -1,7 +1,7 @@
 import { createEffect, type VoidComponent } from "solid-js"
 
 import { toggleAttribute } from "@/utils/attributes"
-import { _note, _value, _expand, _onNoteChanged, _currentTarget } from "@/data/string"
+import { _note, _value, _expand, _onNoteChanged, _currentTarget } from "@/constants/string"
 
 import { AreaTextField, changeAreaTextFieldValue } from "@/components/TextField"
 import CSS from './_styles.module.scss'

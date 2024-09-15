@@ -1,6 +1,6 @@
 import { type JSX, type ParentComponent, splitProps, children } from "solid-js"
 
-import { _header, _actions, _children, _classList, _style, _left, _top, _springBounce, _animate, _closeAnimation, _finished, _none, _openAnimation, _then } from "@/data/string"
+import { _header, _actions, _children, _classList, _style, _left, _top, _springBounce, _animate, _closeAnimation, _finished, _none, _openAnimation, _then } from "@/constants/string"
 import { toggleAttribute } from "@/utils/attributes"
 
 import { Modal, type ModalProps, openModal, closeModal, focusModal } from "@/components/Modal"

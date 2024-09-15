@@ -1,10 +1,10 @@
 import { type JSX, type ParentComponent, splitProps, children, onMount, onCleanup } from "solid-js"
 
-import { _dispatchEvent, _onOpen, _onClose, _leading, _trailing, _children, _header, _actions, _classList, _ref, _onToggleOpen, _centerTop, _centerCenterTop, _leftTop, _centerCenterLeftTop, _leftBottom, _centerCenterLeftBottom, _centerBottom, _centerCenterBottom, _rightTop, _centerCenterRightTop, _rightBottom, _centerCenterRightBottom, _detail } from "@/data/string"
+import { _dispatchEvent, _onOpen, _onClose, _leading, _trailing, _children, _header, _actions, _classList, _ref, _onToggleOpen, _centerTop, _centerCenterTop, _leftTop, _centerCenterLeftTop, _leftBottom, _centerCenterLeftBottom, _centerBottom, _centerCenterBottom, _rightTop, _centerCenterRightTop, _rightBottom, _centerCenterRightBottom, _detail } from "@/constants/string"
 import { toggleAttribute } from "@/utils/attributes"
 import { addEventListener, removeEventListener } from "@/utils/event"
 import { clearTimeDelayed, setTimeDelayed } from "@/utils/timeout"
-import { getDocumentBody } from "@/data/window"
+import { getDocumentBody } from "@/constants/window"
 
 import List from "@/components/List"
 import Popover, { type PopoverProps, closePopover, openPopover, PopoverPosition } from "@/components/Popover"

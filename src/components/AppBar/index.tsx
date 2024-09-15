@@ -1,6 +1,6 @@
 import { Show, splitProps, type JSX, type ParentComponent } from "solid-js"
 
-import { _children, _leading, _trailing, _headline, _class } from "@/data/string"
+import { _children, _leading, _trailing, _headline, _class } from "@/constants/string"
 
 import './index.scss'
 

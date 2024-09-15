@@ -1,6 +1,6 @@
 import { createSignal, Show, type VoidComponent } from "solid-js"
 
-import { _slice } from "@/data/string"
+import { _slice } from "@/constants/string"
 
 import CheckBox from "@/components/CheckBox"
 import { NumberTextField } from "@/components/TextField"
@@ -20,7 +20,7 @@ const _: VoidComponent = () => {
         title="Dropdown"
         description="A dropdown is a UI element that displays a list of options when clicked. It provides a compact way to present multiple choices while saving screen space.">
         <Playground>
-            <Dropdown 
+            <Dropdown
                 compact={compact()}
                 items={[
                     [0, 'Tiger'],
@@ -38,7 +38,7 @@ const _: VoidComponent = () => {
                 readOnly={readOnly()}
                 multiple={multiple()}
                 header={<Show when={header()}>
-                    <DropdownHeader>Animals</DropdownHeader> 
+                    <DropdownHeader>Animals</DropdownHeader>
                     <DropdownDivider />
                 </Show>}
                 footer={<Show when={footer()}>

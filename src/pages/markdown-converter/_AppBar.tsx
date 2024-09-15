@@ -1,8 +1,8 @@
 import { createSignal, onMount, type VoidComponent } from "solid-js";
 
 import type { Settings } from "./_types";
-import { _system, _round, _theme, _corner, _light, _dark, _includes, _sharp, _semiRound, _fullRound, _about, _apps, _contactEmail, _donate, _getFullYear, _home, _privacy, _share, _src, _terms, _URL, _centerBottomToLeft, _currentTarget, _settings, _textWrap, _command, _fontSize, _contentWindow, _print, _markdown, _html, _csc, _css } from "@/data/string";
-import { getDocument, getNavigator, getRoot } from "@/data/window";
+import { _system, _round, _theme, _corner, _light, _dark, _includes, _sharp, _semiRound, _fullRound, _about, _apps, _contactEmail, _donate, _getFullYear, _home, _privacy, _share, _src, _terms, _URL, _centerBottomToLeft, _currentTarget, _settings, _textWrap, _command, _fontSize, _contentWindow, _print, _markdown, _html, _csc, _css } from "@/constants/string";
+import { getDocument, getNavigator, getRoot } from "@/constants/window";
 import { RootAttributes } from "@/enums/attributes";
 import { CornerData } from "@/enums/corner";
 import { RoutesLinks, ExternalLinks } from "@/enums/links";

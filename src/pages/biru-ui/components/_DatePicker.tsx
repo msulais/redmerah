@@ -1,7 +1,7 @@
 import { Show, type VoidComponent, createSignal } from "solid-js"
 
 import { getDate_Y, getDateString_YMD } from "@/utils/datetime"
-import { _tonal, _currentTarget } from "@/data/string"
+import { _tonal, _currentTarget } from "@/constants/string"
 
 import Tooltip from "@/components/Tooltip"
 import Icon from "@/components/Icon"
@@ -27,11 +27,11 @@ const _: VoidComponent = () => {
         title="DatePicker"
         description="A DatePicker is a UI element that allows users to select a specific date. It typically presents a calendar interface for easy navigation and selection.">
         <Playground>
-            <Button 
+            <Button
                 focused={is_datePicker_open()}
                 variant={ButtonVariant[_tonal]}
                 onClick={(ev) => openDatePicker(ev, datePicker_ref, {
-                    anchor: ev[_currentTarget], 
+                    anchor: ev[_currentTarget],
                     gap: 8
                 })}>
                 <Icon code={0xE2CC}/>
@@ -39,7 +39,7 @@ const _: VoidComponent = () => {
                     {getDateString_YMD(date()!, locale())}
                 </Show>
             </Button>
-            <DatePicker 
+            <DatePicker
                 firstDate={firstDate()}
                 onToggleOpen={o => setIs_datePicker_open(o)}
                 lastDate={lastDate()}
@@ -50,7 +50,7 @@ const _: VoidComponent = () => {
             />
         </Playground>
         <PlaygroundOptions>
-            <Dropdown 
+            <Dropdown
                 labelText="Locale"
                 style={{width: '100px'}}
                 items={[
@@ -68,7 +68,7 @@ const _: VoidComponent = () => {
                 onSelectedItemsChanged={(items) => setLocale(items[0][0] as Intl.LocalesArgument)}
                 selectedValues={[locale() as string]}
             />
-            <TextField 
+            <TextField
                 style={{width: '164px'}}
                 labelText={'First date'}
                 readOnly
@@ -78,8 +78,8 @@ const _: VoidComponent = () => {
                         <TextFieldButton
                             focused={is_datePicker_firstDate_open()}
                             onClick={(ev) => openDatePicker(
-                                ev, 
-                                datePicker_firstDate_ref, 
+                                ev,
+                                datePicker_firstDate_ref,
                                 { anchor: ev[_currentTarget] }
                             )}>
                             <Icon code={0xE2CC}/>
@@ -87,7 +87,7 @@ const _: VoidComponent = () => {
                     </Tooltip>
                 </>}
             />
-            <DatePicker 
+            <DatePicker
                 onToggleOpen={o => setIs_datePicker_firstDate_open(o)}
                 lastDate={date() ?? new Date()}
                 firstDate={new Date(getDate_Y(date() ?? new Date()) - 1000, 0, 1)}
@@ -97,7 +97,7 @@ const _: VoidComponent = () => {
                 ref={r => datePicker_firstDate_ref = r}
             />
 
-            <TextField 
+            <TextField
                 style={{width: '164px'}}
                 labelText={'Last date'}
                 readOnly
@@ -107,8 +107,8 @@ const _: VoidComponent = () => {
                         <TextFieldButton
                             focused={is_datePicker_lastDate_open()}
                             onClick={(ev) => openDatePicker(
-                                ev, 
-                                datePicker_lastDate_ref, 
+                                ev,
+                                datePicker_lastDate_ref,
                                 { anchor: ev[_currentTarget] }
                             )}>
                             <Icon code={0xE2CC}/>
@@ -116,7 +116,7 @@ const _: VoidComponent = () => {
                     </Tooltip>
                 </>}
             />
-            <DatePicker 
+            <DatePicker
                 firstDate={date() ?? new Date()}
                 onToggleOpen={o => setIs_datePicker_lastDate_open(o)}
                 lastDate={new Date(getDate_Y(date() ?? new Date()) + 1000, 11, 31)}

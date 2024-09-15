@@ -1,6 +1,6 @@
 import { createSignal, Show, type VoidComponent } from "solid-js"
 
-import { _text, _password, _telephone, _email, _url } from "@/data/string"
+import { _text, _password, _telephone, _email, _url } from "@/constants/string"
 
 import Icon from "@/components/Icon"
 import CheckBox from "@/components/CheckBox"
@@ -53,8 +53,8 @@ const _: VoidComponent = () => {
         description="A TextField is a UI element that allows users to input text. It typically includes a text box for entering content and may have additional features like labels, placeholders, and validation rules">
         <h2>TextField</h2>
         <Playground>
-            <TextField 
-                labelText={labelText()? 'TextField' : undefined} 
+            <TextField
+                labelText={labelText()? 'TextField' : undefined}
                 readOnly={readOnly()}
                 compact={compact()}
                 leading={<Show when={leading()}><Icon code={0xECC0}/></Show>}
@@ -70,7 +70,7 @@ const _: VoidComponent = () => {
             />
         </Playground>
         <PlaygroundOptions>
-            <Dropdown 
+            <Dropdown
                 items={[
                     [TextFieldType[_text], 'Text'],
                     [TextFieldType[_password], 'Password'],
@@ -88,8 +88,8 @@ const _: VoidComponent = () => {
 
         <h2>NumberTextField</h2>
         <Playground>
-            <NumberTextField 
-                labelText={labelText()? 'NumberTextField' : undefined} 
+            <NumberTextField
+                labelText={labelText()? 'NumberTextField' : undefined}
                 leading={<Show when={leading()}><Icon code={0xECC0}/></Show>}
                 readOnly={readOnly()}
                 compact={compact()}
@@ -107,27 +107,27 @@ const _: VoidComponent = () => {
             />
         </Playground>
         <PlaygroundOptions>
-            <NumberTextField 
-                value={step()} 
+            <NumberTextField
+                value={step()}
                 labelText="Step"
-                onFinalValueChanged={v => setStep(v)} 
+                onFinalValueChanged={v => setStep(v)}
                 style={{width: '100px'}}
             />
             <Show when={limitMin()}>
-                <NumberTextField 
-                    value={min()} 
+                <NumberTextField
+                    value={min()}
                     labelText="Min"
                     max={limitMax()? max() : undefined}
-                    onFinalValueChanged={v => setMin(v)} 
+                    onFinalValueChanged={v => setMin(v)}
                     style={{width: '100px'}}
                 />
             </Show>
             <Show when={limitMax()}>
-                <NumberTextField 
-                    value={max()} 
+                <NumberTextField
+                    value={max()}
                     min={limitMin()? min() : undefined}
                     labelText="Max"
-                    onFinalValueChanged={v => setMax(v)} 
+                    onFinalValueChanged={v => setMax(v)}
                     style={{width: '100px'}}
                 />
             </Show>
@@ -138,8 +138,8 @@ const _: VoidComponent = () => {
 
         <h2>AreaTextField</h2>
         <Playground>
-            <AreaTextField 
-                labelText={labelText()? 'AreaTextField' : undefined} 
+            <AreaTextField
+                labelText={labelText()? 'AreaTextField' : undefined}
                 leading={<Show when={leading()}><Icon code={0xECC0}/></Show>}
                 readOnly={readOnly()}
                 compact={compact()}
@@ -156,19 +156,19 @@ const _: VoidComponent = () => {
             />
         </Playground>
         <PlaygroundOptions>
-            <NumberTextField 
-                value={minLine()} 
+            <NumberTextField
+                value={minLine()}
                 labelText="Min line"
-                onFinalValueChanged={v => setMinLine(v)} 
+                onFinalValueChanged={v => setMinLine(v)}
                 min={1}
                 max={limitMaxLine()? maxLine() : undefined}
                 style={{width: '100px'}}
             />
             <Show when={limitMaxLine()}>
-                <NumberTextField 
-                    value={maxLine()} 
+                <NumberTextField
+                    value={maxLine()}
                     labelText="Max line"
-                    onFinalValueChanged={v => setMaxLine(v)} 
+                    onFinalValueChanged={v => setMaxLine(v)}
                     min={minLine()}
                     style={{width: '100px'}}
                 />

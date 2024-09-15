@@ -9,7 +9,7 @@ import CSSAnimation from '@/styles/animation.module.scss'
 import CSS from './_index.module.scss'
 
 import type { HEXColor, RGBColor } from "@/types/color";
-import { _centerBottomToLeft, _centerBottomToRight, _centerCenterLeftTop, _leftCenterToBottom, _about, _apps, _clipboard, _color, _colorDark, _color_accent, _corner, _currentTarget, _dark, _donate, _filled, _filledTonal, _fullRound, _hostname, _includes, _innerHTML, _join, _light, _link, _onColor, _onColorDark, _open, _outlined, _pinnedApps, _round, _route, _semiRound, _share, _sharp, _some, _split, _system, _test, _theme, _title, _toLowerCase, _trim, _value, _writeText } from "@/data/string";
+import { _centerBottomToLeft, _centerBottomToRight, _centerCenterLeftTop, _leftCenterToBottom, _about, _apps, _clipboard, _color, _colorDark, _color_accent, _corner, _currentTarget, _dark, _donate, _filled, _filledTonal, _fullRound, _hostname, _includes, _innerHTML, _join, _light, _link, _onColor, _onColorDark, _open, _outlined, _pinnedApps, _round, _route, _semiRound, _share, _sharp, _some, _split, _system, _test, _theme, _title, _toLowerCase, _trim, _value, _writeText } from "@/constants/string";
 import { getLocalStorageItem, setLocalStorageItem } from "@/utils/storage";
 import { generateColor, hexToRgb, testHexColor } from "@/utils/color";
 import { setAttribute } from "@/utils/attributes";
@@ -20,7 +20,7 @@ import { addClassListModule, getElementById } from "@/utils/element";
 import { ElementIds } from "@/enums/ids";
 import { CornerData } from "@/enums/corner";
 import { ThemeData } from "@/enums/theme";
-import { getRoot } from "@/data/window";
+import { getRoot } from "@/constants/window";
 import { FlyoutPosition } from "@/enums/position";
 
 type NavigationMenuProps = {
@@ -33,39 +33,39 @@ export const NavigationMenu: VoidComponent<NavigationMenuProps> = (props) => {
 
     return (<>
         <Tooltip text="Open navigation menu">
-            <IconButton 
-                classList={addClassListModule(CSS.mobile_only)} 
-                focused={is_menu_navigation_open()} 
+            <IconButton
+                classList={addClassListModule(CSS.mobile_only)}
+                focused={is_menu_navigation_open()}
                 onClick={(ev) => openMenu(ev, menu_navigation_ref, {
-                    anchor: ev[_currentTarget], 
-                    padding: 0, 
+                    anchor: ev[_currentTarget],
+                    padding: 0,
                     position: FlyoutPosition[_centerBottomToLeft]
-                })} 
+                })}
                 code={0xE4F7}
             />
         </Tooltip>
-        <Menu 
-            style={{width: '164px'}} 
-            ref={r => menu_navigation_ref = r} 
+        <Menu
+            style={{width: '164px'}}
+            ref={r => menu_navigation_ref = r}
             onToggleOpen={v => setIs_menu_navigation_open(v)}>
             <MenuHeader>Navigation</MenuHeader>
-            <LinkMenuItem 
-                href={RoutesLinks[_apps]} 
-                selected={props[_route] == RoutesLinks[_apps]} 
+            <LinkMenuItem
+                href={RoutesLinks[_apps]}
+                selected={props[_route] == RoutesLinks[_apps]}
                 iconCode={0xE063}>
                 Apps
             </LinkMenuItem>
-            <LinkMenuItem 
-                href={RoutesLinks[_about]} 
-                selected={props[_route] == RoutesLinks[_about]} 
+            <LinkMenuItem
+                href={RoutesLinks[_about]}
+                selected={props[_route] == RoutesLinks[_about]}
                 iconCode={0xE930}>
                 About
             </LinkMenuItem>
             <MenuDivider />
-            <LinkMenuItem 
-                onClick={() => closeMenu(menu_navigation_ref)} 
-                href={ExternalLinks[_donate]} 
-                openInNewTab 
+            <LinkMenuItem
+                onClick={() => closeMenu(menu_navigation_ref)}
+                href={ExternalLinks[_donate]}
+                openInNewTab
                 iconCode={0xE84B}>
                 Donate
             </LinkMenuItem>
@@ -149,20 +149,20 @@ export const SettingsElement: VoidComponent = () => {
 
     return (<>
         <Tooltip text="Open settings">
-            <IconButton 
+            <IconButton
                 classList={addClassListModule(CSSAnimation.btn_rotate_icon)}
-                focused={is_menu_settings_open()} 
+                focused={is_menu_settings_open()}
                 onClick={(ev) => openMenu(ev, menu_settings_ref, {
-                    anchor: ev[_currentTarget], 
+                    anchor: ev[_currentTarget],
                     padding: 0,
                     position: FlyoutPosition[_centerBottomToRight]
                 })}
                 code={0xEE0F}
             />
         </Tooltip>
-        <Menu 
-            style={{width: '200px'}} 
-            ref={r => menu_settings_ref = r} 
+        <Menu
+            style={{width: '200px'}}
+            ref={r => menu_settings_ref = r}
             onToggleOpen={(v) => setIs_menu_settings_open(v)}>
             <MenuHeader>Theme</MenuHeader>
             <MenuItem
@@ -211,22 +211,22 @@ export const SettingsElement: VoidComponent = () => {
             </MenuItem>
             <MenuDivider/>
             <MenuHeader>Accent color</MenuHeader>
-            <MenuItem 
-                focused={is_colorPicker_open()} 
+            <MenuItem
+                focused={is_colorPicker_open()}
                 onClick={(ev) => openColorPicker(ev, colorPicker_ref, {
-                    anchor: ev[_currentTarget], 
+                    anchor: ev[_currentTarget],
                     position: FlyoutPosition[_leftCenterToBottom]
-                })} 
+                })}
                 leading={<Icon style={{color: color()}} filled code={0xE408}/>}>
                 {color()}
             </MenuItem>
         </Menu>
-        <ColorPicker 
-            disabledColorControl 
-            disabledOpacityControl 
-            onSelectColor={v => changeColor(v)} 
-            ref={r => colorPicker_ref = r} 
-            onToggleOpen={(v) => setIs_colorPicker_open(v)} 
+        <ColorPicker
+            disabledColorControl
+            disabledOpacityControl
+            onSelectColor={v => changeColor(v)}
+            ref={r => colorPicker_ref = r}
+            onToggleOpen={(v) => setIs_colorPicker_open(v)}
             onClose={() => closeMenu(menu_settings_ref)}
         />
     </>)

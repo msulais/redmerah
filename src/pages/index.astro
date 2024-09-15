@@ -6,7 +6,7 @@ import logo from '@/assets/logo.svg'
 import featuresImg_workOffline from '@/assets/features/work-offline.svg'
 import featuresImg_keepDataLocal from '@/assets/features/keep-data-local.svg'
 import featuresImg_uiUx from '@/assets/features/ui-ux.svg'
-import { apps } from '@/data/apps';
+import { apps } from '@/constants/apps';
 
 import Html from '@/layouts/Html/index.astro';
 import Icon from '@/components/Icon/index.astro';
@@ -19,18 +19,18 @@ import CSS from './_index.module.scss'
 
 const features = [
     {
-        title: 'UI/UX', 
-        description: 'We’ve obsessed over every pixel to create an intuitive and delightful user experience. Say goodbye to clunky interfaces—our apps are designed for simplicity and elegance.', 
+        title: 'UI/UX',
+        description: 'We’ve obsessed over every pixel to create an intuitive and delightful user experience. Say goodbye to clunky interfaces—our apps are designed for simplicity and elegance.',
         image: featuresImg_uiUx.src
     },
     {
-        title: 'Keep Data Local', 
-        description: 'We respect your privacy. All your settings, preferences, and history are stored securely in your browser, not on our server. Your data, your control.', 
+        title: 'Keep Data Local',
+        description: 'We respect your privacy. All your settings, preferences, and history are stored securely in your browser, not on our server. Your data, your control.',
         image: featuresImg_keepDataLocal.src
     },
     {
-        title: 'Work Offline', 
-        description: 'No internet connection? No problem! Our apps work seamlessly offline, ensuring you can stay productive wherever you are.', 
+        title: 'Work Offline',
+        description: 'No internet connection? No problem! Our apps work seamlessly offline, ensuring you can stay productive wherever you are.',
         image: featuresImg_workOffline.src
     },
 ]
@@ -95,19 +95,19 @@ const features = [
         for (const entry of entries) {
             if (!entry[_isIntersecting]) continue;
             for (let i = 0; i < spans[_length]; i++) {
-                spans[i][_animate]([{ 
-                    transform: 'translateY(-0.4em)', 
-                    offset: 0.5 
+                spans[i][_animate]([{
+                    transform: 'translateY(-0.4em)',
+                    offset: 0.5
                 }], {
-                    duration: 1000, 
-                    delay: i * 200, 
+                    duration: 1000,
+                    delay: i * 200,
                     easing: 'cubic-bezier(.15, 0, 0, 1)',
-                    iterations: 1, 
+                    iterations: 1,
                 })
             }
         }
     }, {
-        root: null, 
+        root: null,
         threshold: 1.0
     })
 

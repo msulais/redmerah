@@ -1,6 +1,6 @@
 import { createSignal, Show, type VoidComponent } from "solid-js"
 
-import { _left, _tonal, _right } from "@/data/string"
+import { _left, _tonal, _right } from "@/constants/string"
 
 import Button, { ButtonVariant, IconButton } from "@/components/Button"
 import CheckBox from "@/components/CheckBox"
@@ -21,7 +21,7 @@ const _: VoidComponent = () => {
         title="Drawer"
         description="A drawer is a navigation pattern that slides in from the edge of the screen, typically revealing a list of options or actions. It's often used to conserve screen space and provide access to secondary functions.">
         <Playground>
-            <Button 
+            <Button
                 variant={ButtonVariant[_tonal]}
                 onClick={(ev) => openDrawer(ev, drawer_ref, {
                     important: important(),
@@ -29,7 +29,7 @@ const _: VoidComponent = () => {
                 })}>
                 Open drawer
             </Button>
-            <Drawer 
+            <Drawer
                 ref={r => drawer_ref = r}
                 position={position()}
                 header={<Show when={hasHeader()}><IconButton onClick={() => closeDrawer(drawer_ref)} code={0xEAFF}/> BiruUI</Show>}
@@ -49,7 +49,7 @@ const _: VoidComponent = () => {
             </Drawer>
         </Playground>
         <PlaygroundOptions>
-            <Dropdown 
+            <Dropdown
                 labelText="Position"
                 style={{width: '100px'}}
                 items={[

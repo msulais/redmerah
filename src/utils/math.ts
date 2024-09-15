@@ -1,6 +1,6 @@
-import { _abs, _acos, _acosh, _asin, _asinh, _atan, _atanh, _ceil, _cos, _cosh, _floor, _indexOf, _isInteger, _isNaN, _length, _log, _log10, _match, _max, _min, _pow, _random, _repeat, _replace, _round, _sin, _sinh, _split, _sqrt, _substring, _tan, _tanh, _test, _toString } from "@/data/string"
+import { _abs, _acos, _acosh, _asin, _asinh, _atan, _atanh, _ceil, _cos, _cosh, _floor, _indexOf, _isInteger, _isNaN, _length, _log, _log10, _match, _max, _min, _pow, _random, _repeat, _replace, _round, _sin, _sinh, _split, _sqrt, _substring, _tan, _tanh, _test, _toString } from "@/constants/string"
 import { isVarHasValue } from "./data"
-import { getMath, getNumber } from "@/data/math"
+import { getMath, getNumber } from "@/constants/math"
 
 export function numberParse(num: string, isInt?: boolean, radix?: number): number {
     return isInt? parseInt(num, radix) : parseFloat(num)

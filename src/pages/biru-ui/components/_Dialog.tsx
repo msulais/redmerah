@@ -1,6 +1,6 @@
 import { createSignal, Show, type VoidComponent } from "solid-js"
 
-import { _tonal, _filled, _currentTarget, _value } from "@/data/string"
+import { _tonal, _filled, _currentTarget, _value } from "@/constants/string"
 
 import Button, { ButtonVariant } from "@/components/Button"
 import CheckBox from "@/components/CheckBox"
@@ -22,7 +22,7 @@ const _: VoidComponent = () => {
         title="Dialog"
         description="A dialog is an overlay window that interrupts the user's main workflow to deliver important information or request user input. It typically contains a title, content area, and buttons for user actions.">
         <Playground>
-            <Button 
+            <Button
                 variant={ButtonVariant[_tonal]}
                 onClick={(ev) => openDialog(ev, dialog_ref, {
                     important: important(),
@@ -30,7 +30,7 @@ const _: VoidComponent = () => {
                 })}>
                 Open dialog
             </Button>
-            <Dialog 
+            <Dialog
                 style={{width: '500px'}}
                 ref={r => dialog_ref = r}
                 header={<Show when={hasHeader()}>{headerText()}</Show>}

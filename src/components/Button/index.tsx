@@ -1,7 +1,7 @@
 import { type ParentComponent, type JSX, mergeProps, splitProps, type VoidComponent } from 'solid-js'
 
 import type { ComponentEvent } from '@/types/event'
-import { _button, _transparent, _bottom, _children, _indicatorPosition, _variant, _focused, _compact, _selected, _layerAttr, _disableScale, _classList, _type, _class, _desktopCompact, _filled, _filledTonal, _outlined, _openInNewTab, _disabled, _onClick, _code, _tonal, _emoji } from '@/data/string'
+import { _button, _transparent, _bottom, _children, _indicatorPosition, _variant, _focused, _compact, _selected, _layerAttr, _disableScale, _classList, _type, _class, _desktopCompact, _filled, _filledTonal, _outlined, _openInNewTab, _disabled, _onClick, _code, _tonal, _emoji } from '@/constants/string'
 import { toggleAttribute } from '@/utils/attributes'
 import { preventDefault } from '@/utils/event'
 

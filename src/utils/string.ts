@@ -1,4 +1,4 @@
-import { _join, _length, _map, _match, _push, _reverse, _split, _substring, _toLowerCase, _toUpperCase } from "@/data/string";
+import { _join, _length, _map, _match, _push, _reverse, _split, _substring, _toLowerCase, _toUpperCase } from "@/constants/string";
 
 export function stringToLowerCase(text: string): string {
     return text[_toLowerCase]()
@@ -9,7 +9,7 @@ export function stringToUpperCase(text: string): string {
 }
 
 export function stringToTitleCase(text: string): string {
-    return text[_split](' ')[_map](v => 
+    return text[_split](' ')[_map](v =>
         stringToUpperCase(v[_substring](0, 1)) + stringToLowerCase(v)[_substring](1)
     )[_join](' ')
 }

@@ -2,23 +2,23 @@ import { type Component, type ParentComponent, createEffect, createMemo, createS
 import { createStore } from "solid-js/store"
 
 import type { HEXColor, HSLColor, RGBColor } from "@/types/color"
-import { _children, _disabledOpacityControl, _onSelectColor, _disabledColorControl, _ref, _classList, _color, _HEX, _toString, _padStart, _toUpperCase, _hue, _position, _opacity, _HSL, _RGB, _value, _toFixed, _join, _substring, _isDrag, _rect, _left, _top, _touchmove, _touches, _clientX, _clientY, _touchend, _noPointerEvent, _mousemove, _mouseup, _length, _replace, _split, _push, _isNaN, _isFinite, _trim, _currentTarget, _px, _tonal, _filled } from "@/data/string"
+import { _children, _disabledOpacityControl, _onSelectColor, _disabledColorControl, _ref, _classList, _color, _HEX, _toString, _padStart, _toUpperCase, _hue, _position, _opacity, _HSL, _RGB, _value, _toFixed, _join, _substring, _isDrag, _rect, _left, _top, _touchmove, _touches, _clientX, _clientY, _touchend, _noPointerEvent, _mousemove, _mouseup, _length, _replace, _split, _push, _isNaN, _isFinite, _trim, _currentTarget, _px, _tonal, _filled } from "@/constants/string"
 import { hexToHSL, hexToRgb, hslToHex, hslToHsv, hslToRgb, hsvToHsl, rgbToHsl, testHexColorWithAlpha } from "@/utils/color"
 import { setTimeDelayed } from "@/utils/timeout"
 import { removeAttribute, setAttribute, toggleAttribute } from "@/utils/attributes"
 import { getBoundingClientRect } from "@/utils/element"
 import { addEventListener, removeEventListener } from '@/utils/event'
 import { BodyAttributes } from "@/enums/attributes"
-import { getDocument, getDocumentBody } from "@/data/window"
+import { getDocument, getDocumentBody } from "@/constants/window"
 import { mathMax, mathMin, mathRound, numberParse } from "@/utils/math"
 
 import Button, { ButtonVariant } from "@/components/Button"
 import TextField from "@/components/TextField"
-import Modal, { 
-    type ModalProps, 
-    closeModal, 
-    openModal, 
-    repositionModal, 
+import Modal, {
+    type ModalProps,
+    closeModal,
+    openModal,
+    repositionModal,
     focusModal,
     ModalPosition as ColorPickerPosition
 } from "@/components/Modal"
@@ -66,7 +66,7 @@ type Picker = {
 const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
     const $$props = mergeProps({color: DEFAULT_HEX_COLOR, disabledColorControl: false}, $props)
     const [props, other] = splitProps($$props, [
-        _children, _disabledOpacityControl, _onSelectColor, 
+        _children, _disabledOpacityControl, _onSelectColor,
         _disabledColorControl, _ref, _classList, _color
     ])
     const [colorModel, setColorMode] = createSignal<'HEX' | 'RGB' | 'HSL'>(_HEX)
@@ -228,7 +228,7 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
         addEventListener<TouchEvent>(getDocument(), _touchend, onTouchEnd)
         addEventListener<MouseEvent>(getDocument(), _mousemove, onMouseMove)
         addEventListener<MouseEvent>(getDocument(), _mouseup, onMouseUp)
-        
+
         onCleanup(() => {
             removeEventListener<TouchEvent>(getDocument(), _touchmove, onTouchMove)
             removeEventListener<TouchEvent>(getDocument(), _touchend, onTouchEnd)
@@ -524,7 +524,7 @@ export {
     closeModal as closeColorPicker,
     openModal as openColorPicker,
     repositionModal as repositionColorPicker,
-    focusModal as focusColorPicker, 
+    focusModal as focusColorPicker,
     ColorPickerPosition
 }
 export type {

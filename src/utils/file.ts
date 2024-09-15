@@ -1,4 +1,4 @@
-import { _input, _oncancel, _onchange, _remove, _multiple, _type, _accept, _file, _files, _click, _onabort, _onerror, _onload, _readAsText, _result, _target } from "@/data/string"
+import { _input, _oncancel, _onchange, _remove, _multiple, _type, _accept, _file, _files, _click, _onabort, _onerror, _onload, _readAsText, _result, _target } from "@/constants/string"
 import { createElement } from "./element"
 import { createObjectURL, downloadFileByURL, revokeObjectURL } from "./url"
 

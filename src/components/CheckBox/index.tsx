@@ -1,7 +1,7 @@
 import { createEffect, createSignal, mergeProps, splitProps, type JSX, type ParentComponent } from "solid-js"
 
 import type { ComponentEvent } from "@/types/event"
-import { _check, _compact, _disabled, _children, _value, _onValueChanged, _variant, _class, _onClick, _desktopCompact, _focused, _disableScale } from "@/data/string"
+import { _check, _compact, _disabled, _children, _value, _onValueChanged, _variant, _class, _onClick, _desktopCompact, _focused, _disableScale } from "@/constants/string"
 import { toggleAttribute } from "@/utils/attributes"
 import { isVarHasValue } from "@/utils/data"
 
@@ -9,7 +9,7 @@ import { IconButton } from "@/components/Button"
 import './index.scss'
 
 enum CheckBoxVariant {
-    radio, 
+    radio,
     check
 }
 
@@ -28,7 +28,7 @@ type CheckBoxProps = Omit<JSX.HTMLAttributes<HTMLDivElement>, 'onClick'> & {
 const CheckBox: ParentComponent<CheckBoxProps> = ($props) => {
     const $$props = mergeProps({ variant: CheckBoxVariant[_check] }, $props)
     const [props, other] = splitProps($$props, [
-        _compact, _disabled, _children, _value, 
+        _compact, _disabled, _children, _value,
         _onValueChanged, _variant, _class,
         _onClick, _desktopCompact, _focused,
         _disableScale
@@ -47,9 +47,9 @@ const CheckBox: ParentComponent<CheckBoxProps> = ($props) => {
         const value = props[_value]
         const onValueChanged = props[_onValueChanged]
         if (
-            !isInitialize 
-            && isVarHasValue(value) 
-            && value != isSelectedLocal 
+            !isInitialize
+            && isVarHasValue(value)
+            && value != isSelectedLocal
             && onValueChanged
         ){
             onValueChanged(value!)
@@ -58,22 +58,22 @@ const CheckBox: ParentComponent<CheckBoxProps> = ($props) => {
         isInitialize = false
     })
 
-    return (<div 
-        data-selected={toggleAttribute(isSelected())} 
-        data-disabled={toggleAttribute(props[_disabled])} 
-        class={"checkbox" + (props[_class] != undefined? ` ${props[_class]}` : '')} 
+    return (<div
+        data-selected={toggleAttribute(isSelected())}
+        data-disabled={toggleAttribute(props[_disabled])}
+        class={"checkbox" + (props[_class] != undefined? ` ${props[_class]}` : '')}
         onClick={ev => {
             if (!props[_disabled]) changeValue()
             if (props[_onClick]) props[_onClick](ev)
         }}
         {...other}>
-        <IconButton 
+        <IconButton
             disabled={props[_disabled]}
             compact={props[_compact]}
             desktopCompact={props[_desktopCompact]}
             disableScale={props[_disableScale]}
             focused={props[_focused]}
-            code={props[_variant] == CheckBoxVariant[_check]? (isSelected()? 0xE3CB : 0xE3D4) : 0xED2F } 
+            code={props[_variant] == CheckBoxVariant[_check]? (isSelected()? 0xE3CB : 0xE3D4) : 0xED2F }
             filled={props[_variant] != CheckBoxVariant[_check] && isSelected()}
             classList={{"checkbox-icon": true}}
         />

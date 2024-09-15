@@ -1,4 +1,4 @@
-import { _tasks, _all, _completed, _uncompleted, _important, _planned } from "@/data/string"
+import { _tasks, _all, _completed, _uncompleted, _important, _planned } from "@/constants/string"
 import { Pages } from "./_enums"
 import type { TaskList } from "./_types"
 

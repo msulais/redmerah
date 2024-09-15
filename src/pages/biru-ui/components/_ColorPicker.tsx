@@ -1,7 +1,7 @@
 import { Show, type VoidComponent, createSignal } from "solid-js"
 
 import type { HEXColor } from "@/types/color"
-import { _tonal, _currentTarget } from "@/data/string"
+import { _tonal, _currentTarget } from "@/constants/string"
 
 import Icon from "@/components/Icon"
 import Button, { ButtonVariant } from "@/components/Button"
@@ -18,7 +18,7 @@ const _: VoidComponent = () => {
         title="ColorPicker"
         description="A color picker is a UI element that allows users to select a color from a defined color space. It typically provides a visual representation of colors and offers various methods for color selection, such as palettes, sliders, or color wheels.">
         <Playground>
-            <Button 
+            <Button
                 variant={ButtonVariant[_tonal]}
                 onClick={(ev) => openColorPicker(ev, colorPicker_ref, {
                     anchor: ev[_currentTarget],
@@ -28,7 +28,7 @@ const _: VoidComponent = () => {
                 <Icon style={{color: color() ?? '#FF0000'}} code={0xE408} filled/>
                 <Show when={color()} fallback="Select color">{color()!}</Show>
             </Button>
-            <ColorPicker 
+            <ColorPicker
                 ref={r => colorPicker_ref = r}
                 onSelectColor={(color) => setColor(color)}
                 disabledColorControl={disabledColorControl()}

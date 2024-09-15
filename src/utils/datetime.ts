@@ -1,4 +1,4 @@
-import { _format, _getDate, _getFullYear, _getHours, _getMinutes, _getMonth, _long, _numeric, _push, _toLocaleDateString, _UTC, _valueOf } from "@/data/string"
+import { _format, _getDate, _getFullYear, _getHours, _getMinutes, _getMonth, _long, _numeric, _push, _toLocaleDateString, _UTC, _valueOf } from "@/constants/string"
 import { mathFloor } from "./math"
 
 export function getCurrentDate(): Date {

@@ -1,6 +1,6 @@
 import { type VoidComponent, createSignal, Show } from "solid-js"
 
-import { _transparent, _bottom, _filled, _tonal, _outlined, _top, _right, _left } from "@/data/string"
+import { _transparent, _bottom, _filled, _tonal, _outlined, _top, _right, _left } from "@/constants/string"
 
 import { TextTooltip } from "@/components/Tooltip"
 import Icon from "@/components/Icon"
@@ -24,7 +24,7 @@ const _: VoidComponent = () => {
         description="A button is an interactive UI element that triggers a specific action when clicked or tapped. It typically has a clear label indicating its function and provides visual feedback upon interaction. Buttons are essential for guiding users through an interface and facilitating user-system communication.">
         <Playground>
             <TextTooltip text="Button">
-                <Button 
+                <Button
                     disabled={disabled()}
                     variant={variant()}
                     compact={compact()}
@@ -41,7 +41,7 @@ const _: VoidComponent = () => {
             </TextTooltip>
 
             <TextTooltip text="IconButton">
-                <IconButton 
+                <IconButton
                     disabled={disabled()}
                     variant={variant()}
                     compact={compact()}
@@ -55,7 +55,7 @@ const _: VoidComponent = () => {
             </TextTooltip>
 
             <TextTooltip text="EmojiButton">
-                <EmojiButton 
+                <EmojiButton
                     disabled={disabled()}
                     variant={variant()}
                     compact={compact()}
@@ -67,9 +67,9 @@ const _: VoidComponent = () => {
                     emoji={'🏛'}
                 />
             </TextTooltip>
-            
+
             <TextTooltip text="LinkButton">
-                <LinkButton 
+                <LinkButton
                     href="#"
                     disabled={disabled()}
                     variant={variant()}
@@ -87,7 +87,7 @@ const _: VoidComponent = () => {
             </TextTooltip>
 
             <TextTooltip text="LinkIconButton">
-                <LinkIconButton 
+                <LinkIconButton
                     href="#"
                     disabled={disabled()}
                     variant={variant()}
@@ -102,7 +102,7 @@ const _: VoidComponent = () => {
             </TextTooltip>
 
             <TextTooltip text="LinkEmojiButton">
-                <LinkEmojiButton 
+                <LinkEmojiButton
                     href="#"
                     disabled={disabled()}
                     variant={variant()}
@@ -117,7 +117,7 @@ const _: VoidComponent = () => {
             </TextTooltip>
 
             <TextTooltip text="FloatingActionButton">
-                <FloatingActionButton 
+                <FloatingActionButton
                     disabled={disabled()}
                     variant={variant()}
                     compact={compact()}
@@ -134,7 +134,7 @@ const _: VoidComponent = () => {
             </TextTooltip>
 
             <TextTooltip text="LinkFloatingActionButton">
-                <LinkFloatingActionButton 
+                <LinkFloatingActionButton
                     href={'#'}
                     disabled={disabled()}
                     variant={variant()}
@@ -152,7 +152,7 @@ const _: VoidComponent = () => {
             </TextTooltip>
         </Playground>
         <PlaygroundOptions>
-            <Dropdown 
+            <Dropdown
                 labelText="Variant"
                 style={{width: '100px'}}
                 items={[
@@ -165,7 +165,7 @@ const _: VoidComponent = () => {
                 selectedValues={[variant()]}
             />
             <Show when={selected()}>
-                <Dropdown 
+                <Dropdown
                     labelText="Indicator position"
                     style={{width: '100px'}}
                     items={[

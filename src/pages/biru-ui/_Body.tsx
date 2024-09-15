@@ -1,7 +1,7 @@
 import { Match, Switch, type ParentComponent, type VoidComponent } from "solid-js"
 
 import { Pages } from "./_enums"
-import { _bottom, _button, _checkBox, _children, _colorPicker, _datePicker, _dateTimePicker, _description, _dialog, _divider, _drawer, _dropdown, _expander, _filled, _tonal, _icon, _left, _list, _menu, _modal, _outlined, _page, _popover, _right, _textField, _title, _toast, _top, _transparent, _tooltip, _emoji, _emojiPicker } from "@/data/string"
+import { _bottom, _button, _checkBox, _children, _colorPicker, _datePicker, _dateTimePicker, _description, _dialog, _divider, _drawer, _dropdown, _expander, _filled, _tonal, _icon, _left, _list, _menu, _modal, _outlined, _page, _popover, _right, _textField, _title, _toast, _top, _transparent, _tooltip, _emoji, _emojiPicker } from "@/constants/string"
 
 import CSS from './_styles.module.scss'
 import Button from "./components/_Button"

@@ -1,6 +1,6 @@
 import { type VoidComponent, createSignal } from "solid-js"
 
-import { _check, _radio } from "@/data/string"
+import { _check, _radio } from "@/constants/string"
 
 import CheckBox, { CheckBoxVariant } from "@/components/CheckBox"
 import Dropdown from "@/components/Dropdown"
@@ -28,7 +28,7 @@ const _: VoidComponent = () => {
             </CheckBox>
         </Playground>
         <PlaygroundOptions>
-            <Dropdown 
+            <Dropdown
                 labelText="Variant"
                 style={{width: '100px'}}
                 items={[

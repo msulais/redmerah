@@ -2,7 +2,7 @@ import type { ParentComponent } from "solid-js"
 import { Show, children, createEffect, createMemo, createSignal, mergeProps, onCleanup, onMount, splitProps, type JSX } from "solid-js"
 
 import type { ComponentEvent } from "@/types/event"
-import { _children, _class, _classList, _disconnect, _expandIconTooltip, _tonal, _header, _headerAttr, _height, _isOpen, _leading, _observe, _onClick, _onToggle, _onToggleOpen, _openByDefault, _px, _ref, _showExpandIcon, _subtitle, _title, _trailing, _variant } from "@/data/string"
+import { _children, _class, _classList, _disconnect, _expandIconTooltip, _tonal, _header, _headerAttr, _height, _isOpen, _leading, _observe, _onClick, _onToggle, _onToggleOpen, _openByDefault, _px, _ref, _showExpandIcon, _subtitle, _title, _trailing, _variant } from "@/constants/string"
 import { getBoundingClientRect } from "@/utils/element"
 import { stopPropagation } from "@/utils/event"
 import { toggleAttribute } from "@/utils/attributes"
@@ -47,8 +47,8 @@ const Expander: ParentComponent<ExpanderProps> = ($props) => {
     const [props, other] = splitProps($$props, [
         _title, _children, _isOpen, _ref,
         _openByDefault, _onToggleOpen, _variant,
-        _subtitle, _leading, _trailing, 
-        _showExpandIcon, _headerAttr, _class, 
+        _subtitle, _leading, _trailing,
+        _showExpandIcon, _headerAttr, _class,
         _expandIconTooltip
     ])
     const trailingComponent = children(() => props[_trailing])
@@ -116,7 +116,7 @@ const Expander: ParentComponent<ExpanderProps> = ($props) => {
         }
     })
 
-    return (<div 
+    return (<div
         class={"expander" + (props[_class]? ` ${props[_class]}` : '')}
         ref={r => {
             expander_ref = r
@@ -124,7 +124,7 @@ const Expander: ParentComponent<ExpanderProps> = ($props) => {
         }}
         data-open={toggleAttribute(open())}
         {...other}>
-        <List 
+        <List
             classList={{'expander-header': true}}
             tabIndex={0}
             data-no-children={toggleAttribute(!childrenComponent())}
@@ -132,7 +132,7 @@ const Expander: ParentComponent<ExpanderProps> = ($props) => {
                 toggleOpen(ev)
                 if (props[_headerAttr] && props[_headerAttr][_onClick]) props[_headerAttr][_onClick](ev)
             }}
-            leading={props[_leading]} 
+            leading={props[_leading]}
             data-variant={props[_variant] ?? ExpanderVariant[_tonal]}
             data-open={toggleAttribute(open())}
             subtitle={props[_subtitle]}
@@ -148,14 +148,14 @@ const Expander: ParentComponent<ExpanderProps> = ($props) => {
             {...props[_headerAttr]}>
             {props[_title]}
         </List>
-        <div 
+        <div
             data-open={toggleAttribute(open())}
             data-trailing={toggleAttribute(trailingComponent() || (props[_showExpandIcon] && childrenComponent()))}
             data-variant={props[_variant] ?? ExpanderVariant[_tonal]}
-            class="expander-content" 
-            style={{ height: isMounted() 
-                ? (open()? contentHeight() : 0) + _px 
-                : undefined 
+            class="expander-content"
+            style={{ height: isMounted()
+                ? (open()? contentHeight() : 0) + _px
+                : undefined
             }}>
             <div ref={r => div_content_ref = r}>{childrenComponent()}</div>
         </div>

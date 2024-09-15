@@ -4,7 +4,7 @@ import { For, Match, Show, Switch, type VoidComponent, createMemo, createSelecto
 import type { HEXColor, HSLColor, RGBColor } from "@/types/color";
 import type { Result, Settings } from "./_types";
 import { hexToHSL, hexToRgb } from "@/utils/color";
-import { _result, _string, _numbers, _colors, _hex, _toUpperCase, _randomizerType, _words, _length, _join, _list, _map, _members, _settings, _prefix, _separator, _suffix, _lowercase, _titlecase, _togglecase, _uppercase, _wordCase, _items, _selection, _some, _teams, _name, _membersList, _namesList } from "@/data/string";
+import { _result, _string, _numbers, _colors, _hex, _toUpperCase, _randomizerType, _words, _length, _join, _list, _map, _members, _settings, _prefix, _separator, _suffix, _lowercase, _titlecase, _togglecase, _uppercase, _wordCase, _items, _selection, _some, _teams, _name, _membersList, _namesList } from "@/constants/string";
 import { RandomizerType, WordsRandomizerWordCase } from "./_enums";
 import { stringToLowerCase, stringToTitleCase, stringToToggleCase, stringToUpperCase } from "@/utils/string";
 import { toggleAttribute } from "@/utils/attributes";

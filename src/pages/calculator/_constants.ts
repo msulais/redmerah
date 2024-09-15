@@ -1,4 +1,4 @@
-import { _basic, _scientific, _converter, _programmer, _date } from "@/data/string";
+import { _basic, _scientific, _converter, _programmer, _date } from "@/constants/string";
 import { CalculatorType } from "./_enums";
 import { ConverterType } from "./_converter";
 

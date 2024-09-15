@@ -1,6 +1,6 @@
 import { splitProps, type JSX, type ParentComponent } from "solid-js"
 
-import { _appBar, _bottomBar, _children, _class, _floatingActionButton, _leftSideBar, _rightSideBar } from "@/data/string"
+import { _appBar, _bottomBar, _children, _class, _floatingActionButton, _leftSideBar, _rightSideBar } from "@/constants/string"
 
 import '@/styles/fonts.scss'
 import '@/styles/variables.scss'
@@ -18,7 +18,7 @@ type AppProps = JSX.HTMLAttributes<HTMLDivElement> & {
 
 const App: ParentComponent<AppProps> = ($props) => {
     const [props, other] = splitProps($props, [
-        _appBar, _leftSideBar, _children, _rightSideBar, 
+        _appBar, _leftSideBar, _children, _rightSideBar,
         _bottomBar, _floatingActionButton, _class
     ])
     return (<div class={"app" + (props[_class] != undefined? ` ${props[_class]}` : '')} {...other}>

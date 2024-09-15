@@ -1,5 +1,5 @@
-import { _add, _close, _contains, _continue, _createIndex, _createObjectStore, _databaseName, _delete, _deleteDatabase, _deleteIndex, _get, _getAll, _includes, _indexNames, _isOpen, _objectStore, _objectStoreNames, _onblocked, _onBlocked, _onerror, _onError, _onSuccess, _onsuccess, _onupgradeneeded, _onUpgradeNeeded, _onversionchange, _open, _openCursor, _put, _readonly, _readwrite, _result, _transaction, _version, _writeObjectStore } from "@/data/string"
-import { getIndexedDB } from "@/data/window"
+import { _add, _close, _contains, _continue, _createIndex, _createObjectStore, _databaseName, _delete, _deleteDatabase, _deleteIndex, _get, _getAll, _includes, _indexNames, _isOpen, _objectStore, _objectStoreNames, _onblocked, _onBlocked, _onerror, _onError, _onSuccess, _onsuccess, _onupgradeneeded, _onUpgradeNeeded, _onversionchange, _open, _openCursor, _put, _readonly, _readwrite, _result, _transaction, _version, _writeObjectStore } from "@/constants/string"
+import { getIndexedDB } from "@/constants/window"
 import type { DatabaseNames } from "@/enums/storage"
 
 type CreateObjectStoreParams<T> = {

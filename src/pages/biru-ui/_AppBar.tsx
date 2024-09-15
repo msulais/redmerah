@@ -1,7 +1,7 @@
 import { createSignal, For, onMount, Show, type VoidComponent } from "solid-js"
 
-import { _system, _round, _change, _matches, _theme, _corner, _light, _dark, _includes, _sharp, _semiRound, _fullRound, _home, _src, _apps, _about, _privacy, _terms, _share, _URL, _contactEmail, _donate, _getFullYear, _currentTarget, _centerBottomToLeft, _command, _page, _text, _type } from "@/data/string"
-import { getDocument, getNavigator, getRoot } from "@/data/window"
+import { _system, _round, _change, _matches, _theme, _corner, _light, _dark, _includes, _sharp, _semiRound, _fullRound, _home, _src, _apps, _about, _privacy, _terms, _share, _URL, _contactEmail, _donate, _getFullYear, _currentTarget, _centerBottomToLeft, _command, _page, _text, _type } from "@/constants/string"
+import { getDocument, getNavigator, getRoot } from "@/constants/window"
 import { RootAttributes } from "@/enums/attributes"
 import { CornerData } from "@/enums/corner"
 import { LocalStorageKeys } from "@/enums/storage"
