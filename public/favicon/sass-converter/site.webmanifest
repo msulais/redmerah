@@ -1,0 +1,32 @@
+{
+    "name": "SASS Converter",
+    "short_name": "SASS Converter",
+    "id": "/sass-converter",
+    "start_url": "/sass-converter",
+    "description": "Simplify your SASS/SCSS development process with our powerful online converter. Quickly and accurately translate your code into clean, optimized CSS.",
+    "icons": [
+        {
+            "src": "/favicon/sass-converter/favicon-16x16.png",
+            "sizes": "16x16",
+            "type": "image/png"
+        },
+        {
+            "src": "/favicon/sass-converter/favicon-32x32.png",
+            "sizes": "32x32",
+            "type": "image/png"
+        },
+        {
+            "src": "/favicon/sass-converter/android-chrome-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/favicon/sass-converter/android-chrome-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "theme_color": "#FF0056",
+    "background_color": "#ffffff",
+    "display": "standalone"
+}
