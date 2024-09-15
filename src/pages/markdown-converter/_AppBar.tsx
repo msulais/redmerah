@@ -23,7 +23,6 @@ import CSSAnimation from "@/styles/animation.module.scss"
 import cssLogo from '@/assets/css-logo.svg'
 import htmlLogo from '@/assets/html-logo.svg'
 
-import Icon from "@/components/Icon";
 import { IconButton } from "@/components/Button";
 import Menu, { closeSubMenu, closeMenu, LinkMenuItem, MenuDivider, MenuHeader, MenuItem, SubMenu, openMenu, SubMenuItem } from "@/components/Menu";
 import AppBar from "@/components/AppBar";

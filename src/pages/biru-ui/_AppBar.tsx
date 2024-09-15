@@ -21,7 +21,6 @@ import logo from '@/assets/apps/biru-ui-logo.svg'
 import redmerahLogo from '@/assets/logo.svg'
 
 import Tooltip from "@/components/Tooltip"
-import Icon from "@/components/Icon"
 import { IconButton } from "@/components/Button"
 import Menu, { MenuDivider, MenuItem, MenuHeader, openMenu, LinkMenuItem, SubMenu, closeSubMenu, closeMenu, SubMenuItem } from "@/components/Menu"
 import Drawer, { closeDrawer, DrawerItem, openDrawer } from "@/components/Drawer"

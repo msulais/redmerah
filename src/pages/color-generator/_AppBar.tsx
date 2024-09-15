@@ -11,7 +11,6 @@ import { ThemeData } from "@/enums/theme"
 import { setLocalStorageItem, getLocalStorageItem } from "@/utils/storage"
 import { setAttribute } from "solid-js/web"
 import { RoutesLinks, ExternalLinks } from "@/enums/links"
-import { toggleAttribute } from "@/utils/attributes"
 import { getDate_Y } from "@/utils/datetime"
 import { encodeURL } from "@/utils/url"
 import { addClassListModule } from "@/utils/element"
@@ -20,7 +19,6 @@ import { _dialog_colorList_ref, _colorPicker_ref } from "./_string"
 import redmerahLogo from '@/assets/logo.svg'
 import logo from '@/assets/apps/color-generator-logo.svg'
 
-import Icon from "@/components/Icon"
 import {TextTooltip} from "@/components/Tooltip"
 import Button, { ButtonVariant, IconButton } from "@/components/Button"
 import Menu, { SubMenu, MenuItem, MenuDivider, LinkMenuItem, MenuHeader, closeMenu, closeSubMenu, openMenu, SubMenuItem } from "@/components/Menu"

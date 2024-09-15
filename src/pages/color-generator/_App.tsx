@@ -1,4 +1,4 @@
-import { type Component, For, Show, type Signal, type VoidComponent, createSignal, onMount } from 'solid-js'
+import { type Component, For, Show, type VoidComponent, createSignal, onMount } from 'solid-js'
 import { createStore } from 'solid-js/store'
 
 import type { HEXColor, RGBColor } from '@/types/color'
