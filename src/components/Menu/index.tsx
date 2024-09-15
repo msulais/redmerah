@@ -75,6 +75,18 @@ const MenuItem: ParentComponent<MenuItemProps> = ($props) => {
     </Button>)
 }
 
+type SubMenuItemProps = MenuItemProps
+const SubMenuItem: ParentComponent<SubMenuItemProps> = ($props) => {
+    const [props, other] = splitProps($props, [_trailing])
+    return (<MenuItem
+        trailing={<>
+            {props[_trailing]}
+            <Icon code={0xE402}/>
+        </>}
+        {...other}
+    />)
+}
+
 type LinkMenuItemProps = LinkButtonProps & {
     leading?: JSX.Element
     trailing?: JSX.Element
@@ -293,6 +305,7 @@ export {
     MenuIndent,
     MenuHeader,
     MenuDivider,
+    SubMenuItem,
     LinkMenuItem,
     MenuItemTrailingShortcut,
     closePopover as closeSubMenu,
@@ -309,6 +322,7 @@ export type {
     MenuProps,
     MenuItemProps,
     SubMenuProps,
+    SubMenuItemProps,
     MenuItemTrailingShortcutProps,
     LinkMenuItemProps,
 }
