@@ -1,0 +1,24 @@
+---
+import icon from '@/assets/apps/sass-converter-splash.svg'
+
+import Html from '@/layouts/Html/index.astro';
+import Splash from '@/layouts/Splash/index.astro';
+import App from './_App'
+
+export const prerender = true;
+---
+
+<Html
+	title='SASS Converter'
+	accentColor='#FF0056'
+	description='Simplify your SASS/SCSS development process with our powerful online converter. Quickly and accurately translate your code into clean, optimized CSS.'>
+	<Fragment slot="favicon">
+		<link rel="shortcut icon" type="image/ico" href="/favicon/sass-converter/favicon.ico" />
+		<link rel="apple-touch-icon" sizes="180x180" href="/favicon/sass-converter/apple-touch-icon.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/favicon/sass-converter/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/favicon/sass-converter/favicon-16x16.png">
+		<link rel="manifest" href="/favicon/sass-converter/site.webmanifest">
+	</Fragment>
+	<App client:only="solid-js"/>
+	<Splash src={icon.src} alt="Tasks splash icon" />
+</Html>
