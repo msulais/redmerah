@@ -25,7 +25,7 @@ import CheckBox from "@/components/CheckBox"
 import List from "@/components/List"
 import Expander from "@/components/Expander"
 import TextField, { changeTextFieldValue, AreaTextField, TextFieldButton } from "@/components/TextField"
-import Menu, { closeMenu, closeSubMenu, MenuDivider, MenuHeader, MenuIndent, MenuItem, MenuPosition, openMenu, SubMenu } from "@/components/Menu"
+import Menu, { closeMenu, closeSubMenu, MenuDivider, MenuHeader, MenuIndent, MenuItem, MenuPosition, openMenu, SubMenu, SubMenuItem } from "@/components/Menu"
 import Dialog, { closeDialog, openDialog } from "@/components/Dialog"
 import Toast, { openToast } from "@/components/Toast"
 import DateTimePicker, { DateTimePickerPosition, openDateTimePicker } from "@/components/DateTimePicker"
@@ -1551,12 +1551,11 @@ const _: VoidComponent<{
                 <SubMenu
                     level={1}
                     onToggleOpen={v => setIs_menu_taskActionAddLabel_open(v)}
-                    item={<MenuItem
+                    item={<SubMenuItem
                         focused={is_menu_taskActionAddLabel_open()}
-                        iconCode={0xF00D}
-                        trailing={<Icon filled code={0xE368}/>}>
+                        iconCode={0xF00D}>
                         Add label
-                    </MenuItem>}>
+                    </SubMenuItem>}>
                     <For each={props[_labels]}>{label => <Show when={label != undefined}>
                         <MenuItem
                             leading={<Icon style={{color: label![_color] ?? undefined}} code={0xE407}/>}
@@ -1585,12 +1584,11 @@ const _: VoidComponent<{
                 ref={r => submenu_moveTask_ref = r}
                 style={{"min-width": '200px'}}
                 onToggleOpen={v => setIs_menu_taskActionMove_open(v)}
-                item={<MenuItem
+                item={<SubMenuItem
                     focused={is_menu_taskActionMove_open()}
-                    iconCode={0xE115}
-                    trailing={<Icon filled code={0xE368}/>}>
+                    iconCode={0xE115}>
                     Move task to ...
-                </MenuItem>}>
+                </SubMenuItem>}>
                 <For each={props[_taskLists]}>{(list, i) => <>
                     <MenuItem
                         onClick={() => {

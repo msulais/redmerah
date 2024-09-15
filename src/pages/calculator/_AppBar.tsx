@@ -24,7 +24,7 @@ import Icon from "@/components/Icon"
 import { TextTooltip } from "@/components/Tooltip"
 import { ButtonVariant, IconButton } from "@/components/Button"
 import { AreaTextField, changeAreaTextFieldValue } from "@/components/TextField"
-import Menu, {  MenuDivider, MenuItem, MenuHeader, closeMenu, LinkMenuItem, SubMenu, closeSubMenu, openMenu, MenuPosition } from "@/components/Menu"
+import Menu, {  MenuDivider, MenuItem, MenuHeader, closeMenu, LinkMenuItem, SubMenu, closeSubMenu, openMenu, MenuPosition, SubMenuItem } from "@/components/Menu"
 import Drawer, { closeDrawer, DrawerItem, DrawerPosition, openDrawer } from "@/components/Drawer"
 import AppBar from "@/components/AppBar"
 import CSSAnimation from "@/styles/animation.module.scss";
@@ -210,12 +210,11 @@ const _: VoidComponent<{
                     level={1}
                     ref={r => submenu_themeSettings_ref = r}
                     onToggleOpen={v => setIs_submenu_themeSettings_open(v)}
-                    item={<MenuItem
+                    item={<SubMenuItem
                         focused={is_submenu_themeSettings_open()}
-                        iconCode={0xE28A}
-                        trailing={<Icon filled code={0xE368}/>}>
+                        iconCode={0xE28A}>
                         Theme
-                    </MenuItem>}>
+                    </SubMenuItem>}>
                     <MenuItem
                         selected={theme() == ThemeData[_light]}
                         iconCode={0xF2CD}
@@ -239,12 +238,11 @@ const _: VoidComponent<{
                     level={1}
                     ref={r => submenu_cornerSettings_ref = r}
                     onToggleOpen={v => setIs_submenu_cornerSettings_open(v)}
-                    item={<MenuItem
+                    item={<SubMenuItem
                         focused={is_submenu_cornerSettings_open()}
-                        iconCode={0xF044}
-                        trailing={<Icon filled code={0xE368}/>}>
+                        iconCode={0xF044}>
                         Corner style
-                    </MenuItem>}>
+                    </SubMenuItem>}>
                     <MenuItem
                         selected={corner() == CornerData[_sharp]}
                         iconCode={0xEA99}
@@ -277,12 +275,11 @@ const _: VoidComponent<{
                     style={{width: '132px'}}
                     ref={r => submenu_decimalNumberFormatSettings_ref = r}
                     onToggleOpen={v => setIs_menu_decimalNumberFormatSettings_open(v)}
-                    item={<MenuItem
+                    item={<SubMenuItem
                         focused={is_menu_decimalNumberFormatSettings_open()}
-                        iconCode={0xE599}
-                        trailing={<Icon filled code={0xE368}/>}>
+                        iconCode={0xE599}>
                         Decimal
-                    </MenuItem>}>
+                    </SubMenuItem>}>
                     <MenuItem
                         onClick={() => changeDecimalNumberFormat(DecimalNumberFormat[_comma])}
                         selected={props[_settings][_numberFormat][_decimal] == DecimalNumberFormat[_comma]}>
@@ -300,12 +297,11 @@ const _: VoidComponent<{
                     style={{width: '132px'}}
                     ref={r => submenu_groupingNumberFormatSettings_ref = r}
                     onToggleOpen={v => setIs_menu_groupingNumberFormatSettings_open(v)}
-                    item={<MenuItem
+                    item={<SubMenuItem
                         focused={is_menu_groupingNumberFormatSettings_open()}
-                        iconCode={0xEB49}
-                        trailing={<Icon filled code={0xE368}/>}>
+                        iconCode={0xEB49}>
                         Grouping
-                    </MenuItem>}>
+                    </SubMenuItem>}>
                     <MenuItem
                         onClick={() => changeGroupingNumberFormat(GroupingNumberFormat[_comma])}
                         selected={props[_settings][_numberFormat][_grouping] == GroupingNumberFormat[_comma]}>

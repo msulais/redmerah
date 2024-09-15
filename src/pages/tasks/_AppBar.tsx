@@ -22,7 +22,7 @@ import redmerahLogo from '@/assets/logo.svg'
 
 import AppBar from "@/components/AppBar";
 import Icon from "@/components/Icon";
-import Menu, { LinkMenuItem, MenuDivider, MenuItem, MenuHeader, SubMenu, MenuIndent, closeSubMenu, closeMenu, MenuPosition, openMenu } from "@/components/Menu";
+import Menu, { LinkMenuItem, MenuDivider, MenuItem, MenuHeader, SubMenu, MenuIndent, closeSubMenu, closeMenu, MenuPosition, openMenu, SubMenuItem } from "@/components/Menu";
 import { IconButton } from "@/components/Button";
 import { TextTooltip } from "@/components/Tooltip";
 import Divider from "@/components/Divider";
@@ -196,12 +196,11 @@ const _: VoidComponent<{
                     level={1}
                     ref={r => submenu_themeSettings_ref = r}
                     onToggleOpen={v => setIs_submenu_themeSettings_open(v)}
-                    item={<MenuItem
+                    item={<SubMenuItem
                         focused={is_submenu_themeSettings_open()}
-                        iconCode={0xE28A}
-                        trailing={<Icon filled code={0xE368}/>}>
+                        iconCode={0xE28A}>
                         Theme
-                    </MenuItem>}>
+                    </SubMenuItem>}>
                     <MenuItem
                         selected={theme() == ThemeData[_light]}
                         iconCode={0xF2CD}
@@ -225,12 +224,11 @@ const _: VoidComponent<{
                     level={1}
                     ref={r => submenu_cornerSettings_ref = r}
                     onToggleOpen={v => setIs_submenu_cornerSettings_open(v)}
-                    item={<MenuItem
+                    item={<SubMenuItem
                         focused={is_submenu_cornerSettings_open()}
-                        iconCode={0xF044}
-                        trailing={<Icon filled code={0xE368}/>}>
+                        iconCode={0xF044}>
                         Corner style
-                    </MenuItem>}>
+                    </SubMenuItem>}>
                     <MenuItem
                         selected={corner() == CornerData[_sharp]}
                         iconCode={0xEA99}

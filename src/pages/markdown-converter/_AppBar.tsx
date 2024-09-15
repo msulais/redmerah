@@ -25,7 +25,7 @@ import htmlLogo from '@/assets/html-logo.svg'
 
 import Icon from "@/components/Icon";
 import { IconButton } from "@/components/Button";
-import Menu, { closeSubMenu, closeMenu, LinkMenuItem, MenuDivider, MenuHeader, MenuItem, SubMenu, openMenu } from "@/components/Menu";
+import Menu, { closeSubMenu, closeMenu, LinkMenuItem, MenuDivider, MenuHeader, MenuItem, SubMenu, openMenu, SubMenuItem } from "@/components/Menu";
 import AppBar from "@/components/AppBar";
 
 const _: VoidComponent<{
@@ -172,12 +172,11 @@ const _: VoidComponent<{
                     level={1}
                     ref={r => submenu_themeSettings_ref = r}
                     onToggleOpen={v => setIs_submenu_themeSettings_open(v)}
-                    item={<MenuItem
+                    item={<SubMenuItem
                         focused={is_submenu_themeSettings_open()}
-                        iconCode={0xE28A}
-                        trailing={<Icon filled code={0xE368}/>}>
+                        iconCode={0xE28A}>
                         Theme
-                    </MenuItem>}>
+                    </SubMenuItem>}>
                     <MenuItem
                         selected={theme() == ThemeData[_light]}
                         iconCode={0xF2CD}
@@ -201,12 +200,11 @@ const _: VoidComponent<{
                     level={1}
                     ref={r => submenu_cornerSettings_ref = r}
                     onToggleOpen={v => setIs_submenu_cornerSettings_open(v)}
-                    item={<MenuItem
+                    item={<SubMenuItem
                         focused={is_submenu_cornerSettings_open()}
-                        iconCode={0xF044}
-                        trailing={<Icon filled code={0xE368}/>}>
+                        iconCode={0xF044}>
                         Corner style
-                    </MenuItem>}>
+                    </SubMenuItem>}>
                     <MenuItem
                         selected={corner() == CornerData[_sharp]}
                         iconCode={0xEA99}
@@ -273,12 +271,11 @@ const _: VoidComponent<{
                     level={1}
                     onToggleOpen={isOpen => setIs_submenu_downloadMoreActions_open(isOpen)}
                     ref={r => submenu_downloadMoreActions_ref = r}
-                    item={<MenuItem
+                    item={<SubMenuItem
                         iconCode={0xE0B9}
-                        focused={is_submenu_downloadMoreActions_open()}
-                        trailing={<Icon filled code={0xE368}/>}>
+                        focused={is_submenu_downloadMoreActions_open()}>
                         Download
-                    </MenuItem>}>
+                    </SubMenuItem>}>
                     <MenuItem
                         leading={<svg width={20} viewBox="0 0 2560 2560" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M2375.4 2067.68H184.6C82.8 2067.68 0 1984.88 0 1883.08V676.92C0 575.12 82.8 492.32 184.6 492.32H2375.36C2477.16 492.32 2559.96 575.12 2559.96 676.92V1883.08C2560 1984.88 2477.2 2067.68 2375.4 2067.68ZM615.4 1698.48V1218.48L861.56 1526.16L1107.72 1218.48V1698.48H1353.88V861.52H1107.72L861.56 1169.2L615.4 861.52H369.24V1698.44H615.4V1698.48ZM2264.6 1280H2018.44V861.52H1772.28V1280H1526.12L1895.36 1710.76L2264.6 1280Z" fill="rgb(var(--color-on-surface))"/>
@@ -301,12 +298,11 @@ const _: VoidComponent<{
                     level={1}
                     ref={r => submenu_copyAllMoreActions_ref = r}
                     onToggleOpen={isOpen => setIs_submenu_copyAllMoreActions_open(isOpen)}
-                    item={<MenuItem
+                    item={<SubMenuItem
                         iconCode={0xE51B}
-                        focused={is_submenu_copyAllMoreActions_open()}
-                        trailing={<Icon filled code={0xE368}/>}>
+                        focused={is_submenu_copyAllMoreActions_open()}>
                         Copy all
-                    </MenuItem>}>
+                    </SubMenuItem>}>
                     <MenuItem
                         leading={<svg width={20} viewBox="0 0 2560 2560" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M2375.4 2067.68H184.6C82.8 2067.68 0 1984.88 0 1883.08V676.92C0 575.12 82.8 492.32 184.6 492.32H2375.36C2477.16 492.32 2559.96 575.12 2559.96 676.92V1883.08C2560 1984.88 2477.2 2067.68 2375.4 2067.68ZM615.4 1698.48V1218.48L861.56 1526.16L1107.72 1218.48V1698.48H1353.88V861.52H1107.72L861.56 1169.2L615.4 861.52H369.24V1698.44H615.4V1698.48ZM2264.6 1280H2018.44V861.52H1772.28V1280H1526.12L1895.36 1710.76L2264.6 1280Z" fill="rgb(var(--color-on-surface))"/>

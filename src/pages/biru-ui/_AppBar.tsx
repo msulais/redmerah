@@ -23,7 +23,7 @@ import redmerahLogo from '@/assets/logo.svg'
 import Tooltip from "@/components/Tooltip"
 import Icon from "@/components/Icon"
 import { IconButton } from "@/components/Button"
-import Menu, { MenuDivider, MenuItem, MenuHeader, openMenu, LinkMenuItem, SubMenu, closeSubMenu, closeMenu } from "@/components/Menu"
+import Menu, { MenuDivider, MenuItem, MenuHeader, openMenu, LinkMenuItem, SubMenu, closeSubMenu, closeMenu, SubMenuItem } from "@/components/Menu"
 import Drawer, { closeDrawer, DrawerItem, openDrawer } from "@/components/Drawer"
 import AppBar from "@/components/AppBar"
 import CSSAnimation from "@/styles/animation.module.scss"
@@ -161,12 +161,11 @@ const _: VoidComponent<{
                     level={1}
                     ref={r => submenu_themeSettings_ref = r}
                     onToggleOpen={v => setIs_menu_themeSettings_open(v)}
-                    item={<MenuItem
+                    item={<SubMenuItem
                         focused={is_menu_themeSettings_open()}
-                        iconCode={0xE28A}
-                        trailing={<Icon filled code={0xE368}/>}>
+                        iconCode={0xE28A}>
                         Theme
-                    </MenuItem>}>
+                    </SubMenuItem>}>
                     <MenuItem
                         selected={theme() == ThemeData[_light]}
                         iconCode={0xF2CD}
@@ -190,12 +189,11 @@ const _: VoidComponent<{
                     level={1}
                     ref={r => submenu_cornerSettings_ref = r}
                     onToggleOpen={v => setIs_menu_cornerSettings_open(v)}
-                    item={<MenuItem
+                    item={<SubMenuItem
                         focused={is_menu_cornerSettings_open()}
-                        iconCode={0xF044}
-                        trailing={<Icon filled code={0xE368}/>}>
+                        iconCode={0xF044}>
                         Corner style
-                    </MenuItem>}>
+                    </SubMenuItem>}>
                     <MenuItem
                         selected={corner() == CornerData[_sharp]}
                         iconCode={0xEA99}

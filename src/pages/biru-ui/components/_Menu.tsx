@@ -5,7 +5,7 @@ import { FlyoutPosition } from "@/enums/position"
 
 import Icon from "@/components/Icon"
 import Button, { ButtonVariant } from "@/components/Button"
-import Menu, { MenuDivider, MenuHeader, MenuItem, MenuItemTrailingShortcut, openMenu, SubMenu } from "@/components/Menu"
+import Menu, { MenuDivider, MenuHeader, MenuItem, MenuItemTrailingShortcut, openMenu, SubMenu, SubMenuItem } from "@/components/Menu"
 import TextField, { NumberTextField } from "@/components/TextField"
 import CheckBox from "@/components/CheckBox"
 import Dropdown from "@/components/Dropdown"
@@ -72,26 +72,26 @@ const _: VoidComponent = () => {
                 <C/>
                 <MenuDivider />
                 <MenuHeader>Sub menu</MenuHeader>
-                <SubMenu style={{width: '240px'}} level={1} item={<MenuItem>1 Level</MenuItem>}>
+                <SubMenu style={{width: '240px'}} level={1} item={<SubMenuItem>1 Level</SubMenuItem>}>
                     <C/>
                 </SubMenu>
-                <SubMenu style={{width: '240px'}} level={1} item={<MenuItem>2 Level</MenuItem>}>
+                <SubMenu style={{width: '240px'}} level={1} item={<SubMenuItem>2 Level</SubMenuItem>}>
                     <C/>
                     <MenuDivider />
                     <MenuHeader>Sub menu</MenuHeader>
-                    <SubMenu style={{width: '240px'}} level={2} item={<MenuItem>Next Level</MenuItem>}>
+                    <SubMenu style={{width: '240px'}} level={2} item={<SubMenuItem>Next Level</SubMenuItem>}>
                         <C/>
                     </SubMenu>
                 </SubMenu>
-                <SubMenu style={{width: '240px'}} level={1} item={<MenuItem>3 Level</MenuItem>}>
+                <SubMenu style={{width: '240px'}} level={1} item={<SubMenuItem>3 Level</SubMenuItem>}>
                     <C/>
                     <MenuDivider />
                     <MenuHeader>Sub menu</MenuHeader>
-                    <SubMenu style={{width: '240px'}} level={2} item={<MenuItem>Next Level</MenuItem>}>
+                    <SubMenu style={{width: '240px'}} level={2} item={<SubMenuItem>Next Level</SubMenuItem>}>
                         <C/>
                         <MenuDivider />
                         <MenuHeader>Sub menu</MenuHeader>
-                        <SubMenu style={{width: '240px'}} level={3} item={<MenuItem>Next Level</MenuItem>}>
+                        <SubMenu style={{width: '240px'}} level={3} item={<SubMenuItem>Next Level</SubMenuItem>}>
                             <C/>
                         </SubMenu>
                     </SubMenu>

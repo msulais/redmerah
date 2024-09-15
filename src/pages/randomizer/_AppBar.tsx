@@ -25,7 +25,7 @@ import redmerahLogo from '@/assets/logo.svg'
 import Icon from "@/components/Icon"
 import Button, { ButtonVariant, IconButton } from "@/components/Button"
 import { TextTooltip } from "@/components/Tooltip"
-import Menu, { MenuDivider, MenuHeader, MenuIndent, MenuItem, LinkMenuItem, SubMenu, closeSubMenu, closeMenu, openMenu, MenuPosition } from "@/components/Menu"
+import Menu, { MenuDivider, MenuHeader, MenuIndent, MenuItem, LinkMenuItem, SubMenu, closeSubMenu, closeMenu, openMenu, MenuPosition, SubMenuItem } from "@/components/Menu"
 import TextField, { NumberTextField, changeTextFieldValue } from "@/components/TextField"
 import Drawer, { closeDrawer, DrawerItem, openDrawer } from "@/components/Drawer"
 import AppBar from "@/components/AppBar"
@@ -271,12 +271,11 @@ const _: Component<{
                     ref={r => submenu_sortSettings_ref = r}
                     level={1}
                     onToggleOpen={(v) => setIs_submenu_sortSettings_open(v)}
-                    item={<MenuItem
+                    item={<SubMenuItem
                         focused={is_submenu_sortSettings_open()}
-                        iconCode={0xE123}
-                        trailing={<Icon filled code={0xE368}/>}>
+                        iconCode={0xE123}>
                         Sort
-                    </MenuItem>}>
+                    </SubMenuItem>}>
                     <MenuItem
                         iconCode={0xE11F}
                         onClick={() => changeNumbersSort(NumbersRandomizerSort[_none])}
@@ -300,12 +299,11 @@ const _: Component<{
                     ref={r => submenu_numberTypeSettings_ref = r}
                     level={1}
                     onToggleOpen={(isOpen) => setIs_submenu_numberTypeSettings_open(isOpen)}
-                    item={<MenuItem
+                    item={<SubMenuItem
                         focused={is_submenu_numberTypeSettings_open()}
-                        iconCode={0xEB4B}
-                        trailing={<Icon filled code={0xE368}/>}>
+                        iconCode={0xEB4B}>
                         Number type
-                    </MenuItem>}>
+                    </SubMenuItem>}>
                     <MenuItem
                         onClick={() => changeNumbersType(NumbersRandomizerNumberType[_decimal])}
                         selected={settings()[_numbers][_numberType] == NumbersRandomizerNumberType[_decimal]}>
@@ -335,12 +333,11 @@ const _: Component<{
                     ref={r => submenu_wordCaseSettings_ref = r}
                     level={1}
                     onToggleOpen={isOpen => setIs_submenu_wordCaseSettings_open(isOpen)}
-                    item={<MenuItem
+                    item={<SubMenuItem
                         focused={is_submenu_wordCaseSettings_open()}
-                        iconCode={0xF0FF}
-                        trailing={<Icon filled code={0xE368}/>}>
+                        iconCode={0xF0FF}>
                         Word case
-                    </MenuItem>}>
+                    </SubMenuItem>}>
                     <MenuItem
                         onClick={() => changeWordsWordCase(WordsRandomizerWordCase[_none])}
                         selected={settings()[_words][_wordCase] == WordsRandomizerWordCase[_none]}>
@@ -376,12 +373,11 @@ const _: Component<{
                     style={{width: '128px'}}
                     level={1}
                     onToggleOpen={(v) => setIs_submenu_colorModelSettings_open(v)}
-                    item={<MenuItem
+                    item={<SubMenuItem
                         focused={is_submenu_colorModelSettings_open()}
-                        iconCode={0xE4B6}
-                        trailing={<Icon filled code={0xE368}/>}>
+                        iconCode={0xE4B6}>
                         Color model
-                    </MenuItem>}>
+                    </SubMenuItem>}>
                     <MenuItem
                         onClick={() => changeColorsColorModel(ColorsRandomizerColorModel[_hex])}
                         selected={settings()[_colors][_colorModel] == ColorsRandomizerColorModel[_hex]}>
@@ -403,12 +399,11 @@ const _: Component<{
                 level={1}
                 ref={r => submenu_themeSettings_ref = r}
                 onToggleOpen={v => setIs_submenu_themeSettings_open(v)}
-                item={<MenuItem
+                item={<SubMenuItem
                     focused={is_submenu_themeSettings_open()}
-                    iconCode={0xE28A}
-                    trailing={<Icon filled code={0xE368}/>}>
+                    iconCode={0xE28A}>
                     Theme
-                </MenuItem>}>
+                </SubMenuItem>}>
                 <MenuItem
                     selected={theme() == ThemeData[_light]}
                     iconCode={0xF2CD}
@@ -432,12 +427,11 @@ const _: Component<{
                 level={1}
                 ref={r => submenu_cornerSettings_ref = r}
                 onToggleOpen={v => setIs_submenu_cornerSettings_open(v)}
-                item={<MenuItem
+                item={<SubMenuItem
                     focused={is_submenu_cornerSettings_open()}
-                    iconCode={0xF044}
-                    trailing={<Icon filled code={0xE368}/>}>
+                    iconCode={0xF044}>
                     Corner style
-                </MenuItem>}>
+                </SubMenuItem>}>
                 <MenuItem
                     selected={corner() == CornerData[_sharp]}
                     iconCode={0xEA99}
