@@ -5,9 +5,9 @@ import App from './_App'
 export const prerender = true;
 ---
 
-<Html 
-	title='BiruUI' 
-	accentColor='#0093FF' 
+<Html
+	title='BiruUI'
+	accentColor='#0093FF'
 	description='We test our UI here'>
 	<Fragment slot="favicon">
 		<link rel="shortcut icon" type="image/ico" href="/favicon/biru-ui/favicon.ico" />
@@ -18,3 +18,5 @@ export const prerender = true;
 	</Fragment>
 	<App client:only="solid-js"/>
 </Html>
+
+<script is:inline src='/scripts/theme.js'/>
