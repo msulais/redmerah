@@ -3,11 +3,21 @@ import randomizer_converter_logo from '@/assets/apps/randomizer-logo.svg'
 import color_generator_logo from '@/assets/apps/color-generator-logo.svg'
 import calculator_logo from '@/assets/apps/calculator-logo.svg'
 import tasks_logo from '@/assets/apps/tasks-logo.svg'
+import sass_converter_logo from '@/assets/apps/sass-converter-logo.svg'
 import { _src } from './string'
 import type { AppItem } from '@/types/apps'
 import { RoutesLinks } from '@/enums/links'
 
 export const apps: AppItem[] = [
+    {
+        logoURL: sass_converter_logo[_src],
+        title: 'SASS Converter',
+        description: 'Simplify your SASS/SCSS development process with our powerful online converter. Quickly and accurately translate your code into clean, optimized CSS.',
+        link: RoutesLinks.sassConverter,
+        color: '#FF0056',
+        buildNumber: 1,
+        buildVersion: '0.0.1',
+    },
     {
         logoURL: tasks_logo[_src],
         title: 'Tasks',
