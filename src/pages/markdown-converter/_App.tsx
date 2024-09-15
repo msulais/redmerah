@@ -1,10 +1,11 @@
 import { createSignal, onMount, type VoidComponent } from "solid-js";
 import { marked } from 'marked'
+import beautiful from 'simply-beautiful'
 
 import type { Settings } from "./_types";
 import { IDB } from "@/utils/indexeddb";
 import { DatabaseNames } from "@/enums/storage";
-import { _animate, _clipboard, _contains, _createObjectStore, _css, _db, _finished, _fontSize, _get, _html, _key, _lastInput, _length, _markdown, _markdownConverter, _newVersion, _objectStore, _objectStoreNames, _oldVersion, _open, _put, _readObjectStore, _readonly, _remove, _settings, _splash, _spring, _textWrap, _then, _transaction, _value, _writeObjectStore, _writeText } from "@/constants/string";
+import { _animate, _clipboard, _contains, _createObjectStore, _css, _db, _finished, _fontSize, _get, _html, _key, _lastInput, _length, _markdown, _markdownConverter, _newVersion, _objectStore, _objectStoreNames, _oldVersion, _open, _put, _readObjectStore, _readonly, _remove, _replace, _settings, _splash, _spring, _textWrap, _then, _transaction, _value, _writeObjectStore, _writeText } from "@/constants/string";
 import { ObjectStoreKeys, ObjectStoreNames, type ObjectStoreLastInput, type ObjectStoreSettings } from "./_storage";
 import { createStore } from "solid-js/store";
 import { Commands } from "./_enums";
@@ -127,7 +128,7 @@ const _: VoidComponent = () => {
             const t = args[1] as ('markdown' | 'css' | 'html')
             let text = ''
             if (t == _markdown) text = markdownText()
-            else if (t == _html) text = htmlText()
+            else if (t == _html) text = beautiful[_html](htmlText())[_replace](/(?<=>)\n+(?=<)/gs, '\n')
             else if (t == _css) text = cssText()
 
             getNavigator()[_clipboard][_writeText](text)
@@ -140,7 +141,7 @@ const _: VoidComponent = () => {
             let text = ''
             let filename = ''
             if (t == _markdown) text = markdownText(), filename = 'markdown.md'
-            else if (t == _html) text = htmlText(), filename = 'hypertext-markup-language.html'
+            else if (t == _html) text = beautiful[_html](htmlText())[_replace](/(?<=>)\n+(?=<)/gs, '\n'), filename = 'hypertext-markup-language.html'
             else if (t == _css) text = cssText(), filename = 'cascading-style-sheets.css'
 
             downloadFile(new Blob([text]), filename)
