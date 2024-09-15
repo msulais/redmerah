@@ -1,13 +1,13 @@
+import { Transition } from "solid-transition-group"
 import { For, Match, Show, Switch, createEffect, createMemo, createSignal, mergeProps, splitProps, type VoidComponent } from "solid-js"
 
 import { _ref, _date, _onSelectDate, _firstDate, _lastDate, _locales, _classList, _children, _onClose, _day, _getDay, _includes, _setMonth, _month, _setFullYear, _year, _substring, _fill, _filled, _outlined, _animate, _finished, _spring, _then } from "@/constants/string"
 import { getCurrentDate, getDate_Y, getDate_M, getWeekdayNames, isOutDate_YMD, isSameDate_YMD, getMonthNames, isOutDate_YM, isSameDate_YM, isOutDate_Y, isSameDate_Y, getMonthText, isInDate_YM } from "@/utils/datetime"
+import { AnimationEffectTiming } from "@/enums/animation"
 
-import Button, { ButtonVariant, IconButton } from "@/components/Button"
+import Button, { ButtonVariant, IconButton, SquareButton } from "@/components/Button"
 import { repositionModal, closeModal, openModal, focusModal, Modal, type ModalProps, ModalPosition as DatePickerPosition } from "@/components/Modal"
 import './index.scss'
-import { AnimationEffectTiming } from "@/enums/animation"
-import { Transition } from "solid-transition-group"
 
 enum DatePickerOption {
     year,
@@ -100,14 +100,13 @@ const DatePicker: VoidComponent<DatePickerProps> = ($props) => {
                 <For each={Array(startDay())[_fill](0)}>{_v => <div/>}</For>
                 <For each={Array(daysPerMonth())[_fill](0)}>{(_v, i) => {
                     const date = createMemo(() => new Date(getDate_Y(viewDate()), getDate_M(viewDate()), i() + 1))
-                    return (<Button
+                    return (<SquareButton
                         onClick={() => {
                             setValue(date())
                             if (props[_onSelectDate]) props[_onSelectDate](date())
 
                             closeModal(datePicker_ref)
                         }}
-                        classList={{'icon-btn': true}}
                         disabled={isOutDate_YMD(date(), props[_firstDate], props[_lastDate])}
                         variant={isSameDate_YMD(date(), value())
                             ? ButtonVariant[_filled]
@@ -116,7 +115,7 @@ const DatePicker: VoidComponent<DatePickerProps> = ($props) => {
                                 : undefined
                         }>
                         { i() + 1 }
-                    </Button>)
+                    </SquareButton>)
                 }}</For>
             </div>
         </div>)

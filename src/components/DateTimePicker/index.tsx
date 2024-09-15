@@ -6,7 +6,7 @@ import { getCurrentDate, getDate_Y, getDate_M, getWeekdayNames, isOutDate_YMD, i
 import { AnimationEffectTiming } from '@/enums/animation'
 import { TimeFormat } from '@/enums/datetime'
 
-import Button, { ButtonVariant, IconButton } from '@/components/Button'
+import Button, { ButtonVariant, IconButton, SquareButton } from '@/components/Button'
 import Dropdown, { type Item as $DropdownItem } from '@/components/Dropdown'
 import { closeModal, openModal, focusModal, Modal, type ModalProps, repositionModal, ModalPosition as DateTimePickerPosition } from '@/components/Modal'
 import './index.scss'
@@ -105,7 +105,7 @@ const DateTimePicker: VoidComponent<DateTimePickerProps> = ($props) => {
                 <For each={Array(startDay())[_fill](0)}>{_v => <div/>}</For>
                 <For each={Array(daysPerMonth())[_fill](0)}>{(_v, i) => {
                     const date = createMemo(() => new Date(getDate_Y(viewDate()), getDate_M(viewDate()), i() + 1))
-                    return (<Button
+                    return (<SquareButton
                         onClick={() => {
                             const d = new Date(value())
                             d[_setDate](date()[_getDate]())
@@ -113,7 +113,6 @@ const DateTimePicker: VoidComponent<DateTimePickerProps> = ($props) => {
                             d[_setFullYear](date()[_getFullYear]())
                             setValue(d)
                         }}
-                        classList={{'icon-btn': true}}
                         disabled={isOutDate_YMD(date(), props[_firstDate], props[_lastDate])}
                         variant={isSameDate_YMD(date(), value())
                             ? ButtonVariant[_filled]
@@ -122,7 +121,7 @@ const DateTimePicker: VoidComponent<DateTimePickerProps> = ($props) => {
                                 : undefined
                         }>
                         { i() + 1 }
-                    </Button>)
+                    </SquareButton>)
                 }}</For>
             </div>
         </div>)

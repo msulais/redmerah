@@ -2,10 +2,10 @@ import { type JSX, type ParentComponent, splitProps, children } from "solid-js"
 
 import { _header, _actions, _children, _classList, _style, _left, _top, _springBounce, _animate, _closeAnimation, _finished, _none, _openAnimation, _then } from "@/constants/string"
 import { toggleAttribute } from "@/utils/attributes"
+import { AnimationEffectTiming } from "@/enums/animation"
 
 import { Modal, type ModalProps, openModal, closeModal, focusModal } from "@/components/Modal"
 import './index.scss'
-import { AnimationEffectTiming } from "@/enums/animation"
 
 function openDialog(ev: Event, dialog: HTMLDialogElement, options?: {
     inputAutoFocus?: boolean
