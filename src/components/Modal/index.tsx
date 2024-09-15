@@ -21,7 +21,7 @@ type ModalOpenDetail = {
     event: Event
     anchor?: HTMLElement
 
-    /** Use this if you want to override the `PopoverOpenDetail.anchor` `DOMRect` */
+    /** Use this if you want to override the `ModalOpenDetail.anchor` `DOMRect` */
     anchorRect?: DOMRect
     gap?: number
     padding?: number
@@ -32,8 +32,8 @@ type ModalOpenDetail = {
     inputAutoFocus?: boolean
 
     /**
-     * Custom pointer position. Only works if `PopoverOpenDetail.anchor` and
-     * `PopoverOpenDetail.anchorRect` set to `undefined`
+     * Custom pointer position. Only works if `ModalOpenDetail.anchor` and
+     * `ModalOpenDetail.anchorRect` set to `undefined`
      * */
     pointer?: {
         x: number
@@ -75,6 +75,7 @@ function initModalListener(): void {
     let isNoPointerEvent: boolean = false
     let scrollTop: number = 0
     let timeoutId: number | null = null
+    let closeTimeoutId: number | null = null
 
     // make sure not to close other modal after closing some modal
     let removed = false
@@ -94,6 +95,14 @@ function initModalListener(): void {
 
         modals[_splice](index, 1)
         removed = modals[_length] > 0
+
+        if (!removed) return
+
+        if (closeTimeoutId != null) clearTimeDelayed(closeTimeoutId)
+        closeTimeoutId = setTimeDelayed(() => {
+            removed = false
+            closeTimeoutId = null
+        }, 50)
     })
 
     // use for click outside modal
