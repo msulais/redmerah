@@ -38,7 +38,7 @@
     &:is(:disabled,[data-disabled]) {
         color: rgba(var(--color-on-surface), var(--opacity-inv4));
         cursor: not-allowed;
-        
+
         & * {
             cursor: not-allowed;
         }
@@ -48,7 +48,7 @@
         &[data-selected]:not([data-focused],.filled-btn,.tonal-btn,.outlined-btn) {
             color: rgb(var(--color-accent))
         }
-        
+
         &[data-focused] {
             --bg-opacity: var(--opacity2);
         }
@@ -57,7 +57,7 @@
             &:hover {
                 --bg-opacity: var(--opacity1);
                 cursor: pointer;
-    
+
                 > .btn-layer > .icon {
                     animation: var(--btn-icon-animation);
                 }
@@ -84,7 +84,7 @@
         &[data-desktop-compact] {
             --btn-padding: 0 8px;
             min-height: 32px;
-    
+
             [data-corner=full-round] & {
                 border-radius: 16px;
             }
@@ -178,7 +178,7 @@
 
         &:not(.btn-transparent:not([data-focused]))::before {
             border-radius: 0 var(--btn-indicator-border-radius) var(--btn-indicator-border-radius) 0;
-            
+
             [data-corner=full-round] & {
                 border-radius: 999px;
             }
@@ -196,7 +196,7 @@
 
         &:not(.btn-transparent:not([data-focused]))::before {
             border-radius: var(--btn-indicator-border-radius) 0 0 var(--btn-indicator-border-radius);
-            
+
             [data-corner=full-round] & {
                 border-radius: 999px;
             }
@@ -204,9 +204,9 @@
     }
 }
 
-:is(.icon-btn, .emoji-btn) {
+.square-btn {
     --btn-padding: 0;
-    --icon-btn-size: 40px;  
+    --icon-btn-size: 40px;
     min-height: var(--icon-btn-size);
     max-height: var(--icon-btn-size);
     min-width: var(--icon-btn-size);
@@ -255,22 +255,22 @@
             --btn-padding: 4px 12px;
             min-height: 40px;
             border-radius: 8px;
-    
+
             [data-corner=sharp] & { border-radius: 0 }
             [data-corner=semi-round] & { border-radius: 4px }
             [data-corner=full-round] & { border-radius: 20px }
-    
+
             &::before {
                 --btn-indicator-size: max(16px, calc(100% - 20px));
-        
+
                 [data-corner=full-round] & {
                     --btn-indicator-size: max(var(--btn-indicator-weight), calc(100% - 40px));
                 }
             }
-        
+
             &:is([data-indicator=top],[data-indicator=bottom])::before {
                 --btn-indicator-size: max(16px, calc(100% - 24px));
-        
+
                 [data-corner=full-round] & {
                     --btn-indicator-size: max(var(--btn-indicator-weight), calc(100% - 40px));
                 }
@@ -289,15 +289,15 @@
 
         &::before {
             --btn-indicator-size: max(16px, calc(100% - 20px));
-    
+
             [data-corner=full-round] & {
                 --btn-indicator-size: max(var(--btn-indicator-weight), calc(100% - 40px));
             }
         }
-    
+
         &:is([data-indicator=top],[data-indicator=bottom])::before {
             --btn-indicator-size: max(16px, calc(100% - 24px));
-    
+
             [data-corner=full-round] & {
                 --btn-indicator-size: max(var(--btn-indicator-weight), calc(100% - 40px));
             }

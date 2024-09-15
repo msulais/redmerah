@@ -6,20 +6,20 @@ import { toggleAttribute } from '@/utils/attributes'
 import { preventDefault } from '@/utils/event'
 
 import Icon from '@/components/Icon'
+import Emoji from '@/components/Emoji'
 import './index.scss'
-import Emoji from '../Emoji'
 
 enum ButtonVariant {
-    filled, 
-    outlined, 
-    tonal, 
+    filled,
+    outlined,
+    tonal,
     transparent
 }
 
 enum ButtonIndicatorPosition {
-    top = 'top', 
-    right = 'right', 
-    bottom = 'bottom', 
+    top = 'top',
+    right = 'right',
+    bottom = 'bottom',
     left = 'left'
 }
 
@@ -32,26 +32,26 @@ type ButtonProps = JSX.ButtonHTMLAttributes<HTMLButtonElement> & {
     desktopCompact?: boolean
     indicatorPosition?: ButtonIndicatorPosition
     layerAttr?: JSX.HTMLAttributes<HTMLDivElement>
-} 
+}
 const Button: ParentComponent<ButtonProps> = ($props) => {
     const $$props = mergeProps({
-        type: _button, 
-        variant: ButtonVariant[_transparent], 
+        type: _button,
+        variant: ButtonVariant[_transparent],
         indicatorPosition: ButtonIndicatorPosition[_bottom]
     }, $props)
     const [props, other] = splitProps($$props, [
-        _children, _indicatorPosition, _variant, 
-        _focused, _compact, _selected, _layerAttr, 
-        _disableScale, _classList, _type, _class, 
+        _children, _indicatorPosition, _variant,
+        _focused, _compact, _selected, _layerAttr,
+        _disableScale, _classList, _type, _class,
         _desktopCompact
     ])
 
-    return (<button 
+    return (<button
         class={'btn' + (props[_class] != undefined? ` ${props[_class]}` : '')}
         classList={{
-            'filled-btn': props[_variant] == ButtonVariant[_filled], 
-            'tonal-btn': props[_variant] == ButtonVariant[_tonal], 
-            'outlined-btn': props[_variant] == ButtonVariant[_outlined], 
+            'filled-btn': props[_variant] == ButtonVariant[_filled],
+            'tonal-btn': props[_variant] == ButtonVariant[_tonal],
+            'outlined-btn': props[_variant] == ButtonVariant[_outlined],
             ...props[_classList]
         }}
         type={props[_type] as ("button" | "submit" | "reset" | undefined)}
@@ -81,15 +81,18 @@ type LinkButtonProps = Omit<JSX.AnchorHTMLAttributes<HTMLAnchorElement>, 'onClic
 }
 
 const LinkButton: ParentComponent<LinkButtonProps> = ($props) => {
-    const $$props = mergeProps({variant: ButtonVariant[_transparent], indicatorPosition: ButtonIndicatorPosition[_bottom]}, $props)
+    const $$props = mergeProps({
+        variant: ButtonVariant[_transparent],
+        indicatorPosition: ButtonIndicatorPosition[_bottom]
+    }, $props)
     const [props, other] = splitProps($$props, [
-        _openInNewTab, _children, _indicatorPosition, 
-        _variant, _focused, _compact, _selected, _layerAttr, 
+        _openInNewTab, _children, _indicatorPosition,
+        _variant, _focused, _compact, _selected, _layerAttr,
         _disableScale, _classList, _class, _desktopCompact,
         _disabled, _onClick
     ])
 
-    return (<a 
+    return (<a
         class={'btn' + (props[_class] != undefined? ` ${props[_class]}` : '')}
         onClick={(ev) => {
             if (props[_disabled]) {
@@ -98,9 +101,9 @@ const LinkButton: ParentComponent<LinkButtonProps> = ($props) => {
             if (props[_onClick]) props[_onClick](ev)
         }}
         classList={{
-            'filled-btn': props[_variant] == ButtonVariant[_filled], 
-            'tonal-btn': props[_variant] == ButtonVariant[_tonal], 
-            'outlined-btn': props[_variant] == ButtonVariant[_outlined], 
+            'filled-btn': props[_variant] == ButtonVariant[_filled],
+            'tonal-btn': props[_variant] == ButtonVariant[_tonal],
+            'outlined-btn': props[_variant] == ButtonVariant[_outlined],
             ...props[_classList]
         }}
         data-indicator={props[_selected]? props[_indicatorPosition] : undefined}
@@ -110,68 +113,86 @@ const LinkButton: ParentComponent<LinkButtonProps> = ($props) => {
         data-focused={toggleAttribute(props[_focused])}
         data-noscale={toggleAttribute(props[_disableScale])}
         data-compact={toggleAttribute(props[_compact])}
-        target={props[_openInNewTab]? "_blank" : undefined} 
+        target={props[_openInNewTab]? "_blank" : undefined}
         rel={props[_openInNewTab]? "noopener noreferrer" : undefined}
         {...other}>
         <div class='btn-layer' {...props[_layerAttr]}>{props[_children]}</div>
     </a>)
 }
 
-type IconButtonProps = ButtonProps & {
+type SquareButtonProps = ButtonProps
+const SquareButton: ParentComponent<SquareButtonProps> = ($props) => {
+    const [props, other] = splitProps($props, [_classList])
+    return (<Button
+        classList={{'square-btn': true, ...props[_classList]}}
+        {...other}
+    />)
+}
+
+type LinkSquareButtonProps = LinkButtonProps
+const LinkSquareButton: ParentComponent<LinkSquareButtonProps> = ($props) => {
+    const [props, other] = splitProps($props, [_classList])
+    return (<LinkButton
+        classList={{'square-btn': true, ...props[_classList]}}
+        {...other}
+    />)
+}
+
+type IconButtonProps = SquareButtonProps & {
     code: number
     filled?: boolean
 }
 const IconButton: VoidComponent<IconButtonProps> = ($props) => {
     const [props, other] = splitProps($props, [_classList, _code, _filled])
-    return (<Button 
-        classList={{'icon-btn': true, ...props[_classList]}} 
+    return (<SquareButton
+        classList={{'icon-btn': true, ...props[_classList]}}
         {...other}>
         <Icon code={props[_code]} filled={props[_filled]}/>
-    </Button>)
+    </SquareButton>)
 }
 
-type LinkIconButtonProps = LinkButtonProps & {
+type LinkIconButtonProps = LinkSquareButtonProps & {
     code: number
     filled?: boolean
 }
 const LinkIconButton: VoidComponent<LinkIconButtonProps> = ($props) => {
     const [props, other] = splitProps($props, [_classList, _code, _filled])
-    return (<LinkButton 
-        classList={{'icon-btn': true, ...props[_classList]}} 
+    return (<LinkSquareButton
+        classList={{'icon-btn': true, ...props[_classList]}}
         {...other}>
         <Icon code={props[_code]} filled={props[_filled]}/>
-    </LinkButton>)
+    </LinkSquareButton>)
 }
 
-type EmojiButtonProps = ButtonProps & {
+type EmojiButtonProps = SquareButtonProps & {
     emoji: string
 }
 const EmojiButton: VoidComponent<EmojiButtonProps> = ($props) => {
     const [props, other] = splitProps($props, [_classList, _emoji])
-    return (<Button 
-        classList={{'emoji-btn': true, ...props[_classList]}} 
+    return (<SquareButton
+        classList={{'emoji-btn': true, ...props[_classList]}}
         {...other}>
         <Emoji emoji={props[_emoji]}/>
-    </Button>)
+    </SquareButton>)
 }
 
-type LinkEmojiButtonProps = LinkButtonProps & {
+type LinkEmojiButtonProps = LinkSquareButtonProps & {
     emoji: string
 }
 const LinkEmojiButton: VoidComponent<LinkEmojiButtonProps> = ($props) => {
     const [props, other] = splitProps($props, [_classList, _emoji])
-    return (<LinkButton 
-        classList={{'emoji-btn': true, ...props[_classList]}} 
+    return (<LinkSquareButton
+        classList={{'emoji-btn': true, ...props[_classList]}}
         {...other}>
         <Emoji emoji={props[_emoji]}/>
-    </LinkButton>)
+    </LinkSquareButton>)
 }
 
 type FloatingActionButtonProps = ButtonProps
 const FloatingActionButton: ParentComponent<FloatingActionButtonProps> = ($props) => {
     const [props, other] = splitProps($props, [_classList])
-    return (<Button 
-        classList={{'floating-action-btn': true, ...props[_classList]}} 
+    return (<Button
+        classList={{'floating-action-btn': true, ...props[_classList]}}
         {...other}
     />)
 }
@@ -179,32 +200,36 @@ const FloatingActionButton: ParentComponent<FloatingActionButtonProps> = ($props
 type LinkFloatingActionActionButtonProps = LinkButtonProps
 const LinkFloatingActionButton: ParentComponent<LinkFloatingActionActionButtonProps> = ($props) => {
     const [props, other] = splitProps($props, [_classList])
-    return (<LinkButton 
-        classList={{'floating-action-btn': true, ...props[_classList]}} 
+    return (<LinkButton
+        classList={{'floating-action-btn': true, ...props[_classList]}}
         {...other}
     />)
 }
 
 export {
     Button,
-    IconButton,
     LinkButton,
+    IconButton,
     LinkIconButton,
     FloatingActionButton,
     LinkFloatingActionButton,
+    SquareButton,
+    LinkSquareButton,
     EmojiButton,
     LinkEmojiButton,
     ButtonVariant,
     ButtonIndicatorPosition
 }
-export type { 
-    IconButtonProps, 
-    LinkButtonProps, 
-    LinkIconButtonProps, 
+export type {
+    ButtonProps,
+    LinkButtonProps,
+    IconButtonProps,
+    LinkIconButtonProps,
     FloatingActionButtonProps,
     LinkFloatingActionActionButtonProps,
-    ButtonProps,
+    SquareButtonProps,
+    LinkSquareButtonProps,
     EmojiButtonProps,
-    LinkEmojiButtonProps
+    LinkEmojiButtonProps,
 }
 export default Button

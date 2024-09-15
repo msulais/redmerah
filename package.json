@@ -1,28 +1,28 @@
 {
-    "name": "redmerah",
-    "type": "module",
-    "author": "Muhammad Sulais",
-    "version": "0.1.4",
-    "scripts": {
-        "dev": "astro dev",
-        "start": "astro dev",
-        "build": "astro check && astro build",
-        "preview": "astro preview",
-        "astro": "astro"
-    },
-    "dependencies": {
-        "@astrojs/check": "^0.9.3",
-        "@astrojs/solid-js": "^4.4.1",
-        "@astrojs/vercel": "^7.8.0",
-        "astro": "^4.14.5",
-        "gray-matter": "^4.0.3",
-        "just-clone": "^6.2.0",
-        "marked": "^12.0.2",
-        "sass": "^1.77.8",
-        "simply-beautiful": "^0.2.16",
-        "solid-js": "^1.8.21",
-        "solid-transition-group": "^0.2.3",
-        "typescript": "^5.5.4"
-    },
-    "packageManager": "pnpm@9.1.1+sha256.9551e803dcb7a1839fdf5416153a844060c7bce013218ce823410532504ac10b"
+  "name": "redmerah",
+  "type": "module",
+  "author": "Muhammad Sulais",
+  "version": "0.1.4",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.3",
+    "@astrojs/solid-js": "^4.4.1",
+    "@astrojs/vercel": "^7.8.0",
+    "astro": "^4.15.4",
+    "gray-matter": "^4.0.3",
+    "just-clone": "^6.2.0",
+    "marked": "^12.0.2",
+    "sass": "^1.78.0",
+    "simply-beautiful": "^0.2.16",
+    "solid-js": "^1.8.22",
+    "solid-transition-group": "^0.2.3",
+    "typescript": "^5.5.4"
+  },
+  "packageManager": "pnpm@9.1.1+sha256.9551e803dcb7a1839fdf5416153a844060c7bce013218ce823410532504ac10b"
 }
