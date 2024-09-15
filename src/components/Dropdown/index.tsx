@@ -15,7 +15,7 @@ import Menu, { closeMenu, LinkMenuItem, MenuDivider, MenuHeader, MenuItem, openM
 import './index.scss'
 
 type Item = (
-    [value: string | number, text: string, trailingText: string] | 
+    [value: string | number, text: string, trailingText: string] |
     [value: string | number, text: string]
 )
 
@@ -39,20 +39,20 @@ type DropdownProps = Omit<TextFieldProps, 'value'> & {
 const Dropdown: VoidComponent<DropdownProps> = ($props) => {
     const $$props = mergeProps({
         dividerIndexs: [],
-        labels: [], 
+        labels: [],
         trailings: []
     }, $props)
     const [props, other] = splitProps($$props, [
-        _refs, _dividerIndexs, _labels, _readOnly, 
-        _footer, _header, _disabled, _onSelectedItemsChanged, _items, 
-        _selectedValues, _labelAttr, _multiple, _trailing, 
+        _refs, _dividerIndexs, _labels, _readOnly,
+        _footer, _header, _disabled, _onSelectedItemsChanged, _items,
+        _selectedValues, _labelAttr, _multiple, _trailing,
         _onClicks, _menuAttr, _optionIconTooltip
     ])
     const [selectedItems, setSelectedItems] = createStore<Item[]>([])
     const [width, setWidth] = createSignal<number>(0)
     const [isFocus, setIsFocus] = createSignal<boolean>(false)
     const isSelected = createSelector<Item[], string | number>(
-        () => selectedItems, 
+        () => selectedItems,
         (item, items) => items[_some]((a) => a[0] == item)
     )
     let label_dropdown_ref: HTMLLabelElement
@@ -65,7 +65,7 @@ const Dropdown: VoidComponent<DropdownProps> = ($props) => {
         setWidth(getBoundingClientRect(label_dropdown_ref)[_width])
         openMenu(ev, menu_dropdown_ref, {
             anchor: label_dropdown_ref,
-            padding: 0, 
+            padding: 0,
             position: DropdownPosition[_centerBottom],
             allowHideAnchor: false
         })
@@ -114,7 +114,7 @@ const Dropdown: VoidComponent<DropdownProps> = ($props) => {
             observer[_disconnect]()
         })
     })
-    
+
     createEffect(() => {
         const selectedValues = props[_selectedValues] ?? $selectedValues
         const multiple = props[_multiple]
@@ -122,8 +122,8 @@ const Dropdown: VoidComponent<DropdownProps> = ($props) => {
 
         let $items: Item[] = []
         if (selectedValues[_length] == 0) return setSelectedItems($items)
-        
-        if (multiple) $items = items[_filter](item => selectedValues[_includes](item[0] as never))                
+
+        if (multiple) $items = items[_filter](item => selectedValues[_includes](item[0] as never))
         else {
             const item = items[_find]((item) => item[0] == selectedValues[0])
             if (item) $items[_push](item)
@@ -134,7 +134,7 @@ const Dropdown: VoidComponent<DropdownProps> = ($props) => {
     })
 
     return (<>
-        <TextField 
+        <TextField
             readOnly
             disabled={props[_disabled]}
             focused={isFocus()}
@@ -145,7 +145,7 @@ const Dropdown: VoidComponent<DropdownProps> = ($props) => {
                     if (props[_labelAttr] && props[_labelAttr][_ref]) {
                         (props[_labelAttr][_ref] as ((el: HTMLLabelElement) => void))(r)
                     }
-                }, 
+                },
                 classList: {'dropdown': true, ...(() => {
                     if (props[_labelAttr] && props[_labelAttr][_classList]) return props[_labelAttr][_classList];
                     return {}
@@ -164,25 +164,25 @@ const Dropdown: VoidComponent<DropdownProps> = ($props) => {
                 {props[_trailing]}
                 <Show when={!props[_readOnly]}>
                     <TextTooltip text={props[_optionIconTooltip] ?? "Show options"}>
-                        <TextFieldButton 
-                            focused={isFocus()} 
+                        <TextFieldButton
+                            focused={isFocus()}
                             onClick={ev => openDropdownMenu(ev)}>
-                            <Icon code={0xE362} filled/>
+                            <Icon code={0xE3FC}/>
                         </TextFieldButton>
                     </TextTooltip>
                 </Show>
-            </>} 
+            </>}
             {...other}
         />
-        <Menu  
+        <Menu
             onToggleOpen={v => {
                 setIsFocus(v)
                 if (props[_menuAttr] && props[_menuAttr][_onToggleOpen]) props[_menuAttr][_onToggleOpen](v)
-            }} 
+            }}
             ref={r => {
                 menu_dropdown_ref = r
                 if (props[_menuAttr] && props[_menuAttr][_ref]) props[_menuAttr][_ref](r)
-            }} 
+            }}
             style={{
                 'min-width': width() + _px,
                 ...(props[_menuAttr]? props[_menuAttr][_style] : {})
@@ -200,7 +200,7 @@ const Dropdown: VoidComponent<DropdownProps> = ($props) => {
                     <For each={props[_labels]}>{h => <Show when={index() == h[0]}>
                         <MenuHeader>{h[1]}</MenuHeader>
                     </Show>}</For>
-                    <MenuItem 
+                    <MenuItem
                         ref={(r) => {
                             if (props[_refs]) props[_refs](r, item)
                         }}
@@ -210,7 +210,7 @@ const Dropdown: VoidComponent<DropdownProps> = ($props) => {
                                 if (isContinue == false) return
                             }
                             selectItem(item)
-                        }} 
+                        }}
                         trailing={item[2]}
                         selected={!props[_multiple]? isSelected(item[0]) : undefined}
                         checked={props[_multiple]? isSelected(item[0]) : undefined}>
@@ -224,7 +224,7 @@ const Dropdown: VoidComponent<DropdownProps> = ($props) => {
 }
 
 export {
-    Dropdown, 
+    Dropdown,
     MenuHeader as DropdownHeader,
     MenuItem as DropdownItem,
     MenuDivider as DropdownDivider,
@@ -232,7 +232,7 @@ export {
     DropdownPosition
 }
 export type {
-    DropdownProps, 
+    DropdownProps,
     Item
 }
 export default Dropdown
