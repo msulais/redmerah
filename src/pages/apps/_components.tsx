@@ -88,7 +88,7 @@ export const MainElement: VoidComponent = () => {
                 </Show>
             </LinkButton>
         </Show>}</For></div>
-        <Menu ref={r => menu_actions_ref = r} onToggle={v => setSelectedApp(a => v? a : null)}>
+        <Menu ref={r => menu_actions_ref = r} onToggleOpen={v => setSelectedApp(a => v? a : null)}>
             <MenuItem
                 onClick={() => {
                     pinApp(getSelectedLink() ?? '#')
