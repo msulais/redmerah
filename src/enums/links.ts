@@ -28,7 +28,16 @@ export enum RoutesLinks {
     document = '/document',
     sheet = '/sheet',
     presentation = '/presentation',
-    favicon = '/favicon'
+    favicon = '/favicon',
+    audioEditor = '/audio-editor',
+    videoEditor = '/video-editor',
+    imageEditor = '/image-editor',
+    imageConverter = '/image-converter',
+    keyboardTest = '/keyboard-test',
+    jsonStringify = '/json-stringify',
+    javascriptMinifier = '/javascript-minifier',
+    sorter = '/sorter',
+    textEditor = '/text-editor'
 }
 
 export enum ExternalLinks {
