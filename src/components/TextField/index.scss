@@ -1,5 +1,6 @@
 :is(.textfield, .areatextfield) {
     display: block;
+    --textfield-border-radius: 8px;
 
     > div:first-child {
         --bg-color: var(--color-on-surface);
@@ -9,44 +10,31 @@
         align-items: center;
         min-height: 40px;
         border: 1px solid rgba(var(--color-on-surface), var(--opacity1));
-        padding: 4px 12px;
-        border-radius: 8px;
+        padding: 0 12px;
+        border-radius: var(--textfield-border-radius);
         gap: 8px;
         min-width: 0;
         width: 100%;
         transition-duration: .3s;
 
-        [data-corner=sharp] & { border-radius: 0 }
-        [data-corner=semi-round] & { border-radius: 4px }
-        [data-corner=full-round] & { border-radius: 20px }
+        :root[data-corner=sharp] & { --textfield-border-radius: 0px }
+        :root[data-corner=semi-round] & { --textfield-border-radius: 4px }
+        :root[data-corner=full-round] & { --textfield-border-radius: 20px }
+        :root[data-corner=full-round]:root[data-platform=desktop] & { --textfield-border-radius: 18px }
 
-        &[data-compact] {
-            min-height: 32px;
-            padding: 4px 8px;
-
-            &::before {
-                width: calc(100% - 16px)
-            }
-
-            > textarea {
-                margin: 2px 0 0 0;
-            }
+        &[data-compact], :root[data-platform=desktop] & {
+            min-height: 36px;
 
             > .areatextfield-leading {
-                margin: 3px 0 0 0;
-            }
-
-            > .areatextfield-trailing {
-                margin-top: 2px;
+                margin: 8px 0;
             }
 
             & .btn.textfield-btn[data-compact] {
-                min-height: 20px;
-
+                min-height: 28px;
             }
 
             & .icon {
-                font-size: 16px;
+                font-size: 18px;
             }
         }
 
@@ -54,31 +42,26 @@
             content: '';
             position: absolute;
             background-color: rgb(var(--color-on-surface));
-            width: calc(100% - 24px);
-            bottom: 0;
+            width: calc(100% - var(--textfield-border-radius) * 2);
+            bottom: -1px;
             min-height: 2px;
             left: 50%;
             transform: translateX(-50%);
+            border-radius: 2px 2px 0 0;
             transition-duration: .3s;
 
-            [data-corner=sharp] & {
+            :root[data-corner=sharp] & {
                 border-radius: 0;
-            }
-
-            [data-corner=full-round] & {
-                width: calc(100% - 40px)
             }
         }
 
-        &[data-readonly] {
-            &::before {
-                min-height: 1px;
-                bottom: -1px;
-            }
+        &[data-readonly]::before {
+            min-height: 1px;
+            border-radius: 0px;
         }
 
         &[data-trailing] {
-            padding-right: 6px;
+            padding-right: 4px;
         }
 
         &[data-disabled] {
@@ -101,19 +84,9 @@
                 --bg-color: var(--color-surface);
                 border-color: rgba(var(--color-on-surface), var(--opacity2));
 
-                &[data-compact] {
-                    &::before {
-                        animation: input-start-focus-compact .3s var(--transition-spring);
-                    }
-                }
-                
                 &::before {
                     background-color: rgb(var(--color-accent));
                     animation: input-start-focus .3s var(--transition-spring);
-                    
-                    [data-corner=full-round] & {
-                        animation: full-round-input-start-focus .3s var(--transition-spring);
-                    }
                 }
             }
 
@@ -139,6 +112,7 @@
             border: none;
             outline: none;
             font-size: var(--font-size-xs);
+            line-height: 20px;
             transition-duration: .3s;
 
             &::placeholder {
@@ -147,13 +121,17 @@
         }
 
         > textarea {
-            margin: 6px 0;
+            margin: 10px 0;
             transition-duration: .3s, 0s;
             transition-property: all, height;
             resize: none;
 
             &[data-resize] {
                 resize: vertical;
+            }
+
+            :root[data-platform=desktop] & {
+                margin: 8px 0;
             }
         }
     }
@@ -164,66 +142,47 @@
 }
 
 @keyframes input-start-focus {
-    from {
-        width: 0;
-    }
-    to {
-        width: calc(100% - 24px);
-    }
-}
-
-@keyframes input-start-focus-compact {
-    from {
-        width: 0;
-    }
-    to {
-        width: calc(100% - 16px);
-    }
-}
-
-@keyframes full-round-input-start-focus {
-    from {
-        width: 0;
-    }
-    to {
-        width: calc(100% - 40px);
-    }
+    from { width: 0 }
+    to { width: calc(100% - var(--textfield-border-radius) * 2) }
 }
 
 .btn.textfield-btn[data-compact] {
-    --btn-padding: 0 6px;
-    min-height: 28px;
+    --btn-padding: 2px 6px;
+    min-height: 32px;
     border-radius: 4px;
 
-    [data-corner=sharp] & { border-radius: 0 }
-    [data-corner=semi-round] & { border-radius: 2px }
-    [data-corner=full-round] & { border-radius: 20px }
+    :root[data-corner=sharp] & { border-radius: 0 }
+    :root[data-corner=semi-round] & { border-radius: 2px }
+    :root[data-corner=full-round] & { border-radius: 20px }
 }
 
 :is(.textfield-leading, .textfield-trailing, .areatextfield-leading, .areatextfield-trailing) {
     display: flex;
     align-items: center;
-    gap: 4px;
-    
+    gap: 1px;
+
     &:empty {
         display: none;
     }
-}
-.areatextfield-leading {
-    margin: 5px 0;
 }
 
-:is(.textfield-message-text, .textfield-label-text, .areatextfield-message-text, .areatextfield-label-text){
-    &:empty {
-        display: none;
-    }
+.areatextfield-trailing {
+    margin-top: 4px;
+}
+
+.areatextfield-leading {
+    margin: 10px 0;
+}
+
+:is(.textfield-message-text, .textfield-label-text, .areatextfield-message-text, .areatextfield-label-text):empty {
+    display: none;
 }
 
 :is(.textfield-label-text, .areatextfield-label-text) {
     position: absolute;
     bottom: 100%;
     transform: translateY(0.5em);
-    left: 6px;
+    left: calc(var(--textfield-border-radius) - 4px);
     background-color: rgb(var(--color-background));
     max-width: calc(100% - 12px);
     border-radius: 2px;
@@ -232,33 +191,27 @@
     font-size: var(--font-size-s);
     z-index: 2;
 
-    [data-corner=sharp] & {
-        border-radius: 0;
-    }
+    :root[data-corner=sharp] & { border-radius: 0px }
 }
 
 :is(.textfield-message-text, .areatextfield-message-text) {
     padding: 0 12px;
     font-size: var(--font-size-xs);
-    
-    [data-corner=sharp] & {
-        border-radius: 0;
-    }
+
+    :root[data-corner=sharp] & { border-radius: 0 }
 }
 
-.menu.number-textfield-menu {
-    [data-corner=full-round] & {
-        border-radius: 24px !important;
-    }
+.modal.menu.number-textfield-menu {
+    :root[data-corner=full-round] & { border-radius: 24px }
 
     > div {
-        padding: 4px !important;
+        padding: 4px;
     }
 }
 
 .popover.search-textfield-menu {
     box-shadow: var(--elevation1);
-    
+
     > div {
         padding: 4px 0;
         display: flex;

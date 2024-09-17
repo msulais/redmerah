@@ -14,14 +14,14 @@
     transition-property: opacity;
     transition-duration: .3s;
 
-    [data-corner=sharp] & {border-radius: 0}
-    [data-corner=semi-round] & {border-radius: 8px}
-    [data-corner=full-round] & {border-radius: 20px}
-    [data-theme=dark] & {
+    :root[data-corner=sharp] & {border-radius: 0}
+    :root[data-corner=semi-round] & {border-radius: 8px}
+    :root[data-corner=full-round] & {border-radius: 20px}
+    :root[data-theme=dark] & {
         background-color: rgb(36, 36, 36);
         border: 1px solid rgba(0, 0, 0, var(--opacity-inv5));
     }
-    [data-theme=system] & {
+    :root[data-theme=system] & {
         @media (prefers-color-scheme: dark) {
             background-color: rgb(36, 36, 36);
             border: 1px solid rgba(0, 0, 0, var(--opacity-inv5));
@@ -71,16 +71,16 @@
     background-color: rgb(var(--color-accent));
     transition-duration: .3s;
 
-    [data-corner=sharp] & {
+    :root[data-corner=sharp] & {
         --popover-drag-handle-border-radius: 0px;
         border-radius: 0px;
     }
 
-    [data-corner=semi-round] & {
+    :root[data-corner=semi-round] & {
         --popover-drag-handle-border-radius: 8px;
     }
 
-    [data-corner=full-round] & {
+    :root[data-corner=full-round] & {
         --popover-drag-handle-border-radius: 20px;
     }
 

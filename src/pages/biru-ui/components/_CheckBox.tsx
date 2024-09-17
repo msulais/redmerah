@@ -12,7 +12,6 @@ const _: VoidComponent = () => {
     const [focused, setFocused] = createSignal<boolean>(false)
     const [disableScale, setDisableScale] = createSignal<boolean>(false)
     const [compact, setCompact] = createSignal<boolean>(false)
-    const [desktopCompact, setDesktopCompact] = createSignal<boolean>(false)
     return (<Page
         title="CheckBox"
         description="A checkbox is a UI element that allows users to select multiple options from a list. It typically displays a square box that can be checked or unchecked to indicate selection or deselection.">
@@ -20,7 +19,6 @@ const _: VoidComponent = () => {
             <CheckBox
                 variant={variant()}
                 compact={compact()}
-                desktopCompact={desktopCompact()}
                 disabled={disabled()}
                 focused={focused()}
                 disableScale={disableScale()}>
@@ -42,7 +40,6 @@ const _: VoidComponent = () => {
             <CheckBox value={focused()} onValueChanged={d => setFocused(d)}>Focused</CheckBox>
             <CheckBox value={disableScale()} onValueChanged={d => setDisableScale(d)}>Disable scale</CheckBox>
             <CheckBox value={compact()} onValueChanged={d => setCompact(d)}>Compact</CheckBox>
-            <CheckBox value={desktopCompact()} onValueChanged={d => setDesktopCompact(d)}>Desktop compact</CheckBox>
         </PlaygroundOptions>
     </Page>)
 }

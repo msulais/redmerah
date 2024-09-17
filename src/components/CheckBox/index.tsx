@@ -16,7 +16,6 @@ enum CheckBoxVariant {
 type CheckBoxProps = Omit<JSX.HTMLAttributes<HTMLDivElement>, 'onClick'> & {
     value?: boolean
     compact?: boolean
-    desktopCompact?: boolean
     onValueChanged?: (isSelected: boolean) => unknown
     onClick?: (ev: ComponentEvent<MouseEvent, HTMLDivElement>) => unknown
     disabled?: boolean
@@ -30,8 +29,7 @@ const CheckBox: ParentComponent<CheckBoxProps> = ($props) => {
     const [props, other] = splitProps($$props, [
         _compact, _disabled, _children, _value,
         _onValueChanged, _variant, _class,
-        _onClick, _desktopCompact, _focused,
-        _disableScale
+        _onClick, _focused, _disableScale
     ])
     const [isSelected, setIsSelected] = createSignal<boolean>(false)
     let isSelectedLocal = false
@@ -70,7 +68,6 @@ const CheckBox: ParentComponent<CheckBoxProps> = ($props) => {
         <IconButton
             disabled={props[_disabled]}
             compact={props[_compact]}
-            desktopCompact={props[_desktopCompact]}
             disableScale={props[_disableScale]}
             focused={props[_focused]}
             code={props[_variant] == CheckBoxVariant[_check]? (isSelected()? 0xE3CB : 0xE3D4) : 0xED2F }

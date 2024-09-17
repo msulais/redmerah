@@ -1,5 +1,6 @@
 // root attributes
 // * data-theme=light|dark|system (default: light)
+// * data-platform=desktop|mobile (default: desktop)
 // * data-corner=sharp|semi-round|round|full-round (default: round)
 //      sharp=0px
 //      semi-round=4px
@@ -9,29 +10,29 @@
 :root {
     // background color
     --color-background-light: 250, 250, 250;
-    --color-background-dark: 20, 20, 20;
+    --color-background-dark :  20,  20,  20;
 
     // surface colors
-    --color-surface-light: 255, 255, 255; 
-    --color-on-surface-light: 31, 31, 31; 
-    --color-surface-dark: 26, 26, 26; 
-    --color-on-surface-dark: 250, 250, 250; 
-    
+    --color-surface-light   : 255, 255, 255;
+    --color-on-surface-light:  31,  31,  31;
+    --color-surface-dark    :  26,  26,  26;
+    --color-on-surface-dark : 250, 250, 250;
+
     // error colors
-    --color-error-light: 194, 0, 0;
-    --color-error-dark: 255, 148, 148;
+    --color-error-light   : 194,   0,   0;
+    --color-error-dark    : 255, 148, 148;
     --color-on-error-light: 255, 255, 255;
-    --color-on-error-dark: 0, 0, 0;
+    --color-on-error-dark :   0,   0,   0;
 
     --color-background: var(--color-background-light);
-    --color-accent: var(--color-accent-light); 
-    --color-on-accent: var(--color-on-accent-light); 
-    --color-surface: var(--color-surface-light); 
-    --color-on-surface: var(--color-on-surface-light); 
-    --color-error: var(--color-error-light); 
-    --color-on-error: var(--color-on-error-light); 
+    --color-accent    : var(--color-accent-light    );
+    --color-on-accent : var(--color-on-accent-light );
+    --color-surface   : var(--color-surface-light   );
+    --color-on-surface: var(--color-on-surface-light);
+    --color-error     : var(--color-error-light     );
+    --color-on-error  : var(--color-on-error-light  );
 
-    // opacity level 
+    // opacity level
     --opacity0: .02;
     --opacity1: .04;
     --opacity2: .08;
@@ -47,46 +48,46 @@
     --opacity-border: .32;
 
     // font family
-    --font-family-sans-serif: 
+    --font-family-sans-serif:
         InstrumentSans,
-        system-ui, 
-        -apple-system, 
-        BlinkMacSystemFont, 
-        "Segoe UI", 
-        "Roboto", 
-        "Oxygen", 
-        "Ubuntu", 
-        "Cantarell", 
-        "Fira Sans", 
-        "Droid Sans", 
-        "Helvetica Neue", 
-        Arial, 
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        "Roboto",
+        "Oxygen",
+        "Ubuntu",
+        "Cantarell",
+        "Fira Sans",
+        "Droid Sans",
+        "Helvetica Neue",
+        Arial,
         sans-serif
     ;
-    --font-family-monospace:  
-        ui-monospace, 
-        Menlo, 
-        Monaco, 
-        "Cascadia Mono", 
-        "Segoe UI Mono", 
-        "Roboto Mono", 
-        "Oxygen Mono", 
-        "Ubuntu Monospace", 
+    --font-family-monospace:
+        ui-monospace,
+        Menlo,
+        Monaco,
+        "Cascadia Mono",
+        "Segoe UI Mono",
+        "Roboto Mono",
+        "Oxygen Mono",
+        "Ubuntu Monospace",
         "Source Code Pro",
-        "Fira Mono", 
-        "Droid Sans Mono", 
-        "Courier New", 
+        "Fira Mono",
+        "Droid Sans Mono",
+        "Courier New",
         monospace
     ;
 
     // transitions
-    --transition-spring: cubic-bezier(.15, 0, 0, 1); 
-    --transition-spring-bounce: cubic-bezier(.15, 0, 0, 2); 
+    --transition-spring: cubic-bezier(.15, 0, 0, 1);
+    --transition-spring-bounce: cubic-bezier(.15, 0, 0, 2);
 
     // font sizes
-    
+
     // s: small
-    --font-size-s: 12px; 
+    --font-size-s: 12px;
     --font-size-xs: 14px;
     --font-size-xxs: 16px;
 
@@ -94,7 +95,7 @@
     --font-size-m: 20px;
     --font-size-xm: 24px;
     --font-size-xxm: 28px;
-    
+
     // l: large
     --font-size-l: 32px;
     --font-size-xl: 36px;
@@ -106,10 +107,10 @@
     --font-size-xxd: 52px;
 
     // elevation
-    --elevation1: 0 4px 8px #00000026;     
-    --elevation2: 0 4px 12px #00000026;      
-    --elevation3: 0 4px 16px #00000026;      
-    --elevation4: 0 4px 20px #00000026;      
+    --elevation1: 0 4px 8px #00000026;
+    --elevation2: 0 4px 12px #00000026;
+    --elevation3: 0 4px 16px #00000026;
+    --elevation4: 0 4px 20px #00000026;
     --elevation5: 0 4px 24px #00000026;
 
     background-color: rgb(var(--color-background));
@@ -118,18 +119,18 @@
 
     &[data-theme="dark"] {
         // elevation
-        --elevation1: 0 4px 8px #00000080;             
-        --elevation2: 0 4px 12px #00000080;      
-        --elevation3: 0 4px 16px #00000080;      
-        --elevation4: 0 4px 20px #00000080;      
+        --elevation1: 0 4px 8px #00000080;
+        --elevation2: 0 4px 12px #00000080;
+        --elevation3: 0 4px 16px #00000080;
+        --elevation4: 0 4px 20px #00000080;
         --elevation5: 0 4px 24px #00000080;
-        
+
         --color-background: var(--color-background-dark);
-        --color-accent: var(--color-accent-dark); 
-        --color-on-accent: var(--color-on-accent-dark); 
-        --color-surface: var(--color-surface-dark); 
-        --color-on-surface: var(--color-on-surface-dark); 
-        --color-error: var(--color-error-dark); 
+        --color-accent: var(--color-accent-dark);
+        --color-on-accent: var(--color-on-accent-dark);
+        --color-surface: var(--color-surface-dark);
+        --color-on-surface: var(--color-on-surface-dark);
+        --color-error: var(--color-error-dark);
         --color-on-error: var(--color-on-error-dark);
 
         color-scheme: dark;
@@ -142,22 +143,22 @@
     &[data-theme="system"] {
         @media (prefers-color-scheme: dark) {
             // elevation
-            --elevation1: 0 4px 8px #00000080;      
-            --elevation2: 0 4px 12px #00000080;      
-            --elevation3: 0 4px 16px #00000080;      
-            --elevation4: 0 4px 20px #00000080;      
-            --elevation5: 0 4px 24px #00000080;      
+            --elevation1: 0 4px 8px #00000080;
+            --elevation2: 0 4px 12px #00000080;
+            --elevation3: 0 4px 16px #00000080;
+            --elevation4: 0 4px 20px #00000080;
+            --elevation5: 0 4px 24px #00000080;
 
             --color-background: var(--color-background-dark);
-            --color-accent: var(--color-accent-dark); 
-            --color-on-accent: var(--color-on-accent-dark); 
-            --color-surface: var(--color-surface-dark); 
-            --color-on-surface: var(--color-on-surface-dark); 
-            --color-error: var(--color-error-dark); 
+            --color-accent: var(--color-accent-dark);
+            --color-on-accent: var(--color-on-accent-dark);
+            --color-surface: var(--color-surface-dark);
+            --color-on-surface: var(--color-on-surface-dark);
+            --color-error: var(--color-error-dark);
             --color-on-error: var(--color-on-error-dark);
-    
+
             color-scheme: dark;
-    
+
             & * {
                 color-scheme: dark;
             }

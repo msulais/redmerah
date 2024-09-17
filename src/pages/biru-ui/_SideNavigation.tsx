@@ -18,7 +18,6 @@ const _: VoidComponent<{
         expand={true}>
         <For each={PAGES}>{page =>
             <SideNavigationItem
-                desktopCompact
                 onClick={() => props[_command](Commands.change_page, page[_type])}
                 selected={props[_page] == page[_type]}>
                 {page[_text]}

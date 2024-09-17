@@ -6,9 +6,9 @@
     transform: translate(-50%, -50%);
     transition-duration: .3s;
 
-    [data-corner=sharp] & { border-radius: 0 }
-    [data-corner=semi-round] & { border-radius: 8px }
-    [data-corner=full-round] & { border-radius: 44px }
+    :root[data-corner=sharp] & { border-radius: 0 }
+    :root[data-corner=semi-round] & { border-radius: 8px }
+    :root[data-corner=full-round] & { border-radius: 44px }
 
     &::backdrop {
         transition-duration: .3s;
@@ -72,9 +72,5 @@
 
     &:not(:empty) + .dialog-content {
         padding-top: 8px !important;
-    }
-
-    > .btn {
-        right: -10px;
     }
 }

@@ -30,25 +30,27 @@
 }
 
 .btn.menu-item {
+    --btn-padding: 0 8px;
     justify-content: flex-start;
     margin: 0 4px;
     width: calc(100% - 8px);
+
+    :root[data-platform=desktop] & { min-height: 32px }
+    :root[data-platform=mobile] & { min-height: 48px }
 
     > .btn-layer {
         white-space: nowrap;
     }
 
-    &[data-trailing]{
-        > .btn-layer {
-            width: 100%;
-        }
+    &[data-trailing] > .btn-layer {
+        width: 100%;
     }
 }
 
 .menu-item-trailing-shortcut {
     display: flex;
     gap: 4px;
-    padding: 6px 0;
+    padding: 4px 0;
 }
 
 .popover.sub-menu {

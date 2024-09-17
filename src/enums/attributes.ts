@@ -1,6 +1,7 @@
 export enum RootAttributes {
-    theme = 'data-theme', 
-    corner = 'data-corner'
+    theme = 'data-theme',
+    corner = 'data-corner',
+    platform = 'data-platform'
 }
 
 export enum BodyAttributes {
@@ -31,8 +32,8 @@ export enum PopoverAttributes {
 }
 
 export enum ModalAttributes {
-    open = 'data-open', 
+    open = 'data-open',
     modal = 'data-modal',
-    focus = 'data-focus', 
+    focus = 'data-focus',
     focusTimeoutId = 'data-focus-timeout-id'
 }

@@ -1,5 +1,8 @@
 ---
+import icon from '@/assets/apps/biru-ui-splash.svg'
+
 import Html from '@/layouts/Html/index.astro';
+import Splash from '@/layouts/Splash/index.astro';
 import App from './_App'
 
 export const prerender = true;
@@ -17,6 +20,8 @@ export const prerender = true;
 		<link rel="manifest" href="/favicon/biru-ui/site.webmanifest">
 	</Fragment>
 	<App client:only="solid-js"/>
+	<Splash src={icon.src} alt="Biru UI icon splash"/>
 </Html>
 
 <script is:inline src='/scripts/theme.js'/>
+<script is:inline src='/scripts/platform.js'/>

@@ -6,6 +6,10 @@
     min-height: 56px;
     gap: 8px;
 
+    :root[data-platform=desktop] & {
+        min-height: 52px;
+    }
+
     > div {
         display: flex;
         align-items: center;

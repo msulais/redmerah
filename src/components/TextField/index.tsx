@@ -17,7 +17,7 @@ import Popover, { closePopover, openPopover, PopoverPosition as SearchMenuPositi
 import Menu, { MenuItem, LinkMenuItem, MenuDivider, MenuHeader, openMenu, MenuPosition } from '@/components/Menu'
 import './index.scss'
 
-const HEIGHT_TEXT_INPUT_PER_LINE = 18
+const HEIGHT_TEXT_INPUT_PER_LINE = 20
 
 enum TextFieldType {
     text = 'text',

@@ -1,7 +1,11 @@
-import { createSignal, type VoidComponent } from "solid-js"
+import { createSignal, onMount, type VoidComponent } from "solid-js"
 
 import { Commands, Pages } from "./_enums"
-import { _button } from "@/constants/string"
+import { _animate, _button, _finished, _remove, _splash, _spring, _then } from "@/constants/string"
+import { AnimationEffectTiming } from "@/enums/animation"
+import { ElementIds } from "@/enums/ids"
+import { getElementById } from "@/utils/element"
+import { setMicrotask } from "@/utils/timeout"
 
 import App from "@/components/App"
 import AppBar from './_AppBar'
@@ -17,6 +21,23 @@ const _: VoidComponent = () => {
         }
         return
     }
+
+    function removeSplashScreen(): void {
+        setMicrotask(() => {
+            const splash_ref = getElementById(ElementIds[_splash]) as HTMLDivElement
+            splash_ref[_animate](
+                {opacity: 0},
+                {
+                    duration: 1000,
+                    easing: AnimationEffectTiming[_spring]
+                }
+            )[_finished][_then](() => splash_ref[_remove]())
+        })
+    }
+
+    onMount(() => {
+        removeSplashScreen()
+    })
 
     return (<App
         class={CSS.app}

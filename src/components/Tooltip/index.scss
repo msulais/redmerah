@@ -27,8 +27,8 @@
     transition-duration: .3s;
     transition-timing-function: var(--transition-spring-bounce);
 
-    [data-corner=sharp] & { border-radius: 0 }
-    [data-corner=full-round] & { border-radius: 14px }
+    :root[data-corner=sharp] & { border-radius: 0 }
+    :root[data-corner=full-round] & { border-radius: 14px }
 
     &[data-open] {
         opacity: 1;

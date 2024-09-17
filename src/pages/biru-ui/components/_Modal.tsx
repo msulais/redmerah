@@ -38,7 +38,7 @@ const _: VoidComponent = () => {
                 <div style={{padding: '16px'}}>
                     <TextField placeholder="Feedback"/>
                     <p style={{margin: '8px 0'}}>Consequat commodo sint incididunt nulla duis commodo elit enim aliquip ex occaecat eiusmod.</p>
-                    <Button desktopCompact onClick={(_ev) => closeModal(modal_ref)} variant={ButtonVariant[_filled]}>Close modal</Button>
+                    <Button onClick={(_ev) => closeModal(modal_ref)} variant={ButtonVariant[_filled]}>Close modal</Button>
                 </div>
             </Modal>
         </Playground>

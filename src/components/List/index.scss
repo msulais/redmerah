@@ -7,13 +7,13 @@
     padding: 4px 0;
     width: 100%;
     border-radius: 8px;
-    
-    [data-corner=sharp] & {border-radius: 0}
-    [data-corner=semi-round] & {border-radius: 4px}
-    [data-corner=full-round] & {border-radius: 20px}
-    
+
+    :root[data-corner=sharp] & {border-radius: 0}
+    :root[data-corner=semi-round] & {border-radius: 4px}
+    :root[data-corner=full-round] & {border-radius: 20px}
+
     &[data-trailing] {
-        [data-corner=full-round] & {border-radius: 25px}
+        :root[data-corner=full-round] & {border-radius: 25px}
     }
 
     &[data-compact] {

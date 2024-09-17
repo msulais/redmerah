@@ -31,19 +31,18 @@
     position: fixed;
     right: 16px;
     bottom: 16px;
-    // top: auto;
     z-index: 200;
 }
 
-.app-left-sidebar, 
+.app-left-sidebar,
 .app-right-sidebar {
     max-height: 100%;
     overflow: auto;
 }
 
 :is(
-    .app-appbar, .app-left-sidebar, 
-    .app-right-sidebar, 
+    .app-appbar, .app-left-sidebar,
+    .app-right-sidebar,
     .app-bottombar, .app-fab
 ):empty {
     display: none;

@@ -17,7 +17,6 @@ const _: VoidComponent = () => {
     const [icon, setIcon] = createSignal<boolean>(false)
     const [disableScale, setDisableScale] = createSignal<boolean>(false)
     const [compact, setCompact] = createSignal<boolean>(false)
-    const [desktopCompact, setDesktopCompact] = createSignal<boolean>(false)
     const [indicatorPosition, setIndicatorPosition] = createSignal<ButtonIndicatorPosition>(ButtonIndicatorPosition[_bottom])
     return (<Page
         title="Buttons"
@@ -30,7 +29,6 @@ const _: VoidComponent = () => {
                     compact={compact()}
                     focused={focused()}
                     selected={selected()}
-                    desktopCompact={desktopCompact()}
                     indicatorPosition={indicatorPosition()}
                     disableScale={disableScale()}>
                     <Show when={icon()}>
@@ -47,7 +45,6 @@ const _: VoidComponent = () => {
                     compact={compact()}
                     focused={focused()}
                     selected={selected()}
-                    desktopCompact={desktopCompact()}
                     indicatorPosition={indicatorPosition()}
                     disableScale={disableScale()}
                     code={0xE54B}
@@ -61,7 +58,6 @@ const _: VoidComponent = () => {
                     compact={compact()}
                     focused={focused()}
                     selected={selected()}
-                    desktopCompact={desktopCompact()}
                     indicatorPosition={indicatorPosition()}
                     disableScale={disableScale()}
                     emoji={'🏛'}
@@ -76,7 +72,6 @@ const _: VoidComponent = () => {
                     compact={compact()}
                     focused={focused()}
                     selected={selected()}
-                    desktopCompact={desktopCompact()}
                     indicatorPosition={indicatorPosition()}
                     disableScale={disableScale()}>
                     <Show when={icon()}>
@@ -94,7 +89,6 @@ const _: VoidComponent = () => {
                     compact={compact()}
                     focused={focused()}
                     selected={selected()}
-                    desktopCompact={desktopCompact()}
                     indicatorPosition={indicatorPosition()}
                     disableScale={disableScale()}
                     code={0xE54B}
@@ -109,7 +103,6 @@ const _: VoidComponent = () => {
                     compact={compact()}
                     focused={focused()}
                     selected={selected()}
-                    desktopCompact={desktopCompact()}
                     indicatorPosition={indicatorPosition()}
                     disableScale={disableScale()}
                     emoji={'😁'}
@@ -123,7 +116,6 @@ const _: VoidComponent = () => {
                     compact={compact()}
                     focused={focused()}
                     selected={selected()}
-                    desktopCompact={desktopCompact()}
                     indicatorPosition={indicatorPosition()}
                     disableScale={disableScale()}>
                     <Show when={icon()}>
@@ -141,7 +133,6 @@ const _: VoidComponent = () => {
                     compact={compact()}
                     focused={focused()}
                     selected={selected()}
-                    desktopCompact={desktopCompact()}
                     indicatorPosition={indicatorPosition()}
                     disableScale={disableScale()}>
                     <Show when={icon()}>
@@ -184,7 +175,6 @@ const _: VoidComponent = () => {
             <CheckBox value={icon()} onValueChanged={d => setIcon(d)}>Show icon</CheckBox>
             <CheckBox value={disableScale()} onValueChanged={d => setDisableScale(d)}>Disable scale</CheckBox>
             <CheckBox value={compact()} onValueChanged={d => setCompact(d)}>Compact</CheckBox>
-            <CheckBox value={desktopCompact()} onValueChanged={d => setDesktopCompact(d)}>Desktop compact</CheckBox>
         </PlaygroundOptions>
     </Page>)
 }

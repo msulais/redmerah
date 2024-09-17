@@ -29,7 +29,6 @@ type ButtonProps = JSX.ButtonHTMLAttributes<HTMLButtonElement> & {
     disableScale?: boolean
     compact?: boolean
     selected?: boolean
-    desktopCompact?: boolean
     indicatorPosition?: ButtonIndicatorPosition
     layerAttr?: JSX.HTMLAttributes<HTMLDivElement>
 }
@@ -43,7 +42,6 @@ const Button: ParentComponent<ButtonProps> = ($props) => {
         _children, _indicatorPosition, _variant,
         _focused, _compact, _selected, _layerAttr,
         _disableScale, _classList, _type, _class,
-        _desktopCompact
     ])
 
     return (<button
@@ -55,7 +53,6 @@ const Button: ParentComponent<ButtonProps> = ($props) => {
             ...props[_classList]
         }}
         type={props[_type] as ("button" | "submit" | "reset" | undefined)}
-        data-desktop-compact={toggleAttribute(props[_desktopCompact])}
         data-indicator={props[_selected]? props[_indicatorPosition] : undefined}
         data-selected={toggleAttribute(props[_selected])}
         data-focused={toggleAttribute(props[_focused])}
@@ -75,7 +72,6 @@ type LinkButtonProps = Omit<JSX.AnchorHTMLAttributes<HTMLAnchorElement>, 'onClic
     selected?: boolean
     disableScale?: boolean
     indicatorPosition?: ButtonIndicatorPosition
-    desktopCompact?: boolean
     layerAttr?: JSX.HTMLAttributes<HTMLDivElement>
     onClick?: (ev: ComponentEvent<MouseEvent, HTMLAnchorElement>) => unknown
 }
@@ -88,8 +84,8 @@ const LinkButton: ParentComponent<LinkButtonProps> = ($props) => {
     const [props, other] = splitProps($$props, [
         _openInNewTab, _children, _indicatorPosition,
         _variant, _focused, _compact, _selected, _layerAttr,
-        _disableScale, _classList, _class, _desktopCompact,
-        _disabled, _onClick
+        _disableScale, _classList, _class, _disabled,
+        _onClick
     ])
 
     return (<a
@@ -107,7 +103,6 @@ const LinkButton: ParentComponent<LinkButtonProps> = ($props) => {
             ...props[_classList]
         }}
         data-indicator={props[_selected]? props[_indicatorPosition] : undefined}
-        data-desktop-compact={toggleAttribute(props[_desktopCompact])}
         data-disabled={toggleAttribute(props[_disabled])}
         data-selected={toggleAttribute(props[_selected])}
         data-focused={toggleAttribute(props[_focused])}

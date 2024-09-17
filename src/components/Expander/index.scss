@@ -8,19 +8,19 @@
     overflow: hidden;
     transition-duration: .3s;
     border-radius: 8px;
-    
-    [data-corner=sharp] & {border-radius: 0}
-    [data-corner=semi-round] & {border-radius: 4px}
-    [data-corner=full-round] & {border-radius: 20px}
+
+    :root[data-corner=sharp] & {border-radius: 0}
+    :root[data-corner=semi-round] & {border-radius: 4px}
+    :root[data-corner=full-round] & {border-radius: 20px}
 
     &[data-open] {
         border-radius: 0 0 8px 8px;
-        [data-corner=sharp] & {border-radius: 0}
-        [data-corner=semi-round] & {border-radius: 0 0 4px 4px}
-        [data-corner=full-round] & {border-radius: 0 0 20px 20px}
+        :root[data-corner=sharp] & {border-radius: 0}
+        :root[data-corner=semi-round] & {border-radius: 0 0 4px 4px}
+        :root[data-corner=full-round] & {border-radius: 0 0 20px 20px}
 
         &[data-trailing] {
-            [data-corner=full-round] & {border-radius: 0 0 25px 25px}
+            :root[data-corner=full-round] & {border-radius: 0 0 25px 25px}
         }
     }
 
@@ -77,7 +77,7 @@
                 cursor: pointer;
             }
         }
-        
+
         &:active {
             --bg-opacity: var(--opacity0);
             --expander-border-opacity: var(--opacity1);

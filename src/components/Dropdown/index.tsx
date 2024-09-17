@@ -66,6 +66,7 @@ const Dropdown: VoidComponent<DropdownProps> = ($props) => {
         openMenu(ev, menu_dropdown_ref, {
             anchor: label_dropdown_ref,
             padding: 0,
+            gap: 4,
             position: DropdownPosition[_centerBottom],
             allowHideAnchor: false
         })

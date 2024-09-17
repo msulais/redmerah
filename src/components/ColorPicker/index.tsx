@@ -394,6 +394,7 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
             <div>
                 <div
                     data-hide-color={toggleAttribute(props[_disabledColorControl])}
+                    data-hide-opacity={toggleAttribute(props[_disabledOpacityControl])}
                     class="color-picker-selected-color"
                     style={{'background-color': getHexColor()}}
                 />

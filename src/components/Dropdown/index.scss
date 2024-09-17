@@ -1,7 +1,6 @@
 .textfield.dropdown {
     &:not([data-dropdown-readonly]){
         > div:first-child {
-
             @media (hover:hover) {
                 &:hover {
                     cursor: pointer;
@@ -17,10 +16,9 @@
                 --bg-opacity: var(--opacity2);
             }
 
-            &[data-readonly] {
-                &::before {
-                    min-height: 2px;
-                }
+            &[data-readonly]::before {
+                min-height: 2px;
+                border-radius: 2px 2px 0 0;
             }
 
             &[data-focused] {
@@ -28,19 +26,10 @@
                 --bg-color: var(--color-surface);
                 border-color: rgba(var(--color-on-surface), var(--opacity2));
 
-                &[data-compact] {
-                    &::before {
-                        animation: dropdown-start-focus-compact .3s var(--transition-spring);
-                    }
-                }
-
                 &::before {
                     background-color: rgb(var(--color-accent));
-                    animation: dropdown-start-focus .3s var(--transition-spring);
 
-                    [data-corner=full-round] & {
-                        animation: full-round-dropdown-start-focus .3s var(--transition-spring);
-                    }
+                    animation: dropdown-start-focus .3s var(--transition-spring);
                 }
             }
         }
@@ -48,30 +37,8 @@
 }
 
 @keyframes dropdown-start-focus {
-    from {
-        width: 0;
-    }
-    to {
-        width: calc(100% - 24px);
-    }
-}
-
-@keyframes dropdown-start-focus-compact {
-    from {
-        width: 0;
-    }
-    to {
-        width: calc(100% - 16px);
-    }
-}
-
-@keyframes full-round-dropdown-start-focus {
-    from {
-        width: 0;
-    }
-    to {
-        width: calc(100% - 40px);
-    }
+    from { width: 0 }
+    to { width: calc(100% - var(--textfield-border-radius) * 2) }
 }
 
 :is(.dropdown-header, .dropdown-footer) {

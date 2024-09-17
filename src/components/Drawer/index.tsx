@@ -3,12 +3,12 @@ import { type JSX, type ParentComponent, Show, splitProps, children, mergeProps 
 import { _indicatorPosition, _selected, _leading, _children, _trailing, _classList, _iconCode, _variant, _disableScale, _tonal, _left, _header, _footer, _position, _right, _openAnimation, _closeAnimation, _spring, _animate, _none, _finished, _then, _auto, _style, _top } from "@/constants/string"
 import { toggleAttribute } from "@/utils/attributes"
 import { isVarHasValue } from "@/utils/data"
+import { AnimationEffectTiming } from "@/enums/animation"
 
 import Icon from "@/components/Icon"
 import Button, { ButtonIndicatorPosition, ButtonVariant, type ButtonProps } from "@/components/Button"
 import { Modal, type ModalProps, openModal, closeModal, focusModal } from "@/components/Modal"
 import './index.scss'
-import { AnimationEffectTiming } from "@/enums/animation"
 
 function openDrawer(ev: Event, drawer: HTMLDialogElement, options?: {
     important?: boolean

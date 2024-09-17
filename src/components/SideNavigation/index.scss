@@ -7,7 +7,7 @@
     max-width: 56px;
     height: 100%;
     transition-duration: .3s;
-    
+
     &[data-expand] {
         width: 280px;
         max-width: 280px;
@@ -55,15 +55,13 @@
         @media (hover: none) {
             min-height: 40px !important;
 
-            [data-corner=full-round] & {
+            :root[data-corner=full-round] & {
                 border-radius: 20px !important;
             }
         }
 
-        &[data-trailing]{
-            > .btn-layer {
-                width: 100%;
-            }
+        &[data-trailing] > .btn-layer {
+            width: 100%;
         }
 
         > .btn-layer {

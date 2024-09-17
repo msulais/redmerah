@@ -1,13 +1,14 @@
 import { Transition } from "solid-transition-group"
 import { For, Match, Show, Switch, createEffect, createMemo, createSignal, mergeProps, splitProps, type VoidComponent } from "solid-js"
 
-import { _ref, _date, _onSelectDate, _firstDate, _lastDate, _locales, _classList, _children, _onClose, _day, _getDay, _includes, _setMonth, _month, _setFullYear, _year, _substring, _fill, _filled, _outlined, _animate, _finished, _spring, _then } from "@/constants/string"
+import { _ref, _date, _onSelectDate, _firstDate, _lastDate, _locales, _classList, _children, _onClose, _day, _getDay, _includes, _setMonth, _month, _setFullYear, _year, _substring, _fill, _filled, _outlined, _animate, _finished, _spring, _then, _tonal } from "@/constants/string"
 import { getCurrentDate, getDate_Y, getDate_M, getWeekdayNames, isOutDate_YMD, isSameDate_YMD, getMonthNames, isOutDate_YM, isSameDate_YM, isOutDate_Y, isSameDate_Y, getMonthText, isInDate_YM } from "@/utils/datetime"
 import { AnimationEffectTiming } from "@/enums/animation"
 
 import Button, { ButtonVariant, IconButton, SquareButton } from "@/components/Button"
 import { repositionModal, closeModal, openModal, focusModal, Modal, type ModalProps, ModalPosition as DatePickerPosition } from "@/components/Modal"
 import './index.scss'
+import Divider from "../Divider"
 
 enum DatePickerOption {
     year,
@@ -184,7 +185,8 @@ const DatePicker: VoidComponent<DatePickerProps> = ($props) => {
                 onClick={() => setDateOption(d => {
                     if (d == DatePickerOption[_month]) return DatePickerOption[_year]
                     return DatePickerOption[_month]
-                })}>
+                })}
+                variant={ButtonVariant[_tonal]}>
                 <Switch>
                     <Match when={dateOption() == DatePickerOption[_day]}>
                         {getMonthText(viewDate(), props[_locales]) + ' ' + getDate_Y(viewDate())}
@@ -209,6 +211,7 @@ const DatePicker: VoidComponent<DatePickerProps> = ($props) => {
             <IconButton code={0xE400} onClick={() => previous()}/>
             <IconButton code={0xE402} onClick={() => next()}/>
         </div>
+        <Divider />
         <Transition
             onEnter={(el, done) => {el[_animate](
                 { opacity: [0, 1], transform: ['translateY(-12px)', 'none'] },

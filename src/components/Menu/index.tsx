@@ -38,8 +38,7 @@ const MenuItem: ParentComponent<MenuItemProps> = ($props) => {
     const [props, other] = splitProps($props, [
         _checked, _selected, _leading, _children,
         _trailing, _classList, _iconCode, _variant,
-        _indicatorPosition, _disableScale,
-        _desktopCompact
+        _indicatorPosition, _disableScale
     ])
     const trailingComponent = children(() => props[_trailing])
 
@@ -48,7 +47,6 @@ const MenuItem: ParentComponent<MenuItemProps> = ($props) => {
         selected={props[_selected]}
         indicatorPosition={props[_indicatorPosition] ?? ButtonIndicatorPosition[_left]}
         disableScale={props[_disableScale] ?? (trailingComponent()? true : undefined)}
-        desktopCompact={props[_desktopCompact] ?? true}
         data-trailing={toggleAttribute(trailingComponent())}
         classList={{'menu-item': true, ...props[_classList]}}
         {...other}>
@@ -98,7 +96,6 @@ const LinkMenuItem: ParentComponent<LinkMenuItemProps> = ($props) => {
         _checked, _selected, _leading, _children,
         _trailing, _classList, _iconCode, _variant,
         _indicatorPosition, _disableScale,
-        _desktopCompact
     ])
     const trailingComponent = children(() => props[_trailing])
 
@@ -107,7 +104,6 @@ const LinkMenuItem: ParentComponent<LinkMenuItemProps> = ($props) => {
         selected={props[_selected]}
         indicatorPosition={props[_indicatorPosition] ?? ButtonIndicatorPosition[_left]}
         disableScale={props[_disableScale] ?? (trailingComponent()? true : undefined)}
-        desktopCompact={props[_desktopCompact] ?? true}
         data-trailing={toggleAttribute(trailingComponent())}
         classList={{'menu-item': true, ...props[_classList]}}
         {...other}>

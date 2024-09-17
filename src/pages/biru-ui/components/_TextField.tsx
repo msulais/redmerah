@@ -35,17 +35,17 @@ const _: VoidComponent = () => {
     const [limitMaxLine, setLimitMaxLine] = createSignal<boolean>(false)
 
     const Options: VoidComponent = () => (<>
-        <CheckBox desktopCompact value={leading()} onValueChanged={v => setLeading(v)}>Leading</CheckBox>
-        <CheckBox desktopCompact value={trailing()} onValueChanged={v => setTrailing(v)}>Trailing</CheckBox>
-        <CheckBox desktopCompact value={labelText()} onValueChanged={v => setLabelText(v)}>Label text</CheckBox>
+        <CheckBox value={leading()} onValueChanged={v => setLeading(v)}>Leading</CheckBox>
+        <CheckBox value={trailing()} onValueChanged={v => setTrailing(v)}>Trailing</CheckBox>
+        <CheckBox value={labelText()} onValueChanged={v => setLabelText(v)}>Label text</CheckBox>
         <Show when={labelText()}>
-            <CheckBox desktopCompact value={autoHideLabel()} onValueChanged={v => setAutoHideLabel(v)}>Auto hide label</CheckBox>
+            <CheckBox value={autoHideLabel()} onValueChanged={v => setAutoHideLabel(v)}>Auto hide label</CheckBox>
         </Show>
-        <CheckBox desktopCompact value={placeholder()} onValueChanged={v => setPlaceholder(v)}>Placeholder</CheckBox>
-        <CheckBox desktopCompact value={messageText()} onValueChanged={v => setMessageText(v)}>Message text</CheckBox>
-        <CheckBox desktopCompact value={autoShowClearBtn()} onValueChanged={v => setAutoShowClearBtn(v)}>Auto show clear button</CheckBox>
-        <CheckBox desktopCompact value={readOnly()} onValueChanged={v => setReadOnly(v)}>Read only</CheckBox>
-        <CheckBox desktopCompact value={compact()} onValueChanged={v => setCompact(v)}>Compact</CheckBox>
+        <CheckBox value={placeholder()} onValueChanged={v => setPlaceholder(v)}>Placeholder</CheckBox>
+        <CheckBox value={messageText()} onValueChanged={v => setMessageText(v)}>Message text</CheckBox>
+        <CheckBox value={autoShowClearBtn()} onValueChanged={v => setAutoShowClearBtn(v)}>Auto show clear button</CheckBox>
+        <CheckBox value={readOnly()} onValueChanged={v => setReadOnly(v)}>Read only</CheckBox>
+        <CheckBox value={compact()} onValueChanged={v => setCompact(v)}>Compact</CheckBox>
     </>)
 
     return (<Page

@@ -1,6 +1,6 @@
 import { createSignal, For, onMount, Show, type VoidComponent } from "solid-js"
 
-import { _system, _round, _change, _matches, _theme, _corner, _light, _dark, _includes, _sharp, _semiRound, _fullRound, _home, _src, _apps, _about, _privacy, _terms, _share, _URL, _contactEmail, _donate, _getFullYear, _currentTarget, _centerBottomToLeft, _command, _page, _text, _type } from "@/constants/string"
+import { _system, _round, _change, _matches, _theme, _corner, _light, _dark, _includes, _sharp, _semiRound, _fullRound, _home, _src, _apps, _about, _privacy, _terms, _share, _URL, _contactEmail, _donate, _getFullYear, _currentTarget, _centerBottomToLeft, _command, _page, _text, _type, _platform, _hybrid, _mobile, _desktop } from "@/constants/string"
 import { getDocument, getNavigator, getRoot } from "@/constants/window"
 import { RootAttributes } from "@/enums/attributes"
 import { CornerData } from "@/enums/corner"
@@ -17,6 +17,7 @@ import { timeout } from "@/utils/timeout"
 import { addClassListModule } from "@/utils/element"
 import { RoutesLinks, ExternalLinks } from "@/enums/links"
 import { encodeURL } from "@/utils/url"
+import { PlatformData } from "@/enums/platforms"
 import logo from '@/assets/apps/biru-ui-logo.svg'
 import redmerahLogo from '@/assets/logo.svg'
 
@@ -34,19 +35,30 @@ const _: VoidComponent<{
     const [is_menu_info_open, setIs_menu_info_open] = createSignal<boolean>(false)
     const [is_menu_themeSettings_open, setIs_menu_themeSettings_open] = createSignal<boolean>(false)
     const [is_menu_cornerSettings_open, setIs_menu_cornerSettings_open] = createSignal<boolean>(false)
+    const [is_menu_platformSettings_open, setIs_menu_platformSettings_open] = createSignal<boolean>(false)
     const [is_menu_settings_open, setIs_menu_settings_open] = createSignal<boolean>(false)
     const [isSideNavigationHidden, setIsSideNavigationHidden] = createSignal<boolean>(false)
     const [theme, setTheme] = createSignal<ThemeData>(ThemeData[_system])
     const [corner, setCorner] = createSignal<CornerData>(CornerData[_round])
+    const [platform, setPlatform] = createSignal<PlatformData>(PlatformData[_hybrid])
     let drawer_navigation_ref: HTMLDialogElement
     let menu_info_ref: HTMLDialogElement
     let menu_settings_ref: HTMLDialogElement
     let submenu_themeSettings_ref: HTMLDivElement
     let submenu_cornerSettings_ref: HTMLDivElement
+    let submenu_platformSettings_ref: HTMLDivElement
 
     function initSideNavigationListener(): void {
         setIsSideNavigationHidden(isMatchMedia(`(max-width: ${SIZE_SIDE_NAVIGATION_NONE}px)`))
         addEventListener(matchMedia(`(max-width: ${SIZE_SIDE_NAVIGATION_NONE}px)`), _change, ev => setIsSideNavigationHidden((ev as MediaQueryListEvent)[_matches]))
+    }
+
+    async function changePlatform(platform: PlatformData): Promise<void> {
+        setPlatform(platform)
+        setAttribute(getRoot(), RootAttributes[_platform], platform)
+        closeSubMenu(submenu_platformSettings_ref)
+        await timeout(300)
+        closeMenu(menu_settings_ref)
     }
 
     async function changeTheme(theme: ThemeData): Promise<void> {
@@ -152,7 +164,6 @@ const _: VoidComponent<{
                 </LinkMenuItem>
                 <MenuHeader>&copy; {new Date()[_getFullYear]()} Redmerah</MenuHeader>
             </Menu>
-
             <Menu
                 ref={r => menu_settings_ref = r}
                 onToggleOpen={(v) => setIs_menu_settings_open(v)}>
@@ -216,6 +227,34 @@ const _: VoidComponent<{
                         iconCode={0xE408}
                         onClick={() => changeCorner(CornerData[_fullRound])}>
                         Full round
+                    </MenuItem>
+                </SubMenu>
+                <SubMenu
+                    level={1}
+                    ref={r => submenu_platformSettings_ref = r}
+                    onToggleOpen={v => setIs_menu_platformSettings_open(v)}
+                    item={<SubMenuItem
+                        focused={is_menu_platformSettings_open()}
+                        iconCode={0xE5CB}>
+                        Platform
+                    </SubMenuItem>}>
+                    <MenuItem
+                        selected={platform() == PlatformData[_hybrid]}
+                        iconCode={0xEC76}
+                        onClick={() => changePlatform(PlatformData[_hybrid])}>
+                        Hybrid
+                    </MenuItem>
+                    <MenuItem
+                        selected={platform() == PlatformData[_desktop]}
+                        iconCode={0xE5AD}
+                        onClick={() => changePlatform(PlatformData[_desktop])}>
+                        Desktop
+                    </MenuItem>
+                    <MenuItem
+                        selected={platform() == PlatformData[_mobile]}
+                        iconCode={0xEC5C}
+                        onClick={() => changePlatform(PlatformData[_mobile])}>
+                        Mobile
                     </MenuItem>
                 </SubMenu>
             </Menu>

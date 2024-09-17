@@ -8,6 +8,7 @@ import '@/styles/variables.scss'
 import '@/styles/animations.scss'
 import '@/styles/index.scss'
 import type { HEXColor } from '@/types/color'
+import { PlatformData } from '@/enums/platforms'
 
 type Props = {
     title?: string
@@ -34,7 +35,7 @@ const colorToCSS = (hex: string) => {
 }
 ---
 
-<html lang={ lang } data-theme={ theme } data-corner={ corner }>
+<html lang={ lang } data-platform={ PlatformData.desktop } data-theme={ theme } data-corner={ corner }>
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />

@@ -10,6 +10,7 @@ import Button, { ButtonVariant, IconButton, SquareButton } from '@/components/Bu
 import Dropdown, { type Item as $DropdownItem } from '@/components/Dropdown'
 import { closeModal, openModal, focusModal, Modal, type ModalProps, repositionModal, ModalPosition as DateTimePickerPosition } from '@/components/Modal'
 import './index.scss'
+import Divider from '../Divider'
 
 enum DatePickerOption {
     year,
@@ -190,7 +191,8 @@ const DateTimePicker: VoidComponent<DateTimePickerProps> = ($props) => {
                 onClick={() => setDateOption(d => {
                     if (d == DatePickerOption[_month]) return DatePickerOption[_year]
                     return DatePickerOption[_month]
-                })}>
+                })}
+                variant={ButtonVariant[_tonal]}>
                 <Switch>
                     <Match when={dateOption() == DatePickerOption[_day]}>
                         {getMonthText(viewDate(), props[_locales]) + ' ' + getDate_Y(viewDate())}
@@ -215,6 +217,7 @@ const DateTimePicker: VoidComponent<DateTimePickerProps> = ($props) => {
             <IconButton code={0xE400} onClick={() => previous()}/>
             <IconButton code={0xE402} onClick={() => next()}/>
         </div>
+        <Divider />
         <Transition
             onEnter={(el, done) => {el[_animate](
                 { opacity: [0, 1], transform: ['translateY(-12px)', 'none'] },

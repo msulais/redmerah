@@ -1,23 +1,27 @@
 .modal.drawer {
     background-color: rgb(var(--color-surface)) !important;
     border-radius: 0 12px 12px 0;
-    width: 280px;
     height: 100dvh;
     box-shadow: var(--elevation3);
     max-height: 100dvh;
+    width: 280px;
     max-width: min(280px, calc(100% - 80px));
     opacity: 1;
     transform: translateX(-100%);
 
-    [data-corner=sharp] & { border-radius: 0 }
-    [data-corner=semi-round] & { border-radius: 0 8px 8px 0 }
-    [data-corner=full-round] & { border-radius: 0 28px 28px 0 }
+    :root[data-platform=mobile] & {
+        width: 360px;
+        max-width: min(360px, calc(100% - 80px));
+    }
+    :root[data-corner=sharp] & { border-radius: 0 }
+    :root[data-corner=semi-round] & { border-radius: 0 8px 8px 0 }
+    :root[data-corner=full-round] & { border-radius: 0 24px 24px 0 }
 
     &[data-right] {
         transform: translateX(100%);
         border-radius: 12px 0 0 12px;
-        [data-corner=semi-round] & { border-radius: 8px 0 0 8px }
-        [data-corner=full-round] & { border-radius: 28px 0 0 28px }
+        :root[data-corner=semi-round] & { border-radius: 8px 0 0 8px }
+        :root[data-corner=full-round] & { border-radius: 24px 0 0 24px }
     }
 
     &::backdrop {
@@ -47,10 +51,15 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
-    padding: 8px;
+    padding: 4px;
 
     &:empty {
         display: none;
+    }
+
+    :root[data-platform=mobile] & {
+        padding: 12px;
+        gap: 1px;
     }
 }
 
@@ -58,34 +67,38 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
-    padding: 8px;
+    padding: 4px;
     flex: 1;
     max-height: 100%;
     width: 100%;
     overflow: auto;
+
+    :root[data-platform=mobile] & {
+        padding: 12px;
+        gap: 1px;
+    }
 }
 
 .drawer-header {
     width: 100%;
     font-size: var(--font-size-m);
     font-weight: 500;
-    padding: 8px 8px 0 8px;
+    padding: 4px 4px 0 4px;
     min-height: 40px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 4px;
 
     &:empty {
         display: none;
     }
 
-    &:not(:empty) + .drawer-content {
-        padding-top: 8px !important;
+    :root[data-platform=mobile] & {
+        padding: 12px 12px 0 12px;
     }
 }
 
 .btn.drawer-item {
-    --btn-padding: 4px 8px;
     justify-content: flex-start;
     width: 100%;
 
@@ -93,18 +106,29 @@
         color: rgb(var(--color-accent));
     }
 
-    @media (hover: none) {
-        min-height: 40px !important;
+    :root[data-platform=mobile] & {
+        --btn-padding: 4px 16px;
+        min-height: 56px;
 
-        [data-corner=full-round] & {
-            border-radius: 20px !important;
+        > .btn-layer {
+            gap: 12px;
         }
     }
 
-    &[data-trailing]{
-        > .btn-layer {
-            width: 100%;
+    :root[data-platform=mobile][data-corner=full-round] & {
+        border-radius: 28px;
+
+        &::before {
+            --btn-indicator-size: max(var(--btn-indicator-weight), calc(100% - 56px));
         }
+
+        &:is([data-indicator=top],[data-indicator=bottom])::before {
+            --btn-indicator-size: max(var(--btn-indicator-weight), calc(100% - 56px));
+        }
+    }
+
+    &[data-trailing] > .btn-layer {
+        width: 100%;
     }
 
     > .btn-layer {
