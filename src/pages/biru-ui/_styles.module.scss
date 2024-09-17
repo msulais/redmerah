@@ -10,10 +10,10 @@ $side_navigation_none: 680px;
     border-right: none;
     border-radius: 16px 0 0 0;
 
-    [data-corner=sharp] & { border-radius: 0 }
-    [data-corner=semi-round] & { border-radius: 8px 0 0 0 }
-    [data-corner=full-round] & { border-radius: 20px 0 0 0 }
-    
+    :root[data-corner=sharp] & { border-radius: 0 }
+    :root[data-corner=semi-round] & { border-radius: 8px 0 0 0 }
+    :root[data-corner=full-round] & { border-radius: 20px 0 0 0 }
+
     @media (max-width: $side_navigation_none) {
         border-radius: 0 !important;
         border-left: none;
@@ -24,7 +24,7 @@ $side_navigation_none: 680px;
     width: 820px;
     max-width: 100%;
     padding: 24px;
-    
+
     @media (max-width: $side_navigation_none) {
         padding: 16px;
     }
@@ -54,9 +54,9 @@ $side_navigation_none: 680px;
     gap: 8px;
     align-items: center;
 
-    [data-corner=sharp] & { border-radius: 0 }
-    [data-corner=semi-round] & { border-radius: 4px }
-    [data-corner=full-round] & { border-radius: 20px }
+    :root[data-corner=sharp] & { border-radius: 0 }
+    :root[data-corner=semi-round] & { border-radius: 4px }
+    :root[data-corner=full-round] & { border-radius: 20px }
 }
 
 .body_playground_options {

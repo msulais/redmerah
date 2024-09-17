@@ -34,17 +34,9 @@ $side_notebook_none: 760px;
     border-radius: 16px;
     border: 1px solid rgba(var(--color-on-surface), var(--opacity1));
 
-    [data-corner=sharp] & {
-        border-radius: 0;
-    }
-
-    [data-corner=semi-round] & {
-        border-radius: 12px;
-    }
-
-    [data-corner=full-round] & {
-        border-radius: 28px;
-    }
+    :root[data-corner=sharp] & { border-radius: 0 }
+    :root[data-corner=semi-round] & { border-radius: 12px }
+    :root[data-corner=full-round] & { border-radius: 28px }
 
     > :global(.btn) {
         --btn-padding: 0;
@@ -82,9 +74,9 @@ $side_notebook_none: 760px;
     align-items: flex-start;
     gap: 12px;
 
-    [data-corner=sharp] & {border-radius: 0;}
-    [data-corner=semi-round] & {border-radius: 4px;}
-    [data-corner=full-round] & {border-radius: 20px;}
+    :root[data-corner=sharp] & { border-radius: 0 }
+    :root[data-corner=semi-round] & { border-radius: 4px }
+    :root[data-corner=full-round] & { border-radius: 20px }
 
     > div[data-hide] {
         display: none !important;

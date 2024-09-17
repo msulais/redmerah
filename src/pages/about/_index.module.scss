@@ -3,7 +3,7 @@
     width: 1080px;
     max-width: 100%;
 
-    & :is(p, li) { 
+    & :is(p, li) {
         font-size: 20px;
         text-align: justify;
 
@@ -13,10 +13,10 @@
 
         > a {
             border-bottom: .1em solid;
-            color: rgb(var(--color-accent));     
+            color: rgb(var(--color-accent));
             position: relative;
             transition-duration: .3s;
-            
+
             @media (hover: hover) {
                 &:hover {
                     border-bottom-style: dashed;
@@ -47,7 +47,7 @@
 
         > a {
             transition-duration: .3s;
-            
+
             @media (hover: hover) {
                 &:hover {
                     text-decoration: underline;
@@ -81,7 +81,7 @@
     > :not(h1) {
         margin-top: 1em;
     }
-    
+
     > section > :not(:first-child) {
         margin-top: 1em;
     }

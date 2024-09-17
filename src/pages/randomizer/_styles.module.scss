@@ -68,15 +68,15 @@ $appbar_generate_btn_none: 500px;
         align-items: center;
         white-space: nowrap;
 
-        [data-corner=sharp] & {
+        :root[data-corner=sharp] & {
             border-radius: 0;
         }
 
-        [data-corner=semi-round] & {
+        :root[data-corner=semi-round] & {
             border-radius: 4px;
         }
 
-        [data-corner=full-round] & {
+        :root[data-corner=full-round] & {
             border-radius: 20px;
         }
     }
@@ -179,9 +179,9 @@ $appbar_generate_btn_none: 500px;
     border-bottom: none;
     border-radius: 16px 0 0 0;
 
-    [data-corner=sharp] & { border-radius: 0 }
-    [data-corner=semi-round] & { border-radius: 8px 0 0 0 }
-    [data-corner=full-round] & { border-radius: 20px 0 0 0 }
+    :root[data-corner=sharp] & { border-radius: 0 }
+    :root[data-corner=semi-round] & { border-radius: 8px 0 0 0 }
+    :root[data-corner=full-round] & { border-radius: 20px 0 0 0 }
 
     @media (max-width: $side_navigation_none) {
         border-radius: 0 !important;
@@ -205,15 +205,15 @@ $appbar_generate_btn_none: 500px;
         border-radius: 8px;
         transition-duration: .3s;
 
-        [data-corner=sharp] & {
+        :root[data-corner=sharp] & {
             border-radius: 0;
         }
 
-        [data-corner=semi-round] & {
+        :root[data-corner=semi-round] & {
             border-radius: 4px;
         }
 
-        [data-corner=full-round] & {
+        :root[data-corner=full-round] & {
             border-radius: 12px;
         }
 
@@ -224,11 +224,11 @@ $appbar_generate_btn_none: 500px;
             padding: 12px;
             border-radius: 4px;
 
-            [data-corner=sharp] & {
+            :root[data-corner=sharp] & {
                 border-radius: 0;
             }
 
-            [data-corner=full-round] & {
+            :root[data-corner=full-round] & {
                 border-radius: 8px;
             }
         }
@@ -251,15 +251,15 @@ $appbar_generate_btn_none: 500px;
         padding: 8px 16px;
         transition-duration: .3s;
 
-        [data-corner=sharp] & {
+        :root[data-corner=sharp] & {
             border-radius: 0;
         }
 
-        [data-corner=semi-round] & {
+        :root[data-corner=semi-round] & {
             border-radius: 4px;
         }
 
-        [data-corner=full-round] & {
+        :root[data-corner=full-round] & {
             border-radius: 24px;
         }
 
@@ -292,15 +292,15 @@ $appbar_generate_btn_none: 500px;
         padding: 12px;
         border: 1px solid rgba(var(--color-on-surface), var(--opacity-border));
 
-        [data-corner=sharp] & {
+        :root[data-corner=sharp] & {
             border-radius: 0;
         }
 
-        [data-corner=semi-round] & {
+        :root[data-corner=semi-round] & {
             border-radius: 4px;
         }
 
-        [data-corner=full-round] & {
+        :root[data-corner=full-round] & {
             border-radius: 12px;
         }
 
@@ -340,15 +340,15 @@ $appbar_generate_btn_none: 500px;
             padding: 8px 16px;
             transition-duration: .3s;
 
-            [data-corner=sharp] & {
+            :root[data-corner=sharp] & {
                 border-radius: 0;
             }
 
-            [data-corner=semi-round] & {
+            :root[data-corner=semi-round] & {
                 border-radius: 4px;
             }
 
-            [data-corner=full-round] & {
+            :root[data-corner=full-round] & {
                 border-radius: 24px;
             }
         }

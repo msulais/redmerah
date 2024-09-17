@@ -23,9 +23,9 @@
             width: 40px;
         }
 
-        & :global(.btn){ 
-            --padding: 12px;
-    
+        & :global(.btn){
+            --btn-padding: 12px;
+
             &[data-pinned] {
                 order: -1;
             }

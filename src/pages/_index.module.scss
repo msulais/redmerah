@@ -12,15 +12,15 @@
         flex-direction: column;
         transition-duration: .3s;
 
-        [data-corner=sharp] & {
+        :root[data-corner=sharp] & {
             border-radius: 0;
         }
 
-        [data-corner=semi-round] & {
+        :root[data-corner=semi-round] & {
             border-radius: 8px;
         }
 
-        [data-corner=full-round] & {
+        :root[data-corner=full-round] & {
             border-radius: 36px;
         }
 
@@ -89,15 +89,15 @@
         object-fit: cover;
         margin-bottom: 16px;
 
-        [data-corner=sharp] & {
+        :root[data-corner=sharp] & {
             border-radius: 0;
         }
 
-        [data-corner=semi-round] & {
+        :root[data-corner=semi-round] & {
             border-radius: 8px;
         }
 
-        [data-corner=full-round] & {
+        :root[data-corner=full-round] & {
             border-radius: 24px;
         }
     }

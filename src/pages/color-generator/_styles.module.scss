@@ -12,15 +12,15 @@ $appbar_colorpicker_button_none: 500px;
         font-weight: bold;
         border-radius: 8px;
 
-        [data-corner=sharp] & {
+        :root[data-corner=sharp] & {
             border-radius: 0;
         }
 
-        [data-corner=semi-round] & {
+        :root[data-corner=semi-round] & {
             border-radius: 4px;
         }
 
-        [data-corner=full-round] & {
+        :root[data-corner=full-round] & {
             border-radius: 20px;
         }
     }
@@ -39,15 +39,15 @@ $appbar_colorpicker_button_none: 500px;
     max-height: 40px;
     border-radius: 8px;
 
-    [data-corner=sharp] & {
+    :root[data-corner=sharp] & {
         border-radius: 0;
     }
 
-    [data-corner=semi-round] & {
+    :root[data-corner=semi-round] & {
         border-radius: 4px;
     }
 
-    [data-corner=full-round] & {
+    :root[data-corner=full-round] & {
         border-radius: 20px;
     }
 }
@@ -86,15 +86,15 @@ $appbar_colorpicker_button_none: 500px;
         justify-content: center;
         transition-duration: .3s;
 
-        [data-corner=sharp] & {
+        :root[data-corner=sharp] & {
             border-radius: 0;
         }
 
-        [data-corner=semi-round] & {
+        :root[data-corner=semi-round] & {
             border-radius: 8px;
         }
 
-        [data-corner=full-round] & {
+        :root[data-corner=full-round] & {
             border-radius: 20px;
         }
 
