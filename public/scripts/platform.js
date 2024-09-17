@@ -5,6 +5,8 @@ function isMobile() {
         const $$isMobile = navigator.userAgentData.mobile
         if (typeof $$isMobile == 'boolean') $isMobile = $$isMobile
     }
+
+    alert($isMobile)
     if (!$isMobile) return;
 
     document.documentElement.setAttribute('data-platform', 'mobile')
