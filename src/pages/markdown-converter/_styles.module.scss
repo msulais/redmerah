@@ -2,6 +2,11 @@
     height: calc(100dvh - 56px);
     max-height: calc(100dvh - 56px);
     display: flex;
+
+    :root[data-platform=desktop] & {
+        max-height: calc(100dvh - 52px);
+        height: calc(100dvh - 52px);
+    }
 }
 
 .body_drag_handle {

@@ -61,6 +61,7 @@ $side_navigation_none: 680px;
     flex-direction: column;
     align-items: center;
 
+    :root[data-platform=desktop] & { max-height: calc(100dvh - 52px) }
     :root[data-corner=sharp] & { border-radius: 0 }
     :root[data-corner=semi-round] & { border-radius: 4px 0 0 0 }
     :root[data-corner=full-round] & { border-radius: 20px 0 0 0 }
@@ -187,6 +188,11 @@ $side_navigation_none: 680px;
         }
     }
 
+    :root[data-platform=desktop] & {
+        max-height: calc(100dvh - 52px);
+        height: calc(100dvh - 52px);
+    }
+
     > :global(.appbar).body_appbar {
         position: sticky;
         top: 0;
@@ -308,6 +314,11 @@ $side_navigation_none: 680px;
         align-items: center;
         justify-content: space-between;
         height: 100%;
+    }
+
+    :root[data-platform=desktop] & {
+        max-height: calc(100dvh - 52px);
+        height: calc(100dvh - 52px);
     }
 
     > :global(.appbar).body_appbar {
