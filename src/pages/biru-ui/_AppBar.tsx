@@ -27,6 +27,7 @@ import Menu, { MenuDivider, MenuItem, MenuHeader, openMenu, LinkMenuItem, SubMen
 import Drawer, { closeDrawer, DrawerItem, openDrawer } from "@/components/Drawer"
 import AppBar from "@/components/AppBar"
 import CSSAnimation from "@/styles/animation.module.scss"
+import { isMobile } from "@/utils/platforms"
 
 const _: VoidComponent<{
     command: (type: Commands, ...args: unknown[]) => unknown
@@ -40,7 +41,7 @@ const _: VoidComponent<{
     const [isSideNavigationHidden, setIsSideNavigationHidden] = createSignal<boolean>(false)
     const [theme, setTheme] = createSignal<ThemeData>(ThemeData[_system])
     const [corner, setCorner] = createSignal<CornerData>(CornerData[_round])
-    const [platform, setPlatform] = createSignal<PlatformData>(PlatformData[_hybrid])
+    const [platform, setPlatform] = createSignal<PlatformData>(PlatformData[_desktop])
     let drawer_navigation_ref: HTMLDialogElement
     let menu_info_ref: HTMLDialogElement
     let menu_settings_ref: HTMLDialogElement
@@ -97,10 +98,18 @@ const _: VoidComponent<{
         }
     }
 
+    function initPlatform(): void {
+        const $isMobile = isMobile()
+        if (!$isMobile) return
+
+        setPlatform(PlatformData[_mobile])
+    }
+
     onMount(() => {
         initTheme()
         initCorner()
         initSideNavigationListener()
+        initPlatform()
     })
 
     const Menus: VoidComponent = () => {
