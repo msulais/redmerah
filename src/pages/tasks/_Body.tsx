@@ -787,6 +787,7 @@ const _: VoidComponent<{
     // 'edit' = open from left click to task
     // 'action' = open from left click to file chip below task name
     let renameFileOption: 'edit' | 'action' = _edit
+    let addSubtaskOption: 'edit' | 'action' = _edit
     let textfield_newSubtask_ref: HTMLInputElement
     let textfield_editSubtask_ref: HTMLInputElement
     let textfield_renameFile_ref: HTMLInputElement
@@ -886,20 +887,25 @@ const _: VoidComponent<{
     }
 
     async function confirmAddSubtask(): Promise<void> {
+        const task = addSubtaskOption == _action? selectedTaskToAction[_task] : selectedTaskToEdit[_task]
+        const taskListIndex = addSubtaskOption == _action? selectedTaskToAction[_taskListIndex] : selectedTaskToEdit[_taskListIndex]
+        const taskIndex = addSubtaskOption == _action? selectedTaskToAction[_taskIndex] : selectedTaskToEdit[_taskIndex]
+
         closeDialog(dialog_newSubtask_ref)
         const subtasks = (await props[_command](
             Commands.add_subtask,
             {   complete: false,
                 id: -1,
-                listId: selectedTaskToEdit[_task][_listId],
+                listId: task[_listId],
                 name: text_subtask()[_trim](),
-                taskId: selectedTaskToEdit[_task][_id]
+                taskId: task[_id]
             } satisfies SubTask,
-            selectedTaskToEdit[_taskListIndex],
-            selectedTaskToEdit[_taskIndex]
+            taskListIndex,
+            taskIndex
         ) as SubTask[])
 
-        setSelectedTaskToEdit(_task, _subtasks, subtasks)
+        if (addSubtaskOption == _edit) setSelectedTaskToEdit(_task, _subtasks, subtasks)
+        else setSelectedTaskToAction(_task, _subtasks, subtasks)
     }
 
     function confirmFileRename(): void {
@@ -1144,10 +1150,14 @@ const _: VoidComponent<{
                     taskIndex={selectedTaskToEdit[_taskIndex]}
                     subtaskIndex={index()}
                 />}</For>
-                <Button onClick={ev => openDialog(ev, dialog_newSubtask_ref, {
-                        important: true,
-                        inputAutoFocus: true
-                    })}>
+                <Button
+                    onClick={ev => {
+                        addSubtaskOption = _edit
+                        openDialog(ev, dialog_newSubtask_ref, {
+                            important: true,
+                            inputAutoFocus: true
+                        })}
+                    }>
                     <Icon code={0xE009}/>Add subtask
                 </Button>
             </div>
@@ -1528,6 +1538,7 @@ const _: VoidComponent<{
                 trailing={<MenuIndent />}
                 onClick={ev => {
                     closeMenu(menu_taskAction_ref)
+                    addSubtaskOption = _action
                     openDialog(ev, dialog_newSubtask_ref, {
                         important: true,
                         inputAutoFocus: true
