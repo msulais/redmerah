@@ -33,7 +33,16 @@ $side_navigation_none: 680px;
     padding-left: 16px;
 
     > :global(.textfield) {
-        width: min(100%, 720px)
+        width: min(100%, 720px);
+
+        :root[data-platform=mobile] & > div:first-child {
+            min-height: 40px;
+        }
+
+        & :global(.btn.textfield-btn)[data-compact] {
+            min-height: 32px;
+            min-width: none;
+        }
     }
 
     @media (max-width: $side_navigation_none) {
