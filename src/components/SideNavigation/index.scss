@@ -8,6 +8,11 @@
     height: 100%;
     transition-duration: .3s;
 
+    :root[data-platform=desktop] &:not([data-expand]) {
+        width: 52px;
+        max-width: 52px;
+    }
+
     &[data-expand] {
         width: 280px;
         max-width: 280px;
