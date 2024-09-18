@@ -1,6 +1,10 @@
 :is(.modal,.popover).menu {
     box-shadow: var(--elevation1);
 
+    &[data-dragable] > div {
+        padding-top: 12px;
+    }
+
     :root[data-platform=mobile][data-corner=full-round] & {
         border-radius: 28px;
     }

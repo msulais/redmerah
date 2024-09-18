@@ -284,12 +284,28 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 
 type MenuProps = ModalProps
 const Menu: ParentComponent<MenuProps> = ($props) => {
-    const [props, other] = splitProps($props, [_classList])
+    const [props, other] = splitProps($props, [_classList, _gap, _padding])
     return (<Modal
         classList={{
             menu: true,
             ...props[_classList]
         }}
+        gap={props[_gap] ?? 8}
+        padding={props[_padding] ?? 4}
+        {...other}
+    />)
+}
+
+type PopoverMenuProps = PopoverProps
+const PopoverMenu: ParentComponent<PopoverMenuProps> = ($props) => {
+    const [props, other] = splitProps($props, [_classList, _gap, _padding])
+    return (<Popover
+        classList={{
+            menu: true,
+            ...props[_classList]
+        }}
+        gap={props[_gap] ?? 8}
+        padding={props[_padding] ?? 4}
         {...other}
     />)
 }
@@ -301,12 +317,16 @@ export {
     MenuIndent,
     MenuHeader,
     MenuDivider,
+    PopoverMenu,
     SubMenuItem,
     LinkMenuItem,
     MenuItemTrailingShortcut,
     closePopover as closeSubMenu,
     openPopover as openSubMenu,
     repositionPopover as repositionSubMenu,
+    closePopover as closePopoverMenu,
+    openPopover as openPopoverMenu,
+    repositionPopover as repositionPopoverMenu,
     focusModal as focusMenu,
     openModal as openMenu,
     closeModal as closeMenu,
@@ -321,5 +341,6 @@ export type {
     SubMenuItemProps,
     MenuItemTrailingShortcutProps,
     LinkMenuItemProps,
+    PopoverMenuProps,
 }
 export default Menu
