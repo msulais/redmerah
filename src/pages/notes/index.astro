@@ -1,0 +1,27 @@
+---
+import icon from '@/assets/apps/notes-splash.svg'
+
+import Html from '@/layouts/Html/index.astro';
+import Splash from '@/layouts/Splash/index.astro';
+import App  from './_App'
+
+export const prerender = true;
+---
+
+<Html
+	title='Notes'
+	accentColor='#FF1F1F'
+	description='Notes is your all-in-one note-taking solution. Capture ideas, add multimedia, and create task lists with ease. Stay organized and productive on the go.'>
+	<Fragment slot="favicon">
+		<link rel="shortcut icon" type="image/ico" href="/favicon/notes/favicon.ico" />
+		<link rel="apple-touch-icon" sizes="180x180" href="/favicon/notes/apple-touch-icon.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/favicon/notes/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/favicon/notes/favicon-16x16.png">
+		<link rel="manifest" href="/favicon/notes/site.webmanifest">
+	</Fragment>
+	<App client:only="solid-js" />
+	<Splash src={icon.src} alt="Notes icon splash"/>
+</Html>
+
+<script is:inline src='/scripts/theme.js'/>
+<script is:inline src='/scripts/platform.js'/>
