@@ -19,6 +19,11 @@
     background-color: rgb(var(--color-background));
     border-top: 1px solid rgba(var(--color-on-surface), var(--opacity2));
     width: 342px;
+    margin-top: 6px;
+
+    &[data-disabled] {
+        grid-template-columns: 1fr;
+    }
 }
 
 .color-picker-color {

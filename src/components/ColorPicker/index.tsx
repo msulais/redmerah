@@ -1,8 +1,8 @@
-import { type Component, type ParentComponent, createEffect, createMemo, createSignal, mergeProps, onCleanup, onMount, splitProps } from "solid-js"
+import { type Component, type ParentComponent, Show, createEffect, createMemo, createSignal, mergeProps, onCleanup, onMount, splitProps } from "solid-js"
 import { createStore } from "solid-js/store"
 
 import type { HEXColor, HSLColor, RGBColor } from "@/types/color"
-import { _children, _disabledOpacityControl, _onSelectColor, _disabledColorControl, _ref, _classList, _color, _HEX, _toString, _padStart, _toUpperCase, _hue, _position, _opacity, _HSL, _RGB, _value, _toFixed, _join, _substring, _isDrag, _rect, _left, _top, _touchmove, _touches, _clientX, _clientY, _touchend, _noPointerEvent, _mousemove, _mouseup, _length, _replace, _split, _push, _isNaN, _isFinite, _trim, _currentTarget, _px, _tonal, _filled } from "@/constants/string"
+import { _children, _disabledOpacityControl, _onSelectColor, _disabledColorControl, _ref, _classList, _color, _HEX, _toString, _padStart, _toUpperCase, _hue, _position, _opacity, _HSL, _RGB, _value, _toFixed, _join, _substring, _isDrag, _rect, _left, _top, _touchmove, _touches, _clientX, _clientY, _touchend, _noPointerEvent, _mousemove, _mouseup, _length, _replace, _split, _push, _isNaN, _isFinite, _trim, _currentTarget, _px, _tonal, _filled, _onUpdateColor, _disabledAction } from "@/constants/string"
 import { hexToHSL, hexToRgb, hslToHex, hslToHsv, hslToRgb, hsvToHsl, rgbToHsl, testHexColorWithAlpha } from "@/utils/color"
 import { setTimeDelayed } from "@/utils/timeout"
 import { removeAttribute, setAttribute, toggleAttribute } from "@/utils/attributes"
@@ -13,7 +13,7 @@ import { getDocument, getDocumentBody } from "@/constants/window"
 import { mathMax, mathMin, mathRound, numberParse } from "@/utils/math"
 
 import Button, { ButtonVariant } from "@/components/Button"
-import TextField from "@/components/TextField"
+import TextField, { changeTextFieldValue } from "@/components/TextField"
 import Modal, {
     type ModalProps,
     closeModal,
@@ -32,6 +32,8 @@ type ColorPickerProps = ModalProps & {
     color?: HEXColor
     disabledOpacityControl?: boolean
     disabledColorControl?: boolean
+    disabledAction?: boolean
+    onUpdateColor?: (color: HEXColor) => unknown
     onSelectColor?: (color: HEXColor) => unknown
 }
 
@@ -67,7 +69,8 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
     const $$props = mergeProps({color: DEFAULT_HEX_COLOR, disabledColorControl: false}, $props)
     const [props, other] = splitProps($$props, [
         _children, _disabledOpacityControl, _onSelectColor,
-        _disabledColorControl, _ref, _classList, _color
+        _disabledColorControl, _ref, _classList, _color,
+        _onUpdateColor, _disabledAction
     ])
     const [colorModel, setColorMode] = createSignal<'HEX' | 'RGB' | 'HSL'>(_HEX)
     const [hslColor, setHslColor] = createSignal<HSLColor>({h: 0, s: 1, l: 0.5})
@@ -97,7 +100,9 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
             ? ''
             : mathRound(opacity() / 100 * 255)[_toString](16)[_padStart](2, '0')
         ;
-        return (hslToHex(hslColor()) + $opacity)[_toUpperCase]()
+        const hexColor = (hslToHex(hslColor()) + $opacity)[_toUpperCase]()
+        if (props[_onUpdateColor]) props[_onUpdateColor](hexColor as HEXColor)
+        return hexColor
     })
     const getSliderSize = createMemo<number>(() => props[_disabledColorControl]? 260 : 144)
     const getHexColorForCanvas = createMemo(() => hslToHex({h: hslColor().h, s: 1, l: 0.5}))
@@ -136,20 +141,20 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 
         if (colorModel() == _RGB){
             const rgb = hslToRgb(hslColor())
-            textfield_color_ref[_value] = `${rgb.r}, ${rgb.g}, ${rgb.b}`
+            changeTextFieldValue(textfield_color_ref, `${rgb.r}, ${rgb.g}, ${rgb.b}`)
         }
         else if (colorModel() == _HSL){
-            textfield_color_ref[_value] = [
+            changeTextFieldValue(textfield_color_ref, [
                 mathRound(hslColor().h * 360),
                 numberParse((hslColor().s * 100)[_toFixed](2)) + '%',
                 numberParse((hslColor().l * 100)[_toFixed](2)) + '%'
-            ][_join](', ')
+            ][_join](', '))
         }
         else if (colorModel() == _HEX) {
-            textfield_color_ref[_value] = `${getHexColor()[_substring](0, 7)}`
+            changeTextFieldValue(textfield_color_ref, getHexColor()[_substring](0, 7))
         }
 
-        if (textfield_opacity_ref) textfield_opacity_ref[_value] = opacity() + '%'
+        if (textfield_opacity_ref) changeTextFieldValue(textfield_opacity_ref, opacity() + '%')
     }
 
     function setPosition(clientX: number, clientY: number): void {
@@ -482,24 +487,26 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
     }
 
     const Actions: Component = () => {
-        return (<div class="color-picker-actions">
+        return (<div class="color-picker-actions" data-disabled={toggleAttribute(props[_disabledAction])}>
             <Button onClick={changeColorModel} variant={ButtonVariant[_tonal]}>{colorModel()}</Button>
-            <Button
-                variant={ButtonVariant[_tonal]}
-                onClick={() => {
-                    updateColor()
-                    closeModal(colorPicker_ref)
-                }}>
-                Cancel
-            </Button>
-            <Button
-                variant={ButtonVariant[_filled]}
-                onClick={() => {
-                    if (props[_onSelectColor]) props[_onSelectColor](getHexColor() as HEXColor)
+            <Show when={!props[_disabledAction]}>
+                <Button
+                    variant={ButtonVariant[_tonal]}
+                    onClick={() => {
+                        updateColor()
                         closeModal(colorPicker_ref)
-                }}>
-                Select
-            </Button>
+                    }}>
+                    Cancel
+                </Button>
+                <Button
+                    variant={ButtonVariant[_filled]}
+                    onClick={() => {
+                        if (props[_onSelectColor]) props[_onSelectColor](getHexColor() as HEXColor)
+                        closeModal(colorPicker_ref)
+                    }}>
+                    Select
+                </Button>
+            </Show>
         </div>)
     }
 
