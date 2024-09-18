@@ -1,3 +1,7 @@
+export const _inputAutoFocus = 'inputAutoFocus'
+export const _manualDismiss = 'manualDismiss'
+export const _disabledAction = 'disabledAction'
+export const _onUpdateColor = 'onUpdateColor'
 export const _desktop = 'desktop'
 export const _hybrid = 'hybrid'
 export const _platform = 'platform'
