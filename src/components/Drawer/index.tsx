@@ -59,7 +59,7 @@ const DrawerItem: ParentComponent<DrawerItemProps> = ($props) => {
     </Button>)
 }
 
-type DrawerProps = Omit<ModalProps, 'style'> & {
+type DrawerProps = Omit<ModalProps, 'style' | 'position'> & {
     header?: JSX.Element
     footer?: JSX.Element
     position?: DrawerPosition
