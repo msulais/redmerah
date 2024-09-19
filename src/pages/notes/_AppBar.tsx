@@ -209,7 +209,7 @@ const _: VoidComponent = () => {
             leading={<img alt="Notes logo" width={32} src={logo[_src]} />}
             headline="Notes"
             trailing={<>
-                <Button variant={ButtonVariant[_filled]}><Icon code={0xEB2F} filled/>New note</Button>
+                <Button variant={ButtonVariant[_filled]}><Icon code={0xEB1B} filled/>New note</Button>
                 <Tooltip text="Info">
                     <IconButton
                         focused={is_menu_info_open()}

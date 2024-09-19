@@ -1,42 +1,168 @@
 import { createSignal, type VoidComponent } from "solid-js"
 
 import CSS from './_styles.module.scss'
-import { IconButton } from "@/components/Button"
-import Divider from "@/components/Divider"
+import { ButtonVariant, IconButton } from "@/components/Button"
 import Dropdown from "@/components/Dropdown"
 import TextTooltip from "@/components/Tooltip"
-import { closePopoverMenu, MenuHeader, MenuItem, openPopoverMenu, PopoverMenu } from "@/components/Menu"
-import { _currentTarget } from "@/constants/string"
+import { closePopoverMenu, MenuDivider, MenuHeader, MenuItem, openPopoverMenu, PopoverMenu } from "@/components/Menu"
+import { _currentTarget, _hidePopover, _showPopover, _tonal } from "@/constants/string"
 import ColorPicker, { openColorPicker } from "@/components/ColorPicker"
 
 const ToolBar: VoidComponent = () => {
-    const [is_popover_textFormat_open    , setIs_popover_textFormat_open    ] = createSignal<boolean>(false)
     const [is_popoverMenu_insert_open    , setIs_popoverMenu_insert_open    ] = createSignal<boolean>(false)
-    const [is_popoverMenu_indent_open    , setIs_popoverMenu_indent_open    ] = createSignal<boolean>(false)
     const [is_popoverMenu_direction_open , setIs_popoverMenu_direction_open ] = createSignal<boolean>(false)
     const [is_popoverMenu_list_open      , setIs_popoverMenu_list_open      ] = createSignal<boolean>(false)
     const [is_popoverMenu_align_open     , setIs_popoverMenu_align_open     ] = createSignal<boolean>(false)
     const [is_popoverMenu_textCase_open  , setIs_popoverMenu_textCase_open  ] = createSignal<boolean>(false)
+    const [is_popoverMenu_moreAction_open, setIs_popoverMenu_moreAction_open] = createSignal<boolean>(false)
+    const [is_popoverMenu_color_open     , setIs_popoverMenu_color_open     ] = createSignal<boolean>(false)
+    const [is_popoverMenu_format_open    , setIs_popoverMenu_format_open    ] = createSignal<boolean>(false)
     const [is_colorPicker_text_open      , setIs_colorPicker_text_open      ] = createSignal<boolean>(false)
     const [is_colorPicker_background_open, setIs_colorPicker_background_open] = createSignal<boolean>(false)
-    let popover_textFormat_ref: HTMLDivElement
-    let popoverMenu_textCase_ref : HTMLDivElement
-    let popoverMenu_insert_ref   : HTMLDivElement
-    let popoverMenu_list_ref     : HTMLDivElement
-    let popoverMenu_indent_ref   : HTMLDivElement
-    let popoverMenu_direction_ref: HTMLDivElement
-    let popoverMenu_align_ref    : HTMLDivElement
+    let popoverMenu_moreAction_ref: HTMLDivElement
+    let popoverMenu_format_ref    : HTMLDivElement
+    let popoverMenu_color_ref     : HTMLDivElement
+    let popoverMenu_textCase_ref  : HTMLDivElement
+    let popoverMenu_insert_ref    : HTMLDivElement
+    let popoverMenu_list_ref      : HTMLDivElement
+    let popoverMenu_direction_ref : HTMLDivElement
+    let popoverMenu_align_ref     : HTMLDivElement
     let colorPicker_text_ref: HTMLDialogElement
     let colorPicker_background_ref: HTMLDialogElement
 
-    const Popovers: VoidComponent = () => (<></>)
+    function focusToolbarMenu(menu: HTMLDivElement): void {
+        menu[_hidePopover]()
+        menu[_showPopover]()
+    }
 
     const Menus: VoidComponent = () => (<>
         <PopoverMenu
-            ref={r => popoverMenu_textCase_ref = r}
+            ref={r => popoverMenu_format_ref = r}
+            dragable
+            manualDismiss
             class={CSS.body_toolbar_menu}
-            style={{'min-width': '164px'}}
-            onToggleOpen={isOpen => setIs_popoverMenu_textCase_open(isOpen)}>
+            onToggleOpen={isOpen => setIs_popoverMenu_format_open(isOpen)}
+            onMouseDown={ev => focusToolbarMenu(ev[_currentTarget])}
+            onTouchStart={ev => focusToolbarMenu(ev[_currentTarget])}>
+            <TextTooltip text="Close">
+                <IconButton
+                    class={CSS.body_toolbar_menu_close}
+                    compact
+                    code={0xE5E9}
+                    onClick={() => closePopoverMenu(popoverMenu_format_ref)}
+                />
+            </TextTooltip>
+            <MenuHeader>Text format</MenuHeader>
+            <MenuDivider />
+            <div class={CSS.body_toolbar_menu_icons}>
+                {/* TODO: bold */}
+                <TextTooltip text="Bold"><IconButton code={0xF082}/></TextTooltip>
+
+                {/* TODO: italic */}
+                <TextTooltip text="Italic"><IconButton code={0xF14F}/></TextTooltip>
+
+                {/* TODO: underline */}
+                <TextTooltip text="Underline"><IconButton code={0xF193}/></TextTooltip>
+
+                {/* TODO: strikethrough */}
+                <TextTooltip text="Strikethrough"><IconButton code={0xF18B}/></TextTooltip>
+
+                {/* TODO: code */}
+                <TextTooltip text="Code"><IconButton code={0xE4A8}/></TextTooltip>
+
+                {/* TODO: subscript */}
+                <TextTooltip text="Subscript"><IconButton code={0xF18D}/></TextTooltip>
+
+                {/* TODO: superscript */}
+                <TextTooltip text="Superscript"><IconButton code={0xF18F}/></TextTooltip>
+
+                {/* TODO: clear format */}
+                <TextTooltip text="Clear format"><IconButton code={0xF0B6}/></TextTooltip>
+            </div>
+        </PopoverMenu>
+        <PopoverMenu
+            ref={r => popoverMenu_color_ref = r}
+            dragable
+            manualDismiss
+            class={CSS.body_toolbar_menu}
+            onToggleOpen={isOpen => setIs_popoverMenu_color_open(isOpen)}
+            onMouseDown={ev => focusToolbarMenu(ev[_currentTarget])}
+            onTouchStart={ev => focusToolbarMenu(ev[_currentTarget])}>
+            <TextTooltip text="Close">
+                <IconButton
+                    class={CSS.body_toolbar_menu_close}
+                    compact
+                    code={0xE5E9}
+                    onClick={() => closePopoverMenu(popoverMenu_color_ref)}
+                />
+            </TextTooltip>
+            <MenuHeader>Color</MenuHeader>
+            <MenuDivider />
+            <div class={CSS.body_toolbar_menu_icons}>
+
+                {/* TODO: text color */}
+                <TextTooltip text="Text color">
+                    <IconButton
+                        code={0xF0BA}
+                        focused={is_colorPicker_text_open()}
+                        onClick={ev => openColorPicker(ev, colorPicker_text_ref, { anchor: ev[_currentTarget] })}
+                    />
+                </TextTooltip>
+
+                {/* TODO: background-color */}
+                <TextTooltip text="Background color">
+                    <IconButton
+                        code={0xE4B8}
+                        focused={is_colorPicker_background_open()}
+                        onClick={ev => openColorPicker(ev, colorPicker_background_ref, { anchor: ev[_currentTarget] })}
+                    />
+                </TextTooltip>
+            </div>
+        </PopoverMenu>
+        <PopoverMenu
+            ref={r => popoverMenu_moreAction_ref = r}
+            dragable
+            manualDismiss
+            class={CSS.body_toolbar_menu}
+            onToggleOpen={isOpen => setIs_popoverMenu_moreAction_open(isOpen)}
+            onMouseDown={ev => focusToolbarMenu(ev[_currentTarget])}
+            onTouchStart={ev => focusToolbarMenu(ev[_currentTarget])}>
+            <TextTooltip text="Close">
+                <IconButton
+                    class={CSS.body_toolbar_menu_close}
+                    compact
+                    code={0xE5E9}
+                    onClick={() => closePopoverMenu(popoverMenu_moreAction_ref)}
+                />
+            </TextTooltip>
+            <MenuHeader>More action</MenuHeader>
+            <MenuDivider />
+            <div class={CSS.body_toolbar_menu_icons}>
+
+                {/* TODO: undo */}
+                <TextTooltip text="Undo"><IconButton code={0xE177} /></TextTooltip>
+
+                {/* TODO: redo */}
+                <TextTooltip text="Redo"><IconButton code={0xE105} /></TextTooltip>
+
+                {/* TODO: print */}
+                <TextTooltip text="Print"><IconButton code={0xECFF} /></TextTooltip>
+
+                {/* TODO: find */}
+                <TextTooltip text="Find"><IconButton code={0xEDDF} /></TextTooltip>
+
+                {/* TODO: download */}
+                <TextTooltip text="Download"><IconButton code={0xE0B9} /></TextTooltip>
+            </div>
+        </PopoverMenu>
+        <PopoverMenu
+            ref={r => popoverMenu_textCase_ref = r}
+            dragable
+            manualDismiss
+            class={CSS.body_toolbar_menu}
+            onToggleOpen={isOpen => setIs_popoverMenu_textCase_open(isOpen)}
+            onMouseDown={ev => focusToolbarMenu(ev[_currentTarget])}
+            onTouchStart={ev => focusToolbarMenu(ev[_currentTarget])}>
             <TextTooltip text="Close">
                 <IconButton
                     class={CSS.body_toolbar_menu_close}
@@ -46,6 +172,7 @@ const ToolBar: VoidComponent = () => {
                 />
             </TextTooltip>
             <MenuHeader>Text case</MenuHeader>
+            <MenuDivider />
 
             {/* TODO: upper case */}
             <MenuItem>UPPER CASE</MenuItem>
@@ -61,9 +188,12 @@ const ToolBar: VoidComponent = () => {
         </PopoverMenu>
         <PopoverMenu
             ref={r => popoverMenu_insert_ref = r}
+            dragable
+            manualDismiss
             class={CSS.body_toolbar_menu}
-            style={{'min-width': '164px'}}
-            onToggleOpen={isOpen => setIs_popoverMenu_insert_open(isOpen)}>
+            onToggleOpen={isOpen => setIs_popoverMenu_insert_open(isOpen)}
+            onMouseDown={ev => focusToolbarMenu(ev[_currentTarget])}
+            onTouchStart={ev => focusToolbarMenu(ev[_currentTarget])}>
             <TextTooltip text="Close">
                 <IconButton
                     class={CSS.body_toolbar_menu_close}
@@ -73,45 +203,42 @@ const ToolBar: VoidComponent = () => {
                 />
             </TextTooltip>
             <MenuHeader>Insert</MenuHeader>
+            <MenuDivider />
+            <div class={CSS.body_toolbar_menu_icons}>
 
-            {/* TODO: file */}
-            <MenuItem iconCode={0xE5FF}>File</MenuItem>
+                {/* TODO: insert file */}
+                <TextTooltip text="File"><IconButton code={0xE5FF}/></TextTooltip>
 
-            {/* TODO: formula */}
-            <MenuItem iconCode={0xEA95}>Formula</MenuItem>
+                {/* TODO: insert formula */}
+                <TextTooltip text="Formula"><IconButton code={0xEA95}/></TextTooltip>
 
-            {/* TODO: image */}
-            <MenuItem iconCode={0xE8FE}>Image</MenuItem>
+                {/* TODO: insert image */}
+                <TextTooltip text="Image"><IconButton code={0xE8FE}/></TextTooltip>
 
-            {/* TODO: link */}
-            <MenuItem iconCode={0xE9EF}>Link</MenuItem>
-        </PopoverMenu>
-        <PopoverMenu
-            ref={r => popoverMenu_indent_ref = r}
-            class={CSS.body_toolbar_menu}
-            style={{'min-width': '164px'}}
-            onToggleOpen={isOpen => setIs_popoverMenu_indent_open(isOpen)}>
-            <TextTooltip text="Close">
-                <IconButton
-                    class={CSS.body_toolbar_menu_close}
-                    compact
-                    code={0xE5E9}
-                    onClick={() => closePopoverMenu(popoverMenu_indent_ref)}
-                />
-            </TextTooltip>
-            <MenuHeader>Indentation</MenuHeader>
+                {/* TODO: insert link */}
+                <TextTooltip text="Link"><IconButton code={0xE9EF}/></TextTooltip>
 
-            {/* TODO: increase indent */}
-            <MenuItem iconCode={0xF13D}>Increase indent</MenuItem>
+                {/* TODO: insert label */}
+                <TextTooltip text="Label"><IconButton code={0xF00D}/></TextTooltip>
 
-            {/* TODO: decrease indent */}
-            <MenuItem iconCode={0xF12B}>Decrease indent</MenuItem>
+                {/* TODO: insert reminder */}
+                <TextTooltip text="Reminder"><IconButton code={0xE01B}/></TextTooltip>
+
+                {/* TODO: insert time */}
+                <TextTooltip text="Time"><IconButton code={0xE46A}/></TextTooltip>
+
+                {/* TODO: insert date */}
+                <TextTooltip text="Date"><IconButton code={0xE2CC}/></TextTooltip>
+            </div>
         </PopoverMenu>
         <PopoverMenu
             ref={r => popoverMenu_direction_ref = r}
+            dragable
+            manualDismiss
             class={CSS.body_toolbar_menu}
-            style={{'min-width': '164px'}}
-            onToggleOpen={isOpen => setIs_popoverMenu_direction_open(isOpen)}>
+            onToggleOpen={isOpen => setIs_popoverMenu_direction_open(isOpen)}
+            onMouseDown={ev => focusToolbarMenu(ev[_currentTarget])}
+            onTouchStart={ev => focusToolbarMenu(ev[_currentTarget])}>
             <TextTooltip text="Close">
                 <IconButton
                     class={CSS.body_toolbar_menu_close}
@@ -120,19 +247,32 @@ const ToolBar: VoidComponent = () => {
                     onClick={() => closePopoverMenu(popoverMenu_direction_ref)}
                 />
             </TextTooltip>
-            <MenuHeader>Direction</MenuHeader>
+            <MenuHeader>Direction &<br/>
+            indentation</MenuHeader>
+            <MenuDivider />
+            <div class={CSS.body_toolbar_menu_icons}>
 
-            {/* TODO: left to right */}
-            <MenuItem iconCode={0xF16D} selected>Left to right</MenuItem>
+                {/* TODO: ltr */}
+                <TextTooltip text="Left to right"><IconButton code={0xF16D} selected variant={ButtonVariant[_tonal]}/></TextTooltip>
 
-            {/* TODO: right to left */}
-            <MenuItem iconCode={0xF16B}>Right to left</MenuItem>
+                {/* TODO: rtl */}
+                <TextTooltip text="Right to left"><IconButton code={0xF16B}/></TextTooltip>
+
+                {/* TODO: increase indent */}
+                <TextTooltip text="Increase indent"><IconButton code={0xF13D}/></TextTooltip>
+
+                {/* TODO: decrease indent */}
+                <TextTooltip text="Decrease indent"><IconButton code={0xF12B}/></TextTooltip>
+            </div>
         </PopoverMenu>
         <PopoverMenu
             ref={r => popoverMenu_list_ref = r}
+            dragable
+            manualDismiss
             class={CSS.body_toolbar_menu}
-            style={{'min-width': '164px'}}
-            onToggleOpen={isOpen => setIs_popoverMenu_list_open(isOpen)}>
+            onToggleOpen={isOpen => setIs_popoverMenu_list_open(isOpen)}
+            onMouseDown={ev => focusToolbarMenu(ev[_currentTarget])}
+            onTouchStart={ev => focusToolbarMenu(ev[_currentTarget])}>
             <TextTooltip text="Close">
                 <IconButton
                     class={CSS.body_toolbar_menu_close}
@@ -142,18 +282,27 @@ const ToolBar: VoidComponent = () => {
                 />
             </TextTooltip>
             <MenuHeader>List</MenuHeader>
+            <MenuDivider />
+            <div class={CSS.body_toolbar_menu_icons}>
 
-            {/* TODO: unordered list */}
-            <MenuItem iconCode={0xF086}>Unordered list</MenuItem>
+                {/* TODO: unordered list */}
+                <TextTooltip text="Unordered list"><IconButton code={0xF086}/></TextTooltip>
 
-            {/* TODO: ordered llist */}
-            <MenuItem iconCode={0xF157}>Ordered list</MenuItem>
+                {/* TODO: ordered list */}
+                <TextTooltip text="Ordered list"><IconButton code={0xF157}/></TextTooltip>
+
+                {/* TODO: check list */}
+                <TextTooltip text="Check list"><IconButton code={0xF032}/></TextTooltip>
+            </div>
         </PopoverMenu>
         <PopoverMenu
             ref={r => popoverMenu_align_ref = r}
+            dragable
+            manualDismiss
             class={CSS.body_toolbar_menu}
-            style={{'min-width': '164px'}}
-            onToggleOpen={isOpen => setIs_popoverMenu_align_open(isOpen)}>
+            onToggleOpen={isOpen => setIs_popoverMenu_align_open(isOpen)}
+            onMouseDown={ev => focusToolbarMenu(ev[_currentTarget])}
+            onTouchStart={ev => focusToolbarMenu(ev[_currentTarget])}>
             <TextTooltip text="Close">
                 <IconButton
                     class={CSS.body_toolbar_menu_close}
@@ -163,18 +312,21 @@ const ToolBar: VoidComponent = () => {
                 />
             </TextTooltip>
             <MenuHeader>Alignment</MenuHeader>
+            <MenuDivider />
+            <div class={CSS.body_toolbar_menu_icons}>
 
-            {/* TODO: left */}
-            <MenuItem iconCode={0xF070} selected>Left</MenuItem>
+                {/* TODO: left */}
+                <TextTooltip text="Left"><IconButton code={0xF070} selected variant={ButtonVariant[_tonal]}/></TextTooltip>
 
-            {/* TODO: center */}
-            <MenuItem iconCode={0xF056}>Center</MenuItem>
+                {/* TODO: center */}
+                <TextTooltip text="Center"><IconButton code={0xF056}/></TextTooltip>
 
-            {/* TODO: right */}
-            <MenuItem iconCode={0xF076}>Right</MenuItem>
+                {/* TODO: right */}
+                <TextTooltip text="Right"><IconButton code={0xF076}/></TextTooltip>
 
-            {/* TODO: justify */}
-            <MenuItem iconCode={0xF062}>Justify</MenuItem>
+                {/* TODO: justify */}
+                <TextTooltip text="Justify"><IconButton code={0xF062}/></TextTooltip>
+            </div>
         </PopoverMenu>
     </>)
 
@@ -184,6 +336,7 @@ const ToolBar: VoidComponent = () => {
         <ColorPicker
             ref={r => colorPicker_text_ref = r}
             disabledAction
+            dragable
             onToggleOpen={isOpen => setIs_colorPicker_text_open(isOpen)}
         />
 
@@ -191,13 +344,12 @@ const ToolBar: VoidComponent = () => {
         <ColorPicker
             ref={r => colorPicker_background_ref = r}
             disabledAction
+            dragable
             onToggleOpen={isOpen => setIs_colorPicker_background_open(isOpen)}
         />
     </>)
 
     return (<div class={CSS.body_toolbar}>
-
-        {/* TODO: style */}
         <Dropdown
             labelText={"Style"}
             selectedValues={['n']}
@@ -213,79 +365,33 @@ const ToolBar: VoidComponent = () => {
                 ['c', "Blockcode"],
             ]}
         />
-        <TextTooltip text="Bold">
-            <IconButton code={0xF082}/>
-        </TextTooltip>
-        <TextTooltip text="Italic">
-            <IconButton code={0xF14F}/>
-        </TextTooltip>
-        <TextTooltip text="Underline">
-            <IconButton code={0xF193}/>
-        </TextTooltip>
-        <TextTooltip text="Strikethrough">
-            <IconButton code={0xF18B}/>
-        </TextTooltip>
-        <TextTooltip text="Code">
-            <IconButton code={0xE4A8}/>
-        </TextTooltip>
-        <TextTooltip text="Subscript">
-            <IconButton code={0xF18D}/>
-        </TextTooltip>
-        <TextTooltip text="Superscript">
-            <IconButton code={0xF18F}/>
-        </TextTooltip>
-        <Divider vertical style={{height: '20px'}}/>
-        <TextTooltip text="Search">
-            <IconButton code={0xEDDF}/>
-        </TextTooltip>
-        <TextTooltip text="Clear format">
-            <IconButton code={0xE424}/>
-        </TextTooltip>
-        <TextTooltip text="Undo">
-            <IconButton code={0xE177}/>
-        </TextTooltip>
-        <TextTooltip text="Redo">
-            <IconButton code={0xE105}/>
-        </TextTooltip>
-        <TextTooltip text="Print">
-            <IconButton code={0xECFF}/>
-        </TextTooltip>
-        <Divider vertical style={{height: '20px'}}/>
-        <TextTooltip text="Text color">
+        <TextTooltip text="Text format">
             <IconButton
-                code={0xF0BA}
-                focused={is_colorPicker_text_open()}
-                onClick={ev => openColorPicker(ev, colorPicker_text_ref, {
-                    anchor: ev[_currentTarget],
-                    dragable: true,
-                    gap: 8
-                })}
+                code={0xF080}
+                focused={is_popoverMenu_format_open()}
+                onClick={ev => is_popoverMenu_format_open()
+                    ? closePopoverMenu(popoverMenu_format_ref)
+                    : openPopoverMenu(ev, popoverMenu_format_ref, { anchor: ev[_currentTarget] })
+                }
             />
         </TextTooltip>
-        <TextTooltip text="Background color">
+        <TextTooltip text="Color">
             <IconButton
-                code={0xE4B8}
-                focused={is_colorPicker_background_open()}
-                onClick={ev => openColorPicker(ev, colorPicker_background_ref, {
-                    anchor: ev[_currentTarget],
-                    dragable: true,
-                    gap: 8
-                })}
+                code={0xE4B6}
+                focused={is_popoverMenu_color_open()}
+                onClick={ev => is_popoverMenu_color_open()
+                    ? closePopoverMenu(popoverMenu_color_ref)
+                    : openPopoverMenu(ev, popoverMenu_color_ref, { anchor: ev[_currentTarget] })
+                }
             />
         </TextTooltip>
-        <Divider vertical style={{height: '20px'}}/>
         <TextTooltip text="Insert">
             <IconButton
                 code={0xE00B}
                 focused={is_popoverMenu_insert_open()}
                 onClick={ev => is_popoverMenu_insert_open()
                     ? closePopoverMenu(popoverMenu_insert_ref)
-                    : openPopoverMenu(ev, popoverMenu_insert_ref, {
-                        anchor: ev[_currentTarget],
-                        gap: 8,
-                        manualDismiss: true,
-                        dragable: true
-                    })
+                    : openPopoverMenu(ev, popoverMenu_insert_ref, { anchor: ev[_currentTarget] })
                 }
             />
         </TextTooltip>
@@ -295,12 +401,7 @@ const ToolBar: VoidComponent = () => {
                 focused={is_popoverMenu_textCase_open()}
                 onClick={ev => is_popoverMenu_textCase_open()
                     ? closePopoverMenu(popoverMenu_textCase_ref)
-                    : openPopoverMenu(ev, popoverMenu_textCase_ref, {
-                        anchor: ev[_currentTarget],
-                        gap: 8,
-                        manualDismiss: true,
-                        dragable: true
-                    })
+                    : openPopoverMenu(ev, popoverMenu_textCase_ref, { anchor: ev[_currentTarget] })
                 }
             />
         </TextTooltip>
@@ -310,42 +411,17 @@ const ToolBar: VoidComponent = () => {
                 focused={is_popoverMenu_list_open()}
                 onClick={ev => is_popoverMenu_list_open()
                     ? closePopoverMenu(popoverMenu_list_ref)
-                    : openPopoverMenu(ev, popoverMenu_list_ref, {
-                        anchor: ev[_currentTarget],
-                        gap: 8,
-                        manualDismiss: true,
-                        dragable: true
-                    })
+                    : openPopoverMenu(ev, popoverMenu_list_ref, { anchor: ev[_currentTarget] })
                 }
             />
         </TextTooltip>
-        <TextTooltip text="Indentation">
-            <IconButton
-                code={0xF13D}
-                focused={is_popoverMenu_indent_open()}
-                onClick={ev => is_popoverMenu_indent_open()
-                    ? closePopoverMenu(popoverMenu_indent_ref)
-                    : openPopoverMenu(ev, popoverMenu_indent_ref, {
-                        anchor: ev[_currentTarget],
-                        dragable: true,
-                        gap: 8,
-                        manualDismiss: true
-                    })
-                }
-            />
-        </TextTooltip>
-        <TextTooltip text="Text direction">
+        <TextTooltip text="Text direction & indentation">
             <IconButton
                 code={0xF169}
                 focused={is_popoverMenu_direction_open()}
                 onClick={ev => is_popoverMenu_direction_open()
                     ? closePopoverMenu(popoverMenu_direction_ref)
-                    : openPopoverMenu(ev, popoverMenu_direction_ref, {
-                        anchor: ev[_currentTarget],
-                        dragable: true,
-                        gap: 8,
-                        manualDismiss: true
-                    })
+                    : openPopoverMenu(ev, popoverMenu_direction_ref, { anchor: ev[_currentTarget] })
                 }
             />
         </TextTooltip>
@@ -355,17 +431,19 @@ const ToolBar: VoidComponent = () => {
                 focused={is_popoverMenu_align_open()}
                 onClick={ev => is_popoverMenu_align_open()
                     ? closePopoverMenu(popoverMenu_align_ref)
-                    : openPopoverMenu(ev, popoverMenu_align_ref, {
-                        anchor: ev[_currentTarget],
-                        dragable: true,
-                        gap: 8,
-                        manualDismiss: true
-                    })
+                    : openPopoverMenu(ev, popoverMenu_align_ref, { anchor: ev[_currentTarget] })
                 }
             />
         </TextTooltip>
-        <TextTooltip text="More actions">
-            <IconButton code={0xEAD9}/>
+        <TextTooltip text="More action">
+            <IconButton
+                code={0xEAD9}
+                focused={is_popoverMenu_moreAction_open()}
+                onClick={ev => is_popoverMenu_moreAction_open()
+                    ? closePopoverMenu(popoverMenu_moreAction_ref)
+                    : openPopoverMenu(ev, popoverMenu_moreAction_ref, { anchor: ev[_currentTarget] })
+                }
+            />
         </TextTooltip>
         <Menus/>
         <ColorPickers />
