@@ -37,7 +37,8 @@ export enum RoutesLinks {
     jsonStringify = '/json-stringify',
     javascriptMinifier = '/javascript-minifier',
     sorter = '/sorter',
-    textEditor = '/text-editor'
+    textEditor = '/text-editor',
+    compass = '/compass'
 }
 
 export enum ExternalLinks {
