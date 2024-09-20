@@ -1,3 +1,7 @@
+export const _hidden = 'hidden'
+export const _selectedNoteId = 'selectedNoteId'
+export const _notes = 'notes'
+export const _resolve = 'resolve'
 export const _inputAutoFocus = 'inputAutoFocus'
 export const _manualDismiss = 'manualDismiss'
 export const _disabledAction = 'disabledAction'

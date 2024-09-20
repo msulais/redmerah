@@ -1,6 +1,6 @@
 import { createSignal, onMount, type VoidComponent } from "solid-js";
 
-import { _system, _round, _theme, _corner, _light, _dark, _includes, _sharp, _semiRound, _fullRound, _home, _src, _apps, _about, _privacy, _terms, _share, _URL, _contactEmail, _donate, _getFullYear, _currentTarget, _filled } from "@/constants/string";
+import { _system, _round, _theme, _corner, _light, _dark, _includes, _sharp, _semiRound, _fullRound, _home, _src, _apps, _about, _privacy, _terms, _share, _URL, _contactEmail, _donate, _getFullYear, _currentTarget, _filled, _command } from "@/constants/string";
 import { getDocument, getNavigator, getRoot } from "@/constants/window";
 import { RootAttributes } from "@/enums/attributes";
 import { CornerData } from "@/enums/corner";
@@ -11,6 +11,7 @@ import { setLocalStorageItem, getLocalStorageItem } from "@/utils/storage";
 import { timeout } from "@/utils/timeout";
 import { encodeURL } from "@/utils/url";
 import { setAttribute } from "solid-js/web";
+import { Commands } from "./_enums";
 import logo from '@/assets/apps/notes-logo.svg'
 import redmerahLogo from '@/assets/logo.svg'
 import CSSAnimation from "@/styles/animation.module.scss"
@@ -21,7 +22,9 @@ import Menu, { closeSubMenu, closeMenu, LinkMenuItem, MenuDivider, MenuHeader, M
 import AppBar from "@/components/AppBar";
 import Icon from "@/components/Icon";
 
-const _: VoidComponent = () => {
+const _: VoidComponent<{
+    command: (type: Commands, ...args: unknown[]) => unknown
+}> = (props) => {
     const [is_menu_info_open, setIs_menu_info_open] = createSignal<boolean>(false)
     const [is_menu_settings_open, setIs_menu_settings_open] = createSignal<boolean>(false)
     const [is_submenu_themeSettings_open, setIs_submenu_themeSettings_open] = createSignal<boolean>(false)
@@ -209,7 +212,12 @@ const _: VoidComponent = () => {
             leading={<img alt="Notes logo" width={32} src={logo[_src]} />}
             headline="Notes"
             trailing={<>
-                <Button variant={ButtonVariant[_filled]}><Icon code={0xEB1B} filled/>New note</Button>
+                <Button
+                    variant={ButtonVariant[_filled]}
+                    onClick={(ev) => props[_command](Commands.add_note, ev)}>
+                    <Icon code={0xEB1B} filled/>
+                    New note
+                </Button>
                 <Tooltip text="Info">
                     <IconButton
                         focused={is_menu_info_open()}

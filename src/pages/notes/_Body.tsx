@@ -1,14 +1,21 @@
-import { createSignal, type VoidComponent } from "solid-js"
+import { createEffect, createSignal, onCleanup, Show, type VoidComponent } from "solid-js"
 
-import CSS from './_styles.module.scss'
-import { ButtonVariant, IconButton } from "@/components/Button"
-import Dropdown from "@/components/Dropdown"
+import type { Note } from "./_types"
+import { _currentTarget, _hidden, _hidePopover, _length, _notes, _selectedNoteId, _showPopover, _tonal } from "@/constants/string"
+import { toggleAttribute } from "@/utils/attributes"
+
+import Icon from "@/components/Icon"
 import TextTooltip from "@/components/Tooltip"
+import { ButtonVariant, IconButton } from "@/components/Button"
 import { closePopoverMenu, MenuDivider, MenuHeader, MenuItem, openPopoverMenu, PopoverMenu } from "@/components/Menu"
-import { _currentTarget, _hidePopover, _showPopover, _tonal } from "@/constants/string"
-import ColorPicker, { openColorPicker } from "@/components/ColorPicker"
+import Dropdown from "@/components/Dropdown"
+import ColorPicker, { closeColorPicker, openColorPicker } from "@/components/ColorPicker"
+import CSS from './_styles.module.scss'
 
-const ToolBar: VoidComponent = () => {
+const ToolBar: VoidComponent<{
+    selectedNoteId: number
+    hidden: boolean
+}> = (props) => {
     const [is_popoverMenu_insert_open    , setIs_popoverMenu_insert_open    ] = createSignal<boolean>(false)
     const [is_popoverMenu_direction_open , setIs_popoverMenu_direction_open ] = createSignal<boolean>(false)
     const [is_popoverMenu_list_open      , setIs_popoverMenu_list_open      ] = createSignal<boolean>(false)
@@ -34,6 +41,24 @@ const ToolBar: VoidComponent = () => {
         menu[_hidePopover]()
         menu[_showPopover]()
     }
+
+    function closeAllToolbarMenu(): void {
+        closePopoverMenu(popoverMenu_moreAction_ref)
+        closePopoverMenu(popoverMenu_format_ref)
+        closePopoverMenu(popoverMenu_color_ref)
+        closePopoverMenu(popoverMenu_textCase_ref)
+        closePopoverMenu(popoverMenu_insert_ref)
+        closePopoverMenu(popoverMenu_list_ref)
+        closePopoverMenu(popoverMenu_direction_ref)
+        closePopoverMenu(popoverMenu_align_ref)
+        closeColorPicker(colorPicker_text_ref)
+        closeColorPicker(colorPicker_background_ref)
+    }
+
+    createEffect(() => {
+        const hidden = props[_hidden]
+        if (hidden) closeAllToolbarMenu()
+    })
 
     const Menus: VoidComponent = () => (<>
         <PopoverMenu
@@ -349,7 +374,9 @@ const ToolBar: VoidComponent = () => {
         />
     </>)
 
-    return (<div class={CSS.body_toolbar}>
+    return (<div
+        class={CSS.body_toolbar}
+        data-hidden={toggleAttribute(props[_hidden])}>
         <Dropdown
             labelText={"Style"}
             selectedValues={['n']}
@@ -450,9 +477,22 @@ const ToolBar: VoidComponent = () => {
     </div>)
 }
 
-const _: VoidComponent = () => {
-    return (<main class={CSS.body}>
-        <ToolBar />
+const _: VoidComponent<{
+    notes: Note[]
+    selectedNoteId: number | null
+}> = (props) => {
+    return (<main
+        class={CSS.body}
+        data-empty={toggleAttribute(props[_notes][_length] == 0)}
+        data-noselected={toggleAttribute(props[_notes][_length] > 0) && props[_selectedNoteId] == null}>
+        <Show when={props[_notes][_length] == 0}>
+            <Icon code={0xEB19}/>
+            No Notes
+        </Show>
+        <ToolBar
+            selectedNoteId={props[_selectedNoteId]!}
+            hidden={props[_selectedNoteId] == null}
+        />
     </main>)
 }
 

@@ -10,6 +10,26 @@
     :root[data-corner=sharp] & { border-radius: 0px }
     :root[data-corner=semi-round] & { border-radius: 4px 0 0 0 }
     :root[data-corner=full-round] & { border-radius: 20px 0 0 0 }
+
+    &[data-empty] {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        border-radius: 0;
+        background-color: transparent;
+        flex-direction: column;
+        gap: 8px;
+        font-size: var(--font-size-xm);
+
+        > :global(.icon) {
+            --icon-size: var(--font-size-xxd);
+        }
+    }
+
+    &[data-noselected] {
+
+    }
 }
 
 .body_toolbar {
@@ -23,6 +43,10 @@
 
     :root[data-platform=desktop] & {
         min-height: 52px;
+    }
+
+    &[data-hidden] {
+        display: none;
     }
 }
 
@@ -50,4 +74,8 @@
     align-items: center;
     gap: 4px;
     flex-wrap: wrap;
+}
+
+.side_navigation {
+    padding-top: 0 !important;
 }
