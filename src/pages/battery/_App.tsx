@@ -133,10 +133,10 @@ const _: VoidComponent = () => {
                     {isCharging()? "Charging" : "Discharging"}
                 </Show>
             </div>
-            <Show when={chargingTime() != null}>
+            <Show when={chargingTime() != null && level() != null && level()! < 100}>
                 <p>{getRemainingTimeText(chargingTime()!)} remaining</p>
             </Show>
-            <Show when={dischargingTime() != null}>
+            <Show when={dischargingTime() != null && level() != null && level()! > 0}>
                 <p>{getRemainingTimeText(dischargingTime()!)} remaining</p>
             </Show>
         </main>
