@@ -1,7 +1,7 @@
 import { For, Show, createMemo, createSelector, createSignal, onMount, type VoidComponent } from "solid-js"
 
 import type { AppItem } from "@/types/apps"
-import { _centerBottomToLeft, _centerBottomToRight, _centerCenterLeftTop, _leftCenterToBottom, _clipboard, _color, _color_accent, _corner, _currentTarget, _dark, _description, _filled, _tonal, _filter, _fullRound, _hostname, _includes, _innerHTML, _join, _light, _link, _open, _outlined, _pinnedApps, _round, _semiRound, _share, _sharp, _some, _split, _system, _test, _theme, _title, _toLowerCase, _trim, _value, _writeText } from "@/constants/string"
+import { _centerBottomToLeft, _centerBottomToRight, _centerCenterLeftTop, _leftCenterToBottom, _clipboard, _color, _color_accent, _corner, _currentTarget, _dark, _description, _filled, _tonal, _filter, _fullRound, _hostname, _includes, _innerHTML, _join, _light, _link, _open, _outlined, _pinnedApps, _round, _semiRound, _share, _sharp, _some, _split, _system, _test, _theme, _title, _toLowerCase, _trim, _value, _writeText, _name } from "@/constants/string"
 import { getLocalStorageItem, setLocalStorageItem } from "@/utils/storage"
 import { toggleAttribute } from "@/utils/attributes"
 import { LocalStorageKeys } from "@/enums/storage"
@@ -23,7 +23,7 @@ export const MainElement: VoidComponent = () => {
     const [searchText, setSearchText] = createSignal<string>('')
     const isSelected = createSelector<string[], string>(pinnedApps, (a, b) => b[_some]((v) => v == a))
     const getSelectedLink = createMemo(() => selectedApp()? selectedApp()![_link] : '')
-    const getSelectedTitle = createMemo(() => selectedApp()? selectedApp()![_title] : '')
+    const getSelectedTitle = createMemo(() => selectedApp()? selectedApp()![_name] : '')
     let dialog_info_ref: HTMLDialogElement
     let menu_actions_ref: HTMLDialogElement
     let timeoutId: number | null = null
@@ -68,7 +68,7 @@ export const MainElement: VoidComponent = () => {
             leading={<Icon code={0xEDDF} />}
             labelText="Search apps"
         />
-        <div><For each={apps}>{app => <Show when={searchText()[_trim]() == '' || new RegExp(searchText()[_toLowerCase]()[_trim]()[_split](' ')[_join]('|'))[_test](app[_title][_toLowerCase]())}>
+        <div><For each={apps}>{app => <Show when={searchText()[_trim]() == '' || new RegExp(searchText()[_toLowerCase]()[_trim]()[_split](' ')[_join]('|'))[_test](app[_name][_toLowerCase]())}>
             <LinkButton
                 data-pinned={toggleAttribute(isSelected(app[_link]))}
                 href={app[_link]}
@@ -81,8 +81,8 @@ export const MainElement: VoidComponent = () => {
                     })
                     preventDefault(ev)
                 }}>
-                <img src={app.logoURL} alt={app[_title]} />
-                {app[_title]}
+                <img src={app.logoURL} alt={app[_name]} />
+                {app[_name]}
                 <Show when={isSelected(app[_link])}>
                     <Icon filled code={0xECA2}/>
                 </Show>
