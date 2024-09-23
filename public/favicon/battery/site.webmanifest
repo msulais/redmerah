@@ -2,7 +2,7 @@
     "name": "Battery",
     "short_name": "Battery",
     "id": "/battery",
-    "description": "",
+    "description": "Stay informed about your device's battery health with our accurate and easy-to-use app. Track battery level, charging status, and estimated time to full.",
     "start_url": "/battery",
     "icons": [
         {

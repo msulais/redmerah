@@ -13,7 +13,7 @@ import type { AppItem } from '@/types/apps'
 export const battery: AppItem = {
     logoURL: battery_logo[_src],
     name: 'Battery',
-    description: '',
+    description: 'Stay informed about your device\'s battery health with our accurate and easy-to-use app. Track battery level, charging status, and estimated time to full.',
     link: RoutesLinks.battery,
     color: '#FF800B',
     buildNumber: 1,
