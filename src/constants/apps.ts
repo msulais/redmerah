@@ -6,9 +6,20 @@ import tasks_logo from '@/assets/apps/tasks-logo.svg'
 import sass_converter_logo from '@/assets/apps/sass-converter-logo.svg'
 import notes_logo from '@/assets/apps/notes-logo.svg'
 import battery_logo from '@/assets/apps/battery-logo.svg'
+import qr_code_logo from '@/assets/apps/qr-code-logo.svg'
 import { _src } from './string'
 import { RoutesLinks } from '@/enums/links'
 import type { AppItem } from '@/types/apps'
+
+export const qrCode: AppItem = {
+    logoURL: qr_code_logo[_src],
+    name: 'QR Code',
+    description: '',
+    link: RoutesLinks.qrCode,
+    color: '#FF2222',
+    buildNumber: 1,
+    buildVersion: '0.1.0',
+}
 
 export const battery: AppItem = {
     logoURL: battery_logo[_src],
@@ -91,6 +102,7 @@ export const markdownConverter: AppItem = {
 }
 
 export const apps: AppItem[] = [
+    qrCode,
     battery,
     // notes
     sassConverter,

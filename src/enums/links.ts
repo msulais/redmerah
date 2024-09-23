@@ -14,11 +14,11 @@ export enum RoutesLinks {
     tasks = '/tasks',
     sassConverter = '/sass-converter',
     battery = '/battery',
+    qrCode = '/qr-code',
 
     // TODO: create these apps
     notes = '/notes',
     codeFormatter = '/code-formatter',
-    qrCode = '/qr-code',
     whiteboard = '/whiteboard',
     voiceRecorder = '/voice-recorder',
     clock = '/clock',
