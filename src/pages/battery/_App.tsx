@@ -7,16 +7,16 @@ import { AnimationEffectTiming } from "@/enums/animation"
 import { ElementIds } from "@/enums/ids"
 import { getElementById } from "@/utils/element"
 import { addEventListener } from "@/utils/event"
-import { getDocument, getDocumentBody, getNavigator } from "@/constants/window"
+import { getDocumentBody, getNavigator } from "@/constants/window"
 import { mathFloor } from "@/utils/math"
 
-import CSS from './_styles.module.scss'
+import TextTooltip from "@/components/Tooltip"
+import { ButtonVariant, IconButton } from "@/components/Button"
 import Icon from "@/components/Icon"
+import Toast, { closeToast, openToast } from "@/components/Toast"
 import AppBar from './_AppBar'
 import App from "@/components/App"
-import Toast, { closeToast, openToast } from "@/components/Toast"
-import { ButtonVariant, IconButton } from "@/components/Button"
-import TextTooltip from "@/components/Tooltip"
+import CSS from './_styles.module.scss'
 
 const _: VoidComponent = () => {
     const [level, setLevel] = createSignal<number | null>(null)
@@ -103,7 +103,7 @@ const _: VoidComponent = () => {
                 <IconButton
                     code={0xE5E9}
                     variant={ButtonVariant[_tonal]}
-                    onClick={ev => closeToast(toast_browserNotSupport_ref)}
+                    onClick={() => closeToast(toast_browserNotSupport_ref)}
                 />
             </TextTooltip>}>
             Browser not supported. See <a
