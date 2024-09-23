@@ -13,9 +13,10 @@ export enum RoutesLinks {
     calculator = '/calculator',
     tasks = '/tasks',
     sassConverter = '/sass-converter',
-    notes = '/notes',
+    battery = '/battery',
 
     // TODO: create these apps
+    notes = '/notes',
     codeFormatter = '/code-formatter',
     qrCode = '/qr-code',
     whiteboard = '/whiteboard',
