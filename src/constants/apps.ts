@@ -16,8 +16,8 @@ export const battery: AppItem = {
     description: 'Stay informed about your device\'s battery health with our accurate and easy-to-use app. Track battery level, charging status, and estimated time to full.',
     link: RoutesLinks.battery,
     color: '#FF800B',
-    buildNumber: 1,
-    buildVersion: '0.1.0',
+    buildNumber: 2,
+    buildVersion: '0.1.1',
 }
 
 export const notes: AppItem = {
