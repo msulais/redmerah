@@ -10,15 +10,15 @@ import type { AppItem } from '@/types/apps'
 import { RoutesLinks } from '@/enums/links'
 
 export const apps: AppItem[] = [
-    {
-        logoURL: notes_logo[_src],
-        title: 'Notes',
-        description: 'Notes is your all-in-one note-taking solution. Capture ideas, add multimedia, and create task lists with ease. Stay organized and productive on the go.',
-        link: RoutesLinks.notes,
-        color: '#FF1F1F',
-        buildNumber: 1,
-        buildVersion: '0.1.0',
-    },
+    // {
+    //     logoURL: notes_logo[_src],
+    //     title: 'Notes',
+    //     description: 'Notes is your all-in-one note-taking solution. Capture ideas, add multimedia, and create task lists with ease. Stay organized and productive on the go.',
+    //     link: RoutesLinks.notes,
+    //     color: '#FF1F1F',
+    //     buildNumber: 1,
+    //     buildVersion: '0.1.0',
+    // },
     {
         logoURL: sass_converter_logo[_src],
         title: 'SASS Converter',

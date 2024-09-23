@@ -1,3 +1,8 @@
+export const _noteId = 'noteId'
+export const _folderId = 'folderId'
+export const _noteFileMetaData = 'noteFileMetaData'
+export const _noteFolders = 'noteFolders'
+export const _insert = 'insert'
 export const _hidden = 'hidden'
 export const _selectedNoteId = 'selectedNoteId'
 export const _notes = 'notes'
