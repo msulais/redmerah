@@ -64,11 +64,11 @@ export const tasks: AppItem = {
 export const calculator: AppItem = {
     logoURL: calculator_logo[_src],
     name: 'Calculator',
-    description: 'Looking for a reliable and comprehensive calculator app? Look no further than our all-in-one calculator! With 5 calculators in one app, you can tackle any calculation that comes your way.',
+    description: 'Perform a wide range of calculations with our versatile calculator. From basic arithmetic to advanced scientific functions and programmer tools, we\'ve got you covered.',
     link: RoutesLinks.calculator,
     color: '#026BE3',
-    buildNumber: 4,
-    buildVersion: '0.1.3',
+    buildNumber: 5,
+    buildVersion: '0.1.4',
 }
 
 export const randomizer: AppItem = {

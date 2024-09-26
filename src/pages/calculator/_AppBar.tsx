@@ -24,7 +24,7 @@ import Icon from "@/components/Icon"
 import { TextTooltip } from "@/components/Tooltip"
 import { ButtonVariant, IconButton } from "@/components/Button"
 import { AreaTextField, changeAreaTextFieldValue } from "@/components/TextField"
-import Menu, {  MenuDivider, MenuItem, MenuHeader, closeMenu, LinkMenuItem, SubMenu, closeSubMenu, openMenu, MenuPosition, SubMenuItem } from "@/components/Menu"
+import Menu, {  MenuDivider, MenuItem, MenuHeader, closeMenu, LinkMenuItem, SubMenu, closeSubMenu, openMenu, MenuPosition, SubMenuItem, SwitchMenuItem } from "@/components/Menu"
 import Drawer, { closeDrawer, DrawerItem, DrawerPosition, openDrawer } from "@/components/Drawer"
 import AppBar from "@/components/AppBar"
 import CSSAnimation from "@/styles/animation.module.scss";
@@ -126,211 +126,210 @@ const _: VoidComponent<{
         initSideNotebookListener()
     })
 
-    const Menus: VoidComponent = () => {
-        return (<>
-            <Menu
-                ref={r => menu_info_ref = r}
-                style={{"min-width": '200px'}}
-                onToggleOpen={isOpen => setIs_menu_info_open(isOpen)}>
-                <LinkMenuItem
-                    onClick={() => closeMenu(menu_info_ref)}
-                    href={RoutesLinks[_home]}
-                    leading={<img src={redmerahLogo[_src]} width={16} alt='Redmerah logo'/>}>
-                    Redmerah
-                </LinkMenuItem>
-                <LinkMenuItem
-                    onClick={() => closeMenu(menu_info_ref)}
-                    href={RoutesLinks[_apps]}
-                    iconCode={0xE063}>
-                    More apps
-                </LinkMenuItem>
-                <LinkMenuItem
-                    onClick={() => closeMenu(menu_info_ref)}
-                    href={RoutesLinks[_about]}
-                    iconCode={0xE930}>
-                    About us
-                </LinkMenuItem>
-                <MenuDivider />
-                <LinkMenuItem
-                    onClick={() => closeMenu(menu_info_ref)}
-                    href={RoutesLinks[_privacy]}
-                    iconCode={0xEE51}>
-                    Privacy policy
-                </LinkMenuItem>
-                <LinkMenuItem
-                    onClick={() => closeMenu(menu_info_ref)}
-                    href={RoutesLinks[_terms]}
-                    iconCode={0xED47}>
-                    Terms & conditions
-                </LinkMenuItem>
-                <MenuDivider />
+    const Menus: VoidComponent = () => (<>
+        <Menu
+            ref={r => menu_info_ref = r}
+            style={{"min-width": '200px'}}
+            onToggleOpen={isOpen => setIs_menu_info_open(isOpen)}>
+            <LinkMenuItem
+                onClick={() => closeMenu(menu_info_ref)}
+                href={RoutesLinks[_home]}
+                leading={<img src={redmerahLogo[_src]} width={16} alt='Redmerah logo'/>}>
+                Redmerah
+            </LinkMenuItem>
+            <LinkMenuItem
+                onClick={() => closeMenu(menu_info_ref)}
+                href={RoutesLinks[_apps]}
+                iconCode={0xE063}>
+                More apps
+            </LinkMenuItem>
+            <LinkMenuItem
+                onClick={() => closeMenu(menu_info_ref)}
+                href={RoutesLinks[_about]}
+                iconCode={0xE930}>
+                About us
+            </LinkMenuItem>
+            <MenuDivider />
+            <LinkMenuItem
+                onClick={() => closeMenu(menu_info_ref)}
+                href={RoutesLinks[_privacy]}
+                iconCode={0xEE51}>
+                Privacy policy
+            </LinkMenuItem>
+            <LinkMenuItem
+                onClick={() => closeMenu(menu_info_ref)}
+                href={RoutesLinks[_terms]}
+                iconCode={0xED47}>
+                Terms & conditions
+            </LinkMenuItem>
+            <MenuDivider />
+            <MenuItem
+                onClick={() => {
+                    getNavigator()[_share]({ title: 'Calculator', text: 'Calculator', url: getDocument()[_URL] })
+                    closeMenu(menu_info_ref)
+                }}
+                iconCode={0xEE23}>
+                Share
+            </MenuItem>
+            <LinkMenuItem
+                onClick={() => closeMenu(menu_info_ref)}
+                href={'mailto:' + ExternalLinks[_contactEmail] + '?subject=' + encodeURL('Calculator')}
+                iconCode={0xE3A0}>
+                Send feedback
+            </LinkMenuItem>
+            <LinkMenuItem
+                onClick={() => closeMenu(menu_info_ref)}
+                href={ExternalLinks[_donate]}
+                openInNewTab
+                iconCode={0xE84B}>
+                Donate
+            </LinkMenuItem>
+            <MenuHeader>&copy; {new Date()[_getFullYear]()} Redmerah</MenuHeader>
+        </Menu>
+        <Menu
+            style={{width: '224px'}}
+            ref={r => menu_settings_ref = r}
+            onToggleOpen={(v) => setIs_menu_settings_open(v)}>
+            <TextTooltip text={"Display result in scientific notation (e.g. 1.2E-29)"}>
+                <SwitchMenuItem
+                    value={props[_settings][_scientificNotation]}
+                    iconCode={0xEA91}
+                    onClick={() => props[_command](Commands.toggle_settings_scientificNotation)}>
+                    Scientific notation
+                </SwitchMenuItem>
+            </TextTooltip>
+            <TextTooltip text={"Show or hide memory button (M, M+, M-, MR, MC)"}>
+                <SwitchMenuItem
+                    value={props[_settings][_memoryButtons]}
+                    iconCode={0xE5CD}
+                    onClick={() => props[_command](Commands.toggle_settings_memoryButtons)}>
+                    Memory buttons
+                </SwitchMenuItem>
+            </TextTooltip>
+            <MenuDivider/>
+            <SubMenu
+                level={1}
+                ref={r => submenu_themeSettings_ref = r}
+                onToggleOpen={v => setIs_submenu_themeSettings_open(v)}
+                item={<SubMenuItem
+                    focused={is_submenu_themeSettings_open()}
+                    iconCode={0xE28A}>
+                    Theme
+                </SubMenuItem>}>
                 <MenuItem
-                    onClick={() => {
-                        getNavigator()[_share]({ title: 'Calculator', text: 'Calculator', url: getDocument()[_URL] })
-                        closeMenu(menu_info_ref)
-                    }}
-                    iconCode={0xEE23}>
-                    Share
+                    selected={theme() == ThemeData[_light]}
+                    iconCode={0xF2CD}
+                    onClick={() => changeTheme(ThemeData[_light])}>
+                    Light
                 </MenuItem>
-                <LinkMenuItem
-                    onClick={() => closeMenu(menu_info_ref)}
-                    href={'mailto:' + ExternalLinks[_contactEmail] + '?subject=' + encodeURL('Calculator')}
-                    iconCode={0xE3A0}>
-                    Send feedback
-                </LinkMenuItem>
-                <LinkMenuItem
-                    onClick={() => closeMenu(menu_info_ref)}
-                    href={ExternalLinks[_donate]}
-                    openInNewTab
-                    iconCode={0xE84B}>
-                    Donate
-                </LinkMenuItem>
-                <MenuHeader>&copy; {new Date()[_getFullYear]()} Redmerah</MenuHeader>
-            </Menu>
-            <Menu
-                style={{width: '224px'}}
-                ref={r => menu_settings_ref = r}
-                onToggleOpen={(v) => setIs_menu_settings_open(v)}>
-                <TextTooltip text={"Display result in scientific notation (e.g. 1.2E-29)"}>
-                    <MenuItem
-                        onClick={() => props[_command](Commands.toggle_settings_scientificNotation)}
-                        checked={props[_settings][_scientificNotation]}>
-                        Scientific notation
-                    </MenuItem>
-                </TextTooltip>
-                <TextTooltip text={"Show or hide memory button (M, M+, M-, MR, MC)"}>
-                    <MenuItem
-                        onClick={() => props[_command](Commands.toggle_settings_memoryButtons)}
-                        checked={props[_settings][_memoryButtons]}>
-                        Memory buttons
-                    </MenuItem>
-                </TextTooltip>
-                <MenuDivider/>
-                <SubMenu
-                    level={1}
-                    ref={r => submenu_themeSettings_ref = r}
-                    onToggleOpen={v => setIs_submenu_themeSettings_open(v)}
-                    item={<SubMenuItem
-                        focused={is_submenu_themeSettings_open()}
-                        iconCode={0xE28A}>
-                        Theme
-                    </SubMenuItem>}>
-                    <MenuItem
-                        selected={theme() == ThemeData[_light]}
-                        iconCode={0xF2CD}
-                        onClick={() => changeTheme(ThemeData[_light])}>
-                        Light
-                    </MenuItem>
-                    <MenuItem
-                        selected={theme() == ThemeData[_dark]}
-                        iconCode={0xF2B3}
-                        onClick={() => changeTheme(ThemeData[_dark])}>
-                        Dark
-                    </MenuItem>
-                    <MenuItem
-                        selected={theme() == ThemeData[_system]}
-                        iconCode={0xE96D}
-                        onClick={() => changeTheme(ThemeData[_system])}>
-                        System theme
-                    </MenuItem>
-                </SubMenu>
-                <SubMenu
-                    level={1}
-                    ref={r => submenu_cornerSettings_ref = r}
-                    onToggleOpen={v => setIs_submenu_cornerSettings_open(v)}
-                    item={<SubMenuItem
-                        focused={is_submenu_cornerSettings_open()}
-                        iconCode={0xF044}>
-                        Corner style
-                    </SubMenuItem>}>
-                    <MenuItem
-                        selected={corner() == CornerData[_sharp]}
-                        iconCode={0xEA99}
-                        onClick={() => changeCorner(CornerData[_sharp])}>
-                        Sharp
-                    </MenuItem>
-                    <MenuItem
-                        selected={corner() == CornerData[_semiRound]}
-                        iconCode={0xEEF7}
-                        onClick={() => changeCorner(CornerData[_semiRound])}>
-                        Semi round
-                    </MenuItem>
-                    <MenuItem
-                        selected={corner() == CornerData[_round]}
-                        iconCode={0xF044}
-                        onClick={() => changeCorner(CornerData[_round])}>
-                        Round
-                    </MenuItem>
-                    <MenuItem
-                        selected={corner() == CornerData[_fullRound]}
-                        iconCode={0xE408}
-                        onClick={() => changeCorner(CornerData[_fullRound])}>
-                        Full round
-                    </MenuItem>
-                </SubMenu>
-                <MenuDivider />
-                <MenuHeader>Number format</MenuHeader>
-                <SubMenu
-                    level={1}
-                    style={{width: '132px'}}
-                    ref={r => submenu_decimalNumberFormatSettings_ref = r}
-                    onToggleOpen={v => setIs_menu_decimalNumberFormatSettings_open(v)}
-                    item={<SubMenuItem
-                        focused={is_menu_decimalNumberFormatSettings_open()}
-                        iconCode={0xE599}>
-                        Decimal
-                    </SubMenuItem>}>
-                    <MenuItem
-                        onClick={() => changeDecimalNumberFormat(DecimalNumberFormat[_comma])}
-                        selected={props[_settings][_numberFormat][_decimal] == DecimalNumberFormat[_comma]}>
-                        Comma
-                    </MenuItem>
-                    <MenuItem
-                        onClick={() => changeDecimalNumberFormat(DecimalNumberFormat[_point])}
-                        selected={props[_settings][_numberFormat][_decimal] == DecimalNumberFormat[_point]}>
-                        Point
-                    </MenuItem>
-                </SubMenu>
-
-                <SubMenu
-                    level={1}
-                    style={{width: '132px'}}
-                    ref={r => submenu_groupingNumberFormatSettings_ref = r}
-                    onToggleOpen={v => setIs_menu_groupingNumberFormatSettings_open(v)}
-                    item={<SubMenuItem
-                        focused={is_menu_groupingNumberFormatSettings_open()}
-                        iconCode={0xEB49}>
-                        Grouping
-                    </SubMenuItem>}>
-                    <MenuItem
-                        onClick={() => changeGroupingNumberFormat(GroupingNumberFormat[_comma])}
-                        selected={props[_settings][_numberFormat][_grouping] == GroupingNumberFormat[_comma]}>
-                        Comma
-                    </MenuItem>
-                    <MenuItem
-                        onClick={() => changeGroupingNumberFormat(GroupingNumberFormat[_point])}
-                        selected={props[_settings][_numberFormat][_grouping] == GroupingNumberFormat[_point]}>
-                        Point
-                    </MenuItem>
-                    <MenuItem
-                        onClick={() => changeGroupingNumberFormat(GroupingNumberFormat[_space])}
-                        selected={props[_settings][_numberFormat][_grouping] == GroupingNumberFormat[_space]}>
-                        Space
-                    </MenuItem>
-                    <MenuItem
-                        onClick={() => changeGroupingNumberFormat(GroupingNumberFormat[_none])}
-                        selected={props[_settings][_numberFormat][_grouping] == GroupingNumberFormat[_none]}>
-                        None
-                    </MenuItem>
-                    <MenuItem
-                        onClick={() => changeGroupingNumberFormat(GroupingNumberFormat[_underscore])}
-                        selected={props[_settings][_numberFormat][_grouping] == GroupingNumberFormat[_underscore]}>
-                        Underscore
-                    </MenuItem>
-                </SubMenu>
-            </Menu>
-        </>)
-    }
+                <MenuItem
+                    selected={theme() == ThemeData[_dark]}
+                    iconCode={0xF2B3}
+                    onClick={() => changeTheme(ThemeData[_dark])}>
+                    Dark
+                </MenuItem>
+                <MenuItem
+                    selected={theme() == ThemeData[_system]}
+                    iconCode={0xE96D}
+                    onClick={() => changeTheme(ThemeData[_system])}>
+                    System theme
+                </MenuItem>
+            </SubMenu>
+            <SubMenu
+                level={1}
+                ref={r => submenu_cornerSettings_ref = r}
+                onToggleOpen={v => setIs_submenu_cornerSettings_open(v)}
+                item={<SubMenuItem
+                    focused={is_submenu_cornerSettings_open()}
+                    iconCode={0xF044}>
+                    Corner style
+                </SubMenuItem>}>
+                <MenuItem
+                    selected={corner() == CornerData[_sharp]}
+                    iconCode={0xEA99}
+                    onClick={() => changeCorner(CornerData[_sharp])}>
+                    Sharp
+                </MenuItem>
+                <MenuItem
+                    selected={corner() == CornerData[_semiRound]}
+                    iconCode={0xEEF7}
+                    onClick={() => changeCorner(CornerData[_semiRound])}>
+                    Semi round
+                </MenuItem>
+                <MenuItem
+                    selected={corner() == CornerData[_round]}
+                    iconCode={0xF044}
+                    onClick={() => changeCorner(CornerData[_round])}>
+                    Round
+                </MenuItem>
+                <MenuItem
+                    selected={corner() == CornerData[_fullRound]}
+                    iconCode={0xE408}
+                    onClick={() => changeCorner(CornerData[_fullRound])}>
+                    Full round
+                </MenuItem>
+            </SubMenu>
+            <MenuDivider />
+            <MenuHeader>Number format</MenuHeader>
+            <SubMenu
+                level={1}
+                style={{width: '132px'}}
+                ref={r => submenu_decimalNumberFormatSettings_ref = r}
+                onToggleOpen={v => setIs_menu_decimalNumberFormatSettings_open(v)}
+                item={<SubMenuItem
+                    focused={is_menu_decimalNumberFormatSettings_open()}
+                    iconCode={0xE599}>
+                    Decimal
+                </SubMenuItem>}>
+                <MenuItem
+                    onClick={() => changeDecimalNumberFormat(DecimalNumberFormat[_comma])}
+                    selected={props[_settings][_numberFormat][_decimal] == DecimalNumberFormat[_comma]}>
+                    Comma
+                </MenuItem>
+                <MenuItem
+                    onClick={() => changeDecimalNumberFormat(DecimalNumberFormat[_point])}
+                    selected={props[_settings][_numberFormat][_decimal] == DecimalNumberFormat[_point]}>
+                    Point
+                </MenuItem>
+            </SubMenu>
+            <SubMenu
+                level={1}
+                style={{width: '132px'}}
+                ref={r => submenu_groupingNumberFormatSettings_ref = r}
+                onToggleOpen={v => setIs_menu_groupingNumberFormatSettings_open(v)}
+                item={<SubMenuItem
+                    focused={is_menu_groupingNumberFormatSettings_open()}
+                    iconCode={0xEB49}>
+                    Grouping
+                </SubMenuItem>}>
+                <MenuItem
+                    onClick={() => changeGroupingNumberFormat(GroupingNumberFormat[_comma])}
+                    selected={props[_settings][_numberFormat][_grouping] == GroupingNumberFormat[_comma]}>
+                    Comma
+                </MenuItem>
+                <MenuItem
+                    onClick={() => changeGroupingNumberFormat(GroupingNumberFormat[_point])}
+                    selected={props[_settings][_numberFormat][_grouping] == GroupingNumberFormat[_point]}>
+                    Point
+                </MenuItem>
+                <MenuItem
+                    onClick={() => changeGroupingNumberFormat(GroupingNumberFormat[_space])}
+                    selected={props[_settings][_numberFormat][_grouping] == GroupingNumberFormat[_space]}>
+                    Space
+                </MenuItem>
+                <MenuItem
+                    onClick={() => changeGroupingNumberFormat(GroupingNumberFormat[_none])}
+                    selected={props[_settings][_numberFormat][_grouping] == GroupingNumberFormat[_none]}>
+                    None
+                </MenuItem>
+                <MenuItem
+                    onClick={() => changeGroupingNumberFormat(GroupingNumberFormat[_underscore])}
+                    selected={props[_settings][_numberFormat][_grouping] == GroupingNumberFormat[_underscore]}>
+                    Underscore
+                </MenuItem>
+            </SubMenu>
+        </Menu>
+    </>)
 
     const Drawers: VoidComponent = () => {
         return (<>

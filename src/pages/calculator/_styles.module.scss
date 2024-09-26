@@ -6,7 +6,14 @@ $side_notebook_none: 760px;
     min-width: min(360px, calc(100% - 80px));
 
     & textarea {
-        min-height: calc(100dvh - 96px);
+        min-height: calc(100dvh - 80px);
+
+        :root[data-platform=desktop] & {
+            min-height: calc(100dvh - 72px) !important;
+        }
+        :root[data-platform=mobile] & {
+            min-height: calc(100dvh - 120px) !important;
+        }
     }
 }
 
@@ -231,10 +238,19 @@ $side_notebook_none: 760px;
     }
 
     & textarea {
-        height: calc(100dvh - 96px) !important;
-        max-height: calc(100dvh - 96px);
+        height: calc(100dvh - 94px) !important;
+        max-height: calc(100dvh - 94px) !important;
         min-width: 360px - 32px !important;
         max-width: 360px - 32px !important;
+
+        :root[data-platform=desktop] & {
+            height: calc(100dvh - 86px) !important;
+            max-height: calc(100dvh - 86px) !important;
+        }
+        :root[data-platform=mobile] & {
+            height: calc(100dvh - 110px) !important;
+            max-height: calc(100dvh - 110px) !important;
+        }
     }
 }
 
