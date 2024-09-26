@@ -2,7 +2,7 @@
     "name": "QR Code",
     "short_name": "QR Code",
     "id": "/qr-code",
-    "description": "",
+    "description": "Create and read QR codes effortlessly with our user-friendly app. Share information, websites, contacts, and more using QR codes.",
     "start_url": "/qr-code",
     "icons": [
         {
