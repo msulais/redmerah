@@ -1,7 +1,7 @@
-import { Match, Switch, type ParentComponent, type VoidComponent } from "solid-js"
+import { Match, Switch as SolidSwitch, type ParentComponent, type VoidComponent } from "solid-js"
 
 import { Pages } from "./_enums"
-import { _bottom, _button, _checkBox, _children, _colorPicker, _datePicker, _dateTimePicker, _description, _dialog, _divider, _drawer, _dropdown, _expander, _filled, _tonal, _icon, _left, _list, _menu, _modal, _outlined, _page, _popover, _right, _textField, _title, _toast, _top, _transparent, _tooltip, _emoji, _emojiPicker } from "@/constants/string"
+import { _bottom, _button, _checkBox, _children, _colorPicker, _datePicker, _dateTimePicker, _description, _dialog, _divider, _drawer, _dropdown, _expander, _filled, _tonal, _icon, _left, _list, _menu, _modal, _outlined, _page, _popover, _right, _textField, _title, _toast, _top, _transparent, _tooltip, _emoji, _emojiPicker, _switch } from "@/constants/string"
 
 import CSS from './_styles.module.scss'
 import Button from "./components/_Button"
@@ -24,6 +24,7 @@ import Toast from './components/_Toast'
 import Tooltip from './components/_Tooltip'
 import Emoji from './components/_Emoji'
 import EmojiPicker from './components/_EmojiPicker'
+import Switch from './components/_Switch'
 
 export const Page: ParentComponent<{
     title: string
@@ -51,7 +52,7 @@ export const PlaygroundOptions: ParentComponent = (props) => {
 const _: VoidComponent<{
     page: Pages
 }> = (props) => {
-    return (<Switch>
+    return (<SolidSwitch>
         <Match when={props[_page] == Pages[_button        ]}><Button        /></Match>
         <Match when={props[_page] == Pages[_checkBox      ]}><CheckBox      /></Match>
         <Match when={props[_page] == Pages[_colorPicker   ]}><ColorPicker   /></Match>
@@ -72,7 +73,8 @@ const _: VoidComponent<{
         <Match when={props[_page] == Pages[_tooltip       ]}><Tooltip       /></Match>
         <Match when={props[_page] == Pages[_emoji         ]}><Emoji         /></Match>
         <Match when={props[_page] == Pages[_emojiPicker   ]}><EmojiPicker   /></Match>
-    </Switch>)
+        <Match when={props[_page] == Pages[_switch        ]}><Switch        /></Match>
+    </SolidSwitch>)
 }
 
 export default _

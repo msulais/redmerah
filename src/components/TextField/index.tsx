@@ -4,8 +4,8 @@ import type { ComponentEvent } from '@/types/event'
 import { toggleAttribute } from '@/utils/attributes'
 import { clearTimeDelayed, clearTimeInterval, setTimeDelayed, setTimeInterval } from '@/utils/timeout'
 import { preventDefault } from '@/utils/event'
-import { _centerBottom, _centerCenterLeft, _autoHideLabel, _autoShowClearBtn, _autocomplete, _button, _changeValueTooltip, _checkValidity, _children, _classList, _clearTooltip, _compact, _currentTarget, _decreaseTooltip, _disabled, _dispatchEvent, _focus, _focused, _id, _increaseTooltip, _input, _isIntOnly, _isNaN, _labelAttr, _labelElement, _labelText, _leading, _length, _max, _maxLine, _messageText, _min, _minLine, _off, _onBlur, _onFinalValueChanged, _onFocus, _onInput, _onValueChanged, _placeholder, _px, _readOnly, _ref, _resize, _rows, _scrollHeight, _split, _step, _text, _trailing, _trim, _type, _value, _valuechange, _result, _observe, _disconnect, _width, _menuAttr, _usePortal, _style, _bottom, _clientX, _clientY, _left, _right, _top, _touches, _x, _y, _click, _onToggleOpen, _target, _contains, _isArray } from '@/constants/string'
-import { mathMax, numberParse } from '@/utils/math'
+import { _centerBottom, _centerCenterLeft, _autoHideLabel, _autoShowClearBtn, _autocomplete, _button, _changeValueTooltip, _checkValidity, _children, _classList, _clearTooltip, _compact, _currentTarget, _decreaseTooltip, _disabled, _dispatchEvent, _focus, _focused, _id, _increaseTooltip, _input, _isIntOnly, _isNaN, _labelAttr, _labelElement, _labelText, _leading, _length, _max, _maxLine, _messageText, _min, _minLine, _off, _onBlur, _onFinalValueChanged, _onFocus, _onInput, _onValueChanged, _placeholder, _px, _readOnly, _ref, _resize, _rows, _scrollHeight, _split, _step, _text, _trailing, _trim, _type, _value, _valuechange, _result, _observe, _disconnect, _width, _menuAttr, _usePortal, _style, _bottom, _clientX, _clientY, _left, _right, _top, _touches, _x, _y, _click, _onToggleOpen, _target, _contains, _isArray, _class, _integerOnly } from '@/constants/string'
+import { mathMax, mathRound, numberParse } from '@/utils/math'
 import { getBoundingClientRect } from '@/utils/element'
 import { getDocument } from '@/constants/window'
 import { addEventListener, removeEventListener } from '@/utils/event'
@@ -226,10 +226,12 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
     })
 
     return (<label
-        class='textfield'
+        class={'textfield' + (props[_labelAttr] && props[_labelAttr][_class] != null? ` ${props[_labelAttr][_class]}` : '')}
         for={props[_id]}
-        {...props[_labelAttr]}
-    >
+        {...(props[_labelAttr]
+            ? splitProps(props[_labelAttr], [_class])[1]
+            : {}
+        )}>
         <div
             data-focused={toggleAttribute(props[_focused] ?? isFocus())}
             data-invalid={toggleAttribute(isInvalid())}
@@ -289,6 +291,7 @@ type NumberTextFieldProps = Omit<TextFieldProps, 'type'> & {
     step?: number
     min?: number
     max?: number
+    integerOnly?: boolean
     decreaseTooltip?: string
     increaseTooltip?: string
     changeValueTooltip?: string
@@ -305,7 +308,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
         _max, _min, _trailing, _onValueChanged, _autoShowClearBtn,
         _step, _onBlur, _value, _ref, _focused, _onFinalValueChanged,
         _decreaseTooltip, _increaseTooltip, _changeValueTooltip,
-        _clearTooltip
+        _clearTooltip, _disabled, _integerOnly
     ])
 
     const [isActionMenuOpen, setIsActionMenuOpen] = createSignal<boolean>(false)
@@ -326,6 +329,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 
             if (props[_min] != undefined && n < props[_min]) n = props[_min]
             if (props[_max] != undefined && n > props[_max]) n = props[_max]
+            if (props[_integerOnly]) n = mathRound(n)
 
             setValue(n)
             $value = n
@@ -372,6 +376,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
         if (Number[_isNaN](v)) v = value()
         if (props[_min] != undefined && v < props[_min]) v = props[_min]
         if (props[_max] != undefined && v > props[_max]) v = props[_max]
+        if (props[_integerOnly]) v = mathRound(v)
 
         setValue(v)
         $value = v
@@ -383,12 +388,14 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 
         if (min != undefined && $value < min) $value = min
         if (max != undefined && $value > max) $value = max
+        if (props[_integerOnly]) $value = mathRound($value)
         setValue($value)
     })
 
     return (<>
         <TextField
             focused={props[_focused] ?? (isActionMenuOpen()? true : undefined)}
+            disabled={props[_disabled]}
             ref={(r) => {
                 if (props[_ref]) props[_ref](r)
                 numberTextField_ref = r
@@ -399,6 +406,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
                 if (Number[_isNaN](v)) v = 0
                 if (props[_min] != undefined && v < props[_min]) v = props[_min]
                 if (props[_max] != undefined && v > props[_max]) v = props[_max]
+                if (props[_integerOnly]) v = mathRound(v)
                 setValue(v)
 
                 return v
@@ -409,6 +417,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
                 if (Number[_isNaN](v)) v = value()
                 if (props[_min] != undefined && v < props[_min]) v = props[_min]
                 if (props[_max] != undefined && v > props[_max]) v = props[_max]
+                if (props[_integerOnly]) v = mathRound(v)
 
                 const va = value()
                 const isChanged = va != v
@@ -422,25 +431,28 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
             }}
             trailing={<>
                 { props[_trailing] }
-                <TextTooltip text={props[_changeValueTooltip]}>
-                    <TextFieldButton
-                        onClick={(ev) => openMenu(
-                            ev,
-                            menu_action_ref,
-                            {
-                                position: MenuPosition[_centerCenterLeft],
-                                anchor: ev[_currentTarget]
-                            })
-                        }>
-                        <Icon code={0xE406}/>
-                    </TextFieldButton>
-                </TextTooltip>
+                <Show when={!props[_disabled]}>
+                    <TextTooltip text={props[_changeValueTooltip]}>
+                        <TextFieldButton
+                            onClick={(ev) => openMenu(
+                                ev,
+                                menu_action_ref,
+                                {
+                                    position: MenuPosition[_centerCenterLeft],
+                                    anchor: ev[_currentTarget]
+                                })
+                            }>
+                            <Icon code={0xE406}/>
+                        </TextFieldButton>
+                    </TextTooltip>
+                </Show>
                 <Show when={props[_autoShowClearBtn] && value() != 0}>
                     <TextTooltip text={props[_clearTooltip] ?? 'Clear'}>
                         <TextFieldButton onClick={(_ev) => {
                             let v = 0
                             if (props[_min] != undefined && v < props[_min]) v = props[_min]
                             if (props[_max] != undefined && v > props[_max]) v = props[_max]
+                            if (props[_integerOnly]) v = mathRound(v)
 
                             const va = value()
                             const isChanged = va != v

@@ -1,31 +1,32 @@
-import { createSignal, onMount, type VoidComponent } from "solid-js";
+import { createSignal, onMount, type VoidComponent } from "solid-js"
 
-import { _system, _round, _theme, _corner, _light, _dark, _includes, _sharp, _semiRound, _fullRound, _home, _src, _apps, _about, _privacy, _terms, _share, _URL, _contactEmail, _donate, _getFullYear, _currentTarget, _filled } from "@/constants/string";
-import { getDocument, getNavigator, getRoot } from "@/constants/window";
-import { RootAttributes } from "@/enums/attributes";
-import { CornerData } from "@/enums/corner";
-import { RoutesLinks, ExternalLinks } from "@/enums/links";
-import { LocalStorageKeys } from "@/enums/storage";
-import { ThemeData } from "@/enums/theme";
-import { setLocalStorageItem, getLocalStorageItem } from "@/utils/storage";
-import { timeout } from "@/utils/timeout";
-import { encodeURL } from "@/utils/url";
-import { setAttribute } from "solid-js/web";
-import logo from '@/assets/apps/notes-logo.svg'
+import { _system, _round, _theme, _corner, _light, _dark, _includes, _sharp, _semiRound, _fullRound, _home, _src, _apps, _about, _privacy, _terms, _share, _URL, _contactEmail, _donate, _getFullYear, _currentTarget, _centerBottomToLeft } from "@/constants/string"
+import { getDocument, getNavigator, getRoot } from "@/constants/window"
+import { RootAttributes } from "@/enums/attributes"
+import { CornerData } from "@/enums/corner"
+import { LocalStorageKeys } from "@/enums/storage"
+import { ThemeData } from "@/enums/theme"
+import { setLocalStorageItem, getLocalStorageItem } from "@/utils/storage"
+import { setAttribute } from "@/utils/attributes"
+import { FlyoutPosition } from "@/enums/position"
+import { timeout } from "@/utils/timeout"
+import { RoutesLinks, ExternalLinks } from "@/enums/links"
+import { encodeURL } from "@/utils/url"
+import logo from '@/assets/apps/battery-logo.svg'
 import redmerahLogo from '@/assets/logo.svg'
-import CSSAnimation from "@/styles/animation.module.scss"
 
 import Tooltip from "@/components/Tooltip"
-import Button, { ButtonVariant, IconButton } from "@/components/Button";
-import Menu, { closeSubMenu, closeMenu, LinkMenuItem, MenuDivider, MenuHeader, MenuItem, SubMenu, openMenu, SubMenuItem } from "@/components/Menu";
-import AppBar from "@/components/AppBar";
-import Icon from "@/components/Icon";
+import { IconButton } from "@/components/Button"
+import Menu, { MenuDivider, MenuItem, MenuHeader, openMenu, LinkMenuItem, SubMenu, closeSubMenu, closeMenu, SubMenuItem } from "@/components/Menu"
+import AppBar from "@/components/AppBar"
+import CSSAnimation from "@/styles/animation.module.scss"
+import Icon from "@/components/Icon"
 
 const _: VoidComponent = () => {
     const [is_menu_info_open, setIs_menu_info_open] = createSignal<boolean>(false)
+    const [is_menu_themeSettings_open, setIs_menu_themeSettings_open] = createSignal<boolean>(false)
+    const [is_menu_cornerSettings_open, setIs_menu_cornerSettings_open] = createSignal<boolean>(false)
     const [is_menu_settings_open, setIs_menu_settings_open] = createSignal<boolean>(false)
-    const [is_submenu_themeSettings_open, setIs_submenu_themeSettings_open] = createSignal<boolean>(false)
-    const [is_submenu_cornerSettings_open, setIs_submenu_cornerSettings_open] = createSignal<boolean>(false)
     const [theme, setTheme] = createSignal<ThemeData>(ThemeData[_system])
     const [corner, setCorner] = createSignal<CornerData>(CornerData[_round])
     let menu_info_ref: HTMLDialogElement
@@ -114,7 +115,7 @@ const _: VoidComponent = () => {
                 <MenuDivider />
                 <MenuItem
                     onClick={() => {
-                        getNavigator()[_share]({ title: 'Notes', text: 'Notes', url: getDocument()[_URL] })
+                        getNavigator()[_share]({ title: 'Battery', text: 'Battery', url: getDocument()[_URL] })
                         closeMenu(menu_info_ref)
                     }}
                     iconCode={0xEE23}>
@@ -122,7 +123,7 @@ const _: VoidComponent = () => {
                 </MenuItem>
                 <LinkMenuItem
                     onClick={() => closeMenu(menu_info_ref)}
-                    href={'mailto:' + ExternalLinks[_contactEmail] + '?subject=' + encodeURL('Notes')}
+                    href={'mailto:' + ExternalLinks[_contactEmail] + '?subject=' + encodeURL('Battery')}
                     iconCode={0xE3A0}>
                     Send feedback
                 </LinkMenuItem>
@@ -138,12 +139,20 @@ const _: VoidComponent = () => {
             <Menu
                 ref={r => menu_settings_ref = r}
                 onToggleOpen={(v) => setIs_menu_settings_open(v)}>
+                <LinkMenuItem
+                    openInNewTab
+                    href="https://developer.mozilla.org/en-US/docs/Web/API/BatteryManager#browser_compatibility"
+                    iconCode={0xF31B}
+                    trailing={<Icon code={0xEB51}/>}>
+                    Browser compatibility
+                </LinkMenuItem>
+                <MenuDivider />
                 <SubMenu
                     level={1}
                     ref={r => submenu_themeSettings_ref = r}
-                    onToggleOpen={v => setIs_submenu_themeSettings_open(v)}
+                    onToggleOpen={v => setIs_menu_themeSettings_open(v)}
                     item={<SubMenuItem
-                        focused={is_submenu_themeSettings_open()}
+                        focused={is_menu_themeSettings_open()}
                         iconCode={0xE28A}>
                         Theme
                     </SubMenuItem>}>
@@ -169,9 +178,9 @@ const _: VoidComponent = () => {
                 <SubMenu
                     level={1}
                     ref={r => submenu_cornerSettings_ref = r}
-                    onToggleOpen={v => setIs_submenu_cornerSettings_open(v)}
+                    onToggleOpen={v => setIs_menu_cornerSettings_open(v)}
                     item={<SubMenuItem
-                        focused={is_submenu_cornerSettings_open()}
+                        focused={is_menu_cornerSettings_open()}
                         iconCode={0xF044}>
                         Corner style
                     </SubMenuItem>}>
@@ -206,17 +215,17 @@ const _: VoidComponent = () => {
 
     return (<>
         <AppBar
-            leading={<img alt="Notes logo" width={32} src={logo[_src]} />}
-            headline="Notes"
+            leading={<img alt="Battery logo" width={32} src={logo[_src]} />}
+            headline="Battery"
             trailing={<>
-                <Button variant={ButtonVariant[_filled]}><Icon code={0xEB1B} filled/>New note</Button>
                 <Tooltip text="Info">
                     <IconButton
                         focused={is_menu_info_open()}
                         code={0xE930}
                         onClick={(ev) => openMenu(ev, menu_info_ref, {
                             anchor: ev[_currentTarget],
-                            padding: 4
+                            padding: 4,
+                            position: FlyoutPosition[_centerBottomToLeft]
                         })}
                     />
                 </Tooltip>
@@ -227,13 +236,14 @@ const _: VoidComponent = () => {
                         code={0xEE0F}
                         onClick={(ev) => openMenu(ev, menu_settings_ref, {
                             anchor: ev[_currentTarget],
-                            padding: 4
+                            padding: 4,
+                            position: FlyoutPosition[_centerBottomToLeft]
                         })}
                     />
                 </Tooltip>
             </>}
         />
-        <Menus/>
+        <Menus />
     </>)
 }
 

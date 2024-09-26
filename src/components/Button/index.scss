@@ -29,7 +29,12 @@
     position: relative;
     scrollbar-width: none;
     transition-duration: .3s;
+    user-select: none;
     -ms-overflow-style: none;
+
+    & * {
+        user-select: none;
+    }
 
     :root[data-platform=mobile] & { font-weight: 500 }
     :root[data-corner=sharp] & { --btn-border-radius: 0px }

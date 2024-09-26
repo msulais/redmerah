@@ -1,6 +1,6 @@
 import { children, Show, splitProps, type JSX, type ParentComponent } from "solid-js"
 
-import { _checked, _children, _classList, _disableScale, _expand, _tonal, _focus, _footer, _header, _iconCode, _iconOnly, _indent, _indicatorPosition, _leading, _left, _selected, _trailing, _variant } from "@/constants/string"
+import { _checked, _children, _classList, _disableScale, _expand, _tonal, _focus, _footer, _header, _iconCode, _iconOnly, _indent, _indicatorPosition, _leading, _left, _selected, _trailing, _variant, _class } from "@/constants/string"
 import { toggleAttribute } from "@/utils/attributes"
 
 import Icon from "@/components/Icon"
@@ -42,7 +42,7 @@ const SideNavigationItem: ParentComponent<SideNavigationItemProps> = ($props) =>
         </Show>
         { props[_leading] }
         <Show when={!props[_iconOnly]}>
-            { props[_children] }
+            <span class="side-navigation-item-text">{ props[_children] }</span>
             <Show when={trailingComponent()}>
                 <div style={{flex: 1}} />
             </Show>
@@ -58,10 +58,11 @@ type SideNavigationProps = JSX.HTMLAttributes<HTMLDivElement> & {
 }
 const SideNavigation: ParentComponent<SideNavigationProps> = ($props) => {
     const [props, other] = splitProps($props, [
-        _children, _expand, _header, _footer
+        _children, _expand, _header, _footer,
+        _class
     ])
 
-    return (<div class="side-navigation" data-expand={toggleAttribute(props[_expand])} {...other}>
+    return (<div class={"side-navigation" + (props[_class] != undefined ? ` ${props[_class]}` : '')} data-expand={toggleAttribute(props[_expand])} {...other}>
         <div class="side-navigation-header">{props[_header]}</div>
         <div class="side-navigation-content">{props[_children]}</div>
         <div class="side-navigation-footer">{props[_footer]}</div>

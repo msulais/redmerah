@@ -13,11 +13,12 @@ export enum RoutesLinks {
     calculator = '/calculator',
     tasks = '/tasks',
     sassConverter = '/sass-converter',
-    notes = '/notes',
+    battery = '/battery',
+    qrCode = '/qr-code',
 
     // TODO: create these apps
+    notes = '/notes',
     codeFormatter = '/code-formatter',
-    qrCode = '/qr-code',
     whiteboard = '/whiteboard',
     voiceRecorder = '/voice-recorder',
     clock = '/clock',
@@ -37,7 +38,8 @@ export enum RoutesLinks {
     jsonStringify = '/json-stringify',
     javascriptMinifier = '/javascript-minifier',
     sorter = '/sorter',
-    textEditor = '/text-editor'
+    textEditor = '/text-editor',
+    compass = '/compass'
 }
 
 export enum ExternalLinks {

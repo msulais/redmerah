@@ -1,12 +1,13 @@
-import { _input, _oncancel, _onchange, _remove, _multiple, _type, _accept, _file, _files, _click, _onabort, _onerror, _onload, _readAsText, _result, _target } from "@/constants/string"
+import { _input, _oncancel, _onchange, _remove, _multiple, _type, _accept, _file, _files, _click, _onabort, _onerror, _onload, _readAsText, _result, _target, _capture } from "@/constants/string"
 import { createElement } from "./element"
 import { createObjectURL, downloadFileByURL, revokeObjectURL } from "./url"
 
-export async function openFile(accept: string | null, multiple: boolean = false): Promise<FileList | null> {
+export async function openFile(accept: string | null, multiple: boolean = false, capture?: string): Promise<FileList | null> {
     return new Promise<FileList | null>((ok) => {
         const filePickerRef = createElement(_input)
         filePickerRef[_type] = _file
         if (accept != null) filePickerRef[_accept] = accept
+        if (capture != null) filePickerRef[_capture] = capture
         filePickerRef[_multiple] = multiple
         filePickerRef[_click]()
 

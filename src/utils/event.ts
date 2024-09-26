@@ -1,11 +1,14 @@
 import { _addEventListener, _preventDefault, _removeEventListener, _stopImmediatePropagation, _stopPropagation } from "@/constants/string"
+import type { BatteryManager } from "@/interfaces/battery"
 
 type HasEventElement =
     Element |
     Window |
     Document |
     MediaQueryList |
-    FileReader
+    FileReader |
+    BatteryManager |
+    any
 
 
 export function addEventListener<E = Event>(
