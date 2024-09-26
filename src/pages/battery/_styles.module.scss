@@ -24,6 +24,7 @@
             #ff7a00 80%
         );
         -webkit-background-clip: text;
+        text-align: center;
         background-clip: text;
         -webkit-text-fill-color: transparent;
         text-fill-color: transparent;
@@ -33,6 +34,7 @@
 
     > p {
         margin-top: 16px;
+        text-align: center;
     }
 }
 
