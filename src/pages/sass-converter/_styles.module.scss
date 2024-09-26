@@ -19,8 +19,10 @@
     overflow: auto;
     font-family: var(--font-family-monospace);
     white-space: pre-wrap;
+    word-break: break-all;
 
     &:not([data-text-wrap]) {
+        word-break: normal;
         white-space: pre;
     }
 }
