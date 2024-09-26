@@ -1,4 +1,4 @@
-import { type Component, type JSX, type ParentComponent, Show, mergeProps, splitProps, type VoidComponent, For, children, createUniqueId, onCleanup, onMount, createMemo, createSignal, createEffect } from "solid-js"
+import { type Component, type JSX, type ParentComponent, Show, mergeProps, splitProps, type VoidComponent, For, children, createUniqueId, onCleanup, onMount } from "solid-js"
 
 import type { ComponentEvent } from "@/types/event"
 import { getAttribute, toggleAttribute } from "@/utils/attributes"

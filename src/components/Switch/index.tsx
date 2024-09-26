@@ -19,7 +19,7 @@ const Switch: VoidComponent<SwitchProps> = ($props) => {
         const value = props[_value]
 
         if (value == null) return;
-        setIsChecked(v => value)
+        setIsChecked(value)
     })
 
     return (<button
