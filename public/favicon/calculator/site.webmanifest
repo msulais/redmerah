@@ -3,7 +3,7 @@
     "short_name": "Calculator",
     "id": "/calculator",
     "start_url": "/calculator",
-    "description": "Looking for a reliable and comprehensive calculator app? Look no further than our all-in-one calculator! With 5 calculators in one app, you can tackle any calculation that comes your way.",
+    "description": "Perform a wide range of calculations with our versatile calculator. From basic arithmetic to advanced scientific functions and programmer tools, we've got you covered.",
     "icons": [
         {
             "src": "/favicon/calculator/favicon-16x16.png",
