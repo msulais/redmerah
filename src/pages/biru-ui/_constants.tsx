@@ -1,4 +1,4 @@
-import { _button, _checkBox, _colorPicker, _datePicker, _dateTimePicker, _dialog, _divider, _drawer, _dropdown, _emoji, _emojiPicker, _expander, _icon, _list, _menu, _modal, _popover, _textField, _toast, _tooltip } from "@/constants/string"
+import { _button, _checkBox, _colorPicker, _datePicker, _dateTimePicker, _dialog, _divider, _drawer, _dropdown, _emoji, _emojiPicker, _expander, _icon, _list, _menu, _modal, _popover, _switch, _textField, _toast, _tooltip } from "@/constants/string"
 import { Pages } from "./_enums"
 
 export const SIZE_SIDE_NAVIGATION_NONE = 640
@@ -20,6 +20,7 @@ export const PAGES = [
     {type: Pages[_menu], text: 'Menu'},
     {type: Pages[_modal], text: 'Modal'},
     {type: Pages[_popover], text: 'Popover'},
+    {type: Pages[_switch], text: 'Switch'},
     {type: Pages[_textField], text: 'TextField'},
     {type: Pages[_toast], text: 'Toast'},
     {type: Pages[_tooltip], text: 'Tooltip'},

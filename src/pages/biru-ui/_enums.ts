@@ -4,13 +4,13 @@ export enum Commands {
 }
 
 export enum Pages {
-    button, 
-    checkBox, 
+    button,
+    checkBox,
     colorPicker,
     datePicker,
     dateTimePicker,
-    dialog, 
-    divider, 
+    dialog,
+    divider,
     drawer,
     dropdown,
     emoji,
@@ -19,9 +19,10 @@ export enum Pages {
     icon,
     list,
     menu,
-    modal, 
-    popover, 
+    modal,
+    popover,
     textField,
     toast,
-    tooltip
+    tooltip,
+    switch
 }
