@@ -5,7 +5,7 @@ import type { ComponentEvent } from '@/types/event'
 import { AnimationEffectTiming } from '@/enums/animation'
 import { FlyoutPosition as ModalPosition } from '@/enums/position'
 import { getFlyoutPosition } from '@/utils/flyout'
-import { _dispatchEvent, _onOpen, _openModal, _modalListener, _detail, _element, _some, _isSameNode, _push, _closeModal, _findIndex, _splice, _length, _click, _at, _clientX, _clientY, _x, _left, _right, _y, _top, _bottom, _scroll, _scrollY, _documentElement, _scrollTop, _scrollTo, _instant, _resize, _noPointerEvent, _observe, _onReposition, _onShortFocus, _onClose, _ref, _onToggleOpen, _onCancel, _children, _onKeyDown, _class, _openAnimation, _closeAnimation, _centerBottom, _body, _clientWidth, _innerHeight, _px, _width, _height, _touches, _touchmove, _touchend, _mousemove, _mouseup, _centerBottomToLeft, _centerBottomToRight, _centerTop, _centerTopToLeft, _centerTopToRight, _leftCenter, _leftCenterToBottom, _leftCenterToTop, _rightCenter, _rightCenterToBottom, _rightCenterToTop, _open, _close, _animate, _springBounce, _finished, _then, _focus, _showModal, _style, _maxWidth, _maxHeight, _max_width, _max_height, _none, _disconnect, _key, _Escape, _altKey, _ctrlKey, _metaKey, _shiftKey, _position, _gap, _padding, _important, _allowHideAnchor, _dragable, _inputAutoFocus } from '@/constants/string'
+import { _dispatchEvent, _onOpen, _openModal, _modalListener, _detail, _element, _some, _isSameNode, _push, _closeModal, _findIndex, _splice, _length, _click, _at, _clientX, _clientY, _x, _left, _right, _y, _top, _bottom, _scroll, _scrollY, _documentElement, _scrollTop, _scrollTo, _instant, _resize, _noPointerEvent, _observe, _onReposition, _onShortFocus, _onClose, _ref, _onToggleOpen, _onCancel, _children, _onKeyDown, _class, _openAnimation, _closeAnimation, _centerBottom, _body, _clientWidth, _innerHeight, _px, _width, _height, _touches, _touchmove, _touchend, _mousemove, _mouseup, _centerBottomToLeft, _centerBottomToRight, _centerTop, _centerTopToLeft, _centerTopToRight, _leftCenter, _leftCenterToBottom, _leftCenterToTop, _rightCenter, _rightCenterToBottom, _rightCenterToTop, _open, _close, _animate, _springBounce, _finished, _then, _focus, _showModal, _style, _maxWidth, _maxHeight, _max_width, _max_height, _none, _disconnect, _key, _Escape, _altKey, _ctrlKey, _metaKey, _shiftKey, _position, _gap, _padding, _important, _allowHideAnchor, _dragable, _inputAutoFocus, _pointerType } from '@/constants/string'
 import { clearTimeDelayed, setTimeDelayed } from '@/utils/timeout'
 import { hasAttribute, removeAttribute, setAttribute, toggleAttribute } from '@/utils/attributes'
 import { getDocument, getDocumentBody, getWindow } from '@/constants/window'
@@ -107,12 +107,11 @@ function initModalListener(): void {
 
     // use for click outside modal
     addEventListener(getDocument(), _click, async (ev: Event) => {
-
         // Since 'click' still dispatch even when `<body>` has
         // `[data-no-pointer-event]`, we have to disable it. This is useful
         // if you have modal but `<body>` has `[data-no-pointer-event]`.
         // Or when you drag something, modal will not automatically closed.
-        if (isNoPointerEvent || modals[_length] == 0 || removed) {
+        if (isNoPointerEvent || modals[_length] == 0 || removed || !(ev as any)[_pointerType]) {
             removed = false
             return
         }
