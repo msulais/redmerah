@@ -25,7 +25,7 @@ import redmerahLogo from '@/assets/logo.svg'
 import Icon from "@/components/Icon"
 import Button, { ButtonVariant, IconButton } from "@/components/Button"
 import { TextTooltip } from "@/components/Tooltip"
-import Menu, { MenuDivider, MenuHeader, MenuIndent, MenuItem, LinkMenuItem, SubMenu, closeSubMenu, closeMenu, openMenu, MenuPosition, SubMenuItem } from "@/components/Menu"
+import Menu, { MenuDivider, MenuHeader, MenuIndent, MenuItem, LinkMenuItem, SubMenu, closeSubMenu, closeMenu, openMenu, MenuPosition, SubMenuItem, SwitchMenuItem } from "@/components/Menu"
 import TextField, { NumberTextField, changeTextFieldValue } from "@/components/TextField"
 import Drawer, { closeDrawer, DrawerItem, openDrawer } from "@/components/Drawer"
 import AppBar from "@/components/AppBar"
@@ -248,21 +248,21 @@ const _: Component<{
                 </Switch>
             </MenuHeader>
             <Show when={props[_randomizerType] == RandomizerType[_numbers] || props[_randomizerType] == RandomizerType[_words]}>
-                <MenuItem
-                    checked={isRepeat()}
+                <SwitchMenuItem
+                    value={isRepeat()}
                     iconCode={0xE0A1}
-                    onClick={() => props[_command](Commands[_toggle_settings_repeat])}
+                    onValueChanged={() => props[_command](Commands[_toggle_settings_repeat])}
                     trailing={<MenuIndent/>}>
                     Repeat
-                </MenuItem>
+                </SwitchMenuItem>
             </Show>
-            <MenuItem
-                checked={isAnimation()}
-                onClick={() => props[_command](Commands[_toggle_settings_animation])}
+            <SwitchMenuItem
+                value={isAnimation()}
+                onValueChanged={() => props[_command](Commands[_toggle_settings_animation])}
                 iconCode={0xECBA}
                 trailing={<MenuIndent/>}>
                 Animation
-            </MenuItem>
+            </SwitchMenuItem>
             <MenuDivider/>
 
             {/* Numbers */}

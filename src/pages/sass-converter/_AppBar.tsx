@@ -22,7 +22,7 @@ import cssLogo from '@/assets/logos/css-logo.svg'
 
 import Tooltip from "@/components/Tooltip"
 import { IconButton } from "@/components/Button";
-import Menu, { closeSubMenu, closeMenu, LinkMenuItem, MenuDivider, MenuHeader, MenuItem, SubMenu, openMenu, SubMenuItem } from "@/components/Menu";
+import Menu, { closeSubMenu, closeMenu, LinkMenuItem, MenuDivider, MenuHeader, MenuItem, SubMenu, openMenu, SubMenuItem, SwitchMenuItem } from "@/components/Menu";
 import { NumberTextField } from "@/components/TextField";
 import AppBar from "@/components/AppBar";
 
@@ -229,16 +229,18 @@ const _: VoidComponent<{
                     </MenuItem>
                 </SubMenu>
                 <MenuDivider/>
-                <MenuItem
-                    checked={props[_settings][_textWrap]}
-                    onClick={() => props[_command](Commands.toggle_textWrap)}>
+                <SwitchMenuItem
+                    iconCode={0xF19D}
+                    value={props[_settings][_textWrap]}
+                    onValueChanged={() => props[_command](Commands.toggle_textWrap)}>
                     Text wrap
-                </MenuItem>
-                <MenuItem
-                    checked={props[_settings][_minify]}
-                    onClick={() => props[_command](Commands.toggle_minify)}>
+                </SwitchMenuItem>
+                <SwitchMenuItem
+                    iconCode={0xE0F5}
+                    value={props[_settings][_minify]}
+                    onValueChanged={() => props[_command](Commands.toggle_minify)}>
                     Minify CSS
-                </MenuItem>
+                </SwitchMenuItem>
                 <div style={{padding: '8px 12px'}}>
                     <NumberTextField
                         min={12}
