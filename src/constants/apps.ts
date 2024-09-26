@@ -47,8 +47,8 @@ export const sassConverter: AppItem = {
     description: 'Simplify your SASS/SCSS development process with our powerful online converter. Quickly and accurately translate your code into clean, optimized CSS.',
     link: RoutesLinks.sassConverter,
     color: '#FF0056',
-    buildNumber: 1,
-    buildVersion: '0.0.1',
+    buildNumber: 2,
+    buildVersion: '0.0.2',
 }
 
 export const tasks: AppItem = {
@@ -67,8 +67,8 @@ export const calculator: AppItem = {
     description: 'Perform a wide range of calculations with our versatile calculator. From basic arithmetic to advanced scientific functions and programmer tools, we\'ve got you covered.',
     link: RoutesLinks.calculator,
     color: '#026BE3',
-    buildNumber: 5,
-    buildVersion: '0.1.4',
+    buildNumber: 6,
+    buildVersion: '0.1.5',
 }
 
 export const randomizer: AppItem = {
@@ -77,8 +77,8 @@ export const randomizer: AppItem = {
     description: 'Explore our Randomizer Hub for a variety of tools that add a touch of unpredictability to your life. Generate random strings, words, numbers, colors, and even assemble teams. Embrace the unexpected!',
     link: RoutesLinks.randomizer,
     color: '#00FF48',
-    buildNumber: 3,
-    buildVersion: '0.1.3',
+    buildNumber: 4,
+    buildVersion: '0.1.4',
 }
 
 export const colorGenerator: AppItem = {
@@ -97,8 +97,8 @@ export const markdownConverter: AppItem = {
     description: 'Convert markdown to HTML effortlessly with our online markdown converter. Create beautifully formatted web content from plain text using our user-friendly tool.',
     link: RoutesLinks.markdownConverter,
     color: '#01B92A',
-    buildNumber: 5,
-    buildVersion: '0.1.4',
+    buildNumber: 6,
+    buildVersion: '0.1.5',
 }
 
 export const apps: AppItem[] = [
