@@ -12,5 +12,6 @@ export enum DatabaseNames {
     calculator = 'calculator',
     tasks = 'tasks',
     sassConverter = 'sass-converter',
-    notes = 'notes'
+    notes = 'notes',
+    qrCode = 'qr-code'
 }
