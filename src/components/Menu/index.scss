@@ -69,3 +69,49 @@
         width: calc(100% - 8px);
     }
 }
+
+.switch-menu-item > div {
+    @media (hover: hover) {
+        &:hover > .switch {
+            --switch-handle-size: calc(var(--switch-height) - 6px);
+
+            &[data-checked] > div {
+                transform: translate(2px, -2px);
+            }
+
+            > div {
+                transform: translate(-2px, -2px);
+
+                :root:not([data-corner=sharp]) & {
+                    border-radius: max(0px, var(--switch-border-radius) - 2px);
+                }
+            }
+        }
+    }
+
+    &:active > .switch {
+        @media (hover: hover) {
+            --switch-handle-size: calc(var(--switch-height) - 10px);
+
+            > div {
+                transform: none !important;
+            }
+        }
+
+        @media (hover: none) {
+            --switch-handle-size: calc(var(--switch-height) - 6px);
+
+            &[data-checked] > div {
+                transform: translate(2px, -2px);
+            }
+
+            > div {
+                transform: translate(-2px, -2px);
+
+                :root:not([data-corner=sharp]) & {
+                    border-radius: max(0px, var(--switch-border-radius) - 2px);
+                }
+            }
+        }
+    }
+}

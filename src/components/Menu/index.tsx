@@ -1,8 +1,8 @@
-import { type Component, type JSX, type ParentComponent, Show, mergeProps, splitProps, type VoidComponent, For, children, createUniqueId, onCleanup, onMount } from "solid-js"
+import { type Component, type JSX, type ParentComponent, Show, mergeProps, splitProps, type VoidComponent, For, children, createUniqueId, onCleanup, onMount, createMemo, createSignal, createEffect } from "solid-js"
 
 import type { ComponentEvent } from "@/types/event"
 import { getAttribute, toggleAttribute } from "@/utils/attributes"
-import { _checked, _selected, _leading, _children, _trailing, _subtitle, _indent, _classList, _rightCenterToBottom, _disconnect, _dismiss, _id, _item, _level, _manual, _observe, _onCancel, _onClick, _onClose, _onToggle, _open, _ref, _wrapperAttr, _auto, _shortcuts, _currentTarget, _none, _left, _tonal, _dragable, _clientX, _clientY, _color, _hue, _initialColor, _isDrag, _mousemove, _mouseup, _noPointerEvent, _opacity, _touchend, _touches, _touchmove, _value, _valuechange, _top, _px, _anchorId, _body, _bottom, _clientWidth, _height, _innerHeight, _right, _width, _focus, _iconCode, _compact, _variant, _indicatorPosition, _onMouseEnter, _onMouseLeave, _class, _disableScale, _desktopCompact, _gap, _position, _padding, _allowHideAnchor, _onToggleOpen, _click, _contains, _target } from "@/constants/string"
+import { _checked, _selected, _leading, _children, _trailing, _subtitle, _indent, _classList, _rightCenterToBottom, _disconnect, _dismiss, _id, _item, _level, _manual, _observe, _onCancel, _onClick, _onClose, _onToggle, _open, _ref, _wrapperAttr, _auto, _shortcuts, _currentTarget, _none, _left, _tonal, _dragable, _clientX, _clientY, _color, _hue, _initialColor, _isDrag, _mousemove, _mouseup, _noPointerEvent, _opacity, _touchend, _touches, _touchmove, _value, _valuechange, _top, _px, _anchorId, _body, _bottom, _clientWidth, _height, _innerHeight, _right, _width, _focus, _iconCode, _compact, _variant, _indicatorPosition, _onMouseEnter, _onMouseLeave, _class, _disableScale, _desktopCompact, _gap, _position, _padding, _allowHideAnchor, _onToggleOpen, _click, _contains, _target, _filled, _focused, _layerAttr, _outlined, _transparent, _switchAttr, _onValueChanged } from "@/constants/string"
 import { isVarHasValue } from "@/utils/data"
 import { querySelectorAll } from "@/utils/element"
 import { stopImmediatePropagation, stopPropagation } from "@/utils/event"
@@ -17,6 +17,7 @@ import Button, { ButtonIndicatorPosition, ButtonVariant, LinkButton, type Button
 import Popover, { type PopoverProps, closePopover, openPopover, repositionPopover, PopoverPosition as SubMenuPosition } from "@/components/Popover"
 import Modal, { type ModalProps, closeModal, focusModal, openModal, repositionModal, ModalPosition as MenuPosition } from "@/components/Modal"
 import './index.scss'
+import { Switch, type SwitchProps } from "@/components/Switch"
 
 type MenuItemTrailingShortcutProps = JSX.HTMLAttributes<HTMLDivElement> & {
     shortcuts: string[]
@@ -142,8 +143,81 @@ const MenuHeader: ParentComponent<JSX.HTMLAttributes<HTMLDivElement>> = (props) 
     return (<div class="menu-header" {...props}/>)
 }
 
+type SwitchMenuItemProps = Omit<JSX.HTMLAttributes<HTMLDivElement>, 'onClick' | 'value'> & {
+    variant?: ButtonVariant
+    focused?: boolean
+    disableScale?: boolean
+    compact?: boolean
+    layerAttr?: JSX.HTMLAttributes<HTMLDivElement>
+    leading?: JSX.Element
+    trailing?: JSX.Element
+    iconCode?: number
+    value?: boolean
+    onValueChanged?: (isSwitchChecked: boolean) => unknown
+    onClick?: (ev: ComponentEvent<MouseEvent, HTMLDivElement>) => unknown
+    switchAttr?: Omit<SwitchProps, 'ref' | 'children'> & {
+        ref?: (el: HTMLButtonElement) => unknown
+    }
+}
+const SwitchMenuItem: ParentComponent<SwitchMenuItemProps> = ($props) => {
+    const $$props = mergeProps({
+        variant: ButtonVariant[_transparent],
+        indicatorPosition: ButtonIndicatorPosition[_left]
+    }, $props)
+    const [props, other] = splitProps($$props, [
+        _children, _variant, _focused,
+        _compact, _layerAttr, _disableScale,
+        _classList, _class, _leading,
+        _trailing, _iconCode, _switchAttr,
+        _value, _onValueChanged, _onClick
+    ])
+    let switch_ref: HTMLButtonElement
+
+    return (<div
+        tabindex={0}
+        class={'btn menu-item switch-menu-item' + (props[_class] != null? ` ${props[_class]}` : '')}
+        classList={{
+            'filled-btn': props[_variant] == ButtonVariant[_filled],
+            'tonal-btn': props[_variant] == ButtonVariant[_tonal],
+            'outlined-btn': props[_variant] == ButtonVariant[_outlined],
+            ...props[_classList]
+        }}
+        data-focused={toggleAttribute(props[_focused])}
+        data-noscale={toggleAttribute(props[_disableScale] ?? true)}
+        data-compact={toggleAttribute(props[_compact])}
+        data-trailing
+        onClick={ev => {
+            switch_ref[_click]()
+            if (props[_onClick]) props[_onClick](ev)
+        }}
+        {...other}>
+        <div class='btn-layer' {...props[_layerAttr]}>
+            { props[_leading] }
+            <Show when={props[_iconCode] != null}>
+                <Icon code={props[_iconCode]!}/>
+            </Show>
+            { props[_children] }
+            <div style={{flex: 1}} />
+            { props[_trailing] }
+            <Switch
+                value={(props[_switchAttr] && props[_switchAttr][_value]) ?? props[_value]}
+                onValueChanged={(props[_switchAttr] && props[_switchAttr][_onValueChanged]) ?? props[_onValueChanged]}
+                ref={r => {
+                    switch_ref = r
+                    if (props[_switchAttr] && props[_switchAttr][_ref]) props[_switchAttr][_ref](r)
+                }}
+                onClick={ev => {
+                    stopPropagation(ev)
+                    if (props[_switchAttr] && props[_switchAttr][_onClick]) props[_switchAttr][_onClick](ev)
+                }}
+                {...splitProps(props[_switchAttr] ?? {}, [_value, _onValueChanged, _ref, _onClick])[1]}
+            />
+        </div>
+    </div>)
+}
+
 type SubMenuProps = Omit<PopoverProps, 'onClick'> & {
-    level: number
+    level?: number
     item: JSX.Element
     gap?: number
     position?: SubMenuPosition
@@ -159,7 +233,7 @@ type SubMenuProps = Omit<PopoverProps, 'onClick'> & {
     }
 }
 const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
-    const $$props = mergeProps({id: createUniqueId()}, $props)
+    const $$props = mergeProps({id: createUniqueId(), level: 1}, $props)
     const [props, other] = splitProps($$props, [
         _classList, _level, _item, _wrapperAttr,
         _id, _onClick, _ref, _gap, _position,
@@ -320,6 +394,7 @@ export {
     PopoverMenu,
     SubMenuItem,
     LinkMenuItem,
+    SwitchMenuItem,
     MenuItemTrailingShortcut,
     closePopover as closeSubMenu,
     openPopover as openSubMenu,
@@ -337,6 +412,7 @@ export {
 export type {
     MenuProps,
     MenuItemProps,
+    SwitchMenuItemProps,
     SubMenuProps,
     SubMenuItemProps,
     MenuItemTrailingShortcutProps,
