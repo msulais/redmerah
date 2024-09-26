@@ -368,7 +368,7 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
         if ($color != $$color) {
             testHexColorWithAlpha($color)
             setColor($color)
-            setHexColor($$color)
+            setHexColor($color)
             updateColor()
         }
     })
@@ -418,6 +418,7 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
                             getSliderSize()), 0))
                         }}
                         onMouseDown={(ev) => {
+                            // BUG: unable to scroll when color is #000000 or #FFFFFF
                             setPicker(_hue, _isDrag, true)
                             setPicker(_hue, _rect, getBoundingClientRect(ev[_currentTarget]))
                             setAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
@@ -493,6 +494,7 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
                 <Button
                     variant={ButtonVariant[_tonal]}
                     onClick={() => {
+                        setHexColor(color())
                         updateColor()
                         closeModal(colorPicker_ref)
                     }}>
