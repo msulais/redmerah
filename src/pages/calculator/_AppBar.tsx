@@ -194,7 +194,7 @@ const _: VoidComponent<{
                 <SwitchMenuItem
                     value={props[_settings][_scientificNotation]}
                     iconCode={0xEA91}
-                    onClick={() => props[_command](Commands.toggle_settings_scientificNotation)}>
+                    onValueChanged={() => props[_command](Commands.toggle_settings_scientificNotation)}>
                     Scientific notation
                 </SwitchMenuItem>
             </TextTooltip>
@@ -202,7 +202,7 @@ const _: VoidComponent<{
                 <SwitchMenuItem
                     value={props[_settings][_memoryButtons]}
                     iconCode={0xE5CD}
-                    onClick={() => props[_command](Commands.toggle_settings_memoryButtons)}>
+                    onValueChanged={() => props[_command](Commands.toggle_settings_memoryButtons)}>
                     Memory buttons
                 </SwitchMenuItem>
             </TextTooltip>

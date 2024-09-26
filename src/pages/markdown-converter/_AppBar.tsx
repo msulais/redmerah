@@ -24,7 +24,7 @@ import cssLogo from '@/assets/css-logo.svg'
 import htmlLogo from '@/assets/html-logo.svg'
 
 import { IconButton } from "@/components/Button";
-import Menu, { closeSubMenu, closeMenu, LinkMenuItem, MenuDivider, MenuHeader, MenuItem, SubMenu, openMenu, SubMenuItem } from "@/components/Menu";
+import Menu, { closeSubMenu, closeMenu, LinkMenuItem, MenuDivider, MenuHeader, MenuItem, SubMenu, openMenu, SubMenuItem, SwitchMenuItem } from "@/components/Menu";
 import AppBar from "@/components/AppBar";
 
 const _: VoidComponent<{
@@ -230,11 +230,12 @@ const _: VoidComponent<{
                     </MenuItem>
                 </SubMenu>
                 <MenuDivider/>
-                <MenuItem
-                    checked={props[_settings][_textWrap]}
-                    onClick={() => props[_command](Commands.toggle_textWrap)}>
+                <SwitchMenuItem
+                    iconCode={0xF19D}
+                    value={props[_settings][_textWrap]}
+                    onValueChanged={() => props[_command](Commands.toggle_textWrap)}>
                     Text wrap
-                </MenuItem>
+                </SwitchMenuItem>
                 <div style={{padding: '8px 12px'}}>
                     <NumberTextField
                         min={12}
