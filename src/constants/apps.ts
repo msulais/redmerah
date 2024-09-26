@@ -14,7 +14,7 @@ import type { AppItem } from '@/types/apps'
 export const qrCode: AppItem = {
     logoURL: qr_code_logo[_src],
     name: 'QR Code',
-    description: '',
+    description: 'Create and read QR codes effortlessly with our user-friendly app. Share information, websites, contacts, and more using QR codes.',
     link: RoutesLinks.qrCode,
     color: '#FF2222',
     buildNumber: 1,
