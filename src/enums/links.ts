@@ -39,7 +39,9 @@ export enum RoutesLinks {
     javascriptMinifier = '/javascript-minifier',
     sorter = '/sorter',
     textEditor = '/text-editor',
-    compass = '/compass'
+    compass = '/compass',
+    colorGradient = '/color-gradient',
+    cubicBezier = '/cubic-bezier'
 }
 
 export enum ExternalLinks {
