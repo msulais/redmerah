@@ -116,6 +116,11 @@
     background-color: rgb(var(--color-background));
     font-family: var(--font-family-sans-serif);
     color: rgb(var(--color-on-surface));
+    color-scheme: light;
+
+    & * {
+        color-scheme: light;
+    }
 
     &[data-theme="dark"] {
         // elevation
