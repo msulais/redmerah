@@ -7,9 +7,20 @@ import sass_converter_logo from '@/assets/apps/sass-converter-logo.svg'
 import notes_logo from '@/assets/apps/notes-logo.svg'
 import battery_logo from '@/assets/apps/battery-logo.svg'
 import qr_code_logo from '@/assets/apps/qr-code-logo.svg'
+import color_gradient_logo from '@/assets/apps/color-gradient/logo.svg'
 import { _src } from './string'
 import { RoutesLinks } from '@/enums/links'
 import type { AppItem } from '@/types/apps'
+
+export const colorGradient: AppItem = {
+    logoURL: color_gradient_logo[_src],
+    name: 'Color Gradient',
+    description: 'Design beautiful color gradients with our intuitive app. Choose from linear and radial gradients, and stack them for complex effects. Generate clean CSS code to implement your designs.',
+    link: RoutesLinks.colorGenerator,
+    color: '#F9D101',
+    buildNumber: 1,
+    buildVersion: '0.0.1',
+}
 
 export const qrCode: AppItem = {
     logoURL: qr_code_logo[_src],
@@ -102,6 +113,7 @@ export const markdownConverter: AppItem = {
 }
 
 export const apps: AppItem[] = [
+    colorGradient,
     qrCode,
     battery,
     // notes
