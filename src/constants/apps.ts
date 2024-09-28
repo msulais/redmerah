@@ -16,7 +16,7 @@ export const colorGradient: AppItem = {
     logoURL: color_gradient_logo[_src],
     name: 'Color Gradient',
     description: 'Design beautiful color gradients with our intuitive app. Choose from linear and radial gradients, and stack them for complex effects. Generate clean CSS code to implement your designs.',
-    link: RoutesLinks.colorGenerator,
+    link: RoutesLinks.colorGradient,
     color: '#F9D101',
     buildNumber: 1,
     buildVersion: '0.0.1',
