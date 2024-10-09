@@ -17,7 +17,7 @@ export const colorGradient: AppItem = {
     name: 'Color Gradient',
     description: 'Design beautiful color gradients with our intuitive app. Choose from linear and radial gradients, and stack them for complex effects. Generate clean CSS code to implement your designs.',
     link: RoutesLinks.colorGradient,
-    color: '#F9D101',
+    color: '#F5FF00',
     buildNumber: 1,
     buildVersion: '0.0.1',
 }
@@ -94,7 +94,7 @@ export const randomizer: AppItem = {
 
 export const colorGenerator: AppItem = {
     logoURL: color_generator_logo[_src],
-    name: 'Color generator',
+    name: 'Color Generator',
     description: 'Generate accent pallete color for your app. Including color for light and dark mode.',
     link: RoutesLinks.colorGenerator,
     color: '#39BBFF',
@@ -104,7 +104,7 @@ export const colorGenerator: AppItem = {
 
 export const markdownConverter: AppItem = {
     logoURL: markdown_converter_logo[_src],
-    name: 'Markdown converter',
+    name: 'Markdown Converter',
     description: 'Convert markdown to HTML effortlessly with our online markdown converter. Create beautifully formatted web content from plain text using our user-friendly tool.',
     link: RoutesLinks.markdownConverter,
     color: '#01B92A',
