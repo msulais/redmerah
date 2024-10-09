@@ -3,7 +3,7 @@ import { For, Match, Show, Switch, type VoidComponent, createMemo, createSelecto
 
 import type { HEXColor, HSLColor, RGBColor } from "@/types/color";
 import type { Result, Settings } from "./_types";
-import { hexToHSL, hexToRgb } from "@/utils/color";
+import { HEX_to_HSL, HEX_to_RGB } from "@/utils/color";
 import { _result, _string, _numbers, _colors, _hex, _toUpperCase, _randomizerType, _words, _length, _join, _list, _map, _members, _settings, _prefix, _separator, _suffix, _lowercase, _titlecase, _togglecase, _uppercase, _wordCase, _items, _selection, _some, _teams, _name, _membersList, _namesList } from "@/constants/string";
 import { RandomizerType, WordsRandomizerWordCase } from "./_enums";
 import { stringToLowerCase, stringToTitleCase, stringToToggleCase, stringToUpperCase } from "@/utils/string";
@@ -15,8 +15,8 @@ import CSS from './_styles.module.scss'
 const ColorItem: VoidComponent<{
     hex: HEXColor
 }> = (props) => {
-    const hsl = createMemo<HSLColor>(() => hexToHSL(props[_hex]))
-    const rgb = createMemo<RGBColor>(() => hexToRgb(props[_hex]))
+    const hsl = createMemo<HSLColor>(() => HEX_to_HSL(props[_hex]))
+    const rgb = createMemo<RGBColor>(() => HEX_to_RGB(props[_hex]))
 
     return (<div style={{"background-color": props[_hex]}}>
         <code>

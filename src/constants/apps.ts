@@ -7,9 +7,20 @@ import sass_converter_logo from '@/assets/apps/sass-converter-logo.svg'
 import notes_logo from '@/assets/apps/notes-logo.svg'
 import battery_logo from '@/assets/apps/battery-logo.svg'
 import qr_code_logo from '@/assets/apps/qr-code-logo.svg'
+import color_gradient_logo from '@/assets/apps/color-gradient/logo.svg'
 import { _src } from './string'
 import { RoutesLinks } from '@/enums/links'
 import type { AppItem } from '@/types/apps'
+
+export const colorGradient: AppItem = {
+    logoURL: color_gradient_logo[_src],
+    name: 'Color Gradient',
+    description: 'Design beautiful color gradients with our intuitive app. Choose from linear and radial gradients, and stack them for complex effects. Generate clean CSS code to implement your designs.',
+    link: RoutesLinks.colorGradient,
+    color: '#F5FF00',
+    buildNumber: 1,
+    buildVersion: '0.0.1',
+}
 
 export const qrCode: AppItem = {
     logoURL: qr_code_logo[_src],
@@ -83,7 +94,7 @@ export const randomizer: AppItem = {
 
 export const colorGenerator: AppItem = {
     logoURL: color_generator_logo[_src],
-    name: 'Color generator',
+    name: 'Color Generator',
     description: 'Generate accent pallete color for your app. Including color for light and dark mode.',
     link: RoutesLinks.colorGenerator,
     color: '#39BBFF',
@@ -93,7 +104,7 @@ export const colorGenerator: AppItem = {
 
 export const markdownConverter: AppItem = {
     logoURL: markdown_converter_logo[_src],
-    name: 'Markdown converter',
+    name: 'Markdown Converter',
     description: 'Convert markdown to HTML effortlessly with our online markdown converter. Create beautifully formatted web content from plain text using our user-friendly tool.',
     link: RoutesLinks.markdownConverter,
     color: '#01B92A',
@@ -102,6 +113,7 @@ export const markdownConverter: AppItem = {
 }
 
 export const apps: AppItem[] = [
+    colorGradient,
     qrCode,
     battery,
     // notes

@@ -1,0 +1,32 @@
+{
+    "name": "Color Gradient",
+    "short_name": "Color Gradient",
+    "id": "/color-gradient",
+    "description": "Design beautiful color gradients with our intuitive app. Choose from linear and radial gradients, and stack them for complex effects. Generate clean CSS code to implement your designs",
+    "start_url": "/color-gradient",
+    "icons": [
+        {
+            "src": "/favicon/color-gradient/favicon-16x16.png",
+            "sizes": "16x16",
+            "type": "image/png"
+        },
+        {
+            "src": "/favicon/color-gradient/favicon-32x32.png",
+            "sizes": "32x32",
+            "type": "image/png"
+        },
+        {
+            "src": "/favicon/color-gradient/android-chrome-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/favicon/color-gradient/android-chrome-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "theme_color": "#F5FF00",
+    "background_color": "#ffffff",
+    "display": "standalone"
+}

@@ -4,7 +4,7 @@ import { createStore } from 'solid-js/store'
 import type { HEXColor, RGBColor } from '@/types/color'
 import type { Palette } from './_types'
 import { clearTimeDelayed, setMicrotask, setTimeDelayed } from '@/utils/timeout'
-import { generateColor, hexToRgb, testHexColor } from '@/utils/color'
+import { generateColor, HEX_to_RGB, testHexColor } from '@/utils/color'
 import { addClassListModule, getElementById } from '@/utils/element'
 import { _system, _theme, _corner, _dark, _fullRound, _includes, _light, _round, _semiRound, _sharp, _src, _URL, _share, _currentTarget, _seed, _paletteList, _length, _outlined, _tonal, _color, _color_accent, _innerHTML, _toUpperCase, _colorDark, _onColor, _onColorDark, _clipboard, _writeText, _join, _push, _palette, _filter, _filled, _accentDark, _accentLight, _onAccentDark, _onAccentLight, _open, _createObjectStore, _readonly, _objectStore, _transaction, _getAll, _then, _put, _readwrite, _manual, _clear, _delete, _colorGenerator, _writeObjectStore, _readObjectStore, _animate, _finished, _remove, _splash, _spring } from '@/constants/string'
 import { getNavigator } from '@/constants/window'
@@ -54,12 +54,7 @@ const _: VoidComponent = () => {
     function onColorChange(hexColor: HEXColor): void {
         const acc = generateColor(hexColor)
         const accentColorStyleEl = getElementById(ElementIds[_color_accent])!
-        accentColorStyleEl[_innerHTML] = `:root{
---color-accent-light: ${rgbToCSSValue(hexToRgb(acc[_color]))};
---color-accent-dark: ${rgbToCSSValue(hexToRgb(acc[_colorDark]))};
---color-on-accent-light: ${rgbToCSSValue(hexToRgb(acc[_onColor]))};
---color-on-accent-dark: ${rgbToCSSValue(hexToRgb(acc[_onColorDark]))};
-}`;
+        accentColorStyleEl[_innerHTML] = `:root{--color-accent-light: ${rgbToCSSValue(HEX_to_RGB(acc[_color]))};--color-accent-dark: ${rgbToCSSValue(HEX_to_RGB(acc[_colorDark]))};--color-on-accent-light: ${rgbToCSSValue(HEX_to_RGB(acc[_onColor]))};--color-on-accent-dark: ${rgbToCSSValue(HEX_to_RGB(acc[_onColorDark]))};}`;
         setLocalStorageItem(LocalStorageKeys[_color], hexColor)
         setPalette({
             seed: hexColor[_toUpperCase]() as HEXColor,
@@ -107,11 +102,9 @@ const _: VoidComponent = () => {
     function initColor(): void {
         const color = getLocalStorageItem(LocalStorageKeys[_color])
 
-        try {
-            testHexColor(color ?? '')
-            onColorChange(color as HEXColor)
-            setPalette(_seed, color as HEXColor)
-        } catch (e) {}
+        if (!testHexColor(color ?? '')) return;
+        onColorChange(color as HEXColor)
+        setPalette(_seed, color as HEXColor)
     }
 
     function initPaletteList(): void {

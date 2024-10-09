@@ -1,6 +1,6 @@
 ---
 import { ThemeData } from '@/enums/theme'
-import { generateColor, hexToRgb } from '@/utils/color'
+import { generateColor, HEX_to_RGB } from '@/utils/color'
 import { CornerData } from '@/enums/corner'
 import { ElementIds } from '@/enums/ids'
 import '@/styles/fonts.scss'
@@ -29,8 +29,8 @@ const {
 } = Astro.props
 
 const colors = generateColor(accentColor)
-const colorToCSS = (hex: string) => {
-    const rgb = hexToRgb(hex)
+const colorToCSS = (hex: HEXColor) => {
+    const rgb = HEX_to_RGB(hex)
     return `${rgb.r}, ${rgb.g}, ${rgb.b}`
 }
 ---

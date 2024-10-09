@@ -4,7 +4,7 @@ import type { ComponentEvent } from '@/types/event'
 import { toggleAttribute } from '@/utils/attributes'
 import { clearTimeDelayed, clearTimeInterval, setTimeDelayed, setTimeInterval } from '@/utils/timeout'
 import { preventDefault } from '@/utils/event'
-import { _centerBottom, _centerCenterLeft, _autoHideLabel, _autoShowClearBtn, _autocomplete, _button, _changeValueTooltip, _checkValidity, _children, _classList, _clearTooltip, _compact, _currentTarget, _decreaseTooltip, _disabled, _dispatchEvent, _focus, _focused, _id, _increaseTooltip, _input, _isIntOnly, _isNaN, _labelAttr, _labelElement, _labelText, _leading, _length, _max, _maxLine, _messageText, _min, _minLine, _off, _onBlur, _onFinalValueChanged, _onFocus, _onInput, _onValueChanged, _placeholder, _px, _readOnly, _ref, _resize, _rows, _scrollHeight, _split, _step, _text, _trailing, _trim, _type, _value, _valuechange, _result, _observe, _disconnect, _width, _menuAttr, _usePortal, _style, _bottom, _clientX, _clientY, _left, _right, _top, _touches, _x, _y, _click, _onToggleOpen, _target, _contains, _isArray, _class, _integerOnly } from '@/constants/string'
+import { _centerBottom, _centerCenterLeft, _autoHideLabel, _autoShowClearBtn, _autocomplete, _button, _changeValueTooltip, _checkValidity, _children, _classList, _clearTooltip, _compact, _currentTarget, _decreaseTooltip, _disabled, _dispatchEvent, _focus, _focused, _id, _increaseTooltip, _input, _isIntOnly, _isNaN, _labelAttr, _labelElement, _labelText, _leading, _length, _max, _maxLine, _messageText, _min, _minLine, _off, _onBlur, _onFinalValueChanged, _onFocus, _onInput, _onValueChanged, _placeholder, _px, _readOnly, _ref, _resize, _rows, _scrollHeight, _split, _step, _text, _trailing, _trim, _type, _value, _valuechange, _result, _observe, _disconnect, _width, _menuAttr, _usePortal, _style, _bottom, _clientX, _clientY, _left, _right, _top, _touches, _x, _y, _click, _onToggleOpen, _target, _contains, _isArray, _class, _integerOnly, _suffix, _prefix, _autoSelectAll, _setSelectionRange, _onKeyUp, _blur, _code, _Enter } from '@/constants/string'
 import { mathMax, mathRound, numberParse } from '@/utils/math'
 import { getBoundingClientRect } from '@/utils/element'
 import { getDocument } from '@/constants/window'
@@ -187,7 +187,7 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 }
 
 
-type TextFieldProps = Omit<JSX.InputHTMLAttributes<HTMLInputElement>, 'type' | 'ref' | 'onInput' | 'onFocus' | 'onBlur' | 'children'> & {
+type TextFieldProps = Omit<JSX.InputHTMLAttributes<HTMLInputElement>, 'type' | 'ref' | 'onInput' | 'onKeyUp' | 'onFocus' | 'onBlur' | 'children'> & {
     leading?: JSX.Element
     trailing?: JSX.Element
     labelText?: JSX.Element
@@ -196,6 +196,7 @@ type TextFieldProps = Omit<JSX.InputHTMLAttributes<HTMLInputElement>, 'type' | '
     compact?: boolean
     autoShowClearBtn?: boolean
     autoHideLabel?: boolean
+    autoSelectAll?: boolean
     clearTooltip?: string
     type?: TextFieldType
     ref?: (el: HTMLInputElement) => void
@@ -203,6 +204,7 @@ type TextFieldProps = Omit<JSX.InputHTMLAttributes<HTMLInputElement>, 'type' | '
     onInput?: (ev: ComponentEvent<InputEvent, HTMLInputElement, HTMLInputElement>) => void
     onFocus?: (ev: ComponentEvent<FocusEvent, HTMLInputElement, HTMLInputElement>) => void
     onBlur?: (ev: ComponentEvent<FocusEvent, HTMLInputElement, HTMLInputElement>) => void
+    onKeyUp?: (ev: ComponentEvent<KeyboardEvent, HTMLInputElement>) => void
 }
 const TextField: VoidComponent<TextFieldProps> = ($props) => {
     const $$props = mergeProps({type: _text, autoHideLabel: true, id: createUniqueId()}, $props)
@@ -212,7 +214,7 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
         _type, _labelAttr, _disabled, _readOnly,
         _onFocus, _onBlur, _placeholder, _autoHideLabel,
         _value, _ref, _autoShowClearBtn, _clearTooltip,
-        _compact
+        _compact, _autoSelectAll, _onKeyUp
     ])
     const [isFocus, setIsFocus] = createSignal<boolean>(false)
     const [isInvalid, setIsInvalid] = createSignal<boolean>(false)
@@ -256,8 +258,13 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
                     setValue(ev[_currentTarget][_value])
                     setIsInvalid(!ev[_currentTarget][_checkValidity]())
                     setIsFocus(true)
-                        if (props[_onFocus]) props[_onFocus](ev)
-                    }}
+                    if (props[_onFocus]) props[_onFocus](ev)
+                    if (props[_autoSelectAll]) ev[_currentTarget][_setSelectionRange](0, ev[_currentTarget][_value][_length])
+                }}
+                onKeyUp={ev => {
+                    if (ev[_code] == _Enter) ev[_currentTarget][_blur]()
+                    if (props[_onKeyUp]) props[_onKeyUp](ev)
+                }}
                 onBlur={(ev) => {
                     setValue(ev[_currentTarget][_value])
                     setIsFocus(false)
@@ -291,6 +298,8 @@ type NumberTextFieldProps = Omit<TextFieldProps, 'type'> & {
     step?: number
     min?: number
     max?: number
+    suffix?: string
+    prefix?: string
     integerOnly?: boolean
     decreaseTooltip?: string
     increaseTooltip?: string
@@ -308,7 +317,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
         _max, _min, _trailing, _onValueChanged, _autoShowClearBtn,
         _step, _onBlur, _value, _ref, _focused, _onFinalValueChanged,
         _decreaseTooltip, _increaseTooltip, _changeValueTooltip,
-        _clearTooltip, _disabled, _integerOnly
+        _clearTooltip, _disabled, _integerOnly, _suffix, _prefix
     ])
 
     const [isActionMenuOpen, setIsActionMenuOpen] = createSignal<boolean>(false)
@@ -334,7 +343,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
             setValue(n)
             $value = n
             if (props[_onValueChanged]) props[_onValueChanged](n)
-            changeTextFieldValue(numberTextField_ref, `${n}`)
+            changeTextFieldValue(numberTextField_ref, `${props[_prefix] ?? ''}${n}${props[_suffix] ?? ''}`)
 
             if (timeoutId2 != null) {
                 clearTimeDelayed(timeoutId2)
@@ -409,7 +418,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
                 if (props[_integerOnly]) v = mathRound(v)
                 setValue(v)
 
-                return v
+                return `${props[_prefix] ?? ''}${v}${props[_suffix] ?? ''}`
             })()}
             onBlur={(ev) => {
                 let v = numberParse(ev[_currentTarget][_value])
@@ -421,7 +430,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 
                 const va = value()
                 const isChanged = va != v
-                changeTextFieldValue(ev[_currentTarget], `${v}`)
+                changeTextFieldValue(ev[_currentTarget], `${props[_prefix] ?? ''}${v}${props[_suffix] ?? ''}`)
                 setValue(v)
                 $value = v
 
@@ -456,7 +465,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 
                             const va = value()
                             const isChanged = va != v
-                            changeTextFieldValue(numberTextField_ref, `${v}`)
+                            changeTextFieldValue(numberTextField_ref, `${props[_prefix] ?? ''}${v}${props[_suffix] ?? ''}`)
                             setValue(v)
                             $value = v
 

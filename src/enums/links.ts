@@ -15,6 +15,7 @@ export enum RoutesLinks {
     sassConverter = '/sass-converter',
     battery = '/battery',
     qrCode = '/qr-code',
+    colorGradient = '/color-gradient',
 
     // TODO: create these apps
     notes = '/notes',
@@ -40,7 +41,6 @@ export enum RoutesLinks {
     sorter = '/sorter',
     textEditor = '/text-editor',
     compass = '/compass',
-    colorGradient = '/color-gradient',
     cubicBezier = '/cubic-bezier'
 }
 

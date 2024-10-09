@@ -3,7 +3,7 @@ import { createSignal, For, onMount, Show, type VoidComponent } from "solid-js";
 import type { HEXColor } from "@/types/color";
 import type { ItemList, Result, Settings } from "./_types";
 import { _string, _characters, _numbers, _symbols, _length, _floor, _range, _max, _min, _count, _repeat, _includes, _push, _sort, _ascending, _descending, _map, _prefix, _toString, _numberType, _padStart, _suffix, _join, _separator, _colors, _round, _colorModel, _hex, _rgb, _hsl, _words, _selection, _teams, _animation, _result, _settings, _decimal, _none, _open, _key, _value, _createObjectStore, _id, _list, _lists, _lastResult, _isOpen, _readonly, _objectStore, _transaction, _get, _then, _color, _readwrite, _put, _add, _name, _members, _getAll, _namesList, _membersList, _alphabetLowercase, _alphabetUppercase, _customCharacter, _minDecimalLength, _splice, _lowercase, _titlecase, _togglecase, _uppercase, _wordCase, _h, _l, _s, _r, _b, _g, _cursor, _test, _tonal, _filled, _manual, _items, _accept, _file, _input, _type, _readAsText, _target, _onerror, _onabort, _onload, _replace, _split, _substring, _filter, _trim, _focus, _delete, _clipboard, _writeText, _noPointerEvent, _generate, _stopGenerate, _randomizer, _writeObjectStore, _readObjectStore, _findIndex, _concat, _slice, _localeCompare, _animate, _finished, _remove, _splash, _spring } from "@/constants/string";
-import { rgbToHex, hslToHex } from "@/utils/color";
+import { RGB_to_HEX, HSL_to_HEX } from "@/utils/color";
 import { setTimeInterval, clearTimeInterval, setMicrotask } from "@/utils/timeout";
 import { createStore } from "solid-js/store";
 import { RandomizerType, WordsRandomizerWordCase, NumbersRandomizerNumberType, NumbersRandomizerSort, ColorsRandomizerColorModel, Commands } from "./_enums";
@@ -212,13 +212,13 @@ const _: VoidComponent = () => {
                 const r = randomNumber(s[_range][_rgb].r[_min], s[_range][_rgb].r[_max])
                 const g = randomNumber(s[_range][_rgb].g[_min], s[_range][_rgb].g[_max])
                 const b = randomNumber(s[_range][_rgb].b[_min], s[_range][_rgb].b[_max])
-                colors[_push](rgbToHex({r, g, b}))
+                colors[_push](RGB_to_HEX({r, g, b}))
             }
             else if (s[_colorModel] == ColorsRandomizerColorModel[_hsl]) for (let i = 0; i < s[_count]; i++) {
                 const hue = randomNumber(s[_range][_hsl].h[_min], s[_range][_hsl].h[_max]) / 360
                 const saturation = randomNumber(s[_range][_hsl].s[_min], s[_range][_hsl].s[_max]) / 100
                 const lightness = randomNumber(s[_range][_hsl].l[_min], s[_range][_hsl].l[_max]) / 100
-                colors[_push](hslToHex({h: hue, s: saturation, l: lightness}))
+                colors[_push](HSL_to_HEX({h: hue, s: saturation, l: lightness}))
             }
 
             setResult(_colors, colors)

@@ -172,8 +172,9 @@ function initTooltip(): void {
         await textTooltip_ref[_animate](
             { transform: `translate(${translate[_left]}px, ${translate[_top]}px)` },
             { duration: 300, easing: AnimationEffectTiming[_springBounce] }
-        )[_finished]
-        textTooltip_ref[_hidePopover]()
+        )[_finished][_then](() =>
+            textTooltip_ref[_hidePopover]()
+        )
     }
 
     function initEvents(): void {
@@ -184,18 +185,23 @@ function initTooltip(): void {
                 text,
                 gap = 40,
                 position = TooltipPosition[_centerTop],
-                startDelayDuration = isOpen? 300 : 800,
+                startDelayDuration = 800,
                 useAnchor = false,
                 tooltip
             } = ev[_detail]
+
+            setTimeDelayed(() => {
+                if ($anchor_ref != null && anchor[_isSameNode]($anchor_ref) && isOpen) return
+                if (text == undefined && tooltip == undefined) return
+
+                closeTooltip()
+            }, 300)
 
             if (timeoutId != null) clearTimeDelayed(timeoutId)
             timeoutId = setTimeDelayed(async () => {
                 timeoutId = null
                 if ($anchor_ref != null && anchor[_isSameNode]($anchor_ref) && isOpen) return
                 if (text == undefined && tooltip == undefined) return
-
-                await closeTooltip()
 
                 $anchor_ref = anchor
                 $gap = gap
