@@ -11,7 +11,7 @@ import CSS from './_index.module.scss'
 import type { HEXColor, RGBColor } from "@/types/color";
 import { _centerBottomToLeft, _centerBottomToRight, _centerCenterLeftTop, _leftCenterToBottom, _about, _apps, _clipboard, _color, _colorDark, _color_accent, _corner, _currentTarget, _dark, _donate, _filled, _filledTonal, _fullRound, _hostname, _includes, _innerHTML, _join, _light, _link, _onColor, _onColorDark, _open, _outlined, _pinnedApps, _round, _route, _semiRound, _share, _sharp, _some, _split, _system, _test, _theme, _title, _toLowerCase, _trim, _value, _writeText } from "@/constants/string";
 import { getLocalStorageItem, setLocalStorageItem } from "@/utils/storage";
-import { generateColor, hexToRgb, testHexColor } from "@/utils/color";
+import { generateColor, HEX_to_RGB, testHexColor } from "@/utils/color";
 import { setAttribute } from "@/utils/attributes";
 import { ExternalLinks, RoutesLinks } from "@/enums/links";
 import { LocalStorageKeys } from "@/enums/storage";
@@ -122,12 +122,7 @@ export const SettingsElement: VoidComponent = () => {
         setColor(hexColor)
         const acc = generateColor(hexColor)
         const accentColorStyleEl = getElementById(ElementIds[_color_accent])!
-        accentColorStyleEl[_innerHTML] = `:root{
---color-accent-light: ${rgbToCSSValue(hexToRgb(acc[_color]))};
---color-accent-dark: ${rgbToCSSValue(hexToRgb(acc[_colorDark]))};
---color-on-accent-light: ${rgbToCSSValue(hexToRgb(acc[_onColor]))};
---color-on-accent-dark: ${rgbToCSSValue(hexToRgb(acc[_onColorDark]))};
-}`;
+        accentColorStyleEl[_innerHTML] = `:root{--color-accent-light: ${rgbToCSSValue(HEX_to_RGB(acc[_color]))};--color-accent-dark: ${rgbToCSSValue(HEX_to_RGB(acc[_colorDark]))};--color-on-accent-light: ${rgbToCSSValue(HEX_to_RGB(acc[_onColor]))};--color-on-accent-dark: ${rgbToCSSValue(HEX_to_RGB(acc[_onColorDark]))};}`;
         setLocalStorageItem(LocalStorageKeys[_color], hexColor)
         closeMenu(menu_settings_ref)
     }
@@ -135,10 +130,9 @@ export const SettingsElement: VoidComponent = () => {
     function initColor(): void {
         const color = getLocalStorageItem(LocalStorageKeys[_color])
 
-        try {
-            testHexColor(color ?? '')
-            changeColor(color as HEXColor)
-        } catch (e) {}
+        if (!testHexColor(color ?? '')) return;
+
+        changeColor(color as HEXColor)
     }
 
     onMount(() => {

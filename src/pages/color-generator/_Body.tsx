@@ -4,7 +4,7 @@ import type { HEXColor } from "@/types/color"
 import type { Palette } from "./_types"
 import { _clipboard, _writeText, _accentLight, _onAccentLight, _tonal, _accentDark, _onAccentDark } from "@/constants/string"
 import { getNavigator } from "@/constants/window"
-import { hexToRgb } from "@/utils/color"
+import { HEX_to_RGB } from "@/utils/color"
 import { clearTimeDelayed, setTimeDelayed } from "@/utils/timeout"
 
 import Icon from "@/components/Icon"
@@ -28,7 +28,7 @@ const _: VoidComponent<Palette> = (props) => {
     }
 
     function hexToCSSValue(hexColor: HEXColor): string {
-        const rgb = hexToRgb(hexColor)
+        const rgb = HEX_to_RGB(hexColor)
         return `${rgb.r}, ${rgb.g}, ${rgb.b}`
     }
 
