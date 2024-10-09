@@ -7,9 +7,9 @@ import { getLocalStorageItem } from "@/utils/storage"
 import { setAttribute } from "solid-js/web"
 
 export function checkTheme(): void {
-    const theme = getLocalStorageItem(LocalStorageKeys[_theme])
+	const theme = getLocalStorageItem(LocalStorageKeys[_theme])
 
-    if (theme && [ThemeData[_system], ThemeData[_light], ThemeData[_dark]][_includes](theme as ThemeData)) {
-        setAttribute(getRoot(), RootAttributes[_theme], theme)
-    }
+	if (theme && [ThemeData[_system], ThemeData[_light], ThemeData[_dark]][_includes](theme as ThemeData)) {
+		setAttribute(getRoot(), RootAttributes[_theme], theme)
+	}
 }

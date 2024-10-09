@@ -12,106 +12,106 @@ import Dropdown from "@/components/Dropdown"
 import { NumberTextField } from "@/components/TextField"
 
 const _: VoidComponent = () => {
-    const [allowHideAnchor, setAllowHideAnchor] = createSignal<boolean>(true)
-    const [dragable, setDragable] = createSignal<boolean>(false)
-    const [multiple, setMultiple] = createSignal<boolean>(false)
-    const [gap, setGap] = createSignal<number>(12)
-    const [important, setImportant] = createSignal<boolean>(false)
-    const [padding, setPadding] = createSignal<number>(0)
-    const [position, setPosition] = createSignal<EmojiPickerPosition>(EmojiPickerPosition[_centerBottom])
-    const [anchor, setAnchor] = createSignal<boolean>(true)
-    const [showCloseButton, setShowCloseButton] = createSignal<boolean>(false)
-    const [emoji, setEmoji] = createSignal<Emoji | null>(null)
-    let emojiPicker_ref: HTMLDialogElement
-    return (<Page
-        title="EmojiPicker"
-        description="An EmojiPicker is a UI element that allows users to select and insert emojis into text fields or other input areas. It typically presents a grid of emojis that can be searched, filtered, or categorized for easy selection.">
-        <Playground>
-            <Button
-                variant={ButtonVariant[_tonal]}
-                onClick={ev => openEmojiPicker(ev, emojiPicker_ref, {
-                    anchor: anchor()? ev[_currentTarget] : undefined,
-                    allowHideAnchor: allowHideAnchor(),
-                    dragable: dragable(),
-                    gap: gap(),
-                    important: important(),
-                    padding: padding(),
-                    position: position(),
-                })}>
-                <Show when={emoji() != null} fallback={<><Icon code={0xE747}/>Pick emoji</>}>
-                    <EmojiC emoji={emoji()![0]}/>
-                    {emoji()![1]}
-                </Show>
-            </Button>
-            <EmojiPicker
-                ref={r => emojiPicker_ref = r}
-                onSelectEmoji={(emoji, name) => setEmoji([emoji, name])}
-                multiple={multiple()}
-                showCloseButton={showCloseButton()}
-            />
-        </Playground>
-        <PlaygroundOptions>
-            <Dropdown
-                items={[
-                    [EmojiPickerPosition[_leftTop], 'Left top'],
-                    [EmojiPickerPosition[_leftCenterToBottom], 'Left center to bottom'],
-                    [EmojiPickerPosition[_leftCenter], 'Left center'],
-                    [EmojiPickerPosition[_leftCenterToTop], 'Left center to top'],
-                    [EmojiPickerPosition[_leftBottom], 'Left bottom'],
-                    [EmojiPickerPosition[_rightTop], 'Right top'],
-                    [EmojiPickerPosition[_rightCenterToBottom], 'Right center to bottom'],
-                    [EmojiPickerPosition[_rightCenter], 'Right center'],
-                    [EmojiPickerPosition[_rightCenterToTop], 'Right center to top'],
-                    [EmojiPickerPosition[_rightBottom], 'Right bottom'],
-                    [EmojiPickerPosition[_centerTopToRight], 'Center top to right'],
-                    [EmojiPickerPosition[_centerTop], 'Center top'],
-                    [EmojiPickerPosition[_centerTopToLeft], 'Center top to left'],
-                    [EmojiPickerPosition[_centerBottomToRight], 'Center bottom to right'],
-                    [EmojiPickerPosition[_centerBottom], 'Center bottom'],
-                    [EmojiPickerPosition[_centerBottomToLeft], 'Center bottom to left'],
-                    [EmojiPickerPosition[_centerCenterLeftTop], 'Center center left top'],
-                    [EmojiPickerPosition[_centerCenterLeft], 'Center center left'],
-                    [EmojiPickerPosition[_centerCenterLeftBottom], 'Center center left bottom'],
-                    [EmojiPickerPosition[_centerCenterTop], 'Center center top'],
-                    [EmojiPickerPosition[_centerCenter], 'Center center'],
-                    [EmojiPickerPosition[_centerCenterBottom], 'Center center bottom'],
-                    [EmojiPickerPosition[_centerCenterRightTop], 'Center center right top'],
-                    [EmojiPickerPosition[_centerCenterRight], 'Center center right'],
-                    [EmojiPickerPosition[_centerCenterRightBottom], 'Center center right bottom'],
-                ]}
-                labelText="Position"
-                selectedValues={[position()]}
-                onSelectedItemsChanged={(items) => setPosition(items[0][0] as EmojiPickerPosition)}
-            />
-            <NumberTextField style={{width: '100px'}} value={gap()} min={0} onFinalValueChanged={(v) => setGap(v)} labelText="Gap"/>
-            <Show when={[
-                EmojiPickerPosition[_centerTopToRight],
-                EmojiPickerPosition[_centerCenterLeft],
-                EmojiPickerPosition[_centerBottomToRight],
-                EmojiPickerPosition[_centerTopToLeft],
-                EmojiPickerPosition[_centerCenterRight],
-                EmojiPickerPosition[_centerBottomToLeft],
-                EmojiPickerPosition[_leftCenterToBottom],
-                EmojiPickerPosition[_centerCenterLeftTop],
-                EmojiPickerPosition[_centerCenterTop],
-                EmojiPickerPosition[_centerCenterRightTop],
-                EmojiPickerPosition[_rightCenterToBottom],
-                EmojiPickerPosition[_leftCenterToTop],
-                EmojiPickerPosition[_centerCenterLeftBottom],
-                EmojiPickerPosition[_centerCenterBottom],
-                EmojiPickerPosition[_centerCenterRightBottom],
-                EmojiPickerPosition[_rightCenterToTop]
-            ][_includes](position())}>
-                <NumberTextField value={padding()} style={{width: '100px'}} min={0} onFinalValueChanged={(v) => setPadding(v)} labelText="Padding"/>
-            </Show>
-            <CheckBox value={anchor()} onValueChanged={v => setAnchor(v)}>Anchor</CheckBox>
-            <CheckBox value={important()} onValueChanged={v => setImportant(v)}>Important</CheckBox>
-            <CheckBox value={dragable()} onValueChanged={v => setDragable(v)}>Dragable</CheckBox>
-            <CheckBox value={allowHideAnchor()} onValueChanged={v => setAllowHideAnchor(v)}>Allow hide anchor</CheckBox>
-            <CheckBox value={multiple()} onValueChanged={v => setMultiple(v)}>Multiple</CheckBox>
-            <CheckBox value={showCloseButton()} onValueChanged={v => setShowCloseButton(v)}>Show close button</CheckBox>
-        </PlaygroundOptions>
-    </Page>)
+	const [allowHideAnchor, setAllowHideAnchor] = createSignal<boolean>(true)
+	const [dragable, setDragable] = createSignal<boolean>(false)
+	const [multiple, setMultiple] = createSignal<boolean>(false)
+	const [gap, setGap] = createSignal<number>(12)
+	const [important, setImportant] = createSignal<boolean>(false)
+	const [padding, setPadding] = createSignal<number>(0)
+	const [position, setPosition] = createSignal<EmojiPickerPosition>(EmojiPickerPosition[_centerBottom])
+	const [anchor, setAnchor] = createSignal<boolean>(true)
+	const [showCloseButton, setShowCloseButton] = createSignal<boolean>(false)
+	const [emoji, setEmoji] = createSignal<Emoji | null>(null)
+	let emojiPicker_ref: HTMLDialogElement
+	return (<Page
+		title="EmojiPicker"
+		description="An EmojiPicker is a UI element that allows users to select and insert emojis into text fields or other input areas. It typically presents a grid of emojis that can be searched, filtered, or categorized for easy selection.">
+		<Playground>
+			<Button
+				variant={ButtonVariant[_tonal]}
+				onClick={ev => openEmojiPicker(ev, emojiPicker_ref, {
+					anchor: anchor()? ev[_currentTarget] : undefined,
+					allowHideAnchor: allowHideAnchor(),
+					dragable: dragable(),
+					gap: gap(),
+					important: important(),
+					padding: padding(),
+					position: position(),
+				})}>
+				<Show when={emoji() != null} fallback={<><Icon code={0xE747}/>Pick emoji</>}>
+					<EmojiC emoji={emoji()![0]}/>
+					{emoji()![1]}
+				</Show>
+			</Button>
+			<EmojiPicker
+				ref={r => emojiPicker_ref = r}
+				onSelectEmoji={(emoji, name) => setEmoji([emoji, name])}
+				multiple={multiple()}
+				showCloseButton={showCloseButton()}
+			/>
+		</Playground>
+		<PlaygroundOptions>
+			<Dropdown
+				items={[
+					[EmojiPickerPosition[_leftTop], 'Left top'],
+					[EmojiPickerPosition[_leftCenterToBottom], 'Left center to bottom'],
+					[EmojiPickerPosition[_leftCenter], 'Left center'],
+					[EmojiPickerPosition[_leftCenterToTop], 'Left center to top'],
+					[EmojiPickerPosition[_leftBottom], 'Left bottom'],
+					[EmojiPickerPosition[_rightTop], 'Right top'],
+					[EmojiPickerPosition[_rightCenterToBottom], 'Right center to bottom'],
+					[EmojiPickerPosition[_rightCenter], 'Right center'],
+					[EmojiPickerPosition[_rightCenterToTop], 'Right center to top'],
+					[EmojiPickerPosition[_rightBottom], 'Right bottom'],
+					[EmojiPickerPosition[_centerTopToRight], 'Center top to right'],
+					[EmojiPickerPosition[_centerTop], 'Center top'],
+					[EmojiPickerPosition[_centerTopToLeft], 'Center top to left'],
+					[EmojiPickerPosition[_centerBottomToRight], 'Center bottom to right'],
+					[EmojiPickerPosition[_centerBottom], 'Center bottom'],
+					[EmojiPickerPosition[_centerBottomToLeft], 'Center bottom to left'],
+					[EmojiPickerPosition[_centerCenterLeftTop], 'Center center left top'],
+					[EmojiPickerPosition[_centerCenterLeft], 'Center center left'],
+					[EmojiPickerPosition[_centerCenterLeftBottom], 'Center center left bottom'],
+					[EmojiPickerPosition[_centerCenterTop], 'Center center top'],
+					[EmojiPickerPosition[_centerCenter], 'Center center'],
+					[EmojiPickerPosition[_centerCenterBottom], 'Center center bottom'],
+					[EmojiPickerPosition[_centerCenterRightTop], 'Center center right top'],
+					[EmojiPickerPosition[_centerCenterRight], 'Center center right'],
+					[EmojiPickerPosition[_centerCenterRightBottom], 'Center center right bottom'],
+				]}
+				labelText="Position"
+				selectedValues={[position()]}
+				onSelectedItemsChanged={(items) => setPosition(items[0][0] as EmojiPickerPosition)}
+			/>
+			<NumberTextField style={{width: '100px'}} value={gap()} min={0} onFinalValueChanged={(v) => setGap(v)} labelText="Gap"/>
+			<Show when={[
+				EmojiPickerPosition[_centerTopToRight],
+				EmojiPickerPosition[_centerCenterLeft],
+				EmojiPickerPosition[_centerBottomToRight],
+				EmojiPickerPosition[_centerTopToLeft],
+				EmojiPickerPosition[_centerCenterRight],
+				EmojiPickerPosition[_centerBottomToLeft],
+				EmojiPickerPosition[_leftCenterToBottom],
+				EmojiPickerPosition[_centerCenterLeftTop],
+				EmojiPickerPosition[_centerCenterTop],
+				EmojiPickerPosition[_centerCenterRightTop],
+				EmojiPickerPosition[_rightCenterToBottom],
+				EmojiPickerPosition[_leftCenterToTop],
+				EmojiPickerPosition[_centerCenterLeftBottom],
+				EmojiPickerPosition[_centerCenterBottom],
+				EmojiPickerPosition[_centerCenterRightBottom],
+				EmojiPickerPosition[_rightCenterToTop]
+			][_includes](position())}>
+				<NumberTextField value={padding()} style={{width: '100px'}} min={0} onFinalValueChanged={(v) => setPadding(v)} labelText="Padding"/>
+			</Show>
+			<CheckBox value={anchor()} onValueChanged={v => setAnchor(v)}>Anchor</CheckBox>
+			<CheckBox value={important()} onValueChanged={v => setImportant(v)}>Important</CheckBox>
+			<CheckBox value={dragable()} onValueChanged={v => setDragable(v)}>Dragable</CheckBox>
+			<CheckBox value={allowHideAnchor()} onValueChanged={v => setAllowHideAnchor(v)}>Allow hide anchor</CheckBox>
+			<CheckBox value={multiple()} onValueChanged={v => setMultiple(v)}>Multiple</CheckBox>
+			<CheckBox value={showCloseButton()} onValueChanged={v => setShowCloseButton(v)}>Show close button</CheckBox>
+		</PlaygroundOptions>
+	</Page>)
 }
 
 export default _

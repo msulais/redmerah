@@ -1,100 +1,100 @@
 .popover {
-    background-color: rgb(var(--color-surface));
-    border: 1px solid rgba(var(--color-on-surface), var(--opacity3));
-    box-sizing: content-box;
-    border-radius: 12px;
-    left: 0;
-    max-height: calc(100dvh - 16px);
-    max-width: calc(100% - 16px);
-    opacity: 0;
-    position: fixed;
-    outline: none;
-    overflow: hidden;
-    top: 0;
-    transition-property: opacity;
-    transition-duration: .3s;
+	background-color: rgb(var(--color-surface));
+	border: 1px solid rgba(var(--color-on-surface), var(--opacity3));
+	box-sizing: content-box;
+	border-radius: 12px;
+	left: 0;
+	max-height: calc(100dvh - 16px);
+	max-width: calc(100% - 16px);
+	opacity: 0;
+	position: fixed;
+	outline: none;
+	overflow: hidden;
+	top: 0;
+	transition-property: opacity;
+	transition-duration: .3s;
 
-    :root[data-corner=sharp] & {border-radius: 0}
-    :root[data-corner=semi-round] & {border-radius: 8px}
-    :root[data-corner=full-round] & {border-radius: 20px}
-    :root[data-theme=dark] & {
-        background-color: rgb(36, 36, 36);
-        border: 1px solid rgba(0, 0, 0, var(--opacity-inv5));
-    }
-    :root[data-theme=system] & {
-        @media (prefers-color-scheme: dark) {
-            background-color: rgb(36, 36, 36);
-            border: 1px solid rgba(0, 0, 0, var(--opacity-inv5));
-        }
-    }
+	:root[data-corner=sharp] & {border-radius: 0}
+	:root[data-corner=semi-round] & {border-radius: 8px}
+	:root[data-corner=full-round] & {border-radius: 20px}
+	:root[data-theme=dark] & {
+		background-color: rgb(36, 36, 36);
+		border: 1px solid rgba(0, 0, 0, var(--opacity-inv5));
+	}
+	:root[data-theme=system] & {
+		@media (prefers-color-scheme: dark) {
+			background-color: rgb(36, 36, 36);
+			border: 1px solid rgba(0, 0, 0, var(--opacity-inv5));
+		}
+	}
 
-    &::backdrop {
-        background-color: transparent;
-    }
+	&::backdrop {
+		background-color: transparent;
+	}
 
-    &[data-open] {
-        opacity: 1;
-    }
+	&[data-open] {
+		opacity: 1;
+	}
 
-    &[data-open-done] {
-        transition-property: all;
-    }
+	&[data-open-done] {
+		transition-property: all;
+	}
 
-    &[data-drag] {
-        transition-property: all, top, left;
-        transition-duration: .3s, 0s, 0s;
-    }
+	&[data-drag] {
+		transition-property: all, top, left;
+		transition-duration: .3s, 0s, 0s;
+	}
 
-    > div {
-        max-height: inherit;
-        max-width: 100%;
-        overflow: auto;
-        width: 100%;
-        border-radius: inherit;
-    }
+	> div {
+		max-height: inherit;
+		max-width: 100%;
+		overflow: auto;
+		width: 100%;
+		border-radius: inherit;
+	}
 }
 
 .popover-drag-handle {
-    --popover-drag-handle-border-radius: 16px;
-    --popover-drag-handle-width: calc(100% - var(--popover-drag-handle-border-radius) * 2 + 32px);
-    --popover-drag-handle-width-hover: calc(100% - var(--popover-drag-handle-border-radius) * 2 + 8px);
+	--popover-drag-handle-border-radius: 16px;
+	--popover-drag-handle-width: calc(100% - var(--popover-drag-handle-border-radius) * 2 + 32px);
+	--popover-drag-handle-width-hover: calc(100% - var(--popover-drag-handle-border-radius) * 2 + 8px);
 
-    width: min(64px, var(--popover-drag-handle-width));
-    height: 4px;
-    position: absolute;
-    top: 4px;
-    left: 50%;
-    transform: translateX(-50%);
-    box-shadow: var(--elevation1);
-    z-index: 5;
-    border-radius: 999px;
-    background-color: rgb(var(--color-accent));
-    transition-duration: .3s;
+	width: min(64px, var(--popover-drag-handle-width));
+	height: 4px;
+	position: absolute;
+	top: 4px;
+	left: 50%;
+	transform: translateX(-50%);
+	box-shadow: var(--elevation1);
+	z-index: 5;
+	border-radius: 999px;
+	background-color: rgb(var(--color-accent));
+	transition-duration: .3s;
 
-    :root[data-corner=sharp] & {
-        --popover-drag-handle-border-radius: 0px;
-        border-radius: 0px;
-    }
+	:root[data-corner=sharp] & {
+		--popover-drag-handle-border-radius: 0px;
+		border-radius: 0px;
+	}
 
-    :root[data-corner=semi-round] & {
-        --popover-drag-handle-border-radius: 8px;
-    }
+	:root[data-corner=semi-round] & {
+		--popover-drag-handle-border-radius: 8px;
+	}
 
-    :root[data-corner=full-round] & {
-        --popover-drag-handle-border-radius: 20px;
-    }
+	:root[data-corner=full-round] & {
+		--popover-drag-handle-border-radius: 20px;
+	}
 
-    @media (hover: hover) {
-        &:hover {
-            cursor: grab;
-            width: min(88px, var(--popover-drag-handle-width-hover));
-            height: 8px;
-        }
-    }
+	@media (hover: hover) {
+		&:hover {
+			cursor: grab;
+			width: min(88px, var(--popover-drag-handle-width-hover));
+			height: 8px;
+		}
+	}
 
-    &:active {
-        cursor: grabbing;
-        height: 8px;
-        width: min(80px, calc(var(--popover-drag-handle-width-hover) - 16px));
-    }
+	&:active {
+		cursor: grabbing;
+		height: 8px;
+		width: min(80px, calc(var(--popover-drag-handle-width-hover) - 16px));
+	}
 }

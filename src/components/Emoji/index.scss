@@ -1,22 +1,22 @@
 @font-face {
-    font-family: "Noto Color Emoji";
-    src: url("/fonts/NotoColorEmoji-Regular.ttf") format("truetype");
+	font-family: "Noto Color Emoji";
+	src: url("/fonts/NotoColorEmoji-Regular.ttf") format("truetype");
 }
 
 .emoji {
-    display: block;
-    font-family: "Noto Color Emoji", sans-serif;
-    font-size: 20px;
-    font-style: normal;
-    font-variant: normal;
-    font-weight: normal !important;
-    text-transform: none;
+	display: block;
+	font-family: "Noto Color Emoji", sans-serif;
+	font-size: 20px;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: normal !important;
+	text-transform: none;
 
-    &[data-inline] {
-        display: inline-block;
-    }
+	&[data-inline] {
+		display: inline-block;
+	}
 
-    :root[data-platform=mobile] & {
-        font-size: 24px;
-    }
+	:root[data-platform=mobile] & {
+		font-size: 24px;
+	}
 }

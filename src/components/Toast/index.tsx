@@ -11,158 +11,158 @@ import Popover, { type PopoverProps, closePopover, openPopover, PopoverPosition 
 import './index.scss'
 
 enum ToastPosition {
-    leftTop,
-    centerTop,
-    rightTop,
-    leftBottom,
-    centerBottom,
-    rightBottom
+	leftTop,
+	centerTop,
+	rightTop,
+	leftBottom,
+	centerBottom,
+	rightBottom
 }
 
 type ToastOpenDetail = {
-    event: Event
-    autoClose?: boolean
-    duration?: number
-    position?: ToastPosition
+	event: Event
+	autoClose?: boolean
+	duration?: number
+	position?: ToastPosition
 }
 
 enum ToastEvents {
-    onOpen = 'on-open-toast',
-    onClose = 'on-close-toast'
+	onOpen = 'on-open-toast',
+	onClose = 'on-close-toast'
 }
 
 enum ToastAttributes {
-    open = 'data-open',
-    move = 'data-move',
+	open = 'data-open',
+	move = 'data-move',
 }
 
 function openToast(event: Event, toast: HTMLDivElement, options?: Omit<ToastOpenDetail, 'event'>): void {
-    toast[_dispatchEvent](new CustomEvent(
-        ToastEvents[_onOpen],
-        {detail: {event, ...options} satisfies ToastOpenDetail}
-    ))
+	toast[_dispatchEvent](new CustomEvent(
+		ToastEvents[_onOpen],
+		{detail: {event, ...options} satisfies ToastOpenDetail}
+	))
 }
 
 function closeToast(toast: HTMLDivElement): void {
-    toast[_dispatchEvent](new CustomEvent(ToastEvents[_onClose]))
+	toast[_dispatchEvent](new CustomEvent(ToastEvents[_onClose]))
 }
 
 type ToastProps = PopoverProps & {
-    header?: JSX.Element
-    actions?: JSX.Element
-    leading?: JSX.Element
-    trailing?: JSX.Element
+	header?: JSX.Element
+	actions?: JSX.Element
+	leading?: JSX.Element
+	trailing?: JSX.Element
 }
 const Toast: ParentComponent<ToastProps> = ($props) => {
-    const [props, other] = splitProps($props, [
-        _leading, _trailing, _children,
-        _header, _actions, _classList,
-        _ref, _onToggleOpen
-    ])
-    const actionsComponent = children(() => props[_actions])
-    let toast_ref: HTMLDivElement
-    let isOpen = false
-    let timeoutId: number | null = null
+	const [props, other] = splitProps($props, [
+		_leading, _trailing, _children,
+		_header, _actions, _classList,
+		_ref, _onToggleOpen
+	])
+	const actionsComponent = children(() => props[_actions])
+	let toast_ref: HTMLDivElement
+	let isOpen = false
+	let timeoutId: number | null = null
 
-    async function closeToast(): Promise<void> {
-        if (!isOpen) return;
-        if (timeoutId != null) {
-            clearTimeDelayed(timeoutId)
-            timeoutId = null
-        }
-        closePopover(toast_ref)
-    }
+	async function closeToast(): Promise<void> {
+		if (!isOpen) return;
+		if (timeoutId != null) {
+			clearTimeDelayed(timeoutId)
+			timeoutId = null
+		}
+		closePopover(toast_ref)
+	}
 
-    async function openToast(options: ToastOpenDetail): Promise<void> {
-        if (isOpen) return
+	async function openToast(options: ToastOpenDetail): Promise<void> {
+		if (isOpen) return
 
-        const {
-            event,
-            position = ToastPosition[_centerTop],
-            autoClose = true,
-            duration = 5E3
-        } = options;
+		const {
+			event,
+			position = ToastPosition[_centerTop],
+			autoClose = true,
+			duration = 5E3
+		} = options;
 
-        let $position = PopoverPosition[_centerCenterTop]
-        if (position == ToastPosition[_leftTop]) $position = PopoverPosition[_centerCenterLeftTop]
-        else if (position == ToastPosition[_leftBottom]) $position = PopoverPosition[_centerCenterLeftBottom]
-        else if (position == ToastPosition[_centerTop]) $position = PopoverPosition[_centerCenterTop]
-        else if (position == ToastPosition[_centerBottom]) $position = PopoverPosition[_centerCenterBottom]
-        else if (position == ToastPosition[_rightTop]) $position = PopoverPosition[_centerCenterRightTop]
-        else if (position == ToastPosition[_rightBottom]) $position = PopoverPosition[_centerCenterRightBottom]
+		let $position = PopoverPosition[_centerCenterTop]
+		if (position == ToastPosition[_leftTop]) $position = PopoverPosition[_centerCenterLeftTop]
+		else if (position == ToastPosition[_leftBottom]) $position = PopoverPosition[_centerCenterLeftBottom]
+		else if (position == ToastPosition[_centerTop]) $position = PopoverPosition[_centerCenterTop]
+		else if (position == ToastPosition[_centerBottom]) $position = PopoverPosition[_centerCenterBottom]
+		else if (position == ToastPosition[_rightTop]) $position = PopoverPosition[_centerCenterRightTop]
+		else if (position == ToastPosition[_rightBottom]) $position = PopoverPosition[_centerCenterRightBottom]
 
-        openPopover(event, toast_ref, {
-            anchor: getDocumentBody(),
-            manualDismiss: true,
-            position: $position
-        })
+		openPopover(event, toast_ref, {
+			anchor: getDocumentBody(),
+			manualDismiss: true,
+			position: $position
+		})
 
-        if (!autoClose) return;
+		if (!autoClose) return;
 
-        timeoutId = setTimeDelayed(() => {
-            closeToast()
-            timeoutId = null
-        }, duration)
-    }
+		timeoutId = setTimeDelayed(() => {
+			closeToast()
+			timeoutId = null
+		}, duration)
+	}
 
-    function customOnOpen(ev: CustomEvent): void {
-        openToast(ev[_detail] as ToastOpenDetail)
-    }
+	function customOnOpen(ev: CustomEvent): void {
+		openToast(ev[_detail] as ToastOpenDetail)
+	}
 
-    function customOnClose(_ev: CustomEvent): void {
-        closeToast()
-    }
+	function customOnClose(_ev: CustomEvent): void {
+		closeToast()
+	}
 
-    function initCustomEvent(): void {
-        addEventListener<CustomEvent>(toast_ref, ToastEvents[_onOpen], customOnOpen)
-        addEventListener<CustomEvent>(toast_ref, ToastEvents[_onClose], customOnClose)
+	function initCustomEvent(): void {
+		addEventListener<CustomEvent>(toast_ref, ToastEvents[_onOpen], customOnOpen)
+		addEventListener<CustomEvent>(toast_ref, ToastEvents[_onClose], customOnClose)
 
-        onCleanup(() => {
-            removeEventListener<CustomEvent>(toast_ref, ToastEvents[_onOpen], customOnOpen)
-            removeEventListener<CustomEvent>(toast_ref, ToastEvents[_onClose], customOnClose)
-        })
-    }
+		onCleanup(() => {
+			removeEventListener<CustomEvent>(toast_ref, ToastEvents[_onOpen], customOnOpen)
+			removeEventListener<CustomEvent>(toast_ref, ToastEvents[_onClose], customOnClose)
+		})
+	}
 
-    onMount(() => {
-        initCustomEvent()
-    })
+	onMount(() => {
+		initCustomEvent()
+	})
 
-    return (<Popover
-        onToggleOpen={o => {
-            isOpen = o
-            if (props[_onToggleOpen]) props[_onToggleOpen](o)
-        }}
-        ref={r => {
-            toast_ref = r
-            if (props[_ref]) props[_ref](r)
-        }}
-        classList={{
-            toast: true,
-            ...props[_classList]
-        }}
-        data-actions={toggleAttribute(actionsComponent())}
-        {...other}>
-        <List
-            leading={props[_leading]}
-            trailing={props[_trailing]}
-            subtitle={props[_children]}>
-            { props[_header] }
-        </List>
-        <div class="toast-actions">
-            { actionsComponent() }
-        </div>
-    </Popover>)
+	return (<Popover
+		onToggleOpen={o => {
+			isOpen = o
+			if (props[_onToggleOpen]) props[_onToggleOpen](o)
+		}}
+		ref={r => {
+			toast_ref = r
+			if (props[_ref]) props[_ref](r)
+		}}
+		classList={{
+			toast: true,
+			...props[_classList]
+		}}
+		data-actions={toggleAttribute(actionsComponent())}
+		{...other}>
+		<List
+			leading={props[_leading]}
+			trailing={props[_trailing]}
+			subtitle={props[_children]}>
+			{ props[_header] }
+		</List>
+		<div class="toast-actions">
+			{ actionsComponent() }
+		</div>
+	</Popover>)
 }
 
 export {
-    Toast,
-    openToast,
-    closeToast,
-    ToastPosition
+	Toast,
+	openToast,
+	closeToast,
+	ToastPosition
 }
 export type {
-    ToastProps,
-    ToastEvents,
-    ToastAttributes
+	ToastProps,
+	ToastEvents,
+	ToastAttributes
 }
 export default Toast

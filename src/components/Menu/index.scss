@@ -1,117 +1,117 @@
 :is(.modal,.popover).menu {
-    box-shadow: var(--elevation1);
+	box-shadow: var(--elevation1);
 
-    &[data-dragable] > div {
-        padding-top: 12px;
-    }
+	&[data-dragable] > div {
+		padding-top: 12px;
+	}
 
-    :root[data-platform=mobile][data-corner=full-round] & {
-        border-radius: 28px;
-    }
+	:root[data-platform=mobile][data-corner=full-round] & {
+		border-radius: 28px;
+	}
 
-    > div {
-        padding: 4px 0;
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        align-items: stretch;
-        justify-content: flex-start;
-    }
+	> div {
+		padding: 4px 0;
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+		align-items: stretch;
+		justify-content: flex-start;
+	}
 }
 
 .menu-header {
-    padding: 0 8px;
-    margin: 0 4px;
-    min-height: 24px;
-    display: flex;
-    text-wrap: nowrap;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    font-size: var(--font-size-s);
-    color: rgba(var(--color-on-surface), var(--opacity-inv2));
+	padding: 0 8px;
+	margin: 0 4px;
+	min-height: 24px;
+	display: flex;
+	text-wrap: nowrap;
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: center;
+	font-size: var(--font-size-s);
+	color: rgba(var(--color-on-surface), var(--opacity-inv2));
 }
 
 .menu-indent {
-    min-width: 20px;
-    max-width: 20px;
+	min-width: 20px;
+	max-width: 20px;
 }
 
 .btn.menu-item {
-    --btn-padding: 0 8px;
-    justify-content: flex-start;
-    margin: 0 4px;
-    width: calc(100% - 8px);
+	--btn-padding: 0 8px;
+	justify-content: flex-start;
+	margin: 0 4px;
+	width: calc(100% - 8px);
 
-    :root[data-platform=desktop] & { min-height: 32px }
-    :root[data-platform=mobile] & { min-height: 48px }
-    :root[data-platform=mobile][data-corner=full-round] & { --btn-border-radius: 24px }
+	:root[data-platform=desktop] & { min-height: 32px }
+	:root[data-platform=mobile] & { min-height: 48px }
+	:root[data-platform=mobile][data-corner=full-round] & { --btn-border-radius: 24px }
 
-    > .btn-layer {
-        white-space: nowrap;
-    }
+	> .btn-layer {
+		white-space: nowrap;
+	}
 
-    &[data-trailing] > .btn-layer {
-        width: 100%;
-    }
+	&[data-trailing] > .btn-layer {
+		width: 100%;
+	}
 }
 
 .menu-item-trailing-shortcut {
-    display: flex;
-    gap: 4px;
-    padding: 4px 0;
+	display: flex;
+	gap: 4px;
+	padding: 4px 0;
 }
 
 .popover.sub-menu {
-    width: 100%;
+	width: 100%;
 
-    > .menu-item {
-        width: calc(100% - 8px);
-    }
+	> .menu-item {
+		width: calc(100% - 8px);
+	}
 }
 
 .switch-menu-item > div {
-    @media (hover: hover) {
-        &:hover > .switch {
-            --switch-handle-size: calc(var(--switch-height) - 6px);
+	@media (hover: hover) {
+		&:hover > .switch {
+			--switch-handle-size: calc(var(--switch-height) - 6px);
 
-            &[data-checked] > div {
-                transform: translate(2px, -2px);
-            }
+			&[data-checked] > div {
+				transform: translate(2px, -2px);
+			}
 
-            > div {
-                transform: translate(-2px, -2px);
+			> div {
+				transform: translate(-2px, -2px);
 
-                :root:not([data-corner=sharp]) & {
-                    border-radius: max(0px, var(--switch-border-radius) - 2px);
-                }
-            }
-        }
-    }
+				:root:not([data-corner=sharp]) & {
+					border-radius: max(0px, var(--switch-border-radius) - 2px);
+				}
+			}
+		}
+	}
 
-    &:active > .switch {
-        @media (hover: hover) {
-            --switch-handle-size: calc(var(--switch-height) - 10px);
+	&:active > .switch {
+		@media (hover: hover) {
+			--switch-handle-size: calc(var(--switch-height) - 10px);
 
-            > div {
-                transform: none !important;
-            }
-        }
+			> div {
+				transform: none !important;
+			}
+		}
 
-        @media (hover: none) {
-            --switch-handle-size: calc(var(--switch-height) - 6px);
+		@media (hover: none) {
+			--switch-handle-size: calc(var(--switch-height) - 6px);
 
-            &[data-checked] > div {
-                transform: translate(2px, -2px);
-            }
+			&[data-checked] > div {
+				transform: translate(2px, -2px);
+			}
 
-            > div {
-                transform: translate(-2px, -2px);
+			> div {
+				transform: translate(-2px, -2px);
 
-                :root:not([data-corner=sharp]) & {
-                    border-radius: max(0px, var(--switch-border-radius) - 2px);
-                }
-            }
-        }
-    }
+				:root:not([data-corner=sharp]) & {
+					border-radius: max(0px, var(--switch-border-radius) - 2px);
+				}
+			}
+		}
+	}
 }

@@ -1,33 +1,33 @@
 @font-face {
-    font-family: "FluentSystemIcons-Resizable";
-    src: url("/icons/FluentSystemIcons-Resizable.woff2") format("woff2"),
-         url("/icons/FluentSystemIcons-Resizable.woff") format("woff"),
-         url("/icons/FluentSystemIcons-Resizable.ttf") format("truetype");
+	font-family: "FluentSystemIcons-Resizable";
+	src: url("/icons/FluentSystemIcons-Resizable.woff2") format("woff2"),
+		 url("/icons/FluentSystemIcons-Resizable.woff") format("woff"),
+		 url("/icons/FluentSystemIcons-Resizable.ttf") format("truetype");
 }
 
 .icon {
-    --icon-size: 20px;
-    display: block;
-    font-family: FluentSystemIcons-Resizable;
-    font-size: var(--icon-size);
-    font-style: normal;
-    font-variant: normal;
-    font-weight: normal !important;
-    line-height: var(--icon-size);
-    text-transform: none;
-    -webkit-font-smoothing: antialiased;
+	--icon-size: 20px;
+	display: block;
+	font-family: FluentSystemIcons-Resizable;
+	font-size: var(--icon-size);
+	font-style: normal;
+	font-variant: normal;
+	font-weight: normal !important;
+	line-height: var(--icon-size);
+	text-transform: none;
+	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 
-    :root[data-platform=mobile] & {
-        --icon-size: 24px;
-    }
+	:root[data-platform=mobile] & {
+		--icon-size: 24px;
+	}
 
-    &::-webkit-scrollbar {
-        display: none;
-    }
+	&::-webkit-scrollbar {
+		display: none;
+	}
 
-    &[data-inline] {
-        display: inline;
-        font-size: inherit;
-    }
+	&[data-inline] {
+		display: inline;
+		font-size: inherit;
+	}
 }

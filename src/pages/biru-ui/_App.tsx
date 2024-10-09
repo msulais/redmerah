@@ -14,43 +14,43 @@ import Body from './_Body'
 import CSS from './_styles.module.scss'
 
 const _: VoidComponent = () => {
-    const [page, setPage] = createSignal<Pages>(Pages[_button])
-    function command(type: Commands, ...args: unknown[]): unknown {
-        if (type == Commands.change_page) {
-            setPage(args[0] as Pages)
-        }
-        return
-    }
+	const [page, setPage] = createSignal<Pages>(Pages[_button])
+	function command(type: Commands, ...args: unknown[]): unknown {
+		if (type == Commands.change_page) {
+			setPage(args[0] as Pages)
+		}
+		return
+	}
 
-    function removeSplashScreen(): void {
-        setMicrotask(() => {
-            const splash_ref = getElementById(ElementIds[_splash]) as HTMLDivElement
-            splash_ref[_animate](
-                {opacity: 0},
-                {
-                    duration: 1000,
-                    easing: AnimationEffectTiming[_spring]
-                }
-            )[_finished][_then](() => splash_ref[_remove]())
-        })
-    }
+	function removeSplashScreen(): void {
+		setMicrotask(() => {
+			const splash_ref = getElementById(ElementIds[_splash]) as HTMLDivElement
+			splash_ref[_animate](
+				{opacity: 0},
+				{
+					duration: 1000,
+					easing: AnimationEffectTiming[_spring]
+				}
+			)[_finished][_then](() => splash_ref[_remove]())
+		})
+	}
 
-    onMount(() => {
-        removeSplashScreen()
-    })
+	onMount(() => {
+		removeSplashScreen()
+	})
 
-    return (<App
-        class={CSS.app}
-        appBar={<AppBar
-            page={page()}
-            command={command}
-        />}
-        leftSideBar={<SideNavigation
-            page={page()}
-            command={command}
-        />}>
-        <Body page={page()}/>
-    </App>)
+	return (<App
+		class={CSS.app}
+		appBar={<AppBar
+			page={page()}
+			command={command}
+		/>}
+		leftSideBar={<SideNavigation
+			page={page()}
+			command={command}
+		/>}>
+		<Body page={page()}/>
+	</App>)
 }
 
 export default _

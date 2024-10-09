@@ -1,97 +1,97 @@
 .switch {
-    --switch-width: 42px;
-    --switch-height: 24px;
-    --switch-handle-size: calc(var(--switch-height) - 10px);
-    --switch-border-radius: 20px;
+	--switch-width: 42px;
+	--switch-height: 24px;
+	--switch-handle-size: calc(var(--switch-height) - 10px);
+	--switch-border-radius: 20px;
 
-    background-color: rgb(var(--color-background));
-    min-height: var(--switch-height);
-    max-height: var(--switch-height);
-    min-width: var(--switch-width);
-    max-width: var(--switch-width);
-    border-radius: var(--switch-border-radius);
-    border: 1px solid rgba(var(--color-on-surface), var(--opacity-border));
-    position: relative;
-    transition-duration: .3s;
+	background-color: rgb(var(--color-background));
+	min-height: var(--switch-height);
+	max-height: var(--switch-height);
+	min-width: var(--switch-width);
+	max-width: var(--switch-width);
+	border-radius: var(--switch-border-radius);
+	border: 1px solid rgba(var(--color-on-surface), var(--opacity-border));
+	position: relative;
+	transition-duration: .3s;
 
-    :root[data-corner=sharp] & { --switch-border-radius: 0px }
-    :root[data-corner=semi-round] & { --switch-border-radius: 4px }
+	:root[data-corner=sharp] & { --switch-border-radius: 0px }
+	:root[data-corner=semi-round] & { --switch-border-radius: 4px }
 
-    :root[data-platform=desktop] & {
-        --switch-height: 20px;
-        --switch-width: 34px;
-    }
-    :root[data-platform=mobile] & {
-        --switch-height: 32px;
-        --switch-width: 54px;
-    }
+	:root[data-platform=desktop] & {
+		--switch-height: 20px;
+		--switch-width: 34px;
+	}
+	:root[data-platform=mobile] & {
+		--switch-height: 32px;
+		--switch-width: 54px;
+	}
 
-    @media (hover: hover) {
-        &:hover {
-            cursor: pointer;
-            --switch-handle-size: calc(var(--switch-height) - 6px);
+	@media (hover: hover) {
+		&:hover {
+			cursor: pointer;
+			--switch-handle-size: calc(var(--switch-height) - 6px);
 
-            &[data-checked] > div {
-                transform: translate(2px, -2px);
-            }
+			&[data-checked] > div {
+				transform: translate(2px, -2px);
+			}
 
-            > div {
-                transform: translate(-2px, -2px);
+			> div {
+				transform: translate(-2px, -2px);
 
-                :root:not([data-corner=sharp]) & {
-                    border-radius: max(0px, var(--switch-border-radius) - 2px);
-                }
-            }
-        }
-    }
+				:root:not([data-corner=sharp]) & {
+					border-radius: max(0px, var(--switch-border-radius) - 2px);
+				}
+			}
+		}
+	}
 
-    &:active {
-        @media (hover: hover) {
-            --switch-handle-size: calc(var(--switch-height) - 10px);
+	&:active {
+		@media (hover: hover) {
+			--switch-handle-size: calc(var(--switch-height) - 10px);
 
-            > div {
-                transform: none !important;
-            }
-        }
+			> div {
+				transform: none !important;
+			}
+		}
 
-        @media (hover: none) {
-            --switch-handle-size: calc(var(--switch-height) - 6px);
+		@media (hover: none) {
+			--switch-handle-size: calc(var(--switch-height) - 6px);
 
-            &[data-checked] > div {
-                transform: translate(2px, -2px);
-            }
+			&[data-checked] > div {
+				transform: translate(2px, -2px);
+			}
 
-            > div {
-                transform: translate(-2px, -2px);
+			> div {
+				transform: translate(-2px, -2px);
 
-                :root:not([data-corner=sharp]) & {
-                    border-radius: max(0px, var(--switch-border-radius) - 2px);
-                }
-            }
-        }
-    }
+				:root:not([data-corner=sharp]) & {
+					border-radius: max(0px, var(--switch-border-radius) - 2px);
+				}
+			}
+		}
+	}
 
-    &[data-checked]{
-        background-color: rgb(var(--color-accent));
-        border-color: rgb(var(--color-accent));
+	&[data-checked]{
+		background-color: rgb(var(--color-accent));
+		border-color: rgb(var(--color-accent));
 
-        > div {
-            background-color: rgb(var(--color-surface));
-            left: calc(100% - calc(var(--switch-handle-size) + 4px));
-        }
-    }
+		> div {
+			background-color: rgb(var(--color-surface));
+			left: calc(100% - calc(var(--switch-handle-size) + 4px));
+		}
+	}
 
-    > div {
-        position: absolute;
-        top: 4px;
-        left: 4px;
-        height: var(--switch-handle-size);
-        width: var(--switch-handle-size);
-        background-color: rgb(var(--color-accent));
-        transition-duration: .3s;
+	> div {
+		position: absolute;
+		top: 4px;
+		left: 4px;
+		height: var(--switch-handle-size);
+		width: var(--switch-handle-size);
+		background-color: rgb(var(--color-accent));
+		transition-duration: .3s;
 
-        :root:not([data-corner=sharp]) & {
-            border-radius: max(0px, var(--switch-border-radius) - 6px);
-        }
-    }
+		:root:not([data-corner=sharp]) & {
+			border-radius: max(0px, var(--switch-border-radius) - 6px);
+		}
+	}
 }

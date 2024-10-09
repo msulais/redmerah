@@ -1,88 +1,88 @@
 .article {
-    padding: 32px 16px 64px 16px;
-    width: 1080px;
-    max-width: 100%;
+	padding: 32px 16px 64px 16px;
+	width: 1080px;
+	max-width: 100%;
 
-    & :is(p, li) {
-        font-size: 20px;
-        text-align: justify;
+	& :is(p, li) {
+		font-size: 20px;
+		text-align: justify;
 
-        @media (max-width: 500px) {
-            font-size: 16px;
-        }
+		@media (max-width: 500px) {
+			font-size: 16px;
+		}
 
-        > a {
-            border-bottom: .1em solid;
-            color: rgb(var(--color-accent));
-            position: relative;
-            transition-duration: .3s;
+		> a {
+			border-bottom: .1em solid;
+			color: rgb(var(--color-accent));
+			position: relative;
+			transition-duration: .3s;
 
-            @media (hover: hover) {
-                &:hover {
-                    border-bottom-style: dashed;
-                }
-            }
+			@media (hover: hover) {
+				&:hover {
+					border-bottom-style: dashed;
+				}
+			}
 
-            &:active {
-                border-bottom-style: none;
-                background-color: rgb(var(--color-accent));
-                color: rgb(var(--color-on-accent));
-            }
-        }
-    }
+			&:active {
+				border-bottom-style: none;
+				background-color: rgb(var(--color-accent));
+				color: rgb(var(--color-on-accent));
+			}
+		}
+	}
 
-    & h2 {
-        scroll-margin-top: 64px;
-        font-size: 48px;
-        margin-top: 1em;
-        font-weight: 500;
+	& h2 {
+		scroll-margin-top: 64px;
+		font-size: 48px;
+		margin-top: 1em;
+		font-weight: 500;
 
-        @media (max-width: 500px) {
-            font-size: 32px;
-        }
+		@media (max-width: 500px) {
+			font-size: 32px;
+		}
 
-        &:target {
-            color: rgb(var(--color-accent));
-        }
+		&:target {
+			color: rgb(var(--color-accent));
+		}
 
-        > a {
-            transition-duration: .3s;
+		> a {
+			transition-duration: .3s;
 
-            @media (hover: hover) {
-                &:hover {
-                    text-decoration: underline;
-                }
-            }
+			@media (hover: hover) {
+				&:hover {
+					text-decoration: underline;
+				}
+			}
 
-            &:active {
-                text-decoration: underline dotted;
-            }
-        }
-    }
+			&:active {
+				text-decoration: underline dotted;
+			}
+		}
+	}
 
-    & :is(ul, ol) {
-        margin-left: 2em;
-    }
+	& :is(ul, ol) {
+		margin-left: 2em;
+	}
 
-    > h1 {
-        font-size: 108px;
-        margin-bottom: 1em;
-        text-wrap: balance;
-        background: linear-gradient(94.87deg, #F81111 0%, #B235FF 120.44%);
-        background-clip: text;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+	> h1 {
+		font-size: 108px;
+		margin-bottom: 1em;
+		text-wrap: balance;
+		background: linear-gradient(94.87deg, #F81111 0%, #B235FF 120.44%);
+		background-clip: text;
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
 
-        @media (max-width: 720px) {
-            font-size: 14dvw;
-        }
-    }
+		@media (max-width: 720px) {
+			font-size: 14dvw;
+		}
+	}
 
-    > :not(h1) {
-        margin-top: 1em;
-    }
+	> :not(h1) {
+		margin-top: 1em;
+	}
 
-    > section > :not(:first-child) {
-        margin-top: 1em;
-    }
+	> section > :not(:first-child) {
+		margin-top: 1em;
+	}
 }

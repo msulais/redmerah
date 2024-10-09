@@ -1,32 +1,32 @@
 {
-    "name": "Color Generator",
-    "short_name": "Color Generator",
-    "id": "/color-generator",
-    "start_url": "/color-generator",
-    "description": "Generate accent pallete color for your app. Including color for light and dark mode.",
-    "icons": [
-        {
-            "src": "/favicon/color-generator/favicon-16x16.png",
-            "sizes": "16x16",
-            "type": "image/png"
-        },
-        {
-            "src": "/favicon/color-generator/favicon-32x32.png",
-            "sizes": "32x32",
-            "type": "image/png"
-        },
-        {
-            "src": "/favicon/color-generator/android-chrome-192x192.png",
-            "sizes": "192x192",
-            "type": "image/png"
-        },
-        {
-            "src": "/favicon/color-generator/android-chrome-512x512.png",
-            "sizes": "512x512",
-            "type": "image/png"
-        }
-    ],
-    "theme_color": "#39BBFF",
-    "background_color": "#ffffff",
-    "display": "standalone"
+	"name": "Color Generator",
+	"short_name": "Color Generator",
+	"id": "/color-generator",
+	"start_url": "/color-generator",
+	"description": "Generate accent pallete color for your app. Including color for light and dark mode.",
+	"icons": [
+		{
+			"src": "/favicon/color-generator/favicon-16x16.png",
+			"sizes": "16x16",
+			"type": "image/png"
+		},
+		{
+			"src": "/favicon/color-generator/favicon-32x32.png",
+			"sizes": "32x32",
+			"type": "image/png"
+		},
+		{
+			"src": "/favicon/color-generator/android-chrome-192x192.png",
+			"sizes": "192x192",
+			"type": "image/png"
+		},
+		{
+			"src": "/favicon/color-generator/android-chrome-512x512.png",
+			"sizes": "512x512",
+			"type": "image/png"
+		}
+	],
+	"theme_color": "#39BBFF",
+	"background_color": "#ffffff",
+	"display": "standalone"
 }

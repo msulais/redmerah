@@ -1,32 +1,32 @@
 {
-    "name": "Calculator",
-    "short_name": "Calculator",
-    "id": "/calculator",
-    "start_url": "/calculator",
-    "description": "Perform a wide range of calculations with our versatile calculator. From basic arithmetic to advanced scientific functions and programmer tools, we've got you covered.",
-    "icons": [
-        {
-            "src": "/favicon/calculator/favicon-16x16.png",
-            "sizes": "16x16",
-            "type": "image/png"
-        },
-        {
-            "src": "/favicon/calculator/favicon-32x32.png",
-            "sizes": "32x32",
-            "type": "image/png"
-        },
-        {
-            "src": "/favicon/calculator/android-chrome-192x192.png",
-            "sizes": "192x192",
-            "type": "image/png"
-        },
-        {
-            "src": "/favicon/calculator/android-chrome-512x512.png",
-            "sizes": "512x512",
-            "type": "image/png"
-        }
-    ],
-    "theme_color": "#026BE3",
-    "background_color": "#ffffff",
-    "display": "standalone"
+	"name": "Calculator",
+	"short_name": "Calculator",
+	"id": "/calculator",
+	"start_url": "/calculator",
+	"description": "Perform a wide range of calculations with our versatile calculator. From basic arithmetic to advanced scientific functions and programmer tools, we've got you covered.",
+	"icons": [
+		{
+			"src": "/favicon/calculator/favicon-16x16.png",
+			"sizes": "16x16",
+			"type": "image/png"
+		},
+		{
+			"src": "/favicon/calculator/favicon-32x32.png",
+			"sizes": "32x32",
+			"type": "image/png"
+		},
+		{
+			"src": "/favicon/calculator/android-chrome-192x192.png",
+			"sizes": "192x192",
+			"type": "image/png"
+		},
+		{
+			"src": "/favicon/calculator/android-chrome-512x512.png",
+			"sizes": "512x512",
+			"type": "image/png"
+		}
+	],
+	"theme_color": "#026BE3",
+	"background_color": "#ffffff",
+	"display": "standalone"
 }

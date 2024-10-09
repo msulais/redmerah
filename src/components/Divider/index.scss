@@ -1,13 +1,13 @@
 .divider {
-    min-height: 1px;
-    max-height: 1px;
-    min-width: 100%;
-    background-color: rgba(var(--color-on-surface), var(--opacity2));
+	min-height: 1px;
+	max-height: 1px;
+	min-width: 100%;
+	background-color: rgba(var(--color-on-surface), var(--opacity2));
 
-    &[data-vertical] {
-        min-height: 100%;
-        max-height: 100%;
-        min-width: 1px;
-        max-width: 1px;
-    }
+	&[data-vertical] {
+		min-height: 100%;
+		max-height: 100%;
+		min-width: 1px;
+		max-width: 1px;
+	}
 }

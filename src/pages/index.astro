@@ -1,5 +1,4 @@
 ---
-
 import { ExternalLinks, RoutesLinks } from '@/enums/links';
 import androidLogo from '@/assets/android-logo.svg'
 import logo from '@/assets/logo.svg'
@@ -18,100 +17,100 @@ import CSSAnimation from '@/styles/animation.module.scss'
 import CSS from './_index.module.scss'
 
 const features = [
-    {
-        title: 'UI/UX',
-        description: 'We’ve obsessed over every pixel to create an intuitive and delightful user experience. Say goodbye to clunky interfaces—our apps are designed for simplicity and elegance.',
-        image: featuresImg_uiUx.src
-    },
-    {
-        title: 'Keep Data Local',
-        description: 'We respect your privacy. All your settings, preferences, and history are stored securely in your browser, not on our server. Your data, your control.',
-        image: featuresImg_keepDataLocal.src
-    },
-    {
-        title: 'Work Offline',
-        description: 'No internet connection? No problem! Our apps work seamlessly offline, ensuring you can stay productive wherever you are.',
-        image: featuresImg_workOffline.src
-    },
+	{
+		title: 'UI/UX',
+		description: 'We’ve obsessed over every pixel to create an intuitive and delightful user experience. Say goodbye to clunky interfaces—our apps are designed for simplicity and elegance.',
+		image: featuresImg_uiUx.src
+	},
+	{
+		title: 'Keep Data Local',
+		description: 'We respect your privacy. All your settings, preferences, and history are stored securely in your browser, not on our server. Your data, your control.',
+		image: featuresImg_keepDataLocal.src
+	},
+	{
+		title: 'Work Offline',
+		description: 'No internet connection? No problem! Our apps work seamlessly offline, ensuring you can stay productive wherever you are.',
+		image: featuresImg_workOffline.src
+	},
 ]
 ---
 
 <Html>
-    <Appbar />
-    <div class={CSS.body}>
-        <header class={CSS.header}>
-            <div>
-                <h1>Redmerah</h1>
-                <p>Discover a suite of powerful apps designed to simplify your tasks and enhance your productivity. Whether you’re a developer, designer, or just someone who loves efficiency, our app has something for you.</p>
-                <nav>
-                    <LinkButton href={RoutesLinks.apps} variant={ButtonVariant.tonal}><Icon filled code={0xE063}/>Apps</LinkButton>
-                    <LinkButton openInNewTab href={ExternalLinks.androidApps} variant={ButtonVariant.tonal}><img src={androidLogo.src} alt="Android logo" width="24"/>Android apps</LinkButton>
-                </nav>
-            </div>
-            <img src={logo.src} width={170} alt="Redmerah logo" />
-        </header>
-        <main class={CSS.main}>
-            <section>
-                <h2>Apps</h2>
-                <p>Apps that we recommended for you.</p>
-                <div class={CSS.apps}>
-                    {apps.map((v, i) => <>{i < 3 && <div>
-                        <img src={v.logoURL} alt={v.name} />
-                        <h3>{v.name}</h3>
-                        <p>{v.description}</p>
-                        <div>
-                            <LinkButton classList={[CSSAnimation.btn_scale_up_icon]} variant={ButtonVariant.filled} href={v.link}>Open <Icon filled code={0xEB51}/></LinkButton>
-                        </div>
-                    </div>}</>)}
-                </div>
-                <LinkButton classList={[CSS.more_apps, CSSAnimation.btn_move_right_icon]} variant={ButtonVariant.tonal} href={RoutesLinks.apps}>See more apps <Icon filled code={0xE115}/></LinkButton>
-            </section>
-            <section>
-                <h2>Features</h2>
-                <p>Discover our diverse features for an enhanced user experience.</p>
-                <div class={CSS.features}>
-                    {features.map(v => <div>
-                        <img src={v.image} alt={v.title} />
-                        <h3>{v.title}</h3>
-                        <p>{v.description}</p>
-                    </div>)}
-                </div>
-            </section>
-            <p id="quote"><q>
-                { 'We are also users. What’s good for you, good for us too.'.split(' ').map(v => <><span>{v}</span> </>) }
-            </q></p>
-        </main>
-        <BottomBar />
-    </div>
+	<Appbar />
+	<div class={CSS.body}>
+		<header class={CSS.header}>
+			<div>
+				<h1>Redmerah</h1>
+				<p>Discover a suite of powerful apps designed to simplify your tasks and enhance your productivity. Whether you’re a developer, designer, or just someone who loves efficiency, our app has something for you.</p>
+				<nav>
+					<LinkButton href={RoutesLinks.apps} variant={ButtonVariant.tonal}><Icon filled code={0xE063}/>Apps</LinkButton>
+					<LinkButton openInNewTab href={ExternalLinks.androidApps} variant={ButtonVariant.tonal}><img src={androidLogo.src} alt="Android logo" width="24"/>Android apps</LinkButton>
+				</nav>
+			</div>
+			<img src={logo.src} width={170} alt="Redmerah logo" />
+		</header>
+		<main class={CSS.main}>
+			<section>
+				<h2>Apps</h2>
+				<p>Apps that we recommended for you.</p>
+				<div class={CSS.apps}>
+					{apps.map((v, i) => <>{i < 3 && <div>
+						<img src={v.logoURL} alt={v.name} />
+						<h3>{v.name}</h3>
+						<p>{v.description}</p>
+						<div>
+							<LinkButton classList={[CSSAnimation.btn_scale_up_icon]} variant={ButtonVariant.filled} href={v.link}>Open <Icon filled code={0xEB51}/></LinkButton>
+						</div>
+					</div>}</>)}
+				</div>
+				<LinkButton classList={[CSS.more_apps, CSSAnimation.btn_move_right_icon]} variant={ButtonVariant.tonal} href={RoutesLinks.apps}>See more apps <Icon filled code={0xE115}/></LinkButton>
+			</section>
+			<section>
+				<h2>Features</h2>
+				<p>Discover our diverse features for an enhanced user experience.</p>
+				<div class={CSS.features}>
+					{features.map(v => <div>
+						<img src={v.image} alt={v.title} />
+						<h3>{v.title}</h3>
+						<p>{v.description}</p>
+					</div>)}
+				</div>
+			</section>
+			<p id="quote"><q>
+				{ 'We are also users. What’s good for you, good for us too.'.split(' ').map(v => <><span>{v}</span> </>) }
+			</q></p>
+		</main>
+		<BottomBar />
+	</div>
 </Html>
 
 <script is:inline src='/scripts/theme.js'/>
 <script is:inline src='/scripts/platform.js'/>
 <script>
-    import { getElementById, querySelectorAll } from "@/utils/element"
-    import { _length, _isIntersecting, _animate, _observe } from '@/constants/string'
+	import { getElementById, querySelectorAll } from "@/utils/element"
+	import { _length, _isIntersecting, _animate, _observe } from '@/constants/string'
 
-    const quote = getElementById('quote') as HTMLParagraphElement
-    const spans = querySelectorAll<HTMLSpanElement>('#quote span')
-    const viewObserver = new IntersectionObserver((entries) => {
-        for (const entry of entries) {
-            if (!entry[_isIntersecting]) continue;
-            for (let i = 0; i < spans[_length]; i++) {
-                spans[i][_animate]([{
-                    transform: 'translateY(-0.4em)',
-                    offset: 0.5
-                }], {
-                    duration: 1000,
-                    delay: i * 200,
-                    easing: 'cubic-bezier(.15, 0, 0, 1)',
-                    iterations: 1,
-                })
-            }
-        }
-    }, {
-        root: null,
-        threshold: 1.0
-    })
+	const quote = getElementById('quote') as HTMLParagraphElement
+	const spans = querySelectorAll<HTMLSpanElement>('#quote span')
+	const viewObserver = new IntersectionObserver((entries) => {
+		for (const entry of entries) {
+			if (!entry[_isIntersecting]) continue;
+			for (let i = 0; i < spans[_length]; i++) {
+				spans[i][_animate]([{
+					transform: 'translateY(-0.4em)',
+					offset: 0.5
+				}], {
+					duration: 1000,
+					delay: i * 200,
+					easing: 'cubic-bezier(.15, 0, 0, 1)',
+					iterations: 1,
+				})
+			}
+		}
+	}, {
+		root: null,
+		threshold: 1.0
+	})
 
-    viewObserver[_observe](quote)
+	viewObserver[_observe](quote)
 </script>

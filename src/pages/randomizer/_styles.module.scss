@@ -2,361 +2,361 @@ $side_navigation_none: 680px;
 $appbar_generate_btn_none: 500px;
 
 .appbar_generate_btn {
-    @media (max-width: $appbar_generate_btn_none) {
-        display: none !important;
-    }
+	@media (max-width: $appbar_generate_btn_none) {
+		display: none !important;
+	}
 }
 
 .appbar_generate_icon {
-    &[data-rotate] {
-        animation: rotate-animation 1s infinite linear !important;
-    }
+	&[data-rotate] {
+		animation: rotate-animation 1s infinite linear !important;
+	}
 }
 
 .appbar_textfield_menu_item {
-    padding: 8px 12px;
+	padding: 8px 12px;
 
-    &:not(:last-child) {
-        padding-bottom: 0;
-    }
+	&:not(:last-child) {
+		padding-bottom: 0;
+	}
 }
 
 .app_body {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+	display: flex;
+	flex-direction: column;
+	height: 100%;
 }
 
 .app_delete_list {
-    border: 2px solid rgb(var(--color-accent));
-    padding-left: 12px !important;
-    padding-right: 12px !important;
-    margin-top: 8px;
+	border: 2px solid rgb(var(--color-accent));
+	padding-left: 12px !important;
+	padding-right: 12px !important;
+	margin-top: 8px;
 }
 
 .app_fab {
-    @media (min-width: ($appbar_generate_btn_none + 1px)) {
-        display: none !important;
-    }
+	@media (min-width: ($appbar_generate_btn_none + 1px)) {
+		display: none !important;
+	}
 }
 
 .app_generate_icon {
-    &[data-rotate] {
-        animation: rotate-animation 1s infinite linear !important;
-    }
+	&[data-rotate] {
+		animation: rotate-animation 1s infinite linear !important;
+	}
 }
 
 @keyframes rotate-animation {
-    to {
-        rotate: 360deg;
-    }
+	to {
+		rotate: 360deg;
+	}
 }
 
 .app_view_list {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 8px;
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 8px;
 
-    > div {
-        border: 1px solid rgba(var(--color-on-surface), var(--opacity-border));
-        padding: 0 12px;
-        min-height: 32px;
-        border-radius: 8px;
-        font-size: var(--font-size-xs);
-        display: flex;
-        align-items: center;
-        white-space: nowrap;
+	> div {
+		border: 1px solid rgba(var(--color-on-surface), var(--opacity-border));
+		padding: 0 12px;
+		min-height: 32px;
+		border-radius: 8px;
+		font-size: var(--font-size-xs);
+		display: flex;
+		align-items: center;
+		white-space: nowrap;
 
-        :root[data-corner=sharp] & {
-            border-radius: 0;
-        }
+		:root[data-corner=sharp] & {
+			border-radius: 0;
+		}
 
-        :root[data-corner=semi-round] & {
-            border-radius: 4px;
-        }
+		:root[data-corner=semi-round] & {
+			border-radius: 4px;
+		}
 
-        :root[data-corner=full-round] & {
-            border-radius: 20px;
-        }
-    }
+		:root[data-corner=full-round] & {
+			border-radius: 20px;
+		}
+	}
 }
 
 .control {
-    padding: 8px 8px 8px 0;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+	padding: 8px 8px 8px 0;
+	display: flex;
+	align-items: center;
+	gap: 8px;
 
-    @media (max-width: $side_navigation_none) {
-        padding: 8px;
-    }
+	@media (max-width: $side_navigation_none) {
+		padding: 8px;
+	}
 
-    &[data-randomizer=string] {
-        @media (max-width: 560px) {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+	&[data-randomizer=string] {
+		@media (max-width: 560px) {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
 
-            & :global(.textfield) {
-                width: 100% !important;
-            }
-        }
-    }
+			& :global(.textfield) {
+				width: 100% !important;
+			}
+		}
+	}
 
-    &[data-randomizer=numbers] {
-        @media (max-width: 500px) {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+	&[data-randomizer=numbers] {
+		@media (max-width: 500px) {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
 
-            & :global(.textfield) {
-                width: 100% !important;
-            }
-        }
-    }
+			& :global(.textfield) {
+				width: 100% !important;
+			}
+		}
+	}
 
-    &[data-randomizer=colors] {
-        > :global(.textfield) {
-            width: min(100%, 164px);
-        }
+	&[data-randomizer=colors] {
+		> :global(.textfield) {
+			width: min(100%, 164px);
+		}
 
-        @media (max-width: 700px) {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            row-gap: 12px;
+		@media (max-width: 700px) {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			row-gap: 12px;
 
-            > :global(.textfield) {
-                width: 100% !important;
-            }
-        }
-    }
+			> :global(.textfield) {
+				width: 100% !important;
+			}
+		}
+	}
 
-    &[data-randomizer=words] {
-        @media (max-width: 500px) {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+	&[data-randomizer=words] {
+		@media (max-width: 500px) {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
 
-            & :global(.textfield) {
-                width: 100% !important;
-            }
-        }
-    }
+			& :global(.textfield) {
+				width: 100% !important;
+			}
+		}
+	}
 
-    &[data-randomizer=selection] {
-        @media (max-width: 500px) {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+	&[data-randomizer=selection] {
+		@media (max-width: 500px) {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
 
-            & :global(.textfield) {
-                width: 100% !important;
-            }
-        }
-    }
+			& :global(.textfield) {
+				width: 100% !important;
+			}
+		}
+	}
 
-    &[data-randomizer=teams] {
-        @media (max-width: 500px) {
-            display: flex;
-            flex-wrap: wrap;
+	&[data-randomizer=teams] {
+		@media (max-width: 500px) {
+			display: flex;
+			flex-wrap: wrap;
 
-            > * {
-                flex: 1 1 150px;
-            }
-        }
-    }
+			> * {
+				flex: 1 1 150px;
+			}
+		}
+	}
 }
 
 .control_string_custom_character {
-    padding: 8px 12px;
+	padding: 8px 12px;
 }
 
 .result {
-    flex: 1;
-    height: 100%;
-    max-height: 100%;
-    overflow-y: auto;
-    background-color: rgb(var(--color-surface));
-    border: 1px solid rgba(var(--color-on-surface), var(--opacity1));
-    border-right: none;
-    border-bottom: none;
-    border-radius: 16px 0 0 0;
+	flex: 1;
+	height: 100%;
+	max-height: 100%;
+	overflow-y: auto;
+	background-color: rgb(var(--color-surface));
+	border: 1px solid rgba(var(--color-on-surface), var(--opacity1));
+	border-right: none;
+	border-bottom: none;
+	border-radius: 16px 0 0 0;
 
-    :root[data-corner=sharp] & { border-radius: 0 }
-    :root[data-corner=semi-round] & { border-radius: 8px 0 0 0 }
-    :root[data-corner=full-round] & { border-radius: 20px 0 0 0 }
+	:root[data-corner=sharp] & { border-radius: 0 }
+	:root[data-corner=semi-round] & { border-radius: 8px 0 0 0 }
+	:root[data-corner=full-round] & { border-radius: 20px 0 0 0 }
 
-    @media (max-width: $side_navigation_none) {
-        border-radius: 0 !important;
-    }
+	@media (max-width: $side_navigation_none) {
+		border-radius: 0 !important;
+	}
 
-    @media (max-width: $appbar_generate_btn_none) {
-        > * {
-            padding-bottom: 88px !important;
-        }
-    }
+	@media (max-width: $appbar_generate_btn_none) {
+		> * {
+			padding-bottom: 88px !important;
+		}
+	}
 }
 
 .result_colors {
-    display: grid;
-    gap: 12px;
-    padding: 12px;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+	display: grid;
+	gap: 12px;
+	padding: 12px;
+	grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
 
-    > div {
-        padding: 48px 4px 4px 4px;
-        border-radius: 8px;
-        transition-duration: .3s;
+	> div {
+		padding: 48px 4px 4px 4px;
+		border-radius: 8px;
+		transition-duration: .3s;
 
-        :root[data-corner=sharp] & {
-            border-radius: 0;
-        }
+		:root[data-corner=sharp] & {
+			border-radius: 0;
+		}
 
-        :root[data-corner=semi-round] & {
-            border-radius: 4px;
-        }
+		:root[data-corner=semi-round] & {
+			border-radius: 4px;
+		}
 
-        :root[data-corner=full-round] & {
-            border-radius: 12px;
-        }
+		:root[data-corner=full-round] & {
+			border-radius: 12px;
+		}
 
-        > code {
-            display: block;
-            font-weight: normal;
-            background-color: rgba(var(--color-surface), var(--opacity-inv3));
-            padding: 12px;
-            border-radius: 4px;
+		> code {
+			display: block;
+			font-weight: normal;
+			background-color: rgba(var(--color-surface), var(--opacity-inv3));
+			padding: 12px;
+			border-radius: 4px;
 
-            :root[data-corner=sharp] & {
-                border-radius: 0;
-            }
+			:root[data-corner=sharp] & {
+				border-radius: 0;
+			}
 
-            :root[data-corner=full-round] & {
-                border-radius: 8px;
-            }
-        }
-    }
+			:root[data-corner=full-round] & {
+				border-radius: 8px;
+			}
+		}
+	}
 }
 
 .result_selection {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    padding: 12px;
-    max-width: 1080px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	padding: 12px;
+	max-width: 1080px;
 
-    > div {
-        border: 1px solid rgba(var(--color-on-surface), var(--opacity-border));padding: 0 8px;
-        align-items: center;
-        border-radius: 8px;
-        display: flex;
-        font-weight: 500;
-        padding: 8px 16px;
-        transition-duration: .3s;
+	> div {
+		border: 1px solid rgba(var(--color-on-surface), var(--opacity-border));padding: 0 8px;
+		align-items: center;
+		border-radius: 8px;
+		display: flex;
+		font-weight: 500;
+		padding: 8px 16px;
+		transition-duration: .3s;
 
-        :root[data-corner=sharp] & {
-            border-radius: 0;
-        }
+		:root[data-corner=sharp] & {
+			border-radius: 0;
+		}
 
-        :root[data-corner=semi-round] & {
-            border-radius: 4px;
-        }
+		:root[data-corner=semi-round] & {
+			border-radius: 4px;
+		}
 
-        :root[data-corner=full-round] & {
-            border-radius: 24px;
-        }
+		:root[data-corner=full-round] & {
+			border-radius: 24px;
+		}
 
-        &[data-selected] {
-            background-color: rgb(var(--color-accent));
-            color: rgb(var(--color-on-accent));
-            border-color: rgb(var(--color-accent));
-        }
-    }
+		&[data-selected] {
+			background-color: rgb(var(--color-accent));
+			color: rgb(var(--color-on-accent));
+			border-color: rgb(var(--color-accent));
+		}
+	}
 }
 
 .result_string, .result_numbers, .result_words {
-    overflow-wrap: anywhere;
-    padding: 8px 16px;
-    font-size: var(--font-size-xxl);
+	overflow-wrap: anywhere;
+	padding: 8px 16px;
+	font-size: var(--font-size-xxl);
 
-    @media (max-width: 500px) {
-        font-size: var(--font-size-xm);
-    }
+	@media (max-width: 500px) {
+		font-size: var(--font-size-xm);
+	}
 }
 
 .result_teams {
-    display: grid;
-    gap: 12px;
-    padding: 12px;
-    grid-template-columns: repeat(auto-fill, minmax(164px, 1fr));
+	display: grid;
+	gap: 12px;
+	padding: 12px;
+	grid-template-columns: repeat(auto-fill, minmax(164px, 1fr));
 
-    > div {
-        border-radius: 8px;
-        padding: 12px;
-        border: 1px solid rgba(var(--color-on-surface), var(--opacity-border));
+	> div {
+		border-radius: 8px;
+		padding: 12px;
+		border: 1px solid rgba(var(--color-on-surface), var(--opacity-border));
 
-        :root[data-corner=sharp] & {
-            border-radius: 0;
-        }
+		:root[data-corner=sharp] & {
+			border-radius: 0;
+		}
 
-        :root[data-corner=semi-round] & {
-            border-radius: 4px;
-        }
+		:root[data-corner=semi-round] & {
+			border-radius: 4px;
+		}
 
-        :root[data-corner=full-round] & {
-            border-radius: 12px;
-        }
+		:root[data-corner=full-round] & {
+			border-radius: 12px;
+		}
 
-        > h3 {
-            margin-bottom: 12px;
-            color: rgb(var(--color-accent));
-        }
+		> h3 {
+			margin-bottom: 12px;
+			color: rgb(var(--color-accent));
+		}
 
-        > ul {
-            margin-left: calc(1em + 4px);
-        }
-    }
+		> ul {
+			margin-left: calc(1em + 4px);
+		}
+	}
 }
 
 .result_teams_empty {
-    padding: 12px;
+	padding: 12px;
 
-    > h2 {
-        margin-bottom: 8px;
-        &:not(:first-child){
-            margin-top: 16px;
-        }
-    }
+	> h2 {
+		margin-bottom: 8px;
+		&:not(:first-child){
+			margin-top: 16px;
+		}
+	}
 
-    > div {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        max-width: 1080px;
+	> div {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+		max-width: 1080px;
 
-        > div {
-            border: 1px solid rgba(var(--color-on-surface), var(--opacity-border));padding: 0 8px;
-            align-items: center;
-            border-radius: 8px;
-            display: flex;
-            font-weight: 500;
-            padding: 8px 16px;
-            transition-duration: .3s;
+		> div {
+			border: 1px solid rgba(var(--color-on-surface), var(--opacity-border));padding: 0 8px;
+			align-items: center;
+			border-radius: 8px;
+			display: flex;
+			font-weight: 500;
+			padding: 8px 16px;
+			transition-duration: .3s;
 
-            :root[data-corner=sharp] & {
-                border-radius: 0;
-            }
+			:root[data-corner=sharp] & {
+				border-radius: 0;
+			}
 
-            :root[data-corner=semi-round] & {
-                border-radius: 4px;
-            }
+			:root[data-corner=semi-round] & {
+				border-radius: 4px;
+			}
 
-            :root[data-corner=full-round] & {
-                border-radius: 24px;
-            }
-        }
-    }
+			:root[data-corner=full-round] & {
+				border-radius: 24px;
+			}
+		}
+	}
 }
 
 .side_navigation {
-    @media (max-width: $side_navigation_none) {
-        display: none !important;
-    }
+	@media (max-width: $side_navigation_none) {
+		display: none !important;
+	}
 }

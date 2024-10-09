@@ -9,21 +9,21 @@ import CSS from './_styles.module.scss'
 import { PAGES } from "./_constants";
 
 const _: VoidComponent<{
-    page: Pages
-    command: (type: Commands, ...args: unknown[]) => unknown
+	page: Pages
+	command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
-    return (<SideNavigation
-        style={{"padding-top": '0'}}
-        classList={addClassListModule(CSS.side_navigation)}
-        expand={true}>
-        <For each={PAGES}>{page =>
-            <SideNavigationItem
-                onClick={() => props[_command](Commands.change_page, page[_type])}
-                selected={props[_page] == page[_type]}>
-                {page[_text]}
-            </SideNavigationItem>
-        }</For>
-    </SideNavigation>)
+	return (<SideNavigation
+		style={{"padding-top": '0'}}
+		classList={addClassListModule(CSS.side_navigation)}
+		expand={true}>
+		<For each={PAGES}>{page =>
+			<SideNavigationItem
+				onClick={() => props[_command](Commands.change_page, page[_type])}
+				selected={props[_page] == page[_type]}>
+				{page[_text]}
+			</SideNavigationItem>
+		}</For>
+	</SideNavigation>)
 }
 
 export default _

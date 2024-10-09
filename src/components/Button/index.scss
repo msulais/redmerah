@@ -7,312 +7,312 @@
 // - Disabled
 
 .btn {
-    --btn-border-radius: 8px;
-    --btn-border-opacity: 0;
-    --btn-padding: 4px 12px;
-    --btn-icon-animation: none;
-    --bg-color: var(--color-on-surface);
-    --btn-border-color: var(--color-on-surface);
+	--btn-border-radius: 8px;
+	--btn-border-opacity: 0;
+	--btn-padding: 4px 12px;
+	--btn-icon-animation: none;
+	--bg-color: var(--color-on-surface);
+	--btn-border-color: var(--color-on-surface);
 
-    border: 1px solid;
-    border-color: transparent;
-    border-color: rgba(var(--btn-border-color), var(--btn-border-opacity));
-    display: flex;
-    outline-offset: 4px;
-    align-items: center;
-    border-radius: var(--btn-border-radius);
-    display: flex;
-    font-size: var(--font-size-xs);
-    line-height: normal;
-    justify-content: center;
-    min-height: 40px;
-    position: relative;
-    scrollbar-width: none;
-    transition-duration: .3s;
-    user-select: none;
-    -ms-overflow-style: none;
+	border: 1px solid;
+	border-color: transparent;
+	border-color: rgba(var(--btn-border-color), var(--btn-border-opacity));
+	display: flex;
+	outline-offset: 4px;
+	align-items: center;
+	border-radius: var(--btn-border-radius);
+	display: flex;
+	font-size: var(--font-size-xs);
+	line-height: normal;
+	justify-content: center;
+	min-height: 40px;
+	position: relative;
+	scrollbar-width: none;
+	transition-duration: .3s;
+	user-select: none;
+	-ms-overflow-style: none;
 
-    & * {
-        user-select: none;
-    }
+	& * {
+		user-select: none;
+	}
 
-    :root[data-platform=mobile] & { font-weight: 500 }
-    :root[data-corner=sharp] & { --btn-border-radius: 0px }
-    :root[data-corner=semi-round] & { --btn-border-radius: 4px }
-    :root[data-corner=full-round] & { --btn-border-radius: 20px }
+	:root[data-platform=mobile] & { font-weight: 500 }
+	:root[data-corner=sharp] & { --btn-border-radius: 0px }
+	:root[data-corner=semi-round] & { --btn-border-radius: 4px }
+	:root[data-corner=full-round] & { --btn-border-radius: 20px }
 
-    &:is(:disabled,[data-disabled]) {
-        color: rgba(var(--color-on-surface), var(--opacity-inv4));
-        cursor: not-allowed;
+	&:is(:disabled,[data-disabled]) {
+		color: rgba(var(--color-on-surface), var(--opacity-inv4));
+		cursor: not-allowed;
 
-        & * {
-            cursor: not-allowed;
-        }
-    }
+		& * {
+			cursor: not-allowed;
+		}
+	}
 
-    &:not(:is(:disabled,[data-disabled])){
-        &[data-selected]:not([data-focused],.filled-btn,.tonal-btn,.outlined-btn) {
-            color: rgb(var(--color-accent))
-        }
+	&:not(:is(:disabled,[data-disabled])){
+		&[data-selected]:not([data-focused],.filled-btn,.tonal-btn,.outlined-btn) {
+			color: rgb(var(--color-accent))
+		}
 
-        &[data-focused] {
-            --bg-opacity: var(--opacity2);
-        }
+		&[data-focused] {
+			--bg-opacity: var(--opacity2);
+		}
 
-        @media (hover:hover) {
-            &:hover {
-                --bg-opacity: var(--opacity1);
-                cursor: pointer;
+		@media (hover:hover) {
+			&:hover {
+				--bg-opacity: var(--opacity1);
+				cursor: pointer;
 
-                > .btn-layer > .icon {
-                    animation: var(--btn-icon-animation);
-                }
-            }
-        }
+				> .btn-layer > .icon {
+					animation: var(--btn-icon-animation);
+				}
+			}
+		}
 
-        &:active {
-            --bg-opacity: var(--opacity0);
-            --btn-border-opacity: var(--opacity1);
+		&:active {
+			--bg-opacity: var(--opacity0);
+			--btn-border-opacity: var(--opacity1);
 
-            &:not([data-noscale]) {
-                > .btn-layer {
-                    scale: .85;
-                }
-            }
-        }
-    }
+			&:not([data-noscale]) {
+				> .btn-layer {
+					scale: .85;
+				}
+			}
+		}
+	}
 
-    &::-webkit-scrollbar {
-        display: none;
-    }
+	&::-webkit-scrollbar {
+		display: none;
+	}
 
-    :root[data-platform=desktop] & {
-        min-height: 36px;
-    }
+	:root[data-platform=desktop] & {
+		min-height: 36px;
+	}
 
-    :root[data-platform=desktop][data-corner=full-round] & {
-        --btn-border-radius: 18px;
-    }
+	:root[data-platform=desktop][data-corner=full-round] & {
+		--btn-border-radius: 18px;
+	}
 
-    &[data-compact] {
-        min-height: 36px;
+	&[data-compact] {
+		min-height: 36px;
 
-        :root[data-corner=full-round] & {
-            --btn-border-radius: 18px;
-        }
-    }
+		:root[data-corner=full-round] & {
+			--btn-border-radius: 18px;
+		}
+	}
 
-    &::before {
-        --btn-indicator-weight: 4px;
-        --btn-indicator-size: max(4px, calc(100% - var(--btn-border-radius) * 2));
-        --btn-indicator-border-radius: var(--btn-indicator-weight);
+	&::before {
+		--btn-indicator-weight: 4px;
+		--btn-indicator-size: max(4px, calc(100% - var(--btn-border-radius) * 2));
+		--btn-indicator-border-radius: var(--btn-indicator-weight);
 
-        background-color: rgb(var(--color-accent));
-        border-radius: var(--btn-indicator-border-radius);
-        content: '';
-        height: 0;
-        opacity: 0;
-        position: absolute;
-        transition-duration: .3s;
-        width: 0;
+		background-color: rgb(var(--color-accent));
+		border-radius: var(--btn-indicator-border-radius);
+		content: '';
+		height: 0;
+		opacity: 0;
+		position: absolute;
+		transition-duration: .3s;
+		width: 0;
 
-        :root[data-corner=sharp] & {
-            --btn-indicator-border-radius: 0;
-        }
-    }
+		:root[data-corner=sharp] & {
+			--btn-indicator-border-radius: 0;
+		}
+	}
 
-    &[data-selected]::before {
-        opacity: 1;
-    }
+	&[data-selected]::before {
+		opacity: 1;
+	}
 
-    &:is(.filled-btn)::before {
-        background-color: rgb(var(--color-on-accent));
-    }
+	&:is(.filled-btn)::before {
+		background-color: rgb(var(--color-on-accent));
+	}
 
-    &[data-indicator=top]{
-        &::before {
-            left: 50%;
-            min-height: var(--btn-indicator-weight);
-            top: -1px;
-            transform: translateX(-50%);
-            width: var(--btn-indicator-size);
-        }
+	&[data-indicator=top]{
+		&::before {
+			left: 50%;
+			min-height: var(--btn-indicator-weight);
+			top: -1px;
+			transform: translateX(-50%);
+			width: var(--btn-indicator-size);
+		}
 
-        &:is(.filled-btn,.tonal-btn,.outlined-btn):not([data-focused])::before {
-            border-radius: 0 0 var(--btn-indicator-border-radius) var(--btn-indicator-border-radius);
-        }
-    }
+		&:is(.filled-btn,.tonal-btn,.outlined-btn):not([data-focused])::before {
+			border-radius: 0 0 var(--btn-indicator-border-radius) var(--btn-indicator-border-radius);
+		}
+	}
 
-    &[data-indicator=bottom]{
-        &::before {
-            bottom: -1px;
-            left: 50%;
-            min-height: var(--btn-indicator-weight);
-            transform: translateX(-50%);
-            width: var(--btn-indicator-size);
-        }
+	&[data-indicator=bottom]{
+		&::before {
+			bottom: -1px;
+			left: 50%;
+			min-height: var(--btn-indicator-weight);
+			transform: translateX(-50%);
+			width: var(--btn-indicator-size);
+		}
 
-        &:is(.filled-btn,.tonal-btn,.outlined-btn):not([data-focused])::before {
-            border-radius: var(--btn-indicator-border-radius) var(--btn-indicator-border-radius) 0 0;
-        }
-    }
+		&:is(.filled-btn,.tonal-btn,.outlined-btn):not([data-focused])::before {
+			border-radius: var(--btn-indicator-border-radius) var(--btn-indicator-border-radius) 0 0;
+		}
+	}
 
-    &[data-indicator=left]{
-        &::before {
-            height: var(--btn-indicator-size);
-            left: -1px;
-            min-width: var(--btn-indicator-weight);
-            top: 50%;
-            transform: translateY(-50%);
-        }
+	&[data-indicator=left]{
+		&::before {
+			height: var(--btn-indicator-size);
+			left: -1px;
+			min-width: var(--btn-indicator-weight);
+			top: 50%;
+			transform: translateY(-50%);
+		}
 
-        &:is(.filled-btn,.tonal-btn,.outlined-btn):not([data-focused])::before {
-            border-radius: 0 var(--btn-indicator-border-radius) var(--btn-indicator-border-radius) 0;
+		&:is(.filled-btn,.tonal-btn,.outlined-btn):not([data-focused])::before {
+			border-radius: 0 var(--btn-indicator-border-radius) var(--btn-indicator-border-radius) 0;
 
-            :root[data-corner=full-round] & {
-                border-radius: 999px;
-            }
-        }
-    }
+			:root[data-corner=full-round] & {
+				border-radius: 999px;
+			}
+		}
+	}
 
-    &[data-indicator=right]{
-        &::before {
-            height: var(--btn-indicator-size);
-            min-width: var(--btn-indicator-weight);
-            right: -1px;
-            top: 50%;
-            transform: translateY(-50%);
-        }
+	&[data-indicator=right]{
+		&::before {
+			height: var(--btn-indicator-size);
+			min-width: var(--btn-indicator-weight);
+			right: -1px;
+			top: 50%;
+			transform: translateY(-50%);
+		}
 
-        &:is(.filled-btn,.tonal-btn,.outlined-btn):not([data-focused])::before {
-            border-radius: var(--btn-indicator-border-radius) 0 0 var(--btn-indicator-border-radius);
+		&:is(.filled-btn,.tonal-btn,.outlined-btn):not([data-focused])::before {
+			border-radius: var(--btn-indicator-border-radius) 0 0 var(--btn-indicator-border-radius);
 
-            :root[data-corner=full-round] & {
-                border-radius: 999px;
-            }
-        }
-    }
+			:root[data-corner=full-round] & {
+				border-radius: 999px;
+			}
+		}
+	}
 }
 
 .square-btn {
-    --btn-padding: 4px;
-    --icon-btn-size: 40px;
-    min-height: var(--icon-btn-size);
-    max-height: var(--icon-btn-size);
-    min-width: var(--icon-btn-size);
-    max-width: var(--icon-btn-size);
+	--btn-padding: 4px;
+	--icon-btn-size: 40px;
+	min-height: var(--icon-btn-size);
+	max-height: var(--icon-btn-size);
+	min-width: var(--icon-btn-size);
+	max-width: var(--icon-btn-size);
 
-    :root[data-platform=desktop] & {
-        --icon-btn-size: 36px;
-    }
+	:root[data-platform=desktop] & {
+		--icon-btn-size: 36px;
+	}
 
-    &[data-compact] {
-        --icon-btn-size: 36px;
-    }
+	&[data-compact] {
+		--icon-btn-size: 36px;
+	}
 }
 
 .floating-action-btn {
-    --btn-padding: 16px;
-    --btn-border-radius: 16px;
-    min-height: 56px;
-    box-shadow: var(--elevation3);
-    min-width: 80px;
+	--btn-padding: 16px;
+	--btn-border-radius: 16px;
+	min-height: 56px;
+	box-shadow: var(--elevation3);
+	min-width: 80px;
 
-    :root[data-corner=sharp] & { --btn-border-radius: 0px }
-    :root[data-corner=semi-round] & { --btn-border-radius: 8px }
-    :root[data-corner=full-round] & { --btn-border-radius: 28px }
+	:root[data-corner=sharp] & { --btn-border-radius: 0px }
+	:root[data-corner=semi-round] & { --btn-border-radius: 8px }
+	:root[data-corner=full-round] & { --btn-border-radius: 28px }
 }
 
 .filled-btn {
-    --bg-opacity: 1;
-    --bg-color: var(--color-accent);
-    --btn-border-color: var(--color-on-surface);
-    --btn-border-opacity: var(--opacity1);
-    font-weight: 500;
-    color: rgb(var(--color-on-accent));
+	--bg-opacity: 1;
+	--bg-color: var(--color-accent);
+	--btn-border-color: var(--color-on-surface);
+	--btn-border-opacity: var(--opacity1);
+	font-weight: 500;
+	color: rgb(var(--color-on-accent));
 
-    &:is(:disabled,[data-disabled]) {
-        --bg-color: var(--color-on-surface);
-        --bg-opacity: var(--opacity1);
-    }
+	&:is(:disabled,[data-disabled]) {
+		--bg-color: var(--color-on-surface);
+		--bg-opacity: var(--opacity1);
+	}
 
-    &:not(:is(:disabled,[data-disabled])){
-        &[data-focused] {
-            --bg-opacity: var(--opacity-inv3);
-        }
+	&:not(:is(:disabled,[data-disabled])){
+		&[data-focused] {
+			--bg-opacity: var(--opacity-inv3);
+		}
 
-        @media (hover:hover) {
-            &:hover {
-                --bg-opacity: var(--opacity-inv3);
-            }
-        }
+		@media (hover:hover) {
+			&:hover {
+				--bg-opacity: var(--opacity-inv3);
+			}
+		}
 
-        &:active {
-            --bg-opacity: var(--opacity-inv5);
-            --btn-border-opacity: var(--opacity1);
-        }
-    }
+		&:active {
+			--bg-opacity: var(--opacity-inv5);
+			--btn-border-opacity: var(--opacity1);
+		}
+	}
 }
 
 .tonal-btn {
-    --bg-opacity: var(--opacity1);
+	--bg-opacity: var(--opacity1);
 
-    &:is(:disabled,[data-disabled]) {
-        --bg-opacity: var(--opacity0);
-    }
+	&:is(:disabled,[data-disabled]) {
+		--bg-opacity: var(--opacity0);
+	}
 
-    &:not(:is(:disabled,[data-disabled])){
-        &[data-focused] {
-            --bg-opacity: var(--opacity0);
-        }
+	&:not(:is(:disabled,[data-disabled])){
+		&[data-focused] {
+			--bg-opacity: var(--opacity0);
+		}
 
-        @media (hover:hover) {
-            &:hover {
-                --bg-opacity: var(--opacity2);
-            }
-        }
+		@media (hover:hover) {
+			&:hover {
+				--bg-opacity: var(--opacity2);
+			}
+		}
 
-        &:active {
-            --bg-opacity: var(--opacity1);
-            --btn-border-opacity: var(--opacity1);
-        }
-    }
+		&:active {
+			--bg-opacity: var(--opacity1);
+			--btn-border-opacity: var(--opacity1);
+		}
+	}
 }
 
 .btn-layer {
-    align-items: center;
-    border-radius: inherit;
-    display: flex;
-    font-size: inherit;
-    font-weight: inherit;
-    line-height: inherit;
-    gap: 8px;
-    height: 100%;
-    justify-content: center;
-    overflow: hidden;
-    padding: var(--btn-padding);
-    transition-duration: .3s;
+	align-items: center;
+	border-radius: inherit;
+	display: flex;
+	font-size: inherit;
+	font-weight: inherit;
+	line-height: inherit;
+	gap: 8px;
+	height: 100%;
+	justify-content: center;
+	overflow: hidden;
+	padding: var(--btn-padding);
+	transition-duration: .3s;
 
-    &::-webkit-scrollbar {
-        display: none;
-    }
+	&::-webkit-scrollbar {
+		display: none;
+	}
 
-    > .icon {
-        position: relative
-    }
+	> .icon {
+		position: relative
+	}
 }
 
 .outlined-btn {
-    --btn-border-opacity: var(--opacity-border);
+	--btn-border-opacity: var(--opacity-border);
 
-    &:is(:disabled,[data-disabled]) {
-        --btn-border-color: var(--color-on-surface);
-        --btn-border-opacity: var(--opacity5);
-    }
+	&:is(:disabled,[data-disabled]) {
+		--btn-border-color: var(--color-on-surface);
+		--btn-border-opacity: var(--opacity5);
+	}
 
-    &:not(:is(:disabled,[data-disabled])){
-        &:active {
-            --btn-border-opacity: var(--opacity-border);
-        }
-    }
+	&:not(:is(:disabled,[data-disabled])){
+		&:active {
+			--btn-border-opacity: var(--opacity-border);
+		}
+	}
 }

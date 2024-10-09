@@ -1,45 +1,45 @@
 .popover.toast {
-    box-shadow: var(--elevation3);
-    width: max-content;
-    max-width: min(500px, calc(100% - 16px));
+	box-shadow: var(--elevation3);
+	width: max-content;
+	max-width: min(500px, calc(100% - 16px));
 
-    > div > .list {
-        padding: 12px;
+	> div > .list {
+		padding: 12px;
 
-        > .list-content {
-            > .list-title {
-                font-size: var(--font-size-m);
-                font-weight: 500;
-            }
-            > .list-subtitle {
-                color: rgb(var(--color-on-surface));
-                font-size: var(--font-size-xs);
-            }
-        }
-    }
+		> .list-content {
+			> .list-title {
+				font-size: var(--font-size-m);
+				font-weight: 500;
+			}
+			> .list-subtitle {
+				color: rgb(var(--color-on-surface));
+				font-size: var(--font-size-xs);
+			}
+		}
+	}
 }
 
 .toast-actions {
-    display: flex;
-    width: 100%;
-    gap: 8px;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: flex-end;
-    padding: 12px;
-    background-color: rgb(var(--color-background));
-    border-top: 1px solid rgba(var(--color-on-surface), var(--opacity2));
+	display: flex;
+	width: 100%;
+	gap: 8px;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: flex-end;
+	padding: 12px;
+	background-color: rgb(var(--color-background));
+	border-top: 1px solid rgba(var(--color-on-surface), var(--opacity2));
 
-    &:empty {
-        display: none;
-    }
+	&:empty {
+		display: none;
+	}
 
-    > * {
-        flex: 1 1 100px;
-        max-width: 340px;
+	> * {
+		flex: 1 1 100px;
+		max-width: 340px;
 
-        &:first-child:last-child {
-            max-width: 100%;
-        }
-    }
+		&:first-child:last-child {
+			max-width: 100%;
+		}
+	}
 }

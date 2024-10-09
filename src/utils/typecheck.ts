@@ -1,33 +1,33 @@
 import { _bigint, _boolean, _function, _isArray, _number, _object, _string, _symbol } from "@/constants/string";
 
 export function isArray(arg: unknown): boolean {
-    return Array[_isArray](arg)
+	return Array[_isArray](arg)
 }
 
 export function isNumber(arg: unknown): boolean {
-    return typeof arg == _number
+	return typeof arg == _number
 }
 
 export function isString(arg: unknown): boolean {
-    return typeof arg == _string
+	return typeof arg == _string
 }
 
 export function isBoolean(arg: unknown): boolean {
-    return typeof arg == _boolean
+	return typeof arg == _boolean
 }
 
 export function isFunction(arg: unknown): boolean {
-    return typeof arg == _function
+	return typeof arg == _function
 }
 
 export function isBigInt(arg: unknown): boolean {
-    return typeof arg == _bigint
+	return typeof arg == _bigint
 }
 
 export function isObject(arg: unknown): boolean {
-    return typeof arg == _object
+	return typeof arg == _object
 }
 
 export function isSymbol(arg: unknown): boolean {
-    return typeof arg == _symbol
+	return typeof arg == _symbol
 }

@@ -1,123 +1,123 @@
 $appbar_colorpicker_button_none: 500px;
 
 .app_dialog_colors {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 4px;
-    padding: 4px 0;
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 4px;
+	padding: 4px 0;
 
-    > div {
-        padding: 4px 8px;
-        font-weight: bold;
-        border-radius: 8px;
+	> div {
+		padding: 4px 8px;
+		font-weight: bold;
+		border-radius: 8px;
 
-        :root[data-corner=sharp] & {
-            border-radius: 0;
-        }
+		:root[data-corner=sharp] & {
+			border-radius: 0;
+		}
 
-        :root[data-corner=semi-round] & {
-            border-radius: 4px;
-        }
+		:root[data-corner=semi-round] & {
+			border-radius: 4px;
+		}
 
-        :root[data-corner=full-round] & {
-            border-radius: 20px;
-        }
-    }
+		:root[data-corner=full-round] & {
+			border-radius: 20px;
+		}
+	}
 }
 
 .app_fab {
-    @media (min-width: ($appbar_colorpicker_button_none + 1px)) {
-        display: none !important;
-    }
+	@media (min-width: ($appbar_colorpicker_button_none + 1px)) {
+		display: none !important;
+	}
 }
 
 .app_seed {
-    min-width: 40px;
-    max-width: 40px;
-    min-height: 40px;
-    max-height: 40px;
-    border-radius: 8px;
+	min-width: 40px;
+	max-width: 40px;
+	min-height: 40px;
+	max-height: 40px;
+	border-radius: 8px;
 
-    :root[data-corner=sharp] & {
-        border-radius: 0;
-    }
+	:root[data-corner=sharp] & {
+		border-radius: 0;
+	}
 
-    :root[data-corner=semi-round] & {
-        border-radius: 4px;
-    }
+	:root[data-corner=semi-round] & {
+		border-radius: 4px;
+	}
 
-    :root[data-corner=full-round] & {
-        border-radius: 20px;
-    }
+	:root[data-corner=full-round] & {
+		border-radius: 20px;
+	}
 }
 
 .appbar_select_color {
-    @media (max-width: $appbar_colorpicker_button_none) {
-        display: none !important;
-    }
+	@media (max-width: $appbar_colorpicker_button_none) {
+		display: none !important;
+	}
 }
 
 .body_main {
-    padding: 0 8px 8px 8px;
-    gap: 8px;
-    height: 100%;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
+	padding: 0 8px 8px 8px;
+	gap: 8px;
+	height: 100%;
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
 
-    @media (max-width: 720px) {
-        grid-template-columns: repeat(2, 1fr);
-    }
+	@media (max-width: 720px) {
+		grid-template-columns: repeat(2, 1fr);
+	}
 
-    @media (max-width: 420px) {
-        --h: auto;
+	@media (max-width: 420px) {
+		--h: auto;
 
-        grid-template-columns: 1fr;
-    }
+		grid-template-columns: 1fr;
+	}
 
-    > div {
-        height: 100%;
-        border-radius: 16px;
-        border: 1px solid rgba(var(--color-on-surface), var(--opacity-border));
-        padding: 24px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        transition-duration: .3s;
+	> div {
+		height: 100%;
+		border-radius: 16px;
+		border: 1px solid rgba(var(--color-on-surface), var(--opacity-border));
+		padding: 24px;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		transition-duration: .3s;
 
-        :root[data-corner=sharp] & {
-            border-radius: 0;
-        }
+		:root[data-corner=sharp] & {
+			border-radius: 0;
+		}
 
-        :root[data-corner=semi-round] & {
-            border-radius: 8px;
-        }
+		:root[data-corner=semi-round] & {
+			border-radius: 8px;
+		}
 
-        :root[data-corner=full-round] & {
-            border-radius: 20px;
-        }
+		:root[data-corner=full-round] & {
+			border-radius: 20px;
+		}
 
-        &:first-child > h2 {
-            --color-on-surface: var(--color-surface-light);
-        }
+		&:first-child > h2 {
+			--color-on-surface: var(--color-surface-light);
+		}
 
-        &:nth-child(2) > h2 {
-            --color-on-surface: var(--color-on-surface-light);
-        }
+		&:nth-child(2) > h2 {
+			--color-on-surface: var(--color-on-surface-light);
+		}
 
-        &:nth-child(3) > h2 {
-            --color-on-surface: var(--color-surface-dark);
-        }
+		&:nth-child(3) > h2 {
+			--color-on-surface: var(--color-surface-dark);
+		}
 
-        &:last-child > h2 {
-            --color-on-surface: var(--color-on-surface-dark);
-        }
-    }
+		&:last-child > h2 {
+			--color-on-surface: var(--color-on-surface-dark);
+		}
+	}
 
-    & h2 {
-        font-size: var(--font-size-m);
-        text-align: center;
-        margin-bottom: 16px;
-    }
+	& h2 {
+		font-size: var(--font-size-m);
+		text-align: center;
+		margin-bottom: 16px;
+	}
 }

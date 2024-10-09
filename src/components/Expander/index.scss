@@ -1,150 +1,150 @@
 .expander {
-    &[data-open] .expander-header-icon  .icon {
-        rotate: 180deg;
-    }
+	&[data-open] .expander-header-icon  .icon {
+		rotate: 180deg;
+	}
 }
 
 .expander-content {
-    overflow: hidden;
-    transition-duration: .3s;
-    border-radius: 8px;
+	overflow: hidden;
+	transition-duration: .3s;
+	border-radius: 8px;
 
-    :root[data-corner=sharp] & {border-radius: 0}
-    :root[data-corner=semi-round] & {border-radius: 4px}
-    :root[data-corner=full-round] & {border-radius: 20px}
+	:root[data-corner=sharp] & {border-radius: 0}
+	:root[data-corner=semi-round] & {border-radius: 4px}
+	:root[data-corner=full-round] & {border-radius: 20px}
 
-    &[data-open] {
-        border-radius: 0 0 8px 8px;
-        :root[data-corner=sharp] & {border-radius: 0}
-        :root[data-corner=semi-round] & {border-radius: 0 0 4px 4px}
-        :root[data-corner=full-round] & {border-radius: 0 0 20px 20px}
+	&[data-open] {
+		border-radius: 0 0 8px 8px;
+		:root[data-corner=sharp] & {border-radius: 0}
+		:root[data-corner=semi-round] & {border-radius: 0 0 4px 4px}
+		:root[data-corner=full-round] & {border-radius: 0 0 20px 20px}
 
-        &[data-trailing] {
-            :root[data-corner=full-round] & {border-radius: 0 0 25px 25px}
-        }
-    }
+		&[data-trailing] {
+			:root[data-corner=full-round] & {border-radius: 0 0 25px 25px}
+		}
+	}
 
-    &[data-variant=filled] {
-        background-color: rgba(var(--color-accent), var(--opacity1));
-    }
+	&[data-variant=filled] {
+		background-color: rgba(var(--color-accent), var(--opacity1));
+	}
 
-    &[data-variant=tonal] {
-        background-color: rgba(var(--color-on-surface), var(--opacity1));
-    }
+	&[data-variant=tonal] {
+		background-color: rgba(var(--color-on-surface), var(--opacity1));
+	}
 
-    &[data-variant=outlined][data-open] {
-        border: 1px solid rgba(var(--color-on-surface), var(--opacity-border));
-        border-top: none;
-    }
+	&[data-variant=outlined][data-open] {
+		border: 1px solid rgba(var(--color-on-surface), var(--opacity-border));
+		border-top: none;
+	}
 
-    > div {
-        padding: 12px;
-        overflow: auto;
-    }
+	> div {
+		padding: 12px;
+		overflow: auto;
+	}
 }
 
 .list.expander-header {
-    --bg-color: var(--color-on-surface);
-    --expander-border-opacity: 0;
-    --expander-border-color: var(--color-on-surface);
+	--bg-color: var(--color-on-surface);
+	--expander-border-opacity: 0;
+	--expander-border-color: var(--color-on-surface);
 
-    border: 1px solid transparent;
-    padding: 0;
-    user-select: none;
-    padding: 4px 12px;
-    transition-duration: .3s;
-    border: 1px solid;
-    border-color: transparent;
-    border-color: rgba(var(--expander-border-color), var(--expander-border-opacity));
+	border: 1px solid transparent;
+	padding: 0;
+	user-select: none;
+	padding: 4px 12px;
+	transition-duration: .3s;
+	border: 1px solid;
+	border-color: transparent;
+	border-color: rgba(var(--expander-border-color), var(--expander-border-opacity));
 
-    &[data-trailing] {
-        padding-right: 4px;
-    }
+	&[data-trailing] {
+		padding-right: 4px;
+	}
 
-    &[data-open]:not([data-variant=transparent]) {
-        border-bottom-left-radius: 0;
-        border-bottom-right-radius: 0;
-    }
+	&[data-open]:not([data-variant=transparent]) {
+		border-bottom-left-radius: 0;
+		border-bottom-right-radius: 0;
+	}
 
-    &[data-open] {
-        --bg-opacity: var(--opacity2);
-    }
+	&[data-open] {
+		--bg-opacity: var(--opacity2);
+	}
 
-    &:not(:has( .btn:hover, .btn:active)) {
-        @media (hover:hover) {
-            &:hover {
-                --bg-opacity: var(--opacity1);
-                cursor: pointer;
-            }
-        }
+	&:not(:has( .btn:hover, .btn:active)) {
+		@media (hover:hover) {
+			&:hover {
+				--bg-opacity: var(--opacity1);
+				cursor: pointer;
+			}
+		}
 
-        &:active {
-            --bg-opacity: var(--opacity0);
-            --expander-border-opacity: var(--opacity1);
-        }
-    }
+		&:active {
+			--bg-opacity: var(--opacity0);
+			--expander-border-opacity: var(--opacity1);
+		}
+	}
 
-    &[data-variant=filled] {
-        --bg-opacity: 1;
-        --bg-color: var(--color-accent);
-        --expander-border-color: var(--color-on-surface);
-        --expander-border-opacity: var(--opacity1);
-        color: rgb(var(--color-on-accent));
+	&[data-variant=filled] {
+		--bg-opacity: 1;
+		--bg-color: var(--color-accent);
+		--expander-border-color: var(--color-on-surface);
+		--expander-border-opacity: var(--opacity1);
+		color: rgb(var(--color-on-accent));
 
-        &[data-open] {
-            --bg-opacity: 1;
-        }
+		&[data-open] {
+			--bg-opacity: 1;
+		}
 
-        &:not(:has( .btn:hover, .btn:active)) {
-            @media (hover:hover) {
-                &:hover {
-                    --bg-opacity: var(--opacity-inv3);
-                }
-            }
+		&:not(:has( .btn:hover, .btn:active)) {
+			@media (hover:hover) {
+				&:hover {
+					--bg-opacity: var(--opacity-inv3);
+				}
+			}
 
-            &:active {
-                --bg-opacity: var(--opacity-inv5);
-                --expander-border-opacity: var(--opacity1);
-            }
-        }
+			&:active {
+				--bg-opacity: var(--opacity-inv5);
+				--expander-border-opacity: var(--opacity1);
+			}
+		}
 
-        & .list-subtitle {
-            color: rgba(var(--color-on-accent), var(--opacity-inv1));
-        }
-    }
+		& .list-subtitle {
+			color: rgba(var(--color-on-accent), var(--opacity-inv1));
+		}
+	}
 
-    &[data-variant=tonal] {
-        --bg-opacity: var(--opacity1);
+	&[data-variant=tonal] {
+		--bg-opacity: var(--opacity1);
 
-        &[data-open] {
-            border-bottom: 1px solid rgb(var(--color-background));
-        }
+		&[data-open] {
+			border-bottom: 1px solid rgb(var(--color-background));
+		}
 
-        &:not(:has( .btn:hover, .btn:active)) {
-            @media (hover:hover) {
-                &:hover {
-                    --bg-opacity: var(--opacity2);
-                }
-            }
+		&:not(:has( .btn:hover, .btn:active)) {
+			@media (hover:hover) {
+				&:hover {
+					--bg-opacity: var(--opacity2);
+				}
+			}
 
-            &:active {
-                --bg-opacity: var(--opacity1);
-                --expander-border-opacity: var(--opacity1);
-            }
-        }
-    }
+			&:active {
+				--bg-opacity: var(--opacity1);
+				--expander-border-opacity: var(--opacity1);
+			}
+		}
+	}
 
-    &[data-variant=outlined] {
-        --expander-border-opacity: var(--opacity-border);
+	&[data-variant=outlined] {
+		--expander-border-opacity: var(--opacity-border);
 
-        &:not(:has( .btn:hover, .btn:active)) {
-            &:active {
-                --expander-border-opacity: var(--opacity-border);
-            }
-        }
-    }
+		&:not(:has( .btn:hover, .btn:active)) {
+			&:active {
+				--expander-border-opacity: var(--opacity-border);
+			}
+		}
+	}
 }
 
 .icon-btn.expander-header-icon  .icon {
-    transition-duration: .3s;
+	transition-duration: .3s;
 }

@@ -1,246 +1,246 @@
 :is(.textfield, .areatextfield) {
-    display: block;
-    --textfield-border-radius: 8px;
+	display: block;
+	--textfield-border-radius: 8px;
 
-    > div:first-child {
-        --bg-color: var(--color-on-surface);
-        --bg-opacity: var(--opacity1);
-        display: flex;
-        position: relative;
-        align-items: center;
-        min-height: 40px;
-        border: 1px solid rgba(var(--color-on-surface), var(--opacity1));
-        padding: 0 12px;
-        border-radius: var(--textfield-border-radius);
-        gap: 8px;
-        min-width: 0;
-        width: 100%;
-        transition-duration: .3s;
+	> div:first-child {
+		--bg-color: var(--color-on-surface);
+		--bg-opacity: var(--opacity1);
+		display: flex;
+		position: relative;
+		align-items: center;
+		min-height: 40px;
+		border: 1px solid rgba(var(--color-on-surface), var(--opacity1));
+		padding: 0 12px;
+		border-radius: var(--textfield-border-radius);
+		gap: 8px;
+		min-width: 0;
+		width: 100%;
+		transition-duration: .3s;
 
-        :root[data-corner=sharp] & { --textfield-border-radius: 0px }
-        :root[data-corner=semi-round] & { --textfield-border-radius: 4px }
-        :root[data-corner=full-round] & { --textfield-border-radius: 20px }
-        :root[data-corner=full-round]:root[data-platform=desktop] & { --textfield-border-radius: 18px }
-        :root[data-corner=full-round]:root[data-platform=mobile] & { --textfield-border-radius: 28px }
-        :root[data-platform=mobile] & {
-            min-height: 56px;
-        }
+		:root[data-corner=sharp] & { --textfield-border-radius: 0px }
+		:root[data-corner=semi-round] & { --textfield-border-radius: 4px }
+		:root[data-corner=full-round] & { --textfield-border-radius: 20px }
+		:root[data-corner=full-round]:root[data-platform=desktop] & { --textfield-border-radius: 18px }
+		:root[data-corner=full-round]:root[data-platform=mobile] & { --textfield-border-radius: 28px }
+		:root[data-platform=mobile] & {
+			min-height: 56px;
+		}
 
-        &[data-compact], :root[data-platform=desktop] & {
-            min-height: 36px;
+		&[data-compact], :root[data-platform=desktop] & {
+			min-height: 36px;
 
-            > .areatextfield-leading {
-                margin: 8px 0;
-            }
+			> .areatextfield-leading {
+				margin: 8px 0;
+			}
 
-            & .btn.textfield-btn[data-compact] {
-                min-height: 28px;
-            }
+			& .btn.textfield-btn[data-compact] {
+				min-height: 28px;
+			}
 
-            & .icon {
-                font-size: 18px;
-            }
-        }
+			& .icon {
+				font-size: 18px;
+			}
+		}
 
-        &::before {
-            content: '';
-            position: absolute;
-            background-color: rgb(var(--color-on-surface));
-            width: calc(100% - var(--textfield-border-radius) * 2);
-            bottom: -1px;
-            min-height: 2px;
-            left: 50%;
-            transform: translateX(-50%);
-            border-radius: 2px 2px 0 0;
-            transition-duration: .3s;
+		&::before {
+			content: '';
+			position: absolute;
+			background-color: rgb(var(--color-on-surface));
+			width: calc(100% - var(--textfield-border-radius) * 2);
+			bottom: -1px;
+			min-height: 2px;
+			left: 50%;
+			transform: translateX(-50%);
+			border-radius: 2px 2px 0 0;
+			transition-duration: .3s;
 
-            :root[data-corner=sharp] & {
-                border-radius: 0;
-            }
-        }
+			:root[data-corner=sharp] & {
+				border-radius: 0;
+			}
+		}
 
-        &[data-readonly]::before {
-            min-height: 1px;
-            border-radius: 0px;
-        }
+		&[data-readonly]::before {
+			min-height: 1px;
+			border-radius: 0px;
+		}
 
-        &[data-trailing] {
-            padding-right: 4px;
-        }
+		&[data-trailing] {
+			padding-right: 4px;
+		}
 
-        &[data-disabled] {
-            color: rgba(var(--color-on-surface), var(--opacity5));
-            border: 1px solid rgba(var(--color-on-surface), var(--opacity2));
-            cursor: not-allowed;
+		&[data-disabled] {
+			color: rgba(var(--color-on-surface), var(--opacity5));
+			border: 1px solid rgba(var(--color-on-surface), var(--opacity2));
+			cursor: not-allowed;
 
-            > input::placeholder {
-                color: rgba(var(--color-on-surface), var(--opacity5));
-            }
+			> input::placeholder {
+				color: rgba(var(--color-on-surface), var(--opacity5));
+			}
 
-            & * {
-                cursor: not-allowed;
-            }
-        }
+			& * {
+				cursor: not-allowed;
+			}
+		}
 
-        &:not([data-disabled], [data-readonly]){
-            &[data-focused] {
-                --bg-opacity: 1;
-                --bg-color: var(--color-surface);
-                border-color: rgba(var(--color-on-surface), var(--opacity2));
+		&:not([data-disabled], [data-readonly]){
+			&[data-focused] {
+				--bg-opacity: 1;
+				--bg-color: var(--color-surface);
+				border-color: rgba(var(--color-on-surface), var(--opacity2));
 
-                &::before {
-                    background-color: rgb(var(--color-accent));
-                    animation: input-start-focus .3s var(--transition-spring);
-                }
-            }
+				&::before {
+					background-color: rgb(var(--color-accent));
+					animation: input-start-focus .3s var(--transition-spring);
+				}
+			}
 
-            @media (hover:hover) {
-                &:hover {
-                    --bg-opacity: var(--opacity2);
-                }
-            }
+			@media (hover:hover) {
+				&:hover {
+					--bg-opacity: var(--opacity2);
+				}
+			}
 
-            &:active {
-                --bg-opacity: var(--opacity2);
-            }
+			&:active {
+				--bg-opacity: var(--opacity2);
+			}
 
-            &[data-invalid] {
-                border-color: rgba(var(--color-error));
-            }
-        }
+			&[data-invalid] {
+				border-color: rgba(var(--color-error));
+			}
+		}
 
-        > :is(input, textarea) {
-            width: 100%;
-            flex: 1;
-            min-width: 0;
-            border: none;
-            outline: none;
-            font-size: var(--font-size-xs);
-            line-height: 20px;
-            transition-duration: .3s;
+		> :is(input, textarea) {
+			width: 100%;
+			flex: 1;
+			min-width: 0;
+			border: none;
+			outline: none;
+			font-size: var(--font-size-xs);
+			line-height: 20px;
+			transition-duration: .3s;
 
-            &::placeholder {
-                color: rgba(var(--color-on-surface), var(--opacity-inv3));
-            }
-        }
+			&::placeholder {
+				color: rgba(var(--color-on-surface), var(--opacity-inv3));
+			}
+		}
 
-        > textarea {
-            margin: 10px 0;
-            transition-duration: .3s, 0s;
-            transition-property: all, height;
-            resize: none;
+		> textarea {
+			margin: 10px 0;
+			transition-duration: .3s, 0s;
+			transition-property: all, height;
+			resize: none;
 
-            &[data-resize] {
-                resize: vertical;
-            }
+			&[data-resize] {
+				resize: vertical;
+			}
 
-            :root[data-platform=desktop] & {
-                margin: 8px 0;
-            }
-            :root[data-platform=mobile] & {
-                margin: 18px 0;
-            }
-        }
-    }
+			:root[data-platform=desktop] & {
+				margin: 8px 0;
+			}
+			:root[data-platform=mobile] & {
+				margin: 18px 0;
+			}
+		}
+	}
 }
 
 .areatextfield > div:first-child {
-    align-items: flex-start;
+	align-items: flex-start;
 }
 
 @keyframes input-start-focus {
-    from { width: 0 }
-    to { width: calc(100% - var(--textfield-border-radius) * 2) }
+	from { width: 0 }
+	to { width: calc(100% - var(--textfield-border-radius) * 2) }
 }
 
 .btn.textfield-btn[data-compact] {
-    --btn-padding: 2px 6px;
-    min-height: 32px;
-    border-radius: 4px;
+	--btn-padding: 2px 6px;
+	min-height: 32px;
+	border-radius: 4px;
 
-    :root[data-corner=sharp] & { border-radius: 0 }
-    :root[data-corner=semi-round] & { border-radius: 2px }
-    :root[data-corner=full-round] & { border-radius: 20px }
-    :root[data-platform=mobile] & {
-        min-height: 40px;
-        min-width: 40px;
-    }
+	:root[data-corner=sharp] & { border-radius: 0 }
+	:root[data-corner=semi-round] & { border-radius: 2px }
+	:root[data-corner=full-round] & { border-radius: 20px }
+	:root[data-platform=mobile] & {
+		min-height: 40px;
+		min-width: 40px;
+	}
 }
 
 :is(.textfield-leading, .textfield-trailing, .areatextfield-leading, .areatextfield-trailing) {
-    display: flex;
-    align-items: center;
-    gap: 1px;
+	display: flex;
+	align-items: center;
+	gap: 1px;
 
-    &:empty {
-        display: none;
-    }
+	&:empty {
+		display: none;
+	}
 }
 
 .areatextfield-trailing {
-    margin-top: 4px;
+	margin-top: 4px;
 
-    :root[data-platform=mobile] & {
-        margin-top: 8px;
-    }
+	:root[data-platform=mobile] & {
+		margin-top: 8px;
+	}
 }
 
 .areatextfield-leading {
-    margin-top: 10px;
+	margin-top: 10px;
 
-    :root[data-platform=mobile] & {
-        margin-top: 16px;
-    }
+	:root[data-platform=mobile] & {
+		margin-top: 16px;
+	}
 }
 
 :is(.textfield-message-text, .textfield-label-text, .areatextfield-message-text, .areatextfield-label-text):empty {
-    display: none;
+	display: none;
 }
 
 :is(.textfield-label-text, .areatextfield-label-text) {
-    position: absolute;
-    bottom: 100%;
-    transform: translateY(0.5em);
-    left: max(8px, calc(var(--textfield-border-radius) - 4px));
-    background-color: rgb(var(--color-background));
-    max-width: calc(100% - 12px);
-    border-radius: 2px;
-    line-height: var(--font-size-s);
-    padding: 1px 4px;
-    font-size: var(--font-size-s);
-    z-index: 2;
+	position: absolute;
+	bottom: 100%;
+	transform: translateY(0.5em);
+	left: max(8px, calc(var(--textfield-border-radius) - 4px));
+	background-color: rgb(var(--color-background));
+	max-width: calc(100% - 12px);
+	border-radius: 2px;
+	line-height: var(--font-size-s);
+	padding: 1px 4px;
+	font-size: var(--font-size-s);
+	z-index: 2;
 
-    :root[data-corner=sharp] & { border-radius: 0px }
+	:root[data-corner=sharp] & { border-radius: 0px }
 }
 
 :is(.textfield-message-text, .areatextfield-message-text) {
-    padding: 0 12px;
-    font-size: var(--font-size-xs);
+	padding: 0 12px;
+	font-size: var(--font-size-xs);
 
-    :root[data-corner=sharp] & { border-radius: 0 }
+	:root[data-corner=sharp] & { border-radius: 0 }
 }
 
 .modal.menu.number-textfield-menu {
-    :root[data-corner=full-round] & { border-radius: 24px }
+	:root[data-corner=full-round] & { border-radius: 24px }
 
-    > div {
-        padding: 4px;
-    }
+	> div {
+		padding: 4px;
+	}
 }
 
 .popover.search-textfield-menu {
-    box-shadow: var(--elevation1);
+	box-shadow: var(--elevation1);
 
-    :root[data-platform=mobile][data-corner=full-round] & {
-        border-radius: 28px;
-    }
+	:root[data-platform=mobile][data-corner=full-round] & {
+		border-radius: 28px;
+	}
 
-    > div {
-        padding: 4px 0;
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        align-items: stretch;
-        justify-content: flex-start;
-    }
+	> div {
+		padding: 4px 0;
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+		align-items: stretch;
+		justify-content: flex-start;
+	}
 }

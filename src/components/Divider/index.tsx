@@ -6,22 +6,22 @@ import { toggleAttribute } from "@/utils/attributes"
 import './index.scss'
 
 type DividerProps = JSX.HTMLAttributes<HTMLDivElement> & {
-    vertical?: boolean
+	vertical?: boolean
 }
 const Divider: Component<DividerProps> = ($props) => {
-    const [props, other] = splitProps($props, [_class, _vertical])
+	const [props, other] = splitProps($props, [_class, _vertical])
 
-    return (<div
-        data-vertical={toggleAttribute(props[_vertical])}
-        class={"divider" + (props[_class]? ` ${props[_class]}` : '')}
-        {...other}
-    />)
+	return (<div
+		data-vertical={toggleAttribute(props[_vertical])}
+		class={"divider" + (props[_class]? ` ${props[_class]}` : '')}
+		{...other}
+	/>)
 }
 
 export {
-    Divider
+	Divider
 }
 export type {
-    DividerProps
+	DividerProps
 }
 export default Divider

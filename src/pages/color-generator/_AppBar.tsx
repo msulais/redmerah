@@ -29,262 +29,262 @@ import CSSAnimation from '@/styles/animation.module.scss'
 import CSS from './_styles.module.scss'
 
 const _: VoidComponent<{
-    onAddColor: () => unknown
-    palette: Palette
-    onColorChange: (color: HEXColor) => unknown
-    paletteList: Palette[]
-    colorPicker_ref: HTMLDialogElement
-    dialog_colorList_ref: HTMLDialogElement
-    seed: string
+	onAddColor: () => unknown
+	palette: Palette
+	onColorChange: (color: HEXColor) => unknown
+	paletteList: Palette[]
+	colorPicker_ref: HTMLDialogElement
+	dialog_colorList_ref: HTMLDialogElement
+	seed: string
 }> = (props) => {
-    const [theme, setTheme] = createSignal<ThemeData>(ThemeData[_system])
-    const [timeoutId, setTimeoutId] = createSignal<number | null>(null)
-    const [copyTimeoutId, setCopyTimeoutId] = createSignal<number | null>(null)
-    const [corner, setCorner] = createSignal<CornerData>(CornerData[_round])
-    const [is_menu_settings_open, setIs_menu_settings_open] = createSignal<boolean>(false)
-    const [is_submenu_themeSettings_open, setIs_submenu_themeSettings_open] = createSignal<boolean>(false)
-    const [is_submenu_cornerSettings_open, setIs_submenu_cornerSettings_open] = createSignal<boolean>(false)
-    let menu_settings_ref: HTMLDialogElement
-    let submenu_themeSettings_ref: HTMLDivElement
-    let submenu_cornerSettings_ref: HTMLDivElement
+	const [theme, setTheme] = createSignal<ThemeData>(ThemeData[_system])
+	const [timeoutId, setTimeoutId] = createSignal<number | null>(null)
+	const [copyTimeoutId, setCopyTimeoutId] = createSignal<number | null>(null)
+	const [corner, setCorner] = createSignal<CornerData>(CornerData[_round])
+	const [is_menu_settings_open, setIs_menu_settings_open] = createSignal<boolean>(false)
+	const [is_submenu_themeSettings_open, setIs_submenu_themeSettings_open] = createSignal<boolean>(false)
+	const [is_submenu_cornerSettings_open, setIs_submenu_cornerSettings_open] = createSignal<boolean>(false)
+	let menu_settings_ref: HTMLDialogElement
+	let submenu_themeSettings_ref: HTMLDivElement
+	let submenu_cornerSettings_ref: HTMLDivElement
 
-    async function copyAll(): Promise<void> {
-        if (copyTimeoutId() != null) {
-            clearTimeDelayed(copyTimeoutId()!)
-            setCopyTimeoutId(null)
-        }
-        try {
-            await getNavigator()[_clipboard][_writeText]([
-                '--seed: ' + props[_palette][_seed],
-                '--accent-light: ' + props[_palette][_accentLight],
-                '--on-accent-light: ' + props[_palette][_onAccentLight],
-                '--accent-dark: ' + props[_palette][_accentDark],
-                '--on-accent-dark: ' + props[_palette][_onAccentDark],
-            ][_join](';\n') + ';')
-            setCopyTimeoutId(setTimeDelayed(() => setCopyTimeoutId(null), 2000))
-        } catch (e) {}
-    }
+	async function copyAll(): Promise<void> {
+		if (copyTimeoutId() != null) {
+			clearTimeDelayed(copyTimeoutId()!)
+			setCopyTimeoutId(null)
+		}
+		try {
+			await getNavigator()[_clipboard][_writeText]([
+				'--seed: ' + props[_palette][_seed],
+				'--accent-light: ' + props[_palette][_accentLight],
+				'--on-accent-light: ' + props[_palette][_onAccentLight],
+				'--accent-dark: ' + props[_palette][_accentDark],
+				'--on-accent-dark: ' + props[_palette][_onAccentDark],
+			][_join](';\n') + ';')
+			setCopyTimeoutId(setTimeDelayed(() => setCopyTimeoutId(null), 2000))
+		} catch (e) {}
+	}
 
-    async function changeTheme(theme: ThemeData): Promise<void> {
-        setTheme(theme)
-        setAttribute(getRoot(), RootAttributes[_theme], theme)
-        setLocalStorageItem(LocalStorageKeys[_theme], theme)
-        closeSubMenu(submenu_themeSettings_ref)
-        await timeout(300)
-        closeMenu(menu_settings_ref)
-    }
+	async function changeTheme(theme: ThemeData): Promise<void> {
+		setTheme(theme)
+		setAttribute(getRoot(), RootAttributes[_theme], theme)
+		setLocalStorageItem(LocalStorageKeys[_theme], theme)
+		closeSubMenu(submenu_themeSettings_ref)
+		await timeout(300)
+		closeMenu(menu_settings_ref)
+	}
 
-    async function changeCorner(corner: CornerData): Promise<void> {
-        setCorner(corner)
-        setAttribute(getRoot(), RootAttributes[_corner], corner)
-        setLocalStorageItem(LocalStorageKeys[_corner], corner)
-        closeSubMenu(submenu_cornerSettings_ref)
-        await timeout(300)
-        closeMenu(menu_settings_ref)
-    }
+	async function changeCorner(corner: CornerData): Promise<void> {
+		setCorner(corner)
+		setAttribute(getRoot(), RootAttributes[_corner], corner)
+		setLocalStorageItem(LocalStorageKeys[_corner], corner)
+		closeSubMenu(submenu_cornerSettings_ref)
+		await timeout(300)
+		closeMenu(menu_settings_ref)
+	}
 
-    function initTheme(): void {
-        const theme = getLocalStorageItem(LocalStorageKeys[_theme])
+	function initTheme(): void {
+		const theme = getLocalStorageItem(LocalStorageKeys[_theme])
 
-        if (theme && [ThemeData[_system], ThemeData[_light], ThemeData[_dark]][_includes](theme as ThemeData)) {
-            setAttribute(getRoot(), RootAttributes[_theme], theme)
-            setTheme(theme as ThemeData)
-        }
-    }
+		if (theme && [ThemeData[_system], ThemeData[_light], ThemeData[_dark]][_includes](theme as ThemeData)) {
+			setAttribute(getRoot(), RootAttributes[_theme], theme)
+			setTheme(theme as ThemeData)
+		}
+	}
 
-    function initCorner(): void {
-        const corner = getLocalStorageItem(LocalStorageKeys[_corner])
+	function initCorner(): void {
+		const corner = getLocalStorageItem(LocalStorageKeys[_corner])
 
-        if (corner && [CornerData[_sharp], CornerData[_semiRound], CornerData[_round], CornerData[_fullRound]][_includes](corner as CornerData)) {
-            setAttribute(getRoot(), RootAttributes[_corner], corner)
-            setCorner(corner as CornerData)
-        }
-    }
+		if (corner && [CornerData[_sharp], CornerData[_semiRound], CornerData[_round], CornerData[_fullRound]][_includes](corner as CornerData)) {
+			setAttribute(getRoot(), RootAttributes[_corner], corner)
+			setCorner(corner as CornerData)
+		}
+	}
 
-    onMount(() => {
-        initTheme()
-        initCorner()
-    })
+	onMount(() => {
+		initTheme()
+		initCorner()
+	})
 
-    const Menus: VoidComponent = () => (<>
-        <Menu
-            ref={r => menu_settings_ref = r}
-            onToggleOpen={(v) => setIs_menu_settings_open(v)}
-            style={{"min-width": '200px'}}>
-            <SubMenu
-                level={1}
-                ref={r => submenu_themeSettings_ref = r}
-                onToggleOpen={v => setIs_submenu_themeSettings_open(v)}
-                item={<SubMenuItem
-                    focused={is_submenu_themeSettings_open()}
-                    iconCode={0xE28A}>
-                    Theme
-                </SubMenuItem>}>
-                <MenuItem
-                    selected={theme() == ThemeData[_light]}
-                    iconCode={0xF2CD}
-                    onClick={() => changeTheme(ThemeData[_light])}>
-                    Light
-                </MenuItem>
-                <MenuItem
-                    selected={theme() == ThemeData[_dark]}
-                    iconCode={0xF2B3}
-                    onClick={() => changeTheme(ThemeData[_dark])}>
-                    Dark
-                </MenuItem>
-                <MenuItem
-                    selected={theme() == ThemeData[_system]}
-                    iconCode={0xE96D}
-                    onClick={() => changeTheme(ThemeData[_system])}>
-                    System theme
-                </MenuItem>
-            </SubMenu>
-            <SubMenu
-                level={1}
-                ref={r => submenu_cornerSettings_ref = r}
-                onToggleOpen={v => setIs_submenu_cornerSettings_open(v)}
-                item={<SubMenuItem
-                    focused={is_submenu_cornerSettings_open()}
-                    iconCode={0xF044}>
-                    Corner style
-                </SubMenuItem>}>
-                <MenuItem
-                    selected={corner() == CornerData[_sharp]}
-                    iconCode={0xEA99}
-                    onClick={() => changeCorner(CornerData[_sharp])}>
-                    Sharp
-                </MenuItem>
-                <MenuItem
-                    selected={corner() == CornerData[_semiRound]}
-                    iconCode={0xEEF7}
-                    onClick={() => changeCorner(CornerData[_semiRound])}>
-                    Semi round
-                </MenuItem>
-                <MenuItem
-                    selected={corner() == CornerData[_round]}
-                    iconCode={0xF044}
-                    onClick={() => changeCorner(CornerData[_round])}>
-                    Round
-                </MenuItem>
-                <MenuItem
-                    selected={corner() == CornerData[_fullRound]}
-                    iconCode={0xE408}
-                    onClick={() => changeCorner(CornerData[_fullRound])}>
-                    Full round
-                </MenuItem>
-            </SubMenu>
-            <MenuDivider />
-            <LinkMenuItem
-                onClick={() => closeMenu(menu_settings_ref)}
-                href={RoutesLinks[_home]}
-                leading={<img src={redmerahLogo[_src]} width={16} alt='Redmerah logo'/>}>
-                Redmerah
-            </LinkMenuItem>
-            <LinkMenuItem
-                onClick={() => closeMenu(menu_settings_ref)}
-                href={RoutesLinks[_apps]}
-                iconCode={0xE063}>
-                More apps
-            </LinkMenuItem>
-            <LinkMenuItem
-                onClick={() => closeMenu(menu_settings_ref)}
-                href={RoutesLinks[_about]}
-                iconCode={0xE930}>
-                About us
-            </LinkMenuItem>
-            <MenuDivider />
-            <LinkMenuItem
-                onClick={() => closeMenu(menu_settings_ref)}
-                href={RoutesLinks[_privacy]}
-                iconCode={0xEE51}>
-                Privacy policy
-            </LinkMenuItem>
-            <LinkMenuItem
-                onClick={() => closeMenu(menu_settings_ref)}
-                href={RoutesLinks[_terms]}
-                iconCode={0xED47}>
-                Terms & conditions
-            </LinkMenuItem>
-            <MenuDivider/>
-            <MenuItem
-                onClick={() => {
-                    getNavigator()[_share]({text: 'Color Generator', title: 'Color Generator', url: getDocument()[_URL]})
-                    closeMenu(menu_settings_ref)
-                }}
-                iconCode={0xEE23}>
-                Share
-            </MenuItem>
-            <LinkMenuItem
-                onClick={() => closeMenu(menu_settings_ref)}
-                href={'mailto:' + ExternalLinks[_contactEmail] + '?subject=' + encodeURL('Color Generator')}
-                iconCode={0xE3A0}>
-                Send feedback
-            </LinkMenuItem>
-            <LinkMenuItem
-                onClick={() => closeMenu(menu_settings_ref)}
-                href={ExternalLinks[_donate]}
-                openInNewTab
-                iconCode={0xE84B}>
-                Donate
-            </LinkMenuItem>
-            <MenuHeader>&copy; {getDate_Y()} Redmerah</MenuHeader>
-        </Menu>
-    </>)
+	const Menus: VoidComponent = () => (<>
+		<Menu
+			ref={r => menu_settings_ref = r}
+			onToggleOpen={(v) => setIs_menu_settings_open(v)}
+			style={{"min-width": '200px'}}>
+			<SubMenu
+				level={1}
+				ref={r => submenu_themeSettings_ref = r}
+				onToggleOpen={v => setIs_submenu_themeSettings_open(v)}
+				item={<SubMenuItem
+					focused={is_submenu_themeSettings_open()}
+					iconCode={0xE28A}>
+					Theme
+				</SubMenuItem>}>
+				<MenuItem
+					selected={theme() == ThemeData[_light]}
+					iconCode={0xF2CD}
+					onClick={() => changeTheme(ThemeData[_light])}>
+					Light
+				</MenuItem>
+				<MenuItem
+					selected={theme() == ThemeData[_dark]}
+					iconCode={0xF2B3}
+					onClick={() => changeTheme(ThemeData[_dark])}>
+					Dark
+				</MenuItem>
+				<MenuItem
+					selected={theme() == ThemeData[_system]}
+					iconCode={0xE96D}
+					onClick={() => changeTheme(ThemeData[_system])}>
+					System theme
+				</MenuItem>
+			</SubMenu>
+			<SubMenu
+				level={1}
+				ref={r => submenu_cornerSettings_ref = r}
+				onToggleOpen={v => setIs_submenu_cornerSettings_open(v)}
+				item={<SubMenuItem
+					focused={is_submenu_cornerSettings_open()}
+					iconCode={0xF044}>
+					Corner style
+				</SubMenuItem>}>
+				<MenuItem
+					selected={corner() == CornerData[_sharp]}
+					iconCode={0xEA99}
+					onClick={() => changeCorner(CornerData[_sharp])}>
+					Sharp
+				</MenuItem>
+				<MenuItem
+					selected={corner() == CornerData[_semiRound]}
+					iconCode={0xEEF7}
+					onClick={() => changeCorner(CornerData[_semiRound])}>
+					Semi round
+				</MenuItem>
+				<MenuItem
+					selected={corner() == CornerData[_round]}
+					iconCode={0xF044}
+					onClick={() => changeCorner(CornerData[_round])}>
+					Round
+				</MenuItem>
+				<MenuItem
+					selected={corner() == CornerData[_fullRound]}
+					iconCode={0xE408}
+					onClick={() => changeCorner(CornerData[_fullRound])}>
+					Full round
+				</MenuItem>
+			</SubMenu>
+			<MenuDivider />
+			<LinkMenuItem
+				onClick={() => closeMenu(menu_settings_ref)}
+				href={RoutesLinks[_home]}
+				leading={<img src={redmerahLogo[_src]} width={16} alt='Redmerah logo'/>}>
+				Redmerah
+			</LinkMenuItem>
+			<LinkMenuItem
+				onClick={() => closeMenu(menu_settings_ref)}
+				href={RoutesLinks[_apps]}
+				iconCode={0xE063}>
+				More apps
+			</LinkMenuItem>
+			<LinkMenuItem
+				onClick={() => closeMenu(menu_settings_ref)}
+				href={RoutesLinks[_about]}
+				iconCode={0xE930}>
+				About us
+			</LinkMenuItem>
+			<MenuDivider />
+			<LinkMenuItem
+				onClick={() => closeMenu(menu_settings_ref)}
+				href={RoutesLinks[_privacy]}
+				iconCode={0xEE51}>
+				Privacy policy
+			</LinkMenuItem>
+			<LinkMenuItem
+				onClick={() => closeMenu(menu_settings_ref)}
+				href={RoutesLinks[_terms]}
+				iconCode={0xED47}>
+				Terms & conditions
+			</LinkMenuItem>
+			<MenuDivider/>
+			<MenuItem
+				onClick={() => {
+					getNavigator()[_share]({text: 'Color Generator', title: 'Color Generator', url: getDocument()[_URL]})
+					closeMenu(menu_settings_ref)
+				}}
+				iconCode={0xEE23}>
+				Share
+			</MenuItem>
+			<LinkMenuItem
+				onClick={() => closeMenu(menu_settings_ref)}
+				href={'mailto:' + ExternalLinks[_contactEmail] + '?subject=' + encodeURL('Color Generator')}
+				iconCode={0xE3A0}>
+				Send feedback
+			</LinkMenuItem>
+			<LinkMenuItem
+				onClick={() => closeMenu(menu_settings_ref)}
+				href={ExternalLinks[_donate]}
+				openInNewTab
+				iconCode={0xE84B}>
+				Donate
+			</LinkMenuItem>
+			<MenuHeader>&copy; {getDate_Y()} Redmerah</MenuHeader>
+		</Menu>
+	</>)
 
-    return (<>
-        <AppBar
-            leading={<>
-                <Show when={props[_paletteList][_length] > 0}>
-                    <TextTooltip text='Color list'>
-                        <IconButton
-                            onClick={(ev) => openDialog(ev, props[_dialog_colorList_ref])}
-                            code={0xF098}
-                        />
-                    </TextTooltip>
-                </Show>
-                <img width={32} src={logo[_src]} alt="Color generator logo" />
-            </>}
-            headline="Color Generator"
-            trailing={<>
-                <TextTooltip text='Select color'>
-                    <Button
-                        classList={addClassListModule(CSS.appbar_select_color)}
-                        variant={ButtonVariant[_filled]}
-                        onClick={(ev) => openColorPicker(ev, props[_colorPicker_ref], {anchor: ev[_currentTarget]})}>
-                        {props[_seed]}
-                    </Button>
-                </TextTooltip>
-                <TextTooltip text='Add color to list'>
-                    <IconButton
-                        onClick={() => {
-                            if (timeoutId()) {
-                                clearTimeDelayed(timeoutId()!)
-                                setTimeoutId(null)
-                            }
-                            props[_onAddColor]()
-                            setTimeoutId(setTimeDelayed(() => setTimeoutId(null), 1000))
-                        }}
-                        code={timeoutId()? 0xE3D8 : 0xF08A}
-                    />
-                </TextTooltip>
-                <TextTooltip text='Copy all'>
-                    <IconButton
-                        onClick={() => copyAll()}
-                        code={copyTimeoutId()? 0xE3D8 : 0xE51B}
-                    />
-                </TextTooltip>
-                <TextTooltip text='Open settings'>
-                    <IconButton
-                        classList={addClassListModule(CSSAnimation.btn_rotate_icon)}
-                        focused={is_menu_settings_open()}
-                        onClick={ev => openMenu(ev, menu_settings_ref, { anchor: ev[_currentTarget] })}
-                        code={0xEE0F}
-                    />
-                </TextTooltip>
-            </>}
-        />
-        <Menus />
-    </>)
+	return (<>
+		<AppBar
+			leading={<>
+				<Show when={props[_paletteList][_length] > 0}>
+					<TextTooltip text='Color list'>
+						<IconButton
+							onClick={(ev) => openDialog(ev, props[_dialog_colorList_ref])}
+							code={0xF098}
+						/>
+					</TextTooltip>
+				</Show>
+				<img width={32} src={logo[_src]} alt="Color generator logo" />
+			</>}
+			headline="Color Generator"
+			trailing={<>
+				<TextTooltip text='Select color'>
+					<Button
+						classList={addClassListModule(CSS.appbar_select_color)}
+						variant={ButtonVariant[_filled]}
+						onClick={(ev) => openColorPicker(ev, props[_colorPicker_ref], {anchor: ev[_currentTarget]})}>
+						{props[_seed]}
+					</Button>
+				</TextTooltip>
+				<TextTooltip text='Add color to list'>
+					<IconButton
+						onClick={() => {
+							if (timeoutId()) {
+								clearTimeDelayed(timeoutId()!)
+								setTimeoutId(null)
+							}
+							props[_onAddColor]()
+							setTimeoutId(setTimeDelayed(() => setTimeoutId(null), 1000))
+						}}
+						code={timeoutId()? 0xE3D8 : 0xF08A}
+					/>
+				</TextTooltip>
+				<TextTooltip text='Copy all'>
+					<IconButton
+						onClick={() => copyAll()}
+						code={copyTimeoutId()? 0xE3D8 : 0xE51B}
+					/>
+				</TextTooltip>
+				<TextTooltip text='Open settings'>
+					<IconButton
+						classList={addClassListModule(CSSAnimation.btn_rotate_icon)}
+						focused={is_menu_settings_open()}
+						onClick={ev => openMenu(ev, menu_settings_ref, { anchor: ev[_currentTarget] })}
+						code={0xEE0F}
+					/>
+				</TextTooltip>
+			</>}
+		/>
+		<Menus />
+	</>)
 }
 
 export default _

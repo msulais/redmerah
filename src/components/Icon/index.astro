@@ -3,10 +3,10 @@ import { toggleAttribute } from '@/utils/attributes'
 import './index.scss'
 
 type Props = astroHTML.JSX.HTMLAttributes & {
-    inline?: boolean
-    filled?: boolean
-    classList?: string[]
-    code: number
+	inline?: boolean
+	filled?: boolean
+	classList?: string[]
+	code: number
 }
 
 let {inline, filled, code, classList = [], ...other} = Astro.props
@@ -15,5 +15,5 @@ if (filled) code -= 1
 ---
 
 <i class:list={["icon", ...classList]} translate="no" data-inline={toggleAttribute(inline)} {...other}>{
-    String.fromCharCode(code)
+	String.fromCharCode(code)
 }</i>

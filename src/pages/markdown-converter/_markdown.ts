@@ -29,21 +29,21 @@ You can create ordered and unordered lists.
 
 Unordered list:
 - Item 1
-  - Item 1.1
-  - Item 1.2
+	- Item 1.1
+	- Item 1.2
 - Item 2
 - Item 3
 
 * Item 1
-  * Item 1.1
-  * Item 1.2
+	* Item 1.1
+	* Item 1.2
 * Item 2
 * Item 3
 
 Ordered list:
 1. Item 1
-   1. Item 1.1
-   2. Item 1.2
+	 1. Item 1.1
+	 2. Item 1.2
 2. Item 2
 3. Item 3
 
@@ -65,7 +65,7 @@ You can represent blocks of code using triple backticks (\`\`\`).
 
 \`\`\`python
 def greet(name):
-    print(f"Hello, {name}!")
+		print(f"Hello, {name}!")
 
 greet("User")
 # output: Hello, user

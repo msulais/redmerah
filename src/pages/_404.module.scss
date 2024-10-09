@@ -1,12 +1,12 @@
 .main {
-    padding-bottom: 64px;
+	padding-bottom: 64px;
 
-    > h1 {
-        font-size: max(min(20vmin, 164px), 64px);
-        padding-bottom: 16px;
+	> h1 {
+		font-size: max(min(20vmin, 164px), 64px);
+		padding-bottom: 16px;
 
-        > span {
-            border-bottom: 1px solid;
-        }
-    }
+		> span {
+			border-bottom: 1px solid;
+		}
+	}
 }

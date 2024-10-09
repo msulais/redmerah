@@ -11,53 +11,53 @@ import Expander, { ExpanderVariant } from "@/components/Expander"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
 
 const _: VoidComponent = () => {
-    const [title, setTitle] = createSignal<boolean>(true)
-    const [subtitle, setSubtitle] = createSignal<boolean>(false)
-    const [leading, setLeading] = createSignal<boolean>(false)
-    const [trailing, setTrailing] = createSignal<boolean>(false)
-    const [showExpandIcon, setShowExpandIcon] = createSignal<boolean>(true)
-    const [variant, setVariant] = createSignal<ExpanderVariant>(ExpanderVariant[_tonal])
-    const [content, setContent] = createSignal<boolean>(true)
-    return (<Page
-        title="Expander"
-        description="An expander is a UI element that allows users to reveal or collapse hidden content within a list item.">
-        <Playground>
-            <Expander
-                showExpandIcon={showExpandIcon()}
-                title={<Show when={title()}>Click to expand</Show>}
-                subtitle={<Show when={subtitle()}>Deserunt commodo qui aute veniam tempor ipsum.</Show>}
-                leading={<Show when={leading()}><Icon code={0xE569}/></Show>}
-                trailing={<Show when={trailing()}>
-                    <IconButton onClick={ev => stopPropagation(ev)} code={0xE6BF}/>
-                    <IconButton onClick={ev => stopPropagation(ev)} code={0xEBB8}/>
-                </Show>}
-                variant={variant()}>
-                <Show when={content()}>
-                    <p style={{"margin-bottom": '1.15em'}}>Deserunt sint voluptate nisi reprehenderit anim veniam ex quis deserunt ad. Aute duis commodo veniam incididunt aute anim anim et. Ipsum exercitation ea minim voluptate veniam ad duis dolore. Do officia amet adipisicing ea incididunt labore ipsum commodo minim. Quis ipsum dolor non sunt magna ad aliqua. Ea minim reprehenderit sint exercitation nostrud veniam nisi sit. Ut et culpa occaecat proident id sint officia anim adipisicing.</p>
-                    <p>Qui culpa cillum sunt sit in dolore ullamco excepteur ipsum ex do ut reprehenderit. Magna dolor excepteur velit ullamco laboris. Esse nulla qui sit enim et ex ullamco tempor eiusmod voluptate eiusmod non dolore. Aliquip mollit tempor id qui do consequat occaecat mollit. Voluptate nisi deserunt ipsum quis eiusmod tempor culpa excepteur tempor velit deserunt.</p>
-                </Show>
-            </Expander>
-        </Playground>
-        <PlaygroundOptions>
-            <Dropdown
-                labelText="Variant"
-                items={[
-                    [ExpanderVariant[_filled], 'Filled'],
-                    [ExpanderVariant[_tonal], 'Tonal'],
-                    [ExpanderVariant[_outlined], 'Outlined'],
-                    [ExpanderVariant[_transparent], 'Transparent'],
-                ]}
-                selectedValues={[variant()]}
-                onSelectedItemsChanged={(items) => setVariant(items[0][0] as ExpanderVariant)}
-            />
-            <CheckBox value={title()} onValueChanged={(v) => setTitle(v)}>Title</CheckBox>
-            <CheckBox value={subtitle()} onValueChanged={(v) => setSubtitle(v)}>Subtitle</CheckBox>
-            <CheckBox value={leading()} onValueChanged={(v) => setLeading(v)}>Leading</CheckBox>
-            <CheckBox value={trailing()} onValueChanged={(v) => setTrailing(v)}>Trailing</CheckBox>
-            <CheckBox value={showExpandIcon()} onValueChanged={(v) => setShowExpandIcon(v)}>Show expand icon</CheckBox>
-            <CheckBox value={content()} onValueChanged={(v) => setContent(v)}>Content</CheckBox>
-        </PlaygroundOptions>
-    </Page>)
+	const [title, setTitle] = createSignal<boolean>(true)
+	const [subtitle, setSubtitle] = createSignal<boolean>(false)
+	const [leading, setLeading] = createSignal<boolean>(false)
+	const [trailing, setTrailing] = createSignal<boolean>(false)
+	const [showExpandIcon, setShowExpandIcon] = createSignal<boolean>(true)
+	const [variant, setVariant] = createSignal<ExpanderVariant>(ExpanderVariant[_tonal])
+	const [content, setContent] = createSignal<boolean>(true)
+	return (<Page
+		title="Expander"
+		description="An expander is a UI element that allows users to reveal or collapse hidden content within a list item.">
+		<Playground>
+			<Expander
+				showExpandIcon={showExpandIcon()}
+				title={<Show when={title()}>Click to expand</Show>}
+				subtitle={<Show when={subtitle()}>Deserunt commodo qui aute veniam tempor ipsum.</Show>}
+				leading={<Show when={leading()}><Icon code={0xE569}/></Show>}
+				trailing={<Show when={trailing()}>
+					<IconButton onClick={ev => stopPropagation(ev)} code={0xE6BF}/>
+					<IconButton onClick={ev => stopPropagation(ev)} code={0xEBB8}/>
+				</Show>}
+				variant={variant()}>
+				<Show when={content()}>
+					<p style={{"margin-bottom": '1.15em'}}>Deserunt sint voluptate nisi reprehenderit anim veniam ex quis deserunt ad. Aute duis commodo veniam incididunt aute anim anim et. Ipsum exercitation ea minim voluptate veniam ad duis dolore. Do officia amet adipisicing ea incididunt labore ipsum commodo minim. Quis ipsum dolor non sunt magna ad aliqua. Ea minim reprehenderit sint exercitation nostrud veniam nisi sit. Ut et culpa occaecat proident id sint officia anim adipisicing.</p>
+					<p>Qui culpa cillum sunt sit in dolore ullamco excepteur ipsum ex do ut reprehenderit. Magna dolor excepteur velit ullamco laboris. Esse nulla qui sit enim et ex ullamco tempor eiusmod voluptate eiusmod non dolore. Aliquip mollit tempor id qui do consequat occaecat mollit. Voluptate nisi deserunt ipsum quis eiusmod tempor culpa excepteur tempor velit deserunt.</p>
+				</Show>
+			</Expander>
+		</Playground>
+		<PlaygroundOptions>
+			<Dropdown
+				labelText="Variant"
+				items={[
+					[ExpanderVariant[_filled], 'Filled'],
+					[ExpanderVariant[_tonal], 'Tonal'],
+					[ExpanderVariant[_outlined], 'Outlined'],
+					[ExpanderVariant[_transparent], 'Transparent'],
+				]}
+				selectedValues={[variant()]}
+				onSelectedItemsChanged={(items) => setVariant(items[0][0] as ExpanderVariant)}
+			/>
+			<CheckBox value={title()} onValueChanged={(v) => setTitle(v)}>Title</CheckBox>
+			<CheckBox value={subtitle()} onValueChanged={(v) => setSubtitle(v)}>Subtitle</CheckBox>
+			<CheckBox value={leading()} onValueChanged={(v) => setLeading(v)}>Leading</CheckBox>
+			<CheckBox value={trailing()} onValueChanged={(v) => setTrailing(v)}>Trailing</CheckBox>
+			<CheckBox value={showExpandIcon()} onValueChanged={(v) => setShowExpandIcon(v)}>Show expand icon</CheckBox>
+			<CheckBox value={content()} onValueChanged={(v) => setContent(v)}>Content</CheckBox>
+		</PlaygroundOptions>
+	</Page>)
 }
 
 export default _

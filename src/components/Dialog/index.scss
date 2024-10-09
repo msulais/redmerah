@@ -1,76 +1,76 @@
 .modal.dialog {
-    background-color: rgb(var(--color-surface)) !important;
-    border-radius: 16px;
-    width: max-content;
-    box-shadow: var(--elevation3);
-    transform: translate(-50%, -50%);
-    transition-duration: .3s;
+	background-color: rgb(var(--color-surface)) !important;
+	border-radius: 16px;
+	width: max-content;
+	box-shadow: var(--elevation3);
+	transform: translate(-50%, -50%);
+	transition-duration: .3s;
 
-    :root[data-corner=sharp] & { border-radius: 0 }
-    :root[data-corner=semi-round] & { border-radius: 8px }
-    :root[data-corner=full-round] & { border-radius: 44px }
+	:root[data-corner=sharp] & { border-radius: 0 }
+	:root[data-corner=semi-round] & { border-radius: 8px }
+	:root[data-corner=full-round] & { border-radius: 44px }
 
-    &::backdrop {
-        transition-duration: .3s;
-    }
+	&::backdrop {
+		transition-duration: .3s;
+	}
 
-    &[data-open] {
-        &::backdrop {
-            background-color: rgba(0, 0, 0, var(--opacity-inv5));
-        }
-    }
+	&[data-open] {
+		&::backdrop {
+			background-color: rgba(0, 0, 0, var(--opacity-inv5));
+		}
+	}
 
-    > div {
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
+	> div {
+		overflow: hidden;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
 
-        > div:empty {
-            display: none;
-        }
-    }
+		> div:empty {
+			display: none;
+		}
+	}
 }
 
 .dialog-actions {
-    align-items: center;
-    background-color: rgb(var(--color-background));
-    border-top: 1px solid rgba(var(--color-on-surface), var(--opacity2));
-    width: 100%;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: flex-end;
-    padding: 24px;
+	align-items: center;
+	background-color: rgb(var(--color-background));
+	border-top: 1px solid rgba(var(--color-on-surface), var(--opacity2));
+	width: 100%;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	justify-content: flex-end;
+	padding: 24px;
 
-    > * {
-        flex: 1 1 100px;
-        max-width: 340px;
+	> * {
+		flex: 1 1 100px;
+		max-width: 340px;
 
-        &:first-child:last-child {
-            max-width: 100%;
-        }
-    }
+		&:first-child:last-child {
+			max-width: 100%;
+		}
+	}
 }
 
 .dialog-content {
-    padding: 24px;
-    flex: 1;
-    max-height: 100%;
-    width: 100%;
-    overflow: auto;
+	padding: 24px;
+	flex: 1;
+	max-height: 100%;
+	width: 100%;
+	overflow: auto;
 }
 
 .dialog-header {
-    width: 100%;
-    font-size: var(--font-size-m);
-    font-weight: 500;
-    padding: 24px 24px 0 24px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+	width: 100%;
+	font-size: var(--font-size-m);
+	font-weight: 500;
+	padding: 24px 24px 0 24px;
+	display: flex;
+	align-items: center;
+	gap: 8px;
 
-    &:not(:empty) + .dialog-content {
-        padding-top: 8px !important;
-    }
+	&:not(:empty) + .dialog-content {
+		padding-top: 8px !important;
+	}
 }

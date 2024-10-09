@@ -1,334 +1,334 @@
 .modal.color-picker {
-    box-shadow: var(--elevation1);
+	box-shadow: var(--elevation1);
 
-    > div {
-        padding: 12px 0 0 0;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        align-items: stretch;
-        justify-content: flex-start;
-    }
+	> div {
+		padding: 12px 0 0 0;
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		align-items: stretch;
+		justify-content: flex-start;
+	}
 }
 
 .color-picker-actions {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    padding: 12px;
-    background-color: rgb(var(--color-background));
-    border-top: 1px solid rgba(var(--color-on-surface), var(--opacity2));
-    width: 342px;
-    margin-top: 6px;
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 8px;
+	padding: 12px;
+	background-color: rgb(var(--color-background));
+	border-top: 1px solid rgba(var(--color-on-surface), var(--opacity2));
+	width: 342px;
+	margin-top: 6px;
 
-    &[data-disabled] {
-        grid-template-columns: 1fr;
-    }
+	&[data-disabled] {
+		grid-template-columns: 1fr;
+	}
 }
 
 .color-picker-color {
-    --color-picker-color: #ff0000;
-    min-width: 260px;
-    min-height: 200px;
-    max-width: 260px;
-    max-height: 200px;
-    background:
-        linear-gradient(to top, #000, transparent),
-        linear-gradient(to right, #fff, transparent),
-        var(--color-picker-color)
-    ;
-    border-radius: 8px;
-    position: relative;
-    box-shadow: var(--elevation1);
+	--color-picker-color: #ff0000;
+	min-width: 260px;
+	min-height: 200px;
+	max-width: 260px;
+	max-height: 200px;
+	background:
+		linear-gradient(to top, #000, transparent),
+		linear-gradient(to right, #fff, transparent),
+		var(--color-picker-color)
+	;
+	border-radius: 8px;
+	position: relative;
+	box-shadow: var(--elevation1);
 
-    &[data-hsl] {
-        background:
-            linear-gradient(to bottom, #ffffff, #ffffff00 50%, #00000000 50%, #000000),
-            linear-gradient(to right, #808080, var(--color-picker-color))
-        ;
-    }
+	&[data-hsl] {
+		background:
+			linear-gradient(to bottom, #ffffff, #ffffff00 50%, #00000000 50%, #000000),
+			linear-gradient(to right, #808080, var(--color-picker-color))
+		;
+	}
 
-    :root[data-corner=sharp] & {
-        border-radius: 0;
-    }
+	:root[data-corner=sharp] & {
+		border-radius: 0;
+	}
 
-    :root[data-corner=semi-round] & {
-        border-radius: 4px;
-    }
+	:root[data-corner=semi-round] & {
+		border-radius: 4px;
+	}
 
-    @media (hover: hover) {
-        &:hover {
-            cursor: crosshair;
-        }
-    }
+	@media (hover: hover) {
+		&:hover {
+			cursor: crosshair;
+		}
+	}
 
-    &:active > div {
-        scale: .85;
-    }
+	&:active > div {
+		scale: .85;
+	}
 
-    > div {
-        width: 20px;
-        height: 20px;
-        border-radius: 10px;
-        position: absolute;
-        border: 2px solid white;
-        z-index: 3;
-        box-shadow: var(--elevation1), inset var(--elevation1);
-        transition-duration: .3s;
-        transition-property: backdrop-filter, scale;
+	> div {
+		width: 20px;
+		height: 20px;
+		border-radius: 10px;
+		position: absolute;
+		border: 2px solid white;
+		z-index: 3;
+		box-shadow: var(--elevation1), inset var(--elevation1);
+		transition-duration: .3s;
+		transition-property: backdrop-filter, scale;
 
-        :root[data-corner=sharp] & {
-            border-radius: 0;
-        }
+		:root[data-corner=sharp] & {
+			border-radius: 0;
+		}
 
-        :root[data-corner=semi-round] & {
-            border-radius: 4px;
-        }
+		:root[data-corner=semi-round] & {
+			border-radius: 4px;
+		}
 
-        @media (hover: hover) {
-            &:hover {
-                cursor: pointer;
-            }
-        }
-    }
+		@media (hover: hover) {
+			&:hover {
+				cursor: pointer;
+			}
+		}
+	}
 }
 
 .color-picker-content {
-    padding: 0 12px;
+	padding: 0 12px;
 
-    &:empty {
-        display: none;
-    }
+	&:empty {
+		display: none;
+	}
 }
 
 .color-picker-control {
-    display: flex;
-    padding: 0 12px 8px 12px;
-    gap: 8px;
+	display: flex;
+	padding: 0 12px 8px 12px;
+	gap: 8px;
 
-    &[data-hide-color] {
-        > .color-picker-color {
-            display: none;
-        }
+	&[data-hide-color] {
+		> .color-picker-color {
+			display: none;
+		}
 
-        > div:not(.color-picker-color) {
-            display: flex;
-            align-items: center;
-        }
-    }
+		> div:not(.color-picker-color) {
+			display: flex;
+			align-items: center;
+		}
+	}
 }
 
 .color-picker-hue {
-    width: 12px;
-    height: 144px;
-    border-radius: 8px;
-    background: linear-gradient(to bottom,
-        rgb(255,   0,   0)   0%,
-        rgb(255, 255,   0)  17%,
-        rgb(  0, 255,   0)  33%,
-        rgb(  0, 255, 255)  50%,
-        rgb(  0,   0, 255)  67%,
-        rgb(255,   0, 255)  83%,
-        rgb(255,   0,   0) 100%
-    );
-    position: relative;
-    box-shadow: var(--elevation1);
+	width: 12px;
+	height: 144px;
+	border-radius: 8px;
+	background: linear-gradient(to bottom,
+		rgb(255,   0,   0)   0%,
+		rgb(255, 255,   0)  17%,
+		rgb(  0, 255,   0)  33%,
+		rgb(  0, 255, 255)  50%,
+		rgb(  0,   0, 255)  67%,
+		rgb(255,   0, 255)  83%,
+		rgb(255,   0,   0) 100%
+	);
+	position: relative;
+	box-shadow: var(--elevation1);
 
-    &:active > div {
-        scale: .85;
-    }
+	&:active > div {
+		scale: .85;
+	}
 
-    &:hover {
-        cursor: crosshair;
-    }
+	&:hover {
+		cursor: crosshair;
+	}
 
-    :root[data-corner=sharp] & {
-        border-radius: 0;
-    }
+	:root[data-corner=sharp] & {
+		border-radius: 0;
+	}
 
-    :root[data-corner=semi-round] & {
-        border-radius: 4px;
-    }
+	:root[data-corner=semi-round] & {
+		border-radius: 4px;
+	}
 
-    > div {
-        width: 20px;
-        height: 20px;
-        border-radius: 10px;
-        position: absolute;
-        border: 2px solid rgb(var(--color-on-surface));
-        z-index: 3;
-        box-shadow: var(--elevation1), inset var(--elevation1);
-        transition-duration: .3s;
-        transition-property: backdrop-filter, scale;
+	> div {
+		width: 20px;
+		height: 20px;
+		border-radius: 10px;
+		position: absolute;
+		border: 2px solid rgb(var(--color-on-surface));
+		z-index: 3;
+		box-shadow: var(--elevation1), inset var(--elevation1);
+		transition-duration: .3s;
+		transition-property: backdrop-filter, scale;
 
-        :root[data-corner=sharp] & {
-            border-radius: 0;
-        }
+		:root[data-corner=sharp] & {
+			border-radius: 0;
+		}
 
-        :root[data-corner=semi-round] & {
-            border-radius: 4px;
-        }
+		:root[data-corner=semi-round] & {
+			border-radius: 4px;
+		}
 
-        @media (hover: hover) {
-            &:hover {
-                cursor: pointer;
-            }
-        }
-    }
+		@media (hover: hover) {
+			&:hover {
+				cursor: pointer;
+			}
+		}
+	}
 }
 
 .color-picker-input {
-    display: flex;
-    gap: 8px;
-    padding: 0 12px;
-    width: 342px;
+	display: flex;
+	gap: 8px;
+	padding: 0 12px;
+	width: 342px;
 
-    > :first-child {
-        flex: 1;
-    }
+	> :first-child {
+		flex: 1;
+	}
 
-    > :nth-child(2) {
-        width: 100px;
-    }
+	> :nth-child(2) {
+		width: 100px;
+	}
 
-    &[data-hide-opacity] {
-        > :nth-child(2) {
-            display: none;
-        }
-    }
+	&[data-hide-opacity] {
+		> :nth-child(2) {
+			display: none;
+		}
+	}
 
-    & input {
-        min-width: 0 !important;
-    }
+	& input {
+		min-width: 0 !important;
+	}
 }
 
 .color-picker-opacity {
-    width: 12px;
-    background: linear-gradient(to bottom, #000 0%, #fff 100%);
-    height: 144px;
-    border-radius: 8px;
-    position: relative;
-    box-shadow: var(--elevation1);
+	width: 12px;
+	background: linear-gradient(to bottom, #000 0%, #fff 100%);
+	height: 144px;
+	border-radius: 8px;
+	position: relative;
+	box-shadow: var(--elevation1);
 
-    &:active > div {
-        scale: .85;
-    }
+	&:active > div {
+		scale: .85;
+	}
 
-    &:hover {
-        cursor: crosshair;
-    }
+	&:hover {
+		cursor: crosshair;
+	}
 
-    :root[data-corner=sharp] & {
-        border-radius: 0;
-    }
+	:root[data-corner=sharp] & {
+		border-radius: 0;
+	}
 
-    :root[data-corner=semi-round] & {
-        border-radius: 4px;
-    }
+	:root[data-corner=semi-round] & {
+		border-radius: 4px;
+	}
 
-    > div {
-        width: 20px;
-        height: 20px;
-        border-radius: 10px;
-        position: absolute;
-        border: 2px solid rgb(var(--color-on-surface));
-        z-index: 3;
-        box-shadow: var(--elevation1), inset var(--elevation1);
-        transition-duration: .3s;
-        transition-property: backdrop-filter, scale;
+	> div {
+		width: 20px;
+		height: 20px;
+		border-radius: 10px;
+		position: absolute;
+		border: 2px solid rgb(var(--color-on-surface));
+		z-index: 3;
+		box-shadow: var(--elevation1), inset var(--elevation1);
+		transition-duration: .3s;
+		transition-property: backdrop-filter, scale;
 
-        :root[data-corner=sharp] & {
-            border-radius: 0;
-        }
+		:root[data-corner=sharp] & {
+			border-radius: 0;
+		}
 
-        :root[data-corner=semi-round] & {
-            border-radius: 4px;
-        }
+		:root[data-corner=semi-round] & {
+			border-radius: 4px;
+		}
 
-        @media (hover: hover) {
-            &:hover {
-                cursor: pointer;
-            }
-        }
-    }
+		@media (hover: hover) {
+			&:hover {
+				cursor: pointer;
+			}
+		}
+	}
 }
 
 .color-picker-range {
-    height: 100%;
-    display: flex;
-    justify-content: space-around;
-    width: 48px;
+	height: 100%;
+	display: flex;
+	justify-content: space-around;
+	width: 48px;
 
-    &[data-hide-color] {
-        flex-direction: column;
-        width: 260px;
+	&[data-hide-color] {
+		flex-direction: column;
+		width: 260px;
 
-        > .color-picker-hue {
-            background: linear-gradient(to right,
-                rgb(255,   0,   0)   0%,
-                rgb(255, 255,   0)  17%,
-                rgb(  0, 255,   0)  33%,
-                rgb(  0, 255, 255)  50%,
-                rgb(  0,   0, 255)  67%,
-                rgb(255,   0, 255)  83%,
-                rgb(255,   0,   0) 100%
-            );
-            width: 260px;
-            height: 12px;
-        }
+		> .color-picker-hue {
+			background: linear-gradient(to right,
+				rgb(255,   0,   0)   0%,
+				rgb(255, 255,   0)  17%,
+				rgb(  0, 255,   0)  33%,
+				rgb(  0, 255, 255)  50%,
+				rgb(  0,   0, 255)  67%,
+				rgb(255,   0, 255)  83%,
+				rgb(255,   0,   0) 100%
+			);
+			width: 260px;
+			height: 12px;
+		}
 
-        > .color-picker-opacity {
-            background: linear-gradient(to right, #000 0%, #fff 100%);
-            width: 260px;
-            height: 12px;
-        }
+		> .color-picker-opacity {
+			background: linear-gradient(to right, #000 0%, #fff 100%);
+			width: 260px;
+			height: 12px;
+		}
 
-        &[data-hide-opacity] {
-            > .color-picker-opacity {
-                display: none;
-            }
+		&[data-hide-opacity] {
+			> .color-picker-opacity {
+				display: none;
+			}
 
-            > .color-picker-hue {
-                height: 40px;
+			> .color-picker-hue {
+				height: 40px;
 
-                > div {
-                    height: 48px;
-                }
-            }
-        }
-    }
+				> div {
+					height: 48px;
+				}
+			}
+		}
+	}
 
-    &[data-hide-opacity]:not([data-hide-color]) {
-        > .color-picker-hue {
-            width: 40px;
+	&[data-hide-opacity]:not([data-hide-color]) {
+		> .color-picker-hue {
+			width: 40px;
 
-            > div {
-                width: 48px;
-            }
-        }
-        > .color-picker-opacity {
-            display: none;
-        }
-    }
+			> div {
+				width: 48px;
+			}
+		}
+		> .color-picker-opacity {
+			display: none;
+		}
+	}
 }
 
 .color-picker-selected-color {
-    min-width: 48px;
-    max-width: 48px;
-    min-height: 48px;
-    max-height: 48px;
-    border-radius: 8px;
-    margin-bottom: 8px;
-    box-shadow: var(--elevation1);
+	min-width: 48px;
+	max-width: 48px;
+	min-height: 48px;
+	max-height: 48px;
+	border-radius: 8px;
+	margin-bottom: 8px;
+	box-shadow: var(--elevation1);
 
-    &[data-hide-color] {
-        margin: 0 8px 0 0;
-    }
-    :root[data-corner=sharp] & {
-        border-radius: 0;
-    }
+	&[data-hide-color] {
+		margin: 0 8px 0 0;
+	}
+	:root[data-corner=sharp] & {
+		border-radius: 0;
+	}
 
-    :root[data-corner=semi-round] & {
-        border-radius: 4px;
-    }
+	:root[data-corner=semi-round] & {
+		border-radius: 4px;
+	}
 }

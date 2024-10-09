@@ -1,49 +1,49 @@
 #text-tooltip {
-    align-items: center;
-    border-radius: 4px;
-    border: none;
-    box-shadow: var(--elevation1);
-    display: flex;
-    inset: unset;
-    color: rgb(var(--color-surface));
-    background-color: rgb(var(--color-on-surface));
-    max-height: calc(100dvh - 16px);
-    max-width: calc(100% - 16px);
-    opacity: 0;
-    padding: 6px 8px;
-    font-size: var(--font-size-s);
-    font-weight: 500;
-    outline: 1px solid rgba(var(--color-surface), var(--opacity2));
-    outline-offset: -1px;
-    overflow: hidden;
-    pointer-events: none;
-    width: fit-content;
-    height: fit-content;
-    position: fixed;
-    white-space: pre-wrap;
-    position: fixed;
-    z-index: 99;
-    transition-property: opacity;
-    transition-duration: .3s;
-    transition-timing-function: var(--transition-spring-bounce);
+	align-items: center;
+	border-radius: 4px;
+	border: none;
+	box-shadow: var(--elevation1);
+	display: flex;
+	inset: unset;
+	color: rgb(var(--color-surface));
+	background-color: rgb(var(--color-on-surface));
+	max-height: calc(100dvh - 16px);
+	max-width: calc(100% - 16px);
+	opacity: 0;
+	padding: 6px 8px;
+	font-size: var(--font-size-s);
+	font-weight: 500;
+	outline: 1px solid rgba(var(--color-surface), var(--opacity2));
+	outline-offset: -1px;
+	overflow: hidden;
+	pointer-events: none;
+	width: fit-content;
+	height: fit-content;
+	position: fixed;
+	white-space: pre-wrap;
+	position: fixed;
+	z-index: 99;
+	transition-property: opacity;
+	transition-duration: .3s;
+	transition-timing-function: var(--transition-spring-bounce);
 
-    :root[data-corner=sharp] & { border-radius: 0 }
-    :root[data-corner=full-round] & { border-radius: 14px }
+	:root[data-corner=sharp] & { border-radius: 0 }
+	:root[data-corner=full-round] & { border-radius: 14px }
 
-    &[data-open] {
-        opacity: 1;
-    }
+	&[data-open] {
+		opacity: 1;
+	}
 }
 
 .popover.rich-tooltip {
-    box-shadow: var(--elevation1);
+	box-shadow: var(--elevation1);
 
-    > div {
-        padding: 12px;
-        font-size: var(--font-size-xs);
-    }
+	> div {
+		padding: 12px;
+		font-size: var(--font-size-xs);
+	}
 }
 
 .tooltip {
-    display: contents;
+	display: contents;
 }

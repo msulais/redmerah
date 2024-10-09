@@ -11,24 +11,24 @@ import SideNavigation, { SideNavigationItem } from "@/components/SideNavigation"
 import CSS from './_styles.module.scss'
 
 const _: VoidComponent<{
-    calculator: CalculatorType
-    onChangeCalculator: (type: CalculatorType) => void
-    expand: boolean
+	calculator: CalculatorType
+	onChangeCalculator: (type: CalculatorType) => void
+	expand: boolean
 }> = (props) => {
-    return (<SideNavigation expand={props[_expand]} classList={addClassListModule(CSS.side_navigation)}>
-        <For each={CALCULATOR_TYPES}>{ r => <TextTooltip text={!props[_expand]? r[_text] : undefined}>
-            <SideNavigationItem
-                iconOnly={!props[_expand]}
-                onClick={() => {
-                    if (props[_calculator] == r[_type]) return;
-                    props[_onChangeCalculator](r[_type]);
-                } }
-                leading={<Icon filled={props[_calculator] == r[_type]} code={r[_icon]}/>}
-                selected={props[_calculator] == r[_type]}>
-                { r[_text] }
-            </SideNavigationItem>
-        </TextTooltip>}</For>
-    </SideNavigation>)
+	return (<SideNavigation expand={props[_expand]} classList={addClassListModule(CSS.side_navigation)}>
+		<For each={CALCULATOR_TYPES}>{ r => <TextTooltip text={!props[_expand]? r[_text] : undefined}>
+			<SideNavigationItem
+				iconOnly={!props[_expand]}
+				onClick={() => {
+					if (props[_calculator] == r[_type]) return;
+					props[_onChangeCalculator](r[_type]);
+				} }
+				leading={<Icon filled={props[_calculator] == r[_type]} code={r[_icon]}/>}
+				selected={props[_calculator] == r[_type]}>
+				{ r[_text] }
+			</SideNavigationItem>
+		</TextTooltip>}</For>
+	</SideNavigation>)
 }
 
 export default _

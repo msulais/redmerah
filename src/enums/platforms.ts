@@ -1,5 +1,5 @@
 export enum PlatformData {
-    desktop = 'desktop',
-    mobile = 'mobile',
-    hybrid = 'hybrid'
+	desktop = 'desktop',
+	mobile = 'mobile',
+	hybrid = 'hybrid'
 }

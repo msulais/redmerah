@@ -20,403 +20,403 @@ import './index.scss'
 import { Switch, type SwitchProps } from "@/components/Switch"
 
 type MenuItemTrailingShortcutProps = JSX.HTMLAttributes<HTMLDivElement> & {
-    shortcuts: string[]
+	shortcuts: string[]
 }
 const MenuItemTrailingShortcut: VoidComponent<MenuItemTrailingShortcutProps> = ($props) => {
-    const [props, other] = splitProps($props, [_shortcuts])
-    return (<div class="menu-item-trailing-shortcut" {...other}>
-        <For each={props[_shortcuts]}>{s => <kbd>{s}</kbd>}</For>
-    </div>)
+	const [props, other] = splitProps($props, [_shortcuts])
+	return (<div class="menu-item-trailing-shortcut" {...other}>
+		<For each={props[_shortcuts]}>{s => <kbd>{s}</kbd>}</For>
+	</div>)
 }
 
 type MenuItemProps = ButtonProps & {
-    leading?: JSX.Element
-    trailing?: JSX.Element
-    checked?: boolean
-    iconCode?: number
+	leading?: JSX.Element
+	trailing?: JSX.Element
+	checked?: boolean
+	iconCode?: number
 }
 const MenuItem: ParentComponent<MenuItemProps> = ($props) => {
-    const [props, other] = splitProps($props, [
-        _checked, _selected, _leading, _children,
-        _trailing, _classList, _iconCode, _variant,
-        _indicatorPosition, _disableScale
-    ])
-    const trailingComponent = children(() => props[_trailing])
+	const [props, other] = splitProps($props, [
+		_checked, _selected, _leading, _children,
+		_trailing, _classList, _iconCode, _variant,
+		_indicatorPosition, _disableScale
+	])
+	const trailingComponent = children(() => props[_trailing])
 
-    return (<Button
-        variant={props[_variant] ?? (props[_selected]? ButtonVariant[_tonal] : props[_variant])}
-        selected={props[_selected]}
-        indicatorPosition={props[_indicatorPosition] ?? ButtonIndicatorPosition[_left]}
-        disableScale={props[_disableScale] ?? (trailingComponent()? true : undefined)}
-        data-trailing={toggleAttribute(trailingComponent())}
-        classList={{'menu-item': true, ...props[_classList]}}
-        {...other}>
-        <Show when={isVarHasValue(props[_checked])}>
-            <Icon
-                style={{color: 'rgb(var(--color-accent))'}}
-                filled={props[_checked]}
-                code={props[_checked]? 0xE3CC : 0xE3D4}
-            />
-        </Show>
-        <Show when={props[_iconCode] != null}>
-            <Icon
-                style={{color: props[_selected]? 'rgb(var(--color-accent))' : undefined}}
-                filled={props[_selected]}
-                code={props[_iconCode]!}
-            />
-        </Show>
-        { props[_leading] }
-        { props[_children] }
-        <Show when={trailingComponent()}>
-            <div style={{flex: 1}} />
-        </Show>
-        { trailingComponent() }
-    </Button>)
+	return (<Button
+		variant={props[_variant] ?? (props[_selected]? ButtonVariant[_tonal] : props[_variant])}
+		selected={props[_selected]}
+		indicatorPosition={props[_indicatorPosition] ?? ButtonIndicatorPosition[_left]}
+		disableScale={props[_disableScale] ?? (trailingComponent()? true : undefined)}
+		data-trailing={toggleAttribute(trailingComponent())}
+		classList={{'menu-item': true, ...props[_classList]}}
+		{...other}>
+		<Show when={isVarHasValue(props[_checked])}>
+			<Icon
+				style={{color: 'rgb(var(--color-accent))'}}
+				filled={props[_checked]}
+				code={props[_checked]? 0xE3CC : 0xE3D4}
+			/>
+		</Show>
+		<Show when={props[_iconCode] != null}>
+			<Icon
+				style={{color: props[_selected]? 'rgb(var(--color-accent))' : undefined}}
+				filled={props[_selected]}
+				code={props[_iconCode]!}
+			/>
+		</Show>
+		{ props[_leading] }
+		{ props[_children] }
+		<Show when={trailingComponent()}>
+			<div style={{flex: 1}} />
+		</Show>
+		{ trailingComponent() }
+	</Button>)
 }
 
 type SubMenuItemProps = MenuItemProps
 const SubMenuItem: ParentComponent<SubMenuItemProps> = ($props) => {
-    const [props, other] = splitProps($props, [_trailing])
-    return (<MenuItem
-        trailing={<>
-            {props[_trailing]}
-            <Icon code={0xE402}/>
-        </>}
-        {...other}
-    />)
+	const [props, other] = splitProps($props, [_trailing])
+	return (<MenuItem
+		trailing={<>
+			{props[_trailing]}
+			<Icon code={0xE402}/>
+		</>}
+		{...other}
+	/>)
 }
 
 type LinkMenuItemProps = LinkButtonProps & {
-    leading?: JSX.Element
-    trailing?: JSX.Element
-    checked?: boolean
-    iconCode?: number
+	leading?: JSX.Element
+	trailing?: JSX.Element
+	checked?: boolean
+	iconCode?: number
 }
 const LinkMenuItem: ParentComponent<LinkMenuItemProps> = ($props) => {
-    const [props, other] = splitProps($props, [
-        _checked, _selected, _leading, _children,
-        _trailing, _classList, _iconCode, _variant,
-        _indicatorPosition, _disableScale,
-    ])
-    const trailingComponent = children(() => props[_trailing])
+	const [props, other] = splitProps($props, [
+		_checked, _selected, _leading, _children,
+		_trailing, _classList, _iconCode, _variant,
+		_indicatorPosition, _disableScale,
+	])
+	const trailingComponent = children(() => props[_trailing])
 
-    return (<LinkButton
-        variant={props[_variant] ?? (props[_selected]? ButtonVariant[_tonal] : props[_variant])}
-        selected={props[_selected]}
-        indicatorPosition={props[_indicatorPosition] ?? ButtonIndicatorPosition[_left]}
-        disableScale={props[_disableScale] ?? (trailingComponent()? true : undefined)}
-        data-trailing={toggleAttribute(trailingComponent())}
-        classList={{'menu-item': true, ...props[_classList]}}
-        {...other}>
-        <Show when={isVarHasValue(props[_checked])}>
-            <Icon
-                style={{color: props[_checked]? 'rgb(var(--color-accent))' : undefined}}
-                filled={props[_checked]}
-                code={props[_checked]? 0xE3CC : 0xE3D4}
-            />
-        </Show>
-        <Show when={props[_iconCode] != null}>
-            <Icon
-                style={{color: props[_selected]? 'rgb(var(--color-accent))' : undefined}}
-                filled={props[_selected]}
-                code={props[_iconCode]!}
-            />
-        </Show>
-        { props[_leading] }
-        { props[_children] }
-        <Show when={trailingComponent()}>
-            <div style={{flex: 1}} />
-        </Show>
-        { trailingComponent() }
-    </LinkButton>)
+	return (<LinkButton
+		variant={props[_variant] ?? (props[_selected]? ButtonVariant[_tonal] : props[_variant])}
+		selected={props[_selected]}
+		indicatorPosition={props[_indicatorPosition] ?? ButtonIndicatorPosition[_left]}
+		disableScale={props[_disableScale] ?? (trailingComponent()? true : undefined)}
+		data-trailing={toggleAttribute(trailingComponent())}
+		classList={{'menu-item': true, ...props[_classList]}}
+		{...other}>
+		<Show when={isVarHasValue(props[_checked])}>
+			<Icon
+				style={{color: props[_checked]? 'rgb(var(--color-accent))' : undefined}}
+				filled={props[_checked]}
+				code={props[_checked]? 0xE3CC : 0xE3D4}
+			/>
+		</Show>
+		<Show when={props[_iconCode] != null}>
+			<Icon
+				style={{color: props[_selected]? 'rgb(var(--color-accent))' : undefined}}
+				filled={props[_selected]}
+				code={props[_iconCode]!}
+			/>
+		</Show>
+		{ props[_leading] }
+		{ props[_children] }
+		<Show when={trailingComponent()}>
+			<div style={{flex: 1}} />
+		</Show>
+		{ trailingComponent() }
+	</LinkButton>)
 }
 
 const MenuIndent: Component<JSX.HTMLAttributes<HTMLDivElement>> = (props) => {
-    return (<div class="menu-indent" {...props}/>)
+	return (<div class="menu-indent" {...props}/>)
 }
 
 const MenuDivider: Component<DividerProps> = (props) => {
-    return (<Divider {...props}/>)
+	return (<Divider {...props}/>)
 }
 
 const MenuHeader: ParentComponent<JSX.HTMLAttributes<HTMLDivElement>> = (props) => {
-    return (<div class="menu-header" {...props}/>)
+	return (<div class="menu-header" {...props}/>)
 }
 
 type SwitchMenuItemProps = Omit<JSX.HTMLAttributes<HTMLDivElement>, 'onClick' | 'value'> & {
-    variant?: ButtonVariant
-    focused?: boolean
-    disableScale?: boolean
-    compact?: boolean
-    layerAttr?: JSX.HTMLAttributes<HTMLDivElement>
-    leading?: JSX.Element
-    trailing?: JSX.Element
-    iconCode?: number
-    value?: boolean
-    onValueChanged?: (isSwitchChecked: boolean) => unknown
-    onClick?: (ev: ComponentEvent<MouseEvent, HTMLDivElement>) => unknown
-    switchAttr?: Omit<SwitchProps, 'ref' | 'children'> & {
-        ref?: (el: HTMLButtonElement) => unknown
-    }
+	variant?: ButtonVariant
+	focused?: boolean
+	disableScale?: boolean
+	compact?: boolean
+	layerAttr?: JSX.HTMLAttributes<HTMLDivElement>
+	leading?: JSX.Element
+	trailing?: JSX.Element
+	iconCode?: number
+	value?: boolean
+	onValueChanged?: (isSwitchChecked: boolean) => unknown
+	onClick?: (ev: ComponentEvent<MouseEvent, HTMLDivElement>) => unknown
+	switchAttr?: Omit<SwitchProps, 'ref' | 'children'> & {
+		ref?: (el: HTMLButtonElement) => unknown
+	}
 }
 const SwitchMenuItem: ParentComponent<SwitchMenuItemProps> = ($props) => {
-    const $$props = mergeProps({
-        variant: ButtonVariant[_transparent],
-        indicatorPosition: ButtonIndicatorPosition[_left]
-    }, $props)
-    const [props, other] = splitProps($$props, [
-        _children, _variant, _focused,
-        _compact, _layerAttr, _disableScale,
-        _classList, _class, _leading,
-        _trailing, _iconCode, _switchAttr,
-        _value, _onValueChanged, _onClick
-    ])
-    let switch_ref: HTMLButtonElement
+	const $$props = mergeProps({
+		variant: ButtonVariant[_transparent],
+		indicatorPosition: ButtonIndicatorPosition[_left]
+	}, $props)
+	const [props, other] = splitProps($$props, [
+		_children, _variant, _focused,
+		_compact, _layerAttr, _disableScale,
+		_classList, _class, _leading,
+		_trailing, _iconCode, _switchAttr,
+		_value, _onValueChanged, _onClick
+	])
+	let switch_ref: HTMLButtonElement
 
-    return (<div
-        tabindex={0}
-        class={'btn menu-item switch-menu-item' + (props[_class] != null? ` ${props[_class]}` : '')}
-        classList={{
-            'filled-btn': props[_variant] == ButtonVariant[_filled],
-            'tonal-btn': props[_variant] == ButtonVariant[_tonal],
-            'outlined-btn': props[_variant] == ButtonVariant[_outlined],
-            ...props[_classList]
-        }}
-        data-focused={toggleAttribute(props[_focused])}
-        data-noscale={toggleAttribute(props[_disableScale] ?? true)}
-        data-compact={toggleAttribute(props[_compact])}
-        data-trailing
-        onClick={ev => {
-            switch_ref[_click]()
-            if (props[_onClick]) props[_onClick](ev)
-        }}
-        {...other}>
-        <div class='btn-layer' {...props[_layerAttr]}>
-            { props[_leading] }
-            <Show when={props[_iconCode] != null}>
-                <Icon code={props[_iconCode]!}/>
-            </Show>
-            { props[_children] }
-            <div style={{flex: 1}} />
-            { props[_trailing] }
-            <Switch
-                value={(props[_switchAttr] && props[_switchAttr][_value]) ?? props[_value]}
-                onValueChanged={(props[_switchAttr] && props[_switchAttr][_onValueChanged]) ?? props[_onValueChanged]}
-                ref={r => {
-                    switch_ref = r
-                    if (props[_switchAttr] && props[_switchAttr][_ref]) props[_switchAttr][_ref](r)
-                }}
-                onClick={ev => {
-                    stopPropagation(ev)
-                    if (props[_switchAttr] && props[_switchAttr][_onClick]) props[_switchAttr][_onClick](ev)
-                }}
-                {...splitProps(props[_switchAttr] ?? {}, [_value, _onValueChanged, _ref, _onClick])[1]}
-            />
-        </div>
-    </div>)
+	return (<div
+		tabindex={0}
+		class={'btn menu-item switch-menu-item' + (props[_class] != null? ` ${props[_class]}` : '')}
+		classList={{
+			'filled-btn': props[_variant] == ButtonVariant[_filled],
+			'tonal-btn': props[_variant] == ButtonVariant[_tonal],
+			'outlined-btn': props[_variant] == ButtonVariant[_outlined],
+			...props[_classList]
+		}}
+		data-focused={toggleAttribute(props[_focused])}
+		data-noscale={toggleAttribute(props[_disableScale] ?? true)}
+		data-compact={toggleAttribute(props[_compact])}
+		data-trailing
+		onClick={ev => {
+			switch_ref[_click]()
+			if (props[_onClick]) props[_onClick](ev)
+		}}
+		{...other}>
+		<div class='btn-layer' {...props[_layerAttr]}>
+			{ props[_leading] }
+			<Show when={props[_iconCode] != null}>
+				<Icon code={props[_iconCode]!}/>
+			</Show>
+			{ props[_children] }
+			<div style={{flex: 1}} />
+			{ props[_trailing] }
+			<Switch
+				value={(props[_switchAttr] && props[_switchAttr][_value]) ?? props[_value]}
+				onValueChanged={(props[_switchAttr] && props[_switchAttr][_onValueChanged]) ?? props[_onValueChanged]}
+				ref={r => {
+					switch_ref = r
+					if (props[_switchAttr] && props[_switchAttr][_ref]) props[_switchAttr][_ref](r)
+				}}
+				onClick={ev => {
+					stopPropagation(ev)
+					if (props[_switchAttr] && props[_switchAttr][_onClick]) props[_switchAttr][_onClick](ev)
+				}}
+				{...splitProps(props[_switchAttr] ?? {}, [_value, _onValueChanged, _ref, _onClick])[1]}
+			/>
+		</div>
+	</div>)
 }
 
 type SubMenuProps = Omit<PopoverProps, 'onClick'> & {
-    level?: number
-    item: JSX.Element
-    gap?: number
-    position?: SubMenuPosition
-    padding?: number
-    dragable?: boolean
-    allowHideAnchor?: boolean
-    onClick?: (ev: ComponentEvent<MouseEvent, HTMLDivElement>) => unknown
-    wrapperAttr?: Omit<JSX.HTMLAttributes<HTMLDivElement>, 'children' | 'ref' | 'onClick' | 'onMouseEnter' | 'onMouseLeave'> & {
-        ref?: (el: HTMLDivElement) => unknown
-        onClick?: (ev: ComponentEvent<MouseEvent, HTMLDivElement>) => unknown
-        onMouseEnter?: (ev: ComponentEvent<MouseEvent, HTMLDivElement>) => unknown
-        onMouseLeave?: (ev: ComponentEvent<MouseEvent, HTMLDivElement>) => unknown
-    }
+	level?: number
+	item: JSX.Element
+	gap?: number
+	position?: SubMenuPosition
+	padding?: number
+	dragable?: boolean
+	allowHideAnchor?: boolean
+	onClick?: (ev: ComponentEvent<MouseEvent, HTMLDivElement>) => unknown
+	wrapperAttr?: Omit<JSX.HTMLAttributes<HTMLDivElement>, 'children' | 'ref' | 'onClick' | 'onMouseEnter' | 'onMouseLeave'> & {
+		ref?: (el: HTMLDivElement) => unknown
+		onClick?: (ev: ComponentEvent<MouseEvent, HTMLDivElement>) => unknown
+		onMouseEnter?: (ev: ComponentEvent<MouseEvent, HTMLDivElement>) => unknown
+		onMouseLeave?: (ev: ComponentEvent<MouseEvent, HTMLDivElement>) => unknown
+	}
 }
 const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
-    const $$props = mergeProps({id: createUniqueId(), level: 1}, $props)
-    const [props, other] = splitProps($$props, [
-        _classList, _level, _item, _wrapperAttr,
-        _id, _onClick, _ref, _gap, _position,
-        _padding, _dragable, _allowHideAnchor,
-        _onToggleOpen
-    ])
-    let timeoutId: number | null = null
-    let div_ref: HTMLDivElement
-    let popover_ref: HTMLDivElement
-    let isOpen: boolean = false
+	const $$props = mergeProps({id: createUniqueId(), level: 1}, $props)
+	const [props, other] = splitProps($$props, [
+		_classList, _level, _item, _wrapperAttr,
+		_id, _onClick, _ref, _gap, _position,
+		_padding, _dragable, _allowHideAnchor,
+		_onToggleOpen
+	])
+	let timeoutId: number | null = null
+	let div_ref: HTMLDivElement
+	let popover_ref: HTMLDivElement
+	let isOpen: boolean = false
 
-    function cancelTimeout(): void {
-        if (timeoutId == null) return;
+	function cancelTimeout(): void {
+		if (timeoutId == null) return;
 
-        clearTimeDelayed(timeoutId)
-        timeoutId = null
-    }
+		clearTimeDelayed(timeoutId)
+		timeoutId = null
+	}
 
-    async function open(ev: Event): Promise<void> {
-        if (isOpen) return;
+	async function open(ev: Event): Promise<void> {
+		if (isOpen) return;
 
-        let isAnySubMenuOpen = false
-        for (const submenu of querySelectorAll(`.sub-menu>.menu[data-level]:not([id="${props[_id]}"]):popover-open`)) {
-            const level: number = numberParse(getAttribute(submenu, 'data-level')!, true)
-            if (level < props[_level]) continue;
+		let isAnySubMenuOpen = false
+		for (const submenu of querySelectorAll(`.sub-menu>.menu[data-level]:not([id="${props[_id]}"]):popover-open`)) {
+			const level: number = numberParse(getAttribute(submenu, 'data-level')!, true)
+			if (level < props[_level]) continue;
 
-            isAnySubMenuOpen = true
-            closePopover(submenu as HTMLDivElement)
-        }
+			isAnySubMenuOpen = true
+			closePopover(submenu as HTMLDivElement)
+		}
 
-        // wait for close animation done
-        if (isAnySubMenuOpen) await timeout(300)
+		// wait for close animation done
+		if (isAnySubMenuOpen) await timeout(300)
 
-        openPopover(ev, popover_ref, {
-            anchor: div_ref,
-            position: props[_position] ?? SubMenuPosition[_rightCenterToBottom],
-            gap: props[_gap] ?? -8,
-            padding: props[_padding] ?? 5,
-            dragable: props[_dragable],
-            allowHideAnchor: props[_allowHideAnchor],
-            manualDismiss: true
-        })
-    }
+		openPopover(ev, popover_ref, {
+			anchor: div_ref,
+			position: props[_position] ?? SubMenuPosition[_rightCenterToBottom],
+			gap: props[_gap] ?? -8,
+			padding: props[_padding] ?? 5,
+			dragable: props[_dragable],
+			allowHideAnchor: props[_allowHideAnchor],
+			manualDismiss: true
+		})
+	}
 
-    function onClick(ev: MouseEvent): void {
-        if (!isOpen) return;
+	function onClick(ev: MouseEvent): void {
+		if (!isOpen) return;
 
-        const target = ev[_target] as HTMLElement
-        const isClickedInside = div_ref[_contains](target) || div_ref[_contains](target)
+		const target = ev[_target] as HTMLElement
+		const isClickedInside = div_ref[_contains](target) || div_ref[_contains](target)
 
-        if (isClickedInside) return;
+		if (isClickedInside) return;
 
-        closePopover(popover_ref)
-    }
+		closePopover(popover_ref)
+	}
 
-    function initEvents(): void {
-        addEventListener<MouseEvent>(getDocument(), _click, onClick)
+	function initEvents(): void {
+		addEventListener<MouseEvent>(getDocument(), _click, onClick)
 
-        onCleanup(() => {
-            removeEventListener<MouseEvent>(getDocument(), _click, onClick)
-        })
-    }
+		onCleanup(() => {
+			removeEventListener<MouseEvent>(getDocument(), _click, onClick)
+		})
+	}
 
-    onMount(() => {
-        initEvents()
-    })
+	onMount(() => {
+		initEvents()
+	})
 
-    return (<div
-        class={"sub-menu" + (props[_wrapperAttr] && props[_wrapperAttr][_class] != undefined? ` ${props[_wrapperAttr][_class]}` : '')}
-        ref={r => {
-            div_ref = r
-            if (props[_wrapperAttr] && props[_wrapperAttr][_ref]) props[_wrapperAttr][_ref](r)
-        }}
-        onClick={(ev) => {
-            cancelTimeout()
-            open(ev)
-            if (props[_wrapperAttr] && props[_wrapperAttr][_onClick]) props[_wrapperAttr][_onClick](ev)
-        }}
-        onMouseEnter={(ev) => {
-            cancelTimeout()
-            timeoutId = setTimeDelayed(() => {
-                open(ev)
-                timeoutId = null
-            }, 300)
-            if (props[_wrapperAttr] && props[_wrapperAttr][_onMouseEnter]) props[_wrapperAttr][_onMouseEnter](ev)
-        }}
-        onMouseLeave={(ev) => {
-            cancelTimeout()
-            timeoutId = setTimeDelayed(() => {
-                closePopover(popover_ref)
-                timeoutId = null
-            }, 500)
-            if (props[_wrapperAttr] && props[_wrapperAttr][_onMouseLeave]) props[_wrapperAttr][_onMouseLeave](ev)
-        }}
-        {...props[_wrapperAttr]}>
-        {props[_item]}
-        <Popover
-            data-level={props[_level]}
-            usePortal={false}
-            id={props[_id]}
-            onToggleOpen={$isOpen => {
-                isOpen = $isOpen
-                if (props[_onToggleOpen]) props[_onToggleOpen]($isOpen)
-            }}
-            onClick={(ev) => {
-                stopPropagation(ev)
-                stopImmediatePropagation(ev)
-                if (props[_onClick]) props[_onClick](ev)
-            }}
-            ref={r => {
-                popover_ref = r
-                if (props[_ref]) props[_ref](r)
-            }}
-            classList={{
-                menu: true,
-                ...props[_classList]
-            }}
-            {...other}
-        />
-    </div>)
+	return (<div
+		class={"sub-menu" + (props[_wrapperAttr] && props[_wrapperAttr][_class] != undefined? ` ${props[_wrapperAttr][_class]}` : '')}
+		ref={r => {
+			div_ref = r
+			if (props[_wrapperAttr] && props[_wrapperAttr][_ref]) props[_wrapperAttr][_ref](r)
+		}}
+		onClick={(ev) => {
+			cancelTimeout()
+			open(ev)
+			if (props[_wrapperAttr] && props[_wrapperAttr][_onClick]) props[_wrapperAttr][_onClick](ev)
+		}}
+		onMouseEnter={(ev) => {
+			cancelTimeout()
+			timeoutId = setTimeDelayed(() => {
+				open(ev)
+				timeoutId = null
+			}, 300)
+			if (props[_wrapperAttr] && props[_wrapperAttr][_onMouseEnter]) props[_wrapperAttr][_onMouseEnter](ev)
+		}}
+		onMouseLeave={(ev) => {
+			cancelTimeout()
+			timeoutId = setTimeDelayed(() => {
+				closePopover(popover_ref)
+				timeoutId = null
+			}, 500)
+			if (props[_wrapperAttr] && props[_wrapperAttr][_onMouseLeave]) props[_wrapperAttr][_onMouseLeave](ev)
+		}}
+		{...props[_wrapperAttr]}>
+		{props[_item]}
+		<Popover
+			data-level={props[_level]}
+			usePortal={false}
+			id={props[_id]}
+			onToggleOpen={$isOpen => {
+				isOpen = $isOpen
+				if (props[_onToggleOpen]) props[_onToggleOpen]($isOpen)
+			}}
+			onClick={(ev) => {
+				stopPropagation(ev)
+				stopImmediatePropagation(ev)
+				if (props[_onClick]) props[_onClick](ev)
+			}}
+			ref={r => {
+				popover_ref = r
+				if (props[_ref]) props[_ref](r)
+			}}
+			classList={{
+				menu: true,
+				...props[_classList]
+			}}
+			{...other}
+		/>
+	</div>)
 }
 
 type MenuProps = ModalProps
 const Menu: ParentComponent<MenuProps> = ($props) => {
-    const [props, other] = splitProps($props, [_classList, _gap, _padding])
-    return (<Modal
-        classList={{
-            menu: true,
-            ...props[_classList]
-        }}
-        gap={props[_gap] ?? 8}
-        padding={props[_padding] ?? 4}
-        {...other}
-    />)
+	const [props, other] = splitProps($props, [_classList, _gap, _padding])
+	return (<Modal
+		classList={{
+			menu: true,
+			...props[_classList]
+		}}
+		gap={props[_gap] ?? 8}
+		padding={props[_padding] ?? 4}
+		{...other}
+	/>)
 }
 
 type PopoverMenuProps = PopoverProps
 const PopoverMenu: ParentComponent<PopoverMenuProps> = ($props) => {
-    const [props, other] = splitProps($props, [_classList, _gap, _padding])
-    return (<Popover
-        classList={{
-            menu: true,
-            ...props[_classList]
-        }}
-        gap={props[_gap] ?? 8}
-        padding={props[_padding] ?? 4}
-        {...other}
-    />)
+	const [props, other] = splitProps($props, [_classList, _gap, _padding])
+	return (<Popover
+		classList={{
+			menu: true,
+			...props[_classList]
+		}}
+		gap={props[_gap] ?? 8}
+		padding={props[_padding] ?? 4}
+		{...other}
+	/>)
 }
 
 export {
-    SubMenu,
-    Menu,
-    MenuItem,
-    MenuIndent,
-    MenuHeader,
-    MenuDivider,
-    PopoverMenu,
-    SubMenuItem,
-    LinkMenuItem,
-    SwitchMenuItem,
-    MenuItemTrailingShortcut,
-    closePopover as closeSubMenu,
-    openPopover as openSubMenu,
-    repositionPopover as repositionSubMenu,
-    closePopover as closePopoverMenu,
-    openPopover as openPopoverMenu,
-    repositionPopover as repositionPopoverMenu,
-    focusModal as focusMenu,
-    openModal as openMenu,
-    closeModal as closeMenu,
-    repositionModal as repositionMenu,
-    SubMenuPosition,
-    MenuPosition
+	SubMenu,
+	Menu,
+	MenuItem,
+	MenuIndent,
+	MenuHeader,
+	MenuDivider,
+	PopoverMenu,
+	SubMenuItem,
+	LinkMenuItem,
+	SwitchMenuItem,
+	MenuItemTrailingShortcut,
+	closePopover as closeSubMenu,
+	openPopover as openSubMenu,
+	repositionPopover as repositionSubMenu,
+	closePopover as closePopoverMenu,
+	openPopover as openPopoverMenu,
+	repositionPopover as repositionPopoverMenu,
+	focusModal as focusMenu,
+	openModal as openMenu,
+	closeModal as closeMenu,
+	repositionModal as repositionMenu,
+	SubMenuPosition,
+	MenuPosition
 }
 export type {
-    MenuProps,
-    MenuItemProps,
-    SwitchMenuItemProps,
-    SubMenuProps,
-    SubMenuItemProps,
-    MenuItemTrailingShortcutProps,
-    LinkMenuItemProps,
-    PopoverMenuProps,
+	MenuProps,
+	MenuItemProps,
+	SwitchMenuItemProps,
+	SubMenuProps,
+	SubMenuItemProps,
+	MenuItemTrailingShortcutProps,
+	LinkMenuItemProps,
+	PopoverMenuProps,
 }
 export default Menu

@@ -1,4 +1,4 @@
 export type Settings = {
-    textWrap: boolean
-    fontSize: number
+	textWrap: boolean
+	fontSize: number
 }

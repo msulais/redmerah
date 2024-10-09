@@ -1,57 +1,57 @@
 import { _name, _symbol, _value } from "@/constants/string"
 
 export type ConverterUnitType = {
-    name: string
-    symbol: string
-    value: number
+	name: string
+	symbol: string
+	value: number
 }
 
 export enum ConverterType {
-    length = 'length',
-    area = 'area',
-    volume = 'volume',
-    temperature = 'temperature',
-    time = 'time',
-    weight = 'weight',
-    frequency = 'frequency',
-    pressure = 'pressure',
-    angle = 'angle',
+	length = 'length',
+	area = 'area',
+	volume = 'volume',
+	temperature = 'temperature',
+	time = 'time',
+	weight = 'weight',
+	frequency = 'frequency',
+	pressure = 'pressure',
+	angle = 'angle',
 }
 
 export class ConverterUnit {
-    name: string
-    symbol: string
-    value: number
+	name: string
+	symbol: string
+	value: number
 
-    constructor (name: string, symbol: string, value: number) {
-        this[_name] = name
-        this[_symbol] = symbol
-        this[_value] = value
-    }
+	constructor (name: string, symbol: string, value: number) {
+		this[_name] = name
+		this[_symbol] = symbol
+		this[_value] = value
+	}
 
-    equals(unit: ConverterUnit): boolean {
-        return (
-            unit[_name] == this[_name]
-            && unit[_symbol] == this[_symbol]
-            && unit[_value] == this[_value]
-        )
-    }
+	equals(unit: ConverterUnit): boolean {
+		return (
+			unit[_name] == this[_name]
+			&& unit[_symbol] == this[_symbol]
+			&& unit[_value] == this[_value]
+		)
+	}
 
-    get JSON(): ConverterUnitType {
-        return {
-            name: this[_name],
-            symbol: this[_symbol],
-            value: this[_value]
-        }
-    }
+	get JSON(): ConverterUnitType {
+		return {
+			name: this[_name],
+			symbol: this[_symbol],
+			value: this[_value]
+		}
+	}
 
-    static parseJSON(unit: ConverterUnitType): ConverterUnit {
-        return new ConverterUnit(
-            unit[_name],
-            unit[_symbol],
-            unit[_value]
-        )
-    }
+	static parseJSON(unit: ConverterUnitType): ConverterUnit {
+		return new ConverterUnit(
+			unit[_name],
+			unit[_symbol],
+			unit[_value]
+		)
+	}
 }
 
 export const UNIT_LENGTH_KILOMETER = new ConverterUnit("Kilometer", 'km', 1E-3)
@@ -69,11 +69,11 @@ export const UNIT_LENGTH_INCH = new ConverterUnit("Inch", 'in', 39.37007874)
 export const UNIT_LENGTH_YARD = new ConverterUnit("Yard", 'yd', 1.0936132983)
 export const UNIT_LENGTH_FOOT = new ConverterUnit("Foot", 'ft', 3.280839895)
 export const UNIT_LENGTH = [
-    UNIT_LENGTH_KILOMETER , UNIT_LENGTH_HECTOMETER, UNIT_LENGTH_DEKAMETER,
-    UNIT_LENGTH_METER     , UNIT_LENGTH_DECIMETER , UNIT_LENGTH_CENTIMETER,
-    UNIT_LENGTH_CENTIMETER, UNIT_LENGTH_MILLIMETER, UNIT_LENGTH_MICROMETER,
-    UNIT_LENGTH_NANOMETER , UNIT_LENGTH_PICOMETER , UNIT_LENGTH_MILE,
-    UNIT_LENGTH_INCH      , UNIT_LENGTH_YARD      , UNIT_LENGTH_FOOT
+	UNIT_LENGTH_KILOMETER , UNIT_LENGTH_HECTOMETER, UNIT_LENGTH_DEKAMETER,
+	UNIT_LENGTH_METER     , UNIT_LENGTH_DECIMETER , UNIT_LENGTH_CENTIMETER,
+	UNIT_LENGTH_CENTIMETER, UNIT_LENGTH_MILLIMETER, UNIT_LENGTH_MICROMETER,
+	UNIT_LENGTH_NANOMETER , UNIT_LENGTH_PICOMETER , UNIT_LENGTH_MILE,
+	UNIT_LENGTH_INCH      , UNIT_LENGTH_YARD      , UNIT_LENGTH_FOOT
 ]
 
 export const UNIT_AREA_KILOMETER = new ConverterUnit("Square Kilometer", 'km²', 1E-6)
@@ -92,12 +92,12 @@ export const UNIT_AREA_YARD = new ConverterUnit("Square Yard", 'yd²', 1.1959900
 export const UNIT_AREA_FOOT = new ConverterUnit("Square Foot", 'ft²', 10.763910417)
 export const UNIT_AREA_HECTARE = new ConverterUnit("Hectare", 'ha', 1E-4)
 export const UNIT_AREA = [
-    UNIT_AREA_KILOMETER , UNIT_AREA_HECTOMETER, UNIT_AREA_DEKAMETER,
-    UNIT_AREA_METER     , UNIT_AREA_DECIMETER , UNIT_AREA_CENTIMETER,
-    UNIT_AREA_CENTIMETER, UNIT_AREA_MILLIMETER, UNIT_AREA_MICROMETER,
-    UNIT_AREA_NANOMETER , UNIT_AREA_PICOMETER , UNIT_AREA_MILE,
-    UNIT_AREA_INCH      , UNIT_AREA_YARD      , UNIT_AREA_FOOT,
-    UNIT_AREA_HECTARE
+	UNIT_AREA_KILOMETER , UNIT_AREA_HECTOMETER, UNIT_AREA_DEKAMETER,
+	UNIT_AREA_METER     , UNIT_AREA_DECIMETER , UNIT_AREA_CENTIMETER,
+	UNIT_AREA_CENTIMETER, UNIT_AREA_MILLIMETER, UNIT_AREA_MICROMETER,
+	UNIT_AREA_NANOMETER , UNIT_AREA_PICOMETER , UNIT_AREA_MILE,
+	UNIT_AREA_INCH      , UNIT_AREA_YARD      , UNIT_AREA_FOOT,
+	UNIT_AREA_HECTARE
 ]
 
 export const UNIT_VOLUME_KILOMETER = new ConverterUnit("Cubic Kilometer", 'km³', 1E-9)
@@ -117,12 +117,12 @@ export const UNIT_VOLUME_FOOT = new ConverterUnit("Cubic Foot", 'ft³', 35.31466
 export const UNIT_VOLUME_LITER = new ConverterUnit("Liter", 'L', 1E3)
 export const UNIT_VOLUME_MILLILITER = new ConverterUnit("Milliliter", 'mL', 1E6)
 export const UNIT_VOLUME = [
-    UNIT_VOLUME_KILOMETER , UNIT_VOLUME_HECTOMETER, UNIT_VOLUME_DEKAMETER,
-    UNIT_VOLUME_METER     , UNIT_VOLUME_DECIMETER , UNIT_VOLUME_CENTIMETER,
-    UNIT_VOLUME_CENTIMETER, UNIT_VOLUME_MILLIMETER, UNIT_VOLUME_MICROMETER,
-    UNIT_VOLUME_NANOMETER , UNIT_VOLUME_PICOMETER , UNIT_VOLUME_MILE,
-    UNIT_VOLUME_INCH      , UNIT_VOLUME_YARD      , UNIT_VOLUME_FOOT,
-    UNIT_VOLUME_LITER     , UNIT_VOLUME_MILLILITER
+	UNIT_VOLUME_KILOMETER , UNIT_VOLUME_HECTOMETER, UNIT_VOLUME_DEKAMETER,
+	UNIT_VOLUME_METER     , UNIT_VOLUME_DECIMETER , UNIT_VOLUME_CENTIMETER,
+	UNIT_VOLUME_CENTIMETER, UNIT_VOLUME_MILLIMETER, UNIT_VOLUME_MICROMETER,
+	UNIT_VOLUME_NANOMETER , UNIT_VOLUME_PICOMETER , UNIT_VOLUME_MILE,
+	UNIT_VOLUME_INCH      , UNIT_VOLUME_YARD      , UNIT_VOLUME_FOOT,
+	UNIT_VOLUME_LITER     , UNIT_VOLUME_MILLILITER
 ]
 
 export const UNIT_TEMPERATURE_KELVIN = new ConverterUnit("Kelvin", 'K', 274.15)
@@ -133,9 +133,9 @@ export const UNIT_TEMPERATURE_ROMER = new ConverterUnit("Rømer", '°Rø', 7.875
 export const UNIT_TEMPERATURE_RANKINE = new ConverterUnit("Rankine", '°R', 491.67)
 export const UNIT_TEMPERATURE_DELISLE = new ConverterUnit("Delisle", '°De', 148.5)
 export const UNIT_TEMPERATURE = [
-    UNIT_TEMPERATURE_KELVIN    , UNIT_TEMPERATURE_CELCIUS, UNIT_TEMPERATURE_REAMUR,
-    UNIT_TEMPERATURE_FAHRENHEIT, UNIT_TEMPERATURE_ROMER  , UNIT_TEMPERATURE_RANKINE,
-    UNIT_TEMPERATURE_DELISLE
+	UNIT_TEMPERATURE_KELVIN    , UNIT_TEMPERATURE_CELCIUS, UNIT_TEMPERATURE_REAMUR,
+	UNIT_TEMPERATURE_FAHRENHEIT, UNIT_TEMPERATURE_ROMER  , UNIT_TEMPERATURE_RANKINE,
+	UNIT_TEMPERATURE_DELISLE
 ]
 
 export const UNIT_TIME_CENTURY = new ConverterUnit("Century", 'century', 3.168808781402895E-10)
@@ -151,10 +151,10 @@ export const UNIT_TIME_MILLISECOND = new ConverterUnit("Millisecond", 'ms', 1E3)
 export const UNIT_TIME_MICROSECOND = new ConverterUnit("Microsecond", 'μs', 1E6)
 export const UNIT_TIME_NANOSECOND = new ConverterUnit("Nanosecond", 'ns', 1E9)
 export const UNIT_TIME = [
-    UNIT_TIME_CENTURY    , UNIT_TIME_DECADE     , UNIT_TIME_YEAR,
-    UNIT_TIME_MONTH      , UNIT_TIME_WEEK       , UNIT_TIME_DAY,
-    UNIT_TIME_HOUR       , UNIT_TIME_MINUTE     , UNIT_TIME_SECOND,
-    UNIT_TIME_MILLISECOND, UNIT_TIME_MICROSECOND, UNIT_TIME_NANOSECOND
+	UNIT_TIME_CENTURY    , UNIT_TIME_DECADE     , UNIT_TIME_YEAR,
+	UNIT_TIME_MONTH      , UNIT_TIME_WEEK       , UNIT_TIME_DAY,
+	UNIT_TIME_HOUR       , UNIT_TIME_MINUTE     , UNIT_TIME_SECOND,
+	UNIT_TIME_MILLISECOND, UNIT_TIME_MICROSECOND, UNIT_TIME_NANOSECOND
 ]
 
 export const UNIT_WEIGHT_KILOGRAM = new ConverterUnit("Kilogram", 'kg', 1E-3)
@@ -172,11 +172,11 @@ export const UNIT_WEIGHT_OUNCE = new ConverterUnit("Ounce", 'oz', 0.0352739907)
 export const UNIT_WEIGHT_POUND = new ConverterUnit("Pound", 'lbs', 0.0022046244)
 export const UNIT_WEIGHT_CARRAT = new ConverterUnit("Carrat", 'ct', 5)
 export const UNIT_WEIGHT = [
-    UNIT_WEIGHT_KILOGRAM, UNIT_WEIGHT_HECTOGRAM, UNIT_WEIGHT_DEKAGRAM,
-    UNIT_WEIGHT_GRAM, UNIT_WEIGHT_DECIGRAM, UNIT_WEIGHT_CENTIGRAM,
-    UNIT_WEIGHT_MILLIGRAM, UNIT_WEIGHT_MICROGRAM, UNIT_WEIGHT_NANOGRAM,
-    UNIT_WEIGHT_PICOGRAM, UNIT_WEIGHT_TONNE, UNIT_WEIGHT_OUNCE,
-    UNIT_WEIGHT_POUND, UNIT_WEIGHT_CARRAT
+	UNIT_WEIGHT_KILOGRAM, UNIT_WEIGHT_HECTOGRAM, UNIT_WEIGHT_DEKAGRAM,
+	UNIT_WEIGHT_GRAM, UNIT_WEIGHT_DECIGRAM, UNIT_WEIGHT_CENTIGRAM,
+	UNIT_WEIGHT_MILLIGRAM, UNIT_WEIGHT_MICROGRAM, UNIT_WEIGHT_NANOGRAM,
+	UNIT_WEIGHT_PICOGRAM, UNIT_WEIGHT_TONNE, UNIT_WEIGHT_OUNCE,
+	UNIT_WEIGHT_POUND, UNIT_WEIGHT_CARRAT
 ]
 
 export const UNIT_FREQUENCY_TERAHERTZ = new ConverterUnit("Terahertz", 'THz', 1E-12)
@@ -185,8 +185,8 @@ export const UNIT_FREQUENCY_MEGAHERTZ = new ConverterUnit("Megahertz", 'MHz', 1E
 export const UNIT_FREQUENCY_KILOHERTZ = new ConverterUnit("Kilohertz", 'KHz', 1E-3)
 export const UNIT_FREQUENCY_HERTZ = new ConverterUnit("Hertz", 'Hz', 1)
 export const UNIT_FREQUENCY = [
-    UNIT_FREQUENCY_TERAHERTZ, UNIT_FREQUENCY_GIGAHERTZ, UNIT_FREQUENCY_MEGAHERTZ,
-    UNIT_FREQUENCY_KILOHERTZ, UNIT_FREQUENCY_HERTZ
+	UNIT_FREQUENCY_TERAHERTZ, UNIT_FREQUENCY_GIGAHERTZ, UNIT_FREQUENCY_MEGAHERTZ,
+	UNIT_FREQUENCY_KILOHERTZ, UNIT_FREQUENCY_HERTZ
 ]
 
 export const UNIT_PRESSURE_KILOPASCAL = new ConverterUnit("Kilopascal", 'km', 1E-3)
@@ -204,16 +204,16 @@ export const UNIT_PRESSURE_PSI = new ConverterUnit("Psi", 'psi', 0.0001450377)
 export const UNIT_PRESSURE_ATMOSPHERE = new ConverterUnit("Atmosphere", 'atm', 0.0000098692)
 export const UNIT_PRESSURE_TORR = new ConverterUnit("Torr", 'torr', 0.0075006168)
 export const UNIT_PRESSURE = [
-    UNIT_PRESSURE_KILOPASCAL, UNIT_PRESSURE_HECTOPASCAL, UNIT_PRESSURE_DEKAPASCAL,
-    UNIT_PRESSURE_PASCAL, UNIT_PRESSURE_DECIPASCAL, UNIT_PRESSURE_CENTIPASCAL,
-    UNIT_PRESSURE_MILLIPASCAL, UNIT_PRESSURE_MICROPASCAL, UNIT_PRESSURE_NANOPASCAL,
-    UNIT_PRESSURE_PICOPASCAL, UNIT_PRESSURE_BAR, UNIT_PRESSURE_PSI,
-    UNIT_PRESSURE_ATMOSPHERE, UNIT_PRESSURE_TORR
+	UNIT_PRESSURE_KILOPASCAL, UNIT_PRESSURE_HECTOPASCAL, UNIT_PRESSURE_DEKAPASCAL,
+	UNIT_PRESSURE_PASCAL, UNIT_PRESSURE_DECIPASCAL, UNIT_PRESSURE_CENTIPASCAL,
+	UNIT_PRESSURE_MILLIPASCAL, UNIT_PRESSURE_MICROPASCAL, UNIT_PRESSURE_NANOPASCAL,
+	UNIT_PRESSURE_PICOPASCAL, UNIT_PRESSURE_BAR, UNIT_PRESSURE_PSI,
+	UNIT_PRESSURE_ATMOSPHERE, UNIT_PRESSURE_TORR
 ]
 
 export const UNIT_ANGLE_GRADIAN = new ConverterUnit("Gradian", 'ᵍ', 63.662)
 export const UNIT_ANGLE_RADIAN = new ConverterUnit("Radian", 'rad', 1)
 export const UNIT_ANGLE_DEGREE = new ConverterUnit("Degree", '°', 57.2958)
 export const UNIT_ANGLE = [
-    UNIT_ANGLE_GRADIAN, UNIT_ANGLE_RADIAN, UNIT_ANGLE_DEGREE
+	UNIT_ANGLE_GRADIAN, UNIT_ANGLE_RADIAN, UNIT_ANGLE_DEGREE
 ]
