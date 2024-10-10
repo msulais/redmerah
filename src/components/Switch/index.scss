@@ -49,6 +49,10 @@
 				cursor: pointer;
 				--switch-handle-size: calc(var(--switch-height) - 6px);
 
+				& * {
+					cursor: pointer;
+				}
+
 				&[data-checked] > div {
 					transform: translate(2px, -2px);
 				}

@@ -70,6 +70,62 @@
 	}
 }
 
-.switch-menu-item:has( > div > :last-child > input:focus-visible) {
-	outline: auto;
+.switch-menu-item{
+	&:has( > div > :last-child > input:focus-visible) {
+		outline: auto;
+	}
+
+	&:not([data-disabled]){
+		@media (hover: hover) {
+			&:hover {
+				cursor: pointer;
+
+				& * {
+					cursor: pointer;
+				}
+
+				> div > :last-child {
+					--switch-handle-size: calc(var(--switch-height) - 6px);
+
+					&[data-checked] > div {
+						transform: translate(2px, -2px);
+					}
+
+					> div {
+						transform: translate(-2px, -2px);
+
+						:root:not([data-corner=sharp]) & {
+							border-radius: max(0px, var(--switch-border-radius) - 2px);
+						}
+					}
+				}
+			}
+		}
+
+		&:active > div > :last-child {
+			@media (hover: hover) {
+				--switch-handle-size: calc(var(--switch-height) - 10px);
+
+				> div {
+					transform: none !important;
+				}
+			}
+
+			@media (hover: none) {
+				--switch-handle-size: calc(var(--switch-height) - 6px);
+
+				&[data-checked] > div {
+					transform: translate(2px, -2px);
+				}
+
+				> div {
+					transform: translate(-2px, -2px);
+
+					:root:not([data-corner=sharp]) & {
+						border-radius: max(0px, var(--switch-border-radius) - 2px);
+					}
+				}
+			}
+		}
+	}
 }
