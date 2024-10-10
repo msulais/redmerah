@@ -232,8 +232,10 @@ const _: VoidComponent<{
 				<MenuDivider/>
 				<SwitchMenuItem
 					iconCode={0xF19D}
-					value={props[_settings][_textWrap]}
-					onValueChanged={() => props[_command](Commands.toggle_textWrap)}>
+					checked={props[_settings][_textWrap]}
+					switchAttr={{
+						onChange: () => props[_command](Commands.toggle_textWrap)
+					}}>
 					Text wrap
 				</SwitchMenuItem>
 				<div style={{padding: '8px 12px'}}>

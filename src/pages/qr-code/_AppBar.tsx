@@ -1,7 +1,7 @@
 import { createSignal, onMount, Show, type VoidComponent } from "solid-js"
 
 import type { Settings } from "./_types"
-import { _system, _round, _theme, _corner, _command, _light, _dark, _includes, _sharp, _semiRound, _fullRound, _home, _src, _apps, _about, _privacy, _terms, _share, _URL, _contactEmail, _donate, _getFullYear, _page, _generate, _low, _settings, _errorCorrectionLevel, _medium, _quartile, _high, _auto, _encodingMode, _alphanumeric, _byte, _kanji, _numeric, _color, _currentTarget, _leftCenterToBottom, _backgroundColor, _margin, _version, _png, _jpeg, _svg, _isGenerateError } from "@/constants/string"
+import { _system, _round, _theme, _corner, _command, _light, _dark, _includes, _sharp, _semiRound, _fullRound, _home, _src, _apps, _about, _privacy, _terms, _share, _URL, _contactEmail, _donate, _getFullYear, _page, _generate, _low, _settings, _errorCorrectionLevel, _medium, _quartile, _high, _auto, _encodingMode, _alphanumeric, _byte, _kanji, _numeric, _color, _currentTarget, _leftCenterToBottom, _backgroundColor, _margin, _version, _png, _jpeg, _svg, _isGenerateError, _checked } from "@/constants/string"
 import { getDocument, getNavigator, getRoot } from "@/constants/window"
 import { RootAttributes } from "@/enums/attributes"
 import { CornerData } from "@/enums/corner"
@@ -357,8 +357,10 @@ const _: VoidComponent<{
 				<MenuHeader>QR Code version</MenuHeader>
 				<SwitchMenuItem
 					iconCode={0xEB49}
-					value={props[_settings][_version] == null}
-					onValueChanged={isChecked => props[_command](Commands.change_settings_version, isChecked? null : 1)}>
+					checked={props[_settings][_version] == null}
+					switchAttr={{
+						onChange: ev => props[_command](Commands.change_settings_version, ev[_currentTarget][_checked]? null : 1)
+					}}>
 					Auto version
 				</SwitchMenuItem>
 				<div style={{padding: '4px 12px 8px 12px'}}>

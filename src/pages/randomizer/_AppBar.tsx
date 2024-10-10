@@ -249,16 +249,20 @@ const _: Component<{
 			</MenuHeader>
 			<Show when={props[_randomizerType] == RandomizerType[_numbers] || props[_randomizerType] == RandomizerType[_words]}>
 				<SwitchMenuItem
-					value={isRepeat()}
+					checked={isRepeat()}
 					iconCode={0xE0A1}
-					onValueChanged={() => props[_command](Commands[_toggle_settings_repeat])}
+					switchAttr={{
+						onChange: () => props[_command](Commands[_toggle_settings_repeat])
+					}}
 					trailing={<MenuIndent/>}>
 					Repeat
 				</SwitchMenuItem>
 			</Show>
 			<SwitchMenuItem
-				value={isAnimation()}
-				onValueChanged={() => props[_command](Commands[_toggle_settings_animation])}
+				checked={isAnimation()}
+				switchAttr={{
+					onChange: () => props[_command](Commands[_toggle_settings_animation])
+				}}
 				iconCode={0xECBA}
 				trailing={<MenuIndent/>}>
 				Animation

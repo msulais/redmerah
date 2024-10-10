@@ -231,14 +231,14 @@ const _: VoidComponent<{
 				<MenuDivider/>
 				<SwitchMenuItem
 					iconCode={0xF19D}
-					value={props[_settings][_textWrap]}
-					onValueChanged={() => props[_command](Commands.toggle_textWrap)}>
+					checked={props[_settings][_textWrap]}
+					switchAttr={{onChange: () => props[_command](Commands.toggle_textWrap)}}>
 					Text wrap
 				</SwitchMenuItem>
 				<SwitchMenuItem
 					iconCode={0xE0F5}
-					value={props[_settings][_minify]}
-					onValueChanged={() => props[_command](Commands.toggle_minify)}>
+					checked={props[_settings][_minify]}
+					switchAttr={{onChange: () => props[_command](Commands.toggle_minify)}}>
 					Minify CSS
 				</SwitchMenuItem>
 				<div style={{padding: '8px 12px'}}>

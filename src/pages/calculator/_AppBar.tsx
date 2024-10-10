@@ -192,17 +192,22 @@ const _: VoidComponent<{
 			onToggleOpen={(v) => setIs_menu_settings_open(v)}>
 			<TextTooltip text={"Display result in scientific notation (e.g. 1.2E-29)"}>
 				<SwitchMenuItem
-					value={props[_settings][_scientificNotation]}
 					iconCode={0xEA91}
-					onValueChanged={() => props[_command](Commands.toggle_settings_scientificNotation)}>
+					switchAttr={{
+						checked: props[_settings][_scientificNotation],
+						onChange: () => props[_command](Commands.toggle_settings_scientificNotation),
+					}}>
 					Scientific notation
 				</SwitchMenuItem>
 			</TextTooltip>
 			<TextTooltip text={"Show or hide memory button (M, M+, M-, MR, MC)"}>
 				<SwitchMenuItem
-					value={props[_settings][_memoryButtons]}
+					checked={props[_settings][_memoryButtons]}
 					iconCode={0xE5CD}
-					onValueChanged={() => props[_command](Commands.toggle_settings_memoryButtons)}>
+					switchAttr={{
+						checked: props[_settings][_memoryButtons],
+						onChange: () => props[_command](Commands.toggle_settings_memoryButtons),
+					}}>
 					Memory buttons
 				</SwitchMenuItem>
 			</TextTooltip>
