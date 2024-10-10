@@ -14,5 +14,6 @@ export enum DatabaseNames {
 	sassConverter = 'sass-converter',
 	notes = 'notes',
 	qrCode = 'qr-code',
-	colorGradient = 'color-gradient'
+	colorGradient = 'color-gradient',
+	biruUi = 'biru-ui'
 }

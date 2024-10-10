@@ -1,6 +1,6 @@
 import { createSignal, Show, type VoidComponent } from "solid-js"
 
-import { _centerTop, _tonal, _filled, _centerBottom, _leftBottom, _leftTop, _rightBottom, _rightTop } from "@/constants/string"
+import { _centerTop, _tonal, _filled, _centerBottom, _leftBottom, _leftTop, _rightBottom, _rightTop, _checked, _currentTarget } from "@/constants/string"
 
 import Icon from "@/components/Icon"
 import Button, { ButtonVariant, IconButton } from "@/components/Button"
@@ -68,12 +68,36 @@ const _: VoidComponent = () => {
 				selectedValues={[position()]}
 				onSelectedItemsChanged={(items) => setPosition(items[0][0] as ToastPosition)}
 			/>
-			<CheckBox value={header()} onValueChanged={v => setHeader(v)}>Header</CheckBox>
-			<CheckBox value={actions()} onValueChanged={v => setActions(v)}>Actions</CheckBox>
-			<CheckBox value={leading()} onValueChanged={v => setLeading(v)}>Leading</CheckBox>
-			<CheckBox value={trailing()} onValueChanged={v => setTrailing(v)}>Trailing</CheckBox>
-			<CheckBox value={content()} onValueChanged={v => setContent(v)}>Content</CheckBox>
-			<CheckBox value={autoClose()} onValueChanged={v => setAutoClose(v)}>Auto close</CheckBox>
+			<CheckBox
+				checked={header()}
+				onChange={ev => setHeader(ev[_currentTarget][_checked])}>
+				Header
+			</CheckBox>
+			<CheckBox
+				checked={actions()}
+				onChange={ev => setActions(ev[_currentTarget][_checked])}>
+				Actions
+			</CheckBox>
+			<CheckBox
+				checked={leading()}
+				onChange={ev => setLeading(ev[_currentTarget][_checked])}>
+				Leading
+			</CheckBox>
+			<CheckBox
+				checked={trailing()}
+				onChange={ev => setTrailing(ev[_currentTarget][_checked])}>
+				Trailing
+			</CheckBox>
+			<CheckBox
+				checked={content()}
+				onChange={ev => setContent(ev[_currentTarget][_checked])}>
+				Content
+			</CheckBox>
+			<CheckBox
+				checked={autoClose()}
+				onChange={ev => setAutoClose(ev[_currentTarget][_checked])}>
+				Auto close
+			</CheckBox>
 		</PlaygroundOptions>
 	</Page>)
 }

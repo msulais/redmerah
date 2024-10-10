@@ -1,6 +1,6 @@
 import { createSignal, Show, type VoidComponent } from "solid-js"
 
-import { _tonal, _filled, _currentTarget, _value } from "@/constants/string"
+import { _tonal, _filled, _currentTarget, _value, _checked } from "@/constants/string"
 
 import Button, { ButtonVariant } from "@/components/Button"
 import CheckBox from "@/components/CheckBox"
@@ -53,11 +53,31 @@ const _: VoidComponent = () => {
 			<Show when={hasContent()}>
 				<TextField labelText="Content text" value="Cupidatat aliqua est quis enim commodo. Aute Lorem occaecat commodo nisi amet dolor ut cupidatat qui ipsum magna in. In aliquip voluptate nulla aliquip duis cillum consectetur eiusmod adipisicing reprehenderit officia reprehenderit adipisicing dolor." onInput={ev => setContentText(ev[_currentTarget][_value])}/>
 			</Show>
-			<CheckBox value={important()} onValueChanged={i => setImportant(i)}>Important</CheckBox>
-			<CheckBox value={inputAutoFocus()} onValueChanged={i => setInputAutoFocus(i)}>Input autofocus</CheckBox>
-			<CheckBox value={hasHeader()} onValueChanged={i => setHasHeader(i)}>Header</CheckBox>
-			<CheckBox value={hasActions()} onValueChanged={i => setHasActions(i)}>Actions</CheckBox>
-			<CheckBox value={hasContent()} onValueChanged={i => setHasContent(i)}>Content</CheckBox>
+			<CheckBox
+				checked={important()}
+				onChange={ev => setImportant(ev[_currentTarget][_checked])}>
+				Important
+			</CheckBox>
+			<CheckBox
+				checked={inputAutoFocus()}
+				onChange={ev => setInputAutoFocus(ev[_currentTarget][_checked])}>
+				Input autofocus
+			</CheckBox>
+			<CheckBox
+				checked={hasHeader()}
+				onChange={ev => setHasHeader(ev[_currentTarget][_checked])}>
+				Header
+			</CheckBox>
+			<CheckBox
+				checked={hasActions()}
+				onChange={ev => setHasActions(ev[_currentTarget][_checked])}>
+				Actions
+			</CheckBox>
+			<CheckBox
+				checked={hasContent()}
+				onChange={ev => setHasContent(ev[_currentTarget][_checked])}>
+				Content
+			</CheckBox>
 		</PlaygroundOptions>
 	</Page>)
 }

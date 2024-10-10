@@ -1,6 +1,6 @@
 import { createSignal, Show, type VoidComponent } from "solid-js"
 
-import { _text, _password, _telephone, _email, _url } from "@/constants/string"
+import { _text, _password, _telephone, _email, _url, _checked, _currentTarget } from "@/constants/string"
 
 import Icon from "@/components/Icon"
 import CheckBox from "@/components/CheckBox"
@@ -35,17 +35,53 @@ const _: VoidComponent = () => {
 	const [limitMaxLine, setLimitMaxLine] = createSignal<boolean>(false)
 
 	const Options: VoidComponent = () => (<>
-		<CheckBox value={leading()} onValueChanged={v => setLeading(v)}>Leading</CheckBox>
-		<CheckBox value={trailing()} onValueChanged={v => setTrailing(v)}>Trailing</CheckBox>
-		<CheckBox value={labelText()} onValueChanged={v => setLabelText(v)}>Label text</CheckBox>
+		<CheckBox
+			checked={leading()}
+			onChange={ev => setLeading(ev[_currentTarget][_checked])}>
+			Leading
+		</CheckBox>
+		<CheckBox
+			checked={trailing()}
+			onChange={ev => setTrailing(ev[_currentTarget][_checked])}>
+			Trailing
+		</CheckBox>
+		<CheckBox
+			checked={labelText()}
+			onChange={ev => setLabelText(ev[_currentTarget][_checked])}>
+			Label text
+		</CheckBox>
 		<Show when={labelText()}>
-			<CheckBox value={autoHideLabel()} onValueChanged={v => setAutoHideLabel(v)}>Auto hide label</CheckBox>
+			<CheckBox
+				checked={autoHideLabel()}
+				onChange={ev => setAutoHideLabel(ev[_currentTarget][_checked])}>
+				Auto hide label
+			</CheckBox>
 		</Show>
-		<CheckBox value={placeholder()} onValueChanged={v => setPlaceholder(v)}>Placeholder</CheckBox>
-		<CheckBox value={messageText()} onValueChanged={v => setMessageText(v)}>Message text</CheckBox>
-		<CheckBox value={autoShowClearBtn()} onValueChanged={v => setAutoShowClearBtn(v)}>Auto show clear button</CheckBox>
-		<CheckBox value={readOnly()} onValueChanged={v => setReadOnly(v)}>Read only</CheckBox>
-		<CheckBox value={compact()} onValueChanged={v => setCompact(v)}>Compact</CheckBox>
+		<CheckBox
+			checked={placeholder()}
+			onChange={ev => setPlaceholder(ev[_currentTarget][_checked])}>
+			Placeholder
+		</CheckBox>
+		<CheckBox
+			checked={messageText()}
+			onChange={ev => setMessageText(ev[_currentTarget][_checked])}>
+			Message text
+		</CheckBox>
+		<CheckBox
+			checked={autoShowClearBtn()}
+			onChange={ev => setAutoShowClearBtn(ev[_currentTarget][_checked])}>
+			Auto show clear button
+		</CheckBox>
+		<CheckBox
+			checked={readOnly()}
+			onChange={ev => setReadOnly(ev[_currentTarget][_checked])}>
+			Read only
+		</CheckBox>
+		<CheckBox
+			checked={compact()}
+			onChange={ev => setCompact(ev[_currentTarget][_checked])}>
+			Compact
+		</CheckBox>
 	</>)
 
 	return (<Page
@@ -132,8 +168,16 @@ const _: VoidComponent = () => {
 				/>
 			</Show>
 			<Options />
-			<CheckBox value={limitMin()} onValueChanged={(v) => setLimitMin(v)}>Limit min</CheckBox>
-			<CheckBox value={limitMax()} onValueChanged={(v) => setLimitMax(v)}>Limit max</CheckBox>
+			<CheckBox
+				checked={limitMin()}
+				onChange={ev => setLimitMin(ev[_currentTarget][_checked])}>
+				Limit min
+			</CheckBox>
+			<CheckBox
+				checked={limitMax()}
+				onChange={ev => setLimitMax(ev[_currentTarget][_checked])}>
+				Limit max
+			</CheckBox>
 		</PlaygroundOptions>
 
 		<h2>AreaTextField</h2>
@@ -174,7 +218,11 @@ const _: VoidComponent = () => {
 				/>
 			</Show>
 			<Options />
-			<CheckBox value={limitMaxLine()} onValueChanged={(v) => setLimitMaxLine(v)}>Limit max line</CheckBox>
+			<CheckBox
+				checked={limitMaxLine()}
+				onChange={ev => setLimitMaxLine(ev[_currentTarget][_checked])}>
+				Limit max line
+			</CheckBox>
 		</PlaygroundOptions>
 	</Page>)
 }

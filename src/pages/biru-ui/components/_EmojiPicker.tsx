@@ -2,7 +2,7 @@ import { createSignal, Show, type VoidComponent } from "solid-js"
 
 import { Page, Playground, PlaygroundOptions } from "../_Body"
 import Button, { ButtonVariant } from "@/components/Button"
-import { _centerBottom, _centerBottomToLeft, _centerBottomToRight, _centerCenter, _centerCenterBottom, _centerCenterLeft, _centerCenterLeftBottom, _centerCenterLeftTop, _centerCenterRight, _centerCenterRightBottom, _centerCenterRightTop, _centerCenterTop, _centerTop, _centerTopToLeft, _centerTopToRight, _currentTarget, _includes, _leftBottom, _leftCenter, _leftCenterToBottom, _leftCenterToTop, _leftTop, _rightBottom, _rightCenter, _rightCenterToBottom, _rightCenterToTop, _rightTop, _tonal } from "@/constants/string"
+import { _centerBottom, _centerBottomToLeft, _centerBottomToRight, _centerCenter, _centerCenterBottom, _centerCenterLeft, _centerCenterLeftBottom, _centerCenterLeftTop, _centerCenterRight, _centerCenterRightBottom, _centerCenterRightTop, _centerCenterTop, _centerTop, _centerTopToLeft, _centerTopToRight, _checked, _currentTarget, _includes, _leftBottom, _leftCenter, _leftCenterToBottom, _leftCenterToTop, _leftTop, _rightBottom, _rightCenter, _rightCenterToBottom, _rightCenterToTop, _rightTop, _tonal } from "@/constants/string"
 import EmojiPicker, { EmojiPickerPosition, openEmojiPicker } from "@/components/EmojiPicker"
 import type { Emoji } from "@/types/emoji"
 import Icon from "@/components/Icon"
@@ -104,12 +104,36 @@ const _: VoidComponent = () => {
 			][_includes](position())}>
 				<NumberTextField value={padding()} style={{width: '100px'}} min={0} onFinalValueChanged={(v) => setPadding(v)} labelText="Padding"/>
 			</Show>
-			<CheckBox value={anchor()} onValueChanged={v => setAnchor(v)}>Anchor</CheckBox>
-			<CheckBox value={important()} onValueChanged={v => setImportant(v)}>Important</CheckBox>
-			<CheckBox value={dragable()} onValueChanged={v => setDragable(v)}>Dragable</CheckBox>
-			<CheckBox value={allowHideAnchor()} onValueChanged={v => setAllowHideAnchor(v)}>Allow hide anchor</CheckBox>
-			<CheckBox value={multiple()} onValueChanged={v => setMultiple(v)}>Multiple</CheckBox>
-			<CheckBox value={showCloseButton()} onValueChanged={v => setShowCloseButton(v)}>Show close button</CheckBox>
+			<CheckBox
+				checked={anchor()}
+				onChange={ev => setAnchor(ev[_currentTarget][_checked])}>
+				Anchor
+			</CheckBox>
+			<CheckBox
+				checked={important()}
+				onChange={ev => setImportant(ev[_currentTarget][_checked])}>
+				Important
+			</CheckBox>
+			<CheckBox
+				checked={dragable()}
+				onChange={ev => setDragable(ev[_currentTarget][_checked])}>
+				Dragable
+			</CheckBox>
+			<CheckBox
+				checked={allowHideAnchor()}
+				onChange={ev => setAllowHideAnchor(ev[_currentTarget][_checked])}>
+				Allow hide anchor
+			</CheckBox>
+			<CheckBox
+				checked={multiple()}
+				onChange={ev => setMultiple(ev[_currentTarget][_checked])}>
+				Multiple
+			</CheckBox>
+			<CheckBox
+				checked={showCloseButton()}
+				onChange={ev => setShowCloseButton(ev[_currentTarget][_checked])}>
+				Show close button
+			</CheckBox>
 		</PlaygroundOptions>
 	</Page>)
 }

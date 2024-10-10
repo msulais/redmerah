@@ -1,6 +1,6 @@
 import { createSignal, Show, type VoidComponent } from "solid-js"
 
-import { _tonal, _filled, _outlined, _transparent } from "@/constants/string"
+import { _tonal, _filled, _outlined, _transparent, _checked, _currentTarget } from "@/constants/string"
 import { stopPropagation } from "@/utils/event"
 
 import Icon from "@/components/Icon"
@@ -50,12 +50,36 @@ const _: VoidComponent = () => {
 				selectedValues={[variant()]}
 				onSelectedItemsChanged={(items) => setVariant(items[0][0] as ExpanderVariant)}
 			/>
-			<CheckBox value={title()} onValueChanged={(v) => setTitle(v)}>Title</CheckBox>
-			<CheckBox value={subtitle()} onValueChanged={(v) => setSubtitle(v)}>Subtitle</CheckBox>
-			<CheckBox value={leading()} onValueChanged={(v) => setLeading(v)}>Leading</CheckBox>
-			<CheckBox value={trailing()} onValueChanged={(v) => setTrailing(v)}>Trailing</CheckBox>
-			<CheckBox value={showExpandIcon()} onValueChanged={(v) => setShowExpandIcon(v)}>Show expand icon</CheckBox>
-			<CheckBox value={content()} onValueChanged={(v) => setContent(v)}>Content</CheckBox>
+			<CheckBox
+				checked={title()}
+				onChange={ev => setTitle(ev[_currentTarget][_checked])}>
+				Title
+			</CheckBox>
+			<CheckBox
+				checked={subtitle()}
+				onChange={ev => setSubtitle(ev[_currentTarget][_checked])}>
+				Subtitle
+			</CheckBox>
+			<CheckBox
+				checked={leading()}
+				onChange={ev => setLeading(ev[_currentTarget][_checked])}>
+				Leading
+			</CheckBox>
+			<CheckBox
+				checked={trailing()}
+				onChange={ev => setTrailing(ev[_currentTarget][_checked])}>
+				Trailing
+			</CheckBox>
+			<CheckBox
+				checked={showExpandIcon()}
+				onChange={ev => setShowExpandIcon(ev[_currentTarget][_checked])}>
+				Show expand icon
+			</CheckBox>
+			<CheckBox
+				checked={content()}
+				onChange={ev => setContent(ev[_currentTarget][_checked])}>
+				Content
+			</CheckBox>
 		</PlaygroundOptions>
 	</Page>)
 }

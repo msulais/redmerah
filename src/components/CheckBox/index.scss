@@ -4,6 +4,22 @@
 	gap: 4px;
 	align-items: center;
 	user-select: none;
+	transition-duration: .3s;
+
+	> input {
+		-moz-appearance: none;
+		-webkit-appearance: none;
+		appearance: none;
+
+		&:focus-visible + .btn {
+			outline: auto;
+		}
+	}
+
+	& * {
+		pointer-events: none;
+		user-select: none;
+	}
 
 	&[data-disabled] {
 		color: rgba(var(--color-on-surface), var(--opacity5));
@@ -19,22 +35,22 @@
 			&:hover {
 				cursor: pointer;
 
-				> .btn.checkbox-icon {
+				& * {
+					cursor: pointer;
+				}
+
+				> .btn {
 					--bg-opacity: var(--opacity1);
 				}
 			}
 		}
 
-		&:active > .btn.checkbox-icon {
+		&:active > .btn {
 			--bg-opacity: var(--opacity0);
 			--btn-border-opacity: var(--opacity1);
-
-			&:not([data-noscale]) > .btn-layer {
-				scale: .85;
-			}
 		}
 
-		> .btn.checkbox-icon {
+		> .btn > div > .icon {
 			color: rgb(var(--color-accent));
 		}
 	}

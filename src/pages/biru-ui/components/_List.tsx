@@ -7,6 +7,7 @@ import List from "@/components/List"
 import { IconButton } from "@/components/Button"
 import CheckBox from "@/components/CheckBox"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
+import { _currentTarget, _checked } from "@/constants/string"
 
 const _: VoidComponent = () => {
 	const [title, setTitle] = createSignal<boolean>(true)
@@ -52,10 +53,26 @@ const _: VoidComponent = () => {
 			</List>
 		</Playground>
 		<PlaygroundOptions>
-			<CheckBox value={title()} onValueChanged={(v) => setTitle(v)}>Title</CheckBox>
-			<CheckBox value={subtitle()} onValueChanged={(v) => setSubtitle(v)}>Subtitle</CheckBox>
-			<CheckBox value={leading()} onValueChanged={(v) => setLeading(v)}>Leading</CheckBox>
-			<CheckBox value={trailing()} onValueChanged={(v) => setTrailing(v)}>Trailing</CheckBox>
+			<CheckBox
+				checked={title()}
+				onChange={ev => setTitle(ev[_currentTarget][_checked])}>
+				Title
+			</CheckBox>
+			<CheckBox
+				checked={subtitle()}
+				onChange={ev => setSubtitle(ev[_currentTarget][_checked])}>
+				Subtitle
+			</CheckBox>
+			<CheckBox
+				checked={leading()}
+				onChange={ev => setLeading(ev[_currentTarget][_checked])}>
+				Leading
+			</CheckBox>
+			<CheckBox
+				checked={trailing()}
+				onChange={ev => setTrailing(ev[_currentTarget][_checked])}>
+				Trailing
+			</CheckBox>
 		</PlaygroundOptions>
 	</Page>)
 }

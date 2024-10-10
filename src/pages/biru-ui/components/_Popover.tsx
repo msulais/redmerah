@@ -1,6 +1,6 @@
 import { createSignal, Show, type VoidComponent } from "solid-js"
 
-import { _centerBottom, _tonal, _currentTarget, _filled, _leftTop, _leftCenterToBottom, _leftCenter, _leftCenterToTop, _leftBottom, _rightTop, _rightCenterToBottom, _rightCenter, _rightCenterToTop, _rightBottom, _centerTopToRight, _centerTop, _centerTopToLeft, _centerBottomToRight, _centerBottomToLeft, _centerCenterLeftTop, _centerCenterLeft, _centerCenterLeftBottom, _centerCenterTop, _centerCenter, _centerCenterBottom, _centerCenterRightTop, _centerCenterRight, _centerCenterRightBottom, _includes } from "@/constants/string"
+import { _centerBottom, _tonal, _currentTarget, _filled, _leftTop, _leftCenterToBottom, _leftCenter, _leftCenterToTop, _leftBottom, _rightTop, _rightCenterToBottom, _rightCenter, _rightCenterToTop, _rightBottom, _centerTopToRight, _centerTop, _centerTopToLeft, _centerBottomToRight, _centerBottomToLeft, _centerCenterLeftTop, _centerCenterLeft, _centerCenterLeftBottom, _centerCenterTop, _centerCenter, _centerCenterBottom, _centerCenterRightTop, _centerCenterRight, _centerCenterRightBottom, _includes, _checked } from "@/constants/string"
 
 import Button, { ButtonVariant } from "@/components/Button"
 import CheckBox from "@/components/CheckBox"
@@ -93,10 +93,26 @@ const _: VoidComponent = () => {
 			][_includes](position())}>
 				<NumberTextField value={padding()} style={{width: '100px'}} min={0} onFinalValueChanged={(v) => setPadding(v)} labelText="Padding"/>
 			</Show>
-			<CheckBox value={anchor()} onValueChanged={v => setAnchor(v)}>Anchor</CheckBox>
-			<CheckBox value={dragable()} onValueChanged={v => setDragable(v)}>Dragable</CheckBox>
-			<CheckBox value={allowHideAnchor()} onValueChanged={v => setAllowHideAnchor(v)}>Allow hide anchor</CheckBox>
-			<CheckBox value={manualDismiss()} onValueChanged={v => setManualDismiss(v)}>Manual dismiss</CheckBox>
+			<CheckBox
+				checked={anchor()}
+				onChange={ev => setAnchor(ev[_currentTarget][_checked])}>
+				Anchor
+			</CheckBox>
+			<CheckBox
+				checked={dragable()}
+				onChange={ev => setDragable(ev[_currentTarget][_checked])}>
+				Dragable
+			</CheckBox>
+			<CheckBox
+				checked={allowHideAnchor()}
+				onChange={ev => setAllowHideAnchor(ev[_currentTarget][_checked])}>
+				Allow hide anchor
+			</CheckBox>
+			<CheckBox
+				checked={manualDismiss()}
+				onChange={ev => setManualDismiss(ev[_currentTarget][_checked])}>
+				Manual dismiss
+			</CheckBox>
 		</PlaygroundOptions>
 	</Page>)
 }

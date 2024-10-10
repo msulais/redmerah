@@ -1,6 +1,6 @@
 import { type VoidComponent, createSignal, Show } from "solid-js"
 
-import { _transparent, _bottom, _filled, _tonal, _outlined, _top, _right, _left } from "@/constants/string"
+import { _transparent, _bottom, _filled, _tonal, _outlined, _top, _right, _left, _checked, _currentTarget } from "@/constants/string"
 
 import { TextTooltip } from "@/components/Tooltip"
 import Icon from "@/components/Icon"
@@ -169,12 +169,36 @@ const _: VoidComponent = () => {
 					selectedValues={[indicatorPosition()]}
 				/>
 			</Show>
-			<CheckBox value={disabled()} onValueChanged={d => setDisabled(d)}>Disabled</CheckBox>
-			<CheckBox value={focused()} onValueChanged={d => setFocused(d)}>Focused</CheckBox>
-			<CheckBox value={selected()} onValueChanged={d => setSelected(d)}>Selected</CheckBox>
-			<CheckBox value={icon()} onValueChanged={d => setIcon(d)}>Show icon</CheckBox>
-			<CheckBox value={disableScale()} onValueChanged={d => setDisableScale(d)}>Disable scale</CheckBox>
-			<CheckBox value={compact()} onValueChanged={d => setCompact(d)}>Compact</CheckBox>
+			<CheckBox
+				checked={disabled()}
+				onChange={ev => setDisabled(ev[_currentTarget][_checked])}>
+				Disabled
+			</CheckBox>
+			<CheckBox
+				checked={focused()}
+				onChange={ev => setFocused(ev[_currentTarget][_checked])}>
+				Focused
+			</CheckBox>
+			<CheckBox
+				checked={selected()}
+				onChange={ev => setSelected(ev[_currentTarget][_checked])}>
+				Selected
+			</CheckBox>
+			<CheckBox
+				checked={icon()}
+				onChange={ev => setIcon(ev[_currentTarget][_checked])}>
+				Show icon
+			</CheckBox>
+			<CheckBox
+				checked={disableScale()}
+				onChange={ev => setDisableScale(ev[_currentTarget][_checked])}>
+				Disable scale
+			</CheckBox>
+			<CheckBox
+				checked={compact()}
+				onChange={ev => setCompact(ev[_currentTarget][_checked])}>
+				Compact
+			</CheckBox>
 		</PlaygroundOptions>
 	</Page>)
 }

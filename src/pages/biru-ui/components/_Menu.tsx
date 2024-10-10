@@ -1,6 +1,6 @@
 import { createSignal, Show, type VoidComponent } from "solid-js"
 
-import { _centerBottom, _tonal, _currentTarget, _leftTop, _leftCenterToBottom, _leftCenter, _leftCenterToTop, _leftBottom, _rightTop, _rightCenterToBottom, _rightCenter, _rightCenterToTop, _rightBottom, _centerTopToRight, _centerTop, _centerTopToLeft, _centerBottomToRight, _centerBottomToLeft, _centerCenterLeftTop, _centerCenterLeft, _centerCenterLeftBottom, _centerCenterTop, _centerCenter, _centerCenterBottom, _centerCenterRightTop, _centerCenterRight, _centerCenterRightBottom, _includes } from "@/constants/string"
+import { _centerBottom, _tonal, _currentTarget, _leftTop, _leftCenterToBottom, _leftCenter, _leftCenterToTop, _leftBottom, _rightTop, _rightCenterToBottom, _rightCenter, _rightCenterToTop, _rightBottom, _centerTopToRight, _centerTop, _centerTopToLeft, _centerBottomToRight, _centerBottomToLeft, _centerCenterLeftTop, _centerCenterLeft, _centerCenterLeftBottom, _centerCenterTop, _centerCenter, _centerCenterBottom, _centerCenterRightTop, _centerCenterRight, _centerCenterRightBottom, _includes, _checked } from "@/constants/string"
 import { FlyoutPosition } from "@/enums/position"
 
 import Icon from "@/components/Icon"
@@ -160,11 +160,31 @@ const _: VoidComponent = () => {
 			][_includes](position())}>
 				<NumberTextField value={padding()} style={{width: '100px'}} min={0} onFinalValueChanged={(v) => setPadding(v)} labelText="Padding"/>
 			</Show>
-			<CheckBox value={anchor()} onValueChanged={v => setAnchor(v)}>Anchor</CheckBox>
-			<CheckBox value={important()} onValueChanged={v => setImportant(v)}>Important</CheckBox>
-			<CheckBox value={inputAutoFocus()} onValueChanged={v => setInputAutoFocus(v)}>Input Autofocus</CheckBox>
-			<CheckBox value={dragable()} onValueChanged={v => setDragable(v)}>Dragable</CheckBox>
-			<CheckBox value={allowHideAnchor()} onValueChanged={v => setAllowHideAnchor(v)}>Allow hide anchor</CheckBox>
+			<CheckBox
+				checked={anchor()}
+				onChange={ev => setAnchor(ev[_currentTarget][_checked])}>
+				Anchor
+			</CheckBox>
+			<CheckBox
+				checked={important()}
+				onChange={ev => setImportant(ev[_currentTarget][_checked])}>
+				Important
+			</CheckBox>
+			<CheckBox
+				checked={inputAutoFocus()}
+				onChange={ev => setInputAutoFocus(ev[_currentTarget][_checked])}>
+				Input Autofocus
+			</CheckBox>
+			<CheckBox
+				checked={dragable()}
+				onChange={ev => setDragable(ev[_currentTarget][_checked])}>
+				Dragable
+			</CheckBox>
+			<CheckBox
+				checked={allowHideAnchor()}
+				onChange={ev => setAllowHideAnchor(ev[_currentTarget][_checked])}>
+				Allow hide anchor
+			</CheckBox>
 		</PlaygroundOptions>
 	</Page>)
 }
