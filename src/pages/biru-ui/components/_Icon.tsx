@@ -3,6 +3,7 @@ import { createSignal, type VoidComponent } from "solid-js"
 import Icon from "@/components/Icon"
 import CheckBox from "@/components/CheckBox"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
+import { _currentTarget, _checked } from "@/constants/string"
 
 const _: VoidComponent = () => {
 	const [filled, setFilled] = createSignal<boolean>(false)
@@ -23,7 +24,7 @@ const _: VoidComponent = () => {
 			<Icon code={0xEF77} filled={filled()}/>
 		</Playground>
 		<PlaygroundOptions>
-			<CheckBox value={filled()} onValueChanged={v => setFilled(v)}>Filled</CheckBox>
+			<CheckBox checked={filled()} onChange={ev => setFilled(ev[_currentTarget][_checked])}>Filled</CheckBox>
 		</PlaygroundOptions>
 	</Page>)
 }

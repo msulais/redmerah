@@ -3,7 +3,7 @@ import { createStore } from "solid-js/store"
 
 import type { TaskLabel, Settings, Task, TaskList, SubTask, TaskFileMetaData } from "./_types"
 import type { ComponentEvent } from "@/types/event"
-import { _command, _settings, _sortBy, _name, _importance, _creationDate, _completed, _uncompleted, _sortMode, _ascending, _descending, _isAnyUncompletedTask, _taskListIndex, _isAnyCompletedTask, _isAnyTask, _page, _tonal, _filled, _leading, _headline, _currentTarget, _isGroup, _tasks, _task, _complete, _onEdit, _onContextMenu, _taskIndex, _important, _onDelete, _subtasks, _length, _description, _reminder, _files, _labelIds, _onEditReminder, _outlined, _onEditFiles, _labels, _color, _onEditLabel, _all, _planned, _includes, _taskList, _number, _value, _trim, _id, _emoji, _onEditFilesTask, _onEditReminderTask, _onEditTask, _onContextMenuTask, _onDeleteTask, _taskLists, _some, _edit, _isShowDeleteTaskWarning, _file, _type, _startsWith, _text, _slice, _concat, _subtask, _subtaskIndex, _listId, _replace, _size, _taskId, _fileIndex, _action, _centerBottomToRight, _test, _toFixed, _join, _findIndex, _isFileDBError, _then, _image, _video, _audio, _normal, _contents, _chip, _rightCenterToBottom } from "@/constants/string"
+import { _command, _settings, _sortBy, _name, _importance, _creationDate, _completed, _uncompleted, _sortMode, _ascending, _descending, _isAnyUncompletedTask, _taskListIndex, _isAnyCompletedTask, _isAnyTask, _page, _tonal, _filled, _leading, _headline, _currentTarget, _isGroup, _tasks, _task, _complete, _onEdit, _onContextMenu, _taskIndex, _important, _onDelete, _subtasks, _length, _description, _reminder, _files, _labelIds, _onEditReminder, _outlined, _onEditFiles, _labels, _color, _onEditLabel, _all, _planned, _includes, _taskList, _number, _value, _trim, _id, _emoji, _onEditFilesTask, _onEditReminderTask, _onEditTask, _onContextMenuTask, _onDeleteTask, _taskLists, _some, _edit, _isShowDeleteTaskWarning, _file, _type, _startsWith, _text, _slice, _concat, _subtask, _subtaskIndex, _listId, _replace, _size, _taskId, _fileIndex, _action, _centerBottomToRight, _test, _toFixed, _join, _findIndex, _isFileDBError, _then, _image, _video, _audio, _normal, _contents, _chip, _rightCenterToBottom, _checked } from "@/constants/string"
 import { Commands, Pages, SortBy, SortMode } from "./_enums"
 import { getCurrentDate, getDate_Y, getDateString_YMD_HM, isOutDate_YMD_HM } from "@/utils/datetime"
 import { preventDefault, stopPropagation } from "@/utils/event"
@@ -436,10 +436,10 @@ const TaskItem: VoidComponent<{
 			</Show>
 		</>}>
 		<For each={props[_task][_subtasks]}>{(subtask, index) => <CheckBox
-			value={subtask[_complete]}
-			onValueChanged={isChecked => props[_command](
+			checked={subtask[_complete]}
+			onChange={ev => props[_command](
 				Commands.edit_subtask,
-				{...subtask, complete: isChecked} satisfies SubTask,
+				{...subtask, complete: ev[_currentTarget][_checked]} satisfies SubTask,
 				props[_taskListIndex],
 				props[_taskIndex],
 				index()
@@ -1321,9 +1321,8 @@ const _: VoidComponent<{
 			</>}>
 			Are you sure want to delete <q><span style={{color: 'rgb(var(--color-accent))', "font-weight": 'bold'}}>{(selectedTaskToDelete[_task][_name]) || ''}</span></q> task?
 			<CheckBox
-				compact
 				style={{"margin-top": '16px'}}
-				onValueChanged={(value) => props[_command](Commands.toggle_deleteTaskWarning, !value)}>
+				onChange={ev => props[_command](Commands.toggle_deleteTaskWarning, !ev[_currentTarget][_checked])}>
 				Don't remind me again
 			</CheckBox>
 		</Dialog>

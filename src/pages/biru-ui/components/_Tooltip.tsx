@@ -1,6 +1,6 @@
 import { createSignal, type VoidComponent } from "solid-js"
 
-import { _centerTop, _tonal, _leftTop, _leftCenterToBottom, _leftCenter, _leftCenterToTop, _leftBottom, _rightTop, _rightCenterToBottom, _rightCenter, _rightCenterToTop, _rightBottom, _centerTopToRight, _centerTopToLeft, _centerBottomToRight, _centerBottom, _centerBottomToLeft, _centerCenterLeftTop, _centerCenterLeft, _centerCenterLeftBottom, _centerCenterTop, _centerCenter, _centerCenterBottom, _centerCenterRightTop, _centerCenterRight, _centerCenterRightBottom } from "@/constants/string"
+import { _centerTop, _tonal, _leftTop, _leftCenterToBottom, _leftCenter, _leftCenterToTop, _leftBottom, _rightTop, _rightCenterToBottom, _rightCenter, _rightCenterToTop, _rightBottom, _centerTopToRight, _centerTopToLeft, _centerBottomToRight, _centerBottom, _centerBottomToLeft, _centerCenterLeftTop, _centerCenterLeft, _centerCenterLeftBottom, _centerCenterTop, _centerCenter, _centerCenterBottom, _centerCenterRightTop, _centerCenterRight, _centerCenterRightBottom, _currentTarget, _checked } from "@/constants/string"
 
 import { RichTooltip, TextTooltip, TooltipPosition } from "@/components/Tooltip"
 import Icon from "@/components/Icon"
@@ -91,7 +91,7 @@ const _: VoidComponent = () => {
 			<NumberTextField style={{width: '100px'}} value={gap()} min={0} onFinalValueChanged={(v) => setGap(v)} labelText="Gap"/>
 			<NumberTextField style={{width: '100px'}} value={startDelayDuration()} min={0} step={100} onFinalValueChanged={(v) => setStartDelayDuration(v)} labelText="Start delay duration"/>
 			<NumberTextField style={{width: '100px'}} value={endDelayDuration()} min={0} step={100} onFinalValueChanged={(v) => setEndDelayDuration(v)} labelText="End delay duration"/>
-			<CheckBox value={useAnchor()} onValueChanged={v => setUseAnchor(v)}>Use anchor</CheckBox>
+			<CheckBox checked={useAnchor()} onChange={ev => setUseAnchor(ev[_currentTarget][_checked])}>Use anchor</CheckBox>
 		</PlaygroundOptions>
 	</Page>)
 }

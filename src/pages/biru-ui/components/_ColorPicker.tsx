@@ -1,7 +1,7 @@
 import { Show, type VoidComponent, createSignal } from "solid-js"
 
 import type { HEXColor } from "@/types/color"
-import { _tonal, _currentTarget } from "@/constants/string"
+import { _tonal, _currentTarget, _checked } from "@/constants/string"
 
 import Icon from "@/components/Icon"
 import Button, { ButtonVariant } from "@/components/Button"
@@ -36,8 +36,16 @@ const _: VoidComponent = () => {
 			/>
 		</Playground>
 		<PlaygroundOptions>
-			<CheckBox value={disabledOpacityControl()} onValueChanged={d => setDisabledOpacityControl(d)}>Disable opacity</CheckBox>
-			<CheckBox value={disabledColorControl()} onValueChanged={d => setDisabledColorControl(d)}>Disable color (hue only)</CheckBox>
+			<CheckBox
+				checked={disabledOpacityControl()}
+				onChange={ev => setDisabledOpacityControl(ev[_currentTarget][_checked])}>
+				Disable opacity
+			</CheckBox>
+			<CheckBox
+				checked={disabledColorControl()}
+				onChange={ev => setDisabledColorControl(ev[_currentTarget][_checked])}>
+				Disable color (hue only)
+			</CheckBox>
 		</PlaygroundOptions>
 	</Page>)
 }

@@ -329,8 +329,8 @@ const GradientControl: VoidComponent<{
 			/>
 		</Show>
 		<CheckBox
-			value={props[_gradient][_repeat]}
-			onValueChanged={() => props[_command](
+			checked={props[_gradient][_repeat]}
+			onChange={() => props[_command](
 				Commands.toggle_gradient_repeat,
 				props[_gradientIndex]
 			)}>

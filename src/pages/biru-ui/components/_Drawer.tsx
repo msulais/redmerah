@@ -1,6 +1,6 @@
 import { createSignal, Show, type VoidComponent } from "solid-js"
 
-import { _left, _tonal, _right } from "@/constants/string"
+import { _left, _tonal, _right, _checked, _currentTarget } from "@/constants/string"
 
 import Button, { ButtonVariant, IconButton } from "@/components/Button"
 import CheckBox from "@/components/CheckBox"
@@ -59,11 +59,31 @@ const _: VoidComponent = () => {
 				onSelectedItemsChanged={(items) => setPosition(items[0][0] as DrawerPosition)}
 				selectedValues={[position()]}
 			/>
-			<CheckBox value={important()} onValueChanged={i => setImportant(i)}>Important</CheckBox>
-			<CheckBox value={hasHeader()} onValueChanged={i => setHasHeader(i)}>Header</CheckBox>
-			<CheckBox value={hasFooter()} onValueChanged={i => setHasFooter(i)}>Footer</CheckBox>
-			<CheckBox value={hasContent()} onValueChanged={i => setHasContent(i)}>Content</CheckBox>
-			<CheckBox value={inputAutoFocus()} onValueChanged={i => setInputAutoFocus(i)}>Input autofocus</CheckBox>
+			<CheckBox
+				checked={important()}
+				onChange={ev => setImportant(ev[_currentTarget][_checked])}>
+				Important
+			</CheckBox>
+			<CheckBox
+				checked={hasHeader()}
+				onChange={ev => setHasHeader(ev[_currentTarget][_checked])}>
+				Header
+			</CheckBox>
+			<CheckBox
+				checked={hasFooter()}
+				onChange={ev => setHasFooter(ev[_currentTarget][_checked])}>
+				Footer
+			</CheckBox>
+			<CheckBox
+				checked={hasContent()}
+				onChange={ev => setHasContent(ev[_currentTarget][_checked])}>
+				Content
+			</CheckBox>
+			<CheckBox
+				checked={inputAutoFocus()}
+				onChange={ev => setInputAutoFocus(ev[_currentTarget][_checked])}>
+				Input autofocus
+			</CheckBox>
 		</PlaygroundOptions>
 	</Page>)
 }

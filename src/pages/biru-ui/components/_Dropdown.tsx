@@ -1,6 +1,6 @@
 import { createSignal, Show, type VoidComponent } from "solid-js"
 
-import { _slice } from "@/constants/string"
+import { _checked, _currentTarget, _slice } from "@/constants/string"
 
 import CheckBox from "@/components/CheckBox"
 import { NumberTextField } from "@/components/TextField"
@@ -58,13 +58,41 @@ const _: VoidComponent = () => {
 		</Playground>
 		<PlaygroundOptions>
 			<NumberTextField labelText="Count" style={{width: '100px'}} value={10} min={1} max={10} onFinalValueChanged={(v) => setCount(v)}/>
-			<CheckBox value={multiple()} onValueChanged={m => setMultiple(m)}>Multiple</CheckBox>
-			<CheckBox value={header()} onValueChanged={m => setHeader(m)}>Header</CheckBox>
-			<CheckBox value={footer()} onValueChanged={m => setFooter(m)}>Footer</CheckBox>
-			<CheckBox value={dividers()} onValueChanged={m => setDividers(m)}>Dividers</CheckBox>
-			<CheckBox value={labels()} onValueChanged={m => setLabels(m)}>Labels</CheckBox>
-			<CheckBox value={readOnly()} onValueChanged={m => setReadOnly(m)}>Read only</CheckBox>
-			<CheckBox value={compact()} onValueChanged={m => setCompact(m)}>Compact</CheckBox>
+			<CheckBox
+				checked={multiple()}
+				onChange={ev => setMultiple(ev[_currentTarget][_checked])}>
+				Multiple
+			</CheckBox>
+			<CheckBox
+				checked={header()}
+				onChange={ev => setHeader(ev[_currentTarget][_checked])}>
+				Header
+			</CheckBox>
+			<CheckBox
+				checked={footer()}
+				onChange={ev => setFooter(ev[_currentTarget][_checked])}>
+				Footer
+			</CheckBox>
+			<CheckBox
+				checked={dividers()}
+				onChange={ev => setDividers(ev[_currentTarget][_checked])}>
+				Dividers
+			</CheckBox>
+			<CheckBox
+				checked={labels()}
+				onChange={ev => setLabels(ev[_currentTarget][_checked])}>
+				Labels
+			</CheckBox>
+			<CheckBox
+				checked={readOnly()}
+				onChange={ev => setReadOnly(ev[_currentTarget][_checked])}>
+				Read only
+			</CheckBox>
+			<CheckBox
+				checked={compact()}
+				onChange={ev => setCompact(ev[_currentTarget][_checked])}>
+				Compact
+			</CheckBox>
 		</PlaygroundOptions>
 	</Page>)
 }

@@ -23,4 +23,10 @@ const Icon: VoidComponent<IconProps> = ($props) => {
 	</i>)
 }
 
+export {
+	Icon
+}
+export type {
+	IconProps
+}
 export default Icon

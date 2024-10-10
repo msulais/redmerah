@@ -1,3 +1,8 @@
+export const _onChangeRadioOff = 'onChangeRadioOff'
+export const _cancel = 'cancel'
+export const _onChange = 'onChange'
+export const _checkbox = 'checkbox'
+export const _iconAttr = 'iconAttr'
 export const _gradientType = 'gradientType'
 export const _gradientData = 'gradientData'
 export const _linearGradient = 'linearGradient'
