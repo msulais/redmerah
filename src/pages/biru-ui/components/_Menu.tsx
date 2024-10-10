@@ -5,7 +5,7 @@ import { FlyoutPosition } from "@/enums/position"
 
 import Icon from "@/components/Icon"
 import Button, { ButtonVariant } from "@/components/Button"
-import Menu, { MenuDivider, MenuHeader, MenuItem, MenuItemTrailingShortcut, openMenu, SubMenu, SubMenuItem } from "@/components/Menu"
+import Menu, { MenuDivider, MenuHeader, MenuItem, MenuItemTrailingShortcut, openMenu, SubMenu, SubMenuItem, SwitchMenuItem } from "@/components/Menu"
 import TextField, { NumberTextField } from "@/components/TextField"
 import CheckBox from "@/components/CheckBox"
 import Dropdown from "@/components/Dropdown"
@@ -40,6 +40,9 @@ const _: VoidComponent = () => {
 		<MenuHeader>Check color</MenuHeader>
 		<MenuItem checked>Red</MenuItem>
 		<MenuItem checked={false}>Blue</MenuItem>
+		<MenuDivider />
+		<MenuHeader>Switch</MenuHeader>
+		<SwitchMenuItem>On/off</SwitchMenuItem>
 	</>)
 
 	return (<Page

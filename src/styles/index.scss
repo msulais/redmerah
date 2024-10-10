@@ -70,3 +70,11 @@ pre > code {
 		user-select: auto;
 	}
 }
+
+[data-no-outline] {
+	outline: none !important;
+
+	& * {
+		outline: none !important;
+	}
+}

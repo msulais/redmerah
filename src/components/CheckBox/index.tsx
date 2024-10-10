@@ -1,4 +1,4 @@
-import { createMemo, createSignal, mergeProps, onCleanup, onMount, splitProps, type JSX, type ParentComponent } from "solid-js"
+import { createEffect, createMemo, createSignal, mergeProps, onCleanup, onMount, splitProps, type JSX, type ParentComponent } from "solid-js"
 
 import type { ComponentEvent } from "@/types/event"
 import { AnimationEffectTiming } from "@/enums/animation"
@@ -10,7 +10,6 @@ import { addEventListener, removeEventListener } from "@/utils/event"
 import Icon, { type IconProps } from "@/components/Icon"
 import '@/components/Button/index.scss'
 import './index.scss'
-import { setTimeDelayed } from "@/utils/timeout"
 
 enum CheckBoxEvents {
 	/** @param {HTMLInputElement} el `HTMLInputElement` */
@@ -79,6 +78,11 @@ const CheckBox: ParentComponent<CheckBoxProps> = ($props) => {
 			CheckBoxEvents.onChangeRadioOff,
 			onChangeRadioOff
 		)
+	})
+
+	createEffect(() => {
+		const checked = other[_checked]
+		setIsChecked(c => checked ?? c)
 	})
 
 	onCleanup(() => {

@@ -1,3 +1,5 @@
+export const _component = 'component'
+export const _divAttr = 'divAttr'
 export const _onChangeRadioOff = 'onChangeRadioOff'
 export const _cancel = 'cancel'
 export const _onChange = 'onChange'

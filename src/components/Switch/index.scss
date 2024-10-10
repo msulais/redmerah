@@ -26,59 +26,88 @@
 		--switch-width: 54px;
 	}
 
-	@media (hover: hover) {
-		&:hover {
-			cursor: pointer;
-			--switch-handle-size: calc(var(--switch-height) - 6px);
+	&[data-disabled] {
+		cursor: not-allowed;
+		background-color: rgba(var(--color-on-surface), var(--opacity4));
 
-			&[data-checked] > div {
-				transform: translate(2px, -2px);
-			}
-
-			> div {
-				transform: translate(-2px, -2px);
-
-				:root:not([data-corner=sharp]) & {
-					border-radius: max(0px, var(--switch-border-radius) - 2px);
-				}
-			}
-		}
-	}
-
-	&:active {
-		@media (hover: hover) {
-			--switch-handle-size: calc(var(--switch-height) - 10px);
-
-			> div {
-				transform: none !important;
-			}
-		}
-
-		@media (hover: none) {
-			--switch-handle-size: calc(var(--switch-height) - 6px);
-
-			&[data-checked] > div {
-				transform: translate(2px, -2px);
-			}
-
-			> div {
-				transform: translate(-2px, -2px);
-
-				:root:not([data-corner=sharp]) & {
-					border-radius: max(0px, var(--switch-border-radius) - 2px);
-				}
-			}
-		}
-	}
-
-	&[data-checked]{
-		background-color: rgb(var(--color-accent));
-		border-color: rgb(var(--color-accent));
-
-		> div {
-			background-color: rgb(var(--color-surface));
+		&[data-checked] > div {
 			left: calc(100% - calc(var(--switch-handle-size) + 4px));
 		}
+
+		& * {
+			cursor: not-allowed;
+		}
+
+		> div {
+			background-color: rgba(var(--color-on-surface), var(--opacity-inv4));
+		}
+	}
+
+	&:not([data-disabled]){
+		@media (hover: hover) {
+			&:hover {
+				cursor: pointer;
+				--switch-handle-size: calc(var(--switch-height) - 6px);
+
+				&[data-checked] > div {
+					transform: translate(2px, -2px);
+				}
+
+				> div {
+					transform: translate(-2px, -2px);
+
+					:root:not([data-corner=sharp]) & {
+						border-radius: max(0px, var(--switch-border-radius) - 2px);
+					}
+				}
+			}
+		}
+
+		&:active {
+			@media (hover: hover) {
+				--switch-handle-size: calc(var(--switch-height) - 10px);
+
+				> div {
+					transform: none !important;
+				}
+			}
+
+			@media (hover: none) {
+				--switch-handle-size: calc(var(--switch-height) - 6px);
+
+				&[data-checked] > div {
+					transform: translate(2px, -2px);
+				}
+
+				> div {
+					transform: translate(-2px, -2px);
+
+					:root:not([data-corner=sharp]) & {
+						border-radius: max(0px, var(--switch-border-radius) - 2px);
+					}
+				}
+			}
+		}
+
+		&[data-checked]{
+			background-color: rgb(var(--color-accent));
+			border-color: rgb(var(--color-accent));
+
+			> div {
+				background-color: rgb(var(--color-surface));
+				left: calc(100% - calc(var(--switch-handle-size) + 4px));
+			}
+		}
+	}
+
+	&:has( > input:focus-visible) {
+		outline: auto;
+	}
+
+	> input {
+		-moz-appearance: none;
+		-webkit-appearance: none;
+		appearance: none;
 	}
 
 	> div {
