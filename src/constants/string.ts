@@ -1,3 +1,4 @@
+export const _defaultPrevented = 'defaultPrevented'
 export const _useExpandIcon = 'useExpandIcon'
 export const _bodyAttr = 'bodyAttr'
 export const _component = 'component'
