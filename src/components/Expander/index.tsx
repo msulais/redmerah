@@ -158,7 +158,7 @@ const Expander: ParentComponent<ExpanderProps> = ($props) => {
 			expander_ref = r
 			if (props[_ref]) props[_ref](r)
 		}}
-		class={`expander${props[_class] || ''}`}
+		class={`expander${props[_class]? ` ${props[_class]}` : ''}`}
 		data-variant={props[_variant]}
 		onToggle={ev => {
 			setIsOpen(ev[_currentTarget][_open])
@@ -172,7 +172,7 @@ const Expander: ParentComponent<ExpanderProps> = ($props) => {
 				variant: () => props[_variant]
 			}}>
 			<summary
-				class={`expander-header${headerProps[_class] ? ` ${headerProps[_class]}` : ''}`}
+				class={`expander-header${headerProps[_class]? ` ${headerProps[_class]}` : ''}`}
 				onClick={(ev) => {
 					if (headerProps[_onClick]) headerProps[_onClick](ev)
 					if (!isOpen()) return;

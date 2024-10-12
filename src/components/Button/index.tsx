@@ -44,7 +44,7 @@ const RawButton: ParentComponent<RawButtonProps> = ($props) => {
 	])
 
 	return (<Dynamic
-		class={`btn${props[_class] && ` ${props[_class]}` || ''}`}
+		class={`btn${props[_class]? ` ${props[_class]}` : ''}`}
 		classList={{
 			'filled-btn': props[_variant] == ButtonVariant[_filled],
 			'tonal-btn': props[_variant] == ButtonVariant[_tonal],
