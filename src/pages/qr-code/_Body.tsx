@@ -96,7 +96,7 @@ const _: VoidComponent<{
 				labelText="Data"
 				placeholder="Link, email, or any text"
 				onInput={ev => props[_command](Commands.change_QRCodeData, ev[_currentTarget][_value])}
-				labelAttr={{ class: CSS.body_input }}
+				wrapperAttr={{ class: CSS.body_input }}
 			/>
 			<canvas
 				class={CSS.body_canvas_output}

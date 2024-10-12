@@ -70,7 +70,7 @@ const _: VoidComponent = () => {
 				position: position()
 			})}>Open menu2</Button>
 			<Menu ref={r => menu_ref = r} style={{width: '240px'}}>
-				<TextField  labelAttr={{style: {width: 'calc(100% - 16px)', margin: '4px 8px'}}} placeholder="Input"/>
+				<TextField  wrapperAttr={{style: {width: 'calc(100% - 16px)', margin: '4px 8px'}}} placeholder="Input"/>
 				<MenuDivider />
 				<C/>
 				<MenuDivider />
@@ -101,7 +101,7 @@ const _: VoidComponent = () => {
 				</SubMenu>
 			</Menu>
 			<Menu ref={r => menu_ref2 = r} style={{width: '200px'}}>
-				<TextField  labelAttr={{style: {width: 'calc(100% - 16px)', margin: '4px 8px'}}} placeholder="Input"/>
+				<TextField  wrapperAttr={{style: {width: 'calc(100% - 16px)', margin: '4px 8px'}}} placeholder="Input"/>
 				<MenuDivider />
 				<MenuItem iconCode={0xE51B} trailing="Ctrl + C">Copy</MenuItem>
 				<MenuItem iconCode={0xE454} trailing={<>

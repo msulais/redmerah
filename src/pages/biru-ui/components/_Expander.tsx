@@ -1,4 +1,4 @@
-import { createSignal, Show, splitProps, type JSX, type ParentComponent, type VoidComponent } from "solid-js"
+import { createSignal, Show, type VoidComponent } from "solid-js"
 
 import { _tonal, _filled, _outlined, _transparent, _checked, _currentTarget } from "@/constants/string"
 import { stopPropagation } from "@/utils/event"

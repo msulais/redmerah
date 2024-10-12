@@ -61,14 +61,14 @@ const Teams: VoidComponent<{
 			min={1}
 			max={settings()[_membersList][_items][_length]}
 			onFinalValueChanged={(v) => props[_command](Commands[_change_settings_teams_count], v)}
-			labelAttr={{ style: { width: 'min(100%, 164px)' } }}
+			wrapperAttr={{ style: { width: 'min(100%, 164px)' } }}
 			value={settings()[_count]}
 		/>
 		<Dropdown
 			labelText="Names"
 			selectedValues={[settings()[_namesList][_id]]}
 			items={[...itemListToDropdownList(props[_lists][0])]}
-			labelAttr={{ style: { width: 'min(100%, 164px)' } }}
+			wrapperAttr={{ style: { width: 'min(100%, 164px)' } }}
 			onSelectedItemsChanged={(items) => changeNamesList(items[0][0] as number)}
 			menuAttr={{ ref: (r) => dropdownMenu_namesLists_ref = r }}
 			refs={(r, item) => {
@@ -118,7 +118,7 @@ const Teams: VoidComponent<{
 			labelText="Members"
 			selectedValues={[settings()[_membersList][_id]]}
 			items={[...itemListToDropdownList(props[_lists][0])]}
-			labelAttr={{ style: { width: 'min(100%, 164px)' } }}
+			wrapperAttr={{ style: { width: 'min(100%, 164px)' } }}
 			onSelectedItemsChanged={items => changeMembersList(items[0][0] as number)}
 			menuAttr={{ ref: (r) => dropdownMenu_membersLists_ref = r }}
 			refs={(r, value) => {
@@ -257,7 +257,7 @@ const Selection: VoidComponent<{
 			labelText="List"
 			selectedValues={[props[_settings][0][_selection][_list][_id]]}
 			items={[...itemListToDropdownList(props[_lists][0])]}
-			labelAttr={{ style: { width: 'min(100%, 164px)' }}}
+			wrapperAttr={{ style: { width: 'min(100%, 164px)' }}}
 			onSelectedItemsChanged={items => changeList(items[0][0] as number)}
 			menuAttr={{ ref: (r) => menu_dropdown_ref = r }}
 			refs={(r, value) => {
@@ -358,7 +358,7 @@ const Selection: VoidComponent<{
 			min={1}
 			max={props[_settings][0][_selection][_list][_items][_length]}
 			onFinalValueChanged={(v) => props[_command](Commands[_change_settings_selection_count], v)}
-			labelAttr={{ style: { width: 'min(100%, 164px)' } }}
+			wrapperAttr={{ style: { width: 'min(100%, 164px)' } }}
 			value={props[_settings][0][_selection][_count]}
 		/>
 	</>)
@@ -397,7 +397,7 @@ const Words: VoidComponent<{
 			labelText="List"
 			selectedValues={[props[_settings][0][_words][_list][_id]]}
 			items={[...itemListToDropdownList(props[_lists][0])]}
-			labelAttr={{ style: { width: 'min(100%, 164px)' } }}
+			wrapperAttr={{ style: { width: 'min(100%, 164px)' } }}
 			onSelectedItemsChanged={items => changeList(items[0][0] as number)}
 			menuAttr={{ ref: (r) => menu_dropdown_ref = r }}
 			refs={(r, value) => {
@@ -497,7 +497,7 @@ const Words: VoidComponent<{
 			labelText="Count"
 			min={1}
 			onFinalValueChanged={(v) => props[_command](Commands[_change_settings_words_count], v)}
-			labelAttr={{ style: { width: 'min(100%, 164px)' } }}
+			wrapperAttr={{ style: { width: 'min(100%, 164px)' } }}
 			value={props[_settings][0][_words][_count]}
 		/>
 	</>)
@@ -716,14 +716,14 @@ const Numbers: VoidComponent<{
 		<TextField
 			labelText="Range"
 			onBlur={onBlurRange}
-			labelAttr={{ style: { width: 'min(100%, 164px)' } }}
+			wrapperAttr={{ style: { width: 'min(100%, 164px)' } }}
 			value={[props[_settings][0][_numbers][_range][_min], props[_settings][0][_numbers][_range][_max]][_join](' - ')}
 		/>
 		<NumberTextField
 			labelText="Count"
 			min={1}
 			onFinalValueChanged={(v) => props[_command](Commands[_change_settings_numbers_count], v)}
-			labelAttr={{ style: { width: 'min(100%, 164px)' } }}
+			wrapperAttr={{ style: { width: 'min(100%, 164px)' } }}
 			value={props[_settings][0][_numbers][_count]}
 		/>
 	</>)
@@ -736,7 +736,7 @@ const $String: VoidComponent<{
 	const [isCharactersMenuOpen, setIsCharactersMenuOpen] = createSignal<boolean>(false)
 	const [charactersMenuWidth, setCharactersMenuWidth] = createSignal<number>(0)
 	const settings = createMemo(() => props[_settings][0][_string])
-	let charactersLabelRef: HTMLLabelElement
+	let charactersLabelRef: HTMLDivElement
 	let charactersInputRef: HTMLInputElement
 	let menu_characters_ref: HTMLDialogElement
 
@@ -764,7 +764,7 @@ const $String: VoidComponent<{
 
 	return (<>
 		<NumberTextField
-			labelAttr={{ style: { width: 'min(100%, 164px)' } }}
+			wrapperAttr={{ style: { width: 'min(100%, 164px)' } }}
 			value={settings()[_length]}
 			onFinalValueChanged={(v) => props[_command](Commands[_change_settings_string_length], v)}
 			min={1}
@@ -774,7 +774,7 @@ const $String: VoidComponent<{
 			ref={r => charactersInputRef = r}
 			focused={isCharactersMenuOpen()}
 			readOnly
-			labelAttr={{
+			wrapperAttr={{
 				ref: r => charactersLabelRef = r,
 				style: { width: 'min(100%, 328px)' }
 			}}
