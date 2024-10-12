@@ -1,3 +1,5 @@
+export const _useExpandIcon = 'useExpandIcon'
+export const _bodyAttr = 'bodyAttr'
 export const _component = 'component'
 export const _divAttr = 'divAttr'
 export const _onChangeRadioOff = 'onChangeRadioOff'
