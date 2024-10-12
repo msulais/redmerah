@@ -17,6 +17,9 @@ importers:
       '@astrojs/vercel':
         specifier: ^7.8.1
         version: 7.8.1(astro@4.15.12(@types/node@22.5.5)(rollup@4.21.0)(sass@1.78.0)(typescript@5.5.4))
+      '@solid-primitives/refs':
+        specifier: ^1.0.8
+        version: 1.0.8(solid-js@1.8.22)
       '@types/qrcode':
         specifier: ^1.5.5
         version: 1.5.5
