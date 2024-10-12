@@ -1,5 +1,6 @@
 import { TransitionGroup } from 'solid-transition-group'
 import { createMemo, createSignal, For, onCleanup, onMount, Show, splitProps, type ParentComponent, type VoidComponent } from 'solid-js'
+import { mergeRefs } from '@solid-primitives/refs'
 
 import type { Emoji } from '@/types/emoji'
 import { activitiesEmojis, animalAndNatureEmojis, flagsEmojis, foodAndDrinkEmojis, objectsEmojis, personAndBodyEmojis, smileyAndEmotionEmojis, symbolsEmojis, travelAndPlacesEmojis } from '@/constants/emoji'
@@ -146,10 +147,7 @@ const EmojiPicker: ParentComponent<EmojiPickerProps> = ($props) => {
 			'emoji-picker': true,
 			...props[_classList]
 		}}
-		ref={r => {
-			emojiPicker_ref = r
-			if (props[_ref]) props[_ref](r)
-		}}
+		ref={mergeRefs(props[_ref], r => emojiPicker_ref = r)}
 		{...other}>
 		<div class="emoji-picker-tabs">
 			<Tab iconCode={0xE8DE} option={EmojiCategory[_recents]}/>

@@ -1,4 +1,5 @@
 import { createEffect, createMemo, createSignal, mergeProps, onCleanup, onMount, splitProps, type JSX, type ParentComponent } from "solid-js"
+import { mergeRefs } from "@solid-primitives/refs"
 
 import { AnimationEffectTiming } from "@/enums/animation"
 import { _animate, _blur, _cancel, _catch, _check, _checkbox, _checked, _children, _class, _code, _currentTarget, _detail, _disabled, _dispatchEvent, _filled, _finished, _forEach, _iconAttr, _isSameNode, _labelAttr, _name, _onChange, _onChangeRadioOff, _radio, _ref, _replace, _spring, _then, _variant } from "@/constants/string"
@@ -20,13 +21,10 @@ enum CheckBoxVariant {
 	check
 }
 
-type CheckBoxProps = Omit<JSX.InputHTMLAttributes<HTMLInputElement>, 'type' | 'ref'> & {
+type CheckBoxProps = Omit<JSX.InputHTMLAttributes<HTMLInputElement>, 'type'> & {
 	variant?: CheckBoxVariant
-	ref?(el: HTMLInputElement): unknown
 	labelAttr?: JSX.LabelHTMLAttributes<HTMLLabelElement>
-	iconAttr?: Omit<IconProps, 'ref'> & {
-		ref?(el: HTMLElement): unknown
-	}
+	iconAttr?: IconProps
 }
 
 const CheckBox: ParentComponent<CheckBoxProps> = ($props) => {
@@ -96,10 +94,7 @@ const CheckBox: ParentComponent<CheckBoxProps> = ($props) => {
 		data-disabled={toggleAttribute(isDisabled())}
 		{...otherLabelProps}>
 		<input
-			ref={r => {
-				input_ref = r
-				if (props[_ref]) props[_ref](r)
-			}}
+			ref={mergeRefs(props[_ref], el => input_ref = el)}
 			type={props[_variant] == CheckBoxVariant[_radio]? _radio : _checkbox}
 			onChange={(ev) => {
 				const isChecked = ev[_currentTarget][_checked]
@@ -120,10 +115,7 @@ const CheckBox: ParentComponent<CheckBoxProps> = ($props) => {
 		<div class="btn square-btn">
 			<div class="btn-layer">
 				<Icon
-					ref={r => {
-						icon_ref = r
-						if (iconProps[_ref]) iconProps[_ref](r)
-					}}
+					ref={mergeRefs(iconProps[_ref], r => icon_ref = r)}
 					code={iconProps[_code] ?? (props[_variant] == CheckBoxVariant[_check]? (isChecked()? 0xE3CB : 0xE3D4) : 0xED2F)}
 					filled={iconProps[_filled] ?? (props[_variant] != CheckBoxVariant[_check] && isChecked())}
 					{...otherIconProps}

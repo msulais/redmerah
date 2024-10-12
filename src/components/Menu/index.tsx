@@ -1,4 +1,5 @@
 import { type Component, type JSX, type ParentComponent, Show, mergeProps, splitProps, type VoidComponent, For, children, createUniqueId, onCleanup, onMount } from "solid-js"
+import { mergeRefs } from "@solid-primitives/refs"
 
 import { getAttribute, toggleAttribute } from "@/utils/attributes"
 import { _checked, _selected, _leading, _children, _trailing, _subtitle, _indent, _classList, _rightCenterToBottom, _disconnect, _dismiss, _id, _item, _level, _manual, _observe, _onCancel, _onClick, _onClose, _onToggle, _open, _ref, _wrapperAttr, _auto, _shortcuts, _currentTarget, _none, _left, _tonal, _dragable, _clientX, _clientY, _color, _hue, _initialColor, _isDrag, _mousemove, _mouseup, _noPointerEvent, _opacity, _touchend, _touches, _touchmove, _value, _valuechange, _top, _px, _anchorId, _body, _bottom, _clientWidth, _height, _innerHeight, _right, _width, _focus, _iconCode, _compact, _variant, _indicatorPosition, _onMouseEnter, _onMouseLeave, _class, _disableScale, _desktopCompact, _gap, _position, _padding, _allowHideAnchor, _onToggleOpen, _click, _contains, _target, _filled, _focused, _layerAttr, _outlined, _transparent, _switchAttr, _onValueChanged, _onChange, _div, _disabled } from "@/constants/string"
@@ -216,9 +217,7 @@ type SubMenuProps = PopoverProps & {
 	padding?: number
 	dragable?: boolean
 	allowHideAnchor?: boolean
-	wrapperAttr?: Omit<JSX.HTMLAttributes<HTMLDivElement>, 'children' | 'ref'> & {
-		ref?: (el: HTMLDivElement) => unknown
-	}
+	wrapperAttr?: Omit<JSX.HTMLAttributes<HTMLDivElement>, 'children'>
 }
 const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 	const $$props = mergeProps({id: createUniqueId(), level: 1}, $props)
@@ -230,7 +229,7 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 	])
 	const [wrapperProps, wrapperPropsOther] = splitProps(
 		props[_wrapperAttr]! ?? {},
-		[_class, _onClick, _onMouseEnter, _onMouseLeave]
+		[_class, _onClick, _onMouseEnter, _onMouseLeave, _ref]
 	)
 	let timeoutId: number | null = null
 	let div_ref: HTMLDivElement
@@ -295,10 +294,7 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 
 	return (<div
 		class={"sub-menu" + (wrapperProps[_class]? ` ${wrapperProps[_class]}` : '')}
-		ref={r => {
-			div_ref = r
-			if (props[_wrapperAttr] && props[_wrapperAttr][_ref]) props[_wrapperAttr][_ref](r)
-		}}
+		ref={mergeRefs(wrapperProps[_ref], r => div_ref = r)}
 		onClick={(ev) => {
 			cancelTimeout()
 			open(ev)
@@ -335,10 +331,7 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 				stopImmediatePropagation(ev)
 				callEventHandler(ev, props[_onClick])
 			}}
-			ref={r => {
-				popover_ref = r
-				if (props[_ref]) props[_ref](r)
-			}}
+			ref={mergeRefs(props[_ref], r => popover_ref = r)}
 			classList={{
 				menu: true,
 				...props[_classList]

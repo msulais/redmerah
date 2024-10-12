@@ -1,4 +1,5 @@
 import { onCleanup, onMount, splitProps, type FlowComponent, type JSX } from "solid-js"
+import { mergeRefs } from "@solid-primitives/refs"
 
 import { _textTooltipListener, _centerTop, _createElement, _div, _id, _popover, _manual, _appendChild, _top, _height, _left, _width, _centerBottom, _centerBottomToLeft, _centerBottomToRight, _centerTopToLeft, _centerTopToRight, _leftCenter, _leftCenterToBottom, _leftCenterToTop, _rightCenter, _rightCenterToBottom, _rightCenterToTop, _move, _open, _hidePopover, _openTextTooltip, _detail, _isSameNode, _textContent, _showPopover, _px, _transform, _closeTextTooltip, _updatePointerTextTooltip, _pointer, _dispatchEvent, _useAnchor, _gap, _position, _startDelayDuration, _text, _endDelayDuration, _clientX, _clientY, _children, _tooltip, _classList, _ref, _usePortal, _tooltipListener, _onMouseLeave, _onMouseDown, _onMouseMove, _onTouchCancel, _onTouchEnd, _bottom, _right, _contains, _openDone, _animate, _finished, _springBounce, _then, _none } from "@/constants/string"
 import { hasAttribute, removeAttribute, setAttribute } from "@/utils/attributes"
@@ -468,10 +469,7 @@ const RichTooltip: FlowComponent<RichTooltipProps> = ($props) => {
 				stopPropagation(ev)
 				callEventHandler(ev, props[_onTouchCancel])
 			}}
-			ref={r => {
-				tooltip_ref = r
-				if (props[_ref]) props[_ref](r)
-			}}
+			ref={mergeRefs(props[_ref], r => tooltip_ref = r)}
 			classList={{
 				'rich-tooltip': true,
 				...props[_classList]

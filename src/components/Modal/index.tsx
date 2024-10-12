@@ -1,4 +1,5 @@
 import { createSignal, createUniqueId, mergeProps, onCleanup, onMount, Show, splitProps, type JSX, type ParentComponent } from 'solid-js'
+import { mergeRefs } from '@solid-primitives/refs'
 import { Portal } from 'solid-js/web'
 
 import { AnimationEffectTiming } from '@/enums/animation'
@@ -172,8 +173,7 @@ function closeModal(modal: HTMLDialogElement, soft: boolean = false): void {
 	modal[_dispatchEvent](new CustomEvent(ModalEvents[_onClose], {detail: {soft} satisfies ModalCloseDetail}))
 }
 
-type ModalProps = Omit<JSX.DialogHtmlAttributes<HTMLDialogElement>, 'style' | 'ref'> & {
-	ref?: (el: HTMLDialogElement) => unknown
+type ModalProps = Omit<JSX.DialogHtmlAttributes<HTMLDialogElement>, 'style'> & {
 	onToggleOpen?: (isOpen: boolean) => unknown
 	openAnimation?: (el: HTMLDialogElement, done: () => void) => unknown
 	closeAnimation?: (el: HTMLDialogElement, done: () => void) => unknown
@@ -693,10 +693,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 
 	return (<Portal><dialog
 		class={"modal" + (props[_class] != undefined? ` ${props[_class]}` : '')}
-		ref={r => {
-			modal_ref = r
-			if (props[_ref]) props[_ref](r)
-		}}
+		ref={mergeRefs(props[_ref], r => modal_ref = r)}
 		style={{
 			...props[_style],
 			top: props[_style] && props[_style][_top] != undefined? props[_style][_top] : top() + _px,

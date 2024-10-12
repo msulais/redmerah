@@ -1,4 +1,5 @@
 import { type JSX, type ParentComponent, createSignal, createUniqueId, mergeProps, onMount, splitProps, type VoidComponent, children, createEffect, Show, onCleanup } from 'solid-js'
+import { mergeRefs } from '@solid-primitives/refs'
 
 import { toggleAttribute } from '@/utils/attributes'
 import { clearTimeDelayed, clearTimeInterval, setTimeDelayed, setTimeInterval } from '@/utils/timeout'
@@ -74,23 +75,19 @@ const TextFieldButton: ParentComponent<TextFieldButtonProps> = ($props) => {
 	/>)
 }
 
-type AreaTextFieldProps = Omit<JSX.TextareaHTMLAttributes<HTMLTextAreaElement>, 'ref' | 'children' | 'rows' | 'columns' | 'value'> & {
+type AreaTextFieldProps = Omit<JSX.TextareaHTMLAttributes<HTMLTextAreaElement>, 'children' | 'rows' | 'columns'> & {
 	leading?: JSX.Element
 	trailing?: JSX.Element
 	labelText?: JSX.Element
 	messageText?: JSX.Element
 	focused?: boolean
-	value?: string
 	minLine?: number
 	maxLine?: number
 	compact?: boolean
 	autoShowClearBtn?: boolean
 	autoHideLabel?: boolean
 	clearTooltip?: string
-	ref?: (el: HTMLTextAreaElement) => void
-	wrapperAttr?: Omit<JSX.HTMLAttributes<HTMLDivElement>, 'ref'> & {
-		ref?(el: HTMLDivElement): unknown
-	}
+	wrapperAttr?: JSX.HTMLAttributes<HTMLDivElement>
 	labelAttr?: JSX.LabelHTMLAttributes<HTMLLabelElement>
 }
 const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
@@ -112,7 +109,7 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 	let areaTextField_ref!: HTMLTextAreaElement
 
 	createEffect(() => {
-		const value = props[_value]
+		const value = `${props[_value] ?? ''}`
 
 		const lines = (value ?? '')[_trim]()[_split]('\n')[_length]
 		setHeight(lines * HEIGHT_TEXT_INPUT_PER_LINE)
@@ -134,10 +131,7 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 			<div class='areatextfield-leading' onClick={ev => stopPropagation(ev)}>{props[_leading]}</div>
 			<textarea
 				id={props[_id]}
-				ref={(r) => {
-					areaTextField_ref = r
-					if (props[_ref]) props[_ref](r)
-				}}
+				ref={mergeRefs(props[_ref], r => areaTextField_ref = r)}
 				onInput={(ev) => {
 					const self = ev[_currentTarget]
 					setValue(ev[_currentTarget][_value])
@@ -187,7 +181,7 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 }
 
 
-type TextFieldProps = Omit<JSX.InputHTMLAttributes<HTMLInputElement>, 'type' | 'ref' | 'children'> & {
+type TextFieldProps = Omit<JSX.InputHTMLAttributes<HTMLInputElement>, 'type' | 'children'> & {
 	leading?: JSX.Element
 	trailing?: JSX.Element
 	labelText?: JSX.Element
@@ -199,10 +193,7 @@ type TextFieldProps = Omit<JSX.InputHTMLAttributes<HTMLInputElement>, 'type' | '
 	autoSelectAll?: boolean
 	clearTooltip?: string
 	type?: TextFieldType
-	wrapperAttr?: Omit<JSX.HTMLAttributes<HTMLDivElement>, 'ref'> & {
-		ref?(el: HTMLDivElement): unknown
-	}
-	ref?: (el: HTMLInputElement) => void
+	wrapperAttr?: JSX.HTMLAttributes<HTMLDivElement>
 }
 const TextField: VoidComponent<TextFieldProps> = ($props) => {
 	const $$props = mergeProps({type: _text, autoHideLabel: true, id: createUniqueId()}, $props)
@@ -246,10 +237,7 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 			<div class='textfield-leading' onClick={ev => stopPropagation(ev)}>{props[_leading]}</div>
 			<input
 				id={props[_id]}
-				ref={(r) => {
-					textfield_ref = r
-					if (props[_ref]) props[_ref](r)
-				}}
+				ref={mergeRefs(props[_ref], r => textfield_ref = r)}
 				onInput={(ev) => {
 					setValue(ev[_currentTarget][_value])
 					setIsInvalid(!ev[_currentTarget][_checkValidity]())
@@ -406,10 +394,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 		<TextField
 			focused={props[_focused] ?? (isActionMenuOpen()? true : undefined)}
 			disabled={props[_disabled]}
-			ref={(r) => {
-				if (props[_ref]) props[_ref](r)
-				numberTextField_ref = r
-			}}
+			ref={mergeRefs(props[_ref], r => numberTextField_ref = r)}
 			value={(() => {
 				let v = numberParse(`${props[_value]}`)
 
@@ -521,7 +506,14 @@ const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
 	const [props, other] = splitProps($props, [
 		_result, _wrapperAttr, _menuAttr, _onFocus,
 	])
-	const [wrapperProps, wrapperPropsOther] = splitProps(props[_wrapperAttr]! ?? {}, [_ref])
+	const [wrapperProps, wrapperPropsOther] = splitProps(
+		props[_wrapperAttr]! ?? {},
+		[_ref]
+	)
+	const [menuProps, menuPropsOther] = splitProps(
+		props[_menuAttr]! ?? {},
+		[_usePortal, _ref, _classList, _style, _onToggleOpen]
+	)
 	const [width, setWidth] = createSignal<number>(0)
 	const resultComponents = children(() => props[_result])
 	let is_popover_open: boolean = false
@@ -598,10 +590,7 @@ const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
 	return (<>
 		<TextField
 			wrapperAttr={{
-				ref: (r) => {
-					wrapper_ref = r
-					if (wrapperProps[_ref]) wrapperProps[_ref](r)
-				},
+				ref: mergeRefs(wrapperProps[_ref], r => wrapper_ref = r),
 				...wrapperPropsOther
 			}}
 			onFocus={ev => {
@@ -613,24 +602,21 @@ const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
 			{...other}
 		/>
 		<Popover
-			usePortal={props[_menuAttr] && props[_menuAttr][_usePortal]? props[_menuAttr][_usePortal] : false}
+			usePortal={menuProps[_usePortal] ?? false}
 			onToggleOpen={isOpen => {
 				is_popover_open = isOpen
-				if (props[_menuAttr] && props[_menuAttr][_onToggleOpen]) props[_menuAttr][_onToggleOpen](isOpen)
+				if (menuProps[_onToggleOpen]) menuProps[_onToggleOpen](isOpen)
 			}}
-			ref={r => {
-				menu_ref = r
-				if (props[_menuAttr] && props[_menuAttr][_ref]) props[_menuAttr][_ref](r)
-			}}
+			ref={mergeRefs(menuProps[_ref], r => menu_ref = r)}
 			classList={{
 				'search-textfield-menu': true,
-				...(props[_menuAttr]? props[_menuAttr][_classList] : {})
+				...menuProps[_classList]
 			}}
 			style={{
 				'min-width': width() + _px,
-				...(props[_menuAttr]? props[_menuAttr][_style] : {})
+				...menuProps[_style]
 			}}
-			{...splitProps(props[_menuAttr] ?? {}, [_onToggleOpen, _usePortal, _style, _ref, _classList])[1]}>
+			{...menuPropsOther}>
 			{resultComponents()}
 		</Popover>
 	</>)
