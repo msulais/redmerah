@@ -1,8 +1,8 @@
+import type { DOMElement } from "solid-js/jsx-runtime"
 import { createEffect, createMemo, createSignal, For, Match, Show, Switch, type JSX, type VoidComponent } from "solid-js"
 import { createStore } from "solid-js/store"
 
 import type { TaskLabel, Settings, Task, TaskList, SubTask, TaskFileMetaData } from "./_types"
-import type { ComponentEvent } from "@/types/event"
 import { _command, _settings, _sortBy, _name, _importance, _creationDate, _completed, _uncompleted, _sortMode, _ascending, _descending, _isAnyUncompletedTask, _taskListIndex, _isAnyCompletedTask, _isAnyTask, _page, _tonal, _filled, _leading, _headline, _currentTarget, _isGroup, _tasks, _task, _complete, _onEdit, _onContextMenu, _taskIndex, _important, _onDelete, _subtasks, _length, _description, _reminder, _files, _labelIds, _onEditReminder, _outlined, _onEditFiles, _labels, _color, _onEditLabel, _all, _planned, _includes, _taskList, _number, _value, _trim, _id, _emoji, _onEditFilesTask, _onEditReminderTask, _onEditTask, _onContextMenuTask, _onDeleteTask, _taskLists, _some, _edit, _isShowDeleteTaskWarning, _file, _type, _startsWith, _text, _slice, _concat, _subtask, _subtaskIndex, _listId, _replace, _size, _taskId, _fileIndex, _action, _centerBottomToRight, _test, _toFixed, _join, _findIndex, _isFileDBError, _then, _image, _video, _audio, _normal, _contents, _chip, _rightCenterToBottom, _checked } from "@/constants/string"
 import { Commands, Pages, SortBy, SortMode } from "./_enums"
 import { getCurrentDate, getDate_Y, getDateString_YMD_HM, isOutDate_YMD_HM } from "@/utils/datetime"
@@ -278,12 +278,12 @@ const TaskItem: VoidComponent<{
 	taskIndex: number
 	taskListIndex: number
 	labels: (TaskLabel | undefined)[]
-	onEdit: (ev: ComponentEvent<MouseEvent>) => unknown
-	onEditReminder: (ev: ComponentEvent<MouseEvent, HTMLButtonElement>) => unknown
-	onEditFiles: (ev: ComponentEvent<MouseEvent, HTMLButtonElement>) => unknown
-	onEditLabel: (ev: ComponentEvent<MouseEvent, HTMLButtonElement>, label: TaskLabel) => unknown
-	onContextMenu: (ev: ComponentEvent<MouseEvent>) => unknown
-	onDelete: (ev: ComponentEvent<MouseEvent, HTMLButtonElement>) => unknown
+	onEdit: JSX.EventHandler<HTMLElement, MouseEvent>
+	onEditReminder: JSX.EventHandler<HTMLButtonElement, MouseEvent>
+	onEditFiles: JSX.EventHandler<HTMLButtonElement, MouseEvent>
+	onEditLabel: (ev: MouseEvent & {currentTarget: HTMLButtonElement; target: DOMElement}, label: TaskLabel) => unknown
+	onContextMenu: JSX.EventHandler<HTMLElement, MouseEvent>
+	onDelete: JSX.EventHandler<HTMLButtonElement, MouseEvent>
 	command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
 	return (<Expander
@@ -483,12 +483,37 @@ const SingleTaskList: VoidComponent<{
 	labels: (TaskLabel | undefined)[]
 	settings: Settings
 	taskListIndex: number
-	onEditLabel: (ev: ComponentEvent<MouseEvent, HTMLButtonElement>, label: TaskLabel, task: Task, taskIndex: number) => unknown
-	onDeleteTask: (ev: ComponentEvent<MouseEvent, HTMLButtonElement>, task: Task, taskIndex: number) => unknown
-	onEditTask: (ev: ComponentEvent<MouseEvent>, task: Task, taskIndex: number) => unknown
-	onEditFilesTask: (ev: ComponentEvent<MouseEvent, HTMLButtonElement>, task: Task, taskIndex: number) => unknown
-	onEditReminderTask: (ev: ComponentEvent<MouseEvent, HTMLButtonElement>, task: Task, taskIndex: number) => unknown
-	onContextMenuTask: (ev: ComponentEvent<MouseEvent>, task: Task, taskIndex: number) => unknown
+	onEditLabel: (
+		ev: MouseEvent & {currentTarget: HTMLButtonElement; target: DOMElement},
+		label: TaskLabel,
+		task: Task,
+		taskIndex: number
+	) => unknown
+	onDeleteTask: (
+		ev: MouseEvent & {currentTarget: HTMLButtonElement; target: DOMElement},
+		task: Task,
+		taskIndex: number
+	) => unknown
+	onEditTask: (
+		ev: MouseEvent & {currentTarget: HTMLElement; target: DOMElement},
+		task: Task,
+		taskIndex: number
+	) => unknown
+	onEditFilesTask: (
+		ev: MouseEvent & {currentTarget: HTMLButtonElement; target: DOMElement},
+		task: Task,
+		taskIndex: number
+	) => unknown
+	onEditReminderTask: (
+		ev: MouseEvent & {currentTarget: HTMLButtonElement; target: DOMElement},
+		task: Task,
+		taskIndex: number
+	) => unknown
+	onContextMenuTask: (
+		ev: MouseEvent & {currentTarget: HTMLElement; target: DOMElement},
+		task: Task,
+		taskIndex: number
+	) => unknown
 	command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
 	const [isAnyCompletedTask, setIsAnyCompletedTask] = createSignal<boolean>(true)
@@ -596,12 +621,43 @@ const GroupTaskList: VoidComponent<{
 	taskLists: TaskList[]
 	labels: (TaskLabel | undefined)[]
 	settings: Settings
-	onEditLabel: (ev: ComponentEvent<MouseEvent, HTMLButtonElement>, label: TaskLabel, task: Task, taskListIndex: number, taskIndex: number) => unknown
-	onDeleteTask: (ev: ComponentEvent<MouseEvent, HTMLButtonElement>, task: Task, taskListIndex: number, taskIndex: number) => unknown
-	onEditTask: (ev: ComponentEvent<MouseEvent>, task: Task, taskListIndex: number, taskIndex: number) => unknown
-	onEditFilesTask: (ev: ComponentEvent<MouseEvent, HTMLButtonElement>, task: Task, taskListIndex: number, taskIndex: number) => unknown
-	onEditReminderTask: (ev: ComponentEvent<MouseEvent, HTMLButtonElement>, task: Task, taskListIndex: number, taskIndex: number) => unknown
-	onContextMenuTask: (ev: ComponentEvent<MouseEvent>, task: Task, taskListIndex: number, taskIndex: number) => unknown
+	onEditLabel: (
+		ev: MouseEvent & {currentTarget: HTMLButtonElement; target: DOMElement},
+		label: TaskLabel,
+		task: Task,
+		taskListIndex: number,
+		taskIndex: number
+	) => unknown
+	onDeleteTask: (
+		ev: MouseEvent & {currentTarget: HTMLButtonElement; target: DOMElement},
+		task: Task,
+		taskListIndex: number,
+		taskIndex: number
+	) => unknown
+	onEditTask: (
+		ev: MouseEvent & {currentTarget: HTMLElement; target: DOMElement},
+		task: Task,
+		taskListIndex: number,
+		taskIndex: number
+	) => unknown
+	onEditFilesTask: (
+		ev: MouseEvent & {currentTarget: HTMLButtonElement; target: DOMElement},
+		task: Task,
+		taskListIndex: number,
+		taskIndex: number
+	) => unknown
+	onEditReminderTask: (
+		ev: MouseEvent & {currentTarget: HTMLButtonElement; target: DOMElement},
+		task: Task,
+		taskListIndex: number,
+		taskIndex: number
+	) => unknown
+	onContextMenuTask: (
+		ev: MouseEvent & {currentTarget: HTMLElement; target: DOMElement},
+		task: Task,
+		taskListIndex: number,
+		taskIndex: number
+	) => unknown
 	command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
 	const [is_menu_more_open, setIs_menu_more_open] = createSignal<boolean>(false)
@@ -929,16 +985,16 @@ const _: VoidComponent<{
 		else if (renameFileOption == _action) setSelectedTaskToFileAction(_task, _files, files)
 	}
 
-	function onContextMenuTask(ev: ComponentEvent<MouseEvent>, task: Task, taskListIndex: number, taskIndex: number): void {
+	function onContextMenuTask(ev: MouseEvent & {currentTarget: HTMLElement; target: DOMElement}, task: Task, taskListIndex: number, taskIndex: number): void {
 		setSelectedTaskToAction({task, taskListIndex, taskIndex})
 		openMenu(ev, menu_taskAction_ref, {position: MenuPosition[_centerBottomToRight]})
 	}
 
-	function onEditTask(ev: ComponentEvent<MouseEvent>, task: Task, taskListIndex: number, taskIndex: number): void {
+	function onEditTask(ev: MouseEvent & {currentTarget: HTMLElement; target: DOMElement}, task: Task, taskListIndex: number, taskIndex: number): void {
 		editTask(ev, task, taskListIndex, taskIndex)
 	}
 
-	function onEditReminderTask(ev: ComponentEvent<MouseEvent, HTMLButtonElement>, task: Task, taskListIndex: number, taskIndex: number): void {
+	function onEditReminderTask(ev: MouseEvent & {currentTarget: HTMLButtonElement; target: DOMElement}, task: Task, taskListIndex: number, taskIndex: number): void {
 		setSelectedTaskToChangeReminder({task, taskListIndex, taskIndex})
 		openMenu(ev, menu_reminder_ref, {
 			anchor: ev[_currentTarget],
@@ -946,7 +1002,7 @@ const _: VoidComponent<{
 		})
 	}
 
-	function onEditFilesTask(ev: ComponentEvent<MouseEvent, HTMLButtonElement>, task: Task, taskListIndex: number, taskIndex: number): void {
+	function onEditFilesTask(ev: MouseEvent & {currentTarget: HTMLButtonElement; target: DOMElement}, task: Task, taskListIndex: number, taskIndex: number): void {
 		setSelectedTaskToFileAction({task, taskListIndex, taskIndex})
 		openMenu(ev, menu_fileAction2_ref, {
 			anchor: ev[_currentTarget],
@@ -954,7 +1010,7 @@ const _: VoidComponent<{
 		})
 	}
 
-	function onEditLabel(ev: ComponentEvent<MouseEvent, HTMLButtonElement>, label: TaskLabel, task: Task, taskListIndex: number, taskIndex: number): void {
+	function onEditLabel(ev: MouseEvent & {currentTarget: HTMLButtonElement; target: DOMElement}, label: TaskLabel, task: Task, taskListIndex: number, taskIndex: number): void {
 		setSelectedTaskToEditLabel({task, taskListIndex, taskIndex})
 		setSelectedLabel(label)
 		openMenu(ev, menu_labelAction2_ref, {
@@ -963,7 +1019,7 @@ const _: VoidComponent<{
 		})
 	}
 
-	function onDeleteTask(ev: ComponentEvent<MouseEvent, HTMLButtonElement>, task: Task, taskListIndex: number, taskIndex: number): void {
+	function onDeleteTask(ev: MouseEvent & {currentTarget: HTMLButtonElement; target: DOMElement}, task: Task, taskListIndex: number, taskIndex: number): void {
 		deleteTask(ev, task, taskListIndex, taskIndex)
 	}
 

@@ -1,7 +1,6 @@
 import { createSignal, createUniqueId, mergeProps, onCleanup, onMount, Show, splitProps, type JSX, type ParentComponent } from 'solid-js'
 import { Portal } from 'solid-js/web'
 
-import type { ComponentEvent } from '@/types/event'
 import { AnimationEffectTiming } from '@/enums/animation'
 import { FlyoutPosition as ModalPosition } from '@/enums/position'
 import { getFlyoutPosition } from '@/utils/flyout'
@@ -11,7 +10,7 @@ import { hasAttribute, removeAttribute, setAttribute, toggleAttribute } from '@/
 import { getDocument, getDocumentBody, getWindow } from '@/constants/window'
 import { getBoundingClientRect, querySelectorAll } from '@/utils/element'
 import { BodyAttributes } from '@/enums/attributes'
-import { addEventListener, preventDefault, removeEventListener, stopImmediatePropagation } from "@/utils/event"
+import { addEventListener, callEventHandler, preventDefault, removeEventListener, stopImmediatePropagation } from "@/utils/event"
 import { mathAbs } from '@/utils/math'
 import { BodyEvents } from '@/enums/events'
 
@@ -173,12 +172,9 @@ function closeModal(modal: HTMLDialogElement, soft: boolean = false): void {
 	modal[_dispatchEvent](new CustomEvent(ModalEvents[_onClose], {detail: {soft} satisfies ModalCloseDetail}))
 }
 
-type ModalProps = Omit<JSX.DialogHtmlAttributes<HTMLDialogElement>, 'style' | 'ref' | 'onClose' | 'onCancel' | 'onKeyDown'> & {
+type ModalProps = Omit<JSX.DialogHtmlAttributes<HTMLDialogElement>, 'style' | 'ref'> & {
 	ref?: (el: HTMLDialogElement) => unknown
 	onToggleOpen?: (isOpen: boolean) => unknown
-	onKeyDown?: (ev: ComponentEvent<KeyboardEvent, HTMLDialogElement>) => unknown
-	onClose?: (ev: ComponentEvent<Event, HTMLDialogElement>) => unknown
-	onCancel?: (ev: ComponentEvent<Event, HTMLDialogElement>) => unknown
 	openAnimation?: (el: HTMLDialogElement, done: () => void) => unknown
 	closeAnimation?: (el: HTMLDialogElement, done: () => void) => unknown
 	style?: JSX.CSSProperties
@@ -717,7 +713,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 				: props[_style]? props[_style][_max_height] : undefined,
 		}}
 		onKeyDown={(ev) => {
-			if (props[_onKeyDown]) props[_onKeyDown](ev)
+			callEventHandler(ev, props[_onKeyDown])
 			if (ev[_key] == _Escape
 				&& !ev[_altKey]
 				&& !ev[_ctrlKey]
@@ -730,7 +726,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 			}
 		}}
 		onCancel={(ev) => {
-			if (props[_onCancel]) props[_onCancel](ev)
+			callEventHandler(ev, props[_onCancel])
 			if ($important) {
 				preventDefault(ev)
 				return
@@ -738,8 +734,8 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 			closeModal({soft: true})
 		}}
 		onClose={(ev) => {
+			callEventHandler(ev, props[_onClose])
 			if (props[_onToggleOpen]) props[_onToggleOpen](false)
-			if (props[_onClose]) props[_onClose](ev)
 			isOpen = false
 		}}
 		data-dragable={toggleAttribute(isDragable())}

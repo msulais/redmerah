@@ -1,14 +1,13 @@
 import { createEffect, createMemo, createSignal, splitProps, type JSX, type ValidComponent, type VoidComponent } from "solid-js"
 import { Dynamic, type DynamicProps } from "solid-js/web"
 
-import type { ComponentEvent } from "@/types/event"
 import { _checked, _class, _component, _currentTarget, _disabled, _divAttr, _labelAttr, _onChange, _onClick, _onValueChanged, _value, _wrapperAttr } from "@/constants/string"
 import { toggleAttribute } from "@/utils/attributes"
+import { callEventHandler } from "@/utils/event"
 
 import './index.scss'
 
-type SwitchProps = Omit<JSX.InputHTMLAttributes<HTMLInputElement>, 'type' | 'onChange'> & {
-	onChange?(ev: ComponentEvent<Event, HTMLInputElement>): unknown
+type SwitchProps = Omit<JSX.InputHTMLAttributes<HTMLInputElement>, 'type'> & {
 	labelAttr?: JSX.LabelHTMLAttributes<HTMLLabelElement>
 }
 const Switch: VoidComponent<SwitchProps> = ($props) => {
@@ -31,7 +30,7 @@ const Switch: VoidComponent<SwitchProps> = ($props) => {
 			type="checkbox"
 			onChange={(ev) => {
 				setIsChecked(ev[_currentTarget][_checked])
-				if (props[_onChange]) props[_onChange](ev)
+				callEventHandler(ev, props[_onChange])
 			}}
 			{...other}
 		/>
@@ -39,9 +38,8 @@ const Switch: VoidComponent<SwitchProps> = ($props) => {
 	</label>)
 }
 
-type RawSwitchProps = Omit<JSX.InputHTMLAttributes<HTMLInputElement>, 'type' | 'onChange'> & {
+type RawSwitchProps = Omit<JSX.InputHTMLAttributes<HTMLInputElement>, 'type'> & {
 	component?: ValidComponent
-	onChange?(ev: ComponentEvent<Event, HTMLInputElement>): unknown
 	wrapperAttr?: Omit<DynamicProps<keyof JSX.HTMLElementTags & keyof JSX.SVGElementTags>, 'component'>
 }
 const RawSwitch: VoidComponent<RawSwitchProps> = ($props) => {
@@ -65,7 +63,7 @@ const RawSwitch: VoidComponent<RawSwitchProps> = ($props) => {
 			type="checkbox"
 			onChange={(ev) => {
 				setIsChecked(ev[_currentTarget][_checked])
-				if (props[_onChange]) props[_onChange](ev)
+				callEventHandler(ev, props[_onChange])
 			}}
 			{...other}
 		/>

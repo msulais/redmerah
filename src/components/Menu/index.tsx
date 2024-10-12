@@ -1,11 +1,10 @@
 import { type Component, type JSX, type ParentComponent, Show, mergeProps, splitProps, type VoidComponent, For, children, createUniqueId, onCleanup, onMount } from "solid-js"
 
-import type { ComponentEvent } from "@/types/event"
 import { getAttribute, toggleAttribute } from "@/utils/attributes"
 import { _checked, _selected, _leading, _children, _trailing, _subtitle, _indent, _classList, _rightCenterToBottom, _disconnect, _dismiss, _id, _item, _level, _manual, _observe, _onCancel, _onClick, _onClose, _onToggle, _open, _ref, _wrapperAttr, _auto, _shortcuts, _currentTarget, _none, _left, _tonal, _dragable, _clientX, _clientY, _color, _hue, _initialColor, _isDrag, _mousemove, _mouseup, _noPointerEvent, _opacity, _touchend, _touches, _touchmove, _value, _valuechange, _top, _px, _anchorId, _body, _bottom, _clientWidth, _height, _innerHeight, _right, _width, _focus, _iconCode, _compact, _variant, _indicatorPosition, _onMouseEnter, _onMouseLeave, _class, _disableScale, _desktopCompact, _gap, _position, _padding, _allowHideAnchor, _onToggleOpen, _click, _contains, _target, _filled, _focused, _layerAttr, _outlined, _transparent, _switchAttr, _onValueChanged, _onChange, _div, _disabled } from "@/constants/string"
 import { isVarHasValue } from "@/utils/data"
 import { querySelectorAll } from "@/utils/element"
-import { stopImmediatePropagation, stopPropagation } from "@/utils/event"
+import { callEventHandler, stopImmediatePropagation, stopPropagation } from "@/utils/event"
 import { clearTimeDelayed, setTimeDelayed, timeout } from "@/utils/timeout"
 import { numberParse } from "@/utils/math"
 import { getDocument } from "@/constants/window"
@@ -209,7 +208,7 @@ const SwitchMenuItem: ParentComponent<SwitchMenuItemProps> = ($props) => {
 	</label>)
 }
 
-type SubMenuProps = Omit<PopoverProps, 'onClick'> & {
+type SubMenuProps = PopoverProps & {
 	level?: number
 	item: JSX.Element
 	gap?: number
@@ -217,12 +216,8 @@ type SubMenuProps = Omit<PopoverProps, 'onClick'> & {
 	padding?: number
 	dragable?: boolean
 	allowHideAnchor?: boolean
-	onClick?: (ev: ComponentEvent<MouseEvent, HTMLDivElement>) => unknown
-	wrapperAttr?: Omit<JSX.HTMLAttributes<HTMLDivElement>, 'children' | 'ref' | 'onClick' | 'onMouseEnter' | 'onMouseLeave'> & {
+	wrapperAttr?: Omit<JSX.HTMLAttributes<HTMLDivElement>, 'children' | 'ref'> & {
 		ref?: (el: HTMLDivElement) => unknown
-		onClick?: (ev: ComponentEvent<MouseEvent, HTMLDivElement>) => unknown
-		onMouseEnter?: (ev: ComponentEvent<MouseEvent, HTMLDivElement>) => unknown
-		onMouseLeave?: (ev: ComponentEvent<MouseEvent, HTMLDivElement>) => unknown
 	}
 }
 const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
@@ -233,6 +228,10 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 		_padding, _dragable, _allowHideAnchor,
 		_onToggleOpen
 	])
+	const [wrapperProps, wrapperPropsOther] = splitProps(
+		props[_wrapperAttr]! ?? {},
+		[_class, _onClick, _onMouseEnter, _onMouseLeave]
+	)
 	let timeoutId: number | null = null
 	let div_ref: HTMLDivElement
 	let popover_ref: HTMLDivElement
@@ -295,7 +294,7 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 	})
 
 	return (<div
-		class={"sub-menu" + (props[_wrapperAttr] && props[_wrapperAttr][_class] != undefined? ` ${props[_wrapperAttr][_class]}` : '')}
+		class={"sub-menu" + (wrapperProps[_class]? ` ${wrapperProps[_class]}` : '')}
 		ref={r => {
 			div_ref = r
 			if (props[_wrapperAttr] && props[_wrapperAttr][_ref]) props[_wrapperAttr][_ref](r)
@@ -303,7 +302,7 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 		onClick={(ev) => {
 			cancelTimeout()
 			open(ev)
-			if (props[_wrapperAttr] && props[_wrapperAttr][_onClick]) props[_wrapperAttr][_onClick](ev)
+			callEventHandler(ev, wrapperProps[_onClick])
 		}}
 		onMouseEnter={(ev) => {
 			cancelTimeout()
@@ -311,7 +310,7 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 				open(ev)
 				timeoutId = null
 			}, 300)
-			if (props[_wrapperAttr] && props[_wrapperAttr][_onMouseEnter]) props[_wrapperAttr][_onMouseEnter](ev)
+			callEventHandler(ev, wrapperProps[_onMouseEnter])
 		}}
 		onMouseLeave={(ev) => {
 			cancelTimeout()
@@ -319,9 +318,9 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 				closePopover(popover_ref)
 				timeoutId = null
 			}, 500)
-			if (props[_wrapperAttr] && props[_wrapperAttr][_onMouseLeave]) props[_wrapperAttr][_onMouseLeave](ev)
+			callEventHandler(ev, wrapperProps[_onMouseLeave])
 		}}
-		{...props[_wrapperAttr]}>
+		{...wrapperPropsOther}>
 		{props[_item]}
 		<Popover
 			data-level={props[_level]}
@@ -334,7 +333,7 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 			onClick={(ev) => {
 				stopPropagation(ev)
 				stopImmediatePropagation(ev)
-				if (props[_onClick]) props[_onClick](ev)
+				callEventHandler(ev, props[_onClick])
 			}}
 			ref={r => {
 				popover_ref = r

@@ -1,11 +1,10 @@
 import { createEffect, createMemo, createSignal, mergeProps, onCleanup, onMount, splitProps, type JSX, type ParentComponent } from "solid-js"
 
-import type { ComponentEvent } from "@/types/event"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { _animate, _blur, _cancel, _catch, _check, _checkbox, _checked, _children, _class, _code, _currentTarget, _detail, _disabled, _dispatchEvent, _filled, _finished, _forEach, _iconAttr, _isSameNode, _labelAttr, _name, _onChange, _onChangeRadioOff, _radio, _ref, _replace, _spring, _then, _variant } from "@/constants/string"
 import { toggleAttribute } from "@/utils/attributes"
 import { querySelectorAll } from "@/utils/element"
-import { addEventListener, removeEventListener } from "@/utils/event"
+import { addEventListener, callEventHandler, removeEventListener } from "@/utils/event"
 
 import Icon, { type IconProps } from "@/components/Icon"
 import '@/components/Button/index.scss'
@@ -21,8 +20,7 @@ enum CheckBoxVariant {
 	check
 }
 
-type CheckBoxProps = Omit<JSX.InputHTMLAttributes<HTMLInputElement>, 'type' | 'onChange' | 'ref'> & {
-	onChange?(ev: ComponentEvent<Event, HTMLInputElement>): unknown
+type CheckBoxProps = Omit<JSX.InputHTMLAttributes<HTMLInputElement>, 'type' | 'ref'> & {
 	variant?: CheckBoxVariant
 	ref?(el: HTMLInputElement): unknown
 	labelAttr?: JSX.LabelHTMLAttributes<HTMLLabelElement>
@@ -105,7 +103,7 @@ const CheckBox: ParentComponent<CheckBoxProps> = ($props) => {
 			type={props[_variant] == CheckBoxVariant[_radio]? _radio : _checkbox}
 			onChange={(ev) => {
 				const isChecked = ev[_currentTarget][_checked]
-				if (props[_onChange]) props[_onChange](ev)
+				callEventHandler(ev, props[_onChange])
 
 				if (props[_variant] == CheckBoxVariant[_radio] && other[_name] != null) {
 					const getAllRadioWithSameName = querySelectorAll(`input[type=radio][name="${other[_name][_replace](/"/g, '\\"')}"]`)

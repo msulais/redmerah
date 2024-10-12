@@ -1,7 +1,6 @@
 import { createSignal, createUniqueId, mergeProps, onCleanup, onMount, Show, splitProps, type JSX, type ParentComponent, type VoidComponent } from 'solid-js'
 import { Portal } from 'solid-js/web'
 
-import type { ComponentEvent } from '@/types/event'
 import { FlyoutPosition as PopoverPosition } from '@/enums/position'
 import { getFlyoutPosition } from '@/utils/flyout'
 import { _allowHideAnchor, _altKey, _animate, _body, _bottom, _centerBottom, _centerBottomToLeft, _centerBottomToRight, _centerTop, _centerTopToLeft, _centerTopToRight, _children, _class, _click, _clientWidth, _clientX, _clientY, _close, _closeAnimation, _closePopover, _ctrlKey, _detail, _disconnect, _dismiss, _dispatchEvent, _documentElement, _dragable, _element, _Escape, _findIndex, _finished, _flyout, _flyoutListener, _focus, _gap, _height, _hidePopover, _important, _innerHeight, _instant, _isSameNode, _key, _left, _leftCenter, _leftCenterToBottom, _leftCenterToTop, _length, _manual, _manualDismiss, _max_height, _max_width, _maxHeight, _maxWidth, _metaKey, _mousemove, _mouseup, _move, _newState, _none, _noPointerEvent, _observe, _onCancel, _onClose, _onKeyDown, _onOpen, _onReposition, _onShortFocus, _onToggle, _onToggleOpen, _open, _openAnimation, _openPopover, _padding, _pointerType, _popoverListener, _popoverOpen, _position, _push, _px, _ref, _resize, _right, _rightCenter, _rightCenterToBottom, _rightCenterToTop, _scroll, _scrollTo, _scrollTop, _scrollY, _shiftKey, _showPopover, _some, _splice, _springBounce, _style, _then, _top, _touchend, _touches, _touchmove, _transform, _usePortal, _width, _x, _y } from '@/constants/string'
@@ -10,12 +9,12 @@ import { hasAttribute, removeAttribute, setAttribute, toggleAttribute } from '@/
 import { getDocument, getDocumentBody, getWindow } from '@/constants/window'
 import { getBoundingClientRect, querySelectorAll, setStyleProperty } from '@/utils/element'
 import { BodyAttributes } from '@/enums/attributes'
-import { addEventListener, removeEventListener, stopImmediatePropagation } from "@/utils/event"
+import { addEventListener, callEventHandler, removeEventListener, stopImmediatePropagation } from "@/utils/event"
 import { mathAbs } from '@/utils/math'
 import { BodyEvents } from '@/enums/events'
+import { AnimationEffectTiming } from '@/enums/animation'
 
 import './index.scss'
-import { AnimationEffectTiming } from '@/enums/animation'
 
 type PopoverOpenDetail = {
 	event: Event
@@ -151,7 +150,7 @@ function closePopover(popover: HTMLDivElement): void {
 	popover[_dispatchEvent](new CustomEvent(PopoverEvents[_onClose]))
 }
 
-type PopoverProps = Omit<JSX.HTMLAttributes<HTMLDivElement>, 'style' | 'ref' | 'onToggle'> & {
+type PopoverProps = Omit<JSX.HTMLAttributes<HTMLDivElement>, 'style' | 'ref'> & {
 	usePortal?: boolean
 	style?: JSX.CSSProperties
 	gap?: number
@@ -162,7 +161,6 @@ type PopoverProps = Omit<JSX.HTMLAttributes<HTMLDivElement>, 'style' | 'ref' | '
 	manualDismiss?: boolean
 	ref?: (el: HTMLDivElement) => unknown
 	onToggleOpen?: (isOpen: boolean) => unknown
-	onToggle?: (ev: ComponentEvent<ToggleEvent, HTMLDivElement>) => unknown
 	openAnimation?: (el: HTMLDivElement, done: () => void) => unknown
 	closeAnimation?: (el: HTMLDivElement, done: () => void) => unknown
 }
@@ -664,7 +662,7 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 		popover={_manual}
 		onToggle={(ev) => {
 			isOpen = ev[_newState] == _open
-			if (props[_onToggle]) props[_onToggle](ev)
+			callEventHandler(ev, props[_onToggle])
 			if (props[_onToggleOpen]) props[_onToggleOpen](isOpen)
 		}}
 		data-dragable={toggleAttribute(isDragable())}

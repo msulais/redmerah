@@ -9,6 +9,7 @@ import Button, { ButtonVariant, IconButton, SquareButton } from "@/components/Bu
 import { repositionModal, closeModal, openModal, focusModal, Modal, type ModalProps, ModalPosition as DatePickerPosition } from "@/components/Modal"
 import './index.scss'
 import Divider from "../Divider"
+import { callEventHandler } from "@/utils/event"
 
 enum DatePickerOption {
 	year,
@@ -177,7 +178,7 @@ const DatePicker: VoidComponent<DatePickerProps> = ($props) => {
 		}}
 		onClose={(ev) => {
 			setDateOption(DatePickerOption[_day])
-			if (props[_onClose]) props[_onClose](ev)
+			callEventHandler(ev, props[_onClose])
 		}}
 		{...other}>
 		<div class="date-picker-header">
