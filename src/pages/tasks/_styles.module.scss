@@ -239,7 +239,7 @@ $side_navigation_none: 680px;
 		text-decoration: line-through;
 	}
 
-	> :global(.list.expander-header) {
+	> .expander-header :global(.list) {
 		gap: 4px;
 		padding: 4px;
 		border-radius: 12px;
@@ -266,7 +266,7 @@ $side_navigation_none: 680px;
 		}
 	}
 
-	> :global(.expander-content){
+	> :global(.expander-body){
 		border-radius: 0 0 12px 12px;
 
 		:root[data-corner=sharp] & {border-radius: 0}

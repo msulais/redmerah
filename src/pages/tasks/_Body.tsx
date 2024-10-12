@@ -23,7 +23,7 @@ import Button, { ButtonVariant, IconButton } from "@/components/Button"
 import Emoji from "@/components/Emoji"
 import CheckBox from "@/components/CheckBox"
 import List from "@/components/List"
-import Expander from "@/components/Expander"
+import Expander, { ExpanderHeader } from "@/components/Expander"
 import TextField, { changeTextFieldValue, AreaTextField, TextFieldButton } from "@/components/TextField"
 import Menu, { closeMenu, closeSubMenu, MenuDivider, MenuHeader, MenuIndent, MenuItem, MenuPosition, openMenu, SubMenu, SubMenuItem } from "@/components/Menu"
 import Dialog, { closeDialog, openDialog } from "@/components/Dialog"
@@ -278,16 +278,156 @@ const TaskItem: VoidComponent<{
 	taskIndex: number
 	taskListIndex: number
 	labels: (TaskLabel | undefined)[]
-	onEdit: (ev: ComponentEvent<MouseEvent, HTMLDivElement>) => unknown
+	onEdit: (ev: ComponentEvent<MouseEvent>) => unknown
 	onEditReminder: (ev: ComponentEvent<MouseEvent, HTMLButtonElement>) => unknown
 	onEditFiles: (ev: ComponentEvent<MouseEvent, HTMLButtonElement>) => unknown
 	onEditLabel: (ev: ComponentEvent<MouseEvent, HTMLButtonElement>, label: TaskLabel) => unknown
-	onContextMenu: (ev: ComponentEvent<MouseEvent, HTMLDivElement>) => unknown
+	onContextMenu: (ev: ComponentEvent<MouseEvent>) => unknown
 	onDelete: (ev: ComponentEvent<MouseEvent, HTMLButtonElement>) => unknown
 	command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
 	return (<Expander
 		data-done={toggleAttribute(props[_task][_complete])}
+		header={<ExpanderHeader
+			useExpandIcon={false}
+			leading={<>
+				<TextTooltip text={`Mark as ${props[_task][_complete]? 'un' : ''}completed`}>
+					<IconButton
+						onContextMenu={ev => {
+							stopPropagation(ev)
+							preventDefault(ev)
+						}}
+						onClick={ev => {
+							stopPropagation(ev)
+							props[_command](
+								Commands.edit_task,
+								{...props[_task], complete: !props[_task][_complete]} satisfies Task,
+								props[_taskListIndex],
+								props[_taskIndex]
+							)
+						}}
+						code={props[_task][_complete]? 0xE3CB : 0xE3D4}
+					/>
+				</TextTooltip>
+			</>}
+			trailing={<>
+				<TextTooltip text={`Mark as ${props[_task][_important]? 'not ' : ''}important`}>
+					<IconButton
+						onContextMenu={ev => {
+							stopPropagation(ev)
+							preventDefault(ev)
+						}}
+						onClick={ev => {
+							stopPropagation(ev)
+							props[_command](
+								Commands.edit_task,
+								{...props[_task], important: !props[_task][_important]} satisfies Task,
+								props[_taskListIndex],
+								props[_taskIndex]
+							)
+						}}
+						filled={props[_task][_important]}
+						code={0xEF1B}
+					/>
+				</TextTooltip>
+				<TextTooltip text="Delete task">
+					<IconButton
+						onContextMenu={ev => {
+							stopPropagation(ev)
+							preventDefault(ev)
+						}}
+						onClick={ev => {
+							stopPropagation(ev)
+							props[_onDelete](ev)
+						}}
+						code={0xE59D}
+					/>
+				</TextTooltip>
+			</>}
+			subtitle={<>
+				{ props[_task][_description] }
+				<Show when={
+					props[_task][_subtasks][_length] > 0
+					|| props[_task][_reminder] != null
+					|| props[_task][_files][_length] > 0
+					|| props[_task][_labelIds][_length] > 0
+				}>
+					<div class={CSS.body_task_item_tags}>
+						<Show when={props[_task][_reminder] != null}>
+							<TextTooltip text={
+								"Task reminder" + (isOutDate_YMD_HM(
+									props[_task][_reminder]!,
+									getCurrentDate(),
+									new Date(getDate_Y() + 100, 2, 2)
+								)? " (outdated)" : "")}>
+								<Button
+									compact
+									style={{
+										"border-color": isOutDate_YMD_HM(
+											props[_task][_reminder]!,
+											getCurrentDate(),
+											new Date(getDate_Y() + 100, 2, 2)
+										)? 'rgb(var(--color-error))' : undefined
+									}}
+									onContextMenu={ev => {
+										stopPropagation(ev)
+										preventDefault(ev)
+									}}
+									onClick={ev => {
+										stopPropagation(ev)
+										props[_onEditReminder](ev)
+									}}
+									variant={ButtonVariant[_outlined]}>
+									<Icon filled code={0xE025} inline/>
+									{getDateString_YMD_HM(props[_task][_reminder]!)}
+								</Button>
+							</TextTooltip>
+						</Show>
+						<Show when={props[_task][_files][_length] > 0}>
+							<Button
+								compact
+								onContextMenu={ev => {
+									stopPropagation(ev)
+									preventDefault(ev)
+								}}
+								onClick={ev => {
+									stopPropagation(ev)
+									props[_onEditFiles](ev)
+								}}
+								variant={ButtonVariant[_outlined]}>
+								<Icon filled code={0xE187} inline/>
+								{props[_task][_files][_length]} file{props[_task][_files][_length] > 1? "s" : ''}
+							</Button>
+						</Show>
+						<For each={props[_task][_labelIds]}>{labelId =>
+							<Show when={props[_labels][labelId] != undefined}>
+								<Button
+									compact
+									style={{
+										"border-color": props[_labels][labelId]![_color] ?? undefined,
+										"background-color": props[_labels][labelId]![_color] != null
+											? props[_labels][labelId]![_color] + '14'
+											: undefined
+									}}
+									onContextMenu={ev => {
+										stopPropagation(ev)
+										preventDefault(ev)
+									}}
+									onClick={ev => {
+										stopPropagation(ev)
+										props[_onEditLabel](ev, props[_labels][labelId]!)
+									}}
+									variant={ButtonVariant[_outlined]}>
+									<Icon filled code={0xF00D} inline/>
+									{props[_labels][labelId]![_name]}
+								</Button>
+							</Show>
+						}</For>
+					</div>
+				</Show>
+			</>}>
+			{props[_task][_name]}
+		</ExpanderHeader>}
 		headerAttr={{
 			onClick: ev => props[_onEdit](ev),
 			onContextMenu: ev => {
@@ -295,146 +435,8 @@ const TaskItem: VoidComponent<{
 				props[_onContextMenu](ev)
 			}
 		}}
-		showExpandIcon={false}
 		classList={addClassListModule(CSS.body_task_item)}
-		leading={<>
-			<TextTooltip text={`Mark as ${props[_task][_complete]? 'un' : ''}completed`}>
-				<IconButton
-					onContextMenu={ev => {
-						stopPropagation(ev)
-						preventDefault(ev)
-					}}
-					onClick={ev => {
-						stopPropagation(ev)
-						props[_command](
-							Commands.edit_task,
-							{...props[_task], complete: !props[_task][_complete]} satisfies Task,
-							props[_taskListIndex],
-							props[_taskIndex]
-						)
-					}}
-					code={props[_task][_complete]? 0xE3CB : 0xE3D4}
-				/>
-			</TextTooltip>
-		</>}
-		title={props[_task][_name]}
-		trailing={<>
-			<TextTooltip text={`Mark as ${props[_task][_important]? 'not ' : ''}important`}>
-				<IconButton
-					onContextMenu={ev => {
-						stopPropagation(ev)
-						preventDefault(ev)
-					}}
-					onClick={ev => {
-						stopPropagation(ev)
-						props[_command](
-							Commands.edit_task,
-							{...props[_task], important: !props[_task][_important]} satisfies Task,
-							props[_taskListIndex],
-							props[_taskIndex]
-						)
-					}}
-					filled={props[_task][_important]}
-					code={0xEF1B}
-				/>
-			</TextTooltip>
-			<TextTooltip text="Delete task">
-				<IconButton
-					onContextMenu={ev => {
-						stopPropagation(ev)
-						preventDefault(ev)
-					}}
-					onClick={ev => {
-						stopPropagation(ev)
-						props[_onDelete](ev)
-					}}
-					code={0xE59D}
-				/>
-			</TextTooltip>
-		</>}
-		isOpen={props[_task][_subtasks][_length] > 0}
-		subtitle={<>
-			{ props[_task][_description] }
-			<Show when={
-				props[_task][_subtasks][_length] > 0
-				|| props[_task][_reminder] != null
-				|| props[_task][_files][_length] > 0
-				|| props[_task][_labelIds][_length] > 0
-			}>
-				<div class={CSS.body_task_item_tags}>
-					<Show when={props[_task][_reminder] != null}>
-						<TextTooltip text={
-							"Task reminder" + (isOutDate_YMD_HM(
-								props[_task][_reminder]!,
-								getCurrentDate(),
-								new Date(getDate_Y() + 100, 2, 2)
-							)? " (outdated)" : "")}>
-							<Button
-								compact
-								style={{
-									"border-color": isOutDate_YMD_HM(
-										props[_task][_reminder]!,
-										getCurrentDate(),
-										new Date(getDate_Y() + 100, 2, 2)
-									)? 'rgb(var(--color-error))' : undefined
-								}}
-								onContextMenu={ev => {
-									stopPropagation(ev)
-									preventDefault(ev)
-								}}
-								onClick={ev => {
-									stopPropagation(ev)
-									props[_onEditReminder](ev)
-								}}
-								variant={ButtonVariant[_outlined]}>
-								<Icon filled code={0xE025} inline/>
-								{getDateString_YMD_HM(props[_task][_reminder]!)}
-							</Button>
-						</TextTooltip>
-					</Show>
-					<Show when={props[_task][_files][_length] > 0}>
-						<Button
-							compact
-							onContextMenu={ev => {
-								stopPropagation(ev)
-								preventDefault(ev)
-							}}
-							onClick={ev => {
-								stopPropagation(ev)
-								props[_onEditFiles](ev)
-							}}
-							variant={ButtonVariant[_outlined]}>
-							<Icon filled code={0xE187} inline/>
-							{props[_task][_files][_length]} file{props[_task][_files][_length] > 1? "s" : ''}
-						</Button>
-					</Show>
-					<For each={props[_task][_labelIds]}>{labelId =>
-						<Show when={props[_labels][labelId] != undefined}>
-							<Button
-								compact
-								style={{
-									"border-color": props[_labels][labelId]![_color] ?? undefined,
-									"background-color": props[_labels][labelId]![_color] != null
-										? props[_labels][labelId]![_color] + '14'
-										: undefined
-								}}
-								onContextMenu={ev => {
-									stopPropagation(ev)
-									preventDefault(ev)
-								}}
-								onClick={ev => {
-									stopPropagation(ev)
-									props[_onEditLabel](ev, props[_labels][labelId]!)
-								}}
-								variant={ButtonVariant[_outlined]}>
-								<Icon filled code={0xF00D} inline/>
-								{props[_labels][labelId]![_name]}
-							</Button>
-						</Show>
-					}</For>
-				</div>
-			</Show>
-		</>}>
+		open={props[_task][_subtasks][_length] > 0}>
 		<For each={props[_task][_subtasks]}>{(subtask, index) => <CheckBox
 			checked={subtask[_complete]}
 			onChange={ev => props[_command](
@@ -483,10 +485,10 @@ const SingleTaskList: VoidComponent<{
 	taskListIndex: number
 	onEditLabel: (ev: ComponentEvent<MouseEvent, HTMLButtonElement>, label: TaskLabel, task: Task, taskIndex: number) => unknown
 	onDeleteTask: (ev: ComponentEvent<MouseEvent, HTMLButtonElement>, task: Task, taskIndex: number) => unknown
-	onEditTask: (ev: ComponentEvent<MouseEvent, HTMLDivElement>, task: Task, taskIndex: number) => unknown
+	onEditTask: (ev: ComponentEvent<MouseEvent>, task: Task, taskIndex: number) => unknown
 	onEditFilesTask: (ev: ComponentEvent<MouseEvent, HTMLButtonElement>, task: Task, taskIndex: number) => unknown
 	onEditReminderTask: (ev: ComponentEvent<MouseEvent, HTMLButtonElement>, task: Task, taskIndex: number) => unknown
-	onContextMenuTask: (ev: ComponentEvent<MouseEvent, HTMLDivElement>, task: Task, taskIndex: number) => unknown
+	onContextMenuTask: (ev: ComponentEvent<MouseEvent>, task: Task, taskIndex: number) => unknown
 	command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
 	const [isAnyCompletedTask, setIsAnyCompletedTask] = createSignal<boolean>(true)
@@ -596,10 +598,10 @@ const GroupTaskList: VoidComponent<{
 	settings: Settings
 	onEditLabel: (ev: ComponentEvent<MouseEvent, HTMLButtonElement>, label: TaskLabel, task: Task, taskListIndex: number, taskIndex: number) => unknown
 	onDeleteTask: (ev: ComponentEvent<MouseEvent, HTMLButtonElement>, task: Task, taskListIndex: number, taskIndex: number) => unknown
-	onEditTask: (ev: ComponentEvent<MouseEvent, HTMLDivElement>, task: Task, taskListIndex: number, taskIndex: number) => unknown
+	onEditTask: (ev: ComponentEvent<MouseEvent>, task: Task, taskListIndex: number, taskIndex: number) => unknown
 	onEditFilesTask: (ev: ComponentEvent<MouseEvent, HTMLButtonElement>, task: Task, taskListIndex: number, taskIndex: number) => unknown
 	onEditReminderTask: (ev: ComponentEvent<MouseEvent, HTMLButtonElement>, task: Task, taskListIndex: number, taskIndex: number) => unknown
-	onContextMenuTask: (ev: ComponentEvent<MouseEvent, HTMLDivElement>, task: Task, taskListIndex: number, taskIndex: number) => unknown
+	onContextMenuTask: (ev: ComponentEvent<MouseEvent>, task: Task, taskListIndex: number, taskIndex: number) => unknown
 	command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
 	const [is_menu_more_open, setIs_menu_more_open] = createSignal<boolean>(false)
@@ -927,12 +929,12 @@ const _: VoidComponent<{
 		else if (renameFileOption == _action) setSelectedTaskToFileAction(_task, _files, files)
 	}
 
-	function onContextMenuTask(ev: ComponentEvent<MouseEvent, HTMLDivElement>, task: Task, taskListIndex: number, taskIndex: number): void {
+	function onContextMenuTask(ev: ComponentEvent<MouseEvent>, task: Task, taskListIndex: number, taskIndex: number): void {
 		setSelectedTaskToAction({task, taskListIndex, taskIndex})
 		openMenu(ev, menu_taskAction_ref, {position: MenuPosition[_centerBottomToRight]})
 	}
 
-	function onEditTask(ev: ComponentEvent<MouseEvent, HTMLDivElement>, task: Task, taskListIndex: number, taskIndex: number): void {
+	function onEditTask(ev: ComponentEvent<MouseEvent>, task: Task, taskListIndex: number, taskIndex: number): void {
 		editTask(ev, task, taskListIndex, taskIndex)
 	}
 
