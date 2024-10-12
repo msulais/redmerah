@@ -22,14 +22,6 @@ const _: VoidComponent = () => {
 		title="Expander"
 		description="An expander is a UI element that allows users to reveal or collapse hidden content within a list item.">
 		<Playground>
-			{/* <Expander
-
-				variant={variant()}>
-				<Show when={content()}>
-					<p style={{"margin-bottom": '1.15em'}}>Deserunt sint voluptate nisi reprehenderit anim veniam ex quis deserunt ad. Aute duis commodo veniam incididunt aute anim anim et. Ipsum exercitation ea minim voluptate veniam ad duis dolore. Do officia amet adipisicing ea incididunt labore ipsum commodo minim. Quis ipsum dolor non sunt magna ad aliqua. Ea minim reprehenderit sint exercitation nostrud veniam nisi sit. Ut et culpa occaecat proident id sint officia anim adipisicing.</p>
-					<p>Qui culpa cillum sunt sit in dolore ullamco excepteur ipsum ex do ut reprehenderit. Magna dolor excepteur velit ullamco laboris. Esse nulla qui sit enim et ex ullamco tempor eiusmod voluptate eiusmod non dolore. Aliquip mollit tempor id qui do consequat occaecat mollit. Voluptate nisi deserunt ipsum quis eiusmod tempor culpa excepteur tempor velit deserunt.</p>
-				</Show>
-			</Expander> */}
 			<Expander
 				header={<ExpanderHeader
 					useExpandIcon={useExpandIcon()}
