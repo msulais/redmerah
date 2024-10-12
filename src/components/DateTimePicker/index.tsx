@@ -9,8 +9,9 @@ import { TimeFormat } from '@/enums/datetime'
 import Button, { ButtonVariant, IconButton, SquareButton } from '@/components/Button'
 import Dropdown, { type Item as $DropdownItem } from '@/components/Dropdown'
 import { closeModal, openModal, focusModal, Modal, type ModalProps, repositionModal, ModalPosition as DateTimePickerPosition } from '@/components/Modal'
+import Divider from '@/components/Divider'
 import './index.scss'
-import Divider from '../Divider'
+import { callEventHandler } from '@/utils/event'
 
 enum DatePickerOption {
 	year,
@@ -183,7 +184,7 @@ const DateTimePicker: VoidComponent<DateTimePickerProps> = ($props) => {
 		}}
 		onClose={(ev) => {
 			setDateOption(DatePickerOption[_day])
-			if (props[_onClose]) props[_onClose](ev)
+			callEventHandler(ev, props[_onClose])
 		}}
 		{...other}>
 		<div class="datetime-picker-header">

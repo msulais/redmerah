@@ -1,9 +1,8 @@
 import { onCleanup, onMount, splitProps, type FlowComponent, type JSX } from "solid-js"
 
-import type { ComponentEvent } from "@/types/event"
 import { _textTooltipListener, _centerTop, _createElement, _div, _id, _popover, _manual, _appendChild, _top, _height, _left, _width, _centerBottom, _centerBottomToLeft, _centerBottomToRight, _centerTopToLeft, _centerTopToRight, _leftCenter, _leftCenterToBottom, _leftCenterToTop, _rightCenter, _rightCenterToBottom, _rightCenterToTop, _move, _open, _hidePopover, _openTextTooltip, _detail, _isSameNode, _textContent, _showPopover, _px, _transform, _closeTextTooltip, _updatePointerTextTooltip, _pointer, _dispatchEvent, _useAnchor, _gap, _position, _startDelayDuration, _text, _endDelayDuration, _clientX, _clientY, _children, _tooltip, _classList, _ref, _usePortal, _tooltipListener, _onMouseLeave, _onMouseDown, _onMouseMove, _onTouchCancel, _onTouchEnd, _bottom, _right, _contains, _openDone, _animate, _finished, _springBounce, _then, _none } from "@/constants/string"
 import { hasAttribute, removeAttribute, setAttribute } from "@/utils/attributes"
-import { addEventListener, stopPropagation } from "@/utils/event"
+import { addEventListener, callEventHandler, stopPropagation } from "@/utils/event"
 import { getBoundingClientRect, setStyleProperty } from "@/utils/element"
 import { clearTimeDelayed, setTimeDelayed } from "@/utils/timeout"
 import { getDocument, getDocumentBody } from "@/constants/window"
@@ -12,10 +11,10 @@ import { getFlyoutPosition } from "@/utils/flyout"
 import { mathAbs } from "@/utils/math"
 import { BodyAttributes } from "@/enums/attributes"
 import { BodyEvents } from "@/enums/events"
+import { AnimationEffectTiming } from "@/enums/animation"
 
 import { closePopover, openPopover, Popover, type PopoverProps } from "@/components/Popover"
 import './index.scss'
-import { AnimationEffectTiming } from "@/enums/animation"
 
 enum TooltipAttributes {
 	open = 'data-open',
@@ -381,18 +380,13 @@ const TextTooltip: FlowComponent<TextTooltipProps> = (props) => {
 	</div>)
 }
 
-type RichTooltipProps = Omit<PopoverProps, 'onMouseMove' | 'onMouseLeave' | 'onMouseDown' | 'onTouchEnd' | 'onTouchCancel'> & {
+type RichTooltipProps = PopoverProps & {
 	tooltip: JSX.Element
 	position?: TooltipPosition
 	gap?: number
 	startDelayDuration?: number
 	endDelayDuration?: number
 	useAnchor?: boolean
-	onMouseMove?: (ev: ComponentEvent<MouseEvent, HTMLDivElement>) => unknown
-	onMouseLeave?: (ev: ComponentEvent<MouseEvent, HTMLDivElement>) => unknown
-	onMouseDown?: (ev: ComponentEvent<MouseEvent, HTMLDivElement>) => unknown
-	onTouchEnd?: (ev: ComponentEvent<TouchEvent, HTMLDivElement>) => unknown
-	onTouchCancel?: (ev: ComponentEvent<TouchEvent, HTMLDivElement>) => unknown
 }
 const RichTooltip: FlowComponent<RichTooltipProps> = ($props) => {
 	const [props, other] = splitProps($props, [
@@ -456,23 +450,23 @@ const RichTooltip: FlowComponent<RichTooltipProps> = ($props) => {
 			usePortal={props[_usePortal] ?? false}
 			onMouseMove={ev => {
 				stopPropagation(ev)
-				if (props[_onMouseMove]) props[_onMouseMove](ev)
+				callEventHandler(ev, props[_onMouseMove])
 			}}
 			onMouseLeave={ev => {
 				stopPropagation(ev)
-				if (props[_onMouseLeave]) props[_onMouseLeave](ev)
+				callEventHandler(ev, props[_onMouseLeave])
 			}}
 			onMouseDown={ev => {
 				stopPropagation(ev)
-				if (props[_onMouseDown]) props[_onMouseDown](ev)
+				callEventHandler(ev, props[_onMouseDown])
 			}}
 			onTouchEnd={ev => {
 				stopPropagation(ev)
-				if (props[_onTouchEnd]) props[_onTouchEnd](ev)
+				callEventHandler(ev, props[_onTouchEnd])
 			}}
 			onTouchCancel={ev => {
 				stopPropagation(ev)
-				if (props[_onTouchCancel]) props[_onTouchCancel](ev)
+				callEventHandler(ev, props[_onTouchCancel])
 			}}
 			ref={r => {
 				tooltip_ref = r

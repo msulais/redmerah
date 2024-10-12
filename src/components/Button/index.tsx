@@ -1,10 +1,9 @@
 import { type ParentComponent, type JSX, mergeProps, splitProps, type VoidComponent, type ValidComponent } from 'solid-js'
 import { Dynamic, type DynamicProps } from 'solid-js/web'
 
-import type { ComponentEvent } from '@/types/event'
 import { _button, _transparent, _bottom, _children, _indicatorPosition, _variant, _focused, _compact, _selected, _layerAttr, _disableScale, _classList, _type, _class, _desktopCompact, _filled, _filledTonal, _outlined, _openInNewTab, _disabled, _onClick, _code, _tonal, _emoji } from '@/constants/string'
 import { toggleAttribute } from '@/utils/attributes'
-import { preventDefault } from '@/utils/event'
+import { callEventHandler, preventDefault } from '@/utils/event'
 
 import Icon from '@/components/Icon'
 import Emoji from '@/components/Emoji'
@@ -101,7 +100,7 @@ const Button: ParentComponent<ButtonProps> = ($props) => {
 	</button>)
 }
 
-type LinkButtonProps = Omit<JSX.AnchorHTMLAttributes<HTMLAnchorElement>, 'onClick'> & {
+type LinkButtonProps = JSX.AnchorHTMLAttributes<HTMLAnchorElement> & {
 	variant?: ButtonVariant
 	focused?: boolean
 	compact?: boolean
@@ -111,7 +110,6 @@ type LinkButtonProps = Omit<JSX.AnchorHTMLAttributes<HTMLAnchorElement>, 'onClic
 	disableScale?: boolean
 	indicatorPosition?: ButtonIndicatorPosition
 	layerAttr?: JSX.HTMLAttributes<HTMLDivElement>
-	onClick?: (ev: ComponentEvent<MouseEvent, HTMLAnchorElement>) => unknown
 }
 
 const LinkButton: ParentComponent<LinkButtonProps> = ($props) => {
@@ -132,7 +130,7 @@ const LinkButton: ParentComponent<LinkButtonProps> = ($props) => {
 			if (props[_disabled]) {
 				preventDefault(ev)
 			}
-			if (props[_onClick]) props[_onClick](ev)
+			callEventHandler(ev, props[_onClick])
 		}}
 		classList={{
 			'filled-btn': props[_variant] == ButtonVariant[_filled],

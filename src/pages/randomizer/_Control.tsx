@@ -2,7 +2,6 @@ import { Match, Show, Switch, type VoidComponent, createEffect, createMemo, crea
 import type { SetStoreFunction, Store } from "solid-js/store/types/store";
 
 import type { ItemList, Settings } from "./_types";
-import type { ComponentEvent } from "@/types/event";
 import { _add_list, _change_settings_colors_count, _change_settings_colors_range_hex, _change_settings_colors_range_hsl_h, _change_settings_colors_range_hsl_l, _change_settings_colors_range_hsl_s, _change_settings_colors_range_rgb_b, _change_settings_colors_range_rgb_g, _change_settings_colors_range_rgb_r, _change_settings_numbers_count, _change_settings_numbers_range, _change_settings_selection_count, _change_settings_selection_list, _change_settings_string_characters_customCharacters, _change_settings_string_characters_toDefault, _change_settings_string_length, _change_settings_teams_count, _change_settings_teams_membersList, _change_settings_teams_namesList, _change_settings_words_count, _change_settings_words_list, _delete_list, _edit_list, _export_list, _reset_list, _settings_words_listId, _toggle_settings_string_characters_alphabetLowercase, _toggle_settings_string_characters_alphabetUppercase, _toggle_settings_string_characters_numbers, _toggle_settings_string_characters_symbols, _view_list } from "./_string";
 import { _settings, _string, _numbers, _length, _push, _join, _width, _currentTarget, _centerBottomToLeft, _value, _characters, _symbols, _colors, _match, _max, _min, _replace, _range, _count, _colorModel, _hex, _hsl, _isNaN, _rgb, _words, _lists, _alphabetLowercase, _alphabetUppercase, _customCharacter, _randomizerType, _id, _list, _members, _name, _db, _objectStore, _put, _transaction, _readwrite, _command, _centerBottomToRight, _oncontextmenu, _items, _selection, _teams, _namesList, _membersList, _find } from "@/constants/string";
 import { getBoundingClientRect } from "@/utils/element";
@@ -691,7 +690,7 @@ const Numbers: VoidComponent<{
 	settings: [Settings, SetStoreFunction<Settings>]
 	command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
-	function onBlurRange(ev: ComponentEvent<FocusEvent, HTMLInputElement>): void {
+	function onBlurRange(ev: FocusEvent & {currentTarget: HTMLInputElement; target: HTMLInputElement}): void {
 		const rangeRegex = /([-+]?\d+?) ?- ?([-+]?\d+)/
 		const unnecesaryChar = /[^\d-.]|(?<=\d)\.\d+|(?<!\d)\.(?=\d)/gs
 		const r = ev[_currentTarget][_value][_replace](unnecesaryChar, '')[_match](rangeRegex)

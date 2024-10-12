@@ -1,7 +1,6 @@
 import { createStore } from "solid-js/store"
 import { For, Show, createEffect, createSelector, createSignal, mergeProps, onCleanup, onMount, splitProps, type JSX, type VoidComponent } from "solid-js"
 
-import type { ComponentEvent } from "@/types/event"
 import { _refs, _dividerIndexs, _labels, _readOnly, _footer, _header, _disabled, _onSelectedItemsChanged, _items, _selectedValues, _labelAttr, _multiple, _trailing, _onClicks, _menuAttr, _optionIconTooltip, _some, _width, _centerBottom, _length, _slice, _map, _observe, _disconnect, _filter, _includes, _push, _ref, _classList, _onClick, _join, _px, _find, _style, _onToggleOpen, _wrapperAttr } from "@/constants/string"
 import { getBoundingClientRect } from "@/utils/element"
 import { toggleAttribute } from "@/utils/attributes"
@@ -13,6 +12,7 @@ import Icon from "@/components/Icon"
 import TextField, { TextFieldButton, type TextFieldProps } from "@/components/TextField"
 import Menu, { closeMenu, LinkMenuItem, MenuDivider, MenuHeader, MenuItem, openMenu, repositionMenu, type MenuProps, MenuPosition as DropdownPosition } from "@/components/Menu"
 import './index.scss'
+import type { DOMElement } from "solid-js/jsx-runtime"
 
 type Item = (
 	[value: string | number, text: string, trailingText: string] |
@@ -29,7 +29,7 @@ type DropdownProps = Omit<TextFieldProps, 'value'> & {
 	footer?: JSX.Element
 	optionIconTooltip?: string
 	refs?: (el: HTMLButtonElement, item: Item) => unknown
-	onClicks?: (ev: ComponentEvent<MouseEvent, HTMLButtonElement>) => boolean | unknown
+	onClicks?: (ev: MouseEvent & {currentTarget: HTMLButtonElement; target: DOMElement}) => boolean | unknown
 	onSelectedItemsChanged?: (items: Item[]) => unknown
 	menuAttr?: Omit<MenuProps, 'style'> & {
 		style?: JSX.CSSProperties
@@ -63,7 +63,7 @@ const Dropdown: VoidComponent<DropdownProps> = ($props) => {
 	let menu_dropdown_ref: HTMLDialogElement
 	let $selectedValues: (string | number)[] = []
 
-	function openDropdownMenu(ev: ComponentEvent<MouseEvent>): void {
+	function openDropdownMenu(ev: MouseEvent): void {
 		if (props[_disabled] || props[_readOnly]) return;
 
 		setWidth(getBoundingClientRect(wrapper_dropdown_ref)[_width])
