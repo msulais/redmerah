@@ -2,11 +2,11 @@ import { createStore } from "solid-js/store"
 import { For, Show, createEffect, createSelector, createSignal, mergeProps, onCleanup, onMount, splitProps, type JSX, type VoidComponent } from "solid-js"
 
 import type { ComponentEvent } from "@/types/event"
-import { _refs, _dividerIndexs, _labels, _readOnly, _footer, _header, _disabled, _onSelectedItemsChanged, _items, _selectedValues, _labelAttr, _multiple, _trailing, _onClicks, _menuAttr, _optionIconTooltip, _some, _width, _centerBottom, _length, _slice, _map, _observe, _disconnect, _filter, _includes, _push, _ref, _classList, _onClick, _join, _px, _find, _style, _onToggleOpen } from "@/constants/string"
+import { _refs, _dividerIndexs, _labels, _readOnly, _footer, _header, _disabled, _onSelectedItemsChanged, _items, _selectedValues, _labelAttr, _multiple, _trailing, _onClicks, _menuAttr, _optionIconTooltip, _some, _width, _centerBottom, _length, _slice, _map, _observe, _disconnect, _filter, _includes, _push, _ref, _classList, _onClick, _join, _px, _find, _style, _onToggleOpen, _wrapperAttr } from "@/constants/string"
 import { getBoundingClientRect } from "@/utils/element"
 import { toggleAttribute } from "@/utils/attributes"
 import { clearTimeDelayed, setTimeDelayed } from "@/utils/timeout"
-import { stopImmediatePropagation } from "@/utils/event"
+import { callEventHandler, stopImmediatePropagation } from "@/utils/event"
 
 import { TextTooltip } from "@/components/Tooltip"
 import Icon from "@/components/Icon"
@@ -45,9 +45,13 @@ const Dropdown: VoidComponent<DropdownProps> = ($props) => {
 	const [props, other] = splitProps($$props, [
 		_refs, _dividerIndexs, _labels, _readOnly,
 		_footer, _header, _disabled, _onSelectedItemsChanged, _items,
-		_selectedValues, _labelAttr, _multiple, _trailing,
+		_selectedValues, _wrapperAttr, _multiple, _trailing,
 		_onClicks, _menuAttr, _optionIconTooltip
 	])
+	const [wrapperProps, wrapperPropsOther] = splitProps(
+		props[_wrapperAttr]! ?? {},
+		[_ref, _classList, _onClick]
+	)
 	const [selectedItems, setSelectedItems] = createStore<Item[]>([])
 	const [width, setWidth] = createSignal<number>(0)
 	const [isFocus, setIsFocus] = createSignal<boolean>(false)
@@ -55,16 +59,16 @@ const Dropdown: VoidComponent<DropdownProps> = ($props) => {
 		() => selectedItems,
 		(item, items) => items[_some]((a) => a[0] == item)
 	)
-	let label_dropdown_ref: HTMLLabelElement
+	let wrapper_dropdown_ref: HTMLDivElement
 	let menu_dropdown_ref: HTMLDialogElement
 	let $selectedValues: (string | number)[] = []
 
 	function openDropdownMenu(ev: ComponentEvent<MouseEvent>): void {
 		if (props[_disabled] || props[_readOnly]) return;
 
-		setWidth(getBoundingClientRect(label_dropdown_ref)[_width])
+		setWidth(getBoundingClientRect(wrapper_dropdown_ref)[_width])
 		openMenu(ev, menu_dropdown_ref, {
-			anchor: label_dropdown_ref,
+			anchor: wrapper_dropdown_ref,
 			padding: 0,
 			gap: 4,
 			position: DropdownPosition[_centerBottom],
@@ -104,12 +108,12 @@ const Dropdown: VoidComponent<DropdownProps> = ($props) => {
 			if (t != null) clearTimeDelayed(t)
 
 			t = setTimeDelayed(() => {
-				setWidth(getBoundingClientRect(label_dropdown_ref)[_width])
+				setWidth(getBoundingClientRect(wrapper_dropdown_ref)[_width])
 				repositionMenu(menu_dropdown_ref)
 				t = null
 			}, 300)
 		})
-		observer[_observe](label_dropdown_ref!, { box: "border-box" })
+		observer[_observe](wrapper_dropdown_ref!, { box: "border-box" })
 
 		onCleanup(() => {
 			observer[_disconnect]()
@@ -139,26 +143,22 @@ const Dropdown: VoidComponent<DropdownProps> = ($props) => {
 			readOnly
 			disabled={props[_disabled]}
 			focused={isFocus()}
-			labelAttr={{
-				...props[_labelAttr],
+			wrapperAttr={{
 				ref: (r) => {
-					label_dropdown_ref = r
-					if (props[_labelAttr] && props[_labelAttr][_ref]) {
-						(props[_labelAttr][_ref] as ((el: HTMLLabelElement) => void))(r)
-					}
+					wrapper_dropdown_ref = r
+					if (wrapperProps[_ref]) wrapperProps[_ref](r)
 				},
-				classList: {'dropdown': true, ...(() => {
-					if (props[_labelAttr] && props[_labelAttr][_classList]) return props[_labelAttr][_classList];
-					return {}
-				})()},
+				classList: {
+					'dropdown': true,
+					...wrapperProps[_classList]
+				},
 				onClick: ev => {
 					stopImmediatePropagation(ev)
 					openDropdownMenu(ev)
-					if (props[_labelAttr] && props[_labelAttr][_onClick]) {
-						(props[_labelAttr][_onClick] as (ev: ComponentEvent<MouseEvent, HTMLLabelElement>) => unknown)(ev)
-					}
+					callEventHandler(ev, wrapperProps[_onClick])
 				},
 				...{'data-dropdown-readonly': toggleAttribute(props[_readOnly])},
+				...wrapperPropsOther
 			}}
 			value={selectedItems[_map](i => i[1])[_join](', ')}
 			trailing={<>

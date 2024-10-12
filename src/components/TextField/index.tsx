@@ -3,8 +3,8 @@ import { type JSX, type ParentComponent, createSignal, createUniqueId, mergeProp
 import type { ComponentEvent } from '@/types/event'
 import { toggleAttribute } from '@/utils/attributes'
 import { clearTimeDelayed, clearTimeInterval, setTimeDelayed, setTimeInterval } from '@/utils/timeout'
-import { preventDefault } from '@/utils/event'
-import { _centerBottom, _centerCenterLeft, _autoHideLabel, _autoShowClearBtn, _autocomplete, _button, _changeValueTooltip, _checkValidity, _children, _classList, _clearTooltip, _compact, _currentTarget, _decreaseTooltip, _disabled, _dispatchEvent, _focus, _focused, _id, _increaseTooltip, _input, _isIntOnly, _isNaN, _labelAttr, _labelElement, _labelText, _leading, _length, _max, _maxLine, _messageText, _min, _minLine, _off, _onBlur, _onFinalValueChanged, _onFocus, _onInput, _onValueChanged, _placeholder, _px, _readOnly, _ref, _resize, _rows, _scrollHeight, _split, _step, _text, _trailing, _trim, _type, _value, _valuechange, _result, _observe, _disconnect, _width, _menuAttr, _usePortal, _style, _bottom, _clientX, _clientY, _left, _right, _top, _touches, _x, _y, _click, _onToggleOpen, _target, _contains, _isArray, _class, _integerOnly, _suffix, _prefix, _autoSelectAll, _setSelectionRange, _onKeyUp, _blur, _code, _Enter } from '@/constants/string'
+import { callEventHandler, preventDefault, stopPropagation } from '@/utils/event'
+import { _centerBottom, _centerCenterLeft, _autoHideLabel, _autoShowClearBtn, _autocomplete, _button, _changeValueTooltip, _checkValidity, _children, _classList, _clearTooltip, _compact, _currentTarget, _decreaseTooltip, _disabled, _dispatchEvent, _focus, _focused, _id, _increaseTooltip, _input, _isIntOnly, _isNaN, _labelAttr, _labelElement, _labelText, _leading, _length, _max, _maxLine, _messageText, _min, _minLine, _off, _onBlur, _onFinalValueChanged, _onFocus, _onInput, _onValueChanged, _placeholder, _px, _readOnly, _ref, _resize, _rows, _scrollHeight, _split, _step, _text, _trailing, _trim, _type, _value, _valuechange, _result, _observe, _disconnect, _width, _menuAttr, _usePortal, _style, _bottom, _clientX, _clientY, _left, _right, _top, _touches, _x, _y, _click, _onToggleOpen, _target, _contains, _isArray, _class, _integerOnly, _suffix, _prefix, _autoSelectAll, _setSelectionRange, _onKeyUp, _blur, _code, _Enter, _wrapperAttr } from '@/constants/string'
 import { mathMax, mathRound, numberParse } from '@/utils/math'
 import { getBoundingClientRect } from '@/utils/element'
 import { getDocument } from '@/constants/window'
@@ -75,7 +75,7 @@ const TextFieldButton: ParentComponent<TextFieldButtonProps> = ($props) => {
 	/>)
 }
 
-type AreaTextFieldProps = Omit<JSX.TextareaHTMLAttributes<HTMLTextAreaElement>, 'ref' | 'onInput' | 'onFocus' | 'onBlur' | 'children' | 'rows' | 'columns' | 'value'> & {
+type AreaTextFieldProps = Omit<JSX.TextareaHTMLAttributes<HTMLTextAreaElement>, 'ref' | 'children' | 'rows' | 'columns' | 'value'> & {
 	leading?: JSX.Element
 	trailing?: JSX.Element
 	labelText?: JSX.Element
@@ -89,10 +89,10 @@ type AreaTextFieldProps = Omit<JSX.TextareaHTMLAttributes<HTMLTextAreaElement>, 
 	autoHideLabel?: boolean
 	clearTooltip?: string
 	ref?: (el: HTMLTextAreaElement) => void
+	wrapperAttr?: Omit<JSX.HTMLAttributes<HTMLDivElement>, 'ref'> & {
+		ref?(el: HTMLDivElement): unknown
+	}
 	labelAttr?: JSX.LabelHTMLAttributes<HTMLLabelElement>
-	onInput?: (ev: ComponentEvent<InputEvent, HTMLTextAreaElement, HTMLTextAreaElement>) => void
-	onFocus?: (ev: ComponentEvent<FocusEvent, HTMLTextAreaElement, HTMLTextAreaElement>) => void
-	onBlur?: (ev: ComponentEvent<FocusEvent, HTMLTextAreaElement, HTMLTextAreaElement>) => void
 }
 const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 	const $$props = mergeProps({autoHideLabel: true, id: createUniqueId()}, $props)
@@ -102,8 +102,9 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 		_labelAttr, _disabled, _readOnly,
 		_onFocus, _onBlur, _placeholder, _autoHideLabel,
 		_value, _ref, _autoShowClearBtn, _clearTooltip,
-		_minLine, _maxLine, _compact
+		_minLine, _maxLine, _compact, _wrapperAttr
 	])
+	const [wrapperProps, wrapperPropsOther] = splitProps(props[_wrapperAttr]! ?? {}, [_class])
 	const [isFocus, setIsFocus] = createSignal<boolean>(false)
 	const [isInvalid, setIsInvalid] = createSignal<boolean>(false)
 	const [value, setValue] = createSignal<string>('')
@@ -119,20 +120,19 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 		setValue(value ?? '')
 	})
 
-	return (<label
-		class='areatextfield'
-		for={props[_id]}
-		{...props[_labelAttr]}
-	>
+	return (<div
+		class={`areatextfield${wrapperProps[_class] != null ? ` ${wrapperProps[_class]}` : ''}`}
+		{...wrapperPropsOther}>
 		<div
 			data-focused={toggleAttribute(props[_focused] ?? isFocus())}
 			data-invalid={toggleAttribute(isInvalid())}
 			data-disabled={toggleAttribute(props[_disabled])}
 			data-trailing={toggleAttribute(trailingComponents() || (props[_autoShowClearBtn] && value()[_length] > 0))}
 			data-compact={toggleAttribute(props[_compact])}
-			data-readonly={toggleAttribute(props[_readOnly])}>
+			data-readonly={toggleAttribute(props[_readOnly])}
+			onClick={() => areaTextField_ref[_focus]()}>
 			<div class='areatextfield-label-text'>{props[_autoHideLabel] && value()[_length] == 0 && !props[_placeholder]? '' : props[_labelText]}</div>
-			<div class='areatextfield-leading'>{props[_leading]}</div>
+			<div class='areatextfield-leading' onClick={ev => stopPropagation(ev)}>{props[_leading]}</div>
 			<textarea
 				id={props[_id]}
 				ref={(r) => {
@@ -140,22 +140,23 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 					if (props[_ref]) props[_ref](r)
 				}}
 				onInput={(ev) => {
+					const self = ev[_currentTarget]
 					setValue(ev[_currentTarget][_value])
 					setIsInvalid(!ev[_currentTarget][_checkValidity]())
-					if (props[_onInput]) props[_onInput](ev)
+					callEventHandler(ev, props[_onInput])
 					setHeight(HEIGHT_TEXT_INPUT_PER_LINE) // set to one line: to calculate the scroll height
-					setHeight(mathMax(ev[_currentTarget][_scrollHeight], HEIGHT_TEXT_INPUT_PER_LINE))
+					setHeight(mathMax(self[_scrollHeight], HEIGHT_TEXT_INPUT_PER_LINE))
 				}}
 				onFocus={(ev) => {
 					setValue(ev[_currentTarget][_value])
 					setIsInvalid(!ev[_currentTarget][_checkValidity]())
 					setIsFocus(true)
-					if (props[_onFocus]) props[_onFocus](ev)
+					callEventHandler(ev, props[_onFocus])
 				}}
 				onBlur={(ev) => {
 					setValue(ev[_currentTarget][_value])
 					setIsFocus(false)
-					if (props[_onBlur]) props[_onBlur](ev)
+					callEventHandler(ev, props[_onBlur])
 				}}
 				rows={props[_minLine] ?? 1}
 				disabled={props[_disabled]}
@@ -169,7 +170,7 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 				}}
 				placeholder={props[_placeholder] ?? (props[_autoHideLabel] && props[_labelText]? `${props[_labelText]}` : undefined)}
 				{...other}></textarea>
-			<div class='areatextfield-trailing'>
+			<div class='areatextfield-trailing' onClick={ev => stopPropagation(ev)}>
 				{trailingComponents()}
 				<Show when={props[_autoShowClearBtn] && value()[_length] > 0}>
 					<TextTooltip text={props[_clearTooltip] ?? 'Clear'}>
@@ -183,11 +184,11 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 			</div>
 		</div>
 		<div class='areatextfield-message-text'>{props[_messageText]}</div>
-	</label>)
+	</div>)
 }
 
 
-type TextFieldProps = Omit<JSX.InputHTMLAttributes<HTMLInputElement>, 'type' | 'ref' | 'onInput' | 'onKeyUp' | 'onFocus' | 'onBlur' | 'children'> & {
+type TextFieldProps = Omit<JSX.InputHTMLAttributes<HTMLInputElement>, 'type' | 'ref' | 'children'> & {
 	leading?: JSX.Element
 	trailing?: JSX.Element
 	labelText?: JSX.Element
@@ -199,23 +200,22 @@ type TextFieldProps = Omit<JSX.InputHTMLAttributes<HTMLInputElement>, 'type' | '
 	autoSelectAll?: boolean
 	clearTooltip?: string
 	type?: TextFieldType
+	wrapperAttr?: Omit<JSX.HTMLAttributes<HTMLDivElement>, 'ref'> & {
+		ref?(el: HTMLDivElement): unknown
+	}
 	ref?: (el: HTMLInputElement) => void
-	labelAttr?: JSX.LabelHTMLAttributes<HTMLLabelElement>
-	onInput?: (ev: ComponentEvent<InputEvent, HTMLInputElement, HTMLInputElement>) => void
-	onFocus?: (ev: ComponentEvent<FocusEvent, HTMLInputElement, HTMLInputElement>) => void
-	onBlur?: (ev: ComponentEvent<FocusEvent, HTMLInputElement, HTMLInputElement>) => void
-	onKeyUp?: (ev: ComponentEvent<KeyboardEvent, HTMLInputElement>) => void
 }
 const TextField: VoidComponent<TextFieldProps> = ($props) => {
 	const $$props = mergeProps({type: _text, autoHideLabel: true, id: createUniqueId()}, $props)
 	const [props, other] = splitProps($$props, [
 		_leading, _onInput, _labelText, _focused,
 		_autocomplete, _id, _messageText, _trailing,
-		_type, _labelAttr, _disabled, _readOnly,
+		_type, _wrapperAttr, _disabled, _readOnly,
 		_onFocus, _onBlur, _placeholder, _autoHideLabel,
 		_value, _ref, _autoShowClearBtn, _clearTooltip,
 		_compact, _autoSelectAll, _onKeyUp
 	])
+	const [wrapperProps, wrapperPropsOther] = splitProps(props[_wrapperAttr]! ?? {}, [_class])
 	const [isFocus, setIsFocus] = createSignal<boolean>(false)
 	const [isInvalid, setIsInvalid] = createSignal<boolean>(false)
 	const [value, setValue] = createSignal<string>('')
@@ -223,26 +223,28 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 	let textfield_ref: HTMLInputElement
 
 	createEffect(() => {
-		const value = props[_value] as string ?? ''
-		setValue(value)
+		const value = props[_value]
+		setValue(v => `${value ?? v}`)
 	})
 
-	return (<label
-		class={'textfield' + (props[_labelAttr] && props[_labelAttr][_class] != null? ` ${props[_labelAttr][_class]}` : '')}
-		for={props[_id]}
-		{...(props[_labelAttr]
-			? splitProps(props[_labelAttr], [_class])[1]
-			: {}
-		)}>
+	return (<div
+		class={`textfield${wrapperProps[_class] != null ? ` ${wrapperProps[_class]}` : ''}`}
+		{...wrapperPropsOther}>
 		<div
 			data-focused={toggleAttribute(props[_focused] ?? isFocus())}
 			data-invalid={toggleAttribute(isInvalid())}
 			data-compact={toggleAttribute(props[_compact])}
 			data-disabled={toggleAttribute(props[_disabled])}
 			data-trailing={toggleAttribute(trailingComponents() || (props[_autoShowClearBtn] && value()[_length] > 0))}
-			data-readonly={toggleAttribute(props[_readOnly])}>
-			<div class='textfield-label-text'>{props[_autoHideLabel] && value()[_length] == 0 && !props[_placeholder]? '' : props[_labelText]}</div>
-			<div class='textfield-leading'>{props[_leading]}</div>
+			data-readonly={toggleAttribute(props[_readOnly])}
+			onClick={() => textfield_ref[_focus]()}>
+			<div class='textfield-label-text'>
+				{ props[_autoHideLabel] && value()[_length] == 0 && !props[_placeholder]
+					? ''
+					: props[_labelText]
+				}
+			</div>
+			<div class='textfield-leading' onClick={ev => stopPropagation(ev)}>{props[_leading]}</div>
 			<input
 				id={props[_id]}
 				ref={(r) => {
@@ -252,23 +254,23 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 				onInput={(ev) => {
 					setValue(ev[_currentTarget][_value])
 					setIsInvalid(!ev[_currentTarget][_checkValidity]())
-					if (props[_onInput]) props[_onInput](ev)
+					callEventHandler(ev, props[_onInput])
 				}}
 				onFocus={(ev) => {
 					setValue(ev[_currentTarget][_value])
 					setIsInvalid(!ev[_currentTarget][_checkValidity]())
 					setIsFocus(true)
-					if (props[_onFocus]) props[_onFocus](ev)
+					callEventHandler(ev, props[_onFocus])
 					if (props[_autoSelectAll]) ev[_currentTarget][_setSelectionRange](0, ev[_currentTarget][_value][_length])
 				}}
 				onKeyUp={ev => {
 					if (ev[_code] == _Enter) ev[_currentTarget][_blur]()
-					if (props[_onKeyUp]) props[_onKeyUp](ev)
+					callEventHandler(ev, props[_onKeyUp])
 				}}
 				onBlur={(ev) => {
 					setValue(ev[_currentTarget][_value])
 					setIsFocus(false)
-					if (props[_onBlur]) props[_onBlur](ev)
+					callEventHandler(ev, props[_onBlur])
 				}}
 				type={props[_type]}
 				disabled={props[_disabled]}
@@ -278,7 +280,7 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 				placeholder={props[_placeholder] ?? (props[_autoHideLabel] && props[_labelText]? `${props[_labelText]}` : undefined)}
 				{...other}
 			/>
-			<div class='textfield-trailing'>
+			<div class='textfield-trailing' onClick={ev => stopPropagation(ev)}>
 				{trailingComponents()}
 				<Show when={props[_autoShowClearBtn] && value()[_length] > 0}>
 					<TextTooltip text={props[_clearTooltip] ?? 'Clear'}>
@@ -291,7 +293,7 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 			</div>
 		</div>
 		<div class='textfield-message-text'>{props[_messageText]}</div>
-	</label>)
+	</div>)
 }
 
 type NumberTextFieldProps = Omit<TextFieldProps, 'type'> & {
@@ -424,8 +426,8 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 				let v = numberParse(ev[_currentTarget][_value])
 
 				if (Number[_isNaN](v)) v = value()
-				if (props[_min] != undefined && v < props[_min]) v = props[_min]
-				if (props[_max] != undefined && v > props[_max]) v = props[_max]
+				if (props[_min] != null && v < props[_min]) v = props[_min]
+				if (props[_max] != null && v > props[_max]) v = props[_max]
 				if (props[_integerOnly]) v = mathRound(v)
 
 				const va = value()
@@ -436,7 +438,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 
 				if (isChanged && props[_onFinalValueChanged]) props[_onFinalValueChanged](v)
 				if (isChanged && props[_onValueChanged]) props[_onValueChanged](v)
-				if (props[_onBlur]) props[_onBlur](ev)
+				callEventHandler(ev, props[_onBlur])
 			}}
 			trailing={<>
 				{ props[_trailing] }
@@ -518,14 +520,15 @@ type SearchTextFieldProps = TextFieldProps & {
 }
 const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
 	const [props, other] = splitProps($props, [
-		_result, _labelAttr, _menuAttr, _onFocus,
+		_result, _wrapperAttr, _menuAttr, _onFocus,
 	])
+	const [wrapperProps, wrapperPropsOther] = splitProps(props[_wrapperAttr]! ?? {}, [_ref])
 	const [width, setWidth] = createSignal<number>(0)
 	const resultComponents = children(() => props[_result])
 	let is_popover_open: boolean = false
 	let isFocus = false
 	let event: FocusEvent
-	let label_ref: HTMLLabelElement
+	let wrapper_ref: HTMLDivElement
 	let menu_ref: HTMLDivElement
 
 	function $openPopover(ev: Event): void {
@@ -533,10 +536,10 @@ const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
 
 		if (Array[_isArray](resultComponents()) && (resultComponents() as unknown[])[_length] == 0) return;
 
-		setWidth(getBoundingClientRect(label_ref)[_width])
+		setWidth(getBoundingClientRect(wrapper_ref)[_width])
 		openPopover(ev, menu_ref, {
 			allowHideAnchor: false,
-			anchor: label_ref,
+			anchor: wrapper_ref,
 			position: SearchMenuPosition[_centerBottom],
 			manualDismiss: true,
 		})
@@ -548,12 +551,12 @@ const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
 			if (t != null) clearTimeDelayed(t)
 
 			t = setTimeDelayed(() => {
-				setWidth(getBoundingClientRect(label_ref)[_width])
+				setWidth(getBoundingClientRect(wrapper_ref)[_width])
 				repositionPopover(menu_ref)
 				t = null
 			}, 300)
 		})
-		observer[_observe](label_ref, { box: "border-box" })
+		observer[_observe](wrapper_ref, { box: "border-box" })
 
 		onCleanup(() => {
 			observer[_disconnect]()
@@ -564,7 +567,7 @@ const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
 		if (!is_popover_open) return;
 
 		const target = ev[_target] as HTMLElement
-		const isClickedInside = label_ref[_contains](target) || menu_ref[_contains](target)
+		const isClickedInside = wrapper_ref[_contains](target) || menu_ref[_contains](target)
 
 		if (isClickedInside) return;
 
@@ -595,18 +598,18 @@ const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
 
 	return (<>
 		<TextField
-			labelAttr={{
-				...props[_labelAttr],
+			wrapperAttr={{
 				ref: (r) => {
-					label_ref = r
-					if (props[_labelAttr] && props[_labelAttr][_ref]) (props[_labelAttr][_ref] as ((el: HTMLLabelElement) => void))(r)
+					wrapper_ref = r
+					if (wrapperProps[_ref]) wrapperProps[_ref](r)
 				},
+				...wrapperPropsOther
 			}}
 			onFocus={ev => {
 				$openPopover(ev)
 				isFocus = isFocus
 				event = ev
-				if (props[_onFocus]) props[_onFocus](ev)
+				callEventHandler(ev, props[_onFocus])
 			}}
 			{...other}
 		/>
