@@ -1,4 +1,5 @@
 import { type JSX, type ParentComponent, splitProps, children, onMount, onCleanup } from "solid-js"
+import { mergeRefs } from "@solid-primitives/refs"
 
 import { _dispatchEvent, _onOpen, _onClose, _leading, _trailing, _children, _header, _actions, _classList, _ref, _onToggleOpen, _centerTop, _centerCenterTop, _leftTop, _centerCenterLeftTop, _leftBottom, _centerCenterLeftBottom, _centerBottom, _centerCenterBottom, _rightTop, _centerCenterRightTop, _rightBottom, _centerCenterRightBottom, _detail } from "@/constants/string"
 import { toggleAttribute } from "@/utils/attributes"
@@ -132,10 +133,7 @@ const Toast: ParentComponent<ToastProps> = ($props) => {
 			isOpen = o
 			if (props[_onToggleOpen]) props[_onToggleOpen](o)
 		}}
-		ref={r => {
-			toast_ref = r
-			if (props[_ref]) props[_ref](r)
-		}}
+		ref={mergeRefs(props[_ref], r => toast_ref = r)}
 		classList={{
 			toast: true,
 			...props[_classList]

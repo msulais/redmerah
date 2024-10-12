@@ -1,4 +1,5 @@
 import { createSignal, createUniqueId, mergeProps, onCleanup, onMount, Show, splitProps, type JSX, type ParentComponent, type VoidComponent } from 'solid-js'
+import { mergeRefs } from '@solid-primitives/refs'
 import { Portal } from 'solid-js/web'
 
 import { FlyoutPosition as PopoverPosition } from '@/enums/position'
@@ -150,7 +151,7 @@ function closePopover(popover: HTMLDivElement): void {
 	popover[_dispatchEvent](new CustomEvent(PopoverEvents[_onClose]))
 }
 
-type PopoverProps = Omit<JSX.HTMLAttributes<HTMLDivElement>, 'style' | 'ref'> & {
+type PopoverProps = Omit<JSX.HTMLAttributes<HTMLDivElement>, 'style'> & {
 	usePortal?: boolean
 	style?: JSX.CSSProperties
 	gap?: number
@@ -159,7 +160,6 @@ type PopoverProps = Omit<JSX.HTMLAttributes<HTMLDivElement>, 'style' | 'ref'> & 
 	allowHideAnchor?: boolean
 	dragable?: boolean
 	manualDismiss?: boolean
-	ref?: (el: HTMLDivElement) => unknown
 	onToggleOpen?: (isOpen: boolean) => unknown
 	openAnimation?: (el: HTMLDivElement, done: () => void) => unknown
 	closeAnimation?: (el: HTMLDivElement, done: () => void) => unknown
@@ -640,10 +640,7 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 
 	const C: VoidComponent = () => (<div
 		class={"popover" + (props[_class] != undefined? ` ${props[_class]}` : '')}
-		ref={r => {
-			popover_ref = r
-			if (props[_ref] != undefined) props[_ref](r)
-		}}
+		ref={mergeRefs(props[_ref], r => popover_ref = r)}
 		style={{
 			...props[_style],
 			top: props[_style] && props[_style][_top] != undefined? props[_style][_top] : top() + _px,

@@ -1,5 +1,7 @@
 import { Transition } from "solid-transition-group"
 import { For, Match, Show, Switch, createEffect, createMemo, createSignal, mergeProps, splitProps, type VoidComponent } from "solid-js"
+import { callEventHandler } from "@/utils/event"
+import { mergeRefs } from "@solid-primitives/refs"
 
 import { _ref, _date, _onSelectDate, _firstDate, _lastDate, _locales, _classList, _children, _onClose, _day, _getDay, _includes, _setMonth, _month, _setFullYear, _year, _substring, _fill, _filled, _outlined, _animate, _finished, _spring, _then, _tonal } from "@/constants/string"
 import { getCurrentDate, getDate_Y, getDate_M, getWeekdayNames, isOutDate_YMD, isSameDate_YMD, getMonthNames, isOutDate_YM, isSameDate_YM, isOutDate_Y, isSameDate_Y, getMonthText, isInDate_YM } from "@/utils/datetime"
@@ -7,9 +9,8 @@ import { AnimationEffectTiming } from "@/enums/animation"
 
 import Button, { ButtonVariant, IconButton, SquareButton } from "@/components/Button"
 import { repositionModal, closeModal, openModal, focusModal, Modal, type ModalProps, ModalPosition as DatePickerPosition } from "@/components/Modal"
+import Divider from "@/components/Divider"
 import './index.scss'
-import Divider from "../Divider"
-import { callEventHandler } from "@/utils/event"
 
 enum DatePickerOption {
 	year,
@@ -168,10 +169,7 @@ const DatePicker: VoidComponent<DatePickerProps> = ($props) => {
 	}
 
 	return (<Modal
-		ref={r => {
-			datePicker_ref = r
-			if (props[_ref]) props[_ref](r)
-		}}
+		ref={mergeRefs(props[_ref], r => datePicker_ref = r)}
 		classList={{
 			'date-picker': true,
 			...props[_classList]

@@ -1,5 +1,6 @@
 import { type Component, type ParentComponent, Show, createEffect, createMemo, createSignal, mergeProps, onCleanup, onMount, splitProps } from "solid-js"
 import { createStore } from "solid-js/store"
+import { mergeRefs } from "@solid-primitives/refs"
 
 import type { HEXColor, HSLColor, RGBColor } from "@/types/color"
 import { _children, _disabledOpacityControl, _onSelectColor, _disabledColorControl, _ref, _classList, _color, _HEX, _toString, _padStart, _toUpperCase, _hue, _position, _opacity, _HSL, _RGB, _value, _toFixed, _join, _substring, _isDrag, _rect, _left, _top, _touchmove, _touches, _clientX, _clientY, _touchend, _noPointerEvent, _mousemove, _mouseup, _length, _replace, _split, _push, _isNaN, _isFinite, _trim, _currentTarget, _px, _tonal, _filled, _onUpdateColor, _disabledAction, _dispatchEvent, _onChangeColor, _detail, _onToggleOpen } from "@/constants/string"
@@ -544,10 +545,7 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 	}
 
 	return (<Modal
-		ref={r => {
-			colorPicker_ref = r
-			if (props[_ref]) props[_ref](r)
-		}}
+		ref={mergeRefs(props[_ref], r => colorPicker_ref = r)}
 		onToggleOpen={o => {
 			is_colorPicker_open = o
 			if (props[_onToggleOpen]) props[_onToggleOpen](o)

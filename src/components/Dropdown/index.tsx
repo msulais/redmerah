@@ -1,5 +1,7 @@
 import { createStore } from "solid-js/store"
 import { For, Show, createEffect, createSelector, createSignal, mergeProps, onCleanup, onMount, splitProps, type JSX, type VoidComponent } from "solid-js"
+import type { DOMElement } from "solid-js/jsx-runtime"
+import { mergeRefs } from "@solid-primitives/refs"
 
 import { _refs, _dividerIndexs, _labels, _readOnly, _footer, _header, _disabled, _onSelectedItemsChanged, _items, _selectedValues, _labelAttr, _multiple, _trailing, _onClicks, _menuAttr, _optionIconTooltip, _some, _width, _centerBottom, _length, _slice, _map, _observe, _disconnect, _filter, _includes, _push, _ref, _classList, _onClick, _join, _px, _find, _style, _onToggleOpen, _wrapperAttr } from "@/constants/string"
 import { getBoundingClientRect } from "@/utils/element"
@@ -12,7 +14,6 @@ import Icon from "@/components/Icon"
 import TextField, { TextFieldButton, type TextFieldProps } from "@/components/TextField"
 import Menu, { closeMenu, LinkMenuItem, MenuDivider, MenuHeader, MenuItem, openMenu, repositionMenu, type MenuProps, MenuPosition as DropdownPosition } from "@/components/Menu"
 import './index.scss'
-import type { DOMElement } from "solid-js/jsx-runtime"
 
 type Item = (
 	[value: string | number, text: string, trailingText: string] |
@@ -51,6 +52,10 @@ const Dropdown: VoidComponent<DropdownProps> = ($props) => {
 	const [wrapperProps, wrapperPropsOther] = splitProps(
 		props[_wrapperAttr]! ?? {},
 		[_ref, _classList, _onClick]
+	)
+	const [menuProps, menuPropsOther] = splitProps(
+		props[_menuAttr]! ?? {},
+		[_onToggleOpen, _ref, _style, _classList]
 	)
 	const [selectedItems, setSelectedItems] = createStore<Item[]>([])
 	const [width, setWidth] = createSignal<number>(0)
@@ -144,10 +149,7 @@ const Dropdown: VoidComponent<DropdownProps> = ($props) => {
 			disabled={props[_disabled]}
 			focused={isFocus()}
 			wrapperAttr={{
-				ref: (r) => {
-					wrapper_dropdown_ref = r
-					if (wrapperProps[_ref]) wrapperProps[_ref](r)
-				},
+				ref: mergeRefs(wrapperProps[_ref], r => wrapper_dropdown_ref = r),
 				classList: {
 					'dropdown': true,
 					...wrapperProps[_classList]
@@ -178,20 +180,18 @@ const Dropdown: VoidComponent<DropdownProps> = ($props) => {
 		<Menu
 			onToggleOpen={v => {
 				setIsFocus(v)
-				if (props[_menuAttr] && props[_menuAttr][_onToggleOpen]) props[_menuAttr][_onToggleOpen](v)
+				if (menuProps[_onToggleOpen]) menuProps[_onToggleOpen](v)
 			}}
-			ref={r => {
-				menu_dropdown_ref = r
-				if (props[_menuAttr] && props[_menuAttr][_ref]) props[_menuAttr][_ref](r)
-			}}
+			ref={mergeRefs(menuProps.ref, r => menu_dropdown_ref = r)}
 			style={{
 				'min-width': width() + _px,
-				...(props[_menuAttr]? props[_menuAttr][_style] : {})
+				...menuProps[_style]
 			}}
 			classList={{
 				'dropdown-menu': true,
-				...(props[_menuAttr]? props[_menuAttr][_classList] : {})
-			}}>
+				...menuProps[_classList]
+			}}
+			{...menuPropsOther}>
 			<div class="dropdown-header">{ props[_header] }</div>
 			<div class="dropdown-items">
 				<For each={props[_items]}>{(item, index) => <>

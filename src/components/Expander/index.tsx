@@ -1,4 +1,5 @@
 import { createContext, createEffect, createSignal, mergeProps, onCleanup, onMount, Show, splitProps, useContext, type Accessor, type JSX, type ParentComponent } from "solid-js"
+import { mergeRefs } from "@solid-primitives/refs"
 
 import { _children, _class, _headerAttr, _header, _variant, _bodyAttr, _tonal, _open, _expandIconTooltip, _trailing, _useExpandIcon, _isOpen, _onToggle, _currentTarget, _style, _px, _disconnect, _height, _observe, _openByDefault, _click, _then, _onClick, _ref } from "@/constants/string"
 import { toggleAttribute } from "@/utils/attributes"
@@ -91,12 +92,11 @@ const RawExpanderHeader: ParentComponent<RawExpanderHeaderProps> = ($props) => {
 	/>)
 }
 
-type ExpanderProps = Omit<JSX.DetailsHtmlAttributes<HTMLDetailsElement>, 'ref'> & {
+type ExpanderProps = JSX.DetailsHtmlAttributes<HTMLDetailsElement> & {
 	header: JSX.Element
 	variant?: ExpanderVariant
 	bodyAttr?: Omit<JSX.HTMLAttributes<HTMLDivElement>, 'children'>
 	headerAttr?: Omit<JSX.HTMLAttributes<HTMLElement>, 'children'>
-	ref?(el: HTMLDetailsElement): unknown
 }
 
 const Expander: ParentComponent<ExpanderProps> = ($props) => {
@@ -150,10 +150,7 @@ const Expander: ParentComponent<ExpanderProps> = ($props) => {
 	})
 
 	return (<details
-		ref={r => {
-			expander_ref = r
-			if (props[_ref]) props[_ref](r)
-		}}
+		ref={mergeRefs(props[_ref], r => expander_ref = r)}
 		class={`expander${props[_class]? ` ${props[_class]}` : ''}`}
 		data-variant={props[_variant]}
 		onToggle={ev => {
