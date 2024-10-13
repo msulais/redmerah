@@ -220,11 +220,22 @@
 	:root[data-corner=sharp] & { border-radius: 0 }
 }
 
-.modal.menu.number-textfield-menu {
+.modal.number-textfield-actions {
 	:root[data-corner=full-round] & { border-radius: 24px }
 
 	> div {
 		padding: 4px;
+	}
+}
+
+.number-textfield input[type=number] {
+	-moz-appearance: textfield;
+
+	&::-webkit-inner-spin-button,
+	&::-webkit-outer-spin-button {
+		-webkit-appearance: none;
+		-moz-appearance: none;
+		margin: 0;
 	}
 }
 

@@ -1,7 +1,8 @@
 import { createSignal, Show, type VoidComponent } from "solid-js"
 
-import { _centerBottom, _tonal, _currentTarget, _leftTop, _leftCenterToBottom, _leftCenter, _leftCenterToTop, _leftBottom, _rightTop, _rightCenterToBottom, _rightCenter, _rightCenterToTop, _rightBottom, _centerTopToRight, _centerTop, _centerTopToLeft, _centerBottomToRight, _centerBottomToLeft, _centerCenterLeftTop, _centerCenterLeft, _centerCenterLeftBottom, _centerCenterTop, _centerCenter, _centerCenterBottom, _centerCenterRightTop, _centerCenterRight, _centerCenterRightBottom, _includes, _checked } from "@/constants/string"
+import { _centerBottom, _tonal, _currentTarget, _leftTop, _leftCenterToBottom, _leftCenter, _leftCenterToTop, _leftBottom, _rightTop, _rightCenterToBottom, _rightCenter, _rightCenterToTop, _rightBottom, _centerTopToRight, _centerTop, _centerTopToLeft, _centerBottomToRight, _centerBottomToLeft, _centerCenterLeftTop, _centerCenterLeft, _centerCenterLeftBottom, _centerCenterTop, _centerCenter, _centerCenterBottom, _centerCenterRightTop, _centerCenterRight, _centerCenterRightBottom, _includes, _checked, _valueAsNumber } from "@/constants/string"
 import { FlyoutPosition } from "@/enums/position"
+import { safeNumber } from "@/utils/math"
 
 import Icon from "@/components/Icon"
 import Button, { ButtonVariant } from "@/components/Button"
@@ -142,7 +143,13 @@ const _: VoidComponent = () => {
 				selectedValues={[position()]}
 				onSelectedItemsChanged={(items) => setPosition(items[0][0] as FlyoutPosition)}
 			/>
-			<NumberTextField style={{width: '100px'}} value={gap()} min={0} onFinalValueChanged={(v) => setGap(v)} labelText="Gap"/>
+			<NumberTextField
+				style={{width: '100px'}}
+				value={gap()}
+				min={0}
+				onBlur={(ev) => setGap(g => safeNumber(ev[_currentTarget][_valueAsNumber], g))}
+				labelText="Gap"
+			/>
 			<Show when={[
 				FlyoutPosition[_centerTopToRight],
 				FlyoutPosition[_centerCenterLeft],
@@ -161,7 +168,13 @@ const _: VoidComponent = () => {
 				FlyoutPosition[_centerCenterRightBottom],
 				FlyoutPosition[_rightCenterToTop]
 			][_includes](position())}>
-				<NumberTextField value={padding()} style={{width: '100px'}} min={0} onFinalValueChanged={(v) => setPadding(v)} labelText="Padding"/>
+				<NumberTextField
+					value={padding()}
+					style={{width: '100px'}}
+					min={0}
+					onBlur={(ev) => setPadding(p => safeNumber(ev[_currentTarget][_valueAsNumber], p))}
+					labelText="Padding"
+				/>
 			</Show>
 			<CheckBox
 				checked={anchor()}

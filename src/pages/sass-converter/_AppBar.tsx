@@ -2,7 +2,7 @@ import { createSignal, onMount, type VoidComponent } from "solid-js";
 
 import type { Settings } from "./_types";
 import { Commands } from "./_enums";
-import { _system, _round, _theme, _corner, _light, _dark, _includes, _sharp, _semiRound, _fullRound, _home, _src, _apps, _about, _privacy, _terms, _share, _URL, _contactEmail, _donate, _getFullYear, _currentTarget, _command, _fontSize, _settings, _textWrap, _minify, _sass, _scss, _css } from "@/constants/string";
+import { _system, _round, _theme, _corner, _light, _dark, _includes, _sharp, _semiRound, _fullRound, _home, _src, _apps, _about, _privacy, _terms, _share, _URL, _contactEmail, _donate, _getFullYear, _currentTarget, _command, _fontSize, _settings, _textWrap, _minify, _sass, _scss, _css, _valueAsNumber } from "@/constants/string";
 import { getDocument, getNavigator, getRoot } from "@/constants/window";
 import { RootAttributes } from "@/enums/attributes";
 import { CornerData } from "@/enums/corner";
@@ -12,7 +12,8 @@ import { ThemeData } from "@/enums/theme";
 import { setLocalStorageItem, getLocalStorageItem } from "@/utils/storage";
 import { timeout } from "@/utils/timeout";
 import { encodeURL } from "@/utils/url";
-import { setAttribute } from "solid-js/web";
+import { safeNumber } from "@/utils/math";
+import { setAttribute } from "@/utils/attributes";
 import logo from '@/assets/apps/sass-converter-logo.svg'
 import redmerahLogo from '@/assets/logo.svg'
 import CSSAnimation from "@/styles/animation.module.scss"
@@ -246,7 +247,10 @@ const _: VoidComponent<{
 						min={12}
 						labelText="Font size"
 						value={props[_settings][_fontSize]}
-						onFinalValueChanged={v => props[_command](Commands.change_fontSize, v)}
+						onBlur={ev => props[_command](
+							Commands.change_fontSize,
+							safeNumber(ev[_currentTarget][_valueAsNumber], props[_settings][_fontSize])
+						)}
 					/>
 				</div>
 			</Menu>

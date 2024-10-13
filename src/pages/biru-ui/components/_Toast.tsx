@@ -1,6 +1,7 @@
 import { createSignal, Show, type VoidComponent } from "solid-js"
 
-import { _centerTop, _tonal, _filled, _centerBottom, _leftBottom, _leftTop, _rightBottom, _rightTop, _checked, _currentTarget } from "@/constants/string"
+import { _centerTop, _tonal, _filled, _centerBottom, _leftBottom, _leftTop, _rightBottom, _rightTop, _checked, _currentTarget, _valueAsNumber } from "@/constants/string"
+import { safeNumber } from "@/utils/math"
 
 import Icon from "@/components/Icon"
 import Button, { ButtonVariant, IconButton } from "@/components/Button"
@@ -53,7 +54,15 @@ const _: VoidComponent = () => {
 		</Playground>
 		<PlaygroundOptions>
 			<Show when={autoClose()}>
-				<NumberTextField labelText="Duration" style={{width: '100px'}} value={duration()} step={100} min={100} onFinalValueChanged={v => setDuration(v)} trailing="ms"/>
+				<NumberTextField
+					labelText="Duration"
+					style={{width: '100px'}}
+					value={duration()}
+					step={100}
+					min={100}
+					onBlur={ev => setDuration(d => safeNumber(ev[_currentTarget][_valueAsNumber], d))}
+					trailing="ms"
+				/>
 			</Show>
 			<Dropdown
 				labelText="Position"

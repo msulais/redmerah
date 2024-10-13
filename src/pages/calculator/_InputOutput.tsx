@@ -2,7 +2,7 @@ import { createEffect, createMemo, createSignal, For, Match, Show, Switch, type 
 
 import type { CalculatorInput, CalculatorOutput, DateCalculatorInput, Settings } from "./_types"
 import { CalculatorType, Commands, DateOperation, DecimalNumberFormat, NumberType } from "./_enums"
-import { _hide, _children, _settings, _memoryButtons, _memory, _currentTarget, _command, _onRecallMemory, _value, _substring, _length, _setSelectionRange, _focus, _output, _toString, _input, _none, _text, _code, _shiftKey, _selectionStart, _join, _scientificNotation, _numberFormat, _decimal, _grouping, _test, _toUpperCase, _tonal, _comma, _filled, _sin, _cos, _tan, _csc, _sec, _cot, _centerBottomToRight, _abs, _log, _ln, _ceil, _round, _floor, _scientific, _angle, _type, _converter, _icon, _area, _volume, _temperature, _time, _weight, _frequency, _pressure, _match, _trim, _inputUnit, _name, _symbol, _equals, _outputUnit, _programmer, _numberType, _hexadecimal, _octal, _binary, _right, _clipboard, _writeText, _date, _operation, _add, _subtract, _difference, _from, _year, _month, _day, _to, _calculator, _basic, _inputs, _outputs } from "@/constants/string"
+import { _hide, _children, _settings, _memoryButtons, _memory, _currentTarget, _command, _onRecallMemory, _value, _substring, _length, _setSelectionRange, _focus, _output, _toString, _input, _none, _text, _code, _shiftKey, _selectionStart, _join, _scientificNotation, _numberFormat, _decimal, _grouping, _test, _toUpperCase, _tonal, _comma, _filled, _sin, _cos, _tan, _csc, _sec, _cot, _centerBottomToRight, _abs, _log, _ln, _ceil, _round, _floor, _scientific, _angle, _type, _converter, _icon, _area, _volume, _temperature, _time, _weight, _frequency, _pressure, _match, _trim, _inputUnit, _name, _symbol, _equals, _outputUnit, _programmer, _numberType, _hexadecimal, _octal, _binary, _right, _clipboard, _writeText, _date, _operation, _add, _subtract, _difference, _from, _year, _month, _day, _to, _calculator, _basic, _inputs, _outputs, _valueAsNumber } from "@/constants/string"
 import { addClassListModule } from "@/utils/element"
 import { toggleAttribute } from "@/utils/attributes"
 import { CONVERTER_TYPES } from "./_constants"
@@ -10,7 +10,7 @@ import { ConverterType, UNIT_ANGLE, UNIT_AREA, UNIT_FREQUENCY, UNIT_LENGTH, UNIT
 import { stringToTitleCase } from "@/utils/string"
 import { preventDefault } from "@/utils/event"
 import { getNavigator } from "@/constants/window"
-import { floatToBinary, formatNumber, numberParse, numberToRealDigit } from "@/utils/math"
+import { floatToBinary, formatNumber, numberParse, numberToRealDigit, safeNumber } from "@/utils/math"
 import { getDate_Y, getDateString_YMD } from "@/utils/datetime"
 
 import { TextTooltip } from "@/components/Tooltip"
@@ -962,19 +962,34 @@ const DateCalculator: VoidComponent<{
 				min={0}
 				value={props[_input][_year] + ''}
 				labelText="Year"
-				onFinalValueChanged={(v) => props[_command](Commands.change_calculator_input, {...props[_input], year: v})}
+				onBlur={(ev) => props[_command](
+					Commands.change_calculator_input,
+					{	...props[_input],
+						year: safeNumber(ev[_currentTarget][_valueAsNumber], props[_input][_year])
+					}
+				)}
 			/>
 			<NumberTextField
 				min={0}
 				value={props[_input][_month] + ''}
 				labelText="Month"
-				onFinalValueChanged={(v) => props[_command](Commands.change_calculator_input, {...props[_input], month: v})}
+				onBlur={(ev) => props[_command](
+					Commands.change_calculator_input,
+					{	...props[_input],
+						month: safeNumber(ev[_currentTarget][_valueAsNumber], props[_input][_month])
+					}
+				)}
 			/>
 			<NumberTextField
 				min={0}
 				value={props[_input][_day] + ''}
 				labelText="Day"
-				onFinalValueChanged={(v) => props[_command](Commands.change_calculator_input, {...props[_input], day: v})}
+				onBlur={(ev) => props[_command](
+					Commands.change_calculator_input,
+					{	...props[_input],
+						day: safeNumber(ev[_currentTarget][_valueAsNumber], props[_input][_day])
+					}
+				)}
 			/>
 		</div>
 		<div data-hide={toggleAttribute(props[_settings][_date][_operation] != DateOperation[_difference])}>

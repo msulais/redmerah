@@ -1,8 +1,10 @@
 import { createSignal, Show, type VoidComponent } from "solid-js"
 
+import { safeNumber } from "@/utils/math"
+
 import { Page, Playground, PlaygroundOptions } from "../_Body"
 import Button, { ButtonVariant } from "@/components/Button"
-import { _centerBottom, _centerBottomToLeft, _centerBottomToRight, _centerCenter, _centerCenterBottom, _centerCenterLeft, _centerCenterLeftBottom, _centerCenterLeftTop, _centerCenterRight, _centerCenterRightBottom, _centerCenterRightTop, _centerCenterTop, _centerTop, _centerTopToLeft, _centerTopToRight, _checked, _currentTarget, _includes, _leftBottom, _leftCenter, _leftCenterToBottom, _leftCenterToTop, _leftTop, _rightBottom, _rightCenter, _rightCenterToBottom, _rightCenterToTop, _rightTop, _tonal } from "@/constants/string"
+import { _centerBottom, _centerBottomToLeft, _centerBottomToRight, _centerCenter, _centerCenterBottom, _centerCenterLeft, _centerCenterLeftBottom, _centerCenterLeftTop, _centerCenterRight, _centerCenterRightBottom, _centerCenterRightTop, _centerCenterTop, _centerTop, _centerTopToLeft, _centerTopToRight, _checked, _currentTarget, _includes, _leftBottom, _leftCenter, _leftCenterToBottom, _leftCenterToTop, _leftTop, _rightBottom, _rightCenter, _rightCenterToBottom, _rightCenterToTop, _rightTop, _tonal, _valueAsNumber } from "@/constants/string"
 import EmojiPicker, { EmojiPickerPosition, openEmojiPicker } from "@/components/EmojiPicker"
 import type { Emoji } from "@/types/emoji"
 import Icon from "@/components/Icon"
@@ -83,7 +85,13 @@ const _: VoidComponent = () => {
 				selectedValues={[position()]}
 				onSelectedItemsChanged={(items) => setPosition(items[0][0] as EmojiPickerPosition)}
 			/>
-			<NumberTextField style={{width: '100px'}} value={gap()} min={0} onFinalValueChanged={(v) => setGap(v)} labelText="Gap"/>
+			<NumberTextField
+				style={{width: '100px'}}
+				value={gap()}
+				min={0}
+				onBlur={(ev) => setGap(g => safeNumber(ev[_currentTarget][_valueAsNumber], g))}
+				labelText="Gap"
+			/>
 			<Show when={[
 				EmojiPickerPosition[_centerTopToRight],
 				EmojiPickerPosition[_centerCenterLeft],
@@ -102,7 +110,13 @@ const _: VoidComponent = () => {
 				EmojiPickerPosition[_centerCenterRightBottom],
 				EmojiPickerPosition[_rightCenterToTop]
 			][_includes](position())}>
-				<NumberTextField value={padding()} style={{width: '100px'}} min={0} onFinalValueChanged={(v) => setPadding(v)} labelText="Padding"/>
+				<NumberTextField
+					value={padding()}
+					style={{width: '100px'}}
+					min={0}
+					onBlur={(ev) => setPadding(p => safeNumber(ev[_currentTarget][_valueAsNumber], p))}
+					labelText="Padding"
+				/>
 			</Show>
 			<CheckBox
 				checked={anchor()}

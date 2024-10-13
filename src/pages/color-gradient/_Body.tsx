@@ -2,14 +2,14 @@ import { createMemo, createSignal, For, onMount, Show, type VoidComponent } from
 import { createStore } from "solid-js/store"
 
 import type { Gradient, GradientData, RadialGradient, Settings } from "./_type"
-import { _clipboard, _writeText, _gradients, _map, _settings, _colorModel, _join, _data, _index, _currentTarget, _centerBottomToRight, _command, _gradientData, _gradient, _colorStopList, _sort, _size, _color, _type, _conic, _onStartDrag, _clientX, _clientY, _selectedGradientIndex, _gradientIndex, _isDragging, _touches, _linear, _radial, _colorInterpolationMethod, _hsl, _hwb, _lch, _oklch, _includes, _auto, _decreasing, _increasing, _longer, _shorter, _hueInterpolationMethod, _circle, _ellipse, _shape, _angle, _positionX, _positionY, _sizeLength, _sizeWidth, _sizeHeight, _repeat, _value, _hsla, _replace, _split, _toString, _padStart, _toUpperCase, _rgba, _trim, _length, _isNaN, _isFinite, _substring, _onStartPickColor, _colorPickerRef, _filled, _onOpenActionsMenu, _x, _width, _noPointerEvent, _touchmove, _touchend, _mousemove, _mouseup, _aspectRatio, _borderRadius, _px, _centerCenterRightTop } from "@/constants/string"
+import { _clipboard, _writeText, _gradients, _map, _settings, _colorModel, _join, _data, _index, _currentTarget, _centerBottomToRight, _command, _gradientData, _gradient, _colorStopList, _sort, _size, _color, _type, _conic, _onStartDrag, _clientX, _clientY, _selectedGradientIndex, _gradientIndex, _isDragging, _touches, _linear, _radial, _colorInterpolationMethod, _hsl, _hwb, _lch, _oklch, _includes, _auto, _decreasing, _increasing, _longer, _shorter, _hueInterpolationMethod, _circle, _ellipse, _shape, _angle, _positionX, _positionY, _sizeLength, _sizeWidth, _sizeHeight, _repeat, _value, _hsla, _replace, _split, _toString, _padStart, _toUpperCase, _rgba, _trim, _length, _isNaN, _isFinite, _substring, _onStartPickColor, _colorPickerRef, _filled, _onOpenActionsMenu, _x, _width, _noPointerEvent, _touchmove, _touchend, _mousemove, _mouseup, _aspectRatio, _borderRadius, _px, _centerCenterRightTop, _valueAsNumber } from "@/constants/string"
 import { ColorModel, Commands, GradientType, HueInterpolationMethod, PolarColorSpace, RadialGradientShape } from "./_enums"
 import { removeAttribute, setAttribute, toggleAttribute } from "@/utils/attributes"
 import { addEventListener } from "@/utils/event"
 import { getDocumentBody, getDocument, getNavigator } from "@/constants/window"
 import { BodyAttributes } from "@/enums/attributes"
 import { getBoundingClientRect } from "@/utils/element"
-import { mathClamp, mathRound, numberParse } from "@/utils/math"
+import { mathClamp, mathRound, numberParse, safeNumber } from "@/utils/math"
 import { convertColorByColorModel, gradientToCSSText } from "./_utils"
 import { HSL_to_HEX, RGB_to_HEX } from "@/utils/color"
 
@@ -263,68 +263,82 @@ const GradientControl: VoidComponent<{
 		</Show>
 		<Show when={[GradientType[_conic], GradientType[_linear]][_includes](props[_gradient][_type])}>
 			<NumberTextField
-				labelText="Angle"
-				suffix="°"
+				labelText="Angle (°)"
 				enterkeyhint="done"
 				min={0}
 				max={360}
 				autoSelectAll
-				onValueChanged={v => props[_command](
+				onInput={ev => props[_command](
 					Commands.change_gradient_angle,
 					props[_gradientIndex],
-					v
+					safeNumber(ev[_currentTarget][_valueAsNumber], (props[_gradient] as any)[_angle] as number)
 				)}
 				value={(props[_gradient] as any)[_angle] as number}
 			/>
 		</Show>
 		<Show when={[GradientType[_conic], GradientType[_radial]][_includes](props[_gradient][_type])}>
 			<NumberTextField
-				labelText="X"
-				suffix="%"
+				labelText="X (%)"
 				min={0}
 				enterkeyhint="done"
 				autoSelectAll
-				onValueChanged={v => props[_command](Commands.change_gradient_positionX, props[_gradientIndex], v)}
+				onInput={ev => props[_command](
+					Commands.change_gradient_positionX,
+					props[_gradientIndex],
+					safeNumber(ev[_currentTarget][_valueAsNumber], (props[_gradient] as any)[_positionX] as number)
+				)}
 				value={(props[_gradient] as any)[_positionX] as number}
 			/>
 			<NumberTextField
-				labelText="Y"
-				suffix="%"
+				labelText="Y (%)"
 				enterkeyhint="done"
 				min={0}
 				autoSelectAll
-				onValueChanged={v => props[_command](Commands.change_gradient_positionY, props[_gradientIndex], v)}
+				onInput={ev => props[_command](
+					Commands.change_gradient_positionY,
+					props[_gradientIndex],
+					safeNumber(ev[_currentTarget][_valueAsNumber], (props[_gradient] as any)[_positionY] as number)
+				)}
 				value={(props[_gradient] as any)[_positionY] as number}
 			/>
 		</Show>
 		<Show when={props[_gradient][_type] == GradientType[_radial] && props[_gradient][_shape] == RadialGradientShape[_circle]}>
 			<NumberTextField
-				labelText="Size"
+				labelText="Size (px)"
 				enterkeyhint="done"
-				suffix="px"
 				min={0}
 				autoSelectAll
-				onValueChanged={v => props[_command](Commands.change_radialGradient_size, props[_gradientIndex], v)}
+				onInput={ev => props[_command](
+					Commands.change_radialGradient_size,
+					props[_gradientIndex],
+					safeNumber(ev[_currentTarget][_valueAsNumber], (props[_gradient] as RadialGradient)[_sizeLength])
+				)}
 				value={(props[_gradient] as RadialGradient)[_sizeLength]}
 			/>
 		</Show>
 		<Show when={props[_gradient][_type] == GradientType[_radial] && props[_gradient][_shape] == RadialGradientShape[_ellipse]}>
 			<NumberTextField
-				labelText="Width"
-				suffix="%"
+				labelText="Width (%)"
 				enterkeyhint="done"
 				min={0}
 				autoSelectAll
-				onValueChanged={v => props[_command](Commands.change_radialGradient_width, props[_gradientIndex], v)}
+				onInput={ev => props[_command](
+					Commands.change_radialGradient_width,
+					props[_gradientIndex],
+					safeNumber(ev[_currentTarget][_valueAsNumber], (props[_gradient] as RadialGradient)[_sizeWidth])
+				)}
 				value={(props[_gradient] as RadialGradient)[_sizeWidth]}
 			/>
 			<NumberTextField
-				labelText="Height"
-				suffix="%"
+				labelText="Height (%)"
 				enterkeyhint="done"
 				min={0}
 				autoSelectAll
-				onValueChanged={v => props[_command](Commands.change_radialGradient_height, props[_gradientIndex], v)}
+				onInput={ev => props[_command](
+					Commands.change_radialGradient_height,
+					props[_gradientIndex],
+					safeNumber(ev[_currentTarget][_valueAsNumber], (props[_gradient] as RadialGradient)[_sizeHeight])
+				)}
 				value={(props[_gradient] as RadialGradient)[_sizeHeight]}
 			/>
 		</Show>
@@ -342,18 +356,18 @@ const GradientControl: VoidComponent<{
 		<div class={CSS.body_gradient_control_stop}>
 			<div>
 				<NumberTextField
-					suffix={isConicGradient()? "°" : "%"}
+					labelText={isConicGradient()? "°" : "%"}
 					autoSelectAll
 					enterkeyhint="done"
 					value={stop[_size] * (isConicGradient()? 360 / 100 : 1)}
 					min={0}
 					max={isConicGradient()? 360 : 100}
 					integerOnly
-					onValueChanged={value => props[_command](
+					onInput={ev => props[_command](
 						Commands.change_colorStopLength,
 						props[_gradientIndex],
 						index(),
-						value * (isConicGradient()? (100 / 360) : 1)
+						safeNumber(ev[_currentTarget][_valueAsNumber], isConicGradient()? 360 : 100) * (isConicGradient()? (100 / 360) : 1)
 					)}
 				/>
 				<TextField
@@ -571,17 +585,22 @@ const _: VoidComponent<{
 							enterkeyhint="done"
 							autoSelectAll
 							value={props[_settings][_aspectRatio]}
-							onValueChanged={v => props[_command](Commands.change_settings_aspectRatio, v)}
+							onInput={ev => props[_command](
+								Commands.change_settings_aspectRatio,
+								safeNumber(ev[_currentTarget][_valueAsNumber], props[_settings][_aspectRatio])
+							)}
 							labelText="Aspect ratio"
 						/>
 						<NumberTextField
 							min={0}
-							suffix="px"
 							enterkeyhint="done"
 							autoSelectAll
 							value={props[_settings][_borderRadius]}
-							onValueChanged={v => props[_command](Commands.change_settings_borderRadius, v)}
-							labelText="Border radius"
+							onInput={ev => props[_command](
+								Commands.change_settings_borderRadius,
+								safeNumber(ev[_currentTarget][_valueAsNumber], props[_settings][_borderRadius])
+							)}
+							labelText="Border radius (px)"
 						/>
 					</div>
 				</div>

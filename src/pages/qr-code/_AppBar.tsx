@@ -1,7 +1,7 @@
 import { createSignal, onMount, Show, type VoidComponent } from "solid-js"
 
 import type { Settings } from "./_types"
-import { _system, _round, _theme, _corner, _command, _light, _dark, _includes, _sharp, _semiRound, _fullRound, _home, _src, _apps, _about, _privacy, _terms, _share, _URL, _contactEmail, _donate, _getFullYear, _page, _generate, _low, _settings, _errorCorrectionLevel, _medium, _quartile, _high, _auto, _encodingMode, _alphanumeric, _byte, _kanji, _numeric, _color, _currentTarget, _leftCenterToBottom, _backgroundColor, _margin, _version, _png, _jpeg, _svg, _isGenerateError, _checked } from "@/constants/string"
+import { _system, _round, _theme, _corner, _command, _light, _dark, _includes, _sharp, _semiRound, _fullRound, _home, _src, _apps, _about, _privacy, _terms, _share, _URL, _contactEmail, _donate, _getFullYear, _page, _generate, _low, _settings, _errorCorrectionLevel, _medium, _quartile, _high, _auto, _encodingMode, _alphanumeric, _byte, _kanji, _numeric, _color, _currentTarget, _leftCenterToBottom, _backgroundColor, _margin, _version, _png, _jpeg, _svg, _isGenerateError, _checked, _valueAsNumber } from "@/constants/string"
 import { getDocument, getNavigator, getRoot } from "@/constants/window"
 import { RootAttributes } from "@/enums/attributes"
 import { CornerData } from "@/enums/corner"
@@ -13,6 +13,7 @@ import { setTimeDelayed, timeout } from "@/utils/timeout"
 import { RoutesLinks, ExternalLinks } from "@/enums/links"
 import { encodeURL } from "@/utils/url"
 import { Commands, CopyFileType, DownloadFileType, EncodingMode, ErrorCorrectionLevel, Pages } from "./_enums"
+import { safeNumber } from "@/utils/math"
 import logo from '@/assets/apps/qr-code-logo.svg'
 import redmerahLogo from '@/assets/logo.svg'
 
@@ -350,7 +351,10 @@ const _: VoidComponent<{
 						min={0}
 						value={props[_settings][_margin]}
 						integerOnly
-						onFinalValueChanged={value => props[_command](Commands.change_settings_margin, value)}
+						onBlur={ev => props[_command](
+							Commands.change_settings_margin,
+							safeNumber(ev[_currentTarget][_valueAsNumber], props[_settings][_margin])
+						)}
 					/>
 				</div>
 				<MenuDivider/>
@@ -371,7 +375,10 @@ const _: VoidComponent<{
 						max={40}
 						integerOnly
 						value={props[_settings][_version] ?? 1}
-						onFinalValueChanged={value => props[_command](Commands.change_settings_version, value)}
+						onBlur={ev => props[_command](
+							Commands.change_settings_version,
+							safeNumber(ev[_currentTarget][_valueAsNumber], props[_settings][_version] ?? 1)
+						)}
 					/>
 				</div>
 			</Show>
