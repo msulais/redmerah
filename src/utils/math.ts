@@ -2,6 +2,15 @@ import { _parseInt, _parseFloat, _pow, _min, _max, _round, _floor, _abs, _random
 import { isVarHasValue } from "./data"
 import { getMath, getNumber } from "@/constants/math"
 
+export function safeNumber(num: number, fallback: number = 0): number {
+	return (numberIsNaN(num)
+		|| num >= getNumber.POSITIVE_INFINITY
+		|| num <= getNumber.NEGATIVE_INFINITY
+			? fallback
+			: num
+	)
+}
+
 export function numberParse(num: string, isInt?: boolean, radix?: number): number {
 	return isInt ? getNumber[_parseInt](num, radix) : getNumber[_parseFloat](num)
 }

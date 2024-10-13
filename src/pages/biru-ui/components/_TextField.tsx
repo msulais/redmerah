@@ -1,10 +1,11 @@
 import { createSignal, Show, type VoidComponent } from "solid-js"
 
-import { _text, _password, _telephone, _email, _url, _checked, _currentTarget } from "@/constants/string"
+import { _text, _password, _telephone, _email, _url, _checked, _currentTarget, _valueAsNumber } from "@/constants/string"
+import { safeNumber } from "@/utils/math"
 
 import Icon from "@/components/Icon"
 import CheckBox from "@/components/CheckBox"
-import TextField, { AreaTextField, NumberTextField, TextFieldButton, TextFieldType } from "@/components/TextField"
+import TextField, { AreaTextField, NumberTextField, TextFieldButton } from "@/components/TextField"
 import Dropdown from "@/components/Dropdown"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
 
@@ -20,7 +21,7 @@ const _: VoidComponent = () => {
 	const [readOnly, setReadOnly] = createSignal<boolean>(false)
 
 	// <TextField>
-	const [type, setType] = createSignal<TextFieldType>(TextFieldType[_text])
+	const [type, setType] = createSignal<string>('text')
 
 	// <NumberTextField>
 	const [step, setStep] = createSignal<number>(1)
@@ -108,16 +109,32 @@ const _: VoidComponent = () => {
 		<PlaygroundOptions>
 			<Dropdown
 				items={[
-					[TextFieldType[_text], 'Text'],
-					[TextFieldType[_password], 'Password'],
-					[TextFieldType[_telephone], 'Telephone'],
-					[TextFieldType[_email], 'Email'],
-					[TextFieldType[_url], 'URL'],
+					['button', 'Button'],
+					['checkbox', 'Checkbox'],
+					['color', 'Color'],
+					['date', 'Date'],
+					['datetime-local', 'Local datetime'],
+					['email', 'Email'],
+					['file', 'File'],
+					['hidden', 'Hidden'],
+					['image', 'Image'],
+					['month', 'Month'],
+					['number', 'Number'],
+					['password', 'Password'],
+					['radio', 'Radio'],
+					['range', 'Range'],
+					['reset', 'Reset'],
+					['search', 'Search'],
+					['submit', 'Submit'],
+					['tel', 'Telephone'],
+					['time', 'Time'],
+					['url', 'URL'],
+					['week', 'Week'],
 				]}
 				labelText="Type"
 				style={{width: '100px'}}
 				selectedValues={[type()]}
-				onSelectedItemsChanged={(v) => setType(v[0][0] as TextFieldType)}
+				onSelectedItemsChanged={(v) => setType(v[0][0] as string)}
 			/>
 			<Options />
 		</PlaygroundOptions>
@@ -146,7 +163,7 @@ const _: VoidComponent = () => {
 			<NumberTextField
 				value={step()}
 				labelText="Step"
-				onFinalValueChanged={v => setStep(v)}
+				onBlur={ev => setStep(s => safeNumber(ev[_currentTarget][_valueAsNumber], s))}
 				style={{width: '100px'}}
 			/>
 			<Show when={limitMin()}>
@@ -154,7 +171,7 @@ const _: VoidComponent = () => {
 					value={min()}
 					labelText="Min"
 					max={limitMax()? max() : undefined}
-					onFinalValueChanged={v => setMin(v)}
+					onBlur={ev => setMin(m => safeNumber(ev[_currentTarget][_valueAsNumber], m))}
 					style={{width: '100px'}}
 				/>
 			</Show>
@@ -163,7 +180,7 @@ const _: VoidComponent = () => {
 					value={max()}
 					min={limitMin()? min() : undefined}
 					labelText="Max"
-					onFinalValueChanged={v => setMax(v)}
+					onBlur={ev => setMax(m => safeNumber(ev[_currentTarget][_valueAsNumber], m))}
 					style={{width: '100px'}}
 				/>
 			</Show>
@@ -203,7 +220,7 @@ const _: VoidComponent = () => {
 			<NumberTextField
 				value={minLine()}
 				labelText="Min line"
-				onFinalValueChanged={v => setMinLine(v)}
+				onBlur={ev => setMinLine(m => safeNumber(ev[_currentTarget][_valueAsNumber], m))}
 				min={1}
 				max={limitMaxLine()? maxLine() : undefined}
 				style={{width: '100px'}}
@@ -212,7 +229,7 @@ const _: VoidComponent = () => {
 				<NumberTextField
 					value={maxLine()}
 					labelText="Max line"
-					onFinalValueChanged={v => setMaxLine(v)}
+					onBlur={ev => setMaxLine(m => safeNumber(ev[_currentTarget][_valueAsNumber], m))}
 					min={minLine()}
 					style={{width: '100px'}}
 				/>

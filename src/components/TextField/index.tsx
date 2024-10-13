@@ -4,28 +4,22 @@ import { mergeRefs } from '@solid-primitives/refs'
 import { toggleAttribute } from '@/utils/attributes'
 import { clearTimeDelayed, clearTimeInterval, setTimeDelayed, setTimeInterval } from '@/utils/timeout'
 import { callEventHandler, preventDefault, stopPropagation } from '@/utils/event'
-import { _centerBottom, _centerCenterLeft, _autoHideLabel, _autoShowClearBtn, _autocomplete, _button, _changeValueTooltip, _checkValidity, _children, _classList, _clearTooltip, _compact, _currentTarget, _decreaseTooltip, _disabled, _dispatchEvent, _focus, _focused, _id, _increaseTooltip, _input, _isIntOnly, _isNaN, _labelAttr, _labelElement, _labelText, _leading, _length, _max, _maxLine, _messageText, _min, _minLine, _off, _onBlur, _onFinalValueChanged, _onFocus, _onInput, _onValueChanged, _placeholder, _px, _readOnly, _ref, _resize, _rows, _scrollHeight, _split, _step, _text, _trailing, _trim, _type, _value, _valuechange, _result, _observe, _disconnect, _width, _menuAttr, _usePortal, _style, _bottom, _clientX, _clientY, _left, _right, _top, _touches, _x, _y, _click, _onToggleOpen, _target, _contains, _isArray, _class, _integerOnly, _suffix, _prefix, _autoSelectAll, _setSelectionRange, _onKeyUp, _blur, _code, _Enter, _wrapperAttr } from '@/constants/string'
-import { mathMax, mathRound, numberParse } from '@/utils/math'
+import { _value, _input, _dispatchEvent, _classList, _compact, _leading, _onInput, _labelText, _focused, _autocomplete, _id, _messageText, _trailing, _labelAttr, _disabled, _readOnly, _onFocus, _onBlur, _placeholder, _autoHideLabel, _ref, _autoShowClearBtn, _clearTooltip, _minLine, _maxLine, _wrapperAttr, _class, _trim, _split, _length, _focus, _currentTarget, _checkValidity, _scrollHeight, _off, _px, _button, _text, _type, _autoSelectAll, _onKeyUp, _setSelectionRange, _code, _Enter, _blur, _max, _min, _decreaseTooltip, _increaseTooltip, _changeValueTooltip, _integerOnly, _stepUp, _stepDown, _valueAsNumber, _isNaN, _toUpperCase, _centerCenterLeft, _result, _menuAttr, _usePortal, _style, _onToggleOpen, _isArray, _width, _centerBottom, _observe, _disconnect, _target, _contains, _click, _autoFixOnBlur, _actionsAttr } from '@/constants/string'
+import { mathClamp, mathMax, mathRound, numberIsNaN, numberParse } from '@/utils/math'
 import { getBoundingClientRect } from '@/utils/element'
 import { getDocument } from '@/constants/window'
 import { addEventListener, removeEventListener } from '@/utils/event'
+import { isNumber, isString } from '@/utils/typecheck'
 
 import Icon from '@/components/Icon'
 import { TextTooltip } from '@/components/Tooltip'
 import Button, { IconButton, type ButtonProps } from '@/components/Button'
 import Popover, { closePopover, openPopover, PopoverPosition as SearchMenuPosition, repositionPopover, type PopoverProps } from '../Popover'
-import Menu, { MenuItem, LinkMenuItem, MenuDivider, MenuHeader, openMenu, MenuPosition } from '@/components/Menu'
+import { MenuItem, LinkMenuItem, MenuDivider, MenuHeader, openMenu, MenuPosition } from '@/components/Menu'
+import Modal, { type ModalProps } from '@/components/Modal'
 import './index.scss'
 
 const HEIGHT_TEXT_INPUT_PER_LINE = 20
-
-enum TextFieldType {
-	text = 'text',
-	password = 'password',
-	telephone = 'tel',
-	email = 'email',
-	url = 'url'
-}
 
 /**
  * To trigger 'input' event
@@ -181,7 +175,7 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 }
 
 
-type TextFieldProps = Omit<JSX.InputHTMLAttributes<HTMLInputElement>, 'type' | 'children'> & {
+type TextFieldProps = JSX.InputHTMLAttributes<HTMLInputElement> & {
 	leading?: JSX.Element
 	trailing?: JSX.Element
 	labelText?: JSX.Element
@@ -192,7 +186,6 @@ type TextFieldProps = Omit<JSX.InputHTMLAttributes<HTMLInputElement>, 'type' | '
 	autoHideLabel?: boolean
 	autoSelectAll?: boolean
 	clearTooltip?: string
-	type?: TextFieldType
 	wrapperAttr?: JSX.HTMLAttributes<HTMLDivElement>
 }
 const TextField: VoidComponent<TextFieldProps> = ($props) => {
@@ -284,146 +277,131 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 }
 
 type NumberTextFieldProps = Omit<TextFieldProps, 'type'> & {
-	step?: number
-	min?: number
-	max?: number
-	suffix?: string
-	prefix?: string
 	integerOnly?: boolean
 	decreaseTooltip?: string
 	increaseTooltip?: string
 	changeValueTooltip?: string
-	onValueChanged?: (value: number ) => unknown // value change listener
-	onFinalValueChanged?: (value: number) => unknown // final value change listener
+	autoFixOnBlur?: boolean
+	actionsAttr?: ModalProps
 }
 const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 	const $$props = mergeProps({
 		increaseTooltip: 'Increase',
 		decreaseTooltip: 'Decrease',
 		changeValueTooltip: 'Change value',
+		autoFixOnBlur: true
 	}, $props)
 	const [props, other] = splitProps($$props, [
-		_max, _min, _trailing, _onValueChanged, _autoShowClearBtn,
-		_step, _onBlur, _value, _ref, _focused, _onFinalValueChanged,
+		_max, _min, _trailing, _autoShowClearBtn, _onBlur,
+		_onBlur, _value, _ref, _focused, _wrapperAttr,
 		_decreaseTooltip, _increaseTooltip, _changeValueTooltip,
-		_clearTooltip, _disabled, _integerOnly, _suffix, _prefix
+		_clearTooltip, _disabled, _integerOnly, _autoFixOnBlur,
+		_actionsAttr
 	])
+	const [wrapperProps, wrapperPropsOther] = splitProps(
+		props[_wrapperAttr]! ?? {},
+		[_classList]
+	)
+	const [actionsProps, actionsPropsOther] = splitProps(
+		props[_actionsAttr]! ?? {},
+		[_ref, _classList, _onToggleOpen]
+	)
 
-	const [isActionMenuOpen, setIsActionMenuOpen] = createSignal<boolean>(false)
+	const [is_modal_actions_open, setIs_modal_actions_open] = createSignal<boolean>(false)
 	const [value, setValue] = createSignal<number>(0)
-	let $value: number = 0
 	let timeoutId: number | null = null
-	let timeoutId2: number | null = null
 	let intervalId: number | null = null
 	let numberTextField_ref: HTMLInputElement
-	let menu_action_ref: HTMLDialogElement
+	let modal_actions_ref: HTMLDialogElement
 
-	function changeLength(operator: '+' | '-', continuous: boolean = false): void {
-		const changeValue = () => {
-			let n = value() + (operator == '+'
-				? (props[_step] ?? 1)
-				: -(props[_step] ?? 1)
-			)
+	function getMax(defaultNumber?: number): number {
+		const max = props[_max]
+		let v: number = defaultNumber ?? value()
 
-			if (props[_min] != undefined && n < props[_min]) n = props[_min]
-			if (props[_max] != undefined && n > props[_max]) n = props[_max]
-			if (props[_integerOnly]) n = mathRound(n)
-
-			setValue(n)
-			$value = n
-			if (props[_onValueChanged]) props[_onValueChanged](n)
-			changeTextFieldValue(numberTextField_ref, `${props[_prefix] ?? ''}${n}${props[_suffix] ?? ''}`)
-
-			if (timeoutId2 != null) {
-				clearTimeDelayed(timeoutId2)
-				timeoutId2 = null
-			}
-
-			timeoutId2 = setTimeDelayed(() => {
-				if (props[_onFinalValueChanged])
-					props[_onFinalValueChanged](value())
-			}, 100)
-		}
-
-		stopContinuousChangeLength()
-		if (continuous){
-			timeoutId = (setTimeDelayed(() => {
-				intervalId = setTimeInterval(() => changeValue(), 30)
-				timeoutId = null
-			}, 300))
-		}
-
-		if (continuous) return;
-		changeValue()
+		if (isString(max)) v = numberParse(max as string, props[_integerOnly])
+		else if (isNumber(max)) v = max as number
+		return props[_integerOnly]? mathRound(v) : v
 	}
 
-	function stopContinuousChangeLength(): void {
-		if (intervalId != null) {
-			clearTimeInterval(intervalId)
-			intervalId = null
-		}
-		if (timeoutId != null) {
-			clearTimeDelayed(timeoutId)
+	function getMin(defaultNumber?: number): number {
+		const min = props[_min]
+		let v: number = defaultNumber ?? value()
+
+		if (isString(min)) v = numberParse(min as string, props[_integerOnly])
+		else if (isNumber(min)) v = min as number
+		return props[_integerOnly]? mathRound(v) : v
+	}
+
+	function changeValue(operator: '+' | '-'): void {
+		if (operator == '+') numberTextField_ref[_stepUp]()
+		else numberTextField_ref[_stepDown]()
+
+		let n = numberTextField_ref[_valueAsNumber]
+		if (numberIsNaN(n)) n = value()
+
+		n = mathClamp(n, getMin(n), getMax(n))
+		if (props[_integerOnly]) n = mathRound(n)
+
+		setValue(n)
+		changeTextFieldValue(numberTextField_ref, `${n}`)
+	}
+
+	function onPressStart(operator: '+' | '-'): void {
+		if (timeoutId != null) clearTimeDelayed(timeoutId)
+
+		timeoutId = setTimeDelayed(() => {
+			if (intervalId != null) clearTimeInterval(intervalId)
+			intervalId = setTimeInterval(() => changeValue(operator), 30)
 			timeoutId = null
-		}
+		}, 300)
 	}
 
-	onMount(() => {
-		let v = numberParse(`${props[_value]}`)
+	function onPressEnd(operator: '+' | '-'): void {
+		if (intervalId != null) clearTimeInterval(intervalId)
+		if (timeoutId != null) clearTimeDelayed(timeoutId)
+		intervalId = timeoutId = null
+		changeValue(operator)
+	}
 
+	function fixNumberInput(): void {
+		let n = numberParse(numberTextField_ref[_value], props[_integerOnly])
+		if (numberIsNaN(n)) n = value()
+
+		n = mathClamp(n, getMin(n), getMax(n))
+		if (props[_integerOnly]) n = mathRound(n)
+
+		setValue(n)
+		changeTextFieldValue(numberTextField_ref, `${n}`[_toUpperCase]())
+	}
+
+	createEffect(() => {
+		let v = numberParse(`${props[_value]}`)
 		if (Number[_isNaN](v)) v = value()
-		if (props[_min] != undefined && v < props[_min]) v = props[_min]
-		if (props[_max] != undefined && v > props[_max]) v = props[_max]
+
+		v = mathClamp(v, getMin(v), getMax(v))
 		if (props[_integerOnly]) v = mathRound(v)
 
 		setValue(v)
-		$value = v
-	})
-
-	createEffect(() => {
-		const min = props[_min]
-		const max = props[_max]
-
-		if (min != undefined && $value < min) $value = min
-		if (max != undefined && $value > max) $value = max
-		if (props[_integerOnly]) $value = mathRound($value)
-		setValue($value)
 	})
 
 	return (<>
 		<TextField
-			focused={props[_focused] ?? (isActionMenuOpen()? true : undefined)}
+			focused={props[_focused] ?? (is_modal_actions_open()? true : undefined)}
 			disabled={props[_disabled]}
 			ref={mergeRefs(props[_ref], r => numberTextField_ref = r)}
-			value={(() => {
-				let v = numberParse(`${props[_value]}`)
-
-				if (Number[_isNaN](v)) v = 0
-				if (props[_min] != undefined && v < props[_min]) v = props[_min]
-				if (props[_max] != undefined && v > props[_max]) v = props[_max]
-				if (props[_integerOnly]) v = mathRound(v)
-				setValue(v)
-
-				return `${props[_prefix] ?? ''}${v}${props[_suffix] ?? ''}`
-			})()}
-			onBlur={(ev) => {
-				let v = numberParse(ev[_currentTarget][_value])
-
-				if (Number[_isNaN](v)) v = value()
-				if (props[_min] != null && v < props[_min]) v = props[_min]
-				if (props[_max] != null && v > props[_max]) v = props[_max]
-				if (props[_integerOnly]) v = mathRound(v)
-
-				const va = value()
-				const isChanged = va != v
-				changeTextFieldValue(ev[_currentTarget], `${props[_prefix] ?? ''}${v}${props[_suffix] ?? ''}`)
-				setValue(v)
-				$value = v
-
-				if (isChanged && props[_onFinalValueChanged]) props[_onFinalValueChanged](v)
-				if (isChanged && props[_onValueChanged]) props[_onValueChanged](v)
+			value={value()}
+			wrapperAttr={{
+				classList: {
+					'number-textfield': true,
+					...wrapperProps[_classList]
+				},
+				...wrapperPropsOther
+			}}
+			onBlur={ev => {
+				if (props[_autoFixOnBlur]) fixNumberInput()
 				callEventHandler(ev, props[_onBlur])
 			}}
+			type='number'
 			trailing={<>
 				{ props[_trailing] }
 				<Show when={!props[_disabled]}>
@@ -431,7 +409,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 						<TextFieldButton
 							onClick={(ev) => openMenu(
 								ev,
-								menu_action_ref,
+								modal_actions_ref,
 								{
 									position: MenuPosition[_centerCenterLeft],
 									anchor: ev[_currentTarget]
@@ -444,55 +422,55 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 				<Show when={props[_autoShowClearBtn] && value() != 0}>
 					<TextTooltip text={props[_clearTooltip] ?? 'Clear'}>
 						<TextFieldButton onClick={(_ev) => {
-							let v = 0
-							if (props[_min] != undefined && v < props[_min]) v = props[_min]
-							if (props[_max] != undefined && v > props[_max]) v = props[_max]
+							let v = mathClamp(0, getMin(), getMax())
 							if (props[_integerOnly]) v = mathRound(v)
 
-							const va = value()
-							const isChanged = va != v
-							changeTextFieldValue(numberTextField_ref, `${props[_prefix] ?? ''}${v}${props[_suffix] ?? ''}`)
+							changeTextFieldValue(numberTextField_ref, `${v}`)
 							setValue(v)
-							$value = v
-
-							if (isChanged && props[_onFinalValueChanged]) props[_onFinalValueChanged](v)
-							if (isChanged && props[_onValueChanged]) props[_onValueChanged](v)
 						}}><Icon code={0xE5E9}/></TextFieldButton>
 					</TextTooltip>
 				</Show>
 			</>}
 			{...other}
 		/>
-		<Menu
-			ref={r => menu_action_ref = r}
-			classList={{'number-textfield-menu': true}}
-			onToggleOpen={(v) => setIsActionMenuOpen(v)}>
+		<Modal
+			ref={mergeRefs(actionsProps[_ref], r => modal_actions_ref = r)}
+			classList={{
+				'number-textfield-actions': true,
+				...actionsProps[_classList]
+			}}
+			onToggleOpen={(isOpen) => {
+				actionsProps[_onToggleOpen]?.(isOpen)
+				setIs_modal_actions_open(isOpen)
+				if (!isOpen) {
+					numberTextField_ref[_focus]()
+					numberTextField_ref[_blur]()
+				}
+			}}
+			{...actionsPropsOther}>
 			<TextTooltip text={props[_increaseTooltip]}>
 				<IconButton
-					disabled={props[_max] != undefined && value() >= props[_max]}
-					onMouseUp={() => stopContinuousChangeLength()}
+					disabled={props[_max] != null && value() >= getMax()}
+					onMouseUp={() => onPressEnd('+')}
 					onContextMenu={(ev) => preventDefault(ev)}
-					onMouseDown={() => changeLength('+', true)}
-					onTouchEnd={() => stopContinuousChangeLength()}
-					onTouchStart={() => changeLength('+', true)}
-					onClick={() => changeLength('+')}
+					onMouseDown={() => onPressStart('+')}
+					onTouchEnd={() => onPressEnd('+')}
+					onTouchStart={() => onPressStart('+')}
 					code={0xE404}
 				/>
 			</TextTooltip>
-
 			<TextTooltip text={props[_decreaseTooltip]}>
 				<IconButton
-					disabled={props[_min] != undefined && value() <= props[_min]}
-					onMouseUp={() => stopContinuousChangeLength()}
+					disabled={props[_min] != null && value() <= getMin()}
+					onMouseUp={() => onPressEnd('-')}
 					onContextMenu={(ev) => preventDefault(ev)}
-					onMouseDown={() => changeLength('-', true)}
-					onTouchEnd={() => stopContinuousChangeLength()}
-					onTouchStart={() => changeLength('-', true)}
-					onClick={() => changeLength('-')}
+					onMouseDown={() => onPressStart('-')}
+					onTouchEnd={() => onPressEnd('-')}
+					onTouchStart={() => onPressStart('-')}
 					code={0xE3FC}
 				/>
 			</TextTooltip>
-		</Menu>
+		</Modal>
 	</>)
 }
 
@@ -632,7 +610,6 @@ export {
 	AreaTextField,
 	NumberTextField,
 	TextField,
-	TextFieldType,
 	SearchTextField,
 	openPopover as openSearchMenu,
 	closePopover as closeSearchMenu,

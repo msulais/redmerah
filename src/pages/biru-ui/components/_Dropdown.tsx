@@ -1,6 +1,7 @@
 import { createSignal, Show, type VoidComponent } from "solid-js"
 
-import { _checked, _currentTarget, _slice } from "@/constants/string"
+import { _checked, _currentTarget, _slice, _valueAsNumber } from "@/constants/string"
+import { safeNumber } from "@/utils/math"
 
 import CheckBox from "@/components/CheckBox"
 import { NumberTextField } from "@/components/TextField"
@@ -57,7 +58,13 @@ const _: VoidComponent = () => {
 			/>
 		</Playground>
 		<PlaygroundOptions>
-			<NumberTextField labelText="Count" style={{width: '100px'}} value={10} min={1} max={10} onFinalValueChanged={(v) => setCount(v)}/>
+			<NumberTextField
+				labelText="Count"
+				style={{width: '100px'}}
+				value={10} min={1}
+				max={10}
+				onBlur={(ev) => setCount(c => safeNumber(ev[_currentTarget][_valueAsNumber], c))}
+			/>
 			<CheckBox
 				checked={multiple()}
 				onChange={ev => setMultiple(ev[_currentTarget][_checked])}>

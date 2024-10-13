@@ -3,10 +3,10 @@ import type { SetStoreFunction, Store } from "solid-js/store/types/store";
 
 import type { ItemList, Settings } from "./_types";
 import { _add_list, _change_settings_colors_count, _change_settings_colors_range_hex, _change_settings_colors_range_hsl_h, _change_settings_colors_range_hsl_l, _change_settings_colors_range_hsl_s, _change_settings_colors_range_rgb_b, _change_settings_colors_range_rgb_g, _change_settings_colors_range_rgb_r, _change_settings_numbers_count, _change_settings_numbers_range, _change_settings_selection_count, _change_settings_selection_list, _change_settings_string_characters_customCharacters, _change_settings_string_characters_toDefault, _change_settings_string_length, _change_settings_teams_count, _change_settings_teams_membersList, _change_settings_teams_namesList, _change_settings_words_count, _change_settings_words_list, _delete_list, _edit_list, _export_list, _reset_list, _settings_words_listId, _toggle_settings_string_characters_alphabetLowercase, _toggle_settings_string_characters_alphabetUppercase, _toggle_settings_string_characters_numbers, _toggle_settings_string_characters_symbols, _view_list } from "./_string";
-import { _settings, _string, _numbers, _length, _push, _join, _width, _currentTarget, _centerBottomToLeft, _value, _characters, _symbols, _colors, _match, _max, _min, _replace, _range, _count, _colorModel, _hex, _hsl, _isNaN, _rgb, _words, _lists, _alphabetLowercase, _alphabetUppercase, _customCharacter, _randomizerType, _id, _list, _members, _name, _db, _objectStore, _put, _transaction, _readwrite, _command, _centerBottomToRight, _oncontextmenu, _items, _selection, _teams, _namesList, _membersList, _find } from "@/constants/string";
+import { _settings, _string, _numbers, _length, _push, _join, _width, _currentTarget, _centerBottomToLeft, _value, _characters, _symbols, _colors, _match, _max, _min, _replace, _range, _count, _colorModel, _hex, _hsl, _isNaN, _rgb, _words, _lists, _alphabetLowercase, _alphabetUppercase, _customCharacter, _randomizerType, _id, _list, _members, _name, _db, _objectStore, _put, _transaction, _readwrite, _command, _centerBottomToRight, _oncontextmenu, _items, _selection, _teams, _namesList, _membersList, _find, _valueAsNumber } from "@/constants/string";
 import { getBoundingClientRect } from "@/utils/element";
 import { RandomizerType, ColorsRandomizerColorModel, Commands } from "./_enums";
-import { numberIsNaN, numberParse } from "@/utils/math";
+import { numberIsNaN, numberParse, safeNumber } from "@/utils/math";
 import { preventDefault } from "@/utils/event";
 
 import Icon from "@/components/Icon";
@@ -59,7 +59,10 @@ const Teams: VoidComponent<{
 			labelText="Count"
 			min={1}
 			max={settings()[_membersList][_items][_length]}
-			onFinalValueChanged={(v) => props[_command](Commands[_change_settings_teams_count], v)}
+			onBlur={ev => props[_command](
+				Commands[_change_settings_teams_count],
+				safeNumber(ev[_currentTarget][_valueAsNumber], settings()[_count])
+			)}
 			wrapperAttr={{ style: { width: 'min(100%, 164px)' } }}
 			value={settings()[_count]}
 		/>
@@ -356,7 +359,10 @@ const Selection: VoidComponent<{
 			labelText="Count"
 			min={1}
 			max={props[_settings][0][_selection][_list][_items][_length]}
-			onFinalValueChanged={(v) => props[_command](Commands[_change_settings_selection_count], v)}
+			onBlur={ev => props[_command](
+				Commands[_change_settings_selection_count],
+				safeNumber(ev[_currentTarget][_valueAsNumber], props[_settings][0][_selection][_count])
+			)}
 			wrapperAttr={{ style: { width: 'min(100%, 164px)' } }}
 			value={props[_settings][0][_selection][_count]}
 		/>
@@ -495,7 +501,10 @@ const Words: VoidComponent<{
 		<NumberTextField
 			labelText="Count"
 			min={1}
-			onFinalValueChanged={(v) => props[_command](Commands[_change_settings_words_count], v)}
+			onBlur={ev => props[_command](
+				Commands[_change_settings_words_count],
+				safeNumber(ev[_currentTarget][_valueAsNumber], props[_settings][0][_words][_count])
+			)}
 			wrapperAttr={{ style: { width: 'min(100%, 164px)' } }}
 			value={props[_settings][0][_words][_count]}
 		/>
@@ -533,7 +542,10 @@ const Colors: VoidComponent<{
 			min={1}
 			labelText="Count"
 			value={props[_settings][0][_colors][_count]}
-			onFinalValueChanged={(v) => props[_command](Commands[_change_settings_colors_count], v)}
+			onBlur={ev => props[_command](
+				Commands[_change_settings_colors_count],
+				safeNumber(ev[_currentTarget][_valueAsNumber], props[_settings][0][_colors][_count])
+			)}
 		/>
 		<Switch>
 			<Match when={props[_settings][0][_colors][_colorModel] == ColorsRandomizerColorModel[_hex]}>
@@ -721,7 +733,10 @@ const Numbers: VoidComponent<{
 		<NumberTextField
 			labelText="Count"
 			min={1}
-			onFinalValueChanged={(v) => props[_command](Commands[_change_settings_numbers_count], v)}
+			onBlur={ev => props[_command](
+				Commands[_change_settings_numbers_count],
+				safeNumber(ev[_currentTarget][_valueAsNumber], props[_settings][0][_numbers][_count])
+			)}
 			wrapperAttr={{ style: { width: 'min(100%, 164px)' } }}
 			value={props[_settings][0][_numbers][_count]}
 		/>
@@ -765,7 +780,10 @@ const $String: VoidComponent<{
 		<NumberTextField
 			wrapperAttr={{ style: { width: 'min(100%, 164px)' } }}
 			value={settings()[_length]}
-			onFinalValueChanged={(v) => props[_command](Commands[_change_settings_string_length], v)}
+			onBlur={ev => props[_command](
+				Commands[_change_settings_string_length],
+				safeNumber(ev[_currentTarget][_valueAsNumber], settings()[_length])
+			)}
 			min={1}
 			labelText="Length"
 		/>
