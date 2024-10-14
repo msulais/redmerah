@@ -1,14 +1,20 @@
-import { _parseInt, _parseFloat, _pow, _min, _max, _round, _floor, _abs, _random, _sqrt, _sin, _cos, _tan, _log10, _log, _ceil, _sinh, _asin, _asinh, _acos, _cosh, _acosh, _atan, _tanh, _atanh, _isNaN, _isInteger, _split, _replace, _length, _toString, _match, _repeat, _substring, _test, _indexOf } from "@/constants/string"
+import { _parseInt, _parseFloat, _pow, _min, _max, _round, _floor, _abs, _random, _sqrt, _sin, _cos, _tan, _log10, _log, _ceil, _sinh, _asin, _asinh, _acos, _cosh, _acosh, _atan, _tanh, _atanh, _isNaN, _isInteger, _split, _replace, _length, _toString, _match, _repeat, _substring, _test, _indexOf, _isFinite } from "@/constants/string"
 import { isVarHasValue } from "./data"
 import { getMath, getNumber } from "@/constants/math"
 
 export function safeNumber(num: number, fallback: number = 0): number {
-	return (numberIsNaN(num)
-		|| num >= getNumber.POSITIVE_INFINITY
-		|| num <= getNumber.NEGATIVE_INFINITY
-			? fallback
-			: num
+	return (numberIsNaN(num) || !Number.isFinite(num)
+		? fallback
+		: num
 	)
+}
+
+export function numberIsFinite(num: number): boolean {
+	return getNumber[_isFinite](num)
+}
+
+export function numberIsInfinite(num: number): boolean {
+	return !numberIsFinite(num)
 }
 
 export function numberParse(num: string, isInt?: boolean, radix?: number): number {
@@ -16,7 +22,7 @@ export function numberParse(num: string, isInt?: boolean, radix?: number): numbe
 }
 
 export function mathClamp(value: number, min: number, max: number): number {
-	return mathMax(min, mathMin(max, value));
+	return mathMax(min, mathMin(max, value))
 }
 
 export function mathPow(x: number, y: number): number {

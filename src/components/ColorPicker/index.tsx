@@ -11,10 +11,10 @@ import { getBoundingClientRect } from "@/utils/element"
 import { addEventListener, removeEventListener } from '@/utils/event'
 import { BodyAttributes } from "@/enums/attributes"
 import { getDocument, getDocumentBody } from "@/constants/window"
-import { mathMax, mathMin, mathRound, numberParse } from "@/utils/math"
+import { mathClamp, mathMax, mathMin, mathRound, numberParse, safeNumber } from "@/utils/math"
 
 import Button, { ButtonVariant } from "@/components/Button"
-import TextField, { changeTextFieldValue } from "@/components/TextField"
+import TextField from "@/components/TextField"
 import Modal, {
 	type ModalProps,
 	closeModal,
@@ -35,7 +35,11 @@ enum ColorPickerEvents {
 	onChangeColor = 'on-change-color'
 }
 
-function openColorPicker(event: Event, colorPicker: HTMLDialogElement, options?: Omit<ModalOpenDetail, 'event'> & {color?: HEXColor}): void {
+function openColorPicker(
+	event: Event,
+	colorPicker: HTMLDialogElement,
+	options?: Omit<ModalOpenDetail, 'event'> & { color?: HEXColor }
+): void {
 	if (options?.[_color] != null) changeColorPickerValue(colorPicker, options[_color])
 
 	openModal(event, colorPicker, options)
@@ -44,37 +48,10 @@ function openColorPicker(event: Event, colorPicker: HTMLDialogElement, options?:
 function changeColorPickerValue(colorPicker: HTMLDialogElement, color: HEXColor): void {
 	colorPicker[_dispatchEvent](new CustomEvent(
 		ColorPickerEvents[_onChangeColor],
-		{detail: color}
+		{ detail: color }
 	))
 }
 
-type Picker = {
-	color: {
-		rect: DOMRect | null
-		isDrag: boolean
-		position: {
-			/** `0 -> COLOR_BOX_HEIGHT` */
-			top: number
-
-			/** `0 -> COLOR_BOX_WIDTH` */
-			left: number
-		}
-	}
-	hue: {
-		rect: DOMRect | null
-		isDrag: boolean
-
-		/** `0 -> slider` */
-		position: number
-	}
-	opacity: {
-		rect: DOMRect | null
-		isDrag: boolean
-
-		/** `0 -> slider` */
-		position: number
-	}
-}
 
 
 type ColorPickerProps = ModalProps & {
@@ -86,7 +63,34 @@ type ColorPickerProps = ModalProps & {
 	onSelectColor?(color: HEXColor): unknown
 }
 const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
-	const $$props = mergeProps({color: DEFAULT_HEX_COLOR, disabledColorControl: false}, $props)
+	type Picker = {
+		color: {
+			rect: DOMRect | null
+			isDrag: boolean
+			position: {
+				/** `0 -> COLOR_BOX_HEIGHT` */
+				top: number
+
+				/** `0 -> COLOR_BOX_WIDTH` */
+				left: number
+			}
+		}
+		hue: {
+			rect: DOMRect | null
+			isDrag: boolean
+
+			/** `0 -> slider` */
+			position: number
+		}
+		opacity: {
+			rect: DOMRect | null
+			isDrag: boolean
+
+			/** `0 -> slider` */
+			position: number
+		}
+	}
+	const $$props = mergeProps({ color: DEFAULT_HEX_COLOR, disabledColorControl: false }, $props)
 	const [props, other] = splitProps($$props, [
 		_children, _disabledOpacityControl, _onSelectColor,
 		_disabledColorControl, _ref, _classList, _color,
@@ -94,7 +98,7 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 	])
 	let is_colorPicker_open: boolean = false
 	const [colorModel, setColorMode] = createSignal<'HEX' | 'RGB' | 'HSL'>(_HEX)
-	const [hslColor, setHslColor] = createSignal<HSLColor>({h: 0, s: 1, l: 0.5})
+	const [hslColor, setHslColor] = createSignal<HSLColor>({ h: 0, s: 1, l: 0.5 })
 	const [hexColor, setHexColor] = createSignal<HEXColor>(DEFAULT_HEX_COLOR)
 	const [opacity, setOpacity] = createSignal<number>(100) // 0 - 100
 	const [color, setColor] = createSignal<HEXColor>(DEFAULT_HEX_COLOR)
@@ -103,7 +107,7 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 		color: {
 			rect: null,
 			isDrag: false,
-			position: {left: COLOR_BOX_WIDTH, top: 0},
+			position: { left: COLOR_BOX_WIDTH, top: 0 },
 		},
 		hue: {
 			rect: null,
@@ -120,13 +124,13 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 		const $opacity: string = opacity() == 100 || props[_disabledOpacityControl]
 			? ''
 			: mathRound(opacity() / 100 * 255)[_toString](16)[_padStart](2, '0')
-		;
+			;
 		const hexColor = (HSL_to_HEX(hslColor()) + $opacity)[_toUpperCase]()
 		if (is_colorPicker_open) props[_onUpdateColor]?.(hexColor as HEXColor)
 		return hexColor
 	})
-	const getSliderSize = createMemo<number>(() => props[_disabledColorControl]? 260 : 144)
-	const getHexColorForCanvas = createMemo(() => HSL_to_HEX({h: hslColor().h, s: 1, l: 0.5}))
+	const getSliderSize = createMemo<number>(() => props[_disabledColorControl] ? 260 : 144)
+	const getHexColorForCanvas = createMemo(() => HSL_to_HEX({ h: hslColor().h, s: 1, l: 0.5 }))
 	let textfield_opacity_ref: HTMLInputElement | undefined
 	let textfield_color_ref!: HTMLInputElement
 	let colorPicker_ref: HTMLDialogElement
@@ -160,39 +164,43 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 	function updateInputs(onBeforeUpdate?: () => void): void {
 		if (onBeforeUpdate) onBeforeUpdate()
 
-		if (colorModel() == _RGB){
+		// don't trigger input event
+		if (colorModel() == _RGB) {
 			const rgb = HSL_to_RGB(hslColor())
-			changeTextFieldValue(textfield_color_ref, `${rgb.r}, ${rgb.g}, ${rgb.b}`)
+			textfield_color_ref[_value] = `${rgb.r}, ${rgb.g}, ${rgb.b}`
 		}
-		else if (colorModel() == _HSL){
-			changeTextFieldValue(textfield_color_ref, [
-				mathRound(hslColor().h * 360),
-				numberParse((hslColor().s * 100)[_toFixed](2)) + '%',
-				numberParse((hslColor().l * 100)[_toFixed](2)) + '%'
-			][_join](', '))
-		}
-		else if (colorModel() == _HEX) {
-			changeTextFieldValue(textfield_color_ref, getHexColor()[_substring](0, 7))
-		}
+		else if (colorModel() == _HSL) textfield_color_ref[_value] = [
+			mathRound(hslColor().h * 360),
+			numberParse((hslColor().s * 100)[_toFixed](2)) + '%',
+			numberParse((hslColor().l * 100)[_toFixed](2)) + '%'
+		][_join](', ')
+		else if (colorModel() == _HEX) textfield_color_ref[_value] = getHexColor()[_substring](0, 7)
 
-		if (textfield_opacity_ref) changeTextFieldValue(textfield_opacity_ref, opacity() + '%')
+		if (textfield_opacity_ref) textfield_opacity_ref[_value] = opacity() + '%'
 	}
 
 	function setPosition(clientX: number, clientY: number): void {
 		if (picker[_color][_isDrag]) setPicker(_color, _position, {
-			left: mathMax(mathMin(clientX - picker[_color][_rect]![_left], COLOR_BOX_WIDTH), 0),
-			top: mathMax(mathMin(clientY - picker[_color][_rect]![_top], COLOR_BOX_HEIGHT), 0)
+			left: mathClamp(clientX - picker[_color][_rect]![_left], 0, COLOR_BOX_WIDTH),
+			top: mathClamp(clientY - picker[_color][_rect]![_top], 0, COLOR_BOX_HEIGHT)
 		})
-		else if (picker[_hue][_isDrag]) setPicker(_hue, _position, mathMax(mathMin(props[_disabledColorControl]
-			? clientX - picker[_hue][_rect]![_left]
-			: clientY - picker[_hue][_rect]![_top],
-		getSliderSize()), 0))
-		else if (picker[_opacity][_isDrag]) setPicker(_opacity, _position, mathMax(mathMin(props[_disabledColorControl]
-			? clientX - picker[_opacity][_rect]![_left]
-			: clientY - picker[_opacity][_rect]![_top],
-		getSliderSize()), 0))
+		else if (picker[_hue][_isDrag]) setPicker(_hue, _position, mathClamp(
+			props[_disabledColorControl]
+				? clientX - picker[_hue][_rect]![_left]
+				: clientY - picker[_hue][_rect]![_top],
+			0,
+			getSliderSize()
+		))
+		else if (picker[_opacity][_isDrag]) setPicker(_opacity, _position, mathClamp(
+			props[_disabledColorControl]
+				? clientX - picker[_opacity][_rect]![_left]
+				: clientY - picker[_opacity][_rect]![_top],
+			0,
+			getSliderSize()
+		))
 
-		if (!(picker[_color][_isDrag] || picker[_hue][_isDrag] || picker[_opacity][_isDrag])) return
+		const isDragging = picker[_color][_isDrag] || picker[_hue][_isDrag] || picker[_opacity][_isDrag]
+		if (!isDragging) return
 
 		updateInputs(() => {
 			const hsl: HSLColor = {
@@ -208,7 +216,6 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 					v: hsl.l
 				})
 
-				// i don't even know this can be here
 				hsl.s = _hsl.s
 				hsl.l = _hsl.l
 			}
@@ -283,14 +290,14 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 			setOpacity(mathRound(opacity * 100))
 		}
 
-		if (props[_disabledColorControl]) setHslColor(hsl => ({...hsl, s: 1, l: 0.5}))
+		if (props[_disabledColorControl]) setHslColor({ ...hslColor(), s: 1, l: 0.5 })
 
 		updateInputs()
 		updatePosition()
 	}
 
 	function onColorInputChange(value: string): void {
-		if (colorModel() == _RGB){
+		if (colorModel() == _RGB) {
 			const rgb: RGBColor = { r: 0, g: 0, b: 0 }
 			const rgbArr: string[] = value[_replace](/[^0-9,.]/g, '')[_split](',')
 			while (rgbArr[_length] < 3) rgbArr[_push]('0')
@@ -308,15 +315,15 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 			rgb.b = parse(rgbArr[2])
 
 			const hsl = RGB_to_HSL(rgb)
-			if (props[_disabledColorControl]){
+			if (props[_disabledColorControl]) {
 				hsl.s = 1
 				hsl.l = 0.5
 			}
 
 			setHslColor(hsl)
 		}
-		else if (colorModel() == _HSL){
-			const hsl: HSLColor = {h: 0, s: 0, l: 0}
+		else if (colorModel() == _HSL) {
+			const hsl: HSLColor = { h: 0, s: 0, l: 0 }
 			const hslArr: string[] = value[_replace](/[^0-9,.]/g, '')[_split](',')
 			while (hslArr[_length] < 3) hslArr[_push]("0")
 
@@ -341,7 +348,7 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 
 			hsl.l = $value / 100
 
-			if (props[_disabledColorControl]){
+			if (props[_disabledColorControl]) {
 				hsl.s = 1
 				hsl.l = 0.5
 			}
@@ -351,15 +358,16 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 			value = value[_replace](/[^0-9a-fA-F]/g, '')
 			if (value[_trim]()[_length] == 0) value = '0'
 
-			let $value: number = numberParse(value, true, 16)
-			if (Number[_isNaN]($value) || !Number[_isFinite]($value)) $value = 0
-			if ($value < 0) $value = 0
-			if ($value > 0xffffff) $value = 0xffffff
+			const $value: number = mathClamp(
+				safeNumber(numberParse(value, true, 16), 0),
+				0,
+				0xffffff
+			)
 
 			value = `${$value[_toString](16)}`[_padStart](6, '0')[_substring](0, 6)
 
 			const hsl = RGB_to_HSL(HEX_to_RGB(('#' + value) as HEXColor))
-			if (props[_disabledColorControl]){
+			if (props[_disabledColorControl]) {
 				hsl.s = 1
 				hsl.l = 0.5
 			}
@@ -392,7 +400,7 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 		const $$color = color()
 
 		if ($isDisabledColorControl != $$isDisabledColorControl) {
-			let color = HSL_to_HEX({...HEX_to_HSL($hexColor), l: 1.0})
+			let color = HSL_to_HEX({ ...HEX_to_HSL($hexColor), l: 1.0 })
 			setHexColor(color)
 			updateColor()
 			setIsDisabledColorControl($isDisabledColorControl)
@@ -409,7 +417,7 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 		return (<div class="color-picker-control" data-hide-color={toggleAttribute(props[_disabledColorControl])}>
 			<div
 				class="color-picker-color"
-				style={{'--color-picker-color': getHexColorForCanvas()}}
+				style={{ '--color-picker-color': getHexColorForCanvas() }}
 				onMouseDown={(ev) => {
 					setPicker(_color, _isDrag, true)
 					setPicker(_color, _rect, getBoundingClientRect(ev[_currentTarget]))
@@ -422,18 +430,19 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 					setAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
 					setPosition(ev[_touches][0][_clientX], ev[_touches][0][_clientY])
 				}}
-				data-hsl={toggleAttribute(colorModel() == _HSL)}>
+				data-hsl={toggleAttribute(colorModel() == _HSL)}
+				draggable={false}>
 				<div draggable={false} style={{
-					top: mathMax(mathMin(picker[_color][_position][_top] - 10, 184), -4) + _px,
-					left: mathMax(mathMin(picker[_color][_position][_left] - 10, 244), -4) + _px
-				}}/>
+					top: mathClamp(picker[_color][_position][_top] - 10, -4, 184) + _px,
+					left: mathClamp(picker[_color][_position][_left] - 10, -4, 244) + _px
+				}} />
 			</div>
 			<div>
 				<div
 					data-hide-color={toggleAttribute(props[_disabledColorControl])}
 					data-hide-opacity={toggleAttribute(props[_disabledOpacityControl])}
 					class="color-picker-selected-color"
-					style={{'background-color': getHexColor()}}
+					style={{ 'background-color': getHexColor() }}
 				/>
 				<div
 					class="color-picker-range"
@@ -447,10 +456,9 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 							setPicker(_hue, _position, mathMax(mathMin(props[_disabledColorControl]
 								? ev[_clientX] - picker[_hue][_rect]![_left]
 								: ev[_clientY] - picker[_hue][_rect]![_top],
-							getSliderSize()), 0))
+								getSliderSize()), 0))
 						}}
 						onMouseDown={(ev) => {
-							// BUG: unable to scroll when color is #000000 or #FFFFFF
 							setPicker(_hue, _isDrag, true)
 							setPicker(_hue, _rect, getBoundingClientRect(ev[_currentTarget]))
 							setAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
@@ -461,21 +469,25 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 							setPicker(_hue, _rect, getBoundingClientRect(ev[_currentTarget]))
 							setAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
 							setPosition(ev[_touches][0][_clientX], ev[_touches][0][_clientY])
-						}}>
+						}}
+						draggable={false}>
 						<div draggable={false} style={{
-							top: (props[_disabledColorControl]? -4 : mathMax(mathMin(picker[_hue][_position] - 10, 128), -4)) + _px,
-							left: (props[_disabledColorControl]? mathMax(mathMin(picker[_hue][_position] - 10, 244), -4) : -4) + _px
-						}}/>
+							top: (props[_disabledColorControl]? -4 : mathClamp(picker[_hue][_position] - 10, -4, 128)) + _px,
+							left: (props[_disabledColorControl]? mathClamp(picker[_hue][_position] - 10, -4, 244) : -4) + _px
+						}} />
 					</div>
 					<div
 						class="color-picker-opacity"
 						onClick={(ev) => {
 							if (!picker[_opacity][_rect]) throw Error()
 
-							setPicker(_opacity, _position, mathMax(mathMin(props[_disabledColorControl]
-								? ev[_clientX] - picker[_opacity][_rect]![_left]
-								: ev[_clientY] - picker[_opacity][_rect]![_top],
-							getSliderSize()), 0))
+							setPicker(_opacity, _position, mathClamp(
+								props[_disabledColorControl]
+									? ev[_clientX] - picker[_opacity][_rect]![_left]
+									: ev[_clientY] - picker[_opacity][_rect]![_top],
+								0,
+								getSliderSize()
+							))
 						}}
 						onTouchStart={(ev) => {
 							setPicker(_opacity, _isDrag, true)
@@ -488,11 +500,12 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 							setPicker(_opacity, _rect, getBoundingClientRect(ev[_currentTarget]))
 							setAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
 							setPosition(ev[_clientX], ev[_clientY])
-						}}>
+						}}
+						draggable={false}>
 						<div draggable={false} style={{
-							top: (props[_disabledColorControl]? -4 : mathMax(mathMin(picker[_opacity][_position] - 10, 128), -4)) + _px,
-							left: (props[_disabledColorControl]? mathMax(mathMin(picker[_opacity][_position] - 10, 244), -4) : -4) + _px
-						}}/>
+							top: (props[_disabledColorControl]? -4 : mathClamp(picker[_opacity][_position] - 10, -4, 128)) + _px,
+							left: (props[_disabledColorControl]? mathClamp(picker[_opacity][_position] - 10, -4, 244) : -4) + _px,
+						}} />
 					</div>
 				</div>
 			</div>
@@ -505,8 +518,8 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 				ref={r => textfield_color_ref = r}
 				onInput={(ev) => onColorInputChange(ev[_currentTarget][_value])}
 				onBlur={() => updateInputs()}
-				labelText={colorModel() == _RGB? _RGB : colorModel() == _HEX? 'Hex' : _HSL}
-				placeholder={colorModel() == _RGB? "0-255, 0-255, 0-255" : colorModel() == _HEX? '#FF0000' : '0-360, 0-100%, 0-100%'}
+				labelText={colorModel() == _RGB ? _RGB : colorModel() == _HEX ? 'Hex' : _HSL}
+				placeholder={colorModel() == _RGB ? "0-255, 0-255, 0-255" : colorModel() == _HEX ? '#FF0000' : '0-360, 0-100%, 0-100%'}
 			/>
 			<TextField
 				onInput={(ev) => onOpacityInputChange(ev[_currentTarget][_value])}
@@ -555,10 +568,10 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 			...props[_classList]
 		}}
 		{...other}>
-		<Control/>
-		<Input/>
-		<div class="color-picker-content">{ props[_children] }</div>
-		<Actions/>
+		<Control />
+		<Input />
+		<div class="color-picker-content">{props[_children]}</div>
+		<Actions />
 	</Modal>)
 }
 

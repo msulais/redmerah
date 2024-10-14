@@ -122,14 +122,10 @@
 	width: 12px;
 	height: 144px;
 	border-radius: 8px;
-	background: linear-gradient(to bottom,
-		rgb(255,   0,   0)   0%,
-		rgb(255, 255,   0)  17%,
-		rgb(  0, 255,   0)  33%,
-		rgb(  0, 255, 255)  50%,
-		rgb(  0,   0, 255)  67%,
-		rgb(255,   0, 255)  83%,
-		rgb(255,   0,   0) 100%
+	background: linear-gradient(
+		to bottom in hsl longer hue,
+		#ff0000   0%,
+		#ff0000 100%
 	);
 	position: relative;
 	box-shadow: var(--elevation1);
@@ -264,14 +260,10 @@
 		width: 260px;
 
 		> .color-picker-hue {
-			background: linear-gradient(to right,
-				rgb(255,   0,   0)   0%,
-				rgb(255, 255,   0)  17%,
-				rgb(  0, 255,   0)  33%,
-				rgb(  0, 255, 255)  50%,
-				rgb(  0,   0, 255)  67%,
-				rgb(255,   0, 255)  83%,
-				rgb(255,   0,   0) 100%
+			background: linear-gradient(
+				to right in hsl longer hue,
+				#ff0000   0%,
+				#ff0000 100%
 			);
 			width: 260px;
 			height: 12px;
