@@ -2,7 +2,7 @@ import { type Component, type JSX, type ParentComponent, Show, mergeProps, split
 import { mergeRefs } from "@solid-primitives/refs"
 
 import { getAttribute, toggleAttribute } from "@/utils/attributes"
-import { _checked, _selected, _leading, _children, _trailing, _subtitle, _indent, _classList, _rightCenterToBottom, _disconnect, _dismiss, _id, _item, _level, _manual, _observe, _onCancel, _onClick, _onClose, _onToggle, _open, _ref, _wrapperAttr, _auto, _shortcuts, _currentTarget, _none, _left, _tonal, _dragable, _clientX, _clientY, _color, _hue, _initialColor, _isDrag, _mousemove, _mouseup, _noPointerEvent, _opacity, _touchend, _touches, _touchmove, _value, _valuechange, _top, _px, _anchorId, _body, _bottom, _clientWidth, _height, _innerHeight, _right, _width, _focus, _iconCode, _compact, _variant, _indicatorPosition, _onMouseEnter, _onMouseLeave, _class, _disableScale, _desktopCompact, _gap, _position, _padding, _allowHideAnchor, _onToggleOpen, _click, _contains, _target, _filled, _focused, _layerAttr, _outlined, _transparent, _switchAttr, _onValueChanged, _onChange, _div, _disabled } from "@/constants/string"
+import { _checked, _selected, _leading, _children, _trailing, _subtitle, _indent, _classList, _rightCenterToBottom, _disconnect, _dismiss, _id, _item, _level, _manual, _observe, _onCancel, _onClick, _onClose, _onToggle, _open, _ref, _wrapperAttr, _auto, _shortcuts, _currentTarget, _none, _left, _tonal, _dragable, _clientX, _clientY, _color, _hue, _initialColor, _isDrag, _mousemove, _mouseup, _noPointerEvent, _opacity, _touchend, _touches, _touchmove, _value, _valuechange, _top, _px, _anchorId, _body, _bottom, _clientWidth, _height, _innerHeight, _right, _width, _focus, _iconCode, _compact, _variant, _indicatorPosition, _onMouseEnter, _onMouseLeave, _class, _disableScale, _desktopCompact, _gap, _position, _padding, _allowHideAnchor, _onToggleOpen, _click, _contains, _target, _filled, _focused, _layerAttr, _outlined, _transparent, _switchAttr, _onValueChanged, _onChange, _div, _disabled, _forEach } from "@/constants/string"
 import { isVarHasValue } from "@/utils/data"
 import { querySelectorAll } from "@/utils/element"
 import { callEventHandler, stopImmediatePropagation, stopPropagation } from "@/utils/event"
@@ -247,13 +247,14 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 		if (isOpen) return;
 
 		let isAnySubMenuOpen = false
-		for (const submenu of querySelectorAll(`.sub-menu>.menu[data-level]:not([id="${props[_id]}"]):popover-open`)) {
+		querySelectorAll(`.sub-menu>.menu[data-level]:not([id="${props[_id]}"]):popover-open`)
+		[_forEach](submenu => {
 			const level: number = numberParse(getAttribute(submenu, 'data-level')!, true)
-			if (level < props[_level]) continue;
+			if (level < props[_level]) return
 
 			isAnySubMenuOpen = true
 			closePopover(submenu as HTMLDivElement)
-		}
+		})
 
 		// wait for close animation done
 		if (isAnySubMenuOpen) await timeout(300)
@@ -274,7 +275,6 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 
 		const target = ev[_target] as HTMLElement
 		const isClickedInside = div_ref[_contains](target) || div_ref[_contains](target)
-
 		if (isClickedInside) return;
 
 		closePopover(popover_ref)
@@ -324,7 +324,7 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 			id={props[_id]}
 			onToggleOpen={$isOpen => {
 				isOpen = $isOpen
-				if (props[_onToggleOpen]) props[_onToggleOpen]($isOpen)
+				props[_onToggleOpen]?.($isOpen)
 			}}
 			onClick={(ev) => {
 				stopPropagation(ev)

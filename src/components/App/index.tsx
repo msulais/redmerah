@@ -21,7 +21,7 @@ const App: ParentComponent<AppProps> = ($props) => {
 		_appBar, _leftSideBar, _children, _rightSideBar,
 		_bottomBar, _floatingActionButton, _class
 	])
-	return (<div class={"app" + (props[_class] != undefined? ` ${props[_class]}` : '')} {...other}>
+	return (<div class={`app${props[_class]? ` ${props[_class]}` : ''}`} {...other}>
 		<div class="app-appbar">{props[_appBar]}</div>
 		<div class="app-container">
 			<div class="app-left-sidebar">{props[_leftSideBar]}</div>

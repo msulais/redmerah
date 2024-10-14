@@ -82,9 +82,9 @@ const Drawer: ParentComponent<DrawerProps> = ($props) => {
 		}}
 		style={{
 			...props[_style],
-			left: props[_style] && props[_style][_left] != undefined? props[_style][_left] : props[_position] == DrawerPosition[_left]? 0 : _auto,
-			top: props[_style] && props[_style][_top] != undefined? props[_style][_top] : '0px',
-			right: props[_style] && props[_style][_right] != undefined? props[_style][_right] : props[_position] == DrawerPosition[_right]? 0 : _auto,
+			left: props[_style]?.[_left] ?? props[_position] == DrawerPosition[_left]? 0 : _auto,
+			top: props[_style]?.[_top] ?? '0px',
+			right: props[_style]?.[_right] ?? props[_position] == DrawerPosition[_right]? 0 : _auto,
 		}}
 		openAnimation={(el, done) => {
 			if (props[_openAnimation]) props[_openAnimation](el, done)

@@ -67,7 +67,9 @@ type RawExpanderHeaderProps = RawListProps & {
 }
 
 const RawExpanderHeader: ParentComponent<RawExpanderHeaderProps> = ($props) => {
-	const [props, other] = splitProps($props, [_useExpandIcon, _trailing, _expandIconTooltip])
+	const [props, other] = splitProps($props, [
+		_useExpandIcon, _trailing, _expandIconTooltip
+	])
 	const context = useContext(ExpanderContext)
 
 	return (<RawList

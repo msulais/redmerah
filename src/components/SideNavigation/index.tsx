@@ -62,7 +62,10 @@ const SideNavigation: ParentComponent<SideNavigationProps> = ($props) => {
 		_class
 	])
 
-	return (<div class={"side-navigation" + (props[_class] != undefined ? ` ${props[_class]}` : '')} data-expand={toggleAttribute(props[_expand])} {...other}>
+	return (<div
+		class={`side-navigation${props[_class]? ` ${props[_class]}` : ''}`}
+		data-expanded={toggleAttribute(props[_expand])}
+		{...other}>
 		<div class="side-navigation-header">{props[_header]}</div>
 		<div class="side-navigation-content">{props[_children]}</div>
 		<div class="side-navigation-footer">{props[_footer]}</div>

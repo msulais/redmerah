@@ -5,7 +5,7 @@ import { Portal } from 'solid-js/web'
 import { AnimationEffectTiming } from '@/enums/animation'
 import { FlyoutPosition as ModalPosition } from '@/enums/position'
 import { getFlyoutPosition } from '@/utils/flyout'
-import { _dispatchEvent, _onOpen, _openModal, _modalListener, _detail, _element, _some, _isSameNode, _push, _closeModal, _findIndex, _splice, _length, _click, _at, _clientX, _clientY, _x, _left, _right, _y, _top, _bottom, _scroll, _scrollY, _documentElement, _scrollTop, _scrollTo, _instant, _resize, _noPointerEvent, _observe, _onReposition, _onShortFocus, _onClose, _ref, _onToggleOpen, _onCancel, _children, _onKeyDown, _class, _openAnimation, _closeAnimation, _centerBottom, _body, _clientWidth, _innerHeight, _px, _width, _height, _touches, _touchmove, _touchend, _mousemove, _mouseup, _centerBottomToLeft, _centerBottomToRight, _centerTop, _centerTopToLeft, _centerTopToRight, _leftCenter, _leftCenterToBottom, _leftCenterToTop, _rightCenter, _rightCenterToBottom, _rightCenterToTop, _open, _close, _animate, _springBounce, _finished, _then, _focus, _showModal, _style, _maxWidth, _maxHeight, _max_width, _max_height, _none, _disconnect, _key, _Escape, _altKey, _ctrlKey, _metaKey, _shiftKey, _position, _gap, _padding, _important, _allowHideAnchor, _dragable, _inputAutoFocus, _pointerType } from '@/constants/string'
+import { _dispatchEvent, _onOpen, _openModal, _modalListener, _detail, _element, _some, _isSameNode, _push, _closeModal, _findIndex, _splice, _length, _click, _at, _clientX, _clientY, _x, _left, _right, _y, _top, _bottom, _scroll, _scrollY, _documentElement, _scrollTop, _scrollTo, _instant, _resize, _noPointerEvent, _observe, _onReposition, _onShortFocus, _onClose, _ref, _onToggleOpen, _onCancel, _children, _onKeyDown, _class, _openAnimation, _closeAnimation, _centerBottom, _body, _clientWidth, _innerHeight, _px, _width, _height, _touches, _touchmove, _touchend, _mousemove, _mouseup, _centerBottomToLeft, _centerBottomToRight, _centerTop, _centerTopToLeft, _centerTopToRight, _leftCenter, _leftCenterToBottom, _leftCenterToTop, _rightCenter, _rightCenterToBottom, _rightCenterToTop, _open, _close, _animate, _springBounce, _finished, _then, _focus, _showModal, _style, _maxWidth, _maxHeight, _max_width, _max_height, _none, _disconnect, _key, _Escape, _altKey, _ctrlKey, _metaKey, _shiftKey, _position, _gap, _padding, _important, _allowHideAnchor, _dragable, _inputAutoFocus, _pointerType, _forEach } from '@/constants/string'
 import { clearTimeDelayed, setTimeDelayed } from '@/utils/timeout'
 import { hasAttribute, removeAttribute, setAttribute, toggleAttribute } from '@/utils/attributes'
 import { getDocument, getDocumentBody, getWindow } from '@/constants/window'
@@ -57,12 +57,19 @@ enum ModalEvents {
 	onOpen = 'on-open-modal'
 }
 
-function openModal(event: Event, modal: HTMLDialogElement, options?: Omit<ModalOpenDetail, 'event'>): void {
+function openModal(
+	event: Event,
+	modal: HTMLDialogElement,
+	options?: Omit<ModalOpenDetail, 'event'>
+): void {
 	modal[_dispatchEvent](new CustomEvent(
 		ModalEvents[_onOpen],
 		{detail: {event: event, ...options} satisfies ModalOpenDetail}
 	))
-	getDocumentBody()[_dispatchEvent](new CustomEvent(BodyEvents[_openModal], {detail: {element: modal}}))
+	getDocumentBody()[_dispatchEvent](new CustomEvent(
+		BodyEvents[_openModal],
+		{detail: {element: modal}}
+	))
 }
 
 function initModalListener(): void {
@@ -121,13 +128,13 @@ function initModalListener(): void {
 			y: (ev as MouseEvent)[_clientY]
 		}
 
-		// if clicked inside, nothing happen
 		const modalRect = getBoundingClientRect(modal)
-		if (pointer[_x] >= modalRect[_left  ] &&
-			pointer[_x] <= modalRect[_right ] &&
-			pointer[_y] >= modalRect[_top   ] &&
-			pointer[_y] <= modalRect[_bottom]
-		) return;
+		const isClickedInside = pointer[_x] >= modalRect[_left]
+			&& pointer[_x] <= modalRect[_right]
+			&& pointer[_y] >= modalRect[_top]
+			&& pointer[_y] <= modalRect[_bottom]
+
+		if (isClickedInside) return
 
 		closeModal(modal as HTMLDialogElement, true)
 	})
@@ -142,22 +149,21 @@ function initModalListener(): void {
 
 	addEventListener(getWindow(), _resize, () => {
 		if (modals[_length] == 0) return;
-
-		if (timeoutId) {
-			clearTimeDelayed(timeoutId)
-			timeoutId = null
-		}
+		if (timeoutId != null) clearTimeDelayed(timeoutId)
 
 		timeoutId = setTimeDelayed(() => {
-			for (const modal of querySelectorAll(selector)) {
-				repositionModal(modal as HTMLDialogElement)
-			}
+			querySelectorAll(selector)[_forEach](
+				modal => repositionModal(modal as HTMLDialogElement)
+			)
 			timeoutId = null
 		}, 250)
 	})
 
 	new MutationObserver(() => {
-		isNoPointerEvent = hasAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
+		isNoPointerEvent = hasAttribute(
+			getDocumentBody(),
+			BodyAttributes[_noPointerEvent]
+		)
 	})[_observe](getDocumentBody(), { attributes: true })
 }
 
@@ -170,13 +176,13 @@ function focusModal(modal: HTMLDialogElement): void {
 }
 
 function closeModal(modal: HTMLDialogElement, soft: boolean = false): void {
-	modal[_dispatchEvent](new CustomEvent(ModalEvents[_onClose], {detail: {soft} satisfies ModalCloseDetail}))
+	modal[_dispatchEvent](new CustomEvent(
+		ModalEvents[_onClose],
+		{detail: {soft} satisfies ModalCloseDetail}
+	))
 }
 
 type ModalProps = Omit<JSX.DialogHtmlAttributes<HTMLDialogElement>, 'style'> & {
-	onToggleOpen?: (isOpen: boolean) => unknown
-	openAnimation?: (el: HTMLDialogElement, done: () => void) => unknown
-	closeAnimation?: (el: HTMLDialogElement, done: () => void) => unknown
 	style?: JSX.CSSProperties
 	gap?: number
 	padding?: number
@@ -185,6 +191,9 @@ type ModalProps = Omit<JSX.DialogHtmlAttributes<HTMLDialogElement>, 'style'> & {
 	allowHideAnchor?: boolean
 	dragable?: boolean
 	inputAutoFocus?: boolean
+	onToggleOpen?(isOpen: boolean): unknown
+	openAnimation?(el: HTMLDialogElement, done: () => void): unknown
+	closeAnimation?(el: HTMLDialogElement, done: () => void): unknown
 }
 const Modal: ParentComponent<ModalProps> = ($props) => {
 	const $$props = mergeProps({id: createUniqueId()}, $props)
@@ -241,7 +250,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 		changePosition(ev[_touches][0][_clientX], ev[_touches][0][_clientY])
 	}
 
-	function onTouchEnd(_ev: TouchEvent): void {
+	function onTouchEnd(): void {
 		removeAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
 		setIsDragging(false)
 		fixPosition()
@@ -250,28 +259,28 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 	function onMouseMove(ev: MouseEvent): void {
 		if (!isDragging()) return;
 
-		changePosition((ev as MouseEvent)[_clientX], (ev as MouseEvent)[_clientY])
+		changePosition(ev[_clientX], ev[_clientY])
 	}
 
-	function onMouseUp(_ev: MouseEvent): void {
+	function onMouseUp(): void {
 		removeAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
 		setIsDragging(false)
 		fixPosition()
 	}
 
-	function customOnShortFocus(_ev: CustomEvent): void {
+	function customOnShortFocus(): void {
 		shortFocusModal()
 	}
 
-	function customOnClose(ev: CustomEvent): void {
-		closeModal(ev[_detail] as ModalCloseDetail)
+	function customOnClose(ev: CustomEvent<ModalCloseDetail>): void {
+		closeModal(ev[_detail])
 	}
 
-	function customOnOpen(ev: CustomEvent): void {
-		openModal(ev[_detail] as ModalOpenDetail)
+	function customOnOpen(ev: CustomEvent<ModalOpenDetail>): void {
+		openModal(ev[_detail])
 	}
 
-	function customOnReposition(_ev: CustomEvent): void {
+	function customOnReposition(): void {
 		repositionModal()
 	}
 
@@ -314,7 +323,9 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 		isOpen = false
 
 
-		const anchorRect: DOMRect | undefined = anchor_ref? getBoundingClientRect(anchor_ref) : undefined
+		const anchorRect: DOMRect | undefined = anchor_ref
+			? getBoundingClientRect(anchor_ref)
+			: undefined
 		const modalRect = getBoundingClientRect(modal_ref)
 		const pos = getFlyoutPosition({
 			flyout: modalRect,
@@ -385,8 +396,14 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 		setAttr_open(false)
 		setAttr_openDone(false)
 		anchor_ref = null
-		getDocumentBody()[_dispatchEvent](new CustomEvent(BodyEvents[_closeModal], {detail: {element: modal_ref}}))
-		if (props[_closeAnimation] != undefined) props[_closeAnimation](modal_ref, () => modal_ref[_close]())
+		getDocumentBody()[_dispatchEvent](new CustomEvent(
+			BodyEvents[_closeModal],
+			{detail: {element: modal_ref}}
+		))
+		if (props[_closeAnimation] != null) props[_closeAnimation](
+			modal_ref,
+			() => modal_ref[_close]()
+		)
 		else modal_ref[_animate](
 			{ transform: `translate(${translate[_left]}px, ${translate[_top]}px)` },
 			{ duration: 300, easing: AnimationEffectTiming[_springBounce] }
@@ -441,12 +458,20 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 		if (!inputAutoFocus) modal_ref[_focus]()
 
 		const modalRect: DOMRect = getBoundingClientRect(modal_ref)
-		const $anchorRect: DOMRect | undefined = anchorRect != undefined? anchorRect : anchor? getBoundingClientRect(anchor) : undefined
-		const $event = (event as TouchEvent)[_touches]? (event as TouchEvent)[_touches][0] : (event as MouseEvent)
-		$pointer = pointer != undefined? pointer : {
-			x: $event[_clientX] ?? 0,
-			y: $event[_clientY] ?? 0
-		}
+		const $anchorRect: DOMRect | undefined = anchorRect != null
+			? anchorRect
+			: anchor
+				? getBoundingClientRect(anchor)
+				: undefined
+		const $event = (event as TouchEvent)[_touches]
+			? (event as TouchEvent)[_touches][0]
+			: (event as MouseEvent)
+		$pointer = pointer != null
+			? pointer
+			: {
+				x: $event[_clientX] ?? 0,
+				y: $event[_clientY] ?? 0
+			}
 		let pos = getFlyoutPosition({
 			flyout: modalRect,
 			anchor: $anchorRect,
@@ -574,7 +599,10 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 		setTop(pos[_top])
 		setLeft(pos[_left])
 		setAttr_open(true)
-		if (props[_openAnimation] != undefined) props[_openAnimation](modal_ref, () => setAttr_openDone(true))
+		if (props[_openAnimation] != null) props[_openAnimation](
+			modal_ref,
+			() => setAttr_openDone(true)
+		)
 		else modal_ref[_animate](
 			{ transform: [`translate(${translate[_left]}px, ${translate[_top]}px)`, _none] },
 			{ duration: 300, easing: AnimationEffectTiming[_springBounce] }
@@ -692,22 +720,22 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 	})
 
 	return (<Portal><dialog
-		class={"modal" + (props[_class] != undefined? ` ${props[_class]}` : '')}
+		class={`modal${props[_class]? ` ${props[_class]}` : ''}`}
 		ref={mergeRefs(props[_ref], r => modal_ref = r)}
 		style={{
 			...props[_style],
-			top: props[_style] && props[_style][_top] != undefined? props[_style][_top] : top() + _px,
-			left: props[_style] && props[_style][_left] != undefined? props[_style][_left] : left() + _px,
+			top: props[_style]?.[_top] ?? top() + _px,
+			left: props[_style]?.[_left] ?? left() + _px,
 			"max-width": !allowHideAnchor()
 				? maxWidth() != undefined
 					? maxWidth() + _px
-					: props[_style]? props[_style][_max_width] : undefined
-				: props[_style]? props[_style][_max_width] : undefined,
+					: props[_style]?.[_max_width] ?? undefined
+				: props[_style]?.[_max_width] ?? undefined,
 			"max-height": !allowHideAnchor()
 				? maxHeight() != undefined
 					? maxHeight() + _px
-					: props[_style]? props[_style][_max_height] : undefined
-				: props[_style]? props[_style][_max_height] : undefined,
+					: props[_style]?.[_max_height] ?? undefined
+				: props[_style]?.[_max_height] ?? undefined,
 		}}
 		onKeyDown={(ev) => {
 			callEventHandler(ev, props[_onKeyDown])

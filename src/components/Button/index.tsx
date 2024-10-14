@@ -125,7 +125,7 @@ const LinkButton: ParentComponent<LinkButtonProps> = ($props) => {
 	])
 
 	return (<a
-		class={'btn' + (props[_class] != undefined? ` ${props[_class]}` : '')}
+		class={`btn${props[_class]? ` ${props[_class]}` : ''}`}
 		onClick={(ev) => {
 			if (props[_disabled]) {
 				preventDefault(ev)

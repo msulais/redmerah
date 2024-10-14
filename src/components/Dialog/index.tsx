@@ -17,10 +17,9 @@ function openDialog(ev: Event, dialog: HTMLDialogElement, options?: {
 	})
 }
 
-type DialogProps = Omit<ModalProps, 'style'> & {
+type DialogProps = ModalProps & {
 	header?: JSX.Element
 	actions?: JSX.Element
-	style?: JSX.CSSProperties
 }
 const Dialog: ParentComponent<DialogProps> = ($props) => {
 	const [props, other] = splitProps($props, [
@@ -37,8 +36,8 @@ const Dialog: ParentComponent<DialogProps> = ($props) => {
 		}}
 		style={{
 			...props[_style],
-			top: props[_style] && props[_style][_top] != undefined? props[_style][_top] : '50%',
-			left: props[_style] && props[_style][_left] != undefined? props[_style][_left] : '50%',
+			top: props[_style]?.[_top] ?? '50%',
+			left: props[_style]?.[_left] ?? '50%',
 		}}
 		openAnimation={(el, done) => {
 			if (props[_openAnimation]) props[_openAnimation](el, done)

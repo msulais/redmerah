@@ -99,10 +99,18 @@ const EmojiPicker: ParentComponent<EmojiPickerProps> = ($props) => {
 	}
 
 	function initEvents(): void {
-		addEventListener<CustomEvent>(emojiPicker_ref, EmojiPickerEvents[_getRecentEmoji], customOnGetRecentEmoji)
+		addEventListener<CustomEvent>(
+			emojiPicker_ref,
+			EmojiPickerEvents[_getRecentEmoji],
+			customOnGetRecentEmoji
+		)
 
 		onCleanup(() => {
-			removeEventListener<CustomEvent>(emojiPicker_ref, EmojiPickerEvents[_getRecentEmoji], customOnGetRecentEmoji)
+			removeEventListener<CustomEvent>(
+				emojiPicker_ref,
+				EmojiPickerEvents[_getRecentEmoji],
+				customOnGetRecentEmoji
+			)
 		})
 	}
 
@@ -135,7 +143,7 @@ const EmojiPicker: ParentComponent<EmojiPickerProps> = ($props) => {
 						))
 						updateRecents()
 						if (!props[_multiple]) closeModal(emojiPicker_ref)
-						if (props[_onSelectEmoji]) props[_onSelectEmoji](e[0], e[1])
+						props[_onSelectEmoji]?.(e[0], e[1])
 					}}/>
 				</TextTooltip>
 			}</For>
@@ -202,12 +210,13 @@ const EmojiPicker: ParentComponent<EmojiPickerProps> = ($props) => {
 							updateRecents()
 							if (!props[_multiple]) closeModal(emojiPicker_ref)
 							closeSearchMenu(searchMenu_ref)
-							if (props[_onSelectEmoji]) props[_onSelectEmoji](e[0], e[1])
+							props[_onSelectEmoji]?.(e[0], e[1])
 						}}>
 							<EmojiC emoji={e[0]}/>{e[1]}
 						</SearchMenuItem>
 					</Show>}</For>
-				</TransitionGroup>}/>
+				</TransitionGroup>}
+			/>
 		</div>
 		{props[_children]}
 		<Divider />
