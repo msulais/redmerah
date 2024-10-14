@@ -29,12 +29,10 @@ type DropdownProps = Omit<TextFieldProps, 'value'> & {
 	header?: JSX.Element
 	footer?: JSX.Element
 	optionIconTooltip?: string
-	refs?: (el: HTMLButtonElement, item: Item) => unknown
-	onClicks?: (ev: MouseEvent & {currentTarget: HTMLButtonElement; target: DOMElement}) => boolean | unknown
-	onSelectedItemsChanged?: (items: Item[]) => unknown
-	menuAttr?: Omit<MenuProps, 'style'> & {
-		style?: JSX.CSSProperties
-	}
+	refs?(el: HTMLButtonElement, item: Item): unknown
+	onClicks?(ev: MouseEvent & {currentTarget: HTMLButtonElement; target: DOMElement}): boolean | unknown
+	onSelectedItemsChanged?(items: Item[]): unknown
+	menuAttr?: MenuProps
 }
 
 const Dropdown: VoidComponent<DropdownProps> = ($props) => {
@@ -182,7 +180,7 @@ const Dropdown: VoidComponent<DropdownProps> = ($props) => {
 				setIsFocus(v)
 				if (menuProps[_onToggleOpen]) menuProps[_onToggleOpen](v)
 			}}
-			ref={mergeRefs(menuProps.ref, r => menu_dropdown_ref = r)}
+			ref={mergeRefs(menuProps[_ref], r => menu_dropdown_ref = r)}
 			style={{
 				'min-width': width() + _px,
 				...menuProps[_style]

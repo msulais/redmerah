@@ -65,7 +65,7 @@ const Toast: ParentComponent<ToastProps> = ($props) => {
 	let isOpen = false
 	let timeoutId: number | null = null
 
-	async function closeToast(): Promise<void> {
+	function closeToast(): void {
 		if (!isOpen) return;
 		if (timeoutId != null) {
 			clearTimeDelayed(timeoutId)
@@ -74,7 +74,7 @@ const Toast: ParentComponent<ToastProps> = ($props) => {
 		closePopover(toast_ref)
 	}
 
-	async function openToast(options: ToastOpenDetail): Promise<void> {
+	function openToast(options: ToastOpenDetail): void {
 		if (isOpen) return
 
 		const {

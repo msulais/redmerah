@@ -22,7 +22,7 @@ const Switch: VoidComponent<SwitchProps> = ($props) => {
 	})
 
 	return (<label
-		class={`switch${labelProps[_class] != null ? ` ${labelProps[_class]}` : ''}`}
+		class={`switch${labelProps[_class]? ` ${labelProps[_class]}` : ''}`}
 		data-disabled={toggleAttribute(isDisabled())}
 		data-checked={toggleAttribute(isChecked())}
 		{...otherLabelProps}>

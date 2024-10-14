@@ -90,7 +90,7 @@ const CheckBox: ParentComponent<CheckBoxProps> = ($props) => {
 	})
 
 	return (<label
-		class={`checkbox${labelProps[_class] != null ? ` ${labelProps[_class]}` : ''}`}
+		class={`checkbox${labelProps[_class]? ` ${labelProps[_class]}` : ''}`}
 		data-disabled={toggleAttribute(isDisabled())}
 		{...otherLabelProps}>
 		<input

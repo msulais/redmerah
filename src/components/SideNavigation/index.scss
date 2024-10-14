@@ -8,17 +8,17 @@
 	height: 100%;
 	transition-duration: .3s;
 
-	:root[data-platform=desktop] &:not([data-expand]) {
+	:root[data-platform=desktop] &:not([data-expanded]) {
 		width: 52px;
 		max-width: 52px;
 	}
 
-	&[data-expand] {
+	&[data-expanded] {
 		width: 280px;
 		max-width: 280px;
 	}
 
-	&:not([data-expand]) > div {
+	&:not([data-expanded]) > div {
 		-ms-overflow-style: none;
 		scrollbar-width: none;
 

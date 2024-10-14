@@ -14,7 +14,7 @@ const AppBar: ParentComponent<AppBarProps> = ($props) => {
 	const [props, other] = splitProps($props, [
 		_children, _leading, _trailing, _headline, _class
 	])
-	return (<div class={"appbar" + (props[_class] != undefined? ` ${props[_class]}` : '')} {...other}>
+	return (<div class={`appbar${props[_class]? ` ${props[_class]}` : ''}`} {...other}>
 		<div class="appbar-leading">{props[_leading]}</div>
 		<div class="appbar-headline">
 			<Show when={props[_headline]}>

@@ -1,11 +1,11 @@
 import { Transition } from "solid-transition-group"
 import { For, Match, Show, Switch, createEffect, createMemo, createSignal, mergeProps, splitProps, type VoidComponent } from "solid-js"
-import { callEventHandler } from "@/utils/event"
 import { mergeRefs } from "@solid-primitives/refs"
 
 import { _ref, _date, _onSelectDate, _firstDate, _lastDate, _locales, _classList, _children, _onClose, _day, _getDay, _includes, _setMonth, _month, _setFullYear, _year, _substring, _fill, _filled, _outlined, _animate, _finished, _spring, _then, _tonal } from "@/constants/string"
 import { getCurrentDate, getDate_Y, getDate_M, getWeekdayNames, isOutDate_YMD, isSameDate_YMD, getMonthNames, isOutDate_YM, isSameDate_YM, isOutDate_Y, isSameDate_Y, getMonthText, isInDate_YM } from "@/utils/datetime"
 import { AnimationEffectTiming } from "@/enums/animation"
+import { callEventHandler } from "@/utils/event"
 
 import Button, { ButtonVariant, IconButton, SquareButton } from "@/components/Button"
 import { repositionModal, closeModal, openModal, focusModal, Modal, type ModalProps, ModalPosition as DatePickerPosition } from "@/components/Modal"
@@ -23,7 +23,7 @@ type DatePickerProps = ModalProps & {
 	firstDate?: Date
 	lastDate?: Date
 	locales?: Intl.LocalesArgument
-	onSelectDate?: (value: Date) => unknown
+	onSelectDate?(value: Date): unknown
 }
 
 const DatePicker: VoidComponent<DatePickerProps> = ($props) => {
@@ -43,7 +43,6 @@ const DatePicker: VoidComponent<DatePickerProps> = ($props) => {
 	const [viewDate, setViewDate] = createSignal<Date>(getCurrentDate())
 	const [startDay, setStartDay] = createSignal<number>(0)
 	const [daysPerMonth, setDaysPerMonth] = createSignal<number>(31)
-	const dateNow = getCurrentDate()
 	let datePicker_ref: HTMLDialogElement
 
 	function updateDateView(): void {
@@ -95,7 +94,7 @@ const DatePicker: VoidComponent<DatePickerProps> = ($props) => {
 	})
 
 	const DaysDate: VoidComponent = () => {
-		return (<div style={{display: 'contents'}}>
+		return (<div style="display: contents">
 			<div class="date-picker-days-name">
 				<For each={getWeekdayNames(props[_locales])}>{d => <p>{d[_substring](0, 2)}</p>}</For>
 			</div>
@@ -113,7 +112,7 @@ const DatePicker: VoidComponent<DatePickerProps> = ($props) => {
 						disabled={isOutDate_YMD(date(), props[_firstDate], props[_lastDate])}
 						variant={isSameDate_YMD(date(), value())
 							? ButtonVariant[_filled]
-							: isSameDate_YMD(date(), dateNow)
+							: isSameDate_YMD(date(), getCurrentDate())
 								? ButtonVariant[_outlined]
 								: undefined
 						}>
@@ -137,7 +136,7 @@ const DatePicker: VoidComponent<DatePickerProps> = ($props) => {
 					disabled={isOutDate_YM(date(), props[_firstDate], props[_lastDate])}
 					variant={isSameDate_YM(date(), value())
 						? ButtonVariant[_filled]
-						: isSameDate_YM(date(), dateNow)
+						: isSameDate_YM(date(), getCurrentDate())
 							? ButtonVariant[_outlined]
 							: undefined
 					}>{m}</Button>)
@@ -158,7 +157,7 @@ const DatePicker: VoidComponent<DatePickerProps> = ($props) => {
 					disabled={isOutDate_Y(date(), props[_firstDate], props[_lastDate])}
 					variant={isSameDate_Y(date(), value())
 						? ButtonVariant[_filled]
-						: isSameDate_Y(date(), dateNow)
+						: isSameDate_Y(date(), getCurrentDate())
 							? ButtonVariant[_outlined]
 							: undefined
 					}>

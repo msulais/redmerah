@@ -34,8 +34,7 @@ const HEIGHT_TEXT_INPUT_PER_LINE = 20
  */
 function changeTextFieldValue(el: HTMLInputElement, value: string): void {
 	el[_value] = value
-	const event = new Event(_input, { bubbles: true });
-	el[_dispatchEvent](event)
+	el[_dispatchEvent](new Event(_input, { bubbles: true }))
 }
 
 /**
@@ -51,8 +50,7 @@ function changeTextFieldValue(el: HTMLInputElement, value: string): void {
  */
 function changeAreaTextFieldValue(el: HTMLTextAreaElement, value: string): void {
 	el[_value] = value
-	const event = new Event(_input, { bubbles: true });
-	el[_dispatchEvent](event)
+	el[_dispatchEvent](new Event(_input, { bubbles: true }))
 }
 
 type TextFieldButtonProps = ButtonProps
@@ -111,7 +109,7 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 	})
 
 	return (<div
-		class={`areatextfield${wrapperProps[_class] != null ? ` ${wrapperProps[_class]}` : ''}`}
+		class={`areatextfield${wrapperProps[_class]? ` ${wrapperProps[_class]}` : ''}`}
 		{...wrapperPropsOther}>
 		<div
 			data-focused={toggleAttribute(props[_focused] ?? isFocus())}
@@ -486,7 +484,7 @@ const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
 	])
 	const [wrapperProps, wrapperPropsOther] = splitProps(
 		props[_wrapperAttr]! ?? {},
-		[_ref]
+		[_ref, _classList]
 	)
 	const [menuProps, menuPropsOther] = splitProps(
 		props[_menuAttr]! ?? {},
@@ -569,6 +567,10 @@ const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
 		<TextField
 			wrapperAttr={{
 				ref: mergeRefs(wrapperProps[_ref], r => wrapper_ref = r),
+				classList: {
+					'search-textfield': true,
+					...wrapperProps[_classList]
+				},
 				...wrapperPropsOther
 			}}
 			onFocus={ev => {
@@ -583,7 +585,7 @@ const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
 			usePortal={menuProps[_usePortal] ?? false}
 			onToggleOpen={isOpen => {
 				is_popover_open = isOpen
-				if (menuProps[_onToggleOpen]) menuProps[_onToggleOpen](isOpen)
+				menuProps[_onToggleOpen]?.(isOpen)
 			}}
 			ref={mergeRefs(menuProps[_ref], r => menu_ref = r)}
 			classList={{

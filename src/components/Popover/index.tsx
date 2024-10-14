@@ -4,7 +4,7 @@ import { Portal } from 'solid-js/web'
 
 import { FlyoutPosition as PopoverPosition } from '@/enums/position'
 import { getFlyoutPosition } from '@/utils/flyout'
-import { _allowHideAnchor, _altKey, _animate, _body, _bottom, _centerBottom, _centerBottomToLeft, _centerBottomToRight, _centerTop, _centerTopToLeft, _centerTopToRight, _children, _class, _click, _clientWidth, _clientX, _clientY, _close, _closeAnimation, _closePopover, _ctrlKey, _detail, _disconnect, _dismiss, _dispatchEvent, _documentElement, _dragable, _element, _Escape, _findIndex, _finished, _flyout, _flyoutListener, _focus, _gap, _height, _hidePopover, _important, _innerHeight, _instant, _isSameNode, _key, _left, _leftCenter, _leftCenterToBottom, _leftCenterToTop, _length, _manual, _manualDismiss, _max_height, _max_width, _maxHeight, _maxWidth, _metaKey, _mousemove, _mouseup, _move, _newState, _none, _noPointerEvent, _observe, _onCancel, _onClose, _onKeyDown, _onOpen, _onReposition, _onShortFocus, _onToggle, _onToggleOpen, _open, _openAnimation, _openPopover, _padding, _pointerType, _popoverListener, _popoverOpen, _position, _push, _px, _ref, _resize, _right, _rightCenter, _rightCenterToBottom, _rightCenterToTop, _scroll, _scrollTo, _scrollTop, _scrollY, _shiftKey, _showPopover, _some, _splice, _springBounce, _style, _then, _top, _touchend, _touches, _touchmove, _transform, _usePortal, _width, _x, _y } from '@/constants/string'
+import { _allowHideAnchor, _altKey, _animate, _body, _bottom, _centerBottom, _centerBottomToLeft, _centerBottomToRight, _centerTop, _centerTopToLeft, _centerTopToRight, _children, _class, _click, _clientWidth, _clientX, _clientY, _close, _closeAnimation, _closePopover, _ctrlKey, _detail, _disconnect, _dismiss, _dispatchEvent, _documentElement, _dragable, _element, _Escape, _findIndex, _finished, _flyout, _flyoutListener, _focus, _forEach, _gap, _height, _hidePopover, _important, _innerHeight, _instant, _isSameNode, _key, _left, _leftCenter, _leftCenterToBottom, _leftCenterToTop, _length, _manual, _manualDismiss, _max_height, _max_width, _maxHeight, _maxWidth, _metaKey, _mousemove, _mouseup, _move, _newState, _none, _noPointerEvent, _observe, _onCancel, _onClose, _onKeyDown, _onOpen, _onReposition, _onShortFocus, _onToggle, _onToggleOpen, _open, _openAnimation, _openPopover, _padding, _pointerType, _popoverListener, _popoverOpen, _position, _push, _px, _ref, _resize, _right, _rightCenter, _rightCenterToBottom, _rightCenterToTop, _scroll, _scrollTo, _scrollTop, _scrollY, _shiftKey, _showPopover, _some, _splice, _springBounce, _style, _then, _top, _touchend, _touches, _touchmove, _transform, _usePortal, _width, _x, _y } from '@/constants/string'
 import { clearTimeDelayed, setTimeDelayed } from '@/utils/timeout'
 import { hasAttribute, removeAttribute, setAttribute, toggleAttribute } from '@/utils/attributes'
 import { getDocument, getDocumentBody, getWindow } from '@/constants/window'
@@ -52,12 +52,19 @@ enum PopoverEvents {
 	onOpen = 'on-open-popover'
 }
 
-function openPopover(event: Event, popover: HTMLDivElement, options?: Omit<PopoverOpenDetail, 'event'>): void {
+function openPopover(
+	event: Event,
+	popover: HTMLDivElement,
+	options?: Omit<PopoverOpenDetail, 'event'>
+): void {
 	popover[_dispatchEvent](new CustomEvent(
 		PopoverEvents[_onOpen],
 		{detail: {event: event, ...options} satisfies PopoverOpenDetail}
 	))
-	getDocumentBody()[_dispatchEvent](new CustomEvent(BodyEvents[_openPopover], {detail: {element: popover}}))
+	getDocumentBody()[_dispatchEvent](new CustomEvent(
+		BodyEvents[_openPopover],
+		{ detail: { element: popover } }
+	))
 }
 
 function initPopoverListener(): void {
@@ -71,34 +78,39 @@ function initPopoverListener(): void {
 	let timeoutId: number | null = null
 
 	function repositionAllPopover(): void {
-		if (timeoutId) {
-			clearTimeDelayed(timeoutId)
-			timeoutId = null
-		}
+		if (timeoutId != null) clearTimeDelayed(timeoutId)
 
 		timeoutId = setTimeDelayed(() => {
-			for (const popover of querySelectorAll(selector)) {
-				repositionPopover(popover as HTMLDivElement)
-			}
+			querySelectorAll(selector)[_forEach](
+				popover => repositionPopover(popover as HTMLDivElement)
+			)
 			timeoutId = null
 		}, 250)
 	}
 
-	addEventListener(getDocumentBody(), BodyEvents[_openPopover], ev => {
-		const element: HTMLDivElement = (ev as any)[_detail][_element] as HTMLDivElement
-		const isExist = popovers[_some](popover => popover[_isSameNode](element as Node))
-		if (isExist) return;
+	addEventListener<CustomEvent<{element: HTMLDivElement}>>(
+		getDocumentBody(),
+		BodyEvents[_openPopover],
+		ev => {
+			const element = ev[_detail][_element]
+			const isExist = popovers[_some](popover => popover[_isSameNode](element as Node))
+			if (isExist) return;
 
-		popovers[_push](element)
-	})
+			popovers[_push](element)
+		}
+	)
 
-	addEventListener(getDocumentBody(), BodyEvents[_closePopover], ev => {
-		const element: HTMLDivElement = (ev as any)[_detail][_element] as HTMLDivElement
-		const index = popovers[_findIndex](popover => popover[_isSameNode](element))
-		if (index < 0) return;
+	addEventListener<CustomEvent<{element: HTMLDivElement}>>(
+		getDocumentBody(),
+		BodyEvents[_closePopover],
+		ev => {
+			const element = ev[_detail][_element]
+			const index = popovers[_findIndex](popover => popover[_isSameNode](element))
+			if (index < 0) return;
 
-		popovers[_splice](index, 1)
-	})
+			popovers[_splice](index, 1)
+		}
+	)
 
 	// use for click outside popover
 	addEventListener(getDocument(), _click, async (ev: Event) => {
@@ -107,25 +119,26 @@ function initPopoverListener(): void {
 		// `[data-no-pointer-event]`, we have to disable it. This is useful
 		// if you have popover but `<body>` has `[data-no-pointer-event]`.
 		// Or when you drag something, popover will not automatically closed.
-		if (isNoPointerEvent || popovers[_length] == 0 || !(ev as any)[_pointerType]) return;
+		if (isNoPointerEvent
+			|| popovers[_length] == 0
+			|| !(ev as any)[_pointerType]
+		) return;
 		const pointer = {
 			x: (ev as MouseEvent)[_clientX],
 			y: (ev as MouseEvent)[_clientY]
 		}
 
-		for (const popover of popovers) {
-
-			// if clicked inside, nothing happen
+		popovers[_forEach](popover => {
 			const popoverRect = getBoundingClientRect(popover)
-			if (pointer[_x] >= popoverRect[_left  ] &&
-				pointer[_x] <= popoverRect[_right ] &&
-				pointer[_y] >= popoverRect[_top   ] &&
-				pointer[_y] <= popoverRect[_bottom]
-			) continue;
-			if (hasAttribute(popover, PopoverAttributes[_manual])) continue;
+			const isClickedInside = pointer[_x] >= popoverRect[_left]
+				&& pointer[_x] <= popoverRect[_right]
+				&& pointer[_y] >= popoverRect[_top]
+				&& pointer[_y] <= popoverRect[_bottom]
+
+			if (isClickedInside || hasAttribute(popover, PopoverAttributes[_manual])) return;
 
 			closePopover(popover as HTMLDivElement)
-		}
+		})
 	})
 
 	addEventListener(getDocument(), _scroll, () => {
@@ -160,9 +173,9 @@ type PopoverProps = Omit<JSX.HTMLAttributes<HTMLDivElement>, 'style'> & {
 	allowHideAnchor?: boolean
 	dragable?: boolean
 	manualDismiss?: boolean
-	onToggleOpen?: (isOpen: boolean) => unknown
-	openAnimation?: (el: HTMLDivElement, done: () => void) => unknown
-	closeAnimation?: (el: HTMLDivElement, done: () => void) => unknown
+	onToggleOpen?(isOpen: boolean): unknown
+	openAnimation?(el: HTMLDivElement, done: () => void): unknown
+	closeAnimation?(el: HTMLDivElement, done: () => void): unknown
 }
 const Popover: ParentComponent<PopoverProps> = ($props) => {
 	const $$props = mergeProps({usePortal: true, id: createUniqueId()}, $props)
@@ -347,8 +360,14 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 		setAttr_open(false)
 		setAttr_openDone(false)
 		anchor_ref = null
-		getDocumentBody()[_dispatchEvent](new CustomEvent(BodyEvents[_closePopover], {detail: {element: popover_ref}}))
-		if (props[_closeAnimation] != undefined) props[_closeAnimation](popover_ref, () => popover_ref[_hidePopover]())
+		getDocumentBody()[_dispatchEvent](new CustomEvent(
+			BodyEvents[_closePopover],
+			{ detail: {element: popover_ref} }
+		))
+		if (props[_closeAnimation] != null) props[_closeAnimation](
+			popover_ref,
+			() => popover_ref[_hidePopover]()
+		)
 		else popover_ref[_animate](
 			{ transform: `translate(${translate[_left]}px, ${translate[_top]}px)` },
 			{ duration: 300, easing: AnimationEffectTiming[_springBounce] }
@@ -388,7 +407,11 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 		popover_ref[_showPopover]()
 
 		const popoverRect: DOMRect = getBoundingClientRect(popover_ref)
-		const $anchorRect: DOMRect | undefined = anchorRect != undefined? anchorRect : anchor? getBoundingClientRect(anchor) : undefined
+		const $anchorRect: DOMRect | undefined = anchorRect != null
+			? anchorRect
+			: anchor
+				? getBoundingClientRect(anchor)
+				: undefined
 		const $event = (event as TouchEvent)[_touches]? (event as TouchEvent)[_touches][0] : (event as MouseEvent)
 		$pointer = pointer != undefined? pointer : {
 			x: $event[_clientX] ?? 0,
@@ -521,7 +544,10 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 		setTop(pos[_top])
 		setLeft(pos[_left])
 		setAttr_open(true)
-		if (props[_openAnimation] != undefined) props[_openAnimation](popover_ref, () => setAttr_openDone(true))
+		if (props[_openAnimation] != null) props[_openAnimation](
+			popover_ref,
+			() => setAttr_openDone(true)
+		)
 		else popover_ref[_animate](
 			{ transform: [`translate(${translate[_left]}px, ${translate[_top]}px)`, _none] },
 			{ duration: 300, easing: AnimationEffectTiming[_springBounce] }
@@ -639,28 +665,28 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 	})
 
 	const C: VoidComponent = () => (<div
-		class={"popover" + (props[_class] != undefined? ` ${props[_class]}` : '')}
+		class={`popover${props[_class]? ` ${props[_class]}` : ''}`}
 		ref={mergeRefs(props[_ref], r => popover_ref = r)}
 		style={{
 			...props[_style],
-			top: props[_style] && props[_style][_top] != undefined? props[_style][_top] : top() + _px,
-			left: props[_style] && props[_style][_left] != undefined? props[_style][_left] : left() + _px,
+			top: props[_style]?.[_top] ?? top() + _px,
+			left: props[_style]?.[_left] ?? left() + _px,
 			"max-width": !allowHideAnchor()
 				? maxWidth() != undefined
 					? maxWidth() + _px
-					: props[_style]? props[_style][_max_width] : undefined
-				: props[_style]? props[_style][_max_width] : undefined,
+					: props[_style]?.[_max_width] ?? undefined
+				: props[_style]?.[_max_width] ?? undefined,
 			"max-height": !allowHideAnchor()
 				? maxHeight() != undefined
 					? maxHeight() + _px
-					: props[_style]? props[_style][_max_height] : undefined
-				: props[_style]? props[_style][_max_height] : undefined,
+					: props[_style]?.[_max_height] ?? undefined
+				: props[_style]?.[_max_height] ?? undefined,
 		}}
 		popover={_manual}
 		onToggle={(ev) => {
 			isOpen = ev[_newState] == _open
 			callEventHandler(ev, props[_onToggle])
-			if (props[_onToggleOpen]) props[_onToggleOpen](isOpen)
+			props[_onToggleOpen]?.(isOpen)
 		}}
 		data-dragable={toggleAttribute(isDragable())}
 		data-open={toggleAttribute(attr_open())}

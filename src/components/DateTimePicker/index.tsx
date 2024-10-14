@@ -25,7 +25,7 @@ type DateTimePickerProps = ModalProps & {
 	firstDate?: Date
 	lastDate?: Date
 	locales?: Intl.LocalesArgument
-	onSelectDateTime?: (value: Date) => unknown
+	onSelectDateTime?(value: Date): unknown
 }
 
 const DateTimePicker: VoidComponent<DateTimePickerProps> = ($props) => {
@@ -48,7 +48,6 @@ const DateTimePicker: VoidComponent<DateTimePickerProps> = ($props) => {
 	const [isTime24HourFormat, setIsTime24HourFormat] = createSignal<boolean>(false)
 	const [isTimePMFormat, setIsTimePMFormat] = createSignal<boolean>(false)
 	const isTimeAMFormat = createMemo(() => !isTimePMFormat() && !isTime24HourFormat())
-	const dateNow = getCurrentDate()
 	let dateTimePicker_ref: HTMLDialogElement
 
 	function updateDateView(): void {
@@ -99,80 +98,74 @@ const DateTimePicker: VoidComponent<DateTimePickerProps> = ($props) => {
 		setValue(datetime)
 	})
 
-	const DaysDate: VoidComponent = () => {
-		return (<div style={{display: 'contents'}}>
-			<div class="datetime-picker-days-name">
-				<For each={getWeekdayNames(props[_locales])}>{d => <p>{d[_substring](0, 2)}</p>}</For>
-			</div>
-			<div class="datetime-picker-days">
-				<For each={Array(startDay())[_fill](0)}>{_v => <div/>}</For>
-				<For each={Array(daysPerMonth())[_fill](0)}>{(_v, i) => {
-					const date = createMemo(() => new Date(getDate_Y(viewDate()), getDate_M(viewDate()), i() + 1))
-					return (<SquareButton
-						onClick={() => {
-							const d = new Date(value())
-							d[_setDate](date()[_getDate]())
-							d[_setMonth](date()[_getMonth]())
-							d[_setFullYear](date()[_getFullYear]())
-							setValue(d)
-						}}
-						disabled={isOutDate_YMD(date(), props[_firstDate], props[_lastDate])}
-						variant={isSameDate_YMD(date(), value())
-							? ButtonVariant[_filled]
-							: isSameDate_YMD(date(), dateNow)
-								? ButtonVariant[_outlined]
-								: undefined
-						}>
-						{ i() + 1 }
-					</SquareButton>)
-				}}</For>
-			</div>
-		</div>)
-	}
-
-	const MonthsDate: VoidComponent = () => {
-		return (<div class="datetime-picker-month">
-			<For each={getMonthNames(props[_locales])}>{(m, i) => {
-				const date = createMemo(() => new Date(getDate_Y(viewDate()), i()))
-				return (<Button
+	const DaysDate: VoidComponent = () => (<div style="display: contents">
+		<div class="datetime-picker-days-name">
+			<For each={getWeekdayNames(props[_locales])}>{d => <p>{d[_substring](0, 2)}</p>}</For>
+		</div>
+		<div class="datetime-picker-days">
+			<For each={Array(startDay())[_fill](0)}>{_v => <div/>}</For>
+			<For each={Array(daysPerMonth())[_fill](0)}>{(_v, i) => {
+				const date = createMemo(() => new Date(getDate_Y(viewDate()), getDate_M(viewDate()), i() + 1))
+				return (<SquareButton
 					onClick={() => {
-						setViewDate(date())
-						setDateOption(DatePickerOption[_day])
-						updateDateView()
+						const d = new Date(value())
+						d[_setDate](date()[_getDate]())
+						d[_setMonth](date()[_getMonth]())
+						d[_setFullYear](date()[_getFullYear]())
+						setValue(d)
 					}}
-					disabled={isOutDate_YM(date(), props[_firstDate], props[_lastDate])}
-					variant={isSameDate_YM(date(), value())
+					disabled={isOutDate_YMD(date(), props[_firstDate], props[_lastDate])}
+					variant={isSameDate_YMD(date(), value())
 						? ButtonVariant[_filled]
-						: isSameDate_YM(date(), dateNow)
-							? ButtonVariant[_outlined]
-							: undefined
-					}>{m}</Button>)
-			}}</For>
-		</div>)
-	}
-
-	const YearsDate: VoidComponent = () => {
-		return (<div class="datetime-picker-year">
-			<For each={Array(16)[_fill](0)}>{(_v, i) => {
-				const date = createMemo(() => new Date(getDate_Y(viewDate()) + i(), 0))
-				return (<Button
-					onClick={() => {
-						setViewDate(date())
-						setDateOption(DatePickerOption[_month])
-						updateDateView()
-					}}
-					disabled={isOutDate_Y(date(), props[_firstDate], props[_lastDate])}
-					variant={isSameDate_Y(date(), value())
-						? ButtonVariant[_filled]
-						: isSameDate_Y(date(), dateNow)
+						: isSameDate_YMD(date(), getCurrentDate())
 							? ButtonVariant[_outlined]
 							: undefined
 					}>
-					{getDate_Y(viewDate()) + i()}
-				</Button>)
+					{ i() + 1 }
+				</SquareButton>)
 			}}</For>
-		</div>)
-	}
+		</div>
+	</div>)
+
+	const MonthsDate: VoidComponent = () => (<div class="datetime-picker-month">
+		<For each={getMonthNames(props[_locales])}>{(m, i) => {
+			const date = createMemo(() => new Date(getDate_Y(viewDate()), i()))
+			return (<Button
+				onClick={() => {
+					setViewDate(date())
+					setDateOption(DatePickerOption[_day])
+					updateDateView()
+				}}
+				disabled={isOutDate_YM(date(), props[_firstDate], props[_lastDate])}
+				variant={isSameDate_YM(date(), value())
+					? ButtonVariant[_filled]
+					: isSameDate_YM(date(), getCurrentDate())
+						? ButtonVariant[_outlined]
+						: undefined
+				}>{m}</Button>)
+		}}</For>
+	</div>)
+
+	const YearsDate: VoidComponent = () => (<div class="datetime-picker-year">
+		<For each={Array(16)[_fill](0)}>{(_v, i) => {
+			const date = createMemo(() => new Date(getDate_Y(viewDate()) + i(), 0))
+			return (<Button
+				onClick={() => {
+					setViewDate(date())
+					setDateOption(DatePickerOption[_month])
+					updateDateView()
+				}}
+				disabled={isOutDate_Y(date(), props[_firstDate], props[_lastDate])}
+				variant={isSameDate_Y(date(), value())
+					? ButtonVariant[_filled]
+					: isSameDate_Y(date(), getCurrentDate())
+						? ButtonVariant[_outlined]
+						: undefined
+				}>
+				{getDate_Y(viewDate()) + i()}
+			</Button>)
+		}}</For>
+	</div>)
 
 	return (<Modal
 		ref={mergeRefs(props[_ref], r => dateTimePicker_ref = r)}

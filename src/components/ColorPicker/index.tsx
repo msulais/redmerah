@@ -82,8 +82,8 @@ type ColorPickerProps = ModalProps & {
 	disabledOpacityControl?: boolean
 	disabledColorControl?: boolean
 	disabledAction?: boolean
-	onUpdateColor?: (color: HEXColor) => unknown
-	onSelectColor?: (color: HEXColor) => unknown
+	onUpdateColor?(color: HEXColor): unknown
+	onSelectColor?(color: HEXColor): unknown
 }
 const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 	const $$props = mergeProps({color: DEFAULT_HEX_COLOR, disabledColorControl: false}, $props)
@@ -122,7 +122,7 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 			: mathRound(opacity() / 100 * 255)[_toString](16)[_padStart](2, '0')
 		;
 		const hexColor = (HSL_to_HEX(hslColor()) + $opacity)[_toUpperCase]()
-		if (props[_onUpdateColor] && is_colorPicker_open) props[_onUpdateColor](hexColor as HEXColor)
+		if (is_colorPicker_open) props[_onUpdateColor]?.(hexColor as HEXColor)
 		return hexColor
 	})
 	const getSliderSize = createMemo<number>(() => props[_disabledColorControl]? 260 : 144)
@@ -423,7 +423,7 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 					setPosition(ev[_touches][0][_clientX], ev[_touches][0][_clientY])
 				}}
 				data-hsl={toggleAttribute(colorModel() == _HSL)}>
-				<div style={{
+				<div draggable={false} style={{
 					top: mathMax(mathMin(picker[_color][_position][_top] - 10, 184), -4) + _px,
 					left: mathMax(mathMin(picker[_color][_position][_left] - 10, 244), -4) + _px
 				}}/>
@@ -462,7 +462,7 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 							setAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
 							setPosition(ev[_touches][0][_clientX], ev[_touches][0][_clientY])
 						}}>
-						<div style={{
+						<div draggable={false} style={{
 							top: (props[_disabledColorControl]? -4 : mathMax(mathMin(picker[_hue][_position] - 10, 128), -4)) + _px,
 							left: (props[_disabledColorControl]? mathMax(mathMin(picker[_hue][_position] - 10, 244), -4) : -4) + _px
 						}}/>
@@ -489,7 +489,7 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 							setAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
 							setPosition(ev[_clientX], ev[_clientY])
 						}}>
-						<div style={{
+						<div draggable={false} style={{
 							top: (props[_disabledColorControl]? -4 : mathMax(mathMin(picker[_opacity][_position] - 10, 128), -4)) + _px,
 							left: (props[_disabledColorControl]? mathMax(mathMin(picker[_opacity][_position] - 10, 244), -4) : -4) + _px
 						}}/>

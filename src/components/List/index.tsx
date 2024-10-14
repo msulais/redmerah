@@ -12,11 +12,13 @@ type ListProps = JSX.HTMLAttributes<HTMLDivElement> & {
 	trailing?: JSX.Element
 }
 const List: ParentComponent<ListProps> = ($props) => {
-	const [props, other] = splitProps($props, [_leading, _children, _trailing, _subtitle, _class])
+	const [props, other] = splitProps($props, [
+		_leading, _children, _trailing, _subtitle, _class
+	])
 	const trailingComponent = children(() => props[_trailing])
 
 	return (<div
-		class={'list' + (props[_class] != null? ` ${props[_class]}` : '')}
+		class={`list${props[_class]? ` ${props[_class]}` : ''}`}
 		data-trailing={toggleAttribute(trailingComponent())}
 		{...other}>
 		<div class='list-leading'>{props[_leading]}</div>
@@ -34,11 +36,13 @@ type RawListProps<T extends ValidComponent = keyof JSX.HTMLElementTags> = Dynami
 	trailing?: JSX.Element
 }
 const RawList: ParentComponent<RawListProps> = ($props) => {
-	const [props, other] = splitProps($props, [_leading, _children, _trailing, _subtitle, _class])
+	const [props, other] = splitProps($props, [
+		_leading, _children, _trailing, _subtitle, _class
+	])
 	const trailingComponent = children(() => props[_trailing])
 
 	return (<Dynamic
-		class={'list' + (props[_class] != null? ` ${props[_class]}` : '')}
+		class={`list${props[_class]? ` ${props[_class]}` : ''}`}
 		data-trailing={toggleAttribute(trailingComponent())}
 		{...other}>
 		<div class='list-leading'>{props[_leading]}</div>
