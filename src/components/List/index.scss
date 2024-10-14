@@ -1,4 +1,4 @@
-.list {
+.c-list {
 	min-height: 40px;
 	display: flex;
 	gap: 12px;
@@ -12,17 +12,17 @@
 	:root[data-corner=semi-round] & {border-radius: 4px}
 	:root[data-corner=full-round] & {border-radius: 20px}
 
-	&[data-trailing] {
+	&[data-c-trailing] {
 		:root[data-corner=full-round] & {border-radius: 25px}
 	}
 
-	&[data-compact] {
+	&[data-c-compact] {
 		gap: 8px;
 		min-height: 40px;
 	}
 }
 
-.list-content {
+.c-list-content {
 	flex: 1;
 	display: flex;
 	flex-direction: column;
@@ -31,7 +31,7 @@
 	width: 100%;
 }
 
-.list-leading {
+.c-list-leading {
 	display: flex;
 	align-items: center;
 	justify-content: flex-end;
@@ -43,26 +43,26 @@
 	}
 }
 
-.list-subtitle {
-	color: rgba(var(--color-on-surface), var(--opacity-inv3));
-	font-size: var(--font-size-xs);
+.c-list-subtitle {
+	color: rgba(var(--g-color-on-surface), var(--g-opacity-inv3));
+	font-size: var(--g-font-size-xs);
 	text-align: start;
 	width: 100%;
 }
 
-.list-title {
+.c-list-title {
 	text-align: start;
-	font-size: var(--font-size-xxs);
+	font-size: var(--g-font-size-xxs);
 	width: 100%;
 }
 
-.list-trailing {
+.c-list-trailing {
 	display: flex;
 	align-items: center;
 	justify-content: flex-end;
 	gap: 4px;
 	height: 100%;
-	font-size: var(--font-size-xs);
+	font-size: var(--g-font-size-xs);
 
 	&:empty {
 		display: none;

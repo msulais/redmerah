@@ -1,4 +1,4 @@
-.side-navigation {
+.c-side-navigation {
 	display: flex;
 	flex-direction: column;
 	padding: 8px;
@@ -8,17 +8,17 @@
 	height: 100%;
 	transition-duration: .3s;
 
-	:root[data-platform=desktop] &:not([data-expanded]) {
+	:root[data-platform=desktop] &:not([data-c-expanded]) {
 		width: 52px;
 		max-width: 52px;
 	}
 
-	&[data-expanded] {
+	&[data-c-expanded] {
 		width: 280px;
 		max-width: 280px;
 	}
 
-	&:not([data-expanded]) > div {
+	&:not([data-c-expanded]) > div {
 		-ms-overflow-style: none;
 		scrollbar-width: none;
 
@@ -40,19 +40,19 @@
 	}
 }
 
-.side-navigation-content {
+.c-side-navigation-content {
 	flex: 1;
 	overflow: auto;
 	align-items: start;
 }
 
-.btn.side-navigation-item {
-	&[data-selected] > .btn-layer > .icon:first-child {
-		color: rgb(var(--color-accent));
+.c-btn.c-side-navigation-item {
+	&[data-c-selected] > .c-btn-layer > .c-icon:first-child {
+		color: rgb(var(--g-color-accent));
 	}
 
-	&:not([data-icon]) {
-		--btn-padding: 4px 8px;
+	&:not([data-c-icon]) {
+		--c-btn-padding: 4px 8px;
 		justify-content: flex-start;
 		width: 100%;
 
@@ -65,17 +65,17 @@
 			}
 		}
 
-		&[data-trailing] > .btn-layer {
+		&[data-c-trailing] > .c-btn-layer {
 			width: 100%;
 		}
 
-		> .btn-layer {
+		> .c-btn-layer {
 			white-space: nowrap;
 		}
 	}
 }
 
-.side-navigation-item-text {
+.c-side-navigation-item-text {
 	max-width: 100%;
 	overflow: hidden;
 	text-overflow: ellipsis;

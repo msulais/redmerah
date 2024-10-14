@@ -149,7 +149,7 @@ const Dropdown: VoidComponent<DropdownProps> = ($props) => {
 			wrapperAttr={{
 				ref: mergeRefs(wrapperProps[_ref], r => wrapper_dropdown_ref = r),
 				classList: {
-					'dropdown': true,
+					'c-dropdown': true,
 					...wrapperProps[_classList]
 				},
 				onClick: ev => {
@@ -157,7 +157,7 @@ const Dropdown: VoidComponent<DropdownProps> = ($props) => {
 					openDropdownMenu(ev)
 					callEventHandler(ev, wrapperProps[_onClick])
 				},
-				...{'data-dropdown-readonly': toggleAttribute(props[_readOnly])},
+				...{'c-data-dropdown-readonly': toggleAttribute(props[_readOnly])},
 				...wrapperPropsOther
 			}}
 			value={selectedItems[_map](i => i[1])[_join](', ')}
@@ -186,12 +186,12 @@ const Dropdown: VoidComponent<DropdownProps> = ($props) => {
 				...menuProps[_style]
 			}}
 			classList={{
-				'dropdown-menu': true,
+				'c-dropdown-menu': true,
 				...menuProps[_classList]
 			}}
 			{...menuPropsOther}>
-			<div class="dropdown-header">{ props[_header] }</div>
-			<div class="dropdown-items">
+			<div class="c-dropdown-header">{ props[_header] }</div>
+			<div class="c-dropdown-items">
 				<For each={props[_items]}>{(item, index) => <>
 					<Show when={(props[_dividerIndexs] as number[])[_includes](index())}>
 						<MenuDivider />
@@ -217,7 +217,7 @@ const Dropdown: VoidComponent<DropdownProps> = ($props) => {
 					</MenuItem>
 				</>}</For>
 			</div>
-			<div class="dropdown-footer">{ props[_footer] }</div>
+			<div class="c-dropdown-footer">{ props[_footer] }</div>
 		</Menu>
 	</>)
 }

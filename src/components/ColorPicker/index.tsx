@@ -414,10 +414,10 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 	})
 
 	const Control: Component = () => {
-		return (<div class="color-picker-control" data-hide-color={toggleAttribute(props[_disabledColorControl])}>
+		return (<div class="c-color-picker-control" data-c-hide-color={toggleAttribute(props[_disabledColorControl])}>
 			<div
-				class="color-picker-color"
-				style={{ '--color-picker-color': getHexColorForCanvas() }}
+				class="c-color-picker-color"
+				style={{ '--c-color-picker-color': getHexColorForCanvas() }}
 				onMouseDown={(ev) => {
 					setPicker(_color, _isDrag, true)
 					setPicker(_color, _rect, getBoundingClientRect(ev[_currentTarget]))
@@ -430,7 +430,7 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 					setAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
 					setPosition(ev[_touches][0][_clientX], ev[_touches][0][_clientY])
 				}}
-				data-hsl={toggleAttribute(colorModel() == _HSL)}
+				data-c-hsl={toggleAttribute(colorModel() == _HSL)}
 				draggable={false}>
 				<div draggable={false} style={{
 					top: mathClamp(picker[_color][_position][_top] - 10, -4, 184) + _px,
@@ -439,17 +439,17 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 			</div>
 			<div>
 				<div
-					data-hide-color={toggleAttribute(props[_disabledColorControl])}
-					data-hide-opacity={toggleAttribute(props[_disabledOpacityControl])}
-					class="color-picker-selected-color"
+					data-c-hide-color={toggleAttribute(props[_disabledColorControl])}
+					data-c-hide-opacity={toggleAttribute(props[_disabledOpacityControl])}
+					class="c-color-picker-selected-color"
 					style={{ 'background-color': getHexColor() }}
 				/>
 				<div
-					class="color-picker-range"
-					data-hide-color={toggleAttribute(props[_disabledColorControl])}
-					data-hide-opacity={toggleAttribute(props[_disabledOpacityControl])}>
+					class="c-color-picker-range"
+					data-c-hide-color={toggleAttribute(props[_disabledColorControl])}
+					data-c-hide-opacity={toggleAttribute(props[_disabledOpacityControl])}>
 					<div
-						class="color-picker-hue"
+						class="c-color-picker-hue"
 						onClick={(ev) => {
 							if (!picker[_hue][_rect]) throw Error()
 
@@ -477,7 +477,7 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 						}} />
 					</div>
 					<div
-						class="color-picker-opacity"
+						class="c-color-picker-opacity"
 						onClick={(ev) => {
 							if (!picker[_opacity][_rect]) throw Error()
 
@@ -513,7 +513,7 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 	}
 
 	const Input: Component = () => {
-		return (<div class="color-picker-input" data-hide-opacity={toggleAttribute(props[_disabledOpacityControl])}>
+		return (<div class="c-color-picker-input" data-c-hide-opacity={toggleAttribute(props[_disabledOpacityControl])}>
 			<TextField
 				ref={r => textfield_color_ref = r}
 				onInput={(ev) => onColorInputChange(ev[_currentTarget][_value])}
@@ -533,7 +533,7 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 	}
 
 	const Actions: Component = () => {
-		return (<div class="color-picker-actions" data-disabled={toggleAttribute(props[_disabledAction])}>
+		return (<div class="c-color-picker-actions" data-c-disabled={toggleAttribute(props[_disabledAction])}>
 			<Button onClick={changeColorModel} variant={ButtonVariant[_tonal]}>{colorModel()}</Button>
 			<Show when={!props[_disabledAction]}>
 				<Button
@@ -564,13 +564,13 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 			if (props[_onToggleOpen]) props[_onToggleOpen](o)
 		}}
 		classList={{
-			'color-picker': true,
+			'c-color-picker': true,
 			...props[_classList]
 		}}
 		{...other}>
 		<Control />
 		<Input />
-		<div class="color-picker-content">{props[_children]}</div>
+		<div class="c-color-picker-content">{props[_children]}</div>
 		<Actions />
 	</Modal>)
 }

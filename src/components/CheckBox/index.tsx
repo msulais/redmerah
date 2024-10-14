@@ -90,8 +90,8 @@ const CheckBox: ParentComponent<CheckBoxProps> = ($props) => {
 	})
 
 	return (<label
-		class={`checkbox${labelProps[_class]? ` ${labelProps[_class]}` : ''}`}
-		data-disabled={toggleAttribute(isDisabled())}
+		class={`c-checkbox${labelProps[_class]? ` ${labelProps[_class]}` : ''}`}
+		data-c-disabled={toggleAttribute(isDisabled())}
 		{...otherLabelProps}>
 		<input
 			ref={mergeRefs(props[_ref], el => input_ref = el)}
@@ -112,8 +112,8 @@ const CheckBox: ParentComponent<CheckBoxProps> = ($props) => {
 			}}
 			{...other}
 		/>
-		<div class="btn square-btn">
-			<div class="btn-layer">
+		<div class="c-btn c-square-btn">
+			<div class="c-btn-layer">
 				<Icon
 					ref={mergeRefs(iconProps[_ref], r => icon_ref = r)}
 					code={iconProps[_code] ?? (props[_variant] == CheckBoxVariant[_check]? (isChecked()? 0xE3CB : 0xE3D4) : 0xED2F)}

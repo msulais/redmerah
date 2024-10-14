@@ -24,7 +24,7 @@ type MenuItemTrailingShortcutProps = JSX.HTMLAttributes<HTMLDivElement> & {
 }
 const MenuItemTrailingShortcut: VoidComponent<MenuItemTrailingShortcutProps> = ($props) => {
 	const [props, other] = splitProps($props, [_shortcuts])
-	return (<div class="menu-item-trailing-shortcut" {...other}>
+	return (<div class="c-menu-item-trailing-shortcut" {...other}>
 		<For each={props[_shortcuts]}>{s => <kbd>{s}</kbd>}</For>
 	</div>)
 }
@@ -48,19 +48,19 @@ const MenuItem: ParentComponent<MenuItemProps> = ($props) => {
 		selected={props[_selected]}
 		indicatorPosition={props[_indicatorPosition] ?? ButtonIndicatorPosition[_left]}
 		disableScale={props[_disableScale] ?? (trailingComponent()? true : undefined)}
-		data-trailing={toggleAttribute(trailingComponent())}
-		classList={{'menu-item': true, ...props[_classList]}}
+		data-c-trailing={toggleAttribute(trailingComponent())}
+		classList={{'c-menu-item': true, ...props[_classList]}}
 		{...other}>
 		<Show when={isVarHasValue(props[_checked])}>
 			<Icon
-				style={{color: 'rgb(var(--color-accent))'}}
+				style={{color: 'rgb(var(--g-color-accent))'}}
 				filled={props[_checked]}
 				code={props[_checked]? 0xE3CC : 0xE3D4}
 			/>
 		</Show>
 		<Show when={props[_iconCode] != null}>
 			<Icon
-				style={{color: props[_selected]? 'rgb(var(--color-accent))' : undefined}}
+				style={{color: props[_selected]? 'rgb(var(--g-color-accent))' : undefined}}
 				filled={props[_selected]}
 				code={props[_iconCode]!}
 			/>
@@ -105,19 +105,19 @@ const LinkMenuItem: ParentComponent<LinkMenuItemProps> = ($props) => {
 		selected={props[_selected]}
 		indicatorPosition={props[_indicatorPosition] ?? ButtonIndicatorPosition[_left]}
 		disableScale={props[_disableScale] ?? (trailingComponent()? true : undefined)}
-		data-trailing={toggleAttribute(trailingComponent())}
-		classList={{'menu-item': true, ...props[_classList]}}
+		data-c-trailing={toggleAttribute(trailingComponent())}
+		classList={{'c-menu-item': true, ...props[_classList]}}
 		{...other}>
 		<Show when={isVarHasValue(props[_checked])}>
 			<Icon
-				style={{color: props[_checked]? 'rgb(var(--color-accent))' : undefined}}
+				style={{color: props[_checked]? 'rgb(var(--g-color-accent))' : undefined}}
 				filled={props[_checked]}
 				code={props[_checked]? 0xE3CC : 0xE3D4}
 			/>
 		</Show>
 		<Show when={props[_iconCode] != null}>
 			<Icon
-				style={{color: props[_selected]? 'rgb(var(--color-accent))' : undefined}}
+				style={{color: props[_selected]? 'rgb(var(--g-color-accent))' : undefined}}
 				filled={props[_selected]}
 				code={props[_iconCode]!}
 			/>
@@ -132,7 +132,7 @@ const LinkMenuItem: ParentComponent<LinkMenuItemProps> = ($props) => {
 }
 
 const MenuIndent: Component<JSX.HTMLAttributes<HTMLDivElement>> = (props) => {
-	return (<div class="menu-indent" {...props}/>)
+	return (<div class="c-menu-indent" {...props}/>)
 }
 
 const MenuDivider: Component<DividerProps> = (props) => {
@@ -140,7 +140,7 @@ const MenuDivider: Component<DividerProps> = (props) => {
 }
 
 const MenuHeader: ParentComponent<JSX.HTMLAttributes<HTMLDivElement>> = (props) => {
-	return (<div class="menu-header" {...props}/>)
+	return (<div class="c-menu-header" {...props}/>)
 }
 
 type SwitchMenuItemProps = JSX.LabelHTMLAttributes<HTMLLabelElement> & {
@@ -176,22 +176,22 @@ const SwitchMenuItem: ParentComponent<SwitchMenuItemProps> = ($props) => {
 	)
 
 	return (<label
-		class={'btn menu-item switch-menu-item' + (props[_class] != null? ` ${props[_class]}` : '')}
-		data-disabled={toggleAttribute(props[_disabled])}
+		class={'c-btn c-menu-item c-switch-menu-item' + (props[_class] != null? ` ${props[_class]}` : '')}
+		data-c-disabled={toggleAttribute(props[_disabled])}
 		classList={{
-			'filled-btn': props[_variant] == ButtonVariant[_filled],
-			'tonal-btn': props[_variant] == ButtonVariant[_tonal],
-			'outlined-btn': props[_variant] == ButtonVariant[_outlined],
+			'c-filled-btn': props[_variant] == ButtonVariant[_filled],
+			'c-tonal-btn': props[_variant] == ButtonVariant[_tonal],
+			'c-outlined-btn': props[_variant] == ButtonVariant[_outlined],
 			...props[_classList]
 		}}
-		data-focused={toggleAttribute(props[_focused])}
-		data-noscale={toggleAttribute(props[_disableScale] ?? true)}
-		data-compact={toggleAttribute(props[_compact])}
-		data-trailing
+		data-c-focused={toggleAttribute(props[_focused])}
+		data-c-noscale={toggleAttribute(props[_disableScale] ?? true)}
+		data-c-compact={toggleAttribute(props[_compact])}
+		data-c-trailing
 		{...other}>
 		<div
-			class='btn-layer'
-			data-no-outline
+			class='c-btn-layer'
+			data-g-no-outline
 			{...props[_layerAttr]}>
 			{ props[_leading] }
 			<Show when={props[_iconCode] != null}>
@@ -247,9 +247,9 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 		if (isOpen) return;
 
 		let isAnySubMenuOpen = false
-		querySelectorAll(`.sub-menu>.menu[data-level]:not([id="${props[_id]}"]):popover-open`)
+		querySelectorAll(`.c-sub-menu>.c-menu[data-c-level]:not([id="${props[_id]}"]):popover-open`)
 		[_forEach](submenu => {
-			const level: number = numberParse(getAttribute(submenu, 'data-level')!, true)
+			const level: number = numberParse(getAttribute(submenu, 'data-c-level')!, true)
 			if (level < props[_level]) return
 
 			isAnySubMenuOpen = true
@@ -293,7 +293,7 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 	})
 
 	return (<div
-		class={"sub-menu" + (wrapperProps[_class]? ` ${wrapperProps[_class]}` : '')}
+		class={"c-sub-menu" + (wrapperProps[_class]? ` ${wrapperProps[_class]}` : '')}
 		ref={mergeRefs(wrapperProps[_ref], r => div_ref = r)}
 		onClick={(ev) => {
 			cancelTimeout()
@@ -319,7 +319,7 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 		{...wrapperPropsOther}>
 		{props[_item]}
 		<Popover
-			data-level={props[_level]}
+			data-c-level={props[_level]}
 			usePortal={false}
 			id={props[_id]}
 			onToggleOpen={$isOpen => {
@@ -333,7 +333,7 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 			}}
 			ref={mergeRefs(props[_ref], r => popover_ref = r)}
 			classList={{
-				menu: true,
+				'c-menu': true,
 				...props[_classList]
 			}}
 			{...other}
@@ -346,7 +346,7 @@ const Menu: ParentComponent<MenuProps> = ($props) => {
 	const [props, other] = splitProps($props, [_classList, _gap, _padding])
 	return (<Modal
 		classList={{
-			menu: true,
+			'c-menu': true,
 			...props[_classList]
 		}}
 		gap={props[_gap] ?? 8}
@@ -360,7 +360,7 @@ const PopoverMenu: ParentComponent<PopoverMenuProps> = ($props) => {
 	const [props, other] = splitProps($props, [_classList, _gap, _padding])
 	return (<Popover
 		classList={{
-			menu: true,
+			'c-menu': true,
 			...props[_classList]
 		}}
 		gap={props[_gap] ?? 8}

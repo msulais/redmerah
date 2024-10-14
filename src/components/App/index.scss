@@ -1,4 +1,4 @@
-.app {
+.c-app {
 	max-height: 100dvh;
 	max-width: 100%;
 	width: 100%;
@@ -10,14 +10,14 @@
 	flex-direction: column;
 }
 
-.app-body {
+.c-app-body {
 	flex: 1;
 	max-width: 100%;
 	max-height: 100%;
 	overflow: auto;
 }
 
-.app-container {
+.c-app-container {
 	flex: 1;
 	max-width: 100%;
 	max-height: 100%;
@@ -27,23 +27,23 @@
 	justify-content: stretch;
 }
 
-.app-fab {
+.c-app-fab {
 	position: fixed;
 	right: 16px;
 	bottom: 16px;
 	z-index: 200;
 }
 
-.app-left-sidebar,
-.app-right-sidebar {
+.c-app-left-sidebar,
+.c-app-right-sidebar {
 	max-height: 100%;
 	overflow: auto;
 }
 
 :is(
-	.app-appbar, .app-left-sidebar,
-	.app-right-sidebar,
-	.app-bottombar, .app-fab
+	.c-app-appbar, .c-app-left-sidebar,
+	.c-app-right-sidebar,
+	.c-app-bottombar, .c-app-fab
 ):empty {
 	display: none;
 }

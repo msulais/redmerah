@@ -149,7 +149,7 @@ const _: VoidComponent<{
 				onDragOver={ev => preventDefault(ev)}
 				onDragEnter={() => setIsDragEnter(true)}
 				onDragLeave={() => setIsDragEnter(false)}>
-				<div data-no-pointer-event={toggleAttribute(isDragEnter())}>
+				<div data-g-no-pointer-event={toggleAttribute(isDragEnter())}>
 					<Show when={QRCodeImageSource() == null}>
 						<p><Icon code={0xED21}/>Drag QR code image here</p>
 					</Show>

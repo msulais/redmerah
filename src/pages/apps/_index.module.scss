@@ -5,12 +5,12 @@
 	padding-bottom: 64px;
 	max-width: 100%;
 
-	> :global(.textfield) {
+	> :global(.c-textfield) {
 		width: 100%;
 		margin-bottom: 16px;
 	}
 
-	> div {
+	> div:last-child {
 		display: grid;
 		gap: 4px;
 		grid-template-columns: repeat(auto-fill, minmax(124px, 1fr));
@@ -23,15 +23,15 @@
 			width: 48px;
 		}
 
-		& :global(.btn){
-			--btn-padding: 12px;
+		& :global(.c-btn){
+			--c-btn-padding: 12px;
 
 			&[data-pinned] {
 				order: -1;
 			}
 		}
 
-		& :global(.btn-layer) {
+		& :global(.c-btn-layer) {
 			flex-direction: column;
 			text-align: center;
 			justify-content: flex-start;
@@ -40,7 +40,7 @@
 			width: 100%;
 		}
 
-		& :global(.icon) {
+		& :global(.c-icon) {
 			position: absolute;
 			top: 0;
 			left: 50%;

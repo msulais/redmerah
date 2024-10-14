@@ -37,7 +37,7 @@ const _: VoidComponent<Palette> = (props) => {
 			<h2>Accent Light<br />{props[_accentLight]}</h2>
 			<Button
 				variant={ButtonVariant[_tonal]}
-				style={{'--color-on-surface': hexToCSSValue(props[_onAccentLight])}}
+				style={{'--g-color-on-surface': hexToCSSValue(props[_onAccentLight])}}
 				onClick={() => copyColor(props[_accentLight], accLightTimeoutId)}>
 				<Show when={accLightTimeoutId[0]()} fallback={<><Icon code={0xE51B}/>Copy</>}>
 					<Icon code={0xE3D8}/>Copied
@@ -48,7 +48,7 @@ const _: VoidComponent<Palette> = (props) => {
 			<h2>On Accent Light<br />{props[_onAccentLight]}</h2>
 			<Button
 				variant={ButtonVariant[_tonal]}
-				style={{'--color-on-surface': hexToCSSValue(props[_accentLight])}}
+				style={{'--g-color-on-surface': hexToCSSValue(props[_accentLight])}}
 				onClick={() => copyColor(props[_onAccentLight], onAccLightTimeoutId)}>
 				<Show when={onAccLightTimeoutId[0]()} fallback={<><Icon code={0xE51B}/>Copy</>}>
 					<Icon code={0xE3D8}/>Copied
@@ -59,7 +59,7 @@ const _: VoidComponent<Palette> = (props) => {
 			<h2>Accent Dark<br />{props[_accentDark]}</h2>
 			<Button
 				variant={ButtonVariant[_tonal]}
-				style={{'--color-on-surface': hexToCSSValue(props[_onAccentDark])}}
+				style={{'--g-color-on-surface': hexToCSSValue(props[_onAccentDark])}}
 				onClick={() => copyColor(props[_accentDark], accDarkTimeoutId)}>
 				<Show when={accDarkTimeoutId[0]()} fallback={<><Icon code={0xE51B}/>Copy</>}>
 					<Icon code={0xE3D8}/>Copied
@@ -70,7 +70,7 @@ const _: VoidComponent<Palette> = (props) => {
 			<h2>On Accent Dark<br />{props[_onAccentDark]}</h2>
 			<Button
 				variant={ButtonVariant[_tonal]}
-				style={{'--color-on-surface': hexToCSSValue(props[_accentDark])}}
+				style={{'--g-color-on-surface': hexToCSSValue(props[_accentDark])}}
 				onClick={() => copyColor(props[_onAccentDark], onAccDarkTimeoutId)}>
 				<Show when={onAccDarkTimeoutId[0]()} fallback={<><Icon code={0xE51B}/>Copy</>}>
 					<Icon code={0xE3D8}/>Copied

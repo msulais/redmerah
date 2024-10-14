@@ -51,7 +51,7 @@ const _: VoidComponent = () => {
 				useAnchor={useAnchor()}
 				tooltip={<>
 					<p style={{"margin-bottom": '8px'}}>Ullamco anim in magna ea ut labore velit ex occaecat elit voluptate laboris.</p>
-					<Button style={{color: 'rgb(var(--color-accent))'}} variant={ButtonVariant[_tonal]}>Learn more</Button>
+					<Button style={{color: 'rgb(var(--g-color-accent))'}} variant={ButtonVariant[_tonal]}>Learn more</Button>
 				</>}>
 				<Button>Rich tooltip</Button>
 			</RichTooltip>

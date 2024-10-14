@@ -1,5 +1,5 @@
 .btn_rotate_icon {
-	--btn-icon-animation: rotate-icon .8s var(--transition-spring) !important;
+	--c-btn-icon-animation: rotate-icon .8s var(--g-transition-spring) !important;
 }
 
 @keyframes rotate-icon {
@@ -8,7 +8,7 @@
 }
 
 .btn_rotate_full_icon {
-	--btn-icon-animation: rotate-full-icon .8s var(--transition-spring) !important;
+	--c-btn-icon-animation: rotate-full-icon .8s var(--g-transition-spring) !important;
 }
 
 @keyframes rotate-full-icon {
@@ -16,7 +16,7 @@
 }
 
 .btn_move_right_icon {
-	--btn-icon-animation: move-right-icon .8s var(--transition-spring) !important;
+	--c-btn-icon-animation: move-right-icon .8s var(--g-transition-spring) !important;
 }
 
 @keyframes move-right-icon {
@@ -25,7 +25,7 @@
 }
 
 .btn_scale_up_icon {
-	--btn-icon-animation: scale-up-icon .8s var(--transition-spring) !important;
+	--c-btn-icon-animation: scale-up-icon .8s var(--g-transition-spring) !important;
 }
 
 @keyframes scale-up-icon {
@@ -34,7 +34,7 @@
 }
 
 .btn_shrink_horizontal_icon {
-	--btn-icon-animation: shrink-horizontal-icon .8s var(--transition-spring) !important;
+	--c-btn-icon-animation: shrink-horizontal-icon .8s var(--g-transition-spring) !important;
 }
 
 @keyframes shrink-horizontal-icon {

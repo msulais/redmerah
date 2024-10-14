@@ -12,8 +12,8 @@ const Divider: Component<DividerProps> = ($props) => {
 	const [props, other] = splitProps($props, [_class, _vertical])
 
 	return (<div
-		data-vertical={toggleAttribute(props[_vertical])}
-		class={"divider" + (props[_class]? ` ${props[_class]}` : '')}
+		data-c-vertical={toggleAttribute(props[_vertical])}
+		class={`c-divider${props[_class] ? ` ${props[_class]}` : ''}`}
 		{...other}
 	/>)
 }

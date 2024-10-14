@@ -34,21 +34,21 @@ const {
 ---
 
 <a
-	class:list={['btn', {
-		'filled-btn': variant == ButtonVariant.filled,
-		'tonal-btn': variant == ButtonVariant.tonal,
-		'outlined-btn': variant == ButtonVariant.outlined
+	class:list={['c-btn', {
+		'c-filled-btn': variant == ButtonVariant.filled,
+		'c-tonal-btn': variant == ButtonVariant.tonal,
+		'c-outlined-btn': variant == ButtonVariant.outlined
 	}, ...classList]}
-	data-indicator={selected? indicatorPosition : undefined}
-	data-selected={toggleAttribute(selected)}
-	data-elevation={toggleAttribute(elevation, true)}
-	data-focus={toggleAttribute(focus)}
-	data-noscale={toggleAttribute(disableScale)}
-	data-compact={toggleAttribute(compact)}
+	data-c-indicator={selected? indicatorPosition : undefined}
+	data-c-selected={toggleAttribute(selected)}
+	data-c-elevation={toggleAttribute(elevation, true)}
+	data-c-focus={toggleAttribute(focus)}
+	data-c-noscale={toggleAttribute(disableScale)}
+	data-c-compact={toggleAttribute(compact)}
 	target={openInNewTab? '_blank' : undefined}
 	rel={openInNewTab? 'noopener noreferrer' : undefined}
 	{...other}>
-	<div class="btn-layer" {...layerAttr}>
+	<div class="c-btn-layer" {...layerAttr}>
 		<slot/>
 	</div>
 </a>

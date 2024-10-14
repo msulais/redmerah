@@ -10,11 +10,11 @@ type Props = astroHTML.JSX.HTMLAttributes & {
 const { compact, classList = [], ...other } = Astro.props
 ---
 
-<div class:list={['list', ...classList]} data-compact={toggleAttribute(compact)} {...other}>
-	<div class='list-leading'><slot name="leading" /></div>
-	<div class='list-content'>
-		<div class='list-title'><slot /></div>
-		<div class='list-subtitle'><slot name="subtitle"/></div>
+<div class:list={['c-list', ...classList]} data-c-compact={toggleAttribute(compact)} {...other}>
+	<div class='c-list-leading'><slot name="leading" /></div>
+	<div class='c-list-content'>
+		<div class='c-list-title'><slot /></div>
+		<div class='c-list-subtitle'><slot name="subtitle"/></div>
 	</div>
-	<div class='list-trailing'><slot name="trailing" /></div>
+	<div class='c-list-trailing'><slot name="trailing" /></div>
 </div>

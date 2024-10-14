@@ -1,8 +1,8 @@
-.modal.drawer {
-	background-color: rgb(var(--color-surface)) !important;
+.c-modal.c-drawer {
+	background-color: rgb(var(--g-color-surface)) !important;
 	border-radius: 0 12px 12px 0;
 	height: 100dvh;
-	box-shadow: var(--elevation3);
+	box-shadow: var(--g-elevation3);
 	max-height: 100dvh;
 	width: 280px;
 	max-width: min(280px, calc(100% - 80px));
@@ -17,7 +17,7 @@
 	:root[data-corner=semi-round] & { border-radius: 0 8px 8px 0 }
 	:root[data-corner=full-round] & { border-radius: 0 24px 24px 0 }
 
-	&[data-right] {
+	&[data-c-right] {
 		transform: translateX(100%);
 		border-radius: 12px 0 0 12px;
 		:root[data-corner=semi-round] & { border-radius: 8px 0 0 8px }
@@ -28,11 +28,11 @@
 		transition-duration: .3s;
 	}
 
-	&[data-open]{
+	&[data-c-open]{
 		transform: none;
 
 		&::backdrop {
-			background-color: rgba(0, 0, 0, var(--opacity-inv5));
+			background-color: rgba(0, 0, 0, var(--g-opacity-inv5));
 		}
 	}
 
@@ -46,7 +46,7 @@
 	}
 }
 
-.drawer-footer {
+.c-drawer-footer {
 	width: 100%;
 	display: flex;
 	flex-direction: column;
@@ -63,7 +63,7 @@
 	}
 }
 
-.drawer-content {
+.c-drawer-content {
 	display: flex;
 	flex-direction: column;
 	gap: 4px;
@@ -79,9 +79,9 @@
 	}
 }
 
-.drawer-header {
+.c-drawer-header {
 	width: 100%;
-	font-size: var(--font-size-m);
+	font-size: var(--g-font-size-m);
 	font-weight: 500;
 	padding: 4px 4px 0 4px;
 	min-height: 40px;
@@ -98,19 +98,19 @@
 	}
 }
 
-.btn.drawer-item {
+.c-btn.c-drawer-item {
 	justify-content: flex-start;
 	width: 100%;
 
-	&[data-selected] > .btn-layer > .icon:first-child {
-		color: rgb(var(--color-accent));
+	&[data-c-selected] > .c-btn-layer > .c-icon:first-child {
+		color: rgb(var(--g-color-accent));
 	}
 
 	:root[data-platform=mobile] & {
-		--btn-padding: 4px 16px;
+		--c-btn-padding: 4px 16px;
 		min-height: 56px;
 
-		> .btn-layer {
+		> .c-btn-layer {
 			gap: 12px;
 		}
 	}
@@ -119,19 +119,19 @@
 		border-radius: 28px;
 
 		&::before {
-			--btn-indicator-size: max(var(--btn-indicator-weight), calc(100% - 56px));
+			--c-btn-indicator-size: max(var(--c-btn-indicator-weight), calc(100% - 56px));
 		}
 
-		&:is([data-indicator=top],[data-indicator=bottom])::before {
-			--btn-indicator-size: max(var(--btn-indicator-weight), calc(100% - 56px));
+		&:is([data-c-indicator=top],[data-c-indicator=bottom])::before {
+			--c-btn-indicator-size: max(var(--c-btn-indicator-weight), calc(100% - 56px));
 		}
 	}
 
-	&[data-trailing] > .btn-layer {
+	&[data-c-trailing] > .c-btn-layer {
 		width: 100%;
 	}
 
-	> .btn-layer {
+	> .c-btn-layer {
 		white-space: nowrap;
 	}
 }

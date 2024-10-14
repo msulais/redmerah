@@ -14,15 +14,15 @@ const AppBar: ParentComponent<AppBarProps> = ($props) => {
 	const [props, other] = splitProps($props, [
 		_children, _leading, _trailing, _headline, _class
 	])
-	return (<div class={`appbar${props[_class]? ` ${props[_class]}` : ''}`} {...other}>
-		<div class="appbar-leading">{props[_leading]}</div>
-		<div class="appbar-headline">
+	return (<div class={`c-appbar${props[_class]? ` ${props[_class]}` : ''}`} {...other}>
+		<div class="c-appbar-leading">{props[_leading]}</div>
+		<div class="c-appbar-headline">
 			<Show when={props[_headline]}>
 				<h2>{props[_headline]}</h2>
 			</Show>
 			{props[_children]}
 		</div>
-		<div class="appbar-trailing">{props[_trailing]}</div>
+		<div class="c-appbar-trailing">{props[_trailing]}</div>
 	</div>)
 }
 

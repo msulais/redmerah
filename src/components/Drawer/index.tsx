@@ -40,12 +40,12 @@ const DrawerItem: ParentComponent<DrawerItemProps> = ($props) => {
 		selected={props[_selected]}
 		indicatorPosition={props[_indicatorPosition] ?? (isVarHasValue(props[_selected])? (props[_indicatorPosition] ?? ButtonIndicatorPosition[_left]) : undefined)}
 		disableScale={props[_disableScale] ?? (trailingComponent()? true : undefined)}
-		data-trailing={toggleAttribute(trailingComponent())}
-		classList={{'drawer-item': true, ...props[_classList]}}
+		data-c-trailing={toggleAttribute(trailingComponent())}
+		classList={{'c-drawer-item': true, ...props[_classList]}}
 		{...other}>
 		<Show when={props[_iconCode] != null}>
 			<Icon
-				style={{color: props[_selected]? 'rgb(var(--color-accent))' : undefined}}
+				style={{color: props[_selected]? 'rgb(var(--g-color-accent))' : undefined}}
 				filled={props[_selected]}
 				code={props[_iconCode]!}
 			/>
@@ -75,9 +75,9 @@ const Drawer: ParentComponent<DrawerProps> = ($props) => {
 	const animationOption = {duration: 300, easing: AnimationEffectTiming[_spring]}
 
 	return (<Modal
-		data-right={toggleAttribute(props[_position] == DrawerPosition[_right])}
+		data-c-right={toggleAttribute(props[_position] == DrawerPosition[_right])}
 		classList={{
-			drawer: true,
+			'c-drawer': true,
 			...props[_classList]
 		}}
 		style={{
@@ -102,9 +102,9 @@ const Drawer: ParentComponent<DrawerProps> = ($props) => {
 			}, animationOption)[_finished][_then](done)
 		}}
 		{...other}>
-		<div class="drawer-header">{props[_header]}</div>
-		<div class="drawer-content">{props[_children]}</div>
-		<div class="drawer-footer">{props[_footer]}</div>
+		<div class="c-drawer-header">{props[_header]}</div>
+		<div class="c-drawer-content">{props[_children]}</div>
+		<div class="c-drawer-footer">{props[_footer]}</div>
 	</Modal>)
 }
 

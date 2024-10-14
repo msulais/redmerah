@@ -603,7 +603,7 @@ const ConverterCalculator: VoidComponent<{
 							position: MenuPosition[_centerBottomToRight],
 							allowHideAnchor: false
 						})}
-						style={{color: 'rgb(var(--color-accent))'}}>
+						style={{color: 'rgb(var(--g-color-accent))'}}>
 						{props[_settings][_converter][_inputUnit][_name] + ` (${props[_settings][_converter][_inputUnit][_symbol]})`}
 					</Button>
 				</TextTooltip>
@@ -638,7 +638,7 @@ const ConverterCalculator: VoidComponent<{
 							position: MenuPosition[_centerBottomToRight],
 							allowHideAnchor: false
 						})}
-						style={{color: 'rgb(var(--color-accent))'}}>
+						style={{color: 'rgb(var(--g-color-accent))'}}>
 						{props[_settings][_converter][_outputUnit][_name] + ` (${props[_settings][_converter][_outputUnit][_symbol]})`}
 					</Button>
 				</TextTooltip>

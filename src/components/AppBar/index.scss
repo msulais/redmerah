@@ -1,4 +1,4 @@
-.appbar {
+.c-appbar {
 	width: 100%;
 	padding: 8px;
 	display: flex;
@@ -16,13 +16,13 @@
 	}
 }
 
-.appbar-headline {
+.c-appbar-headline {
 	gap: 8px;
 	flex: 1;
 	overflow: hidden;
 
 	> h2 {
-		font-size: var(--font-size-m);
+		font-size: var(--g-font-size-m);
 		font-weight: 500;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -30,7 +30,7 @@
 	}
 }
 
-:is(.appbar-leading, .appbar-trailing) {
+:is(.c-appbar-leading, .c-appbar-trailing) {
 	gap: 4px;
 
 	&:empty {

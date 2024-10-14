@@ -49,19 +49,19 @@
 
 .app_body_status {
 	margin-top: 16px;
-	background-color: rgba(var(--color-accent), var(--opacity3));
+	background-color: rgba(var(--g-color-accent), var(--g-opacity3));
 	padding: 8px 12px;
 	border-radius: 8px;
 	display: flex;
 	gap: 8px;
-	border: 1px solid rgba(var(--color-on-surface), var(--opacity1));
+	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity1));
 	transition-duration: .3s;
 
 	:root[data-corner=sharp] & { border-radius: 0 }
 	:root[data-corner=semi-round] & { border-radius: 4px }
 	:root[data-corner=full-round] & { border-radius: 20px }
 
-	> :global(.icon) {
-		color: rgb(var(--color-accent));
+	> :global(.c-icon) {
+		color: rgb(var(--g-color-accent));
 	}
 }

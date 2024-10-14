@@ -14,12 +14,12 @@
 	position: sticky;
 	top: 0;
 	z-index: 100;
-	background-color: rgba(var(--color-background), var(--opacity-inv1));
+	background-color: rgba(var(--g-color-background), var(--g-opacity-inv1));
 	backdrop-filter: blur(8px);
 
-	> :global(.btn){
-		--btn-padding: 4px 12px 4px 8px;
-		font-size: var(--font-size-m);
+	> :global(.c-btn){
+		--c-btn-padding: 4px 12px 4px 8px;
+		font-size: var(--g-font-size-m);
 
 		& img {
 			width: 32px;

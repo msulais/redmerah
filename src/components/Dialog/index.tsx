@@ -31,7 +31,7 @@ const Dialog: ParentComponent<DialogProps> = ($props) => {
 
 	return (<Modal
 		classList={{
-			dialog: true,
+			'c-dialog': true,
 			...props[_classList]
 		}}
 		style={{
@@ -53,11 +53,11 @@ const Dialog: ParentComponent<DialogProps> = ($props) => {
 				animationOption
 			)[_finished][_then](done)
 		}}
-		data-actions={toggleAttribute(actionsComponent())}
+		data-c-actions={toggleAttribute(actionsComponent())}
 		{...other}>
-		<div class="dialog-header">{props[_header]}</div>
-		<div class="dialog-content">{props[_children]}</div>
-		<div class="dialog-actions">{actionsComponent()}</div>
+		<div class="c-dialog-header">{props[_header]}</div>
+		<div class="c-dialog-content">{props[_children]}</div>
+		<div class="c-dialog-actions">{actionsComponent()}</div>
 	</Modal>)
 }
 

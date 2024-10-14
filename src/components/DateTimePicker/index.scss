@@ -1,5 +1,5 @@
-.modal.datetime-picker {
-	box-shadow: var(--elevation1);
+.c-modal.c-datetime-picker {
+	box-shadow: var(--g-elevation1);
 	min-width: 320px;
 	max-width: 320px;
 
@@ -11,27 +11,27 @@
 	}
 }
 
-.datetime-picker-actions {
+.c-datetime-picker-actions {
 	display: grid;
 	grid-template-columns: repeat(2, 1fr);
 	gap: 8px;
 	padding: 12px;
-	background-color: rgb(var(--color-background));
-	border-top: 1px solid rgba(var(--color-on-surface), var(--opacity2));
+	background-color: rgb(var(--g-color-background));
+	border-top: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity2));
 }
 
-.datetime-picker-days {
+.c-datetime-picker-days {
 	display: grid;
 	grid-template-columns: repeat(7, 1fr);
 	gap: 1px;
 	padding: 0 12px 12px 12px;
 
-	> .btn.square-btn {
+	> .c-btn.c-square-btn {
 		max-width: 100%;
 	}
 }
 
-.datetime-picker-days-name {
+.c-datetime-picker-days-name {
 	display: grid;
 	grid-template-columns: repeat(7, 1fr);
 	gap: 1px;
@@ -49,27 +49,27 @@
 		min-width: 40px;
 		max-width: 100%;
 		text-align: center;
-		font-size: var(--font-size-xs);
-		color: rgb(var(--color-accent));
+		font-size: var(--g-font-size-xs);
+		color: rgb(var(--g-color-accent));
 
 		:root[data-platform=desktop] & { min-width: 36px }
 		:root[data-platform=mobile] & { font-weight: 500 }
 	}
 }
 
-.datetime-picker-header {
+.c-datetime-picker-header {
 	display: flex;
 	align-items: center;
 	gap: 1px;
 	padding: 12px;
 
-	> .btn:first-child {
+	> .c-btn:first-child {
 		flex: 1;
 		justify-content: flex-start;
 	}
 }
 
-.datetime-picker-month {
+.c-datetime-picker-month {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
 	gap: 1px;
@@ -77,14 +77,14 @@
 	padding: 12px 12px 8px 12px;
 }
 
-.datetime-picker-time {
+.c-datetime-picker-time {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
 	gap: 8px;
 	padding: 0 12px 12px 12px;
 }
 
-.datetime-picker-year {
+.c-datetime-picker-year {
 	display: grid;
 	grid-template-columns: repeat(4, 1fr);
 	gap: 1px;

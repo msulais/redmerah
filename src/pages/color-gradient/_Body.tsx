@@ -152,7 +152,7 @@ const GradientControl: VoidComponent<{
 						}}
 						draggable="false"
 						data-dragged={toggleAttribute(props[_selectedGradientIndex] == props[_gradientIndex] && selectedColorStopIndex() == index() && props[_isDragging])}
-						data-keep-pointer-event={toggleAttribute(props[_selectedGradientIndex] == props[_gradientIndex] && selectedColorStopIndex() == index() && props[_isDragging])}
+						data-g-keep-pointer-event={toggleAttribute(props[_selectedGradientIndex] == props[_gradientIndex] && selectedColorStopIndex() == index() && props[_isDragging])}
 						onTouchStart={ev => {
 							props[_onStartDrag](
 								div_gradient_ref,

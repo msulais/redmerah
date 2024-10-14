@@ -54,7 +54,7 @@ const _: VoidComponent = () => {
 	function onColorChange(hexColor: HEXColor): void {
 		const acc = generateColor(hexColor)
 		const accentColorStyleEl = getElementById(ElementIds[_color_accent])!
-		accentColorStyleEl[_innerHTML] = `:root{--color-accent-light: ${rgbToCSSValue(HEX_to_RGB(acc[_color]))};--color-accent-dark: ${rgbToCSSValue(HEX_to_RGB(acc[_colorDark]))};--color-on-accent-light: ${rgbToCSSValue(HEX_to_RGB(acc[_onColor]))};--color-on-accent-dark: ${rgbToCSSValue(HEX_to_RGB(acc[_onColorDark]))};}`;
+		accentColorStyleEl[_innerHTML] = `:root{--g-color-accent-light: ${rgbToCSSValue(HEX_to_RGB(acc[_color]))};--g-color-accent-dark: ${rgbToCSSValue(HEX_to_RGB(acc[_colorDark]))};--g-color-on-accent-light: ${rgbToCSSValue(HEX_to_RGB(acc[_onColor]))};--g-color-on-accent-dark: ${rgbToCSSValue(HEX_to_RGB(acc[_onColorDark]))};}`;
 		setLocalStorageItem(LocalStorageKeys[_color], hexColor)
 		setPalette({
 			seed: hexColor[_toUpperCase]() as HEXColor,

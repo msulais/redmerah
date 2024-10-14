@@ -36,21 +36,21 @@ $side_notebook_none: 760px;
 	flex: 1;
 	height: 100%;
 	gap: 4px;
-	background-color: rgb(var(--color-surface));
+	background-color: rgb(var(--g-color-surface));
 	padding: 8px;
 	border-radius: 16px;
-	border: 1px solid rgba(var(--color-on-surface), var(--opacity1));
+	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity1));
 
 	:root[data-corner=sharp] & { border-radius: 0 }
 	:root[data-corner=semi-round] & { border-radius: 12px }
 	:root[data-corner=full-round] & { border-radius: 28px }
 
-	> :global(.btn) {
-		--btn-padding: 0;
-		font-size: min(var(--font-size-xxl), max(var(--font-size-m), 4vmin));
+	> :global(.c-btn) {
+		--c-btn-padding: 0;
+		font-size: min(var(--g-font-size-xxl), max(var(--g-font-size-m), 4vmin));
 
-		& :global(.icon) {
-			font-size: min(var(--font-size-xxl), max(var(--font-size-m), 4vmin));
+		& :global(.c-icon) {
+			font-size: min(var(--g-font-size-xxl), max(var(--g-font-size-m), 4vmin));
 		}
 	}
 }
@@ -72,10 +72,10 @@ $side_notebook_none: 760px;
 .input_output_date_calculator {
 	gap: 16px;
 	height: 100%;
-	background-color: rgb(var(--color-surface));
+	background-color: rgb(var(--g-color-surface));
 	padding: 12px;
 	border-radius: 8px;
-	border: 1px solid rgba(var(--color-on-surface), var(--opacity1));
+	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity1));
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
@@ -90,7 +90,7 @@ $side_notebook_none: 760px;
 	}
 
 	& p {
-		color: rgb(var(--color-accent));
+		color: rgb(var(--g-color-accent));
 		font-weight: bold;
 		margin-bottom: 4px;
 	}
@@ -129,7 +129,7 @@ $side_notebook_none: 760px;
 		}
 	}
 
-	& :global(.btn.menu-item) {
+	& :global(.c-btn.c-menu-item) {
 		margin: 0;
 		width: auto;
 	}
@@ -138,7 +138,7 @@ $side_notebook_none: 760px;
 :is(.input_output_basic_text_input, .input_output_scientific_text_input, .input_output_converter_text_input, .input_output_programmer_text_input) {
 	width: 100%;
 	text-align: end;
-	font-size: var(--font-size-xxl);
+	font-size: var(--g-font-size-xxl);
 	outline: none;
 	border: none;
 }
@@ -146,8 +146,8 @@ $side_notebook_none: 760px;
 :is(.input_output_basic_text_output, .input_output_scientific_text_output, .input_output_converter_text_output) {
 	text-align: end;
 	overflow: auto;
-	font-size: var(--font-size-xxl);
-	color: rgb(var(--color-accent));
+	font-size: var(--g-font-size-xxl);
+	color: rgb(var(--g-color-accent));
 	margin-bottom: 8px;
 	min-height: 49px;
 	text-wrap: nowrap;
@@ -181,7 +181,7 @@ $side_notebook_none: 760px;
 		padding: 12px !important;
 
 		& p {
-			font-size: var(--font-size-xs);
+			font-size: var(--g-font-size-xs);
 			font-weight: 500;
 			text-overflow: ellipsis;
 			overflow: hidden;
@@ -194,7 +194,7 @@ $side_notebook_none: 760px;
 	grid-template-columns: 1fr;
 	gap: 1px;
 
-	> :global(.btn) {
+	> :global(.c-btn) {
 		justify-content: flex-end;
 		max-width: 100%;
 		width: 100%;
@@ -216,7 +216,7 @@ $side_notebook_none: 760px;
 }
 
 .input_output_remove_symbol {
-	color: rgb(var(--color-error))
+	color: rgb(var(--g-color-error))
 }
 
 .notebook {
