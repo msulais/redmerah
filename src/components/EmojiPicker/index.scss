@@ -1,14 +1,14 @@
-.modal.emoji-picker {
-	box-shadow: var(--elevation1);
+.c-modal.c-emoji-picker {
+	box-shadow: var(--g-elevation1);
 	width: 313px;
 }
 
-.emoji-picker-emojis {
+.c-emoji-picker-emojis {
 	min-height: 285px;
 	max-height: 285px;
 	overflow: auto;
 
-	&[data-hidden] {
+	&[data-c-hidden] {
 		display: none;
 	}
 
@@ -31,11 +31,11 @@
 	}
 }
 
-.emoji-picker-search {
+.c-emoji-picker-search {
 	padding: 0 12px 12px 12px;
 }
 
-.emoji-picker-tabs {
+.c-emoji-picker-tabs {
 	display: grid;
 	padding: 4px;
 	width: 100%;

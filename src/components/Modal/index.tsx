@@ -77,7 +77,7 @@ function initModalListener(): void {
 	if (hasAttribute(getDocumentBody(), BodyAttributes[_modalListener])) return;
 	setAttribute(getDocumentBody(), BodyAttributes[_modalListener])
 
-	const selector: string = 'dialog.modal[open]'
+	const selector: string = 'dialog.c-modal[open]'
 	const modals: HTMLDialogElement[] = []
 	let isNoPointerEvent: boolean = false
 	let scrollTop: number = 0
@@ -115,8 +115,8 @@ function initModalListener(): void {
 	// use for click outside modal
 	addEventListener(getDocument(), _click, async (ev: Event) => {
 		// Since 'click' still dispatch even when `<body>` has
-		// `[data-no-pointer-event]`, we have to disable it. This is useful
-		// if you have modal but `<body>` has `[data-no-pointer-event]`.
+		// `[data-g-no-pointer-event]`, we have to disable it. This is useful
+		// if you have modal but `<body>` has `[data-g-no-pointer-event]`.
 		// Or when you drag something, modal will not automatically closed.
 		if (isNoPointerEvent || modals[_length] == 0 || removed || !(ev as any)[_pointerType]) {
 			removed = false
@@ -720,7 +720,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 	})
 
 	return (<Portal><dialog
-		class={`modal${props[_class]? ` ${props[_class]}` : ''}`}
+		class={`c-modal${props[_class]? ` ${props[_class]}` : ''}`}
 		ref={mergeRefs(props[_ref], r => modal_ref = r)}
 		style={{
 			...props[_style],
@@ -763,16 +763,17 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 			if (props[_onToggleOpen]) props[_onToggleOpen](false)
 			isOpen = false
 		}}
-		data-dragable={toggleAttribute(isDragable())}
-		data-drag={toggleAttribute(isDragging())}
-		data-focus={toggleAttribute(attr_focus())}
-		data-open={toggleAttribute(attr_open())}
-		data-open-done={toggleAttribute(attr_openDone())}
+		data-c-dragable={toggleAttribute(isDragable())}
+		data-c-drag={toggleAttribute(isDragging())}
+		data-c-focus={toggleAttribute(attr_focus())}
+		data-c-open={toggleAttribute(attr_open())}
+		data-c-open-done={toggleAttribute(attr_openDone())}
 		{...other}>
 		<Show when={isDragable()}>
 			<span
-				class="modal-drag-handle"
-				data-keep-pointer-event={toggleAttribute(isDragging())}
+				class="c-modal-drag-handle"
+				draggable={false}
+				data-g-keep-pointer-event={toggleAttribute(isDragging())}
 				onMouseDown={(ev) => {
 					const rect = getBoundingClientRect(modal_ref)
 					setIsDragging(true)

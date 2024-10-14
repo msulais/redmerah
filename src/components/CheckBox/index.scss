@@ -1,6 +1,6 @@
-.checkbox {
+.c-checkbox {
 	display: flex;
-	font-size: var(--font-size-xs);
+	font-size: var(--g-font-size-xs);
 	gap: 4px;
 	align-items: center;
 	user-select: none;
@@ -10,8 +10,9 @@
 		-moz-appearance: none;
 		-webkit-appearance: none;
 		appearance: none;
+		display: contents;
 
-		&:focus-visible + .btn {
+		&:focus-visible + .c-btn {
 			outline: auto;
 		}
 	}
@@ -21,8 +22,8 @@
 		user-select: none;
 	}
 
-	&[data-disabled] {
-		color: rgba(var(--color-on-surface), var(--opacity5));
+	&[data-c-disabled] {
+		color: rgba(var(--g-color-on-surface), var(--g-opacity5));
 		cursor: not-allowed;
 
 		& * {
@@ -30,7 +31,7 @@
 		}
 	}
 
-	&:not([data-disabled]) {
+	&:not([data-c-disabled]) {
 		@media (hover: hover) {
 			&:hover {
 				cursor: pointer;
@@ -39,19 +40,19 @@
 					cursor: pointer;
 				}
 
-				> .btn {
-					--bg-opacity: var(--opacity1);
+				> .c-btn {
+					--g-background-color-opacity: var(--g-opacity1);
 				}
 			}
 		}
 
-		&:active > .btn {
-			--bg-opacity: var(--opacity0);
-			--btn-border-opacity: var(--opacity1);
+		&:active > .c-btn {
+			--g-background-color-opacity: var(--g-opacity0);
+			--c-btn-border-opacity: var(--g-opacity1);
 		}
 
-		> .btn > div > .icon {
-			color: rgb(var(--color-accent));
+		> .c-btn > div > .c-icon {
+			color: rgb(var(--g-color-accent));
 		}
 	}
 }

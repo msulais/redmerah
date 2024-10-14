@@ -1,5 +1,5 @@
-.modal.color-picker {
-	box-shadow: var(--elevation1);
+.c-modal.c-color-picker {
+	box-shadow: var(--g-elevation1);
 
 	> div {
 		padding: 12px 0 0 0;
@@ -11,23 +11,23 @@
 	}
 }
 
-.color-picker-actions {
+.c-color-picker-actions {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
 	gap: 8px;
 	padding: 12px;
-	background-color: rgb(var(--color-background));
-	border-top: 1px solid rgba(var(--color-on-surface), var(--opacity2));
+	background-color: rgb(var(--g-color-background));
+	border-top: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity2));
 	width: 342px;
 	margin-top: 6px;
 
-	&[data-disabled] {
+	&[data-c-disabled] {
 		grid-template-columns: 1fr;
 	}
 }
 
-.color-picker-color {
-	--color-picker-color: #ff0000;
+.c-color-picker-color {
+	--c-color-picker-color: #ff0000;
 	min-width: 260px;
 	min-height: 200px;
 	max-width: 260px;
@@ -35,16 +35,16 @@
 	background:
 		linear-gradient(to top, #000, transparent),
 		linear-gradient(to right, #fff, transparent),
-		var(--color-picker-color)
+		var(--c-color-picker-color)
 	;
 	border-radius: 8px;
 	position: relative;
-	box-shadow: var(--elevation1);
+	box-shadow: var(--g-elevation1);
 
-	&[data-hsl] {
+	&[data-c-hsl] {
 		background:
 			linear-gradient(to bottom, #ffffff, #ffffff00 50%, #00000000 50%, #000000),
-			linear-gradient(to right, #808080, var(--color-picker-color))
+			linear-gradient(to right, #808080, var(--c-color-picker-color))
 		;
 	}
 
@@ -73,7 +73,7 @@
 		position: absolute;
 		border: 2px solid white;
 		z-index: 3;
-		box-shadow: var(--elevation1), inset var(--elevation1);
+		box-shadow: var(--g-elevation1), inset var(--g-elevation1);
 		transition-duration: .3s;
 		transition-property: backdrop-filter, scale;
 
@@ -93,7 +93,7 @@
 	}
 }
 
-.color-picker-content {
+.c-color-picker-content {
 	padding: 0 12px;
 
 	&:empty {
@@ -101,24 +101,24 @@
 	}
 }
 
-.color-picker-control {
+.c-color-picker-control {
 	display: flex;
 	padding: 0 12px 8px 12px;
 	gap: 8px;
 
-	&[data-hide-color] {
-		> .color-picker-color {
+	&[data-c-hide-color] {
+		> .c-color-picker-color {
 			display: none;
 		}
 
-		> div:not(.color-picker-color) {
+		> div:not(.c-color-picker-color) {
 			display: flex;
 			align-items: center;
 		}
 	}
 }
 
-.color-picker-hue {
+.c-color-picker-hue {
 	width: 12px;
 	height: 144px;
 	border-radius: 8px;
@@ -128,7 +128,7 @@
 		#ff0000 100%
 	);
 	position: relative;
-	box-shadow: var(--elevation1);
+	box-shadow: var(--g-elevation1);
 
 	&:active > div {
 		scale: .85;
@@ -151,9 +151,9 @@
 		height: 20px;
 		border-radius: 10px;
 		position: absolute;
-		border: 2px solid rgb(var(--color-on-surface));
+		border: 2px solid rgb(var(--g-color-on-surface));
 		z-index: 3;
-		box-shadow: var(--elevation1), inset var(--elevation1);
+		box-shadow: var(--g-elevation1), inset var(--g-elevation1);
 		transition-duration: .3s;
 		transition-property: backdrop-filter, scale;
 
@@ -173,7 +173,7 @@
 	}
 }
 
-.color-picker-input {
+.c-color-picker-input {
 	display: flex;
 	gap: 8px;
 	padding: 0 12px;
@@ -187,7 +187,7 @@
 		width: 100px;
 	}
 
-	&[data-hide-opacity] {
+	&[data-c-hide-opacity] {
 		> :nth-child(2) {
 			display: none;
 		}
@@ -198,13 +198,13 @@
 	}
 }
 
-.color-picker-opacity {
+.c-color-picker-opacity {
 	width: 12px;
 	background: linear-gradient(to bottom, #000 0%, #fff 100%);
 	height: 144px;
 	border-radius: 8px;
 	position: relative;
-	box-shadow: var(--elevation1);
+	box-shadow: var(--g-elevation1);
 
 	&:active > div {
 		scale: .85;
@@ -227,9 +227,9 @@
 		height: 20px;
 		border-radius: 10px;
 		position: absolute;
-		border: 2px solid rgb(var(--color-on-surface));
+		border: 2px solid rgb(var(--g-color-on-surface));
 		z-index: 3;
-		box-shadow: var(--elevation1), inset var(--elevation1);
+		box-shadow: var(--g-elevation1), inset var(--g-elevation1);
 		transition-duration: .3s;
 		transition-property: backdrop-filter, scale;
 
@@ -249,17 +249,17 @@
 	}
 }
 
-.color-picker-range {
+.c-color-picker-range {
 	height: 100%;
 	display: flex;
 	justify-content: space-around;
 	width: 48px;
 
-	&[data-hide-color] {
+	&[data-c-hide-color] {
 		flex-direction: column;
 		width: 260px;
 
-		> .color-picker-hue {
+		> .c-color-picker-hue {
 			background: linear-gradient(
 				to right in hsl longer hue,
 				#ff0000   0%,
@@ -269,18 +269,18 @@
 			height: 12px;
 		}
 
-		> .color-picker-opacity {
+		> .c-color-picker-opacity {
 			background: linear-gradient(to right, #000 0%, #fff 100%);
 			width: 260px;
 			height: 12px;
 		}
 
-		&[data-hide-opacity] {
-			> .color-picker-opacity {
+		&[data-c-hide-opacity] {
+			> .c-color-picker-opacity {
 				display: none;
 			}
 
-			> .color-picker-hue {
+			> .c-color-picker-hue {
 				height: 40px;
 
 				> div {
@@ -290,30 +290,30 @@
 		}
 	}
 
-	&[data-hide-opacity]:not([data-hide-color]) {
-		> .color-picker-hue {
+	&[data-c-hide-opacity]:not([data-c-hide-color]) {
+		> .c-color-picker-hue {
 			width: 40px;
 
 			> div {
 				width: 48px;
 			}
 		}
-		> .color-picker-opacity {
+		> .c-color-picker-opacity {
 			display: none;
 		}
 	}
 }
 
-.color-picker-selected-color {
+.c-color-picker-selected-color {
 	min-width: 48px;
 	max-width: 48px;
 	min-height: 48px;
 	max-height: 48px;
 	border-radius: 8px;
 	margin-bottom: 8px;
-	box-shadow: var(--elevation1);
+	box-shadow: var(--g-elevation1);
 
-	&[data-hide-color] {
+	&[data-c-hide-color] {
 		margin: 0 8px 0 0;
 	}
 	:root[data-corner=sharp] & {

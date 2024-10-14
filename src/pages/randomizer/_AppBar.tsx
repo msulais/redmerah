@@ -550,7 +550,7 @@ const _: Component<{
 			trailing={<>
 				<Button
 					classList={addClassListModule(CSSAnimation.btn_rotate_full_icon, CSS.appbar_generate_btn)}
-					data-keep-pointer-event={toggleAttribute(props[_isGenerating])}
+					data-g-keep-pointer-event={toggleAttribute(props[_isGenerating])}
 					variant={ButtonVariant[_filled]}
 					onClick={(ev) => {
 						if (props[_isGenerating]) return props[_command](Commands[_stopGenerate])

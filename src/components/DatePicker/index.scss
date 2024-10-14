@@ -1,5 +1,5 @@
-.modal.date-picker {
-	box-shadow: var(--elevation1);
+.c-modal.c-date-picker {
+	box-shadow: var(--g-elevation1);
 	min-width: 320px;
 	max-width: 320px;
 
@@ -11,18 +11,18 @@
 	}
 }
 
-.date-picker-days {
+.c-date-picker-days {
 	display: grid;
 	grid-template-columns: repeat(7, 1fr);
 	gap: 1px;
 	padding: 0 12px 12px 12px;
 
-	> .btn.square-btn {
+	> .c-btn.c-square-btn {
 		max-width: 100%;
 	}
 }
 
-.date-picker-days-name {
+.c-date-picker-days-name {
 	display: grid;
 	grid-template-columns: repeat(7, 1fr);
 	gap: 1px;
@@ -40,27 +40,27 @@
 		min-width: 40px;
 		max-width: 100%;
 		text-align: center;
-		font-size: var(--font-size-xs);
-		color: rgb(var(--color-accent));
+		font-size: var(--g-font-size-xs);
+		color: rgb(var(--g-color-accent));
 
 		:root[data-platform=desktop] & { min-width: 36px }
 		:root[data-platform=mobile] & { font-weight: 500 }
 	}
 }
 
-.date-picker-header {
+.c-date-picker-header {
 	display: flex;
 	align-items: center;
 	gap: 1px;
 	padding: 12px;
 
-	> .btn:first-child {
+	> .c-btn:first-child {
 		flex: 1;
 		justify-content: flex-start;
 	}
 }
 
-.date-picker-month {
+.c-date-picker-month {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
 	gap: 1px;
@@ -68,7 +68,7 @@
 	height: 100%;
 }
 
-.date-picker-year {
+.c-date-picker-year {
 	display: grid;
 	grid-template-columns: repeat(4, 1fr);
 	gap: 1px;

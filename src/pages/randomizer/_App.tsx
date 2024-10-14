@@ -1428,7 +1428,7 @@ const _: VoidComponent = () => {
 			/>}
 			floatingActionButton={<FloatingActionButton
 				classList={addClassListModule(CSSAnimation.btn_rotate_full_icon, CSS.app_fab)}
-				data-keep-pointer-event={toggleAttribute(isGenerating())}
+				data-g-keep-pointer-event={toggleAttribute(isGenerating())}
 				variant={ButtonVariant[_filled]}
 				onClick={() => {
 					if (isGenerating()) return command(Commands[_stopGenerate])

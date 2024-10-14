@@ -1,11 +1,11 @@
 $side_navigation_none: 680px;
 
-.app :global(.app-body) {
+.app :global(.c-app-body) {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	background-color: rgb(var(--color-surface));
-	border: 1px solid rgba(var(--color-on-surface), var(--opacity1));
+	background-color: rgb(var(--g-color-surface));
+	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity1));
 	border-bottom: none;
 	border-right: none;
 	border-radius: 16px 0 0 0;
@@ -30,11 +30,11 @@ $side_navigation_none: 680px;
 	}
 
 	> h1 {
-		font-size: var(--font-size-xxd);
+		font-size: var(--g-font-size-xxd);
 		margin-bottom: 8px;
 
 		@media (max-width: 500px) {
-			font-size: var(--font-size-l);
+			font-size: var(--g-font-size-l);
 		}
 	}
 
@@ -46,9 +46,9 @@ $side_navigation_none: 680px;
 .body_playground {
 	padding: 16px;
 	margin-top: 32px;
-	border: 1px solid rgba(var(--color-on-surface), var(--opacity-border));
+	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity-border));
 	border-radius: 8px;
-	background-color: rgb(var(--color-background));
+	background-color: rgb(var(--g-color-background));
 	display: flex;
 	flex-wrap: wrap;
 	gap: 8px;

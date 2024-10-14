@@ -18,11 +18,11 @@ import { closePopover, openPopover, Popover, type PopoverProps } from "@/compone
 import './index.scss'
 
 enum TooltipAttributes {
-	open = 'data-open',
-	openDone = 'data-open-done',
+	open = 'data-c-open',
+	openDone = 'data-c-open-done',
 }
 
-const TEXT_TOOLTIP_ID = 'text-tooltip'
+const TEXT_TOOLTIP_ID = 'c-text-tooltip'
 
 type TooltipOpenDetail = {
 	event: Event
@@ -66,7 +66,7 @@ function initTooltip(): void {
 		let left = 0, top = 0, right = 0, bottom = 0
 		let isInitiated = false
 		for (const child of anchor[_children]) {
-			if (child[_classList][_contains]('rich-tooltip')) continue;
+			if (child[_classList][_contains]('c-rich-tooltip')) continue;
 
 			const rect = getBoundingClientRect(child)
 			if (!isInitiated) {
@@ -368,7 +368,7 @@ const TextTooltip: FlowComponent<TextTooltipProps> = (props) => {
 	})
 
 	return (<div
-		class="tooltip"
+		class="c-tooltip"
 		ref={r => div_ref = r}
 		onMouseOver={ev => openTextTooltip(ev)}
 		onTouchStart={ev => openTextTooltip(ev)}
@@ -437,7 +437,7 @@ const RichTooltip: FlowComponent<RichTooltipProps> = ($props) => {
 	})
 
 	return (<div
-		class="tooltip"
+		class="c-tooltip"
 		ref={r => div_ref = r}
 		onMouseOver={ev => openRichTooltip(ev)}
 		onTouchStart={ev => openRichTooltip(ev)}
@@ -471,7 +471,7 @@ const RichTooltip: FlowComponent<RichTooltipProps> = ($props) => {
 			}}
 			ref={mergeRefs(props[_ref], r => tooltip_ref = r)}
 			classList={{
-				'rich-tooltip': true,
+				'c-rich-tooltip': true,
 				...props[_classList]
 			}}
 			{...other}>

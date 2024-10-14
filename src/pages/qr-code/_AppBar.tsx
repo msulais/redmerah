@@ -313,7 +313,7 @@ const _: VoidComponent<{
 						style={{
 							color: props[_settings][_color],
 							"border-radius": '999px',
-							border: '1px solid rgba(var(--color-on-surface), var(--opacity-border))'
+							border: '1px solid rgba(var(--g-color-on-surface), var(--g-opacity-border))'
 						}}
 						code={0xE408}
 					/>}
@@ -332,7 +332,7 @@ const _: VoidComponent<{
 						style={{
 							color: props[_settings][_backgroundColor],
 							"border-radius": '999px',
-							border: '1px solid rgba(var(--color-on-surface), var(--opacity-border))'
+							border: '1px solid rgba(var(--g-color-on-surface), var(--g-opacity-border))'
 						}}
 						code={0xE408}
 					/>}

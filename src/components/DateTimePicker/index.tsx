@@ -99,10 +99,10 @@ const DateTimePicker: VoidComponent<DateTimePickerProps> = ($props) => {
 	})
 
 	const DaysDate: VoidComponent = () => (<div style="display: contents">
-		<div class="datetime-picker-days-name">
+		<div class="c-datetime-picker-days-name">
 			<For each={getWeekdayNames(props[_locales])}>{d => <p>{d[_substring](0, 2)}</p>}</For>
 		</div>
-		<div class="datetime-picker-days">
+		<div class="c-datetime-picker-days">
 			<For each={Array(startDay())[_fill](0)}>{_v => <div/>}</For>
 			<For each={Array(daysPerMonth())[_fill](0)}>{(_v, i) => {
 				const date = createMemo(() => new Date(getDate_Y(viewDate()), getDate_M(viewDate()), i() + 1))
@@ -127,7 +127,7 @@ const DateTimePicker: VoidComponent<DateTimePickerProps> = ($props) => {
 		</div>
 	</div>)
 
-	const MonthsDate: VoidComponent = () => (<div class="datetime-picker-month">
+	const MonthsDate: VoidComponent = () => (<div class="c-datetime-picker-month">
 		<For each={getMonthNames(props[_locales])}>{(m, i) => {
 			const date = createMemo(() => new Date(getDate_Y(viewDate()), i()))
 			return (<Button
@@ -146,7 +146,7 @@ const DateTimePicker: VoidComponent<DateTimePickerProps> = ($props) => {
 		}}</For>
 	</div>)
 
-	const YearsDate: VoidComponent = () => (<div class="datetime-picker-year">
+	const YearsDate: VoidComponent = () => (<div class="c-datetime-picker-year">
 		<For each={Array(16)[_fill](0)}>{(_v, i) => {
 			const date = createMemo(() => new Date(getDate_Y(viewDate()) + i(), 0))
 			return (<Button
@@ -170,7 +170,7 @@ const DateTimePicker: VoidComponent<DateTimePickerProps> = ($props) => {
 	return (<Modal
 		ref={mergeRefs(props[_ref], r => dateTimePicker_ref = r)}
 		classList={{
-			'datetime-picker': true,
+			'c-datetime-picker': true,
 			...props[_classList]
 		}}
 		onClose={(ev) => {
@@ -178,7 +178,7 @@ const DateTimePicker: VoidComponent<DateTimePickerProps> = ($props) => {
 			callEventHandler(ev, props[_onClose])
 		}}
 		{...other}>
-		<div class="datetime-picker-header">
+		<div class="c-datetime-picker-header">
 			<Button
 				onClick={() => setDateOption(d => {
 					if (d == DatePickerOption[_month]) return DatePickerOption[_year]
@@ -222,7 +222,7 @@ const DateTimePicker: VoidComponent<DateTimePickerProps> = ($props) => {
 				<Match when={dateOption() == DatePickerOption[_year]}><YearsDate/></Match>
 			</Switch>
 		</Transition>
-		<div class="datetime-picker-time">
+		<div class="c-datetime-picker-time">
 			<Dropdown
 				labelText="Hour"
 				selectedValues={[
@@ -273,7 +273,7 @@ const DateTimePicker: VoidComponent<DateTimePickerProps> = ($props) => {
 			/>
 		</div>
 		{props[_children]}
-		<div class="datetime-picker-actions">
+		<div class="c-datetime-picker-actions">
 			<Button variant={ButtonVariant[_tonal]} onClick={() => closeModal(dateTimePicker_ref)}>Cancel</Button>
 			<Button
 				variant={ButtonVariant[_filled]}

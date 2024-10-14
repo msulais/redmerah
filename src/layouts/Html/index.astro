@@ -42,7 +42,7 @@ const colorToCSS = (hex: HEXColor) => {
 		<meta name="theme-color" content={ accentColor } />
 		<meta name="description" content={ description }>
 		<title>{ title }</title>
-		<style id={ElementIds.color_accent} set:html={`:root{--color-accent-light: ${colorToCSS(colors.color)};--color-accent-dark: ${colorToCSS(colors.colorDark)};--color-on-accent-light: ${colorToCSS(colors.onColor)};--color-on-accent-dark: ${colorToCSS(colors.onColorDark)};}`}/>
+		<style id={ElementIds.color_accent} set:html={`:root{--g-color-accent-light: ${colorToCSS(colors.color)};--g-color-accent-dark: ${colorToCSS(colors.colorDark)};--g-color-on-accent-light: ${colorToCSS(colors.onColor)};--g-color-on-accent-dark: ${colorToCSS(colors.onColorDark)};}`}/>
 		<slot name="favicon">
 			<link rel="shortcut icon" type="image/ico" href="/favicon/favicon.ico" />
 			<link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">

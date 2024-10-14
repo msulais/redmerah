@@ -3,7 +3,7 @@
 	src: url("/fonts/NotoColorEmoji-Regular.ttf") format("truetype");
 }
 
-.emoji {
+.c-emoji {
 	display: block;
 	font-family: "Noto Color Emoji", sans-serif;
 	font-size: 20px;
@@ -12,7 +12,7 @@
 	font-weight: normal !important;
 	text-transform: none;
 
-	&[data-inline] {
+	&[data-c-inline] {
 		display: inline-block;
 	}
 

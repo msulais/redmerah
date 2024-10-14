@@ -18,15 +18,15 @@ const List: ParentComponent<ListProps> = ($props) => {
 	const trailingComponent = children(() => props[_trailing])
 
 	return (<div
-		class={`list${props[_class]? ` ${props[_class]}` : ''}`}
-		data-trailing={toggleAttribute(trailingComponent())}
+		class={`c-list${props[_class]? ` ${props[_class]}` : ''}`}
+		data-c-trailing={toggleAttribute(trailingComponent())}
 		{...other}>
-		<div class='list-leading'>{props[_leading]}</div>
-		<div class='list-content'>
-			<div class='list-title'>{props[_children]}</div>
-			<div class='list-subtitle'>{props[_subtitle]}</div>
+		<div class='c-list-leading'>{props[_leading]}</div>
+		<div class='c-list-content'>
+			<div class='c-list-title'>{props[_children]}</div>
+			<div class='c-list-subtitle'>{props[_subtitle]}</div>
 		</div>
-		<div class='list-trailing'>{trailingComponent()}</div>
+		<div class='c-list-trailing'>{trailingComponent()}</div>
 	</div>)
 }
 
@@ -42,15 +42,15 @@ const RawList: ParentComponent<RawListProps> = ($props) => {
 	const trailingComponent = children(() => props[_trailing])
 
 	return (<Dynamic
-		class={`list${props[_class]? ` ${props[_class]}` : ''}`}
-		data-trailing={toggleAttribute(trailingComponent())}
+		class={`c-list${props[_class]? ` ${props[_class]}` : ''}`}
+		data-c-trailing={toggleAttribute(trailingComponent())}
 		{...other}>
-		<div class='list-leading'>{props[_leading]}</div>
-		<div class='list-content'>
-			<div class='list-title'>{props[_children]}</div>
-			<div class='list-subtitle'>{props[_subtitle]}</div>
+		<div class='c-list-leading'>{props[_leading]}</div>
+		<div class='c-list-content'>
+			<div class='c-list-title'>{props[_children]}</div>
+			<div class='c-list-subtitle'>{props[_subtitle]}</div>
 		</div>
-		<div class='list-trailing'>{trailingComponent()}</div>
+		<div class='c-list-trailing'>{trailingComponent()}</div>
 	</Dynamic>)
 }
 

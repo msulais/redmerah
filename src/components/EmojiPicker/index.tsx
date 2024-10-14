@@ -130,8 +130,8 @@ const EmojiPicker: ParentComponent<EmojiPickerProps> = ($props) => {
 	</TextTooltip>)
 
 	const Emojis: VoidComponent<{option: EmojiCategory, emojis: Emoji[]}> = $props => (<div
-		class='emoji-picker-emojis'
-		data-hidden={toggleAttribute($props[_option] != option())}>
+		class='c-emoji-picker-emojis'
+		data-c-hidden={toggleAttribute($props[_option] != option())}>
 		<div>
 			<h3>{$props[_option]}</h3>
 			<For each={$props[_emojis]}>{e =>
@@ -152,12 +152,12 @@ const EmojiPicker: ParentComponent<EmojiPickerProps> = ($props) => {
 
 	return (<Modal
 		classList={{
-			'emoji-picker': true,
+			'c-emoji-picker': true,
 			...props[_classList]
 		}}
 		ref={mergeRefs(props[_ref], r => emojiPicker_ref = r)}
 		{...other}>
-		<div class="emoji-picker-tabs">
+		<div class="c-emoji-picker-tabs">
 			<Tab iconCode={0xE8DE} option={EmojiCategory[_recents]}/>
 			<Tab iconCode={0xE745} option={EmojiCategory[_smileyAndEmotion]}/>
 			<Tab iconCode={0xEBF8} option={EmojiCategory[_personAndBody]}/>
@@ -178,7 +178,7 @@ const EmojiPicker: ParentComponent<EmojiPickerProps> = ($props) => {
 			<Tab iconCode={0xEF77} option={EmojiCategory[_symbols]}/>
 			<Tab iconCode={0xE7AB} option={EmojiCategory[_flags]}/>
 		</div>
-		<div class='emoji-picker-search'>
+		<div class='c-emoji-picker-search'>
 			<SearchTextField
 				placeholder='Search emoji'
 				onInput={(ev) => {

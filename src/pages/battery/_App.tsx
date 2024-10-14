@@ -109,7 +109,7 @@ const _: VoidComponent = () => {
 			Browser not supported. See <a
 				style={{
 					"text-decoration": 'underline',
-					color: 'rgb(var(--color-accent))'
+					color: 'rgb(var(--g-color-accent))'
 				}}
 				target={"_blank"}
 				rel={"noopener noreferrer"}

@@ -40,8 +40,8 @@ const ExpanderHeader: ParentComponent<ExpanderHeaderProps> = ($props) => {
 	const context = useContext(ExpanderContext)
 
 	return (<List
-		data-open={toggleAttribute(context?.[_isOpen]())}
-		data-variant={toggleAttribute(context?.[_variant](), context != null)}
+		data-c-open={toggleAttribute(context?.[_isOpen]())}
+		data-c-variant={toggleAttribute(context?.[_variant](), context != null)}
 		trailing={<>
 			{props[_trailing]}
 			<Show when={props[_useExpandIcon]}>
@@ -51,8 +51,8 @@ const ExpanderHeader: ParentComponent<ExpanderHeaderProps> = ($props) => {
 					<RawIconButton
 						component="div"
 						code={0xE3FC}
-						class="expander-icon"
-						data-open={toggleAttribute(context?.[_isOpen]())}
+						class="c-expander-icon"
+						data-c-open={toggleAttribute(context?.[_isOpen]())}
 					/>
 				</TextTooltip>
 			</Show>
@@ -73,8 +73,8 @@ const RawExpanderHeader: ParentComponent<RawExpanderHeaderProps> = ($props) => {
 	const context = useContext(ExpanderContext)
 
 	return (<RawList
-		data-open={toggleAttribute(context?.[_isOpen]())}
-		data-variant={toggleAttribute(context?.[_variant](), context != null)}
+		data-c-open={toggleAttribute(context?.[_isOpen]())}
+		data-c-variant={toggleAttribute(context?.[_variant](), context != null)}
 		trailing={<>
 			{props[_trailing]}
 			<Show when={props[_useExpandIcon]}>
@@ -84,8 +84,8 @@ const RawExpanderHeader: ParentComponent<RawExpanderHeaderProps> = ($props) => {
 					<RawIconButton
 						component="div"
 						code={0xE3FC}
-						class="expander-icon"
-						data-open={toggleAttribute(context?.[_isOpen]())}
+						class="c-expander-icon"
+						data-c-open={toggleAttribute(context?.[_isOpen]())}
 					/>
 				</TextTooltip>
 			</Show>
@@ -153,8 +153,8 @@ const Expander: ParentComponent<ExpanderProps> = ($props) => {
 
 	return (<details
 		ref={mergeRefs(props[_ref], r => expander_ref = r)}
-		class={`expander${props[_class]? ` ${props[_class]}` : ''}`}
-		data-variant={props[_variant]}
+		class={`c-expander${props[_class]? ` ${props[_class]}` : ''}`}
+		data-c-variant={props[_variant]}
 		onToggle={ev => {
 			setIsOpen(ev[_currentTarget][_open])
 			callEventHandler(ev, props[_onToggle])
@@ -167,9 +167,9 @@ const Expander: ParentComponent<ExpanderProps> = ($props) => {
 				variant: () => props[_variant]
 			}}>
 			<summary
-				class={`expander-header${headerProps[_class]? ` ${headerProps[_class]}` : ''}`}
+				class={`c-expander-header${headerProps[_class]? ` ${headerProps[_class]}` : ''}`}
 				onClick={(ev) => {
-					callEventHandler(ev, headerProps[_onClick])
+					if (callEventHandler(ev, headerProps[_onClick])) return
 					if (!isOpen()) return;
 
 					const el = ev[_currentTarget]
@@ -181,9 +181,9 @@ const Expander: ParentComponent<ExpanderProps> = ($props) => {
 				{props[_header]}
 			</summary>
 			<div
-				class={`expander-body${bodyProps[_class] ? ` ${bodyProps[_class]}` : ''}`}
-				data-variant={props[_variant]}
-				data-open={toggleAttribute(isOpen())}
+				class={`c-expander-body${bodyProps[_class] ? ` ${bodyProps[_class]}` : ''}`}
+				data-c-variant={props[_variant]}
+				data-c-open={toggleAttribute(isOpen())}
 				style={isString(bodyProps[_style])
 					? bodyProps[_style]
 					: {

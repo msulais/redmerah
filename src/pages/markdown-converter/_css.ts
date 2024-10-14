@@ -1,34 +1,34 @@
 export const defaultCSSText = `:root {
-	--color-background-light: 250, 250, 250;
-	--color-background-dark: 26, 26, 26;
-	--color-surface-light: 255, 255, 255;
-	--color-on-surface-light: 31, 31, 31;
-	--color-surface-dark: 31, 31, 31;
-	--color-on-surface-dark: 250, 250, 250;
-	--color-accent-light: 0, 97, 29;
-	--color-on-accent-light: 255, 255, 255;
-	--color-accent-dark: 0, 204, 61;
-	--color-on-accent-dark: 0, 0, 0;
-	--color-background: var(--color-background-light);
-	--color-accent: var(--color-accent-light);
-	--color-on-accent: var(--color-on-accent-light);
-	--color-surface: var(--color-surface-light);
-	--color-on-surface: var(--color-on-surface-light);
-	--font-family-sans-serif: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
-	--font-family-monospace: ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono", "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace", "Source Code Pro", "Fira Mono", "Droid Sans Mono", "Courier New", monospace ;
+	--g-color-background-light: 250, 250, 250;
+	--g-color-background-dark: 26, 26, 26;
+	--g-color-surface-light: 255, 255, 255;
+	--g-color-on-surface-light: 31, 31, 31;
+	--g-color-surface-dark: 31, 31, 31;
+	--g-color-on-surface-dark: 250, 250, 250;
+	--g-color-accent-light: 0, 97, 29;
+	--g-color-on-accent-light: 255, 255, 255;
+	--g-color-accent-dark: 0, 204, 61;
+	--g-color-on-accent-dark: 0, 0, 0;
+	--g-color-background: var(--g-color-background-light);
+	--g-color-accent: var(--g-color-accent-light);
+	--g-color-on-accent: var(--g-color-on-accent-light);
+	--g-color-surface: var(--g-color-surface-light);
+	--g-color-on-surface: var(--g-color-on-surface-light);
+	--g-font-family-sans-serif: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
+	--g-font-family-monospace: ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono", "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace", "Source Code Pro", "Fira Mono", "Droid Sans Mono", "Courier New", monospace ;
 
-	background-color: rgb(var(--color-background));
-	font-family: var(--font-family-sans-serif);
-	color: rgb(var(--color-on-surface));
+	background-color: rgb(var(--g-color-background));
+	font-family: var(--g-font-family-sans-serif);
+	color: rgb(var(--g-color-on-surface));
 }
 
 @media (prefers-color-scheme: dark) {
 	:root {
-		--color-background: var(--color-background-dark);
-		--color-accent: var(--color-accent-dark);
-		--color-on-accent: var(--color-on-accent-dark);
-		--color-surface: var(--color-surface-dark);
-		--color-on-surface: var(--color-on-surface-dark);
+		--g-color-background: var(--g-color-background-dark);
+		--g-color-accent: var(--g-color-accent-dark);
+		--g-color-on-accent: var(--g-color-on-accent-dark);
+		--g-color-surface: var(--g-color-surface-dark);
+		--g-color-on-surface: var(--g-color-on-surface-dark);
 
 		color-scheme: dark;
 	}
@@ -68,7 +68,7 @@ body > :not(:first-child) {
 }
 
 code {
-	font-family: var(--font-family-monospace);
+	font-family: var(--g-font-family-monospace);
 }
 
 img {
@@ -134,13 +134,13 @@ ul, ol {
 code {
 	padding: 0 .2em;
 	border-radius: .2em;
-	background-color: rgba(var(--color-on-surface), .04);
-	border: 1px solid rgba(var(--color-on-surface), .04);
+	background-color: rgba(var(--g-color-on-surface), .04);
+	border: 1px solid rgba(var(--g-color-on-surface), .04);
 }
 
 pre {
-	background-color: rgba(var(--color-on-surface), .04);
-	border: 1px solid rgba(var(--color-on-surface), .04);
+	background-color: rgba(var(--g-color-on-surface), .04);
+	border: 1px solid rgba(var(--g-color-on-surface), .04);
 	padding: 8px 12px;
 	border-radius: 4px;
 	overflow: auto;
@@ -153,11 +153,11 @@ pre code {
 }
 
 a {
-	--border-color: rgba(var(--color-accent), .08);
+	--border-color: rgba(var(--g-color-accent), .08);
 
 	text-decoration: underline;
 	border: 1px solid transparent;
-	color: rgb(var(--color-accent));
+	color: rgb(var(--g-color-accent));
 	transition: all .2s;
 	padding: 0 .2em;
 	border-radius: .2em;
@@ -165,18 +165,18 @@ a {
 
 @media (hover: hover) {
 	a:hover {
-		background-color: rgba(var(--color-accent), .12);
+		background-color: rgba(var(--g-color-accent), .12);
 		border-color: var(--border-color);
 	}
 }
 
 a:active {
 	border-color: var(--border-color);
-	background-color: rgba(var(--color-accent), .04);
+	background-color: rgba(var(--g-color-accent), .04);
 }
 
 blockquote {
-	border: 1px solid rgb(var(--color-accent));
+	border: 1px solid rgb(var(--g-color-accent));
 	border-left-width: 4px;
 	padding: 8px;
 	border-radius: 4px;
@@ -198,12 +198,12 @@ blockquote blockquote::after {
 }
 
 hr {
-	border-color: rgba(var(--color-on-surface), .32);
+	border-color: rgba(var(--g-color-on-surface), .32);
 	border-style: dashed;
 }
 
 table {
-	--border-color: rgba(var(--color-on-surface), .32);
+	--border-color: rgba(var(--g-color-on-surface), .32);
 
 	border: 1px solid var(--border-color);
 	border-collapse: separate;
@@ -214,7 +214,7 @@ table {
 }
 
 th {
-	background-color: rgba(var(--color-on-surface), .04);
+	background-color: rgba(var(--g-color-on-surface), .04);
 	border: none;
 	padding: 8px 12px;
 	text-align: start;

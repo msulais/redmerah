@@ -21,15 +21,15 @@ const App: ParentComponent<AppProps> = ($props) => {
 		_appBar, _leftSideBar, _children, _rightSideBar,
 		_bottomBar, _floatingActionButton, _class
 	])
-	return (<div class={`app${props[_class]? ` ${props[_class]}` : ''}`} {...other}>
-		<div class="app-appbar">{props[_appBar]}</div>
-		<div class="app-container">
-			<div class="app-left-sidebar">{props[_leftSideBar]}</div>
-			<div class="app-body">{props[_children]}</div>
-			<div class="app-right-sidebar">{props[_rightSideBar]}</div>
+	return (<div class={`c-app${props[_class]? ` ${props[_class]}` : ''}`} {...other}>
+		<div class="c-app-appbar">{props[_appBar]}</div>
+		<div class="c-app-container">
+			<div class="c-app-left-sidebar">{props[_leftSideBar]}</div>
+			<div class="c-app-body">{props[_children]}</div>
+			<div class="c-app-right-sidebar">{props[_rightSideBar]}</div>
 		</div>
-		<div class="app-bottombar">{props[_bottomBar]}</div>
-		<div class="app-fab">{props[_floatingActionButton]}</div>
+		<div class="c-app-bottombar">{props[_bottomBar]}</div>
+		<div class="c-app-fab">{props[_floatingActionButton]}</div>
 	</div>)
 }
 

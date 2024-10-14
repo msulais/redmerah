@@ -42,10 +42,10 @@ function changeTextFieldValue(el: HTMLInputElement, value: string): void {
  *
  * ```ts
  * // don't => (not trigger 'input' event)
- * areatextfield_ref.value = 'new value'
+ * area-textfield_ref.value = 'new value'
  *
  * // do => (trigger 'input' event)
- * changeAreaTextFieldValue(areatextfield_ref, 'new value')
+ * changeAreaTextFieldValue(area-textfield_ref, 'new value')
  * ```
  */
 function changeAreaTextFieldValue(el: HTMLTextAreaElement, value: string): void {
@@ -60,7 +60,7 @@ const TextFieldButton: ParentComponent<TextFieldButtonProps> = ($props) => {
 	return (<Button
 		compact={props[_compact]}
 		classList={{
-			'textfield-btn': true,
+			'c-textfield-btn': true,
 			...props[_classList]
 		}}
 		{...other}
@@ -109,18 +109,18 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 	})
 
 	return (<div
-		class={`areatextfield${wrapperProps[_class]? ` ${wrapperProps[_class]}` : ''}`}
+		class={`c-area-textfield${wrapperProps[_class]? ` ${wrapperProps[_class]}` : ''}`}
 		{...wrapperPropsOther}>
 		<div
-			data-focused={toggleAttribute(props[_focused] ?? isFocus())}
-			data-invalid={toggleAttribute(isInvalid())}
-			data-disabled={toggleAttribute(props[_disabled])}
-			data-trailing={toggleAttribute(trailingComponents() || (props[_autoShowClearBtn] && value()[_length] > 0))}
-			data-compact={toggleAttribute(props[_compact])}
-			data-readonly={toggleAttribute(props[_readOnly])}
+			data-c-focused={toggleAttribute(props[_focused] ?? isFocus())}
+			data-c-invalid={toggleAttribute(isInvalid())}
+			data-c-disabled={toggleAttribute(props[_disabled])}
+			data-c-trailing={toggleAttribute(trailingComponents() || (props[_autoShowClearBtn] && value()[_length] > 0))}
+			data-c-compact={toggleAttribute(props[_compact])}
+			data-c-readonly={toggleAttribute(props[_readOnly])}
 			onClick={() => areaTextField_ref[_focus]()}>
-			<div class='areatextfield-label-text'>{props[_autoHideLabel] && value()[_length] == 0 && !props[_placeholder]? '' : props[_labelText]}</div>
-			<div class='areatextfield-leading' onClick={ev => stopPropagation(ev)}>{props[_leading]}</div>
+			<div class='c-area-textfield-label-text'>{props[_autoHideLabel] && value()[_length] == 0 && !props[_placeholder]? '' : props[_labelText]}</div>
+			<div class='c-area-textfield-leading' onClick={ev => stopPropagation(ev)}>{props[_leading]}</div>
 			<textarea
 				id={props[_id]}
 				ref={mergeRefs(props[_ref], r => areaTextField_ref = r)}
@@ -155,7 +155,7 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 				}}
 				placeholder={props[_placeholder] ?? (props[_autoHideLabel] && props[_labelText]? `${props[_labelText]}` : undefined)}
 				{...other}></textarea>
-			<div class='areatextfield-trailing' onClick={ev => stopPropagation(ev)}>
+			<div class='c-area-textfield-trailing' onClick={ev => stopPropagation(ev)}>
 				{trailingComponents()}
 				<Show when={props[_autoShowClearBtn] && value()[_length] > 0}>
 					<TextTooltip text={props[_clearTooltip] ?? 'Clear'}>
@@ -168,7 +168,7 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 				</Show>
 			</div>
 		</div>
-		<div class='areatextfield-message-text'>{props[_messageText]}</div>
+		<div class='c-area-textfield-message-text'>{props[_messageText]}</div>
 	</div>)
 }
 
@@ -209,23 +209,23 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 	})
 
 	return (<div
-		class={`textfield${wrapperProps[_class] != null ? ` ${wrapperProps[_class]}` : ''}`}
+		class={`c-textfield${wrapperProps[_class] != null ? ` ${wrapperProps[_class]}` : ''}`}
 		{...wrapperPropsOther}>
 		<div
-			data-focused={toggleAttribute(props[_focused] ?? isFocus())}
-			data-invalid={toggleAttribute(isInvalid())}
-			data-compact={toggleAttribute(props[_compact])}
-			data-disabled={toggleAttribute(props[_disabled])}
-			data-trailing={toggleAttribute(trailingComponents() || (props[_autoShowClearBtn] && value()[_length] > 0))}
-			data-readonly={toggleAttribute(props[_readOnly])}
+			data-c-focused={toggleAttribute(props[_focused] ?? isFocus())}
+			data-c-invalid={toggleAttribute(isInvalid())}
+			data-c-compact={toggleAttribute(props[_compact])}
+			data-c-disabled={toggleAttribute(props[_disabled])}
+			data-c-trailing={toggleAttribute(trailingComponents() || (props[_autoShowClearBtn] && value()[_length] > 0))}
+			data-c-readonly={toggleAttribute(props[_readOnly])}
 			onClick={() => textfield_ref[_focus]()}>
-			<div class='textfield-label-text'>
+			<div class='c-textfield-label-text'>
 				{ props[_autoHideLabel] && value()[_length] == 0 && !props[_placeholder]
 					? ''
 					: props[_labelText]
 				}
 			</div>
-			<div class='textfield-leading' onClick={ev => stopPropagation(ev)}>{props[_leading]}</div>
+			<div class='c-textfield-leading' onClick={ev => stopPropagation(ev)}>{props[_leading]}</div>
 			<input
 				id={props[_id]}
 				ref={mergeRefs(props[_ref], r => textfield_ref = r)}
@@ -258,7 +258,7 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 				placeholder={props[_placeholder] ?? (props[_autoHideLabel] && props[_labelText]? `${props[_labelText]}` : undefined)}
 				{...other}
 			/>
-			<div class='textfield-trailing' onClick={ev => stopPropagation(ev)}>
+			<div class='c-textfield-trailing' onClick={ev => stopPropagation(ev)}>
 				{trailingComponents()}
 				<Show when={props[_autoShowClearBtn] && value()[_length] > 0}>
 					<TextTooltip text={props[_clearTooltip] ?? 'Clear'}>
@@ -270,7 +270,7 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 				</Show>
 			</div>
 		</div>
-		<div class='textfield-message-text'>{props[_messageText]}</div>
+		<div class='c-textfield-message-text'>{props[_messageText]}</div>
 	</div>)
 }
 
@@ -390,7 +390,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 			value={value()}
 			wrapperAttr={{
 				classList: {
-					'number-textfield': true,
+					'c-number-textfield': true,
 					...wrapperProps[_classList]
 				},
 				...wrapperPropsOther
@@ -434,7 +434,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 		<Modal
 			ref={mergeRefs(actionsProps[_ref], r => modal_actions_ref = r)}
 			classList={{
-				'number-textfield-actions': true,
+				'c-number-textfield-actions': true,
 				...actionsProps[_classList]
 			}}
 			onToggleOpen={(isOpen) => {
@@ -568,7 +568,7 @@ const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
 			wrapperAttr={{
 				ref: mergeRefs(wrapperProps[_ref], r => wrapper_ref = r),
 				classList: {
-					'search-textfield': true,
+					'c-search-textfield': true,
 					...wrapperProps[_classList]
 				},
 				...wrapperPropsOther
@@ -589,7 +589,7 @@ const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
 			}}
 			ref={mergeRefs(menuProps[_ref], r => menu_ref = r)}
 			classList={{
-				'search-textfield-menu': true,
+				'c-search-textfield-menu': true,
 				...menuProps[_classList]
 			}}
 			style={{

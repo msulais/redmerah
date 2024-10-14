@@ -1,7 +1,7 @@
-:is(.modal,.popover).menu {
-	box-shadow: var(--elevation1);
+:is(.c-modal,.c-popover).c-menu {
+	box-shadow: var(--g-elevation1);
 
-	&[data-dragable] > div {
+	&[data-c-dragable] > div {
 		padding-top: 12px;
 	}
 
@@ -19,7 +19,7 @@
 	}
 }
 
-.menu-header {
+.c-menu-header {
 	padding: 0 8px;
 	margin: 0 4px;
 	min-height: 24px;
@@ -28,54 +28,54 @@
 	flex-direction: column;
 	align-items: flex-start;
 	justify-content: center;
-	font-size: var(--font-size-s);
-	color: rgba(var(--color-on-surface), var(--opacity-inv2));
+	font-size: var(--g-font-size-s);
+	color: rgba(var(--g-color-on-surface), var(--g-opacity-inv2));
 }
 
-.menu-indent {
+.c-menu-indent {
 	min-width: 20px;
 	max-width: 20px;
 }
 
-.btn.menu-item {
-	--btn-padding: 0 8px;
+.c-btn.c-menu-item {
+	--c-btn-padding: 0 8px;
 	justify-content: flex-start;
 	margin: 0 4px;
 	width: calc(100% - 8px);
 
 	:root[data-platform=desktop] & { min-height: 32px }
 	:root[data-platform=mobile] & { min-height: 48px }
-	:root[data-platform=mobile][data-corner=full-round] & { --btn-border-radius: 24px }
+	:root[data-platform=mobile][data-corner=full-round] & { --c-btn-border-radius: 24px }
 
-	> .btn-layer {
+	> .c-btn-layer {
 		white-space: nowrap;
 	}
 
-	&[data-trailing] > .btn-layer {
+	&[data-c-trailing] > .c-btn-layer {
 		width: 100%;
 	}
 }
 
-.menu-item-trailing-shortcut {
+.c-menu-item-trailing-shortcut {
 	display: flex;
 	gap: 4px;
 	padding: 4px 0;
 }
 
-.popover.sub-menu {
+.c-popover.c-sub-menu {
 	width: 100%;
 
-	> .menu-item {
+	> .c-menu-item {
 		width: calc(100% - 8px);
 	}
 }
 
-.switch-menu-item{
+.c-switch-menu-item{
 	&:has( > div > :last-child > input:focus-visible) {
 		outline: auto;
 	}
 
-	&:not([data-disabled]){
+	&:not([data-c-disabled]){
 		@media (hover: hover) {
 			&:hover {
 				cursor: pointer;
@@ -85,9 +85,9 @@
 				}
 
 				> div > :last-child {
-					--switch-handle-size: calc(var(--switch-height) - 6px);
+					--c-switch-handle-size: calc(var(--c-switch-height) - 6px);
 
-					&[data-checked] > div {
+					&[data-c-checked] > div {
 						transform: translate(2px, -2px);
 					}
 
@@ -95,7 +95,7 @@
 						transform: translate(-2px, -2px);
 
 						:root:not([data-corner=sharp]) & {
-							border-radius: max(0px, var(--switch-border-radius) - 2px);
+							border-radius: max(0px, var(--c-switch-border-radius) - 2px);
 						}
 					}
 				}
@@ -104,7 +104,7 @@
 
 		&:active > div > :last-child {
 			@media (hover: hover) {
-				--switch-handle-size: calc(var(--switch-height) - 10px);
+				--c-switch-handle-size: calc(var(--c-switch-height) - 10px);
 
 				> div {
 					transform: none !important;
@@ -112,9 +112,9 @@
 			}
 
 			@media (hover: none) {
-				--switch-handle-size: calc(var(--switch-height) - 6px);
+				--c-switch-handle-size: calc(var(--c-switch-height) - 6px);
 
-				&[data-checked] > div {
+				&[data-c-checked] > div {
 					transform: translate(2px, -2px);
 				}
 
@@ -122,7 +122,7 @@
 					transform: translate(-2px, -2px);
 
 					:root:not([data-corner=sharp]) & {
-						border-radius: max(0px, var(--switch-border-radius) - 2px);
+						border-radius: max(0px, var(--c-switch-border-radius) - 2px);
 					}
 				}
 			}

@@ -367,7 +367,7 @@ const TaskItem: VoidComponent<{
 											props[_task][_reminder]!,
 											getCurrentDate(),
 											new Date(getDate_Y() + 100, 2, 2)
-										)? 'rgb(var(--color-error))' : undefined
+										)? 'rgb(var(--g-color-error))' : undefined
 									}}
 									onContextMenu={ev => {
 										stopPropagation(ev)
@@ -429,7 +429,10 @@ const TaskItem: VoidComponent<{
 			{props[_task][_name]}
 		</ExpanderHeader>}
 		headerAttr={{
-			onClick: ev => props[_onEdit](ev),
+			onClick: ev => {
+				props[_onEdit](ev)
+				preventDefault(ev)
+			},
 			onContextMenu: ev => {
 				preventDefault(ev)
 				props[_onContextMenu](ev)
@@ -1285,7 +1288,7 @@ const _: VoidComponent<{
 								selectedTaskToEdit[_task][_reminder]!,
 								getCurrentDate(),
 								new Date(getDate_Y() + 100, 2, 2)
-							)? 'rgb(var(--color-error))' : undefined
+							)? 'rgb(var(--g-color-error))' : undefined
 						}}>{getDateString_YMD_HM(selectedTaskToEdit[_task][_reminder]!)}</span>
 					</List>
 				</Show>
@@ -1345,7 +1348,7 @@ const _: VoidComponent<{
 						selectedTaskToEdit[_taskListIndex],
 						selectedTaskToEdit[_taskIndex]
 					)}
-					style={{color: 'rgb(var(--color-error))'}}>
+					style={{color: 'rgb(var(--g-color-error))'}}>
 					<Icon code={0xE59D}/>
 					Delete task
 				</Button>
@@ -1377,9 +1380,9 @@ const _: VoidComponent<{
 					Delete
 				</Button>
 			</>}>
-			Are you sure want to delete <q><span style={{color: 'rgb(var(--color-accent))', "font-weight": 'bold'}}>{(selectedTaskToDelete[_task][_name]) || ''}</span></q> task?
+			Are you sure want to delete <q><span style={{color: 'rgb(var(--g-color-accent))', "font-weight": 'bold'}}>{(selectedTaskToDelete[_task][_name]) || ''}</span></q> task?
 			<CheckBox
-				style={{"margin-top": '16px'}}
+				labelAttr={{style: "margin-top: 16px"}}
 				onChange={ev => props[_command](Commands.toggle_deleteTaskWarning, !ev[_currentTarget][_checked])}>
 				Don't remind me again
 			</CheckBox>

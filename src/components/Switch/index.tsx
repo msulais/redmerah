@@ -22,9 +22,9 @@ const Switch: VoidComponent<SwitchProps> = ($props) => {
 	})
 
 	return (<label
-		class={`switch${labelProps[_class]? ` ${labelProps[_class]}` : ''}`}
-		data-disabled={toggleAttribute(isDisabled())}
-		data-checked={toggleAttribute(isChecked())}
+		class={`c-switch${labelProps[_class]? ` ${labelProps[_class]}` : ''}`}
+		data-c-disabled={toggleAttribute(isDisabled())}
+		data-c-checked={toggleAttribute(isChecked())}
 		{...otherLabelProps}>
 		<input
 			type="checkbox"
@@ -55,9 +55,9 @@ const RawSwitch: VoidComponent<RawSwitchProps> = ($props) => {
 
 	return (<Dynamic
 		component={props[_component] ?? 'label'}
-		class={`switch${wrapperProps[_class] != null ? ` ${wrapperProps[_class]}` : ''}`}
-		data-disabled={toggleAttribute(isDisabled())}
-		data-checked={toggleAttribute(isChecked())}
+		class={`c-switch${wrapperProps[_class] != null ? ` ${wrapperProps[_class]}` : ''}`}
+		data-c-disabled={toggleAttribute(isDisabled())}
+		data-c-checked={toggleAttribute(isChecked())}
 		{...otherWrapperProps}>
 		<input
 			type="checkbox"

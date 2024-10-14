@@ -3,9 +3,9 @@
 
 	> p {
 		text-align: center;
-		color: rgb(var(--color-accent));
+		color: rgb(var(--g-color-accent));
 		font-weight: bold;
-		text-shadow: var(--elevation1);
+		text-shadow: var(--g-elevation1);
 	}
 
 	> div {
@@ -19,20 +19,20 @@
 
 	& a {
 		display: inline-block;
-		border-bottom: 2px solid rgb(var(--color-accent));
+		border-bottom: 2px solid rgb(var(--g-color-accent));
 		padding-top: 8px;
 		transition-duration: .3s;
 
 		@media (hover: hover) {
 			&:hover {
-				color: rgb(var(--color-accent));
+				color: rgb(var(--g-color-accent));
 				padding-top: 0;
 				padding-bottom: 8px;
 			}
 		}
 
 		&:active {
-			color: rgb(var(--color-accent));
+			color: rgb(var(--g-color-accent));
 			padding-top: 0;
 			padding-bottom: 8px;
 			border-bottom-style: dashed;

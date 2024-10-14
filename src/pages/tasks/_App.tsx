@@ -1640,7 +1640,7 @@ const _: VoidComponent = () => {
 				</Button>
 			</>}>
 			<Show when={taskLists[selectedTaskListIndexToDelete()]}>
-				<>Are you sure want to delete <q style={{"font-weight": _bold, color: 'rgb(var(--color-accent))'}}>{taskLists[selectedTaskListIndexToDelete()][_name]}</q> list? </>
+				<>Are you sure want to delete <q style={{"font-weight": _bold, color: 'rgb(var(--g-color-accent))'}}>{taskLists[selectedTaskListIndexToDelete()][_name]}</q> list? </>
 				<>This list contains {taskLists[selectedTaskListIndexToDelete()][_tasks][_filter](v => !v[_complete])[_length]} uncompleted tasks </>
 				<>and {taskLists[selectedTaskListIndexToDelete()][_tasks][_filter](v => v[_complete])[_length]} completed tasks</>
 			</Show>

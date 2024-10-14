@@ -1,25 +1,25 @@
-.popover.toast {
-	box-shadow: var(--elevation3);
+.c-popover.c-toast {
+	box-shadow: var(--g-elevation3);
 	width: max-content;
 	max-width: min(500px, calc(100% - 16px));
 
-	> div > .list {
+	> div > .c-list {
 		padding: 12px;
 
-		> .list-content {
-			> .list-title {
-				font-size: var(--font-size-m);
+		> .c-list-content {
+			> .c-list-title {
+				font-size: var(--g-font-size-m);
 				font-weight: 500;
 			}
-			> .list-subtitle {
-				color: rgb(var(--color-on-surface));
-				font-size: var(--font-size-xs);
+			> .c-list-subtitle {
+				color: rgb(var(--g-color-on-surface));
+				font-size: var(--g-font-size-xs);
 			}
 		}
 	}
 }
 
-.toast-actions {
+.c-toast-actions {
 	display: flex;
 	width: 100%;
 	gap: 8px;
@@ -27,8 +27,8 @@
 	align-items: center;
 	justify-content: flex-end;
 	padding: 12px;
-	background-color: rgb(var(--color-background));
-	border-top: 1px solid rgba(var(--color-on-surface), var(--opacity2));
+	background-color: rgb(var(--g-color-background));
+	border-top: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity2));
 
 	&:empty {
 		display: none;

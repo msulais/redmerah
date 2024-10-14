@@ -7,11 +7,11 @@ $side_navigation_none: 680px;
 
 	&[data-search] {
 		@media (max-width: $side_navigation_none) {
-			> :is(:global(.appbar-leading), :global(.appbar-trailing)) {
+			> :is(:global(.c-appbar-leading), :global(.c-appbar-trailing)) {
 				display: none;
 			}
 
-			> :global(.appbar-headline) {
+			> :global(.c-appbar-headline) {
 				> h2 {
 					display: none;
 				}
@@ -32,14 +32,14 @@ $side_navigation_none: 680px;
 	width: 100%;
 	padding-left: 16px;
 
-	> :global(.textfield) {
+	> :global(.c-textfield) {
 		width: min(100%, 720px);
 
 		:root[data-platform=mobile] & > div:first-child {
 			min-height: 40px;
 		}
 
-		& :global(.btn.textfield-btn)[data-compact] {
+		& :global(.c-btn.c-textfield-btn)[data-c-compact] {
 			min-height: 32px;
 			min-width: none;
 		}
@@ -61,8 +61,8 @@ $side_navigation_none: 680px;
 	height: 100%;
 	max-width: 100%;
 	max-height: calc(100dvh - 56px);
-	background-color: rgb(var(--color-surface));
-	border: 1px solid rgba(var(--color-on-surface), var(--opacity1));
+	background-color: rgb(var(--g-color-surface));
+	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity1));
 	border-right: 0;
 	border-bottom: 0;
 	border-radius: 8px 0 0 0;
@@ -81,14 +81,14 @@ $side_navigation_none: 680px;
 	}
 }
 
-:global(.appbar).body_appbar {
+:global(.c-appbar).body_appbar {
 	padding-left: 12px;
 	padding-right: 4px;
 	width: 1080px;
 	max-width: calc(100% - 48px);
 	transition-duration: .3s;
 
-	> :global(.appbar-leading) > :global(.icon) {
+	> :global(.c-appbar-leading) > :global(.c-icon) {
 		width: 24px;
 		display: flex;
 		align-items: center;
@@ -97,42 +97,42 @@ $side_navigation_none: 680px;
 }
 
 .body_dialog_edit {
-	> div > :global(.dialog-content) {
-		> :is(:global(.btn), :global(.textfield), :global(.textareafield)) {
+	> div > :global(.c-dialog-content) {
+		> :is(:global(.c-textfield), :global(.c-area-textfield)) {
 			margin-bottom: 8px;
 		}
 
-		> div {
+		> div:not(:global(.c-textfield), :global(.c-area-textfield)) {
 			&:not(:last-child) {
 				margin-bottom: 4px;
 			}
 
-			> :global(.list) {
+			> :global(.c-list) {
 				padding-left: 12px;
 			}
 
-			& :global(.list-title) {
-				font-size: var(--font-size-xs);
+			& :global(.c-list-title) {
+				font-size: var(--g-font-size-xs);
 			}
 
 			&[data-subtasks] {
 				margin-top: 8px;
 
-				> :global(.list) {
+				> :global(.c-list) {
 					padding-left: 4px;
 					gap: 1px;
 				}
 
-				& :global(.list-leading) {
-					color: rgb(var(--color-accent));
+				& :global(.c-list-leading) {
+					color: rgb(var(--g-color-accent));
 				}
 			}
 
 
-			> :global(.btn) {
-				color: rgb(var(--color-accent));
+			> :global(.c-btn) {
+				color: rgb(var(--g-color-accent));
 
-				> :global(.btn-layer) {
+				> :global(.c-btn-layer) {
 					gap: 12px;
 				}
 			}
@@ -145,9 +145,9 @@ $side_navigation_none: 680px;
 	flex-direction: column;
 	align-items: center;
 
-	> :global(.icon) {
-		color: rgb(var(--color-accent));
-		font-size: var(--font-size-xxl) !important;
+	> :global(.c-icon) {
+		color: rgb(var(--g-color-accent));
+		font-size: var(--g-font-size-xxl) !important;
 		margin-bottom: 8px;
 	}
 
@@ -157,13 +157,13 @@ $side_navigation_none: 680px;
 }
 
 .body_file_list_item {
-	& :global(.list-title) {
-		color: rgb(var(--color-accent));
+	& :global(.c-list-title) {
+		color: rgb(var(--g-color-accent));
 		line-break: anywhere;
 	}
 
-	& :global(.list-subtitle) {
-		font-family: var(--font-family-monospace);
+	& :global(.c-list-subtitle) {
+		font-family: var(--g-font-family-monospace);
 		line-break: anywhere;
 	}
 }
@@ -202,10 +202,10 @@ $side_navigation_none: 680px;
 		height: calc(100dvh - 52px);
 	}
 
-	> :global(.appbar).body_appbar {
+	> :global(.c-appbar).body_appbar {
 		position: sticky;
 		top: 0;
-		background-color: rgb(var(--color-surface));
+		background-color: rgb(var(--g-color-surface));
 		z-index: 9;
 
 		@media (max-width: 500px) {
@@ -213,7 +213,7 @@ $side_navigation_none: 680px;
 		}
 	}
 
-	> :global(.appbar):not(.body_appbar) {
+	> :global(.c-appbar):not(.body_appbar) {
 		padding-left: 12px;
 		padding-right: 4px;
 		width: 1080px;
@@ -226,7 +226,7 @@ $side_navigation_none: 680px;
 	}
 }
 
-.body_task_item:global(.expander) {
+.body_task_item:global(.c-expander) {
 	width: 1080px;
 	max-width: calc(100% - 48px);
 	transition-duration: .3s;
@@ -235,11 +235,11 @@ $side_navigation_none: 680px;
 		max-width: calc(100% - 16px);
 	}
 
-	&[data-done] :global(.list-title) {
+	&[data-done] :global(.c-list-title) {
 		text-decoration: line-through;
 	}
 
-	> .expander-header :global(.list) {
+	> summary > :global(.c-list) {
 		gap: 4px;
 		padding: 4px;
 		border-radius: 12px;
@@ -253,20 +253,20 @@ $side_navigation_none: 680px;
 			border-bottom-right-radius: 0;
 		}
 
-		&:has( :global(.btn):hover) {
-			--bg-opacity: var(--opacity1);
+		&:has( :global(.c-btn):hover) {
+			--g-background-color-opacity: var(--g-opacity1);
 		}
 
-		&:has( :global(.btn):active) {
+		&:has( :global(.c-btn):active) {
 			border-color: transparent;
 		}
 
-		> :global(.list-leading) {
-			color: rgb(var(--color-accent));
+		& :global(.c-list-leading) {
+			color: rgb(var(--g-color-accent));
 		}
 	}
 
-	> :global(.expander-body){
+	> :global(.c-expander-body){
 		border-radius: 0 0 12px 12px;
 
 		:root[data-corner=sharp] & {border-radius: 0}
@@ -289,18 +289,18 @@ $side_navigation_none: 680px;
 		display: none;
 	}
 
-	& :global(.btn) {
-		--btn-padding: 4px 8px;
+	& :global(.c-btn) {
+		--c-btn-padding: 4px 8px;
 
-		font-size: var(--font-size-s);
-		color: rgb(var(--color-on-surface));
-		min-height: 0;
+		font-size: var(--g-font-size-s);
+		color: rgb(var(--g-color-on-surface));
+		min-height: 0 !important;
 
-		> :global(.btn-layer) {
+		> :global(.c-btn-layer) {
 			gap: 4px;
 
-			> :global(.icon) {
-				color: rgb(var(--color-accent));
+			> :global(.c-icon) {
+				color: rgb(var(--g-color-accent));
 			}
 		}
 	}
@@ -330,10 +330,10 @@ $side_navigation_none: 680px;
 		height: calc(100dvh - 52px);
 	}
 
-	> :global(.appbar).body_appbar {
+	> :global(.c-appbar).body_appbar {
 		position: sticky;
 		top: 0;
-		background-color: rgb(var(--color-surface));
+		background-color: rgb(var(--g-color-surface));
 		z-index: 9;
 
 		@media (max-width: 500px) {
@@ -345,7 +345,7 @@ $side_navigation_none: 680px;
 		width: 100%;
 		max-width: 100%;
 		padding: 8px 24px 24px 24px;
-		background-color: rgba(var(--color-surface), var(--opacity-inv2));
+		background-color: rgba(var(--g-color-surface), var(--g-opacity-inv2));
 		-webkit-backdrop-filter: blur(24px);
 		backdrop-filter: blur(24px);
 		display: flex;
@@ -360,7 +360,7 @@ $side_navigation_none: 680px;
 			padding: 8px;
 		}
 
-		> :global(.textfield) {
+		> :global(.c-textfield) {
 			width: 1080px;
 			max-width: 100%;
 		}

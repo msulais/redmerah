@@ -41,7 +41,7 @@ type PopoverOpenDetail = {
 }
 
 enum PopoverAttributes {
-	manual = 'data-manual'
+	manual = 'data-c-manual'
 }
 
 enum PopoverEvents {
@@ -72,7 +72,7 @@ function initPopoverListener(): void {
 	if (hasAttribute(getDocumentBody(), BodyAttributes[_popoverListener])) return;
 	setAttribute(getDocumentBody(), BodyAttributes[_popoverListener])
 
-	const selector: string = 'div.popover:popover-open'
+	const selector: string = 'div.c-popover:popover-open'
 	const popovers: HTMLDivElement[] = []
 	let isNoPointerEvent: boolean = false
 	let timeoutId: number | null = null
@@ -116,8 +116,8 @@ function initPopoverListener(): void {
 	addEventListener(getDocument(), _click, async (ev: Event) => {
 
 		// Since 'click' still dispatch even when `<body>` has
-		// `[data-no-pointer-event]`, we have to disable it. This is useful
-		// if you have popover but `<body>` has `[data-no-pointer-event]`.
+		// `[data-g-no-pointer-event]`, we have to disable it. This is useful
+		// if you have popover but `<body>` has `[data-g-no-pointer-event]`.
 		// Or when you drag something, popover will not automatically closed.
 		if (isNoPointerEvent
 			|| popovers[_length] == 0
@@ -665,7 +665,7 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 	})
 
 	const C: VoidComponent = () => (<div
-		class={`popover${props[_class]? ` ${props[_class]}` : ''}`}
+		class={`c-popover${props[_class]? ` ${props[_class]}` : ''}`}
 		ref={mergeRefs(props[_ref], r => popover_ref = r)}
 		style={{
 			...props[_style],
@@ -688,16 +688,17 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 			callEventHandler(ev, props[_onToggle])
 			props[_onToggleOpen]?.(isOpen)
 		}}
-		data-dragable={toggleAttribute(isDragable())}
-		data-open={toggleAttribute(attr_open())}
-		data-open-done={toggleAttribute(attr_openDone())}
-		data-drag={toggleAttribute(isDragging())}
-		data-manual={toggleAttribute(isManualDismiss())}
+		data-c-dragable={toggleAttribute(isDragable())}
+		data-c-open={toggleAttribute(attr_open())}
+		data-c-open-done={toggleAttribute(attr_openDone())}
+		data-c-drag={toggleAttribute(isDragging())}
+		data-c-manual={toggleAttribute(isManualDismiss())}
 		{...other}>
 		<Show when={isDragable()}>
 			<span
-				class="popover-drag-handle"
-				data-keep-pointer-event={toggleAttribute(isDragging())}
+				class="c-popover-drag-handle"
+				data-g-keep-pointer-event={toggleAttribute(isDragging())}
+				draggable={false}
 				onMouseDown={(ev) => {
 					const rect = getBoundingClientRect(popover_ref)
 					setIsDragging(true)

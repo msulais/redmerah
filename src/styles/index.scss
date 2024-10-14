@@ -1,9 +1,9 @@
 * {
-	--bg-color: transparent; // rgb value (eg. '9, 23, 200')
-	--bg-opacity: 0;
+	--g-background-color: transparent; // rgb value (eg. '9, 23, 200')
+	--g-background-color-opacity: 0;
 
 	background-color: transparent;
-	background-color: rgba(var(--bg-color), var(--bg-opacity));
+	background-color: rgba(var(--g-background-color), var(--g-background-color-opacity));
 	box-sizing: border-box;
 	color: inherit;
 	font-family: inherit;
@@ -11,11 +11,11 @@
 	margin: 0;
 	padding: 0;
 	scroll-behavior: smooth;
-	transition-timing-function: var(--transition-spring);
+	transition-timing-function: var(--g-transition-spring);
 	-webkit-tap-highlight-color: transparent;
 }
 
-a, button, .icon, :is(a, button, .icon) * {
+a, button, .c-icon, :is(a, button, .c-icon) * {
 	user-select: none;
 	text-decoration: none;
 	-webkit-user-select: none;
@@ -31,7 +31,7 @@ body {
 }
 
 code {
-	font-family: var(--font-family-monospace);
+	font-family: var(--g-font-family-monospace);
 }
 
 img {
@@ -40,15 +40,15 @@ img {
 
 kbd {
 	border-radius: .3em;
-	background-color: rgb(var(--color-on-surface));
+	background-color: rgb(var(--g-color-on-surface));
 	font-size: .85em;
-	color: rgb(var(--color-surface));
+	color: rgb(var(--g-color-surface));
 	padding: .2em .4em;
-	box-shadow: 0 .1em .3em -.15em rgba(var(--color-on-surface), 1);
+	box-shadow: 0 .1em .3em -.15em rgba(var(--g-color-on-surface), 1);
 }
 
 pre > code {
-	font-family: var(--font-family-monospace);
+	font-family: var(--g-font-family-monospace);
 	white-space: pre;
 
 	& * {
@@ -56,22 +56,22 @@ pre > code {
 	}
 }
 
-[data-no-pointer-event] {
+[data-g-no-pointer-event] {
 	pointer-events: none;
 	user-select: none;
 
-	& :not([data-keep-pointer-event], [data-keep-pointer-event] *) {
+	& :not([data-g-keep-pointer-event], [data-g-keep-pointer-event] *) {
 		pointer-events: none;
 		user-select: none;
 	}
 
-	& :is([data-keep-pointer-event], [data-keep-pointer-event] *) {
+	& :is([data-g-keep-pointer-event], [data-g-keep-pointer-event] *) {
 		pointer-events: auto;
 		user-select: auto;
 	}
 }
 
-[data-no-outline] {
+[data-g-no-outline] {
 	outline: none !important;
 
 	& * {
@@ -79,7 +79,7 @@ pre > code {
 	}
 }
 
-[data-no-appearance] {
+[data-g-no-appearance] {
 	appearance: none;
 	-moz-appearance: none;
 	-webkit-appearance: none;

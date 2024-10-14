@@ -32,11 +32,6 @@ enum ToastEvents {
 	onClose = 'on-close-toast'
 }
 
-enum ToastAttributes {
-	open = 'data-open',
-	move = 'data-move',
-}
-
 function openToast(event: Event, toast: HTMLDivElement, options?: Omit<ToastOpenDetail, 'event'>): void {
 	toast[_dispatchEvent](new CustomEvent(
 		ToastEvents[_onOpen],
@@ -135,10 +130,10 @@ const Toast: ParentComponent<ToastProps> = ($props) => {
 		}}
 		ref={mergeRefs(props[_ref], r => toast_ref = r)}
 		classList={{
-			toast: true,
+			'c-toast': true,
 			...props[_classList]
 		}}
-		data-actions={toggleAttribute(actionsComponent())}
+		data-c-actions={toggleAttribute(actionsComponent())}
 		{...other}>
 		<List
 			leading={props[_leading]}
@@ -146,7 +141,7 @@ const Toast: ParentComponent<ToastProps> = ($props) => {
 			subtitle={props[_children]}>
 			{ props[_header] }
 		</List>
-		<div class="toast-actions">
+		<div class="c-toast-actions">
 			{ actionsComponent() }
 		</div>
 	</Popover>)
@@ -160,7 +155,6 @@ export {
 }
 export type {
 	ToastProps,
-	ToastEvents,
-	ToastAttributes
+	ToastEvents
 }
 export default Toast

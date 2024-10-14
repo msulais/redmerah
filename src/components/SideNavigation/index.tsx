@@ -26,23 +26,23 @@ const SideNavigationItem: ParentComponent<SideNavigationItemProps> = ($props) =>
 		indicatorPosition={props[_indicatorPosition] ?? ButtonIndicatorPosition[_left]}
 		selected={props[_selected]}
 		disableScale={props[_disableScale] ?? (trailingComponent()? true : undefined)}
-		data-trailing={toggleAttribute(trailingComponent())}
+		data-c-trailing={toggleAttribute(trailingComponent())}
 		classList={{
-			'side-navigation-item': true,
-			'icon-btn': props[_iconOnly] ?? false,
+			'c-side-navigation-item': true,
+			'c-icon-btn': props[_iconOnly] ?? false,
 			...props[_classList]
 		}}
 		{...other}>
 		<Show when={props[_iconCode] != null}>
 			<Icon
-				style={{color: props[_selected]? 'rgb(var(--color-accent))' : undefined}}
+				style={{color: props[_selected]? 'rgb(var(--g-color-accent))' : undefined}}
 				filled={props[_selected]}
 				code={props[_iconCode]!}
 			/>
 		</Show>
 		{ props[_leading] }
 		<Show when={!props[_iconOnly]}>
-			<span class="side-navigation-item-text">{ props[_children] }</span>
+			<span class="c-side-navigation-item-text">{ props[_children] }</span>
 			<Show when={trailingComponent()}>
 				<div style={{flex: 1}} />
 			</Show>
@@ -63,12 +63,12 @@ const SideNavigation: ParentComponent<SideNavigationProps> = ($props) => {
 	])
 
 	return (<div
-		class={`side-navigation${props[_class]? ` ${props[_class]}` : ''}`}
-		data-expanded={toggleAttribute(props[_expand])}
+		class={`c-side-navigation${props[_class]? ` ${props[_class]}` : ''}`}
+		data-c-expanded={toggleAttribute(props[_expand])}
 		{...other}>
-		<div class="side-navigation-header">{props[_header]}</div>
-		<div class="side-navigation-content">{props[_children]}</div>
-		<div class="side-navigation-footer">{props[_footer]}</div>
+		<div class="c-side-navigation-header">{props[_header]}</div>
+		<div class="c-side-navigation-content">{props[_children]}</div>
+		<div class="c-side-navigation-footer">{props[_footer]}</div>
 	</div>)
 }
 

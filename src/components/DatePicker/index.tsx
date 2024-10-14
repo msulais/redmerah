@@ -95,10 +95,10 @@ const DatePicker: VoidComponent<DatePickerProps> = ($props) => {
 
 	const DaysDate: VoidComponent = () => {
 		return (<div style="display: contents">
-			<div class="date-picker-days-name">
+			<div class="c-date-picker-days-name">
 				<For each={getWeekdayNames(props[_locales])}>{d => <p>{d[_substring](0, 2)}</p>}</For>
 			</div>
-			<div class="date-picker-days">
+			<div class="c-date-picker-days">
 				<For each={Array(startDay())[_fill](0)}>{_v => <div/>}</For>
 				<For each={Array(daysPerMonth())[_fill](0)}>{(_v, i) => {
 					const date = createMemo(() => new Date(getDate_Y(viewDate()), getDate_M(viewDate()), i() + 1))
@@ -124,7 +124,7 @@ const DatePicker: VoidComponent<DatePickerProps> = ($props) => {
 	}
 
 	const MonthsDate: VoidComponent = () => {
-		return (<div class="date-picker-month">
+		return (<div class="c-date-picker-month">
 			<For each={getMonthNames(props[_locales])}>{(m, i) => {
 				const date = createMemo(() => new Date(getDate_Y(viewDate()), i()))
 				return (<Button
@@ -145,7 +145,7 @@ const DatePicker: VoidComponent<DatePickerProps> = ($props) => {
 	}
 
 	const YearsDate: VoidComponent = () => {
-		return (<div class="date-picker-year">
+		return (<div class="c-date-picker-year">
 			<For each={Array(16)[_fill](0)}>{(_, i) => {
 				const date = createMemo(() => new Date(getDate_Y(viewDate()) + i(), 0))
 				return (<Button
@@ -170,7 +170,7 @@ const DatePicker: VoidComponent<DatePickerProps> = ($props) => {
 	return (<Modal
 		ref={mergeRefs(props[_ref], r => datePicker_ref = r)}
 		classList={{
-			'date-picker': true,
+			'c-date-picker': true,
 			...props[_classList]
 		}}
 		onClose={(ev) => {
@@ -178,7 +178,7 @@ const DatePicker: VoidComponent<DatePickerProps> = ($props) => {
 			callEventHandler(ev, props[_onClose])
 		}}
 		{...other}>
-		<div class="date-picker-header">
+		<div class="c-date-picker-header">
 			<Button
 				onClick={() => setDateOption(d => {
 					if (d == DatePickerOption[_month]) return DatePickerOption[_year]

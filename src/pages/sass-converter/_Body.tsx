@@ -167,7 +167,7 @@ const _: VoidComponent<{
 				placeholder={`Type your ${inputViewOption() == InputViewOption[_scss]? 'SCSS' : 'SASS'} ...`}></textarea>
 			<Show when={inputViewOption() != null && outputViewOption() != null}>
 				<div
-					data-keep-pointer-event={toggleAttribute(isDragging())}
+					data-g-keep-pointer-event={toggleAttribute(isDragging())}
 					class={CSS.body_drag_handle}
 					onMouseDown={(ev) => {
 						setAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])

@@ -14,8 +14,8 @@ const Emoji: VoidComponent<EmojiProps> = ($props) => {
 	const [props, other] = splitProps($props, [_inline, _emoji, _class])
 
 	return (<i
-		class={`emoji${props[_class] ? ` ${props[_class]}` : ''}`}
-		data-inline={toggleAttribute(props[_inline])}
+		class={`c-emoji${props[_class] ? ` ${props[_class]}` : ''}`}
+		data-c-inline={toggleAttribute(props[_inline])}
 		translate="no"
 		{...other}>
 		{ props[_emoji] }

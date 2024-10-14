@@ -5,35 +5,13 @@ export enum RootAttributes {
 }
 
 export enum BodyAttributes {
-	modalListener = 'data-modal-listener',
-	popoverListener = 'data-popover-listener',
-	tooltipListener = 'data-tooltip-listener',
-	emojiListener = 'data-emoji-listener',
+	modalListener = 'data-c-modal-listener',
+	popoverListener = 'data-c-popover-listener',
+	tooltipListener = 'data-c-tooltip-listener',
+	emojiListener = 'data-c-emoji-listener',
 
 	/**
-	 * Disable all element pointer event. Except element that has [data-keep-pointer-event].
+	 * Disable all element pointer event. Except element that has [data-g-keep-pointer-event].
 	 */
-	noPointerEvent = 'data-no-pointer-event'
-}
-
-export enum PopoverAttributes {
-	anchorId = 'data-anchor-id',
-	position = 'data-position',
-	padding = 'data-padding',
-	open = 'data-open',
-	hasMaxWidth = 'data-has-max-width',
-	hasMaxHeight = 'data-has-max-height',
-	notAllowHideAnchor = 'data-not-allow-hide-anchor',
-	move = 'data-move',
-	popover = 'data-popover',
-	gap = 'data-gap',
-	focus = 'data-focus',
-	focusTimeoutId = 'data-focus-timeout-id'
-}
-
-export enum ModalAttributes {
-	open = 'data-open',
-	modal = 'data-modal',
-	focus = 'data-focus',
-	focusTimeoutId = 'data-focus-timeout-id'
+	noPointerEvent = 'data-g-no-pointer-event'
 }

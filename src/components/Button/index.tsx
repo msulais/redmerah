@@ -43,20 +43,20 @@ const RawButton: ParentComponent<RawButtonProps> = ($props) => {
 	])
 
 	return (<Dynamic
-		class={`btn${props[_class]? ` ${props[_class]}` : ''}`}
+		class={`c-btn${props[_class]? ` ${props[_class]}` : ''}`}
 		classList={{
-			'filled-btn': props[_variant] == ButtonVariant[_filled],
-			'tonal-btn': props[_variant] == ButtonVariant[_tonal],
-			'outlined-btn': props[_variant] == ButtonVariant[_outlined],
+			'c-filled-btn': props[_variant] == ButtonVariant[_filled],
+			'c-tonal-btn': props[_variant] == ButtonVariant[_tonal],
+			'c-outlined-btn': props[_variant] == ButtonVariant[_outlined],
 			...props[_classList]
 		}}
-		data-indicator={props[_selected]? props[_indicatorPosition] : undefined}
-		data-selected={toggleAttribute(props[_selected])}
-		data-focused={toggleAttribute(props[_focused])}
-		data-noscale={toggleAttribute(props[_disableScale])}
-		data-compact={toggleAttribute(props[_compact])}
+		data-c-indicator={props[_selected]? props[_indicatorPosition] : undefined}
+		data-c-selected={toggleAttribute(props[_selected])}
+		data-c-focused={toggleAttribute(props[_focused])}
+		data-c-noscale={toggleAttribute(props[_disableScale])}
+		data-c-compact={toggleAttribute(props[_compact])}
 		{...other}>
-		<div class='btn-layer' {...props[_layerAttr]}>{props[_children]}</div>
+		<div class='c-btn-layer' {...props[_layerAttr]}>{props[_children]}</div>
 	</Dynamic>)
 }
 
@@ -82,21 +82,21 @@ const Button: ParentComponent<ButtonProps> = ($props) => {
 	])
 
 	return (<button
-		class={'btn' + (props[_class] != undefined? ` ${props[_class]}` : '')}
+		class={`c-btn${props[_class]? ` ${props[_class]}` : ''}`}
 		classList={{
-			'filled-btn': props[_variant] == ButtonVariant[_filled],
-			'tonal-btn': props[_variant] == ButtonVariant[_tonal],
-			'outlined-btn': props[_variant] == ButtonVariant[_outlined],
+			'c-filled-btn': props[_variant] == ButtonVariant[_filled],
+			'c-tonal-btn': props[_variant] == ButtonVariant[_tonal],
+			'c-outlined-btn': props[_variant] == ButtonVariant[_outlined],
 			...props[_classList]
 		}}
 		type={props[_type] as ("button" | "submit" | "reset" | undefined)}
-		data-indicator={props[_selected]? props[_indicatorPosition] : undefined}
-		data-selected={toggleAttribute(props[_selected])}
-		data-focused={toggleAttribute(props[_focused])}
-		data-noscale={toggleAttribute(props[_disableScale])}
-		data-compact={toggleAttribute(props[_compact])}
+		data-c-indicator={props[_selected]? props[_indicatorPosition] : undefined}
+		data-c-selected={toggleAttribute(props[_selected])}
+		data-c-focused={toggleAttribute(props[_focused])}
+		data-c-noscale={toggleAttribute(props[_disableScale])}
+		data-c-compact={toggleAttribute(props[_compact])}
 		{...other}>
-		<div class='btn-layer' {...props[_layerAttr]}>{props[_children]}</div>
+		<div class='c-btn-layer' {...props[_layerAttr]}>{props[_children]}</div>
 	</button>)
 }
 
@@ -125,7 +125,7 @@ const LinkButton: ParentComponent<LinkButtonProps> = ($props) => {
 	])
 
 	return (<a
-		class={`btn${props[_class]? ` ${props[_class]}` : ''}`}
+		class={`c-btn${props[_class]? ` ${props[_class]}` : ''}`}
 		onClick={(ev) => {
 			if (props[_disabled]) {
 				preventDefault(ev)
@@ -133,21 +133,21 @@ const LinkButton: ParentComponent<LinkButtonProps> = ($props) => {
 			callEventHandler(ev, props[_onClick])
 		}}
 		classList={{
-			'filled-btn': props[_variant] == ButtonVariant[_filled],
-			'tonal-btn': props[_variant] == ButtonVariant[_tonal],
-			'outlined-btn': props[_variant] == ButtonVariant[_outlined],
+			'c-filled-btn': props[_variant] == ButtonVariant[_filled],
+			'c-tonal-btn': props[_variant] == ButtonVariant[_tonal],
+			'c-outlined-btn': props[_variant] == ButtonVariant[_outlined],
 			...props[_classList]
 		}}
-		data-indicator={props[_selected]? props[_indicatorPosition] : undefined}
-		data-disabled={toggleAttribute(props[_disabled])}
-		data-selected={toggleAttribute(props[_selected])}
-		data-focused={toggleAttribute(props[_focused])}
-		data-noscale={toggleAttribute(props[_disableScale])}
-		data-compact={toggleAttribute(props[_compact])}
+		data-c-indicator={props[_selected]? props[_indicatorPosition] : undefined}
+		data-c-disabled={toggleAttribute(props[_disabled])}
+		data-c-selected={toggleAttribute(props[_selected])}
+		data-c-focused={toggleAttribute(props[_focused])}
+		data-c-noscale={toggleAttribute(props[_disableScale])}
+		data-c-compact={toggleAttribute(props[_compact])}
 		target={props[_openInNewTab]? "_blank" : undefined}
 		rel={props[_openInNewTab]? "noopener noreferrer" : undefined}
 		{...other}>
-		<div class='btn-layer' {...props[_layerAttr]}>{props[_children]}</div>
+		<div class='c-btn-layer' {...props[_layerAttr]}>{props[_children]}</div>
 	</a>)
 }
 
@@ -155,7 +155,7 @@ type RawSquareButtonProps = RawButtonProps
 const RawSquareButton: ParentComponent<RawSquareButtonProps> = ($props) => {
 	const [props, other] = splitProps($props, [_classList])
 	return (<RawButton
-		classList={{'square-btn': true, ...props[_classList]}}
+		classList={{'c-square-btn': true, ...props[_classList]}}
 		{...other}
 	/>)
 }
@@ -164,7 +164,7 @@ type SquareButtonProps = ButtonProps
 const SquareButton: ParentComponent<SquareButtonProps> = ($props) => {
 	const [props, other] = splitProps($props, [_classList])
 	return (<Button
-		classList={{'square-btn': true, ...props[_classList]}}
+		classList={{'c-square-btn': true, ...props[_classList]}}
 		{...other}
 	/>)
 }
@@ -173,7 +173,7 @@ type LinkSquareButtonProps = LinkButtonProps
 const LinkSquareButton: ParentComponent<LinkSquareButtonProps> = ($props) => {
 	const [props, other] = splitProps($props, [_classList])
 	return (<LinkButton
-		classList={{'square-btn': true, ...props[_classList]}}
+		classList={{'c-square-btn': true, ...props[_classList]}}
 		{...other}
 	/>)
 }
@@ -185,7 +185,7 @@ type RawIconButtonProps = RawSquareButtonProps & {
 const RawIconButton: VoidComponent<RawIconButtonProps> = ($props) => {
 	const [props, other] = splitProps($props, [_classList, _code, _filled])
 	return (<RawSquareButton
-		classList={{'icon-btn': true, ...props[_classList]}}
+		classList={{'c-icon-btn': true, ...props[_classList]}}
 		{...other}>
 		<Icon code={props[_code]} filled={props[_filled]}/>
 	</RawSquareButton>)
@@ -198,7 +198,7 @@ type IconButtonProps = SquareButtonProps & {
 const IconButton: VoidComponent<IconButtonProps> = ($props) => {
 	const [props, other] = splitProps($props, [_classList, _code, _filled])
 	return (<SquareButton
-		classList={{'icon-btn': true, ...props[_classList]}}
+		classList={{'c-icon-btn': true, ...props[_classList]}}
 		{...other}>
 		<Icon code={props[_code]} filled={props[_filled]}/>
 	</SquareButton>)
@@ -211,7 +211,7 @@ type LinkIconButtonProps = LinkSquareButtonProps & {
 const LinkIconButton: VoidComponent<LinkIconButtonProps> = ($props) => {
 	const [props, other] = splitProps($props, [_classList, _code, _filled])
 	return (<LinkSquareButton
-		classList={{'icon-btn': true, ...props[_classList]}}
+		classList={{'c-icon-btn': true, ...props[_classList]}}
 		{...other}>
 		<Icon code={props[_code]} filled={props[_filled]}/>
 	</LinkSquareButton>)
@@ -223,7 +223,7 @@ type RawEmojiButtonProps = RawSquareButtonProps & {
 const RawEmojiButton: VoidComponent<RawEmojiButtonProps> = ($props) => {
 	const [props, other] = splitProps($props, [_classList, _emoji])
 	return (<RawSquareButton
-		classList={{'emoji-btn': true, ...props[_classList]}}
+		classList={{'c-emoji-btn': true, ...props[_classList]}}
 		{...other}>
 		<Emoji emoji={props[_emoji]}/>
 	</RawSquareButton>)
@@ -235,7 +235,7 @@ type EmojiButtonProps = SquareButtonProps & {
 const EmojiButton: VoidComponent<EmojiButtonProps> = ($props) => {
 	const [props, other] = splitProps($props, [_classList, _emoji])
 	return (<SquareButton
-		classList={{'emoji-btn': true, ...props[_classList]}}
+		classList={{'c-emoji-btn': true, ...props[_classList]}}
 		{...other}>
 		<Emoji emoji={props[_emoji]}/>
 	</SquareButton>)
@@ -247,7 +247,7 @@ type LinkEmojiButtonProps = LinkSquareButtonProps & {
 const LinkEmojiButton: VoidComponent<LinkEmojiButtonProps> = ($props) => {
 	const [props, other] = splitProps($props, [_classList, _emoji])
 	return (<LinkSquareButton
-		classList={{'emoji-btn': true, ...props[_classList]}}
+		classList={{'c-emoji-btn': true, ...props[_classList]}}
 		{...other}>
 		<Emoji emoji={props[_emoji]}/>
 	</LinkSquareButton>)
@@ -257,7 +257,7 @@ type RawFloatingActionButtonProps = RawButtonProps
 const RawFloatingActionButton: ParentComponent<RawFloatingActionButtonProps> = ($props) => {
 	const [props, other] = splitProps($props, [_classList])
 	return (<RawButton
-		classList={{'floating-action-btn': true, ...props[_classList]}}
+		classList={{'c-floating-action-btn': true, ...props[_classList]}}
 		{...other}
 	/>)
 }
@@ -266,7 +266,7 @@ type FloatingActionButtonProps = ButtonProps
 const FloatingActionButton: ParentComponent<FloatingActionButtonProps> = ($props) => {
 	const [props, other] = splitProps($props, [_classList])
 	return (<Button
-		classList={{'floating-action-btn': true, ...props[_classList]}}
+		classList={{'c-floating-action-btn': true, ...props[_classList]}}
 		{...other}
 	/>)
 }
@@ -275,7 +275,7 @@ type LinkFloatingActionActionButtonProps = LinkButtonProps
 const LinkFloatingActionButton: ParentComponent<LinkFloatingActionActionButtonProps> = ($props) => {
 	const [props, other] = splitProps($props, [_classList])
 	return (<LinkButton
-		classList={{'floating-action-btn': true, ...props[_classList]}}
+		classList={{'c-floating-action-btn': true, ...props[_classList]}}
 		{...other}
 	/>)
 }
