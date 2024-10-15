@@ -4,7 +4,7 @@ import { mergeRefs } from '@solid-primitives/refs'
 import { toggleAttribute } from '@/utils/attributes'
 import { clearTimeDelayed, clearTimeInterval, setTimeDelayed, setTimeInterval } from '@/utils/timeout'
 import { callEventHandler, preventDefault, stopPropagation } from '@/utils/event'
-import { _value, _input, _dispatchEvent, _classList, _compact, _leading, _onInput, _labelText, _focused, _autocomplete, _id, _messageText, _trailing, _labelAttr, _disabled, _readOnly, _onFocus, _onBlur, _placeholder, _autoHideLabel, _ref, _autoShowClearBtn, _clearTooltip, _minLine, _maxLine, _wrapperAttr, _class, _trim, _split, _length, _focus, _currentTarget, _checkValidity, _scrollHeight, _off, _px, _button, _text, _type, _autoSelectAll, _onKeyUp, _setSelectionRange, _code, _Enter, _blur, _max, _min, _decreaseTooltip, _increaseTooltip, _changeValueTooltip, _integerOnly, _stepUp, _stepDown, _valueAsNumber, _isNaN, _toUpperCase, _centerCenterLeft, _result, _menuAttr, _usePortal, _style, _onToggleOpen, _isArray, _width, _centerBottom, _observe, _disconnect, _target, _contains, _click, _autoFixOnBlur, _actionsAttr } from '@/constants/string'
+import { _value, _input, _dispatchEvent, _classList, _compact, _leading, _onInput, _labelText, _focused, _autocomplete, _id, _messageText, _trailing, _labelAttr, _disabled, _readOnly, _onFocus, _onBlur, _placeholder, _autoHideLabel, _ref, _autoShowClearBtn, _clearTooltip, _minLine, _maxLine, _wrapperAttr, _class, _trim, _split, _length, _focus, _currentTarget, _checkValidity, _scrollHeight, _off, _px, _button, _text, _type, _autoSelectAll, _onKeyUp, _setSelectionRange, _code, _Enter, _blur, _max, _min, _decreaseTooltip, _increaseTooltip, _changeValueTooltip, _integerOnly, _stepUp, _stepDown, _valueAsNumber, _isNaN, _toUpperCase, _centerCenterLeft, _result, _menuAttr, _usePortal, _style, _onToggleOpen, _isArray, _width, _centerBottom, _observe, _disconnect, _target, _contains, _click, _autoFixOnBlur, _actionsAttr, _autoValidation } from '@/constants/string'
 import { mathClamp, mathMax, mathRound, numberIsNaN, numberParse } from '@/utils/math'
 import { getBoundingClientRect } from '@/utils/element'
 import { getDocument } from '@/constants/window'
@@ -79,15 +79,20 @@ type AreaTextFieldProps = Omit<JSX.TextareaHTMLAttributes<HTMLTextAreaElement>, 
 	autoShowClearBtn?: boolean
 	autoHideLabel?: boolean
 	clearTooltip?: string
+	autoValidation?: boolean
 	wrapperAttr?: JSX.HTMLAttributes<HTMLDivElement>
 	labelAttr?: JSX.LabelHTMLAttributes<HTMLLabelElement>
 }
 const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
-	const $$props = mergeProps({autoHideLabel: true, id: createUniqueId()}, $props)
+	const $$props = mergeProps({
+		autoValidation: true,
+		autoHideLabel: true,
+		id: createUniqueId()
+	}, $props)
 	const [props, other] = splitProps($$props, [
 		_leading, _onInput, _labelText, _focused,
 		_autocomplete, _id, _messageText, _trailing,
-		_labelAttr, _disabled, _readOnly,
+		_labelAttr, _disabled, _readOnly, _autoValidation,
 		_onFocus, _onBlur, _placeholder, _autoHideLabel,
 		_value, _ref, _autoShowClearBtn, _clearTooltip,
 		_minLine, _maxLine, _compact, _wrapperAttr
@@ -113,7 +118,7 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 		{...wrapperPropsOther}>
 		<div
 			data-c-focused={toggleAttribute(props[_focused] ?? isFocus())}
-			data-c-invalid={toggleAttribute(isInvalid())}
+			data-c-invalid={toggleAttribute(!props[_disabled] && props[_autoValidation] && isInvalid())}
 			data-c-disabled={toggleAttribute(props[_disabled])}
 			data-c-trailing={toggleAttribute(trailingComponents() || (props[_autoShowClearBtn] && value()[_length] > 0))}
 			data-c-compact={toggleAttribute(props[_compact])}
@@ -184,17 +189,23 @@ type TextFieldProps = JSX.InputHTMLAttributes<HTMLInputElement> & {
 	autoHideLabel?: boolean
 	autoSelectAll?: boolean
 	clearTooltip?: string
+	autoValidation?: boolean
 	wrapperAttr?: JSX.HTMLAttributes<HTMLDivElement>
 }
 const TextField: VoidComponent<TextFieldProps> = ($props) => {
-	const $$props = mergeProps({type: _text, autoHideLabel: true, id: createUniqueId()}, $props)
+	const $$props = mergeProps({
+		autoValidation: true,
+		type: _text,
+		autoHideLabel: true,
+		id: createUniqueId()
+	}, $props)
 	const [props, other] = splitProps($$props, [
 		_leading, _onInput, _labelText, _focused,
 		_autocomplete, _id, _messageText, _trailing,
 		_type, _wrapperAttr, _disabled, _readOnly,
 		_onFocus, _onBlur, _placeholder, _autoHideLabel,
 		_value, _ref, _autoShowClearBtn, _clearTooltip,
-		_compact, _autoSelectAll, _onKeyUp
+		_compact, _autoSelectAll, _onKeyUp, _autoValidation
 	])
 	const [wrapperProps, wrapperPropsOther] = splitProps(props[_wrapperAttr]! ?? {}, [_class])
 	const [isFocus, setIsFocus] = createSignal<boolean>(false)
@@ -213,7 +224,7 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 		{...wrapperPropsOther}>
 		<div
 			data-c-focused={toggleAttribute(props[_focused] ?? isFocus())}
-			data-c-invalid={toggleAttribute(isInvalid())}
+			data-c-invalid={toggleAttribute(!props[_disabled] && props[_autoValidation] && isInvalid())}
 			data-c-compact={toggleAttribute(props[_compact])}
 			data-c-disabled={toggleAttribute(props[_disabled])}
 			data-c-trailing={toggleAttribute(trailingComponents() || (props[_autoShowClearBtn] && value()[_length] > 0))}
