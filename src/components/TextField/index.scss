@@ -21,10 +21,6 @@
 		:root[data-corner=semi-round] & { --c-textfield-border-radius: 4px }
 		:root[data-corner=full-round] & { --c-textfield-border-radius: 20px }
 		:root[data-corner=full-round]:root[data-platform=desktop] & { --c-textfield-border-radius: 18px }
-		:root[data-corner=full-round]:root[data-platform=mobile] & { --c-textfield-border-radius: 28px }
-		:root[data-platform=mobile] & {
-			min-height: 56px;
-		}
 
 		&[data-c-compact], :root[data-platform=desktop] & {
 			min-height: 36px;
@@ -137,9 +133,6 @@
 			:root[data-platform=desktop] & {
 				margin: 8px 0;
 			}
-			:root[data-platform=mobile] & {
-				margin: 18px 0;
-			}
 		}
 	}
 }
@@ -161,10 +154,6 @@
 	:root[data-corner=sharp] & { border-radius: 0 }
 	:root[data-corner=semi-round] & { border-radius: 2px }
 	:root[data-corner=full-round] & { border-radius: 20px }
-	:root[data-platform=mobile] & {
-		min-height: 40px;
-		min-width: 40px;
-	}
 }
 
 :is(.c-textfield-leading, .c-textfield-trailing, .c-area-textfield-leading, .c-area-textfield-trailing) {
@@ -179,17 +168,13 @@
 
 .c-area-textfield-trailing {
 	margin-top: 4px;
-
-	:root[data-platform=mobile] & {
-		margin-top: 8px;
-	}
 }
 
 .c-area-textfield-leading {
 	margin-top: 10px;
 
 	:root[data-platform=mobile] & {
-		margin-top: 16px;
+		margin-top: 8px;
 	}
 }
 
@@ -241,10 +226,6 @@
 
 .c-popover.c-search-textfield-menu {
 	box-shadow: var(--g-elevation1);
-
-	:root[data-platform=mobile][data-corner=full-round] & {
-		border-radius: 28px;
-	}
 
 	> div {
 		padding: 4px 0;
