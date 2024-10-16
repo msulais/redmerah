@@ -1,3 +1,4 @@
+export const _Space = 'Space'
 export const _autoValidation = 'autoValidation'
 export const _actionsAttr = 'actionsAttr'
 export const _autoFixOnBlur = 'autoFixOnBlur'

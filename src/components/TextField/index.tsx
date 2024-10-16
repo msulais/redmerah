@@ -4,7 +4,7 @@ import { mergeRefs } from '@solid-primitives/refs'
 import { toggleAttribute } from '@/utils/attributes'
 import { clearTimeDelayed, clearTimeInterval, setTimeDelayed, setTimeInterval } from '@/utils/timeout'
 import { callEventHandler, preventDefault, stopPropagation } from '@/utils/event'
-import { _value, _input, _dispatchEvent, _classList, _compact, _leading, _onInput, _labelText, _focused, _autocomplete, _id, _messageText, _trailing, _labelAttr, _disabled, _readOnly, _onFocus, _onBlur, _placeholder, _autoHideLabel, _ref, _autoShowClearBtn, _clearTooltip, _minLine, _maxLine, _wrapperAttr, _class, _trim, _split, _length, _focus, _currentTarget, _checkValidity, _scrollHeight, _off, _px, _button, _text, _type, _autoSelectAll, _onKeyUp, _setSelectionRange, _code, _Enter, _blur, _max, _min, _decreaseTooltip, _increaseTooltip, _changeValueTooltip, _integerOnly, _stepUp, _stepDown, _valueAsNumber, _isNaN, _toUpperCase, _centerCenterLeft, _result, _menuAttr, _usePortal, _style, _onToggleOpen, _isArray, _width, _centerBottom, _observe, _disconnect, _target, _contains, _click, _autoFixOnBlur, _actionsAttr, _autoValidation } from '@/constants/string'
+import { _value, _input, _dispatchEvent, _classList, _compact, _leading, _onInput, _labelText, _focused, _autocomplete, _id, _messageText, _trailing, _labelAttr, _disabled, _readOnly, _onFocus, _onBlur, _placeholder, _autoHideLabel, _ref, _autoShowClearBtn, _clearTooltip, _minLine, _maxLine, _wrapperAttr, _class, _trim, _split, _length, _focus, _currentTarget, _checkValidity, _scrollHeight, _off, _px, _button, _text, _type, _autoSelectAll, _onKeyUp, _setSelectionRange, _code, _Enter, _blur, _max, _min, _decreaseTooltip, _increaseTooltip, _changeValueTooltip, _integerOnly, _stepUp, _stepDown, _valueAsNumber, _isNaN, _toUpperCase, _centerCenterLeft, _result, _menuAttr, _usePortal, _style, _onToggleOpen, _isArray, _width, _centerBottom, _observe, _disconnect, _target, _contains, _click, _autoFixOnBlur, _actionsAttr, _autoValidation, _Space } from '@/constants/string'
 import { mathClamp, mathMax, mathRound, numberIsNaN, numberParse } from '@/utils/math'
 import { getBoundingClientRect } from '@/utils/element'
 import { getDocument } from '@/constants/window'
@@ -322,6 +322,8 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 	let intervalId: number | null = null
 	let numberTextField_ref: HTMLInputElement
 	let modal_actions_ref: HTMLDialogElement
+	let iconButton_up_ref: HTMLButtonElement
+	let iconButton_down_ref: HTMLButtonElement
 
 	function getMax(defaultNumber?: number): number {
 		const max = props[_max]
@@ -342,6 +344,25 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 	}
 
 	function changeValue(operator: '+' | '-'): void {
+		const reachLimit = (
+			(
+				operator == '+'
+				&& props[_max] != null
+				&& value() >= getMax()
+			)
+			|| (
+				operator == '-'
+				&& props[_min] != null
+				&& value() <= getMin()
+			)
+		)
+		if (reachLimit) {
+			if (intervalId != null) clearTimeInterval(intervalId)
+			if (timeoutId != null) clearTimeDelayed(timeoutId)
+			intervalId = timeoutId = null
+			return
+		}
+
 		if (operator == '+') numberTextField_ref[_stepUp]()
 		else numberTextField_ref[_stepDown]()
 
@@ -459,23 +480,39 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 			{...actionsPropsOther}>
 			<TextTooltip text={props[_increaseTooltip]}>
 				<IconButton
+					ref={r => iconButton_up_ref = r}
 					disabled={props[_max] != null && value() >= getMax()}
 					onMouseUp={() => onPressEnd('+')}
 					onContextMenu={(ev) => preventDefault(ev)}
 					onMouseDown={() => onPressStart('+')}
 					onTouchEnd={() => onPressEnd('+')}
 					onTouchStart={() => onPressStart('+')}
+					onKeyDown={ev => {
+						const clickKey = ev[_code] == _Enter || ev[_code] == _Space
+						const updownKey = ev[_code] == 'ArrowDown' || ev[_code] == 'ArrowUp'
+						if (clickKey) onPressStart('+')
+						if (updownKey && !iconButton_down_ref[_disabled]) iconButton_down_ref[_focus]()
+					}}
+					onKeyUp={ev => (ev[_code] == _Enter || ev[_code] == _Space) && onPressEnd('+')}
 					code={0xE404}
 				/>
 			</TextTooltip>
 			<TextTooltip text={props[_decreaseTooltip]}>
 				<IconButton
+					ref={r => iconButton_down_ref = r}
 					disabled={props[_min] != null && value() <= getMin()}
 					onMouseUp={() => onPressEnd('-')}
 					onContextMenu={(ev) => preventDefault(ev)}
 					onMouseDown={() => onPressStart('-')}
 					onTouchEnd={() => onPressEnd('-')}
 					onTouchStart={() => onPressStart('-')}
+					onKeyDown={ev => {
+						const clickKey = ev[_code] == _Enter || ev[_code] == _Space
+						const updownKey = ev[_code] == 'ArrowDown' || ev[_code] == 'ArrowUp'
+						if (clickKey) onPressStart('-')
+						if (updownKey && !iconButton_up_ref[_disabled]) iconButton_up_ref[_focus]()
+					}}
+					onKeyUp={ev => (ev[_code] == _Enter || ev[_code] == _Space) && onPressEnd('-')}
 					code={0xE3FC}
 				/>
 			</TextTooltip>
