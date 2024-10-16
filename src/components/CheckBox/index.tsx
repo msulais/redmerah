@@ -91,7 +91,6 @@ const CheckBox: ParentComponent<CheckBoxProps> = ($props) => {
 			|| $isChecked == isChecked()
 		) return;
 
-		console.log('effect', $isChecked, isChecked())
 		changeCheckedState($isChecked)
 	})
 
