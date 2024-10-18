@@ -268,10 +268,10 @@ const GradientControl: VoidComponent<{
 				min={0}
 				max={360}
 				autoSelectAll
-				onInput={ev => props[_command](
+				onInputAsNumber={(_, v) => props[_command](
 					Commands.change_gradient_angle,
 					props[_gradientIndex],
-					safeNumber(ev[_currentTarget][_valueAsNumber], (props[_gradient] as any)[_angle] as number)
+					v
 				)}
 				value={(props[_gradient] as any)[_angle] as number}
 			/>
@@ -282,10 +282,10 @@ const GradientControl: VoidComponent<{
 				min={0}
 				enterkeyhint="done"
 				autoSelectAll
-				onInput={ev => props[_command](
+				onInputAsNumber={(_, v) => props[_command](
 					Commands.change_gradient_positionX,
 					props[_gradientIndex],
-					safeNumber(ev[_currentTarget][_valueAsNumber], (props[_gradient] as any)[_positionX] as number)
+					v
 				)}
 				value={(props[_gradient] as any)[_positionX] as number}
 			/>
@@ -294,10 +294,10 @@ const GradientControl: VoidComponent<{
 				enterkeyhint="done"
 				min={0}
 				autoSelectAll
-				onInput={ev => props[_command](
+				onInputAsNumber={(_, v) => props[_command](
 					Commands.change_gradient_positionY,
 					props[_gradientIndex],
-					safeNumber(ev[_currentTarget][_valueAsNumber], (props[_gradient] as any)[_positionY] as number)
+					v
 				)}
 				value={(props[_gradient] as any)[_positionY] as number}
 			/>
@@ -308,10 +308,10 @@ const GradientControl: VoidComponent<{
 				enterkeyhint="done"
 				min={0}
 				autoSelectAll
-				onInput={ev => props[_command](
+				onInputAsNumber={(_, v) => props[_command](
 					Commands.change_radialGradient_size,
 					props[_gradientIndex],
-					safeNumber(ev[_currentTarget][_valueAsNumber], (props[_gradient] as RadialGradient)[_sizeLength])
+					v
 				)}
 				value={(props[_gradient] as RadialGradient)[_sizeLength]}
 			/>
@@ -322,10 +322,10 @@ const GradientControl: VoidComponent<{
 				enterkeyhint="done"
 				min={0}
 				autoSelectAll
-				onInput={ev => props[_command](
+				onInputAsNumber={(_, v) => props[_command](
 					Commands.change_radialGradient_width,
 					props[_gradientIndex],
-					safeNumber(ev[_currentTarget][_valueAsNumber], (props[_gradient] as RadialGradient)[_sizeWidth])
+					v
 				)}
 				value={(props[_gradient] as RadialGradient)[_sizeWidth]}
 			/>
@@ -334,10 +334,10 @@ const GradientControl: VoidComponent<{
 				enterkeyhint="done"
 				min={0}
 				autoSelectAll
-				onInput={ev => props[_command](
+				onInputAsNumber={(_, v) => props[_command](
 					Commands.change_radialGradient_height,
 					props[_gradientIndex],
-					safeNumber(ev[_currentTarget][_valueAsNumber], (props[_gradient] as RadialGradient)[_sizeHeight])
+					v
 				)}
 				value={(props[_gradient] as RadialGradient)[_sizeHeight]}
 			/>
@@ -363,11 +363,11 @@ const GradientControl: VoidComponent<{
 					min={0}
 					max={isConicGradient()? 360 : 100}
 					integerOnly
-					onInput={ev => props[_command](
+					onInputAsNumber={(_, v) => props[_command](
 						Commands.change_colorStopLength,
 						props[_gradientIndex],
 						index(),
-						safeNumber(ev[_currentTarget][_valueAsNumber], isConicGradient()? 360 : 100) * (isConicGradient()? (100 / 360) : 1)
+						v * (isConicGradient()? (100 / 360) : 1)
 					)}
 				/>
 				<TextField
@@ -585,9 +585,9 @@ const _: VoidComponent<{
 							enterkeyhint="done"
 							autoSelectAll
 							value={props[_settings][_aspectRatio]}
-							onInput={ev => props[_command](
+							onInputAsNumber={(_, v) => props[_command](
 								Commands.change_settings_aspectRatio,
-								safeNumber(ev[_currentTarget][_valueAsNumber], props[_settings][_aspectRatio])
+								v
 							)}
 							labelText="Aspect ratio"
 						/>
@@ -596,9 +596,9 @@ const _: VoidComponent<{
 							enterkeyhint="done"
 							autoSelectAll
 							value={props[_settings][_borderRadius]}
-							onInput={ev => props[_command](
+							onInputAsNumber={(_, v) => props[_command](
 								Commands.change_settings_borderRadius,
-								safeNumber(ev[_currentTarget][_valueAsNumber], props[_settings][_borderRadius])
+								v
 							)}
 							labelText="Border radius (px)"
 						/>
