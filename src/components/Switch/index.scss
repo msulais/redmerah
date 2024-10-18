@@ -1,6 +1,6 @@
 .c-switch {
-	--c-switch-width: 42px;
 	--c-switch-height: 24px;
+	--c-switch-width: calc((var(--c-switch-height) - 10px) * 2 + 14px);
 	--c-switch-handle-size: calc(var(--c-switch-height) - 10px);
 	--c-switch-border-radius: 20px;
 
@@ -19,11 +19,6 @@
 
 	:root[data-platform=desktop] & {
 		--c-switch-height: 20px;
-		--c-switch-width: 34px;
-	}
-	:root[data-platform=mobile] & {
-		--c-switch-height: 32px;
-		--c-switch-width: 54px;
 	}
 
 	&[data-c-disabled] {
