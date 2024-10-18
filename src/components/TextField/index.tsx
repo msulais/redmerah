@@ -4,8 +4,8 @@ import { mergeRefs } from '@solid-primitives/refs'
 import { toggleAttribute } from '@/utils/attributes'
 import { clearTimeDelayed, clearTimeInterval, setTimeDelayed, setTimeInterval } from '@/utils/timeout'
 import { callEventHandler, preventDefault, stopPropagation } from '@/utils/event'
-import { _value, _input, _dispatchEvent, _classList, _compact, _leading, _onInput, _labelText, _focused, _autocomplete, _id, _messageText, _trailing, _labelAttr, _disabled, _readOnly, _onFocus, _onBlur, _placeholder, _autoHideLabel, _ref, _autoShowClearBtn, _clearTooltip, _minLine, _maxLine, _wrapperAttr, _class, _trim, _split, _length, _focus, _currentTarget, _checkValidity, _scrollHeight, _off, _px, _button, _text, _type, _autoSelectAll, _onKeyUp, _setSelectionRange, _code, _Enter, _blur, _max, _min, _decreaseTooltip, _increaseTooltip, _changeValueTooltip, _integerOnly, _stepUp, _stepDown, _valueAsNumber, _isNaN, _toUpperCase, _centerCenterLeft, _result, _menuAttr, _usePortal, _style, _onToggleOpen, _isArray, _width, _centerBottom, _observe, _disconnect, _target, _contains, _click, _autoFixOnBlur, _actionsAttr, _autoValidation, _Space, _ArrowDown, _ArrowUp } from '@/constants/string'
-import { mathClamp, mathMax, mathRound, numberIsNaN, numberParse } from '@/utils/math'
+import { _value, _input, _dispatchEvent, _classList, _compact, _leading, _onInput, _labelText, _focused, _autocomplete, _id, _messageText, _trailing, _labelAttr, _disabled, _readOnly, _onFocus, _onBlur, _placeholder, _autoHideLabel, _ref, _autoShowClearBtn, _clearTooltip, _minLine, _maxLine, _wrapperAttr, _class, _trim, _split, _length, _focus, _currentTarget, _checkValidity, _scrollHeight, _off, _px, _button, _text, _type, _autoSelectAll, _onKeyUp, _setSelectionRange, _code, _Enter, _blur, _max, _min, _decreaseTooltip, _increaseTooltip, _changeValueTooltip, _integerOnly, _stepUp, _stepDown, _valueAsNumber, _isNaN, _toUpperCase, _centerCenterLeft, _result, _menuAttr, _usePortal, _style, _onToggleOpen, _isArray, _width, _centerBottom, _observe, _disconnect, _target, _contains, _click, _autoFixOnBlur, _actionsAttr, _autoValidation, _Space, _ArrowDown, _ArrowUp, _onInputAsNumber } from '@/constants/string'
+import { mathClamp, mathMax, mathRound, numberIsNaN, numberParse, safeNumber } from '@/utils/math'
 import { getBoundingClientRect } from '@/utils/element'
 import { getDocument } from '@/constants/window'
 import { addEventListener, removeEventListener } from '@/utils/event'
@@ -292,6 +292,7 @@ type NumberTextFieldProps = Omit<TextFieldProps, 'type'> & {
 	changeValueTooltip?: string
 	autoFixOnBlur?: boolean
 	actionsAttr?: ModalProps
+	onInputAsNumber?(ev: InputEvent & {currentTarget: HTMLInputElement; target: HTMLInputElement}, value: number): unknown
 }
 const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 	const $$props = mergeProps({
@@ -305,7 +306,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 		_onBlur, _value, _ref, _focused, _wrapperAttr,
 		_decreaseTooltip, _increaseTooltip, _changeValueTooltip,
 		_clearTooltip, _disabled, _integerOnly, _autoFixOnBlur,
-		_actionsAttr
+		_actionsAttr, _onInputAsNumber, _onInput
 	])
 	const [wrapperProps, wrapperPropsOther] = splitProps(
 		props[_wrapperAttr]! ?? {},
@@ -430,6 +431,16 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 			onBlur={ev => {
 				if (props[_autoFixOnBlur]) fixNumberInput()
 				callEventHandler(ev, props[_onBlur])
+			}}
+			onInput={ev => {
+				if (props[_onInputAsNumber]){
+					let n = numberParse(numberTextField_ref[_value], props[_integerOnly])
+					n = safeNumber(n, value())
+					n = mathClamp(n, getMin(n), getMax(n))
+					if (props[_integerOnly]) n = mathRound(n)
+					props[_onInputAsNumber](ev, n)
+				}
+				callEventHandler(ev, props[_onInput])
 			}}
 			type='number'
 			trailing={<>
