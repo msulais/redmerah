@@ -1,3 +1,5 @@
+export const _ArrowDown = 'ArrowDown'
+export const _ArrowUp = 'ArrowUp'
 export const _Space = 'Space'
 export const _autoValidation = 'autoValidation'
 export const _actionsAttr = 'actionsAttr'

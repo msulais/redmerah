@@ -4,7 +4,7 @@ import { mergeRefs } from '@solid-primitives/refs'
 import { toggleAttribute } from '@/utils/attributes'
 import { clearTimeDelayed, clearTimeInterval, setTimeDelayed, setTimeInterval } from '@/utils/timeout'
 import { callEventHandler, preventDefault, stopPropagation } from '@/utils/event'
-import { _value, _input, _dispatchEvent, _classList, _compact, _leading, _onInput, _labelText, _focused, _autocomplete, _id, _messageText, _trailing, _labelAttr, _disabled, _readOnly, _onFocus, _onBlur, _placeholder, _autoHideLabel, _ref, _autoShowClearBtn, _clearTooltip, _minLine, _maxLine, _wrapperAttr, _class, _trim, _split, _length, _focus, _currentTarget, _checkValidity, _scrollHeight, _off, _px, _button, _text, _type, _autoSelectAll, _onKeyUp, _setSelectionRange, _code, _Enter, _blur, _max, _min, _decreaseTooltip, _increaseTooltip, _changeValueTooltip, _integerOnly, _stepUp, _stepDown, _valueAsNumber, _isNaN, _toUpperCase, _centerCenterLeft, _result, _menuAttr, _usePortal, _style, _onToggleOpen, _isArray, _width, _centerBottom, _observe, _disconnect, _target, _contains, _click, _autoFixOnBlur, _actionsAttr, _autoValidation, _Space } from '@/constants/string'
+import { _value, _input, _dispatchEvent, _classList, _compact, _leading, _onInput, _labelText, _focused, _autocomplete, _id, _messageText, _trailing, _labelAttr, _disabled, _readOnly, _onFocus, _onBlur, _placeholder, _autoHideLabel, _ref, _autoShowClearBtn, _clearTooltip, _minLine, _maxLine, _wrapperAttr, _class, _trim, _split, _length, _focus, _currentTarget, _checkValidity, _scrollHeight, _off, _px, _button, _text, _type, _autoSelectAll, _onKeyUp, _setSelectionRange, _code, _Enter, _blur, _max, _min, _decreaseTooltip, _increaseTooltip, _changeValueTooltip, _integerOnly, _stepUp, _stepDown, _valueAsNumber, _isNaN, _toUpperCase, _centerCenterLeft, _result, _menuAttr, _usePortal, _style, _onToggleOpen, _isArray, _width, _centerBottom, _observe, _disconnect, _target, _contains, _click, _autoFixOnBlur, _actionsAttr, _autoValidation, _Space, _ArrowDown, _ArrowUp } from '@/constants/string'
 import { mathClamp, mathMax, mathRound, numberIsNaN, numberParse } from '@/utils/math'
 import { getBoundingClientRect } from '@/utils/element'
 import { getDocument } from '@/constants/window'
@@ -489,7 +489,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 					onTouchStart={() => onPressStart('+')}
 					onKeyDown={ev => {
 						const clickKey = ev[_code] == _Enter || ev[_code] == _Space
-						const updownKey = ev[_code] == 'ArrowDown' || ev[_code] == 'ArrowUp'
+						const updownKey = ev[_code] == _ArrowDown || ev[_code] == _ArrowUp
 						if (clickKey) onPressStart('+')
 						if (updownKey && !iconButton_down_ref[_disabled]) iconButton_down_ref[_focus]()
 					}}
