@@ -3,9 +3,7 @@ import { createSignal, onMount, Show, type VoidComponent } from "solid-js"
 import type { BatteryManager } from "@/interfaces/battery"
 import { setTimeDelayed } from "@/utils/timeout"
 import { _splash, _animate, _spring, _finished, _then, _remove, _catch, _getBattery, _level, _charging, _dischargingTime, _chargingTime, _chargingchange, _chargingtimechange, _dischargingtimechange, _levelchange, _focus, _click, _tonal, _filled } from "@/constants/string"
-import { AnimationEffectTiming } from "@/enums/animation"
-import { ElementIds } from "@/enums/ids"
-import { getElementById } from "@/utils/element"
+import { removeSplashScreen } from "@/scripts/splash"
 import { addEventListener } from "@/utils/event"
 import { getDocumentBody, getNavigator } from "@/constants/window"
 import { mathFloor } from "@/utils/math"
@@ -69,19 +67,6 @@ const _: VoidComponent = () => {
 			addEventListener(battery, _chargingtimechange, () => update())
 			addEventListener(battery, _dischargingtimechange, () => update())
 		})[_catch](() => openToast(ev, toast_batteryStatusError_ref, {duration: 8E3}))
-	}
-
-	function removeSplashScreen(): void {
-		setTimeDelayed(() => {
-			const splash_ref = getElementById(ElementIds[_splash]) as HTMLDivElement
-			splash_ref[_animate](
-				{opacity: 0},
-				{
-					duration: 1000,
-					easing: AnimationEffectTiming[_spring]
-				}
-			)[_finished][_then](() => splash_ref[_remove]())
-		})
 	}
 
 	onMount(() => {

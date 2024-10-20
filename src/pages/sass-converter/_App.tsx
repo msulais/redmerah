@@ -4,10 +4,7 @@ import { compileString } from 'sass'
 
 import type { Settings } from "./_types"
 import { _splash, _animate, _spring, _finished, _then, _remove, _sassConverter, _clipboard, _createObjectStore, _css, _fontSize, _get, _html, _key, _lastInput, _length, _markdown, _open, _put, _readObjectStore, _settings, _textWrap, _value, _writeObjectStore, _writeText, _sass, _expanded, _compressed, _minify, _compileString, _scss, _indented } from "@/constants/string"
-import { AnimationEffectTiming } from "@/enums/animation"
-import { ElementIds } from "@/enums/ids"
-import { getElementById } from "@/utils/element"
-import { setMicrotask } from "@/utils/timeout"
+import { removeSplashScreen } from "@/scripts/splash"
 import { getNavigator } from "@/constants/window"
 import { Commands, InputViewOption } from "./_enums"
 import { openFile, readFileAsText, downloadFile } from "@/utils/file"
@@ -231,19 +228,6 @@ const _: VoidComponent = () => {
 					indexs: [_key, _value]
 				})
 			}
-		})
-	}
-
-	function removeSplashScreen(): void {
-		setMicrotask(() => {
-			const splash_ref = getElementById(ElementIds[_splash]) as HTMLDivElement
-			splash_ref[_animate](
-				{opacity: 0},
-				{
-					duration: 1000,
-					easing: AnimationEffectTiming[_spring]
-				}
-			)[_finished][_then](() => splash_ref[_remove]())
 		})
 	}
 

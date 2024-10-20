@@ -8,7 +8,7 @@ import { IDB } from "@/utils/indexeddb"
 import { DatabaseNames } from "@/enums/storage"
 import { ObjectStoreKeys, type ObjectStoreLastInput, type ObjectStoreLastOutput, type ObjectStoreMiscellaneous, ObjectStoreNames, type ObjectStoreSettings } from "./_storage"
 import { dateDifferenceInDays, getCurrentDate, getDate_D, getDate_M, getDate_Y, getDateString_YMD } from "@/utils/datetime"
-import { clearTimeDelayed, setMicrotask, setTimeDelayed } from "@/utils/timeout"
+import { clearTimeDelayed, setTimeDelayed } from "@/utils/timeout"
 import { stringCount, stringReverse } from "@/utils/string"
 import { KEY_DIVISION, KEY_MULTIPLY } from "./_constants"
 import { floatToBinary, formatNumber, mathAbs, mathACos, mathACosH, mathACot, mathACotH, mathACsc, mathACscH, mathASec, mathASecH, mathASin, mathASinH, mathATan, mathATanH, mathCeil, mathCos, mathCosH, mathCot, mathCotH, mathCsc, mathCscH, mathFloor, mathLn, mathLog, mathNot, mathRound, mathSec, mathSecH, mathSin, mathSinH, mathSqrt, mathTan, mathTanH, numberParse, numberToRealDigit } from "@/utils/math"
@@ -16,15 +16,13 @@ import { getMath, mathE, mathPI } from "@/constants/math"
 import { getConsole } from "@/constants/window"
 import { ConverterType, ConverterUnit, UNIT_ANGLE, UNIT_ANGLE_DEGREE, UNIT_ANGLE_GRADIAN, UNIT_ANGLE_RADIAN, UNIT_AREA, UNIT_FREQUENCY, UNIT_LENGTH, UNIT_LENGTH_KILOMETER, UNIT_LENGTH_METER, UNIT_PRESSURE, UNIT_TEMPERATURE, UNIT_TEMPERATURE_CELCIUS, UNIT_TEMPERATURE_DELISLE, UNIT_TEMPERATURE_FAHRENHEIT, UNIT_TEMPERATURE_KELVIN, UNIT_TEMPERATURE_RANKINE, UNIT_TEMPERATURE_REAMUR, UNIT_TEMPERATURE_ROMER, UNIT_TIME, UNIT_VOLUME, UNIT_WEIGHT, type ConverterUnitType } from "./_converter"
 import { FUNCTION_REGEX, NUMBER_REGEX } from "./_regex"
-import { ElementIds } from "@/enums/ids"
-import { getElementById } from "@/utils/element"
+import { removeSplashScreen } from "@/scripts/splash"
 
 import App from "@/components/App"
 import AppBar from "./_AppBar"
 import SideNavigation from './_SideNavigation'
 import Notebook from './_Notebook'
 import InputOutput from './_InputOutput'
-import { AnimationEffectTiming } from "@/enums/animation"
 
 const _: VoidComponent = () => {
 	const db = new IDB(DatabaseNames[_calculator])
@@ -962,19 +960,6 @@ const _: VoidComponent = () => {
 					indexs: [_key, _value]
 				})
 			},
-		})
-	}
-
-	function removeSplashScreen(): void {
-		setMicrotask(() => {
-			const splash_ref = getElementById(ElementIds[_splash]) as HTMLDivElement
-			splash_ref[_animate](
-				{opacity: 0},
-				{
-					duration: 1000,
-					easing: AnimationEffectTiming[_spring]
-				}
-			)[_finished][_then](() => splash_ref[_remove]())
 		})
 	}
 

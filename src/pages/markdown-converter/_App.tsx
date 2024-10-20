@@ -13,10 +13,7 @@ import { defaultCSSText } from "./_css";
 import { defaultMarkdownText } from "./_markdown";
 import { downloadFile, openFile, readFileAsText } from "@/utils/file";
 import { getNavigator } from "@/constants/window";
-import { AnimationEffectTiming } from "@/enums/animation";
-import { ElementIds } from "@/enums/ids";
-import { getElementById } from "@/utils/element";
-import { setMicrotask } from "@/utils/timeout";
+import { removeSplashScreen } from "@/scripts/splash";
 
 import Icon from "@/components/Icon";
 import Toast, { openToast } from "@/components/Toast";
@@ -199,19 +196,6 @@ const _: VoidComponent = () => {
 					indexs: [_key, _value]
 				})
 			}
-		})
-	}
-
-	function removeSplashScreen(): void {
-		setMicrotask(() => {
-			const splash_ref = getElementById(ElementIds[_splash]) as HTMLDivElement
-			splash_ref[_animate](
-				{opacity: 0},
-				{
-					duration: 1000,
-					easing: AnimationEffectTiming[_spring]
-				}
-			)[_finished][_then](() => splash_ref[_remove]())
 		})
 	}
 
