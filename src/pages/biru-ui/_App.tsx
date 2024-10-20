@@ -1,14 +1,11 @@
 import { createSignal, onMount, type VoidComponent } from "solid-js"
 
+import { type ObjectStoreSettings, ObjectStoreNames, ObjectStoreSettingsKeys } from "./_storage"
 import { Commands, Pages } from "./_enums"
 import { _animate, _button, _createObjectStore, _finished, _forEach, _get, _includes, _key, _open, _put, _readObjectStore, _remove, _settings, _splash, _spring, _then, _value, _writeObjectStore } from "@/constants/string"
-import { AnimationEffectTiming } from "@/enums/animation"
-import { ElementIds } from "@/enums/ids"
-import { getElementById } from "@/utils/element"
-import { setMicrotask } from "@/utils/timeout"
 import { IDB } from "@/utils/indexeddb"
-import { type ObjectStoreSettings, ObjectStoreNames, ObjectStoreSettingsKeys } from "./_storage"
 import { DatabaseNames } from "@/enums/storage"
+import { removeSplashScreen } from "@/scripts/splash"
 
 import App from "@/components/App"
 import AppBar from './_AppBar'
@@ -36,19 +33,6 @@ const _: VoidComponent = () => {
 			saveSettings([ObjectStoreSettingsKeys.lastPage, page])
 		}
 		return
-	}
-
-	function removeSplashScreen(): void {
-		setMicrotask(() => {
-			const splash_ref = getElementById(ElementIds[_splash]) as HTMLDivElement
-			splash_ref[_animate](
-				{opacity: 0},
-				{
-					duration: 1000,
-					easing: AnimationEffectTiming[_spring]
-				}
-			)[_finished][_then](() => splash_ref[_remove]())
-		})
 	}
 
 	function initSettings(): void {

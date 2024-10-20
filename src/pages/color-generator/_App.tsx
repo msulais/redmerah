@@ -3,7 +3,7 @@ import { createStore } from 'solid-js/store'
 
 import type { HEXColor, RGBColor } from '@/types/color'
 import type { Palette } from './_types'
-import { clearTimeDelayed, setMicrotask, setTimeDelayed } from '@/utils/timeout'
+import { clearTimeDelayed, setTimeDelayed } from '@/utils/timeout'
 import { generateColor, HEX_to_RGB, testHexColor } from '@/utils/color'
 import { addClassListModule, getElementById } from '@/utils/element'
 import { _system, _theme, _corner, _dark, _fullRound, _includes, _light, _round, _semiRound, _sharp, _src, _URL, _share, _currentTarget, _seed, _paletteList, _length, _outlined, _tonal, _color, _color_accent, _innerHTML, _toUpperCase, _colorDark, _onColor, _onColorDark, _clipboard, _writeText, _join, _push, _palette, _filter, _filled, _accentDark, _accentLight, _onAccentDark, _onAccentLight, _open, _createObjectStore, _readonly, _objectStore, _transaction, _getAll, _then, _put, _readwrite, _manual, _clear, _delete, _colorGenerator, _writeObjectStore, _readObjectStore, _animate, _finished, _remove, _splash, _spring } from '@/constants/string'
@@ -13,7 +13,7 @@ import { getLocalStorageItem, setLocalStorageItem } from '@/utils/storage'
 import { ElementIds } from '@/enums/ids'
 import { IDB } from '@/utils/indexeddb'
 import { ObjectStoreNames, type ObjectStorePaletteList } from './_storage'
-import { AnimationEffectTiming } from '@/enums/animation'
+import { removeSplashScreen } from '@/scripts/splash'
 
 import {TextTooltip} from '@/components/Tooltip'
 import Divider from '@/components/Divider'
@@ -128,19 +128,6 @@ const _: VoidComponent = () => {
 					indexs: [_seed, _accentLight, _onAccentLight, _accentDark, _onAccentDark]
 				})
 			},
-		})
-	}
-
-	function removeSplashScreen(): void {
-		setMicrotask(() => {
-			const splash_ref = getElementById(ElementIds[_splash]) as HTMLDivElement
-			splash_ref[_animate](
-				{opacity: 0},
-				{
-					duration: 1000,
-					easing: AnimationEffectTiming[_spring]
-				}
-			)[_finished][_then](() => splash_ref[_remove]())
 		})
 	}
 

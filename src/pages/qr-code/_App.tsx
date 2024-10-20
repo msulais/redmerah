@@ -4,9 +4,6 @@ import { toCanvas as dataToQRCanvas, toString as dataToQRString } from "qrcode"
 import type { HEXColor } from "@/types/color"
 import type { Settings } from "./_types"
 import { _scan, _writeObjectStore, _settings, _put, _miscellaneous, _encodingMode, _auto, _color, _backgroundColor, _errorCorrectionLevel, _margin, _version, _getContext, _2d, _clearRect, _width, _height, _svg, _replace, _toUpperCase, _jpeg, _toDataURL, _png, _then, _toBlob, _clipboard, _write, _writeText, _splash, _animate, _spring, _finished, _remove, _readObjectStore, _get, _value, _createObjectStore, _open, _key, _generate } from "@/constants/string"
-import { AnimationEffectTiming } from "@/enums/animation"
-import { ElementIds } from "@/enums/ids"
-import { getElementById } from "@/utils/element"
 import { setTimeDelayed } from "@/utils/timeout"
 import { Commands, CopyFileType, DownloadFileType, EncodingMode, ErrorCorrectionLevel, Pages } from "./_enums"
 import { createStore } from "solid-js/store"
@@ -17,6 +14,7 @@ import { getNavigator } from "@/constants/window"
 import { IDB } from "@/utils/indexeddb"
 import { DatabaseNames } from "@/enums/storage"
 import { ObjectStoreKeys, ObjectStoreNames, type ObjectStoreMiscellaneous, type ObjectStoreSettings } from "./_storage"
+import { removeSplashScreen } from "@/scripts/splash"
 
 import Icon from "@/components/Icon"
 import Toast, { openToast } from "@/components/Toast"
@@ -195,19 +193,6 @@ const _: VoidComponent = () => {
 		}
 		default: return
 	}}
-
-	function removeSplashScreen(): void {
-		setTimeDelayed(() => {
-			const splash_ref = getElementById(ElementIds[_splash])
-			splash_ref?.[_animate](
-				{opacity: 0},
-				{
-					duration: 1000,
-					easing: AnimationEffectTiming[_spring]
-				}
-			)[_finished][_then](() => splash_ref[_remove]())
-		})
-	}
 
 	function initDatabase(): void {
 		db[_open]({
