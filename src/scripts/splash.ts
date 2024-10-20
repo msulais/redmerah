@@ -14,5 +14,5 @@ export function removeSplashScreen(): void {
 				easing: AnimationEffectTiming[_spring]
 			}
 		)[_finished][_then](() => splash_ref[_remove]())
-	})
+	}, 1500)
 }
