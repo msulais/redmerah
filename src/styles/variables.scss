@@ -9,13 +9,13 @@
 
 :root {
 	// background color
-	--g-color-background-light: 250, 250, 250;
-	--g-color-background-dark :  20,  20,  20;
+	--g-color-background-light: 243, 243, 243;
+	--g-color-background-dark :  32,  32,  32;
 
 	// surface colors
-	--g-color-surface-light   : 255, 255, 255;
+	--g-color-surface-light   : 249, 249, 249;
 	--g-color-on-surface-light:  31,  31,  31;
-	--g-color-surface-dark    :  26,  26,  26;
+	--g-color-surface-dark    :  39,  39,  39;
 	--g-color-on-surface-dark : 250, 250, 250;
 
 	// error colors
@@ -78,11 +78,11 @@
 	--g-font-size-xxd: 52px;
 
 	// elevation
-	--g-elevation1: 0 4px 8px #00000026;
-	--g-elevation2: 0 4px 12px #00000026;
-	--g-elevation3: 0 4px 16px #00000026;
-	--g-elevation4: 0 4px 20px #00000026;
-	--g-elevation5: 0 4px 24px #00000026;
+	--g-elevation1: 0px 2px  4px rgba(0, 0, 0, 0.04);
+	--g-elevation2: 0px 4px  8px rgba(0, 0, 0, 0.16);
+	--g-elevation3: 0px 8px 16px rgba(0, 0, 0, 0.16);
+	--g-elevation4: 0px 16px 32px rgba(0, 0, 0, 0.16);
+	--g-elevation5: 0px 32px 64px rgba(0, 0, 0, 0.16);
 
 	background-color: rgb(var(--g-color-background));
 	font-family: var(--g-font-family-sans-serif);
@@ -95,11 +95,11 @@
 
 	&[data-theme="dark"] {
 		// elevation
-		--g-elevation1: 0 4px 8px #00000080;
-		--g-elevation2: 0 4px 12px #00000080;
-		--g-elevation3: 0 4px 16px #00000080;
-		--g-elevation4: 0 4px 20px #00000080;
-		--g-elevation5: 0 4px 24px #00000080;
+		--g-elevation1: 0px 2px 4px rgba(0, 0, 0, .12);
+		--g-elevation2: 0px 4px 8px rgba(0, 0, 0, .28);
+		--g-elevation3: 0px 8px 16px rgba(0, 0, 0, .28);
+		--g-elevation4: 0px 16px 32px rgba(0, 0, 0, .28);
+		--g-elevation5: 0px 32px 64px rgba(0, 0, 0, .28);
 
 		--g-color-background: var(--g-color-background-dark);
 		--g-color-accent: var(--g-color-accent-dark);
@@ -119,11 +119,11 @@
 	&[data-theme="system"] {
 		@media (prefers-color-scheme: dark) {
 			// elevation
-			--g-elevation1: 0 4px 8px #00000080;
-			--g-elevation2: 0 4px 12px #00000080;
-			--g-elevation3: 0 4px 16px #00000080;
-			--g-elevation4: 0 4px 20px #00000080;
-			--g-elevation5: 0 4px 24px #00000080;
+			--g-elevation1: 0px 2px 4px rgba(0, 0, 0, .12);
+			--g-elevation2: 0px 4px 8px rgba(0, 0, 0, .28);
+			--g-elevation3: 0px 8px 16px rgba(0, 0, 0, .28);
+			--g-elevation4: 0px 16px 32px rgba(0, 0, 0, .28);
+			--g-elevation5: 0px 32px 64px rgba(0, 0, 0, .28);
 
 			--g-color-background: var(--g-color-background-dark);
 			--g-color-accent: var(--g-color-accent-dark);

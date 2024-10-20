@@ -2,7 +2,7 @@
 	align-items: center;
 	border-radius: 4px;
 	border: none;
-	box-shadow: var(--g-elevation1);
+	box-shadow: var(--g-elevation2);
 	display: flex;
 	inset: unset;
 	color: rgb(var(--g-color-surface));
@@ -36,7 +36,7 @@
 }
 
 .c-popover.c-rich-tooltip {
-	box-shadow: var(--g-elevation1);
+	box-shadow: var(--g-elevation3);
 
 	> div {
 		padding: 12px;

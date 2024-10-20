@@ -11,6 +11,7 @@
 	outline: none;
 	overflow: hidden;
 	top: 0;
+	box-shadow: var(--g-elevation3);
 	transition-property: opacity;
 	transition-duration: .3s;
 
@@ -18,12 +19,12 @@
 	:root[data-corner=semi-round] & {border-radius: 8px}
 	:root[data-corner=full-round] & {border-radius: 20px}
 	:root[data-theme=dark] & {
-		background-color: rgb(36, 36, 36);
+		background-color: rgb(46, 46, 46);
 		border: 1px solid rgba(0, 0, 0, var(--g-opacity-inv5));
 	}
 	:root[data-theme=system] & {
 		@media (prefers-color-scheme: dark) {
-			background-color: rgb(36, 36, 36);
+			background-color: rgb(46, 46, 46);
 			border: 1px solid rgba(0, 0, 0, var(--g-opacity-inv5));
 		}
 	}
@@ -65,7 +66,7 @@
 	top: 4px;
 	left: 50%;
 	transform: translateX(-50%);
-	box-shadow: var(--g-elevation1);
+	box-shadow: var(--g-elevation2);
 	z-index: 5;
 	border-radius: 999px;
 	background-color: rgb(var(--g-color-accent));

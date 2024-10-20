@@ -1,6 +1,4 @@
 :is(.c-modal,.c-popover).c-menu {
-	box-shadow: var(--g-elevation1);
-
 	&[data-c-dragable] > div {
 		padding-top: 12px;
 	}
