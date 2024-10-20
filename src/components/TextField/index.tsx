@@ -493,11 +493,9 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 				<IconButton
 					ref={r => iconButton_up_ref = r}
 					disabled={props[_max] != null && value() >= getMax()}
-					onMouseUp={() => onPressEnd('+')}
+					onPointerUp={(ev) => onPressEnd('+')}
+					onPointerDown={(ev) => onPressStart('+')}
 					onContextMenu={(ev) => preventDefault(ev)}
-					onMouseDown={() => onPressStart('+')}
-					onTouchEnd={() => onPressEnd('+')}
-					onTouchStart={() => onPressStart('+')}
 					onKeyDown={ev => {
 						const clickKey = ev[_code] == _Enter || ev[_code] == _Space
 						const updownKey = ev[_code] == _ArrowDown || ev[_code] == _ArrowUp
@@ -512,14 +510,12 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 				<IconButton
 					ref={r => iconButton_down_ref = r}
 					disabled={props[_min] != null && value() <= getMin()}
-					onMouseUp={() => onPressEnd('-')}
+					onPointerUp={() => onPressEnd('-')}
+					onPointerDown={() => onPressStart('-')}
 					onContextMenu={(ev) => preventDefault(ev)}
-					onMouseDown={() => onPressStart('-')}
-					onTouchEnd={() => onPressEnd('-')}
-					onTouchStart={() => onPressStart('-')}
 					onKeyDown={ev => {
 						const clickKey = ev[_code] == _Enter || ev[_code] == _Space
-						const updownKey = ev[_code] == 'ArrowDown' || ev[_code] == 'ArrowUp'
+						const updownKey = ev[_code] == _ArrowDown || ev[_code] == _ArrowUp
 						if (clickKey) onPressStart('-')
 						if (updownKey && !iconButton_up_ref[_disabled]) iconButton_up_ref[_focus]()
 					}}
