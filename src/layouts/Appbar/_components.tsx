@@ -3,8 +3,8 @@ import { createSignal, onMount, type VoidComponent } from "solid-js";
 import Icon from "@/components/Icon";
 import { IconButton } from "@/components/Button";
 import Tooltip from "@/components/Tooltip";
-import Menu, { closeMenu, LinkMenuItem, MenuDivider, MenuHeader, MenuItem, openMenu } from "@/components/Menu";
-import ColorPicker, { openColorPicker } from "@/components/ColorPicker";
+import Menu, { closeMenu, LinkMenuItem, MenuDivider, MenuHeader, MenuItem, MenuPosition, openMenu } from "@/components/Menu";
+import { openPopoverColorPicker, PopoverColorPicker } from "@/components/ColorPicker";
 import CSSAnimation from '@/styles/animation.module.scss'
 import CSS from './_index.module.scss'
 
@@ -21,7 +21,7 @@ import { ElementIds } from "@/enums/ids";
 import { CornerData } from "@/enums/corner";
 import { ThemeData } from "@/enums/theme";
 import { getRoot } from "@/constants/window";
-import { FlyoutPosition } from "@/enums/position";
+import { clearTimeDelayed, setTimeDelayed } from "@/utils/timeout";
 
 type NavigationMenuProps = {
 	route?: RoutesLinks
@@ -39,7 +39,7 @@ export const NavigationMenu: VoidComponent<NavigationMenuProps> = (props) => {
 				onClick={(ev) => openMenu(ev, menu_navigation_ref, {
 					anchor: ev[_currentTarget],
 					padding: 0,
-					position: FlyoutPosition[_centerBottomToLeft]
+					position: MenuPosition[_centerBottomToLeft]
 				})}
 				code={0xE4F7}
 			/>
@@ -80,7 +80,8 @@ export const SettingsElement: VoidComponent = () => {
 	const [is_menu_settings_open, setIs_menu_settings_open] = createSignal<boolean>(false)
 	const [is_colorPicker_open, setIs_colorPicker_open] = createSignal<boolean>(false)
 	let menu_settings_ref: HTMLDialogElement
-	let colorPicker_ref: HTMLDialogElement
+	let colorPicker_ref: HTMLDivElement
+	let timeout_color_id: number | null = null
 
 	function changeTheme(theme: ThemeData): void {
 		setTheme(theme)
@@ -123,7 +124,12 @@ export const SettingsElement: VoidComponent = () => {
 		const acc = generateColor(hexColor)
 		const accentColorStyleEl = getElementById(ElementIds[_color_accent])!
 		accentColorStyleEl[_innerHTML] = `:root{--g-color-accent-light: ${rgbToCSSValue(HEX_to_RGB(acc[_color]))};--g-color-accent-dark: ${rgbToCSSValue(HEX_to_RGB(acc[_colorDark]))};--g-color-on-accent-light: ${rgbToCSSValue(HEX_to_RGB(acc[_onColor]))};--g-color-on-accent-dark: ${rgbToCSSValue(HEX_to_RGB(acc[_onColorDark]))};}`;
-		setLocalStorageItem(LocalStorageKeys[_color], hexColor)
+
+		if (timeout_color_id != null) clearTimeDelayed(timeout_color_id)
+		timeout_color_id = setTimeDelayed(() => {
+			setLocalStorageItem(LocalStorageKeys[_color], hexColor)
+			timeout_color_id = null
+		}, 100)
 		closeMenu(menu_settings_ref)
 	}
 
@@ -149,7 +155,7 @@ export const SettingsElement: VoidComponent = () => {
 				onClick={(ev) => openMenu(ev, menu_settings_ref, {
 					anchor: ev[_currentTarget],
 					padding: 0,
-					position: FlyoutPosition[_centerBottomToRight]
+					position: MenuPosition[_centerBottomToLeft],
 				})}
 				code={0xEE0F}
 			/>
@@ -207,21 +213,24 @@ export const SettingsElement: VoidComponent = () => {
 			<MenuHeader>Accent color</MenuHeader>
 			<MenuItem
 				focused={is_colorPicker_open()}
-				onClick={(ev) => openColorPicker(ev, colorPicker_ref, {
-					anchor: ev[_currentTarget],
-					position: FlyoutPosition[_leftCenterToBottom]
-				})}
+				onClick={(ev) => {
+					closeMenu(menu_settings_ref)
+					openPopoverColorPicker(ev, colorPicker_ref, {
+						color: color()
+					})
+				}}
 				leading={<Icon style={{color: color()}} filled code={0xE408}/>}>
 				{color()}
 			</MenuItem>
 		</Menu>
-		<ColorPicker
+		<PopoverColorPicker
 			disabledColorControl
 			disabledOpacityControl
-			onSelectColor={v => changeColor(v)}
+			disabledAction
+			dragable
+			onUpdateColor={v => changeColor(v)}
 			ref={r => colorPicker_ref = r}
 			onToggleOpen={(v) => setIs_colorPicker_open(v)}
-			onClose={() => closeMenu(menu_settings_ref)}
 		/>
 	</>)
 }

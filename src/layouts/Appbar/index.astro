@@ -16,9 +16,9 @@ const { route } = Astro.props
 ---
 
 <header class={CSS.header}>
-	<LinkButton href={RoutesLinks.home}><img src={logo.src} alt="Redmerah logo" /> Redmerah</LinkButton>
+	<LinkButton variant={ButtonVariant.outlined} href={RoutesLinks.home}><img src={logo.src} alt="Redmerah logo" /> Redmerah</LinkButton>
 	<nav>
-		<LinkButton classList={[CSS.desktop_only]} selected={route == RoutesLinks.apps} href={RoutesLinks.apps} variant={ButtonVariant.tonal}><Icon code={0xE063} filled/>Apps</LinkButton>
+		<LinkButton classList={[CSS.desktop_only]} selected={route == RoutesLinks.apps} href={RoutesLinks.apps}><Icon code={0xE063} filled/>Apps</LinkButton>
 		<LinkButton classList={[CSS.desktop_only]} selected={route == RoutesLinks.about} href={RoutesLinks.about}><Icon code={0xE930}/>About</LinkButton>
 		<LinkButton classList={[CSS.desktop_only]} href={ExternalLinks.donate} openInNewTab><Icon code={0xE84B}/>Donate</LinkButton>
 	</nav>
