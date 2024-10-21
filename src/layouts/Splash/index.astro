@@ -9,12 +9,10 @@ type Props = {
 const {
 	alt = 'Splash icon',
 	src = '#',
-	autoRemove = true,
 } = Astro.props
 ---
 <div
 	id={ElementIds.splash}
-	data-auto-remove={toggleAttribute(autoRemove)}
 	style={{
 		zIndex: 999,
 		width: '100%',

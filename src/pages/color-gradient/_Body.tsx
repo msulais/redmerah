@@ -9,7 +9,7 @@ import { addEventListener } from "@/utils/event"
 import { getDocumentBody, getDocument, getNavigator } from "@/constants/window"
 import { BodyAttributes } from "@/enums/attributes"
 import { getBoundingClientRect } from "@/utils/element"
-import { mathClamp, mathRound, numberParse, safeNumber } from "@/utils/math"
+import { mathClamp, mathRound, numberParse } from "@/utils/math"
 import { convertColorByColorModel, gradientToCSSText } from "./_utils"
 import { HSL_to_HEX, RGB_to_HEX } from "@/utils/color"
 

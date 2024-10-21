@@ -493,8 +493,8 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 				<IconButton
 					ref={r => iconButton_up_ref = r}
 					disabled={props[_max] != null && value() >= getMax()}
-					onPointerUp={(ev) => onPressEnd('+')}
-					onPointerDown={(ev) => onPressStart('+')}
+					onPointerUp={() => onPressEnd('+')}
+					onPointerDown={() => onPressStart('+')}
 					onContextMenu={(ev) => preventDefault(ev)}
 					onKeyDown={ev => {
 						const clickKey = ev[_code] == _Enter || ev[_code] == _Space
