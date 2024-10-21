@@ -124,6 +124,7 @@ export const markdownConverter: AppItem = {
 }
 
 export const apps: AppItem[] = [
+	emojiPicker,
 	colorGradient,
 	qrCode,
 	battery,
