@@ -1,5 +1,6 @@
 ---
 import { ElementIds } from '@/enums/ids'
+import { toggleAttribute } from '@/utils/attributes'
 
 type Props = {
 	src: string
@@ -7,17 +8,19 @@ type Props = {
 }
 const {
 	alt = 'Splash icon',
-	src = '#'
+	src = '#',
+	autoRemove = true,
 } = Astro.props
 ---
 <div
 	id={ElementIds.splash}
+	data-auto-remove={toggleAttribute(autoRemove)}
 	style={{
 		zIndex: 999,
 		width: '100%',
 		height: '100dvh',
 		backgroundColor: 'rgb(var(--g-color-background))',
-		position: 'absolute',
+		position: 'fixed',
 		left: 0,
 		top: 0,
 		display: 'flex',

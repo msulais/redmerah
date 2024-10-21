@@ -10,8 +10,8 @@ export enum BodyAttributes {
 	tooltipListener = 'data-c-tooltip-listener',
 	emojiListener = 'data-c-emoji-listener',
 
-	/**
-	 * Disable all element pointer event. Except element that has [data-g-keep-pointer-event].
-	 */
-	noPointerEvent = 'data-g-no-pointer-event'
+	/** Disable all element pointer event. Except element that has `[data-g-keep-pointer-event]` */
+	noPointerEvent = 'data-g-no-pointer-event',
+	componentCount = 'data-g-component-count',
+	componentCountMax = 'data-g-component-count-max'
 }

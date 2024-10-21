@@ -7,22 +7,50 @@
 .header {
 	display: flex;
 	align-items: center;
-	gap: 8px;
+	gap: 4px;
 	padding: 8px;
 	width: 1440px;
-	max-width: 100%;
+	max-width: calc(100% - 16px);
 	position: sticky;
-	top: 0;
+	top: 8px;
 	z-index: 100;
 	background-color: rgba(var(--g-color-background), var(--g-opacity-inv1));
-	backdrop-filter: blur(8px);
+	box-shadow: var(--g-elevation3);
+	backdrop-filter: blur(32px);
+	border-radius: 16px;
+	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity3));
+	transition-duration: .3s;
+
+	&[data-top] {
+		border-color: transparent !important;
+		background-color: transparent !important;
+		box-shadow: none;
+		top: 0px;
+		max-width: 100%;
+	}
+
+	:root[data-theme=dark] & {
+		border: 1px solid rgba(0, 0, 0, var(--g-opacity-inv5));
+		background-color: rgba(46, 46, 46, var(--g-opacity-inv1));
+	}
+	:root[data-theme=system] & {
+		@media (prefers-color-scheme: dark) {
+			border: 1px solid rgba(0, 0, 0, var(--g-opacity-inv5));
+			background-color: rgba(46, 46, 46, var(--g-opacity-inv1));
+		}
+	}
+	:root[data-corner=sharp] & { border-radius: 0px }
+	:root[data-corner=semi-round] & { border-radius: 12px }
+	:root[data-corner=full-round] & { border-radius: 28px }
 
 	> :global(.c-btn){
 		--c-btn-padding: 4px 12px 4px 8px;
 		font-size: var(--g-font-size-m);
 
 		& img {
-			width: 32px;
+			width: 20px;
+
+			:root[data-platform=mobile] & { width: 24px }
 		}
 	}
 

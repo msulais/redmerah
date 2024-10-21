@@ -4,14 +4,17 @@ import { MainElement } from './_components'
 import Appbar from '@/layouts/Appbar/index.astro'
 import BottomBar from '@/layouts/BottomBar/index.astro'
 import { RoutesLinks } from '@/enums/links';
+import logo from '@/assets/logo.svg';
+import Splash from '@/layouts/Splash/index.astro';
 
 export const prerender = true;
 ---
 
-<Html title="Redmerah Apps">
+<Html componentCount={3} title="Redmerah Apps">
 	<Appbar route={RoutesLinks.apps}/>
 	<MainElement client:only="solid-js"/>
 	<BottomBar/>
+	<Splash src={logo.src} alt={`Redmerah splash icon`} />
 </Html>
 
 <script is:inline src='/scripts/theme.js'/>

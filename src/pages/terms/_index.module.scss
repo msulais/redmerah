@@ -1,19 +1,18 @@
 .article {
-	padding: 32px 16px 64px 16px;
-	width: 1080px;
+	padding: 64px 16px;
+	width: 840px;
 	max-width: 100%;
 
 	& :is(p, li) {
-		font-size: 20px;
+		font-size: var(--g-font-size-m);
 		text-align: justify;
 
 		@media (max-width: 500px) {
-			font-size: 16px;
+			font-size: var(--g-font-size-xxs);
 		}
 
 		> a {
-			border-bottom: .1em solid;
-			color: rgb(var(--g-color-accent));
+			border-bottom: .1em solid rgb(var(--g-color-accent));
 			position: relative;
 			transition-duration: .3s;
 
@@ -24,16 +23,17 @@
 			}
 
 			&:active {
-				border-bottom-style: none;
+				border-bottom-style: solid;
 				background-color: rgb(var(--g-color-accent));
 				color: rgb(var(--g-color-on-accent));
+				padding: 0 .3em;
 			}
 		}
 	}
 
 	& h2 {
 		scroll-margin-top: 64px;
-		font-size: 48px;
+		font-size: var(--g-font-size-l);
 		margin-top: 1em;
 		font-weight: 500;
 
@@ -65,17 +65,10 @@
 	}
 
 	> h1 {
-		font-size: 108px;
-		text-wrap: balance;
+		font-size: var(--g-font-size-xxl);
 		margin-bottom: 1em;
-		background: linear-gradient(94.87deg, #F81111 0%, #B235FF 120.44%);
-		background-clip: text;
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-
-		@media (max-width: 650px) {
-			font-size: 64px;
-		}
+		font-weight: 500;
+		color: rgb(var(--g-color-accent));
 	}
 
 	> :not(h1) {

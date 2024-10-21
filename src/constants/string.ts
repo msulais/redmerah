@@ -1,3 +1,8 @@
+export const _componentCountMax = 'componentCountMax'
+export const _componentCount = 'componentCount'
+export const _timeout = 'timeout'
+export const _dataset = 'dataset'
+export const _autoRemove = 'autoRemove'
 export const _onInputAsNumber = 'onInputAsNumber'
 export const _ArrowDown = 'ArrowDown'
 export const _ArrowUp = 'ArrowUp'
