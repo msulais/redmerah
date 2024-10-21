@@ -15,5 +15,6 @@ export enum DatabaseNames {
 	notes = 'notes',
 	qrCode = 'qr-code',
 	colorGradient = 'color-gradient',
-	biruUi = 'biru-ui'
+	biruUi = 'biru-ui',
+	emojiPicker = 'emoji-picker'
 }

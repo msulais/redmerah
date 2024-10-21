@@ -1,0 +1,35 @@
+.body {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 8px;
+	padding: 0 16px 16px 16px;
+
+	> :global(.c-expander) {
+		width: 840px;
+		max-width: 100%;
+	}
+
+	& :global(.c-expander-body) > div {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+	}
+}
+
+.body_textfield {
+	width: 840px;
+	max-width: 100%;
+	position: sticky;
+	top: 0px;
+	z-index: 5;
+	background-color: rgb(var(--g-color-background));
+	padding: 8px 0;
+
+	> :global(.c-textfield) {
+		width: 100%;
+
+		& input {
+			font-family: "Noto Color Emoji", var(--g-font-family-sans-serif);
+		}
+	}
+}
