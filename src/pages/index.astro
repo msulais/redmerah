@@ -1,11 +1,9 @@
 ---
-import { ExternalLinks, RoutesLinks } from '@/enums/links';
-import androidLogo from '@/assets/android-logo.svg'
-import logo from '@/assets/logo.svg'
-import featuresImg_workOffline from '@/assets/features/work-offline.svg'
-import featuresImg_keepDataLocal from '@/assets/features/keep-data-local.svg'
-import featuresImg_uiUx from '@/assets/features/ui-ux.svg'
+import { RoutesLinks } from '@/enums/links';
+import type { HEXColor } from '@/types/color';
+import { HEX_to_RGB } from '@/utils/color';
 import { apps } from '@/constants/apps';
+import logo from '@/assets/logo.svg';
 
 import Html from '@/layouts/Html/index.astro';
 import Icon from '@/components/Icon/index.astro';
@@ -13,82 +11,83 @@ import LinkButton from '@/components/Button/LinkButton.astro';
 import { ButtonVariant } from '@/components/Button';
 import Appbar from '@/layouts/Appbar/index.astro';
 import BottomBar from '@/layouts/BottomBar/index.astro';
+import Splash from '@/layouts/Splash/index.astro';
 import CSSAnimation from '@/styles/animation.module.scss'
 import CSS from './_index.module.scss'
 
 const features = [
 	{
-		title: 'UI/UX',
+		title: 'Prioritize UI/UX & functionality',
 		description: 'We’ve obsessed over every pixel to create an intuitive and delightful user experience. Say goodbye to clunky interfaces—our apps are designed for simplicity and elegance.',
-		image: featuresImg_uiUx.src
+		icon: 0xEECB
 	},
 	{
-		title: 'Keep Data Local',
+		title: 'Store data locally on your device',
 		description: 'We respect your privacy. All your settings, preferences, and history are stored securely in your browser, not on our server. Your data, your control.',
-		image: featuresImg_keepDataLocal.src
+		icon: 0xE58D
 	},
 	{
-		title: 'Work Offline',
+		title: 'Continue working offline',
 		description: 'No internet connection? No problem! Our apps work seamlessly offline, ensuring you can stay productive wherever you are.',
-		image: featuresImg_workOffline.src
+		icon: 0xEE13
 	},
 ]
+
+function colorAppBackground(color: HEXColor): string {
+	const rgb = HEX_to_RGB(color)
+	return `rgba(${rgb.r},${rgb.g},${rgb.b},.24)`
+}
 ---
 
 <Html>
 	<Appbar />
 	<div class={CSS.body}>
-		<header class={CSS.header}>
-			<div>
-				<h1>Redmerah</h1>
-				<p>Discover a suite of powerful apps designed to simplify your tasks and enhance your productivity. Whether you’re a developer, designer, or just someone who loves efficiency, our app has something for you.</p>
-				<nav>
-					<LinkButton href={RoutesLinks.apps} variant={ButtonVariant.tonal}><Icon filled code={0xE063}/>Apps</LinkButton>
-					<LinkButton openInNewTab href={ExternalLinks.androidApps} variant={ButtonVariant.tonal}><img src={androidLogo.src} alt="Android logo" width="24"/>Android apps</LinkButton>
-				</nav>
-			</div>
-			<img src={logo.src} width={170} alt="Redmerah logo" />
-		</header>
+		<div class={CSS.header}>
+			<h1>📱✅🔥🚀<br/>Discover a suite of powerful <span data-color=green>apps</span> designed to simplify your <span data-color=blue>tasks</span> and enhance your <span data-color=red>productivity</span></h1>
+			<p>Whether you’re a developer, designer, or just someone who loves efficiency, our app has something for you.</p>
+		</div>
 		<main class={CSS.main}>
-			<section>
-				<h2>Apps</h2>
-				<p>Apps that we recommended for you.</p>
-				<div class={CSS.apps}>
-					{apps.map((v, i) => <>{i < 3 && <div>
-						<img src={v.logoURL} alt={v.name} />
-						<h3>{v.name}</h3>
-						<p>{v.description}</p>
-						<div>
-							<LinkButton classList={[CSSAnimation.btn_scale_up_icon]} variant={ButtonVariant.filled} href={v.link}>Open <Icon filled code={0xEB51}/></LinkButton>
-						</div>
-					</div>}</>)}
-				</div>
-				<LinkButton classList={[CSS.more_apps, CSSAnimation.btn_move_right_icon]} variant={ButtonVariant.tonal} href={RoutesLinks.apps}>See more apps <Icon filled code={0xE115}/></LinkButton>
+			<section class={CSS.apps}>
+				{apps.map((v, i) => <>{i < 3 && <div
+					style={{backgroundColor: colorAppBackground(v.color)}}>
+					<img src={v.logoURL} alt={v.name} />
+					<h3>{v.name}</h3>
+					<p>{v.description}</p>
+					<LinkButton classList={[CSSAnimation.btn_scale_up_icon]} variant={ButtonVariant.outlined} href={v.link}>Open <Icon filled code={0xEB51}/></LinkButton>
+				</div>}</>)}
 			</section>
-			<section>
+			<LinkButton
+				classList={[CSS.more_apps, CSSAnimation.btn_move_right_icon]}
+				variant={ButtonVariant.filled}
+				href={RoutesLinks.apps}>
+				See more apps
+				<Icon filled code={0xE115}/>
+			</LinkButton>
+			<section class={CSS.features}>
 				<h2>Features</h2>
-				<p>Discover our diverse features for an enhanced user experience.</p>
-				<div class={CSS.features}>
-					{features.map(v => <div>
-						<img src={v.image} alt={v.title} />
+				{features.map(v => <div>
+					<Icon code={v.icon}/>
+					<div>
 						<h3>{v.title}</h3>
 						<p>{v.description}</p>
-					</div>)}
-				</div>
+					</div>
+				</div>)}
 			</section>
-			<p id="quote"><q>
+			<p id="quote" class={CSS.quote}><q>
 				{ 'We are also users. What’s good for you, good for us too.'.split(' ').map(v => <><span>{v}</span> </>) }
 			</q></p>
 		</main>
 		<BottomBar />
 	</div>
+	<Splash src={logo.src} alt={`Redmerah splash icon`} />
 </Html>
 
 <script is:inline src='/scripts/theme.js'/>
 <script is:inline src='/scripts/platform.js'/>
 <script>
+	import { removeSplashScreen } from '@/scripts/splash'
 	import { getElementById, querySelectorAll } from "@/utils/element"
-	import { _length, _isIntersecting, _animate, _observe } from '@/constants/string'
+	import { _length, _isIntersecting, _animate, _observe, _onload } from '@/constants/string'
 
 	const quote = getElementById('quote') as HTMLParagraphElement
 	const spans = querySelectorAll<HTMLSpanElement>('#quote span')
@@ -113,4 +112,5 @@ const features = [
 	})
 
 	viewObserver[_observe](quote)
+	window[_onload] = () => removeSplashScreen()
 </script>
