@@ -15,7 +15,7 @@ type Props = {
 const { route } = Astro.props
 ---
 
-<header class={CSS.header} id="_appbar">
+<header class={CSS.header} id="_appbar" data-top>
 	<LinkButton variant={ButtonVariant.outlined} href={RoutesLinks.home}><img src={logo.src} alt="Redmerah logo" /> Redmerah</LinkButton>
 	<nav>
 		<LinkButton classList={[CSS.desktop_only]} selected={route == RoutesLinks.apps} href={RoutesLinks.apps}><Icon code={0xE063} filled/>Apps</LinkButton>
@@ -35,11 +35,11 @@ const { route } = Astro.props
 	import { addEventListener } from "@/utils/event"
 
 	const appbar = getElementById('_appbar')
-	let isTop = getWindow()[_scrollY] == 0
+	let isTop = getWindow()[_scrollY] <= 16
 
 	appbar?.[_toggleAttribute]('data-top', isTop)
 	addEventListener(getWindow(), _scroll, () => {
-		const $isTop = getWindow()[_scrollY] == 0
+		const $isTop = getWindow()[_scrollY] <= 16
 
 		if (isTop == $isTop) return;
 		isTop = $isTop
