@@ -118,6 +118,10 @@
 			}
 		}
 	}
+
+	> p {
+		font-size: var(--g-font-size-m);
+	}
 }
 
 .main {
@@ -131,6 +135,16 @@
 
 .more_apps {
 	margin: 32px 0 64px 0;
+	box-shadow: 0px 8px 16px rgba(var(--g-color-accent), 0.16);
+
+	:root[data-theme="dark"] & {
+		box-shadow: 0px 8px 16px rgba(var(--g-color-accent), 0.28);
+	}
+	:root[data-theme="dark"] & {
+		@media (prefers-color-scheme: dark) {
+			box-shadow: 0px 8px 16px rgba(var(--g-color-accent), 0.28);
+		}
+	}
 }
 
 .quote {
