@@ -42,7 +42,7 @@
 	width: calc(100% - 8px);
 
 	:root[data-platform=desktop] & { min-height: 32px }
-	:root[data-platform=mobile] & { min-height: 48px }
+	:root[data-platform=mobile] & { min-height: 40px }
 	:root[data-platform=mobile][data-corner=full-round] & { --c-btn-border-radius: 24px }
 
 	> .c-btn-layer {
