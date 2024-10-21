@@ -15,7 +15,7 @@ type Props = {
 const { route } = Astro.props
 ---
 
-<header class={CSS.header}>
+<header class={CSS.header} id="_appbar">
 	<LinkButton variant={ButtonVariant.outlined} href={RoutesLinks.home}><img src={logo.src} alt="Redmerah logo" /> Redmerah</LinkButton>
 	<nav>
 		<LinkButton classList={[CSS.desktop_only]} selected={route == RoutesLinks.apps} href={RoutesLinks.apps}><Icon code={0xE063} filled/>Apps</LinkButton>
@@ -27,3 +27,23 @@ const { route } = Astro.props
 		<NavigationMenu client:only="solid-js" route={route}/>
 	</div>
 </header>
+
+<script>
+	import { _scrollY, _toggleAttribute, _scroll } from "@/constants/string"
+	import { getWindow } from "@/constants/window"
+	import { getElementById } from "@/utils/element"
+	import { addEventListener } from "@/utils/event"
+
+	const appbar = getElementById('_appbar')
+	let isTop = getWindow()[_scrollY] == 0
+
+	appbar?.[_toggleAttribute]('data-top', isTop)
+	addEventListener(getWindow(), _scroll, () => {
+		const $isTop = getWindow()[_scrollY] == 0
+
+		if (isTop == $isTop) return;
+		isTop = $isTop
+
+		appbar?.[_toggleAttribute]('data-top', isTop)
+	})
+</script>
