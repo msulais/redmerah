@@ -15,6 +15,8 @@ export const prerender = true
 	componentCount={2}
 	title="About Redmerah"
 	description="Welcome to Redmerah, your one-stop for becoming a productivity powerhouse. We're more than just a platform; we're your partner in streamlining your workflow and conquering your to-do list. Ever feel overwhelmed by a overflowing task list? Redmerah can help. With the right tools at your fingertips, you can tackle any project with confidence.">
+	<script is:inline src='/scripts/theme.js'/>
+	<script is:inline src='/scripts/platform.js'/>
 	<Splash src={logo.src} alt={`Redmerah splash icon`} />
 	<Appbar route={RoutesLinks.about} />
 	<Main>
@@ -47,6 +49,3 @@ export const prerender = true
 	</Main>
 	<BottomBar />
 </Html>
-
-<script is:inline src='/scripts/theme.js'/>
-<script is:inline src='/scripts/platform.js'/>

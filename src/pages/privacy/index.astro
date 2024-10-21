@@ -9,6 +9,8 @@ import Splash from '@/layouts/Splash/index.astro';
 ---
 
 <Html componentCount={2} title="Privacy Policy - Redmerah" description="Putting you in control. Redmerah respects your privacy with no data collection. Discover your control options in our detailed privacy policy.">
+	<script is:inline src='/scripts/theme.js'/>
+	<script is:inline src='/scripts/platform.js'/>
 	<Splash src={logo.src} alt={`Redmerah splash icon`} />
 	<Appbar/>
 	<Main>
@@ -48,6 +50,3 @@ import Splash from '@/layouts/Splash/index.astro';
 	</Main>
 	<BottomBar/>
 </Html>
-
-<script is:inline src='/scripts/theme.js'/>
-<script is:inline src='/scripts/platform.js'/>

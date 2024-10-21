@@ -40,6 +40,8 @@ function colorAppBackground(color: HEXColor): string {
 ---
 
 <Html componentCount={2}>
+	<script is:inline src='/scripts/theme.js'/>
+	<script is:inline src='/scripts/platform.js'/>
 	<Splash src={logo.src} alt={`Redmerah splash icon`} />
 	<Appbar />
 	<div class={CSS.body}>
@@ -82,8 +84,6 @@ function colorAppBackground(color: HEXColor): string {
 	</div>
 </Html>
 
-<script is:inline src='/scripts/theme.js'/>
-<script is:inline src='/scripts/platform.js'/>
 <script>
 	import { getElementById, querySelectorAll } from "@/utils/element"
 	import { _length, _isIntersecting, _animate, _observe, _onload } from '@/constants/string'
