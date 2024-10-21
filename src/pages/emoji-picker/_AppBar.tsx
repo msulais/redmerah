@@ -20,7 +20,6 @@ import { IconButton } from "@/components/Button"
 import Menu, { MenuDivider, MenuItem, MenuHeader, openMenu, LinkMenuItem, SubMenu, closeSubMenu, closeMenu, SubMenuItem } from "@/components/Menu"
 import AppBar from "@/components/AppBar"
 import CSSAnimation from "@/styles/animation.module.scss"
-import Icon from "@/components/Icon"
 
 const _: VoidComponent = () => {
 	const [is_menu_info_open, setIs_menu_info_open] = createSignal<boolean>(false)
