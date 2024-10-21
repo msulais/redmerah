@@ -17,6 +17,7 @@ type Props = {
 	theme?: ThemeData
 	accentColor?: HEXColor
 	corner?: CornerData
+	componentCount?: number
 }
 
 const {
@@ -25,7 +26,8 @@ const {
 	lang = 'en-US',
 	theme = ThemeData.system,
 	accentColor = '#FF0000',
-	corner = CornerData.round
+	corner = CornerData.round,
+	componentCount = 0
 } = Astro.props
 
 const colors = generateColor(accentColor)
@@ -52,7 +54,7 @@ const colorToCSS = (hex: HEXColor) => {
 		</slot>
 		<slot name="open-graph-protocol" />
 	</head>
-	<body>
+	<body data-g-component-count-max={componentCount}>
 		<slot />
 	</body>
 </html>

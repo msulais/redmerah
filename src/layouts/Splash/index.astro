@@ -1,5 +1,6 @@
 ---
 import { ElementIds } from '@/enums/ids'
+import { toggleAttribute } from '@/utils/attributes'
 
 type Props = {
 	src: string
@@ -7,11 +8,13 @@ type Props = {
 }
 const {
 	alt = 'Splash icon',
-	src = '#'
+	src = '#',
+	autoRemove = true,
 } = Astro.props
 ---
 <div
 	id={ElementIds.splash}
+	data-auto-remove={toggleAttribute(autoRemove)}
 	style={{
 		zIndex: 999,
 		width: '100%',
@@ -36,11 +39,3 @@ const {
 	/>
 	<img width="160" src={src} alt={alt} />
 </div>
-
-<script>
-	import { addEventListener } from '@/utils/event'
-	import { _load } from '@/constants/string'
-	import { removeSplashScreen } from '@/scripts/splash'
-
-	addEventListener(window, _load, () => removeSplashScreen())
-</script>

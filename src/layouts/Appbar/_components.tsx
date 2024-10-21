@@ -22,6 +22,7 @@ import { CornerData } from "@/enums/corner";
 import { ThemeData } from "@/enums/theme";
 import { getRoot } from "@/constants/window";
 import { clearTimeDelayed, setTimeDelayed } from "@/utils/timeout";
+import { removeSplashScreenOnLoadEveryComponent } from "@/scripts/splash";
 
 type NavigationMenuProps = {
 	route?: RoutesLinks
@@ -30,6 +31,8 @@ type NavigationMenuProps = {
 export const NavigationMenu: VoidComponent<NavigationMenuProps> = (props) => {
 	const [is_menu_navigation_open, setIs_menu_navigation_open] = createSignal<boolean>(false)
 	let menu_navigation_ref: HTMLDialogElement
+
+	onMount(() => removeSplashScreenOnLoadEveryComponent())
 
 	return (<>
 		<Tooltip text="Open navigation menu">
@@ -145,6 +148,7 @@ export const SettingsElement: VoidComponent = () => {
 		initTheme()
 		initCorner()
 		initColor()
+		removeSplashScreenOnLoadEveryComponent()
 	})
 
 	return (<>

@@ -10,7 +10,7 @@ import Splash from '@/layouts/Splash/index.astro';
 export const prerender = true;
 ---
 
-<Html title="Redmerah Apps">
+<Html componentCount={3} title="Redmerah Apps">
 	<Appbar route={RoutesLinks.apps}/>
 	<MainElement client:only="solid-js"/>
 	<BottomBar/>

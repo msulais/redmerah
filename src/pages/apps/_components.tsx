@@ -16,8 +16,10 @@ import TextField from "@/components/TextField"
 import Menu, { closeMenu, LinkMenuItem, MenuDivider, MenuItem, MenuPosition, openMenu } from "@/components/Menu"
 import Dialog, { closeDialog, openDialog } from "@/components/Dialog"
 import CSS from './_index.module.scss'
+import { removeSplashScreenOnLoadEveryComponent } from "@/scripts/splash"
 
 export const MainElement: VoidComponent = () => {
+	const [is_menu_actions_open, setIs_menu_actions_open] = createSignal<boolean>(false)
 	const [pinnedApps, setPinnedApps] = createSignal<string[]>([])
 	const [selectedApp, setSelectedApp] = createSignal<AppItem | null>(null)
 	const [searchText, setSearchText] = createSignal<string>('')
@@ -50,6 +52,7 @@ export const MainElement: VoidComponent = () => {
 
 	onMount(() => {
 		initPinnedApp()
+		removeSplashScreenOnLoadEveryComponent()
 	})
 
 	return (<main class={CSS.main}>
@@ -72,23 +75,22 @@ export const MainElement: VoidComponent = () => {
 			<LinkButton
 				data-pinned={toggleAttribute(isSelected(app[_link]))}
 				href={app[_link]}
-				focused={getSelectedLink() == app[_link]}
+				focused={getSelectedLink() == app[_link] && is_menu_actions_open()}
 				onContextMenu={ev => {
 					setSelectedApp(app)
 					openMenu(ev, menu_actions_ref, {
 						position: MenuPosition[_centerBottomToRight],
-						dragable: true
 					})
 					preventDefault(ev)
 				}}>
-				<img src={app.logoURL} alt={app[_name]} />
+				<img loading="eager" width="48" height="48" src={app.logoURL} alt={app[_name]} />
 				{app[_name]}
 				<Show when={isSelected(app[_link])}>
 					<Icon filled code={0xECA2}/>
 				</Show>
 			</LinkButton>
 		</Show>}</For></div>
-		<Menu ref={r => menu_actions_ref = r} onToggleOpen={v => setSelectedApp(a => v? a : null)}>
+		<Menu ref={r => menu_actions_ref = r} onToggleOpen={isOpen => setIs_menu_actions_open(isOpen)}>
 			<MenuItem
 				onClick={() => {
 					pinApp(getSelectedLink() ?? '#')
@@ -123,7 +125,10 @@ export const MainElement: VoidComponent = () => {
 			</MenuItem>
 			<MenuDivider/>
 			<MenuItem
-				onClick={(ev) => openDialog(ev, dialog_info_ref)}
+				onClick={(ev) => {
+					closeMenu(menu_actions_ref)
+					openDialog(ev, dialog_info_ref)
+				}}
 				leading={<Icon code={0xE930}/>}>
 				About app
 			</MenuItem>
