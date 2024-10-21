@@ -8,9 +8,20 @@ import notes_logo from '@/assets/apps/notes-logo.svg'
 import battery_logo from '@/assets/apps/battery-logo.svg'
 import qr_code_logo from '@/assets/apps/qr-code-logo.svg'
 import color_gradient_logo from '@/assets/apps/color-gradient/logo.svg'
+import emoji_picker_logo from '@/assets/apps/emoji-picker/logo.svg'
 import { _src } from './string'
 import { RoutesLinks } from '@/enums/links'
 import type { AppItem } from '@/types/apps'
+
+export const emojiPicker: AppItem = {
+	logoURL: emoji_picker_logo[_src],
+	name: 'Emoji Picker',
+	description: 'Emoji Picker is your ultimate emoji companion. Browse, search, and copy emojis with ease. Express yourself with the perfect emoji every time.',
+	link: RoutesLinks.emojiPicker,
+	color: '#00B0FF',
+	buildNumber: 1,
+	buildVersion: '0.0.1',
+}
 
 export const colorGradient: AppItem = {
 	logoURL: color_gradient_logo[_src],
@@ -113,6 +124,7 @@ export const markdownConverter: AppItem = {
 }
 
 export const apps: AppItem[] = [
+	emojiPicker,
 	colorGradient,
 	qrCode,
 	battery,

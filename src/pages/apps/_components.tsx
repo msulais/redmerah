@@ -1,7 +1,7 @@
 import { For, Show, createMemo, createSelector, createSignal, onMount, type VoidComponent } from "solid-js"
 
 import type { AppItem } from "@/types/apps"
-import { _centerBottomToLeft, _centerBottomToRight, _centerCenterLeftTop, _leftCenterToBottom, _clipboard, _color, _color_accent, _corner, _currentTarget, _dark, _description, _filled, _tonal, _filter, _fullRound, _hostname, _includes, _innerHTML, _join, _light, _link, _open, _outlined, _pinnedApps, _round, _semiRound, _share, _sharp, _some, _split, _system, _test, _theme, _title, _toLowerCase, _trim, _value, _writeText, _name } from "@/constants/string"
+import { _centerBottomToLeft, _centerBottomToRight, _centerCenterLeftTop, _leftCenterToBottom, _clipboard, _color, _color_accent, _corner, _currentTarget, _dark, _description, _filled, _tonal, _filter, _fullRound, _hostname, _includes, _innerHTML, _join, _light, _link, _open, _outlined, _pinnedApps, _round, _semiRound, _share, _sharp, _some, _split, _system, _test, _theme, _title, _toLowerCase, _trim, _value, _writeText, _name, _localeCompare, _sort } from "@/constants/string"
 import { getLocalStorageItem, setLocalStorageItem } from "@/utils/storage"
 import { toggleAttribute } from "@/utils/attributes"
 import { LocalStorageKeys } from "@/enums/storage"
@@ -71,7 +71,7 @@ export const MainElement: VoidComponent = () => {
 			leading={<Icon code={0xEDDF} />}
 			labelText="Search apps"
 		/>
-		<div><For each={apps}>{app => <Show when={searchText()[_trim]() == '' || new RegExp(searchText()[_toLowerCase]()[_trim]()[_split](' ')[_join]('|'))[_test](app[_name][_toLowerCase]())}>
+		<div><For each={apps[_sort]((a, b) => a[_name][_localeCompare](b[_name]))}>{app => <Show when={searchText()[_trim]() == '' || new RegExp(searchText()[_toLowerCase]()[_trim]()[_split](' ')[_join]('|'))[_test](app[_name][_toLowerCase]())}>
 			<LinkButton
 				data-pinned={toggleAttribute(isSelected(app[_link]))}
 				href={app[_link]}
