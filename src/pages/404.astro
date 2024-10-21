@@ -8,6 +8,8 @@ import Main from '@/layouts/Main/index.astro';
 import BottomBar from '@/layouts/BottomBar/index.astro';
 import CSS from './_404.module.scss'
 import { RoutesLinks } from '@/enums/links';
+import logo from '@/assets/logo.svg';
+import Splash from '@/layouts/Splash/index.astro';
 
 export const prerender = true;
 ---
@@ -22,6 +24,7 @@ export const prerender = true;
 		</LinkButton>
 	</Main>
 	<BottomBar/>
+	<Splash src={logo.src} alt={`Redmerah splash icon`} />
 </Html>
 
 <script is:inline src='/scripts/theme.js'/>

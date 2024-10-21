@@ -36,3 +36,11 @@ const {
 	/>
 	<img width="160" src={src} alt={alt} />
 </div>
+
+<script>
+	import { addEventListener } from '@/utils/event'
+	import { _load } from '@/constants/string'
+	import { removeSplashScreen } from '@/scripts/splash'
+
+	addEventListener(window, _load, () => removeSplashScreen())
+</script>
