@@ -48,5 +48,4 @@ export enum ExternalLinks {
 	siteUrl = 'https://redmerah.com',
 	contactEmail = 'mailto:redmerah1813@gmail.com',
 	donate = 'https://buymeacoffee.com/redmerah',
-	androidApps = 'https://play.google.com/store/apps/dev?id=8392660381147653639'
 }
