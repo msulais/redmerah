@@ -9,6 +9,7 @@ import Splash from '@/layouts/Splash/index.astro';
 ---
 
 <Html componentCount={2} title="Terms & Conditions - Redmerah" description="Understand the terms and conditions governing your use of Redmerah's services. This page outlines important legal information.">
+	<Splash src={logo.src} alt={`Redmerah splash icon`} />
 	<Appbar/>
 	<Main>
 		<article class={CSS.article}>
@@ -108,7 +109,6 @@ import Splash from '@/layouts/Splash/index.astro';
 		</article>
 	</Main>
 	<BottomBar/>
-	<Splash src={logo.src} alt={`Redmerah splash icon`} />
 </Html>
 
 <script is:inline src='/scripts/theme.js'/>

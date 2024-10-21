@@ -40,6 +40,7 @@ function colorAppBackground(color: HEXColor): string {
 ---
 
 <Html componentCount={2}>
+	<Splash src={logo.src} alt={`Redmerah splash icon`} />
 	<Appbar />
 	<div class={CSS.body}>
 		<div class={CSS.header}>
@@ -79,7 +80,6 @@ function colorAppBackground(color: HEXColor): string {
 		</main>
 		<BottomBar />
 	</div>
-	<Splash src={logo.src} alt={`Redmerah splash icon`} />
 </Html>
 
 <script is:inline src='/scripts/theme.js'/>

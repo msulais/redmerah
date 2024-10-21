@@ -11,10 +11,10 @@ export const prerender = true;
 ---
 
 <Html componentCount={3} title="Redmerah Apps">
+	<Splash src={logo.src} alt={`Redmerah splash icon`} />
 	<Appbar route={RoutesLinks.apps}/>
 	<MainElement client:only="solid-js"/>
 	<BottomBar/>
-	<Splash src={logo.src} alt={`Redmerah splash icon`} />
 </Html>
 
 <script is:inline src='/scripts/theme.js'/>
