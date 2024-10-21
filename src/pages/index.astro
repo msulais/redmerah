@@ -18,7 +18,7 @@ import CSS from './_index.module.scss'
 const features = [
 	{
 		title: 'Prioritize UI/UX & functionality',
-		description: 'We’ve obsessed over every pixel to create an intuitive and delightful user experience. Say goodbye to clunky interfaces—our apps are designed for simplicity and elegance.',
+		description: 'Experience the perfect blend of aesthetics and usability. Our apps offer a visually stunning interface that is easy to navigate and packed with features.',
 		icon: 0xEECB
 	},
 	{
@@ -85,7 +85,6 @@ function colorAppBackground(color: HEXColor): string {
 <script is:inline src='/scripts/theme.js'/>
 <script is:inline src='/scripts/platform.js'/>
 <script>
-	import { removeSplashScreen } from '@/scripts/splash'
 	import { getElementById, querySelectorAll } from "@/utils/element"
 	import { _length, _isIntersecting, _animate, _observe, _onload } from '@/constants/string'
 
@@ -112,5 +111,4 @@ function colorAppBackground(color: HEXColor): string {
 	})
 
 	viewObserver[_observe](quote)
-	window[_onload] = () => removeSplashScreen()
 </script>
