@@ -805,7 +805,6 @@ const ProgrammerCalculator: VoidComponent<{
 			<Button
 				selected={props[_settings][_programmer][_numberType] == NumberType[_decimal]}
 				compact
-				disableScale
 				indicatorPosition={ButtonIndicatorPosition[_right]}
 				onClick={() => props[_command](Commands.change_settings_programmer_numberType, NumberType[_decimal])}
 				onContextMenu={(ev) => {
@@ -819,7 +818,6 @@ const ProgrammerCalculator: VoidComponent<{
 			<Button
 				selected={props[_settings][_programmer][_numberType] == NumberType[_hexadecimal]}
 				compact
-				disableScale
 				indicatorPosition={ButtonIndicatorPosition[_right]}
 				onClick={() => props[_command](Commands.change_settings_programmer_numberType, NumberType[_hexadecimal])}
 				onContextMenu={(ev) => {
@@ -835,7 +833,6 @@ const ProgrammerCalculator: VoidComponent<{
 			<Button
 				selected={props[_settings][_programmer][_numberType] == NumberType[_octal]}
 				compact
-				disableScale
 				indicatorPosition={ButtonIndicatorPosition[_right]}
 				onClick={() => props[_command](Commands.change_settings_programmer_numberType, NumberType[_octal])}
 				onContextMenu={(ev) => {
@@ -851,7 +848,6 @@ const ProgrammerCalculator: VoidComponent<{
 			<Button
 				selected={props[_settings][_programmer][_numberType] == NumberType[_binary]}
 				compact
-				disableScale
 				indicatorPosition={ButtonIndicatorPosition[_right]}
 				onClick={() => props[_command](Commands.change_settings_programmer_numberType, NumberType[_binary])}
 				onContextMenu={(ev) => {

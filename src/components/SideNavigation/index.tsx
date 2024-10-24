@@ -1,6 +1,6 @@
 import { children, Show, splitProps, type JSX, type ParentComponent } from "solid-js"
 
-import { _checked, _children, _classList, _disableScale, _expand, _tonal, _focus, _footer, _header, _iconCode, _iconOnly, _indent, _indicatorPosition, _leading, _left, _selected, _trailing, _variant, _class } from "@/constants/string"
+import { _checked, _children, _classList, _expand, _tonal, _focus, _footer, _header, _iconCode, _iconOnly, _indent, _indicatorPosition, _leading, _left, _selected, _trailing, _variant, _class } from "@/constants/string"
 import { toggleAttribute } from "@/utils/attributes"
 
 import Icon from "@/components/Icon"
@@ -17,7 +17,7 @@ const SideNavigationItem: ParentComponent<SideNavigationItemProps> = ($props) =>
 	const [props, other] = splitProps($props, [
 		_indicatorPosition, _selected, _leading, _children,
 		_trailing, _classList, _iconCode, _iconOnly,
-		_variant, _disableScale
+		_variant
 	])
 	const trailingComponent = children(() => props[_trailing])
 
@@ -25,8 +25,6 @@ const SideNavigationItem: ParentComponent<SideNavigationItemProps> = ($props) =>
 		variant={props[_variant] ?? (props[_selected]? ButtonVariant[_tonal] : undefined)}
 		indicatorPosition={props[_indicatorPosition] ?? ButtonIndicatorPosition[_left]}
 		selected={props[_selected]}
-		disableScale={props[_disableScale] ?? (trailingComponent()? true : undefined)}
-		data-c-trailing={toggleAttribute(trailingComponent())}
 		classList={{
 			'c-side-navigation-item': true,
 			'c-icon-btn': props[_iconOnly] ?? false,
@@ -61,14 +59,20 @@ const SideNavigation: ParentComponent<SideNavigationProps> = ($props) => {
 		_children, _expand, _header, _footer,
 		_class
 	])
+	const header = children(() => props[_header])
+	const footer = children(() => props[_footer])
 
 	return (<div
 		class={`c-side-navigation${props[_class]? ` ${props[_class]}` : ''}`}
 		data-c-expanded={toggleAttribute(props[_expand])}
 		{...other}>
-		<div class="c-side-navigation-header">{props[_header]}</div>
+		<Show when={header()}>
+			<div class="c-side-navigation-header">{header()}</div>
+		</Show>
 		<div class="c-side-navigation-content">{props[_children]}</div>
-		<div class="c-side-navigation-footer">{props[_footer]}</div>
+		<Show when={footer()}>
+			<div class="c-side-navigation-footer">{footer()}</div>
+		</Show>
 	</div>)
 }
 

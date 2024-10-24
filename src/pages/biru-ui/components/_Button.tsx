@@ -15,7 +15,6 @@ const _: VoidComponent = () => {
 	const [focused, setFocused] = createSignal<boolean>(false)
 	const [selected, setSelected] = createSignal<boolean>(false)
 	const [icon, setIcon] = createSignal<boolean>(false)
-	const [disableScale, setDisableScale] = createSignal<boolean>(false)
 	const [compact, setCompact] = createSignal<boolean>(false)
 	const [indicatorPosition, setIndicatorPosition] = createSignal<ButtonIndicatorPosition>(ButtonIndicatorPosition[_bottom])
 	return (<Page
@@ -29,8 +28,7 @@ const _: VoidComponent = () => {
 					compact={compact()}
 					focused={focused()}
 					selected={selected()}
-					indicatorPosition={indicatorPosition()}
-					disableScale={disableScale()}>
+					indicatorPosition={indicatorPosition()}>
 					<Show when={icon()}>
 						<Icon code={0xE54B}/>
 					</Show>
@@ -46,7 +44,6 @@ const _: VoidComponent = () => {
 					focused={focused()}
 					selected={selected()}
 					indicatorPosition={indicatorPosition()}
-					disableScale={disableScale()}
 					code={0xE54B}
 				/>
 			</TextTooltip>
@@ -59,7 +56,6 @@ const _: VoidComponent = () => {
 					focused={focused()}
 					selected={selected()}
 					indicatorPosition={indicatorPosition()}
-					disableScale={disableScale()}
 					emoji={'🏛'}
 				/>
 			</TextTooltip>
@@ -72,8 +68,7 @@ const _: VoidComponent = () => {
 					compact={compact()}
 					focused={focused()}
 					selected={selected()}
-					indicatorPosition={indicatorPosition()}
-					disableScale={disableScale()}>
+					indicatorPosition={indicatorPosition()}>
 					<Show when={icon()}>
 						<Icon code={0xE54B}/>
 					</Show>
@@ -90,7 +85,6 @@ const _: VoidComponent = () => {
 					focused={focused()}
 					selected={selected()}
 					indicatorPosition={indicatorPosition()}
-					disableScale={disableScale()}
 					code={0xE54B}
 				/>
 			</TextTooltip>
@@ -104,7 +98,6 @@ const _: VoidComponent = () => {
 					focused={focused()}
 					selected={selected()}
 					indicatorPosition={indicatorPosition()}
-					disableScale={disableScale()}
 					emoji={'😁'}
 				/>
 			</TextTooltip>
@@ -116,8 +109,7 @@ const _: VoidComponent = () => {
 					compact={compact()}
 					focused={focused()}
 					selected={selected()}
-					indicatorPosition={indicatorPosition()}
-					disableScale={disableScale()}>
+					indicatorPosition={indicatorPosition()}>
 					<Show when={icon()}>
 						<Icon code={0xE54B}/>
 					</Show>
@@ -133,8 +125,7 @@ const _: VoidComponent = () => {
 					compact={compact()}
 					focused={focused()}
 					selected={selected()}
-					indicatorPosition={indicatorPosition()}
-					disableScale={disableScale()}>
+					indicatorPosition={indicatorPosition()}>
 					<Show when={icon()}>
 						<Icon code={0xE54B}/>
 					</Show>
@@ -188,11 +179,6 @@ const _: VoidComponent = () => {
 				checked={icon()}
 				onChange={ev => setIcon(ev[_currentTarget][_checked])}>
 				Show icon
-			</CheckBox>
-			<CheckBox
-				checked={disableScale()}
-				onChange={ev => setDisableScale(ev[_currentTarget][_checked])}>
-				Disable scale
 			</CheckBox>
 			<CheckBox
 				checked={compact()}

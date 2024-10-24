@@ -1,7 +1,6 @@
-import { type JSX, type ParentComponent, splitProps, children } from "solid-js"
+import { type JSX, type ParentComponent, splitProps, children, Show } from "solid-js"
 
 import { _header, _actions, _children, _classList, _style, _left, _top, _springBounce, _animate, _closeAnimation, _finished, _none, _openAnimation, _then } from "@/constants/string"
-import { toggleAttribute } from "@/utils/attributes"
 import { AnimationEffectTiming } from "@/enums/animation"
 
 import { Modal, type ModalProps, openModal, closeModal, focusModal } from "@/components/Modal"
@@ -22,12 +21,13 @@ type DialogProps = ModalProps & {
 	actions?: JSX.Element
 }
 const Dialog: ParentComponent<DialogProps> = ($props) => {
+	const animationOption = {duration: 300, easing: AnimationEffectTiming[_springBounce]}
 	const [props, other] = splitProps($props, [
 		_header, _actions, _children, _classList,
 		_style, _openAnimation, _closeAnimation
 	])
-	const actionsComponent = children(() => props[_actions])
-	const animationOption = {duration: 300, easing: AnimationEffectTiming[_springBounce]}
+	const actions = children(() => props[_actions])
+	const header = children(() => props[_header])
 
 	return (<Modal
 		classList={{
@@ -53,11 +53,14 @@ const Dialog: ParentComponent<DialogProps> = ($props) => {
 				animationOption
 			)[_finished][_then](done)
 		}}
-		data-c-actions={toggleAttribute(actionsComponent())}
 		{...other}>
-		<div class="c-dialog-header">{props[_header]}</div>
+		<Show when={header()}>
+			<div class="c-dialog-header">{header()}</div>
+		</Show>
 		<div class="c-dialog-content">{props[_children]}</div>
-		<div class="c-dialog-actions">{actionsComponent()}</div>
+		<Show when={actions()}>
+			<div class="c-dialog-actions">{actions()}</div>
+		</Show>
 	</Modal>)
 }
 

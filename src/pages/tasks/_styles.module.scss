@@ -131,10 +131,7 @@ $side_navigation_none: 680px;
 
 			> :global(.c-btn) {
 				color: rgb(var(--g-color-accent));
-
-				> :global(.c-btn-layer) {
-					gap: 12px;
-				}
+				gap: 12px;
 			}
 		}
 	}
@@ -290,18 +287,15 @@ $side_navigation_none: 680px;
 	}
 
 	& :global(.c-btn) {
-		--c-btn-padding: 4px 8px;
+		padding: 4px 8px;
 
 		font-size: var(--g-font-size-s);
 		color: rgb(var(--g-color-on-surface));
 		min-height: 0 !important;
+		gap: 4px;
 
-		> :global(.c-btn-layer) {
-			gap: 4px;
-
-			> :global(.c-icon) {
-				color: rgb(var(--g-color-accent));
-			}
+		> :global(.c-icon) {
+			color: rgb(var(--g-color-accent));
 		}
 	}
 }

@@ -126,14 +126,12 @@ const CheckBox: ParentComponent<CheckBoxProps> = ($props) => {
 			{...other}
 		/>
 		<div class="c-btn c-square-btn">
-			<div class="c-btn-layer">
-				<Icon
-					ref={mergeRefs(iconProps[_ref], r => icon_ref = r)}
-					code={iconProps[_code] ?? (props[_variant] == CheckBoxVariant[_check]? (isChecked()? 0xE3CB : 0xE3D4) : 0xED2F)}
-					filled={iconProps[_filled] ?? (props[_variant] != CheckBoxVariant[_check] && isChecked())}
-					{...otherIconProps}
-				/>
-			</div>
+			<Icon
+				ref={mergeRefs(iconProps[_ref], r => icon_ref = r)}
+				code={iconProps[_code] ?? (props[_variant] == CheckBoxVariant[_check]? (isChecked()? 0xE3CB : 0xE3D4) : 0xED2F)}
+				filled={iconProps[_filled] ?? (props[_variant] != CheckBoxVariant[_check] && isChecked())}
+				{...otherIconProps}
+			/>
 		</div>
 		{props[_children]}
 	</label>)

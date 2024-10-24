@@ -1,4 +1,4 @@
-import { splitProps, type JSX, type ParentComponent } from "solid-js"
+import { children, Show, splitProps, type JSX, type ParentComponent } from "solid-js"
 
 import { _appBar, _bottomBar, _children, _class, _floatingActionButton, _leftSideBar, _rightSideBar } from "@/constants/string"
 
@@ -21,15 +21,30 @@ const App: ParentComponent<AppProps> = ($props) => {
 		_appBar, _leftSideBar, _children, _rightSideBar,
 		_bottomBar, _floatingActionButton, _class
 	])
+	const appBar = children(() => props[_appBar])
+	const leftSideBar = children(() => props[_leftSideBar])
+	const rightSideBar = children(() => props[_rightSideBar])
+	const bottomBar = children(() => props[_bottomBar])
+	const floatingActionButton = children(() => props[_floatingActionButton])
 	return (<div class={`c-app${props[_class]? ` ${props[_class]}` : ''}`} {...other}>
-		<div class="c-app-appbar">{props[_appBar]}</div>
+		<Show when={appBar()}>
+			<div class="c-app-appbar">{appBar()}</div>
+		</Show>
 		<div class="c-app-container">
-			<div class="c-app-left-sidebar">{props[_leftSideBar]}</div>
+			<Show when={leftSideBar()}>
+				<div class="c-app-left-sidebar">{leftSideBar()}</div>
+			</Show>
 			<div class="c-app-body">{props[_children]}</div>
-			<div class="c-app-right-sidebar">{props[_rightSideBar]}</div>
+			<Show when={rightSideBar()}>
+				<div class="c-app-right-sidebar">{rightSideBar()}</div>
+			</Show>
 		</div>
-		<div class="c-app-bottombar">{props[_bottomBar]}</div>
-		<div class="c-app-fab">{props[_floatingActionButton]}</div>
+		<Show when={bottomBar()}>
+			<div class="c-app-bottombar">{bottomBar()}</div>
+		</Show>
+		<Show when={floatingActionButton()}>
+			<div class="c-app-fab">{floatingActionButton()}</div>
+		</Show>
 	</div>)
 }
 

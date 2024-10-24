@@ -1,4 +1,4 @@
-import { children, type JSX, type ParentComponent, splitProps, type ValidComponent } from "solid-js"
+import { children, type JSX, type ParentComponent, Show, splitProps, type ValidComponent } from "solid-js"
 import { Dynamic, type DynamicProps } from "solid-js/web"
 
 import { toggleAttribute } from '@/utils/attributes'
@@ -15,18 +15,29 @@ const List: ParentComponent<ListProps> = ($props) => {
 	const [props, other] = splitProps($props, [
 		_leading, _children, _trailing, _subtitle, _class
 	])
-	const trailingComponent = children(() => props[_trailing])
+	const trailing = children(() => props[_trailing])
+	const leading = children(() => props[_leading])
+	const $children = children(() => props[_children])
+	const subtitle = children(() => props[_subtitle])
 
 	return (<div
 		class={`c-list${props[_class]? ` ${props[_class]}` : ''}`}
-		data-c-trailing={toggleAttribute(trailingComponent())}
+		data-c-trailing={toggleAttribute(trailing())}
 		{...other}>
-		<div class='c-list-leading'>{props[_leading]}</div>
+		<Show when={leading()}>
+			<div class='c-list-leading'>{leading()}</div>
+		</Show>
 		<div class='c-list-content'>
-			<div class='c-list-title'>{props[_children]}</div>
-			<div class='c-list-subtitle'>{props[_subtitle]}</div>
+			<Show when={$children()}>
+				<div class='c-list-title'>{$children()}</div>
+			</Show>
+			<Show when={subtitle()}>
+				<div class='c-list-subtitle'>{subtitle()}</div>
+			</Show>
 		</div>
-		<div class='c-list-trailing'>{trailingComponent()}</div>
+		<Show when={trailing()}>
+			<div class='c-list-trailing'>{trailing()}</div>
+		</Show>
 	</div>)
 }
 
@@ -39,18 +50,29 @@ const RawList: ParentComponent<RawListProps> = ($props) => {
 	const [props, other] = splitProps($props, [
 		_leading, _children, _trailing, _subtitle, _class
 	])
-	const trailingComponent = children(() => props[_trailing])
+	const trailing = children(() => props[_trailing])
+	const leading = children(() => props[_leading])
+	const $children = children(() => props[_children])
+	const subtitle = children(() => props[_subtitle])
 
 	return (<Dynamic
 		class={`c-list${props[_class]? ` ${props[_class]}` : ''}`}
-		data-c-trailing={toggleAttribute(trailingComponent())}
+		data-c-trailing={toggleAttribute(trailing())}
 		{...other}>
-		<div class='c-list-leading'>{props[_leading]}</div>
+		<Show when={leading()}>
+			<div class='c-list-leading'>{leading()}</div>
+		</Show>
 		<div class='c-list-content'>
-			<div class='c-list-title'>{props[_children]}</div>
-			<div class='c-list-subtitle'>{props[_subtitle]}</div>
+			<Show when={$children()}>
+				<div class='c-list-title'>{$children()}</div>
+			</Show>
+			<Show when={subtitle()}>
+				<div class='c-list-subtitle'>{subtitle()}</div>
+			</Show>
 		</div>
-		<div class='c-list-trailing'>{trailingComponent()}</div>
+		<Show when={trailing()}>
+			<div class='c-list-trailing'>{trailing()}</div>
+		</Show>
 	</Dynamic>)
 }
 

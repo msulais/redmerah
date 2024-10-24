@@ -46,7 +46,7 @@ $side_notebook_none: 760px;
 	:root[data-corner=full-round] & { border-radius: 28px }
 
 	> :global(.c-btn) {
-		--c-btn-padding: 0;
+		padding: 0;
 		font-size: min(var(--g-font-size-xxl), max(var(--g-font-size-m), 4vmin));
 
 		& :global(.c-icon) {

@@ -102,7 +102,9 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 	const [isInvalid, setIsInvalid] = createSignal<boolean>(false)
 	const [value, setValue] = createSignal<string>('')
 	const [height, setHeight] = createSignal<number>(HEIGHT_TEXT_INPUT_PER_LINE)
-	const trailingComponents = children(() => props[_trailing])
+	const trailing = children(() => props[_trailing])
+	const leading = children(() => props[_leading])
+	const messageText = children(() => props[_messageText])
 	let areaTextField_ref!: HTMLTextAreaElement
 
 	createEffect(() => {
@@ -120,12 +122,16 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 			data-c-focused={toggleAttribute(props[_focused] ?? isFocus())}
 			data-c-invalid={toggleAttribute(!props[_disabled] && props[_autoValidation] && isInvalid())}
 			data-c-disabled={toggleAttribute(props[_disabled])}
-			data-c-trailing={toggleAttribute(trailingComponents() || (props[_autoShowClearBtn] && value()[_length] > 0))}
+			data-c-trailing={toggleAttribute(trailing() || (props[_autoShowClearBtn] && value()[_length] > 0))}
 			data-c-compact={toggleAttribute(props[_compact])}
 			data-c-readonly={toggleAttribute(props[_readOnly])}
 			onClick={() => areaTextField_ref[_focus]()}>
-			<div class='c-area-textfield-label-text'>{props[_autoHideLabel] && value()[_length] == 0 && !props[_placeholder]? '' : props[_labelText]}</div>
-			<div class='c-area-textfield-leading' onClick={ev => stopPropagation(ev)}>{props[_leading]}</div>
+			<Show when={props[_autoHideLabel] && value()[_length] == 0 && !props[_placeholder]}>
+				<div class='c-area-textfield-label-text'>{props[_labelText]}</div>
+			</Show>
+			<Show when={leading()}>
+				<div class='c-area-textfield-leading' onClick={ev => stopPropagation(ev)}>{leading()}</div>
+			</Show>
 			<textarea
 				id={props[_id]}
 				ref={mergeRefs(props[_ref], r => areaTextField_ref = r)}
@@ -160,20 +166,24 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 				}}
 				placeholder={props[_placeholder] ?? (props[_autoHideLabel] && props[_labelText]? `${props[_labelText]}` : undefined)}
 				{...other}></textarea>
-			<div class='c-area-textfield-trailing' onClick={ev => stopPropagation(ev)}>
-				{trailingComponents()}
-				<Show when={props[_autoShowClearBtn] && value()[_length] > 0}>
-					<TextTooltip text={props[_clearTooltip] ?? 'Clear'}>
-						<TextFieldButton type={_button} onClick={(ev) => {
-							areaTextField_ref[_value] = ''
-							setValue('')
-							preventDefault(ev)
-						}}><Icon code={0xE5E9}/></TextFieldButton>
-					</TextTooltip>
-				</Show>
-			</div>
+			<Show when={trailing() || (props[_autoShowClearBtn] && value()[_length] > 0)}>
+				<div class='c-area-textfield-trailing' onClick={ev => stopPropagation(ev)}>
+					{trailing()}
+					<Show when={props[_autoShowClearBtn] && value()[_length] > 0}>
+						<TextTooltip text={props[_clearTooltip] ?? 'Clear'}>
+							<TextFieldButton type={_button} onClick={(ev) => {
+								areaTextField_ref[_value] = ''
+								setValue('')
+								preventDefault(ev)
+							}}><Icon code={0xE5E9}/></TextFieldButton>
+						</TextTooltip>
+					</Show>
+				</div>
+			</Show>
 		</div>
-		<div class='c-area-textfield-message-text'>{props[_messageText]}</div>
+		<Show when={messageText()}>
+			<div class='c-area-textfield-message-text'>{messageText()}</div>
+		</Show>
 	</div>)
 }
 
@@ -211,7 +221,9 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 	const [isFocus, setIsFocus] = createSignal<boolean>(false)
 	const [isInvalid, setIsInvalid] = createSignal<boolean>(false)
 	const [value, setValue] = createSignal<string>('')
-	const trailingComponents = children(() => props[_trailing])
+	const trailing = children(() => props[_trailing])
+	const leading = children(() => props[_leading])
+	const messageText = children(() => props[_messageText])
 	let textfield_ref: HTMLInputElement
 
 	createEffect(() => {
@@ -227,16 +239,15 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 			data-c-invalid={toggleAttribute(!props[_disabled] && props[_autoValidation] && isInvalid())}
 			data-c-compact={toggleAttribute(props[_compact])}
 			data-c-disabled={toggleAttribute(props[_disabled])}
-			data-c-trailing={toggleAttribute(trailingComponents() || (props[_autoShowClearBtn] && value()[_length] > 0))}
+			data-c-trailing={toggleAttribute(trailing() || (props[_autoShowClearBtn] && value()[_length] > 0))}
 			data-c-readonly={toggleAttribute(props[_readOnly])}
 			onClick={() => textfield_ref[_focus]()}>
-			<div class='c-textfield-label-text'>
-				{ props[_autoHideLabel] && value()[_length] == 0 && !props[_placeholder]
-					? ''
-					: props[_labelText]
-				}
-			</div>
-			<div class='c-textfield-leading' onClick={ev => stopPropagation(ev)}>{props[_leading]}</div>
+			<Show when={props[_autoHideLabel] && value()[_length] == 0 && !props[_placeholder]}>
+				<div class='c-textfield-label-text'>{props[_labelText]}</div>
+			</Show>
+			<Show when={leading()}>
+				<div class='c-textfield-leading' onClick={ev => stopPropagation(ev)}>{leading()}</div>
+			</Show>
 			<input
 				id={props[_id]}
 				ref={mergeRefs(props[_ref], r => textfield_ref = r)}
@@ -269,19 +280,23 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 				placeholder={props[_placeholder] ?? (props[_autoHideLabel] && props[_labelText]? `${props[_labelText]}` : undefined)}
 				{...other}
 			/>
-			<div class='c-textfield-trailing' onClick={ev => stopPropagation(ev)}>
-				{trailingComponents()}
-				<Show when={props[_autoShowClearBtn] && value()[_length] > 0}>
-					<TextTooltip text={props[_clearTooltip] ?? 'Clear'}>
-						<TextFieldButton type={_button} onClick={(ev) => {
-							changeTextFieldValue(textfield_ref, '')
-							preventDefault(ev)
-						}}><Icon code={0xE5E9}/></TextFieldButton>
-					</TextTooltip>
-				</Show>
-			</div>
+			<Show when={trailing() || (props[_autoShowClearBtn] && value()[_length] > 0)}>
+				<div class='c-textfield-trailing' onClick={ev => stopPropagation(ev)}>
+					{trailing()}
+					<Show when={props[_autoShowClearBtn] && value()[_length] > 0}>
+						<TextTooltip text={props[_clearTooltip] ?? 'Clear'}>
+							<TextFieldButton type={_button} onClick={(ev) => {
+								changeTextFieldValue(textfield_ref, '')
+								preventDefault(ev)
+							}}><Icon code={0xE5E9}/></TextFieldButton>
+						</TextTooltip>
+					</Show>
+				</div>
+			</Show>
 		</div>
-		<div class='c-textfield-message-text'>{props[_messageText]}</div>
+		<Show when={messageText()}>
+			<div class='c-textfield-message-text'>{messageText()}</div>
+		</Show>
 	</div>)
 }
 

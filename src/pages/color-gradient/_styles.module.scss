@@ -225,7 +225,7 @@
 		display: none;
 	}
 
-	& :global(.c-btn-layer) > div {
+	> div {
 		--size: 24px;
 		max-width: var(--size);
 		max-height: var(--size);
