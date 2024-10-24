@@ -1,5 +1,5 @@
 import { createStore } from "solid-js/store"
-import { For, Show, createEffect, createSelector, createSignal, mergeProps, onCleanup, onMount, splitProps, type JSX, type VoidComponent } from "solid-js"
+import { For, Show, children, createEffect, createSelector, createSignal, mergeProps, onCleanup, onMount, splitProps, type JSX, type VoidComponent } from "solid-js"
 import type { DOMElement } from "solid-js/jsx-runtime"
 import { mergeRefs } from "@solid-primitives/refs"
 
@@ -62,6 +62,8 @@ const Dropdown: VoidComponent<DropdownProps> = ($props) => {
 		() => selectedItems,
 		(item, items) => items[_some]((a) => a[0] == item)
 	)
+	const header = children(() => props[_header])
+	const footer = children(() => props[_footer])
 	let wrapper_dropdown_ref: HTMLDivElement
 	let menu_dropdown_ref: HTMLDialogElement
 	let $selectedValues: (string | number)[] = []
@@ -190,7 +192,9 @@ const Dropdown: VoidComponent<DropdownProps> = ($props) => {
 				...menuProps[_classList]
 			}}
 			{...menuPropsOther}>
-			<div class="c-dropdown-header">{ props[_header] }</div>
+			<Show when={header()}>
+				<div class="c-dropdown-header">{header()}</div>
+			</Show>
 			<div class="c-dropdown-items">
 				<For each={props[_items]}>{(item, index) => <>
 					<Show when={(props[_dividerIndexs] as number[])[_includes](index())}>
@@ -217,7 +221,9 @@ const Dropdown: VoidComponent<DropdownProps> = ($props) => {
 					</MenuItem>
 				</>}</For>
 			</div>
-			<div class="c-dropdown-footer">{ props[_footer] }</div>
+			<Show when={footer()}>
+				<div class="c-dropdown-footer">{footer()}</div>
+			</Show>
 		</Menu>
 	</>)
 }

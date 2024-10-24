@@ -9,11 +9,11 @@
 .c-btn {
 	--c-btn-border-radius: 8px;
 	--c-btn-border-opacity: 0;
-	--c-btn-padding: 4px 12px;
 	--c-btn-icon-animation: none;
 	--c-btn-border-color: var(--g-color-on-surface);
 	--g-background-color: var(--g-color-on-surface);
 
+	padding: 4px 12px;
 	border: 1px solid;
 	border-color: transparent;
 	border-color: rgba(var(--c-btn-border-color), var(--c-btn-border-opacity));
@@ -22,6 +22,7 @@
 	align-items: center;
 	border-radius: var(--c-btn-border-radius);
 	display: flex;
+	gap: 8px;
 	font-size: var(--g-font-size-xs);
 	line-height: normal;
 	justify-content: center;
@@ -64,7 +65,7 @@
 				--g-background-color-opacity: var(--g-opacity1);
 				cursor: pointer;
 
-				> .c-btn-layer > .c-icon {
+				> .c-icon {
 					animation: var(--c-btn-icon-animation);
 				}
 			}
@@ -73,12 +74,6 @@
 		&:active {
 			--g-background-color-opacity: var(--g-opacity0);
 			--c-btn-border-opacity: var(--g-opacity1);
-
-			&:not([data-c-noscale]) {
-				> .c-btn-layer {
-					scale: .85;
-				}
-			}
 		}
 	}
 
@@ -195,25 +190,25 @@
 }
 
 .c-square-btn {
-	--c-btn-padding: 4px;
-	--c-squre-btn-size: 40px;
-	min-height: var(--c-squre-btn-size);
-	max-height: var(--c-squre-btn-size);
-	min-width: var(--c-squre-btn-size);
-	max-width: var(--c-squre-btn-size);
+	--c-square-btn-size: 40px;
+	padding: 4px;
+	min-height: var(--c-square-btn-size);
+	max-height: var(--c-square-btn-size);
+	min-width: var(--c-square-btn-size);
+	max-width: var(--c-square-btn-size);
 
 	:root[data-platform=desktop] & {
-		--c-squre-btn-size: 36px;
+		--c-square-btn-size: 36px;
 	}
 
 	&[data-c-compact] {
-		--c-squre-btn-size: 36px;
+		--c-square-btn-size: 36px;
 	}
 }
 
 .c-floating-action-btn {
-	--c-btn-padding: 16px;
 	--c-btn-border-radius: 16px;
+	padding: 16px;
 	min-height: 56px;
 	box-shadow: var(--g-elevation3);
 	min-width: 80px;
@@ -276,29 +271,6 @@
 			--g-background-color-opacity: var(--g-opacity1);
 			--c-btn-border-opacity: var(--g-opacity1);
 		}
-	}
-}
-
-.c-btn-layer {
-	align-items: center;
-	border-radius: inherit;
-	display: flex;
-	font-size: inherit;
-	font-weight: inherit;
-	line-height: inherit;
-	gap: 8px;
-	height: 100%;
-	justify-content: center;
-	overflow: hidden;
-	padding: var(--c-btn-padding);
-	transition-duration: .3s;
-
-	&::-webkit-scrollbar {
-		display: none;
-	}
-
-	> .c-icon {
-		position: relative
 	}
 }
 

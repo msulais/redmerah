@@ -1,6 +1,6 @@
 import { type JSX, type ParentComponent, Show, splitProps, children, mergeProps } from "solid-js"
 
-import { _indicatorPosition, _selected, _leading, _children, _trailing, _classList, _iconCode, _variant, _disableScale, _tonal, _left, _header, _footer, _position, _right, _openAnimation, _closeAnimation, _spring, _animate, _none, _finished, _then, _auto, _style, _top } from "@/constants/string"
+import { _indicatorPosition, _selected, _leading, _children, _trailing, _classList, _iconCode, _variant, _tonal, _left, _header, _footer, _position, _right, _openAnimation, _closeAnimation, _spring, _animate, _none, _finished, _then, _auto, _style, _top } from "@/constants/string"
 import { toggleAttribute } from "@/utils/attributes"
 import { isVarHasValue } from "@/utils/data"
 import { AnimationEffectTiming } from "@/enums/animation"
@@ -31,7 +31,6 @@ const DrawerItem: ParentComponent<DrawerItemProps> = ($props) => {
 	const [props, other] = splitProps($props, [
 		_indicatorPosition, _selected, _leading, _children,
 		_trailing, _classList, _iconCode, _variant,
-		_disableScale
 	])
 	const trailingComponent = children(() => props[_trailing])
 
@@ -39,8 +38,6 @@ const DrawerItem: ParentComponent<DrawerItemProps> = ($props) => {
 		variant={props[_variant] ?? (props[_selected]? ButtonVariant[_tonal] : undefined)}
 		selected={props[_selected]}
 		indicatorPosition={props[_indicatorPosition] ?? (isVarHasValue(props[_selected])? (props[_indicatorPosition] ?? ButtonIndicatorPosition[_left]) : undefined)}
-		disableScale={props[_disableScale] ?? (trailingComponent()? true : undefined)}
-		data-c-trailing={toggleAttribute(trailingComponent())}
 		classList={{'c-drawer-item': true, ...props[_classList]}}
 		{...other}>
 		<Show when={props[_iconCode] != null}>
@@ -66,13 +63,15 @@ type DrawerProps = Omit<ModalProps, 'style' | 'position'> & {
 	style?: JSX.CSSProperties
 }
 const Drawer: ParentComponent<DrawerProps> = ($props) => {
+	const animationOption = {duration: 300, easing: AnimationEffectTiming[_spring]}
 	const $$props = mergeProps({position: DrawerPosition[_left]}, $props)
 	const [props, other] = splitProps($$props, [
 		_header, _footer, _children, _position,
 		_classList, _openAnimation, _closeAnimation,
 		_style
 	])
-	const animationOption = {duration: 300, easing: AnimationEffectTiming[_spring]}
+	const header = children(() => props[_header])
+	const footer = children(() => props[_footer])
 
 	return (<Modal
 		data-c-right={toggleAttribute(props[_position] == DrawerPosition[_right])}
@@ -102,9 +101,13 @@ const Drawer: ParentComponent<DrawerProps> = ($props) => {
 			}, animationOption)[_finished][_then](done)
 		}}
 		{...other}>
-		<div class="c-drawer-header">{props[_header]}</div>
+		<Show when={header()}>
+			<div class="c-drawer-header">{header()}</div>
+		</Show>
 		<div class="c-drawer-content">{props[_children]}</div>
-		<div class="c-drawer-footer">{props[_footer]}</div>
+		<Show when={footer()}>
+			<div class="c-drawer-footer">{footer()}</div>
+		</Show>
 	</Modal>)
 }
 

@@ -10,10 +10,8 @@ type Props = astroHTML.JSX.AnchorHTMLAttributes  & {
 	compact?: boolean
 	openInNewTab?: boolean
 	selected?: boolean
-	disableScale?: boolean
 	indicatorPosition?: ButtonIndicatorPosition
 	elevation?: 1 | 2 | 3 | 4 | 5
-	layerAttr?: astroHTML.JSX.HTMLAttributes
 	classList?: string[]
 }
 
@@ -25,8 +23,6 @@ const {
 	compact,
 	selected,
 	elevation,
-	layerAttr,
-	disableScale,
 	classList = [],
 	...other
 } = Astro.props
@@ -43,12 +39,9 @@ const {
 	data-c-selected={toggleAttribute(selected)}
 	data-c-elevation={toggleAttribute(elevation, true)}
 	data-c-focus={toggleAttribute(focus)}
-	data-c-noscale={toggleAttribute(disableScale)}
 	data-c-compact={toggleAttribute(compact)}
 	target={openInNewTab? '_blank' : undefined}
 	rel={openInNewTab? 'noopener noreferrer' : undefined}
 	{...other}>
-	<div class="c-btn-layer" {...layerAttr}>
-		<slot/>
-	</div>
+	<slot/>
 </a>

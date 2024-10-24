@@ -1,7 +1,7 @@
 import { type ParentComponent, type JSX, mergeProps, splitProps, type VoidComponent, type ValidComponent } from 'solid-js'
 import { Dynamic, type DynamicProps } from 'solid-js/web'
 
-import { _button, _transparent, _bottom, _children, _indicatorPosition, _variant, _focused, _compact, _selected, _layerAttr, _disableScale, _classList, _type, _class, _desktopCompact, _filled, _filledTonal, _outlined, _openInNewTab, _disabled, _onClick, _code, _tonal, _emoji } from '@/constants/string'
+import { _button, _transparent, _bottom, _children, _indicatorPosition, _variant, _focused, _compact, _selected, _layerAttr, _classList, _type, _class, _desktopCompact, _filled, _filledTonal, _outlined, _openInNewTab, _disabled, _onClick, _code, _tonal, _emoji } from '@/constants/string'
 import { toggleAttribute } from '@/utils/attributes'
 import { callEventHandler, preventDefault } from '@/utils/event'
 
@@ -26,11 +26,9 @@ enum ButtonIndicatorPosition {
 type RawButtonProps<T extends ValidComponent = keyof JSX.HTMLElementTags> = DynamicProps<T> & {
 	variant?: ButtonVariant
 	focused?: boolean
-	disableScale?: boolean
 	compact?: boolean
 	selected?: boolean
 	indicatorPosition?: ButtonIndicatorPosition
-	layerAttr?: JSX.HTMLAttributes<HTMLDivElement>
 }
 const RawButton: ParentComponent<RawButtonProps> = ($props) => {
 	const [props, other] = splitProps(mergeProps({
@@ -38,8 +36,8 @@ const RawButton: ParentComponent<RawButtonProps> = ($props) => {
 		indicatorPosition: ButtonIndicatorPosition[_bottom]
 	}, $props), [
 		_children, _indicatorPosition, _variant,
-		_focused, _compact, _selected, _layerAttr,
-		_disableScale, _classList,  _class,
+		_focused, _compact, _selected,
+		_classList,  _class,
 	])
 
 	return (<Dynamic
@@ -53,21 +51,18 @@ const RawButton: ParentComponent<RawButtonProps> = ($props) => {
 		data-c-indicator={props[_selected]? props[_indicatorPosition] : undefined}
 		data-c-selected={toggleAttribute(props[_selected])}
 		data-c-focused={toggleAttribute(props[_focused])}
-		data-c-noscale={toggleAttribute(props[_disableScale])}
 		data-c-compact={toggleAttribute(props[_compact])}
 		{...other}>
-		<div class='c-btn-layer' {...props[_layerAttr]}>{props[_children]}</div>
+		{props[_children]}
 	</Dynamic>)
 }
 
 type ButtonProps = JSX.ButtonHTMLAttributes<HTMLButtonElement> & {
 	variant?: ButtonVariant
 	focused?: boolean
-	disableScale?: boolean
 	compact?: boolean
 	selected?: boolean
 	indicatorPosition?: ButtonIndicatorPosition
-	layerAttr?: JSX.HTMLAttributes<HTMLDivElement>
 }
 const Button: ParentComponent<ButtonProps> = ($props) => {
 	const $$props = mergeProps({
@@ -77,8 +72,8 @@ const Button: ParentComponent<ButtonProps> = ($props) => {
 	}, $props)
 	const [props, other] = splitProps($$props, [
 		_children, _indicatorPosition, _variant,
-		_focused, _compact, _selected, _layerAttr,
-		_disableScale, _classList, _type, _class,
+		_focused, _compact, _selected,
+		_classList, _type, _class,
 	])
 
 	return (<button
@@ -93,10 +88,9 @@ const Button: ParentComponent<ButtonProps> = ($props) => {
 		data-c-indicator={props[_selected]? props[_indicatorPosition] : undefined}
 		data-c-selected={toggleAttribute(props[_selected])}
 		data-c-focused={toggleAttribute(props[_focused])}
-		data-c-noscale={toggleAttribute(props[_disableScale])}
 		data-c-compact={toggleAttribute(props[_compact])}
 		{...other}>
-		<div class='c-btn-layer' {...props[_layerAttr]}>{props[_children]}</div>
+		{props[_children]}
 	</button>)
 }
 
@@ -107,9 +101,7 @@ type LinkButtonProps = JSX.AnchorHTMLAttributes<HTMLAnchorElement> & {
 	disabled?: boolean
 	openInNewTab?: boolean
 	selected?: boolean
-	disableScale?: boolean
 	indicatorPosition?: ButtonIndicatorPosition
-	layerAttr?: JSX.HTMLAttributes<HTMLDivElement>
 }
 
 const LinkButton: ParentComponent<LinkButtonProps> = ($props) => {
@@ -119,8 +111,8 @@ const LinkButton: ParentComponent<LinkButtonProps> = ($props) => {
 	}, $props)
 	const [props, other] = splitProps($$props, [
 		_openInNewTab, _children, _indicatorPosition,
-		_variant, _focused, _compact, _selected, _layerAttr,
-		_disableScale, _classList, _class, _disabled,
+		_variant, _focused, _compact, _selected,
+		_classList, _class, _disabled,
 		_onClick
 	])
 
@@ -142,12 +134,11 @@ const LinkButton: ParentComponent<LinkButtonProps> = ($props) => {
 		data-c-disabled={toggleAttribute(props[_disabled])}
 		data-c-selected={toggleAttribute(props[_selected])}
 		data-c-focused={toggleAttribute(props[_focused])}
-		data-c-noscale={toggleAttribute(props[_disableScale])}
 		data-c-compact={toggleAttribute(props[_compact])}
 		target={props[_openInNewTab]? "_blank" : undefined}
 		rel={props[_openInNewTab]? "noopener noreferrer" : undefined}
 		{...other}>
-		<div class='c-btn-layer' {...props[_layerAttr]}>{props[_children]}</div>
+		{props[_children]}
 	</a>)
 }
 

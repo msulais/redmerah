@@ -44,7 +44,7 @@
 	:root[data-corner=full-round] & { border-radius: 28px }
 
 	> :global(.c-btn){
-		--c-btn-padding: 4px 12px 4px 8px;
+		padding: 4px 12px 4px 8px;
 		font-size: var(--g-font-size-m);
 
 		& img {

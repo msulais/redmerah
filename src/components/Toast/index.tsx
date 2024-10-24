@@ -1,4 +1,4 @@
-import { type JSX, type ParentComponent, splitProps, children, onMount, onCleanup } from "solid-js"
+import { type JSX, type ParentComponent, splitProps, children, onMount, onCleanup, Show } from "solid-js"
 import { mergeRefs } from "@solid-primitives/refs"
 
 import { _dispatchEvent, _onOpen, _onClose, _leading, _trailing, _children, _header, _actions, _classList, _ref, _onToggleOpen, _centerTop, _centerCenterTop, _leftTop, _centerCenterLeftTop, _leftBottom, _centerCenterLeftBottom, _centerBottom, _centerCenterBottom, _rightTop, _centerCenterRightTop, _rightBottom, _centerCenterRightBottom, _detail } from "@/constants/string"
@@ -55,7 +55,7 @@ const Toast: ParentComponent<ToastProps> = ($props) => {
 		_header, _actions, _classList,
 		_ref, _onToggleOpen
 	])
-	const actionsComponent = children(() => props[_actions])
+	const actions = children(() => props[_actions])
 	let toast_ref: HTMLDivElement
 	let isOpen = false
 	let timeoutId: number | null = null
@@ -133,7 +133,7 @@ const Toast: ParentComponent<ToastProps> = ($props) => {
 			'c-toast': true,
 			...props[_classList]
 		}}
-		data-c-actions={toggleAttribute(actionsComponent())}
+		data-c-actions={toggleAttribute(actions())}
 		{...other}>
 		<List
 			leading={props[_leading]}
@@ -141,9 +141,9 @@ const Toast: ParentComponent<ToastProps> = ($props) => {
 			subtitle={props[_children]}>
 			{ props[_header] }
 		</List>
-		<div class="c-toast-actions">
-			{ actionsComponent() }
-		</div>
+		<Show when={actions()}>
+			<div class="c-toast-actions">{actions()}</div>
+		</Show>
 	</Popover>)
 }
 

@@ -2,7 +2,7 @@ import { type Component, type JSX, type ParentComponent, Show, mergeProps, split
 import { mergeRefs } from "@solid-primitives/refs"
 
 import { getAttribute, toggleAttribute } from "@/utils/attributes"
-import { _checked, _selected, _leading, _children, _trailing, _subtitle, _indent, _classList, _rightCenterToBottom, _disconnect, _dismiss, _id, _item, _level, _manual, _observe, _onCancel, _onClick, _onClose, _onToggle, _open, _ref, _wrapperAttr, _auto, _shortcuts, _currentTarget, _none, _left, _tonal, _dragable, _clientX, _clientY, _color, _hue, _initialColor, _isDrag, _mousemove, _mouseup, _noPointerEvent, _opacity, _touchend, _touches, _touchmove, _value, _valuechange, _top, _px, _anchorId, _body, _bottom, _clientWidth, _height, _innerHeight, _right, _width, _focus, _iconCode, _compact, _variant, _indicatorPosition, _onMouseEnter, _onMouseLeave, _class, _disableScale, _desktopCompact, _gap, _position, _padding, _allowHideAnchor, _onToggleOpen, _click, _contains, _target, _filled, _focused, _layerAttr, _outlined, _transparent, _switchAttr, _onValueChanged, _onChange, _div, _disabled, _forEach } from "@/constants/string"
+import { _checked, _selected, _leading, _children, _trailing, _subtitle, _indent, _classList, _rightCenterToBottom, _disconnect, _dismiss, _id, _item, _level, _manual, _observe, _onCancel, _onClick, _onClose, _onToggle, _open, _ref, _wrapperAttr, _auto, _shortcuts, _currentTarget, _none, _left, _tonal, _dragable, _clientX, _clientY, _color, _hue, _initialColor, _isDrag, _mousemove, _mouseup, _noPointerEvent, _opacity, _touchend, _touches, _touchmove, _value, _valuechange, _top, _px, _anchorId, _body, _bottom, _clientWidth, _height, _innerHeight, _right, _width, _focus, _iconCode, _compact, _variant, _indicatorPosition, _onMouseEnter, _onMouseLeave, _class, _desktopCompact, _gap, _position, _padding, _allowHideAnchor, _onToggleOpen, _click, _contains, _target, _filled, _focused, _layerAttr, _outlined, _transparent, _switchAttr, _onValueChanged, _onChange, _div, _disabled, _forEach } from "@/constants/string"
 import { isVarHasValue } from "@/utils/data"
 import { querySelectorAll } from "@/utils/element"
 import { callEventHandler, stopImmediatePropagation, stopPropagation } from "@/utils/event"
@@ -39,7 +39,7 @@ const MenuItem: ParentComponent<MenuItemProps> = ($props) => {
 	const [props, other] = splitProps($props, [
 		_checked, _selected, _leading, _children,
 		_trailing, _classList, _iconCode, _variant,
-		_indicatorPosition, _disableScale
+		_indicatorPosition
 	])
 	const trailingComponent = children(() => props[_trailing])
 
@@ -47,8 +47,6 @@ const MenuItem: ParentComponent<MenuItemProps> = ($props) => {
 		variant={props[_variant] ?? (props[_selected]? ButtonVariant[_tonal] : props[_variant])}
 		selected={props[_selected]}
 		indicatorPosition={props[_indicatorPosition] ?? ButtonIndicatorPosition[_left]}
-		disableScale={props[_disableScale] ?? (trailingComponent()? true : undefined)}
-		data-c-trailing={toggleAttribute(trailingComponent())}
 		classList={{'c-menu-item': true, ...props[_classList]}}
 		{...other}>
 		<Show when={isVarHasValue(props[_checked])}>
@@ -96,7 +94,7 @@ const LinkMenuItem: ParentComponent<LinkMenuItemProps> = ($props) => {
 	const [props, other] = splitProps($props, [
 		_checked, _selected, _leading, _children,
 		_trailing, _classList, _iconCode, _variant,
-		_indicatorPosition, _disableScale,
+		_indicatorPosition,
 	])
 	const trailingComponent = children(() => props[_trailing])
 
@@ -104,8 +102,6 @@ const LinkMenuItem: ParentComponent<LinkMenuItemProps> = ($props) => {
 		variant={props[_variant] ?? (props[_selected]? ButtonVariant[_tonal] : props[_variant])}
 		selected={props[_selected]}
 		indicatorPosition={props[_indicatorPosition] ?? ButtonIndicatorPosition[_left]}
-		disableScale={props[_disableScale] ?? (trailingComponent()? true : undefined)}
-		data-c-trailing={toggleAttribute(trailingComponent())}
 		classList={{'c-menu-item': true, ...props[_classList]}}
 		{...other}>
 		<Show when={isVarHasValue(props[_checked])}>
@@ -146,9 +142,7 @@ const MenuHeader: ParentComponent<JSX.HTMLAttributes<HTMLDivElement>> = (props) 
 type SwitchMenuItemProps = JSX.LabelHTMLAttributes<HTMLLabelElement> & {
 	variant?: ButtonVariant
 	focused?: boolean
-	disableScale?: boolean
 	compact?: boolean
-	layerAttr?: JSX.HTMLAttributes<HTMLDivElement>
 	leading?: JSX.Element
 	trailing?: JSX.Element
 	iconCode?: number
@@ -164,7 +158,7 @@ const SwitchMenuItem: ParentComponent<SwitchMenuItemProps> = ($props) => {
 		}, $props),
 		[
 			_children, _variant, _focused,
-			_compact, _layerAttr, _disableScale,
+			_compact,
 			_classList, _class, _leading,
 			_trailing, _iconCode, _switchAttr,
 			_checked, _disabled
@@ -185,27 +179,21 @@ const SwitchMenuItem: ParentComponent<SwitchMenuItemProps> = ($props) => {
 			...props[_classList]
 		}}
 		data-c-focused={toggleAttribute(props[_focused])}
-		data-c-noscale={toggleAttribute(props[_disableScale] ?? true)}
 		data-c-compact={toggleAttribute(props[_compact])}
-		data-c-trailing
+		data-g-no-outline
 		{...other}>
-		<div
-			class='c-btn-layer'
-			data-g-no-outline
-			{...props[_layerAttr]}>
-			{ props[_leading] }
-			<Show when={props[_iconCode] != null}>
-				<Icon code={props[_iconCode]!}/>
-			</Show>
-			{ props[_children] }
-			<div style={{flex: 1}} />
-			{ props[_trailing] }
-			<RawSwitch
-				disabled={switchProps[_disabled] ?? props[_disabled]}
-				checked={switchProps[_checked] ?? props[_checked]}
-				{...otherSwitchProps}
-			/>
-		</div>
+		{ props[_leading] }
+		<Show when={props[_iconCode] != null}>
+			<Icon code={props[_iconCode]!}/>
+		</Show>
+		{ props[_children] }
+		<div style={{flex: 1}} />
+		{ props[_trailing] }
+		<RawSwitch
+			disabled={switchProps[_disabled] ?? props[_disabled]}
+			checked={switchProps[_checked] ?? props[_checked]}
+			{...otherSwitchProps}
+		/>
 	</label>)
 }
 

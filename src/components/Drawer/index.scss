@@ -101,18 +101,16 @@
 .c-btn.c-drawer-item {
 	justify-content: flex-start;
 	width: 100%;
+	white-space: nowrap;
 
-	&[data-c-selected] > .c-btn-layer > .c-icon:first-child {
+	&[data-c-selected] > .c-icon:first-child {
 		color: rgb(var(--g-color-accent));
 	}
 
 	:root[data-platform=mobile] & {
-		--c-btn-padding: 4px 16px;
+		padding: 4px 16px;
 		min-height: 56px;
-
-		> .c-btn-layer {
-			gap: 12px;
-		}
+		gap: 12px;
 	}
 
 	:root[data-platform=mobile][data-corner=full-round] & {
@@ -125,13 +123,5 @@
 		&:is([data-c-indicator=top],[data-c-indicator=bottom])::before {
 			--c-btn-indicator-size: max(var(--c-btn-indicator-weight), calc(100% - 56px));
 		}
-	}
-
-	&[data-c-trailing] > .c-btn-layer {
-		width: 100%;
-	}
-
-	> .c-btn-layer {
-		white-space: nowrap;
 	}
 }
