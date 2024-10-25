@@ -2,7 +2,7 @@ import { type Component, type JSX, type ParentComponent, Show, mergeProps, split
 import { mergeRefs } from "@solid-primitives/refs"
 
 import { getAttribute, toggleAttribute } from "@/utils/attributes"
-import { _checked, _selected, _leading, _children, _trailing, _subtitle, _indent, _classList, _rightCenterToBottom, _disconnect, _dismiss, _id, _item, _level, _manual, _observe, _onCancel, _onClick, _onClose, _onToggle, _open, _ref, _wrapperAttr, _auto, _shortcuts, _currentTarget, _none, _left, _tonal, _dragable, _clientX, _clientY, _color, _hue, _initialColor, _isDrag, _mousemove, _mouseup, _noPointerEvent, _opacity, _touchend, _touches, _touchmove, _value, _valuechange, _top, _px, _anchorId, _body, _bottom, _clientWidth, _height, _innerHeight, _right, _width, _focus, _iconCode, _compact, _variant, _indicatorPosition, _onMouseEnter, _onMouseLeave, _class, _desktopCompact, _gap, _position, _padding, _allowHideAnchor, _onToggleOpen, _click, _contains, _target, _filled, _focused, _layerAttr, _outlined, _transparent, _switchAttr, _onValueChanged, _onChange, _div, _disabled, _forEach } from "@/constants/string"
+import { _checked, _selected, _leading, _children, _trailing, _subtitle, _indent, _classList, _rightCenterToBottom, _disconnect, _dismiss, _id, _item, _level, _manual, _observe, _onCancel, _onClick, _onClose, _onToggle, _open, _ref, _wrapperAttr, _auto, _shortcuts, _currentTarget, _none, _left, _tonal, _dragable, _clientX, _clientY, _color, _hue, _initialColor, _isDrag, _mousemove, _mouseup, _noPointerEvent, _opacity, _touchend, _touches, _touchmove, _value, _valuechange, _top, _px, _anchorId, _body, _bottom, _clientWidth, _height, _innerHeight, _right, _width, _focus, _iconCode, _compact, _variant, _indicatorPosition, _onMouseEnter, _onMouseLeave, _class, _desktopCompact, _gap, _position, _padding, _allowHideAnchor, _onToggleOpen, _click, _contains, _target, _filled, _focused, _layerAttr, _outlined, _transparent, _switchAttr, _onValueChanged, _onChange, _div, _disabled, _forEach, _onPointerEnter, _onPointerLeave } from "@/constants/string"
 import { isVarHasValue } from "@/utils/data"
 import { querySelectorAll } from "@/utils/element"
 import { callEventHandler, stopImmediatePropagation, stopPropagation } from "@/utils/event"
@@ -217,7 +217,7 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 	])
 	const [wrapperProps, wrapperPropsOther] = splitProps(
 		props[_wrapperAttr]! ?? {},
-		[_class, _onClick, _onMouseEnter, _onMouseLeave, _ref]
+		[_class, _onClick, _onPointerEnter, _onPointerLeave, _ref]
 	)
 	let timeoutId: number | null = null
 	let div_ref: HTMLDivElement
@@ -288,21 +288,21 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 			open(ev)
 			callEventHandler(ev, wrapperProps[_onClick])
 		}}
-		onMouseEnter={(ev) => {
+		onPointerEnter={(ev) => {
 			cancelTimeout()
 			timeoutId = setTimeDelayed(() => {
 				open(ev)
 				timeoutId = null
 			}, 300)
-			callEventHandler(ev, wrapperProps[_onMouseEnter])
+			callEventHandler(ev, wrapperProps[_onPointerEnter])
 		}}
-		onMouseLeave={(ev) => {
+		onPointerLeave={(ev) => {
 			cancelTimeout()
 			timeoutId = setTimeDelayed(() => {
 				closePopover(popover_ref)
 				timeoutId = null
 			}, 500)
-			callEventHandler(ev, wrapperProps[_onMouseLeave])
+			callEventHandler(ev, wrapperProps[_onPointerLeave])
 		}}
 		{...wrapperPropsOther}>
 		{props[_item]}

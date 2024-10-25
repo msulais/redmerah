@@ -37,7 +37,7 @@
 	;
 	border-radius: 8px;
 	position: relative;
-	box-shadow: var(--g-elevation1);
+	box-shadow: var(--g-elevation2);
 
 	&[data-c-hsl] {
 		background:
@@ -71,7 +71,8 @@
 		position: absolute;
 		border: 2px solid white;
 		z-index: 3;
-		box-shadow: var(--g-elevation1), inset var(--g-elevation1);
+		touch-action: none;
+		box-shadow: var(--g-elevation2), inset var(--g-elevation2);
 		transition-duration: .3s;
 		transition-property: backdrop-filter, scale;
 
@@ -126,7 +127,7 @@
 		#ff0000 100%
 	);
 	position: relative;
-	box-shadow: var(--g-elevation1);
+	box-shadow: var(--g-elevation2);
 
 	&:active > div {
 		scale: .85;
@@ -151,7 +152,8 @@
 		position: absolute;
 		border: 2px solid rgb(var(--g-color-on-surface));
 		z-index: 3;
-		box-shadow: var(--g-elevation1), inset var(--g-elevation1);
+		touch-action: none;
+		box-shadow: var(--g-elevation2), inset var(--g-elevation2);
 		transition-duration: .3s;
 		transition-property: backdrop-filter, scale;
 
@@ -202,7 +204,7 @@
 	height: 144px;
 	border-radius: 8px;
 	position: relative;
-	box-shadow: var(--g-elevation1);
+	box-shadow: var(--g-elevation2);
 
 	&:active > div {
 		scale: .85;
@@ -227,7 +229,8 @@
 		position: absolute;
 		border: 2px solid rgb(var(--g-color-on-surface));
 		z-index: 3;
-		box-shadow: var(--g-elevation1), inset var(--g-elevation1);
+		touch-action: none;
+		box-shadow: var(--g-elevation2), inset var(--g-elevation2);
 		transition-duration: .3s;
 		transition-property: backdrop-filter, scale;
 
@@ -309,7 +312,7 @@
 	max-height: 48px;
 	border-radius: 8px;
 	margin-bottom: 8px;
-	box-shadow: var(--g-elevation1);
+	box-shadow: var(--g-elevation2);
 
 	&[data-c-hide-color] {
 		margin: 0 8px 0 0;

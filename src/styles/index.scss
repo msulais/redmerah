@@ -59,15 +59,18 @@ pre > code {
 [data-g-no-pointer-event] {
 	pointer-events: none;
 	user-select: none;
+	touch-action: none;
 
 	& :not([data-g-keep-pointer-event], [data-g-keep-pointer-event] *) {
 		pointer-events: none;
 		user-select: none;
+		touch-action: none;
 	}
 
 	& :is([data-g-keep-pointer-event], [data-g-keep-pointer-event] *) {
 		pointer-events: auto;
 		user-select: auto;
+		touch-action: auto;
 	}
 }
 
