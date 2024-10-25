@@ -3,7 +3,7 @@ import { createStore } from "solid-js/store"
 import { mergeRefs } from "@solid-primitives/refs"
 
 import type { HEXColor, HSLColor, RGBColor } from "@/types/color"
-import { _children, _disabledOpacityControl, _onSelectColor, _disabledColorControl, _ref, _classList, _color, _HEX, _toString, _padStart, _toUpperCase, _hue, _position, _opacity, _HSL, _RGB, _value, _toFixed, _join, _substring, _isDrag, _rect, _left, _top, _touchmove, _touches, _clientX, _clientY, _touchend, _noPointerEvent, _mousemove, _mouseup, _length, _replace, _split, _push, _isNaN, _isFinite, _trim, _currentTarget, _px, _tonal, _filled, _onUpdateColor, _disabledAction, _dispatchEvent, _onChangeColor, _detail, _onToggleOpen } from "@/constants/string"
+import { _children, _disabledOpacityControl, _onSelectColor, _disabledColorControl, _ref, _classList, _color, _HEX, _toString, _padStart, _toUpperCase, _hue, _position, _opacity, _HSL, _RGB, _value, _toFixed, _join, _substring, _isDrag, _rect, _left, _top, _touchmove, _touches, _clientX, _clientY, _touchend, _noPointerEvent, _mousemove, _mouseup, _length, _replace, _split, _push, _isNaN, _isFinite, _trim, _currentTarget, _px, _tonal, _filled, _onUpdateColor, _disabledAction, _dispatchEvent, _onChangeColor, _detail, _onToggleOpen, _pointermove, _pointerup } from "@/constants/string"
 import { HEX_to_HSL, HEX_to_RGB, HSL_to_HEX, HSL_to_HSV, HSL_to_RGB, HSV_to_HSL, RGB_to_HSL, testHexColorWithAlpha } from "@/utils/color"
 import { setTimeDelayed } from "@/utils/timeout"
 import { removeAttribute, setAttribute, toggleAttribute } from "@/utils/attributes"
@@ -248,27 +248,11 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 		})
 	}
 
-	function onTouchMove(ev: TouchEvent): void {
-		setPosition(ev[_touches][0][_clientX], ev[_touches][0][_clientY])
-	}
-
-	function onTouchEnd(): void {
-		setPicker(_color, _isDrag, false)
-		setPicker(_hue, _isDrag, false)
-		setPicker(_opacity, _isDrag, false)
-
-		// should be run last because <Modal> will mark this to close
-		// when mouse position outside
-		setTimeDelayed(() => {
-			removeAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
-		})
-	}
-
-	function onMouseMove(ev: MouseEvent): void {
+	function onPointerMove(ev: PointerEvent): void {
 		setPosition(ev[_clientX], ev[_clientY])
 	}
 
-	function onMouseUp(): void {
+	function onPointerUp(): void {
 		setPicker(_color, _isDrag, false)
 		setPicker(_hue, _isDrag, false)
 		setPicker(_opacity, _isDrag, false)
@@ -290,17 +274,13 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 
 	function initListener() {
 		addEventListener<CustomEvent>(colorPicker_ref, ColorPickerEvents[_onChangeColor], onChangeColor)
-		addEventListener<TouchEvent>(getDocument(), _touchmove, onTouchMove)
-		addEventListener<TouchEvent>(getDocument(), _touchend, onTouchEnd)
-		addEventListener<MouseEvent>(getDocument(), _mousemove, onMouseMove)
-		addEventListener<MouseEvent>(getDocument(), _mouseup, onMouseUp)
+		addEventListener<PointerEvent>(getDocument(), _pointermove, onPointerMove)
+		addEventListener<PointerEvent>(getDocument(), _pointerup, onPointerUp)
 
 		onCleanup(() => {
 			removeEventListener<CustomEvent>(colorPicker_ref, ColorPickerEvents[_onChangeColor], onChangeColor)
-			removeEventListener<TouchEvent>(getDocument(), _touchmove, onTouchMove)
-			removeEventListener<TouchEvent>(getDocument(), _touchend, onTouchEnd)
-			removeEventListener<MouseEvent>(getDocument(), _mousemove, onMouseMove)
-			removeEventListener<MouseEvent>(getDocument(), _mouseup, onMouseUp)
+			removeEventListener<PointerEvent>(getDocument(), _pointermove, onPointerMove)
+			removeEventListener<PointerEvent>(getDocument(), _pointerup, onPointerUp)
 		})
 	}
 
@@ -441,17 +421,11 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 			<div
 				class="c-color-picker-color"
 				style={{ '--c-color-picker-color': getHexColorForCanvas() }}
-				onMouseDown={(ev) => {
+				onPointerDown={(ev) => {
 					setPicker(_color, _isDrag, true)
 					setPicker(_color, _rect, getBoundingClientRect(ev[_currentTarget]))
 					setAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
 					setPosition(ev[_clientX], ev[_clientY])
-				}}
-				onTouchStart={(ev) => {
-					setPicker(_color, _isDrag, true)
-					setPicker(_color, _rect, getBoundingClientRect(ev[_currentTarget]))
-					setAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
-					setPosition(ev[_touches][0][_clientX], ev[_touches][0][_clientY])
 				}}
 				data-c-hsl={toggleAttribute(colorModel() == _HSL)}
 				draggable={false}>
@@ -481,17 +455,11 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 								: ev[_clientY] - picker[_hue][_rect]![_top],
 								getSliderSize()), 0))
 						}}
-						onMouseDown={(ev) => {
+						onPointerDown={(ev) => {
 							setPicker(_hue, _isDrag, true)
 							setPicker(_hue, _rect, getBoundingClientRect(ev[_currentTarget]))
 							setAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
 							setPosition(ev[_clientX], ev[_clientY])
-						}}
-						onTouchStart={(ev) => {
-							setPicker(_hue, _isDrag, true)
-							setPicker(_hue, _rect, getBoundingClientRect(ev[_currentTarget]))
-							setAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
-							setPosition(ev[_touches][0][_clientX], ev[_touches][0][_clientY])
 						}}
 						draggable={false}>
 						<div draggable={false} style={{
@@ -512,13 +480,7 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 								getSliderSize()
 							))
 						}}
-						onTouchStart={(ev) => {
-							setPicker(_opacity, _isDrag, true)
-							setPicker(_opacity, _rect, getBoundingClientRect(ev[_currentTarget]))
-							setAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
-							setPosition(ev[_touches][0][_clientX], ev[_touches][0][_clientY])
-						}}
-						onMouseDown={(ev) => {
+						onPointerDown={(ev) => {
 							setPicker(_opacity, _isDrag, true)
 							setPicker(_opacity, _rect, getBoundingClientRect(ev[_currentTarget]))
 							setAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
@@ -769,27 +731,11 @@ const PopoverColorPicker: ParentComponent<PopoverColorPickerProps> = ($props) =>
 		})
 	}
 
-	function onTouchMove(ev: TouchEvent): void {
-		setPosition(ev[_touches][0][_clientX], ev[_touches][0][_clientY])
-	}
-
-	function onTouchEnd(): void {
-		setPicker(_color, _isDrag, false)
-		setPicker(_hue, _isDrag, false)
-		setPicker(_opacity, _isDrag, false)
-
-		// should be run last because <Modal> will mark this to close
-		// when mouse position outside
-		setTimeDelayed(() => {
-			removeAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
-		})
-	}
-
-	function onMouseMove(ev: MouseEvent): void {
+	function onPointerMove(ev: PointerEvent): void {
 		setPosition(ev[_clientX], ev[_clientY])
 	}
 
-	function onMouseUp(): void {
+	function onPointerUp(): void {
 		setPicker(_color, _isDrag, false)
 		setPicker(_hue, _isDrag, false)
 		setPicker(_opacity, _isDrag, false)
@@ -811,17 +757,13 @@ const PopoverColorPicker: ParentComponent<PopoverColorPickerProps> = ($props) =>
 
 	function initListener() {
 		addEventListener<CustomEvent>(colorPicker_ref, ColorPickerEvents[_onChangeColor], onChangeColor)
-		addEventListener<TouchEvent>(getDocument(), _touchmove, onTouchMove)
-		addEventListener<TouchEvent>(getDocument(), _touchend, onTouchEnd)
-		addEventListener<MouseEvent>(getDocument(), _mousemove, onMouseMove)
-		addEventListener<MouseEvent>(getDocument(), _mouseup, onMouseUp)
+		addEventListener<PointerEvent>(getDocument(), _pointermove, onPointerMove)
+		addEventListener<PointerEvent>(getDocument(), _pointerup, onPointerUp)
 
 		onCleanup(() => {
 			removeEventListener<CustomEvent>(colorPicker_ref, ColorPickerEvents[_onChangeColor], onChangeColor)
-			removeEventListener<TouchEvent>(getDocument(), _touchmove, onTouchMove)
-			removeEventListener<TouchEvent>(getDocument(), _touchend, onTouchEnd)
-			removeEventListener<MouseEvent>(getDocument(), _mousemove, onMouseMove)
-			removeEventListener<MouseEvent>(getDocument(), _mouseup, onMouseUp)
+			removeEventListener<PointerEvent>(getDocument(), _pointermove, onPointerMove)
+			removeEventListener<PointerEvent>(getDocument(), _pointerup, onPointerUp)
 		})
 	}
 
@@ -962,17 +904,11 @@ const PopoverColorPicker: ParentComponent<PopoverColorPickerProps> = ($props) =>
 			<div
 				class="c-color-picker-color"
 				style={{ '--c-color-picker-color': getHexColorForCanvas() }}
-				onMouseDown={(ev) => {
+				onPointerDown={(ev) => {
 					setPicker(_color, _isDrag, true)
 					setPicker(_color, _rect, getBoundingClientRect(ev[_currentTarget]))
 					setAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
 					setPosition(ev[_clientX], ev[_clientY])
-				}}
-				onTouchStart={(ev) => {
-					setPicker(_color, _isDrag, true)
-					setPicker(_color, _rect, getBoundingClientRect(ev[_currentTarget]))
-					setAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
-					setPosition(ev[_touches][0][_clientX], ev[_touches][0][_clientY])
 				}}
 				data-c-hsl={toggleAttribute(colorModel() == _HSL)}
 				draggable={false}>
@@ -1002,17 +938,11 @@ const PopoverColorPicker: ParentComponent<PopoverColorPickerProps> = ($props) =>
 								: ev[_clientY] - picker[_hue][_rect]![_top],
 								getSliderSize()), 0))
 						}}
-						onMouseDown={(ev) => {
+						onPointerDown={(ev) => {
 							setPicker(_hue, _isDrag, true)
 							setPicker(_hue, _rect, getBoundingClientRect(ev[_currentTarget]))
 							setAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
 							setPosition(ev[_clientX], ev[_clientY])
-						}}
-						onTouchStart={(ev) => {
-							setPicker(_hue, _isDrag, true)
-							setPicker(_hue, _rect, getBoundingClientRect(ev[_currentTarget]))
-							setAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
-							setPosition(ev[_touches][0][_clientX], ev[_touches][0][_clientY])
 						}}
 						draggable={false}>
 						<div draggable={false} style={{
@@ -1033,13 +963,7 @@ const PopoverColorPicker: ParentComponent<PopoverColorPickerProps> = ($props) =>
 								getSliderSize()
 							))
 						}}
-						onTouchStart={(ev) => {
-							setPicker(_opacity, _isDrag, true)
-							setPicker(_opacity, _rect, getBoundingClientRect(ev[_currentTarget]))
-							setAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
-							setPosition(ev[_touches][0][_clientX], ev[_touches][0][_clientY])
-						}}
-						onMouseDown={(ev) => {
+						onPointerDown={(ev) => {
 							setPicker(_opacity, _isDrag, true)
 							setPicker(_opacity, _rect, getBoundingClientRect(ev[_currentTarget]))
 							setAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])

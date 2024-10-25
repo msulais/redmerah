@@ -126,7 +126,7 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 			data-c-compact={toggleAttribute(props[_compact])}
 			data-c-readonly={toggleAttribute(props[_readOnly])}
 			onClick={() => areaTextField_ref[_focus]()}>
-			<Show when={props[_autoHideLabel] && value()[_length] == 0 && !props[_placeholder]}>
+			<Show when={!(props[_autoHideLabel] && value()[_length] == 0 && !props[_placeholder])}>
 				<div class='c-area-textfield-label-text'>{props[_labelText]}</div>
 			</Show>
 			<Show when={leading()}>
@@ -242,7 +242,7 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 			data-c-trailing={toggleAttribute(trailing() || (props[_autoShowClearBtn] && value()[_length] > 0))}
 			data-c-readonly={toggleAttribute(props[_readOnly])}
 			onClick={() => textfield_ref[_focus]()}>
-			<Show when={props[_autoHideLabel] && value()[_length] == 0 && !props[_placeholder]}>
+			<Show when={!(props[_autoHideLabel] && value()[_length] == 0 && !props[_placeholder])}>
 				<div class='c-textfield-label-text'>{props[_labelText]}</div>
 			</Show>
 			<Show when={leading()}>

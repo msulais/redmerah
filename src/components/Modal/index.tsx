@@ -5,7 +5,7 @@ import { Portal } from 'solid-js/web'
 import { AnimationEffectTiming } from '@/enums/animation'
 import { FlyoutPosition as ModalPosition } from '@/enums/position'
 import { getFlyoutPosition } from '@/utils/flyout'
-import { _dispatchEvent, _onOpen, _openModal, _modalListener, _detail, _element, _some, _isSameNode, _push, _closeModal, _findIndex, _splice, _length, _click, _at, _clientX, _clientY, _x, _left, _right, _y, _top, _bottom, _scroll, _scrollY, _documentElement, _scrollTop, _scrollTo, _instant, _resize, _noPointerEvent, _observe, _onReposition, _onShortFocus, _onClose, _ref, _onToggleOpen, _onCancel, _children, _onKeyDown, _class, _openAnimation, _closeAnimation, _centerBottom, _body, _clientWidth, _innerHeight, _px, _width, _height, _touches, _touchmove, _touchend, _mousemove, _mouseup, _centerBottomToLeft, _centerBottomToRight, _centerTop, _centerTopToLeft, _centerTopToRight, _leftCenter, _leftCenterToBottom, _leftCenterToTop, _rightCenter, _rightCenterToBottom, _rightCenterToTop, _open, _close, _animate, _springBounce, _finished, _then, _focus, _showModal, _style, _maxWidth, _maxHeight, _max_width, _max_height, _none, _disconnect, _key, _Escape, _altKey, _ctrlKey, _metaKey, _shiftKey, _position, _gap, _padding, _important, _allowHideAnchor, _dragable, _inputAutoFocus, _pointerType, _forEach } from '@/constants/string'
+import { _dispatchEvent, _onOpen, _openModal, _modalListener, _detail, _element, _some, _isSameNode, _push, _closeModal, _findIndex, _splice, _length, _click, _at, _clientX, _clientY, _x, _left, _right, _y, _top, _bottom, _scroll, _scrollY, _documentElement, _scrollTop, _scrollTo, _instant, _resize, _noPointerEvent, _observe, _onReposition, _onShortFocus, _onClose, _ref, _onToggleOpen, _onCancel, _children, _onKeyDown, _class, _openAnimation, _closeAnimation, _centerBottom, _body, _clientWidth, _innerHeight, _px, _width, _height, _touches, _touchmove, _touchend, _mousemove, _mouseup, _centerBottomToLeft, _centerBottomToRight, _centerTop, _centerTopToLeft, _centerTopToRight, _leftCenter, _leftCenterToBottom, _leftCenterToTop, _rightCenter, _rightCenterToBottom, _rightCenterToTop, _open, _close, _animate, _springBounce, _finished, _then, _focus, _showModal, _style, _maxWidth, _maxHeight, _max_width, _max_height, _none, _disconnect, _key, _Escape, _altKey, _ctrlKey, _metaKey, _shiftKey, _position, _gap, _padding, _important, _allowHideAnchor, _dragable, _inputAutoFocus, _pointerType, _forEach, _pointermove, _pointerup } from '@/constants/string'
 import { clearTimeDelayed, setTimeDelayed } from '@/utils/timeout'
 import { hasAttribute, removeAttribute, setAttribute, toggleAttribute } from '@/utils/attributes'
 import { getDocument, getDocumentBody, getWindow } from '@/constants/window'
@@ -245,24 +245,13 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 		setTop(y - diffPositionY)
 	}
 
-	function onTouchMove(ev: TouchEvent): void {
-		if (!isDragging()) return;
-		changePosition(ev[_touches][0][_clientX], ev[_touches][0][_clientY])
-	}
-
-	function onTouchEnd(): void {
-		removeAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
-		setIsDragging(false)
-		fixPosition()
-	}
-
-	function onMouseMove(ev: MouseEvent): void {
+	function onPointerMove(ev: PointerEvent): void {
 		if (!isDragging()) return;
 
 		changePosition(ev[_clientX], ev[_clientY])
 	}
 
-	function onMouseUp(): void {
+	function onPointerUp(): void {
 		removeAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
 		setIsDragging(false)
 		fixPosition()
@@ -285,17 +274,13 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 	}
 
 	function addDragListener() {
-		addEventListener<TouchEvent>(getDocument(), _touchmove, onTouchMove)
-		addEventListener<TouchEvent>(getDocument(), _touchend, onTouchEnd)
-		addEventListener<MouseEvent>(getDocument(), _mousemove, onMouseMove)
-		addEventListener<MouseEvent>(getDocument(), _mouseup, onMouseUp)
+		addEventListener<PointerEvent>(getDocument(), _pointermove, onPointerMove)
+		addEventListener<PointerEvent>(getDocument(), _pointerup, onPointerUp)
 	}
 
 	function removeDragListener(): void {
-		removeEventListener<TouchEvent>(getDocument(), _touchmove, onTouchMove)
-		removeEventListener<TouchEvent>(getDocument(), _touchend, onTouchEnd)
-		removeEventListener<MouseEvent>(getDocument(), _mousemove, onMouseMove)
-		removeEventListener<MouseEvent>(getDocument(), _mouseup, onMouseUp)
+		removeEventListener<PointerEvent>(getDocument(), _pointermove, onPointerMove)
+		removeEventListener<PointerEvent>(getDocument(), _pointerup, onPointerUp)
 	}
 
 	function initCustomEvent(): void {
@@ -774,7 +759,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 				class="c-modal-drag-handle"
 				draggable={false}
 				data-g-keep-pointer-event={toggleAttribute(isDragging())}
-				onMouseDown={(ev) => {
+				onPointerDown={(ev) => {
 					const rect = getBoundingClientRect(modal_ref)
 					setIsDragging(true)
 					setAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
@@ -782,13 +767,6 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 					diffPositionY = ev[_clientY] - rect.y
 				}}
 				onDblClick={() => repositionModal()}
-				onTouchStart={ev => {
-					const rect = getBoundingClientRect(modal_ref)
-					setIsDragging(true)
-					setAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
-					diffPositionX = ev[_touches][0][_clientX] - rect.x
-					diffPositionY = ev[_touches][0][_clientY] - rect.y
-				}}
 			/>
 		</Show>
 		<div>

@@ -4,7 +4,7 @@ import { Portal } from 'solid-js/web'
 
 import { FlyoutPosition as PopoverPosition } from '@/enums/position'
 import { getFlyoutPosition } from '@/utils/flyout'
-import { _allowHideAnchor, _altKey, _animate, _body, _bottom, _centerBottom, _centerBottomToLeft, _centerBottomToRight, _centerTop, _centerTopToLeft, _centerTopToRight, _children, _class, _click, _clientWidth, _clientX, _clientY, _close, _closeAnimation, _closePopover, _ctrlKey, _detail, _disconnect, _dismiss, _dispatchEvent, _documentElement, _dragable, _element, _Escape, _findIndex, _finished, _flyout, _flyoutListener, _focus, _forEach, _gap, _height, _hidePopover, _important, _innerHeight, _instant, _isSameNode, _key, _left, _leftCenter, _leftCenterToBottom, _leftCenterToTop, _length, _manual, _manualDismiss, _max_height, _max_width, _maxHeight, _maxWidth, _metaKey, _mousemove, _mouseup, _move, _newState, _none, _noPointerEvent, _observe, _onCancel, _onClose, _onKeyDown, _onOpen, _onReposition, _onShortFocus, _onToggle, _onToggleOpen, _open, _openAnimation, _openPopover, _padding, _pointerType, _popoverListener, _popoverOpen, _position, _push, _px, _ref, _resize, _right, _rightCenter, _rightCenterToBottom, _rightCenterToTop, _scroll, _scrollTo, _scrollTop, _scrollY, _shiftKey, _showPopover, _some, _splice, _springBounce, _style, _then, _top, _touchend, _touches, _touchmove, _transform, _usePortal, _width, _x, _y } from '@/constants/string'
+import { _allowHideAnchor, _altKey, _animate, _body, _bottom, _centerBottom, _centerBottomToLeft, _centerBottomToRight, _centerTop, _centerTopToLeft, _centerTopToRight, _children, _class, _click, _clientWidth, _clientX, _clientY, _close, _closeAnimation, _closePopover, _ctrlKey, _detail, _disconnect, _dismiss, _dispatchEvent, _documentElement, _dragable, _element, _Escape, _findIndex, _finished, _flyout, _flyoutListener, _focus, _forEach, _gap, _height, _hidePopover, _important, _innerHeight, _instant, _isSameNode, _key, _left, _leftCenter, _leftCenterToBottom, _leftCenterToTop, _length, _manual, _manualDismiss, _max_height, _max_width, _maxHeight, _maxWidth, _metaKey, _mousemove, _mouseup, _move, _newState, _none, _noPointerEvent, _observe, _onCancel, _onClose, _onKeyDown, _onOpen, _onReposition, _onShortFocus, _onToggle, _onToggleOpen, _open, _openAnimation, _openPopover, _padding, _pointermove, _pointerType, _pointerup, _popoverListener, _popoverOpen, _position, _push, _px, _ref, _resize, _right, _rightCenter, _rightCenterToBottom, _rightCenterToTop, _scroll, _scrollTo, _scrollTop, _scrollY, _shiftKey, _showPopover, _some, _splice, _springBounce, _style, _then, _top, _touchend, _touches, _touchmove, _transform, _usePortal, _width, _x, _y } from '@/constants/string'
 import { clearTimeDelayed, setTimeDelayed } from '@/utils/timeout'
 import { hasAttribute, removeAttribute, setAttribute, toggleAttribute } from '@/utils/attributes'
 import { getDocument, getDocumentBody, getWindow } from '@/constants/window'
@@ -224,24 +224,13 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 		setTop(y - diffPositionY)
 	}
 
-	function onTouchMove(ev: TouchEvent): void {
-		if (!isDragging()) return;
-		changePosition(ev[_touches][0][_clientX], ev[_touches][0][_clientY])
-	}
-
-	function onTouchEnd(_ev: TouchEvent): void {
-		removeAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
-		setIsDragging(false)
-		fixPosition()
-	}
-
-	function onMouseMove(ev: MouseEvent): void {
+	function onPointerMove(ev: PointerEvent): void {
 		if (!isDragging()) return;
 
-		changePosition((ev as MouseEvent)[_clientX], (ev as MouseEvent)[_clientY])
+		changePosition(ev[_clientX], ev[_clientY])
 	}
 
-	function onMouseUp(_ev: MouseEvent): void {
+	function onPointerUp(): void {
 		removeAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
 		setIsDragging(false)
 		fixPosition()
@@ -260,17 +249,13 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 	}
 
 	function addDragListener() {
-		addEventListener<TouchEvent>(getDocument(), _touchmove, onTouchMove)
-		addEventListener<TouchEvent>(getDocument(), _touchend, onTouchEnd)
-		addEventListener<MouseEvent>(getDocument(), _mousemove, onMouseMove)
-		addEventListener<MouseEvent>(getDocument(), _mouseup, onMouseUp)
+		addEventListener<PointerEvent>(getDocument(), _pointermove, onPointerMove)
+		addEventListener<PointerEvent>(getDocument(), _pointerup, onPointerUp)
 	}
 
 	function removeDragListener(): void {
-		removeEventListener<TouchEvent>(getDocument(), _touchmove, onTouchMove)
-		removeEventListener<TouchEvent>(getDocument(), _touchend, onTouchEnd)
-		removeEventListener<MouseEvent>(getDocument(), _mousemove, onMouseMove)
-		removeEventListener<MouseEvent>(getDocument(), _mouseup, onMouseUp)
+		removeEventListener<PointerEvent>(getDocument(), _pointermove, onPointerMove)
+		removeEventListener<PointerEvent>(getDocument(), _pointerup, onPointerUp)
 	}
 
 	function initCustomEvent(): void {
@@ -699,7 +684,7 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 				class="c-popover-drag-handle"
 				data-g-keep-pointer-event={toggleAttribute(isDragging())}
 				draggable={false}
-				onMouseDown={(ev) => {
+				onPointerDown={(ev) => {
 					const rect = getBoundingClientRect(popover_ref)
 					setIsDragging(true)
 					setAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
@@ -707,13 +692,6 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 					diffPositionY = ev[_clientY] - rect.y
 				}}
 				onDblClick={() => repositionPopover()}
-				onTouchStart={ev => {
-					const rect = getBoundingClientRect(popover_ref)
-					setIsDragging(true)
-					setAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
-					diffPositionX = ev[_touches][0][_clientX] - rect.x
-					diffPositionY = ev[_touches][0][_clientY] - rect.y
-				}}
 			/>
 		</Show>
 		<div>

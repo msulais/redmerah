@@ -16,6 +16,7 @@ import { AnimationEffectTiming } from "@/enums/animation"
 
 import { closePopover, openPopover, Popover, type PopoverProps } from "@/components/Popover"
 import './index.scss'
+import { isMobile } from "@/utils/platforms"
 
 enum TooltipAttributes {
 	open = 'data-c-open',
@@ -43,6 +44,7 @@ function initTooltip(): void {
 	if (hasAttribute(getDocumentBody(), BodyAttributes[_tooltipListener])) return;
 	setAttribute(getDocumentBody(), BodyAttributes[_tooltipListener])
 
+	const $isMobile = isMobile()
 	let $anchor_ref: HTMLDivElement | null = null
 	let $pointer = {x: 0, y: 0}
 	let $position: TooltipPosition = TooltipPosition[_centerTop]
@@ -298,7 +300,7 @@ function initTooltip(): void {
 		})
 
 		addEventListener(getDocumentBody(), BodyEvents[_closeTextTooltip], (ev: CustomEvent<TooltipCloseDetail>) => {
-			const { endDelayDuration = 300 } = ev[_detail]
+			const { endDelayDuration = $isMobile? 1500 : 300 } = ev[_detail]
 
 			if (timeoutId != null) clearTimeDelayed(timeoutId)
 			timeoutId = setTimeDelayed(async () => {
@@ -370,13 +372,12 @@ const TextTooltip: FlowComponent<TextTooltipProps> = (props) => {
 	return (<div
 		class="c-tooltip"
 		ref={r => div_ref = r}
-		onMouseOver={ev => openTextTooltip(ev)}
+		onPointerOver={ev => openTextTooltip(ev)}
 		onTouchStart={ev => openTextTooltip(ev)}
-		onMouseLeave={ev => closeTextTooltip(ev)}
+		onPointerLeave={ev => closeTextTooltip(ev)}
 		onMouseDown={ev => closeTextTooltip(ev)}
-		onMouseMove={ev => updatePointer(ev)}
-		onTouchEnd={ev => closeTextTooltip(ev)}
-		onTouchCancel={ev => closeTextTooltip(ev)}>
+		onPointerUp={ev => closeTextTooltip(ev)}
+		onPointerMove={ev => updatePointer(ev)}>
 		{props[_children]}
 	</div>)
 }
@@ -439,13 +440,12 @@ const RichTooltip: FlowComponent<RichTooltipProps> = ($props) => {
 	return (<div
 		class="c-tooltip"
 		ref={r => div_ref = r}
-		onMouseOver={ev => openRichTooltip(ev)}
+		onPointerOver={ev => openRichTooltip(ev)}
 		onTouchStart={ev => openRichTooltip(ev)}
-		onMouseMove={ev => updatePointer(ev)}
-		onMouseLeave={ev => closeRichTooltip(ev)}
+		onPointerLeave={ev => closeRichTooltip(ev)}
 		onMouseDown={ev => closeRichTooltip(ev)}
-		onTouchEnd={ev => closeRichTooltip(ev)}
-		onTouchCancel={ev => closeRichTooltip(ev)}>
+		onPointerUp={ev => closeRichTooltip(ev)}
+		onPointerMove={ev => updatePointer(ev)}>
 		{props[_children]}
 		<Popover
 			usePortal={props[_usePortal] ?? false}
