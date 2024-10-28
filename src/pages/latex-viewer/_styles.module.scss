@@ -1,0 +1,77 @@
+.body {
+	padding: 8px;
+	max-width: 100%;
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 8px;
+}
+
+.body_latex_editor {
+	max-width: 100%;
+	padding: 8px 8px 0 8px;
+
+	&:last-child {
+		padding-bottom: 8px;
+	}
+
+	> textarea {
+		--g-background-color: var(--g-color-on-surface);
+		--g-background-color-opacity: var(--g-opacity1);
+		font-family: var(--g-font-family-monospace);
+		width: 100%;
+		resize: none;
+		overflow-y: hidden;
+		padding: 12px;
+		border-radius: 8px;
+		border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity-border));
+		outline: none;
+		scroll-padding: 12px;
+		transition-duration: .3s, 0s;
+		transition-property: all, height;
+
+		:root[data-corner=sharp] & { border-radius: 0 }
+		:root[data-corner=semi-round] & { border-radius: 4px }
+		:root[data-corner=full-round] & { border-radius: 20px }
+
+		&:not([data-text-wrap]) {
+			white-space: pre;
+		}
+
+		@media (hover:hover) {
+			&:hover {
+				--g-background-color-opacity: var(--g-opacity2);
+			}
+		}
+
+		&:active {
+			--g-background-color-opacity: var(--g-opacity2);
+		}
+
+		&:focus {
+			border-color: rgb(var(--g-color-accent));
+		}
+	}
+
+	> div {
+		padding: 12px;
+		max-width: 100%;
+		overflow: auto;
+	}
+
+	& math {
+		width: fit-content;
+		font-family: Cambria Math, TeX Gyre Pagella Math, XITS Math, math;
+	}
+}
+
+.body_new_equation_top {
+	padding: 0 8px;
+}
+
+.body_new_equation_bottom {
+	padding: 0 8px !important;
+	position: relative;
+	left: -8px;
+	display: flex;
+	gap: 4px;
+}

@@ -9,9 +9,20 @@ import battery_logo from '@/assets/apps/battery-logo.svg'
 import qr_code_logo from '@/assets/apps/qr-code-logo.svg'
 import color_gradient_logo from '@/assets/apps/color-gradient/logo.svg'
 import emoji_picker_logo from '@/assets/apps/emoji-picker/logo.svg'
+import latex_viewer_logo from '@/assets/apps/latex-viewer/logo.svg'
 import { _src } from './string'
 import { RoutesLinks } from '@/enums/links'
 import type { AppItem } from '@/types/apps'
+
+export const latexViewer: AppItem = {
+	logoURL: latex_viewer_logo[_src],
+	name: 'LaTeX Viewer',
+	description: 'Visualize your LaTeX code effortlessly. Our app renders complex mathematical expressions and scientific notation, making it perfect for students, researchers, and educators.',
+	link: RoutesLinks.latexViewer,
+	color: '#C247FF',
+	buildNumber: 1,
+	buildVersion: '0.0.1',
+}
 
 export const emojiPicker: AppItem = {
 	logoURL: emoji_picker_logo[_src],
@@ -124,6 +135,7 @@ export const markdownConverter: AppItem = {
 }
 
 export const apps: AppItem[] = [
+	latexViewer,
 	emojiPicker,
 	colorGradient,
 	qrCode,
