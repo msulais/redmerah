@@ -1,4 +1,4 @@
-import { createSignal, Index, onMount, Show, type VoidComponent } from "solid-js"
+import { createEffect, createSignal, Index, Show, type Accessor, type VoidComponent } from "solid-js"
 import katex from 'katex'
 
 import type { Settings } from "./_types"
@@ -16,7 +16,7 @@ import TextTooltip from "@/components/Tooltip"
 const LatexEditor: VoidComponent<{
 	index: number
 	isOnlyThis: boolean
-	latex: string
+	latex: Accessor<string>
 	settings: Settings
 	command: (type: Commands, ...args: unknown[]) => unknown
 }> = props => {
@@ -25,7 +25,7 @@ const LatexEditor: VoidComponent<{
 	let timeoutUpdateId: number | null = null
 	let textarea_ref: HTMLTextAreaElement
 
-	function updateOutput(): void {
+	function saveInput(): void {
 		if (timeoutUpdateId != null) clearTimeDelayed(timeoutUpdateId)
 		timeoutUpdateId = setTimeDelayed(() => {
 			const text = textarea_ref[_value]
@@ -45,10 +45,14 @@ const LatexEditor: VoidComponent<{
 		})
 	}
 
-	onMount(() => {
-		textarea_ref[_value] = props[_latex]
-		setHeight(0)
-		setHeight(textarea_ref[_scrollHeight])
+	createEffect(() => {
+		const latex = props[_latex]()
+
+		textarea_ref[_value] = latex
+		setTimeDelayed(() => {
+			setHeight(0)
+			setHeight(textarea_ref[_scrollHeight])
+		})
 	})
 
 	return (<div class={CSS.body_latex_editor}>
@@ -59,16 +63,16 @@ const LatexEditor: VoidComponent<{
 			onInput={() => {
 				setHeight(0)
 				setHeight(textarea_ref![_scrollHeight])
-				updateOutput()
+				saveInput()
 			}}
-			value={props[_latex]}
+			value={props[_latex]()}
 			data-text-wrap={toggleAttribute(props[_settings][_textWrap])}
 			style={{
 				"font-size": props[_settings][_fontSize] + _px,
 				"height": height() + _px
 			}}
 		/>
-		<div innerHTML={katex[_renderToString](props[_latex], {
+		<div innerHTML={katex[_renderToString](props[_latex](), {
 			displayMode: true,
 			output: _mathml,
 			errorColor: 'rgb(var(--color-on-error))',
@@ -115,7 +119,7 @@ const _: VoidComponent<{
 		</div>
 		<Index each={props[_latex]}>{(latex, i) => <LatexEditor
 			command={props[_command]}
-			latex={latex()}
+			latex={latex}
 			index={i}
 			isOnlyThis={props[_latex][_length] == 1}
 			settings={props[_settings]}
