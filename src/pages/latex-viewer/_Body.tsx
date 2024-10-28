@@ -54,6 +54,7 @@ const LatexEditor: VoidComponent<{
 	return (<div class={CSS.body_latex_editor}>
 		<textarea
 			ref={r => textarea_ref = r}
+			rows={1}
 			placeholder="Type your LaTeX here ..."
 			onInput={() => {
 				setHeight(0)
