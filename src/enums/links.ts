@@ -17,6 +17,7 @@ export enum RoutesLinks {
 	qrCode = '/qr-code',
 	colorGradient = '/color-gradient',
 	emojiPicker = '/emoji-picker',
+	latexViewer = '/latex-viewer',
 
 	// TODO: create these apps
 	notes = '/notes',
