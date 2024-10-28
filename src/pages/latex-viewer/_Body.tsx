@@ -2,16 +2,16 @@ import { createSignal, Index, onMount, Show, type VoidComponent } from "solid-js
 import katex from 'katex'
 
 import type { Settings } from "./_types"
-import { Commands } from "./_enums"
-
-import CSS from './_styles.module.scss'
 import { _clipboard, _command, _filled, _fontSize, _height, _index, _isOnlyThis, _latex, _length, _mathml, _prefix, _px, _renderToString, _scrollHeight, _settings, _suffix, _text, _textWrap, _then, _tonal, _value, _writeText } from "@/constants/string"
 import { clearTimeDelayed, setTimeDelayed } from "@/utils/timeout"
+import { Commands } from "./_enums"
+import { toggleAttribute } from "@/utils/attributes"
+import { getNavigator } from "@/constants/window"
+
+import CSS from './_styles.module.scss'
 import Button, { ButtonVariant, IconButton } from "@/components/Button"
 import Icon from "@/components/Icon"
-import { toggleAttribute } from "@/utils/attributes"
 import TextTooltip from "@/components/Tooltip"
-import { getNavigator } from "@/constants/window"
 
 const LatexEditor: VoidComponent<{
 	index: number
