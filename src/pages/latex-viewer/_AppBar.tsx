@@ -40,8 +40,6 @@ const _: VoidComponent<{
 	let menu_moreActions_ref: HTMLDialogElement
 	let submenu_themeSettings_ref: HTMLDivElement
 	let submenu_cornerSettings_ref: HTMLDivElement
-	let submenu_downloadMoreActions_ref: HTMLDivElement
-	let submenu_copyAllMoreActions_ref: HTMLDivElement
 
 	async function changeTheme(theme: ThemeData): Promise<void> {
 		setTheme(theme)

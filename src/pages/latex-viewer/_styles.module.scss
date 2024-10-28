@@ -9,6 +9,7 @@
 .body_latex_editor {
 	max-width: 100%;
 	padding: 8px 8px 0 8px;
+	overflow: hidden;
 
 	&:last-child {
 		padding-bottom: 8px;
