@@ -62,7 +62,7 @@
 }
 
 .c-switch-menu-item{
-	&:has( > div > :last-child > input:focus-visible) {
+	&:has( > .c-switch > input:focus-visible) {
 		outline: auto;
 	}
 
@@ -75,7 +75,7 @@
 					cursor: pointer;
 				}
 
-				> div > :last-child {
+				> .c-switch  {
 					--c-switch-handle-size: calc(var(--c-switch-height) - 6px);
 
 					&[data-c-checked] > div {
@@ -93,7 +93,7 @@
 			}
 		}
 
-		&:active > div > :last-child {
+		&:active > .c-switch {
 			@media (hover: hover) {
 				--c-switch-handle-size: calc(var(--c-switch-height) - 10px);
 
