@@ -1,5 +1,5 @@
 ---
-import { toggleElementAttributeIfExist } from '@/utils/attributes'
+import { setElementAttributeIfExist } from '@/utils/attributes'
 import './index.scss'
 
 type Props = astroHTML.JSX.HTMLAttributes & {
@@ -10,7 +10,7 @@ type Props = astroHTML.JSX.HTMLAttributes & {
 const { compact, classList = [], ...other } = Astro.props
 ---
 
-<div class:list={['c-list', ...classList]} data-c-compact={toggleElementAttributeIfExist(compact)} {...other}>
+<div class:list={['c-list', ...classList]} data-c-compact={setElementAttributeIfExist(compact)} {...other}>
 	<div class='c-list-leading'><slot name="leading" /></div>
 	<div class='c-list-content'>
 		<div class='c-list-title'><slot /></div>

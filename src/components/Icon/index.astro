@@ -1,5 +1,5 @@
 ---
-import { toggleElementAttributeIfExist } from '@/utils/attributes'
+import { setElementAttributeIfExist } from '@/utils/attributes'
 import './index.scss'
 
 type Props = astroHTML.JSX.HTMLAttributes & {
@@ -14,6 +14,6 @@ let {inline, filled, code, classList = [], ...other} = Astro.props
 if (filled) code -= 1
 ---
 
-<i class:list={["c-icon", ...classList]} translate="no" data-c-inline={toggleElementAttributeIfExist(inline)} {...other}>{
+<i class:list={["c-icon", ...classList]} translate="no" data-c-inline={setElementAttributeIfExist(inline)} {...other}>{
 	String.fromCharCode(code)
 }</i>
