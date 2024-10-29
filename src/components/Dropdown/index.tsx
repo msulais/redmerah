@@ -5,9 +5,9 @@ import { mergeRefs } from "@solid-primitives/refs"
 
 import { _refs, _dividerIndexs, _labels, _readOnly, _footer, _header, _disabled, _onSelectedItemsChanged, _items, _selectedValues, _labelAttr, _multiple, _trailing, _onClicks, _menuAttr, _optionIconTooltip, _some, _width, _centerBottom, _length, _slice, _map, _observe, _disconnect, _filter, _includes, _push, _ref, _classList, _onClick, _join, _px, _find, _style, _onToggleOpen, _wrapperAttr } from "@/constants/string"
 import { getBoundingClientRect } from "@/utils/element"
-import { toggleAttribute } from "@/utils/attributes"
-import { clearTimeDelayed, setTimeDelayed } from "@/utils/timeout"
-import { callEventHandler, stopImmediatePropagation } from "@/utils/event"
+import { setElementAttributeIfExist } from "@/utils/attributes"
+import { endTimeout, startTimeout } from "@/utils/timeout"
+import { callEventHandler, eventStopImmediatePropagation } from "@/utils/event"
 
 import { TextTooltip } from "@/components/Tooltip"
 import Icon from "@/components/Icon"
@@ -110,9 +110,9 @@ const Dropdown: VoidComponent<DropdownProps> = ($props) => {
 		let t: number | null = null
 
 		const observer = new ResizeObserver(() => {
-			if (t != null) clearTimeDelayed(t)
+			if (t != null) endTimeout(t)
 
-			t = setTimeDelayed(() => {
+			t = startTimeout(() => {
 				setWidth(getBoundingClientRect(wrapper_dropdown_ref)[_width])
 				repositionMenu(menu_dropdown_ref)
 				t = null
@@ -155,11 +155,11 @@ const Dropdown: VoidComponent<DropdownProps> = ($props) => {
 					...wrapperProps[_classList]
 				},
 				onClick: ev => {
-					stopImmediatePropagation(ev)
+					eventStopImmediatePropagation(ev)
 					openDropdownMenu(ev)
 					callEventHandler(ev, wrapperProps[_onClick])
 				},
-				...{'c-data-dropdown-readonly': toggleAttribute(props[_readOnly])},
+				...{'c-data-dropdown-readonly': setElementAttributeIfExist(props[_readOnly])},
 				...wrapperPropsOther
 			}}
 			value={selectedItems[_map](i => i[1])[_join](', ')}

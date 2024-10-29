@@ -195,7 +195,7 @@ export function numberIsNaN(x: number, fallback?: number): boolean | number {
 	return getNumber[_isNaN](x)
 }
 
-export function isNumberInteger(number: unknown): boolean {
+export function numberIsInteger(number: unknown): boolean {
 	return getNumber[_isInteger](number)
 }
 

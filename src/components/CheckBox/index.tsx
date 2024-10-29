@@ -3,8 +3,8 @@ import { mergeRefs } from "@solid-primitives/refs"
 
 import { AnimationEffectTiming } from "@/enums/animation"
 import { _animate, _blur, _cancel, _catch, _check, _checkbox, _checked, _children, _class, _code, _currentTarget, _detail, _disabled, _dispatchEvent, _filled, _finished, _forEach, _iconAttr, _isSameNode, _labelAttr, _name, _onChange, _onChangeRadioState, _radio, _ref, _replace, _spring, _then, _variant } from "@/constants/string"
-import { toggleAttribute } from "@/utils/attributes"
-import { querySelectorAll } from "@/utils/element"
+import { setElementAttributeIfExist } from "@/utils/attributes"
+import { getAllElementBySelector } from "@/utils/element"
 import { addEventListener, callEventHandler, removeEventListener } from "@/utils/event"
 
 import Icon, { type IconProps } from "@/components/Icon"
@@ -104,7 +104,7 @@ const CheckBox: ParentComponent<CheckBoxProps> = ($props) => {
 
 	return (<label
 		class={`c-checkbox${labelProps[_class]? ` ${labelProps[_class]}` : ''}`}
-		data-c-disabled={toggleAttribute(isDisabled())}
+		data-c-disabled={setElementAttributeIfExist(isDisabled())}
 		{...otherLabelProps}>
 		<input
 			ref={mergeRefs(props[_ref], el => input_ref = el)}
@@ -114,7 +114,7 @@ const CheckBox: ParentComponent<CheckBoxProps> = ($props) => {
 				callEventHandler(ev, props[_onChange])
 
 				if (props[_variant] == CheckBoxVariant[_radio] && other[_name] != null) {
-					const getAllRadioWithSameName = querySelectorAll(`input[type=radio][name]`)
+					const getAllRadioWithSameName = getAllElementBySelector(`input[type=radio][name]`)
 					getAllRadioWithSameName[_forEach](el => el[_dispatchEvent](new CustomEvent(
 						CheckBoxEvents[_onChangeRadioState],
 						{detail: input_ref}

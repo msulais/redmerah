@@ -6,7 +6,7 @@ import { IDB } from "@/utils/indexeddb";
 import { Commands } from "./_enums";
 import { DatabaseNames } from "@/enums/storage";
 import { ObjectStoreNames, type ObjectStoreSettings, ObjectStoreSettingsKeys } from "./_storage";
-import { clearTimeDelayed, setTimeDelayed } from "@/utils/timeout";
+import { endTimeout, startTimeout } from "@/utils/timeout";
 
 import App from "@/components/App";
 import AppBar from './_AppBar'
@@ -29,9 +29,9 @@ const _: VoidComponent = () => {
 		case Commands.update_text: {
 			const text = args[0] as string
 
-			if (timeout_textUpdate_id != null) clearTimeDelayed(timeout_textUpdate_id)
+			if (timeout_textUpdate_id != null) endTimeout(timeout_textUpdate_id)
 
-			timeout_textUpdate_id = setTimeDelayed(() => {
+			timeout_textUpdate_id = startTimeout(() => {
 				saveSettings([ObjectStoreSettingsKeys.lastText, text])
 				timeout_textUpdate_id = null
 			}, 100)

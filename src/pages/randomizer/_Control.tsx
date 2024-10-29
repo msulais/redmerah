@@ -7,7 +7,7 @@ import { _settings, _string, _numbers, _length, _push, _join, _width, _currentTa
 import { getBoundingClientRect } from "@/utils/element";
 import { RandomizerType, ColorsRandomizerColorModel, Commands } from "./_enums";
 import { numberIsNaN, numberParse, safeNumber } from "@/utils/math";
-import { preventDefault } from "@/utils/event";
+import { eventPreventDefault } from "@/utils/event";
 
 import Icon from "@/components/Icon";
 import { TextTooltip } from "@/components/Tooltip";
@@ -84,7 +84,7 @@ const Teams: VoidComponent<{
 					openMenu(ev, menu_action_ref, {
 						position: MenuPosition[_centerBottomToRight]
 					})
-					preventDefault(ev)
+					eventPreventDefault(ev)
 				}
 			}}
 			header={<Show when={props[_lists][0][_length] > 0}><MenuHeader>Select list</MenuHeader></Show>}
@@ -134,7 +134,7 @@ const Teams: VoidComponent<{
 					openMenu(ev, menu_action_ref, {
 						position: MenuPosition[_centerBottomToRight]
 					})
-					preventDefault(ev)
+					eventPreventDefault(ev)
 				}
 			}}
 			header={<Show when={props[_lists][0][_length] > 0}><MenuHeader>Select list</MenuHeader></Show>}
@@ -272,7 +272,7 @@ const Selection: VoidComponent<{
 					openMenu(ev, menu_action_ref, {
 						position: MenuPosition[_centerBottomToRight]
 					})
-					preventDefault(ev)
+					eventPreventDefault(ev)
 				}
 			}}
 			header={<Show when={props[_lists][0][_length] > 0}><MenuHeader>Select list</MenuHeader></Show>}
@@ -415,7 +415,7 @@ const Words: VoidComponent<{
 					openMenu(ev, menu_action_ref, {
 						position: MenuPosition[_centerBottomToRight]
 					})
-					preventDefault(ev)
+					eventPreventDefault(ev)
 				}
 			}}
 			header={<Show when={props[_lists][0][_length] > 0}><MenuHeader>Select list</MenuHeader></Show>}

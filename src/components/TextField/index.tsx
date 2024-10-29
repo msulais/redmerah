@@ -1,9 +1,9 @@
 import { type JSX, type ParentComponent, createSignal, createUniqueId, mergeProps, onMount, splitProps, type VoidComponent, children, createEffect, Show, onCleanup } from 'solid-js'
 import { mergeRefs } from '@solid-primitives/refs'
 
-import { toggleAttribute } from '@/utils/attributes'
-import { clearTimeDelayed, clearTimeInterval, setTimeDelayed, setTimeInterval } from '@/utils/timeout'
-import { callEventHandler, preventDefault, stopPropagation } from '@/utils/event'
+import { setElementAttributeIfExist } from '@/utils/attributes'
+import { endTimeout, endInterval, startTimeout, startInterval } from '@/utils/timeout'
+import { callEventHandler, eventPreventDefault, eventStopPropagation } from '@/utils/event'
 import { _value, _input, _dispatchEvent, _classList, _compact, _leading, _onInput, _labelText, _focused, _autocomplete, _id, _messageText, _trailing, _labelAttr, _disabled, _readOnly, _onFocus, _onBlur, _placeholder, _autoHideLabel, _ref, _autoShowClearBtn, _clearTooltip, _minLine, _maxLine, _wrapperAttr, _class, _trim, _split, _length, _focus, _currentTarget, _checkValidity, _scrollHeight, _off, _px, _button, _text, _type, _autoSelectAll, _onKeyUp, _setSelectionRange, _code, _Enter, _blur, _max, _min, _decreaseTooltip, _increaseTooltip, _changeValueTooltip, _integerOnly, _stepUp, _stepDown, _valueAsNumber, _isNaN, _toUpperCase, _centerCenterLeft, _result, _menuAttr, _usePortal, _style, _onToggleOpen, _isArray, _width, _centerBottom, _observe, _disconnect, _target, _contains, _click, _autoFixOnBlur, _actionsAttr, _autoValidation, _Space, _ArrowDown, _ArrowUp, _onInputAsNumber } from '@/constants/string'
 import { mathClamp, mathMax, mathRound, numberIsNaN, numberParse, safeNumber } from '@/utils/math'
 import { getBoundingClientRect } from '@/utils/element'
@@ -119,18 +119,18 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 		class={`c-area-textfield${wrapperProps[_class]? ` ${wrapperProps[_class]}` : ''}`}
 		{...wrapperPropsOther}>
 		<div
-			data-c-focused={toggleAttribute(props[_focused] ?? isFocus())}
-			data-c-invalid={toggleAttribute(!props[_disabled] && props[_autoValidation] && isInvalid())}
-			data-c-disabled={toggleAttribute(props[_disabled])}
-			data-c-trailing={toggleAttribute(trailing() || (props[_autoShowClearBtn] && value()[_length] > 0))}
-			data-c-compact={toggleAttribute(props[_compact])}
-			data-c-readonly={toggleAttribute(props[_readOnly])}
+			data-c-focused={setElementAttributeIfExist(props[_focused] ?? isFocus())}
+			data-c-invalid={setElementAttributeIfExist(!props[_disabled] && props[_autoValidation] && isInvalid())}
+			data-c-disabled={setElementAttributeIfExist(props[_disabled])}
+			data-c-trailing={setElementAttributeIfExist(trailing() || (props[_autoShowClearBtn] && value()[_length] > 0))}
+			data-c-compact={setElementAttributeIfExist(props[_compact])}
+			data-c-readonly={setElementAttributeIfExist(props[_readOnly])}
 			onClick={() => areaTextField_ref[_focus]()}>
 			<Show when={!(props[_autoHideLabel] && value()[_length] == 0 && !props[_placeholder])}>
 				<div class='c-area-textfield-label-text'>{props[_labelText]}</div>
 			</Show>
 			<Show when={leading()}>
-				<div class='c-area-textfield-leading' onClick={ev => stopPropagation(ev)}>{leading()}</div>
+				<div class='c-area-textfield-leading' onClick={ev => eventStopPropagation(ev)}>{leading()}</div>
 			</Show>
 			<textarea
 				id={props[_id]}
@@ -167,14 +167,14 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 				placeholder={props[_placeholder] ?? (props[_autoHideLabel] && props[_labelText]? `${props[_labelText]}` : undefined)}
 				{...other}></textarea>
 			<Show when={trailing() || (props[_autoShowClearBtn] && value()[_length] > 0)}>
-				<div class='c-area-textfield-trailing' onClick={ev => stopPropagation(ev)}>
+				<div class='c-area-textfield-trailing' onClick={ev => eventStopPropagation(ev)}>
 					{trailing()}
 					<Show when={props[_autoShowClearBtn] && value()[_length] > 0}>
 						<TextTooltip text={props[_clearTooltip] ?? 'Clear'}>
 							<TextFieldButton type={_button} onClick={(ev) => {
 								areaTextField_ref[_value] = ''
 								setValue('')
-								preventDefault(ev)
+								eventPreventDefault(ev)
 							}}><Icon code={0xE5E9}/></TextFieldButton>
 						</TextTooltip>
 					</Show>
@@ -235,18 +235,18 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 		class={`c-textfield${wrapperProps[_class] != null ? ` ${wrapperProps[_class]}` : ''}`}
 		{...wrapperPropsOther}>
 		<div
-			data-c-focused={toggleAttribute(props[_focused] ?? isFocus())}
-			data-c-invalid={toggleAttribute(!props[_disabled] && props[_autoValidation] && isInvalid())}
-			data-c-compact={toggleAttribute(props[_compact])}
-			data-c-disabled={toggleAttribute(props[_disabled])}
-			data-c-trailing={toggleAttribute(trailing() || (props[_autoShowClearBtn] && value()[_length] > 0))}
-			data-c-readonly={toggleAttribute(props[_readOnly])}
+			data-c-focused={setElementAttributeIfExist(props[_focused] ?? isFocus())}
+			data-c-invalid={setElementAttributeIfExist(!props[_disabled] && props[_autoValidation] && isInvalid())}
+			data-c-compact={setElementAttributeIfExist(props[_compact])}
+			data-c-disabled={setElementAttributeIfExist(props[_disabled])}
+			data-c-trailing={setElementAttributeIfExist(trailing() || (props[_autoShowClearBtn] && value()[_length] > 0))}
+			data-c-readonly={setElementAttributeIfExist(props[_readOnly])}
 			onClick={() => textfield_ref[_focus]()}>
 			<Show when={!(props[_autoHideLabel] && value()[_length] == 0 && !props[_placeholder])}>
 				<div class='c-textfield-label-text'>{props[_labelText]}</div>
 			</Show>
 			<Show when={leading()}>
-				<div class='c-textfield-leading' onClick={ev => stopPropagation(ev)}>{leading()}</div>
+				<div class='c-textfield-leading' onClick={ev => eventStopPropagation(ev)}>{leading()}</div>
 			</Show>
 			<input
 				id={props[_id]}
@@ -281,13 +281,13 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 				{...other}
 			/>
 			<Show when={trailing() || (props[_autoShowClearBtn] && value()[_length] > 0)}>
-				<div class='c-textfield-trailing' onClick={ev => stopPropagation(ev)}>
+				<div class='c-textfield-trailing' onClick={ev => eventStopPropagation(ev)}>
 					{trailing()}
 					<Show when={props[_autoShowClearBtn] && value()[_length] > 0}>
 						<TextTooltip text={props[_clearTooltip] ?? 'Clear'}>
 							<TextFieldButton type={_button} onClick={(ev) => {
 								changeTextFieldValue(textfield_ref, '')
-								preventDefault(ev)
+								eventPreventDefault(ev)
 							}}><Icon code={0xE5E9}/></TextFieldButton>
 						</TextTooltip>
 					</Show>
@@ -373,8 +373,8 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 			)
 		)
 		if (reachLimit) {
-			if (intervalId != null) clearTimeInterval(intervalId)
-			if (timeoutId != null) clearTimeDelayed(timeoutId)
+			if (intervalId != null) endInterval(intervalId)
+			if (timeoutId != null) endTimeout(timeoutId)
 			intervalId = timeoutId = null
 			return
 		}
@@ -393,18 +393,18 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 	}
 
 	function onPressStart(operator: '+' | '-'): void {
-		if (timeoutId != null) clearTimeDelayed(timeoutId)
+		if (timeoutId != null) endTimeout(timeoutId)
 
-		timeoutId = setTimeDelayed(() => {
-			if (intervalId != null) clearTimeInterval(intervalId)
-			intervalId = setTimeInterval(() => changeValue(operator), 30)
+		timeoutId = startTimeout(() => {
+			if (intervalId != null) endInterval(intervalId)
+			intervalId = startInterval(() => changeValue(operator), 30)
 			timeoutId = null
 		}, 300)
 	}
 
 	function onPressEnd(operator: '+' | '-'): void {
-		if (intervalId != null) clearTimeInterval(intervalId)
-		if (timeoutId != null) clearTimeDelayed(timeoutId)
+		if (intervalId != null) endInterval(intervalId)
+		if (timeoutId != null) endTimeout(timeoutId)
 		intervalId = timeoutId = null
 		changeValue(operator)
 	}
@@ -510,7 +510,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 					disabled={props[_max] != null && value() >= getMax()}
 					onPointerUp={() => onPressEnd('+')}
 					onPointerDown={() => onPressStart('+')}
-					onContextMenu={(ev) => preventDefault(ev)}
+					onContextMenu={(ev) => eventPreventDefault(ev)}
 					onKeyDown={ev => {
 						const clickKey = ev[_code] == _Enter || ev[_code] == _Space
 						const updownKey = ev[_code] == _ArrowDown || ev[_code] == _ArrowUp
@@ -527,7 +527,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 					disabled={props[_min] != null && value() <= getMin()}
 					onPointerUp={() => onPressEnd('-')}
 					onPointerDown={() => onPressStart('-')}
-					onContextMenu={(ev) => preventDefault(ev)}
+					onContextMenu={(ev) => eventPreventDefault(ev)}
 					onKeyDown={ev => {
 						const clickKey = ev[_code] == _Enter || ev[_code] == _Space
 						const updownKey = ev[_code] == _ArrowDown || ev[_code] == _ArrowUp
@@ -585,9 +585,9 @@ const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
 	function resizeObserver(): void {
 		let t: number | null = null
 		const observer = new ResizeObserver(() => {
-			if (t != null) clearTimeDelayed(t)
+			if (t != null) endTimeout(t)
 
-			t = setTimeDelayed(() => {
+			t = startTimeout(() => {
 				setWidth(getBoundingClientRect(wrapper_ref)[_width])
 				repositionPopover(menu_ref)
 				t = null

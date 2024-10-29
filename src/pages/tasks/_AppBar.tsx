@@ -9,11 +9,11 @@ import { CornerData } from "@/enums/corner";
 import { LocalStorageKeys } from "@/enums/storage";
 import { ThemeData } from "@/enums/theme";
 import { setLocalStorageItem, getLocalStorageItem } from "@/utils/storage";
-import { setAttribute, toggleAttribute } from "@/utils/attributes";
+import { setElementAttribute, setElementAttributeIfExist } from "@/utils/attributes";
 import { DEFAULT_TASK_LIST, SIZE_SIDE_NAVIGATION_NONE, TASKS_PAGES } from "./_constants";
 import { isMatchMedia, matchMedia } from "@/utils/window";
 import { addEventListener } from '@/utils/event'
-import { clearTimeDelayed, setTimeDelayed, timeout } from "@/utils/timeout";
+import { endTimeout, startTimeout, wait } from "@/utils/timeout";
 import { RoutesLinks, ExternalLinks } from "@/enums/links";
 import { encodeURL } from "@/utils/url";
 import { addClassListModule } from "@/utils/element";
@@ -90,19 +90,19 @@ const _: VoidComponent<{
 
 	async function changeTheme(theme: ThemeData): Promise<void> {
 		setTheme(theme)
-		setAttribute(getRoot(), RootAttributes[_theme], theme)
+		setElementAttribute(getRoot(), RootAttributes[_theme], theme)
 		setLocalStorageItem(LocalStorageKeys[_theme], theme)
 		closeSubMenu(submenu_themeSettings_ref)
-		await timeout(300)
+		await wait(300)
 		closeMenu(menu_settings_ref)
 	}
 
 	async function changeCorner(corner: CornerData): Promise<void> {
 		setCorner(corner)
-		setAttribute(getRoot(), RootAttributes[_corner], corner)
+		setElementAttribute(getRoot(), RootAttributes[_corner], corner)
 		setLocalStorageItem(LocalStorageKeys[_corner], corner)
 		closeSubMenu(submenu_cornerSettings_ref)
-		await timeout(300)
+		await wait(300)
 		closeMenu(menu_settings_ref)
 	}
 
@@ -110,7 +110,7 @@ const _: VoidComponent<{
 		const theme = getLocalStorageItem(LocalStorageKeys[_theme])
 
 		if (theme && [ThemeData[_system], ThemeData[_light], ThemeData[_dark]][_includes](theme as ThemeData)) {
-			setAttribute(getRoot(), RootAttributes[_theme], theme)
+			setElementAttribute(getRoot(), RootAttributes[_theme], theme)
 			setTheme(theme as ThemeData)
 		}
 	}
@@ -119,7 +119,7 @@ const _: VoidComponent<{
 		const corner = getLocalStorageItem(LocalStorageKeys[_corner])
 
 		if (corner && [CornerData[_sharp], CornerData[_semiRound], CornerData[_round], CornerData[_fullRound]][_includes](corner as CornerData)) {
-			setAttribute(getRoot(), RootAttributes[_corner], corner)
+			setElementAttribute(getRoot(), RootAttributes[_corner], corner)
 			setCorner(corner as CornerData)
 		}
 	}
@@ -292,7 +292,7 @@ const _: VoidComponent<{
 
 	return (<>
 		<AppBar
-			data-search={toggleAttribute(isSearching())}
+			data-search={setElementAttributeIfExist(isSearching())}
 			classList={addClassListModule(CSS.appbar)}
 			leading={<>
 				<TextTooltip text={isSideNavigationHidden()
@@ -361,7 +361,7 @@ const _: VoidComponent<{
 									searchTextField_ref[_blur]()
 									if (is_searchTextFieldMenu_open) {
 										closeSearchMenu(searchTextFieldMenu_ref)
-										await timeout(300)
+										await wait(300)
 									}
 									setIsSearching(false)
 									props[_command](
@@ -375,9 +375,9 @@ const _: VoidComponent<{
 					</>}</For>}
 					onInput={(ev) => {
 						const text = ev[_currentTarget][_value]
-						if (searchTimeoutId != null) clearTimeDelayed(searchTimeoutId)
+						if (searchTimeoutId != null) endTimeout(searchTimeoutId)
 
-						searchTimeoutId = setTimeDelayed(() => {
+						searchTimeoutId = startTimeout(() => {
 							setSearchText(text[_trim]())
 							searchTimeoutId = null
 						}, 1000)
@@ -394,7 +394,7 @@ const _: VoidComponent<{
 									searchTextField_ref[_blur]()
 									if (is_searchTextFieldMenu_open) {
 										closeSearchMenu(searchTextFieldMenu_ref)
-										await timeout(300)
+										await wait(300)
 									}
 									setIsSearching(false)
 								}}>

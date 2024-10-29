@@ -9,7 +9,7 @@ import { RoutesLinks, ExternalLinks } from "@/enums/links";
 import { LocalStorageKeys } from "@/enums/storage";
 import { ThemeData } from "@/enums/theme";
 import { setLocalStorageItem, getLocalStorageItem } from "@/utils/storage";
-import { timeout } from "@/utils/timeout";
+import { wait } from "@/utils/timeout";
 import { encodeURL } from "@/utils/url";
 import { setAttribute } from "solid-js/web";
 import { Commands } from "./_enums";
@@ -46,7 +46,7 @@ const _: VoidComponent<{
 		setAttribute(getRoot(), RootAttributes[_theme], theme)
 		setLocalStorageItem(LocalStorageKeys[_theme], theme)
 		closeSubMenu(submenu_themeSettings_ref)
-		await timeout(300)
+		await wait(300)
 		closeMenu(menu_settings_ref)
 	}
 
@@ -55,7 +55,7 @@ const _: VoidComponent<{
 		setAttribute(getRoot(), RootAttributes[_corner], corner)
 		setLocalStorageItem(LocalStorageKeys[_corner], corner)
 		closeSubMenu(submenu_cornerSettings_ref)
-		await timeout(300)
+		await wait(300)
 		closeMenu(menu_settings_ref)
 	}
 

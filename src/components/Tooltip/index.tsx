@@ -2,10 +2,10 @@ import { onCleanup, onMount, splitProps, type FlowComponent, type JSX } from "so
 import { mergeRefs } from "@solid-primitives/refs"
 
 import { _textTooltipListener, _centerTop, _createElement, _div, _id, _popover, _manual, _appendChild, _top, _height, _left, _width, _centerBottom, _centerBottomToLeft, _centerBottomToRight, _centerTopToLeft, _centerTopToRight, _leftCenter, _leftCenterToBottom, _leftCenterToTop, _rightCenter, _rightCenterToBottom, _rightCenterToTop, _move, _open, _hidePopover, _openTextTooltip, _detail, _isSameNode, _textContent, _showPopover, _px, _transform, _closeTextTooltip, _updatePointerTextTooltip, _pointer, _dispatchEvent, _useAnchor, _gap, _position, _startDelayDuration, _text, _endDelayDuration, _clientX, _clientY, _children, _tooltip, _classList, _ref, _usePortal, _tooltipListener, _onMouseLeave, _onMouseDown, _onMouseMove, _onTouchCancel, _onTouchEnd, _bottom, _right, _contains, _openDone, _animate, _finished, _springBounce, _then, _none } from "@/constants/string"
-import { hasAttribute, removeAttribute, setAttribute } from "@/utils/attributes"
-import { addEventListener, callEventHandler, stopPropagation } from "@/utils/event"
-import { getBoundingClientRect, setStyleProperty } from "@/utils/element"
-import { clearTimeDelayed, setTimeDelayed } from "@/utils/timeout"
+import { isElementHasAttribute, removeElementAttribute, setElementAttribute } from "@/utils/attributes"
+import { addEventListener, callEventHandler, eventStopPropagation } from "@/utils/event"
+import { getBoundingClientRect, setElementStyleProperty } from "@/utils/element"
+import { endTimeout, startTimeout } from "@/utils/timeout"
 import { getDocument, getDocumentBody } from "@/constants/window"
 import { FlyoutPosition as TooltipPosition } from "@/enums/position"
 import { getFlyoutPosition } from "@/utils/flyout"
@@ -41,8 +41,8 @@ type TooltipCloseDetail = {
 }
 
 function initTooltip(): void {
-	if (hasAttribute(getDocumentBody(), BodyAttributes[_tooltipListener])) return;
-	setAttribute(getDocumentBody(), BodyAttributes[_tooltipListener])
+	if (isElementHasAttribute(getDocumentBody(), BodyAttributes[_tooltipListener])) return;
+	setElementAttribute(getDocumentBody(), BodyAttributes[_tooltipListener])
 
 	const $isMobile = isMobile()
 	let $anchor_ref: HTMLDivElement | null = null
@@ -168,8 +168,8 @@ function initTooltip(): void {
 			}
 		}
 
-		removeAttribute(textTooltip_ref, TooltipAttributes[_open])
-		removeAttribute(textTooltip_ref, TooltipAttributes[_openDone])
+		removeElementAttribute(textTooltip_ref, TooltipAttributes[_open])
+		removeElementAttribute(textTooltip_ref, TooltipAttributes[_openDone])
 		$anchor_ref = null
 		await textTooltip_ref[_animate](
 			{ transform: `translate(${translate[_left]}px, ${translate[_top]}px)` },
@@ -192,15 +192,15 @@ function initTooltip(): void {
 				tooltip
 			} = ev[_detail]
 
-			setTimeDelayed(() => {
+			startTimeout(() => {
 				if ($anchor_ref != null && anchor[_isSameNode]($anchor_ref) && isOpen) return
 				if (text == undefined && tooltip == undefined) return
 
 				closeTooltip()
 			}, 300)
 
-			if (timeoutId != null) clearTimeDelayed(timeoutId)
-			timeoutId = setTimeDelayed(async () => {
+			if (timeoutId != null) endTimeout(timeoutId)
+			timeoutId = startTimeout(async () => {
 				timeoutId = null
 				if ($anchor_ref != null && anchor[_isSameNode]($anchor_ref) && isOpen) return
 				if (text == undefined && tooltip == undefined) return
@@ -289,21 +289,21 @@ function initTooltip(): void {
 					}
 				}
 
-				setStyleProperty(textTooltip_ref, _top, pos[_top] + _px)
-				setStyleProperty(textTooltip_ref, _left, pos[_left] + _px)
-				setAttribute(textTooltip_ref, TooltipAttributes[_open])
+				setElementStyleProperty(textTooltip_ref, _top, pos[_top] + _px)
+				setElementStyleProperty(textTooltip_ref, _left, pos[_left] + _px)
+				setElementAttribute(textTooltip_ref, TooltipAttributes[_open])
 				textTooltip_ref[_animate](
 					{ transform: [`translate(${translate[_left]}px, ${translate[_top]}px)`, _none] },
 					{ duration: 300, easing: AnimationEffectTiming[_springBounce] }
-				)[_finished][_then](() => setAttribute(textTooltip_ref, TooltipAttributes[_openDone]))
+				)[_finished][_then](() => setElementAttribute(textTooltip_ref, TooltipAttributes[_openDone]))
 			}, startDelayDuration)
 		})
 
 		addEventListener(getDocumentBody(), BodyEvents[_closeTextTooltip], (ev: CustomEvent<TooltipCloseDetail>) => {
 			const { endDelayDuration = $isMobile? 1500 : 300 } = ev[_detail]
 
-			if (timeoutId != null) clearTimeDelayed(timeoutId)
-			timeoutId = setTimeDelayed(async () => {
+			if (timeoutId != null) endTimeout(timeoutId)
+			timeoutId = startTimeout(async () => {
 				closeTooltip()
 				richTooltip_ref = undefined
 				isOpen = false
@@ -343,14 +343,14 @@ const TextTooltip: FlowComponent<TextTooltipProps> = (props) => {
 			startDelayDuration: props[_startDelayDuration],
 			text: props[_text],
 		} satisfies TooltipOpenDetail}))
-		stopPropagation(ev)
+		eventStopPropagation(ev)
 	}
 
 	function closeTextTooltip(ev: Event): void {
 		getDocumentBody()[_dispatchEvent](new CustomEvent(BodyEvents[_closeTextTooltip], {detail: {
 			endDelayDuration: props[_endDelayDuration]
 		} satisfies TooltipCloseDetail}))
-		stopPropagation(ev)
+		eventStopPropagation(ev)
 	}
 
 	function updatePointer(ev: MouseEvent) {
@@ -411,14 +411,14 @@ const RichTooltip: FlowComponent<RichTooltipProps> = ($props) => {
 			startDelayDuration: props[_startDelayDuration],
 			tooltip: tooltip_ref
 		} satisfies TooltipOpenDetail}))
-		stopPropagation(ev)
+		eventStopPropagation(ev)
 	}
 
 	function closeRichTooltip(ev: Event): void {
 		getDocumentBody()[_dispatchEvent](new CustomEvent(BodyEvents[_closeTextTooltip], {detail: {
 			endDelayDuration: props[_endDelayDuration],
 		} satisfies TooltipCloseDetail}))
-		stopPropagation(ev)
+		eventStopPropagation(ev)
 	}
 
 	function updatePointer(ev: MouseEvent) {
@@ -450,23 +450,23 @@ const RichTooltip: FlowComponent<RichTooltipProps> = ($props) => {
 		<Popover
 			usePortal={props[_usePortal] ?? false}
 			onMouseMove={ev => {
-				stopPropagation(ev)
+				eventStopPropagation(ev)
 				callEventHandler(ev, props[_onMouseMove])
 			}}
 			onMouseLeave={ev => {
-				stopPropagation(ev)
+				eventStopPropagation(ev)
 				callEventHandler(ev, props[_onMouseLeave])
 			}}
 			onMouseDown={ev => {
-				stopPropagation(ev)
+				eventStopPropagation(ev)
 				callEventHandler(ev, props[_onMouseDown])
 			}}
 			onTouchEnd={ev => {
-				stopPropagation(ev)
+				eventStopPropagation(ev)
 				callEventHandler(ev, props[_onTouchEnd])
 			}}
 			onTouchCancel={ev => {
-				stopPropagation(ev)
+				eventStopPropagation(ev)
 				callEventHandler(ev, props[_onTouchCancel])
 			}}
 			ref={mergeRefs(props[_ref], r => tooltip_ref = r)}

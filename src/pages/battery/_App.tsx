@@ -1,7 +1,7 @@
 import { createSignal, onMount, Show, type VoidComponent } from "solid-js"
 
 import type { BatteryManager } from "@/interfaces/battery"
-import { setTimeDelayed } from "@/utils/timeout"
+import { startTimeout } from "@/utils/timeout"
 import { _splash, _animate, _spring, _finished, _then, _remove, _catch, _getBattery, _level, _charging, _dischargingTime, _chargingTime, _chargingchange, _chargingtimechange, _dischargingtimechange, _levelchange, _focus, _click, _tonal, _filled } from "@/constants/string"
 import { removeSplashScreen } from "@/scripts/splash"
 import { addEventListener } from "@/utils/event"
@@ -49,7 +49,7 @@ const _: VoidComponent = () => {
 
 	function initBattery(ev: Event): void {
 		if (!(getNavigator() as any)[_getBattery]) {
-			setTimeDelayed(() => openToast(ev, toast_browserNotSupport_ref, {
+			startTimeout(() => openToast(ev, toast_browserNotSupport_ref, {
 				autoClose: false
 			}))
 			return

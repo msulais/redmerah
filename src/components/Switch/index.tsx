@@ -2,7 +2,7 @@ import { createEffect, createMemo, createSignal, splitProps, type JSX, type Vali
 import { Dynamic, type DynamicProps } from "solid-js/web"
 
 import { _checked, _class, _component, _currentTarget, _disabled, _divAttr, _labelAttr, _onChange, _onClick, _onValueChanged, _value, _wrapperAttr } from "@/constants/string"
-import { toggleAttribute } from "@/utils/attributes"
+import { setElementAttributeIfExist } from "@/utils/attributes"
 import { callEventHandler } from "@/utils/event"
 
 import './index.scss'
@@ -23,8 +23,8 @@ const Switch: VoidComponent<SwitchProps> = ($props) => {
 
 	return (<label
 		class={`c-switch${labelProps[_class]? ` ${labelProps[_class]}` : ''}`}
-		data-c-disabled={toggleAttribute(isDisabled())}
-		data-c-checked={toggleAttribute(isChecked())}
+		data-c-disabled={setElementAttributeIfExist(isDisabled())}
+		data-c-checked={setElementAttributeIfExist(isChecked())}
 		{...otherLabelProps}>
 		<input
 			type="checkbox"
@@ -56,8 +56,8 @@ const RawSwitch: VoidComponent<RawSwitchProps> = ($props) => {
 	return (<Dynamic
 		component={props[_component] ?? 'label'}
 		class={`c-switch${wrapperProps[_class] != null ? ` ${wrapperProps[_class]}` : ''}`}
-		data-c-disabled={toggleAttribute(isDisabled())}
-		data-c-checked={toggleAttribute(isChecked())}
+		data-c-disabled={setElementAttributeIfExist(isDisabled())}
+		data-c-checked={setElementAttributeIfExist(isChecked())}
 		{...otherWrapperProps}>
 		<input
 			type="checkbox"

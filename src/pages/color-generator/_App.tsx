@@ -3,7 +3,7 @@ import { createStore } from 'solid-js/store'
 
 import type { HEXColor, RGBColor } from '@/types/color'
 import type { Palette } from './_types'
-import { clearTimeDelayed, setTimeDelayed } from '@/utils/timeout'
+import { endTimeout, startTimeout } from '@/utils/timeout'
 import { generateColor, HEX_to_RGB, testHexColor } from '@/utils/color'
 import { addClassListModule, getElementById } from '@/utils/element'
 import { _system, _theme, _corner, _dark, _fullRound, _includes, _light, _round, _semiRound, _sharp, _src, _URL, _share, _currentTarget, _seed, _paletteList, _length, _outlined, _tonal, _color, _color_accent, _innerHTML, _toUpperCase, _colorDark, _onColor, _onColorDark, _clipboard, _writeText, _join, _push, _palette, _filter, _filled, _accentDark, _accentLight, _onAccentDark, _onAccentLight, _open, _createObjectStore, _readonly, _objectStore, _transaction, _getAll, _then, _put, _readwrite, _manual, _clear, _delete, _colorGenerator, _writeObjectStore, _readObjectStore, _animate, _finished, _remove, _splash, _spring } from '@/constants/string'
@@ -67,7 +67,7 @@ const _: VoidComponent = () => {
 
 	async function copyAllPaletteList(): Promise<void> {
 		if (timeoutId()) {
-			clearTimeDelayed(timeoutId()!)
+			endTimeout(timeoutId()!)
 			setTimeoutId(null)
 		}
 
@@ -84,7 +84,7 @@ const _: VoidComponent = () => {
 		}
 
 		await getNavigator()[_clipboard][_writeText](colorsText[_join]('\n\n'))
-		setTimeoutId(setTimeDelayed(() => setTimeoutId(null), 2000))
+		setTimeoutId(startTimeout(() => setTimeoutId(null), 2000))
 	}
 
 	function onAddColor(): void {
@@ -142,7 +142,7 @@ const _: VoidComponent = () => {
 
 		async function copy(): Promise<void> {
 			if (timeoutId()) {
-				clearTimeDelayed(timeoutId()!)
+				endTimeout(timeoutId()!)
 				setTimeoutId(null)
 			}
 
@@ -153,7 +153,7 @@ const _: VoidComponent = () => {
 				'--accent-dark: ' + props[_palette][_accentDark],
 				'--on-accent-dark: ' + props[_palette][_onAccentDark],
 			][_join](';\n') + ';')
-			setTimeoutId(setTimeDelayed(() => setTimeoutId(null), 1000))
+			setTimeoutId(startTimeout(() => setTimeoutId(null), 1000))
 		}
 
 		function deleteColor(): void {

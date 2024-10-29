@@ -12,7 +12,7 @@ import type { HEXColor, RGBColor } from "@/types/color";
 import { _centerBottomToLeft, _centerBottomToRight, _centerCenterLeftTop, _leftCenterToBottom, _about, _apps, _clipboard, _color, _colorDark, _color_accent, _corner, _currentTarget, _dark, _donate, _filled, _filledTonal, _fullRound, _hostname, _includes, _innerHTML, _join, _light, _link, _onColor, _onColorDark, _open, _outlined, _pinnedApps, _round, _route, _semiRound, _share, _sharp, _some, _split, _system, _test, _theme, _title, _toLowerCase, _trim, _value, _writeText } from "@/constants/string";
 import { getLocalStorageItem, setLocalStorageItem } from "@/utils/storage";
 import { generateColor, HEX_to_RGB, testHexColor } from "@/utils/color";
-import { setAttribute } from "@/utils/attributes";
+import { setElementAttribute } from "@/utils/attributes";
 import { ExternalLinks, RoutesLinks } from "@/enums/links";
 import { LocalStorageKeys } from "@/enums/storage";
 import { RootAttributes } from "@/enums/attributes";
@@ -21,7 +21,7 @@ import { ElementIds } from "@/enums/ids";
 import { CornerData } from "@/enums/corner";
 import { ThemeData } from "@/enums/theme";
 import { getRoot } from "@/constants/window";
-import { clearTimeDelayed, setTimeDelayed } from "@/utils/timeout";
+import { endTimeout, startTimeout } from "@/utils/timeout";
 import { removeSplashScreenOnLoadEveryComponent } from "@/scripts/splash";
 
 type NavigationMenuProps = {
@@ -88,14 +88,14 @@ export const SettingsElement: VoidComponent = () => {
 
 	function changeTheme(theme: ThemeData): void {
 		setTheme(theme)
-		setAttribute(getRoot(), RootAttributes[_theme], theme)
+		setElementAttribute(getRoot(), RootAttributes[_theme], theme)
 		setLocalStorageItem(LocalStorageKeys[_theme], theme)
 		closeMenu(menu_settings_ref)
 	}
 
 	function changeCorner(corner: CornerData): void {
 		setCorner(corner)
-		setAttribute(getRoot(), RootAttributes[_corner], corner)
+		setElementAttribute(getRoot(), RootAttributes[_corner], corner)
 		setLocalStorageItem(LocalStorageKeys[_corner], corner)
 		closeMenu(menu_settings_ref)
 	}
@@ -104,7 +104,7 @@ export const SettingsElement: VoidComponent = () => {
 		const theme = getLocalStorageItem(LocalStorageKeys[_theme])
 
 		if (theme && [ThemeData[_system], ThemeData[_light], ThemeData[_dark]][_includes](theme as ThemeData)) {
-			setAttribute(getRoot(), RootAttributes[_theme], theme)
+			setElementAttribute(getRoot(), RootAttributes[_theme], theme)
 			setTheme(theme as ThemeData)
 		}
 	}
@@ -113,7 +113,7 @@ export const SettingsElement: VoidComponent = () => {
 		const corner = getLocalStorageItem(LocalStorageKeys[_corner])
 
 		if (corner && [CornerData[_sharp], CornerData[_semiRound], CornerData[_round], CornerData[_fullRound]][_includes](corner as CornerData)) {
-			setAttribute(getRoot(), RootAttributes[_corner], corner)
+			setElementAttribute(getRoot(), RootAttributes[_corner], corner)
 			setCorner(corner as CornerData)
 		}
 	}
@@ -128,8 +128,8 @@ export const SettingsElement: VoidComponent = () => {
 		const accentColorStyleEl = getElementById(ElementIds[_color_accent])!
 		accentColorStyleEl[_innerHTML] = `:root{--g-color-accent-light: ${rgbToCSSValue(HEX_to_RGB(acc[_color]))};--g-color-accent-dark: ${rgbToCSSValue(HEX_to_RGB(acc[_colorDark]))};--g-color-on-accent-light: ${rgbToCSSValue(HEX_to_RGB(acc[_onColor]))};--g-color-on-accent-dark: ${rgbToCSSValue(HEX_to_RGB(acc[_onColorDark]))};}`;
 
-		if (timeout_color_id != null) clearTimeDelayed(timeout_color_id)
-		timeout_color_id = setTimeDelayed(() => {
+		if (timeout_color_id != null) endTimeout(timeout_color_id)
+		timeout_color_id = startTimeout(() => {
 			setLocalStorageItem(LocalStorageKeys[_color], hexColor)
 			timeout_color_id = null
 		}, 100)

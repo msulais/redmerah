@@ -4,7 +4,7 @@ import { toCanvas as dataToQRCanvas, toString as dataToQRString } from "qrcode"
 import type { HEXColor } from "@/types/color"
 import type { Settings } from "./_types"
 import { _scan, _writeObjectStore, _settings, _put, _miscellaneous, _encodingMode, _auto, _color, _backgroundColor, _errorCorrectionLevel, _margin, _version, _getContext, _2d, _clearRect, _width, _height, _svg, _replace, _toUpperCase, _jpeg, _toDataURL, _png, _then, _toBlob, _clipboard, _write, _writeText, _splash, _animate, _spring, _finished, _remove, _readObjectStore, _get, _value, _createObjectStore, _open, _key, _generate } from "@/constants/string"
-import { setTimeDelayed } from "@/utils/timeout"
+import { startTimeout } from "@/utils/timeout"
 import { Commands, CopyFileType, DownloadFileType, EncodingMode, ErrorCorrectionLevel, Pages } from "./_enums"
 import { createStore } from "solid-js/store"
 import { DEFAULT_BACKGROUND_COLOR, DEFAULT_COLOR, DEFAULT_ENCODING_MODE, DEFAULT_ERROR_CORRECTION_LEVEL, DEFAULT_MARGIN, DEFAULT_VERSION } from "./_constants"
@@ -60,7 +60,7 @@ const _: VoidComponent = () => {
 	function generate(): void {
 		if (timeoutId != null) clearTimeout(timeoutId)
 
-		timeoutId = setTimeDelayed(() => {
+		timeoutId = startTimeout(() => {
 			dataToQRCanvas(canvas_ref, settings[_encodingMode] == EncodingMode[_auto]
 				? QRCodeData()
 				: [{data: QRCodeData(), mode: settings[_encodingMode] as any}],

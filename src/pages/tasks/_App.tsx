@@ -12,7 +12,7 @@ import { IDB } from "@/utils/indexeddb"
 import { getDateString_YMD_HM } from "@/utils/datetime"
 import { getNavigator } from "@/constants/window"
 import { downloadFile } from "@/utils/file"
-import { preventDefault } from "@/utils/event"
+import { eventPreventDefault } from "@/utils/event"
 import { numberParse } from "@/utils/math"
 import { setMicrotask } from "@/utils/timeout"
 import { getElementById } from "@/utils/element"
@@ -1421,7 +1421,7 @@ const _: VoidComponent = () => {
 			<form
 				style={{ display: _contents }}
 				onSubmit={ev => {
-					preventDefault(ev)
+					eventPreventDefault(ev)
 					if (selectedLabelToAdd[_name][_trim]() == '') return;
 
 					addLabel(selectedLabelToAdd[_name][_trim](), selectedLabelToAdd[_color])
@@ -1476,7 +1476,7 @@ const _: VoidComponent = () => {
 			<form
 				style={{display: _contents}}
 				onSubmit={ev => {
-					preventDefault(ev)
+					eventPreventDefault(ev)
 					if (selectedLabelToEdit[_name][_trim]() == '') return;
 
 					editLabel({
@@ -1537,7 +1537,7 @@ const _: VoidComponent = () => {
 			<form
 				style={{display: _contents}}
 				onSubmit={(ev) => {
-					preventDefault(ev)
+					eventPreventDefault(ev)
 					if (newListNameText()[_trim]() == '') return;
 
 					addNewTaskList(newListNameText(), newListEmoji())
@@ -1591,7 +1591,7 @@ const _: VoidComponent = () => {
 			<form
 				style={{display: _contents}}
 				onSubmit={(ev) => {
-					preventDefault(ev)
+					eventPreventDefault(ev)
 					if (editListNameText()[_trim]() == ''
 						|| (
 							editListNameText()[_trim]() == taskLists[selectedTaskListIndexToRename()][_name]

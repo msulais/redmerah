@@ -29,11 +29,11 @@ export function getElementById(elementId: string): HTMLElement | null {
 	return getDocument()[_getElementById](elementId)
 }
 
-export function querySelector(selectors: string): HTMLElement | null {
+export function getElementBySelector(selectors: string): HTMLElement | null {
 	return getDocument()[_querySelector](selectors)
 }
 
-export function querySelectorAll<E extends Element>(selectors: string): NodeListOf<E> {
+export function getAllElementBySelector<E extends Element>(selectors: string): NodeListOf<E> {
 	return getDocument()[_querySelectorAll]<E>(selectors)
 }
 
@@ -41,7 +41,7 @@ export function getBoundingClientRect(element: Element): DOMRect {
 	return element[_getBoundingClientRect]()
 }
 
-export function setStyleProperty(
+export function setElementStyleProperty(
 		element: HTMLElement,
 		property: string,
 		value: string | null,

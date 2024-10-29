@@ -1,6 +1,6 @@
 import { type JSX, splitProps, type VoidComponent } from "solid-js"
 
-import { toggleAttribute } from '@/utils/attributes'
+import { setElementAttributeIfExist } from '@/utils/attributes'
 import { _children, _filled, _inline, _fromCharCode, _charCodeAt, _code } from "@/constants/string"
 
 import './index.scss'
@@ -16,7 +16,7 @@ const Icon: VoidComponent<IconProps> = ($props) => {
 
 	return (<i
 		class='c-icon'
-		data-c-inline={toggleAttribute(props[_inline])}
+		data-c-inline={setElementAttributeIfExist(props[_inline])}
 		translate="no"
 		{...other}>
 		{ String[_fromCharCode](props[_code] - (props[_filled]? 1 : 0)) }

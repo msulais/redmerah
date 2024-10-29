@@ -6,9 +6,9 @@ import type { TaskLabel, Settings, Task, TaskList, SubTask, TaskFileMetaData } f
 import { _command, _settings, _sortBy, _name, _importance, _creationDate, _completed, _uncompleted, _sortMode, _ascending, _descending, _isAnyUncompletedTask, _taskListIndex, _isAnyCompletedTask, _isAnyTask, _page, _tonal, _filled, _leading, _headline, _currentTarget, _isGroup, _tasks, _task, _complete, _onEdit, _onContextMenu, _taskIndex, _important, _onDelete, _subtasks, _length, _description, _reminder, _files, _labelIds, _onEditReminder, _outlined, _onEditFiles, _labels, _color, _onEditLabel, _all, _planned, _includes, _taskList, _number, _value, _trim, _id, _emoji, _onEditFilesTask, _onEditReminderTask, _onEditTask, _onContextMenuTask, _onDeleteTask, _taskLists, _some, _edit, _isShowDeleteTaskWarning, _file, _type, _startsWith, _text, _slice, _concat, _subtask, _subtaskIndex, _listId, _replace, _size, _taskId, _fileIndex, _action, _centerBottomToRight, _test, _toFixed, _join, _findIndex, _isFileDBError, _then, _image, _video, _audio, _normal, _contents, _chip, _rightCenterToBottom, _checked } from "@/constants/string"
 import { Commands, Pages, SortBy, SortMode } from "./_enums"
 import { getCurrentDate, getDate_Y, getDateString_YMD_HM, isOutDate_YMD_HM } from "@/utils/datetime"
-import { preventDefault, stopPropagation } from "@/utils/event"
+import { eventPreventDefault, eventStopPropagation } from "@/utils/event"
 import { DEFAULT_TASK_LIST } from "./_constants"
-import { toggleAttribute } from "@/utils/attributes"
+import { setElementAttributeIfExist } from "@/utils/attributes"
 import { stringToTitleCase } from "@/utils/string"
 import { addClassListModule } from "@/utils/element"
 import { isNumber } from "@/utils/typecheck"
@@ -287,18 +287,18 @@ const TaskItem: VoidComponent<{
 	command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
 	return (<Expander
-		data-done={toggleAttribute(props[_task][_complete])}
+		data-done={setElementAttributeIfExist(props[_task][_complete])}
 		header={<ExpanderHeader
 			useExpandIcon={false}
 			leading={<>
 				<TextTooltip text={`Mark as ${props[_task][_complete]? 'un' : ''}completed`}>
 					<IconButton
 						onContextMenu={ev => {
-							stopPropagation(ev)
-							preventDefault(ev)
+							eventStopPropagation(ev)
+							eventPreventDefault(ev)
 						}}
 						onClick={ev => {
-							stopPropagation(ev)
+							eventStopPropagation(ev)
 							props[_command](
 								Commands.edit_task,
 								{...props[_task], complete: !props[_task][_complete]} satisfies Task,
@@ -314,11 +314,11 @@ const TaskItem: VoidComponent<{
 				<TextTooltip text={`Mark as ${props[_task][_important]? 'not ' : ''}important`}>
 					<IconButton
 						onContextMenu={ev => {
-							stopPropagation(ev)
-							preventDefault(ev)
+							eventStopPropagation(ev)
+							eventPreventDefault(ev)
 						}}
 						onClick={ev => {
-							stopPropagation(ev)
+							eventStopPropagation(ev)
 							props[_command](
 								Commands.edit_task,
 								{...props[_task], important: !props[_task][_important]} satisfies Task,
@@ -333,11 +333,11 @@ const TaskItem: VoidComponent<{
 				<TextTooltip text="Delete task">
 					<IconButton
 						onContextMenu={ev => {
-							stopPropagation(ev)
-							preventDefault(ev)
+							eventStopPropagation(ev)
+							eventPreventDefault(ev)
 						}}
 						onClick={ev => {
-							stopPropagation(ev)
+							eventStopPropagation(ev)
 							props[_onDelete](ev)
 						}}
 						code={0xE59D}
@@ -370,11 +370,11 @@ const TaskItem: VoidComponent<{
 										)? 'rgb(var(--g-color-error))' : undefined
 									}}
 									onContextMenu={ev => {
-										stopPropagation(ev)
-										preventDefault(ev)
+										eventStopPropagation(ev)
+										eventPreventDefault(ev)
 									}}
 									onClick={ev => {
-										stopPropagation(ev)
+										eventStopPropagation(ev)
 										props[_onEditReminder](ev)
 									}}
 									variant={ButtonVariant[_outlined]}>
@@ -387,11 +387,11 @@ const TaskItem: VoidComponent<{
 							<Button
 								compact
 								onContextMenu={ev => {
-									stopPropagation(ev)
-									preventDefault(ev)
+									eventStopPropagation(ev)
+									eventPreventDefault(ev)
 								}}
 								onClick={ev => {
-									stopPropagation(ev)
+									eventStopPropagation(ev)
 									props[_onEditFiles](ev)
 								}}
 								variant={ButtonVariant[_outlined]}>
@@ -410,11 +410,11 @@ const TaskItem: VoidComponent<{
 											: undefined
 									}}
 									onContextMenu={ev => {
-										stopPropagation(ev)
-										preventDefault(ev)
+										eventStopPropagation(ev)
+										eventPreventDefault(ev)
 									}}
 									onClick={ev => {
-										stopPropagation(ev)
+										eventStopPropagation(ev)
 										props[_onEditLabel](ev, props[_labels][labelId]!)
 									}}
 									variant={ButtonVariant[_outlined]}>
@@ -431,10 +431,10 @@ const TaskItem: VoidComponent<{
 		headerAttr={{
 			onClick: ev => {
 				props[_onEdit](ev)
-				preventDefault(ev)
+				eventPreventDefault(ev)
 			},
 			onContextMenu: ev => {
-				preventDefault(ev)
+				eventPreventDefault(ev)
 				props[_onContextMenu](ev)
 			}
 		}}
@@ -568,7 +568,7 @@ const SingleTaskList: VoidComponent<{
 
 	return (<div
 		class={CSS.body_single_task_list}
-		data-empty={toggleAttribute(!isAnyTask())}>
+		data-empty={setElementAttributeIfExist(!isAnyTask())}>
 		<AppbarTasks
 			command={props[_command]}
 			taskListIndex={props[_taskListIndex]}
@@ -606,7 +606,7 @@ const SingleTaskList: VoidComponent<{
 		<Show when={isAnyTask()}><div style={{flex: '1'}}></div></Show>
 		<form onSubmit={ev => {
 			addTask()
-			preventDefault(ev)
+			eventPreventDefault(ev)
 		}}>
 			<TextField
 				placeholder="Add task"
@@ -761,7 +761,7 @@ const GroupTaskList: VoidComponent<{
 
 	return (<div
 		class={CSS.body_group_task_list}
-		data-empty={toggleAttribute(!isNotEmpty())}>
+		data-empty={setElementAttributeIfExist(!isNotEmpty())}>
 		<AppbarTasks
 			taskListIndex={-1}
 			isAnyTask={isNotEmpty()}
@@ -1405,7 +1405,7 @@ const _: VoidComponent<{
 				</Button>
 			</>}>
 			<form onSubmit={ev => {
-				preventDefault(ev)
+				eventPreventDefault(ev)
 				if (text_file()[_trim]() == '') return;
 
 				confirmFileRename()
@@ -1484,7 +1484,7 @@ const _: VoidComponent<{
 				</Button>
 			</>}>
 			<form onSubmit={ev => {
-				preventDefault(ev)
+				eventPreventDefault(ev)
 				if (text_subtask()[_trim]() == '') return;
 
 				confirmAddSubtask()
@@ -1519,7 +1519,7 @@ const _: VoidComponent<{
 				</Button>
 			</>}>
 			<form style={{display: _contents}} onSubmit={ev => {
-				preventDefault(ev)
+				eventPreventDefault(ev)
 				if (text_subtask()[_trim]() == '') return;
 				confirmEditSubtask()
 			}}>
@@ -1769,7 +1769,7 @@ const _: VoidComponent<{
 					checked={selectedTaskToEdit[_task][_labelIds][_includes](label![_id])}
 					onContextMenu={ev => {
 						setSelectedLabel(label!)
-						preventDefault(ev)
+						eventPreventDefault(ev)
 						openMenu(ev, menu_labelAction_ref, {position: MenuPosition[_centerBottomToRight]})
 					}}
 					onClick={() => {

@@ -4,11 +4,11 @@ import type { CalculatorInput, CalculatorOutput, DateCalculatorInput, Settings }
 import { CalculatorType, Commands, DateOperation, DecimalNumberFormat, NumberType } from "./_enums"
 import { _hide, _children, _settings, _memoryButtons, _memory, _currentTarget, _command, _onRecallMemory, _value, _substring, _length, _setSelectionRange, _focus, _output, _toString, _input, _none, _text, _code, _shiftKey, _selectionStart, _join, _scientificNotation, _numberFormat, _decimal, _grouping, _test, _toUpperCase, _tonal, _comma, _filled, _sin, _cos, _tan, _csc, _sec, _cot, _centerBottomToRight, _abs, _log, _ln, _ceil, _round, _floor, _scientific, _angle, _type, _converter, _icon, _area, _volume, _temperature, _time, _weight, _frequency, _pressure, _match, _trim, _inputUnit, _name, _symbol, _equals, _outputUnit, _programmer, _numberType, _hexadecimal, _octal, _binary, _right, _clipboard, _writeText, _date, _operation, _add, _subtract, _difference, _from, _year, _month, _day, _to, _calculator, _basic, _inputs, _outputs, _valueAsNumber } from "@/constants/string"
 import { addClassListModule } from "@/utils/element"
-import { toggleAttribute } from "@/utils/attributes"
+import { setElementAttributeIfExist } from "@/utils/attributes"
 import { CONVERTER_TYPES } from "./_constants"
 import { ConverterType, UNIT_ANGLE, UNIT_AREA, UNIT_FREQUENCY, UNIT_LENGTH, UNIT_PRESSURE, UNIT_TEMPERATURE, UNIT_TIME, UNIT_VOLUME, UNIT_WEIGHT, type ConverterUnit } from "./_converter"
 import { stringToTitleCase } from "@/utils/string"
-import { preventDefault } from "@/utils/event"
+import { eventPreventDefault } from "@/utils/event"
 import { getNavigator } from "@/constants/window"
 import { floatToBinary, formatNumber, numberParse, numberToRealDigit, safeNumber } from "@/utils/math"
 import { getDate_Y, getDateString_YMD } from "@/utils/datetime"
@@ -33,9 +33,9 @@ const ActionButtons: ParentComponent<JSX.HTMLAttributes<HTMLDivElement> & {
 	const [is_menu_memory_open, setIs_menu_memory_open] = createSignal<boolean>(false)
 	let menu_memory_ref: HTMLDialogElement
 
-	return (<div class={CSS.input_output_action_buttons} data-hidden={toggleAttribute(props[_hide])}>
+	return (<div class={CSS.input_output_action_buttons} data-hidden={setElementAttributeIfExist(props[_hide])}>
 		{props[_children]}
-		<div class={CSS.input_output_memory_buttons} data-hidden={toggleAttribute(!props[_settings][_memoryButtons])}>
+		<div class={CSS.input_output_memory_buttons} data-hidden={setElementAttributeIfExist(!props[_settings][_memoryButtons])}>
 			<TextTooltip text={"Memory value " + `(${props[_memory]})`}>
 				<Button
 					focused={is_menu_memory_open()}
@@ -145,7 +145,7 @@ const BasicCalculator: VoidComponent<{
 			onKeyDown={ev => {
 				if (!(ev[_code] == "Equal" && !ev[_shiftKey])) return
 				equal()
-				preventDefault(ev)
+				eventPreventDefault(ev)
 			}}
 			onFocus={ev => caretPos = ev[_currentTarget][_selectionStart] ?? caretPos}
 			onBlur={ev => caretPos = ev[_currentTarget][_selectionStart] ?? caretPos}
@@ -288,7 +288,7 @@ const ScientificCalculator: VoidComponent<{
 			onKeyDown={ev => {
 				if (!(ev[_code] == "Equal" && !ev[_shiftKey])) return
 				equal()
-				preventDefault(ev)
+				eventPreventDefault(ev)
 			}}
 			onFocus={ev => caretPos = ev[_currentTarget][_selectionStart] ?? caretPos}
 			onBlur={ev => caretPos = ev[_currentTarget][_selectionStart] ?? caretPos}
@@ -533,7 +533,7 @@ const ConverterCalculator: VoidComponent<{
 			onKeyDown={ev => {
 				if (!(ev[_code] == "Equal" && !ev[_shiftKey])) return
 				equal()
-				preventDefault(ev)
+				eventPreventDefault(ev)
 			}}
 			onFocus={ev => caretPos = ev[_currentTarget][_selectionStart] ?? caretPos}
 			onBlur={ev => caretPos = ev[_currentTarget][_selectionStart] ?? caretPos}
@@ -791,7 +791,7 @@ const ProgrammerCalculator: VoidComponent<{
 			onKeyDown={ev => {
 				if (!(ev[_code] == "Equal" && !ev[_shiftKey])) return
 				equal()
-				preventDefault(ev)
+				eventPreventDefault(ev)
 			}}
 			onFocus={ev => caretPos = ev[_currentTarget][_selectionStart] ?? caretPos}
 			onBlur={ev => caretPos = ev[_currentTarget][_selectionStart] ?? caretPos}
@@ -808,7 +808,7 @@ const ProgrammerCalculator: VoidComponent<{
 				indicatorPosition={ButtonIndicatorPosition[_right]}
 				onClick={() => props[_command](Commands.change_settings_programmer_numberType, NumberType[_decimal])}
 				onContextMenu={(ev) => {
-					preventDefault(ev)
+					eventPreventDefault(ev)
 					textToCopy = getDecimalOutput()
 					openMenu(ev, menu_copy_ref)
 				}}>
@@ -821,7 +821,7 @@ const ProgrammerCalculator: VoidComponent<{
 				indicatorPosition={ButtonIndicatorPosition[_right]}
 				onClick={() => props[_command](Commands.change_settings_programmer_numberType, NumberType[_hexadecimal])}
 				onContextMenu={(ev) => {
-					preventDefault(ev)
+					eventPreventDefault(ev)
 					if (props[_output] == null) return;
 
 					textToCopy = getHexadecimalOutput()
@@ -836,7 +836,7 @@ const ProgrammerCalculator: VoidComponent<{
 				indicatorPosition={ButtonIndicatorPosition[_right]}
 				onClick={() => props[_command](Commands.change_settings_programmer_numberType, NumberType[_octal])}
 				onContextMenu={(ev) => {
-					preventDefault(ev)
+					eventPreventDefault(ev)
 					if (props[_output] == null) return;
 
 					textToCopy = getOctalOutput()
@@ -851,7 +851,7 @@ const ProgrammerCalculator: VoidComponent<{
 				indicatorPosition={ButtonIndicatorPosition[_right]}
 				onClick={() => props[_command](Commands.change_settings_programmer_numberType, NumberType[_binary])}
 				onContextMenu={(ev) => {
-					preventDefault(ev)
+					eventPreventDefault(ev)
 					if (props[_output] == null) return;
 
 					textToCopy = getBinaryOutput()
@@ -953,7 +953,7 @@ const DateCalculator: VoidComponent<{
 				{getDateString_YMD(props[_input][_from])}
 			</Button>
 		</div>
-		<div class={CSS.input_output_date_inputs} data-hide={toggleAttribute(props[_settings][_date][_operation] == DateOperation[_difference])}>
+		<div class={CSS.input_output_date_inputs} data-hide={setElementAttributeIfExist(props[_settings][_date][_operation] == DateOperation[_difference])}>
 			<NumberTextField
 				min={0}
 				value={props[_input][_year] + ''}
@@ -988,7 +988,7 @@ const DateCalculator: VoidComponent<{
 				)}
 			/>
 		</div>
-		<div data-hide={toggleAttribute(props[_settings][_date][_operation] != DateOperation[_difference])}>
+		<div data-hide={setElementAttributeIfExist(props[_settings][_date][_operation] != DateOperation[_difference])}>
 			<p>To</p>
 			<Button
 				variant={ButtonVariant[_tonal]}
@@ -1001,7 +1001,7 @@ const DateCalculator: VoidComponent<{
 			</Button>
 		</div>
 		<div>
-			<p><Show when={toggleAttribute(props[_settings][_date][_operation] != DateOperation[_difference])} fallback="Result">Difference</Show></p>
+			<p><Show when={setElementAttributeIfExist(props[_settings][_date][_operation] != DateOperation[_difference])} fallback="Result">Difference</Show></p>
 			<h2>{props[_output]}</h2>
 		</div>
 		<DatePicker

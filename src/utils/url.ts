@@ -10,7 +10,7 @@ export function decodeURL(url: string): string {
 }
 
 export function getUrlQueries(url: string): {[key: string]: string} {
-	let queryObject: {[key: string]: string} = {}
+	const queryObject: {[key: string]: string} = {}
 	const urlParams = new URL(url)[_searchParams]
 
 	urlParams[_forEach]((value, key) => {

@@ -4,10 +4,10 @@ import { BarcodeFormat, DecodeHintType } from "@zxing/library"
 
 import type { Settings } from "./_types"
 import { _2d, _at, _auto, _backgroundColor, _canvasRef, _catch, _centerBottomToRight, _clearRect, _color, _command, _contents, _currentTarget, _dataTransfer, _decodeFromImageElement, _encodingMode, _environment, _errorCorrectionLevel, _file, _files, _filled, _generate, _getAsFile, _getContext, _getText, _height, _image, _isGenerateError, _items, _jpeg, _kind, _length, _margin, _match, _none, _page, _png, _replace, _scan, _scanFile, _set, _settings, _split, _startsWith, _svg, _svgRef, _then, _tonal, _trim, _type, _value, _vector, _version, _width } from "@/constants/string"
-import { setTimeDelayed } from "@/utils/timeout"
+import { startTimeout } from "@/utils/timeout"
 import { Commands, CopyFileType, DownloadFileType, Pages } from "./_enums"
-import { preventDefault, stopPropagation } from "@/utils/event"
-import { toggleAttribute } from "@/utils/attributes"
+import { eventPreventDefault, eventStopPropagation } from "@/utils/event"
+import { setElementAttributeIfExist } from "@/utils/attributes"
 import { openFile } from "@/utils/file"
 import { createObjectURL, revokeObjectURL } from "@/utils/url"
 import { isMobile } from "@/utils/platforms"
@@ -101,9 +101,9 @@ const _: VoidComponent<{
 			<canvas
 				class={CSS.body_canvas_output}
 				ref={props[_canvasRef]}
-				data-empty={toggleAttribute(props[_isGenerateError])}
+				data-empty={setElementAttributeIfExist(props[_isGenerateError])}
 				onContextMenu={ev => {
-					preventDefault(ev)
+					eventPreventDefault(ev)
 					if (props[_isGenerateError]) return;
 					openMenu(ev, menu_canvasActions_ref, {position: MenuPosition[_centerBottomToRight]})
 				}}
@@ -118,11 +118,11 @@ const _: VoidComponent<{
 			class={CSS.body_scan}>
 			<div
 				class={CSS.body_image}
-				data-drag-over={toggleAttribute(isDragEnter())}
+				data-drag-over={setElementAttributeIfExist(isDragEnter())}
 				onClick={(ev) => chooseFile(ev)}
 				onDrop={ev => {
 					setIsDragEnter(false)
-					preventDefault(ev)
+					eventPreventDefault(ev)
 					if (ev[_dataTransfer] == null) return;
 
 					let $file: File | null = null
@@ -146,10 +146,10 @@ const _: VoidComponent<{
 					setQRCodeImageSource(createObjectURL($file))
 					scanQRImage(ev)
 				}}
-				onDragOver={ev => preventDefault(ev)}
+				onDragOver={ev => eventPreventDefault(ev)}
 				onDragEnter={() => setIsDragEnter(true)}
 				onDragLeave={() => setIsDragEnter(false)}>
-				<div data-g-no-pointer-event={toggleAttribute(isDragEnter())}>
+				<div data-g-no-pointer-event={setElementAttributeIfExist(isDragEnter())}>
 					<Show when={QRCodeImageSource() == null}>
 						<p><Icon code={0xED21}/>Drag QR code image here</p>
 					</Show>
@@ -167,7 +167,7 @@ const _: VoidComponent<{
 										revokeObjectURL(QRCodeImageSource()!)
 										setQRCodeImageSource(null)
 										setQRCodeDecodedText('')
-										stopPropagation(ev)
+										eventStopPropagation(ev)
 									}}
 								/>
 							</TextTooltip>
@@ -178,7 +178,7 @@ const _: VoidComponent<{
 								filled={QRCodeImageSource() != null}
 								onClick={ev => {
 									chooseFile(ev)
-									stopPropagation(ev)
+									eventStopPropagation(ev)
 								}}
 								code={0xE900}
 							/>
@@ -190,7 +190,7 @@ const _: VoidComponent<{
 									filled={QRCodeImageSource() != null}
 									onClick={ev => {
 										chooseFile(ev, _environment)
-										stopPropagation(ev)
+										eventStopPropagation(ev)
 									}}
 									code={0xE354}
 								/>
@@ -216,7 +216,7 @@ const _: VoidComponent<{
 					onClick={() => {
 						props[_command](Commands.download_QRCode, DownloadFileType[_png])
 						closeSubMenu(submenu_downloadCanvasActions_ref)
-						setTimeDelayed(() => closeMenu(menu_canvasActions_ref), 300)
+						startTimeout(() => closeMenu(menu_canvasActions_ref), 300)
 					}}
 					trailing="PNG">
 					Image
@@ -226,7 +226,7 @@ const _: VoidComponent<{
 					onClick={() => {
 						props[_command](Commands.download_QRCode, DownloadFileType[_jpeg])
 						closeSubMenu(submenu_downloadCanvasActions_ref)
-						setTimeDelayed(() => closeMenu(menu_canvasActions_ref), 300)
+						startTimeout(() => closeMenu(menu_canvasActions_ref), 300)
 					}}
 					trailing="JPEG">
 					Image
@@ -236,7 +236,7 @@ const _: VoidComponent<{
 					onClick={() => {
 						props[_command](Commands.download_QRCode, DownloadFileType[_svg])
 						closeSubMenu(submenu_downloadCanvasActions_ref)
-						setTimeDelayed(() => closeMenu(menu_canvasActions_ref), 300)
+						startTimeout(() => closeMenu(menu_canvasActions_ref), 300)
 					}}
 					trailing="SVG">
 					Vector
@@ -256,7 +256,7 @@ const _: VoidComponent<{
 					onClick={(ev) => {
 						props[_command](Commands.copy_QRCode, ev, CopyFileType[_png])
 						closeSubMenu(submenu_copyCanvasActions_ref)
-						setTimeDelayed(() => closeMenu(menu_canvasActions_ref), 300)
+						startTimeout(() => closeMenu(menu_canvasActions_ref), 300)
 					}}
 					trailing="PNG">
 					Image
@@ -266,7 +266,7 @@ const _: VoidComponent<{
 					onClick={(ev) => {
 						props[_command](Commands.copy_QRCode, ev, CopyFileType[_svg])
 						closeSubMenu(submenu_copyCanvasActions_ref)
-						setTimeDelayed(() => closeMenu(menu_canvasActions_ref), 300)
+						startTimeout(() => closeMenu(menu_canvasActions_ref), 300)
 					}}
 					trailing="SVG">
 					Vector

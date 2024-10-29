@@ -5,11 +5,11 @@ import { mergeRefs } from '@solid-primitives/refs'
 import type { Emoji } from '@/types/emoji'
 import { activitiesEmojis, animalAndNatureEmojis, flagsEmojis, foodAndDrinkEmojis, objectsEmojis, personAndBodyEmojis, smileyAndEmotionEmojis, symbolsEmojis, travelAndPlacesEmojis } from '@/constants/emoji'
 import { _activities, _addRecentEmoji, _animalAndNature, _animate, _category, _children, _classList, _closeTooltip, _concat, _currentTarget, _detail, _dispatchEvent, _element, _emoji, _emojiListener, _emojis, _filled, _findIndex, _finished, _flags, _foodAndDrink, _getRecentEmoji, _iconCode, _join, _length, _localeCompare, _multiple, _objects, _onSelectEmoji, _onToggleOpen, _option, _personAndBody, _push, _recents, _ref, _removeRecentEmoji, _replace, _showCloseBtn, _showCloseButton, _slice, _smileyAndEmotion, _some, _sort, _splice, _split, _spring, _symbols, _test, _then, _tonal, _travelAndPlaces, _trim, _value } from '@/constants/string'
-import { hasAttribute, toggleAttribute,setAttribute } from '@/utils/attributes'
+import { isElementHasAttribute, setElementAttributeIfExist,setElementAttribute } from '@/utils/attributes'
 import { getDocumentBody } from '@/constants/window'
 import { BodyAttributes } from '@/enums/attributes'
 import { addEventListener, removeEventListener } from '@/utils/event'
-import { clearTimeDelayed, setTimeDelayed } from '@/utils/timeout'
+import { endTimeout, startTimeout } from '@/utils/timeout'
 import { BodyEvents } from '@/enums/events'
 import { AnimationEffectTiming } from '@/enums/animation'
 
@@ -42,8 +42,8 @@ enum EmojiPickerEvents {
 }
 
 function initEmojiPicker(): void {
-	if (hasAttribute(getDocumentBody(), BodyAttributes[_emojiListener])) return;
-	setAttribute(getDocumentBody(), BodyAttributes[_emojiListener])
+	if (isElementHasAttribute(getDocumentBody(), BodyAttributes[_emojiListener])) return;
+	setElementAttribute(getDocumentBody(), BodyAttributes[_emojiListener])
 
 	let recents: Emoji[] = []
 
@@ -131,7 +131,7 @@ const EmojiPicker: ParentComponent<EmojiPickerProps> = ($props) => {
 
 	const Emojis: VoidComponent<{option: EmojiCategory, emojis: Emoji[]}> = $props => (<div
 		class='c-emoji-picker-emojis'
-		data-c-hidden={toggleAttribute($props[_option] != option())}>
+		data-c-hidden={setElementAttributeIfExist($props[_option] != option())}>
 		<div>
 			<h3>{$props[_option]}</h3>
 			<For each={$props[_emojis]}>{e =>
@@ -184,8 +184,8 @@ const EmojiPicker: ParentComponent<EmojiPickerProps> = ($props) => {
 				onInput={(ev) => {
 					const text = ev[_currentTarget][_value]
 
-					if (timeoutId != null) clearTimeDelayed(timeoutId)
-					timeoutId = setTimeDelayed(() => {
+					if (timeoutId != null) endTimeout(timeoutId)
+					timeoutId = startTimeout(() => {
 						setSearchText(text)
 					}, 1000)
 				}}

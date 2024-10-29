@@ -1,5 +1,5 @@
 ---
-import { toggleAttribute } from '@/utils/attributes'
+import { toggleElementAttributeIfExist } from '@/utils/attributes'
 
 import { ButtonVariant, ButtonIndicatorPosition } from '.'
 import './index.scss'
@@ -36,10 +36,10 @@ const {
 		'c-outlined-btn': variant == ButtonVariant.outlined
 	}, ...classList]}
 	data-c-indicator={selected? indicatorPosition : undefined}
-	data-c-selected={toggleAttribute(selected)}
-	data-c-elevation={toggleAttribute(elevation, true)}
-	data-c-focus={toggleAttribute(focus)}
-	data-c-compact={toggleAttribute(compact)}
+	data-c-selected={toggleElementAttributeIfExist(selected)}
+	data-c-elevation={toggleElementAttributeIfExist(elevation, true)}
+	data-c-focus={toggleElementAttributeIfExist(focus)}
+	data-c-compact={toggleElementAttributeIfExist(compact)}
 	target={openInNewTab? '_blank' : undefined}
 	rel={openInNewTab? 'noopener noreferrer' : undefined}
 	{...other}>

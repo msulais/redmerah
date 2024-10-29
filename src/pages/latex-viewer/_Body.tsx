@@ -3,9 +3,9 @@ import katex from 'katex'
 
 import type { Settings } from "./_types"
 import { _clipboard, _command, _filled, _fontSize, _height, _index, _isOnlyThis, _latex, _length, _mathml, _prefix, _px, _renderToString, _scrollHeight, _settings, _suffix, _text, _textWrap, _then, _tonal, _value, _writeText } from "@/constants/string"
-import { clearTimeDelayed, setTimeDelayed } from "@/utils/timeout"
+import { endTimeout, startTimeout } from "@/utils/timeout"
 import { Commands } from "./_enums"
-import { toggleAttribute } from "@/utils/attributes"
+import { setElementAttributeIfExist } from "@/utils/attributes"
 import { getNavigator } from "@/constants/window"
 
 import CSS from './_styles.module.scss'
@@ -26,8 +26,8 @@ const LatexEditor: VoidComponent<{
 	let textarea_ref: HTMLTextAreaElement
 
 	function saveInput(): void {
-		if (timeoutUpdateId != null) clearTimeDelayed(timeoutUpdateId)
-		timeoutUpdateId = setTimeDelayed(() => {
+		if (timeoutUpdateId != null) endTimeout(timeoutUpdateId)
+		timeoutUpdateId = startTimeout(() => {
 			const text = textarea_ref[_value]
 			props[_command](Commands.update_latex_input, text, props[_index])
 			timeoutUpdateId = null
@@ -39,9 +39,9 @@ const LatexEditor: VoidComponent<{
 		[_clipboard]
 		[_writeText](props[_settings][_prefix] + props[_latex]() + props[_settings][_suffix])
 		[_then](() => {
-			if (timeoutCopyId() != null) clearTimeDelayed(timeoutCopyId()!)
+			if (timeoutCopyId() != null) endTimeout(timeoutCopyId()!)
 
-			setTimeoutCopyId(setTimeDelayed(() => setTimeoutCopyId(null), 3000))
+			setTimeoutCopyId(startTimeout(() => setTimeoutCopyId(null), 3000))
 		})
 	}
 
@@ -49,7 +49,7 @@ const LatexEditor: VoidComponent<{
 		const latex = props[_latex]()
 
 		textarea_ref[_value] = latex
-		setTimeDelayed(() => {
+		startTimeout(() => {
 			setHeight(0)
 			setHeight(textarea_ref[_scrollHeight])
 		})
@@ -66,7 +66,7 @@ const LatexEditor: VoidComponent<{
 				saveInput()
 			}}
 			value={props[_latex]()}
-			data-text-wrap={toggleAttribute(props[_settings][_textWrap])}
+			data-text-wrap={setElementAttributeIfExist(props[_settings][_textWrap])}
 			style={{
 				"font-size": props[_settings][_fontSize] + _px,
 				"height": height() + _px

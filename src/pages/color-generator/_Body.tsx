@@ -5,7 +5,7 @@ import type { Palette } from "./_types"
 import { _clipboard, _writeText, _accentLight, _onAccentLight, _tonal, _accentDark, _onAccentDark } from "@/constants/string"
 import { getNavigator } from "@/constants/window"
 import { HEX_to_RGB } from "@/utils/color"
-import { clearTimeDelayed, setTimeDelayed } from "@/utils/timeout"
+import { endTimeout, startTimeout } from "@/utils/timeout"
 
 import Icon from "@/components/Icon"
 import Button, { ButtonVariant } from "@/components/Button"
@@ -19,12 +19,12 @@ const _: VoidComponent<Palette> = (props) => {
 
 	async function copyColor(color: string, timeoutId: Signal<number | null>): Promise<void> {
 		if (timeoutId[0]()) {
-			clearTimeDelayed(timeoutId[0]()!)
+			endTimeout(timeoutId[0]()!)
 			timeoutId[1](null)
 		}
 
 		await getNavigator()[_clipboard][_writeText](color)
-		timeoutId[1](setTimeDelayed(() => timeoutId[1](null), 1000))
+		timeoutId[1](startTimeout(() => timeoutId[1](null), 1000))
 	}
 
 	function hexToCSSValue(hexColor: HEXColor): string {

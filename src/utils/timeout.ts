@@ -1,20 +1,20 @@
-export function timeout(ms: number): Promise<unknown> {
-	return new Promise(resolve => setTimeout(resolve, ms));
+export function wait(ms: number): Promise<unknown> {
+	return new Promise(resolve => startTimeout(resolve, ms));
 }
 
-export function setTimeDelayed(handler: TimerHandler, timeout?: number | undefined): number {
+export function startTimeout(handler: TimerHandler, timeout?: number | undefined): number {
 	return setTimeout(handler, timeout)
 }
 
-export function setTimeInterval(handler: TimerHandler, timeout?: number | undefined): number {
+export function startInterval(handler: TimerHandler, timeout?: number | undefined): number {
 	return setInterval(handler, timeout)
 }
 
-export function clearTimeDelayed(id: number | undefined): void {
+export function endTimeout(id: number | undefined): void {
 	return clearTimeout(id)
 }
 
-export function clearTimeInterval(id: number | undefined): void {
+export function endInterval(id: number | undefined): void {
 	return clearInterval(id)
 }
 

@@ -6,7 +6,7 @@ import { _expand, _text, _icon, _page, _type, _command, _name, _emoji, _id, _ind
 import { DEFAULT_TASK_LIST, TASKS_PAGES } from "./_constants";
 import { addClassListModule } from "@/utils/element";
 import { Commands, Pages } from "./_enums";
-import { preventDefault } from "@/utils/event";
+import { eventPreventDefault } from "@/utils/event";
 import { AnimationEffectTiming } from "@/enums/animation";
 
 import { TextTooltip } from "@/components/Tooltip";
@@ -46,7 +46,7 @@ const _: VoidComponent<{
 				selected={props[_page] == $props[_id]}
 				onClick={() => props[_command](Commands.change_page, $props[_id])}
 				onContextMenu={(ev) => {
-					preventDefault(ev)
+					eventPreventDefault(ev)
 					selectedTaskListIndex = $props[_index]
 					openMenu(ev, menu_listAction_ref, {
 						position: MenuPosition[_centerBottomToRight]

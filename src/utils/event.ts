@@ -31,15 +31,15 @@ export function removeEventListener<E = Event>(
 	return element[_removeEventListener](type, listener as any, options)
 }
 
-export function stopImmediatePropagation(event: Event): void {
+export function eventStopImmediatePropagation(event: Event): void {
 	return event[_stopImmediatePropagation]()
 }
 
-export function preventDefault(event: Event): void {
+export function eventPreventDefault(event: Event): void {
 	return event[_preventDefault]()
 }
 
-export function stopPropagation(event: Event): void {
+export function eventStopPropagation(event: Event): void {
 	return event[_stopPropagation]()
 }
 

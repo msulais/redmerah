@@ -1,6 +1,6 @@
 import { createSignal, Show, type VoidComponent } from "solid-js"
 
-import { stopPropagation } from "@/utils/event"
+import { eventStopPropagation } from "@/utils/event"
 
 import Icon from "@/components/Icon"
 import List from "@/components/List"
@@ -22,8 +22,8 @@ const _: VoidComponent = () => {
 				subtitle={<Show when={subtitle()}>Deserunt commodo qui aute veniam tempor ipsum.</Show>}
 				leading={<Show when={leading()}><Icon code={0xE569}/></Show>}
 				trailing={<Show when={trailing()}>
-					<IconButton onClick={ev => stopPropagation(ev)} code={0xE6BF}/>
-					<IconButton onClick={ev => stopPropagation(ev)} code={0xEBB8}/>
+					<IconButton onClick={ev => eventStopPropagation(ev)} code={0xE6BF}/>
+					<IconButton onClick={ev => eventStopPropagation(ev)} code={0xEBB8}/>
 				</Show>}>
 				<Show when={title()}>
 					Amet ad ad sint deserunt fugiat
@@ -33,8 +33,8 @@ const _: VoidComponent = () => {
 				subtitle={<Show when={subtitle()}>Anim ea ad dolor pariatur laboris et ipsum nisi aute eu eu.</Show>}
 				leading={<Show when={leading()}><Icon code={0xE569}/></Show>}
 				trailing={<Show when={trailing()}>
-					<IconButton onClick={ev => stopPropagation(ev)} code={0xE6BF}/>
-					<IconButton onClick={ev => stopPropagation(ev)} code={0xEBB8}/>
+					<IconButton onClick={ev => eventStopPropagation(ev)} code={0xE6BF}/>
+					<IconButton onClick={ev => eventStopPropagation(ev)} code={0xEBB8}/>
 				</Show>}>
 				<Show when={title()}>
 					Tempor ut est adipisicing amet laborum
@@ -44,8 +44,8 @@ const _: VoidComponent = () => {
 				subtitle={<Show when={subtitle()}>Culpa elit enim aliquip aliqua est et adipisicing Lorem laboris nulla.</Show>}
 				leading={<Show when={leading()}><Icon code={0xE569}/></Show>}
 				trailing={<Show when={trailing()}>
-					<IconButton onClick={ev => stopPropagation(ev)} code={0xE6BF}/>
-					<IconButton onClick={ev => stopPropagation(ev)} code={0xEBB8}/>
+					<IconButton onClick={ev => eventStopPropagation(ev)} code={0xE6BF}/>
+					<IconButton onClick={ev => eventStopPropagation(ev)} code={0xEBB8}/>
 				</Show>}>
 				<Show when={title()}>
 					Aute commodo eiusmod exercitation nulla amet

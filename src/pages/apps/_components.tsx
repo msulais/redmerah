@@ -3,12 +3,12 @@ import { For, Show, createMemo, createSelector, createSignal, onMount, type Void
 import type { AppItem } from "@/types/apps"
 import { _centerBottomToLeft, _centerBottomToRight, _centerCenterLeftTop, _leftCenterToBottom, _clipboard, _color, _color_accent, _corner, _currentTarget, _dark, _description, _filled, _tonal, _filter, _fullRound, _hostname, _includes, _innerHTML, _join, _light, _link, _open, _outlined, _pinnedApps, _round, _semiRound, _share, _sharp, _some, _split, _system, _test, _theme, _title, _toLowerCase, _trim, _value, _writeText, _name, _localeCompare, _sort } from "@/constants/string"
 import { getLocalStorageItem, setLocalStorageItem } from "@/utils/storage"
-import { toggleAttribute } from "@/utils/attributes"
+import { setElementAttributeIfExist } from "@/utils/attributes"
 import { LocalStorageKeys } from "@/enums/storage"
 import { getLocation, getNavigator, getWindow } from "@/constants/window"
 import { apps } from "@/constants/apps"
-import { preventDefault } from "@/utils/event"
-import { clearTimeDelayed, setTimeDelayed } from "@/utils/timeout"
+import { eventPreventDefault } from "@/utils/event"
+import { endTimeout, startTimeout } from "@/utils/timeout"
 
 import Icon from "@/components/Icon"
 import Button, { ButtonVariant, LinkButton } from "@/components/Button"
@@ -58,11 +58,11 @@ export const MainElement: VoidComponent = () => {
 	return (<main class={CSS.main}>
 		<TextField
 			onInput={(ev) => {
-				if (timeoutId != null) clearTimeDelayed(timeoutId)
+				if (timeoutId != null) endTimeout(timeoutId)
 
 				const text = ev[_currentTarget][_value]
 
-				timeoutId = setTimeDelayed(() => {
+				timeoutId = startTimeout(() => {
 					setSearchText(text)
 					timeoutId = null
 				}, 500)
@@ -73,7 +73,7 @@ export const MainElement: VoidComponent = () => {
 		/>
 		<div><For each={apps[_sort]((a, b) => a[_name][_localeCompare](b[_name]))}>{app => <Show when={searchText()[_trim]() == '' || new RegExp(searchText()[_toLowerCase]()[_trim]()[_split](' ')[_join]('|'))[_test](app[_name][_toLowerCase]())}>
 			<LinkButton
-				data-pinned={toggleAttribute(isSelected(app[_link]))}
+				data-pinned={setElementAttributeIfExist(isSelected(app[_link]))}
 				href={app[_link]}
 				focused={getSelectedLink() == app[_link] && is_menu_actions_open()}
 				onContextMenu={ev => {
@@ -81,7 +81,7 @@ export const MainElement: VoidComponent = () => {
 					openMenu(ev, menu_actions_ref, {
 						position: MenuPosition[_centerBottomToRight],
 					})
-					preventDefault(ev)
+					eventPreventDefault(ev)
 				}}>
 				<img loading="eager" width="48" height="48" src={app.logoURL} alt={app[_name]} />
 				{app[_name]}

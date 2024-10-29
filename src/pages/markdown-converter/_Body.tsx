@@ -4,10 +4,10 @@ import beautiful from 'simply-beautiful'
 import type { Settings } from "./_types"
 import { addEventListener } from "@/utils/event"
 import { _change, _clientX, _command, _css, _cssText, _fontSize, _html, _htmlText, _markdown, _markdownText, _matches, _mousemove, _mouseup, _noPointerEvent, _preview, _px, _replace, _settings, _textWrap, _tonal, _touchend, _touches, _touchmove, _value } from "@/constants/string"
-import { removeAttribute, setAttribute, toggleAttribute } from "@/utils/attributes"
+import { removeElementAttribute, setElementAttribute, setElementAttributeIfExist } from "@/utils/attributes"
 import { getDocument, getDocumentBody } from "@/constants/window"
 import { BodyAttributes } from "@/enums/attributes"
-import { clearTimeDelayed, setTimeDelayed } from "@/utils/timeout"
+import { endTimeout, startTimeout } from "@/utils/timeout"
 import { Commands } from "./_enums"
 import { IFRAME_PREVIEW_ID, MIN_EDITOR_WIDTH } from "./_constants"
 import { isMatchMedia } from "@/utils/window"
@@ -41,8 +41,8 @@ const _: VoidComponent<{
 	let isSmallScreen: boolean = false
 
 	function updateOutput(): void {
-		if (timeoutId != null) clearTimeDelayed(timeoutId)
-		timeoutId = setTimeDelayed(() => {
+		if (timeoutId != null) endTimeout(timeoutId)
+		timeoutId = startTimeout(() => {
 			const command = (inputViewOption() == InputViewOption[_markdown]
 				? Commands.update_markdown_text
 				: Commands.update_css_text
@@ -59,7 +59,7 @@ const _: VoidComponent<{
 
 	function closeDrag(): void {
 		setIsDragging(false)
-		removeAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
+		removeElementAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
 	}
 
 	function initEvents(): void {
@@ -168,8 +168,8 @@ const _: VoidComponent<{
 	return (<div class={CSS.body}>
 		<div
 			class={CSS.body_input}
-			data-hidden={toggleAttribute(inputViewOption() == null)}
-			data-output-hidden={toggleAttribute(outputViewOption() == null)}
+			data-hidden={setElementAttributeIfExist(inputViewOption() == null)}
+			data-output-hidden={setElementAttributeIfExist(outputViewOption() == null)}
 			style={{width: width() == null? undefined : width() + _px}}>
 			<div class={CSS.body_tabs}>
 				<InputTabButtons/>
@@ -184,20 +184,20 @@ const _: VoidComponent<{
 				value={inputViewOption() == InputViewOption[_markdown]? props[_markdownText] : props[_cssText]}
 				style={{"font-size": props[_settings][_fontSize] + _px}}
 				class={CSS.body_textfield}
-				data-text-wrap={toggleAttribute(props[_settings][_textWrap])}
+				data-text-wrap={setElementAttributeIfExist(props[_settings][_textWrap])}
 				placeholder={`Type your ${inputViewOption() == InputViewOption[_markdown]? 'markdown' : 'CSS'} ...`}></textarea>
 			<Show when={inputViewOption() != null && outputViewOption() != null}>
 				<div
-					data-g-keep-pointer-event={toggleAttribute(isDragging())}
+					data-g-keep-pointer-event={setElementAttributeIfExist(isDragging())}
 					class={CSS.body_drag_handle}
 					onMouseDown={(ev) => {
-						setAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
+						setElementAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
 						setWidth(ev[_clientX])
 						setIsDragging(true)
 					}}
 					onTouchStart={(ev) => {
 						setIsDragging(true)
-						setAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
+						setElementAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
 						setWidth(ev[_touches][0][_clientX])
 					}}
 					onDblClick={() => setWidth(null)}
@@ -206,7 +206,7 @@ const _: VoidComponent<{
 		</div>
 		<div
 			class={CSS.body_output}
-			data-hidden={toggleAttribute(outputViewOption() == null)}>
+			data-hidden={setElementAttributeIfExist(outputViewOption() == null)}>
 			<div class={CSS.body_tabs}>
 				<Show when={inputViewOption() == null}>
 					<InputTabButtons/>
@@ -216,14 +216,14 @@ const _: VoidComponent<{
 			<div
 				class={CSS.body_html_output}
 				style={{"font-size": props[_settings][_fontSize] + _px}}
-				data-hidden={toggleAttribute(outputViewOption() != OutputViewOption[_html])}>
+				data-hidden={setElementAttributeIfExist(outputViewOption() != OutputViewOption[_html])}>
 				{beautiful[_html](props[_htmlText])[_replace](/(?<=>)\n+(?=<)/gs, '\n')}
 			</div>
 			<iframe
 				id={IFRAME_PREVIEW_ID}
 				title='Markdown output'
 				class={CSS.body_preview_output}
-				data-hidden={toggleAttribute(outputViewOption() != OutputViewOption[_preview])}
+				data-hidden={setElementAttributeIfExist(outputViewOption() != OutputViewOption[_preview])}
 				srcdoc={`<style>${props[_cssText]}</style>` +  props[_htmlText] }
 			></iframe>
 		</div>

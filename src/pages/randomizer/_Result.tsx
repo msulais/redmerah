@@ -7,7 +7,7 @@ import { HEX_to_HSL, HEX_to_RGB } from "@/utils/color";
 import { _result, _string, _numbers, _colors, _hex, _toUpperCase, _randomizerType, _words, _length, _join, _list, _map, _members, _settings, _prefix, _separator, _suffix, _lowercase, _titlecase, _togglecase, _uppercase, _wordCase, _items, _selection, _some, _teams, _name, _membersList, _namesList } from "@/constants/string";
 import { RandomizerType, WordsRandomizerWordCase } from "./_enums";
 import { stringToLowerCase, stringToTitleCase, stringToToggleCase, stringToUpperCase } from "@/utils/string";
-import { toggleAttribute } from "@/utils/attributes";
+import { setElementAttributeIfExist } from "@/utils/attributes";
 import { mathRound } from "@/utils/math";
 
 import CSS from './_styles.module.scss'
@@ -80,7 +80,7 @@ const _: VoidComponent<{
 			<Match when={props[_randomizerType] == RandomizerType[_selection]}>
 				<div class={CSS.result_selection}>
 					<For each={settings()[_selection][_list][_items]}>{item =>
-						<div data-selected={toggleAttribute(selection_isSelected(item))}>
+						<div data-selected={setElementAttributeIfExist(selection_isSelected(item))}>
 							{ item }
 						</div>
 					}</For>

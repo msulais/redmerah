@@ -2,9 +2,9 @@ import { type JSX, type ParentComponent, splitProps, children, onMount, onCleanu
 import { mergeRefs } from "@solid-primitives/refs"
 
 import { _dispatchEvent, _onOpen, _onClose, _leading, _trailing, _children, _header, _actions, _classList, _ref, _onToggleOpen, _centerTop, _centerCenterTop, _leftTop, _centerCenterLeftTop, _leftBottom, _centerCenterLeftBottom, _centerBottom, _centerCenterBottom, _rightTop, _centerCenterRightTop, _rightBottom, _centerCenterRightBottom, _detail } from "@/constants/string"
-import { toggleAttribute } from "@/utils/attributes"
+import { setElementAttributeIfExist } from "@/utils/attributes"
 import { addEventListener, removeEventListener } from "@/utils/event"
-import { clearTimeDelayed, setTimeDelayed } from "@/utils/timeout"
+import { endTimeout, startTimeout } from "@/utils/timeout"
 import { getDocumentBody } from "@/constants/window"
 
 import List from "@/components/List"
@@ -63,7 +63,7 @@ const Toast: ParentComponent<ToastProps> = ($props) => {
 	function closeToast(): void {
 		if (!isOpen) return;
 		if (timeoutId != null) {
-			clearTimeDelayed(timeoutId)
+			endTimeout(timeoutId)
 			timeoutId = null
 		}
 		closePopover(toast_ref)
@@ -95,7 +95,7 @@ const Toast: ParentComponent<ToastProps> = ($props) => {
 
 		if (!autoClose) return;
 
-		timeoutId = setTimeDelayed(() => {
+		timeoutId = startTimeout(() => {
 			closeToast()
 			timeoutId = null
 		}, duration)
@@ -133,7 +133,7 @@ const Toast: ParentComponent<ToastProps> = ($props) => {
 			'c-toast': true,
 			...props[_classList]
 		}}
-		data-c-actions={toggleAttribute(actions())}
+		data-c-actions={setElementAttributeIfExist(actions())}
 		{...other}>
 		<List
 			leading={props[_leading]}

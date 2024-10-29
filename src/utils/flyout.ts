@@ -26,8 +26,6 @@ export function getFlyoutPosition({
 	padding = 0,
 	pointer
 }: GetFlyoutPositionParams): FlyoutPositionResult {
-	const POPOVER_MARGIN = 8
-
 	if (!anchor && !pointer) return {
 		top: 0,
 		right: 0,
@@ -35,52 +33,40 @@ export function getFlyoutPosition({
 		left: 0
 	}
 
-	const rect = {
-		element: pointer ? {
+	const FLYOUT_MARGIN = 8
+	const screenWidth = getDocument()[_body][_clientWidth]
+	const screenHeight = getWindow()[_innerHeight]
+	const rectElement = pointer
+		? {
 			left: pointer[_x],
 			right: pointer[_x],
 			top: pointer[_y],
 			bottom: pointer[_y],
 			height: 0,
 			width: 0,
-		} : anchor!,
-		flyout: flyout
-	}
-	const screen = {
-		width: getDocument()[_body][_clientWidth],
-		height: getWindow()[_innerHeight]
-	}
-	const middlePosition = {
-		screen: {
-			top: screen[_height] / 2,
-			left: screen[_width] / 2
-		},
-		element: {
-			top: rect[_element][_top] + (rect[_element][_height] / 2),
-			left: rect[_element][_left] + (rect[_element][_width] / 2),
-		}
-	}
-	const maxSize = {
-		width: screen[_width] - POPOVER_MARGIN * 2,
-		height: screen[_height] - POPOVER_MARGIN * 2
-	}
-	const edgePosition = {
-		top: POPOVER_MARGIN,
-		left: POPOVER_MARGIN,
-		bottom: screen[_height] - POPOVER_MARGIN,
-		right: screen[_width] - POPOVER_MARGIN,
-	}
+		} : anchor!
+	const rectFlyout = flyout
+	const middlePositionScreenTop = screenHeight / 2
+	const middlePositionScreenLeft = screenWidth / 2
+	const middlePositionElementTop = rectElement[_top] + (rectElement[_height]  / 2)
+	const middlePositionElementLeft = rectElement[_left] + (rectElement[_width]  / 2)
+	const maxWidth = screenWidth - FLYOUT_MARGIN * 2
+	const maxHeight = screenHeight - FLYOUT_MARGIN * 2
+	const edgePositionTop = FLYOUT_MARGIN
+	const edgePositionLeft = FLYOUT_MARGIN
+	const edgePositionBottom = screenHeight - FLYOUT_MARGIN
+	const edgePositionRight = screenWidth - FLYOUT_MARGIN
 	let top: number = 0
 	let left: number = 0
-	const right: () => number = () => left + rect[_flyout][_width]
-	const bottom: () => number = () => top + rect[_flyout][_height]
+	const right: () => number = () => left + rectFlyout[_width]
+	const bottom: () => number = () => top + rectFlyout[_height]
 
-	rect[_flyout][_width] = rect[_flyout][_width] > maxSize[_width]
-		? maxSize[_width]
-		: rect[_flyout][_width]
-	rect[_flyout][_height] = rect[_flyout][_height] > maxSize[_height]
-		? maxSize[_height]
-		: rect[_flyout][_height]
+	rectFlyout[_width] = rectFlyout[_width] > maxWidth
+		? maxWidth
+		: rectFlyout[_width]
+	rectFlyout[_height] = rectFlyout[_height] > maxHeight
+		? maxHeight
+		: rectFlyout[_height]
 
 	// find x position
 	if ([
@@ -90,12 +76,11 @@ export function getFlyoutPosition({
 		FlyoutPosition[_leftCenterToTop],
 		FlyoutPosition[_leftBottom],
 	][_includes](position)) {
-		left = rect[_element][_left] - rect[_flyout][_width] - gap
-		if (left < edgePosition[_left]) {
-			if (middlePosition[_element][_left] < middlePosition[_screen][_left]) left = rect[_element][_right] + gap
-			else left = edgePosition[_left]
+		left = rectElement[_left] - rectFlyout[_width] - gap
+		if (left < edgePositionLeft) {
+			if (middlePositionElementLeft < middlePositionScreenLeft) left = rectElement[_right] + gap
+			else left = edgePositionLeft
 		}
-
 	}
 
 	else if ([
@@ -105,11 +90,11 @@ export function getFlyoutPosition({
 		FlyoutPosition[_centerCenterLeftBottom],
 		FlyoutPosition[_centerBottomToRight]
 	][_includes](position)) {
-		left = rect[_element][_left] - padding
+		left = rectElement[_left] - padding
 
-		if (right() > edgePosition[_right]) {
-			if (middlePosition[_element][_left] > middlePosition[_screen][_left]) left = rect[_element][_right] - rect[_flyout][_width] + padding
-			else left = edgePosition[_right] - rect[_flyout][_width]
+		if (right() > edgePositionRight) {
+			if (middlePositionElementLeft > middlePositionScreenLeft) left = rectElement[_right] - rectFlyout[_width] + padding
+			else left = edgePositionRight - rectFlyout[_width]
 		}
 	}
 
@@ -120,7 +105,7 @@ export function getFlyoutPosition({
 		FlyoutPosition[_centerCenterBottom],
 		FlyoutPosition[_centerBottom]
 	][_includes](position)) {
-		left = rect[_element][_left] + (rect[_element][_width] / 2) - (rect[_flyout][_width] / 2)
+		left = rectElement[_left] + (rectElement[_width] / 2) - (rectFlyout[_width] / 2)
 	}
 
 	else if ([
@@ -130,11 +115,11 @@ export function getFlyoutPosition({
 		FlyoutPosition[_centerCenterRightBottom],
 		FlyoutPosition[_centerBottomToLeft]
 	][_includes](position)) {
-		left = rect[_element][_right] - rect[_flyout][_width] + padding
+		left = rectElement[_right] - rectFlyout[_width] + padding
 
-		if (left < edgePosition[_left]) {
-			if (middlePosition[_element][_left] < middlePosition[_screen][_left]) left = rect[_element][_left] - padding
-			else left = edgePosition[_left]
+		if (left < edgePositionLeft) {
+			if (middlePositionElementLeft < middlePositionScreenLeft) left = rectElement[_left] - padding
+			else left = edgePositionLeft
 		}
 	}
 
@@ -145,10 +130,10 @@ export function getFlyoutPosition({
 		FlyoutPosition[_rightCenterToTop],
 		FlyoutPosition[_rightBottom]
 	][_includes](position)) {
-		left = rect[_element][_right] + gap
-		if (right() > edgePosition[_right]) {
-			if (middlePosition[_element][_left] > middlePosition[_screen][_left]) left = rect[_element][_left] - rect[_flyout][_width] - gap
-			else left = edgePosition[_right] - rect[_flyout][_width]
+		left = rectElement[_right] + gap
+		if (right() > edgePositionRight) {
+			if (middlePositionElementLeft > middlePositionScreenLeft) left = rectElement[_left] - rectFlyout[_width] - gap
+			else left = edgePositionRight - rectFlyout[_width]
 		}
 	}
 
@@ -160,10 +145,10 @@ export function getFlyoutPosition({
 		FlyoutPosition[_centerTopToLeft],
 		FlyoutPosition[_rightTop]
 	][_includes](position)) {
-		top = rect[_element][_top] - rect[_flyout][_height] - gap
-		if (top < edgePosition[_top]) {
-			if (middlePosition[_element][_top] < middlePosition[_screen][_top]) top = rect[_element][_bottom] + gap
-			else top = edgePosition[_top]
+		top = rectElement[_top] - rectFlyout[_height] - gap
+		if (top < edgePositionTop) {
+			if (middlePositionElementTop < middlePositionScreenTop) top = rectElement[_bottom] + gap
+			else top = edgePositionTop
 		}
 	}
 
@@ -174,11 +159,11 @@ export function getFlyoutPosition({
 		FlyoutPosition[_centerCenterRightTop],
 		FlyoutPosition[_rightCenterToBottom]
 	][_includes](position)) {
-		top = rect[_element][_top] - padding
+		top = rectElement[_top] - padding
 
-		if (bottom() > edgePosition[_bottom]) {
-			if (middlePosition[_element][_top] > middlePosition[_screen][_top]) top = rect[_element][_bottom] - rect[_flyout][_height] + padding
-			else top = edgePosition[_bottom] - rect[_flyout][_height]
+		if (bottom() > edgePositionBottom) {
+			if (middlePositionElementTop > middlePositionScreenTop) top = rectElement[_bottom] - rectFlyout[_height] + padding
+			else top = edgePositionBottom - rectFlyout[_height]
 		}
 	}
 
@@ -189,7 +174,7 @@ export function getFlyoutPosition({
 		FlyoutPosition[_centerCenterRight],
 		FlyoutPosition[_rightCenter]
 	][_includes](position)) {
-		top = rect[_element][_top] + (rect[_element][_height] / 2) - (rect[_flyout][_height] / 2)
+		top = rectElement[_top] + (rectElement[_height] / 2) - (rectFlyout[_height] / 2)
 	}
 
 	else if ([
@@ -199,11 +184,11 @@ export function getFlyoutPosition({
 		FlyoutPosition[_centerCenterRightBottom],
 		FlyoutPosition[_rightCenterToTop]
 	][_includes](position)) {
-		top = rect[_element][_bottom] - rect[_flyout][_height] + padding
+		top = rectElement[_bottom] - rectFlyout[_height] + padding
 
-		if (top < edgePosition[_top]) {
-			if (middlePosition[_element][_top] < middlePosition[_screen][_top]) top = rect[_element][_top] - padding
-			else top = edgePosition[_top]
+		if (top < edgePositionTop) {
+			if (middlePositionElementTop < middlePositionScreenTop) top = rectElement[_top] - padding
+			else top = edgePositionTop
 		}
 	}
 
@@ -214,23 +199,23 @@ export function getFlyoutPosition({
 		FlyoutPosition[_centerBottomToLeft],
 		FlyoutPosition[_rightBottom]
 	][_includes](position)) {
-		top = rect[_element][_bottom] + gap
-		if (bottom() > edgePosition[_bottom]) {
-			if (middlePosition[_element][_top] > middlePosition[_screen][_top]) top = rect[_element][_top] - rect[_flyout][_height] - gap
-			else top = edgePosition[_bottom] - rect[_flyout][_height]
+		top = rectElement[_bottom] + gap
+		if (bottom() > edgePositionBottom) {
+			if (middlePositionElementTop > middlePositionScreenTop) top = rectElement[_top] - rectFlyout[_height] - gap
+			else top = edgePositionBottom - rectFlyout[_height]
 		}
 	}
 
 	// final fallback
-	if (top < edgePosition[_top]) top = edgePosition[_top]
-	if (bottom() > edgePosition[_bottom]) top = edgePosition[_bottom] - rect[_flyout][_height]
-	if (left < edgePosition[_left]) left = edgePosition[_left]
-	if (right() > edgePosition[_right]) left = edgePosition[_right] - rect[_flyout][_width]
+	if (top < edgePositionTop) top = edgePositionTop
+	if (bottom() > edgePositionBottom) top = edgePositionBottom - rectFlyout[_height]
+	if (left < edgePositionLeft) left = edgePositionLeft
+	if (right() > edgePositionRight) left = edgePositionRight - rectFlyout[_width]
 
 	return {
 		top,
 		left,
-		right: screen[_width] - right(),
-		bottom: screen[_height] - bottom()
+		right: screenWidth - right(),
+		bottom: screenHeight - bottom()
 	}
 }

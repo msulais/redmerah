@@ -1,7 +1,7 @@
 import { createSignal, Show, type VoidComponent } from "solid-js"
 
 import { _tonal, _filled, _outlined, _transparent, _checked, _currentTarget } from "@/constants/string"
-import { stopPropagation } from "@/utils/event"
+import { eventStopPropagation } from "@/utils/event"
 
 import Icon from "@/components/Icon"
 import { IconButton } from "@/components/Button"
@@ -28,8 +28,8 @@ const _: VoidComponent = () => {
 					subtitle={<Show when={subtitle()}>Deserunt commodo qui aute veniam tempor ipsum.</Show>}
 					leading={<Show when={leading()}><Icon code={0xE569}/></Show>}
 					trailing={<Show when={trailing()}>
-						<IconButton onClick={ev => stopPropagation(ev)} code={0xE6BF}/>
-						<IconButton onClick={ev => stopPropagation(ev)} code={0xEBB8}/>
+						<IconButton onClick={ev => eventStopPropagation(ev)} code={0xE6BF}/>
+						<IconButton onClick={ev => eventStopPropagation(ev)} code={0xEBB8}/>
 					</Show>}>
 					<Show when={title()}>Click to expand</Show>
 				</ExpanderHeader>}

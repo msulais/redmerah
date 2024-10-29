@@ -2,7 +2,7 @@ import { createSignal, For, type VoidComponent } from "solid-js"
 
 import { activitiesEmojis, animalAndNatureEmojis, flagsEmojis, foodAndDrinkEmojis, objectsEmojis, personAndBodyEmojis, smileyAndEmotionEmojis, symbolsEmojis, travelAndPlacesEmojis } from "@/constants/emoji"
 import { _clipboard, _command, _currentTarget, _text, _then, _value, _writeText } from "@/constants/string"
-import { clearTimeDelayed, setTimeDelayed } from "@/utils/timeout"
+import { endTimeout, startTimeout } from "@/utils/timeout"
 import { getNavigator } from "@/constants/window"
 import { Commands } from "./_enums"
 
@@ -30,9 +30,9 @@ const _: VoidComponent<{
 		[_clipboard]
 		[_writeText](textfield_ref[_value])
 		[_then](() => {
-			if (timeout_copy_id() != null) clearTimeDelayed(timeout_copy_id()!)
+			if (timeout_copy_id() != null) endTimeout(timeout_copy_id()!)
 
-			setTimeout_copy_id(setTimeDelayed(
+			setTimeout_copy_id(startTimeout(
 				() => setTimeout_copy_id(null),
 				3000
 			))

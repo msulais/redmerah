@@ -85,11 +85,11 @@ function colorAppBackground(color: HEXColor): string {
 </Html>
 
 <script>
-	import { getElementById, querySelectorAll } from "@/utils/element"
+	import { getElementById, getAllElementBySelector } from "@/utils/element"
 	import { _length, _isIntersecting, _animate, _observe, _onload } from '@/constants/string'
 
 	const quote = getElementById('quote') as HTMLParagraphElement
-	const spans = querySelectorAll<HTMLSpanElement>('#quote span')
+	const spans = getAllElementBySelector<HTMLSpanElement>('#quote span')
 	const viewObserver = new IntersectionObserver((entries) => {
 		for (const entry of entries) {
 			if (!entry[_isIntersecting]) continue;

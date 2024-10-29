@@ -5,12 +5,12 @@ import { Portal } from 'solid-js/web'
 import { FlyoutPosition as PopoverPosition } from '@/enums/position'
 import { getFlyoutPosition } from '@/utils/flyout'
 import { _allowHideAnchor, _altKey, _animate, _body, _bottom, _centerBottom, _centerBottomToLeft, _centerBottomToRight, _centerTop, _centerTopToLeft, _centerTopToRight, _children, _class, _click, _clientWidth, _clientX, _clientY, _close, _closeAnimation, _closePopover, _ctrlKey, _detail, _disconnect, _dismiss, _dispatchEvent, _documentElement, _dragable, _element, _Escape, _findIndex, _finished, _flyout, _flyoutListener, _focus, _forEach, _gap, _height, _hidePopover, _important, _innerHeight, _instant, _isSameNode, _key, _left, _leftCenter, _leftCenterToBottom, _leftCenterToTop, _length, _manual, _manualDismiss, _max_height, _max_width, _maxHeight, _maxWidth, _metaKey, _mousemove, _mouseup, _move, _newState, _none, _noPointerEvent, _observe, _onCancel, _onClose, _onKeyDown, _onOpen, _onReposition, _onShortFocus, _onToggle, _onToggleOpen, _open, _openAnimation, _openPopover, _padding, _pointermove, _pointerType, _pointerup, _popoverListener, _popoverOpen, _position, _push, _px, _ref, _resize, _right, _rightCenter, _rightCenterToBottom, _rightCenterToTop, _scroll, _scrollTo, _scrollTop, _scrollY, _shiftKey, _showPopover, _some, _splice, _springBounce, _style, _then, _top, _touchend, _touches, _touchmove, _transform, _usePortal, _width, _x, _y } from '@/constants/string'
-import { clearTimeDelayed, setTimeDelayed } from '@/utils/timeout'
-import { hasAttribute, removeAttribute, setAttribute, toggleAttribute } from '@/utils/attributes'
+import { endTimeout, startTimeout } from '@/utils/timeout'
+import { isElementHasAttribute, removeElementAttribute, setElementAttribute, setElementAttributeIfExist } from '@/utils/attributes'
 import { getDocument, getDocumentBody, getWindow } from '@/constants/window'
-import { getBoundingClientRect, querySelectorAll, setStyleProperty } from '@/utils/element'
+import { getBoundingClientRect, getAllElementBySelector, setElementStyleProperty } from '@/utils/element'
 import { BodyAttributes } from '@/enums/attributes'
-import { addEventListener, callEventHandler, removeEventListener, stopImmediatePropagation } from "@/utils/event"
+import { addEventListener, callEventHandler, removeEventListener, eventStopImmediatePropagation } from "@/utils/event"
 import { mathAbs } from '@/utils/math'
 import { BodyEvents } from '@/enums/events'
 import { AnimationEffectTiming } from '@/enums/animation'
@@ -69,8 +69,8 @@ function openPopover(
 
 function initPopoverListener(): void {
 	// make sure to call this listener once
-	if (hasAttribute(getDocumentBody(), BodyAttributes[_popoverListener])) return;
-	setAttribute(getDocumentBody(), BodyAttributes[_popoverListener])
+	if (isElementHasAttribute(getDocumentBody(), BodyAttributes[_popoverListener])) return;
+	setElementAttribute(getDocumentBody(), BodyAttributes[_popoverListener])
 
 	const selector: string = 'div.c-popover:popover-open'
 	const popovers: HTMLDivElement[] = []
@@ -78,10 +78,10 @@ function initPopoverListener(): void {
 	let timeoutId: number | null = null
 
 	function repositionAllPopover(): void {
-		if (timeoutId != null) clearTimeDelayed(timeoutId)
+		if (timeoutId != null) endTimeout(timeoutId)
 
-		timeoutId = setTimeDelayed(() => {
-			querySelectorAll(selector)[_forEach](
+		timeoutId = startTimeout(() => {
+			getAllElementBySelector(selector)[_forEach](
 				popover => repositionPopover(popover as HTMLDivElement)
 			)
 			timeoutId = null
@@ -135,7 +135,7 @@ function initPopoverListener(): void {
 				&& pointer[_y] >= popoverRect[_top]
 				&& pointer[_y] <= popoverRect[_bottom]
 
-			if (isClickedInside || hasAttribute(popover, PopoverAttributes[_manual])) return;
+			if (isClickedInside || isElementHasAttribute(popover, PopoverAttributes[_manual])) return;
 
 			closePopover(popover as HTMLDivElement)
 		})
@@ -152,7 +152,7 @@ function initPopoverListener(): void {
 	})
 
 	new MutationObserver(() => {
-		isNoPointerEvent = hasAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
+		isNoPointerEvent = isElementHasAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
 	})[_observe](getDocumentBody(), { attributes: true })
 }
 
@@ -231,7 +231,7 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 	}
 
 	function onPointerUp(): void {
-		removeAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
+		removeElementAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
 		setIsDragging(false)
 		fixPosition()
 	}
@@ -539,7 +539,7 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 		)[_finished][_then](() => setAttr_openDone(true))
 
 		// stop reaching to `document.onclick`
-		stopImmediatePropagation(event)
+		eventStopImmediatePropagation(event)
 	}
 
 	function repositionPopover(): void {
@@ -549,10 +549,10 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 				width: getDocument()[_body][_clientWidth],
 				height: getWindow()[_innerHeight]
 			}
-			if (popoverRect[_left  ] < 8) setStyleProperty(popover_ref, _left, 8 + _px)
-			if (popoverRect[_top   ] < 8) setStyleProperty(popover_ref, _top , 8 + _px)
-			if (popoverRect[_right ] > screen[_width ]) setStyleProperty(popover_ref, _left, (screen[_width ] - popoverRect[_width ] - 8) + _px)
-			if (popoverRect[_bottom] > screen[_height]) setStyleProperty(popover_ref, _top , (screen[_height] - popoverRect[_height] - 8) + _px)
+			if (popoverRect[_left  ] < 8) setElementStyleProperty(popover_ref, _left, 8 + _px)
+			if (popoverRect[_top   ] < 8) setElementStyleProperty(popover_ref, _top , 8 + _px)
+			if (popoverRect[_right ] > screen[_width ]) setElementStyleProperty(popover_ref, _left, (screen[_width ] - popoverRect[_width ] - 8) + _px)
+			if (popoverRect[_bottom] > screen[_height]) setElementStyleProperty(popover_ref, _top , (screen[_height] - popoverRect[_height] - 8) + _px)
 			return
 		}
 
@@ -673,21 +673,21 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 			callEventHandler(ev, props[_onToggle])
 			props[_onToggleOpen]?.(isOpen)
 		}}
-		data-c-dragable={toggleAttribute(isDragable())}
-		data-c-open={toggleAttribute(attr_open())}
-		data-c-open-done={toggleAttribute(attr_openDone())}
-		data-c-drag={toggleAttribute(isDragging())}
-		data-c-manual={toggleAttribute(isManualDismiss())}
+		data-c-dragable={setElementAttributeIfExist(isDragable())}
+		data-c-open={setElementAttributeIfExist(attr_open())}
+		data-c-open-done={setElementAttributeIfExist(attr_openDone())}
+		data-c-drag={setElementAttributeIfExist(isDragging())}
+		data-c-manual={setElementAttributeIfExist(isManualDismiss())}
 		{...other}>
 		<Show when={isDragable()}>
 			<span
 				class="c-popover-drag-handle"
-				data-g-keep-pointer-event={toggleAttribute(isDragging())}
+				data-g-keep-pointer-event={setElementAttributeIfExist(isDragging())}
 				draggable={false}
 				onPointerDown={(ev) => {
 					const rect = getBoundingClientRect(popover_ref)
 					setIsDragging(true)
-					setAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
+					setElementAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
 					diffPositionX = ev[_clientX] - rect.x
 					diffPositionY = ev[_clientY] - rect.y
 				}}

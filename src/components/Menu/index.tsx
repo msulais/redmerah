@@ -1,12 +1,12 @@
 import { type Component, type JSX, type ParentComponent, Show, mergeProps, splitProps, type VoidComponent, For, children, createUniqueId, onCleanup, onMount } from "solid-js"
 import { mergeRefs } from "@solid-primitives/refs"
 
-import { getAttribute, toggleAttribute } from "@/utils/attributes"
+import { getElementAttribute, setElementAttributeIfExist } from "@/utils/attributes"
 import { _checked, _selected, _leading, _children, _trailing, _subtitle, _indent, _classList, _rightCenterToBottom, _disconnect, _dismiss, _id, _item, _level, _manual, _observe, _onCancel, _onClick, _onClose, _onToggle, _open, _ref, _wrapperAttr, _auto, _shortcuts, _currentTarget, _none, _left, _tonal, _dragable, _clientX, _clientY, _color, _hue, _initialColor, _isDrag, _mousemove, _mouseup, _noPointerEvent, _opacity, _touchend, _touches, _touchmove, _value, _valuechange, _top, _px, _anchorId, _body, _bottom, _clientWidth, _height, _innerHeight, _right, _width, _focus, _iconCode, _compact, _variant, _indicatorPosition, _onMouseEnter, _onMouseLeave, _class, _desktopCompact, _gap, _position, _padding, _allowHideAnchor, _onToggleOpen, _click, _contains, _target, _filled, _focused, _layerAttr, _outlined, _transparent, _switchAttr, _onValueChanged, _onChange, _div, _disabled, _forEach, _onPointerEnter, _onPointerLeave } from "@/constants/string"
 import { isVarHasValue } from "@/utils/data"
-import { querySelectorAll } from "@/utils/element"
-import { callEventHandler, stopImmediatePropagation, stopPropagation } from "@/utils/event"
-import { clearTimeDelayed, setTimeDelayed, timeout } from "@/utils/timeout"
+import { getAllElementBySelector } from "@/utils/element"
+import { callEventHandler, eventStopImmediatePropagation, eventStopPropagation } from "@/utils/event"
+import { endTimeout, startTimeout, wait } from "@/utils/timeout"
 import { numberParse } from "@/utils/math"
 import { getDocument } from "@/constants/window"
 import { addEventListener, removeEventListener } from "@/utils/event"
@@ -171,15 +171,15 @@ const SwitchMenuItem: ParentComponent<SwitchMenuItemProps> = ($props) => {
 
 	return (<label
 		class={'c-btn c-menu-item c-switch-menu-item' + (props[_class] != null? ` ${props[_class]}` : '')}
-		data-c-disabled={toggleAttribute(props[_disabled])}
+		data-c-disabled={setElementAttributeIfExist(props[_disabled])}
 		classList={{
 			'c-filled-btn': props[_variant] == ButtonVariant[_filled],
 			'c-tonal-btn': props[_variant] == ButtonVariant[_tonal],
 			'c-outlined-btn': props[_variant] == ButtonVariant[_outlined],
 			...props[_classList]
 		}}
-		data-c-focused={toggleAttribute(props[_focused])}
-		data-c-compact={toggleAttribute(props[_compact])}
+		data-c-focused={setElementAttributeIfExist(props[_focused])}
+		data-c-compact={setElementAttributeIfExist(props[_compact])}
 		data-g-no-outline
 		{...other}>
 		{ props[_leading] }
@@ -227,7 +227,7 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 	function cancelTimeout(): void {
 		if (timeoutId == null) return;
 
-		clearTimeDelayed(timeoutId)
+		endTimeout(timeoutId)
 		timeoutId = null
 	}
 
@@ -235,9 +235,9 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 		if (isOpen) return;
 
 		let isAnySubMenuOpen = false
-		querySelectorAll(`.c-sub-menu>.c-menu[data-c-level]:not([id="${props[_id]}"]):popover-open`)
+		getAllElementBySelector(`.c-sub-menu>.c-menu[data-c-level]:not([id="${props[_id]}"]):popover-open`)
 		[_forEach](submenu => {
-			const level: number = numberParse(getAttribute(submenu, 'data-c-level')!, true)
+			const level: number = numberParse(getElementAttribute(submenu, 'data-c-level')!, true)
 			if (level < props[_level]) return
 
 			isAnySubMenuOpen = true
@@ -245,7 +245,7 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 		})
 
 		// wait for close animation done
-		if (isAnySubMenuOpen) await timeout(300)
+		if (isAnySubMenuOpen) await wait(300)
 
 		openPopover(ev, popover_ref, {
 			anchor: div_ref,
@@ -290,7 +290,7 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 		}}
 		onPointerEnter={(ev) => {
 			cancelTimeout()
-			timeoutId = setTimeDelayed(() => {
+			timeoutId = startTimeout(() => {
 				open(ev)
 				timeoutId = null
 			}, 300)
@@ -298,7 +298,7 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 		}}
 		onPointerLeave={(ev) => {
 			cancelTimeout()
-			timeoutId = setTimeDelayed(() => {
+			timeoutId = startTimeout(() => {
 				closePopover(popover_ref)
 				timeoutId = null
 			}, 500)
@@ -315,8 +315,8 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 				props[_onToggleOpen]?.($isOpen)
 			}}
 			onClick={(ev) => {
-				stopPropagation(ev)
-				stopImmediatePropagation(ev)
+				eventStopPropagation(ev)
+				eventStopImmediatePropagation(ev)
 				callEventHandler(ev, props[_onClick])
 			}}
 			ref={mergeRefs(props[_ref], r => popover_ref = r)}

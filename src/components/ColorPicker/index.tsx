@@ -5,8 +5,8 @@ import { mergeRefs } from "@solid-primitives/refs"
 import type { HEXColor, HSLColor, RGBColor } from "@/types/color"
 import { _children, _disabledOpacityControl, _onSelectColor, _disabledColorControl, _ref, _classList, _color, _HEX, _toString, _padStart, _toUpperCase, _hue, _position, _opacity, _HSL, _RGB, _value, _toFixed, _join, _substring, _isDrag, _rect, _left, _top, _touchmove, _touches, _clientX, _clientY, _touchend, _noPointerEvent, _mousemove, _mouseup, _length, _replace, _split, _push, _isNaN, _isFinite, _trim, _currentTarget, _px, _tonal, _filled, _onUpdateColor, _disabledAction, _dispatchEvent, _onChangeColor, _detail, _onToggleOpen, _pointermove, _pointerup } from "@/constants/string"
 import { HEX_to_HSL, HEX_to_RGB, HSL_to_HEX, HSL_to_HSV, HSL_to_RGB, HSV_to_HSL, RGB_to_HSL, testHexColorWithAlpha } from "@/utils/color"
-import { setTimeDelayed } from "@/utils/timeout"
-import { removeAttribute, setAttribute, toggleAttribute } from "@/utils/attributes"
+import { startTimeout } from "@/utils/timeout"
+import { removeElementAttribute, setElementAttribute, setElementAttributeIfExist } from "@/utils/attributes"
 import { getBoundingClientRect } from "@/utils/element"
 import { addEventListener, removeEventListener } from '@/utils/event'
 import { BodyAttributes } from "@/enums/attributes"
@@ -259,8 +259,8 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 
 		// should be run last because <Modal> will mark this to close
 		// when mouse position outside
-		setTimeDelayed(() => {
-			removeAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
+		startTimeout(() => {
+			removeElementAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
 		})
 	}
 
@@ -417,17 +417,17 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 	})
 
 	const Control: Component = () => {
-		return (<div class="c-color-picker-control" data-c-hide-color={toggleAttribute(props[_disabledColorControl])}>
+		return (<div class="c-color-picker-control" data-c-hide-color={setElementAttributeIfExist(props[_disabledColorControl])}>
 			<div
 				class="c-color-picker-color"
 				style={{ '--c-color-picker-color': getHexColorForCanvas() }}
 				onPointerDown={(ev) => {
 					setPicker(_color, _isDrag, true)
 					setPicker(_color, _rect, getBoundingClientRect(ev[_currentTarget]))
-					setAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
+					setElementAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
 					setPosition(ev[_clientX], ev[_clientY])
 				}}
-				data-c-hsl={toggleAttribute(colorModel() == _HSL)}
+				data-c-hsl={setElementAttributeIfExist(colorModel() == _HSL)}
 				draggable={false}>
 				<div draggable={false} style={{
 					top: mathClamp(picker[_color][_position][_top] - 10, -4, 184) + _px,
@@ -436,15 +436,15 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 			</div>
 			<div>
 				<div
-					data-c-hide-color={toggleAttribute(props[_disabledColorControl])}
-					data-c-hide-opacity={toggleAttribute(props[_disabledOpacityControl])}
+					data-c-hide-color={setElementAttributeIfExist(props[_disabledColorControl])}
+					data-c-hide-opacity={setElementAttributeIfExist(props[_disabledOpacityControl])}
 					class="c-color-picker-selected-color"
 					style={{ 'background-color': getHexColor() }}
 				/>
 				<div
 					class="c-color-picker-range"
-					data-c-hide-color={toggleAttribute(props[_disabledColorControl])}
-					data-c-hide-opacity={toggleAttribute(props[_disabledOpacityControl])}>
+					data-c-hide-color={setElementAttributeIfExist(props[_disabledColorControl])}
+					data-c-hide-opacity={setElementAttributeIfExist(props[_disabledOpacityControl])}>
 					<div
 						class="c-color-picker-hue"
 						onClick={(ev) => {
@@ -458,7 +458,7 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 						onPointerDown={(ev) => {
 							setPicker(_hue, _isDrag, true)
 							setPicker(_hue, _rect, getBoundingClientRect(ev[_currentTarget]))
-							setAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
+							setElementAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
 							setPosition(ev[_clientX], ev[_clientY])
 						}}
 						draggable={false}>
@@ -483,7 +483,7 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 						onPointerDown={(ev) => {
 							setPicker(_opacity, _isDrag, true)
 							setPicker(_opacity, _rect, getBoundingClientRect(ev[_currentTarget]))
-							setAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
+							setElementAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
 							setPosition(ev[_clientX], ev[_clientY])
 						}}
 						draggable={false}>
@@ -498,7 +498,7 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 	}
 
 	const Input: Component = () => {
-		return (<div class="c-color-picker-input" data-c-hide-opacity={toggleAttribute(props[_disabledOpacityControl])}>
+		return (<div class="c-color-picker-input" data-c-hide-opacity={setElementAttributeIfExist(props[_disabledOpacityControl])}>
 			<TextField
 				ref={r => textfield_color_ref = r}
 				onInput={(ev) => onColorInputChange(ev[_currentTarget][_value])}
@@ -518,7 +518,7 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 	}
 
 	const Actions: Component = () => {
-		return (<div class="c-color-picker-actions" data-c-disabled={toggleAttribute(props[_disabledAction])}>
+		return (<div class="c-color-picker-actions" data-c-disabled={setElementAttributeIfExist(props[_disabledAction])}>
 			<Button onClick={changeColorModel} variant={ButtonVariant[_tonal]}>{colorModel()}</Button>
 			<Show when={!props[_disabledAction]}>
 				<Button
@@ -742,8 +742,8 @@ const PopoverColorPicker: ParentComponent<PopoverColorPickerProps> = ($props) =>
 
 		// should be run last because <Modal> will mark this to close
 		// when mouse position outside
-		setTimeDelayed(() => {
-			removeAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
+		startTimeout(() => {
+			removeElementAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
 		})
 	}
 
@@ -900,17 +900,17 @@ const PopoverColorPicker: ParentComponent<PopoverColorPickerProps> = ($props) =>
 	})
 
 	const Control: Component = () => {
-		return (<div class="c-color-picker-control" data-c-hide-color={toggleAttribute(props[_disabledColorControl])}>
+		return (<div class="c-color-picker-control" data-c-hide-color={setElementAttributeIfExist(props[_disabledColorControl])}>
 			<div
 				class="c-color-picker-color"
 				style={{ '--c-color-picker-color': getHexColorForCanvas() }}
 				onPointerDown={(ev) => {
 					setPicker(_color, _isDrag, true)
 					setPicker(_color, _rect, getBoundingClientRect(ev[_currentTarget]))
-					setAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
+					setElementAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
 					setPosition(ev[_clientX], ev[_clientY])
 				}}
-				data-c-hsl={toggleAttribute(colorModel() == _HSL)}
+				data-c-hsl={setElementAttributeIfExist(colorModel() == _HSL)}
 				draggable={false}>
 				<div draggable={false} style={{
 					top: mathClamp(picker[_color][_position][_top] - 10, -4, 184) + _px,
@@ -919,15 +919,15 @@ const PopoverColorPicker: ParentComponent<PopoverColorPickerProps> = ($props) =>
 			</div>
 			<div>
 				<div
-					data-c-hide-color={toggleAttribute(props[_disabledColorControl])}
-					data-c-hide-opacity={toggleAttribute(props[_disabledOpacityControl])}
+					data-c-hide-color={setElementAttributeIfExist(props[_disabledColorControl])}
+					data-c-hide-opacity={setElementAttributeIfExist(props[_disabledOpacityControl])}
 					class="c-color-picker-selected-color"
 					style={{ 'background-color': getHexColor() }}
 				/>
 				<div
 					class="c-color-picker-range"
-					data-c-hide-color={toggleAttribute(props[_disabledColorControl])}
-					data-c-hide-opacity={toggleAttribute(props[_disabledOpacityControl])}>
+					data-c-hide-color={setElementAttributeIfExist(props[_disabledColorControl])}
+					data-c-hide-opacity={setElementAttributeIfExist(props[_disabledOpacityControl])}>
 					<div
 						class="c-color-picker-hue"
 						onClick={(ev) => {
@@ -941,7 +941,7 @@ const PopoverColorPicker: ParentComponent<PopoverColorPickerProps> = ($props) =>
 						onPointerDown={(ev) => {
 							setPicker(_hue, _isDrag, true)
 							setPicker(_hue, _rect, getBoundingClientRect(ev[_currentTarget]))
-							setAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
+							setElementAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
 							setPosition(ev[_clientX], ev[_clientY])
 						}}
 						draggable={false}>
@@ -966,7 +966,7 @@ const PopoverColorPicker: ParentComponent<PopoverColorPickerProps> = ($props) =>
 						onPointerDown={(ev) => {
 							setPicker(_opacity, _isDrag, true)
 							setPicker(_opacity, _rect, getBoundingClientRect(ev[_currentTarget]))
-							setAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
+							setElementAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
 							setPosition(ev[_clientX], ev[_clientY])
 						}}
 						draggable={false}>
@@ -981,7 +981,7 @@ const PopoverColorPicker: ParentComponent<PopoverColorPickerProps> = ($props) =>
 	}
 
 	const Input: Component = () => {
-		return (<div class="c-color-picker-input" data-c-hide-opacity={toggleAttribute(props[_disabledOpacityControl])}>
+		return (<div class="c-color-picker-input" data-c-hide-opacity={setElementAttributeIfExist(props[_disabledOpacityControl])}>
 			<TextField
 				ref={r => textfield_color_ref = r}
 				onInput={(ev) => onColorInputChange(ev[_currentTarget][_value])}
@@ -1001,7 +1001,7 @@ const PopoverColorPicker: ParentComponent<PopoverColorPickerProps> = ($props) =>
 	}
 
 	const Actions: Component = () => {
-		return (<div class="c-color-picker-actions" data-c-disabled={toggleAttribute(props[_disabledAction])}>
+		return (<div class="c-color-picker-actions" data-c-disabled={setElementAttributeIfExist(props[_disabledAction])}>
 			<Button onClick={changeColorModel} variant={ButtonVariant[_tonal]}>{colorModel()}</Button>
 			<Show when={!props[_disabledAction]}>
 				<Button

@@ -8,7 +8,7 @@ import { IDB } from "@/utils/indexeddb"
 import { DatabaseNames } from "@/enums/storage"
 import { ObjectStoreKeys, type ObjectStoreLastInput, type ObjectStoreLastOutput, type ObjectStoreMiscellaneous, ObjectStoreNames, type ObjectStoreSettings } from "./_storage"
 import { dateDifferenceInDays, getCurrentDate, getDate_D, getDate_M, getDate_Y, getDateString_YMD } from "@/utils/datetime"
-import { clearTimeDelayed, setTimeDelayed } from "@/utils/timeout"
+import { endTimeout, startTimeout } from "@/utils/timeout"
 import { stringCount, stringReverse } from "@/utils/string"
 import { KEY_DIVISION, KEY_MULTIPLY } from "./_constants"
 import { floatToBinary, formatNumber, mathAbs, mathACos, mathACosH, mathACot, mathACotH, mathACsc, mathACscH, mathASec, mathASecH, mathASin, mathASinH, mathATan, mathATanH, mathCeil, mathCos, mathCosH, mathCot, mathCotH, mathCsc, mathCscH, mathFloor, mathLn, mathLog, mathNot, mathRound, mathSec, mathSecH, mathSin, mathSinH, mathSqrt, mathTan, mathTanH, numberParse, numberToRealDigit } from "@/utils/math"
@@ -105,8 +105,8 @@ const _: VoidComponent = () => {
 
 	function onNoteChanged(value: string): void {
 		setNote(value)
-		if (timeoutNoteId != null) clearTimeDelayed(timeoutNoteId)
-		timeoutNoteId = setTimeDelayed(() => {
+		if (timeoutNoteId != null) endTimeout(timeoutNoteId)
+		timeoutNoteId = startTimeout(() => {
 			timeoutNoteId = null
 			const store_miscellaneous = db[_writeObjectStore](ObjectStoreNames[_miscellaneous])
 			if (store_miscellaneous == null) return
@@ -193,10 +193,10 @@ const _: VoidComponent = () => {
 
 		// change_calculator_input
 		else if (type == Commands.change_calculator_input) {
-			if (timeoutId) clearTimeDelayed(timeoutId)
+			if (timeoutId) endTimeout(timeoutId)
 			const value = args[0]
 
-			timeoutId = setTimeDelayed(() => {
+			timeoutId = startTimeout(() => {
 				if (calculator() == CalculatorType[_basic]) {
 					setInputs(_basic, value as string)
 					saveInputs([ObjectStoreKeys.lastInput_basic, value])
@@ -256,8 +256,8 @@ const _: VoidComponent = () => {
 			setSettings(_scientific, _angle, value)
 			saveSettings([ObjectStoreKeys.settings_scientific_angle, value])
 
-			if (timeoutId) clearTimeDelayed(timeoutId)
-			timeoutId = setTimeDelayed(() => {
+			if (timeoutId) endTimeout(timeoutId)
+			timeoutId = startTimeout(() => {
 				generateOutput()
 				timeoutId = null
 			}, 300)

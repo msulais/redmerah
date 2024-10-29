@@ -2,11 +2,11 @@ import { createContext, createEffect, createSignal, mergeProps, onCleanup, onMou
 import { mergeRefs } from "@solid-primitives/refs"
 
 import { _children, _class, _headerAttr, _header, _variant, _bodyAttr, _tonal, _open, _expandIconTooltip, _trailing, _useExpandIcon, _isOpen, _onToggle, _currentTarget, _style, _px, _disconnect, _height, _observe, _openByDefault, _click, _then, _onClick, _ref } from "@/constants/string"
-import { toggleAttribute } from "@/utils/attributes"
+import { setElementAttributeIfExist } from "@/utils/attributes"
 import { isString } from "@/utils/typecheck"
 import { getBoundingClientRect } from "@/utils/element"
-import { clearTimeDelayed, setTimeDelayed, timeout } from "@/utils/timeout"
-import { callEventHandler, preventDefault } from "@/utils/event"
+import { endTimeout, startTimeout, wait } from "@/utils/timeout"
+import { callEventHandler, eventPreventDefault } from "@/utils/event"
 
 import TextTooltip from "@/components/Tooltip"
 import { RawIconButton } from "@/components/Button"
@@ -40,8 +40,8 @@ const ExpanderHeader: ParentComponent<ExpanderHeaderProps> = ($props) => {
 	const context = useContext(ExpanderContext)
 
 	return (<List
-		data-c-open={toggleAttribute(context?.[_isOpen]())}
-		data-c-variant={toggleAttribute(context?.[_variant](), context != null)}
+		data-c-open={setElementAttributeIfExist(context?.[_isOpen]())}
+		data-c-variant={setElementAttributeIfExist(context?.[_variant](), context != null)}
 		trailing={<>
 			{props[_trailing]}
 			<Show when={props[_useExpandIcon]}>
@@ -52,7 +52,7 @@ const ExpanderHeader: ParentComponent<ExpanderHeaderProps> = ($props) => {
 						component="div"
 						code={0xE3FC}
 						class="c-expander-icon"
-						data-c-open={toggleAttribute(context?.[_isOpen]())}
+						data-c-open={setElementAttributeIfExist(context?.[_isOpen]())}
 					/>
 				</TextTooltip>
 			</Show>
@@ -73,8 +73,8 @@ const RawExpanderHeader: ParentComponent<RawExpanderHeaderProps> = ($props) => {
 	const context = useContext(ExpanderContext)
 
 	return (<RawList
-		data-c-open={toggleAttribute(context?.[_isOpen]())}
-		data-c-variant={toggleAttribute(context?.[_variant](), context != null)}
+		data-c-open={setElementAttributeIfExist(context?.[_isOpen]())}
+		data-c-variant={setElementAttributeIfExist(context?.[_variant](), context != null)}
 		trailing={<>
 			{props[_trailing]}
 			<Show when={props[_useExpandIcon]}>
@@ -85,7 +85,7 @@ const RawExpanderHeader: ParentComponent<RawExpanderHeaderProps> = ($props) => {
 						component="div"
 						code={0xE3FC}
 						class="c-expander-icon"
-						data-c-open={toggleAttribute(context?.[_isOpen]())}
+						data-c-open={setElementAttributeIfExist(context?.[_isOpen]())}
 					/>
 				</TextTooltip>
 			</Show>
@@ -125,8 +125,8 @@ const Expander: ParentComponent<ExpanderProps> = ($props) => {
 		let t: number | null = null
 		const update = () => {
 			if (!div_content_ref) return
-			if (t != null) clearTimeDelayed(t)
-			t = setTimeDelayed(() => {
+			if (t != null) endTimeout(t)
+			t = startTimeout(() => {
 				const height = getBoundingClientRect(div_content_ref)[_height] + BORDER_BOTTOM_WIDTH
 				if (contentHeight() != height) setContentHeight(height)
 				t = null
@@ -173,9 +173,9 @@ const Expander: ParentComponent<ExpanderProps> = ($props) => {
 					if (!isOpen()) return;
 
 					const el = ev[_currentTarget]
-					preventDefault(ev)
+					eventPreventDefault(ev)
 					setIsOpen(false)
-					timeout(300)[_then](() => el[_click]())
+					wait(300)[_then](() => el[_click]())
 				}}
 				{...headerPropsOther}>
 				{props[_header]}
@@ -183,7 +183,7 @@ const Expander: ParentComponent<ExpanderProps> = ($props) => {
 			<div
 				class={`c-expander-body${bodyProps[_class] ? ` ${bodyProps[_class]}` : ''}`}
 				data-c-variant={props[_variant]}
-				data-c-open={toggleAttribute(isOpen())}
+				data-c-open={setElementAttributeIfExist(isOpen())}
 				style={isString(bodyProps[_style])
 					? bodyProps[_style]
 					: {

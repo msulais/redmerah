@@ -8,8 +8,8 @@ import { CornerData } from "@/enums/corner"
 import { LocalStorageKeys } from "@/enums/storage"
 import { ThemeData } from "@/enums/theme"
 import { setLocalStorageItem, getLocalStorageItem } from "@/utils/storage"
-import { setAttribute } from "@/utils/attributes"
-import { setTimeDelayed, timeout } from "@/utils/timeout"
+import { setElementAttribute } from "@/utils/attributes"
+import { startTimeout, wait } from "@/utils/timeout"
 import { RoutesLinks, ExternalLinks } from "@/enums/links"
 import { encodeURL } from "@/utils/url"
 import { Commands, CopyFileType, DownloadFileType, EncodingMode, ErrorCorrectionLevel, Pages } from "./_enums"
@@ -59,33 +59,33 @@ const _: VoidComponent<{
 
 	async function changeTheme(theme: ThemeData): Promise<void> {
 		setTheme(theme)
-		setAttribute(getRoot(), RootAttributes[_theme], theme)
+		setElementAttribute(getRoot(), RootAttributes[_theme], theme)
 		setLocalStorageItem(LocalStorageKeys[_theme], theme)
 		closeSubMenu(submenu_themeSettings_ref)
-		await timeout(300)
+		await wait(300)
 		closeMenu(menu_settings_ref)
 	}
 
 	async function changeCorner(corner: CornerData): Promise<void> {
 		setCorner(corner)
-		setAttribute(getRoot(), RootAttributes[_corner], corner)
+		setElementAttribute(getRoot(), RootAttributes[_corner], corner)
 		setLocalStorageItem(LocalStorageKeys[_corner], corner)
 		closeSubMenu(submenu_cornerSettings_ref)
-		await timeout(300)
+		await wait(300)
 		closeMenu(menu_settings_ref)
 	}
 
 	async function changeEncodingMode(mode: EncodingMode): Promise<void> {
 		props[_command](Commands.change_settings_encodingMode, mode)
 		closeSubMenu(submenu_encodingModeSettings_ref)
-		await timeout(300)
+		await wait(300)
 		closeMenu(menu_settings_ref)
 	}
 
 	async function changeErrorCorrectionLevel(level: ErrorCorrectionLevel): Promise<void> {
 		props[_command](Commands.change_settings_errorCorrectionLevel, level)
 		closeSubMenu(submenu_errorCorrectionLevelSettings_ref)
-		await timeout(300)
+		await wait(300)
 		closeMenu(menu_settings_ref)
 	}
 
@@ -93,7 +93,7 @@ const _: VoidComponent<{
 		const theme = getLocalStorageItem(LocalStorageKeys[_theme])
 
 		if (theme && [ThemeData[_system], ThemeData[_light], ThemeData[_dark]][_includes](theme as ThemeData)) {
-			setAttribute(getRoot(), RootAttributes[_theme], theme)
+			setElementAttribute(getRoot(), RootAttributes[_theme], theme)
 			setTheme(theme as ThemeData)
 		}
 	}
@@ -102,7 +102,7 @@ const _: VoidComponent<{
 		const corner = getLocalStorageItem(LocalStorageKeys[_corner])
 
 		if (corner && [CornerData[_sharp], CornerData[_semiRound], CornerData[_round], CornerData[_fullRound]][_includes](corner as CornerData)) {
-			setAttribute(getRoot(), RootAttributes[_corner], corner)
+			setElementAttribute(getRoot(), RootAttributes[_corner], corner)
 			setCorner(corner as CornerData)
 		}
 	}
@@ -398,7 +398,7 @@ const _: VoidComponent<{
 					onClick={() => {
 						props[_command](Commands.download_QRCode, DownloadFileType[_png])
 						closeSubMenu(submenu_downloadMoreActions_ref)
-						setTimeDelayed(() => closeMenu(menu_moreActions_ref), 300)
+						startTimeout(() => closeMenu(menu_moreActions_ref), 300)
 					}}
 					trailing="PNG">
 					Image
@@ -408,7 +408,7 @@ const _: VoidComponent<{
 					onClick={() => {
 						props[_command](Commands.download_QRCode, DownloadFileType[_jpeg])
 						closeSubMenu(submenu_downloadMoreActions_ref)
-						setTimeDelayed(() => closeMenu(menu_moreActions_ref), 300)
+						startTimeout(() => closeMenu(menu_moreActions_ref), 300)
 					}}
 					trailing="JPEG">
 					Image
@@ -418,7 +418,7 @@ const _: VoidComponent<{
 					onClick={() => {
 						props[_command](Commands.download_QRCode, DownloadFileType[_svg])
 						closeSubMenu(submenu_downloadMoreActions_ref)
-						setTimeDelayed(() => closeMenu(menu_moreActions_ref), 300)
+						startTimeout(() => closeMenu(menu_moreActions_ref), 300)
 					}}
 					trailing="SVG">
 					Vector
@@ -438,7 +438,7 @@ const _: VoidComponent<{
 					onClick={(ev) => {
 						props[_command](Commands.copy_QRCode, ev, CopyFileType[_png])
 						closeSubMenu(submenu_copyMoreActions_ref)
-						setTimeDelayed(() => closeMenu(menu_moreActions_ref), 300)
+						startTimeout(() => closeMenu(menu_moreActions_ref), 300)
 					}}
 					trailing="PNG">
 					Image
@@ -448,7 +448,7 @@ const _: VoidComponent<{
 					onClick={(ev) => {
 						props[_command](Commands.copy_QRCode, ev, CopyFileType[_svg])
 						closeSubMenu(submenu_copyMoreActions_ref)
-						setTimeDelayed(() => closeMenu(menu_moreActions_ref), 300)
+						startTimeout(() => closeMenu(menu_moreActions_ref), 300)
 					}}
 					trailing="SVG">
 					Vector

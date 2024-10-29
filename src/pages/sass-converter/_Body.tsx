@@ -3,7 +3,7 @@ import { createSignal, onMount, Show, type VoidComponent } from "solid-js"
 import type { Settings } from "./_types"
 import { _markdown, _preview, _noPointerEvent, _touchmove, _touches, _clientX, _touchend, _mousemove, _mouseup, _change, _matches, _tonal, _value, _markdownText, _css, _cssText, _html, _px, _settings, _fontSize, _textWrap, _htmlText, _replace, _scss, _sass, _sassText, _scssText, _command } from "@/constants/string"
 import { addEventListener } from "@/utils/event"
-import { removeAttribute, setAttribute, toggleAttribute } from "@/utils/attributes"
+import { removeElementAttribute, setElementAttribute, setElementAttributeIfExist } from "@/utils/attributes"
 import { getDocument, getDocumentBody } from "@/constants/window"
 import { BodyAttributes } from "@/enums/attributes"
 import { isMatchMedia } from "@/utils/window"
@@ -12,7 +12,7 @@ import { Commands, InputViewOption } from "./_enums"
 
 import Button, { ButtonVariant } from "@/components/Button"
 import CSS from './_styles.module.scss'
-import { clearTimeDelayed, setTimeDelayed } from "@/utils/timeout"
+import { endTimeout, startTimeout } from "@/utils/timeout"
 
 enum OutputViewOption {
 	css
@@ -34,8 +34,8 @@ const _: VoidComponent<{
 	let isSmallScreen: boolean = false
 
 	function updateOutput(): void {
-		if (timeoutId != null) clearTimeDelayed(timeoutId)
-		timeoutId = setTimeDelayed(() => {
+		if (timeoutId != null) endTimeout(timeoutId)
+		timeoutId = startTimeout(() => {
 			const command = (inputViewOption() == InputViewOption[_sass]
 				? Commands.update_sass_text
 				: Commands.update_scss_text
@@ -52,7 +52,7 @@ const _: VoidComponent<{
 
 	function closeDrag(): void {
 		setIsDragging(false)
-		removeAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
+		removeElementAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
 	}
 
 	function initEvents(): void {
@@ -147,8 +147,8 @@ const _: VoidComponent<{
 	return (<div class={CSS.body}>
 		<div
 			class={CSS.body_input}
-			data-hidden={toggleAttribute(inputViewOption() == null)}
-			data-output-hidden={toggleAttribute(outputViewOption() == null)}
+			data-hidden={setElementAttributeIfExist(inputViewOption() == null)}
+			data-output-hidden={setElementAttributeIfExist(outputViewOption() == null)}
 			style={{width: width() == null? undefined : width() + _px}}>
 			<div class={CSS.body_tabs}>
 				<InputTabButtons/>
@@ -163,20 +163,20 @@ const _: VoidComponent<{
 				value={inputViewOption() == InputViewOption[_sass]? props[_sassText] : props[_scssText]}
 				style={{"font-size": props[_settings][_fontSize] + _px}}
 				class={CSS.body_textfield}
-				data-text-wrap={toggleAttribute(props[_settings][_textWrap])}
+				data-text-wrap={setElementAttributeIfExist(props[_settings][_textWrap])}
 				placeholder={`Type your ${inputViewOption() == InputViewOption[_scss]? 'SCSS' : 'SASS'} ...`}></textarea>
 			<Show when={inputViewOption() != null && outputViewOption() != null}>
 				<div
-					data-g-keep-pointer-event={toggleAttribute(isDragging())}
+					data-g-keep-pointer-event={setElementAttributeIfExist(isDragging())}
 					class={CSS.body_drag_handle}
 					onMouseDown={(ev) => {
-						setAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
+						setElementAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
 						setWidth(ev[_clientX])
 						setIsDragging(true)
 					}}
 					onTouchStart={(ev) => {
 						setIsDragging(true)
-						setAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
+						setElementAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
 						setWidth(ev[_touches][0][_clientX])
 					}}
 					onDblClick={() => setWidth(null)}
@@ -185,8 +185,8 @@ const _: VoidComponent<{
 		</div>
 		<div
 			class={CSS.body_output}
-			data-hidden={toggleAttribute(outputViewOption() == null)}
-			data-no-text-wrap={toggleAttribute(!props[_settings][_textWrap])}>
+			data-hidden={setElementAttributeIfExist(outputViewOption() == null)}
+			data-no-text-wrap={setElementAttributeIfExist(!props[_settings][_textWrap])}>
 			<div class={CSS.body_tabs}>
 				<Show when={inputViewOption() == null}>
 					<InputTabButtons/>
@@ -196,7 +196,7 @@ const _: VoidComponent<{
 			<div
 				class={CSS.body_css_output}
 				style={{"font-size": props[_settings][_fontSize] + _px}}
-				data-text-wrap={toggleAttribute(props[_settings][_textWrap])}>
+				data-text-wrap={setElementAttributeIfExist(props[_settings][_textWrap])}>
 				{props[_cssText]}
 			</div>
 		</div>

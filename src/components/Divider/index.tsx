@@ -1,7 +1,7 @@
 import { splitProps, type Component, type JSX } from "solid-js"
 
 import { _class, _vertical } from "@/constants/string"
-import { toggleAttribute } from "@/utils/attributes"
+import { setElementAttributeIfExist } from "@/utils/attributes"
 
 import './index.scss'
 
@@ -12,7 +12,7 @@ const Divider: Component<DividerProps> = ($props) => {
 	const [props, other] = splitProps($props, [_class, _vertical])
 
 	return (<div
-		data-c-vertical={toggleAttribute(props[_vertical])}
+		data-c-vertical={setElementAttributeIfExist(props[_vertical])}
 		class={`c-divider${props[_class] ? ` ${props[_class]}` : ''}`}
 		{...other}
 	/>)

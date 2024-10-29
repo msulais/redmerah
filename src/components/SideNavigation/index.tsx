@@ -1,7 +1,7 @@
 import { children, Show, splitProps, type JSX, type ParentComponent } from "solid-js"
 
 import { _checked, _children, _classList, _expand, _tonal, _focus, _footer, _header, _iconCode, _iconOnly, _indent, _indicatorPosition, _leading, _left, _selected, _trailing, _variant, _class } from "@/constants/string"
-import { toggleAttribute } from "@/utils/attributes"
+import { setElementAttributeIfExist } from "@/utils/attributes"
 
 import Icon from "@/components/Icon"
 import Button, { ButtonIndicatorPosition, ButtonVariant, type ButtonProps } from "@/components/Button"
@@ -64,7 +64,7 @@ const SideNavigation: ParentComponent<SideNavigationProps> = ($props) => {
 
 	return (<div
 		class={`c-side-navigation${props[_class]? ` ${props[_class]}` : ''}`}
-		data-c-expanded={toggleAttribute(props[_expand])}
+		data-c-expanded={setElementAttributeIfExist(props[_expand])}
 		{...other}>
 		<Show when={header()}>
 			<div class="c-side-navigation-header">{header()}</div>

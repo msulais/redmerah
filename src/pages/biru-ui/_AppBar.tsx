@@ -7,13 +7,13 @@ import { CornerData } from "@/enums/corner"
 import { LocalStorageKeys } from "@/enums/storage"
 import { ThemeData } from "@/enums/theme"
 import { setLocalStorageItem, getLocalStorageItem } from "@/utils/storage"
-import { setAttribute } from "@/utils/attributes"
+import { setElementAttribute } from "@/utils/attributes"
 import { isMatchMedia, matchMedia } from "@/utils/window"
 import { addEventListener } from '@/utils/event'
 import { FlyoutPosition } from "@/enums/position"
 import { Commands, Pages } from "./_enums"
 import { PAGES, SIZE_SIDE_NAVIGATION_NONE } from "./_constants"
-import { timeout } from "@/utils/timeout"
+import { wait } from "@/utils/timeout"
 import { addClassListModule } from "@/utils/element"
 import { RoutesLinks, ExternalLinks } from "@/enums/links"
 import { encodeURL } from "@/utils/url"
@@ -56,27 +56,27 @@ const _: VoidComponent<{
 
 	async function changePlatform(platform: PlatformData): Promise<void> {
 		setPlatform(platform)
-		setAttribute(getRoot(), RootAttributes[_platform], platform)
+		setElementAttribute(getRoot(), RootAttributes[_platform], platform)
 		closeSubMenu(submenu_platformSettings_ref)
-		await timeout(300)
+		await wait(300)
 		closeMenu(menu_settings_ref)
 	}
 
 	async function changeTheme(theme: ThemeData): Promise<void> {
 		setTheme(theme)
-		setAttribute(getRoot(), RootAttributes[_theme], theme)
+		setElementAttribute(getRoot(), RootAttributes[_theme], theme)
 		setLocalStorageItem(LocalStorageKeys[_theme], theme)
 		closeSubMenu(submenu_themeSettings_ref)
-		await timeout(300)
+		await wait(300)
 		closeMenu(menu_settings_ref)
 	}
 
 	async function changeCorner(corner: CornerData): Promise<void> {
 		setCorner(corner)
-		setAttribute(getRoot(), RootAttributes[_corner], corner)
+		setElementAttribute(getRoot(), RootAttributes[_corner], corner)
 		setLocalStorageItem(LocalStorageKeys[_corner], corner)
 		closeSubMenu(submenu_cornerSettings_ref)
-		await timeout(300)
+		await wait(300)
 		closeMenu(menu_settings_ref)
 	}
 
@@ -84,7 +84,7 @@ const _: VoidComponent<{
 		const theme = getLocalStorageItem(LocalStorageKeys[_theme])
 
 		if (theme && [ThemeData[_system], ThemeData[_light], ThemeData[_dark]][_includes](theme as ThemeData)) {
-			setAttribute(getRoot(), RootAttributes[_theme], theme)
+			setElementAttribute(getRoot(), RootAttributes[_theme], theme)
 			setTheme(theme as ThemeData)
 		}
 	}
@@ -93,7 +93,7 @@ const _: VoidComponent<{
 		const corner = getLocalStorageItem(LocalStorageKeys[_corner])
 
 		if (corner && [CornerData[_sharp], CornerData[_semiRound], CornerData[_round], CornerData[_fullRound]][_includes](corner as CornerData)) {
-			setAttribute(getRoot(), RootAttributes[_corner], corner)
+			setElementAttribute(getRoot(), RootAttributes[_corner], corner)
 			setCorner(corner as CornerData)
 		}
 	}

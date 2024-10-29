@@ -1,6 +1,6 @@
 import { createEffect, type VoidComponent } from "solid-js"
 
-import { toggleAttribute } from "@/utils/attributes"
+import { setElementAttributeIfExist } from "@/utils/attributes"
 import { _note, _value, _expand, _onNoteChanged, _currentTarget } from "@/constants/string"
 
 import { AreaTextField, changeAreaTextFieldValue } from "@/components/TextField"
@@ -20,7 +20,7 @@ const _: VoidComponent<{
 		textarea_ref[_value] = props[_note]
 	})
 
-	return (<div class={CSS.notebook} data-expand={toggleAttribute(props[_expand])}>
+	return (<div class={CSS.notebook} data-expand={setElementAttributeIfExist(props[_expand])}>
 		<AreaTextField
 			ref={r => textarea_ref = r}
 			labelText="Notebook"

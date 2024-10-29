@@ -4,7 +4,7 @@ import { createStore } from "solid-js/store"
 import type { Gradient, GradientData, RadialGradient, Settings } from "./_type"
 import { _clipboard, _writeText, _gradients, _map, _settings, _colorModel, _join, _data, _index, _currentTarget, _centerBottomToRight, _command, _gradientData, _gradient, _colorStopList, _sort, _size, _color, _type, _conic, _onStartDrag, _clientX, _clientY, _selectedGradientIndex, _gradientIndex, _isDragging, _touches, _linear, _radial, _colorInterpolationMethod, _hsl, _hwb, _lch, _oklch, _includes, _auto, _decreasing, _increasing, _longer, _shorter, _hueInterpolationMethod, _circle, _ellipse, _shape, _angle, _positionX, _positionY, _sizeLength, _sizeWidth, _sizeHeight, _repeat, _value, _hsla, _replace, _split, _toString, _padStart, _toUpperCase, _rgba, _trim, _length, _isNaN, _isFinite, _substring, _onStartPickColor, _colorPickerRef, _filled, _onOpenActionsMenu, _x, _width, _noPointerEvent, _touchmove, _touchend, _mousemove, _mouseup, _aspectRatio, _borderRadius, _px, _centerCenterRightTop, _valueAsNumber } from "@/constants/string"
 import { ColorModel, Commands, GradientType, HueInterpolationMethod, PolarColorSpace, RadialGradientShape } from "./_enums"
-import { removeAttribute, setAttribute, toggleAttribute } from "@/utils/attributes"
+import { removeElementAttribute, setElementAttribute, setElementAttributeIfExist } from "@/utils/attributes"
 import { addEventListener } from "@/utils/event"
 import { getDocumentBody, getDocument, getNavigator } from "@/constants/window"
 import { BodyAttributes } from "@/enums/attributes"
@@ -151,8 +151,8 @@ const GradientControl: VoidComponent<{
 							setSelectedColorStopIndex(index())
 						}}
 						draggable="false"
-						data-dragged={toggleAttribute(props[_selectedGradientIndex] == props[_gradientIndex] && selectedColorStopIndex() == index() && props[_isDragging])}
-						data-g-keep-pointer-event={toggleAttribute(props[_selectedGradientIndex] == props[_gradientIndex] && selectedColorStopIndex() == index() && props[_isDragging])}
+						data-dragged={setElementAttributeIfExist(props[_selectedGradientIndex] == props[_gradientIndex] && selectedColorStopIndex() == index() && props[_isDragging])}
+						data-g-keep-pointer-event={setElementAttributeIfExist(props[_selectedGradientIndex] == props[_gradientIndex] && selectedColorStopIndex() == index() && props[_isDragging])}
 						onTouchStart={ev => {
 							props[_onStartDrag](
 								div_gradient_ref,
@@ -181,7 +181,7 @@ const GradientControl: VoidComponent<{
 			<IconButton
 				code={0xE3FC}
 				onClick={() => setExpand(e => !e)}
-				data-expanded={toggleAttribute(expand())}
+				data-expanded={setElementAttributeIfExist(expand())}
 			/>
 		</TextTooltip>
 	</div>)
@@ -503,7 +503,7 @@ const _: VoidComponent<{
 
 	function onPointerUp(): void {
 		setIsDragging(false)
-		removeAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
+		removeElementAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
 	}
 
 	function initListener() {
@@ -624,7 +624,7 @@ const _: VoidComponent<{
 							setSelectedGradientIndex(index())
 							setPointerPosition(pointer)
 							setIsDragging(true)
-							setAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
+							setElementAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
 						}}
 						selectedGradientIndex={selectedGradientIndex()}
 						onStartPickColor={(colorStopIndex) => {

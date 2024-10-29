@@ -11,12 +11,12 @@ import { RoutesLinks, ExternalLinks } from "@/enums/links"
 import { encodeURL } from "@/utils/url"
 import { CornerData } from "@/enums/corner"
 import { ThemeData } from "@/enums/theme"
-import { setAttribute } from "@/utils/attributes"
+import { setElementAttribute } from "@/utils/attributes"
 import { RootAttributes } from "@/enums/attributes"
 import { LocalStorageKeys } from "@/enums/storage"
 import { setLocalStorageItem, getLocalStorageItem } from "@/utils/storage"
 import { Commands, DecimalNumberFormat, GroupingNumberFormat, type CalculatorType } from "./_enums"
-import { timeout } from "@/utils/timeout"
+import { wait } from "@/utils/timeout"
 import redmerahLogo from '@/assets/logo.svg'
 import logo from '@/assets/apps/calculator-logo.svg'
 
@@ -62,14 +62,14 @@ const _: VoidComponent<{
 	async function changeDecimalNumberFormat(type: DecimalNumberFormat): Promise<void> {
 		props[_command](Commands.change_settings_numberFormatDecimal, type)
 		closeSubMenu(submenu_decimalNumberFormatSettings_ref)
-		await timeout(300)
+		await wait(300)
 		closeMenu(menu_settings_ref)
 	}
 
 	async function changeGroupingNumberFormat(type: GroupingNumberFormat): Promise<void> {
 		props[_command](Commands.change_settings_numberFormatGrouping, type)
 		closeSubMenu(submenu_groupingNumberFormatSettings_ref)
-		await timeout(300)
+		await wait(300)
 		closeMenu(menu_settings_ref)
 	}
 
@@ -85,19 +85,19 @@ const _: VoidComponent<{
 
 	async function changeTheme(theme: ThemeData): Promise<void> {
 		setTheme(theme)
-		setAttribute(getRoot(), RootAttributes[_theme], theme)
+		setElementAttribute(getRoot(), RootAttributes[_theme], theme)
 		setLocalStorageItem(LocalStorageKeys[_theme], theme)
 		closeSubMenu(submenu_themeSettings_ref)
-		await timeout(300)
+		await wait(300)
 		closeMenu(menu_settings_ref)
 	}
 
 	async function changeCorner(corner: CornerData): Promise<void> {
 		setCorner(corner)
-		setAttribute(getRoot(), RootAttributes[_corner], corner)
+		setElementAttribute(getRoot(), RootAttributes[_corner], corner)
 		setLocalStorageItem(LocalStorageKeys[_corner], corner)
 		closeSubMenu(submenu_cornerSettings_ref)
-		await timeout(300)
+		await wait(300)
 		closeMenu(menu_settings_ref)
 	}
 
@@ -105,7 +105,7 @@ const _: VoidComponent<{
 		const theme = getLocalStorageItem(LocalStorageKeys[_theme])
 
 		if (theme && [ThemeData[_system], ThemeData[_light], ThemeData[_dark]][_includes](theme as ThemeData)) {
-			setAttribute(getRoot(), RootAttributes[_theme], theme)
+			setElementAttribute(getRoot(), RootAttributes[_theme], theme)
 			setTheme(theme as ThemeData)
 		}
 	}
@@ -114,7 +114,7 @@ const _: VoidComponent<{
 		const corner = getLocalStorageItem(LocalStorageKeys[_corner])
 
 		if (corner && [CornerData[_sharp], CornerData[_semiRound], CornerData[_round], CornerData[_fullRound]][_includes](corner as CornerData)) {
-			setAttribute(getRoot(), RootAttributes[_corner], corner)
+			setElementAttribute(getRoot(), RootAttributes[_corner], corner)
 			setCorner(corner as CornerData)
 		}
 	}

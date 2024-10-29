@@ -2,8 +2,8 @@ import { type Component, For, Match, Show, Switch, type VoidComponent, createMem
 import type { SetStoreFunction } from "solid-js/store"
 
 import type { Settings } from "./_types"
-import { clearTimeDelayed, setTimeDelayed, timeout } from "@/utils/timeout"
-import { setAttribute, toggleAttribute } from "@/utils/attributes"
+import { endTimeout, startTimeout, wait } from "@/utils/timeout"
+import { setElementAttribute, setElementAttributeIfExist } from "@/utils/attributes"
 import { addClassListModule } from "@/utils/element"
 import { RootAttributes } from "@/enums/attributes"
 import { ExternalLinks, RoutesLinks } from "@/enums/links"
@@ -89,19 +89,19 @@ const _: Component<{
 
 	async function changeTheme(theme: ThemeData): Promise<void> {
 		setTheme(theme)
-		setAttribute(getRoot(), RootAttributes[_theme], theme)
+		setElementAttribute(getRoot(), RootAttributes[_theme], theme)
 		setLocalStorageItem(LocalStorageKeys[_theme], theme)
 		closeSubMenu(submenu_themeSettings_ref)
-		await timeout(300)
+		await wait(300)
 		closeMenu(menu_settings_ref)
 	}
 
 	async function changeCorner(corner: CornerData): Promise<void> {
 		setCorner(corner)
-		setAttribute(getRoot(), RootAttributes[_corner], corner)
+		setElementAttribute(getRoot(), RootAttributes[_corner], corner)
 		setLocalStorageItem(LocalStorageKeys[_corner], corner)
 		closeSubMenu(submenu_cornerSettings_ref)
-		await timeout(300)
+		await wait(300)
 		closeMenu(menu_settings_ref)
 	}
 
@@ -109,7 +109,7 @@ const _: Component<{
 		const theme = getLocalStorageItem(LocalStorageKeys[_theme])
 
 		if (theme && [ThemeData[_system], ThemeData[_light], ThemeData[_dark]][_includes](theme as ThemeData)) {
-			setAttribute(getRoot(), RootAttributes[_theme], theme)
+			setElementAttribute(getRoot(), RootAttributes[_theme], theme)
 			setTheme(theme as ThemeData)
 		}
 	}
@@ -118,7 +118,7 @@ const _: Component<{
 		const corner = getLocalStorageItem(LocalStorageKeys[_corner])
 
 		if (corner && [CornerData[_sharp], CornerData[_semiRound], CornerData[_round], CornerData[_fullRound]][_includes](corner as CornerData)) {
-			setAttribute(getRoot(), RootAttributes[_corner], corner)
+			setElementAttribute(getRoot(), RootAttributes[_corner], corner)
 			setCorner(corner as CornerData)
 		}
 	}
@@ -126,14 +126,14 @@ const _: Component<{
 	async function changeNumbersSort(sort: NumbersRandomizerSort): Promise<void> {
 		props[_command](Commands[_change_settings_numbers_sort], sort)
 		closeSubMenu(submenu_sortSettings_ref)
-		await timeout(300)
+		await wait(300)
 		closeMenu(menu_settings_ref)
 	}
 
 	async function changeNumbersType(type: NumbersRandomizerNumberType): Promise<void> {
 		props[_command](Commands[_change_settings_numbers_type], type)
 		closeSubMenu(submenu_numberTypeSettings_ref)
-		await timeout(300)
+		await wait(300)
 		closeMenu(menu_settings_ref)
 	}
 
@@ -155,14 +155,14 @@ const _: Component<{
 	async function changeWordsWordCase(wordCase: WordsRandomizerWordCase): Promise<void> {
 		props[_command](Commands[_change_settings_words_wordCase], wordCase)
 		closeSubMenu(submenu_wordCaseSettings_ref)
-		await timeout(300)
+		await wait(300)
 		closeMenu(menu_settings_ref)
 	}
 
 	async function changeColorsColorModel(colorModel: ColorsRandomizerColorModel): Promise<void> {
 		props[_command](Commands[_change_settings_colors_colorModel], colorModel)
 		closeSubMenu(submenu_colorModelSettings_ref)
-		await timeout(300)
+		await wait(300)
 		closeMenu(menu_settings_ref)
 	}
 
@@ -550,7 +550,7 @@ const _: Component<{
 			trailing={<>
 				<Button
 					classList={addClassListModule(CSSAnimation.btn_rotate_full_icon, CSS.appbar_generate_btn)}
-					data-g-keep-pointer-event={toggleAttribute(props[_isGenerating])}
+					data-g-keep-pointer-event={setElementAttributeIfExist(props[_isGenerating])}
 					variant={ButtonVariant[_filled]}
 					onClick={(ev) => {
 						if (props[_isGenerating]) return props[_command](Commands[_stopGenerate])
@@ -559,7 +559,7 @@ const _: Component<{
 					<Icon
 						filled
 						classList={addClassListModule(CSS.appbar_generate_icon)}
-						data-rotate={toggleAttribute(props[_isGenerating])}
+						data-rotate={setElementAttributeIfExist(props[_isGenerating])}
 						code={0xE143}
 					/>
 					<Show when={props[_isGenerating]} fallback="Generate">Generating</Show>
@@ -595,17 +595,17 @@ const _: Component<{
 						onClick={async () => {
 							const success = await props[_onCopyResult]()
 							if (!success) {
-								if (copyErrorTimeoutId()) clearTimeDelayed(copyErrorTimeoutId()!)
+								if (copyErrorTimeoutId()) endTimeout(copyErrorTimeoutId()!)
 
-								setCopyErrorTimeoutId(setTimeDelayed(() => {
+								setCopyErrorTimeoutId(startTimeout(() => {
 									setCopyErrorTimeoutId(null)
 								}, 1000))
 								return
 							}
 
-							if (copyTimeoutId()) clearTimeDelayed(copyTimeoutId()!)
+							if (copyTimeoutId()) endTimeout(copyTimeoutId()!)
 
-							setCopyTimeoutId(setTimeDelayed(() => {
+							setCopyTimeoutId(startTimeout(() => {
 								setCopyTimeoutId(null)
 							}, 1000))
 						}}

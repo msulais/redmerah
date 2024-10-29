@@ -2,8 +2,8 @@ import { type ParentComponent, type JSX, mergeProps, splitProps, type VoidCompon
 import { Dynamic, type DynamicProps } from 'solid-js/web'
 
 import { _button, _transparent, _bottom, _children, _indicatorPosition, _variant, _focused, _compact, _selected, _layerAttr, _classList, _type, _class, _desktopCompact, _filled, _filledTonal, _outlined, _openInNewTab, _disabled, _onClick, _code, _tonal, _emoji } from '@/constants/string'
-import { toggleAttribute } from '@/utils/attributes'
-import { callEventHandler, preventDefault } from '@/utils/event'
+import { setElementAttributeIfExist } from '@/utils/attributes'
+import { callEventHandler, eventPreventDefault } from '@/utils/event'
 
 import Icon from '@/components/Icon'
 import Emoji from '@/components/Emoji'
@@ -49,9 +49,9 @@ const RawButton: ParentComponent<RawButtonProps> = ($props) => {
 			...props[_classList]
 		}}
 		data-c-indicator={props[_selected]? props[_indicatorPosition] : undefined}
-		data-c-selected={toggleAttribute(props[_selected])}
-		data-c-focused={toggleAttribute(props[_focused])}
-		data-c-compact={toggleAttribute(props[_compact])}
+		data-c-selected={setElementAttributeIfExist(props[_selected])}
+		data-c-focused={setElementAttributeIfExist(props[_focused])}
+		data-c-compact={setElementAttributeIfExist(props[_compact])}
 		{...other}>
 		{props[_children]}
 	</Dynamic>)
@@ -86,9 +86,9 @@ const Button: ParentComponent<ButtonProps> = ($props) => {
 		}}
 		type={props[_type] as ("button" | "submit" | "reset" | undefined)}
 		data-c-indicator={props[_selected]? props[_indicatorPosition] : undefined}
-		data-c-selected={toggleAttribute(props[_selected])}
-		data-c-focused={toggleAttribute(props[_focused])}
-		data-c-compact={toggleAttribute(props[_compact])}
+		data-c-selected={setElementAttributeIfExist(props[_selected])}
+		data-c-focused={setElementAttributeIfExist(props[_focused])}
+		data-c-compact={setElementAttributeIfExist(props[_compact])}
 		{...other}>
 		{props[_children]}
 	</button>)
@@ -120,7 +120,7 @@ const LinkButton: ParentComponent<LinkButtonProps> = ($props) => {
 		class={`c-btn${props[_class]? ` ${props[_class]}` : ''}`}
 		onClick={(ev) => {
 			if (props[_disabled]) {
-				preventDefault(ev)
+				eventPreventDefault(ev)
 			}
 			callEventHandler(ev, props[_onClick])
 		}}
@@ -131,10 +131,10 @@ const LinkButton: ParentComponent<LinkButtonProps> = ($props) => {
 			...props[_classList]
 		}}
 		data-c-indicator={props[_selected]? props[_indicatorPosition] : undefined}
-		data-c-disabled={toggleAttribute(props[_disabled])}
-		data-c-selected={toggleAttribute(props[_selected])}
-		data-c-focused={toggleAttribute(props[_focused])}
-		data-c-compact={toggleAttribute(props[_compact])}
+		data-c-disabled={setElementAttributeIfExist(props[_disabled])}
+		data-c-selected={setElementAttributeIfExist(props[_selected])}
+		data-c-focused={setElementAttributeIfExist(props[_focused])}
+		data-c-compact={setElementAttributeIfExist(props[_compact])}
 		target={props[_openInNewTab]? "_blank" : undefined}
 		rel={props[_openInNewTab]? "noopener noreferrer" : undefined}
 		{...other}>

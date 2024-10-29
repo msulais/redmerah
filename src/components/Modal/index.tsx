@@ -6,12 +6,12 @@ import { AnimationEffectTiming } from '@/enums/animation'
 import { FlyoutPosition as ModalPosition } from '@/enums/position'
 import { getFlyoutPosition } from '@/utils/flyout'
 import { _dispatchEvent, _onOpen, _openModal, _modalListener, _detail, _element, _some, _isSameNode, _push, _closeModal, _findIndex, _splice, _length, _click, _at, _clientX, _clientY, _x, _left, _right, _y, _top, _bottom, _scroll, _scrollY, _documentElement, _scrollTop, _scrollTo, _instant, _resize, _noPointerEvent, _observe, _onReposition, _onShortFocus, _onClose, _ref, _onToggleOpen, _onCancel, _children, _onKeyDown, _class, _openAnimation, _closeAnimation, _centerBottom, _body, _clientWidth, _innerHeight, _px, _width, _height, _touches, _touchmove, _touchend, _mousemove, _mouseup, _centerBottomToLeft, _centerBottomToRight, _centerTop, _centerTopToLeft, _centerTopToRight, _leftCenter, _leftCenterToBottom, _leftCenterToTop, _rightCenter, _rightCenterToBottom, _rightCenterToTop, _open, _close, _animate, _springBounce, _finished, _then, _focus, _showModal, _style, _maxWidth, _maxHeight, _max_width, _max_height, _none, _disconnect, _key, _Escape, _altKey, _ctrlKey, _metaKey, _shiftKey, _position, _gap, _padding, _important, _allowHideAnchor, _dragable, _inputAutoFocus, _pointerType, _forEach, _pointermove, _pointerup } from '@/constants/string'
-import { clearTimeDelayed, setTimeDelayed } from '@/utils/timeout'
-import { hasAttribute, removeAttribute, setAttribute, toggleAttribute } from '@/utils/attributes'
+import { endTimeout, startTimeout } from '@/utils/timeout'
+import { isElementHasAttribute, removeElementAttribute, setElementAttribute, setElementAttributeIfExist } from '@/utils/attributes'
 import { getDocument, getDocumentBody, getWindow } from '@/constants/window'
-import { getBoundingClientRect, querySelectorAll } from '@/utils/element'
+import { getBoundingClientRect, getAllElementBySelector } from '@/utils/element'
 import { BodyAttributes } from '@/enums/attributes'
-import { addEventListener, callEventHandler, preventDefault, removeEventListener, stopImmediatePropagation } from "@/utils/event"
+import { addEventListener, callEventHandler, eventPreventDefault, removeEventListener, eventStopImmediatePropagation } from "@/utils/event"
 import { mathAbs } from '@/utils/math'
 import { BodyEvents } from '@/enums/events'
 
@@ -74,8 +74,8 @@ function openModal(
 
 function initModalListener(): void {
 	// make sure to call this listener once
-	if (hasAttribute(getDocumentBody(), BodyAttributes[_modalListener])) return;
-	setAttribute(getDocumentBody(), BodyAttributes[_modalListener])
+	if (isElementHasAttribute(getDocumentBody(), BodyAttributes[_modalListener])) return;
+	setElementAttribute(getDocumentBody(), BodyAttributes[_modalListener])
 
 	const selector: string = 'dialog.c-modal[open]'
 	const modals: HTMLDialogElement[] = []
@@ -105,8 +105,8 @@ function initModalListener(): void {
 
 		if (!removed) return
 
-		if (closeTimeoutId != null) clearTimeDelayed(closeTimeoutId)
-		closeTimeoutId = setTimeDelayed(() => {
+		if (closeTimeoutId != null) endTimeout(closeTimeoutId)
+		closeTimeoutId = startTimeout(() => {
 			removed = false
 			closeTimeoutId = null
 		}, 50)
@@ -149,10 +149,10 @@ function initModalListener(): void {
 
 	addEventListener(getWindow(), _resize, () => {
 		if (modals[_length] == 0) return;
-		if (timeoutId != null) clearTimeDelayed(timeoutId)
+		if (timeoutId != null) endTimeout(timeoutId)
 
-		timeoutId = setTimeDelayed(() => {
-			querySelectorAll(selector)[_forEach](
+		timeoutId = startTimeout(() => {
+			getAllElementBySelector(selector)[_forEach](
 				modal => repositionModal(modal as HTMLDialogElement)
 			)
 			timeoutId = null
@@ -160,7 +160,7 @@ function initModalListener(): void {
 	})
 
 	new MutationObserver(() => {
-		isNoPointerEvent = hasAttribute(
+		isNoPointerEvent = isElementHasAttribute(
 			getDocumentBody(),
 			BodyAttributes[_noPointerEvent]
 		)
@@ -252,7 +252,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 	}
 
 	function onPointerUp(): void {
-		removeAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
+		removeElementAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
 		setIsDragging(false)
 		fixPosition()
 	}
@@ -396,10 +396,10 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 	}
 
 	function shortFocusModal(): void {
-		if (focusTimeoutId != null) clearTimeDelayed(focusTimeoutId)
+		if (focusTimeoutId != null) endTimeout(focusTimeoutId)
 		setAttr_focus(true)
 
-		focusTimeoutId = setTimeDelayed(() => {
+		focusTimeoutId = startTimeout(() => {
 			setAttr_focus(false)
 			focusTimeoutId = null
 		}, 1000)
@@ -594,7 +594,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 		)[_finished][_then](() => setAttr_openDone(true))
 
 		// stop reaching to `document.onclick`
-		stopImmediatePropagation(event)
+		eventStopImmediatePropagation(event)
 	}
 
 	function repositionModal(): void {
@@ -732,13 +732,13 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 				&& $important
 			){
 				focusModal(modal_ref)
-				preventDefault(ev)
+				eventPreventDefault(ev)
 			}
 		}}
 		onCancel={(ev) => {
 			callEventHandler(ev, props[_onCancel])
 			if ($important) {
-				preventDefault(ev)
+				eventPreventDefault(ev)
 				return
 			}
 			closeModal({soft: true})
@@ -748,21 +748,21 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 			if (props[_onToggleOpen]) props[_onToggleOpen](false)
 			isOpen = false
 		}}
-		data-c-dragable={toggleAttribute(isDragable())}
-		data-c-drag={toggleAttribute(isDragging())}
-		data-c-focus={toggleAttribute(attr_focus())}
-		data-c-open={toggleAttribute(attr_open())}
-		data-c-open-done={toggleAttribute(attr_openDone())}
+		data-c-dragable={setElementAttributeIfExist(isDragable())}
+		data-c-drag={setElementAttributeIfExist(isDragging())}
+		data-c-focus={setElementAttributeIfExist(attr_focus())}
+		data-c-open={setElementAttributeIfExist(attr_open())}
+		data-c-open-done={setElementAttributeIfExist(attr_openDone())}
 		{...other}>
 		<Show when={isDragable()}>
 			<span
 				class="c-modal-drag-handle"
 				draggable={false}
-				data-g-keep-pointer-event={toggleAttribute(isDragging())}
+				data-g-keep-pointer-event={setElementAttributeIfExist(isDragging())}
 				onPointerDown={(ev) => {
 					const rect = getBoundingClientRect(modal_ref)
 					setIsDragging(true)
-					setAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
+					setElementAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
 					diffPositionX = ev[_clientX] - rect.x
 					diffPositionY = ev[_clientY] - rect.y
 				}}

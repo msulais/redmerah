@@ -14,7 +14,7 @@ import { RoutesLinks, ExternalLinks } from "@/enums/links"
 import { getDate_Y } from "@/utils/datetime"
 import { encodeURL } from "@/utils/url"
 import { addClassListModule } from "@/utils/element"
-import { clearTimeDelayed, setTimeDelayed, timeout } from "@/utils/timeout"
+import { endTimeout, startTimeout, wait } from "@/utils/timeout"
 import { _dialog_colorList_ref, _colorPicker_ref } from "./_string"
 import redmerahLogo from '@/assets/logo.svg'
 import logo from '@/assets/apps/color-generator-logo.svg'
@@ -50,7 +50,7 @@ const _: VoidComponent<{
 
 	async function copyAll(): Promise<void> {
 		if (copyTimeoutId() != null) {
-			clearTimeDelayed(copyTimeoutId()!)
+			endTimeout(copyTimeoutId()!)
 			setCopyTimeoutId(null)
 		}
 		try {
@@ -61,7 +61,7 @@ const _: VoidComponent<{
 				'--accent-dark: ' + props[_palette][_accentDark],
 				'--on-accent-dark: ' + props[_palette][_onAccentDark],
 			][_join](';\n') + ';')
-			setCopyTimeoutId(setTimeDelayed(() => setCopyTimeoutId(null), 2000))
+			setCopyTimeoutId(startTimeout(() => setCopyTimeoutId(null), 2000))
 		} catch (e) {}
 	}
 
@@ -70,7 +70,7 @@ const _: VoidComponent<{
 		setAttribute(getRoot(), RootAttributes[_theme], theme)
 		setLocalStorageItem(LocalStorageKeys[_theme], theme)
 		closeSubMenu(submenu_themeSettings_ref)
-		await timeout(300)
+		await wait(300)
 		closeMenu(menu_settings_ref)
 	}
 
@@ -79,7 +79,7 @@ const _: VoidComponent<{
 		setAttribute(getRoot(), RootAttributes[_corner], corner)
 		setLocalStorageItem(LocalStorageKeys[_corner], corner)
 		closeSubMenu(submenu_cornerSettings_ref)
-		await timeout(300)
+		await wait(300)
 		closeMenu(menu_settings_ref)
 	}
 
@@ -258,11 +258,11 @@ const _: VoidComponent<{
 					<IconButton
 						onClick={() => {
 							if (timeoutId()) {
-								clearTimeDelayed(timeoutId()!)
+								endTimeout(timeoutId()!)
 								setTimeoutId(null)
 							}
 							props[_onAddColor]()
-							setTimeoutId(setTimeDelayed(() => setTimeoutId(null), 1000))
+							setTimeoutId(startTimeout(() => setTimeoutId(null), 1000))
 						}}
 						code={timeoutId()? 0xE3D8 : 0xF08A}
 					/>

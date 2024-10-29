@@ -1,6 +1,6 @@
 import { type JSX, splitProps, type VoidComponent } from "solid-js"
 
-import { toggleAttribute } from '@/utils/attributes'
+import { setElementAttributeIfExist } from '@/utils/attributes'
 import { _children, _filled, _inline, _fromCharCode, _charCodeAt, _code, _emoji, _class } from "@/constants/string"
 
 import './index.scss'
@@ -15,7 +15,7 @@ const Emoji: VoidComponent<EmojiProps> = ($props) => {
 
 	return (<i
 		class={`c-emoji${props[_class] ? ` ${props[_class]}` : ''}`}
-		data-c-inline={toggleAttribute(props[_inline])}
+		data-c-inline={setElementAttributeIfExist(props[_inline])}
 		translate="no"
 		{...other}>
 		{ props[_emoji] }
