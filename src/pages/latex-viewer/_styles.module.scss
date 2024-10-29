@@ -62,6 +62,13 @@
 	& math {
 		width: fit-content;
 		font-family: Cambria Math, TeX Gyre Pagella Math, XITS Math, math;
+		padding: revert;
+		margin: revert;
+
+		& * {
+			padding: revert;
+			margin: revert;
+		}
 	}
 }
 

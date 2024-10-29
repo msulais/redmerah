@@ -37,7 +37,7 @@ const LatexEditor: VoidComponent<{
 	function copy(): void {
 		getNavigator()
 		[_clipboard]
-		[_writeText](props[_settings][_prefix] + props[_latex] + props[_settings][_suffix])
+		[_writeText](props[_settings][_prefix] + props[_latex]() + props[_settings][_suffix])
 		[_then](() => {
 			if (timeoutCopyId() != null) clearTimeDelayed(timeoutCopyId()!)
 
