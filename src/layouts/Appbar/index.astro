@@ -16,11 +16,48 @@ const { route } = Astro.props
 ---
 
 <header class={CSS.header} id="_appbar" data-top>
-	<LinkButton variant={ButtonVariant.outlined} href={RoutesLinks.home}><img src={logo.src} alt="Redmerah logo" /> Redmerah</LinkButton>
+	<LinkButton href={RoutesLinks.home}>
+		<svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+			<rect y="10" width="8" height="22" rx="2" fill="rgb(var(--g-color-accent))"/>
+			<path d="M14.1504 19.4785C12.7754 18.4093 12.0879 17.8747 12.0142 17.4068C11.9505 17.0018 12.1036 16.5932 12.4224 16.3179C12.7906 16 13.6786 16 15.4544 16H29.9394C30.6607 16 31.0213 16 31.2968 16.1336C31.5391 16.251 31.7362 16.4385 31.8596 16.669C32 16.9311 32 17.2743 32 17.9605V29.2243C32 30.5454 32 31.2059 31.7161 31.5421C31.4693 31.8344 31.0954 32.0031 30.7013 32C30.2481 31.9963 29.7105 31.5783 28.6354 30.7423L14.1504 19.4785Z" fill="rgba(var(--g-color-accent),.64)"/>
+			<rect x="22" width="8" height="22" rx="2" transform="rotate(90 22 0)" fill="rgba(var(--g-color-accent),.64)"/>
+			<path d="M31.0477 3.02574C31.6985 2.0423 32.0239 1.55059 31.9986 1.14307C31.9766 0.788019 31.8005 0.460331 31.5166 0.246004C31.1908 0 30.6011 0 29.4219 0H11.9496C11.2672 0 10.926 0 10.6653 0.132816C10.436 0.249644 10.2496 0.43606 10.1328 0.665348C10 0.926014 10 1.26724 10 1.9497V28.3519C10 30.2994 10 31.2731 10.3413 31.6271C10.636 31.9329 11.0688 32.0632 11.4833 31.9709C11.9633 31.864 12.5007 31.052 13.5754 29.4279L31.0477 3.02574Z" fill="rgb(var(--g-color-accent))"/>
+		</svg>
+		Redmerah
+	</LinkButton>
 	<nav>
-		<LinkButton classList={[CSS.desktop_only]} selected={route == RoutesLinks.apps} href={RoutesLinks.apps}><Icon code={0xE063} filled/>Apps</LinkButton>
-		<LinkButton classList={[CSS.desktop_only]} selected={route == RoutesLinks.about} href={RoutesLinks.about}><Icon code={0xE930}/>About</LinkButton>
-		<LinkButton classList={[CSS.desktop_only]} href={ExternalLinks.donate} openInNewTab><Icon code={0xE84B}/>Donate</LinkButton>
+		<LinkButton
+			classList={[CSS.desktop_only]}
+			variant={route == RoutesLinks.apps? ButtonVariant.tonal : undefined}
+			selected={route == RoutesLinks.apps}
+			href={RoutesLinks.apps}>
+			<Icon
+				code={0xE063}
+				filled={route == RoutesLinks.apps}
+				style={route == RoutesLinks.apps? 'color:rgb(var(--g-color-accent))' : undefined}
+			/>
+			Apps
+		</LinkButton>
+		<LinkButton
+			classList={[CSS.desktop_only]}
+			variant={route == RoutesLinks.about? ButtonVariant.tonal : undefined}
+			selected={route == RoutesLinks.about}
+			href={RoutesLinks.about}>
+			<Icon
+				code={0xE930}
+				filled={route == RoutesLinks.about}
+				style={route == RoutesLinks.about? 'color:rgb(var(--g-color-accent))' : undefined}
+			/>
+			About
+		</LinkButton>
+		<LinkButton
+			classList={[CSS.desktop_only]}
+			href={ExternalLinks.donate}
+			openInNewTab>
+			<Icon code={0xE84B}/>
+			Donate
+			<Icon code={0xE17D} inline/>
+		</LinkButton>
 	</nav>
 	<div>
 		<SettingsElement client:only="solid-js"/>

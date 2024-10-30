@@ -47,7 +47,7 @@
 		padding: 4px 12px 4px 8px;
 		font-size: var(--g-font-size-m);
 
-		& img {
+		& svg {
 			width: 20px;
 
 			:root[data-platform=mobile] & { width: 24px }
