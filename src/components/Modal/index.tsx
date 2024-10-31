@@ -223,6 +223,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 	let $gap: number = 0
 	let $padding: number = 0
 	let $position: ModalPosition = ModalPosition[_centerBottom]
+	let timeout_reposition_id: number | null = null
 
 	// different of mouse position to top-left of modal position `diffPosition = abs(mousePosition - targetPosition)`
 	let diffPositionX: number = 0
@@ -685,7 +686,13 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 	}
 
 	function initMutationObserver(): void {
-		const childrenObserver = new MutationObserver(() => repositionModal())
+		const childrenObserver = new MutationObserver(() => {
+			if (timeout_reposition_id != null) endTimeout(timeout_reposition_id)
+			timeout_reposition_id = startTimeout(() => {
+				repositionModal()
+				timeout_reposition_id = null
+			}, 1000)
+		})
 		childrenObserver[_observe](modal_ref, {subtree: true, childList: true})
 
 		onCleanup(() => {
