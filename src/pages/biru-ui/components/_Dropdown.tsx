@@ -1,29 +1,29 @@
-import { createSignal, Show, type VoidComponent } from "solid-js"
+import { createSignal, For, Show, type VoidComponent } from "solid-js"
 
-import { _checked, _currentTarget, _slice, _valueAsNumber } from "@/constants/string"
+import { _checked, _currentTarget, _filled, _outlined, _slice, _tonal, _transparent, _value, _valueAsNumber } from "@/constants/string"
 import { safeNumber } from "@/utils/math"
 
 import CheckBox from "@/components/CheckBox"
 import { NumberTextField } from "@/components/TextField"
-import Dropdown, { DropdownDivider, DropdownHeader, DropdownItem, type Item } from "@/components/Dropdown"
+import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
+import { ButtonVariant } from "@/components/Button"
 
 const _: VoidComponent = () => {
 	const [multiple, setMultiple] = createSignal<boolean>(false)
-	const [header, setHeader] = createSignal<boolean>(true)
-	const [footer, setFooter] = createSignal<boolean>(true)
-	const [dividers, setDividers] = createSignal<boolean>(false)
-	const [labels, setLabels] = createSignal<boolean>(false)
-	const [readOnly, setReadOnly] = createSignal<boolean>(false)
-	const [compact, setCompact] = createSignal<boolean>(false)
+	const [label, setLabel] = createSignal<boolean>(true)
 	const [count, setCount] = createSignal<number>(10)
+	const [variant, setVariant] = createSignal<ButtonVariant>(ButtonVariant[_tonal])
 	return (<Page
 		title="Dropdown"
 		description="A dropdown is a UI element that displays a list of options when clicked. It provides a compact way to present multiple choices while saving screen space.">
 		<Playground>
 			<Dropdown
-				compact={compact()}
-				items={[
+				multiple={multiple()}
+				variant={variant()}
+				label={label()? "Animals" : undefined}
+				text="Select animal">
+				<For each={[
 					[0, 'Tiger'],
 					[1, 'Lion'],
 					[2, 'Girrafe'],
@@ -34,28 +34,9 @@ const _: VoidComponent = () => {
 					[7, 'Komodo'],
 					[8, 'Orangutan'],
 					[9, 'Fish'],
-					[10, 'Bird']
-				][_slice](0, count()) as Item[]}
-				readOnly={readOnly()}
-				multiple={multiple()}
-				header={<Show when={header()}>
-					<DropdownHeader>Animals</DropdownHeader>
-					<DropdownDivider />
-				</Show>}
-				footer={<Show when={footer()}>
-					<DropdownDivider />
-					<DropdownItem iconCode={0xE007}>Add animal</DropdownItem>
-					<DropdownItem iconCode={0xE59D}>Clear selected animals</DropdownItem>
-				</Show>}
-				dividerIndexs={dividers()? [1, 3, 8] : undefined}
-				labels={labels()? [
-					[1, 'label 1'],
-					[3, 'label 2'],
-					[8, 'label 3'],
-				] : undefined}
-				labelText="Animals"
-				placeholder="Select animals"
-			/>
+				][_slice](0, count()) as [number, string][]}>{option =>
+				<DropdownOption value={option[0]} text={option[1]}/>}</For>
+			</Dropdown>
 		</Playground>
 		<PlaygroundOptions>
 			<NumberTextField
@@ -65,40 +46,26 @@ const _: VoidComponent = () => {
 				max={10}
 				onBlur={(ev) => setCount(c => safeNumber(ev[_currentTarget][_valueAsNumber], c))}
 			/>
+			<Dropdown
+				label="Variant"
+				values={[variant()]}
+				onChangeOptions={(items) => setVariant(items[0][_value] as ButtonVariant)}>
+				<For each={[
+					[ButtonVariant[_filled], 'Filled'],
+					[ButtonVariant[_tonal], 'Tonal'],
+					[ButtonVariant[_outlined], 'Outlined'],
+					[ButtonVariant[_transparent], 'Transparent'],
+				]}>{option => <DropdownOption value={option[0]} text={option[1] as string} />}</For>
+			</Dropdown>
 			<CheckBox
 				checked={multiple()}
 				onChange={ev => setMultiple(ev[_currentTarget][_checked])}>
 				Multiple
 			</CheckBox>
 			<CheckBox
-				checked={header()}
-				onChange={ev => setHeader(ev[_currentTarget][_checked])}>
-				Header
-			</CheckBox>
-			<CheckBox
-				checked={footer()}
-				onChange={ev => setFooter(ev[_currentTarget][_checked])}>
-				Footer
-			</CheckBox>
-			<CheckBox
-				checked={dividers()}
-				onChange={ev => setDividers(ev[_currentTarget][_checked])}>
-				Dividers
-			</CheckBox>
-			<CheckBox
-				checked={labels()}
-				onChange={ev => setLabels(ev[_currentTarget][_checked])}>
-				Labels
-			</CheckBox>
-			<CheckBox
-				checked={readOnly()}
-				onChange={ev => setReadOnly(ev[_currentTarget][_checked])}>
-				Read only
-			</CheckBox>
-			<CheckBox
-				checked={compact()}
-				onChange={ev => setCompact(ev[_currentTarget][_checked])}>
-				Compact
+				checked={label()}
+				onChange={ev => setLabel(ev[_currentTarget][_checked])}>
+				Label
 			</CheckBox>
 		</PlaygroundOptions>
 	</Page>)

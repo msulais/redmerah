@@ -1,13 +1,13 @@
-import { createSignal, Show, type VoidComponent } from "solid-js"
+import { createSignal, For, Show, type VoidComponent } from "solid-js"
 
-import { _centerTop, _tonal, _filled, _centerBottom, _leftBottom, _leftTop, _rightBottom, _rightTop, _checked, _currentTarget, _valueAsNumber } from "@/constants/string"
+import { _centerTop, _tonal, _filled, _centerBottom, _leftBottom, _leftTop, _rightBottom, _rightTop, _checked, _currentTarget, _valueAsNumber, _value } from "@/constants/string"
 import { safeNumber } from "@/utils/math"
 
 import Icon from "@/components/Icon"
 import Button, { ButtonVariant, IconButton } from "@/components/Button"
 import CheckBox from "@/components/CheckBox"
 import { NumberTextField } from "@/components/TextField"
-import Dropdown from "@/components/Dropdown"
+import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import Toast, { closeToast, openToast, ToastPosition } from "@/components/Toast"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
 
@@ -65,18 +65,18 @@ const _: VoidComponent = () => {
 				/>
 			</Show>
 			<Dropdown
-				labelText="Position"
-				items={[
+				label="Position"
+				values={[position()]}
+				onChangeOptions={(options) => setPosition(options[0][_value] as ToastPosition)}>
+				<For each={[
 					[ToastPosition[_centerBottom], 'Center bottom'],
 					[ToastPosition[_centerTop], 'Center top'],
 					[ToastPosition[_leftBottom], 'Left bottom'],
 					[ToastPosition[_leftTop], 'Left top'],
 					[ToastPosition[_rightBottom], 'Right bottom'],
 					[ToastPosition[_rightTop], 'Right top'],
-				]}
-				selectedValues={[position()]}
-				onSelectedItemsChanged={(items) => setPosition(items[0][0] as ToastPosition)}
-			/>
+				]}>{option => <DropdownOption value={option[0]} text={option[1] as string} />}</For>
+			</Dropdown>
 			<CheckBox
 				checked={header()}
 				onChange={ev => setHeader(ev[_currentTarget][_checked])}>

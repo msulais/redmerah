@@ -1,9 +1,9 @@
-import { type VoidComponent, createSignal } from "solid-js"
+import { For, type VoidComponent, createSignal } from "solid-js"
 
-import { _check, _checked, _currentTarget, _radio } from "@/constants/string"
+import { _check, _checked, _currentTarget, _radio, _value } from "@/constants/string"
 
 import CheckBox, { CheckBoxVariant } from "@/components/CheckBox"
-import Dropdown from "@/components/Dropdown"
+import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
 
 const _: VoidComponent = () => {
@@ -34,15 +34,14 @@ const _: VoidComponent = () => {
 		</Playground>
 		<PlaygroundOptions>
 			<Dropdown
-				labelText="Variant"
-				style={{width: '100px'}}
-				items={[
+				label="Variant"
+				onChangeOptions={(items) => setVariant(items[0][_value] as CheckBoxVariant)}
+				values={[variant()]}>
+				<For each={[
 					[CheckBoxVariant[_check], 'Check'],
 					[CheckBoxVariant[_radio], 'Radio'],
-				]}
-				onSelectedItemsChanged={(items) => setVariant(items[0][0] as CheckBoxVariant)}
-				selectedValues={[variant()]}
-			/>
+				]}>{option => <DropdownOption value={option[0]} text={option[1] as string} />}</For>
+			</Dropdown>
 			<CheckBox
 				checked={disabled()}
 				onChange={ev => setDisabled(ev[_currentTarget][_checked])}>

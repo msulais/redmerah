@@ -1,12 +1,12 @@
-import { createSignal, Show, type VoidComponent } from "solid-js"
+import { createSignal, For, Show, type VoidComponent } from "solid-js"
 
-import { _tonal, _filled, _outlined, _transparent, _checked, _currentTarget } from "@/constants/string"
+import { _tonal, _filled, _outlined, _transparent, _checked, _currentTarget, _value } from "@/constants/string"
 import { eventStopPropagation } from "@/utils/event"
 
 import Icon from "@/components/Icon"
 import { IconButton } from "@/components/Button"
 import CheckBox from "@/components/CheckBox"
-import Dropdown from "@/components/Dropdown"
+import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import Expander, { ExpanderHeader, ExpanderVariant } from "@/components/Expander"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
 
@@ -42,16 +42,16 @@ const _: VoidComponent = () => {
 		</Playground>
 		<PlaygroundOptions>
 			<Dropdown
-				labelText="Variant"
-				items={[
+				label="Variant"
+				values={[variant()]}
+				onChangeOptions={(items) => setVariant(items[0][_value] as ExpanderVariant)}>
+				<For each={[
 					[ExpanderVariant[_filled], 'Filled'],
 					[ExpanderVariant[_tonal], 'Tonal'],
 					[ExpanderVariant[_outlined], 'Outlined'],
 					[ExpanderVariant[_transparent], 'Transparent'],
-				]}
-				selectedValues={[variant()]}
-				onSelectedItemsChanged={(items) => setVariant(items[0][0] as ExpanderVariant)}
-			/>
+				]}>{option => <DropdownOption value={option[0]} text={option[1] as string} />}</For>
+			</Dropdown>
 			<CheckBox
 				checked={title()}
 				onChange={ev => setTitle(ev[_currentTarget][_checked])}>

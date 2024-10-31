@@ -1,6 +1,6 @@
-import { createSignal, type VoidComponent } from "solid-js"
+import { createSignal, For, type VoidComponent } from "solid-js"
 
-import { _centerTop, _tonal, _leftTop, _leftCenterToBottom, _leftCenter, _leftCenterToTop, _leftBottom, _rightTop, _rightCenterToBottom, _rightCenter, _rightCenterToTop, _rightBottom, _centerTopToRight, _centerTopToLeft, _centerBottomToRight, _centerBottom, _centerBottomToLeft, _centerCenterLeftTop, _centerCenterLeft, _centerCenterLeftBottom, _centerCenterTop, _centerCenter, _centerCenterBottom, _centerCenterRightTop, _centerCenterRight, _centerCenterRightBottom, _currentTarget, _checked, _valueAsNumber } from "@/constants/string"
+import { _centerTop, _tonal, _leftTop, _leftCenterToBottom, _leftCenter, _leftCenterToTop, _leftBottom, _rightTop, _rightCenterToBottom, _rightCenter, _rightCenterToTop, _rightBottom, _centerTopToRight, _centerTopToLeft, _centerBottomToRight, _centerBottom, _centerBottomToLeft, _centerCenterLeftTop, _centerCenterLeft, _centerCenterLeftBottom, _centerCenterTop, _centerCenter, _centerCenterBottom, _centerCenterRightTop, _centerCenterRight, _centerCenterRightBottom, _currentTarget, _checked, _valueAsNumber, _value } from "@/constants/string"
 import { safeNumber } from "@/utils/math"
 
 import { RichTooltip, TextTooltip, TooltipPosition } from "@/components/Tooltip"
@@ -8,7 +8,7 @@ import Icon from "@/components/Icon"
 import Button, { ButtonVariant } from "@/components/Button"
 import CheckBox from "@/components/CheckBox"
 import { NumberTextField } from "@/components/TextField"
-import Dropdown from "@/components/Dropdown"
+import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
 
 const _: VoidComponent = () => {
@@ -58,7 +58,10 @@ const _: VoidComponent = () => {
 		</Playground>
 		<PlaygroundOptions>
 			<Dropdown
-				items={[
+				label="Position"
+				values={[position()]}
+				onChangeOptions={(options) => setPosition(options[0][_value] as TooltipPosition)}>
+				<For each={[
 					[TooltipPosition[_leftTop], 'Left top'],
 					[TooltipPosition[_leftCenterToBottom], 'Left center to bottom'],
 					[TooltipPosition[_leftCenter], 'Left center'],
@@ -84,11 +87,8 @@ const _: VoidComponent = () => {
 					[TooltipPosition[_centerCenterRightTop], 'Center center right top'],
 					[TooltipPosition[_centerCenterRight], 'Center center right'],
 					[TooltipPosition[_centerCenterRightBottom], 'Center center right bottom'],
-				]}
-				labelText="Position"
-				selectedValues={[position()]}
-				onSelectedItemsChanged={(items) => setPosition(items[0][0] as TooltipPosition)}
-			/>
+				]}>{option => <DropdownOption value={option[0]} text={option[1] as string} />}</For>
+			</Dropdown>
 			<NumberTextField
 				style={{width: '100px'}}
 				value={gap()}

@@ -18,7 +18,7 @@ import Icon from "@/components/Icon"
 import Button, { ButtonIndicatorPosition, ButtonVariant, IconButton } from "@/components/Button"
 import { NumberTextField } from "@/components/TextField"
 import Menu, { closeMenu, MenuDivider, MenuItem, MenuPosition, openMenu } from "@/components/Menu"
-import Dropdown from "@/components/Dropdown"
+import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import DatePicker, { openDatePicker } from "@/components/DatePicker"
 import CSSMiscellaneous from '@/styles/miscellaneous.module.scss'
 import CSS from './_styles.module.scss'
@@ -932,15 +932,15 @@ const DateCalculator: VoidComponent<{
 
 	return (<div class={CSS.input_output_date_calculator}>
 		<Dropdown
-			labelText="Operation"
-			selectedValues={[props[_settings][_date][_operation]]}
-			onSelectedItemsChanged={(items) => props[_command](Commands.change_settings_date_operation, items[0][0])}
-			items={[
+			label="Operation"
+			values={[props[_settings][_date][_operation]]}
+			onChangeOptions={(options) => props[_command](Commands.change_settings_date_operation, options[0][_value])}>
+			<For each={[
 				[DateOperation[_add], 'Add'],
 				[DateOperation[_subtract], 'Subtract'],
 				[DateOperation[_difference], 'Difference'],
-			]}
-		/>
+			]}>{option => <DropdownOption value={option[0]} text={option[1]}/>}</For>
+		</Dropdown>
 		<div>
 			<p>From</p>
 			<Button

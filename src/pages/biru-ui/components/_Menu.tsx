@@ -1,15 +1,15 @@
-import { createSignal, Show, type VoidComponent } from "solid-js"
+import { createSignal, For, Show, type VoidComponent } from "solid-js"
 
-import { _centerBottom, _tonal, _currentTarget, _leftTop, _leftCenterToBottom, _leftCenter, _leftCenterToTop, _leftBottom, _rightTop, _rightCenterToBottom, _rightCenter, _rightCenterToTop, _rightBottom, _centerTopToRight, _centerTop, _centerTopToLeft, _centerBottomToRight, _centerBottomToLeft, _centerCenterLeftTop, _centerCenterLeft, _centerCenterLeftBottom, _centerCenterTop, _centerCenter, _centerCenterBottom, _centerCenterRightTop, _centerCenterRight, _centerCenterRightBottom, _includes, _checked, _valueAsNumber } from "@/constants/string"
+import { _centerBottom, _tonal, _currentTarget, _leftTop, _leftCenterToBottom, _leftCenter, _leftCenterToTop, _leftBottom, _rightTop, _rightCenterToBottom, _rightCenter, _rightCenterToTop, _rightBottom, _centerTopToRight, _centerTop, _centerTopToLeft, _centerBottomToRight, _centerBottomToLeft, _centerCenterLeftTop, _centerCenterLeft, _centerCenterLeftBottom, _centerCenterTop, _centerCenter, _centerCenterBottom, _centerCenterRightTop, _centerCenterRight, _centerCenterRightBottom, _includes, _checked, _valueAsNumber, _value } from "@/constants/string"
 import { FlyoutPosition } from "@/enums/position"
 import { safeNumber } from "@/utils/math"
 
 import Icon from "@/components/Icon"
 import Button, { ButtonVariant } from "@/components/Button"
-import Menu, { MenuDivider, MenuHeader, MenuItem, MenuItemTrailingShortcut, openMenu, SubMenu, SubMenuItem, SwitchMenuItem } from "@/components/Menu"
+import Menu, { MenuDivider, MenuHeader, MenuItem, MenuItemTrailingShortcut, MenuPosition, openMenu, SubMenu, SubMenuItem, SwitchMenuItem } from "@/components/Menu"
 import TextField, { NumberTextField } from "@/components/TextField"
 import CheckBox from "@/components/CheckBox"
-import Dropdown from "@/components/Dropdown"
+import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
 
 const _: VoidComponent = () => {
@@ -112,37 +112,37 @@ const _: VoidComponent = () => {
 		</Playground>
 		<PlaygroundOptions>
 			<Dropdown
-				items={[
-					[FlyoutPosition[_leftTop], 'Left top'],
-					[FlyoutPosition[_leftCenterToBottom], 'Left center to bottom'],
-					[FlyoutPosition[_leftCenter], 'Left center'],
-					[FlyoutPosition[_leftCenterToTop], 'Left center to top'],
-					[FlyoutPosition[_leftBottom], 'Left bottom'],
-					[FlyoutPosition[_rightTop], 'Right top'],
-					[FlyoutPosition[_rightCenterToBottom], 'Right center to bottom'],
-					[FlyoutPosition[_rightCenter], 'Right center'],
-					[FlyoutPosition[_rightCenterToTop], 'Right center to top'],
-					[FlyoutPosition[_rightBottom], 'Right bottom'],
-					[FlyoutPosition[_centerTopToRight], 'Center top to right'],
-					[FlyoutPosition[_centerTop], 'Center top'],
-					[FlyoutPosition[_centerTopToLeft], 'Center top to left'],
-					[FlyoutPosition[_centerBottomToRight], 'Center bottom to right'],
-					[FlyoutPosition[_centerBottom], 'Center bottom'],
-					[FlyoutPosition[_centerBottomToLeft], 'Center bottom to left'],
-					[FlyoutPosition[_centerCenterLeftTop], 'Center center left top'],
-					[FlyoutPosition[_centerCenterLeft], 'Center center left'],
-					[FlyoutPosition[_centerCenterLeftBottom], 'Center center left bottom'],
-					[FlyoutPosition[_centerCenterTop], 'Center center top'],
-					[FlyoutPosition[_centerCenter], 'Center center'],
-					[FlyoutPosition[_centerCenterBottom], 'Center center bottom'],
-					[FlyoutPosition[_centerCenterRightTop], 'Center center right top'],
-					[FlyoutPosition[_centerCenterRight], 'Center center right'],
-					[FlyoutPosition[_centerCenterRightBottom], 'Center center right bottom'],
-				]}
-				labelText="Position"
-				selectedValues={[position()]}
-				onSelectedItemsChanged={(items) => setPosition(items[0][0] as FlyoutPosition)}
-			/>
+				label="Position"
+				values={[position()]}
+				onChangeOptions={(options) => setPosition(options[0][_value] as MenuPosition)}>
+				<For each={[
+					[MenuPosition[_leftTop], 'Left top'],
+					[MenuPosition[_leftCenterToBottom], 'Left center to bottom'],
+					[MenuPosition[_leftCenter], 'Left center'],
+					[MenuPosition[_leftCenterToTop], 'Left center to top'],
+					[MenuPosition[_leftBottom], 'Left bottom'],
+					[MenuPosition[_rightTop], 'Right top'],
+					[MenuPosition[_rightCenterToBottom], 'Right center to bottom'],
+					[MenuPosition[_rightCenter], 'Right center'],
+					[MenuPosition[_rightCenterToTop], 'Right center to top'],
+					[MenuPosition[_rightBottom], 'Right bottom'],
+					[MenuPosition[_centerTopToRight], 'Center top to right'],
+					[MenuPosition[_centerTop], 'Center top'],
+					[MenuPosition[_centerTopToLeft], 'Center top to left'],
+					[MenuPosition[_centerBottomToRight], 'Center bottom to right'],
+					[MenuPosition[_centerBottom], 'Center bottom'],
+					[MenuPosition[_centerBottomToLeft], 'Center bottom to left'],
+					[MenuPosition[_centerCenterLeftTop], 'Center center left top'],
+					[MenuPosition[_centerCenterLeft], 'Center center left'],
+					[MenuPosition[_centerCenterLeftBottom], 'Center center left bottom'],
+					[MenuPosition[_centerCenterTop], 'Center center top'],
+					[MenuPosition[_centerCenter], 'Center center'],
+					[MenuPosition[_centerCenterBottom], 'Center center bottom'],
+					[MenuPosition[_centerCenterRightTop], 'Center center right top'],
+					[MenuPosition[_centerCenterRight], 'Center center right'],
+					[MenuPosition[_centerCenterRightBottom], 'Center center right bottom'],
+				]}>{option => <DropdownOption value={option[0]} text={option[1] as string} />}</For>
+			</Dropdown>
 			<NumberTextField
 				style={{width: '100px'}}
 				value={gap()}

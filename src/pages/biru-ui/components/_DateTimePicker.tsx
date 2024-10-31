@@ -1,13 +1,13 @@
-import { Show, type VoidComponent, createSignal } from "solid-js"
+import { For, Show, type VoidComponent, createSignal } from "solid-js"
 
 import { getDate_Y, getDateString_YMD, getDateString_YMD_HM } from "@/utils/datetime"
-import { _tonal, _currentTarget } from "@/constants/string"
+import { _tonal, _currentTarget, _value } from "@/constants/string"
 
 import Tooltip from "@/components/Tooltip"
 import Icon from "@/components/Icon"
 import Button, { ButtonVariant } from "@/components/Button"
 import TextField, { TextFieldButton } from "@/components/TextField"
-import Dropdown from "@/components/Dropdown"
+import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import DatePicker, { openDatePicker } from "@/components/DatePicker"
 import DateTimePicker from "@/components/DateTimePicker"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
@@ -52,9 +52,10 @@ const _: VoidComponent = () => {
 		</Playground>
 		<PlaygroundOptions>
 			<Dropdown
-				labelText="Locale"
-				style={{width: '100px'}}
-				items={[
+				label="Locale"
+				onChangeOptions={(items) => setLocale(items[0][_value] as Intl.LocalesArgument)}
+				values={[locale() as string]}>
+				<For each={[
 					['en-US', 'English (US)'],
 					['es-ES', 'Spanish'],
 					['fr-FR', 'French'],
@@ -65,10 +66,8 @@ const _: VoidComponent = () => {
 					['ru-RU', 'Russian'],
 					['ar-SA', 'Arabic'],
 					['ko-KR', 'Korean'],
-				]}
-				onSelectedItemsChanged={(items) => setLocale(items[0][0] as Intl.LocalesArgument)}
-				selectedValues={[locale() as string]}
-			/>
+				]}>{option => <DropdownOption value={option[0]} text={option[1] as string} />}</For>
+			</Dropdown>
 			<TextField
 				style={{width: '164px'}}
 				labelText={'First date'}

@@ -1,4 +1,4 @@
-import { Match, Show, Switch, type VoidComponent, createEffect, createMemo, createSignal } from "solid-js";
+import { For, Match, Show, Switch, type VoidComponent, createEffect, createMemo, createSignal } from "solid-js";
 import type { SetStoreFunction, Store } from "solid-js/store/types/store";
 
 import type { ItemList, Settings } from "./_types";
@@ -13,7 +13,7 @@ import Icon from "@/components/Icon";
 import { TextTooltip } from "@/components/Tooltip";
 import TextField, { NumberTextField, TextFieldButton, changeTextFieldValue } from "@/components/TextField";
 import Menu, { closeMenu, MenuDivider, MenuHeader, MenuItem, MenuPosition, openMenu } from "@/components/Menu";
-import Dropdown, { type Item } from "@/components/Dropdown";
+import Dropdown, { DropdownOption } from "@/components/Dropdown";
 import CSS from './_styles.module.scss'
 
 const Teams: VoidComponent<{
@@ -28,8 +28,8 @@ const Teams: VoidComponent<{
 	let dropdownMenu_membersLists_ref: HTMLDialogElement
 	let menu_action_ref: HTMLDialogElement
 
-	function itemListToDropdownList(list: ItemList[]): Item[] {
-		const items: Item[] = []
+	function itemListToDropdownList(list: ItemList[]): [number, string, string][] {
+		const items: [number, string, string][] = []
 
 		for (const l of list) {
 			items[_push]([l[_id], l[_name], l[_items][_length] + ''])
@@ -67,105 +67,111 @@ const Teams: VoidComponent<{
 			value={settings()[_count]}
 		/>
 		<Dropdown
-			labelText="Names"
-			selectedValues={[settings()[_namesList][_id]]}
-			items={[...itemListToDropdownList(props[_lists][0])]}
-			wrapperAttr={{ style: { width: 'min(100%, 164px)' } }}
-			onSelectedItemsChanged={(items) => changeNamesList(items[0][0] as number)}
-			menuAttr={{ ref: (r) => dropdownMenu_namesLists_ref = r }}
-			refs={(r, item) => {
-				r[_oncontextmenu] = (ev) => {
-					for (const li of props[_lists][0]) {
-						if (li[_id] != item[0]) continue;
-						setList(li)
-						break
-					}
-					setIsActionOpenForNamesList(true)
-					openMenu(ev, menu_action_ref, {
-						position: MenuPosition[_centerBottomToRight]
-					})
-					eventPreventDefault(ev)
-				}
-			}}
-			header={<Show when={props[_lists][0][_length] > 0}><MenuHeader>Select list</MenuHeader></Show>}
-			footer={<Show when={props[_lists][0][_length] > 0}>
-				<MenuDivider />
-				<MenuItem
-					onClick={(ev) => {
-						props[_command](Commands[_add_list], ev)
-						closeMenu(dropdownMenu_namesLists_ref)
+			label="Names"
+			values={[settings()[_namesList][_id]]}
+			onChangeOptions={(options) => changeNamesList(options[0][_value] as number)}
+			menuAttr={{ ref: (r) => dropdownMenu_namesLists_ref = r }}>
+			<MenuItem
+				onClick={(ev) => {
+					props[_command](Commands[_add_list], ev)
+					closeMenu(dropdownMenu_namesLists_ref)
+				}}
+				iconCode={0xE007}>
+				Add new list
+			</MenuItem>
+			<MenuItem
+				onClick={(ev) => {
+					props[_command](Commands[_reset_list], ev)
+					closeMenu(dropdownMenu_namesLists_ref)
+				}}
+				iconCode={0xF09A}>
+				Reset all list
+			</MenuItem>
+			<MenuItem
+				onClick={(ev) => {
+					props[_command](Commands[_edit_list], ev)
+					closeMenu(dropdownMenu_namesLists_ref)
+				}}
+				iconCode={0xE069}>
+				Edit list
+			</MenuItem>
+			<MenuDivider />
+			<Show when={props[_lists][0][_length] > 0}>
+				<MenuHeader>Select list</MenuHeader>
+			</Show>
+			<For each={itemListToDropdownList(props[_lists][0])}>{option =>
+				<DropdownOption
+					value={option[0]}
+					text={option[1]}
+					trailing={option[2]}
+					onContextMenu={ev => {
+						for (const li of props[_lists][0]) {
+							if (li[_id] != option[0]) continue;
+							setList(li)
+							break
+						}
+						setIsActionOpenForNamesList(true)
+						openMenu(ev, menu_action_ref, {
+							position: MenuPosition[_centerBottomToRight]
+						})
+						eventPreventDefault(ev)
 					}}
-					iconCode={0xE007}>
-					Add new list
-				</MenuItem>
-				<MenuItem
-					onClick={(ev) => {
-						props[_command](Commands[_reset_list], ev)
-						closeMenu(dropdownMenu_namesLists_ref)
-					}}
-					iconCode={0xF09A}>
-					Reset all list
-				</MenuItem>
-				<MenuItem
-					onClick={(ev) => {
-						props[_command](Commands[_edit_list], ev)
-						closeMenu(dropdownMenu_namesLists_ref)
-					}}
-					iconCode={0xE069}>
-					Edit list
-				</MenuItem>
-			</Show>}
-		/>
+				/>
+			}</For>
+		</Dropdown>
 		<Dropdown
-			labelText="Members"
-			selectedValues={[settings()[_membersList][_id]]}
-			items={[...itemListToDropdownList(props[_lists][0])]}
-			wrapperAttr={{ style: { width: 'min(100%, 164px)' } }}
-			onSelectedItemsChanged={items => changeMembersList(items[0][0] as number)}
-			menuAttr={{ ref: (r) => dropdownMenu_membersLists_ref = r }}
-			refs={(r, value) => {
-				r[_oncontextmenu] = (ev) => {
-					for (const li of props[_lists][0]) {
-						if (li[_id] != value[0]) continue;
-						setList(li)
-						break
-					}
-					setIsActionOpenForNamesList(false)
-					openMenu(ev, menu_action_ref, {
-						position: MenuPosition[_centerBottomToRight]
-					})
-					eventPreventDefault(ev)
-				}
-			}}
-			header={<Show when={props[_lists][0][_length] > 0}><MenuHeader>Select list</MenuHeader></Show>}
-			footer={<Show when={props[_lists][0][_length] > 0}>
-				<MenuDivider />
-				<MenuItem
-					onClick={(ev) => {
-						props[_command](Commands[_add_list], ev)
-						closeMenu(dropdownMenu_membersLists_ref)
+			label="Members"
+			values={[settings()[_membersList][_id]]}
+			onChangeOptions={options => changeMembersList(options[0][_value] as number)}
+			menuAttr={{ ref: (r) => dropdownMenu_membersLists_ref = r }}>
+			<MenuItem
+				onClick={(ev) => {
+					props[_command](Commands[_add_list], ev)
+					closeMenu(dropdownMenu_membersLists_ref)
+				}}
+				iconCode={0xE007}>
+				Add new list
+			</MenuItem>
+			<MenuItem
+				onClick={(ev) => {
+					props[_command](Commands[_reset_list], ev)
+					closeMenu(dropdownMenu_membersLists_ref)
+				}}
+				iconCode={0xF09A}>
+				Reset all list
+			</MenuItem>
+			<MenuItem
+				onClick={(ev) => {
+					props[_command](Commands[_edit_list], ev)
+					closeMenu(dropdownMenu_membersLists_ref)
+				}}
+				iconCode={0xE069}>
+				Edit list
+			</MenuItem>
+			<MenuDivider />
+			<Show when={props[_lists][0][_length] > 0}>
+				<MenuHeader>Select list</MenuHeader>
+			</Show>
+			<For each={itemListToDropdownList(props[_lists][0])}>{option =>
+				<DropdownOption
+					value={option[0]}
+					text={option[1]}
+					trailing={option[2]}
+					onContextMenu={ev => {
+						for (const li of props[_lists][0]) {
+							if (li[_id] != option[0]) continue;
+							setList(li)
+							break
+						}
+						setIsActionOpenForNamesList(false)
+						openMenu(ev, menu_action_ref, {
+							position: MenuPosition[_centerBottomToRight]
+						})
+						eventPreventDefault(ev)
 					}}
-					iconCode={0xE007}>
-					Add new list
-				</MenuItem>
-				<MenuItem
-					onClick={(ev) => {
-						props[_command](Commands[_reset_list], ev)
-						closeMenu(dropdownMenu_membersLists_ref)
-					}}
-					iconCode={0xF09A}>
-					Reset all list
-				</MenuItem>
-				<MenuItem
-					onClick={(ev) => {
-						props[_command](Commands[_edit_list], ev)
-						closeMenu(dropdownMenu_membersLists_ref)
-					}}
-					iconCode={0xE069}>
-					Edit list
-				</MenuItem>
-			</Show>}
-		/>
+				/>
+			}</For>
+		</Dropdown>
 		<Menu ref={r => menu_action_ref = r} style={{width: '164px'}}>
 			<Show when={list() && list()![_id] != (isActionOpenForNamesList()? settings()[_namesList][_id] : settings()[_membersList][_id])}>
 				<MenuItem
@@ -235,8 +241,8 @@ const Selection: VoidComponent<{
 	let menu_dropdown_ref: HTMLDialogElement
 	let menu_action_ref: HTMLDialogElement
 
-	function itemListToDropdownList(list: ItemList[]): Item[] {
-		const items: Item[] = []
+	function itemListToDropdownList(list: ItemList[]): [number, string, string][] {
+		const items: [number, string, string][] = []
 
 		for (const l of list) {
 			items[_push]([l[_id], l[_name], l[_items][_length] + ''])
@@ -256,54 +262,57 @@ const Selection: VoidComponent<{
 
 	return (<>
 		<Dropdown
-			labelText="List"
-			selectedValues={[props[_settings][0][_selection][_list][_id]]}
-			items={[...itemListToDropdownList(props[_lists][0])]}
-			wrapperAttr={{ style: { width: 'min(100%, 164px)' }}}
-			onSelectedItemsChanged={items => changeList(items[0][0] as number)}
-			menuAttr={{ ref: (r) => menu_dropdown_ref = r }}
-			refs={(r, value) => {
-				r[_oncontextmenu] = (ev) => {
-					for (const li of props[_lists][0]) {
-						if (li[_id] != value[0]) continue;
-						setList(li)
-						break
-					}
-					openMenu(ev, menu_action_ref, {
-						position: MenuPosition[_centerBottomToRight]
-					})
-					eventPreventDefault(ev)
-				}
-			}}
-			header={<Show when={props[_lists][0][_length] > 0}><MenuHeader>Select list</MenuHeader></Show>}
-			footer={<Show when={props[_lists][0][_length] > 0}>
-				<MenuDivider />
-				<MenuItem
-					onClick={(ev) => {
-						props[_command](Commands[_add_list], ev)
-						closeMenu(menu_dropdown_ref)
+			label="List"
+			values={[props[_settings][0][_selection][_list][_id]]}
+			onChangeOptions={options => changeList(options[0][_value] as number)}
+			menuAttr={{ ref: (r) => menu_dropdown_ref = r }}>
+			<MenuItem
+				onClick={(ev) => {
+					props[_command](Commands[_add_list], ev)
+					closeMenu(menu_dropdown_ref)
+				}}
+				iconCode={0xE007}>
+				Add new list
+			</MenuItem>
+			<MenuItem
+				onClick={(ev) => {
+					props[_command](Commands[_reset_list], ev)
+					closeMenu(menu_dropdown_ref)
+				}}
+				iconCode={0xF09A}>
+				Reset all list
+			</MenuItem>
+			<MenuItem
+				onClick={(ev) => {
+					props[_command](Commands[_edit_list], ev)
+					closeMenu(menu_dropdown_ref)
+				}}
+				iconCode={0xE069}>
+				Edit list
+			</MenuItem>
+			<MenuDivider />
+			<Show when={props[_lists][0][_length] > 0}>
+				<MenuHeader>Select list</MenuHeader>
+			</Show>
+			<For each={itemListToDropdownList(props[_lists][0])}>{option =>
+				<DropdownOption
+					value={option[0]}
+					text={option[1]}
+					trailing={option[2]}
+					onContextMenu={ev => {
+						for (const li of props[_lists][0]) {
+							if (li[_id] != option[0]) continue;
+							setList(li)
+							break
+						}
+						openMenu(ev, menu_action_ref, {
+							position: MenuPosition[_centerBottomToRight]
+						})
+						eventPreventDefault(ev)
 					}}
-					iconCode={0xE007}>
-					Add new list
-				</MenuItem>
-				<MenuItem
-					onClick={(ev) => {
-						props[_command](Commands[_reset_list], ev)
-						closeMenu(menu_dropdown_ref)
-					}}
-					iconCode={0xF09A}>
-					Reset all list
-				</MenuItem>
-				<MenuItem
-					onClick={(ev) => {
-						props[_command](Commands[_edit_list], ev)
-						closeMenu(menu_dropdown_ref)
-					}}
-					iconCode={0xE069}>
-					Edit list
-				</MenuItem>
-			</Show>}
-		/>
+				/>
+			}</For>
+		</Dropdown>
 		<Menu ref={r => menu_action_ref = r} style={{width: '164px'}}>
 			<Show when={list() && list()![_id] != props[_settings][0][_selection][_list][_id]}>
 				<MenuItem
@@ -378,8 +387,8 @@ const Words: VoidComponent<{
 	let menu_dropdown_ref: HTMLDialogElement
 	let menu_action_ref: HTMLDialogElement
 
-	function itemListToDropdownList(list: ItemList[]): Item[] {
-		const items: Item[] = []
+	function itemListToDropdownList(list: ItemList[]): [number, string, string][] {
+		const items: [number, string, string][] = []
 
 		for (const l of list) {
 			items[_push]([l[_id], l[_name], l[_items][_length] + ''])
@@ -399,54 +408,57 @@ const Words: VoidComponent<{
 
 	return (<>
 		<Dropdown
-			labelText="List"
-			selectedValues={[props[_settings][0][_words][_list][_id]]}
-			items={[...itemListToDropdownList(props[_lists][0])]}
-			wrapperAttr={{ style: { width: 'min(100%, 164px)' } }}
-			onSelectedItemsChanged={items => changeList(items[0][0] as number)}
-			menuAttr={{ ref: (r) => menu_dropdown_ref = r }}
-			refs={(r, value) => {
-				r[_oncontextmenu] = (ev) => {
-					for (const li of props[_lists][0]) {
-						if (li[_id] != value[0]) continue;
-						setList(li)
-						break
-					}
-					openMenu(ev, menu_action_ref, {
-						position: MenuPosition[_centerBottomToRight]
-					})
-					eventPreventDefault(ev)
-				}
-			}}
-			header={<Show when={props[_lists][0][_length] > 0}><MenuHeader>Select list</MenuHeader></Show>}
-			footer={<Show when={props[_lists][0][_length] > 0}>
-				<MenuDivider />
-				<MenuItem
-					onClick={(ev) => {
-						props[_command](Commands[_add_list], ev)
-						closeMenu(menu_dropdown_ref)
+			label="List"
+			values={[props[_settings][0][_selection][_list][_id]]}
+			onChangeOptions={options => changeList(options[0][_value] as number)}
+			menuAttr={{ ref: (r) => menu_dropdown_ref = r }}>
+			<MenuItem
+				onClick={(ev) => {
+					props[_command](Commands[_add_list], ev)
+					closeMenu(menu_dropdown_ref)
+				}}
+				iconCode={0xE007}>
+				Add new list
+			</MenuItem>
+			<MenuItem
+				onClick={(ev) => {
+					props[_command](Commands[_reset_list], ev)
+					closeMenu(menu_dropdown_ref)
+				}}
+				iconCode={0xF09A}>
+				Reset all list
+			</MenuItem>
+			<MenuItem
+				onClick={(ev) => {
+					props[_command](Commands[_edit_list], ev)
+					closeMenu(menu_dropdown_ref)
+				}}
+				iconCode={0xE069}>
+				Edit list
+			</MenuItem>
+			<MenuDivider />
+			<Show when={props[_lists][0][_length] > 0}>
+				<MenuHeader>Select list</MenuHeader>
+			</Show>
+			<For each={itemListToDropdownList(props[_lists][0])}>{option =>
+				<DropdownOption
+					value={option[0]}
+					text={option[1]}
+					trailing={option[2]}
+					onContextMenu={ev => {
+						for (const li of props[_lists][0]) {
+							if (li[_id] != option[0]) continue;
+							setList(li)
+							break
+						}
+						openMenu(ev, menu_action_ref, {
+							position: MenuPosition[_centerBottomToRight]
+						})
+						eventPreventDefault(ev)
 					}}
-					iconCode={0xE007}>
-					Add new list
-				</MenuItem>
-				<MenuItem
-					onClick={(ev) => {
-						props[_command](Commands[_reset_list], ev)
-						closeMenu(menu_dropdown_ref)
-					}}
-					iconCode={0xF09A}>
-					Reset all list
-				</MenuItem>
-				<MenuItem
-					onClick={(ev) => {
-						props[_command](Commands[_edit_list], ev)
-						closeMenu(menu_dropdown_ref)
-					}}
-					iconCode={0xE069}>
-					Edit list
-				</MenuItem>
-			</Show>}
-		/>
+				/>
+			}</For>
+		</Dropdown>
 		<Menu ref={r => menu_action_ref = r} style={{width: '164px'}}>
 			<Show when={list() && list()![_id] != props[_settings][0][_words][_list][_id]}>
 				<MenuItem

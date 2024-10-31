@@ -1,12 +1,12 @@
-import { type VoidComponent, createSignal, Show } from "solid-js"
+import { type VoidComponent, createSignal, For, Show } from "solid-js"
 
-import { _transparent, _bottom, _filled, _tonal, _outlined, _top, _right, _left, _checked, _currentTarget } from "@/constants/string"
+import { _transparent, _bottom, _filled, _tonal, _outlined, _top, _right, _left, _checked, _currentTarget, _value } from "@/constants/string"
 
 import { TextTooltip } from "@/components/Tooltip"
 import Icon from "@/components/Icon"
 import Button, { ButtonIndicatorPosition, ButtonVariant, EmojiButton, FloatingActionButton, IconButton, LinkButton, LinkEmojiButton, LinkFloatingActionButton, LinkIconButton } from "@/components/Button"
 import CheckBox from "@/components/CheckBox"
-import Dropdown from "@/components/Dropdown"
+import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
 
 const _: VoidComponent = () => {
@@ -135,30 +135,28 @@ const _: VoidComponent = () => {
 		</Playground>
 		<PlaygroundOptions>
 			<Dropdown
-				labelText="Variant"
-				style={{width: '100px'}}
-				items={[
+				label="Variant"
+				values={[variant()]}
+				onChangeOptions={(items) => setVariant(items[0][_value] as ButtonVariant)}>
+				<For each={[
 					[ButtonVariant[_filled], 'Filled'],
 					[ButtonVariant[_tonal], 'Tonal'],
 					[ButtonVariant[_outlined], 'Outlined'],
 					[ButtonVariant[_transparent], 'Transparent'],
-				]}
-				onSelectedItemsChanged={(items) => setVariant(items[0][0] as ButtonVariant)}
-				selectedValues={[variant()]}
-			/>
+				]}>{option => <DropdownOption value={option[0]} text={option[1] as string} />}</For>
+			</Dropdown>
 			<Show when={selected()}>
 				<Dropdown
-					labelText="Indicator position"
-					style={{width: '100px'}}
-					items={[
+					label="Indicator position"
+					onChangeOptions={(items) => setIndicatorPosition(items[0][_value] as ButtonIndicatorPosition)}
+					values={[indicatorPosition()]}>
+					<For each={[
 						[ButtonIndicatorPosition[_top], 'Top'],
 						[ButtonIndicatorPosition[_right], 'Right'],
 						[ButtonIndicatorPosition[_bottom], 'Bottom'],
 						[ButtonIndicatorPosition[_left], 'Left'],
-					]}
-					onSelectedItemsChanged={(items) => setIndicatorPosition(items[0][0] as ButtonIndicatorPosition)}
-					selectedValues={[indicatorPosition()]}
-				/>
+					]}>{option => <DropdownOption value={option[0]} text={option[1] as string} />}</For>
+				</Dropdown>
 			</Show>
 			<CheckBox
 				checked={disabled()}

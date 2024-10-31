@@ -1,16 +1,16 @@
-import { createSignal, Show, type VoidComponent } from "solid-js"
+import { createSignal, For, Show, type VoidComponent } from "solid-js"
 
 import { safeNumber } from "@/utils/math"
 
 import { Page, Playground, PlaygroundOptions } from "../_Body"
 import Button, { ButtonVariant } from "@/components/Button"
-import { _centerBottom, _centerBottomToLeft, _centerBottomToRight, _centerCenter, _centerCenterBottom, _centerCenterLeft, _centerCenterLeftBottom, _centerCenterLeftTop, _centerCenterRight, _centerCenterRightBottom, _centerCenterRightTop, _centerCenterTop, _centerTop, _centerTopToLeft, _centerTopToRight, _checked, _currentTarget, _includes, _leftBottom, _leftCenter, _leftCenterToBottom, _leftCenterToTop, _leftTop, _rightBottom, _rightCenter, _rightCenterToBottom, _rightCenterToTop, _rightTop, _tonal, _valueAsNumber } from "@/constants/string"
+import { _centerBottom, _centerBottomToLeft, _centerBottomToRight, _centerCenter, _centerCenterBottom, _centerCenterLeft, _centerCenterLeftBottom, _centerCenterLeftTop, _centerCenterRight, _centerCenterRightBottom, _centerCenterRightTop, _centerCenterTop, _centerTop, _centerTopToLeft, _centerTopToRight, _checked, _currentTarget, _includes, _leftBottom, _leftCenter, _leftCenterToBottom, _leftCenterToTop, _leftTop, _rightBottom, _rightCenter, _rightCenterToBottom, _rightCenterToTop, _rightTop, _tonal, _value, _valueAsNumber } from "@/constants/string"
 import EmojiPicker, { EmojiPickerPosition, openEmojiPicker } from "@/components/EmojiPicker"
 import type { Emoji } from "@/types/emoji"
 import Icon from "@/components/Icon"
 import EmojiC from "@/components/Emoji"
 import CheckBox from "@/components/CheckBox"
-import Dropdown from "@/components/Dropdown"
+import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import { NumberTextField } from "@/components/TextField"
 
 const _: VoidComponent = () => {
@@ -54,7 +54,10 @@ const _: VoidComponent = () => {
 		</Playground>
 		<PlaygroundOptions>
 			<Dropdown
-				items={[
+				label="Position"
+				values={[position()]}
+				onChangeOptions={(options) => setPosition(options[0][_value] as EmojiPickerPosition)}>
+				<For each={[
 					[EmojiPickerPosition[_leftTop], 'Left top'],
 					[EmojiPickerPosition[_leftCenterToBottom], 'Left center to bottom'],
 					[EmojiPickerPosition[_leftCenter], 'Left center'],
@@ -80,11 +83,8 @@ const _: VoidComponent = () => {
 					[EmojiPickerPosition[_centerCenterRightTop], 'Center center right top'],
 					[EmojiPickerPosition[_centerCenterRight], 'Center center right'],
 					[EmojiPickerPosition[_centerCenterRightBottom], 'Center center right bottom'],
-				]}
-				labelText="Position"
-				selectedValues={[position()]}
-				onSelectedItemsChanged={(items) => setPosition(items[0][0] as EmojiPickerPosition)}
-			/>
+				]}>{option => <DropdownOption value={option[0]} text={option[1] as string} />}</For>
+			</Dropdown>
 			<NumberTextField
 				style={{width: '100px'}}
 				value={gap()}
