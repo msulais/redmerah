@@ -2,17 +2,18 @@ import { Transition } from 'solid-transition-group'
 import { createEffect, createMemo, createSignal, For, Match, mergeProps, Show, splitProps, Switch, type VoidComponent } from 'solid-js'
 import { mergeRefs } from '@solid-primitives/refs'
 
-import { _ref, _datetime, _onSelectDateTime, _firstDate, _lastDate, _locales, _children, _classList, _onClose, _day, _getDay, _includes, _setMonth, _month, _setFullYear, _year, _substring, _fill, _setDate, _getDate, _getMonth, _getFullYear, _filled, _outlined, _getHours, _setHours, _map, _padStart, _getMinutes, _setMinutes, _AM, _PM, _$24hour, _tonal, _animate, _finished, _spring, _then } from '@/constants/string'
+import { _ref, _datetime, _onSelectDateTime, _firstDate, _lastDate, _locales, _children, _classList, _onClose, _day, _getDay, _includes, _setMonth, _month, _setFullYear, _year, _substring, _fill, _setDate, _getDate, _getMonth, _getFullYear, _filled, _outlined, _getHours, _setHours, _map, _padStart, _getMinutes, _setMinutes, _AM, _PM, _$24hour, _tonal, _animate, _finished, _spring, _then, _value } from '@/constants/string'
 import { getCurrentDate, getDate_Y, getDate_M, getWeekdayNames, isOutDate_YMD, isSameDate_YMD, getMonthNames, isOutDate_YM, isSameDate_YM, isOutDate_Y, isSameDate_Y, getMonthText, isInDate_YM } from '@/utils/datetime'
 import { AnimationEffectTiming } from '@/enums/animation'
 import { TimeFormat } from '@/enums/datetime'
 import { callEventHandler } from '@/utils/event'
 
 import Button, { ButtonVariant, IconButton, SquareButton } from '@/components/Button'
-import Dropdown, { type Item as $DropdownItem } from '@/components/Dropdown'
+import Dropdown, { DropdownOption } from '@/components/Dropdown'
 import { closeModal, openModal, focusModal, Modal, type ModalProps, repositionModal, ModalPosition as DateTimePickerPosition } from '@/components/Modal'
 import Divider from '@/components/Divider'
 import './index.scss'
+import { MenuHeader } from '../Menu'
 
 enum DatePickerOption {
 	year,
@@ -224,53 +225,58 @@ const DateTimePicker: VoidComponent<DateTimePickerProps> = ($props) => {
 		</Transition>
 		<div class="c-datetime-picker-time">
 			<Dropdown
-				labelText="Hour"
-				selectedValues={[
+				values={[
 					value()[_getHours]() - (value()[_getHours]() >= 12 && !isTime24HourFormat()? 12 : 0)
 				]}
-				onSelectedItemsChanged={(items) =>
-					setValue(v => (v[_setHours](items[0][0] as number + (isTimePMFormat()? 12 : 0)), v))
-				}
-				items={[
+				onChangeOptions={(options) =>
+					setValue(v => (v[_setHours](options[0][_value] as number + (isTimePMFormat()? 12 : 0)), v))
+				}>
+				<MenuHeader>Hour</MenuHeader>
+				<For each={[
 					[0, '00'],
 					...new Array(isTime24HourFormat()? 23 : 11)[_fill](1)[_map]((_v, i) =>
-						[i+1, `${i+1}`[_padStart](2, '0')] as $DropdownItem
+						[i+1, `${i+1}`[_padStart](2, '0')]
 					),
-				]}
-			/>
+				]}>{option => <DropdownOption value={option[0]} text={option[1] as string}/>}</For>
+			</Dropdown>
 			<Dropdown
-				labelText="Minute"
-				selectedValues={[value()[_getMinutes]()]}
-				onSelectedItemsChanged={(items) => setValue(v => (v[_setMinutes](items[0][0] as number), v))}
-				items={new Array(60)[_fill](1)[_map]((_v, i) => [i, `${i}`[_padStart](2, '0')] as $DropdownItem)}
-			/>
+				values={[value()[_getMinutes]()]}
+				onChangeOptions={(options) => setValue(v => (v[_setMinutes](options[0][_value] as number), v))}>
+				<MenuHeader>Minute</MenuHeader>
+				<For each={new Array(60)[_fill](1)[_map]((_v, i) => [i, `${i}`[_padStart](2, '0')])}>{option =>
+					<DropdownOption value={option[0]} text={option[1] as string}/>
+				}</For>
+			</Dropdown>
 			<Dropdown
-				selectedValues={[_AM]}
-				onSelectedItemsChanged={(items) => {
+				values={[_AM]}
+				onChangeOptions={(options) => {
 					const hour = value()[_getHours]()
 					let $hour = hour
 
 					// from (AM | 24hour) to PM
 					if (
 						(isTimeAMFormat() || isTime24HourFormat())
-						&& items[0][0] == _PM
+						&& options[0][_value] == _PM
 						&& $hour <= 12
 					) $hour += 12
 
 					// from (PM | 24hour) to AM
 					else if (
 						(isTime24HourFormat() || isTimePMFormat())
-						&& items[0][0] == _AM
+						&& options[0][_value] == _AM
 						&& $hour >= 12
 					) $hour -= 12
 
 					if (hour != $hour) setValue(v => (v[_setHours]($hour), v))
 
-					setIsTime24HourFormat(items[0][0] == TimeFormat[_$24hour])
-					setIsTimePMFormat(items[0][0] == _PM)
-				}}
-				items={[[_AM, _AM], [_PM, _PM], [TimeFormat[_$24hour], '24 hour']]}
-			/>
+					setIsTime24HourFormat(options[0][_value] == TimeFormat[_$24hour])
+					setIsTimePMFormat(options[0][_value] == _PM)
+				}}>
+				<MenuHeader>Time format</MenuHeader>
+				<For each={[[_AM, _AM], [_PM, _PM], [TimeFormat[_$24hour], '24 hour']]}>{option =>
+					<DropdownOption value={option[0]} text={option[1] as string}/>
+				}</For>
+			</Dropdown>
 		</div>
 		{props[_children]}
 		<div class="c-datetime-picker-actions">
