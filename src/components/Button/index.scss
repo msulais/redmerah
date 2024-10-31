@@ -64,16 +64,16 @@
 			&:hover {
 				--g-background-color-opacity: var(--g-opacity1);
 				cursor: pointer;
-
-				> .c-icon {
-					animation: var(--c-btn-icon-animation);
-				}
 			}
 		}
 
 		&:active {
 			--g-background-color-opacity: var(--g-opacity0);
 			--c-btn-border-opacity: var(--g-opacity1);
+
+			> .c-icon {
+				animation: var(--c-btn-icon-animation);
+			}
 		}
 	}
 
@@ -98,8 +98,8 @@
 	}
 
 	&::before {
-		--c-btn-indicator-weight: 4px;
-		--c-btn-indicator-size: max(4px, calc(100% - var(--c-btn-border-radius) * 2));
+		--c-btn-indicator-weight: 3px;
+		--c-btn-indicator-size: max(var(--c-btn-indicator-weight), calc(100% - var(--c-btn-border-radius) * 2));
 		--c-btn-indicator-border-radius: var(--c-btn-indicator-weight);
 
 		background-color: rgb(var(--g-color-accent));
@@ -133,17 +133,24 @@
 			width: var(--c-btn-indicator-size);
 		}
 
+		&[data-c-selected]::before {
+			width: var(--c-btn-indicator-size);
+		}
+
 		&:is(.c-filled-btn,.c-tonal-btn,.c-outlined-btn):not([data-c-focused])::before {
 			border-radius: 0 0 var(--c-btn-indicator-border-radius) var(--c-btn-indicator-border-radius);
 		}
 	}
 
-	&[data-c-indicator=bottom]{
+	&:not([data-c-indicator=left],[data-c-indicator=right],[data-c-indicator=top]){
 		&::before {
 			bottom: -1px;
 			left: 50%;
 			min-height: var(--c-btn-indicator-weight);
 			transform: translateX(-50%);
+		}
+
+		&[data-c-selected]::before {
 			width: var(--c-btn-indicator-size);
 		}
 
@@ -154,11 +161,14 @@
 
 	&[data-c-indicator=left]{
 		&::before {
-			height: var(--c-btn-indicator-size);
 			left: -1px;
 			min-width: var(--c-btn-indicator-weight);
 			top: 50%;
 			transform: translateY(-50%);
+		}
+
+		&[data-c-selected]::before {
+			height: var(--c-btn-indicator-size);
 		}
 
 		&:is(.c-filled-btn,.c-tonal-btn,.c-outlined-btn):not([data-c-focused])::before {
@@ -172,11 +182,14 @@
 
 	&[data-c-indicator=right]{
 		&::before {
-			height: var(--c-btn-indicator-size);
 			min-width: var(--c-btn-indicator-weight);
 			right: -1px;
 			top: 50%;
 			transform: translateY(-50%);
+		}
+
+		&[data-c-selected]::before {
+			height: var(--c-btn-indicator-size);
 		}
 
 		&:is(.c-filled-btn,.c-tonal-btn,.c-outlined-btn):not([data-c-focused])::before {
