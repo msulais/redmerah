@@ -1,124 +1,139 @@
 import { createStore } from "solid-js/store"
-import { For, Show, children, createEffect, createSelector, createSignal, mergeProps, onCleanup, onMount, splitProps, type JSX, type VoidComponent } from "solid-js"
-import type { DOMElement } from "solid-js/jsx-runtime"
+import { Show, createContext, createEffect, createMemo, createSelector, createSignal, mergeProps, onCleanup, onMount, splitProps, useContext, type Accessor, type ParentComponent, type VoidComponent } from "solid-js"
 import { mergeRefs } from "@solid-primitives/refs"
 
-import { _refs, _dividerIndexs, _labels, _readOnly, _footer, _header, _disabled, _onSelectedItemsChanged, _items, _selectedValues, _labelAttr, _multiple, _trailing, _onClicks, _menuAttr, _optionIconTooltip, _some, _width, _centerBottom, _length, _slice, _map, _observe, _disconnect, _filter, _includes, _push, _ref, _classList, _onClick, _join, _px, _find, _style, _onToggleOpen, _wrapperAttr } from "@/constants/string"
+import { _refs, _dividerIndexs, _values, _selected, _labels, _readOnly, _footer, _header, _disabled, _onSelectedItemsChanged, _items, _selectedValues, _labelAttr, _multiple, _trailing, _onClicks, _menuAttr, _optionIconTooltip, _some, _width, _centerBottom, _length, _slice, _map, _observe, _disconnect, _filter, _includes, _push, _ref, _classList, _onClick, _join, _px, _find, _style, _onToggleOpen, _wrapperAttr, _label, _value, _id, _onCleanupOption, _onMountOption, _onSelectOption, _checked, _children, _text, _onChangeOptions, _accent, _focused, _findIndex, _concat, _tonal, _splice, _variant, _filled, _onAccent } from "@/constants/string"
 import { getBoundingClientRect } from "@/utils/element"
-import { setElementAttributeIfExist } from "@/utils/attributes"
 import { endTimeout, startTimeout } from "@/utils/timeout"
-import { callEventHandler, eventStopImmediatePropagation } from "@/utils/event"
 
-import { TextTooltip } from "@/components/Tooltip"
-import Icon from "@/components/Icon"
-import TextField, { TextFieldButton, type TextFieldProps } from "@/components/TextField"
-import Menu, { closeMenu, LinkMenuItem, MenuDivider, MenuHeader, MenuItem, openMenu, repositionMenu, type MenuProps, MenuPosition as DropdownPosition } from "@/components/Menu"
+import Menu, { closeMenu, MenuItem, openMenu, repositionMenu, type MenuProps, MenuPosition as DropdownPosition, type MenuItemProps } from "@/components/Menu"
+import { Button, ButtonVariant, type ButtonProps } from "@/components/Button"
 import './index.scss'
+import { callEventHandler } from "@/utils/event"
+import { AppColors } from "@/enums/colors"
+import Icon from "../Icon"
 
-type Item = (
-	[value: string | number, text: string, trailingText: string] |
-	[value: string | number, text: string]
-)
+type DropdownContextProps = {
+	onMountOption(value: string | number, text: string): unknown
+	onCleanupOption(value: string | number | null): unknown
+	onSelectOption(value: string | number): unknown
+	selectedValues: Accessor<(number | string)[]>
+	multiple: Accessor<boolean>
+} | undefined
 
-type DropdownProps = Omit<TextFieldProps, 'value'> & {
-	items: Item[]
-	selectedValues?: (string | number)[]
-	dividerIndexs?: number[]
-	labels?: [index: number, text: JSX.Element][]
-	multiple?: boolean
-	header?: JSX.Element
-	footer?: JSX.Element
-	optionIconTooltip?: string
-	refs?(el: HTMLButtonElement, item: Item): unknown
-	onClicks?(ev: MouseEvent & {currentTarget: HTMLButtonElement; target: DOMElement}): boolean | unknown
-	onSelectedItemsChanged?(items: Item[]): unknown
-	menuAttr?: MenuProps
+const DropdownContext = createContext<DropdownContextProps>()
+
+type DropdownOptionProps = Omit<MenuItemProps, 'value'> & {
+	value: string | number
+	text: string
 }
 
-const Dropdown: VoidComponent<DropdownProps> = ($props) => {
-	const $$props = mergeProps({
-		dividerIndexs: [],
-		labels: [],
-		trailings: []
-	}, $props)
-	const [props, other] = splitProps($$props, [
-		_refs, _dividerIndexs, _labels, _readOnly,
-		_footer, _header, _disabled, _onSelectedItemsChanged, _items,
-		_selectedValues, _wrapperAttr, _multiple, _trailing,
-		_onClicks, _menuAttr, _optionIconTooltip
+const DropdownOption: ParentComponent<DropdownOptionProps> = ($props) => {
+	const [props, other] = splitProps($props, [
+		_value, _onClick, _selected, _id, _checked,
+		_text, _children
 	])
-	const [wrapperProps, wrapperPropsOther] = splitProps(
-		props[_wrapperAttr]! ?? {},
-		[_ref, _classList, _onClick]
-	)
+	const context = useContext(DropdownContext)
+	const selected = createMemo<boolean>(() => {
+		const selectedValues = context?.[_selectedValues]()
+		return selectedValues == undefined
+			? false
+			: selectedValues[_map](v => `${v}`)[_includes](`${props[_value]}`)
+	})
+	let value: string | number | null = null
+
+	createEffect(() => {
+		context?.[_onCleanupOption](value) // remove old value
+		context?.[_onMountOption](props[_value], props[_text])
+		value = props[_value]
+	})
+	onCleanup(() => context?.[_onCleanupOption](props[_value]))
+
+	return (<MenuItem
+		selected={props[_selected] ?? context?.[_multiple]()? undefined : selected()}
+		checked={props[_checked] ?? context?.[_multiple]()? selected() : undefined}
+		onClick={ev => {
+			context?.[_onSelectOption](props[_value])
+			callEventHandler(ev, props[_onClick])
+		}}
+		{...other}>
+		{ props[_children] ?? props[_text]}
+	</MenuItem>)
+}
+
+type DropdownProps = Omit<ButtonProps, 'value'> & {
+	values?: (number | string)[]
+	text?: string
+	label?: string
+	multiple?: boolean
+	menuAttr?: MenuProps
+	onChangeOptions?(values: {value: string | number, text: string}[]): unknown
+}
+
+const Dropdown: ParentComponent<DropdownProps> = ($props) => {
+	const [props, other] = splitProps(mergeProps({variant: ButtonVariant[_tonal]}, $props), [
+		_disabled, _multiple, _children, _text,
+		_menuAttr, _label, _onChangeOptions,
+		_values, _ref, _onClick, _selected,
+		_classList, _variant
+	])
 	const [menuProps, menuPropsOther] = splitProps(
 		props[_menuAttr]! ?? {},
 		[_onToggleOpen, _ref, _style, _classList]
 	)
-	const [selectedItems, setSelectedItems] = createStore<Item[]>([])
+	const [isOpen, setIsOpen] = createSignal<boolean>(false)
+	const [options, setOptions] = createStore<{value: string | number, text: string}[]>([])
+	const [selectedValues, setSelectedValues] = createStore<(string | number)[]>([])
 	const [width, setWidth] = createSignal<number>(0)
-	const [isFocus, setIsFocus] = createSignal<boolean>(false)
-	const isSelected = createSelector<Item[], string | number>(
-		() => selectedItems,
-		(item, items) => items[_some]((a) => a[0] == item)
+	const isSelected = createSelector<(string | number)[], string | number>(
+		() => selectedValues,
+		(value, array) => array[_includes](value)
 	)
-	const header = children(() => props[_header])
-	const footer = children(() => props[_footer])
-	let wrapper_dropdown_ref: HTMLDivElement
+	let $options: {value: string | number, text: string}[] = []
+	let button_dropdown_ref: HTMLButtonElement
 	let menu_dropdown_ref: HTMLDialogElement
-	let $selectedValues: (string | number)[] = []
 
 	function openDropdownMenu(ev: MouseEvent): void {
-		if (props[_disabled] || props[_readOnly]) return;
-
-		setWidth(getBoundingClientRect(wrapper_dropdown_ref)[_width])
+		setWidth(getBoundingClientRect(button_dropdown_ref)[_width])
 		openMenu(ev, menu_dropdown_ref, {
-			anchor: wrapper_dropdown_ref,
+			anchor: button_dropdown_ref,
 			padding: 0,
 			gap: 4,
 			position: DropdownPosition[_centerBottom],
-			allowHideAnchor: false
 		})
 	}
 
-	function selectItem(item: Item): void {
+	function onSelectOption(value: string | number): void {
+		const index = selectedValues[_findIndex](v => v == value)
 		if (props[_multiple]) {
-			if (isSelected(item[0])) {
-				let index = 0
-				for (let i = 0; i < selectedItems[_length]; i++) {
-					if (selectedItems[i][0] != item[0]) continue
-
-					index = i
-					break
-				}
-				setSelectedItems(v => [...v[_slice](0, index), ...v[_slice](index+1)])
-			} else {
-				setSelectedItems(v => [...v, item])
-			}
+			setSelectedValues(v => index >= 0
+				? v[_slice](0, index)[_concat](v[_slice](index + 1))
+				: [...v, value]
+			)
 		} else {
 			closeMenu(menu_dropdown_ref)
 
-			if (isSelected(item[0])) return;
-			setSelectedItems([[...item]])
+			if (index >= 0) return;
+			setSelectedValues([value])
 		}
 
-		$selectedValues = selectedItems[_map](v => v[0])
-		if (props[_onSelectedItemsChanged]) props[_onSelectedItemsChanged]([...selectedItems])
+		props[_onChangeOptions]?.(options[_filter](o => isSelected(o[_value])))
 	}
 
 	onMount(() => {
 		let t: number | null = null
 
 		const observer = new ResizeObserver(() => {
+			if (!isOpen()) return
 			if (t != null) endTimeout(t)
 
 			t = startTimeout(() => {
-				setWidth(getBoundingClientRect(wrapper_dropdown_ref)[_width])
+				setWidth(getBoundingClientRect(button_dropdown_ref)[_width])
 				repositionMenu(menu_dropdown_ref)
 				t = null
 			}, 300)
 		})
-		observer[_observe](wrapper_dropdown_ref!, { box: "border-box" })
+		observer[_observe](button_dropdown_ref!, { box: "border-box" })
 
 		onCleanup(() => {
 			observer[_disconnect]()
@@ -126,61 +141,64 @@ const Dropdown: VoidComponent<DropdownProps> = ($props) => {
 	})
 
 	createEffect(() => {
-		const selectedValues = props[_selectedValues] ?? $selectedValues
+		const values = props[_values]
 		const multiple = props[_multiple]
-		const items = props[_items]
 
-		let $items: Item[] = []
-		if (selectedValues[_length] == 0) return setSelectedItems($items)
+		if (values != undefined) setSelectedValues(values)
 
-		if (multiple) $items = items[_filter](item => selectedValues[_includes](item[0] as never))
-		else {
-			const item = items[_find]((item) => item[0] == selectedValues[0])
-			if (item) $items[_push](item)
-		}
-
-		$selectedValues = $items[_map](v => v[0])
-		setSelectedItems($items)
+		if (!multiple) setSelectedValues(d => d[_slice](0, 1))
 	})
 
-	return (<>
-		<TextField
-			readOnly
-			disabled={props[_disabled]}
-			focused={isFocus()}
-			wrapperAttr={{
-				ref: mergeRefs(wrapperProps[_ref], r => wrapper_dropdown_ref = r),
-				classList: {
-					'c-dropdown': true,
-					...wrapperProps[_classList]
-				},
-				onClick: ev => {
-					eventStopImmediatePropagation(ev)
-					openDropdownMenu(ev)
-					callEventHandler(ev, wrapperProps[_onClick])
-				},
-				...{'c-data-dropdown-readonly': setElementAttributeIfExist(props[_readOnly])},
-				...wrapperPropsOther
+	return (<DropdownContext.Provider value={{
+		onMountOption: (value, text) => {
+			// !IMPORTANT: DON'T CALL ANY SIGNAL HERE
+			if ($options[_some](o => o[_value] == value)) return;
+			setOptions(d => [...d, {value, text}])
+			$options[_push]({value, text})
+		},
+		onCleanupOption: (value) => {
+			if (value == null) return;
+
+			let index = selectedValues[_findIndex](v => v == value)
+			if (index >= 0) setSelectedValues(d => d[_slice](0, index)[_concat](d[_slice](index + 1)))
+
+			index = options[_findIndex](o => o[_value] == value)
+			if (index < 0) return
+
+			setOptions(d => d[_slice](0, index)[_concat](d[_slice](index + 1)))
+			$options[_splice](index, 1)
+		},
+		multiple: () => props[_multiple] ?? false,
+		selectedValues: () => selectedValues,
+		onSelectOption,
+	}}>
+		<Button
+			ref={mergeRefs(props[_ref], r => button_dropdown_ref = r)}
+			variant={props[_variant]}
+			classList={{
+				'c-dropdown': true,
+				...props[_classList]
 			}}
-			value={selectedItems[_map](i => i[1])[_join](', ')}
-			trailing={<>
-				{props[_trailing]}
-				<Show when={!props[_readOnly]}>
-					<TextTooltip text={props[_optionIconTooltip] ?? "Show options"}>
-						<TextFieldButton
-							focused={isFocus()}
-							onClick={ev => openDropdownMenu(ev)}>
-							<Icon code={0xE3FC}/>
-						</TextFieldButton>
-					</TextTooltip>
-				</Show>
-			</>}
-			{...other}
-		/>
+			selected={props[_selected] ?? isOpen()}
+			onClick={ev => {
+				openDropdownMenu(ev)
+				callEventHandler(ev, props[_onClick])
+			}}
+			{...other}>
+			<Show when={props[_label]}>
+				<span style={{color: `rgb(${props[_variant] == ButtonVariant[_filled]? AppColors[_onAccent] : AppColors[_accent]})`}}>{props[_label]}:</span>
+			</Show>
+			{selectedValues[_length] == 0
+				? props[_text]
+				: options[_filter](v => isSelected(v[_value]))[_map](v => v[_text])[_join](', ')
+			}
+			<div style="flex:1"/>
+			<Icon code={0xE3FC}/>
+		</Button>
 		<Menu
 			onToggleOpen={v => {
-				setIsFocus(v)
-				if (menuProps[_onToggleOpen]) menuProps[_onToggleOpen](v)
+				setIsOpen(v)
+				menuProps[_onToggleOpen]?.(v)
 			}}
 			ref={mergeRefs(menuProps[_ref], r => menu_dropdown_ref = r)}
 			style={{
@@ -192,52 +210,19 @@ const Dropdown: VoidComponent<DropdownProps> = ($props) => {
 				...menuProps[_classList]
 			}}
 			{...menuPropsOther}>
-			<Show when={header()}>
-				<div class="c-dropdown-header">{header()}</div>
-			</Show>
-			<div class="c-dropdown-items">
-				<For each={props[_items]}>{(item, index) => <>
-					<Show when={(props[_dividerIndexs] as number[])[_includes](index())}>
-						<MenuDivider />
-					</Show>
-					<For each={props[_labels]}>{h => <Show when={index() == h[0]}>
-						<MenuHeader>{h[1]}</MenuHeader>
-					</Show>}</For>
-					<MenuItem
-						ref={(r) => {
-							if (props[_refs]) props[_refs](r, item)
-						}}
-						onClick={(ev) => {
-							if (props[_onClicks]) {
-								const isContinue = props[_onClicks](ev)
-								if (isContinue == false) return
-							}
-							selectItem(item)
-						}}
-						trailing={item[2]}
-						selected={!props[_multiple]? isSelected(item[0]) : undefined}
-						checked={props[_multiple]? isSelected(item[0]) : undefined}>
-						{item[1]}
-					</MenuItem>
-				</>}</For>
-			</div>
-			<Show when={footer()}>
-				<div class="c-dropdown-footer">{footer()}</div>
-			</Show>
+			{props[_children]}
 		</Menu>
-	</>)
+	</DropdownContext.Provider>)
 }
 
 export {
 	Dropdown,
-	MenuHeader as DropdownHeader,
-	MenuItem as DropdownItem,
-	MenuDivider as DropdownDivider,
-	LinkMenuItem as LinkDropdownItem,
-	DropdownPosition
+	DropdownOption,
+	DropdownContext
 }
 export type {
 	DropdownProps,
-	Item
+	DropdownContextProps,
+	DropdownOptionProps
 }
 export default Dropdown

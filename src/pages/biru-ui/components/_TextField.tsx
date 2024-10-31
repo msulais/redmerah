@@ -1,12 +1,12 @@
-import { createSignal, Show, type VoidComponent } from "solid-js"
+import { createSignal, For, Show, type VoidComponent } from "solid-js"
 
-import { _text, _password, _telephone, _email, _url, _checked, _currentTarget, _valueAsNumber } from "@/constants/string"
+import { _text, _password, _telephone, _email, _url, _checked, _currentTarget, _valueAsNumber, _value } from "@/constants/string"
 import { safeNumber } from "@/utils/math"
 
 import Icon from "@/components/Icon"
 import CheckBox from "@/components/CheckBox"
 import TextField, { AreaTextField, NumberTextField, TextFieldButton } from "@/components/TextField"
-import Dropdown from "@/components/Dropdown"
+import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
 
 const _: VoidComponent = () => {
@@ -108,7 +108,10 @@ const _: VoidComponent = () => {
 		</Playground>
 		<PlaygroundOptions>
 			<Dropdown
-				items={[
+				label="Type"
+				values={[type()]}
+				onChangeOptions={(v) => setType(v[0][_value] as string)}>
+				<For each={[
 					['button', 'Button'],
 					['checkbox', 'Checkbox'],
 					['color', 'Color'],
@@ -130,12 +133,8 @@ const _: VoidComponent = () => {
 					['time', 'Time'],
 					['url', 'URL'],
 					['week', 'Week'],
-				]}
-				labelText="Type"
-				style={{width: '100px'}}
-				selectedValues={[type()]}
-				onSelectedItemsChanged={(v) => setType(v[0][0] as string)}
-			/>
+				]}>{option => <DropdownOption value={option[0]} text={option[1] as string} />}</For>
+			</Dropdown>
 			<Options />
 		</PlaygroundOptions>
 

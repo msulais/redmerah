@@ -20,7 +20,7 @@ import CheckBox from "@/components/CheckBox"
 import TextField, { changeTextFieldValue, NumberTextField, TextFieldButton } from "@/components/TextField"
 import Menu, { closeMenu, MenuDivider, MenuItem, MenuPosition, openMenu } from "@/components/Menu"
 import ColorPicker, { openColorPicker } from "@/components/ColorPicker"
-import Dropdown from "@/components/Dropdown"
+import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import Toast, { openToast } from "@/components/Toast"
 import CSS from './_styles.module.scss'
 
@@ -65,7 +65,7 @@ const GradientDataList: VoidComponent<{
 						position: MenuPosition[_centerBottomToRight]
 					})
 				}}>
-				<div style={{"background-image": $props[_data][_gradients][_map](gradient => gradientToCSSText(gradient))[_join](',')}}/>
+				<div data-gradient style={{"background-image": $props[_data][_gradients][_map](gradient => gradientToCSSText(gradient))[_join](',')}}/>
 			</SquareButton>
 		</RichTooltip>)
 	}
@@ -188,21 +188,28 @@ const GradientControl: VoidComponent<{
 
 	const Options: VoidComponent = () => (<div class={CSS.body_gradient_control_options}>
 		<Dropdown
-			items={[
+			values={[props[_gradient][_type]]}
+			onChangeOptions={(options) => props[_command](
+				Commands.change_gradient_type,
+				props[_gradientIndex],
+				options[0][_value]
+			)}
+			label="Type">
+			<For each={[
 				[GradientType[_linear], 'Linear'],
 				[GradientType[_radial], 'Radial'],
 				[GradientType[_conic], 'Conic'],
-			]}
-			selectedValues={[props[_gradient][_type]]}
-			onSelectedItemsChanged={(items) => props[_command](
-				Commands.change_gradient_type,
-				props[_gradientIndex],
-				items[0][0]
-			)}
-			labelText="Type"
-		/>
+			]}>{option => <DropdownOption value={option[0]} text={option[1]}/>}</For>
+		</Dropdown>
 		<Dropdown
-			items={[
+			values={[props[_gradient][_colorInterpolationMethod]]}
+			onChangeOptions={(options) => props[_command](
+				Commands.change_colorInterpolationMethod,
+				props[_gradientIndex],
+				options[0][_value]
+			)}
+			label="Color space">
+			<For each={[
 				[PolarColorSpace.auto, 'Auto'],
 				// [RectangularColorSpace.a98_rgb, 'A98 RGB'],
 				// [RectangularColorSpace.display_p3, 'Display P3'],
@@ -219,137 +226,132 @@ const GradientControl: VoidComponent<{
 				// [RectangularColorSpace.xyz, 'XYZ'],
 				// [RectangularColorSpace.xyz_d50, 'XYZ D50'],
 				// [RectangularColorSpace.xyz_d65, 'XYZ D65'],
-			]}
-			selectedValues={[props[_gradient][_colorInterpolationMethod]]}
-			onSelectedItemsChanged={(items) => props[_command](
-				Commands.change_colorInterpolationMethod,
-				props[_gradientIndex],
-				items[0][0]
-			)}
-			labelText="Color space"
-		/>
+			]}>{option => <DropdownOption value={option[0]} text={option[1]}/>}</For>
+		</Dropdown>
 		<Show
 			when={[
 				PolarColorSpace[_hsl], PolarColorSpace[_hwb],
 				PolarColorSpace[_lch], PolarColorSpace[_oklch]
 			][_includes](props[_gradient][_colorInterpolationMethod] as PolarColorSpace)}>
 			<Dropdown
-				items={[
+				values={[props[_gradient][_hueInterpolationMethod]]}
+				onChangeOptions={(options) => props[_command](
+					Commands.change_hueInterpolationMethod,
+					props[_gradientIndex],
+					options[0][_value]
+				)}
+				label="Hue interpolation">
+				<For each={[
 					[HueInterpolationMethod[_auto], 'Auto'],
 					[HueInterpolationMethod[_decreasing], 'Decreasing'],
 					[HueInterpolationMethod[_increasing], 'Increasing'],
 					[HueInterpolationMethod[_longer], 'Longer'],
 					[HueInterpolationMethod[_shorter], 'Shorter'],
-				]}
-				selectedValues={[props[_gradient][_hueInterpolationMethod]]}
-				onSelectedItemsChanged={(items) => props[_command](
-					Commands.change_hueInterpolationMethod,
-					props[_gradientIndex],
-					items[0][0]
-				)}
-				labelText="Hue interpolation"
-			/>
+				]}>{option => <DropdownOption value={option[0]} text={option[1]}/>}</For>
+			</Dropdown>
 		</Show>
 		<Show when={props[_gradient][_type] == GradientType[_radial]}>
 			<Dropdown
-				items={[
+				values={[(props[_gradient] as RadialGradient)[_shape]]}
+				onChangeOptions={(options) => props[_command](Commands.change_radialGradient_shape, props[_gradientIndex], options[0][_value])}
+				label="Shape">
+				<For each={[
 					[RadialGradientShape[_circle], 'Circle'],
 					[RadialGradientShape[_ellipse], 'Ellipse'],
-				]}
-				selectedValues={[(props[_gradient] as RadialGradient)[_shape]]}
-				onSelectedItemsChanged={(items) => props[_command](Commands.change_radialGradient_shape, props[_gradientIndex], items[0][0])}
-				labelText="Shape"
-			/>
+				]}>{option => <DropdownOption value={option[0]} text={option[1]}/>}</For>
+			</Dropdown>
 		</Show>
-		<Show when={[GradientType[_conic], GradientType[_linear]][_includes](props[_gradient][_type])}>
-			<NumberTextField
-				labelText="Angle (°)"
-				enterkeyhint="done"
-				min={0}
-				max={360}
-				autoSelectAll
-				onInputAsNumber={(_, v) => props[_command](
-					Commands.change_gradient_angle,
-					props[_gradientIndex],
-					v
-				)}
-				value={(props[_gradient] as any)[_angle] as number}
-			/>
-		</Show>
-		<Show when={[GradientType[_conic], GradientType[_radial]][_includes](props[_gradient][_type])}>
-			<NumberTextField
-				labelText="X (%)"
-				min={0}
-				enterkeyhint="done"
-				autoSelectAll
-				onInputAsNumber={(_, v) => props[_command](
-					Commands.change_gradient_positionX,
-					props[_gradientIndex],
-					v
-				)}
-				value={(props[_gradient] as any)[_positionX] as number}
-			/>
-			<NumberTextField
-				labelText="Y (%)"
-				enterkeyhint="done"
-				min={0}
-				autoSelectAll
-				onInputAsNumber={(_, v) => props[_command](
-					Commands.change_gradient_positionY,
-					props[_gradientIndex],
-					v
-				)}
-				value={(props[_gradient] as any)[_positionY] as number}
-			/>
-		</Show>
-		<Show when={props[_gradient][_type] == GradientType[_radial] && props[_gradient][_shape] == RadialGradientShape[_circle]}>
-			<NumberTextField
-				labelText="Size (px)"
-				enterkeyhint="done"
-				min={0}
-				autoSelectAll
-				onInputAsNumber={(_, v) => props[_command](
-					Commands.change_radialGradient_size,
-					props[_gradientIndex],
-					v
-				)}
-				value={(props[_gradient] as RadialGradient)[_sizeLength]}
-			/>
-		</Show>
-		<Show when={props[_gradient][_type] == GradientType[_radial] && props[_gradient][_shape] == RadialGradientShape[_ellipse]}>
-			<NumberTextField
-				labelText="Width (%)"
-				enterkeyhint="done"
-				min={0}
-				autoSelectAll
-				onInputAsNumber={(_, v) => props[_command](
-					Commands.change_radialGradient_width,
-					props[_gradientIndex],
-					v
-				)}
-				value={(props[_gradient] as RadialGradient)[_sizeWidth]}
-			/>
-			<NumberTextField
-				labelText="Height (%)"
-				enterkeyhint="done"
-				min={0}
-				autoSelectAll
-				onInputAsNumber={(_, v) => props[_command](
-					Commands.change_radialGradient_height,
-					props[_gradientIndex],
-					v
-				)}
-				value={(props[_gradient] as RadialGradient)[_sizeHeight]}
-			/>
-		</Show>
-		<CheckBox
-			checked={props[_gradient][_repeat]}
-			onChange={() => props[_command](
-				Commands.toggle_gradient_repeat,
-				props[_gradientIndex]
-			)}>
-			Repeat
-		</CheckBox>
+		<div class={CSS.body_gradient_control_options_2_grid}>
+			<Show when={[GradientType[_conic], GradientType[_linear]][_includes](props[_gradient][_type])}>
+				<NumberTextField
+					labelText="Angle (°)"
+					enterkeyhint="done"
+					min={0}
+					max={360}
+					autoSelectAll
+					onInputAsNumber={(_, v) => props[_command](
+						Commands.change_gradient_angle,
+						props[_gradientIndex],
+						v
+					)}
+					value={(props[_gradient] as any)[_angle] as number}
+				/>
+			</Show>
+			<Show when={[GradientType[_conic], GradientType[_radial]][_includes](props[_gradient][_type])}>
+				<NumberTextField
+					labelText="X (%)"
+					min={0}
+					enterkeyhint="done"
+					autoSelectAll
+					onInputAsNumber={(_, v) => props[_command](
+						Commands.change_gradient_positionX,
+						props[_gradientIndex],
+						v
+					)}
+					value={(props[_gradient] as any)[_positionX] as number}
+				/>
+				<NumberTextField
+					labelText="Y (%)"
+					enterkeyhint="done"
+					min={0}
+					autoSelectAll
+					onInputAsNumber={(_, v) => props[_command](
+						Commands.change_gradient_positionY,
+						props[_gradientIndex],
+						v
+					)}
+					value={(props[_gradient] as any)[_positionY] as number}
+				/>
+			</Show>
+			<Show when={props[_gradient][_type] == GradientType[_radial] && props[_gradient][_shape] == RadialGradientShape[_circle]}>
+				<NumberTextField
+					labelText="Size (px)"
+					enterkeyhint="done"
+					min={0}
+					autoSelectAll
+					onInputAsNumber={(_, v) => props[_command](
+						Commands.change_radialGradient_size,
+						props[_gradientIndex],
+						v
+					)}
+					value={(props[_gradient] as RadialGradient)[_sizeLength]}
+				/>
+			</Show>
+			<Show when={props[_gradient][_type] == GradientType[_radial] && props[_gradient][_shape] == RadialGradientShape[_ellipse]}>
+				<NumberTextField
+					labelText="Width (%)"
+					enterkeyhint="done"
+					min={0}
+					autoSelectAll
+					onInputAsNumber={(_, v) => props[_command](
+						Commands.change_radialGradient_width,
+						props[_gradientIndex],
+						v
+					)}
+					value={(props[_gradient] as RadialGradient)[_sizeWidth]}
+				/>
+				<NumberTextField
+					labelText="Height (%)"
+					enterkeyhint="done"
+					min={0}
+					autoSelectAll
+					onInputAsNumber={(_, v) => props[_command](
+						Commands.change_radialGradient_height,
+						props[_gradientIndex],
+						v
+					)}
+					value={(props[_gradient] as RadialGradient)[_sizeHeight]}
+				/>
+			</Show>
+			<CheckBox
+				checked={props[_gradient][_repeat]}
+				onChange={() => props[_command](
+					Commands.toggle_gradient_repeat,
+					props[_gradientIndex]
+				)}>
+				Repeat
+			</CheckBox>
+		</div>
 	</div>)
 
 	const ColorStops: VoidComponent = () => (<For each={props[_gradient][_colorStopList]}>{(stop, index) =>

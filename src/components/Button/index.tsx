@@ -33,7 +33,6 @@ type RawButtonProps<T extends ValidComponent = keyof JSX.HTMLElementTags> = Dyna
 const RawButton: ParentComponent<RawButtonProps> = ($props) => {
 	const [props, other] = splitProps(mergeProps({
 		variant: ButtonVariant[_transparent],
-		indicatorPosition: ButtonIndicatorPosition[_bottom]
 	}, $props), [
 		_children, _indicatorPosition, _variant,
 		_focused, _compact, _selected,
@@ -48,7 +47,7 @@ const RawButton: ParentComponent<RawButtonProps> = ($props) => {
 			'c-outlined-btn': props[_variant] == ButtonVariant[_outlined],
 			...props[_classList]
 		}}
-		data-c-indicator={props[_selected]? props[_indicatorPosition] : undefined}
+		data-c-indicator={props[_indicatorPosition]}
 		data-c-selected={setElementAttributeIfExist(props[_selected])}
 		data-c-focused={setElementAttributeIfExist(props[_focused])}
 		data-c-compact={setElementAttributeIfExist(props[_compact])}
@@ -68,7 +67,6 @@ const Button: ParentComponent<ButtonProps> = ($props) => {
 	const $$props = mergeProps({
 		type: _button,
 		variant: ButtonVariant[_transparent],
-		indicatorPosition: ButtonIndicatorPosition[_bottom]
 	}, $props)
 	const [props, other] = splitProps($$props, [
 		_children, _indicatorPosition, _variant,
@@ -85,7 +83,7 @@ const Button: ParentComponent<ButtonProps> = ($props) => {
 			...props[_classList]
 		}}
 		type={props[_type] as ("button" | "submit" | "reset" | undefined)}
-		data-c-indicator={props[_selected]? props[_indicatorPosition] : undefined}
+		data-c-indicator={props[_indicatorPosition]}
 		data-c-selected={setElementAttributeIfExist(props[_selected])}
 		data-c-focused={setElementAttributeIfExist(props[_focused])}
 		data-c-compact={setElementAttributeIfExist(props[_compact])}
@@ -107,7 +105,6 @@ type LinkButtonProps = JSX.AnchorHTMLAttributes<HTMLAnchorElement> & {
 const LinkButton: ParentComponent<LinkButtonProps> = ($props) => {
 	const $$props = mergeProps({
 		variant: ButtonVariant[_transparent],
-		indicatorPosition: ButtonIndicatorPosition[_bottom]
 	}, $props)
 	const [props, other] = splitProps($$props, [
 		_openInNewTab, _children, _indicatorPosition,
@@ -130,7 +127,7 @@ const LinkButton: ParentComponent<LinkButtonProps> = ($props) => {
 			'c-outlined-btn': props[_variant] == ButtonVariant[_outlined],
 			...props[_classList]
 		}}
-		data-c-indicator={props[_selected]? props[_indicatorPosition] : undefined}
+		data-c-indicator={props[_indicatorPosition]}
 		data-c-disabled={setElementAttributeIfExist(props[_disabled])}
 		data-c-selected={setElementAttributeIfExist(props[_selected])}
 		data-c-focused={setElementAttributeIfExist(props[_focused])}

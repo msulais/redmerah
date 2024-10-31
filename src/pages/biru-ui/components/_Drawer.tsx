@@ -1,10 +1,10 @@
-import { createSignal, Show, type VoidComponent } from "solid-js"
+import { createSignal, For, Show, type VoidComponent } from "solid-js"
 
-import { _left, _tonal, _right, _checked, _currentTarget } from "@/constants/string"
+import { _left, _tonal, _right, _checked, _currentTarget, _value } from "@/constants/string"
 
 import Button, { ButtonVariant, IconButton } from "@/components/Button"
 import CheckBox from "@/components/CheckBox"
-import Dropdown from "@/components/Dropdown"
+import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import TextField from "@/components/TextField"
 import Drawer, { closeDrawer, DrawerItem, DrawerPosition, openDrawer } from "@/components/Drawer"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
@@ -50,15 +50,14 @@ const _: VoidComponent = () => {
 		</Playground>
 		<PlaygroundOptions>
 			<Dropdown
-				labelText="Position"
-				style={{width: '100px'}}
-				items={[
+				label="Position"
+				onChangeOptions={(options) => setPosition(options[0][_value] as DrawerPosition)}
+				values={[position()]}>
+				<For each={[
 					[DrawerPosition[_left], 'Left'],
 					[DrawerPosition[_right], 'Right'],
-				]}
-				onSelectedItemsChanged={(items) => setPosition(items[0][0] as DrawerPosition)}
-				selectedValues={[position()]}
-			/>
+				]}>{option => <DropdownOption value={option[0]} text={option[1] as string} />}</For>
+			</Dropdown>
 			<CheckBox
 				checked={important()}
 				onChange={ev => setImportant(ev[_currentTarget][_checked])}>
