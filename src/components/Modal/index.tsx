@@ -5,7 +5,7 @@ import { Portal } from 'solid-js/web'
 import { AnimationEffectTiming } from '@/enums/animation'
 import { FlyoutPosition as ModalPosition } from '@/enums/position'
 import { getFlyoutPosition } from '@/utils/flyout'
-import { _dispatchEvent, _onOpen, _openModal, _modalListener, _detail, _element, _some, _isSameNode, _push, _closeModal, _findIndex, _splice, _length, _click, _at, _clientX, _clientY, _x, _left, _right, _y, _top, _bottom, _scroll, _scrollY, _documentElement, _scrollTop, _scrollTo, _instant, _resize, _noPointerEvent, _observe, _onReposition, _onShortFocus, _onClose, _ref, _onToggleOpen, _onCancel, _children, _onKeyDown, _class, _openAnimation, _closeAnimation, _centerBottom, _body, _clientWidth, _innerHeight, _px, _width, _height, _touches, _touchmove, _touchend, _mousemove, _mouseup, _centerBottomToLeft, _centerBottomToRight, _centerTop, _centerTopToLeft, _centerTopToRight, _leftCenter, _leftCenterToBottom, _leftCenterToTop, _rightCenter, _rightCenterToBottom, _rightCenterToTop, _open, _close, _animate, _springBounce, _finished, _then, _focus, _showModal, _style, _maxWidth, _maxHeight, _max_width, _max_height, _none, _disconnect, _key, _Escape, _altKey, _ctrlKey, _metaKey, _shiftKey, _position, _gap, _padding, _important, _allowHideAnchor, _dragable, _contentAutoFocus, _pointerType, _forEach, _pointermove, _pointerup } from '@/constants/string'
+import { _dispatchEvent, _onOpen, _openModal, _modalListener, _detail, _element, _some, _isSameNode, _push, _closeModal, _findIndex, _splice, _length, _click, _at, _clientX, _clientY, _x, _left, _right, _y, _top, _bottom, _scroll, _scrollY, _documentElement, _scrollTop, _scrollTo, _instant, _resize, _noPointerEvent, _observe, _onReposition, _onShortFocus, _onClose, _ref, _onToggleOpen, _onCancel, _children, _onKeyDown, _class, _openAnimation, _closeAnimation, _centerBottom, _body, _clientWidth, _innerHeight, _px, _width, _height, _touches, _touchmove, _touchend, _mousemove, _mouseup, _centerBottomToLeft, _centerBottomToRight, _centerTop, _centerTopToLeft, _centerTopToRight, _leftCenter, _leftCenterToBottom, _leftCenterToTop, _rightCenter, _rightCenterToBottom, _rightCenterToTop, _open, _close, _animate, _springBounce, _finished, _then, _focus, _showModal, _style, _maxWidth, _maxHeight, _max_width, _max_height, _none, _disconnect, _key, _Escape, _altKey, _ctrlKey, _metaKey, _shiftKey, _position, _gap, _padding, _important, _allowHideAnchor, _draggable, _contentAutoFocus, _pointerType, _forEach, _pointermove, _pointerup } from '@/constants/string'
 import { endTimeout, startTimeout } from '@/utils/timeout'
 import { isElementHasAttribute, removeElementAttribute, setElementAttribute, setElementAttributeIfExist } from '@/utils/attributes'
 import { getDocument, getDocumentBody, getWindow } from '@/constants/window'
@@ -28,7 +28,7 @@ type ModalOpenDetail = {
 	important?: boolean
 	position?: ModalPosition
 	allowHideAnchor?: boolean
-	dragable?: boolean
+	draggable?: boolean
 	contentAutoFocus?: boolean
 
 	/**
@@ -182,14 +182,14 @@ function closeModal(modal: HTMLDialogElement, soft: boolean = false): void {
 	))
 }
 
-type ModalProps = Omit<JSX.DialogHtmlAttributes<HTMLDialogElement>, 'style'> & {
+type ModalProps = Omit<JSX.DialogHtmlAttributes<HTMLDialogElement>, 'style' | 'draggable'> & {
 	style?: JSX.CSSProperties
 	gap?: number
 	padding?: number
 	important?: boolean
 	position?: ModalPosition
 	allowHideAnchor?: boolean
-	dragable?: boolean
+	draggable?: boolean
 	contentAutoFocus?: boolean
 	onToggleOpen?(isOpen: boolean): unknown
 	openAnimation?(el: HTMLDialogElement, done: () => void): unknown
@@ -202,10 +202,10 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 		_children, _onKeyDown, _class, _openAnimation,
 		_closeAnimation, _style, _gap, _padding,
 		_important, _position, _allowHideAnchor,
-		_dragable, _contentAutoFocus
+		_draggable, _contentAutoFocus
 	])
 	const [isDragging, setIsDragging] = createSignal<boolean>(false)
-	const [isDragable, setIsDragable] = createSignal<boolean>(false)
+	const [isDraggable, setIsDraggable] = createSignal<boolean>(false)
 	const [left, setLeft] = createSignal<number>(0)
 	const [top, setTop] = createSignal<number>(0)
 	const [maxWidth, setMaxWidth] = createSignal<number | undefined>(undefined)
@@ -417,7 +417,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 			anchorRect,
 			allowHideAnchor = props[_allowHideAnchor] ?? true,
 			anchor = null,
-			dragable = props[_dragable] ?? false,
+			draggable = props[_draggable] ?? false,
 			gap = props[_gap] ?? 0,
 			important = props[_important] ?? false,
 			padding = props[_padding] ?? 0,
@@ -434,9 +434,9 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 		$important = important
 
 		// handle drag
-		if (isDragable() && !dragable) removeDragListener()
-		else if (!isDragable() && dragable) addDragListener()
-		setIsDragable(dragable)
+		if (isDraggable() && !draggable) removeDragListener()
+		else if (!isDraggable() && draggable) addDragListener()
+		setIsDraggable(draggable)
 
 		modal_ref[_showModal]()
 
@@ -756,13 +756,13 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 			if (props[_onToggleOpen]) props[_onToggleOpen](false)
 			isOpen = false
 		}}
-		data-c-dragable={setElementAttributeIfExist(isDragable())}
+		data-c-draggable={setElementAttributeIfExist(isDraggable())}
 		data-c-drag={setElementAttributeIfExist(isDragging())}
 		data-c-focus={setElementAttributeIfExist(attr_focus())}
 		data-c-open={setElementAttributeIfExist(attr_open())}
 		data-c-open-done={setElementAttributeIfExist(attr_openDone())}
 		{...other}>
-		<Show when={isDragable()}>
+		<Show when={isDraggable()}>
 			<span
 				class="c-modal-drag-handle"
 				draggable={false}

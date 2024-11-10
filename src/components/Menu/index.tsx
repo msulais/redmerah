@@ -2,7 +2,7 @@ import { type Component, type JSX, type ParentComponent, Show, mergeProps, split
 import { mergeRefs } from "@solid-primitives/refs"
 
 import { getElementAttribute, setElementAttributeIfExist } from "@/utils/attributes"
-import { _checked, _selected, _leading, _children, _trailing, _subtitle, _indent, _classList, _rightCenterToBottom, _disconnect, _dismiss, _id, _item, _level, _manual, _observe, _onCancel, _onClick, _onClose, _onToggle, _open, _ref, _wrapperAttr, _auto, _shortcuts, _currentTarget, _none, _left, _tonal, _dragable, _clientX, _clientY, _color, _hue, _initialColor, _isDrag, _mousemove, _mouseup, _noPointerEvent, _opacity, _touchend, _touches, _touchmove, _value, _valuechange, _top, _px, _anchorId, _body, _bottom, _clientWidth, _height, _innerHeight, _right, _width, _focus, _iconCode, _compact, _variant, _indicatorPosition, _onMouseEnter, _onMouseLeave, _class, _desktopCompact, _gap, _position, _padding, _allowHideAnchor, _onToggleOpen, _click, _contains, _target, _filled, _focused, _layerAttr, _outlined, _transparent, _switchAttr, _onValueChanged, _onChange, _div, _disabled, _forEach, _onPointerEnter, _onPointerLeave, _accent, _autofocus, _contentAutoFocus } from "@/constants/string"
+import { _checked, _selected, _leading, _children, _trailing, _subtitle, _indent, _classList, _rightCenterToBottom, _disconnect, _dismiss, _id, _item, _level, _manual, _observe, _onCancel, _onClick, _onClose, _onToggle, _open, _ref, _wrapperAttr, _auto, _shortcuts, _currentTarget, _none, _left, _tonal, _draggable, _clientX, _clientY, _color, _hue, _initialColor, _isDrag, _mousemove, _mouseup, _noPointerEvent, _opacity, _touchend, _touches, _touchmove, _value, _valuechange, _top, _px, _anchorId, _body, _bottom, _clientWidth, _height, _innerHeight, _right, _width, _focus, _iconCode, _compact, _variant, _indicatorPosition, _onMouseEnter, _onMouseLeave, _class, _desktopCompact, _gap, _position, _padding, _allowHideAnchor, _onToggleOpen, _click, _contains, _target, _filled, _focused, _layerAttr, _outlined, _transparent, _switchAttr, _onValueChanged, _onChange, _div, _disabled, _forEach, _onPointerEnter, _onPointerLeave, _accent, _autofocus, _contentAutoFocus } from "@/constants/string"
 import { isVarHasValue } from "@/utils/data"
 import { getAllElementBySelector } from "@/utils/element"
 import { callEventHandler, eventStopImmediatePropagation, eventStopPropagation } from "@/utils/event"
@@ -208,7 +208,7 @@ type SubMenuProps = PopoverProps & {
 	gap?: number
 	position?: SubMenuPosition
 	padding?: number
-	dragable?: boolean
+	draggable?: boolean
 	allowHideAnchor?: boolean
 	wrapperAttr?: Omit<JSX.HTMLAttributes<HTMLDivElement>, 'children'>
 }
@@ -217,7 +217,7 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 	const [props, other] = splitProps($$props, [
 		_classList, _level, _item, _wrapperAttr,
 		_id, _onClick, _ref, _gap, _position,
-		_padding, _dragable, _allowHideAnchor,
+		_padding, _draggable, _allowHideAnchor,
 		_onToggleOpen
 	])
 	const [wrapperProps, wrapperPropsOther] = splitProps(
@@ -257,7 +257,7 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 			position: props[_position] ?? SubMenuPosition[_rightCenterToBottom],
 			gap: props[_gap] ?? -8,
 			padding: props[_padding] ?? 5,
-			dragable: props[_dragable],
+			draggable: props[_draggable],
 			allowHideAnchor: props[_allowHideAnchor],
 			manualDismiss: true
 		})

@@ -14,7 +14,7 @@ import { Page, Playground, PlaygroundOptions } from "../_Body"
 
 const _: VoidComponent = () => {
 	const [allowHideAnchor, setAllowHideAnchor] = createSignal<boolean>(true)
-	const [dragable, setDragable] = createSignal<boolean>(false)
+	const [draggable, setDragable] = createSignal<boolean>(false)
 	const [gap, setGap] = createSignal<number>(12)
 	const [contentAutoFocus, setInputAutoFocus] = createSignal<boolean>(false)
 	const [important, setImportant] = createSignal<boolean>(false)
@@ -53,7 +53,7 @@ const _: VoidComponent = () => {
 			<Button variant={ButtonVariant[_tonal]} onClick={(ev) => openMenu(ev, menu_ref, {
 				anchor: anchor()? ev[_currentTarget] : undefined,
 				allowHideAnchor: allowHideAnchor(),
-				dragable: dragable(),
+				draggable: draggable(),
 				gap: gap(),
 				important: important(),
 				contentAutoFocus: contentAutoFocus(),
@@ -63,7 +63,7 @@ const _: VoidComponent = () => {
 			<Button variant={ButtonVariant[_tonal]} onClick={(ev) => openMenu(ev, menu_ref2, {
 				anchor: anchor()? ev[_currentTarget] : undefined,
 				allowHideAnchor: allowHideAnchor(),
-				dragable: dragable(),
+				draggable: draggable(),
 				gap: gap(),
 				important: important(),
 				contentAutoFocus: contentAutoFocus(),
@@ -192,7 +192,7 @@ const _: VoidComponent = () => {
 				Input Autofocus
 			</CheckBox>
 			<CheckBox
-				checked={dragable()}
+				checked={draggable()}
 				onChange={ev => setDragable(ev[_currentTarget][_checked])}>
 				Dragable
 			</CheckBox>

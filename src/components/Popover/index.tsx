@@ -4,7 +4,7 @@ import { Portal } from 'solid-js/web'
 
 import { FlyoutPosition as PopoverPosition } from '@/enums/position'
 import { getFlyoutPosition } from '@/utils/flyout'
-import { _allowHideAnchor, _altKey, _animate, _body, _bottom, _centerBottom, _centerBottomToLeft, _centerBottomToRight, _centerTop, _centerTopToLeft, _centerTopToRight, _children, _class, _click, _clientWidth, _clientX, _clientY, _close, _closeAnimation, _closePopover, _ctrlKey, _detail, _disconnect, _dismiss, _dispatchEvent, _documentElement, _dragable, _element, _Escape, _findIndex, _finished, _flyout, _flyoutListener, _focus, _forEach, _gap, _height, _hidePopover, _important, _innerHeight, _instant, _isSameNode, _key, _left, _leftCenter, _leftCenterToBottom, _leftCenterToTop, _length, _manual, _manualDismiss, _max_height, _max_width, _maxHeight, _maxWidth, _metaKey, _mousemove, _mouseup, _move, _newState, _none, _noPointerEvent, _observe, _onCancel, _onClose, _onKeyDown, _onOpen, _onReposition, _onShortFocus, _onToggle, _onToggleOpen, _open, _openAnimation, _openPopover, _padding, _pointermove, _pointerType, _pointerup, _popoverListener, _popoverOpen, _position, _push, _px, _ref, _resize, _right, _rightCenter, _rightCenterToBottom, _rightCenterToTop, _scroll, _scrollTo, _scrollTop, _scrollY, _shiftKey, _showPopover, _some, _splice, _springBounce, _style, _then, _top, _touchend, _touches, _touchmove, _transform, _usePortal, _width, _x, _y } from '@/constants/string'
+import { _allowHideAnchor, _altKey, _animate, _body, _bottom, _centerBottom, _centerBottomToLeft, _centerBottomToRight, _centerTop, _centerTopToLeft, _centerTopToRight, _children, _class, _click, _clientWidth, _clientX, _clientY, _close, _closeAnimation, _closePopover, _ctrlKey, _detail, _disconnect, _dismiss, _dispatchEvent, _documentElement, _draggable, _element, _Escape, _findIndex, _finished, _flyout, _flyoutListener, _focus, _forEach, _gap, _height, _hidePopover, _important, _innerHeight, _instant, _isSameNode, _key, _left, _leftCenter, _leftCenterToBottom, _leftCenterToTop, _length, _manual, _manualDismiss, _max_height, _max_width, _maxHeight, _maxWidth, _metaKey, _mousemove, _mouseup, _move, _newState, _none, _noPointerEvent, _observe, _onCancel, _onClose, _onKeyDown, _onOpen, _onReposition, _onShortFocus, _onToggle, _onToggleOpen, _open, _openAnimation, _openPopover, _padding, _pointermove, _pointerType, _pointerup, _popoverListener, _popoverOpen, _position, _push, _px, _ref, _resize, _right, _rightCenter, _rightCenterToBottom, _rightCenterToTop, _scroll, _scrollTo, _scrollTop, _scrollY, _shiftKey, _showPopover, _some, _splice, _springBounce, _style, _then, _top, _touchend, _touches, _touchmove, _transform, _usePortal, _width, _x, _y } from '@/constants/string'
 import { endTimeout, startTimeout } from '@/utils/timeout'
 import { isElementHasAttribute, removeElementAttribute, setElementAttribute, setElementAttributeIfExist } from '@/utils/attributes'
 import { getDocument, getDocumentBody, getWindow } from '@/constants/window'
@@ -27,7 +27,7 @@ type PopoverOpenDetail = {
 	padding?: number
 	position?: PopoverPosition
 	allowHideAnchor?: boolean
-	dragable?: boolean
+	draggable?: boolean
 	manualDismiss?: boolean
 
 	/**
@@ -164,14 +164,14 @@ function closePopover(popover: HTMLDivElement): void {
 	popover[_dispatchEvent](new CustomEvent(PopoverEvents[_onClose]))
 }
 
-type PopoverProps = Omit<JSX.HTMLAttributes<HTMLDivElement>, 'style'> & {
+type PopoverProps = Omit<JSX.HTMLAttributes<HTMLDivElement>, 'style' | 'draggable'> & {
 	usePortal?: boolean
 	style?: JSX.CSSProperties
 	gap?: number
 	padding?: number
 	position?: PopoverPosition
 	allowHideAnchor?: boolean
-	dragable?: boolean
+	draggable?: boolean
 	manualDismiss?: boolean
 	onToggleOpen?(isOpen: boolean): unknown
 	openAnimation?(el: HTMLDivElement, done: () => void): unknown
@@ -183,10 +183,10 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 		_ref, _onToggleOpen, _children, _onToggle,
 		_class, _usePortal, _style, _openAnimation,
 		_closeAnimation, _gap, _padding, _position,
-		_allowHideAnchor, _dragable, _manualDismiss
+		_allowHideAnchor, _draggable, _manualDismiss
 	])
 	const [isDragging, setIsDragging] = createSignal<boolean>(false)
-	const [isDragable, setIsDragable] = createSignal<boolean>(false)
+	const [isDraggable, setIsDraggable] = createSignal<boolean>(false)
 	const [isManualDismiss, setIsManualDismiss] = createSignal<boolean>(false)
 	const [left, setLeft] = createSignal<number>(0)
 	const [top, setTop] = createSignal<number>(0)
@@ -369,7 +369,7 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 			anchorRect,
 			allowHideAnchor = props[_allowHideAnchor] ?? true,
 			anchor = null,
-			dragable = props[_dragable] ?? false,
+			draggable = props[_draggable] ?? false,
 			gap = props[_gap] ?? 0,
 			padding = props[_padding] ?? 0,
 			position = props[_position] ?? PopoverPosition[_centerBottom],
@@ -385,9 +385,9 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 		$padding = padding
 
 		// handle drag
-		if (isDragable() && !dragable) removeDragListener()
-		else if (!isDragable() && dragable) addDragListener()
-		setIsDragable(dragable)
+		if (isDraggable() && !draggable) removeDragListener()
+		else if (!isDraggable() && draggable) addDragListener()
+		setIsDraggable(draggable)
 
 		popover_ref[_showPopover]()
 
@@ -673,13 +673,13 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 			callEventHandler(ev, props[_onToggle])
 			props[_onToggleOpen]?.(isOpen)
 		}}
-		data-c-dragable={setElementAttributeIfExist(isDragable())}
+		data-c-draggable={setElementAttributeIfExist(isDraggable())}
 		data-c-open={setElementAttributeIfExist(attr_open())}
 		data-c-open-done={setElementAttributeIfExist(attr_openDone())}
 		data-c-drag={setElementAttributeIfExist(isDragging())}
 		data-c-manual={setElementAttributeIfExist(isManualDismiss())}
 		{...other}>
-		<Show when={isDragable()}>
+		<Show when={isDraggable()}>
 			<span
 				class="c-popover-drag-handle"
 				data-g-keep-pointer-event={setElementAttributeIfExist(isDragging())}

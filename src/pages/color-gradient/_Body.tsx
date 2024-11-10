@@ -521,7 +521,7 @@ const _: VoidComponent<{
 
 	const ColorPickers: VoidComponent = () => (<>
 		<ColorPicker
-			dragable
+			draggable
 			disabledAction
 			ref={r => set_colorPicker_ref(r)}
 			onUpdateColor={color => props[_command](

@@ -231,7 +231,7 @@ export const SettingsElement: VoidComponent = () => {
 			disabledColorControl
 			disabledOpacityControl
 			disabledAction
-			dragable
+			draggable
 			onUpdateColor={v => changeColor(v)}
 			ref={r => colorPicker_ref = r}
 			onToggleOpen={(v) => setIs_colorPicker_open(v)}
