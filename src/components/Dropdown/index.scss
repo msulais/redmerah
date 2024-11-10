@@ -2,6 +2,10 @@
 	text-align: start;
 }
 
+.c-filled-btn.c-dropdown > .c-dropdown-label {
+	color: rgb(var(--g-color-on-surface));
+}
+
 .c-dropdown-label {
 	position: absolute;
 	bottom: 100%;
