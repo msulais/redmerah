@@ -2,7 +2,7 @@ import { type Component, type JSX, type ParentComponent, Show, mergeProps, split
 import { mergeRefs } from "@solid-primitives/refs"
 
 import { getElementAttribute, setElementAttributeIfExist } from "@/utils/attributes"
-import { _checked, _selected, _leading, _children, _trailing, _subtitle, _indent, _classList, _rightCenterToBottom, _disconnect, _dismiss, _id, _item, _level, _manual, _observe, _onCancel, _onClick, _onClose, _onToggle, _open, _ref, _wrapperAttr, _auto, _shortcuts, _currentTarget, _none, _left, _tonal, _dragable, _clientX, _clientY, _color, _hue, _initialColor, _isDrag, _mousemove, _mouseup, _noPointerEvent, _opacity, _touchend, _touches, _touchmove, _value, _valuechange, _top, _px, _anchorId, _body, _bottom, _clientWidth, _height, _innerHeight, _right, _width, _focus, _iconCode, _compact, _variant, _indicatorPosition, _onMouseEnter, _onMouseLeave, _class, _desktopCompact, _gap, _position, _padding, _allowHideAnchor, _onToggleOpen, _click, _contains, _target, _filled, _focused, _layerAttr, _outlined, _transparent, _switchAttr, _onValueChanged, _onChange, _div, _disabled, _forEach, _onPointerEnter, _onPointerLeave } from "@/constants/string"
+import { _checked, _selected, _leading, _children, _trailing, _subtitle, _indent, _classList, _rightCenterToBottom, _disconnect, _dismiss, _id, _item, _level, _manual, _observe, _onCancel, _onClick, _onClose, _onToggle, _open, _ref, _wrapperAttr, _auto, _shortcuts, _currentTarget, _none, _left, _tonal, _dragable, _clientX, _clientY, _color, _hue, _initialColor, _isDrag, _mousemove, _mouseup, _noPointerEvent, _opacity, _touchend, _touches, _touchmove, _value, _valuechange, _top, _px, _anchorId, _body, _bottom, _clientWidth, _height, _innerHeight, _right, _width, _focus, _iconCode, _compact, _variant, _indicatorPosition, _onMouseEnter, _onMouseLeave, _class, _desktopCompact, _gap, _position, _padding, _allowHideAnchor, _onToggleOpen, _click, _contains, _target, _filled, _focused, _layerAttr, _outlined, _transparent, _switchAttr, _onValueChanged, _onChange, _div, _disabled, _forEach, _onPointerEnter, _onPointerLeave, _accent } from "@/constants/string"
 import { isVarHasValue } from "@/utils/data"
 import { getAllElementBySelector } from "@/utils/element"
 import { callEventHandler, eventStopImmediatePropagation, eventStopPropagation } from "@/utils/event"
@@ -18,6 +18,7 @@ import Popover, { type PopoverProps, closePopover, openPopover, repositionPopove
 import Modal, { type ModalProps, closeModal, focusModal, openModal, repositionModal, ModalPosition as MenuPosition } from "@/components/Modal"
 import { RawSwitch, type RawSwitchProps } from "@/components/Switch"
 import './index.scss'
+import { AppColors } from "@/enums/colors"
 
 type MenuItemTrailingShortcutProps = JSX.HTMLAttributes<HTMLDivElement> & {
 	shortcuts: string[]
@@ -51,14 +52,14 @@ const MenuItem: ParentComponent<MenuItemProps> = ($props) => {
 		{...other}>
 		<Show when={isVarHasValue(props[_checked])}>
 			<Icon
-				style={{color: 'rgb(var(--g-color-accent))'}}
+				style={{color: `rgb(${AppColors[_accent]})`}}
 				filled={props[_checked]}
 				code={props[_checked]? 0xE3CC : 0xE3D4}
 			/>
 		</Show>
 		<Show when={props[_iconCode] != null}>
 			<Icon
-				style={{color: props[_selected]? 'rgb(var(--g-color-accent))' : undefined}}
+				style={{color: props[_selected]? `rgb(${AppColors[_accent]})` : undefined}}
 				filled={props[_selected]}
 				code={props[_iconCode]!}
 			/>
@@ -96,7 +97,7 @@ const LinkMenuItem: ParentComponent<LinkMenuItemProps> = ($props) => {
 		_trailing, _classList, _iconCode, _variant,
 		_indicatorPosition,
 	])
-	const trailingComponent = children(() => props[_trailing])
+	const trailing = children(() => props[_trailing])
 
 	return (<LinkButton
 		variant={props[_variant] ?? (props[_selected]? ButtonVariant[_tonal] : props[_variant])}
@@ -106,24 +107,24 @@ const LinkMenuItem: ParentComponent<LinkMenuItemProps> = ($props) => {
 		{...other}>
 		<Show when={isVarHasValue(props[_checked])}>
 			<Icon
-				style={{color: props[_checked]? 'rgb(var(--g-color-accent))' : undefined}}
+				style={{color: props[_checked]? `rgb(${AppColors[_accent]})` : undefined}}
 				filled={props[_checked]}
 				code={props[_checked]? 0xE3CC : 0xE3D4}
 			/>
 		</Show>
 		<Show when={props[_iconCode] != null}>
 			<Icon
-				style={{color: props[_selected]? 'rgb(var(--g-color-accent))' : undefined}}
+				style={{color: props[_selected]? `rgb(${AppColors[_accent]})` : undefined}}
 				filled={props[_selected]}
 				code={props[_iconCode]!}
 			/>
 		</Show>
 		{ props[_leading] }
 		{ props[_children] }
-		<Show when={trailingComponent()}>
+		<Show when={trailing()}>
 			<div style={{flex: 1}} />
 		</Show>
-		{ trailingComponent() }
+		{ trailing() }
 	</LinkButton>)
 }
 
@@ -139,7 +140,7 @@ const MenuHeader: ParentComponent<JSX.HTMLAttributes<HTMLDivElement>> = (props) 
 	return (<div class="c-menu-header" {...props}/>)
 }
 
-type SwitchMenuItemProps = JSX.LabelHTMLAttributes<HTMLLabelElement> & {
+type SwitchMenuItemProps = Omit<JSX.LabelHTMLAttributes<HTMLLabelElement>, 'for'> & {
 	variant?: ButtonVariant
 	focused?: boolean
 	compact?: boolean
@@ -165,13 +166,14 @@ const SwitchMenuItem: ParentComponent<SwitchMenuItemProps> = ($props) => {
 		]
 	)
 	const [switchProps, otherSwitchProps] = splitProps(
-		mergeProps({component: _div}, props[_switchAttr]! ?? {}),
-		[_checked, _disabled]
+		mergeProps({component: _div, id: createUniqueId()}, props[_switchAttr]! ?? {}),
+		[_checked, _disabled, _id]
 	)
 
 	return (<label
 		class={'c-btn c-menu-item c-switch-menu-item' + (props[_class] != null? ` ${props[_class]}` : '')}
 		data-c-disabled={setElementAttributeIfExist(props[_disabled])}
+		for={switchProps[_id]}
 		classList={{
 			'c-filled-btn': props[_variant] == ButtonVariant[_filled],
 			'c-tonal-btn': props[_variant] == ButtonVariant[_tonal],
@@ -194,6 +196,7 @@ const SwitchMenuItem: ParentComponent<SwitchMenuItemProps> = ($props) => {
 			} as any}
 			disabled={switchProps[_disabled] ?? props[_disabled]}
 			checked={switchProps[_checked] ?? props[_checked]}
+			id={switchProps[_id]}
 			{...otherSwitchProps}
 		/>
 	</label>)
