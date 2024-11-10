@@ -1,22 +1,15 @@
-.c-checkbox {
-	display: flex;
-	font-size: var(--g-font-size-xs);
-	align-items: center;
-	user-select: none;
-	transition-duration: .3s;
+.c-checkbox.c-btn {
+	padding-left: 0px;
+	padding-right: 8px;
+
+	&:has( > input:focus-visible) {
+		outline: auto;
+	}
 
 	> input {
 		-moz-appearance: none;
 		-webkit-appearance: none;
 		appearance: none;
-
-		&:focus-visible + .c-btn {
-			outline: auto;
-		}
-	}
-
-	> div {
-		margin-right: 4px;
 	}
 
 	& * {
@@ -33,28 +26,7 @@
 		}
 	}
 
-	&:not([data-c-disabled]) {
-		@media (hover: hover) {
-			&:hover {
-				cursor: pointer;
-
-				& * {
-					cursor: pointer;
-				}
-
-				> .c-btn {
-					--g-background-color-opacity: var(--g-opacity1);
-				}
-			}
-		}
-
-		&:active > .c-btn {
-			--g-background-color-opacity: var(--g-opacity0);
-			--c-btn-border-opacity: var(--g-opacity1);
-		}
-
-		> .c-btn > .c-icon {
-			color: rgb(var(--g-color-accent));
-		}
+	&:not([data-c-disabled]) > .c-icon {
+		color: rgb(var(--g-color-accent));
 	}
 }
