@@ -957,7 +957,7 @@ const DateCalculator: VoidComponent<{
 			<NumberTextField
 				min={0}
 				value={props[_input][_year] + ''}
-				labelText="Year"
+				label="Year"
 				onBlur={(ev) => props[_command](
 					Commands.change_calculator_input,
 					{	...props[_input],
@@ -968,7 +968,7 @@ const DateCalculator: VoidComponent<{
 			<NumberTextField
 				min={0}
 				value={props[_input][_month] + ''}
-				labelText="Month"
+				label="Month"
 				onBlur={(ev) => props[_command](
 					Commands.change_calculator_input,
 					{	...props[_input],
@@ -979,7 +979,7 @@ const DateCalculator: VoidComponent<{
 			<NumberTextField
 				min={0}
 				value={props[_input][_day] + ''}
-				labelText="Day"
+				label="Day"
 				onBlur={(ev) => props[_command](
 					Commands.change_calculator_input,
 					{	...props[_input],

@@ -1429,7 +1429,7 @@ const _: VoidComponent = () => {
 				}}>
 				<TextField
 					ref={r => textfield_newLabel_ref = r}
-					labelText="Name"
+					label="Name"
 					onFocus={() => setSelectedLabelToAdd(_name, textfield_newLabel_ref[_value])}
 					onInput={() => setSelectedLabelToAdd(_name, textfield_newLabel_ref[_value])}
 					autofocus
@@ -1487,7 +1487,7 @@ const _: VoidComponent = () => {
 				}}>
 				<TextField
 					ref={r => textfield_editLabel_ref = r}
-					labelText="Name"
+					label="Name"
 					onFocus={() => setSelectedLabelToEdit(_name, textfield_editLabel_ref[_value])}
 					onInput={() => setSelectedLabelToEdit(_name, textfield_editLabel_ref[_value])}
 					autofocus

@@ -69,7 +69,7 @@ export const MainElement: VoidComponent = () => {
 			}}
 			autoShowClearBtn
 			leading={<Icon code={0xEDDF} />}
-			labelText="Search apps"
+			label="Search apps"
 		/>
 		<div><For each={apps[_sort]((a, b) => a[_name][_localeCompare](b[_name]))}>{app => <Show when={searchText()[_trim]() == '' || new RegExp(searchText()[_toLowerCase]()[_trim]()[_split](' ')[_join]('|'))[_test](app[_name][_toLowerCase]())}>
 			<LinkButton

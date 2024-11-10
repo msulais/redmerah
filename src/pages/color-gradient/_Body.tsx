@@ -264,7 +264,7 @@ const GradientControl: VoidComponent<{
 		<div class={CSS.body_gradient_control_options_2_grid}>
 			<Show when={[GradientType[_conic], GradientType[_linear]][_includes](props[_gradient][_type])}>
 				<NumberTextField
-					labelText="Angle (°)"
+					label="Angle (°)"
 					enterkeyhint="done"
 					min={0}
 					max={360}
@@ -279,7 +279,7 @@ const GradientControl: VoidComponent<{
 			</Show>
 			<Show when={[GradientType[_conic], GradientType[_radial]][_includes](props[_gradient][_type])}>
 				<NumberTextField
-					labelText="X (%)"
+					label="X (%)"
 					min={0}
 					enterkeyhint="done"
 					autoSelectAll
@@ -291,7 +291,7 @@ const GradientControl: VoidComponent<{
 					value={(props[_gradient] as any)[_positionX] as number}
 				/>
 				<NumberTextField
-					labelText="Y (%)"
+					label="Y (%)"
 					enterkeyhint="done"
 					min={0}
 					autoSelectAll
@@ -305,7 +305,7 @@ const GradientControl: VoidComponent<{
 			</Show>
 			<Show when={props[_gradient][_type] == GradientType[_radial] && props[_gradient][_shape] == RadialGradientShape[_circle]}>
 				<NumberTextField
-					labelText="Size (px)"
+					label="Size (px)"
 					enterkeyhint="done"
 					min={0}
 					autoSelectAll
@@ -319,7 +319,7 @@ const GradientControl: VoidComponent<{
 			</Show>
 			<Show when={props[_gradient][_type] == GradientType[_radial] && props[_gradient][_shape] == RadialGradientShape[_ellipse]}>
 				<NumberTextField
-					labelText="Width (%)"
+					label="Width (%)"
 					enterkeyhint="done"
 					min={0}
 					autoSelectAll
@@ -331,7 +331,7 @@ const GradientControl: VoidComponent<{
 					value={(props[_gradient] as RadialGradient)[_sizeWidth]}
 				/>
 				<NumberTextField
-					labelText="Height (%)"
+					label="Height (%)"
 					enterkeyhint="done"
 					min={0}
 					autoSelectAll
@@ -358,7 +358,7 @@ const GradientControl: VoidComponent<{
 		<div class={CSS.body_gradient_control_stop}>
 			<div>
 				<NumberTextField
-					labelText={isConicGradient()? "°" : "%"}
+					label={isConicGradient()? "°" : "%"}
 					autoSelectAll
 					enterkeyhint="done"
 					value={stop[_size] * (isConicGradient()? 360 / 100 : 1)}
@@ -591,7 +591,7 @@ const _: VoidComponent<{
 								Commands.change_settings_aspectRatio,
 								v
 							)}
-							labelText="Aspect ratio"
+							label="Aspect ratio"
 						/>
 						<NumberTextField
 							min={0}
@@ -602,7 +602,7 @@ const _: VoidComponent<{
 								Commands.change_settings_borderRadius,
 								v
 							)}
-							labelText="Border radius (px)"
+							label="Border radius (px)"
 						/>
 					</div>
 				</div>

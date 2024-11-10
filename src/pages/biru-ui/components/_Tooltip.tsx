@@ -94,7 +94,7 @@ const _: VoidComponent = () => {
 				value={gap()}
 				min={0}
 				onBlur={(ev) => setGap(g => safeNumber(ev[_currentTarget][_valueAsNumber], g))}
-				labelText="Gap"
+				label="Gap"
 			/>
 			<NumberTextField
 				style={{width: '100px'}}
@@ -102,7 +102,7 @@ const _: VoidComponent = () => {
 				min={0}
 				step={100}
 				onBlur={(ev) => setStartDelayDuration(d => safeNumber(ev[_currentTarget][_valueAsNumber], d))}
-				labelText="Start delay duration"
+				label="Start delay duration"
 			/>
 			<NumberTextField
 				style={{width: '100px'}}
@@ -110,7 +110,7 @@ const _: VoidComponent = () => {
 				min={0}
 				step={100}
 				onBlur={(ev) => setEndDelayDuration(d => safeNumber(ev[_currentTarget][_valueAsNumber], d))}
-				labelText="End delay duration"
+				label="End delay duration"
 			/>
 			<CheckBox checked={useAnchor()} onChange={ev => setUseAnchor(ev[_currentTarget][_checked])}>Use anchor</CheckBox>
 		</PlaygroundOptions>

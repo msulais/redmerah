@@ -503,14 +503,14 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 				ref={r => textfield_color_ref = r}
 				onInput={(ev) => onColorInputChange(ev[_currentTarget][_value])}
 				onBlur={() => updateInputs()}
-				labelText={colorModel() == _RGB ? _RGB : colorModel() == _HEX ? 'Hex' : _HSL}
+				label={colorModel() == _RGB ? _RGB : colorModel() == _HEX ? 'Hex' : _HSL}
 				placeholder={colorModel() == _RGB ? "0-255, 0-255, 0-255" : colorModel() == _HEX ? '#FF0000' : '0-360, 0-100%, 0-100%'}
 			/>
 			<TextField
 				onInput={(ev) => onOpacityInputChange(ev[_currentTarget][_value])}
 				onBlur={() => updateInputs()}
 				ref={r => textfield_opacity_ref = r}
-				labelText="Opacity"
+				label="Opacity"
 				value="100%"
 				placeholder="0-100%"
 			/>
@@ -986,14 +986,14 @@ const PopoverColorPicker: ParentComponent<PopoverColorPickerProps> = ($props) =>
 				ref={r => textfield_color_ref = r}
 				onInput={(ev) => onColorInputChange(ev[_currentTarget][_value])}
 				onBlur={() => updateInputs()}
-				labelText={colorModel() == _RGB ? _RGB : colorModel() == _HEX ? 'Hex' : _HSL}
+				label={colorModel() == _RGB ? _RGB : colorModel() == _HEX ? 'Hex' : _HSL}
 				placeholder={colorModel() == _RGB ? "0-255, 0-255, 0-255" : colorModel() == _HEX ? '#FF0000' : '0-360, 0-100%, 0-100%'}
 			/>
 			<TextField
 				onInput={(ev) => onOpacityInputChange(ev[_currentTarget][_value])}
 				onBlur={() => updateInputs()}
 				ref={r => textfield_opacity_ref = r}
-				labelText="Opacity"
+				label="Opacity"
 				value="100%"
 				placeholder="0-100%"
 			/>

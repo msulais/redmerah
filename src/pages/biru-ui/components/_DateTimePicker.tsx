@@ -70,7 +70,7 @@ const _: VoidComponent = () => {
 			</Dropdown>
 			<TextField
 				style={{width: '164px'}}
-				labelText={'First date'}
+				label={'First date'}
 				readOnly
 				value={getDateString_YMD(firstDate(), locale())}
 				trailing={<>
@@ -95,7 +95,7 @@ const _: VoidComponent = () => {
 
 			<TextField
 				style={{width: '164px'}}
-				labelText={'Last date'}
+				label={'Last date'}
 				readOnly
 				value={getDateString_YMD(lastDate(), locale())}
 				trailing={<>

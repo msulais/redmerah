@@ -93,7 +93,7 @@ const _: VoidComponent<{
 		</div>
 		<div style={{display: props[_page] == Pages[_generate]? _contents : _none}}>
 			<TextField
-				labelText="Data"
+				label="Data"
 				placeholder="Link, email, or any text"
 				onInput={ev => props[_command](Commands.change_QRCodeData, ev[_currentTarget][_value])}
 				wrapperAttr={{ class: CSS.body_input }}

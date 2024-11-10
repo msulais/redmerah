@@ -1175,7 +1175,7 @@ const _: VoidComponent<{
 				</Button>
 			</>}>
 			<TextField
-				labelText="Task"
+				label="Task"
 				value={selectedTaskToEdit[_task][_name]}
 				onBlur={ev => {
 					if (ev[_currentTarget][_value] == selectedTaskToEdit[_task][_name]) return;
@@ -1190,7 +1190,7 @@ const _: VoidComponent<{
 				}}
 			/>
 			<AreaTextField
-				labelText="Description"
+				label="Description"
 				maxLine={3}
 				value={selectedTaskToEdit[_task][_description]}
 				onBlur={ev => {

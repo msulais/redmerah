@@ -23,7 +23,7 @@ const _: VoidComponent<{
 	return (<div class={CSS.notebook} data-expand={setElementAttributeIfExist(props[_expand])}>
 		<AreaTextField
 			ref={r => textarea_ref = r}
-			labelText="Notebook"
+			label="Notebook"
 			placeholder="Type your thought here ..."
 			onInput={(ev) => props[_onNoteChanged](ev[_currentTarget][_value])}
 		/>

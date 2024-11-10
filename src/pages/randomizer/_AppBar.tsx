@@ -467,7 +467,7 @@ const _: Component<{
 				<div class={ CSS.appbar_textfield_menu_item }>
 					<TextField
 						ref={r => textfield_prefix_ref = r}
-						labelText="Prefix"
+						label="Prefix"
 						onBlur={(ev) => props[_command](Commands[_change_settings_prefix], ev[_currentTarget][_value])}
 						leading={<Icon code={0xE043}/>}
 					/>
@@ -475,7 +475,7 @@ const _: Component<{
 				<div class={ CSS.appbar_textfield_menu_item }>
 					<TextField
 						ref={r => textfield_suffix_ref = r}
-						labelText="Suffix"
+						label="Suffix"
 						onBlur={(ev) => props[_command](Commands[_change_settings_suffix], ev[_currentTarget][_value])}
 						leading={<Icon code={0xE02D}/>}
 					/>
@@ -483,7 +483,7 @@ const _: Component<{
 				<div class={ CSS.appbar_textfield_menu_item }>
 					<TextField
 						ref={r => textfield_separator_ref = r}
-						labelText="Separator"
+						label="Separator"
 						onBlur={(ev) => props[_command](Commands[_change_settings_separator], ev[_currentTarget][_value])}
 						leading={<Icon code={0xE4CF}/>}
 					/>
@@ -494,7 +494,7 @@ const _: Component<{
 					<NumberTextField
 						ref={r => textfield_decimalLength_ref = r}
 						min={0}
-						labelText="Min decimal length"
+						label="Min decimal length"
 						onBlur={ev => props[_command](
 							Commands[_change_settings_numbers_minDecimalLength],
 							safeNumber(ev[_currentTarget][_valueAsNumber])

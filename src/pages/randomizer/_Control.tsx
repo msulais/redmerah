@@ -56,7 +56,7 @@ const Teams: VoidComponent<{
 
 	return (<>
 		<NumberTextField
-			labelText="Count"
+			label="Count"
 			min={1}
 			max={settings()[_membersList][_items][_length]}
 			onBlur={ev => props[_command](
@@ -365,7 +365,7 @@ const Selection: VoidComponent<{
 			</MenuItem>
 		</Menu>
 		<NumberTextField
-			labelText="Count"
+			label="Count"
 			min={1}
 			max={props[_settings][0][_selection][_list][_items][_length]}
 			onBlur={ev => props[_command](
@@ -511,7 +511,7 @@ const Words: VoidComponent<{
 			</MenuItem>
 		</Menu>
 		<NumberTextField
-			labelText="Count"
+			label="Count"
 			min={1}
 			onBlur={ev => props[_command](
 				Commands[_change_settings_words_count],
@@ -552,7 +552,7 @@ const Colors: VoidComponent<{
 	return (<>
 		<NumberTextField
 			min={1}
-			labelText="Count"
+			label="Count"
 			value={props[_settings][0][_colors][_count]}
 			onBlur={ev => props[_command](
 				Commands[_change_settings_colors_count],
@@ -562,7 +562,7 @@ const Colors: VoidComponent<{
 		<Switch>
 			<Match when={props[_settings][0][_colors][_colorModel] == ColorsRandomizerColorModel[_hex]}>
 				<TextField
-					labelText="Hex"
+					label="Hex"
 					placeholder="0-16777215 - 0-16777215"
 					onBlur={(ev) => {
 						const values = getMinMax(
@@ -584,7 +584,7 @@ const Colors: VoidComponent<{
 			</Match>
 			<Match when={props[_settings][0][_colors][_colorModel] == ColorsRandomizerColorModel[_hsl]}>
 				<TextField
-					labelText="Hue"
+					label="Hue"
 					placeholder="0-360 - 0-360"
 					onBlur={(ev) => {
 						const values = getMinMax(
@@ -604,7 +604,7 @@ const Colors: VoidComponent<{
 					][_join](' - ')}
 				/>
 				<TextField
-					labelText="Saturation"
+					label="Saturation"
 					placeholder="0-100 - 0-100"
 					onBlur={(ev) => {
 						const values = getMinMax(
@@ -624,7 +624,7 @@ const Colors: VoidComponent<{
 					][_join](' - ')}
 				/>
 				<TextField
-					labelText="Lightness"
+					label="Lightness"
 					placeholder="0-100 - 0-100"
 					onBlur={(ev) => {
 						const values = getMinMax(
@@ -646,7 +646,7 @@ const Colors: VoidComponent<{
 			</Match>
 			<Match when={props[_settings][0][_colors][_colorModel] == ColorsRandomizerColorModel[_rgb]}>
 				<TextField
-					labelText="Red"
+					label="Red"
 					placeholder="0-225 - 0-255"
 					onBlur={(ev) => {
 						const values = getMinMax(
@@ -666,7 +666,7 @@ const Colors: VoidComponent<{
 					][_join](' - ')}
 				/>
 				<TextField
-					labelText="Green"
+					label="Green"
 					placeholder="0-225 - 0-255"
 					onBlur={(ev) => {
 						const values = getMinMax(
@@ -686,7 +686,7 @@ const Colors: VoidComponent<{
 					][_join](' - ')}
 				/>
 				<TextField
-					labelText="Blue"
+					label="Blue"
 					placeholder="0-225 - 0-255"
 					onBlur={(ev) => {
 						const values = getMinMax(
@@ -737,13 +737,13 @@ const Numbers: VoidComponent<{
 
 	return (<>
 		<TextField
-			labelText="Range"
+			label="Range"
 			onBlur={onBlurRange}
 			wrapperAttr={{ style: { width: 'min(100%, 164px)' } }}
 			value={[props[_settings][0][_numbers][_range][_min], props[_settings][0][_numbers][_range][_max]][_join](' - ')}
 		/>
 		<NumberTextField
-			labelText="Count"
+			label="Count"
 			min={1}
 			onBlur={ev => props[_command](
 				Commands[_change_settings_numbers_count],
@@ -797,7 +797,7 @@ const $String: VoidComponent<{
 				safeNumber(ev[_currentTarget][_valueAsNumber], settings()[_length])
 			)}
 			min={1}
-			labelText="Length"
+			label="Length"
 		/>
 		<TextField
 			ref={r => charactersInputRef = r}
@@ -808,7 +808,7 @@ const $String: VoidComponent<{
 				style: { width: 'min(100%, 328px)' }
 			}}
 			value={8}
-			labelText="Characters"
+			label="Characters"
 			trailing={<TextTooltip text="More character options">
 				<TextFieldButton
 					focused={isCharactersMenuOpen()}
@@ -859,7 +859,7 @@ const $String: VoidComponent<{
 			<MenuDivider />
 			<div class={ CSS.control_string_custom_character}>
 				<TextField
-					labelText="Custom characters"
+					label="Custom characters"
 					placeholder="#d(23'[])sdf"
 					onInput={(ev) => props[_command](Commands[_change_settings_string_characters_customCharacters], ev[_currentTarget][_value])}
 					value={settings()[_characters][_customCharacter]}

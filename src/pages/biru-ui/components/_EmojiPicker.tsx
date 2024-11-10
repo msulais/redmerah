@@ -90,7 +90,7 @@ const _: VoidComponent = () => {
 				value={gap()}
 				min={0}
 				onBlur={(ev) => setGap(g => safeNumber(ev[_currentTarget][_valueAsNumber], g))}
-				labelText="Gap"
+				label="Gap"
 			/>
 			<Show when={[
 				EmojiPickerPosition[_centerTopToRight],
@@ -115,7 +115,7 @@ const _: VoidComponent = () => {
 					style={{width: '100px'}}
 					min={0}
 					onBlur={(ev) => setPadding(p => safeNumber(ev[_currentTarget][_valueAsNumber], p))}
-					labelText="Padding"
+					label="Padding"
 				/>
 			</Show>
 			<CheckBox

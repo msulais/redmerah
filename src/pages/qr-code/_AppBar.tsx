@@ -347,7 +347,7 @@ const _: VoidComponent<{
 				</MenuItem>
 				<div style={{padding: '4px 12px'}}>
 					<NumberTextField
-						labelText="Margin"
+						label="Margin"
 						min={0}
 						value={props[_settings][_margin]}
 						integerOnly
@@ -370,7 +370,7 @@ const _: VoidComponent<{
 				<div style={{padding: '4px 12px 8px 12px'}}>
 					<NumberTextField
 						disabled={props[_settings][_version] == null}
-						labelText="Version"
+						label="Version"
 						min={1}
 						max={40}
 						integerOnly

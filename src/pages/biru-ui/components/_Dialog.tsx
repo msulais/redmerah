@@ -42,16 +42,16 @@ const _: VoidComponent = () => {
 				<Show when={hasContent()}>
 					{contentText()}
 					<div style={{height: '16px'}}/>
-					<TextField labelText="Some input"/>
+					<TextField label="Some input"/>
 				</Show>
 			</Dialog>
 		</Playground>
 		<PlaygroundOptions>
 			<Show when={hasHeader()}>
-				<TextField labelText="Header text" value="Header" onInput={ev => setHeaderText(ev[_currentTarget][_value])}/>
+				<TextField label="Header text" value="Header" onInput={ev => setHeaderText(ev[_currentTarget][_value])}/>
 			</Show>
 			<Show when={hasContent()}>
-				<TextField labelText="Content text" value="Cupidatat aliqua est quis enim commodo. Aute Lorem occaecat commodo nisi amet dolor ut cupidatat qui ipsum magna in. In aliquip voluptate nulla aliquip duis cillum consectetur eiusmod adipisicing reprehenderit officia reprehenderit adipisicing dolor." onInput={ev => setContentText(ev[_currentTarget][_value])}/>
+				<TextField label="Content text" value="Cupidatat aliqua est quis enim commodo. Aute Lorem occaecat commodo nisi amet dolor ut cupidatat qui ipsum magna in. In aliquip voluptate nulla aliquip duis cillum consectetur eiusmod adipisicing reprehenderit officia reprehenderit adipisicing dolor." onInput={ev => setContentText(ev[_currentTarget][_value])}/>
 			</Show>
 			<CheckBox
 				checked={important()}
