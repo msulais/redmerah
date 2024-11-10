@@ -11,7 +11,7 @@ import { Page, Playground, PlaygroundOptions } from "../_Body"
 
 const _: VoidComponent = () => {
 	const [important, setImportant] = createSignal<boolean>(false)
-	const [inputAutoFocus, setInputAutoFocus] = createSignal<boolean>(false)
+	const [contentAutoFocus, setInputAutoFocus] = createSignal<boolean>(false)
 	const [hasHeader, setHasHeader] = createSignal<boolean>(true)
 	const [hasFooter, setHasFooter] = createSignal<boolean>(true)
 	const [hasContent, setHasContent] = createSignal<boolean>(true)
@@ -25,7 +25,7 @@ const _: VoidComponent = () => {
 				variant={ButtonVariant[_tonal]}
 				onClick={(ev) => openDrawer(ev, drawer_ref, {
 					important: important(),
-					inputAutoFocus: inputAutoFocus()
+					contentAutoFocus: contentAutoFocus()
 				})}>
 				Open drawer
 			</Button>
@@ -79,9 +79,9 @@ const _: VoidComponent = () => {
 				Content
 			</CheckBox>
 			<CheckBox
-				checked={inputAutoFocus()}
+				checked={contentAutoFocus()}
 				onChange={ev => setInputAutoFocus(ev[_currentTarget][_checked])}>
-				Input autofocus
+				Content autofocus
 			</CheckBox>
 		</PlaygroundOptions>
 	</Page>)

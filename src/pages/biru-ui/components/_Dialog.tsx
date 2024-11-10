@@ -10,7 +10,7 @@ import { Page, Playground, PlaygroundOptions } from "../_Body"
 
 const _: VoidComponent = () => {
 	const [important, setImportant] = createSignal<boolean>(false)
-	const [inputAutoFocus, setInputAutoFocus] = createSignal<boolean>(false)
+	const [contentAutoFocus, setInputAutoFocus] = createSignal<boolean>(false)
 	const [hasHeader, setHasHeader] = createSignal<boolean>(true)
 	const [hasActions, setHasActions] = createSignal<boolean>(true)
 	const [hasContent, setHasContent] = createSignal<boolean>(true)
@@ -26,7 +26,7 @@ const _: VoidComponent = () => {
 				variant={ButtonVariant[_tonal]}
 				onClick={(ev) => openDialog(ev, dialog_ref, {
 					important: important(),
-					inputAutoFocus: inputAutoFocus()
+					contentAutoFocus: contentAutoFocus()
 				})}>
 				Open dialog
 			</Button>
@@ -59,9 +59,9 @@ const _: VoidComponent = () => {
 				Important
 			</CheckBox>
 			<CheckBox
-				checked={inputAutoFocus()}
+				checked={contentAutoFocus()}
 				onChange={ev => setInputAutoFocus(ev[_currentTarget][_checked])}>
-				Input autofocus
+				Content autofocus
 			</CheckBox>
 			<CheckBox
 				checked={hasHeader()}

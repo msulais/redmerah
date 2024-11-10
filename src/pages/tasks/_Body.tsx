@@ -926,7 +926,7 @@ const _: VoidComponent<{
 		setText_subtask(subtask[_name])
 		openDialog(ev, dialog_editSubtask_ref, {
 			important: true,
-			inputAutoFocus: true
+			contentAutoFocus: true
 		})
 	}
 
@@ -1216,7 +1216,7 @@ const _: VoidComponent<{
 						addSubtaskOption = _edit
 						openDialog(ev, dialog_newSubtask_ref, {
 							important: true,
-							inputAutoFocus: true
+							contentAutoFocus: true
 						})}
 					}>
 					<Icon code={0xE009}/>Add subtask
@@ -1601,7 +1601,7 @@ const _: VoidComponent<{
 					addSubtaskOption = _action
 					openDialog(ev, dialog_newSubtask_ref, {
 						important: true,
-						inputAutoFocus: true
+						contentAutoFocus: true
 					})
 				}}>
 				Add subtask
@@ -1863,7 +1863,7 @@ const _: VoidComponent<{
 					setSelectedFileToRename({...selectedFileToAction})
 					renameFileOption = _edit
 					openDialog(ev, dialog_fileRename_ref, {
-						inputAutoFocus: true,
+						contentAutoFocus: true,
 						important: true
 					})
 				}}>
@@ -1934,7 +1934,7 @@ const _: VoidComponent<{
 					setSelectedFileToRename({...selectedFileToAction2})
 					renameFileOption = _action
 					openDialog(ev, dialog_fileRename_ref, {
-						inputAutoFocus: true,
+						contentAutoFocus: true,
 						important: true
 					})
 				}}>

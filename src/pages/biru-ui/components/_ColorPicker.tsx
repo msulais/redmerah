@@ -22,7 +22,7 @@ const _: VoidComponent = () => {
 				variant={ButtonVariant[_tonal]}
 				onClick={(ev) => openColorPicker(ev, colorPicker_ref, {
 					anchor: ev[_currentTarget],
-					inputAutoFocus: false,
+					contentAutoFocus: false,
 					gap: 8,
 				})}>
 				<Icon style={{color: color() ?? '#FF0000'}} code={0xE408} filled/>

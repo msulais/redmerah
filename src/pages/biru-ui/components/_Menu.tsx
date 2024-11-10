@@ -16,7 +16,7 @@ const _: VoidComponent = () => {
 	const [allowHideAnchor, setAllowHideAnchor] = createSignal<boolean>(true)
 	const [dragable, setDragable] = createSignal<boolean>(false)
 	const [gap, setGap] = createSignal<number>(12)
-	const [inputAutoFocus, setInputAutoFocus] = createSignal<boolean>(false)
+	const [contentAutoFocus, setInputAutoFocus] = createSignal<boolean>(false)
 	const [important, setImportant] = createSignal<boolean>(false)
 	const [padding, setPadding] = createSignal<number>(0)
 	const [position, setPosition] = createSignal<FlyoutPosition>(FlyoutPosition[_centerBottom])
@@ -56,7 +56,7 @@ const _: VoidComponent = () => {
 				dragable: dragable(),
 				gap: gap(),
 				important: important(),
-				inputAutoFocus: inputAutoFocus(),
+				contentAutoFocus: contentAutoFocus(),
 				padding: padding(),
 				position: position()
 			})}>Open menu</Button>
@@ -66,7 +66,7 @@ const _: VoidComponent = () => {
 				dragable: dragable(),
 				gap: gap(),
 				important: important(),
-				inputAutoFocus: inputAutoFocus(),
+				contentAutoFocus: contentAutoFocus(),
 				padding: padding(),
 				position: position()
 			})}>Open menu2</Button>
@@ -187,7 +187,7 @@ const _: VoidComponent = () => {
 				Important
 			</CheckBox>
 			<CheckBox
-				checked={inputAutoFocus()}
+				checked={contentAutoFocus()}
 				onChange={ev => setInputAutoFocus(ev[_currentTarget][_checked])}>
 				Input Autofocus
 			</CheckBox>

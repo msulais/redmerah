@@ -12,7 +12,7 @@ import './index.scss'
 
 function openDrawer(ev: Event, drawer: HTMLDialogElement, options?: {
 	important?: boolean
-	inputAutoFocus?: boolean
+	contentAutoFocus?: boolean
 }): void {
 	openModal(ev, drawer, {...options})
 }
