@@ -749,6 +749,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 				return
 			}
 			closeModal({soft: true})
+			eventPreventDefault(ev)
 		}}
 		onClose={(ev) => {
 			callEventHandler(ev, props[_onClose])
