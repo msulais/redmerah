@@ -10,7 +10,6 @@ import Menu, { closeMenu, MenuItem, openMenu, repositionMenu, type MenuProps, Me
 import { Button, ButtonVariant, type ButtonProps } from "@/components/Button"
 import './index.scss'
 import { callEventHandler } from "@/utils/event"
-import { AppColors } from "@/enums/colors"
 import Icon from "../Icon"
 
 type DropdownContextProps = {
