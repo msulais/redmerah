@@ -1,3 +1,23 @@
 .c-btn.c-dropdown {
 	text-align: start;
 }
+
+.c-filled-btn.c-dropdown > .c-dropdown-label {
+	color: rgb(var(--g-color-on-surface));
+}
+
+.c-dropdown-label {
+	position: absolute;
+	bottom: 100%;
+	transform: translateY(0.5em);
+	left: max(8px, calc(var(--c-btn-border-radius) - 4px));
+	background-color: rgb(var(--g-color-background));
+	max-width: calc(100% - 12px);
+	border-radius: 2px;
+	line-height: var(--g-font-size-s);
+	padding: 1px 4px;
+	font-size: var(--g-font-size-s);
+	z-index: 2;
+
+	:root[data-corner=sharp] & { border-radius: 0px }
+}

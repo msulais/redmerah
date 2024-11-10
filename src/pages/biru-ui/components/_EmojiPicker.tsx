@@ -15,7 +15,7 @@ import { NumberTextField } from "@/components/TextField"
 
 const _: VoidComponent = () => {
 	const [allowHideAnchor, setAllowHideAnchor] = createSignal<boolean>(true)
-	const [dragable, setDragable] = createSignal<boolean>(false)
+	const [draggable, setDragable] = createSignal<boolean>(false)
 	const [multiple, setMultiple] = createSignal<boolean>(false)
 	const [gap, setGap] = createSignal<number>(12)
 	const [important, setImportant] = createSignal<boolean>(false)
@@ -34,7 +34,7 @@ const _: VoidComponent = () => {
 				onClick={ev => openEmojiPicker(ev, emojiPicker_ref, {
 					anchor: anchor()? ev[_currentTarget] : undefined,
 					allowHideAnchor: allowHideAnchor(),
-					dragable: dragable(),
+					draggable: draggable(),
 					gap: gap(),
 					important: important(),
 					padding: padding(),
@@ -90,7 +90,7 @@ const _: VoidComponent = () => {
 				value={gap()}
 				min={0}
 				onBlur={(ev) => setGap(g => safeNumber(ev[_currentTarget][_valueAsNumber], g))}
-				labelText="Gap"
+				label="Gap"
 			/>
 			<Show when={[
 				EmojiPickerPosition[_centerTopToRight],
@@ -115,7 +115,7 @@ const _: VoidComponent = () => {
 					style={{width: '100px'}}
 					min={0}
 					onBlur={(ev) => setPadding(p => safeNumber(ev[_currentTarget][_valueAsNumber], p))}
-					labelText="Padding"
+					label="Padding"
 				/>
 			</Show>
 			<CheckBox
@@ -129,7 +129,7 @@ const _: VoidComponent = () => {
 				Important
 			</CheckBox>
 			<CheckBox
-				checked={dragable()}
+				checked={draggable()}
 				onChange={ev => setDragable(ev[_currentTarget][_checked])}>
 				Dragable
 			</CheckBox>

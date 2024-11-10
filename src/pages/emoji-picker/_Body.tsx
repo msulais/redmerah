@@ -42,7 +42,7 @@ const _: VoidComponent<{
 	return (<main class={CSS.body}>
 		<div class={CSS.body_textfield}>
 			<TextField
-				labelText="Emoji"
+				label="Emoji"
 				autoShowClearBtn
 				value={props[_text]}
 				onInput={ev => props[_command](Commands.update_text, ev[_currentTarget][_value])}

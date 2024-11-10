@@ -220,7 +220,7 @@ const _: VoidComponent<{
 				<div style={{padding: '8px 12px'}}>
 					<NumberTextField
 						min={12}
-						labelText="Font size"
+						label="Font size"
 						value={props[_settings][_fontSize]}
 						onBlur={ev => props[_command](
 							Commands.change_fontSize,
@@ -229,7 +229,7 @@ const _: VoidComponent<{
 					/>
 					<TextField
 						wrapperAttr={{style: {"margin-top": '8px'}}}
-						labelText="Prefix"
+						label="Prefix"
 						value={props[_settings][_prefix]}
 						onBlur={ev => props[_command](
 							Commands.change_prefix,
@@ -238,7 +238,7 @@ const _: VoidComponent<{
 					/>
 					<TextField
 						wrapperAttr={{style: {"margin-top": '8px'}}}
-						labelText="Suffix"
+						label="Suffix"
 						value={props[_settings][_suffix]}
 						onBlur={ev => props[_command](
 							Commands.change_suffix,

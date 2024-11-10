@@ -371,7 +371,7 @@ const _: VoidComponent<{
 				position={DrawerPosition[_right]}>
 				<AreaTextField
 					ref={r => areaTextField_notebook_ref = r}
-					labelText="Notebook"
+					label="Notebook"
 					placeholder="Type your thought here ..."
 					onInput={(ev) => props[_onNoteChanged](ev[_currentTarget][_value])}
 				/>

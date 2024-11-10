@@ -10,7 +10,7 @@ import { Page, Playground, PlaygroundOptions } from "../_Body"
 
 const _: VoidComponent = () => {
 	const [important, setImportant] = createSignal<boolean>(false)
-	const [inputAutoFocus, setInputAutoFocus] = createSignal<boolean>(false)
+	const [contentAutoFocus, setInputAutoFocus] = createSignal<boolean>(false)
 	const [hasHeader, setHasHeader] = createSignal<boolean>(true)
 	const [hasActions, setHasActions] = createSignal<boolean>(true)
 	const [hasContent, setHasContent] = createSignal<boolean>(true)
@@ -26,7 +26,7 @@ const _: VoidComponent = () => {
 				variant={ButtonVariant[_tonal]}
 				onClick={(ev) => openDialog(ev, dialog_ref, {
 					important: important(),
-					inputAutoFocus: inputAutoFocus()
+					contentAutoFocus: contentAutoFocus()
 				})}>
 				Open dialog
 			</Button>
@@ -42,16 +42,16 @@ const _: VoidComponent = () => {
 				<Show when={hasContent()}>
 					{contentText()}
 					<div style={{height: '16px'}}/>
-					<TextField labelText="Some input"/>
+					<TextField label="Some input"/>
 				</Show>
 			</Dialog>
 		</Playground>
 		<PlaygroundOptions>
 			<Show when={hasHeader()}>
-				<TextField labelText="Header text" value="Header" onInput={ev => setHeaderText(ev[_currentTarget][_value])}/>
+				<TextField label="Header text" value="Header" onInput={ev => setHeaderText(ev[_currentTarget][_value])}/>
 			</Show>
 			<Show when={hasContent()}>
-				<TextField labelText="Content text" value="Cupidatat aliqua est quis enim commodo. Aute Lorem occaecat commodo nisi amet dolor ut cupidatat qui ipsum magna in. In aliquip voluptate nulla aliquip duis cillum consectetur eiusmod adipisicing reprehenderit officia reprehenderit adipisicing dolor." onInput={ev => setContentText(ev[_currentTarget][_value])}/>
+				<TextField label="Content text" value="Cupidatat aliqua est quis enim commodo. Aute Lorem occaecat commodo nisi amet dolor ut cupidatat qui ipsum magna in. In aliquip voluptate nulla aliquip duis cillum consectetur eiusmod adipisicing reprehenderit officia reprehenderit adipisicing dolor." onInput={ev => setContentText(ev[_currentTarget][_value])}/>
 			</Show>
 			<CheckBox
 				checked={important()}
@@ -59,9 +59,9 @@ const _: VoidComponent = () => {
 				Important
 			</CheckBox>
 			<CheckBox
-				checked={inputAutoFocus()}
+				checked={contentAutoFocus()}
 				onChange={ev => setInputAutoFocus(ev[_currentTarget][_checked])}>
-				Input autofocus
+				Content autofocus
 			</CheckBox>
 			<CheckBox
 				checked={hasHeader()}

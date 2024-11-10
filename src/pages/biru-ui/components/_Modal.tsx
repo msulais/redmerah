@@ -12,9 +12,9 @@ import { Page, Playground, PlaygroundOptions } from "../_Body"
 
 const _: VoidComponent = () => {
 	const [allowHideAnchor, setAllowHideAnchor] = createSignal<boolean>(true)
-	const [dragable, setDragable] = createSignal<boolean>(false)
+	const [draggable, setDragable] = createSignal<boolean>(false)
 	const [gap, setGap] = createSignal<number>(12)
-	const [inputAutoFocus, setInputAutoFocus] = createSignal<boolean>(false)
+	const [contentAutoFocus, setInputAutoFocus] = createSignal<boolean>(false)
 	const [important, setImportant] = createSignal<boolean>(false)
 	const [padding, setPadding] = createSignal<number>(0)
 	const [position, setPosition] = createSignal<ModalPosition>(ModalPosition[_centerBottom])
@@ -28,10 +28,10 @@ const _: VoidComponent = () => {
 			<Button variant={ButtonVariant[_tonal]} onClick={(ev) => openModal(ev, modal_ref, {
 				anchor: anchor()? ev[_currentTarget] : undefined,
 				allowHideAnchor: allowHideAnchor(),
-				dragable: dragable(),
+				draggable: draggable(),
 				gap: gap(),
 				important: important(),
-				inputAutoFocus: inputAutoFocus(),
+				contentAutoFocus: contentAutoFocus(),
 				padding: padding(),
 				position: position(),
 			})}>Open modal</Button>
@@ -81,7 +81,7 @@ const _: VoidComponent = () => {
 				value={gap()}
 				min={0}
 				onBlur={(ev) => setGap(g => safeNumber(ev[_currentTarget][_valueAsNumber], g))}
-				labelText="Gap"
+				label="Gap"
 			/>
 			<Show when={[
 				ModalPosition[_centerTopToRight],
@@ -106,7 +106,7 @@ const _: VoidComponent = () => {
 					style={{width: '100px'}}
 					min={0}
 					onBlur={(ev) => setPadding(p => safeNumber(ev[_currentTarget][_valueAsNumber], p))}
-					labelText="Padding"
+					label="Padding"
 				/>
 			</Show>
 			<CheckBox
@@ -120,12 +120,12 @@ const _: VoidComponent = () => {
 				Important
 			</CheckBox>
 			<CheckBox
-				checked={inputAutoFocus()}
+				checked={contentAutoFocus()}
 				onChange={ev => setInputAutoFocus(ev[_currentTarget][_checked])}>
 				Input Autofocus
 			</CheckBox>
 			<CheckBox
-				checked={dragable()}
+				checked={draggable()}
 				onChange={ev => setDragable(ev[_currentTarget][_checked])}>
 				Dragable
 			</CheckBox>

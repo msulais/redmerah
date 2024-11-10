@@ -55,7 +55,7 @@ const _: VoidComponent = () => {
 		<PlaygroundOptions>
 			<Show when={autoClose()}>
 				<NumberTextField
-					labelText="Duration"
+					label="Duration"
 					style={{width: '100px'}}
 					value={duration()}
 					step={100}

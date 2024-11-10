@@ -876,7 +876,7 @@ const _: VoidComponent = () => {
 		// add_label
 		else if (type == Commands.add_label) {
 			openDialog(args[0] as Event, dialog_newLabel_ref, {
-				inputAutoFocus: true,
+				contentAutoFocus: true,
 				important: true
 			})
 		}
@@ -888,7 +888,7 @@ const _: VoidComponent = () => {
 			changeTextFieldValue(textfield_editLabel_ref, label[_name])
 			setSelectedLabelToEdit(label)
 			openDialog(args[0] as Event, dialog_editLabel_ref, {
-				inputAutoFocus: true,
+				contentAutoFocus: true,
 				important: true
 			})
 		}
@@ -937,7 +937,7 @@ const _: VoidComponent = () => {
 		else if (type == Commands.add_taskList) {
 			openDialog(args[0] as Event, dialog_newList_ref, {
 				important: true,
-				inputAutoFocus: true
+				contentAutoFocus: true
 			})
 		}
 
@@ -958,7 +958,7 @@ const _: VoidComponent = () => {
 			changeTextFieldValue(textfield_editList_ref, list[_name])
 			openDialog(args[0] as Event, dialog_editList_ref, {
 				important: true,
-				inputAutoFocus: true
+				contentAutoFocus: true
 			})
 		}
 
@@ -1383,7 +1383,7 @@ const _: VoidComponent = () => {
 				</Button>
 				<Button
 					onClick={ev => openDialog(ev, dialog_newLabel_ref, {
-						inputAutoFocus: true,
+						contentAutoFocus: true,
 						important: true
 					})}
 					variant={ButtonVariant[_filled]}>
@@ -1429,7 +1429,7 @@ const _: VoidComponent = () => {
 				}}>
 				<TextField
 					ref={r => textfield_newLabel_ref = r}
-					labelText="Name"
+					label="Name"
 					onFocus={() => setSelectedLabelToAdd(_name, textfield_newLabel_ref[_value])}
 					onInput={() => setSelectedLabelToAdd(_name, textfield_newLabel_ref[_value])}
 					autofocus
@@ -1487,7 +1487,7 @@ const _: VoidComponent = () => {
 				}}>
 				<TextField
 					ref={r => textfield_editLabel_ref = r}
-					labelText="Name"
+					label="Name"
 					onFocus={() => setSelectedLabelToEdit(_name, textfield_editLabel_ref[_value])}
 					onInput={() => setSelectedLabelToEdit(_name, textfield_editLabel_ref[_value])}
 					autofocus

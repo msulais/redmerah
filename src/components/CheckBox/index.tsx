@@ -1,8 +1,8 @@
-import { createEffect, createMemo, createSignal, mergeProps, onCleanup, onMount, splitProps, type JSX, type ParentComponent } from "solid-js"
+import { createEffect, createMemo, createSignal, createUniqueId, mergeProps, onCleanup, onMount, splitProps, type JSX, type ParentComponent } from "solid-js"
 import { mergeRefs } from "@solid-primitives/refs"
 
 import { AnimationEffectTiming } from "@/enums/animation"
-import { _animate, _blur, _cancel, _catch, _check, _checkbox, _checked, _children, _class, _code, _currentTarget, _detail, _disabled, _dispatchEvent, _filled, _finished, _forEach, _iconAttr, _isSameNode, _labelAttr, _name, _onChange, _onChangeRadioState, _radio, _ref, _replace, _spring, _then, _variant } from "@/constants/string"
+import { _animate, _blur, _cancel, _catch, _check, _checkbox, _checked, _children, _class, _code, _currentTarget, _detail, _disabled, _dispatchEvent, _filled, _finished, _forEach, _iconAttr, _id, _isSameNode, _join, _labelAttr, _name, _onChange, _onChangeRadioState, _radio, _ref, _replace, _spring, _then, _variant } from "@/constants/string"
 import { setElementAttributeIfExist } from "@/utils/attributes"
 import { getAllElementBySelector } from "@/utils/element"
 import { addEventListener, callEventHandler, removeEventListener } from "@/utils/event"
@@ -23,7 +23,7 @@ enum CheckBoxVariant {
 
 type CheckBoxProps = Omit<JSX.InputHTMLAttributes<HTMLInputElement>, 'type'> & {
 	variant?: CheckBoxVariant
-	labelAttr?: JSX.LabelHTMLAttributes<HTMLLabelElement>
+	labelAttr?: Omit<JSX.LabelHTMLAttributes<HTMLLabelElement>, 'for'>
 	iconAttr?: IconProps
 }
 
@@ -33,10 +33,13 @@ const CheckBox: ParentComponent<CheckBoxProps> = ($props) => {
 		easing: AnimationEffectTiming[_spring]
 	}
 	const [props, other] = splitProps(
-		mergeProps({variant: CheckBoxVariant[_check]}, $props),
+		mergeProps({
+			variant: CheckBoxVariant[_check],
+			id: createUniqueId()
+		}, $props),
 		[
 			_variant, _children, _labelAttr, _iconAttr,
-			_onChange, _ref
+			_onChange, _ref, _id
 		]
 	)
 	const [labelProps, otherLabelProps] = splitProps(props[_labelAttr] ?? {}, [_class])
@@ -103,12 +106,14 @@ const CheckBox: ParentComponent<CheckBoxProps> = ($props) => {
 	})
 
 	return (<label
-		class={`c-checkbox${labelProps[_class]? ` ${labelProps[_class]}` : ''}`}
+		class={['c-checkbox', 'c-btn', labelProps[_class] ?? ""][_join](' ')}
 		data-c-disabled={setElementAttributeIfExist(isDisabled())}
+		for={props[_id]}
 		{...otherLabelProps}>
 		<input
 			ref={mergeRefs(props[_ref], el => input_ref = el)}
 			type={props[_variant] == CheckBoxVariant[_radio]? _radio : _checkbox}
+			id={props[_id]}
 			onChange={(ev) => {
 				const isChecked = ev[_currentTarget][_checked]
 				callEventHandler(ev, props[_onChange])
@@ -125,14 +130,12 @@ const CheckBox: ParentComponent<CheckBoxProps> = ($props) => {
 			}}
 			{...other}
 		/>
-		<div class="c-btn c-square-btn">
-			<Icon
-				ref={mergeRefs(iconProps[_ref], r => icon_ref = r)}
-				code={iconProps[_code] ?? (props[_variant] == CheckBoxVariant[_check]? (isChecked()? 0xE3CB : 0xE3D4) : 0xED2F)}
-				filled={iconProps[_filled] ?? (props[_variant] != CheckBoxVariant[_check] && isChecked())}
-				{...otherIconProps}
-			/>
-		</div>
+		<Icon
+			ref={mergeRefs(iconProps[_ref], r => icon_ref = r)}
+			code={iconProps[_code] ?? (props[_variant] == CheckBoxVariant[_check]? (isChecked()? 0xE3CB : 0xE3D4) : 0xED2F)}
+			filled={iconProps[_filled] ?? (props[_variant] != CheckBoxVariant[_check] && isChecked())}
+			{...otherIconProps}
+		/>
 		{props[_children]}
 	</label>)
 }

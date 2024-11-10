@@ -1280,13 +1280,13 @@ const _: VoidComponent = () => {
 					</Button>
 				</>}
 				header="New list">
-				<TextField ref={r => textField_newListName_ref = r} labelText="List name" />
+				<TextField ref={r => textField_newListName_ref = r} label="List name" />
 				<div style={{"min-height": '16px'}}/>
 				<AreaTextField
 					ref={r => areaTextField_newItemList_ref = r}
-					labelText="Items"
+					label="Items"
 					placeholder={"Item1, Item2,\nItem3, Item 4\nItem 5"}
-					messageText={"Info: Each item separated by comma or new line"}
+					message={"Info: Each item separated by comma or new line"}
 					minLine={5}
 					maxLine={5}
 				/>
@@ -1330,14 +1330,14 @@ const _: VoidComponent = () => {
 				<TextField
 					ref={r => textField_editListName_ref = r}
 					placeholder={selectedListToEdit()[_name]}
-					labelText="List name"
+					label="List name"
 				/>
 				<div style={{"min-height": '16px'}}/>
 				<AreaTextField
 					ref={r => areaTextField_editItemList_ref = r}
-					labelText="Items"
+					label="Items"
 					placeholder={selectedListToEdit()[_items][_join](', ')}
-					messageText={"Info: Each item separated by comma or new line"}
+					message={"Info: Each item separated by comma or new line"}
 					minLine={5}
 					maxLine={5}
 				/>

@@ -10,7 +10,6 @@ import Menu, { closeMenu, MenuItem, openMenu, repositionMenu, type MenuProps, Me
 import { Button, ButtonVariant, type ButtonProps } from "@/components/Button"
 import './index.scss'
 import { callEventHandler } from "@/utils/event"
-import { AppColors } from "@/enums/colors"
 import Icon from "../Icon"
 
 type DropdownContextProps = {
@@ -186,7 +185,7 @@ const Dropdown: ParentComponent<DropdownProps> = ($props) => {
 			}}
 			{...other}>
 			<Show when={props[_label]}>
-				<span style={{color: `rgb(${props[_variant] == ButtonVariant[_filled]? AppColors[_onAccent] : AppColors[_accent]})`}}>{props[_label]}:</span>
+				<div class="c-dropdown-label">{props[_label]}</div>
 			</Show>
 			{selectedValues[_length] == 0
 				? props[_text]

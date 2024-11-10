@@ -4,7 +4,7 @@ import { mergeRefs } from '@solid-primitives/refs'
 import { setElementAttributeIfExist } from '@/utils/attributes'
 import { endTimeout, endInterval, startTimeout, startInterval } from '@/utils/timeout'
 import { callEventHandler, eventPreventDefault, eventStopPropagation } from '@/utils/event'
-import { _value, _input, _dispatchEvent, _classList, _compact, _leading, _onInput, _labelText, _focused, _autocomplete, _id, _messageText, _trailing, _labelAttr, _disabled, _readOnly, _onFocus, _onBlur, _placeholder, _autoHideLabel, _ref, _autoShowClearBtn, _clearTooltip, _minLine, _maxLine, _wrapperAttr, _class, _trim, _split, _length, _focus, _currentTarget, _checkValidity, _scrollHeight, _off, _px, _button, _text, _type, _autoSelectAll, _onKeyUp, _setSelectionRange, _code, _Enter, _blur, _max, _min, _decreaseTooltip, _increaseTooltip, _changeValueTooltip, _integerOnly, _stepUp, _stepDown, _valueAsNumber, _isNaN, _toUpperCase, _centerCenterLeft, _result, _menuAttr, _usePortal, _style, _onToggleOpen, _isArray, _width, _centerBottom, _observe, _disconnect, _target, _contains, _click, _autoFixOnBlur, _actionsAttr, _autoValidation, _Space, _ArrowDown, _ArrowUp, _onInputAsNumber } from '@/constants/string'
+import { _value, _input, _dispatchEvent, _classList, _compact, _leading, _onInput, _focused, _autocomplete, _id, _trailing, _labelAttr, _disabled, _readOnly, _onFocus, _onBlur, _placeholder, _autoHideLabel, _ref, _autoShowClearBtn, _clearTooltip, _minLine, _maxLine, _wrapperAttr, _class, _trim, _split, _length, _focus, _currentTarget, _checkValidity, _scrollHeight, _off, _px, _button, _text, _type, _autoSelectAll, _onKeyUp, _setSelectionRange, _code, _Enter, _blur, _max, _min, _decreaseTooltip, _increaseTooltip, _changeValueTooltip, _integerOnly, _stepUp, _stepDown, _valueAsNumber, _isNaN, _toUpperCase, _centerCenterLeft, _result, _menuAttr, _usePortal, _style, _onToggleOpen, _isArray, _width, _centerBottom, _observe, _disconnect, _target, _contains, _click, _autoFixOnBlur, _actionsAttr, _autoValidation, _Space, _ArrowDown, _ArrowUp, _onInputAsNumber, _label, _message } from '@/constants/string'
 import { mathClamp, mathMax, mathRound, numberIsNaN, numberParse, safeNumber } from '@/utils/math'
 import { getBoundingClientRect } from '@/utils/element'
 import { getDocument } from '@/constants/window'
@@ -70,8 +70,8 @@ const TextFieldButton: ParentComponent<TextFieldButtonProps> = ($props) => {
 type AreaTextFieldProps = Omit<JSX.TextareaHTMLAttributes<HTMLTextAreaElement>, 'children' | 'rows' | 'columns'> & {
 	leading?: JSX.Element
 	trailing?: JSX.Element
-	labelText?: JSX.Element
-	messageText?: JSX.Element
+	label?: string
+	message?: string
 	focused?: boolean
 	minLine?: number
 	maxLine?: number
@@ -81,7 +81,6 @@ type AreaTextFieldProps = Omit<JSX.TextareaHTMLAttributes<HTMLTextAreaElement>, 
 	clearTooltip?: string
 	autoValidation?: boolean
 	wrapperAttr?: JSX.HTMLAttributes<HTMLDivElement>
-	labelAttr?: JSX.LabelHTMLAttributes<HTMLLabelElement>
 }
 const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 	const $$props = mergeProps({
@@ -90,9 +89,9 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 		id: createUniqueId()
 	}, $props)
 	const [props, other] = splitProps($$props, [
-		_leading, _onInput, _labelText, _focused,
-		_autocomplete, _id, _messageText, _trailing,
-		_labelAttr, _disabled, _readOnly, _autoValidation,
+		_leading, _onInput, _label, _focused,
+		_autocomplete, _id, _message, _trailing,
+		_disabled, _readOnly, _autoValidation,
 		_onFocus, _onBlur, _placeholder, _autoHideLabel,
 		_value, _ref, _autoShowClearBtn, _clearTooltip,
 		_minLine, _maxLine, _compact, _wrapperAttr
@@ -104,7 +103,7 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 	const [height, setHeight] = createSignal<number>(HEIGHT_TEXT_INPUT_PER_LINE)
 	const trailing = children(() => props[_trailing])
 	const leading = children(() => props[_leading])
-	const messageText = children(() => props[_messageText])
+	const message = children(() => props[_message])
 	let areaTextField_ref!: HTMLTextAreaElement
 
 	createEffect(() => {
@@ -127,7 +126,7 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 			data-c-readonly={setElementAttributeIfExist(props[_readOnly])}
 			onClick={() => areaTextField_ref[_focus]()}>
 			<Show when={!(props[_autoHideLabel] && value()[_length] == 0 && !props[_placeholder])}>
-				<div class='c-area-textfield-label-text'>{props[_labelText]}</div>
+				<label for={props[_id]} class='c-area-textfield-label'>{props[_label]}</label>
 			</Show>
 			<Show when={leading()}>
 				<div class='c-area-textfield-leading' onClick={ev => eventStopPropagation(ev)}>{leading()}</div>
@@ -164,7 +163,7 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 					"min-height": props[_minLine]? ((HEIGHT_TEXT_INPUT_PER_LINE * props[_minLine]) + _px) : undefined,
 					"max-height": props[_maxLine] && props[_maxLine] >= (props[_minLine] ?? 1)? ((HEIGHT_TEXT_INPUT_PER_LINE * props[_maxLine]) + _px) : undefined
 				}}
-				placeholder={props[_placeholder] ?? (props[_autoHideLabel] && props[_labelText]? `${props[_labelText]}` : undefined)}
+				placeholder={props[_placeholder] ?? (props[_autoHideLabel] && props[_label]? `${props[_label]}` : undefined)}
 				{...other}></textarea>
 			<Show when={trailing() || (props[_autoShowClearBtn] && value()[_length] > 0)}>
 				<div class='c-area-textfield-trailing' onClick={ev => eventStopPropagation(ev)}>
@@ -181,8 +180,8 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 				</div>
 			</Show>
 		</div>
-		<Show when={messageText()}>
-			<div class='c-area-textfield-message-text'>{messageText()}</div>
+		<Show when={message()}>
+			<div class='c-area-textfield-message'>{message()}</div>
 		</Show>
 	</div>)
 }
@@ -191,8 +190,8 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 type TextFieldProps = JSX.InputHTMLAttributes<HTMLInputElement> & {
 	leading?: JSX.Element
 	trailing?: JSX.Element
-	labelText?: JSX.Element
-	messageText?: JSX.Element
+	label?: string
+	message?: string
 	focused?: boolean
 	compact?: boolean
 	autoShowClearBtn?: boolean
@@ -210,8 +209,8 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 		id: createUniqueId()
 	}, $props)
 	const [props, other] = splitProps($$props, [
-		_leading, _onInput, _labelText, _focused,
-		_autocomplete, _id, _messageText, _trailing,
+		_leading, _onInput, _label, _focused,
+		_autocomplete, _id, _message, _trailing,
 		_type, _wrapperAttr, _disabled, _readOnly,
 		_onFocus, _onBlur, _placeholder, _autoHideLabel,
 		_value, _ref, _autoShowClearBtn, _clearTooltip,
@@ -223,7 +222,7 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 	const [value, setValue] = createSignal<string>('')
 	const trailing = children(() => props[_trailing])
 	const leading = children(() => props[_leading])
-	const messageText = children(() => props[_messageText])
+	const message = children(() => props[_message])
 	let textfield_ref: HTMLInputElement
 
 	createEffect(() => {
@@ -243,7 +242,7 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 			data-c-readonly={setElementAttributeIfExist(props[_readOnly])}
 			onClick={() => textfield_ref[_focus]()}>
 			<Show when={!(props[_autoHideLabel] && value()[_length] == 0 && !props[_placeholder])}>
-				<div class='c-textfield-label-text'>{props[_labelText]}</div>
+				<label class='c-textfield-label' for={props[_id]}>{props[_label]}</label>
 			</Show>
 			<Show when={leading()}>
 				<div class='c-textfield-leading' onClick={ev => eventStopPropagation(ev)}>{leading()}</div>
@@ -277,7 +276,7 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 				autocomplete={props[_autocomplete] ?? _off}
 				readOnly={props[_readOnly]}
 				value={props[_value]}
-				placeholder={props[_placeholder] ?? (props[_autoHideLabel] && props[_labelText]? `${props[_labelText]}` : undefined)}
+				placeholder={props[_placeholder] ?? (props[_autoHideLabel] && props[_label]? `${props[_label]}` : undefined)}
 				{...other}
 			/>
 			<Show when={trailing() || (props[_autoShowClearBtn] && value()[_length] > 0)}>
@@ -294,8 +293,8 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 				</div>
 			</Show>
 		</div>
-		<Show when={messageText()}>
-			<div class='c-textfield-message-text'>{messageText()}</div>
+		<Show when={message()}>
+			<div class='c-textfield-message'>{message()}</div>
 		</Show>
 	</div>)
 }

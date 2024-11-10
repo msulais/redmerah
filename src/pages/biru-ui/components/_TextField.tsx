@@ -12,9 +12,9 @@ import { Page, Playground, PlaygroundOptions } from "../_Body"
 const _: VoidComponent = () => {
 	const [leading, setLeading] = createSignal<boolean>(false)
 	const [trailing, setTrailing] = createSignal<boolean>(false)
-	const [labelText, setLabelText] = createSignal<boolean>(true)
+	const [label, setLabelText] = createSignal<boolean>(true)
 	const [placeholder, setPlaceholder] = createSignal<boolean>(false)
-	const [messageText, setMessageText] = createSignal<boolean>(false)
+	const [message, setMessageText] = createSignal<boolean>(false)
 	const [autoHideLabel, setAutoHideLabel] = createSignal<boolean>(true)
 	const [autoShowClearBtn, setAutoShowClearBtn] = createSignal<boolean>(false)
 	const [compact, setCompact] = createSignal<boolean>(false)
@@ -47,11 +47,11 @@ const _: VoidComponent = () => {
 			Trailing
 		</CheckBox>
 		<CheckBox
-			checked={labelText()}
+			checked={label()}
 			onChange={ev => setLabelText(ev[_currentTarget][_checked])}>
 			Label text
 		</CheckBox>
-		<Show when={labelText()}>
+		<Show when={label()}>
 			<CheckBox
 				checked={autoHideLabel()}
 				onChange={ev => setAutoHideLabel(ev[_currentTarget][_checked])}>
@@ -64,7 +64,7 @@ const _: VoidComponent = () => {
 			Placeholder
 		</CheckBox>
 		<CheckBox
-			checked={messageText()}
+			checked={message()}
 			onChange={ev => setMessageText(ev[_currentTarget][_checked])}>
 			Message text
 		</CheckBox>
@@ -91,7 +91,7 @@ const _: VoidComponent = () => {
 		<h2>TextField</h2>
 		<Playground>
 			<TextField
-				labelText={labelText()? 'TextField' : undefined}
+				label={label()? 'TextField' : undefined}
 				readOnly={readOnly()}
 				compact={compact()}
 				leading={<Show when={leading()}><Icon code={0xECC0}/></Show>}
@@ -100,7 +100,7 @@ const _: VoidComponent = () => {
 					<TextFieldButton><Icon code={0xE553}/></TextFieldButton>
 				</Show>}
 				placeholder={placeholder()? 'TextField placeholder' : undefined}
-				messageText={<Show when={messageText()}>Consectetur labore sint aliqua occaecat anim quis aute dolor ex occaecat laborum sit aliqua consequat.</Show>}
+				message={message()? "Consectetur labore sint aliqua occaecat anim quis aute dolor ex occaecat laborum sit aliqua consequat." : undefined}
 				autoHideLabel={autoHideLabel()}
 				autoShowClearBtn={autoShowClearBtn()}
 				type={type()}
@@ -141,7 +141,7 @@ const _: VoidComponent = () => {
 		<h2>NumberTextField</h2>
 		<Playground>
 			<NumberTextField
-				labelText={labelText()? 'NumberTextField' : undefined}
+				label={label()? 'NumberTextField' : undefined}
 				leading={<Show when={leading()}><Icon code={0xECC0}/></Show>}
 				readOnly={readOnly()}
 				compact={compact()}
@@ -153,7 +153,7 @@ const _: VoidComponent = () => {
 				min={limitMin()? min() : undefined}
 				max={limitMax()? max() : undefined}
 				placeholder={placeholder()? 'NumberTextField placeholder' : undefined}
-				messageText={<Show when={messageText()}>Consectetur labore sint aliqua occaecat anim quis aute dolor ex occaecat laborum sit aliqua consequat.</Show>}
+				message={message()? "Consectetur labore sint aliqua occaecat anim quis aute dolor ex occaecat laborum sit aliqua consequat." : undefined}
 				autoHideLabel={autoHideLabel()}
 				autoShowClearBtn={autoShowClearBtn()}
 			/>
@@ -161,14 +161,14 @@ const _: VoidComponent = () => {
 		<PlaygroundOptions>
 			<NumberTextField
 				value={step()}
-				labelText="Step"
+				label="Step"
 				onBlur={ev => setStep(s => safeNumber(ev[_currentTarget][_valueAsNumber], s))}
 				style={{width: '100px'}}
 			/>
 			<Show when={limitMin()}>
 				<NumberTextField
 					value={min()}
-					labelText="Min"
+					label="Min"
 					max={limitMax()? max() : undefined}
 					onBlur={ev => setMin(m => safeNumber(ev[_currentTarget][_valueAsNumber], m))}
 					style={{width: '100px'}}
@@ -178,7 +178,7 @@ const _: VoidComponent = () => {
 				<NumberTextField
 					value={max()}
 					min={limitMin()? min() : undefined}
-					labelText="Max"
+					label="Max"
 					onBlur={ev => setMax(m => safeNumber(ev[_currentTarget][_valueAsNumber], m))}
 					style={{width: '100px'}}
 				/>
@@ -199,7 +199,7 @@ const _: VoidComponent = () => {
 		<h2>AreaTextField</h2>
 		<Playground>
 			<AreaTextField
-				labelText={labelText()? 'AreaTextField' : undefined}
+				label={label()? 'AreaTextField' : undefined}
 				leading={<Show when={leading()}><Icon code={0xECC0}/></Show>}
 				readOnly={readOnly()}
 				compact={compact()}
@@ -208,7 +208,7 @@ const _: VoidComponent = () => {
 					<TextFieldButton><Icon code={0xE553}/></TextFieldButton>
 				</Show>}
 				placeholder={placeholder()? 'AreaTextField placeholder' : undefined}
-				messageText={<Show when={messageText()}>Consectetur labore sint aliqua occaecat anim quis aute dolor ex occaecat laborum sit aliqua consequat.</Show>}
+				message={message()? "Consectetur labore sint aliqua occaecat anim quis aute dolor ex occaecat laborum sit aliqua consequat." : undefined}
 				autoHideLabel={autoHideLabel()}
 				autoShowClearBtn={autoShowClearBtn()}
 				minLine={minLine()}
@@ -218,7 +218,7 @@ const _: VoidComponent = () => {
 		<PlaygroundOptions>
 			<NumberTextField
 				value={minLine()}
-				labelText="Min line"
+				label="Min line"
 				onBlur={ev => setMinLine(m => safeNumber(ev[_currentTarget][_valueAsNumber], m))}
 				min={1}
 				max={limitMaxLine()? maxLine() : undefined}
@@ -227,7 +227,7 @@ const _: VoidComponent = () => {
 			<Show when={limitMaxLine()}>
 				<NumberTextField
 					value={maxLine()}
-					labelText="Max line"
+					label="Max line"
 					onBlur={ev => setMaxLine(m => safeNumber(ev[_currentTarget][_valueAsNumber], m))}
 					min={minLine()}
 					style={{width: '100px'}}

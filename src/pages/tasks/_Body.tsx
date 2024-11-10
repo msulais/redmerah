@@ -926,7 +926,7 @@ const _: VoidComponent<{
 		setText_subtask(subtask[_name])
 		openDialog(ev, dialog_editSubtask_ref, {
 			important: true,
-			inputAutoFocus: true
+			contentAutoFocus: true
 		})
 	}
 
@@ -1175,7 +1175,7 @@ const _: VoidComponent<{
 				</Button>
 			</>}>
 			<TextField
-				labelText="Task"
+				label="Task"
 				value={selectedTaskToEdit[_task][_name]}
 				onBlur={ev => {
 					if (ev[_currentTarget][_value] == selectedTaskToEdit[_task][_name]) return;
@@ -1190,7 +1190,7 @@ const _: VoidComponent<{
 				}}
 			/>
 			<AreaTextField
-				labelText="Description"
+				label="Description"
 				maxLine={3}
 				value={selectedTaskToEdit[_task][_description]}
 				onBlur={ev => {
@@ -1216,7 +1216,7 @@ const _: VoidComponent<{
 						addSubtaskOption = _edit
 						openDialog(ev, dialog_newSubtask_ref, {
 							important: true,
-							inputAutoFocus: true
+							contentAutoFocus: true
 						})}
 					}>
 					<Icon code={0xE009}/>Add subtask
@@ -1601,7 +1601,7 @@ const _: VoidComponent<{
 					addSubtaskOption = _action
 					openDialog(ev, dialog_newSubtask_ref, {
 						important: true,
-						inputAutoFocus: true
+						contentAutoFocus: true
 					})
 				}}>
 				Add subtask
@@ -1863,7 +1863,7 @@ const _: VoidComponent<{
 					setSelectedFileToRename({...selectedFileToAction})
 					renameFileOption = _edit
 					openDialog(ev, dialog_fileRename_ref, {
-						inputAutoFocus: true,
+						contentAutoFocus: true,
 						important: true
 					})
 				}}>
@@ -1934,7 +1934,7 @@ const _: VoidComponent<{
 					setSelectedFileToRename({...selectedFileToAction2})
 					renameFileOption = _action
 					openDialog(ev, dialog_fileRename_ref, {
-						inputAutoFocus: true,
+						contentAutoFocus: true,
 						important: true
 					})
 				}}>

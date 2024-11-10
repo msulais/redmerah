@@ -7,11 +7,11 @@ import { Modal, type ModalProps, openModal, closeModal, focusModal } from "@/com
 import './index.scss'
 
 function openDialog(ev: Event, dialog: HTMLDialogElement, options?: {
-	inputAutoFocus?: boolean
+	contentAutoFocus?: boolean
 	important?: boolean
 }): void {
 	openModal(ev, dialog, {
-		inputAutoFocus: options?.inputAutoFocus,
+		contentAutoFocus: options?.contentAutoFocus,
 		important: options?.important
 	})
 }

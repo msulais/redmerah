@@ -40,7 +40,7 @@ const _: VoidComponent = () => {
 		</Playground>
 		<PlaygroundOptions>
 			<NumberTextField
-				labelText="Count"
+				label="Count"
 				style={{width: '100px'}}
 				value={10} min={1}
 				max={10}
