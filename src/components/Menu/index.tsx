@@ -180,7 +180,6 @@ const SwitchMenuItem: ParentComponent<SwitchMenuItemProps> = ($props) => {
 		}}
 		data-c-focused={setElementAttributeIfExist(props[_focused])}
 		data-c-compact={setElementAttributeIfExist(props[_compact])}
-		data-g-no-outline
 		{...other}>
 		{ props[_leading] }
 		<Show when={props[_iconCode] != null}>
@@ -190,6 +189,9 @@ const SwitchMenuItem: ParentComponent<SwitchMenuItemProps> = ($props) => {
 		<div style={{flex: 1}} />
 		{ props[_trailing] }
 		<RawSwitch
+			wrapperAttr={{
+				'data-g-no-outline': ''
+			} as any}
 			disabled={switchProps[_disabled] ?? props[_disabled]}
 			checked={switchProps[_checked] ?? props[_checked]}
 			{...otherSwitchProps}
