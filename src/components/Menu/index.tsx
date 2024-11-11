@@ -10,6 +10,7 @@ import { endTimeout, startTimeout, wait } from "@/utils/timeout"
 import { numberParse } from "@/utils/math"
 import { getDocument } from "@/constants/window"
 import { addEventListener, removeEventListener } from "@/utils/event"
+import { AppColors } from "@/enums/colors"
 
 import Divider, { type DividerProps } from "@/components/Divider"
 import Icon from "@/components/Icon"
@@ -18,7 +19,6 @@ import Popover, { type PopoverProps, closePopover, openPopover, repositionPopove
 import Modal, { type ModalProps, closeModal, focusModal, openModal, repositionModal, ModalPosition as MenuPosition } from "@/components/Modal"
 import { RawSwitch, type RawSwitchProps } from "@/components/Switch"
 import './index.scss'
-import { AppColors } from "@/enums/colors"
 
 type MenuItemTrailingShortcutProps = JSX.HTMLAttributes<HTMLDivElement> & {
 	shortcuts: string[]
