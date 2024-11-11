@@ -167,7 +167,7 @@ const SwitchMenuItem: ParentComponent<SwitchMenuItemProps> = ($props) => {
 	)
 	const [switchProps, otherSwitchProps] = splitProps(
 		mergeProps({component: _div, id: createUniqueId()}, props[_switchAttr]! ?? {}),
-		[_checked, _disabled, _id]
+		[_checked, _disabled, _id, _wrapperAttr]
 	)
 
 	return (<label
@@ -191,9 +191,7 @@ const SwitchMenuItem: ParentComponent<SwitchMenuItemProps> = ($props) => {
 		<div style={{flex: 1}} />
 		{ props[_trailing] }
 		<RawSwitch
-			wrapperAttr={{
-				'data-g-no-outline': ''
-			} as any}
+			wrapperAttr={mergeProps({'data-g-no-outline': ''}, props[_switchAttr]) as any}
 			disabled={switchProps[_disabled] ?? props[_disabled]}
 			checked={switchProps[_checked] ?? props[_checked]}
 			id={switchProps[_id]}
