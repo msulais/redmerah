@@ -1,3 +1,6 @@
+export const _onTouchStart = 'onTouchStart'
+export const _onPointerUp = 'onPointerUp'
+export const _onPointerOver = 'onPointerOver'
 export const _autofocus = 'autofocus'
 export const _onAccent = 'onAccent'
 export const _values = 'values'
