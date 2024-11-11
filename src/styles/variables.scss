@@ -90,7 +90,7 @@
 	color-scheme: light;
 
 	& * {
-		color-scheme: light;
+		color-scheme: inherit;
 	}
 
 	&[data-theme="dark"] {
@@ -110,10 +110,6 @@
 		--g-color-on-error: var(--g-color-on-error-dark);
 
 		color-scheme: dark;
-
-		& * {
-			color-scheme: dark;
-		}
 	}
 
 	&[data-theme="system"] {
@@ -134,10 +130,6 @@
 			--g-color-on-error: var(--g-color-on-error-dark);
 
 			color-scheme: dark;
-
-			& * {
-				color-scheme: dark;
-			}
 		}
 	}
 }
