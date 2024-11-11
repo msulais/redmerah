@@ -2,7 +2,6 @@ import { children, Show, splitProps, type JSX, type ParentComponent } from "soli
 
 import { _appBar, _bottomBar, _children, _class, _floatingActionButton, _leftSideBar, _rightSideBar } from "@/constants/string"
 
-import '@/styles/fonts.scss'
 import '@/styles/variables.scss'
 import '@/styles/animations.scss'
 import '@/styles/index.scss'
