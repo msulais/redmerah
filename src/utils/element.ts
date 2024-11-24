@@ -29,12 +29,18 @@ export function getElementById(elementId: string): HTMLElement | null {
 	return getDocument()[_getElementById](elementId)
 }
 
-export function getElementBySelector(selectors: string): HTMLElement | null {
-	return getDocument()[_querySelector](selectors)
+export function getElementBySelector(
+	selectors: string,
+	from: HTMLElement | Document = document
+): HTMLElement | null {
+	return from[_querySelector](selectors)
 }
 
-export function getAllElementBySelector<E extends Element>(selectors: string): NodeListOf<E> {
-	return getDocument()[_querySelectorAll]<E>(selectors)
+export function getAllElementBySelector<E extends Element>(
+	selectors: string,
+	from: HTMLElement | Document = document
+): NodeListOf<E> {
+	return from[_querySelectorAll]<E>(selectors)
 }
 
 export function getBoundingClientRect(element: Element): DOMRect {

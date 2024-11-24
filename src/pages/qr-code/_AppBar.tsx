@@ -176,7 +176,6 @@ const _: VoidComponent<{
 			ref={r => menu_settings_ref = r}
 			onToggleOpen={(v) => setIs_menu_settings_open(v)}>
 			<SubMenu
-				level={1}
 				ref={r => submenu_themeSettings_ref = r}
 				onToggleOpen={v => setIs_submenu_themeSettings_open(v)}
 				item={<SubMenuItem
@@ -204,7 +203,6 @@ const _: VoidComponent<{
 				</MenuItem>
 			</SubMenu>
 			<SubMenu
-				level={1}
 				ref={r => submenu_cornerSettings_ref = r}
 				onToggleOpen={v => setIs_submenu_cornerSettings_open(v)}
 				item={<SubMenuItem

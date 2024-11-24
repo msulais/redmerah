@@ -76,26 +76,26 @@ const _: VoidComponent = () => {
 				<C/>
 				<MenuDivider />
 				<MenuHeader>Sub menu</MenuHeader>
-				<SubMenu style={{width: '240px'}} level={1} item={<SubMenuItem>1 Level</SubMenuItem>}>
+				<SubMenu style={{width: '240px'}} item={<SubMenuItem>1 Level</SubMenuItem>}>
 					<C/>
 				</SubMenu>
-				<SubMenu style={{width: '240px'}} level={1} item={<SubMenuItem>2 Level</SubMenuItem>}>
+				<SubMenu style={{width: '240px'}} item={<SubMenuItem>2 Level</SubMenuItem>}>
 					<C/>
 					<MenuDivider />
 					<MenuHeader>Sub menu</MenuHeader>
-					<SubMenu style={{width: '240px'}} level={2} item={<SubMenuItem>Next Level</SubMenuItem>}>
+					<SubMenu style={{width: '240px'}} item={<SubMenuItem>Next Level</SubMenuItem>}>
 						<C/>
 					</SubMenu>
 				</SubMenu>
-				<SubMenu style={{width: '240px'}} level={1} item={<SubMenuItem>3 Level</SubMenuItem>}>
+				<SubMenu style={{width: '240px'}} item={<SubMenuItem>3 Level</SubMenuItem>}>
 					<C/>
 					<MenuDivider />
 					<MenuHeader>Sub menu</MenuHeader>
-					<SubMenu style={{width: '240px'}} level={2} item={<SubMenuItem>Next Level</SubMenuItem>}>
+					<SubMenu style={{width: '240px'}} item={<SubMenuItem>Next Level</SubMenuItem>}>
 						<C/>
 						<MenuDivider />
 						<MenuHeader>Sub menu</MenuHeader>
-						<SubMenu style={{width: '240px'}} level={3} item={<SubMenuItem>Next Level</SubMenuItem>}>
+						<SubMenu style={{width: '240px'}} item={<SubMenuItem>Next Level</SubMenuItem>}>
 							<C/>
 						</SubMenu>
 					</SubMenu>

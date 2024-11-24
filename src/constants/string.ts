@@ -1,3 +1,6 @@
+export const _CLevel = 'CLevel'
+export const _onBeforeClose = 'onBeforeClose'
+export const _onBeforeOpen = 'onBeforeOpen'
 export const _onTouchStart = 'onTouchStart'
 export const _onPointerUp = 'onPointerUp'
 export const _onPointerOver = 'onPointerOver'

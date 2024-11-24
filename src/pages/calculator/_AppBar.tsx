@@ -213,7 +213,6 @@ const _: VoidComponent<{
 			</TextTooltip>
 			<MenuDivider/>
 			<SubMenu
-				level={1}
 				ref={r => submenu_themeSettings_ref = r}
 				onToggleOpen={v => setIs_submenu_themeSettings_open(v)}
 				item={<SubMenuItem
@@ -241,7 +240,6 @@ const _: VoidComponent<{
 				</MenuItem>
 			</SubMenu>
 			<SubMenu
-				level={1}
 				ref={r => submenu_cornerSettings_ref = r}
 				onToggleOpen={v => setIs_submenu_cornerSettings_open(v)}
 				item={<SubMenuItem
@@ -277,7 +275,6 @@ const _: VoidComponent<{
 			<MenuDivider />
 			<MenuHeader>Number format</MenuHeader>
 			<SubMenu
-				level={1}
 				style={{width: '132px'}}
 				ref={r => submenu_decimalNumberFormatSettings_ref = r}
 				onToggleOpen={v => setIs_menu_decimalNumberFormatSettings_open(v)}
@@ -298,7 +295,6 @@ const _: VoidComponent<{
 				</MenuItem>
 			</SubMenu>
 			<SubMenu
-				level={1}
 				style={{width: '132px'}}
 				ref={r => submenu_groupingNumberFormatSettings_ref = r}
 				onToggleOpen={v => setIs_menu_groupingNumberFormatSettings_open(v)}

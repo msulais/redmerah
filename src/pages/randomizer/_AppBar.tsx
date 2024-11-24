@@ -274,7 +274,6 @@ const _: Component<{
 			<Show when={props[_randomizerType] == RandomizerType[_numbers]}>
 				<SubMenu
 					ref={r => submenu_sortSettings_ref = r}
-					level={1}
 					onToggleOpen={(v) => setIs_submenu_sortSettings_open(v)}
 					item={<SubMenuItem
 						focused={is_submenu_sortSettings_open()}
@@ -302,7 +301,6 @@ const _: Component<{
 				</SubMenu>
 				<SubMenu
 					ref={r => submenu_numberTypeSettings_ref = r}
-					level={1}
 					onToggleOpen={(isOpen) => setIs_submenu_numberTypeSettings_open(isOpen)}
 					item={<SubMenuItem
 						focused={is_submenu_numberTypeSettings_open()}
@@ -336,7 +334,6 @@ const _: Component<{
 			<Show when={props[_randomizerType] == RandomizerType[_words]}>
 				<SubMenu
 					ref={r => submenu_wordCaseSettings_ref = r}
-					level={1}
 					onToggleOpen={isOpen => setIs_submenu_wordCaseSettings_open(isOpen)}
 					item={<SubMenuItem
 						focused={is_submenu_wordCaseSettings_open()}
@@ -376,7 +373,6 @@ const _: Component<{
 				<SubMenu
 					ref={r => submenu_colorModelSettings_ref = r}
 					style={{width: '128px'}}
-					level={1}
 					onToggleOpen={(v) => setIs_submenu_colorModelSettings_open(v)}
 					item={<SubMenuItem
 						focused={is_submenu_colorModelSettings_open()}
@@ -401,7 +397,6 @@ const _: Component<{
 				</SubMenu>
 			</Show>
 			<SubMenu
-				level={1}
 				ref={r => submenu_themeSettings_ref = r}
 				onToggleOpen={v => setIs_submenu_themeSettings_open(v)}
 				item={<SubMenuItem
@@ -429,7 +424,6 @@ const _: Component<{
 				</MenuItem>
 			</SubMenu>
 			<SubMenu
-				level={1}
 				ref={r => submenu_cornerSettings_ref = r}
 				onToggleOpen={v => setIs_submenu_cornerSettings_open(v)}
 				item={<SubMenuItem

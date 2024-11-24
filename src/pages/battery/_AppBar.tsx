@@ -148,7 +148,6 @@ const _: VoidComponent = () => {
 				</LinkMenuItem>
 				<MenuDivider />
 				<SubMenu
-					level={1}
 					ref={r => submenu_themeSettings_ref = r}
 					onToggleOpen={v => setIs_menu_themeSettings_open(v)}
 					item={<SubMenuItem
@@ -176,7 +175,6 @@ const _: VoidComponent = () => {
 					</MenuItem>
 				</SubMenu>
 				<SubMenu
-					level={1}
 					ref={r => submenu_cornerSettings_ref = r}
 					onToggleOpen={v => setIs_menu_cornerSettings_open(v)}
 					item={<SubMenuItem

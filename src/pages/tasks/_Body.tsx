@@ -1620,7 +1620,6 @@ const _: VoidComponent<{
 			</Show>
 			<Show when={props[_labels][_length] > 0}>
 				<SubMenu
-					level={1}
 					onToggleOpen={v => setIs_menu_taskActionAddLabel_open(v)}
 					item={<SubMenuItem
 						focused={is_menu_taskActionAddLabel_open()}
@@ -1651,7 +1650,6 @@ const _: VoidComponent<{
 			</Show>
 			<MenuDivider />
 			<SubMenu
-				level={1}
 				ref={r => submenu_moveTask_ref = r}
 				style={{"min-width": '200px'}}
 				onToggleOpen={v => setIs_menu_taskActionMove_open(v)}

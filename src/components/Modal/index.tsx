@@ -5,7 +5,7 @@ import { Portal } from 'solid-js/web'
 import { AnimationEffectTiming } from '@/enums/animation'
 import { FlyoutPosition as ModalPosition } from '@/enums/position'
 import { getFlyoutPosition } from '@/utils/flyout'
-import { _dispatchEvent, _onOpen, _openModal, _modalListener, _detail, _element, _some, _isSameNode, _push, _closeModal, _findIndex, _splice, _length, _click, _at, _clientX, _clientY, _x, _left, _right, _y, _top, _bottom, _scroll, _scrollY, _documentElement, _scrollTop, _scrollTo, _instant, _resize, _noPointerEvent, _observe, _onReposition, _onShortFocus, _onClose, _ref, _onToggleOpen, _onCancel, _children, _onKeyDown, _class, _openAnimation, _closeAnimation, _centerBottom, _body, _clientWidth, _innerHeight, _px, _width, _height, _touches, _touchmove, _touchend, _mousemove, _mouseup, _centerBottomToLeft, _centerBottomToRight, _centerTop, _centerTopToLeft, _centerTopToRight, _leftCenter, _leftCenterToBottom, _leftCenterToTop, _rightCenter, _rightCenterToBottom, _rightCenterToTop, _open, _close, _animate, _springBounce, _finished, _then, _focus, _showModal, _style, _maxWidth, _maxHeight, _max_width, _max_height, _none, _disconnect, _key, _Escape, _altKey, _ctrlKey, _metaKey, _shiftKey, _position, _gap, _padding, _important, _allowHideAnchor, _draggable, _contentAutoFocus, _pointerType, _forEach, _pointermove, _pointerup } from '@/constants/string'
+import { _dispatchEvent, _onOpen, _openModal, _modalListener, _detail, _element, _some, _isSameNode, _push, _closeModal, _findIndex, _splice, _length, _click, _at, _clientX, _clientY, _x, _left, _right, _y, _top, _bottom, _scroll, _scrollY, _documentElement, _scrollTop, _scrollTo, _instant, _resize, _noPointerEvent, _observe, _onReposition, _onShortFocus, _onClose, _ref, _onToggleOpen, _onCancel, _children, _onKeyDown, _class, _openAnimation, _closeAnimation, _centerBottom, _body, _clientWidth, _innerHeight, _px, _width, _height, _touches, _touchmove, _touchend, _mousemove, _mouseup, _centerBottomToLeft, _centerBottomToRight, _centerTop, _centerTopToLeft, _centerTopToRight, _leftCenter, _leftCenterToBottom, _leftCenterToTop, _rightCenter, _rightCenterToBottom, _rightCenterToTop, _open, _close, _animate, _springBounce, _finished, _then, _focus, _showModal, _style, _maxWidth, _maxHeight, _max_width, _max_height, _none, _disconnect, _key, _Escape, _altKey, _ctrlKey, _metaKey, _shiftKey, _position, _gap, _padding, _important, _allowHideAnchor, _draggable, _contentAutoFocus, _pointerType, _forEach, _pointermove, _pointerup, _onBeforeOpen, _onBeforeClose } from '@/constants/string'
 import { endTimeout, startTimeout } from '@/utils/timeout'
 import { isElementHasAttribute, removeElementAttribute, setElementAttribute, setElementAttributeIfExist } from '@/utils/attributes'
 import { getDocument, getDocumentBody, getWindow } from '@/constants/window'
@@ -191,6 +191,8 @@ type ModalProps = Omit<JSX.DialogHtmlAttributes<HTMLDialogElement>, 'style' | 'd
 	allowHideAnchor?: boolean
 	draggable?: boolean
 	contentAutoFocus?: boolean
+	onBeforeOpen?(): unknown
+	onBeforeClose?(): unknown
 	onToggleOpen?(isOpen: boolean): unknown
 	openAnimation?(el: HTMLDialogElement, done: () => void): unknown
 	closeAnimation?(el: HTMLDialogElement, done: () => void): unknown
@@ -202,7 +204,8 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 		_children, _onKeyDown, _class, _openAnimation,
 		_closeAnimation, _style, _gap, _padding,
 		_important, _position, _allowHideAnchor,
-		_draggable, _contentAutoFocus
+		_draggable, _contentAutoFocus, _onBeforeOpen,
+		_onBeforeClose
 	])
 	const [isDragging, setIsDragging] = createSignal<boolean>(false)
 	const [isDraggable, setIsDraggable] = createSignal<boolean>(false)
@@ -386,6 +389,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 			BodyEvents[_closeModal],
 			{detail: {element: modal_ref}}
 		))
+		props[_onBeforeClose]?.()
 		if (props[_closeAnimation] != null) props[_closeAnimation](
 			modal_ref,
 			() => modal_ref[_close]()
@@ -585,6 +589,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 		setTop(pos[_top])
 		setLeft(pos[_left])
 		setAttr_open(true)
+		props[_onBeforeOpen]?.()
 		if (props[_openAnimation] != null) props[_openAnimation](
 			modal_ref,
 			() => setAttr_openDone(true)
