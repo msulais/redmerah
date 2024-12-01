@@ -2,7 +2,7 @@ import { type Component, type JSX, type ParentComponent, Show, mergeProps, split
 import { mergeRefs } from "@solid-primitives/refs"
 
 import { getElementAttribute, setElementAttributeIfExist } from "@/utils/attributes"
-import { _checked, _selected, _leading, _children, _trailing, _subtitle, _indent, _classList, _rightCenterToBottom, _disconnect, _dismiss, _id, _item, _level, _manual, _observe, _onCancel, _onClick, _onClose, _onToggle, _open, _ref, _wrapperAttr, _auto, _shortcuts, _currentTarget, _none, _left, _tonal, _draggable, _clientX, _clientY, _color, _hue, _initialColor, _isDrag, _mousemove, _mouseup, _noPointerEvent, _opacity, _touchend, _touches, _touchmove, _value, _valuechange, _top, _px, _anchorId, _body, _bottom, _clientWidth, _height, _innerHeight, _right, _width, _focus, _iconCode, _compact, _variant, _indicatorPosition, _onMouseEnter, _onMouseLeave, _class, _desktopCompact, _gap, _position, _padding, _allowHideAnchor, _onToggleOpen, _click, _contains, _target, _filled, _focused, _layerAttr, _outlined, _transparent, _switchAttr, _onValueChanged, _onChange, _div, _disabled, _forEach, _onPointerEnter, _onPointerLeave, _accent, _autofocus, _contentAutoFocus, _onPointerOver, _dispatchEvent, _onBeforeClose, _dataset, _CLevel } from "@/constants/string"
+import { _checked, _selected, _leading, _children, _firstChild, _trailing, _subtitle, _indent, _classList, _rightCenterToBottom, _disconnect, _dismiss, _id, _item, _level, _manual, _observe, _onCancel, _onClick, _onClose, _onToggle, _open, _ref, _wrapperAttr, _auto, _shortcuts, _currentTarget, _none, _left, _tonal, _draggable, _clientX, _clientY, _color, _hue, _initialColor, _isDrag, _mousemove, _mouseup, _noPointerEvent, _opacity, _touchend, _touches, _touchmove, _value, _valuechange, _top, _px, _anchorId, _body, _bottom, _clientWidth, _height, _innerHeight, _right, _width, _focus, _iconCode, _compact, _variant, _indicatorPosition, _onMouseEnter, _onMouseLeave, _class, _desktopCompact, _gap, _position, _padding, _allowHideAnchor, _onToggleOpen, _click, _contains, _target, _filled, _focused, _layerAttr, _outlined, _transparent, _switchAttr, _onValueChanged, _onChange, _div, _disabled, _forEach, _onPointerEnter, _onPointerLeave, _accent, _autofocus, _contentAutoFocus, _onPointerOver, _dispatchEvent, _onBeforeClose, _dataset, _CLevel, _usePortal, _parentElement, _lastChild, _isSameNode, _firstElementChild, _lastElementChild } from "@/constants/string"
 import { isVarHasValue } from "@/utils/data"
 import { getAllElementBySelector } from "@/utils/element"
 import { callEventHandler, eventPreventDefault, eventStopImmediatePropagation, eventStopPropagation } from "@/utils/event"
@@ -15,26 +15,12 @@ import { AppColors } from "@/enums/colors"
 import Divider, { type DividerProps } from "@/components/Divider"
 import Icon from "@/components/Icon"
 import Button, { ButtonIndicatorPosition, ButtonVariant, LinkButton, type ButtonProps, type LinkButtonProps } from "@/components/Button"
-import Popover, { type PopoverProps, closePopover, openPopover, repositionPopover, PopoverPosition as SubMenuPosition } from "@/components/Popover"
+import Popover, { type PopoverProps, closePopover, isPopoverOpen, openPopover, repositionPopover, PopoverPosition as SubMenuPosition } from "@/components/Popover"
 import Modal, { type ModalProps, closeModal, focusModal, openModal, repositionModal, ModalPosition as MenuPosition } from "@/components/Modal"
 import { RawSwitch, type RawSwitchProps } from "@/components/Switch"
 import './index.scss'
 
-type MenuContextProps = {
-	id: string
-} | undefined
-
-const MenuContext = createContext<MenuContextProps>()
-
-enum SubMenuEvents {
-	onClose = 'on-close-sub-menu',
-}
-
-type SubMenuContextProps = {
-	level: number
-} | undefined
-
-const SubMenuContext = createContext<SubMenuContextProps>()
+const subMenuClassName = 'c-sub-menu'
 
 type MenuItemTrailingShortcutProps = JSX.HTMLAttributes<HTMLDivElement> & {
 	shortcuts: string[]
@@ -226,41 +212,27 @@ type SubMenuProps = PopoverProps & {
 	wrapperAttr?: Omit<JSX.HTMLAttributes<HTMLDivElement>, 'children'>
 }
 const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
-	const [props, other] = splitProps(
-		mergeProps({id: createUniqueId()}, $props),
-	[
+	const [props, other] = splitProps($props, [
 		_classList, _item, _wrapperAttr,
 		_id, _onClick, _ref, _gap, _position,
 		_padding, _draggable, _allowHideAnchor,
-		_onToggleOpen, _children, _onBeforeClose
+		_onToggleOpen, _children, _onBeforeClose,
+		_usePortal
 	])
-	const [wrapperProps, wrapperPropsOther] = splitProps(
-		mergeProps({id: createUniqueId()}, props[_wrapperAttr]! ?? {}),
-		[
-			_class, _onClick, _onPointerEnter,
-			_onPointerOver, _ref, _id
-		]
-	)
-	const menu_contex = useContext(MenuContext)
-	const submenu_context = useContext(SubMenuContext)
+	const [wrapperProps, wrapperPropsOther] = splitProps(props[_wrapperAttr] ?? {}, [
+		_class, _onClick, _onPointerEnter,
+		_onPointerLeave, _ref
+	])
 	let timeoutId: number | null = null
 	let div_ref: HTMLDivElement
 	let popover_ref: HTMLDivElement
 	let isOpen: boolean = false
-	let isClosingSubMenu: boolean = false
 
-	function closeDescendantSubMenu(quickClose: boolean = false): void {
-		if (quickClose) {
-			getAllElementBySelector(`#${props[_id]}>div>.c-sub-menu>.c-popover.c-menu:popover-open`)
-			[_forEach](submenu => closePopover(submenu as HTMLDivElement))
-			return
+	function closeDescendantSubMenu(): void {
+		for (const element of popover_ref[_firstElementChild]![_children] as unknown as HTMLElement[]) {
+			if (!element[_classList][_contains](subMenuClassName)) continue
+			closePopover(element[_lastElementChild] as HTMLDivElement)
 		}
-		if (isClosingSubMenu) return;
-
-		getAllElementBySelector(`#${props[_id]}>div>.c-sub-menu`)
-		[_forEach](submenu => submenu[_dispatchEvent](new CustomEvent(SubMenuEvents[_onClose])))
-		isClosingSubMenu = true
-		startTimeout(() => isClosingSubMenu = false, 300)
 	}
 
 	function cancelTimeout(): void {
@@ -273,15 +245,16 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 	async function open(ev: Event): Promise<void> {
 		if (isOpen) return;
 
-		let isAnySubMenuOpen = false
-		getAllElementBySelector(`#${menu_contex?.[_id]} .c-menu.popover:not(#${props[_id]}):popover-open`)
-		[_forEach](popover => {
-			const level = numberParse((popover as HTMLDivElement)[_dataset][_CLevel] ?? String(submenu_context?.[_level] ?? 1), true)
-			if (level < (submenu_context?.[_level] ?? 1)) return;
+		let isAnySubMenuOpen = false;
 
-			isAnySubMenuOpen = true
-			closePopover(popover as HTMLDivElement)
-		})
+		for (const element of div_ref[_parentElement]?.[_children] as unknown as HTMLElement[]) {
+			if (!element[_classList][_contains](subMenuClassName) || element[_isSameNode](div_ref)) continue
+
+			const popover = element[_lastElementChild] as HTMLDivElement
+			const isOpen = isPopoverOpen(popover)
+			if (!isAnySubMenuOpen && isOpen) isAnySubMenuOpen = true
+			if (isOpen) closePopover(popover)
+		}
 
 		// wait for close animation done
 		if (isAnySubMenuOpen) await wait(500)
@@ -297,46 +270,9 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 		})
 	}
 
-	function onClick(ev: MouseEvent): void {
-		if (!isOpen) return;
-
-		const target = ev[_target] as HTMLElement
-		const isClickedInside = div_ref[_contains](target) || div_ref[_contains](target)
-		if (isClickedInside) return;
-
-		closePopover(popover_ref)
-	}
-
-	function onClose(): void {
-		cancelTimeout()
-		timeoutId = startTimeout(() => {
-			closePopover(popover_ref)
-			timeoutId = null
-		}, 1000)
-	}
-
-	function initEvents(): void {
-		addEventListener<MouseEvent>(getDocument(), _click, onClick)
-		addEventListener<CustomEvent>(div_ref, SubMenuEvents[_onClose], onClose)
-	}
-
-	function removeEvents(): void {
-		removeEventListener<MouseEvent>(getDocument(), _click, onClick)
-		removeEventListener<CustomEvent>(div_ref, SubMenuEvents[_onClose], onClose)
-	}
-
-	onMount(() => {
-		initEvents()
-	})
-
-	onCleanup(() => {
-		removeEvents()
-	})
-
 	return (<div
-		class={"c-sub-menu" + (wrapperProps[_class]? ` ${wrapperProps[_class]}` : '')}
+		class={subMenuClassName + (wrapperProps[_class]? ` ${wrapperProps[_class]}` : '')}
 		ref={mergeRefs(wrapperProps[_ref], r => div_ref = r)}
-		id={wrapperProps[_id]}
 		onClick={(ev) => {
 			cancelTimeout()
 			open(ev)
@@ -350,16 +286,18 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 			}, 300)
 			callEventHandler(ev, wrapperProps[_onPointerEnter])
 		}}
-		onPointerOver={ev => {
-			eventStopPropagation(ev)
-			closeDescendantSubMenu()
-			callEventHandler(ev, wrapperProps[_onPointerOver])
+		onPointerLeave={(ev) => {
+			cancelTimeout()
+			timeoutId = startTimeout(() => {
+				closePopover(popover_ref)
+				timeoutId = null
+			}, 500)
+			callEventHandler(ev, wrapperProps[_onPointerLeave])
 		}}
 		{...wrapperPropsOther}>
 		{props[_item]}
 		<Popover
-			data-c-level={submenu_context?.[_level] ?? 1}
-			id={props[_id]}
+			usePortal={false}
 			onToggleOpen={$isOpen => {
 				isOpen = $isOpen
 				props[_onToggleOpen]?.($isOpen)
@@ -370,7 +308,7 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 				callEventHandler(ev, props[_onClick])
 			}}
 			onBeforeClose={() => {
-				closeDescendantSubMenu(true)
+				closeDescendantSubMenu()
 				props[_onBeforeClose]?.()
 			}}
 			ref={mergeRefs(props[_ref], r => popover_ref = r)}
@@ -379,106 +317,76 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 				...props[_classList]
 			}}
 			{...other}>
-			<SubMenuContext.Provider
-				value={{level: (submenu_context?.[_level] ?? 1) + 1}}>
-				{ props[_children] }
-			</SubMenuContext.Provider>
+			{ props[_children] }
 		</Popover>
 	</div>)
 }
 
 type MenuProps = ModalProps
 const Menu: ParentComponent<MenuProps> = ($props) => {
-	const [props, other] = splitProps(
-		mergeProps({id: createUniqueId()}, $props),
-	[
+	const [props, other] = splitProps($props, [
 		_classList, _gap, _padding, _contentAutoFocus,
-		_onPointerOver, _id, _onBeforeClose
+		_onBeforeClose, _ref
 	])
-	let isClosingSubMenu: boolean = false
+	let menu_ref: HTMLDialogElement
 
-	function closeDescendantSubMenu(quickClose: boolean = false): void {
-		if (quickClose) {
-			getAllElementBySelector(`#${props[_id]}>div>.c-sub-menu>.c-popover.c-menu:popover-open`)
-			[_forEach](submenu => closePopover(submenu as HTMLDivElement))
-			return
+	function closeDescendantSubMenu(): void {
+		for (const element of menu_ref[_firstElementChild]![_children] as unknown as HTMLElement[]) {
+			if (!element[_classList][_contains](subMenuClassName)) continue
+			closePopover(element[_lastElementChild] as HTMLDivElement)
 		}
-		if (isClosingSubMenu) return;
-
-		getAllElementBySelector(`#${props[_id]}>div>.c-sub-menu`)
-		[_forEach](submenu => submenu[_dispatchEvent](new CustomEvent(SubMenuEvents[_onClose])))
-		isClosingSubMenu = true
-		startTimeout(() => isClosingSubMenu = false, 300)
 	}
 
-	return (<MenuContext.Provider value={{id: props[_id]}}><Modal
+	return (<Modal
+		ref={mergeRefs(props[_ref], r => menu_ref = r)}
 		classList={{
 			'c-menu': true,
 			...props[_classList]
 		}}
-		id={props[_id]}
-		onPointerOver={ev => {
-			closeDescendantSubMenu()
-			callEventHandler(ev, props[_onPointerOver])
-		}}
 		onBeforeClose={() => {
-			closeDescendantSubMenu(true)
+			closeDescendantSubMenu()
 			props[_onBeforeClose]?.()
 		}}
 		contentAutoFocus={props[_contentAutoFocus] ?? true}
 		gap={props[_gap] ?? 8}
 		padding={props[_padding] ?? 4}
 		{...other}
-	/></MenuContext.Provider>)
+	/>)
 }
 
 type PopoverMenuProps = PopoverProps
 const PopoverMenu: ParentComponent<PopoverMenuProps> = ($props) => {
-	const [props, other] = splitProps(
-		mergeProps({id: createUniqueId()}, $props),
-	[
-		_classList, _gap, _padding, _id,
-		_onPointerOver, _onBeforeClose
+	const [props, other] = splitProps($props, [
+		_classList, _gap, _padding,
+		_onBeforeClose, _ref
 	])
-	let isClosingSubMenu: boolean = false
+	let menu_ref: HTMLDivElement
 
-	function closeDescendantSubMenu(quickClose: boolean = false): void {
-		if (quickClose) {
-			getAllElementBySelector(`#${props[_id]}>div>.c-sub-menu>.c-popover.c-menu:popover-open`)
-			[_forEach](submenu => closePopover(submenu as HTMLDivElement))
-			return
+	function closeDescendantSubMenu(): void {
+		for (const element of menu_ref[_firstElementChild]![_children] as unknown as HTMLElement[]) {
+			if (!element[_classList][_contains](subMenuClassName)) continue
+			closePopover(element[_lastElementChild] as HTMLDivElement)
 		}
-		if (isClosingSubMenu) return;
-
-		getAllElementBySelector(`#${props[_id]}>div>.c-sub-menu`)
-		[_forEach](submenu => submenu[_dispatchEvent](new CustomEvent(SubMenuEvents[_onClose])))
-		isClosingSubMenu = true
-		startTimeout(() => isClosingSubMenu = false, 300)
 	}
 
-	return (<MenuContext.Provider value={{id: props[_id]}}><Popover
-		id={props[_id]}
+	return (<Popover
+		ref={mergeRefs(props[_ref], r => menu_ref = r)}
 		classList={{
 			'c-menu': true,
 			...props[_classList]
 		}}
-		onPointerOver={ev => {
-			closeDescendantSubMenu()
-			callEventHandler(ev, props[_onPointerOver])
-		}}
 		onBeforeClose={() => {
-			closeDescendantSubMenu(true)
+			closeDescendantSubMenu()
 			props[_onBeforeClose]?.()
 		}}
 		gap={props[_gap] ?? 8}
 		padding={props[_padding] ?? 4}
 		{...other}
-	/></MenuContext.Provider>)
+	/>)
 }
 
 export {
 	SubMenu,
-	SubMenuContext,
 	Menu,
 	MenuItem,
 	MenuIndent,
@@ -501,7 +409,6 @@ export {
 	repositionModal as repositionMenu,
 	SubMenuPosition,
 	MenuPosition,
-	SubMenuEvents
 }
 export type {
 	MenuProps,
@@ -509,7 +416,6 @@ export type {
 	SwitchMenuItemProps,
 	SubMenuProps,
 	SubMenuItemProps,
-	SubMenuContextProps,
 	MenuItemTrailingShortcutProps,
 	LinkMenuItemProps,
 	PopoverMenuProps,

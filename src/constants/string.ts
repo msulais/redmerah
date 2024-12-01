@@ -1,3 +1,7 @@
+export const _lastElementChild = 'lastElementChild'
+export const _cOpen = 'cOpen'
+export const _lastChild = 'lastChild'
+export const _parentElement = 'parentElement'
 export const _CLevel = 'CLevel'
 export const _onBeforeClose = 'onBeforeClose'
 export const _onBeforeOpen = 'onBeforeOpen'

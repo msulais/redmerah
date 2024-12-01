@@ -4,7 +4,7 @@ import { Portal } from 'solid-js/web'
 
 import { FlyoutPosition as PopoverPosition } from '@/enums/position'
 import { getFlyoutPosition } from '@/utils/flyout'
-import { _allowHideAnchor, _altKey, _animate, _body, _bottom, _centerBottom, _centerBottomToLeft, _centerBottomToRight, _centerTop, _centerTopToLeft, _centerTopToRight, _children, _class, _click, _clientWidth, _clientX, _clientY, _close, _closeAnimation, _closePopover, _ctrlKey, _detail, _disconnect, _dismiss, _dispatchEvent, _documentElement, _draggable, _element, _Escape, _findIndex, _finished, _flyout, _flyoutListener, _focus, _forEach, _gap, _height, _hidePopover, _important, _innerHeight, _instant, _isSameNode, _key, _left, _leftCenter, _leftCenterToBottom, _leftCenterToTop, _length, _manual, _manualDismiss, _max_height, _max_width, _maxHeight, _maxWidth, _metaKey, _mousemove, _mouseup, _move, _newState, _none, _noPointerEvent, _observe, _onBeforeClose, _onBeforeOpen, _onCancel, _onClose, _onKeyDown, _onOpen, _onReposition, _onShortFocus, _onToggle, _onToggleOpen, _open, _openAnimation, _openPopover, _padding, _pointermove, _pointerType, _pointerup, _popoverListener, _popoverOpen, _position, _push, _px, _ref, _resize, _right, _rightCenter, _rightCenterToBottom, _rightCenterToTop, _scroll, _scrollTo, _scrollTop, _scrollY, _shiftKey, _showPopover, _some, _splice, _springBounce, _style, _then, _top, _touchend, _touches, _touchmove, _transform, _usePortal, _width, _x, _y } from '@/constants/string'
+import { _allowHideAnchor, _altKey, _animate, _body, _bottom, _centerBottom, _centerBottomToLeft, _centerBottomToRight, _centerTop, _centerTopToLeft, _centerTopToRight, _children, _class, _click, _clientWidth, _clientX, _clientY, _close, _closeAnimation, _closePopover, _cOpen, _ctrlKey, _dataset, _detail, _disconnect, _dismiss, _dispatchEvent, _documentElement, _draggable, _element, _Escape, _findIndex, _finished, _flyout, _flyoutListener, _focus, _forEach, _gap, _height, _hidePopover, _important, _innerHeight, _instant, _isSameNode, _key, _left, _leftCenter, _leftCenterToBottom, _leftCenterToTop, _length, _manual, _manualDismiss, _max_height, _max_width, _maxHeight, _maxWidth, _metaKey, _mousemove, _mouseup, _move, _newState, _none, _noPointerEvent, _observe, _onBeforeClose, _onBeforeOpen, _onCancel, _onClose, _onKeyDown, _onOpen, _onReposition, _onShortFocus, _onToggle, _onToggleOpen, _open, _openAnimation, _openPopover, _padding, _pointermove, _pointerType, _pointerup, _popoverListener, _popoverOpen, _position, _push, _px, _ref, _resize, _right, _rightCenter, _rightCenterToBottom, _rightCenterToTop, _scroll, _scrollTo, _scrollTop, _scrollY, _shiftKey, _showPopover, _some, _splice, _springBounce, _style, _then, _top, _touchend, _touches, _touchmove, _transform, _usePortal, _width, _x, _y } from '@/constants/string'
 import { endTimeout, startTimeout } from '@/utils/timeout'
 import { isElementHasAttribute, removeElementAttribute, setElementAttribute, setElementAttributeIfExist } from '@/utils/attributes'
 import { getDocument, getDocumentBody, getWindow } from '@/constants/window'
@@ -50,6 +50,10 @@ enum PopoverEvents {
 
 	/** @param {PopoverOpenDetail} detail `PopoverOpenDetail` */
 	onOpen = 'on-open-popover'
+}
+
+function isPopoverOpen(popover: HTMLDivElement): boolean {
+	return popover[_dataset][_cOpen] != undefined
 }
 
 function openPopover(
@@ -718,6 +722,7 @@ export {
 	repositionPopover,
 	closePopover,
 	Popover,
+	isPopoverOpen,
 	PopoverPosition
 }
 export type {
