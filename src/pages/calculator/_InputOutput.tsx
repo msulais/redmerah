@@ -2,24 +2,24 @@ import { createEffect, createMemo, createSignal, For, Match, Show, Switch, type 
 
 import type { CalculatorInput, CalculatorOutput, DateCalculatorInput, Settings } from "./_types"
 import { CalculatorType, Commands, DateOperation, DecimalNumberFormat, NumberType } from "./_enums"
-import { _hide, _children, _settings, _memoryButtons, _memory, _currentTarget, _command, _onRecallMemory, _value, _substring, _length, _setSelectionRange, _focus, _output, _toString, _input, _none, _text, _code, _shiftKey, _selectionStart, _join, _scientificNotation, _numberFormat, _decimal, _grouping, _test, _toUpperCase, _tonal, _comma, _filled, _sin, _cos, _tan, _csc, _sec, _cot, _centerBottomToRight, _abs, _log, _ln, _ceil, _round, _floor, _scientific, _angle, _type, _converter, _icon, _area, _volume, _temperature, _time, _weight, _frequency, _pressure, _match, _trim, _inputUnit, _name, _symbol, _equals, _outputUnit, _programmer, _numberType, _hexadecimal, _octal, _binary, _right, _clipboard, _writeText, _date, _operation, _add, _subtract, _difference, _from, _year, _month, _day, _to, _calculator, _basic, _inputs, _outputs, _valueAsNumber } from "@/constants/string"
-import { addClassListModule } from "@/utils/element"
-import { setElementAttributeIfExist } from "@/utils/attributes"
+import { add_classlist_module, element_focus } from "@/utils/element"
+import { attr_set_if_exist, classlist } from "@/utils/attributes"
 import { CONVERTER_TYPES } from "./_constants"
 import { ConverterType, UNIT_ANGLE, UNIT_AREA, UNIT_FREQUENCY, UNIT_LENGTH, UNIT_PRESSURE, UNIT_TEMPERATURE, UNIT_TIME, UNIT_VOLUME, UNIT_WEIGHT, type ConverterUnit } from "./_converter"
-import { stringToTitleCase } from "@/utils/string"
-import { eventPreventDefault } from "@/utils/event"
-import { getNavigator } from "@/constants/window"
-import { floatToBinary, formatNumber, numberParse, numberToRealDigit, safeNumber } from "@/utils/math"
-import { getDate_Y, getDateString_YMD } from "@/utils/datetime"
+import { string_length, string_match, string_substring, string_totitlecase, string_touppercase, string_trim } from "@/utils/string"
+import { event_prevent_default } from "@/utils/event"
+import { date_year, date_text_YMD } from "@/utils/datetime"
+import { number_to_binary, number_format, number_parse, number_to_real_digit, number_to_string, number_safe } from "@/utils/number"
+import { regex_test } from "@/utils/regex"
+import { navigator_clipboard_writetext } from "@/utils/navigator"
 
 import { TextTooltip } from "@/components/Tooltip"
 import Icon from "@/components/Icon"
 import Button, { ButtonIndicatorPosition, ButtonVariant, IconButton } from "@/components/Button"
 import { NumberTextField } from "@/components/TextField"
-import Menu, { closeMenu, MenuDivider, MenuItem, MenuPosition, openMenu } from "@/components/Menu"
+import Menu, { close_menu, MenuDivider, MenuItem, MenuPosition, open_menu } from "@/components/Menu"
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
-import DatePicker, { openDatePicker } from "@/components/DatePicker"
+import DatePicker, { open_datepicker } from "@/components/DatePicker"
 import CSSMiscellaneous from '@/styles/miscellaneous.module.scss'
 import CSS from './_styles.module.scss'
 
@@ -27,52 +27,57 @@ const ActionButtons: ParentComponent<JSX.HTMLAttributes<HTMLDivElement> & {
 	command: (type: Commands, ...args: unknown[]) => unknown
 	memory: number
 	settings: Settings
-	onRecallMemory: (memory: number) => unknown
+	on_recall_memory: (memory: number) => unknown
 	hide?: boolean
 }> = (props) => {
-	const [is_menu_memory_open, setIs_menu_memory_open] = createSignal<boolean>(false)
+	const [is_menu_memory_open, set_is_menu_memory_open] = createSignal<boolean>(false)
+	const settings = createMemo(() => props.settings)
 	let menu_memory_ref: HTMLDialogElement
 
-	return (<div class={CSS.input_output_action_buttons} data-hidden={setElementAttributeIfExist(props[_hide])}>
-		{props[_children]}
-		<div class={CSS.input_output_memory_buttons} data-hidden={setElementAttributeIfExist(!props[_settings][_memoryButtons])}>
-			<TextTooltip text={"Memory value " + `(${props[_memory]})`}>
+	function command(type: Commands, ...args: unknown[]): unknown {
+		return props.command(type, ...args)
+	}
+
+	return (<div class={CSS.input_output_action_buttons} data-hidden={attr_set_if_exist(props.hide)}>
+		{props.children}
+		<div class={CSS.input_output_memory_buttons} data-hidden={attr_set_if_exist(!settings().memory_buttons)}>
+			<TextTooltip text={"Memory value " + `(${props.memory})`}>
 				<Button
 					focused={is_menu_memory_open()}
-					onClick={(ev) => openMenu(ev, menu_memory_ref, {
-						anchor: ev[_currentTarget],
+					onClick={(ev) => open_menu(ev, menu_memory_ref, {
+						anchor: ev.currentTarget,
 					})}>
 					M
 				</Button>
 			</TextTooltip>
 			<Menu
-				classList={addClassListModule(CSS.input_output_memory_menu)}
-				onToggleOpen={(v) => setIs_menu_memory_open(v)}
+				classList={add_classlist_module(CSS.input_output_memory_menu)}
+				on_toggle_open={(v) => set_is_menu_memory_open(v)}
 				ref={r => menu_memory_ref = r}>
 				<p>Memory value:</p>
-				<p>{props[_memory]}</p>
+				<p>{props.memory}</p>
 			</Menu>
 			<TextTooltip text="Memory clear">
 				<Button
-					onClick={() => props[_command](Commands.clear_memory)}>
+					onClick={() => command(Commands.clear_memory)}>
 					MC
 				</Button>
 			</TextTooltip>
 			<TextTooltip text="Memory recall">
 				<Button
-					onClick={() => props[_onRecallMemory](props[_memory])}>
+					onClick={() => props.on_recall_memory(props.memory)}>
 					MR
 				</Button>
 			</TextTooltip>
 			<TextTooltip text="Memory add">
 				<Button
-					onClick={() => props[_command](Commands.add_memory)}>
+					onClick={() => command(Commands.add_memory)}>
 					M+
 				</Button>
 			</TextTooltip>
 			<TextTooltip text="Memory subtract">
 				<Button
-					onClick={() => props[_command](Commands.subtract_memory)}>
+					onClick={() => command(Commands.subtract_memory)}>
 					M-
 				</Button>
 			</TextTooltip>
@@ -87,122 +92,127 @@ const BasicCalculator: VoidComponent<{
 	output: number | null
 	command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
+	const settings = createMemo(() => props.settings)
+	const output = createMemo(() => props.output)
 	let input_ref: HTMLInputElement
-	let caretPos: number = 0
+	let caret_pos: number = 0
 
-	function addChar(char: string): void {
-		const prefix = input_ref[_value][_substring](0, caretPos)
-		const suffix = input_ref[_value][_substring](caretPos)
-		const value = prefix + char + suffix
-		input_ref[_value] = value
-		caretPos += char[_length]
-		input_ref[_setSelectionRange](caretPos, caretPos)
-		input_ref[_focus]()
-		props[_command](Commands.change_calculator_input, value)
+	function command(type: Commands, ...args: unknown[]): unknown {
+		return props.command(type, ...args)
+	}
+
+	function add_char(char: string): void {
+		let value = input_ref.value
+		const prefix = string_substring(value, 0, caret_pos)
+		const suffix = string_substring(value, caret_pos)
+		value = prefix + char + suffix
+		input_ref.value = value
+		caret_pos += string_length(char)
+		input_ref.setSelectionRange(caret_pos, caret_pos)
+		element_focus(input_ref)
+		command(Commands.change_calculator_input, value)
 	}
 
 	function backspace(): void {
-		const prefix = input_ref[_value][_substring](0, caretPos-1)
-		const suffix = input_ref[_value][_substring](caretPos)
-		const value = prefix + suffix
-		input_ref[_value] = value
-		--caretPos
-		if (caretPos < 0) caretPos = 0
-		input_ref[_setSelectionRange](caretPos, caretPos)
-		input_ref[_focus]()
-		props[_command](Commands.change_calculator_input, value)
+		let value = input_ref.value
+		const prefix = string_substring(value, 0, caret_pos-1)
+		const suffix = string_substring(value, caret_pos)
+		value = prefix + suffix
+		input_ref.value = value
+		--caret_pos
+		if (caret_pos < 0) caret_pos = 0
+		input_ref.setSelectionRange(caret_pos, caret_pos)
+		element_focus(input_ref)
+		command(Commands.change_calculator_input, value)
 	}
 
 	function clear(): void {
-		caretPos = 0
-		input_ref[_value] = ''
-		input_ref[_setSelectionRange](caretPos, caretPos)
-		input_ref[_focus]()
-		props[_command](Commands.change_calculator_input, '')
+		caret_pos = 0
+		input_ref.value = ''
+		input_ref.setSelectionRange(caret_pos, caret_pos)
+		element_focus(input_ref)
+		command(Commands.change_calculator_input, '')
 	}
 
 	function equal(): void {
-		if (!props[_output]) return;
+		if (output() == null) return;
 
-		caretPos = props[_output][_toString]()[_length]
-		input_ref[_value] = props[_output][_toString]()
-		input_ref[_setSelectionRange](caretPos, caretPos)
-		input_ref[_focus]()
-		props[_command](Commands.change_calculator_input, numberToRealDigit(props[_output]))
+		caret_pos = string_length(number_to_string(output()!))
+		input_ref.value = number_to_string(output()!)
+		input_ref.setSelectionRange(caret_pos, caret_pos)
+		element_focus(input_ref)
+		command(Commands.change_calculator_input, number_to_real_digit(output()!))
 	}
 
 	createEffect(() => {
-		input_ref[_value] = props[_input]
-		input_ref[_focus]()
+		input_ref.value = props.input
+		element_focus(input_ref)
 	})
 
 	return (<>
 		<input
 			ref={r => input_ref = r}
-			inputMode={_none}
+			inputMode="none"
 			class={CSS.input_output_basic_text_input}
-			type={_text}
+			type="text"
 			onKeyDown={ev => {
-				if (!(ev[_code] == "Equal" && !ev[_shiftKey])) return
+				if (!(ev.code == "Equal" && !ev.shiftKey)) return
 				equal()
-				eventPreventDefault(ev)
+				event_prevent_default(ev)
 			}}
-			onFocus={ev => caretPos = ev[_currentTarget][_selectionStart] ?? caretPos}
-			onBlur={ev => caretPos = ev[_currentTarget][_selectionStart] ?? caretPos}
-			onInput={ev => props[_command](Commands.change_calculator_input, ev[_currentTarget][_value])}
+			onFocus={ev => caret_pos = ev.currentTarget.selectionStart ?? caret_pos}
+			onBlur={ev => caret_pos = ev.currentTarget.selectionStart ?? caret_pos}
+			onInput={ev => command(Commands.change_calculator_input, ev.currentTarget.value)}
 		/>
 		<div
-			class={[
-				CSS.input_output_basic_text_output,
-				CSSMiscellaneous.no_scrollbar
-			][_join](' ')}>
+			class={classlist(CSS.input_output_basic_text_output, CSSMiscellaneous.no_scrollbar)}>
 			<Show
-				when={props[_settings][_scientificNotation]}
-				fallback={props[_output] != null && formatNumber(props[_output], {
-					decimalSeparator: props[_settings][_numberFormat][_decimal],
-					thousandSeparator: props[_settings][_numberFormat][_grouping]
+				when={settings().scientific_notation}
+				fallback={output() != null && number_format(output()!, {
+					decimal: settings().number_format.decimal,
+					thousand: settings().number_format.grouping
 				})}>
-				{props[_output] != null && (/[eE]/[_test](props[_output][_toString]())
-					? props[_output][_toString]()[_toUpperCase]()
-					: formatNumber(props[_output], {
-						decimalSeparator: props[_settings][_numberFormat][_decimal],
-						thousandSeparator: props[_settings][_numberFormat][_grouping]
+				{output() != null && (regex_test(/[eE]/, number_to_string(output()!))
+					? string_touppercase(number_to_string(output()!))
+					: number_format(output()!, {
+						decimal: settings().number_format.decimal,
+						thousand: settings().number_format.grouping
 					})
 				)}
 			</Show>
 		</div>
 		<ActionButtons
-			command={props[_command]}
-			memory={props[_memory]}
-			onRecallMemory={(v) => addChar(numberToRealDigit(v))}
-			settings={props[_settings]}
-			hide={!props[_settings][_memoryButtons]}
+			command={command}
+			memory={props.memory}
+			on_recall_memory={(v) => add_char(number_to_real_digit(v))}
+			settings={settings()}
+			hide={!settings().memory_buttons}
 		/>
 		<div class={CSS.input_output_basic_buttons}>
-			<Button onClick={() => addChar('%')}>%</Button>
-			<Button onClick={() => addChar('√')}>√</Button>
-			<Button onClick={() => clear()} classList={addClassListModule(CSS.input_output_remove_symbol)}>C</Button>
-			<Button onClick={() => backspace()} classList={addClassListModule(CSS.input_output_remove_symbol)}><Icon code={0xE199} /></Button>
+			<Button onClick={() => add_char('%')}>%</Button>
+			<Button onClick={() => add_char('√')}>√</Button>
+			<Button onClick={() => clear()} classList={add_classlist_module(CSS.input_output_remove_symbol)}>C</Button>
+			<Button onClick={() => backspace()} classList={add_classlist_module(CSS.input_output_remove_symbol)}><Icon code={0xE199} /></Button>
 
-			<Button onClick={() => addChar('7')} variant={ButtonVariant[_tonal]}>7</Button>
-			<Button onClick={() => addChar('8')} variant={ButtonVariant[_tonal]}>8</Button>
-			<Button onClick={() => addChar('9')} variant={ButtonVariant[_tonal]}>9</Button>
-			<Button onClick={() => addChar('÷')} ><Icon code={0xEE8F}/></Button>
+			<Button onClick={() => add_char('7')} variant={ButtonVariant.tonal}>7</Button>
+			<Button onClick={() => add_char('8')} variant={ButtonVariant.tonal}>8</Button>
+			<Button onClick={() => add_char('9')} variant={ButtonVariant.tonal}>9</Button>
+			<Button onClick={() => add_char('÷')} ><Icon code={0xEE8F}/></Button>
 
-			<Button onClick={() => addChar('4')} variant={ButtonVariant[_tonal]}>4</Button>
-			<Button onClick={() => addChar('5')} variant={ButtonVariant[_tonal]}>5</Button>
-			<Button onClick={() => addChar('6')} variant={ButtonVariant[_tonal]}>6</Button>
-			<Button onClick={() => addChar('×')}><Icon code={0xE5E9}/></Button>
+			<Button onClick={() => add_char('4')} variant={ButtonVariant.tonal}>4</Button>
+			<Button onClick={() => add_char('5')} variant={ButtonVariant.tonal}>5</Button>
+			<Button onClick={() => add_char('6')} variant={ButtonVariant.tonal}>6</Button>
+			<Button onClick={() => add_char('×')}><Icon code={0xE5E9}/></Button>
 
-			<Button onClick={() => addChar('1')} variant={ButtonVariant[_tonal]}>1</Button>
-			<Button onClick={() => addChar('2')} variant={ButtonVariant[_tonal]}>2</Button>
-			<Button onClick={() => addChar('3')} variant={ButtonVariant[_tonal]}>3</Button>
-			<Button onClick={() => addChar('-')}><Icon code={0xEF5D} /></Button>
+			<Button onClick={() => add_char('1')} variant={ButtonVariant.tonal}>1</Button>
+			<Button onClick={() => add_char('2')} variant={ButtonVariant.tonal}>2</Button>
+			<Button onClick={() => add_char('3')} variant={ButtonVariant.tonal}>3</Button>
+			<Button onClick={() => add_char('-')}><Icon code={0xEF5D} /></Button>
 
-			<Button onClick={() => addChar(props[_settings][_numberFormat][_decimal] == DecimalNumberFormat[_comma]? ',' : '.')} ><Show when={props[_settings][_numberFormat][_decimal] == DecimalNumberFormat[_comma]} fallback=".">,</Show></Button>
-			<Button onClick={() => addChar('0')} variant={ButtonVariant[_tonal]}>0</Button>
-			<Button onClick={() => equal()} variant={ButtonVariant[_filled]}>=</Button>
-			<Button onClick={() => addChar('+')}><Icon code={0xE007}/></Button>
+			<Button onClick={() => add_char(settings().number_format.decimal == DecimalNumberFormat.comma? ',' : '.')} ><Show when={settings().number_format.decimal == DecimalNumberFormat.comma} fallback=".">,</Show></Button>
+			<Button onClick={() => add_char('0')} variant={ButtonVariant.tonal}>0</Button>
+			<Button onClick={() => equal()} variant={ButtonVariant.filled}>=</Button>
+			<Button onClick={() => add_char('+')}><Icon code={0xE007}/></Button>
 		</div>
 	</>)
 }
@@ -214,186 +224,194 @@ const ScientificCalculator: VoidComponent<{
 	output: number | null
 	command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
-	const [is_menu_function_open, setIs_menu_function_open] = createSignal<boolean>(false)
-	const [isHyperbolic, setIsHyperbolic] = createSignal<boolean>(false)
-	const [isInverse, setIsInverse] = createSignal<boolean>(false)
-	const getTrigonometry = createMemo<string[]>(() => {
-		const i = () => isInverse()? 'a' : ''
-		const h = () => isHyperbolic()? 'h' : ''
+	const [is_menu_function_open, set_is_menu_function_open] = createSignal<boolean>(false)
+	const [is_hyperbolic, set_is_hyperbolic] = createSignal<boolean>(false)
+	const [is_inverse, set_is_inverse] = createSignal<boolean>(false)
+	const settings = createMemo(() => props.settings)
+	const output = createMemo(() => props.output)
+	const get_trigonometry = createMemo<string[]>(() => {
+		const i = () => is_inverse()? 'a' : ''
+		const h = () => is_hyperbolic()? 'h' : ''
 		return [
-			i() + _sin + h(),
-			i() + _cos + h(),
-			i() + _tan + h(),
-			i() + _csc + h(),
-			i() + _sec + h(),
-			i() + _cot + h()
+			i() + 'sin' + h(),
+			i() + 'cos' + h(),
+			i() + 'tan' + h(),
+			i() + 'csc' + h(),
+			i() + 'sec' + h(),
+			i() + 'cot' + h()
 		]
 	})
 	let input_ref: HTMLInputElement
 	let menu_function_ref: HTMLDialogElement
-	let caretPos: number = 0
+	let caret_pos: number = 0
 
-	function addChar(char: string): void {
-		const prefix = input_ref[_value][_substring](0, caretPos)
-		const suffix = input_ref[_value][_substring](caretPos)
-		const value = prefix + char + suffix
-		input_ref[_value] = value
-		caretPos += char[_length]
-		input_ref[_setSelectionRange](caretPos, caretPos)
-		input_ref[_focus]()
-		props[_command](Commands.change_calculator_input, value)
+	function command(type: Commands, ...args: unknown[]): unknown {
+		return props.command(type, ...args)
+	}
+
+	function add_char(char: string): void {
+		let value = input_ref.value
+		const prefix = string_substring(value, 0, caret_pos)
+		const suffix = string_substring(value, caret_pos)
+		value = prefix + char + suffix
+		input_ref.value = value
+		caret_pos += string_length(char)
+		input_ref.setSelectionRange(caret_pos, caret_pos)
+		element_focus(input_ref)
+		command(Commands.change_calculator_input, value)
 	}
 
 	function backspace(): void {
-		const prefix = input_ref[_value][_substring](0, caretPos-1)
-		const suffix = input_ref[_value][_substring](caretPos)
-		const value = prefix + suffix
-		input_ref[_value] = value
-		--caretPos
-		if (caretPos < 0) caretPos = 0
-		input_ref[_setSelectionRange](caretPos, caretPos)
-		input_ref[_focus]()
-		props[_command](Commands.change_calculator_input, value)
+		let value = input_ref.value
+		const prefix = string_substring(value, 0, caret_pos-1)
+		const suffix = string_substring(value, caret_pos)
+		value = prefix + suffix
+		input_ref.value = value
+		--caret_pos
+		if (caret_pos < 0) caret_pos = 0
+		input_ref.setSelectionRange(caret_pos, caret_pos)
+		element_focus(input_ref)
+		command(Commands.change_calculator_input, value)
 	}
 
 	function clear(): void {
-		caretPos = 0
-		input_ref[_value] = ''
-		input_ref[_setSelectionRange](caretPos, caretPos)
-		input_ref[_focus]()
-		props[_command](Commands.change_calculator_input, '')
+		caret_pos = 0
+		input_ref.value = ''
+		input_ref.setSelectionRange(caret_pos, caret_pos)
+		element_focus(input_ref)
+		command(Commands.change_calculator_input, '')
 	}
 
 	function equal(): void {
-		if (!props[_output]) return;
+		if (output() == null) return;
 
-		caretPos = props[_output][_toString]()[_length]
-		input_ref[_value] = props[_output][_toString]()
-		input_ref[_setSelectionRange](caretPos, caretPos)
-		input_ref[_focus]()
-		props[_command](Commands.change_calculator_input, numberToRealDigit(props[_output]))
+		caret_pos = string_length(number_to_string(output()!))
+		input_ref.value = number_to_string(output()!)
+		input_ref.setSelectionRange(caret_pos, caret_pos)
+		element_focus(input_ref)
+		command(Commands.change_calculator_input, number_to_real_digit(output()!))
 	}
 
 	createEffect(() => {
-		input_ref[_value] = props[_input]
-		input_ref[_focus]()
+		input_ref.value = props.input
+		element_focus(input_ref)
 	})
 
 	return (<>
 		<input
 			ref={r => input_ref = r}
-			inputMode={_none}
+			inputMode="none"
 			class={CSS.input_output_scientific_text_input}
-			type={_text}
+			type="text"
 			onKeyDown={ev => {
-				if (!(ev[_code] == "Equal" && !ev[_shiftKey])) return
+				if (!(ev.code == "Equal" && !ev.shiftKey)) return
 				equal()
-				eventPreventDefault(ev)
+				event_prevent_default(ev)
 			}}
-			onFocus={ev => caretPos = ev[_currentTarget][_selectionStart] ?? caretPos}
-			onBlur={ev => caretPos = ev[_currentTarget][_selectionStart] ?? caretPos}
-			onInput={ev => props[_command](Commands.change_calculator_input, ev[_currentTarget][_value])}
+			onFocus={ev => caret_pos = ev.currentTarget.selectionStart ?? caret_pos}
+			onBlur={ev => caret_pos = ev.currentTarget.selectionStart ?? caret_pos}
+			onInput={ev => command(Commands.change_calculator_input, ev.currentTarget.value)}
 		/>
 		<div
-			class={[
+			class={classlist(
 				CSS.input_output_scientific_text_output,
 				CSSMiscellaneous.no_scrollbar
-			][_join](' ')}>
+			)}>
 			<Show
-				when={props[_settings][_scientificNotation]}
-				fallback={props[_output] != null && formatNumber(props[_output], {
-					decimalSeparator: props[_settings][_numberFormat][_decimal],
-					thousandSeparator: props[_settings][_numberFormat][_grouping]
+				when={settings().scientific_notation}
+				fallback={output() != null && number_format(output()!, {
+					decimal: settings().number_format.decimal,
+					thousand: settings().number_format.grouping
 				})}>
-				{props[_output] != null && (/[eE]/[_test](props[_output][_toString]())
-					? props[_output][_toString]()[_toUpperCase]()
-					: formatNumber(props[_output], {
-						decimalSeparator: props[_settings][_numberFormat][_decimal],
-						thousandSeparator: props[_settings][_numberFormat][_grouping]
+				{output() != null && (regex_test(/[eE]/, number_to_string(output()!))
+					? string_touppercase(number_to_string(output()!))
+					: number_format(output()!, {
+						decimal: settings().number_format.decimal,
+						thousand: settings().number_format.grouping
 					})
 				)}
 			</Show>
 		</div>
 		<ActionButtons
-			command={props[_command]}
-			memory={props[_memory]}
-			onRecallMemory={(v) => addChar(numberToRealDigit(v))}
-			settings={props[_settings]}>
+			command={command}
+			memory={props.memory}
+			on_recall_memory={(v) => add_char(number_to_real_digit(v))}
+			settings={settings()}>
 			<Button
-				onClick={ev => openMenu(ev, menu_function_ref, {
-					anchor: ev[_currentTarget],
-					position: MenuPosition[_centerBottomToRight]
+				onClick={ev => open_menu(ev, menu_function_ref, {
+					anchor: ev.currentTarget,
+					position: MenuPosition.center_bottom_to_right
 				})}
 				focused={is_menu_function_open()}>
 				<Icon code={0xEA95}/>
 				Function
 			</Button>
 			<Menu
-				classList={addClassListModule(CSS.input_output_scientific_function_menu)}
+				classList={add_classlist_module(CSS.input_output_scientific_function_menu)}
 				ref={r => menu_function_ref = r}
-				onToggleOpen={(v) => setIs_menu_function_open(v)}>
+				on_toggle_open={(v) => set_is_menu_function_open(v)}>
 				<div class={CSS.input_output_trigonometry_options}>
-					<MenuItem checked={isInverse()} onClick={() => setIsInverse(v => !v)}>Invers</MenuItem>
-					<MenuItem checked={isHyperbolic()} onClick={() => setIsHyperbolic(v => !v)}>Hyperbolic</MenuItem>
+					<MenuItem checked={is_inverse()} onClick={() => set_is_inverse(v => !v)}>Invers</MenuItem>
+					<MenuItem checked={is_hyperbolic()} onClick={() => set_is_hyperbolic(v => !v)}>Hyperbolic</MenuItem>
 				</div>
 				<div class={CSS.input_output_grid_3}>
-					<For each={getTrigonometry()}>{t => <MenuItem onClick={() => addChar(t + '(')}>{`${t}(x)`}</MenuItem>}</For>
+					<For each={get_trigonometry()}>{t => <MenuItem onClick={() => add_char(t + '(')}>{`${t}(x)`}</MenuItem>}</For>
 				</div>
 				<MenuDivider />
 				<div class={CSS.input_output_grid_3}>
-					<MenuItem onClick={() => addChar(_abs + '(')}>abs(x)</MenuItem>
-					<MenuItem onClick={() => addChar(_log + '(')}>log(x)</MenuItem>
-					<MenuItem onClick={() => addChar(_ln + '(')}>ln(x)</MenuItem>
-					<MenuItem onClick={() => addChar(_ceil + '(')}>ceil(x)</MenuItem>
-					<MenuItem onClick={() => addChar(_round + '(')}>round(x)</MenuItem>
-					<MenuItem onClick={() => addChar(_floor + '(')}>floor(x)</MenuItem>
+					<MenuItem onClick={() => add_char('abs(')}>abs(x)</MenuItem>
+					<MenuItem onClick={() => add_char('log(')}>log(x)</MenuItem>
+					<MenuItem onClick={() => add_char('ln(')}>ln(x)</MenuItem>
+					<MenuItem onClick={() => add_char('ceil(')}>ceil(x)</MenuItem>
+					<MenuItem onClick={() => add_char('round(')}>round(x)</MenuItem>
+					<MenuItem onClick={() => add_char('floor(')}>floor(x)</MenuItem>
 				</div>
 			</Menu>
 
 			<TextTooltip text="Angle mode">
 				<Button
 					style={{width: '68px'}}
-					onClick={() => props[_command](Commands.toggle_settings_scientific_angle)}>
-					{props[_settings][_scientific][_angle]}
+					onClick={() => command(Commands.toggle_settings_scientific_angle)}>
+					{settings().scientific.angle}
 				</Button>
 			</TextTooltip>
 		</ActionButtons>
 		<div class={CSS.input_output_scientific_buttons}>
-			<Button onClick={() => addChar('mod')}>mod</Button>
-			<Button onClick={() => addChar('(')}>{'('}</Button>
-			<Button onClick={() => addChar(')')}>{')'}</Button>
-			<Button onClick={() => clear()} classList={addClassListModule(CSS.input_output_remove_symbol)}>C</Button>
-			<Button onClick={() => backspace()} classList={addClassListModule(CSS.input_output_remove_symbol)}><Icon code={0xE199} /></Button>
+			<Button onClick={() => add_char('mod')}>mod</Button>
+			<Button onClick={() => add_char('(')}>{'('}</Button>
+			<Button onClick={() => add_char(')')}>{')'}</Button>
+			<Button onClick={() => clear()} classList={add_classlist_module(CSS.input_output_remove_symbol)}>C</Button>
+			<Button onClick={() => backspace()} classList={add_classlist_module(CSS.input_output_remove_symbol)}><Icon code={0xE199} /></Button>
 
-			<Button onClick={() => addChar('%')}>%</Button>
-			<Button onClick={() => addChar('10^')}>10^</Button>
-			<Button onClick={() => addChar('^2')}>^2</Button>
-			<Button onClick={() => addChar('e^')}>e^</Button>
-			<Button onClick={() => addChar('^')}>^</Button>
+			<Button onClick={() => add_char('%')}>%</Button>
+			<Button onClick={() => add_char('10^')}>10^</Button>
+			<Button onClick={() => add_char('^2')}>^2</Button>
+			<Button onClick={() => add_char('e^')}>e^</Button>
+			<Button onClick={() => add_char('^')}>^</Button>
 
-			<Button onClick={() => addChar('!')}>!</Button>
-			<Button onClick={() => addChar('7')} variant={ButtonVariant[_tonal]}>7</Button>
-			<Button onClick={() => addChar('8')} variant={ButtonVariant[_tonal]}>8</Button>
-			<Button onClick={() => addChar('9')} variant={ButtonVariant[_tonal]}>9</Button>
-			<Button onClick={() => addChar('÷')} ><Icon code={0xEE8F}/></Button>
+			<Button onClick={() => add_char('!')}>!</Button>
+			<Button onClick={() => add_char('7')} variant={ButtonVariant.tonal}>7</Button>
+			<Button onClick={() => add_char('8')} variant={ButtonVariant.tonal}>8</Button>
+			<Button onClick={() => add_char('9')} variant={ButtonVariant.tonal}>9</Button>
+			<Button onClick={() => add_char('÷')} ><Icon code={0xEE8F}/></Button>
 
-			<Button onClick={() => addChar('e')}>e</Button>
-			<Button onClick={() => addChar('4')} variant={ButtonVariant[_tonal]}>4</Button>
-			<Button onClick={() => addChar('5')} variant={ButtonVariant[_tonal]}>5</Button>
-			<Button onClick={() => addChar('6')} variant={ButtonVariant[_tonal]}>6</Button>
-			<Button onClick={() => addChar('×')}><Icon code={0xE5E9}/></Button>
+			<Button onClick={() => add_char('e')}>e</Button>
+			<Button onClick={() => add_char('4')} variant={ButtonVariant.tonal}>4</Button>
+			<Button onClick={() => add_char('5')} variant={ButtonVariant.tonal}>5</Button>
+			<Button onClick={() => add_char('6')} variant={ButtonVariant.tonal}>6</Button>
+			<Button onClick={() => add_char('×')}><Icon code={0xE5E9}/></Button>
 
-			<Button onClick={() => addChar('π')}>π</Button>
-			<Button onClick={() => addChar('1')} variant={ButtonVariant[_tonal]}>1</Button>
-			<Button onClick={() => addChar('2')} variant={ButtonVariant[_tonal]}>2</Button>
-			<Button onClick={() => addChar('3')} variant={ButtonVariant[_tonal]}>3</Button>
-			<Button onClick={() => addChar('-')}><Icon code={0xEF5D} /></Button>
+			<Button onClick={() => add_char('π')}>π</Button>
+			<Button onClick={() => add_char('1')} variant={ButtonVariant.tonal}>1</Button>
+			<Button onClick={() => add_char('2')} variant={ButtonVariant.tonal}>2</Button>
+			<Button onClick={() => add_char('3')} variant={ButtonVariant.tonal}>3</Button>
+			<Button onClick={() => add_char('-')}><Icon code={0xEF5D} /></Button>
 
-			<Button onClick={() => addChar('√')}>√</Button>
-			<Button onClick={() => addChar(props[_settings][_numberFormat][_decimal] == DecimalNumberFormat[_comma]? ',' : '.')} ><Show when={props[_settings][_numberFormat][_decimal] == DecimalNumberFormat[_comma]} fallback=".">,</Show></Button>
-			<Button onClick={() => addChar('0')} variant={ButtonVariant[_tonal]}>0</Button>
-			<Button onClick={() => equal()} variant={ButtonVariant[_filled]}>=</Button>
-			<Button onClick={() => addChar('+')}><Icon code={0xE007}/></Button>
+			<Button onClick={() => add_char('√')}>√</Button>
+			<Button onClick={() => add_char(settings().number_format.decimal == DecimalNumberFormat.comma? ',' : '.')} ><Show when={settings().number_format.decimal == DecimalNumberFormat.comma} fallback=".">,</Show></Button>
+			<Button onClick={() => add_char('0')} variant={ButtonVariant.tonal}>0</Button>
+			<Button onClick={() => equal()} variant={ButtonVariant.filled}>=</Button>
+			<Button onClick={() => add_char('+')}><Icon code={0xE007}/></Button>
 		</div>
 	</>)
 }
@@ -405,87 +423,96 @@ const ConverterCalculator: VoidComponent<{
 	output: number | null
 	command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
-	const [is_menu_converterType_open, setIs_menu_converterType_open] = createSignal<boolean>(false)
-	const [is_menu_inputUnit_open, setIs_menu_inputUnit_open] = createSignal<boolean>(false)
-	const [is_menu_outputUnit_open, setIs_menu_outputUnit_open] = createSignal<boolean>(false)
-	const getConverterIcon = createMemo<number>(() => {
+	const [is_menu_convertertype_open, set_is_menu_convertertype_open] = createSignal<boolean>(false)
+	const [is_menu_inputunit_open, set_is_menu_inputunit_open] = createSignal<boolean>(false)
+	const [is_menu_outputunit_open, set_is_menu_outputunit_open] = createSignal<boolean>(false)
+	const settings = createMemo(() => props.settings)
+	const output = createMemo(() => props.output)
+	const input = createMemo(() => props.input)
+	const get_converter_icon = createMemo<number>(() => {
 		for (const c of CONVERTER_TYPES) {
-			if (c[_type] == props[_settings][_converter][_type]) return c[_icon]
+			if (c.type == settings().converter.type) return c.icon
 		}
 		return 0
 	})
-	const getUnits = createMemo<ConverterUnit[]>(() => {
-		const type = props[_settings][_converter][_type]
-		if (type == ConverterType[_length]) return UNIT_LENGTH
-		if (type == ConverterType[_area]) return UNIT_AREA
-		if (type == ConverterType[_volume]) return UNIT_VOLUME
-		if (type == ConverterType[_temperature]) return UNIT_TEMPERATURE
-		if (type == ConverterType[_time]) return UNIT_TIME
-		if (type == ConverterType[_weight]) return UNIT_WEIGHT
-		if (type == ConverterType[_frequency]) return UNIT_FREQUENCY
-		if (type == ConverterType[_pressure]) return UNIT_PRESSURE
-		if (type == ConverterType[_angle]) return UNIT_ANGLE
+	const get_units = createMemo<ConverterUnit[]>(() => {
+		const type = settings().converter.type
+		if (type == ConverterType.length) return UNIT_LENGTH
+		if (type == ConverterType.area) return UNIT_AREA
+		if (type == ConverterType.volume) return UNIT_VOLUME
+		if (type == ConverterType.temperature) return UNIT_TEMPERATURE
+		if (type == ConverterType.time) return UNIT_TIME
+		if (type == ConverterType.weight) return UNIT_WEIGHT
+		if (type == ConverterType.frequency) return UNIT_FREQUENCY
+		if (type == ConverterType.pressure) return UNIT_PRESSURE
+		if (type == ConverterType.angle) return UNIT_ANGLE
 		return []
 	})
-	const getConverterName = createMemo<string>(() => {
-		const type = props[_settings][_converter][_type]
-		if (type == ConverterType[_weight]) return 'Weight & mass'
-		return stringToTitleCase(type)
+	const get_converter_name = createMemo<string>(() => {
+		const type = settings().converter.type
+		if (type == ConverterType.weight) return 'Weight & mass'
+		return string_totitlecase(type)
 	})
 	let input_ref: HTMLInputElement
-	let menu_converterType_ref: HTMLDialogElement
-	let menu_inputUnit_ref: HTMLDialogElement
-	let menu_outputUnit_ref: HTMLDialogElement
-	let caretPos: number = 0
+	let menu_convertertype_ref: HTMLDialogElement
+	let menu_inputunit_ref: HTMLDialogElement
+	let menu_outputunit_ref: HTMLDialogElement
+	let caret_pos: number = 0
 
-	function addChar(char: string): void {
-		const prefix = input_ref[_value][_substring](0, caretPos)
-		const suffix = input_ref[_value][_substring](caretPos)
-		const value = prefix + char + suffix
-		input_ref[_value] = value
-		caretPos += char[_length]
-		input_ref[_setSelectionRange](caretPos, caretPos)
-		input_ref[_focus]()
-		props[_command](Commands.change_calculator_input, value)
+	function command(type: Commands, ...args: unknown[]): unknown {
+		return props.command(type, ...args)
+	}
+
+	function add_char(char: string): void {
+		let value = input_ref.value
+		const prefix = string_substring(value, 0, caret_pos)
+		const suffix = string_substring(value, caret_pos)
+		value = prefix + char + suffix
+		input_ref.value = value
+		caret_pos += string_length(char)
+		input_ref.setSelectionRange(caret_pos, caret_pos)
+		element_focus(input_ref)
+		command(Commands.change_calculator_input, value)
 	}
 
 	function backspace(): void {
-		const prefix = input_ref[_value][_substring](0, caretPos-1)
-		const suffix = input_ref[_value][_substring](caretPos)
-		const value = prefix + suffix
-		input_ref[_value] = value
-		--caretPos
-		if (caretPos < 0) caretPos = 0
-		input_ref[_setSelectionRange](caretPos, caretPos)
-		input_ref[_focus]()
-		props[_command](Commands.change_calculator_input, value)
+		let value = input_ref.value
+		const prefix = string_substring(value, 0, caret_pos-1)
+		const suffix = string_substring(value, caret_pos)
+		value = prefix + suffix
+		input_ref.value = value
+		--caret_pos
+		if (caret_pos < 0) caret_pos = 0
+		input_ref.setSelectionRange(caret_pos, caret_pos)
+		element_focus(input_ref)
+		command(Commands.change_calculator_input, value)
 	}
 
 	function clear(): void {
-		caretPos = 0
-		input_ref[_value] = ''
-		input_ref[_setSelectionRange](caretPos, caretPos)
-		input_ref[_focus]()
-		props[_command](Commands.change_calculator_input, '')
+		caret_pos = 0
+		input_ref.value = ''
+		input_ref.setSelectionRange(caret_pos, caret_pos)
+		element_focus(input_ref)
+		command(Commands.change_calculator_input, '')
 	}
 
 	function equal(): void {
-		if (!props[_output]) return;
+		if (output() == null) return;
 
-		caretPos = props[_output][_toString]()[_length]
-		input_ref[_value] = props[_output][_toString]()
-		input_ref[_setSelectionRange](caretPos, caretPos)
-		input_ref[_focus]()
-		props[_command](Commands.change_calculator_input, numberToRealDigit(props[_output]))
+		caret_pos = string_length(number_to_string(output()!))
+		input_ref.value = number_to_string(output()!)
+		input_ref.setSelectionRange(caret_pos, caret_pos)
+		element_focus(input_ref)
+		command(Commands.change_calculator_input, number_to_real_digit(output()!))
 	}
 
-	function plusMinus(): void {
+	function plus_minus(): void {
 		const re = /(.*?)([-+]{0,2})(\d*(?:\.\d*)?)$/s
-		const match = props[_input][_substring](0, caretPos)[_match](re)
-		let value: string = props[_input]
-		if (props[_input][_trim]() == '') {
+		const match = string_match(string_substring(input(), 0, caret_pos), re)
+		let value: string = input()
+		if (string_trim(input()) == '') {
 			value = '-'
-			caretPos = 1
+			caret_pos = 1
 		}
 		else if (match) {
 			const pre = match[1] ?? ''
@@ -507,89 +534,89 @@ const ConverterCalculator: VoidComponent<{
 				|| sign == ''
 			) value = '-' + number
 
-			const prefix = props[_input][_substring](0, pre[_length])
-			const suffix = props[_input][_substring](caretPos)
-			caretPos = prefix[_length] + value[_length]
+			const prefix = string_substring(input(), 0, string_length(pre))
+			const suffix = string_substring(input(), caret_pos)
+			caret_pos = string_length(prefix) + string_length(value)
 			value = prefix + value + suffix
 		}
 
-		input_ref[_value] = value
-		input_ref[_setSelectionRange](caretPos, caretPos)
-		input_ref[_focus]()
-		props[_command](Commands.change_calculator_input, value)
+		input_ref.value = value
+		input_ref.setSelectionRange(caret_pos, caret_pos)
+		element_focus(input_ref)
+		command(Commands.change_calculator_input, value)
 	}
 
 	createEffect(() => {
-		input_ref[_value] = props[_input]
-		input_ref[_focus]()
+		input_ref.value = input()
+		element_focus(input_ref)
 	})
 
 	return (<>
 		<input
 			ref={r => input_ref = r}
-			inputMode={_none}
+			inputMode="none"
 			class={CSS.input_output_converter_text_input}
-			type={_text}
+			type="text"
 			onKeyDown={ev => {
-				if (!(ev[_code] == "Equal" && !ev[_shiftKey])) return
+				if (!(ev.code == "Equal" && !ev.shiftKey)) return
 				equal()
-				eventPreventDefault(ev)
+				event_prevent_default(ev)
 			}}
-			onFocus={ev => caretPos = ev[_currentTarget][_selectionStart] ?? caretPos}
-			onBlur={ev => caretPos = ev[_currentTarget][_selectionStart] ?? caretPos}
-			onInput={ev => props[_command](Commands.change_calculator_input, ev[_currentTarget][_value])}
+			onFocus={ev => caret_pos = ev.currentTarget.selectionStart ?? caret_pos}
+			onBlur={ev => caret_pos = ev.currentTarget.selectionStart ?? caret_pos}
+			onInput={ev => command(Commands.change_calculator_input, ev.currentTarget.value)}
 		/>
 		<div
-			class={[
+			class={classlist(
 				CSS.input_output_converter_text_output,
 				CSSMiscellaneous.no_scrollbar
-			][_join](' ')}>
+			)}>
 			<Show
-				when={props[_settings][_scientificNotation]}
-				fallback={props[_output] != null && formatNumber(props[_output], {
-					decimalSeparator: props[_settings][_numberFormat][_decimal],
-					thousandSeparator: props[_settings][_numberFormat][_grouping]
+				when={settings().scientific_notation}
+				fallback={output() != null && number_format(output()!, {
+					decimal: settings().number_format.decimal,
+					thousand: settings().number_format.grouping
 				})}>
-				{props[_output] != null && (/[eE]/[_test](props[_output][_toString]())
-					? props[_output][_toString]()[_toUpperCase]()
-					: formatNumber(props[_output], {
-						decimalSeparator: props[_settings][_numberFormat][_decimal],
-						thousandSeparator: props[_settings][_numberFormat][_grouping]
+				{output() != null && (regex_test(/[eE]/, number_to_string(output()!))
+					? string_touppercase(number_to_string(output()!))
+					: number_format(output()!, {
+						decimal: settings().number_format.decimal,
+						thousand: settings().number_format.grouping
 					})
 				)}
 			</Show>
 		</div>
 		<ActionButtons
-			command={props[_command]}
-			memory={props[_memory]}
-			onRecallMemory={(v) => addChar(numberToRealDigit(v))}
-			settings={props[_settings]}>
+			command={command}
+			memory={props.memory}
+			on_recall_memory={(v) => add_char(number_to_real_digit(v))}
+			settings={settings()}>
 			<TextTooltip text="Select converter type">
 				<Button
-					focused={is_menu_converterType_open()}
-					onClick={ev => openMenu(ev, menu_converterType_ref, {
-						anchor: ev[_currentTarget],
-						position: MenuPosition[_centerBottomToRight],
-						allowHideAnchor: false
+					focused={is_menu_convertertype_open()}
+					onClick={ev => open_menu(ev, menu_convertertype_ref, {
+						anchor: ev.currentTarget,
+						position: MenuPosition.center_bottom_to_right,
+						allow_hide_anchor: false
 					})}
-					variant={ButtonVariant[_tonal]}>
-					<Icon code={getConverterIcon()}/>
-					{getConverterName()}
+					variant={ButtonVariant.tonal}>
+					<Icon code={get_converter_icon()}/>
+					{get_converter_name()}
 				</Button>
 			</TextTooltip>
 
 			<Menu
-				ref={r => menu_converterType_ref = r}
-				onToggleOpen={v => setIs_menu_converterType_open(v)}>
+				ref={r => menu_convertertype_ref = r}
+				on_toggle_open={v => set_is_menu_convertertype_open(v)}>
 				<For each={CONVERTER_TYPES}>{c =>
 					<MenuItem
-						selected={c[_type] == props[_settings][_converter][_type]}
+						selected={c.type == settings().converter.type}
 						onClick={() => {
-							props[_command](Commands.change_settings_converter_type, c[_type])
-							closeMenu(menu_converterType_ref)
+							command(Commands.change_settings_converter_type, c.type)
+							close_menu(menu_convertertype_ref)
 						}}
-						leading={<Icon code={c[_icon]}/>}>
-						{c[_text]}
+						leading={<Icon code={c.icon}/>}>
+						{c.text}
 					</MenuItem>
 				}</For>
 			</Menu>
@@ -597,88 +624,88 @@ const ConverterCalculator: VoidComponent<{
 			<div class={CSS.input_output_converter_units}>
 				<TextTooltip text="Select input unit">
 					<Button
-						focused={is_menu_inputUnit_open()}
-						onClick={ev => openMenu(ev, menu_inputUnit_ref, {
-							anchor: ev[_currentTarget],
-							position: MenuPosition[_centerBottomToRight],
-							allowHideAnchor: false
+						focused={is_menu_inputunit_open()}
+						onClick={ev => open_menu(ev, menu_inputunit_ref, {
+							anchor: ev.currentTarget,
+							position: MenuPosition.center_bottom_to_right,
+							allow_hide_anchor: false
 						})}
 						style={{color: 'rgb(var(--g-color-accent))'}}>
-						{props[_settings][_converter][_inputUnit][_name] + ` (${props[_settings][_converter][_inputUnit][_symbol]})`}
+						{settings().converter.unit_input.name + ` (${settings().converter.unit_input.symbol})`}
 					</Button>
 				</TextTooltip>
 
 				<Menu
-					ref={r => menu_inputUnit_ref = r}
-					onToggleOpen={v => setIs_menu_inputUnit_open(v)}>
-					<For each={getUnits()}>{u =>
+					ref={r => menu_inputunit_ref = r}
+					on_toggle_open={v => set_is_menu_inputunit_open(v)}>
+					<For each={get_units()}>{u =>
 						<MenuItem
 							onClick={() => {
-								props[_command](Commands.change_settings_converter_inputUnit, u)
-								closeMenu(menu_inputUnit_ref)
+								command(Commands.change_settings_converter_inputunit, u)
+								close_menu(menu_inputunit_ref)
 							}}
-							selected={u[_equals](props[_settings][_converter][_inputUnit])}>
-							{u[_name] + ` (${u[_symbol]})`}
+							selected={u.equals(settings().converter.unit_input)}>
+							{u.name + ` (${u.symbol})`}
 						</MenuItem>
 					}</For>
 				</Menu>
 
 				<TextTooltip text="Swap unit">
 					<IconButton
-						onClick={() => props[_command](Commands.change_settings_converter_swapUnit)}
+						onClick={() => command(Commands.change_settings_converter_swapunit)}
 						code={0xE115}
 					/>
 				</TextTooltip>
 
 				<TextTooltip text="Select output unit">
 					<Button
-						focused={is_menu_outputUnit_open()}
-						onClick={ev => openMenu(ev, menu_outputUnit_ref, {
-							anchor: ev[_currentTarget],
-							position: MenuPosition[_centerBottomToRight],
-							allowHideAnchor: false
+						focused={is_menu_outputunit_open()}
+						onClick={ev => open_menu(ev, menu_outputunit_ref, {
+							anchor: ev.currentTarget,
+							position: MenuPosition.center_bottom_to_right,
+							allow_hide_anchor: false
 						})}
 						style={{color: 'rgb(var(--g-color-accent))'}}>
-						{props[_settings][_converter][_outputUnit][_name] + ` (${props[_settings][_converter][_outputUnit][_symbol]})`}
+						{settings().converter.unit_output.name + ` (${settings().converter.unit_output.symbol})`}
 					</Button>
 				</TextTooltip>
 			</div>
 
 			<Menu
-				ref={r => menu_outputUnit_ref = r}
-				onToggleOpen={v => setIs_menu_outputUnit_open(v)}>
-				<For each={getUnits()}>{u =>
+				ref={r => menu_outputunit_ref = r}
+				on_toggle_open={v => set_is_menu_outputunit_open(v)}>
+				<For each={get_units()}>{u =>
 					<MenuItem
 						onClick={() => {
-							props[_command](Commands.change_settings_converter_outputUnit, u)
-							closeMenu(menu_outputUnit_ref)
+							command(Commands.change_settings_converter_outputunit, u)
+							close_menu(menu_outputunit_ref)
 						}}
-						selected={u[_equals](props[_settings][_converter][_outputUnit])}>
-						{u[_name] + ` (${u[_symbol]})`}
+						selected={u.equals(settings().converter.unit_output)}>
+						{u.name + ` (${u.symbol})`}
 					</MenuItem>
 				}</For>
 			</Menu>
 		</ActionButtons>
 		<div class={CSS.input_output_converter_buttons}>
-			<Button onClick={() => plusMinus()}>±</Button>
-			<Button onClick={() => clear()} classList={addClassListModule(CSS.input_output_remove_symbol)}>C</Button>
-			<Button onClick={() => backspace()} classList={addClassListModule(CSS.input_output_remove_symbol)}><Icon code={0xE199} /></Button>
+			<Button onClick={() => plus_minus()}>±</Button>
+			<Button onClick={() => clear()} classList={add_classlist_module(CSS.input_output_remove_symbol)}>C</Button>
+			<Button onClick={() => backspace()} classList={add_classlist_module(CSS.input_output_remove_symbol)}><Icon code={0xE199} /></Button>
 
-			<Button onClick={() => addChar('7')} variant={ButtonVariant[_tonal]}>7</Button>
-			<Button onClick={() => addChar('8')} variant={ButtonVariant[_tonal]}>8</Button>
-			<Button onClick={() => addChar('9')} variant={ButtonVariant[_tonal]}>9</Button>
+			<Button onClick={() => add_char('7')} variant={ButtonVariant.tonal}>7</Button>
+			<Button onClick={() => add_char('8')} variant={ButtonVariant.tonal}>8</Button>
+			<Button onClick={() => add_char('9')} variant={ButtonVariant.tonal}>9</Button>
 
-			<Button onClick={() => addChar('4')} variant={ButtonVariant[_tonal]}>4</Button>
-			<Button onClick={() => addChar('5')} variant={ButtonVariant[_tonal]}>5</Button>
-			<Button onClick={() => addChar('6')} variant={ButtonVariant[_tonal]}>6</Button>
+			<Button onClick={() => add_char('4')} variant={ButtonVariant.tonal}>4</Button>
+			<Button onClick={() => add_char('5')} variant={ButtonVariant.tonal}>5</Button>
+			<Button onClick={() => add_char('6')} variant={ButtonVariant.tonal}>6</Button>
 
-			<Button onClick={() => addChar('1')} variant={ButtonVariant[_tonal]}>1</Button>
-			<Button onClick={() => addChar('2')} variant={ButtonVariant[_tonal]}>2</Button>
-			<Button onClick={() => addChar('3')} variant={ButtonVariant[_tonal]}>3</Button>
+			<Button onClick={() => add_char('1')} variant={ButtonVariant.tonal}>1</Button>
+			<Button onClick={() => add_char('2')} variant={ButtonVariant.tonal}>2</Button>
+			<Button onClick={() => add_char('3')} variant={ButtonVariant.tonal}>3</Button>
 
-			<Button onClick={() => addChar(props[_settings][_numberFormat][_decimal] == DecimalNumberFormat[_comma]? ',' : '.')} ><Show when={props[_settings][_numberFormat][_decimal] == DecimalNumberFormat[_comma]} fallback=".">,</Show></Button>
-			<Button onClick={() => addChar('0')} variant={ButtonVariant[_tonal]}>0</Button>
-			<Button onClick={() => equal()} variant={ButtonVariant[_filled]}>=</Button>
+			<Button onClick={() => add_char(settings().number_format.decimal == DecimalNumberFormat.comma? ',' : '.')} ><Show when={settings().number_format.decimal == DecimalNumberFormat.comma} fallback=".">,</Show></Button>
+			<Button onClick={() => add_char('0')} variant={ButtonVariant.tonal}>0</Button>
+			<Button onClick={() => equal()} variant={ButtonVariant.filled}>=</Button>
 		</div>
 	</>)
 }
@@ -690,233 +717,246 @@ const ProgrammerCalculator: VoidComponent<{
 	output: number | null
 	command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
-	const getDecimalOutput = createMemo<string>(() => {
-		if (props[_output] == null) return ''
+	const settings = createMemo(() => props.settings)
+	const output = createMemo(() => props.output)
+	const output_decimal = createMemo<string>(() => {
+		if (output() == null) return ''
 
-		if (props[_settings][_scientificNotation]) return (/[eE]/[_test](props[_output][_toString]())
-			? props[_output][_toString]()[_toUpperCase]()
-			: formatNumber(props[_output], {
-				decimalSeparator: props[_settings][_numberFormat][_decimal],
-				thousandSeparator: props[_settings][_numberFormat][_grouping]
+		if (settings().scientific_notation) return (regex_test(/[eE]/, number_to_string(output()!))
+			? string_touppercase(number_to_string(output()!))
+			: number_format(output()!, {
+				decimal: settings().number_format.decimal,
+				thousand: settings().number_format.grouping
 			})
 		)
 
-		return formatNumber(props[_output], {
-			decimalSeparator: props[_settings][_numberFormat][_decimal],
-			thousandSeparator: props[_settings][_numberFormat][_grouping]
+		return number_format(output()!, {
+			decimal: settings().number_format.decimal,
+			thousand: settings().number_format.grouping
 		})
 	})
-	const getBinaryOutput = createMemo<string>(() => props[_output] != null? floatToBinary(props[_output]) : '')
-	const getHexadecimalOutput = createMemo<string>(() => props[_output] != null? numberParse(getBinaryOutput(), true, 2)[_toString](16)[_toUpperCase]() : '')
-	const getOctalOutput = createMemo<string>(() => props[_output] != null? numberParse(getBinaryOutput(), true, 2)[_toString](8) : '')
-	const isDec = createMemo(() => props[_settings][_programmer][_numberType] == NumberType[_decimal])
-	const isHex = createMemo(() => props[_settings][_programmer][_numberType] == NumberType[_hexadecimal])
-	const isOct = createMemo(() => props[_settings][_programmer][_numberType] == NumberType[_octal])
-	const isBin = createMemo(() => props[_settings][_programmer][_numberType] == NumberType[_binary])
+	const output_binary = createMemo<string>(() => output() != null
+		? number_to_binary(output()!)
+		: ''
+	)
+	const output_hexadecimal = createMemo<string>(() => output() != null
+		? string_touppercase(number_to_string(number_parse(output_binary(), true, 2), 16))
+		: ''
+	)
+	const output_octal = createMemo<string>(() => output() != null
+		? number_to_string(number_parse(output_binary(), true, 2), 8)
+		: ''
+	)
+	const is_dec = createMemo(() => settings().programmer.number_type == NumberType.decimal)
+	const is_hex = createMemo(() => settings().programmer.number_type == NumberType.hexadecimal)
+	const is_oct = createMemo(() => settings().programmer.number_type == NumberType.octal)
+	const is_bin = createMemo(() => settings().programmer.number_type == NumberType.binary)
 	let menu_copy_ref: HTMLDialogElement
 	let input_ref: HTMLInputElement
-	let caretPos: number = 0
-	let textToCopy: string = ''
+	let caret_pos: number = 0
+	let text_to_copy: string = ''
 
-	function addChar(char: string): void {
-		const prefix = input_ref[_value][_substring](0, caretPos)
-		const suffix = input_ref[_value][_substring](caretPos)
-		const value = prefix + char + suffix
-		input_ref[_value] = value
-		caretPos += char[_length]
-		input_ref[_setSelectionRange](caretPos, caretPos)
-		input_ref[_focus]()
-		props[_command](Commands.change_calculator_input, value)
+	function command(type: Commands, ...args: unknown[]): unknown {
+		return props.command(type, ...args)
+	}
+
+	function add_char(char: string): void {
+		let value = input_ref.value
+		const prefix = string_substring(value, 0, caret_pos)
+		const suffix = string_substring(value, caret_pos)
+		value = prefix + char + suffix
+		input_ref.value = value
+		caret_pos += string_length(char)
+		input_ref.setSelectionRange(caret_pos, caret_pos)
+		element_focus(input_ref)
+		command(Commands.change_calculator_input, value)
 	}
 
 	function backspace(): void {
-		const prefix = input_ref[_value][_substring](0, caretPos-1)
-		const suffix = input_ref[_value][_substring](caretPos)
-		const value = prefix + suffix
-		input_ref[_value] = value
-		--caretPos
-		if (caretPos < 0) caretPos = 0
-		input_ref[_setSelectionRange](caretPos, caretPos)
-		input_ref[_focus]()
-		props[_command](Commands.change_calculator_input, value)
+		let value = input_ref.value
+		const prefix = string_substring(value, 0, caret_pos-1)
+		const suffix = string_substring(value, caret_pos)
+		value = prefix + suffix
+		input_ref.value = value
+		--caret_pos
+		if (caret_pos < 0) caret_pos = 0
+		input_ref.setSelectionRange(caret_pos, caret_pos)
+		element_focus(input_ref)
+		command(Commands.change_calculator_input, value)
 	}
 
 	function clear(): void {
-		caretPos = 0
-		input_ref[_value] = ''
-		input_ref[_setSelectionRange](caretPos, caretPos)
-		input_ref[_focus]()
-		props[_command](Commands.change_calculator_input, '')
+		caret_pos = 0
+		input_ref.value = ''
+		input_ref.setSelectionRange(caret_pos, caret_pos)
+		element_focus(input_ref)
+		command(Commands.change_calculator_input, '')
 	}
 
 	function equal(): void {
-		if (!props[_output]) return;
+		if (output() == null) return;
 
-		let output = props[_output][_toString]()
-		const type = props[_settings][_programmer][_numberType]
-		if (type == NumberType[_hexadecimal]) output = getHexadecimalOutput()
-		else if (type == NumberType[_octal]) output = getOctalOutput()
-		else if (type == NumberType[_binary]) output = getBinaryOutput()
+		let $output = number_to_string(output()!)
+		const type = settings().programmer.number_type
+		if (type == NumberType.hexadecimal) $output = output_hexadecimal()
+		else if (type == NumberType.octal) $output = output_octal()
+		else if (type == NumberType.binary) $output = output_binary()
 
-		caretPos = output[_length]
-		input_ref[_value] = output[_toString]()
-		input_ref[_setSelectionRange](caretPos, caretPos)
-		input_ref[_focus]()
-		props[_command](Commands.change_calculator_input, output)
+		caret_pos = string_length($output)
+		input_ref.value = $output
+		input_ref.setSelectionRange(caret_pos, caret_pos)
+		element_focus(input_ref)
+		command(Commands.change_calculator_input, $output)
 	}
 
-	function onRecallMemory(value: number): void {
-		const type = props[_settings][_programmer][_numberType]
+	function on_recall_memory(value: number): void {
+		const type = settings().programmer.number_type
 		let $value = ''
 
-		if (type == NumberType[_decimal]) $value = numberToRealDigit(value)
-		else if (type == NumberType[_hexadecimal]) $value = numberParse(floatToBinary(value), true, 2)[_toString](16)[_toUpperCase]()
-		else if (type == NumberType[_octal]) $value = numberParse(floatToBinary(value), true, 2)[_toString](8)
-		else if (type == NumberType[_binary]) $value = floatToBinary(value)
+		if (type == NumberType.decimal) $value = number_to_real_digit(value)
+		else if (type == NumberType.hexadecimal) $value = string_touppercase(number_to_string(number_parse(number_to_binary(value), true, 2), 16))
+		else if (type == NumberType.octal) $value = number_to_string(number_parse(number_to_binary(value), true, 2), 8)
+		else if (type == NumberType.binary) $value = number_to_binary(value)
 
-		addChar($value)
+		add_char($value)
 	}
 
 	createEffect(() => {
-		input_ref[_value] = props[_input]
-		input_ref[_focus]()
+		input_ref.value = props.input
+		element_focus(input_ref)
 	})
 
 	return (<>
 		<input
 			ref={r => input_ref = r}
-			inputMode={_none}
+			inputMode="none"
 			class={CSS.input_output_programmer_text_input}
-			type={_text}
+			type="text"
 			onKeyDown={ev => {
-				if (!(ev[_code] == "Equal" && !ev[_shiftKey])) return
+				if (!(ev.code == "Equal" && !ev.shiftKey)) return
 				equal()
-				eventPreventDefault(ev)
+				event_prevent_default(ev)
 			}}
-			onFocus={ev => caretPos = ev[_currentTarget][_selectionStart] ?? caretPos}
-			onBlur={ev => caretPos = ev[_currentTarget][_selectionStart] ?? caretPos}
-			onInput={ev => props[_command](Commands.change_calculator_input, ev[_currentTarget][_value])}
+			onFocus={ev => caret_pos = ev.currentTarget.selectionStart ?? caret_pos}
+			onBlur={ev => caret_pos = ev.currentTarget.selectionStart ?? caret_pos}
+			onInput={ev => command(Commands.change_calculator_input, ev.currentTarget.value)}
 		/>
 		<div
-			class={[
+			class={classlist(
 				CSS.input_output_programmer_text_output,
 				CSSMiscellaneous.no_scrollbar
-			][_join](' ')}>
+			)}>
 			<Button
-				selected={props[_settings][_programmer][_numberType] == NumberType[_decimal]}
-				compact
-				indicatorPosition={ButtonIndicatorPosition[_right]}
-				onClick={() => props[_command](Commands.change_settings_programmer_numberType, NumberType[_decimal])}
+				selected={settings().programmer.number_type == NumberType.decimal}
+				indicator_position={ButtonIndicatorPosition.right}
+				onClick={() => command(Commands.change_settings_programmer_numbertype, NumberType.decimal)}
 				onContextMenu={(ev) => {
-					eventPreventDefault(ev)
-					textToCopy = getDecimalOutput()
-					openMenu(ev, menu_copy_ref)
+					event_prevent_default(ev)
+					text_to_copy = output_decimal()
+					open_menu(ev, menu_copy_ref)
 				}}>
-				<div class={CSSMiscellaneous.no_scrollbar}>{getDecimalOutput()}</div>
+				<div class={CSSMiscellaneous.no_scrollbar}>{output_decimal()}</div>
 				<span>DEC</span>
 			</Button>
 			<Button
-				selected={props[_settings][_programmer][_numberType] == NumberType[_hexadecimal]}
-				compact
-				indicatorPosition={ButtonIndicatorPosition[_right]}
-				onClick={() => props[_command](Commands.change_settings_programmer_numberType, NumberType[_hexadecimal])}
+				selected={settings().programmer.number_type == NumberType.hexadecimal}
+				indicator_position={ButtonIndicatorPosition.right}
+				onClick={() => command(Commands.change_settings_programmer_numbertype, NumberType.hexadecimal)}
 				onContextMenu={(ev) => {
-					eventPreventDefault(ev)
-					if (props[_output] == null) return;
+					event_prevent_default(ev)
+					if (output() == null) return;
 
-					textToCopy = getHexadecimalOutput()
-					openMenu(ev, menu_copy_ref)
+					text_to_copy = output_hexadecimal()
+					open_menu(ev, menu_copy_ref)
 				}}>
-				<div class={CSSMiscellaneous.no_scrollbar}>{getHexadecimalOutput()}</div>
+				<div class={CSSMiscellaneous.no_scrollbar}>{output_hexadecimal()}</div>
 				<span>HEX</span>
 			</Button>
 			<Button
-				selected={props[_settings][_programmer][_numberType] == NumberType[_octal]}
-				compact
-				indicatorPosition={ButtonIndicatorPosition[_right]}
-				onClick={() => props[_command](Commands.change_settings_programmer_numberType, NumberType[_octal])}
+				selected={settings().programmer.number_type == NumberType.octal}
+				indicator_position={ButtonIndicatorPosition.right}
+				onClick={() => command(Commands.change_settings_programmer_numbertype, NumberType.octal)}
 				onContextMenu={(ev) => {
-					eventPreventDefault(ev)
-					if (props[_output] == null) return;
+					event_prevent_default(ev)
+					if (output() == null) return;
 
-					textToCopy = getOctalOutput()
-					openMenu(ev, menu_copy_ref)
+					text_to_copy = output_octal()
+					open_menu(ev, menu_copy_ref)
 				}}>
-				<div class={CSSMiscellaneous.no_scrollbar}>{getOctalOutput()}</div>
+				<div class={CSSMiscellaneous.no_scrollbar}>{output_octal()}</div>
 				<span>OCT</span>
 			</Button>
 			<Button
-				selected={props[_settings][_programmer][_numberType] == NumberType[_binary]}
-				compact
-				indicatorPosition={ButtonIndicatorPosition[_right]}
-				onClick={() => props[_command](Commands.change_settings_programmer_numberType, NumberType[_binary])}
+				selected={settings().programmer.number_type == NumberType.binary}
+				indicator_position={ButtonIndicatorPosition.right}
+				onClick={() => command(Commands.change_settings_programmer_numbertype, NumberType.binary)}
 				onContextMenu={(ev) => {
-					eventPreventDefault(ev)
-					if (props[_output] == null) return;
+					event_prevent_default(ev)
+					if (output() == null) return;
 
-					textToCopy = getBinaryOutput()
-					openMenu(ev, menu_copy_ref)
+					text_to_copy = output_binary()
+					open_menu(ev, menu_copy_ref)
 				}}>
-				<div class={CSSMiscellaneous.no_scrollbar}><Show when={props[_output] != null}>{getBinaryOutput()}</Show></div>
+				<div class={CSSMiscellaneous.no_scrollbar}><Show when={output() != null}>{output_binary()}</Show></div>
 				<span>BIN</span>
 			</Button>
 
 			<Menu ref={r => menu_copy_ref = r}>
 				<MenuItem onClick={() => {
-					getNavigator()[_clipboard][_writeText](textToCopy)
-					closeMenu(menu_copy_ref)
+					navigator_clipboard_writetext(text_to_copy)
+					close_menu(menu_copy_ref)
 				}} leading={<Icon code={0xE51B}/>}>Copy</MenuItem>
 			</Menu>
 		</div>
 		<ActionButtons
-			command={props[_command]}
-			memory={props[_memory]}
-			onRecallMemory={onRecallMemory}
-			hide={!props[_settings][_memoryButtons]}
-			settings={props[_settings]}
+			command={command}
+			memory={props.memory}
+			on_recall_memory={on_recall_memory}
+			hide={!settings().memory_buttons}
+			settings={settings()}
 		/>
 		<div class={CSS.input_output_programmer_buttons}>
 			<div />
-			<Button onClick={() => addChar('(')}>{'('}</Button>
-			<Button onClick={() => addChar(')')}>{')'}</Button>
-			<Button onClick={() => clear()} classList={addClassListModule(CSS.input_output_remove_symbol)}>C</Button>
-			<Button onClick={() => backspace()} classList={addClassListModule(CSS.input_output_remove_symbol)}><Icon code={0xE199} /></Button>
+			<Button onClick={() => add_char('(')}>{'('}</Button>
+			<Button onClick={() => add_char(')')}>{')'}</Button>
+			<Button onClick={() => clear()} classList={add_classlist_module(CSS.input_output_remove_symbol)}>C</Button>
+			<Button onClick={() => backspace()} classList={add_classlist_module(CSS.input_output_remove_symbol)}><Icon code={0xE199} /></Button>
 
-			<Button disabled={!isHex()} onClick={() => addChar('F')} variant={ButtonVariant[_tonal]}>F</Button>
-			<Button onClick={() => addChar('not(')}>not</Button>
-			<Button onClick={() => addChar('mod')}>mod</Button>
-			<Button onClick={() => addChar('lsh')}>lsh</Button>
-			<Button onClick={() => addChar('rsh')}>rsh</Button>
+			<Button disabled={!is_hex()} onClick={() => add_char('F')} variant={ButtonVariant.tonal}>F</Button>
+			<Button onClick={() => add_char('not(')}>not</Button>
+			<Button onClick={() => add_char('mod')}>mod</Button>
+			<Button onClick={() => add_char('lsh')}>lsh</Button>
+			<Button onClick={() => add_char('rsh')}>rsh</Button>
 
-			<Button disabled={!isHex()} onClick={() => addChar('E')} variant={ButtonVariant[_tonal]}>E</Button>
-			<Button onClick={() => addChar('or')}>or</Button>
-			<Button onClick={() => addChar('and')}>and</Button>
-			<Button onClick={() => addChar('xor')}>xor</Button>
-			<Button onClick={() => addChar('^')}>^</Button>
+			<Button disabled={!is_hex()} onClick={() => add_char('E')} variant={ButtonVariant.tonal}>E</Button>
+			<Button onClick={() => add_char('or')}>or</Button>
+			<Button onClick={() => add_char('and')}>and</Button>
+			<Button onClick={() => add_char('xor')}>xor</Button>
+			<Button onClick={() => add_char('^')}>^</Button>
 
-			<Button disabled={!isHex()} onClick={() => addChar('D')} variant={ButtonVariant[_tonal]}>D</Button>
-			<Button disabled={isBin()} onClick={() => addChar('7')} variant={ButtonVariant[_tonal]}>7</Button>
-			<Button disabled={isOct() || isBin()} onClick={() => addChar('8')} variant={ButtonVariant[_tonal]}>8</Button>
-			<Button disabled={isOct() || isBin()} onClick={() => addChar('9')} variant={ButtonVariant[_tonal]}>9</Button>
-			<Button onClick={() => addChar('÷')} ><Icon code={0xEE8F}/></Button>
+			<Button disabled={!is_hex()} onClick={() => add_char('D')} variant={ButtonVariant.tonal}>D</Button>
+			<Button disabled={is_bin()} onClick={() => add_char('7')} variant={ButtonVariant.tonal}>7</Button>
+			<Button disabled={is_oct() || is_bin()} onClick={() => add_char('8')} variant={ButtonVariant.tonal}>8</Button>
+			<Button disabled={is_oct() || is_bin()} onClick={() => add_char('9')} variant={ButtonVariant.tonal}>9</Button>
+			<Button onClick={() => add_char('÷')} ><Icon code={0xEE8F}/></Button>
 
-			<Button disabled={!isHex()} onClick={() => addChar('C')} variant={ButtonVariant[_tonal]}>C</Button>
-			<Button disabled={isBin()} onClick={() => addChar('4')} variant={ButtonVariant[_tonal]}>4</Button>
-			<Button disabled={isBin()} onClick={() => addChar('5')} variant={ButtonVariant[_tonal]}>5</Button>
-			<Button disabled={isBin()} onClick={() => addChar('6')} variant={ButtonVariant[_tonal]}>6</Button>
-			<Button onClick={() => addChar('×')}><Icon code={0xE5E9}/></Button>
+			<Button disabled={!is_hex()} onClick={() => add_char('C')} variant={ButtonVariant.tonal}>C</Button>
+			<Button disabled={is_bin()} onClick={() => add_char('4')} variant={ButtonVariant.tonal}>4</Button>
+			<Button disabled={is_bin()} onClick={() => add_char('5')} variant={ButtonVariant.tonal}>5</Button>
+			<Button disabled={is_bin()} onClick={() => add_char('6')} variant={ButtonVariant.tonal}>6</Button>
+			<Button onClick={() => add_char('×')}><Icon code={0xE5E9}/></Button>
 
-			<Button disabled={!isHex()} onClick={() => addChar('B')} variant={ButtonVariant[_tonal]}>B</Button>
-			<Button onClick={() => addChar('1')} variant={ButtonVariant[_tonal]}>1</Button>
-			<Button disabled={isBin()} onClick={() => addChar('2')} variant={ButtonVariant[_tonal]}>2</Button>
-			<Button disabled={isBin()} onClick={() => addChar('3')} variant={ButtonVariant[_tonal]}>3</Button>
-			<Button onClick={() => addChar('-')}><Icon code={0xEF5D} /></Button>
+			<Button disabled={!is_hex()} onClick={() => add_char('B')} variant={ButtonVariant.tonal}>B</Button>
+			<Button onClick={() => add_char('1')} variant={ButtonVariant.tonal}>1</Button>
+			<Button disabled={is_bin()} onClick={() => add_char('2')} variant={ButtonVariant.tonal}>2</Button>
+			<Button disabled={is_bin()} onClick={() => add_char('3')} variant={ButtonVariant.tonal}>3</Button>
+			<Button onClick={() => add_char('-')}><Icon code={0xEF5D} /></Button>
 
-			<Button disabled={!isHex()} onClick={() => addChar('A')} variant={ButtonVariant[_tonal]}>A</Button>
-			<Button disabled={!isDec()} onClick={() => addChar(props[_settings][_numberFormat][_decimal] == DecimalNumberFormat[_comma]? ',' : '.')} ><Show when={props[_settings][_numberFormat][_decimal] == DecimalNumberFormat[_comma]} fallback=".">,</Show></Button>
-			<Button onClick={() => addChar('0')} variant={ButtonVariant[_tonal]}>0</Button>
-			<Button onClick={() => equal()} variant={ButtonVariant[_filled]}>=</Button>
-			<Button onClick={() => addChar('+')}><Icon code={0xE007}/></Button>
+			<Button disabled={!is_hex()} onClick={() => add_char('A')} variant={ButtonVariant.tonal}>A</Button>
+			<Button disabled={!is_dec()} onClick={() => add_char(settings().number_format.decimal == DecimalNumberFormat.comma? ',' : '.')} ><Show when={settings().number_format.decimal == DecimalNumberFormat.comma} fallback=".">,</Show></Button>
+			<Button onClick={() => add_char('0')} variant={ButtonVariant.tonal}>0</Button>
+			<Button onClick={() => equal()} variant={ButtonVariant.filled}>=</Button>
+			<Button onClick={() => add_char('+')}><Icon code={0xE007}/></Button>
 		</div>
 	</>)
 }
@@ -927,96 +967,102 @@ const DateCalculator: VoidComponent<{
 	output: string | null
 	command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
+	const settings = createMemo(() => props.settings)
+	const input = createMemo(() => props.input)
 	let datePicker_from_ref: HTMLDialogElement
 	let datePicker_to_ref: HTMLDialogElement
+
+	function command(type: Commands, ...args: unknown[]): unknown {
+		return props.command(type, ...args)
+	}
 
 	return (<div class={CSS.input_output_date_calculator}>
 		<Dropdown
 			label="Operation"
-			values={[props[_settings][_date][_operation]]}
-			onChangeOptions={(options) => props[_command](Commands.change_settings_date_operation, options[0][_value])}>
+			values={[settings().date.operation]}
+			on_change_options={(options) => command(Commands.change_settings_date_operation, options[0].value)}>
 			<For each={[
-				[DateOperation[_add], 'Add'],
-				[DateOperation[_subtract], 'Subtract'],
-				[DateOperation[_difference], 'Difference'],
+				[DateOperation.add, 'Add'],
+				[DateOperation.subtract, 'Subtract'],
+				[DateOperation.difference, 'Difference'],
 			]}>{option => <DropdownOption value={option[0]} text={option[1]}/>}</For>
 		</Dropdown>
 		<div>
 			<p>From</p>
 			<Button
-				variant={ButtonVariant[_tonal]}
-				onClick={(ev) => openDatePicker(ev, datePicker_from_ref, {
-					anchor: ev[_currentTarget],
-					position: MenuPosition[_centerBottomToRight]
+				variant={ButtonVariant.tonal}
+				onClick={(ev) => open_datepicker(ev, datePicker_from_ref, {
+					anchor: ev.currentTarget,
+					position: MenuPosition.center_bottom_to_right
 				})}>
 				<Icon code={0xE2CC}/>
-				{getDateString_YMD(props[_input][_from])}
+				{date_text_YMD(input().from)}
 			</Button>
 		</div>
-		<div class={CSS.input_output_date_inputs} data-hide={setElementAttributeIfExist(props[_settings][_date][_operation] == DateOperation[_difference])}>
+		<div class={CSS.input_output_date_inputs} data-hide={attr_set_if_exist(settings().date.operation == DateOperation.difference)}>
 			<NumberTextField
 				min={0}
-				value={props[_input][_year] + ''}
+				value={input().year + ''}
 				label="Year"
-				onBlur={(ev) => props[_command](
+				onBlur={(ev) => command(
 					Commands.change_calculator_input,
-					{	...props[_input],
-						year: safeNumber(ev[_currentTarget][_valueAsNumber], props[_input][_year])
+					{	...input(),
+						year: number_safe(ev.currentTarget.valueAsNumber, input().year)
 					}
 				)}
 			/>
 			<NumberTextField
 				min={0}
-				value={props[_input][_month] + ''}
+				value={input().month + ''}
 				label="Month"
-				onBlur={(ev) => props[_command](
+				onBlur={(ev) => command(
 					Commands.change_calculator_input,
-					{	...props[_input],
-						month: safeNumber(ev[_currentTarget][_valueAsNumber], props[_input][_month])
+					{	...input(),
+						month: number_safe(ev.currentTarget.valueAsNumber, input().month)
 					}
 				)}
 			/>
 			<NumberTextField
 				min={0}
-				value={props[_input][_day] + ''}
+				value={input().day + ''}
 				label="Day"
-				onBlur={(ev) => props[_command](
+				onBlur={(ev) => command(
 					Commands.change_calculator_input,
-					{	...props[_input],
-						day: safeNumber(ev[_currentTarget][_valueAsNumber], props[_input][_day])
+					{	...input(),
+						day: number_safe(ev.currentTarget.valueAsNumber, input().day)
 					}
 				)}
 			/>
 		</div>
-		<div data-hide={setElementAttributeIfExist(props[_settings][_date][_operation] != DateOperation[_difference])}>
+		<div data-hide={attr_set_if_exist(settings().date.operation != DateOperation.difference)}>
 			<p>To</p>
 			<Button
-				variant={ButtonVariant[_tonal]}
-				onClick={(ev) => openDatePicker(ev, datePicker_to_ref, {
-					anchor: ev[_currentTarget],
-					position: MenuPosition[_centerBottomToRight]
+				variant={ButtonVariant.tonal}
+				onClick={(ev) => open_datepicker(ev, datePicker_to_ref, {
+					anchor: ev.currentTarget,
+					position: MenuPosition.center_bottom_to_right
 				})}>
 				<Icon code={0xE2CC}/>
-				{getDateString_YMD(props[_input][_to])}
+				{date_text_YMD(input().to)}
 			</Button>
 		</div>
 		<div>
-			<p><Show when={setElementAttributeIfExist(props[_settings][_date][_operation] != DateOperation[_difference])} fallback="Result">Difference</Show></p>
-			<h2>{props[_output]}</h2>
+			<p><Show when={attr_set_if_exist(settings().date.operation != DateOperation.difference)} fallback="Result">Difference</Show></p>
+			<h2>{props.output}</h2>
 		</div>
 		<DatePicker
 			ref={r => datePicker_from_ref = r}
-			date={props[_input][_from]}
-			firstDate={new Date(getDate_Y() - 1000, 0, 1)}
-			lastDate={new Date(getDate_Y() + 1000, 11, 31)}
-			onSelectDate={(value) => props[_command](Commands.change_calculator_input, {...props[_input], from: value})}
+			date={input().from}
+			first_date={new Date(date_year() - 1000, 0, 1)}
+			last_date={new Date(date_year() + 1000, 11, 31)}
+			on_select_date={(value) => command(Commands.change_calculator_input, {...input(), from: value})}
 		/>
 		<DatePicker
 			ref={r => datePicker_to_ref = r}
-			date={props[_input][_to]}
-			firstDate={new Date(getDate_Y() - 1000, 0, 1)}
-			lastDate={new Date(getDate_Y() + 1000, 11, 31)}
-			onSelectDate={(value) => props[_command](Commands.change_calculator_input, {...props[_input], to: value})}
+			date={input().to}
+			first_date={new Date(date_year() - 1000, 0, 1)}
+			last_date={new Date(date_year() + 1000, 11, 31)}
+			on_select_date={(value) => command(Commands.change_calculator_input, {...input(), to: value})}
 		/>
 	</div>)
 }
@@ -1029,50 +1075,56 @@ const _: VoidComponent<{
 	memory: number
 	command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
+	const calculator = createMemo(() => props.calculator)
+	const inputs = createMemo(() => props.inputs)
+	const outputs = createMemo(() => props.outputs)
+	const command = createMemo(() => props.command)
+	const settings = createMemo(() => props.settings)
+	const memory = createMemo(() => props.memory)
 	return (<main class={CSS.input_output_main}>
 		<Switch>
-			<Match when={props[_calculator] == CalculatorType[_basic]}>
+			<Match when={calculator() == CalculatorType.basic}>
 				<BasicCalculator
-					settings={props[_settings]}
-					input={props[_inputs][_basic]}
-					output={props[_outputs][_basic]}
-					command={props[_command]}
-					memory={props[_memory]}
+					settings={settings()}
+					input={inputs().basic}
+					output={outputs().basic}
+					command={command()}
+					memory={memory()}
 				/>
 			</Match>
-			<Match when={props[_calculator] == CalculatorType[_scientific]}>
+			<Match when={calculator() == CalculatorType.scientific}>
 				<ScientificCalculator
-					settings={props[_settings]}
-					input={props[_inputs][_scientific]}
-					output={props[_outputs][_scientific]}
-					command={props[_command]}
-					memory={props[_memory]}
+					settings={settings()}
+					input={inputs().scientific}
+					output={outputs().scientific}
+					command={command()}
+					memory={memory()}
 				/>
 			</Match>
-			<Match when={props[_calculator] == CalculatorType[_converter]}>
+			<Match when={calculator() == CalculatorType.converter}>
 				<ConverterCalculator
-					settings={props[_settings]}
-					input={props[_inputs][_converter]}
-					output={props[_outputs][_converter]}
-					command={props[_command]}
-					memory={props[_memory]}
+					settings={settings()}
+					input={inputs().converter}
+					output={outputs().converter}
+					command={command()}
+					memory={memory()}
 				/>
 			</Match>
-			<Match when={props[_calculator] == CalculatorType[_programmer]}>
+			<Match when={calculator() == CalculatorType.programmer}>
 				<ProgrammerCalculator
-					settings={props[_settings]}
-					input={props[_inputs][_programmer]}
-					output={props[_outputs][_programmer]}
-					command={props[_command]}
-					memory={props[_memory]}
+					settings={settings()}
+					input={inputs().programmer}
+					output={outputs().programmer}
+					command={command()}
+					memory={memory()}
 				/>
 			</Match>
-			<Match when={props[_calculator] == CalculatorType[_date]}>
+			<Match when={calculator() == CalculatorType.date}>
 				<DateCalculator
-					settings={props[_settings]}
-					input={props[_inputs][_date]}
-					output={props[_outputs][_date]}
-					command={props[_command]}
+					settings={settings()}
+					input={inputs().date}
+					output={outputs().date}
+					command={command()}
 				/>
 			</Match>
 		</Switch>

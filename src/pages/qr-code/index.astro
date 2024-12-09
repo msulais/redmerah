@@ -1,5 +1,5 @@
 ---
-import { qrCode as app } from '@/constants/apps'
+import { app_qr_code as app } from '@/constants/apps'
 import icon from '@/assets/apps/qr-code-splash.svg'
 
 import Html from '@/layouts/Html/index.astro';
@@ -11,7 +11,7 @@ export const prerender = true;
 
 <Html
 	title={app.name}
-	accentColor={app.color}
+	accent_color={app.color}
 	description={app.description}>
 	<Fragment slot="favicon">
 		<link rel="shortcut icon" type="image/ico" href={`/favicon${app.link}/favicon.ico`} />

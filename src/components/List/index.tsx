@@ -1,8 +1,7 @@
 import { children, type JSX, type ParentComponent, Show, splitProps, type ValidComponent } from "solid-js"
 import { Dynamic, type DynamicProps } from "solid-js/web"
 
-import { setElementAttributeIfExist } from '@/utils/attributes'
-import { _leading, _children, _trailing, _subtitle, _compact, _class } from "@/constants/string"
+import { attr_set_if_exist, classlist } from '@/utils/attributes'
 
 import './index.scss'
 
@@ -13,16 +12,17 @@ type ListProps = JSX.HTMLAttributes<HTMLDivElement> & {
 }
 const List: ParentComponent<ListProps> = ($props) => {
 	const [props, other] = splitProps($props, [
-		_leading, _children, _trailing, _subtitle, _class
+		'leading', 'children', 'trailing', 'subtitle',
+		'class'
 	])
-	const trailing = children(() => props[_trailing])
-	const leading = children(() => props[_leading])
-	const $children = children(() => props[_children])
-	const subtitle = children(() => props[_subtitle])
+	const trailing = children(() => props.trailing)
+	const leading = children(() => props.leading)
+	const $children = children(() => props.children)
+	const subtitle = children(() => props.subtitle)
 
 	return (<div
-		class={`c-list${props[_class]? ` ${props[_class]}` : ''}`}
-		data-c-trailing={setElementAttributeIfExist(trailing())}
+		class={classlist('c-list', props.class)}
+		data-c-trailing={attr_set_if_exist(trailing())}
 		{...other}>
 		<Show when={leading()}>
 			<div class='c-list-leading'>{leading()}</div>
@@ -48,16 +48,17 @@ type RawListProps<T extends ValidComponent = keyof JSX.HTMLElementTags> = Dynami
 }
 const RawList: ParentComponent<RawListProps> = ($props) => {
 	const [props, other] = splitProps($props, [
-		_leading, _children, _trailing, _subtitle, _class
+		'leading', 'children', 'trailing', 'subtitle',
+		'class'
 	])
-	const trailing = children(() => props[_trailing])
-	const leading = children(() => props[_leading])
-	const $children = children(() => props[_children])
-	const subtitle = children(() => props[_subtitle])
+	const trailing = children(() => props.trailing)
+	const leading = children(() => props.leading)
+	const $children = children(() => props.children)
+	const subtitle = children(() => props.subtitle)
 
 	return (<Dynamic
-		class={`c-list${props[_class]? ` ${props[_class]}` : ''}`}
-		data-c-trailing={setElementAttributeIfExist(trailing())}
+		class={classlist('c-list', props.class)}
+		data-c-trailing={attr_set_if_exist(trailing())}
 		{...other}>
 		<Show when={leading()}>
 			<div class='c-list-leading'>{leading()}</div>

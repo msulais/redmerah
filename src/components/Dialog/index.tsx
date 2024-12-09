@@ -1,19 +1,17 @@
 import { type JSX, type ParentComponent, splitProps, children, Show } from "solid-js"
 
-import { _header, _actions, _children, _classList, _style, _left, _top, _springBounce, _animate, _closeAnimation, _finished, _none, _openAnimation, _then } from "@/constants/string"
 import { AnimationEffectTiming } from "@/enums/animation"
+import { element_animate } from "@/utils/element"
+import { promise_done } from "@/utils/object"
 
-import { Modal, type ModalProps, openModal, closeModal, focusModal } from "@/components/Modal"
+import { close_modal, focus_modal, Modal, open_modal, type ModalProps } from "@/components/Modal"
 import './index.scss'
 
-function openDialog(ev: Event, dialog: HTMLDialogElement, options?: {
-	contentAutoFocus?: boolean
+function open_dialog(ev: Event, dialog: HTMLDialogElement, options?: {
+	content_auto_focus?: boolean
 	important?: boolean
 }): void {
-	openModal(ev, dialog, {
-		contentAutoFocus: options?.contentAutoFocus,
-		important: options?.important
-	})
+	open_modal(ev, dialog, {...options})
 }
 
 type DialogProps = ModalProps & {
@@ -21,43 +19,45 @@ type DialogProps = ModalProps & {
 	actions?: JSX.Element
 }
 const Dialog: ParentComponent<DialogProps> = ($props) => {
-	const animationOption = {duration: 300, easing: AnimationEffectTiming[_springBounce]}
+	const animation_options = {duration: 300, easing: AnimationEffectTiming.spring_bounce}
 	const [props, other] = splitProps($props, [
-		_header, _actions, _children, _classList,
-		_style, _openAnimation, _closeAnimation
+		'header', 'actions', 'children', 'classList',
+		'style', 'open_animation', 'close_animation'
 	])
-	const actions = children(() => props[_actions])
-	const header = children(() => props[_header])
+	const actions = children(() => props.actions)
+	const header = children(() => props.header)
 
 	return (<Modal
 		classList={{
 			'c-dialog': true,
-			...props[_classList]
+			...props.classList
 		}}
 		style={{
-			...props[_style],
-			top: props[_style]?.[_top] ?? '50%',
-			left: props[_style]?.[_left] ?? '50%',
+			...props.style,
+			top: props.style?.top ?? '50%',
+			left: props.style?.left ?? '50%',
 		}}
-		openAnimation={(el, done) => {
-			if (props[_openAnimation]) props[_openAnimation](el, done)
-			else el[_animate](
+		open_animation={(el, done) => {
+			if (props.open_animation) props.open_animation(el, done)
+			else promise_done(element_animate(
+				el,
 				{ transform: ['translate(-50%, calc(-50% - 12px))', 'translate(-50%, -50%)'] },
-				animationOption
-			)[_finished][_then](done)
+				animation_options
+			).finished, done)
 		}}
-		closeAnimation={(el, done) => {
-			if (props[_closeAnimation]) props[_closeAnimation](el, done)
-			else el[_animate](
+		close_animation={(el, done) => {
+			if (props.close_animation) props.close_animation(el, done)
+			else promise_done(element_animate(
+				el,
 				{ transform: ['translate(-50%, -50%)', 'translate(-50%, calc(-50% - 12px))'] },
-				animationOption
-			)[_finished][_then](done)
+				animation_options
+			).finished, done)
 		}}
 		{...other}>
 		<Show when={header()}>
 			<div class="c-dialog-header">{header()}</div>
 		</Show>
-		<div class="c-dialog-content">{props[_children]}</div>
+		<div class="c-dialog-content">{props.children}</div>
 		<Show when={actions()}>
 			<div class="c-dialog-actions">{actions()}</div>
 		</Show>
@@ -66,9 +66,9 @@ const Dialog: ParentComponent<DialogProps> = ($props) => {
 
 export {
 	Dialog,
-	openDialog,
-	closeModal as closeDialog,
-	focusModal as focusDialog,
+	open_dialog as open_dialog,
+	close_modal as close_dialog,
+	focus_modal as focus_dialog,
 }
 export type {
 	DialogProps

@@ -1,9 +1,8 @@
-import { type ParentComponent, type JSX, mergeProps, splitProps, type VoidComponent, type ValidComponent } from 'solid-js'
+import { type ParentComponent, type JSX, mergeProps, splitProps, type VoidComponent, type ValidComponent, createMemo } from 'solid-js'
 import { Dynamic, type DynamicProps } from 'solid-js/web'
 
-import { _button, _transparent, _bottom, _children, _indicatorPosition, _variant, _focused, _compact, _selected, _layerAttr, _classList, _type, _class, _desktopCompact, _filled, _filledTonal, _outlined, _openInNewTab, _disabled, _onClick, _code, _tonal, _emoji } from '@/constants/string'
-import { setElementAttributeIfExist } from '@/utils/attributes'
-import { callEventHandler, eventPreventDefault } from '@/utils/event'
+import { classlist, attr_set_if_exist } from '@/utils/attributes'
+import { call_event_handler, event_prevent_default } from '@/utils/event'
 
 import Icon from '@/components/Icon'
 import Emoji from '@/components/Emoji'
@@ -26,142 +25,138 @@ enum ButtonIndicatorPosition {
 type RawButtonProps<T extends ValidComponent = keyof JSX.HTMLElementTags> = DynamicProps<T> & {
 	variant?: ButtonVariant
 	focused?: boolean
-	compact?: boolean
 	selected?: boolean
-	indicatorPosition?: ButtonIndicatorPosition
+	indicator_position?: ButtonIndicatorPosition
 }
 const RawButton: ParentComponent<RawButtonProps> = ($props) => {
 	const [props, other] = splitProps(mergeProps({
-		variant: ButtonVariant[_transparent],
+		variant: ButtonVariant.transparent,
 	}, $props), [
-		_children, _indicatorPosition, _variant,
-		_focused, _compact, _selected,
-		_classList,  _class,
+		'children', 'indicator_position', 'variant',
+		'focused', 'selected', 'classList', 'class',
 	])
+	const variant = createMemo(() => props.variant)
 
 	return (<Dynamic
-		class={`c-btn${props[_class]? ` ${props[_class]}` : ''}`}
+		class={classlist('c-btn', props.class ?? '')}
 		classList={{
-			'c-filled-btn': props[_variant] == ButtonVariant[_filled],
-			'c-tonal-btn': props[_variant] == ButtonVariant[_tonal],
-			'c-outlined-btn': props[_variant] == ButtonVariant[_outlined],
-			...props[_classList]
+			'c-filled-btn': variant() == ButtonVariant.filled,
+			'c-tonal-btn': variant() == ButtonVariant.tonal,
+			'c-outlined-btn': variant() == ButtonVariant.outlined,
+			...props.classList
 		}}
-		data-c-indicator={props[_indicatorPosition]}
-		data-c-selected={setElementAttributeIfExist(props[_selected])}
-		data-c-focused={setElementAttributeIfExist(props[_focused])}
-		data-c-compact={setElementAttributeIfExist(props[_compact])}
+		data-c-indicator={props.indicator_position}
+		data-c-selected={attr_set_if_exist(props.selected)}
+		data-c-focused={attr_set_if_exist(props.focused)}
 		{...other}>
-		{props[_children]}
+		{props.children}
 	</Dynamic>)
 }
 
 type ButtonProps = JSX.ButtonHTMLAttributes<HTMLButtonElement> & {
 	variant?: ButtonVariant
 	focused?: boolean
-	compact?: boolean
 	selected?: boolean
-	indicatorPosition?: ButtonIndicatorPosition
+	indicator_position?: ButtonIndicatorPosition
 }
 const Button: ParentComponent<ButtonProps> = ($props) => {
 	const $$props = mergeProps({
-		type: _button,
-		variant: ButtonVariant[_transparent],
+		type: 'button',
+		variant: ButtonVariant.transparent,
 	}, $props)
 	const [props, other] = splitProps($$props, [
-		_children, _indicatorPosition, _variant,
-		_focused, _compact, _selected,
-		_classList, _type, _class,
+		'children', 'indicator_position', 'variant',
+		'focused', 'selected', 'classList', 'type',
+		'class',
 	])
+	const variant = createMemo(() => props.variant)
 
 	return (<button
-		class={`c-btn${props[_class]? ` ${props[_class]}` : ''}`}
+		class={classlist('c-btn', props.class ?? '')}
 		classList={{
-			'c-filled-btn': props[_variant] == ButtonVariant[_filled],
-			'c-tonal-btn': props[_variant] == ButtonVariant[_tonal],
-			'c-outlined-btn': props[_variant] == ButtonVariant[_outlined],
-			...props[_classList]
+			'c-filled-btn': variant() == ButtonVariant.filled,
+			'c-tonal-btn': variant() == ButtonVariant.tonal,
+			'c-outlined-btn': variant() == ButtonVariant.outlined,
+			...props.classList
 		}}
-		type={props[_type] as ("button" | "submit" | "reset" | undefined)}
-		data-c-indicator={props[_indicatorPosition]}
-		data-c-selected={setElementAttributeIfExist(props[_selected])}
-		data-c-focused={setElementAttributeIfExist(props[_focused])}
-		data-c-compact={setElementAttributeIfExist(props[_compact])}
+		type={props.type as ("button" | "submit" | "reset" | undefined)}
+		data-c-indicator={props.indicator_position}
+		data-c-selected={attr_set_if_exist(props.selected)}
+		data-c-focused={attr_set_if_exist(props.focused)}
 		{...other}>
-		{props[_children]}
+		{props.children}
 	</button>)
 }
 
 type LinkButtonProps = JSX.AnchorHTMLAttributes<HTMLAnchorElement> & {
 	variant?: ButtonVariant
 	focused?: boolean
-	compact?: boolean
 	disabled?: boolean
-	openInNewTab?: boolean
+	open_in_new_tab?: boolean
 	selected?: boolean
-	indicatorPosition?: ButtonIndicatorPosition
+	indicator_position?: ButtonIndicatorPosition
 }
 
 const LinkButton: ParentComponent<LinkButtonProps> = ($props) => {
 	const $$props = mergeProps({
-		variant: ButtonVariant[_transparent],
+		variant: ButtonVariant.transparent,
 	}, $props)
 	const [props, other] = splitProps($$props, [
-		_openInNewTab, _children, _indicatorPosition,
-		_variant, _focused, _compact, _selected,
-		_classList, _class, _disabled,
-		_onClick
+		'open_in_new_tab', 'children', 'indicator_position',
+		'variant', 'focused', 'selected',
+		'classList', 'class', 'disabled',
+		'onClick'
 	])
+	const variant = createMemo(() => props.variant)
 
 	return (<a
-		class={`c-btn${props[_class]? ` ${props[_class]}` : ''}`}
+		class={classlist('c-btn', props.class ?? '')}
 		onClick={(ev) => {
-			if (props[_disabled]) {
-				eventPreventDefault(ev)
+			if (props.disabled) {
+				event_prevent_default(ev)
 			}
-			callEventHandler(ev, props[_onClick])
+			call_event_handler(ev, props.onClick)
 		}}
 		classList={{
-			'c-filled-btn': props[_variant] == ButtonVariant[_filled],
-			'c-tonal-btn': props[_variant] == ButtonVariant[_tonal],
-			'c-outlined-btn': props[_variant] == ButtonVariant[_outlined],
-			...props[_classList]
+			'c-filled-btn': variant() == ButtonVariant.filled,
+			'c-tonal-btn': variant() == ButtonVariant.tonal,
+			'c-outlined-btn': variant() == ButtonVariant.outlined,
+			...props.classList
 		}}
-		data-c-indicator={props[_indicatorPosition]}
-		data-c-disabled={setElementAttributeIfExist(props[_disabled])}
-		data-c-selected={setElementAttributeIfExist(props[_selected])}
-		data-c-focused={setElementAttributeIfExist(props[_focused])}
-		data-c-compact={setElementAttributeIfExist(props[_compact])}
-		target={props[_openInNewTab]? "_blank" : undefined}
-		rel={props[_openInNewTab]? "noopener noreferrer" : undefined}
+		data-c-disabled={attr_set_if_exist(props.disabled)}
+		data-c-indicator={props.indicator_position}
+		data-c-selected={attr_set_if_exist(props.selected)}
+		data-c-focused={attr_set_if_exist(props.focused)}
+		target={props.open_in_new_tab? "_blank" : undefined}
+		rel={props.open_in_new_tab? "noopener noreferrer" : undefined}
 		{...other}>
-		{props[_children]}
+		{props.children}
 	</a>)
 }
 
 type RawSquareButtonProps = RawButtonProps
 const RawSquareButton: ParentComponent<RawSquareButtonProps> = ($props) => {
-	const [props, other] = splitProps($props, [_classList])
+	const [props, other] = splitProps($props, ['classList'])
 	return (<RawButton
-		classList={{'c-square-btn': true, ...props[_classList]}}
+		classList={{'c-square-btn': true, ...props.classList}}
 		{...other}
 	/>)
 }
 
 type SquareButtonProps = ButtonProps
 const SquareButton: ParentComponent<SquareButtonProps> = ($props) => {
-	const [props, other] = splitProps($props, [_classList])
+	const [props, other] = splitProps($props, ['classList'])
 	return (<Button
-		classList={{'c-square-btn': true, ...props[_classList]}}
+		classList={{'c-square-btn': true, ...props.classList}}
 		{...other}
 	/>)
 }
 
 type LinkSquareButtonProps = LinkButtonProps
 const LinkSquareButton: ParentComponent<LinkSquareButtonProps> = ($props) => {
-	const [props, other] = splitProps($props, [_classList])
+	const [props, other] = splitProps($props, ['classList'])
 	return (<LinkButton
-		classList={{'c-square-btn': true, ...props[_classList]}}
+		classList={{'c-square-btn': true, ...props.classList}}
 		{...other}
 	/>)
 }
@@ -171,11 +166,11 @@ type RawIconButtonProps = RawSquareButtonProps & {
 	filled?: boolean
 }
 const RawIconButton: VoidComponent<RawIconButtonProps> = ($props) => {
-	const [props, other] = splitProps($props, [_classList, _code, _filled])
+	const [props, other] = splitProps($props, ['classList', 'code', 'filled'])
 	return (<RawSquareButton
-		classList={{'c-icon-btn': true, ...props[_classList]}}
+		classList={{'c-icon-btn': true, ...props.classList}}
 		{...other}>
-		<Icon code={props[_code]} filled={props[_filled]}/>
+		<Icon code={props.code} filled={props.filled}/>
 	</RawSquareButton>)
 }
 
@@ -184,11 +179,11 @@ type IconButtonProps = SquareButtonProps & {
 	filled?: boolean
 }
 const IconButton: VoidComponent<IconButtonProps> = ($props) => {
-	const [props, other] = splitProps($props, [_classList, _code, _filled])
+	const [props, other] = splitProps($props, ['classList', 'code', 'filled'])
 	return (<SquareButton
-		classList={{'c-icon-btn': true, ...props[_classList]}}
+		classList={{'c-icon-btn': true, ...props.classList}}
 		{...other}>
-		<Icon code={props[_code]} filled={props[_filled]}/>
+		<Icon code={props.code} filled={props.filled}/>
 	</SquareButton>)
 }
 
@@ -197,11 +192,11 @@ type LinkIconButtonProps = LinkSquareButtonProps & {
 	filled?: boolean
 }
 const LinkIconButton: VoidComponent<LinkIconButtonProps> = ($props) => {
-	const [props, other] = splitProps($props, [_classList, _code, _filled])
+	const [props, other] = splitProps($props, ['classList', 'code', 'filled'])
 	return (<LinkSquareButton
-		classList={{'c-icon-btn': true, ...props[_classList]}}
+		classList={{'c-icon-btn': true, ...props.classList}}
 		{...other}>
-		<Icon code={props[_code]} filled={props[_filled]}/>
+		<Icon code={props.code} filled={props.filled}/>
 	</LinkSquareButton>)
 }
 
@@ -209,11 +204,11 @@ type RawEmojiButtonProps = RawSquareButtonProps & {
 	emoji: string
 }
 const RawEmojiButton: VoidComponent<RawEmojiButtonProps> = ($props) => {
-	const [props, other] = splitProps($props, [_classList, _emoji])
+	const [props, other] = splitProps($props, ['classList', 'emoji'])
 	return (<RawSquareButton
-		classList={{'c-emoji-btn': true, ...props[_classList]}}
+		classList={{'c-emoji-btn': true, ...props.classList}}
 		{...other}>
-		<Emoji emoji={props[_emoji]}/>
+		<Emoji emoji={props.emoji}/>
 	</RawSquareButton>)
 }
 
@@ -221,11 +216,11 @@ type EmojiButtonProps = SquareButtonProps & {
 	emoji: string
 }
 const EmojiButton: VoidComponent<EmojiButtonProps> = ($props) => {
-	const [props, other] = splitProps($props, [_classList, _emoji])
+	const [props, other] = splitProps($props, ['classList', 'emoji'])
 	return (<SquareButton
-		classList={{'c-emoji-btn': true, ...props[_classList]}}
+		classList={{'c-emoji-btn': true, ...props.classList}}
 		{...other}>
-		<Emoji emoji={props[_emoji]}/>
+		<Emoji emoji={props.emoji}/>
 	</SquareButton>)
 }
 
@@ -233,37 +228,37 @@ type LinkEmojiButtonProps = LinkSquareButtonProps & {
 	emoji: string
 }
 const LinkEmojiButton: VoidComponent<LinkEmojiButtonProps> = ($props) => {
-	const [props, other] = splitProps($props, [_classList, _emoji])
+	const [props, other] = splitProps($props, ['classList', 'emoji'])
 	return (<LinkSquareButton
-		classList={{'c-emoji-btn': true, ...props[_classList]}}
+		classList={{'c-emoji-btn': true, ...props.classList}}
 		{...other}>
-		<Emoji emoji={props[_emoji]}/>
+		<Emoji emoji={props.emoji}/>
 	</LinkSquareButton>)
 }
 
 type RawFloatingActionButtonProps = RawButtonProps
 const RawFloatingActionButton: ParentComponent<RawFloatingActionButtonProps> = ($props) => {
-	const [props, other] = splitProps($props, [_classList])
+	const [props, other] = splitProps($props, ['classList'])
 	return (<RawButton
-		classList={{'c-floating-action-btn': true, ...props[_classList]}}
+		classList={{'c-floating-action-btn': true, ...props.classList}}
 		{...other}
 	/>)
 }
 
 type FloatingActionButtonProps = ButtonProps
 const FloatingActionButton: ParentComponent<FloatingActionButtonProps> = ($props) => {
-	const [props, other] = splitProps($props, [_classList])
+	const [props, other] = splitProps($props, ['classList'])
 	return (<Button
-		classList={{'c-floating-action-btn': true, ...props[_classList]}}
+		classList={{'c-floating-action-btn': true, ...props.classList}}
 		{...other}
 	/>)
 }
 
 type LinkFloatingActionActionButtonProps = LinkButtonProps
 const LinkFloatingActionButton: ParentComponent<LinkFloatingActionActionButtonProps> = ($props) => {
-	const [props, other] = splitProps($props, [_classList])
+	const [props, other] = splitProps($props, ['classList'])
 	return (<LinkButton
-		classList={{'c-floating-action-btn': true, ...props[_classList]}}
+		classList={{'c-floating-action-btn': true, ...props.classList}}
 		{...other}
 	/>)
 }

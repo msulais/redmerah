@@ -1,58 +1,57 @@
 import { For, Show, type VoidComponent, createSignal } from "solid-js"
 
-import { getDate_Y, getDateString_YMD } from "@/utils/datetime"
-import { _tonal, _currentTarget, _value } from "@/constants/string"
+import { date_year, date_text_YMD } from "@/utils/datetime"
 
 import Tooltip from "@/components/Tooltip"
 import Icon from "@/components/Icon"
 import Button, { ButtonVariant } from "@/components/Button"
-import DatePicker, { openDatePicker } from "@/components/DatePicker"
+import DatePicker, { open_datepicker } from "@/components/DatePicker"
 import TextField, { TextFieldButton } from "@/components/TextField"
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
 
 const _: VoidComponent = () => {
-	const [firstDate, setFirstDate] = createSignal<Date>(new Date(getDate_Y() - 100, 0, 1))
-	const [lastDate, setLastDate] = createSignal<Date>(new Date(getDate_Y() + 100, 11, 31))
-	const [date, setDate] = createSignal<Date | null>(null)
-	const [locale, setLocale] = createSignal<Intl.LocalesArgument>('en-US')
-	const [is_datePicker_open, setIs_datePicker_open] = createSignal<boolean>(false)
-	const [is_datePicker_firstDate_open, setIs_datePicker_firstDate_open] = createSignal<boolean>(false)
-	const [is_datePicker_lastDate_open, setIs_datePicker_lastDate_open] = createSignal<boolean>(false)
-	let datePicker_ref: HTMLDialogElement
-	let datePicker_firstDate_ref: HTMLDialogElement
-	let datePicker_lastDate_ref: HTMLDialogElement
+	const [first_date, set_first_date] = createSignal<Date>(new Date(date_year() - 100, 0, 1))
+	const [last_date, set_last_date] = createSignal<Date>(new Date(date_year() + 100, 11, 31))
+	const [date, set_date] = createSignal<Date | null>(null)
+	const [locale, set_locale] = createSignal<Intl.LocalesArgument>('en-US')
+	const [is_datepicker_open, set_is_datepicker_open] = createSignal<boolean>(false)
+	const [is_datepicker_firstdate_open, set_is_datepicker_firstdate_open] = createSignal<boolean>(false)
+	const [is_datepicker_lastdate_open, set_is_datepicker_lastdate_open] = createSignal<boolean>(false)
+	let datepicker_ref: HTMLDialogElement
+	let datepicker_firstdate_ref: HTMLDialogElement
+	let datepicker_lastdate_ref: HTMLDialogElement
 
 	return (<Page
 		title="DatePicker"
 		description="A DatePicker is a UI element that allows users to select a specific date. It typically presents a calendar interface for easy navigation and selection.">
 		<Playground>
 			<Button
-				focused={is_datePicker_open()}
-				variant={ButtonVariant[_tonal]}
-				onClick={(ev) => openDatePicker(ev, datePicker_ref, {
-					anchor: ev[_currentTarget],
+				focused={is_datepicker_open()}
+				variant={ButtonVariant.tonal}
+				onClick={(ev) => open_datepicker(ev, datepicker_ref, {
+					anchor: ev.currentTarget,
 					gap: 8
 				})}>
 				<Icon code={0xE2CC}/>
 				<Show when={date() != null} fallback="Select date">
-					{getDateString_YMD(date()!, locale())}
+					{date_text_YMD(date()!, locale())}
 				</Show>
 			</Button>
 			<DatePicker
-				firstDate={firstDate()}
-				onToggleOpen={o => setIs_datePicker_open(o)}
-				lastDate={lastDate()}
+				first_date={first_date()}
+				on_toggle_open={o => set_is_datepicker_open(o)}
+				last_date={last_date()}
 				date={date() ?? undefined}
 				locales={locale()}
-				onSelectDate={(d) => setDate(d)}
-				ref={r => datePicker_ref = r}
+				on_select_date={(d) => set_date(d)}
+				ref={r => datepicker_ref = r}
 			/>
 		</Playground>
 		<PlaygroundOptions>
 			<Dropdown
 				label="Locale"
-				onChangeOptions={(items) => setLocale(items[0][_value] as Intl.LocalesArgument)}
+				on_change_options={(items) => set_locale(items[0].value as Intl.LocalesArgument)}
 				values={[locale() as string]}>
 				<For each={[
 					['en-US', 'English (US)'],
@@ -71,15 +70,15 @@ const _: VoidComponent = () => {
 				style={{width: '164px'}}
 				label={'First date'}
 				readOnly
-				value={getDateString_YMD(firstDate(), locale())}
+				value={date_text_YMD(first_date(), locale())}
 				trailing={<>
 					<Tooltip text="Select first date">
 						<TextFieldButton
-							focused={is_datePicker_firstDate_open()}
-							onClick={(ev) => openDatePicker(
+							focused={is_datepicker_firstdate_open()}
+							onClick={(ev) => open_datepicker(
 								ev,
-								datePicker_firstDate_ref,
-								{ anchor: ev[_currentTarget] }
+								datepicker_firstdate_ref,
+								{ anchor: ev.currentTarget }
 							)}>
 							<Icon code={0xE2CC}/>
 						</TextFieldButton>
@@ -87,28 +86,28 @@ const _: VoidComponent = () => {
 				</>}
 			/>
 			<DatePicker
-				onToggleOpen={o => setIs_datePicker_firstDate_open(o)}
-				lastDate={date() ?? new Date()}
-				firstDate={new Date(getDate_Y(date() ?? new Date()) - 1000, 0, 1)}
-				date={firstDate()}
+				on_toggle_open={o => set_is_datepicker_firstdate_open(o)}
+				last_date={date() ?? new Date()}
+				first_date={new Date(date_year(date() ?? new Date()) - 1000, 0, 1)}
+				date={first_date()}
 				locales={locale()}
-				onSelectDate={(d) => setFirstDate(d)}
-				ref={r => datePicker_firstDate_ref = r}
+				on_select_date={(d) => set_first_date(d)}
+				ref={r => datepicker_firstdate_ref = r}
 			/>
 
 			<TextField
 				style={{width: '164px'}}
 				label={'Last date'}
 				readOnly
-				value={getDateString_YMD(lastDate(), locale())}
+				value={date_text_YMD(last_date(), locale())}
 				trailing={<>
 					<Tooltip text="Select last date">
 						<TextFieldButton
-							focused={is_datePicker_lastDate_open()}
-							onClick={(ev) => openDatePicker(
+							focused={is_datepicker_lastdate_open()}
+							onClick={(ev) => open_datepicker(
 								ev,
-								datePicker_lastDate_ref,
-								{ anchor: ev[_currentTarget] }
+								datepicker_lastdate_ref,
+								{ anchor: ev.currentTarget }
 							)}>
 							<Icon code={0xE2CC}/>
 						</TextFieldButton>
@@ -116,13 +115,13 @@ const _: VoidComponent = () => {
 				</>}
 			/>
 			<DatePicker
-				firstDate={date() ?? new Date()}
-				onToggleOpen={o => setIs_datePicker_lastDate_open(o)}
-				lastDate={new Date(getDate_Y(date() ?? new Date()) + 1000, 11, 31)}
-				date={lastDate()}
+				first_date={date() ?? new Date()}
+				on_toggle_open={o => set_is_datepicker_lastdate_open(o)}
+				last_date={new Date(date_year(date() ?? new Date()) + 1000, 11, 31)}
+				date={last_date()}
 				locales={locale()}
-				onSelectDate={(d) => setLastDate(d)}
-				ref={r => datePicker_lastDate_ref = r}
+				on_select_date={(d) => set_last_date(d)}
+				ref={r => datepicker_lastdate_ref = r}
 			/>
 		</PlaygroundOptions>
 	</Page>)

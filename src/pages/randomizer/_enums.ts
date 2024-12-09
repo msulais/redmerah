@@ -86,12 +86,12 @@ export enum Commands {
 	change_settings_separator = 'm',
 
 	/**
-	@param wordCase `WordsRandomizerWordCase` */
-	change_settings_words_wordCase = 'n',
+	@param wordcase `WordsRandomizerWordCase` */
+	change_settings_words_wordcase = 'n',
 
 	/**
-	@param colorModel `ColorsRandomizerColorModel` */
-	change_settings_colors_colorModel = 'o',
+	@param model `ColorsRandomizerColorModel` */
+	change_settings_colors_model = 'o',
 
 	/**
 	@param list `ListItems` */
@@ -103,13 +103,13 @@ export enum Commands {
 
 	/**
 	@param characters `string` */
-	change_settings_string_characters_customCharacters = 'r',
+	change_settings_string_characters_custom = 'r',
 
 	toggle_settings_string_characters_symbols = 's',
 	toggle_settings_string_characters_numbers = 't',
-	toggle_settings_string_characters_alphabetLowercase = 'u',
-	toggle_settings_string_characters_alphabetUppercase = 'v',
-	change_settings_string_characters_toDefault = 'w',
+	toggle_settings_string_characters_lowercase = 'u',
+	toggle_settings_string_characters_uppercase = 'v',
+	change_settings_string_characters_default = 'w',
 
 	/**
 	@param count `number` */
@@ -117,7 +117,7 @@ export enum Commands {
 
 	/**
 	@param length `number` */
-	change_settings_numbers_minDecimalLength = 'y',
+	change_settings_numbers_minlength = 'y',
 
 	/**
 	@param min `number`
@@ -177,11 +177,11 @@ export enum Commands {
 
 	/**
 	@param list `ListItems` */
-	change_settings_teams_namesList = 'al',
+	change_settings_teams_listnames = 'al',
 
 	/**
 	@param list `ListItems` */
-	change_settings_teams_membersList = 'am',
+	change_settings_teams_listmembers = 'am',
 
 	/**
 	@param count `number` */
@@ -192,5 +192,5 @@ export enum Commands {
 	/**
 	@param event `Event` */
 	generate = 'ap',
-	stopGenerate = 'aq'
+	stop_generate = 'aq'
 }

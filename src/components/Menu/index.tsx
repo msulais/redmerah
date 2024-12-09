@@ -1,34 +1,30 @@
-import { type Component, type JSX, type ParentComponent, Show, mergeProps, splitProps, type VoidComponent, For, children, createUniqueId, onCleanup, onMount, createContext, useContext } from "solid-js"
+import { type Component, type JSX, type ParentComponent, Show, mergeProps, splitProps, type VoidComponent, For, children, createUniqueId, createMemo } from "solid-js"
 import { mergeRefs } from "@solid-primitives/refs"
 
-import { getElementAttribute, setElementAttributeIfExist } from "@/utils/attributes"
-import { _checked, _selected, _leading, _children, _firstChild, _trailing, _subtitle, _indent, _classList, _rightCenterToBottom, _disconnect, _dismiss, _id, _item, _level, _manual, _observe, _onCancel, _onClick, _onClose, _onToggle, _open, _ref, _wrapperAttr, _auto, _shortcuts, _currentTarget, _none, _left, _tonal, _draggable, _clientX, _clientY, _color, _hue, _initialColor, _isDrag, _mousemove, _mouseup, _noPointerEvent, _opacity, _touchend, _touches, _touchmove, _value, _valuechange, _top, _px, _anchorId, _body, _bottom, _clientWidth, _height, _innerHeight, _right, _width, _focus, _iconCode, _compact, _variant, _indicatorPosition, _onMouseEnter, _onMouseLeave, _class, _desktopCompact, _gap, _position, _padding, _allowHideAnchor, _onToggleOpen, _click, _contains, _target, _filled, _focused, _layerAttr, _outlined, _transparent, _switchAttr, _onValueChanged, _onChange, _div, _disabled, _forEach, _onPointerEnter, _onPointerLeave, _accent, _autofocus, _contentAutoFocus, _onPointerOver, _dispatchEvent, _onBeforeClose, _dataset, _CLevel, _usePortal, _parentElement, _lastChild, _isSameNode, _firstElementChild, _lastElementChild } from "@/constants/string"
-import { isVarHasValue } from "@/utils/data"
-import { getAllElementBySelector } from "@/utils/element"
-import { callEventHandler, eventPreventDefault, eventStopImmediatePropagation, eventStopPropagation } from "@/utils/event"
-import { endTimeout, startTimeout, wait } from "@/utils/timeout"
-import { numberParse } from "@/utils/math"
-import { getDocument } from "@/constants/window"
-import { addEventListener, removeEventListener } from "@/utils/event"
+import { attr_set_if_exist, classlist } from "@/utils/attributes"
+import { is_var_has_value } from "@/utils/object"
+import { call_event_handler, event_stop_immediate_propagation, event_stop_propagation } from "@/utils/event"
+import { timeout_clear, timeout_set, wait } from "@/utils/timeout"
+import { element_children, element_classlist, element_first_element_child, element_is_same_node, element_last_element_child, element_parent_element } from "@/utils/element"
 import { AppColors } from "@/enums/colors"
 
 import Divider, { type DividerProps } from "@/components/Divider"
 import Icon from "@/components/Icon"
 import Button, { ButtonIndicatorPosition, ButtonVariant, LinkButton, type ButtonProps, type LinkButtonProps } from "@/components/Button"
-import Popover, { type PopoverProps, closePopover, isPopoverOpen, openPopover, repositionPopover, PopoverPosition as SubMenuPosition } from "@/components/Popover"
-import Modal, { type ModalProps, closeModal, focusModal, openModal, repositionModal, ModalPosition as MenuPosition } from "@/components/Modal"
+import Popover, { close_popover, is_popover_open, open_popover, type PopoverProps, reposition_popover, PopoverPosition as SubMenuPosition } from "@/components/Popover"
+import Modal, { type ModalProps, close_modal, focus_modal, is_modal_open, ModalPosition as MenuPosition, open_modal, reposition_modal } from "@/components/Modal"
 import { RawSwitch, type RawSwitchProps } from "@/components/Switch"
 import './index.scss'
 
-const subMenuClassName = 'c-sub-menu'
+const SUBMENU_CLASSNAME = 'c-sub-menu'
 
 type MenuItemTrailingShortcutProps = JSX.HTMLAttributes<HTMLDivElement> & {
 	shortcuts: string[]
 }
 const MenuItemTrailingShortcut: VoidComponent<MenuItemTrailingShortcutProps> = ($props) => {
-	const [props, other] = splitProps($props, [_shortcuts])
+	const [props, other] = splitProps($props, ['shortcuts'])
 	return (<div class="c-menu-item-trailing-shortcut" {...other}>
-		<For each={props[_shortcuts]}>{s => <kbd>{s}</kbd>}</For>
+		<For each={props.shortcuts}>{s => <kbd>{s}</kbd>}</For>
 	</div>)
 }
 
@@ -36,51 +32,50 @@ type MenuItemProps = ButtonProps & {
 	leading?: JSX.Element
 	trailing?: JSX.Element
 	checked?: boolean
-	iconCode?: number
+	icon_code?: number
 }
 const MenuItem: ParentComponent<MenuItemProps> = ($props) => {
 	const [props, other] = splitProps($props, [
-		_checked, _selected, _leading, _children,
-		_trailing, _classList, _iconCode, _variant,
-		_indicatorPosition
+		'checked', 'leading', 'children', 'trailing',
+		'classList', 'icon_code', 'variant',
+		'indicator_position'
 	])
-	const trailingComponent = children(() => props[_trailing])
+	const trailing = children(() => props.trailing)
 
 	return (<Button
-		variant={props[_variant] ?? (props[_selected]? ButtonVariant[_tonal] : props[_variant])}
-		selected={props[_selected]}
-		indicatorPosition={props[_indicatorPosition] ?? ButtonIndicatorPosition[_left]}
-		classList={{'c-menu-item': true, ...props[_classList]}}
+		variant={props.variant ?? (other.selected? ButtonVariant.tonal : props.variant)}
+		indicator_position={props.indicator_position ?? ButtonIndicatorPosition.left}
+		classList={{'c-menu-item': true, ...props.classList}}
 		{...other}>
-		<Show when={isVarHasValue(props[_checked])}>
+		<Show when={is_var_has_value(props.checked)}>
 			<Icon
-				style={{color: `rgb(${AppColors[_accent]})`}}
-				filled={props[_checked]}
-				code={props[_checked]? 0xE3CC : 0xE3D4}
+				style={{color: `rgb(${AppColors.accent})`}}
+				filled={props.checked}
+				code={props.checked? 0xE3CC : 0xE3D4}
 			/>
 		</Show>
-		<Show when={props[_iconCode] != null}>
+		<Show when={props.icon_code != null}>
 			<Icon
-				style={{color: props[_selected]? `rgb(${AppColors[_accent]})` : undefined}}
-				filled={props[_selected]}
-				code={props[_iconCode]!}
+				style={{color: other.selected? `rgb(${AppColors.accent})` : undefined}}
+				filled={other.selected}
+				code={props.icon_code!}
 			/>
 		</Show>
-		{ props[_leading] }
-		{ props[_children] }
-		<Show when={trailingComponent()}>
-			<div style={{flex: 1}} />
+		{ props.leading }
+		{ props.children }
+		<Show when={trailing()}>
+			<div style="flex:1"/>
 		</Show>
-		{ trailingComponent() }
+		{ trailing() }
 	</Button>)
 }
 
 type SubMenuItemProps = MenuItemProps
 const SubMenuItem: ParentComponent<SubMenuItemProps> = ($props) => {
-	const [props, other] = splitProps($props, [_trailing])
+	const [props, other] = splitProps($props, ['trailing'])
 	return (<MenuItem
 		trailing={<>
-			{props[_trailing]}
+			{props.trailing}
 			<Icon code={0xE402}/>
 		</>}
 		{...other}
@@ -91,113 +86,112 @@ type LinkMenuItemProps = LinkButtonProps & {
 	leading?: JSX.Element
 	trailing?: JSX.Element
 	checked?: boolean
-	iconCode?: number
+	icon_code?: number
 }
 const LinkMenuItem: ParentComponent<LinkMenuItemProps> = ($props) => {
 	const [props, other] = splitProps($props, [
-		_checked, _selected, _leading, _children,
-		_trailing, _classList, _iconCode, _variant,
-		_indicatorPosition,
+		'checked', 'leading', 'children', 'trailing',
+		'classList', 'icon_code', 'variant',
+		'indicator_position'
 	])
-	const trailing = children(() => props[_trailing])
+	const trailing = children(() => props.trailing)
 
 	return (<LinkButton
-		variant={props[_variant] ?? (props[_selected]? ButtonVariant[_tonal] : props[_variant])}
-		selected={props[_selected]}
-		indicatorPosition={props[_indicatorPosition] ?? ButtonIndicatorPosition[_left]}
-		classList={{'c-menu-item': true, ...props[_classList]}}
+		variant={props.variant ?? (other.selected? ButtonVariant.tonal : props.variant)}
+		indicator_position={props.indicator_position ?? ButtonIndicatorPosition.left}
+		classList={{'c-menu-item': true, ...props.classList}}
 		{...other}>
-		<Show when={isVarHasValue(props[_checked])}>
+		<Show when={is_var_has_value(props.checked)}>
 			<Icon
-				style={{color: props[_checked]? `rgb(${AppColors[_accent]})` : undefined}}
-				filled={props[_checked]}
-				code={props[_checked]? 0xE3CC : 0xE3D4}
+				style={{color: props.checked? `rgb(${AppColors.accent})` : undefined}}
+				filled={props.checked}
+				code={props.checked? 0xE3CC : 0xE3D4}
 			/>
 		</Show>
-		<Show when={props[_iconCode] != null}>
+		<Show when={props.icon_code != null}>
 			<Icon
-				style={{color: props[_selected]? `rgb(${AppColors[_accent]})` : undefined}}
-				filled={props[_selected]}
-				code={props[_iconCode]!}
+				style={{color: other.selected? `rgb(${AppColors.accent})` : undefined}}
+				filled={other.selected}
+				code={props.icon_code!}
 			/>
 		</Show>
-		{ props[_leading] }
-		{ props[_children] }
+		{ props.leading }
+		{ props.children }
 		<Show when={trailing()}>
-			<div style={{flex: 1}} />
+			<div style="flex:1"/>
 		</Show>
 		{ trailing() }
 	</LinkButton>)
 }
 
-const MenuIndent: Component<JSX.HTMLAttributes<HTMLDivElement>> = (props) => {
-	return (<div class="c-menu-indent" {...props}/>)
+const MenuIndent: Component<JSX.HTMLAttributes<HTMLDivElement>> = ($props) => {
+	const [props, other] = splitProps($props, ['class'])
+	return (<div class={classlist("c-menu-indent", props.class)} {...other}/>)
 }
 
 const MenuDivider: Component<DividerProps> = (props) => {
 	return (<Divider {...props}/>)
 }
 
-const MenuHeader: ParentComponent<JSX.HTMLAttributes<HTMLDivElement>> = (props) => {
-	return (<div class="c-menu-header" {...props}/>)
+const MenuHeader: ParentComponent<JSX.HTMLAttributes<HTMLDivElement>> = ($props) => {
+	const [props, other] = splitProps($props, ['class'])
+	return (<div class={classlist("c-menu-header", props.class)} {...other}/>)
 }
 
 type SwitchMenuItemProps = Omit<JSX.LabelHTMLAttributes<HTMLLabelElement>, 'for'> & {
 	variant?: ButtonVariant
 	focused?: boolean
-	compact?: boolean
 	leading?: JSX.Element
 	trailing?: JSX.Element
-	iconCode?: number
+	icon_code?: number
 	checked?: boolean
 	disabled?: boolean
-	switchAttr?: Omit<RawSwitchProps, 'children'>
+	attr_switch?: Omit<RawSwitchProps, 'children'>
 }
 const SwitchMenuItem: ParentComponent<SwitchMenuItemProps> = ($props) => {
 	const [props, other] = splitProps(
 		mergeProps({
-			variant: ButtonVariant[_transparent],
-			indicatorPosition: ButtonIndicatorPosition[_left]
+			variant: ButtonVariant.transparent,
+			indicator_position: ButtonIndicatorPosition.left
 		}, $props),
 		[
-			_children, _variant, _focused,
-			_compact,
-			_classList, _class, _leading,
-			_trailing, _iconCode, _switchAttr,
-			_checked, _disabled
+			'children', 'variant', 'focused',
+			'classList', 'class', 'leading',
+			'trailing', 'icon_code', 'attr_switch',
+			'checked', 'disabled'
 		]
 	)
-	const [switchProps, otherSwitchProps] = splitProps(
-		mergeProps({component: _div, id: createUniqueId()}, props[_switchAttr]! ?? {}),
-		[_checked, _disabled, _id, _wrapperAttr]
+	const [switch_props, switch_props_other] = splitProps(
+		mergeProps({component: 'div', id: createUniqueId()}, props.attr_switch! ?? {}),
+		['checked', 'disabled', 'id', 'attr_wrapper']
 	)
+	const variant = createMemo(() => props.variant)
 
 	return (<label
-		class={'c-btn c-menu-item c-switch-menu-item' + (props[_class] != null? ` ${props[_class]}` : '')}
-		data-c-disabled={setElementAttributeIfExist(props[_disabled])}
-		for={switchProps[_id]}
+		class={classlist('c-btn', 'c-menu-item', 'c-switch-menu-item', props.class)}
+		data-c-disabled={attr_set_if_exist(props.disabled)}
+		for={switch_props.id}
 		classList={{
-			'c-filled-btn': props[_variant] == ButtonVariant[_filled],
-			'c-tonal-btn': props[_variant] == ButtonVariant[_tonal],
-			'c-outlined-btn': props[_variant] == ButtonVariant[_outlined],
-			...props[_classList]
+			'c-filled-btn': variant() == ButtonVariant.filled,
+			'c-tonal-btn': variant() == ButtonVariant.tonal,
+			'c-outlined-btn': variant() == ButtonVariant.outlined,
+			...props.classList
 		}}
-		data-c-focused={setElementAttributeIfExist(props[_focused])}
-		data-c-compact={setElementAttributeIfExist(props[_compact])}
+		data-c-focused={attr_set_if_exist(props.focused)}
 		{...other}>
-		{ props[_leading] }
-		<Show when={props[_iconCode] != null}>
-			<Icon code={props[_iconCode]!}/>
+		{ props.leading }
+		<Show when={props.icon_code != null}>
+			<Icon code={props.icon_code!}/>
 		</Show>
-		{ props[_children] }
-		<div style={{flex: 1}} />
-		{ props[_trailing] }
+		{ props.children }
+		<div style="flex:1" />
+		{ props.trailing }
 		<RawSwitch
-			wrapperAttr={mergeProps({'data-g-no-outline': ''}, props[_switchAttr]) as any}
-			disabled={switchProps[_disabled] ?? props[_disabled]}
-			checked={switchProps[_checked] ?? props[_checked]}
-			id={switchProps[_id]}
-			{...otherSwitchProps}
+			attr_wrapper={mergeProps({'data-g-no-outline': ''}, props.attr_switch) as any}
+			disabled={switch_props.disabled ?? props.disabled}
+			checked={switch_props.checked ?? props.checked}
+			id={switch_props.id}
+			{...switch_props_other}
 		/>
 	</label>)
 }
@@ -208,116 +202,116 @@ type SubMenuProps = PopoverProps & {
 	position?: SubMenuPosition
 	padding?: number
 	draggable?: boolean
-	allowHideAnchor?: boolean
-	wrapperAttr?: Omit<JSX.HTMLAttributes<HTMLDivElement>, 'children'>
+	allow_hide_anchor?: boolean
+	attr_wrapper?: Omit<JSX.HTMLAttributes<HTMLDivElement>, 'children'>
 }
 const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 	const [props, other] = splitProps($props, [
-		_classList, _item, _wrapperAttr,
-		_id, _onClick, _ref, _gap, _position,
-		_padding, _draggable, _allowHideAnchor,
-		_onToggleOpen, _children, _onBeforeClose,
-		_usePortal
+		'classList', 'item', 'attr_wrapper',
+		'id', 'onClick', 'ref', 'gap', 'position',
+		'padding', 'draggable', 'allow_hide_anchor',
+		'on_toggle_open', 'children', 'on_before_close',
+		'use_portal'
 	])
-	const [wrapperProps, wrapperPropsOther] = splitProps(props[_wrapperAttr] ?? {}, [
-		_class, _onClick, _onPointerEnter,
-		_onPointerLeave, _ref
+	const [wrapper_props, wrapper_props_other] = splitProps(props.attr_wrapper ?? {}, [
+		'class', 'onClick','onPointerEnter',
+		'onPointerLeave', 'ref'
 	])
-	let timeoutId: number | null = null
+	let timeout_id: number | null = null
 	let div_ref: HTMLDivElement
 	let popover_ref: HTMLDivElement
-	let isOpen: boolean = false
+	let is_open: boolean = false
 
-	function closeDescendantSubMenu(): void {
-		for (const element of popover_ref[_firstElementChild]![_children] as unknown as HTMLElement[]) {
-			if (!element[_classList][_contains](subMenuClassName)) continue
-			closePopover(element[_lastElementChild] as HTMLDivElement)
+	function close_submenu_descendant(): void {
+		for (const el of element_children(element_first_element_child(popover_ref)!) as unknown as HTMLElement[]) {
+			if (!element_classlist(el).contains(SUBMENU_CLASSNAME)) continue;
+			close_popover(element_last_element_child(el) as HTMLDivElement)
 		}
 	}
 
-	function cancelTimeout(): void {
-		if (timeoutId == null) return;
+	function cancel_timeout(): void {
+		if (timeout_id == null) return;
 
-		endTimeout(timeoutId)
-		timeoutId = null
+		timeout_clear(timeout_id)
+		timeout_id = null
 	}
 
 	async function open(ev: Event): Promise<void> {
-		if (isOpen) return;
+		if (is_open) return;
 
-		let isAnySubMenuOpen = false;
+		let some_submenu_open = false;
 
-		for (const element of div_ref[_parentElement]?.[_children] as unknown as HTMLElement[]) {
-			if (!element[_classList][_contains](subMenuClassName) || element[_isSameNode](div_ref)) continue
+		for (const el of element_parent_element(div_ref)?.children as unknown as HTMLElement[]) {
+			if (!element_classlist(el).contains(SUBMENU_CLASSNAME) || element_is_same_node(el, div_ref)) continue
 
-			const popover = element[_lastElementChild] as HTMLDivElement
-			const isOpen = isPopoverOpen(popover)
-			if (!isAnySubMenuOpen && isOpen) isAnySubMenuOpen = true
-			if (isOpen) closePopover(popover)
+			const popover = element_last_element_child(el) as HTMLDivElement
+			const isOpen = is_popover_open(popover)
+			if (!some_submenu_open && isOpen) some_submenu_open = true
+			if (isOpen) close_popover(popover)
 		}
 
 		// wait for close animation done
-		if (isAnySubMenuOpen) await wait(500)
+		if (some_submenu_open) await wait(500)
 
-		openPopover(ev, popover_ref, {
+		open_popover(ev, popover_ref, {
 			anchor: div_ref,
-			position: props[_position] ?? SubMenuPosition[_rightCenterToBottom],
-			gap: props[_gap] ?? -8,
-			padding: props[_padding] ?? 5,
-			draggable: props[_draggable],
-			allowHideAnchor: props[_allowHideAnchor],
-			manualDismiss: true
+			position: props.position ?? SubMenuPosition.right_center_to_bottom,
+			gap: props.gap ?? -8,
+			padding: props.padding ?? 5,
+			draggable: props.draggable,
+			allow_hide_anchor: props.allow_hide_anchor,
+			manual_dismiss: true
 		})
 	}
 
 	return (<div
-		class={subMenuClassName + (wrapperProps[_class]? ` ${wrapperProps[_class]}` : '')}
-		ref={mergeRefs(wrapperProps[_ref], r => div_ref = r)}
+		class={classlist(SUBMENU_CLASSNAME, wrapper_props.class)}
+		ref={mergeRefs(wrapper_props.ref, r => div_ref = r)}
 		onClick={(ev) => {
-			cancelTimeout()
+			cancel_timeout()
 			open(ev)
-			callEventHandler(ev, wrapperProps[_onClick])
+			call_event_handler(ev, wrapper_props.onClick)
 		}}
 		onPointerEnter={(ev) => {
-			cancelTimeout()
-			timeoutId = startTimeout(() => {
+			cancel_timeout()
+			timeout_id = timeout_set(() => {
 				open(ev)
-				timeoutId = null
+				timeout_id = null
 			}, 300)
-			callEventHandler(ev, wrapperProps[_onPointerEnter])
+			call_event_handler(ev, wrapper_props.onPointerEnter)
 		}}
 		onPointerLeave={(ev) => {
-			cancelTimeout()
-			timeoutId = startTimeout(() => {
-				closePopover(popover_ref)
-				timeoutId = null
+			cancel_timeout()
+			timeout_id = timeout_set(() => {
+				close_popover(popover_ref)
+				timeout_id = null
 			}, 500)
-			callEventHandler(ev, wrapperProps[_onPointerLeave])
+			call_event_handler(ev, wrapper_props.onPointerLeave)
 		}}
-		{...wrapperPropsOther}>
-		{props[_item]}
+		{...wrapper_props_other}>
+		{props.item}
 		<Popover
-			usePortal={false}
-			onToggleOpen={$isOpen => {
-				isOpen = $isOpen
-				props[_onToggleOpen]?.($isOpen)
+			use_portal={false}
+			on_toggle_open={$is_open => {
+				is_open = $is_open
+				props.on_toggle_open?.($is_open)
 			}}
 			onClick={(ev) => {
-				eventStopPropagation(ev)
-				eventStopImmediatePropagation(ev)
-				callEventHandler(ev, props[_onClick])
+				event_stop_propagation(ev)
+				event_stop_immediate_propagation(ev)
+				call_event_handler(ev, props.onClick)
 			}}
-			onBeforeClose={() => {
-				closeDescendantSubMenu()
-				props[_onBeforeClose]?.()
+			on_before_close={() => {
+				close_submenu_descendant()
+				props.on_before_close?.()
 			}}
-			ref={mergeRefs(props[_ref], r => popover_ref = r)}
+			ref={mergeRefs(props.ref, r => popover_ref = r)}
 			classList={{
 				'c-menu': true,
-				...props[_classList]
+				...props.classList
 			}}
 			{...other}>
-			{ props[_children] }
+			{ props.children }
 		</Popover>
 	</div>)
 }
@@ -325,31 +319,31 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 type MenuProps = ModalProps
 const Menu: ParentComponent<MenuProps> = ($props) => {
 	const [props, other] = splitProps($props, [
-		_classList, _gap, _padding, _contentAutoFocus,
-		_onBeforeClose, _ref
+		'classList', 'gap', 'padding', 'content_auto_focus',
+		'on_before_close', 'ref'
 	])
 	let menu_ref: HTMLDialogElement
 
-	function closeDescendantSubMenu(): void {
-		for (const element of menu_ref[_firstElementChild]![_children] as unknown as HTMLElement[]) {
-			if (!element[_classList][_contains](subMenuClassName)) continue
-			closePopover(element[_lastElementChild] as HTMLDivElement)
+	function close_submenu_descendant(): void {
+		for (const el of element_children(element_first_element_child(menu_ref)!) as unknown as HTMLElement[]) {
+			if (!element_classlist(el).contains(SUBMENU_CLASSNAME)) continue
+			close_popover(element_last_element_child(el) as HTMLDivElement)
 		}
 	}
 
 	return (<Modal
-		ref={mergeRefs(props[_ref], r => menu_ref = r)}
+		ref={mergeRefs(props.ref, r => menu_ref = r)}
 		classList={{
 			'c-menu': true,
-			...props[_classList]
+			...props.classList
 		}}
-		onBeforeClose={() => {
-			closeDescendantSubMenu()
-			props[_onBeforeClose]?.()
+		on_before_close={() => {
+			close_submenu_descendant()
+			props.on_before_close?.()
 		}}
-		contentAutoFocus={props[_contentAutoFocus] ?? true}
-		gap={props[_gap] ?? 8}
-		padding={props[_padding] ?? 4}
+		content_auto_focus={props.content_auto_focus ?? true}
+		gap={props.gap ?? 8}
+		padding={props.padding ?? 4}
 		{...other}
 	/>)
 }
@@ -357,30 +351,30 @@ const Menu: ParentComponent<MenuProps> = ($props) => {
 type PopoverMenuProps = PopoverProps
 const PopoverMenu: ParentComponent<PopoverMenuProps> = ($props) => {
 	const [props, other] = splitProps($props, [
-		_classList, _gap, _padding,
-		_onBeforeClose, _ref
+		'classList', 'gap', 'padding',
+		'on_before_close', 'ref'
 	])
 	let menu_ref: HTMLDivElement
 
-	function closeDescendantSubMenu(): void {
-		for (const element of menu_ref[_firstElementChild]![_children] as unknown as HTMLElement[]) {
-			if (!element[_classList][_contains](subMenuClassName)) continue
-			closePopover(element[_lastElementChild] as HTMLDivElement)
+	function close_submenu_descendant(): void {
+		for (const el of element_children(element_first_element_child(menu_ref)!) as unknown as HTMLElement[]) {
+			if (!element_classlist(el).contains(SUBMENU_CLASSNAME)) continue
+			close_popover(element_last_element_child(el) as HTMLDivElement)
 		}
 	}
 
 	return (<Popover
-		ref={mergeRefs(props[_ref], r => menu_ref = r)}
+		ref={mergeRefs(props.ref, r => menu_ref = r)}
 		classList={{
 			'c-menu': true,
-			...props[_classList]
+			...props.classList
 		}}
-		onBeforeClose={() => {
-			closeDescendantSubMenu()
-			props[_onBeforeClose]?.()
+		on_before_close={() => {
+			close_submenu_descendant()
+			props.on_before_close?.()
 		}}
-		gap={props[_gap] ?? 8}
-		padding={props[_padding] ?? 4}
+		gap={props.gap ?? 8}
+		padding={props.padding ?? 4}
 		{...other}
 	/>)
 }
@@ -397,16 +391,19 @@ export {
 	LinkMenuItem,
 	SwitchMenuItem,
 	MenuItemTrailingShortcut,
-	closePopover as closeSubMenu,
-	openPopover as openSubMenu,
-	repositionPopover as repositionSubMenu,
-	closePopover as closePopoverMenu,
-	openPopover as openPopoverMenu,
-	repositionPopover as repositionPopoverMenu,
-	focusModal as focusMenu,
-	openModal as openMenu,
-	closeModal as closeMenu,
-	repositionModal as repositionMenu,
+	is_popover_open as is_submenu_open,
+	close_popover as close_submenu,
+	open_popover as open_submenu,
+	reposition_popover as reposition_submenu,
+	is_popover_open as is_popovermenu_open,
+	close_popover as close_popovermenu,
+	open_popover as open_popovermenu,
+	reposition_popover as reposition_popovermenu,
+	focus_modal as focus_menu,
+	open_modal as open_menu,
+	close_modal as close_menu,
+	reposition_modal as reposition_menu,
+	is_modal_open as is_menu_open,
 	SubMenuPosition,
 	MenuPosition,
 }

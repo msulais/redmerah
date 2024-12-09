@@ -1,19 +1,18 @@
 import { createSignal, Show, type VoidComponent } from "solid-js"
 
-import { eventStopPropagation } from "@/utils/event"
+import { event_stop_propagation } from "@/utils/event"
 
 import Icon from "@/components/Icon"
 import List from "@/components/List"
 import { IconButton } from "@/components/Button"
 import CheckBox from "@/components/CheckBox"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
-import { _currentTarget, _checked } from "@/constants/string"
 
 const _: VoidComponent = () => {
-	const [title, setTitle] = createSignal<boolean>(true)
-	const [subtitle, setSubtitle] = createSignal<boolean>(false)
-	const [leading, setLeading] = createSignal<boolean>(false)
-	const [trailing, setTrailing] = createSignal<boolean>(false)
+	const [title, set_title] = createSignal<boolean>(true)
+	const [subtitle, set_subtitle] = createSignal<boolean>(false)
+	const [leading, set_leading] = createSignal<boolean>(false)
+	const [trailing, set_trailing] = createSignal<boolean>(false)
 	return (<Page
 		title="List"
 		description="A list is a UI element that displays a collection of items in a sequential order. It typically includes components like title, subtitle, leading icon (placed before the title), and trailing buttons (placed after the title).">
@@ -22,8 +21,8 @@ const _: VoidComponent = () => {
 				subtitle={<Show when={subtitle()}>Deserunt commodo qui aute veniam tempor ipsum.</Show>}
 				leading={<Show when={leading()}><Icon code={0xE569}/></Show>}
 				trailing={<Show when={trailing()}>
-					<IconButton onClick={ev => eventStopPropagation(ev)} code={0xE6BF}/>
-					<IconButton onClick={ev => eventStopPropagation(ev)} code={0xEBB8}/>
+					<IconButton onClick={ev => event_stop_propagation(ev)} code={0xE6BF}/>
+					<IconButton onClick={ev => event_stop_propagation(ev)} code={0xEBB8}/>
 				</Show>}>
 				<Show when={title()}>
 					Amet ad ad sint deserunt fugiat
@@ -33,8 +32,8 @@ const _: VoidComponent = () => {
 				subtitle={<Show when={subtitle()}>Anim ea ad dolor pariatur laboris et ipsum nisi aute eu eu.</Show>}
 				leading={<Show when={leading()}><Icon code={0xE569}/></Show>}
 				trailing={<Show when={trailing()}>
-					<IconButton onClick={ev => eventStopPropagation(ev)} code={0xE6BF}/>
-					<IconButton onClick={ev => eventStopPropagation(ev)} code={0xEBB8}/>
+					<IconButton onClick={ev => event_stop_propagation(ev)} code={0xE6BF}/>
+					<IconButton onClick={ev => event_stop_propagation(ev)} code={0xEBB8}/>
 				</Show>}>
 				<Show when={title()}>
 					Tempor ut est adipisicing amet laborum
@@ -44,8 +43,8 @@ const _: VoidComponent = () => {
 				subtitle={<Show when={subtitle()}>Culpa elit enim aliquip aliqua est et adipisicing Lorem laboris nulla.</Show>}
 				leading={<Show when={leading()}><Icon code={0xE569}/></Show>}
 				trailing={<Show when={trailing()}>
-					<IconButton onClick={ev => eventStopPropagation(ev)} code={0xE6BF}/>
-					<IconButton onClick={ev => eventStopPropagation(ev)} code={0xEBB8}/>
+					<IconButton onClick={ev => event_stop_propagation(ev)} code={0xE6BF}/>
+					<IconButton onClick={ev => event_stop_propagation(ev)} code={0xEBB8}/>
 				</Show>}>
 				<Show when={title()}>
 					Aute commodo eiusmod exercitation nulla amet
@@ -55,22 +54,22 @@ const _: VoidComponent = () => {
 		<PlaygroundOptions>
 			<CheckBox
 				checked={title()}
-				onChange={ev => setTitle(ev[_currentTarget][_checked])}>
+				onChange={ev => set_title(ev.currentTarget.checked)}>
 				Title
 			</CheckBox>
 			<CheckBox
 				checked={subtitle()}
-				onChange={ev => setSubtitle(ev[_currentTarget][_checked])}>
+				onChange={ev => set_subtitle(ev.currentTarget.checked)}>
 				Subtitle
 			</CheckBox>
 			<CheckBox
 				checked={leading()}
-				onChange={ev => setLeading(ev[_currentTarget][_checked])}>
+				onChange={ev => set_leading(ev.currentTarget.checked)}>
 				Leading
 			</CheckBox>
 			<CheckBox
 				checked={trailing()}
-				onChange={ev => setTrailing(ev[_currentTarget][_checked])}>
+				onChange={ev => set_trailing(ev.currentTarget.checked)}>
 				Trailing
 			</CheckBox>
 		</PlaygroundOptions>

@@ -1,16 +1,15 @@
-import { createSignal, onMount, Show, type VoidComponent } from "solid-js"
+import { createMemo, createSignal, onMount, Show, type VoidComponent } from "solid-js"
 import beautiful from 'simply-beautiful'
 
 import type { Settings } from "./_types"
-import { addEventListener } from "@/utils/event"
-import { _change, _clientX, _command, _css, _cssText, _fontSize, _html, _htmlText, _markdown, _markdownText, _matches, _mousemove, _mouseup, _noPointerEvent, _preview, _px, _replace, _settings, _textWrap, _tonal, _touchend, _touches, _touchmove, _value } from "@/constants/string"
-import { removeElementAttribute, setElementAttribute, setElementAttributeIfExist } from "@/utils/attributes"
-import { getDocument, getDocumentBody } from "@/constants/window"
+import { event_add_listener } from "@/utils/event"
+import { attr_remove, attr_set, attr_set_if_exist } from "@/utils/attributes"
 import { BodyAttributes } from "@/enums/attributes"
-import { endTimeout, startTimeout } from "@/utils/timeout"
+import { timeout_clear, timeout_set } from "@/utils/timeout"
 import { Commands } from "./_enums"
 import { IFRAME_PREVIEW_ID, MIN_EDITOR_WIDTH } from "./_constants"
-import { isMatchMedia } from "@/utils/window"
+import { is_window_media_matches } from "@/utils/window"
+import { string_replace } from "@/utils/string"
 
 import Button, { ButtonVariant } from "@/components/Button"
 import CSS from './_styles.module.scss'
@@ -27,104 +26,110 @@ enum OutputViewOption {
 
 const _: VoidComponent<{
 	settings: Settings
-	htmlText: string
-	markdownText: string
-	cssText: string
+	text_html: string
+	text_markdown: string
+	text_css: string
 	command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
-	const [width, setWidth] = createSignal<number | null>(null)
-	const [isDragging, setIsDragging] = createSignal<boolean>(false)
-	const [inputViewOption, setInputViewOption] = createSignal<InputViewOption | null>(InputViewOption[_markdown])
-	const [outputViewOption, setOutputViewOption] = createSignal<OutputViewOption | null>(OutputViewOption[_preview])
-	let timeoutId: number | null
+	const body = document.body
+	const [width, set_width] = createSignal<number | null>(null)
+	const [is_dragging, set_is_dragging] = createSignal<boolean>(false)
+	const [input_view_option, set_input_view_option] = createSignal<InputViewOption | null>(InputViewOption.markdown)
+	const [output_view_option, set_output_view_option] = createSignal<OutputViewOption | null>(OutputViewOption.preview)
+	const settings = createMemo(() => props.settings)
+	let timeout_id: number | null
 	let textarea_ref: HTMLTextAreaElement
-	let isSmallScreen: boolean = false
+	let is_small_screen: boolean = false
 
-	function updateOutput(): void {
-		if (timeoutId != null) endTimeout(timeoutId)
-		timeoutId = startTimeout(() => {
-			const command = (inputViewOption() == InputViewOption[_markdown]
+	function command(type: Commands, ...args: unknown[]): unknown {
+		return props.command(type, ...args)
+	}
+
+	function update_output(): void {
+		if (timeout_id != null) timeout_clear(timeout_id)
+		timeout_id = timeout_set(() => {
+			const $command = (input_view_option() == InputViewOption.markdown
 				? Commands.update_markdown_text
 				: Commands.update_css_text
 			)
-			props[_command](command, textarea_ref[_value])
-			timeoutId = null
+			command($command, textarea_ref.value)
+			timeout_id = null
 		}, 500)
 	}
 
-	function updateWidth(width: number): void {
-		if (!isDragging()) return;
-		setWidth(width)
+	function update_width(width: number): void {
+		if (!is_dragging()) return;
+		set_width(width)
 	}
 
-	function closeDrag(): void {
-		setIsDragging(false)
-		removeElementAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
+	function close_drag(): void {
+		set_is_dragging(false)
+		attr_remove(body, BodyAttributes.no_pointer_event)
 	}
 
 	function initEvents(): void {
-		addEventListener<TouchEvent>(getDocument(), _touchmove, ev => updateWidth(ev[_touches][0][_clientX]))
-		addEventListener<TouchEvent>(getDocument(), _touchend, () => closeDrag())
-		addEventListener<MouseEvent>(getDocument(), _mousemove, ev => updateWidth(ev[_clientX]))
-		addEventListener<MouseEvent>(getDocument(), _mouseup, () => closeDrag())
+		event_add_listener<TouchEvent>(document, 'touchmove', ev => update_width(ev.touches[0].clientX))
+		event_add_listener<TouchEvent>(document, 'touchend', () => close_drag())
+		event_add_listener<MouseEvent>(document, 'mousemove', ev => update_width(ev.clientX))
+		event_add_listener<MouseEvent>(document, 'mouseup', () => close_drag())
 	}
 
-	function initSmallScreenListener(): void {
+	function init_smallscreen_listener(): void {
 		const callback = () => {
-			if (inputViewOption() == null || outputViewOption() == null) return;
-			setOutputViewOption(null)
+			if (input_view_option() == null || output_view_option() == null) return;
+			set_output_view_option(null)
 		}
 
-		addEventListener<MediaQueryListEvent>(matchMedia(`(max-width: ${MIN_EDITOR_WIDTH}px)`), _change,  ev => {
-			isSmallScreen = ev[_matches]
-			if (!isSmallScreen) return;
+		event_add_listener<MediaQueryListEvent>(matchMedia(`(max-width: ${MIN_EDITOR_WIDTH}px)`), 'change',  ev => {
+			is_small_screen = ev.matches
+			if (!is_small_screen) return;
 
 			callback()
 		})
 
-		isSmallScreen = isMatchMedia(`(max-width: ${MIN_EDITOR_WIDTH}px)`)
-		if (!isSmallScreen) return;
+		is_small_screen = is_window_media_matches(`(max-width: ${MIN_EDITOR_WIDTH}px)`)
+		if (!is_small_screen) return;
 
 		callback()
 	}
 
 	onMount(() => {
 		initEvents()
-		initSmallScreenListener()
+		init_smallscreen_listener()
 	})
 
 	const InputTabButtons: VoidComponent = () => (<>
 		<Button
-			variant={ButtonVariant[_tonal]}
-			selected={inputViewOption() == InputViewOption[_markdown]}
+			variant={ButtonVariant.tonal}
+			selected={input_view_option() == InputViewOption.markdown}
 			onClick={() => {
-				if (isSmallScreen) {
-					setInputViewOption(InputViewOption[_markdown])
-					setOutputViewOption(null)
+				if (is_small_screen) {
+					set_input_view_option(InputViewOption.markdown)
+					set_output_view_option(null)
 					return;
 				}
 
-				if (inputViewOption() == InputViewOption[_markdown] && outputViewOption() != null)
-					return setInputViewOption(null)
-				setInputViewOption(InputViewOption[_markdown])
-				textarea_ref[_value] = props[_markdownText]
+				if (input_view_option() == InputViewOption.markdown && output_view_option() != null)
+					return set_input_view_option(null)
+				set_input_view_option(InputViewOption.markdown)
+				textarea_ref.value = props.text_markdown
 			}}>
 			Markdown
 		</Button>
 		<Button
-			variant={ButtonVariant[_tonal]}
-			selected={inputViewOption() == InputViewOption[_css]}
+			variant={ButtonVariant.tonal}
+			selected={input_view_option() == InputViewOption.css}
 			onClick={() => {
-				if (isSmallScreen) {
-					setInputViewOption(InputViewOption[_css])
-					setOutputViewOption(null)
+				if (is_small_screen) {
+					set_input_view_option(InputViewOption.css)
+					set_output_view_option(null)
 					return;
 				}
 
-				if (inputViewOption() == InputViewOption[_css] && outputViewOption() != null)
-					return setInputViewOption(null)
-				setInputViewOption(InputViewOption[_css])
-				textarea_ref[_value] = props[_cssText]
+				if (input_view_option() == InputViewOption.css && output_view_option() != null)
+					return set_input_view_option(null)
+				set_input_view_option(InputViewOption.css)
+				textarea_ref.value = props.text_css
 			}}>
 			CSS
 		</Button>
@@ -132,34 +137,34 @@ const _: VoidComponent<{
 
 	const OutputTabButtons: VoidComponent = () => (<>
 		<Button
-			variant={ButtonVariant[_tonal]}
-			selected={outputViewOption() == OutputViewOption[_preview]}
+			variant={ButtonVariant.tonal}
+			selected={output_view_option() == OutputViewOption.preview}
 			onClick={() => {
-				if (isSmallScreen) {
-					setOutputViewOption(OutputViewOption[_preview])
-					setInputViewOption(null)
+				if (is_small_screen) {
+					set_output_view_option(OutputViewOption.preview)
+					set_input_view_option(null)
 					return;
 				}
 
-				if (outputViewOption() == OutputViewOption[_preview] && inputViewOption() != null)
-					return setOutputViewOption(null)
-				setOutputViewOption(OutputViewOption[_preview])
+				if (output_view_option() == OutputViewOption.preview && input_view_option() != null)
+					return set_output_view_option(null)
+				set_output_view_option(OutputViewOption.preview)
 			}}>
 			Preview
 		</Button>
 		<Button
-			variant={ButtonVariant[_tonal]}
-			selected={outputViewOption() == OutputViewOption[_html]}
+			variant={ButtonVariant.tonal}
+			selected={output_view_option() == OutputViewOption.html}
 			onClick={() => {
-				if (isSmallScreen) {
-					setOutputViewOption(OutputViewOption[_html])
-					setInputViewOption(null)
+				if (is_small_screen) {
+					set_output_view_option(OutputViewOption.html)
+					set_input_view_option(null)
 					return;
 				}
 
-				if (outputViewOption() == OutputViewOption[_html] && inputViewOption() != null)
-					return setOutputViewOption(null)
-				setOutputViewOption(OutputViewOption[_html])
+				if (output_view_option() == OutputViewOption.html && input_view_option() != null)
+					return set_output_view_option(null)
+				set_output_view_option(OutputViewOption.html)
 			}}>
 			HTML
 		</Button>
@@ -168,63 +173,63 @@ const _: VoidComponent<{
 	return (<div class={CSS.body}>
 		<div
 			class={CSS.body_input}
-			data-hidden={setElementAttributeIfExist(inputViewOption() == null)}
-			data-output-hidden={setElementAttributeIfExist(outputViewOption() == null)}
-			style={{width: width() == null? undefined : width() + _px}}>
+			data-hidden={attr_set_if_exist(input_view_option() == null)}
+			data-output-hidden={attr_set_if_exist(output_view_option() == null)}
+			style={{width: width() == null? undefined : width() + 'px'}}>
 			<div class={CSS.body_tabs}>
 				<InputTabButtons/>
-				<Show when={outputViewOption() == null}>
+				<Show when={output_view_option() == null}>
 					<OutputTabButtons/>
 				</Show>
 			</div>
 			<textarea
 				autofocus
-				onInput={() => updateOutput()}
+				onInput={() => update_output()}
 				ref={r => textarea_ref = r}
-				value={inputViewOption() == InputViewOption[_markdown]? props[_markdownText] : props[_cssText]}
-				style={{"font-size": props[_settings][_fontSize] + _px}}
+				value={input_view_option() == InputViewOption.markdown? props.text_markdown : props.text_css}
+				style={{"font-size": settings().font_size + 'px'}}
 				class={CSS.body_textfield}
-				data-text-wrap={setElementAttributeIfExist(props[_settings][_textWrap])}
-				placeholder={`Type your ${inputViewOption() == InputViewOption[_markdown]? 'markdown' : 'CSS'} ...`}></textarea>
-			<Show when={inputViewOption() != null && outputViewOption() != null}>
+				data-text-wrap={attr_set_if_exist(settings().text_wrap)}
+				placeholder={`Type your ${input_view_option() == InputViewOption.markdown? 'markdown' : 'CSS'} ...`}></textarea>
+			<Show when={input_view_option() != null && output_view_option() != null}>
 				<div
-					data-g-keep-pointer-event={setElementAttributeIfExist(isDragging())}
+					data-g-keep-pointer-event={attr_set_if_exist(is_dragging())}
 					class={CSS.body_drag_handle}
 					onMouseDown={(ev) => {
-						setElementAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
-						setWidth(ev[_clientX])
-						setIsDragging(true)
+						attr_set(body, BodyAttributes.no_pointer_event)
+						set_width(ev.clientX)
+						set_is_dragging(true)
 					}}
 					onTouchStart={(ev) => {
-						setIsDragging(true)
-						setElementAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
-						setWidth(ev[_touches][0][_clientX])
+						set_is_dragging(true)
+						attr_set(body, BodyAttributes.no_pointer_event)
+						set_width(ev.touches[0].clientX)
 					}}
-					onDblClick={() => setWidth(null)}
+					onDblClick={() => set_width(null)}
 				/>
 			</Show>
 		</div>
 		<div
 			class={CSS.body_output}
-			data-hidden={setElementAttributeIfExist(outputViewOption() == null)}>
+			data-hidden={attr_set_if_exist(output_view_option() == null)}>
 			<div class={CSS.body_tabs}>
-				<Show when={inputViewOption() == null}>
+				<Show when={input_view_option() == null}>
 					<InputTabButtons/>
 				</Show>
 				<OutputTabButtons/>
 			</div>
 			<div
 				class={CSS.body_html_output}
-				style={{"font-size": props[_settings][_fontSize] + _px}}
-				data-hidden={setElementAttributeIfExist(outputViewOption() != OutputViewOption[_html])}>
-				{beautiful[_html](props[_htmlText])[_replace](/(?<=>)\n+(?=<)/gs, '\n')}
+				style={{"font-size": settings().font_size + 'px'}}
+				data-hidden={attr_set_if_exist(output_view_option() != OutputViewOption.html)}>
+				{string_replace(beautiful.html(props.text_html), /(?<=>)\n+(?=<)/gs, '\n')}
 			</div>
 			<iframe
 				id={IFRAME_PREVIEW_ID}
 				title='Markdown output'
 				class={CSS.body_preview_output}
-				data-hidden={setElementAttributeIfExist(outputViewOption() != OutputViewOption[_preview])}
-				srcdoc={`<style>${props[_cssText]}</style>` +  props[_htmlText] }
+				data-hidden={attr_set_if_exist(output_view_option() != OutputViewOption.preview)}
+				srcdoc={`<style>${props.text_css}</style>` +  props.text_html }
 			></iframe>
 		</div>
 	</div>)

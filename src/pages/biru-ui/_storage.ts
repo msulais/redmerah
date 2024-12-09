@@ -9,5 +9,5 @@ export enum ObjectStoreNames {
 
 export enum ObjectStoreSettingsKeys {
 	/** @param page `Pages` */
-	lastPage = 'lastPage',
+	last_page = 'last_page',
 }

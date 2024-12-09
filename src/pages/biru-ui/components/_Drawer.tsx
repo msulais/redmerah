@@ -1,86 +1,84 @@
 import { createSignal, For, Show, type VoidComponent } from "solid-js"
 
-import { _left, _tonal, _right, _checked, _currentTarget, _value } from "@/constants/string"
-
 import Button, { ButtonVariant, IconButton } from "@/components/Button"
 import CheckBox from "@/components/CheckBox"
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import TextField from "@/components/TextField"
-import Drawer, { closeDrawer, DrawerItem, DrawerPosition, openDrawer } from "@/components/Drawer"
+import Drawer, { close_drawer, DrawerItem, DrawerPosition, openDrawer } from "@/components/Drawer"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
 
 const _: VoidComponent = () => {
-	const [important, setImportant] = createSignal<boolean>(false)
-	const [contentAutoFocus, setInputAutoFocus] = createSignal<boolean>(false)
-	const [hasHeader, setHasHeader] = createSignal<boolean>(true)
-	const [hasFooter, setHasFooter] = createSignal<boolean>(true)
-	const [hasContent, setHasContent] = createSignal<boolean>(true)
-	const [position, setPosition] = createSignal<DrawerPosition>(DrawerPosition[_left])
+	const [important, set_important] = createSignal<boolean>(false)
+	const [content_autofocus, set_content_autofocus] = createSignal<boolean>(false)
+	const [has_header, set_has_header] = createSignal<boolean>(true)
+	const [has_footer, set_has_footer] = createSignal<boolean>(true)
+	const [has_content, set_has_content] = createSignal<boolean>(true)
+	const [position, set_position] = createSignal<DrawerPosition>(DrawerPosition.left)
 	let drawer_ref: HTMLDialogElement
 	return (<Page
 		title="Drawer"
 		description="A drawer is a navigation pattern that slides in from the edge of the screen, typically revealing a list of options or actions. It's often used to conserve screen space and provide access to secondary functions.">
 		<Playground>
 			<Button
-				variant={ButtonVariant[_tonal]}
+				variant={ButtonVariant.tonal}
 				onClick={(ev) => openDrawer(ev, drawer_ref, {
 					important: important(),
-					contentAutoFocus: contentAutoFocus()
+					content_auto_focus: content_autofocus()
 				})}>
 				Open drawer
 			</Button>
 			<Drawer
 				ref={r => drawer_ref = r}
 				position={position()}
-				header={<Show when={hasHeader()}><IconButton onClick={() => closeDrawer(drawer_ref)} code={0xEAFF}/> BiruUI</Show>}
-				footer={<Show when={hasFooter()}>
-					<DrawerItem iconCode={0xE932}>Privacy policy</DrawerItem>
-					<DrawerItem iconCode={0xED47}>Terms & conditions</DrawerItem>
+				header={<Show when={has_header()}><IconButton onClick={() => close_drawer(drawer_ref)} code={0xEAFF}/> BiruUI</Show>}
+				footer={<Show when={has_footer()}>
+					<DrawerItem icon_code={0xE932}>Privacy policy</DrawerItem>
+					<DrawerItem icon_code={0xED47}>Terms & conditions</DrawerItem>
 				</Show>}>
-				<Show when={hasContent()}>
+				<Show when={has_content()}>
 					<TextField placeholder="Search" autofocus/>
 					<div/>
-					<DrawerItem selected iconCode={0xE8E2}>Home</DrawerItem>
-					<DrawerItem iconCode={0xE930}>About</DrawerItem>
-					<DrawerItem iconCode={0xE32A}>Contact</DrawerItem>
-					<DrawerItem iconCode={0xE063}>Product</DrawerItem>
-					<DrawerItem iconCode={0xE84B}>Donate</DrawerItem>
+					<DrawerItem selected icon_code={0xE8E2}>Home</DrawerItem>
+					<DrawerItem icon_code={0xE930}>About</DrawerItem>
+					<DrawerItem icon_code={0xE32A}>Contact</DrawerItem>
+					<DrawerItem icon_code={0xE063}>Product</DrawerItem>
+					<DrawerItem icon_code={0xE84B}>Donate</DrawerItem>
 				</Show>
 			</Drawer>
 		</Playground>
 		<PlaygroundOptions>
 			<Dropdown
 				label="Position"
-				onChangeOptions={(options) => setPosition(options[0][_value] as DrawerPosition)}
+				on_change_options={(options) => set_position(options[0].value as DrawerPosition)}
 				values={[position()]}>
 				<For each={[
-					[DrawerPosition[_left], 'Left'],
-					[DrawerPosition[_right], 'Right'],
+					[DrawerPosition.left, 'Left'],
+					[DrawerPosition.right, 'Right'],
 				]}>{option => <DropdownOption value={option[0]} text={option[1] as string} />}</For>
 			</Dropdown>
 			<CheckBox
 				checked={important()}
-				onChange={ev => setImportant(ev[_currentTarget][_checked])}>
+				onChange={ev => set_important(ev.currentTarget.checked)}>
 				Important
 			</CheckBox>
 			<CheckBox
-				checked={hasHeader()}
-				onChange={ev => setHasHeader(ev[_currentTarget][_checked])}>
+				checked={has_header()}
+				onChange={ev => set_has_header(ev.currentTarget.checked)}>
 				Header
 			</CheckBox>
 			<CheckBox
-				checked={hasFooter()}
-				onChange={ev => setHasFooter(ev[_currentTarget][_checked])}>
+				checked={has_footer()}
+				onChange={ev => set_has_footer(ev.currentTarget.checked)}>
 				Footer
 			</CheckBox>
 			<CheckBox
-				checked={hasContent()}
-				onChange={ev => setHasContent(ev[_currentTarget][_checked])}>
+				checked={has_content()}
+				onChange={ev => set_has_content(ev.currentTarget.checked)}>
 				Content
 			</CheckBox>
 			<CheckBox
-				checked={contentAutoFocus()}
-				onChange={ev => setInputAutoFocus(ev[_currentTarget][_checked])}>
+				checked={content_autofocus()}
+				onChange={ev => set_content_autofocus(ev.currentTarget.checked)}>
 				Content autofocus
 			</CheckBox>
 		</PlaygroundOptions>

@@ -1,23 +1,23 @@
 export function wait(ms: number): Promise<unknown> {
-	return new Promise(resolve => startTimeout(resolve, ms));
+	return new Promise(resolve => timeout_set(resolve, ms));
 }
 
-export function startTimeout(handler: TimerHandler, timeout?: number | undefined): number {
+export function timeout_set(handler: TimerHandler, timeout?: number | undefined): number {
 	return setTimeout(handler, timeout)
 }
 
-export function startInterval(handler: TimerHandler, timeout?: number | undefined): number {
+export function interval_set(handler: TimerHandler, timeout?: number | undefined): number {
 	return setInterval(handler, timeout)
 }
 
-export function endTimeout(id: number | undefined): void {
+export function timeout_clear(id: number | undefined): void {
 	return clearTimeout(id)
 }
 
-export function endInterval(id: number | undefined): void {
+export function interval_clear(id: number | undefined): void {
 	return clearInterval(id)
 }
 
-export function setMicrotask(callback: VoidFunction): void {
+export function microtask_set(callback: VoidFunction): void {
 	return queueMicrotask(callback)
 }

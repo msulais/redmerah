@@ -1,110 +1,121 @@
 import { For, Show, createMemo, createSelector, createSignal, onMount, type VoidComponent } from "solid-js"
 
 import type { AppItem } from "@/types/apps"
-import { _centerBottomToLeft, _centerBottomToRight, _centerCenterLeftTop, _leftCenterToBottom, _clipboard, _color, _color_accent, _corner, _currentTarget, _dark, _description, _filled, _tonal, _filter, _fullRound, _hostname, _includes, _innerHTML, _join, _light, _link, _open, _outlined, _pinnedApps, _round, _semiRound, _share, _sharp, _some, _split, _system, _test, _theme, _title, _toLowerCase, _trim, _value, _writeText, _name, _localeCompare, _sort } from "@/constants/string"
-import { getLocalStorageItem, setLocalStorageItem } from "@/utils/storage"
-import { setElementAttributeIfExist } from "@/utils/attributes"
+import { storage_get, storage_set } from "@/utils/storage"
+import { attr_set_if_exist } from "@/utils/attributes"
 import { LocalStorageKeys } from "@/enums/storage"
-import { getLocation, getNavigator, getWindow } from "@/constants/window"
 import { apps } from "@/constants/apps"
-import { eventPreventDefault } from "@/utils/event"
-import { endTimeout, startTimeout } from "@/utils/timeout"
+import { event_prevent_default } from "@/utils/event"
+import { remove_splash_screen_on_load_every_component } from "@/scripts/splash"
+import { array_filter, array_join, array_some, array_sort } from "@/utils/array"
+import { string_locale_compare, string_split, string_tolowercase, string_trim } from "@/utils/string"
+import { navigator_clipboard_writetext, navigator_share } from "@/utils/navigator"
+import { regex_test } from "@/utils/regex"
+import { timeout_clear, timeout_set } from "@/utils/timeout"
 
 import Icon from "@/components/Icon"
 import Button, { ButtonVariant, LinkButton } from "@/components/Button"
 import TextField from "@/components/TextField"
-import Menu, { closeMenu, LinkMenuItem, MenuDivider, MenuItem, MenuPosition, openMenu } from "@/components/Menu"
-import Dialog, { closeDialog, openDialog } from "@/components/Dialog"
+import Menu, { close_menu, LinkMenuItem, MenuDivider, MenuItem, MenuPosition, open_menu } from "@/components/Menu"
+import Dialog, { close_dialog, open_dialog } from "@/components/Dialog"
 import CSS from './_index.module.scss'
-import { removeSplashScreenOnLoadEveryComponent } from "@/scripts/splash"
 
 export const MainElement: VoidComponent = () => {
-	const [is_menu_actions_open, setIs_menu_actions_open] = createSignal<boolean>(false)
-	const [pinnedApps, setPinnedApps] = createSignal<string[]>([])
-	const [selectedApp, setSelectedApp] = createSignal<AppItem | null>(null)
-	const [searchText, setSearchText] = createSignal<string>('')
-	const isSelected = createSelector<string[], string>(pinnedApps, (a, b) => b[_some]((v) => v == a))
-	const getSelectedLink = createMemo(() => selectedApp()? selectedApp()![_link] : '')
-	const getSelectedTitle = createMemo(() => selectedApp()? selectedApp()![_name] : '')
+	const [is_menu_actions_open, set_is_menu_actions_open] = createSignal<boolean>(false)
+	const [pinned_apps, set_pinned_apps] = createSignal<string[]>([])
+	const [selected_app, set_selected_app] = createSignal<AppItem | null>(null)
+	const [search_text, set_search_text] = createSignal<string>('')
+	const is_selected = createSelector<string[], string>(pinned_apps, (a, b) => array_some(b, (v) => v == a))
+	const get_selected_link = createMemo(() => selected_app()? selected_app()!.link : '')
+	const get_selected_name = createMemo(() => selected_app()? selected_app()!.name : '')
 	let dialog_info_ref: HTMLDialogElement
 	let menu_actions_ref: HTMLDialogElement
-	let timeoutId: number | null = null
+	let timeout_id: number | null = null
 
-	function pinApp(link: string): void {
-		setPinnedApps(v => isSelected(link)? v[_filter](a => a != link) :  [...v, link])
-		setLocalStorageItem(LocalStorageKeys[_pinnedApps], pinnedApps()[_join](';'))
+	function pin_app(link: string): void {
+		set_pinned_apps(v => is_selected(link)? array_filter(v, a => a != link) :  [...v, link])
+		storage_set(LocalStorageKeys.pinned_apps, array_join(pinned_apps(), ';'))
 	}
 
-	function initPinnedApp(): void {
-		const pinnedApp = getLocalStorageItem(LocalStorageKeys[_pinnedApps])
+	function init_pinned_app(): void {
+		const pinned_apps = storage_get(LocalStorageKeys.pinned_apps)
 
-		if (!pinnedApp) return;
-		setPinnedApps(pinnedApp![_split](';'))
+		if (!pinned_apps) return;
+		set_pinned_apps(string_split(pinned_apps!, ';'))
 	}
 
 	function share(): void {
-		getNavigator()[_share]({
-			text: getSelectedTitle(),
-			url: getSelectedLink()
+		navigator_share({
+			text: get_selected_name(),
+			url: get_selected_link()
 		})
-		closeMenu(menu_actions_ref)
+		close_menu(menu_actions_ref)
 	}
 
 	onMount(() => {
-		initPinnedApp()
-		removeSplashScreenOnLoadEveryComponent()
+		init_pinned_app()
+		remove_splash_screen_on_load_every_component()
 	})
 
 	return (<main class={CSS.main}>
 		<TextField
 			onInput={(ev) => {
-				if (timeoutId != null) endTimeout(timeoutId)
+				if (timeout_id != null) timeout_clear(timeout_id)
 
-				const text = ev[_currentTarget][_value]
-
-				timeoutId = startTimeout(() => {
-					setSearchText(text)
-					timeoutId = null
+				const text = ev.currentTarget.value
+				timeout_id = timeout_set(() => {
+					set_search_text(text)
+					timeout_id = null
 				}, 500)
 			}}
-			autoShowClearBtn
+			auto_show_clear_button
 			leading={<Icon code={0xEDDF} />}
 			label="Search apps"
 		/>
-		<div><For each={apps[_sort]((a, b) => a[_name][_localeCompare](b[_name]))}>{app => <Show when={searchText()[_trim]() == '' || new RegExp(searchText()[_toLowerCase]()[_trim]()[_split](' ')[_join]('|'))[_test](app[_name][_toLowerCase]())}>
-			<LinkButton
-				data-pinned={setElementAttributeIfExist(isSelected(app[_link]))}
-				href={app[_link]}
-				focused={getSelectedLink() == app[_link] && is_menu_actions_open()}
-				onContextMenu={ev => {
-					setSelectedApp(app)
-					openMenu(ev, menu_actions_ref, {
-						position: MenuPosition[_centerBottomToRight],
-					})
-					eventPreventDefault(ev)
-				}}>
-				<img loading="eager" width="48" height="48" src={app.logoURL} alt={app[_name]} />
-				{app[_name]}
-				<Show when={isSelected(app[_link])}>
-					<Icon filled code={0xECA2}/>
+		<div>
+			<For each={array_sort(apps, (a, b) => string_locale_compare(a.name, b.name))}>{app =>
+				<Show when={
+					string_trim(search_text()) == ''
+					|| regex_test(
+						new RegExp(array_join(string_split(string_trim(string_tolowercase(search_text())), ' '), '|')),
+						string_tolowercase(app.name)
+					)
+				}>
+					<LinkButton
+						data-pinned={attr_set_if_exist(is_selected(app.link))}
+						href={app.link}
+						focused={get_selected_link() == app.link && is_menu_actions_open()}
+						onContextMenu={ev => {
+							set_selected_app(app)
+							open_menu(ev, menu_actions_ref, {
+								position: MenuPosition.center_bottom_to_right,
+							})
+							event_prevent_default(ev)
+						}}>
+						<img loading="eager" width="48" height="48" src={app.logo_url} alt={app.name} />
+						{app.name}
+						<Show when={is_selected(app.link)}>
+							<Icon filled code={0xECA2}/>
+						</Show>
+					</LinkButton>
 				</Show>
-			</LinkButton>
-		</Show>}</For></div>
-		<Menu ref={r => menu_actions_ref = r} onToggleOpen={isOpen => setIs_menu_actions_open(isOpen)}>
+			}</For>
+		</div>
+		<Menu ref={r => menu_actions_ref = r} on_toggle_open={isOpen => set_is_menu_actions_open(isOpen)}>
 			<MenuItem
 				onClick={() => {
-					pinApp(getSelectedLink() ?? '#')
-					closeMenu(menu_actions_ref)
+					pin_app(get_selected_link() ?? '#')
+					close_menu(menu_actions_ref)
 				}}
-				leading={<Show when={isSelected(getSelectedLink() ?? '#')} fallback={<Icon code={0xECA2}/>}><Icon code={0xECA4}/></Show>}>
-				<Show when={isSelected(getSelectedLink() ?? '#')} fallback="Pin">Unpin</Show> app
+				leading={<Show when={is_selected(get_selected_link() ?? '#')} fallback={<Icon code={0xECA2}/>}><Icon code={0xECA4}/></Show>}>
+				<Show when={is_selected(get_selected_link() ?? '#')} fallback="Pin">Unpin</Show> app
 			</MenuItem>
 			<MenuDivider/>
-			<LinkMenuItem href={getSelectedLink() ?? '#'} leading={<Icon code={0xEB53}/>}>Open</LinkMenuItem>
+			<LinkMenuItem href={get_selected_link() ?? '#'} leading={<Icon code={0xEB53}/>}>Open</LinkMenuItem>
 			<MenuItem
 				onClick={() => {
-					getWindow()[_open](getSelectedLink() ?? '#', '_blank', 'noopener noreferrer')
-					closeMenu(menu_actions_ref)
+					window.open(get_selected_link() ?? '#', '_blank', 'noopener noreferrer')
+					close_menu(menu_actions_ref)
 				}}
 				leading={<Icon code={0xEB51}/>}>
 				Open in new tab
@@ -112,8 +123,8 @@ export const MainElement: VoidComponent = () => {
 			<MenuDivider/>
 			<MenuItem
 				onClick={() => {
-					getNavigator()[_clipboard][_writeText]('https://' + getLocation()[_hostname] + (getSelectedLink() ?? '#'))
-					closeMenu(menu_actions_ref)
+					navigator_clipboard_writetext('https://' + location.hostname + (get_selected_link() ?? '#'))
+					close_menu(menu_actions_ref)
 				}}
 				leading={<Icon code={0xE51B}/>}>
 				Copy link
@@ -126,8 +137,8 @@ export const MainElement: VoidComponent = () => {
 			<MenuDivider/>
 			<MenuItem
 				onClick={(ev) => {
-					closeMenu(menu_actions_ref)
-					openDialog(ev, dialog_info_ref)
+					close_menu(menu_actions_ref)
+					open_dialog(ev, dialog_info_ref)
 				}}
 				leading={<Icon code={0xE930}/>}>
 				About app
@@ -135,22 +146,22 @@ export const MainElement: VoidComponent = () => {
 		</Menu>
 		<Dialog
 			ref={r => dialog_info_ref = r}
-			header={getSelectedTitle()}
-			onClose={() => closeMenu(menu_actions_ref)}
+			header={get_selected_name()}
+			onClose={() => close_menu(menu_actions_ref)}
 			style={{width: '500px'}}
 			actions={<>
-				<Button onClick={() => closeDialog(dialog_info_ref)} variant={ButtonVariant[_tonal]}>Close</Button>
+				<Button onClick={() => close_dialog(dialog_info_ref)} variant={ButtonVariant.tonal}>Close</Button>
 				<Button
 					onClick={() => {
-						closeDialog(dialog_info_ref)
+						close_dialog(dialog_info_ref)
 						share()
 					}}
-					variant={ButtonVariant[_tonal]}>
+					variant={ButtonVariant.tonal}>
 					Share
 				</Button>
-				<LinkButton href={getSelectedLink()} variant={ButtonVariant[_filled]}>Open</LinkButton>
+				<LinkButton href={get_selected_link()} variant={ButtonVariant.filled}>Open</LinkButton>
 			</>}>
-			{ selectedApp() && selectedApp()![_description] }
+			{ selected_app() && selected_app()!.description }
 		</Dialog>
 	</main>)
 }

@@ -2,35 +2,36 @@ import { createSignal, For, onMount, Show, type VoidComponent } from "solid-js";
 
 import type { HEXColor } from "@/types/color";
 import type { ItemList, Result, Settings } from "./_types";
-import { _string, _characters, _numbers, _symbols, _length, _floor, _range, _max, _min, _count, _repeat, _includes, _push, _sort, _ascending, _descending, _map, _prefix, _toString, _numberType, _padStart, _suffix, _join, _separator, _colors, _round, _colorModel, _hex, _rgb, _hsl, _words, _selection, _teams, _animation, _result, _settings, _decimal, _none, _open, _key, _value, _createObjectStore, _id, _list, _lists, _lastResult, _isOpen, _readonly, _objectStore, _transaction, _get, _then, _color, _readwrite, _put, _add, _name, _members, _getAll, _namesList, _membersList, _alphabetLowercase, _alphabetUppercase, _customCharacter, _minDecimalLength, _splice, _lowercase, _titlecase, _togglecase, _uppercase, _wordCase, _h, _l, _s, _r, _b, _g, _cursor, _test, _tonal, _filled, _manual, _items, _accept, _file, _input, _type, _readAsText, _target, _onerror, _onabort, _onload, _replace, _split, _substring, _filter, _trim, _focus, _delete, _clipboard, _writeText, _noPointerEvent, _generate, _stopGenerate, _randomizer, _writeObjectStore, _readObjectStore, _findIndex, _concat, _slice, _localeCompare, _animate, _finished, _remove, _splash, _spring } from "@/constants/string";
-import { RGB_to_HEX, HSL_to_HEX } from "@/utils/color";
-import { startInterval, endInterval } from "@/utils/timeout";
+import { rgb_to_hex, hsl_to_hex } from "@/utils/color";
+import { interval_set, interval_clear } from "@/utils/timeout";
 import { createStore } from "solid-js/store";
 import { RandomizerType, WordsRandomizerWordCase, NumbersRandomizerNumberType, NumbersRandomizerSort, ColorsRandomizerColorModel, Commands } from "./_enums";
-import { mathFloor, mathRandom } from "@/utils/math";
+import { math_floor, math_random, math_round } from "@/utils/math";
 import { PERSON_NAMES, TEAMS_NAMES, ANIMALS, LOREM_IPSUM, DEFAULT_LISTS } from "./_constants";
 import { ObjectStoreNames, ObjectStoreKeys, type ObjectStoreLists, type ObjectStoreSettings, type ObjectStoreLastResult } from "./_storage";
-import { _settings_lastPage, _lastResult_string, _lastResult_numbers, _lastResult_words, _lastResult_selection, _lastResult_colors, _lastResult_teams, _settings_words_listId, _settings_selection_listId, _settings_teams_membersListId, _settings_teams_namesListId, _settings_numbers_repeat, _settings_words_repeat, _settings_numbers_sort, _settings_numbers_animation, _settings_words_animation, _settings_string_animation, _settings_selection_animation, _settings_colors_animation, _settings_teams_animation, _settings_numbers_numberType, _settings_numbers_prefix, _settings_words_prefix, _settings_numbers_suffix, _settings_words_suffix, _settings_numbers_separator, _settings_words_separator, _settings_words_wordCase, _settings_colors_colorModel, _settings_string_length, _settings_string_characters_symbols, _settings_string_characters_numbers, _settings_string_characters_alphabetLowercase, _settings_string_characters_alphabetUppercase, _settings_numbers_count, _settings_numbers_minDecimalLength, _settings_numbers_range_min, _settings_numbers_range_max, _settings_words_count, _settings_colors_count, _settings_colors_range_hex_min, _settings_colors_range_hex_max, _settings_colors_range_hsl_h_min, _settings_colors_range_hsl_h_max, _settings_colors_range_hsl_l_max, _settings_colors_range_hsl_l_min, _settings_colors_range_hsl_s_max, _settings_colors_range_hsl_s_min, _settings_colors_range_rgb_r_max, _settings_colors_range_rgb_r_min, _settings_colors_range_rgb_b_max, _settings_colors_range_rgb_b_min, _settings_colors_range_rgb_g_max, _settings_colors_range_rgb_g_min, _settings_string_characters_customCharacter, _settings_selection_count, _settings_teams_count, _add_list, _change_settings_colors_colorModel, _change_settings_colors_count, _change_settings_colors_range_hex, _change_settings_colors_range_hsl_h, _change_settings_colors_range_hsl_l, _change_settings_colors_range_hsl_s, _change_settings_colors_range_rgb_b, _change_settings_colors_range_rgb_g, _change_settings_colors_range_rgb_r, _change_settings_numbers_count, _change_settings_numbers_minDecimalLength, _change_settings_numbers_range, _change_settings_numbers_sort, _change_settings_numbers_type, _change_settings_prefix, _change_settings_selection_count, _change_settings_selection_list, _change_settings_separator, _change_settings_string_characters_customCharacters, _change_settings_string_characters_toDefault, _change_settings_string_length, _change_settings_suffix, _change_settings_teams_count, _change_settings_teams_membersList, _change_settings_teams_namesList, _change_settings_words_count, _change_settings_words_list, _change_settings_words_wordCase, _delete_list, _edit_list, _export_list, _reset_list, _toggle_navigation_expand, _toggle_settings_animation, _toggle_settings_repeat, _toggle_settings_string_characters_alphabetLowercase, _toggle_settings_string_characters_alphabetUppercase, _toggle_settings_string_characters_numbers, _toggle_settings_string_characters_symbols, _view_list } from "./_string";
-import { stringToLowerCase, stringToUpperCase, stringToToggleCase, stringToTitleCase } from "@/utils/string";
-import { createObjectURL, downloadFileByURL, revokeObjectURL } from "@/utils/url";
-import { addClassListModule } from "@/utils/element";
-import { openFile, readFileAsText } from "@/utils/file";
-import { IDB } from "@/utils/indexeddb";
+import { string_tolowercase, string_touppercase, string_totogglecase, string_totitlecase, string_length, string_padstart, string_trim, string_split, string_locale_compare } from "@/utils/string";
+import { url_create, url_download_file, url_revoke } from "@/utils/url";
+import { add_classlist_module, element_focus } from "@/utils/element";
+import { file_open, file_read_as_text } from "@/utils/file";
+import { IDB, idb_store_delete, idb_store_put } from "@/utils/indexeddb";
 import { DatabaseNames } from "@/enums/storage";
-import { getDocumentBody, getNavigator } from "@/constants/window";
-import { removeElementAttribute, setElementAttribute, setElementAttributeIfExist } from "@/utils/attributes";
+import { attr_remove, attr_set, attr_set_if_exist } from "@/utils/attributes";
 import { BodyAttributes } from "@/enums/attributes";
-import { removeSplashScreen } from "@/scripts/splash";
+import { remove_splash_screen } from "@/scripts/splash";
+import { array_concat, array_filter, array_find_index, array_includes, array_join, array_length, array_map, array_push, array_slice, array_sort, array_splice } from "@/utils/array";
+import { number_to_string } from "@/utils/number";
+import { navigator_clipboard_writetext } from "@/utils/navigator";
+import { promise_done } from "@/utils/object";
 
 import App from "@/components/App";
 import { TextTooltip } from "@/components/Tooltip";
 import Icon from "@/components/Icon";
 import Divider from "@/components/Divider";
-import Dialog, { closeDialog, openDialog } from "@/components/Dialog";
+import Dialog, { close_dialog, open_dialog } from "@/components/Dialog";
 import Button, { ButtonVariant, FloatingActionButton, IconButton } from "@/components/Button";
 import List from "@/components/List";
-import TextField, { AreaTextField, changeAreaTextFieldValue, changeTextFieldValue } from "@/components/TextField";
-import Toast, { openToast } from "@/components/Toast";
+import TextField, { AreaTextField, change_areatextfield_value, change_textfield_value } from "@/components/TextField";
+import Toast, { open_toast } from "@/components/Toast";
 import AppBar from './_AppBar'
 import SideNavigation from './_SideNavigation'
 import Control from './_Control'
@@ -39,24 +40,31 @@ import CSSAnimation from "@/styles/animation.module.scss";
 import CSS from './_styles.module.scss'
 
 const _: VoidComponent = () => {
-	const db = new IDB(DatabaseNames[_randomizer], 1)
-	const [randomizerType, setRandomizerType] = createSignal<RandomizerType>(RandomizerType[_string])
-	const [viewItemList, setViewItemList] = createSignal<ItemList>({id: -1, items: [], name: ''})
-	const [selectedListToDelete, setSelectedListToDelete] = createSignal<ItemList>({id: -1, items: [], name: ''})
-	const [selectedListToEdit, setSelectedListToEdit] = createSignal<ItemList>({id: -1, items: [], name: ''})
-	const [isExpandNavigation, setIsExpandNavigation] = createSignal<boolean>(true)
-	const [isGenerating, setIsGenerating] = createSignal<boolean>(false)
-	const [lists, setLists] = createStore<ItemList[]>(DEFAULT_LISTS)
-	const [settings, setSettings] = createStore<Settings>({
+	const db = new IDB(DatabaseNames.randomizer, 1)
+	const body = document.body
+	const randomizer_string = RandomizerType.string
+	const randomizer_numbers = RandomizerType.numbers
+	const randomizer_words = RandomizerType.words
+	const randomizer_selection = RandomizerType.selection
+	const randomizer_colors = RandomizerType.colors
+	const randomizer_teams = RandomizerType.teams
+	const [randomizer, set_randomizer] = createSignal<RandomizerType>(randomizer_string)
+	const [list_viewitem, set_list_viewitem] = createSignal<ItemList>({id: -1, items: [], name: ''})
+	const [selected_list_to_delete, set_selected_list_to_delete] = createSignal<ItemList>({id: -1, items: [], name: ''})
+	const [selected_list_to_edit, set_selected_list_to_edit] = createSignal<ItemList>({id: -1, items: [], name: ''})
+	const [is_sidenavigation_expanded, set_is_sidenavigation_expanded] = createSignal<boolean>(true)
+	const [is_generating, set_is_generating] = createSignal<boolean>(false)
+	const [lists, set_lists] = createStore<ItemList[]>(array_map(DEFAULT_LISTS, l => ({id: l.id, name: l.name, items: [...l.items]})))
+	const [settings, set_settings] = createStore<Settings>({
 		string: {
 			animation: true,
 			length: 8,
 			characters: {
-				alphabetLowercase: true,
-				alphabetUppercase: true,
+				lowercase: true,
+				uppercase: true,
 				numbers: true,
 				symbols: false,
-				customCharacter: '',
+				custom: '',
 			}
 		},
 		words: {
@@ -67,13 +75,13 @@ const _: VoidComponent = () => {
 			repeat: true,
 			separator: ' ',
 			suffix: '',
-			wordCase: WordsRandomizerWordCase[_none]
+			wordcase: WordsRandomizerWordCase.none
 		},
 		numbers: {
 			animation: true,
 			count: 3,
-			minDecimalLength: 0,
-			numberType: NumbersRandomizerNumberType[_decimal],
+			min_length: 0,
+			type: NumbersRandomizerNumberType.decimal,
 			prefix: '',
 			range: {
 				min: 0,
@@ -81,12 +89,12 @@ const _: VoidComponent = () => {
 			},
 			repeat: true,
 			separator: ', ',
-			sort: NumbersRandomizerSort[_none],
+			sort: NumbersRandomizerSort.none,
 			suffix: '',
 		},
 		colors: {
 			animation: true,
-			colorModel: ColorsRandomizerColorModel[_rgb],
+			model: ColorsRandomizerColorModel.rgb,
 			count: 3,
 			range: {
 				hex: { min: 0, max: 0xffffff },
@@ -110,11 +118,11 @@ const _: VoidComponent = () => {
 		teams: {
 			animation: true,
 			count: 3,
-			membersList: {id: 1, name: 'Person', items: [...PERSON_NAMES]},
-			namesList: {id: 2, name: 'Teams', items: [...TEAMS_NAMES]},
+			list_members: {id: 1, name: 'Person', items: [...PERSON_NAMES]},
+			list_names: {id: 2, name: 'Teams', items: [...TEAMS_NAMES]},
 		}
 	})
-	const [result, setResult] = createStore<Result>({
+	const [output, set_output] = createStore<Result>({
 		string: '',
 		colors: [],
 		numbers: '',
@@ -122,245 +130,273 @@ const _: VoidComponent = () => {
 		teams: [],
 		words: ''
 	})
-	let intervalId: number | null = null
+	let interval_id: number | null = null
 	let dialog_lists_ref: HTMLDialogElement
-	let dialog_deleteListWarning_ref: HTMLDialogElement
+	let dialog_deletelistwarning_ref: HTMLDialogElement
 	let dialog_add_ref: HTMLDialogElement
 	let dialog_edit_ref: HTMLDialogElement
-	let dialog_viewItemList_ref: HTMLDialogElement
-	let dialog_previewItemList_ref: HTMLDialogElement
-	let toast_listNameEmpty_ref: HTMLDivElement
-	let toast_listHaveNoItems_ref: HTMLDivElement
-	let toast_listNameAlreadyExist_ref: HTMLDivElement
-	let toast_listEdited_ref: HTMLDivElement
-	let toast_listDeleted_ref: HTMLDivElement
-	let toast_newListAdded_ref: HTMLDivElement
-	let toast_noListSelected_ref: HTMLDivElement
-	let areaTextField_newItemList_ref: HTMLTextAreaElement
-	let areaTextField_editItemList_ref: HTMLTextAreaElement
-	let textField_newListName_ref: HTMLInputElement
-	let textField_editListName_ref: HTMLInputElement
+	let dialog_viewitemlist_ref: HTMLDialogElement
+	let dialog_previewitemlist_ref: HTMLDialogElement
+	let toast_listnameempty_ref: HTMLDivElement
+	let toast_listhavenoitems_ref: HTMLDivElement
+	let toast_listnamealreadyexist_ref: HTMLDivElement
+	let toast_listedited_ref: HTMLDivElement
+	let toast_listdeleted_ref: HTMLDivElement
+	let toast_newlistadded_ref: HTMLDivElement
+	let toast_nolistselected_ref: HTMLDivElement
+	let areatextfield_newitemlist_ref: HTMLTextAreaElement
+	let areatextfield_edititemlist_ref: HTMLTextAreaElement
+	let textfield_newlistname_ref: HTMLInputElement
+	let textfield_editlistname_ref: HTMLInputElement
 
 	function generate(): void {
-		if (randomizerType() == RandomizerType[_string]) {
+		if (randomizer() == randomizer_string) {
 			let text: string = ''
-			let charList: string = ''
-			const characters = settings[_string][_characters]
+			let charlist: string = ''
+			const $settings = settings.string
+			const characters = $settings.characters
 
-			if (characters[_alphabetLowercase]) charList += 'abcdefghijklmnopqrstuvwxyz'
-			if (characters[_alphabetUppercase]) charList += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-			if (characters[_numbers]) charList += '0123456789'
-			if (characters[_symbols]) charList += "<({[!@#$%^&*_-+=~`\\|\"':;?/.,]})>"
-			if (characters[_customCharacter]) charList += characters[_customCharacter]
+			if (characters.lowercase) charlist += 'abcdefghijklmnopqrstuvwxyz'
+			if (characters.uppercase) charlist += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+			if (characters.numbers) charlist += '0123456789'
+			if (characters.symbols) charlist += "<({[!@#$%^&*_-+=~`\\|\"':;?/.,]})>"
+			if (characters.custom) charlist += characters.custom
 
-			for (let i = 0; i < settings[_string][_length]; i++) {
-				text += charList[mathFloor(mathRandom() * charList[_length])]
+			for (let i = 0; i < $settings.length; i++) {
+				text += charlist[math_floor(math_random() * string_length(charlist))]
 			}
 
-			setResult(_string, text)
+			set_output('string', text)
 		}
 
-		else if (randomizerType() == RandomizerType[_numbers]) {
+		else if (randomizer() == randomizer_numbers) {
 			const numbers: number[] = []
-			const range: number = settings[_numbers][_range][_max] - settings[_numbers][_range][_min]
+			const $settings = settings.numbers
+			const min = $settings.range.min
+			const count = $settings.count
+			const range: number = $settings.range.max - min
 
-			for (let i = 0; i < settings[_numbers][_count]; i++) {
-				const v: number = settings[_numbers][_range][_min] + 1 + mathFloor(mathRandom() * range)
+			for (let i = 0; i < count; i++) {
+				const v: number = min + 1 + math_floor(math_random() * range)
 
-				if (!settings[_numbers][_repeat] && numbers[_includes](v)) continue
+				if (!$settings.repeat && array_includes(numbers, v)) continue
 
-				numbers[_push](v)
+				array_push(numbers, v)
 			}
 
 			let iteration = 0
-			while (numbers[_length] < settings[_numbers][_count] && iteration < settings[_numbers][_count] + 0xff){
-				const v: number = settings[_numbers][_range][_min] + 1 + mathFloor(mathRandom() * range)
+			while (array_length(numbers) < count && iteration < count + 0xff){
+				const v: number = min + 1 + math_floor(math_random() * range)
 
-				if (!settings[_numbers][_repeat] &&
-					numbers[_includes](v) &&
-					numbers[_length] < range) continue;
+				if (!$settings.repeat &&
+					array_includes(numbers, v) &&
+					array_length(numbers) < range) continue;
 
-				numbers[_push](v)
+				array_push(numbers, v)
 				++iteration
 			}
 
-			if (settings[_numbers][_sort] == NumbersRandomizerSort[_ascending]) numbers[_sort]((a, b) => a - b)
-			else if (settings[_numbers][_sort] == NumbersRandomizerSort[_descending]) numbers[_sort]((a, b) => b - a)
+			array_sort(
+				numbers,
+				(a, b) => $settings.sort == NumbersRandomizerSort.ascending
+					? a - b
+					: b - a
+			)
 
-			setResult(_numbers, [...numbers][_map](v =>
-				settings[_numbers][_prefix] +
-				stringToUpperCase(v[_toString](settings[_numbers][_numberType])[_padStart](settings[_numbers][_minDecimalLength], '0')) +
-				settings[_numbers][_suffix]
-			)[_join](settings[_numbers][_separator]))
+			set_output('numbers', array_join(array_map([...numbers], v =>
+				$settings.prefix +
+				string_touppercase(string_padstart(number_to_string(v, $settings.type), $settings.min_length, '0')) +
+				$settings.suffix
+			), $settings.separator))
 		}
 
-		else if (randomizerType() == RandomizerType[_colors]) {
-			const s = settings[_colors]
+		else if (randomizer() == randomizer_colors) {
+			const $settings = settings.colors
 			const colors: HEXColor[] = []
-			const randomNumber = (min: number, max: number): number => {
+			const count = $settings.count
+			const random_number = (min: number, max: number): number => {
 				const range = max - min
-				const value = min + 1 + mathFloor(mathRandom() * range)
-				return Math[_round](value)
+				const value = min + 1 + math_floor(math_random() * range)
+				return math_round(value)
 			}
 
-			if (s[_colorModel] == ColorsRandomizerColorModel[_hex]) for (let i = 0; i < s[_count]; i++) {
-				const value = randomNumber(s[_range][_hex][_min], s[_range][_hex][_max])
-				colors[_push]('#' + value[_toString](16)[_padStart](6, '0') as HEXColor)
-			}
-			else if (s[_colorModel] == ColorsRandomizerColorModel[_rgb]) for (let i = 0; i < s[_count]; i++) {
-				const r = randomNumber(s[_range][_rgb].r[_min], s[_range][_rgb].r[_max])
-				const g = randomNumber(s[_range][_rgb].g[_min], s[_range][_rgb].g[_max])
-				const b = randomNumber(s[_range][_rgb].b[_min], s[_range][_rgb].b[_max])
-				colors[_push](RGB_to_HEX({r, g, b}))
-			}
-			else if (s[_colorModel] == ColorsRandomizerColorModel[_hsl]) for (let i = 0; i < s[_count]; i++) {
-				const hue = randomNumber(s[_range][_hsl].h[_min], s[_range][_hsl].h[_max]) / 360
-				const saturation = randomNumber(s[_range][_hsl].s[_min], s[_range][_hsl].s[_max]) / 100
-				const lightness = randomNumber(s[_range][_hsl].l[_min], s[_range][_hsl].l[_max]) / 100
-				colors[_push](HSL_to_HEX({h: hue, s: saturation, l: lightness}))
+			switch ($settings.model) {
+				case ColorsRandomizerColorModel.rgb: {
+					const rgb = $settings.range.rgb
+					for (let i = 0; i < count; i++) {
+						const r = random_number(rgb.r.min, rgb.r.max)
+						const g = random_number(rgb.g.min, rgb.g.max)
+						const b = random_number(rgb.b.min, rgb.b.max)
+						array_push(colors, rgb_to_hex({r, g, b}))
+					}
+					break
+				}
+				case ColorsRandomizerColorModel.hsl: {
+					const hsl = $settings.range.hsl
+					for (let i = 0; i < count; i++) {
+						const hue = random_number(hsl.h.min, hsl.h.max) / 360
+						const saturation = random_number(hsl.s.min, hsl.s.max) / 100
+						const lightness = random_number(hsl.l.min, hsl.l.max) / 100
+						array_push(colors, hsl_to_hex({h: hue, s: saturation, l: lightness}))
+					}
+					break
+				}
+				case ColorsRandomizerColorModel.hex: {
+					const hex = $settings.range.hex
+					for (let i = 0; i < count; i++) {
+						const value = random_number(hex.min, hex.max)
+						array_push(colors, '#' + string_padstart(number_to_string(value, 16), 6, '0') as HEXColor)
+					}
+					break
+				}
 			}
 
-			setResult(_colors, colors)
+			set_output('colors', colors)
 		}
 
-		else if (randomizerType() == RandomizerType[_words]) {
+		else if (randomizer() == randomizer_words) {
+			const $settings = settings.words
 			const words: string[] = []
-			let members: string[] = [...settings[_words][_list][_items]]
+			const items = $settings.list.items
+			let members: string[] = [...items]
 
-			for (let i = 0; i < settings[_words][_count]; i++) {
-				if (i >= settings[_words][_list][_items][_length] && !settings[_words][_repeat]) break;
+			for (let i = 0; i < $settings.count; i++) {
+				if (i >= array_length(items) && !$settings.repeat) break;
 
-				const index = mathFloor(mathRandom() * (members[_length] - 1))
+				const index = math_floor(math_random() * (array_length(members) - 1))
 				const member = members[index]
 
-				if (!settings[_words][_repeat]) {
-					members[_splice](index, 1)
+				if (!$settings.repeat) {
+					array_splice(members, index, 1)
 
-					if (words[_includes](member)) continue
+					if (array_includes(words, member)) continue
 				}
 
-				words[_push](member)
+				array_push(words, member)
 			}
 
-			members = [...settings[_words][_list][_items]]
-			for (let i = 0; i < settings[_words][_count] - words[_length]; i++) {
-				const index = mathFloor(mathRandom() * (members[_length] - 1))
-				words[_push](members[index])
+			members = [...items]
+			for (let i = 0; i < $settings.count - array_length(words); i++) {
+				const index = math_floor(math_random() * (array_length(members) - 1))
+				array_push(words, members[index])
 			}
 
-			setResult(_words, words[_map](text => {
-				if (settings[_words][_wordCase] == WordsRandomizerWordCase[_lowercase])
-					text = stringToLowerCase(text)
-				else if (settings[_words][_wordCase] == WordsRandomizerWordCase[_uppercase])
-					text = stringToUpperCase(text)
-				else if (settings[_words][_wordCase] == WordsRandomizerWordCase[_togglecase])
-					text = stringToToggleCase(text)
-				else if (settings[_words][_wordCase] == WordsRandomizerWordCase[_titlecase])
-					text = stringToTitleCase(text)
+			set_output('words', array_join(array_map(words, text => {
+				switch ($settings.wordcase) {
+					case WordsRandomizerWordCase.uppercase: text = string_touppercase(text); break
+					case WordsRandomizerWordCase.lowercase: text = string_tolowercase(text); break
+					case WordsRandomizerWordCase.titlecase: text = string_totitlecase(text); break
+					case WordsRandomizerWordCase.togglecase: text = string_totogglecase(text); break
+					case WordsRandomizerWordCase.none:
+				}
 
-				return settings[_words][_prefix] + text + settings[_words][_suffix]
-			})[_join](settings[_words][_separator]))
+				return $settings.prefix + text + $settings.suffix
+			}), $settings.separator))
 		}
 
-		else if (randomizerType() == RandomizerType[_selection]) {
-			const items = [...settings[_selection][_list][_items]]
-			const selectedItems: string[] = []
+		else if (randomizer() == randomizer_selection) {
+			const $settings = settings.selection
+			const count = $settings.count
+			const items = [...$settings.list.items]
+			const selected_items: string[] = []
 
-			if (settings[_selection][_count] == items[_length]) {
-				setResult(_selection, items)
+			if (count == array_length(items)) {
+				set_output('selection', items)
 				return
 			}
 
-			for (let i = 0; i < settings[_selection][_count]; i++) {
-				const index = mathFloor(mathRandom() * (items[_length] - 1))
-				selectedItems[_push](items[index])
-				items[_splice](index, 1)
+			for (let i = 0; i < count; i++) {
+				const index = math_floor(math_random() * (array_length(items) - 1))
+				array_push(selected_items, items[index])
+				array_splice(items, index, 1)
 			}
 
-			setResult(_selection, selectedItems)
+			set_output('selection', selected_items)
 		}
 
-		else if (randomizerType() == RandomizerType[_teams]) {
-			const names: string[] = [...settings[_teams][_namesList][_items]]
-			const members: string[] = [...settings[_teams][_membersList][_items]]
+		else if (randomizer() == randomizer_teams) {
+			const $settings = settings.teams
+			const count = $settings.count
+			const names: string[] = [...$settings.list_names.items]
+			const members: string[] = [...$settings.list_members.items]
 			const teams: {name: string; members: string[]}[] = []
-			const minimumMembers = mathFloor(members[_length] / settings[_teams][_count])
+			const min_members = math_floor(array_length(members) / count)
 
-			if (names[_length] > settings[_teams][_count]) {
-				names[_splice](names[_length] - (names[_length] - settings[_teams][_count]))
+			if (array_length(names) > count) {
+				array_splice(names, array_length(names) - (array_length(names) - count))
 			}
 
-			names[_sort]()
+			array_sort(names)
 
-			const range = settings[_teams][_count] - names[_length]
+			const range = count - array_length(names)
 			for (let i = 0; i < range; i++) {
-				names[_push]('Team #' + (i + 1))
+				array_push(names, 'Team #' + (i + 1))
 			}
 
 			for (const name of names) {
 				const m: string[] = []
 
-				for (let i = 0; i < minimumMembers; i++) {
-					const index = mathFloor(mathRandom() * (members[_length] - 1))
-					m[_push](members[index])
-					members[_splice](index, 1)
+				for (let i = 0; i < min_members; i++) {
+					const index = math_floor(math_random() * (array_length(members) - 1))
+					array_push(m, members[index])
+					array_splice(members, index, 1)
 				}
 
-				m[_sort]()
-
-				teams[_push]({name, members: m})
+				array_sort(m)
+				array_push(teams, {name, members: m})
 			}
 
 			for (const i in members) {
-				teams[i][_members][_push](members[i])
+				array_push(teams[i].members, members[i])
 			}
 
-			setResult(_teams, teams)
+			set_output('teams', teams)
 		}
 	}
 
-	async function onGenerate(ev: Event): Promise<void> { return new Promise((ok) => {
-		setIsGenerating(true)
-		setElementAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
+	async function on_generate(ev: Event): Promise<void> { return new Promise((ok) => {
+		set_is_generating(true)
+		attr_set(body, BodyAttributes.no_pointer_event)
 
-		let type = _string
-		if (randomizerType() == RandomizerType[_string]) type = _string
-		else if (randomizerType() == RandomizerType[_numbers]) type = _numbers
-		else if (randomizerType() == RandomizerType[_words]) {
-			type = _words
-			if (settings[_words][_list][_id] == -1) {
-				openToast(ev, toast_noListSelected_ref)
+		let type = 'string'
+		if (randomizer() == randomizer_string) type = 'string'
+		else if (randomizer() == randomizer_numbers) type = 'numbers'
+		else if (randomizer() == randomizer_words) {
+			type = 'words'
+			if (settings.words.list.id == -1) {
+				open_toast(ev, toast_nolistselected_ref)
 				return ok()
 			}
 		}
-		else if (randomizerType() == RandomizerType[_selection]) {
-			type = _selection
-			if (settings[_selection][_list][_id] == -1) {
-				openToast(ev, toast_noListSelected_ref)
+		else if (randomizer() == randomizer_selection) {
+			type = 'selection'
+			if (settings.selection.list.id == -1) {
+				open_toast(ev, toast_nolistselected_ref)
 				return ok()
 			}
 		}
-		else if (randomizerType() == RandomizerType[_colors]) type = _colors
-		else if (randomizerType() == RandomizerType[_teams]) {
-			type = _teams
-			if (settings[_teams][_membersList][_id] == -1 || settings[_teams][_namesList][_id] == -1) {
-				openToast(ev, toast_noListSelected_ref)
+		else if (randomizer() == randomizer_colors) type = 'colors'
+		else if (randomizer() == randomizer_teams) {
+			type = 'teams'
+			const teams = settings.teams
+			if (teams.list_members.id == -1 || teams.list_names.id == -1) {
+				open_toast(ev, toast_nolistselected_ref)
 				return ok()
 			}
 		}
 
-		if (settings[type as keyof Settings][_animation]){
+		if (settings[type as keyof Settings].animation){
 			const duration = 3000
 			const step = 250
 			let i = 0
-			intervalId = startInterval(() => {
+			interval_id = interval_set(() => {
 
 				// max duration: 3 seconds
 				if (i >= duration / step) {
-					endInterval(intervalId!)
-					addResultToDB()
-					setIsGenerating(false)
-					removeElementAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
+					interval_clear(interval_id!)
+					output_to_db()
+					set_is_generating(false)
+					attr_remove(body, BodyAttributes.no_pointer_event)
 					return ok()
 				}
 				generate()
@@ -370,826 +406,850 @@ const _: VoidComponent = () => {
 		}
 
 		generate()
-		addResultToDB()
-		removeElementAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
-		setIsGenerating(false)
+		output_to_db()
+		attr_remove(body, BodyAttributes.no_pointer_event)
+		set_is_generating(false)
 		ok()
 	})}
 
-	function onStopGenerate(): void {
-		setIsGenerating(false)
-		removeElementAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
-		endInterval(intervalId!)
-		addResultToDB()
+	function on_stop_generate(): void {
+		set_is_generating(false)
+		attr_remove(body, BodyAttributes.no_pointer_event)
+		interval_clear(interval_id!)
+		output_to_db()
 	}
 
-	async function onCopyResult(): Promise<boolean> {
-		const copy = async (text: string) => await getNavigator()[_clipboard][_writeText](text)
+	async function on_copy_result(): Promise<boolean> {
+		let text = output.string
 
 		try {
-			if (randomizerType() == RandomizerType[_string]) await copy(result[_string])
-			else if (randomizerType() == RandomizerType[_numbers]) await copy(result[_numbers])
-			else if (randomizerType() == RandomizerType[_words]) await copy(result[_words])
-			else if (randomizerType() == RandomizerType[_selection]) await copy(settings[_selection][_list][_items][_map](v => result[_selection][_includes](v)? (v + ' [selected]') : v)[_join]('\n'))
-			else if (randomizerType() == RandomizerType[_colors]) await copy(result[_colors][_join]('\n'))
-			else if (randomizerType() == RandomizerType[_teams]) await copy(result[_teams][_map](v => '# ' + v[_name] + '\n' + v[_members][_join]('\n') )[_join]('\n\n'))
+			if (randomizer() == randomizer_string) text = output.string
+			else if (randomizer() == randomizer_numbers) text = output.numbers
+			else if (randomizer() == randomizer_words) text = output.words
+			else if (randomizer() == randomizer_selection) text = array_join(
+				array_map(
+					settings.selection.list.items,
+					v => array_includes(output.selection, v)? (v + ' [selected]') : v
+				),
+				'\n'
+			)
+			else if (randomizer() == randomizer_colors) text = array_join(output.colors, '\n')
+			else if (randomizer() == randomizer_teams) text = array_join(array_map(output.teams, v => '# ' + v.name + '\n' + array_join(v.members, '\n')), '\n\n')
+			await navigator_clipboard_writetext(text)
 			return true
 		} catch (e) {}
 
 		return false
 	}
 
-	function onChangeRandomizer(type: RandomizerType): void {
-		setRandomizerType(type)
-		const store_settings = db[_writeObjectStore](ObjectStoreNames[_settings])
+	function on_change_randomizer(type: RandomizerType): void {
+		set_randomizer(type)
+		const store_settings = db.write_store(ObjectStoreNames.settings)
 		if (store_settings == null) return
 
-		store_settings[_put]({
-			key: ObjectStoreKeys[_settings_lastPage],
-			value: randomizerType()
+		idb_store_put(store_settings, {
+			key: ObjectStoreKeys.settings_lastpage,
+			value: randomizer()
 		})
 	}
 
-	function addResultToDB(): void {
-		const store_lastResult = db[_writeObjectStore](ObjectStoreNames[_lastResult])
-		if (store_lastResult == null) return
+	function output_to_db(): void {
+		const store_lastoutput = db.write_store(ObjectStoreNames.last_output)
+		if (store_lastoutput == null) return
 
-		if (randomizerType() == RandomizerType[_string]) store_lastResult[_put]({
-			key: ObjectStoreKeys[_lastResult_string],
-			value: result[_string]
-		})
-		else if (randomizerType() == RandomizerType[_numbers]) store_lastResult[_put]({
-			key: ObjectStoreKeys[_lastResult_numbers],
-			value: result[_numbers]
-		})
-		else if (randomizerType() == RandomizerType[_words]) store_lastResult[_put]({
-			key: ObjectStoreKeys[_lastResult_words],
-			value: result[_words]
-		})
-		else if (randomizerType() == RandomizerType[_selection]) store_lastResult[_put]({
-			key: ObjectStoreKeys[_lastResult_selection],
-			value: [...result[_selection]]
-		})
-		else if (randomizerType() == RandomizerType[_colors]) store_lastResult[_put]({
-			key: ObjectStoreKeys[_lastResult_colors],
-			value: [...result[_colors]]
-		})
-		else if (randomizerType() == RandomizerType[_teams]) store_lastResult[_put]({
-			key: ObjectStoreKeys[_lastResult_teams],
-			value: [...result[_teams][_map](v => ({name: v[_name], members: [...v[_members]]}))]
-		})
+		let key = ''
+		let value: any = ''
+
+		if (randomizer() == randomizer_string) {
+			key = ObjectStoreKeys.lastoutput_string
+			value = output.string
+		}
+		else if (randomizer() == randomizer_numbers) {
+			key = ObjectStoreKeys.lastoutput_numbers,
+			value = output.numbers
+		}
+		else if (randomizer() == randomizer_words) {
+			key = ObjectStoreKeys.lastoutput_words
+			value = output.words
+		}
+		else if (randomizer() == randomizer_selection) {
+			key = ObjectStoreKeys.lastoutput_selection,
+			value = [...output.selection]
+		}
+		else if (randomizer() == randomizer_colors) {
+			key = ObjectStoreKeys.lastoutput_colors
+			value = [...output.colors]
+		}
+		else if (randomizer() == randomizer_teams) {
+			key = ObjectStoreKeys.lastoutput_teams
+			value = [...array_map(output.teams, v => ({name: v.name, members: [...v.members]}))]
+		}
+
+		idb_store_put(store_lastoutput, {key, value})
 	}
 
-	async function initDatabase(): Promise<void> {
-		db[_open]({
-			onSuccess() {
-				initLastResult()
-				initLastPage()
-				getLists()
-				initSettings()
+	async function init_database(): Promise<void> {
+		db.open({
+			on_success() {
+				init_last_output()
+				init_last_page()
+				get_lists()
+				init_settings()
 			},
-			onUpgradeNeeded(_, db) {
-				db[_createObjectStore]<ObjectStoreSettings>({
-					name: ObjectStoreNames[_settings],
-					keyPath: _key,
-					indexs: [_key, _value]
+			on_upgrade_needed(_, db) {
+				db.create_store<ObjectStoreSettings>({
+					name: ObjectStoreNames.settings,
+					key_path: 'key',
+					indexs: ['key', 'value']
 				})
-				db[_createObjectStore]<ObjectStoreLastResult>({
-					name: ObjectStoreNames[_lastResult],
-					keyPath: _key,
-					indexs: [_key, _value]
+				db.create_store<ObjectStoreLastResult>({
+					name: ObjectStoreNames.last_output,
+					key_path: 'key',
+					indexs: ['key', 'value']
 				})
-				const $lists = db[_createObjectStore]<ObjectStoreLists>({
-					name: ObjectStoreNames[_lists],
-					keyPath: _id,
-					indexs: [_id, _name, _items]
+				const $lists = db.create_store<ObjectStoreLists>({
+					name: ObjectStoreNames.lists,
+					key_path: 'id',
+					indexs: ['id', 'name', 'items']
 				})
 
-				for (const list of DEFAULT_LISTS) {
-					$lists![_put]({
-						id: list[_id],
-						name: list[_name],
-						items: [...list[_items]]
-					} satisfies ObjectStoreLists)
-				}
+				for (const list of DEFAULT_LISTS) idb_store_put($lists!, {
+					id: list.id,
+					name: list.name,
+					items: [...list.items]
+				} satisfies ObjectStoreLists)
 			}
 		})
 	}
 
-	function initLastPage(): void {
-		const store_settings = db[_readObjectStore](ObjectStoreNames[_settings])
+	function init_last_page(): void {
+		const store_settings = db.read_store(ObjectStoreNames.settings)
 		if (store_settings == null) return;
 
-		db[_get]<{key: string; value: RandomizerType}>(store_settings, ObjectStoreKeys[_settings_lastPage])[_then](
-			(v) => setRandomizerType(r => v? v[_value] : r)
-		)
+		promise_done(db.get<{key: string; value: RandomizerType}>(
+			store_settings,
+			ObjectStoreKeys.settings_lastpage
+		), (result) => set_randomizer(r => result?.value ?? r))
 	}
 
-	function initLastResult(): void {
-		const store_lastResult = db[_readObjectStore](ObjectStoreNames[_lastResult])
-		if (store_lastResult == null) return
+	function init_last_output(): void {
+		const store_lastoutput = db.read_store(ObjectStoreNames.last_output)
+		if (store_lastoutput == null) return
 
-		db[_get]<{key: string; value: string}>(store_lastResult, ObjectStoreKeys[_lastResult_string])[_then](
-			(v) => setResult(_string, s => v? v[_value] : s)
-		)
-		db[_get]<{key: string; value: string}>(store_lastResult, ObjectStoreKeys[_lastResult_numbers])[_then](
-			(v) => setResult(_numbers, n => v? v[_value] : n)
-		)
-		db[_get]<{key: string; value: string}>(store_lastResult, ObjectStoreKeys[_lastResult_words])[_then](
-			(v) => setResult(_words, w => v? v[_value] : w)
-		)
-		db[_get]<{key:string; value: string[]}>(store_lastResult, ObjectStoreKeys[_lastResult_selection])[_then](
-			(v) => setResult(_selection, s => v? v[_value] : s)
-		)
-		db[_get]<{key: string; value: HEXColor[]}>(store_lastResult, ObjectStoreKeys[_lastResult_colors])[_then](
-			(v) => setResult(_colors, c => v? v[_value] : c)
-		)
-		db[_get]<{key: string; value: {name: string;members: string[]}[]}>(store_lastResult, ObjectStoreKeys[_lastResult_teams])[_then](
-			(v) => setResult(_teams, t => v? v[_value] : t)
-		)
+		promise_done(db.get<{key: string; value: string}>(
+			store_lastoutput,
+			ObjectStoreKeys.lastoutput_string
+		), (result) => set_output('string', s => result?.value ??s))
+
+		promise_done(db.get<{key: string; value: string}>(
+			store_lastoutput,
+			ObjectStoreKeys.lastoutput_numbers
+		), (result) => set_output('numbers', n => result?.value ?? n))
+
+		promise_done(db.get<{key: string; value: string}>(
+			store_lastoutput,
+			ObjectStoreKeys.lastoutput_words
+		), (result) => set_output('words', w => result?.value ?? w))
+
+		promise_done(db.get<{key:string; value: string[]}>(
+			store_lastoutput,
+			ObjectStoreKeys.lastoutput_selection
+		), (result) => set_output('selection', s => result?.value ?? s))
+
+		promise_done(db.get<{key: string; value: HEXColor[]}>(
+			store_lastoutput,
+			ObjectStoreKeys.lastoutput_colors
+		), (result) => set_output('colors', c => result?.value ?? c))
+
+		promise_done(db.get<{key: string; value: {name: string;members: string[]}[]}>(
+			store_lastoutput,
+			ObjectStoreKeys.lastoutput_teams
+		), (result) => set_output('teams', t => result?.value ?? t))
 	}
 
-	function getLists(): void {
-		const store_lists = db[_readObjectStore](ObjectStoreNames[_lists])
+	function get_lists(): void {
+		const store_lists = db.read_store(ObjectStoreNames.lists)
 		if (store_lists == null) return
 
-		db[_getAll]<ObjectStoreLists>(store_lists)[_then]((v) => {
-			if (!v) return;
-			setLists([...v])
-			getListsSettings()
+		promise_done(db.get_all<ObjectStoreLists>(store_lists), (result) => {
+			if (!result) return;
+			set_lists([...result])
+			get_lists_settings()
 		})
 	}
 
-	function getListsSettings(): void {
-		const store_settings = db[_readObjectStore](ObjectStoreNames[_settings])
+	function get_lists_settings(): void {
+		const store_settings = db.read_store(ObjectStoreNames.settings)
 		if (store_settings == null) return
 
-		db[_get]<ObjectStoreSettings>(store_settings, ObjectStoreKeys[_settings_words_listId])[_then]((v) => {
-			if (!v) return;
+		promise_done(db.get<ObjectStoreSettings>(
+			store_settings,
+			ObjectStoreKeys.settings_words_listid
+		), (result) => {
+			if (!result) return;
 
-			const id = (v[_value] as number)
+			const id = result.value as number
 			for (const list of lists) {
-				if (list[_id] == id) return setSettings(_words, _list, list)
+				if (list.id == id) return set_settings('words', 'list', list)
 			}
 
-			return setSettings(_words, _list, {id: -1, items: [], name: ''})
+			return set_settings('words', 'list', {id: -1, items: [], name: ''})
 		})
-		db[_get]<ObjectStoreSettings>(store_settings, ObjectStoreKeys[_settings_selection_listId])[_then]((v) => {
-			if (!v) return;
 
-			const id = (v[_value] as number)
+		promise_done(db.get<ObjectStoreSettings>(
+			store_settings,
+			ObjectStoreKeys.settings_selection_listid
+		), (result) => {
+			if (!result) return;
+
+			const id = result.value as number
 			for (const list of lists) {
-				if (list[_id] == id) return setSettings(_selection, _list, list)
+				if (list.id == id) return set_settings('selection', 'list', list)
 			}
 
-			return setSettings(_selection, _list, {id: -1, items: [], name: ''})
+			return set_settings('selection', 'list', {id: -1, items: [], name: ''})
 		})
-		db[_get]<ObjectStoreSettings>(store_settings, ObjectStoreKeys[_settings_teams_namesListId])[_then]((v) => {
-			if (!v) return;
 
-			const id = (v[_value] as number)
+		promise_done(db.get<ObjectStoreSettings>(
+			store_settings,
+			ObjectStoreKeys.settings_teams_listnamesid
+		), (result) => {
+			if (!result) return;
+
+			const id = result.value as number
 			for (const list of lists) {
-				if (list[_id] == id) return setSettings(_teams, _namesList, list)
+				if (list.id == id) return set_settings('teams', 'list_names', list)
 			}
 
-			return setSettings(_teams, _namesList, {id: -1, items: [], name: ''})
+			return set_settings('teams', 'list_names', {id: -1, items: [], name: ''})
 		})
-		db[_get]<ObjectStoreSettings>(store_settings, ObjectStoreKeys[_settings_teams_membersListId])[_then]((v) => {
-			if (!v) return;
 
-			const id = (v[_value] as number)
+		promise_done(db.get<ObjectStoreSettings>(
+			store_settings,
+			ObjectStoreKeys.settings_teams_listmembersid
+		), (result) => {
+			if (!result) return;
+
+			const id = result.value as number
 			for (const list of lists) {
-				if (list[_id] == id) return setSettings(_teams, _membersList, list)
+				if (list.id == id) return set_settings('teams', 'list_members', list)
 			}
 
-			return setSettings(_teams, _membersList, {id: -1, items: [], name: ''})
+			return set_settings('teams', 'list_members', {id: -1, items: [], name: ''})
 		})
 	}
 
-	function initSettings(): void {
-		const store_settings = db[_readObjectStore](ObjectStoreNames[_settings])
+	function init_settings(): void {
+		const store_settings = db.read_store(ObjectStoreNames.settings)
 		if (store_settings == null) return
 
-		db[_cursor](store_settings, (cursor) => {
+		db.cursor(store_settings, (cursor) => {
 			if (!cursor) return true
-				 if (cursor[_key] == ObjectStoreKeys[_settings_string_length                        ]) setSettings(_string, _length     , cursor[_value][_value] as number  )
-			else if (cursor[_key] == ObjectStoreKeys[_settings_string_animation                     ]) setSettings(_string, _animation  , cursor[_value][_value] as boolean )
-			else if (cursor[_key] == ObjectStoreKeys[_settings_string_characters_customCharacter    ]) setSettings(_string, _characters , _customCharacter  , cursor[_value][_value] as string  )
-			else if (cursor[_key] == ObjectStoreKeys[_settings_string_characters_symbols            ]) setSettings(_string, _characters , _symbols          , cursor[_value][_value] as boolean )
-			else if (cursor[_key] == ObjectStoreKeys[_settings_string_characters_numbers            ]) setSettings(_string, _characters , _numbers          , cursor[_value][_value] as boolean )
-			else if (cursor[_key] == ObjectStoreKeys[_settings_string_characters_alphabetLowercase  ]) setSettings(_string, _characters , _alphabetLowercase, cursor[_value][_value] as boolean )
-			else if (cursor[_key] == ObjectStoreKeys[_settings_string_characters_alphabetUppercase  ]) setSettings(_string, _characters , _alphabetUppercase, cursor[_value][_value] as boolean )
 
-			else if (cursor[_key] == ObjectStoreKeys[_settings_numbers_count            ]) setSettings(_numbers, _count             , cursor[_value][_value] as number                      )
-			else if (cursor[_key] == ObjectStoreKeys[_settings_numbers_animation        ]) setSettings(_numbers, _animation         , cursor[_value][_value] as boolean                     )
-			else if (cursor[_key] == ObjectStoreKeys[_settings_numbers_numberType       ]) setSettings(_numbers, _numberType        , cursor[_value][_value] as NumbersRandomizerNumberType )
-			else if (cursor[_key] == ObjectStoreKeys[_settings_numbers_repeat           ]) setSettings(_numbers, _repeat            , cursor[_value][_value] as boolean                     )
-			else if (cursor[_key] == ObjectStoreKeys[_settings_numbers_sort             ]) setSettings(_numbers, _sort              , cursor[_value][_value] as NumbersRandomizerSort       )
-			else if (cursor[_key] == ObjectStoreKeys[_settings_numbers_prefix           ]) setSettings(_numbers, _prefix            , cursor[_value][_value] as string                      )
-			else if (cursor[_key] == ObjectStoreKeys[_settings_numbers_suffix           ]) setSettings(_numbers, _suffix            , cursor[_value][_value] as string                      )
-			else if (cursor[_key] == ObjectStoreKeys[_settings_numbers_separator        ]) setSettings(_numbers, _separator         , cursor[_value][_value] as string                      )
-			else if (cursor[_key] == ObjectStoreKeys[_settings_numbers_minDecimalLength ]) setSettings(_numbers, _minDecimalLength  , cursor[_value][_value] as number                      )
-			else if (cursor[_key] == ObjectStoreKeys[_settings_numbers_range_min        ]) setSettings(_numbers, _range             , _min, cursor[_value][_value] as number                )
-			else if (cursor[_key] == ObjectStoreKeys[_settings_numbers_range_max        ]) setSettings(_numbers, _range             , _max, cursor[_value][_value] as number                )
+			const value = cursor.value.value
+			switch (cursor.key as ObjectStoreKeys) {
+				case ObjectStoreKeys.settings_string_length: set_settings('string', 'length', value as number); break
+				case ObjectStoreKeys.settings_string_animation: set_settings('string', 'animation', value as boolean); break
+				case ObjectStoreKeys.settings_string_characters_custom: set_settings('string', 'characters', 'custom', value as string); break
+				case ObjectStoreKeys.settings_string_characters_symbols: set_settings('string', 'characters', 'symbols', value as boolean); break
+				case ObjectStoreKeys.settings_string_characters_numbers: set_settings('string', 'characters', 'numbers', value as boolean); break
+				case ObjectStoreKeys.settings_string_characters_lowercase: set_settings('string', 'characters', 'lowercase', value as boolean); break
+				case ObjectStoreKeys.settings_string_characters_uppercase: set_settings('string', 'characters', 'uppercase', value as boolean); break
+				case ObjectStoreKeys.settings_numbers_count: set_settings('numbers', 'count', value as number); break
+				case ObjectStoreKeys.settings_numbers_animation: set_settings('numbers', 'animation', value as boolean); break
+				case ObjectStoreKeys.settings_numbers_type: set_settings('numbers', 'type', value as NumbersRandomizerNumberType); break
+				case ObjectStoreKeys.settings_numbers_repeat: set_settings('numbers', 'repeat', value as boolean); break
+				case ObjectStoreKeys.settings_numbers_sort: set_settings('numbers', 'sort', value as NumbersRandomizerSort); break
+				case ObjectStoreKeys.settings_numbers_prefix: set_settings('numbers', 'prefix', value as string); break
+				case ObjectStoreKeys.settings_numbers_suffix: set_settings('numbers', 'suffix', value as string); break
+				case ObjectStoreKeys.settings_numbers_separator: set_settings('numbers', 'separator', value as string); break
+				case ObjectStoreKeys.settings_numbers_minlength: set_settings('numbers', 'min_length', value as number); break
+				case ObjectStoreKeys.settings_numbers_range_min: set_settings('numbers', 'range', 'min', value as number); break
+				case ObjectStoreKeys.settings_numbers_range_max: set_settings('numbers', 'range', 'max', value as number); break
+				case ObjectStoreKeys.settings_words_count: set_settings('words', 'count', value as number); break
+				case ObjectStoreKeys.settings_words_animation: set_settings('words', 'animation', value as boolean); break
+				case ObjectStoreKeys.settings_words_repeat: set_settings('words', 'repeat', value as boolean); break
+				case ObjectStoreKeys.settings_words_wordcase: set_settings('words', 'wordcase', value as WordsRandomizerWordCase); break
+				case ObjectStoreKeys.settings_words_prefix: set_settings('words', 'prefix', value as string); break
+				case ObjectStoreKeys.settings_words_suffix: set_settings('words', 'suffix', value as string); break
+				case ObjectStoreKeys.settings_words_separator: set_settings('words', 'separator', value as string); break
+				case ObjectStoreKeys.settings_selection_count: set_settings('selection', 'count', value as number); break
+				case ObjectStoreKeys.settings_selection_animation: set_settings('selection', 'animation', value as boolean); break
+				case ObjectStoreKeys.settings_colors_count: set_settings('colors', 'count', value as number); break
+				case ObjectStoreKeys.settings_colors_animation: set_settings('colors', 'animation', value as boolean); break
+				case ObjectStoreKeys.settings_colors_model: set_settings('colors', 'model', value as ColorsRandomizerColorModel); break
+				case ObjectStoreKeys.settings_colors_range_hex_min: set_settings('colors', 'range', 'hex', 'min', value as number); break
+				case ObjectStoreKeys.settings_colors_range_hex_max: set_settings('colors', 'range', 'hex', 'max', value as number); break
+				case ObjectStoreKeys.settings_colors_range_hsl_h_min: set_settings('colors', 'range', 'hsl', 'h', 'min', value as number); break
+				case ObjectStoreKeys.settings_colors_range_hsl_h_max: set_settings('colors', 'range', 'hsl', 'h', 'max', value as number); break
+				case ObjectStoreKeys.settings_colors_range_hsl_s_min: set_settings('colors', 'range', 'hsl', 's', 'min', value as number); break
+				case ObjectStoreKeys.settings_colors_range_hsl_s_max: set_settings('colors', 'range', 'hsl', 's', 'max', value as number); break
+				case ObjectStoreKeys.settings_colors_range_hsl_l_min: set_settings('colors', 'range', 'hsl', 'l', 'min', value as number); break
+				case ObjectStoreKeys.settings_colors_range_hsl_l_max: set_settings('colors', 'range', 'hsl', 'l', 'max', value as number); break
+				case ObjectStoreKeys.settings_colors_range_rgb_r_min: set_settings('colors', 'range', 'rgb', 'r', 'min', value as number); break
+				case ObjectStoreKeys.settings_colors_range_rgb_r_max: set_settings('colors', 'range', 'rgb', 'r', 'max', value as number); break
+				case ObjectStoreKeys.settings_colors_range_rgb_g_min: set_settings('colors', 'range', 'rgb', 'g', 'min', value as number); break
+				case ObjectStoreKeys.settings_colors_range_rgb_g_max: set_settings('colors', 'range', 'rgb', 'g', 'max', value as number); break
+				case ObjectStoreKeys.settings_colors_range_rgb_b_min: set_settings('colors', 'range', 'rgb', 'b', 'min', value as number); break
+				case ObjectStoreKeys.settings_colors_range_rgb_b_max: set_settings('colors', 'range', 'rgb', 'b', 'max', value as number); break
+				case ObjectStoreKeys.settings_teams_count: set_settings('teams', 'count', value as number); break
+				case ObjectStoreKeys.settings_teams_animation: set_settings('teams', 'animation', value as boolean); break
 
-			else if (cursor[_key] == ObjectStoreKeys[_settings_words_count      ]) setSettings(_words, _count       , cursor[_value][_value] as number                  )
-			else if (cursor[_key] == ObjectStoreKeys[_settings_words_animation  ]) setSettings(_words, _animation   , cursor[_value][_value] as boolean                 )
-			else if (cursor[_key] == ObjectStoreKeys[_settings_words_repeat     ]) setSettings(_words, _repeat      , cursor[_value][_value] as boolean                 )
-			else if (cursor[_key] == ObjectStoreKeys[_settings_words_wordCase   ]) setSettings(_words, _wordCase    , cursor[_value][_value] as WordsRandomizerWordCase )
-			else if (cursor[_key] == ObjectStoreKeys[_settings_words_prefix     ]) setSettings(_words, _prefix      , cursor[_value][_value] as string                  )
-			else if (cursor[_key] == ObjectStoreKeys[_settings_words_suffix     ]) setSettings(_words, _suffix      , cursor[_value][_value] as string                  )
-			else if (cursor[_key] == ObjectStoreKeys[_settings_words_separator  ]) setSettings(_words, _separator   , cursor[_value][_value] as string                  )
-
-			else if (cursor[_key] == ObjectStoreKeys[_settings_selection_count      ]) setSettings(_selection, _count       , cursor[_value][_value] as number  )
-			else if (cursor[_key] == ObjectStoreKeys[_settings_selection_animation  ]) setSettings(_selection, _animation   , cursor[_value][_value] as boolean )
-
-			else if (cursor[_key] == ObjectStoreKeys[_settings_colors_count             ]) setSettings(_colors, _count      , cursor[_value][_value] as number  )
-			else if (cursor[_key] == ObjectStoreKeys[_settings_colors_animation         ]) setSettings(_colors, _animation  , cursor[_value][_value] as boolean )
-			else if (cursor[_key] == ObjectStoreKeys[_settings_colors_colorModel        ]) setSettings(_colors, _colorModel , cursor[_value][_value] as ColorsRandomizerColorModel)
-			else if (cursor[_key] == ObjectStoreKeys[_settings_colors_range_hex_min     ]) setSettings(_colors, _range      , _hex, _min, cursor[_value][_value] as number)
-			else if (cursor[_key] == ObjectStoreKeys[_settings_colors_range_hex_max     ]) setSettings(_colors, _range      , _hex, _max, cursor[_value][_value] as number)
-			else if (cursor[_key] == ObjectStoreKeys[_settings_colors_range_hsl_h_min   ]) setSettings(_colors, _range      , _hsl, _h  , _min, cursor[_value][_value] as number)
-			else if (cursor[_key] == ObjectStoreKeys[_settings_colors_range_hsl_h_max   ]) setSettings(_colors, _range      , _hsl, _h  , _max, cursor[_value][_value] as number)
-			else if (cursor[_key] == ObjectStoreKeys[_settings_colors_range_hsl_s_min   ]) setSettings(_colors, _range      , _hsl, _s  , _min, cursor[_value][_value] as number)
-			else if (cursor[_key] == ObjectStoreKeys[_settings_colors_range_hsl_s_max   ]) setSettings(_colors, _range      , _hsl, _s  , _max, cursor[_value][_value] as number)
-			else if (cursor[_key] == ObjectStoreKeys[_settings_colors_range_hsl_l_min   ]) setSettings(_colors, _range      , _hsl, _l  , _min, cursor[_value][_value] as number)
-			else if (cursor[_key] == ObjectStoreKeys[_settings_colors_range_hsl_l_max   ]) setSettings(_colors, _range      , _hsl, _l  , _max, cursor[_value][_value] as number)
-			else if (cursor[_key] == ObjectStoreKeys[_settings_colors_range_rgb_r_min   ]) setSettings(_colors, _range      , _rgb, _r  , _min, cursor[_value][_value] as number)
-			else if (cursor[_key] == ObjectStoreKeys[_settings_colors_range_rgb_r_max   ]) setSettings(_colors, _range      , _rgb, _r  , _max, cursor[_value][_value] as number)
-			else if (cursor[_key] == ObjectStoreKeys[_settings_colors_range_rgb_g_min   ]) setSettings(_colors, _range      , _rgb, _g  , _min, cursor[_value][_value] as number)
-			else if (cursor[_key] == ObjectStoreKeys[_settings_colors_range_rgb_g_max   ]) setSettings(_colors, _range      , _rgb, _g  , _max, cursor[_value][_value] as number)
-			else if (cursor[_key] == ObjectStoreKeys[_settings_colors_range_rgb_b_min   ]) setSettings(_colors, _range      , _rgb, _b  , _min, cursor[_value][_value] as number)
-			else if (cursor[_key] == ObjectStoreKeys[_settings_colors_range_rgb_b_max   ]) setSettings(_colors, _range      , _rgb, _b  , _max, cursor[_value][_value] as number)
-
-			else if (cursor[_key] == ObjectStoreKeys[_settings_teams_count      ]) setSettings(_teams, _count       , cursor[_value][_value] as number  )
-			else if (cursor[_key] == ObjectStoreKeys[_settings_teams_animation  ]) setSettings(_teams, _animation   , cursor[_value][_value] as boolean )
-
-			// init by `getListsSettings()`
-			// else if (cursor[_key] == ObjectStoreKeys[_settings_words_listId]) {}
-			// else if (cursor[_key] == ObjectStoreKeys[_settings_selection_listId]) {}
-			// else if (cursor[_key] == ObjectStoreKeys[_settings_teams_namesListId]) {}
-			// else if (cursor[_key] == ObjectStoreKeys[_settings_teams_membersListId]) {}
+				// already init by other function
+				case ObjectStoreKeys.settings_teams_listnamesid:
+				case ObjectStoreKeys.settings_teams_listmembersid:
+				case ObjectStoreKeys.settings_words_listid:
+				case ObjectStoreKeys.settings_selection_listid:
+				case ObjectStoreKeys.lastoutput_string:
+				case ObjectStoreKeys.lastoutput_numbers:
+				case ObjectStoreKeys.lastoutput_words:
+				case ObjectStoreKeys.lastoutput_selection:
+				case ObjectStoreKeys.lastoutput_colors:
+				case ObjectStoreKeys.lastoutput_teams:
+				case ObjectStoreKeys.settings_lastpage:
+			}
 
 			return true
 		})
 	}
 
-	function saveSettings(...items: [key: ObjectStoreKeys, value: unknown][]): void {
-		const store_settings = db[_writeObjectStore](ObjectStoreNames[_settings])
+	function save_settings(...items: [key: ObjectStoreKeys, value: unknown][]): void {
+		const store_settings = db.write_store(ObjectStoreNames.settings)
 		if (store_settings == null) return
 
 		for (const item of items) {
-			store_settings[_put]({ key: item[0], value: item[1] })
+			idb_store_put(store_settings, { key: item[0], value: item[1] })
 		}
 	}
 
-	function exportList(list: ItemList): void {
-		const url = createObjectURL(new Blob(
-			[list[_items][_join]('\n')],
+	function export_list(list: ItemList): void {
+		const url = url_create(new Blob(
+			[array_join(list.items, '\n')],
 			{ type: 'text/csv'}
 		))
-		downloadFileByURL(url, 'list.csv')
-		revokeObjectURL(url)
+		url_download_file(url, 'list.csv')
+		url_revoke(url)
 	}
 
-	function editList(ev: Event): void {
-		const name = textField_editListName_ref[_value][_trim]()
-		const id = selectedListToEdit()[_id]
-		if (name[_length] == 0) {
-			textField_editListName_ref[_focus]()
-			openToast(ev, toast_listNameEmpty_ref)
+	function edit_list(ev: Event): void {
+		const name = string_trim(textfield_editlistname_ref.value)
+		const id = selected_list_to_edit().id
+		if (string_length(name) == 0) {
+			element_focus(textfield_editlistname_ref)
+			open_toast(ev, toast_listnameempty_ref)
 			return
 		}
 
-		const items: string[] = areaTextField_editItemList_ref[_value][_split](/[\n,]/gs)[_filter](v => v[_trim]()[_length] > 0)
-		if (items[_length] == 0) {
-			areaTextField_editItemList_ref[_focus]()
-			openToast(ev, toast_listHaveNoItems_ref)
+		const items: string[] = array_filter(
+			string_split(areatextfield_edititemlist_ref.value, /[\n,]/gs),
+			v => string_length(string_trim(v)) > 0
+		)
+		if (array_length(items) == 0) {
+			element_focus(areatextfield_edititemlist_ref)
+			open_toast(ev, toast_listhavenoitems_ref)
 			return
 		}
 
 		for (const list of lists) {
-			if (list[_name] != name || list[_id] == id) continue;
+			if (list.name != name || list.id == id) continue;
 
-			textField_editListName_ref[_focus]()
-			openToast(ev, toast_listNameAlreadyExist_ref)
+			element_focus(textfield_editlistname_ref)
+			open_toast(ev, toast_listnamealreadyexist_ref)
 			return
 		}
 
-		closeDialog(dialog_edit_ref)
+		close_dialog(dialog_edit_ref)
 
-		const newLists: ItemList = {id, name, items}
-		const index = lists[_findIndex](list => list[_id] == id)
-		if (index >= 0) setLists(lists => [
-			...lists[_slice](0, index)[_concat](lists[_slice](index + 1)),
-			newLists
-		][_sort]((a, b) => a[_name][_localeCompare](b[_name])))
+		const new_list: ItemList = {id, name, items}
+		const index = array_find_index(lists, list => list.id == id)
+		if (index >= 0) set_lists(lists => array_sort([
+			...array_concat(array_slice(lists, 0, index), array_slice(lists, index + 1)),
+			new_list
+		], (a, b) => string_locale_compare(a.name, b.name)))
 
-		if (settings[_words][_list][_id] == id) command(Commands[_change_settings_words_list], newLists)
-		if (settings[_selection][_list][_id] == id) command(Commands[_change_settings_selection_list], newLists)
-		if (settings[_teams][_namesList][_id] == id) command(Commands[_change_settings_teams_namesList], newLists)
-		if (settings[_teams][_membersList][_id] == id) command(Commands[_change_settings_teams_membersList], newLists)
+		if (settings.words.list.id == id) command(Commands.change_settings_words_list, new_list)
+		if (settings.selection.list.id == id) command(Commands.change_settings_selection_list, new_list)
+		if (settings.teams.list_names.id == id) command(Commands.change_settings_teams_listnames, new_list)
+		if (settings.teams.list_members.id == id) command(Commands.change_settings_teams_listmembers, new_list)
 
-		openToast(ev, toast_listEdited_ref)
+		open_toast(ev, toast_listedited_ref)
 
-		const store_lists = db[_writeObjectStore](ObjectStoreNames[_lists])
-		if (store_lists != null) store_lists[_put](newLists)
+		const store_lists = db.write_store(ObjectStoreNames.lists)
+		if (store_lists) idb_store_put(store_lists, new_list)
 	}
 
-	function openEditDialog(ev: Event, list: ItemList): void {
-		setSelectedListToEdit(list)
-		changeTextFieldValue(textField_editListName_ref, list[_name])
-		changeAreaTextFieldValue(areaTextField_editItemList_ref, list[_items][_join](', '))
-		openDialog(ev, dialog_edit_ref, {
+	function open_edit_dialog(ev: Event, list: ItemList): void {
+		set_selected_list_to_edit(list)
+		change_textfield_value(textfield_editlistname_ref, list.name)
+		change_areatextfield_value(areatextfield_edititemlist_ref, array_join(list.items, ', '))
+		open_dialog(ev, dialog_edit_ref, {
 			important: true
 		})
 	}
 
-	function deleteList(ev: Event, list: ItemList): void {
-		const index = lists[_findIndex](v => v[_id] == list[_id])
+	function delete_list(ev: Event, list: ItemList): void {
+		const index = array_find_index(lists, v => v.id == list.id)
 		if (index < 0) return;
 
-		setLists(lists => lists[_slice](0, index)[_concat](lists[_slice](index + 1)))
+		set_lists(lists => array_concat(array_slice(lists, 0, index), array_slice(lists, index + 1)))
 
-		const isNoMoreLists = lists[_length] == 0
-		const newList = isNoMoreLists? {id: -1, name: '', items: []} : lists[0]
-		if (isNoMoreLists) closeDialog(dialog_lists_ref)
+		const is_no_more_lists = array_length(lists) == 0
+		const new_list = is_no_more_lists? {id: -1, name: '', items: []} : lists[0]
+		if (is_no_more_lists) close_dialog(dialog_lists_ref)
 
-		if (settings[_words][_list][_id]        == list[_id]) command(Commands[_change_settings_words_list]       , {...newList})
-		if (settings[_selection][_list][_id]    == list[_id]) command(Commands[_change_settings_selection_list]   , {...newList})
-		if (settings[_teams][_namesList][_id]   == list[_id]) command(Commands[_change_settings_teams_namesList]  , {...newList})
-		if (settings[_teams][_membersList][_id] == list[_id]) command(Commands[_change_settings_teams_membersList], {...newList})
+		if (settings.words.list.id == list.id) command(Commands.change_settings_words_list, {...new_list})
+		if (settings.selection.list.id == list.id) command(Commands.change_settings_selection_list, {...new_list})
+		if (settings.teams.list_names.id == list.id) command(Commands.change_settings_teams_listnames, {...new_list})
+		if (settings.teams.list_members.id == list.id) command(Commands.change_settings_teams_listmembers, {...new_list})
 
-		openToast(ev, toast_listDeleted_ref)
+		open_toast(ev, toast_listdeleted_ref)
 
-		const store_lists = db[_writeObjectStore](ObjectStoreNames[_lists])
-		if (store_lists != null) store_lists[_delete](list[_id])
+		const store_lists = db.write_store(ObjectStoreNames.lists)
+		if (store_lists) idb_store_delete(store_lists, list.id)
 	}
 
-	function openDeleteDialog(ev: Event, list: ItemList): void {
-		setSelectedListToDelete(list)
-		openDialog(ev, dialog_deleteListWarning_ref, {
+	function open_delete_dialog(ev: Event, list: ItemList): void {
+		set_selected_list_to_delete(list)
+		open_dialog(ev, dialog_deletelistwarning_ref, {
 			important: true
 		})
 	}
 
-	function addNewList(ev: MouseEvent): void {
-		const name = textField_newListName_ref[_value][_trim]()
-		if (name[_length] == 0) {
-			textField_newListName_ref[_focus]()
-			openToast(ev, toast_listNameEmpty_ref)
+	function add_new_list(ev: MouseEvent): void {
+		const value = textfield_newlistname_ref.value
+		const name = string_trim(value)
+		if (string_length(name) == 0) {
+			element_focus(textfield_newlistname_ref)
+			open_toast(ev, toast_listnameempty_ref)
 			return
 		}
 
-		const items: string[] = areaTextField_newItemList_ref[_value][_split](/[\n,]/gs)[_filter](v => v[_trim]()[_length] > 0)
-		if (items[_length] == 0) {
-			areaTextField_newItemList_ref[_focus]()
-			openToast(ev, toast_listHaveNoItems_ref)
+		const items: string[] = array_filter(
+			string_split(value, /[\n,]/gs),
+			v => string_length(string_trim(v)) > 0
+		)
+		if (array_length(items) == 0) {
+			element_focus(areatextfield_newitemlist_ref)
+			open_toast(ev, toast_listhavenoitems_ref)
 			return
 		}
 
 		for (const list of lists) {
-			if (list[_name] != name) continue;
+			if (list.name != name) continue;
 
-			textField_newListName_ref[_focus]()
-			openToast(ev, toast_listNameAlreadyExist_ref)
+			element_focus(textfield_newlistname_ref)
+			open_toast(ev, toast_listnamealreadyexist_ref)
 			return
 		}
 
-		closeDialog(dialog_add_ref)
+		close_dialog(dialog_add_ref)
 
 		let id = 0
 		for (const list of lists) {
-			if (list[_id] <= id) continue
-			id = list[_id]
+			if (list.id <= id) continue
+			id = list.id
 		}
 		id += 1
-		const newLists: ItemList = {id, name, items}
-		openToast(ev, toast_newListAdded_ref)
-		setLists(l => [...l, {id, name, items}][_sort]((a, b) => a[_name][_localeCompare](b[_name])))
+		const new_lists: ItemList = {id, name, items}
+		open_toast(ev, toast_newlistadded_ref)
+		set_lists(l => array_sort([...l, {id, name, items}], (a, b) => string_locale_compare(a.name, b.name)))
 
-		const store_lists = db[_writeObjectStore](ObjectStoreNames[_lists])
-		if (store_lists != null) store_lists[_put](newLists)
+		const store_lists = db.write_store(ObjectStoreNames.lists)
+		if (store_lists) idb_store_put(store_lists, new_lists)
 	}
 
-	function openAddDialog(ev: Event): void {
-		changeTextFieldValue(textField_newListName_ref, '')
-		changeAreaTextFieldValue(areaTextField_newItemList_ref, '')
-		openDialog(ev, dialog_add_ref)
+	function open_add_dialog(ev: Event): void {
+		change_textfield_value(textfield_newlistname_ref, '')
+		change_areatextfield_value(areatextfield_newitemlist_ref, '')
+		open_dialog(ev, dialog_add_ref)
 	}
 
-	function viewList(ev: Event, list: ItemList): void {
-		setViewItemList(list)
-		openDialog(ev, dialog_viewItemList_ref)
+	function view_list(ev: Event, list: ItemList): void {
+		set_list_viewitem(list)
+		open_dialog(ev, dialog_viewitemlist_ref)
 	}
 
-	async function listItemFromCSVFile(): Promise<string[]> {
+	async function listitem_from_csv_file(): Promise<string[]> {
 		let text = ''
 
 		try {
-			const files = await openFile('text/csv', true)
+			const files = await file_open('text/csv', true)
 			if (!files) return [];
 
 			for (const file of files!) {
-				if (file[_type] != 'text/csv') continue;
-				text += await readFileAsText(file)
+				if (file.type != 'text/csv') continue;
+				text += await file_read_as_text(file)
 			}
 		} catch (e) {}
 
-		return text[_split](/[\n,]/gs)[_filter](v => v[_trim]()[_length] > 0)
+		return array_filter(
+			string_split(text, /[\n,]/gs),
+			v => string_length(string_trim(v)) > 0
+		)
 	}
 
-	function resetLists(ev: Event): void {
-		const defaultListIds = DEFAULT_LISTS[_map](v => v[_id])
+	function reset_lists(ev: Event): void {
+		const default_list_ids = array_map(DEFAULT_LISTS, v => v.id)
 		for (const list of lists) {
-			if (defaultListIds[_includes](list[_id])) continue
+			if (array_includes(default_list_ids, list.id)) continue
 
-			deleteList(ev, list)
+			delete_list(ev, list)
 		}
-		setLists(DEFAULT_LISTS)
+		set_lists(array_map(DEFAULT_LISTS, l => ({id: l.id, name: l.name, items: [...l.items]})))
 
-		const store_lists = db[_writeObjectStore](ObjectStoreNames[_lists])
+		const store_lists = db.write_store(ObjectStoreNames.lists)
 		if (store_lists == null) return
 
 		for (const list of lists){
-			store_lists[_put]({
-				id: list[_id],
-				name: list[_name],
-				items: [...list[_items]]
+			idb_store_put(store_lists, {
+				id: list.id,
+				name: list.name,
+				items: [...list.items]
 			} satisfies ItemList)
 		}
 	}
 
-	function command(type: Commands, ...args: unknown[]): unknown {
-		// add_list
-		if (type == Commands[_add_list]) {
-			openAddDialog(args[0] as Event)
+	function command(type: Commands, ...args: unknown[]): unknown { switch (type) {
+		case Commands.reset_list: {
+			reset_lists(args[0] as Event)
+			break
 		}
-
-		// reset_list
-		else if (type == Commands[_reset_list]) {
-			resetLists(args[0] as Event)
+		case Commands.add_list: {
+			open_add_dialog(args[0] as Event)
+			break
 		}
-
-		// view_list
-		else if (type == Commands[_view_list]) {
-			viewList(args[0] as Event, args[1] as ItemList)
+		case Commands.export_list: {
+			export_list(args[0] as ItemList)
+			break
 		}
-
-		// edit_list
-		else if (type == Commands[_edit_list]) {
-			if (args[_length] > 1) return openEditDialog(args[0] as Event, args[1] as ItemList)
-			openDialog(args[0] as Event, dialog_lists_ref)
+		case Commands.edit_list: {
+			if (array_length(args) > 1) return open_edit_dialog(args[0] as Event, args[1] as ItemList)
+			open_dialog(args[0] as Event, dialog_lists_ref)
+			break
 		}
-
-		// delete_list
-		else if (type == Commands[_delete_list]) {
-			openDeleteDialog(args[0] as Event, args[1] as ItemList)
+		case Commands.view_list:{
+			view_list(args[0] as Event, args[1] as ItemList)
+			break
 		}
-
-		// export_list
-		else if (type == Commands[_export_list]) {
-			exportList(args[0] as ItemList)
+		case Commands.delete_list: {
+			open_delete_dialog(args[0] as Event, args[1] as ItemList)
+			break
 		}
-
-		// toggle_settings_animation
-		else if (type == Commands[_toggle_settings_animation]) {
-			if (randomizerType() == RandomizerType[_numbers]) {
-				setSettings(_numbers, _animation, a => !a)
-				saveSettings([ObjectStoreKeys[_settings_numbers_animation], settings[_numbers][_animation]])
+		case Commands.toggle_settings_animation: {
+			switch (randomizer()) {
+				case randomizer_numbers: {
+					set_settings('numbers', 'animation', a => !a)
+					save_settings([ObjectStoreKeys.settings_numbers_animation, settings.numbers.animation])
+					break
+				}
+				case randomizer_words: {
+					set_settings('words', 'animation', a => !a)
+					save_settings([ObjectStoreKeys.settings_words_animation, settings.words.animation])
+					break
+				}
+				case randomizer_string: {
+					set_settings('string', 'animation', a => !a)
+					save_settings([ObjectStoreKeys.settings_string_animation, settings.string.animation])
+					break
+				}
+				case randomizer_selection: {
+					set_settings('selection', 'animation', a => !a)
+					save_settings([ObjectStoreKeys.settings_selection_animation, settings.selection.animation])
+					break
+				}
+				case randomizer_colors: {
+					set_settings('colors', 'animation', a => !a)
+					save_settings([ObjectStoreKeys.settings_colors_animation, settings.colors.animation])
+					break
+				}
+				case randomizer_teams: {
+					set_settings('teams', 'animation', a => !a)
+					save_settings([ObjectStoreKeys.settings_teams_animation, settings.teams.animation])
+					break
+				}
 			}
-			else if (randomizerType() == RandomizerType[_words]) {
-				setSettings(_words, _animation, a => !a)
-				saveSettings([ObjectStoreKeys[_settings_words_animation], settings[_words][_animation]])
-			}
-			else if (randomizerType() == RandomizerType[_string]) {
-				setSettings(_string, _animation, a => !a)
-				saveSettings([ObjectStoreKeys[_settings_string_animation], settings[_string][_animation]])
-			}
-			else if (randomizerType() == RandomizerType[_selection]) {
-				setSettings(_selection, _animation, a => !a)
-				saveSettings([ObjectStoreKeys[_settings_selection_animation], settings[_selection][_animation]])
-			}
-			else if (randomizerType() == RandomizerType[_colors]) {
-				setSettings(_colors, _animation, a => !a)
-				saveSettings([ObjectStoreKeys[_settings_colors_animation], settings[_colors][_animation]])
-			}
-			else if (randomizerType() == RandomizerType[_teams]) {
-				setSettings(_teams, _animation, a => !a)
-				saveSettings([ObjectStoreKeys[_settings_teams_animation], settings[_teams][_animation]])
-			}
+			break
 		}
-
-		// toggle_settings_repeat
-		else if (type == Commands[_toggle_settings_repeat]) {
-			if (randomizerType() == RandomizerType[_numbers]) {
-				setSettings(_numbers, _repeat, r => !r)
-				saveSettings([ObjectStoreKeys[_settings_numbers_repeat], settings[_numbers][_repeat]])
+		case Commands.toggle_settings_repeat: {
+			if (randomizer() == randomizer_numbers) {
+				set_settings('numbers', 'repeat', r => !r)
+				save_settings([ObjectStoreKeys.settings_numbers_repeat, settings.numbers.repeat])
 			}
-			else if (randomizerType() == RandomizerType[_words]) {
-				setSettings(_words, _repeat, r => !r)
-				saveSettings([ObjectStoreKeys[_settings_words_repeat], settings[_words][_repeat]])
-			}
-		}
-
-		// change_settings_numbers_sort
-		else if (type == Commands[_change_settings_numbers_sort]) {
-			setSettings(_numbers, _sort, args[0] as NumbersRandomizerSort)
-			saveSettings([ObjectStoreKeys[_settings_numbers_sort], args[0]])
-		}
-
-		// change_settings_numbers_type
-		else if (type == Commands[_change_settings_numbers_type]) {
-			setSettings(_numbers, _numberType, args[0] as NumbersRandomizerNumberType)
-			saveSettings([ObjectStoreKeys[_settings_numbers_numberType], args[0]])
-		}
-
-		// change_settings_prefix
-		else if (type == Commands[_change_settings_prefix]) {
-			if (randomizerType() == RandomizerType[_numbers]) {
-				setSettings(_numbers, _prefix, args[0] as string)
-				saveSettings([ObjectStoreKeys[_settings_numbers_prefix], args[0]])
-			}
-			else if (randomizerType() == RandomizerType[_words]) {
-				setSettings(_words, _prefix, args[0] as string)
-				saveSettings([ObjectStoreKeys[_settings_words_prefix], args[0]])
+			else if (randomizer() == randomizer_words) {
+				set_settings('words', 'repeat', r => !r)
+				save_settings([ObjectStoreKeys.settings_words_repeat, settings.words.repeat])
 			}
 		}
-
-		// change_settings_suffix
-		else if (type == Commands[_change_settings_suffix]) {
-			if (randomizerType() == RandomizerType[_numbers]) {
-				setSettings(_numbers, _suffix, args[0] as string)
-				saveSettings([ObjectStoreKeys[_settings_numbers_suffix], args[0]])
+		case Commands.change_settings_numbers_sort: {
+			set_settings('numbers', 'sort', args[0] as NumbersRandomizerSort)
+			save_settings([ObjectStoreKeys.settings_numbers_sort, args[0]])
+			break
+		}
+		case Commands.change_settings_numbers_type: {
+			set_settings('numbers', 'type', args[0] as NumbersRandomizerNumberType)
+			save_settings([ObjectStoreKeys.settings_numbers_type, args[0]])
+			break
+		}
+		case Commands.change_settings_prefix: {
+			if (randomizer() == randomizer_numbers) {
+				set_settings('numbers', 'prefix', args[0] as string)
+				save_settings([ObjectStoreKeys.settings_numbers_prefix, args[0]])
 			}
-			else if (randomizerType() == RandomizerType[_words]) {
-				setSettings(_words, _suffix, args[0] as string)
-				saveSettings([ObjectStoreKeys[_settings_words_suffix], args[0]])
+			else if (randomizer() == randomizer_words) {
+				set_settings('words', 'prefix', args[0] as string)
+				save_settings([ObjectStoreKeys.settings_words_prefix, args[0]])
 			}
+			break
 		}
-
-		// change_settings_separator
-		else if (type == Commands[_change_settings_separator]) {
-			if (randomizerType() == RandomizerType[_numbers]) {
-				setSettings(_numbers, _separator, args[0] as string)
-				saveSettings([ObjectStoreKeys[_settings_numbers_separator], args[0]])
+		case Commands.change_settings_suffix:{
+			if (randomizer() == randomizer_numbers) {
+				set_settings('numbers', 'suffix', args[0] as string)
+				save_settings([ObjectStoreKeys.settings_numbers_suffix, args[0]])
 			}
-			else if (randomizerType() == RandomizerType[_words]) {
-				setSettings(_words, _separator, args[0] as string)
-				saveSettings([ObjectStoreKeys[_settings_words_separator], args[0]])
+			else if (randomizer() == randomizer_words) {
+				set_settings('words', 'suffix', args[0] as string)
+				save_settings([ObjectStoreKeys.settings_words_suffix, args[0]])
 			}
+			break
 		}
-
-		// change_settings_words_wordCase
-		else if (type == Commands[_change_settings_words_wordCase]) {
-			setSettings(_words, _wordCase, args[0] as WordsRandomizerWordCase)
-			saveSettings([ObjectStoreKeys[_settings_words_wordCase], args[0]])
+		case Commands.change_settings_separator:{
+			if (randomizer() == randomizer_numbers) {
+				set_settings('numbers', 'separator', args[0] as string)
+				save_settings([ObjectStoreKeys.settings_numbers_separator, args[0]])
+			}
+			else if (randomizer() == randomizer_words) {
+				set_settings('words', 'separator', args[0] as string)
+				save_settings([ObjectStoreKeys.settings_words_separator, args[0]])
+			}
+			break
 		}
-
-		// change_settings_colors_colorModel
-		else if (type == Commands[_change_settings_colors_colorModel]) {
-			setSettings(_colors, _colorModel, args[0] as ColorsRandomizerColorModel)
-			saveSettings([ObjectStoreKeys[_settings_colors_colorModel], args[0]])
+		case Commands.change_settings_words_wordcase:{
+			set_settings('words', 'wordcase', args[0] as WordsRandomizerWordCase)
+			save_settings([ObjectStoreKeys.settings_words_wordcase, args[0]])
+			break
 		}
-
-		// change_settings_words_listId
-		else if (type == Commands[_change_settings_words_list]) {
-			setSettings(_words, _list, args[0] as ItemList)
-			saveSettings([ObjectStoreKeys[_settings_words_listId], (args[0] as ItemList)[_id]])
+		case Commands.change_settings_colors_model: {
+			set_settings('colors', 'model', args[0] as ColorsRandomizerColorModel)
+			save_settings([ObjectStoreKeys.settings_colors_model, args[0]])
+			break
 		}
-
-		// change_settings_string_length
-		else if (type == Commands[_change_settings_string_length]) {
-			setSettings(_string, _length, args[0] as number)
-			saveSettings([ObjectStoreKeys[_settings_string_length], args[0]])
+		case Commands.change_settings_words_list: {
+			set_settings('words', 'list', args[0] as ItemList)
+			save_settings([ObjectStoreKeys.settings_words_listid, (args[0] as ItemList).id])
+			break
 		}
-
-		// change_settings_string_characters_customCharacters
-		else if (type == Commands[_change_settings_string_characters_customCharacters]) {
-			setSettings(_string, _characters, _customCharacter, args[0] as string)
-			saveSettings([ObjectStoreKeys[_settings_string_characters_customCharacter], args[0]])
+		case Commands.change_settings_string_length: {
+			set_settings('string', 'length', args[0] as number)
+			save_settings([ObjectStoreKeys.settings_string_length, args[0]])
+			break
 		}
-
-		// toggle_settings_string_characters_symbols
-		else if (type == Commands[_toggle_settings_string_characters_symbols]) {
-			setSettings(_string, _characters, _symbols, v => !v)
-			saveSettings([ObjectStoreKeys[_settings_string_characters_symbols], settings[_string][_characters][_symbols]])
+		case Commands.change_settings_string_characters_custom: {
+			set_settings('string', 'characters', 'custom', args[0] as string)
+			save_settings([ObjectStoreKeys.settings_string_characters_custom, args[0]])
+			break
 		}
-
-		// toggle_settings_string_characters_numbers
-		else if (type == Commands[_toggle_settings_string_characters_numbers]) {
-			setSettings(_string, _characters, _numbers, v => !v)
-			saveSettings([ObjectStoreKeys[_settings_string_characters_numbers], settings[_string][_characters][_numbers]])
+		case Commands.toggle_settings_string_characters_symbols: {
+			set_settings('string', 'characters', 'symbols', v => !v)
+			save_settings([ObjectStoreKeys.settings_string_characters_symbols, settings.string.characters.symbols])
+			break
 		}
-
-		// toggle_settings_string_characters_alphabetLowercase
-		else if (type == Commands[_toggle_settings_string_characters_alphabetLowercase]) {
-			setSettings(_string, _characters, _alphabetLowercase, v => !v)
-			saveSettings([ObjectStoreKeys[_settings_string_characters_alphabetLowercase], settings[_string][_characters][_alphabetLowercase]])
+		case Commands.toggle_settings_string_characters_numbers: {
+			set_settings('string', 'characters', 'numbers', v => !v)
+			save_settings([ObjectStoreKeys.settings_string_characters_numbers, settings.string.characters.numbers])
+			break
 		}
-
-		// toggle_settings_string_characters_alphabetUppercase
-		else if (type == Commands[_toggle_settings_string_characters_alphabetUppercase]) {
-			setSettings(_string, _characters, _alphabetUppercase, v => !v)
-			saveSettings([ObjectStoreKeys[_settings_string_characters_alphabetUppercase], settings[_string][_characters][_alphabetUppercase]])
+		case Commands.toggle_settings_string_characters_lowercase: {
+			set_settings('string', 'characters', 'lowercase', v => !v)
+			save_settings([ObjectStoreKeys.settings_string_characters_lowercase, settings.string.characters.lowercase])
+			break
 		}
-
-		// change_settings_numbers_count
-		else if (type == Commands[_change_settings_numbers_count]) {
-			setSettings(_numbers, _count, args[0] as number)
-			saveSettings([ObjectStoreKeys[_settings_numbers_count], args[0]])
+		case Commands.toggle_settings_string_characters_uppercase: {
+			set_settings('string','characters', 'uppercase', v => !v)
+			save_settings([ObjectStoreKeys.settings_string_characters_uppercase, settings.string.characters.uppercase])
+			break
 		}
-
-		// change_settings_numbers_minDecimalLength
-		else if (type == Commands[_change_settings_numbers_minDecimalLength]) {
-			setSettings(_numbers, _minDecimalLength, args[0] as number)
-			saveSettings([ObjectStoreKeys[_settings_numbers_minDecimalLength], args[0]])
-		}
-
-		// change_settings_numbers_range
-		else if (type == Commands[_change_settings_numbers_range]) {
-			setSettings(_numbers, _range, {min: args[0] as number, max: args[1] as number})
-			saveSettings(
-				[ObjectStoreKeys[_settings_numbers_range_min], args[0]],
-				[ObjectStoreKeys[_settings_numbers_range_max], args[1]]
-			)
-		}
-
-		// change_settings_words_count
-		else if (type == Commands[_change_settings_words_count]) {
-			setSettings(_words, _count, args[0] as number)
-			saveSettings([ObjectStoreKeys[_settings_words_count], args[0]])
-		}
-
-		// change_settings_colors_count
-		else if (type == Commands[_change_settings_colors_count]) {
-			setSettings(_colors, _count, args[0] as number)
-			saveSettings([ObjectStoreKeys[_settings_colors_count], args[0]])
-		}
-
-		// change_settings_colors_range_hex
-		else if (type == Commands[_change_settings_colors_range_hex]) {
-			setSettings(_colors, _range, _hex, { min: args[0] as number, max: args[1] as number })
-			saveSettings(
-				[ObjectStoreKeys[_settings_colors_range_hex_min], args[0]],
-				[ObjectStoreKeys[_settings_colors_range_hex_max], args[1]],
-			)
-		}
-
-		// change_settings_colors_range_hsl_h
-		else if (type == Commands[_change_settings_colors_range_hsl_h]) {
-			setSettings(_colors, _range, _hsl, _h, { min: args[0] as number, max: args[1] as number })
-			saveSettings(
-				[ObjectStoreKeys[_settings_colors_range_hsl_h_min], args[0]],
-				[ObjectStoreKeys[_settings_colors_range_hsl_h_max], args[1]],
-			)
-		}
-
-		// change_settings_colors_range_hsl_s
-		else if (type == Commands[_change_settings_colors_range_hsl_s]) {
-			setSettings(_colors, _range, _hsl, _s, { min: args[0] as number, max: args[1] as number })
-			saveSettings(
-				[ObjectStoreKeys[_settings_colors_range_hsl_s_min], args[0]],
-				[ObjectStoreKeys[_settings_colors_range_hsl_s_max], args[1]],
-			)
-		}
-
-		// change_settings_colors_range_hsl_l
-		else if (type == Commands[_change_settings_colors_range_hsl_l]) {
-			setSettings(_colors, _range, _hsl, _l, { min: args[0] as number, max: args[1] as number })
-			saveSettings(
-				[ObjectStoreKeys[_settings_colors_range_hsl_l_min], args[0]],
-				[ObjectStoreKeys[_settings_colors_range_hsl_l_max], args[1]],
-			)
-		}
-
-		// change_settings_colors_range_rgb_r
-		else if (type == Commands[_change_settings_colors_range_rgb_r]) {
-			setSettings(_colors, _range, _rgb, _r, { min: args[0] as number, max: args[1] as number })
-			saveSettings(
-				[ObjectStoreKeys[_settings_colors_range_rgb_r_min], args[0]],
-				[ObjectStoreKeys[_settings_colors_range_rgb_r_max], args[1]],
-			)
-		}
-
-		// change_settings_colors_range_rgb_g
-		else if (type == Commands[_change_settings_colors_range_rgb_g]) {
-			setSettings(_colors, _range, _rgb, _g, { min: args[0] as number, max: args[1] as number })
-			saveSettings(
-				[ObjectStoreKeys[_settings_colors_range_rgb_g_min], args[0]],
-				[ObjectStoreKeys[_settings_colors_range_rgb_g_max], args[1]],
-			)
-		}
-
-		// change_settings_colors_range_rgb_b
-		else if (type == Commands[_change_settings_colors_range_rgb_b]) {
-			setSettings(_colors, _range, _rgb, _b, { min: args[0] as number, max: args[1] as number })
-			saveSettings(
-				[ObjectStoreKeys[_settings_colors_range_rgb_b_min], args[0]],
-				[ObjectStoreKeys[_settings_colors_range_rgb_b_max], args[1]],
-			)
-		}
-
-		// change_settings_string_characters_toDefault
-		else if (type == Commands[_change_settings_string_characters_toDefault]) {
-			setSettings(_string, _characters, c => { return {
+		case Commands.change_settings_string_characters_default: {
+			set_settings('string', 'characters', c => ({
 				...c,
 				alphabetLowercase: true,
 				alphabetUppercase: true,
 				numbers: true,
-			}})
-			saveSettings(
-				[ObjectStoreKeys[_settings_string_characters_alphabetLowercase], true],
-				[ObjectStoreKeys[_settings_string_characters_alphabetUppercase], true],
-				[ObjectStoreKeys[_settings_string_characters_numbers], true],
+			}))
+			save_settings(
+				[ObjectStoreKeys.settings_string_characters_lowercase, true],
+				[ObjectStoreKeys.settings_string_characters_uppercase, true],
+				[ObjectStoreKeys.settings_string_characters_numbers, true],
 			)
 		}
-
-		// change_settings_selection_list
-		else if (type == Commands[_change_settings_selection_list]) {
-			setSettings(_selection, _list, args[0] as ItemList)
-			if ((args[0] as ItemList)[_items][_length] < settings[_selection][_count]) {
-				setSettings(_selection, _count, (args[0] as ItemList)[_items][_length])
-				saveSettings(
-					[ObjectStoreKeys[_settings_selection_listId], (args[0] as ItemList)[_id]],
-					[ObjectStoreKeys[_settings_selection_count], (args[0] as ItemList)[_items][_length]]
+		case Commands.change_settings_numbers_count: {
+			set_settings('numbers', 'count', args[0] as number)
+			save_settings([ObjectStoreKeys.settings_numbers_count, args[0]])
+			break
+		}
+		case Commands.change_settings_numbers_minlength: {
+			set_settings('numbers', 'min_length', args[0] as number)
+			save_settings([ObjectStoreKeys.settings_numbers_minlength, args[0]])
+			break
+		}
+		case Commands.change_settings_numbers_range: {
+			set_settings('numbers', 'range', {min: args[0] as number, max: args[1] as number})
+			save_settings(
+				[ObjectStoreKeys.settings_numbers_range_min, args[0]],
+				[ObjectStoreKeys.settings_numbers_range_max, args[1]]
+			)
+			break
+		}
+		case Commands.change_settings_words_count: {
+			set_settings('words', 'count', args[0] as number)
+			save_settings([ObjectStoreKeys.settings_words_count, args[0]])
+			break
+		}
+		case Commands.change_settings_colors_count: {
+			set_settings('colors', 'count', args[0] as number)
+			save_settings([ObjectStoreKeys.settings_colors_count, args[0]])
+			break
+		}
+		case Commands.change_settings_colors_range_hex: {
+			set_settings('colors', 'range', 'hex', { min: args[0] as number, max: args[1] as number })
+			save_settings(
+				[ObjectStoreKeys.settings_colors_range_hex_min, args[0]],
+				[ObjectStoreKeys.settings_colors_range_hex_max, args[1]],
+			)
+			break
+		}
+		case Commands.change_settings_colors_range_hsl_h: {
+			set_settings('colors', 'range', 'hsl', 'h', { min: args[0] as number, max: args[1] as number })
+			save_settings(
+				[ObjectStoreKeys.settings_colors_range_hsl_h_min, args[0]],
+				[ObjectStoreKeys.settings_colors_range_hsl_h_max, args[1]],
+			)
+			break
+		}
+		case Commands.change_settings_colors_range_hsl_s: {
+			set_settings('colors', 'range', 'hsl', 's', { min: args[0] as number, max: args[1] as number })
+			save_settings(
+				[ObjectStoreKeys.settings_colors_range_hsl_s_min, args[0]],
+				[ObjectStoreKeys.settings_colors_range_hsl_s_max, args[1]],
+			)
+			break
+		}
+		case Commands.change_settings_colors_range_hsl_l: {
+			set_settings('colors', 'range', 'hsl', 'l', { min: args[0] as number, max: args[1] as number })
+			save_settings(
+				[ObjectStoreKeys.settings_colors_range_hsl_l_min, args[0]],
+				[ObjectStoreKeys.settings_colors_range_hsl_l_max, args[1]],
+			)
+			break
+		}
+		case Commands.change_settings_colors_range_rgb_r: {
+			set_settings('colors', 'range', 'rgb', 'r', { min: args[0] as number, max: args[1] as number })
+			save_settings(
+				[ObjectStoreKeys.settings_colors_range_rgb_r_min, args[0]],
+				[ObjectStoreKeys.settings_colors_range_rgb_r_max, args[1]],
+			)
+			break
+		}
+		case Commands.change_settings_colors_range_rgb_g: {
+			set_settings('colors', 'range', 'rgb', 'g', { min: args[0] as number, max: args[1] as number })
+			save_settings(
+				[ObjectStoreKeys.settings_colors_range_rgb_g_min, args[0]],
+				[ObjectStoreKeys.settings_colors_range_rgb_g_max, args[1]],
+			)
+			break
+		}
+		case Commands.change_settings_colors_range_rgb_b:{
+			set_settings('colors', 'range', 'rgb', 'b', { min: args[0] as number, max: args[1] as number })
+			save_settings(
+				[ObjectStoreKeys.settings_colors_range_rgb_b_min, args[0]],
+				[ObjectStoreKeys.settings_colors_range_rgb_b_max, args[1]],
+			)
+			break
+		}
+		case Commands.change_settings_selection_list: {
+			const [list] = args as [ItemList]
+			const list_length = array_length(list.items)
+			const list_id = list.id
+			set_settings('selection', 'list', list)
+			if (list_length < settings.selection.count) {
+				set_settings('selection', 'count', list_length)
+				save_settings(
+					[ObjectStoreKeys.settings_selection_listid, list_id],
+					[ObjectStoreKeys.settings_selection_count, list_length]
 				)
 				return
 			}
-			saveSettings([ObjectStoreKeys[_settings_selection_listId], (args[0] as ItemList)[_id]])
-		}
 
-		// change_settings_selection_count
-		else if (type == Commands[_change_settings_selection_count]) {
-			setSettings(_selection, _count, args[0] as number)
-			saveSettings([ObjectStoreKeys[_settings_selection_count], args[0] as number])
+			save_settings([ObjectStoreKeys.settings_selection_listid, list_id])
+			break
 		}
-
-		// change_settings_teams_namesList
-		else if (type == Commands[_change_settings_teams_namesList]) {
-			setSettings(_teams, _namesList, args[0] as ItemList)
-			saveSettings([ObjectStoreKeys[_settings_teams_namesListId], (args[0] as ItemList)[_id]])
+		case Commands.change_settings_selection_count: {
+			set_settings('selection', 'count', args[0] as number)
+			save_settings([ObjectStoreKeys.settings_selection_count, args[0] as number])
+			break
 		}
-
-		// change_settings_teams_membersList
-		else if (type == Commands[_change_settings_teams_membersList]) {
-			setSettings(_teams, _membersList, args[0] as ItemList)
-			if ((args[0] as ItemList)[_items][_length] < settings[_teams][_count]) {
-				setSettings(_teams, _count, (args[0] as ItemList)[_items][_length])
-				saveSettings(
-					[ObjectStoreKeys[_settings_teams_membersListId], (args[0] as ItemList)[_id]],
-					[ObjectStoreKeys[_settings_teams_count], (args[0] as ItemList)[_items][_length]]
+		case Commands.change_settings_teams_listnames: {
+			set_settings('teams', 'list_names', args[0] as ItemList)
+			save_settings([ObjectStoreKeys.settings_teams_listnamesid, (args[0] as ItemList).id])
+			break
+		}
+		case Commands.change_settings_teams_listmembers: {
+			const [list] = args as [ItemList]
+			const list_length = array_length(list.items)
+			const list_id = list.id
+			set_settings('teams', 'list_members', list)
+			if (list_length < settings.teams.count) {
+				set_settings('teams', 'count', list_length)
+				save_settings(
+					[ObjectStoreKeys.settings_teams_listmembersid, list_id],
+					[ObjectStoreKeys.settings_teams_count, list_length]
 				)
 				return
 			}
-			saveSettings([ObjectStoreKeys[_settings_teams_membersListId], (args[0] as ItemList)[_id]])
-		}
 
-		// change_settings_teams_count
-		else if (type == Commands[_change_settings_teams_count]) {
-			setSettings(_teams, _count, args[0] as number)
-			saveSettings([ObjectStoreKeys[_settings_teams_count], args[0] as number])
+			save_settings([ObjectStoreKeys.settings_teams_listmembersid, list_id])
+			break
 		}
-
-		// toggle_navigation_expand
-		else if (type == Commands[_toggle_navigation_expand]) {
-			setIsExpandNavigation(v => !v)
+		case Commands.change_settings_teams_count: {
+			set_settings('teams', 'count', args[0] as number)
+			save_settings([ObjectStoreKeys.settings_teams_count, args[0] as number])
+			break
 		}
-
-		// generate
-		else if (type == Commands[_generate]) {
-			return onGenerate(args[0] as Event)
+		case Commands.toggle_navigation_expand:{
+			set_is_sidenavigation_expanded(v => !v)
+			break
 		}
-
-		// stopGenerate
-		else if (type == Commands[_stopGenerate]) {
-			return onStopGenerate()
+		case Commands.generate: {
+			return on_generate(args[0] as Event)
 		}
-	}
+		case Commands.stop_generate: {
+			return on_stop_generate()
+		}
+		default: return
+	}}
 
 	onMount(() => {
-		initDatabase()
-		removeSplashScreen()
+		init_database()
+		remove_splash_screen()
 	})
 
 	const ListItem: VoidComponent<ItemList> = ($props) => {
 		return (<List
 			trailing={<>
 				<TextTooltip text="Export list">
-					<IconButton onClick={() => exportList($props)} code={0xE0CF}/>
+					<IconButton onClick={() => export_list($props)} code={0xE0CF}/>
 				</TextTooltip>
 				<TextTooltip text="View list">
-					<IconButton onClick={(ev) => viewList(ev, $props)} code={0xE77B}/>
+					<IconButton onClick={(ev) => view_list(ev, $props)} code={0xE77B}/>
 				</TextTooltip>
 				<TextTooltip text="Edit list">
-					<IconButton onClick={(ev) => openEditDialog(ev, $props)} code={0xE739}/>
+					<IconButton onClick={(ev) => open_edit_dialog(ev, $props)} code={0xE739}/>
 				</TextTooltip>
 				<TextTooltip text="Delete list">
-					<IconButton onClick={(ev) => openDeleteDialog(ev, $props)} code={0xE59D}/>
+					<IconButton onClick={(ev) => open_delete_dialog(ev, $props)} code={0xE59D}/>
 				</TextTooltip>
 			</>}
-			subtitle={$props[_items][_length] + ' item' + ($props[_items][_length] > 1? 's' : '')}>
-			{$props[_name]}
+			subtitle={array_length($props.items) + ' item' + (array_length($props.items) > 1? 's' : '')}>
+			{$props.name}
 		</List>)
 	}
 
@@ -1201,16 +1261,16 @@ const _: VoidComponent = () => {
 				header="Lists"
 				actions={<>
 					<Button
-						onClick={() => closeDialog(dialog_lists_ref)}
-						variant={ButtonVariant[_tonal]}>
+						onClick={() => close_dialog(dialog_lists_ref)}
+						variant={ButtonVariant.tonal}>
 						Close
 					</Button>
 					<Button
 						onClick={(ev) => {
-							closeDialog(dialog_lists_ref)
-							openAddDialog(ev)
+							close_dialog(dialog_lists_ref)
+							open_add_dialog(ev)
 						}}
-						variant={ButtonVariant[_filled]}>
+						variant={ButtonVariant.filled}>
 						Add new list
 					</Button>
 				</>}>
@@ -1220,18 +1280,18 @@ const _: VoidComponent = () => {
 				</>}</For>
 			</Dialog>
 			<Dialog
-				ref={r => dialog_deleteListWarning_ref = r}
+				ref={r => dialog_deletelistwarning_ref = r}
 				actions={<>
 					<Button
-						variant={ButtonVariant[_tonal]}
-						onClick={() => closeDialog(dialog_deleteListWarning_ref)}>
+						variant={ButtonVariant.tonal}
+						onClick={() => close_dialog(dialog_deletelistwarning_ref)}>
 						Cancel
 					</Button>
 					<Button
-						variant={ButtonVariant[_filled]}
+						variant={ButtonVariant.filled}
 						onClick={(ev) => {
-							closeDialog(dialog_deleteListWarning_ref)
-							deleteList(ev, selectedListToDelete())
+							close_dialog(dialog_deletelistwarning_ref)
+							delete_list(ev, selected_list_to_delete())
 						}}>
 						Delete
 					</Button>
@@ -1239,9 +1299,9 @@ const _: VoidComponent = () => {
 				header="Delete list">
 				Are you sure want to delete this list?
 				<List
-					classList={addClassListModule(CSS.app_delete_list)}
-					subtitle={selectedListToDelete()[_items][_length] + ' item' + (selectedListToDelete()[_items][_length] > 1? 's' : '')}>
-					{selectedListToDelete()[_name]}
+					classList={add_classlist_module(CSS.app_delete_list)}
+					subtitle={array_length(selected_list_to_delete().items) + ' item' + (array_length(selected_list_to_delete().items) > 1? 's' : '')}>
+					{selected_list_to_delete().name}
 				</List>
 			</Dialog>
 			<Dialog
@@ -1249,46 +1309,55 @@ const _: VoidComponent = () => {
 				style={{width: '500px'}}
 				actions={<>
 					<Button
-						variant={ButtonVariant[_tonal]}
-						onClick={() => closeDialog(dialog_add_ref)}>
+						variant={ButtonVariant.tonal}
+						onClick={() => close_dialog(dialog_add_ref)}>
 						Cancel
 					</Button>
 					<Button
-						variant={ButtonVariant[_tonal]}
+						variant={ButtonVariant.tonal}
 						onClick={async () => {
-							const text = await listItemFromCSVFile()
-							changeAreaTextFieldValue(areaTextField_newItemList_ref, [areaTextField_newItemList_ref[_value], ...text][_filter](v => v[_trim]()[_length] > 0)[_join](', '))
+							const text = await listitem_from_csv_file()
+							change_areatextfield_value(
+								areatextfield_newitemlist_ref,
+								array_join(array_filter(
+									[areatextfield_newitemlist_ref.value, ...text],
+									v => string_length(string_trim(v)) > 0
+								), ', ')
+							)
 						}}>
 						Import CSV
 					</Button>
 					<Button
 						onClick={(ev) => {
-							setViewItemList({
+							set_list_viewitem({
 								id: -1,
-								name: textField_newListName_ref[_value],
-								items: areaTextField_newItemList_ref[_value][_split](/[\n,]/gs)[_filter](v => v[_trim]()[_length] > 0)
+								name: textfield_newlistname_ref.value,
+								items: array_filter(
+									string_split(areatextfield_newitemlist_ref.value, /[\n,]/gs),
+									v => string_length(string_trim(v)) > 0
+								)
 							})
-							openDialog(ev, dialog_previewItemList_ref)
+							open_dialog(ev, dialog_previewitemlist_ref)
 						}}
-						variant={ButtonVariant[_tonal]}>
+						variant={ButtonVariant.tonal}>
 						Preview
 					</Button>
 					<Button
-						onClick={(ev) => addNewList(ev)}
-						variant={ButtonVariant[_filled]}>
+						onClick={(ev) => add_new_list(ev)}
+						variant={ButtonVariant.filled}>
 						Save
 					</Button>
 				</>}
 				header="New list">
-				<TextField ref={r => textField_newListName_ref = r} label="List name" />
+				<TextField ref={r => textfield_newlistname_ref = r} label="List name" />
 				<div style={{"min-height": '16px'}}/>
 				<AreaTextField
-					ref={r => areaTextField_newItemList_ref = r}
+					ref={r => areatextfield_newitemlist_ref = r}
 					label="Items"
 					placeholder={"Item1, Item2,\nItem3, Item 4\nItem 5"}
 					message={"Info: Each item separated by comma or new line"}
-					minLine={5}
-					maxLine={5}
+					min_line={5}
+					max_line={5}
 				/>
 			</Dialog>
 			<Dialog
@@ -1296,93 +1365,105 @@ const _: VoidComponent = () => {
 				style={{width: '500px'}}
 				actions={<>
 					<Button
-						variant={ButtonVariant[_tonal]}
-						onClick={() => closeDialog(dialog_edit_ref)}>
+						variant={ButtonVariant.tonal}
+						onClick={() => close_dialog(dialog_edit_ref)}>
 						Cancel
 					</Button>
 					<Button
-						variant={ButtonVariant[_tonal]}
+						variant={ButtonVariant.tonal}
 						onClick={async () => {
-							const text = await listItemFromCSVFile()
-							changeAreaTextFieldValue(areaTextField_editItemList_ref, [areaTextField_newItemList_ref[_value], ...text][_filter](v => v[_trim]()[_length] > 0)[_join](', '))
+							const text = await listitem_from_csv_file()
+							change_areatextfield_value(
+								areatextfield_edititemlist_ref,
+								array_join(
+									array_filter(
+										[areatextfield_newitemlist_ref.value, ...text],
+										v => string_length(string_trim(v)) > 0
+									),
+									', '
+								)
+							)
 						}}>
 						Import CSV
 					</Button>
 					<Button
 						onClick={(ev) => {
-							setViewItemList({
+							set_list_viewitem({
 								id: -1,
-								name: textField_editListName_ref[_value],
-								items: areaTextField_editItemList_ref[_value][_split](/[\n,]/gs)[_filter](v => v[_trim]()[_length] > 0)
+								name: textfield_editlistname_ref.value,
+								items: array_filter(
+									string_split(areatextfield_edititemlist_ref.value, /[\n,]/gs),
+									v => string_length(string_trim(v)) > 0
+								)
 							})
-							openDialog(ev, dialog_previewItemList_ref)
+							open_dialog(ev, dialog_previewitemlist_ref)
 						}}
-						variant={ButtonVariant[_tonal]}>
+						variant={ButtonVariant.tonal}>
 						Preview
 					</Button>
 					<Button
-						onClick={(ev) => editList(ev)}
-						variant={ButtonVariant[_filled]}>
+						onClick={(ev) => edit_list(ev)}
+						variant={ButtonVariant.filled}>
 						Save
 					</Button>
 				</>}
 				header="Edit list">
 				<TextField
-					ref={r => textField_editListName_ref = r}
-					placeholder={selectedListToEdit()[_name]}
+					ref={r => textfield_editlistname_ref = r}
+					placeholder={selected_list_to_edit().name}
 					label="List name"
 				/>
 				<div style={{"min-height": '16px'}}/>
 				<AreaTextField
-					ref={r => areaTextField_editItemList_ref = r}
+					ref={r => areatextfield_edititemlist_ref = r}
 					label="Items"
-					placeholder={selectedListToEdit()[_items][_join](', ')}
+					placeholder={array_join(selected_list_to_edit().items, ', ')}
 					message={"Info: Each item separated by comma or new line"}
-					minLine={5}
-					maxLine={5}
+					min_line={5}
+					max_line={5}
 				/>
 			</Dialog>
 			<Dialog
-				ref={r => dialog_viewItemList_ref = r}
+				ref={r => dialog_viewitemlist_ref = r}
 				style={{width: '720px'}}
 				actions={<>
 					<Button
-						onClick={() => closeDialog(dialog_viewItemList_ref)}
-						variant={ButtonVariant[_tonal]}>
+						onClick={() => close_dialog(dialog_viewitemlist_ref)}
+						variant={ButtonVariant.tonal}>
 						Close
 					</Button>
 					<Button
-						onClick={() => exportList(viewItemList())}
-						variant={ButtonVariant[_tonal]}>
+						onClick={() => export_list(list_viewitem())}
+						variant={ButtonVariant.tonal}>
 						Export
 					</Button>
 					<Button
 						onClick={ev => {
-							closeDialog(dialog_viewItemList_ref)
-							openEditDialog(ev, viewItemList())
+							close_dialog(dialog_viewitemlist_ref)
+							open_edit_dialog(ev, list_viewitem())
 						}}
-						variant={ButtonVariant[_filled]}>
+						variant={ButtonVariant.filled}>
 						Edit
 					</Button>
 				</>}
-				header={viewItemList()[_name]}>
+				header={list_viewitem().name}>
 				<div class={CSS.app_view_list}>
-					<For each={[...viewItemList()[_items]][_sort]()}>{l =>
+					<For each={[...list_viewitem().items].sort()}>{l =>
 						<div>{l}</div>
 					}</For>
 				</div>
 			</Dialog>
 			<Dialog
-				ref={r => dialog_previewItemList_ref = r}
+				ref={r => dialog_previewitemlist_ref = r}
 				style={{width: '720px'}}
 				actions={<Button
-					onClick={() => closeDialog(dialog_previewItemList_ref)}
-					variant={ButtonVariant[_filled]}>
+					onClick={() => close_dialog(dialog_previewitemlist_ref)}
+					variant={ButtonVariant.filled}>
 					Close
 				</Button>}
-				header={viewItemList()[_name]}>
+				header={list_viewitem().name}>
 				<div class={CSS.app_view_list}>
-					<For each={[...viewItemList()[_items]][_sort]()}>{l =>
+					<For each={[...list_viewitem().items].sort()}>{l =>
 						<div>{l}</div>
 					}</For>
 				</div>
@@ -1392,58 +1473,58 @@ const _: VoidComponent = () => {
 
 	const Toasts: VoidComponent = () => {
 		return (<>
-			<Toast leading={<Icon filled code={0xE4BE}/>} ref={r => toast_listNameEmpty_ref = r}>List name is empty</Toast>
-			<Toast leading={<Icon filled code={0xF0AA}/>} ref={r => toast_listHaveNoItems_ref = r}>List items is empty</Toast>
-			<Toast leading={<Icon filled code={0xEBA8}/>} ref={r => toast_listNameAlreadyExist_ref = r}>List name already exist</Toast>
-			<Toast leading={<Icon filled code={0xF09C}/>} ref={r => toast_listEdited_ref = r}>List edited</Toast>
-			<Toast leading={<Icon filled code={0xE59D}/>} ref={r => toast_listDeleted_ref = r}>List deleted</Toast>
-			<Toast leading={<Icon filled code={0xF0A6}/>} ref={r => toast_newListAdded_ref = r}>New list added</Toast>
-			<Toast leading={<Icon filled code={0xE069}/>} ref={r => toast_noListSelected_ref = r}>No list selected</Toast>
+			<Toast leading={<Icon filled code={0xE4BE}/>} ref={r => toast_listnameempty_ref = r}>List name is empty</Toast>
+			<Toast leading={<Icon filled code={0xF0AA}/>} ref={r => toast_listhavenoitems_ref = r}>List items is empty</Toast>
+			<Toast leading={<Icon filled code={0xEBA8}/>} ref={r => toast_listnamealreadyexist_ref = r}>List name already exist</Toast>
+			<Toast leading={<Icon filled code={0xF09C}/>} ref={r => toast_listedited_ref = r}>List edited</Toast>
+			<Toast leading={<Icon filled code={0xE59D}/>} ref={r => toast_listdeleted_ref = r}>List deleted</Toast>
+			<Toast leading={<Icon filled code={0xF0A6}/>} ref={r => toast_newlistadded_ref = r}>New list added</Toast>
+			<Toast leading={<Icon filled code={0xE069}/>} ref={r => toast_nolistselected_ref = r}>No list selected</Toast>
 		</>)
 	}
 
 	return (<>
 		<App
-			appBar={<AppBar
-				isGenerating={isGenerating()}
-				randomizerType={randomizerType()}
-				onCopyResult={onCopyResult}
-				settings={[settings, setSettings]}
+			appbar={<AppBar
+				is_generating={is_generating()}
+				randomizer={randomizer()}
+				on_copy_result={on_copy_result}
+				settings={[settings, set_settings]}
 				command={command}
-				onChangeRandomizer={onChangeRandomizer}
+				on_change_randomizer={on_change_randomizer}
 			/>}
-			floatingActionButton={<FloatingActionButton
-				classList={addClassListModule(CSSAnimation.btn_rotate_full_icon, CSS.app_fab)}
-				data-g-keep-pointer-event={setElementAttributeIfExist(isGenerating())}
-				variant={ButtonVariant[_filled]}
+			floating_action_button={<FloatingActionButton
+				classList={add_classlist_module(CSSAnimation.btn_rotate_full_icon, CSS.app_fab)}
+				data-g-keep-pointer-event={attr_set_if_exist(is_generating())}
+				variant={ButtonVariant.filled}
 				onClick={() => {
-					if (isGenerating()) return command(Commands[_stopGenerate])
-					command(Commands[_generate])
+					if (is_generating()) return command(Commands.stop_generate)
+					command(Commands.generate)
 				}}>
 				<Icon
 					filled
-					classList={addClassListModule(CSS.app_generate_icon)}
-					data-rotate={setElementAttributeIfExist(isGenerating())}
+					classList={add_classlist_module(CSS.app_generate_icon)}
+					data-rotate={attr_set_if_exist(is_generating())}
 					code={0xE143}
 				/>
-				<Show when={isGenerating()} fallback="Generate">Generating</Show>
+				<Show when={is_generating()} fallback="Generate">Generating</Show>
 			</FloatingActionButton>}
-			leftSideBar={<SideNavigation
-				expand={isExpandNavigation()}
-				randomizerType={randomizerType()}
-				onChangeRandomizer={onChangeRandomizer}
+			left_sidebar={<SideNavigation
+				expanded={is_sidenavigation_expanded()}
+				randomizer={randomizer()}
+				on_change_randomizer={on_change_randomizer}
 			/>}>
 			<div class={CSS.app_body}>
 				<Control
-					randomizerType={randomizerType()}
-					settings={[settings, setSettings]}
-					lists={[lists, setLists]}
+					randomizer={randomizer()}
+					settings={[settings, set_settings]}
+					lists={[lists, set_lists]}
 					command={command}
 				/>
 				<ResultComponent
-					randomizerType={randomizerType()}
-					result={[result, setResult]}
-					settings={[settings, setSettings]}
+					randomizer={randomizer()}
+					result={[output, set_output]}
+					settings={[settings, set_settings]}
 				/>
 			</div>
 		</App>

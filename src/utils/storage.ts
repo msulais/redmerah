@@ -1,19 +1,17 @@
-import { getLocalStorage } from "@/constants/storage"
-import { _clear, _getItem, _mode, _objectStore, _removeItem, _setItem, _transaction } from "@/constants/string"
 import { LocalStorageKeys } from "@/enums/storage"
 
-export function setLocalStorageItem(key: LocalStorageKeys, value: string): void {
-	return getLocalStorage()[_setItem](key, value)
+export function storage_set(key: LocalStorageKeys, value: string): void {
+	return localStorage.setItem(key, value)
 }
 
-export function getLocalStorageItem(key: LocalStorageKeys): string | null {
-	return getLocalStorage()[_getItem](key)
+export function storage_get(key: LocalStorageKeys): string | null {
+	return localStorage.getItem(key)
 }
 
-export function clearLocalStorage(): void {
-	return getLocalStorage()[_clear]()
+export function storage_clear(): void {
+	return localStorage.clear()
 }
 
-export function removeLocalStorageItem(key: LocalStorageKeys): void {
-	return getLocalStorage()[_removeItem](key)
+export function storage_remove(key: LocalStorageKeys): void {
+	return localStorage.removeItem(key)
 }

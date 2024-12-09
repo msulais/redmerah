@@ -1,49 +1,48 @@
 import { Show, type VoidComponent, createSignal } from "solid-js"
 
 import type { HEXColor } from "@/types/color"
-import { _tonal, _currentTarget, _checked } from "@/constants/string"
 
 import Icon from "@/components/Icon"
 import Button, { ButtonVariant } from "@/components/Button"
 import CheckBox from "@/components/CheckBox"
-import ColorPicker, { openColorPicker } from "@/components/ColorPicker"
+import ColorPicker, { open_colorpicker } from "@/components/ColorPicker"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
 
 const _: VoidComponent = () => {
-	const [disabledOpacityControl, setDisabledOpacityControl] = createSignal<boolean>(false)
-	const [disabledColorControl, setDisabledColorControl] = createSignal<boolean>(false)
-	const [color, setColor] = createSignal<HEXColor | null>(null)
-	let colorPicker_ref: HTMLDialogElement
+	const [disabled_opacity_control, set_disabled_opacity_control] = createSignal<boolean>(false)
+	const [disabled_color_control, set_disabled_color_control] = createSignal<boolean>(false)
+	const [color, set_color] = createSignal<HEXColor | null>(null)
+	let colorpicker_ref: HTMLDialogElement
 	return (<Page
 		title="ColorPicker"
 		description="A color picker is a UI element that allows users to select a color from a defined color space. It typically provides a visual representation of colors and offers various methods for color selection, such as palettes, sliders, or color wheels.">
 		<Playground>
 			<Button
-				variant={ButtonVariant[_tonal]}
-				onClick={(ev) => openColorPicker(ev, colorPicker_ref, {
-					anchor: ev[_currentTarget],
-					contentAutoFocus: false,
+				variant={ButtonVariant.tonal}
+				onClick={(ev) => open_colorpicker(ev, colorpicker_ref, {
+					anchor: ev.currentTarget,
+					content_auto_focus: false,
 					gap: 8,
 				})}>
 				<Icon style={{color: color() ?? '#FF0000'}} code={0xE408} filled/>
 				<Show when={color()} fallback="Select color">{color()!}</Show>
 			</Button>
 			<ColorPicker
-				ref={r => colorPicker_ref = r}
-				onSelectColor={(color) => setColor(color)}
-				disabledColorControl={disabledColorControl()}
-				disabledOpacityControl={disabledOpacityControl()}
+				ref={r => colorpicker_ref = r}
+				on_select_color={(color) => set_color(color)}
+				disabled_color_control={disabled_color_control()}
+				disabled_opacity_control={disabled_opacity_control()}
 			/>
 		</Playground>
 		<PlaygroundOptions>
 			<CheckBox
-				checked={disabledOpacityControl()}
-				onChange={ev => setDisabledOpacityControl(ev[_currentTarget][_checked])}>
+				checked={disabled_opacity_control()}
+				onChange={ev => set_disabled_opacity_control(ev.currentTarget.checked)}>
 				Disable opacity
 			</CheckBox>
 			<CheckBox
-				checked={disabledColorControl()}
-				onChange={ev => setDisabledColorControl(ev[_currentTarget][_checked])}>
+				checked={disabled_color_control()}
+				onChange={ev => set_disabled_color_control(ev.currentTarget.checked)}>
 				Disable color (hue only)
 			</CheckBox>
 		</PlaygroundOptions>

@@ -1,74 +1,79 @@
 import { createSignal, onMount, type VoidComponent } from "solid-js";
 
-import { removeSplashScreen } from "@/scripts/splash";
-import { _readObjectStore, _settings, _get, _then, _open, _createObjectStore, _key, _value, _writeObjectStore, _forEach, _put, _emojiPicker } from "@/constants/string";
-import { IDB } from "@/utils/indexeddb";
+import { remove_splash_screen } from "@/scripts/splash";
+import { IDB, idb_store_put } from "@/utils/indexeddb";
 import { Commands } from "./_enums";
+import { promise_done } from "@/utils/object";
 import { DatabaseNames } from "@/enums/storage";
 import { ObjectStoreNames, type ObjectStoreSettings, ObjectStoreSettingsKeys } from "./_storage";
-import { endTimeout, startTimeout } from "@/utils/timeout";
+import { timeout_clear, timeout_set } from "@/utils/timeout";
 
 import App from "@/components/App";
 import AppBar from './_AppBar'
 import Body from './_Body'
 
 const _: VoidComponent = () => {
-	const db = new IDB(DatabaseNames[_emojiPicker])
-	const [text, setText] = createSignal<string>('')
-	let timeout_textUpdate_id: number | null = null
+	const db = new IDB(DatabaseNames.emoji_picker)
+	const [text, set_text] = createSignal<string>('')
+	let timeout_textupdate_id: number | null = null
 
-    function saveSettings(...items: [key: ObjectStoreSettingsKeys, value: unknown][]): void {
-        const store_settings = db[_writeObjectStore](ObjectStoreNames[_settings])
-		items[_forEach](item => store_settings?.[_put]({
-			key: item[0],
-			value: item[1]
-		}))
+    function save_settings(...items: [key: ObjectStoreSettingsKeys, value: unknown][]): void {
+        const store_settings = db.write_store(ObjectStoreNames.settings)
+		if (store_settings == null) return;
+
+		for (const item of items) {
+			idb_store_put(store_settings, {
+				key: item[0],
+				value: item[1]
+			})
+		}
     }
 
 	function command(type: Commands, ...args: unknown[]): unknown { switch (type) {
 		case Commands.update_text: {
 			const text = args[0] as string
 
-			if (timeout_textUpdate_id != null) endTimeout(timeout_textUpdate_id)
+			if (timeout_textupdate_id != null) timeout_clear(timeout_textupdate_id)
 
-			timeout_textUpdate_id = startTimeout(() => {
-				saveSettings([ObjectStoreSettingsKeys.lastText, text])
-				timeout_textUpdate_id = null
+			timeout_textupdate_id = timeout_set(() => {
+				save_settings([ObjectStoreSettingsKeys.last_text, text])
+				timeout_textupdate_id = null
 			}, 100)
 		}
 		default: return
 	}}
 
-	function initSettings(): void {
-		const store_settings = db[_readObjectStore](ObjectStoreNames[_settings])
+	function init_settings(): void {
+		const store_settings = db.read_store(ObjectStoreNames.settings)
 		if (store_settings == null) return
 
-		db
-		[_get]<ObjectStoreSettings<string>>(store_settings, ObjectStoreSettingsKeys.lastText)
-		[_then](result => setText(d => result?.[_value] ?? d))
+		promise_done(db.get<ObjectStoreSettings<string>>(
+			store_settings,
+			ObjectStoreSettingsKeys.last_text
+		), result => set_text(d => result?.value ?? d))
 	}
 
-	function initDatabase(): void {
-		db[_open]({
-			onSuccess() {
-				initSettings()
+	function init_database(): void {
+		db.open({
+			on_success() {
+				init_settings()
 			},
-			onUpgradeNeeded(_, db) {
-				db[_createObjectStore]<ObjectStoreSettings>({
-					name: ObjectStoreNames[_settings],
-					keyPath: _key,
-					indexs: [_key, _value]
+			on_upgrade_needed(_, db) {
+				db.create_store<ObjectStoreSettings>({
+					name: ObjectStoreNames.settings,
+					key_path: 'key',
+					indexs: ['key', 'value']
 				})
 			},
 		})
 	}
 
 	onMount(() => {
-		removeSplashScreen(1000)
-		initDatabase()
+		remove_splash_screen(1000)
+		init_database()
 	})
 
-	return (<App appBar={<AppBar/>}>
+	return (<App appbar={<AppBar/>}>
 		<Body
 			command={command}
 			text={text()}

@@ -34,13 +34,13 @@ export enum Commands {
 	change_page = 'a',
 
 	/** @param { ErrorCorrectionLevel } level `ErrorCorrectionLevel` */
-	change_settings_errorCorrectionLevel = 'b',
+	change_settings_errorcorrectionlevel = 'b',
 
 	/** @param { HEXColor } color `HEXColor` */
 	change_settings_color = 'c',
 
 	/** @param { HEXColor } color `HEXColor` */
-	change_settings_backgroundColor = 'd',
+	change_settings_backgroundcolor = 'd',
 
 	/** @param { number } value `number` */
 	change_settings_margin = 'e',
@@ -49,16 +49,16 @@ export enum Commands {
 	change_settings_version = 'f',
 
 	/** @param { EncodingMode } mode `EncodingMode` */
-	change_settings_encodingMode = 'g',
+	change_settings_encodingmode = 'g',
 
 	/** @param { string } data `string` */
-	change_QRCodeData = 'h',
+	change_qrcode_data = 'h',
 
 	/** @param { DownloadFileType } type `DownloadFileType` */
-	download_QRCode = 'i',
+	download_qrcode = 'i',
 
 	/**
 	@param { Event } event `Event`
 	@param { CopyFileType } type `CopyFileType` */
-	copy_QRCode = 'j',
+	copy_qrcode = 'j',
 }

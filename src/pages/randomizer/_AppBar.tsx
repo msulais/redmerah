@@ -2,258 +2,278 @@ import { type Component, For, Match, Show, Switch, type VoidComponent, createMem
 import type { SetStoreFunction } from "solid-js/store"
 
 import type { Settings } from "./_types"
-import { endTimeout, startTimeout, wait } from "@/utils/timeout"
-import { setElementAttribute, setElementAttributeIfExist } from "@/utils/attributes"
-import { addClassListModule } from "@/utils/element"
+import { timeout_clear, timeout_set, wait } from "@/utils/timeout"
+import { attr_set, attr_set_if_exist } from "@/utils/attributes"
+import { add_classlist_module } from "@/utils/element"
 import { RootAttributes } from "@/enums/attributes"
 import { ExternalLinks, RoutesLinks } from "@/enums/links"
 import { ThemeData } from "@/enums/theme"
-import { getLocalStorageItem, setLocalStorageItem } from "@/utils/storage"
+import { storage_get, storage_set } from "@/utils/storage"
 import { LocalStorageKeys } from "@/enums/storage"
 import { RandomizerType, NumbersRandomizerSort, NumbersRandomizerNumberType, WordsRandomizerWordCase, ColorsRandomizerColorModel, Commands } from "./_enums"
-import { _change_settings_numbers_sort, _change_settings_numbers_type, _change_settings_words_wordCase, _change_settings_colors_colorModel, _toggle_navigation_expand, _toggle_settings_repeat, _toggle_settings_animation, _change_settings_prefix, _change_settings_suffix, _change_settings_separator, _change_settings_numbers_minDecimalLength } from "./_string"
-import { _centerBottomToLeft, _rightCenterToBottom, _URL, _actions, _animation, _ascending, _binary, _change, _color, _colorModel, _colors, _command, _contactEmail, _corner, _currentTarget, _dark, _decimal, _descending, _donate, _filled, _fullRound, _generate, _getFullYear, _hex, _hexadecimal, _history, _hsl, _icon, _includes, _isGenerating, _light, _logo, _lowercase, _matches, _minDecimalLength, _noPointerEvent, _none, _numberType, _numbers, _octal, _onChangeRandomizer, _onCopyResult, _onGenerate, _onStopGenerate, _prefix, _randomizerType, _repeat, _rgb, _round, _selection, _semiRound, _separator, _settings, _share, _sharp, _sort, _src, _stopGenerate, _string, _suffix, _system, _teams, _text, _theme, _then, _titlecase, _togglecase, _type, _uppercase, _value, _wordCase, _words, _apps, _home, _about, _privacy, _terms, _valueAsNumber } from "@/constants/string"
-import { encodeURL } from "@/utils/url"
-import { getDocument, getNavigator, getRoot } from "@/constants/window"
+import { url_encode } from "@/utils/url"
 import { CornerData } from "@/enums/corner"
-import { isMatchMedia } from "@/utils/window"
+import { is_window_media_matches } from "@/utils/window"
 import { RANDOMIZER_TYPES, SIZE_SIDE_NAVIGATION_NONE } from "./_constants"
-import { addEventListener } from "@/utils/event"
-import { safeNumber } from "@/utils/math"
+import { event_add_listener } from "@/utils/event"
+import { array_includes } from "@/utils/array"
+import { navigator_share } from "@/utils/navigator"
+import { date_year } from "@/utils/datetime"
+import { number_safe } from "@/utils/number"
 import logo from '@/assets/apps/randomizer-logo.svg'
-import redmerahLogo from '@/assets/logo.svg'
+import redmerah_logo from '@/assets/logo.svg'
 
 import Icon from "@/components/Icon"
 import Button, { ButtonVariant, IconButton } from "@/components/Button"
 import { TextTooltip } from "@/components/Tooltip"
-import Menu, { MenuDivider, MenuHeader, MenuIndent, MenuItem, LinkMenuItem, SubMenu, closeSubMenu, closeMenu, openMenu, MenuPosition, SubMenuItem, SwitchMenuItem } from "@/components/Menu"
-import TextField, { NumberTextField, changeTextFieldValue } from "@/components/TextField"
-import Drawer, { closeDrawer, DrawerItem, openDrawer } from "@/components/Drawer"
+import Menu, { MenuDivider, MenuHeader, MenuIndent, MenuItem, LinkMenuItem, SubMenu, close_submenu, close_menu, open_menu, SubMenuItem, SwitchMenuItem } from "@/components/Menu"
+import TextField, { NumberTextField, change_textfield_value } from "@/components/TextField"
+import Drawer, { close_drawer, DrawerItem, openDrawer } from "@/components/Drawer"
 import AppBar from "@/components/AppBar"
 import CSSAnimation from "@/styles/animation.module.scss"
 import CSS from './_styles.module.scss'
 
 const _: Component<{
-	isGenerating: boolean
-	randomizerType: RandomizerType
+	is_generating: boolean
+	randomizer: RandomizerType
 	settings: [Settings, SetStoreFunction<Settings>]
-	onCopyResult: () => Promise<boolean>
+	on_copy_result: () => Promise<boolean>
 	command: (type: Commands, ...args: unknown[]) => unknown
-	onChangeRandomizer: (type: RandomizerType) => void
+	on_change_randomizer: (type: RandomizerType) => void
 }> = (props) => {
-	const [is_menu_info_open, setIs_menu_info_open] = createSignal<boolean>(false)
-	const [is_menu_settings_open, setIs_menu_settings_open] = createSignal<boolean>(false)
-	const [is_submenu_themeSettings_open, setIs_submenu_themeSettings_open] = createSignal<boolean>(false)
-	const [is_submenu_cornerSettings_open, setIs_submenu_cornerSettings_open] = createSignal<boolean>(false)
-	const [is_submenu_colorModelSettings_open, setIs_submenu_colorModelSettings_open] = createSignal<boolean>(false)
-	const [is_submenu_wordCaseSettings_open, setIs_submenu_wordCaseSettings_open] = createSignal<boolean>(false)
-	const [is_submenu_sortSettings_open, setIs_submenu_sortSettings_open] = createSignal<boolean>(false)
-	const [is_submenu_numberTypeSettings_open, setIs_submenu_numberTypeSettings_open] = createSignal<boolean>(false)
-	const [theme, setTheme] = createSignal<ThemeData>(ThemeData[_system])
-	const [copyTimeoutId, setCopyTimeoutId] = createSignal<number | null>(null)
-	const [copyErrorTimeoutId, setCopyErrorTimeoutId] = createSignal<number | null>(null)
-	const [corner, setCorner] = createSignal<CornerData>(CornerData[_round])
-	const [isSideNavigationHidden, setIsSideNavigationHidden] = createSignal<boolean>(false)
-	const settings = createMemo<Settings>(() => props[_settings][0])
-	const isRepeat = createMemo<boolean>(() => {
+	const root = document.documentElement
+	const theme_system = ThemeData.system
+	const theme_light = ThemeData.light
+	const theme_dark = ThemeData.dark
+	const corner_sharp = CornerData.sharp
+	const corner_semiround = CornerData.semi_round
+	const corner_round = CornerData.round
+	const corner_fullround = CornerData.full_round
+	const randomizer_string = RandomizerType.string
+	const randomizer_numbers = RandomizerType.numbers
+	const randomizer_words = RandomizerType.words
+	const randomizer_selection = RandomizerType.selection
+	const randomizer_colors = RandomizerType.colors
+	const randomizer_teams = RandomizerType.teams
+
+	const [is_menu_info_open, set_is_menu_info_open] = createSignal<boolean>(false)
+	const [is_menu_settings_open, set_is_menu_settings_open] = createSignal<boolean>(false)
+	const [is_submenu_themesettings_open, set_is_submenu_themesettings_open] = createSignal<boolean>(false)
+	const [is_submenu_cornersettings_open, set_is_submenu_cornersettings_open] = createSignal<boolean>(false)
+	const [is_submenu_colormodelsettings_open, set_is_submenu_colormodelsettings_open] = createSignal<boolean>(false)
+	const [is_submenu_wordcasesettings_open, set_is_submenu_wordcasesettings_open] = createSignal<boolean>(false)
+	const [is_submenu_sortsettings_open, set_is_submenu_sortsettings_open] = createSignal<boolean>(false)
+	const [is_submenu_numbertypesettings_open, set_is_submenu_numbertypesettings_open] = createSignal<boolean>(false)
+	const [theme, set_theme] = createSignal<ThemeData>(theme_system)
+	const [timeout_copy_id, set_timeout_copy_id] = createSignal<number | null>(null)
+	const [timeout_copyerror_id, set_timeout_copyerror_id] = createSignal<number | null>(null)
+	const [corner, set_corner] = createSignal<CornerData>(corner_round)
+	const [is_sidenavigation_hidden, set_is_sidenavigation_hidden] = createSignal<boolean>(false)
+	const settings = createMemo<Settings>(() => props.settings[0])
+	const randomizer = createMemo(() => props.randomizer)
+	const is_repeat = createMemo<boolean>(() => {
 		const s = settings()
-		const randomizerType = props[_randomizerType]
-		if (randomizerType == RandomizerType[_numbers   ]) return s[_numbers][_repeat]
-		if (randomizerType == RandomizerType[_words     ]) return s[_words  ][_repeat]
+		if (randomizer() == randomizer_numbers) return s.numbers.repeat
+		if (randomizer() == randomizer_words) return s.words.repeat
 		return false
 	})
 	const isAnimation = createMemo<boolean>(() => {
 		const s = settings()
-		const randomizerType = props[_randomizerType]
-		if (randomizerType == RandomizerType[_numbers   ]) return s[_numbers    ][_animation]
-		if (randomizerType == RandomizerType[_words     ]) return s[_words      ][_animation]
-		if (randomizerType == RandomizerType[_string    ]) return s[_string     ][_animation]
-		if (randomizerType == RandomizerType[_selection ]) return s[_selection  ][_animation]
-		if (randomizerType == RandomizerType[_colors    ]) return s[_colors     ][_animation]
-		if (randomizerType == RandomizerType[_teams     ]) return s[_teams      ][_animation]
+		if (randomizer() == randomizer_numbers) return s.numbers.animation
+		if (randomizer() == randomizer_words) return s.words.animation
+		if (randomizer() == randomizer_string) return s.string.animation
+		if (randomizer() == randomizer_selection) return s.selection.animation
+		if (randomizer() == randomizer_colors) return s.colors.animation
+		if (randomizer() == randomizer_teams) return s.teams.animation
 		return false
 	})
 	let textfield_prefix_ref: HTMLInputElement
 	let textfield_suffix_ref: HTMLInputElement
 	let textfield_separator_ref: HTMLInputElement
-	let textfield_decimalLength_ref: HTMLInputElement
+	let textfield_decimallength_ref: HTMLInputElement
 	let drawer_navigation_ref: HTMLDialogElement
 	let menu_info_ref: HTMLDialogElement
 	let menu_settings_ref: HTMLDialogElement
-	let submenu_cornerSettings_ref: HTMLDivElement
-	let submenu_themeSettings_ref: HTMLDivElement
-	let submenu_wordCaseSettings_ref: HTMLDivElement
-	let submenu_sortSettings_ref: HTMLDivElement
-	let submenu_numberTypeSettings_ref: HTMLDivElement
-	let submenu_colorModelSettings_ref: HTMLDivElement
+	let submenu_cornersettings_ref: HTMLDivElement
+	let submenu_themesettings_ref: HTMLDivElement
+	let submenu_wordcasesettings_ref: HTMLDivElement
+	let submenu_sortsettings_ref: HTMLDivElement
+	let submenu_numbertypesettings_ref: HTMLDivElement
+	let submenu_colormodelsettings_ref: HTMLDivElement
 
-	async function changeTheme(theme: ThemeData): Promise<void> {
-		setTheme(theme)
-		setElementAttribute(getRoot(), RootAttributes[_theme], theme)
-		setLocalStorageItem(LocalStorageKeys[_theme], theme)
-		closeSubMenu(submenu_themeSettings_ref)
-		await wait(300)
-		closeMenu(menu_settings_ref)
+	function command(type: Commands, ...args: unknown[]): unknown {
+		return props.command(type, ...args)
 	}
 
-	async function changeCorner(corner: CornerData): Promise<void> {
-		setCorner(corner)
-		setElementAttribute(getRoot(), RootAttributes[_corner], corner)
-		setLocalStorageItem(LocalStorageKeys[_corner], corner)
-		closeSubMenu(submenu_cornerSettings_ref)
+	async function change_theme(theme: ThemeData): Promise<void> {
+		set_theme(theme)
+		attr_set(root, RootAttributes.theme, theme)
+		storage_set(LocalStorageKeys.theme, theme)
+		close_submenu(submenu_themesettings_ref)
 		await wait(300)
-		closeMenu(menu_settings_ref)
+		close_menu(menu_settings_ref)
 	}
 
-	function initTheme(): void {
-		const theme = getLocalStorageItem(LocalStorageKeys[_theme])
+	async function change_corner(corner: CornerData): Promise<void> {
+		set_corner(corner)
+		attr_set(root, RootAttributes.corner, corner)
+		storage_set(LocalStorageKeys.corner, corner)
+		close_submenu(submenu_cornersettings_ref)
+		await wait(300)
+		close_menu(menu_settings_ref)
+	}
 
-		if (theme && [ThemeData[_system], ThemeData[_light], ThemeData[_dark]][_includes](theme as ThemeData)) {
-			setElementAttribute(getRoot(), RootAttributes[_theme], theme)
-			setTheme(theme as ThemeData)
+	function init_theme(): void {
+		const theme = storage_get(LocalStorageKeys.theme)
+
+		if (theme && array_includes([theme_system, theme_light, theme_dark], theme as ThemeData)) {
+			attr_set(root, RootAttributes.theme, theme)
+			set_theme(theme as ThemeData)
 		}
 	}
 
-	function initCorner(): void {
-		const corner = getLocalStorageItem(LocalStorageKeys[_corner])
+	function init_corner(): void {
+		const corner = storage_get(LocalStorageKeys.corner)
 
-		if (corner && [CornerData[_sharp], CornerData[_semiRound], CornerData[_round], CornerData[_fullRound]][_includes](corner as CornerData)) {
-			setElementAttribute(getRoot(), RootAttributes[_corner], corner)
-			setCorner(corner as CornerData)
+		if (corner && array_includes([corner_sharp, corner_semiround, corner_round, corner_fullround], corner as CornerData)) {
+			attr_set(root, RootAttributes.corner, corner)
+			set_corner(corner as CornerData)
 		}
 	}
 
-	async function changeNumbersSort(sort: NumbersRandomizerSort): Promise<void> {
-		props[_command](Commands[_change_settings_numbers_sort], sort)
-		closeSubMenu(submenu_sortSettings_ref)
+	async function change_numbers_sort(sort: NumbersRandomizerSort): Promise<void> {
+		command(Commands.change_settings_numbers_sort, sort)
+		close_submenu(submenu_sortsettings_ref)
 		await wait(300)
-		closeMenu(menu_settings_ref)
+		close_menu(menu_settings_ref)
 	}
 
 	async function changeNumbersType(type: NumbersRandomizerNumberType): Promise<void> {
-		props[_command](Commands[_change_settings_numbers_type], type)
-		closeSubMenu(submenu_numberTypeSettings_ref)
+		command(Commands.change_settings_numbers_type, type)
+		close_submenu(submenu_numbertypesettings_ref)
 		await wait(300)
-		closeMenu(menu_settings_ref)
+		close_menu(menu_settings_ref)
 	}
 
-	function initInputs(): void {
+	function init_inputs(): void {
 		const s = settings()
-		if (props[_randomizerType] == RandomizerType[_numbers]) {
-			if (textfield_prefix_ref) changeTextFieldValue(textfield_prefix_ref, s[_numbers][_prefix])
-			if (textfield_suffix_ref) changeTextFieldValue(textfield_suffix_ref, s[_numbers][_suffix])
-			if (textfield_separator_ref) changeTextFieldValue(textfield_separator_ref, s[_numbers][_separator])
-			if (textfield_decimalLength_ref) changeTextFieldValue(textfield_decimalLength_ref, `${s[_numbers][_minDecimalLength]}`)
+		if (randomizer() == randomizer_numbers) {
+			const numbers = s.numbers
+			if (textfield_prefix_ref) change_textfield_value(textfield_prefix_ref, numbers.prefix)
+			if (textfield_suffix_ref) change_textfield_value(textfield_suffix_ref, numbers.suffix)
+			if (textfield_separator_ref) change_textfield_value(textfield_separator_ref, numbers.separator)
+			if (textfield_decimallength_ref) change_textfield_value(textfield_decimallength_ref, `${numbers.min_length}`)
 		}
-		else if (props[_randomizerType] == RandomizerType[_words]) {
-			if (textfield_prefix_ref) changeTextFieldValue(textfield_prefix_ref, s[_words][_prefix])
-			if (textfield_suffix_ref) changeTextFieldValue(textfield_suffix_ref, s[_words][_suffix])
-			if (textfield_separator_ref) changeTextFieldValue(textfield_separator_ref, s[_words][_separator])
+		else if (randomizer() == randomizer_words) {
+			const words = s.words
+			if (textfield_prefix_ref) change_textfield_value(textfield_prefix_ref, words.prefix)
+			if (textfield_suffix_ref) change_textfield_value(textfield_suffix_ref, words.suffix)
+			if (textfield_separator_ref) change_textfield_value(textfield_separator_ref, words.separator)
 		}
 	}
 
-	async function changeWordsWordCase(wordCase: WordsRandomizerWordCase): Promise<void> {
-		props[_command](Commands[_change_settings_words_wordCase], wordCase)
-		closeSubMenu(submenu_wordCaseSettings_ref)
+	async function change_words_wordcase(wordcase: WordsRandomizerWordCase): Promise<void> {
+		command(Commands.change_settings_words_wordcase, wordcase)
+		close_submenu(submenu_wordcasesettings_ref)
 		await wait(300)
-		closeMenu(menu_settings_ref)
+		close_menu(menu_settings_ref)
 	}
 
-	async function changeColorsColorModel(colorModel: ColorsRandomizerColorModel): Promise<void> {
-		props[_command](Commands[_change_settings_colors_colorModel], colorModel)
-		closeSubMenu(submenu_colorModelSettings_ref)
+	async function change_colors_model(model: ColorsRandomizerColorModel): Promise<void> {
+		command(Commands.change_settings_colors_model, model)
+		close_submenu(submenu_colormodelsettings_ref)
 		await wait(300)
-		closeMenu(menu_settings_ref)
+		close_menu(menu_settings_ref)
 	}
 
-	function initSideNavigationListener(): void {
-		setIsSideNavigationHidden(isMatchMedia(`(max-width: ${SIZE_SIDE_NAVIGATION_NONE}px)`))
-		addEventListener(matchMedia(`(max-width: ${SIZE_SIDE_NAVIGATION_NONE}px)`), _change, ev => setIsSideNavigationHidden((ev as MediaQueryListEvent)[_matches]))
+	function init_sidenavigation_listener(): void {
+		set_is_sidenavigation_hidden(is_window_media_matches(`(max-width: ${SIZE_SIDE_NAVIGATION_NONE}px)`))
+		event_add_listener(matchMedia(`(max-width: ${SIZE_SIDE_NAVIGATION_NONE}px)`), 'change', ev => set_is_sidenavigation_hidden((ev as MediaQueryListEvent).matches))
 	}
 
 	onMount(() => {
-		initTheme()
-		initCorner()
-		initSideNavigationListener()
+		init_theme()
+		init_corner()
+		init_sidenavigation_listener()
 	})
 
 	const Menus: VoidComponent = () => (<>
 		<Menu
 			ref={r => menu_info_ref = r}
 			style={{"min-width": '200px'}}
-			onToggleOpen={isOpen => setIs_menu_info_open(isOpen)}>
+			on_toggle_open={isOpen => set_is_menu_info_open(isOpen)}>
 			<LinkMenuItem
-				onClick={() => closeMenu(menu_info_ref)}
-				href={RoutesLinks[_home]}
-				leading={<img src={redmerahLogo[_src]} width={16} alt='Redmerah logo'/>}>
+				onClick={() => close_menu(menu_info_ref)}
+				href={RoutesLinks.home}
+				leading={<img src={redmerah_logo.src} width={16} alt='Redmerah logo'/>}>
 				Redmerah
 			</LinkMenuItem>
 			<LinkMenuItem
-				onClick={() => closeMenu(menu_info_ref)}
-				href={RoutesLinks[_apps]}
-				iconCode={0xE063}>
+				onClick={() => close_menu(menu_info_ref)}
+				href={RoutesLinks.apps}
+				icon_code={0xE063}>
 				More apps
 			</LinkMenuItem>
 			<LinkMenuItem
-				onClick={() => closeMenu(menu_info_ref)}
-				href={RoutesLinks[_about]}
-				iconCode={0xE930}>
+				onClick={() => close_menu(menu_info_ref)}
+				href={RoutesLinks.about}
+				icon_code={0xE930}>
 				About us
 			</LinkMenuItem>
 			<MenuDivider />
 			<LinkMenuItem
-				onClick={() => closeMenu(menu_info_ref)}
-				href={RoutesLinks[_privacy]}
-				iconCode={0xEE51}>
+				onClick={() => close_menu(menu_info_ref)}
+				href={RoutesLinks.privacy}
+				icon_code={0xEE51}>
 				Privacy policy
 			</LinkMenuItem>
 			<LinkMenuItem
-				onClick={() => closeMenu(menu_info_ref)}
-				href={RoutesLinks[_terms]}
-				iconCode={0xED47}>
+				onClick={() => close_menu(menu_info_ref)}
+				href={RoutesLinks.terms}
+				icon_code={0xED47}>
 				Terms & conditions
 			</LinkMenuItem>
 			<MenuDivider />
 			<MenuItem
 				onClick={() => {
-					getNavigator()[_share]({ title: 'Randomizer', text: 'Randomizer', url: getDocument()[_URL] })
-					closeMenu(menu_info_ref)
+					navigator_share({ title: 'Randomizer', text: 'Randomizer', url: document.URL })
+					close_menu(menu_info_ref)
 				}}
-				iconCode={0xEE23}>
+				icon_code={0xEE23}>
 				Share
 			</MenuItem>
 			<LinkMenuItem
-				onClick={() => closeMenu(menu_info_ref)}
-				href={'mailto:' + ExternalLinks[_contactEmail] + '?subject=' + encodeURL('Randomizer')}
-				iconCode={0xE3A0}>
+				onClick={() => close_menu(menu_info_ref)}
+				href={'mailto:' + ExternalLinks.contact_email + '?subject=' + url_encode('Randomizer')}
+				icon_code={0xE3A0}>
 				Send feedback
 			</LinkMenuItem>
 			<LinkMenuItem
-				onClick={() => closeMenu(menu_info_ref)}
-				href={ExternalLinks[_donate]}
-				openInNewTab
-				iconCode={0xE84B}>
+				onClick={() => close_menu(menu_info_ref)}
+				href={ExternalLinks.donate}
+				open_in_new_tab
+				icon_code={0xE84B}>
 				Donate
 			</LinkMenuItem>
-			<MenuHeader>&copy; {new Date()[_getFullYear]()} Redmerah</MenuHeader>
+			<MenuHeader>&copy; {date_year(new Date())} Redmerah</MenuHeader>
 		</Menu>
-		<Menu ref={r => menu_settings_ref = r} onToggleOpen={(v) => setIs_menu_settings_open(v)}>
+		<Menu ref={r => menu_settings_ref = r} on_toggle_open={(v) => set_is_menu_settings_open(v)}>
 			<MenuHeader>
 				<Switch>
-					<Match when={props[_randomizerType] == RandomizerType[_string]}>String</Match>
-					<Match when={props[_randomizerType] == RandomizerType[_words]}>Words</Match>
-					<Match when={props[_randomizerType] == RandomizerType[_numbers]}>Numbers</Match>
-					<Match when={props[_randomizerType] == RandomizerType[_colors]}>Colors</Match>
-					<Match when={props[_randomizerType] == RandomizerType[_selection]}>Selection</Match>
-					<Match when={props[_randomizerType] == RandomizerType[_teams]}>Teams</Match>
+					<Match when={randomizer() == randomizer_string}>String</Match>
+					<Match when={randomizer() == randomizer_words}>Words</Match>
+					<Match when={randomizer() == randomizer_numbers}>Numbers</Match>
+					<Match when={randomizer() == randomizer_colors}>Colors</Match>
+					<Match when={randomizer() == randomizer_selection}>Selection</Match>
+					<Match when={randomizer() == randomizer_teams}>Teams</Match>
 				</Switch>
 			</MenuHeader>
-			<Show when={props[_randomizerType] == RandomizerType[_numbers] || props[_randomizerType] == RandomizerType[_words]}>
+			<Show when={randomizer() == randomizer_numbers || randomizer() == randomizer_words}>
 				<SwitchMenuItem
-					checked={isRepeat()}
-					iconCode={0xE0A1}
-					switchAttr={{
-						onChange: () => props[_command](Commands[_toggle_settings_repeat])
+					checked={is_repeat()}
+					icon_code={0xE0A1}
+					attr_switch={{
+						onChange: () => command(Commands.toggle_settings_repeat)
 					}}
 					trailing={<MenuIndent/>}>
 					Repeat
@@ -261,208 +281,208 @@ const _: Component<{
 			</Show>
 			<SwitchMenuItem
 				checked={isAnimation()}
-				switchAttr={{
-					onChange: () => props[_command](Commands[_toggle_settings_animation])
+				attr_switch={{
+					onChange: () => command(Commands.toggle_settings_animation)
 				}}
-				iconCode={0xECBA}
+				icon_code={0xECBA}
 				trailing={<MenuIndent/>}>
 				Animation
 			</SwitchMenuItem>
 			<MenuDivider/>
 
 			{/* Numbers */}
-			<Show when={props[_randomizerType] == RandomizerType[_numbers]}>
+			<Show when={randomizer() == randomizer_numbers}>
 				<SubMenu
-					ref={r => submenu_sortSettings_ref = r}
-					onToggleOpen={(v) => setIs_submenu_sortSettings_open(v)}
+					ref={r => submenu_sortsettings_ref = r}
+					on_toggle_open={(v) => set_is_submenu_sortsettings_open(v)}
 					item={<SubMenuItem
-						focused={is_submenu_sortSettings_open()}
-						iconCode={0xE123}>
+						focused={is_submenu_sortsettings_open()}
+						icon_code={0xE123}>
 						Sort
 					</SubMenuItem>}>
 					<MenuItem
-						iconCode={0xE11F}
-						onClick={() => changeNumbersSort(NumbersRandomizerSort[_none])}
-						selected={settings()[_numbers][_sort] == NumbersRandomizerSort[_none]}>
+						icon_code={0xE11F}
+						onClick={() => change_numbers_sort(NumbersRandomizerSort.none)}
+						selected={settings().numbers.sort == NumbersRandomizerSort.none}>
 						None
 					</MenuItem>
 					<MenuItem
-						iconCode={0xF187}
-						onClick={() => changeNumbersSort(NumbersRandomizerSort[_ascending])}
-						selected={settings()[_numbers][_sort] == NumbersRandomizerSort[_ascending]}>
+						icon_code={0xF187}
+						onClick={() => change_numbers_sort(NumbersRandomizerSort.ascending)}
+						selected={settings().numbers.sort == NumbersRandomizerSort.ascending}>
 						Ascending
 					</MenuItem>
 					<MenuItem
-						iconCode={0xF189}
-						onClick={() => changeNumbersSort(NumbersRandomizerSort[_descending])}
-						selected={settings()[_numbers][_sort] == NumbersRandomizerSort[_descending]}>
+						icon_code={0xF189}
+						onClick={() => change_numbers_sort(NumbersRandomizerSort.descending)}
+						selected={settings().numbers.sort == NumbersRandomizerSort.descending}>
 						Descending
 					</MenuItem>
 				</SubMenu>
 				<SubMenu
-					ref={r => submenu_numberTypeSettings_ref = r}
-					onToggleOpen={(isOpen) => setIs_submenu_numberTypeSettings_open(isOpen)}
+					ref={r => submenu_numbertypesettings_ref = r}
+					on_toggle_open={(isOpen) => set_is_submenu_numbertypesettings_open(isOpen)}
 					item={<SubMenuItem
-						focused={is_submenu_numberTypeSettings_open()}
-						iconCode={0xEB4B}>
+						focused={is_submenu_numbertypesettings_open()}
+						icon_code={0xEB4B}>
 						Number type
 					</SubMenuItem>}>
 					<MenuItem
-						onClick={() => changeNumbersType(NumbersRandomizerNumberType[_decimal])}
-						selected={settings()[_numbers][_numberType] == NumbersRandomizerNumberType[_decimal]}>
+						onClick={() => changeNumbersType(NumbersRandomizerNumberType.decimal)}
+						selected={settings().numbers.type == NumbersRandomizerNumberType.decimal}>
 						Decimal
 					</MenuItem>
 					<MenuItem
-						onClick={() => changeNumbersType(NumbersRandomizerNumberType[_hexadecimal])}
-						selected={settings()[_numbers][_numberType] == NumbersRandomizerNumberType[_hexadecimal]}>
+						onClick={() => changeNumbersType(NumbersRandomizerNumberType.hexadecimal)}
+						selected={settings().numbers.type == NumbersRandomizerNumberType.hexadecimal}>
 						Hexadecimal
 					</MenuItem>
 					<MenuItem
-						onClick={() => changeNumbersType(NumbersRandomizerNumberType[_octal])}
-						selected={settings()[_numbers][_numberType] == NumbersRandomizerNumberType[_octal]}>
+						onClick={() => changeNumbersType(NumbersRandomizerNumberType.octal)}
+						selected={settings().numbers.type == NumbersRandomizerNumberType.octal}>
 						Octal
 					</MenuItem>
 					<MenuItem
-						onClick={() => changeNumbersType(NumbersRandomizerNumberType[_binary])}
-						selected={settings()[_numbers][_numberType] == NumbersRandomizerNumberType[_binary]}>
+						onClick={() => changeNumbersType(NumbersRandomizerNumberType.binary)}
+						selected={settings().numbers.type == NumbersRandomizerNumberType.binary}>
 						Binary
 					</MenuItem>
 				</SubMenu>
 			</Show>
 
 			{/* Words */}
-			<Show when={props[_randomizerType] == RandomizerType[_words]}>
+			<Show when={randomizer() == randomizer_words}>
 				<SubMenu
-					ref={r => submenu_wordCaseSettings_ref = r}
-					onToggleOpen={isOpen => setIs_submenu_wordCaseSettings_open(isOpen)}
+					ref={r => submenu_wordcasesettings_ref = r}
+					on_toggle_open={isOpen => set_is_submenu_wordcasesettings_open(isOpen)}
 					item={<SubMenuItem
-						focused={is_submenu_wordCaseSettings_open()}
-						iconCode={0xF0FF}>
+						focused={is_submenu_wordcasesettings_open()}
+						icon_code={0xF0FF}>
 						Word case
 					</SubMenuItem>}>
 					<MenuItem
-						onClick={() => changeWordsWordCase(WordsRandomizerWordCase[_none])}
-						selected={settings()[_words][_wordCase] == WordsRandomizerWordCase[_none]}>
+						onClick={() => change_words_wordcase(WordsRandomizerWordCase.none)}
+						selected={settings().words.wordcase == WordsRandomizerWordCase.none}>
 						Default
 					</MenuItem>
 					<MenuItem
-						onClick={() => changeWordsWordCase(WordsRandomizerWordCase[_uppercase])}
-						selected={settings()[_words][_wordCase] == WordsRandomizerWordCase[_uppercase]}>
+						onClick={() => change_words_wordcase(WordsRandomizerWordCase.uppercase)}
+						selected={settings().words.wordcase == WordsRandomizerWordCase.uppercase}>
 						UPPER CASE
 					</MenuItem>
 					<MenuItem
-						onClick={() => changeWordsWordCase(WordsRandomizerWordCase[_lowercase])}
-						selected={settings()[_words][_wordCase] == WordsRandomizerWordCase[_lowercase]}>
+						onClick={() => change_words_wordcase(WordsRandomizerWordCase.lowercase)}
+						selected={settings().words.wordcase == WordsRandomizerWordCase.lowercase}>
 						lower case
 					</MenuItem>
 					<MenuItem
-						onClick={() => changeWordsWordCase(WordsRandomizerWordCase[_titlecase])}
-						selected={settings()[_words][_wordCase] == WordsRandomizerWordCase[_titlecase]}>
+						onClick={() => change_words_wordcase(WordsRandomizerWordCase.titlecase)}
+						selected={settings().words.wordcase == WordsRandomizerWordCase.titlecase}>
 						Title Case
 					</MenuItem>
 					<MenuItem
-						onClick={() => changeWordsWordCase(WordsRandomizerWordCase[_togglecase])}
-						selected={settings()[_words][_wordCase] == WordsRandomizerWordCase[_togglecase]}>
+						onClick={() => change_words_wordcase(WordsRandomizerWordCase.togglecase)}
+						selected={settings().words.wordcase == WordsRandomizerWordCase.togglecase}>
 						tOGGLE cASE
 					</MenuItem>
 				</SubMenu>
 			</Show>
 
 			{/* Colors */}
-			<Show when={props[_randomizerType] == RandomizerType[_colors]}>
+			<Show when={randomizer() == randomizer_colors}>
 				<SubMenu
-					ref={r => submenu_colorModelSettings_ref = r}
+					ref={r => submenu_colormodelsettings_ref = r}
 					style={{width: '128px'}}
-					onToggleOpen={(v) => setIs_submenu_colorModelSettings_open(v)}
+					on_toggle_open={(v) => set_is_submenu_colormodelsettings_open(v)}
 					item={<SubMenuItem
-						focused={is_submenu_colorModelSettings_open()}
-						iconCode={0xE4B6}>
+						focused={is_submenu_colormodelsettings_open()}
+						icon_code={0xE4B6}>
 						Color model
 					</SubMenuItem>}>
 					<MenuItem
-						onClick={() => changeColorsColorModel(ColorsRandomizerColorModel[_hex])}
-						selected={settings()[_colors][_colorModel] == ColorsRandomizerColorModel[_hex]}>
+						onClick={() => change_colors_model(ColorsRandomizerColorModel.hex)}
+						selected={settings().colors.model == ColorsRandomizerColorModel.hex}>
 						HEX
 					</MenuItem>
 					<MenuItem
-						onClick={() => changeColorsColorModel(ColorsRandomizerColorModel[_rgb])}
-						selected={settings()[_colors][_colorModel] == ColorsRandomizerColorModel[_rgb]}>
+						onClick={() => change_colors_model(ColorsRandomizerColorModel.rgb)}
+						selected={settings().colors.model == ColorsRandomizerColorModel.rgb}>
 						RGB
 					</MenuItem>
 					<MenuItem
-						onClick={() => changeColorsColorModel(ColorsRandomizerColorModel[_hsl])}
-						selected={settings()[_colors][_colorModel] == ColorsRandomizerColorModel[_hsl]}>
+						onClick={() => change_colors_model(ColorsRandomizerColorModel.hsl)}
+						selected={settings().colors.model == ColorsRandomizerColorModel.hsl}>
 						HSL
 					</MenuItem>
 				</SubMenu>
 			</Show>
 			<SubMenu
-				ref={r => submenu_themeSettings_ref = r}
-				onToggleOpen={v => setIs_submenu_themeSettings_open(v)}
+				ref={r => submenu_themesettings_ref = r}
+				on_toggle_open={v => set_is_submenu_themesettings_open(v)}
 				item={<SubMenuItem
-					focused={is_submenu_themeSettings_open()}
-					iconCode={0xE28A}>
+					focused={is_submenu_themesettings_open()}
+					icon_code={0xE28A}>
 					Theme
 				</SubMenuItem>}>
 				<MenuItem
-					selected={theme() == ThemeData[_light]}
-					iconCode={0xF2CD}
-					onClick={() => changeTheme(ThemeData[_light])}>
+					selected={theme() == theme_light}
+					icon_code={0xF2CD}
+					onClick={() => change_theme(theme_light)}>
 					Light
 				</MenuItem>
 				<MenuItem
-					selected={theme() == ThemeData[_dark]}
-					iconCode={0xF2B3}
-					onClick={() => changeTheme(ThemeData[_dark])}>
+					selected={theme() == theme_dark}
+					icon_code={0xF2B3}
+					onClick={() => change_theme(theme_dark)}>
 					Dark
 				</MenuItem>
 				<MenuItem
-					selected={theme() == ThemeData[_system]}
-					iconCode={0xE96D}
-					onClick={() => changeTheme(ThemeData[_system])}>
+					selected={theme() == theme_system}
+					icon_code={0xE96D}
+					onClick={() => change_theme(theme_system)}>
 					System theme
 				</MenuItem>
 			</SubMenu>
 			<SubMenu
-				ref={r => submenu_cornerSettings_ref = r}
-				onToggleOpen={v => setIs_submenu_cornerSettings_open(v)}
+				ref={r => submenu_cornersettings_ref = r}
+				on_toggle_open={v => set_is_submenu_cornersettings_open(v)}
 				item={<SubMenuItem
-					focused={is_submenu_cornerSettings_open()}
-					iconCode={0xF044}>
+					focused={is_submenu_cornersettings_open()}
+					icon_code={0xF044}>
 					Corner style
 				</SubMenuItem>}>
 				<MenuItem
-					selected={corner() == CornerData[_sharp]}
-					iconCode={0xEA99}
-					onClick={() => changeCorner(CornerData[_sharp])}>
+					selected={corner() == corner_sharp}
+					icon_code={0xEA99}
+					onClick={() => change_corner(corner_sharp)}>
 					Sharp
 				</MenuItem>
 				<MenuItem
-					selected={corner() == CornerData[_semiRound]}
-					iconCode={0xEEF7}
-					onClick={() => changeCorner(CornerData[_semiRound])}>
+					selected={corner() == corner_semiround}
+					icon_code={0xEEF7}
+					onClick={() => change_corner(corner_semiround)}>
 					Semi round
 				</MenuItem>
 				<MenuItem
-					selected={corner() == CornerData[_round]}
-					iconCode={0xF044}
-					onClick={() => changeCorner(CornerData[_round])}>
+					selected={corner() == corner_round}
+					icon_code={0xF044}
+					onClick={() => change_corner(corner_round)}>
 					Round
 				</MenuItem>
 				<MenuItem
-					selected={corner() == CornerData[_fullRound]}
-					iconCode={0xE408}
-					onClick={() => changeCorner(CornerData[_fullRound])}>
+					selected={corner() == corner_fullround}
+					icon_code={0xE408}
+					onClick={() => change_corner(corner_fullround)}>
 					Full round
 				</MenuItem>
 			</SubMenu>
-			<Show when={props[_randomizerType] == RandomizerType[_numbers] || props[_randomizerType] == RandomizerType[_words]}>
+			<Show when={randomizer() == randomizer_numbers || randomizer() == randomizer_words}>
 				<MenuDivider/>
 				<div class={ CSS.appbar_textfield_menu_item }>
 					<TextField
 						ref={r => textfield_prefix_ref = r}
 						label="Prefix"
-						onBlur={(ev) => props[_command](Commands[_change_settings_prefix], ev[_currentTarget][_value])}
+						onBlur={(ev) => command(Commands.change_settings_prefix, ev.currentTarget.value)}
 						leading={<Icon code={0xE043}/>}
 					/>
 				</div>
@@ -470,7 +490,7 @@ const _: Component<{
 					<TextField
 						ref={r => textfield_suffix_ref = r}
 						label="Suffix"
-						onBlur={(ev) => props[_command](Commands[_change_settings_suffix], ev[_currentTarget][_value])}
+						onBlur={(ev) => command(Commands.change_settings_suffix, ev.currentTarget.value)}
 						leading={<Icon code={0xE02D}/>}
 					/>
 				</div>
@@ -478,20 +498,20 @@ const _: Component<{
 					<TextField
 						ref={r => textfield_separator_ref = r}
 						label="Separator"
-						onBlur={(ev) => props[_command](Commands[_change_settings_separator], ev[_currentTarget][_value])}
+						onBlur={(ev) => command(Commands.change_settings_separator, ev.currentTarget.value)}
 						leading={<Icon code={0xE4CF}/>}
 					/>
 				</div>
 			</Show>
-			<Show when={props[_randomizerType] == RandomizerType[_numbers]}>
+			<Show when={randomizer() == randomizer_numbers}>
 				<div class={ CSS.appbar_textfield_menu_item }>
 					<NumberTextField
-						ref={r => textfield_decimalLength_ref = r}
+						ref={r => textfield_decimallength_ref = r}
 						min={0}
 						label="Min decimal length"
-						onBlur={ev => props[_command](
-							Commands[_change_settings_numbers_minDecimalLength],
-							safeNumber(ev[_currentTarget][_valueAsNumber])
+						onBlur={ev => command(
+							Commands.change_settings_numbers_minlength,
+							number_safe(ev.currentTarget.valueAsNumber)
 						)}
 						leading={<Icon code={0xE599}/>}
 					/>
@@ -504,8 +524,8 @@ const _: Component<{
 		<Drawer
 			header={<TextTooltip text="Close navigation">
 				<IconButton
-					classList={addClassListModule(CSSAnimation.btn_shrink_horizontal_icon)}
-					onClick={() => closeDrawer(drawer_navigation_ref)}
+					classList={add_classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
+					onClick={() => close_drawer(drawer_navigation_ref)}
 					code={0xEAFF}
 				/>
 			</TextTooltip>}
@@ -513,13 +533,13 @@ const _: Component<{
 			<For each={RANDOMIZER_TYPES}>{r =>
 				<DrawerItem
 					onClick={() => {
-						if (props[_randomizerType] != r[_type]) props[_onChangeRandomizer](r[_type])
+						if (randomizer() != r.type) props.on_change_randomizer(r.type)
 
-						closeDrawer(drawer_navigation_ref)
+						close_drawer(drawer_navigation_ref)
 					} }
-					selected={props[_randomizerType] == r[_type]}>
-					<Icon filled={props[_randomizerType] == r[_type]} code={r[_icon]}/>
-					{ r[_text] }
+					selected={randomizer() == r.type}>
+					<Icon filled={randomizer() == r.type} code={r.icon}/>
+					{ r.text }
 				</DrawerItem>
 			}</For>
 		</Drawer>
@@ -528,57 +548,55 @@ const _: Component<{
 	return (<>
 		<AppBar
 			leading={<>
-				<TextTooltip text={isSideNavigationHidden()? "Open navigation" : "Expand/shrink navigation"}>
+				<TextTooltip text={is_sidenavigation_hidden()? "Open navigation" : "Expand/shrink navigation"}>
 					<IconButton
 						onClick={(ev) => {
-							if (isSideNavigationHidden()) return openDrawer(ev, drawer_navigation_ref)
-							props[_command](Commands[_toggle_navigation_expand])
+							if (is_sidenavigation_hidden()) return openDrawer(ev, drawer_navigation_ref)
+							command(Commands.toggle_navigation_expand)
 						}}
-						classList={addClassListModule(CSSAnimation.btn_shrink_horizontal_icon)}
+						classList={add_classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
 						code={0xEAFF}
 					/>
 				</TextTooltip>
-				<img width="32" src={logo[_src]} alt="Randomizer" />
+				<img width="32" src={logo.src} alt="Randomizer" />
 			</>}
 			headline="Randomizer"
 			trailing={<>
 				<Button
-					classList={addClassListModule(CSSAnimation.btn_rotate_full_icon, CSS.appbar_generate_btn)}
-					data-g-keep-pointer-event={setElementAttributeIfExist(props[_isGenerating])}
-					variant={ButtonVariant[_filled]}
+					classList={add_classlist_module(CSSAnimation.btn_rotate_full_icon, CSS.appbar_generate_btn)}
+					data-g-keep-pointer-event={attr_set_if_exist(props.is_generating)}
+					variant={ButtonVariant.filled}
 					onClick={(ev) => {
-						if (props[_isGenerating]) return props[_command](Commands[_stopGenerate])
-						props[_command](Commands[_generate], ev)
+						if (props.is_generating) return command(Commands.stop_generate)
+						command(Commands.generate, ev)
 					}}>
 					<Icon
 						filled
-						classList={addClassListModule(CSS.appbar_generate_icon)}
-						data-rotate={setElementAttributeIfExist(props[_isGenerating])}
+						classList={add_classlist_module(CSS.appbar_generate_icon)}
+						data-rotate={attr_set_if_exist(props.is_generating)}
 						code={0xE143}
 					/>
-					<Show when={props[_isGenerating]} fallback="Generate">Generating</Show>
+					<Show when={props.is_generating} fallback="Generate">Generating</Show>
 				</Button>
 				<TextTooltip text="Info">
 					<IconButton
 						focused={is_menu_info_open()}
 						code={0xE930}
-						onClick={(ev) => openMenu(ev, menu_info_ref, {
-							anchor: ev[_currentTarget],
+						onClick={(ev) => open_menu(ev, menu_info_ref, {
+							anchor: ev.currentTarget,
 							padding: 4,
-							position: MenuPosition[_centerBottomToLeft]
 						})}
 					/>
 				</TextTooltip>
 				<TextTooltip text="Settings">
 					<IconButton
-						classList={addClassListModule(CSSAnimation.btn_rotate_icon)}
+						classList={add_classlist_module(CSSAnimation.btn_rotate_icon)}
 						focused={is_menu_settings_open()}
 						onClick={async (ev) => {
-							initInputs()
-							openMenu(ev, menu_settings_ref, {
-								anchor: ev[_currentTarget],
+							init_inputs()
+							open_menu(ev, menu_settings_ref, {
+								anchor: ev.currentTarget,
 								padding: 4,
-								position: MenuPosition[_centerBottomToLeft]
 							})
 						}}
 						code={0xEE0F}
@@ -587,23 +605,23 @@ const _: Component<{
 				<TextTooltip text="Copy result">
 					<IconButton
 						onClick={async () => {
-							const success = await props[_onCopyResult]()
+							const success = await props.on_copy_result()
 							if (!success) {
-								if (copyErrorTimeoutId()) endTimeout(copyErrorTimeoutId()!)
+								if (timeout_copyerror_id()) timeout_clear(timeout_copyerror_id()!)
 
-								setCopyErrorTimeoutId(startTimeout(() => {
-									setCopyErrorTimeoutId(null)
+								set_timeout_copyerror_id(timeout_set(() => {
+									set_timeout_copyerror_id(null)
 								}, 1000))
 								return
 							}
 
-							if (copyTimeoutId()) endTimeout(copyTimeoutId()!)
+							if (timeout_copy_id()) timeout_clear(timeout_copy_id()!)
 
-							setCopyTimeoutId(startTimeout(() => {
-								setCopyTimeoutId(null)
+							set_timeout_copy_id(timeout_set(() => {
+								set_timeout_copy_id(null)
 							}, 1000))
 						}}
-						code={copyTimeoutId()? 0xE3D8 : copyErrorTimeoutId()? 0xE5E9 : 0xE51B}
+						code={timeout_copy_id()? 0xE3D8 : timeout_copyerror_id()? 0xE5E9 : 0xE51B}
 					/>
 				</TextTooltip>
 			</>}

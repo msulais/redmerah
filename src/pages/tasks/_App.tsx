@@ -4,30 +4,30 @@ import { createSignal, For, onMount, Show, type VoidComponent } from "solid-js"
 import type { TaskList, TaskLabel, Settings, Task, TaskFileMetaData, SubTask } from "./_types"
 import type { HEXColor } from "@/types/color"
 import { type ObjectStoreTaskLists, type ObjectStoreSettings, type ObjectStoreSubTasks, type ObjectStoreTasks, type ObjectStoreTaskLabels, type ObjectStoreFiles, type ObjectStoreTaskFileMetaData, type ObjectStoreMiscellaneous, ObjectStoreNames, ObjectStoreKeys, } from "./_storage"
-import { _tasks, _new, _name, _ascending, _sortMode, _descending, _sortBy, _completed, _sort, _localeCompare, _complete, _creationDate, _id, _importance, _important, _uncompleted, _transaction, _subtasks, _readwrite, _objectStore, _push, _map, _put, _description, _labelIds, _listId, _reminder, _includes, _taskFileMetaData, _files, _delete, _writeObjectStore, _settings, _miscellaneous, _add, _target, _result, _length, _slice, _all, _planned, _emoji, _join, _every, _clipboard, _writeText, _labels, _splice, _findIndex, _concat, _size, _type, _readonly, _get, _then, _blob, _taskId, _reverse, _taskLists, _trim, _isShowDeleteTaskWarning, _hiddenNavigation, _open, _readObjectStore, _createObjectStore, _key, _value, _color, _getAll, _keys, _cursor, _filter, _tonal, _filled, _contents, _currentTarget, _edit, _bold, _remove, _splash, _animate, _finished, _spring } from "@/constants/string"
 import { Commands, Pages, SortBy, SortMode } from "./_enums"
 import { DatabaseNames } from "@/enums/storage"
 import { DEFAULT_TASK_LIST } from "./_constants"
-import { IDB } from "@/utils/indexeddb"
-import { getDateString_YMD_HM } from "@/utils/datetime"
-import { getNavigator } from "@/constants/window"
-import { downloadFile } from "@/utils/file"
-import { eventPreventDefault } from "@/utils/event"
-import { numberParse } from "@/utils/math"
-import { setMicrotask } from "@/utils/timeout"
-import { getElementById } from "@/utils/element"
-import { ElementIds } from "@/enums/ids"
-import { AnimationEffectTiming } from "@/enums/animation"
+import { IDB, idb_store_delete, idb_store_put } from "@/utils/indexeddb"
+import { date_text_YMD_HM } from "@/utils/datetime"
+import { file_download } from "@/utils/file"
+import { event_prevent_default } from "@/utils/event"
+import { array_concat, array_every, array_filter, array_find_index, array_includes, array_join, array_length, array_map, array_push, array_reverse, array_slice, array_sort, array_splice } from "@/utils/array"
+import { string_locale_compare, string_trim } from "@/utils/string"
+import { navigator_clipboard_writetext } from "@/utils/navigator"
+import { promise_done } from "@/utils/object"
+import { number_parse } from "@/utils/number"
+import { remove_splash_screen } from "@/scripts/splash"
+import { AppColors } from "@/enums/colors"
 
 import { TextTooltip } from "@/components/Tooltip"
 import Icon from "@/components/Icon"
 import Button, { ButtonVariant, IconButton } from "@/components/Button"
-import TextField, { changeTextFieldValue, TextFieldButton } from "@/components/TextField"
-import { EmojiPicker, closeEmojiPicker, openEmojiPicker } from "@/components/EmojiPicker"
+import TextField, { change_textfield_value, TextFieldButton } from "@/components/TextField"
+import { EmojiPicker, close_emojipicker, open_emojipicker } from "@/components/EmojiPicker"
 import List from "@/components/List"
-import Toast, { openToast } from "@/components/Toast"
-import Dialog, { closeDialog, openDialog } from "@/components/Dialog"
-import ColorPicker, { closeColorPicker, openColorPicker } from "@/components/ColorPicker"
+import Toast, { open_toast } from "@/components/Toast"
+import Dialog, { close_dialog, open_dialog } from "@/components/Dialog"
+import ColorPicker, { close_colorpicker, open_colorpicker } from "@/components/ColorPicker"
 import Emoji from "@/components/Emoji"
 import App from "@/components/App"
 import AppBar from "./_AppBar"
@@ -35,1322 +35,1394 @@ import SideNavigation from './_SideNavigation'
 import Body from './_Body'
 
 const _: VoidComponent = () => {
-	const db = new IDB(DatabaseNames[_tasks])
-	const [page, setPage] = createSignal<Pages | number>(Pages[_tasks])
-	const [isSideNavigationExpanded, setIsSideNavigationExpanded] = createSignal<boolean>(true)
-	const [newListNameText, setNewListNameText] = createSignal<string>('')
-	const [newListEmoji, setNewListEmoji] = createSignal<string | null>(null)
-	const [editListNameText, setEditListNameText] = createSignal<string>('')
-	const [editListEmoji, setEditListEmoji] = createSignal<string | null>(null)
-	const [labels, setLabels] = createStore<(TaskLabel | undefined)[]>([])
-	const [taskLists, setTaskLists] = createStore<TaskList[]>([DEFAULT_TASK_LIST])
-	const [selectedLabelToAdd, setSelectedLabelToAdd] = createStore<TaskLabel>({id: -1, name: '', color: null})
-	const [selectedLabelToEdit, setSelectedLabelToEdit] = createStore<TaskLabel>({id: -1, name: '', color: null})
-	const [selectedTaskListIndexToDelete, setSelectedTaskListIndexToDelete] = createSignal<number>(0)
-	const [selectedTaskListIndexToRename, setSelectedTaskListIndexToRename] = createSignal<number>(0)
-	const [changeLabelColorOption, setChangeLabelColorOption] = createSignal<'new' | 'edit'>(_new)
-	const [is_emojiPicker_newList_open, setIs_emojiPIcker_newList_open] = createSignal<boolean>(false)
-	const [is_emojiPicker_editList_open, setIs_emojiPicker_editList_open] = createSignal<boolean>(false)
-	const [is_colorPicker_label_open, setIs_colorPicker_label_open] = createSignal<boolean>(false)
-	const [isFileDBError, setIsFileDBError] = createSignal<boolean>(true)
-	const [settings, setSettings] = createStore<Settings>({
-		sortBy: SortBy[_name],
-		sortMode: SortMode[_ascending],
-		isShowDeleteTaskWarning: true,
-		hiddenNavigation: []
+	const db = new IDB(DatabaseNames.tasks)
+	const [page, set_page] = createSignal<Pages | number>(Pages.tasks)
+	const [is_sidenavigation_expanded, set_is_sidenavigation_expanded] = createSignal<boolean>(true)
+	const [new_listname_text, set_new_listname_text] = createSignal<string>('')
+	const [new_list_emoji, set_new_list_emoji] = createSignal<string | null>(null)
+	const [edit_listname_text, set_edit_listname_text] = createSignal<string>('')
+	const [edit_list_emoji, set_edit_list_emoji] = createSignal<string | null>(null)
+	const [labels, set_labels] = createStore<(TaskLabel | undefined)[]>([])
+	const [tasklists, set_tasklists] = createStore<TaskList[]>([DEFAULT_TASK_LIST])
+	const [selected_label_to_add, set_selected_label_to_add] = createStore<TaskLabel>({id: -1, name: '', color: null})
+	const [selected_label_to_edit, set_selected_label_to_edit] = createStore<TaskLabel>({id: -1, name: '', color: null})
+	const [selected_tasklist_index_to_delete, set_selected_tasklist_index_to_delete] = createSignal<number>(0)
+	const [selected_tasklist_index_to_rename, set_selected_tasklist_index_to_rename] = createSignal<number>(0)
+	const [change_labelcolor_option, set_change_labelcolor_option] = createSignal<'new' | 'edit'>('new')
+	const [is_emojipicker_newlist_open, set_is_emojipicker_newlist_open] = createSignal<boolean>(false)
+	const [is_emojipicker_editlist_open, set_is_emojipicker_editlist_open] = createSignal<boolean>(false)
+	const [is_colorpicker_label_open, set_is_colorpicker_label_open] = createSignal<boolean>(false)
+	const [is_db_file_error, set_is_db_file_error] = createSignal<boolean>(true)
+	const [settings, set_settings] = createStore<Settings>({
+		sort_by: SortBy.name,
+		sort_mode: SortMode.ascending,
+		is_show_deletetaskwarning: true,
+		hidden_navigation: []
 	})
-	let isEveryTaskLoaded: boolean = false
-	let textfield_newLabel_ref: HTMLInputElement
-	let textfield_editLabel_ref: HTMLInputElement
-	let textfield_newList_ref: HTMLInputElement
-	let textfield_editList_ref: HTMLInputElement
+	let is_every_task_loaded: boolean = false
+	let textfield_newlabel_ref: HTMLInputElement
+	let textfield_editlabel_ref: HTMLInputElement
+	let textfield_newlist_ref: HTMLInputElement
+	let textfield_editlist_ref: HTMLInputElement
 	let dialog_labels_ref: HTMLDialogElement
-	let dialog_newLabel_ref: HTMLDialogElement
-	let dialog_editLabel_ref: HTMLDialogElement
-	let dialog_newList_ref: HTMLDialogElement
-	let dialog_editList_ref: HTMLDialogElement
-	let dialog_deleteList_ref: HTMLDialogElement
-	let colorPicker_label_ref: HTMLDialogElement
-	let toast_noFile_ref: HTMLDivElement
-	let emojiPicker_ref: HTMLDialogElement
+	let dialog_newlabel_ref: HTMLDialogElement
+	let dialog_editlabel_ref: HTMLDialogElement
+	let dialog_newlist_ref: HTMLDialogElement
+	let dialog_editlist_ref: HTMLDialogElement
+	let dialog_deletelist_ref: HTMLDialogElement
+	let colorpicker_label_ref: HTMLDialogElement
+	let toast_nofile_ref: HTMLDivElement
+	let emojipicker_ref: HTMLDialogElement
 
-	function sortTasks(tasks: Task[]): Task[] {
-		const isReverse = settings[_sortMode] == SortMode[_descending]
-
-		if (settings[_sortBy] == SortBy[_completed]) {
-			tasks[_sort]((a, b) => a[_name][_localeCompare](b[_name]))
-			tasks[_sort]((a) => (a[_complete]? -1 : 1) * (isReverse? -1 : 1))
-		}
-		else if (settings[_sortBy] == SortBy[_name]) {
-			tasks[_sort]((a, b) => (a[_name][_localeCompare](b[_name])) * (isReverse? -1 : 1))
-		}
-		else if (settings[_sortBy] == SortBy[_creationDate]) {
-			tasks[_sort]((a, b) => !isReverse? b[_id] - a[_id] : a[_id] - b[_id])
-		}
-		else if (settings[_sortBy] == SortBy[_importance]) {
-			tasks[_sort]((a, b) => a[_name][_localeCompare](b[_name]))
-			tasks[_sort]((a, _b) => (a[_important]? -1 : 1) * (isReverse? -1 : 1))
-		}
-		else if (settings[_sortBy] == SortBy[_uncompleted]) {
-			tasks[_sort]((a, b) => b[_name][_localeCompare](a[_name]))
-			tasks[_sort]((a) => (!a[_complete]? -1 : 1) * (isReverse? -1 : 1))
+	function sort_tasks(tasks: Task[]): Task[] {
+		const is_reverse = settings.sort_mode == SortMode.descending
+		switch (settings.sort_by) {
+			case SortBy.name: {
+				array_sort(
+					tasks,
+					(a, b) => string_locale_compare(a.name, b.name) * (is_reverse? -1 : 1)
+				)
+				break
+			}
+			case SortBy.importance: {
+				array_sort(tasks, (a, b) => string_locale_compare(a.name, b.name))
+				array_sort(tasks, (a, _b) => (a.important? -1 : 1) * (is_reverse? -1 : 1))
+				break
+			}
+			case SortBy.creation_date: {
+				array_sort(tasks, (a, b) => !is_reverse? b.id - a.id : a.id - b.id)
+				break
+			}
+			case SortBy.completed: {
+				array_sort(tasks, (a, b) => string_locale_compare(a.name, b.name))
+				array_sort(tasks, (a) => (a.complete? -1 : 1) * (is_reverse? -1 : 1))
+				break
+			}
+			case SortBy.uncompleted: {
+				array_sort(tasks, (a, b) => string_locale_compare(b.name, a.name))
+				array_sort(tasks, (a) => (!a.complete? -1 : 1) * (is_reverse? -1 : 1))
+				break
+			}
 		}
 
 		return tasks
 	}
 
-	function markAllTaskAs(taskListIndex: number, complete: boolean): void {
-		const transaction = db[_transaction]([
-			ObjectStoreNames[_tasks],
-			ObjectStoreNames[_subtasks]
-		], _readwrite)
-		const store_tasks = transaction != null? transaction[_objectStore](ObjectStoreNames[_tasks]) : null
-		const store_subtasks = transaction != null? transaction[_objectStore](ObjectStoreNames[_subtasks]) : null
+	function mark_all_task_as(tasklist_index: number, complete: boolean): void {
+		const [store_tasks, store_subtasks] = db.stores('readwrite',
+			ObjectStoreNames.tasks, ObjectStoreNames.subtasks
+		)
 		const tasks: Task[] = []
 
-		for (const task of taskLists[taskListIndex][_tasks]){
-			if (task[_complete] == complete) {
-				tasks[_push](task)
+		for (const task of tasklists[tasklist_index].tasks){
+			if (task.complete == complete) {
+				array_push(tasks, task)
 				continue
 			}
 
 			const t: Task = {
 				...task,
 				complete: complete,
-				subtasks: [...task[_subtasks][_map]((v) => {
+				subtasks: [...array_map(task.subtasks, (v) => {
 					const subtask = {...v}
-					subtask[_complete] = complete
-					if (store_subtasks != null) store_subtasks[_put]({...v} satisfies ObjectStoreSubTasks)
+					subtask.complete = complete
+					if (store_subtasks) idb_store_put(store_subtasks, {...v} satisfies ObjectStoreSubTasks)
 					return subtask
 				})]
 			}
-			if (store_tasks != null) store_tasks[_put]({
-				id: t[_id],
-				complete: t[_complete],
-				description: t[_description],
-				important: t[_important],
-				labelIds: [...t[_labelIds]],
-				listId: t[_listId],
-				name: t[_name],
-				reminder: t[_reminder]
+			if (store_tasks) idb_store_put(store_tasks, {
+				id: t.id,
+				complete: t.complete,
+				description: t.description,
+				important: t.important,
+				label_ids: [...t.label_ids],
+				list_id: t.list_id,
+				name: t.name,
+				reminder: t.reminder
 			} satisfies ObjectStoreTasks)
-			tasks[_push](t)
+			array_push(tasks, t)
 		}
-		setTaskLists(
-			taskListIndex,
-			_tasks,
-			[SortBy[_completed], SortBy[_uncompleted]][_includes](settings[_sortBy])
-				? sortTasks(tasks)
+		set_tasklists(
+			tasklist_index,
+			'tasks',
+			array_includes([SortBy.completed, SortBy.uncompleted], settings.sort_by)
+				? sort_tasks(tasks)
 				: tasks
 		)
 	}
 
-	function deleteCompletedTask(taskListIndex: number): void {
-		const transaction = db[_transaction]([
-			ObjectStoreNames[_tasks],
-			ObjectStoreNames[_subtasks],
-			ObjectStoreNames[_taskFileMetaData],
-			ObjectStoreNames[_files],
-		], _readwrite)
-		const store_tasks = transaction != null? transaction[_objectStore](ObjectStoreNames[_tasks]) : null
-		const store_subtasks = transaction != null? transaction[_objectStore](ObjectStoreNames[_subtasks]) : null
-		const store_files = transaction != null? transaction[_objectStore](ObjectStoreNames[_files]) : null
-		const store_taskFileMetaData = transaction != null? transaction[_objectStore](ObjectStoreNames[_taskFileMetaData]) : null
+	function delete_completed_task(tasklist_index: number): void {
+		const [store_tasks, store_subtasks, store_files, store_filemetadata] = db.stores('readwrite',
+			ObjectStoreNames.tasks,
+			ObjectStoreNames.subtasks,
+			ObjectStoreNames.files,
+			ObjectStoreNames.filemetadata,
+		)
 		const tasks: Task[] = []
 
-		for (const task of taskLists[taskListIndex][_tasks]){
-			if (!task[_complete]) {
-				tasks[_push](task)
+		for (const task of tasklists[tasklist_index].tasks){
+			if (!task.complete) {
+				array_push(tasks, task)
 				continue
 			}
-			if (store_tasks != null) store_tasks[_delete](task[_id])
-			if (store_subtasks != null){
-				for (const subtask of task[_subtasks]) {
-					store_subtasks[_delete](subtask[_id])
+			if (store_tasks) idb_store_delete(store_tasks, task.id)
+			if (store_subtasks){
+				for (const subtask of task.subtasks) {
+					idb_store_delete(store_subtasks, subtask.id)
 				}
 			}
-			for (const file of task[_files]) {
-				if (store_taskFileMetaData != null) store_taskFileMetaData[_delete](file[_id])
-				if (store_files != null) store_files[_delete](file[_id])
+			for (const file of task.files) {
+				if (store_filemetadata) idb_store_delete(store_filemetadata, file.id)
+				if (store_files) idb_store_delete(store_files, file.id)
 			}
 		}
-		setTaskLists(taskListIndex, _tasks, tasks)
+		set_tasklists(tasklist_index, 'tasks', tasks)
 	}
 
-	function clearTasks(taskListIndex: number): void {
-		setTaskLists(taskListIndex, _tasks, [])
+	function clear_tasks(tasklist_index: number): void {
+		const [store_tasks, store_subtasks, store_files, store_filemetadata] = db.stores('readwrite',
+			ObjectStoreNames.tasks,
+			ObjectStoreNames.subtasks,
+			ObjectStoreNames.files,
+			ObjectStoreNames.filemetadata,
+		)
 
-		const transaction = db[_transaction]([
-			ObjectStoreNames[_tasks],
-			ObjectStoreNames[_subtasks],
-			ObjectStoreNames[_taskFileMetaData],
-			ObjectStoreNames[_files],
-		], _readwrite)
-		const store_tasks = transaction != null? transaction[_objectStore](ObjectStoreNames[_tasks]) : null
-		const store_subtasks = transaction != null? transaction[_objectStore](ObjectStoreNames[_subtasks]) : null
-		const store_taskFileMetaData = transaction != null? transaction[_objectStore](ObjectStoreNames[_taskFileMetaData]) : null
-		const store_files = transaction != null? transaction[_objectStore](ObjectStoreNames[_files]) : null
+		set_tasklists(tasklist_index, 'tasks', [])
 
-		for (const task of taskLists[taskListIndex][_tasks]){
-			if (store_tasks != null) store_tasks[_delete](task[_id])
-			if (store_subtasks != null){
-				for (const subtask of task[_subtasks]) {
-					store_subtasks[_delete](subtask[_id])
+		for (const task of tasklists[tasklist_index].tasks){
+			if (store_tasks) idb_store_delete(store_tasks, task.id)
+			if (store_subtasks){
+				for (const subtask of task.subtasks) {
+					idb_store_delete(store_subtasks, subtask.id)
 				}
 			}
-			for (const file of task[_files]) {
-				if (store_taskFileMetaData != null) store_taskFileMetaData[_delete](file[_id])
-				if (store_files != null) store_files[_delete](file[_id])
+			for (const file of task.files) {
+				if (store_filemetadata) idb_store_delete(store_filemetadata, file.id)
+				if (store_files) idb_store_delete(store_files, file.id)
 			}
 		}
 	}
 
-	function saveSettings(...items: [key: ObjectStoreKeys, value: unknown][]): void {
-		const store = db[_writeObjectStore](ObjectStoreNames[_settings])
-		if (store == null) return;
+	function save_settings(...items: [key: ObjectStoreKeys, value: unknown][]): void {
+		const store = db.write_store(ObjectStoreNames.settings)
+		if (!store) return
 
 		for (const item of items) {
-			store[_put]({ key: item[0], value: item[1] })
+			idb_store_put(store, { key: item[0], value: item[1] })
 		}
 	}
 
-	function saveMiscellaneous(...items: [key: ObjectStoreKeys, value: unknown][]): void {
-		const store = db[_writeObjectStore](ObjectStoreNames[_miscellaneous])
-		if (store == null) return;
+	function save_miscellaneous(...items: [key: ObjectStoreKeys, value: unknown][]): void {
+		const store = db.write_store(ObjectStoreNames.miscellaneous)
+		if (store == null) return
 
 		for (const item of items) {
-			store[_put]({ key: item[0], value: item[1] })
+			idb_store_put(store, { key: item[0], value: item[1] })
 		}
 	}
 
-	async function addTask(task: Task, taskListIndex: number): Promise<void> {
-		const store = db[_writeObjectStore](ObjectStoreNames[_tasks])
+	async function add_task(task: Task, tasklist_index: number): Promise<void> {
+		const store = db.write_store(ObjectStoreNames.tasks)
 
 		try {
 			let id = 0
-			if (store != null) id = ((await db[_add]<Omit<ObjectStoreTasks, 'id'>>(store, {
-				description: task[_description],
-				complete: task[_complete],
-				important: task[_important],
-				labelIds: [...task[_labelIds]],
-				listId: task[_listId],
-				name: task[_name],
-				reminder: task[_reminder]
-			}))[_target]! as any)[_result] as number
+			if (store) id = ((await db.add<Omit<ObjectStoreTasks, 'id'>>(store, {
+				description: task.description,
+				complete: task.complete,
+				important: task.important,
+				label_ids: [...task.label_ids],
+				list_id: task.list_id,
+				name: task.name,
+				reminder: task.reminder
+			})).target! as any).result as number
 
-			else for (const taskList of taskLists) {
-				tasks: for (const task of taskList[_tasks]) {
-					if (task[_id] < id) continue tasks;
+			else for (const taskList of tasklists) {
+				tasks: for (const task of taskList.tasks) {
+					if (task.id < id) continue tasks;
 
-					id = task[_id] + 1
+					id = task.id + 1
 				}
 			}
 
 			const $$task: Task = {...task, id, subtasks: []}
-			setTaskLists(taskListIndex, _tasks, t => sortTasks([...t, $$task]))
+			set_tasklists(tasklist_index, 'tasks', t => sort_tasks([...t, $$task]))
 		} catch {}
 	}
 
-	function editSubtask(subtask: SubTask, taskListIndex: number, taskIndex: number, subtaskIndex: number): void {
-		const transaction = db[_transaction]([
-			ObjectStoreNames[_tasks],
-			ObjectStoreNames[_subtasks]
-		], _readwrite)
-		const store_tasks = transaction != null? transaction[_objectStore](ObjectStoreNames[_tasks]) : null
-		const store_subtasks = transaction != null? transaction[_objectStore](ObjectStoreNames[_subtasks]) : null
-		const isNameChanged = subtask[_name] != taskLists[taskListIndex][_tasks][taskIndex][_subtasks][subtaskIndex][_name]
-		const subtasks = (isNameChanged
-			? [...taskLists[taskListIndex][_tasks][taskIndex][_subtasks]]
+	function edit_subtask(
+		subtask: SubTask,
+		tasklist_index: number,
+		task_index: number,
+		subtask_index: number
+	): void {
+		const [store_tasks, store_subtasks] = db.stores('readwrite',
+			ObjectStoreNames.tasks,
+			ObjectStoreNames.subtasks,
+		)
+		const is_name_changed = subtask.name != tasklists[tasklist_index].tasks[task_index].subtasks[subtask_index].name
+		const subtasks = (is_name_changed
+			? [...tasklists[tasklist_index].tasks[task_index].subtasks]
 			: []
 		)
 
-		if (isNameChanged){
-			subtasks[subtaskIndex] = subtask
-			subtasks[_sort]((a, b) => a[_name][_localeCompare](b[_name]))
+		if (is_name_changed){
+			subtasks[subtask_index] = subtask
+			array_sort(subtasks, (a, b) => string_locale_compare(a.name, b.name))
 		}
 
-		if (isNameChanged) setTaskLists(taskListIndex, _tasks, taskIndex, _subtasks, subtasks)
-		else setTaskLists(taskListIndex, _tasks, taskIndex, _subtasks, subtaskIndex, {...subtask})
+		if (is_name_changed) set_tasklists(tasklist_index, 'tasks', task_index, 'subtasks', subtasks)
+		else set_tasklists(tasklist_index, 'tasks', task_index, 'subtasks', subtask_index, {...subtask})
 
-		if (store_subtasks != null) store_subtasks[_put]({...subtask})
-		if (!(!subtask[_complete] && taskLists[taskListIndex][_tasks][taskIndex][_complete])) return;
+		if (store_subtasks) idb_store_put(store_subtasks, {...subtask})
+		if (!(!subtask.complete && tasklists[tasklist_index].tasks[task_index].complete)) return;
 
-		const task: Task = {...taskLists[taskListIndex][_tasks][taskIndex], complete: false}
-		if ([SortBy[_completed], SortBy[_uncompleted]][_includes](settings[_sortBy])) {
-			const tasks: Task[] = [...taskLists[taskListIndex][_tasks]]
-			tasks[taskIndex] = task
-			setTaskLists(taskListIndex, _tasks, sortTasks(tasks))
+		const task: Task = {...tasklists[tasklist_index].tasks[task_index], complete: false}
+		if (array_includes([SortBy.completed, SortBy.uncompleted], settings.sort_by)) {
+			const tasks: Task[] = [...tasklists[tasklist_index].tasks]
+			tasks[task_index] = task
+			set_tasklists(tasklist_index, 'tasks', sort_tasks(tasks))
 		}
-		else setTaskLists(taskListIndex, _tasks, taskIndex, task)
+		else set_tasklists(tasklist_index, 'tasks', task_index, task)
 
-		if (store_tasks != null) store_tasks[_put]({
-			id: task[_id],
-			description: task[_description],
-			complete: task[_complete],
-			important: task[_important],
-			labelIds: [...task[_labelIds]],
-			listId: task[_listId],
-			name: task[_name],
-			reminder: task[_reminder],
+		if (store_tasks) idb_store_put(store_tasks, {
+			id: task.id,
+			description: task.description,
+			complete: task.complete,
+			important: task.important,
+			label_ids: [...task.label_ids],
+			list_id: task.list_id,
+			name: task.name,
+			reminder: task.reminder,
 		} satisfies ObjectStoreTasks)
 	}
 
-	function editFile(file: TaskFileMetaData, taskListIndex: number, taskIndex: number, fileIndex: number): void {
-		const isNameChanged = taskLists[taskListIndex][_tasks][taskIndex][_files][fileIndex][_name] != file[_name]
-		const files: TaskFileMetaData[] = (isNameChanged
-			? [...taskLists[taskListIndex][_tasks][taskIndex][_files]]
-			: taskLists[taskListIndex][_tasks][taskIndex][_files]
+	function edit_file(
+		file: TaskFileMetaData,
+		tasklist_index: number,
+		task_index: number,
+		file_index: number
+	): void {
+		const is_name_changed = tasklists[tasklist_index].tasks[task_index].files[file_index].name != file.name
+		const files: TaskFileMetaData[] = (is_name_changed
+			? [...tasklists[tasklist_index].tasks[task_index].files]
+			: tasklists[tasklist_index].tasks[task_index].files
 		)
 
-		if (isNameChanged) {
-			files[fileIndex] = {...file}
-			files[_sort]((a, b) => a[_name][_localeCompare](b[_name]))
+		if (is_name_changed) {
+			files[file_index] = {...file}
+			array_sort(files, (a, b) => string_locale_compare(a.name, b.name))
 		}
 
-		setTaskLists(taskListIndex, _tasks, taskIndex, _files, files)
-
-		const store_taskFileMetaData = db[_writeObjectStore](ObjectStoreNames[_taskFileMetaData])
-		if (store_taskFileMetaData != null) store_taskFileMetaData[_put]({...file})
+		set_tasklists(tasklist_index, 'tasks', task_index, 'files', files)
+		const store_filemetadata = db.write_store(ObjectStoreNames.filemetadata)
+		if (store_filemetadata) idb_store_put(store_filemetadata, {...file})
 	}
 
 	/**
-	 * Don't use this function to edit single subtask/file. Use `editSubtask()`/`editFile()` instead.
+	 * Don't use this function to edit single subtask/file. Use `edit_subtask()`/`edit_file()` instead.
 	 */
-	function editTask(task: Task, taskListIndex: number, taskIndex: number): void {
-		const pastTask = taskLists[taskListIndex][_tasks][taskIndex]
-		const isTaskCompleteChanged = pastTask[_complete] != task[_complete]
-		const isTaskImportantChanged = pastTask[_important] != task[_important]
-		const isTaskNameChanged = pastTask[_name] != task[_name]
-		const changedSubtasks: SubTask[] = (isTaskCompleteChanged
-			? task[_subtasks][_map](subtask => ({...subtask, complete: !pastTask[_complete] && task[_complete]} satisfies SubTask))
+	function edit_task(task: Task, taskListIndex: number, taskIndex: number): void {
+		const past_task = tasklists[taskListIndex].tasks[taskIndex]
+		const is_task_complete_status_changed = past_task.complete != task.complete
+		const is_task_importance_status_changed = past_task.important != task.important
+		const is_task_name_changed = past_task.name != task.name
+		const changed_subtasks: SubTask[] = (is_task_complete_status_changed
+			? array_map(task.subtasks, subtask => ({...subtask, complete: !past_task.complete && task.complete} satisfies SubTask))
 			: [])
-		const deletedSubtasks: SubTask[] = []
-		const deletedFiles: TaskFileMetaData[] = []
-		const transaction = db[_transaction]([
-			ObjectStoreNames[_tasks],
-			ObjectStoreNames[_subtasks],
-			ObjectStoreNames[_taskFileMetaData],
-			ObjectStoreNames[_files],
-		], _readwrite)
-		const store_tasks = transaction != null? transaction[_objectStore](ObjectStoreNames[_tasks]) : null
-		const store_subtasks = transaction != null? transaction[_objectStore](ObjectStoreNames[_subtasks]) : null
-		const store_taskFileMetaData = transaction != null? transaction[_objectStore](ObjectStoreNames[_taskFileMetaData]) : null
-		const store_files = transaction != null? transaction[_objectStore](ObjectStoreNames[_files]) : null
+		const deleted_subtasks: SubTask[] = []
+		const deleted_files: TaskFileMetaData[] = []
+		const [store_tasks, store_subtasks, store_files, store_filemetadata] = db.stores('readwrite',
+			ObjectStoreNames.tasks,
+			ObjectStoreNames.subtasks,
+			ObjectStoreNames.files,
+			ObjectStoreNames.filemetadata,
+		)
 
-		if (pastTask[_subtasks][_length] > task[_subtasks][_length]) {
-			const ids = task[_subtasks][_map](subtask => subtask[_id])
+		if (array_length(past_task.subtasks) > array_length(task.subtasks)) {
+			const ids = array_map(task.subtasks, subtask => subtask.id)
 
-			for (let i = 0; i < pastTask[_subtasks][_length]; i++) {
-				if (ids[_includes](pastTask[_subtasks][i][_id])) continue;
+			for (let i = 0; i < array_length(past_task.subtasks); i++) {
+				if (array_includes(ids, past_task.subtasks[i].id)) continue;
 
-				deletedSubtasks[_push](pastTask[_subtasks][i])
+				array_push(deleted_subtasks, past_task.subtasks[i])
 			}
 		}
 
-		if (pastTask[_files][_length] > task[_files][_length]) {
-			const ids = task[_files][_map](file => file[_id])
+		if (array_length(past_task.files) > array_length(task.files)) {
+			const ids = array_map(task.files, file => file.id)
 
-			for (let i = 0; i < pastTask[_files][_length]; i++) {
-				if (ids[_includes](pastTask[_files][i][_id])) continue;
+			for (let i = 0; i < array_length(past_task.files); i++) {
+				if (array_includes(ids, past_task.files[i].id)) continue;
 
-				deletedFiles[_push](pastTask[_files][i])
+				array_push(deleted_files, past_task.files[i])
 			}
 		}
 
-		const newTask: Task = {
+		const new_task: Task = {
 			...task,
-			reminder: task[_reminder] != null? new Date(task[_reminder]) : null,
-			subtasks: isTaskCompleteChanged
-				? [...changedSubtasks]
-				: task[_subtasks]
+			reminder: task.reminder != null? new Date(task.reminder) : null,
+			subtasks: is_task_complete_status_changed
+				? [...changed_subtasks]
+				: task.subtasks
 		}
 
 		if (
-			(isTaskCompleteChanged && [SortBy[_uncompleted], SortBy[_completed]][_includes](settings[_sortBy]))
-			|| (isTaskImportantChanged && settings[_sortBy] == SortBy[_importance])
-			|| (isTaskNameChanged && settings[_sortBy] == SortBy[_name])
+			(is_task_complete_status_changed && array_includes([SortBy.uncompleted, SortBy.completed], settings.sort_by))
+			|| (is_task_importance_status_changed && settings.sort_by == SortBy.importance)
+			|| (is_task_name_changed && settings.sort_by == SortBy.name)
 		){
-			const tasks: Task[] = [...taskLists[taskListIndex][_tasks]]
-			tasks[taskIndex] = newTask
-			setTaskLists(taskListIndex, _tasks, sortTasks(tasks))
+			const tasks: Task[] = [...tasklists[taskListIndex].tasks]
+			tasks[taskIndex] = new_task
+			set_tasklists(taskListIndex, 'tasks', sort_tasks(tasks))
 		}
 		else {
-			setTaskLists(taskListIndex, _tasks, taskIndex, newTask)
+			set_tasklists(taskListIndex, 'tasks', taskIndex, new_task)
 		}
 
-		if (store_subtasks != null) {
-			for (const subtask of changedSubtasks) {
-				store_subtasks[_put]({...subtask})
+		if (store_subtasks) {
+			for (const subtask of changed_subtasks) {
+				idb_store_put(store_subtasks, {...subtask})
 			}
 
-			for (const subtask of deletedSubtasks) {
-				store_subtasks[_delete](subtask[_id])
+			for (const subtask of deleted_subtasks) {
+				idb_store_delete(store_subtasks, subtask.id)
 			}
 		}
 
-		for (const file of deletedFiles) {
-			if (store_taskFileMetaData != null) store_taskFileMetaData[_delete](file[_id])
-			if (store_files != null) store_files[_delete](file[_id])
+		for (const file of deleted_files) {
+			if (store_filemetadata != null) idb_store_delete(store_filemetadata, file.id)
+			if (store_files != null) idb_store_delete(store_files, file.id)
 		}
 
-		if (store_tasks != null) store_tasks[_put]({
-			id: task[_id],
-			description: task[_description],
-			complete: task[_complete],
-			important: task[_important],
-			listId: task[_listId],
-			name: task[_name],
-			reminder: task[_reminder],
-			labelIds: [...task[_labelIds]],
+		if (store_tasks) idb_store_put(store_tasks, {
+			id: task.id,
+			description: task.description,
+			complete: task.complete,
+			important: task.important,
+			list_id: task.list_id,
+			name: task.name,
+			reminder: task.reminder,
+			label_ids: [...task.label_ids],
 		} satisfies ObjectStoreTasks)
 	}
 
-	function deleteTask(task: Task, taskListIndex: number, taskIndex: number): void {
-		const transaction = db[_transaction]([
-			ObjectStoreNames[_tasks],
-			ObjectStoreNames[_files],
-			ObjectStoreNames[_taskFileMetaData],
-			ObjectStoreNames[_subtasks]
-		], _readwrite)
-		const store_tasks = transaction != null? transaction[_objectStore](ObjectStoreNames[_tasks]) : null
-		const store_subtasks = transaction != null? transaction[_objectStore](ObjectStoreNames[_subtasks]) : null
-		const store_files = transaction != null? transaction[_objectStore](ObjectStoreNames[_files]) : null
-		const store_taskFileMetaData = transaction != null? transaction[_objectStore](ObjectStoreNames[_taskFileMetaData]) : null
+	function delete_task(task: Task, tasklist_index: number, task_index: number): void {
+		const [store_tasks, store_subtasks, store_files, store_filemetadata] = db.stores('readwrite',
+			ObjectStoreNames.tasks,
+			ObjectStoreNames.subtasks,
+			ObjectStoreNames.files,
+			ObjectStoreNames.filemetadata,
+		)
 
-		setTaskLists(
-			taskListIndex,
-			_tasks,
+		set_tasklists(
+			tasklist_index,
+			'tasks',
 			tasks => [
-				...tasks[_slice](0, taskIndex),
-				...tasks[_slice](taskIndex + 1)
+				...array_slice(tasks, 0, task_index),
+				...array_slice(tasks, task_index + 1)
 			]
 		)
 
-		if (store_tasks != null) store_tasks[_delete](task[_id])
-		if (store_subtasks != null) for (const subtask of task[_subtasks]) {
-			store_subtasks[_delete](subtask[_id])
+		if (store_tasks) idb_store_delete(store_tasks, task.id)
+		if (store_subtasks) for (const subtask of task.subtasks) {
+			idb_store_delete(store_subtasks, subtask.id)
 		}
 
-		for (const file of task[_files]) {
-			if (store_files != null) store_files[_delete](file[_id])
-			if (store_taskFileMetaData != null) store_taskFileMetaData[_delete](file[_id])
+		for (const file of task.files) {
+			if (store_files) idb_store_delete(store_files, file.id)
+			if (store_filemetadata) idb_store_delete(store_filemetadata, file.id)
 		}
 	}
 
-	function copyTasks(taskListIndex?: number): void {
-		const isGrouping = ([
-			Pages[_all], Pages[_completed], Pages[_uncompleted],
-			Pages[_important], Pages[_planned]
-		][_includes](page() as Pages))
+	function copy_tasks(tasklist_index?: number): void {
+		const is_grouping = array_includes([
+			Pages.all, Pages.completed, Pages.uncompleted,
+			Pages.important, Pages.planned
+		], page() as Pages)
 
 		let text: string = ''
-		const getTextPerTaskList = (taskListIndex: number) => {
-			const taskList = taskLists[taskListIndex]
-			text += `${taskList[_emoji] != null ? taskList[_emoji] : '📑'} ${taskList[_name]}`
+		const get_text_per_tasklist = (tasklist_index: number) => {
+			const tasklist = tasklists[tasklist_index]
+			text += `${tasklist.emoji != null ? tasklist.emoji : '📑'} ${tasklist.name}`
 
-			for (let i = 0; i < taskList[_tasks][_length]; i++) {
-				const task: Task = taskList[_tasks][i]
+			for (let i = 0; i < array_length(tasklist.tasks); i++) {
+				const task: Task = tasklist.tasks[i]
+				const task_complete = task.complete
+				const task_important = task.important
+				const task_reminder = task.reminder
+				const task_description = task.description
 
 				// skipping
-				if (isGrouping
+				if (is_grouping
 					&& (
-						(page() == Pages[_completed] && !task[_complete])
-						|| (page() == Pages[_uncompleted] && task[_complete])
-						|| (page() == Pages[_important] && !task[_important])
-						|| (page() == Pages[_planned] && task[_reminder] == null)
+						(page() == Pages.completed && !task_complete)
+						|| (page() == Pages.uncompleted && task_complete)
+						|| (page() == Pages.important && !task_important)
+						|| (page() == Pages.planned && task_reminder == null)
 					)
 				) continue
 
 				let additional: string = ''
-				text += (`\n${task[_complete] ? '✔️' : '❌'} ${task[_name]}`)
+				text += (`\n${task_complete ? '✔️' : '❌'} ${task.name}`)
 
-				if (task[_description] != '') additional += `[🗒️ ${task[_description]}]`
-				if (task[_important]) additional +=  '[⭐ important]'
-				if (task[_reminder] != null) additional += `[🕒 ${getDateString_YMD_HM(task[_reminder]!)}]`
-				for (const file of task[_files]) additional += `[💾 ${file[_name]}]`
+				if (task_description != '') additional += `[🗒️ ${task_description}]`
+				if (task_important) additional +=  '[⭐ important]'
+				if (task_reminder != null) additional += `[🕒 ${date_text_YMD_HM(task_reminder!)}]`
+				for (const file of task.files) additional += `[💾 ${file.name}]`
 
 				let j = 0
-				labels: for (const id of task[_labelIds]) {
+				labels: for (const id of task.label_ids) {
 					if (labels[id] == undefined) continue labels;
-					if (j >= task[_labelIds][_length]) break labels;
+					if (j >= array_length(task.label_ids)) break labels;
 
-					additional += `[🔖 ${labels[id][_name]}]`
+					additional += `[🔖 ${labels[id].name}]`
 					j++
 				}
 
-				if (additional != '') text = [text, additional][_join](' ')
-				for (const subtask of task[_subtasks]) {
-					text += (`\n➡️${subtask[_complete] ? '✔️' : '❌'} ${subtask[_name]}`)
+				if (additional != '') text = array_join([text, additional], ' ')
+				for (const subtask of task.subtasks) {
+					text += (`\n➡️${subtask.complete ? '✔️' : '❌'} ${subtask.name}`)
 				}
 			}
 		}
 
-		if (taskListIndex == undefined) {
+		if (tasklist_index == null) {
 			let j = 0
-			for (let i = 0; i < taskLists[_length]; i++) {
-				const taskList: TaskList = taskLists[i]
-				if (taskLists[i][_tasks][_length] == 0) continue;
-				if (isGrouping
+			for (let i = 0; i < array_length(tasklists); i++) {
+				const tasklist: TaskList = tasklists[i]
+				const tasks = tasklist.tasks
+				if (array_length(tasks) == 0) continue;
+				if (is_grouping
 					&& (
-						(page() == Pages[_completed] && taskList[_tasks][_every](task => !task[_complete]))
-						|| (page() == Pages[_uncompleted] && taskList[_tasks][_every](task => task[_complete]))
-						|| (page() == Pages[_important] && taskList[_tasks][_every](task => !task[_important]))
-						|| (page() == Pages[_planned] && taskList[_tasks][_every](task => task[_reminder] == null))
+						(page() == Pages.completed      && array_every(tasks, task => !task.complete))
+						|| (page() == Pages.uncompleted && array_every(tasks, task => task.complete))
+						|| (page() == Pages.important   && array_every(tasks, task => !task.important))
+						|| (page() == Pages.planned     && array_every(tasks, task => task.reminder == null))
 					)
 				) continue;
 				if (j > 0) text += '\n\n'
-				getTextPerTaskList(i)
+				get_text_per_tasklist(i)
 				++j
 			}
 		}
-		else getTextPerTaskList(taskListIndex)
+		else get_text_per_tasklist(tasklist_index)
 
 		// # ⚠️ task-list-name #
 		// ✔️ task-name [🗒️ description][⭐ important][🕒 reminder][💾 file1][💾 file2][🔖 label1][🔖 label2]
 		// ➡️✔️ subtask-name
 		// ➡️❌ subtask-name
 		// ❌ task-name
-		getNavigator()[_clipboard][_writeText](text)
+		navigator_clipboard_writetext(text)
 	}
 
-	async function addLabel(name: string, color: HEXColor | null): Promise<void> {
-		const store_labels = db[_writeObjectStore](ObjectStoreNames[_labels])
+	async function add_label(name: string, color: HEXColor | null): Promise<void> {
+		const store_labels = db.write_store(ObjectStoreNames.labels)
 
 		try {
 			let id: number = 1
-			let isAdded = false
+			let is_added = false
 
 			// since key generator value never decrease,
 			// we have to check empty key to use it.
 			// keep the labels compact.
-			for (let i = 1; i < labels[_length]; i++) {
+			for (let i = 1; i < array_length(labels); i++) {
 				if (labels[i] != undefined) continue;
-				isAdded = true
+
+				is_added = true
 				id = i
-				if (store_labels != null) await db[_add]<ObjectStoreTaskLabels>(store_labels, {id, name, color})
+				if (store_labels) await db.add<ObjectStoreTaskLabels>(store_labels, {id, name, color})
 				break
 			}
 
-			if (!isAdded) {
-				if (store_labels != null) id = ((await db[_add]<Omit<ObjectStoreTaskLabels, 'id'>>(store_labels, {name, color}))[_target] as any)[_result] as number
+			if (!is_added) {
+				if (store_labels != null) id = ((await db.add<Omit<ObjectStoreTaskLabels, 'id'>>(
+					store_labels, {name, color}
+				)).target as any).result as number
 				else for (const label of labels){
 					if (label == undefined) continue
-					if (label[_id] < id) continue
-					id = label[_id] + 1
+					if (label.id < id) continue
+					id = label.id + 1
 				}
 			}
 
 			const $labels: (TaskLabel | undefined)[] = [...labels]
 			$labels[id] = {id, color, name}
-			setLabels($labels)
+			set_labels($labels)
 		} catch {}
 	}
 
-	function editLabel(label: TaskLabel): void {
+	function edit_label(label: TaskLabel): void {
 		const $labels = [...labels]
-		$labels[label[_id]] = label
-		setLabels($labels)
+		$labels[label.id] = label
+		set_labels($labels)
 
-		const store_labels = db[_writeObjectStore](ObjectStoreNames[_labels])
-		if (store_labels != null) store_labels[_put]({...label})
+		const store_labels = db.write_store(ObjectStoreNames.labels)
+		if (store_labels) idb_store_put(store_labels, {...label})
 	}
 
-	function deleteLabel(label: TaskLabel): void {
-		const transaction = db[_transaction]([ObjectStoreNames[_tasks], ObjectStoreNames[_labels]], _readwrite)
-		const store_tasks = transaction != null? transaction[_objectStore](ObjectStoreNames[_tasks]) : null
-		const store_labels = transaction != null? transaction[_objectStore](ObjectStoreNames[_labels]) : null
+	function delete_label(label: TaskLabel): void {
+		const [store_tasks, store_labels] = db.stores('readwrite',
+			ObjectStoreNames.tasks,
+			ObjectStoreNames.labels
+		)
 		const $labels = [...labels]
-		$labels[_splice](label[_id], 1)
+		array_splice($labels, label.id, 1)
 
-		for (let i = 0; i < taskLists[_length]; i++) {
-			tasks: for (let j = 0; j < taskLists[i][_tasks][_length]; j++) {
-				const task = taskLists[i][_tasks][j]
-				const index = taskLists[i][_tasks][j][_labelIds][_findIndex](id => id == label[_id])
+		for (let i = 0; i < array_length(tasklists); i++) {
+			const tasks = tasklists[i].tasks
+			tasks: for (let j = 0; j < array_length(tasks); j++) {
+				const task = tasks[j]
+				const task_label_ids = tasks[j].label_ids
+				const index = array_find_index(task_label_ids, id => id == label.id)
 				if (index < 0) continue tasks
 
-				const labelIds = taskLists[i][_tasks][j][_labelIds][_slice](0, index)[_concat](taskLists[i][_tasks][j][_labelIds][_slice](index + 1))
-				setTaskLists(
-					i, _tasks,
-					j, _labelIds,
-					labelIds
+				const label_ids = array_concat(
+					array_slice(task_label_ids, 0, index),
+					array_slice(task_label_ids, index + 1)
 				)
-				if (store_tasks != null) store_tasks[_put]({
-					id: task[_id],
-					description: task[_description],
-					complete: task[_complete],
-					important: task[_important],
-					labelIds: [...labelIds],
-					listId: task[_listId],
-					name: task[_name],
-					reminder: task[_reminder]
+				set_tasklists(i, 'tasks', j, 'label_ids', label_ids)
+				if (store_tasks) idb_store_put(store_tasks, {
+					id: task.id,
+					description: task.description,
+					complete: task.complete,
+					important: task.important,
+					label_ids: [...label_ids],
+					list_id: task.list_id,
+					name: task.name,
+					reminder: task.reminder
 				} satisfies ObjectStoreTasks)
 			}
 		}
-		setLabels($labels)
-		if (store_labels != null) store_labels[_delete](label[_id])
+		set_labels($labels)
+		if (store_labels) idb_store_delete(store_labels, label.id)
 	}
 
-	async function addFiles(files: FileList, task: Task, taskListIndex: number, taskIndex: number): Promise<TaskFileMetaData[]> {
-		if (files[_length] == 0) return []
+	async function add_files(
+		files: FileList,
+		task: Task,
+		tasklist_index: number,
+		task_index: number
+	): Promise<TaskFileMetaData[]> {
+		if (array_length(files as unknown as any[]) == 0) return []
 
-		const transaction = db[_transaction]([ObjectStoreNames[_taskFileMetaData], ObjectStoreNames[_files]], _readwrite)
-		const store_taskFileMetaData = transaction != null? transaction[_objectStore](ObjectStoreNames[_taskFileMetaData]) : null
-		const store_files = transaction != null? transaction[_objectStore](ObjectStoreNames[_files]) : null
-		const $files: TaskFileMetaData[] = [...taskLists[taskListIndex][_tasks][taskIndex][_files]]
+		const [store_files, store_filemetadata] = db.stores('readwrite',
+			ObjectStoreNames.files,
+			ObjectStoreNames.filemetadata,
+		)
+		const $files: TaskFileMetaData[] = [...tasklists[tasklist_index].tasks[task_index].files]
 
 		try {
-			if (store_taskFileMetaData == null || store_files == null) return $files
+			if (store_filemetadata == null || store_files == null) return $files
 			for (const file of files) {
-				const id = ((await db[_add]<Omit<ObjectStoreTaskFileMetaData, 'id'>>(store_taskFileMetaData, {
-					listId: task[_listId],
-					name: file[_name],
-					size: file[_size],
-					taskId: task[_id],
-					type: file[_type]
-				}))[_target]! as any)[_result] as number
+				const id = ((await db.add<Omit<ObjectStoreTaskFileMetaData, 'id'>>(store_filemetadata, {
+					list_id: task.list_id,
+					name: file.name,
+					size: file.size,
+					task_id: task.id,
+					type: file.type
+				})).target! as any).result as number
 
-				store_files[_put]({
+				idb_store_put(store_files, {
 					id,
 					blob: new Blob([file])
 				} satisfies ObjectStoreFiles)
 
-				$files[_push]({
+				array_push($files, {
 					id: id,
-					listId: task[_listId],
-					name: file[_name],
-					size: file[_size],
-					taskId: task[_id],
-					type: file[_type]
+					list_id: task.list_id,
+					name: file.name,
+					size: file.size,
+					task_id: task.id,
+					type: file.type
 				})
 			}
-			setTaskLists(taskListIndex, _tasks, taskIndex, _files, $files[_sort]((a, b) => a[_name][_localeCompare](b[_name])))
+			set_tasklists(
+				tasklist_index, 'tasks', task_index, 'files',
+				array_sort($files, (a, b) => string_locale_compare(a.name, b.name))
+			)
 		} catch {}
 
 		return $files
 	}
 
-	function downloadTaskFile(ev: Event, file: TaskFileMetaData, taskListIndex: number, taskIndex: number, fileIndex: number): void {
-		const transaction = db[_transaction]([
-			ObjectStoreNames[_files],
-			ObjectStoreNames[_taskFileMetaData]
-		], _readonly)
-		const store_files = transaction == null? null : transaction[_objectStore](ObjectStoreNames[_files])
-		const store_taskFileMetaData = transaction == null? null : transaction[_objectStore](ObjectStoreNames[_taskFileMetaData])
-		if (store_files == null || store_taskFileMetaData == null) return;
+	function download_task_file(
+		ev: Event,
+		file: TaskFileMetaData,
+		tasklist_index: number,
+		task_index: number,
+		file_index: number
+	): void {
+		const [store_files, store_filemetadata] = db.stores('readwrite',
+			ObjectStoreNames.files,
+			ObjectStoreNames.filemetadata,
+		)
+		if (store_files == null || store_filemetadata == null) return;
 
-		db[_get]<ObjectStoreFiles>(store_files, file[_id])[_then]((result) => {
+		promise_done(db.get<ObjectStoreFiles>(store_files, file.id), (result) => {
 			if (!result) {
-				if (file[_id] == taskLists[taskListIndex][_tasks][taskIndex][_files][fileIndex][_id]) {
+				if (file.id == tasklists[tasklist_index].tasks[task_index].files[file_index].id) {
 
 					// This statement not update the file lists in <dialog>
-					setTaskLists(taskListIndex, _tasks, taskIndex, _files, files => [
-						...files[_slice](0, fileIndex),
-						...files[_slice](fileIndex + 1)
+					set_tasklists(tasklist_index, 'tasks', task_index, 'files', files => [
+						...array_slice(files, 0, file_index),
+						...array_slice(files, file_index + 1)
 					])
-					store_taskFileMetaData[_delete](file[_id])
+					idb_store_delete(store_filemetadata, file.id)
 				}
 
-				openToast(ev, toast_noFile_ref)
+				open_toast(ev, toast_nofile_ref)
 				return;
 			}
 
-			downloadFile(new Blob([result[_blob]]), file[_name])
+			file_download(new Blob([result.blob]), file.name)
 		})
 	}
 
-	async function getBlob(ev: Event, file: TaskFileMetaData, taskListIndex: number, taskIndex: number, fileIndex: number): Promise<Blob | null> {
-		const transaction = db[_transaction]([
-			ObjectStoreNames[_files],
-			ObjectStoreNames[_taskFileMetaData]],
-		_readonly)
-		const store_files = transaction == null? null : transaction[_objectStore](ObjectStoreNames[_files])
-		const store_taskFileMetaData = transaction == null? null : transaction[_objectStore](ObjectStoreNames[_taskFileMetaData])
-		if (store_files == null || store_taskFileMetaData == null) return null
+	async function get_blob(
+		ev: Event,
+		file: TaskFileMetaData,
+		tasklist_index: number,
+		task_index: number,
+		file_index: number
+	): Promise<Blob | null> {
+		const [store_files, store_filemetadata] = db.stores('readwrite',
+			ObjectStoreNames.files,
+			ObjectStoreNames.filemetadata,
+		)
+		if (store_files == null || store_filemetadata == null) return null
 
 		try {
-			const result = await db[_get]<ObjectStoreFiles>(store_files, file[_id])
+			const result = await db.get<ObjectStoreFiles>(store_files, file.id)
 			if (!result) {
-				if (file[_id] == taskLists[taskListIndex][_tasks][taskIndex][_files][fileIndex][_id]) {
+				if (file.id == tasklists[tasklist_index].tasks[task_index].files[file_index].id) {
 
 					// This statement not update the file lists in <dialog>
-					setTaskLists(
-						taskListIndex, _tasks, taskIndex, _files,
-						files => files[_slice](0, fileIndex)[_concat](files[_slice](fileIndex + 1)),
+					set_tasklists(
+						tasklist_index, 'tasks', task_index, 'files',
+						files => array_concat(
+							array_slice(files, 0, file_index),
+							array_slice(files, file_index + 1)
+						),
 					)
-					store_taskFileMetaData[_delete](file[_id])
+					idb_store_delete(store_filemetadata, file.id)
 				}
 
-				openToast(ev, toast_noFile_ref)
+				open_toast(ev, toast_nofile_ref)
 				return null
 			}
 
-			return new Blob([result[_blob]])
+			return new Blob([result.blob])
 		} catch {}
 
 		return null
 	}
 
-	async function addSubtask(subtask: SubTask, taskListIndex: number, taskIndex: number): Promise<SubTask[]> {
-		const transaction = db[_transaction]([
-			ObjectStoreNames[_tasks],
-			ObjectStoreNames[_subtasks]
-		], _readwrite)
-		const store_subtasks = transaction == null? null : transaction[_objectStore](ObjectStoreNames[_subtasks])
+	async function add_subtask(subtask: SubTask, tasklist_index: number, task_index: number): Promise<SubTask[]> {
+		const store_subtasks = db.write_store(ObjectStoreNames.subtasks)
 
 		try {
 			let id = 0
-			if (store_subtasks != null) id = ((await db[_add]<Omit<ObjectStoreSubTasks, 'id'>>(store_subtasks, {
-				complete: subtask[_complete],
-				listId: subtask[_listId],
-				name: subtask[_name],
-				taskId: subtask[_taskId]
-			}))[_target]! as any)[_result] as number
+			if (store_subtasks != null) id = ((await db.add<Omit<ObjectStoreSubTasks, 'id'>>(store_subtasks, {
+				complete: subtask.complete,
+				list_id: subtask.list_id,
+				name: subtask.name,
+				task_id: subtask.task_id
+			})).target! as any).result as number
 
-			else for (const list of taskLists){
-				for (const task of list[_tasks]){
-					subtasks: for (const subtask of task[_subtasks]){
-						if (subtask[_id] < id) continue subtasks
-						id = subtask[_id] + 1
+			else for (const list of tasklists){
+				for (const task of list.tasks){
+					subtasks: for (const subtask of task.subtasks){
+						if (subtask.id < id) continue subtasks
+						id = subtask.id + 1
 					}
 				}
 			}
 
 			const $subtask = {...subtask}
-			$subtask[_id] = id
-			setTaskLists(
-				taskListIndex, _tasks,
-				taskIndex, _subtasks,
-				subtasks => [...subtasks, $subtask][_sort]((a, b) => a[_name][_localeCompare](b[_name]))
+			$subtask.id = id
+			set_tasklists(
+				tasklist_index, 'tasks', task_index, 'subtasks',
+				subtasks => array_sort([...subtasks, $subtask], (a, b) => string_locale_compare(a.name, b.name))
 			)
 
-			if (taskLists[taskListIndex][_tasks][taskIndex][_complete]) {
-				const task: Task = {...taskLists[taskListIndex][_tasks][taskIndex], complete: false}
-				if ([SortBy[_completed], SortBy[_uncompleted]][_includes](settings[_sortBy])) {
-					const tasks: Task[] = [...taskLists[taskListIndex][_tasks]]
-					tasks[taskIndex] = task
-					setTaskLists(taskListIndex, _tasks, sortTasks(tasks))
+			if (tasklists[tasklist_index].tasks[task_index].complete) {
+				const task: Task = {...tasklists[tasklist_index].tasks[task_index], complete: false}
+				if (array_includes([SortBy.completed, SortBy.uncompleted], settings.sort_by)) {
+					const tasks: Task[] = [...tasklists[tasklist_index].tasks]
+					tasks[task_index] = task
+					set_tasklists(tasklist_index, 'tasks', sort_tasks(tasks))
 				}
-				else setTaskLists(taskListIndex, _tasks, taskIndex, task)
+				else set_tasklists(tasklist_index, 'tasks', task_index, task)
 			}
 		} catch {}
 
-		return taskLists[taskListIndex][_tasks][taskIndex][_subtasks]
+		return tasklists[tasklist_index].tasks[task_index].subtasks
 	}
 
-	function sortAllTasks(): void {
-		for (let i = 0; i < taskLists[_length]; i++) {
-			setTaskLists(i, _tasks, sortTasks([...taskLists[i][_tasks]]))
+	function sort_all_tasks(): void {
+		for (let i = 0; i < array_length(tasklists); i++) {
+			set_tasklists(i, 'tasks', sort_tasks([...tasklists[i].tasks]))
 		}
 	}
 
-	function reverseAllTasks(): void {
-		for (let i = 0; i < taskLists[_length]; i++) {
-			setTaskLists(i, _tasks, [...taskLists[i][_tasks]][_reverse]())
+	function reverse_all_tasks(): void {
+		for (let i = 0; i < array_length(tasklists); i++) {
+			set_tasklists(i, 'tasks', array_reverse([...tasklists[i].tasks]))
 		}
 	}
 
-	async function addNewTaskList(name: string, emoji: string | null): Promise<void> {
-		const store_taskLists = db[_writeObjectStore](ObjectStoreNames[_taskLists])
+	async function add_new_tasklist(name: string, emoji: string | null): Promise<void> {
+		const store_taskLists = db.write_store(ObjectStoreNames.tasklists)
 		let count = 0
 
-		name = name[_trim]()
-		for (const list of taskLists) {
-			if (count == 0 && list[_name] == name) ++count
-			if (list[_name] == name + ` (${count})`) ++count
+		name = string_trim(name)
+		for (const list of tasklists) {
+			if (count == 0 && list.name == name) ++count
+			if (list.name == name + ` (${count})`) ++count
 		}
 
 		if (count > 0) name += ` (${count})`
 
 		try {
 			let id = 0
-			if (store_taskLists != null) id = ((await db[_add]<Omit<ObjectStoreTaskLists, 'id'>>(store_taskLists, {
-				emoji, name
-			}))[_target]! as any)[_result] as number
+			if (store_taskLists != null) id = ((await db.add<Omit<ObjectStoreTaskLists, 'id'>>(store_taskLists, {
+				emoji,
+				name
+			})).target! as any).result as number
 
-			else for (const list of taskLists) {
-				if (list[_id] < id) continue
+			else for (const list of tasklists) {
+				if (list.id < id) continue
 
-				id = list[_id] + 1
+				id = list.id + 1
 			}
 
 			// make the default list always on top
-			const index = taskLists[_findIndex](list => list[_id] == DEFAULT_TASK_LIST[_id])
+			const index = array_find_index(tasklists, list => list.id == DEFAULT_TASK_LIST.id)
 			if (index >= 0) {
-				const otherLists = taskLists[_slice](0, index)[_concat](taskLists[_slice](index + 1), { id, emoji, name, tasks: []} satisfies TaskList)
-				otherLists[_sort]((a, b) => a[_name][_localeCompare](b[_name]))
-				setTaskLists([taskLists[index]][_concat](otherLists))
+				const other_lists = array_concat(
+					array_slice(tasklists, 0, index),
+					array_slice(tasklists, index + 1),
+					[{ id, emoji, name, tasks: []} satisfies TaskList]
+				)
+				array_sort(other_lists, (a, b) => string_locale_compare(a.name, b.name))
+				set_tasklists(array_concat([tasklists[index]], other_lists))
 			}
-			else setTaskLists(values => [
+			else set_tasklists(values => array_sort([
 				...values,
 				{ id, emoji, name, tasks: []} satisfies TaskList
-			][_sort]((a, b) => a[_name][_localeCompare](b[_name])))
-			changePage(id)
+			], (a, b) => string_locale_compare(a.name, b.name)))
+			change_page(id)
 		} catch {}
 	}
 
-	async function command(type: Commands, ...args: unknown[]): Promise<unknown> {
-		// toggle_navigation_expand
-		if (type == Commands.toggle_navigation_expand) {
-			setIsSideNavigationExpanded(v => !v)
-			saveMiscellaneous([ObjectStoreKeys.miscellaneous_isSideNavigationExpand, isSideNavigationExpanded()])
+	async function command(type: Commands, ...args: unknown[]): Promise<unknown> { switch (type) {
+		case Commands.toggle_navigation_expand: {
+			set_is_sidenavigation_expanded(v => !v)
+			save_miscellaneous([ObjectStoreKeys.miscellaneous_issidenavigationexpanded, is_sidenavigation_expanded()])
+			break
 		}
-
-		// change_page
-		else if (type == Commands.change_page) {
-			changePage(args[0] as (Pages | number))
+		case Commands.change_page: {
+			const [page] = args as [Pages | number]
+			change_page(page)
+			break
 		}
-
-		// change_sortBy
-		else if (type == Commands.change_sortBy) {
-			const sortBy = args[0] as SortBy
-			setSettings(_sortBy, sortBy)
-			saveSettings([ObjectStoreKeys.settings_sortBy, sortBy])
-			sortAllTasks()
+		case Commands.change_sort_by: {
+			const [sort_by] = args as [SortBy]
+			set_settings('sort_by', sort_by)
+			save_settings([ObjectStoreKeys.settings_sortby, sort_by])
+			sort_all_tasks()
+			break
 		}
-
-		// change_sortMode
-		else if (type == Commands.change_sortMode) {
-			const sortMode = args[0] as SortMode
-			setSettings(_sortMode, sortMode)
-			saveSettings([ObjectStoreKeys.settings_sortMode, sortMode])
-			reverseAllTasks()
+		case Commands.change_sort_mode: {
+			const [sort_mode] = args as [SortMode]
+			set_settings('sort_mode', sort_mode)
+			save_settings([ObjectStoreKeys.settings_sortmode, sort_mode])
+			reverse_all_tasks()
+			break
 		}
-
-		// add_task
-		else if (type == Commands.add_task) {
-			addTask(args[0] as Task, args[1] as number)
+		case Commands.add_task: {
+			const [task, tasklist_index] = args as [Task, number]
+			add_task(task, tasklist_index)
+			break
 		}
-
-		// edit_task
-		else if (type == Commands.edit_task) {
-			editTask(args[0] as Task, args[1] as number, args[2] as number)
+		case Commands.edit_task: {
+			const [task, tasklist_index, task_index] = args as [Task, number, number]
+			edit_task(task, tasklist_index, task_index)
+			break
 		}
-
-		// delete_task
-		else if (type == Commands.delete_task) {
-			deleteTask(args[0] as Task, args[1] as number, args[2] as number)
+		case Commands.delete_task: {
+			const [task, tasklist_index, task_index] = args as [Task, number, number]
+			delete_task(task, tasklist_index, task_index)
+			break
 		}
-
-		// toggle_deleteTaskWarning
-		else if (type == Commands.toggle_deleteTaskWarning) {
-			const value = args[0] as boolean ?? !settings[_isShowDeleteTaskWarning]
-			setSettings(_isShowDeleteTaskWarning, value)
-			saveSettings([ObjectStoreKeys.settings_isShowDeleteTaskWarning, value])
+		case Commands.toggle_delete_task_warning: {
+			const [value = !settings.is_show_deletetaskwarning] = args as [boolean | undefined]
+			set_settings('is_show_deletetaskwarning', value)
+			save_settings([ObjectStoreKeys.settings_isshowdeletetaskwarning, value])
+			break
 		}
-
-		// change_hiddenNavigation
-		else if (type == Commands.change_hiddenNavigation) {
-			const value = args[0] as (Pages[])
-			if (typeof page() == (typeof Pages[_tasks]) && value[_includes](page() as Pages)) {
-				changePage(Pages[_tasks])
+		case Commands.change_hidden_navigation: {
+			const [pages] = args as [Pages[]]
+			if (typeof page() == (typeof Pages.tasks) && array_includes(pages, page() as Pages)) {
+				change_page(Pages.tasks)
 			}
-			setSettings(_hiddenNavigation, value)
-			saveSettings([ObjectStoreKeys.settings_hiddenNavigation, [...value]])
+			set_settings('hidden_navigation', pages)
+			save_settings([ObjectStoreKeys.settings_hidden_navigation, [...pages]])
+			break
 		}
-
-		// mark_all_completed
-		else if (type == Commands.mark_all_completed) {
-			markAllTaskAs(args[0] as number, true)
+		case Commands.mark_all_completed: {
+			const [tasklist_index] = args as [number]
+			mark_all_task_as(tasklist_index, true)
+			break
 		}
-
-		// mark_all_uncompleted
-		else if (type == Commands.mark_all_uncompleted) {
-			markAllTaskAs(args[0] as number, false)
+		case Commands.mark_all_uncompleted: {
+			const [tasklist_index] = args as [number]
+			mark_all_task_as(tasklist_index, false)
+			break
 		}
-
-		// clear_tasks
-		else if (type == Commands.clear_tasks) {
-			clearTasks(args[0] as number)
+		case Commands.clear_tasks: {
+			const [tasklist_index] = args as [number]
+			clear_tasks(tasklist_index)
+			break
 		}
-
-		// delete_completed_task
-		else if (type == Commands.delete_completed_task) {
-			deleteCompletedTask(args[0] as number)
+		case Commands.delete_completed_task: {
+			const [tasklist_index] = args as [number]
+			delete_completed_task(tasklist_index)
+			break
 		}
-
-		// copy_tasks
-		else if (type == Commands.copy_tasks) {
-			copyTasks(args[0] as (number | undefined))
+		case Commands.copy_tasks: {
+			const [tasklist_index] = args as [number | undefined]
+			copy_tasks(tasklist_index)
+			break
 		}
-
-		// add_label
-		else if (type == Commands.add_label) {
-			openDialog(args[0] as Event, dialog_newLabel_ref, {
-				contentAutoFocus: true,
+		case Commands.add_label: {
+			const [event] = args as [Event]
+			open_dialog(event, dialog_newlabel_ref, {
+				content_auto_focus: true,
 				important: true
 			})
+			break
 		}
-
-		// edit_label
-		else if (type == Commands.edit_label) {
-			const label = args[1] as TaskLabel
-
-			changeTextFieldValue(textfield_editLabel_ref, label[_name])
-			setSelectedLabelToEdit(label)
-			openDialog(args[0] as Event, dialog_editLabel_ref, {
-				contentAutoFocus: true,
+		case Commands.edit_label: {
+			const [event, label] = args as [Event, TaskLabel]
+			change_textfield_value(textfield_editlabel_ref, label.name)
+			set_selected_label_to_edit(label)
+			open_dialog(event, dialog_editlabel_ref, {
+				content_auto_focus: true,
 				important: true
 			})
+			break
 		}
-
-		// delete_label
-		else if (type == Commands.delete_label) {
-			deleteLabel(args[0] as TaskLabel)
+		case Commands.delete_label: {
+			const [label] = args as [TaskLabel]
+			delete_label(label)
+			break
 		}
-
-		// show_labels_options
-		else if (type == Commands.show_labels_options) {
-			openDialog(args[0] as Event, dialog_labels_ref)
+		case Commands.show_labels_options: {
+			const [event] = args as [Event]
+			open_dialog(event, dialog_labels_ref)
+			break
 		}
-
-		// add_files
-		else if (type == Commands.add_files) {
-			return await addFiles(args[0] as FileList, args[1] as Task, args[2] as number, args[3] as number)
+		case Commands.add_files: {
+			const [
+				files,
+				task,
+				tasklist_index,
+				task_index
+			] = args as [FileList, Task, number, number]
+			return await add_files(files, task, tasklist_index, task_index)
 		}
-
-		// download_file
-		else if (type == Commands.download_file) {
-			downloadTaskFile(args[0] as Event, args[1] as TaskFileMetaData, args[2] as number, args[3] as number, args[4] as number)
+		case Commands.download_file: {
+			const [
+				event,
+				file,
+				tasklist_index,
+				task_index,
+				file_index
+			] = args as [Event, TaskFileMetaData, number, number, number]
+			download_task_file(event, file, tasklist_index, task_index, file_index)
+			break
 		}
-
-		// edit_file
-		else if (type == Commands.edit_file) {
-			editFile(args[0] as TaskFileMetaData, args[1] as number, args[2] as number, args[3] as number)
+		case Commands.edit_file: {
+			const [
+				file, tasklist_index, task_index, file_index
+			] = args as [TaskFileMetaData, number, number, number]
+			edit_file(file, tasklist_index, task_index, file_index)
+			break
 		}
-
-		// edit_subtask
-		else if (type == Commands.edit_subtask) {
-			editSubtask(args[0] as SubTask, args[1] as number, args[2] as number, args[3] as number)
+		case Commands.edit_subtask: {
+			const [
+				subtask, tasklist_index, task_index,
+				subtask_index
+			] = args as [SubTask, number, number, number]
+			edit_subtask(subtask, tasklist_index, task_index, subtask_index)
+			break
 		}
-
-		// get_file_blob
-		else if (type == Commands.get_file_blob) {
-			return await getBlob(args[0] as Event, args[1] as TaskFileMetaData, args[2] as number, args[3] as number, args[4] as number)
+		case Commands.get_file_blob: {
+			const [
+				event, file, tasklist_index, task_index, file_index
+			] = args as [Event, TaskFileMetaData, number, number, number]
+			return await get_blob(event, file, tasklist_index, task_index, file_index)
 		}
-
-		// add_subtask
-		else if (type == Commands.add_subtask) {
-			return await addSubtask(args[0] as SubTask, args[1] as number, args[2] as number)
+		case Commands.add_subtask: {
+			const [
+				subtask, tasklist_index, task_index
+			] = args as [SubTask, number, number]
+			return await add_subtask(subtask, tasklist_index, task_index)
 		}
-
-		// add_taskList
-		else if (type == Commands.add_taskList) {
-			openDialog(args[0] as Event, dialog_newList_ref, {
+		case Commands.add_tasklist: {
+			const [event] = args as [Event]
+			open_dialog(event, dialog_newlist_ref, {
 				important: true,
-				contentAutoFocus: true
+				content_auto_focus: true
 			})
+			break
 		}
-
-		// delete_taskList
-		else if (type == Commands.delete_taskList) {
-			setSelectedTaskListIndexToDelete(args[1] as number)
-			openDialog(args[0] as Event, dialog_deleteList_ref, {
+		case Commands.delete_taskList: {
+			const [event, tasklist_index] = args as [Event, number]
+			set_selected_tasklist_index_to_delete(tasklist_index)
+			open_dialog(event, dialog_deletelist_ref, {
 				important: true
 			})
+			break
 		}
-
-		// rename_taskList
-		else if (type == Commands.rename_taskList) {
-			const list = taskLists[args[1] as number]
-			setSelectedTaskListIndexToRename(args[1] as number)
-			setEditListEmoji(list[_emoji])
-			setEditListNameText(list[_name])
-			changeTextFieldValue(textfield_editList_ref, list[_name])
-			openDialog(args[0] as Event, dialog_editList_ref, {
+		case Commands.rename_taskList: {
+			const [event, tasklist_index] = args as [Event, number]
+			const list = tasklists[tasklist_index]
+			set_selected_tasklist_index_to_rename(tasklist_index)
+			set_edit_list_emoji(list.emoji)
+			set_edit_listname_text(list.name)
+			change_textfield_value(textfield_editlist_ref, list.name)
+			open_dialog(event, dialog_editlist_ref, {
 				important: true,
-				contentAutoFocus: true
+				content_auto_focus: true
 			})
+			break
 		}
-
-		// move_task
-		else if (type == Commands.move_task) {
-			moveTask(args[0] as Task, args[1] as number, args[2] as number, args[3] as number)
+		/**
+			@param {Task} task `Task`
+			@param {number} tasklist_index `number`
+			@param {number} task_index `number`
+			@param {number} target_tasklist_index `number` */
+		case Commands.move_task: {
+			const [
+				task, tasklist_index, task_index, target_tasklist_index
+			] = args as [Task, number, number, number]
+			move_task(task, tasklist_index, task_index, target_tasklist_index)
+			break
 		}
-
-		// get_all_task
-		else if (type == Commands.get_all_task) {
-			getTasks(true)
+		case Commands.get_all_task: {
+			get_tasks(true)
+			break
 		}
+		default: return
+	}}
 
-		return
-	}
-
-	function moveTask(task: Task, taskListIndex: number, taskIndex: number, targetTaskListIndex: number): void {
-		const transaction = db[_transaction]([
-			ObjectStoreNames[_tasks],
-			ObjectStoreNames[_subtasks],
-			ObjectStoreNames[_taskFileMetaData],
-		], _readwrite)
-		const store_tasks = transaction == null? null : transaction[_objectStore](ObjectStoreNames[_tasks])
-		const store_subtasks = transaction == null? null : transaction[_objectStore](ObjectStoreNames[_subtasks])
-		const store_taskFileMetaData = transaction == null? null : transaction[_objectStore](ObjectStoreNames[_taskFileMetaData])
-		const targetList = taskLists[targetTaskListIndex]
+	function move_task(
+		task: Task,
+		tasklist_index: number,
+		task_index: number,
+		target_tasklist_index: number
+	): void {
+		const [store_tasks, store_subtasks, store_filemetadata] = db.stores('readwrite',
+			ObjectStoreNames.tasks,
+			ObjectStoreNames.subtasks,
+			ObjectStoreNames.filemetadata,
+		)
+		const target_list = tasklists[target_tasklist_index]
 
 		// Update manually if list has tasks, because
-		// `getTasks()` function only update empty list.
-		if (targetList[_tasks][_length] > 0) {
-			const subtasks = task[_subtasks][_map](subtask => ({...subtask, listId: targetList[_id]}))
-			const files = task[_files][_map](file => ({...file, listId: targetList[_id]}))
+		// `get_tasks()` function only update empty list.
+		if (array_length(target_list.tasks) > 0) {
+			const subtasks = array_map(
+				task.subtasks,
+				subtask => ({...subtask, list_id: target_list.id} satisfies SubTask)
+			)
+			const files = array_map(
+				task.files,
+				file => ({...file, list_id: target_list.id} satisfies TaskFileMetaData)
+			)
 			const $task: Task = {...task, subtasks, files}
-			setTaskLists(targetTaskListIndex, _tasks, tasks => sortTasks([...tasks, $task]))
+			set_tasklists(
+				target_tasklist_index, 'tasks',
+				tasks => sort_tasks([...tasks, $task])
+			)
 		}
 
-		setTaskLists(
-			taskListIndex,
-			_tasks,
-			tasks => tasks[_slice](0, taskIndex)[_concat](tasks[_slice](taskIndex + 1))
+		set_tasklists(
+			tasklist_index,
+			'tasks',
+			tasks => array_concat(
+				array_slice(tasks, 0, task_index),
+				array_slice(tasks, task_index + 1)
+			)
 		)
-		if (store_tasks != null) store_tasks[_put]({
-			complete: task[_complete],
-			description: task[_description],
-			id: task[_id],
-			important: task[_important],
-			labelIds: [...task[_labelIds]],
-			listId: targetList[_id],
-			name: task[_name],
-			reminder: task[_reminder]
+		if (store_tasks) idb_store_put(store_tasks, {
+			complete: task.complete,
+			description: task.description,
+			id: task.id,
+			important: task.important,
+			label_ids: [...task.label_ids],
+			list_id: target_list.id,
+			name: task.name,
+			reminder: task.reminder
 		} satisfies ObjectStoreTasks)
 
-		if (store_subtasks != null) for (const subtask of task[_subtasks]) store_subtasks[_put]({
+		if (store_subtasks) for (const subtask of task.subtasks) idb_store_put(store_subtasks, {
 			...subtask,
-			listId: targetList[_id]
+			list_id: target_list.id
 		} satisfies ObjectStoreSubTasks)
 
-		if (store_taskFileMetaData != null) for (const file of task[_files]) store_taskFileMetaData[_put]({
+		if (store_filemetadata) for (const file of task.files) idb_store_put(store_filemetadata, {
 			...file,
-			listId: targetList[_id]
+			list_id: target_list.id
 		} satisfies ObjectStoreTaskFileMetaData)
 	}
 
-	function initDatabase(): void {
-		db[_open]({
-			onSuccess(_ev, db) {
-				initLists()
-				initLabels()
-				initSettings()
-				initMiscellaneous()
-				setIsFileDBError(db[_readObjectStore](ObjectStoreNames[_taskFileMetaData]) == null)
+	function init_database(): void {
+		db.open({
+			on_success(_, db) {
+				init_tasklists()
+				init_labels()
+				init_settings()
+				init_miscellaneous()
+				set_is_db_file_error(db.read_store(ObjectStoreNames.filemetadata) == null)
 			},
-			onError(_ev, _db) {
-				setIsFileDBError(true)
+			on_error() {
+				set_is_db_file_error(true)
 			},
-			onUpgradeNeeded(_, db) {
-				const store = db[_createObjectStore]<ObjectStoreTaskLists>({
-					name: ObjectStoreNames[_taskLists],
-					keyPath: _id,
-					indexs: [_id, _name, _emoji]
+			on_upgrade_needed(_, db) {
+				const store = db.create_store<ObjectStoreTaskLists>({
+					name: ObjectStoreNames.tasklists,
+					key_path: 'id',
+					indexs: ['id', 'name', 'emoji']
 				})
 
-				store![_put]({
-					id: DEFAULT_TASK_LIST[_id],
-					name: DEFAULT_TASK_LIST[_name],
-					emoji: DEFAULT_TASK_LIST[_emoji],
+				idb_store_put(store!, {
+					id: DEFAULT_TASK_LIST.id,
+					name: DEFAULT_TASK_LIST.name,
+					emoji: DEFAULT_TASK_LIST.emoji,
 				} satisfies ObjectStoreTaskLists)
 
-				db[_createObjectStore]<ObjectStoreTasks>({
-					name: ObjectStoreNames[_tasks],
-					keyPath: _id,
-					indexs: [_id, _listId, _name, _complete, _reminder, _important, _description, _labelIds]
+				db.create_store<ObjectStoreTasks>({
+					name: ObjectStoreNames.tasks,
+					key_path: 'id',
+					indexs: ['id', 'list_id', 'name', 'complete', 'reminder', 'important', 'description', 'label_ids']
 				})
-				db[_createObjectStore]<ObjectStoreSubTasks>({
-					name: ObjectStoreNames[_subtasks],
-					keyPath: _id,
-					indexs: [_id, _taskId, _name, _complete, _listId]
+				db.create_store<ObjectStoreSubTasks>({
+					name: ObjectStoreNames.subtasks,
+					key_path: 'id',
+					indexs: ['id', 'task_id', 'name', 'complete', 'list_id']
 				})
-				db[_createObjectStore]<ObjectStoreSettings>({
-					name: ObjectStoreNames[_settings],
-					keyPath: _key,
-					indexs: [_key, _value]
+				db.create_store<ObjectStoreSettings>({
+					name: ObjectStoreNames.settings,
+					key_path: 'key',
+					indexs: ['key', 'value']
 				})
-				db[_createObjectStore]<ObjectStoreMiscellaneous>({
-					name: ObjectStoreNames[_miscellaneous],
-					keyPath: _key,
-					indexs: [_key, _value]
+				db.create_store<ObjectStoreMiscellaneous>({
+					name: ObjectStoreNames.miscellaneous,
+					key_path: 'key',
+					indexs: ['key', 'value']
 				})
-				db[_createObjectStore]<ObjectStoreTaskLabels>({
-					name: ObjectStoreNames[_labels],
-					keyPath: _id,
-					indexs: [_id, _name, _color]
+				db.create_store<ObjectStoreTaskLabels>({
+					name: ObjectStoreNames.labels,
+					key_path: 'id',
+					indexs: ['id', 'name', 'color']
 				})
-				db[_createObjectStore]<ObjectStoreFiles>({
-					name: ObjectStoreNames[_files],
-					keyPath: _id,
-					indexs: [_id, _blob]
+				db.create_store<ObjectStoreFiles>({
+					name: ObjectStoreNames.files,
+					key_path: 'id',
+					indexs: ['id', 'blob']
 				})
-				db[_createObjectStore]<ObjectStoreTaskFileMetaData>({
-					name: ObjectStoreNames[_taskFileMetaData],
-					keyPath: _id,
-					indexs: [_id, _listId, _taskId, _name, _size, _type]
+				db.create_store<ObjectStoreTaskFileMetaData>({
+					name: ObjectStoreNames.filemetadata,
+					key_path: 'id',
+					indexs: ['id', 'list_id', 'task_id', 'name', 'size', 'type']
 				})
 			},
 		})
 	}
 
-	function initLastPage(): void {
-		const store_miscellaneous = db[_readObjectStore](ObjectStoreNames[_miscellaneous])
+	function init_last_page(): void {
+		const store_miscellaneous = db.read_store(ObjectStoreNames.miscellaneous)
 		if (store_miscellaneous == null) return;
 
-		db[_get]<ObjectStoreMiscellaneous<Pages | number>>(store_miscellaneous, ObjectStoreKeys.miscellaneous_lastPage)[_then]((v) => {
-			if (!v) return getTasks()
+		promise_done(db.get<ObjectStoreMiscellaneous<Pages | number>>(
+			store_miscellaneous,
+			ObjectStoreKeys.miscellaneous_lastpage
+		), (result) => {
+			if (!result) return get_tasks()
 
-			setPage(v[_value])
-			getTasks()
+			set_page(result.value)
+			get_tasks()
 		})
 	}
 
-	function initMiscellaneous(): void {
-		const store_miscellaneous = db[_readObjectStore](ObjectStoreNames[_miscellaneous])
+	function init_miscellaneous(): void {
+		const store_miscellaneous = db.read_store(ObjectStoreNames.miscellaneous)
 		if (store_miscellaneous == null) return;
 
-		db[_get]<ObjectStoreMiscellaneous<boolean>>(store_miscellaneous, ObjectStoreKeys.miscellaneous_isSideNavigationExpand)[_then]((v) => setIsSideNavigationExpanded(d => v? v[_value] : d))
+		promise_done(db.get<ObjectStoreMiscellaneous<boolean>>(
+			store_miscellaneous,
+			ObjectStoreKeys.miscellaneous_issidenavigationexpanded
+		), (result) => set_is_sidenavigation_expanded(d => result?.value ?? d))
 	}
 
-	function initSettings(): void {
-		const store_settings = db[_readObjectStore](ObjectStoreNames[_settings])
+	function init_settings(): void {
+		const store_settings = db.read_store(ObjectStoreNames.settings)
 		if (store_settings == null) return;
 
-		db[_get]<ObjectStoreSettings<SortBy>>(store_settings, ObjectStoreKeys.settings_sortBy)[_then]((v) => setSettings(_sortBy, d => v? v[_value] : d))
-		db[_get]<ObjectStoreSettings<SortMode>>(store_settings, ObjectStoreKeys.settings_sortMode)[_then]((v) => setSettings(_sortMode, d => v? v[_value] : d))
-		db[_get]<ObjectStoreSettings<boolean>>(store_settings, ObjectStoreKeys.settings_isShowDeleteTaskWarning)[_then]((v) => setSettings(_isShowDeleteTaskWarning, d => v? v[_value] : d))
-		db[_get]<ObjectStoreSettings<Pages[]>>(store_settings, ObjectStoreKeys.settings_hiddenNavigation)[_then]((v) => setSettings(_hiddenNavigation, d => v? [...v[_value]] : d))
+		promise_done(db.get<ObjectStoreSettings<SortBy>>(
+			store_settings,
+			ObjectStoreKeys.settings_sortby
+		), (result) => set_settings('sort_by', d => result?.value ?? d))
+
+		promise_done(db.get<ObjectStoreSettings<SortMode>>(
+			store_settings,
+			ObjectStoreKeys.settings_sortmode
+		), (result) => set_settings('sort_mode', d => result?.value ?? d))
+
+		promise_done(db.get<ObjectStoreSettings<boolean>>(
+			store_settings,
+			ObjectStoreKeys.settings_isshowdeletetaskwarning
+		), (result) => set_settings('is_show_deletetaskwarning', d => result?.value ?? d))
+
+		promise_done(db.get<ObjectStoreSettings<Pages[]>>(
+			store_settings,
+			ObjectStoreKeys.settings_hidden_navigation
+		), (result) => set_settings('hidden_navigation', d => result? [...result.value] : d))
 	}
 
-	function initLists(): void {
-		const store_taskLists = db[_readObjectStore](ObjectStoreNames[_taskLists])
-		if (store_taskLists == null) return;
+	function init_tasklists(): void {
+		const store_tasklists = db.read_store(ObjectStoreNames.tasklists)
+		if (store_tasklists == null) return;
 
-		db[_getAll]<ObjectStoreTaskLists>(store_taskLists)[_then]((v) => {
-			if (!v) return;
+		promise_done(db.get_all<ObjectStoreTaskLists>(store_tasklists), (result) => {
+			if (!result) return;
 
 			let lists: TaskList[] = []
-			for (const i of v) lists[_push]({...i, tasks: []})
+			for (const i of result) array_push(lists, {...i, tasks: []})
 
 			// just assume user able to explicitly delete default task list
-			const index = lists[_findIndex](list => list[_id] == DEFAULT_TASK_LIST[_id])
+			const index = array_find_index(lists, list => list.id == DEFAULT_TASK_LIST.id)
 			if (index >= 0) {
-				const otherLists = lists[_slice](0, index)[_concat](lists[_slice](index + 1))
-				otherLists[_sort]((a, b) => a[_name][_localeCompare](b[_name]))
-				lists = [lists[index]][_concat](otherLists)
+				const other_lists = array_concat(
+					array_slice(lists, 0, index),
+					array_slice(lists, index + 1)
+				)
+				array_sort(other_lists, (a, b) => string_locale_compare(a.name, b.name))
+				lists = array_concat([lists[index]], other_lists)
 			}
-			else lists[_sort]((a, b) => a[_name][_localeCompare](b[_name]))
+			else array_sort(lists, (a, b) => string_locale_compare(a.name, b.name))
 
-			setTaskLists(lists)
-			initLastPage()
+			set_tasklists(lists)
+			init_last_page()
 		})
 	}
 
-	function initLabels(): void {
-		const store_labels = db[_readObjectStore](ObjectStoreNames[_labels])
+	function init_labels(): void {
+		const store_labels = db.read_store(ObjectStoreNames.labels)
 		if (store_labels == null) return;
 
-		db[_getAll]<ObjectStoreTaskLabels>(store_labels)[_then]((v) => {
+		promise_done(db.get_all<ObjectStoreTaskLabels>(store_labels), (v) => {
 			if (!v) return;
 			const values: TaskLabel[] = []
-			for (const label of [...v][_sort]((a, b) => a[_name][_localeCompare](b[_name]))) {
-				values[label[_id]] = label
+			for (const label of array_sort([...v], (a, b) => string_locale_compare(a.name, b.name))) {
+				values[label.id] = label
 			}
-			setLabels(values)
+			set_labels(values)
 		})
 	}
 
-	function deleteTaskList(): void {
-		const transaction = db[_transaction]([
-			ObjectStoreNames[_taskLists],
-			ObjectStoreNames[_tasks],
-			ObjectStoreNames[_subtasks],
-			ObjectStoreNames[_taskFileMetaData],
-			ObjectStoreNames[_files],
-		], _readwrite)
-		const store_taskLists = transaction == null? null : transaction[_objectStore](ObjectStoreNames[_taskLists])
-		const store_tasks = transaction == null? null : transaction[_objectStore](ObjectStoreNames[_tasks])
-		const store_subtasks = transaction == null? null : transaction[_objectStore](ObjectStoreNames[_subtasks])
-		const store_taskFileMetaData = transaction == null? null : transaction[_objectStore](ObjectStoreNames[_taskFileMetaData])
-		const store_files = transaction == null? null : transaction[_objectStore](ObjectStoreNames[_files])
-		const list = taskLists[selectedTaskListIndexToDelete()]
-		changePage(Pages[_tasks])
+	function delete_tasklist(): void {
+		const [
+			store_tasklists, store_tasks, store_subtasks,
+			store_filemetadata, store_files
+		] = db.stores('readwrite',
+			ObjectStoreNames.tasklists,
+			ObjectStoreNames.tasks,
+			ObjectStoreNames.subtasks,
+			ObjectStoreNames.filemetadata,
+			ObjectStoreNames.files,
+		)
+		const list = tasklists[selected_tasklist_index_to_delete()]
+		change_page(Pages.tasks)
 
-		if (store_taskLists != null) store_taskLists[_delete](list[_id])
+		if (store_tasklists) idb_store_delete(store_tasklists, list.id)
 
-		for (const task of list[_tasks]) {
-			if (store_tasks != null) store_tasks[_delete](task[_id])
+		for (const task of list.tasks) {
+			if (store_tasks) idb_store_delete(store_tasks, task.id)
 
-			if (store_subtasks != null) {
-				for (const subtask of task[_subtasks]) store_subtasks[_delete](subtask[_id])
+			if (store_subtasks) {
+				for (const subtask of task.subtasks)
+					idb_store_delete(store_subtasks, subtask.id)
 			}
 
-			for (const fileMetaData of task[_files]) {
-				if (store_taskFileMetaData != null) store_taskFileMetaData[_delete](fileMetaData[_id])
-				if (store_files != null) store_files[_delete](fileMetaData[_id])
+			for (const file of task.files) {
+				if (store_filemetadata) idb_store_delete(store_filemetadata, file.id)
+				if (store_files) idb_store_delete(store_files, file.id)
 			}
 		}
 
-		setTaskLists(lists => lists[_slice](0, selectedTaskListIndexToDelete())[_concat](lists[_slice](selectedTaskListIndexToDelete() + 1)))
+		set_tasklists(lists => array_concat(
+			array_slice(lists, 0, selected_tasklist_index_to_delete()),
+			array_slice(lists, selected_tasklist_index_to_delete() + 1)
+		))
 	}
 
 	// FIXME: To many iteration and I hate it. I don't find any better solution currently
-	async function getTasks(all: boolean = false): Promise<void> {
-		if (isEveryTaskLoaded) return;
+	async function get_tasks(all: boolean = false): Promise<void> {
+		if (is_every_task_loaded) return;
 
-		const transaction = db[_transaction]([
-			ObjectStoreNames[_tasks],
-			ObjectStoreNames[_subtasks],
-			ObjectStoreNames[_taskFileMetaData]
-		], _readonly)
-		const store_tasks = transaction == null? null : transaction[_objectStore](ObjectStoreNames[_tasks])
-		const store_subtasks = transaction == null? null : transaction[_objectStore](ObjectStoreNames[_subtasks])
-		const store_taskFileMetaData = transaction == null? null : transaction[_objectStore](ObjectStoreNames[_taskFileMetaData])
-		const isGetAll = (
-			([
-				Pages[_all], Pages[_completed], Pages[_uncompleted],
-				Pages[_important], Pages[_planned]
-			][_includes](page() as Pages))
+		const [
+			store_tasks, store_subtasks, store_filemetadata
+		] = db.stores('readwrite',
+			ObjectStoreNames.tasks,
+			ObjectStoreNames.subtasks,
+			ObjectStoreNames.filemetadata,
+		)
+		const is_get_all = (
+			array_includes([
+				Pages.all, Pages.completed, Pages.uncompleted,
+				Pages.important, Pages.planned
+			], page() as Pages)
 			|| all
 		)
-		const listId = page() == Pages[_tasks]? DEFAULT_TASK_LIST[_id] : page() as number
+		const list_id = page() == Pages.tasks? DEFAULT_TASK_LIST.id : page() as number
 		const list_idIndex: {[id: number]: number} = {}
 
-		for (let i = 0; i < taskLists[_length]; i++) {
-			if (taskLists[i][_tasks][_length] > 0) continue
-			if (isGetAll) list_idIndex[taskLists[i][_id]] = i
-			else if (taskLists[i][_id] == listId) {
-				list_idIndex[taskLists[i][_id]] = i
+		for (let i = 0; i < array_length(tasklists); i++) {
+			if (array_length(tasklists[i].tasks) > 0) continue
+			if (is_get_all) list_idIndex[tasklists[i].id] = i
+			else if (tasklists[i].id == list_id) {
+				list_idIndex[tasklists[i].id] = i
 				break
 			}
 		}
 
-		isEveryTaskLoaded = Object[_keys](list_idIndex)[_length] == 0
-		if (isEveryTaskLoaded || store_tasks == null) return;
+		is_every_task_loaded = array_length(Object.keys(list_idIndex)) == 0
+		if (is_every_task_loaded || store_tasks == null) return;
 
 		try {
 
 			// TASKS
-			const tasks_idIndex: {[id: number]: number} = {}
+			const tasks_id_index: {[id: number]: number} = {}
 			const tasks: Task[] = []
-			await db[_cursor](store_tasks, (cursor) => {
+			await db.cursor(store_tasks, (cursor) => {
 				if (!cursor) return false
-				const task = cursor[_value] as ObjectStoreTasks
+				const task = cursor.value as ObjectStoreTasks
 				const add = () => {
-					if (list_idIndex[task[_listId]] == undefined) return;
-					tasks[_push]({...task, files: [], subtasks: []})
+					if (list_idIndex[task.list_id] == undefined) return;
+					array_push(tasks, {...task, files: [], subtasks: []})
 				}
-				if (isGetAll) add()
-				else if (task[_listId] == listId) add()
+				if (is_get_all) add()
+				else if (task.list_id == list_id) add()
 				return true
 			})
-			sortTasks(tasks)
-			for (let i = 0; i < tasks[_length]; i++) {
-				tasks_idIndex[tasks[i][_id]] = i
+			sort_tasks(tasks)
+			for (let i = 0; i < array_length(tasks); i++) {
+				tasks_id_index[tasks[i].id] = i
 			}
 
 			// SUBTASKS
 			const subtasks: SubTask[] = []
-			if (store_subtasks != null) await db[_cursor](store_subtasks, (cursor) => {
+			if (store_subtasks != null) await db.cursor(store_subtasks, (cursor) => {
 				if (!cursor) return false
-				const subtask = cursor[_value] as ObjectStoreSubTasks
+				const subtask = cursor.value as ObjectStoreSubTasks
 				const add = () => {
-					if (list_idIndex[subtask[_listId]] == undefined) return;
-					subtasks[_push](subtask)
+					if (list_idIndex[subtask.list_id] == undefined) return;
+					array_push(subtasks, subtask)
 				}
-				if (isGetAll) add()
-				else if (subtask[_listId] == listId) add()
+				if (is_get_all) add()
+				else if (subtask.list_id == list_id) add()
 				return true
 			})
-			subtasks[_sort]((a, b) => a[_name][_localeCompare](b[_name]))
+			array_sort(subtasks, (a, b) => string_locale_compare(a.name, b.name))
 			for (const subtask of subtasks) {
-				tasks[tasks_idIndex[subtask[_taskId]]][_subtasks][_push](subtask)
+				array_push(tasks[tasks_id_index[subtask.task_id]].subtasks, subtask)
 			}
 
 			// FILES
-			const fileMetaDatas: TaskFileMetaData[] = []
-			if (store_taskFileMetaData != null) await db[_cursor](store_taskFileMetaData, (cursor) => {
+			const filemetadatas: TaskFileMetaData[] = []
+			if (store_filemetadata != null) await db.cursor(store_filemetadata, (cursor) => {
 				if (!cursor) return false
-				const fileMetaData = cursor[_value] as ObjectStoreTaskFileMetaData
+				const filemetadata = cursor.value as ObjectStoreTaskFileMetaData
 				const add = () => {
-					if (list_idIndex[fileMetaData[_listId]] == undefined) return;
-					fileMetaDatas[_push]({...fileMetaData})
+					if (list_idIndex[filemetadata.list_id] == undefined) return;
+					array_push(filemetadatas, {...filemetadata})
 				}
-				if (isGetAll) add()
-				else if (fileMetaData[_listId] == listId) add()
+				if (is_get_all) add()
+				else if (filemetadata.list_id == list_id) add()
 				return true
 			})
-			fileMetaDatas[_sort]((a, b) => a[_name][_localeCompare](b[_name]))
-			for (const fileMetaData of fileMetaDatas) {
-				tasks[tasks_idIndex[fileMetaData[_taskId]]][_files][_push](fileMetaData)
+			array_sort(filemetadatas, (a, b) => string_locale_compare(a.name, b.name))
+			for (const filemetadata of filemetadatas) {
+				array_push(tasks[tasks_id_index[filemetadata.task_id]].files, filemetadata)
 			}
 
-			for (const id of Object[_keys](list_idIndex)[_map](v => numberParse(v, true))) {
-				setTaskLists(list_idIndex[id], _tasks, tasks[_filter](task => task[_listId] == id))
+			for (const id of array_map(Object.keys(list_idIndex), v => number_parse(v, true))) {
+				set_tasklists(list_idIndex[id], 'tasks', array_filter(tasks, task => task.list_id == id))
 			}
 
 		} catch (e) {console.log(e)}
 	}
 
-	function changePage(page: Pages | number): void {
-		setPage(page)
-		getTasks()
+	function change_page(page: Pages | number): void {
+		set_page(page)
+		get_tasks()
 
-		const store_miscellaneous = db[_writeObjectStore](ObjectStoreNames[_miscellaneous])
+		const store_miscellaneous = db.write_store(ObjectStoreNames.miscellaneous)
 		if (store_miscellaneous == null) return;
 
-		store_miscellaneous[_put]({
-			key: ObjectStoreKeys.miscellaneous_lastPage,
+		idb_store_put(store_miscellaneous, {
+			key: ObjectStoreKeys.miscellaneous_lastpage,
 			value: page
 		})
 	}
 
-	function renameTaskList(): void {
-		const store_taskLists = db[_writeObjectStore](ObjectStoreNames[_taskLists])
-		const list = taskLists[selectedTaskListIndexToRename()]
-		const id = list[_id]
-		const emoji = editListEmoji()
-		let name = editListNameText()[_trim]()
+	function rename_tasklist(): void {
+		const store_tasklists = db.write_store(ObjectStoreNames.tasklists)
+		const list = tasklists[selected_tasklist_index_to_rename()]
+		const id = list.id
+		const emoji = edit_list_emoji()
+		let name = string_trim(edit_listname_text())
 
-		if (name != list[_name]) {
+		if (name != list.name) {
 			let count = 0
-			for (const taskList of taskLists) {
-				if (count == 0 && taskList[_name] == name) ++count
-				if (taskList[_name] == name + ` (${count})`) ++count
+			for (const tasklist of tasklists) {
+				if (count == 0 && tasklist.name == name) ++count
+				if (tasklist.name == name + ` (${count})`) ++count
 			}
 			if (count > 0) name += ` (${count})`
 		}
 
-		let $lists = [...taskLists]
-		$lists[selectedTaskListIndexToRename()] = {...$lists[selectedTaskListIndexToRename()], emoji, name}
+		let $lists = [...tasklists]
+		$lists[selected_tasklist_index_to_rename()] = {...$lists[selected_tasklist_index_to_rename()], emoji, name}
 
 		// keep general tasks on top
-		const index = $lists[_findIndex](list => list[_id] == DEFAULT_TASK_LIST[_id])
+		const index = array_find_index($lists, list => list.id == DEFAULT_TASK_LIST.id)
 		if (index >= 0) {
-			const otherLists = $lists[_slice](0, index)[_concat]($lists[_slice](index + 1))
-			otherLists[_sort]((a, b) => a[_name][_localeCompare](b[_name]))
-			$lists = [$lists[index]][_concat](otherLists)
+			const other_lists = array_concat(
+				array_slice($lists, 0, index),
+				array_slice($lists, index + 1)
+			)
+			array_sort(other_lists, (a, b) => string_locale_compare(a.name, b.name))
+			$lists = array_concat([$lists[index]], other_lists)
 		}
-		else $lists[_sort]((a, b) => a[_name][_localeCompare](b[_name]))
+		else array_sort($lists, (a, b) => string_locale_compare(a.name, b.name))
 
-		setTaskLists($lists)
-		if (store_taskLists != null) store_taskLists[_put]({emoji, id, name} satisfies ObjectStoreTaskLists)
-	}
-
-	function removeSplashScreen(): void {
-		setMicrotask(() => {
-			const splash_ref = getElementById(ElementIds[_splash]) as HTMLDivElement
-			splash_ref[_animate](
-				{opacity: 0},
-				{
-					duration: 1000,
-					easing: AnimationEffectTiming[_spring]
-				}
-			)[_finished][_then](() => splash_ref[_remove]())
-		})
+		set_tasklists($lists)
+		if (store_tasklists) idb_store_put(store_tasklists, {emoji, id, name} satisfies ObjectStoreTaskLists)
 	}
 
 	onMount(() => {
-		initDatabase()
-		removeSplashScreen()
+		init_database()
+		remove_splash_screen()
 	})
 
 	const LabelItem: VoidComponent<TaskLabel> = (props) => {
 		return (<List
-			leading={<Icon style={{color: props[_color] ?? undefined}} code={0xE407}/>}
+			leading={<Icon style={{color: props.color ?? undefined}} code={0xE407}/>}
 			trailing={<>
 				<TextTooltip text="Edit label">
 					<IconButton
@@ -1366,7 +1438,7 @@ const _: VoidComponent = () => {
 					/>
 				</TextTooltip>
 			</>}>
-			{ props[_name] }
+			{ props.name }
 		</List>)
 	}
 
@@ -1377,16 +1449,16 @@ const _: VoidComponent = () => {
 			header="Labels"
 			actions={<>
 				<Button
-					onClick={() => closeDialog(dialog_labels_ref)}
-					variant={ButtonVariant[_tonal]}>
+					onClick={() => close_dialog(dialog_labels_ref)}
+					variant={ButtonVariant.tonal}>
 					Close
 				</Button>
 				<Button
-					onClick={ev => openDialog(ev, dialog_newLabel_ref, {
-						contentAutoFocus: true,
+					onClick={ev => open_dialog(ev, dialog_newlabel_ref, {
+						content_auto_focus: true,
 						important: true
 					})}
-					variant={ButtonVariant[_filled]}>
+					variant={ButtonVariant.filled}>
 					Add label
 				</Button>
 			</>}>
@@ -1395,55 +1467,55 @@ const _: VoidComponent = () => {
 			}</For>
 		</Dialog>
 		<Dialog
-			ref={r => dialog_newLabel_ref = r}
+			ref={r => dialog_newlabel_ref = r}
 			header="New label"
 			onClose={() => {
-				setSelectedLabelToAdd(_name, '')
-				changeTextFieldValue(textfield_newLabel_ref, '')
-				setSelectedLabelToAdd(_color, null)
+				set_selected_label_to_add('name', '')
+				change_textfield_value(textfield_newlabel_ref, '')
+				set_selected_label_to_add('color', null)
 			}}
 			actions={<>
 				<Button
-					onClick={() => closeDialog(dialog_newLabel_ref)}
-					variant={ButtonVariant[_tonal]}>
+					onClick={() => close_dialog(dialog_newlabel_ref)}
+					variant={ButtonVariant.tonal}>
 					Cancel
 				</Button>
 				<Button
-					disabled={selectedLabelToAdd[_name][_trim]() == ''}
+					disabled={string_trim(selected_label_to_add.name) == ''}
 					onClick={() => {
-						addLabel(selectedLabelToAdd[_name][_trim](), selectedLabelToAdd[_color])
-						closeDialog(dialog_newLabel_ref)
+						add_label(string_trim(selected_label_to_add.name), selected_label_to_add.color)
+						close_dialog(dialog_newlabel_ref)
 					}}
-					variant={ButtonVariant[_filled]}>
+					variant={ButtonVariant.filled}>
 					Add
 				</Button>
 			</>}>
 			<form
-				style={{ display: _contents }}
+				style={{ display: 'contents' }}
 				onSubmit={ev => {
-					eventPreventDefault(ev)
-					if (selectedLabelToAdd[_name][_trim]() == '') return;
+					event_prevent_default(ev)
+					if (string_trim(selected_label_to_add.name) == '') return;
 
-					addLabel(selectedLabelToAdd[_name][_trim](), selectedLabelToAdd[_color])
-					closeDialog(dialog_newLabel_ref)
+					add_label(string_trim(selected_label_to_add.name), selected_label_to_add.color)
+					close_dialog(dialog_newlabel_ref)
 				}}>
 				<TextField
-					ref={r => textfield_newLabel_ref = r}
+					ref={r => textfield_newlabel_ref = r}
 					label="Name"
-					onFocus={() => setSelectedLabelToAdd(_name, textfield_newLabel_ref[_value])}
-					onInput={() => setSelectedLabelToAdd(_name, textfield_newLabel_ref[_value])}
+					onFocus={() => set_selected_label_to_add('name', textfield_newlabel_ref.value)}
+					onInput={() => set_selected_label_to_add('name', textfield_newlabel_ref.value)}
 					autofocus
 					trailing={<TextTooltip text="Change label color">
 						<TextFieldButton
-							focused={is_colorPicker_label_open()}
+							focused={is_colorpicker_label_open()}
 							onClick={ev => {
-								setChangeLabelColorOption(_new)
-								openColorPicker(ev, colorPicker_label_ref, {
-									anchor: ev[_currentTarget],
+								set_change_labelcolor_option('new')
+								open_colorpicker(ev, colorpicker_label_ref, {
+									anchor: ev.currentTarget,
 								})
 							}}>
 							<Icon
-								style={{color: selectedLabelToAdd[_color] ?? undefined}}
+								style={{color: selected_label_to_add.color ?? undefined}}
 								code={0xE407}
 							/>
 						</TextFieldButton>
@@ -1452,56 +1524,56 @@ const _: VoidComponent = () => {
 			</form>
 		</Dialog>
 		<Dialog
-			ref={r => dialog_editLabel_ref = r}
+			ref={r => dialog_editlabel_ref = r}
 			header="Edit label"
 			actions={<>
 				<Button
-					onClick={() => closeDialog(dialog_editLabel_ref)}
-					variant={ButtonVariant[_tonal]}>
+					onClick={() => close_dialog(dialog_editlabel_ref)}
+					variant={ButtonVariant.tonal}>
 					Cancel
 				</Button>
 				<Button
-					disabled={selectedLabelToEdit[_name][_trim]() == ''}
+					disabled={string_trim(selected_label_to_edit.name) == ''}
 					onClick={() => {
-						editLabel({
-							...selectedLabelToEdit,
-							name: selectedLabelToEdit[_name][_trim](),
+						edit_label({
+							...selected_label_to_edit,
+							name: string_trim(selected_label_to_edit.name),
 						} satisfies TaskLabel)
-						closeDialog(dialog_editLabel_ref)
+						close_dialog(dialog_editlabel_ref)
 					}}
-					variant={ButtonVariant[_filled]}>
+					variant={ButtonVariant.filled}>
 					Edit
 				</Button>
 			</>}>
 			<form
-				style={{display: _contents}}
+				style={{display: 'contents'}}
 				onSubmit={ev => {
-					eventPreventDefault(ev)
-					if (selectedLabelToEdit[_name][_trim]() == '') return;
+					event_prevent_default(ev)
+					if (string_trim(selected_label_to_edit.name) == '') return;
 
-					editLabel({
-						...selectedLabelToEdit,
-						name: selectedLabelToEdit[_name][_trim](),
+					edit_label({
+						...selected_label_to_edit,
+						name: string_trim(selected_label_to_edit.name),
 					} satisfies TaskLabel)
-					closeDialog(dialog_editLabel_ref)
+					close_dialog(dialog_editlabel_ref)
 				}}>
 				<TextField
-					ref={r => textfield_editLabel_ref = r}
+					ref={r => textfield_editlabel_ref = r}
 					label="Name"
-					onFocus={() => setSelectedLabelToEdit(_name, textfield_editLabel_ref[_value])}
-					onInput={() => setSelectedLabelToEdit(_name, textfield_editLabel_ref[_value])}
+					onFocus={() => set_selected_label_to_edit('name', textfield_editlabel_ref.value)}
+					onInput={() => set_selected_label_to_edit('name', textfield_editlabel_ref.value)}
 					autofocus
 					trailing={<TextTooltip text="Change label color">
 						<TextFieldButton
-							focused={is_colorPicker_label_open()}
+							focused={is_colorpicker_label_open()}
 							onClick={ev => {
-								setChangeLabelColorOption(_edit)
-								openColorPicker(ev, colorPicker_label_ref, {
-									anchor: ev[_currentTarget],
+								set_change_labelcolor_option('edit')
+								open_colorpicker(ev, colorpicker_label_ref, {
+									anchor: ev.currentTarget,
 								})
 							}}>
 							<Icon
-								style={{color: selectedLabelToEdit[_color] ?? undefined}}
+								style={{color: selected_label_to_edit.color ?? undefined}}
 								code={0xE407}
 							/>
 						</TextFieldButton>
@@ -1510,52 +1582,52 @@ const _: VoidComponent = () => {
 			</form>
 		</Dialog>
 		<Dialog
-			ref={r => dialog_newList_ref = r}
+			ref={r => dialog_newlist_ref = r}
 			header="New list"
 			style={{width: '500px'}}
 			onClose={() => {
-				setNewListNameText('')
-				setNewListEmoji(null)
-				changeTextFieldValue(textfield_newList_ref, '')
+				set_new_listname_text('')
+				set_new_list_emoji(null)
+				change_textfield_value(textfield_newlist_ref, '')
 			}}
 			actions={<>
 				<Button
-					onClick={() => closeDialog(dialog_newList_ref)}
-					variant={ButtonVariant[_tonal]}>
+					onClick={() => close_dialog(dialog_newlist_ref)}
+					variant={ButtonVariant.tonal}>
 					Cancel
 				</Button>
 				<Button
 					onClick={() => {
-						addNewTaskList(newListNameText(), newListEmoji())
-						closeDialog(dialog_newList_ref)
+						add_new_tasklist(new_listname_text(), new_list_emoji())
+						close_dialog(dialog_newlist_ref)
 					}}
-					disabled={newListNameText()[_trim]() == ''}
-					variant={ButtonVariant[_filled]}>
+					disabled={string_trim(new_listname_text()) == ''}
+					variant={ButtonVariant.filled}>
 					Add
 				</Button>
 			</>}>
 			<form
-				style={{display: _contents}}
+				style={{display: 'contents'}}
 				onSubmit={(ev) => {
-					eventPreventDefault(ev)
-					if (newListNameText()[_trim]() == '') return;
+					event_prevent_default(ev)
+					if (string_trim(new_listname_text()) == '') return;
 
-					addNewTaskList(newListNameText(), newListEmoji())
-					closeDialog(dialog_newList_ref)
+					add_new_tasklist(new_listname_text(), new_list_emoji())
+					close_dialog(dialog_newlist_ref)
 				}}>
 				<TextField
-					ref={r => textfield_newList_ref = r}
+					ref={r => textfield_newlist_ref = r}
 					placeholder="List name"
-					onInput={ev => setNewListNameText(ev[_currentTarget][_value])}
-					onFocus={ev => setNewListNameText(ev[_currentTarget][_value])}
+					onInput={ev => set_new_listname_text(ev.currentTarget.value)}
+					onFocus={ev => set_new_listname_text(ev.currentTarget.value)}
 					trailing={<TextFieldButton
 						onClick={(ev) => {
-							setIs_emojiPIcker_newList_open(true)
-							openEmojiPicker(ev, emojiPicker_ref)
+							set_is_emojipicker_newlist_open(true)
+							open_emojipicker(ev, emojipicker_ref)
 						}}>
 						<Show
-							when={newListEmoji() == null}
-							fallback={<Emoji emoji={newListEmoji()!}/>}>
+							when={new_list_emoji() == null}
+							fallback={<Emoji emoji={new_list_emoji()!}/>}>
 							<Icon code={0xE747}/>
 						</Show>
 					</TextFieldButton>}
@@ -1563,57 +1635,57 @@ const _: VoidComponent = () => {
 			</form>
 		</Dialog>
 		<Dialog
-			ref={r => dialog_editList_ref = r}
+			ref={r => dialog_editlist_ref = r}
 			header="Rename list"
 			style={{width: '500px'}}
 			actions={<>
 				<Button
-					onClick={() => closeDialog(dialog_editList_ref)}
-					variant={ButtonVariant[_tonal]}>
+					onClick={() => close_dialog(dialog_editlist_ref)}
+					variant={ButtonVariant.tonal}>
 					Cancel
 				</Button>
 				<Button
 					onClick={() => {
-						renameTaskList()
-						closeDialog(dialog_editList_ref)
+						rename_tasklist()
+						close_dialog(dialog_editlist_ref)
 					}}
 					disabled={
-						editListNameText()[_trim]() == ''
+						string_trim(edit_listname_text()) == ''
 						|| (
-							editListNameText()[_trim]() == taskLists[selectedTaskListIndexToRename()][_name]
-							&& editListEmoji() == taskLists[selectedTaskListIndexToRename()][_emoji]
+							string_trim(edit_listname_text()) == tasklists[selected_tasklist_index_to_rename()].name
+							&& edit_list_emoji() == tasklists[selected_tasklist_index_to_rename()].emoji
 						)
 					}
-					variant={ButtonVariant[_filled]}>
+					variant={ButtonVariant.filled}>
 					Rename
 				</Button>
 			</>}>
 			<form
-				style={{display: _contents}}
+				style={{display: 'contents'}}
 				onSubmit={(ev) => {
-					eventPreventDefault(ev)
-					if (editListNameText()[_trim]() == ''
+					event_prevent_default(ev)
+					if (string_trim(edit_listname_text()) == ''
 						|| (
-							editListNameText()[_trim]() == taskLists[selectedTaskListIndexToRename()][_name]
-							&& editListEmoji() == taskLists[selectedTaskListIndexToRename()][_emoji]
+							string_trim(edit_listname_text()) == tasklists[selected_tasklist_index_to_rename()].name
+							&& edit_list_emoji() == tasklists[selected_tasklist_index_to_rename()].emoji
 						)
 					) return;
-					renameTaskList()
-					closeDialog(dialog_editList_ref)
+					rename_tasklist()
+					close_dialog(dialog_editlist_ref)
 				}}>
 				<TextField
-					ref={r => textfield_editList_ref = r}
+					ref={r => textfield_editlist_ref = r}
 					placeholder="List name"
-					onInput={ev => setEditListNameText(ev[_currentTarget][_value])}
-					onFocus={ev => setEditListNameText(ev[_currentTarget][_value])}
+					onInput={ev => set_edit_listname_text(ev.currentTarget.value)}
+					onFocus={ev => set_edit_listname_text(ev.currentTarget.value)}
 					trailing={<TextFieldButton
 						onClick={(ev) => {
-							setIs_emojiPicker_editList_open(true)
-							openEmojiPicker(ev, emojiPicker_ref)
+							set_is_emojipicker_editlist_open(true)
+							open_emojipicker(ev, emojipicker_ref)
 						}}>
 						<Show
-							when={editListEmoji() == null}
-							fallback={<Emoji emoji={editListEmoji()!}/>}>
+							when={edit_list_emoji() == null}
+							fallback={<Emoji emoji={edit_list_emoji()!}/>}>
 							<Icon code={0xE747}/>
 						</Show>
 					</TextFieldButton>}
@@ -1621,28 +1693,28 @@ const _: VoidComponent = () => {
 			</form>
 		</Dialog>
 		<Dialog
-			ref={r => dialog_deleteList_ref = r}
+			ref={r => dialog_deletelist_ref = r}
 			style={{width: '500px'}}
 			header="Delete list"
 			actions={<>
 				<Button
-					variant={ButtonVariant[_tonal]}
-					onClick={() => closeDialog(dialog_deleteList_ref)}>
+					variant={ButtonVariant.tonal}
+					onClick={() => close_dialog(dialog_deletelist_ref)}>
 					Cancel
 				</Button>
 				<Button
-					variant={ButtonVariant[_filled]}
+					variant={ButtonVariant.filled}
 					onClick={() => {
-						closeDialog(dialog_deleteList_ref)
-						deleteTaskList()
+						close_dialog(dialog_deletelist_ref)
+						delete_tasklist()
 					}}>
 					Delete
 				</Button>
 			</>}>
-			<Show when={taskLists[selectedTaskListIndexToDelete()]}>
-				<>Are you sure want to delete <q style={{"font-weight": _bold, color: 'rgb(var(--g-color-accent))'}}>{taskLists[selectedTaskListIndexToDelete()][_name]}</q> list? </>
-				<>This list contains {taskLists[selectedTaskListIndexToDelete()][_tasks][_filter](v => !v[_complete])[_length]} uncompleted tasks </>
-				<>and {taskLists[selectedTaskListIndexToDelete()][_tasks][_filter](v => v[_complete])[_length]} completed tasks</>
+			<Show when={tasklists[selected_tasklist_index_to_delete()]}>
+				<>Are you sure want to delete <q style={{"font-weight": 'bold', color: `rgb(${AppColors.accent})`}}>{tasklists[selected_tasklist_index_to_delete()].name}</q> list? </>
+				<>This list contains {array_length(array_filter(tasklists[selected_tasklist_index_to_delete()].tasks, v => !v.complete))} uncompleted tasks </>
+				<>and {array_length(array_filter(tasklists[selected_tasklist_index_to_delete()].tasks, v => v.complete))} completed tasks</>
 			</Show>
 		</Dialog>
 	</>)
@@ -1650,28 +1722,28 @@ const _: VoidComponent = () => {
 	const ColorPickers: VoidComponent = () => {
 		return (<>
 			<ColorPicker
-				color={(changeLabelColorOption() == _new
-					? selectedLabelToAdd[_color]
-					: selectedLabelToEdit[_color]
+				color={(change_labelcolor_option() == 'new'
+					? selected_label_to_add.color
+					: selected_label_to_edit.color
 				) ?? undefined}
-				onToggleOpen={isOpen => setIs_colorPicker_label_open(isOpen)}
-				onSelectColor={color => changeLabelColorOption() == _new
-					? setSelectedLabelToAdd(_color, color)
-					: setSelectedLabelToEdit(_color, color)
+				on_toggle_open={is_open => set_is_colorpicker_label_open(is_open)}
+				on_select_color={color => change_labelcolor_option() == 'new'
+					? set_selected_label_to_add('color', color)
+					: set_selected_label_to_edit('color', color)
 				}
-				ref={r => colorPicker_label_ref = r}>
-				<Show when={(changeLabelColorOption() == _new
-					? selectedLabelToAdd[_color]
-					: selectedLabelToEdit[_color]
+				ref={r => colorpicker_label_ref = r}>
+				<Show when={(change_labelcolor_option() == 'new'
+					? selected_label_to_add.color
+					: selected_label_to_edit.color
 				) != null}>
 					<Button
 						style={{width: '100%'}}
 						onClick={() => {
-							closeColorPicker(colorPicker_label_ref)
-							if (changeLabelColorOption() == _new) setSelectedLabelToAdd(_color, null)
-							else setSelectedLabelToEdit(_color, null)
+							close_colorpicker(colorpicker_label_ref)
+							if (change_labelcolor_option() == 'new') set_selected_label_to_add('color', null)
+							else set_selected_label_to_edit('color', null)
 						}}
-						variant={ButtonVariant[_tonal]}>
+						variant={ButtonVariant.tonal}>
 						<Icon code={0xE40C}/>No color
 					</Button>
 				</Show>
@@ -1681,27 +1753,27 @@ const _: VoidComponent = () => {
 
 	const EmojiPickers: VoidComponent = () => (<>
 		<EmojiPicker
-			ref={r => emojiPicker_ref = r}
+			ref={r => emojipicker_ref = r}
 			onClose={() => {
-				setIs_emojiPIcker_newList_open(false)
-				setIs_emojiPicker_editList_open(false)
+				set_is_emojipicker_newlist_open(false)
+				set_is_emojipicker_editlist_open(false)
 			}}
-			onSelectEmoji={e => {
-				if (is_emojiPicker_newList_open()) setNewListEmoji(e)
-				if (is_emojiPicker_editList_open()) setEditListEmoji(e)
+			on_select_emoji={e => {
+				if (is_emojipicker_newlist_open()) set_new_list_emoji(e)
+				if (is_emojipicker_editlist_open()) set_edit_list_emoji(e)
 			}}>
 			<Show when={
-				(is_emojiPicker_newList_open() && newListEmoji() != null)
-				|| (is_emojiPicker_editList_open() && editListEmoji() != null)
+				(is_emojipicker_newlist_open() && new_list_emoji() != null)
+				|| (is_emojipicker_editlist_open() && edit_list_emoji() != null)
 			}>
 				<div style={{width: '100%', padding: '0 12px 12px 12px'}}>
 					<Button
 						style={{width: '100%'}}
-						variant={ButtonVariant[_tonal]}
+						variant={ButtonVariant.tonal}
 						onClick={() => {
-							if (is_emojiPicker_newList_open()) setNewListEmoji(null)
-							if (is_emojiPicker_editList_open()) setEditListEmoji(null)
-							closeEmojiPicker(emojiPicker_ref)
+							if (is_emojipicker_newlist_open()) set_new_list_emoji(null)
+							if (is_emojipicker_editlist_open()) set_edit_list_emoji(null)
+							close_emojipicker(emojipicker_ref)
 						}}>
 						<Icon code={0xE5E9}/>No emoji
 					</Button>
@@ -1713,7 +1785,7 @@ const _: VoidComponent = () => {
 	const Toasts: VoidComponent = () => {
 		return (<>
 			<Toast
-				ref={r => toast_noFile_ref = r}
+				ref={r => toast_nofile_ref = r}
 				leading={<Icon code={0xE631}/>}>
 				File is not exist
 			</Toast>
@@ -1721,26 +1793,26 @@ const _: VoidComponent = () => {
 	}
 
 	return (<App
-		appBar={<AppBar
-			taskLists={taskLists}
-			isSideNavigationExpanded={isSideNavigationExpanded()}
+		appbar={<AppBar
+			tasklists={tasklists}
+			is_side_navigation_expanded={is_sidenavigation_expanded()}
 			command={command}
 			page={page()}
 			settings={settings}
 		/>}
-		leftSideBar={<SideNavigation
-			expand={isSideNavigationExpanded()}
-			taskLists={taskLists}
+		left_sidebar={<SideNavigation
+			expanded={is_sidenavigation_expanded()}
+			tasklists={tasklists}
 			command={command}
 			page={page()}
 			settings={settings}
 		/>}>
 		<Body
 			settings={settings}
-			isFileDBError={isFileDBError()}
+			is_db_file_error={is_db_file_error()}
 			page={page()}
 			labels={labels}
-			taskLists={taskLists}
+			tasklists={tasklists}
 			command={command}
 		/>
 		<Dialogs/>

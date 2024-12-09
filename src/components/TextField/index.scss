@@ -22,14 +22,14 @@
 		:root[data-corner=full-round] & { --c-textfield-border-radius: 20px }
 		:root[data-corner=full-round]:root[data-platform=desktop] & { --c-textfield-border-radius: 18px }
 
-		&[data-c-compact], :root[data-platform=desktop] & {
+		:root[data-platform=desktop] & {
 			min-height: 36px;
 
 			> .c-area-textfield-leading {
 				margin: 8px 0;
 			}
 
-			& .c-btn.c-textfield-btn[data-c-compact] {
+			& .c-btn.c-textfield-btn {
 				min-height: 28px;
 			}
 
@@ -146,7 +146,7 @@
 	to { width: calc(100% - var(--c-textfield-border-radius) * 2) }
 }
 
-.c-btn.c-textfield-btn[data-c-compact] {
+.c-btn.c-textfield-btn {
 	padding: 2px 6px;
 	min-height: 32px;
 	border-radius: 4px;

@@ -2,26 +2,29 @@ import { createMemo, createSignal, For, onMount, Show, type VoidComponent } from
 import { createStore } from "solid-js/store"
 
 import type { Gradient, GradientData, RadialGradient, Settings } from "./_type"
-import { _clipboard, _writeText, _gradients, _map, _settings, _colorModel, _join, _data, _index, _currentTarget, _centerBottomToRight, _command, _gradientData, _gradient, _colorStopList, _sort, _size, _color, _type, _conic, _onStartDrag, _clientX, _clientY, _selectedGradientIndex, _gradientIndex, _isDragging, _touches, _linear, _radial, _colorInterpolationMethod, _hsl, _hwb, _lch, _oklch, _includes, _auto, _decreasing, _increasing, _longer, _shorter, _hueInterpolationMethod, _circle, _ellipse, _shape, _angle, _positionX, _positionY, _sizeLength, _sizeWidth, _sizeHeight, _repeat, _value, _hsla, _replace, _split, _toString, _padStart, _toUpperCase, _rgba, _trim, _length, _isNaN, _isFinite, _substring, _onStartPickColor, _colorPickerRef, _filled, _onOpenActionsMenu, _x, _width, _noPointerEvent, _touchmove, _touchend, _mousemove, _mouseup, _aspectRatio, _borderRadius, _px, _centerCenterRightTop, _valueAsNumber } from "@/constants/string"
 import { ColorModel, Commands, GradientType, HueInterpolationMethod, PolarColorSpace, RadialGradientShape } from "./_enums"
-import { removeElementAttribute, setElementAttribute, setElementAttributeIfExist } from "@/utils/attributes"
-import { addEventListener } from "@/utils/event"
-import { getDocumentBody, getDocument, getNavigator } from "@/constants/window"
+import { attr_remove, attr_set, attr_set_if_exist } from "@/utils/attributes"
+import { event_add_listener } from "@/utils/event"
 import { BodyAttributes } from "@/enums/attributes"
-import { getBoundingClientRect } from "@/utils/element"
-import { mathClamp, mathRound, numberParse } from "@/utils/math"
-import { convertColorByColorModel, gradientToCSSText } from "./_utils"
-import { HSL_to_HEX, RGB_to_HEX } from "@/utils/color"
+import { element_rect } from "@/utils/element"
+import { math_clamp, math_round } from "@/utils/math"
+import { convert_color_by_color_model, gradient_to_css_text } from "./_utils"
+import { hsl_to_hex, rgb_to_hex } from "@/utils/color"
+import { navigator_clipboard_writetext } from "@/utils/navigator"
+import { array_includes, array_join, array_length, array_map, array_sort } from "@/utils/array"
+import { string_length, string_padstart, string_replace, string_split, string_substring, string_touppercase, string_trim } from "@/utils/string"
+import { number_parse, number_safe, number_to_string } from "@/utils/number"
+import { rect_width } from "@/utils/rect"
 
 import Icon from "@/components/Icon"
 import Button, { ButtonVariant, IconButton, SquareButton } from "@/components/Button"
 import TextTooltip, { RichTooltip } from "@/components/Tooltip"
 import CheckBox from "@/components/CheckBox"
-import TextField, { changeTextFieldValue, NumberTextField, TextFieldButton } from "@/components/TextField"
-import Menu, { closeMenu, MenuDivider, MenuItem, MenuPosition, openMenu } from "@/components/Menu"
-import ColorPicker, { openColorPicker } from "@/components/ColorPicker"
+import TextField, { change_textfield_value, NumberTextField, TextFieldButton } from "@/components/TextField"
+import Menu, { close_menu, MenuDivider, MenuItem, MenuPosition, open_menu } from "@/components/Menu"
+import ColorPicker, { open_colorpicker } from "@/components/ColorPicker"
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
-import Toast, { openToast } from "@/components/Toast"
+import Toast, { open_toast } from "@/components/Toast"
 import CSS from './_styles.module.scss'
 
 type PointerPosition = {
@@ -30,42 +33,45 @@ type PointerPosition = {
 }
 
 const GradientDataList: VoidComponent<{
-	gradientData: GradientData[]
+	gradient_data: GradientData[]
 	settings: Settings
 	command(type: Commands, ...args: unknown[]): unknown
 }> = (props) => {
-	const [is_menu_action_open, setIs_menu_action_open] = createSignal<boolean>(false)
-	const [selectedGradientDataIndex, setSelectedGradientDataIndex] = createSignal<number>(-1)
+	const [is_menu_action_open, set_is_menu_action_open] = createSignal<boolean>(false)
+	const [selected_gradientdata_index, set_selected_gradientdata_index] = createSignal<number>(-1)
+	const settings = createMemo(() => props.settings)
+	const gradient_data = createMemo(() => props.gradient_data)
 	let menu_action_ref: HTMLDialogElement
 
+	function command(type: Commands, ...args: unknown[]): unknown {
+		return props.command(type, ...args)
+	}
+
 	function copy(data: GradientData): void {
-		getNavigator()
-		[_clipboard]
-		[_writeText](
-			data[_gradients]
-			[_map](gradient => gradientToCSSText(
+		navigator_clipboard_writetext(
+			array_join(array_map(data.gradients, gradient => gradient_to_css_text(
 				gradient,
-				props[_settings][_colorModel],
+				settings().color_model,
 				true
-			))[_join]('\n')
+			)), '\n')
 		)
 	}
 
 	const GradientDataItem: VoidComponent<{data: GradientData; index: number}> = ($props) => {
 		return (<RichTooltip
-			tooltip={<For each={$props[_data][_gradients]}>{gradient =>
-				<pre><code>{gradientToCSSText(gradient, props[_settings][_colorModel], true)}</code></pre>
+			tooltip={<For each={$props.data.gradients}>{gradient =>
+				<pre><code>{gradient_to_css_text(gradient, settings().color_model, true)}</code></pre>
 			}</For>}>
 			<SquareButton
-				focused={selectedGradientDataIndex() == $props[_index] && is_menu_action_open()}
+				focused={selected_gradientdata_index() == $props.index && is_menu_action_open()}
 				onClick={(ev) => {
-					setSelectedGradientDataIndex($props[_index])
-					openMenu(ev, menu_action_ref, {
-						anchor: ev[_currentTarget],
-						position: MenuPosition[_centerBottomToRight]
+					set_selected_gradientdata_index($props.index)
+					open_menu(ev, menu_action_ref, {
+						anchor: ev.currentTarget,
+						position: MenuPosition.center_bottom_to_right
 					})
 				}}>
-				<div data-gradient style={{"background-image": $props[_data][_gradients][_map](gradient => gradientToCSSText(gradient))[_join](',')}}/>
+				<div data-gradient style={{"background-image": array_join(array_map($props.data.gradients, gradient => gradient_to_css_text(gradient)), ',')}}/>
 			</SquareButton>
 		</RichTooltip>)
 	}
@@ -73,30 +79,30 @@ const GradientDataList: VoidComponent<{
 	const Menus: VoidComponent = () => (<>
 		<Menu
 			ref={r => menu_action_ref = r}
-			onToggleOpen={isOpen => setIs_menu_action_open(isOpen)}
+			on_toggle_open={isOpen => set_is_menu_action_open(isOpen)}
 			style={{'min-width': '128px'}}>
 			<MenuItem
-				iconCode={0xE77B}
+				icon_code={0xE77B}
 				onClick={() => {
-					props[_command](Commands.view_gradient_data, selectedGradientDataIndex())
-					closeMenu(menu_action_ref)
+					command(Commands.view_gradient_data, selected_gradientdata_index())
+					close_menu(menu_action_ref)
 				}}>
 				View
 			</MenuItem>
 			<MenuItem
-				iconCode={0xE51B}
+				icon_code={0xE51B}
 				onClick={() => {
-					copy(props[_gradientData][selectedGradientDataIndex()])
-					closeMenu(menu_action_ref)
+					copy(gradient_data()[selected_gradientdata_index()])
+					close_menu(menu_action_ref)
 				}}>
 				Copy
 			</MenuItem>
 			<MenuDivider />
 			<MenuItem
-				iconCode={0xE59D}
+				icon_code={0xE59D}
 				onClick={() => {
-					props[_command](Commands.delete_gradient_data, selectedGradientDataIndex())
-					closeMenu(menu_action_ref)
+					command(Commands.delete_gradient_data, selected_gradientdata_index())
+					close_menu(menu_action_ref)
 				}}>
 				Delete
 			</MenuItem>
@@ -104,7 +110,7 @@ const GradientDataList: VoidComponent<{
 	</>)
 
 	return (<div class={CSS.body_gradient_data_list}>
-		<For each={props[_gradientData]}>{(data, i) =>
+		<For each={gradient_data()}>{(data, i) =>
 			<GradientDataItem index={i()} data={data}/>
 		}</For>
 		<Menus/>
@@ -113,58 +119,70 @@ const GradientDataList: VoidComponent<{
 
 const GradientControl: VoidComponent<{
 	gradient: Gradient
-	isDragging: boolean
-	colorPickerRef: HTMLDialogElement
-	gradientIndex: number
+	is_dragging: boolean
+	colorpicker_ref: HTMLDialogElement
+	gradient_index: number
 	settings: Settings
-	selectedGradientIndex: number
-	pointerPosition: PointerPosition
+	selected_gradient_index: number
+	pointer_position: PointerPosition
 	command(type: Commands, ...args: unknown[]): unknown
-	onStartDrag(gradientElement: HTMLDivElement, position: PointerPosition, colorStopIndex: number): void
-	onStartPickColor(colorStopIndex: number): void
-	onOpenActionsMenu(ev: Event): void
+	on_start_drag(gradient_element: HTMLDivElement, position: PointerPosition, colorstop_index: number): void
+	on_start_pick_color(colorstop_index: number): void
+	on_open_actions_menu(ev: Event): void
 }> = (props) => {
-	const [expand, setExpand] = createSignal<boolean>(false)
-	const [selectedColorStopIndex, setSelectedColorStopIndex] = createSignal<number>(-1)
-	const getStopListGradient = createMemo<string>(() =>
-		[	...props
-			[_gradient]
-			[_colorStopList]
-		][_sort]((a, b) => a[_size] - b[_size])
-		[_map](stop => `${stop[_color]} ${stop[_size]}%`)
-		[_join](',')
-	)
-	const isConicGradient = createMemo<boolean>(() => props[_gradient][_type] == GradientType[_conic])
+	const [expanded, set_expanded] = createSignal<boolean>(false)
+	const [selected_colorstop_index, set_selected_colorstop_index] = createSignal<number>(-1)
+	const gradient = createMemo(() => props.gradient)
+	const get_list_stop_gradient = createMemo<string>(() => array_join(array_map(
+		array_sort([...gradient().color_stop_list], (a, b) => a.size - b.size),
+		stop => `${stop.color} ${stop.size}%`
+	), ','))
+	const settings = createMemo(() => props.settings)
+	const selected_gradient_index = createMemo(() => props.selected_gradient_index)
+	const gradient_index = createMemo(() => props.gradient_index)
+	const is_conic_gradient = createMemo<boolean>(() => gradient().type == GradientType.conic)
 	let div_gradient_ref: HTMLDivElement
+
+	function command(type: Commands, ...args: unknown[]): unknown {
+		return props.command(type, ...args)
+	}
 
 	const Control: VoidComponent = () => (<div class={CSS.body_gradient_control_gradient}>
 		<div>
-			<For each={props[_gradient][_colorStopList]}>{(stop, index) =>
-				<div style={{left: stop[_size] + '%'}}>
+			<For each={gradient().color_stop_list}>{(stop, index) =>
+				<div style={{left: stop.size + '%'}}>
 					<div
 						onMouseDown={ev => {
-							props[_onStartDrag](
+							props.on_start_drag(
 								div_gradient_ref,
-								{ x: ev[_clientX], y: ev[_clientY] },
+								{ x: ev.clientX, y: ev.clientY },
 								index()
 							)
-							setSelectedColorStopIndex(index())
+							set_selected_colorstop_index(index())
 						}}
 						draggable="false"
-						data-dragged={setElementAttributeIfExist(props[_selectedGradientIndex] == props[_gradientIndex] && selectedColorStopIndex() == index() && props[_isDragging])}
-						data-g-keep-pointer-event={setElementAttributeIfExist(props[_selectedGradientIndex] == props[_gradientIndex] && selectedColorStopIndex() == index() && props[_isDragging])}
+						data-dragged={attr_set_if_exist(
+							selected_gradient_index() == gradient_index()
+							&& selected_colorstop_index() == index()
+							&& props.is_dragging
+						)}
+						data-g-keep-pointer-event={attr_set_if_exist(
+							selected_gradient_index() == gradient_index()
+							&& selected_colorstop_index() == index()
+							&& props.is_dragging
+						)}
 						onTouchStart={ev => {
-							props[_onStartDrag](
+							props.on_start_drag(
 								div_gradient_ref,
-								{ x: ev[_touches][0][_clientX], y: ev[_touches][0][_clientY] },
+								{ x: ev.touches[0].clientX, y: ev.touches[0].clientY },
 								index()
 							)
-							setSelectedColorStopIndex(index())
+							set_selected_colorstop_index(index())
 						}}
-						style={{"background-color": stop[_color]}}
-						data-length={isConicGradient()
-							? `${mathRound(stop[_size] / 100 * 360)}°`
-							: `${stop[_size]}%`
+						style={{"background-color": stop.color}}
+						data-length={is_conic_gradient()
+							? `${math_round(stop.size / 100 * 360)}°`
+							: `${stop.size}%`
 						}
 					/>
 				</div>
@@ -173,40 +191,40 @@ const GradientControl: VoidComponent<{
 				data-gradient
 				ref={r => div_gradient_ref = r}
 				style={{
-					'background': `linear-gradient(to right,${getStopListGradient()})`
+					'background': `linear-gradient(to right,${get_list_stop_gradient()})`
 				}}
 			/>
 		</div>
-		<TextTooltip text={expand()? "Show less" : 'Show more'}>
+		<TextTooltip text={expanded()? "Show less" : 'Show more'}>
 			<IconButton
 				code={0xE3FC}
-				onClick={() => setExpand(e => !e)}
-				data-expanded={setElementAttributeIfExist(expand())}
+				onClick={() => set_expanded(e => !e)}
+				data-expanded={attr_set_if_exist(expanded())}
 			/>
 		</TextTooltip>
 	</div>)
 
 	const Options: VoidComponent = () => (<div class={CSS.body_gradient_control_options}>
 		<Dropdown
-			values={[props[_gradient][_type]]}
-			onChangeOptions={(options) => props[_command](
+			values={[gradient().type]}
+			on_change_options={(options) => command(
 				Commands.change_gradient_type,
-				props[_gradientIndex],
-				options[0][_value]
+				gradient_index(),
+				options[0].value
 			)}
 			label="Type">
 			<For each={[
-				[GradientType[_linear], 'Linear'],
-				[GradientType[_radial], 'Radial'],
-				[GradientType[_conic], 'Conic'],
+				[GradientType.linear, 'Linear'],
+				[GradientType.radial, 'Radial'],
+				[GradientType.conic, 'Conic'],
 			]}>{option => <DropdownOption value={option[0]} text={option[1]}/>}</For>
 		</Dropdown>
 		<Dropdown
-			values={[props[_gradient][_colorInterpolationMethod]]}
-			onChangeOptions={(options) => props[_command](
-				Commands.change_colorInterpolationMethod,
-				props[_gradientIndex],
-				options[0][_value]
+			values={[gradient().color_interpolation_method]}
+			on_change_options={(options) => command(
+				Commands.change_color_interpolation_method,
+				gradient_index(),
+				options[0].value
 			)}
 			label="Color space">
 			<For each={[
@@ -229,211 +247,208 @@ const GradientControl: VoidComponent<{
 			]}>{option => <DropdownOption value={option[0]} text={option[1]}/>}</For>
 		</Dropdown>
 		<Show
-			when={[
-				PolarColorSpace[_hsl], PolarColorSpace[_hwb],
-				PolarColorSpace[_lch], PolarColorSpace[_oklch]
-			][_includes](props[_gradient][_colorInterpolationMethod] as PolarColorSpace)}>
+			when={array_includes([
+				PolarColorSpace.hsl, PolarColorSpace.hwb,
+				PolarColorSpace.lch, PolarColorSpace.oklch
+			], gradient().color_interpolation_method as PolarColorSpace)}>
 			<Dropdown
-				values={[props[_gradient][_hueInterpolationMethod]]}
-				onChangeOptions={(options) => props[_command](
-					Commands.change_hueInterpolationMethod,
-					props[_gradientIndex],
-					options[0][_value]
+				values={[gradient().hue_interpolation_method]}
+				on_change_options={(options) => command(
+					Commands.change_hue_interpolation_method,
+					gradient_index(),
+					options[0].value
 				)}
 				label="Hue interpolation">
 				<For each={[
-					[HueInterpolationMethod[_auto], 'Auto'],
-					[HueInterpolationMethod[_decreasing], 'Decreasing'],
-					[HueInterpolationMethod[_increasing], 'Increasing'],
-					[HueInterpolationMethod[_longer], 'Longer'],
-					[HueInterpolationMethod[_shorter], 'Shorter'],
+					[HueInterpolationMethod.auto, 'Auto'],
+					[HueInterpolationMethod.decreasing, 'Decreasing'],
+					[HueInterpolationMethod.increasing, 'Increasing'],
+					[HueInterpolationMethod.longer, 'Longer'],
+					[HueInterpolationMethod.shorter, 'Shorter'],
 				]}>{option => <DropdownOption value={option[0]} text={option[1]}/>}</For>
 			</Dropdown>
 		</Show>
-		<Show when={props[_gradient][_type] == GradientType[_radial]}>
+		<Show when={gradient().type == GradientType.radial}>
 			<Dropdown
-				values={[(props[_gradient] as RadialGradient)[_shape]]}
-				onChangeOptions={(options) => props[_command](Commands.change_radialGradient_shape, props[_gradientIndex], options[0][_value])}
+				values={[(gradient() as RadialGradient).shape]}
+				on_change_options={(options) => command(Commands.change_radial_gradient_shape, gradient_index(), options[0].value)}
 				label="Shape">
 				<For each={[
-					[RadialGradientShape[_circle], 'Circle'],
-					[RadialGradientShape[_ellipse], 'Ellipse'],
+					[RadialGradientShape.circle, 'Circle'],
+					[RadialGradientShape.ellipse, 'Ellipse'],
 				]}>{option => <DropdownOption value={option[0]} text={option[1]}/>}</For>
 			</Dropdown>
 		</Show>
 		<div class={CSS.body_gradient_control_options_2_grid}>
-			<Show when={[GradientType[_conic], GradientType[_linear]][_includes](props[_gradient][_type])}>
+			<Show when={array_includes([GradientType.conic, GradientType.linear], gradient().type)}>
 				<NumberTextField
 					label="Angle (°)"
 					enterkeyhint="done"
 					min={0}
 					max={360}
-					autoSelectAll
-					onInputAsNumber={(_, v) => props[_command](
+					auto_select_all
+					on_input_as_number={(_, v) => command(
 						Commands.change_gradient_angle,
-						props[_gradientIndex],
+						gradient_index(),
 						v
 					)}
-					value={(props[_gradient] as any)[_angle] as number}
+					value={(gradient() as any).angle as number}
 				/>
 			</Show>
-			<Show when={[GradientType[_conic], GradientType[_radial]][_includes](props[_gradient][_type])}>
+			<Show when={array_includes([GradientType.conic, GradientType.radial], gradient().type)}>
 				<NumberTextField
 					label="X (%)"
 					min={0}
 					enterkeyhint="done"
-					autoSelectAll
-					onInputAsNumber={(_, v) => props[_command](
-						Commands.change_gradient_positionX,
-						props[_gradientIndex],
+					auto_select_all
+					on_input_as_number={(_, v) => command(
+						Commands.change_gradient_position_x,
+						gradient_index(),
 						v
 					)}
-					value={(props[_gradient] as any)[_positionX] as number}
+					value={(gradient() as any).position_x as number}
 				/>
 				<NumberTextField
 					label="Y (%)"
 					enterkeyhint="done"
 					min={0}
-					autoSelectAll
-					onInputAsNumber={(_, v) => props[_command](
-						Commands.change_gradient_positionY,
-						props[_gradientIndex],
+					auto_select_all
+					on_input_as_number={(_, v) => command(
+						Commands.change_gradient_position_y,
+						gradient_index(),
 						v
 					)}
-					value={(props[_gradient] as any)[_positionY] as number}
+					value={(gradient() as any).position_y as number}
 				/>
 			</Show>
-			<Show when={props[_gradient][_type] == GradientType[_radial] && props[_gradient][_shape] == RadialGradientShape[_circle]}>
+			<Show when={gradient().type == GradientType.radial && (gradient() as RadialGradient).shape == RadialGradientShape.circle}>
 				<NumberTextField
 					label="Size (px)"
 					enterkeyhint="done"
 					min={0}
-					autoSelectAll
-					onInputAsNumber={(_, v) => props[_command](
-						Commands.change_radialGradient_size,
-						props[_gradientIndex],
+					auto_select_all
+					on_input_as_number={(_, v) => command(
+						Commands.change_radial_gradient_size,
+						gradient_index(),
 						v
 					)}
-					value={(props[_gradient] as RadialGradient)[_sizeLength]}
+					value={(gradient() as RadialGradient).size_length}
 				/>
 			</Show>
-			<Show when={props[_gradient][_type] == GradientType[_radial] && props[_gradient][_shape] == RadialGradientShape[_ellipse]}>
+			<Show when={gradient().type == GradientType.radial && (gradient() as RadialGradient).shape == RadialGradientShape.ellipse}>
 				<NumberTextField
 					label="Width (%)"
 					enterkeyhint="done"
 					min={0}
-					autoSelectAll
-					onInputAsNumber={(_, v) => props[_command](
-						Commands.change_radialGradient_width,
-						props[_gradientIndex],
+					auto_select_all
+					on_input_as_number={(_, v) => command(
+						Commands.change_radial_gradient_width,
+						gradient_index(),
 						v
 					)}
-					value={(props[_gradient] as RadialGradient)[_sizeWidth]}
+					value={(gradient() as RadialGradient).size_width}
 				/>
 				<NumberTextField
 					label="Height (%)"
 					enterkeyhint="done"
 					min={0}
-					autoSelectAll
-					onInputAsNumber={(_, v) => props[_command](
-						Commands.change_radialGradient_height,
-						props[_gradientIndex],
+					auto_select_all
+					on_input_as_number={(_, v) => command(
+						Commands.change_radial_gradient_height,
+						gradient_index(),
 						v
 					)}
-					value={(props[_gradient] as RadialGradient)[_sizeHeight]}
+					value={(gradient() as RadialGradient).size_height}
 				/>
 			</Show>
 			<CheckBox
-				checked={props[_gradient][_repeat]}
-				onChange={() => props[_command](
+				checked={gradient().repeat}
+				onChange={() => command(
 					Commands.toggle_gradient_repeat,
-					props[_gradientIndex]
+					gradient_index()
 				)}>
 				Repeat
 			</CheckBox>
 		</div>
 	</div>)
 
-	const ColorStops: VoidComponent = () => (<For each={props[_gradient][_colorStopList]}>{(stop, index) =>
+	const ColorStops: VoidComponent = () => (<For each={gradient().color_stop_list}>{(stop, index) =>
 		<div class={CSS.body_gradient_control_stop}>
 			<div>
 				<NumberTextField
-					label={isConicGradient()? "°" : "%"}
-					autoSelectAll
+					label={is_conic_gradient()? "°" : "%"}
+					auto_select_all
 					enterkeyhint="done"
-					value={stop[_size] * (isConicGradient()? 360 / 100 : 1)}
+					value={stop.size * (is_conic_gradient()? 360 / 100 : 1)}
 					min={0}
-					max={isConicGradient()? 360 : 100}
-					integerOnly
-					onInputAsNumber={(_, v) => props[_command](
-						Commands.change_colorStopLength,
-						props[_gradientIndex],
+					max={is_conic_gradient()? 360 : 100}
+					integer_only
+					on_input_as_number={(_, v) => command(
+						Commands.change_color_stop_length,
+						gradient_index(),
 						index(),
-						v * (isConicGradient()? (100 / 360) : 1)
+						v * (is_conic_gradient()? (100 / 360) : 1)
 					)}
 				/>
 				<TextField
-					leading={<Icon code={0xE408} filled style={{color: stop[_color]}}/>}
-					value={convertColorByColorModel(stop[_color], props[_settings][_colorModel], true)}
+					leading={<Icon code={0xE408} filled style={{color: stop.color}}/>}
+					value={convert_color_by_color_model(stop.color, settings().color_model, true)}
 					enterkeyhint="done"
 					onBlur={ev => {
-						let value = ev[_currentTarget][_value]
-						const colorModel = props[_settings][_colorModel]
-						if (colorModel == ColorModel[_hsla]) {
-							value = value[_replace](/[^-\d.,]+/gs, '')
+						let value = ev.currentTarget.value
+						const model = settings().color_model
+						if (model == ColorModel.hsla) {
+							value = string_replace(value, /[^-\d.,]+/gs, '')
 
-							const values = value[_split](',')
-							const h = mathClamp(numberParse(values[0] ?? '0', true), 0, 360)
-							const s = mathClamp(numberParse(values[1] ?? '100', true), 0, 100)
-							const l = mathClamp(numberParse(values[2] ?? '100', true), 0, 100)
-							const opacity = mathRound(mathClamp(numberParse(values[3] ?? '1'), 0, 1) * 0xff)
-							const hex = HSL_to_HEX({h: h / 360, s: s / 100, l: l / 100})
+							const values = string_split(value, ',')
+							const h = math_clamp(number_parse(values[0] ?? '0', true), 0, 360)
+							const s = math_clamp(number_parse(values[1] ?? '100', true), 0, 100)
+							const l = math_clamp(number_parse(values[2] ?? '100', true), 0, 100)
+							const opacity = math_round(math_clamp(number_parse(values[3] ?? '1'), 0, 1) * 0xff)
+							const hex = hsl_to_hex({h: h / 360, s: s / 100, l: l / 100})
 
-							value = (hex + (opacity < 0xff? opacity[_toString](16)[_padStart](2, '0') : ''))[_toUpperCase]()
-							props[_command](Commands.change_colorStopColor, props[_gradientIndex], index(), value)
-							changeTextFieldValue(ev[_currentTarget], `hsla(${h}, ${s}%, ${l}%, ${mathClamp(numberParse(values[3] ?? '1'), 0, 1)})`)
+							value = string_touppercase((hex + (opacity < 0xff? string_padstart(number_to_string(opacity, 16), 2, '0') : '')))
+							command(Commands.change_color_stop_color, gradient_index(), index(), value)
+							change_textfield_value(ev.currentTarget, `hsla(${h}, ${s}%, ${l}%, ${math_clamp(number_parse(values[3] ?? '1'), 0, 1)})`)
 							return
 						}
 
-						if (colorModel == ColorModel[_rgba]) {
-							value = value[_replace](/[^-\d.,]+/gs, '')
+						if (model == ColorModel.rgba) {
+							value = string_replace(value, /[^-\d.,]+/gs, '')
 
-							const values = value[_split](',')
-							const r = mathClamp(numberParse(values[0] ?? '0', true), 0, 0xff)
-							const g = mathClamp(numberParse(values[1] ?? '100', true), 0, 0xff)
-							const b = mathClamp(numberParse(values[2] ?? '100', true), 0, 0xff)
-							const opacity = mathRound(mathClamp(numberParse(values[3] ?? '1'), 0, 1) * 0xff)
-							const hex = RGB_to_HEX({r, g, b})
+							const values = string_split(value, ',')
+							const r = math_clamp(number_parse(values[0] ?? '0', true), 0, 0xff)
+							const g = math_clamp(number_parse(values[1] ?? '100', true), 0, 0xff)
+							const b = math_clamp(number_parse(values[2] ?? '100', true), 0, 0xff)
+							const opacity = math_round(math_clamp(number_parse(values[3] ?? '1'), 0, 1) * 0xff)
+							const hex = rgb_to_hex({r, g, b})
 
-							value = (hex + (opacity < 255? opacity[_toString](16)[_padStart](2, '0') : ''))[_toUpperCase]()
-							props[_command](Commands.change_colorStopColor, props[_gradientIndex], index(), value)
-							changeTextFieldValue(ev[_currentTarget], `rgba(${r}, ${g}, ${b}, ${mathClamp(numberParse(values[3] ?? '1'), 0, 1)})`)
+							value = string_touppercase((hex + (opacity < 255? string_padstart(number_to_string(opacity, 16), 2, '0') : '')))
+							command(Commands.change_color_stop_color, gradient_index(), index(), value)
+							change_textfield_value(ev.currentTarget, `rgba(${r}, ${g}, ${b}, ${math_clamp(number_parse(values[3] ?? '1'), 0, 1)})`)
 							return
 						}
 
-						value = value[_replace](/[^0-9a-fA-F]+/g, '')
-						if (value[_trim]()[_length] == 0) value = '0'
+						value = string_replace(value, /[^0-9a-fA-F]+/g, '')
+						if (string_length(string_trim(value)) == 0) value = '0'
 
-						let $value: number = numberParse(value, true, 16)
-						if (Number[_isNaN]($value) || !Number[_isFinite]($value)) $value = 0
-						if ($value < 0) $value = 0
-						if ($value > 0xffffffff) $value = 0xffffffff
+						let $value: number = math_clamp(number_safe(number_parse(value, true, 16), 0), 0, 0xffffffff)
 
-						value = `#${$value[_toString](16)[_padStart](6, '0')[_substring](0, 8)[_toUpperCase]()}`
-						props[_command](Commands.change_colorStopColor, props[_gradientIndex], index(), value)
-						changeTextFieldValue(ev[_currentTarget], value)
+						value = '#' + string_touppercase(string_substring(string_padstart(number_to_string($value, 16), 6, '0'), 0, 8))
+						command(Commands.change_color_stop_color, gradient_index(), index(), value)
+						change_textfield_value(ev.currentTarget, value)
 					}}
 					trailing={<>
 						<TextTooltip text="Pick color"><TextFieldButton
 							onClick={(ev) => {
-								props[_onStartPickColor](index())
-								openColorPicker(ev, props[_colorPickerRef], { color: stop[_color], anchor: ev[_currentTarget] })}
+								props.on_start_pick_color(index())
+								open_colorpicker(ev, props.colorpicker_ref, { color: stop.color, anchor: ev.currentTarget })}
 							}>
 							<Icon code={0xE785} />
 						</TextFieldButton></TextTooltip>
-						<Show when={props[_gradient][_colorStopList][_length] > 2}>
+						<Show when={array_length(gradient().color_stop_list) > 2}>
 							<TextTooltip text="Remove color"><TextFieldButton
-								onClick={() => props[_command](Commands.remove_colorStop, props[_gradientIndex], index())}>
+								onClick={() => command(Commands.remove_color_stop, gradient_index(), index())}>
 								<Icon code={0xE59D} />
 							</TextFieldButton></TextTooltip>
 						</Show>
@@ -445,18 +460,18 @@ const GradientControl: VoidComponent<{
 
 	const Actions: VoidComponent = () => (<div class={CSS.body_gradient_control_actions}>
 		<Button
-			variant={ButtonVariant[_filled]}
-			onClick={() => props[_command](Commands.add_colorStop, props[_gradientIndex])}>
+			variant={ButtonVariant.filled}
+			onClick={() => command(Commands.add_color_stop, gradient_index())}>
 			<Icon code={0xE009} filled/>Add color stop
 		</Button>
 		<TextTooltip text="More actions">
-			<IconButton onClick={ev => props[_onOpenActionsMenu](ev)} code={0xEAD7}/>
+			<IconButton onClick={ev => props.on_open_actions_menu(ev)} code={0xEAD7}/>
 		</TextTooltip>
 	</div>)
 
 	return (<div class={CSS.body_gradient_control}>
 		<Control/>
-		<Show when={expand()}>
+		<Show when={expanded()}>
 			<Options/>
 			<h3>Stops</h3>
 			<ColorStops/>
@@ -467,89 +482,100 @@ const GradientControl: VoidComponent<{
 
 const _: VoidComponent<{
 	gradients: Gradient[]
-	gradientData: GradientData[]
+	gradient_data: GradientData[]
 	settings: Settings
 	command(type: Commands, ...args: unknown[]): unknown
 }> = (props) => {
-	const [isDragging, setIsDragging] = createSignal<boolean>(false)
-	const [pointerPosition, setPointerPosition] = createStore<PointerPosition>({x: 0, y: 0})
-	const [colorPicker_ref, set_colorPicker_ref] = createSignal<HTMLDialogElement | null>(null)
-	const [selectedGradientIndex, setSelectedGradientIndex] = createSignal<number>(-1)
-	let selectedColorStopIndex: number = -1
-	let selectedGradientElementRect: DOMRect | null = null
-	let menu_gradientActions_ref: HTMLDialogElement
+	const doc = document
+	const body = doc.body
+	const [is_dragging, set_is_dragging] = createSignal<boolean>(false)
+	const [pointer_position, set_pointer_position] = createStore<PointerPosition>({x: 0, y: 0})
+	const [colorpicker_ref, set_colorpicker_ref] = createSignal<HTMLDialogElement | null>(null)
+	const [selected_gradient_index, set_selected_gradient_index] = createSignal<number>(-1)
+	const settings = createMemo(() => props.settings)
+	let selected_colorstop_index: number = -1
+	let selected_gradient_element_rect: DOMRect | null = null
+	let menu_gradientactions_ref: HTMLDialogElement
 	let toast_copied_ref: HTMLDivElement
 
-	function updatePosition(): void {
-		if (selectedGradientElementRect == null) return;
+	function command(type: Commands, ...args: unknown[]): unknown {
+		return props.command(type, ...args)
+	}
 
-		const length = mathRound(mathClamp(
-			(pointerPosition[_x] - selectedGradientElementRect[_x]) / selectedGradientElementRect[_width] * 100,
+	function update_position(): void {
+		if (selected_gradient_element_rect == null) return;
+
+		const length = math_round(math_clamp(
+			(pointer_position.x - selected_gradient_element_rect.x) / rect_width(selected_gradient_element_rect) * 100,
 			0,
 			100
 		))
-		props[_command](Commands.change_colorStopLength, selectedGradientIndex(), selectedColorStopIndex, length)
+		command(Commands.change_color_stop_length, selected_gradient_index(), selected_colorstop_index, length)
 	}
 
-	function onTouchMove(ev: TouchEvent): void {
-		if (!isDragging()) return;
-		setPointerPosition({x: ev[_touches][0][_clientX], y: ev[_touches][0][_clientY]})
-		updatePosition()
+	function on_touch_move(ev: TouchEvent): void {
+		if (!is_dragging()) return;
+		set_pointer_position({x: ev.touches[0].clientX, y: ev.touches[0].clientY})
+		update_position()
 	}
 
-	function onMouseMove(ev: MouseEvent): void {
-		if (!isDragging()) return;
-		setPointerPosition({x: ev[_clientX], y: ev[_clientY]})
-		updatePosition()
+	function on_mouse_move(ev: MouseEvent): void {
+		if (!is_dragging()) return;
+		set_pointer_position({x: ev.clientX, y: ev.clientY})
+		update_position()
 	}
 
-	function onPointerUp(): void {
-		setIsDragging(false)
-		removeElementAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
+	function on_pointer_up(): void {
+		set_is_dragging(false)
+		attr_remove(body, BodyAttributes.no_pointer_event)
 	}
 
-	function initListener() {
-		addEventListener<TouchEvent>(getDocument(), _touchmove, onTouchMove)
-		addEventListener<TouchEvent>(getDocument(), _touchend, onPointerUp)
-		addEventListener<MouseEvent>(getDocument(), _mousemove, onMouseMove)
-		addEventListener<MouseEvent>(getDocument(), _mouseup, onPointerUp)
+	function init_listener() {
+		event_add_listener<TouchEvent>(doc, 'touchmove', on_touch_move)
+		event_add_listener<TouchEvent>(doc, 'touchend', on_pointer_up)
+		event_add_listener<MouseEvent>(doc, 'mousemove', on_mouse_move)
+		event_add_listener<MouseEvent>(doc, 'mouseup', on_pointer_up)
 	}
 
 	onMount(() => {
-		initListener()
+		init_listener()
 	})
 
 	const ColorPickers: VoidComponent = () => (<>
 		<ColorPicker
 			draggable
-			disabledAction
-			ref={r => set_colorPicker_ref(r)}
-			onUpdateColor={color => props[_command](
-				Commands.change_colorStopColor,
-				selectedGradientIndex(),
-				selectedColorStopIndex,
+			disabled_action
+			ref={r => set_colorpicker_ref(r)}
+			on_update_color={color => command(
+				Commands.change_color_stop_color,
+				selected_gradient_index(),
+				selected_colorstop_index,
 				color
 			)}
 		/>
 	</>)
 
 	const Menus: VoidComponent = () => (<>
-		<Menu ref={r => menu_gradientActions_ref = r}>
+		<Menu ref={r => menu_gradientactions_ref = r}>
 			<MenuItem
-				iconCode={0xE51B}
+				icon_code={0xE51B}
 				onClick={ev => {
-					getNavigator()[_clipboard][_writeText](gradientToCSSText(props[_gradients][selectedGradientIndex()], props[_settings][_colorModel], true))
-					closeMenu(menu_gradientActions_ref)
-					openToast(ev, toast_copied_ref)
+					navigator_clipboard_writetext(gradient_to_css_text(
+						props.gradients[selected_gradient_index()],
+						settings().color_model,
+						true
+					))
+					close_menu(menu_gradientactions_ref)
+					open_toast(ev, toast_copied_ref)
 				}}>
 				Copy CSS
 			</MenuItem>
 			<MenuItem
-				iconCode={0xE59D}
-				disabled={props[_gradients][_length] <= 1}
+				icon_code={0xE59D}
+				disabled={array_length(props.gradients) <= 1}
 				onClick={() => {
-					closeMenu(menu_gradientActions_ref)
-					props[_command](Commands.remove_gradient, selectedGradientIndex())
+					close_menu(menu_gradientactions_ref)
+					command(Commands.remove_gradient, selected_gradient_index())
 				}}>
 				Delete gradient
 			</MenuItem>
@@ -568,27 +594,33 @@ const _: VoidComponent<{
 		<div>
 			<div class={CSS.body_preview}>
 				<div style={{
-					"aspect-ratio": props[_settings][_aspectRatio],
-					"border-radius": props[_settings][_borderRadius] + _px,
-					"background-image": props[_gradients][_map](gradient => gradientToCSSText(gradient))[_join](',')
+					"aspect-ratio": settings().aspect_ratio,
+					"border-radius": settings().border_radius + 'px',
+					"background-image": array_join(
+						array_map(
+							props.gradients,
+							gradient => gradient_to_css_text(gradient)
+						),
+						','
+					)
 				}}/>
 			</div>
 			<div class={CSS.body_control}>
 				<div>
 					<GradientDataList
-						command={props[_command]}
-						gradientData={props[_gradientData]}
-						settings={props[_settings]}
+						command={command}
+						gradient_data={props.gradient_data}
+						settings={settings()}
 					/>
 					<div class={CSS.body_control_shape}>
 						<NumberTextField
 							min={0.1}
 							step={0.1}
 							enterkeyhint="done"
-							autoSelectAll
-							value={props[_settings][_aspectRatio]}
-							onInputAsNumber={(_, v) => props[_command](
-								Commands.change_settings_aspectRatio,
+							auto_select_all
+							value={settings().aspect_ratio}
+							on_input_as_number={(_, v) => command(
+								Commands.change_settings_aspect_ratio,
 								v
 							)}
 							label="Aspect ratio"
@@ -596,10 +628,10 @@ const _: VoidComponent<{
 						<NumberTextField
 							min={0}
 							enterkeyhint="done"
-							autoSelectAll
-							value={props[_settings][_borderRadius]}
-							onInputAsNumber={(_, v) => props[_command](
-								Commands.change_settings_borderRadius,
+							auto_select_all
+							value={settings().border_radius}
+							on_input_as_number={(_, v) => command(
+								Commands.change_settings_border_radius,
 								v
 							)}
 							label="Border radius (px)"
@@ -607,37 +639,37 @@ const _: VoidComponent<{
 					</div>
 				</div>
 				<Button
-					variant={ButtonVariant[_filled]}
-					onClick={() => props[_command](Commands.add_gradient)}>
+					variant={ButtonVariant.filled}
+					onClick={() => command(Commands.add_gradient)}>
 					<Icon code={0xE007} />Add gradient
 				</Button>
-				<For each={props[_gradients]}>{(gradient, index) =>
+				<For each={props.gradients}>{(gradient, index) =>
 					<GradientControl
 						gradient={gradient}
-						command={props[_command]}
-						settings={props[_settings]}
-						colorPickerRef={colorPicker_ref()!}
-						isDragging={isDragging()}
-						gradientIndex={index()}
-						pointerPosition={pointerPosition}
-						onStartDrag={(gradientElement, pointer, colorStopIndex) => {
-							selectedGradientElementRect = getBoundingClientRect(gradientElement)
-							selectedColorStopIndex = colorStopIndex
-							setSelectedGradientIndex(index())
-							setPointerPosition(pointer)
-							setIsDragging(true)
-							setElementAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
+						command={command}
+						settings={settings()}
+						colorpicker_ref={colorpicker_ref()!}
+						is_dragging={is_dragging()}
+						gradient_index={index()}
+						pointer_position={pointer_position}
+						on_start_drag={(gradientElement, pointer, colorStopIndex) => {
+							selected_gradient_element_rect = element_rect(gradientElement)
+							selected_colorstop_index = colorStopIndex
+							set_selected_gradient_index(index())
+							set_pointer_position(pointer)
+							set_is_dragging(true)
+							attr_set(body, BodyAttributes.no_pointer_event)
 						}}
-						selectedGradientIndex={selectedGradientIndex()}
-						onStartPickColor={(colorStopIndex) => {
-							selectedColorStopIndex = colorStopIndex
-							setSelectedGradientIndex(index())
+						selected_gradient_index={selected_gradient_index()}
+						on_start_pick_color={(colorStopIndex) => {
+							selected_colorstop_index = colorStopIndex
+							set_selected_gradient_index(index())
 						}}
-						onOpenActionsMenu={ev => {
-							setSelectedGradientIndex(index())
-							openMenu(ev, menu_gradientActions_ref, {
-								anchor: ev[_currentTarget] as HTMLElement,
-								position: MenuPosition[_centerCenterRightTop]
+						on_open_actions_menu={ev => {
+							set_selected_gradient_index(index())
+							open_menu(ev, menu_gradientactions_ref, {
+								anchor: ev.currentTarget as HTMLElement,
+								position: MenuPosition.center_center_right_top
 							})
 						}}
 					/>

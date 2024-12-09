@@ -1,31 +1,32 @@
-import { createEffect, type VoidComponent } from "solid-js"
+import { createEffect, createMemo, type VoidComponent } from "solid-js"
 
-import { setElementAttributeIfExist } from "@/utils/attributes"
-import { _note, _value, _expand, _onNoteChanged, _currentTarget } from "@/constants/string"
+import { attr_set_if_exist } from "@/utils/attributes"
 
-import { AreaTextField, changeAreaTextFieldValue } from "@/components/TextField"
+import { AreaTextField, change_areatextfield_value } from "@/components/TextField"
 import CSS from './_styles.module.scss'
 
 const _: VoidComponent<{
-	expand: boolean
+	expanded: boolean
 	note: string
-	onNoteChanged: (value: string) => unknown
+	on_note_changed: (value: string) => unknown
 }> = (props) => {
+	const note = createMemo(() => props.note)
 	let textarea_ref: HTMLTextAreaElement
 
 	createEffect(() => {
-		if (props[_note] == textarea_ref[_value]) return;
+		const value = textarea_ref.value
+		if (note() == value) return;
 
-		if (textarea_ref[_value] == '') return changeAreaTextFieldValue(textarea_ref, props[_note])
-		textarea_ref[_value] = props[_note]
+		if (value == '') return change_areatextfield_value(textarea_ref, note())
+		textarea_ref.value = note()
 	})
 
-	return (<div class={CSS.notebook} data-expand={setElementAttributeIfExist(props[_expand])}>
+	return (<div class={CSS.notebook} data-expand={attr_set_if_exist(props.expanded)}>
 		<AreaTextField
 			ref={r => textarea_ref = r}
 			label="Notebook"
 			placeholder="Type your thought here ..."
-			onInput={(ev) => props[_onNoteChanged](ev[_currentTarget][_value])}
+			onInput={(ev) => props.on_note_changed(ev.currentTarget.value)}
 		/>
 	</div>)
 }

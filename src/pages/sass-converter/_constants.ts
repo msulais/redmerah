@@ -1,8 +1,7 @@
-import { _sass } from "@/constants/string"
 import { InputViewOption } from "./_enums"
 
 export const MIN_EDITOR_WIDTH = 280 * 2
-export const DEFAULT_INPUT_VIEW_OPTION = InputViewOption[_sass]
+export const DEFAULT_INPUT_VIEW_OPTION = InputViewOption.sass
 export const DEFAULT_SASS_INPUT = `p.my-paragraph
 	color: red
 	background-color: white

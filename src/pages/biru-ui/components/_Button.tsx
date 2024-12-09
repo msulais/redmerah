@@ -1,7 +1,5 @@
 import { type VoidComponent, createSignal, For, Show } from "solid-js"
 
-import { _transparent, _bottom, _filled, _tonal, _outlined, _top, _right, _left, _checked, _currentTarget, _value } from "@/constants/string"
-
 import { TextTooltip } from "@/components/Tooltip"
 import Icon from "@/components/Icon"
 import Button, { ButtonIndicatorPosition, ButtonVariant, EmojiButton, FloatingActionButton, IconButton, LinkButton, LinkEmojiButton, LinkFloatingActionButton, LinkIconButton } from "@/components/Button"
@@ -10,13 +8,12 @@ import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
 
 const _: VoidComponent = () => {
-	const [variant, setVariant] = createSignal<ButtonVariant>(ButtonVariant[_transparent])
-	const [disabled, setDisabled] = createSignal<boolean>(false)
-	const [focused, setFocused] = createSignal<boolean>(false)
-	const [selected, setSelected] = createSignal<boolean>(false)
-	const [icon, setIcon] = createSignal<boolean>(false)
-	const [compact, setCompact] = createSignal<boolean>(false)
-	const [indicatorPosition, setIndicatorPosition] = createSignal<ButtonIndicatorPosition>(ButtonIndicatorPosition[_bottom])
+	const [variant, set_variant] = createSignal<ButtonVariant>(ButtonVariant.transparent)
+	const [disabled, set_disabled] = createSignal<boolean>(false)
+	const [focused, set_focused] = createSignal<boolean>(false)
+	const [selected, set_selected] = createSignal<boolean>(false)
+	const [icon, set_icon] = createSignal<boolean>(false)
+	const [indicator_position, set_indicator_position] = createSignal<ButtonIndicatorPosition>(ButtonIndicatorPosition.bottom)
 	return (<Page
 		title="Buttons"
 		description="A button is an interactive UI element that triggers a specific action when clicked or tapped. It typically has a clear label indicating its function and provides visual feedback upon interaction. Buttons are essential for guiding users through an interface and facilitating user-system communication.">
@@ -25,10 +22,9 @@ const _: VoidComponent = () => {
 				<Button
 					disabled={disabled()}
 					variant={variant()}
-					compact={compact()}
 					focused={focused()}
 					selected={selected()}
-					indicatorPosition={indicatorPosition()}>
+					indicator_position={indicator_position()}>
 					<Show when={icon()}>
 						<Icon code={0xE54B}/>
 					</Show>
@@ -40,10 +36,9 @@ const _: VoidComponent = () => {
 				<IconButton
 					disabled={disabled()}
 					variant={variant()}
-					compact={compact()}
 					focused={focused()}
 					selected={selected()}
-					indicatorPosition={indicatorPosition()}
+					indicator_position={indicator_position()}
 					code={0xE54B}
 				/>
 			</TextTooltip>
@@ -52,10 +47,9 @@ const _: VoidComponent = () => {
 				<EmojiButton
 					disabled={disabled()}
 					variant={variant()}
-					compact={compact()}
 					focused={focused()}
 					selected={selected()}
-					indicatorPosition={indicatorPosition()}
+					indicator_position={indicator_position()}
 					emoji={'🏛'}
 				/>
 			</TextTooltip>
@@ -65,10 +59,9 @@ const _: VoidComponent = () => {
 					href="#"
 					disabled={disabled()}
 					variant={variant()}
-					compact={compact()}
 					focused={focused()}
 					selected={selected()}
-					indicatorPosition={indicatorPosition()}>
+					indicator_position={indicator_position()}>
 					<Show when={icon()}>
 						<Icon code={0xE54B}/>
 					</Show>
@@ -81,10 +74,9 @@ const _: VoidComponent = () => {
 					href="#"
 					disabled={disabled()}
 					variant={variant()}
-					compact={compact()}
 					focused={focused()}
 					selected={selected()}
-					indicatorPosition={indicatorPosition()}
+					indicator_position={indicator_position()}
 					code={0xE54B}
 				/>
 			</TextTooltip>
@@ -94,10 +86,9 @@ const _: VoidComponent = () => {
 					href="#"
 					disabled={disabled()}
 					variant={variant()}
-					compact={compact()}
 					focused={focused()}
 					selected={selected()}
-					indicatorPosition={indicatorPosition()}
+					indicator_position={indicator_position()}
 					emoji={'😁'}
 				/>
 			</TextTooltip>
@@ -106,10 +97,9 @@ const _: VoidComponent = () => {
 				<FloatingActionButton
 					disabled={disabled()}
 					variant={variant()}
-					compact={compact()}
 					focused={focused()}
 					selected={selected()}
-					indicatorPosition={indicatorPosition()}>
+					indicator_position={indicator_position()}>
 					<Show when={icon()}>
 						<Icon code={0xE54B}/>
 					</Show>
@@ -122,10 +112,9 @@ const _: VoidComponent = () => {
 					href={'#'}
 					disabled={disabled()}
 					variant={variant()}
-					compact={compact()}
 					focused={focused()}
 					selected={selected()}
-					indicatorPosition={indicatorPosition()}>
+					indicator_position={indicator_position()}>
 					<Show when={icon()}>
 						<Icon code={0xE54B}/>
 					</Show>
@@ -137,51 +126,46 @@ const _: VoidComponent = () => {
 			<Dropdown
 				label="Variant"
 				values={[variant()]}
-				onChangeOptions={(items) => setVariant(items[0][_value] as ButtonVariant)}>
+				on_change_options={(items) => set_variant(items[0].value as ButtonVariant)}>
 				<For each={[
-					[ButtonVariant[_filled], 'Filled'],
-					[ButtonVariant[_tonal], 'Tonal'],
-					[ButtonVariant[_outlined], 'Outlined'],
-					[ButtonVariant[_transparent], 'Transparent'],
+					[ButtonVariant.filled, 'Filled'],
+					[ButtonVariant.tonal, 'Tonal'],
+					[ButtonVariant.outlined, 'Outlined'],
+					[ButtonVariant.transparent, 'Transparent'],
 				]}>{option => <DropdownOption value={option[0]} text={option[1] as string} />}</For>
 			</Dropdown>
 			<Show when={selected()}>
 				<Dropdown
 					label="Indicator position"
-					onChangeOptions={(items) => setIndicatorPosition(items[0][_value] as ButtonIndicatorPosition)}
-					values={[indicatorPosition()]}>
+					on_change_options={(items) => set_indicator_position(items[0].value as ButtonIndicatorPosition)}
+					values={[indicator_position()]}>
 					<For each={[
-						[ButtonIndicatorPosition[_top], 'Top'],
-						[ButtonIndicatorPosition[_right], 'Right'],
-						[ButtonIndicatorPosition[_bottom], 'Bottom'],
-						[ButtonIndicatorPosition[_left], 'Left'],
+						[ButtonIndicatorPosition.top, 'Top'],
+						[ButtonIndicatorPosition.right, 'Right'],
+						[ButtonIndicatorPosition.bottom, 'Bottom'],
+						[ButtonIndicatorPosition.left, 'Left'],
 					]}>{option => <DropdownOption value={option[0]} text={option[1] as string} />}</For>
 				</Dropdown>
 			</Show>
 			<CheckBox
 				checked={disabled()}
-				onChange={ev => setDisabled(ev[_currentTarget][_checked])}>
+				onChange={ev => set_disabled(ev.currentTarget.checked)}>
 				Disabled
 			</CheckBox>
 			<CheckBox
 				checked={focused()}
-				onChange={ev => setFocused(ev[_currentTarget][_checked])}>
+				onChange={ev => set_focused(ev.currentTarget.checked)}>
 				Focused
 			</CheckBox>
 			<CheckBox
 				checked={selected()}
-				onChange={ev => setSelected(ev[_currentTarget][_checked])}>
+				onChange={ev => set_selected(ev.currentTarget.checked)}>
 				Selected
 			</CheckBox>
 			<CheckBox
 				checked={icon()}
-				onChange={ev => setIcon(ev[_currentTarget][_checked])}>
+				onChange={ev => set_icon(ev.currentTarget.checked)}>
 				Show icon
-			</CheckBox>
-			<CheckBox
-				checked={compact()}
-				onChange={ev => setCompact(ev[_currentTarget][_checked])}>
-				Compact
 			</CheckBox>
 		</PlaygroundOptions>
 	</Page>)

@@ -3,17 +3,18 @@ import { mergeRefs } from '@solid-primitives/refs'
 import { Portal } from 'solid-js/web'
 
 import { FlyoutPosition as PopoverPosition } from '@/enums/position'
-import { getFlyoutPosition } from '@/utils/flyout'
-import { _allowHideAnchor, _altKey, _animate, _body, _bottom, _centerBottom, _centerBottomToLeft, _centerBottomToRight, _centerTop, _centerTopToLeft, _centerTopToRight, _children, _class, _click, _clientWidth, _clientX, _clientY, _close, _closeAnimation, _closePopover, _cOpen, _ctrlKey, _dataset, _detail, _disconnect, _dismiss, _dispatchEvent, _documentElement, _draggable, _element, _Escape, _findIndex, _finished, _flyout, _flyoutListener, _focus, _forEach, _gap, _height, _hidePopover, _important, _innerHeight, _instant, _isSameNode, _key, _left, _leftCenter, _leftCenterToBottom, _leftCenterToTop, _length, _manual, _manualDismiss, _max_height, _max_width, _maxHeight, _maxWidth, _metaKey, _mousemove, _mouseup, _move, _newState, _none, _noPointerEvent, _observe, _onBeforeClose, _onBeforeOpen, _onCancel, _onClose, _onKeyDown, _onOpen, _onReposition, _onShortFocus, _onToggle, _onToggleOpen, _open, _openAnimation, _openPopover, _padding, _pointermove, _pointerType, _pointerup, _popoverListener, _popoverOpen, _position, _push, _px, _ref, _resize, _right, _rightCenter, _rightCenterToBottom, _rightCenterToTop, _scroll, _scrollTo, _scrollTop, _scrollY, _shiftKey, _showPopover, _some, _splice, _springBounce, _style, _then, _top, _touchend, _touches, _touchmove, _transform, _usePortal, _width, _x, _y } from '@/constants/string'
-import { endTimeout, startTimeout } from '@/utils/timeout'
-import { isElementHasAttribute, removeElementAttribute, setElementAttribute, setElementAttributeIfExist } from '@/utils/attributes'
-import { getDocument, getDocumentBody, getWindow } from '@/constants/window'
-import { getBoundingClientRect, getAllElementBySelector, setElementStyleProperty } from '@/utils/element'
+import { get_flyout_position } from '@/utils/flyout'
+import { timeout_clear, timeout_set } from '@/utils/timeout'
+import { attr_has, attr_remove, attr_set, attr_set_if_exist, classlist } from '@/utils/attributes'
+import { element_rect, get_multiple_element_by_selector, element_dataset, element_dispatch_event, element_is_same_node, element_client_width, element_animate } from '@/utils/element'
 import { BodyAttributes } from '@/enums/attributes'
-import { addEventListener, callEventHandler, removeEventListener, eventStopImmediatePropagation } from "@/utils/event"
-import { mathAbs } from '@/utils/math'
+import { event_add_listener, call_event_handler, event_remove_listener, event_stop_immediate_propagation } from "@/utils/event"
+import { math_abs } from '@/utils/math'
 import { BodyEvents } from '@/enums/events'
+import { array_find_index, array_length, array_push, array_some, array_splice } from '@/utils/array'
+import { rect_bottom, rect_height, rect_left, rect_right, rect_top, rect_width } from '@/utils/rect'
 import { AnimationEffectTiming } from '@/enums/animation'
+import { promise_done } from '@/utils/object'
 
 import './index.scss'
 
@@ -22,17 +23,17 @@ type PopoverOpenDetail = {
 	anchor?: HTMLElement
 
 	/** Use this if you want to override the `PopoverOpenDetail.anchor` `DOMRect` */
-	anchorRect?: DOMRect
+	anchor_rect?: DOMRect
 	gap?: number
 	padding?: number
 	position?: PopoverPosition
-	allowHideAnchor?: boolean
+	allow_hide_anchor?: boolean
 	draggable?: boolean
-	manualDismiss?: boolean
+	manual_dismiss?: boolean
 
 	/**
 	 * Custom pointer position. Only works if `PopoverOpenDetail.anchor` and
-	 * `PopoverOpenDetail.anchorRect` set to `undefined`
+	 * `PopoverOpenDetail.anchor_rect` set to `undefined`
 	 * */
 	pointer?: {
 		x: number
@@ -45,671 +46,672 @@ enum PopoverAttributes {
 }
 
 enum PopoverEvents {
-	onClose = 'on-close-popover',
-	onReposition = 'on-reposition-popover',
+	on_close = 'on-close-popover',
+	on_reposition = 'on-reposition-popover',
 
 	/** @param {PopoverOpenDetail} detail `PopoverOpenDetail` */
-	onOpen = 'on-open-popover'
+	on_open = 'on-open-popover'
 }
 
-function isPopoverOpen(popover: HTMLDivElement): boolean {
-	return popover[_dataset][_cOpen] != undefined
+function is_popover_open(popover: HTMLDivElement): boolean {
+	return element_dataset(popover, 'cOpen') != undefined
 }
 
-function openPopover(
+function open_popover(
 	event: Event,
 	popover: HTMLDivElement,
 	options?: Omit<PopoverOpenDetail, 'event'>
 ): void {
-	popover[_dispatchEvent](new CustomEvent(
-		PopoverEvents[_onOpen],
+	element_dispatch_event(popover, new CustomEvent(
+		PopoverEvents.on_open,
 		{detail: {event: event, ...options} satisfies PopoverOpenDetail}
 	))
-	getDocumentBody()[_dispatchEvent](new CustomEvent(
-		BodyEvents[_openPopover],
+	element_dispatch_event(document.body, new CustomEvent(
+		BodyEvents.open_popover,
 		{ detail: { element: popover } }
 	))
 }
 
-function initPopoverListener(): void {
+function init_popover_listener(): void {
+	const body = document.body
 	// make sure to call this listener once
-	if (isElementHasAttribute(getDocumentBody(), BodyAttributes[_popoverListener])) return;
-	setElementAttribute(getDocumentBody(), BodyAttributes[_popoverListener])
+	if (attr_has(body, BodyAttributes.popover_listener)) return;
+	attr_set(body, BodyAttributes.popover_listener)
 
 	const selector: string = 'div.c-popover:popover-open'
 	const popovers: HTMLDivElement[] = []
-	let isNoPointerEvent: boolean = false
-	let timeoutId: number | null = null
+	let is_no_pointer_event: boolean = false
+	let timeout_id: number | null = null
 
-	function repositionAllPopover(): void {
-		if (timeoutId != null) endTimeout(timeoutId)
+	function reposition_all_popover(): void {
+		if (timeout_id != null) timeout_clear(timeout_id)
 
-		timeoutId = startTimeout(() => {
-			getAllElementBySelector(selector)[_forEach](
-				popover => repositionPopover(popover as HTMLDivElement)
-			)
-			timeoutId = null
+		timeout_id = timeout_set(() => {
+			for (const popover of get_multiple_element_by_selector(selector)) {
+				reposition_popover(popover as HTMLDivElement)
+			}
+			timeout_id = null
 		}, 250)
 	}
 
-	addEventListener<CustomEvent<{element: HTMLDivElement}>>(
-		getDocumentBody(),
-		BodyEvents[_openPopover],
+	event_add_listener<CustomEvent<{element: HTMLDivElement}>>(
+		body,
+		BodyEvents.open_popover,
 		ev => {
-			const element = ev[_detail][_element]
-			const isExist = popovers[_some](popover => popover[_isSameNode](element as Node))
-			if (isExist) return;
+			const element = ev.detail.element
+			const is_exist = array_some(
+				popovers,
+				popover => element_is_same_node(popover, element)
+			)
+			if (is_exist) return;
 
-			popovers[_push](element)
+			array_push(popovers, element)
 		}
 	)
 
-	addEventListener<CustomEvent<{element: HTMLDivElement}>>(
-		getDocumentBody(),
-		BodyEvents[_closePopover],
+	event_add_listener<CustomEvent<{element: HTMLDivElement}>>(
+		body,
+		BodyEvents.close_popover,
 		ev => {
-			const element = ev[_detail][_element]
-			const index = popovers[_findIndex](popover => popover[_isSameNode](element))
+			const element = ev.detail.element
+			const index = array_find_index(
+				popovers,
+				popover => element_is_same_node(popover, element)
+			)
 			if (index < 0) return;
 
-			popovers[_splice](index, 1)
+			array_splice(popovers, index, 1)
 		}
 	)
 
 	// use for click outside popover
-	addEventListener(getDocument(), _click, async (ev: Event) => {
+	event_add_listener(document, 'click', async (ev: Event) => {
 
 		// Since 'click' still dispatch even when `<body>` has
 		// `[data-g-no-pointer-event]`, we have to disable it. This is useful
 		// if you have popover but `<body>` has `[data-g-no-pointer-event]`.
 		// Or when you drag something, popover will not automatically closed.
-		if (isNoPointerEvent
-			|| popovers[_length] == 0
-			|| !(ev as any)[_pointerType]
+		if (is_no_pointer_event
+			|| array_length(popovers) == 0
+			|| !(ev as any).pointerType
 		) return;
 		const pointer = {
-			x: (ev as MouseEvent)[_clientX],
-			y: (ev as MouseEvent)[_clientY]
+			x: (ev as MouseEvent).clientX,
+			y: (ev as MouseEvent).clientY
 		}
 
-		popovers[_forEach](popover => {
-			const popoverRect = getBoundingClientRect(popover)
-			const isClickedInside = pointer[_x] >= popoverRect[_left]
-				&& pointer[_x] <= popoverRect[_right]
-				&& pointer[_y] >= popoverRect[_top]
-				&& pointer[_y] <= popoverRect[_bottom]
+		for (const popover of popovers) {
+			const popover_rect = element_rect(popover)
+			const is_clicked_inside = pointer.x >= popover_rect.left
+				&& pointer.x <= popover_rect.right
+				&& pointer.y >= popover_rect.top
+				&& pointer.y <= popover_rect.bottom
 
-			if (isClickedInside || isElementHasAttribute(popover, PopoverAttributes[_manual])) return;
+			if (is_clicked_inside || attr_has(popover, PopoverAttributes.manual)) return;
 
-			closePopover(popover as HTMLDivElement)
-		})
+			close_popover(popover as HTMLDivElement)
+		}
 	})
 
-	addEventListener(getDocument(), _scroll, () => {
-		if (popovers[_length] == 0) return;
-		repositionAllPopover()
+	event_add_listener(document, 'scroll', () => {
+		if (array_length(popovers) == 0) return;
+		reposition_all_popover()
 	})
 
-	addEventListener(getWindow(), _resize, () => {
-		if (popovers[_length] == 0) return;
-		repositionAllPopover()
+	event_add_listener(window, 'resize', () => {
+		if (array_length(popovers) == 0) return;
+		reposition_all_popover()
 	})
 
 	new MutationObserver(() => {
-		isNoPointerEvent = isElementHasAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
-	})[_observe](getDocumentBody(), { attributes: true })
+		is_no_pointer_event = attr_has(body, BodyAttributes.no_pointer_event)
+	}).observe(body, { attributes: true })
 }
 
-function repositionPopover(popover: HTMLDivElement): void {
-	popover[_dispatchEvent](new CustomEvent(PopoverEvents[_onReposition]))
+function reposition_popover(popover: HTMLDivElement): void {
+	element_dispatch_event(popover, new CustomEvent(PopoverEvents.on_reposition))
 }
 
-function closePopover(popover: HTMLDivElement): void {
-	popover[_dispatchEvent](new CustomEvent(PopoverEvents[_onClose]))
+function close_popover(popover: HTMLDivElement): void {
+	element_dispatch_event(popover, new CustomEvent(PopoverEvents.on_close))
 }
 
 type PopoverProps = Omit<JSX.HTMLAttributes<HTMLDivElement>, 'style' | 'draggable'> & {
-	usePortal?: boolean
+	use_portal?: boolean
 	style?: JSX.CSSProperties
 	gap?: number
 	padding?: number
 	position?: PopoverPosition
-	allowHideAnchor?: boolean
+	allow_hide_anchor?: boolean
 	draggable?: boolean
-	manualDismiss?: boolean
-	onBeforeOpen?(): unknown
-	onBeforeClose?(): unknown
-	onToggleOpen?(isOpen: boolean): unknown
-	openAnimation?(el: HTMLDivElement, done: () => void): unknown
-	closeAnimation?(el: HTMLDivElement, done: () => void): unknown
+	manual_dismiss?: boolean
+	on_before_open?(): unknown
+	on_before_close?(): unknown
+	on_toggle_open?(isOpen: boolean): unknown
+	open_animation?(el: HTMLDivElement, done: () => void): unknown
+	close_animation?(el: HTMLDivElement, done: () => void): unknown
 }
 const Popover: ParentComponent<PopoverProps> = ($props) => {
-	const $$props = mergeProps({usePortal: true, id: createUniqueId()}, $props)
+	const $$props = mergeProps({use_portal: true, id: createUniqueId()}, $props)
 	const [props, other] = splitProps($$props, [
-		_ref, _onToggleOpen, _children, _onToggle,
-		_class, _usePortal, _style, _openAnimation,
-		_closeAnimation, _gap, _padding, _position,
-		_allowHideAnchor, _draggable, _manualDismiss,
-		_onBeforeOpen, _onBeforeClose
+		'ref', 'on_toggle_open', 'children', 'onToggle',
+		'class', 'use_portal', 'style', 'open_animation',
+		'close_animation', 'gap', 'padding', 'position',
+		'allow_hide_anchor', 'draggable', 'manual_dismiss',
+		'on_before_open', 'on_before_close'
 	])
-	const [isDragging, setIsDragging] = createSignal<boolean>(false)
-	const [isDraggable, setIsDraggable] = createSignal<boolean>(false)
-	const [isManualDismiss, setIsManualDismiss] = createSignal<boolean>(false)
-	const [left, setLeft] = createSignal<number>(0)
-	const [top, setTop] = createSignal<number>(0)
-	const [maxWidth, setMaxWidth] = createSignal<number | undefined>(undefined)
-	const [maxHeight, setMaxHeight] = createSignal<number | undefined>(undefined)
-	const [allowHideAnchor, setAllowHideAnchor] = createSignal<boolean>(true)
-	const [attr_open, setAttr_open] = createSignal<boolean>(false)
-	const [attr_openDone, setAttr_openDone] = createSignal<boolean>(false)
+	const [is_dragging, set_is_dragging] = createSignal<boolean>(false)
+	const [is_draggable, set_is_draggable] = createSignal<boolean>(false)
+	const [is_manual_dismiss, set_is_manual_dismiss] = createSignal<boolean>(false)
+	const [left, set_left] = createSignal<number>(0)
+	const [top, set_top] = createSignal<number>(0)
+	const [max_width, set_max_width] = createSignal<number | undefined>(undefined)
+	const [max_height, set_max_height] = createSignal<number | undefined>(undefined)
+	const [allow_hide_anchor, set_allow_hide_anchor] = createSignal<boolean>(true)
+	const [attr_open, set_attr_open] = createSignal<boolean>(false)
+	const [attr_open_done, set_attr_open_done] = createSignal<boolean>(false)
 	let $pointer: {x: number; y: number} = { x: 0, y: 0 }
-	let isOpen: boolean = false
+	let is_open: boolean = false
 	let popover_ref: HTMLDivElement
 	let anchor_ref: HTMLElement | null = null
 	let $gap: number = 0
 	let $padding: number = 0
-	let $position: PopoverPosition = PopoverPosition[_centerBottom]
+	let $position: PopoverPosition = PopoverPosition.center_bottom
 
 	// different of mouse position to top-left of popover position `diffPosition = abs(mousePosition - targetPosition)`
-	let diffPositionX: number = 0
-	let diffPositionY: number = 0
+	let diff_position_x: number = 0
+	let diff_position_y: number = 0
 
-	function fixPosition(): void {
-		const popoverRect = getBoundingClientRect(popover_ref)
-		const screen = {
-			width: getDocument()[_body][_clientWidth],
-			height: getWindow()[_innerHeight]
-		}
-		if (popoverRect[_left  ] < 8) setLeft(8)
-		if (popoverRect[_top   ] < 8) setTop(8)
-		if (popoverRect[_right ] > screen[_width ]) setLeft(screen[_width ] - popoverRect[_width ] - 8)
-		if (popoverRect[_bottom] > screen[_height]) setTop(screen[_height] - popoverRect[_height] - 8)
+	function fix_position(): void {
+		const popover_rect = element_rect(popover_ref)
+		const screen_width = element_client_width(document.body)
+		const screen_height = window.innerHeight
+
+		if (rect_left(popover_rect) < 8) set_left(8)
+		if (rect_top(popover_rect) < 8) set_top(8)
+		if (rect_right(popover_rect) > screen_width) set_left(screen_width - rect_width(popover_rect) - 8)
+		if (rect_bottom(popover_rect) > screen_height) set_top(screen_height - rect_height(popover_rect) - 8)
 	}
 
-	function changePosition(x: number, y: number) {
-		setLeft(x - diffPositionX)
-		setTop(y - diffPositionY)
+	function update_position(x: number, y: number) {
+		set_left(x - diff_position_x)
+		set_top(y - diff_position_y)
 	}
 
-	function onPointerMove(ev: PointerEvent): void {
-		if (!isDragging()) return;
+	function on_pointer_move(ev: PointerEvent): void {
+		if (!is_dragging()) return;
 
-		changePosition(ev[_clientX], ev[_clientY])
+		update_position(ev.clientX, ev.clientY)
 	}
 
-	function onPointerUp(): void {
-		removeElementAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
-		setIsDragging(false)
-		fixPosition()
+	function on_pointer_up(): void {
+		attr_remove(document.body, BodyAttributes.no_pointer_event)
+		set_is_dragging(false)
+		fix_position()
 	}
 
-	function customOnClose(_ev: CustomEvent): void {
-		closePopover()
+	function custom_on_close(_ev: CustomEvent): void {
+		close_popover()
 	}
 
-	function customOnOpen(ev: CustomEvent): void {
-		openPopover(ev[_detail] as PopoverOpenDetail)
+	function custom_on_open(ev: CustomEvent): void {
+		open_popover(ev.detail as PopoverOpenDetail)
 	}
 
-	function customOnReposition(_ev: CustomEvent): void {
-		repositionPopover()
+	function custom_on_reposition(_ev: CustomEvent): void {
+		reposition_popover()
 	}
 
-	function addDragListener() {
-		addEventListener<PointerEvent>(getDocument(), _pointermove, onPointerMove)
-		addEventListener<PointerEvent>(getDocument(), _pointerup, onPointerUp)
+	function add_drag_listener() {
+		event_add_listener<PointerEvent>(document, 'pointermove', on_pointer_move)
+		event_add_listener<PointerEvent>(document, 'pointerup', on_pointer_up)
 	}
 
-	function removeDragListener(): void {
-		removeEventListener<PointerEvent>(getDocument(), _pointermove, onPointerMove)
-		removeEventListener<PointerEvent>(getDocument(), _pointerup, onPointerUp)
+	function remove_drag_listener(): void {
+		event_remove_listener<PointerEvent>(document, 'pointermove', on_pointer_move)
+		event_remove_listener<PointerEvent>(document, 'pointerup', on_pointer_up)
 	}
 
-	function initCustomEvent(): void {
-		addEventListener<CustomEvent>(popover_ref, PopoverEvents[_onClose], customOnClose)
-		addEventListener<CustomEvent>(popover_ref, PopoverEvents[_onOpen], customOnOpen)
-		addEventListener<CustomEvent>(popover_ref, PopoverEvents[_onReposition], customOnReposition)
+	function init_events(): void {
+		event_add_listener<CustomEvent>(popover_ref, PopoverEvents.on_close, custom_on_close)
+		event_add_listener<CustomEvent>(popover_ref, PopoverEvents.on_open, custom_on_open)
+		event_add_listener<CustomEvent>(popover_ref, PopoverEvents.on_reposition, custom_on_reposition)
 	}
 
-	function removeCustomEvent(): void {
-		removeEventListener<CustomEvent>(popover_ref, PopoverEvents[_onClose], customOnClose)
-		removeEventListener<CustomEvent>(popover_ref, PopoverEvents[_onOpen], customOnOpen)
-		removeEventListener<CustomEvent>(popover_ref, PopoverEvents[_onReposition], customOnReposition)
+	function remove_events(): void {
+		event_remove_listener<CustomEvent>(popover_ref, PopoverEvents.on_close, custom_on_close)
+		event_remove_listener<CustomEvent>(popover_ref, PopoverEvents.on_open, custom_on_open)
+		event_remove_listener<CustomEvent>(popover_ref, PopoverEvents.on_reposition, custom_on_reposition)
 	}
 
-	async function closePopover(): Promise<void> {
-		if (!isOpen) return;
-		isOpen = false
+	async function close_popover(): Promise<void> {
+		if (!is_open) return;
+		is_open = false
 
-		const anchorRect: DOMRect | undefined = anchor_ref? getBoundingClientRect(anchor_ref) : undefined
-		const popoverRect = getBoundingClientRect(popover_ref)
-		const pos = getFlyoutPosition({
-			flyout: popoverRect,
-			anchor: anchorRect,
+		const anchor_rect: DOMRect | undefined = anchor_ref? element_rect(anchor_ref) : undefined
+		const popover_rect = element_rect(popover_ref)
+		const pos = get_flyout_position({
+			flyout: popover_rect,
+			anchor: anchor_rect,
 			gap: $gap,
-			pointer: anchorRect? undefined : $pointer,
+			pointer: anchor_rect? undefined : $pointer,
 			padding: $padding,
 			position: $position
-		})
+		}) as DOMRect
 
-		const popoverPos = {
+		const popover_position = {
 			...pos,
-			bottom: pos[_top] + popoverRect[_height],
-			right: pos[_left] + popoverRect[_width]
+			bottom: rect_top(pos) + rect_height(popover_rect),
+			right: rect_left(pos) + rect_width(popover_rect)
 		}
-		const popoverMidPos = {
-			x: popoverPos[_left] + (popoverRect[_width] / 2),
-			y: popoverPos[_top] + (popoverRect[_height] / 2),
+		const popover_mid_position = {
+			x: rect_left(popover_position) + (rect_width(popover_rect) / 2),
+			y: rect_top(popover_position) + (rect_height(popover_rect) / 2),
 		}
 		const translate = {
 			left: 0,
 			top: 0
 		}
 
-		let anchorCenterLeft = $pointer.x
-		let anchorCenterTop = $pointer.y
+		let anchor_center_left = $pointer.x
+		let anchor_center_top = $pointer.y
 
-		if (anchorRect) {
-			anchorCenterLeft = anchorRect[_left] + (anchorRect[_width] / 2)
-			anchorCenterTop = anchorRect[_top] + (anchorRect[_height] / 2)
+		if (anchor_rect) {
+			anchor_center_left = rect_left(anchor_rect) + (rect_width(anchor_rect) / 2)
+			anchor_center_top = rect_top(anchor_rect) + (rect_height(anchor_rect) / 2)
 		}
 
-		const rangeX = mathAbs(popoverMidPos.x - anchorCenterLeft)
-		const rangeY = mathAbs(popoverMidPos.y - anchorCenterTop)
+		const range_x = math_abs(popover_mid_position.x - anchor_center_left)
+		const range_y = math_abs(popover_mid_position.y - anchor_center_top)
 
-		if (rangeX > rangeY) {
-			if ((popoverMidPos.x < anchorCenterTop || popoverMidPos.x > anchorCenterTop) && (
-				$position == PopoverPosition[_centerBottom]
-				|| $position == PopoverPosition[_centerBottomToLeft]
-				|| $position == PopoverPosition[_centerBottomToRight]
-				|| $position == PopoverPosition[_centerTop]
-				|| $position == PopoverPosition[_centerTopToLeft]
-				|| $position == PopoverPosition[_centerTopToRight]
+		if (range_x > range_y) {
+			if ((popover_mid_position.x < anchor_center_top || popover_mid_position.x > anchor_center_top) && (
+				$position == PopoverPosition.center_bottom
+				|| $position == PopoverPosition.center_bottom_to_left
+				|| $position == PopoverPosition.center_bottom_to_right
+				|| $position == PopoverPosition.center_top
+				|| $position == PopoverPosition.center_top_to_left
+				|| $position == PopoverPosition.center_top_to_right
 			)) {
-				if (popoverMidPos.y > anchorCenterTop ) translate[_top]  = -12
-				if (popoverMidPos.y < anchorCenterTop ) translate[_top]  = 12
+				if (popover_mid_position.y > anchor_center_top ) translate.top  = -12
+				if (popover_mid_position.y < anchor_center_top ) translate.top  = 12
 			} else {
-				if (popoverMidPos.x > anchorCenterLeft) translate[_left] = -12
-				if (popoverMidPos.x < anchorCenterLeft) translate[_left] = 12
+				if (popover_mid_position.x > anchor_center_left) translate.left = -12
+				if (popover_mid_position.x < anchor_center_left) translate.left = 12
 			}
 		} else {
-			if ((popoverMidPos.y < anchorCenterLeft || popoverMidPos.y > anchorCenterLeft) && (
-				$position == PopoverPosition[_leftCenter]
-				|| $position == PopoverPosition[_leftCenterToBottom]
-				|| $position == PopoverPosition[_leftCenterToTop]
-				|| $position == PopoverPosition[_rightCenter]
-				|| $position == PopoverPosition[_rightCenterToBottom]
-				|| $position == PopoverPosition[_rightCenterToTop]
+			if ((popover_mid_position.y < anchor_center_left || popover_mid_position.y > anchor_center_left) && (
+				$position == PopoverPosition.left_center
+				|| $position == PopoverPosition.left_center_to_bottom
+				|| $position == PopoverPosition.left_center_to_top
+				|| $position == PopoverPosition.right_center
+				|| $position == PopoverPosition.right_center_to_bottom
+				|| $position == PopoverPosition.right_center_to_top
 			)) {
-				if (popoverMidPos.x > anchorCenterLeft) translate[_left] = -12
-				if (popoverMidPos.x < anchorCenterLeft) translate[_left] = 12
+				if (popover_mid_position.x > anchor_center_left) translate.left = -12
+				if (popover_mid_position.x < anchor_center_left) translate.left = 12
 			} else {
-				if (popoverMidPos.y > anchorCenterTop ) translate[_top]  = -12
-				if (popoverMidPos.y < anchorCenterTop ) translate[_top]  = 12
+				if (popover_mid_position.y > anchor_center_top ) translate.top  = -12
+				if (popover_mid_position.y < anchor_center_top ) translate.top  = 12
 			}
 		}
 
-		setAttr_open(false)
-		setAttr_openDone(false)
+		set_attr_open(false)
+		set_attr_open_done(false)
 		anchor_ref = null
-		getDocumentBody()[_dispatchEvent](new CustomEvent(
-			BodyEvents[_closePopover],
+		element_dispatch_event(document.body, new CustomEvent(
+			BodyEvents.close_popover,
 			{ detail: {element: popover_ref} }
 		))
-		props[_onBeforeClose]?.()
-		if (props[_closeAnimation] != null) props[_closeAnimation](
+		props.on_before_close?.()
+		if (props.close_animation != null) props.close_animation(
 			popover_ref,
-			() => popover_ref[_hidePopover]()
+			() => popover_ref.hidePopover()
 		)
-		else popover_ref[_animate](
-			{ transform: `translate(${translate[_left]}px, ${translate[_top]}px)` },
-			{ duration: 300, easing: AnimationEffectTiming[_springBounce] }
-		)[_finished][_then](() => popover_ref[_hidePopover]())
+		else promise_done(element_animate(
+			popover_ref,
+			{ transform: `translate(${translate.left}px, ${translate.top}px)` },
+			{ duration: 300, easing: AnimationEffectTiming.spring_bounce }
+		).finished, () => popover_ref.hidePopover())
 	}
 
-	function openPopover(options: PopoverOpenDetail): void {
-		if (isOpen) return
+	function open_popover(options: PopoverOpenDetail): void {
+		if (is_open) return
 
 		const POPOVER_MARGIN = 8
 		const {
 			event,
 			pointer,
-			anchorRect,
-			allowHideAnchor = props[_allowHideAnchor] ?? true,
+			anchor_rect,
+			allow_hide_anchor = props.allow_hide_anchor ?? true,
 			anchor = null,
-			draggable = props[_draggable] ?? false,
-			gap = props[_gap] ?? 0,
-			padding = props[_padding] ?? 0,
-			position = props[_position] ?? PopoverPosition[_centerBottom],
-			manualDismiss = props[_manualDismiss] ?? false
+			draggable = props.draggable ?? false,
+			gap = props.gap ?? 0,
+			padding = props.padding ?? 0,
+			position = props.position ?? PopoverPosition.center_bottom,
+			manual_dismiss = props.manual_dismiss ?? false
 		} = options;
 
-		setIsManualDismiss(manualDismiss)
-		setAllowHideAnchor(allowHideAnchor)
-		isOpen = true
+		set_is_manual_dismiss(manual_dismiss)
+		set_allow_hide_anchor(allow_hide_anchor)
+		is_open = true
 		anchor_ref = anchor
 		$position = position
 		$gap = gap
 		$padding = padding
 
 		// handle drag
-		if (isDraggable() && !draggable) removeDragListener()
-		else if (!isDraggable() && draggable) addDragListener()
-		setIsDraggable(draggable)
+		if (is_draggable() && !draggable) remove_drag_listener()
+		else if (!is_draggable() && draggable) add_drag_listener()
+		set_is_draggable(draggable)
 
-		popover_ref[_showPopover]()
+		popover_ref.showPopover()
 
-		const popoverRect: DOMRect = getBoundingClientRect(popover_ref)
-		const $anchorRect: DOMRect | undefined = anchorRect != null
-			? anchorRect
+		const popover_rect: DOMRect = element_rect(popover_ref)
+		const $anchor_rect: DOMRect | undefined = anchor_rect != null
+			? anchor_rect
 			: anchor
-				? getBoundingClientRect(anchor)
+				? element_rect(anchor)
 				: undefined
-		const $event = (event as TouchEvent)[_touches]? (event as TouchEvent)[_touches][0] : (event as MouseEvent)
+		const $event = (event as TouchEvent).touches
+			? (event as TouchEvent).touches[0]
+			: (event as MouseEvent)
 		$pointer = pointer != undefined? pointer : {
-			x: $event[_clientX] ?? 0,
-			y: $event[_clientY] ?? 0
+			x: $event.clientX ?? 0,
+			y: $event.clientY ?? 0
 		}
-		let pos = getFlyoutPosition({
-			flyout: popoverRect,
-			anchor: $anchorRect,
+		let pos = get_flyout_position({
+			flyout: popover_rect,
+			anchor: $anchor_rect,
 			gap,
-			pointer: $anchorRect? undefined : $pointer,
+			pointer: $anchor_rect? undefined : $pointer,
 			padding,
 			position
-		})
+		}) as DOMRect
 
-		if (!allowHideAnchor && anchor != null) {
-			const popoverPos = {
+		if (!allow_hide_anchor && anchor != null) {
+			const popover_position = {
 				...pos,
-				bottom: pos[_top] + popoverRect[_height],
-				right: pos[_left] + popoverRect[_width]
+				bottom: rect_top(pos) + rect_height(popover_rect),
+				right: rect_left(pos) + rect_width(popover_rect)
 			}
-			const anchorMidPosition = {
-				x: $anchorRect![_left] + ($anchorRect![_width] / 2),
-				y: $anchorRect![_top] + ($anchorRect![_height] / 2),
+			const anchor_mid_position = {
+				x: rect_left($anchor_rect!) + (rect_width($anchor_rect!) / 2),
+				y: rect_top($anchor_rect!) + (rect_height($anchor_rect!) / 2),
 			}
-			const popoverMidPos = {
-				x: popoverPos[_left] + (popoverRect[_width] / 2),
-				y: popoverPos[_top] + (popoverRect[_height] / 2),
+			const popover_mid_position = {
+				x: rect_left(popover_position) + (rect_width(popover_rect) / 2),
+				y: rect_top(popover_position) + (rect_height(popover_rect) / 2),
 			}
-			const rangeX = mathAbs(popoverMidPos.x - anchorMidPosition.x)
-			const rangeY = mathAbs(popoverMidPos.y - anchorMidPosition.y)
-			const isLeftSide = popoverMidPos.x < anchorMidPosition.x
-			const isRightSide = popoverMidPos.x > anchorMidPosition.x
-			const isTopSide = popoverMidPos.y < anchorMidPosition.y
-			const isBottomSide = popoverMidPos.y > anchorMidPosition.y
+			const range_x = math_abs(popover_mid_position.x - anchor_mid_position.x)
+			const range_y = math_abs(popover_mid_position.y - anchor_mid_position.y)
+			const is_left_side = popover_mid_position.x < anchor_mid_position.x
+			const is_right_side = popover_mid_position.x > anchor_mid_position.x
+			const is_top_side = popover_mid_position.y < anchor_mid_position.y
+			const is_bottom_side = popover_mid_position.y > anchor_mid_position.y
 
-			if (rangeX > rangeY){
+			if (range_x > range_y){
 				// left side
-				if (isLeftSide && popoverPos[_right] > $anchorRect![_left]) {
-					setMaxWidth($anchorRect![_left] - POPOVER_MARGIN - gap)
-					setMaxHeight(undefined)
+				if (is_left_side && rect_right(popover_position) > rect_left($anchor_rect!)) {
+					set_max_width(rect_left($anchor_rect!) - POPOVER_MARGIN - gap)
+					set_max_height(undefined)
 				}
 
 				// right side
-				else if (isRightSide && popoverPos[_left] < $anchorRect![_right]) {
-					setMaxWidth((getDocument()[_body][_clientWidth] - $anchorRect![_right]) - POPOVER_MARGIN - gap)
-					setMaxHeight(undefined)
+				else if (is_right_side && rect_left(popover_position) < rect_right($anchor_rect!)) {
+					set_max_width((element_client_width(document.body) - rect_right($anchor_rect!)) - POPOVER_MARGIN - gap)
+					set_max_height(undefined)
 				}
 			}
 			else {
 				// top side
-				if (isTopSide && popoverPos[_bottom] > $anchorRect![_top]) {
-					setMaxHeight($anchorRect![_top] - POPOVER_MARGIN - gap)
-					setMaxWidth(undefined)
+				if (is_top_side && rect_bottom(popover_position) > rect_top($anchor_rect!)) {
+					set_max_height(rect_top($anchor_rect!) - POPOVER_MARGIN - gap)
+					set_max_width(undefined)
 				}
 
 				// bottom side
-				else if (isBottomSide && popoverPos[_top] < $anchorRect![_bottom]) {
-					setMaxHeight((getWindow()[_innerHeight] - $anchorRect![_bottom]) - POPOVER_MARGIN - gap)
-					setMaxWidth(undefined)
+				else if (is_bottom_side && rect_top(popover_position) < rect_bottom($anchor_rect!)) {
+					set_max_height((window.innerHeight - rect_bottom($anchor_rect!)) - POPOVER_MARGIN - gap)
+					set_max_width(undefined)
 				}
 			}
 
-			pos = getFlyoutPosition({
-				flyout: getBoundingClientRect(popover_ref),
-				anchor: $anchorRect,
+			pos = get_flyout_position({
+				flyout: element_rect(popover_ref),
+				anchor: $anchor_rect,
 				gap,
-				pointer: $anchorRect? undefined : $pointer,
+				pointer: $anchor_rect? undefined : $pointer,
 				padding,
 				position
-			})
+			}) as DOMRect
 		}
 
-		const popoverPos = {
+		const popover_position = {
 			...pos,
-			bottom: pos[_top] + popoverRect[_height],
-			right: pos[_left] + popoverRect[_width]
+			bottom: rect_top(pos) + rect_height(popover_rect),
+			right: rect_left(pos) + rect_width(popover_rect)
 		}
-		const popoverMidPos = {
-			x: popoverPos[_left] + (popoverRect[_width] / 2),
-			y: popoverPos[_top] + (popoverRect[_height] / 2),
+		const popover_mid_position = {
+			x: rect_left(popover_position) + (rect_width(popover_rect) / 2),
+			y: rect_top(popover_position) + (rect_height(popover_rect) / 2),
 		}
 		const translate = {
 			left: 0,
 			top: 0
 		}
 
-		let anchorCenterLeft = $pointer.x
-		let anchorCenterTop = $pointer.y
+		let anchor_center_left = $pointer.x
+		let anchor_center_top = $pointer.y
 
-		if ($anchorRect) {
-			anchorCenterLeft = $anchorRect[_left] + ($anchorRect[_width] / 2)
-			anchorCenterTop = $anchorRect[_top] + ($anchorRect[_height] / 2)
+		if ($anchor_rect) {
+			anchor_center_left = $anchor_rect.left + (rect_width($anchor_rect) / 2)
+			anchor_center_top = $anchor_rect.top + (rect_height($anchor_rect) / 2)
 		}
 
-		const rangeX = mathAbs(popoverMidPos.x - anchorCenterLeft)
-		const rangeY = mathAbs(popoverMidPos.y - anchorCenterTop)
+		const range_x = math_abs(popover_mid_position.x - anchor_center_left)
+		const range_y = math_abs(popover_mid_position.y - anchor_center_top)
 
-		if (rangeX > rangeY) {
-			if ((popoverMidPos.x < anchorCenterTop || popoverMidPos.x > anchorCenterTop) && (
-				position == PopoverPosition[_centerBottom]
-				|| position == PopoverPosition[_centerBottomToLeft]
-				|| position == PopoverPosition[_centerBottomToRight]
-				|| position == PopoverPosition[_centerTop]
-				|| position == PopoverPosition[_centerTopToLeft]
-				|| position == PopoverPosition[_centerTopToRight]
+		if (range_x > range_y) {
+			if ((popover_mid_position.x < anchor_center_top || popover_mid_position.x > anchor_center_top) && (
+				position == PopoverPosition.center_bottom
+				|| position == PopoverPosition.center_bottom_to_left
+				|| position == PopoverPosition.center_bottom_to_right
+				|| position == PopoverPosition.center_top
+				|| position == PopoverPosition.center_top_to_left
+				|| position == PopoverPosition.center_top_to_right
 			)) {
-				if (popoverMidPos.y > anchorCenterTop ) translate[_top]  = -12
-				if (popoverMidPos.y < anchorCenterTop ) translate[_top]  = 12
+				if (popover_mid_position.y > anchor_center_top ) translate.top = -12
+				if (popover_mid_position.y < anchor_center_top ) translate.top = 12
 			} else {
-				if (popoverMidPos.x > anchorCenterLeft) translate[_left] = -12
-				if (popoverMidPos.x < anchorCenterLeft) translate[_left] = 12
+				if (popover_mid_position.x > anchor_center_left) translate.left = -12
+				if (popover_mid_position.x < anchor_center_left) translate.left = 12
 			}
 		} else {
-			if ((popoverMidPos.y < anchorCenterLeft || popoverMidPos.y > anchorCenterLeft) && (
-				position == PopoverPosition[_leftCenter]
-				|| position == PopoverPosition[_leftCenterToBottom]
-				|| position == PopoverPosition[_leftCenterToTop]
-				|| position == PopoverPosition[_rightCenter]
-				|| position == PopoverPosition[_rightCenterToBottom]
-				|| position == PopoverPosition[_rightCenterToTop]
+			if ((popover_mid_position.y < anchor_center_left || popover_mid_position.y > anchor_center_left) && (
+				position == PopoverPosition.left_center
+				|| position == PopoverPosition.left_center_to_bottom
+				|| position == PopoverPosition.left_center_to_top
+				|| position == PopoverPosition.right_center
+				|| position == PopoverPosition.right_center_to_bottom
+				|| position == PopoverPosition.right_center_to_top
 			)) {
-				if (popoverMidPos.x > anchorCenterLeft) translate[_left] = -12
-				if (popoverMidPos.x < anchorCenterLeft) translate[_left] = 12
+				if (popover_mid_position.x > anchor_center_left) translate.left = -12
+				if (popover_mid_position.x < anchor_center_left) translate.left = 12
 			} else {
-				if (popoverMidPos.y > anchorCenterTop ) translate[_top]  = -12
-				if (popoverMidPos.y < anchorCenterTop ) translate[_top]  = 12
+				if (popover_mid_position.y > anchor_center_top ) translate.top = -12
+				if (popover_mid_position.y < anchor_center_top ) translate.top = 12
 			}
 		}
 
-		setTop(pos[_top])
-		setLeft(pos[_left])
-		setAttr_open(true)
-		props[_onBeforeOpen]?.()
-		if (props[_openAnimation] != null) props[_openAnimation](
+		set_top(rect_top(pos))
+		set_left(rect_left(pos))
+		set_attr_open(true)
+		props.on_before_open?.()
+		if (props.open_animation != null) props.open_animation(
 			popover_ref,
-			() => setAttr_openDone(true)
+			() => set_attr_open_done(true)
 		)
-		else popover_ref[_animate](
-			{ transform: [`translate(${translate[_left]}px, ${translate[_top]}px)`, _none] },
-			{ duration: 300, easing: AnimationEffectTiming[_springBounce] }
-		)[_finished][_then](() => setAttr_openDone(true))
+		else promise_done(element_animate(popover_ref,
+			{ transform: [`translate(${translate.left}px, ${translate.top}px)`, 'none'] },
+			{ duration: 300, easing: AnimationEffectTiming.spring_bounce }
+		).finished, () => set_attr_open_done(true))
 
 		// stop reaching to `document.onclick`
-		eventStopImmediatePropagation(event)
+		event_stop_immediate_propagation(event)
 	}
 
-	function repositionPopover(): void {
+	function reposition_popover(): void {
 		if (anchor_ref == null) {
-			const popoverRect = getBoundingClientRect(popover_ref)
-			const screen = {
-				width: getDocument()[_body][_clientWidth],
-				height: getWindow()[_innerHeight]
-			}
-			if (popoverRect[_left  ] < 8) setElementStyleProperty(popover_ref, _left, 8 + _px)
-			if (popoverRect[_top   ] < 8) setElementStyleProperty(popover_ref, _top , 8 + _px)
-			if (popoverRect[_right ] > screen[_width ]) setElementStyleProperty(popover_ref, _left, (screen[_width ] - popoverRect[_width ] - 8) + _px)
-			if (popoverRect[_bottom] > screen[_height]) setElementStyleProperty(popover_ref, _top , (screen[_height] - popoverRect[_height] - 8) + _px)
+			fix_position()
 			return
 		}
 
 		const POPOVER_MARGIN = 8
-		const anchorRect = getBoundingClientRect(anchor_ref)
-		const popoverRect = getBoundingClientRect(popover_ref)
+		const anchor_rect = element_rect(anchor_ref)
+		const popover_rect = element_rect(popover_ref)
 
-		let pos = getFlyoutPosition({
-			flyout: popoverRect,
-			anchor: anchorRect,
+		let pos = get_flyout_position({
+			flyout: popover_rect,
+			anchor: anchor_rect,
 			gap: $gap,
 			position: $position,
 			padding: $padding
-		})
+		}) as DOMRect
 
-		if (!allowHideAnchor()) {
-			const popoverPos = {
+		if (!allow_hide_anchor()) {
+			const popover_position = {
 				...pos,
-				bottom: pos[_top] + popoverRect[_height],
-				right: pos[_left] + popoverRect[_width]
+				bottom: rect_top(pos) + rect_height(popover_rect),
+				right: rect_left(pos) + rect_width(popover_rect)
 			}
-			const anchorMidPosition = {
-				x: anchorRect![_left] + (anchorRect![_width] / 2),
-				y: anchorRect![_top] + (anchorRect![_height] / 2),
+			const anchor_mid_position = {
+				x: rect_left(anchor_rect!) + (rect_width(anchor_rect!) / 2),
+				y: rect_top(anchor_rect!) + (rect_height(anchor_rect!) / 2),
 			}
-			const popoverMidPos = {
-				x: popoverPos[_left] + (popoverRect[_width] / 2),
-				y: popoverPos[_top] + (popoverRect[_height] / 2),
+			const popover_mid_position = {
+				x: rect_left(popover_position) + (rect_width(popover_rect) / 2),
+				y: rect_top(popover_position) + (rect_height(popover_rect) / 2),
 			}
-			const rangeX = mathAbs(popoverMidPos.x - anchorMidPosition.x)
-			const rangeY = mathAbs(popoverMidPos.y - anchorMidPosition.y)
-			const isLeftSide = popoverMidPos.x < anchorMidPosition.x
-			const isRightSide = popoverMidPos.x > anchorMidPosition.x
-			const isTopSide = popoverMidPos.y < anchorMidPosition.y
-			const isBottomSide = popoverMidPos.y > anchorMidPosition.y
+			const range_x = math_abs(popover_mid_position.x - anchor_mid_position.x)
+			const range_y = math_abs(popover_mid_position.y - anchor_mid_position.y)
+			const is_left_side = popover_mid_position.x < anchor_mid_position.x
+			const is_right_side = popover_mid_position.x > anchor_mid_position.x
+			const is_top_side = popover_mid_position.y < anchor_mid_position.y
+			const is_bottom_side = popover_mid_position.y > anchor_mid_position.y
 
-			if (rangeX > rangeY){
+			if (range_x > range_y){
 				// left side
-				if (isLeftSide && popoverPos[_right] > anchorRect![_left]) {
-					setMaxWidth(anchorRect![_left] - POPOVER_MARGIN - $gap)
-					setMaxHeight(undefined)
+				if (is_left_side && rect_right(popover_position) > rect_left(anchor_rect!)) {
+					set_max_width(rect_left(anchor_rect!) - POPOVER_MARGIN - $gap)
+					set_max_height(undefined)
 				}
 
 				// right side
-				else if (isRightSide && popoverPos[_left] < anchorRect![_right]) {
-					setMaxWidth((getDocument()[_body][_clientWidth] - anchorRect![_right]) - POPOVER_MARGIN - $gap)
-					setMaxHeight(undefined)
+				else if (is_right_side && rect_left(popover_position) < rect_right(anchor_rect!)) {
+					set_max_width((element_client_width(document.body) - rect_right(anchor_rect!)) - POPOVER_MARGIN - $gap)
+					set_max_height(undefined)
 				}
 			}
 			else {
 				// top side
-				if (isTopSide && popoverPos[_bottom] > anchorRect![_top]) {
-					setMaxHeight(anchorRect![_top] - POPOVER_MARGIN - $gap)
-					setMaxWidth(undefined)
+				if (is_top_side && rect_bottom(popover_position) > rect_top(anchor_rect!)) {
+					set_max_height(rect_top(anchor_rect!) - POPOVER_MARGIN - $gap)
+					set_max_width(undefined)
 				}
 
 				// bottom side
-				else if (isBottomSide && popoverPos[_top] < anchorRect![_bottom]) {
-					setMaxHeight((getWindow()[_innerHeight] - anchorRect![_bottom]) - POPOVER_MARGIN - $gap)
-					setMaxWidth(undefined)
+				else if (is_bottom_side && rect_top(popover_position) < rect_bottom(anchor_rect!)) {
+					set_max_height((window.innerHeight - rect_bottom(anchor_rect!)) - POPOVER_MARGIN - $gap)
+					set_max_width(undefined)
 				}
 			}
 
-			pos = getFlyoutPosition({
-				flyout: getBoundingClientRect(popover_ref),
-				anchor: anchorRect,
+			pos = get_flyout_position({
+				flyout: element_rect(popover_ref),
+				anchor: anchor_rect,
 				gap: $gap,
 				position: $position,
 				padding: $padding
-			})
+			}) as DOMRect
 		}
 
-		setTop(pos[_top])
-		setLeft(pos[_left])
+		set_top(rect_top(pos))
+		set_left(rect_left(pos))
 	}
 
-	function initMutationObserver(): void {
-		const childrenObserver = new MutationObserver(() => repositionPopover())
-		childrenObserver[_observe](popover_ref, {subtree: true, childList: true})
+	function init_mutation_observer(): void {
+		const observer = new MutationObserver(() => reposition_popover())
+		observer.observe(popover_ref, {subtree: true, childList: true})
 
 		onCleanup(() => {
-			childrenObserver[_disconnect]()
+			observer.disconnect()
 		})
 	}
 
 	onMount(() => {
-		initPopoverListener()
-		initCustomEvent()
-		initMutationObserver()
+		init_popover_listener()
+		init_events()
+		init_mutation_observer()
 	})
 
 	onCleanup(async () => {
-		removeCustomEvent()
-		await closePopover()
+		remove_events()
+		await close_popover()
 	})
 
 	const C: VoidComponent = () => (<div
-		class={`c-popover${props[_class]? ` ${props[_class]}` : ''}`}
-		ref={mergeRefs(props[_ref], r => popover_ref = r)}
+		class={classlist('c-popover', props.class ?? '')}
+		ref={mergeRefs(props.ref, r => popover_ref = r)}
 		style={{
-			...props[_style],
-			top: props[_style]?.[_top] ?? top() + _px,
-			left: props[_style]?.[_left] ?? left() + _px,
-			"max-width": !allowHideAnchor()
-				? maxWidth() != undefined
-					? maxWidth() + _px
-					: props[_style]?.[_max_width] ?? undefined
-				: props[_style]?.[_max_width] ?? undefined,
-			"max-height": !allowHideAnchor()
-				? maxHeight() != undefined
-					? maxHeight() + _px
-					: props[_style]?.[_max_height] ?? undefined
-				: props[_style]?.[_max_height] ?? undefined,
+			...props.style,
+			top: props.style?.top ?? top() + 'px',
+			left: props.style?.left ?? left() + 'px',
+			"max-width": !allow_hide_anchor()
+				? max_width() != undefined
+					? max_width() + 'px'
+					: props.style?.["max-width"] ?? undefined
+				: props.style?.["max-width"] ?? undefined,
+			"max-height": !allow_hide_anchor()
+				? max_height() != undefined
+					? max_height() + 'px'
+					: props.style?.['max-height'] ?? undefined
+				: props.style?.['max-height'] ?? undefined,
 		}}
-		popover={_manual}
+		popover={'manual'}
 		onToggle={(ev) => {
-			isOpen = ev[_newState] == _open
-			callEventHandler(ev, props[_onToggle])
-			props[_onToggleOpen]?.(isOpen)
+			is_open = ev.newState == 'open'
+			props.on_toggle_open?.(is_open)
+			call_event_handler(ev, props.onToggle)
 		}}
-		data-c-draggable={setElementAttributeIfExist(isDraggable())}
-		data-c-open={setElementAttributeIfExist(attr_open())}
-		data-c-open-done={setElementAttributeIfExist(attr_openDone())}
-		data-c-drag={setElementAttributeIfExist(isDragging())}
-		data-c-manual={setElementAttributeIfExist(isManualDismiss())}
+		data-c-draggable={attr_set_if_exist(is_draggable())}
+		data-c-open={attr_set_if_exist(attr_open())}
+		data-c-open-done={attr_set_if_exist(attr_open_done())}
+		data-c-drag={attr_set_if_exist(is_dragging())}
+		data-c-manual={attr_set_if_exist(is_manual_dismiss())}
 		{...other}>
-		<Show when={isDraggable()}>
+		<Show when={is_draggable()}>
 			<span
 				class="c-popover-drag-handle"
-				data-g-keep-pointer-event={setElementAttributeIfExist(isDragging())}
+				data-g-keep-pointer-event={attr_set_if_exist(is_dragging())}
 				draggable={false}
 				onPointerDown={(ev) => {
-					const rect = getBoundingClientRect(popover_ref)
-					setIsDragging(true)
-					setElementAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
-					diffPositionX = ev[_clientX] - rect.x
-					diffPositionY = ev[_clientY] - rect.y
+					const rect = element_rect(popover_ref)
+					set_is_dragging(true)
+					attr_set(document.body, BodyAttributes.no_pointer_event)
+					diff_position_x = ev.clientX - rect.x
+					diff_position_y = ev.clientY - rect.y
 				}}
-				onDblClick={() => repositionPopover()}
+				onDblClick={() => reposition_popover()}
 			/>
 		</Show>
 		<div>
-			{props[_children]}
+			{props.children}
 		</div>
 	</div>)
 
 	return (<Show
-		when={props[_usePortal]}
+		when={props.use_portal}
 		fallback={<C/>}>
 		<Portal><C/></Portal>
 	</Show>)
@@ -718,11 +720,11 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 export {
 	PopoverAttributes,
 	PopoverEvents,
-	openPopover,
-	repositionPopover,
-	closePopover,
+	open_popover,
+	reposition_popover,
+	close_popover,
 	Popover,
-	isPopoverOpen,
+	is_popover_open,
 	PopoverPosition
 }
 export type {

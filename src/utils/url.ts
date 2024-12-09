@@ -1,27 +1,26 @@
-import { _click, _remove, _createObjectURL, _download, _forEach, _href, _id, _revokeObjectURL, _searchParams } from "@/constants/string"
-import { createElement } from "./element"
+import { create_element, element_click, element_remove } from "./element"
 
-export function encodeURL(text: string): string {
+export function url_encode(text: string): string {
 	return encodeURIComponent(text)
 }
 
-export function decodeURL(url: string): string {
+export function url_decode(url: string): string {
 	return decodeURIComponent(url)
 }
 
-export function getUrlQueries(url: string): {[key: string]: string} {
-	const queryObject: {[key: string]: string} = {}
-	const urlParams = new URL(url)[_searchParams]
+export function url_queries(url: string): {[key: string]: string} {
+	const query_object: {[key: string]: string} = {}
+	const url_params = new URL(url).searchParams
 
-	urlParams[_forEach]((value, key) => {
-		queryObject[key] = value
+	url_params.forEach((value, key) => {
+		query_object[key] = value
 	})
 
-	return queryObject
+	return query_object
 }
 
-export function getUrlQuery(url: string, key: string): string | null {
-	const queries = getUrlQueries(url)
+export function url_query(url: string, key: string): string | null {
+	const queries = url_queries(url)
 
 	for (const $key in queries) {
 		if ($key == key) return queries[$key]
@@ -30,18 +29,18 @@ export function getUrlQuery(url: string, key: string): string | null {
 	return null
 }
 
-export function createObjectURL(obj: Blob | MediaSource): string {
-	return URL[_createObjectURL](obj)
+export function url_create(obj: Blob | MediaSource): string {
+	return URL.createObjectURL(obj)
 }
 
-export function revokeObjectURL(url: string): void {
-	return URL[_revokeObjectURL](url)
+export function url_revoke(url: string): void {
+	return URL.revokeObjectURL(url)
 }
 
-export function downloadFileByURL(url: string, filename: string): void {
-	const link = createElement("a")
-	link[_href] = url
-	link[_download] = filename
-	link[_click]()
-	link[_remove]()
+export function url_download_file(url: string, filename: string): void {
+	const link = create_element("a")
+	link.href = url
+	link.download = filename
+	element_click(link)
+	element_remove(link)
 }

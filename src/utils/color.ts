@@ -4,23 +4,24 @@
  * https://www.myndex.com/WEB/LuminanceContrast
  */
 
-import { _padStart, _slice, _startsWith, _substring, _test, _toString } from "@/constants/string"
 import type { RGBColor, HSLColor, HSVColor, HEXColor } from "@/types/color"
-import { mathFloor, mathMax, mathMin, mathPow, mathRound, numberParse } from "./math"
+import { math_floor, math_max, math_min, math_pow, math_round } from "./math"
+import { regex_test } from "./regex"
+import { string_padstart, string_slice, string_starts_with, string_substring } from "./string"
+import { number_parse, number_to_string } from "./number"
 
-export function testHexColorWithAlpha(hex: string): boolean {
-	return /^#[0-9a-fA-F]{6}([0-9a-fA-F]{2})?$/i[_test](hex)
+export function is_color_with_alpha_valid(hex: string): boolean {
+	return regex_test(/^#[0-9a-fA-F]{6}([0-9a-fA-F]{2})?$/i, hex)
 }
 
-export function testHexColor(hex: string): boolean {
-	return /^#[0-9a-fA-F]{6}$/i[_test](hex)
+export function is_color_valid(hex: string): boolean {
+	return regex_test(/^#[0-9a-fA-F]{6}$/i, hex)
 }
 
-export function getLuminance(rgb: RGBColor): number {
-
-	const r = mathPow(rgb.r / 255, 2.2)
-	const g = mathPow(rgb.g / 255, 2.2)
-	const b = mathPow(rgb.b / 255, 2.2)
+export function get_luminance(rgb: RGBColor): number {
+	const r = math_pow(rgb.r / 255, 2.2)
+	const g = math_pow(rgb.g / 255, 2.2)
+	const b = math_pow(rgb.b / 255, 2.2)
 	const luminance = r * 0.2126 + g * 0.7152 + b * 0.0722
 
 	return luminance
@@ -29,33 +30,33 @@ export function getLuminance(rgb: RGBColor): number {
 /**
  * `Y` = Luminance
  */
-export function YtoLstar(Y: number): number {
+export function y_to_lstar(Y: number): number {
 	if (Y <= (216 / 24389)) return Y * (24389 / 27)
-	return mathPow(Y, (1 / 3)) * 116 - 16
+	return math_pow(Y, (1 / 3)) * 116 - 16
 }
 
 /**
  * Result value is between `0` (low contrast) to `100` (high contrast)
  */
-export function getContrastRatio(rgb1: RGBColor, rgb2: RGBColor): number {
-	const L1 = YtoLstar(getLuminance(rgb1))
-	const L2 = YtoLstar(getLuminance(rgb2))
-	const ratio = mathMax(L1, L2) - mathMin(L1, L2)
+export function get_contrast_ratio(rgb1: RGBColor, rgb2: RGBColor): number {
+	const L1 = y_to_lstar(get_luminance(rgb1))
+	const L2 = y_to_lstar(get_luminance(rgb2))
+	const ratio = math_max(L1, L2) - math_min(L1, L2)
 	return ratio
 }
 
-export function HEX_to_HSL(hex: HEXColor): HSLColor {
-	return RGB_to_HSL(HEX_to_RGB(hex))
+export function hex_to_hsl(hex: HEXColor): HSLColor {
+	return rgb_to_hsl(hex_to_rgb(hex))
 }
 
-export function RGB_to_HSL(rgb: RGBColor): HSLColor {
+export function rgb_to_hsl(rgb: RGBColor): HSLColor {
 	let h = 0, s = 0, l = 0
 	const r = rgb.r / 255
 	const g = rgb.g / 255
 	const b = rgb.b / 255
 
-	const min = mathMin(r, g, b)
-	const max = mathMax(r, g, b)
+	const min = math_min(r, g, b)
+	const max = math_max(r, g, b)
 	const delta = max - min
 
 	l = (max + min) / 2
@@ -69,13 +70,13 @@ export function RGB_to_HSL(rgb: RGBColor): HSLColor {
 	if (l < 0.5) s = delta / (max + min)
 	else s = delta / (2 - max - min)
 
-	const deltaR = (((max - r) / 6) + (delta / 2)) / delta
-	const deltaG = (((max - g) / 6) + (delta / 2)) / delta
-	const deltaB = (((max - b) / 6) + (delta / 2)) / delta
+	const delta_r = (((max - r) / 6) + (delta / 2)) / delta
+	const delta_g = (((max - g) / 6) + (delta / 2)) / delta
+	const delta_b = (((max - b) / 6) + (delta / 2)) / delta
 
-	if (r == max) h = deltaB - deltaG
-	else if (g == max) h = (1 / 3) + deltaR - deltaB
-	else if (b == max) h = (2 / 3) + deltaG - deltaR
+	if (r == max) h = delta_b - delta_g
+	else if (g == max) h = (1 / 3) + delta_r - delta_b
+	else if (b == max) h = (2 / 3) + delta_g - delta_r
 
 	if (h < 0) h += 1
 	if (h > 1) h -= 1
@@ -83,20 +84,20 @@ export function RGB_to_HSL(rgb: RGBColor): HSLColor {
 	return {h, s, l}
 }
 
-export function HEX_to_RGB(hex: HEXColor): RGBColor {
-	if (!testHexColor(hex)) {
+export function hex_to_rgb(hex: HEXColor): RGBColor {
+	if (!is_color_valid(hex)) {
 		throw new Error("Invalid hex color format!")
 	}
 
-	hex = hex[_startsWith]("#") ? hex[_slice](1) : hex as any
+	hex = string_starts_with(hex, "#") ? string_slice(hex, 1) : hex as any
 
-	const r = numberParse(hex[_substring](0, 2), true, 16)
-	const g = numberParse(hex[_substring](2, 4), true, 16)
-	const b = numberParse(hex[_substring](4, 6), true, 16)
+	const r = number_parse(string_substring(hex, 0, 2), true, 16)
+	const g = number_parse(string_substring(hex, 2, 4), true, 16)
+	const b = number_parse(string_substring(hex, 4, 6), true, 16)
 	return { r, g, b }
 }
 
-export function HUE_to_RGB(v1: number, v2: number, vH: number) {
+export function hue_to_rgb(v1: number, v2: number, vH: number) {
 	while (vH < 0) vH += 1
 	while (vH > 1) vH -= 1
 
@@ -106,7 +107,7 @@ export function HUE_to_RGB(v1: number, v2: number, vH: number) {
 	return v1
 }
 
-export function HSL_to_RGB(hsl: HSLColor): RGBColor {
+export function hsl_to_rgb(hsl: HSLColor): RGBColor {
 	let r, g, b
 
 	if (hsl.s == 0) r = g = b = hsl.l
@@ -116,31 +117,31 @@ export function HSL_to_RGB(hsl: HSLColor): RGBColor {
 			: hsl.l + hsl.s - hsl.s * hsl.l
 		const v1 = 2 * hsl.l - v2
 
-		r = HUE_to_RGB(v1, v2, hsl.h + 1 / 3)
-		g = HUE_to_RGB(v1, v2, hsl.h)
-		b = HUE_to_RGB(v1, v2, hsl.h - 1 / 3)
+		r = hue_to_rgb(v1, v2, hsl.h + 1 / 3)
+		g = hue_to_rgb(v1, v2, hsl.h)
+		b = hue_to_rgb(v1, v2, hsl.h - 1 / 3)
 	}
 
 	return {
-		r: mathRound(r * 255),
-		g: mathRound(g * 255),
-		b: mathRound(b * 255)
+		r: math_round(r * 255),
+		g: math_round(g * 255),
+		b: math_round(b * 255)
 	}
 }
 
-export function HSL_to_HEX(hsl: HSLColor): HEXColor {
-	return RGB_to_HEX(HSL_to_RGB(hsl))
+export function hsl_to_hex(hsl: HSLColor): HEXColor {
+	return rgb_to_hex(hsl_to_rgb(hsl))
 }
 
-export function RGB_to_HEX(rgb: RGBColor): HEXColor {
+export function rgb_to_hex(rgb: RGBColor): HEXColor {
 	return ('#'
-		+ rgb.r[_toString](16)[_padStart](2, '0')
-		+ rgb.g[_toString](16)[_padStart](2, '0')
-		+ rgb.b[_toString](16)[_padStart](2, '0')
+		+ string_padstart(number_to_string(rgb.r, 16), 2, '0')
+		+ string_padstart(number_to_string(rgb.g, 16), 2, '0')
+		+ string_padstart(number_to_string(rgb.b, 16), 2, '0')
 	) as HEXColor
 }
 
-export function RGB_to_HSV(rgb: RGBColor): HSVColor {
+export function rgb_to_hsv(rgb: RGBColor): HSVColor {
 	let h: number = 0
 	let s: number = 0
 	let v: number = 0
@@ -149,8 +150,8 @@ export function RGB_to_HSV(rgb: RGBColor): HSVColor {
 	const g = rgb.g / 255
 	const b = rgb.b / 255
 
-	const min = mathMin(r, g, b)
-	const max = mathMax(r, g, b)
+	const min = math_min(r, g, b)
+	const max = math_max(r, g, b)
 	const delta = max - min
 
 	v = max
@@ -163,13 +164,13 @@ export function RGB_to_HSV(rgb: RGBColor): HSVColor {
 
 	s = delta / max
 
-	const deltaR = (((max - r) / 6) + (delta / 2)) / delta
-	const deltaG = (((max - g) / 6) + (delta / 2)) / delta
-	const deltaB = (((max - b) / 6) + (delta / 2)) / delta
+	const delta_r = (((max - r) / 6) + (delta / 2)) / delta
+	const delta_g = (((max - g) / 6) + (delta / 2)) / delta
+	const delta_b = (((max - b) / 6) + (delta / 2)) / delta
 
-	if (r == max) h = deltaB - deltaG
-	else if (g == max) h = (1 / 3) + deltaR - deltaB
-	else if (b == max) h = (2 / 3) + deltaG - deltaR
+	if (r == max) h = delta_b - delta_g
+	else if (g == max) h = (1 / 3) + delta_r - delta_b
+	else if (b == max) h = (2 / 3) + delta_g - delta_r
 
 	if (h < 0) h += 1
 	if (h > 1) h -= 1
@@ -177,18 +178,18 @@ export function RGB_to_HSV(rgb: RGBColor): HSVColor {
 	return {h, s, v}
 }
 
-export function HSV_to_RGB(hsv: HSVColor): RGBColor {
+export function hsv_to_rgb(hsv: HSVColor): RGBColor {
 	let r, g, b
 
 	if (hsv.s == 0) {
-		r = g = b = mathRound(hsv.v * 255)
+		r = g = b = math_round(hsv.v * 255)
 		return {r, g, b}
 	}
 
 	let h = hsv.h * 6
 	if (h == 6) h = 0
 
-	const i = mathFloor(h)
+	const i = math_floor(h)
 	const j = hsv.v * (1 - hsv.s)
 	const k = hsv.v * (1 - hsv.s * (h - i))
 	const l = hsv.v * (1 - hsv.s * (1 - (h - i)))
@@ -224,26 +225,26 @@ export function HSV_to_RGB(hsv: HSVColor): RGBColor {
 		b = k
 	}
 
-	r = mathRound(r * 255)
-	g = mathRound(g * 255)
-	b = mathRound(b * 255)
+	r = math_round(r * 255)
+	g = math_round(g * 255)
+	b = math_round(b * 255)
 
 	return {r, g, b}
 }
 
-export function HSL_to_HSV(hsl: HSLColor): HSVColor {
-	return RGB_to_HSV(HSL_to_RGB(hsl))
+export function hsl_to_hsv(hsl: HSLColor): HSVColor {
+	return rgb_to_hsv(hsl_to_rgb(hsl))
 }
 
-export function HSV_to_HSL(hsv: HSVColor): HSLColor {
-	return RGB_to_HSL(HSV_to_RGB(hsv))
+export function hsv_to_hsl(hsv: HSVColor): HSLColor {
+	return rgb_to_hsl(hsv_to_rgb(hsv))
 }
 
 type GenerateColorResult = {
 	color: HEXColor
-	onColor: HEXColor
-	colorDark: HEXColor
-	onColorDark: HEXColor
+	on_color: HEXColor
+	color_dark: HEXColor
+	on_color_dark: HEXColor
 }
 
 /**
@@ -253,27 +254,27 @@ type GenerateColorResult = {
  * - Color Dark
  * - On Color Dark
 */
-export function generateColor(hex: HEXColor): GenerateColorResult {
-	if (!testHexColor(hex)) {
+export function generate_color(hex: HEXColor): GenerateColorResult {
+	if (!is_color_valid(hex)) {
 		throw new Error("Invalid hex color format!")
 	}
-	const hsl = {...HEX_to_HSL(hex), s: 1}
+	const hsl = {...hex_to_hsl(hex), s: 1}
 
 	/**
 	 * `contrast` must be a value between `0 (bad) => 100 (best (high contrast))`.
 	 */
 	function getLightness(hsl: HSLColor, contrast: number){
 		let lightness = 0
-		const brightness = YtoLstar(getLuminance(HSL_to_RGB(hsl)))
+		const brightness = y_to_lstar(get_luminance(hsl_to_rgb(hsl)))
 
 		for (let i = 0; i < 101; i++){
 			if (brightness > 50) lightness = i / 100
 			else lightness = 1 - (i / 100)
 
-			if (getContrastRatio(HSL_to_RGB(hsl), HSL_to_RGB({...hsl, l: lightness})) <= contrast) break
+			if (get_contrast_ratio(hsl_to_rgb(hsl), hsl_to_rgb({...hsl, l: lightness})) <= contrast) break
 		}
 
-		return mathMax(0, mathMin(1, lightness))
+		return math_max(0, math_min(1, lightness))
 	}
 
 	/**
@@ -281,12 +282,12 @@ export function generateColor(hex: HEXColor): GenerateColorResult {
 	 * @param contrast Range from `0` to `100` (`0`=darkest, `100`=lightest)
 	 */
 	function getColor(hsl: HSLColor, contrast: number): HSLColor {
-		const highToLow: boolean = contrast <= 50 ? true : false
-		const brightness = (c: HSLColor) => YtoLstar(getLuminance(HSL_to_RGB(c)))
+		const high_to_low: boolean = contrast <= 50 ? true : false
+		const brightness = (c: HSLColor) => y_to_lstar(get_luminance(hsl_to_rgb(c)))
 		let lightness: number = 0
 
 		for (let i = 0; i < 101; i++){
-			if (highToLow) {
+			if (high_to_low) {
 				lightness = 1 - (i / 100)
 				hsl = {...hsl, l: lightness}
 				if (brightness(hsl) <= contrast) break;
@@ -301,15 +302,15 @@ export function generateColor(hex: HEXColor): GenerateColorResult {
 		return hsl
 	}
 
-	const color = getColor(hsl, 88 - getContrastRatio(HSL_to_RGB(hsl), {r: 255, g: 255, b: 255}))
-	const onColor = {...color, l: getLightness(color, 100)}
-	const colorDark = getColor(color, 72)
-	const onColorDark = {...colorDark, l: getLightness(colorDark, 100)}
+	const color = getColor(hsl, 88 - get_contrast_ratio(hsl_to_rgb(hsl), {r: 255, g: 255, b: 255}))
+	const on_color = {...color, l: getLightness(color, 100)}
+	const color_dark = getColor(color, 72)
+	const on_color_dark = {...color_dark, l: getLightness(color_dark, 100)}
 
 	return {
-		color       : HSL_to_HEX(color       ),
-		onColor     : HSL_to_HEX(onColor     ),
-		colorDark   : HSL_to_HEX(colorDark   ),
-		onColorDark : HSL_to_HEX(onColorDark )
+		color        : hsl_to_hex(color        ),
+		on_color     : hsl_to_hex(on_color     ),
+		color_dark   : hsl_to_hex(color_dark   ),
+		on_color_dark: hsl_to_hex(on_color_dark)
 	}
 }

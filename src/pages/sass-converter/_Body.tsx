@@ -1,125 +1,132 @@
-import { createSignal, onMount, Show, type VoidComponent } from "solid-js"
+import { createMemo, createSignal, onMount, Show, type VoidComponent } from "solid-js"
 
 import type { Settings } from "./_types"
-import { _markdown, _preview, _noPointerEvent, _touchmove, _touches, _clientX, _touchend, _mousemove, _mouseup, _change, _matches, _tonal, _value, _markdownText, _css, _cssText, _html, _px, _settings, _fontSize, _textWrap, _htmlText, _replace, _scss, _sass, _sassText, _scssText, _command } from "@/constants/string"
-import { addEventListener } from "@/utils/event"
-import { removeElementAttribute, setElementAttribute, setElementAttributeIfExist } from "@/utils/attributes"
-import { getDocument, getDocumentBody } from "@/constants/window"
+import { event_add_listener } from "@/utils/event"
+import { attr_remove, attr_set, attr_set_if_exist } from "@/utils/attributes"
 import { BodyAttributes } from "@/enums/attributes"
-import { isMatchMedia } from "@/utils/window"
+import { is_window_media_matches } from "@/utils/window"
 import { DEFAULT_INPUT_VIEW_OPTION, MIN_EDITOR_WIDTH } from "./_constants"
 import { Commands, InputViewOption } from "./_enums"
+import { timeout_clear, timeout_set } from "@/utils/timeout"
 
 import Button, { ButtonVariant } from "@/components/Button"
 import CSS from './_styles.module.scss'
-import { endTimeout, startTimeout } from "@/utils/timeout"
 
 enum OutputViewOption {
 	css
 }
 
 const _: VoidComponent<{
-	sassText: string
-	scssText: string
-	cssText: string
+	sass_text: string
+	scss_text: string
+	css_text: string
 	settings: Settings
 	command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
-	const [width, setWidth] = createSignal<number | null>(null)
-	const [isDragging, setIsDragging] = createSignal<boolean>(false)
-	const [inputViewOption, setInputViewOption] = createSignal<InputViewOption | null>(DEFAULT_INPUT_VIEW_OPTION)
-	const [outputViewOption, setOutputViewOption] = createSignal<OutputViewOption | null>(OutputViewOption[_css])
-	let timeoutId: number | null
+	const body = document.body
+	const [width, set_width] = createSignal<number | null>(null)
+	const [is_dragging, set_is_dragging] = createSignal<boolean>(false)
+	const [input_view_option, set_input_view_option] = createSignal<InputViewOption | null>(DEFAULT_INPUT_VIEW_OPTION)
+	const [output_view_option, set_output_view_option] = createSignal<OutputViewOption | null>(OutputViewOption.css)
+	const sass_text = createMemo(() => props.sass_text)
+	const scss_text = createMemo(() => props.scss_text)
+	const css_text = createMemo(() => props.css_text)
+	const settings = createMemo(() => props.settings)
+	let timeout_id: number | null
 	let textarea_ref: HTMLTextAreaElement
-	let isSmallScreen: boolean = false
+	let is_small_screen: boolean = false
 
-	function updateOutput(): void {
-		if (timeoutId != null) endTimeout(timeoutId)
-		timeoutId = startTimeout(() => {
-			const command = (inputViewOption() == InputViewOption[_sass]
+	function command(type: Commands, ...args: unknown[]): unknown {
+		return props.command(type, ...args)
+	}
+
+	function update_output(): void {
+		if (timeout_id != null) timeout_clear(timeout_id)
+		timeout_id = timeout_set(() => {
+			const $command = (input_view_option() == InputViewOption.sass
 				? Commands.update_sass_text
 				: Commands.update_scss_text
 			)
-			props[_command](command, textarea_ref[_value])
-			timeoutId = null
+			command($command, textarea_ref.value)
+			timeout_id = null
 		}, 500)
 	}
 
-	function updateWidth(width: number): void {
-		if (!isDragging()) return;
-		setWidth(width)
+	function update_width(width: number): void {
+		if (!is_dragging()) return;
+		set_width(width)
 	}
 
-	function closeDrag(): void {
-		setIsDragging(false)
-		removeElementAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
+	function close_drag(): void {
+		set_is_dragging(false)
+		attr_remove(body, BodyAttributes.no_pointer_event)
 	}
 
-	function initEvents(): void {
-		addEventListener<TouchEvent>(getDocument(), _touchmove, ev => updateWidth(ev[_touches][0][_clientX]))
-		addEventListener<TouchEvent>(getDocument(), _touchend, () => closeDrag())
-		addEventListener<MouseEvent>(getDocument(), _mousemove, ev => updateWidth(ev[_clientX]))
-		addEventListener<MouseEvent>(getDocument(), _mouseup, () => closeDrag())
+	function init_events(): void {
+		event_add_listener<TouchEvent>(document, 'touchmove', ev => update_width(ev.touches[0].clientX))
+		event_add_listener<TouchEvent>(document, 'touchend', () => close_drag())
+		event_add_listener<MouseEvent>(document, 'mousemove', ev => update_width(ev.clientX))
+		event_add_listener<MouseEvent>(document, 'mouseup', () => close_drag())
 	}
 
-	function initSmallScreenListener(): void {
+	function init_smallscreen_listener(): void {
 		const callback = () => {
-			if (inputViewOption() == null || outputViewOption() == null) return;
-			setOutputViewOption(null)
+			if (input_view_option() == null || output_view_option() == null) return;
+			set_output_view_option(null)
 		}
 
-		addEventListener<MediaQueryListEvent>(matchMedia(`(max-width: ${MIN_EDITOR_WIDTH}px)`), _change,  ev => {
-			isSmallScreen = ev[_matches]
-			if (!isSmallScreen) return;
+		event_add_listener<MediaQueryListEvent>(matchMedia(`(max-width: ${MIN_EDITOR_WIDTH}px)`), 'change',  ev => {
+			is_small_screen = ev.matches
+			if (!is_small_screen) return;
 
 			callback()
 		})
 
-		isSmallScreen = isMatchMedia(`(max-width: ${MIN_EDITOR_WIDTH}px)`)
-		if (!isSmallScreen) return;
+		is_small_screen = is_window_media_matches(`(max-width: ${MIN_EDITOR_WIDTH}px)`)
+		if (!is_small_screen) return;
 
 		callback()
 	}
 
 	onMount(() => {
-		initEvents()
-		initSmallScreenListener()
+		init_events()
+		init_smallscreen_listener()
 	})
 
 	const InputTabButtons: VoidComponent = () => (<>
 		<Button
-			variant={ButtonVariant[_tonal]}
-			selected={inputViewOption() == InputViewOption[_sass]}
+			variant={ButtonVariant.tonal}
+			selected={input_view_option() == InputViewOption.sass}
 			onClick={() => {
-				if (isSmallScreen) {
-					setInputViewOption(InputViewOption[_sass])
-					setOutputViewOption(null)
+				if (is_small_screen) {
+					set_input_view_option(InputViewOption.sass)
+					set_output_view_option(null)
 					return;
 				}
 
-				if (inputViewOption() == InputViewOption[_sass] && outputViewOption() != null)
-					return setInputViewOption(null)
-				setInputViewOption(InputViewOption[_sass])
-				props[_command](Commands.change_input_view_option, InputViewOption[_sass])
-				textarea_ref[_value] = props[_sassText]
+				if (input_view_option() == InputViewOption.sass && output_view_option() != null)
+					return set_input_view_option(null)
+				set_input_view_option(InputViewOption.sass)
+				command(Commands.change_input_view_option, InputViewOption.sass)
+				textarea_ref.value = sass_text()
 			}}>
 			SASS
 		</Button>
 		<Button
-			variant={ButtonVariant[_tonal]}
-			selected={inputViewOption() == InputViewOption[_scss]}
+			variant={ButtonVariant.tonal}
+			selected={input_view_option() == InputViewOption.scss}
 			onClick={() => {
-				if (isSmallScreen) {
-					setInputViewOption(InputViewOption[_scss])
-					setOutputViewOption(null)
+				if (is_small_screen) {
+					set_input_view_option(InputViewOption.scss)
+					set_output_view_option(null)
 					return;
 				}
 
-				if (inputViewOption() == InputViewOption[_scss] && outputViewOption() != null)
-					return setInputViewOption(null)
-				setInputViewOption(InputViewOption[_scss])
-				props[_command](Commands.change_input_view_option, InputViewOption[_scss])
-				textarea_ref[_value] = props[_scssText]
+				if (input_view_option() == InputViewOption.scss && output_view_option() != null)
+					return set_input_view_option(null)
+				set_input_view_option(InputViewOption.scss)
+				command(Commands.change_input_view_option, InputViewOption.scss)
+				textarea_ref.value = scss_text()
 			}}>
 			SCSS
 		</Button>
@@ -127,18 +134,18 @@ const _: VoidComponent<{
 
 	const OutputTabButtons: VoidComponent = () => (<>
 		<Button
-			variant={ButtonVariant[_tonal]}
-			selected={outputViewOption() == OutputViewOption[_css]}
+			variant={ButtonVariant.tonal}
+			selected={output_view_option() == OutputViewOption.css}
 			onClick={() => {
-				if (isSmallScreen) {
-					setOutputViewOption(OutputViewOption[_css])
-					setInputViewOption(null)
+				if (is_small_screen) {
+					set_output_view_option(OutputViewOption.css)
+					set_input_view_option(null)
 					return;
 				}
 
-				if (outputViewOption() == OutputViewOption[_css] && inputViewOption() != null)
-					return setOutputViewOption(null)
-				setOutputViewOption(OutputViewOption[_css])
+				if (output_view_option() == OutputViewOption.css && input_view_option() != null)
+					return set_output_view_option(null)
+				set_output_view_option(OutputViewOption.css)
 			}}>
 			CSS
 		</Button>
@@ -147,57 +154,57 @@ const _: VoidComponent<{
 	return (<div class={CSS.body}>
 		<div
 			class={CSS.body_input}
-			data-hidden={setElementAttributeIfExist(inputViewOption() == null)}
-			data-output-hidden={setElementAttributeIfExist(outputViewOption() == null)}
-			style={{width: width() == null? undefined : width() + _px}}>
+			data-hidden={attr_set_if_exist(input_view_option() == null)}
+			data-output-hidden={attr_set_if_exist(output_view_option() == null)}
+			style={{width: width() == null? undefined : width() + 'px'}}>
 			<div class={CSS.body_tabs}>
 				<InputTabButtons/>
-				<Show when={outputViewOption() == null}>
+				<Show when={output_view_option() == null}>
 					<OutputTabButtons/>
 				</Show>
 			</div>
 			<textarea
 				autofocus
-				onInput={() => updateOutput()}
+				onInput={() => update_output()}
 				ref={r => textarea_ref = r}
-				value={inputViewOption() == InputViewOption[_sass]? props[_sassText] : props[_scssText]}
-				style={{"font-size": props[_settings][_fontSize] + _px}}
+				value={input_view_option() == InputViewOption.sass? sass_text() : scss_text()}
+				style={{"font-size": settings().font_size + 'px'}}
 				class={CSS.body_textfield}
-				data-text-wrap={setElementAttributeIfExist(props[_settings][_textWrap])}
-				placeholder={`Type your ${inputViewOption() == InputViewOption[_scss]? 'SCSS' : 'SASS'} ...`}></textarea>
-			<Show when={inputViewOption() != null && outputViewOption() != null}>
+				data-text-wrap={attr_set_if_exist(settings().text_wrap)}
+				placeholder={`Type your ${input_view_option() == InputViewOption.scss? 'SCSS' : 'SASS'} ...`}></textarea>
+			<Show when={input_view_option() != null && output_view_option() != null}>
 				<div
-					data-g-keep-pointer-event={setElementAttributeIfExist(isDragging())}
+					data-g-keep-pointer-event={attr_set_if_exist(is_dragging())}
 					class={CSS.body_drag_handle}
 					onMouseDown={(ev) => {
-						setElementAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
-						setWidth(ev[_clientX])
-						setIsDragging(true)
+						attr_set(body, BodyAttributes.no_pointer_event)
+						set_width(ev.clientX)
+						set_is_dragging(true)
 					}}
 					onTouchStart={(ev) => {
-						setIsDragging(true)
-						setElementAttribute(getDocumentBody(), BodyAttributes[_noPointerEvent])
-						setWidth(ev[_touches][0][_clientX])
+						set_is_dragging(true)
+						attr_set(body, BodyAttributes.no_pointer_event)
+						set_width(ev.touches[0].clientX)
 					}}
-					onDblClick={() => setWidth(null)}
+					onDblClick={() => set_width(null)}
 				/>
 			</Show>
 		</div>
 		<div
 			class={CSS.body_output}
-			data-hidden={setElementAttributeIfExist(outputViewOption() == null)}
-			data-no-text-wrap={setElementAttributeIfExist(!props[_settings][_textWrap])}>
+			data-hidden={attr_set_if_exist(output_view_option() == null)}
+			data-no-text-wrap={attr_set_if_exist(!settings().text_wrap)}>
 			<div class={CSS.body_tabs}>
-				<Show when={inputViewOption() == null}>
+				<Show when={input_view_option() == null}>
 					<InputTabButtons/>
 				</Show>
 				<OutputTabButtons/>
 			</div>
 			<div
 				class={CSS.body_css_output}
-				style={{"font-size": props[_settings][_fontSize] + _px}}
-				data-text-wrap={setElementAttributeIfExist(props[_settings][_textWrap])}>
-				{props[_cssText]}
+				style={{"font-size": settings().font_size + 'px'}}
+				data-text-wrap={attr_set_if_exist(settings().text_wrap)}>
+				{css_text()}
 			</div>
 		</div>
 	</div>)

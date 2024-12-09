@@ -5,13 +5,13 @@ export enum RootAttributes {
 }
 
 export enum BodyAttributes {
-	modalListener = 'data-c-modal-listener',
-	popoverListener = 'data-c-popover-listener',
-	tooltipListener = 'data-c-tooltip-listener',
-	emojiListener = 'data-c-emoji-listener',
+	modal_listener = 'data-c-modal-listener',
+	popover_listener = 'data-c-popover-listener',
+	tooltip_listener = 'data-c-tooltip-listener',
+	emoji_listener = 'data-c-emoji-listener',
 
 	/** Disable all element pointer event. Except element that has `[data-g-keep-pointer-event]` */
-	noPointerEvent = 'data-g-no-pointer-event',
-	componentCount = 'data-g-component-count',
-	componentCountMax = 'data-g-component-count-max'
+	no_pointer_event = 'data-g-no-pointer-event',
+	component_count = 'data-g-component-count',
+	component_count_max = 'data-g-component-count-max'
 }

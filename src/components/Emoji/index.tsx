@@ -1,7 +1,6 @@
 import { type JSX, splitProps, type VoidComponent } from "solid-js"
 
-import { setElementAttributeIfExist } from '@/utils/attributes'
-import { _children, _filled, _inline, _fromCharCode, _charCodeAt, _code, _emoji, _class } from "@/constants/string"
+import { attr_set_if_exist, classlist } from '@/utils/attributes'
 
 import './index.scss'
 
@@ -11,14 +10,14 @@ type EmojiProps = Omit<JSX.HTMLAttributes<HTMLElement>, 'children'> & {
 }
 
 const Emoji: VoidComponent<EmojiProps> = ($props) => {
-	const [props, other] = splitProps($props, [_inline, _emoji, _class])
+	const [props, other] = splitProps($props, ['inline', 'emoji', 'class'])
 
 	return (<i
-		class={`c-emoji${props[_class] ? ` ${props[_class]}` : ''}`}
-		data-c-inline={setElementAttributeIfExist(props[_inline])}
+		class={classlist('c-emoji', props.class)}
+		data-c-inline={attr_set_if_exist(props.inline)}
 		translate="no"
 		{...other}>
-		{ props[_emoji] }
+		{ props.emoji }
 	</i>)
 }
 

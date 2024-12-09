@@ -1,6 +1,6 @@
 export type Settings = {
-	textWrap: boolean
-	fontSize: number
+	text_wrap: boolean
+	font_size: number
 	suffix: string
 	prefix: string
 }

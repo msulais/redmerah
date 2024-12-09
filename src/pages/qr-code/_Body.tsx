@@ -1,196 +1,205 @@
-import { createSignal, Show, type VoidComponent } from "solid-js"
+import { createMemo, createSignal, Show, type VoidComponent } from "solid-js"
 import { BrowserQRCodeReader } from '@zxing/browser'
 import { BarcodeFormat, DecodeHintType } from "@zxing/library"
 
-import type { Settings } from "./_types"
-import { _2d, _at, _auto, _backgroundColor, _canvasRef, _catch, _centerBottomToRight, _clearRect, _color, _command, _contents, _currentTarget, _dataTransfer, _decodeFromImageElement, _encodingMode, _environment, _errorCorrectionLevel, _file, _files, _filled, _generate, _getAsFile, _getContext, _getText, _height, _image, _isGenerateError, _items, _jpeg, _kind, _length, _margin, _match, _none, _page, _png, _replace, _scan, _scanFile, _set, _settings, _split, _startsWith, _svg, _svgRef, _then, _tonal, _trim, _type, _value, _vector, _version, _width } from "@/constants/string"
-import { startTimeout } from "@/utils/timeout"
+import { timeout_set } from "@/utils/timeout"
 import { Commands, CopyFileType, DownloadFileType, Pages } from "./_enums"
-import { eventPreventDefault, eventStopPropagation } from "@/utils/event"
-import { setElementAttributeIfExist } from "@/utils/attributes"
-import { openFile } from "@/utils/file"
-import { createObjectURL, revokeObjectURL } from "@/utils/url"
-import { isMobile } from "@/utils/platforms"
+import { event_prevent_default, event_stop_propagation } from "@/utils/event"
+import { attr_set_if_exist } from "@/utils/attributes"
+import { file_open } from "@/utils/file"
+import { url_create, url_revoke } from "@/utils/url"
+import { is_mobile } from "@/utils/platforms"
+import { promise_done } from "@/utils/object"
+import { array_length } from "@/utils/array"
+import { string_length, string_starts_with } from "@/utils/string"
 
 import TextTooltip from "@/components/Tooltip"
 import Icon from "@/components/Icon"
 import Button, { ButtonVariant, IconButton } from "@/components/Button"
 import TextField from "@/components/TextField"
-import Menu, { closeMenu, closeSubMenu, MenuItem, MenuPosition, openMenu, SubMenu, SubMenuItem } from "@/components/Menu"
+import Menu, { close_menu, close_submenu, MenuItem, MenuPosition, open_menu, SubMenu, SubMenuItem } from "@/components/Menu"
+import Toast, { open_toast } from "@/components/Toast"
 import CSS from './_styles.module.scss'
-import Toast, { openToast } from "@/components/Toast"
 
 const _: VoidComponent<{
 	page: Pages
-	settings: Settings
 	command: (type: Commands, ...args: unknown[]) => unknown
-	canvasRef: (el: HTMLCanvasElement) => unknown
-	isGenerateError: boolean
+	canvas_ref: (el: HTMLCanvasElement) => unknown
+	is_generate_error: boolean
 }> = (props) => {
-	const barcodeFormats: BarcodeFormat[] = [
+	const barcode_format: BarcodeFormat[] = [
 		BarcodeFormat.QR_CODE,
 		BarcodeFormat.AZTEC,
 		BarcodeFormat.DATA_MATRIX,
 		BarcodeFormat.MAXICODE,
 	]
 	const decoder = new BrowserQRCodeReader()
-	const decoder2 = new BrowserQRCodeReader(new Map([[DecodeHintType.PURE_BARCODE, barcodeFormats]]))
-	const decoder3 = new BrowserQRCodeReader(new Map([[DecodeHintType.POSSIBLE_FORMATS, barcodeFormats]]))
-	const decoder4 = new BrowserQRCodeReader(new Map([[DecodeHintType.TRY_HARDER, barcodeFormats]]))
-	const decoder5 = new BrowserQRCodeReader(new Map([[DecodeHintType.OTHER, barcodeFormats]]))
-	const [is_submenu_downloadCanvasActions_open, setIs_submenu_downloadCanvasActions_open] = createSignal<boolean>(false)
-	const [is_submenu_copyCanvasActions_open, setIs_submenu_copyCanvasActions_open] = createSignal<boolean>(false)
-	const [QRCodeImageSource, setQRCodeImageSource] = createSignal<string | null>(null)
-	const [QRCodeDecodedText, setQRCodeDecodedText] = createSignal<string>('')
-	const [isDragEnter, setIsDragEnter] = createSignal<boolean>(false)
-	let menu_canvasActions_ref: HTMLDialogElement
-	let submenu_downloadCanvasActions_ref: HTMLDivElement
-	let submenu_copyCanvasActions_ref: HTMLDivElement
-	let img_QRCode_ref: HTMLImageElement
-	let toast_errorScanQRCode_ref: HTMLDivElement
+	const decoder2 = new BrowserQRCodeReader(new Map([[DecodeHintType.PURE_BARCODE, barcode_format]]))
+	const decoder3 = new BrowserQRCodeReader(new Map([[DecodeHintType.POSSIBLE_FORMATS, barcode_format]]))
+	const decoder4 = new BrowserQRCodeReader(new Map([[DecodeHintType.TRY_HARDER, barcode_format]]))
+	const decoder5 = new BrowserQRCodeReader(new Map([[DecodeHintType.OTHER, barcode_format]]))
+	const [is_submenu_downloadcanvasactions_open, set_is_submenu_downloadcanvasactions_open] = createSignal<boolean>(false)
+	const [is_submenu_copycanvasactions_open, set_is_submenu_copycanvasactions_open] = createSignal<boolean>(false)
+	const [qrcode_image_src, set_qrcode_image_src] = createSignal<string | null>(null)
+	const [qrcode_decoded_text, set_qrcode_decoded_text] = createSignal<string>('')
+	const [is_drag_enter, set_is_drag_enter] = createSignal<boolean>(false)
+	const page = createMemo(() => props.page)
+	let menu_canvasactions_ref: HTMLDialogElement
+	let submenu_downloadcanvasactions_ref: HTMLDivElement
+	let submenu_copycanvasactions_ref: HTMLDivElement
+	let img_qrcode_ref: HTMLImageElement
+	let toast_errorscanqrcode_ref: HTMLDivElement
 
-	async function scanQRImage(ev: Event): Promise<unknown> {
-		if (QRCodeImageSource() == null) return;
-
-		const getText = async (decoder: BrowserQRCodeReader) => (await decoder[_decodeFromImageElement](img_QRCode_ref))[_getText]()
-
-		try { return setQRCodeDecodedText(await getText(decoder )) } catch {}
-		try { return setQRCodeDecodedText(await getText(decoder2)) } catch {}
-		try { return setQRCodeDecodedText(await getText(decoder3)) } catch {}
-		try { return setQRCodeDecodedText(await getText(decoder4)) } catch {}
-		try { return setQRCodeDecodedText(await getText(decoder5)) } catch {}
-
-		setQRCodeDecodedText('')
-		openToast(ev, toast_errorScanQRCode_ref)
+	function command(type: Commands, ...args: unknown[]): unknown {
+		return props.command(type, ...args)
 	}
 
-	function chooseFile(ev: Event, capture?: string): void {
-		openFile('image/*', false, capture)[_then]((files) => {
-			if (files == null || files[_length] == 0) return
+	async function scan_qrcode_image(ev: Event): Promise<unknown> {
+		if (qrcode_image_src() == null) return;
 
-			for (const file of files) {
-				if (!file[_type][_startsWith](_image)) continue
+		const decode_image = async (decoder: BrowserQRCodeReader) => (await decoder.decodeFromImageElement(img_qrcode_ref)).getText()
 
-				if (QRCodeImageSource() != null) revokeObjectURL(QRCodeImageSource()!)
-				setQRCodeImageSource(createObjectURL(file))
-				scanQRImage(ev)
+		try { return set_qrcode_decoded_text(await decode_image(decoder )) } catch {}
+		try { return set_qrcode_decoded_text(await decode_image(decoder2)) } catch {}
+		try { return set_qrcode_decoded_text(await decode_image(decoder3)) } catch {}
+		try { return set_qrcode_decoded_text(await decode_image(decoder4)) } catch {}
+		try { return set_qrcode_decoded_text(await decode_image(decoder5)) } catch {}
+
+		set_qrcode_decoded_text('')
+		open_toast(ev, toast_errorscanqrcode_ref)
+	}
+
+	function choose_file(ev: Event, capture?: string): void {
+		promise_done(
+			file_open('image/*', false, capture),
+			(files) => {
+				if (files == null || array_length(files as unknown as File[]) == 0) return
+
+				for (const file of files) {
+					if (!string_starts_with(file.type, 'image')) continue
+
+					if (qrcode_image_src() != null) url_revoke(qrcode_image_src()!)
+					set_qrcode_image_src(url_create(file))
+					scan_qrcode_image(ev)
+				}
 			}
-		})
+		)
 	}
 
 	return (<main class={CSS.body}>
 		<div class={CSS.body_options}>
 			<Button
-				variant={props[_page] == Pages[_generate]? ButtonVariant[_filled] : ButtonVariant[_tonal]}
-				onClick={() => props[_command](Commands.change_page, Pages[_generate])}>
+				variant={page() == Pages.generate? ButtonVariant.filled : ButtonVariant.tonal}
+				onClick={() => command(Commands.change_page, Pages.generate)}>
 				<Icon code={0xED21}/>Generate
 			</Button>
 			<Button
-				variant={props[_page] == Pages[_scan]? ButtonVariant[_filled] : ButtonVariant[_tonal]}
-				onClick={() => props[_command](Commands.change_page, Pages[_scan])}>
+				variant={page() == Pages.scan? ButtonVariant.filled : ButtonVariant.tonal}
+				onClick={() => command(Commands.change_page, Pages.scan)}>
 				<Icon code={0xEDC5}/>Scan
 			</Button>
 		</div>
-		<div style={{display: props[_page] == Pages[_generate]? _contents : _none}}>
+		<div style={{display: page() == Pages.generate? 'contents' : 'none'}}>
 			<TextField
 				label="Data"
 				placeholder="Link, email, or any text"
-				onInput={ev => props[_command](Commands.change_QRCodeData, ev[_currentTarget][_value])}
-				wrapperAttr={{ class: CSS.body_input }}
+				onInput={ev => command(Commands.change_qrcode_data, ev.currentTarget.value)}
+				attr_wrapper={{ class: CSS.body_input }}
 			/>
 			<canvas
 				class={CSS.body_canvas_output}
-				ref={props[_canvasRef]}
-				data-empty={setElementAttributeIfExist(props[_isGenerateError])}
+				ref={props.canvas_ref}
+				data-empty={attr_set_if_exist(props.is_generate_error)}
 				onContextMenu={ev => {
-					eventPreventDefault(ev)
-					if (props[_isGenerateError]) return;
-					openMenu(ev, menu_canvasActions_ref, {position: MenuPosition[_centerBottomToRight]})
+					event_prevent_default(ev)
+					if (props.is_generate_error) return;
+					open_menu(ev, menu_canvasactions_ref, {position: MenuPosition.center_bottom_to_right})
 				}}
 				onClick={ev => {
-					if (props[_isGenerateError]) return;
-					openMenu(ev, menu_canvasActions_ref, {position: MenuPosition[_centerBottomToRight]})
+					if (props.is_generate_error) return;
+					open_menu(ev, menu_canvasactions_ref, {position: MenuPosition.center_bottom_to_right})
 				}}
 			/>
 		</div>
 		<div
-			style={{display: props[_page] == Pages[_scan]? _contents : _none}}
+			style={{display: page() == Pages.scan? 'contents' : 'none'}}
 			class={CSS.body_scan}>
 			<div
 				class={CSS.body_image}
-				data-drag-over={setElementAttributeIfExist(isDragEnter())}
-				onClick={(ev) => chooseFile(ev)}
+				data-drag-over={attr_set_if_exist(is_drag_enter())}
+				onClick={(ev) => choose_file(ev)}
 				onDrop={ev => {
-					setIsDragEnter(false)
-					eventPreventDefault(ev)
-					if (ev[_dataTransfer] == null) return;
+					set_is_drag_enter(false)
+					event_prevent_default(ev)
+					const data_transfer = ev.dataTransfer
+					if (data_transfer == null) return;
 
 					let $file: File | null = null
-					if (ev[_dataTransfer][_items]) for (const item of ev[_dataTransfer][_items]) {
-						if (item[_kind] != _file) continue
+					if (data_transfer.items) for (const item of data_transfer.items) {
+						if (item.kind != 'file') continue
 
-						const file = item[_getAsFile]()
-						if (!file || !file[_type][_startsWith](_image)) continue
+						const file = item.getAsFile()
+						if (!file || !string_starts_with(file.type, 'image')) continue
 						$file = file
 						break
 					}
-					else for (const file of ev[_dataTransfer][_files]) {
-						if (!file[_type][_startsWith](_image)) continue
+					else for (const file of data_transfer.files) {
+						if (!string_starts_with(file.type, 'image')) continue
 						$file = file
 						break
 					}
 
 					if ($file == null) return;
-					if (!$file[_type][_startsWith](_image)) return
-					if (QRCodeImageSource() != null) revokeObjectURL(QRCodeImageSource()!)
-					setQRCodeImageSource(createObjectURL($file))
-					scanQRImage(ev)
+					if (!string_starts_with($file.type, 'image')) return
+					if (qrcode_image_src() != null) url_revoke(qrcode_image_src()!)
+					set_qrcode_image_src(url_create($file))
+					scan_qrcode_image(ev)
 				}}
-				onDragOver={ev => eventPreventDefault(ev)}
-				onDragEnter={() => setIsDragEnter(true)}
-				onDragLeave={() => setIsDragEnter(false)}>
-				<div data-g-no-pointer-event={setElementAttributeIfExist(isDragEnter())}>
-					<Show when={QRCodeImageSource() == null}>
+				onDragOver={ev => event_prevent_default(ev)}
+				onDragEnter={() => set_is_drag_enter(true)}
+				onDragLeave={() => set_is_drag_enter(false)}>
+				<div data-g-no-pointer-event={attr_set_if_exist(is_drag_enter())}>
+					<Show when={qrcode_image_src() == null}>
 						<p><Icon code={0xED21}/>Drag QR code image here</p>
 					</Show>
-					<Show when={QRCodeImageSource() != null}>
-						<img ref={r => img_QRCode_ref = r} src={QRCodeImageSource()!} alt="" />
+					<Show when={qrcode_image_src() != null}>
+						<img ref={r => img_qrcode_ref = r} src={qrcode_image_src()!} alt="" />
 					</Show>
 					<div>
-						<Show when={QRCodeImageSource() != null}>
+						<Show when={qrcode_image_src() != null}>
 							<TextTooltip text="Dismiss">
 								<IconButton
-									variant={ButtonVariant[_filled]}
+									variant={ButtonVariant.filled}
 									code={0xE5E9}
 									filled
 									onClick={ev => {
-										revokeObjectURL(QRCodeImageSource()!)
-										setQRCodeImageSource(null)
-										setQRCodeDecodedText('')
-										eventStopPropagation(ev)
+										url_revoke(qrcode_image_src()!)
+										set_qrcode_image_src(null)
+										set_qrcode_decoded_text('')
+										event_stop_propagation(ev)
 									}}
 								/>
 							</TextTooltip>
 						</Show>
 						<TextTooltip text="Choose file">
 							<IconButton
-								variant={QRCodeImageSource() != null? ButtonVariant[_filled] : ButtonVariant[_tonal]}
-								filled={QRCodeImageSource() != null}
+								variant={qrcode_image_src() != null? ButtonVariant.filled : ButtonVariant.tonal}
+								filled={qrcode_image_src() != null}
 								onClick={ev => {
-									chooseFile(ev)
-									eventStopPropagation(ev)
+									choose_file(ev)
+									event_stop_propagation(ev)
 								}}
 								code={0xE900}
 							/>
 						</TextTooltip>
-						<Show when={isMobile()}>
+						<Show when={is_mobile()}>
 							<TextTooltip text="Open camera">
 								<IconButton
-									variant={QRCodeImageSource() != null? ButtonVariant[_filled] : ButtonVariant[_tonal]}
-									filled={QRCodeImageSource() != null}
+									variant={qrcode_image_src() != null? ButtonVariant.filled : ButtonVariant.tonal}
+									filled={qrcode_image_src() != null}
 									onClick={ev => {
-										chooseFile(ev, _environment)
-										eventStopPropagation(ev)
+										choose_file(ev, 'environment')
+										event_stop_propagation(ev)
 									}}
 									code={0xE354}
 								/>
@@ -199,44 +208,44 @@ const _: VoidComponent<{
 					</div>
 				</div>
 			</div>
-			<h2>{(QRCodeDecodedText()[_length] > 0? '"' : '') + QRCodeDecodedText() + (QRCodeDecodedText()[_length] > 0? '"' : '')}</h2>
+			<h2>{(string_length(qrcode_decoded_text()) > 0? '"' : '') + qrcode_decoded_text() + (string_length(qrcode_decoded_text()) > 0? '"' : '')}</h2>
 		</div>
-		<Menu ref={r => menu_canvasActions_ref = r}>
+		<Menu ref={r => menu_canvasactions_ref = r}>
 			<SubMenu
 				style={{width: '172px'}}
-				ref={r => submenu_downloadCanvasActions_ref = r}
-				onToggleOpen={isOpen => setIs_submenu_downloadCanvasActions_open(isOpen)}
+				ref={r => submenu_downloadcanvasactions_ref = r}
+				on_toggle_open={isOpen => set_is_submenu_downloadcanvasactions_open(isOpen)}
 				item={<SubMenuItem
-					focused={is_submenu_downloadCanvasActions_open()}
-					iconCode={0xE0B9}>
+					focused={is_submenu_downloadcanvasactions_open()}
+					icon_code={0xE0B9}>
 					Download as
 				</SubMenuItem>}>
 				<MenuItem
-					iconCode={0xE8FE}
+					icon_code={0xE8FE}
 					onClick={() => {
-						props[_command](Commands.download_QRCode, DownloadFileType[_png])
-						closeSubMenu(submenu_downloadCanvasActions_ref)
-						startTimeout(() => closeMenu(menu_canvasActions_ref), 300)
+						command(Commands.download_qrcode, DownloadFileType.png)
+						close_submenu(submenu_downloadcanvasactions_ref)
+						timeout_set(() => close_menu(menu_canvasactions_ref), 300)
 					}}
 					trailing="PNG">
 					Image
 				</MenuItem>
 				<MenuItem
-					iconCode={0xE8FE}
+					icon_code={0xE8FE}
 					onClick={() => {
-						props[_command](Commands.download_QRCode, DownloadFileType[_jpeg])
-						closeSubMenu(submenu_downloadCanvasActions_ref)
-						startTimeout(() => closeMenu(menu_canvasActions_ref), 300)
+						command(Commands.download_qrcode, DownloadFileType.jpeg)
+						close_submenu(submenu_downloadcanvasactions_ref)
+						timeout_set(() => close_menu(menu_canvasactions_ref), 300)
 					}}
 					trailing="JPEG">
 					Image
 				</MenuItem>
 				<MenuItem
-					iconCode={0xE90C}
+					icon_code={0xE90C}
 					onClick={() => {
-						props[_command](Commands.download_QRCode, DownloadFileType[_svg])
-						closeSubMenu(submenu_downloadCanvasActions_ref)
-						startTimeout(() => closeMenu(menu_canvasActions_ref), 300)
+						command(Commands.download_qrcode, DownloadFileType.svg)
+						close_submenu(submenu_downloadcanvasactions_ref)
+						timeout_set(() => close_menu(menu_canvasactions_ref), 300)
 					}}
 					trailing="SVG">
 					Vector
@@ -244,36 +253,36 @@ const _: VoidComponent<{
 			</SubMenu>
 			<SubMenu
 				style={{width: '172px'}}
-				ref={r => submenu_copyCanvasActions_ref = r}
-				onToggleOpen={isOpen => setIs_submenu_copyCanvasActions_open(isOpen)}
+				ref={r => submenu_copycanvasactions_ref = r}
+				on_toggle_open={isOpen => set_is_submenu_copycanvasactions_open(isOpen)}
 				item={<SubMenuItem
-					focused={is_submenu_copyCanvasActions_open()}
-					iconCode={0xE51B}>
+					focused={is_submenu_copycanvasactions_open()}
+					icon_code={0xE51B}>
 					Copy as
 				</SubMenuItem>}>
 				<MenuItem
-					iconCode={0xE8FE}
+					icon_code={0xE8FE}
 					onClick={(ev) => {
-						props[_command](Commands.copy_QRCode, ev, CopyFileType[_png])
-						closeSubMenu(submenu_copyCanvasActions_ref)
-						startTimeout(() => closeMenu(menu_canvasActions_ref), 300)
+						command(Commands.copy_qrcode, ev, CopyFileType.png)
+						close_submenu(submenu_copycanvasactions_ref)
+						timeout_set(() => close_menu(menu_canvasactions_ref), 300)
 					}}
 					trailing="PNG">
 					Image
 				</MenuItem>
 				<MenuItem
-					iconCode={0xE90C}
+					icon_code={0xE90C}
 					onClick={(ev) => {
-						props[_command](Commands.copy_QRCode, ev, CopyFileType[_svg])
-						closeSubMenu(submenu_copyCanvasActions_ref)
-						startTimeout(() => closeMenu(menu_canvasActions_ref), 300)
+						command(Commands.copy_qrcode, ev, CopyFileType.svg)
+						close_submenu(submenu_copycanvasactions_ref)
+						timeout_set(() => close_menu(menu_canvasactions_ref), 300)
 					}}
 					trailing="SVG">
 					Vector
 				</MenuItem>
 			</SubMenu>
 		</Menu>
-		<Toast ref={r => toast_errorScanQRCode_ref = r} leading={<Icon code={0xF29B}/>}>Unable to scan QR Code in the image</Toast>
+		<Toast ref={r => toast_errorscanqrcode_ref = r} leading={<Icon code={0xF29B}/>}>Unable to scan QR Code in the image</Toast>
 	</main>)
 }
 

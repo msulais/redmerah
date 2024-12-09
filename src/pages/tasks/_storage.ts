@@ -23,29 +23,29 @@ export enum ObjectStoreNames {
 	miscellaneous = 'miscellaneous',
 	tasks = 'tasks',
 	subtasks = 'subtasks',
-	taskLists = 'taskLists',
+	tasklists = 'tasklists',
 	labels = 'labels',
-	taskFileMetaData = 'taskFileMetaData',
+	filemetadata = 'filemetadata',
 	files = 'files'
 }
 
 export enum ObjectStoreKeys {
 
 	/** @param {SortBy} value `SortBy` */
-	settings_sortBy = 'sortBy',
+	settings_sortby = 'sort_by',
 
 	/** @param {SortMode} value `SortMode` */
-	settings_sortMode = 'sortMode',
+	settings_sortmode = 'sort_mode',
 
 	/** @param {boolean} value `boolean` */
-	settings_isShowDeleteTaskWarning = 'isShowDeleteTaskWarning',
+	settings_isshowdeletetaskwarning = 'is_show_delete_task_warning',
 
 	/** @param {Pages[]} value `Pages[]` */
-	settings_hiddenNavigation = 'hiddenNavigation',
+	settings_hidden_navigation = 'hidden_navigation',
 
 	/** @param {boolean} value `boolean` */
-	miscellaneous_isSideNavigationExpand = 'isSideNavigationExpand',
+	miscellaneous_issidenavigationexpanded = 'is_side_navigation_expanded',
 
 	/** @param value `Pages|number` */
-	miscellaneous_lastPage = 'lastPage',
+	miscellaneous_lastpage = 'last_page',
 }

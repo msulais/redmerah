@@ -2,10 +2,10 @@ import { createEffect, createMemo, createSignal, createUniqueId, mergeProps, onC
 import { mergeRefs } from "@solid-primitives/refs"
 
 import { AnimationEffectTiming } from "@/enums/animation"
-import { _animate, _blur, _cancel, _catch, _check, _checkbox, _checked, _children, _class, _code, _currentTarget, _detail, _disabled, _dispatchEvent, _filled, _finished, _forEach, _iconAttr, _id, _isSameNode, _join, _labelAttr, _name, _onChange, _onChangeRadioState, _radio, _ref, _replace, _spring, _then, _variant } from "@/constants/string"
-import { setElementAttributeIfExist } from "@/utils/attributes"
-import { getAllElementBySelector } from "@/utils/element"
-import { addEventListener, callEventHandler, removeEventListener } from "@/utils/event"
+import { attr_set_if_exist, classlist } from "@/utils/attributes"
+import { element_animate, element_dispatch_event, element_is_same_node, get_multiple_element_by_selector } from "@/utils/element"
+import { event_add_listener, call_event_handler, event_remove_listener } from "@/utils/event"
+import { promise_done } from "@/utils/object"
 
 import Icon, { type IconProps } from "@/components/Icon"
 import '@/components/Button/index.scss'
@@ -13,7 +13,7 @@ import './index.scss'
 
 enum CheckBoxEvents {
 	/** @param {HTMLInputElement} el `HTMLInputElement` */
-	onChangeRadioState = 'on-change-radio-off'
+	on_change_radio_state = 'on-change-radio-off'
 }
 
 enum CheckBoxVariant {
@@ -23,120 +23,119 @@ enum CheckBoxVariant {
 
 type CheckBoxProps = Omit<JSX.InputHTMLAttributes<HTMLInputElement>, 'type'> & {
 	variant?: CheckBoxVariant
-	labelAttr?: Omit<JSX.LabelHTMLAttributes<HTMLLabelElement>, 'for'>
-	iconAttr?: IconProps
+	attr_label?: Omit<JSX.LabelHTMLAttributes<HTMLLabelElement>, 'for'>
+	attr_icon?: IconProps
 }
 
 const CheckBox: ParentComponent<CheckBoxProps> = ($props) => {
-	const animationOptions = {
+	const animation_options = {
 		duration: 150,
-		easing: AnimationEffectTiming[_spring]
+		easing: AnimationEffectTiming.spring
 	}
 	const [props, other] = splitProps(
 		mergeProps({
-			variant: CheckBoxVariant[_check],
+			variant: CheckBoxVariant.check,
 			id: createUniqueId()
 		}, $props),
 		[
-			_variant, _children, _labelAttr, _iconAttr,
-			_onChange, _ref, _id
+			'variant', 'children', 'attr_label',
+			'attr_icon', 'onChange', 'ref', 'id'
 		]
 	)
-	const [labelProps, otherLabelProps] = splitProps(props[_labelAttr] ?? {}, [_class])
-	const [iconProps, otherIconProps] = splitProps(props[_iconAttr]! ?? {}, [_ref, _filled, _code])
-	const [isChecked, setIsChecked] = createSignal<boolean>(false)
-	const isDisabled = createMemo(() => other[_disabled] == true)
-	let $isChecked: boolean = false
-	let isMounted: boolean = false
+	const [label_props, other_label_props] = splitProps(props.attr_label ?? {}, ['class'])
+	const [icon_props, other_icon_props] = splitProps(props.attr_icon! ?? {}, ['ref', 'filled', 'code'])
+	const [is_checked, set_is_checked] = createSignal<boolean>(false)
+	const is_disabled = createMemo(() => other.disabled == true)
+	let $is_checked: boolean = false
+	let is_mounted: boolean = false
 	let icon_ref: HTMLElement
 	let input_ref: HTMLInputElement
 	let animation: Animation | null = null
 
-	function changeCheckedState(checked: boolean): void {
-		if (animation != null) animation[_cancel]()
+	function change_checked_state(checked: boolean): void {
+		if (animation != null) animation.cancel()
 
-		animation = icon_ref[_animate]({scale: [1, 0]}, animationOptions)
-		animation
-		[_finished]
-		[_then](() => {
-			$isChecked = checked
-			setIsChecked(checked)
-			animation = icon_ref[_animate]({scale: [0, 1]}, animationOptions)
-			animation[_finished]
-			[_then](() => animation = null)
-			[_catch](() => {})
-		})
-		[_catch](() => {})
+		animation = element_animate(icon_ref, {scale: [1, 0]}, animation_options)
+		promise_done(animation.finished, () => {
+			$is_checked = checked
+			set_is_checked(checked)
+			animation = element_animate(icon_ref, {scale: [0, 1]}, animation_options)
+			promise_done(
+				animation.finished,
+				() => animation = null,
+				() => {}
+			)
+		}, () => {})
 	}
 
-	function onChangeRadioOff(ev: CustomEvent<HTMLInputElement>): void {
-		if (ev[_detail][_isSameNode](input_ref) || !isChecked()) return
-		changeCheckedState(input_ref[_checked])
+	function on_change_radio_off(ev: CustomEvent<HTMLInputElement>): void {
+		if (element_is_same_node(ev.detail, input_ref) || !is_checked()) return
+		change_checked_state(input_ref.checked)
 	}
 
 	onMount(() => {
-		addEventListener<CustomEvent<HTMLInputElement>>(
+		event_add_listener<CustomEvent<HTMLInputElement>>(
 			input_ref,
-			CheckBoxEvents[_onChangeRadioState],
-			onChangeRadioOff
+			CheckBoxEvents.on_change_radio_state,
+			on_change_radio_off
 		)
 	})
 
 	createEffect(() => {
-		$isChecked = other[_checked] ?? $isChecked
-		if (!isMounted) {
-			setIsChecked(c => $isChecked ?? c)
-			isMounted = true
+		$is_checked = other.checked ?? $is_checked
+		if (!is_mounted) {
+			set_is_checked(c => $is_checked ?? c)
+			is_mounted = true
 			return
 		}
 		if (
-			$isChecked == null
-			|| $isChecked == isChecked()
+			$is_checked == null
+			|| $is_checked == is_checked()
 		) return;
 
-		changeCheckedState($isChecked)
+		change_checked_state($is_checked)
 	})
 
 	onCleanup(() => {
-		removeEventListener<CustomEvent<HTMLInputElement>>(
+		event_remove_listener<CustomEvent<HTMLInputElement>>(
 			input_ref,
-			CheckBoxEvents[_onChangeRadioState],
-			onChangeRadioOff
+			CheckBoxEvents.on_change_radio_state,
+			on_change_radio_off
 		)
 	})
 
 	return (<label
-		class={['c-checkbox', 'c-btn', labelProps[_class] ?? ""][_join](' ')}
-		data-c-disabled={setElementAttributeIfExist(isDisabled())}
-		for={props[_id]}
-		{...otherLabelProps}>
+		class={classlist('c-checkbox', 'c-btn', label_props.class ?? '')}
+		data-c-disabled={attr_set_if_exist(is_disabled())}
+		for={props.id}
+		{...other_label_props}>
 		<input
-			ref={mergeRefs(props[_ref], el => input_ref = el)}
-			type={props[_variant] == CheckBoxVariant[_radio]? _radio : _checkbox}
-			id={props[_id]}
+			ref={mergeRefs(props.ref, el => input_ref = el)}
+			type={props.variant == CheckBoxVariant.radio? 'radio' : 'checkbox'}
+			id={props.id}
 			onChange={(ev) => {
-				const isChecked = ev[_currentTarget][_checked]
-				callEventHandler(ev, props[_onChange])
+				const is_checked = ev.currentTarget.checked
+				call_event_handler(ev, props.onChange)
 
-				if (props[_variant] == CheckBoxVariant[_radio] && other[_name] != null) {
-					const getAllRadioWithSameName = getAllElementBySelector(`input[type=radio][name]`)
-					getAllRadioWithSameName[_forEach](el => el[_dispatchEvent](new CustomEvent(
-						CheckBoxEvents[_onChangeRadioState],
+				if (props.variant == CheckBoxVariant.radio && other.name != null) {
+					const getAllRadioWithSameName = get_multiple_element_by_selector(`input[type=radio][name]`)
+					for (const el of getAllRadioWithSameName) element_dispatch_event(el as HTMLElement, new CustomEvent(
+						CheckBoxEvents.on_change_radio_state,
 						{detail: input_ref}
-					)))
+					))
 				}
 
-				changeCheckedState(isChecked)
+				change_checked_state(is_checked)
 			}}
 			{...other}
 		/>
 		<Icon
-			ref={mergeRefs(iconProps[_ref], r => icon_ref = r)}
-			code={iconProps[_code] ?? (props[_variant] == CheckBoxVariant[_check]? (isChecked()? 0xE3CB : 0xE3D4) : 0xED2F)}
-			filled={iconProps[_filled] ?? (props[_variant] != CheckBoxVariant[_check] && isChecked())}
-			{...otherIconProps}
+			ref={mergeRefs(icon_props.ref, r => icon_ref = r)}
+			code={icon_props.code ?? (props.variant == CheckBoxVariant.check? (is_checked()? 0xE3CB : 0xE3D4) : 0xED2F)}
+			filled={icon_props.filled ?? (props.variant != CheckBoxVariant.check && is_checked())}
+			{...other_icon_props}
 		/>
-		{props[_children]}
+		{props.children}
 	</label>)
 }
 

@@ -1,4 +1,3 @@
-import { _basic, _scientific, _converter, _programmer, _date } from "@/constants/string";
 import { CalculatorType } from "./_enums";
 import { ConverterType } from "./_converter";
 
@@ -6,11 +5,11 @@ export const
 	SIZE_SIDE_NAVIGATION_NONE = 640,
 	SIZE_SIDE_NOTEBOOK_NONE = 760,
 	CALCULATOR_TYPES = [
-		{ icon: 0xE2C6, type: CalculatorType[_basic], text: 'Basic' },
-		{ icon: 0xE1C1, type: CalculatorType[_scientific], text: 'Scientific' },
-		{ icon: 0xE123, type: CalculatorType[_converter], text: 'Converter' },
-		{ icon: 0xE4A8, type: CalculatorType[_programmer], text: 'Programmer' },
-		{ icon: 0xE2CC, type: CalculatorType[_date], text: 'Date' },
+		{ icon: 0xE2C6, type: CalculatorType.basic, text: 'Basic' },
+		{ icon: 0xE1C1, type: CalculatorType.scientific, text: 'Scientific' },
+		{ icon: 0xE123, type: CalculatorType.converter, text: 'Converter' },
+		{ icon: 0xE4A8, type: CalculatorType.programmer, text: 'Programmer' },
+		{ icon: 0xE2CC, type: CalculatorType.date, text: 'Date' },
 	],
 	KEY_DIVISION = "÷",
 	KEY_MULTIPLY = "×",

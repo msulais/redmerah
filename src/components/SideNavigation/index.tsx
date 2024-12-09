@@ -1,7 +1,6 @@
 import { children, Show, splitProps, type JSX, type ParentComponent } from "solid-js"
 
-import { _checked, _children, _classList, _expand, _tonal, _focus, _footer, _header, _iconCode, _iconOnly, _indent, _indicatorPosition, _leading, _left, _selected, _trailing, _variant, _class } from "@/constants/string"
-import { setElementAttributeIfExist } from "@/utils/attributes"
+import { attr_set_if_exist, classlist } from "@/utils/attributes"
 
 import Icon from "@/components/Icon"
 import Button, { ButtonIndicatorPosition, ButtonVariant, type ButtonProps } from "@/components/Button"
@@ -10,41 +9,41 @@ import './index.scss'
 type SideNavigationItemProps = ButtonProps & {
 	leading?: JSX.Element
 	trailing?: JSX.Element
-	iconCode?: number
-	iconOnly?: boolean
+	icon_code?: number
+	icon_only?: boolean
 }
 const SideNavigationItem: ParentComponent<SideNavigationItemProps> = ($props) => {
 	const [props, other] = splitProps($props, [
-		_indicatorPosition, _selected, _leading, _children,
-		_trailing, _classList, _iconCode, _iconOnly,
-		_variant
+		'indicator_position', 'selected', 'leading', 'children',
+		'trailing', 'classList', 'icon_code', 'icon_only',
+		'variant'
 	])
-	const trailingComponent = children(() => props[_trailing])
+	const trailing = children(() => props.trailing)
 
 	return (<Button
-		variant={props[_variant] ?? (props[_selected]? ButtonVariant[_tonal] : undefined)}
-		indicatorPosition={props[_indicatorPosition] ?? ButtonIndicatorPosition[_left]}
-		selected={props[_selected]}
+		variant={props.variant ?? (props.selected? ButtonVariant.tonal : undefined)}
+		indicator_position={props.indicator_position ?? ButtonIndicatorPosition.left}
+		selected={props.selected}
 		classList={{
 			'c-side-navigation-item': true,
-			'c-icon-btn': props[_iconOnly] ?? false,
-			...props[_classList]
+			'c-icon-btn': props.icon_only ?? false,
+			...props.classList
 		}}
 		{...other}>
-		<Show when={props[_iconCode] != null}>
+		<Show when={props.icon_code != null}>
 			<Icon
-				style={{color: props[_selected]? 'rgb(var(--g-color-accent))' : undefined}}
-				filled={props[_selected]}
-				code={props[_iconCode]!}
+				style={{color: props.selected? 'rgb(var(--g-color-accent))' : undefined}}
+				filled={props.selected}
+				code={props.icon_code!}
 			/>
 		</Show>
-		{ props[_leading] }
-		<Show when={!props[_iconOnly]}>
-			<span class="c-side-navigation-item-text">{ props[_children] }</span>
-			<Show when={trailingComponent()}>
+		{ props.leading }
+		<Show when={!props.icon_only}>
+			<span class="c-side-navigation-item-text">{ props.children }</span>
+			<Show when={trailing()}>
 				<div style={{flex: 1}} />
 			</Show>
-			{ trailingComponent() }
+			{ trailing() }
 		</Show>
 	</Button>)
 }
@@ -52,24 +51,24 @@ const SideNavigationItem: ParentComponent<SideNavigationItemProps> = ($props) =>
 type SideNavigationProps = JSX.HTMLAttributes<HTMLDivElement> & {
 	header?: JSX.Element
 	footer?: JSX.Element
-	expand?: boolean
+	expanded?: boolean
 }
 const SideNavigation: ParentComponent<SideNavigationProps> = ($props) => {
 	const [props, other] = splitProps($props, [
-		_children, _expand, _header, _footer,
-		_class
+		'children', 'expanded', 'header', 'footer',
+		'class'
 	])
-	const header = children(() => props[_header])
-	const footer = children(() => props[_footer])
+	const header = children(() => props.header)
+	const footer = children(() => props.footer)
 
 	return (<div
-		class={`c-side-navigation${props[_class]? ` ${props[_class]}` : ''}`}
-		data-c-expanded={setElementAttributeIfExist(props[_expand])}
+		class={classlist('c-side-navigation', props.class ?? '')}
+		data-c-expanded={attr_set_if_exist(props.expanded)}
 		{...other}>
 		<Show when={header()}>
 			<div class="c-side-navigation-header">{header()}</div>
 		</Show>
-		<div class="c-side-navigation-content">{props[_children]}</div>
+		<div class="c-side-navigation-content">{props.children}</div>
 		<Show when={footer()}>
 			<div class="c-side-navigation-footer">{footer()}</div>
 		</Show>

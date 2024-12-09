@@ -6,23 +6,23 @@ export type Settings = {
 		length: number
 		animation: boolean
 		characters: {
-			customCharacter: string
+			custom: string
 			symbols: boolean
 			numbers: boolean
-			alphabetLowercase: boolean
-			alphabetUppercase: boolean
+			lowercase: boolean
+			uppercase: boolean
 		}
 	}
 	numbers: {
 		count: number
 		animation: boolean
-		numberType: NumbersRandomizerNumberType
+		type: NumbersRandomizerNumberType
 		repeat: boolean
 		sort: NumbersRandomizerSort
 		prefix: string
 		suffix: string
 		separator: string
-		minDecimalLength: number
+		min_length: number
 		range: { min: number; max: number }
 	}
 	words: {
@@ -30,7 +30,7 @@ export type Settings = {
 		animation: boolean
 		list: ItemList
 		repeat: boolean
-		wordCase: WordsRandomizerWordCase
+		wordcase: WordsRandomizerWordCase
 		prefix: string
 		suffix: string
 		separator: string
@@ -43,7 +43,7 @@ export type Settings = {
 	colors: {
 		count: number
 		animation: boolean
-		colorModel: ColorsRandomizerColorModel
+		model: ColorsRandomizerColorModel
 		range: {
 			hex: { min: number; max: number }
 			hsl: {
@@ -60,8 +60,8 @@ export type Settings = {
 	},
 	teams: {
 		count: number
-		namesList: ItemList
-		membersList: ItemList
+		list_names: ItemList
+		list_members: ItemList
 		animation: boolean
 	}
 }

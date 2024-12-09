@@ -1,114 +1,118 @@
-import { type SetStoreFunction } from "solid-js/store";
-import { For, Match, Show, Switch, type VoidComponent, createMemo, createSelector } from "solid-js";
+import { type SetStoreFunction } from "solid-js/store"
+import { For, Match, Show, Switch, type VoidComponent, createMemo, createSelector } from "solid-js"
 
-import type { HEXColor, HSLColor, RGBColor } from "@/types/color";
-import type { Result, Settings } from "./_types";
-import { HEX_to_HSL, HEX_to_RGB } from "@/utils/color";
-import { _result, _string, _numbers, _colors, _hex, _toUpperCase, _randomizerType, _words, _length, _join, _list, _map, _members, _settings, _prefix, _separator, _suffix, _lowercase, _titlecase, _togglecase, _uppercase, _wordCase, _items, _selection, _some, _teams, _name, _membersList, _namesList } from "@/constants/string";
-import { RandomizerType, WordsRandomizerWordCase } from "./_enums";
-import { stringToLowerCase, stringToTitleCase, stringToToggleCase, stringToUpperCase } from "@/utils/string";
-import { setElementAttributeIfExist } from "@/utils/attributes";
-import { mathRound } from "@/utils/math";
+import type { HEXColor, HSLColor, RGBColor } from "@/types/color"
+import type { Result, Settings } from "./_types"
+import { hex_to_hsl, hex_to_rgb } from "@/utils/color"
+import { RandomizerType, WordsRandomizerWordCase } from "./_enums"
+import { string_length, string_tolowercase, string_totitlecase, string_totogglecase, string_touppercase } from "@/utils/string"
+import { attr_set_if_exist } from "@/utils/attributes"
+import { math_round } from "@/utils/math"
+import { array_join, array_length, array_map, array_some } from "@/utils/array"
 
 import CSS from './_styles.module.scss'
 
 const ColorItem: VoidComponent<{
 	hex: HEXColor
 }> = (props) => {
-	const hsl = createMemo<HSLColor>(() => HEX_to_HSL(props[_hex]))
-	const rgb = createMemo<RGBColor>(() => HEX_to_RGB(props[_hex]))
+	const hex = createMemo(() => props.hex)
+	const hsl = createMemo<HSLColor>(() => hex_to_hsl(hex()))
+	const rgb = createMemo<RGBColor>(() => hex_to_rgb(hex()))
 
-	return (<div style={{"background-color": props[_hex]}}>
+	return (<div style={{"background-color": hex()}}>
 		<code>
-			{props[_hex][_toUpperCase]()}<br/>
+			{string_touppercase(hex())}<br/>
 			{`rgb(${rgb().r}, ${rgb().g}, ${rgb().b})`}<br/>
-			{`hsl(${mathRound(hsl().h * 360)}, ${mathRound(hsl().s * 100)}%, ${mathRound(hsl().l * 100)}%)`}
+			{`hsl(${math_round(hsl().h * 360)}, ${math_round(hsl().s * 100)}%, ${math_round(hsl().l * 100)}%)`}
 		</code>
 	</div>)
 }
 
 const _: VoidComponent<{
 	result: [Result, SetStoreFunction<Result>]
-	randomizerType: RandomizerType
+	randomizer: RandomizerType
 	settings: [Settings, SetStoreFunction<Settings>]
 }> = (props) => {
-	const settings = createMemo(() => props[_settings][0])
-	const result = createMemo(() => props[_result][0])
-	const selection_isSelected = createSelector<string[], string>(
-		() => result()[_selection],
-		(item, items) => items[_some]((a) => a == item)
+	const randomizer = createMemo(() => props.randomizer)
+	const settings = createMemo(() => props.settings[0])
+	const result = createMemo(() => props.result[0])
+	const is_selected = createSelector<string[], string>(
+		() => result().selection,
+		(item, items) => array_some(items, (a) => a == item)
 	)
 
 	return (<div class={ CSS.result }>
 		<Switch>
-			<Match when={props[_randomizerType] == RandomizerType[_string]}>
-				<p class={CSS.result_string}>{result()[_string]}</p>
+			<Match when={randomizer() == RandomizerType.string}>
+				<p class={CSS.result_string}>{result().string}</p>
 			</Match>
-			<Match when={props[_randomizerType] == RandomizerType[_numbers]}>
-				<p class={CSS.result_numbers}>{result()[_numbers]}</p>
+			<Match when={randomizer() == RandomizerType.numbers}>
+				<p class={CSS.result_numbers}>{result().numbers}</p>
 			</Match>
-			<Match when={props[_randomizerType] == RandomizerType[_words]}>
+			<Match when={randomizer() == RandomizerType.words}>
 				<p class={CSS.result_words}>
 					<Show
-						when={result()[_words][_length] > 0}
-						fallback={settings()[_words][_list][_items][_map](text => {
-							if (settings()[_words][_wordCase] == WordsRandomizerWordCase[_lowercase]) {
-								text = stringToLowerCase(text)
+						when={string_length(result().words) > 0}
+						fallback={array_join(array_map(settings().words.list.items, text => {
+							const words = settings().words
+							const wordcase = words.wordcase
+							if (wordcase == WordsRandomizerWordCase.lowercase) {
+								text = string_tolowercase(text)
 							}
-							else if (settings()[_words][_wordCase] == WordsRandomizerWordCase[_uppercase]) {
-								text = stringToUpperCase(text)
+							else if (wordcase == WordsRandomizerWordCase.uppercase) {
+								text = string_touppercase(text)
 							}
-							else if (settings()[_words][_wordCase] == WordsRandomizerWordCase[_togglecase]) {
-								text = stringToToggleCase(text)
+							else if (wordcase == WordsRandomizerWordCase.togglecase) {
+								text = string_totogglecase(text)
 							}
-							else if (settings()[_words][_wordCase] == WordsRandomizerWordCase[_titlecase]) {
-								text = stringToTitleCase(text)
+							else if (wordcase == WordsRandomizerWordCase.titlecase) {
+								text = string_totitlecase(text)
 							}
-							return settings()[_words][_prefix] + text + settings()[_words][_suffix]
-						})[_join](settings()[_words][_separator])}>
-						{result()[_words]}
+							return words.prefix + text + words.suffix
+						}), settings().words.separator)}>
+						{result().words}
 					</Show>
 				</p>
 			</Match>
-			<Match when={props[_randomizerType] == RandomizerType[_colors]}>
+			<Match when={randomizer() == RandomizerType.colors}>
 				<div class={CSS.result_colors}>
-					<For each={result()[_colors]}>{c =>
+					<For each={result().colors}>{c =>
 						<ColorItem hex={c} />
 					}</For>
 				</div>
 			</Match>
-			<Match when={props[_randomizerType] == RandomizerType[_selection]}>
+			<Match when={randomizer() == RandomizerType.selection}>
 				<div class={CSS.result_selection}>
-					<For each={settings()[_selection][_list][_items]}>{item =>
-						<div data-selected={setElementAttributeIfExist(selection_isSelected(item))}>
+					<For each={settings().selection.list.items}>{item =>
+						<div data-selected={attr_set_if_exist(is_selected(item))}>
 							{ item }
 						</div>
 					}</For>
 				</div>
 			</Match>
-			<Match when={props[_randomizerType] == RandomizerType[_teams]}>
-				<Show when={result()[_teams][_length] == 0}>
+			<Match when={randomizer() == RandomizerType.teams}>
+				<Show when={array_length(result().teams) == 0}>
 					<div class={CSS.result_teams_empty}>
 						<h2>Names</h2>
 						<div>
-							<For each={settings()[_teams][_namesList][_items]}>{i =>
+							<For each={settings().teams.list_names.items}>{i =>
 								<div>{i}</div>
 							}</For>
 						</div>
 						<h2>Members</h2>
 						<div>
-							<For each={settings()[_teams][_membersList][_items]}>{i =>
+							<For each={settings().teams.list_members.items}>{i =>
 								<div>{i}</div>
 							}</For>
 						</div>
 					</div>
 				</Show>
 				<div class={CSS.result_teams}>
-					<For each={result()[_teams]}>{t =>
+					<For each={result().teams}>{t =>
 						<div>
-							<h3>{t[_name]}</h3>
+							<h3>{t.name}</h3>
 							<ul>
-								<For each={t[_members]}>{m =>
+								<For each={t.members}>{m =>
 									<li>{m}</li>
 								}</For>
 							</ul>

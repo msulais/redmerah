@@ -1,4 +1,4 @@
-export const defaultCSSText = `:root {
+export const DEFAULT_CSS_TEXT = `:root {
 	--g-color-background-light: 250, 250, 250;
 	--g-color-background-dark: 26, 26, 26;
 	--g-color-surface-light: 255, 255, 255;

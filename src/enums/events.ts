@@ -1,23 +1,23 @@
 export enum BodyEvents {
 	/** @param element `HTMLDivElement` */
-	openPopover = 'on-open-popover',
+	open_popover = 'on-open-popover',
 
 	/** @param element `HTMLDivElement` */
-	closePopover = 'on-close-popover',
+	close_popover = 'on-close-popover',
 
 	/** @param element `HTMLDialogElement` */
-	openModal = 'on-open-modal',
+	open_modal = 'on-open-modal',
 
 	/** @param element `HTMLDialogElement` */
-	closeModal = 'on-close-modal',
+	close_modal = 'on-close-modal',
 
-	openTextTooltip = 'on-open-text-tooltip',
-	closeTextTooltip = 'on-close-text-tooltip',
-	updatePointerTextTooltip = 'on-update-pointer-text-tooltip',
+	open_tooltip = 'on-open-text-tooltip',
+	close_tooltip = 'on-close-text-tooltip',
+	update_pointer_tooltip = 'on-update-pointer-text-tooltip',
 
 	/** @param emoji `Emoji` */
-	addRecentEmoji = 'on-add-recent-emoji',
+	add_recent_emoji = 'on-add-recent-emoji',
 
 	/** @param element `HTMLDialogElement | HTMLDivElement` */
-	getRecentEmoji = 'on-get-recent-emoji',
+	get_recent_emoji = 'on-get-recent-emoji',
 }

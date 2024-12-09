@@ -1,7 +1,6 @@
 import { For, type VoidComponent } from "solid-js";
 
-import { _command, _expand, _icon, _page, _text, _type } from "@/constants/string";
-import { addClassListModule } from "@/utils/element";
+import { add_classlist_module } from "@/utils/element";
 import { Commands, Pages } from "./_enums";
 
 import SideNavigation, { SideNavigationItem } from "@/components/SideNavigation";
@@ -14,13 +13,13 @@ const _: VoidComponent<{
 }> = (props) => {
 	return (<SideNavigation
 		style={{"padding-top": '0'}}
-		classList={addClassListModule(CSS.side_navigation)}
-		expand={true}>
+		classList={add_classlist_module(CSS.side_navigation)}
+		expanded={true}>
 		<For each={PAGES}>{page =>
 			<SideNavigationItem
-				onClick={() => props[_command](Commands.change_page, page[_type])}
-				selected={props[_page] == page[_type]}>
-				{page[_text]}
+				onClick={() => props.command(Commands.change_page, page.type)}
+				selected={props.page == page.type}>
+				{page.text}
 			</SideNavigationItem>
 		}</For>
 	</SideNavigation>)

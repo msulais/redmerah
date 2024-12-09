@@ -1,7 +1,6 @@
-import { Match, Switch as SolidSwitch, type ParentComponent, type VoidComponent } from "solid-js"
+import { createMemo, Match, Switch as SolidSwitch, type ParentComponent, type VoidComponent } from "solid-js"
 
 import { Pages } from "./_enums"
-import { _bottom, _button, _checkBox, _children, _colorPicker, _datePicker, _dateTimePicker, _description, _dialog, _divider, _drawer, _dropdown, _expander, _filled, _tonal, _icon, _left, _list, _menu, _modal, _outlined, _page, _popover, _right, _textField, _title, _toast, _top, _transparent, _tooltip, _emoji, _emojiPicker, _switch } from "@/constants/string"
 
 import CSS from './_styles.module.scss'
 import Button from "./components/_Button"
@@ -31,49 +30,50 @@ export const Page: ParentComponent<{
 	description: string
 }> = (props) => {
 	return (<div class={CSS.body_page}>
-		<h1>{props[_title]}</h1>
-		<p>{props[_description]}</p>
-		{props[_children]}
+		<h1>{props.title}</h1>
+		<p>{props.description}</p>
+		{props.children}
 	</div>)
 }
 
 export const Playground: ParentComponent = (props) => {
 	return (<div class={CSS.body_playground}>
-		{props[_children]}
+		{props.children}
 	</div>)
 }
 
 export const PlaygroundOptions: ParentComponent = (props) => {
 	return (<div class={CSS.body_playground_options}>
-		{props[_children]}
+		{props.children}
 	</div>)
 }
 
 const _: VoidComponent<{
 	page: Pages
 }> = (props) => {
+	const page = createMemo(() => props.page)
 	return (<SolidSwitch>
-		<Match when={props[_page] == Pages[_button        ]}><Button        /></Match>
-		<Match when={props[_page] == Pages[_checkBox      ]}><CheckBox      /></Match>
-		<Match when={props[_page] == Pages[_colorPicker   ]}><ColorPicker   /></Match>
-		<Match when={props[_page] == Pages[_datePicker    ]}><DatePicker    /></Match>
-		<Match when={props[_page] == Pages[_dateTimePicker]}><DateTimePicker/></Match>
-		<Match when={props[_page] == Pages[_dialog        ]}><Dialog        /></Match>
-		<Match when={props[_page] == Pages[_divider       ]}><Divider       /></Match>
-		<Match when={props[_page] == Pages[_drawer        ]}><Drawer        /></Match>
-		<Match when={props[_page] == Pages[_dropdown      ]}><Dropdown      /></Match>
-		<Match when={props[_page] == Pages[_expander      ]}><Expander      /></Match>
-		<Match when={props[_page] == Pages[_icon          ]}><Icon          /></Match>
-		<Match when={props[_page] == Pages[_list          ]}><List          /></Match>
-		<Match when={props[_page] == Pages[_menu          ]}><Menu          /></Match>
-		<Match when={props[_page] == Pages[_modal         ]}><Modal         /></Match>
-		<Match when={props[_page] == Pages[_popover       ]}><Popover       /></Match>
-		<Match when={props[_page] == Pages[_textField     ]}><TextField     /></Match>
-		<Match when={props[_page] == Pages[_toast         ]}><Toast         /></Match>
-		<Match when={props[_page] == Pages[_tooltip       ]}><Tooltip       /></Match>
-		<Match when={props[_page] == Pages[_emoji         ]}><Emoji         /></Match>
-		<Match when={props[_page] == Pages[_emojiPicker   ]}><EmojiPicker   /></Match>
-		<Match when={props[_page] == Pages[_switch        ]}><Switch        /></Match>
+		<Match when={page() == Pages.button        }><Button        /></Match>
+		<Match when={page() == Pages.checkbox      }><CheckBox      /></Match>
+		<Match when={page() == Pages.colorpicker   }><ColorPicker   /></Match>
+		<Match when={page() == Pages.datepicker    }><DatePicker    /></Match>
+		<Match when={page() == Pages.datetimepicker}><DateTimePicker/></Match>
+		<Match when={page() == Pages.dialog        }><Dialog        /></Match>
+		<Match when={page() == Pages.divider       }><Divider       /></Match>
+		<Match when={page() == Pages.drawer        }><Drawer        /></Match>
+		<Match when={page() == Pages.dropdown      }><Dropdown      /></Match>
+		<Match when={page() == Pages.expander      }><Expander      /></Match>
+		<Match when={page() == Pages.icon          }><Icon          /></Match>
+		<Match when={page() == Pages.list          }><List          /></Match>
+		<Match when={page() == Pages.menu          }><Menu          /></Match>
+		<Match when={page() == Pages.modal         }><Modal         /></Match>
+		<Match when={page() == Pages.popover       }><Popover       /></Match>
+		<Match when={page() == Pages.textfield     }><TextField     /></Match>
+		<Match when={page() == Pages.toast         }><Toast         /></Match>
+		<Match when={page() == Pages.tooltip       }><Tooltip       /></Match>
+		<Match when={page() == Pages.emoji         }><Emoji         /></Match>
+		<Match when={page() == Pages.emojipicker   }><EmojiPicker   /></Match>
+		<Match when={page() == Pages.switch        }><Switch        /></Match>
 	</SolidSwitch>)
 }
 

@@ -1,345 +1,165 @@
-import { _parseInt, _parseFloat, _pow, _min, _max, _round, _floor, _abs, _random, _sqrt, _sin, _cos, _tan, _log10, _log, _ceil, _sinh, _asin, _asinh, _acos, _cosh, _acosh, _atan, _tanh, _atanh, _isNaN, _isInteger, _split, _replace, _length, _toString, _match, _repeat, _substring, _test, _indexOf, _isFinite } from "@/constants/string"
-import { isVarHasValue } from "./data"
-import { getMath, getNumber } from "@/constants/math"
-
-export function safeNumber(num: number, fallback: number = 0): number {
-	return (numberIsNaN(num) || !Number.isFinite(num)
-		? fallback
-		: num
-	)
+export function math_clamp(value: number, min: number, max: number): number {
+	return math_max(min, math_min(max, value))
 }
 
-export function numberIsFinite(num: number): boolean {
-	return getNumber[_isFinite](num)
+export function math_pow(x: number, y: number): number {
+	return Math.pow(x, y)
 }
 
-export function numberIsInfinite(num: number): boolean {
-	return !numberIsFinite(num)
+export function math_min(...values: number[]): number {
+	return Math.min(...values)
 }
 
-export function numberParse(num: string, isInt?: boolean, radix?: number): number {
-	return isInt ? getNumber[_parseInt](num, radix) : getNumber[_parseFloat](num)
+export function math_max(...values: number[]): number {
+	return Math.max(...values)
 }
 
-export function mathClamp(value: number, min: number, max: number): number {
-	return mathMax(min, mathMin(max, value))
+export function math_round(x: number): number {
+	return Math.round(x)
 }
 
-export function mathPow(x: number, y: number): number {
-	return getMath[_pow](x, y)
+export function math_floor(x: number): number {
+	return Math.floor(x)
 }
 
-export function mathMin(...values: number[]): number {
-	return getMath[_min](...values)
+export function math_abs(x: number): number {
+	return Math.abs(x)
 }
 
-export function mathMax(...values: number[]): number {
-	return getMath[_max](...values)
+export function math_random(): number {
+	return Math.random()
 }
 
-export function mathRound(x: number): number {
-	return getMath[_round](x)
+export function math_sqrt(x: number): number {
+	return Math.sqrt(x)
 }
 
-export function mathFloor(x: number): number {
-	return getMath[_floor](x)
+export function math_sin(x: number): number {
+	return Math.sin(x)
 }
 
-export function mathAbs(x: number): number {
-	return getMath[_abs](x)
+export function math_cos(x: number): number {
+	return Math.cos(x)
 }
 
-export function mathRandom(): number {
-	return getMath[_random]()
+export function math_tan(x: number): number {
+	return Math.tan(x)
 }
 
-export function mathSqrt(x: number): number {
-	return getMath[_sqrt](x)
+export function math_log(x: number): number {
+	return Math.log10(x)
 }
 
-export function mathSin(x: number): number {
-	return getMath[_sin](x)
+export function math_ln(x: number): number {
+	return Math.log(x)
 }
 
-export function mathCos(x: number): number {
-	return getMath[_cos](x)
-}
-
-export function mathTan(x: number): number {
-	return getMath[_tan](x)
-}
-
-export function mathLog(x: number): number {
-	return getMath[_log10](x)
-}
-
-export function mathLn(x: number): number {
-	return getMath[_log](x)
-}
-
-export function mathNot(x: number): number {
+export function math_not(x: number): number {
 	return ~x
 }
 
-export function mathCeil(x: number): number {
-	return getMath[_ceil](x)
+export function math_ceil(x: number): number {
+	return Math.ceil(x)
 }
 
 // sinh(x) = (e^x - e^(-x)) / 2
-export function mathSinH(x: number): number {
-	return getMath[_sinh](x)
+export function math_sinh(x: number): number {
+	return Math.sinh(x)
 }
 
-export function mathASin(x: number): number {
-	return getMath[_asin](x)
+export function math_asin(x: number): number {
+	return Math.asin(x)
 }
 
 // asinh(x) = ln(x + sqrt(x^2 + 1))
-export function mathASinH(x: number): number {
-	return getMath[_asinh](x)
+export function math_asinh(x: number): number {
+	return Math.asinh(x)
 }
 
 // csc(x) = 1 / sin(x)
-export function mathCsc(x: number): number {
-	return 1 / mathSin(x)
+export function math_csc(x: number): number {
+	return 1 / math_sin(x)
 }
 
 // csch(x) = 1 / sinh(x)
-export function mathCscH(x: number): number {
-	return 1 / mathSinH(x)
+export function math_csch(x: number): number {
+	return 1 / math_sinh(x)
 }
 
 // acsc(x) = asin(1 / x), -1 <= x <= 1, x != 0
-export function mathACsc(x: number): number {
-	return mathASin(1 / x)
+export function math_acsc(x: number): number {
+	return math_asin(1 / x)
 }
 
 // acsch(x) = ln(1 / x + sqrt(1 / x ^ 2 + 1)), x != 0
-export function mathACscH(x: number): number {
-	return mathLn(1 / x + mathSqrt(1 / mathPow(x, 2) + 1))
+export function math_acsch(x: number): number {
+	return math_ln(1 / x + math_sqrt(1 / math_pow(x, 2) + 1))
 }
 
-export function mathACos(x: number): number {
-	return getMath[_acos](x)
+export function math_acos(x: number): number {
+	return Math.acos(x)
 }
 
 // cosh(x) = (e ^ x + e ^ (-x))/2
-export function mathCosH(x: number): number {
-	return getMath[_cosh](x)
+export function math_cosh(x: number): number {
+	return Math.cosh(x)
 }
 
 // acosh(x) = ln(x + sqrt(x ^ 2 - 1)), x >= 1
-export function mathACosH(x: number): number {
-	return getMath[_acosh](x)
+export function math_acosh(x: number): number {
+	return Math.acosh(x)
 }
 
 // sec(x) = 1 / cos(x)
-export function mathSec(x: number): number {
-	return 1 / mathCos(x)
+export function math_sec(x: number): number {
+	return 1 / math_cos(x)
 }
 
 // asec(x) = acos(1 / x), x <= -1, x >= 1
-export function mathASec(x: number): number {
-	return mathACos(1 / x)
+export function math_asec(x: number): number {
+	return math_acos(1 / x)
 }
 
 // sech(x) = 1 / cosh(x)
-export function mathSecH(x: number): number {
-	return 1 / mathCosH(x)
+export function math_sech(x: number): number {
+	return 1 / math_cosh(x)
 }
 
 // asech(x) = ln((1 + sqrt(1 - x^2)) / x), 0 < x < 1
-export function mathASecH(x: number): number {
-	return mathLn((1 + mathSqrt(1 - mathPow(x, 2))) / x)
+export function math_asech(x: number): number {
+	return math_ln((1 + math_sqrt(1 - math_pow(x, 2))) / x)
 }
 
-export function mathATan(x: number): number {
-	return getMath[_atan](x)
+export function math_atan(x: number): number {
+	return Math.atan(x)
 }
 
 // tanh(x) = sinh(x) / cosh(x)
-export function mathTanH(x: number): number {
-	return getMath[_tanh](x)
+export function math_tanh(x: number): number {
+	return Math.tanh(x)
 }
 
 // atanh(x) = ln((1 + x) / (1 - x)) / 2, -1 <= x <= 1
-export function mathATanH(x: number): number {
-	return getMath[_atanh](x)
+export function math_atanh(x: number): number {
+	return Math.atanh(x)
 }
 
 // cot(x) = 1 / tan(x), tan(x) != 0
-export function mathCot(x: number): number {
-	return 1 / mathTan(x)
+export function math_cot(x: number): number {
+	return 1 / math_tan(x)
 }
 
 // acot(x) = atan(1 / x), x != 0
-export function mathACot(x: number): number {
-	return mathATan(1 / x)
+export function math_acot(x: number): number {
+	return math_atan(1 / x)
 }
 
 // coth(x) = cosh(x) / sinh(x), tanh(x) != 0
-export function mathCotH(x: number): number {
-	return mathCosH(x) / mathSinH(x)
+export function math_coth(x: number): number {
+	return math_cosh(x) / math_sinh(x)
 }
 
 // acoth(x) = ln[(x + 1) / (x - 1)] / 2, x > 1, x < -1
-export function mathACotH(x: number): number {
-	return mathLn((x + 1) / (x - 1)) / 2
-}
-
-export function numberIsNaN(x: number, fallback?: number): boolean | number {
-	if (isVarHasValue(fallback)) {
-		if (getNumber[_isNaN](x)) return fallback!
-		return x
-	}
-	return getNumber[_isNaN](x)
-}
-
-export function numberIsInteger(number: unknown): boolean {
-	return getNumber[_isInteger](number)
-}
-
-export function formatNumber(num: number, options: {
-	thousandSeparator?: string
-	decimalSeparator?: string
-} = {}): string {
-	const {
-		thousandSeparator = ',',
-		decimalSeparator = '.'
-	} = options
-	const sign = num < 0 ? '-' : ''
-	const absNumber = mathAbs(num)
-	const parts = numberToRealDigit(absNumber)[_split]('.')
-	const integerPart = parts[0][_replace](/\B(?=(\d{3})+(?!\d))/g, thousandSeparator)
-
-	let decimalPart = ''
-	if (parts[_length] > 1) decimalPart = parts[1]
-
-	return `${sign}${integerPart}${decimalPart[_length] > 0 ? decimalSeparator : ''}${decimalPart}`
-}
-
-/**
- * Convert input with scientific notation to real digit.
- * For example: `2.34e-3` become `0.00234`
- *
- * @param input
- * @returns
- */
-export function numberToRealDigit(input: number): string {
-	const regex = /([+-]?)(\d+)(\.\d+)?[Ee]([+\-])?(\d+)/
-	const str: string = input[_toString]()
-
-	const result = str[_match](regex)
-	if (!result) return str
-
-	const sign = result[1]
-	const num = result[2]
-	const decimal = result[3] ?? '.0'
-	const expSign = result[4]
-	const exponent = numberParse(result[5], true)
-
-	if (expSign == '-') return (sign
-		+ '0.'
-		+ '0'[_repeat](exponent - 1)
-		+ num
-		+ decimal[_substring](1)
-	)
-
-	const leftover = exponent - (decimal[_length] - 1)
-	return (sign
-		+ num
-		+ decimal[_substring](1, exponent + 1)
-		+ (leftover <= 0
-			? '.' + decimal[_substring](exponent + 1)
-			: '0'[_repeat](leftover)
-		)
-	)
-}
-
-export function binaryToFloat(input: string, bit: 32 | 64 = 64): number {
-	if (/^[10]+$/[_test](input)) throw Error('input not valid')
-
-	if (input[_length] > bit) input = input[_substring](0, bit)
-	if (input[_length] < bit) input = ('0'[_repeat](bit - input[_length])) + input
-
-	const sign = input[_substring](0, 1)
-	let exponent = input[_substring](1, bit == 32 ? 9 : 12)
-	let mantissa = input[_substring](bit == 32 ? 9 : 12)
-	let carry = 0
-
-	// convert mantissa from bits to real numbers
-	for (let i = 1; i <= mantissa[_length]; i++) {
-		if (mantissa[_substring](i - 1, i) != '1') continue
-
-		carry = carry + mathPow(2, -i)
-	}
-
-	// mantissa in real numbers (base10)
-	mantissa = carry[_toString]()
-	exponent = numberParse(exponent, true, 2)[_toString]()
-
-	// denormalized
-	if (exponent == '0') return (
-		mathPow(-1, numberParse(sign, true))
-		* mathPow(2, (bit == 32 ? -126 : -1022))
-		* numberParse(mantissa)
-	)
-
-	return (
-		mathPow(-1, numberParse(sign, true))
-		* mathPow(2, numberParse(exponent, true) - (bit == 32 ? 127 : 1023))
-		* (1 + numberParse(mantissa))
-	)
-}
-
-export function floatToBinary(input: number, bit: 32 | 64 = 64): string {
-	const sign = input < 0 ? '1' : '0'
-	let n = input[_toString](2)
-	if (!/\./[_test](n)) return n
-
-	let mantissa = mathAbs(input)[_toString](2)
-	const indexDot = mantissa[_indexOf]('.')
-	const indexOne = mantissa[_indexOf]('1')
-	const substractForExp = (indexDot < indexOne
-		? indexDot - indexOne
-		: indexDot - (indexOne + 1)
-	)
-	let more = false
-	let less = false
-	let exponent: number | string = 0
-	if (indexOne != -1) {
-		exponent = substractForExp + (bit == 32 ? 127 : 1023)
-		if (exponent > (bit == 32 ? 255 : 4095)) {
-			more = true
-			exponent = 255
-		} else if (exponent < 0) {
-			less = true
-			exponent = 0
-		}
-		exponent = exponent[_toString](2)
-	}
-	else exponent = '0'
-
-	// // example: [ exponent="101" ] => [ exponent="00000101"(Float32) exponent="00000000101"(Float64) ]
-	if (exponent[_length] < (bit == 32 ? 8 : 11)) {
-		exponent = ('0'[_repeat]((bit == 32 ? 8 : 11) - exponent[_length])) + exponent
-	}
-
-	if (indexOne == -1) mantissa = mantissa[_substring](indexDot + 1)
-	else {
-		if (indexDot < indexOne) {
-			if (less) mantissa = mantissa[_substring](indexDot + (bit == 32 ? 127 : 1023))
-			else mantissa = mantissa[_substring](indexOne + 1)
-		}
-
-		else if (indexDot > indexOne) {
-			if (more) mantissa = mantissa[_substring](indexDot - (bit == 32 ? 127 : 1023), indexDot + 1);
-			else mantissa = (
-				mantissa[_substring](indexOne + 1, indexDot)
-				+ mantissa[_substring](indexDot + 1)
-			)
-		}
-	}
-
-	return (sign + exponent + mantissa)[_substring](0, bit == 32 ? 32 : 64)
+export function math_acoth(x: number): number {
+	return math_ln((x + 1) / (x - 1)) / 2
 }

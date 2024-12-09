@@ -1,7 +1,6 @@
 import { splitProps, type Component, type JSX } from "solid-js"
 
-import { _class, _vertical } from "@/constants/string"
-import { setElementAttributeIfExist } from "@/utils/attributes"
+import { attr_set_if_exist, classlist } from "@/utils/attributes"
 
 import './index.scss'
 
@@ -9,11 +8,11 @@ type DividerProps = JSX.HTMLAttributes<HTMLDivElement> & {
 	vertical?: boolean
 }
 const Divider: Component<DividerProps> = ($props) => {
-	const [props, other] = splitProps($props, [_class, _vertical])
+	const [props, other] = splitProps($props, ['class', 'vertical'])
 
 	return (<div
-		data-c-vertical={setElementAttributeIfExist(props[_vertical])}
-		class={`c-divider${props[_class] ? ` ${props[_class]}` : ''}`}
+		data-c-vertical={attr_set_if_exist(props.vertical)}
+		class={classlist('c-divider', props.class)}
 		{...other}
 	/>)
 }

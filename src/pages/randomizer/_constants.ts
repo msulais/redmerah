@@ -1,4 +1,3 @@
-import { _string, _words, _numbers, _colors, _selection, _teams } from "@/constants/string";
 import { RandomizerType } from "./_enums";
 
 export const
@@ -9,12 +8,12 @@ export const
 	LOREM_IPSUM = [ 'Lorem', 'Ipsum', 'Dolor', 'Sit', 'Amet', 'Consectetur', 'Adipiscing', 'Elit', 'Sed', 'Do', 'Eiusmod', 'Tempor', 'Incididunt', 'Ut', 'Labore', 'Et', 'Dolore', 'Magna', 'Aliqua', 'Enim', 'Ad', 'Minim', 'Veniam', 'Quis', 'Nostrud', 'Exercitation', 'Ullamco', 'Laboris', 'Nisi', 'Aliquip', 'Ex', 'Ea', 'Commodo', 'Consequat', 'Duis', 'Aute', 'Irure', 'In', 'Reprehenderit', 'Voluptate', 'Velit', 'Esse', 'Cillum', 'Eu', 'Fugiat', 'Nulla', 'Pariatur', 'Excepteur', 'Sint', 'Occaecat', 'Cupidatat', 'Non', 'Proident', 'Sunt', 'Culpa', 'Qui', 'Officia', 'Deserunt', 'Mollit', 'Anim', 'Id', 'Est', 'Laborum' ],
 	SIZE_SIDE_NAVIGATION_NONE = 640,
 	RANDOMIZER_TYPES = [
-		{ icon: 0xF155, type: RandomizerType[_string], text: 'String' },
-		{ icon: 0xE4AE, type: RandomizerType[_words], text: 'Words' },
-		{ icon: 0xEB49, type: RandomizerType[_numbers], text: 'Numbers' },
-		{ icon: 0xE4B6, type: RandomizerType[_colors], text: 'Colors' },
-		{ icon: 0xF098, type: RandomizerType[_selection], text: 'Selection' },
-		{ icon: 0xEBC6, type: RandomizerType[_teams], text: 'Teams' },
+		{ icon: 0xF155, type: RandomizerType.string, text: 'String' },
+		{ icon: 0xE4AE, type: RandomizerType.words, text: 'Words' },
+		{ icon: 0xEB49, type: RandomizerType.numbers, text: 'Numbers' },
+		{ icon: 0xE4B6, type: RandomizerType.colors, text: 'Colors' },
+		{ icon: 0xF098, type: RandomizerType.selection, text: 'Selection' },
+		{ icon: 0xEBC6, type: RandomizerType.teams, text: 'Teams' },
 	],
 	DEFAULT_LISTS = [
 		{ id: 1, name: 'Person'     , items: [...PERSON_NAMES] },

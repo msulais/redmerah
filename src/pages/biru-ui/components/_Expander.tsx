@@ -1,7 +1,6 @@
 import { createSignal, For, Show, type VoidComponent } from "solid-js"
 
-import { _tonal, _filled, _outlined, _transparent, _checked, _currentTarget, _value } from "@/constants/string"
-import { eventStopPropagation } from "@/utils/event"
+import { event_stop_propagation } from "@/utils/event"
 
 import Icon from "@/components/Icon"
 import { IconButton } from "@/components/Button"
@@ -11,25 +10,25 @@ import Expander, { ExpanderHeader, ExpanderVariant } from "@/components/Expander
 import { Page, Playground, PlaygroundOptions } from "../_Body"
 
 const _: VoidComponent = () => {
-	const [title, setTitle] = createSignal<boolean>(true)
-	const [subtitle, setSubtitle] = createSignal<boolean>(false)
-	const [leading, setLeading] = createSignal<boolean>(false)
-	const [trailing, setTrailing] = createSignal<boolean>(false)
-	const [useExpandIcon, setUseExpandIcon] = createSignal<boolean>(true)
-	const [variant, setVariant] = createSignal<ExpanderVariant>(ExpanderVariant[_tonal])
-	const [content, setContent] = createSignal<boolean>(true)
+	const [title, set_title] = createSignal<boolean>(true)
+	const [subtitle, set_subtitle] = createSignal<boolean>(false)
+	const [leading, set_leading] = createSignal<boolean>(false)
+	const [trailing, set_trailing] = createSignal<boolean>(false)
+	const [use_expand_icon, set_use_expand_icon] = createSignal<boolean>(true)
+	const [variant, set_variant] = createSignal<ExpanderVariant>(ExpanderVariant.tonal)
+	const [content, set_content] = createSignal<boolean>(true)
 	return (<Page
 		title="Expander"
 		description="An expander is a UI element that allows users to reveal or collapse hidden content within a list item.">
 		<Playground>
 			<Expander
 				header={<ExpanderHeader
-					useExpandIcon={useExpandIcon()}
+					use_expand_icon={use_expand_icon()}
 					subtitle={<Show when={subtitle()}>Deserunt commodo qui aute veniam tempor ipsum.</Show>}
 					leading={<Show when={leading()}><Icon code={0xE569}/></Show>}
 					trailing={<Show when={trailing()}>
-						<IconButton onClick={ev => eventStopPropagation(ev)} code={0xE6BF}/>
-						<IconButton onClick={ev => eventStopPropagation(ev)} code={0xEBB8}/>
+						<IconButton onClick={ev => event_stop_propagation(ev)} code={0xE6BF}/>
+						<IconButton onClick={ev => event_stop_propagation(ev)} code={0xEBB8}/>
 					</Show>}>
 					<Show when={title()}>Click to expand</Show>
 				</ExpanderHeader>}
@@ -44,42 +43,42 @@ const _: VoidComponent = () => {
 			<Dropdown
 				label="Variant"
 				values={[variant()]}
-				onChangeOptions={(items) => setVariant(items[0][_value] as ExpanderVariant)}>
+				on_change_options={(items) => set_variant(items[0].value as ExpanderVariant)}>
 				<For each={[
-					[ExpanderVariant[_filled], 'Filled'],
-					[ExpanderVariant[_tonal], 'Tonal'],
-					[ExpanderVariant[_outlined], 'Outlined'],
-					[ExpanderVariant[_transparent], 'Transparent'],
+					[ExpanderVariant.filled, 'Filled'],
+					[ExpanderVariant.tonal, 'Tonal'],
+					[ExpanderVariant.outlined, 'Outlined'],
+					[ExpanderVariant.transparent, 'Transparent'],
 				]}>{option => <DropdownOption value={option[0]} text={option[1] as string} />}</For>
 			</Dropdown>
 			<CheckBox
 				checked={title()}
-				onChange={ev => setTitle(ev[_currentTarget][_checked])}>
+				onChange={ev => set_title(ev.currentTarget.checked)}>
 				Title
 			</CheckBox>
 			<CheckBox
 				checked={subtitle()}
-				onChange={ev => setSubtitle(ev[_currentTarget][_checked])}>
+				onChange={ev => set_subtitle(ev.currentTarget.checked)}>
 				Subtitle
 			</CheckBox>
 			<CheckBox
 				checked={leading()}
-				onChange={ev => setLeading(ev[_currentTarget][_checked])}>
+				onChange={ev => set_leading(ev.currentTarget.checked)}>
 				Leading
 			</CheckBox>
 			<CheckBox
 				checked={trailing()}
-				onChange={ev => setTrailing(ev[_currentTarget][_checked])}>
+				onChange={ev => set_trailing(ev.currentTarget.checked)}>
 				Trailing
 			</CheckBox>
 			<CheckBox
-				checked={useExpandIcon()}
-				onChange={ev => setUseExpandIcon(ev[_currentTarget][_checked])}>
+				checked={use_expand_icon()}
+				onChange={ev => set_use_expand_icon(ev.currentTarget.checked)}>
 				Show expand icon
 			</CheckBox>
 			<CheckBox
 				checked={content()}
-				onChange={ev => setContent(ev[_currentTarget][_checked])}>
+				onChange={ev => set_content(ev.currentTarget.checked)}>
 				Content
 			</CheckBox>
 		</PlaygroundOptions>

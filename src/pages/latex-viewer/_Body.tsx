@@ -1,57 +1,60 @@
-import { createEffect, createSignal, Index, Show, type Accessor, type VoidComponent } from "solid-js"
+import { createEffect, createMemo, createSignal, Index, Show, type Accessor, type VoidComponent } from "solid-js"
 import katex from 'katex'
 
 import type { Settings } from "./_types"
-import { _clipboard, _command, _filled, _fontSize, _height, _index, _isOnlyThis, _latex, _length, _mathml, _prefix, _px, _renderToString, _scrollHeight, _settings, _suffix, _text, _textWrap, _then, _tonal, _value, _writeText } from "@/constants/string"
-import { endTimeout, startTimeout } from "@/utils/timeout"
+import { timeout_clear, timeout_set } from "@/utils/timeout"
 import { Commands } from "./_enums"
-import { setElementAttributeIfExist } from "@/utils/attributes"
-import { getNavigator } from "@/constants/window"
+import { attr_set_if_exist } from "@/utils/attributes"
+import { navigator_clipboard_writetext } from "@/utils/navigator"
+import { promise_done } from "@/utils/object"
+import { element_scroll_height } from "@/utils/element"
+import { array_length } from "@/utils/array"
 
-import CSS from './_styles.module.scss'
 import Button, { ButtonVariant, IconButton } from "@/components/Button"
 import Icon from "@/components/Icon"
 import TextTooltip from "@/components/Tooltip"
+import CSS from './_styles.module.scss'
 
 const LatexEditor: VoidComponent<{
 	index: number
-	isOnlyThis: boolean
+	is_only_one: boolean
 	latex: Accessor<string>
 	settings: Settings
 	command: (type: Commands, ...args: unknown[]) => unknown
 }> = props => {
-	const [timeoutCopyId, setTimeoutCopyId] = createSignal<number | null>(null)
-	const [height, setHeight] = createSignal<number>(0)
-	let timeoutUpdateId: number | null = null
+	const [timeout_copy_id, set_timeout_copy_id] = createSignal<number | null>(null)
+	const [height, set_height] = createSignal<number>(0)
+	const settings = createMemo(() => props.settings)
+	let timeout_update_id: number | null = null
 	let textarea_ref: HTMLTextAreaElement
 
-	function saveInput(): void {
-		if (timeoutUpdateId != null) endTimeout(timeoutUpdateId)
-		timeoutUpdateId = startTimeout(() => {
-			const text = textarea_ref[_value]
-			props[_command](Commands.update_latex_input, text, props[_index])
-			timeoutUpdateId = null
+	function save_input(): void {
+		if (timeout_update_id != null) timeout_clear(timeout_update_id)
+		timeout_update_id = timeout_set(() => {
+			const text = textarea_ref.value
+			props.command(Commands.update_latex_input, text, props.index)
+			timeout_update_id = null
 		}, 500)
 	}
 
 	function copy(): void {
-		getNavigator()
-		[_clipboard]
-		[_writeText](props[_settings][_prefix] + props[_latex]() + props[_settings][_suffix])
-		[_then](() => {
-			if (timeoutCopyId() != null) endTimeout(timeoutCopyId()!)
+		promise_done(
+			navigator_clipboard_writetext(settings().prefix + props.latex() + settings().suffix),
+			() => {
+				if (timeout_copy_id() != null) timeout_clear(timeout_copy_id()!)
 
-			setTimeoutCopyId(startTimeout(() => setTimeoutCopyId(null), 3000))
-		})
+				set_timeout_copy_id(timeout_set(() => set_timeout_copy_id(null), 3000))
+			}
+		)
 	}
 
 	createEffect(() => {
-		const latex = props[_latex]()
+		const latex = props.latex()
 
-		textarea_ref[_value] = latex
-		startTimeout(() => {
-			setHeight(0)
-			setHeight(textarea_ref[_scrollHeight])
+		textarea_ref.value = latex
+		timeout_set(() => {
+			set_height(0)
+			set_height(element_scroll_height(textarea_ref))
 		})
 	})
 
@@ -61,42 +64,42 @@ const LatexEditor: VoidComponent<{
 			rows={1}
 			placeholder="Type your LaTeX here ..."
 			onInput={() => {
-				setHeight(0)
-				setHeight(textarea_ref![_scrollHeight])
-				saveInput()
+				set_height(0)
+				set_height(element_scroll_height(textarea_ref!))
+				save_input()
 			}}
-			value={props[_latex]()}
-			data-text-wrap={setElementAttributeIfExist(props[_settings][_textWrap])}
+			value={props.latex()}
+			data-text-wrap={attr_set_if_exist(settings().text_wrap)}
 			style={{
-				"font-size": props[_settings][_fontSize] + _px,
-				"height": height() + _px
+				"font-size": settings().font_size + 'px',
+				"height": height() + 'px'
 			}}
 		/>
-		<div innerHTML={katex[_renderToString](props[_latex](), {
+		<div innerHTML={katex.renderToString(props.latex(), {
 			displayMode: true,
-			output: _mathml,
+			output: 'mathml',
 			errorColor: 'rgb(var(--color-on-error))',
 			throwOnError: false
 		})}/>
 		<div class={CSS.body_new_equation_bottom}>
 			<Button
-				onClick={() => props[_command](Commands.add_equation, props[_index] + 1)}
-				variant={ButtonVariant[_tonal]}>
+				onClick={() => props.command(Commands.add_equation, props.index + 1)}
+				variant={ButtonVariant.tonal}>
 				<Icon code={0xE007}/>New equation
 			</Button>
-			<TextTooltip text={timeoutCopyId() != null? "Copied" : "Copy"}>
+			<TextTooltip text={timeout_copy_id() != null? "Copied" : "Copy"}>
 				<IconButton
 					onClick={copy}
-					code={timeoutCopyId() != null? 0xE3D8 : 0xE51B}
-					variant={ButtonVariant[_tonal]}
+					code={timeout_copy_id() != null? 0xE3D8 : 0xE51B}
+					variant={ButtonVariant.tonal}
 				/>
 			</TextTooltip>
-			<Show when={!props[_isOnlyThis]}>
+			<Show when={!props.is_only_one}>
 				<TextTooltip text="Delete">
 					<IconButton
 						code={0xE59D}
-						variant={ButtonVariant[_tonal]}
-						onClick={() => props[_command](Commands.delete_equation, props[_index])}
+						variant={ButtonVariant.tonal}
+						onClick={() => props.command(Commands.delete_equation, props.index)}
 					/>
 				</TextTooltip>
 			</Show>
@@ -112,17 +115,17 @@ const _: VoidComponent<{
 	return (<main class={CSS.body}>
 		<div class={CSS.body_new_equation_top}>
 			<Button
-				onClick={() => props[_command](Commands.add_equation, 0)}
-				variant={ButtonVariant[_filled]}>
+				onClick={() => props.command(Commands.add_equation, 0)}
+				variant={ButtonVariant.filled}>
 				<Icon code={0xE007}/>New equation
 			</Button>
 		</div>
-		<Index each={props[_latex]}>{(latex, i) => <LatexEditor
-			command={props[_command]}
+		<Index each={props.latex}>{(latex, i) => <LatexEditor
+			command={props.command}
 			latex={latex}
 			index={i}
-			isOnlyThis={props[_latex][_length] == 1}
-			settings={props[_settings]}
+			is_only_one={array_length(props.latex) == 1}
+			settings={props.settings}
 		/>}</Index>
 	</main>)
 }

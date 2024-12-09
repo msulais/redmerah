@@ -1,6 +1,7 @@
-import { _flyoutListener, _flyout, _open, _noPointerEvent, _clientX, _touches, _clientY, _focus, _x, _left, _right, _y, _top, _bottom, _modal, _popover, _activeElement, _flyoutOpen, _scrollY, _documentElement, _scrollTop, _scrollTo, _anchorId, _position, _observe, _click, _scroll, _resize, _join, _instant, _manual, _body, _centerBottom, _centerBottomToLeft, _centerBottomToRight, _centerCenter, _centerCenterBottom, _centerCenterLeft, _centerCenterLeftBottom, _centerCenterLeftTop, _centerCenterRight, _centerCenterRightBottom, _centerCenterRightTop, _centerCenterTop, _centerTop, _centerTopToLeft, _centerTopToRight, _clientWidth, _element, _height, _includes, _innerHeight, _leftBottom, _leftCenter, _leftCenterToBottom, _leftCenterToTop, _leftTop, _rightBottom, _rightCenter, _rightCenterToBottom, _rightCenterToTop, _rightTop, _screen, _width } from "@/constants/string"
-import { getDocument, getWindow } from "@/constants/window"
 import { FlyoutPosition } from "@/enums/position"
+import { element_client_width } from "./element";
+import { array_includes } from "./array";
+import { rect_height, rect_left, rect_top, rect_width } from "./rect";
 
 type GetFlyoutPositionParams = {
 	flyout: { width: number; height: number } | DOMRect
@@ -18,10 +19,10 @@ type FlyoutPositionResult = {
 	right: number
 }
 
-export function getFlyoutPosition({
+export function get_flyout_position({
 	flyout,
 	anchor,
-	position = FlyoutPosition[_centerBottom],
+	position = FlyoutPosition.center_bottom,
 	gap = 8,
 	padding = 0,
 	pointer
@@ -34,188 +35,213 @@ export function getFlyoutPosition({
 	}
 
 	const FLYOUT_MARGIN = 8
-	const screenWidth = getDocument()[_body][_clientWidth]
-	const screenHeight = getWindow()[_innerHeight]
-	const rectElement = pointer
+	const screen_width = element_client_width(document.body)
+	const screen_height = window.innerHeight
+	const element_rect = (pointer
 		? {
-			left: pointer[_x],
-			right: pointer[_x],
-			top: pointer[_y],
-			bottom: pointer[_y],
+			left: pointer.x,
+			right: pointer.x,
+			top: pointer.y,
+			bottom: pointer.y,
 			height: 0,
 			width: 0,
-		} : anchor!
-	const rectFlyout = flyout
-	const middlePositionScreenTop = screenHeight / 2
-	const middlePositionScreenLeft = screenWidth / 2
-	const middlePositionElementTop = rectElement[_top] + (rectElement[_height]  / 2)
-	const middlePositionElementLeft = rectElement[_left] + (rectElement[_width]  / 2)
-	const maxWidth = screenWidth - FLYOUT_MARGIN * 2
-	const maxHeight = screenHeight - FLYOUT_MARGIN * 2
-	const edgePositionTop = FLYOUT_MARGIN
-	const edgePositionLeft = FLYOUT_MARGIN
-	const edgePositionBottom = screenHeight - FLYOUT_MARGIN
-	const edgePositionRight = screenWidth - FLYOUT_MARGIN
+		} : anchor!) as DOMRect
+	const flyout_rect = flyout
+	const mid_offset_screen_top = screen_height / 2
+	const mid_offset_screen_left = screen_width / 2
+	const mid_offset_element_top = rect_top(element_rect) + (rect_height(element_rect) / 2)
+	const mid_offset_element_left = rect_left(element_rect) + (rect_width(element_rect)  / 2)
+	const max_width = screen_width - FLYOUT_MARGIN * 2
+	const max_height = screen_height - FLYOUT_MARGIN * 2
+	const edge_offset_top = FLYOUT_MARGIN
+	const edge_position_left = FLYOUT_MARGIN
+	const edge_position_bottom = screen_height - FLYOUT_MARGIN
+	const edge_position_right = screen_width - FLYOUT_MARGIN
+	const LEFT_TOP = FlyoutPosition.left_top
+	const LEFT_CENTER_TO_BOTTOM = FlyoutPosition.left_center_to_bottom
+	const LEFT_CENTER = FlyoutPosition.left_center
+	const LEFT_CENTER_TO_TOP = FlyoutPosition.left_center_to_top
+	const LEFT_BOTTOM = FlyoutPosition.left_bottom
+	const CENTER_TOP_TO_RIGHT = FlyoutPosition.center_top_to_right
+	const CENTER_CENTER_LEFT_TOP = FlyoutPosition.center_center_left_top
+	const CENTER_CENTER_LEFT = FlyoutPosition.center_center_left
+	const CENTER_CENTER_LEFT_BOTTOM = FlyoutPosition.center_center_left_bottom
+	const CENTER_BOTTOM_TO_RIGHT = FlyoutPosition.center_bottom_to_right
+	const CENTER_TOP = FlyoutPosition.center_top
+	const CENTER_CENTER_TOP = FlyoutPosition.center_center_top
+	const CENTER_CENTER = FlyoutPosition.center_center
+	const CENTER_CENTER_BOTTOM = FlyoutPosition.center_center_bottom
+	const CENTER_BOTTOM = FlyoutPosition.center_bottom
+	const CENTER_TOP_TO_LEFT = FlyoutPosition.center_top_to_left
+	const CENTER_CENTER_RIGHT_TOP = FlyoutPosition.center_center_right_top
+	const CENTER_CENTER_RIGHT = FlyoutPosition.center_center_right
+	const CENTER_CENTER_RIGHT_BOTTOM = FlyoutPosition.center_center_right_bottom
+	const CENTER_BOTTOM_TO_LEFT = FlyoutPosition.center_bottom_to_left
+	const RIGHT_TOP = FlyoutPosition.right_top
+	const RIGHT_CENTER_TO_BOTTOM = FlyoutPosition.right_center_to_bottom
+	const RIGHT_CENTER = FlyoutPosition.right_center
+	const RIGHT_CENTER_TO_TOP = FlyoutPosition.right_center_to_top
+	const RIGHT_BOTTOM = FlyoutPosition.right_bottom
 	let top: number = 0
 	let left: number = 0
-	const right: () => number = () => left + rectFlyout[_width]
-	const bottom: () => number = () => top + rectFlyout[_height]
+	const right: () => number = () => left + rect_width(flyout_rect as DOMRect)
+	const bottom: () => number = () => top + rect_height(flyout_rect as DOMRect)
 
-	rectFlyout[_width] = rectFlyout[_width] > maxWidth
-		? maxWidth
-		: rectFlyout[_width]
-	rectFlyout[_height] = rectFlyout[_height] > maxHeight
-		? maxHeight
-		: rectFlyout[_height]
+	flyout_rect.width = rect_width(flyout_rect as DOMRect) > max_width
+		? max_width
+		: rect_width(flyout_rect as DOMRect)
+	flyout_rect.height = rect_height(flyout_rect as DOMRect) > max_height
+		? max_height
+		: rect_height(flyout_rect as DOMRect)
 
 	// find x position
-	if ([
-		FlyoutPosition[_leftTop],
-		FlyoutPosition[_leftCenterToBottom],
-		FlyoutPosition[_leftCenter],
-		FlyoutPosition[_leftCenterToTop],
-		FlyoutPosition[_leftBottom],
-	][_includes](position)) {
-		left = rectElement[_left] - rectFlyout[_width] - gap
-		if (left < edgePositionLeft) {
-			if (middlePositionElementLeft < middlePositionScreenLeft) left = rectElement[_right] + gap
-			else left = edgePositionLeft
+	if (array_includes([
+		LEFT_TOP,
+		LEFT_CENTER_TO_BOTTOM,
+		LEFT_CENTER,
+		LEFT_CENTER_TO_TOP,
+		LEFT_BOTTOM,
+	], position)) {
+		left = element_rect.left - flyout_rect.width - gap
+		if (left < edge_position_left) {
+			if (mid_offset_element_left < mid_offset_screen_left) left = element_rect.right + gap
+			else left = edge_position_left
 		}
 	}
 
-	else if ([
-		FlyoutPosition[_centerTopToRight],
-		FlyoutPosition[_centerCenterLeftTop],
-		FlyoutPosition[_centerCenterLeft],
-		FlyoutPosition[_centerCenterLeftBottom],
-		FlyoutPosition[_centerBottomToRight]
-	][_includes](position)) {
-		left = rectElement[_left] - padding
+	else if (array_includes([
+		CENTER_TOP_TO_RIGHT,
+		CENTER_CENTER_LEFT_TOP,
+		CENTER_CENTER_LEFT,
+		CENTER_CENTER_LEFT_BOTTOM,
+		CENTER_BOTTOM_TO_RIGHT
+	], position)) {
+		left = element_rect.left - padding
 
-		if (right() > edgePositionRight) {
-			if (middlePositionElementLeft > middlePositionScreenLeft) left = rectElement[_right] - rectFlyout[_width] + padding
-			else left = edgePositionRight - rectFlyout[_width]
+		if (right() > edge_position_right) {
+			if (mid_offset_element_left > mid_offset_screen_left) left = element_rect.right - flyout_rect.width + padding
+			else left = edge_position_right - flyout_rect.width
 		}
 	}
 
-	else if ([
-		FlyoutPosition[_centerTop],
-		FlyoutPosition[_centerCenterTop],
-		FlyoutPosition[_centerCenter],
-		FlyoutPosition[_centerCenterBottom],
-		FlyoutPosition[_centerBottom]
-	][_includes](position)) {
-		left = rectElement[_left] + (rectElement[_width] / 2) - (rectFlyout[_width] / 2)
+	else if (array_includes([
+		CENTER_TOP,
+		CENTER_CENTER_TOP,
+		CENTER_CENTER,
+		CENTER_CENTER_BOTTOM,
+		CENTER_BOTTOM
+	], position)) {
+		left = element_rect.left + (element_rect.width / 2) - (flyout_rect.width / 2)
 	}
 
-	else if ([
-		FlyoutPosition[_centerTopToLeft],
-		FlyoutPosition[_centerCenterRightTop],
-		FlyoutPosition[_centerCenterRight],
-		FlyoutPosition[_centerCenterRightBottom],
-		FlyoutPosition[_centerBottomToLeft]
-	][_includes](position)) {
-		left = rectElement[_right] - rectFlyout[_width] + padding
+	else if (array_includes([
+		CENTER_TOP_TO_LEFT,
+		CENTER_CENTER_RIGHT_TOP,
+		CENTER_CENTER_RIGHT,
+		CENTER_CENTER_RIGHT_BOTTOM,
+		CENTER_BOTTOM_TO_LEFT
+	], position)) {
+		left = element_rect.right - flyout_rect.width + padding
 
-		if (left < edgePositionLeft) {
-			if (middlePositionElementLeft < middlePositionScreenLeft) left = rectElement[_left] - padding
-			else left = edgePositionLeft
+		if (left < edge_position_left) {
+			if (mid_offset_element_left < mid_offset_screen_left) left = element_rect.left - padding
+			else left = edge_position_left
 		}
 	}
 
-	else if ([
-		FlyoutPosition[_rightTop],
-		FlyoutPosition[_rightCenterToBottom],
-		FlyoutPosition[_rightCenter],
-		FlyoutPosition[_rightCenterToTop],
-		FlyoutPosition[_rightBottom]
-	][_includes](position)) {
-		left = rectElement[_right] + gap
-		if (right() > edgePositionRight) {
-			if (middlePositionElementLeft > middlePositionScreenLeft) left = rectElement[_left] - rectFlyout[_width] - gap
-			else left = edgePositionRight - rectFlyout[_width]
+	else if (array_includes([
+		RIGHT_TOP,
+		RIGHT_CENTER_TO_BOTTOM,
+		RIGHT_CENTER,
+		RIGHT_CENTER_TO_TOP,
+		RIGHT_BOTTOM
+	], position)) {
+		left = element_rect.right + gap
+		if (right() > edge_position_right) {
+			if (mid_offset_element_left > mid_offset_screen_left) left = element_rect.left - flyout_rect.width - gap
+			else left = edge_position_right - flyout_rect.width
 		}
 	}
 
 	// find y position
-	if ([
-		FlyoutPosition[_leftTop],
-		FlyoutPosition[_centerTopToRight],
-		FlyoutPosition[_centerTop],
-		FlyoutPosition[_centerTopToLeft],
-		FlyoutPosition[_rightTop]
-	][_includes](position)) {
-		top = rectElement[_top] - rectFlyout[_height] - gap
-		if (top < edgePositionTop) {
-			if (middlePositionElementTop < middlePositionScreenTop) top = rectElement[_bottom] + gap
-			else top = edgePositionTop
+	if (array_includes([
+		LEFT_TOP,
+		CENTER_TOP_TO_RIGHT,
+		CENTER_TOP,
+		CENTER_TOP_TO_LEFT,
+		RIGHT_TOP
+	], position)) {
+		top = element_rect.top - flyout_rect.height - gap
+		if (top < edge_offset_top) {
+			if (mid_offset_element_top < mid_offset_screen_top) top = element_rect.bottom + gap
+			else top = edge_offset_top
 		}
 	}
 
-	else if ([
-		FlyoutPosition[_leftCenterToBottom],
-		FlyoutPosition[_centerCenterLeftTop],
-		FlyoutPosition[_centerCenterTop],
-		FlyoutPosition[_centerCenterRightTop],
-		FlyoutPosition[_rightCenterToBottom]
-	][_includes](position)) {
-		top = rectElement[_top] - padding
+	else if (array_includes([
+		LEFT_CENTER_TO_BOTTOM,
+		CENTER_CENTER_LEFT_TOP,
+		CENTER_CENTER_TOP,
+		CENTER_CENTER_RIGHT_TOP,
+		RIGHT_CENTER_TO_BOTTOM
+	], position)) {
+		top = element_rect.top - padding
 
-		if (bottom() > edgePositionBottom) {
-			if (middlePositionElementTop > middlePositionScreenTop) top = rectElement[_bottom] - rectFlyout[_height] + padding
-			else top = edgePositionBottom - rectFlyout[_height]
+		if (bottom() > edge_position_bottom) {
+			if (mid_offset_element_top > mid_offset_screen_top) top = element_rect.bottom - flyout_rect.height + padding
+			else top = edge_position_bottom - flyout_rect.height
 		}
 	}
 
-	else if ([
-		FlyoutPosition[_leftCenter],
-		FlyoutPosition[_centerCenterLeft],
-		FlyoutPosition[_centerCenter],
-		FlyoutPosition[_centerCenterRight],
-		FlyoutPosition[_rightCenter]
-	][_includes](position)) {
-		top = rectElement[_top] + (rectElement[_height] / 2) - (rectFlyout[_height] / 2)
+	else if (array_includes([
+		LEFT_CENTER,
+		CENTER_CENTER_LEFT,
+		CENTER_CENTER,
+		CENTER_CENTER_RIGHT,
+		RIGHT_CENTER
+	], position)) {
+		top = element_rect.top + (element_rect.height / 2) - (flyout_rect.height / 2)
 	}
 
-	else if ([
-		FlyoutPosition[_leftCenterToTop],
-		FlyoutPosition[_centerCenterLeftBottom],
-		FlyoutPosition[_centerCenterBottom],
-		FlyoutPosition[_centerCenterRightBottom],
-		FlyoutPosition[_rightCenterToTop]
-	][_includes](position)) {
-		top = rectElement[_bottom] - rectFlyout[_height] + padding
+	else if (array_includes([
+		LEFT_CENTER_TO_TOP,
+		CENTER_CENTER_LEFT_BOTTOM,
+		CENTER_CENTER_BOTTOM,
+		CENTER_CENTER_RIGHT_BOTTOM,
+		RIGHT_CENTER_TO_TOP
+	], position)) {
+		top = element_rect.bottom - flyout_rect.height + padding
 
-		if (top < edgePositionTop) {
-			if (middlePositionElementTop < middlePositionScreenTop) top = rectElement[_top] - padding
-			else top = edgePositionTop
+		if (top < edge_offset_top) {
+			if (mid_offset_element_top < mid_offset_screen_top) top = element_rect.top - padding
+			else top = edge_offset_top
 		}
 	}
 
-	else if ([
-		FlyoutPosition[_leftBottom],
-		FlyoutPosition[_centerBottomToRight],
-		FlyoutPosition[_centerBottom],
-		FlyoutPosition[_centerBottomToLeft],
-		FlyoutPosition[_rightBottom]
-	][_includes](position)) {
-		top = rectElement[_bottom] + gap
-		if (bottom() > edgePositionBottom) {
-			if (middlePositionElementTop > middlePositionScreenTop) top = rectElement[_top] - rectFlyout[_height] - gap
-			else top = edgePositionBottom - rectFlyout[_height]
+	else if (array_includes([
+		LEFT_BOTTOM,
+		CENTER_BOTTOM_TO_RIGHT,
+		CENTER_BOTTOM,
+		CENTER_BOTTOM_TO_LEFT,
+		RIGHT_BOTTOM
+	], position)) {
+		top = element_rect.bottom + gap
+		if (bottom() > edge_position_bottom) {
+			if (mid_offset_element_top > mid_offset_screen_top) top = element_rect.top - flyout_rect.height - gap
+			else top = edge_position_bottom - flyout_rect.height
 		}
 	}
 
 	// final fallback
-	if (top < edgePositionTop) top = edgePositionTop
-	if (bottom() > edgePositionBottom) top = edgePositionBottom - rectFlyout[_height]
-	if (left < edgePositionLeft) left = edgePositionLeft
-	if (right() > edgePositionRight) left = edgePositionRight - rectFlyout[_width]
+	if (top < edge_offset_top) top = edge_offset_top
+	if (bottom() > edge_position_bottom) top = edge_position_bottom - flyout_rect.height
+	if (left < edge_position_left) left = edge_position_left
+	if (right() > edge_position_right) left = edge_position_right - flyout_rect.width
 
 	return {
 		top,
 		left,
-		right: screenWidth - right(),
-		bottom: screenHeight - bottom()
+		right: screen_width - right(),
+		bottom: screen_height - bottom()
 	}
 }

@@ -1,6 +1,5 @@
 import { children, Show, splitProps, type JSX, type ParentComponent } from "solid-js"
-
-import { _appBar, _bottomBar, _children, _class, _floatingActionButton, _leftSideBar, _rightSideBar } from "@/constants/string"
+import { classlist } from "@/utils/attributes"
 
 import '@/styles/variables.scss'
 import '@/styles/animations.scss'
@@ -8,41 +7,42 @@ import '@/styles/index.scss'
 import './index.scss'
 
 type AppProps = JSX.HTMLAttributes<HTMLDivElement> & {
-	appBar?: JSX.Element
-	bottomBar?: JSX.Element
-	leftSideBar?: JSX.Element
-	rightSideBar?: JSX.Element
-	floatingActionButton?: JSX.Element
+	appbar?: JSX.Element
+	bottombar?: JSX.Element
+	left_sidebar?: JSX.Element
+	right_sidebar?: JSX.Element
+	floating_action_button?: JSX.Element
 }
 
 const App: ParentComponent<AppProps> = ($props) => {
 	const [props, other] = splitProps($props, [
-		_appBar, _leftSideBar, _children, _rightSideBar,
-		_bottomBar, _floatingActionButton, _class
+		'appbar', 'left_sidebar', 'children', 'right_sidebar',
+		'bottombar', 'floating_action_button', 'class'
 	])
-	const appBar = children(() => props[_appBar])
-	const leftSideBar = children(() => props[_leftSideBar])
-	const rightSideBar = children(() => props[_rightSideBar])
-	const bottomBar = children(() => props[_bottomBar])
-	const floatingActionButton = children(() => props[_floatingActionButton])
-	return (<div class={`c-app${props[_class]? ` ${props[_class]}` : ''}`} {...other}>
-		<Show when={appBar()}>
-			<div class="c-app-appbar">{appBar()}</div>
+	const appbar = children(() => props.appbar)
+	const left_sidebar = children(() => props.left_sidebar)
+	const right_sidebar = children(() => props.right_sidebar)
+	const bottombar = children(() => props.bottombar)
+	const floating_action_button = children(() => props.floating_action_button)
+
+	return (<div class={classlist('c-app', props.class ?? '')} {...other}>
+		<Show when={appbar()}>
+			<div class="c-app-appbar">{appbar()}</div>
 		</Show>
 		<div class="c-app-container">
-			<Show when={leftSideBar()}>
-				<div class="c-app-left-sidebar">{leftSideBar()}</div>
+			<Show when={left_sidebar()}>
+				<div class="c-app-left-sidebar">{left_sidebar()}</div>
 			</Show>
-			<div class="c-app-body">{props[_children]}</div>
-			<Show when={rightSideBar()}>
-				<div class="c-app-right-sidebar">{rightSideBar()}</div>
+			<div class="c-app-body">{props.children}</div>
+			<Show when={right_sidebar()}>
+				<div class="c-app-right-sidebar">{right_sidebar()}</div>
 			</Show>
 		</div>
-		<Show when={bottomBar()}>
-			<div class="c-app-bottombar">{bottomBar()}</div>
+		<Show when={bottombar()}>
+			<div class="c-app-bottombar">{bottombar()}</div>
 		</Show>
-		<Show when={floatingActionButton()}>
-			<div class="c-app-fab">{floatingActionButton()}</div>
+		<Show when={floating_action_button()}>
+			<div class="c-app-fab">{floating_action_button()}</div>
 		</Show>
 	</div>)
 }

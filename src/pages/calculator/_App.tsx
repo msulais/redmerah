@@ -2,21 +2,22 @@ import { createMemo, createSignal, onMount, type VoidComponent } from "solid-js"
 import { createStore } from "solid-js/store"
 
 import type { CalculatorInput, CalculatorOutput, DateCalculatorInput, Settings } from "./_types"
-import { _calculator, _basic, _point, _comma, _length, _RAD, _decimal, _difference, _scientific, _converter, _programmer, _date, _writeObjectStore, _miscellaneous, _put, _settings, _lastInput, _numberFormat, _grouping, _push, _scientificNotation, _memoryButtons, _from, _toISOString, _to, _year, _month, _day, _angle, _DEG, _GRAD, _type, _area, _volume, _temperature, _time, _weight, _frequency, _pressure, _JSON, _equals, _inputUnit, _outputUnit, _numberType, _test, _toString, _toUpperCase, _hexadecimal, _octal, _binary, _replace, _operation, _repeat, _replaceAll, _raw, _warn, _PI, _value, _add, _subtract, _not, _abs, _log, _ln, _ceil, _floor, _round, _sqrt, _sin, _cos, _tan, _csc, _sec, _cot, _sinh, _cosh, _tanh, _csch, _sech, _coth, _asin, _acos, _atan, _acsc, _asec, _acot, _asinh, _acosh, _atanh, _acsch, _asech, _acoth, _match, _pow, _lastOutput, _readObjectStore, _get, _then, _parseJSON, _parse, _open, _createObjectStore, _key, _remove, _splash, _animate, _finished, _spring } from "@/constants/string"
 import { CalculatorType, Commands, DateOperation, DecimalNumberFormat, GroupingNumberFormat, NumberType, ScientificAngleType } from "./_enums"
-import { IDB } from "@/utils/indexeddb"
+import { IDB, idb_store_put } from "@/utils/indexeddb"
 import { DatabaseNames } from "@/enums/storage"
 import { ObjectStoreKeys, type ObjectStoreLastInput, type ObjectStoreLastOutput, type ObjectStoreMiscellaneous, ObjectStoreNames, type ObjectStoreSettings } from "./_storage"
-import { dateDifferenceInDays, getCurrentDate, getDate_D, getDate_M, getDate_Y, getDateString_YMD } from "@/utils/datetime"
-import { endTimeout, startTimeout } from "@/utils/timeout"
-import { stringCount, stringReverse } from "@/utils/string"
+import { date_diff_in_days, get_current_date, date_date, date_month, date_year, date_text_YMD, date_iso, date_parse } from "@/utils/datetime"
+import { timeout_clear, timeout_set } from "@/utils/timeout"
+import { string_count, string_match, string_repeat, string_replace, string_replaceall, string_reverse, string_touppercase } from "@/utils/string"
 import { KEY_DIVISION, KEY_MULTIPLY } from "./_constants"
-import { floatToBinary, formatNumber, mathAbs, mathACos, mathACosH, mathACot, mathACotH, mathACsc, mathACscH, mathASec, mathASecH, mathASin, mathASinH, mathATan, mathATanH, mathCeil, mathCos, mathCosH, mathCot, mathCotH, mathCsc, mathCscH, mathFloor, mathLn, mathLog, mathNot, mathRound, mathSec, mathSecH, mathSin, mathSinH, mathSqrt, mathTan, mathTanH, numberParse, numberToRealDigit } from "@/utils/math"
-import { getMath, mathE, mathPI } from "@/constants/math"
-import { getConsole } from "@/constants/window"
+import { math_abs, math_acos, math_acosh, math_acot, math_acoth, math_acsc, math_acsch, math_asec, math_asech, math_asin, math_asinh, math_atan, math_atanh, math_ceil, math_cos, math_cosh, math_cot, math_coth, math_csc, math_csch, math_floor, math_ln, math_log, math_not, math_pow, math_round, math_sec, math_sech, math_sin, math_sinh, math_sqrt, math_tan, math_tanh } from "@/utils/math"
 import { ConverterType, ConverterUnit, UNIT_ANGLE, UNIT_ANGLE_DEGREE, UNIT_ANGLE_GRADIAN, UNIT_ANGLE_RADIAN, UNIT_AREA, UNIT_FREQUENCY, UNIT_LENGTH, UNIT_LENGTH_KILOMETER, UNIT_LENGTH_METER, UNIT_PRESSURE, UNIT_TEMPERATURE, UNIT_TEMPERATURE_CELCIUS, UNIT_TEMPERATURE_DELISLE, UNIT_TEMPERATURE_FAHRENHEIT, UNIT_TEMPERATURE_KELVIN, UNIT_TEMPERATURE_RANKINE, UNIT_TEMPERATURE_REAMUR, UNIT_TEMPERATURE_ROMER, UNIT_TIME, UNIT_VOLUME, UNIT_WEIGHT, type ConverterUnitType } from "./_converter"
 import { FUNCTION_REGEX, NUMBER_REGEX } from "./_regex"
-import { removeSplashScreen } from "@/scripts/splash"
+import { remove_splash_screen } from "@/scripts/splash"
+import { array_push } from "@/utils/array"
+import { regex_test } from "@/utils/regex"
+import { number_format, number_parse, number_to_binary, number_to_real_digit, number_to_string } from "@/utils/number"
+import { promise_done } from "@/utils/object"
 
 import App from "@/components/App"
 import AppBar from "./_AppBar"
@@ -25,343 +26,327 @@ import Notebook from './_Notebook'
 import InputOutput from './_InputOutput'
 
 const _: VoidComponent = () => {
-	const db = new IDB(DatabaseNames[_calculator])
-	const [isSideNavigationExpanded, setIsSideNavigationExpanded] = createSignal<boolean>(true)
-	const [isNotebookExpanded, setIsNotebookExpanded] = createSignal<boolean>(false)
-	const [calculator, setCalculatorType] = createSignal<CalculatorType>(CalculatorType[_basic])
-	const [note, setNote] = createSignal<string>('')
-	const [memory, setMemory] = createSignal<number>(0)
-	const [settings, setSettings] = createStore<Settings>({
-		numberFormat: {
-			decimal: DecimalNumberFormat[_point],
-			grouping: GroupingNumberFormat[_comma]
+	const db = new IDB(DatabaseNames.calculator)
+	const [is_sidenavigation_expanded, set_is_sidenavigation_expanded] = createSignal<boolean>(true)
+	const [is_notebook_expanded, set_is_notebook_expanded] = createSignal<boolean>(false)
+	const [calculator, set_calculator] = createSignal<CalculatorType>(CalculatorType.basic)
+	const [note, set_note] = createSignal<string>('')
+	const [memory, set_memory] = createSignal<number>(0)
+	const [settings, set_settings] = createStore<Settings>({
+		number_format: {
+			decimal: DecimalNumberFormat.point,
+			grouping: GroupingNumberFormat.comma
 		},
 		converter: {
-			type: ConverterType[_length],
-			inputUnit: UNIT_LENGTH_METER,
-			outputUnit: UNIT_LENGTH_KILOMETER
+			type: ConverterType.length,
+			unit_input: UNIT_LENGTH_METER,
+			unit_output: UNIT_LENGTH_KILOMETER
 		},
 		scientific: {
-			angle: ScientificAngleType[_RAD]
+			angle: ScientificAngleType.RAD
 		},
 		programmer: {
-			numberType: NumberType[_decimal]
+			number_type: NumberType.decimal
 		},
 		date: {
-			operation: DateOperation[_difference]
+			operation: DateOperation.difference
 		},
-		scientificNotation: false,
-		memoryButtons: true
+		scientific_notation: false,
+		memory_buttons: true
 	})
-	const [inputs, setInputs] = createStore<CalculatorInput>({
+	const [inputs, set_inputs] = createStore<CalculatorInput>({
 		basic: '',
 		converter: '',
 		scientific: '',
 		programmer: '',
 		date: {
-			from: getCurrentDate(),
-			to: getCurrentDate(),
+			from: get_current_date(),
+			to: get_current_date(),
 			year: 0,
 			day: 0,
 			month: 0
 		}
 	})
-	const [outputs, setOutputs] = createStore<CalculatorOutput>({
+	const [outputs, set_outputs] = createStore<CalculatorOutput>({
 		basic: null,
 		converter: null,
 		scientific: null,
 		programmer: null,
 		date: null
 	})
-	const getOutput = createMemo<number | string | null>(() => {
-		if (calculator() == CalculatorType[_basic]) return outputs[_basic]
-		if (calculator() == CalculatorType[_scientific]) return outputs[_scientific]
-		if (calculator() == CalculatorType[_converter]) return outputs[_converter]
-		if (calculator() == CalculatorType[_programmer]) return outputs[_programmer]
-		if (calculator() == CalculatorType[_date]) return outputs[_date]
-		return null
+	const get_output = createMemo<number | string | null>(() => {
+		switch (calculator()) {
+			case CalculatorType.basic: return outputs.basic
+			case CalculatorType.scientific: return outputs.scientific
+			case CalculatorType.converter: return outputs.converter
+			case CalculatorType.programmer: return outputs.programmer
+			case CalculatorType.date: return outputs.date
+		}
 	})
-	const getInput = createMemo<string | {from: Date;to: Date}>(() => {
-		if (calculator() == CalculatorType[_basic]) return inputs[_basic]
-		if (calculator() == CalculatorType[_scientific]) return inputs[_scientific]
-		if (calculator() == CalculatorType[_converter]) return inputs[_converter]
-		if (calculator() == CalculatorType[_programmer]) return inputs[_programmer]
-		if (calculator() == CalculatorType[_date]) return inputs[_date]
-		return ''
+	const get_input = createMemo<string | {from: Date;to: Date}>(() => {
+		switch (calculator()) {
+			case CalculatorType.basic: return inputs.basic
+			case CalculatorType.scientific: return inputs.scientific
+			case CalculatorType.converter: return inputs.converter
+			case CalculatorType.programmer: return inputs.programmer
+			case CalculatorType.date: return inputs.date
+		}
 	})
-	let timeoutId: null | number = null
-	let timeoutNoteId: null | number = null
+	let timeout_id: null | number = null
+	let timeout_note_id: null | number = null
 
-	function onChangeCalculator(type: CalculatorType): void {
-		setCalculatorType(type)
-		const store_miscellaneous = db[_writeObjectStore](ObjectStoreNames[_miscellaneous])
-		if (store_miscellaneous == null) return
-
-		store_miscellaneous[_put]({
-			key: ObjectStoreKeys.miscellaneous_lastPage,
+	function on_change_calculator(type: CalculatorType): void {
+		set_calculator(type)
+		const store_miscellaneous = db.write_store(ObjectStoreNames.miscellaneous)
+		if (store_miscellaneous) idb_store_put(store_miscellaneous, {
+			key: ObjectStoreKeys.miscellaneous_lastpage,
 			value: type
 		})
 	}
 
-	function onNoteChanged(value: string): void {
-		setNote(value)
-		if (timeoutNoteId != null) endTimeout(timeoutNoteId)
-		timeoutNoteId = startTimeout(() => {
-			timeoutNoteId = null
-			const store_miscellaneous = db[_writeObjectStore](ObjectStoreNames[_miscellaneous])
-			if (store_miscellaneous == null) return
-
-			store_miscellaneous[_put]({key: ObjectStoreKeys.miscellaneous_note, value})
+	function on_note_changed(value: string): void {
+		set_note(value)
+		if (timeout_note_id != null) timeout_clear(timeout_note_id)
+		timeout_note_id = timeout_set(() => {
+			timeout_note_id = null
+			const store_miscellaneous = db.write_store(ObjectStoreNames.miscellaneous)
+			if (store_miscellaneous) idb_store_put(
+				store_miscellaneous,
+				{key: ObjectStoreKeys.miscellaneous_note, value}
+			)
 		}, 1000)
 	}
 
-	function saveSettings(...items: [key: ObjectStoreKeys, value: unknown][]): void {
-		const store_settings = db[_writeObjectStore](ObjectStoreNames[_settings])
+	function save_settings(...items: [key: ObjectStoreKeys, value: unknown][]): void {
+		const store_settings = db.write_store(ObjectStoreNames.settings)
 		if (!store_settings) return;
 
 		for (const item of items) {
-			store_settings[_put]({ key: item[0], value: item[1] })
+			idb_store_put(store_settings, { key: item[0], value: item[1] })
 		}
 	}
 
-	function saveInputs(...items: [key: ObjectStoreKeys, value: unknown][]): void {
-		const store_lastInput = db[_writeObjectStore](ObjectStoreNames[_lastInput])
-		if (!store_lastInput) return;
+	function save_inputs(...items: [key: ObjectStoreKeys, value: unknown][]): void {
+		const store_lastinput = db.write_store(ObjectStoreNames.last_input)
+		if (!store_lastinput) return;
 
 		for (const item of items) {
-			store_lastInput[_put]({ key: item[0], value: item[1] })
+			idb_store_put(store_lastinput, { key: item[0], value: item[1] })
 		}
 	}
 
-	function command(type: Commands, ...args: unknown[]): unknown {
-
-		// toggle_navigation_expand
-		if (type == Commands.toggle_navigation_expand) {
-			setIsSideNavigationExpanded(v => !v)
-			if (isSideNavigationExpanded()) setIsNotebookExpanded(false)
+	function command(type: Commands, ...args: unknown[]): unknown { switch (type) {
+		case Commands.toggle_navigation_expand: {
+			set_is_sidenavigation_expanded(v => !v)
+			if (is_sidenavigation_expanded()) set_is_notebook_expanded(false)
+			break
 		}
-
-		// toggle_notebook_expand
-		else if (type == Commands.toggle_notebook_expand) {
-			setIsNotebookExpanded(v => !v)
-			if (isNotebookExpanded()) setIsSideNavigationExpanded(false)
+		case Commands.toggle_notebook_expand: {
+			set_is_notebook_expanded(v => !v)
+			if (is_notebook_expanded()) set_is_sidenavigation_expanded(false)
+			break
 		}
+		case Commands.change_settings_numberformatgrouping: {
+			const items: [key: ObjectStoreKeys, value: unknown][] = [[ObjectStoreKeys.settings_numberformat_grouping, args[0]]]
 
-		// change_settings_numberFormatGrouping
-		else if (type == Commands.change_settings_numberFormatGrouping) {
-			const items: [key: ObjectStoreKeys, value: unknown][] = [[ObjectStoreKeys.settings_numberFormat_grouping, args[0]]]
-
-			setSettings(_numberFormat, _grouping, args[0] as GroupingNumberFormat)
-			if (args[0] == settings[_numberFormat][_decimal]) {
-				setSettings(
-					_numberFormat,
-					_decimal,
-					args[0] == GroupingNumberFormat[_comma]
-						? DecimalNumberFormat[_point]
-						: DecimalNumberFormat[_comma]
+			set_settings('number_format', 'grouping', args[0] as GroupingNumberFormat)
+			if (args[0] == settings.number_format.decimal) {
+				set_settings(
+					'number_format',
+					'decimal',
+					args[0] == GroupingNumberFormat.comma
+						? DecimalNumberFormat.point
+						: DecimalNumberFormat.comma
 				)
-				items[_push]([ObjectStoreKeys.settings_numberFormat_decimal, settings[_numberFormat][_decimal]])
+				array_push(items, [ObjectStoreKeys.settings_numberformat_decimal, settings.number_format.decimal])
 			}
 
-			saveSettings(...items)
+			save_settings(...items)
+			break
 		}
+		case Commands.change_settings_numberformatdecimal: {
+			const items: [key: ObjectStoreKeys, value: unknown][] = [[ObjectStoreKeys.settings_numberformat_decimal, args[0]]]
 
-		// change_settings_numberFormatDecimal
-		else if (type == Commands.change_settings_numberFormatDecimal) {
-			const items: [key: ObjectStoreKeys, value: unknown][] = [[ObjectStoreKeys.settings_numberFormat_decimal, args[0]]]
-
-			setSettings(_numberFormat, _decimal, args[0] as DecimalNumberFormat)
-			if (args[0] == settings[_numberFormat][_grouping]) {
-				setSettings(_numberFormat, _grouping, args[0] == DecimalNumberFormat[_comma]? GroupingNumberFormat[_point] : GroupingNumberFormat[_comma])
-				items[_push]([ObjectStoreKeys.settings_numberFormat_grouping, settings[_numberFormat][_grouping]])
+			set_settings('number_format', 'decimal', args[0] as DecimalNumberFormat)
+			if (args[0] == settings.number_format.grouping) {
+				set_settings('number_format', 'grouping', args[0] == DecimalNumberFormat.comma? GroupingNumberFormat.point : GroupingNumberFormat.comma)
+				array_push(items, [ObjectStoreKeys.settings_numberformat_grouping, settings.number_format.grouping])
 			}
 
-			saveSettings(...items)
+			save_settings(...items)
+			break
 		}
-
-		// toggle_settings_scientificNotation
-		else if (type == Commands.toggle_settings_scientificNotation) {
-			setSettings(_scientificNotation, v => !v)
-			saveSettings([ObjectStoreKeys.settings_scientificNotation, settings[_scientificNotation]])
+		case Commands.toggle_settings_scientificnotation: {
+			set_settings('scientific_notation', v => !v)
+			save_settings([ObjectStoreKeys.settings_scientificnotation, settings.scientific_notation])
+			break
 		}
-
-		// toggle_settings_memoryButtons
-		else if (type == Commands.toggle_settings_memoryButtons) {
-			setSettings(_memoryButtons, v => !v)
-			saveSettings([ObjectStoreKeys.settings_memoryButtons, settings[_memoryButtons]])
+		case Commands.toggle_settings_memorybuttons: {
+			set_settings('memory_buttons', v => !v)
+			save_settings([ObjectStoreKeys.settings_memorybuttons, settings.memory_buttons])
+			break
 		}
-
-		// change_calculator_input
-		else if (type == Commands.change_calculator_input) {
-			if (timeoutId) endTimeout(timeoutId)
+		case Commands.change_calculator_input: {
+			if (timeout_id) timeout_clear(timeout_id)
 			const value = args[0]
 
-			timeoutId = startTimeout(() => {
-				if (calculator() == CalculatorType[_basic]) {
-					setInputs(_basic, value as string)
-					saveInputs([ObjectStoreKeys.lastInput_basic, value])
+			timeout_id = timeout_set(() => {
+				if (calculator() == CalculatorType.basic) {
+					set_inputs('basic', value as string)
+					save_inputs([ObjectStoreKeys.lastinput_basic, value])
 				}
-				else if (calculator() == CalculatorType[_scientific]) {
-					setInputs(_scientific, value as string)
-					saveInputs([ObjectStoreKeys.lastInput_scientific, value])
+				else if (calculator() == CalculatorType.scientific) {
+					set_inputs('scientific', value as string)
+					save_inputs([ObjectStoreKeys.lastinput_scientific, value])
 				}
-				else if (calculator() == CalculatorType[_converter]) {
-					setInputs(_converter, value as string)
-					saveInputs([ObjectStoreKeys.lastInput_converter, value])
+				else if (calculator() == CalculatorType.converter) {
+					set_inputs('converter', value as string)
+					save_inputs([ObjectStoreKeys.lastinput_converter, value])
 				}
-				else if (calculator() == CalculatorType[_programmer]) {
-					setInputs(_programmer, value as string)
-					saveInputs([ObjectStoreKeys.lastInput_programmer, value])
+				else if (calculator() == CalculatorType.programmer) {
+					set_inputs('programmer', value as string)
+					save_inputs([ObjectStoreKeys.lastinput_programmer, value])
 				}
-				else if (calculator() == CalculatorType[_date]) {
+				else if (calculator() == CalculatorType.date) {
 					const $value = value as DateCalculatorInput
-					setInputs(_date, {...$value})
-					saveInputs(
-						[ObjectStoreKeys.lastInput_date_from, $value[_from][_toISOString]()],
-						[ObjectStoreKeys.lastInput_date_to, $value[_to][_toISOString]()],
-						[ObjectStoreKeys.lastInput_date_year, $value[_year]],
-						[ObjectStoreKeys.lastInput_date_month, $value[_month]],
-						[ObjectStoreKeys.lastInput_date_day, $value[_day]],
+					set_inputs('date', {...$value})
+					save_inputs(
+						[ObjectStoreKeys.lastinput_date_from, date_iso($value.from)],
+						[ObjectStoreKeys.lastinput_date_to, date_iso($value.to)],
+						[ObjectStoreKeys.lastinput_date_year, $value.year],
+						[ObjectStoreKeys.lastinput_date_month, $value.month],
+						[ObjectStoreKeys.lastinput_date_day, $value.day],
 					)
 				}
-				generateOutput()
-				timeoutId = null
+				generate_output()
+				timeout_id = null
 			}, 300)
+			break
 		}
-
-		// add_memory
-		else if (type == Commands.add_memory) {
-			if (getOutput() == null) return;
-			setMemory(v => v + (getOutput() as number))
+		case Commands.add_memory: {
+			if (get_output() == null) return;
+			set_memory(v => v + (get_output() as number))
+			break
 		}
-
-		// subtract_memory
-		else if (type == Commands.subtract_memory) {
-			if (getOutput() == null) return;
-			setMemory(v => v - (getOutput() as number))
+		case Commands.subtract_memory: {
+			if (get_output() == null) return;
+			set_memory(v => v - (get_output() as number))
+			break
 		}
-
-		// clear_memory
-		else if (type == Commands.clear_memory) {
-			setMemory(0)
+		case Commands.clear_memory: {
+			set_memory(0)
+			break
 		}
+		case Commands.toggle_settings_scientific_angle: {
+			let value: ScientificAngleType = ScientificAngleType.RAD
+			const angle = settings.scientific.angle
+			if (angle == ScientificAngleType.RAD) value = ScientificAngleType.DEG
+			else if (angle == ScientificAngleType.DEG) value = ScientificAngleType.GRAD
+			else if (angle == ScientificAngleType.GRAD) value = ScientificAngleType.RAD
+			set_settings('scientific', 'angle', value)
+			save_settings([ObjectStoreKeys.settings_scientific_angle, value])
 
-		// toggle_settings_scientific_angle
-		else if (type == Commands.toggle_settings_scientific_angle) {
-			let value: ScientificAngleType = ScientificAngleType[_RAD]
-			const angle = settings[_scientific][_angle]
-			if (angle == ScientificAngleType[_RAD]) value = ScientificAngleType[_DEG]
-			else if (angle == ScientificAngleType[_DEG]) value = ScientificAngleType[_GRAD]
-			else if (angle == ScientificAngleType[_GRAD]) value = ScientificAngleType[_RAD]
-			setSettings(_scientific, _angle, value)
-			saveSettings([ObjectStoreKeys.settings_scientific_angle, value])
-
-			if (timeoutId) endTimeout(timeoutId)
-			timeoutId = startTimeout(() => {
-				generateOutput()
-				timeoutId = null
+			if (timeout_id) timeout_clear(timeout_id)
+			timeout_id = timeout_set(() => {
+				generate_output()
+				timeout_id = null
 			}, 300)
+			break
 		}
-
-		// change_settings_converter_type
-		else if (type == Commands.change_settings_converter_type) {
+		case Commands.change_settings_converter_type: {
 			const converter = args[0] as ConverterType
-			if (converter == settings[_converter][_type]) return;
+			if (converter == settings.converter.type) return;
 
 			let units: ConverterUnit[] = UNIT_LENGTH
-			if (converter == ConverterType[_length]) units = UNIT_LENGTH
-			else if (converter == ConverterType[_area]) units = UNIT_AREA
-			else if (converter == ConverterType[_volume]) units = UNIT_VOLUME
-			else if (converter == ConverterType[_temperature]) units = UNIT_TEMPERATURE
-			else if (converter == ConverterType[_time]) units = UNIT_TIME
-			else if (converter == ConverterType[_weight]) units = UNIT_WEIGHT
-			else if (converter == ConverterType[_frequency]) units = UNIT_FREQUENCY
-			else if (converter == ConverterType[_pressure]) units = UNIT_PRESSURE
-			else if (converter == ConverterType[_angle]) units = UNIT_ANGLE
+			if (converter == ConverterType.length) units = UNIT_LENGTH
+			else if (converter == ConverterType.area) units = UNIT_AREA
+			else if (converter == ConverterType.volume) units = UNIT_VOLUME
+			else if (converter == ConverterType.temperature) units = UNIT_TEMPERATURE
+			else if (converter == ConverterType.time) units = UNIT_TIME
+			else if (converter == ConverterType.weight) units = UNIT_WEIGHT
+			else if (converter == ConverterType.frequency) units = UNIT_FREQUENCY
+			else if (converter == ConverterType.pressure) units = UNIT_PRESSURE
+			else if (converter == ConverterType.angle) units = UNIT_ANGLE
 
-			setSettings(_converter, {type: converter, inputUnit: units[0], outputUnit: units[1]})
-			saveSettings(
+			set_settings('converter', {type: converter, unit_input: units[0], unit_output: units[1]})
+			save_settings(
 				[ObjectStoreKeys.settings_converter_type, converter],
-				[ObjectStoreKeys.settings_converter_inputUnit, units[0][_JSON]],
-				[ObjectStoreKeys.settings_converter_outputUnit, units[1][_JSON]],
+				[ObjectStoreKeys.settings_converter_unitinput, units[0].json],
+				[ObjectStoreKeys.settings_converter_unitoutput, units[1].json],
 			)
-			generateOutput()
+			generate_output()
+			break
 		}
-
-		// change_settings_converter_inputUnit
-		else if (type == Commands.change_settings_converter_inputUnit) {
+		case Commands.change_settings_converter_inputunit: {
 			const unit = args[0] as ConverterUnit
-			if (unit[_equals](settings[_converter][_inputUnit])) return;
+			if (unit.equals(settings.converter.unit_input)) return;
 
-			setSettings(_converter, _inputUnit, unit)
-			saveSettings([ObjectStoreKeys.settings_converter_inputUnit, unit[_JSON]])
-			generateOutput()
+			set_settings('converter', 'unit_input', unit)
+			save_settings([ObjectStoreKeys.settings_converter_unitinput, unit.json])
+			generate_output()
+			break
 		}
-
-		// change_settings_converter_outputUnit
-		else if (type == Commands.change_settings_converter_outputUnit) {
+		case Commands.change_settings_converter_outputunit: {
 			const unit = args[0] as ConverterUnit
-			if (unit[_equals](settings[_converter][_outputUnit])) return;
+			if (unit.equals(settings.converter.unit_output)) return;
 
-			setSettings(_converter, _outputUnit, unit)
-			saveSettings([ObjectStoreKeys.settings_converter_outputUnit, unit[_JSON]])
-			generateOutput()
+			set_settings('converter', 'unit_output', unit)
+			save_settings([ObjectStoreKeys.settings_converter_unitoutput, unit.json])
+			generate_output()
+			break
 		}
-
-		// change_settings_converter_swapUnit
-		else if (type == Commands.change_settings_converter_swapUnit) {
-			const inputUnit = settings[_converter][_outputUnit]
-			const outputUnit = settings[_converter][_inputUnit]
-			setSettings(_converter, c => {return {...c, inputUnit, outputUnit}})
-			saveSettings(
-				[ObjectStoreKeys.settings_converter_inputUnit, inputUnit[_JSON]],
-				[ObjectStoreKeys.settings_converter_outputUnit, outputUnit[_JSON]],
+		case Commands.change_settings_converter_swapunit: {
+			const unit_input = settings.converter.unit_output
+			const unit_output = settings.converter.unit_input
+			set_settings('converter', c => ({...c, unit_input: unit_input, unit_output: unit_output}))
+			save_settings(
+				[ObjectStoreKeys.settings_converter_unitinput, unit_input.json],
+				[ObjectStoreKeys.settings_converter_unitoutput, unit_output.json],
 			)
-			generateOutput()
+			generate_output()
+			break
 		}
-
-		// change_settings_programmer_numberType
-		else if (type == Commands.change_settings_programmer_numberType) {
+		case Commands.change_settings_programmer_numbertype: {
 			const type = args[0] as NumberType
-			const settingKeys: [key: ObjectStoreKeys, value: unknown][] = [
-				[ObjectStoreKeys.settings_programmer_numberType, type]
+			const setting_keys: [key: ObjectStoreKeys, value: unknown][] = [
+				[ObjectStoreKeys.settings_programmer_numbertype, type]
 			]
-			if (type == settings[_programmer][_numberType]) return;
+			if (type == settings.programmer.number_type) return;
 
 			let input: null | string = null
-			if (outputs[_programmer] != null){
-				if (type == NumberType[_decimal]) {
-					if (settings[_scientificNotation] && /[eE]/[_test](outputs[_programmer][_toString]()))
-						input = outputs[_programmer][_toString]()[_toUpperCase]()
-					else input = formatNumber(outputs[_programmer], {
-						decimalSeparator: settings[_numberFormat][_decimal],
-						thousandSeparator: settings[_numberFormat][_grouping]
+			if (outputs.programmer != null){
+				if (type == NumberType.decimal) {
+					if (settings.scientific_notation && regex_test(/[eE]/, number_to_string(outputs.programmer)))
+						input = string_touppercase(number_to_string(outputs.programmer))
+					else input = number_format(outputs.programmer, {
+						decimal: settings.number_format.decimal,
+						thousand: settings.number_format.grouping
 					})
 				}
 				else {
-					if (type == NumberType[_hexadecimal]) input = numberParse(floatToBinary(outputs[_programmer]), true, 2)[_toString](16)[_toUpperCase]()
-					else if (type == NumberType[_octal]) input = numberParse(floatToBinary(outputs[_programmer]), true, 2)[_toString](8)
-					else if (type == NumberType[_binary]) input = floatToBinary(outputs[_programmer])
+					if (type == NumberType.hexadecimal) input = string_touppercase(number_to_string(number_parse(number_to_binary(outputs.programmer), true, 2), 16))
+					else if (type == NumberType.octal) input = number_to_string(number_parse(number_to_binary(outputs.programmer), true, 2), 8)
+					else if (type == NumberType.binary) input = number_to_binary(outputs.programmer)
 
-					input = input![_replace](/\./g, settings[_numberFormat][_decimal])
+					input = string_replace(input!, /\./g, settings.number_format.decimal)
 				}
 
-				settingKeys[_push]([ObjectStoreKeys.lastInput_programmer, input ?? ''])
-				setInputs(_programmer, input ?? '')
+				array_push(setting_keys, [ObjectStoreKeys.lastinput_programmer, input ?? ''])
+				set_inputs('programmer', input ?? '')
 			}
 
-			setSettings(_programmer, _numberType, type)
-			saveSettings(...settingKeys)
+			set_settings('programmer', 'number_type', type)
+			save_settings(...setting_keys)
+			break
 		}
-
-		// change_settings_date_operation
-		else if (type == Commands.change_settings_date_operation) {
-			setSettings(_date, _operation, args[0] as DateOperation)
-			saveSettings([ObjectStoreKeys.settings_date_operation, args[0]])
-			generateOutput()
+		case Commands.change_settings_date_operation: {
+			set_settings('date', 'operation', args[0] as DateOperation)
+			save_settings([ObjectStoreKeys.settings_date_operation, args[0]])
+			generate_output()
+			break
 		}
-		return
-	}
+		default: return
+	}}
 
 	/**
 	 * Repair input before calculating. The `input` must follow these rules:
@@ -371,60 +356,60 @@ const _: VoidComponent = () => {
 	 * @param input
 	 * @returns
 	 */
-	function repairInput(input: string): string {
-		const openBracketsCount = stringCount(input, /\(/g)
-		const closeBracketsCount = stringCount(input, /\)/g)
+	function repair_input(input: string): string {
+		const count_openbracket = string_count(input, /\(/g)
+		const count_closebracket = string_count(input, /\)/g)
 
 		// '234))' => '((234))'
-		if (openBracketsCount < closeBracketsCount) input = "("[_repeat](closeBracketsCount - openBracketsCount) + input
+		if (count_openbracket < count_closebracket) input = string_repeat("(", count_closebracket - count_openbracket) + input
 
 		// '((234' => '((234))'
-		else if (openBracketsCount > closeBracketsCount) input = input + ")"[_repeat](openBracketsCount - closeBracketsCount)
+		else if (count_openbracket > count_closebracket) input = input + string_repeat(")", count_openbracket - count_closebracket)
 
 		// '123 456 789' => '123456789'
-		input = input[_replace](/\s/g, '')
+		input = string_replace(input, /\s/g, '')
 
 		// '123,456,789' => '123456789'
-		input = input[_replaceAll](settings[_numberFormat][_grouping], '')
+		input = string_replaceall(input, settings.number_format.grouping, '')
 
 		// '123456,789' => '123456.789'
-		input = input[_replaceAll](settings[_numberFormat][_decimal], '.')
+		input = string_replaceall(input, settings.number_format.decimal, '.')
 
 		// '.234' => '0.234'
-		input = input[_replace](/(?<!\d)\.\d+/g, (s) => '0' + s)
+		input = string_replace(input, /(?<!\d)\.\d+/g, (s) => '0' + s)
 
 		// '123.' => '123'
-		input = input[_replace](/(\d+)\.(?!\d)/g, (_, grp1) => grp1)
+		input = string_replace(input, /(\d+)\.(?!\d)/g, (_, grp1) => grp1)
 
 		// '1.23E+5' => '1.23×100000'
-		input = input[_replace](/(\d+(?:\.\d+)?)E([+\-])?(\d+)/g, (_, group1, group2, group3) => {
-			const isMinus = group2 == '-'
-			const power = numberParse(group3, true)
-			return group1 + (power > 0? (isMinus? KEY_DIVISION : KEY_MULTIPLY) + '1' + '0'[_repeat](power) : '')
+		input = string_replace(input, /(\d+(?:\.\d+)?)E([+\-])?(\d+)/g, (_, group1, group2, group3) => {
+			const is_minus = group2 == '-'
+			const power = number_parse(group3, true)
+			return group1 + (power > 0? (is_minus? KEY_DIVISION : KEY_MULTIPLY) + '1' + string_repeat('0', power) : '')
 		})
 
 		// 'e×2×ceil(' => 'e×2×c\eil('
-		const nonEulerEscapeRegex = [
+		const non_euler_escape_regex = [
 			/(ceil|sec)\(/g,
 			/\\e/g, // use in the last part
 		]
-		input = input[_replace](nonEulerEscapeRegex[0], (r) => r[_replace]('e', '\\e'))
+		input = string_replace(input, non_euler_escape_regex[0], (r) => string_replace(r, 'e', '\\e'))
 
 		// '123(456)' => '123×(456)'
-		const implicitMultiplyRegex = [
-			new RegExp(String[_raw]`(${NUMBER_REGEX}|[\)%!π]|(?<!\\)e)([\(π√\\]|(?<!\\)e|${FUNCTION_REGEX}(?=\())`, 'g'),
+		const implicit_multiply_regex = [
+			new RegExp(String.raw`(${NUMBER_REGEX}|[\)%!π]|(?<!\\)e)([\(π√\\]|(?<!\\)e|${FUNCTION_REGEX}(?=\())`, 'g'),
 			/([\)%π!]|(?<!\\)e)(\d+(?:\.\d+)?|[\(π√]|(?<!\\)e)/g,
 		]
 		let iterator = 0
-		while (implicitMultiplyRegex[0][_test](input) || implicitMultiplyRegex[1][_test](input)) {
-			input = input[_replace](implicitMultiplyRegex[0], (_, group1, group2) => group1 + KEY_MULTIPLY + group2)
-			input = input[_replace](implicitMultiplyRegex[1], (_, group1, group2) => group1 + KEY_MULTIPLY + group2)
+		while (regex_test(implicit_multiply_regex[0], input) || regex_test(implicit_multiply_regex[1], input)) {
+			input = string_replace(input, implicit_multiply_regex[0], (_, group1, group2) => group1 + KEY_MULTIPLY + group2)
+			input = string_replace(input, implicit_multiply_regex[1], (_, group1, group2) => group1 + KEY_MULTIPLY + group2)
 
 			++iterator
 
 			// I think the iterator will less than 5. But this is just to catch error in regex
 			if (iterator > 20) {
-				getConsole()[_warn](
+				console.warn(
 					'Iterator exceeded maximum value',
 					'iterator:', iterator,
 					'input:', input
@@ -434,269 +419,282 @@ const _: VoidComponent = () => {
 		}
 
 		// 'e' => '2.718281828459045'
-		input = input[_replace](/(?<!\\)e/g, mathE[_toString]())
+		input = string_replace(input, /(?<!\\)e/g, number_to_string(Math.E))
 
 		// 'π' => '3.141592653589793'
-		input = input[_replace](/π/g, mathPI[_toString]())
+		input = string_replace(input, /π/g, number_to_string(Math.PI))
 
 		// 'c\eil(12)' => 'ceil(12)'
-		input = input[_replace](nonEulerEscapeRegex[1], 'e')
+		input = string_replace(input, non_euler_escape_regex[1], 'e')
 
 		return input
 	}
 
-	function convertUnit(input: number, inputUnit: ConverterUnit, outputUnit: ConverterUnit, type: ConverterType): number {
-		if (type == ConverterType[_angle]) {
+	function convert_unit(
+		input: number,
+		unit_input: ConverterUnit,
+		unit_output: ConverterUnit,
+		type: ConverterType
+	): number {
+		if (type == ConverterType.angle) {
 			let degree: number = 0
-			if (inputUnit[_equals](UNIT_ANGLE_DEGREE)) degree = input
-			else if (inputUnit[_equals](UNIT_ANGLE_RADIAN)) degree = input * 180 / getMath[_PI]
-			else if (inputUnit[_equals](UNIT_ANGLE_GRADIAN)) degree = input * 9 / 10
+			if (unit_input.equals(UNIT_ANGLE_DEGREE)) degree = input
+			else if (unit_input.equals(UNIT_ANGLE_RADIAN)) degree = input * 180 / Math.PI
+			else if (unit_input.equals(UNIT_ANGLE_GRADIAN)) degree = input * 9 / 10
 
-			if (outputUnit[_equals](UNIT_ANGLE_DEGREE)) return degree
-			if (outputUnit[_equals](UNIT_ANGLE_RADIAN)) return degree * getMath[_PI] / 180
-			if (outputUnit[_equals](UNIT_ANGLE_GRADIAN)) return degree * 10 / 9
+			if (unit_output.equals(UNIT_ANGLE_DEGREE)) return degree
+			if (unit_output.equals(UNIT_ANGLE_RADIAN)) return degree * Math.PI / 180
+			if (unit_output.equals(UNIT_ANGLE_GRADIAN)) return degree * 10 / 9
 
 			return input
 		}
-		if (type == ConverterType[_temperature]) {
+		if (type == ConverterType.temperature) {
 			let celsius: number = 0
-			if (inputUnit[_equals](UNIT_TEMPERATURE_CELCIUS)) celsius = input
-			else if (inputUnit[_equals](UNIT_TEMPERATURE_KELVIN)) celsius = input - 273.15
-			else if (inputUnit[_equals](UNIT_TEMPERATURE_REAMUR)) celsius = input * 5 / 4
-			else if (inputUnit[_equals](UNIT_TEMPERATURE_FAHRENHEIT)) celsius = (input - 32) * 5 / 9
-			else if (inputUnit[_equals](UNIT_TEMPERATURE_ROMER)) celsius = (input - 7.5) * 40 / 21
-			else if (inputUnit[_equals](UNIT_TEMPERATURE_RANKINE)) celsius = (input - 491.67) * 5 / 9
-			else if (inputUnit[_equals](UNIT_TEMPERATURE_DELISLE)) celsius = 100 - input * 2 / 3
+			if (unit_input.equals(UNIT_TEMPERATURE_CELCIUS)) celsius = input
+			else if (unit_input.equals(UNIT_TEMPERATURE_KELVIN)) celsius = input - 273.15
+			else if (unit_input.equals(UNIT_TEMPERATURE_REAMUR)) celsius = input * 5 / 4
+			else if (unit_input.equals(UNIT_TEMPERATURE_FAHRENHEIT)) celsius = (input - 32) * 5 / 9
+			else if (unit_input.equals(UNIT_TEMPERATURE_ROMER)) celsius = (input - 7.5) * 40 / 21
+			else if (unit_input.equals(UNIT_TEMPERATURE_RANKINE)) celsius = (input - 491.67) * 5 / 9
+			else if (unit_input.equals(UNIT_TEMPERATURE_DELISLE)) celsius = 100 - input * 2 / 3
 
-			if (outputUnit[_equals](UNIT_TEMPERATURE_CELCIUS)) return celsius
-			if (outputUnit[_equals](UNIT_TEMPERATURE_KELVIN)) return celsius + 273.15
-			if (outputUnit[_equals](UNIT_TEMPERATURE_REAMUR)) return celsius * 4 / 5
-			if (outputUnit[_equals](UNIT_TEMPERATURE_FAHRENHEIT)) return celsius * 9 / 5 + 32
-			if (outputUnit[_equals](UNIT_TEMPERATURE_ROMER)) return celsius * 21 / 40 + 7.5
-			if (outputUnit[_equals](UNIT_TEMPERATURE_RANKINE)) return (celsius + 273.15) * 9 / 5
-			if (outputUnit[_equals](UNIT_TEMPERATURE_DELISLE)) return (100 - celsius) * 3 / 2
+			if (unit_output.equals(UNIT_TEMPERATURE_CELCIUS)) return celsius
+			if (unit_output.equals(UNIT_TEMPERATURE_KELVIN)) return celsius + 273.15
+			if (unit_output.equals(UNIT_TEMPERATURE_REAMUR)) return celsius * 4 / 5
+			if (unit_output.equals(UNIT_TEMPERATURE_FAHRENHEIT)) return celsius * 9 / 5 + 32
+			if (unit_output.equals(UNIT_TEMPERATURE_ROMER)) return celsius * 21 / 40 + 7.5
+			if (unit_output.equals(UNIT_TEMPERATURE_RANKINE)) return (celsius + 273.15) * 9 / 5
+			if (unit_output.equals(UNIT_TEMPERATURE_DELISLE)) return (100 - celsius) * 3 / 2
 
 			return input
 		}
 
-		return input * outputUnit[_value] / inputUnit[_value]
+		return input * unit_output.value / unit_input.value
 	}
 
-	function calculateDate(): void {
-		const operation = settings[_date][_operation]
-		if (operation == DateOperation[_add]) {
-			const d = inputs[_date][_from]
-			setOutputs(_date, getDateString_YMD(new Date(
-				getDate_Y(d) + inputs[_date][_year],
-				getDate_M(d) + inputs[_date][_month],
-				getDate_D(d) + inputs[_date][_day]
+	function calculate_date(): void {
+		const operation = settings.date.operation
+		if (operation == DateOperation.add) {
+			const d = inputs.date.from
+			set_outputs('date', date_text_YMD(new Date(
+				date_year(d) + inputs.date.year,
+				date_month(d) + inputs.date.month,
+				date_date(d) + inputs.date.day
 			)))
 		}
-		else if (operation == DateOperation[_subtract]) {
-			const d = inputs[_date][_from]
-			setOutputs(_date, getDateString_YMD(new Date(
-				getDate_Y(d) - inputs[_date][_year],
-				getDate_M(d) - inputs[_date][_month],
-				getDate_D(d) - inputs[_date][_day]
+		else if (operation == DateOperation.subtract) {
+			const d = inputs.date.from
+			set_outputs('date', date_text_YMD(new Date(
+				date_year(d) - inputs.date.year,
+				date_month(d) - inputs.date.month,
+				date_date(d) - inputs.date.day
 			)))
 		}
-		else if (operation == DateOperation[_difference]) {
+		else if (operation == DateOperation.difference) {
 			let output: string = ""
-			let days: number = mathAbs(dateDifferenceInDays(inputs[_date][_from], inputs[_date][_to]))
-			const diffInDays = days
+			let days: number = math_abs(date_diff_in_days(inputs.date.from, inputs.date.to))
+			const diff_in_days = days
 			if (days >= 365.25){
-				const n = mathFloor(days / 365.25)
+				const n = math_floor(days / 365.25)
 				output = `${n} year${n > 1? "s" : ""}`
-				days = mathFloor(days % 365.25)
+				days = math_floor(days % 365.25)
 			}
 			if (days >= 30.437){
 				if (output != '') output += ", "
-				const n = mathFloor(days / 30.437)
+				const n = math_floor(days / 30.437)
 				output += `${n} month${n > 1? "s" : ""}`
-				days = mathFloor(days % 30.437);
+				days = math_floor(days % 30.437);
 			}
 			if (days >= 7){
 				if (output != '') output += ", "
-				const n = mathFloor(days / 7)
+				const n = math_floor(days / 7)
 				output += `${n} week${n > 1? "s" : ""}`
-				days = mathFloor(days % 7)
+				days = math_floor(days % 7)
 			}
 			if (days > 0){
 				if (output != '') output += ", "
 				output += `${days} day${days > 1? "s" : ""}`
 			}
-			if (diffInDays == 0) output = "Same date"
-			else if (diffInDays >= 7) output += ` (${diffInDays} day${diffInDays > 1? "s" : ""})`
+			if (diff_in_days == 0) output = "Same date"
+			else if (diff_in_days >= 7) output += ` (${diff_in_days} day${diff_in_days > 1? "s" : ""})`
 
-			setOutputs(_date, output)
+			set_outputs('date', output)
 		}
 	}
 
-	function programmerCalcToBase10(input: string): string {
-		const type = settings[_programmer][_numberType]
-		if (type != NumberType[_decimal]) input = input[_replace](/[,\.]+/g, '')
+	function input_to_decimal(input: string): string {
+		const type = settings.programmer.number_type
+		if (type != NumberType.decimal) input = string_replace(input, /[,\.]+/g, '')
 
-		if (type == NumberType[_hexadecimal]) {
+		if (type == NumberType.hexadecimal) {
 			const re = /[0-9A-F]+/g
-			input = input[_replace](re, (v) => numberParse(v, true, 16)[_toString]())
+			input = string_replace(input, re, (v) => number_to_string(number_parse(v, true, 16)))
 		}
-		else if (type == NumberType[_octal]) {
-			if (/[89]/[_test](input)) throw Error()
+		else if (type == NumberType.octal) {
+			if (regex_test(/[89]/, input)) throw Error()
 
 			const re = /[0-7]+/g
-			input = input[_replace](re, (v) => numberParse(v, true, 8)[_toString]())
+			input = string_replace(input, re, (v) => number_to_string(number_parse(v, true, 8)))
 		}
-		else if (type == NumberType[_binary]) {
-			if (/[2-9]/[_test](input)) throw Error()
+		else if (type == NumberType.binary) {
+			if (regex_test(/[2-9]/, input)) throw Error()
 
 			const re = /[01]+/g
-			input = input[_replace](re, (v) => numberParse(v, true, 2)[_toString]())
+			input = string_replace(input, re, (v) => number_to_string(number_parse(v, true, 2)))
 		}
 		return input
 	}
 
 	function calculate(): void {
-		if (calculator() == CalculatorType[_date]) return calculateDate()
+		if (calculator() == CalculatorType.date) return calculate_date()
 
-		let input = getInput() as string
-		if (calculator() == CalculatorType[_programmer]) input = programmerCalcToBase10(inputs[_programmer])
+		let input = get_input() as string
+		if (calculator() == CalculatorType.programmer) input = input_to_decimal(inputs.programmer)
 
-		input = repairInput(input)
+		input = repair_input(input)
 
 		while (true) {
-			let hasOperation = false
+			let has_operation = false
 
 			// function operation
-			const funRegex = new RegExp(String[_raw]`(${FUNCTION_REGEX})\(([+-]?${NUMBER_REGEX})\)`)
-			while (funRegex[_test](input)) {
-				hasOperation = true
-				input = input[_replace](funRegex, (_, fn_name, value) => {
-					let parsedValue: number = numberParse(value)
-					const angleToRadian = (value: number) => {
-						if (calculator() != CalculatorType[_scientific]) return value
+			const function_regex = new RegExp(String.raw`(${FUNCTION_REGEX})\(([+-]?${NUMBER_REGEX})\)`)
+			while (regex_test(function_regex, input)) {
+				has_operation = true
+				input = string_replace(input, function_regex, (_, fn_name, value) => {
+					let parsed_value: number = number_parse(value)
+					const angle_to_radian = (value: number) => {
+						if (calculator() != CalculatorType.scientific) return value
 
-						const angle = settings[_scientific][_angle]
+						const angle = settings.scientific.angle
 						let unit: ConverterUnit = UNIT_ANGLE_RADIAN
-						if (angle == ScientificAngleType[_DEG]) unit = UNIT_ANGLE_DEGREE
-						else if (angle == ScientificAngleType[_GRAD]) unit = UNIT_ANGLE_GRADIAN
+						if (angle == ScientificAngleType.DEG) unit = UNIT_ANGLE_DEGREE
+						else if (angle == ScientificAngleType.GRAD) unit = UNIT_ANGLE_GRADIAN
 
-						return convertUnit(value, unit, UNIT_ANGLE_RADIAN, ConverterType[_angle])
+						return convert_unit(value, unit, UNIT_ANGLE_RADIAN, ConverterType.angle)
 					}
 
-					const radianToAngle = (value: number) => {
-						if (calculator() != CalculatorType[_scientific]) return value
+					const radian_to_angle = (value: number) => {
+						if (calculator() != CalculatorType.scientific) return value
 
-						const angle = settings[_scientific][_angle]
+						const angle = settings.scientific.angle
 						let unit: ConverterUnit = UNIT_ANGLE_RADIAN
-						if (angle == ScientificAngleType[_DEG]) unit = UNIT_ANGLE_DEGREE
-						else if (angle == ScientificAngleType[_GRAD]) unit = UNIT_ANGLE_GRADIAN
+						if (angle == ScientificAngleType.DEG) unit = UNIT_ANGLE_DEGREE
+						else if (angle == ScientificAngleType.GRAD) unit = UNIT_ANGLE_GRADIAN
 
-						return convertUnit(value, UNIT_ANGLE_RADIAN, unit, ConverterType[_angle])
+						return convert_unit(value, UNIT_ANGLE_RADIAN, unit, ConverterType.angle)
 					}
 
-					if (fn_name == _not) parsedValue = mathNot(parsedValue)
-					else if (fn_name == _abs) parsedValue = mathAbs(parsedValue)
-					else if (fn_name == _log) parsedValue = mathLog(parsedValue)
-					else if (fn_name == _ln) parsedValue = mathLn(parsedValue)
-					else if (fn_name == _ceil) parsedValue = mathCeil(parsedValue)
-					else if (fn_name == _floor) parsedValue = mathFloor(parsedValue)
-					else if (fn_name == _round) parsedValue = mathRound(parsedValue)
-					else if (fn_name == _sqrt) parsedValue = mathSqrt(parsedValue)
-					else if (fn_name == _sin) parsedValue = mathSin(angleToRadian(parsedValue))
-					else if (fn_name == _cos) parsedValue = mathCos(angleToRadian(parsedValue))
-					else if (fn_name == _tan) parsedValue = mathTan(angleToRadian(parsedValue))
-					else if (fn_name == _csc) parsedValue = mathCsc(angleToRadian(parsedValue))
-					else if (fn_name == _sec) parsedValue = mathSec(angleToRadian(parsedValue))
-					else if (fn_name == _cot) parsedValue = mathCot(angleToRadian(parsedValue))
-					else if (fn_name == _sinh) parsedValue = mathSinH(angleToRadian(parsedValue))
-					else if (fn_name == _cosh) parsedValue = mathCosH(angleToRadian(parsedValue))
-					else if (fn_name == _tanh) parsedValue = mathTanH(angleToRadian(parsedValue))
-					else if (fn_name == _csch) parsedValue = mathCscH(angleToRadian(parsedValue))
-					else if (fn_name == _sech) parsedValue = mathSecH(angleToRadian(parsedValue))
-					else if (fn_name == _coth) parsedValue = mathCotH(angleToRadian(parsedValue))
-					else if (fn_name == _asin) parsedValue = radianToAngle(mathASin(parsedValue))
-					else if (fn_name == _acos) parsedValue = radianToAngle(mathACos(parsedValue))
-					else if (fn_name == _atan) parsedValue = radianToAngle(mathATan(parsedValue))
-					else if (fn_name == _acsc) parsedValue = radianToAngle(mathACsc(parsedValue))
-					else if (fn_name == _asec) parsedValue = radianToAngle(mathASec(parsedValue))
-					else if (fn_name == _acot) parsedValue = radianToAngle(mathACot(parsedValue))
-					else if (fn_name == _asinh) parsedValue = radianToAngle(mathASinH(parsedValue))
-					else if (fn_name == _acosh) parsedValue = radianToAngle(mathACosH(parsedValue))
-					else if (fn_name == _atanh) parsedValue = radianToAngle(mathATanH(parsedValue))
-					else if (fn_name == _acsch) parsedValue = radianToAngle(mathACscH(parsedValue))
-					else if (fn_name == _asech) parsedValue = radianToAngle(mathASecH(parsedValue))
-					else if (fn_name == _acoth) parsedValue = radianToAngle(mathACotH(parsedValue))
-					return numberToRealDigit(parsedValue)
+					if (fn_name == 'not') parsed_value = math_not(parsed_value)
+					else if (fn_name == 'abs') parsed_value = math_abs(parsed_value)
+					else if (fn_name == 'log') parsed_value = math_log(parsed_value)
+					else if (fn_name == 'ln') parsed_value = math_ln(parsed_value)
+					else if (fn_name == 'ceil') parsed_value = math_ceil(parsed_value)
+					else if (fn_name == 'floor') parsed_value = math_floor(parsed_value)
+					else if (fn_name == 'round') parsed_value = math_round(parsed_value)
+					else if (fn_name == 'sqrt') parsed_value = math_sqrt(parsed_value)
+					else if (fn_name == 'sin') parsed_value = math_sin(angle_to_radian(parsed_value))
+					else if (fn_name == 'cos') parsed_value = math_cos(angle_to_radian(parsed_value))
+					else if (fn_name == 'tan') parsed_value = math_tan(angle_to_radian(parsed_value))
+					else if (fn_name == 'csc') parsed_value = math_csc(angle_to_radian(parsed_value))
+					else if (fn_name == 'sec') parsed_value = math_sec(angle_to_radian(parsed_value))
+					else if (fn_name == 'cot') parsed_value = math_cot(angle_to_radian(parsed_value))
+					else if (fn_name == 'sinh') parsed_value = math_sinh(angle_to_radian(parsed_value))
+					else if (fn_name == 'cosh') parsed_value = math_cosh(angle_to_radian(parsed_value))
+					else if (fn_name == 'tanh') parsed_value = math_tanh(angle_to_radian(parsed_value))
+					else if (fn_name == 'csch') parsed_value = math_csch(angle_to_radian(parsed_value))
+					else if (fn_name == 'sech') parsed_value = math_sech(angle_to_radian(parsed_value))
+					else if (fn_name == 'coth') parsed_value = math_coth(angle_to_radian(parsed_value))
+					else if (fn_name == 'asin') parsed_value = radian_to_angle(math_asin(parsed_value))
+					else if (fn_name == 'acos') parsed_value = radian_to_angle(math_acos(parsed_value))
+					else if (fn_name == 'atan') parsed_value = radian_to_angle(math_atan(parsed_value))
+					else if (fn_name == 'acsc') parsed_value = radian_to_angle(math_acsc(parsed_value))
+					else if (fn_name == 'asec') parsed_value = radian_to_angle(math_asec(parsed_value))
+					else if (fn_name == 'acot') parsed_value = radian_to_angle(math_acot(parsed_value))
+					else if (fn_name == 'asinh') parsed_value = radian_to_angle(math_asinh(parsed_value))
+					else if (fn_name == 'acosh') parsed_value = radian_to_angle(math_acosh(parsed_value))
+					else if (fn_name == 'atanh') parsed_value = radian_to_angle(math_atanh(parsed_value))
+					else if (fn_name == 'acsch') parsed_value = radian_to_angle(math_acsch(parsed_value))
+					else if (fn_name == 'asech') parsed_value = radian_to_angle(math_asech(parsed_value))
+					else if (fn_name == 'acoth') parsed_value = radian_to_angle(math_acoth(parsed_value))
+					return number_to_real_digit(parsed_value)
 				})
 			}
 
 			// remove brackets
-			const bracketsRegex = new RegExp(String[_raw]`(?<!${FUNCTION_REGEX})\(([+-]?${NUMBER_REGEX})\)`)
-			while (bracketsRegex[_test](input)) {
-				hasOperation = true
-				input = input[_replace](bracketsRegex, (_, num1) => num1)
+			const brackets_regex = new RegExp(String.raw`(?<!${FUNCTION_REGEX})\(([+-]?${NUMBER_REGEX})\)`)
+			while (regex_test(brackets_regex, input)) {
+				has_operation = true
+				input = string_replace(input, brackets_regex, (_, num1) => num1)
 			}
 
 			// square root operation
-			const sqrtRegex = /√([-+]?\d+(?:\.\d+)?)/g
-			while (sqrtRegex[_test](input)){
-				hasOperation = true
-				input = input[_replace](sqrtRegex, (_, num1) => {
-					const parsedValue = numberParse(num1)
-					if (parsedValue < 0) throw Error()
-					return numberToRealDigit(mathSqrt(parsedValue))
+			const sqrt_regex = /√([-+]?\d+(?:\.\d+)?)/g
+			while (regex_test(sqrt_regex, input)){
+				has_operation = true
+				input = string_replace(input, sqrt_regex, (_, num1) => {
+					const parsed_value = number_parse(num1)
+					if (parsed_value < 0) throw Error()
+					return number_to_real_digit(math_sqrt(parsed_value))
 				})
 			}
 
 			// percentage operation
-			const percentageRegex = /(\d+(?:\.\d+)?)%/g
-			while (percentageRegex[_test](input)){
-				hasOperation = true
-				input = input[_replace](percentageRegex, (_, num1) => numberToRealDigit(numberParse(num1) / 100))
+			const percentage_regex = /(\d+(?:\.\d+)?)%/g
+			while (regex_test(percentage_regex, input)){
+				has_operation = true
+				input = string_replace(
+					input,
+					percentage_regex,
+					(_, num1) => number_to_real_digit(number_parse(num1) / 100)
+				)
 			}
 
 			// factorial operation
-			const factorialRegex = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)!/g
-			while (factorialRegex[_test](input)){
-				hasOperation = true
-				input = input[_replace](factorialRegex, (_, num1) => {
-					let n = numberParse(num1)
-					if (/\./[_test](numberToRealDigit(n)) || n < 0) throw Error()
+			const factorial_regex = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)!/g
+			while (regex_test(factorial_regex, input)){
+				has_operation = true
+				input = string_replace(input, factorial_regex, (_, num1) => {
+					let n = number_parse(num1)
+					if (regex_test(/\./, number_to_real_digit(n)) || n < 0) throw Error()
 
 					let result = 1
 					while (n > 0) {
 						result *= n
 						n--
 					}
-					return numberToRealDigit(result)
+					return number_to_real_digit(result)
 				})
 			}
 
 			// exponential operation
-			const expRegex = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)\^([+-]?\d+(?:\.\d+)?)/
-			const expReverseRegex = /((?:\d+\.)?\d+[+-]?)\^((?:\d+\.)?\d+(?:[-+](?!\d))?)/
-			const match = input[_match](expRegex)
+			const exp_regex = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)\^([+-]?\d+(?:\.\d+)?)/
+			const exp_reverse_regex = /((?:\d+\.)?\d+[+-]?)\^((?:\d+\.)?\d+(?:[-+](?!\d))?)/
+			const match = string_match(input, exp_regex)
 			if (match) {
-				hasOperation = true
-				input = stringReverse(input)
+				has_operation = true
+				input = string_reverse(input)
 
-				while (expReverseRegex[_test](input)) {
-					input = input[_replace](expReverseRegex, (_, num2, num1) => stringReverse(numberToRealDigit(getMath[_pow](
-						numberParse(stringReverse(num1)),
-						numberParse(stringReverse(num2))
-					))))
+				while (regex_test(exp_reverse_regex, input)) {
+					input = string_replace(
+						input,
+						exp_reverse_regex,
+						(_, num2, num1) => string_reverse(number_to_real_digit(math_pow(
+							number_parse(string_reverse(num1)),
+							number_parse(string_reverse(num2))
+						)))
+					)
 				}
-				input = stringReverse(input)
+				input = string_reverse(input)
 			}
 
 			// division & multiplication & modulus operation
 			const div_mul_mod_regex = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)([*×\/÷]|mod)([+-]?\d+(?:\.\d+)?)/
-			while (div_mul_mod_regex[_test](input)) {
-				hasOperation = true
-				input = input[_replace](div_mul_mod_regex, (_, num1, operator, num2) => {
-					if (operator == 'mod') return numberToRealDigit(numberParse(num1) % numberParse(num2))
-					else if (/[*×]/[_test](operator)) return numberToRealDigit(numberParse(num1) * numberParse(num2))
-					else if (/[\/÷]/[_test](operator)) return numberToRealDigit(numberParse(num1) / numberParse(num2))
+			while (regex_test(div_mul_mod_regex, input)) {
+				has_operation = true
+				input = string_replace(input, div_mul_mod_regex, (_, num1, operator, num2) => {
+					if (operator == 'mod') return number_to_real_digit(number_parse(num1) % number_parse(num2))
+					else if (regex_test(/[*×]/, operator)) return number_to_real_digit(number_parse(num1) * number_parse(num2))
+					else if (regex_test(/[\/÷]/, operator)) return number_to_real_digit(number_parse(num1) / number_parse(num2))
 					return _
 				})
 			}
@@ -704,289 +702,337 @@ const _: VoidComponent = () => {
 
 			// addition & substraction operation
 			const add_sub_regex = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)([+-])([+-]?\d+(?:\.\d+)?)/
-			while (add_sub_regex[_test](input)) {
-				hasOperation = true
-				input = input[_replace](add_sub_regex, (_, num1, operator, num2) => {
-					if (operator == '+') return numberToRealDigit(numberParse(num1) + numberParse(num2))
-					if (operator == '-') return numberToRealDigit(numberParse(num1) - numberParse(num2))
+			while (regex_test(add_sub_regex, input)) {
+				has_operation = true
+				input = string_replace(input, add_sub_regex, (_, num1, operator, num2) => {
+					if (operator == '+') return number_to_real_digit(number_parse(num1) + number_parse(num2))
+					if (operator == '-') return number_to_real_digit(number_parse(num1) - number_parse(num2))
 					return _
 				})
 			}
 
 			// shifting operation
 			const lsh_rsh_regex = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)(lsh|rsh|<<|>>)([+-]?\d+(?:\.\d+)?)/
-			while (lsh_rsh_regex[_test](input)) {
-				hasOperation = true
-				input = input[_replace](lsh_rsh_regex, (_, num1, operator, num2) => {
-					const $num1: number = numberParse(num1)
-					const $num2: number = numberParse(num2)
-					if (/\./[_test](num1) || /\./[_test](num2)) throw Error()
-					if (/^(lsh|<<)$/[_test](operator)) return numberToRealDigit($num1 << $num2)
-					if (/^(rsh|>>)$/[_test](operator)) return numberToRealDigit($num1 >> $num2)
+			while (regex_test(lsh_rsh_regex, input)) {
+				has_operation = true
+				input = string_replace(input, lsh_rsh_regex, (_, num1, operator, num2) => {
+					const $num1: number = number_parse(num1)
+					const $num2: number = number_parse(num2)
+					if (regex_test(/\./, num1) || regex_test(/\./, num2)) throw Error()
+					if (regex_test(/^(lsh|<<)$/, operator)) return number_to_real_digit($num1 << $num2)
+					if (regex_test(/^(rsh|>>)$/, operator)) return number_to_real_digit($num1 >> $num2)
 					return _
 				})
 			}
 
 			// and operation
 			const and_regex = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)(?:&|and)([+-]?\d+(?:\.\d+)?)/
-			while (and_regex[_test](input)) {
-				hasOperation = true
-				input = input[_replace](and_regex, (_, num1, num2) =>  {
-					if (/\./[_test](num1) || /\./[_test](num2)) throw Error()
-					return numberToRealDigit(numberParse(num1) & numberParse(num2))
+			while (regex_test(and_regex, input)) {
+				has_operation = true
+				input = string_replace(input, and_regex, (_, num1, num2) =>  {
+					if (regex_test(/\./, num1) || regex_test(/\./, num2)) throw Error()
+					return number_to_real_digit(number_parse(num1) & number_parse(num2))
 				})
 			}
 
 			// xor operation
 			const xor_regex = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)xor([+-]?\d+(?:\.\d+)?)/
-			while (xor_regex[_test](input)) {
-				hasOperation = true
-				input = input[_replace](xor_regex, (_, num1, num2) => {
-					if (/\./[_test](num1) || /\./[_test](num2)) throw Error()
-					return numberToRealDigit(numberParse(num1) ^ numberParse(num2))
+			while (regex_test(xor_regex, input)) {
+				has_operation = true
+				input = string_replace(input, xor_regex, (_, num1, num2) => {
+					if (regex_test(/\./, num1) || regex_test(/\./, num2)) throw Error()
+					return number_to_real_digit(number_parse(num1) ^ number_parse(num2))
 				})
 			}
 
 			// or operation
 			const or_regex = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)(?:\||or)([+-]?\d+(?:\.\d+)?)/
-			while (or_regex[_test](input)) {
-				hasOperation = true
-				input = input[_replace](or_regex, (_, num1, num2) => {
-					if (/\./[_test](num1) || /\./[_test](num2)) throw Error()
-					return numberToRealDigit(numberParse(num1) | numberParse(num2))
+			while (regex_test(or_regex, input)) {
+				has_operation = true
+				input = string_replace(input, or_regex, (_, num1, num2) => {
+					if (regex_test(/\./, num1) || regex_test(/\./, num2)) throw Error()
+					return number_to_real_digit(number_parse(num1) | number_parse(num2))
 				})
 			}
 
-			if (!hasOperation) break
+			if (!has_operation) break
 		}
 
-		const isValidValue = (v: string) => /^[+-]?\d+(?:\.\d+)?$/[_test](v)
+		const is_valid_value = (v: string) => regex_test(/^[+-]?\d+(?:\.\d+)?$/, v)
 
-		if (calculator() == CalculatorType[_basic]) setOutputs(_basic, isValidValue(input)? numberParse(input) : null)
-		else if (calculator() == CalculatorType[_scientific]) setOutputs(_scientific, isValidValue(input)? numberParse(input) : null)
-		else if (calculator() == CalculatorType[_programmer]) setOutputs(_programmer, isValidValue(input)? numberParse(input) : null)
-		else if (calculator() == CalculatorType[_converter]) {
-			input = numberToRealDigit(convertUnit(
-				numberParse(input),
-				settings[_converter][_inputUnit],
-				settings[_converter][_outputUnit],
-				settings[_converter][_type]
+		if (calculator() == CalculatorType.basic) set_outputs('basic', is_valid_value(input)? number_parse(input) : null)
+		else if (calculator() == CalculatorType.scientific) set_outputs('scientific', is_valid_value(input)? number_parse(input) : null)
+		else if (calculator() == CalculatorType.programmer) set_outputs('programmer', is_valid_value(input)? number_parse(input) : null)
+		else if (calculator() == CalculatorType.converter) {
+			const converter = settings.converter
+			input = number_to_real_digit(convert_unit(
+				number_parse(input),
+				converter.unit_input,
+				converter.unit_output,
+				converter.type
 			))
-			setOutputs(_converter, isValidValue(input)? numberParse(input) : null)
+			set_outputs('converter', is_valid_value(input)? number_parse(input) : null)
 		}
 	}
 
-	function saveOutput(): void {
-		const store_lastOutput = db[_writeObjectStore](ObjectStoreNames[_lastOutput])
-		if (store_lastOutput == null) return
+	function save_output(): void {
+		const store_lastoutput = db.write_store(ObjectStoreNames.last_output)
+		if (store_lastoutput == null) return
 
-		let key = ObjectStoreKeys.lastOutput_basic
+		let key = ObjectStoreKeys.lastoutput_basic
 		let value = null
-		if (calculator() == CalculatorType[_basic]) {
-			key = ObjectStoreKeys.lastOutput_basic
-			value = outputs[_basic]
+		if (calculator() == CalculatorType.basic) {
+			key = ObjectStoreKeys.lastoutput_basic
+			value = outputs.basic
 		}
-		else if (calculator() == CalculatorType[_scientific]) {
-			key = ObjectStoreKeys.lastOutput_scientific
-			value = outputs[_scientific]
+		else if (calculator() == CalculatorType.scientific) {
+			key = ObjectStoreKeys.lastoutput_scientific
+			value = outputs.scientific
 		}
-		else if (calculator() == CalculatorType[_converter]) {
-			key = ObjectStoreKeys.lastOutput_converter
-			value = outputs[_converter]
+		else if (calculator() == CalculatorType.converter) {
+			key = ObjectStoreKeys.lastoutput_converter
+			value = outputs.converter
 		}
-		else if (calculator() == CalculatorType[_programmer]) {
-			key = ObjectStoreKeys.lastOutput_programmer
-			value = outputs[_programmer]
+		else if (calculator() == CalculatorType.programmer) {
+			key = ObjectStoreKeys.lastoutput_programmer
+			value = outputs.programmer
 		}
-		else if (calculator() == CalculatorType[_date]) {
-			key = ObjectStoreKeys.lastOutput_date
-			value = outputs[_date]
+		else if (calculator() == CalculatorType.date) {
+			key = ObjectStoreKeys.lastoutput_date
+			value = outputs.date
 		}
 
-		store_lastOutput[_put]({key, value})
+		idb_store_put(store_lastoutput, {key, value})
 	}
 
-	function generateOutput(): void {
+	function generate_output(): void {
 		try { calculate() }
 		catch (e) {
-			let $calculator: 'basic' | 'scientific' | 'converter' | 'programmer' | 'date' = _basic
-			if (calculator() == CalculatorType[_basic]) $calculator = _basic
-			else if (calculator() == CalculatorType[_scientific]) $calculator = _scientific
-			else if (calculator() == CalculatorType[_converter]) $calculator = _converter
-			else if (calculator() == CalculatorType[_programmer]) $calculator = _programmer
-			else if (calculator() == CalculatorType[_date]) $calculator = _date
+			let $calculator: 'basic' | 'scientific' | 'converter' | 'programmer' | 'date' = 'basic'
+			if (calculator() == CalculatorType.basic) $calculator = 'basic'
+			else if (calculator() == CalculatorType.scientific) $calculator = 'scientific'
+			else if (calculator() == CalculatorType.converter) $calculator = 'converter'
+			else if (calculator() == CalculatorType.programmer) $calculator = 'programmer'
+			else if (calculator() == CalculatorType.date) $calculator = 'date'
 
-			setOutputs($calculator, null)
+			set_outputs($calculator, null)
 		}
-		saveOutput()
+		save_output()
 	}
 
-	function initNote(): void {
-		const store_miscellaneous = db[_readObjectStore](ObjectStoreNames[_miscellaneous])
+	function init_note(): void {
+		const store_miscellaneous = db.read_store(ObjectStoreNames.miscellaneous)
 		if (store_miscellaneous == null) return
 
-		db[_get]<ObjectStoreMiscellaneous<string>>(store_miscellaneous, ObjectStoreKeys.miscellaneous_note)[_then](
-			(v) => setNote(r => v? v[_value] : r)
-		)
+		promise_done(db.get<ObjectStoreMiscellaneous<string>>(
+			store_miscellaneous,
+			ObjectStoreKeys.miscellaneous_note
+		), (result) => set_note(r => result?.value ?? r))
 	}
 
-	function initLastPage(): void {
-		const store_miscellaneous = db[_readObjectStore](ObjectStoreNames[_miscellaneous])
+	function init_last_page(): void {
+		const store_miscellaneous = db.read_store(ObjectStoreNames.miscellaneous)
 		if (store_miscellaneous == null) return
 
-		db[_get]<ObjectStoreMiscellaneous<CalculatorType>>(store_miscellaneous, ObjectStoreKeys.miscellaneous_lastPage)[_then](
-			(v) => setCalculatorType(r => v? v[_value] : r)
-		)
+		promise_done(db.get<ObjectStoreMiscellaneous<CalculatorType>>(
+			store_miscellaneous,
+			ObjectStoreKeys.miscellaneous_lastpage
+		), (result) => set_calculator(r => result?.value ?? r))
 	}
 
-	function initSettings(): void {
-		const store_settings = db[_readObjectStore](ObjectStoreNames[_settings])
+	function init_settings(): void {
+		const store_settings = db.read_store(ObjectStoreNames.settings)
 		if (store_settings == null) return;
 
-		db[_get]<ObjectStoreSettings<DecimalNumberFormat>>(store_settings, ObjectStoreKeys.settings_numberFormat_decimal)[_then](
-			(v) => setSettings(_numberFormat, _decimal, d => v? v[_value] : d)
-		)
-		db[_get]<ObjectStoreSettings<GroupingNumberFormat>>(store_settings, ObjectStoreKeys.settings_numberFormat_grouping)[_then](
-			(v) => setSettings(_numberFormat, _grouping, d => v? v[_value] : d)
-		)
-		db[_get]<ObjectStoreSettings<boolean>>(store_settings, ObjectStoreKeys.settings_scientificNotation)[_then](
-			(v) => setSettings(_scientificNotation, d => v? v[_value] : d)
-		)
-		db[_get]<ObjectStoreSettings<boolean>>(store_settings, ObjectStoreKeys.settings_memoryButtons)[_then](
-			(v) => setSettings(_memoryButtons, d => v? v[_value] : d)
-		)
-		db[_get]<ObjectStoreSettings<ConverterType>>(store_settings, ObjectStoreKeys.settings_converter_type)[_then](
-			(v) => setSettings(_converter, _type, d => v? v[_value] : d)
-		)
-		db[_get]<ObjectStoreSettings<ConverterUnitType>>(store_settings, ObjectStoreKeys.settings_converter_inputUnit)[_then](
-			(v) => setSettings(_converter, _inputUnit, d => v? ConverterUnit[_parseJSON](v[_value]) : d)
-		)
-		db[_get]<ObjectStoreSettings<ConverterUnitType>>(store_settings, ObjectStoreKeys.settings_converter_outputUnit)[_then](
-			(v) => setSettings(_converter, _outputUnit, d => v? ConverterUnit[_parseJSON](v[_value]) : d)
-		)
-		db[_get]<ObjectStoreSettings<ScientificAngleType>>(store_settings, ObjectStoreKeys.settings_scientific_angle)[_then](
-			(v) => setSettings(_scientific, _angle, d => v? v[_value] : d)
-		)
-		db[_get]<ObjectStoreSettings<NumberType>>(store_settings, ObjectStoreKeys.settings_programmer_numberType)[_then](
-			(v) => setSettings(_programmer, _numberType, d => v? v[_value] : d)
-		)
-		db[_get]<ObjectStoreSettings<DateOperation>>(store_settings, ObjectStoreKeys.settings_date_operation)[_then](
-			(v) => setSettings(_date, _operation, d => v? v[_value] : d)
-		)
+		promise_done(db.get<ObjectStoreSettings<DecimalNumberFormat>>(
+			store_settings,
+			ObjectStoreKeys.settings_numberformat_decimal
+		), (result) => set_settings('number_format', 'decimal', d => result?.value ?? d))
+
+		promise_done(db.get<ObjectStoreSettings<GroupingNumberFormat>>(
+			store_settings,
+			ObjectStoreKeys.settings_numberformat_grouping
+		), (result) => set_settings('number_format', 'grouping', d => result?.value ?? d))
+
+		promise_done(db.get<ObjectStoreSettings<boolean>>(
+			store_settings,
+			ObjectStoreKeys.settings_scientificnotation
+		), (result) => set_settings('scientific_notation', d => result?.value ?? d))
+
+		promise_done(db.get<ObjectStoreSettings<boolean>>(
+			store_settings,
+			ObjectStoreKeys.settings_memorybuttons
+		), (result) => set_settings('memory_buttons', d => result?.value ?? d))
+
+		promise_done(db.get<ObjectStoreSettings<ConverterType>>(
+			store_settings,
+			ObjectStoreKeys.settings_converter_type
+		), (result) => set_settings('converter', 'type', d => result?.value ?? d))
+
+		promise_done(db.get<ObjectStoreSettings<ConverterUnitType>>(
+			store_settings,
+			ObjectStoreKeys.settings_converter_unitinput
+		), (result) => set_settings('converter', 'unit_input', d => result? ConverterUnit.parse_json(result.value) : d))
+
+		promise_done(db.get<ObjectStoreSettings<ConverterUnitType>>(
+			store_settings,
+			ObjectStoreKeys.settings_converter_unitoutput
+		), (result) => set_settings('converter', 'unit_output', d => result? ConverterUnit.parse_json(result.value) : d))
+
+		promise_done(db.get<ObjectStoreSettings<ScientificAngleType>>(
+			store_settings,
+			ObjectStoreKeys.settings_scientific_angle
+		), (result) => set_settings('scientific', 'angle', d => result?.value ?? d))
+
+		promise_done(db.get<ObjectStoreSettings<NumberType>>(
+			store_settings,
+			ObjectStoreKeys.settings_programmer_numbertype
+		), (result) => set_settings('programmer', 'number_type', d => result?.value ?? d))
+
+		promise_done(db.get<ObjectStoreSettings<DateOperation>>(
+			store_settings,
+			ObjectStoreKeys.settings_date_operation
+		), (result) => set_settings('date', 'operation', d => result?.value ?? d))
 	}
 
-	function initLastOuptut(): void {
-		const store_lastOutput = db[_readObjectStore](ObjectStoreNames[_lastOutput])
-		if (store_lastOutput == null) return
+	function init_last_output(): void {
+		const store_lastoutput = db.read_store(ObjectStoreNames.last_output)
+		if (store_lastoutput == null) return
 
-		db[_get]<ObjectStoreLastOutput<number>>(store_lastOutput, ObjectStoreKeys.lastOutput_basic)[_then](
-			(v) => setOutputs(_basic, o => v? v[_value] : o)
-		)
-		db[_get]<ObjectStoreLastOutput<number>>(store_lastOutput, ObjectStoreKeys.lastOutput_scientific)[_then](
-			(v) => setOutputs(_scientific, o => v? v[_value] : o)
-		)
-		db[_get]<ObjectStoreLastOutput<number>>(store_lastOutput, ObjectStoreKeys.lastOutput_converter)[_then](
-			(v) => setOutputs(_converter, o => v? v[_value] : o)
-		)
-		db[_get]<ObjectStoreLastOutput<number>>(store_lastOutput, ObjectStoreKeys.lastOutput_programmer)[_then](
-			(v) => setOutputs(_programmer, o => v? v[_value] : o)
-		)
-		db[_get]<ObjectStoreLastOutput<string>>(store_lastOutput, ObjectStoreKeys.lastOutput_date)[_then](
-			(v) => setOutputs(_date, o => v? v[_value] : o)
-		)
+		promise_done(db.get<ObjectStoreLastOutput<number>>(
+			store_lastoutput,
+			ObjectStoreKeys.lastoutput_basic
+		), (result) => set_outputs('basic', o => result?.value ?? o))
+
+		promise_done(db.get<ObjectStoreLastOutput<number>>(
+			store_lastoutput,
+			ObjectStoreKeys.lastoutput_scientific
+		), (result) => set_outputs('scientific', o => result?.value ?? o))
+
+		promise_done(db.get<ObjectStoreLastOutput<number>>(
+			store_lastoutput,
+			ObjectStoreKeys.lastoutput_converter
+		), (result) => set_outputs('converter', o => result?.value ?? o))
+
+		promise_done(db.get<ObjectStoreLastOutput<number>>(
+			store_lastoutput,
+			ObjectStoreKeys.lastoutput_programmer
+		), (result) => set_outputs('programmer', o => result?.value ?? o))
+
+		promise_done(db.get<ObjectStoreLastOutput<string>>(
+			store_lastoutput,
+			ObjectStoreKeys.lastoutput_date
+		), (result) => set_outputs('date', o => result?.value ?? o))
 	}
 
-	function initLastInput(): void {
-		const store_lastInput = db[_readObjectStore](ObjectStoreNames[_lastInput])
-		if (store_lastInput == null) return;
+	function init_last_input(): void {
+		const store_lastinput = db.read_store(ObjectStoreNames.last_input)
+		if (store_lastinput == null) return;
 
-		db[_get]<ObjectStoreLastInput<string>>(store_lastInput, ObjectStoreKeys.lastInput_basic)[_then](
-			(v) => setInputs(_basic, b => v? v[_value] : b)
-		)
-		db[_get]<ObjectStoreLastInput<string>>(store_lastInput, ObjectStoreKeys.lastInput_scientific)[_then](
-			(v) => setInputs(_scientific, b => v? v[_value] : b)
-		)
-		db[_get]<ObjectStoreLastInput<string>>(store_lastInput, ObjectStoreKeys.lastInput_converter)[_then](
-			(v) => setInputs(_converter, b => v? v[_value] : b)
-		)
-		db[_get]<ObjectStoreLastInput<string>>(store_lastInput, ObjectStoreKeys.lastInput_programmer)[_then](
-			(v) => setInputs(_programmer, b => v? v[_value] : b)
-		)
-		db[_get]<ObjectStoreLastInput<number>>(store_lastInput, ObjectStoreKeys.lastInput_date_year)[_then](
-			(v) => setInputs(_date, _year, b => v? v[_value] : b)
-		)
-		db[_get]<ObjectStoreLastInput<number>>(store_lastInput, ObjectStoreKeys.lastInput_date_month)[_then](
-			(v) => setInputs(_date, _month, b => v? v[_value] : b)
-		)
-		db[_get]<ObjectStoreLastInput<number>>(store_lastInput, ObjectStoreKeys.lastInput_date_day)[_then](
-			(v) => setInputs(_date, _day, b => v? v[_value] : b)
-		)
-		db[_get]<ObjectStoreLastInput<string>>(store_lastInput, ObjectStoreKeys.lastInput_date_from)[_then](
-			(v) => setInputs(_date, _from, b => v? new Date(Date[_parse](v[_value])) : b)
-		)
-		db[_get]<ObjectStoreLastInput<string>>(store_lastInput, ObjectStoreKeys.lastInput_date_to)[_then](
-			(v) => setInputs(_date, _to, b => v? new Date(Date[_parse](v[_value])) : b)
-		)
+		promise_done(db.get<ObjectStoreLastInput<string>>(
+			store_lastinput,
+			ObjectStoreKeys.lastinput_basic
+		), (result) => set_inputs('basic', i => result?.value ?? i))
+
+		promise_done(db.get<ObjectStoreLastInput<string>>(
+			store_lastinput,
+			ObjectStoreKeys.lastinput_scientific
+		), (result) => set_inputs('scientific', i => result?.value ?? i))
+
+		promise_done(db.get<ObjectStoreLastInput<string>>(
+			store_lastinput,
+			ObjectStoreKeys.lastinput_converter
+		), (result) => set_inputs('converter', i => result?.value ?? i))
+
+		promise_done(db.get<ObjectStoreLastInput<string>>(
+			store_lastinput,
+			ObjectStoreKeys.lastinput_programmer
+		), (result) => set_inputs('programmer', i => result?.value ?? i))
+
+		promise_done(db.get<ObjectStoreLastInput<number>>(
+			store_lastinput,
+			ObjectStoreKeys.lastinput_date_year
+		), (result) => set_inputs('date', 'year', i => result?.value ?? i))
+
+		promise_done(db.get<ObjectStoreLastInput<number>>(
+			store_lastinput,
+			ObjectStoreKeys.lastinput_date_month
+		), (result) => set_inputs('date', 'month', i => result?.value ?? i))
+
+		promise_done(db.get<ObjectStoreLastInput<number>>(
+			store_lastinput,
+			ObjectStoreKeys.lastinput_date_day
+		), (result) => set_inputs('date', 'day', i => result?.value ?? i))
+
+		promise_done(db.get<ObjectStoreLastInput<string>>(
+			store_lastinput,
+			ObjectStoreKeys.lastinput_date_from
+		), (result) => set_inputs('date', 'from', i => result? new Date(date_parse(result.value)) : i))
+
+		promise_done(db.get<ObjectStoreLastInput<string>>(
+			store_lastinput,
+			ObjectStoreKeys.lastinput_date_to
+		), (result) => set_inputs('date', 'to', i => result? new Date(date_parse(result.value)) : i))
 	}
 
-	function initDatabase(): void {
-		db[_open]({
-			onSuccess() {
-				initSettings()
-				initLastInput()
-				initLastOuptut()
-				initNote()
-				initLastPage()
+	function init_database(): void {
+		db.open({
+			on_success() {
+				init_settings()
+				init_last_input()
+				init_last_output()
+				init_note()
+				init_last_page()
 			},
-			onUpgradeNeeded(_, db) {
-				db[_createObjectStore]<ObjectStoreSettings>({
-					name: ObjectStoreNames[_settings],
-					keyPath: _key,
-					indexs: [_key, _value]
+			on_upgrade_needed(_, db) {
+				db.create_store<ObjectStoreSettings>({
+					name: ObjectStoreNames.settings,
+					key_path: 'key',
+					indexs: ['key', 'value']
 				})
-				db[_createObjectStore]<ObjectStoreLastInput>({
-					name: ObjectStoreNames[_lastInput],
-					keyPath: _key,
-					indexs: [_key, _value]
+				db.create_store<ObjectStoreLastInput>({
+					name: ObjectStoreNames.last_input,
+					key_path: 'key',
+					indexs: ['key', 'value']
 				})
-				db[_createObjectStore]<ObjectStoreLastOutput>({
-					name: ObjectStoreNames[_lastOutput],
-					keyPath: _key,
-					indexs: [_key, _value]
+				db.create_store<ObjectStoreLastOutput>({
+					name: ObjectStoreNames.last_output,
+					key_path: 'key',
+					indexs: ['key', 'value']
 				})
-				db[_createObjectStore]<ObjectStoreMiscellaneous>({
-					name: ObjectStoreNames[_miscellaneous],
-					keyPath: _key,
-					indexs: [_key, _value]
+				db.create_store<ObjectStoreMiscellaneous>({
+					name: ObjectStoreNames.miscellaneous,
+					key_path: 'key',
+					indexs: ['key', 'value']
 				})
 			},
 		})
 	}
 
 	onMount(() => {
-		initDatabase()
-		removeSplashScreen()
+		init_database()
+		remove_splash_screen()
 	})
 
 	return (<App
-		appBar={<AppBar
-			onChangeCalculator={onChangeCalculator}
+		appbar={<AppBar
+			on_change_calculator={on_change_calculator}
 			calculator={calculator()}
 			command={command}
 			settings={settings}
 			note={note()}
-			onNoteChanged={onNoteChanged}
-			isNotebookExpanded={isNotebookExpanded()}
+			on_note_changed={on_note_changed}
+			is_notebook_expanded={is_notebook_expanded()}
 		/>}
-		leftSideBar={<SideNavigation
+		left_sidebar={<SideNavigation
 			calculator={calculator()}
-			onChangeCalculator={onChangeCalculator}
-			expand={isSideNavigationExpanded()}
+			on_change_calculator={on_change_calculator}
+			expanded={is_sidenavigation_expanded()}
 		/>}
-		rightSideBar={<Notebook
-			expand={isNotebookExpanded()}
+		right_sidebar={<Notebook
+			expanded={is_notebook_expanded()}
 			note={note()}
-			onNoteChanged={onNoteChanged}
+			on_note_changed={on_note_changed}
 		/>}>
 		<InputOutput
 			calculator={calculator()}

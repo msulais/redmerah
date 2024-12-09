@@ -10,12 +10,12 @@ export type ObjectStoreLastInput<T = unknown> = {
 
 export enum ObjectStoreNames {
 	settings = 'settings',
-	lastInput = 'lastInput',
+	last_input = 'last_input',
 }
 
 export enum ObjectStoreKeys {
-	settings_textWrap = 'textWrap',
-	settings_fontSize = 'fontSize',
-	lastInput_css = 'css',
-	lastInput_markdown = 'markdown'
+	settings_textwrap = 'text_wrap',
+	settings_fontsize = 'font_size',
+	lastinput_css = 'css',
+	lastinput_markdown = 'markdown'
 }

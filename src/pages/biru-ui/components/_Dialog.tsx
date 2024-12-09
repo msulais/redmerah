@@ -1,21 +1,19 @@
 import { createSignal, Show, type VoidComponent } from "solid-js"
 
-import { _tonal, _filled, _currentTarget, _value, _checked } from "@/constants/string"
-
 import Button, { ButtonVariant } from "@/components/Button"
 import CheckBox from "@/components/CheckBox"
 import TextField from "@/components/TextField"
-import Dialog, { closeDialog, openDialog } from "@/components/Dialog"
+import Dialog, { close_dialog, open_dialog } from "@/components/Dialog"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
 
 const _: VoidComponent = () => {
-	const [important, setImportant] = createSignal<boolean>(false)
-	const [contentAutoFocus, setInputAutoFocus] = createSignal<boolean>(false)
-	const [hasHeader, setHasHeader] = createSignal<boolean>(true)
-	const [hasActions, setHasActions] = createSignal<boolean>(true)
-	const [hasContent, setHasContent] = createSignal<boolean>(true)
-	const [headerText, setHeaderText] = createSignal<string>('Header')
-	const [contentText, setContentText] = createSignal<string>('Cupidatat aliqua est quis enim commodo. Aute Lorem occaecat commodo nisi amet dolor ut cupidatat qui ipsum magna in. In aliquip voluptate nulla aliquip duis cillum consectetur eiusmod adipisicing reprehenderit officia reprehenderit adipisicing dolor.')
+	const [important, set_important] = createSignal<boolean>(false)
+	const [content_autofocus, set_content_autofocus] = createSignal<boolean>(false)
+	const [has_header, set_has_header] = createSignal<boolean>(true)
+	const [has_actions, set_has_actions] = createSignal<boolean>(true)
+	const [has_content, set_has_content] = createSignal<boolean>(true)
+	const [header_text, set_header_text] = createSignal<string>('Header')
+	const [content_text, set_content_text] = createSignal<string>('Cupidatat aliqua est quis enim commodo. Aute Lorem occaecat commodo nisi amet dolor ut cupidatat qui ipsum magna in. In aliquip voluptate nulla aliquip duis cillum consectetur eiusmod adipisicing reprehenderit officia reprehenderit adipisicing dolor.')
 	let dialog_ref: HTMLDialogElement
 
 	return (<Page
@@ -23,59 +21,59 @@ const _: VoidComponent = () => {
 		description="A dialog is an overlay window that interrupts the user's main workflow to deliver important information or request user input. It typically contains a title, content area, and buttons for user actions.">
 		<Playground>
 			<Button
-				variant={ButtonVariant[_tonal]}
-				onClick={(ev) => openDialog(ev, dialog_ref, {
+				variant={ButtonVariant.tonal}
+				onClick={(ev) => open_dialog(ev, dialog_ref, {
 					important: important(),
-					contentAutoFocus: contentAutoFocus()
+					content_auto_focus: content_autofocus()
 				})}>
 				Open dialog
 			</Button>
 			<Dialog
 				style={{width: '500px'}}
 				ref={r => dialog_ref = r}
-				header={<Show when={hasHeader()}>{headerText()}</Show>}
-				actions={<Show when={hasActions()}>
-					<Button variant={ButtonVariant[_tonal]} onClick={() => closeDialog(dialog_ref)}>Close</Button>
-					<Button variant={ButtonVariant[_tonal]}>Options</Button>
-					<Button variant={ButtonVariant[_filled]} onClick={() => closeDialog(dialog_ref)}>Accept</Button>
+				header={<Show when={has_header()}>{header_text()}</Show>}
+				actions={<Show when={has_actions()}>
+					<Button variant={ButtonVariant.tonal} onClick={() => close_dialog(dialog_ref)}>Close</Button>
+					<Button variant={ButtonVariant.tonal}>Options</Button>
+					<Button variant={ButtonVariant.filled} onClick={() => close_dialog(dialog_ref)}>Accept</Button>
 				</Show>}>
-				<Show when={hasContent()}>
-					{contentText()}
+				<Show when={has_content()}>
+					{content_text()}
 					<div style={{height: '16px'}}/>
 					<TextField label="Some input"/>
 				</Show>
 			</Dialog>
 		</Playground>
 		<PlaygroundOptions>
-			<Show when={hasHeader()}>
-				<TextField label="Header text" value="Header" onInput={ev => setHeaderText(ev[_currentTarget][_value])}/>
+			<Show when={has_header()}>
+				<TextField label="Header text" value="Header" onInput={ev => set_header_text(ev.currentTarget.value)}/>
 			</Show>
-			<Show when={hasContent()}>
-				<TextField label="Content text" value="Cupidatat aliqua est quis enim commodo. Aute Lorem occaecat commodo nisi amet dolor ut cupidatat qui ipsum magna in. In aliquip voluptate nulla aliquip duis cillum consectetur eiusmod adipisicing reprehenderit officia reprehenderit adipisicing dolor." onInput={ev => setContentText(ev[_currentTarget][_value])}/>
+			<Show when={has_content()}>
+				<TextField label="Content text" value="Cupidatat aliqua est quis enim commodo. Aute Lorem occaecat commodo nisi amet dolor ut cupidatat qui ipsum magna in. In aliquip voluptate nulla aliquip duis cillum consectetur eiusmod adipisicing reprehenderit officia reprehenderit adipisicing dolor." onInput={ev => set_content_text(ev.currentTarget.value)}/>
 			</Show>
 			<CheckBox
 				checked={important()}
-				onChange={ev => setImportant(ev[_currentTarget][_checked])}>
+				onChange={ev => set_important(ev.currentTarget.checked)}>
 				Important
 			</CheckBox>
 			<CheckBox
-				checked={contentAutoFocus()}
-				onChange={ev => setInputAutoFocus(ev[_currentTarget][_checked])}>
+				checked={content_autofocus()}
+				onChange={ev => set_content_autofocus(ev.currentTarget.checked)}>
 				Content autofocus
 			</CheckBox>
 			<CheckBox
-				checked={hasHeader()}
-				onChange={ev => setHasHeader(ev[_currentTarget][_checked])}>
+				checked={has_header()}
+				onChange={ev => set_has_header(ev.currentTarget.checked)}>
 				Header
 			</CheckBox>
 			<CheckBox
-				checked={hasActions()}
-				onChange={ev => setHasActions(ev[_currentTarget][_checked])}>
+				checked={has_actions()}
+				onChange={ev => set_has_actions(ev.currentTarget.checked)}>
 				Actions
 			</CheckBox>
 			<CheckBox
-				checked={hasContent()}
-				onChange={ev => setHasContent(ev[_currentTarget][_checked])}>
+				checked={has_content()}
+				onChange={ev => set_has_content(ev.currentTarget.checked)}>
 				Content
 			</CheckBox>
 		</PlaygroundOptions>

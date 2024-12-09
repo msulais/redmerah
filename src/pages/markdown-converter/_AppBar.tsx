@@ -1,107 +1,122 @@
-import { createSignal, onMount, type VoidComponent } from "solid-js";
+import { createMemo, createSignal, onMount, type VoidComponent } from "solid-js";
 
 import type { Settings } from "./_types";
-import { _system, _round, _theme, _corner, _light, _dark, _includes, _sharp, _semiRound, _fullRound, _about, _apps, _contactEmail, _donate, _getFullYear, _home, _privacy, _share, _src, _terms, _URL, _centerBottomToLeft, _currentTarget, _settings, _textWrap, _command, _fontSize, _contentWindow, _print, _markdown, _html, _csc, _css, _valueAsNumber } from "@/constants/string";
-import { getDocument, getNavigator, getRoot } from "@/constants/window";
 import { RootAttributes } from "@/enums/attributes";
 import { CornerData } from "@/enums/corner";
 import { RoutesLinks, ExternalLinks } from "@/enums/links";
 import { LocalStorageKeys } from "@/enums/storage";
 import { ThemeData } from "@/enums/theme";
-import { setLocalStorageItem, getLocalStorageItem } from "@/utils/storage";
+import { storage_set, storage_get } from "@/utils/storage";
 import { wait } from "@/utils/timeout";
-import { encodeURL } from "@/utils/url";
+import { url_encode } from "@/utils/url";
 import { setAttribute } from "solid-js/web";
 import { Commands } from "./_enums";
 import { NumberTextField } from "@/components/TextField";
 import { IFRAME_PREVIEW_ID } from "./_constants";
-import { getElementById } from "@/utils/element";
-import { safeNumber } from "@/utils/math";
+import { get_element_by_id } from "@/utils/element";
+import { array_includes } from "@/utils/array";
+import { navigator_share } from "@/utils/navigator";
+import { date_year } from "@/utils/datetime";
+import { number_safe } from "@/utils/number";
 import logo from '@/assets/apps/markdown-converter-logo.svg'
-import redmerahLogo from '@/assets/logo.svg'
-import Tooltip from "@/components/Tooltip";
-import CSSAnimation from "@/styles/animation.module.scss"
-import cssLogo from '@/assets/css-logo.svg'
-import htmlLogo from '@/assets/html-logo.svg'
+import logo_redmerah from '@/assets/logo.svg'
+import logo_css from '@/assets/css-logo.svg'
+import logo_html from '@/assets/html-logo.svg'
 
 import { IconButton } from "@/components/Button";
-import Menu, { closeSubMenu, closeMenu, LinkMenuItem, MenuDivider, MenuHeader, MenuItem, SubMenu, openMenu, SubMenuItem, SwitchMenuItem } from "@/components/Menu";
+import Menu, { close_submenu, close_menu, LinkMenuItem, MenuDivider, MenuHeader, MenuItem, SubMenu, open_menu, SubMenuItem, SwitchMenuItem } from "@/components/Menu";
+import Tooltip from "@/components/Tooltip";
+import CSSAnimation from "@/styles/animation.module.scss"
 import AppBar from "@/components/AppBar";
 
 const _: VoidComponent<{
 	settings: Settings
 	command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
-	const [is_menu_info_open, setIs_menu_info_open] = createSignal<boolean>(false)
-	const [is_menu_settings_open, setIs_menu_settings_open] = createSignal<boolean>(false)
-	const [is_submenu_themeSettings_open, setIs_submenu_themeSettings_open] = createSignal<boolean>(false)
-	const [is_submenu_cornerSettings_open, setIs_submenu_cornerSettings_open] = createSignal<boolean>(false)
-	const [is_menu_moreActions_open, setIs_menu_moreActions_open] = createSignal<boolean>(false)
-	const [is_submenu_downloadMoreActions_open, setIs_submenu_downloadMoreActions_open] = createSignal<boolean>(false)
-	const [is_submenu_copyAllMoreActions_open, setIs_submenu_copyAllMoreActions_open] = createSignal<boolean>(false)
-	const [theme, setTheme] = createSignal<ThemeData>(ThemeData[_system])
-	const [corner, setCorner] = createSignal<CornerData>(CornerData[_round])
+	const root = document.documentElement
+	const theme_system = ThemeData.system
+	const theme_light = ThemeData.light
+	const theme_dark = ThemeData.dark
+	const corner_sharp = CornerData.sharp
+	const corner_semiround = CornerData.semi_round
+	const corner_round = CornerData.round
+	const corner_fullround = CornerData.full_round
+
+	const [is_menu_info_open, set_is_menu_info_open] = createSignal<boolean>(false)
+	const [is_menu_settings_open, set_is_menu_settings_open] = createSignal<boolean>(false)
+	const [is_submenu_themesettings_open, set_is_submenu_themesettings_open] = createSignal<boolean>(false)
+	const [is_submenu_cornersettings_open, set_is_submenu_cornersettings_open] = createSignal<boolean>(false)
+	const [is_menu_moreactions_open, set_is_menu_moreactions_open] = createSignal<boolean>(false)
+	const [is_submenu_downloadmoreactions_open, set_is_submenu_downloadmoreactions_open] = createSignal<boolean>(false)
+	const [is_submenu_copyallmoreactions_open, set_is_submenu_copyallmoreactions_open] = createSignal<boolean>(false)
+	const [theme, set_theme] = createSignal<ThemeData>(theme_system)
+	const [corner, set_corner] = createSignal<CornerData>(corner_round)
+	const settings = createMemo(() => props.settings)
 	let menu_info_ref: HTMLDialogElement
 	let menu_settings_ref: HTMLDialogElement
-	let menu_moreActions_ref: HTMLDialogElement
-	let submenu_themeSettings_ref: HTMLDivElement
-	let submenu_cornerSettings_ref: HTMLDivElement
-	let submenu_downloadMoreActions_ref: HTMLDivElement
-	let submenu_copyAllMoreActions_ref: HTMLDivElement
+	let menu_moreactions_ref: HTMLDialogElement
+	let submenu_themesettings_ref: HTMLDivElement
+	let submenu_cornersettings_ref: HTMLDivElement
+	let submenu_downloadmoreactions_ref: HTMLDivElement
+	let submenu_copyallmoreactions_ref: HTMLDivElement
 
-	async function changeTheme(theme: ThemeData): Promise<void> {
-		setTheme(theme)
-		setAttribute(getRoot(), RootAttributes[_theme], theme)
-		setLocalStorageItem(LocalStorageKeys[_theme], theme)
-		closeSubMenu(submenu_themeSettings_ref)
-		await wait(300)
-		closeMenu(menu_settings_ref)
+	function command(type: Commands, ...args: unknown[]): unknown {
+		return props.command(type, ...args)
 	}
 
-	async function changeCorner(corner: CornerData): Promise<void> {
-		setCorner(corner)
-		setAttribute(getRoot(), RootAttributes[_corner], corner)
-		setLocalStorageItem(LocalStorageKeys[_corner], corner)
-		closeSubMenu(submenu_cornerSettings_ref)
+	async function change_theme(theme: ThemeData): Promise<void> {
+		set_theme(theme)
+		setAttribute(root, RootAttributes.theme, theme)
+		storage_set(LocalStorageKeys.theme, theme)
+		close_submenu(submenu_themesettings_ref)
 		await wait(300)
-		closeMenu(menu_settings_ref)
+		close_menu(menu_settings_ref)
 	}
 
-	function initTheme(): void {
-		const theme = getLocalStorageItem(LocalStorageKeys[_theme])
+	async function change_corner(corner: CornerData): Promise<void> {
+		set_corner(corner)
+		setAttribute(root, RootAttributes.corner, corner)
+		storage_set(LocalStorageKeys.corner, corner)
+		close_submenu(submenu_cornersettings_ref)
+		await wait(300)
+		close_menu(menu_settings_ref)
+	}
 
-		if (theme && [ThemeData[_system], ThemeData[_light], ThemeData[_dark]][_includes](theme as ThemeData)) {
-			setAttribute(getRoot(), RootAttributes[_theme], theme)
-			setTheme(theme as ThemeData)
+	function init_theme(): void {
+		const theme = storage_get(LocalStorageKeys.theme)
+
+		if (theme && array_includes([theme_system, theme_light, theme_dark], theme as ThemeData)) {
+			setAttribute(root, RootAttributes.theme, theme)
+			set_theme(theme as ThemeData)
 		}
 	}
 
-	function initCorner(): void {
-		const corner = getLocalStorageItem(LocalStorageKeys[_corner])
+	function init_corner(): void {
+		const corner = storage_get(LocalStorageKeys.corner)
 
-		if (corner && [CornerData[_sharp], CornerData[_semiRound], CornerData[_round], CornerData[_fullRound]][_includes](corner as CornerData)) {
-			setAttribute(getRoot(), RootAttributes[_corner], corner)
-			setCorner(corner as CornerData)
+		if (corner && array_includes([corner_sharp, corner_semiround, corner_round, corner_fullround], corner as CornerData)) {
+			setAttribute(root, RootAttributes.corner, corner)
+			set_corner(corner as CornerData)
 		}
 	}
 
-	async function downloadFile(type: 'markdown' | 'css' | 'html'): Promise<void> {
-		props[_command](Commands.download_file, type)
-		closeSubMenu(submenu_downloadMoreActions_ref)
+	async function download_file(type: 'markdown' | 'css' | 'html'): Promise<void> {
+		command(Commands.download_file, type)
+		close_submenu(submenu_downloadmoreactions_ref)
 		await wait(300)
-		closeMenu(menu_moreActions_ref)
+		close_menu(menu_moreactions_ref)
 	}
 
-	async function copyAll(ev: Event, type: 'markdown' | 'css' | 'html'): Promise<void> {
-		props[_command](Commands.copy_all, ev, type)
-		closeSubMenu(submenu_copyAllMoreActions_ref)
+	async function copy_all(ev: Event, type: 'markdown' | 'css' | 'html'): Promise<void> {
+		command(Commands.copy_all, ev, type)
+		close_submenu(submenu_copyallmoreactions_ref)
 		await wait(300)
-		closeMenu(menu_moreActions_ref)
+		close_menu(menu_moreactions_ref)
 	}
 
 	onMount(() => {
-		initTheme()
-		initCorner()
+		init_theme()
+		init_corner()
 	})
 
 	const Menus: VoidComponent = () => {
@@ -109,131 +124,131 @@ const _: VoidComponent<{
 			<Menu
 				style={{width: '200px'}}
 				ref={r => menu_info_ref = r}
-				onToggleOpen={(v) => setIs_menu_info_open(v)}>
+				on_toggle_open={(v) => set_is_menu_info_open(v)}>
 				<LinkMenuItem
-					onClick={() => closeMenu(menu_info_ref)}
-					href={RoutesLinks[_home]}
-					leading={<img src={redmerahLogo[_src]} width={16} alt='Redmerah logo'/>}>
+					onClick={() => close_menu(menu_info_ref)}
+					href={RoutesLinks.home}
+					leading={<img src={logo_redmerah.src} width={16} alt='Redmerah logo'/>}>
 					Redmerah
 				</LinkMenuItem>
 				<LinkMenuItem
-					onClick={() => closeMenu(menu_info_ref)}
-					href={RoutesLinks[_apps]}
-					iconCode={0xE063}>
+					onClick={() => close_menu(menu_info_ref)}
+					href={RoutesLinks.apps}
+					icon_code={0xE063}>
 					More apps
 				</LinkMenuItem>
 				<LinkMenuItem
-					onClick={() => closeMenu(menu_info_ref)}
-					href={RoutesLinks[_about]}
-					iconCode={0xE930}>
+					onClick={() => close_menu(menu_info_ref)}
+					href={RoutesLinks.about}
+					icon_code={0xE930}>
 					About us
 				</LinkMenuItem>
 				<MenuDivider />
 				<LinkMenuItem
-					onClick={() => closeMenu(menu_info_ref)}
-					href={RoutesLinks[_privacy]}
-					iconCode={0xEE51}>
+					onClick={() => close_menu(menu_info_ref)}
+					href={RoutesLinks.privacy}
+					icon_code={0xEE51}>
 					Privacy policy
 				</LinkMenuItem>
 				<LinkMenuItem
-					onClick={() => closeMenu(menu_info_ref)}
-					href={RoutesLinks[_terms]}
-					iconCode={0xED47}>
+					onClick={() => close_menu(menu_info_ref)}
+					href={RoutesLinks.terms}
+					icon_code={0xED47}>
 					Terms & conditions
 				</LinkMenuItem>
 				<MenuDivider />
 				<MenuItem
 					onClick={() => {
-						getNavigator()[_share]({ title: 'Markdown Converter', text: 'Markdown Converter', url: getDocument()[_URL] })
-						closeMenu(menu_info_ref)
+						navigator_share({ title: 'Markdown Converter', text: 'Markdown Converter', url: document.URL })
+						close_menu(menu_info_ref)
 					}}
-					iconCode={0xEE23}>
+					icon_code={0xEE23}>
 					Share
 				</MenuItem>
 				<LinkMenuItem
-					onClick={() => closeMenu(menu_info_ref)}
-					href={'mailto:' + ExternalLinks[_contactEmail] + '?subject=' + encodeURL('Markdown Converter')}
-					iconCode={0xE3A0}>
+					onClick={() => close_menu(menu_info_ref)}
+					href={'mailto:' + ExternalLinks.contact_email + '?subject=' + url_encode('Markdown Converter')}
+					icon_code={0xE3A0}>
 					Send feedback
 				</LinkMenuItem>
 				<LinkMenuItem
-					onClick={() => closeMenu(menu_info_ref)}
-					href={ExternalLinks[_donate]}
-					openInNewTab
-					iconCode={0xE84B}>
+					onClick={() => close_menu(menu_info_ref)}
+					href={ExternalLinks.donate}
+					open_in_new_tab
+					icon_code={0xE84B}>
 					Donate
 				</LinkMenuItem>
-				<MenuHeader>&copy; {new Date()[_getFullYear]()} Redmerah</MenuHeader>
+				<MenuHeader>&copy; {date_year(new Date())} Redmerah</MenuHeader>
 			</Menu>
 			<Menu
 				ref={r => menu_settings_ref = r}
-				onToggleOpen={(v) => setIs_menu_settings_open(v)}>
+				on_toggle_open={(v) => set_is_menu_settings_open(v)}>
 				<SubMenu
-					ref={r => submenu_themeSettings_ref = r}
-					onToggleOpen={v => setIs_submenu_themeSettings_open(v)}
+					ref={r => submenu_themesettings_ref = r}
+					on_toggle_open={v => set_is_submenu_themesettings_open(v)}
 					item={<SubMenuItem
-						focused={is_submenu_themeSettings_open()}
-						iconCode={0xE28A}>
+						focused={is_submenu_themesettings_open()}
+						icon_code={0xE28A}>
 						Theme
 					</SubMenuItem>}>
 					<MenuItem
-						selected={theme() == ThemeData[_light]}
-						iconCode={0xF2CD}
-						onClick={() => changeTheme(ThemeData[_light])}>
+						selected={theme() == theme_light}
+						icon_code={0xF2CD}
+						onClick={() => change_theme(theme_light)}>
 						Light
 					</MenuItem>
 					<MenuItem
-						selected={theme() == ThemeData[_dark]}
-						iconCode={0xF2B3}
-						onClick={() => changeTheme(ThemeData[_dark])}>
+						selected={theme() == theme_dark}
+						icon_code={0xF2B3}
+						onClick={() => change_theme(theme_dark)}>
 						Dark
 					</MenuItem>
 					<MenuItem
-						selected={theme() == ThemeData[_system]}
-						iconCode={0xE96D}
-						onClick={() => changeTheme(ThemeData[_system])}>
+						selected={theme() == theme_system}
+						icon_code={0xE96D}
+						onClick={() => change_theme(theme_system)}>
 						System theme
 					</MenuItem>
 				</SubMenu>
 				<SubMenu
-					ref={r => submenu_cornerSettings_ref = r}
-					onToggleOpen={v => setIs_submenu_cornerSettings_open(v)}
+					ref={r => submenu_cornersettings_ref = r}
+					on_toggle_open={v => set_is_submenu_cornersettings_open(v)}
 					item={<SubMenuItem
-						focused={is_submenu_cornerSettings_open()}
-						iconCode={0xF044}>
+						focused={is_submenu_cornersettings_open()}
+						icon_code={0xF044}>
 						Corner style
 					</SubMenuItem>}>
 					<MenuItem
-						selected={corner() == CornerData[_sharp]}
-						iconCode={0xEA99}
-						onClick={() => changeCorner(CornerData[_sharp])}>
+						selected={corner() == corner_sharp}
+						icon_code={0xEA99}
+						onClick={() => change_corner(corner_sharp)}>
 						Sharp
 					</MenuItem>
 					<MenuItem
-						selected={corner() == CornerData[_semiRound]}
-						iconCode={0xEEF7}
-						onClick={() => changeCorner(CornerData[_semiRound])}>
+						selected={corner() == corner_semiround}
+						icon_code={0xEEF7}
+						onClick={() => change_corner(corner_semiround)}>
 						Semi round
 					</MenuItem>
 					<MenuItem
-						selected={corner() == CornerData[_round]}
-						iconCode={0xF044}
-						onClick={() => changeCorner(CornerData[_round])}>
+						selected={corner() == corner_round}
+						icon_code={0xF044}
+						onClick={() => change_corner(corner_round)}>
 						Round
 					</MenuItem>
 					<MenuItem
-						selected={corner() == CornerData[_fullRound]}
-						iconCode={0xE408}
-						onClick={() => changeCorner(CornerData[_fullRound])}>
+						selected={corner() == corner_fullround}
+						icon_code={0xE408}
+						onClick={() => change_corner(corner_fullround)}>
 						Full round
 					</MenuItem>
 				</SubMenu>
 				<MenuDivider/>
 				<SwitchMenuItem
-					iconCode={0xF19D}
-					checked={props[_settings][_textWrap]}
-					switchAttr={{
-						onChange: () => props[_command](Commands.toggle_textWrap)
+					icon_code={0xF19D}
+					checked={settings().text_wrap}
+					attr_switch={{
+						onChange: () => command(Commands.toggle_textwrap)
 					}}>
 					Text wrap
 				</SwitchMenuItem>
@@ -241,94 +256,94 @@ const _: VoidComponent<{
 					<NumberTextField
 						min={12}
 						label="Font size"
-						value={props[_settings][_fontSize]}
-						onBlur={ev => props[_command](
-							Commands.change_fontSize,
-							safeNumber(ev[_currentTarget][_valueAsNumber], props[_settings][_fontSize])
+						value={settings().font_size}
+						onBlur={ev => command(
+							Commands.change_fontsize,
+							number_safe(ev.currentTarget.valueAsNumber, settings().font_size)
 						)}
 					/>
 				</div>
 			</Menu>
 			<Menu
 				style={{"min-width": '200px'}}
-				onToggleOpen={isOpen => setIs_menu_moreActions_open(isOpen)}
-				ref={r => menu_moreActions_ref = r}>
+				on_toggle_open={isOpen => set_is_menu_moreactions_open(isOpen)}
+				ref={r => menu_moreactions_ref = r}>
 				<MenuItem
-					iconCode={0xECFF}
+					icon_code={0xECFF}
 					onClick={() => {
-						closeMenu(menu_moreActions_ref)
-						const iframe = getElementById(IFRAME_PREVIEW_ID) as HTMLIFrameElement
-						if (iframe[_contentWindow]) iframe[_contentWindow][_print]()
+						close_menu(menu_moreactions_ref)
+						const iframe = get_element_by_id(IFRAME_PREVIEW_ID) as HTMLIFrameElement
+						iframe?.contentWindow?.print()
 					}}>
 					Print
 				</MenuItem>
 				<MenuItem
-					iconCode={0xE607}
+					icon_code={0xE607}
 					onClick={(ev) => {
-						closeMenu(menu_moreActions_ref)
-						props[_command](Commands.open_file, ev)
+						close_menu(menu_moreactions_ref)
+						command(Commands.open_file, ev)
 					}}>
 					Open file
 				</MenuItem>
 				<MenuDivider/>
 				<SubMenu
-					onToggleOpen={isOpen => setIs_submenu_downloadMoreActions_open(isOpen)}
-					ref={r => submenu_downloadMoreActions_ref = r}
+					on_toggle_open={isOpen => set_is_submenu_downloadmoreactions_open(isOpen)}
+					ref={r => submenu_downloadmoreactions_ref = r}
 					item={<SubMenuItem
-						iconCode={0xE0B9}
-						focused={is_submenu_downloadMoreActions_open()}>
+						icon_code={0xE0B9}
+						focused={is_submenu_downloadmoreactions_open()}>
 						Download
 					</SubMenuItem>}>
 					<MenuItem
 						leading={<svg width={20} viewBox="0 0 2560 2560" fill="none" xmlns="http://www.w3.org/2000/svg">
 							<path d="M2375.4 2067.68H184.6C82.8 2067.68 0 1984.88 0 1883.08V676.92C0 575.12 82.8 492.32 184.6 492.32H2375.36C2477.16 492.32 2559.96 575.12 2559.96 676.92V1883.08C2560 1984.88 2477.2 2067.68 2375.4 2067.68ZM615.4 1698.48V1218.48L861.56 1526.16L1107.72 1218.48V1698.48H1353.88V861.52H1107.72L861.56 1169.2L615.4 861.52H369.24V1698.44H615.4V1698.48ZM2264.6 1280H2018.44V861.52H1772.28V1280H1526.12L1895.36 1710.76L2264.6 1280Z" fill="rgb(var(--g-color-on-surface))"/>
 						</svg>}
-						onClick={() => downloadFile(_markdown)}>
+						onClick={() => download_file('markdown')}>
 						Markdown
 					</MenuItem>
 					<MenuItem
-						leading={<img width={20} src={htmlLogo[_src]} alt="HTML logo"/>}
-						onClick={() => downloadFile(_html)}>
+						leading={<img width={20} src={logo_html.src} alt="HTML logo"/>}
+						onClick={() => download_file('html')}>
 						HTML
 					</MenuItem>
 					<MenuItem
-						leading={<img width={20} src={cssLogo[_src]} alt="CSS logo"/>}
-						onClick={() => downloadFile(_css)}>
+						leading={<img width={20} src={logo_css.src} alt="CSS logo"/>}
+						onClick={() => download_file('css')}>
 						CSS
 					</MenuItem>
 				</SubMenu>
 				<SubMenu
-					ref={r => submenu_copyAllMoreActions_ref = r}
-					onToggleOpen={isOpen => setIs_submenu_copyAllMoreActions_open(isOpen)}
+					ref={r => submenu_copyallmoreactions_ref = r}
+					on_toggle_open={isOpen => set_is_submenu_copyallmoreactions_open(isOpen)}
 					item={<SubMenuItem
-						iconCode={0xE51B}
-						focused={is_submenu_copyAllMoreActions_open()}>
+						icon_code={0xE51B}
+						focused={is_submenu_copyallmoreactions_open()}>
 						Copy all
 					</SubMenuItem>}>
 					<MenuItem
 						leading={<svg width={20} viewBox="0 0 2560 2560" fill="none" xmlns="http://www.w3.org/2000/svg">
 							<path d="M2375.4 2067.68H184.6C82.8 2067.68 0 1984.88 0 1883.08V676.92C0 575.12 82.8 492.32 184.6 492.32H2375.36C2477.16 492.32 2559.96 575.12 2559.96 676.92V1883.08C2560 1984.88 2477.2 2067.68 2375.4 2067.68ZM615.4 1698.48V1218.48L861.56 1526.16L1107.72 1218.48V1698.48H1353.88V861.52H1107.72L861.56 1169.2L615.4 861.52H369.24V1698.44H615.4V1698.48ZM2264.6 1280H2018.44V861.52H1772.28V1280H1526.12L1895.36 1710.76L2264.6 1280Z" fill="rgb(var(--g-color-on-surface))"/>
 						</svg>}
-						onClick={ev => copyAll(ev, _markdown)}>
+						onClick={ev => copy_all(ev, 'markdown')}>
 						Markdown
 					</MenuItem>
 					<MenuItem
-						leading={<img width={20} src={htmlLogo[_src]} alt="HTML logo"/>}
-						onClick={ev => copyAll(ev, _html)}>
+						leading={<img width={20} src={logo_html.src} alt="HTML logo"/>}
+						onClick={ev => copy_all(ev, 'html')}>
 						HTML
 					</MenuItem>
 					<MenuItem
-						leading={<img width={20} src={cssLogo[_src]} alt="CSS logo"/>}
-						onClick={ev => copyAll(ev, _css)}>
+						leading={<img width={20} src={logo_css.src} alt="CSS logo"/>}
+						onClick={ev => copy_all(ev, 'css')}>
 						CSS
 					</MenuItem>
 				</SubMenu>
 				<MenuDivider/>
 				<MenuItem
-					iconCode={0xE113}
+					icon_code={0xE113}
 					onClick={() => {
-						closeMenu(menu_moreActions_ref)
-						props[_command](Commands.reset_inputs)
+						close_menu(menu_moreactions_ref)
+						command(Commands.reset_inputs)
 					}}>
 					Reset input
 				</MenuItem>
@@ -338,15 +353,15 @@ const _: VoidComponent<{
 
 	return (<>
 		<AppBar
-			leading={<img alt="Markdown converter logo" width={32} src={logo[_src]} />}
+			leading={<img alt="Markdown converter logo" width={32} src={logo.src} />}
 			headline="Markdown Converter"
 			trailing={<>
 				<Tooltip text="Info">
 					<IconButton
 						focused={is_menu_info_open()}
 						code={0xE930}
-						onClick={(ev) => openMenu(ev, menu_info_ref, {
-							anchor: ev[_currentTarget],
+						onClick={(ev) => open_menu(ev, menu_info_ref, {
+							anchor: ev.currentTarget,
 							padding: 4
 						})}
 					/>
@@ -356,18 +371,18 @@ const _: VoidComponent<{
 						class={CSSAnimation.btn_rotate_icon}
 						focused={is_menu_settings_open()}
 						code={0xEE0F}
-						onClick={(ev) => openMenu(ev, menu_settings_ref, {
-							anchor: ev[_currentTarget],
+						onClick={(ev) => open_menu(ev, menu_settings_ref, {
+							anchor: ev.currentTarget,
 							padding: 4
 						})}
 					/>
 				</Tooltip>
 				<Tooltip text="More actions">
 					<IconButton
-						focused={is_menu_moreActions_open()}
+						focused={is_menu_moreactions_open()}
 						code={0xEAD9}
-						onClick={(ev) => openMenu(ev, menu_moreActions_ref, {
-							anchor: ev[_currentTarget],
+						onClick={(ev) => open_menu(ev, menu_moreactions_ref, {
+							anchor: ev.currentTarget,
 							padding: 4
 						})}
 					/>

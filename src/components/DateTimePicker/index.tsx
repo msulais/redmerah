@@ -1,19 +1,22 @@
 import { Transition } from 'solid-transition-group'
-import { createEffect, createMemo, createSignal, For, Match, mergeProps, Show, splitProps, Switch, type VoidComponent } from 'solid-js'
+import { createEffect, createMemo, createSignal, For, Match, mergeProps, Show, splitProps, Switch, type ParentComponent, type VoidComponent } from 'solid-js'
 import { mergeRefs } from '@solid-primitives/refs'
 
-import { _ref, _datetime, _onSelectDateTime, _firstDate, _lastDate, _locales, _children, _classList, _onClose, _day, _getDay, _includes, _setMonth, _month, _setFullYear, _year, _substring, _fill, _setDate, _getDate, _getMonth, _getFullYear, _filled, _outlined, _getHours, _setHours, _map, _padStart, _getMinutes, _setMinutes, _AM, _PM, _$24hour, _tonal, _animate, _finished, _spring, _then, _value } from '@/constants/string'
-import { getCurrentDate, getDate_Y, getDate_M, getWeekdayNames, isOutDate_YMD, isSameDate_YMD, getMonthNames, isOutDate_YM, isSameDate_YM, isOutDate_Y, isSameDate_Y, getMonthText, isInDate_YM } from '@/utils/datetime'
+import { get_current_date, date_year, date_month, date_weekday_names, date_out_range_YMD, is_same_date_YMD, date_month_names, date_out_range_YM, is_same_date_YM, date_out_range_Y, is_same_date_Y, date_text_month, date_in_range_YM, date_day, date_set_month, date_set_year, date_set_date, date_date, date_hour, date_set_hour, date_minute, date_set_minute } from '@/utils/datetime'
 import { AnimationEffectTiming } from '@/enums/animation'
-import { TimeFormat } from '@/enums/datetime'
-import { callEventHandler } from '@/utils/event'
+import { call_event_handler } from '@/utils/event'
+import { array_fill, array_includes, array_map } from '@/utils/array'
+import { string_padstart, string_substring } from '@/utils/string'
+import { element_animate } from '@/utils/element'
+import { promise_done } from '@/utils/object'
 
 import Button, { ButtonVariant, IconButton, SquareButton } from '@/components/Button'
 import Dropdown, { DropdownOption } from '@/components/Dropdown'
-import { closeModal, openModal, focusModal, Modal, type ModalProps, repositionModal, ModalPosition as DateTimePickerPosition } from '@/components/Modal'
+import { Modal, type ModalProps, ModalPosition as DateTimePickerPosition, close_modal, focus_modal, open_modal, reposition_modal, is_modal_open } from '@/components/Modal'
+import { MenuHeader } from '@/components/Menu'
+import { close_popover, is_popover_open, open_popover, Popover, reposition_popover, type PopoverProps } from '@/components/Popover'
 import Divider from '@/components/Divider'
 import './index.scss'
-import { MenuHeader } from '../Menu'
 
 enum DatePickerOption {
 	year,
@@ -21,105 +24,108 @@ enum DatePickerOption {
 	day
 }
 
-type DateTimePickerProps = ModalProps & {
-	datetime?: Date
-	firstDate?: Date
-	lastDate?: Date
+const DateTimePickerBody: ParentComponent<{
+	close_signal: boolean
+	datetime: Date
+	first_date: Date
+	last_date: Date
 	locales?: Intl.LocalesArgument
-	onSelectDateTime?(value: Date): unknown
-}
+	on_select_datetime?(value: Date): unknown
+	on_close(): unknown
+}> = props => {
+	const option_day = DatePickerOption.day
+	const option_month = DatePickerOption.month
+	const option_year = DatePickerOption.year
+	const [value, set_value] = createSignal<Date>(get_current_date())
+	const [date_option, set_date_option] = createSignal<DatePickerOption>(option_day)
+	const [view_date, set_view_date] = createSignal<Date>(get_current_date())
+	const [start_day, set_start_day] = createSignal<number>(0)
+	const [days_per_month, set_days_per_month] = createSignal<number>(31)
+	const [is_time_pm_format, set_is_time_pm_format] = createSignal<boolean>(false)
+	const is_time_am_format = createMemo(() => !is_time_pm_format())
 
-const DateTimePicker: VoidComponent<DateTimePickerProps> = ($props) => {
-	const $$props = mergeProps({
-		locales:'en-US',
-		datetime: getCurrentDate(),
-		firstDate: new Date(getDate_Y() - 100, 0, 1),
-		lastDate: new Date(getDate_Y() + 100, 11, 31),
-	}, $props)
-	const [props, other] = splitProps($$props, [
-		_ref, _datetime, _onSelectDateTime,
-		_firstDate, _lastDate, _locales,
-		_children, _classList, _onClose
-	])
-	const [value, setValue] = createSignal<Date>(getCurrentDate())
-	const [dateOption, setDateOption] = createSignal<DatePickerOption>(DatePickerOption[_day])
-	const [viewDate, setViewDate] = createSignal<Date>(getCurrentDate())
-	const [startDay, setStartDay] = createSignal<number>(0)
-	const [daysPerMonth, setDaysPerMonth] = createSignal<number>(31)
-	const [isTime24HourFormat, setIsTime24HourFormat] = createSignal<boolean>(false)
-	const [isTimePMFormat, setIsTimePMFormat] = createSignal<boolean>(false)
-	const isTimeAMFormat = createMemo(() => !isTimePMFormat() && !isTime24HourFormat())
-	let dateTimePicker_ref: HTMLDialogElement
-
-	function updateDateView(): void {
-		let daysPerMonth = 31 // reset to default
-		setStartDay(new Date(getDate_Y(viewDate()), getDate_M(viewDate()), 1)[_getDay]())
+	function update_date_view(): void {
+		let days_per_month = 31 // reset to default
+		set_start_day(date_day(new Date(date_year(view_date()), date_month(view_date()), 1)))
 
 		// february
-		if (getDate_M(viewDate()) == 1) {
-			daysPerMonth = 28
-			if (getDate_Y(viewDate()) % 4 == 0) daysPerMonth = 29
+		if (date_month(view_date()) == 1) {
+			days_per_month = 28
+			if (date_year(view_date()) % 4 == 0) days_per_month = 29
 		}
 
 		// april, june, september, november
-		else if ([3, 5, 8, 10][_includes](getDate_M(viewDate()))) daysPerMonth = 30
+		else if (array_includes([3, 5, 8, 10], date_month(view_date()))) days_per_month = 30
 
-		setDaysPerMonth(daysPerMonth)
+		set_days_per_month(days_per_month)
 	}
 
 	function next(): void {
-		const newDate = new Date(viewDate())
-		if (dateOption() == DatePickerOption[_day]) newDate[_setMonth](getDate_M(newDate) + 1)
-		else if (dateOption() == DatePickerOption[_month]) newDate[_setFullYear](getDate_Y(newDate) + 1)
-		else if (dateOption() == DatePickerOption[_year]) newDate[_setFullYear](getDate_Y(newDate) + 16)
+		const new_date = new Date(view_date())
+		switch (date_option()) {
+			case option_day: date_set_month(new_date, date_month(new_date) + 1); break
+			case option_month: date_set_year(new_date, date_year(new_date) + 1); break
+			case option_year: date_set_year(new_date, date_year(new_date) + 16); break
+		}
 
-		setViewDate(newDate)
-		updateDateView()
+		set_view_date(new_date)
+		update_date_view()
 	}
 
 	function previous(): void {
-		const newDate = new Date(viewDate())
-		if (dateOption() == DatePickerOption[_day]) newDate[_setMonth](getDate_M(newDate) - 1)
-		else if (dateOption() == DatePickerOption[_month]) newDate[_setFullYear](getDate_Y(newDate) - 1)
-		else if (dateOption() == DatePickerOption[_year]) newDate[_setFullYear](getDate_Y(newDate) - 16)
+		const new_date = new Date(view_date())
+		switch (date_option()) {
+			case option_day: date_set_month(new_date, date_month(new_date) - 1); break
+			case option_month: date_set_year(new_date, date_year(new_date) - 1); break
+			case option_year: date_set_year(new_date, date_year(new_date) - 16); break
+		}
 
-		setViewDate(newDate)
-		updateDateView()
+		set_view_date(new_date)
+		update_date_view()
 	}
 
-	function gotoSelectedDatetime(): void {
-		setViewDate(value())
-		updateDateView()
+	function goto_selected_datetime(): void {
+		set_view_date(value())
+		update_date_view()
 	}
 
 	createEffect(() => {
-		const datetime = props[_datetime]
+		props.close_signal // to trigger close signal
+		set_date_option(option_day)
+	})
 
-		setViewDate(datetime)
-		setValue(datetime)
+	createEffect(() => {
+		const datetime = props.datetime
+
+		set_view_date(datetime)
+		set_value(datetime)
 	})
 
 	const DaysDate: VoidComponent = () => (<div style="display: contents">
 		<div class="c-datetime-picker-days-name">
-			<For each={getWeekdayNames(props[_locales])}>{d => <p>{d[_substring](0, 2)}</p>}</For>
+			<For each={date_weekday_names(props.locales)}>{d => <p>{string_substring(d, 0, 2)}</p>}</For>
 		</div>
 		<div class="c-datetime-picker-days">
-			<For each={Array(startDay())[_fill](0)}>{_v => <div/>}</For>
-			<For each={Array(daysPerMonth())[_fill](0)}>{(_v, i) => {
-				const date = createMemo(() => new Date(getDate_Y(viewDate()), getDate_M(viewDate()), i() + 1))
+			<For each={array_fill(Array(start_day()), 0)}>{_v => <div/>}</For>
+			<For each={array_fill(Array(days_per_month()), 0)}>{(_v, i) => {
+				const date = createMemo(() => new Date(
+					date_year(view_date()),
+					date_month(view_date()),
+					i() + 1
+				))
 				return (<SquareButton
 					onClick={() => {
 						const d = new Date(value())
-						d[_setDate](date()[_getDate]())
-						d[_setMonth](date()[_getMonth]())
-						d[_setFullYear](date()[_getFullYear]())
-						setValue(d)
+						date_set_date(d, date_date(date()))
+						date_set_month(d, date_month(date()))
+						date_set_year(d, date_year(date()))
+						set_value(d)
 					}}
-					disabled={isOutDate_YMD(date(), props[_firstDate], props[_lastDate])}
-					variant={isSameDate_YMD(date(), value())
-						? ButtonVariant[_filled]
-						: isSameDate_YMD(date(), getCurrentDate())
-							? ButtonVariant[_outlined]
+					disabled={date_out_range_YMD(date(), props.first_date, props.last_date)}
+					variant={is_same_date_YMD(date(), value())
+						? ButtonVariant.filled
+						: is_same_date_YMD(date(), get_current_date())
+							? ButtonVariant.outlined
 							: undefined
 					}>
 					{ i() + 1 }
@@ -129,179 +135,288 @@ const DateTimePicker: VoidComponent<DateTimePickerProps> = ($props) => {
 	</div>)
 
 	const MonthsDate: VoidComponent = () => (<div class="c-datetime-picker-month">
-		<For each={getMonthNames(props[_locales])}>{(m, i) => {
-			const date = createMemo(() => new Date(getDate_Y(viewDate()), i()))
+		<For each={date_month_names(props.locales)}>{(m, i) => {
+			const date = createMemo(() => new Date(date_year(view_date()), i()))
 			return (<Button
 				onClick={() => {
-					setViewDate(date())
-					setDateOption(DatePickerOption[_day])
-					updateDateView()
+					set_view_date(date())
+					set_date_option(option_day)
+					update_date_view()
 				}}
-				disabled={isOutDate_YM(date(), props[_firstDate], props[_lastDate])}
-				variant={isSameDate_YM(date(), value())
-					? ButtonVariant[_filled]
-					: isSameDate_YM(date(), getCurrentDate())
-						? ButtonVariant[_outlined]
+				disabled={date_out_range_YM(date(), props.first_date, props.last_date)}
+				variant={is_same_date_YM(date(), value())
+					? ButtonVariant.filled
+					: is_same_date_YM(date(), get_current_date())
+						? ButtonVariant.outlined
 						: undefined
 				}>{m}</Button>)
 		}}</For>
 	</div>)
 
 	const YearsDate: VoidComponent = () => (<div class="c-datetime-picker-year">
-		<For each={Array(16)[_fill](0)}>{(_v, i) => {
-			const date = createMemo(() => new Date(getDate_Y(viewDate()) + i(), 0))
+		<For each={array_fill(Array(16), 0)}>{(_v, i) => {
+			const date = createMemo(() => new Date(date_year(view_date()) + i(), 0))
 			return (<Button
 				onClick={() => {
-					setViewDate(date())
-					setDateOption(DatePickerOption[_month])
-					updateDateView()
+					set_view_date(date())
+					set_date_option(option_month)
+					update_date_view()
 				}}
-				disabled={isOutDate_Y(date(), props[_firstDate], props[_lastDate])}
-				variant={isSameDate_Y(date(), value())
-					? ButtonVariant[_filled]
-					: isSameDate_Y(date(), getCurrentDate())
-						? ButtonVariant[_outlined]
+				disabled={date_out_range_Y(date(), props.first_date, props.last_date)}
+				variant={is_same_date_Y(date(), value())
+					? ButtonVariant.filled
+					: is_same_date_Y(date(), get_current_date())
+						? ButtonVariant.outlined
 						: undefined
 				}>
-				{getDate_Y(viewDate()) + i()}
+				{date_year(view_date()) + i()}
 			</Button>)
 		}}</For>
 	</div>)
 
-	return (<Modal
-		ref={mergeRefs(props[_ref], r => dateTimePicker_ref = r)}
-		classList={{
-			'c-datetime-picker': true,
-			...props[_classList]
-		}}
-		onClose={(ev) => {
-			setDateOption(DatePickerOption[_day])
-			callEventHandler(ev, props[_onClose])
-		}}
-		{...other}>
+	return (<>
 		<div class="c-datetime-picker-header">
 			<Button
-				onClick={() => setDateOption(d => {
-					if (d == DatePickerOption[_month]) return DatePickerOption[_year]
-					return DatePickerOption[_month]
+				onClick={() => set_date_option(d => {
+					if (d == option_month) return option_year
+					return option_month
 				})}
-				variant={ButtonVariant[_tonal]}>
+				variant={ButtonVariant.tonal}>
 				<Switch>
-					<Match when={dateOption() == DatePickerOption[_day]}>
-						{getMonthText(viewDate(), props[_locales]) + ' ' + getDate_Y(viewDate())}
+					<Match when={date_option() == option_day}>
+						{date_text_month(view_date(), props.locales) + ' ' + date_year(view_date())}
 					</Match>
-					<Match when={dateOption() == DatePickerOption[_month]}>
-						{getDate_Y(viewDate())}
+					<Match when={date_option() == option_month}>
+						{date_year(view_date())}
 					</Match>
-					<Match when={dateOption() == DatePickerOption[_year]}>
-						{getDate_Y(viewDate()) + '-' + (getDate_Y(viewDate()) + 15)}
+					<Match when={date_option() == option_year}>
+						{date_year(view_date()) + '-' + (date_year(view_date()) + 15)}
 					</Match>
 				</Switch>
 			</Button>
 			<Show when={
 				(
-					(dateOption() == DatePickerOption[_day] && !isSameDate_YM(viewDate(), value()))
-					|| (dateOption() == DatePickerOption[_month] && !isSameDate_Y(viewDate(), value()))
-					|| (dateOption() == DatePickerOption[_year] && isOutDate_Y(value(), viewDate(), new Date(getDate_Y(viewDate()) + 15, 2, 3)))
+					(date_option() == option_day && !is_same_date_YM(view_date(), value()))
+					|| (date_option() == option_month && !is_same_date_Y(view_date(), value()))
+					|| (date_option() == option_year && date_out_range_Y(value(), view_date(), new Date(date_year(view_date()) + 15, 2, 3)))
 				)
-				&& isInDate_YM(value(), props[_firstDate], props[_lastDate])}>
-				<IconButton code={0xE2E6} onClick={() => gotoSelectedDatetime()}/>
+				&& date_in_range_YM(value(), props.first_date, props.last_date)}>
+				<IconButton code={0xE2E6} onClick={() => goto_selected_datetime()}/>
 			</Show>
 			<IconButton code={0xE400} onClick={() => previous()}/>
 			<IconButton code={0xE402} onClick={() => next()}/>
 		</div>
 		<Divider />
 		<Transition
-			onEnter={(el, done) => {el[_animate](
-				{ opacity: [0, 1], transform: ['translateY(-12px)', 'none'] },
-				{ duration: 300, easing: AnimationEffectTiming[_spring] }
-			)[_finished][_then](done)}}
-			onExit={(el, done) => {el[_animate]({}, { duration: 0 })[_finished][_then](done)}}>
+			onEnter={(el, done) => {
+				promise_done(element_animate(
+					el as HTMLElement,
+					{ opacity: [0, 1], transform: ['translateY(-12px)', 'none'] },
+					{ duration: 300, easing: AnimationEffectTiming.spring }
+				).finished, done)
+			}}
+			onExit={(el, done) => {
+				promise_done(element_animate(
+					el as HTMLElement,
+					{},
+					{ duration: 0 }
+				).finished, done)
+			}}>
 			<Switch>
-				<Match when={dateOption() == DatePickerOption[_day]}><DaysDate/></Match>
-				<Match when={dateOption() == DatePickerOption[_month]}><MonthsDate/></Match>
-				<Match when={dateOption() == DatePickerOption[_year]}><YearsDate/></Match>
+				<Match when={date_option() == option_day}><DaysDate/></Match>
+				<Match when={date_option() == option_month}><MonthsDate/></Match>
+				<Match when={date_option() == option_year}><YearsDate/></Match>
 			</Switch>
 		</Transition>
 		<div class="c-datetime-picker-time">
 			<Dropdown
 				values={[
-					value()[_getHours]() - (value()[_getHours]() >= 12 && !isTime24HourFormat()? 12 : 0)
+					date_hour(value()) - (date_hour(value()) >= 12? 12 : 0)
 				]}
-				onChangeOptions={(options) =>
-					setValue(v => (v[_setHours](options[0][_value] as number + (isTimePMFormat()? 12 : 0)), v))
+				on_change_options={(options) =>
+					set_value(v => (date_set_hour(v, options[0].value as number + (is_time_pm_format()? 12 : 0)), v))
 				}>
 				<MenuHeader>Hour</MenuHeader>
 				<For each={[
 					[0, '00'],
-					...new Array(isTime24HourFormat()? 23 : 11)[_fill](1)[_map]((_v, i) =>
-						[i+1, `${i+1}`[_padStart](2, '0')]
+					...array_map(
+						array_fill(new Array(11), 1),
+						(_v, i) => [i+1, string_padstart(`${i+1}`, 2, '0')]
 					),
 				]}>{option => <DropdownOption value={option[0]} text={option[1] as string}/>}</For>
 			</Dropdown>
 			<Dropdown
-				values={[value()[_getMinutes]()]}
-				onChangeOptions={(options) => setValue(v => (v[_setMinutes](options[0][_value] as number), v))}>
+				values={[date_minute(value())]}
+				on_change_options={(options) => set_value(v => (date_set_minute(v, options[0].value as number), v))}>
 				<MenuHeader>Minute</MenuHeader>
-				<For each={new Array(60)[_fill](1)[_map]((_v, i) => [i, `${i}`[_padStart](2, '0')])}>{option =>
+				<For each={array_map(
+					array_fill(new Array(60), 1),
+					(_, i) => [i, string_padstart(`${i}`, 2, '0')]
+				)}>{option =>
 					<DropdownOption value={option[0]} text={option[1] as string}/>
 				}</For>
 			</Dropdown>
 			<Dropdown
-				values={[_AM]}
-				onChangeOptions={(options) => {
-					const hour = value()[_getHours]()
+				values={['AM']}
+				on_change_options={(options) => {
+					const hour = date_hour(value())
+					const $value = options[0].value
 					let $hour = hour
 
-					// from (AM | 24hour) to PM
+					// from AM to PM
 					if (
-						(isTimeAMFormat() || isTime24HourFormat())
-						&& options[0][_value] == _PM
+						is_time_am_format()
+						&& $value == 'PM'
 						&& $hour <= 12
 					) $hour += 12
 
-					// from (PM | 24hour) to AM
+					// from PM to AM
 					else if (
-						(isTime24HourFormat() || isTimePMFormat())
-						&& options[0][_value] == _AM
+						is_time_pm_format()
+						&& $value == 'AM'
 						&& $hour >= 12
 					) $hour -= 12
 
-					if (hour != $hour) setValue(v => (v[_setHours]($hour), v))
+					if (hour != $hour) set_value(v => (date_set_hour(v, $hour), v))
 
-					setIsTime24HourFormat(options[0][_value] == TimeFormat[_$24hour])
-					setIsTimePMFormat(options[0][_value] == _PM)
+					set_is_time_pm_format($value == 'PM')
 				}}>
 				<MenuHeader>Time format</MenuHeader>
-				<For each={[[_AM, _AM], [_PM, _PM], [TimeFormat[_$24hour], '24 hour']]}>{option =>
+				<For each={[['AM', 'AM'], ['PM', 'PM']]}>{option =>
 					<DropdownOption value={option[0]} text={option[1] as string}/>
 				}</For>
 			</Dropdown>
 		</div>
-		{props[_children]}
+		{props.children}
 		<div class="c-datetime-picker-actions">
-			<Button variant={ButtonVariant[_tonal]} onClick={() => closeModal(dateTimePicker_ref)}>Cancel</Button>
 			<Button
-				variant={ButtonVariant[_filled]}
+				variant={ButtonVariant.tonal}
+				onClick={() => props.on_close()}>
+				Cancel
+			</Button>
+			<Button
+				variant={ButtonVariant.filled}
 				onClick={() => {
-					if (props[_onSelectDateTime]) props[_onSelectDateTime](value())
-					closeModal(dateTimePicker_ref)
+					props.on_select_datetime?.(value())
+					props.on_close()
 				}}>
 				Select
 			</Button>
 		</div>
+	</>)
+}
+
+type DateTimePickerProps = ModalProps & {
+	datetime?: Date
+	first_date?: Date
+	last_date?: Date
+	locales?: Intl.LocalesArgument
+	on_select_datetime?(value: Date): unknown
+}
+
+const DateTimePicker: VoidComponent<DateTimePickerProps> = ($props) => {
+	const $$props = mergeProps({
+		locales:'en-US',
+		datetime: get_current_date(),
+		first_date: new Date(date_year() - 100, 0, 1),
+		last_date: new Date(date_year() + 100, 11, 31),
+	}, $props)
+	const [props, other] = splitProps($$props, [
+		'ref', 'datetime', 'on_select_datetime',
+		'first_date', 'last_date', 'locales',
+		'children', 'classList', 'onClose'
+	])
+	const [close_signal, set_close_signal] = createSignal<boolean>(false)
+	let datetimepicker_ref: HTMLDialogElement
+
+	return (<Modal
+		ref={mergeRefs(props.ref, r => datetimepicker_ref = r)}
+		classList={{
+			'c-datetime-picker': true,
+			...props.classList
+		}}
+		onClose={(ev) => {
+			set_close_signal(s => !s)
+			call_event_handler(ev, props.onClose)
+		}}
+		{...other}>
+		<DateTimePickerBody
+			close_signal={close_signal()}
+			datetime={props.datetime}
+			first_date={props.first_date}
+			last_date={props.last_date}
+			on_close={() => close_modal(datetimepicker_ref)}
+			locales={props.locales}
+			on_select_datetime={props.on_select_datetime}>
+			{props.children}
+		</DateTimePickerBody>
 	</Modal>)
 }
 
+type PopoverDateTimePickerProps = PopoverProps & {
+	datetime?: Date
+	first_date?: Date
+	last_date?: Date
+	locales?: Intl.LocalesArgument
+	on_select_datetime?(value: Date): unknown
+}
+
+const PopoverDateTimePicker: VoidComponent<PopoverDateTimePickerProps> = ($props) => {
+	const $$props = mergeProps({
+		locales:'en-US',
+		datetime: get_current_date(),
+		first_date: new Date(date_year() - 100, 0, 1),
+		last_date: new Date(date_year() + 100, 11, 31),
+	}, $props)
+	const [props, other] = splitProps($$props, [
+		'ref', 'datetime', 'on_select_datetime',
+		'first_date', 'last_date', 'locales',
+		'children', 'classList', 'on_toggle_open'
+	])
+	const [close_signal, set_close_signal] = createSignal<boolean>(false)
+	let datetimepicker_ref: HTMLDivElement
+
+	return (<Popover
+		ref={mergeRefs(props.ref, r => datetimepicker_ref = r)}
+		classList={{
+			'c-datetime-picker': true,
+			...props.classList
+		}}
+		on_toggle_open={is_open => {
+			props.on_toggle_open?.(is_open)
+			if (!is_open) set_close_signal(s => !s)
+		}}
+		{...other}>
+		<DateTimePickerBody
+			close_signal={close_signal()}
+			datetime={props.datetime}
+			first_date={props.first_date}
+			last_date={props.last_date}
+			on_close={() => close_popover(datetimepicker_ref)}
+			locales={props.locales}
+			on_select_datetime={props.on_select_datetime}>
+			{props.children}
+		</DateTimePickerBody>
+	</Popover>)
+}
+
+
 export {
 	DateTimePicker,
-	focusModal as focusDateTimePicker,
-	openModal as openDateTimePicker,
-	closeModal as closeDateTimePicker,
-	repositionModal as repositionDateTimePicker,
+	PopoverDateTimePicker,
+	is_modal_open as is_datetimepicker_open,
+	focus_modal as focus_datetimepicker,
+	open_modal as open_datetimepicker,
+	close_modal as close_datetimepicker,
+	reposition_modal as reposition_datetimepicker,
+	is_popover_open as is_popoverdatetimepicker_open,
+	open_popover as open_popoverdatetimepicker,
+	close_popover as close_popoverdatetimepicker,
+	reposition_popover as reposition_popoverdatetimepicker,
 	DateTimePickerPosition
 }
 export type {
-	DateTimePickerProps
+	DateTimePickerProps,
+	PopoverDateTimePickerProps
 }
 export default DateTimePicker

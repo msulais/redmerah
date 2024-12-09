@@ -1,7 +1,6 @@
 import { For, type VoidComponent } from "solid-js";
 
-import { _rightCenter, _calculator, _colors, _expand, _filledTonal, _icon, _left, _numbers, _onChangeCalculator, _onChangeRandomizer, _randomizerType, _selection, _string, _teams, _text, _tooltip, _type, _words } from "@/constants/string";
-import { addClassListModule } from "@/utils/element";
+import { add_classlist_module } from "@/utils/element";
 import type { CalculatorType } from "./_enums";
 import { CALCULATOR_TYPES } from "./_constants";
 
@@ -12,20 +11,20 @@ import CSS from './_styles.module.scss'
 
 const _: VoidComponent<{
 	calculator: CalculatorType
-	onChangeCalculator: (type: CalculatorType) => void
-	expand: boolean
+	on_change_calculator: (type: CalculatorType) => void
+	expanded: boolean
 }> = (props) => {
-	return (<SideNavigation expand={props[_expand]} classList={addClassListModule(CSS.side_navigation)}>
-		<For each={CALCULATOR_TYPES}>{ r => <TextTooltip text={!props[_expand]? r[_text] : undefined}>
+	return (<SideNavigation expanded={props.expanded} classList={add_classlist_module(CSS.side_navigation)}>
+		<For each={CALCULATOR_TYPES}>{ r => <TextTooltip text={!props.expanded? r.text : undefined}>
 			<SideNavigationItem
-				iconOnly={!props[_expand]}
+				icon_only={!props.expanded}
 				onClick={() => {
-					if (props[_calculator] == r[_type]) return;
-					props[_onChangeCalculator](r[_type]);
+					if (props.calculator == r.type) return;
+					props.on_change_calculator(r.type);
 				} }
-				leading={<Icon filled={props[_calculator] == r[_type]} code={r[_icon]}/>}
-				selected={props[_calculator] == r[_type]}>
-				{ r[_text] }
+				leading={<Icon filled={props.calculator == r.type} code={r.icon}/>}
+				selected={props.calculator == r.type}>
+				{ r.text }
 			</SideNavigationItem>
 		</TextTooltip>}</For>
 	</SideNavigation>)

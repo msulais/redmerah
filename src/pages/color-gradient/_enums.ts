@@ -46,91 +46,91 @@ export enum HueInterpolationMethod {
 
 export enum Commands {
 	/**
-	@param { number } gradientIndex `number`
-	@param { number } colorStopIndex `number`
+	@param { number } gradient_index `number`
+	@param { number } color_stop_index `number`
 	@param { number } length `number` from `0` to `100` */
-	change_colorStopLength = 'a',
+	change_color_stop_length = 'a',
 
-	/** @param { number } gradientIndex `number` */
+	/** @param { number } gradient_index `number` */
 	toggle_gradient_repeat = 'b',
 
 	/**
-	@param { number } gradientIndex `number`
+	@param { number } gradient_index `number`
 	@param { number } angle `number` from `0` to `360` */
 	change_gradient_angle = 'c',
 
 	/**
-	@param { number } gradientIndex `number`
+	@param { number } gradient_index `number`
 	@param { RectangularColorSpace | PolarColorSpace } colorspace `RectangularColorSpace | PolarColorSpace`*/
-	change_colorInterpolationMethod = 'd',
+	change_color_interpolation_method = 'd',
 
 	/**
-	@param { number } gradientIndex `number`
+	@param { number } gradient_index `number`
 	@param { HueInterpolationMethod } method `HueInterpolationMethod` */
-	change_hueInterpolationMethod = 'e',
+	change_hue_interpolation_method = 'e',
 
 	/**
-	@param { number } gradientIndex `number`
-	@param { number } colorStopIndex `number`
+	@param { number } gradient_index `number`
+	@param { number } color_stop_index `number`
 	@param { HEXColor } color `HEXColor` */
-	change_colorStopColor = 'f',
+	change_color_stop_color = 'f',
 
-	/** @param { number } gradientIndex `number` */
-	add_colorStop = 'g',
+	/** @param { number } gradient_index `number` */
+	add_color_stop = 'g',
 
 	/**
-	@param { number } gradientIndex `number`
-	@param { number } colorStopIndex `number` */
-	remove_colorStop = 'h',
+	@param { number } gradient_index `number`
+	@param { number } color_stop_index `number` */
+	remove_color_stop = 'h',
 
 	add_gradient = 'i',
 
-	/** @param { number } gradientIndex `number` */
+	/** @param { number } gradient_index `number` */
 	remove_gradient = 'j',
 
 	/** @param { ColorModel } model `ColorModel` */
-	change_settings_colorModel = 'k',
+	change_settings_colormodel = 'k',
 
 	/** @param { number } value `number` */
-	change_settings_aspectRatio = 'l',
+	change_settings_aspect_ratio = 'l',
 
 	/** @param { number } value `number` */
-	change_settings_borderRadius = 'm',
+	change_settings_border_radius = 'm',
 
 	/**
-	@param { number } gradientIndex `number`
+	@param { number } gradient_index `number`
 	@param { GradientType } type `GradientType` */
 	change_gradient_type = 'n',
 
 	/**
-	@param { number } gradientIndex `number`
+	@param { number } gradient_index `number`
 	@param { RadialGradientShape } shape `RadialGradientShape` */
-	change_radialGradient_shape = 'o',
+	change_radial_gradient_shape = 'o',
 
 	/**
-	@param { number } gradientIndex `number`
+	@param { number } gradient_index `number`
 	@param { number } x `number` from `0` to `100` */
-	change_gradient_positionX = 'p',
+	change_gradient_position_x = 'p',
 
 	/**
-	@param { number } gradientIndex `number`
+	@param { number } gradient_index `number`
 	@param { number } y `number` from `0` to `100` */
-	change_gradient_positionY = 'q',
+	change_gradient_position_y = 'q',
 
 	/**
-	@param { number } gradientIndex `number`
+	@param { number } gradient_index `number`
 	@param { number } size `number` */
-	change_radialGradient_size = 'r',
+	change_radial_gradient_size = 'r',
 
 	/**
-	@param { number } gradientIndex `number`
+	@param { number } gradient_index `number`
 	@param { number } width `number` from `0` to `100` */
-	change_radialGradient_width = 's',
+	change_radial_gradient_width = 's',
 
 	/**
-	@param { number } gradientIndex `number`
+	@param { number } gradient_index `number`
 	@param { number } height `number` from `0` to `100` */
-	change_radialGradient_height = 't',
+	change_radial_gradient_height = 't',
 
 	save_gradient = 'u',
 

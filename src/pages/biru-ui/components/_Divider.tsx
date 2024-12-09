@@ -1,13 +1,11 @@
 import { createSignal, type VoidComponent } from "solid-js"
 
-import { _currentTarget, _checked } from "@/constants/string"
-
 import Divider from "@/components/Divider"
 import CheckBox from "@/components/CheckBox"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
 
 const _: VoidComponent = () => {
-	const [vertical, setVertical] = createSignal<boolean>(false)
+	const [vertical, set_vertical] = createSignal<boolean>(false)
 	return (<Page
 		title="Divider"
 		description="A divider is a visual element used to separate content within an interface. It can be a horizontal or vertical line, often used to group related content or indicate different sections.">
@@ -22,7 +20,7 @@ const _: VoidComponent = () => {
 		<PlaygroundOptions>
 			<CheckBox
 				checked={vertical()}
-				onChange={ev => setVertical(ev[_currentTarget][_checked])}>
+				onChange={ev => set_vertical(ev.currentTarget.checked)}>
 				Vertical
 			</CheckBox>
 		</PlaygroundOptions>

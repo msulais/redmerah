@@ -3,13 +3,17 @@ import { createStore } from "solid-js/store"
 
 import type { Settings, Gradient, LinearGradient, RadialGradient, ConicGradient, GradientData, ColorStopGradient } from "./_type"
 import type { HEXColor } from "@/types/color"
-import { removeSplashScreen } from "@/scripts/splash"
-import { _colorGradient, _auto, _linear, _hex, _open, _createObjectStore, _settings, _key, _value, _gradientData, _id, _linearGradient, _angle, _colorInterpolationMethod, _dataId, _hueInterpolationMethod, _repeat, _type, _radialGradient, _positionX, _positionY, _shape, _sizeHeight, _sizeLength, _sizeWidth, _conicGradient, _colorStopGradient, _color, _gradientId, _size, _gradientType, _readObjectStore, _get, _then, _aspectRatio, _borderRadius, _colorModel, _transaction, _readonly, _objectStore, _getAll, _length, _sort, _forEach, _push, _filter, _gradients, _radial, _conic, _reverse, _colorStopList, _ellipse, _substring, _toString, _toUpperCase, _test, _readwrite, _at, _map, _put, _delete, _slice, _concat, _writeObjectStore } from "@/constants/string"
+import { remove_splash_screen } from "@/scripts/splash"
 import { ColorModel, Commands, GradientType, HueInterpolationMethod, PolarColorSpace, RadialGradientShape, RectangularColorSpace } from "./_enums"
-import { testHexColorWithAlpha } from "@/utils/color"
-import { mathAbs, mathMin, mathRound, numberParse } from "@/utils/math"
-import { IDB } from "@/utils/indexeddb"
+import { is_color_with_alpha_valid } from "@/utils/color"
+import { math_abs, math_min, math_round } from "@/utils/math"
+import { IDB, idb_store_delete, idb_store_put } from "@/utils/indexeddb"
 import { DatabaseNames } from "@/enums/storage"
+import { promise_done } from "@/utils/object"
+import { array_at, array_concat, array_filter, array_foreach, array_length, array_map, array_push, array_reverse, array_slice, array_sort } from "@/utils/array"
+import { number_parse, number_to_string } from "@/utils/number"
+import { string_length, string_substring, string_touppercase } from "@/utils/string"
+import { regex_test } from "@/utils/regex"
 import { type ObjectStoreColorStopGradient, type ObjectStoreConicGradient, type ObjectStoreGradientData, type ObjectStoreLinearGradient, type ObjectStoreRadialGradient, type ObjectStoreSettings, ObjectStoreNames, ObjectStoreSettingsKeys } from "./_storage"
 
 import App from "@/components/App"
@@ -17,254 +21,258 @@ import AppBar from "./_AppBar"
 import Body from "./_Body"
 
 const _: VoidComponent = () => {
-	const db = new IDB(DatabaseNames[_colorGradient])
-	const [gradientData, setGradientData] = createStore<GradientData[]>([])
+	const db = new IDB(DatabaseNames.color_gradient)
+	const [gradient_data, set_gradient_data] = createStore<GradientData[]>([])
 	// !important: must have at least one gradient
-	const [gradients, setGradients] = createStore<Gradient[]>([
+	const [gradients, set_gradients] = createStore<Gradient[]>([
 		{
-			dataId: -1,
+			data_id: -1,
 			id: -1,
 			angle: 0,
-			colorInterpolationMethod: RectangularColorSpace[_auto],
-			colorStopList: [
-				{ color: '#FFFD00', size: 0, dataId: -1, gradientId: -1, gradientType: GradientType[_linear], id: -1 },
-				{ color: '#56FF00', size: 100, dataId: -1, gradientId: -1, gradientType: GradientType[_linear], id: -1 },
+			color_interpolation_method: RectangularColorSpace.auto,
+			color_stop_list: [
+				{ color: '#FFFD00', size: 0, data_id: -1, gradient_id: -1, gradient_type: GradientType.linear, id: -1 },
+				{ color: '#56FF00', size: 100, data_id: -1, gradient_id: -1, gradient_type: GradientType.linear, id: -1 },
 			],
-			hueInterpolationMethod: HueInterpolationMethod[_auto],
+			hue_interpolation_method: HueInterpolationMethod.auto,
 			repeat: false,
-			type: GradientType[_linear]
+			type: GradientType.linear
 		} satisfies LinearGradient
 	])
-	const [settings, setSettings] = createStore<Settings>({
-		aspectRatio: 1,
-		borderRadius: 8,
-		colorModel: ColorModel[_hex]
+	const [settings, set_settings] = createStore<Settings>({
+		aspect_ratio: 1,
+		border_radius: 8,
+		color_model: ColorModel.hex
 	})
 
-	function initDatabase(): void {
-		db[_open]({
-			onSuccess() {
-				initSettings()
-				initGradientData()
+	function init_database(): void {
+		db.open({
+			on_success() {
+				init_settings()
+				init_gradient_data()
 			},
-			onUpgradeNeeded(_, db) {
-				db[_createObjectStore]<ObjectStoreSettings>({
-					name: ObjectStoreNames[_settings],
-					keyPath: _key,
-					indexs: [_key, _value]
+			on_upgrade_needed(_, db) {
+				db.create_store<ObjectStoreSettings>({
+					name: ObjectStoreNames.settings,
+					key_path: 'key',
+					indexs: ['key', 'value']
 				})
-				db[_createObjectStore]<ObjectStoreGradientData>({
-					name: ObjectStoreNames[_gradientData],
-					keyPath: _id,
-					indexs: [_id]
+				db.create_store<ObjectStoreGradientData>({
+					name: ObjectStoreNames.gradient_data,
+					key_path: 'id',
+					indexs: ['id']
 				})
-				db[_createObjectStore]<ObjectStoreLinearGradient>({
-					name: ObjectStoreNames[_linearGradient],
-					keyPath: _id,
-					indexs: [_angle, _colorInterpolationMethod, _dataId, _hueInterpolationMethod, _id, _repeat, _type]
+				db.create_store<ObjectStoreLinearGradient>({
+					name: ObjectStoreNames.linear_gradient,
+					key_path: 'id',
+					indexs: ['angle', 'color_interpolation_method', 'data_id', 'hue_interpolation_method', 'id', 'repeat', 'type']
 				})
-				db[_createObjectStore]<ObjectStoreRadialGradient>({
-					name: ObjectStoreNames[_radialGradient],
-					keyPath: _id,
-					indexs: [_colorInterpolationMethod, _dataId, _hueInterpolationMethod, _id, _positionX, _positionY, _repeat, _type, _shape, _sizeHeight, _sizeLength, _sizeWidth]
+				db.create_store<ObjectStoreRadialGradient>({
+					name: ObjectStoreNames.radial_gradient,
+					key_path: 'id',
+					indexs: ['color_interpolation_method', 'data_id', 'hue_interpolation_method', 'id', 'position_x', 'position_y', 'repeat', 'type', 'shape', 'size_height', 'size_length', 'size_width']
 				})
-				db[_createObjectStore]<ObjectStoreConicGradient>({
-					name: ObjectStoreNames[_conicGradient],
-					keyPath: _id,
-					indexs: [_angle, _colorInterpolationMethod, _dataId, _hueInterpolationMethod, _id, _positionX, _positionY, _repeat, _type]
+				db.create_store<ObjectStoreConicGradient>({
+					name: ObjectStoreNames.conic_gradient,
+					key_path: 'id',
+					indexs: ['angle', 'color_interpolation_method', 'data_id', 'hue_interpolation_method', 'id', 'position_x', 'position_y', 'repeat', 'type']
 				})
-				db[_createObjectStore]<ObjectStoreColorStopGradient>({
-					name: ObjectStoreNames[_colorStopGradient],
-					keyPath: _id,
-					indexs: [_color, _dataId, _gradientId, _id, _size, _gradientType]
+				db.create_store<ObjectStoreColorStopGradient>({
+					name: ObjectStoreNames.color_stop_gradient,
+					key_path: 'id',
+					indexs: ['color', 'data_id', 'gradient_id', 'id', 'size', 'gradient_type']
 				})
 			},
 		})
 	}
 
-	function initSettings(): void {
-		const store_settings = db[_readObjectStore](ObjectStoreNames[_settings])
+	function init_settings(): void {
+		const store_settings = db.read_store(ObjectStoreNames.settings)
 		if (store_settings == null) return
 
-		db
-		[_get]<ObjectStoreSettings<number>>(store_settings, ObjectStoreSettingsKeys.aspectRatio)
-		[_then](result => setSettings(_aspectRatio, d => result?.[_value] ?? d))
+		promise_done(db.get<ObjectStoreSettings<number>>(
+			store_settings,
+			ObjectStoreSettingsKeys.aspect_ratio
+		), result => set_settings('aspect_ratio', d => result?.value ?? d))
 
-		db
-		[_get]<ObjectStoreSettings<number>>(store_settings, ObjectStoreSettingsKeys.borderRadius)
-		[_then](result => setSettings(_borderRadius, d => result?.[_value] ?? d))
+		promise_done(db.get<ObjectStoreSettings<number>>(
+			store_settings,
+			ObjectStoreSettingsKeys.border_radius
+		), result => set_settings('border_radius', d => result?.value ?? d))
 
-		db
-		[_get]<ObjectStoreSettings<ColorModel>>(store_settings, ObjectStoreSettingsKeys.colorModel)
-		[_then](result => setSettings(_colorModel, d => result?.[_value] ?? d))
+		promise_done(db.get<ObjectStoreSettings<ColorModel>>(
+			store_settings,
+			ObjectStoreSettingsKeys.color_model
+		), result => set_settings('color_model', d => result?.value ?? d))
 	}
 
-	async function initGradientData(): Promise<void> {
-		const transaction = db[_transaction]([
-			ObjectStoreNames[_colorStopGradient],
-			ObjectStoreNames[_conicGradient],
-			ObjectStoreNames[_gradientData],
-			ObjectStoreNames[_linearGradient],
-			ObjectStoreNames[_radialGradient],
-		], _readonly)
-		const store_colorStopGradient = transaction?.[_objectStore](ObjectStoreNames[_colorStopGradient])
-		const store_conicGradient = transaction?.[_objectStore](ObjectStoreNames[_conicGradient])
-		const store_gradientData = transaction?.[_objectStore](ObjectStoreNames[_gradientData])
-		const store_linearGradient = transaction?.[_objectStore](ObjectStoreNames[_linearGradient])
-		const store_radialGradient = transaction?.[_objectStore](ObjectStoreNames[_radialGradient])
+	async function init_gradient_data(): Promise<void> {
+		const [
+			store_colorstopgradient,
+			store_gradientdata,
+			store_lineargradient,
+			store_radialgradient,
+			store_conicgradient
+		] = db.stores('readonly',
+			ObjectStoreNames.color_stop_gradient,
+			ObjectStoreNames.gradient_data,
+			ObjectStoreNames.linear_gradient,
+			ObjectStoreNames.radial_gradient,
+			ObjectStoreNames.conic_gradient,
+		)
 
-		if (store_gradientData == null || store_colorStopGradient == null) return
+		if (store_gradientdata == null || store_colorstopgradient == null) return
 
 		try {
 			const $data: GradientData[] = []
-			const data = await db[_getAll]<ObjectStoreGradientData>(store_gradientData) ?? []
-			const stops = await db[_getAll]<ObjectStoreColorStopGradient>(store_colorStopGradient) ?? []
-			if (stops[_length] == 0 || data[_length] == 0) return
+			const data = await db.get_all<ObjectStoreGradientData>(store_gradientdata) ?? []
+			const stops = await db.get_all<ObjectStoreColorStopGradient>(store_colorstopgradient) ?? []
+			if (array_length(stops) == 0 || array_length(data) == 0) return
 
-			stops[_sort]((a, b) => a[_id] - b[_id])
-			data[_sort]((a, b) => a[_id] - b[_id])
-			data[_forEach](value => $data[value[_id]] = {
-				id: value[_id],
+			array_sort(stops, (a, b) => a.id - b.id)
+			array_sort(data, (a, b) => a.id - b.id)
+			for (const value of data) $data[value.id] = {
+				id: value.id,
 				gradients: []
-			} satisfies GradientData)
+			} satisfies GradientData
 
 			const gradients: (ObjectStoreLinearGradient | ObjectStoreRadialGradient | ObjectStoreConicGradient)[] = []
-			if (store_linearGradient != null) {
-				const linearGradient = await db[_getAll]<ObjectStoreLinearGradient>(store_linearGradient) ?? []
-				if (linearGradient[_length] > 0) gradients[_push](...linearGradient)
+			if (store_lineargradient) {
+				const linear = await db.get_all<ObjectStoreLinearGradient>(store_lineargradient) ?? []
+				if (array_length(linear) > 0) array_push(gradients, ...linear)
 			}
-			if (store_radialGradient != null) {
-				const radialGradient = await db[_getAll]<ObjectStoreRadialGradient>(store_radialGradient) ?? []
-				if (radialGradient[_length] > 0) gradients[_push](...radialGradient)
+			if (store_radialgradient) {
+				const gradient = await db.get_all<ObjectStoreRadialGradient>(store_radialgradient) ?? []
+				if (array_length(gradient) > 0) array_push(gradients, ...gradient)
 			}
-			if (store_conicGradient != null) {
-				const conicGradient = await db[_getAll]<ObjectStoreLinearGradient>(store_conicGradient) ?? []
-				if (conicGradient[_length] > 0) gradients[_push](...conicGradient)
+			if (store_conicgradient) {
+				const conic = await db.get_all<ObjectStoreLinearGradient>(store_conicgradient) ?? []
+				if (array_length(conic) > 0) array_push(gradients, ...conic)
 			}
 
-			gradients[_sort]((a, b) => a[_id] - b[_id])
-			gradients[_forEach](gradient => {
-				if ($data[gradient[_dataId]] == null) return
+			array_sort(gradients, (a, b) => a.id - b.id)
+			for (const gradient of gradients){
+				if ($data[gradient.data_id] == null) return
 
-				const $stops: ColorStopGradient[] = stops[_filter](stop =>
-					stop[_gradientType] == gradient[_type]
-					&& stop[_gradientId] == gradient[_id]
+				const $stops: ColorStopGradient[] = array_filter(stops, stop =>
+					stop.gradient_type == gradient.type
+					&& stop.gradient_id == gradient.id
 				)
 
-				if ($stops[_length] == 0) return
+				if (array_length($stops) == 0) return
 
-				$data[gradient[_dataId]][_gradients][_push]((() => {
-					const dataId = gradient[_dataId]
-					const id = gradient[_id]
-					const colorInterpolationMethod = gradient[_colorInterpolationMethod]
-					const colorStopList = $stops
-					const hueInterpolationMethod = gradient[_hueInterpolationMethod]
-					const repeat = gradient[_repeat]
-					const type = gradient[_type]
-					if (type == GradientType[_radial]) return {
-						dataId, id, colorInterpolationMethod, colorStopList, hueInterpolationMethod, repeat, type,
-						positionX: gradient[_positionX],
-						positionY: gradient[_positionY],
-						shape: gradient[_shape],
-						sizeHeight: gradient[_sizeHeight],
-						sizeLength: gradient[_sizeLength],
-						sizeWidth: gradient[_sizeWidth],
+				array_push($data[gradient.data_id].gradients, (() => {
+					const data_id = gradient.data_id
+					const id = gradient.id
+					const color_interpolation_method = gradient.color_interpolation_method
+					const color_stop_list = $stops
+					const hue_interpolation_method = gradient.hue_interpolation_method
+					const repeat = gradient.repeat
+					const type = gradient.type
+					if (type == GradientType.radial) return {
+						data_id: data_id, id, color_interpolation_method: color_interpolation_method, color_stop_list: color_stop_list, hue_interpolation_method: hue_interpolation_method, repeat, type,
+						position_x: gradient.position_x,
+						position_y: gradient.position_y,
+						shape: gradient.shape,
+						size_height: gradient.size_height,
+						size_length: gradient.size_length,
+						size_width: gradient.size_width,
 					} satisfies RadialGradient
 
-					if (type == GradientType[_conic]) return {
-						dataId, id, colorInterpolationMethod, colorStopList, hueInterpolationMethod, repeat, type,
-						angle: gradient[_angle],
-						positionX: gradient[_positionX],
-						positionY: gradient[_positionY],
+					if (type == GradientType.conic) return {
+						data_id: data_id, id, color_interpolation_method: color_interpolation_method, color_stop_list: color_stop_list, hue_interpolation_method: hue_interpolation_method, repeat, type,
+						angle: gradient.angle,
+						position_x: gradient.position_x,
+						position_y: gradient.position_y,
 					} satisfies ConicGradient
 
 					return {
-						dataId, id, colorInterpolationMethod, colorStopList, hueInterpolationMethod, repeat, type,
-						angle: (gradient as ObjectStoreLinearGradient)[_angle],
+						data_id: data_id, id, color_interpolation_method: color_interpolation_method, color_stop_list: color_stop_list, hue_interpolation_method: hue_interpolation_method, repeat, type,
+						angle: (gradient as ObjectStoreLinearGradient).angle,
 					} satisfies LinearGradient
 				})())
-			})
+			}
 
-			setGradientData($data[_filter](v => v != null)[_reverse]())
+			set_gradient_data(array_reverse(array_filter($data, v => v != null)))
 		} catch {}
 	}
 
-	function changeGradientType(gradientIndex: number, type: GradientType): void {
-		let gradient = gradients[gradientIndex]
-		if (type == gradient[_type]) return
+	function change_gradient_type(gradient_index: number, type: GradientType): void {
+		let gradient = gradients[gradient_index]
+		if (type == gradient.type) return
 
-		const dataId = gradient[_dataId]
-		const id = gradient[_id]
-		const repeat = gradient[_repeat]
-		const colorInterpolationMethod = gradient[_colorInterpolationMethod]
-		const colorStopList = gradient[_colorStopList]
-		const hueInterpolationMethod = gradient[_hueInterpolationMethod]
+		const data_id = gradient.data_id
+		const id = gradient.id
+		const repeat = gradient.repeat
+		const color_interpolation_method = gradient.color_interpolation_method
+		const color_stop_list = gradient.color_stop_list
+		const hue_interpolation_method = gradient.hue_interpolation_method
 
-		if (type == GradientType[_linear]) gradient = {
-			id, dataId, colorInterpolationMethod, colorStopList, hueInterpolationMethod, repeat, type,
+		if (type == GradientType.linear) gradient = {
+			id, data_id: data_id, color_interpolation_method: color_interpolation_method, color_stop_list: color_stop_list, hue_interpolation_method: hue_interpolation_method, repeat, type,
 			angle: 0,
 		} satisfies LinearGradient
 
-		else if (type == GradientType[_radial]) gradient = {
-			id, dataId, colorInterpolationMethod, colorStopList, hueInterpolationMethod, repeat, type,
-			positionX: 50,
-			positionY: 50,
-			shape: RadialGradientShape[_ellipse],
-			sizeHeight: 100,
-			sizeLength: 360,
-			sizeWidth: 100,
+		else if (type == GradientType.radial) gradient = {
+			id, data_id: data_id, color_interpolation_method: color_interpolation_method, color_stop_list: color_stop_list, hue_interpolation_method: hue_interpolation_method, repeat, type,
+			position_x: 50,
+			position_y: 50,
+			shape: RadialGradientShape.ellipse,
+			size_height: 100,
+			size_length: 360,
+			size_width: 100,
 		} satisfies RadialGradient
 
-		else if (type == GradientType[_conic]) gradient = {
-			id, dataId, colorInterpolationMethod, colorStopList, hueInterpolationMethod, repeat, type,
+		else if (type == GradientType.conic) gradient = {
+			id, data_id: data_id, color_interpolation_method: color_interpolation_method, color_stop_list: color_stop_list, hue_interpolation_method: hue_interpolation_method, repeat, type,
 			angle: 0,
-			positionX: 50,
-			positionY: 50,
+			position_x: 50,
+			position_y: 50,
 		} satisfies ConicGradient
 
-		setGradients(gradientIndex, gradient)
+		set_gradients(gradient_index, gradient)
 	}
 
-	function addColorStop(gradientIndex: number): void {
-		const colorStops = [...gradients[gradientIndex][_colorStopList]][_sort]((a, b) => a[_size] - b[_size])
+	function add_color_stop(gradient_index: number): void {
+		const color_stops = array_sort([...gradients[gradient_index].color_stop_list], (a, b) => a.size - b.size)
 		let color: HEXColor = '#000000', size: number = 0, diff: number = 0
 
-		for (let i = -1; i < colorStops[_length]; i++) {
+		for (let i = -1; i < array_length(color_stops); i++) {
 			let $diff = 0
-			if (i == -1) $diff = mathRound(colorStops[i + 1][_size] / 2)
-			else if (i == colorStops[_length] - 1) $diff = mathRound((100 - colorStops[i][_size]) / 2)
-			else $diff = mathRound((colorStops[i + 1][_size] - colorStops[i][_size]) / 2)
+			if (i == -1) $diff = math_round(color_stops[i + 1].size / 2)
+			else if (i == array_length(color_stops) - 1) $diff = math_round((100 - color_stops[i].size) / 2)
+			else $diff = math_round((color_stops[i + 1].size - color_stops[i].size) / 2)
 
 			if ($diff > diff) {
 				diff = $diff
-				size = (i == -1? 0 : colorStops[i][_size]) + diff
-				if (i == -1) color = colorStops[0][_color]
-				else if (i == colorStops[_length] - 1) color = colorStops[i][_color]
+				size = (i == -1? 0 : color_stops[i].size) + diff
+				if (i == -1) color = color_stops[0].color
+				else if (i == array_length(color_stops) - 1) color = color_stops[i].color
 				else {
-					const color1 = numberParse(colorStops[i+1][_color][_substring](1, 7), true, 16)
-					const color2 = numberParse(colorStops[ i ][_color][_substring](1, 7), true, 16)
-					color = '#' + (
-						mathMin(color1, color2)
-						+ mathAbs(mathRound((color1 - color2) / 2))
-					)[_toString](16)[_toUpperCase]()
+					const color1 = number_parse(string_substring(color_stops[i+1].color, 1, 7), true, 16)
+					const color2 = number_parse(string_substring(color_stops[i].color, 1, 7), true, 16)
+					color = '#' + string_touppercase(number_to_string((
+						math_min(color1, color2)
+						+ math_abs(math_round((color1 - color2) / 2))
+					), 16))
 				}
 
-				if (/ff$/i[_test](color) && color[_length] > 9) {
-					color = color[_substring](0, 7) as HEXColor
+				if (regex_test(/ff$/i, color) && string_length(color) > 9) {
+					color = string_substring(color, 0, 7) as HEXColor
 				}
 			}
 		}
 
-		setGradients(
-			gradientIndex,
-			_colorStopList,
+		set_gradients(
+			gradient_index,
+			'color_stop_list',
 			list => [
 				...list,
 				({
 					id: -1,
-					dataId: -1,
-					gradientId: gradients[gradientIndex][_id],
-					gradientType: gradients[gradientIndex][_type],
+					data_id: -1,
+					gradient_id: gradients[gradient_index].id,
+					gradient_type: gradients[gradient_index].type,
 					color,
 					size
 				} satisfies ColorStopGradient)
@@ -272,313 +280,319 @@ const _: VoidComponent = () => {
 		)
 	}
 
-	async function saveGradient(): Promise<void> {
-		const transaction = db[_transaction]([
-			ObjectStoreNames[_colorStopGradient],
-			ObjectStoreNames[_conicGradient],
-			ObjectStoreNames[_gradientData],
-			ObjectStoreNames[_linearGradient],
-			ObjectStoreNames[_radialGradient],
-		], _readwrite)
-		const store_colorStopGradient = transaction?.[_objectStore](ObjectStoreNames[_colorStopGradient])
-		const store_conicGradient = transaction?.[_objectStore](ObjectStoreNames[_conicGradient])
-		const store_gradientData = transaction?.[_objectStore](ObjectStoreNames[_gradientData])
-		const store_linearGradient = transaction?.[_objectStore](ObjectStoreNames[_linearGradient])
-		const store_radialGradient = transaction?.[_objectStore](ObjectStoreNames[_radialGradient])
-		const getId = (ids: number[]) => ids[_length] == 0
+	async function save_gradient(): Promise<void> {
+		const [
+			store_colorstopgradient,
+			store_gradientdata,
+			store_lineargradient,
+			store_radialgradient,
+			store_conicgradient
+		] = db.stores('readwrite',
+			ObjectStoreNames.color_stop_gradient,
+			ObjectStoreNames.gradient_data,
+			ObjectStoreNames.linear_gradient,
+			ObjectStoreNames.radial_gradient,
+			ObjectStoreNames.conic_gradient,
+		)
+		const get_id = (ids: number[]) => array_length(ids) == 0
 			? 1
-			: [...ids][_sort]((a, b) => a - b)[_at](-1)! + 1
-		const dataIds: number[] = gradientData[_map](d => d[_id])
-		const gradientIds: number[] = []
-		const stopsIds: number[] = []
-		const newData: GradientData = {
-			id: getId(dataIds),
-			gradients: [...gradients[_map](gradient => ({
+			: array_at(array_sort([...ids], (a, b) => a - b), -1)! + 1
+		const data_ids: number[] = array_map(gradient_data, d => d.id)
+		const gradient_ids: number[] = []
+		const stops_ids: number[] = []
+		const new_data: GradientData = {
+			id: get_id(data_ids),
+			gradients: [...array_map(gradients, gradient => ({
 				...gradient,
-				colorStopList: [
-					...gradient[_colorStopList][_map](colorStop => ({...colorStop}))
+				color_stop_list: [
+					...array_map(gradient.color_stop_list, colorStop => ({...colorStop}))
 				]
 			}))]
 		}
 
-		gradientData[_forEach](data => data[_gradients][_forEach](gradient => {
-			gradientIds[_push](gradient[_id])
-			stopsIds[_push](...gradient[_colorStopList][_map](v => v[_id]))
-		}))
+		for (const data of gradient_data) {
+			for (const gradient of data.gradients) {
+				array_push(gradient_ids, gradient.id)
+				array_push(stops_ids, ...array_map(gradient.color_stop_list, v => v.id))
+			}
+		}
 
 		if (
-			store_colorStopGradient
-			&& store_conicGradient
-			&& store_gradientData
-			&& store_linearGradient
-			&& store_radialGradient
+			store_colorstopgradient
+			&& store_conicgradient
+			&& store_gradientdata
+			&& store_lineargradient
+			&& store_radialgradient
 		) {
-			store_gradientData[_put]({id: newData[_id]} satisfies ObjectStoreGradientData)
-			gradients[_forEach]((gradient, i) => {
-				const dataId = newData[_id]
-				const colorInterpolationMethod = gradient[_colorInterpolationMethod]
-				const type = gradient[_type]
-				const hueInterpolationMethod = gradient[_hueInterpolationMethod]
-				const repeat = gradient[_repeat]
-				const id = getId(gradientIds)
-				const gradientId = id
-				gradientIds[_push](id)
+			idb_store_put(store_gradientdata, {id: new_data.id} satisfies ObjectStoreGradientData)
+			array_foreach(gradients, (gradient, i) => {
+				const data_id = new_data.id
+				const color_interpolation_method = gradient.color_interpolation_method
+				const type = gradient.type
+				const hue_interpolation_method = gradient.hue_interpolation_method
+				const repeat = gradient.repeat
+				const id = get_id(gradient_ids)
+				const gradient_id = id
+				array_push(gradient_ids, id)
 
-				if (type == GradientType[_conic]) store_conicGradient[_put]({
-					id, colorInterpolationMethod, dataId, hueInterpolationMethod, repeat, type,
-					angle: gradient[_angle],
-					positionX: gradient[_positionX],
-					positionY: gradient[_positionY],
+				if (type == GradientType.conic) idb_store_put(store_conicgradient, {
+					id, color_interpolation_method: color_interpolation_method, data_id: data_id, hue_interpolation_method: hue_interpolation_method, repeat, type,
+					angle: gradient.angle,
+					position_x: gradient.position_x,
+					position_y: gradient.position_y,
 				} satisfies ObjectStoreConicGradient)
 
-				else if (type == GradientType[_linear]) store_linearGradient[_put]({
-					id, colorInterpolationMethod, dataId, hueInterpolationMethod, repeat, type,
-					angle: gradient[_angle],
+				else if (type == GradientType.linear) idb_store_put(store_lineargradient, {
+					id, color_interpolation_method: color_interpolation_method, data_id: data_id, hue_interpolation_method: hue_interpolation_method, repeat, type,
+					angle: gradient.angle,
 				} satisfies ObjectStoreLinearGradient)
 
-				else if (type == GradientType[_radial]) store_radialGradient[_put]({
-					id, colorInterpolationMethod, dataId, hueInterpolationMethod, repeat, type,
-					positionX: gradient[_positionX],
-					positionY: gradient[_positionY],
-					shape: gradient[_shape],
-					sizeHeight: gradient[_sizeHeight],
-					sizeLength: gradient[_sizeLength],
-					sizeWidth: gradient[_sizeWidth]
+				else if (type == GradientType.radial) idb_store_put(store_radialgradient, {
+					id, color_interpolation_method: color_interpolation_method, data_id: data_id, hue_interpolation_method: hue_interpolation_method, repeat, type,
+					position_x: gradient.position_x,
+					position_y: gradient.position_y,
+					shape: gradient.shape,
+					size_height: gradient.size_height,
+					size_length: gradient.size_length,
+					size_width: gradient.size_width
 				} satisfies ObjectStoreRadialGradient)
 
-				newData[_gradients][i][_id] = id
-				newData[_gradients][i][_dataId] = dataId
+				new_data.gradients[i].id = id
+				new_data.gradients[i].data_id = data_id
 
-				gradient[_colorStopList][_forEach]((colorStop, j) => {
-					const id = getId(stopsIds)
-					stopsIds[_push](id)
-					newData[_gradients][i][_colorStopList][j][_id] = id
-					newData[_gradients][i][_colorStopList][j][_gradientId] = gradientId
-					newData[_gradients][i][_colorStopList][j][_dataId] = dataId
-					store_colorStopGradient[_put]({
-						id, dataId, gradientId,
-						color: colorStop[_color],
-						gradientType: type,
-						size: colorStop[_size]
+				array_foreach(gradient.color_stop_list, (color_stop, j) => {
+					const id = get_id(stops_ids)
+					array_push(stops_ids, id)
+					new_data.gradients[i].color_stop_list[j].id = id
+					new_data.gradients[i].color_stop_list[j].gradient_id = gradient_id
+					new_data.gradients[i].color_stop_list[j].data_id = data_id
+					idb_store_put(store_colorstopgradient, {
+						id, data_id: data_id, gradient_id: gradient_id,
+						color: color_stop.color,
+						gradient_type: type,
+						size: color_stop.size
 					} satisfies ObjectStoreColorStopGradient)
 				})
 			})
 		}
 
-		setGradientData(data => [newData, ...data])
+		set_gradient_data(data => [new_data, ...data])
 	}
 
-	function deleteGradientData(gradientData: GradientData, index: number): void {
-		const transaction = db[_transaction]([
-			ObjectStoreNames[_colorStopGradient],
-			ObjectStoreNames[_conicGradient],
-			ObjectStoreNames[_gradientData],
-			ObjectStoreNames[_linearGradient],
-			ObjectStoreNames[_radialGradient],
-		], _readwrite)
-		const store_colorStopGradient = transaction == null? null : transaction[_objectStore](ObjectStoreNames[_colorStopGradient])
-		const store_conicGradient = transaction == null? null : transaction[_objectStore](ObjectStoreNames[_conicGradient])
-		const store_gradientData = transaction == null? null : transaction[_objectStore](ObjectStoreNames[_gradientData])
-		const store_linearGradient = transaction == null? null : transaction[_objectStore](ObjectStoreNames[_linearGradient])
-		const store_radialGradient = transaction == null? null : transaction[_objectStore](ObjectStoreNames[_radialGradient])
+	function delete_gradient_data(gradient_data: GradientData, index: number): void {
+		const [
+			store_colorstopgradient,
+			store_gradientdata,
+			store_lineargradient,
+			store_radialgradient,
+			store_conicgradient
+		] = db.stores('readwrite',
+			ObjectStoreNames.color_stop_gradient,
+			ObjectStoreNames.gradient_data,
+			ObjectStoreNames.linear_gradient,
+			ObjectStoreNames.radial_gradient,
+			ObjectStoreNames.conic_gradient,
+		)
 
-		store_gradientData != null
-		&& store_gradientData[_delete](gradientData[_id])
+		store_gradientdata != null
+		&& idb_store_delete(store_gradientdata, gradient_data.id)
 
-		gradientData[_gradients][_forEach](gradient => {
-			gradient[_type] == GradientType[_linear]
-			&& store_linearGradient != null
-			&& store_linearGradient[_delete](gradient[_id]);
+		for (const gradient of gradient_data.gradients) {
+			gradient.type == GradientType.linear
+			&& store_lineargradient != null
+			&& idb_store_delete(store_lineargradient, gradient.id);
 
-			gradient[_type] == GradientType[_radial]
-			&& store_radialGradient != null
-			&& store_radialGradient[_delete](gradient[_id]);
+			gradient.type == GradientType.radial
+			&& store_radialgradient != null
+			&& idb_store_delete(store_radialgradient, gradient.id);
 
-			gradient[_type] == GradientType[_conic]
-			&& store_conicGradient != null
-			&& store_conicGradient[_delete](gradient[_id]);
+			gradient.type == GradientType.conic
+			&& store_conicgradient != null
+			&& idb_store_delete(store_conicgradient, gradient.id);
 
-			store_colorStopGradient != null
-			&& gradient[_colorStopList][_forEach](colorStop =>
-				store_colorStopGradient[_delete](colorStop[_id])
-			)
-		})
+			store_colorstopgradient != null
+			&& array_foreach(gradient.color_stop_list, color_stop => idb_store_delete(store_colorstopgradient, color_stop.id))
+		}
 
-		setGradientData(data => data[_slice](0, index)[_concat](data[_slice](index + 1)))
+		set_gradient_data(data => array_concat(
+			array_slice(data, 0, index),
+			array_slice(data, index + 1)
+		))
 	}
 
-	function viewGradientData(gradientData: GradientData): void {
-		setGradients([...gradientData[_gradients][_map](
+	function view_gradient_data(gradient_data: GradientData): void {
+		set_gradients([...array_map(
+			gradient_data.gradients,
 			gradient => ({
 				...gradient,
-				colorStopList: [
-					...gradient[_colorStopList][_map](colorStop => ({...colorStop}))
+				color_stop_list: [
+					...array_map(gradient.color_stop_list, color_stop => ({...color_stop}))
 				]
 			})
 		)])
 	}
 
-    function saveSettings(...items: [key: ObjectStoreSettingsKeys, value: unknown][]): void {
-        const store_settings = db[_writeObjectStore](ObjectStoreNames[_settings])
-		items[_forEach](item => store_settings?.[_put]({
+    function save_settings(...items: [key: ObjectStoreSettingsKeys, value: unknown][]): void {
+        const store_settings = db.write_store(ObjectStoreNames.settings)
+		if (!store_settings) return
+
+		for (const item of items) idb_store_put(store_settings, {
 			key: item[0],
 			value: item[1]
-		}))
+		})
     }
 
 	function command(type: Commands, ...args: unknown[]): unknown { switch (type) {
-		case Commands.change_colorStopLength: {
-			const gradientIndex = args[0] as number
-			const colorStopIndex = args[1] as number
-			const length = args[2] as number
-			setGradients(gradientIndex, _colorStopList, colorStopIndex, _size, length)
+		case Commands.change_color_stop_length: {
+			const [gradient_index, color_stop_index, length] = args as [number, number, number]
+			set_gradients(gradient_index, 'color_stop_list', color_stop_index, 'size', length)
 			break
 		}
 		case Commands.toggle_gradient_repeat: {
-			const gradientIndex = args[0] as number
-			setGradients(gradientIndex, _repeat, r => !r)
+			const [gradient_index] = args as [number]
+			set_gradients(gradient_index, 'repeat', r => !r)
 			break
 		}
 		case Commands.change_gradient_angle: {
-			const gradientIndex = args[0] as number
-			const angle = args[1] as number
+			const [gradient_index, angle] = args as [number, number]
 
-			setGradients(gradientIndex, _angle as any, angle)
+			set_gradients(gradient_index, 'angle' as any, angle)
 			break
 		}
-		case Commands.change_colorInterpolationMethod: {
-			const gradientIndex = args[0] as number
-			const colorInterpolationMethod = args[1] as RectangularColorSpace | PolarColorSpace
+		case Commands.change_color_interpolation_method: {
+			const [gradient_index, color_interpolation_method] = args as [number, RectangularColorSpace | PolarColorSpace]
 
-			setGradients(gradientIndex, _colorInterpolationMethod, colorInterpolationMethod)
+			set_gradients(gradient_index, 'color_interpolation_method', color_interpolation_method)
 			break
 		}
-		case Commands.change_hueInterpolationMethod: {
-			const gradientIndex = args[0] as number
-			const hueInterpolationMethod = args[1] as HueInterpolationMethod
+		case Commands.change_hue_interpolation_method: {
+			const [gradient_index, hue_interpolation_method] = args as [number, HueInterpolationMethod]
 
-			setGradients(gradientIndex, _hueInterpolationMethod, hueInterpolationMethod)
+			set_gradients(gradient_index, 'hue_interpolation_method', hue_interpolation_method)
 			break
 		}
-		case Commands.change_colorStopColor: {
-			const gradientIndex = args[0] as number
-			const colorStopIndex = args[1] as number
-			const color = args[2] as HEXColor
-			const invalid = gradientIndex < 0 || colorStopIndex < 0 || !testHexColorWithAlpha(color)
+		case Commands.change_color_stop_color: {
+			const [gradient_index, color_stop_index, color] = args as [number, number, HEXColor]
+			const invalid = gradient_index < 0 || color_stop_index < 0 || !is_color_with_alpha_valid(color)
 			if (invalid) return;
 
-			setGradients(gradientIndex, _colorStopList, colorStopIndex, _color, color)
+			set_gradients(gradient_index, 'color_stop_list', color_stop_index, 'color', color)
 			break
 		}
-		case Commands.add_colorStop: {
+		case Commands.add_color_stop: {
 			const gradientIndex = args[0] as number
-			addColorStop(gradientIndex)
+			add_color_stop(gradientIndex)
 			break
 		}
-		case Commands.remove_colorStop: {
-			const gradientIndex = args[0] as number
-			const colorStopIndex = args[1] as number
-			setGradients(gradientIndex, _colorStopList, list => list[_slice](0, colorStopIndex)[_concat](list[_slice](colorStopIndex + 1)))
+		case Commands.remove_color_stop: {
+			const [gradient_index, color_stop_index] = args as [number, number]
+
+			set_gradients(
+				gradient_index, 'color_stop_list',
+				list => array_concat(
+					array_slice(list, 0, color_stop_index),
+					array_slice(list, color_stop_index + 1)
+				)
+			)
 			break
 		}
 		case Commands.add_gradient: {
-			const firstGradient = gradients[0]
+			const first_gradient = gradients[0]
 			const gradient: Gradient = {
-				...firstGradient,
-				colorStopList: [...firstGradient[_colorStopList][_map](v => ({...v}))],
+				...first_gradient,
+				color_stop_list: [...array_map(first_gradient.color_stop_list, v => ({...v}))],
 			}
-			setGradients(gradients => [gradient, ...gradients])
+			set_gradients(gradients => [gradient, ...gradients])
 			break
 		}
 		case Commands.remove_gradient: {
-			const gradientIndex = args[0] as number
-			setGradients(list => list[_slice](0, gradientIndex)[_concat](list[_slice](gradientIndex + 1)))
+			const [gradient_index] = args as [number]
+			set_gradients(list => array_concat(
+				array_slice(list, 0, gradient_index),
+				array_slice(list, gradient_index + 1)
+			))
 			break
 		}
-		case Commands.change_settings_colorModel: {
-			const model = args[0] as ColorModel
-			setSettings(_colorModel, model)
-			saveSettings([ObjectStoreSettingsKeys.colorModel, model])
+		case Commands.change_settings_colormodel: {
+			const [model] = args as [ColorModel]
+			set_settings('color_model', model)
+			save_settings([ObjectStoreSettingsKeys.color_model, model])
 			break
 		}
-		case Commands.change_settings_aspectRatio: {
-			const value = args[0] as number
-			setSettings(_aspectRatio, value)
-			saveSettings([ObjectStoreSettingsKeys.aspectRatio, value])
+		case Commands.change_settings_aspect_ratio: {
+			const [value] = args as [number]
+			set_settings('aspect_ratio', value)
+			save_settings([ObjectStoreSettingsKeys.aspect_ratio, value])
 			break
 		}
-		case Commands.change_settings_borderRadius: {
-			const value = args[0] as number
-			setSettings(_borderRadius, value)
-			saveSettings([ObjectStoreSettingsKeys.borderRadius, value])
+		case Commands.change_settings_border_radius: {
+			const [value] = args as [number]
+			set_settings('border_radius', value)
+			save_settings([ObjectStoreSettingsKeys.border_radius, value])
 			break
 		}
 		case Commands.change_gradient_type: {
-			const gradientIndex = args[0] as number
-			const type = args[1] as GradientType
-			changeGradientType(gradientIndex, type)
+			const [gradient_index, type] = args as [number, GradientType]
+			change_gradient_type(gradient_index, type)
 			break
 		}
-		case Commands.change_radialGradient_shape: {
+		case Commands.change_radial_gradient_shape: {
 			const gradientIndex = args[0] as number
 			const shape = args[1] as RadialGradientShape
-			setGradients(gradientIndex, _shape as any, shape)
+			set_gradients(gradientIndex, 'shape' as any, shape)
 			break
 		}
-		case Commands.change_gradient_positionX: {
-			const gradientIndex = args[0] as number
-			const x = args[1] as number
-			setGradients(gradientIndex, _positionX as any, x)
+		case Commands.change_gradient_position_x: {
+			const [gradient_index, x] = args as [number, number]
+			set_gradients(gradient_index, 'position_x' as any, x)
 			break
 		}
-		case Commands.change_gradient_positionY: {
-			const gradientIndex = args[0] as number
-			const y = args[1] as number
-			setGradients(gradientIndex, _positionY as any, y)
+		case Commands.change_gradient_position_y: {
+			const [gradient_index, y] = args as [number, number]
+			set_gradients(gradient_index, 'position_y' as any, y)
 			break
 		}
-		case Commands.change_radialGradient_size: {
-			const gradientIndex = args[0] as number
-			const size = args[1] as number
-			setGradients(gradientIndex, _sizeLength as any, size)
+		case Commands.change_radial_gradient_size: {
+			const [gradient_index, size] = args[1] as [number, number]
+			set_gradients(gradient_index, 'size_length' as any, size)
 			break
 		}
-		case Commands.change_radialGradient_width: {
-			const gradientIndex = args[0] as number
-			const width = args[1] as number
-			setGradients(gradientIndex, _sizeWidth as any, width)
+		case Commands.change_radial_gradient_width: {
+			const [gradient_index, width] = args as [number, number]
+
+			set_gradients(gradient_index, 'size_width' as any, width)
 			break
 		}
-		case Commands.change_radialGradient_height: {
-			const gradientIndex = args[0] as number
-			const height = args[1] as number
-			setGradients(gradientIndex, _sizeHeight as any, height)
+		case Commands.change_radial_gradient_height: {
+			const [gradient_index, height] = args as [number, number]
+
+			set_gradients(gradient_index, 'size_height' as any, height)
 			break
 		}
 		case Commands.save_gradient: {
-			saveGradient()
+			save_gradient()
 			break
 		}
 		case Commands.delete_gradient_data: {
 			const index = args[0] as number
-			deleteGradientData(gradientData[index], index)
+			delete_gradient_data(gradient_data[index], index)
 			break
 		}
 		case Commands.view_gradient_data: {
 			const index = args[0] as number
-			viewGradientData(gradientData[index])
+			view_gradient_data(gradient_data[index])
 			break
 		}
 		default: return
 	}}
 
 	onMount(() => {
-		removeSplashScreen()
-		initDatabase()
+		remove_splash_screen()
+		init_database()
 	})
 
 	return (<App
-		appBar={<AppBar
+		appbar={<AppBar
 			settings={settings}
 			command={command}
 			gradients={gradients}
@@ -587,7 +601,7 @@ const _: VoidComponent = () => {
 			gradients={gradients}
 			settings={settings}
 			command={command}
-			gradientData={gradientData}
+			gradient_data={gradient_data}
 		/>
 	</App>)
 }

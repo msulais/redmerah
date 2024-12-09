@@ -2,20 +2,20 @@ export enum LocalStorageKeys {
 	theme = 'theme',
 	color = 'color',
 	corner = 'corner',
-	pinnedApps = 'pinned-apps'
+	pinned_apps = 'pinned_apps'
 }
 
 export enum DatabaseNames {
-	markdownConverter = 'markdown-converter',
+	markdown_converter = 'markdown_converter',
 	randomizer = 'randomizer',
-	colorGenerator = 'color-generator',
+	color_generator = 'color_generator',
 	calculator = 'calculator',
 	tasks = 'tasks',
-	sassConverter = 'sass-converter',
+	sass_converter = 'sass_converter',
 	notes = 'notes',
-	qrCode = 'qr-code',
-	colorGradient = 'color-gradient',
-	biruUi = 'biru-ui',
-	emojiPicker = 'emoji-picker',
-	latexViewer = 'latex-viewer'
+	qr_code = 'qr_code',
+	color_gradient = 'color_gradient',
+	biru_ui = 'biru_ui',
+	emoji_picker = 'emoji_picker',
+	latex_viewer = 'latex_viewer'
 }

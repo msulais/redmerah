@@ -1,20 +1,25 @@
-import { type JSX, type ParentComponent, Show, splitProps, children, mergeProps } from "solid-js"
+import { type JSX, type ParentComponent, Show, splitProps, children, mergeProps, createMemo } from "solid-js"
 
-import { _indicatorPosition, _selected, _leading, _children, _trailing, _classList, _iconCode, _variant, _tonal, _left, _header, _footer, _position, _right, _openAnimation, _closeAnimation, _spring, _animate, _none, _finished, _then, _auto, _style, _top } from "@/constants/string"
-import { setElementAttributeIfExist } from "@/utils/attributes"
-import { isVarHasValue } from "@/utils/data"
+import { attr_set_if_exist } from "@/utils/attributes"
+import { is_var_has_value, promise_done } from "@/utils/object"
 import { AnimationEffectTiming } from "@/enums/animation"
+import { element_animate } from "@/utils/element"
+import { AppColors } from "@/enums/colors"
 
 import Icon from "@/components/Icon"
 import Button, { ButtonIndicatorPosition, ButtonVariant, type ButtonProps } from "@/components/Button"
-import { Modal, type ModalProps, openModal, closeModal, focusModal } from "@/components/Modal"
+import { close_modal, focus_modal, Modal, open_modal, type ModalProps } from "@/components/Modal"
 import './index.scss'
 
-function openDrawer(ev: Event, drawer: HTMLDialogElement, options?: {
-	important?: boolean
-	contentAutoFocus?: boolean
-}): void {
-	openModal(ev, drawer, {...options})
+function openDrawer(
+	ev: Event,
+	drawer: HTMLDialogElement,
+	options?: {
+		important?: boolean
+		content_auto_focus?: boolean
+	}
+): void {
+	open_modal(ev, drawer, {...options})
 }
 
 enum DrawerPosition {
@@ -25,34 +30,34 @@ enum DrawerPosition {
 type DrawerItemProps = ButtonProps & {
 	leading?: JSX.Element
 	trailing?: JSX.Element
-	iconCode?: number
+	icon_code?: number
 }
 const DrawerItem: ParentComponent<DrawerItemProps> = ($props) => {
 	const [props, other] = splitProps($props, [
-		_indicatorPosition, _selected, _leading, _children,
-		_trailing, _classList, _iconCode, _variant,
+		'indicator_position', 'leading', 'children',
+		'trailing', 'classList', 'icon_code', 'variant'
 	])
-	const trailingComponent = children(() => props[_trailing])
+	const selected = createMemo(() => other.selected)
+	const trailing = children(() => props.trailing)
 
 	return (<Button
-		variant={props[_variant] ?? (props[_selected]? ButtonVariant[_tonal] : undefined)}
-		selected={props[_selected]}
-		indicatorPosition={props[_indicatorPosition] ?? (isVarHasValue(props[_selected])? (props[_indicatorPosition] ?? ButtonIndicatorPosition[_left]) : undefined)}
-		classList={{'c-drawer-item': true, ...props[_classList]}}
+		variant={props.variant ?? (selected()? ButtonVariant.tonal : undefined)}
+		indicator_position={props.indicator_position ?? (is_var_has_value(selected())? (props.indicator_position ?? ButtonIndicatorPosition.left) : undefined)}
+		classList={{'c-drawer-item': true, ...props.classList}}
 		{...other}>
-		<Show when={props[_iconCode] != null}>
+		<Show when={props.icon_code != null}>
 			<Icon
-				style={{color: props[_selected]? 'rgb(var(--g-color-accent))' : undefined}}
-				filled={props[_selected]}
-				code={props[_iconCode]!}
+				style={{color: selected()? `rgb(${AppColors.accent})` : undefined}}
+				filled={selected()}
+				code={props.icon_code!}
 			/>
 		</Show>
-		{ props[_leading] }
-		{ props[_children] }
-		<Show when={trailingComponent()}>
-			<div style={{flex: 1}} />
+		{ props.leading }
+		{ props.children }
+		<Show when={trailing()}>
+			<div style="flex:1" />
 		</Show>
-		{ trailingComponent() }
+		{ trailing() }
 	</Button>)
 }
 
@@ -63,48 +68,59 @@ type DrawerProps = Omit<ModalProps, 'style' | 'position'> & {
 	style?: JSX.CSSProperties
 }
 const Drawer: ParentComponent<DrawerProps> = ($props) => {
-	const animationOption = {duration: 300, easing: AnimationEffectTiming[_spring]}
-	const $$props = mergeProps({position: DrawerPosition[_left]}, $props)
+	const animation_option = {duration: 300, easing: AnimationEffectTiming.spring}
+	const $$props = mergeProps({position: DrawerPosition.left}, $props)
 	const [props, other] = splitProps($$props, [
-		_header, _footer, _children, _position,
-		_classList, _openAnimation, _closeAnimation,
-		_style
+		'header', 'footer', 'children', 'position',
+		'classList', 'open_animation', 'close_animation',
+		'style'
 	])
-	const header = children(() => props[_header])
-	const footer = children(() => props[_footer])
+	const position = createMemo(() => props.position)
+	const header = children(() => props.header)
+	const footer = children(() => props.footer)
 
 	return (<Modal
-		data-c-right={setElementAttributeIfExist(props[_position] == DrawerPosition[_right])}
+		data-c-right={attr_set_if_exist(position() == DrawerPosition.right)}
 		classList={{
 			'c-drawer': true,
-			...props[_classList]
+			...props.classList
 		}}
 		style={{
-			...props[_style],
-			left: props[_style]?.[_left] ?? props[_position] == DrawerPosition[_left]? 0 : _auto,
-			top: props[_style]?.[_top] ?? '0px',
-			right: props[_style]?.[_right] ?? props[_position] == DrawerPosition[_right]? 0 : _auto,
+			...props.style,
+			left: props.style?.left ?? position() == DrawerPosition.left? 0 : 'auto',
+			top: props.style?.top ?? '0px',
+			right: props.style?.right ?? position() == DrawerPosition.right? 0 : 'auto',
 		}}
-		openAnimation={(el, done) => {
-			if (props[_openAnimation]) props[_openAnimation](el, done)
-			else el[_animate]({ transform: [
-				props[_position] == DrawerPosition[_left]
-					? 'translateX(-100%)'
-					: 'translateX(100%)',
-			_none] }, animationOption)[_finished][_then](done)
+		open_animation={(el, done) => {
+			if (props.open_animation) props.open_animation(el, done)
+			else promise_done(element_animate(
+				el,
+				{ transform: [
+					position() == DrawerPosition.left
+						? 'translateX(-100%)'
+						: 'translateX(100%)',
+				'none'] },
+				animation_option
+			).finished, done)
 		}}
-		closeAnimation={(el, done) => {
-			if (props[_closeAnimation]) props[_closeAnimation](el, done)
-			else el[_animate]({ transform: [_none, props[_position] == DrawerPosition[_left]
-				? 'translateX(-100%)'
-				: 'translateX(100%)']
-			}, animationOption)[_finished][_then](done)
+		close_animation={(el, done) => {
+			if (props.close_animation) props.close_animation(el, done)
+			else promise_done(element_animate(
+				el,
+				{ transform: [
+					'none',
+					props.position == DrawerPosition.left
+						? 'translateX(-100%)'
+						: 'translateX(100%)',
+				] },
+				animation_option
+			).finished, done)
 		}}
 		{...other}>
 		<Show when={header()}>
 			<div class="c-drawer-header">{header()}</div>
 		</Show>
-		<div class="c-drawer-content">{props[_children]}</div>
+		<div class="c-drawer-content">{props.children}</div>
 		<Show when={footer()}>
 			<div class="c-drawer-footer">{footer()}</div>
 		</Show>
@@ -116,8 +132,8 @@ export {
 	DrawerItem,
 	openDrawer,
 	DrawerPosition,
-	closeModal as closeDrawer,
-	focusModal as focusDrawer
+	close_modal as close_drawer,
+	focus_modal as focus_drawer
 }
 export type {
 	DrawerProps,

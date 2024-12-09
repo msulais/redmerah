@@ -1,7 +1,6 @@
-import { _addEventListener, _defaultPrevented, _preventDefault, _removeEventListener, _stopImmediatePropagation, _stopPropagation } from "@/constants/string"
 import type { BatteryManager } from "@/interfaces/battery"
 import type { JSX } from "solid-js"
-import { isFunction } from "./typecheck"
+import { is_function } from "./typecheck"
 
 type HasEventElement =
 	Element |
@@ -13,47 +12,50 @@ type HasEventElement =
 	any
 
 
-export function addEventListener<E = Event>(
+export function event_add_listener<E = Event>(
 		element: HasEventElement,
 		type: string,
 		listener: (ev: E) => unknown,
 		options?: boolean | AddEventListenerOptions | undefined
 	): void {
-	return element[_addEventListener](type, listener as any, options)
+	return element.addEventListener(type, listener as any, options)
 }
 
-export function removeEventListener<E = Event>(
+export function event_remove_listener<E = Event>(
 		element: HasEventElement,
 		type: string,
 		listener: (ev: E) => unknown,
 		options?: boolean | AddEventListenerOptions | undefined
 	): void {
-	return element[_removeEventListener](type, listener as any, options)
+	return element.removeEventListener(type, listener as any, options)
 }
 
-export function eventStopImmediatePropagation(event: Event): void {
-	return event[_stopImmediatePropagation]()
+/** Invoking this method prevents event from reaching any registered event listeners after the current one finishes running and, when dispatched in a tree, also prevents event from reaching any other objects */
+export function event_stop_immediate_propagation(event: Event): void {
+	return event.stopImmediatePropagation()
 }
 
-export function eventPreventDefault(event: Event): void {
-	return event[_preventDefault]()
+/** If invoked when the cancelable attribute value is true, and while executing a listener for the event with passive set to false, signals to the operation that caused event to be dispatched that it needs to be canceled */
+export function event_prevent_default(event: Event): void {
+	return event.preventDefault()
 }
 
-export function eventStopPropagation(event: Event): void {
-	return event[_stopPropagation]()
+/** When dispatched in a tree, invoking this method prevents event from reaching any objects other than the current object */
+export function event_stop_propagation(event: Event): void {
+	return event.stopPropagation()
 }
 
-export function callEventHandler<T, E extends Event>(
+export function call_event_handler<T, E extends Event>(
 	event: E & { currentTarget: T; target: Element },
 	handler: JSX.EventHandlerUnion<T, E> | undefined,
 ): boolean {
 	if (handler) {
-		if (isFunction(handler)) (handler as JSX.EventHandler<T, E>)(event)
+		if (is_function(handler)) (handler as JSX.EventHandler<T, E>)(event)
 		else (handler as JSX.BoundEventHandler<T, E>)[0](
 			(handler as JSX.BoundEventHandler<T, E>)[1],
 			event
 		)
 	}
 
-	return event?.[_defaultPrevented]
+	return event?.defaultPrevented
 }

@@ -1,5 +1,3 @@
-import { _name, _symbol, _value } from "@/constants/string"
-
 export type ConverterUnitType = {
 	name: string
 	symbol: string
@@ -24,32 +22,32 @@ export class ConverterUnit {
 	value: number
 
 	constructor (name: string, symbol: string, value: number) {
-		this[_name] = name
-		this[_symbol] = symbol
-		this[_value] = value
+		this.name = name
+		this.symbol = symbol
+		this.value = value
 	}
 
 	equals(unit: ConverterUnit): boolean {
 		return (
-			unit[_name] == this[_name]
-			&& unit[_symbol] == this[_symbol]
-			&& unit[_value] == this[_value]
+			unit.name == this.name
+			&& unit.symbol == this.symbol
+			&& unit.value == this.value
 		)
 	}
 
-	get JSON(): ConverterUnitType {
+	get json(): ConverterUnitType {
 		return {
-			name: this[_name],
-			symbol: this[_symbol],
-			value: this[_value]
+			name: this.name,
+			symbol: this.symbol,
+			value: this.value
 		}
 	}
 
-	static parseJSON(unit: ConverterUnitType): ConverterUnit {
+	static parse_json(unit: ConverterUnitType): ConverterUnit {
 		return new ConverterUnit(
-			unit[_name],
-			unit[_symbol],
-			unit[_value]
+			unit.name,
+			unit.symbol,
+			unit.value
 		)
 	}
 }

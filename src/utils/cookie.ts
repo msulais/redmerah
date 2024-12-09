@@ -1,46 +1,50 @@
 import { CookieKeys } from "@/enums/cookies"
-import { decodeURL, encodeURL } from "./url";
-import { _maxAge, _path, _domain, _sameSite, _secure, _httpOnly, _length, _expires, _getTime, _setTime, _toUTCString, _cookie, _substring, _indexOf, _split, _trim } from "@/constants/string";
-import { getDocument } from "@/constants/window";
+import { url_decode, url_encode } from "./url";
+import { date_gettime, date_settime, date_to_UTC } from "./datetime";
+import { string_indexof, string_length, string_split, string_substring, string_trim } from "./string";
 
 type CookieOptions = {
 	domain?: string,
 	expires?: number,
-	maxAge?: number,
+	max_age?: number,
 	path?: string,
-	sameSite?: 'Lax' | 'Strict' | 'None',
+	same_site?: 'Lax' | 'Strict' | 'None',
 	secure?: boolean,
-	httpOnly?: boolean
+	http_only?: boolean
 }
 
-export function setCookie(key: CookieKeys, value: string, options: CookieOptions = {sameSite: 'Lax', expires: 9999, path: '/'}): void {
-	let cookie = key + "=" + encodeURL(value)
+export function set_cookie(
+	key: CookieKeys,
+	value: string,
+	options: CookieOptions = {same_site: 'Lax', expires: 9999, path: '/'}
+): void {
+	let cookie = key + "=" + url_encode(value)
 
-	if (options[_expires]) {
-		const expirationDate = new Date()
-		expirationDate[_setTime](expirationDate[_getTime]() + (options[_expires] * 24 * 60 * 60 * 1000))
-		cookie += ("; expires=" + expirationDate[_toUTCString]())
+	if (options.expires) {
+		const expiration_date = new Date()
+		date_settime(expiration_date, date_gettime(expiration_date) + (options.expires * 24 * 60 * 60 * 1000))
+		cookie += ("; expires=" + date_to_UTC(expiration_date))
 	}
-	if (options[_maxAge]  ) cookie += ("; max-age=" + options[_maxAge])
-	if (options[_path]    ) cookie += (`; ${_path}=` + options[_path])
-	if (options[_domain]  ) cookie += (`; ${_domain}=` + options[_domain])
-	if (options[_sameSite]) cookie += ("; SameSite=" + options[_sameSite])
-	if (options[_secure]  ) cookie += (`; ${_secure}`)
-	if (options[_httpOnly]) cookie += (`; ${_httpOnly}`)
+	if (options.max_age  ) cookie += ("; max-age=" + options.max_age)
+	if (options.path     ) cookie += (`; path=` + options.path)
+	if (options.domain   ) cookie += (`; domain=` + options.domain)
+	if (options.same_site) cookie += ("; SameSite=" + options.same_site)
+	if (options.secure   ) cookie += (`; secure`)
+	if (options.http_only) cookie += (`; httpOnly`)
 
-	getDocument()[_cookie] = cookie
+	document.cookie = cookie
 }
 
-export function getCookie(key: CookieKeys): string | null {
+export function get_cookie(key: CookieKeys): string | null {
 
 	const cookieName = key + "="
-	const cookies = getDocument()[_cookie][_split](';')
+	const cookies = string_split(document.cookie, ';')
 
 	for (const i in cookies) {
-		const cookie = cookies[i][_trim]()
+		const cookie = string_trim(cookies[i])
 
-		if (cookie[_indexOf](cookieName) === 0) {
-			return decodeURL(cookie[_substring](cookieName[_length]))
+		if (string_indexof(cookie, cookieName) === 0) {
+			return url_decode(string_substring(cookie, string_length(cookieName)))
 		}
 	}
 

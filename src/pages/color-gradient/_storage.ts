@@ -6,27 +6,27 @@ export type ObjectStoreSettings<T = unknown> = {
 }
 
 export type ObjectStoreGradientData = Omit<GradientData, 'gradients'>
-export type ObjectStoreLinearGradient = Omit<LinearGradient, 'colorStopList'>
-export type ObjectStoreRadialGradient = Omit<RadialGradient, 'colorStopList'>
-export type ObjectStoreConicGradient = Omit<ConicGradient, 'colorStopList'>
+export type ObjectStoreLinearGradient = Omit<LinearGradient, 'color_stop_list'>
+export type ObjectStoreRadialGradient = Omit<RadialGradient, 'color_stop_list'>
+export type ObjectStoreConicGradient = Omit<ConicGradient, 'color_stop_list'>
 export type ObjectStoreColorStopGradient = ColorStopGradient
 
 export enum ObjectStoreNames {
 	settings = 'settings',
-	gradientData = 'gradientData',
-	linearGradient = 'linearGradient',
-	radialGradient = 'radialGradient',
-	conicGradient = 'conicGradient',
-	colorStopGradient = 'colorStopGradient'
+	gradient_data = 'gradient_data',
+	linear_gradient = 'linear_gradient',
+	radial_gradient = 'radial_gradient',
+	conic_gradient = 'conic_gradient',
+	color_stop_gradient = 'color_stop_gradient'
 }
 
 export enum ObjectStoreSettingsKeys {
 	/** @param value `number` */
-	borderRadius = 'borderRadius',
+	border_radius = 'border_radius',
 
 	/** @param value `number` */
-	aspectRatio = 'aspectRatio',
+	aspect_ratio = 'aspect_ratio',
 
 	/** @param value `ColorModel` */
-	colorModel = 'colorModel',
+	color_model = 'color_model',
 }

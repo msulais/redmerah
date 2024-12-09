@@ -1,8 +1,8 @@
 export enum Commands {
-	toggle_textWrap = 'a',
+	toggle_textwrap = 'a',
 
-	/** @param {number} fontSize `number` */
-	change_fontSize = 'b',
+	/** @param {number} fontsize `number` */
+	change_fontsize = 'b',
 
 	/** @param {string} text `string` */
 	update_scss_text = 'c',

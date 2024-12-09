@@ -20,87 +20,87 @@ export type ObjectStoreMiscellaneous<T = unknown> = {
 
 export enum ObjectStoreNames {
 	settings = 'settings',
-	lastInput = 'lastInput',
-	lastOutput = 'lastOutput',
+	last_input = 'last_input',
+	last_output = 'last_output',
 	miscellaneous = 'miscellaneous'
 }
 
 export enum ObjectStoreKeys {
 
 	/** @param value `string|null` */
-	lastInput_basic = 'basic',
+	lastinput_basic = 'basic',
 
 	/** @param value `string|null` */
-	lastInput_scientific = 'scientific',
+	lastinput_scientific = 'scientific',
 
 	/** @param value `string|null` */
-	lastInput_converter = 'converter',
+	lastinput_converter = 'converter',
 
 	/** @param value `string|null` */
-	lastInput_programmer = 'programmer',
+	lastinput_programmer = 'programmer',
 
 	/** @param value `string` */
-	lastInput_date_from = 'date/from',
+	lastinput_date_from = 'date/from',
 
 	/** @param value `string` */
-	lastInput_date_to = 'date/to',
+	lastinput_date_to = 'date/to',
 
 	/** @param value `number` */
-	lastInput_date_year = 'date/year',
+	lastinput_date_year = 'date/year',
 
 	/** @param value `number` */
-	lastInput_date_month = 'date/month',
+	lastinput_date_month = 'date/month',
 
 	/** @param value `number` */
-	lastInput_date_day = 'date/day',
+	lastinput_date_day = 'date/day',
 
 	/** @param value `number | null` */
-	lastOutput_basic = 'basic',
+	lastoutput_basic = 'basic',
 
 	/** @param value `number | null` */
-	lastOutput_scientific = 'scientific',
+	lastoutput_scientific = 'scientific',
 
 	/** @param value `number | null` */
-	lastOutput_converter = 'converter',
+	lastoutput_converter = 'converter',
 
 	/** @param value `number | null` */
-	lastOutput_programmer = 'programmer',
+	lastoutput_programmer = 'programmer',
 
 	/** @param value`string | null` */
-	lastOutput_date = 'date',
+	lastoutput_date = 'date',
 
 	/** @param {CalculatorType} value `CalculatorType` */
-	miscellaneous_lastPage = 'lastPage',
+	miscellaneous_lastpage = 'last_page',
 
 	/** @param value `string` */
 	miscellaneous_note = 'note',
 
 	/** @param {DecimalNumberFormat} value `DecimalNumberFormat` */
-	settings_numberFormat_decimal = 'numberFormat/decimal',
+	settings_numberformat_decimal = 'number_format/decimal',
 
 	/** @param {GroupingNumberFormat} value `GroupingNumberFormat` */
-	settings_numberFormat_grouping = 'numberFormat/grouping',
+	settings_numberformat_grouping = 'number_format/grouping',
 
 	/** @param value `boolean` */
-	settings_scientificNotation = 'scientificNotation',
+	settings_scientificnotation = 'scientific_notation',
 
 	/** @param value `boolean` */
-	settings_memoryButtons = 'memoryButtons',
+	settings_memorybuttons = 'memory_buttons',
 
 	/** @param {ConverterType} value `ConverterType` */
 	settings_converter_type = 'converter/type',
 
 	/** @param {ConverterUnit} value `ConverterUnit` */
-	settings_converter_inputUnit = 'converter/inputUnit',
+	settings_converter_unitinput = 'converter/unit_input',
 
 	/** @param {ConverterUnit} value `ConverterUnit` */
-	settings_converter_outputUnit = 'converter/outputUnit',
+	settings_converter_unitoutput = 'converter/unit_output',
 
 	/** @param {ScientificAngleType} value `ScientificAngleType` */
 	settings_scientific_angle = 'scientific/angle',
 
 	/** @param {NumberType} value `NumberType` */
-	settings_programmer_numberType = 'programmer/numberType',
+	settings_programmer_numbertype = 'programmer/number_type',
 
 	/** @param {DateOperation} value `DateOperation` */
 	settings_date_operation = 'date/operation'

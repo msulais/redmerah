@@ -1,7 +1,7 @@
 ---
 import { RoutesLinks } from '@/enums/links';
 import type { HEXColor } from '@/types/color';
-import { HEX_to_RGB } from '@/utils/color';
+import { hex_to_rgb } from '@/utils/color';
 import { apps } from '@/constants/apps';
 import logo from '@/assets/logo.svg';
 
@@ -33,13 +33,13 @@ const features = [
 	},
 ]
 
-function colorAppBackground(color: HEXColor): string {
-	const rgb = HEX_to_RGB(color)
+function color_app_background(color: HEXColor): string {
+	const rgb = hex_to_rgb(color)
 	return `rgba(${rgb.r},${rgb.g},${rgb.b},.24)`
 }
 ---
 
-<Html componentCount={2}>
+<Html component_count={2}>
 	<script is:inline src='/scripts/theme.js'/>
 	<script is:inline src='/scripts/platform.js'/>
 	<Splash src={logo.src} alt={`Redmerah splash icon`} />
@@ -52,8 +52,8 @@ function colorAppBackground(color: HEXColor): string {
 		<main class={CSS.main}>
 			<section class={CSS.apps}>
 				{apps.map((v, i) => <>{i < 3 && <div
-					style={{backgroundColor: colorAppBackground(v.color)}}>
-					<img src={v.logoURL} alt={v.name} />
+					style={{backgroundColor: color_app_background(v.color)}}>
+					<img src={v.logo_url} alt={v.name} />
 					<h3>{v.name}</h3>
 					<p>{v.description}</p>
 					<LinkButton classList={[CSSAnimation.btn_scale_up_icon]} variant={ButtonVariant.outlined} href={v.link}>Open <Icon filled code={0xEB51}/></LinkButton>
@@ -85,16 +85,16 @@ function colorAppBackground(color: HEXColor): string {
 </Html>
 
 <script>
-	import { getElementById, getAllElementBySelector } from "@/utils/element"
-	import { _length, _isIntersecting, _animate, _observe, _onload } from '@/constants/string'
+	import { element_animate, get_element_by_id, get_multiple_element_by_selector } from "@/utils/element"
+	import { array_length } from "@/utils/array";
 
-	const quote = getElementById('quote') as HTMLParagraphElement
-	const spans = getAllElementBySelector<HTMLSpanElement>('#quote span')
-	const viewObserver = new IntersectionObserver((entries) => {
+	const quote = get_element_by_id('quote') as HTMLParagraphElement
+	const spans = get_multiple_element_by_selector<HTMLSpanElement>('#quote span')
+	const observer = new IntersectionObserver((entries) => {
 		for (const entry of entries) {
-			if (!entry[_isIntersecting]) continue;
-			for (let i = 0; i < spans[_length]; i++) {
-				spans[i][_animate]([{
+			if (!entry.isIntersecting) continue;
+			for (let i = 0; i < array_length(spans as unknown as any[]); i++) {
+				element_animate(spans[i], [{
 					transform: 'translateY(-0.4em)',
 					offset: 0.5
 				}], {
@@ -110,5 +110,5 @@ function colorAppBackground(color: HEXColor): string {
 		threshold: 1.0
 	})
 
-	viewObserver[_observe](quote)
+	observer.observe(quote)
 </script>

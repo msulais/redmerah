@@ -1,44 +1,44 @@
-import { _input, _oncancel, _onchange, _remove, _multiple, _type, _accept, _file, _files, _click, _onabort, _onerror, _onload, _readAsText, _result, _target, _capture } from "@/constants/string"
-import { createElement } from "./element"
-import { createObjectURL, downloadFileByURL, revokeObjectURL } from "./url"
+import { create_element, element_click, element_remove } from "./element"
+import { url_create, url_download_file, url_revoke } from "./url"
 
-export async function openFile(accept: string | null, multiple: boolean = false, capture?: string): Promise<FileList | null> {
+export async function file_open(accept: string | null, multiple: boolean = false, capture?: string): Promise<FileList | null> {
 	return new Promise<FileList | null>((ok) => {
-		const filePickerRef = createElement(_input)
-		filePickerRef[_type] = _file
-		if (accept != null) filePickerRef[_accept] = accept
-		if (capture != null) filePickerRef[_capture] = capture
-		filePickerRef[_multiple] = multiple
-		filePickerRef[_click]()
+		const input = create_element('input')
+		input.type = 'file'
+		if (accept != null) input.accept = accept
+		if (capture != null) input.capture = capture
 
-		filePickerRef[_onchange] = () => {
-			ok(filePickerRef[_files])
-			filePickerRef[_remove]()
+		input.multiple = multiple
+		element_click(input)
+
+		input.onchange = () => {
+			ok(input.files)
+			element_remove(input)
 		}
-		filePickerRef[_oncancel] = () =>{
+		input.oncancel = () =>{
 			ok(null)
-			filePickerRef[_remove]()
+			element_remove(input)
 		}
 	})
 }
 
-export function downloadFile(blob: Blob, filename: string): void {
-	const url = createObjectURL(blob)
-	downloadFileByURL(url, filename)
-	revokeObjectURL(url)
+export function file_download(blob: Blob, filename: string): void {
+	const url = url_create(blob)
+	url_download_file(url, filename)
+	url_revoke(url)
 }
 
-export function readFileAsText(blob: Blob, encoding?: string): Promise<string> {
+export function file_read_as_text(blob: Blob, encoding?: string): Promise<string> {
 	return new Promise((ok) => {
 		const reader = new FileReader()
-		reader[_readAsText](blob, encoding)
-		reader[_onload] = (ev) => {
-			const t = ev[_target]
+		reader.readAsText(blob, encoding)
+		reader.onload = (ev) => {
+			const t = ev.target
 			if (!t) return ok('');
 
-			ok(t[_result] as string)
+			ok(t.result as string)
 		}
-		reader[_onerror] = () => ok('')
-		reader[_onabort] = () => ok('')
+		reader.onerror = () => ok('')
+		reader.onabort = () => ok('')
 	})
 }

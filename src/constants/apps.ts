@@ -10,141 +10,140 @@ import qr_code_logo from '@/assets/apps/qr-code-logo.svg'
 import color_gradient_logo from '@/assets/apps/color-gradient/logo.svg'
 import emoji_picker_logo from '@/assets/apps/emoji-picker/logo.svg'
 import latex_viewer_logo from '@/assets/apps/latex-viewer/logo.svg'
-import { _src } from './string'
 import { RoutesLinks } from '@/enums/links'
 import type { AppItem } from '@/types/apps'
 
-export const latexViewer: AppItem = {
-	logoURL: latex_viewer_logo[_src],
+export const app_latex_viewer: AppItem = {
+	logo_url: latex_viewer_logo.src,
 	name: 'LaTeX Viewer',
 	description: 'Visualize your LaTeX code effortlessly. Our app renders complex mathematical expressions and scientific notation, making it perfect for students, researchers, and educators.',
-	link: RoutesLinks.latexViewer,
+	link: RoutesLinks.latex_viewer,
 	color: '#C247FF',
-	buildNumber: 1,
-	buildVersion: '0.0.1',
+	build_number: 1,
+	build_version: '0.0.1',
 }
 
-export const emojiPicker: AppItem = {
-	logoURL: emoji_picker_logo[_src],
+export const app_emoji_picker: AppItem = {
+	logo_url: emoji_picker_logo.src,
 	name: 'Emoji Picker',
 	description: 'Emoji Picker is your ultimate emoji companion. Browse, search, and copy emojis with ease. Express yourself with the perfect emoji every time.',
-	link: RoutesLinks.emojiPicker,
+	link: RoutesLinks.emoji_picker,
 	color: '#00B0FF',
-	buildNumber: 1,
-	buildVersion: '0.0.1',
+	build_number: 1,
+	build_version: '0.0.1',
 }
 
-export const colorGradient: AppItem = {
-	logoURL: color_gradient_logo[_src],
+export const app_color_gradient: AppItem = {
+	logo_url: color_gradient_logo.src,
 	name: 'Color Gradient',
 	description: 'Design beautiful color gradients with our intuitive app. Choose from linear and radial gradients, and stack them for complex effects. Generate clean CSS code to implement your designs.',
-	link: RoutesLinks.colorGradient,
+	link: RoutesLinks.color_gradient,
 	color: '#F5FF00',
-	buildNumber: 1,
-	buildVersion: '0.0.1',
+	build_number: 1,
+	build_version: '0.0.1',
 }
 
-export const qrCode: AppItem = {
-	logoURL: qr_code_logo[_src],
+export const app_qr_code: AppItem = {
+	logo_url: qr_code_logo.src,
 	name: 'QR Code',
 	description: 'Create and read QR codes effortlessly with our user-friendly app. Share information, websites, contacts, and more using QR codes.',
-	link: RoutesLinks.qrCode,
+	link: RoutesLinks.qr_code,
 	color: '#FF2222',
-	buildNumber: 1,
-	buildVersion: '0.1.0',
+	build_number: 1,
+	build_version: '0.1.0',
 }
 
-export const battery: AppItem = {
-	logoURL: battery_logo[_src],
+export const app_battery: AppItem = {
+	logo_url: battery_logo.src,
 	name: 'Battery',
 	description: 'Stay informed about your device\'s battery health with our accurate and easy-to-use app. Track battery level, charging status, and estimated time to full.',
 	link: RoutesLinks.battery,
 	color: '#FF800B',
-	buildNumber: 2,
-	buildVersion: '0.1.1',
+	build_number: 2,
+	build_version: '0.1.1',
 }
 
-export const notes: AppItem = {
-	logoURL: notes_logo[_src],
+export const app_notes: AppItem = {
+	logo_url: notes_logo.src,
 	name: 'Notes',
 	description: 'Notes is your all-in-one note-taking solution. Capture ideas, add multimedia, and create task lists with ease. Stay organized and productive on the go.',
 	link: RoutesLinks.notes,
 	color: '#FF1F1F',
-	buildNumber: 1,
-	buildVersion: '0.1.0',
+	build_number: 1,
+	build_version: '0.1.0',
 }
 
-export const sassConverter: AppItem = {
-	logoURL: sass_converter_logo[_src],
+export const app_sass_converter: AppItem = {
+	logo_url: sass_converter_logo.src,
 	name: 'SASS Converter',
 	description: 'Simplify your SASS/SCSS development process with our powerful online converter. Quickly and accurately translate your code into clean, optimized CSS.',
-	link: RoutesLinks.sassConverter,
+	link: RoutesLinks.sass_converter,
 	color: '#FF0056',
-	buildNumber: 2,
-	buildVersion: '0.0.2',
+	build_number: 2,
+	build_version: '0.0.2',
 }
 
-export const tasks: AppItem = {
-	logoURL: tasks_logo[_src],
+export const app_tasks: AppItem = {
+	logo_url: tasks_logo.src,
 	name: 'Tasks',
 	description: 'Simple and easy-to-use app that helps you stay organized and on track. With Tasks, you can create tasks, add them to lists, and mark them as completed.',
 	link: RoutesLinks.tasks,
 	color: '#9735E4',
-	buildNumber: 4,
-	buildVersion: '0.1.4',
+	build_number: 4,
+	build_version: '0.1.4',
 }
 
-export const calculator: AppItem = {
-	logoURL: calculator_logo[_src],
+export const app_calculator: AppItem = {
+	logo_url: calculator_logo.src,
 	name: 'Calculator',
 	description: 'Perform a wide range of calculations with our versatile calculator. From basic arithmetic to advanced scientific functions and programmer tools, we\'ve got you covered.',
 	link: RoutesLinks.calculator,
 	color: '#026BE3',
-	buildNumber: 6,
-	buildVersion: '0.1.5',
+	build_number: 6,
+	build_version: '0.1.5',
 }
 
-export const randomizer: AppItem = {
-	logoURL: randomizer_converter_logo[_src],
+export const app_randomizer: AppItem = {
+	logo_url: randomizer_converter_logo.src,
 	name: 'Randomizer',
 	description: 'Explore our Randomizer Hub for a variety of tools that add a touch of unpredictability to your life. Generate random strings, words, numbers, colors, and even assemble teams. Embrace the unexpected!',
 	link: RoutesLinks.randomizer,
 	color: '#00FF48',
-	buildNumber: 4,
-	buildVersion: '0.1.4',
+	build_number: 4,
+	build_version: '0.1.4',
 }
 
-export const colorGenerator: AppItem = {
-	logoURL: color_generator_logo[_src],
+export const app_color_generator: AppItem = {
+	logo_url: color_generator_logo.src,
 	name: 'Color Generator',
 	description: 'Generate accent pallete color for your app. Including color for light and dark mode.',
-	link: RoutesLinks.colorGenerator,
+	link: RoutesLinks.color_generator,
 	color: '#39BBFF',
-	buildNumber: 3,
-	buildVersion: '0.1.3',
+	build_number: 3,
+	build_version: '0.1.3',
 }
 
-export const markdownConverter: AppItem = {
-	logoURL: markdown_converter_logo[_src],
+export const app_markdown_converter: AppItem = {
+	logo_url: markdown_converter_logo.src,
 	name: 'Markdown Converter',
 	description: 'Convert markdown to HTML effortlessly with our online markdown converter. Create beautifully formatted web content from plain text using our user-friendly tool.',
-	link: RoutesLinks.markdownConverter,
+	link: RoutesLinks.markdown_converter,
 	color: '#01B92A',
-	buildNumber: 6,
-	buildVersion: '0.1.5',
+	build_number: 6,
+	build_version: '0.1.5',
 }
 
 export const apps: AppItem[] = [
-	latexViewer,
-	emojiPicker,
-	colorGradient,
-	qrCode,
-	battery,
+	app_latex_viewer,
+	app_emoji_picker,
+	app_color_gradient,
+	app_qr_code,
+	app_battery,
 	// notes
-	sassConverter,
-	tasks,
-	calculator,
-	randomizer,
-	colorGenerator,
-	markdownConverter
+	app_sass_converter,
+	app_tasks,
+	app_calculator,
+	app_randomizer,
+	app_color_generator,
+	app_markdown_converter
 ]

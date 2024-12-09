@@ -1,15 +1,14 @@
-import { _theme, _system, _light, _dark, _includes } from "@/constants/string"
-import { getRoot } from "@/constants/window"
 import { RootAttributes } from "@/enums/attributes"
 import { LocalStorageKeys } from "@/enums/storage"
 import { ThemeData } from "@/enums/theme"
-import { getLocalStorageItem } from "@/utils/storage"
-import { setAttribute } from "solid-js/web"
+import { array_includes } from "@/utils/array"
+import { attr_set } from "@/utils/attributes"
+import { storage_get } from "@/utils/storage"
 
-export function checkTheme(): void {
-	const theme = getLocalStorageItem(LocalStorageKeys[_theme])
+export function check_theme(): void {
+	const theme = storage_get(LocalStorageKeys.theme)
 
-	if (theme && [ThemeData[_system], ThemeData[_light], ThemeData[_dark]][_includes](theme as ThemeData)) {
-		setAttribute(getRoot(), RootAttributes[_theme], theme)
+	if (theme && array_includes([ThemeData.system, ThemeData.light, ThemeData.dark], theme as ThemeData)) {
+		attr_set(document.documentElement, RootAttributes.theme, theme)
 	}
 }

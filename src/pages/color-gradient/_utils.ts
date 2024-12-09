@@ -1,99 +1,110 @@
-import { _repeat, _type, _colorInterpolationMethod, _auto, _hsl, _hwb, _lch, _oklch, _includes, _hueInterpolationMethod, _linear, _angle, _colorStopList, _sort, _size, _map, _color, _join, _radial, _shape, _positionX, _positionY, _circle, _sizeLength, _sizeWidth, _sizeHeight, _conic, _rgba, _hsla, _length, _substring, _padStart, _hex, _toFixed } from "@/constants/string"
 import { RectangularColorSpace, PolarColorSpace, HueInterpolationMethod, GradientType, RadialGradientShape, ColorModel } from "./_enums"
 import type { Gradient } from "./_type"
 import type { HEXColor } from "@/types/color"
-import { mathRound, numberParse } from "@/utils/math"
-import { HEX_to_HSL, HEX_to_RGB } from "@/utils/color"
+import { math_round } from "@/utils/math"
+import { hex_to_hsl, hex_to_rgb } from "@/utils/color"
+import { string_length, string_padstart, string_substring } from "@/utils/string"
+import { number_parse, number_tofixed } from "@/utils/number"
+import { array_includes, array_join, array_map, array_sort } from "@/utils/array"
 
-export function convertColorByColorModel(color: HEXColor, colorModel: ColorModel, keepOpacity: boolean = false): string {
-	const getOpacity = (): number => (color[_length] > 7
-		? numberParse(color[_substring](7)[_padStart](2, '0'), true, 16) / 255
+export function convert_color_by_color_model(color: HEXColor, model: ColorModel, keep_opacity: boolean = false): string {
+	const get_opacity = (): number => (string_length(color) > 7
+		? number_parse(string_padstart(string_substring(color, 7), 2, '0'), true, 16) / 255
 		: 1
 	)
 
-	if (colorModel == ColorModel[_hsla]) {
-		const opacity = getOpacity()
-		const hsl = HEX_to_HSL(color[_substring](0, 7) as HEXColor)
-		return [
+	if (model == ColorModel.hsla) {
+		const opacity = get_opacity()
+		const hsl = hex_to_hsl(string_substring(color, 0, 7) as HEXColor)
+		return array_join([
 			'hsl',
-			opacity < 1 || keepOpacity? 'a' : '',
+			opacity < 1 || keep_opacity? 'a' : '',
 			'(',
-			mathRound(hsl.h * 360),
+			math_round(hsl.h * 360),
 			', ',
-			mathRound(hsl.s * 100),
+			math_round(hsl.s * 100),
 			'%, ',
-			mathRound(hsl.l * 100),
+			math_round(hsl.l * 100),
 			'%',
-			opacity < 1 || keepOpacity? ', ' + numberParse(opacity[_toFixed](2)) : '',
+			opacity < 1 || keep_opacity? ', ' + number_parse(number_tofixed(opacity, 2)) : '',
 			')'
-		][_join]('')
+		], '')
 	}
-	else if (colorModel == ColorModel[_rgba]) {
-		const opacity = getOpacity()
-		const rgb = HEX_to_RGB(color[_substring](0, 7) as HEXColor)
-		return [
+	else if (model == ColorModel.rgba) {
+		const opacity = get_opacity()
+		const rgb = hex_to_rgb(string_substring(color, 0, 7) as HEXColor)
+		return array_join([
 			'rgb',
-			opacity < 1 || keepOpacity? 'a' : '',
+			opacity < 1 || keep_opacity? 'a' : '',
 			'(',
 			rgb.r,
 			', ',
 			rgb.g,
 			', ',
 			rgb.b,
-			opacity < 1 || keepOpacity? ', ' + numberParse(opacity[_toFixed](2)) : '',
+			opacity < 1 || keep_opacity? ', ' + number_parse(number_tofixed(opacity, 2)) : '',
 			')'
-		][_join]('')
+		], '')
 	}
 	return color
 }
 
-export function gradientToCSSText(gradient: Gradient, colorModel: ColorModel = ColorModel[_hex], format: boolean = false): string {
-	const repeat = gradient[_repeat] ? 'repeating-' : ''
-	const type = gradient[_type]
-	let colorInterpolationMethod = ''
-	if (gradient[_colorInterpolationMethod] != RectangularColorSpace[_auto]) {
-		colorInterpolationMethod = ` in ${gradient[_colorInterpolationMethod]}`
+export function gradient_to_css_text(gradient: Gradient, model: ColorModel = ColorModel.hex, format: boolean = false): string {
+	const repeat = gradient.repeat ? 'repeating-' : ''
+	const type = gradient.type
+	let color_interpolation_method = ''
+	if (gradient.color_interpolation_method != RectangularColorSpace.auto) {
+		color_interpolation_method = ` in ${gradient.color_interpolation_method}`
 
-		const isPolarColorSpace = [
-			PolarColorSpace[_hsl], PolarColorSpace[_hwb],
-			PolarColorSpace[_lch], PolarColorSpace[_oklch]
-		][_includes](gradient[_colorInterpolationMethod] as PolarColorSpace)
+		const is_polar_colorspace = array_includes([
+			PolarColorSpace.hsl, PolarColorSpace.hwb,
+			PolarColorSpace.lch, PolarColorSpace.oklch
+		], gradient.color_interpolation_method as PolarColorSpace)
 
-		if (isPolarColorSpace && gradient[_hueInterpolationMethod] != HueInterpolationMethod[_auto]) {
-			colorInterpolationMethod += ` ${gradient[_hueInterpolationMethod]} hue`
+		if (is_polar_colorspace && gradient.hue_interpolation_method != HueInterpolationMethod.auto) {
+			color_interpolation_method += ` ${gradient.hue_interpolation_method} hue`
 		}
 	}
 
 	let text = ''
-	if (type == GradientType[_linear]) {
-		const angle = gradient[_angle]
-		const colorStopList = [...gradient[_colorStopList]]
-			[_sort]((a, b) => a[_size] - b[_size])
-			[_map](v => `${convertColorByColorModel(v[_color], colorModel, false)} ${v[_size]}%`)
-			[_join](format? ',\n    ' : ', ')
+	if (type == GradientType.linear) {
+		const angle = gradient.angle
+		const color_stop_list = array_join(
+			array_map(
+				array_sort([...gradient.color_stop_list], (a, b) => a.size - b.size),
+				v => `${convert_color_by_color_model(v.color, model, false)} ${v.size}%`
+			),
+			format? ',\n    ' : ', '
+		)
 
-		text = `${repeat}linear-gradient(${format? '\n    ' : ''}${angle}deg${colorInterpolationMethod},${format? '\n    ' : ' '}${colorStopList}${format? '\n' : ''})`
+		text = `${repeat}linear-gradient(${format? '\n    ' : ''}${angle}deg${color_interpolation_method},${format? '\n    ' : ' '}${color_stop_list}${format? '\n' : ''})`
 	}
-	else if (type == GradientType[_radial]) {
-		const shape = gradient[_shape]
-		const position = `${gradient[_positionX]}% ${gradient[_positionY]}%`
-		const size = shape == RadialGradientShape[_circle] ? `${gradient[_sizeLength]}px` : `${gradient[_sizeWidth]}% ${gradient[_sizeHeight]}%`
-		const colorStopList = [...gradient[_colorStopList]]
-			[_sort]((a, b) => a[_size] - b[_size])
-			[_map](v => `${convertColorByColorModel(v[_color], colorModel, false)} ${v[_size]}%`)
-			[_join](format? ',\n    ' : ', ')
+	else if (type == GradientType.radial) {
+		const shape = gradient.shape
+		const position = `${gradient.position_x}% ${gradient.position_y}%`
+		const size = shape == RadialGradientShape.circle ? `${gradient.size_length}px` : `${gradient.size_width}% ${gradient.size_height}%`
+		const color_stop_list = array_join(
+			array_map(
+				array_sort([...gradient.color_stop_list], (a, b) => a.size - b.size),
+				v => `${convert_color_by_color_model(v.color, model, false)} ${v.size}%`
+			),
+			format? ',\n    ' : ', '
+		)
 
-		text = `${repeat}radial-gradient(${format? '\n    ' : ''}${shape} ${size} at ${position}${colorInterpolationMethod},${format? '\n    ' : ' '}${colorStopList}${format? '\n' : ''})`
+		text = `${repeat}radial-gradient(${format? '\n    ' : ''}${shape} ${size} at ${position}${color_interpolation_method},${format? '\n    ' : ' '}${color_stop_list}${format? '\n' : ''})`
 	}
-	else if (type == GradientType[_conic]) {
-		const angle = gradient[_angle]
-		const position = `${gradient[_positionX]}% ${gradient[_positionY]}%`
-		const colorStopList = [...gradient[_colorStopList]]
-			[_sort]((a, b) => a[_size] - b[_size])
-			[_map](v => `${convertColorByColorModel(v[_color], colorModel, false)} ${mathRound(v[_size] * 360 / 100)}deg`)
-			[_join](format? ',\n    ' : ', ')
+	else if (type == GradientType.conic) {
+		const angle = gradient.angle
+		const position = `${gradient.position_x}% ${gradient.position_y}%`
+		const color_stop_list = array_join(
+			array_map(
+				array_sort([...gradient.color_stop_list], (a, b) => a.size - b.size),
+				v => `${convert_color_by_color_model(v.color, model, false)} ${math_round(v.size * 360 / 100)}deg`
+			),
+			format? ',\n    ' : ', '
+		)
 
-		text = `${repeat}conic-gradient(${format? '\n    ' : ''}from ${angle}deg at ${position}${colorInterpolationMethod},${format? '\n    ' : ' '}${colorStopList}${format? '\n' : ''})`
+		text = `${repeat}conic-gradient(${format? '\n    ' : ''}from ${angle}deg at ${position}${color_interpolation_method},${format? '\n    ' : ' '}${color_stop_list}${format? '\n' : ''})`
 	}
 
 	return text

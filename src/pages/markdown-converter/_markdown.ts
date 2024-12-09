@@ -1,4 +1,4 @@
-export const defaultMarkdownText = `# Welcome to the Markdown Converter!
+export const DEFAULT_MARKDOWN_TEXT = `# Welcome to the Markdown Converter!
 
 This editor allows you to write Markdown text and instantly see the corresponding HTML output. Here are some examples of Markdown syntax:
 

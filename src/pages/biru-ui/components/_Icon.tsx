@@ -3,10 +3,9 @@ import { createSignal, type VoidComponent } from "solid-js"
 import Icon from "@/components/Icon"
 import CheckBox from "@/components/CheckBox"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
-import { _currentTarget, _checked } from "@/constants/string"
 
 const _: VoidComponent = () => {
-	const [filled, setFilled] = createSignal<boolean>(false)
+	const [filled, set_filled] = createSignal<boolean>(false)
 	return (<Page
 		title="Icon"
 		description="An icon is a small graphic symbol representing an action, object, or concept. Icons are used to enhance user understanding and interaction within an interface.">
@@ -24,7 +23,7 @@ const _: VoidComponent = () => {
 			<Icon code={0xEF77} filled={filled()}/>
 		</Playground>
 		<PlaygroundOptions>
-			<CheckBox checked={filled()} onChange={ev => setFilled(ev[_currentTarget][_checked])}>Filled</CheckBox>
+			<CheckBox checked={filled()} onChange={ev => set_filled(ev.currentTarget.checked)}>Filled</CheckBox>
 		</PlaygroundOptions>
 	</Page>)
 }

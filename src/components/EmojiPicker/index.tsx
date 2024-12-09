@@ -3,32 +3,53 @@ import { createMemo, createSignal, For, onCleanup, onMount, Show, splitProps, ty
 import { mergeRefs } from '@solid-primitives/refs'
 
 import type { Emoji } from '@/types/emoji'
-import { activitiesEmojis, animalAndNatureEmojis, flagsEmojis, foodAndDrinkEmojis, objectsEmojis, personAndBodyEmojis, smileyAndEmotionEmojis, symbolsEmojis, travelAndPlacesEmojis } from '@/constants/emoji'
-import { _activities, _addRecentEmoji, _animalAndNature, _animate, _category, _children, _classList, _closeTooltip, _concat, _currentTarget, _detail, _dispatchEvent, _element, _emoji, _emojiListener, _emojis, _filled, _findIndex, _finished, _flags, _foodAndDrink, _getRecentEmoji, _iconCode, _join, _length, _localeCompare, _multiple, _objects, _onSelectEmoji, _onToggleOpen, _option, _personAndBody, _push, _recents, _ref, _removeRecentEmoji, _replace, _showCloseBtn, _showCloseButton, _slice, _smileyAndEmotion, _some, _sort, _splice, _split, _spring, _symbols, _test, _then, _tonal, _travelAndPlaces, _trim, _value } from '@/constants/string'
-import { isElementHasAttribute, setElementAttributeIfExist,setElementAttribute } from '@/utils/attributes'
-import { getDocumentBody } from '@/constants/window'
+import { activities_emojis, animal_and_nature_emojis, flags_emojis, food_and_drink_emojis, object_emojis, person_and_body_emojis, smiley_and_emotion_emojis, symbols_emojis, travel_and_places_emojis } from '@/constants/emoji'
+import { attr_has, attr_set_if_exist,attr_set } from '@/utils/attributes'
 import { BodyAttributes } from '@/enums/attributes'
-import { addEventListener, removeEventListener } from '@/utils/event'
-import { endTimeout, startTimeout } from '@/utils/timeout'
+import { event_add_listener, event_remove_listener } from '@/utils/event'
+import { timeout_clear, timeout_set } from '@/utils/timeout'
 import { BodyEvents } from '@/enums/events'
 import { AnimationEffectTiming } from '@/enums/animation'
+import { string_length, string_locale_compare, string_replace, string_split, string_trim } from '@/utils/string'
+import { array_concat, array_find_index, array_join, array_map, array_slice, array_sort, array_splice } from '@/utils/array'
+import { element_animate, element_dispatch_event } from '@/utils/element'
+import { regex_test } from '@/utils/regex'
+import { promise_done } from '@/utils/object'
 
 import Divider from '@/components/Divider'
 import TextTooltip from '@/components/Tooltip'
 import EmojiC from '@/components/Emoji'
 import { ButtonVariant, EmojiButton, IconButton } from '@/components/Button'
-import { closeSearchMenu, SearchMenuItem, SearchTextField } from '@/components/TextField'
-import { Modal, type ModalProps, openModal, closeModal, repositionModal, focusModal, ModalPosition as EmojiPickerPosition } from '@/components/Modal'
+import { close_searchtextfieldmenu, SearchMenuItem, SearchTextField } from '@/components/TextField'
+import { Modal, type ModalProps, ModalPosition as EmojiPickerPosition, close_modal, focus_modal, open_modal, reposition_modal, is_modal_open } from '@/components/Modal'
 import './index.scss'
+import { close_popover, is_popover_open, open_popover, Popover, reposition_popover, type PopoverProps } from '../Popover'
 
-const ALL_EMOJI: Emoji[] = ([] as Emoji[])[_concat](smileyAndEmotionEmojis, personAndBodyEmojis, animalAndNatureEmojis, foodAndDrinkEmojis, travelAndPlacesEmojis, activitiesEmojis, objectsEmojis, symbolsEmojis, flagsEmojis)[_sort]((a, b) => a[1][_localeCompare](b[1]))
+const ALL_EMOJI: Emoji[] = array_sort(
+	array_map(
+		array_concat(
+			([] as Emoji[]),
+			smiley_and_emotion_emojis,
+			person_and_body_emojis,
+			animal_and_nature_emojis,
+			food_and_drink_emojis,
+			travel_and_places_emojis,
+			activities_emojis,
+			object_emojis,
+			symbols_emojis,
+			flags_emojis
+		),
+		emoji => [...emoji] // copy
+	),
+	(a, b) => string_locale_compare(a[1], b[1])
+)
 
 enum EmojiCategory {
-	smileyAndEmotion = 'Smiley & emotion',
-	personAndBody = 'Person & body',
-	animalAndNature = 'Animal & nature',
-	foodAndDrink = 'Food & drink',
-	travelAndPlaces = 'Travel & places',
+	smiley_and_emotion = 'Smiley & emotion',
+	person_and_body = 'Person & body',
+	animal_and_nature = 'Animal & nature',
+	food_and_drink = 'Food & drink',
+	travel_and_places = 'Travel & places',
 	activities = 'Activities',
 	objects = 'Objects',
 	symbols = 'Symbols',
@@ -38,179 +59,190 @@ enum EmojiCategory {
 
 enum EmojiPickerEvents {
 	/** @param emojis `Emoji[]` */
-	getRecentEmoji = 'on-get-recent-emoji'
+	get_recent_emoji = 'on-get-recent-emoji'
 }
 
-function initEmojiPicker(): void {
-	if (isElementHasAttribute(getDocumentBody(), BodyAttributes[_emojiListener])) return;
-	setElementAttribute(getDocumentBody(), BodyAttributes[_emojiListener])
+function init_emoji_picker(): void {
+	const body = document.body
+
+	if (attr_has(body, BodyAttributes.emoji_listener)) return;
+	attr_set(body, BodyAttributes.emoji_listener)
 
 	let recents: Emoji[] = []
 
-	addEventListener(getDocumentBody(), BodyEvents[_addRecentEmoji], ev => {
-		const emoji = (ev as any)[_detail][_emoji] as Emoji
-		const index = recents[_findIndex](v => v[0] == emoji[0])
-		if (index >= 0) recents[_splice](index, 1)
+	event_add_listener<CustomEvent<{emoji: Emoji}>>(body, BodyEvents.add_recent_emoji, ev => {
+		const emoji = ev.detail.emoji
+		const index = array_find_index(recents, v => v[0] == emoji[0])
+		if (index >= 0) array_splice(recents, index, 1)
 
-		recents = [emoji, ...recents[_slice](0, 41)]
+		recents = [emoji, ...array_slice(recents, 0, 41)]
 	})
 
-	addEventListener(getDocumentBody(), BodyEvents[_getRecentEmoji], ev => {
-		const element = (ev as any)[_detail][_element] as HTMLElement
-		element[_dispatchEvent](new CustomEvent(
-			EmojiPickerEvents[_getRecentEmoji],
+	event_add_listener<CustomEvent<{element: HTMLElement}>>(body, BodyEvents.get_recent_emoji, ev => {
+		const element = ev.detail.element
+		element_dispatch_event(element, new CustomEvent(
+			EmojiPickerEvents.get_recent_emoji,
 			{detail: {emojis: [...recents]}}
 		))
 	})
 }
 
-type EmojiPickerProps = ModalProps & {
-	onSelectEmoji?: (emoji: string, name: string) => unknown
+const EmojiPickerBody: ParentComponent<{
 	multiple?: boolean
-	showCloseButton?: boolean
-	closeTooltip?: string
-}
-const EmojiPicker: ParentComponent<EmojiPickerProps> = ($props) => {
-	const [props, other] = splitProps($props, [
-		_classList, _onSelectEmoji, _ref, _multiple,
-		_showCloseButton, _closeTooltip, _children
-	])
-	const [option, setOption] = createSignal<EmojiCategory>(EmojiCategory[_recents])
-	const [recents, setRecents] = createSignal<Emoji[]>([])
-	const [searchText, setSearchText] = createSignal<string>('')
-	const getSearchRegex = createMemo<RegExp | null>(() => {
-		const t = searchText()[_trim]()[_replace](/ +/g, ' ')[_replace](/[^\w- ]/g, '')
-		return t[_length] == 0? null : new RegExp(t[_split](' ')[_join]('|'), 'gi')
+	use_close_button?: boolean
+	tooltip_close?: string
+	element: HTMLElement
+	on_select_emoji?(emoji: string, name: string): unknown
+	on_close(): unknown
+}> = props => {
+	const [option, set_option] = createSignal<EmojiCategory>(EmojiCategory.recents)
+	const [recents, set_recents] = createSignal<Emoji[]>([])
+	const [search_text, set_search_text] = createSignal<string>('')
+	const get_search_regex = createMemo<RegExp | null>(() => {
+		let t = search_text()
+		t = string_trim(t)
+		t = string_replace(t, / +/g, ' ')
+		t = string_replace(t, /[^\w- ]/g, '')
+		return string_length(t) == 0
+			? null
+			: new RegExp(array_join(string_split(t, ' '), '|'), 'gi')
 	})
-	let emojiPicker_ref: HTMLDialogElement
-	let timeoutId: number | null = null
-	let searchMenu_ref: HTMLDivElement
+	const body = document.body
+	let menu_search_ref: HTMLDivElement
+	let timeout_id: number | null = null
 
-	function updateRecents(): void {
-		getDocumentBody()[_dispatchEvent](new CustomEvent(
-			BodyEvents[_getRecentEmoji],
-			{detail: {element: emojiPicker_ref}}
+	function update_recents(): void {
+		element_dispatch_event(body, new CustomEvent(
+			BodyEvents.get_recent_emoji,
+			{detail: {element: props.element}}
 		))
 	}
 
-	function customOnGetRecentEmoji(ev: CustomEvent): void {
-		const emojis = ev[_detail][_emojis] as Emoji[]
-		setRecents(emojis)
+	function custom_on_get_recent_emoji(ev: CustomEvent<{emojis: Emoji[]}>): void {
+		set_recents(ev.detail.emojis)
 	}
 
-	function initEvents(): void {
-		addEventListener<CustomEvent>(
-			emojiPicker_ref,
-			EmojiPickerEvents[_getRecentEmoji],
-			customOnGetRecentEmoji
+	function init_events(): void {
+		event_add_listener<CustomEvent<{emojis: Emoji[]}>>(
+			props.element,
+			EmojiPickerEvents.get_recent_emoji,
+			custom_on_get_recent_emoji
 		)
 
 		onCleanup(() => {
-			removeEventListener<CustomEvent>(
-				emojiPicker_ref,
-				EmojiPickerEvents[_getRecentEmoji],
-				customOnGetRecentEmoji
+			event_remove_listener<CustomEvent<{emojis: Emoji[]}>>(
+				props.element,
+				EmojiPickerEvents.get_recent_emoji,
+				custom_on_get_recent_emoji
 			)
 		})
 	}
 
 	onMount(() => {
-		initEmojiPicker()
-		initEvents()
+		init_emoji_picker()
+		init_events()
 	})
 
-	const Tab: VoidComponent<{option: EmojiCategory; iconCode: number}> = ($props) => (<TextTooltip
-		text={$props[_option]}>
-		<IconButton
-			code={$props[_iconCode]}
-			selected={option() == $props[_option]}
-			variant={option() == $props[_option]? ButtonVariant[_tonal] : undefined}
-			onClick={() => setOption($props[_option])}
-		/>
-	</TextTooltip>)
+	const Tab: VoidComponent<{category: EmojiCategory; icon_code: number}> = ($props) => {
+		const category = createMemo(() => $props.category)
 
-	const Emojis: VoidComponent<{option: EmojiCategory, emojis: Emoji[]}> = $props => (<div
+		return (<TextTooltip
+			text={category()}>
+			<IconButton
+				code={$props.icon_code}
+				selected={option() == category()}
+				variant={option() == category()? ButtonVariant.tonal : undefined}
+				onClick={() => set_option(category())}
+			/>
+		</TextTooltip>)
+	}
+
+	const Emojis: VoidComponent<{category: EmojiCategory, emojis: Emoji[]}> = $props => (<div
 		class='c-emoji-picker-emojis'
-		data-c-hidden={setElementAttributeIfExist($props[_option] != option())}>
+		data-c-hidden={attr_set_if_exist($props.category != option())}>
 		<div>
-			<h3>{$props[_option]}</h3>
-			<For each={$props[_emojis]}>{e =>
+			<h3>{$props.category}</h3>
+			<For each={$props.emojis}>{e =>
 				<TextTooltip text={e[1]}>
 					<EmojiButton emoji={e[0]} onClick={() => {
-						getDocumentBody()[_dispatchEvent](new CustomEvent(
-							BodyEvents[_addRecentEmoji],
+						element_dispatch_event(body, new CustomEvent(
+							BodyEvents.add_recent_emoji,
 							{detail: {emoji: [...e]}}
 						))
-						updateRecents()
-						if (!props[_multiple]) closeModal(emojiPicker_ref)
-						props[_onSelectEmoji]?.(e[0], e[1])
+						update_recents()
+						if (!props.multiple) props.on_close()
+
+						props.on_select_emoji?.(e[0], e[1])
 					}}/>
 				</TextTooltip>
 			}</For>
 		</div>
 	</div>)
 
-	return (<Modal
-		classList={{
-			'c-emoji-picker': true,
-			...props[_classList]
-		}}
-		ref={mergeRefs(props[_ref], r => emojiPicker_ref = r)}
-		{...other}>
+	return (<>
 		<div class="c-emoji-picker-tabs">
-			<Tab iconCode={0xE8DE} option={EmojiCategory[_recents]}/>
-			<Tab iconCode={0xE745} option={EmojiCategory[_smileyAndEmotion]}/>
-			<Tab iconCode={0xEBF8} option={EmojiCategory[_personAndBody]}/>
-			<Tab iconCode={0xE04F} option={EmojiCategory[_animalAndNature]}/>
-			<Tab iconCode={0xE80B} option={EmojiCategory[_foodAndDrink]}/>
-			<Tab iconCode={0xF227} option={EmojiCategory[_travelAndPlaces]}/>
-			<TextTooltip text={props[_closeTooltip] ?? 'Close'}>
-				<Show when={props[_showCloseButton]}>
+			<Tab icon_code={0xE8DE} category={EmojiCategory.recents}/>
+			<Tab icon_code={0xE745} category={EmojiCategory.smiley_and_emotion}/>
+			<Tab icon_code={0xEBF8} category={EmojiCategory.person_and_body}/>
+			<Tab icon_code={0xE04F} category={EmojiCategory.animal_and_nature}/>
+			<Tab icon_code={0xE80B} category={EmojiCategory.food_and_drink}/>
+			<Tab icon_code={0xF227} category={EmojiCategory.travel_and_places}/>
+			<TextTooltip text={props.tooltip_close ?? 'Close'}>
+				<Show when={props.use_close_button}>
 					<IconButton
 						code={0xE5E9}
-						variant={ButtonVariant[_filled]}
-						onClick={() => closeModal(emojiPicker_ref)}
+						variant={ButtonVariant.filled}
+						onClick={() => props.on_close()}
 					/>
 				</Show>
 			</TextTooltip>
-			<Tab iconCode={0xEC3C} option={EmojiCategory[_activities]}/>
-			<Tab iconCode={0xE5F1} option={EmojiCategory[_objects]}/>
-			<Tab iconCode={0xEF77} option={EmojiCategory[_symbols]}/>
-			<Tab iconCode={0xE7AB} option={EmojiCategory[_flags]}/>
+			<Tab icon_code={0xEC3C} category={EmojiCategory.activities}/>
+			<Tab icon_code={0xE5F1} category={EmojiCategory.objects}/>
+			<Tab icon_code={0xEF77} category={EmojiCategory.symbols}/>
+			<Tab icon_code={0xE7AB} category={EmojiCategory.flags}/>
 		</div>
 		<div class='c-emoji-picker-search'>
 			<SearchTextField
 				placeholder='Search emoji'
 				onInput={(ev) => {
-					const text = ev[_currentTarget][_value]
+					const text = ev.currentTarget.value
 
-					if (timeoutId != null) endTimeout(timeoutId)
-					timeoutId = startTimeout(() => {
-						setSearchText(text)
+					if (timeout_id != null) timeout_clear(timeout_id)
+					timeout_id = timeout_set(() => {
+						set_search_text(text)
 					}, 1000)
 				}}
-				menuAttr={{
-					ref: (r) => searchMenu_ref = r
+				attr_menu={{
+					ref: (r) => menu_search_ref = r
 				}}
 				result={<TransitionGroup
-					onEnter={(el, done) => {el[_animate](
-						[ { transform: 'translateX(-12px)', opacity: 0 }, { tranform: null, opacity: 1 } ],
-						{ duration: 300, easing: AnimationEffectTiming[_spring] }
-					)[_finished][_then](done)}}
-					onExit={(el, done) => {el[_animate](
-						{ transform: 'translateX(-12px)', opacity: 0 },
-						{ duration: 300, easing: AnimationEffectTiming[_spring] }
-					)[_finished][_then](done)}}>
-					<For each={ALL_EMOJI}>{e => <Show when={getSearchRegex() != null && getSearchRegex()![_test](e[1])}>
+					onEnter={(el, done) => {
+						promise_done(element_animate(
+							el as HTMLElement,
+							[
+								{ transform: 'translateX(-12px)', opacity: 0 },
+								{ tranform: null, opacity: 1 }
+							],
+							{ duration: 300, easing: AnimationEffectTiming.spring }
+						).finished, done)
+					}}
+					onExit={(el, done) => {
+						promise_done(element_animate(
+							el as HTMLElement,
+							{ transform: 'translateX(-12px)', opacity: 0 },
+							{ duration: 300, easing: AnimationEffectTiming.spring }
+						).finished, done)
+					}}>
+					<For each={ALL_EMOJI}>{e => <Show when={get_search_regex() != null && regex_test(get_search_regex()!, e[1])}>
 						<SearchMenuItem onClick={() => {
-							getDocumentBody()[_dispatchEvent](new CustomEvent(
-								BodyEvents[_addRecentEmoji],
+							element_dispatch_event(body, new CustomEvent(
+								BodyEvents.add_recent_emoji,
 								{detail: {emoji: [...e]}}
 							))
-							updateRecents()
-							if (!props[_multiple]) closeModal(emojiPicker_ref)
-							closeSearchMenu(searchMenu_ref)
-							props[_onSelectEmoji]?.(e[0], e[1])
+							update_recents()
+							if (!props.multiple) props.on_close()
+							close_searchtextfieldmenu(menu_search_ref)
+							props.on_select_emoji?.(e[0], e[1])
 						}}>
 							<EmojiC emoji={e[0]}/>{e[1]}
 						</SearchMenuItem>
@@ -218,30 +250,105 @@ const EmojiPicker: ParentComponent<EmojiPickerProps> = ($props) => {
 				</TransitionGroup>}
 			/>
 		</div>
-		{props[_children]}
+		{props.children}
 		<Divider />
-		<Emojis emojis={recents()} option={EmojiCategory[_recents]}/>
-		<Emojis emojis={smileyAndEmotionEmojis} option={EmojiCategory[_smileyAndEmotion]}/>
-		<Emojis emojis={personAndBodyEmojis} option={EmojiCategory[_personAndBody]}/>
-		<Emojis emojis={animalAndNatureEmojis} option={EmojiCategory[_animalAndNature]}/>
-		<Emojis emojis={foodAndDrinkEmojis} option={EmojiCategory[_foodAndDrink]}/>
-		<Emojis emojis={travelAndPlacesEmojis} option={EmojiCategory[_travelAndPlaces]}/>
-		<Emojis emojis={activitiesEmojis} option={EmojiCategory[_activities]}/>
-		<Emojis emojis={objectsEmojis} option={EmojiCategory[_objects]}/>
-		<Emojis emojis={symbolsEmojis} option={EmojiCategory[_symbols]}/>
-		<Emojis emojis={flagsEmojis} option={EmojiCategory[_flags]}/>
+		<Emojis emojis={recents()} category={EmojiCategory.recents}/>
+		<Emojis emojis={smiley_and_emotion_emojis} category={EmojiCategory.smiley_and_emotion}/>
+		<Emojis emojis={person_and_body_emojis}    category={EmojiCategory.person_and_body}/>
+		<Emojis emojis={animal_and_nature_emojis}  category={EmojiCategory.animal_and_nature}/>
+		<Emojis emojis={food_and_drink_emojis}     category={EmojiCategory.food_and_drink}/>
+		<Emojis emojis={travel_and_places_emojis}  category={EmojiCategory.travel_and_places}/>
+		<Emojis emojis={activities_emojis}         category={EmojiCategory.activities}/>
+		<Emojis emojis={object_emojis}             category={EmojiCategory.objects}/>
+		<Emojis emojis={symbols_emojis}            category={EmojiCategory.symbols}/>
+		<Emojis emojis={flags_emojis}              category={EmojiCategory.flags}/>
+	</>)
+}
+
+type EmojiPickerProps = ModalProps & {
+	multiple?: boolean
+	use_close_button?: boolean
+	tooltip_close?: string
+	on_select_emoji?(emoji: string, name: string): unknown
+}
+const EmojiPicker: ParentComponent<EmojiPickerProps> = ($props) => {
+	const [props, other] = splitProps($props, [
+		'classList', 'on_select_emoji', 'ref', 'multiple',
+		'use_close_button', 'tooltip_close', 'children'
+	])
+	const [emojipicker_ref, set_emojipicker_ref] = createSignal<HTMLElement | null>(null)
+
+	return (<Modal
+		classList={{
+			'c-emoji-picker': true,
+			...props.classList
+		}}
+		ref={mergeRefs(props.ref, r => set_emojipicker_ref(r))}
+		{...other}>
+		<Show when={emojipicker_ref() != null}>
+			<EmojiPickerBody
+				element={emojipicker_ref() as HTMLElement}
+				on_close={() => close_modal(emojipicker_ref()! as HTMLDialogElement)}
+				multiple={props.multiple}
+				on_select_emoji={props.on_select_emoji}
+				tooltip_close={props.tooltip_close}
+				use_close_button={props.use_close_button}>
+				{props.children}
+			</EmojiPickerBody>
+		</Show>
 	</Modal>)
+}
+
+type PopoverEmojiPickerProps = PopoverProps & {
+	multiple?: boolean
+	use_close_button?: boolean
+	tooltip_close?: string
+	on_select_emoji?(emoji: string, name: string): unknown
+}
+const PopoverEmojiPicker: ParentComponent<PopoverEmojiPickerProps> = ($props) => {
+	const [props, other] = splitProps($props, [
+		'classList', 'on_select_emoji', 'ref', 'multiple',
+		'use_close_button', 'tooltip_close', 'children'
+	])
+	const [emojipicker_ref, set_emojipicker_ref] = createSignal<HTMLElement | null>(null)
+
+	return (<Popover
+		classList={{
+			'c-emoji-picker': true,
+			...props.classList
+		}}
+		ref={mergeRefs(props.ref, r => set_emojipicker_ref(r))}
+		{...other}>
+		<Show when={emojipicker_ref() != null}>
+			<EmojiPickerBody
+				element={emojipicker_ref() as HTMLElement}
+				on_close={() => close_modal(emojipicker_ref()! as HTMLDialogElement)}
+				multiple={props.multiple}
+				on_select_emoji={props.on_select_emoji}
+				tooltip_close={props.tooltip_close}
+				use_close_button={props.use_close_button}>
+				{props.children}
+			</EmojiPickerBody>
+		</Show>
+	</Popover>)
 }
 
 export {
 	EmojiPicker,
-	openModal as openEmojiPicker,
-	closeModal as closeEmojiPicker,
-	repositionModal as repositionEmojiPicker,
-	focusModal as focusEmojiPicker,
+	PopoverEmojiPicker,
+	is_modal_open as is_emojipicker_open,
+	open_modal as open_emojipicker,
+	close_modal as close_emojipicker,
+	reposition_modal as reposition_emojipicker,
+	focus_modal as focus_emojipicker,
+	is_popover_open as is_popoveremojipicker_open,
+	open_popover as open_popoveremojipicker,
+	close_popover as close_popoveremojipicker,
+	reposition_popover as reposition_popoveremojipicker,
 	EmojiPickerPosition
 }
 export type {
 	EmojiPickerProps,
+	PopoverEmojiPickerProps
 }
 export default EmojiPicker

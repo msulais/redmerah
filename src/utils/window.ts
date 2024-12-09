@@ -1,10 +1,7 @@
-import { _matchMedia, _matches } from "@/constants/string";
-import { getWindow } from "@/constants/window";
-
-export function matchMedia(query: string): MediaQueryList {
-	return getWindow()[_matchMedia](query)
+export function window_match_media(query: string): MediaQueryList {
+	return window.matchMedia(query)
 }
 
-export function isMatchMedia(query: string): boolean {
-	return matchMedia(query)[_matches]
+export function is_window_media_matches(query: string): boolean {
+	return window_match_media(query).matches
 }

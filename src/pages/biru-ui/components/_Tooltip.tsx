@@ -1,22 +1,21 @@
 import { createSignal, For, type VoidComponent } from "solid-js"
 
-import { _centerTop, _tonal, _leftTop, _leftCenterToBottom, _leftCenter, _leftCenterToTop, _leftBottom, _rightTop, _rightCenterToBottom, _rightCenter, _rightCenterToTop, _rightBottom, _centerTopToRight, _centerTopToLeft, _centerBottomToRight, _centerBottom, _centerBottomToLeft, _centerCenterLeftTop, _centerCenterLeft, _centerCenterLeftBottom, _centerCenterTop, _centerCenter, _centerCenterBottom, _centerCenterRightTop, _centerCenterRight, _centerCenterRightBottom, _currentTarget, _checked, _valueAsNumber, _value } from "@/constants/string"
-import { safeNumber } from "@/utils/math"
+import { number_safe } from "@/utils/number"
 
 import { RichTooltip, TextTooltip, TooltipPosition } from "@/components/Tooltip"
-import Icon from "@/components/Icon"
 import Button, { ButtonVariant } from "@/components/Button"
 import CheckBox from "@/components/CheckBox"
 import { NumberTextField } from "@/components/TextField"
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
+import Icon from "@/components/Icon"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
 
 const _: VoidComponent = () => {
-	const [useAnchor, setUseAnchor] = createSignal<boolean>(false)
-	const [position, setPosition] = createSignal<TooltipPosition>(TooltipPosition[_centerTop])
-	const [gap, setGap] = createSignal<number>(40)
-	const [startDelayDuration, setStartDelayDuration] = createSignal<number>(500)
-	const [endDelayDuration, setEndDelayDuration] = createSignal<number>(500)
+	const [use_anchor, set_use_anchor] = createSignal<boolean>(false)
+	const [position, set_position] = createSignal<TooltipPosition>(TooltipPosition.center_top)
+	const [gap, set_gap] = createSignal<number>(40)
+	const [start_delay_duration, set_start_delay_duration] = createSignal<number>(500)
+	const [end_delay_duration, set_end_delay_duration] = createSignal<number>(500)
 
 	return (<Page
 		title="Tooltip"
@@ -24,34 +23,34 @@ const _: VoidComponent = () => {
 		<Playground>
 			<TextTooltip
 				text="This is tooltip"
-				endDelayDuration={endDelayDuration()}
+				end_delay_duration={end_delay_duration()}
 				gap={gap()}
 				position={position()}
-				startDelayDuration={startDelayDuration()}
-				useAnchor={useAnchor()}>
+				start_delay_duration={start_delay_duration()}
+				use_anchor={use_anchor()}>
 				<Button>
 					Hover me please
 					<TextTooltip
 						text="This is icon"
-						endDelayDuration={endDelayDuration()}
+						end_delay_duration={end_delay_duration()}
 						gap={gap()}
 						position={position()}
-						startDelayDuration={startDelayDuration()}
-						useAnchor={useAnchor()}>
+						start_delay_duration={start_delay_duration()}
+						use_anchor={use_anchor()}>
 						<Icon code={0xE4B2}/>
 					</TextTooltip>
 				</Button>
 			</TextTooltip>
 			<RichTooltip
 				style={{width: '240px'}}
-				endDelayDuration={endDelayDuration()}
+				end_delay_duration={end_delay_duration()}
 				gap={gap()}
 				position={position()}
-				startDelayDuration={startDelayDuration()}
-				useAnchor={useAnchor()}
+				start_delay_duration={start_delay_duration()}
+				use_anchor={use_anchor()}
 				tooltip={<>
 					<p style={{"margin-bottom": '8px'}}>Ullamco anim in magna ea ut labore velit ex occaecat elit voluptate laboris.</p>
-					<Button style={{color: 'rgb(var(--g-color-accent))'}} variant={ButtonVariant[_tonal]}>Learn more</Button>
+					<Button style={{color: 'rgb(var(--g-color-accent))'}} variant={ButtonVariant.tonal}>Learn more</Button>
 				</>}>
 				<Button>Rich tooltip</Button>
 			</RichTooltip>
@@ -60,59 +59,63 @@ const _: VoidComponent = () => {
 			<Dropdown
 				label="Position"
 				values={[position()]}
-				onChangeOptions={(options) => setPosition(options[0][_value] as TooltipPosition)}>
+				on_change_options={(options) => set_position(options[0].value as TooltipPosition)}>
 				<For each={[
-					[TooltipPosition[_leftTop], 'Left top'],
-					[TooltipPosition[_leftCenterToBottom], 'Left center to bottom'],
-					[TooltipPosition[_leftCenter], 'Left center'],
-					[TooltipPosition[_leftCenterToTop], 'Left center to top'],
-					[TooltipPosition[_leftBottom], 'Left bottom'],
-					[TooltipPosition[_rightTop], 'Right top'],
-					[TooltipPosition[_rightCenterToBottom], 'Right center to bottom'],
-					[TooltipPosition[_rightCenter], 'Right center'],
-					[TooltipPosition[_rightCenterToTop], 'Right center to top'],
-					[TooltipPosition[_rightBottom], 'Right bottom'],
-					[TooltipPosition[_centerTopToRight], 'Center top to right'],
-					[TooltipPosition[_centerTop], 'Center top'],
-					[TooltipPosition[_centerTopToLeft], 'Center top to left'],
-					[TooltipPosition[_centerBottomToRight], 'Center bottom to right'],
-					[TooltipPosition[_centerBottom], 'Center bottom'],
-					[TooltipPosition[_centerBottomToLeft], 'Center bottom to left'],
-					[TooltipPosition[_centerCenterLeftTop], 'Center center left top'],
-					[TooltipPosition[_centerCenterLeft], 'Center center left'],
-					[TooltipPosition[_centerCenterLeftBottom], 'Center center left bottom'],
-					[TooltipPosition[_centerCenterTop], 'Center center top'],
-					[TooltipPosition[_centerCenter], 'Center center'],
-					[TooltipPosition[_centerCenterBottom], 'Center center bottom'],
-					[TooltipPosition[_centerCenterRightTop], 'Center center right top'],
-					[TooltipPosition[_centerCenterRight], 'Center center right'],
-					[TooltipPosition[_centerCenterRightBottom], 'Center center right bottom'],
+					[TooltipPosition.left_top, 'Left top'],
+					[TooltipPosition.left_center_to_bottom, 'Left center to bottom'],
+					[TooltipPosition.left_center, 'Left center'],
+					[TooltipPosition.left_center_to_top, 'Left center to top'],
+					[TooltipPosition.left_bottom, 'Left bottom'],
+					[TooltipPosition.right_top, 'Right top'],
+					[TooltipPosition.right_center_to_bottom, 'Right center to bottom'],
+					[TooltipPosition.right_center, 'Right center'],
+					[TooltipPosition.right_center_to_top, 'Right center to top'],
+					[TooltipPosition.right_bottom, 'Right bottom'],
+					[TooltipPosition.center_top_to_right, 'Center top to right'],
+					[TooltipPosition.center_top, 'Center top'],
+					[TooltipPosition.center_top_to_left, 'Center top to left'],
+					[TooltipPosition.center_bottom_to_right, 'Center bottom to right'],
+					[TooltipPosition.center_bottom, 'Center bottom'],
+					[TooltipPosition.center_bottom_to_left, 'Center bottom to left'],
+					[TooltipPosition.center_center_left_top, 'Center center left top'],
+					[TooltipPosition.center_center_left, 'Center center left'],
+					[TooltipPosition.center_center_left_bottom, 'Center center left bottom'],
+					[TooltipPosition.center_center_top, 'Center center top'],
+					[TooltipPosition.center_center, 'Center center'],
+					[TooltipPosition.center_center_bottom, 'Center center bottom'],
+					[TooltipPosition.center_center_right_top, 'Center center right top'],
+					[TooltipPosition.center_center_right, 'Center center right'],
+					[TooltipPosition.center_center_right_bottom, 'Center center right bottom'],
 				]}>{option => <DropdownOption value={option[0]} text={option[1] as string} />}</For>
 			</Dropdown>
 			<NumberTextField
 				style={{width: '100px'}}
 				value={gap()}
 				min={0}
-				onBlur={(ev) => setGap(g => safeNumber(ev[_currentTarget][_valueAsNumber], g))}
+				onBlur={(ev) => set_gap(g => number_safe(ev.currentTarget.valueAsNumber, g))}
 				label="Gap"
 			/>
 			<NumberTextField
 				style={{width: '100px'}}
-				value={startDelayDuration()}
+				value={start_delay_duration()}
 				min={0}
 				step={100}
-				onBlur={(ev) => setStartDelayDuration(d => safeNumber(ev[_currentTarget][_valueAsNumber], d))}
+				onBlur={(ev) => set_start_delay_duration(d => number_safe(ev.currentTarget.valueAsNumber, d))}
 				label="Start delay duration"
 			/>
 			<NumberTextField
 				style={{width: '100px'}}
-				value={endDelayDuration()}
+				value={end_delay_duration()}
 				min={0}
 				step={100}
-				onBlur={(ev) => setEndDelayDuration(d => safeNumber(ev[_currentTarget][_valueAsNumber], d))}
+				onBlur={(ev) => set_end_delay_duration(d => number_safe(ev.currentTarget.valueAsNumber, d))}
 				label="End delay duration"
 			/>
-			<CheckBox checked={useAnchor()} onChange={ev => setUseAnchor(ev[_currentTarget][_checked])}>Use anchor</CheckBox>
+			<CheckBox
+				checked={use_anchor()}
+				onChange={ev => set_use_anchor(ev.currentTarget.checked)}>
+				Use anchor
+			</CheckBox>
 		</PlaygroundOptions>
 	</Page>)
 }

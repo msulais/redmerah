@@ -1,39 +1,39 @@
-import { _splash, _animate, _spring, _finished, _then, _remove, _componentCount, _componentCountMax } from "@/constants/string"
-import { getDocumentBody } from "@/constants/window"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { BodyAttributes } from "@/enums/attributes"
 import { ElementIds } from "@/enums/ids"
-import { getElementAttribute, setElementAttribute } from "@/utils/attributes"
-import { getElementById } from "@/utils/element"
-import { numberParse, safeNumber } from "@/utils/math"
-import { startTimeout } from "@/utils/timeout"
+import { attr_get, attr_set } from "@/utils/attributes"
+import { element_animate, element_remove, get_element_by_id } from "@/utils/element"
+import { number_parse, number_safe } from "@/utils/number"
+import { timeout_set } from "@/utils/timeout"
 
-export function removeSplashScreen(timeout: number = 0): void {
-	startTimeout(() => {
-		const splash_ref = getElementById(ElementIds[_splash])
-		splash_ref?.[_animate](
+export function remove_splash_screen(timeout: number = 0): void {
+	timeout_set(() => {
+		const splash_ref = get_element_by_id(ElementIds.splash)
+		if (!splash_ref) return;
+		element_animate(
+			splash_ref,
 			{opacity: 0},
-			{
-				duration: 300,
-				easing: AnimationEffectTiming[_spring]
-			}
-		)[_finished][_then](() => splash_ref[_remove]())
+			{duration: 300, easing: AnimationEffectTiming.spring}
+		)
+		.finished
+		.then(() => element_remove(splash_ref))
 	}, timeout)
 }
 
-export function removeSplashScreenOnLoadEveryComponent(timeout: number = 0): void {
-	const componentCount = safeNumber(
-		numberParse(getElementAttribute(
-			getDocumentBody(),
-			BodyAttributes[_componentCount]
+export function remove_splash_screen_on_load_every_component(timeout: number = 0): void {
+	const body = document.body
+	const componentCount = number_safe(
+		number_parse(attr_get(
+			body,
+			BodyAttributes.component_count
 		) ?? '0'), 0
 	) + 1
-	const componentCountMax = safeNumber(
-		numberParse(getElementAttribute(
-			getDocumentBody(),
-			BodyAttributes[_componentCountMax]
+	const componentCountMax = number_safe(
+		number_parse(attr_get(
+			body,
+			BodyAttributes.component_count_max
 		) ?? '0'), 0
 	)
-	setElementAttribute(getDocumentBody(), BodyAttributes[_componentCount], `${componentCount}`)
-	if (componentCount >= componentCountMax) removeSplashScreen(timeout)
+	attr_set(body, BodyAttributes.component_count, `${componentCount}`)
+	if (componentCount >= componentCountMax) remove_splash_screen(timeout)
 }

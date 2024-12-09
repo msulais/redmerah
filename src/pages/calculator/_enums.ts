@@ -44,14 +44,14 @@ export enum Commands {
 
 	/**
 	@param {GroupingNumberFormat} type `GroupingNumberFormat` */
-	change_settings_numberFormatGrouping = 'c',
+	change_settings_numberformatgrouping = 'c',
 
 	/**
 	@param {DecimalNumberFormat} type `DecimalNumberFormat` */
-	change_settings_numberFormatDecimal = 'd',
+	change_settings_numberformatdecimal = 'd',
 
-	toggle_settings_scientificNotation = 'e',
-	toggle_settings_memoryButtons = 'f',
+	toggle_settings_scientificnotation = 'e',
+	toggle_settings_memorybuttons = 'f',
 
 	/**
 	@param {string | DateCalculatorInput} value `string | DateCalculatorInput` */
@@ -68,15 +68,15 @@ export enum Commands {
 
 	/**
 	@param {ConverterUnit} value `ConverterUnit` */
-	change_settings_converter_inputUnit = 'm',
+	change_settings_converter_inputunit = 'm',
 
 	/**
 	@param {ConverterUnit} value `ConverterUnit` */
-	change_settings_converter_outputUnit = 'n',
-	change_settings_converter_swapUnit = 'o',
+	change_settings_converter_outputunit = 'n',
+	change_settings_converter_swapunit = 'o',
 
 	/** @param {NumberType} type `NumberType` */
-	change_settings_programmer_numberType = 'p',
+	change_settings_programmer_numbertype = 'p',
 
 	/** @param {DateOperation} operation `DateOperation` */
 	change_settings_date_operation = 'q',
