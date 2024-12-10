@@ -489,32 +489,29 @@ const _: VoidComponent<{
 		<AppBar
 			leading={<img alt="QR Code logo" width={32} src={logo.src} />}
 			headline="QR Code"
-			trailing={<>
-				<Tooltip text="Info">
-					<IconButton
-						focused={is_menu_info_open()}
-						code={0xE930}
-						onClick={(ev) => open_menu(ev, menu_info_ref, {anchor: ev.currentTarget})}
-					/>
-				</Tooltip>
-				<Tooltip text="Settings">
-					<IconButton
-						class={CSSAnimation.btn_rotate_icon}
-						focused={is_menu_settings_open()}
-						code={0xEE0F}
-						onClick={(ev) => open_menu(ev, menu_settings_ref, {anchor: ev.currentTarget})}
-					/>
-				</Tooltip>
+			trailing={<Tooltip>
+				<IconButton
+					data-tooltip="Info"
+					focused={is_menu_info_open()}
+					code={0xE930}
+					onClick={(ev) => open_menu(ev, menu_info_ref, {anchor: ev.currentTarget})}
+				/>
+				<IconButton
+					data-tooltip="Settings"
+					class={CSSAnimation.btn_rotate_icon}
+					focused={is_menu_settings_open()}
+					code={0xEE0F}
+					onClick={(ev) => open_menu(ev, menu_settings_ref, {anchor: ev.currentTarget})}
+				/>
 				<Show when={!props.is_generate_error && props.page == Pages.generate}>
-					<Tooltip text="More actions">
-						<IconButton
-							focused={is_menu_moreactions_open()}
-							code={0xEAD9}
-							onClick={(ev) => open_menu(ev, menu_moreactions_ref, {anchor: ev.currentTarget})}
-						/>
-					</Tooltip>
+					<IconButton
+						data-tooltip="More actions"
+						focused={is_menu_moreactions_open()}
+						code={0xEAD9}
+						onClick={(ev) => open_menu(ev, menu_moreactions_ref, {anchor: ev.currentTarget})}
+					/>
 				</Show>
-			</>}
+			</Tooltip>}
 		/>
 		<Menus />
 		<ColorPickers/>

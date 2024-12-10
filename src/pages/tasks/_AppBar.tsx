@@ -329,15 +329,16 @@ const _: VoidComponent<{
 	}
 
 	return (<>
-		<AppBar
-			data-search={attr_set_if_exist(is_searching())}
-			classList={add_classlist_module(CSS.appbar)}
-			leading={<>
-				<TextTooltip text={is_side_navigation_hidden()
-					? "Open navigation"
-					: `${props.is_side_navigation_expanded? 'Shrink' : 'Expand'} navigation`
-				}>
+		<TextTooltip>
+			<AppBar
+				data-search={attr_set_if_exist(is_searching())}
+				classList={add_classlist_module(CSS.appbar)}
+				leading={<>
 					<IconButton
+						data-tooltip={is_side_navigation_hidden()
+							? "Open navigation"
+							: `${props.is_side_navigation_expanded? 'Shrink' : 'Expand'} navigation`
+						}
 						classList={add_classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
 						onClick={(ev) => {
 							if (is_side_navigation_hidden()) return openDrawer(ev, drawer_navigation_ref)
@@ -345,13 +346,12 @@ const _: VoidComponent<{
 						}}
 						code={0xEAFF}
 					/>
-				</TextTooltip>
-				<img alt="Tasks logo" width={32} src={logo.src} />
-			</>}
-			headline="Tasks"
-			trailing={<>
-				<TextTooltip text="Search tasks">
+					<img alt="Tasks logo" width={32} src={logo.src} />
+				</>}
+				headline="Tasks"
+				trailing={<>
 					<IconButton
+						data-tooltip="Search tasks"
 						onClick={() => {
 							set_is_searching(true)
 							element_focus(searchtextfield_ref)
@@ -359,9 +359,8 @@ const _: VoidComponent<{
 						classList={add_classlist_module(CSS.appbar_search_btn)}
 						code={0xEDDF}
 					/>
-				</TextTooltip>
-				<TextTooltip text="Info">
 					<IconButton
+						data-tooltip="Info"
 						focused={is_menu_info_open()}
 						code={0xE930}
 						onClick={ev => open_menu(ev, menu_info_ref, {
@@ -369,9 +368,8 @@ const _: VoidComponent<{
 							padding: 4,
 						})}
 					/>
-				</TextTooltip>
-				<TextTooltip text="Settings">
 					<IconButton
+						data-tooltip="Settings"
 						classList={add_classlist_module(CSSAnimation.btn_rotate_icon)}
 						focused={is_menu_settings_open()}
 						onClick={ev => open_menu(ev, menu_settings_ref, {
@@ -380,52 +378,51 @@ const _: VoidComponent<{
 						})}
 						code={0xEE0F}
 					/>
-				</TextTooltip>
-			</>}>
-			<div class={CSS.appbar_search}>
-				<SearchTextField
-					placeholder="Search tasks"
-					ref={r => searchtextfield_ref = r}
-					leading={<Icon code={0xEDDF}/>}
-					result={<For each={get_search_result()}>{(list, i) => <>
-						<Show when={i() > 0}><SearchMenuDivider /></Show>
-						<SearchMenuHeader>{list.name}</SearchMenuHeader>
-						<For each={list.tasks}>{task =>
-							<SearchMenuItem
-								checked={task.complete}
-								onClick={async () => {
-									element_blur(searchtextfield_ref)
-									if (is_searchtextfield_menu_open) {
-										close_searchtextfieldmenu(searchtextfield_menu_ref)
-										await wait(300)
-									}
-									set_is_searching(false)
-									command(
-										Commands.change_page,
-										list.id == DEFAULT_TASK_LIST.id? Pages.tasks : list.id
-									)
-								}}>
-								{task.name}
-							</SearchMenuItem>
-						}</For>
-					</>}</For>}
-					onInput={(ev) => {
-						const text = ev.currentTarget.value
-						if (timeout_search_id != null) timeout_clear(timeout_search_id)
+				</>}>
+				<div class={CSS.appbar_search}>
+					<SearchTextField
+						placeholder="Search tasks"
+						ref={r => searchtextfield_ref = r}
+						leading={<Icon code={0xEDDF}/>}
+						result={<For each={get_search_result()}>{(list, i) => <>
+							<Show when={i() > 0}><SearchMenuDivider /></Show>
+							<SearchMenuHeader>{list.name}</SearchMenuHeader>
+							<For each={list.tasks}>{task =>
+								<SearchMenuItem
+									checked={task.complete}
+									onClick={async () => {
+										element_blur(searchtextfield_ref)
+										if (is_searchtextfield_menu_open) {
+											close_searchtextfieldmenu(searchtextfield_menu_ref)
+											await wait(300)
+										}
+										set_is_searching(false)
+										command(
+											Commands.change_page,
+											list.id == DEFAULT_TASK_LIST.id? Pages.tasks : list.id
+										)
+									}}>
+									{task.name}
+								</SearchMenuItem>
+							}</For>
+						</>}</For>}
+						onInput={(ev) => {
+							const text = ev.currentTarget.value
+							if (timeout_search_id != null) timeout_clear(timeout_search_id)
 
-						timeout_search_id = timeout_set(() => {
-							set_search_text(string_trim(text))
-							timeout_search_id = null
-						}, 1000)
-					}}
-					onFocus={() => command(Commands.get_all_task)}
-					attr_menu={{
-						ref: r => searchtextfield_menu_ref = r,
-						on_toggle_open: isOpen => is_searchtextfield_menu_open = isOpen
-					}}
-					trailing={<Show when={is_side_navigation_hidden() && is_searching()}>
-						<TextTooltip text="Close search">
+							timeout_search_id = timeout_set(() => {
+								set_search_text(string_trim(text))
+								timeout_search_id = null
+							}, 1000)
+						}}
+						onFocus={() => command(Commands.get_all_task)}
+						attr_menu={{
+							ref: r => searchtextfield_menu_ref = r,
+							on_toggle_open: isOpen => is_searchtextfield_menu_open = isOpen
+						}}
+						trailing={<Show when={is_side_navigation_hidden() && is_searching()}>
 							<SearchTextFieldButton
+								data-tooltip="Close search"
 								onClick={async () => {
 									element_blur(searchtextfield_ref)
 									if (is_searchtextfield_menu_open) {
@@ -436,15 +433,16 @@ const _: VoidComponent<{
 								}}>
 								<Icon code={0xE5E9}/>
 							</SearchTextFieldButton>
-						</TextTooltip>
-					</Show>}
-				/>
-			</div>
-		</AppBar>
+						</Show>}
+					/>
+				</div>
+			</AppBar>
+		</TextTooltip>
 		<Menus />
 		<Drawer
-			header={<TextTooltip text="Close navigation">
+			header={<TextTooltip>
 				<IconButton
+					data-tooltip="Close navigation"
 					classList={add_classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
 					onClick={() => close_drawer(drawer_navigation_ref)}
 					code={0xEAFF}

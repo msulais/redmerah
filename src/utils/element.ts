@@ -2,6 +2,13 @@ export function element_scroll_width(el: HTMLElement): number {
 	return el.scrollWidth
 }
 
+export function element_closest(
+	el: HTMLElement,
+	selector: string
+): HTMLElement | null {
+	return el.closest(selector)
+}
+
 export function element_client_width(el: HTMLElement): number {
 	return el.clientWidth
 }

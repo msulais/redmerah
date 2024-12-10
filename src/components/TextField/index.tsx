@@ -170,16 +170,21 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 				{...other}></textarea>
 			<Show when={trailing() || (props.auto_show_clear_button && string_length(value()) > 0)}>
 				<div class='c-area-textfield-trailing' onClick={ev => event_stop_propagation(ev)}>
-					{trailing()}
-					<Show when={props.auto_show_clear_button && string_length(value()) > 0}>
-						<TextTooltip text={props.tooltip_clear ?? 'Clear'}>
-							<TextFieldButton type={'button'} onClick={(ev) => {
-								areatextfield_ref.value = ''
-								set_value('')
-								event_prevent_default(ev)
-							}}><Icon code={0xE5E9}/></TextFieldButton>
-						</TextTooltip>
-					</Show>
+					<TextTooltip>
+						{trailing()}
+						<Show when={props.auto_show_clear_button && string_length(value()) > 0}>
+							<TextFieldButton
+								data-tooltip={props.tooltip_clear ?? 'Clear'}
+								type={'button'}
+								onClick={(ev) => {
+									areatextfield_ref.value = ''
+									set_value('')
+									event_prevent_default(ev)
+								}}>
+								<Icon code={0xE5E9}/>
+							</TextFieldButton>
+						</Show>
+					</TextTooltip>
 				</div>
 			</Show>
 		</div>
@@ -284,16 +289,21 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 			/>
 			<Show when={trailing() || (props.auto_show_clear_button && string_length(value()) > 0)}>
 				<div class='c-textfield-trailing' onClick={ev => event_stop_propagation(ev)}>
-					{trailing()}
-					<Show when={props.auto_show_clear_button && string_length(value()) > 0}>
-						<TextTooltip text={props.tooltip_clear ?? 'Clear'}>
-							<TextFieldButton type={'button'} onClick={(ev) => {
-								change_textfield_value(textfield_ref, '')
-								set_value('')
-								event_prevent_default(ev)
-							}}><Icon code={0xE5E9}/></TextFieldButton>
-						</TextTooltip>
-					</Show>
+					<TextTooltip>
+						{trailing()}
+						<Show when={props.auto_show_clear_button && string_length(value()) > 0}>
+							<TextFieldButton
+								data-tooltip={props.tooltip_clear ?? 'Clear'}
+								type='button'
+								onClick={(ev) => {
+									change_textfield_value(textfield_ref, '')
+									set_value('')
+									event_prevent_default(ev)
+								}}>
+								<Icon code={0xE5E9}/>
+							</TextFieldButton>
+						</Show>
+					</TextTooltip>
 				</div>
 			</Show>
 		</div>
@@ -430,8 +440,8 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 		if (number_is_not_defined(v)) return;
 
 		const integer_only = props.integer_only
-		let max = props.max
-		let min = props.min
+		let max = props.max ?? v
+		let min = props.min ?? v
 
 		if (is_string(max)) max = number_parse(max as string, integer_only)
 		if (is_string(min)) min = number_parse(min as string, integer_only)
@@ -473,30 +483,27 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 			trailing={<>
 				{ props.trailing }
 				<Show when={!props.disabled}>
-					<TextTooltip text={props.tooltip_change_value}>
-						<TextFieldButton
-							onClick={(ev) => open_menu(
-								ev,
-								modal_actions_ref,
-								{
-									position: MenuPosition.center_center_left,
-									anchor: ev.currentTarget
-								})
-							}>
-							<Icon code={0xE406}/>
-						</TextFieldButton>
-					</TextTooltip>
+					<TextFieldButton
+						data-tooltip={props.tooltip_change_value}
+						onClick={(ev) => open_menu(
+							ev,
+							modal_actions_ref,
+							{
+								position: MenuPosition.center_center_left,
+								anchor: ev.currentTarget
+							})
+						}>
+						<Icon code={0xE406}/>
+					</TextFieldButton>
 				</Show>
 				<Show when={props.auto_show_clear_button && value() != 0}>
-					<TextTooltip text={props.tooltip_clear ?? 'Clear'}>
-						<TextFieldButton onClick={(_ev) => {
-							let v = math_clamp(0, get_min(), get_max())
-							if (props.integer_only) v = math_round(v)
+					<TextFieldButton data-tooltip={props.tooltip_clear ?? 'Clear'} onClick={(_ev) => {
+						let v = math_clamp(0, get_min(), get_max())
+						if (props.integer_only) v = math_round(v)
 
-							numbertextfield_ref.value = `${v}`
-							set_value(v)
-						}}><Icon code={0xE5E9}/></TextFieldButton>
-					</TextTooltip>
+						numbertextfield_ref.value = `${v}`
+						set_value(v)
+					}}><Icon code={0xE5E9}/></TextFieldButton>
 				</Show>
 			</>}
 			{...other}
@@ -518,8 +525,9 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 				}
 			}}
 			{...actions_props_other}>
-			<TextTooltip text={props.tooltip_increase}>
+			<TextTooltip>
 				<IconButton
+					data-tooltip={props.tooltip_increase}
 					ref={r => iconbutton_up_ref = r}
 					disabled={props.max != null && value() >= get_max()}
 					onPointerUp={() => on_press_end('+')}
@@ -535,9 +543,8 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 					onKeyUp={ev => (ev.code == 'Enter' || ev.code == 'Space') && on_press_end('+')}
 					code={0xE404}
 				/>
-			</TextTooltip>
-			<TextTooltip text={props.tooltip_decrease}>
 				<IconButton
+					data-tooltip={props.tooltip_decrease}
 					ref={r => iconbutton_down_ref = r}
 					disabled={props.min != null && value() <= get_min()}
 					onPointerUp={() => on_press_end('-')}

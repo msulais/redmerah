@@ -22,23 +22,14 @@ const _: VoidComponent = () => {
 		description="A tooltip is a small, temporary window that appears when a user hovers over an element. It provides a brief explanation or description of the element's purpose or function. Tooltips are often used to clarify the meaning of icons, buttons, or other UI elements.">
 		<Playground>
 			<TextTooltip
-				text="This is tooltip"
 				end_delay_duration={end_delay_duration()}
 				gap={gap()}
 				position={position()}
 				start_delay_duration={start_delay_duration()}
 				use_anchor={use_anchor()}>
-				<Button>
+				<Button data-tooltip="This is tooltip">
 					Hover me please
-					<TextTooltip
-						text="This is icon"
-						end_delay_duration={end_delay_duration()}
-						gap={gap()}
-						position={position()}
-						start_delay_duration={start_delay_duration()}
-						use_anchor={use_anchor()}>
-						<Icon code={0xE4B2}/>
-					</TextTooltip>
+					<Icon data-tooltip="This is icon" code={0xE4B2}/>
 				</Button>
 			</TextTooltip>
 			<RichTooltip

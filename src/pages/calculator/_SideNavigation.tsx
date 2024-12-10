@@ -15,8 +15,9 @@ const _: VoidComponent<{
 	expanded: boolean
 }> = (props) => {
 	return (<SideNavigation expanded={props.expanded} classList={add_classlist_module(CSS.side_navigation)}>
-		<For each={CALCULATOR_TYPES}>{ r => <TextTooltip text={!props.expanded? r.text : undefined}>
-			<SideNavigationItem
+		<TextTooltip>
+			<For each={CALCULATOR_TYPES}>{ r => <SideNavigationItem
+				data-tooltip={!props.expanded? r.text : undefined}
 				icon_only={!props.expanded}
 				onClick={() => {
 					if (props.calculator == r.type) return;
@@ -25,8 +26,8 @@ const _: VoidComponent<{
 				leading={<Icon filled={props.calculator == r.type} code={r.icon}/>}
 				selected={props.calculator == r.type}>
 				{ r.text }
-			</SideNavigationItem>
-		</TextTooltip>}</For>
+			</SideNavigationItem>}</For>
+		</TextTooltip>
 	</SideNavigation>)
 }
 

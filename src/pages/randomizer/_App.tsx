@@ -1235,18 +1235,10 @@ const _: VoidComponent = () => {
 	const ListItem: VoidComponent<ItemList> = ($props) => {
 		return (<List
 			trailing={<>
-				<TextTooltip text="Export list">
-					<IconButton onClick={() => export_list($props)} code={0xE0CF}/>
-				</TextTooltip>
-				<TextTooltip text="View list">
-					<IconButton onClick={(ev) => view_list(ev, $props)} code={0xE77B}/>
-				</TextTooltip>
-				<TextTooltip text="Edit list">
-					<IconButton onClick={(ev) => open_edit_dialog(ev, $props)} code={0xE739}/>
-				</TextTooltip>
-				<TextTooltip text="Delete list">
-					<IconButton onClick={(ev) => open_delete_dialog(ev, $props)} code={0xE59D}/>
-				</TextTooltip>
+				<IconButton data-tooltip="Export list" onClick={() => export_list($props)} code={0xE0CF}/>
+				<IconButton data-tooltip="View list" onClick={(ev) => view_list(ev, $props)} code={0xE77B}/>
+				<IconButton data-tooltip="Edit list" onClick={(ev) => open_edit_dialog(ev, $props)} code={0xE739}/>
+				<IconButton data-tooltip="Delete list" onClick={(ev) => open_delete_dialog(ev, $props)} code={0xE59D}/>
 			</>}
 			subtitle={array_length($props.items) + ' item' + (array_length($props.items) > 1? 's' : '')}>
 			{$props.name}
@@ -1274,10 +1266,12 @@ const _: VoidComponent = () => {
 						Add new list
 					</Button>
 				</>}>
-				<For each={lists}>{(l, i) => <>
-					<Show when={i() != 0}><Divider /></Show>
-					<ListItem {...l} />
-				</>}</For>
+				<TextTooltip>
+					<For each={lists}>{(l, i) => <>
+						<Show when={i() != 0}><Divider /></Show>
+						<ListItem {...l} />
+					</>}</For>
+				</TextTooltip>
 			</Dialog>
 			<Dialog
 				ref={r => dialog_deletelistwarning_ref = r}

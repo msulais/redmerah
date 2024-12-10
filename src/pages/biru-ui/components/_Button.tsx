@@ -18,8 +18,9 @@ const _: VoidComponent = () => {
 		title="Buttons"
 		description="A button is an interactive UI element that triggers a specific action when clicked or tapped. It typically has a clear label indicating its function and provides visual feedback upon interaction. Buttons are essential for guiding users through an interface and facilitating user-system communication.">
 		<Playground>
-			<TextTooltip text="Button">
+			<TextTooltip>
 				<Button
+					data-tooltip="Button"
 					disabled={disabled()}
 					variant={variant()}
 					focused={focused()}
@@ -30,10 +31,9 @@ const _: VoidComponent = () => {
 					</Show>
 					Button
 				</Button>
-			</TextTooltip>
 
-			<TextTooltip text="IconButton">
 				<IconButton
+					data-tooltip="IconButton"
 					disabled={disabled()}
 					variant={variant()}
 					focused={focused()}
@@ -41,10 +41,9 @@ const _: VoidComponent = () => {
 					indicator_position={indicator_position()}
 					code={0xE54B}
 				/>
-			</TextTooltip>
 
-			<TextTooltip text="EmojiButton">
 				<EmojiButton
+					data-tooltip="EmojiButton"
 					disabled={disabled()}
 					variant={variant()}
 					focused={focused()}
@@ -52,11 +51,10 @@ const _: VoidComponent = () => {
 					indicator_position={indicator_position()}
 					emoji={'🏛'}
 				/>
-			</TextTooltip>
 
-			<TextTooltip text="LinkButton">
 				<LinkButton
 					href="#"
+					data-tooltip="LinkButton"
 					disabled={disabled()}
 					variant={variant()}
 					focused={focused()}
@@ -67,11 +65,10 @@ const _: VoidComponent = () => {
 					</Show>
 					LinkButton
 				</LinkButton>
-			</TextTooltip>
 
-			<TextTooltip text="LinkIconButton">
 				<LinkIconButton
 					href="#"
+					data-tooltip="LinkIconButton"
 					disabled={disabled()}
 					variant={variant()}
 					focused={focused()}
@@ -79,11 +76,10 @@ const _: VoidComponent = () => {
 					indicator_position={indicator_position()}
 					code={0xE54B}
 				/>
-			</TextTooltip>
 
-			<TextTooltip text="LinkEmojiButton">
 				<LinkEmojiButton
 					href="#"
+					data-tooltip="LinkEmojiButton"
 					disabled={disabled()}
 					variant={variant()}
 					focused={focused()}
@@ -91,10 +87,9 @@ const _: VoidComponent = () => {
 					indicator_position={indicator_position()}
 					emoji={'😁'}
 				/>
-			</TextTooltip>
 
-			<TextTooltip text="FloatingActionButton">
 				<FloatingActionButton
+					data-tooltip="FloatingActionButton"
 					disabled={disabled()}
 					variant={variant()}
 					focused={focused()}
@@ -105,10 +100,9 @@ const _: VoidComponent = () => {
 					</Show>
 					FloatingActionButton
 				</FloatingActionButton>
-			</TextTooltip>
 
-			<TextTooltip text="LinkFloatingActionButton">
 				<LinkFloatingActionButton
+					data-tooltip="LinkFloatingActionButton"
 					href={'#'}
 					disabled={disabled()}
 					variant={variant()}

@@ -147,15 +147,13 @@ const EmojiPickerBody: ParentComponent<{
 	const Tab: VoidComponent<{category: EmojiCategory; icon_code: number}> = ($props) => {
 		const category = createMemo(() => $props.category)
 
-		return (<TextTooltip
-			text={category()}>
-			<IconButton
-				code={$props.icon_code}
-				selected={option() == category()}
-				variant={option() == category()? ButtonVariant.tonal : undefined}
-				onClick={() => set_option(category())}
-			/>
-		</TextTooltip>)
+		return (<IconButton
+			data-tooltip={category()}
+			code={$props.icon_code}
+			selected={option() == category()}
+			variant={option() == category()? ButtonVariant.tonal : undefined}
+			onClick={() => set_option(category())}
+		/>)
 	}
 
 	const Emojis: VoidComponent<{category: EmojiCategory, emojis: Emoji[]}> = $props => (<div
@@ -165,18 +163,16 @@ const EmojiPickerBody: ParentComponent<{
 			<div>
 				<h3>{$props.category}</h3>
 				<For each={$props.emojis}>{e =>
-					<TextTooltip text={e[1]}>
-						<EmojiButton emoji={e[0]} onClick={() => {
-							element_dispatch_event(body, new CustomEvent(
-								BodyEvents.add_recent_emoji,
-								{detail: {emoji: [...e]}}
-							))
-							update_recents()
-							if (!props.multiple) props.on_close()
+					<EmojiButton data-tooltip={e[1]} emoji={e[0]} onClick={() => {
+						element_dispatch_event(body, new CustomEvent(
+							BodyEvents.add_recent_emoji,
+							{detail: {emoji: [...e]}}
+						))
+						update_recents()
+						if (!props.multiple) props.on_close()
 
-							props.on_select_emoji?.(e[0], e[1])
-						}}/>
-					</TextTooltip>
+						props.on_select_emoji?.(e[0], e[1])
+					}}/>
 				}</For>
 			</div>
 		</Show>
@@ -184,25 +180,26 @@ const EmojiPickerBody: ParentComponent<{
 
 	return (<>
 		<div class="c-emoji-picker-tabs">
-			<Tab icon_code={0xE8DE} category={EmojiCategory.recents}/>
-			<Tab icon_code={0xE745} category={EmojiCategory.smiley_and_emotion}/>
-			<Tab icon_code={0xEBF8} category={EmojiCategory.person_and_body}/>
-			<Tab icon_code={0xE04F} category={EmojiCategory.animal_and_nature}/>
-			<Tab icon_code={0xE80B} category={EmojiCategory.food_and_drink}/>
-			<Tab icon_code={0xF227} category={EmojiCategory.travel_and_places}/>
-			<TextTooltip text={props.tooltip_close ?? 'Close'}>
+			<TextTooltip>
+				<Tab icon_code={0xE8DE} category={EmojiCategory.recents}/>
+				<Tab icon_code={0xE745} category={EmojiCategory.smiley_and_emotion}/>
+				<Tab icon_code={0xEBF8} category={EmojiCategory.person_and_body}/>
+				<Tab icon_code={0xE04F} category={EmojiCategory.animal_and_nature}/>
+				<Tab icon_code={0xE80B} category={EmojiCategory.food_and_drink}/>
+				<Tab icon_code={0xF227} category={EmojiCategory.travel_and_places}/>
 				<Show when={props.use_close_button}>
 					<IconButton
+						data-tooltip={props.tooltip_close ?? 'Close'}
 						code={0xE5E9}
 						variant={ButtonVariant.filled}
 						onClick={() => props.on_close()}
 					/>
 				</Show>
+				<Tab icon_code={0xEC3C} category={EmojiCategory.activities}/>
+				<Tab icon_code={0xE5F1} category={EmojiCategory.objects}/>
+				<Tab icon_code={0xEF77} category={EmojiCategory.symbols}/>
+				<Tab icon_code={0xE7AB} category={EmojiCategory.flags}/>
 			</TextTooltip>
-			<Tab icon_code={0xEC3C} category={EmojiCategory.activities}/>
-			<Tab icon_code={0xE5F1} category={EmojiCategory.objects}/>
-			<Tab icon_code={0xEF77} category={EmojiCategory.symbols}/>
-			<Tab icon_code={0xE7AB} category={EmojiCategory.flags}/>
 		</div>
 		<div class='c-emoji-picker-search'>
 			<SearchTextField
@@ -255,16 +252,18 @@ const EmojiPickerBody: ParentComponent<{
 		</div>
 		{props.children}
 		<Divider />
-		<Emojis emojis={recents()} category={EmojiCategory.recents}/>
-		<Emojis emojis={smiley_and_emotion_emojis} category={EmojiCategory.smiley_and_emotion}/>
-		<Emojis emojis={person_and_body_emojis}    category={EmojiCategory.person_and_body}/>
-		<Emojis emojis={animal_and_nature_emojis}  category={EmojiCategory.animal_and_nature}/>
-		<Emojis emojis={food_and_drink_emojis}     category={EmojiCategory.food_and_drink}/>
-		<Emojis emojis={travel_and_places_emojis}  category={EmojiCategory.travel_and_places}/>
-		<Emojis emojis={activities_emojis}         category={EmojiCategory.activities}/>
-		<Emojis emojis={object_emojis}             category={EmojiCategory.objects}/>
-		<Emojis emojis={symbols_emojis}            category={EmojiCategory.symbols}/>
-		<Emojis emojis={flags_emojis}              category={EmojiCategory.flags}/>
+		<TextTooltip>
+			<Emojis emojis={recents()} category={EmojiCategory.recents}/>
+			<Emojis emojis={smiley_and_emotion_emojis} category={EmojiCategory.smiley_and_emotion}/>
+			<Emojis emojis={person_and_body_emojis}    category={EmojiCategory.person_and_body}/>
+			<Emojis emojis={animal_and_nature_emojis}  category={EmojiCategory.animal_and_nature}/>
+			<Emojis emojis={food_and_drink_emojis}     category={EmojiCategory.food_and_drink}/>
+			<Emojis emojis={travel_and_places_emojis}  category={EmojiCategory.travel_and_places}/>
+			<Emojis emojis={activities_emojis}         category={EmojiCategory.activities}/>
+			<Emojis emojis={object_emojis}             category={EmojiCategory.objects}/>
+			<Emojis emojis={symbols_emojis}            category={EmojiCategory.symbols}/>
+			<Emojis emojis={flags_emojis}              category={EmojiCategory.flags}/>
+		</TextTooltip>
 	</>)
 }
 

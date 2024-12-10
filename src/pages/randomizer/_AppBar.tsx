@@ -522,8 +522,9 @@ const _: Component<{
 
 	const Drawers: VoidComponent = () => (<>
 		<Drawer
-			header={<TextTooltip text="Close navigation">
+			header={<TextTooltip>
 				<IconButton
+					data-tooltip="Close navigation"
 					classList={add_classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
 					onClick={() => close_drawer(drawer_navigation_ref)}
 					code={0xEAFF}
@@ -546,10 +547,11 @@ const _: Component<{
 	</>)
 
 	return (<>
-		<AppBar
-			leading={<>
-				<TextTooltip text={is_sidenavigation_hidden()? "Open navigation" : "Expand/shrink navigation"}>
+		<TextTooltip>
+			<AppBar
+				leading={<>
 					<IconButton
+						data-tooltip={is_sidenavigation_hidden()? "Open navigation" : "Expand/shrink navigation"}
 						onClick={(ev) => {
 							if (is_sidenavigation_hidden()) return openDrawer(ev, drawer_navigation_ref)
 							command(Commands.toggle_navigation_expand)
@@ -557,29 +559,28 @@ const _: Component<{
 						classList={add_classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
 						code={0xEAFF}
 					/>
-				</TextTooltip>
-				<img width="32" src={logo.src} alt="Randomizer" />
-			</>}
-			headline="Randomizer"
-			trailing={<>
-				<Button
-					classList={add_classlist_module(CSSAnimation.btn_rotate_full_icon, CSS.appbar_generate_btn)}
-					data-g-keep-pointer-event={attr_set_if_exist(props.is_generating)}
-					variant={ButtonVariant.filled}
-					onClick={(ev) => {
-						if (props.is_generating) return command(Commands.stop_generate)
-						command(Commands.generate, ev)
-					}}>
-					<Icon
-						filled
-						classList={add_classlist_module(CSS.appbar_generate_icon)}
-						data-rotate={attr_set_if_exist(props.is_generating)}
-						code={0xE143}
-					/>
-					<Show when={props.is_generating} fallback="Generate">Generating</Show>
-				</Button>
-				<TextTooltip text="Info">
+					<img width="32" src={logo.src} alt="Randomizer" />
+				</>}
+				headline="Randomizer"
+				trailing={<>
+					<Button
+						classList={add_classlist_module(CSSAnimation.btn_rotate_full_icon, CSS.appbar_generate_btn)}
+						data-g-keep-pointer-event={attr_set_if_exist(props.is_generating)}
+						variant={ButtonVariant.filled}
+						onClick={(ev) => {
+							if (props.is_generating) return command(Commands.stop_generate)
+							command(Commands.generate, ev)
+						}}>
+						<Icon
+							filled
+							classList={add_classlist_module(CSS.appbar_generate_icon)}
+							data-rotate={attr_set_if_exist(props.is_generating)}
+							code={0xE143}
+						/>
+						<Show when={props.is_generating} fallback="Generate">Generating</Show>
+					</Button>
 					<IconButton
+						data-tooltip="Info"
 						focused={is_menu_info_open()}
 						code={0xE930}
 						onClick={(ev) => open_menu(ev, menu_info_ref, {
@@ -587,9 +588,8 @@ const _: Component<{
 							padding: 4,
 						})}
 					/>
-				</TextTooltip>
-				<TextTooltip text="Settings">
 					<IconButton
+						data-tooltip="Settings"
 						classList={add_classlist_module(CSSAnimation.btn_rotate_icon)}
 						focused={is_menu_settings_open()}
 						onClick={async (ev) => {
@@ -601,9 +601,8 @@ const _: Component<{
 						}}
 						code={0xEE0F}
 					/>
-				</TextTooltip>
-				<TextTooltip text="Copy result">
 					<IconButton
+						data-tooltip="Copy result"
 						onClick={async () => {
 							const success = await props.on_copy_result()
 							if (!success) {
@@ -623,9 +622,9 @@ const _: Component<{
 						}}
 						code={timeout_copy_id()? 0xE3D8 : timeout_copyerror_id()? 0xE5E9 : 0xE51B}
 					/>
-				</TextTooltip>
-			</>}
-		/>
+				</>}
+			/>
+		</TextTooltip>
 		<Drawers/>
 		<Menus/>
 	</>)

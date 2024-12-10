@@ -41,15 +41,14 @@ const ActionButtons: ParentComponent<JSX.HTMLAttributes<HTMLDivElement> & {
 	return (<div class={CSS.input_output_action_buttons} data-hidden={attr_set_if_exist(props.hide)}>
 		{props.children}
 		<div class={CSS.input_output_memory_buttons} data-hidden={attr_set_if_exist(!settings().memory_buttons)}>
-			<TextTooltip text={"Memory value " + `(${props.memory})`}>
-				<Button
-					focused={is_menu_memory_open()}
-					onClick={(ev) => open_menu(ev, menu_memory_ref, {
-						anchor: ev.currentTarget,
-					})}>
-					M
-				</Button>
-			</TextTooltip>
+			<Button
+				data-tooltip={"Memory value " + `(${props.memory})`}
+				focused={is_menu_memory_open()}
+				onClick={(ev) => open_menu(ev, menu_memory_ref, {
+					anchor: ev.currentTarget,
+				})}>
+				M
+			</Button>
 			<Menu
 				classList={add_classlist_module(CSS.input_output_memory_menu)}
 				on_toggle_open={(v) => set_is_menu_memory_open(v)}
@@ -57,30 +56,26 @@ const ActionButtons: ParentComponent<JSX.HTMLAttributes<HTMLDivElement> & {
 				<p>Memory value:</p>
 				<p>{props.memory}</p>
 			</Menu>
-			<TextTooltip text="Memory clear">
-				<Button
-					onClick={() => command(Commands.clear_memory)}>
-					MC
-				</Button>
-			</TextTooltip>
-			<TextTooltip text="Memory recall">
-				<Button
-					onClick={() => props.on_recall_memory(props.memory)}>
-					MR
-				</Button>
-			</TextTooltip>
-			<TextTooltip text="Memory add">
-				<Button
-					onClick={() => command(Commands.add_memory)}>
-					M+
-				</Button>
-			</TextTooltip>
-			<TextTooltip text="Memory subtract">
-				<Button
-					onClick={() => command(Commands.subtract_memory)}>
-					M-
-				</Button>
-			</TextTooltip>
+			<Button
+				data-tooltip="Memory clear"
+				onClick={() => command(Commands.clear_memory)}>
+				MC
+			</Button>
+			<Button
+				data-tooltip="Memory recall"
+				onClick={() => props.on_recall_memory(props.memory)}>
+				MR
+			</Button>
+			<Button
+				data-tooltip="Memory add"
+				onClick={() => command(Commands.add_memory)}>
+				M+
+			</Button>
+			<Button
+				data-tooltip="Memory subtract"
+				onClick={() => command(Commands.subtract_memory)}>
+				M-
+			</Button>
 		</div>
 	</div>)
 }
@@ -367,14 +362,12 @@ const ScientificCalculator: VoidComponent<{
 					<MenuItem onClick={() => add_char('floor(')}>floor(x)</MenuItem>
 				</div>
 			</Menu>
-
-			<TextTooltip text="Angle mode">
-				<Button
-					style={{width: '68px'}}
-					onClick={() => command(Commands.toggle_settings_scientific_angle)}>
-					{settings().scientific.angle}
-				</Button>
-			</TextTooltip>
+			<Button
+				data-tooltip="Angle mode"
+				style={{width: '68px'}}
+				onClick={() => command(Commands.toggle_settings_scientific_angle)}>
+				{settings().scientific.angle}
+			</Button>
 		</ActionButtons>
 		<div class={CSS.input_output_scientific_buttons}>
 			<Button onClick={() => add_char('mod')}>mod</Button>
@@ -591,19 +584,18 @@ const ConverterCalculator: VoidComponent<{
 			memory={props.memory}
 			on_recall_memory={(v) => add_char(number_to_real_digit(v))}
 			settings={settings()}>
-			<TextTooltip text="Select converter type">
-				<Button
-					focused={is_menu_convertertype_open()}
-					onClick={ev => open_menu(ev, menu_convertertype_ref, {
-						anchor: ev.currentTarget,
-						position: MenuPosition.center_bottom_to_right,
-						allow_hide_anchor: false
-					})}
-					variant={ButtonVariant.tonal}>
-					<Icon code={get_converter_icon()}/>
-					{get_converter_name()}
-				</Button>
-			</TextTooltip>
+			<Button
+				data-tooltip="Select converter type"
+				focused={is_menu_convertertype_open()}
+				onClick={ev => open_menu(ev, menu_convertertype_ref, {
+					anchor: ev.currentTarget,
+					position: MenuPosition.center_bottom_to_right,
+					allow_hide_anchor: false
+				})}
+				variant={ButtonVariant.tonal}>
+				<Icon code={get_converter_icon()}/>
+				{get_converter_name()}
+			</Button>
 
 			<Menu
 				ref={r => menu_convertertype_ref = r}
@@ -622,18 +614,17 @@ const ConverterCalculator: VoidComponent<{
 			</Menu>
 
 			<div class={CSS.input_output_converter_units}>
-				<TextTooltip text="Select input unit">
-					<Button
-						focused={is_menu_inputunit_open()}
-						onClick={ev => open_menu(ev, menu_inputunit_ref, {
-							anchor: ev.currentTarget,
-							position: MenuPosition.center_bottom_to_right,
-							allow_hide_anchor: false
-						})}
-						style={{color: 'rgb(var(--g-color-accent))'}}>
-						{settings().converter.unit_input.name + ` (${settings().converter.unit_input.symbol})`}
-					</Button>
-				</TextTooltip>
+				<Button
+					data-tooltip="Select input unit"
+					focused={is_menu_inputunit_open()}
+					onClick={ev => open_menu(ev, menu_inputunit_ref, {
+						anchor: ev.currentTarget,
+						position: MenuPosition.center_bottom_to_right,
+						allow_hide_anchor: false
+					})}
+					style={{color: 'rgb(var(--g-color-accent))'}}>
+					{settings().converter.unit_input.name + ` (${settings().converter.unit_input.symbol})`}
+				</Button>
 
 				<Menu
 					ref={r => menu_inputunit_ref = r}
@@ -649,26 +640,22 @@ const ConverterCalculator: VoidComponent<{
 						</MenuItem>
 					}</For>
 				</Menu>
-
-				<TextTooltip text="Swap unit">
-					<IconButton
-						onClick={() => command(Commands.change_settings_converter_swapunit)}
-						code={0xE115}
-					/>
-				</TextTooltip>
-
-				<TextTooltip text="Select output unit">
-					<Button
-						focused={is_menu_outputunit_open()}
-						onClick={ev => open_menu(ev, menu_outputunit_ref, {
-							anchor: ev.currentTarget,
-							position: MenuPosition.center_bottom_to_right,
-							allow_hide_anchor: false
-						})}
-						style={{color: 'rgb(var(--g-color-accent))'}}>
-						{settings().converter.unit_output.name + ` (${settings().converter.unit_output.symbol})`}
-					</Button>
-				</TextTooltip>
+				<IconButton
+					data-tooltip="Swap unit"
+					onClick={() => command(Commands.change_settings_converter_swapunit)}
+					code={0xE115}
+				/>
+				<Button
+					data-tooltip="Select output unit"
+					focused={is_menu_outputunit_open()}
+					onClick={ev => open_menu(ev, menu_outputunit_ref, {
+						anchor: ev.currentTarget,
+						position: MenuPosition.center_bottom_to_right,
+						allow_hide_anchor: false
+					})}
+					style={{color: 'rgb(var(--g-color-accent))'}}>
+					{settings().converter.unit_output.name + ` (${settings().converter.unit_output.symbol})`}
+				</Button>
 			</div>
 
 			<Menu
@@ -1082,52 +1069,54 @@ const _: VoidComponent<{
 	const settings = createMemo(() => props.settings)
 	const memory = createMemo(() => props.memory)
 	return (<main class={CSS.input_output_main}>
-		<Switch>
-			<Match when={calculator() == CalculatorType.basic}>
-				<BasicCalculator
-					settings={settings()}
-					input={inputs().basic}
-					output={outputs().basic}
-					command={command()}
-					memory={memory()}
-				/>
-			</Match>
-			<Match when={calculator() == CalculatorType.scientific}>
-				<ScientificCalculator
-					settings={settings()}
-					input={inputs().scientific}
-					output={outputs().scientific}
-					command={command()}
-					memory={memory()}
-				/>
-			</Match>
-			<Match when={calculator() == CalculatorType.converter}>
-				<ConverterCalculator
-					settings={settings()}
-					input={inputs().converter}
-					output={outputs().converter}
-					command={command()}
-					memory={memory()}
-				/>
-			</Match>
-			<Match when={calculator() == CalculatorType.programmer}>
-				<ProgrammerCalculator
-					settings={settings()}
-					input={inputs().programmer}
-					output={outputs().programmer}
-					command={command()}
-					memory={memory()}
-				/>
-			</Match>
-			<Match when={calculator() == CalculatorType.date}>
-				<DateCalculator
-					settings={settings()}
-					input={inputs().date}
-					output={outputs().date}
-					command={command()}
-				/>
-			</Match>
-		</Switch>
+		<TextTooltip>
+			<Switch>
+				<Match when={calculator() == CalculatorType.basic}>
+					<BasicCalculator
+						settings={settings()}
+						input={inputs().basic}
+						output={outputs().basic}
+						command={command()}
+						memory={memory()}
+					/>
+				</Match>
+				<Match when={calculator() == CalculatorType.scientific}>
+					<ScientificCalculator
+						settings={settings()}
+						input={inputs().scientific}
+						output={outputs().scientific}
+						command={command()}
+						memory={memory()}
+					/>
+				</Match>
+				<Match when={calculator() == CalculatorType.converter}>
+					<ConverterCalculator
+						settings={settings()}
+						input={inputs().converter}
+						output={outputs().converter}
+						command={command()}
+						memory={memory()}
+					/>
+				</Match>
+				<Match when={calculator() == CalculatorType.programmer}>
+					<ProgrammerCalculator
+						settings={settings()}
+						input={inputs().programmer}
+						output={outputs().programmer}
+						command={command()}
+						memory={memory()}
+					/>
+				</Match>
+				<Match when={calculator() == CalculatorType.date}>
+					<DateCalculator
+						settings={settings()}
+						input={inputs().date}
+						output={outputs().date}
+						command={command()}
+					/>
+				</Match>
+			</Switch>
+		</TextTooltip>
 	</main>)
 }
 

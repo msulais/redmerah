@@ -274,49 +274,47 @@ const _: VoidComponent<{
 
 	return (<>
 		<AppBar
-			leading={<>
+			leading={<Tooltip>
 				<Show when={isSideNavigationHidden()}>
-					<Tooltip text="Open navigation">
-						<IconButton
-							classList={add_classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
-							onClick={(ev) => {
-								openDrawer(ev, drawer_navigation_ref)
-							}}
-							code={0xEAFF}
-						/>
-					</Tooltip>
+					<IconButton
+						data-tooltip="Open navigation"
+						classList={add_classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
+						onClick={(ev) => {
+							openDrawer(ev, drawer_navigation_ref)
+						}}
+						code={0xEAFF}
+					/>
 				</Show>
 				<img alt="BiruUI logo" width={32} src={logo.src} />
-			</>}
+			</Tooltip>}
 			headline="BiruUI"
-			trailing={<>
-				<Tooltip text="Info">
-					<IconButton
-						focused={is_menu_info_open()}
-						code={0xE930}
-						onClick={(ev) => open_menu(ev, menu_info_ref, {
-							anchor: ev.currentTarget,
-							padding: 4,
-						})}
-					/>
-				</Tooltip>
-				<Tooltip text="Settings">
-					<IconButton
-						class={CSSAnimation.btn_rotate_icon}
-						focused={is_menu_settings_open()}
-						code={0xEE0F}
-						onClick={(ev) => open_menu(ev, menu_settings_ref, {
-							anchor: ev.currentTarget,
-							padding: 4,
-						})}
-					/>
-				</Tooltip>
-			</>}
+			trailing={<Tooltip>
+				<IconButton
+					data-tooltip="Info"
+					focused={is_menu_info_open()}
+					code={0xE930}
+					onClick={(ev) => open_menu(ev, menu_info_ref, {
+						anchor: ev.currentTarget,
+						padding: 4,
+					})}
+				/>
+				<IconButton
+					data-tooltip="Settings"
+					class={CSSAnimation.btn_rotate_icon}
+					focused={is_menu_settings_open()}
+					code={0xEE0F}
+					onClick={(ev) => open_menu(ev, menu_settings_ref, {
+						anchor: ev.currentTarget,
+						padding: 4,
+					})}
+				/>
+			</Tooltip>}
 		/>
 		<Menus />
 		<Drawer
-			header={<Tooltip text="Close navigation">
+			header={<Tooltip>
 				<IconButton
+					data-tooltip="Close navigation"
 					classList={add_classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
 					code={0xEAFF}
 					onClick={() => close_drawer(drawer_navigation_ref)}

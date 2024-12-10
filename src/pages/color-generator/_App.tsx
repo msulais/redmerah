@@ -175,44 +175,34 @@ const _: VoidComponent = () => {
 
 		return (<List
 			trailing={<>
-				<TextTooltip text='Copy'>
-					<IconButton
-						onClick={copy}
-						code={timeout_id()? 0xE3D8 : 0xE51B}
-					/>
-				</TextTooltip>
-				<TextTooltip text='Delete'>
-					<IconButton
-						onClick={delete_color}
-						code={0xE59D}
-					/>
-				</TextTooltip>
+				<IconButton
+					data-tooltip="Copy"
+					onClick={copy}
+					code={timeout_id()? 0xE3D8 : 0xE51B}
+				/>
+				<IconButton
+					data-tooltip="Delete"
+					onClick={delete_color}
+					code={0xE59D}
+				/>
 			</>}
 			subtitle={<div class={CSS.app_dialog_colors}>
-				<TextTooltip text="Accent Light">
-					<div style={{
-						"background-color": palette().accent_light,
-						color: palette().on_accent_light,
-					}}>{palette().accent_light}</div>
-				</TextTooltip>
-				<TextTooltip text="On Accent Light">
-					<div style={{
-						"background-color": palette().on_accent_light,
-						color: palette().accent_light,
-					}}>{palette().on_accent_light}</div>
-				</TextTooltip>
-				<TextTooltip text="Accent Dark">
-					<div style={{
-						"background-color": palette().accent_dark,
-						color: palette().on_accent_dark,
-					}}>{palette().accent_dark}</div>
-				</TextTooltip>
-				<TextTooltip text="On Accent Dark">
-					<div style={{
-						"background-color": palette().on_accent_dark,
-						color: palette().accent_dark,
-					}}>{palette().on_accent_dark}</div>
-				</TextTooltip>
+				<div data-tooltip="Accent Light" style={{
+					"background-color": palette().accent_light,
+					color: palette().on_accent_light,
+				}}>{palette().accent_light}</div>
+				<div data-tooltip="On Accent Light" style={{
+					"background-color": palette().on_accent_light,
+					color: palette().accent_light,
+				}}>{palette().on_accent_light}</div>
+				<div data-tooltip="Accent Dark" style={{
+					"background-color": palette().accent_dark,
+					color: palette().on_accent_dark,
+				}}>{palette().accent_dark}</div>
+					<div data-tooltip="On Accent Dark" style={{
+					"background-color": palette().on_accent_dark,
+					color: palette().accent_dark,
+				}}>{palette().on_accent_dark}</div>
 			</div>}
 			leading={<div class={CSS.app_seed} style={{"background-color": palette().seed}}/>}>
 			{ palette().seed }
@@ -264,10 +254,12 @@ const _: VoidComponent = () => {
 					Close
 				</Button>
 			</>}>
-			<For each={palette_list()}>{(p, i) => <>
-				<Show when={i() > 0}><Divider /></Show>
-				<ListItem palette={p}/>
-			</>}</For>
+			<TextTooltip>
+				<For each={palette_list()}>{(p, i) => <>
+					<Show when={i() > 0}><Divider /></Show>
+					<ListItem palette={p}/>
+				</>}</For>
+			</TextTooltip>
 		</Dialog>
 		<Dialog
 			ref={r => dialog_deleteall_ref = r}

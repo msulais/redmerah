@@ -1424,19 +1424,16 @@ const _: VoidComponent = () => {
 		return (<List
 			leading={<Icon style={{color: props.color ?? undefined}} code={0xE407}/>}
 			trailing={<>
-				<TextTooltip text="Edit label">
-					<IconButton
-						onClick={(ev) => command(Commands.edit_label, ev, props)}
-						code={0xE739}
-					/>
-				</TextTooltip>
-
-				<TextTooltip text="Delete label">
-					<IconButton
-						onClick={() => command(Commands.delete_label, props)}
-						code={0xE59D}
-					/>
-				</TextTooltip>
+				<IconButton
+					data-tooltip="Edit label"
+					onClick={(ev) => command(Commands.edit_label, ev, props)}
+					code={0xE739}
+				/>
+				<IconButton
+					data-tooltip="Delete label"
+					onClick={() => command(Commands.delete_label, props)}
+					code={0xE59D}
+				/>
 			</>}>
 			{ props.name }
 		</List>)
@@ -1462,9 +1459,11 @@ const _: VoidComponent = () => {
 					Add label
 				</Button>
 			</>}>
-			<For each={labels} fallback={"No labels"}>{label =>
-				<Show when={label != undefined}><LabelItem {...label!}/></Show>
-			}</For>
+			<TextTooltip>
+				<For each={labels} fallback={"No labels"}>{label =>
+					<Show when={label != undefined}><LabelItem {...label!}/></Show>
+				}</For>
+			</TextTooltip>
 		</Dialog>
 		<Dialog
 			ref={r => dialog_newlabel_ref = r}
@@ -1505,21 +1504,20 @@ const _: VoidComponent = () => {
 					onFocus={() => set_selected_label_to_add('name', textfield_newlabel_ref.value)}
 					onInput={() => set_selected_label_to_add('name', textfield_newlabel_ref.value)}
 					autofocus
-					trailing={<TextTooltip text="Change label color">
-						<TextFieldButton
-							focused={is_colorpicker_label_open()}
-							onClick={ev => {
-								set_change_labelcolor_option('new')
-								open_colorpicker(ev, colorpicker_label_ref, {
-									anchor: ev.currentTarget,
-								})
-							}}>
-							<Icon
-								style={{color: selected_label_to_add.color ?? undefined}}
-								code={0xE407}
-							/>
-						</TextFieldButton>
-					</TextTooltip>}
+					trailing={<TextFieldButton
+						data-tooltip="Change label color"
+						focused={is_colorpicker_label_open()}
+						onClick={ev => {
+							set_change_labelcolor_option('new')
+							open_colorpicker(ev, colorpicker_label_ref, {
+								anchor: ev.currentTarget,
+							})
+						}}>
+						<Icon
+							style={{color: selected_label_to_add.color ?? undefined}}
+							code={0xE407}
+						/>
+					</TextFieldButton>}
 				/>
 			</form>
 		</Dialog>
@@ -1563,21 +1561,20 @@ const _: VoidComponent = () => {
 					onFocus={() => set_selected_label_to_edit('name', textfield_editlabel_ref.value)}
 					onInput={() => set_selected_label_to_edit('name', textfield_editlabel_ref.value)}
 					autofocus
-					trailing={<TextTooltip text="Change label color">
-						<TextFieldButton
-							focused={is_colorpicker_label_open()}
-							onClick={ev => {
-								set_change_labelcolor_option('edit')
-								open_colorpicker(ev, colorpicker_label_ref, {
-									anchor: ev.currentTarget,
-								})
-							}}>
-							<Icon
-								style={{color: selected_label_to_edit.color ?? undefined}}
-								code={0xE407}
-							/>
-						</TextFieldButton>
-					</TextTooltip>}
+					trailing={<TextFieldButton
+						data-tooltip="Change label color"
+						focused={is_colorpicker_label_open()}
+						onClick={ev => {
+							set_change_labelcolor_option('edit')
+							open_colorpicker(ev, colorpicker_label_ref, {
+								anchor: ev.currentTarget,
+							})
+						}}>
+						<Icon
+							style={{color: selected_label_to_edit.color ?? undefined}}
+							code={0xE407}
+						/>
+					</TextFieldButton>}
 				/>
 			</form>
 		</Dialog>

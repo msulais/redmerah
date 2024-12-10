@@ -226,35 +226,32 @@ const AppbarTasks: VoidComponent<{
 			classList={add_classlist_module(CSS.body_appbar)}
 			leading={props.leading}
 			headline={props.headline}
-			trailing={<>
+			trailing={<TextTooltip>
 				<Show when={props.is_any_task}>
-					<TextTooltip text="Sort by">
-						<IconButton
-							focused={is_menu_sort_open()}
-							onClick={ev => open_menu(ev, menu_sort_ref, {anchor: ev.currentTarget})}
-							code={0xE123}
-						/>
-					</TextTooltip>
-					<TextTooltip text="Copy tasks">
-						<IconButton
-							onClick={(ev) => {
-								command(Commands.copy_tasks, props.is_group? undefined : props.tasklist_index)
-								open_toast(ev, toast_copied_ref)
-							}}
-							code={0xE51B}
-						/>
-					</TextTooltip>
+					<IconButton
+						data-tooltip="Sort by"
+						focused={is_menu_sort_open()}
+						onClick={ev => open_menu(ev, menu_sort_ref, {anchor: ev.currentTarget})}
+						code={0xE123}
+					/>
+					<IconButton
+						data-tooltip="Copy tasks"
+						onClick={(ev) => {
+							command(Commands.copy_tasks, props.is_group? undefined : props.tasklist_index)
+							open_toast(ev, toast_copied_ref)
+						}}
+						code={0xE51B}
+					/>
 				</Show>
 				<Show when={!props.is_group && ((props.page == Pages.tasks && props.is_any_task) || is_number(props.page))}>
-					<TextTooltip text="More options">
-						<IconButton
-							focused={is_menu_more_open()}
-							onClick={ev => open_menu(ev, menu_more_ref, {anchor: ev.currentTarget})}
-							code={0xEAD9}
-						/>
-					</TextTooltip>
+					<IconButton
+						data-tooltip="More options"
+						focused={is_menu_more_open()}
+						onClick={ev => open_menu(ev, menu_more_ref, {anchor: ev.currentTarget})}
+						code={0xEAD9}
+					/>
 				</Show>
-			</>}
+			</TextTooltip>}
 		/>
 		<Menus />
 		<Dialogs />
@@ -289,59 +286,54 @@ const TaskItem: VoidComponent<{
 		data-done={attr_set_if_exist(task().complete)}
 		header={<ExpanderHeader
 			use_expand_icon={false}
-			leading={<>
-				<TextTooltip text={`Mark as ${task().complete? 'un' : ''}completed`}>
-					<IconButton
-						onContextMenu={ev => {
-							event_stop_propagation(ev)
-							event_prevent_default(ev)
-						}}
-						onClick={ev => {
-							event_stop_propagation(ev)
-							command(
-								Commands.edit_task,
-								{...task(), complete: !task().complete} satisfies Task,
-								props.tasklist_index,
-								props.task_index
-							)
-						}}
-						code={task().complete? 0xE3CB : 0xE3D4}
-					/>
-				</TextTooltip>
-			</>}
+			leading={<IconButton
+				data-tooltip={`Mark as ${task().complete? 'un' : ''}completed`}
+				onContextMenu={ev => {
+					event_stop_propagation(ev)
+					event_prevent_default(ev)
+				}}
+				onClick={ev => {
+					event_stop_propagation(ev)
+					command(
+						Commands.edit_task,
+						{...task(), complete: !task().complete} satisfies Task,
+						props.tasklist_index,
+						props.task_index
+					)
+				}}
+				code={task().complete? 0xE3CB : 0xE3D4}
+			/>}
 			trailing={<>
-				<TextTooltip text={`Mark as ${task().important? 'not ' : ''}important`}>
-					<IconButton
-						onContextMenu={ev => {
-							event_stop_propagation(ev)
-							event_prevent_default(ev)
-						}}
-						onClick={ev => {
-							event_stop_propagation(ev)
-							command(
-								Commands.edit_task,
-								{...task(), important: !task().important} satisfies Task,
-								props.tasklist_index,
-								props.task_index
-							)
-						}}
-						filled={task().important}
-						code={0xEF1B}
-					/>
-				</TextTooltip>
-				<TextTooltip text="Delete task">
-					<IconButton
-						onContextMenu={ev => {
-							event_stop_propagation(ev)
-							event_prevent_default(ev)
-						}}
-						onClick={ev => {
-							event_stop_propagation(ev)
-							props.on_delete(ev)
-						}}
-						code={0xE59D}
-					/>
-				</TextTooltip>
+				<IconButton
+					data-tooltip={`Mark as ${task().important? 'not ' : ''}important`}
+					onContextMenu={ev => {
+						event_stop_propagation(ev)
+						event_prevent_default(ev)
+					}}
+					onClick={ev => {
+						event_stop_propagation(ev)
+						command(
+							Commands.edit_task,
+							{...task(), important: !task().important} satisfies Task,
+							props.tasklist_index,
+							props.task_index
+						)
+					}}
+					filled={task().important}
+					code={0xEF1B}
+				/>
+				<IconButton
+					data-tooltip="Delete task"
+					onContextMenu={ev => {
+						event_stop_propagation(ev)
+						event_prevent_default(ev)
+					}}
+					onClick={ev => {
+						event_stop_propagation(ev)
+						props.on_delete(ev)
+					}}
+					code={0xE59D}
+				/>
 			</>}
 			subtitle={<>
 				{ task().description }
@@ -353,33 +345,32 @@ const TaskItem: VoidComponent<{
 				}>
 					<div class={CSS.body_task_item_tags}>
 						<Show when={task().reminder != null}>
-							<TextTooltip text={
-								"Task reminder" + (date_out_range_YMD_HM(
-									task().reminder!,
-									get_current_date(),
-									new Date(date_year() + 100, 2, 2)
-								)? " (outdated)" : "")}>
-								<Button
-									style={{
-										"border-color": date_out_range_YMD_HM(
-											task().reminder!,
-											get_current_date(),
-											new Date(date_year() + 100, 2, 2)
-										)? 'rgb(var(--g-color-error))' : undefined
-									}}
-									onContextMenu={ev => {
-										event_stop_propagation(ev)
-										event_prevent_default(ev)
-									}}
-									onClick={ev => {
-										event_stop_propagation(ev)
-										props.on_edit_reminder(ev)
-									}}
-									variant={ButtonVariant.outlined}>
-									<Icon filled code={0xE025} inline/>
-									{date_text_YMD_HM(task().reminder!)}
-								</Button>
-							</TextTooltip>
+							<Button
+								data-tooltip={
+									"Task reminder" + (date_out_range_YMD_HM(
+										task().reminder!,
+										get_current_date(),
+										new Date(date_year() + 100, 2, 2)
+									)? " (outdated)" : "")}
+								style={{
+									"border-color": date_out_range_YMD_HM(
+										task().reminder!,
+										get_current_date(),
+										new Date(date_year() + 100, 2, 2)
+									)? 'rgb(var(--g-color-error))' : undefined
+								}}
+								onContextMenu={ev => {
+									event_stop_propagation(ev)
+									event_prevent_default(ev)
+								}}
+								onClick={ev => {
+									event_stop_propagation(ev)
+									props.on_edit_reminder(ev)
+								}}
+								variant={ButtonVariant.outlined}>
+								<Icon filled code={0xE025} inline/>
+								{date_text_YMD_HM(task().reminder!)}
+							</Button>
 						</Show>
 						<Show when={array_length(task().files) > 0}>
 							<Button
@@ -592,19 +583,21 @@ const SingleTaskList: VoidComponent<{
 			</Show>}
 			headline={get_headline()}
 		/>
-		<For each={tasklist().tasks}>{(task, index) => <TaskItem
-			command={command}
-			task={task}
-			on_edit_label={(ev, label) => props.on_edit_label(ev, label, task, index())}
-			labels={props.labels}
-			task_index={index()}
-			tasklist_index={props.tasklist_index}
-			on_edit_files={ev => props.on_edit_files_task(ev, task, index())}
-			on_edit_reminder={ev => props.on_edit_reminder_task(ev, task, index())}
-			on_edit={ev => props.on_edit_task(ev, task, index())}
-			on_context_menu={ev => props.on_context_menu_task(ev, task, index())}
-			on_delete={ev => props.on_delete_task(ev, task, index())}
-		/>}</For>
+		<TextTooltip>
+			<For each={tasklist().tasks}>{(task, index) => <TaskItem
+				command={command}
+				task={task}
+				on_edit_label={(ev, label) => props.on_edit_label(ev, label, task, index())}
+				labels={props.labels}
+				task_index={index()}
+				tasklist_index={props.tasklist_index}
+				on_edit_files={ev => props.on_edit_files_task(ev, task, index())}
+				on_edit_reminder={ev => props.on_edit_reminder_task(ev, task, index())}
+				on_edit={ev => props.on_edit_task(ev, task, index())}
+				on_context_menu={ev => props.on_context_menu_task(ev, task, index())}
+				on_delete={ev => props.on_delete_task(ev, task, index())}
+			/>}</For>
+		</TextTooltip>
 		<Show when={!is_any_task()}><EmptyTasks page={page()} /></Show>
 		<Show when={is_any_task()}><div style={{flex: '1'}}></div></Show>
 		<form onSubmit={ev => {
@@ -614,9 +607,11 @@ const SingleTaskList: VoidComponent<{
 			<TextField
 				placeholder="Add task"
 				ref={r => textfield_newtask_ref = r}
-				trailing={<TextTooltip text="Add task">
-					<TextFieldButton onClick={() => add_task()}><Icon code={0xE00B}/></TextFieldButton>
-				</TextTooltip>}
+				trailing={<TextFieldButton
+					data-tooltip="Add task"
+					onClick={() => add_task()}>
+					<Icon code={0xE00B}/>
+				</TextFieldButton>}
 			/>
 		</form>
 	</div>)
@@ -740,37 +735,38 @@ const GroupTaskList: VoidComponent<{
 					<Icon code={0xE8E2}/>
 				</Show>
 			</Show>}
-			trailing={<TextTooltip text="More options">
-				<IconButton
-					focused={is_menu_more_open() && selected_tasklist_to_action.tasklist_index == tasklist_index()}
-					onClick={ev => {
-						set_selected_tasklist_to_action({list: tasklist(), tasklist_index: tasklist_index()})
-						open_menu(ev, menu_more_ref, {anchor: ev.currentTarget})
-					}}
-					code={0xEAD9}
-				/>
-			</TextTooltip>}
+			trailing={<IconButton
+				data-tooltip="More options"
+				focused={is_menu_more_open() && selected_tasklist_to_action.tasklist_index == tasklist_index()}
+				onClick={ev => {
+					set_selected_tasklist_to_action({list: tasklist(), tasklist_index: tasklist_index()})
+					open_menu(ev, menu_more_ref, {anchor: ev.currentTarget})
+				}}
+				code={0xEAD9}
+			/>}
 		/>)
 
 		return (<Show when={is_any_task()}>
-			<Headline/>
-			<For each={tasklist().tasks}>{(task, index) =>
-				<Show when={task_condition(task)}>
-					<TaskItem
-						command={command}
-						task={task}
-						labels={props.labels}
-						task_index={index()}
-						tasklist_index={tasklist_index()}
-						on_edit_label={(ev, label) => props.on_edit_label(ev, label, task, tasklist_index(), index())}
-						on_edit_files={ev => props.on_edit_files_task(ev, task, tasklist_index(), index())}
-						on_edit_reminder={ev => props.on_edit_reminder_task(ev, task, tasklist_index(), index())}
-						on_edit={ev => props.on_edit_task(ev, task, tasklist_index(), index())}
-						on_context_menu={ev => props.on_context_menu_task(ev, task, tasklist_index(), index())}
-						on_delete={ev => props.on_delete_task(ev, task, tasklist_index(), index())}
-					/>
-				</Show>
-			}</For>
+			<TextTooltip>
+				<Headline/>
+				<For each={tasklist().tasks}>{(task, index) =>
+					<Show when={task_condition(task)}>
+						<TaskItem
+							command={command}
+							task={task}
+							labels={props.labels}
+							task_index={index()}
+							tasklist_index={tasklist_index()}
+							on_edit_label={(ev, label) => props.on_edit_label(ev, label, task, tasklist_index(), index())}
+							on_edit_files={ev => props.on_edit_files_task(ev, task, tasklist_index(), index())}
+							on_edit_reminder={ev => props.on_edit_reminder_task(ev, task, tasklist_index(), index())}
+							on_edit={ev => props.on_edit_task(ev, task, tasklist_index(), index())}
+							on_context_menu={ev => props.on_context_menu_task(ev, task, tasklist_index(), index())}
+							on_delete={ev => props.on_delete_task(ev, task, tasklist_index(), index())}
+						/>
+					</Show>
+				}</For>
+			</TextTooltip>
 		</Show>)
 	}
 
@@ -1102,37 +1098,34 @@ const _: VoidComponent<{
 
 		return (<List
 			trailing={<>
-				<TextTooltip text='Edit subtask'>
-					<IconButton
-						onClick={ev => edit_subtask(ev, subtask(), tasklist_index(), task_index(), subtask_index())}
-						code={0xE739}
-					/>
-				</TextTooltip>
-				<TextTooltip text="Delete subtask">
-					<IconButton
-						onClick={() => deleteSubtask(subtask_index())}
-						code={0xE59D}
-					/>
-				</TextTooltip>
-			</>}
-			leading={<TextTooltip text={`Mark as ${subtask().complete? 'un' : ''}completed`}>
 				<IconButton
-					onClick={() => {
-						const $subtask: SubTask = {
-							...subtask(),
-							complete: !subtask().complete
-						}
-						command(
-							Commands.edit_subtask,
-							$subtask,
-							$props.tasklist_index,
-							$props.task_index,
-							subtask_index()
-						)
-						set_selected_task_to_edit('task', 'subtasks', subtask_index(), $subtask)
-					}}
-					code={subtask().complete? 0xE3CB : 0xE3D4}/>
-			</TextTooltip>}>
+					data-tooltip="Edit subtask"
+					onClick={ev => edit_subtask(ev, subtask(), tasklist_index(), task_index(), subtask_index())}
+					code={0xE739}
+				/>
+				<IconButton
+					data-tooltip="Delete subtask"
+					onClick={() => deleteSubtask(subtask_index())}
+					code={0xE59D}
+				/>
+			</>}
+			leading={<IconButton
+				data-tooltip={`Mark as ${subtask().complete? 'un' : ''}completed`}
+				onClick={() => {
+					const $subtask: SubTask = {
+						...subtask(),
+						complete: !subtask().complete
+					}
+					command(
+						Commands.edit_subtask,
+						$subtask,
+						$props.tasklist_index,
+						$props.task_index,
+						subtask_index()
+					)
+					set_selected_task_to_edit('task', 'subtasks', subtask_index(), $subtask)
+				}}
+				code={subtask().complete? 0xE3CB : 0xE3D4}/>}>
 			{subtask().name}
 		</List>)
 	}
@@ -1161,23 +1154,21 @@ const _: VoidComponent<{
 		return (<List
 			classList={add_classlist_module(CSS.body_file_list_item)}
 			trailing={<>
-				<TextTooltip text={"View file" + (is_type_not_supported()? ' (not supported)' : '')}>
-					<IconButton
-						disabled={is_type_not_supported()}
-						onClick={ev => view_file(ev, file(), tasklist_index(), task_index(), file_index())}
-						code={0xE77B}
-					/>
-				</TextTooltip>
-				<TextTooltip text="More actions">
-					<IconButton
-						focused={selected_file_to_action.file.id == file().id && is_menu_fileaction_open()}
-						onClick={ev => {
-							set_selected_file_to_action($props)
-							open_menu(ev, menu_fileaction_ref, {anchor: ev.currentTarget})
-						}}
-						code={0xEAD9}
-					/>
-				</TextTooltip>
+				<IconButton
+					data-tooltip={"View file" + (is_type_not_supported()? ' (not supported)' : '')}
+					disabled={is_type_not_supported()}
+					onClick={ev => view_file(ev, file(), tasklist_index(), task_index(), file_index())}
+					code={0xE77B}
+				/>
+				<IconButton
+					data-tooltip="More actions"
+					focused={selected_file_to_action.file.id == file().id && is_menu_fileaction_open()}
+					onClick={ev => {
+						set_selected_file_to_action($props)
+						open_menu(ev, menu_fileaction_ref, {anchor: ev.currentTarget})
+					}}
+					code={0xEAD9}
+				/>
 			</>}
 			subtitle={array_join([get_size_text(), string_replace(file().type, /\/.+$/gs, '')], " • ")}>
 			{file().name}
@@ -1191,43 +1182,41 @@ const _: VoidComponent<{
 
 		return (<List
 			leading={<Icon style={{color: color() ?? undefined}} code={0xE407}/>}
-			trailing={<>
-				<TextTooltip text="Edit label">
-					<IconButton
-						onClick={ev => {
-							set_selected_label($props)
-							command(Commands.edit_label, ev, selected_label)
-						}}
-						code={0xE739}
-					/>
-				</TextTooltip>
-				<TextTooltip text="Remove label from task">
-					<IconButton
-						onClick={() => {
-							const index = array_find_index(
-								selected_task_to_edit.task.label_ids,
-								$id => $id == id()
-							)
-							if (index < 0) return;
+			trailing={<TextTooltip>
+				<IconButton
+					data-tooltip="Edit label"
+					onClick={ev => {
+						set_selected_label($props)
+						command(Commands.edit_label, ev, selected_label)
+					}}
+					code={0xE739}
+				/>
+				<IconButton
+					data-tooltip="Remove label from task"
+					onClick={() => {
+						const index = array_find_index(
+							selected_task_to_edit.task.label_ids,
+							$id => $id == id()
+						)
+						if (index < 0) return;
 
-							set_selected_task_to_edit(
-								'task', 'label_ids',
-								ids => array_concat(
-									array_slice(ids, 0, index),
-									array_slice(ids, index + 1)
-								)
+						set_selected_task_to_edit(
+							'task', 'label_ids',
+							ids => array_concat(
+								array_slice(ids, 0, index),
+								array_slice(ids, index + 1)
 							)
-							command(
-								Commands.edit_task,
-								selected_task_to_edit.task,
-								selected_task_to_edit.tasklist_index,
-								selected_task_to_edit.task_index
-							)
-						}}
-						code={0xE5E9}
-					/>
-				</TextTooltip>
-			</>}>
+						)
+						command(
+							Commands.edit_task,
+							selected_task_to_edit.task,
+							selected_task_to_edit.tasklist_index,
+							selected_task_to_edit.task_index
+						)
+					}}
+					code={0xE5E9}
+				/>
+			</TextTooltip>}>
 			{ name() }
 		</List>)
 	}
@@ -1291,12 +1280,14 @@ const _: VoidComponent<{
 				}}
 			/>
 			<div data-subtasks>
-				<For each={selected_task_to_edit.task.subtasks}>{ (subtask, index) => <SubtaskItem
-					subtask={subtask}
-					tasklist_index={selected_task_to_edit.tasklist_index}
-					task_index={selected_task_to_edit.task_index}
-					subtask_index={index()}
-				/>}</For>
+				<TextTooltip>
+					<For each={selected_task_to_edit.task.subtasks}>{ (subtask, index) => <SubtaskItem
+						subtask={subtask}
+						tasklist_index={selected_task_to_edit.tasklist_index}
+						task_index={selected_task_to_edit.task_index}
+						subtask_index={index()}
+					/>}</For>
+				</TextTooltip>
 				<Button
 					onClick={ev => {
 						add_subtask_option = 'edit'
@@ -1340,34 +1331,32 @@ const _: VoidComponent<{
 						<Icon code={0xE01D}/>Add reminder
 					</Button>}>
 					<List
-						trailing={<>
-							<TextTooltip text="Change datetime reminder">
-								<IconButton
-									onClick={ev => {
-										set_change_reminder_option('edit')
-										open_datetimepicker(ev, datetimepicker_reminder_ref, {
-											anchor: ev.currentTarget,
-											position: DateTimePickerPosition.center_bottom_to_right
-										})
-									}}
-									code={0xE2EA}
-								/>
-							</TextTooltip>
-							<TextTooltip text="Remove reminder">
-								<IconButton
-									onClick={(_ev) => {
-										set_selected_task_to_edit('task', 'reminder', null)
-										command(
-											Commands.edit_task,
-											selected_task_to_edit.task,
-											selected_task_to_edit.tasklist_index,
-											selected_task_to_edit.task_index
-										)
-									}}
-									code={0xE01F}
-								/>
-							</TextTooltip>
-						</>}
+						trailing={<TextTooltip>
+							<IconButton
+								data-tooltip="Change datetime reminder"
+								onClick={ev => {
+									set_change_reminder_option('edit')
+									open_datetimepicker(ev, datetimepicker_reminder_ref, {
+										anchor: ev.currentTarget,
+										position: DateTimePickerPosition.center_bottom_to_right
+									})
+								}}
+								code={0xE2EA}
+							/>
+							<IconButton
+								data-tooltip="Remove reminder"
+								onClick={(_ev) => {
+									set_selected_task_to_edit('task', 'reminder', null)
+									command(
+										Commands.edit_task,
+										selected_task_to_edit.task,
+										selected_task_to_edit.tasklist_index,
+										selected_task_to_edit.task_index
+									)
+								}}
+								code={0xE01F}
+							/>
+						</TextTooltip>}
 						leading={<Icon code={0xE025}/>}>
 						<span style={{
 							color: date_out_range_YMD_HM(
@@ -1382,14 +1371,16 @@ const _: VoidComponent<{
 			<Divider />
 			<Show when={!props.is_db_file_error}>
 				<div data-file>
-					<For each={selected_task_to_edit.task.files}>{(file, index) =>
-						<FileItem
-							file={file}
-							file_index={index()}
-							task_index={selected_task_to_edit.task_index}
-							tasklist_index={selected_task_to_edit.tasklist_index}
-						/>
-					}</For>
+					<TextTooltip>
+						<For each={selected_task_to_edit.task.files}>{(file, index) =>
+							<FileItem
+								file={file}
+								file_index={index()}
+								task_index={selected_task_to_edit.task_index}
+								tasklist_index={selected_task_to_edit.tasklist_index}
+							/>
+						}</For>
+					</TextTooltip>
 					<Button
 						onClick={() => {
 							const task_index = selected_task_to_edit.task_index

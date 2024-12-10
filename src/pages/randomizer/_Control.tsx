@@ -12,7 +12,6 @@ import { math_clamp } from "@/utils/math"
 import { rect_width } from "@/utils/rect"
 
 import Icon from "@/components/Icon"
-import { TextTooltip } from "@/components/Tooltip"
 import TextField, { NumberTextField, TextFieldButton, change_textfield_value } from "@/components/TextField"
 import Menu, { close_menu, MenuDivider, MenuHeader, MenuItem, MenuPosition, open_menu } from "@/components/Menu"
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
@@ -846,21 +845,20 @@ const $String: VoidComponent<{
 			}}
 			value={8}
 			label="Characters"
-			trailing={<TextTooltip text="More character options">
-				<TextFieldButton
-					focused={is_menu_characters_open()}
-					onClick={(ev) => {
-						set_menu_characters_width(rect_width(element_rect(label_characters_ref!)))
-						open_menu(ev, menu_characters_ref, {
-							anchor: ev.currentTarget,
-							position: MenuPosition.center_bottom_to_left,
-							padding: 6.5,
-							gap: 8,
-						})
-					}}>
-					<Icon filled code={0xE362}/>
-				</TextFieldButton>
-			</TextTooltip>}
+			trailing={<TextFieldButton
+				data-tooltip="More character options"
+				focused={is_menu_characters_open()}
+				onClick={(ev) => {
+					set_menu_characters_width(rect_width(element_rect(label_characters_ref!)))
+					open_menu(ev, menu_characters_ref, {
+						anchor: ev.currentTarget,
+						position: MenuPosition.center_bottom_to_left,
+						padding: 6.5,
+						gap: 8,
+					})
+				}}>
+				<Icon filled code={0xE362}/>
+			</TextFieldButton>}
 		/>
 		<Menu
 			ref={(r) => menu_characters_ref = r}

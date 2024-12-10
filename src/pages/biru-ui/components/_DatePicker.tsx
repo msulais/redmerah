@@ -71,19 +71,18 @@ const _: VoidComponent = () => {
 				label={'First date'}
 				readOnly
 				value={date_text_YMD(first_date(), locale())}
-				trailing={<>
-					<Tooltip text="Select first date">
-						<TextFieldButton
-							focused={is_datepicker_firstdate_open()}
-							onClick={(ev) => open_datepicker(
-								ev,
-								datepicker_firstdate_ref,
-								{ anchor: ev.currentTarget }
-							)}>
-							<Icon code={0xE2CC}/>
-						</TextFieldButton>
-					</Tooltip>
-				</>}
+				trailing={<Tooltip>
+					<TextFieldButton
+						data-tooltip="Select first date"
+						focused={is_datepicker_firstdate_open()}
+						onClick={(ev) => open_datepicker(
+							ev,
+							datepicker_firstdate_ref,
+							{ anchor: ev.currentTarget }
+						)}>
+						<Icon code={0xE2CC}/>
+					</TextFieldButton>
+				</Tooltip>}
 			/>
 			<DatePicker
 				on_toggle_open={o => set_is_datepicker_firstdate_open(o)}
@@ -100,19 +99,18 @@ const _: VoidComponent = () => {
 				label={'Last date'}
 				readOnly
 				value={date_text_YMD(last_date(), locale())}
-				trailing={<>
-					<Tooltip text="Select last date">
-						<TextFieldButton
-							focused={is_datepicker_lastdate_open()}
-							onClick={(ev) => open_datepicker(
-								ev,
-								datepicker_lastdate_ref,
-								{ anchor: ev.currentTarget }
-							)}>
-							<Icon code={0xE2CC}/>
-						</TextFieldButton>
-					</Tooltip>
-				</>}
+				trailing={<Tooltip>
+					<TextFieldButton
+						data-tooltip="Select last date"
+						focused={is_datepicker_lastdate_open()}
+						onClick={(ev) => open_datepicker(
+							ev,
+							datepicker_lastdate_ref,
+							{ anchor: ev.currentTarget }
+						)}>
+						<Icon code={0xE2CC}/>
+					</TextFieldButton>
+				</Tooltip>}
 			/>
 			<DatePicker
 				first_date={date() ?? new Date()}

@@ -17,9 +17,10 @@ const _: VoidComponent<{
 	const expanded = createMemo(() => props.expanded)
 	const randomizer = createMemo(() => props.randomizer)
 	return (<SideNavigation expanded={expanded()} classList={add_classlist_module(CSS.side_navigation)}>
-		<For each={RANDOMIZER_TYPES}>{ r =>
-			<TextTooltip text={!expanded()? r.text : undefined}>
+		<TextTooltip>
+			<For each={RANDOMIZER_TYPES}>{ r =>
 				<SideNavigationItem
+					data-tooltip={!expanded()? r.text : undefined}
 					icon_only={!expanded()}
 					onClick={() => {
 						if (randomizer() == r.type) return;
@@ -29,8 +30,8 @@ const _: VoidComponent<{
 					selected={randomizer() == r.type}>
 					{r.text}
 				</SideNavigationItem>
-			</TextTooltip>
-		}</For>
+			}</For>
+		</TextTooltip>
 	</SideNavigation>)
 }
 

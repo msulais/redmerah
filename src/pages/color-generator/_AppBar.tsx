@@ -237,30 +237,29 @@ const _: VoidComponent<{
 	</>)
 
 	return (<>
-		<AppBar
-			leading={<>
-				<Show when={array_length(props.palette_list) > 0}>
-					<TextTooltip text='Color list'>
+		<TextTooltip>
+			<AppBar
+				leading={<>
+					<Show when={array_length(props.palette_list) > 0}>
 						<IconButton
+							data-tooltip="Color list"
 							onClick={(ev) => open_dialog(ev, props.dialog_colorlist_ref)}
 							code={0xF098}
 						/>
-					</TextTooltip>
-				</Show>
-				<img width={32} src={logo.src} alt="Color generator logo" />
-			</>}
-			headline="Color Generator"
-			trailing={<>
-				<TextTooltip text='Select color'>
+					</Show>
+					<img width={32} src={logo.src} alt="Color generator logo" />
+				</>}
+				headline="Color Generator"
+				trailing={<>
 					<Button
+						data-tooltip="Select color"
 						classList={add_classlist_module(CSS.appbar_select_color)}
 						variant={ButtonVariant.filled}
 						onClick={(ev) => open_colorpicker(ev, props.colorpicker_ref, {anchor: ev.currentTarget})}>
 						{props.seed}
 					</Button>
-				</TextTooltip>
-				<TextTooltip text='Add color to list'>
 					<IconButton
+						data-tooltip="Add color to list"
 						onClick={() => {
 							if (timeout_id()) {
 								timeout_clear(timeout_id()!)
@@ -271,23 +270,21 @@ const _: VoidComponent<{
 						}}
 						code={timeout_id()? 0xE3D8 : 0xF08A}
 					/>
-				</TextTooltip>
-				<TextTooltip text='Copy all'>
 					<IconButton
+						data-tooltip="Copy all"
 						onClick={() => copy_all()}
 						code={timeout_copy_id()? 0xE3D8 : 0xE51B}
 					/>
-				</TextTooltip>
-				<TextTooltip text='Open settings'>
 					<IconButton
+						data-tooltip="Open settings"
 						classList={add_classlist_module(CSSAnimation.btn_rotate_icon)}
 						focused={is_menu_settings_open()}
 						onClick={ev => open_menu(ev, menu_settings_ref, { anchor: ev.currentTarget })}
 						code={0xEE0F}
 					/>
-				</TextTooltip>
-			</>}
-		/>
+				</>}
+			/>
+		</TextTooltip>
 		<Menus />
 	</>)
 }

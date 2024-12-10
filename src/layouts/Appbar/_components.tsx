@@ -34,8 +34,9 @@ export const NavigationMenu: VoidComponent<NavigationMenuProps> = (props) => {
 	onMount(() => remove_splash_screen_on_load_every_component())
 
 	return (<>
-		<Tooltip text="Open navigation menu">
+		<Tooltip>
 			<IconButton
+				data-tooltip="Open navigation menu"
 				classList={add_classlist_module(CSS.mobile_only)}
 				focused={is_menu_navigation_open()}
 				onClick={(ev) => open_menu(ev, menu_navigation_ref, {
@@ -157,8 +158,9 @@ export const SettingsElement: VoidComponent = () => {
 	})
 
 	return (<>
-		<Tooltip text="Open settings">
+		<Tooltip>
 			<IconButton
+				data-tooltip="Open settings"
 				classList={add_classlist_module(CSSAnimation.btn_rotate_icon)}
 				focused={is_menu_settings_open()}
 				onClick={(ev) => open_menu(ev, menu_settings_ref, {

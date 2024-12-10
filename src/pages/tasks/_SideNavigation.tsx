@@ -37,45 +37,42 @@ const _: VoidComponent<{
 	}
 
 	const Page: VoidComponent<{ type: Pages, text: string, icon: number}> = ($props) => {
-		return (<TextTooltip text={!expanded()? $props.text : undefined}>
-			<SideNavigationItem
-				icon_code={$props.icon}
-				selected={props.page == $props.type}
-				onClick={() => command(Commands.change_page, $props.type)}
-				icon_only={!expanded()}>
-				{$props.text}
-			</SideNavigationItem>
-		</TextTooltip>)
+		return (<SideNavigationItem
+			icon_code={$props.icon}
+			data-tooltip={!expanded()? $props.text : undefined}
+			selected={props.page == $props.type}
+			onClick={() => command(Commands.change_page, $props.type)}
+			icon_only={!expanded()}>
+			{$props.text}
+		</SideNavigationItem>)
 	}
 
 	const Item: VoidComponent<TaskList & {index: number}> = ($props) => {
-		return (<TextTooltip text={!expanded()? $props.name : undefined}>
-			<SideNavigationItem
-				icon_code={$props.emoji == null? 0xF032 : undefined}
-				leading={<Show when={$props.emoji != null}><Emoji emoji={$props.emoji!} /></Show>}
-				selected={props.page == $props.id}
-				onClick={() => command(Commands.change_page, $props.id)}
-				onContextMenu={(ev) => {
-					event_prevent_default(ev)
-					selected_tasklist_index = $props.index
-					open_menu(ev, menu_listaction_ref, {
-						position: MenuPosition.center_bottom_to_right
-					})
-				}}
-				icon_only={!expanded()}>
-				{$props.name}
-			</SideNavigationItem>
-		</TextTooltip>)
+		return (<SideNavigationItem
+			data-tooltip={!expanded()? $props.name : undefined}
+			icon_code={$props.emoji == null? 0xF032 : undefined}
+			leading={<Show when={$props.emoji != null}><Emoji emoji={$props.emoji!} /></Show>}
+			selected={props.page == $props.id}
+			onClick={() => command(Commands.change_page, $props.id)}
+			onContextMenu={(ev) => {
+				event_prevent_default(ev)
+				selected_tasklist_index = $props.index
+				open_menu(ev, menu_listaction_ref, {
+					position: MenuPosition.center_bottom_to_right
+				})
+			}}
+			icon_only={!expanded()}>
+			{$props.name}
+		</SideNavigationItem>)
 	}
 
-	const Footer: VoidComponent = () => (<TextTooltip text={!expanded()? "Add new list" : undefined}>
-		<SideNavigationItem
-			icon_code={0xE007}
-			icon_only={!expanded()}
-			onClick={ev => command(Commands.add_tasklist, ev)}>
-			New list
-		</SideNavigationItem>
-	</TextTooltip>)
+	const Footer: VoidComponent = () => (<SideNavigationItem
+		icon_code={0xE007}
+		data-tooltip={!expanded()? "Add new list" : undefined}
+		icon_only={!expanded()}
+		onClick={ev => command(Commands.add_tasklist, ev)}>
+		New list
+	</SideNavigationItem>)
 
 	const Menus: VoidComponent = () => (<>
 		<Menu
@@ -99,7 +96,7 @@ const _: VoidComponent<{
 		</Menu>
 	</>)
 
-	return (<SideNavigation
+	return (<TextTooltip><SideNavigation
 		style={{"padding-top": '0'}}
 		classList={add_classlist_module(CSS.side_navigation)}
 		expanded={expanded()}
@@ -130,7 +127,7 @@ const _: VoidComponent<{
 			</Show>
 		}</For>
 		<Menus/>
-	</SideNavigation>)
+	</SideNavigation></TextTooltip>)
 }
 
 export default _

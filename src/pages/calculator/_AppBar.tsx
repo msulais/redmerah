@@ -212,8 +212,9 @@ const _: VoidComponent<{
 			style={{width: '224px'}}
 			ref={r => menu_settings_ref = r}
 			on_toggle_open={(v) => set_is_menu_settings_open(v)}>
-			<TextTooltip text={"Display result in scientific notation (e.g. 1.2E-29)"}>
+			<TextTooltip>
 				<SwitchMenuItem
+					data-tooltip="Display result in scientific notation (e.g. 1.2E-29)"
 					icon_code={0xEA91}
 					attr_switch={{
 						checked: settings().scientific_notation,
@@ -221,9 +222,8 @@ const _: VoidComponent<{
 					}}>
 					Scientific notation
 				</SwitchMenuItem>
-			</TextTooltip>
-			<TextTooltip text={"Show or hide memory button (M, M+, M-, MR, MC)"}>
 				<SwitchMenuItem
+					data-tooltip="Show or hide memory button (M, M+, M-, MR, MC)"
 					checked={settings().memory_buttons}
 					icon_code={0xE5CD}
 					attr_switch={{
@@ -357,8 +357,9 @@ const _: VoidComponent<{
 	const Drawers: VoidComponent = () => {
 		return (<>
 			<Drawer
-				header={<TextTooltip text="Close navigation">
+				header={<TextTooltip>
 					<IconButton
+						data-tooltip="Close navigation"
 						classList={add_classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
 						onClick={() => close_drawer(drawer_navigation_ref)}
 						code={0xEAFF}
@@ -377,8 +378,9 @@ const _: VoidComponent<{
 			<Drawer
 				classList={add_classlist_module(CSS.appbar_notebook)}
 				header={<>
-					<TextTooltip text="Close notebook">
+					<TextTooltip>
 						<IconButton
+							data-tooltip="Close notebook"
 							onClick={() => close_drawer(drawer_notebook_ref)}
 							code={0xE5E9}
 						/>
@@ -398,13 +400,14 @@ const _: VoidComponent<{
 	}
 
 	return (<>
-		<AppBar
-			leading={<>
-				<TextTooltip text={is_sidenavigation_hidden()
-					? "Open navigation"
-					: "Expand/shrink navigation"
-				}>
+		<TextTooltip>
+			<AppBar
+				leading={<>
 					<IconButton
+						data-tooltip={is_sidenavigation_hidden()
+							? "Open navigation"
+							: "Expand/shrink navigation"
+						}
 						classList={add_classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
 						onClick={(ev) => {
 							if (is_sidenavigation_hidden()) return openDrawer(ev, drawer_navigation_ref)
@@ -412,13 +415,12 @@ const _: VoidComponent<{
 						}}
 						code={0xEAFF}
 					/>
-				</TextTooltip>
-				<img width={32} src={logo.src} alt="Calculator logo" />
-			</>}
-			headline="Calculator"
-			trailing={<>
-				<TextTooltip text="Info">
+					<img width={32} src={logo.src} alt="Calculator logo" />
+				</>}
+				headline="Calculator"
+				trailing={<>
 					<IconButton
+						data-tooltip="Info"
 						focused={is_menu_info_open()}
 						onClick={ev => open_menu(ev, menu_info_ref, {
 							anchor: ev.currentTarget,
@@ -426,9 +428,8 @@ const _: VoidComponent<{
 						})}
 						code={0xE930}
 					/>
-				</TextTooltip>
-				<TextTooltip text="Settings">
 					<IconButton
+						data-tooltip="Settings"
 						classList={add_classlist_module(CSSAnimation.btn_rotate_icon)}
 						focused={is_menu_settings_open()}
 						onClick={(ev) => open_menu(ev, menu_settings_ref, {
@@ -437,9 +438,8 @@ const _: VoidComponent<{
 						})}
 						code={0xEE0F}
 					/>
-				</TextTooltip>
-				<TextTooltip text="Notebook">
 					<IconButton
+						data-tooltip="Notebook"
 						onClick={ev => {
 							if (is_sidenotebook_hidden()) {
 								change_areatextfield_value(areatextfield_notebook_ref, props.note)
@@ -451,9 +451,9 @@ const _: VoidComponent<{
 						filled={props.is_notebook_expanded && !is_sidenotebook_hidden()}
 						code={0xEB19}
 					/>
-				</TextTooltip>
-			</>}
-		/>
+				</>}
+			/>
+		</TextTooltip>
 		<Drawers />
 		<Menus />
 	</>)

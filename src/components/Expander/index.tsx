@@ -43,21 +43,21 @@ const ExpanderHeader: ParentComponent<ExpanderHeaderProps> = ($props) => {
 	return (<List
 		data-c-open={attr_set_if_exist(context?.is_open())}
 		data-c-variant={attr_set_if_exist(context?.variant(), context != null)}
-		trailing={<>
+		trailing={<TextTooltip>
 			{props.trailing}
 			<Show when={props.use_expand_icon}>
-				<TextTooltip text={props.tooltip_expand ?? (context?.is_open()
-					? 'Show less'
-					: 'Show more')}>
-					<RawIconButton
-						component="div"
-						code={0xE3FC}
-						class="c-expander-icon"
-						data-c-open={attr_set_if_exist(context?.is_open())}
-					/>
-				</TextTooltip>
+				<RawIconButton
+					data-tooltip={props.tooltip_expand ?? (context?.is_open()
+						? 'Show less'
+						: 'Show more'
+					)}
+					component="div"
+					code={0xE3FC}
+					class="c-expander-icon"
+					data-c-open={attr_set_if_exist(context?.is_open())}
+				/>
 			</Show>
-		</>}
+		</TextTooltip>}
 		{...other}
 	/>)
 }
@@ -76,21 +76,21 @@ const RawExpanderHeader: ParentComponent<RawExpanderHeaderProps> = ($props) => {
 	return (<RawList
 		data-c-open={attr_set_if_exist(context?.is_open())}
 		data-c-variant={attr_set_if_exist(context?.variant(), context != null)}
-		trailing={<>
+		trailing={<TextTooltip>
 			{props.trailing}
 			<Show when={props.use_expand_icon}>
-				<TextTooltip text={props.tooltip_expand ?? (context?.is_open()
-					? 'Show less'
-					: 'Show more')}>
-					<RawIconButton
-						component="div"
-						code={0xE3FC}
-						class="c-expander-icon"
-						data-c-open={attr_set_if_exist(context?.is_open())}
-					/>
-				</TextTooltip>
+				<RawIconButton
+					data-tooltip={props.tooltip_expand ?? (context?.is_open()
+						? 'Show less'
+						: 'Show more'
+					)}
+					component="div"
+					code={0xE3FC}
+					class="c-expander-icon"
+					data-c-open={attr_set_if_exist(context?.is_open())}
+				/>
 			</Show>
-		</>}
+		</TextTooltip>}
 		{...other}
 	/>)
 }

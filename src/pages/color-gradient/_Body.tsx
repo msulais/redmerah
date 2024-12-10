@@ -195,13 +195,12 @@ const GradientControl: VoidComponent<{
 				}}
 			/>
 		</div>
-		<TextTooltip text={expanded()? "Show less" : 'Show more'}>
-			<IconButton
-				code={0xE3FC}
-				onClick={() => set_expanded(e => !e)}
-				data-expanded={attr_set_if_exist(expanded())}
-			/>
-		</TextTooltip>
+		<IconButton
+			data-tooltip={expanded()? "Show less" : 'Show more'}
+			code={0xE3FC}
+			onClick={() => set_expanded(e => !e)}
+			data-expanded={attr_set_if_exist(expanded())}
+		/>
 	</div>)
 
 	const Options: VoidComponent = () => (<div class={CSS.body_gradient_control_options}>
@@ -439,18 +438,20 @@ const GradientControl: VoidComponent<{
 						change_textfield_value(ev.currentTarget, value)
 					}}
 					trailing={<>
-						<TextTooltip text="Pick color"><TextFieldButton
+						<TextFieldButton
+							data-tooltip="Pick color"
 							onClick={(ev) => {
 								props.on_start_pick_color(index())
 								open_colorpicker(ev, props.colorpicker_ref, { color: stop.color, anchor: ev.currentTarget })}
 							}>
 							<Icon code={0xE785} />
-						</TextFieldButton></TextTooltip>
+						</TextFieldButton>
 						<Show when={array_length(gradient().color_stop_list) > 2}>
-							<TextTooltip text="Remove color"><TextFieldButton
+							<TextFieldButton
+								data-tooltip="Remove color"
 								onClick={() => command(Commands.remove_color_stop, gradient_index(), index())}>
 								<Icon code={0xE59D} />
-							</TextFieldButton></TextTooltip>
+							</TextFieldButton>
 						</Show>
 					</>}
 				/>
@@ -464,19 +465,19 @@ const GradientControl: VoidComponent<{
 			onClick={() => command(Commands.add_color_stop, gradient_index())}>
 			<Icon code={0xE009} filled/>Add color stop
 		</Button>
-		<TextTooltip text="More actions">
-			<IconButton onClick={ev => props.on_open_actions_menu(ev)} code={0xEAD7}/>
-		</TextTooltip>
+		<IconButton data-tooltip="More actions" onClick={ev => props.on_open_actions_menu(ev)} code={0xEAD7}/>
 	</div>)
 
 	return (<div class={CSS.body_gradient_control}>
-		<Control/>
-		<Show when={expanded()}>
-			<Options/>
-			<h3>Stops</h3>
-			<ColorStops/>
-			<Actions/>
-		</Show>
+		<TextTooltip>
+			<Control/>
+			<Show when={expanded()}>
+				<Options/>
+				<h3>Stops</h3>
+				<ColorStops/>
+				<Actions/>
+			</Show>
+		</TextTooltip>
 	</div>)
 }
 

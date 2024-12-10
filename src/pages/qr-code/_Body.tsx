@@ -166,9 +166,10 @@ const _: VoidComponent<{
 						<img ref={r => img_qrcode_ref = r} src={qrcode_image_src()!} alt="" />
 					</Show>
 					<div>
-						<Show when={qrcode_image_src() != null}>
-							<TextTooltip text="Dismiss">
+						<TextTooltip>
+							<Show when={qrcode_image_src() != null}>
 								<IconButton
+									data-tooltip="Dismiss"
 									variant={ButtonVariant.filled}
 									code={0xE5E9}
 									filled
@@ -179,10 +180,9 @@ const _: VoidComponent<{
 										event_stop_propagation(ev)
 									}}
 								/>
-							</TextTooltip>
-						</Show>
-						<TextTooltip text="Choose file">
+							</Show>
 							<IconButton
+								data-tooltip="Choose file"
 								variant={qrcode_image_src() != null? ButtonVariant.filled : ButtonVariant.tonal}
 								filled={qrcode_image_src() != null}
 								onClick={ev => {
@@ -191,10 +191,9 @@ const _: VoidComponent<{
 								}}
 								code={0xE900}
 							/>
-						</TextTooltip>
-						<Show when={is_mobile()}>
-							<TextTooltip text="Open camera">
+							<Show when={is_mobile()}>
 								<IconButton
+									data-tooltip="Open camera"
 									variant={qrcode_image_src() != null? ButtonVariant.filled : ButtonVariant.tonal}
 									filled={qrcode_image_src() != null}
 									onClick={ev => {
@@ -203,8 +202,8 @@ const _: VoidComponent<{
 									}}
 									code={0xE354}
 								/>
-							</TextTooltip>
-						</Show>
+							</Show>
+						</TextTooltip>
 					</div>
 				</div>
 			</div>

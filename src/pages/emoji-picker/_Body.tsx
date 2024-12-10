@@ -44,86 +44,106 @@ const _: VoidComponent<{
 				value={props.text}
 				onInput={ev => props.command(Commands.update_text, ev.currentTarget.value)}
 				ref={r => textfield_ref = r}
-				trailing={<TextTooltip text={timeout_copy_id() != null? 'Copied' : "Copy"}>
-					<TextFieldButton onClick={copy}>
-						<Icon code={timeout_copy_id() != null? 0xE3D8 : 0xE51B}/>
-					</TextFieldButton>
-				</TextTooltip>}
+				trailing={<TextFieldButton
+					onClick={copy}
+					data-tooltip={timeout_copy_id() != null? 'Copied' : "Copy"}>
+					<Icon code={timeout_copy_id() != null? 0xE3D8 : 0xE51B}/>
+				</TextFieldButton>}
 			/>
 		</div>
-		<Expander
-			open
-			header={<ExpanderHeader>Smiley & emotion</ExpanderHeader>}>
-			<For each={smiley_and_emotion_emojis}>{emoji =>
-				<TextTooltip text={emoji[1]}>
-					<Button onClick={() => pick_emoji(emoji[0])}><Emoji emoji={emoji[0]}/></Button>
-				</TextTooltip>
-			}</For>
-		</Expander>
-		<Expander
-			header={<ExpanderHeader>Person & body</ExpanderHeader>}>
-			<For each={person_and_body_emojis}>{emoji =>
-				<TextTooltip text={emoji[1]}>
-					<Button onClick={() => pick_emoji(emoji[0])}><Emoji emoji={emoji[0]}/></Button>
-				</TextTooltip>
-			}</For>
-		</Expander>
-		<Expander
-			header={<ExpanderHeader>Animal & nature</ExpanderHeader>}>
-			<For each={animal_and_nature_emojis}>{emoji =>
-				<TextTooltip text={emoji[1]}>
-					<Button onClick={() => pick_emoji(emoji[0])}><Emoji emoji={emoji[0]}/></Button>
-				</TextTooltip>
-			}</For>
-		</Expander>
-		<Expander
-			header={<ExpanderHeader>Food & drink</ExpanderHeader>}>
-			<For each={food_and_drink_emojis}>{emoji =>
-				<TextTooltip text={emoji[1]}>
-					<Button onClick={() => pick_emoji(emoji[0])}><Emoji emoji={emoji[0]}/></Button>
-				</TextTooltip>
-			}</For>
-		</Expander>
-		<Expander
-			header={<ExpanderHeader>Travel & places</ExpanderHeader>}>
-			<For each={travel_and_places_emojis}>{emoji =>
-				<TextTooltip text={emoji[1]}>
-					<Button onClick={() => pick_emoji(emoji[0])}><Emoji emoji={emoji[0]}/></Button>
-				</TextTooltip>
-			}</For>
-		</Expander>
-		<Expander
-			header={<ExpanderHeader>Activities</ExpanderHeader>}>
-			<For each={activities_emojis}>{emoji =>
-				<TextTooltip text={emoji[1]}>
-					<Button onClick={() => pick_emoji(emoji[0])}><Emoji emoji={emoji[0]}/></Button>
-				</TextTooltip>
-			}</For>
-		</Expander>
-		<Expander
-			header={<ExpanderHeader>Objects</ExpanderHeader>}>
-			<For each={object_emojis}>{emoji =>
-				<TextTooltip text={emoji[1]}>
-					<Button onClick={() => pick_emoji(emoji[0])}><Emoji emoji={emoji[0]}/></Button>
-				</TextTooltip>
-			}</For>
-		</Expander>
-		<Expander
-			header={<ExpanderHeader>Symbols</ExpanderHeader>}>
-			<For each={symbols_emojis}>{emoji =>
-				<TextTooltip text={emoji[1]}>
-					<Button onClick={() => pick_emoji(emoji[0])}><Emoji emoji={emoji[0]}/></Button>
-				</TextTooltip>
-			}</For>
-		</Expander>
-		<Expander
-			header={<ExpanderHeader>Flags</ExpanderHeader>}>
-			<For each={flags_emojis}>{emoji =>
-				<TextTooltip text={emoji[1]}>
-					<Button onClick={() => pick_emoji(emoji[0])}><Emoji emoji={emoji[0]}/></Button>
-				</TextTooltip>
-			}</For>
-		</Expander>
+		<TextTooltip>
+			<Expander
+				open
+				header={<ExpanderHeader>Smiley & emotion</ExpanderHeader>}>
+				<For each={smiley_and_emotion_emojis}>{emoji =>
+					<Button
+						data-tooltip={emoji[1]}
+						onClick={() => pick_emoji(emoji[0])}>
+						<Emoji emoji={emoji[0]}/>
+					</Button>
+				}</For>
+			</Expander>
+			<Expander
+				header={<ExpanderHeader>Person & body</ExpanderHeader>}>
+				<For each={person_and_body_emojis}>{emoji =>
+					<Button
+						data-tooltip={emoji[1]}
+						onClick={() => pick_emoji(emoji[0])}>
+						<Emoji emoji={emoji[0]}/>
+					</Button>
+				}</For>
+			</Expander>
+			<Expander
+				header={<ExpanderHeader>Animal & nature</ExpanderHeader>}>
+				<For each={animal_and_nature_emojis}>{emoji =>
+					<Button
+						data-tooltip={emoji[1]}
+						onClick={() => pick_emoji(emoji[0])}>
+						<Emoji emoji={emoji[0]}/>
+					</Button>
+				}</For>
+			</Expander>
+			<Expander
+				header={<ExpanderHeader>Food & drink</ExpanderHeader>}>
+				<For each={food_and_drink_emojis}>{emoji =>
+					<Button
+						data-tooltip={emoji[1]}
+						onClick={() => pick_emoji(emoji[0])}>
+						<Emoji emoji={emoji[0]}/>
+					</Button>
+				}</For>
+			</Expander>
+			<Expander
+				header={<ExpanderHeader>Travel & places</ExpanderHeader>}>
+				<For each={travel_and_places_emojis}>{emoji =>
+					<Button
+						data-tooltip={emoji[1]}
+						onClick={() => pick_emoji(emoji[0])}>
+						<Emoji emoji={emoji[0]}/>
+					</Button>
+				}</For>
+			</Expander>
+			<Expander
+				header={<ExpanderHeader>Activities</ExpanderHeader>}>
+				<For each={activities_emojis}>{emoji =>
+					<Button
+						data-tooltip={emoji[1]}
+						onClick={() => pick_emoji(emoji[0])}>
+						<Emoji emoji={emoji[0]}/>
+					</Button>
+				}</For>
+			</Expander>
+			<Expander
+				header={<ExpanderHeader>Objects</ExpanderHeader>}>
+				<For each={object_emojis}>{emoji =>
+					<Button
+						data-tooltip={emoji[1]}
+						onClick={() => pick_emoji(emoji[0])}>
+						<Emoji emoji={emoji[0]}/>
+					</Button>
+				}</For>
+			</Expander>
+			<Expander
+				header={<ExpanderHeader>Symbols</ExpanderHeader>}>
+				<For each={symbols_emojis}>{emoji =>
+					<Button
+						data-tooltip={emoji[1]}
+						onClick={() => pick_emoji(emoji[0])}>
+						<Emoji emoji={emoji[0]}/>
+					</Button>
+				}</For>
+			</Expander>
+			<Expander
+				header={<ExpanderHeader>Flags</ExpanderHeader>}>
+				<For each={flags_emojis}>{emoji =>
+					<Button
+						data-tooltip={emoji[1]}
+						onClick={() => pick_emoji(emoji[0])}>
+						<Emoji emoji={emoji[0]}/>
+					</Button>
+				}</For>
+			</Expander>
+		</TextTooltip>
 	</main>)
 }
 

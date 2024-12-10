@@ -88,8 +88,9 @@ const _: VoidComponent = () => {
 		<Toast
 			ref={r => toast_browsernotsupport_ref = r}
 			leading={<Icon code={0xF29B}/>}
-			trailing={<TextTooltip text="Close">
+			trailing={<TextTooltip>
 				<IconButton
+					data-tooltip="Close"
 					code={0xE5E9}
 					variant={ButtonVariant.tonal}
 					onClick={() => close_toast(toast_browsernotsupport_ref)}

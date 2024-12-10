@@ -1,9 +1,9 @@
-import { onCleanup, onMount, splitProps, type FlowComponent, type JSX } from "solid-js"
+import { createUniqueId, onCleanup, onMount, splitProps, type FlowComponent, type JSX } from "solid-js"
 import { mergeRefs } from "@solid-primitives/refs"
 
 import { attr_has, attr_remove, attr_set } from "@/utils/attributes"
 import { event_add_listener, call_event_handler, event_stop_propagation } from "@/utils/event"
-import { create_element, element_animate, element_append_child, element_children, element_classlist, element_dispatch_event, element_is_same_node, element_rect, element_set_style_property } from "@/utils/element"
+import { create_element, element_animate, element_append_child, element_children, element_classlist, element_closest, element_dataset, element_dispatch_event, element_is_same_node, element_rect, element_set_style_property } from "@/utils/element"
 import { timeout_clear, timeout_set } from "@/utils/timeout"
 import { FlyoutPosition as TooltipPosition } from "@/enums/position"
 import { get_flyout_position } from "@/utils/flyout"
@@ -26,10 +26,10 @@ enum TooltipAttributes {
 const TEXT_TOOLTIP_ID = 'c-text-tooltip'
 
 type TooltipOpenDetail = {
+	tooltip_id: string
 	event: Event
 	anchor: HTMLDivElement
 	tooltip?: HTMLDivElement
-	text?: string
 	use_anchor?: boolean
 	position?: TooltipPosition
 	gap?: number
@@ -48,6 +48,7 @@ function init_tooltip(): void {
 
 	const $isMobile = is_mobile()
 	let $anchor_ref: HTMLDivElement | null = null
+	let $target_ref: HTMLElement | null = null
 	let $pointer = {x: 0, y: 0}
 	let $position: TooltipPosition = TooltipPosition.center_top
 	let $gap: number = 40
@@ -183,19 +184,46 @@ function init_tooltip(): void {
 	function init_events(): void {
 		event_add_listener(body, BodyEvents.open_tooltip, (ev: CustomEvent<TooltipOpenDetail>) => {
 			const {
+				tooltip_id,
 				event,
 				anchor,
-				text,
 				gap = 40,
 				position = TooltipPosition.center_top,
 				start_delay_duration = 800,
 				use_anchor = false,
-				tooltip
+				tooltip // for <RichTooltip> <Popover>
 			} = ev.detail
 
+			let text = undefined
+			let target_ref = null
+			if (!tooltip) {
+				target_ref = event.target as HTMLDivElement
+				const element = element_closest(
+					target_ref,
+					'#' + tooltip_id + ' [data-tooltip]'
+				)as HTMLElement
+				if (element && element_dataset(element, 'tooltip')) {
+					text = element_dataset(element, 'tooltip')
+				}
+			}
+
 			timeout_set(() => {
-				if ($anchor_ref != null && element_is_same_node(anchor, $anchor_ref) && is_open) return
-				if (text == undefined && tooltip == undefined) return
+				// if the same rich tooltip
+				if ($anchor_ref
+					&& element_is_same_node(anchor, $anchor_ref)
+					&& tooltip
+					&& is_open) return
+
+				// if the same text tooltip
+				if (
+					target_ref
+					&& $target_ref
+					&& element_is_same_node(target_ref, $target_ref)
+					&& !tooltip
+					&& is_open) return
+
+				// if there is no tooltip
+				if (!text && !tooltip) return
 
 				close_tooltip()
 			}, 300)
@@ -203,14 +231,29 @@ function init_tooltip(): void {
 			if (timeoutId != null) timeout_clear(timeoutId)
 			timeoutId = timeout_set(async () => {
 				timeoutId = null
-				if ($anchor_ref != null && element_is_same_node(anchor, $anchor_ref) && is_open) return
-				if (text == undefined && tooltip == undefined) return
+				// if the same rich tooltip
+				if ($anchor_ref
+					&& element_is_same_node(anchor, $anchor_ref)
+					&& tooltip
+					&& is_open) return
+
+				// if the same text tooltip
+				if (
+					target_ref
+					&& $target_ref
+					&& element_is_same_node(target_ref, $target_ref)
+					&& !tooltip
+					&& is_open) return
+
+				// if there is no tooltip
+				if (!text && !tooltip) return
 
 				$anchor_ref = anchor
 				$gap = gap
 				$position = position
 				$use_anchor = use_anchor
 				tooltip_rich_ref = tooltip
+				$target_ref = target_ref
 				is_open = true
 
 				if (tooltip_rich_ref != undefined) return open_popover(event, tooltip_rich_ref, {
@@ -326,26 +369,39 @@ function init_tooltip(): void {
 }
 
 type TextTooltipProps = {
-	text?: string
 	position?: TooltipPosition
 	gap?: number
 	start_delay_duration?: number
 	end_delay_duration?: number
 	use_anchor?: boolean
 }
+
+/**
+ * **Text Tooltip Wrapper**
+
+ * Initializes tooltip listeners for elements with the `data-tooltip` attribute.
+
+ * **Best Practices:**
+   * Avoid wrapping individual elements with `TextTooltip` as it can lead to performance overhead.
+   * Use this wrapper for groups of tooltips to optimize listener efficiency.
+
+ * @param props
+ * @returns
+ */
 const TextTooltip: FlowComponent<TextTooltipProps> = (props) => {
 	const body = document.body
+	const id = createUniqueId()
 	let div_ref: HTMLDivElement
 
 	function open(ev: Event): void {
 		element_dispatch_event(body, new CustomEvent(BodyEvents.open_tooltip, {detail: {
+			tooltip_id: id,
 			event: ev,
 			anchor: div_ref,
 			use_anchor: props.use_anchor,
 			gap: props.gap,
 			position: props.position,
 			start_delay_duration: props.start_delay_duration,
-			text: props.text,
 		} satisfies TooltipOpenDetail}))
 		event_stop_propagation(ev)
 	}
@@ -375,6 +431,7 @@ const TextTooltip: FlowComponent<TextTooltipProps> = (props) => {
 
 	return (<div
 		class="c-tooltip"
+		id={id}
 		ref={r => div_ref = r}
 		onPointerOver={ev => open(ev)}
 		onTouchStart={ev => open(ev)}
@@ -403,11 +460,13 @@ const RichTooltip: FlowComponent<RichTooltipProps> = ($props) => {
 		'onPointerUp', 'onPointerMove'
 	])
 	const body = document.body
+	const id = createUniqueId()
 	let div_ref: HTMLDivElement
 	let tooltip_ref: HTMLDivElement
 
 	function open(ev: Event): void {
 		element_dispatch_event(body, new CustomEvent(BodyEvents.open_tooltip, {detail: {
+			tooltip_id: id,
 			event: ev,
 			anchor: div_ref,
 			use_anchor: props.use_anchor,
@@ -444,6 +503,7 @@ const RichTooltip: FlowComponent<RichTooltipProps> = ($props) => {
 
 	return (<div
 		class="c-tooltip"
+		id={id}
 		ref={r => div_ref = r}
 		onPointerOver={ev => open(ev)}
 		onTouchStart={ev => open(ev)}

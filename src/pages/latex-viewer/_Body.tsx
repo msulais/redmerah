@@ -87,22 +87,22 @@ const LatexEditor: VoidComponent<{
 				variant={ButtonVariant.tonal}>
 				<Icon code={0xE007}/>New equation
 			</Button>
-			<TextTooltip text={timeout_copy_id() != null? "Copied" : "Copy"}>
+			<TextTooltip>
 				<IconButton
+					data-tooltip={timeout_copy_id() != null? "Copied" : "Copy"}
 					onClick={copy}
 					code={timeout_copy_id() != null? 0xE3D8 : 0xE51B}
 					variant={ButtonVariant.tonal}
 				/>
-			</TextTooltip>
-			<Show when={!props.is_only_one}>
-				<TextTooltip text="Delete">
+				<Show when={!props.is_only_one}>
 					<IconButton
+						data-tooltip="Delete"
 						code={0xE59D}
 						variant={ButtonVariant.tonal}
 						onClick={() => props.command(Commands.delete_equation, props.index)}
 					/>
-				</TextTooltip>
-			</Show>
+				</Show>
+			</TextTooltip>
 		</div>
 	</div>)
 }

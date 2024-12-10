@@ -215,29 +215,27 @@ const _: VoidComponent = () => {
 		<AppBar
 			leading={<img alt="Emoji Picker logo" width={32} src={logo.src} />}
 			headline="Emoji Picker"
-			trailing={<>
-				<Tooltip text="Info">
-					<IconButton
-						focused={is_menu_info_open()}
-						code={0xE930}
-						onClick={(ev) => open_menu(ev, menu_info_ref, {
-							anchor: ev.currentTarget,
-							padding: 4,
-						})}
-					/>
-				</Tooltip>
-				<Tooltip text="Settings">
-					<IconButton
-						class={CSSAnimation.btn_rotate_icon}
-						focused={is_menu_settings_open()}
-						code={0xEE0F}
-						onClick={(ev) => open_menu(ev, menu_settings_ref, {
-							anchor: ev.currentTarget,
-							padding: 4,
-						})}
-					/>
-				</Tooltip>
-			</>}
+			trailing={<Tooltip>
+				<IconButton
+					data-tooltip="Info"
+					focused={is_menu_info_open()}
+					code={0xE930}
+					onClick={(ev) => open_menu(ev, menu_info_ref, {
+						anchor: ev.currentTarget,
+						padding: 4,
+					})}
+				/>
+				<IconButton
+					data-tooltip="Settings"
+					class={CSSAnimation.btn_rotate_icon}
+					focused={is_menu_settings_open()}
+					code={0xEE0F}
+					onClick={(ev) => open_menu(ev, menu_settings_ref, {
+						anchor: ev.currentTarget,
+						padding: 4,
+					})}
+				/>
+			</Tooltip>}
 		/>
 		<Menus />
 	</>)
