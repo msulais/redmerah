@@ -63,7 +63,6 @@ const DatePickerBody: ParentComponent<{
 			case option_month: date_set_year(new_date, date_year(new_date) + 1); break
 			case option_year: date_set_year(new_date, date_year(new_date) + 16); break
 		}
-
 		set_view_date(new_date)
 		update_date_view()
 	}

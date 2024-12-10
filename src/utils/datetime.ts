@@ -14,6 +14,16 @@ export function date_day(date: Date = new Date()): number {
 	return date.getDay()
 }
 
+/** Gets the seconds of a Date object, using local time. */
+export function date_second(date: Date = new Date): number {
+	return date.getSeconds()
+}
+
+/** Gets the milliseconds of a Date, using local time. */
+export function date_millisecond(date: Date = new Date): number {
+	return date.getMilliseconds()
+}
+
 /**
  * Sets the minutes value in the Date object using local time.
  * @param min A numeric value equal to the minutes value.
@@ -26,7 +36,11 @@ export function date_set_minute(
 	sec?: number,
 	ms?: number
 ): number {
-	return current_date.setMinutes(min, sec, ms)
+	return current_date.setMinutes(
+		min,
+		sec ?? date_second(current_date),
+		ms ?? date_millisecond(current_date)
+	)
 }
 
 /**
@@ -43,7 +57,12 @@ export function date_set_hour(
 	sec?: number,
 	ms?: number
 ): number {
-	return current_date.setHours(hours, min, sec, ms)
+	return current_date.setHours(
+		hours,
+		min ?? date_minute(current_date),
+		sec ?? date_second(current_date),
+		ms ?? date_millisecond(current_date)
+	)
 }
 
 /**
@@ -59,8 +78,12 @@ export function date_set_date(current_date: Date = new Date, date: number): numb
  * @param month A numeric value equal to the month. The value for January is 0, and other month values follow consecutively.
  * @param date A numeric value representing the day of the month. If this value is not supplied, the value from a call to the getDate method is used.
  */
-export function date_set_month(current_date: Date = new Date(), month: number, date?: number): number {
-	return current_date.setMonth(month, date)
+export function date_set_month(
+	current_date: Date = new Date(),
+	month: number,
+	date?: number
+): number {
+	return current_date.setMonth(month, date ?? date_date(current_date))
 }
 
 /**
@@ -69,8 +92,16 @@ export function date_set_month(current_date: Date = new Date(), month: number, d
  * @param month A zero-based numeric value for the month (0 for January, 11 for December). Must be specified if numDate is specified.
  * @param date A numeric value equal for the day of the month.
  */
-export function date_set_year(current_date: Date = new Date, year: number, month?: number, date?: number): number {
-	return current_date.setFullYear(year, month, date)
+export function date_set_year(
+	current_date: Date = new Date,
+	year: number, month?: number,
+	date?: number
+): number {
+	return current_date.setFullYear(
+		year,
+		month ?? date_month(current_date),
+		date ?? date_date(date)
+	)
 }
 
 /** Returns the stored time value in milliseconds since midnight, January 1, 1970 UTC. */
