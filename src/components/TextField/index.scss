@@ -82,7 +82,7 @@
 			&[data-c-focused] {
 				--g-background-color-opacity: 1;
 				--g-background-color: var(--g-color-surface);
-				border-color: rgba(var(--g-color-on-surface), var(--g-opacity2));
+				border-color: rgba(var(--g-color-on-surface), var(--g-opacity4));
 
 				&::before {
 					background-color: rgb(var(--g-color-accent));
