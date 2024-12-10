@@ -94,13 +94,14 @@ export function date_set_month(
  */
 export function date_set_year(
 	current_date: Date = new Date,
-	year: number, month?: number,
+	year: number,
+	month?: number,
 	date?: number
 ): number {
 	return current_date.setFullYear(
 		year,
 		month ?? date_month(current_date),
-		date ?? date_date(date)
+		date ?? date_date(current_date)
 	)
 }
 
