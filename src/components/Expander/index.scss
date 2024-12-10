@@ -28,20 +28,20 @@
 		}
 
 		&[data-c-open] {
-			--g-background-color-opacity: var(--g-opacity2);
+			--g-background-color-opacity: var(--g-opacity3);
 		}
 
 		&:not(:has( .c-btn:hover, .c-btn:active)) {
 			@media (hover:hover) {
 				&:hover {
-					--g-background-color-opacity: var(--g-opacity1);
+					--g-background-color-opacity: var(--g-opacity2);
 					cursor: pointer;
 				}
 			}
 
 			&:active {
 				--g-background-color-opacity: var(--g-opacity0);
-				--c-expander-border-opacity: var(--g-opacity1);
+				--c-expander-border-opacity: var(--g-opacity3);
 			}
 		}
 
@@ -59,13 +59,15 @@
 			&:not(:has( .c-btn:hover, .c-btn:active)) {
 				@media (hover:hover) {
 					&:hover {
-						--g-background-color-opacity: var(--g-opacity-inv3);
+						--g-background-color-opacity: var(--g-opacity-inv4);
 					}
 				}
 
 				&:active {
-					--g-background-color-opacity: var(--g-opacity-inv5);
+					color: rgb(var(--g-color-on-surface));
+					--g-background-color-opacity: var(--g-opacity5);
 					--c-expander-border-opacity: var(--g-opacity1);
+					border-color: rgb(var(--g-color-accent));
 				}
 			}
 
@@ -75,7 +77,7 @@
 		}
 
 		&[data-c-variant=tonal] {
-			--g-background-color-opacity: var(--g-opacity1);
+			--g-background-color-opacity: var(--g-opacity2);
 
 			&[data-c-open] {
 				border-bottom: 1px solid rgb(var(--g-color-background));
@@ -84,13 +86,13 @@
 			&:not(:has( .c-btn:hover, .c-btn:active)) {
 				@media (hover:hover) {
 					&:hover {
-						--g-background-color-opacity: var(--g-opacity2);
+						--g-background-color-opacity: var(--g-opacity4);
 					}
 				}
 
 				&:active {
-					--g-background-color-opacity: var(--g-opacity1);
-					--c-expander-border-opacity: var(--g-opacity1);
+					--g-background-color-opacity: var(--g-opacity2);
+					--c-expander-border-opacity: var(--g-opacity4);
 				}
 			}
 		}
@@ -132,7 +134,7 @@
 	}
 
 	&[data-c-variant=tonal] {
-		background-color: rgba(var(--g-color-on-surface), var(--g-opacity1));
+		background-color: rgba(var(--g-color-on-surface), var(--g-opacity2));
 	}
 
 	&[data-c-variant=outlined][data-c-open] {

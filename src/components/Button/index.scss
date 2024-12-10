@@ -29,8 +29,7 @@
 	min-height: 40px;
 	position: relative;
 	scrollbar-width: none;
-	transition-property: all, border;
-	transition-duration: .3s, 0s;
+	transition-duration: .3s;
 	user-select: none;
 	-ms-overflow-style: none;
 
@@ -63,15 +62,14 @@
 
 		@media (hover:hover) {
 			&:hover {
-				--g-background-color-opacity: var(--g-opacity1);
-				--c-btn-border-opacity: var(--g-opacity1);
+				--g-background-color-opacity: var(--g-opacity2);
 				cursor: pointer;
 			}
 		}
 
 		&:active {
 			--g-background-color-opacity: var(--g-opacity0);
-			--c-btn-border-opacity: var(--g-opacity1);
+			--c-btn-border-opacity: var(--g-opacity3);
 
 			> .c-icon {
 				animation: var(--c-btn-icon-animation);
@@ -89,14 +87,6 @@
 
 	:root[data-platform=desktop][data-corner=full-round] & {
 		--c-btn-border-radius: 18px;
-	}
-
-	&[data-c-compact] {
-		min-height: 36px;
-
-		:root[data-corner=full-round] & {
-			--c-btn-border-radius: 18px;
-		}
 	}
 
 	&::before {
@@ -224,25 +214,28 @@
 
 	&:not(:is(:disabled,[data-c-disabled])){
 		&[data-c-focused] {
-			--g-background-color-opacity: var(--g-opacity-inv3);
+			--g-background-color-opacity: var(--g-opacity5);
+			color: rgb(var(--g-color-on-surface));
 		}
 
 		@media (hover:hover) {
 			&:hover {
-				--g-background-color-opacity: var(--g-opacity-inv3);
+				color: rgb(var(--g-color-on-accent));
+				--g-background-color-opacity: var(--g-opacity-inv4);
 			}
 		}
 
 		&:active {
-			--g-background-color-opacity: var(--g-opacity-inv5);
-			--c-btn-border-opacity: var(--g-opacity1);
+			color: rgb(var(--g-color-on-surface));
+			--g-background-color-opacity: var(--g-opacity5);
+			--c-btn-border-opacity: 1;
+			border-color: rgb(var(--g-color-accent));
 		}
 	}
 }
 
 .c-tonal-btn {
-	--g-background-color-opacity: var(--g-opacity1);
-	--c-btn-border-opacity: var(--g-opacity1);
+	--g-background-color-opacity: var(--g-opacity2);
 
 	&:is(:disabled,[data-c-disabled]) {
 		--g-background-color-opacity: var(--g-opacity0);
@@ -250,18 +243,19 @@
 
 	&:not(:is(:disabled,[data-c-disabled])){
 		&[data-c-focused] {
-			--g-background-color-opacity: var(--g-opacity0);
+			--g-background-color-opacity: var(--g-opacity1);
+			--c-btn-border-opacity: var(--g-opacity4);
 		}
 
 		@media (hover:hover) {
 			&:hover {
-				--g-background-color-opacity: var(--g-opacity2);
+				--g-background-color-opacity: var(--g-opacity4);
 			}
 		}
 
 		&:active {
-			--g-background-color-opacity: var(--g-opacity1);
-			--c-btn-border-opacity: var(--g-opacity1);
+			--g-background-color-opacity: var(--g-opacity2);
+			--c-btn-border-opacity: var(--g-opacity4);
 		}
 	}
 }
