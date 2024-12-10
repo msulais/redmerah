@@ -1,4 +1,4 @@
-.c-modal.c-date-picker {
+:is(.c-modal,.c-popover).c-date-picker {
 	min-width: 320px;
 	max-width: 320px;
 
@@ -8,6 +8,15 @@
 		align-items: stretch;
 		justify-content: flex-start;
 	}
+}
+
+.c-date-picker-actions {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 8px;
+	padding: 12px;
+	background-color: rgb(var(--g-color-background));
+	border-top: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity2));
 }
 
 .c-date-picker-days {
