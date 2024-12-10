@@ -22,8 +22,8 @@ import EmojiC from '@/components/Emoji'
 import { ButtonVariant, EmojiButton, IconButton } from '@/components/Button'
 import { close_searchtextfieldmenu, SearchMenuItem, SearchTextField } from '@/components/TextField'
 import { Modal, type ModalProps, ModalPosition as EmojiPickerPosition, close_modal, focus_modal, open_modal, reposition_modal, is_modal_open } from '@/components/Modal'
-import './index.scss'
 import { close_popover, is_popover_open, open_popover, Popover, reposition_popover, type PopoverProps } from '../Popover'
+import './index.scss'
 
 const ALL_EMOJI: Emoji[] = array_sort(
 	array_map(
@@ -88,6 +88,7 @@ function init_emoji_picker(): void {
 }
 
 const EmojiPickerBody: ParentComponent<{
+	is_open: boolean
 	multiple?: boolean
 	use_close_button?: boolean
 	tooltip_close?: string
@@ -160,23 +161,25 @@ const EmojiPickerBody: ParentComponent<{
 	const Emojis: VoidComponent<{category: EmojiCategory, emojis: Emoji[]}> = $props => (<div
 		class='c-emoji-picker-emojis'
 		data-c-hidden={attr_set_if_exist($props.category != option())}>
-		<div>
-			<h3>{$props.category}</h3>
-			<For each={$props.emojis}>{e =>
-				<TextTooltip text={e[1]}>
-					<EmojiButton emoji={e[0]} onClick={() => {
-						element_dispatch_event(body, new CustomEvent(
-							BodyEvents.add_recent_emoji,
-							{detail: {emoji: [...e]}}
-						))
-						update_recents()
-						if (!props.multiple) props.on_close()
+		<Show when={$props.category == option() && props.is_open}>
+			<div>
+				<h3>{$props.category}</h3>
+				<For each={$props.emojis}>{e =>
+					<TextTooltip text={e[1]}>
+						<EmojiButton emoji={e[0]} onClick={() => {
+							element_dispatch_event(body, new CustomEvent(
+								BodyEvents.add_recent_emoji,
+								{detail: {emoji: [...e]}}
+							))
+							update_recents()
+							if (!props.multiple) props.on_close()
 
-						props.on_select_emoji?.(e[0], e[1])
-					}}/>
-				</TextTooltip>
-			}</For>
-		</div>
+							props.on_select_emoji?.(e[0], e[1])
+						}}/>
+					</TextTooltip>
+				}</For>
+			</div>
+		</Show>
 	</div>)
 
 	return (<>
@@ -274,19 +277,26 @@ type EmojiPickerProps = ModalProps & {
 const EmojiPicker: ParentComponent<EmojiPickerProps> = ($props) => {
 	const [props, other] = splitProps($props, [
 		'classList', 'on_select_emoji', 'ref', 'multiple',
-		'use_close_button', 'tooltip_close', 'children'
+		'use_close_button', 'tooltip_close', 'children',
+		'on_toggle_open'
 	])
 	const [emojipicker_ref, set_emojipicker_ref] = createSignal<HTMLElement | null>(null)
+	const [is_open, set_is_open] = createSignal<boolean>(false)
 
 	return (<Modal
 		classList={{
 			'c-emoji-picker': true,
 			...props.classList
 		}}
+		on_toggle_open={is_open => {
+			set_is_open(is_open)
+			props.on_toggle_open?.(is_open)
+		}}
 		ref={mergeRefs(props.ref, r => set_emojipicker_ref(r))}
 		{...other}>
 		<Show when={emojipicker_ref() != null}>
 			<EmojiPickerBody
+				is_open={is_open()}
 				element={emojipicker_ref() as HTMLElement}
 				on_close={() => close_modal(emojipicker_ref()! as HTMLDialogElement)}
 				multiple={props.multiple}
@@ -308,19 +318,26 @@ type PopoverEmojiPickerProps = PopoverProps & {
 const PopoverEmojiPicker: ParentComponent<PopoverEmojiPickerProps> = ($props) => {
 	const [props, other] = splitProps($props, [
 		'classList', 'on_select_emoji', 'ref', 'multiple',
-		'use_close_button', 'tooltip_close', 'children'
+		'use_close_button', 'tooltip_close', 'children',
+		'on_toggle_open'
 	])
 	const [emojipicker_ref, set_emojipicker_ref] = createSignal<HTMLElement | null>(null)
+	const [is_open, set_is_open] = createSignal<boolean>(false)
 
 	return (<Popover
 		classList={{
 			'c-emoji-picker': true,
 			...props.classList
 		}}
+		on_toggle_open={is_open => {
+			set_is_open(is_open)
+			props.on_toggle_open?.(is_open)
+		}}
 		ref={mergeRefs(props.ref, r => set_emojipicker_ref(r))}
 		{...other}>
 		<Show when={emojipicker_ref() != null}>
 			<EmojiPickerBody
+				is_open={is_open()}
 				element={emojipicker_ref() as HTMLElement}
 				on_close={() => close_modal(emojipicker_ref()! as HTMLDialogElement)}
 				multiple={props.multiple}
