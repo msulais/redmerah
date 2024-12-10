@@ -233,6 +233,9 @@ const DateTimePickerBody: ParentComponent<{
 				values={[
 					date_hour(value()) - (date_hour(value()) >= 12? 12 : 0)
 				]}
+				attr_menu={{style: {
+					"max-height": '192px'
+				}}}
 				on_change_options={(options) =>
 					set_value(v => (date_set_hour(v, options[0].value as number + (is_time_pm_format()? 12 : 0)), v))
 				}>
@@ -247,6 +250,9 @@ const DateTimePickerBody: ParentComponent<{
 			</Dropdown>
 			<Dropdown
 				values={[date_minute(value())]}
+				attr_menu={{style: {
+					"max-height": '192px'
+				}}}
 				on_change_options={(options) => set_value(v => (date_set_minute(v, options[0].value as number), v))}>
 				<MenuHeader>Minute</MenuHeader>
 				<For each={array_map(
@@ -257,7 +263,7 @@ const DateTimePickerBody: ParentComponent<{
 				}</For>
 			</Dropdown>
 			<Dropdown
-				values={['AM']}
+				values={[date_hour(value()) >= 12? 'PM' : 'AM']}
 				on_change_options={(options) => {
 					const hour = date_hour(value())
 					const $value = options[0].value
@@ -281,7 +287,7 @@ const DateTimePickerBody: ParentComponent<{
 
 					set_is_time_pm_format($value == 'PM')
 				}}>
-				<MenuHeader>Time format</MenuHeader>
+				<MenuHeader>Format</MenuHeader>
 				<For each={[['AM', 'AM'], ['PM', 'PM']]}>{option =>
 					<DropdownOption value={option[0]} text={option[1] as string}/>
 				}</For>
