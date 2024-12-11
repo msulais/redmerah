@@ -197,13 +197,12 @@ function init_tooltip(): void {
 			let text = undefined
 			let target_ref = null
 			if (!tooltip) {
-				target_ref = event.target as HTMLDivElement
-				const element = element_closest(
-					target_ref,
+				target_ref = element_closest(
+					event.target as HTMLElement,
 					'#' + tooltip_id + ' [data-tooltip]'
 				)as HTMLElement
-				if (element && element_dataset(element, 'tooltip')) {
-					text = element_dataset(element, 'tooltip')
+				if (target_ref && element_dataset(target_ref, 'tooltip')) {
+					text = element_dataset(target_ref, 'tooltip')
 				}
 			}
 
