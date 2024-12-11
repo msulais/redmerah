@@ -187,7 +187,7 @@ const SwitchMenuItem: ParentComponent<SwitchMenuItemProps> = ($props) => {
 		<div style="flex:1" />
 		{ props.trailing }
 		<RawSwitch
-			attr_wrapper={mergeProps({'data-g-no-outline': ''}, props.attr_switch) as any}
+			attr_wrapper={mergeProps({'data-g-no-outline': ''}, switch_props.attr_wrapper) as any}
 			disabled={switch_props.disabled ?? props.disabled}
 			checked={switch_props.checked ?? props.checked}
 			id={switch_props.id}
