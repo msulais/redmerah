@@ -231,9 +231,10 @@ const _: VoidComponent = () => {
 		<ColorPicker
 			ref={r => set_colorpicker_ref(r)}
 			color={palette.seed}
-			disabled_color_control
+			draggable
+			disabled_action
 			disabled_opacity_control
-			on_select_color={on_color_change}
+			on_update_color={on_color_change}
 		/>
 		<Dialog
 			ref={r => set_dialog_colorlist_ref(r)}

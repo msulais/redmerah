@@ -135,6 +135,16 @@ export function string_padstart(text: string, mex_length: number, fill_string?: 
 	return text.padStart(mex_length, fill_string)
 }
 
+/**
+ * Pads the current string with a given string (possibly repeated) so that the resulting string reaches a given length.
+ * The padding is applied from the end (right) of the current string.
+ * @param max_length The length of the resulting string once the current string has been padded. If this parameter is smaller than the current string's length, the current string will be returned as it is.
+ * @param fill_string The string to pad the current string with. If this string is too long, it will be truncated and the left-most part will be applied. The default value for this parameter is " " (U+0020).
+ */
+export function string_padend(text: string, mex_length: number, fill_string?: string) {
+	return text.padEnd(mex_length, fill_string)
+}
+
 /** Returns the length of a String object */
 export function string_length(text: string): number {
 	return text.length

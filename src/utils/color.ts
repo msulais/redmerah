@@ -7,8 +7,9 @@
 import type { RGBColor, HSLColor, HSVColor, HEXColor } from "@/types/color"
 import { math_floor, math_max, math_min, math_pow, math_round } from "./math"
 import { regex_test } from "./regex"
-import { string_padstart, string_slice, string_starts_with, string_substring } from "./string"
+import { string_padend, string_padstart, string_slice, string_starts_with, string_substring } from "./string"
 import { number_parse, number_to_string } from "./number"
+import { DynamicColor, themeFromSourceColor } from "@material/material-color-utilities"
 
 export function is_color_with_alpha_valid(hex: string): boolean {
 	return regex_test(/^#[0-9a-fA-F]{6}([0-9a-fA-F]{2})?$/i, hex)
@@ -240,6 +241,16 @@ export function hsv_to_hsl(hsv: HSVColor): HSLColor {
 	return rgb_to_hsl(hsv_to_rgb(hsv))
 }
 
+export function argb_to_rgb(argb: HEXColor): RGBColor {
+	const argb_hex = string_starts_with(argb, '#') ? string_slice(argb, 1) : argb
+	const argb_int = number_parse(string_padstart(argb_hex, 8, '0'), true, 16)
+	const r = (argb_int >> 16) & 0xFF
+	const g = (argb_int >> 8) & 0xFF
+	const b = argb_int & 0xFF
+
+	return {r, g, b}
+  }
+
 type GenerateColorResult = {
 	color: HEXColor
 	on_color: HEXColor
@@ -258,59 +269,12 @@ export function generate_color(hex: HEXColor): GenerateColorResult {
 	if (!is_color_valid(hex)) {
 		throw new Error("Invalid hex color format!")
 	}
-	const hsl = {...hex_to_hsl(hex), s: 1}
 
-	/**
-	 * `contrast` must be a value between `0 (bad) => 100 (best (high contrast))`.
-	 */
-	function getLightness(hsl: HSLColor, contrast: number){
-		let lightness = 0
-		const brightness = y_to_lstar(get_luminance(hsl_to_rgb(hsl)))
+	const theme = themeFromSourceColor(number_parse(string_substring(hex, 1), true, 16)).schemes
+	const color = rgb_to_hex(argb_to_rgb('#' + number_to_string(theme.light.primary, 16) as HEXColor))
+	const on_color = rgb_to_hex(argb_to_rgb('#' + number_to_string(theme.light.onPrimary, 16) as HEXColor))
+	const color_dark = rgb_to_hex(argb_to_rgb('#' + number_to_string(theme.dark.primary, 16) as HEXColor))
+	const on_color_dark = rgb_to_hex(argb_to_rgb('#' + number_to_string(theme.dark.onPrimary, 16) as HEXColor))
 
-		for (let i = 0; i < 101; i++){
-			if (brightness > 50) lightness = i / 100
-			else lightness = 1 - (i / 100)
-
-			if (get_contrast_ratio(hsl_to_rgb(hsl), hsl_to_rgb({...hsl, l: lightness})) <= contrast) break
-		}
-
-		return math_max(0, math_min(1, lightness))
-	}
-
-	/**
-	 * @param hsl
-	 * @param contrast Range from `0` to `100` (`0`=darkest, `100`=lightest)
-	 */
-	function getColor(hsl: HSLColor, contrast: number): HSLColor {
-		const high_to_low: boolean = contrast <= 50 ? true : false
-		const brightness = (c: HSLColor) => y_to_lstar(get_luminance(hsl_to_rgb(c)))
-		let lightness: number = 0
-
-		for (let i = 0; i < 101; i++){
-			if (high_to_low) {
-				lightness = 1 - (i / 100)
-				hsl = {...hsl, l: lightness}
-				if (brightness(hsl) <= contrast) break;
-				continue
-			}
-
-			lightness = i / 100
-			hsl = {...hsl, l: lightness}
-			if (brightness(hsl) >= contrast) break
-		}
-
-		return hsl
-	}
-
-	const color = getColor(hsl, 88 - get_contrast_ratio(hsl_to_rgb(hsl), {r: 255, g: 255, b: 255}))
-	const on_color = {...color, l: getLightness(color, 100)}
-	const color_dark = getColor(color, 72)
-	const on_color_dark = {...color_dark, l: getLightness(color_dark, 100)}
-
-	return {
-		color        : hsl_to_hex(color        ),
-		on_color     : hsl_to_hex(on_color     ),
-		color_dark   : hsl_to_hex(color_dark   ),
-		on_color_dark: hsl_to_hex(on_color_dark)
-	}
+	return {color, on_color, color_dark, on_color_dark}
 }

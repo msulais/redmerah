@@ -234,7 +234,6 @@ export const SettingsElement: VoidComponent = () => {
 			</MenuItem>
 		</Menu>
 		<PopoverColorPicker
-			disabled_color_control
 			disabled_opacity_control
 			disabled_action
 			draggable
