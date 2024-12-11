@@ -81,6 +81,8 @@ const _: VoidComponent = () => {
 			remove_splash_screen()
 			clicked = true
 		})
+
+		// BUG: el.click is not a function
 		element_click(document as unknown as HTMLElement)
 	})
 

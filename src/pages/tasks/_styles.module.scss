@@ -62,7 +62,7 @@ $side_navigation_none: 680px;
 	max-width: 100%;
 	max-height: calc(100dvh - 56px);
 	background-color: rgb(var(--g-color-surface));
-	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity1));
+	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity3));
 	border-right: 0;
 	border-bottom: 0;
 	border-radius: 8px 0 0 0;
@@ -78,6 +78,7 @@ $side_navigation_none: 680px;
 	@media (max-width: $side_navigation_none) {
 		border-top-left-radius: 0 !important;
 		border: none;
+		border-top: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity3));
 	}
 }
 
@@ -210,7 +211,7 @@ $side_navigation_none: 680px;
 		}
 	}
 
-	> :global(.c-appbar):not(.body_appbar) {
+	> div > :global(.c-appbar):not(.body_appbar) {
 		padding-left: 12px;
 		padding-right: 4px;
 		width: 1080px;
@@ -272,6 +273,10 @@ $side_navigation_none: 680px;
 
 		> div {
 			padding: 4px 4px 4px 40px;
+
+			> :global(.c-checkbox) {
+				justify-content: flex-start;
+			}
 		}
 	}
 }

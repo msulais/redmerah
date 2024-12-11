@@ -9,7 +9,7 @@ import { event_prevent_default, event_stop_propagation } from "@/utils/event"
 import { DEFAULT_TASK_LIST } from "./_constants"
 import { attr_set_if_exist } from "@/utils/attributes"
 import { string_replace, string_starts_with, string_totitlecase, string_trim } from "@/utils/string"
-import { add_classlist_module } from "@/utils/element"
+import { add_classlist_module, element_focus } from "@/utils/element"
 import { is_number } from "@/utils/typecheck"
 import { file_open, file_read_as_text } from "@/utils/file"
 import { url_create, url_revoke } from "@/utils/url"
@@ -543,6 +543,9 @@ const SingleTaskList: VoidComponent<{
 			subtasks: []
 		} satisfies Task, props.tasklist_index)
 		change_textfield_value(textfield_newtask_ref, '')
+
+		// BUG: focus not working
+		element_focus(textfield_newtask_ref)
 	}
 
 	createEffect(() => {

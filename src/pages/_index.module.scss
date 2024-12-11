@@ -71,11 +71,16 @@
 		gap: 16px;
 
 		&:not(:last-child) {
+			border-bottom: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity-border));
+			padding-bottom: 24px;
+		}
+
+		&:not(:last-child) {
 			margin-bottom: 24px;
 		}
 
 		> :global(.c-icon) {
-			--c-icon-size: var(--g-font-size-l);
+			--c-icon-size: var(--g-font-size-xxd);
 		}
 	}
 

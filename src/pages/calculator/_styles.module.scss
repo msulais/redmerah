@@ -39,7 +39,7 @@ $side_notebook_none: 760px;
 	background-color: rgb(var(--g-color-surface));
 	padding: 8px;
 	border-radius: 16px;
-	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity1));
+	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity3));
 
 	:root[data-corner=sharp] & { border-radius: 0 }
 	:root[data-corner=semi-round] & { border-radius: 12px }
@@ -75,7 +75,7 @@ $side_notebook_none: 760px;
 	background-color: rgb(var(--g-color-surface));
 	padding: 12px;
 	border-radius: 8px;
-	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity1));
+	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity3));
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;

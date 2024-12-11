@@ -5,7 +5,7 @@
 	gap: 8px;
 	padding: 0 16px 16px 16px;
 
-	> :global(.c-expander) {
+	> div > :global(.c-expander) {
 		width: 840px;
 		max-width: 100%;
 	}
