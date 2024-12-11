@@ -34,6 +34,7 @@ import Toast, { open_toast } from "@/components/Toast"
 import DateTimePicker, { DateTimePickerPosition, open_datetimepicker } from "@/components/DateTimePicker"
 import AppBar from "@/components/AppBar"
 import CSS from './_styles.module.scss'
+import { timeout_set } from "@/utils/timeout"
 
 const AppbarTasks: VoidComponent<{
 	page: Pages | number
@@ -525,7 +526,7 @@ const SingleTaskList: VoidComponent<{
 			|| string_trim(textfield_newtask_ref.value) == ''
 		) return;
 
-		const listId: number = (page() == Pages.tasks
+		const list_id: number = (page() == Pages.tasks
 			? DEFAULT_TASK_LIST.id
 			: page() as number
 		)
@@ -537,15 +538,17 @@ const SingleTaskList: VoidComponent<{
 			id: -1,
 			important: false,
 			label_ids: [],
-			list_id: listId,
+			list_id,
 			name: string_trim(textfield_newtask_ref.value),
 			reminder: null,
 			subtasks: []
 		} satisfies Task, props.tasklist_index)
 		change_textfield_value(textfield_newtask_ref, '')
 
-		// BUG: focus not working
-		element_focus(textfield_newtask_ref)
+		timeout_set(() => {
+			// FIXME: can't focus textfield without this wrapper
+			element_focus(textfield_newtask_ref)
+		}, 200)
 	}
 
 	createEffect(() => {

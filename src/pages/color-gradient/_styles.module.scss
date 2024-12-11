@@ -88,7 +88,6 @@
 		> div:not([data-gradient]) {
 			position: absolute;
 			bottom: 32px;
-			transition-duration: .25s;
 
 			> div {
 				border: 2px solid rgb(var(--g-color-on-surface));

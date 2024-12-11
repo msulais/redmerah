@@ -75,15 +75,14 @@ const _: VoidComponent = () => {
 
 	onMount(() => {
 		let clicked = false
-		event_add_listener(document, 'click', ev => {
+		event_add_listener(document.body, 'click', ev => {
 			if (clicked) return;
 			init_battery(ev)
 			remove_splash_screen()
 			clicked = true
 		})
 
-		// BUG: el.click is not a function
-		element_click(document as unknown as HTMLElement)
+		element_click(document.body)
 	})
 
 	const Toasts: VoidComponent = () => (<>
