@@ -10,6 +10,7 @@ import qr_code_logo from '@/assets/apps/qr-code-logo.svg'
 import color_gradient_logo from '@/assets/apps/color-gradient/logo.svg'
 import emoji_picker_logo from '@/assets/apps/emoji-picker/logo.svg'
 import latex_viewer_logo from '@/assets/apps/latex-viewer/logo.svg'
+import color_picker_logo from '@/assets/apps/color-picker/logo.svg'
 import { RoutesLinks } from '@/enums/links'
 import type { AppItem } from '@/types/apps'
 
@@ -133,7 +134,18 @@ export const app_markdown_converter: AppItem = {
 	build_version: '0.1.5',
 }
 
+export const app_color_picker: AppItem = {
+	logo_url: color_picker_logo.src,
+	name: 'Color Picker',
+	description: 'Quickly and easily pick the perfect color with our online color picker tool.',
+	link: RoutesLinks.color_picker,
+	color: '#FF0401',
+	build_number: 1,
+	build_version: '0.0.1',
+}
+
 export const apps: AppItem[] = [
+	app_color_picker,
 	app_latex_viewer,
 	app_emoji_picker,
 	app_color_gradient,

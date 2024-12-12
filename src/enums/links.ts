@@ -18,6 +18,7 @@ export enum RoutesLinks {
 	color_gradient = '/color-gradient',
 	emoji_picker = '/emoji-picker',
 	latex_viewer = '/latex-viewer',
+	color_picker = '/color-picker',
 
 	// TODO: create these apps
 	notes = '/notes',
