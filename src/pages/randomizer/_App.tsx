@@ -224,9 +224,9 @@ const _: VoidComponent = () => {
 				case ColorsRandomizerColorModel.rgb: {
 					const rgb = $settings.range.rgb
 					for (let i = 0; i < count; i++) {
-						const r = random_number(rgb.r.min, rgb.r.max)
-						const g = random_number(rgb.g.min, rgb.g.max)
-						const b = random_number(rgb.b.min, rgb.b.max)
+						const r = random_number(rgb.r.min, rgb.r.max) / 0xff
+						const g = random_number(rgb.g.min, rgb.g.max) / 0xff
+						const b = random_number(rgb.b.min, rgb.b.max) / 0xff
 						array_push(colors, rgb_to_hex({r, g, b}))
 					}
 					break

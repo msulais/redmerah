@@ -1,0 +1,365 @@
+import { createMemo as $memory, createSignal as $signal, createEffect as $effect, Match, Switch, type VoidComponent } from "solid-js"
+
+import CSS from './_styles.module.scss'
+import Dropdown, { DropdownOption } from "@/components/Dropdown"
+import { ColorPickerMode, Commands } from "./_enums"
+import type { Settings } from "./_types"
+import { ImagePicker, PalettePicker, RectangleHSLPicker, RectanglePicker, SliderCMYKPicker, SliderHEXPicker, SliderHSLPicker, SliderHSVPicker, SliderHWBPicker, SliderRGBPicker, SpectrumPicker, WheelPicker } from "./_Pickers"
+import TextField, { TextFieldButton } from "@/components/TextField"
+import type { HEXColor, HSLColor } from "@/types/color"
+import { string_length, string_padstart, string_replace, string_split, string_substring, string_touppercase, string_trim } from "@/utils/string"
+import { cmyk_to_hsl, hex_to_cmyk, hex_to_hsl, hex_to_hsv, hex_to_hwb, hex_to_rgb, hsl_to_cmyk, hsl_to_hex, hsl_to_hsv, hsl_to_hwb, hsl_to_rgb, hsv_to_hsl, hwb_to_hsl, rgb_to_hsl } from "@/utils/color"
+import { math_clamp, math_round } from "@/utils/math"
+import { array_join, array_length, array_map, array_push } from "@/utils/array"
+import { number_parse, number_safe } from "@/utils/number"
+import { navigator_clipboard_writetext } from "@/utils/navigator"
+import Toast, { open_toast } from "@/components/Toast"
+import Icon from "@/components/Icon"
+
+const ColorPicker: VoidComponent<{
+	command(type: Commands, ...args: unknown[]): unknown
+	settings: Settings
+	input: HSLColor
+}> = (props) => {
+	const settings = $memory(() => props.settings)
+	const input = $memory(() => props.input)
+
+	function command(type: Commands, ...args: unknown[]): unknown {
+		return props.command(type, ...args)
+	}
+
+	function is_mode(mode: ColorPickerMode): boolean {
+		return settings().mode == mode
+	}
+
+	return (<div class={CSS.color_picker}>
+		<Dropdown
+			label="Picker mode"
+			text="Select picker mode"
+			values={[settings().mode]}
+			style={{"min-width": '100%'}}
+			on_change_options={(values) => command(Commands.change_mode, values[0].value as ColorPickerMode)}>
+			<DropdownOption text="Image" value={ColorPickerMode.image}/>
+			<DropdownOption text="Rectangle" value={ColorPickerMode.rectangle}/>
+			<DropdownOption text="Rectangle HSL" value={ColorPickerMode.rectangle_hsl}/>
+			{/* <DropdownOption text="Palette" value={ColorPickerMode.palette}/> */}
+			<DropdownOption text="Spectrum (Beta release)" value={ColorPickerMode.spectrum}/>
+			{/* <DropdownOption text="Wheel" value={ColorPickerMode.wheel}/> */}
+			<DropdownOption text="Slider RGB" value={ColorPickerMode.slider_rgb}/>
+			<DropdownOption text="Slider HSL" value={ColorPickerMode.slider_hsl}/>
+			<DropdownOption text="Slider CMYK" value={ColorPickerMode.slider_cmyk}/>
+			<DropdownOption text="Slider HEX" value={ColorPickerMode.slider_hex}/>
+			<DropdownOption text="Slider HSV" value={ColorPickerMode.slider_hsv}/>
+			<DropdownOption text="Slider HWB" value={ColorPickerMode.slider_hwb}/>
+		</Dropdown>
+		<Switch>
+			<Match when={is_mode(ColorPickerMode.image)}><ImagePicker command={command} /></Match>
+			<Match when={is_mode(ColorPickerMode.rectangle)}><RectanglePicker command={command} input={input()} /></Match>
+			<Match when={is_mode(ColorPickerMode.rectangle_hsl)}><RectangleHSLPicker command={command} input={input()} /></Match>
+			<Match when={is_mode(ColorPickerMode.palette)}><PalettePicker /></Match>
+			<Match when={is_mode(ColorPickerMode.spectrum)}><SpectrumPicker command={command} input={input()} /></Match>
+			<Match when={is_mode(ColorPickerMode.wheel)}><WheelPicker /></Match>
+			<Match when={is_mode(ColorPickerMode.slider_rgb)}><SliderRGBPicker command={command} input={input()} /></Match>
+			<Match when={is_mode(ColorPickerMode.slider_hsl)}><SliderHSLPicker command={command} input={input()} /></Match>
+			<Match when={is_mode(ColorPickerMode.slider_cmyk)}><SliderCMYKPicker command={command} input={input()} /></Match>
+			<Match when={is_mode(ColorPickerMode.slider_hex)}><SliderHEXPicker command={command} input={input()} /></Match>
+			<Match when={is_mode(ColorPickerMode.slider_hsv)}><SliderHSVPicker command={command} input={input()} /></Match>
+			<Match when={is_mode(ColorPickerMode.slider_hwb)}><SliderHWBPicker command={command} input={input()} /></Match>
+		</Switch>
+	</div>)
+}
+
+const ColorInput: VoidComponent<{
+	input: HSLColor
+	settings: Settings
+	command(type: Commands, ...args: unknown[]): unknown
+}> = (props) => {
+	const input = $memory(() => props.input)
+	const settings = $memory(() => props.settings)
+	const read_only = $memory(() => {
+		const mode = settings().mode
+		return mode == ColorPickerMode.palette || mode == ColorPickerMode.image
+	})
+	const get_hex_color = $memory(() => string_touppercase(hsl_to_hex(input())))
+	const get_rgb_color = $memory(() => {
+		const {r, g, b} = hsl_to_rgb(input())
+		return array_join([
+			math_round(r * 0xff),
+			math_round(g * 0xff),
+			math_round(b * 0xff)
+		], ', ')
+	})
+	const get_hsl_color = $memory(() => {
+		const {h, s, l} = input()
+		return `${math_round(h * 360)}°, ${math_round(s * 100)}%, ${math_round(l * 100)}%`
+	})
+	const get_hsv_color = $memory(() => {
+		const {h, s, v} = hsl_to_hsv(input())
+		return `${math_round(h * 360)}°, ${math_round(s * 100)}%, ${math_round(v * 100)}%`
+	})
+	const get_hwb_color = $memory(() => {
+		const {h, w, b} = hsl_to_hwb(input())
+		return `${math_round(h * 360)}°, ${math_round(w * 100)}%, ${math_round(b * 100)}%`
+	})
+	const get_cmyk_color = $memory(() => {
+		const {c, m, y, k} = hsl_to_cmyk(input())
+		return `${math_round(c * 100)}%, ${math_round(m * 100)}%, ${math_round(y * 100)}%, ${math_round(k * 100)}%`
+	})
+	const [hex_color, set_hex_color] = $signal<string>('#000000')
+	const [rgb_color, set_rgb_color] = $signal<string>('0, 0, 0')
+	const [hsl_color, set_hsl_color] = $signal<string>('0°, 0%, 0%')
+	const [hsv_color, set_hsv_color] = $signal<string>('0°, 0%, 0%')
+	const [hwb_color, set_hwb_color] = $signal<string>('0°, 0%, 0%')
+	const [cmyk_color, set_cmyk_color] = $signal<string>('0%, 0%, 0%, 0%')
+	let is_hex_color_focus = false
+	let is_rgb_color_focus = false
+	let is_hsl_color_focus = false
+	let is_hsv_color_focus = false
+	let is_hwb_color_focus = false
+	let is_cmyk_color_focus = false
+	let toast_copied_ref: HTMLDivElement
+
+	function command(type: Commands, ...args: unknown[]): unknown {
+		return props.command(type, ...args)
+	}
+
+	function copy(ev: Event, text: string): void {
+		navigator_clipboard_writetext(text)
+		open_toast(ev, toast_copied_ref)
+	}
+
+	function update_color(): void {
+		if (!is_hex_color_focus ) set_hex_color (get_hex_color())
+		if (!is_rgb_color_focus ) set_rgb_color (get_rgb_color())
+		if (!is_hsl_color_focus ) set_hsl_color (get_hsl_color())
+		if (!is_hsv_color_focus ) set_hsv_color (get_hsv_color())
+		if (!is_hwb_color_focus ) set_hwb_color (get_hwb_color())
+		if (!is_cmyk_color_focus) set_cmyk_color(get_cmyk_color())
+	}
+
+	$effect(() => {
+		update_color()
+	})
+
+	return (<div class={CSS.color_input}>
+		<div style={{
+			"background-color": hsl_to_hex(input())
+		}}></div>
+		<Toast
+			ref={r => toast_copied_ref = r}
+			leading={<Icon code={0xE51B}/>}>
+			Copied to clipboard
+		</Toast>
+		<TextField
+			label="Hex"
+			value={hex_color()}
+			readOnly={read_only()}
+			onFocus={() => is_hex_color_focus = true}
+			onBlur={() => {
+				set_hex_color(get_hex_color())
+				is_hex_color_focus = false
+			}}
+			onInput={(ev) => {
+				let text = ev.currentTarget.value
+				text = string_trim(text)
+				text = string_replace(text, /[^0-9A-Fa-f]/g, '')
+				if (string_length(text) == 0) text = '0'
+
+				text = string_padstart(text, 6, '0')
+				if (string_length(text) > 6) text = string_substring(text, 0, 6)
+
+				text = '#' + text
+				command(Commands.update_input, hex_to_hsl(text as HEXColor))
+			}}
+			trailing={<TextFieldButton
+				data-tooltip="Copy"
+				onClick={(ev) => copy(ev, get_hex_color())}>
+				<Icon code={0xE51B}/>
+			</TextFieldButton>}
+		/>
+		<TextField
+			readOnly={read_only()}
+			label="RGB"
+			value={rgb_color()}
+			onFocus={() => is_rgb_color_focus = true}
+			onBlur={() => {
+				set_rgb_color(get_rgb_color())
+				is_rgb_color_focus = false
+			}}
+			onInput={(ev) => {
+				let text = ev.currentTarget.value
+				text = string_trim(text)
+				text = string_replace(text, /[^\d,]/g, '')
+				const rgb_array: number[] = array_map(
+					string_split(text, ','),
+					v => math_clamp(number_safe(number_parse(v, true), 0), 0, 0xff)
+				)
+				while (array_length(rgb_array) < 3) {
+					array_push(rgb_array, 0)
+				}
+
+				const r = rgb_array[0] / 0xff
+				const g = rgb_array[1] / 0xff
+				const b = rgb_array[2] / 0xff
+				command(Commands.update_input, rgb_to_hsl({r, g, b}))
+			}}
+			trailing={<TextFieldButton
+				data-tooltip="Copy"
+				onClick={(ev) => copy(ev, get_rgb_color())}>
+				<Icon code={0xE51B}/>
+			</TextFieldButton>}
+		/>
+		<TextField
+			readOnly={read_only()}
+			label="HSL"
+			value={hsl_color()}
+			onFocus={() => is_hsl_color_focus = true}
+			onBlur={() => {
+				set_hsl_color(get_hsl_color())
+				is_hsl_color_focus = false
+			}}
+			onInput={(ev) => {
+				let text = ev.currentTarget.value
+				text = string_trim(text)
+				text = string_replace(text, /[^\d,]/g, '')
+				const hsl_array: number[] = array_map(
+					string_split(text, ','),
+					v => number_safe(number_parse(v, true), 0)
+				)
+				while (array_length(hsl_array) < 3) {
+					array_push(hsl_array, 0)
+				}
+
+				const h = math_clamp(hsl_array[0], 0, 360) / 360
+				const s = math_clamp(hsl_array[1], 0, 100) / 100
+				const l = math_clamp(hsl_array[2], 0, 100) / 100
+				command(Commands.update_input, {h, s, l} satisfies HSLColor)
+			}}
+			trailing={<TextFieldButton
+				data-tooltip="Copy"
+				onClick={(ev) => copy(ev, get_hsl_color())}>
+				<Icon code={0xE51B}/>
+			</TextFieldButton>}
+		/>
+		<TextField
+			readOnly={read_only()}
+			label="HSV"
+			value={hsv_color()}
+			onFocus={() => is_hsv_color_focus = true}
+			onBlur={() => {
+				set_hsv_color(get_hsv_color())
+				is_hsv_color_focus = false
+			}}
+			onInput={(ev) => {
+				let text = ev.currentTarget.value
+				text = string_trim(text)
+				text = string_replace(text, /[^\d,]/g, '')
+				const hsv_array: number[] = array_map(
+					string_split(text, ','),
+					v => number_safe(number_parse(v, true), 0)
+				)
+				while (array_length(hsv_array) < 3) {
+					array_push(hsv_array, 0)
+				}
+
+				const h = math_clamp(hsv_array[0], 0, 360) / 360
+				const s = math_clamp(hsv_array[1], 0, 100) / 100
+				const v = math_clamp(hsv_array[2], 0, 100) / 100
+				command(Commands.update_input, hsv_to_hsl({h, s, v}))
+			}}
+			trailing={<TextFieldButton
+				data-tooltip="Copy"
+				onClick={(ev) => copy(ev, get_hsv_color())}>
+				<Icon code={0xE51B}/>
+			</TextFieldButton>}
+		/>
+		<TextField
+			readOnly={read_only()}
+			label="HWB"
+			value={hwb_color()}
+			onFocus={() => is_hwb_color_focus = true}
+			onBlur={() => {
+				set_hwb_color(get_hwb_color())
+				is_hwb_color_focus = false
+			}}
+			onInput={(ev) => {
+				let text = ev.currentTarget.value
+				text = string_trim(text)
+				text = string_replace(text, /[^\d,]/g, '')
+				const hwb_array: number[] = array_map(
+					string_split(text, ','),
+					v => number_safe(number_parse(v, true), 0)
+				)
+				while (array_length(hwb_array) < 3) {
+					array_push(hwb_array, 0)
+				}
+
+				const h = math_clamp(hwb_array[0], 0, 360) / 360
+				const w = math_clamp(hwb_array[1], 0, 100) / 100
+				const b = math_clamp(hwb_array[2], 0, 100 - (w * 100)) / 100
+				command(Commands.update_input, hwb_to_hsl({h, w, b}))
+			}}
+			trailing={<TextFieldButton
+				data-tooltip="Copy"
+				onClick={(ev) => copy(ev, get_hwb_color())}>
+				<Icon code={0xE51B}/>
+			</TextFieldButton>}
+		/>
+		<TextField
+			readOnly={read_only()}
+			label="CMYK"
+			value={cmyk_color()}
+			onFocus={() => is_cmyk_color_focus = true}
+			onBlur={() => {
+				set_cmyk_color(get_cmyk_color())
+				is_cmyk_color_focus = false
+			}}
+			onInput={(ev) => {
+				let text = ev.currentTarget.value
+				text = string_trim(text)
+				text = string_replace(text, /[^\d,]/g, '')
+				const hwb_array: number[] = array_map(
+					string_split(text, ','),
+					v => number_safe(number_parse(v, true), 0)
+				)
+				while (array_length(hwb_array) < 4) {
+					array_push(hwb_array, 0)
+				}
+
+				const c = math_clamp(hwb_array[0], 0, 100) / 100
+				const m = math_clamp(hwb_array[1], 0, 100) / 100
+				const y = math_clamp(hwb_array[2], 0, 100) / 100
+				const k = math_clamp(hwb_array[3], 0, 100) / 100
+				command(Commands.update_input, cmyk_to_hsl({c, m, y, k}))
+			}}
+			trailing={<TextFieldButton
+				data-tooltip="Copy"
+				onClick={(ev) => copy(ev, get_cmyk_color())}>
+				<Icon code={0xE51B}/>
+			</TextFieldButton>}
+		/>
+	</div>)
+}
+
+const _: VoidComponent<{
+	command(type: Commands, ...args: unknown[]): unknown
+	settings: Settings
+	input: HSLColor
+}> = (props) => {
+	const input = $memory(() => props.input)
+	const settings = $memory(() => props.settings)
+	const command = $memory(() => props.command)
+	return (<main class={CSS.body}>
+		<ColorPicker
+			input={input()}
+			command={command()}
+			settings={settings()}
+		/>
+		<ColorInput
+			command={command()}
+			input={input()} settings={settings()}
+		/>
+	</main>)
+}
+
+export default _

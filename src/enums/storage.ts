@@ -17,5 +17,6 @@ export enum DatabaseNames {
 	color_gradient = 'color_gradient',
 	biru_ui = 'biru_ui',
 	emoji_picker = 'emoji_picker',
-	latex_viewer = 'latex_viewer'
+	latex_viewer = 'latex_viewer',
+	color_picker = 'color_picker'
 }

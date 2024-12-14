@@ -10,6 +10,7 @@ import { promise_done } from "@/utils/object"
 import Icon from "@/components/Icon"
 import Button, { ButtonVariant } from "@/components/Button"
 import CSS from './_styles.module.scss'
+import { math_round } from "@/utils/math"
 
 const _: VoidComponent<Palette> = (props) => {
 	const timeout_accentlight_id: Signal<number | null> = createSignal<number | null>(null)
@@ -35,7 +36,7 @@ const _: VoidComponent<Palette> = (props) => {
 
 	function hex_to_css_value(hex: HEXColor): string {
 		const rgb = hex_to_rgb(hex)
-		return `${rgb.r}, ${rgb.g}, ${rgb.b}`
+		return `${math_round(rgb.r * 0xff)}, ${math_round(rgb.g * 0xff)}, ${math_round(rgb.b * 0xff)}`
 	}
 
 	return (<main class={CSS.body_main}>

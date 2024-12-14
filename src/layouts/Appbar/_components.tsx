@@ -22,6 +22,7 @@ import { ThemeData } from "@/enums/theme";
 import { timeout_clear, timeout_set } from "@/utils/timeout";
 import { remove_splash_screen_on_load_every_component } from "@/scripts/splash";
 import { array_includes } from "@/utils/array";
+import { math_round } from "@/utils/math";
 
 type NavigationMenuProps = {
 	route?: RoutesLinks
@@ -126,7 +127,7 @@ export const SettingsElement: VoidComponent = () => {
 	}
 
 	function rgb_to_css(rgb: RGBColor): string {
-		return `${rgb.r}, ${rgb.g}, ${rgb.b}`
+		return `${math_round(rgb.r * 0xff)}, ${math_round(rgb.g * 0xff)}, ${math_round(rgb.b * 0xff)}`
 	}
 
 	function change_color(hexColor: HEXColor): void {

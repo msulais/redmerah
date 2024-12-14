@@ -1,4 +1,4 @@
-import { createSignal, onMount, type VoidComponent } from "solid-js"
+import { createSignal as $signal, onMount as $mount, type VoidComponent } from "solid-js"
 
 import { RootAttributes } from "@/enums/attributes"
 import { CornerData } from "@/enums/corner"
@@ -23,12 +23,12 @@ import CSSAnimation from "@/styles/animation.module.scss"
 
 const _: VoidComponent = () => {
 	const root = document.documentElement
-	const [is_menu_info_open, set_is_menu_info_open] = createSignal<boolean>(false)
-	const [is_menu_settings_open, set_is_menu_settings_open] = createSignal<boolean>(false)
-	const [is_submenu_themesettings_open, set_is_submenu_themesettings_open] = createSignal<boolean>(false)
-	const [is_submenu_cornersettings_open, set_is_submenu_cornersettings_open] = createSignal<boolean>(false)
-	const [theme, set_theme] = createSignal<ThemeData>(ThemeData.system)
-	const [corner, set_corner] = createSignal<CornerData>(CornerData.round)
+	const [is_menu_info_open, set_is_menu_info_open] = $signal<boolean>(false)
+	const [is_menu_settings_open, set_is_menu_settings_open] = $signal<boolean>(false)
+	const [is_submenu_themesettings_open, set_is_submenu_themesettings_open] = $signal<boolean>(false)
+	const [is_submenu_cornersettings_open, set_is_submenu_cornersettings_open] = $signal<boolean>(false)
+	const [theme, set_theme] = $signal<ThemeData>(ThemeData.system)
+	const [corner, set_corner] = $signal<CornerData>(CornerData.round)
 	let menu_info_ref: HTMLDialogElement
 	let menu_settings_ref: HTMLDialogElement
 	let submenu_themesettings_ref: HTMLDivElement
@@ -70,7 +70,7 @@ const _: VoidComponent = () => {
 		}
 	}
 
-	onMount(() => {
+	$mount(() => {
 		init_theme()
 		init_corner()
 	})

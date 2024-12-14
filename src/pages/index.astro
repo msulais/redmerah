@@ -14,6 +14,7 @@ import BottomBar from '@/layouts/BottomBar/index.astro';
 import Splash from '@/layouts/Splash/index.astro';
 import CSSAnimation from '@/styles/animation.module.scss'
 import CSS from './_index.module.scss'
+import { math_round } from '@/utils/math';
 
 const features = [
 	{
@@ -35,7 +36,7 @@ const features = [
 
 function color_app_background(color: HEXColor): string {
 	const rgb = hex_to_rgb(color)
-	return `rgba(${rgb.r},${rgb.g},${rgb.b},.24)`
+	return `rgba(${math_round(rgb.r * 0xff)},${math_round(rgb.g * 0xff)},${math_round(rgb.b * 0xff)},.24)`
 }
 ---
 

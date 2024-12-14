@@ -420,7 +420,7 @@ const GradientControl: VoidComponent<{
 							const g = math_clamp(number_parse(values[1] ?? '100', true), 0, 0xff)
 							const b = math_clamp(number_parse(values[2] ?? '100', true), 0, 0xff)
 							const opacity = math_round(math_clamp(number_parse(values[3] ?? '1'), 0, 1) * 0xff)
-							const hex = rgb_to_hex({r, g, b})
+							const hex = rgb_to_hex({r: r / 0xff, g: g / 0xff, b: b / 0xff})
 
 							value = string_touppercase((hex + (opacity < 255? string_padstart(number_to_string(opacity, 16), 2, '0') : '')))
 							command(Commands.change_color_stop_color, gradient_index(), index(), value)

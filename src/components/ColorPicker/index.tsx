@@ -161,7 +161,7 @@ const ColorPickerBody: ParentComponent<{
 		// don't trigger input event
 		if (color_model() == 'RGB') {
 			const rgb = hsl_to_rgb(hsl_color())
-			textfield_color_ref.value = `${rgb.r}, ${rgb.g}, ${rgb.b}`
+			textfield_color_ref.value = `${math_round(rgb.r * 0xff)}, ${math_round(rgb.g * 0xff)}, ${math_round(rgb.b * 0xff)}`
 		}
 		else if (color_model() == 'HSL') textfield_color_ref.value = array_join([
 			math_round(hsl_color().h * 360),
@@ -285,6 +285,7 @@ const ColorPickerBody: ParentComponent<{
 				value = number_parse(`${value}`, true)
 				value = number_safe(value, 0)
 				value = math_clamp(value, 0, 255)
+				value = value / 0xff
 				return value as number
 			}
 

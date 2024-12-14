@@ -8,6 +8,7 @@ import { PlatformData } from '@/enums/platforms'
 import '@/styles/variables.scss'
 import '@/styles/animations.scss'
 import '@/styles/index.scss'
+import { math_round } from '@/utils/math'
 
 type Props = {
 	title?: string
@@ -32,7 +33,7 @@ const {
 const colors = generate_color(accent_color)
 const color_to_css = (hex: HEXColor) => {
 	const rgb = hex_to_rgb(hex)
-	return `${rgb.r}, ${rgb.g}, ${rgb.b}`
+	return `${math_round(rgb.r * 0xff)}, ${math_round(rgb.g * 0xff)}, ${math_round(rgb.b * 0xff)}`
 }
 ---
 

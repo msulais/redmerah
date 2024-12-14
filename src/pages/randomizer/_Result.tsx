@@ -22,7 +22,7 @@ const ColorItem: VoidComponent<{
 	return (<div style={{"background-color": hex()}}>
 		<code>
 			{string_touppercase(hex())}<br/>
-			{`rgb(${rgb().r}, ${rgb().g}, ${rgb().b})`}<br/>
+			{`rgb(${math_round(rgb().r * 0xff)}, ${math_round(rgb().g * 0xff)}, ${math_round(rgb().b * 0xff)})`}<br/>
 			{`hsl(${math_round(hsl().h * 360)}, ${math_round(hsl().s * 100)}%, ${math_round(hsl().l * 100)}%)`}
 		</code>
 	</div>)

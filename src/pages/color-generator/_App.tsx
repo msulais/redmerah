@@ -27,6 +27,7 @@ import App from '@/components/App'
 import AppBar from './_AppBar'
 import Body from './_Body'
 import CSS from './_styles.module.scss'
+import { math_round } from '@/utils/math'
 
 const _: VoidComponent = () => {
 	const db = new IDB(DatabaseNames.color_generator)
@@ -50,7 +51,7 @@ const _: VoidComponent = () => {
 	}
 
 	function rgb_to_css_value(rgb: RGBColor): string {
-		return `${rgb.r}, ${rgb.g}, ${rgb.b}`
+		return `${math_round(rgb.r * 0xff)}, ${math_round(rgb.g * 0xff)}, ${math_round(rgb.b * 0xff)}`
 	}
 
 	function on_color_change(color: HEXColor): void {
