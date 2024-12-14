@@ -1,20 +1,21 @@
 import { createMemo as $memory, createSignal as $signal, createEffect as $effect, Match, Switch, type VoidComponent } from "solid-js"
 
-import CSS from './_styles.module.scss'
-import Dropdown, { DropdownOption } from "@/components/Dropdown"
-import { ColorPickerMode, Commands } from "./_enums"
+import type { HEXColor, HSLColor } from "@/types/color"
 import type { Settings } from "./_types"
+import { ColorPickerMode, Commands } from "./_enums"
 import { ImagePicker, PalettePicker, RectangleHSLPicker, RectanglePicker, SliderCMYKPicker, SliderHEXPicker, SliderHSLPicker, SliderHSVPicker, SliderHWBPicker, SliderRGBPicker, SpectrumPicker, WheelPicker } from "./_Pickers"
 import TextField, { TextFieldButton } from "@/components/TextField"
-import type { HEXColor, HSLColor } from "@/types/color"
 import { string_length, string_padstart, string_replace, string_split, string_substring, string_touppercase, string_trim } from "@/utils/string"
-import { cmyk_to_hsl, hex_to_cmyk, hex_to_hsl, hex_to_hsv, hex_to_hwb, hex_to_rgb, hsl_to_cmyk, hsl_to_hex, hsl_to_hsv, hsl_to_hwb, hsl_to_rgb, hsv_to_hsl, hwb_to_hsl, rgb_to_hsl } from "@/utils/color"
+import { cmyk_to_hsl, hex_to_hsl, hsl_to_cmyk, hsl_to_hex, hsl_to_hsv, hsl_to_hwb, hsl_to_rgb, hsv_to_hsl, hwb_to_hsl, rgb_to_hsl } from "@/utils/color"
 import { math_clamp, math_round } from "@/utils/math"
 import { array_join, array_length, array_map, array_push } from "@/utils/array"
 import { number_parse, number_safe } from "@/utils/number"
 import { navigator_clipboard_writetext } from "@/utils/navigator"
+
+import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import Toast, { open_toast } from "@/components/Toast"
 import Icon from "@/components/Icon"
+import CSS from './_styles.module.scss'
 
 const ColorPicker: VoidComponent<{
 	command(type: Commands, ...args: unknown[]): unknown

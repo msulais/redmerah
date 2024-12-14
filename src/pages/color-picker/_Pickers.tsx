@@ -1,6 +1,6 @@
 import { createSignal as $signal, onCleanup as $cleanup, onMount as $mount, type VoidComponent, createMemo as $memory, createEffect as $effect, Show } from "solid-js"
 
-import CSS from './_styles.module.scss'
+import type { HSLColor, HEXColor } from "@/types/color"
 import { element_rect } from "@/utils/element"
 import { rect_height, rect_left, rect_top, rect_width } from "@/utils/rect"
 import { BodyAttributes } from "@/enums/attributes"
@@ -8,17 +8,18 @@ import { attr_remove, attr_set } from "@/utils/attributes"
 import { event_add_listener, event_remove_listener, event_stop_propagation } from "@/utils/event"
 import { math_clamp, math_round } from "@/utils/math"
 import { cmyk_to_hsl, get_contrast_ratio, hex_to_hsl, hex_to_rgb, hsl_to_cmyk, hsl_to_hex, hsl_to_hsv, hsl_to_hwb, hsl_to_rgb, hsv_to_hex, hsv_to_hsl, hwb_to_hsl, rgb_to_hsl } from "@/utils/color"
-import type { HSLColor, HEXColor } from "@/types/color"
 import { Commands } from "./_enums"
 import { string_padstart, string_substring, string_touppercase } from "@/utils/string"
 import { number_parse, number_to_string } from "@/utils/number"
-import Button, { ButtonVariant } from "@/components/Button"
-import Icon from "@/components/Icon"
 import { file_open } from "@/utils/file"
 import { regex_test } from "@/utils/regex"
 import { url_create, url_revoke } from "@/utils/url"
 import { promise_done } from "@/utils/object"
 import { array_join } from "@/utils/array"
+
+import Button, { ButtonVariant } from "@/components/Button"
+import Icon from "@/components/Icon"
+import CSS from './_styles.module.scss'
 
 export const RectanglePicker: VoidComponent<{
 	input: HSLColor
