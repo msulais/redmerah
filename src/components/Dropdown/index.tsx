@@ -5,14 +5,13 @@ import { mergeRefs } from "@solid-primitives/refs"
 import { element_rect } from "@/utils/element"
 import { timeout_clear, timeout_set } from "@/utils/timeout"
 import { call_event_handler } from "@/utils/event"
-import { array_concat, array_equals, array_filter, array_find_index, array_includes, array_join, array_length, array_map, array_push, array_slice, array_some, array_splice } from "@/utils/array"
+import { array_concat, array_equals, array_filter, array_find_index, array_join, array_length, array_map, array_push, array_slice, array_some } from "@/utils/array"
 import { rect_width } from "@/utils/rect"
 
 import Menu, { MenuItem, type MenuProps, MenuPosition as DropdownPosition, type MenuItemProps, open_menu, close_menu, reposition_menu } from "@/components/Menu"
 import { Button, ButtonVariant, type ButtonProps } from "@/components/Button"
 import Icon from "@/components/Icon"
 import './index.scss'
-import { is_array } from "@/utils/typecheck"
 
 type DropdownContextProps = {
 	on_mount_option(value: string | number, text: string): unknown
