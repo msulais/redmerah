@@ -2,7 +2,7 @@
 	"name": "redmerah",
 	"type": "module",
 	"author": "Muhammad Sulais",
-	"version": "0.4.6",
+	"version": "0.4.9",
 	"scripts": {
 		"dev": "astro dev",
 		"start": "astro dev",
