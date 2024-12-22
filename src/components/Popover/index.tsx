@@ -217,6 +217,7 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 	let $gap: number = 0
 	let $padding: number = 0
 	let $position: PopoverPosition = PopoverPosition.center_bottom
+	let timeout_reposition_id: number | null = null
 
 	// different of mouse position to top-left of popover position `diffPosition = abs(mousePosition - targetPosition)`
 	let diff_position_x: number = 0
@@ -640,9 +641,15 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 		set_left(rect_left(pos))
 	}
 
-	function init_mutation_observer(): void {
-		const observer = new MutationObserver(() => reposition_popover())
-		observer.observe(popover_ref, {subtree: true, childList: true})
+	function init_observer(): void {
+		const observer = new ResizeObserver(() => {
+			if (timeout_reposition_id != null) timeout_clear(timeout_reposition_id)
+			timeout_reposition_id = timeout_set(() => {
+				reposition_popover()
+				timeout_reposition_id = null
+			}, 1000)
+		})
+		observer.observe(popover_ref, {box: 'border-box'})
 
 		onCleanup(() => {
 			observer.disconnect()
@@ -652,7 +659,7 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 	onMount(() => {
 		init_popover_listener()
 		init_events()
-		init_mutation_observer()
+		init_observer()
 	})
 
 	onCleanup(async () => {

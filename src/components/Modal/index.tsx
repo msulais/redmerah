@@ -692,15 +692,15 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 		set_left(rect_left(pos))
 	}
 
-	function init_mutation_observer(): void {
-		const observer = new MutationObserver(() => {
+	function init_observer(): void {
+		const observer = new ResizeObserver(() => {
 			if (timeout_reposition_id != null) timeout_clear(timeout_reposition_id)
 			timeout_reposition_id = timeout_set(() => {
 				reposition_modal()
 				timeout_reposition_id = null
 			}, 1000)
 		})
-		observer.observe(modal_ref, {subtree: true, childList: true})
+		observer.observe(modal_ref, {box: 'border-box'})
 
 		onCleanup(() => {
 			observer.disconnect()
@@ -710,7 +710,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 	onMount(() => {
 		init_modal_listener()
 		init_events()
-		init_mutation_observer()
+		init_observer()
 	})
 
 	onCleanup(async () => {
