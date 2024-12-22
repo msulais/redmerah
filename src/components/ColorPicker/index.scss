@@ -1,6 +1,7 @@
 :is(.c-modal,.c-popover).c-color-picker {
+	width: 360px;
 	> div {
-		padding: 12px 0 0 0;
+		padding: 16px 0 0 0;
 		display: flex;
 		flex-direction: column;
 		gap: 8px;
@@ -13,10 +14,10 @@
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
 	gap: 8px;
-	padding: 12px;
+	padding: 16px;
 	background-color: rgb(var(--g-color-background));
 	border-top: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity2));
-	width: 342px;
+	width: 100%;
 	margin-top: 6px;
 
 	&[data-c-disabled] {
@@ -26,9 +27,8 @@
 
 .c-color-picker-color {
 	--c-color-picker-color: #ff0000;
-	min-width: 260px;
+	flex: 1;
 	min-height: 200px;
-	max-width: 260px;
 	max-height: 200px;
 	background:
 		linear-gradient(to top, #000, transparent),
@@ -59,37 +59,6 @@
 			cursor: crosshair;
 		}
 	}
-
-	&:active > div {
-		scale: .85;
-	}
-
-	> div {
-		width: 20px;
-		height: 20px;
-		border-radius: 10px;
-		position: absolute;
-		border: 2px solid white;
-		z-index: 3;
-		touch-action: none;
-		box-shadow: var(--g-elevation2), inset var(--g-elevation2);
-		transition-duration: .3s;
-		transition-property: backdrop-filter, scale;
-
-		:root[data-corner=sharp] & {
-			border-radius: 0;
-		}
-
-		:root[data-corner=semi-round] & {
-			border-radius: 4px;
-		}
-
-		@media (hover: hover) {
-			&:hover {
-				cursor: pointer;
-			}
-		}
-	}
 }
 
 .c-color-picker-content {
@@ -102,8 +71,17 @@
 
 .c-color-picker-control {
 	display: flex;
-	padding: 0 12px 8px 12px;
-	gap: 8px;
+	padding: 0 16px 8px 16px;
+	gap: 16px;
+
+	> div:not(.c-color-picker-color) {
+		display: flex;
+		flex-direction: column;
+		min-height: 200px;
+		max-height: 200px;
+		gap: 8px;
+		align-items: center;
+	}
 
 	&[data-c-hide-color] {
 		> .c-color-picker-color {
@@ -111,15 +89,17 @@
 		}
 
 		> div:not(.c-color-picker-color) {
-			display: flex;
-			align-items: center;
+			flex-direction: row;
+			min-height: auto;
+			max-height: auto;
+			width: 100%;
 		}
 	}
 }
 
 .c-color-picker-hue {
-	width: 12px;
-	height: 144px;
+	width: 16px;
+	height: 100%;
 	border-radius: 8px;
 	background: linear-gradient(
 		to bottom in hsl longer hue,
@@ -128,10 +108,6 @@
 	);
 	position: relative;
 	box-shadow: var(--g-elevation2);
-
-	&:active > div {
-		scale: .85;
-	}
 
 	&:hover {
 		cursor: crosshair;
@@ -144,40 +120,28 @@
 	:root[data-corner=semi-round] & {
 		border-radius: 4px;
 	}
+}
 
-	> div {
-		width: 20px;
-		height: 20px;
-		border-radius: 10px;
-		position: absolute;
-		border: 2px solid rgb(var(--g-color-on-surface));
-		z-index: 3;
-		touch-action: none;
-		box-shadow: var(--g-elevation2), inset var(--g-elevation2);
-		transition-duration: .3s;
-		transition-property: backdrop-filter, scale;
+.c-color-picker-indicator {
+	width: 24px;
+	height: 24px;
+	border-radius: 25px;
+	position: absolute;
+	border: 2px solid rgb(var(--g-color-on-surface));
+	z-index: 3;
+	touch-action: none;
+	box-shadow: var(--g-elevation2), inset var(--g-elevation2);
+	transition-duration: .3s;
+	transition-property: border-color;
 
-		:root[data-corner=sharp] & {
-			border-radius: 0;
-		}
-
-		:root[data-corner=semi-round] & {
-			border-radius: 4px;
-		}
-
-		@media (hover: hover) {
-			&:hover {
-				cursor: pointer;
-			}
-		}
-	}
+	:root[data-corner=sharp] & { border-radius: 0px }
 }
 
 .c-color-picker-input {
 	display: flex;
 	gap: 8px;
-	padding: 0 12px;
-	width: 342px;
+	padding: 0 16px;
+	width: 100%;
 
 	> :first-child {
 		flex: 1;
@@ -199,16 +163,12 @@
 }
 
 .c-color-picker-opacity {
-	width: 12px;
-	background: linear-gradient(to bottom, #000 0%, #fff 100%);
-	height: 144px;
+	width: 16px;
+	background: linear-gradient(to bottom, #fff, #000);
+	height: 100%;
 	border-radius: 8px;
 	position: relative;
 	box-shadow: var(--g-elevation2);
-
-	&:active > div {
-		scale: .85;
-	}
 
 	&:hover {
 		cursor: crosshair;
@@ -221,44 +181,18 @@
 	:root[data-corner=semi-round] & {
 		border-radius: 4px;
 	}
-
-	> div {
-		width: 20px;
-		height: 20px;
-		border-radius: 10px;
-		position: absolute;
-		border: 2px solid rgb(var(--g-color-on-surface));
-		z-index: 3;
-		touch-action: none;
-		box-shadow: var(--g-elevation2), inset var(--g-elevation2);
-		transition-duration: .3s;
-		transition-property: backdrop-filter, scale;
-
-		:root[data-corner=sharp] & {
-			border-radius: 0;
-		}
-
-		:root[data-corner=semi-round] & {
-			border-radius: 4px;
-		}
-
-		@media (hover: hover) {
-			&:hover {
-				cursor: pointer;
-			}
-		}
-	}
 }
 
 .c-color-picker-range {
 	height: 100%;
 	display: flex;
+	flex: 1;
 	justify-content: space-around;
-	width: 48px;
+	gap: 16px;
 
 	&[data-c-hide-color] {
 		flex-direction: column;
-		width: 260px;
+		width: 100%;
 
 		> .c-color-picker-hue {
 			background: linear-gradient(
@@ -266,14 +200,14 @@
 				#ff0000   0%,
 				#ff0000 100%
 			);
-			width: 260px;
-			height: 12px;
+			width: 100%;
+			height: 16px;
 		}
 
 		> .c-color-picker-opacity {
-			background: linear-gradient(to right, #000 0%, #fff 100%);
-			width: 260px;
-			height: 12px;
+			background: linear-gradient(to right, #fff, #000);
+			width: 100%;
+			height: 16px;
 		}
 
 		&[data-c-hide-opacity] {
@@ -282,10 +216,10 @@
 			}
 
 			> .c-color-picker-hue {
-				height: 40px;
+				height: 48px;
 
 				> div {
-					height: 48px;
+					height: 56px;
 				}
 			}
 		}
@@ -293,10 +227,10 @@
 
 	&[data-c-hide-opacity]:not([data-c-hide-color]) {
 		> .c-color-picker-hue {
-			width: 40px;
+			width: 48px;
 
 			> div {
-				width: 48px;
+				width: 56px;
 			}
 		}
 		> .c-color-picker-opacity {
@@ -317,6 +251,7 @@
 	&[data-c-hide-color] {
 		margin: 0 8px 0 0;
 	}
+
 	:root[data-corner=sharp] & {
 		border-radius: 0;
 	}

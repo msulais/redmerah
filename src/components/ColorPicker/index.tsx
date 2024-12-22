@@ -1,5 +1,4 @@
 import { type Component, type ParentComponent, Show, createEffect, createMemo, createSignal, mergeProps, onCleanup, onMount, splitProps } from "solid-js"
-import { createStore } from "solid-js/store"
 import { mergeRefs } from "@solid-primitives/refs"
 
 import type { HEXColor, HSLColor, RGBColor } from "@/types/color"
@@ -8,12 +7,12 @@ import { attr_remove, attr_set, attr_set_if_exist } from "@/utils/attributes"
 import { element_dispatch_event, element_rect } from "@/utils/element"
 import { event_add_listener, event_remove_listener } from '@/utils/event'
 import { BodyAttributes } from "@/enums/attributes"
-import { math_clamp, math_max, math_min, math_round } from "@/utils/math"
-import { number_is_not_defined, number_parse, number_safe, number_to_string, number_tofixed } from "@/utils/number"
+import { math_clamp, math_round } from "@/utils/math"
+import { number_is_not_defined, number_parse, number_safe, number_to_string } from "@/utils/number"
 import { string_length, string_padstart, string_replace, string_split, string_substring, string_touppercase, string_trim } from "@/utils/string"
-import { hex_to_hsl, hex_to_rgb, hsl_to_hex, hsl_to_hsv, hsl_to_rgb, hsv_to_hsl, is_color_with_alpha_valid, rgb_to_hsl } from "@/utils/color"
+import { get_contrast_ratio, hex_to_hsl, hex_to_rgb, hsl_to_hex, hsl_to_hsv, hsl_to_rgb, hsv_to_hsl, is_color_with_alpha_valid, rgb_to_hsl } from "@/utils/color"
 import { array_join, array_length, array_push } from "@/utils/array"
-import { rect_left, rect_top } from "@/utils/rect"
+import { rect_height, rect_left, rect_top, rect_width } from "@/utils/rect"
 
 import Button, { ButtonVariant } from "@/components/Button"
 import TextField from "@/components/TextField"
@@ -21,8 +20,6 @@ import Modal, { type ModalProps, ModalPosition as ColorPickerPosition, type Moda
 import Popover, { close_popover, is_popover_open, open_popover, reposition_popover, type PopoverProps } from "@/components/Popover"
 import './index.scss'
 
-const COLOR_BOX_WIDTH: number = 260
-const COLOR_BOX_HEIGHT: number = 200
 const DEFAULT_HEX_COLOR: HEXColor = '#FF0000'
 
 enum ColorPickerEvents {
@@ -75,74 +72,84 @@ const ColorPickerBody: ParentComponent<{
 		color: DEFAULT_HEX_COLOR,
 		disabled_color_control: false
 	}, $props)
-	type Picker = {
-		color: {
-			rect: DOMRect | null
-			is_drag: boolean
-			position: {
-				/** `0 -> COLOR_BOX_HEIGHT` */
-				top: number
-
-				/** `0 -> COLOR_BOX_WIDTH` */
-				left: number
+	const body = document.body
+	const [color_model, set_color_model2] = createSignal<'HEX' | 'RGB' | 'HSL'>('HEX')
+	const [hsl, set_hsl2] = createSignal<HSLColor>({h: 0, s: 1, l: .5})
+	const [opacity, set_opacity] = createSignal<number>(1) // [0-100]
+	const [hue, set_hue] = createSignal<number>(1) // [0-100]
+	const [left, set_left] = createSignal<number>(1) // [0-100]
+	const [top, set_top] = createSignal<number>(1) // [0-100]
+	const is_disabled_opacity_control = createMemo(() => props.disabled_opacity_control)
+	const is_disabled_color_control = createMemo(() => props.disabled_color_control)
+	const get_hsl_color = createMemo<HSLColor>(() => {
+		let h = hue() / 100
+		let s = 1
+		let l = 0.5
+		if (!is_disabled_color_control()) {
+			if (color_model() != 'HSL') {
+				const hsl = hsv_to_hsl({
+					h, s: left() / 100, v: (100 - top()) / 100
+				})
+				s = hsl.s
+				l = hsl.l
+			}
+			else {
+				s = left() / 100
+				l = (100 - top()) / 100
 			}
 		}
-		hue: {
-			rect: DOMRect | null
-			is_drag: boolean
-
-			/** `0 -> slider` */
-			position: number
-		}
-		opacity: {
-			rect: DOMRect | null
-			is_drag: boolean
-
-			/** `0 -> slider` */
-			position: number
-		}
-	}
-	const body = document.body
-	const [color_model, set_color_model] = createSignal<'HEX' | 'RGB' | 'HSL'>('HEX')
-	const [hsl_color, set_hsl_color] = createSignal<HSLColor>({ h: 0, s: 1, l: 0.5 })
-	const [hex_color, set_hex_color] = createSignal<HEXColor>(DEFAULT_HEX_COLOR)
-	const [opacity, set_opacity] = createSignal<number>(100) // 0 - 100
-	const [color, set_color] = createSignal<HEXColor>(DEFAULT_HEX_COLOR)
-	const [is_disabled_color_control, set_is_disabled_color_control] = createSignal<boolean>(false)
-	const [picker, set_picker] = createStore<Picker>({
-		color: { rect: null, is_drag: false, position: { left: COLOR_BOX_WIDTH, top: 0 } },
-		hue: { rect: null, is_drag: false, position: 0 },
-		opacity: { rect: null, is_drag: false, position: 0 }
+		return {h, s, l}
 	})
-	const is_disabled_opacity_control = createMemo(() => props.disabled_opacity_control)
 	const get_hex_color = createMemo(() => {
 		const $opacity: string = opacity() == 100 || is_disabled_opacity_control()
 			? ''
 			: string_padstart(number_to_string(math_round(opacity() / 100 * 255), 16), 2, '0')
 		;
-		const hex_color = string_touppercase(hsl_to_hex(hsl_color()) + $opacity)
+		const hex_color = string_touppercase(hsl_to_hex(get_hsl_color()) + $opacity)
 		if (props.is_colorpicker_open) props.on_update_color?.(hex_color as HEXColor)
 		return hex_color
 	})
-	const get_slider_size = createMemo<number>(() => is_disabled_color_control()? 260 : 144)
-	const get_hex_color_for_canvas = createMemo(() => hsl_to_hex({ h: hsl_color().h, s: 1, l: 0.5 }))
 	let textfield_opacity_ref: HTMLInputElement | undefined
 	let textfield_color_ref!: HTMLInputElement
+	let color_rect: DOMRect
+	let hue_rect: DOMRect
+	let opacity_rect: DOMRect
+	let color_dragged: boolean = false
+	let hue_dragged: boolean = false
+	let opacity_dragged: boolean = false
+	let local_color: HEXColor | null = null
+	let local_color_model: 'HEX' | 'RGB' | 'HSL' = 'HEX'
+	let local_hsl: HSLColor = {h: 0, s: 1, l: 0.5}
 
-	function update_position(): void {
-		set_picker('hue', 'position', hsl_color().h * get_slider_size())
-		set_picker('opacity', 'position', (1 - opacity() / 100) * get_slider_size())
+	function set_hsl(hsl: HSLColor): void {
+		set_hsl2({...hsl})
+		local_hsl = {...hsl}
+	}
 
-		if (color_model() == 'HSL') return set_picker('color', 'position', {
-			left: COLOR_BOX_WIDTH * hsl_color().s,
-			top: COLOR_BOX_HEIGHT * (1 - hsl_color().l)
-		})
+	function set_color_model(model: 'HEX' | 'RGB' | 'HSL'): void {
+		set_color_model2(model)
+		local_color_model = model
+	}
 
-		const hsv = hsl_to_hsv(hsl_color())
-		set_picker('color', 'position', {
-			left: COLOR_BOX_WIDTH * hsv.s,
-			top: COLOR_BOX_HEIGHT * (1 - hsv.v)
-		})
+	/**
+	 * @param opacity value from [0-1]
+	 */
+	function update_position(opacity?: number): void {
+		const {h, s, l} = hsl()
+		set_hue(h * 100)
+
+		let left = s * 100
+		let top = (1 - l) * 100
+		if (color_model() != 'HSL') {
+			const {s, v} = hsl_to_hsv(hsl())
+			left = s * 100
+			top = (1 - v) * 100
+		}
+
+		if (opacity) set_opacity(math_clamp(opacity, 0, 1) * 100)
+
+		set_left(left)
+		set_top(top)
 	}
 
 	function change_color_model(): void {
@@ -155,73 +162,55 @@ const ColorPickerBody: ParentComponent<{
 		update_position()
 	}
 
-	function update_inputs(on_before_update?: () => unknown): void {
-		on_before_update?.()
-
+	function update_inputs(): void {
 		// don't trigger input event
 		if (color_model() == 'RGB') {
-			const rgb = hsl_to_rgb(hsl_color())
+			const rgb = hsl_to_rgb(get_hsl_color())
 			textfield_color_ref.value = `${math_round(rgb.r * 0xff)}, ${math_round(rgb.g * 0xff)}, ${math_round(rgb.b * 0xff)}`
 		}
 		else if (color_model() == 'HSL') textfield_color_ref.value = array_join([
-			math_round(hsl_color().h * 360),
-			number_parse(number_tofixed(hsl_color().s * 100, 2)) + '%',
-			number_parse(number_tofixed(hsl_color().l * 100, 2)) + '%'
+			math_round(get_hsl_color().h * 360),
+			math_round(get_hsl_color().s * 100) + '%',
+			math_round(get_hsl_color().l * 100) + '%',
 		], ', ')
 		else if (color_model() == 'HEX')
 			textfield_color_ref.value = string_substring(get_hex_color(), 0, 7)
 
-		if (textfield_opacity_ref) textfield_opacity_ref.value = opacity() + '%'
+		if (textfield_opacity_ref) textfield_opacity_ref.value = math_round(opacity()) + '%'
 	}
 
 	function set_position(x: number, y: number): void {
-		const picker_color = picker.color
-		const picker_hue = picker.hue
-		const picker_opacity = picker.opacity
+		if (color_dragged) {
+			x = (x - rect_left(color_rect)) / rect_width(color_rect) * 100
+			x = math_clamp(x, 0, 100)
+			set_left(x)
 
-		if (picker_color.is_drag) set_picker('color', 'position', {
-			left: math_clamp(x - rect_left(picker_color.rect!), 0, COLOR_BOX_WIDTH),
-			top: math_clamp(y - rect_top(picker_color.rect!), 0, COLOR_BOX_HEIGHT)
-		})
-		else if (picker_hue.is_drag) set_picker('hue', 'position', math_clamp(
-			is_disabled_color_control()
-				? x - rect_left(picker_hue.rect!)
-				: y - rect_top(picker_hue.rect!),
-			0,
-			get_slider_size()
-		))
-		else if (picker_opacity.is_drag) set_picker('opacity', 'position', math_clamp(
-			is_disabled_color_control()
-				? x - rect_left(picker_opacity.rect!)
-				: y - rect_top(picker_opacity.rect!),
-			0,
-			get_slider_size()
-		))
+			y = (y - rect_top(color_rect)) / rect_height(color_rect) * 100
+			y = math_clamp(y, 0, 100)
+			set_top(y)
+		}
+		else if (hue_dragged) {
+			let v = is_disabled_color_control()? x : y
+			let rect_offset = is_disabled_color_control()? rect_left(hue_rect) : rect_top(hue_rect)
+			let rect_size = is_disabled_color_control()? rect_width(hue_rect) : rect_height(hue_rect)
+			v = (v - rect_offset) / rect_size * 100
+			v = math_clamp(v, 0, 100)
+			set_hue(v)
+		}
+		else if (opacity_dragged) {
+			let v = is_disabled_color_control()? x : y
+			let rect_offset = is_disabled_color_control()? rect_left(opacity_rect) : rect_top(opacity_rect)
+			let rect_size = is_disabled_color_control()? rect_width(opacity_rect) : rect_height(opacity_rect)
+			v = (v - rect_offset) / rect_size * 100
+			v = math_clamp(v, 0, 100)
+			set_opacity(100 - v)
+		}
 
-		const is_dragging = picker_color.is_drag || picker_hue.is_drag || picker_opacity.is_drag
-		if (!is_dragging) return
+		const dragged = color_dragged || hue_dragged || opacity_dragged
+		if (!dragged) return
 
-		update_inputs(() => {
-			const hsl: HSLColor = {
-				h: picker_hue.position / get_slider_size(),
-				s: picker_color.position.left / COLOR_BOX_WIDTH,
-				l: 1 - picker_color.position.top / COLOR_BOX_HEIGHT
-			}
-
-			if (color_model() != 'HSL') {
-				const _hsl: HSLColor = hsv_to_hsl({
-					h: hsl.h,
-					s: hsl.s,
-					v: hsl.l
-				})
-
-				hsl.s = _hsl.s
-				hsl.l = _hsl.l
-			}
-
-			set_hsl_color(hsl)
-			set_opacity(math_round(100 - (picker_opacity.position / get_slider_size() * 100)))
-		})
+		set_hsl({...get_hsl_color()})
+		update_inputs()
 	}
 
 	function on_pointermove(ev: PointerEvent): void {
@@ -229,9 +218,7 @@ const ColorPickerBody: ParentComponent<{
 	}
 
 	function on_pointerup(): void {
-		set_picker('color', 'is_drag', false)
-		set_picker('hue', 'is_drag', false)
-		set_picker('opacity', 'is_drag', false)
+		color_dragged = hue_dragged = opacity_dragged = false
 
 		// should be run last because <Modal> will mark this to close
 		// when mouse position outside
@@ -241,9 +228,7 @@ const ColorPickerBody: ParentComponent<{
 	function on_change_color(ev: CustomEvent<HEXColor>): void {
 		const color = ev.detail
 		if (!is_color_with_alpha_valid(color)) return;
-		set_color(color)
-		set_hex_color(color)
-		update_color()
+		update_color(color)
 	}
 
 	function init_events() {
@@ -258,18 +243,19 @@ const ColorPickerBody: ParentComponent<{
 		})
 	}
 
-	function update_color(): void {
-		if (!is_color_with_alpha_valid(hex_color())) return;
-		set_hsl_color(hex_to_hsl(
-			string_substring(hex_color(), 0, 7) as HEXColor
-		))
+	function update_color(color: HEXColor): void {
+		if (!is_color_with_alpha_valid(color)) return;
+		const hsl = hex_to_hsl(
+			string_substring(color, 0, 7) as HEXColor
+		)
+		set_hsl({...hsl})
 
-		if (string_length(hex_color()) == 9 && !is_disabled_opacity_control()) {
-			const opacity = number_parse(string_substring(hex_color(), 7, 9), true, 16) / 255
+		if (string_length(color) == 9 && !is_disabled_opacity_control()) {
+			const opacity = number_parse(string_substring(color, 7, 9), true, 16) / 255
 			set_opacity(math_round(opacity * 100))
 		}
 
-		if (is_disabled_color_control()) set_hsl_color({ ...hsl_color(), s: 1, l: 0.5 })
+		if (is_disabled_color_control()) set_hsl({ h: hsl.h, s: 1, l: 0.5 })
 
 		update_inputs()
 		update_position()
@@ -299,7 +285,7 @@ const ColorPickerBody: ParentComponent<{
 				hsl.l = 0.5
 			}
 
-			set_hsl_color(hsl)
+			set_hsl(hsl)
 		}
 		else if (color_model() == 'HSL') {
 			const hsl: HSLColor = { h: 0, s: 0, l: 0 }
@@ -328,7 +314,7 @@ const ColorPickerBody: ParentComponent<{
 				hsl.s = 1
 				hsl.l = 0.5
 			}
-			set_hsl_color(hsl)
+			set_hsl(hsl)
 		}
 		else if (color_model() == 'HEX') {
 			value = string_replace(value, /[^0-9a-fA-F]/g, '')
@@ -350,7 +336,7 @@ const ColorPickerBody: ParentComponent<{
 				hsl.s = 1
 				hsl.l = 0.5
 			}
-			set_hsl_color(hsl)
+			set_hsl(hsl)
 		}
 
 		update_position()
@@ -361,7 +347,7 @@ const ColorPickerBody: ParentComponent<{
 
 		if (number_is_not_defined($opacity)) return
 
-		$opacity = math_clamp($opacity, 0, 100)
+		$opacity = math_round(math_clamp($opacity, 0, 100))
 		set_opacity($opacity)
 		update_position()
 	}
@@ -371,24 +357,97 @@ const ColorPickerBody: ParentComponent<{
 	})
 
 	createEffect(() => {
-		const $is_disabled_color_control = props.disabled_color_control
-		const $$is_disabled_color_control = is_disabled_color_control()
-		const $hex_color = hex_color()
-		const $color = props.color
-		const $$color = color()
+		const is_disabled_color_control = props.disabled_color_control ?? false
+		const is_disabled_opacity_control = props.disabled_opacity_control ?? false
+		const color = props.color
+		const handle_color = () => {
+			if (color == local_color) return
 
-		if ($is_disabled_color_control != $$is_disabled_color_control) {
-			let color = hsl_to_hex({ ...hex_to_hsl($hex_color), l: 1.0 })
-			set_hex_color(color)
-			update_color()
-			set_is_disabled_color_control($is_disabled_color_control)
+			local_color = color
+			if (!is_color_with_alpha_valid(local_color)) return
+
+			let hsl = hex_to_hsl(local_color)
+			let opacity = 100
+			if (is_disabled_color_control) {
+				hsl = {h: hsl.h, s: 1, l: 0.5}
+			}
+
+			if (string_length(local_color) > 7 && !is_disabled_opacity_control) {
+				opacity = number_safe(number_parse(string_substring(local_color, 7, 9), true, 16))
+				opacity = opacity / 0xff * 100
+				opacity = math_clamp(opacity, 0, 100)
+			}
+
+			if (textfield_color_ref) {
+				let text = ''
+				if (local_color_model == 'HSL') text = array_join([
+					math_round(hsl.h * 360),
+					math_round(hsl.s * 100) + '%',
+					math_round(hsl.l * 100) + '%',
+				], ', ')
+				else if (local_color_model == 'HEX') {
+					text = string_touppercase(hsl_to_hex(hsl))
+				}
+				else if (local_color_model == 'RGB') {
+					const {r, g, b} = hsl_to_rgb(hsl)
+					text = array_join([
+						math_round(r * 0xff),
+						math_round(g * 0xff),
+						math_round(b * 0xff),
+					], ', ')
+				}
+
+				textfield_color_ref.value = text
+			}
+
+			if (textfield_opacity_ref) {
+				textfield_opacity_ref.value = opacity + '%'
+			}
+
+			set_hue(hsl.h * 100)
+			set_hsl(hsl)
+			set_opacity(opacity)
 		}
-		if ($color != $$color) {
-			if (!is_color_with_alpha_valid($color)) return;
-			set_color($color)
-			set_hex_color($color)
-			update_color()
+		const handle_disable_color_control = () => {
+			if (!is_disabled_color_control) return
+			const hsl: HSLColor = {h: local_hsl.h, s: 1, l: 0.5}
+			if (textfield_color_ref) {
+				let text = ''
+				if (local_color_model == 'HSL') text = array_join([
+					math_round(hsl.h * 360),
+					math_round(hsl.s * 100) + '%',
+					math_round(hsl.l * 100) + '%',
+				], ', ')
+				else if (local_color_model == 'HEX') {
+					text = string_touppercase(hsl_to_hex(hsl))
+				}
+				else if (local_color_model == 'RGB') {
+					const {r, g, b} = hsl_to_rgb(hsl)
+					text = array_join([
+						math_round(r * 0xff),
+						math_round(g * 0xff),
+						math_round(b * 0xff),
+					], ', ')
+				}
+
+				textfield_color_ref.value = text
+			}
+
+			set_hsl(hsl)
 		}
+		const handle_disable_opacity_control = () => {
+			if (!is_disabled_opacity_control) return
+
+			if (textfield_opacity_ref) {
+				textfield_opacity_ref.value = '100%'
+			}
+
+			set_opacity(100)
+		}
+
+		handle_color()
+		handle_disable_color_control()
+		handle_disable_opacity_control()
 	})
 
 	const Control: Component = () => {
@@ -397,19 +456,29 @@ const ColorPickerBody: ParentComponent<{
 			data-c-hide-color={attr_set_if_exist(is_disabled_color_control())}>
 			<div
 				class="c-color-picker-color"
-				style={{ '--c-color-picker-color': get_hex_color_for_canvas() }}
+				style={{ '--c-color-picker-color': hsl_to_hex({...hsl(), s: 1, l: .5}) }}
 				onPointerDown={(ev) => {
-					set_picker('color', 'is_drag', true)
-					set_picker('color', 'rect', element_rect(ev.currentTarget))
-					attr_set(body, BodyAttributes.no_pointer_event)
+					color_dragged = true
+					color_rect = element_rect(ev.currentTarget)
 					set_position(ev.clientX, ev.clientY)
+					attr_set(body, BodyAttributes.no_pointer_event)
 				}}
 				data-c-hsl={attr_set_if_exist(color_model() == 'HSL')}
 				draggable={false}>
-				<div draggable={false} style={{
-					top: math_clamp(picker.color.position.top - 10, -4, 184) + 'px',
-					left: math_clamp(picker.color.position.left - 10, -4, 244) + 'px'
-				}} />
+				<div
+					draggable={false}
+					tabindex="0"
+					class="c-color-picker-indicator"
+					style={{
+						"background-color": hsl_to_hex(hsl()),
+						top: top() + '%',
+						left: left() + '%',
+						"border-color": get_contrast_ratio(hsl_to_rgb(get_hsl_color()), {r: 0, g: 0, b: 0}) > 50
+							? '#000'
+							: '#fff',
+						transform: 'translate(-12px, -12px)',
+					}}
+				/>
 			</div>
 			<div>
 				<div
@@ -424,52 +493,51 @@ const ColorPickerBody: ParentComponent<{
 					data-c-hide-opacity={attr_set_if_exist(is_disabled_opacity_control())}>
 					<div
 						class="c-color-picker-hue"
-						onClick={(ev) => {
-							const rect = picker.hue.rect
-							if (!rect) throw Error()
-
-							set_picker('hue', 'position', math_max(math_min(is_disabled_color_control()
-								? ev.clientX - rect_left(rect!)
-								: ev.clientY - rect_top(rect!),
-								get_slider_size()), 0))
-						}}
 						onPointerDown={(ev) => {
-							set_picker('hue', 'is_drag', true)
-							set_picker('hue', 'rect', element_rect(ev.currentTarget))
-							attr_set(body, BodyAttributes.no_pointer_event)
+							hue_dragged = true
+							hue_rect = element_rect(ev.currentTarget)
 							set_position(ev.clientX, ev.clientY)
+							attr_set(body, BodyAttributes.no_pointer_event)
 						}}
 						draggable={false}>
-						<div draggable={false} style={{
-							top: (is_disabled_color_control()? -4 : math_clamp(picker.hue.position - 10, -4, 128)) + 'px',
-							left: (is_disabled_color_control()? math_clamp(picker.hue.position - 10, -4, 244) : -4) + 'px'
-						}} />
+						<div
+							tabindex="0"
+							draggable={false}
+							class="c-color-picker-indicator"
+							style={{
+								"background-color": `hsl(${hue() / 100 * 360}, 100%, 50%)`,
+								top: is_disabled_color_control()? undefined : hue() + '%',
+								left: is_disabled_color_control()? hue() + '%' : undefined,
+								"border-color": get_contrast_ratio(hsl_to_rgb({h: hue() / 100, s: 1, l: 0.5}), {r: 0, g: 0, b: 0}) > 50
+									? '#000'
+									: '#fff',
+								transform: is_disabled_color_control()? 'translate(-50%, -4px)' : 'translate(-4px, -50%)'
+							}}
+						/>
 					</div>
 					<div
 						class="c-color-picker-opacity"
-						onClick={(ev) => {
-							const rect = picker.opacity.rect
-							if (!rect) throw Error()
-
-							set_picker('opacity', 'position', math_clamp(
-								is_disabled_color_control()
-									? ev.clientX - rect_left(rect)
-									: ev.clientY - rect_top(rect),
-								0,
-								get_slider_size()
-							))
-						}}
 						onPointerDown={(ev) => {
-							set_picker('opacity', 'is_drag', true)
-							set_picker('opacity', 'rect', element_rect(ev.currentTarget))
-							attr_set(body, BodyAttributes.no_pointer_event)
+							opacity_dragged = true
+							opacity_rect = element_rect(ev.currentTarget)
 							set_position(ev.clientX, ev.clientY)
+							attr_set(body, BodyAttributes.no_pointer_event)
 						}}
 						draggable={false}>
-						<div draggable={false} style={{
-							top: (is_disabled_color_control()? -4 : math_clamp(picker.opacity.position - 10, -4, 128)) + 'px',
-							left: (is_disabled_color_control()? math_clamp(picker.opacity.position - 10, -4, 244) : -4) + 'px',
-						}} />
+						<div
+							tabindex="0"
+							draggable={false}
+							class="c-color-picker-indicator"
+							style={{
+								"background-color": `hsla(0, 0%, ${opacity()}%)`,
+								top: is_disabled_color_control()? undefined : (100 - opacity()) + '%',
+								left: is_disabled_color_control()? (100 - opacity()) + '%' : undefined,
+								"border-color": get_contrast_ratio(hsl_to_rgb({h: 0, s: 0, l: opacity() / 100}), {r: 0, g: 0, b: 0}) > 50
+									? '#000'
+									: '#fff',
+								transform: is_disabled_color_control()? 'translate(-50%, -4px)' : 'translate(-4px, -50%)'
+							}}
+						/>
 					</div>
 				</div>
 			</div>
@@ -505,8 +573,7 @@ const ColorPickerBody: ParentComponent<{
 				<Button
 					variant={ButtonVariant.tonal}
 					onClick={() => {
-						set_hex_color(color())
-						update_color()
+						update_color(props.color)
 						props.on_close()
 					}}>
 					Cancel
