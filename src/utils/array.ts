@@ -199,3 +199,12 @@ export function array_every<T>(
 ): boolean {
 	return arr.every(predicate, this_arg)
 }
+
+/** Returns a string representation of an array. */
+export function array_to_string<T>(arr: T[]): string {
+	return arr.toString()
+}
+
+export function array_equals<T, U>(arr: T[], target: U[]): boolean {
+	return array_to_string(arr) == array_to_string(target)
+}
