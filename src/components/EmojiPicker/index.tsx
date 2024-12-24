@@ -1,5 +1,5 @@
 import { TransitionGroup } from 'solid-transition-group'
-import { createMemo, createSignal, For, onCleanup, onMount, Show, splitProps, type ParentComponent, type VoidComponent } from 'solid-js'
+import { createEffect, createMemo, createSignal, For, onCleanup, onMount, Show, splitProps, type ParentComponent, type VoidComponent } from 'solid-js'
 import { mergeRefs } from '@solid-primitives/refs'
 
 import type { Emoji } from '@/types/emoji'
@@ -24,6 +24,7 @@ import { close_searchtextfieldmenu, SearchMenuItem, SearchTextField } from '@/co
 import { Modal, type ModalProps, ModalPosition as EmojiPickerPosition, close_modal, focus_modal, open_modal, reposition_modal, is_modal_open } from '@/components/Modal'
 import { close_popover, is_popover_open, open_popover, Popover, reposition_popover, type PopoverProps } from '../Popover'
 import './index.scss'
+import { AppColors } from '@/enums/colors'
 
 const ALL_EMOJI: Emoji[] = array_sort(
 	array_map(
@@ -146,13 +147,18 @@ const EmojiPickerBody: ParentComponent<{
 
 	const Tab: VoidComponent<{category: EmojiCategory; icon_code: number}> = ($props) => {
 		const category = createMemo(() => $props.category)
+		const selected = createMemo(() => option() == category())
 
 		return (<IconButton
 			data-tooltip={category()}
 			code={$props.icon_code}
-			selected={option() == category()}
-			variant={option() == category()? ButtonVariant.tonal : undefined}
+			selected={selected()}
+			filled={selected()}
+			variant={selected()? ButtonVariant.tonal : undefined}
 			onClick={() => set_option(category())}
+			style={{
+				color: selected()? `rgb(${AppColors.accent})` : undefined
+			}}
 		/>)
 	}
 
@@ -181,12 +187,6 @@ const EmojiPickerBody: ParentComponent<{
 	return (<>
 		<div class="c-emoji-picker-tabs">
 			<TextTooltip>
-				<Tab icon_code={0xE8DE} category={EmojiCategory.recents}/>
-				<Tab icon_code={0xE745} category={EmojiCategory.smiley_and_emotion}/>
-				<Tab icon_code={0xEBF8} category={EmojiCategory.person_and_body}/>
-				<Tab icon_code={0xE04F} category={EmojiCategory.animal_and_nature}/>
-				<Tab icon_code={0xE80B} category={EmojiCategory.food_and_drink}/>
-				<Tab icon_code={0xF227} category={EmojiCategory.travel_and_places}/>
 				<Show when={props.use_close_button}>
 					<IconButton
 						data-tooltip={props.tooltip_close ?? 'Close'}
@@ -195,6 +195,12 @@ const EmojiPickerBody: ParentComponent<{
 						onClick={() => props.on_close()}
 					/>
 				</Show>
+				<Tab icon_code={0xE8DE} category={EmojiCategory.recents}/>
+				<Tab icon_code={0xE745} category={EmojiCategory.smiley_and_emotion}/>
+				<Tab icon_code={0xEBF8} category={EmojiCategory.person_and_body}/>
+				<Tab icon_code={0xE04F} category={EmojiCategory.animal_and_nature}/>
+				<Tab icon_code={0xE80B} category={EmojiCategory.food_and_drink}/>
+				<Tab icon_code={0xF227} category={EmojiCategory.travel_and_places}/>
 				<Tab icon_code={0xEC3C} category={EmojiCategory.activities}/>
 				<Tab icon_code={0xE5F1} category={EmojiCategory.objects}/>
 				<Tab icon_code={0xEF77} category={EmojiCategory.symbols}/>
@@ -253,7 +259,7 @@ const EmojiPickerBody: ParentComponent<{
 		{props.children}
 		<Divider />
 		<TextTooltip>
-			<Emojis emojis={recents()} category={EmojiCategory.recents}/>
+			<Emojis emojis={recents()}                 category={EmojiCategory.recents}/>
 			<Emojis emojis={smiley_and_emotion_emojis} category={EmojiCategory.smiley_and_emotion}/>
 			<Emojis emojis={person_and_body_emojis}    category={EmojiCategory.person_and_body}/>
 			<Emojis emojis={animal_and_nature_emojis}  category={EmojiCategory.animal_and_nature}/>

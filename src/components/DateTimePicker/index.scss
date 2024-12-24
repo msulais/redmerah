@@ -1,6 +1,5 @@
 :is(.c-modal, .c-popover).c-datetime-picker {
-	min-width: 320px;
-	max-width: 320px;
+	width: 320px;
 
 	> div {
 		display: flex;
@@ -14,7 +13,7 @@
 	display: grid;
 	grid-template-columns: repeat(2, 1fr);
 	gap: 8px;
-	padding: 12px;
+	padding: 8px;
 	background-color: rgb(var(--g-color-background));
 	border-top: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity2));
 }
@@ -22,8 +21,8 @@
 .c-datetime-picker-days {
 	display: grid;
 	grid-template-columns: repeat(7, 1fr);
-	gap: 1px;
-	padding: 0 12px 12px 12px;
+	gap: 4px;
+	padding: 0 8px 8px 8px;
 
 	> .c-btn.c-square-btn {
 		max-width: 100%;
@@ -33,10 +32,10 @@
 .c-datetime-picker-days-name {
 	display: grid;
 	grid-template-columns: repeat(7, 1fr);
-	gap: 1px;
+	gap: 4px;
 	min-height: 40px;
 	max-height: 40px;
-	padding: 12px 12px 1px 12px;
+	padding: 8px 8px 1px 8px;
 	align-items: center;
 
 	:root[data-platform=desktop] & {
@@ -59,8 +58,8 @@
 .c-datetime-picker-header {
 	display: flex;
 	align-items: center;
-	gap: 1px;
-	padding: 12px;
+	gap: 4px;
+	padding: 8px;
 
 	> .c-btn:first-child {
 		flex: 1;
@@ -71,22 +70,22 @@
 .c-datetime-picker-month {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
-	gap: 1px;
+	gap: 4px;
 	height: 100%;
-	padding: 12px 12px 8px 12px;
+	padding: 8px;
 }
 
 .c-datetime-picker-time {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
 	gap: 8px;
-	padding: 0 12px 12px 12px;
+	padding: 0 8px 8px 8px;
 }
 
 .c-datetime-picker-year {
 	display: grid;
 	grid-template-columns: repeat(4, 1fr);
-	gap: 1px;
+	gap: 4px;
 	height: calc(100% - 4px);
-	padding: 12px 12px 8px 12px;
+	padding: 8px;
 }

@@ -98,7 +98,7 @@ const DatePickerBody: ParentComponent<{
 
 	const DaysDate: VoidComponent = () => (<div style="display: contents">
 		<div class="c-date-picker-days-name">
-			<For each={date_weekday_names(props.locales)}>{d => <p>{string_substring(d, 0, 2)}</p>}</For>
+			<For each={date_weekday_names(props.locales)}>{d => <p>{string_substring(d, 0, 3)}</p>}</For>
 		</div>
 		<div class="c-date-picker-days">
 			<For each={array_fill(Array(start_day()), 0)}>{_v => <div/>}</For>
@@ -115,6 +115,8 @@ const DatePickerBody: ParentComponent<{
 						date_set_month(d, date_month(date()))
 						date_set_year(d, date_year(date()))
 						set_value(d)
+						props.on_select_date?.(value())
+						props.on_close()
 					}}
 					disabled={date_out_range_YMD(date(), props.first_date, props.last_date)}
 					variant={is_same_date_YMD(date(), value())
@@ -224,21 +226,6 @@ const DatePickerBody: ParentComponent<{
 			</Switch>
 		</Transition>
 		{props.children}
-		<div class="c-date-picker-actions">
-			<Button
-				variant={ButtonVariant.tonal}
-				onClick={() => props.on_close()}>
-				Cancel
-			</Button>
-			<Button
-				variant={ButtonVariant.filled}
-				onClick={() => {
-					props.on_select_date?.(value())
-					props.on_close()
-				}}>
-				Select
-			</Button>
-		</div>
 	</>)
 }
 

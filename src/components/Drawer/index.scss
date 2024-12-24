@@ -56,11 +56,6 @@
 	&:empty {
 		display: none;
 	}
-
-	:root[data-platform=mobile] & {
-		padding: 12px;
-		gap: 1px;
-	}
 }
 
 .c-drawer-content {
@@ -72,11 +67,6 @@
 	max-height: 100%;
 	width: 100%;
 	overflow: auto;
-
-	:root[data-platform=mobile] & {
-		padding: 12px;
-		gap: 1px;
-	}
 }
 
 .c-drawer-header {
@@ -92,10 +82,6 @@
 	&:empty {
 		display: none;
 	}
-
-	:root[data-platform=mobile] & {
-		padding: 12px 12px 0 12px;
-	}
 }
 
 .c-btn.c-drawer-item {
@@ -105,23 +91,5 @@
 
 	&[data-c-selected] > .c-icon:first-child {
 		color: rgb(var(--g-color-accent));
-	}
-
-	:root[data-platform=mobile] & {
-		padding: 4px 16px;
-		min-height: 56px;
-		gap: 12px;
-	}
-
-	:root[data-platform=mobile][data-corner=full-round] & {
-		border-radius: 28px;
-
-		&::before {
-			--c-btn-indicator-size: max(var(--c-btn-indicator-weight), calc(100% - 56px));
-		}
-
-		&:is([data-c-indicator=top],[data-c-indicator=bottom])::before {
-			--c-btn-indicator-size: max(var(--c-btn-indicator-weight), calc(100% - 56px));
-		}
 	}
 }

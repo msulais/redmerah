@@ -4,7 +4,7 @@ import { Dynamic, type DynamicProps } from 'solid-js/web'
 import { classlist, attr_set_if_exist } from '@/utils/attributes'
 import { call_event_handler, event_prevent_default } from '@/utils/event'
 
-import Icon from '@/components/Icon'
+import Icon, { type IconProps } from '@/components/Icon'
 import Emoji from '@/components/Emoji'
 import './index.scss'
 
@@ -177,26 +177,52 @@ const RawIconButton: VoidComponent<RawIconButtonProps> = ($props) => {
 type IconButtonProps = SquareButtonProps & {
 	code: number
 	filled?: boolean
+	attr_icon?: Omit<IconProps, 'code'> & {
+		code?: number
+	}
 }
 const IconButton: VoidComponent<IconButtonProps> = ($props) => {
-	const [props, other] = splitProps($props, ['classList', 'code', 'filled'])
+	const [props, other] = splitProps($props, [
+		'classList', 'code', 'filled',
+		'attr_icon'
+	])
+	const [icon_props, icon_props_other] = splitProps(props.attr_icon! ?? {}, [
+		'code', 'filled'
+	])
 	return (<SquareButton
 		classList={{'c-icon-btn': true, ...props.classList}}
 		{...other}>
-		<Icon code={props.code} filled={props.filled}/>
+		<Icon
+			code={icon_props.code ?? props.code}
+			filled={icon_props.filled ?? props.filled}
+			{...icon_props_other}
+		/>
 	</SquareButton>)
 }
 
 type LinkIconButtonProps = LinkSquareButtonProps & {
 	code: number
 	filled?: boolean
+	attr_icon?: Omit<IconProps, 'code'> & {
+		code?: number
+	}
 }
 const LinkIconButton: VoidComponent<LinkIconButtonProps> = ($props) => {
-	const [props, other] = splitProps($props, ['classList', 'code', 'filled'])
+	const [props, other] = splitProps($props, [
+		'classList', 'code', 'filled',
+		'attr_icon'
+	])
+	const [icon_props, icon_props_other] = splitProps(props.attr_icon! ?? {}, [
+		'code', 'filled'
+	])
 	return (<LinkSquareButton
 		classList={{'c-icon-btn': true, ...props.classList}}
 		{...other}>
-		<Icon code={props.code} filled={props.filled}/>
+		<Icon
+			code={icon_props.code ?? props.code}
+			filled={icon_props.filled ?? props.filled}
+			{...icon_props_other}
+		/>
 	</LinkSquareButton>)
 }
 

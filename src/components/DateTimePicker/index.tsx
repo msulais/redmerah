@@ -103,7 +103,7 @@ const DateTimePickerBody: ParentComponent<{
 
 	const DaysDate: VoidComponent = () => (<div style="display: contents">
 		<div class="c-datetime-picker-days-name">
-			<For each={date_weekday_names(props.locales)}>{d => <p>{string_substring(d, 0, 2)}</p>}</For>
+			<For each={date_weekday_names(props.locales)}>{d => <p>{string_substring(d, 0, 3)}</p>}</For>
 		</div>
 		<div class="c-datetime-picker-days">
 			<For each={array_fill(Array(start_day()), 0)}>{_v => <div/>}</For>
@@ -230,6 +230,7 @@ const DateTimePickerBody: ParentComponent<{
 		</Transition>
 		<div class="c-datetime-picker-time">
 			<Dropdown
+				label='Hour'
 				values={[
 					date_hour(value()) - (date_hour(value()) >= 12? 12 : 0)
 				]}
@@ -250,6 +251,7 @@ const DateTimePickerBody: ParentComponent<{
 			</Dropdown>
 			<Dropdown
 				values={[date_minute(value())]}
+				label='Minute'
 				attr_menu={{style: {
 					"max-height": '192px'
 				}}}

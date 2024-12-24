@@ -1,5 +1,9 @@
-.c-modal.c-emoji-picker {
-	width: 313px;
+:is(.c-modal,.c-popover).c-emoji-picker {
+	width: 360px;
+
+	&[data-c-draggable] .c-emoji-picker-tabs {
+		padding-top: 12px;
+	}
 }
 
 .c-emoji-picker-emojis {
@@ -14,31 +18,41 @@
 	> div {
 		position: relative;
 		display: grid;
-		padding: 4px;
+		padding: 8px;
 		padding-top: 36px;
 		width: 100%;
 		justify-items: center;
-		grid-template-columns: repeat(7, 1fr);
-		gap: 1px;
+		grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
+		gap: 4px;
 
 		> h3 {
 			position: absolute;
-			left: 12px;
+			left: 16px;
 			top: 10px;
 			font-weight: 500;
+		}
+
+		> .c-btn {
+			max-width: 100%;
+			min-width: 100%;
 		}
 	}
 }
 
 .c-emoji-picker-search {
-	padding: 0 12px 12px 12px;
+	padding: 0 8px 12px 8px;
 }
 
 .c-emoji-picker-tabs {
 	display: grid;
-	padding: 4px;
+	padding: 8px;
 	width: 100%;
 	justify-items: center;
-	grid-template-columns: repeat(7, 1fr);
-	gap: 1px;
+	grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
+	gap: 4px;
+
+	> div > .c-btn.c-icon-btn {
+		max-width: 100%;
+		min-width: 100%;
+	}
 }
