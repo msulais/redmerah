@@ -647,7 +647,7 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 			timeout_reposition_id = timeout_set(() => {
 				reposition_popover()
 				timeout_reposition_id = null
-			}, 1000)
+			}, 300)
 		})
 		observer.observe(popover_ref, {box: 'border-box'})
 

@@ -698,7 +698,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 			timeout_reposition_id = timeout_set(() => {
 				reposition_modal()
 				timeout_reposition_id = null
-			}, 1000)
+			}, 300)
 		})
 		observer.observe(modal_ref, {box: 'border-box'})
 
