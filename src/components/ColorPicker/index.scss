@@ -135,6 +135,10 @@
 	transition-property: border-color;
 
 	:root[data-corner=sharp] & { border-radius: 0px }
+
+	&:focus-visible {
+		outline-offset: 4px;
+	}
 }
 
 .c-color-picker-input {
