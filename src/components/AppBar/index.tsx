@@ -1,7 +1,8 @@
-import { children, Show, splitProps, type JSX, type ParentComponent } from "solid-js"
+import { children, createEffect, Show, splitProps, type JSX, type ParentComponent } from "solid-js"
 import { classlist } from "@/utils/attributes"
 
 import './index.scss'
+import { element_children, element_focus_by_arrowkey, element_is_same_node, element_set_tabindex } from "@/utils/element"
 
 type AppBarProps = JSX.HTMLAttributes<HTMLDivElement> & {
 	leading?: JSX.Element
@@ -17,6 +18,27 @@ const AppBar: ParentComponent<AppBarProps> = ($props) => {
 	const leading = children(() => props.leading)
 	const headline = children(() => props.headline)
 	const trailing = children(() => props.trailing)
+	let div_trailing_ref: HTMLDivElement | undefined
+
+	createEffect(() => {
+		trailing()
+		if (!div_trailing_ref) return
+
+		let is_no_tabindex_0 = true
+		const children = element_children<HTMLButtonElement>(div_trailing_ref)
+		for (const child of children) {
+			const tag_name = child.tagName
+			if (tag_name != 'A' && tag_name != 'BUTTON') continue
+			if (tag_name == 'BUTTON' && child.disabled) continue
+			if (is_no_tabindex_0) {
+				element_set_tabindex(child, 0)
+				is_no_tabindex_0 = false
+				continue
+			}
+
+			element_set_tabindex(child, -1)
+		}
+	})
 
 	return (<div
 		class={classlist('c-appbar', props.class ?? '')}
@@ -31,7 +53,23 @@ const AppBar: ParentComponent<AppBarProps> = ($props) => {
 			{props.children}
 		</div>
 		<Show when={trailing()}>
-			<div class="c-appbar-trailing">{trailing()}</div>
+			<div
+				class="c-appbar-trailing"
+				ref={div_trailing_ref}
+				onKeyDown={ev => {
+					const button = ev.target as HTMLButtonElement
+					if (button.tagName == 'INPUT' || button.tagName == 'TEXTAREA') return;
+					if (!element_is_same_node(button.parentElement!, ev.currentTarget)) return
+
+					element_focus_by_arrowkey(
+						button,
+						ev.code,
+						{ left: 'prev', right: 'next' },
+						(el) => el.tagName != 'INPUT' && el.tagName != 'TEXTAREA'
+					)
+				}}>
+				{trailing()}
+			</div>
 		</Show>
 	</div>)
 }
