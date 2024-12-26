@@ -24,6 +24,7 @@ enum TooltipAttributes {
 }
 
 const TEXT_TOOLTIP_ID = 'c-text-tooltip'
+const TOOLTIP_CLASS = 'c-tooltip'
 
 type TooltipOpenDetail = {
 	tooltip_id: string
@@ -438,7 +439,7 @@ const TextTooltip: FlowComponent<TextTooltipProps> = ($props) => {
 	})
 
 	return (<div
-		class={classlist("c-tooltip", props.class)}
+		class={classlist(TOOLTIP_CLASS, props.class)}
 		id={props.id}
 		ref={mergeRefs(props.ref, r => div_ref = r)}
 		onPointerOver={ev => {
@@ -536,7 +537,7 @@ const RichTooltip: FlowComponent<RichTooltipProps> = ($props) => {
 	})
 
 	return (<div
-		class="c-tooltip"
+		class={classlist(TOOLTIP_CLASS, wrapper_props.class)}
 		id={wrapper_props.id}
 		ref={mergeRefs(wrapper_props.ref, r => div_ref = r)}
 		onPointerOver={ev => {
@@ -606,6 +607,7 @@ const RichTooltip: FlowComponent<RichTooltipProps> = ($props) => {
 export {
 	TooltipAttributes,
 	TEXT_TOOLTIP_ID,
+	TOOLTIP_CLASS,
 	TextTooltip,
 	RichTooltip,
 	TooltipPosition
