@@ -1,7 +1,7 @@
-import { createUniqueId, onCleanup, onMount, splitProps, type FlowComponent, type JSX } from "solid-js"
+import { createUniqueId, mergeProps, onCleanup, onMount, splitProps, type FlowComponent, type JSX } from "solid-js"
 import { mergeRefs } from "@solid-primitives/refs"
 
-import { attr_has, attr_remove, attr_set } from "@/utils/attributes"
+import { attr_has, attr_remove, attr_set, classlist } from "@/utils/attributes"
 import { event_add_listener, call_event_handler, event_stop_propagation } from "@/utils/event"
 import { create_element, element_animate, element_append_child, element_children, element_classlist, element_closest, element_dataset, element_dispatch_event, element_is_same_node, element_rect, element_set_style_property } from "@/utils/element"
 import { timeout_clear, timeout_set } from "@/utils/timeout"
@@ -367,7 +367,7 @@ function init_tooltip(): void {
 	init_events()
 }
 
-type TextTooltipProps = {
+type TextTooltipProps = JSX.HTMLAttributes<HTMLDivElement> & {
 	position?: TooltipPosition
 	gap?: number
 	start_delay_duration?: number
@@ -387,14 +387,23 @@ type TextTooltipProps = {
  * @param props
  * @returns
  */
-const TextTooltip: FlowComponent<TextTooltipProps> = (props) => {
+const TextTooltip: FlowComponent<TextTooltipProps> = ($props) => {
+	const [props, other] = splitProps(
+		mergeProps({
+			id: createUniqueId()
+		}, $props), [
+		'position', 'gap', 'start_delay_duration',
+		'end_delay_duration', 'use_anchor',
+		'children', 'id', 'ref', 'class',
+		'onPointerOver', 'onTouchStart', 'onPointerLeave',
+		'onMouseDown', 'onPointerUp', 'onPointerMove'
+	])
 	const body = document.body
-	const id = createUniqueId()
 	let div_ref: HTMLDivElement
 
 	function open(ev: Event): void {
 		element_dispatch_event(body, new CustomEvent(BodyEvents.open_tooltip, {detail: {
-			tooltip_id: id,
+			tooltip_id: props.id,
 			event: ev,
 			anchor: div_ref,
 			use_anchor: props.use_anchor,
@@ -429,15 +438,34 @@ const TextTooltip: FlowComponent<TextTooltipProps> = (props) => {
 	})
 
 	return (<div
-		class="c-tooltip"
-		id={id}
-		ref={r => div_ref = r}
-		onPointerOver={ev => open(ev)}
-		onTouchStart={ev => open(ev)}
-		onPointerLeave={ev => close(ev)}
-		onMouseDown={ev => close(ev)}
-		onPointerUp={ev => close(ev)}
-		onPointerMove={ev => update_pointer(ev)}>
+		class={classlist("c-tooltip", props.class)}
+		id={props.id}
+		ref={mergeRefs(props.ref, r => div_ref = r)}
+		onPointerOver={ev => {
+			open(ev)
+			call_event_handler(ev, props.onPointerOver)
+		}}
+		onTouchStart={ev => {
+			open(ev)
+			call_event_handler(ev, props.onTouchStart)
+		}}
+		onPointerLeave={ev => {
+			close(ev)
+			call_event_handler(ev, props.onPointerLeave)
+		}}
+		onMouseDown={ev => {
+			close(ev)
+			call_event_handler(ev, props.onMouseDown)
+		}}
+		onPointerUp={ev => {
+			close(ev)
+			call_event_handler(ev, props.onPointerUp)
+		}}
+		onPointerMove={ev => {
+			update_pointer(ev)
+			call_event_handler(ev, props.onPointerMove)
+		}}
+		{...other}>
 		{props.children}
 	</div>)
 }
@@ -449,6 +477,7 @@ type RichTooltipProps = PopoverProps & {
 	start_delay_duration?: number
 	end_delay_duration?: number
 	use_anchor?: boolean
+	attr_wrapper?: JSX.HTMLAttributes<HTMLDivElement>
 }
 const RichTooltip: FlowComponent<RichTooltipProps> = ($props) => {
 	const [props, other] = splitProps($props, [
@@ -456,16 +485,22 @@ const RichTooltip: FlowComponent<RichTooltipProps> = ($props) => {
 		'end_delay_duration', 'use_anchor', 'children',
 		'classList', 'ref', 'use_portal', 'onPointerOver',
 		'onTouchStart', 'onPointerLeave', 'onMouseDown',
-		'onPointerUp', 'onPointerMove'
+		'onPointerUp', 'onPointerMove', 'attr_wrapper'
+	])
+	const [wrapper_props, wrapper_props_other] = splitProps(
+		mergeProps({id: createUniqueId()}, props.attr_wrapper ?? {}),
+	[
+		'id', 'ref', 'class', 'onPointerOver',
+		'onTouchStart', 'onPointerLeave',
+		'onMouseDown', 'onPointerUp', 'onPointerMove'
 	])
 	const body = document.body
-	const id = createUniqueId()
 	let div_ref: HTMLDivElement
 	let tooltip_ref: HTMLDivElement
 
 	function open(ev: Event): void {
 		element_dispatch_event(body, new CustomEvent(BodyEvents.open_tooltip, {detail: {
-			tooltip_id: id,
+			tooltip_id: wrapper_props.id,
 			event: ev,
 			anchor: div_ref,
 			use_anchor: props.use_anchor,
@@ -502,14 +537,33 @@ const RichTooltip: FlowComponent<RichTooltipProps> = ($props) => {
 
 	return (<div
 		class="c-tooltip"
-		id={id}
-		ref={r => div_ref = r}
-		onPointerOver={ev => open(ev)}
-		onTouchStart={ev => open(ev)}
-		onPointerLeave={ev => close(ev)}
-		onMouseDown={ev => close(ev)}
-		onPointerUp={ev => close(ev)}
-		onPointerMove={ev => update_pointer(ev)}>
+		id={wrapper_props.id}
+		ref={mergeRefs(wrapper_props.ref, r => div_ref = r)}
+		onPointerOver={ev => {
+			open(ev)
+			call_event_handler(ev, wrapper_props.onPointerOver)
+		}}
+		onTouchStart={ev => {
+			open(ev)
+			call_event_handler(ev, wrapper_props.onTouchStart)
+		}}
+		onPointerLeave={ev => {
+			close(ev)
+			call_event_handler(ev, wrapper_props.onPointerLeave)
+		}}
+		onMouseDown={ev => {
+			close(ev)
+			call_event_handler(ev, wrapper_props.onMouseDown)
+		}}
+		onPointerUp={ev => {
+			close(ev)
+			call_event_handler(ev, wrapper_props.onPointerUp)
+		}}
+		onPointerMove={ev => {
+			update_pointer(ev)
+			call_event_handler(ev, wrapper_props.onPointerMove)
+		}}
+		{...wrapper_props_other}>
 		{props.children}
 		<Popover
 			use_portal={props.use_portal ?? false}
