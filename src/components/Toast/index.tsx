@@ -1,10 +1,10 @@
-import { type JSX, type ParentComponent, splitProps, children, onMount, onCleanup, Show } from "solid-js"
+import { type JSX, type ParentComponent, splitProps, children, onMount, onCleanup, Show, createEffect } from "solid-js"
 import { mergeRefs } from "@solid-primitives/refs"
 
 import { attr_set_if_exist } from "@/utils/attributes"
 import { event_add_listener, event_remove_listener } from "@/utils/event"
 import { timeout_clear, timeout_set } from "@/utils/timeout"
-import { element_dispatch_event } from "@/utils/element"
+import { element_children, element_dispatch_event, element_focus_by_arrowkey, element_is_same_node, element_set_tabindex } from "@/utils/element"
 
 import List from "@/components/List"
 import Popover, { type PopoverProps, close_popover, open_popover, is_popover_open as is_toast_open, PopoverPosition } from "@/components/Popover"
@@ -62,6 +62,7 @@ const Toast: ParentComponent<ToastProps> = ($props) => {
 	let toast_ref: HTMLDivElement
 	let is_open = false
 	let timeout_id: number | null = null
+	let div_action_ref: HTMLDivElement | undefined
 
 	function close_toast(): void {
 		if (!is_open) return;
@@ -126,6 +127,27 @@ const Toast: ParentComponent<ToastProps> = ($props) => {
 		init_custom_event()
 	})
 
+
+	createEffect(() => {
+		actions()
+		if (!div_action_ref) return
+
+		let is_no_tabindex_0 = true
+		const children = element_children<HTMLButtonElement>(div_action_ref)
+		for (const child of children) {
+			const tag_name = child.tagName
+			if (tag_name != 'A' && tag_name != 'BUTTON') continue
+			if (tag_name == 'BUTTON' && child.disabled) continue
+			if (is_no_tabindex_0) {
+				element_set_tabindex(child, 0)
+				is_no_tabindex_0 = false
+				continue
+			}
+
+			element_set_tabindex(child, -1)
+		}
+	})
+
 	return (<Popover
 		on_toggle_open={o => {
 			is_open = o
@@ -145,7 +167,21 @@ const Toast: ParentComponent<ToastProps> = ($props) => {
 			{ props.header }
 		</List>
 		<Show when={actions()}>
-			<div class="c-toast-actions">{actions()}</div>
+			<div
+				ref={div_action_ref}
+				class="c-toast-actions"
+				onKeyDown={ev => {
+					const button = ev.target as HTMLButtonElement
+					if (button.tagName == 'INPUT' || button.tagName == 'TEXTAREA') return;
+					if (!element_is_same_node(button.parentElement!, ev.currentTarget)) return
+
+					element_focus_by_arrowkey(
+						button,
+						ev.code,
+						{ left: 'prev', right: 'next' },
+						(el) => el.tagName != 'INPUT' && el.tagName != 'TEXTAREA'
+					)
+				}}>{actions()}</div>
 		</Show>
 	</Popover>)
 }

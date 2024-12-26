@@ -1,20 +1,23 @@
 import { TransitionGroup } from 'solid-transition-group'
-import { createEffect, createMemo, createSignal, For, onCleanup, onMount, Show, splitProps, type ParentComponent, type VoidComponent } from 'solid-js'
+import { createEffect, createMemo, createSignal, createUniqueId, For, onCleanup, onMount, Show, splitProps, type ParentComponent, type VoidComponent } from 'solid-js'
 import { mergeRefs } from '@solid-primitives/refs'
 
 import type { Emoji } from '@/types/emoji'
 import { activities_emojis, animal_and_nature_emojis, flags_emojis, food_and_drink_emojis, object_emojis, person_and_body_emojis, smiley_and_emotion_emojis, symbols_emojis, travel_and_places_emojis } from '@/constants/emoji'
 import { attr_has, attr_set_if_exist,attr_set } from '@/utils/attributes'
 import { BodyAttributes } from '@/enums/attributes'
-import { event_add_listener, event_remove_listener } from '@/utils/event'
+import { event_add_listener, event_prevent_default, event_remove_listener } from '@/utils/event'
 import { timeout_clear, timeout_set } from '@/utils/timeout'
 import { BodyEvents } from '@/enums/events'
 import { AnimationEffectTiming } from '@/enums/animation'
 import { string_length, string_locale_compare, string_replace, string_split, string_trim } from '@/utils/string'
-import { array_concat, array_find_index, array_join, array_map, array_slice, array_sort, array_splice } from '@/utils/array'
-import { element_animate, element_dispatch_event } from '@/utils/element'
+import { array_concat, array_find_index, array_join, array_length, array_map, array_slice, array_sort, array_splice } from '@/utils/array'
+import { element_animate, element_children, element_dataset, element_dispatch_event, element_focus, element_focus_by_arrowkey, element_next_sibling, element_previous_sibling, element_set_tabindex } from '@/utils/element'
 import { regex_test } from '@/utils/regex'
 import { promise_done } from '@/utils/object'
+import { AppColors } from '@/enums/colors'
+import { number_parse, number_safe } from '@/utils/number'
+import { ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT, ARROW_UP } from '@/constants/key_code'
 
 import Divider from '@/components/Divider'
 import TextTooltip from '@/components/Tooltip'
@@ -24,7 +27,6 @@ import { close_searchtextfieldmenu, SearchMenuItem, SearchTextField } from '@/co
 import { Modal, type ModalProps, ModalPosition as EmojiPickerPosition, close_modal, focus_modal, open_modal, reposition_modal, is_modal_open } from '@/components/Modal'
 import { close_popover, is_popover_open, open_popover, Popover, reposition_popover, type PopoverProps } from '../Popover'
 import './index.scss'
-import { AppColors } from '@/enums/colors'
 
 const ALL_EMOJI: Emoji[] = array_sort(
 	array_map(
@@ -97,6 +99,7 @@ const EmojiPickerBody: ParentComponent<{
 	on_select_emoji?(emoji: string, name: string): unknown
 	on_close(): unknown
 }> = props => {
+	const button_close_id = createUniqueId()
 	const [option, set_option] = createSignal<EmojiCategory>(EmojiCategory.recents)
 	const [recents, set_recents] = createSignal<Emoji[]>([])
 	const [search_text, set_search_text] = createSignal<string>('')
@@ -110,6 +113,7 @@ const EmojiPickerBody: ParentComponent<{
 			: new RegExp(array_join(string_split(t, ' '), '|'), 'gi')
 	})
 	const body = document.body
+	let div_tabs_ref: HTMLDivElement | undefined
 	let menu_search_ref: HTMLDivElement
 	let timeout_id: number | null = null
 
@@ -145,54 +149,171 @@ const EmojiPickerBody: ParentComponent<{
 		init_events()
 	})
 
+	createEffect(() => {
+		props.use_close_button
+		let is_no_tabindex_0 = true
+
+		const el = div_tabs_ref!.firstChild as HTMLDivElement
+		for (const child of element_children<HTMLButtonElement>(el)) {
+			if (child.tagName != 'BUTTON' || child.disabled) continue
+
+			if (is_no_tabindex_0) {
+				element_set_tabindex(child, 0)
+				is_no_tabindex_0 = false
+				continue
+			}
+
+			element_set_tabindex(child, -1)
+		}
+	})
+
 	const Tab: VoidComponent<{category: EmojiCategory; icon_code: number}> = ($props) => {
 		const category = createMemo(() => $props.category)
 		const selected = createMemo(() => option() == category())
 
 		return (<IconButton
 			data-tooltip={category()}
+			data-category={category()}
 			code={$props.icon_code}
 			selected={selected()}
 			filled={selected()}
 			variant={selected()? ButtonVariant.tonal : undefined}
-			onClick={() => set_option(category())}
 			style={{
 				color: selected()? `rgb(${AppColors.accent})` : undefined
 			}}
 		/>)
 	}
 
-	const Emojis: VoidComponent<{category: EmojiCategory, emojis: Emoji[]}> = $props => (<div
-		class='c-emoji-picker-emojis'
-		data-c-hidden={attr_set_if_exist($props.category != option())}>
-		<Show when={$props.category == option() && props.is_open}>
-			<div>
-				<h3>{$props.category}</h3>
-				<For each={$props.emojis}>{e =>
-					<EmojiButton data-tooltip={e[1]} emoji={e[0]} onClick={() => {
+	const Emojis: VoidComponent<{category: EmojiCategory, emojis: Emoji[]}> = $props => {
+		let div_ref: HTMLDivElement | undefined
+		let timeout_id: number | null = null
+		let grid_column_count = 0
+
+		createEffect(() => {
+			const option2 = option()
+			const is_open = props.is_open
+			const category = $props.category
+			if (category != option2 || !is_open || !div_ref) return
+
+			let is_no_tabindex_0 = true
+			const children = element_children<HTMLButtonElement>(div_ref)
+			for (const child of children) {
+				if (child.tagName != 'BUTTON') continue
+				if (is_no_tabindex_0) {
+					element_set_tabindex(child, 0)
+					is_no_tabindex_0 = false
+					continue
+				}
+				element_set_tabindex(child, -1)
+			}
+		})
+
+		return (<div
+			class='c-emoji-picker-emojis'
+			data-c-hidden={attr_set_if_exist($props.category != option())}>
+			<Show when={$props.category == option() && props.is_open}>
+				<div
+					ref={div_ref}
+					onKeyDown={(ev) => {
+						const code = ev.code
+						if (
+							code != ARROW_UP
+							&& code != ARROW_DOWN
+							&& code != ARROW_LEFT
+							&& code != ARROW_RIGHT
+						) return;
+
+						const button = ev.target as HTMLButtonElement
+						const index = number_safe(number_parse(element_dataset(button, 'index')!, true)) + 1
+						const children = element_children<HTMLButtonElement>(ev.currentTarget)
+						let target: HTMLElement | null = null
+
+						// don't update every key press
+						if (timeout_id == null){
+							grid_column_count = array_length(string_split(string_trim(
+								window
+								.getComputedStyle(ev.currentTarget)
+								.getPropertyValue("grid-template-columns")
+							), " "))
+
+							timeout_id = timeout_set(() => {
+								timeout_id = null
+							}, 300)
+						}
+
+						if (code == ARROW_UP) target = children[index - grid_column_count]
+						else if (code == ARROW_DOWN) target = children[index + grid_column_count]
+						else if (code == ARROW_RIGHT) target = element_next_sibling(button)
+						else if (code == ARROW_LEFT) target = element_previous_sibling(button)
+
+						if (!target || (target as HTMLButtonElement).disabled || target.tagName != 'BUTTON') return
+						event_prevent_default(ev) // disable scroll
+						element_set_tabindex(button, -1)
+						element_set_tabindex(target, 0)
+						element_focus(target)
+					}}
+					onClick={(ev) => {
+						const button = ev.target as HTMLButtonElement
+						if (button.tagName != 'BUTTON') return
+
+						const dataset_index = element_dataset(button, 'index')
+						if (!dataset_index) return
+
+						const index = number_safe(number_parse(dataset_index, true))
+						const emoji = $props.emojis[index]
 						element_dispatch_event(body, new CustomEvent(
 							BodyEvents.add_recent_emoji,
-							{detail: {emoji: [...e]}}
+							{detail: {emoji: [...emoji]}}
 						))
 						update_recents()
 						if (!props.multiple) props.on_close()
 
-						props.on_select_emoji?.(e[0], e[1])
-					}}/>
-				}</For>
-			</div>
-		</Show>
-	</div>)
+						props.on_select_emoji?.(emoji[0], emoji[1])
+					}}>
+					<h3>{$props.category}</h3>
+					<For each={$props.emojis}>{(e, i) =>
+						<EmojiButton
+							data-index={i()}
+							data-tooltip={e[1]}
+							emoji={e[0]}
+						/>
+					}</For>
+				</div>
+			</Show>
+		</div>)
+	}
 
 	return (<>
-		<div class="c-emoji-picker-tabs">
+		<div
+			class="c-emoji-picker-tabs"
+			ref={div_tabs_ref}
+			onKeyDown={(ev) => element_focus_by_arrowkey(
+				ev.target as HTMLElement,
+				ev.code,
+				{ left: 'prev', right: 'next' },
+			)}
+			onClick={(ev) => {
+				let button = ev.target as HTMLButtonElement
+				if (button.tagName == 'I') button = button.parentElement as HTMLButtonElement
+				if (button.tagName != 'BUTTON') return
+
+				if (button.id == button_close_id) {
+					props.on_close()
+					return
+				}
+
+				const dataset_category = element_dataset(button, 'category')
+				if (!dataset_category) return
+
+				set_option(dataset_category as EmojiCategory)
+			}}>
 			<TextTooltip>
 				<Show when={props.use_close_button}>
 					<IconButton
+						id={button_close_id}
 						data-tooltip={props.tooltip_close ?? 'Close'}
 						code={0xE5E9}
 						variant={ButtonVariant.filled}
-						onClick={() => props.on_close()}
 					/>
 				</Show>
 				<Tab icon_code={0xE8DE} category={EmojiCategory.recents}/>

@@ -1,10 +1,11 @@
-import { type JSX, type ParentComponent, Show, splitProps, children, mergeProps, createMemo } from "solid-js"
+import { type JSX, type ParentComponent, Show, splitProps, children, mergeProps, createMemo, createEffect } from "solid-js"
 
 import { attr_set_if_exist } from "@/utils/attributes"
 import { is_var_has_value, promise_done } from "@/utils/object"
 import { AnimationEffectTiming } from "@/enums/animation"
-import { element_animate } from "@/utils/element"
+import { element_animate, element_children, element_focus_by_arrowkey, element_is_same_node, element_set_tabindex } from "@/utils/element"
 import { AppColors } from "@/enums/colors"
+import { event_prevent_default } from "@/utils/event"
 
 import Icon from "@/components/Icon"
 import Button, { ButtonIndicatorPosition, ButtonVariant, type ButtonProps } from "@/components/Button"
@@ -78,6 +79,57 @@ const Drawer: ParentComponent<DrawerProps> = ($props) => {
 	const position = createMemo(() => props.position)
 	const header = children(() => props.header)
 	const footer = children(() => props.footer)
+	const content = children(() => props.children)
+	let header_ref: HTMLDivElement | undefined
+	let footer_ref: HTMLDivElement | undefined
+	let content_ref: HTMLDivElement | undefined
+
+	function reset_tabindex(el: HTMLDivElement | undefined): void {
+		if (!el) return
+
+		let is_no_tabindex_0 = true
+		for (const child of element_children<HTMLButtonElement>(el)) {
+			const tag_name = child.tagName
+			if (tag_name != 'A' && tag_name != 'BUTTON') continue
+			if (tag_name == 'BUTTON' && child.disabled) continue
+			if (is_no_tabindex_0) {
+				element_set_tabindex(child, 0)
+				is_no_tabindex_0 = false
+				continue
+			}
+
+			element_set_tabindex(child, -1)
+		}
+	}
+
+	function on_keydown(ev: KeyboardEvent & {currentTarget: HTMLDivElement; target: Element}): void {
+		const button = ev.target as HTMLButtonElement
+		if (button.tagName == 'INPUT' || button.tagName == 'TEXTAREA') return;
+		if (!element_is_same_node(button.parentElement!, ev.currentTarget)) return
+
+		const done = element_focus_by_arrowkey(
+			button,
+			ev.code,
+			{ up: 'prev', down: 'next' },
+			(el) => el.tagName != 'INPUT' && el.tagName != 'TEXTAREA'
+		)
+		if (done) event_prevent_default(ev)
+	}
+
+	createEffect(() => {
+		header()
+		reset_tabindex(header_ref)
+	})
+
+	createEffect(() => {
+		footer()
+		reset_tabindex(footer_ref)
+	})
+
+	createEffect(() => {
+		content()
+		reset_tabindex(content_ref)
+	})
 
 	return (<Modal
 		data-c-right={attr_set_if_exist(position() == DrawerPosition.right)}
@@ -118,11 +170,26 @@ const Drawer: ParentComponent<DrawerProps> = ($props) => {
 		}}
 		{...other}>
 		<Show when={header()}>
-			<div class="c-drawer-header">{header()}</div>
+			<div
+				class="c-drawer-header"
+				ref={header_ref}
+				onKeyDown={on_keydown}>
+				{header()}
+			</div>
 		</Show>
-		<div class="c-drawer-content">{props.children}</div>
+		<div
+			class="c-drawer-content"
+			ref={content_ref}
+			onKeyDown={on_keydown}>
+			{content()}
+		</div>
 		<Show when={footer()}>
-			<div class="c-drawer-footer">{footer()}</div>
+			<div
+				class="c-drawer-footer"
+				ref={footer_ref}
+				onKeyDown={on_keydown}>
+				{footer()}
+			</div>
 		</Show>
 	</Modal>)
 }

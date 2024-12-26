@@ -1,7 +1,7 @@
-import { type JSX, type ParentComponent, splitProps, children, Show } from "solid-js"
+import { type JSX, type ParentComponent, splitProps, children, Show, createEffect } from "solid-js"
 
 import { AnimationEffectTiming } from "@/enums/animation"
-import { element_animate } from "@/utils/element"
+import { element_animate, element_children, element_focus_by_arrowkey, element_is_same_node, element_set_tabindex } from "@/utils/element"
 import { promise_done } from "@/utils/object"
 
 import { close_modal, focus_modal, Modal, open_modal, type ModalProps } from "@/components/Modal"
@@ -26,6 +26,27 @@ const Dialog: ParentComponent<DialogProps> = ($props) => {
 	])
 	const actions = children(() => props.actions)
 	const header = children(() => props.header)
+	let div_action_ref: HTMLDivElement | undefined
+
+	createEffect(() => {
+		actions()
+		if (!div_action_ref) return
+
+		let is_no_tabindex_0 = true
+		const children = element_children<HTMLButtonElement>(div_action_ref)
+		for (const child of children) {
+			const tag_name = child.tagName
+			if (tag_name != 'A' && tag_name != 'BUTTON') continue
+			if (tag_name == 'BUTTON' && child.disabled) continue
+			if (is_no_tabindex_0) {
+				element_set_tabindex(child, 0)
+				is_no_tabindex_0 = false
+				continue
+			}
+
+			element_set_tabindex(child, -1)
+		}
+	})
 
 	return (<Modal
 		classList={{
@@ -59,7 +80,23 @@ const Dialog: ParentComponent<DialogProps> = ($props) => {
 		</Show>
 		<div class="c-dialog-content">{props.children}</div>
 		<Show when={actions()}>
-			<div class="c-dialog-actions">{actions()}</div>
+			<div
+				ref={div_action_ref}
+				class="c-dialog-actions"
+				onKeyDown={ev => {
+					const button = ev.target as HTMLButtonElement
+					if (button.tagName == 'INPUT' || button.tagName == 'TEXTAREA') return;
+					if (!element_is_same_node(button.parentElement!, ev.currentTarget)) return
+
+					element_focus_by_arrowkey(
+						button,
+						ev.code,
+						{ left: 'prev', right: 'next' },
+						(el) => el.tagName != 'INPUT' && el.tagName != 'TEXTAREA'
+					)
+				}}>
+				{actions()}
+			</div>
 		</Show>
 	</Modal>)
 }

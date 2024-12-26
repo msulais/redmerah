@@ -1,10 +1,10 @@
-import { type Component, type ParentComponent, Show, createEffect, createMemo, createSignal, mergeProps, onCleanup, onMount, splitProps } from "solid-js"
+import { type Component, type ParentComponent, Show, createEffect, createMemo, createSignal, createUniqueId, mergeProps, onCleanup, onMount, splitProps } from "solid-js"
 import { mergeRefs } from "@solid-primitives/refs"
 
 import type { HEXColor, HSLColor, RGBColor } from "@/types/color"
 import { timeout_set } from "@/utils/timeout"
 import { attr_remove, attr_set, attr_set_if_exist } from "@/utils/attributes"
-import { element_dispatch_event, element_rect } from "@/utils/element"
+import { element_dispatch_event, element_focus_by_arrowkey, element_rect, element_set_tabindex, get_element_by_id } from "@/utils/element"
 import { event_add_listener, event_remove_listener } from '@/utils/event'
 import { BodyAttributes } from "@/enums/attributes"
 import { math_clamp, math_round } from "@/utils/math"
@@ -666,17 +666,16 @@ const ColorPickerBody: ParentComponent<{
 	const Input: Component = () => {
 		return (<div
 			class="c-color-picker-input"
-			data-c-hide-opacity={attr_set_if_exist(is_disabled_opacity_control())}>
+			data-c-hide-opacity={attr_set_if_exist(is_disabled_opacity_control())}
+			onFocusOut={() => update_inputs()}>
 			<TextField
 				ref={r => textfield_color_ref = r}
 				onInput={(ev) => on_color_input_change(ev.currentTarget.value)}
-				onBlur={() => update_inputs()}
 				label={color_model() == 'RGB' ? 'RGB' : color_model() == 'HEX' ? 'Hex' : 'HSL'}
 				placeholder={color_model() == 'RGB' ? "0-255, 0-255, 0-255" : color_model() == 'HEX' ? '#FF0000' : '0-360, 0-100%, 0-100%'}
 			/>
 			<TextField
 				onInput={(ev) => on_opacity_input_change(ev.currentTarget.value)}
-				onBlur={() => update_inputs()}
 				ref={r => textfield_opacity_ref = r}
 				label="Opacity"
 				value="100%"
@@ -686,23 +685,66 @@ const ColorPickerBody: ParentComponent<{
 	}
 
 	const Actions: Component = () => {
-		return (<div class="c-color-picker-actions" data-c-disabled={attr_set_if_exist(props.disabled_action)}>
-			<Button onClick={change_color_model} variant={ButtonVariant.tonal}>{color_model()}</Button>
-			<Show when={!props.disabled_action}>
-				<Button
-					variant={ButtonVariant.tonal}
-					onClick={() => {
+		const button_colormodel_id = createUniqueId()
+		const button_cancel_id = createUniqueId()
+		const button_select_id = createUniqueId()
+
+		createEffect(() => {
+			props.disabled_action
+			element_set_tabindex(get_element_by_id(button_colormodel_id)!, 0)
+		})
+
+		return (<div
+			class="c-color-picker-actions"
+			onKeyDown={(ev) => element_focus_by_arrowkey(
+				ev.target as HTMLButtonElement,
+				ev.code,
+				{ right: 'next', left: 'prev' }
+			)}
+			data-c-disabled={attr_set_if_exist(props.disabled_action)}
+			onClick={(ev) => {
+				const button = ev.target as HTMLElement
+				if (button.tagName != 'BUTTON') return;
+
+				const children = ev.currentTarget.children as unknown as HTMLButtonElement[]
+				element_set_tabindex(button, 0)
+				for (const child of children) {
+					if (child.id == button.id) continue
+
+					element_set_tabindex(child, -1)
+				}
+
+				switch (button.id) {
+					case button_colormodel_id:
+						change_color_model()
+						break
+					case button_cancel_id:
 						update_color(props.color)
 						props.on_close()
-					}}>
+						break
+					case button_select_id:
+						props.on_select_color?.(get_hex_color() as HEXColor)
+						props.on_close()
+						break
+				}
+			}}>
+			<Button
+				tabindex="0"
+				id={button_colormodel_id}
+				variant={ButtonVariant.tonal}>
+				{color_model()}
+			</Button>
+			<Show when={!props.disabled_action}>
+				<Button
+					tabindex="-1"
+					id={button_cancel_id}
+					variant={ButtonVariant.tonal}>
 					Cancel
 				</Button>
 				<Button
-					variant={ButtonVariant.filled}
-					onClick={() => {
-						props.on_select_color?.(get_hex_color() as HEXColor)
-						props.on_close()
-					}}>
+					tabindex="-1"
+					id={button_select_id}
+					variant={ButtonVariant.filled}>
 					Select
 				</Button>
 			</Show>

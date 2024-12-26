@@ -1,7 +1,8 @@
-import { children, type JSX, type ParentComponent, Show, splitProps, type ValidComponent } from "solid-js"
+import { children, createEffect, type JSX, type ParentComponent, Show, splitProps, type ValidComponent } from "solid-js"
 import { Dynamic, type DynamicProps } from "solid-js/web"
 
 import { attr_set_if_exist, classlist } from '@/utils/attributes'
+import { element_children, element_focus_by_arrowkey, element_is_same_node, element_set_tabindex } from "@/utils/element"
 
 import './index.scss'
 
@@ -17,8 +18,29 @@ const List: ParentComponent<ListProps> = ($props) => {
 	])
 	const trailing = children(() => props.trailing)
 	const leading = children(() => props.leading)
-	const $children = children(() => props.children)
+	const content = children(() => props.children)
 	const subtitle = children(() => props.subtitle)
+	let div_trailing_ref: HTMLDivElement | undefined
+
+	createEffect(() => {
+		trailing()
+		if (!div_trailing_ref) return
+
+		let is_no_tabindex_0 = true
+		const children = element_children<HTMLButtonElement>(div_trailing_ref)
+		for (const child of children) {
+			const tag_name = child.tagName
+			if (tag_name != 'A' && tag_name != 'BUTTON') continue
+			if (tag_name == 'BUTTON' && child.disabled) continue
+			if (is_no_tabindex_0) {
+				element_set_tabindex(child, 0)
+				is_no_tabindex_0 = false
+				continue
+			}
+
+			element_set_tabindex(child, -1)
+		}
+	})
 
 	return (<div
 		class={classlist('c-list', props.class)}
@@ -28,15 +50,31 @@ const List: ParentComponent<ListProps> = ($props) => {
 			<div class='c-list-leading'>{leading()}</div>
 		</Show>
 		<div class='c-list-content'>
-			<Show when={$children()}>
-				<div class='c-list-title'>{$children()}</div>
+			<Show when={content()}>
+				<div class='c-list-title'>{content()}</div>
 			</Show>
 			<Show when={subtitle()}>
 				<div class='c-list-subtitle'>{subtitle()}</div>
 			</Show>
 		</div>
 		<Show when={trailing()}>
-			<div class='c-list-trailing'>{trailing()}</div>
+			<div
+				class='c-list-trailing'
+				ref={div_trailing_ref}
+				onKeyDown={ev => {
+					const button = ev.target as HTMLButtonElement
+					if (button.tagName == 'INPUT' || button.tagName == 'TEXTAREA') return;
+					if (!element_is_same_node(button.parentElement!, ev.currentTarget)) return
+
+					element_focus_by_arrowkey(
+						button,
+						ev.code,
+						{ left: 'prev', right: 'next' },
+						(el) => el.tagName != 'INPUT' && el.tagName != 'TEXTAREA'
+					)
+				}}>
+				{trailing()}
+			</div>
 		</Show>
 	</div>)
 }
@@ -53,8 +91,29 @@ const RawList: ParentComponent<RawListProps> = ($props) => {
 	])
 	const trailing = children(() => props.trailing)
 	const leading = children(() => props.leading)
-	const $children = children(() => props.children)
+	const content = children(() => props.children)
 	const subtitle = children(() => props.subtitle)
+	let div_trailing_ref: HTMLDivElement | undefined
+
+	createEffect(() => {
+		trailing()
+		if (!div_trailing_ref) return
+
+		let is_no_tabindex_0 = true
+		const children = element_children<HTMLButtonElement>(div_trailing_ref)
+		for (const child of children) {
+			const tag_name = child.tagName
+			if (tag_name != 'A' && tag_name != 'BUTTON') continue
+			if (tag_name == 'BUTTON' && child.disabled) continue
+			if (is_no_tabindex_0) {
+				element_set_tabindex(child, 0)
+				is_no_tabindex_0 = false
+				continue
+			}
+
+			element_set_tabindex(child, -1)
+		}
+	})
 
 	return (<Dynamic
 		class={classlist('c-list', props.class)}
@@ -64,15 +123,31 @@ const RawList: ParentComponent<RawListProps> = ($props) => {
 			<div class='c-list-leading'>{leading()}</div>
 		</Show>
 		<div class='c-list-content'>
-			<Show when={$children()}>
-				<div class='c-list-title'>{$children()}</div>
+			<Show when={content()}>
+				<div class='c-list-title'>{content()}</div>
 			</Show>
 			<Show when={subtitle()}>
 				<div class='c-list-subtitle'>{subtitle()}</div>
 			</Show>
 		</div>
 		<Show when={trailing()}>
-			<div class='c-list-trailing'>{trailing()}</div>
+			<div
+				class='c-list-trailing'
+				ref={div_trailing_ref}
+				onKeyDown={ev => {
+					const button = ev.target as HTMLButtonElement
+					if (button.tagName == 'INPUT' || button.tagName == 'TEXTAREA') return;
+					if (!element_is_same_node(button.parentElement!, ev.currentTarget)) return
+
+					element_focus_by_arrowkey(
+						button,
+						ev.code,
+						{ left: 'prev', right: 'next' },
+						(el) => el.tagName != 'INPUT' && el.tagName != 'TEXTAREA'
+					)
+				}}>
+				{trailing()}
+			</div>
 		</Show>
 	</Dynamic>)
 }

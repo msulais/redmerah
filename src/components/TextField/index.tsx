@@ -1,11 +1,11 @@
-import { type JSX, type ParentComponent, createSignal, createUniqueId, mergeProps, onMount, splitProps, type VoidComponent, children, createEffect, Show, onCleanup } from 'solid-js'
+import { type JSX, type ParentComponent, createSignal, createUniqueId, mergeProps, onMount, splitProps, type VoidComponent, children, createEffect, Show, onCleanup, createMemo } from 'solid-js'
 import { mergeRefs } from '@solid-primitives/refs'
 
 import { attr_set_if_exist, classlist } from '@/utils/attributes'
 import { timeout_clear, interval_clear, timeout_set, interval_set } from '@/utils/timeout'
 import { call_event_handler, event_prevent_default, event_stop_propagation } from '@/utils/event'
 import { math_clamp, math_max, math_round } from '@/utils/math'
-import { element_blur, element_contains, element_dispatch_event, element_focus, element_rect, element_scroll_height } from '@/utils/element'
+import { element_blur, element_children, element_contains, element_dispatch_event, element_focus, element_focus_by_arrowkey, element_is_same_node, element_rect, element_scroll_height, element_set_tabindex } from '@/utils/element'
 import { event_add_listener, event_remove_listener } from '@/utils/event'
 import { is_array, is_number, is_string } from '@/utils/typecheck'
 import { string_length, string_split, string_touppercase, string_trim } from '@/utils/string'
@@ -101,10 +101,33 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 	const [is_invalid, set_is_invalid] = createSignal<boolean>(false)
 	const [value, set_value] = createSignal<string>('')
 	const [height, set_height] = createSignal<number>(HEIGHT_TEXT_INPUT_PER_LINE)
+	const is_show_clear_button = createMemo(() => props.auto_show_clear_button && string_length(value()) > 0)
 	const trailing = children(() => props.trailing)
 	const leading = children(() => props.leading)
 	const message = children(() => props.message)
+	const button_clear_id = createUniqueId()
 	let areatextfield_ref!: HTMLTextAreaElement
+	let div_trailing_ref: HTMLDivElement | undefined
+
+	function reset_trailing_tabindex(): void {
+		if (!div_trailing_ref) return
+
+		const children = element_children<HTMLButtonElement>(div_trailing_ref.firstElementChild as HTMLElement)
+		let is_no_tabindex_0 = true
+
+		for (const child of children) {
+			const tag_name = child.tagName
+			if (tag_name != 'A' && tag_name != 'BUTTON') continue
+			if (tag_name == 'BUTTON' && child.disabled) continue
+			if (is_no_tabindex_0) {
+				element_set_tabindex(child, 0)
+				is_no_tabindex_0 = false
+				continue
+			}
+
+			element_set_tabindex(child, -1)
+		}
+	}
 
 	createEffect(() => {
 		const value = `${props.value ?? ''}`
@@ -112,6 +135,18 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 		const lines = array_length(string_split(string_trim(value ?? ''), '\n'))
 		set_height(lines * HEIGHT_TEXT_INPUT_PER_LINE)
 		set_value(value ?? '')
+	})
+
+	createEffect(() => {
+		const show_clear_button = is_show_clear_button()
+
+		if (!show_clear_button) return;
+		reset_trailing_tabindex()
+	})
+
+	createEffect(() => {
+		trailing()
+		reset_trailing_tabindex()
 	})
 
 	return (<div
@@ -168,19 +203,38 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 				}}
 				placeholder={props.placeholder ?? (props.auto_hide_label && props.label? `${props.label}` : undefined)}
 				{...other}></textarea>
-			<Show when={trailing() || (props.auto_show_clear_button && string_length(value()) > 0)}>
-				<div class='c-area-textfield-trailing' onClick={ev => event_stop_propagation(ev)}>
+			<Show when={trailing() || is_show_clear_button()}>
+				<div
+					class='c-area-textfield-trailing'
+					onClick={ev => {
+						event_stop_propagation(ev)
+						if (ev.target.id == button_clear_id) {
+							change_areatextfield_value(areatextfield_ref, '')
+							event_prevent_default(ev)
+							element_focus(areatextfield_ref)
+							reset_trailing_tabindex()
+						}
+					}}
+					ref={div_trailing_ref}
+					onKeyDown={ev => {
+						const button = ev.target as HTMLButtonElement
+						if (button.tagName == 'INPUT' || button.tagName == 'TEXTAREA') return;
+						if (!element_is_same_node(button.parentElement!, ev.currentTarget.firstChild)) return
+
+						element_focus_by_arrowkey(
+							button,
+							ev.code,
+							{ left: 'prev', right: 'next' },
+							(el) => el.tagName != 'INPUT' && el.tagName != 'TEXTAREA'
+						)
+					}}>
 					<TextTooltip>
 						{trailing()}
-						<Show when={props.auto_show_clear_button && string_length(value()) > 0}>
+						<Show when={is_show_clear_button()}>
 							<TextFieldButton
 								data-tooltip={props.tooltip_clear ?? 'Clear'}
 								type={'button'}
-								onClick={(ev) => {
-									areatextfield_ref.value = ''
-									set_value('')
-									event_prevent_default(ev)
-								}}>
+								id={button_clear_id}>
 								<Icon code={0xE5E9}/>
 							</TextFieldButton>
 						</Show>
@@ -227,14 +281,49 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 	const [is_focus, set_is_focus] = createSignal<boolean>(false)
 	const [is_invalid, set_is_invalid] = createSignal<boolean>(false)
 	const [value, set_value] = createSignal<string>('')
+	const is_show_clear_button = createMemo(() => props.auto_show_clear_button && string_length(value()) > 0)
 	const trailing = children(() => props.trailing)
 	const leading = children(() => props.leading)
 	const message = children(() => props.message)
+	const button_clear_id = createUniqueId()
 	let textfield_ref: HTMLInputElement
+	let div_trailing_ref: HTMLDivElement | undefined
+
+	function reset_trailing_tabindex(): void {
+		if (!div_trailing_ref) return
+
+		const children = element_children<HTMLButtonElement>(div_trailing_ref.firstElementChild as HTMLElement)
+		let is_no_tabindex_0 = true
+
+		for (const child of children) {
+			const tag_name = child.tagName
+			if (tag_name != 'A' && tag_name != 'BUTTON') continue
+			if (tag_name == 'BUTTON' && child.disabled) continue
+			if (is_no_tabindex_0) {
+				element_set_tabindex(child, 0)
+				is_no_tabindex_0 = false
+				continue
+			}
+
+			element_set_tabindex(child, -1)
+		}
+	}
 
 	createEffect(() => {
 		const value = props.value
 		set_value(v => `${value ?? v}`)
+	})
+
+	createEffect(() => {
+		const show_clear_button = is_show_clear_button()
+
+		if (!show_clear_button) return;
+		reset_trailing_tabindex()
+	})
+
+	createEffect(() => {
+		trailing()
+		reset_trailing_tabindex()
 	})
 
 	return (<div
@@ -287,19 +376,38 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 				placeholder={props.placeholder ?? (props.auto_hide_label && props.label? `${props.label}` : undefined)}
 				{...other}
 			/>
-			<Show when={trailing() || (props.auto_show_clear_button && string_length(value()) > 0)}>
-				<div class='c-textfield-trailing' onClick={ev => event_stop_propagation(ev)}>
+			<Show when={trailing() || is_show_clear_button()}>
+				<div
+					class='c-textfield-trailing'
+					ref={div_trailing_ref}
+					onClick={ev => {
+						event_stop_propagation(ev)
+						if (ev.target.id == button_clear_id) {
+							change_textfield_value(textfield_ref, '')
+							event_prevent_default(ev)
+							element_focus(textfield_ref)
+							reset_trailing_tabindex()
+						}
+					}}
+					onKeyDown={ev => {
+						const button = ev.target as HTMLButtonElement
+						if (button.tagName == 'INPUT' || button.tagName == 'TEXTAREA') return;
+						if (!element_is_same_node(button.parentElement!, ev.currentTarget.firstChild)) return
+
+						element_focus_by_arrowkey(
+							button,
+							ev.code,
+							{ left: 'prev', right: 'next' },
+							(el) => el.tagName != 'INPUT' && el.tagName != 'TEXTAREA'
+						)
+					}}>
 					<TextTooltip>
 						{trailing()}
-						<Show when={props.auto_show_clear_button && string_length(value()) > 0}>
+						<Show when={is_show_clear_button()}>
 							<TextFieldButton
 								data-tooltip={props.tooltip_clear ?? 'Clear'}
 								type='button'
-								onClick={(ev) => {
-									change_textfield_value(textfield_ref, '')
-									set_value('')
-									event_prevent_default(ev)
-								}}>
+								id={button_clear_id}>
 								<Icon code={0xE5E9}/>
 							</TextFieldButton>
 						</Show>

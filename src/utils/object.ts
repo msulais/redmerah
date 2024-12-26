@@ -1,3 +1,5 @@
+import { is_function } from "./typecheck"
+
 export function is_var_has_value(data: unknown): boolean {
 	return data != undefined && data != null
 }
@@ -24,4 +26,23 @@ export function promise_done<T, U = any>(
 	return on_error
 		? prom.then(on_done).catch(on_error)
 		: prom.then(on_done)
+}
+
+/**
+ * Basically switch-case but without `break` keyword
+ * @param source
+ * @param args
+ * @returns
+ */
+export function match_case<T, U>(
+	source: T,
+	...args: [value: T, callback: (() => U) | U][]
+): U | void {
+	for (const arg of args) {
+		if (arg[0] == source) {
+			return is_function(arg[1])
+				? (arg[1] as () => U)()
+				: arg[1] as U
+		}
+	}
 }

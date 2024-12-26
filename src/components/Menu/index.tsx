@@ -16,7 +16,7 @@ import Modal, { type ModalProps, close_modal, focus_modal, is_modal_open, ModalP
 import { RawSwitch, type RawSwitchProps } from "@/components/Switch"
 import './index.scss'
 
-const SUBMENU_CLASSNAME = 'c-sub-menu'
+const SUBMENU_CLASSNAME = 'c-submenu'
 
 type MenuItemTrailingShortcutProps = JSX.HTMLAttributes<HTMLDivElement> & {
 	shortcuts: string[]
@@ -320,8 +320,9 @@ type MenuProps = ModalProps
 const Menu: ParentComponent<MenuProps> = ($props) => {
 	const [props, other] = splitProps($props, [
 		'classList', 'gap', 'padding', 'content_auto_focus',
-		'on_before_close', 'ref'
+		'on_before_close', 'ref', 'children'
 	])
+	const content = children(() => props.children)
 	let menu_ref: HTMLDialogElement
 
 	function close_submenu_descendant(): void {
@@ -344,6 +345,7 @@ const Menu: ParentComponent<MenuProps> = ($props) => {
 		content_auto_focus={props.content_auto_focus ?? true}
 		gap={props.gap ?? 8}
 		padding={props.padding ?? 4}
+		children={content()}
 		{...other}
 	/>)
 }

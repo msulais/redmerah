@@ -118,7 +118,7 @@ const CheckBox: ParentComponent<CheckBoxProps> = ($props) => {
 				call_event_handler(ev, props.onChange)
 
 				if (props.variant == CheckBoxVariant.radio && other.name != null) {
-					const getAllRadioWithSameName = get_multiple_element_by_selector(`input[type=radio][name]`)
+					const getAllRadioWithSameName = get_multiple_element_by_selector(`input[type=radio][name=${CSS.escape(other.name)}]`)
 					for (const el of getAllRadioWithSameName) element_dispatch_event(el as HTMLElement, new CustomEvent(
 						CheckBoxEvents.on_change_radio_state,
 						{detail: input_ref}

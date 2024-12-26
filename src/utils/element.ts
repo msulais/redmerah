@@ -1,3 +1,5 @@
+import { ARROW_UP, ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT } from "@/constants/key_code"
+
 export function element_scroll_width(el: HTMLElement): number {
 	return el.scrollWidth
 }
@@ -100,6 +102,68 @@ export function element_append_child(el: HTMLElement, node: Node): Node {
 	return el.appendChild(node)
 }
 
+export function element_focus_by_arrowkey<T = HTMLElement>(
+	el: HTMLElement,
+	key_code: 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight' | string,
+	options?: {
+		up?: 'next' | 'prev'
+		down?: 'next' | 'prev'
+		left?: 'next' | 'prev'
+		right?: 'next' | 'prev'
+	},
+	condition?: (sibling: T) => boolean
+): boolean {
+	if (!options) return false
+
+	const up = options.up
+	const down = options.down
+	const left = options.left
+	const right = options.right
+	const valid_up    = up    && (up    == 'next' || up    == 'prev') && key_code == ARROW_UP
+	const valid_down  = down  && (down  == 'next' || down  == 'prev') && key_code == ARROW_DOWN
+	const valid_left  = left  && (left  == 'next' || left  == 'prev') && key_code == ARROW_LEFT
+	const valid_right = right && (right == 'next' || right == 'prev') && key_code == ARROW_RIGHT
+	const all_options_invalid = (
+		up != 'next' && up != 'prev'
+		&& up == down
+		&& up == left
+		&& up == right
+	)
+	const invalid_keys = (
+		key_code != ARROW_UP
+		&& key_code != ARROW_DOWN
+		&& key_code != ARROW_RIGHT
+		&& key_code != ARROW_LEFT
+	)
+	if (all_options_invalid || invalid_keys) return false
+
+	let sibling: HTMLElement | null = null
+	do {
+		let direction: 'next' | 'prev' = 'next'
+		if (valid_up) direction = up
+		else if (valid_down) direction = down
+		else if (valid_left) direction = left
+		else if (valid_right) direction = right
+
+		sibling = (direction == 'next'
+			? element_next_sibling(sibling? sibling : el)
+			: element_previous_sibling(sibling? sibling : el)
+		)
+		if (sibling && (condition?.(sibling as T) ?? true)) {
+			element_focus(sibling)
+			if (document.activeElement != sibling) continue
+			else {
+				element_set_tabindex(el, -1)
+				element_set_tabindex(sibling, 0)
+				return true
+			}
+		}
+	} while (sibling)
+
+	element_focus(el)
+	return false
+}
+
 export function element_classlist(el: HTMLElement): DOMTokenList {
 	return el.classList
 }
@@ -108,8 +172,8 @@ export function element_blur(el: HTMLElement): void {
 	return el.blur()
 }
 
-export function element_children(el: HTMLElement): HTMLCollection {
-	return el.children
+export function element_children<T = HTMLElement>(el: HTMLElement): T[] {
+	return [...el.children] as unknown as T[]
 }
 
 export function element_click(el: HTMLElement): void {
@@ -118,6 +182,18 @@ export function element_click(el: HTMLElement): void {
 
 export function element_focus(el: HTMLElement, options?: FocusOptions): void {
 	return el.focus(options)
+}
+
+export function element_set_tabindex(el: HTMLElement, value: number): number {
+	return el.tabIndex = value
+}
+
+export function element_next_sibling(el: HTMLElement): HTMLElement | null {
+	return el.nextElementSibling as HTMLElement | null
+}
+
+export function element_previous_sibling(el: HTMLElement): HTMLElement | null {
+	return el.previousElementSibling as HTMLElement | null
 }
 
 export function element_scroll_top(el: HTMLElement): number {
