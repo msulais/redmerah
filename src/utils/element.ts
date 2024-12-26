@@ -135,7 +135,16 @@ export function element_focus_by_arrowkey<T = HTMLElement>(
 		&& key_code != ARROW_RIGHT
 		&& key_code != ARROW_LEFT
 	)
-	if (all_options_invalid || invalid_keys) return false
+	if (
+		all_options_invalid
+		|| invalid_keys
+		|| (
+			!valid_up
+			&& !valid_down
+			&& !valid_left
+			&& !valid_right
+		)
+	) return false
 
 	let sibling: HTMLElement | null = null
 	do {
