@@ -6,7 +6,7 @@ import type { Emoji } from '@/types/emoji'
 import { activities_emojis, animal_and_nature_emojis, flags_emojis, food_and_drink_emojis, object_emojis, person_and_body_emojis, smiley_and_emotion_emojis, symbols_emojis, travel_and_places_emojis } from '@/constants/emoji'
 import { attr_has, attr_set_if_exist,attr_set } from '@/utils/attributes'
 import { BodyAttributes } from '@/enums/attributes'
-import { event_add_listener, event_prevent_default, event_remove_listener } from '@/utils/event'
+import { event_add_listener, event_current_target, event_prevent_default, event_remove_listener } from '@/utils/event'
 import { timeout_clear, timeout_set } from '@/utils/timeout'
 import { BodyEvents } from '@/enums/events'
 import { AnimationEffectTiming } from '@/enums/animation'
@@ -225,14 +225,14 @@ const EmojiPickerBody: ParentComponent<{
 
 						const button = ev.target as HTMLButtonElement
 						const index = number_safe(number_parse(element_dataset(button, 'index')!, true)) + 1
-						const children = element_children<HTMLButtonElement>(ev.currentTarget)
+						const children = element_children<HTMLButtonElement>(event_current_target(ev))
 						let target: HTMLElement | null = null
 
 						// don't update every key press
 						if (timeout_id == null){
 							grid_column_count = array_length(string_split(string_trim(
 								window
-								.getComputedStyle(ev.currentTarget)
+								.getComputedStyle(event_current_target(ev))
 								.getPropertyValue("grid-template-columns")
 							), " "))
 
@@ -288,7 +288,7 @@ const EmojiPickerBody: ParentComponent<{
 			class="c-emoji-picker-tabs"
 			ref={div_tabs_ref}
 			onKeyDown={(ev) => element_focus_by_arrowkey(
-				ev.currentTarget,
+				event_current_target(ev),
 				ev.code,
 				{ left: 'prev', right: 'next' },
 			)}
@@ -332,7 +332,7 @@ const EmojiPickerBody: ParentComponent<{
 			<SearchTextField
 				placeholder='Search emoji'
 				onInput={(ev) => {
-					const text = ev.currentTarget.value
+					const text = event_current_target(ev).value
 
 					if (timeout_id != null) timeout_clear(timeout_id)
 					timeout_id = timeout_set(() => {

@@ -9,6 +9,7 @@ import { NumberTextField } from "@/components/TextField"
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import Toast, { close_toast, open_toast, ToastPosition } from "@/components/Toast"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
+import { event_current_target } from "@/utils/event"
 
 const _: VoidComponent = () => {
 	const [header, set_header] = createSignal<boolean>(false)
@@ -59,7 +60,7 @@ const _: VoidComponent = () => {
 					value={duration()}
 					step={100}
 					min={100}
-					onBlur={ev => set_duration(d => number_safe(ev.currentTarget.valueAsNumber, d))}
+					onBlur={ev => set_duration(d => number_safe(event_current_target(ev).valueAsNumber, d))}
 					trailing="ms"
 				/>
 			</Show>
@@ -78,32 +79,32 @@ const _: VoidComponent = () => {
 			</Dropdown>
 			<CheckBox
 				checked={header()}
-				onChange={ev => set_header(ev.currentTarget.checked)}>
+				onChange={ev => set_header(event_current_target(ev).checked)}>
 				Header
 			</CheckBox>
 			<CheckBox
 				checked={actions()}
-				onChange={ev => set_actions(ev.currentTarget.checked)}>
+				onChange={ev => set_actions(event_current_target(ev).checked)}>
 				Actions
 			</CheckBox>
 			<CheckBox
 				checked={leading()}
-				onChange={ev => set_leading(ev.currentTarget.checked)}>
+				onChange={ev => set_leading(event_current_target(ev).checked)}>
 				Leading
 			</CheckBox>
 			<CheckBox
 				checked={trailing()}
-				onChange={ev => set_trailing(ev.currentTarget.checked)}>
+				onChange={ev => set_trailing(event_current_target(ev).checked)}>
 				Trailing
 			</CheckBox>
 			<CheckBox
 				checked={content()}
-				onChange={ev => set_content(ev.currentTarget.checked)}>
+				onChange={ev => set_content(event_current_target(ev).checked)}>
 				Content
 			</CheckBox>
 			<CheckBox
 				checked={autoclose()}
-				onChange={ev => set_autoclose(ev.currentTarget.checked)}>
+				onChange={ev => set_autoclose(event_current_target(ev).checked)}>
 				Auto close
 			</CheckBox>
 		</PlaygroundOptions>

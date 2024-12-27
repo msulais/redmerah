@@ -12,6 +12,7 @@ import { navigator_share } from "@/utils/navigator"
 import { date_year } from "@/utils/datetime"
 import { RoutesLinks, ExternalLinks } from "@/enums/links"
 import { url_encode } from "@/utils/url"
+import { event_current_target } from "@/utils/event"
 import logo from '@/assets/apps/emoji-picker/logo.svg'
 import logo_redmerah from '@/assets/logo.svg'
 
@@ -221,7 +222,7 @@ const _: VoidComponent = () => {
 					focused={is_menu_info_open()}
 					code={0xE930}
 					onClick={(ev) => open_menu(ev, menu_info_ref, {
-						anchor: ev.currentTarget,
+						anchor: event_current_target(ev),
 						padding: 4,
 					})}
 				/>
@@ -231,7 +232,7 @@ const _: VoidComponent = () => {
 					focused={is_menu_settings_open()}
 					code={0xEE0F}
 					onClick={(ev) => open_menu(ev, menu_settings_ref, {
-						anchor: ev.currentTarget,
+						anchor: event_current_target(ev),
 						padding: 4,
 					})}
 				/>

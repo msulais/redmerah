@@ -23,6 +23,7 @@ import { timeout_clear, timeout_set } from "@/utils/timeout";
 import { remove_splash_screen_on_load_every_component } from "@/scripts/splash";
 import { array_includes } from "@/utils/array";
 import { math_round } from "@/utils/math";
+import { event_current_target } from "@/utils/event";
 
 type NavigationMenuProps = {
 	route?: RoutesLinks
@@ -41,7 +42,7 @@ export const NavigationMenu: VoidComponent<NavigationMenuProps> = (props) => {
 				classList={add_classlist_module(CSS.mobile_only)}
 				focused={is_menu_navigation_open()}
 				onClick={(ev) => open_menu(ev, menu_navigation_ref, {
-					anchor: ev.currentTarget,
+					anchor: event_current_target(ev),
 					padding: 0,
 				})}
 				code={0xE4F7}
@@ -173,7 +174,7 @@ export const SettingsElement: VoidComponent = () => {
 				classList={add_classlist_module(CSSAnimation.btn_rotate_icon)}
 				focused={is_menu_settings_open()}
 				onClick={(ev) => open_menu(ev, menu_settings_ref, {
-					anchor: ev.currentTarget,
+					anchor: event_current_target(ev),
 					padding: 0,
 				})}
 				code={0xEE0F}

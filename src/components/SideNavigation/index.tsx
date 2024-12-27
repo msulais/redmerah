@@ -2,12 +2,12 @@ import { children, createEffect, Show, splitProps, type JSX, type ParentComponen
 
 import { attr_set_if_exist, classlist } from "@/utils/attributes"
 import { element_children, element_set_tabindex, element_is_same_node, element_focus_by_arrowkey, element_tagname } from "@/utils/element"
-import { event_prevent_default } from "@/utils/event"
+import { event_current_target, event_prevent_default } from "@/utils/event"
+import { document_active } from "@/utils/document"
 
 import Icon from "@/components/Icon"
 import Button, { ButtonIndicatorPosition, ButtonVariant, type ButtonProps } from "@/components/Button"
 import './index.scss'
-import { document_active } from "@/utils/document"
 
 type SideNavigationItemProps = ButtonProps & {
 	leading?: JSX.Element
@@ -94,7 +94,7 @@ const SideNavigation: ParentComponent<SideNavigationProps> = ($props) => {
 		if (tag_name == 'INPUT' || tag_name == 'TEXTAREA') return
 
 		const done = element_focus_by_arrowkey(
-			ev.currentTarget,
+			event_current_target(ev),
 			ev.code,
 			{ up: 'prev', down: 'next' },
 			(el) => element_tagname(el) != 'INPUT' && element_tagname(el) != 'TEXTAREA'

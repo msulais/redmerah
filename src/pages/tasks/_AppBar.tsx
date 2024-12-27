@@ -10,7 +10,7 @@ import { storage_set, storage_get } from "@/utils/storage"
 import { attr_set, attr_set_if_exist } from "@/utils/attributes"
 import { DEFAULT_TASK_LIST, SIZE_SIDE_NAVIGATION_NONE, TASKS_PAGES } from "./_constants"
 import { is_window_media_matches, window_match_media } from "@/utils/window"
-import { event_add_listener } from '@/utils/event'
+import { event_add_listener, event_current_target } from '@/utils/event'
 import { timeout_clear, timeout_set, wait } from "@/utils/timeout"
 import { RoutesLinks, ExternalLinks } from "@/enums/links"
 import { url_encode } from "@/utils/url"
@@ -364,7 +364,7 @@ const _: VoidComponent<{
 						focused={is_menu_info_open()}
 						code={0xE930}
 						onClick={ev => open_menu(ev, menu_info_ref, {
-							anchor: ev.currentTarget,
+							anchor: event_current_target(ev),
 							padding: 4,
 						})}
 					/>
@@ -373,7 +373,7 @@ const _: VoidComponent<{
 						classList={add_classlist_module(CSSAnimation.btn_rotate_icon)}
 						focused={is_menu_settings_open()}
 						onClick={ev => open_menu(ev, menu_settings_ref, {
-							anchor: ev.currentTarget,
+							anchor: event_current_target(ev),
 							padding: 4,
 						})}
 						code={0xEE0F}
@@ -407,7 +407,7 @@ const _: VoidComponent<{
 							}</For>
 						</>}</For>}
 						onInput={(ev) => {
-							const text = ev.currentTarget.value
+							const text = event_current_target(ev).value
 							if (timeout_search_id != null) timeout_clear(timeout_search_id)
 
 							timeout_search_id = timeout_set(() => {

@@ -7,6 +7,7 @@ import Button, { ButtonVariant } from "@/components/Button"
 import CheckBox from "@/components/CheckBox"
 import ColorPicker, { open_colorpicker } from "@/components/ColorPicker"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
+import { event_current_target } from "@/utils/event"
 
 const _: VoidComponent = () => {
 	const [disabled_opacity_control, set_disabled_opacity_control] = createSignal<boolean>(false)
@@ -20,7 +21,7 @@ const _: VoidComponent = () => {
 			<Button
 				variant={ButtonVariant.tonal}
 				onClick={(ev) => open_colorpicker(ev, colorpicker_ref, {
-					anchor: ev.currentTarget,
+					anchor: event_current_target(ev),
 					content_auto_focus: false,
 					gap: 8,
 				})}>
@@ -37,12 +38,12 @@ const _: VoidComponent = () => {
 		<PlaygroundOptions>
 			<CheckBox
 				checked={disabled_opacity_control()}
-				onChange={ev => set_disabled_opacity_control(ev.currentTarget.checked)}>
+				onChange={ev => set_disabled_opacity_control(event_current_target(ev).checked)}>
 				Disable opacity
 			</CheckBox>
 			<CheckBox
 				checked={disabled_color_control()}
-				onChange={ev => set_disabled_color_control(ev.currentTarget.checked)}>
+				onChange={ev => set_disabled_color_control(event_current_target(ev).checked)}>
 				Disable color (hue only)
 			</CheckBox>
 		</PlaygroundOptions>

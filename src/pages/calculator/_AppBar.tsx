@@ -2,7 +2,7 @@ import { createMemo, createSignal, For, onMount, type VoidComponent } from "soli
 
 import type { Settings } from "./_types"
 import { add_classlist_module } from "@/utils/element"
-import { event_add_listener } from "@/utils/event"
+import { event_add_listener, event_current_target } from "@/utils/event"
 import { is_window_media_matches, window_match_media } from "@/utils/window"
 import { CALCULATOR_TYPES, SIZE_SIDE_NAVIGATION_NONE, SIZE_SIDE_NOTEBOOK_NONE } from "./_constants"
 import { RoutesLinks, ExternalLinks } from "@/enums/links"
@@ -393,7 +393,7 @@ const _: VoidComponent<{
 					ref={r => areatextfield_notebook_ref = r}
 					label="Notebook"
 					placeholder="Type your thought here ..."
-					onInput={(ev) => props.on_note_changed(ev.currentTarget.value)}
+					onInput={(ev) => props.on_note_changed(event_current_target(ev).value)}
 				/>
 			</Drawer>
 		</>)
@@ -423,7 +423,7 @@ const _: VoidComponent<{
 						data-tooltip="Info"
 						focused={is_menu_info_open()}
 						onClick={ev => open_menu(ev, menu_info_ref, {
-							anchor: ev.currentTarget,
+							anchor: event_current_target(ev),
 							padding: 4,
 						})}
 						code={0xE930}
@@ -433,7 +433,7 @@ const _: VoidComponent<{
 						classList={add_classlist_module(CSSAnimation.btn_rotate_icon)}
 						focused={is_menu_settings_open()}
 						onClick={(ev) => open_menu(ev, menu_settings_ref, {
-							anchor: ev.currentTarget,
+							anchor: event_current_target(ev),
 							padding: 4,
 						})}
 						code={0xEE0F}

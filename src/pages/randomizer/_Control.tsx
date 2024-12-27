@@ -4,7 +4,7 @@ import type { SetStoreFunction, Store } from "solid-js/store/types/store"
 import type { ItemList, Settings } from "./_types"
 import { element_rect } from "@/utils/element"
 import { RandomizerType, ColorsRandomizerColorModel, Commands } from "./_enums"
-import { event_prevent_default } from "@/utils/event"
+import { event_current_target, event_prevent_default } from "@/utils/event"
 import { array_find, array_join, array_length, array_push } from "@/utils/array"
 import { number_parse, number_safe } from "@/utils/number"
 import { string_length, string_match, string_replace } from "@/utils/string"
@@ -67,7 +67,7 @@ const Teams: VoidComponent<{
 			max={array_length(settings().list_members.items)}
 			onBlur={ev => command(
 				Commands.change_settings_teams_count,
-				number_safe(ev.currentTarget.valueAsNumber, settings().count)
+				number_safe(event_current_target(ev).valueAsNumber, settings().count)
 			)}
 			attr_wrapper={{ style: { width: 'min(100%, 164px)' } }}
 			value={settings().count}
@@ -382,7 +382,7 @@ const Selection: VoidComponent<{
 			max={array_length(settings().list.items)}
 			onBlur={ev => command(
 				Commands.change_settings_selection_count,
-				number_safe(ev.currentTarget.valueAsNumber, settings().count)
+				number_safe(event_current_target(ev).valueAsNumber, settings().count)
 			)}
 			attr_wrapper={{ style: { width: 'min(100%, 164px)' } }}
 			value={settings().count}
@@ -533,7 +533,7 @@ const Words: VoidComponent<{
 			min={1}
 			onBlur={ev => command(
 				Commands.change_settings_words_count,
-				number_safe(ev.currentTarget.valueAsNumber, settings().count)
+				number_safe(event_current_target(ev).valueAsNumber, settings().count)
 			)}
 			attr_wrapper={{ style: { width: 'min(100%, 164px)' } }}
 			value={settings().count}
@@ -577,7 +577,7 @@ const Colors: VoidComponent<{
 			value={settings().count}
 			onBlur={ev => command(
 				Commands.change_settings_colors_count,
-				number_safe(ev.currentTarget.valueAsNumber, settings().count)
+				number_safe(event_current_target(ev).valueAsNumber, settings().count)
 			)}
 		/>
 		<Switch>
@@ -586,7 +586,7 @@ const Colors: VoidComponent<{
 					label="Hex"
 					placeholder="0-16777215 - 0-16777215"
 					onBlur={(ev) => {
-						const self = ev.currentTarget
+						const self = event_current_target(ev)
 						const values = get_minmax(
 							self.value,
 							0xffffff,
@@ -609,7 +609,7 @@ const Colors: VoidComponent<{
 					label="Hue"
 					placeholder="0-360 - 0-360"
 					onBlur={(ev) => {
-						const self = ev.currentTarget
+						const self = event_current_target(ev)
 						const values = get_minmax(
 							self.value,
 							360,
@@ -630,7 +630,7 @@ const Colors: VoidComponent<{
 					label="Saturation"
 					placeholder="0-100 - 0-100"
 					onBlur={(ev) => {
-						const self = ev.currentTarget
+						const self = event_current_target(ev)
 						const values = get_minmax(
 							self.value,
 							100,
@@ -651,7 +651,7 @@ const Colors: VoidComponent<{
 					label="Lightness"
 					placeholder="0-100 - 0-100"
 					onBlur={(ev) => {
-						const self = ev.currentTarget
+						const self = event_current_target(ev)
 						const values = get_minmax(
 							self.value,
 							100,
@@ -674,7 +674,7 @@ const Colors: VoidComponent<{
 					label="Red"
 					placeholder="0-225 - 0-255"
 					onBlur={(ev) => {
-						const self = ev.currentTarget
+						const self = event_current_target(ev)
 						const values = get_minmax(
 							self.value,
 							255,
@@ -695,7 +695,7 @@ const Colors: VoidComponent<{
 					label="Green"
 					placeholder="0-225 - 0-255"
 					onBlur={(ev) => {
-						const self = ev.currentTarget
+						const self = event_current_target(ev)
 						const values = get_minmax(
 							self.value,
 							255,
@@ -716,7 +716,7 @@ const Colors: VoidComponent<{
 					label="Blue"
 					placeholder="0-225 - 0-255"
 					onBlur={(ev) => {
-						const self = ev.currentTarget
+						const self = event_current_target(ev)
 						const values = get_minmax(
 							self.value,
 							255,
@@ -749,7 +749,7 @@ const Numbers: VoidComponent<{
 	}
 
 	function on_blur_range(ev: FocusEvent & {currentTarget: HTMLInputElement; target: HTMLInputElement}): void {
-		const self = ev.currentTarget
+		const self = event_current_target(ev)
 		const range_regex = /([-+]?\d+?) ?- ?([-+]?\d+)/
 		const unnecesary_char = /[^\d-.]|(?<=\d)\.\d+|(?<!\d)\.(?=\d)/gs
 		const r = string_match(string_replace(self.value, unnecesary_char, ''), range_regex)
@@ -779,7 +779,7 @@ const Numbers: VoidComponent<{
 			min={1}
 			onBlur={ev => command(
 				Commands.change_settings_numbers_count,
-				number_safe(ev.currentTarget.valueAsNumber, settings().count)
+				number_safe(event_current_target(ev).valueAsNumber, settings().count)
 			)}
 			attr_wrapper={{ style: { width: 'min(100%, 164px)' } }}
 			value={settings().count}
@@ -830,7 +830,7 @@ const $String: VoidComponent<{
 			value={settings().length}
 			onBlur={ev => command(
 				Commands.change_settings_string_length,
-				number_safe(ev.currentTarget.valueAsNumber, settings().length)
+				number_safe(event_current_target(ev).valueAsNumber, settings().length)
 			)}
 			min={1}
 			label="Length"
@@ -851,7 +851,7 @@ const $String: VoidComponent<{
 				onClick={(ev) => {
 					set_menu_characters_width(rect_width(element_rect(label_characters_ref!)))
 					open_menu(ev, menu_characters_ref, {
-						anchor: ev.currentTarget,
+						anchor: event_current_target(ev),
 						position: MenuPosition.center_bottom_to_left,
 						padding: 6.5,
 						gap: 8,
@@ -896,7 +896,7 @@ const $String: VoidComponent<{
 				<TextField
 					label="Custom characters"
 					placeholder="#d(23'[])sdf"
-					onInput={(ev) => command(Commands.change_settings_string_characters_custom, ev.currentTarget.value)}
+					onInput={(ev) => command(Commands.change_settings_string_characters_custom, event_current_target(ev).value)}
 					value={settings().characters.custom}
 				/>
 			</div>

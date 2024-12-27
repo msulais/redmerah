@@ -4,7 +4,7 @@ import { mergeRefs } from "@solid-primitives/refs"
 
 import { get_current_date, date_year, date_month, date_weekday_names, date_out_range_YMD, is_same_date_YMD, date_month_names, date_out_range_YM, is_same_date_YM, date_out_range_Y, is_same_date_Y, date_text_month, date_in_range_YM, date_day, date_set_month, date_set_year, date_date, date_set_date } from "@/utils/datetime"
 import { AnimationEffectTiming } from "@/enums/animation"
-import { event_call } from "@/utils/event"
+import { event_call, event_current_target } from "@/utils/event"
 import { array_fill, array_includes } from "@/utils/array"
 import { string_substring } from "@/utils/string"
 import { element_animate, element_children, element_dataset, element_focus, element_focus_by_arrowkey, element_is_same_node, element_next_sibling, element_previous_sibling, element_set_tabindex } from "@/utils/element"
@@ -140,7 +140,7 @@ const DatePickerBody: ParentComponent<{
 
 					const button = ev.target as HTMLButtonElement
 					const index = number_safe(number_parse(element_dataset(button, 'index')!, true))
-					const children = element_children<HTMLButtonElement>(ev.currentTarget)
+					const children = element_children<HTMLButtonElement>(event_current_target(ev))
 					let target: HTMLElement | null = null
 
 					if (code == ARROW_UP) target = children[start_day() + index - 7]
@@ -156,7 +156,7 @@ const DatePickerBody: ParentComponent<{
 				onFocusIn={(ev) => {
 					if (is_button_focused) return
 
-					const children = element_children<HTMLButtonElement>(ev.currentTarget)
+					const children = element_children<HTMLButtonElement>(event_current_target(ev))
 					const button = ev.target as HTMLButtonElement
 					element_set_tabindex(button, 0)
 					is_button_focused = true
@@ -239,7 +239,7 @@ const DatePickerBody: ParentComponent<{
 
 				const button = ev.target as HTMLButtonElement
 				const index = number_safe(number_parse(element_dataset(button, 'index')!, true))
-				const children = element_children<HTMLButtonElement>(ev.currentTarget)
+				const children = element_children<HTMLButtonElement>(event_current_target(ev))
 				let target: HTMLElement | null = null
 
 				if (code == ARROW_UP) target = children[index - 3]
@@ -255,7 +255,7 @@ const DatePickerBody: ParentComponent<{
 			onFocusIn={(ev) => {
 				if (is_button_focused) return
 
-				const children = element_children<HTMLButtonElement>(ev.currentTarget)
+				const children = element_children<HTMLButtonElement>(event_current_target(ev))
 				const button = ev.target as HTMLButtonElement
 				element_set_tabindex(button, 0)
 				is_button_focused = true
@@ -330,7 +330,7 @@ const DatePickerBody: ParentComponent<{
 
 				const button = ev.target as HTMLButtonElement
 				const index = number_safe(number_parse(element_dataset(button, 'index')!, true))
-				const children = element_children<HTMLButtonElement>(ev.currentTarget)
+				const children = element_children<HTMLButtonElement>(event_current_target(ev))
 				let target: HTMLElement | null = null
 
 				if (code == ARROW_UP) target = children[index - 4]
@@ -346,7 +346,7 @@ const DatePickerBody: ParentComponent<{
 			onFocusIn={(ev) => {
 				if (is_button_focused) return
 
-				const children = element_children<HTMLButtonElement>(ev.currentTarget)
+				const children = element_children<HTMLButtonElement>(event_current_target(ev))
 				const button = ev.target as HTMLButtonElement
 				element_set_tabindex(button, 0)
 				is_button_focused = true
@@ -400,7 +400,7 @@ const DatePickerBody: ParentComponent<{
 		<div
 			class="c-date-picker-header"
 			onKeyDown={(ev) => element_focus_by_arrowkey(
-				ev.currentTarget,
+				event_current_target(ev),
 				ev.code,
 				{ left: 'prev', right: 'next' }
 			)}

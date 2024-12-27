@@ -8,6 +8,7 @@ import { NumberTextField } from "@/components/TextField"
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
 import { ButtonVariant } from "@/components/Button"
+import { event_current_target } from "@/utils/event"
 
 const _: VoidComponent = () => {
 	const [multiple, set_multiple] = createSignal<boolean>(false)
@@ -44,7 +45,7 @@ const _: VoidComponent = () => {
 				style={{width: '100px'}}
 				value={10} min={1}
 				max={10}
-				onBlur={(ev) => set_count(c => number_safe(ev.currentTarget.valueAsNumber, c))}
+				onBlur={(ev) => set_count(c => number_safe(event_current_target(ev).valueAsNumber, c))}
 			/>
 			<Dropdown
 				label="Variant"
@@ -59,12 +60,12 @@ const _: VoidComponent = () => {
 			</Dropdown>
 			<CheckBox
 				checked={multiple()}
-				onChange={ev => set_multiple(ev.currentTarget.checked)}>
+				onChange={ev => set_multiple(event_current_target(ev).checked)}>
 				Multiple
 			</CheckBox>
 			<CheckBox
 				checked={label()}
-				onChange={ev => set_label(ev.currentTarget.checked)}>
+				onChange={ev => set_label(event_current_target(ev).checked)}>
 				Label
 			</CheckBox>
 		</PlaygroundOptions>

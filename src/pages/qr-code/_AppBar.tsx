@@ -13,6 +13,7 @@ import { url_encode } from "@/utils/url"
 import { array_includes } from "@/utils/array"
 import { navigator_share } from "@/utils/navigator"
 import { date_year } from "@/utils/datetime"
+import { event_current_target } from "@/utils/event"
 import { number_safe } from "@/utils/number"
 import { Commands, CopyFileType, DownloadFileType, EncodingMode, ErrorCorrectionLevel, Pages } from "./_enums"
 import logo from '@/assets/apps/qr-code-logo.svg'
@@ -332,7 +333,7 @@ const _: VoidComponent<{
 					/>}
 					focused={is_colorpicker_color_open()}
 					onClick={ev => open_colorpicker(ev, colorPicker_color_ref, {
-						anchor: ev.currentTarget,
+						anchor: event_current_target(ev),
 						position: ColorPickerPosition.left_center_to_bottom,
 						padding: 12,
 						gap: -4
@@ -351,7 +352,7 @@ const _: VoidComponent<{
 					/>}
 					focused={is_colorpicker_backgroundcolor_open()}
 					onClick={ev => open_colorpicker(ev, colorPicker_backgroundcolor_ref, {
-						anchor: ev.currentTarget,
+						anchor: event_current_target(ev),
 						position: ColorPickerPosition.left_center_to_bottom,
 						padding: 12,
 						gap: -4
@@ -366,7 +367,7 @@ const _: VoidComponent<{
 						integer_only
 						onBlur={ev => command(
 							Commands.change_settings_margin,
-							number_safe(ev.currentTarget.valueAsNumber, settings().margin)
+							number_safe(event_current_target(ev).valueAsNumber, settings().margin)
 						)}
 					/>
 				</div>
@@ -376,7 +377,7 @@ const _: VoidComponent<{
 					icon_code={0xEB49}
 					checked={settings().version == null}
 					attr_switch={{
-						onChange: ev => command(Commands.change_settings_version, ev.currentTarget.checked? null : 1)
+						onChange: ev => command(Commands.change_settings_version, event_current_target(ev).checked? null : 1)
 					}}>
 					Auto version
 				</SwitchMenuItem>
@@ -390,7 +391,7 @@ const _: VoidComponent<{
 						value={settings().version ?? 1}
 						onBlur={ev => command(
 							Commands.change_settings_version,
-							number_safe(ev.currentTarget.valueAsNumber, settings().version ?? 1)
+							number_safe(event_current_target(ev).valueAsNumber, settings().version ?? 1)
 						)}
 					/>
 				</div>
@@ -494,21 +495,21 @@ const _: VoidComponent<{
 					data-tooltip="Info"
 					focused={is_menu_info_open()}
 					code={0xE930}
-					onClick={(ev) => open_menu(ev, menu_info_ref, {anchor: ev.currentTarget})}
+					onClick={(ev) => open_menu(ev, menu_info_ref, {anchor: event_current_target(ev)})}
 				/>
 				<IconButton
 					data-tooltip="Settings"
 					class={CSSAnimation.btn_rotate_icon}
 					focused={is_menu_settings_open()}
 					code={0xEE0F}
-					onClick={(ev) => open_menu(ev, menu_settings_ref, {anchor: ev.currentTarget})}
+					onClick={(ev) => open_menu(ev, menu_settings_ref, {anchor: event_current_target(ev)})}
 				/>
 				<Show when={!props.is_generate_error && props.page == Pages.generate}>
 					<IconButton
 						data-tooltip="More actions"
 						focused={is_menu_moreactions_open()}
 						code={0xEAD9}
-						onClick={(ev) => open_menu(ev, menu_moreactions_ref, {anchor: ev.currentTarget})}
+						onClick={(ev) => open_menu(ev, menu_moreactions_ref, {anchor: event_current_target(ev)})}
 					/>
 				</Show>
 			</Tooltip>}

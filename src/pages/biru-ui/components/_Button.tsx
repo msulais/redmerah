@@ -6,6 +6,7 @@ import Button, { ButtonIndicatorPosition, ButtonVariant, EmojiButton, FloatingAc
 import CheckBox from "@/components/CheckBox"
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
+import { event_current_target } from "@/utils/event"
 
 const _: VoidComponent = () => {
 	const [variant, set_variant] = createSignal<ButtonVariant>(ButtonVariant.transparent)
@@ -143,22 +144,22 @@ const _: VoidComponent = () => {
 			</Show>
 			<CheckBox
 				checked={disabled()}
-				onChange={ev => set_disabled(ev.currentTarget.checked)}>
+				onChange={ev => set_disabled(event_current_target(ev).checked)}>
 				Disabled
 			</CheckBox>
 			<CheckBox
 				checked={focused()}
-				onChange={ev => set_focused(ev.currentTarget.checked)}>
+				onChange={ev => set_focused(event_current_target(ev).checked)}>
 				Focused
 			</CheckBox>
 			<CheckBox
 				checked={selected()}
-				onChange={ev => set_selected(ev.currentTarget.checked)}>
+				onChange={ev => set_selected(event_current_target(ev).checked)}>
 				Selected
 			</CheckBox>
 			<CheckBox
 				checked={icon()}
-				onChange={ev => set_icon(ev.currentTarget.checked)}>
+				onChange={ev => set_icon(event_current_target(ev).checked)}>
 				Show icon
 			</CheckBox>
 		</PlaygroundOptions>

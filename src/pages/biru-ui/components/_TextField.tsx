@@ -7,6 +7,7 @@ import CheckBox from "@/components/CheckBox"
 import TextField, { AreaTextField, NumberTextField, TextFieldButton } from "@/components/TextField"
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
+import { event_current_target } from "@/utils/event"
 
 const _: VoidComponent = () => {
 	const [leading, set_leading] = createSignal<boolean>(false)
@@ -36,44 +37,44 @@ const _: VoidComponent = () => {
 	const Options: VoidComponent = () => (<>
 		<CheckBox
 			checked={leading()}
-			onChange={ev => set_leading(ev.currentTarget.checked)}>
+			onChange={ev => set_leading(event_current_target(ev).checked)}>
 			Leading
 		</CheckBox>
 		<CheckBox
 			checked={trailing()}
-			onChange={ev => set_trailing(ev.currentTarget.checked)}>
+			onChange={ev => set_trailing(event_current_target(ev).checked)}>
 			Trailing
 		</CheckBox>
 		<CheckBox
 			checked={label()}
-			onChange={ev => set_label(ev.currentTarget.checked)}>
+			onChange={ev => set_label(event_current_target(ev).checked)}>
 			Label text
 		</CheckBox>
 		<Show when={label()}>
 			<CheckBox
 				checked={autohide_label()}
-				onChange={ev => set_autohide_label(ev.currentTarget.checked)}>
+				onChange={ev => set_autohide_label(event_current_target(ev).checked)}>
 				Auto hide label
 			</CheckBox>
 		</Show>
 		<CheckBox
 			checked={placeholder()}
-			onChange={ev => set_placeholder(ev.currentTarget.checked)}>
+			onChange={ev => set_placeholder(event_current_target(ev).checked)}>
 			Placeholder
 		</CheckBox>
 		<CheckBox
 			checked={message()}
-			onChange={ev => set_message(ev.currentTarget.checked)}>
+			onChange={ev => set_message(event_current_target(ev).checked)}>
 			Message text
 		</CheckBox>
 		<CheckBox
 			checked={autoshow_clear_button()}
-			onChange={ev => set_autoshow_clear_button(ev.currentTarget.checked)}>
+			onChange={ev => set_autoshow_clear_button(event_current_target(ev).checked)}>
 			Auto show clear button
 		</CheckBox>
 		<CheckBox
 			checked={readonly()}
-			onChange={ev => set_readonly(ev.currentTarget.checked)}>
+			onChange={ev => set_readonly(event_current_target(ev).checked)}>
 			Read only
 		</CheckBox>
 	</>)
@@ -153,7 +154,7 @@ const _: VoidComponent = () => {
 			<NumberTextField
 				value={step()}
 				label="Step"
-				onBlur={ev => set_step(s => number_safe(ev.currentTarget.valueAsNumber, s))}
+				onBlur={ev => set_step(s => number_safe(event_current_target(ev).valueAsNumber, s))}
 				style={{width: '100px'}}
 			/>
 			<Show when={limit_min()}>
@@ -161,7 +162,7 @@ const _: VoidComponent = () => {
 					value={min()}
 					label="Min"
 					max={limit_max()? max() : undefined}
-					onBlur={ev => set_min(m => number_safe(ev.currentTarget.valueAsNumber, m))}
+					onBlur={ev => set_min(m => number_safe(event_current_target(ev).valueAsNumber, m))}
 					style={{width: '100px'}}
 				/>
 			</Show>
@@ -170,19 +171,19 @@ const _: VoidComponent = () => {
 					value={max()}
 					min={limit_min()? min() : undefined}
 					label="Max"
-					onBlur={ev => set_max(m => number_safe(ev.currentTarget.valueAsNumber, m))}
+					onBlur={ev => set_max(m => number_safe(event_current_target(ev).valueAsNumber, m))}
 					style={{width: '100px'}}
 				/>
 			</Show>
 			<Options />
 			<CheckBox
 				checked={limit_min()}
-				onChange={ev => set_limit_min(ev.currentTarget.checked)}>
+				onChange={ev => set_limit_min(event_current_target(ev).checked)}>
 				Limit min
 			</CheckBox>
 			<CheckBox
 				checked={limit_max()}
-				onChange={ev => set_limit_max(ev.currentTarget.checked)}>
+				onChange={ev => set_limit_max(event_current_target(ev).checked)}>
 				Limit max
 			</CheckBox>
 		</PlaygroundOptions>
@@ -209,7 +210,7 @@ const _: VoidComponent = () => {
 			<NumberTextField
 				value={line_min()}
 				label="Min line"
-				onBlur={ev => set_line_min(m => number_safe(ev.currentTarget.valueAsNumber, m))}
+				onBlur={ev => set_line_min(m => number_safe(event_current_target(ev).valueAsNumber, m))}
 				min={1}
 				max={line_limit_max()? line_max() : undefined}
 				style={{width: '100px'}}
@@ -218,7 +219,7 @@ const _: VoidComponent = () => {
 				<NumberTextField
 					value={line_max()}
 					label="Max line"
-					onBlur={ev => set_line_max(m => number_safe(ev.currentTarget.valueAsNumber, m))}
+					onBlur={ev => set_line_max(m => number_safe(event_current_target(ev).valueAsNumber, m))}
 					min={line_min()}
 					style={{width: '100px'}}
 				/>
@@ -226,7 +227,7 @@ const _: VoidComponent = () => {
 			<Options />
 			<CheckBox
 				checked={line_limit_max()}
-				onChange={ev => set_line_limit_max(ev.currentTarget.checked)}>
+				onChange={ev => set_line_limit_max(event_current_target(ev).checked)}>
 				Limit max line
 			</CheckBox>
 		</PlaygroundOptions>

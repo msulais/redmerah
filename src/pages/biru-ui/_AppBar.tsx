@@ -7,7 +7,7 @@ import { ThemeData } from "@/enums/theme"
 import { storage_set, storage_get } from "@/utils/storage"
 import { attr_set } from "@/utils/attributes"
 import { is_window_media_matches, window_match_media } from "@/utils/window"
-import { event_add_listener } from '@/utils/event'
+import { event_add_listener, event_current_target } from '@/utils/event'
 import { Commands, Pages } from "./_enums"
 import { PAGES, SIZE_SIDE_NAVIGATION_NONE } from "./_constants"
 import { wait } from "@/utils/timeout"
@@ -294,7 +294,7 @@ const _: VoidComponent<{
 					focused={is_menu_info_open()}
 					code={0xE930}
 					onClick={(ev) => open_menu(ev, menu_info_ref, {
-						anchor: ev.currentTarget,
+						anchor: event_current_target(ev),
 						padding: 4,
 					})}
 				/>
@@ -304,7 +304,7 @@ const _: VoidComponent<{
 					focused={is_menu_settings_open()}
 					code={0xEE0F}
 					onClick={(ev) => open_menu(ev, menu_settings_ref, {
-						anchor: ev.currentTarget,
+						anchor: event_current_target(ev),
 						padding: 4,
 					})}
 				/>

@@ -6,6 +6,7 @@ import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import TextField from "@/components/TextField"
 import Drawer, { close_drawer, DrawerItem, DrawerPosition, openDrawer } from "@/components/Drawer"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
+import { event_current_target } from "@/utils/event"
 
 const _: VoidComponent = () => {
 	const [important, set_important] = createSignal<boolean>(false)
@@ -58,27 +59,27 @@ const _: VoidComponent = () => {
 			</Dropdown>
 			<CheckBox
 				checked={important()}
-				onChange={ev => set_important(ev.currentTarget.checked)}>
+				onChange={ev => set_important(event_current_target(ev).checked)}>
 				Important
 			</CheckBox>
 			<CheckBox
 				checked={has_header()}
-				onChange={ev => set_has_header(ev.currentTarget.checked)}>
+				onChange={ev => set_has_header(event_current_target(ev).checked)}>
 				Header
 			</CheckBox>
 			<CheckBox
 				checked={has_footer()}
-				onChange={ev => set_has_footer(ev.currentTarget.checked)}>
+				onChange={ev => set_has_footer(event_current_target(ev).checked)}>
 				Footer
 			</CheckBox>
 			<CheckBox
 				checked={has_content()}
-				onChange={ev => set_has_content(ev.currentTarget.checked)}>
+				onChange={ev => set_has_content(event_current_target(ev).checked)}>
 				Content
 			</CheckBox>
 			<CheckBox
 				checked={content_autofocus()}
-				onChange={ev => set_content_autofocus(ev.currentTarget.checked)}>
+				onChange={ev => set_content_autofocus(event_current_target(ev).checked)}>
 				Content autofocus
 			</CheckBox>
 		</PlaygroundOptions>

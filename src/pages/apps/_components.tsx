@@ -5,7 +5,7 @@ import { storage_get, storage_set } from "@/utils/storage"
 import { attr_set_if_exist } from "@/utils/attributes"
 import { LocalStorageKeys } from "@/enums/storage"
 import { apps } from "@/constants/apps"
-import { event_prevent_default } from "@/utils/event"
+import { event_current_target, event_prevent_default } from "@/utils/event"
 import { remove_splash_screen_on_load_every_component } from "@/scripts/splash"
 import { array_filter, array_join, array_some, array_sort } from "@/utils/array"
 import { string_locale_compare, string_split, string_tolowercase, string_trim } from "@/utils/string"
@@ -62,7 +62,7 @@ export const MainElement: VoidComponent = () => {
 			onInput={(ev) => {
 				if (timeout_id != null) timeout_clear(timeout_id)
 
-				const text = ev.currentTarget.value
+				const text = event_current_target(ev).value
 				timeout_id = timeout_set(() => {
 					set_search_text(text)
 					timeout_id = null

@@ -10,6 +10,7 @@ import TextField, { NumberTextField } from "@/components/TextField"
 import CheckBox from "@/components/CheckBox"
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
+import { event_current_target } from "@/utils/event"
 
 const _: VoidComponent = () => {
 	const [allow_hide_anchor, set_allow_hide_anchor] = createSignal<boolean>(true)
@@ -50,7 +51,7 @@ const _: VoidComponent = () => {
 		description="A menu is a collection of options or commands that are presented to the user. It can be a simple list of items, a hierarchical structure, or a combination of both. Menus are commonly used for navigation, actions, or settings.">
 		<Playground>
 			<Button variant={ButtonVariant.tonal} onClick={(ev) => open_menu(ev, menu_ref, {
-				anchor: anchor()? ev.currentTarget : undefined,
+				anchor: anchor()? event_current_target(ev) : undefined,
 				allow_hide_anchor: allow_hide_anchor(),
 				draggable: draggable(),
 				gap: gap(),
@@ -60,7 +61,7 @@ const _: VoidComponent = () => {
 				position: position()
 			})}>Open menu</Button>
 			<Button variant={ButtonVariant.tonal} onClick={(ev) => open_menu(ev, menu_ref2, {
-				anchor: anchor()? ev.currentTarget : undefined,
+				anchor: anchor()? event_current_target(ev) : undefined,
 				allow_hide_anchor: allow_hide_anchor(),
 				draggable: draggable(),
 				gap: gap(),
@@ -146,7 +147,7 @@ const _: VoidComponent = () => {
 				style={{width: '100px'}}
 				value={gap()}
 				min={0}
-				onBlur={(ev) => set_gap(g => number_safe(ev.currentTarget.valueAsNumber, g))}
+				onBlur={(ev) => set_gap(g => number_safe(event_current_target(ev).valueAsNumber, g))}
 				label="Gap"
 			/>
 			<Show when={array_includes([
@@ -171,33 +172,33 @@ const _: VoidComponent = () => {
 					value={padding()}
 					style={{width: '100px'}}
 					min={0}
-					onBlur={(ev) => set_padding(p => number_safe(ev.currentTarget.valueAsNumber, p))}
+					onBlur={(ev) => set_padding(p => number_safe(event_current_target(ev).valueAsNumber, p))}
 					label="Padding"
 				/>
 			</Show>
 			<CheckBox
 				checked={anchor()}
-				onChange={ev => set_anchor(ev.currentTarget.checked)}>
+				onChange={ev => set_anchor(event_current_target(ev).checked)}>
 				Anchor
 			</CheckBox>
 			<CheckBox
 				checked={important()}
-				onChange={ev => set_important(ev.currentTarget.checked)}>
+				onChange={ev => set_important(event_current_target(ev).checked)}>
 				Important
 			</CheckBox>
 			<CheckBox
 				checked={content_autofocus()}
-				onChange={ev => set_content_autofocus(ev.currentTarget.checked)}>
+				onChange={ev => set_content_autofocus(event_current_target(ev).checked)}>
 				Input Autofocus
 			</CheckBox>
 			<CheckBox
 				checked={draggable()}
-				onChange={ev => set_draggable(ev.currentTarget.checked)}>
+				onChange={ev => set_draggable(event_current_target(ev).checked)}>
 				Dragable
 			</CheckBox>
 			<CheckBox
 				checked={allow_hide_anchor()}
-				onChange={ev => set_allow_hide_anchor(ev.currentTarget.checked)}>
+				onChange={ev => set_allow_hide_anchor(event_current_target(ev).checked)}>
 				Allow hide anchor
 			</CheckBox>
 		</PlaygroundOptions>

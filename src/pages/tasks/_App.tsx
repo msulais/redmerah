@@ -10,7 +10,7 @@ import { DEFAULT_TASK_LIST } from "./_constants"
 import { IDB, idb_store_delete, idb_store_put } from "@/utils/indexeddb"
 import { date_text_YMD_HM } from "@/utils/datetime"
 import { file_download } from "@/utils/file"
-import { event_prevent_default } from "@/utils/event"
+import { event_current_target, event_prevent_default } from "@/utils/event"
 import { array_concat, array_every, array_filter, array_find_index, array_includes, array_join, array_length, array_map, array_push, array_reverse, array_slice, array_sort, array_splice } from "@/utils/array"
 import { string_locale_compare, string_trim } from "@/utils/string"
 import { navigator_clipboard_writetext } from "@/utils/navigator"
@@ -1510,7 +1510,7 @@ const _: VoidComponent = () => {
 						onClick={ev => {
 							set_change_labelcolor_option('new')
 							open_colorpicker(ev, colorpicker_label_ref, {
-								anchor: ev.currentTarget,
+								anchor: event_current_target(ev),
 							})
 						}}>
 						<Icon
@@ -1567,7 +1567,7 @@ const _: VoidComponent = () => {
 						onClick={ev => {
 							set_change_labelcolor_option('edit')
 							open_colorpicker(ev, colorpicker_label_ref, {
-								anchor: ev.currentTarget,
+								anchor: event_current_target(ev),
 							})
 						}}>
 						<Icon
@@ -1615,8 +1615,8 @@ const _: VoidComponent = () => {
 				<TextField
 					ref={r => textfield_newlist_ref = r}
 					placeholder="List name"
-					onInput={ev => set_new_listname_text(ev.currentTarget.value)}
-					onFocus={ev => set_new_listname_text(ev.currentTarget.value)}
+					onInput={ev => set_new_listname_text(event_current_target(ev).value)}
+					onFocus={ev => set_new_listname_text(event_current_target(ev).value)}
 					trailing={<TextFieldButton
 						onClick={(ev) => {
 							set_is_emojipicker_newlist_open(true)
@@ -1673,8 +1673,8 @@ const _: VoidComponent = () => {
 				<TextField
 					ref={r => textfield_editlist_ref = r}
 					placeholder="List name"
-					onInput={ev => set_edit_listname_text(ev.currentTarget.value)}
-					onFocus={ev => set_edit_listname_text(ev.currentTarget.value)}
+					onInput={ev => set_edit_listname_text(event_current_target(ev).value)}
+					onFocus={ev => set_edit_listname_text(event_current_target(ev).value)}
 					trailing={<TextFieldButton
 						onClick={(ev) => {
 							set_is_emojipicker_editlist_open(true)

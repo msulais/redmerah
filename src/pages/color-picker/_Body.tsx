@@ -11,6 +11,7 @@ import { math_clamp, math_round } from "@/utils/math"
 import { array_join, array_length, array_map, array_push } from "@/utils/array"
 import { number_parse, number_safe } from "@/utils/number"
 import { navigator_clipboard_writetext } from "@/utils/navigator"
+import { event_current_target } from "@/utils/event"
 
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import Toast, { open_toast } from "@/components/Toast"
@@ -161,7 +162,7 @@ const ColorInput: VoidComponent<{
 				is_hex_color_focus = false
 			}}
 			onInput={(ev) => {
-				let text = ev.currentTarget.value
+				let text = event_current_target(ev).value
 				text = string_trim(text)
 				text = string_replace(text, /[^0-9A-Fa-f]/g, '')
 				if (string_length(text) == 0) text = '0'
@@ -188,7 +189,7 @@ const ColorInput: VoidComponent<{
 				is_rgb_color_focus = false
 			}}
 			onInput={(ev) => {
-				let text = ev.currentTarget.value
+				let text = event_current_target(ev).value
 				text = string_trim(text)
 				text = string_replace(text, /[^\d,]/g, '')
 				const rgb_array: number[] = array_map(
@@ -220,7 +221,7 @@ const ColorInput: VoidComponent<{
 				is_hsl_color_focus = false
 			}}
 			onInput={(ev) => {
-				let text = ev.currentTarget.value
+				let text = event_current_target(ev).value
 				text = string_trim(text)
 				text = string_replace(text, /[^\d,]/g, '')
 				const hsl_array: number[] = array_map(
@@ -252,7 +253,7 @@ const ColorInput: VoidComponent<{
 				is_hsv_color_focus = false
 			}}
 			onInput={(ev) => {
-				let text = ev.currentTarget.value
+				let text = event_current_target(ev).value
 				text = string_trim(text)
 				text = string_replace(text, /[^\d,]/g, '')
 				const hsv_array: number[] = array_map(
@@ -284,7 +285,7 @@ const ColorInput: VoidComponent<{
 				is_hwb_color_focus = false
 			}}
 			onInput={(ev) => {
-				let text = ev.currentTarget.value
+				let text = event_current_target(ev).value
 				text = string_trim(text)
 				text = string_replace(text, /[^\d,]/g, '')
 				const hwb_array: number[] = array_map(
@@ -316,7 +317,7 @@ const ColorInput: VoidComponent<{
 				is_cmyk_color_focus = false
 			}}
 			onInput={(ev) => {
-				let text = ev.currentTarget.value
+				let text = event_current_target(ev).value
 				text = string_trim(text)
 				text = string_replace(text, /[^\d,]/g, '')
 				const hwb_array: number[] = array_map(

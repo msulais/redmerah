@@ -1,6 +1,6 @@
 import { createSignal, Show, type VoidComponent } from "solid-js"
 
-import { event_stop_propagation } from "@/utils/event"
+import { event_current_target, event_stop_propagation } from "@/utils/event"
 
 import Icon from "@/components/Icon"
 import List from "@/components/List"
@@ -54,22 +54,22 @@ const _: VoidComponent = () => {
 		<PlaygroundOptions>
 			<CheckBox
 				checked={title()}
-				onChange={ev => set_title(ev.currentTarget.checked)}>
+				onChange={ev => set_title(event_current_target(ev).checked)}>
 				Title
 			</CheckBox>
 			<CheckBox
 				checked={subtitle()}
-				onChange={ev => set_subtitle(ev.currentTarget.checked)}>
+				onChange={ev => set_subtitle(event_current_target(ev).checked)}>
 				Subtitle
 			</CheckBox>
 			<CheckBox
 				checked={leading()}
-				onChange={ev => set_leading(ev.currentTarget.checked)}>
+				onChange={ev => set_leading(event_current_target(ev).checked)}>
 				Leading
 			</CheckBox>
 			<CheckBox
 				checked={trailing()}
-				onChange={ev => set_trailing(ev.currentTarget.checked)}>
+				onChange={ev => set_trailing(event_current_target(ev).checked)}>
 				Trailing
 			</CheckBox>
 		</PlaygroundOptions>

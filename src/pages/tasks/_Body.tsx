@@ -5,7 +5,7 @@ import { createStore } from "solid-js/store"
 import type { TaskLabel, Settings, Task, TaskList, SubTask, TaskFileMetaData } from "./_types"
 import { Commands, Pages, SortBy, SortMode } from "./_enums"
 import { get_current_date, date_year, date_text_YMD_HM, date_out_range_YMD_HM } from "@/utils/datetime"
-import { event_prevent_default, event_stop_propagation } from "@/utils/event"
+import { event_current_target, event_prevent_default, event_stop_propagation } from "@/utils/event"
 import { DEFAULT_TASK_LIST } from "./_constants"
 import { attr_set_if_exist } from "@/utils/attributes"
 import { string_replace, string_starts_with, string_totitlecase, string_trim } from "@/utils/string"
@@ -16,6 +16,7 @@ import { url_create, url_revoke } from "@/utils/url"
 import { array_concat, array_find_index, array_includes, array_join, array_length, array_slice, array_some } from "@/utils/array"
 import { regex_test } from "@/utils/regex"
 import { number_parse, number_tofixed } from "@/utils/number"
+import { timeout_set } from "@/utils/timeout"
 import { promise_done } from "@/utils/object"
 import { AppColors } from "@/enums/colors"
 
@@ -34,7 +35,6 @@ import Toast, { open_toast } from "@/components/Toast"
 import DateTimePicker, { DateTimePickerPosition, open_datetimepicker } from "@/components/DateTimePicker"
 import AppBar from "@/components/AppBar"
 import CSS from './_styles.module.scss'
-import { timeout_set } from "@/utils/timeout"
 
 const AppbarTasks: VoidComponent<{
 	page: Pages | number
@@ -232,7 +232,7 @@ const AppbarTasks: VoidComponent<{
 					<IconButton
 						data-tooltip="Sort by"
 						focused={is_menu_sort_open()}
-						onClick={ev => open_menu(ev, menu_sort_ref, {anchor: ev.currentTarget})}
+						onClick={ev => open_menu(ev, menu_sort_ref, {anchor: event_current_target(ev)})}
 						code={0xE123}
 					/>
 					<IconButton
@@ -248,7 +248,7 @@ const AppbarTasks: VoidComponent<{
 					<IconButton
 						data-tooltip="More options"
 						focused={is_menu_more_open()}
-						onClick={ev => open_menu(ev, menu_more_ref, {anchor: ev.currentTarget})}
+						onClick={ev => open_menu(ev, menu_more_ref, {anchor: event_current_target(ev)})}
 						code={0xEAD9}
 					/>
 				</Show>
@@ -432,7 +432,7 @@ const TaskItem: VoidComponent<{
 			checked={subtask.complete}
 			onChange={ev => command(
 				Commands.edit_subtask,
-				{...subtask, complete: ev.currentTarget.checked} satisfies SubTask,
+				{...subtask, complete: event_current_target(ev).checked} satisfies SubTask,
 				props.tasklist_index,
 				props.task_index,
 				index()
@@ -746,7 +746,7 @@ const GroupTaskList: VoidComponent<{
 				focused={is_menu_more_open() && selected_tasklist_to_action.tasklist_index == tasklist_index()}
 				onClick={ev => {
 					set_selected_tasklist_to_action({list: tasklist(), tasklist_index: tasklist_index()})
-					open_menu(ev, menu_more_ref, {anchor: ev.currentTarget})
+					open_menu(ev, menu_more_ref, {anchor: event_current_target(ev)})
 				}}
 				code={0xEAD9}
 			/>}
@@ -1065,7 +1065,7 @@ const _: VoidComponent<{
 	function on_edit_reminder_task(ev: MouseEvent & {currentTarget: HTMLButtonElement; target: DOMElement}, task: Task, tasklist_index: number, task_index: number): void {
 		set_selected_task_to_changereminder({task, tasklist_index, task_index})
 		open_menu(ev, menu_reminder_ref, {
-			anchor: ev.currentTarget,
+			anchor: event_current_target(ev),
 			position: MenuPosition.center_bottom_to_right
 		})
 	}
@@ -1073,7 +1073,7 @@ const _: VoidComponent<{
 	function on_edit_files_task(ev: MouseEvent & {currentTarget: HTMLButtonElement; target: DOMElement}, task: Task, tasklist_index: number, task_index: number): void {
 		set_selected_task_to_fileaction({task, tasklist_index, task_index})
 		open_menu(ev, menu_fileaction2_ref, {
-			anchor: ev.currentTarget,
+			anchor: event_current_target(ev),
 			position: MenuPosition.center_bottom_to_right
 		})
 	}
@@ -1082,7 +1082,7 @@ const _: VoidComponent<{
 		set_selected_task_to_editlabel({task, tasklist_index, task_index})
 		set_selected_label(label)
 		open_menu(ev, menu_labelaction2_ref, {
-			anchor: ev.currentTarget,
+			anchor: event_current_target(ev),
 			position: MenuPosition.center_bottom_to_right
 		})
 	}
@@ -1171,7 +1171,7 @@ const _: VoidComponent<{
 					focused={selected_file_to_action.file.id == file().id && is_menu_fileaction_open()}
 					onClick={ev => {
 						set_selected_file_to_action($props)
-						open_menu(ev, menu_fileaction_ref, {anchor: ev.currentTarget})
+						open_menu(ev, menu_fileaction_ref, {anchor: event_current_target(ev)})
 					}}
 					code={0xEAD9}
 				/>
@@ -1258,9 +1258,9 @@ const _: VoidComponent<{
 				label="Task"
 				value={selected_task_to_edit.task.name}
 				onBlur={ev => {
-					if (ev.currentTarget.value == selected_task_to_edit.task.name) return;
+					if (event_current_target(ev).value == selected_task_to_edit.task.name) return;
 
-					set_selected_task_to_edit('task', 'name', ev.currentTarget.value)
+					set_selected_task_to_edit('task', 'name', event_current_target(ev).value)
 					command(
 						Commands.edit_task,
 						selected_task_to_edit.task,
@@ -1274,7 +1274,7 @@ const _: VoidComponent<{
 				max_line={3}
 				value={selected_task_to_edit.task.description}
 				onBlur={ev => {
-					const value = ev.currentTarget.value
+					const value = event_current_target(ev).value
 					if (value == selected_task_to_edit.task.description) return;
 					set_selected_task_to_edit('task', 'description', value)
 					command(
@@ -1315,7 +1315,7 @@ const _: VoidComponent<{
 				<Button
 					focused={is_menu_labels_open()}
 					onClick={ev => open_menu(ev, menu_labels_ref, {
-						anchor: ev.currentTarget,
+						anchor: event_current_target(ev),
 						position: MenuPosition.center_bottom_to_right
 					})}>
 					<Icon code={0xF00D}/>Add label
@@ -1330,7 +1330,7 @@ const _: VoidComponent<{
 						onClick={ev => {
 							set_change_reminder_option('edit')
 							open_datetimepicker(ev, datetimepicker_reminder_ref, {
-								anchor: ev.currentTarget,
+								anchor: event_current_target(ev),
 								position: DateTimePickerPosition.center_bottom_to_right
 							})
 						}}>
@@ -1343,7 +1343,7 @@ const _: VoidComponent<{
 								onClick={ev => {
 									set_change_reminder_option('edit')
 									open_datetimepicker(ev, datetimepicker_reminder_ref, {
-										anchor: ev.currentTarget,
+										anchor: event_current_target(ev),
 										position: DateTimePickerPosition.center_bottom_to_right
 									})
 								}}
@@ -1467,7 +1467,7 @@ const _: VoidComponent<{
 			Are you sure want to delete <q><span style={{color: `rgb(${AppColors.accent})`, "font-weight": 'bold'}}>{(selected_task_to_delete.task.name) || ''}</span></q> task?
 			<CheckBox
 				attr_label={{style: "margin-top: 16px"}}
-				onChange={ev => command(Commands.toggle_delete_task_warning, !ev.currentTarget.checked)}>
+				onChange={ev => command(Commands.toggle_delete_task_warning, !event_current_target(ev).checked)}>
 				Don't remind me again
 			</CheckBox>
 		</Dialog>
@@ -1497,7 +1497,7 @@ const _: VoidComponent<{
 				<TextField
 					ref={r => textfield_renamefile_ref = r}
 					autofocus
-					onInput={ev => set_text_file(ev.currentTarget.value)}
+					onInput={ev => set_text_file(event_current_target(ev).value)}
 					placeholder="File name"
 				/>
 			</form>
@@ -1576,8 +1576,8 @@ const _: VoidComponent<{
 				<TextField
 					ref={r => textfield_newsubtask_ref = r}
 					placeholder="Subtask name"
-					onFocus={ev => set_text_subtask(ev.currentTarget.value)}
-					onInput={ev => set_text_subtask(ev.currentTarget.value)}
+					onFocus={ev => set_text_subtask(event_current_target(ev).value)}
+					onInput={ev => set_text_subtask(event_current_target(ev).value)}
 				/>
 			</form>
 		</Dialog>
@@ -1610,8 +1610,8 @@ const _: VoidComponent<{
 				<TextField
 					ref={r => textfield_editsubtask_ref = r}
 					placeholder="Subtask name"
-					onFocus={ev => set_text_subtask(ev.currentTarget.value)}
-					onInput={ev => set_text_subtask(ev.currentTarget.value)}
+					onFocus={ev => set_text_subtask(event_current_target(ev).value)}
+					onInput={ev => set_text_subtask(event_current_target(ev).value)}
 				/>
 			</form>
 		</Dialog>
@@ -1994,7 +1994,7 @@ const _: VoidComponent<{
 							tasklist_index: selected_task_to_fileaction.tasklist_index
 						})
 						open_menu(ev, menu_fileaction3_ref, {
-							anchor: ev.currentTarget,
+							anchor: event_current_target(ev),
 							position: MenuPosition.right_center_to_bottom
 						})
 					}}>

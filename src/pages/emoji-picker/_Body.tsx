@@ -4,6 +4,7 @@ import { activities_emojis, animal_and_nature_emojis, flags_emojis, food_and_dri
 import { timeout_clear, timeout_set } from "@/utils/timeout"
 import { Commands } from "./_enums"
 import { navigator_clipboard_writetext } from "@/utils/navigator"
+import { event_current_target } from "@/utils/event"
 import { promise_done } from "@/utils/object"
 
 import TextField, { change_textfield_value, TextFieldButton } from "@/components/TextField"
@@ -42,7 +43,7 @@ const _: VoidComponent<{
 				label="Emoji"
 				auto_show_clear_button
 				value={props.text}
-				onInput={ev => props.command(Commands.update_text, ev.currentTarget.value)}
+				onInput={ev => props.command(Commands.update_text, event_current_target(ev).value)}
 				ref={r => textfield_ref = r}
 				trailing={<TextFieldButton
 					onClick={copy}

@@ -5,7 +5,7 @@ import type { HEXColor, HSLColor, RGBColor } from "@/types/color"
 import { timeout_set } from "@/utils/timeout"
 import { attr_remove, attr_set, attr_set_if_exist } from "@/utils/attributes"
 import { element_dispatch_event, element_focus_by_arrowkey, element_rect, element_set_tabindex, get_element_by_id } from "@/utils/element"
-import { event_add_listener, event_remove_listener } from '@/utils/event'
+import { event_add_listener, event_current_target, event_remove_listener } from '@/utils/event'
 import { BodyAttributes } from "@/enums/attributes"
 import { math_clamp, math_round } from "@/utils/math"
 import { number_is_not_defined, number_parse, number_safe, number_to_string } from "@/utils/number"
@@ -461,7 +461,7 @@ const ColorPickerBody: ParentComponent<{
 				style={{ '--c-color-picker-color': hsl_to_hex({...hsl(), s: 1, l: .5}) }}
 				onPointerDown={(ev) => {
 					color_dragged = true
-					color_rect = element_rect(ev.currentTarget)
+					color_rect = element_rect(event_current_target(ev))
 					set_position(ev.clientX, ev.clientY)
 					attr_set(body, BodyAttributes.no_pointer_event)
 				}}
@@ -494,7 +494,7 @@ const ColorPickerBody: ParentComponent<{
 
 
 					color_dragged = true
-					color_rect = element_rect(ev.currentTarget)
+					color_rect = element_rect(event_current_target(ev))
 					const one_percent_x = rect_width(color_rect) / 100
 					const one_percent_y = rect_height(color_rect) / 100
 					let x = rect_left(color_rect) + (left() * one_percent_x)
@@ -552,7 +552,7 @@ const ColorPickerBody: ParentComponent<{
 						class="c-color-picker-hue"
 						onPointerDown={(ev) => {
 							hue_dragged = true
-							hue_rect = element_rect(ev.currentTarget)
+							hue_rect = element_rect(event_current_target(ev))
 							set_position(ev.clientX, ev.clientY)
 							attr_set(body, BodyAttributes.no_pointer_event)
 						}}
@@ -566,7 +566,7 @@ const ColorPickerBody: ParentComponent<{
 							if (!is_arrow_key) return;
 
 							hue_dragged = true
-							hue_rect = element_rect(ev.currentTarget)
+							hue_rect = element_rect(event_current_target(ev))
 							const one_percent_x = rect_width(hue_rect) / 100
 							const one_percent_y = rect_height(hue_rect) / 100
 							let x = rect_left(hue_rect) + (hue() * one_percent_x)
@@ -607,7 +607,7 @@ const ColorPickerBody: ParentComponent<{
 						class="c-color-picker-opacity"
 						onPointerDown={(ev) => {
 							opacity_dragged = true
-							opacity_rect = element_rect(ev.currentTarget)
+							opacity_rect = element_rect(event_current_target(ev))
 							set_position(ev.clientX, ev.clientY)
 							attr_set(body, BodyAttributes.no_pointer_event)
 						}}
@@ -621,7 +621,7 @@ const ColorPickerBody: ParentComponent<{
 							if (!is_arrow_key) return;
 
 							opacity_dragged = true
-							opacity_rect = element_rect(ev.currentTarget)
+							opacity_rect = element_rect(event_current_target(ev))
 							const one_percent_x = rect_width(opacity_rect) / 100
 							const one_percent_y = rect_height(opacity_rect) / 100
 							let x = rect_left(opacity_rect) + ((100 - opacity()) * one_percent_x)
@@ -670,12 +670,12 @@ const ColorPickerBody: ParentComponent<{
 			onFocusOut={() => update_inputs()}>
 			<TextField
 				ref={r => textfield_color_ref = r}
-				onInput={(ev) => on_color_input_change(ev.currentTarget.value)}
+				onInput={(ev) => on_color_input_change(event_current_target(ev).value)}
 				label={color_model() == 'RGB' ? 'RGB' : color_model() == 'HEX' ? 'Hex' : 'HSL'}
 				placeholder={color_model() == 'RGB' ? "0-255, 0-255, 0-255" : color_model() == 'HEX' ? '#FF0000' : '0-360, 0-100%, 0-100%'}
 			/>
 			<TextField
-				onInput={(ev) => on_opacity_input_change(ev.currentTarget.value)}
+				onInput={(ev) => on_opacity_input_change(event_current_target(ev).value)}
 				ref={r => textfield_opacity_ref = r}
 				label="Opacity"
 				value="100%"
@@ -697,7 +697,7 @@ const ColorPickerBody: ParentComponent<{
 		return (<div
 			class="c-color-picker-actions"
 			onKeyDown={(ev) => element_focus_by_arrowkey(
-				ev.currentTarget,
+				event_current_target(ev),
 				ev.code,
 				{ right: 'next', left: 'prev' }
 			)}
@@ -706,7 +706,7 @@ const ColorPickerBody: ParentComponent<{
 				const button = ev.target as HTMLElement
 				if (button.tagName != 'BUTTON') return;
 
-				const children = ev.currentTarget.children as unknown as HTMLButtonElement[]
+				const children = event_current_target(ev).children as unknown as HTMLButtonElement[]
 				element_set_tabindex(button, 0)
 				for (const child of children) {
 					if (child.id == button.id) continue

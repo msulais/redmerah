@@ -3,6 +3,7 @@ import { createSignal, type VoidComponent } from "solid-js"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
 import Switch from "@/components/Switch"
 import CheckBox from "@/components/CheckBox"
+import { event_current_target } from "@/utils/event"
 
 const _: VoidComponent = () => {
 	const [disabled, set_disabled] = createSignal<boolean>(false)
@@ -15,7 +16,7 @@ const _: VoidComponent = () => {
 		<PlaygroundOptions>
 			<CheckBox
 				checked={disabled()}
-				onChange={ev => set_disabled(ev.currentTarget.checked)}>
+				onChange={ev => set_disabled(event_current_target(ev).checked)}>
 				Disabled
 			</CheckBox>
 		</PlaygroundOptions>

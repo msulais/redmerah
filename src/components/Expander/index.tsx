@@ -5,7 +5,7 @@ import { attr_set_if_exist, classlist } from "@/utils/attributes"
 import { is_string } from "@/utils/typecheck"
 import { element_click, element_rect } from "@/utils/element"
 import { timeout_clear, timeout_set, wait } from "@/utils/timeout"
-import { event_call, event_prevent_default } from "@/utils/event"
+import { event_call, event_current_target, event_current_target, event_prevent_default } from "@/utils/event"
 import { rect_height } from "@/utils/rect"
 import { promise_done } from "@/utils/object"
 
@@ -163,7 +163,7 @@ const Expander: ParentComponent<ExpanderProps> = ($props) => {
 		class={classlist('c-expander', props.class)}
 		data-c-variant={props.variant}
 		onToggle={ev => {
-			set_is_open(ev.currentTarget.open)
+			set_is_open(event_current_target(ev).open)
 			event_call(ev, props.onToggle)
 		}}
 		open={props.open}
@@ -179,7 +179,7 @@ const Expander: ParentComponent<ExpanderProps> = ($props) => {
 					if (event_call(ev, header_props.onClick)) return
 					if (!is_open()) return;
 
-					const el = ev.currentTarget
+					const el = event_current_target(ev)
 					event_prevent_default(ev)
 					set_is_open(false)
 					promise_done(wait(300), () => element_click(el))

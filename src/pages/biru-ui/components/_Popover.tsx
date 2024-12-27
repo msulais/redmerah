@@ -9,6 +9,7 @@ import TextField, { NumberTextField } from "@/components/TextField"
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import Popover, { close_popover, open_popover, PopoverPosition } from "@/components/Popover"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
+import { event_current_target } from "@/utils/event"
 
 const _: VoidComponent = () => {
 	const [allow_hide_anchor, set_allow_hide_anchor] = createSignal<boolean>(true)
@@ -24,7 +25,7 @@ const _: VoidComponent = () => {
 		description="A popover is a small, temporary window that appears when a user interacts with an element (e.g., hovers over a button). It provides additional information, options, or tools related to the element. Popover content can be triggered by hover, click, or focus.">
 		<Playground>
 			<Button variant={ButtonVariant.tonal} onClick={(ev) => open_popover(ev, popover_ref, {
-				anchor: anchor()? ev.currentTarget : undefined,
+				anchor: anchor()? event_current_target(ev) : undefined,
 				allow_hide_anchor: allow_hide_anchor(),
 				draggable: draggable(),
 				gap: gap(),
@@ -77,7 +78,7 @@ const _: VoidComponent = () => {
 				style={{width: '100px'}}
 				value={gap()}
 				min={0}
-				onBlur={(ev) => set_gap(g => number_safe(ev.currentTarget.valueAsNumber, g))}
+				onBlur={(ev) => set_gap(g => number_safe(event_current_target(ev).valueAsNumber, g))}
 				label="Gap"
 			/>
 			<Show when={array_includes([
@@ -102,28 +103,28 @@ const _: VoidComponent = () => {
 					value={padding()}
 					style={{width: '100px'}}
 					min={0}
-					onBlur={(ev) => set_padding(p => number_safe(ev.currentTarget.valueAsNumber, p))}
+					onBlur={(ev) => set_padding(p => number_safe(event_current_target(ev).valueAsNumber, p))}
 					label="Padding"
 				/>
 			</Show>
 			<CheckBox
 				checked={anchor()}
-				onChange={ev => set_anchor(ev.currentTarget.checked)}>
+				onChange={ev => set_anchor(event_current_target(ev).checked)}>
 				Anchor
 			</CheckBox>
 			<CheckBox
 				checked={draggable()}
-				onChange={ev => set_draggable(ev.currentTarget.checked)}>
+				onChange={ev => set_draggable(event_current_target(ev).checked)}>
 				Dragable
 			</CheckBox>
 			<CheckBox
 				checked={allow_hide_anchor()}
-				onChange={ev => set_allow_hide_anchor(ev.currentTarget.checked)}>
+				onChange={ev => set_allow_hide_anchor(event_current_target(ev).checked)}>
 				Allow hide anchor
 			</CheckBox>
 			<CheckBox
 				checked={manual_dismiss()}
-				onChange={ev => set_manual_dismiss(ev.currentTarget.checked)}>
+				onChange={ev => set_manual_dismiss(event_current_target(ev).checked)}>
 				Manual dismiss
 			</CheckBox>
 		</PlaygroundOptions>

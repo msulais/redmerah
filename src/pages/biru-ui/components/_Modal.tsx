@@ -9,6 +9,7 @@ import TextField, { NumberTextField } from "@/components/TextField"
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import Modal, { close_modal, ModalPosition, open_modal } from "@/components/Modal"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
+import { event_current_target } from "@/utils/event"
 
 const _: VoidComponent = () => {
 	const [allow_hide_anchor, set_allow_hide_anchor] = createSignal<boolean>(true)
@@ -26,7 +27,7 @@ const _: VoidComponent = () => {
 		description="A modal is an overlay window that appears on top of the main content, blocking user interaction with the underlying elements until it is dismissed. Modals are often used for critical tasks or to present important information.">
 		<Playground>
 			<Button variant={ButtonVariant.tonal} onClick={(ev) => open_modal(ev, modal_ref, {
-				anchor: anchor()? ev.currentTarget : undefined,
+				anchor: anchor()? event_current_target(ev) : undefined,
 				allow_hide_anchor: allow_hide_anchor(),
 				draggable: draggable(),
 				gap: gap(),
@@ -80,7 +81,7 @@ const _: VoidComponent = () => {
 				style={{width: '100px'}}
 				value={gap()}
 				min={0}
-				onBlur={(ev) => set_gap(g => number_safe(ev.currentTarget.valueAsNumber, g))}
+				onBlur={(ev) => set_gap(g => number_safe(event_current_target(ev).valueAsNumber, g))}
 				label="Gap"
 			/>
 			<Show when={array_includes([
@@ -105,33 +106,33 @@ const _: VoidComponent = () => {
 					value={padding()}
 					style={{width: '100px'}}
 					min={0}
-					onBlur={(ev) => set_padding(p => number_safe(ev.currentTarget.valueAsNumber, p))}
+					onBlur={(ev) => set_padding(p => number_safe(event_current_target(ev).valueAsNumber, p))}
 					label="Padding"
 				/>
 			</Show>
 			<CheckBox
 				checked={anchor()}
-				onChange={ev => set_anchor(ev.currentTarget.checked)}>
+				onChange={ev => set_anchor(event_current_target(ev).checked)}>
 				Anchor
 			</CheckBox>
 			<CheckBox
 				checked={important()}
-				onChange={ev => setImportant(ev.currentTarget.checked)}>
+				onChange={ev => setImportant(event_current_target(ev).checked)}>
 				Important
 			</CheckBox>
 			<CheckBox
 				checked={content_autofocus()}
-				onChange={ev => set_content_autofocus(ev.currentTarget.checked)}>
+				onChange={ev => set_content_autofocus(event_current_target(ev).checked)}>
 				Input Autofocus
 			</CheckBox>
 			<CheckBox
 				checked={draggable()}
-				onChange={ev => set_draggable(ev.currentTarget.checked)}>
+				onChange={ev => set_draggable(event_current_target(ev).checked)}>
 				Draggable
 			</CheckBox>
 			<CheckBox
 				checked={allow_hide_anchor()}
-				onChange={ev => set_allow_hide_anchor(ev.currentTarget.checked)}>
+				onChange={ev => set_allow_hide_anchor(event_current_target(ev).checked)}>
 				Allow hide anchor
 			</CheckBox>
 		</PlaygroundOptions>

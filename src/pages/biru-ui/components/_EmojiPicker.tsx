@@ -12,6 +12,7 @@ import EmojiC from "@/components/Emoji"
 import CheckBox from "@/components/CheckBox"
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import { NumberTextField } from "@/components/TextField"
+import { event_current_target } from "@/utils/event"
 
 const _: VoidComponent = () => {
 	const [allow_hide_anchor, set_allow_hide_anchor] = createSignal<boolean>(true)
@@ -32,7 +33,7 @@ const _: VoidComponent = () => {
 			<Button
 				variant={ButtonVariant.tonal}
 				onClick={ev => open_emojipicker(ev, emojiPicker_ref, {
-					anchor: anchor()? ev.currentTarget : undefined,
+					anchor: anchor()? event_current_target(ev) : undefined,
 					allow_hide_anchor: allow_hide_anchor(),
 					draggable: draggable(),
 					gap: gap(),
@@ -89,7 +90,7 @@ const _: VoidComponent = () => {
 				style={{width: '100px'}}
 				value={gap()}
 				min={0}
-				onBlur={(ev) => set_gap(g => number_safe(ev.currentTarget.valueAsNumber, g))}
+				onBlur={(ev) => set_gap(g => number_safe(event_current_target(ev).valueAsNumber, g))}
 				label="Gap"
 			/>
 			<Show when={array_includes([
@@ -114,38 +115,38 @@ const _: VoidComponent = () => {
 					value={padding()}
 					style={{width: '100px'}}
 					min={0}
-					onBlur={(ev) => set_padding(p => number_safe(ev.currentTarget.valueAsNumber, p))}
+					onBlur={(ev) => set_padding(p => number_safe(event_current_target(ev).valueAsNumber, p))}
 					label="Padding"
 				/>
 			</Show>
 			<CheckBox
 				checked={anchor()}
-				onChange={ev => set_anchor(ev.currentTarget.checked)}>
+				onChange={ev => set_anchor(event_current_target(ev).checked)}>
 				Anchor
 			</CheckBox>
 			<CheckBox
 				checked={important()}
-				onChange={ev => set_important(ev.currentTarget.checked)}>
+				onChange={ev => set_important(event_current_target(ev).checked)}>
 				Important
 			</CheckBox>
 			<CheckBox
 				checked={draggable()}
-				onChange={ev => set_draggable(ev.currentTarget.checked)}>
+				onChange={ev => set_draggable(event_current_target(ev).checked)}>
 				Dragable
 			</CheckBox>
 			<CheckBox
 				checked={allow_hide_anchor()}
-				onChange={ev => set_allow_hide_anchor(ev.currentTarget.checked)}>
+				onChange={ev => set_allow_hide_anchor(event_current_target(ev).checked)}>
 				Allow hide anchor
 			</CheckBox>
 			<CheckBox
 				checked={multiple()}
-				onChange={ev => set_multiple(ev.currentTarget.checked)}>
+				onChange={ev => set_multiple(event_current_target(ev).checked)}>
 				Multiple
 			</CheckBox>
 			<CheckBox
 				checked={show_close_button()}
-				onChange={ev => set_show_close_button(ev.currentTarget.checked)}>
+				onChange={ev => set_show_close_button(event_current_target(ev).checked)}>
 				Show close button
 			</CheckBox>
 		</PlaygroundOptions>

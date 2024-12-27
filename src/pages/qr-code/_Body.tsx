@@ -4,7 +4,7 @@ import { BarcodeFormat, DecodeHintType } from "@zxing/library"
 
 import { timeout_set } from "@/utils/timeout"
 import { Commands, CopyFileType, DownloadFileType, Pages } from "./_enums"
-import { event_prevent_default, event_stop_propagation } from "@/utils/event"
+import { event_current_target, event_prevent_default, event_stop_propagation } from "@/utils/event"
 import { attr_set_if_exist } from "@/utils/attributes"
 import { file_open } from "@/utils/file"
 import { url_create, url_revoke } from "@/utils/url"
@@ -103,7 +103,7 @@ const _: VoidComponent<{
 			<TextField
 				label="Data"
 				placeholder="Link, email, or any text"
-				onInput={ev => command(Commands.change_qrcode_data, ev.currentTarget.value)}
+				onInput={ev => command(Commands.change_qrcode_data, event_current_target(ev).value)}
 				attr_wrapper={{ class: CSS.body_input }}
 			/>
 			<canvas

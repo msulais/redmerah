@@ -9,6 +9,7 @@ import { NumberTextField } from "@/components/TextField"
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import Icon from "@/components/Icon"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
+import { event_current_target } from "@/utils/event"
 
 const _: VoidComponent = () => {
 	const [use_anchor, set_use_anchor] = createSignal<boolean>(false)
@@ -83,7 +84,7 @@ const _: VoidComponent = () => {
 				style={{width: '100px'}}
 				value={gap()}
 				min={0}
-				onBlur={(ev) => set_gap(g => number_safe(ev.currentTarget.valueAsNumber, g))}
+				onBlur={(ev) => set_gap(g => number_safe(event_current_target(ev).valueAsNumber, g))}
 				label="Gap"
 			/>
 			<NumberTextField
@@ -91,7 +92,7 @@ const _: VoidComponent = () => {
 				value={start_delay_duration()}
 				min={0}
 				step={100}
-				onBlur={(ev) => set_start_delay_duration(d => number_safe(ev.currentTarget.valueAsNumber, d))}
+				onBlur={(ev) => set_start_delay_duration(d => number_safe(event_current_target(ev).valueAsNumber, d))}
 				label="Start delay duration"
 			/>
 			<NumberTextField
@@ -99,12 +100,12 @@ const _: VoidComponent = () => {
 				value={end_delay_duration()}
 				min={0}
 				step={100}
-				onBlur={(ev) => set_end_delay_duration(d => number_safe(ev.currentTarget.valueAsNumber, d))}
+				onBlur={(ev) => set_end_delay_duration(d => number_safe(event_current_target(ev).valueAsNumber, d))}
 				label="End delay duration"
 			/>
 			<CheckBox
 				checked={use_anchor()}
-				onChange={ev => set_use_anchor(ev.currentTarget.checked)}>
+				onChange={ev => set_use_anchor(event_current_target(ev).checked)}>
 				Use anchor
 			</CheckBox>
 		</PlaygroundOptions>

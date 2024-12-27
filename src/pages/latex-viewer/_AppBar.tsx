@@ -15,11 +15,12 @@ import { array_includes } from "@/utils/array";
 import { navigator_share } from "@/utils/navigator";
 import { date_year } from "@/utils/datetime";
 import { number_safe } from "@/utils/number";
-import TextField, { NumberTextField } from "@/components/TextField";
+import { event_current_target } from "@/utils/event";
 import logo from '@/assets/apps/latex-viewer/logo.svg'
 import logo_redmerah from '@/assets/logo.svg'
 
 import { IconButton } from "@/components/Button";
+import TextField, { NumberTextField } from "@/components/TextField";
 import Menu, { close_submenu, close_menu, LinkMenuItem, MenuDivider, MenuHeader, MenuItem, SubMenu, open_menu, SubMenuItem, SwitchMenuItem } from "@/components/Menu";
 import AppBar from "@/components/AppBar";
 import Tooltip from "@/components/Tooltip";
@@ -237,7 +238,7 @@ const _: VoidComponent<{
 						value={settings().font_size}
 						onBlur={ev => command(
 							Commands.change_fontsize,
-							number_safe(ev.currentTarget.valueAsNumber, settings().font_size)
+							number_safe(event_current_target(ev).valueAsNumber, settings().font_size)
 						)}
 					/>
 					<TextField
@@ -246,7 +247,7 @@ const _: VoidComponent<{
 						value={settings().prefix}
 						onBlur={ev => command(
 							Commands.change_prefix,
-							ev.currentTarget.value
+							event_current_target(ev).value
 						)}
 					/>
 					<TextField
@@ -255,7 +256,7 @@ const _: VoidComponent<{
 						value={settings().suffix}
 						onBlur={ev => command(
 							Commands.change_suffix,
-							ev.currentTarget.value
+							event_current_target(ev).value
 						)}
 					/>
 				</div>
@@ -294,7 +295,7 @@ const _: VoidComponent<{
 					focused={is_menu_info_open()}
 					code={0xE930}
 					onClick={(ev) => open_menu(ev, menu_info_ref, {
-						anchor: ev.currentTarget,
+						anchor: event_current_target(ev),
 						padding: 4
 					})}
 				/>
@@ -304,7 +305,7 @@ const _: VoidComponent<{
 					focused={is_menu_settings_open()}
 					code={0xEE0F}
 					onClick={(ev) => open_menu(ev, menu_settings_ref, {
-						anchor: ev.currentTarget,
+						anchor: event_current_target(ev),
 						padding: 4
 					})}
 				/>
@@ -313,7 +314,7 @@ const _: VoidComponent<{
 					focused={is_menu_moreactions_open()}
 					code={0xEAD9}
 					onClick={(ev) => open_menu(ev, menu_moreactions_ref, {
-						anchor: ev.currentTarget,
+						anchor: event_current_target(ev),
 						padding: 4
 					})}
 				/>

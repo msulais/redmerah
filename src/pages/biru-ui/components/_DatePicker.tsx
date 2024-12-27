@@ -9,6 +9,7 @@ import DatePicker, { open_datepicker } from "@/components/DatePicker"
 import TextField, { TextFieldButton } from "@/components/TextField"
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
+import { event_current_target } from "@/utils/event"
 
 const _: VoidComponent = () => {
 	const [first_date, set_first_date] = createSignal<Date>(new Date(date_year() - 100, 0, 1))
@@ -30,7 +31,7 @@ const _: VoidComponent = () => {
 				focused={is_datepicker_open()}
 				variant={ButtonVariant.tonal}
 				onClick={(ev) => open_datepicker(ev, datepicker_ref, {
-					anchor: ev.currentTarget,
+					anchor: event_current_target(ev),
 					gap: 8
 				})}>
 				<Icon code={0xE2CC}/>
@@ -78,7 +79,7 @@ const _: VoidComponent = () => {
 						onClick={(ev) => open_datepicker(
 							ev,
 							datepicker_firstdate_ref,
-							{ anchor: ev.currentTarget }
+							{ anchor: event_current_target(ev) }
 						)}>
 						<Icon code={0xE2CC}/>
 					</TextFieldButton>
@@ -106,7 +107,7 @@ const _: VoidComponent = () => {
 						onClick={(ev) => open_datepicker(
 							ev,
 							datepicker_lastdate_ref,
-							{ anchor: ev.currentTarget }
+							{ anchor: event_current_target(ev) }
 						)}>
 						<Icon code={0xE2CC}/>
 					</TextFieldButton>

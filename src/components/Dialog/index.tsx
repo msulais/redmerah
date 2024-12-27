@@ -3,10 +3,11 @@ import { type JSX, type ParentComponent, splitProps, children, Show, createEffec
 import { AnimationEffectTiming } from "@/enums/animation"
 import { element_animate, element_children, element_focus_by_arrowkey, element_is_same_node, element_set_tabindex, element_tagname } from "@/utils/element"
 import { promise_done } from "@/utils/object"
+import { document_active } from "@/utils/document"
+import { event_current_target } from "@/utils/event"
 
 import { close_modal, focus_modal, Modal, open_modal, type ModalProps } from "@/components/Modal"
 import './index.scss'
-import { document_active } from "@/utils/document"
 
 function open_dialog(ev: Event, dialog: HTMLDialogElement, options?: {
 	content_auto_focus?: boolean
@@ -92,7 +93,7 @@ const Dialog: ParentComponent<DialogProps> = ($props) => {
 					if (tag_name == 'INPUT' || tag_name == 'TEXTAREA') return
 
 					element_focus_by_arrowkey(
-						ev.currentTarget,
+						event_current_target(ev),
 						ev.code,
 						{ left: 'prev', right: 'next' },
 						(el) => element_tagname(el) != 'INPUT' && element_tagname(el) != 'TEXTAREA'

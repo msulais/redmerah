@@ -1,10 +1,11 @@
 import { children, createEffect, Show, splitProps, type JSX, type ParentComponent } from "solid-js"
+
 import { classlist } from "@/utils/attributes"
+import { element_children, element_focus_by_arrowkey, element_set_tabindex, element_tagname } from "@/utils/element"
+import { document_active } from "@/utils/document"
+import { event_current_target } from "@/utils/event"
 
 import './index.scss'
-import { element_children, element_focus_by_arrowkey, element_is_same_node, element_set_tabindex, element_tagname } from "@/utils/element"
-import { TOOLTIP_CLASS } from "../Tooltip"
-import { document_active } from "@/utils/document"
 
 type AppBarProps = JSX.HTMLAttributes<HTMLDivElement> & {
 	leading?: JSX.Element
@@ -66,7 +67,7 @@ const AppBar: ParentComponent<AppBarProps> = ($props) => {
 					if (tag_name == 'INPUT' || tag_name == 'TEXTAREA') return
 
 					element_focus_by_arrowkey(
-						ev.currentTarget,
+						event_current_target(ev),
 						ev.code,
 						{ left: 'prev', right: 'next' },
 						(el) => element_tagname(el) != 'INPUT' && element_tagname(el) != 'TEXTAREA'

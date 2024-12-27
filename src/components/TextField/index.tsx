@@ -3,7 +3,7 @@ import { mergeRefs } from '@solid-primitives/refs'
 
 import { attr_set_if_exist, classlist } from '@/utils/attributes'
 import { timeout_clear, interval_clear, timeout_set, interval_set } from '@/utils/timeout'
-import { event_call, event_prevent_default, event_stop_propagation } from '@/utils/event'
+import { event_call, event_current_target, event_prevent_default, event_stop_propagation } from '@/utils/event'
 import { math_clamp, math_max, math_round } from '@/utils/math'
 import { element_blur, element_children, element_contains, element_dispatch_event, element_focus, element_focus_by_arrowkey, element_is_same_node, element_rect, element_scroll_height, element_set_tabindex, element_tagname } from '@/utils/element'
 import { event_add_listener, event_remove_listener } from '@/utils/event'
@@ -12,6 +12,7 @@ import { string_length, string_split, string_touppercase, string_trim } from '@/
 import { array_length } from '@/utils/array'
 import { number_is_nan, number_is_not_defined, number_parse, number_safe } from '@/utils/number'
 import { rect_width } from '@/utils/rect'
+import { document_active } from '@/utils/document'
 
 import Icon from '@/components/Icon'
 import { TextTooltip } from '@/components/Tooltip'
@@ -20,7 +21,6 @@ import Popover, { close_popover, is_popover_open, open_popover, reposition_popov
 import { MenuItem, LinkMenuItem, MenuDivider, MenuHeader, MenuPosition, open_menu } from '@/components/Menu'
 import Modal, { type ModalProps } from '@/components/Modal'
 import './index.scss'
-import { document_active } from '@/utils/document'
 
 const HEIGHT_TEXT_INPUT_PER_LINE = 20
 
@@ -173,7 +173,7 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 				id={props.id}
 				ref={mergeRefs(props.ref, r => areatextfield_ref = r)}
 				onInput={(ev) => {
-					const self = ev.currentTarget
+					const self = event_current_target(ev)
 					set_value(self.value)
 					set_is_invalid(!self.checkValidity())
 					event_call(ev, props.onInput)
@@ -181,14 +181,14 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 					set_height(math_max(element_scroll_height(self), HEIGHT_TEXT_INPUT_PER_LINE))
 				}}
 				onFocus={(ev) => {
-					const self = ev.currentTarget
+					const self = event_current_target(ev)
 					set_value(self.value)
 					set_is_invalid(!self.checkValidity())
 					set_is_focus(true)
 					event_call(ev, props.onFocus)
 				}}
 				onBlur={(ev) => {
-					set_value(ev.currentTarget.value)
+					set_value(event_current_target(ev).value)
 					set_is_focus(false)
 					event_call(ev, props.onBlur)
 				}}
@@ -225,7 +225,7 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 						if (tag_name == 'INPUT' || tag_name == 'TEXTAREA') return
 
 						element_focus_by_arrowkey(
-							ev.currentTarget,
+							event_current_target(ev),
 							ev.code,
 							{ left: 'prev', right: 'next' },
 							(el) => element_tagname(el) != 'INPUT' && element_tagname(el) != 'TEXTAREA'
@@ -349,13 +349,13 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 				id={props.id}
 				ref={mergeRefs(props.ref, r => textfield_ref = r)}
 				onInput={(ev) => {
-					const self = ev.currentTarget
+					const self = event_current_target(ev)
 					set_value(self.value)
 					set_is_invalid(!self.checkValidity())
 					event_call(ev, props.onInput)
 				}}
 				onFocus={(ev) => {
-					const self = ev.currentTarget
+					const self = event_current_target(ev)
 					set_value(self.value)
 					set_is_invalid(!self.checkValidity())
 					set_is_focus(true)
@@ -363,11 +363,11 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 					if (props.auto_select_all) self.setSelectionRange(0, string_length(self.value))
 				}}
 				onKeyUp={ev => {
-					if (ev.key == 'Enter') element_blur(ev.currentTarget)
+					if (ev.key == 'Enter') element_blur(event_current_target(ev))
 					event_call(ev, props.onKeyUp)
 				}}
 				onBlur={(ev) => {
-					set_value(ev.currentTarget.value)
+					set_value(event_current_target(ev).value)
 					set_is_focus(false)
 					event_call(ev, props.onBlur)
 				}}
@@ -400,7 +400,7 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 						if (tag_name == 'INPUT' || tag_name == 'TEXTAREA') return
 
 						element_focus_by_arrowkey(
-							ev.currentTarget,
+							event_current_target(ev),
 							ev.code,
 							{ left: 'prev', right: 'next' },
 							(el) => element_tagname(el) != 'INPUT' && element_tagname(el) != 'TEXTAREA'
@@ -603,7 +603,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 							modal_actions_ref,
 							{
 								position: MenuPosition.center_center_left,
-								anchor: ev.currentTarget
+								anchor: event_current_target(ev)
 							})
 						}>
 						<Icon code={0xE406}/>

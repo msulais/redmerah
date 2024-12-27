@@ -4,7 +4,7 @@ import { createStore } from "solid-js/store"
 import type { Gradient, GradientData, RadialGradient, Settings } from "./_type"
 import { ColorModel, Commands, GradientType, HueInterpolationMethod, PolarColorSpace, RadialGradientShape } from "./_enums"
 import { attr_remove, attr_set, attr_set_if_exist } from "@/utils/attributes"
-import { event_add_listener } from "@/utils/event"
+import { event_add_listener, event_current_target } from "@/utils/event"
 import { BodyAttributes } from "@/enums/attributes"
 import { element_rect } from "@/utils/element"
 import { math_clamp, math_round } from "@/utils/math"
@@ -67,7 +67,7 @@ const GradientDataList: VoidComponent<{
 				onClick={(ev) => {
 					set_selected_gradientdata_index($props.index)
 					open_menu(ev, menu_action_ref, {
-						anchor: ev.currentTarget,
+						anchor: event_current_target(ev),
 						position: MenuPosition.center_bottom_to_right
 					})
 				}}>
@@ -394,7 +394,7 @@ const GradientControl: VoidComponent<{
 					value={convert_color_by_color_model(stop.color, settings().color_model, true)}
 					enterkeyhint="done"
 					onBlur={ev => {
-						let value = ev.currentTarget.value
+						let value = event_current_target(ev).value
 						const model = settings().color_model
 						if (model == ColorModel.hsla) {
 							value = string_replace(value, /[^-\d.,]+/gs, '')
@@ -408,7 +408,7 @@ const GradientControl: VoidComponent<{
 
 							value = string_touppercase((hex + (opacity < 0xff? string_padstart(number_to_string(opacity, 16), 2, '0') : '')))
 							command(Commands.change_color_stop_color, gradient_index(), index(), value)
-							change_textfield_value(ev.currentTarget, `hsla(${h}, ${s}%, ${l}%, ${math_clamp(number_parse(values[3] ?? '1'), 0, 1)})`)
+							change_textfield_value(event_current_target(ev), `hsla(${h}, ${s}%, ${l}%, ${math_clamp(number_parse(values[3] ?? '1'), 0, 1)})`)
 							return
 						}
 
@@ -424,7 +424,7 @@ const GradientControl: VoidComponent<{
 
 							value = string_touppercase((hex + (opacity < 255? string_padstart(number_to_string(opacity, 16), 2, '0') : '')))
 							command(Commands.change_color_stop_color, gradient_index(), index(), value)
-							change_textfield_value(ev.currentTarget, `rgba(${r}, ${g}, ${b}, ${math_clamp(number_parse(values[3] ?? '1'), 0, 1)})`)
+							change_textfield_value(event_current_target(ev), `rgba(${r}, ${g}, ${b}, ${math_clamp(number_parse(values[3] ?? '1'), 0, 1)})`)
 							return
 						}
 
@@ -435,14 +435,14 @@ const GradientControl: VoidComponent<{
 
 						value = '#' + string_touppercase(string_substring(string_padstart(number_to_string($value, 16), 6, '0'), 0, 8))
 						command(Commands.change_color_stop_color, gradient_index(), index(), value)
-						change_textfield_value(ev.currentTarget, value)
+						change_textfield_value(event_current_target(ev), value)
 					}}
 					trailing={<>
 						<TextFieldButton
 							data-tooltip="Pick color"
 							onClick={(ev) => {
 								props.on_start_pick_color(index())
-								open_colorpicker(ev, props.colorpicker_ref, { color: stop.color, anchor: ev.currentTarget })}
+								open_colorpicker(ev, props.colorpicker_ref, { color: stop.color, anchor: event_current_target(ev) })}
 							}>
 							<Icon code={0xE785} />
 						</TextFieldButton>
@@ -669,7 +669,7 @@ const _: VoidComponent<{
 						on_open_actions_menu={ev => {
 							set_selected_gradient_index(index())
 							open_menu(ev, menu_gradientactions_ref, {
-								anchor: ev.currentTarget as HTMLElement,
+								anchor: event_current_target(ev as any) as HTMLElement,
 								position: MenuPosition.center_center_right_top
 							})
 						}}

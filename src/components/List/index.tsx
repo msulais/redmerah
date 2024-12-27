@@ -3,9 +3,10 @@ import { Dynamic, type DynamicProps } from "solid-js/web"
 
 import { attr_set_if_exist, classlist } from '@/utils/attributes'
 import { element_children, element_focus_by_arrowkey, element_is_same_node, element_set_tabindex, element_tagname } from "@/utils/element"
+import { document_active } from "@/utils/document"
+import { event_current_target } from "@/utils/event"
 
 import './index.scss'
-import { document_active } from "@/utils/document"
 
 type ListProps = JSX.HTMLAttributes<HTMLDivElement> & {
 	leading?: JSX.Element
@@ -69,7 +70,7 @@ const List: ParentComponent<ListProps> = ($props) => {
 					if (tag_name == 'INPUT' || tag_name == 'TEXTAREA') return
 
 					element_focus_by_arrowkey(
-						ev.currentTarget,
+						event_current_target(ev),
 						ev.code,
 						{ left: 'prev', right: 'next' },
 						(el) => element_tagname(el) != 'INPUT' && element_tagname(el) != 'TEXTAREA'
@@ -144,7 +145,7 @@ const RawList: ParentComponent<RawListProps> = ($props) => {
 					if (tag_name == 'INPUT' || tag_name == 'TEXTAREA') return
 
 					element_focus_by_arrowkey(
-						ev.currentTarget,
+						event_current_target(ev),
 						ev.code,
 						{ left: 'prev', right: 'next' },
 						(el) => element_tagname(el) != 'INPUT' && element_tagname(el) != 'TEXTAREA'

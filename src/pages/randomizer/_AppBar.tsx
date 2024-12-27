@@ -15,7 +15,7 @@ import { url_encode } from "@/utils/url"
 import { CornerData } from "@/enums/corner"
 import { is_window_media_matches } from "@/utils/window"
 import { RANDOMIZER_TYPES, SIZE_SIDE_NAVIGATION_NONE } from "./_constants"
-import { event_add_listener } from "@/utils/event"
+import { event_add_listener, event_current_target } from "@/utils/event"
 import { array_includes } from "@/utils/array"
 import { navigator_share } from "@/utils/navigator"
 import { date_year } from "@/utils/datetime"
@@ -482,7 +482,7 @@ const _: Component<{
 					<TextField
 						ref={r => textfield_prefix_ref = r}
 						label="Prefix"
-						onBlur={(ev) => command(Commands.change_settings_prefix, ev.currentTarget.value)}
+						onBlur={(ev) => command(Commands.change_settings_prefix, event_current_target(ev).value)}
 						leading={<Icon code={0xE043}/>}
 					/>
 				</div>
@@ -490,7 +490,7 @@ const _: Component<{
 					<TextField
 						ref={r => textfield_suffix_ref = r}
 						label="Suffix"
-						onBlur={(ev) => command(Commands.change_settings_suffix, ev.currentTarget.value)}
+						onBlur={(ev) => command(Commands.change_settings_suffix, event_current_target(ev).value)}
 						leading={<Icon code={0xE02D}/>}
 					/>
 				</div>
@@ -498,7 +498,7 @@ const _: Component<{
 					<TextField
 						ref={r => textfield_separator_ref = r}
 						label="Separator"
-						onBlur={(ev) => command(Commands.change_settings_separator, ev.currentTarget.value)}
+						onBlur={(ev) => command(Commands.change_settings_separator, event_current_target(ev).value)}
 						leading={<Icon code={0xE4CF}/>}
 					/>
 				</div>
@@ -511,7 +511,7 @@ const _: Component<{
 						label="Min decimal length"
 						onBlur={ev => command(
 							Commands.change_settings_numbers_minlength,
-							number_safe(ev.currentTarget.valueAsNumber)
+							number_safe(event_current_target(ev).valueAsNumber)
 						)}
 						leading={<Icon code={0xE599}/>}
 					/>
@@ -584,7 +584,7 @@ const _: Component<{
 						focused={is_menu_info_open()}
 						code={0xE930}
 						onClick={(ev) => open_menu(ev, menu_info_ref, {
-							anchor: ev.currentTarget,
+							anchor: event_current_target(ev),
 							padding: 4,
 						})}
 					/>
@@ -595,7 +595,7 @@ const _: Component<{
 						onClick={async (ev) => {
 							init_inputs()
 							open_menu(ev, menu_settings_ref, {
-								anchor: ev.currentTarget,
+								anchor: event_current_target(ev),
 								padding: 4,
 							})
 						}}

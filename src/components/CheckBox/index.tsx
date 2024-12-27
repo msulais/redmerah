@@ -4,7 +4,7 @@ import { mergeRefs } from "@solid-primitives/refs"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { attr_set_if_exist, classlist } from "@/utils/attributes"
 import { element_animate, element_dispatch_event, element_is_same_node, get_multiple_element_by_selector } from "@/utils/element"
-import { event_add_listener, event_call, event_remove_listener } from "@/utils/event"
+import { event_add_listener, event_call, event_current_target, event_remove_listener } from "@/utils/event"
 import { promise_done } from "@/utils/object"
 
 import Icon, { type IconProps } from "@/components/Icon"
@@ -114,7 +114,7 @@ const CheckBox: ParentComponent<CheckBoxProps> = ($props) => {
 			type={props.variant == CheckBoxVariant.radio? 'radio' : 'checkbox'}
 			id={props.id}
 			onChange={(ev) => {
-				const is_checked = ev.currentTarget.checked
+				const is_checked = event_current_target(ev).checked
 				event_call(ev, props.onChange)
 
 				if (props.variant == CheckBoxVariant.radio && other.name != null) {

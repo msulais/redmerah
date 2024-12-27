@@ -1,6 +1,6 @@
 import { createSignal, For, Show, type VoidComponent } from "solid-js"
 
-import { event_stop_propagation } from "@/utils/event"
+import { event_current_target, event_stop_propagation } from "@/utils/event"
 
 import Icon from "@/components/Icon"
 import { IconButton } from "@/components/Button"
@@ -53,32 +53,32 @@ const _: VoidComponent = () => {
 			</Dropdown>
 			<CheckBox
 				checked={title()}
-				onChange={ev => set_title(ev.currentTarget.checked)}>
+				onChange={ev => set_title(event_current_target(ev).checked)}>
 				Title
 			</CheckBox>
 			<CheckBox
 				checked={subtitle()}
-				onChange={ev => set_subtitle(ev.currentTarget.checked)}>
+				onChange={ev => set_subtitle(event_current_target(ev).checked)}>
 				Subtitle
 			</CheckBox>
 			<CheckBox
 				checked={leading()}
-				onChange={ev => set_leading(ev.currentTarget.checked)}>
+				onChange={ev => set_leading(event_current_target(ev).checked)}>
 				Leading
 			</CheckBox>
 			<CheckBox
 				checked={trailing()}
-				onChange={ev => set_trailing(ev.currentTarget.checked)}>
+				onChange={ev => set_trailing(event_current_target(ev).checked)}>
 				Trailing
 			</CheckBox>
 			<CheckBox
 				checked={use_expand_icon()}
-				onChange={ev => set_use_expand_icon(ev.currentTarget.checked)}>
+				onChange={ev => set_use_expand_icon(event_current_target(ev).checked)}>
 				Show expand icon
 			</CheckBox>
 			<CheckBox
 				checked={content()}
-				onChange={ev => set_content(ev.currentTarget.checked)}>
+				onChange={ev => set_content(event_current_target(ev).checked)}>
 				Content
 			</CheckBox>
 		</PlaygroundOptions>

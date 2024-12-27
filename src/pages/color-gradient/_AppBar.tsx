@@ -16,6 +16,7 @@ import { promise_done } from "@/utils/object"
 import { array_includes, array_join, array_map } from "@/utils/array"
 import { navigator_clipboard_writetext, navigator_share } from "@/utils/navigator"
 import { date_year } from "@/utils/datetime"
+import { event_current_target } from "@/utils/event"
 import logo from '@/assets/apps/color-gradient/logo.svg'
 import logo_redmerah from '@/assets/logo.svg'
 
@@ -314,7 +315,7 @@ const _: VoidComponent<{
 					focused={is_menu_info_open()}
 					code={0xE930}
 					onClick={(ev) => open_menu(ev, menu_info_ref, {
-						anchor: ev.currentTarget,
+						anchor: event_current_target(ev),
 						padding: 4,
 					})}
 				/>
@@ -324,7 +325,7 @@ const _: VoidComponent<{
 					focused={is_menu_settings_open()}
 					code={0xEE0F}
 					onClick={(ev) => open_menu(ev, menu_settings_ref, {
-						anchor: ev.currentTarget,
+						anchor: event_current_target(ev),
 						padding: 4,
 					})}
 				/>
@@ -333,7 +334,7 @@ const _: VoidComponent<{
 					focused={is_menu_moreactions_open()}
 					code={0xEAD9}
 					onClick={(ev) => open_menu(ev, menu_moreactions_ref, {
-						anchor: ev.currentTarget,
+						anchor: event_current_target(ev),
 						padding: 4,
 					})}
 				/>

@@ -2,14 +2,14 @@ import { type JSX, type ParentComponent, splitProps, children, onMount, onCleanu
 import { mergeRefs } from "@solid-primitives/refs"
 
 import { attr_set_if_exist } from "@/utils/attributes"
-import { event_add_listener, event_remove_listener } from "@/utils/event"
+import { event_add_listener, event_current_target, event_remove_listener } from "@/utils/event"
 import { timeout_clear, timeout_set } from "@/utils/timeout"
 import { element_children, element_dispatch_event, element_focus_by_arrowkey, element_is_same_node, element_set_tabindex, element_tagname } from "@/utils/element"
+import { document_active } from "@/utils/document"
 
 import List from "@/components/List"
 import Popover, { type PopoverProps, close_popover, open_popover, is_popover_open as is_toast_open, PopoverPosition } from "@/components/Popover"
 import './index.scss'
-import { document_active } from "@/utils/document"
 
 enum ToastPosition {
 	left_top,
@@ -179,7 +179,7 @@ const Toast: ParentComponent<ToastProps> = ($props) => {
 					if (tag_name == 'INPUT' || tag_name == 'TEXTAREA') return;
 
 					element_focus_by_arrowkey(
-						ev.currentTarget,
+						event_current_target(ev),
 						ev.code,
 						{ left: 'prev', right: 'next' },
 						(el) => element_tagname(el) != 'INPUT' && element_tagname(el) != 'TEXTAREA'

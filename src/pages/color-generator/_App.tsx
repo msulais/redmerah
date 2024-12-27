@@ -16,6 +16,8 @@ import { string_touppercase } from '@/utils/string'
 import { array_filter, array_join, array_length, array_push } from '@/utils/array'
 import { navigator_clipboard_writetext } from '@/utils/navigator'
 import { promise_done } from '@/utils/object'
+import { math_round } from '@/utils/math'
+import { event_current_target } from '@/utils/event'
 
 import {TextTooltip} from '@/components/Tooltip'
 import Divider from '@/components/Divider'
@@ -27,7 +29,6 @@ import App from '@/components/App'
 import AppBar from './_AppBar'
 import Body from './_Body'
 import CSS from './_styles.module.scss'
-import { math_round } from '@/utils/math'
 
 const _: VoidComponent = () => {
 	const db = new IDB(DatabaseNames.color_generator)
@@ -224,7 +225,7 @@ const _: VoidComponent = () => {
 			floating_action_button={<FloatingActionButton
 				classList={add_classlist_module(CSS.app_fab)}
 				variant={ButtonVariant.filled}
-				onClick={(ev) => open_colorpicker(ev, colorpicker_ref()!, {anchor: ev.currentTarget})}>
+				onClick={(ev) => open_colorpicker(ev, colorpicker_ref()!, {anchor: event_current_target(ev)})}>
 				{palette.seed}
 			</FloatingActionButton>}>
 			<Body {...palette} />

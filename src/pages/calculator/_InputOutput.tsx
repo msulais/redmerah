@@ -7,7 +7,7 @@ import { attr_set_if_exist, classlist } from "@/utils/attributes"
 import { CONVERTER_TYPES } from "./_constants"
 import { ConverterType, UNIT_ANGLE, UNIT_AREA, UNIT_FREQUENCY, UNIT_LENGTH, UNIT_PRESSURE, UNIT_TEMPERATURE, UNIT_TIME, UNIT_VOLUME, UNIT_WEIGHT, type ConverterUnit } from "./_converter"
 import { string_length, string_match, string_substring, string_totitlecase, string_touppercase, string_trim } from "@/utils/string"
-import { event_prevent_default } from "@/utils/event"
+import { event_current_target, event_prevent_default } from "@/utils/event"
 import { date_year, date_text_YMD } from "@/utils/datetime"
 import { number_to_binary, number_format, number_parse, number_to_real_digit, number_to_string, number_safe } from "@/utils/number"
 import { regex_test } from "@/utils/regex"
@@ -45,7 +45,7 @@ const ActionButtons: ParentComponent<JSX.HTMLAttributes<HTMLDivElement> & {
 				data-tooltip={"Memory value " + `(${props.memory})`}
 				focused={is_menu_memory_open()}
 				onClick={(ev) => open_menu(ev, menu_memory_ref, {
-					anchor: ev.currentTarget,
+					anchor: event_current_target(ev),
 				})}>
 				M
 			</Button>
@@ -155,9 +155,9 @@ const BasicCalculator: VoidComponent<{
 				equal()
 				event_prevent_default(ev)
 			}}
-			onFocus={ev => caret_pos = ev.currentTarget.selectionStart ?? caret_pos}
-			onBlur={ev => caret_pos = ev.currentTarget.selectionStart ?? caret_pos}
-			onInput={ev => command(Commands.change_calculator_input, ev.currentTarget.value)}
+			onFocus={ev => caret_pos = event_current_target(ev).selectionStart ?? caret_pos}
+			onBlur={ev => caret_pos = event_current_target(ev).selectionStart ?? caret_pos}
+			onInput={ev => command(Commands.change_calculator_input, event_current_target(ev).value)}
 		/>
 		<div
 			class={classlist(CSS.input_output_basic_text_output, CSSMiscellaneous.no_scrollbar)}>
@@ -303,9 +303,9 @@ const ScientificCalculator: VoidComponent<{
 				equal()
 				event_prevent_default(ev)
 			}}
-			onFocus={ev => caret_pos = ev.currentTarget.selectionStart ?? caret_pos}
-			onBlur={ev => caret_pos = ev.currentTarget.selectionStart ?? caret_pos}
-			onInput={ev => command(Commands.change_calculator_input, ev.currentTarget.value)}
+			onFocus={ev => caret_pos = event_current_target(ev).selectionStart ?? caret_pos}
+			onBlur={ev => caret_pos = event_current_target(ev).selectionStart ?? caret_pos}
+			onInput={ev => command(Commands.change_calculator_input, event_current_target(ev).value)}
 		/>
 		<div
 			class={classlist(
@@ -334,7 +334,7 @@ const ScientificCalculator: VoidComponent<{
 			settings={settings()}>
 			<Button
 				onClick={ev => open_menu(ev, menu_function_ref, {
-					anchor: ev.currentTarget,
+					anchor: event_current_target(ev),
 					position: MenuPosition.center_bottom_to_right
 				})}
 				focused={is_menu_function_open()}>
@@ -555,9 +555,9 @@ const ConverterCalculator: VoidComponent<{
 				equal()
 				event_prevent_default(ev)
 			}}
-			onFocus={ev => caret_pos = ev.currentTarget.selectionStart ?? caret_pos}
-			onBlur={ev => caret_pos = ev.currentTarget.selectionStart ?? caret_pos}
-			onInput={ev => command(Commands.change_calculator_input, ev.currentTarget.value)}
+			onFocus={ev => caret_pos = event_current_target(ev).selectionStart ?? caret_pos}
+			onBlur={ev => caret_pos = event_current_target(ev).selectionStart ?? caret_pos}
+			onInput={ev => command(Commands.change_calculator_input, event_current_target(ev).value)}
 		/>
 		<div
 			class={classlist(
@@ -588,7 +588,7 @@ const ConverterCalculator: VoidComponent<{
 				data-tooltip="Select converter type"
 				focused={is_menu_convertertype_open()}
 				onClick={ev => open_menu(ev, menu_convertertype_ref, {
-					anchor: ev.currentTarget,
+					anchor: event_current_target(ev),
 					position: MenuPosition.center_bottom_to_right,
 					allow_hide_anchor: false
 				})}
@@ -618,7 +618,7 @@ const ConverterCalculator: VoidComponent<{
 					data-tooltip="Select input unit"
 					focused={is_menu_inputunit_open()}
 					onClick={ev => open_menu(ev, menu_inputunit_ref, {
-						anchor: ev.currentTarget,
+						anchor: event_current_target(ev),
 						position: MenuPosition.center_bottom_to_right,
 						allow_hide_anchor: false
 					})}
@@ -649,7 +649,7 @@ const ConverterCalculator: VoidComponent<{
 					data-tooltip="Select output unit"
 					focused={is_menu_outputunit_open()}
 					onClick={ev => open_menu(ev, menu_outputunit_ref, {
-						anchor: ev.currentTarget,
+						anchor: event_current_target(ev),
 						position: MenuPosition.center_bottom_to_right,
 						allow_hide_anchor: false
 					})}
@@ -824,9 +824,9 @@ const ProgrammerCalculator: VoidComponent<{
 				equal()
 				event_prevent_default(ev)
 			}}
-			onFocus={ev => caret_pos = ev.currentTarget.selectionStart ?? caret_pos}
-			onBlur={ev => caret_pos = ev.currentTarget.selectionStart ?? caret_pos}
-			onInput={ev => command(Commands.change_calculator_input, ev.currentTarget.value)}
+			onFocus={ev => caret_pos = event_current_target(ev).selectionStart ?? caret_pos}
+			onBlur={ev => caret_pos = event_current_target(ev).selectionStart ?? caret_pos}
+			onInput={ev => command(Commands.change_calculator_input, event_current_target(ev).value)}
 		/>
 		<div
 			class={classlist(
@@ -979,7 +979,7 @@ const DateCalculator: VoidComponent<{
 			<Button
 				variant={ButtonVariant.tonal}
 				onClick={(ev) => open_datepicker(ev, datePicker_from_ref, {
-					anchor: ev.currentTarget,
+					anchor: event_current_target(ev),
 					position: MenuPosition.center_bottom_to_right
 				})}>
 				<Icon code={0xE2CC}/>
@@ -994,7 +994,7 @@ const DateCalculator: VoidComponent<{
 				onBlur={(ev) => command(
 					Commands.change_calculator_input,
 					{	...input(),
-						year: number_safe(ev.currentTarget.valueAsNumber, input().year)
+						year: number_safe(event_current_target(ev).valueAsNumber, input().year)
 					}
 				)}
 			/>
@@ -1005,7 +1005,7 @@ const DateCalculator: VoidComponent<{
 				onBlur={(ev) => command(
 					Commands.change_calculator_input,
 					{	...input(),
-						month: number_safe(ev.currentTarget.valueAsNumber, input().month)
+						month: number_safe(event_current_target(ev).valueAsNumber, input().month)
 					}
 				)}
 			/>
@@ -1016,7 +1016,7 @@ const DateCalculator: VoidComponent<{
 				onBlur={(ev) => command(
 					Commands.change_calculator_input,
 					{	...input(),
-						day: number_safe(ev.currentTarget.valueAsNumber, input().day)
+						day: number_safe(event_current_target(ev).valueAsNumber, input().day)
 					}
 				)}
 			/>
@@ -1026,7 +1026,7 @@ const DateCalculator: VoidComponent<{
 			<Button
 				variant={ButtonVariant.tonal}
 				onClick={(ev) => open_datepicker(ev, datePicker_to_ref, {
-					anchor: ev.currentTarget,
+					anchor: event_current_target(ev),
 					position: MenuPosition.center_bottom_to_right
 				})}>
 				<Icon code={0xE2CC}/>
