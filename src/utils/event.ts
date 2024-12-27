@@ -45,8 +45,8 @@ export function event_stop_propagation(event: Event): void {
 	return event.stopPropagation()
 }
 
-export function event_current_target<T, E extends Event>(
-	event: E & { currentTarget: T; target: Element }
+export function event_current_target<T, U extends Event, V>(
+	event: U & { currentTarget: T; target: V }
 ): T {
 	return event.currentTarget
 }
