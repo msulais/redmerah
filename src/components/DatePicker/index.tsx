@@ -400,7 +400,7 @@ const DatePickerBody: ParentComponent<{
 		<div
 			class="c-date-picker-header"
 			onKeyDown={(ev) => element_focus_by_arrowkey(
-				ev.target as HTMLButtonElement,
+				ev.currentTarget,
 				ev.code,
 				{ left: 'prev', right: 'next' }
 			)}

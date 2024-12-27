@@ -5,7 +5,7 @@ import { attr_set_if_exist, classlist } from "@/utils/attributes"
 import { is_var_has_value } from "@/utils/object"
 import { call_event_handler, event_stop_immediate_propagation, event_stop_propagation } from "@/utils/event"
 import { timeout_clear, timeout_set, wait } from "@/utils/timeout"
-import { element_children, element_classlist, element_first_element_child, element_is_same_node, element_last_element_child, element_parent_element } from "@/utils/element"
+import { element_children, element_classlist, element_first_child, element_is_same_node, element_last_child, element_parent } from "@/utils/element"
 import { AppColors } from "@/enums/colors"
 
 import Divider, { type DividerProps } from "@/components/Divider"
@@ -223,9 +223,9 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 	let is_open: boolean = false
 
 	function close_submenu_descendant(): void {
-		for (const el of element_children(element_first_element_child(popover_ref)!) as unknown as HTMLElement[]) {
+		for (const el of element_children(element_first_child(popover_ref)!) as unknown as HTMLElement[]) {
 			if (!element_classlist(el).contains(SUBMENU_CLASSNAME)) continue;
-			close_popover(element_last_element_child(el) as HTMLDivElement)
+			close_popover(element_last_child(el) as HTMLDivElement)
 		}
 	}
 
@@ -241,10 +241,10 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 
 		let some_submenu_open = false;
 
-		for (const el of element_parent_element(div_ref)?.children as unknown as HTMLElement[]) {
+		for (const el of element_parent(div_ref)?.children as unknown as HTMLElement[]) {
 			if (!element_classlist(el).contains(SUBMENU_CLASSNAME) || element_is_same_node(el, div_ref)) continue
 
-			const popover = element_last_element_child(el) as HTMLDivElement
+			const popover = element_last_child(el) as HTMLDivElement
 			const isOpen = is_popover_open(popover)
 			if (!some_submenu_open && isOpen) some_submenu_open = true
 			if (isOpen) close_popover(popover)
@@ -326,9 +326,9 @@ const Menu: ParentComponent<MenuProps> = ($props) => {
 	let menu_ref: HTMLDialogElement
 
 	function close_submenu_descendant(): void {
-		for (const el of element_children(element_first_element_child(menu_ref)!) as unknown as HTMLElement[]) {
+		for (const el of element_children(element_first_child(menu_ref)!) as unknown as HTMLElement[]) {
 			if (!element_classlist(el).contains(SUBMENU_CLASSNAME)) continue
-			close_popover(element_last_element_child(el) as HTMLDivElement)
+			close_popover(element_last_child(el) as HTMLDivElement)
 		}
 	}
 
@@ -359,9 +359,9 @@ const PopoverMenu: ParentComponent<PopoverMenuProps> = ($props) => {
 	let menu_ref: HTMLDivElement
 
 	function close_submenu_descendant(): void {
-		for (const el of element_children(element_first_element_child(menu_ref)!) as unknown as HTMLElement[]) {
+		for (const el of element_children(element_first_child(menu_ref)!) as unknown as HTMLElement[]) {
 			if (!element_classlist(el).contains(SUBMENU_CLASSNAME)) continue
-			close_popover(element_last_element_child(el) as HTMLDivElement)
+			close_popover(element_last_child(el) as HTMLDivElement)
 		}
 	}
 

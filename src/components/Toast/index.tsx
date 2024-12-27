@@ -4,11 +4,12 @@ import { mergeRefs } from "@solid-primitives/refs"
 import { attr_set_if_exist } from "@/utils/attributes"
 import { event_add_listener, event_remove_listener } from "@/utils/event"
 import { timeout_clear, timeout_set } from "@/utils/timeout"
-import { element_children, element_dispatch_event, element_focus_by_arrowkey, element_is_same_node, element_set_tabindex } from "@/utils/element"
+import { element_children, element_dispatch_event, element_focus_by_arrowkey, element_is_same_node, element_set_tabindex, element_tagname } from "@/utils/element"
 
 import List from "@/components/List"
 import Popover, { type PopoverProps, close_popover, open_popover, is_popover_open as is_toast_open, PopoverPosition } from "@/components/Popover"
 import './index.scss'
+import { document_active } from "@/utils/document"
 
 enum ToastPosition {
 	left_top,
@@ -171,15 +172,17 @@ const Toast: ParentComponent<ToastProps> = ($props) => {
 				ref={div_action_ref}
 				class="c-toast-actions"
 				onKeyDown={ev => {
-					const button = ev.target as HTMLButtonElement
-					if (button.tagName == 'INPUT' || button.tagName == 'TEXTAREA') return;
-					if (!element_is_same_node(button.parentElement!, ev.currentTarget)) return
+					const active = document_active()
+					if (!active) return
+
+					const tag_name = element_tagname(active)
+					if (tag_name == 'INPUT' || tag_name == 'TEXTAREA') return;
 
 					element_focus_by_arrowkey(
-						button,
+						ev.currentTarget,
 						ev.code,
 						{ left: 'prev', right: 'next' },
-						(el) => el.tagName != 'INPUT' && el.tagName != 'TEXTAREA'
+						(el) => element_tagname(el) != 'INPUT' && element_tagname(el) != 'TEXTAREA'
 					)
 				}}>{actions()}</div>
 		</Show>

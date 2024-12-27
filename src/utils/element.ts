@@ -1,4 +1,7 @@
 import { ARROW_UP, ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT } from "@/constants/key_code"
+import { createUniqueId } from "solid-js"
+import { array_length } from "./array"
+import { document_active, document_has_focus } from "./document"
 
 export function element_scroll_width(el: HTMLElement): number {
 	return el.scrollWidth
@@ -39,15 +42,15 @@ export function element_contains(el: HTMLElement, other: Node | null): boolean {
 	return el.contains(other)
 }
 
-export function element_first_element_child(el: HTMLElement): HTMLElement | null {
+export function element_first_child(el: HTMLElement): HTMLElement | null {
 	return el.firstElementChild as HTMLElement
 }
 
-export function element_last_element_child(el: HTMLElement): HTMLElement | null {
+export function element_last_child(el: HTMLElement): HTMLElement | null {
 	return el.lastElementChild as HTMLElement
 }
 
-export function element_parent_element(el: HTMLElement): HTMLElement | null {
+export function element_parent(el: HTMLElement): HTMLElement | null {
 	return el.parentElement
 }
 
@@ -102,8 +105,12 @@ export function element_append_child(el: HTMLElement, node: Node): Node {
 	return el.appendChild(node)
 }
 
+export function element_tagname(el: HTMLElement): string {
+	return el.tagName
+}
+
 export function element_focus_by_arrowkey<T = HTMLElement>(
-	el: HTMLElement,
+	parent: HTMLElement | null,
 	key_code: 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight' | string,
 	options?: {
 		up?: 'next' | 'prev'
@@ -113,6 +120,9 @@ export function element_focus_by_arrowkey<T = HTMLElement>(
 	},
 	condition?: (sibling: T) => boolean
 ): boolean {
+	if (!document_has_focus()) return false
+
+	const element = document_active()!
 	if (!options) return false
 
 	const up = options.up
@@ -146,6 +156,21 @@ export function element_focus_by_arrowkey<T = HTMLElement>(
 		)
 	) return false
 
+	if (parent && !parent.id) parent.id = createUniqueId()
+	if (parent && !element_closest(element, '#' + CSS.escape(parent.id))) return false
+
+	// parent check
+	let el_parent = element_parent(element)
+	let valid_parent = el_parent === parent
+	while (!valid_parent && el_parent) {
+		if (element_style(el_parent, 'display') != 'contents') return false
+
+		el_parent = element_parent(el_parent)
+		valid_parent = el_parent === parent
+	}
+
+	// Support nested element as long the CSS
+	// property of `display` is `contents`.
 	let sibling: HTMLElement | null = null
 	do {
 		let direction: 'next' | 'prev' = 'next'
@@ -154,23 +179,49 @@ export function element_focus_by_arrowkey<T = HTMLElement>(
 		else if (valid_left) direction = left
 		else if (valid_right) direction = right
 
+		let source = (sibling? sibling : element) as HTMLElement
 		sibling = (direction == 'next'
-			? element_next_sibling(sibling? sibling : el)
-			: element_previous_sibling(sibling? sibling : el)
+			? element_next_sibling(source)
+			: element_previous_sibling(source)
 		)
-		if (sibling && (condition?.(sibling as T) ?? true)) {
-			element_focus(sibling)
-			if (document.activeElement != sibling) continue
-			else {
-				element_set_tabindex(el, -1)
-				element_set_tabindex(sibling, 0)
-				return true
+		if (sibling) {
+			if (
+				element_style(sibling, 'display') == 'contents'
+				&& array_length(element_children(sibling)) > 0
+			) {
+				sibling = (direction == 'next'
+					? element_first_child(sibling)
+					: element_last_child(sibling)
+				) as HTMLElement
 			}
+
+			if (condition?.(sibling as T) ?? true) {
+				element_focus(sibling)
+				if (document.activeElement != sibling) continue
+				else {
+					element_set_tabindex(element, -1)
+					element_set_tabindex(sibling, 0)
+					return true
+				}
+			}
+		}
+		else if (element_parent(source) != parent) {
+			sibling = element_parent(source)
 		}
 	} while (sibling)
 
-	element_focus(el)
+	element_focus(element)
 	return false
+}
+
+export function element_style(
+	element: Element,
+	property: string,
+	pseudo_element?: string | null
+): string {
+	return window
+		.getComputedStyle(element, pseudo_element)
+		.getPropertyValue(property)
 }
 
 export function element_classlist(el: HTMLElement): DOMTokenList {
@@ -222,7 +273,7 @@ export function element_dispatch_event(el: HTMLElement, event: Event): boolean {
 }
 
 export function element_is_same_node(el: HTMLElement, otherNode: Node | null): boolean {
-	return el.isSameNode(otherNode)
+	return el === otherNode
 }
 
 export function element_animate(

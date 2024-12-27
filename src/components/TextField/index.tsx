@@ -5,7 +5,7 @@ import { attr_set_if_exist, classlist } from '@/utils/attributes'
 import { timeout_clear, interval_clear, timeout_set, interval_set } from '@/utils/timeout'
 import { call_event_handler, event_prevent_default, event_stop_propagation } from '@/utils/event'
 import { math_clamp, math_max, math_round } from '@/utils/math'
-import { element_blur, element_children, element_contains, element_dispatch_event, element_focus, element_focus_by_arrowkey, element_is_same_node, element_rect, element_scroll_height, element_set_tabindex } from '@/utils/element'
+import { element_blur, element_children, element_contains, element_dispatch_event, element_focus, element_focus_by_arrowkey, element_is_same_node, element_rect, element_scroll_height, element_set_tabindex, element_tagname } from '@/utils/element'
 import { event_add_listener, event_remove_listener } from '@/utils/event'
 import { is_array, is_number, is_string } from '@/utils/typecheck'
 import { string_length, string_split, string_touppercase, string_trim } from '@/utils/string'
@@ -20,6 +20,7 @@ import Popover, { close_popover, is_popover_open, open_popover, reposition_popov
 import { MenuItem, LinkMenuItem, MenuDivider, MenuHeader, MenuPosition, open_menu } from '@/components/Menu'
 import Modal, { type ModalProps } from '@/components/Modal'
 import './index.scss'
+import { document_active } from '@/utils/document'
 
 const HEIGHT_TEXT_INPUT_PER_LINE = 20
 
@@ -217,15 +218,17 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 					}}
 					ref={div_trailing_ref}
 					onKeyDown={ev => {
-						const button = ev.target as HTMLButtonElement
-						if (button.tagName == 'INPUT' || button.tagName == 'TEXTAREA') return;
-						if (!element_is_same_node(button.parentElement!, ev.currentTarget.firstChild)) return
+						const active = document_active()
+						if (!active) return
+
+						const tag_name = element_tagname(active)
+						if (tag_name == 'INPUT' || tag_name == 'TEXTAREA') return
 
 						element_focus_by_arrowkey(
-							button,
+							ev.currentTarget,
 							ev.code,
 							{ left: 'prev', right: 'next' },
-							(el) => el.tagName != 'INPUT' && el.tagName != 'TEXTAREA'
+							(el) => element_tagname(el) != 'INPUT' && element_tagname(el) != 'TEXTAREA'
 						)
 					}}>
 					<TextTooltip>
@@ -390,15 +393,17 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 						}
 					}}
 					onKeyDown={ev => {
-						const button = ev.target as HTMLButtonElement
-						if (button.tagName == 'INPUT' || button.tagName == 'TEXTAREA') return;
-						if (!element_is_same_node(button.parentElement!, ev.currentTarget.firstChild)) return
+						const active = document_active()
+						if (!active) return
+
+						const tag_name = element_tagname(active)
+						if (tag_name == 'INPUT' || tag_name == 'TEXTAREA') return
 
 						element_focus_by_arrowkey(
-							button,
+							ev.currentTarget,
 							ev.code,
 							{ left: 'prev', right: 'next' },
-							(el) => el.tagName != 'INPUT' && el.tagName != 'TEXTAREA'
+							(el) => element_tagname(el) != 'INPUT' && element_tagname(el) != 'TEXTAREA'
 						)
 					}}>
 					<TextTooltip>

@@ -2,7 +2,9 @@ import { children, createEffect, Show, splitProps, type JSX, type ParentComponen
 import { classlist } from "@/utils/attributes"
 
 import './index.scss'
-import { element_children, element_focus_by_arrowkey, element_is_same_node, element_set_tabindex } from "@/utils/element"
+import { element_children, element_focus_by_arrowkey, element_is_same_node, element_set_tabindex, element_tagname } from "@/utils/element"
+import { TOOLTIP_CLASS } from "../Tooltip"
+import { document_active } from "@/utils/document"
 
 type AppBarProps = JSX.HTMLAttributes<HTMLDivElement> & {
 	leading?: JSX.Element
@@ -57,15 +59,17 @@ const AppBar: ParentComponent<AppBarProps> = ($props) => {
 				class="c-appbar-trailing"
 				ref={div_trailing_ref}
 				onKeyDown={ev => {
-					const button = ev.target as HTMLButtonElement
-					if (button.tagName == 'INPUT' || button.tagName == 'TEXTAREA') return;
-					if (!element_is_same_node(button.parentElement!, ev.currentTarget)) return
+					const active = document_active()
+					if (!active) return
+
+					const tag_name = element_tagname(active)
+					if (tag_name == 'INPUT' || tag_name == 'TEXTAREA') return
 
 					element_focus_by_arrowkey(
-						button,
+						ev.currentTarget,
 						ev.code,
 						{ left: 'prev', right: 'next' },
-						(el) => el.tagName != 'INPUT' && el.tagName != 'TEXTAREA'
+						(el) => element_tagname(el) != 'INPUT' && element_tagname(el) != 'TEXTAREA'
 					)
 				}}>
 				{trailing()}

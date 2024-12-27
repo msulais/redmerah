@@ -3,7 +3,7 @@ import { TransitionGroup } from "solid-transition-group"
 
 import type { Settings, TaskList } from "./_types"
 import { DEFAULT_TASK_LIST, TASKS_PAGES } from "./_constants"
-import { add_classlist_module, element_animate, element_first_element_child } from "@/utils/element"
+import { add_classlist_module, element_animate, element_first_child } from "@/utils/element"
 import { Commands, Pages } from "./_enums"
 import { event_prevent_default } from "@/utils/event"
 import { AnimationEffectTiming } from "@/enums/animation"
@@ -104,14 +104,14 @@ const _: VoidComponent<{
 		<TransitionGroup
 			onEnter={(el, done) => {
 				promise_done(element_animate(
-					element_first_element_child(el as HTMLElement)!,
+					element_first_child(el as HTMLElement)!,
 					{ opacity: [0, 1], transform: ['translate(-12px)', 'none'] },
 					animation_options
 				).finished, done)
 			}}
 			onExit={(el, done) => {
 				promise_done(element_animate(
-					element_first_element_child(el as HTMLElement)!,
+					element_first_child(el as HTMLElement)!,
 					{ opacity: 0, transform: 'translate(-12px)'},
 					animation_options
 				).finished, done)

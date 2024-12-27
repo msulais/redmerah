@@ -1,4 +1,4 @@
-import { createSignal, onMount, type VoidComponent } from "solid-js";
+import { createSignal, createUniqueId, onMount, type VoidComponent } from "solid-js";
 
 import Icon from "@/components/Icon";
 import { IconButton } from "@/components/Button";
@@ -15,7 +15,7 @@ import { attr_set } from "@/utils/attributes";
 import { ExternalLinks, RoutesLinks } from "@/enums/links";
 import { LocalStorageKeys } from "@/enums/storage";
 import { RootAttributes } from "@/enums/attributes";
-import { add_classlist_module, get_element_by_id } from "@/utils/element";
+import { add_classlist_module, element_closest, get_element_by_id } from "@/utils/element";
 import { ElementIds } from "@/enums/ids";
 import { CornerData } from "@/enums/corner";
 import { ThemeData } from "@/enums/theme";
@@ -85,6 +85,14 @@ export const SettingsElement: VoidComponent = () => {
 	const corner_semiround = CornerData.semi_round
 	const corner_round = CornerData.round
 	const corner_fullround = CornerData.full_round
+	const menuitem_themelight_id = createUniqueId()
+	const menuitem_themedark_id = createUniqueId()
+	const menuitem_themesystem_id = createUniqueId()
+	const menuitem_cornersharp_id = createUniqueId()
+	const menuitem_cornersemiround_id = createUniqueId()
+	const menuitem_cornerround_id = createUniqueId()
+	const menuitem_cornerfullround_id = createUniqueId()
+	const menuitem_accent_id = createUniqueId()
 	const [color, set_color] = createSignal<HEXColor>('#FF0000')
 	const [theme, set_theme] = createSignal<ThemeData>(theme_system)
 	const [corner, set_corner] = createSignal<CornerData>(corner_round)
@@ -130,15 +138,15 @@ export const SettingsElement: VoidComponent = () => {
 		return `${math_round(rgb.r * 0xff)}, ${math_round(rgb.g * 0xff)}, ${math_round(rgb.b * 0xff)}`
 	}
 
-	function change_color(hexColor: HEXColor): void {
-		set_color(hexColor)
-		const acc = generate_color(hexColor)
+	function change_color(color: HEXColor): void {
+		set_color(color)
+		const acc = generate_color(color)
 		const accent_color_element = get_element_by_id(ElementIds.color_accent)!
 		accent_color_element.innerHTML = `:root{--g-color-accent-light: ${rgb_to_css(hex_to_rgb(acc.color))};--g-color-accent-dark: ${rgb_to_css(hex_to_rgb(acc.color_dark))};--g-color-on-accent-light: ${rgb_to_css(hex_to_rgb(acc.on_color))};--g-color-on-accent-dark: ${rgb_to_css(hex_to_rgb(acc.on_color_dark))};}`;
 
 		if (timeout_color_id != null) timeout_clear(timeout_color_id)
 		timeout_color_id = timeout_set(() => {
-			storage_set(LocalStorageKeys.color, hexColor)
+			storage_set(LocalStorageKeys.color, color)
 			timeout_color_id = null
 		}, 100)
 		close_menu(menu_settings_ref)
@@ -174,62 +182,80 @@ export const SettingsElement: VoidComponent = () => {
 		<Menu
 			style={{width: '200px'}}
 			ref={r => menu_settings_ref = r}
-			on_toggle_open={(v) => setIs_menu_settings_open(v)}>
+			on_toggle_open={(v) => setIs_menu_settings_open(v)}
+			onClick={ev => {
+				const button = element_closest(ev.target as HTMLElement, 'button')
+				if (!button) return
+
+				switch (button.id) {
+					case menuitem_themelight_id: change_theme(theme_light); break
+					case menuitem_themedark_id: change_theme(theme_dark); break
+					case menuitem_themesystem_id: change_theme(theme_system); break
+
+					case menuitem_cornersharp_id: change_corner(corner_sharp); break
+					case menuitem_cornersemiround_id: change_corner(corner_semiround); break
+					case menuitem_cornerround_id: change_corner(corner_round); break
+					case menuitem_cornerfullround_id: change_corner(corner_fullround); break
+
+					case menuitem_accent_id: {
+						close_menu(menu_settings_ref)
+						open_popovercolorpicker(ev, colorpicker_ref, {
+							color: color(),
+						})
+						break
+					}
+				}
+			}}>
 			<MenuHeader>Theme</MenuHeader>
 			<MenuItem
+				id={menuitem_themelight_id}
 				selected={theme() == theme_light}
-				icon_code={0xF2CD}
-				onClick={() => change_theme(theme_light)}>
+				icon_code={0xF2CD}>
 				Light
 			</MenuItem>
 			<MenuItem
+				id={menuitem_themedark_id}
 				selected={theme() == theme_dark}
-				icon_code={0xF2B3}
-				onClick={() => change_theme(theme_dark)}>
+				icon_code={0xF2B3}>
 				Dark
 			</MenuItem>
 			<MenuItem
+				id={menuitem_themesystem_id}
 				selected={theme() == theme_system}
-				icon_code={0xE96D}
-				onClick={() => change_theme(theme_system)}>
+				icon_code={0xE96D}>
 				System theme
 			</MenuItem>
 			<MenuDivider />
 			<MenuHeader>Corner style</MenuHeader>
 			<MenuItem
+				id={menuitem_cornersharp_id}
 				selected={corner() == corner_sharp}
-				icon_code={0xEA99}
-				onClick={() => change_corner(corner_sharp)}>
+				icon_code={0xEA99}>
 				Sharp
 			</MenuItem>
 			<MenuItem
+				id={menuitem_cornersemiround_id}
 				selected={corner() == corner_semiround}
-				icon_code={0xEEF7}
-				onClick={() => change_corner(corner_semiround)}>
+				icon_code={0xEEF7}>
 				Semi round
 			</MenuItem>
 			<MenuItem
+				id={menuitem_cornerround_id}
 				selected={corner() == corner_round}
-				icon_code={0xF044}
-				onClick={() => change_corner(corner_round)}>
+				icon_code={0xF044}>
 				Round
 			</MenuItem>
 			<MenuItem
+				id={menuitem_cornerfullround_id}
 				selected={corner() == corner_fullround}
-				icon_code={0xE408}
-				onClick={() => change_corner(corner_fullround)}>
+				icon_code={0xE408}>
 				Full round
 			</MenuItem>
 			<MenuDivider/>
 			<MenuHeader>Accent color</MenuHeader>
 			<MenuItem
 				focused={is_colorpicker_open()}
-				onClick={(ev) => {
-					close_menu(menu_settings_ref)
-					open_popovercolorpicker(ev, colorpicker_ref, {
-						color: color()
-					})
-				}}
+				id={menuitem_accent_id}
 				leading={<Icon style={{color: color()}} filled code={0xE408}/>}>
 				{color()}
 			</MenuItem>

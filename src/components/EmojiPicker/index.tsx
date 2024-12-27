@@ -288,7 +288,7 @@ const EmojiPickerBody: ParentComponent<{
 			class="c-emoji-picker-tabs"
 			ref={div_tabs_ref}
 			onKeyDown={(ev) => element_focus_by_arrowkey(
-				ev.target as HTMLElement,
+				ev.currentTarget,
 				ev.code,
 				{ left: 'prev', right: 'next' },
 			)}

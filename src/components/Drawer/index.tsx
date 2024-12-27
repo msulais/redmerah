@@ -3,7 +3,7 @@ import { type JSX, type ParentComponent, Show, splitProps, children, mergeProps,
 import { attr_set_if_exist } from "@/utils/attributes"
 import { is_var_has_value, promise_done } from "@/utils/object"
 import { AnimationEffectTiming } from "@/enums/animation"
-import { element_animate, element_children, element_focus_by_arrowkey, element_is_same_node, element_set_tabindex } from "@/utils/element"
+import { element_animate, element_children, element_focus_by_arrowkey, element_is_same_node, element_set_tabindex, element_tagname } from "@/utils/element"
 import { AppColors } from "@/enums/colors"
 import { event_prevent_default } from "@/utils/event"
 
@@ -11,6 +11,7 @@ import Icon from "@/components/Icon"
 import Button, { ButtonIndicatorPosition, ButtonVariant, type ButtonProps } from "@/components/Button"
 import { close_modal, focus_modal, Modal, open_modal, type ModalProps } from "@/components/Modal"
 import './index.scss'
+import { document_active } from "@/utils/document"
 
 function openDrawer(
 	ev: Event,
@@ -103,15 +104,17 @@ const Drawer: ParentComponent<DrawerProps> = ($props) => {
 	}
 
 	function on_keydown(ev: KeyboardEvent & {currentTarget: HTMLDivElement; target: Element}): void {
-		const button = ev.target as HTMLButtonElement
-		if (button.tagName == 'INPUT' || button.tagName == 'TEXTAREA') return;
-		if (!element_is_same_node(button.parentElement!, ev.currentTarget)) return
+		const active = document_active()
+		if (!active) return
+
+		const tag_name = element_tagname(active)
+		if (tag_name == 'INPUT' || tag_name == 'TEXTAREA') return
 
 		const done = element_focus_by_arrowkey(
-			button,
+			ev.currentTarget,
 			ev.code,
 			{ up: 'prev', down: 'next' },
-			(el) => el.tagName != 'INPUT' && el.tagName != 'TEXTAREA'
+			(el) => element_tagname(el) != 'INPUT' && element_tagname(el) != 'TEXTAREA'
 		)
 		if (done) event_prevent_default(ev)
 	}

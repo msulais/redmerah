@@ -697,7 +697,7 @@ const ColorPickerBody: ParentComponent<{
 		return (<div
 			class="c-color-picker-actions"
 			onKeyDown={(ev) => element_focus_by_arrowkey(
-				ev.target as HTMLButtonElement,
+				ev.currentTarget,
 				ev.code,
 				{ right: 'next', left: 'prev' }
 			)}
