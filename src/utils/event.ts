@@ -45,7 +45,7 @@ export function event_stop_propagation(event: Event): void {
 	return event.stopPropagation()
 }
 
-export function call_event_handler<T, E extends Event>(
+export function event_call<T, E extends Event>(
 	event: E & { currentTarget: T; target: Element },
 	handler: JSX.EventHandlerUnion<T, E> | undefined,
 ): boolean {

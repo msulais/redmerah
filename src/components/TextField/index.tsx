@@ -3,7 +3,7 @@ import { mergeRefs } from '@solid-primitives/refs'
 
 import { attr_set_if_exist, classlist } from '@/utils/attributes'
 import { timeout_clear, interval_clear, timeout_set, interval_set } from '@/utils/timeout'
-import { call_event_handler, event_prevent_default, event_stop_propagation } from '@/utils/event'
+import { event_call, event_prevent_default, event_stop_propagation } from '@/utils/event'
 import { math_clamp, math_max, math_round } from '@/utils/math'
 import { element_blur, element_children, element_contains, element_dispatch_event, element_focus, element_focus_by_arrowkey, element_is_same_node, element_rect, element_scroll_height, element_set_tabindex, element_tagname } from '@/utils/element'
 import { event_add_listener, event_remove_listener } from '@/utils/event'
@@ -176,7 +176,7 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 					const self = ev.currentTarget
 					set_value(self.value)
 					set_is_invalid(!self.checkValidity())
-					call_event_handler(ev, props.onInput)
+					event_call(ev, props.onInput)
 					set_height(HEIGHT_TEXT_INPUT_PER_LINE) // set to one line: to calculate the scroll height
 					set_height(math_max(element_scroll_height(self), HEIGHT_TEXT_INPUT_PER_LINE))
 				}}
@@ -185,12 +185,12 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 					set_value(self.value)
 					set_is_invalid(!self.checkValidity())
 					set_is_focus(true)
-					call_event_handler(ev, props.onFocus)
+					event_call(ev, props.onFocus)
 				}}
 				onBlur={(ev) => {
 					set_value(ev.currentTarget.value)
 					set_is_focus(false)
-					call_event_handler(ev, props.onBlur)
+					event_call(ev, props.onBlur)
 				}}
 				rows={props.min_line ?? 1}
 				disabled={props.disabled}
@@ -352,24 +352,24 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 					const self = ev.currentTarget
 					set_value(self.value)
 					set_is_invalid(!self.checkValidity())
-					call_event_handler(ev, props.onInput)
+					event_call(ev, props.onInput)
 				}}
 				onFocus={(ev) => {
 					const self = ev.currentTarget
 					set_value(self.value)
 					set_is_invalid(!self.checkValidity())
 					set_is_focus(true)
-					call_event_handler(ev, props.onFocus)
+					event_call(ev, props.onFocus)
 					if (props.auto_select_all) self.setSelectionRange(0, string_length(self.value))
 				}}
 				onKeyUp={ev => {
 					if (ev.key == 'Enter') element_blur(ev.currentTarget)
-					call_event_handler(ev, props.onKeyUp)
+					event_call(ev, props.onKeyUp)
 				}}
 				onBlur={(ev) => {
 					set_value(ev.currentTarget.value)
 					set_is_focus(false)
-					call_event_handler(ev, props.onBlur)
+					event_call(ev, props.onBlur)
 				}}
 				type={props.type}
 				disabled={props.disabled}
@@ -580,7 +580,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 			}}
 			onBlur={ev => {
 				if (props.auto_fix_on_blur) fix_input_number()
-				call_event_handler(ev, props.onBlur)
+				event_call(ev, props.onBlur)
 			}}
 			onInput={ev => {
 				if (props.on_input_as_number){
@@ -590,7 +590,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 					if (props.integer_only) n = math_round(n)
 					props.on_input_as_number(ev, n)
 				}
-				call_event_handler(ev, props.onInput)
+				event_call(ev, props.onInput)
 			}}
 			type='number'
 			trailing={<>
@@ -783,7 +783,7 @@ const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
 				$open_popover(ev)
 				is_focus = is_focus
 				event = ev
-				call_event_handler(ev, props.onFocus)
+				event_call(ev, props.onFocus)
 			}}
 			{...other}
 		/>

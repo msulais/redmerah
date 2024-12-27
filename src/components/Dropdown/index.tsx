@@ -4,7 +4,7 @@ import { mergeRefs } from "@solid-primitives/refs"
 
 import { element_rect } from "@/utils/element"
 import { timeout_clear, timeout_set } from "@/utils/timeout"
-import { call_event_handler } from "@/utils/event"
+import { event_call } from "@/utils/event"
 import { array_concat, array_equals, array_filter, array_find_index, array_join, array_length, array_map, array_push, array_slice, array_some } from "@/utils/array"
 import { rect_width } from "@/utils/rect"
 
@@ -63,7 +63,7 @@ const DropdownOption: ParentComponent<DropdownOptionProps> = ($props) => {
 		checked={props.checked ?? context?.multiple()? selected() : undefined}
 		onClick={ev => {
 			context?.on_select_option(props.value)
-			call_event_handler(ev, props.onClick)
+			event_call(ev, props.onClick)
 		}}
 		{...other}>
 		{ props.children ?? props.text}
@@ -245,7 +245,7 @@ const Dropdown: ParentComponent<DropdownProps> = ($props) => {
 			selected={props.selected ?? is_open()}
 			onClick={ev => {
 				open_dropdown_menu(ev)
-				call_event_handler(ev, props.onClick)
+				event_call(ev, props.onClick)
 			}}
 			{...other}>
 			<Show when={props.label}>

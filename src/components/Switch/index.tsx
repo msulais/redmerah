@@ -2,7 +2,7 @@ import { createEffect, createMemo, createSignal, createUniqueId, mergeProps, spl
 import { Dynamic, type DynamicProps } from "solid-js/web"
 
 import { attr_set_if_exist, classlist } from "@/utils/attributes"
-import { call_event_handler } from "@/utils/event"
+import { event_call } from "@/utils/event"
 
 import './index.scss'
 
@@ -35,7 +35,7 @@ const Switch: VoidComponent<SwitchProps> = ($props) => {
 			id={props.id}
 			onChange={(ev) => {
 				set_is_checked(ev.currentTarget.checked)
-				call_event_handler(ev, props.onChange)
+				event_call(ev, props.onChange)
 			}}
 			{...other}
 		/>
@@ -70,7 +70,7 @@ const RawSwitch: VoidComponent<RawSwitchProps> = ($props) => {
 			type="checkbox"
 			onChange={(ev) => {
 				set_is_checked(ev.currentTarget.checked)
-				call_event_handler(ev, props.onChange)
+				event_call(ev, props.onChange)
 			}}
 			{...other}
 		/>

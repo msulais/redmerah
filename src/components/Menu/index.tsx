@@ -3,7 +3,7 @@ import { mergeRefs } from "@solid-primitives/refs"
 
 import { attr_set_if_exist, classlist } from "@/utils/attributes"
 import { is_var_has_value } from "@/utils/object"
-import { call_event_handler, event_stop_immediate_propagation, event_stop_propagation } from "@/utils/event"
+import { event_call, event_stop_immediate_propagation, event_stop_propagation } from "@/utils/event"
 import { timeout_clear, timeout_set, wait } from "@/utils/timeout"
 import { element_children, element_classlist, element_first_child, element_is_same_node, element_last_child, element_parent } from "@/utils/element"
 import { AppColors } from "@/enums/colors"
@@ -270,7 +270,7 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 		onClick={(ev) => {
 			cancel_timeout()
 			open(ev)
-			call_event_handler(ev, wrapper_props.onClick)
+			event_call(ev, wrapper_props.onClick)
 		}}
 		onPointerEnter={(ev) => {
 			cancel_timeout()
@@ -278,7 +278,7 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 				open(ev)
 				timeout_id = null
 			}, 300)
-			call_event_handler(ev, wrapper_props.onPointerEnter)
+			event_call(ev, wrapper_props.onPointerEnter)
 		}}
 		onPointerLeave={(ev) => {
 			cancel_timeout()
@@ -286,7 +286,7 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 				close_popover(popover_ref)
 				timeout_id = null
 			}, 500)
-			call_event_handler(ev, wrapper_props.onPointerLeave)
+			event_call(ev, wrapper_props.onPointerLeave)
 		}}
 		{...wrapper_props_other}>
 		{props.item}
@@ -299,7 +299,7 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 			onClick={(ev) => {
 				event_stop_propagation(ev)
 				event_stop_immediate_propagation(ev)
-				call_event_handler(ev, props.onClick)
+				event_call(ev, props.onClick)
 			}}
 			on_before_close={() => {
 				close_submenu_descendant()

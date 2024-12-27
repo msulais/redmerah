@@ -8,7 +8,7 @@ import { timeout_clear, timeout_set } from '@/utils/timeout'
 import { attr_has, attr_remove, attr_set, attr_set_if_exist, classlist } from '@/utils/attributes'
 import { element_rect, get_multiple_element_by_selector, element_dataset, element_dispatch_event, element_is_same_node, element_client_width, element_animate } from '@/utils/element'
 import { BodyAttributes } from '@/enums/attributes'
-import { event_add_listener, call_event_handler, event_remove_listener, event_stop_immediate_propagation } from "@/utils/event"
+import { event_add_listener, event_call, event_remove_listener, event_stop_immediate_propagation } from "@/utils/event"
 import { math_abs } from '@/utils/math'
 import { BodyEvents } from '@/enums/events'
 import { array_find_index, array_length, array_push, array_some, array_splice } from '@/utils/array'
@@ -689,7 +689,7 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 		onToggle={(ev) => {
 			is_open = ev.newState == 'open'
 			props.on_toggle_open?.(is_open)
-			call_event_handler(ev, props.onToggle)
+			event_call(ev, props.onToggle)
 		}}
 		data-c-draggable={attr_set_if_exist(is_draggable())}
 		data-c-open={attr_set_if_exist(attr_open())}

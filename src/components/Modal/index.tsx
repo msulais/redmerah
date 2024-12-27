@@ -9,7 +9,7 @@ import { timeout_clear, timeout_set } from '@/utils/timeout'
 import { attr_has, attr_remove, attr_set, attr_set_if_exist, classlist } from '@/utils/attributes'
 import { element_animate, element_client_width, element_dataset, element_dispatch_event, element_focus, element_is_same_node, element_rect, element_scroll_top, get_multiple_element_by_selector } from '@/utils/element'
 import { BodyAttributes } from '@/enums/attributes'
-import { event_add_listener, call_event_handler, event_prevent_default, event_remove_listener, event_stop_immediate_propagation } from "@/utils/event"
+import { event_add_listener, event_call, event_prevent_default, event_remove_listener, event_stop_immediate_propagation } from "@/utils/event"
 import { math_abs } from '@/utils/math'
 import { BodyEvents } from '@/enums/events'
 import { array_at, array_find_index, array_length, array_push, array_some, array_splice } from '@/utils/array'
@@ -747,10 +747,10 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 				focus_modal(modal_ref)
 				event_prevent_default(ev)
 			}
-			call_event_handler(ev, props.onKeyDown)
+			event_call(ev, props.onKeyDown)
 		}}
 		onCancel={(ev) => {
-			call_event_handler(ev, props.onCancel)
+			event_call(ev, props.onCancel)
 			if ($important) {
 				event_prevent_default(ev)
 				return
@@ -761,7 +761,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 		onClose={(ev) => {
 			props.on_toggle_open?.(false)
 			is_open = false
-			call_event_handler(ev, props.onClose)
+			event_call(ev, props.onClose)
 		}}
 		data-c-draggable={attr_set_if_exist(is_draggable())}
 		data-c-drag={attr_set_if_exist(is_dragging())}

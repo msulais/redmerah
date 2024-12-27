@@ -2,7 +2,7 @@ import { type ParentComponent, type JSX, mergeProps, splitProps, type VoidCompon
 import { Dynamic, type DynamicProps } from 'solid-js/web'
 
 import { classlist, attr_set_if_exist } from '@/utils/attributes'
-import { call_event_handler, event_prevent_default } from '@/utils/event'
+import { event_call, event_prevent_default } from '@/utils/event'
 
 import Icon, { type IconProps } from '@/components/Icon'
 import Emoji from '@/components/Emoji'
@@ -115,7 +115,7 @@ const LinkButton: ParentComponent<LinkButtonProps> = ($props) => {
 			if (props.disabled) {
 				event_prevent_default(ev)
 			}
-			call_event_handler(ev, props.onClick)
+			event_call(ev, props.onClick)
 		}}
 		classList={{
 			'c-filled-btn': variant() == ButtonVariant.filled,

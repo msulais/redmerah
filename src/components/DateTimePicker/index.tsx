@@ -4,7 +4,7 @@ import { mergeRefs } from '@solid-primitives/refs'
 
 import { get_current_date, date_year, date_month, date_weekday_names, date_out_range_YMD, is_same_date_YMD, date_month_names, date_out_range_YM, is_same_date_YM, date_out_range_Y, is_same_date_Y, date_text_month, date_in_range_YM, date_day, date_set_month, date_set_year, date_set_date, date_date, date_hour, date_set_hour, date_minute, date_set_minute } from '@/utils/datetime'
 import { AnimationEffectTiming } from '@/enums/animation'
-import { call_event_handler } from '@/utils/event'
+import { event_call } from '@/utils/event'
 import { array_fill, array_includes, array_map } from '@/utils/array'
 import { string_padstart, string_substring } from '@/utils/string'
 import { element_animate, element_children, element_dataset, element_focus, element_focus_by_arrowkey, element_is_same_node, element_next_sibling, element_previous_sibling, element_set_tabindex } from '@/utils/element'
@@ -641,7 +641,7 @@ const DateTimePicker: VoidComponent<DateTimePickerProps> = ($props) => {
 		}}
 		onClose={(ev) => {
 			set_close_signal(s => !s)
-			call_event_handler(ev, props.onClose)
+			event_call(ev, props.onClose)
 		}}
 		{...other}>
 		<DateTimePickerBody

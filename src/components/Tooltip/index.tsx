@@ -2,7 +2,7 @@ import { createUniqueId, mergeProps, onCleanup, onMount, splitProps, type FlowCo
 import { mergeRefs } from "@solid-primitives/refs"
 
 import { attr_has, attr_remove, attr_set, classlist } from "@/utils/attributes"
-import { event_add_listener, call_event_handler, event_stop_propagation } from "@/utils/event"
+import { event_add_listener, event_call, event_stop_propagation } from "@/utils/event"
 import { create_element, element_animate, element_append_child, element_children, element_classlist, element_closest, element_dataset, element_dispatch_event, element_is_same_node, element_rect, element_set_style_property } from "@/utils/element"
 import { timeout_clear, timeout_set } from "@/utils/timeout"
 import { FlyoutPosition as TooltipPosition } from "@/enums/position"
@@ -444,27 +444,27 @@ const TextTooltip: FlowComponent<TextTooltipProps> = ($props) => {
 		ref={mergeRefs(props.ref, r => div_ref = r)}
 		onPointerOver={ev => {
 			open(ev)
-			call_event_handler(ev, props.onPointerOver)
+			event_call(ev, props.onPointerOver)
 		}}
 		onTouchStart={ev => {
 			open(ev)
-			call_event_handler(ev, props.onTouchStart)
+			event_call(ev, props.onTouchStart)
 		}}
 		onPointerLeave={ev => {
 			close(ev)
-			call_event_handler(ev, props.onPointerLeave)
+			event_call(ev, props.onPointerLeave)
 		}}
 		onMouseDown={ev => {
 			close(ev)
-			call_event_handler(ev, props.onMouseDown)
+			event_call(ev, props.onMouseDown)
 		}}
 		onPointerUp={ev => {
 			close(ev)
-			call_event_handler(ev, props.onPointerUp)
+			event_call(ev, props.onPointerUp)
 		}}
 		onPointerMove={ev => {
 			update_pointer(ev)
-			call_event_handler(ev, props.onPointerMove)
+			event_call(ev, props.onPointerMove)
 		}}
 		{...other}>
 		{props.children}
@@ -542,27 +542,27 @@ const RichTooltip: FlowComponent<RichTooltipProps> = ($props) => {
 		ref={mergeRefs(wrapper_props.ref, r => div_ref = r)}
 		onPointerOver={ev => {
 			open(ev)
-			call_event_handler(ev, wrapper_props.onPointerOver)
+			event_call(ev, wrapper_props.onPointerOver)
 		}}
 		onTouchStart={ev => {
 			open(ev)
-			call_event_handler(ev, wrapper_props.onTouchStart)
+			event_call(ev, wrapper_props.onTouchStart)
 		}}
 		onPointerLeave={ev => {
 			close(ev)
-			call_event_handler(ev, wrapper_props.onPointerLeave)
+			event_call(ev, wrapper_props.onPointerLeave)
 		}}
 		onMouseDown={ev => {
 			close(ev)
-			call_event_handler(ev, wrapper_props.onMouseDown)
+			event_call(ev, wrapper_props.onMouseDown)
 		}}
 		onPointerUp={ev => {
 			close(ev)
-			call_event_handler(ev, wrapper_props.onPointerUp)
+			event_call(ev, wrapper_props.onPointerUp)
 		}}
 		onPointerMove={ev => {
 			update_pointer(ev)
-			call_event_handler(ev, wrapper_props.onPointerMove)
+			event_call(ev, wrapper_props.onPointerMove)
 		}}
 		{...wrapper_props_other}>
 		{props.children}
@@ -571,27 +571,27 @@ const RichTooltip: FlowComponent<RichTooltipProps> = ($props) => {
 			onPointerOver={ev => {
 				event_stop_propagation(ev)
 				open(ev)
-				call_event_handler(ev, props.onPointerOver)
+				event_call(ev, props.onPointerOver)
 			}}
 			onTouchStart={ev => {
 				event_stop_propagation(ev)
-				call_event_handler(ev, props.onTouchStart)
+				event_call(ev, props.onTouchStart)
 			}}
 			onPointerLeave={ev => {
 				event_stop_propagation(ev)
-				call_event_handler(ev, props.onPointerLeave)
+				event_call(ev, props.onPointerLeave)
 			}}
 			onMouseDown={ev => {
 				event_stop_propagation(ev)
-				call_event_handler(ev, props.onMouseDown)
+				event_call(ev, props.onMouseDown)
 			}}
 			onPointerUp={ev => {
 				event_stop_propagation(ev)
-				call_event_handler(ev, props.onPointerUp)
+				event_call(ev, props.onPointerUp)
 			}}
 			onPointerMove={ev => {
 				event_stop_propagation(ev)
-				call_event_handler(ev, props.onPointerMove)
+				event_call(ev, props.onPointerMove)
 			}}
 			ref={mergeRefs(props.ref, r => tooltip_ref = r)}
 			classList={{
