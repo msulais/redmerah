@@ -5,14 +5,13 @@ import { attr_set_if_exist, classlist } from '@/utils/attributes'
 import { timeout_clear, interval_clear, timeout_set, interval_set } from '@/utils/timeout'
 import { event_call, event_current_target, event_prevent_default, event_stop_propagation } from '@/utils/event'
 import { math_clamp, math_max, math_round } from '@/utils/math'
-import { element_blur, element_children, element_contains, element_dispatch_event, element_focus, element_focus_by_arrowkey, element_is_same_node, element_rect, element_scroll_height, element_set_tabindex, element_tagname } from '@/utils/element'
+import { element_blur, element_contains, element_dispatch_event, element_focus, element_rect, element_scroll_height } from '@/utils/element'
 import { event_add_listener, event_remove_listener } from '@/utils/event'
 import { is_array, is_number, is_string } from '@/utils/typecheck'
 import { string_length, string_split, string_touppercase, string_trim } from '@/utils/string'
 import { array_length } from '@/utils/array'
 import { number_is_nan, number_is_not_defined, number_parse, number_safe } from '@/utils/number'
 import { rect_width } from '@/utils/rect'
-import { document_active } from '@/utils/document'
 
 import Icon from '@/components/Icon'
 import { TextTooltip } from '@/components/Tooltip'
@@ -20,6 +19,7 @@ import Button, { IconButton, type ButtonProps } from '@/components/Button'
 import Popover, { close_popover, is_popover_open, open_popover, reposition_popover, PopoverPosition as SearchMenuPosition, type PopoverProps } from '@/components/Popover'
 import { MenuItem, LinkMenuItem, MenuDivider, MenuHeader, MenuPosition, open_menu } from '@/components/Menu'
 import Modal, { type ModalProps } from '@/components/Modal'
+import FocusableGroup from '@/components/FocusableGroup'
 import './index.scss'
 
 const HEIGHT_TEXT_INPUT_PER_LINE = 20
@@ -45,10 +45,10 @@ function change_textfield_value(el: HTMLInputElement, value: string): void {
  *
  * ```ts
  * // don't => (not trigger 'input' event)
- * area_textfield_ref.value = 'new value'
+ * areatextfield_ref.value = 'new value'
  *
  * // do => (trigger 'input' event)
- * change_area_textfield_value(area-textfield_ref, 'new value')
+ * change_areatextfield_value(areatextfield_ref, 'new value')
  * ```
  */
 function change_areatextfield_value(el: HTMLTextAreaElement, value: string): void {
@@ -72,6 +72,7 @@ const TextFieldButton: ParentComponent<TextFieldButtonProps> = ($props) => {
 type AreaTextFieldProps = Omit<JSX.TextareaHTMLAttributes<HTMLTextAreaElement>, 'children' | 'rows' | 'columns'> & {
 	leading?: JSX.Element
 	trailing?: JSX.Element
+	trailing_auto_tabindex?: boolean
 	label?: string
 	message?: string
 	focused?: boolean
@@ -86,6 +87,7 @@ type AreaTextFieldProps = Omit<JSX.TextareaHTMLAttributes<HTMLTextAreaElement>, 
 const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 	const $$props = mergeProps({
 		auto_validation: true,
+		trailing_auto_tabindex: true,
 		auto_hide_label: true,
 		id: createUniqueId()
 	}, $props)
@@ -95,7 +97,8 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 		'disabled', 'readOnly', 'auto_validation',
 		'onFocus', 'onBlur', 'placeholder', 'auto_hide_label',
 		'value', 'ref', 'auto_show_clear_button', 'tooltip_clear',
-		'min_line', 'max_line', 'attr_wrapper'
+		'min_line', 'max_line', 'attr_wrapper',
+		'trailing_auto_tabindex'
 	])
 	const [wrapper_props, wrapper_props_other] = splitProps(props.attr_wrapper! ?? {}, ['class'])
 	const [is_focus, set_is_focus] = createSignal<boolean>(false)
@@ -108,27 +111,6 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 	const message = children(() => props.message)
 	const button_clear_id = createUniqueId()
 	let areatextfield_ref!: HTMLTextAreaElement
-	let div_trailing_ref: HTMLDivElement | undefined
-
-	function reset_trailing_tabindex(): void {
-		if (!div_trailing_ref) return
-
-		const children = element_children<HTMLButtonElement>(div_trailing_ref.firstElementChild as HTMLElement)
-		let is_no_tabindex_0 = true
-
-		for (const child of children) {
-			const tag_name = child.tagName
-			if (tag_name != 'A' && tag_name != 'BUTTON') continue
-			if (tag_name == 'BUTTON' && child.disabled) continue
-			if (is_no_tabindex_0) {
-				element_set_tabindex(child, 0)
-				is_no_tabindex_0 = false
-				continue
-			}
-
-			element_set_tabindex(child, -1)
-		}
-	}
 
 	createEffect(() => {
 		const value = `${props.value ?? ''}`
@@ -138,17 +120,19 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 		set_value(value ?? '')
 	})
 
-	createEffect(() => {
-		const show_clear_button = is_show_clear_button()
-
-		if (!show_clear_button) return;
-		reset_trailing_tabindex()
-	})
-
-	createEffect(() => {
-		trailing()
-		reset_trailing_tabindex()
-	})
+	const TrailingContent: VoidComponent = () => {
+		return (<TextTooltip>
+			{trailing()}
+			<Show when={is_show_clear_button()}>
+				<TextFieldButton
+					data-tooltip={props.tooltip_clear ?? 'Clear'}
+					type={'button'}
+					id={button_clear_id}>
+					<Icon code={0xE5E9}/>
+				</TextFieldButton>
+			</Show>
+		</TextTooltip>)
+	}
 
 	return (<div
 		class={classlist('c-area-textfield', wrapper_props.class ?? '')}
@@ -167,7 +151,8 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 				<div
 					class='c-area-textfield-leading'
 					onClick={ev => event_stop_propagation(ev)}>
-					{leading()}</div>
+					{leading()}
+				</div>
 			</Show>
 			<textarea
 				id={props.id}
@@ -213,35 +198,15 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 							change_areatextfield_value(areatextfield_ref, '')
 							event_prevent_default(ev)
 							element_focus(areatextfield_ref)
-							reset_trailing_tabindex()
 						}
-					}}
-					ref={div_trailing_ref}
-					onKeyDown={ev => {
-						const active = document_active()
-						if (!active) return
-
-						const tag_name = element_tagname(active)
-						if (tag_name == 'INPUT' || tag_name == 'TEXTAREA') return
-
-						element_focus_by_arrowkey(
-							event_current_target(ev),
-							ev.code,
-							{ left: 'prev', right: 'next' },
-							(el) => element_tagname(el) != 'INPUT' && element_tagname(el) != 'TEXTAREA'
-						)
 					}}>
-					<TextTooltip>
-						{trailing()}
-						<Show when={is_show_clear_button()}>
-							<TextFieldButton
-								data-tooltip={props.tooltip_clear ?? 'Clear'}
-								type={'button'}
-								id={button_clear_id}>
-								<Icon code={0xE5E9}/>
-							</TextFieldButton>
-						</Show>
-					</TextTooltip>
+					<Show
+						when={props.trailing_auto_tabindex}
+						fallback={<TrailingContent />}>
+						<FocusableGroup arrow_options={{left: 'prev', right: 'next'}}>
+							<TrailingContent />
+						</FocusableGroup>
+					</Show>
 				</div>
 			</Show>
 		</div>
@@ -255,6 +220,7 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 type TextFieldProps = JSX.InputHTMLAttributes<HTMLInputElement> & {
 	leading?: JSX.Element
 	trailing?: JSX.Element
+	trailing_auto_tabindex?: boolean
 	label?: string
 	message?: string
 	focused?: boolean
@@ -268,6 +234,7 @@ type TextFieldProps = JSX.InputHTMLAttributes<HTMLInputElement> & {
 const TextField: VoidComponent<TextFieldProps> = ($props) => {
 	const $$props = mergeProps({
 		auto_validation: true,
+		trailing_auto_tabindex: true,
 		type: 'text',
 		auto_hide_label: true,
 		id: createUniqueId()
@@ -278,7 +245,8 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 		'type', 'attr_wrapper', 'disabled', 'readOnly',
 		'onFocus', 'onBlur', 'placeholder', 'auto_hide_label',
 		'value', 'ref', 'auto_show_clear_button', 'tooltip_clear',
-		'auto_select_all', 'onKeyUp', 'auto_validation'
+		'auto_select_all', 'onKeyUp', 'auto_validation',
+		'trailing_auto_tabindex'
 	])
 	const [wrapper_props, wrapper_props_other] = splitProps(props.attr_wrapper! ?? {}, ['class'])
 	const [is_focus, set_is_focus] = createSignal<boolean>(false)
@@ -290,44 +258,25 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 	const message = children(() => props.message)
 	const button_clear_id = createUniqueId()
 	let textfield_ref: HTMLInputElement
-	let div_trailing_ref: HTMLDivElement | undefined
-
-	function reset_trailing_tabindex(): void {
-		if (!div_trailing_ref) return
-
-		const children = element_children<HTMLButtonElement>(div_trailing_ref.firstElementChild as HTMLElement)
-		let is_no_tabindex_0 = true
-
-		for (const child of children) {
-			const tag_name = child.tagName
-			if (tag_name != 'A' && tag_name != 'BUTTON') continue
-			if (tag_name == 'BUTTON' && child.disabled) continue
-			if (is_no_tabindex_0) {
-				element_set_tabindex(child, 0)
-				is_no_tabindex_0 = false
-				continue
-			}
-
-			element_set_tabindex(child, -1)
-		}
-	}
 
 	createEffect(() => {
 		const value = props.value
 		set_value(v => `${value ?? v}`)
 	})
 
-	createEffect(() => {
-		const show_clear_button = is_show_clear_button()
-
-		if (!show_clear_button) return;
-		reset_trailing_tabindex()
-	})
-
-	createEffect(() => {
-		trailing()
-		reset_trailing_tabindex()
-	})
+	const TrailingContent: VoidComponent = () => {
+		return (<TextTooltip>
+			{trailing()}
+			<Show when={is_show_clear_button()}>
+				<TextFieldButton
+					data-tooltip={props.tooltip_clear ?? 'Clear'}
+					type={'button'}
+					id={button_clear_id}>
+					<Icon code={0xE5E9}/>
+				</TextFieldButton>
+			</Show>
+		</TextTooltip>)
+	}
 
 	return (<div
 		class={classlist('c-textfield', wrapper_props.class ?? '')}
@@ -382,41 +331,21 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 			<Show when={trailing() || is_show_clear_button()}>
 				<div
 					class='c-textfield-trailing'
-					ref={div_trailing_ref}
 					onClick={ev => {
 						event_stop_propagation(ev)
 						if (ev.target.id == button_clear_id) {
 							change_textfield_value(textfield_ref, '')
 							event_prevent_default(ev)
 							element_focus(textfield_ref)
-							reset_trailing_tabindex()
 						}
-					}}
-					onKeyDown={ev => {
-						const active = document_active()
-						if (!active) return
-
-						const tag_name = element_tagname(active)
-						if (tag_name == 'INPUT' || tag_name == 'TEXTAREA') return
-
-						element_focus_by_arrowkey(
-							event_current_target(ev),
-							ev.code,
-							{ left: 'prev', right: 'next' },
-							(el) => element_tagname(el) != 'INPUT' && element_tagname(el) != 'TEXTAREA'
-						)
 					}}>
-					<TextTooltip>
-						{trailing()}
-						<Show when={is_show_clear_button()}>
-							<TextFieldButton
-								data-tooltip={props.tooltip_clear ?? 'Clear'}
-								type='button'
-								id={button_clear_id}>
-								<Icon code={0xE5E9}/>
-							</TextFieldButton>
-						</Show>
-					</TextTooltip>
+					<Show
+						when={props.trailing_auto_tabindex}
+						fallback={<TrailingContent />}>
+						<FocusableGroup arrow_options={{left: 'prev', right: 'next'}}>
+							<TrailingContent />
+						</FocusableGroup>
+					</Show>
 				</div>
 			</Show>
 		</div>

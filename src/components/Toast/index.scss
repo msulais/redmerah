@@ -20,7 +20,7 @@
 }
 
 .c-toast-actions {
-	display: flex;
+	display: flex !important;
 	width: 100%;
 	gap: 8px;
 	flex-wrap: wrap;

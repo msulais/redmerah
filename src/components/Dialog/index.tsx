@@ -1,12 +1,11 @@
-import { type JSX, type ParentComponent, splitProps, children, Show, createEffect } from "solid-js"
+import { type JSX, type ParentComponent, splitProps, children, Show, mergeProps } from "solid-js"
 
 import { AnimationEffectTiming } from "@/enums/animation"
-import { element_animate, element_children, element_focus_by_arrowkey, element_is_same_node, element_set_tabindex, element_tagname } from "@/utils/element"
+import { element_animate } from "@/utils/element"
 import { promise_done } from "@/utils/object"
-import { document_active } from "@/utils/document"
-import { event_current_target } from "@/utils/event"
 
 import { close_modal, focus_modal, Modal, open_modal, type ModalProps } from "@/components/Modal"
+import FocusableGroup from "@/components/FocusableGroup"
 import './index.scss'
 
 function open_dialog(ev: Event, dialog: HTMLDialogElement, options?: {
@@ -19,36 +18,20 @@ function open_dialog(ev: Event, dialog: HTMLDialogElement, options?: {
 type DialogProps = ModalProps & {
 	header?: JSX.Element
 	actions?: JSX.Element
+	actions_auto_tabindex?: boolean
 }
 const Dialog: ParentComponent<DialogProps> = ($props) => {
 	const animation_options = {duration: 300, easing: AnimationEffectTiming.spring_bounce}
-	const [props, other] = splitProps($props, [
+	const $$props = mergeProps({
+		actions_auto_tabindex: true
+	}, $props)
+	const [props, other] = splitProps($$props, [
 		'header', 'actions', 'children', 'classList',
-		'style', 'open_animation', 'close_animation'
+		'style', 'open_animation', 'close_animation',
+		'actions_auto_tabindex'
 	])
 	const actions = children(() => props.actions)
 	const header = children(() => props.header)
-	let div_action_ref: HTMLDivElement | undefined
-
-	createEffect(() => {
-		actions()
-		if (!div_action_ref) return
-
-		let is_no_tabindex_0 = true
-		const children = element_children<HTMLButtonElement>(div_action_ref)
-		for (const child of children) {
-			const tag_name = child.tagName
-			if (tag_name != 'A' && tag_name != 'BUTTON') continue
-			if (tag_name == 'BUTTON' && child.disabled) continue
-			if (is_no_tabindex_0) {
-				element_set_tabindex(child, 0)
-				is_no_tabindex_0 = false
-				continue
-			}
-
-			element_set_tabindex(child, -1)
-		}
-	})
 
 	return (<Modal
 		classList={{
@@ -82,24 +65,13 @@ const Dialog: ParentComponent<DialogProps> = ($props) => {
 		</Show>
 		<div class="c-dialog-content">{props.children}</div>
 		<Show when={actions()}>
-			<div
-				ref={div_action_ref}
-				class="c-dialog-actions"
-				onKeyDown={ev => {
-					const active = document_active()
-					if (!active) return
-
-					const tag_name = element_tagname(active)
-					if (tag_name == 'INPUT' || tag_name == 'TEXTAREA') return
-
-					element_focus_by_arrowkey(
-						event_current_target(ev),
-						ev.code,
-						{ left: 'prev', right: 'next' },
-						(el) => element_tagname(el) != 'INPUT' && element_tagname(el) != 'TEXTAREA'
-					)
-				}}>
-				{actions()}
+			<div class="c-dialog-actions">
+				<Show when={props.actions_auto_tabindex} fallback={actions()}>
+					<FocusableGroup arrow_options={{
+						left: 'prev',
+						right: 'next'
+					}}>{actions()}</FocusableGroup>
+				</Show>
 			</div>
 		</Show>
 	</Modal>)

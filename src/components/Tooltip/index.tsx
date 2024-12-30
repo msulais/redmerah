@@ -442,6 +442,7 @@ const TextTooltip: FlowComponent<TextTooltipProps> = ($props) => {
 		class={classlist(TOOLTIP_CLASS, props.class)}
 		id={props.id}
 		ref={mergeRefs(props.ref, r => div_ref = r)}
+		// TODO: on focus-visible
 		onPointerOver={ev => {
 			open(ev)
 			event_call(ev, props.onPointerOver)
@@ -560,6 +561,7 @@ const RichTooltip: FlowComponent<RichTooltipProps> = ($props) => {
 			close(ev)
 			event_call(ev, wrapper_props.onPointerUp)
 		}}
+		// TODO: on focus-visible
 		onPointerMove={ev => {
 			update_pointer(ev)
 			event_call(ev, wrapper_props.onPointerMove)

@@ -1,5 +1,5 @@
 import { TransitionGroup } from 'solid-transition-group'
-import { createEffect, createMemo, createSignal, createUniqueId, For, onCleanup, onMount, Show, splitProps, type ParentComponent, type VoidComponent } from 'solid-js'
+import { createMemo, createSignal, createUniqueId, For, onCleanup, onMount, Show, splitProps, type ParentComponent, type VoidComponent } from 'solid-js'
 import { mergeRefs } from '@solid-primitives/refs'
 
 import type { Emoji } from '@/types/emoji'
@@ -12,7 +12,7 @@ import { BodyEvents } from '@/enums/events'
 import { AnimationEffectTiming } from '@/enums/animation'
 import { string_length, string_locale_compare, string_replace, string_split, string_trim } from '@/utils/string'
 import { array_concat, array_find_index, array_join, array_length, array_map, array_slice, array_sort, array_splice } from '@/utils/array'
-import { element_animate, element_children, element_dataset, element_dispatch_event, element_focus, element_focus_by_arrowkey, element_next_sibling, element_previous_sibling, element_set_tabindex } from '@/utils/element'
+import { element_animate, element_children, element_dataset, element_dispatch_event, element_focus, element_next_sibling, element_previous_sibling, element_set_tabindex, element_style, element_tagname } from '@/utils/element'
 import { regex_test } from '@/utils/regex'
 import { promise_done } from '@/utils/object'
 import { AppColors } from '@/enums/colors'
@@ -26,6 +26,7 @@ import { ButtonVariant, EmojiButton, IconButton } from '@/components/Button'
 import { close_searchtextfieldmenu, SearchMenuItem, SearchTextField } from '@/components/TextField'
 import { Modal, type ModalProps, ModalPosition as EmojiPickerPosition, close_modal, focus_modal, open_modal, reposition_modal, is_modal_open } from '@/components/Modal'
 import { close_popover, is_popover_open, open_popover, Popover, reposition_popover, type PopoverProps } from '../Popover'
+import FocusableGroup from '@/components/FocusableGroup'
 import './index.scss'
 
 const ALL_EMOJI: Emoji[] = array_sort(
@@ -113,7 +114,6 @@ const EmojiPickerBody: ParentComponent<{
 			: new RegExp(array_join(string_split(t, ' '), '|'), 'gi')
 	})
 	const body = document.body
-	let div_tabs_ref: HTMLDivElement | undefined
 	let menu_search_ref: HTMLDivElement
 	let timeout_id: number | null = null
 
@@ -149,24 +149,6 @@ const EmojiPickerBody: ParentComponent<{
 		init_events()
 	})
 
-	createEffect(() => {
-		props.use_close_button
-		let is_no_tabindex_0 = true
-
-		const el = div_tabs_ref!.firstChild as HTMLDivElement
-		for (const child of element_children<HTMLButtonElement>(el)) {
-			if (child.tagName != 'BUTTON' || child.disabled) continue
-
-			if (is_no_tabindex_0) {
-				element_set_tabindex(child, 0)
-				is_no_tabindex_0 = false
-				continue
-			}
-
-			element_set_tabindex(child, -1)
-		}
-	})
-
 	const Tab: VoidComponent<{category: EmojiCategory; icon_code: number}> = ($props) => {
 		const category = createMemo(() => $props.category)
 		const selected = createMemo(() => option() == category())
@@ -185,35 +167,17 @@ const EmojiPickerBody: ParentComponent<{
 	}
 
 	const Emojis: VoidComponent<{category: EmojiCategory, emojis: Emoji[]}> = $props => {
-		let div_ref: HTMLDivElement | undefined
 		let timeout_id: number | null = null
 		let grid_column_count = 0
-
-		createEffect(() => {
-			const option2 = option()
-			const is_open = props.is_open
-			const category = $props.category
-			if (category != option2 || !is_open || !div_ref) return
-
-			let is_no_tabindex_0 = true
-			const children = element_children<HTMLButtonElement>(div_ref)
-			for (const child of children) {
-				if (child.tagName != 'BUTTON') continue
-				if (is_no_tabindex_0) {
-					element_set_tabindex(child, 0)
-					is_no_tabindex_0 = false
-					continue
-				}
-				element_set_tabindex(child, -1)
-			}
-		})
 
 		return (<div
 			class='c-emoji-picker-emojis'
 			data-c-hidden={attr_set_if_exist($props.category != option())}>
 			<Show when={$props.category == option() && props.is_open}>
-				<div
-					ref={div_ref}
+				<FocusableGroup
+					custom_arrow_focus
+					on_before_set_tabindex={el => element_tagname(el) != 'H3'}
+					on_before_change_focus={el => element_tagname(el) != 'H3'}
 					onKeyDown={(ev) => {
 						const code = ev.code
 						if (
@@ -229,18 +193,13 @@ const EmojiPickerBody: ParentComponent<{
 						let target: HTMLElement | null = null
 
 						// don't update every key press
-						if (timeout_id == null){
-							grid_column_count = array_length(string_split(string_trim(
-								window
-								.getComputedStyle(event_current_target(ev))
-								.getPropertyValue("grid-template-columns")
-							), " "))
+						if (timeout_id == null) grid_column_count = array_length(string_split(
+							string_trim(element_style(event_current_target(ev), "grid-template-columns")),
+							" "
+						))
+						else timeout_clear(timeout_id)
 
-							timeout_id = timeout_set(() => {
-								timeout_id = null
-							}, 300)
-						}
-
+						timeout_id = timeout_set(() => timeout_id = null, 300)
 						if (code == ARROW_UP) target = children[index - grid_column_count]
 						else if (code == ARROW_DOWN) target = children[index + grid_column_count]
 						else if (code == ARROW_RIGHT) target = element_next_sibling(button)
@@ -278,20 +237,17 @@ const EmojiPickerBody: ParentComponent<{
 							emoji={e[0]}
 						/>
 					}</For>
-				</div>
+				</FocusableGroup>
 			</Show>
 		</div>)
 	}
 
 	return (<>
-		<div
+		<FocusableGroup
 			class="c-emoji-picker-tabs"
-			ref={div_tabs_ref}
-			onKeyDown={(ev) => element_focus_by_arrowkey(
-				event_current_target(ev),
-				ev.code,
-				{ left: 'prev', right: 'next' },
-			)}
+			arrow_options={{
+				left: 'prev', right: 'next'
+			}}
 			onClick={(ev) => {
 				let button = ev.target as HTMLButtonElement
 				if (button.tagName == 'I') button = button.parentElement as HTMLButtonElement
@@ -327,7 +283,7 @@ const EmojiPickerBody: ParentComponent<{
 				<Tab icon_code={0xEF77} category={EmojiCategory.symbols}/>
 				<Tab icon_code={0xE7AB} category={EmojiCategory.flags}/>
 			</TextTooltip>
-		</div>
+		</FocusableGroup>
 		<div class='c-emoji-picker-search'>
 			<SearchTextField
 				placeholder='Search emoji'

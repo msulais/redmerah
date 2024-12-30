@@ -5,7 +5,7 @@ import { attr_set_if_exist, classlist } from "@/utils/attributes"
 import { is_string } from "@/utils/typecheck"
 import { element_click, element_rect } from "@/utils/element"
 import { timeout_clear, timeout_set, wait } from "@/utils/timeout"
-import { event_call, event_current_target, event_current_target, event_prevent_default } from "@/utils/event"
+import { event_call, event_current_target, event_prevent_default } from "@/utils/event"
 import { rect_height } from "@/utils/rect"
 import { promise_done } from "@/utils/object"
 

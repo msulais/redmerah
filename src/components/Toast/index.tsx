@@ -1,14 +1,14 @@
-import { type JSX, type ParentComponent, splitProps, children, onMount, onCleanup, Show, createEffect } from "solid-js"
+import { type JSX, type ParentComponent, splitProps, children, onMount, onCleanup, Show, mergeProps } from "solid-js"
 import { mergeRefs } from "@solid-primitives/refs"
 
 import { attr_set_if_exist } from "@/utils/attributes"
-import { event_add_listener, event_current_target, event_remove_listener } from "@/utils/event"
+import { event_add_listener, event_remove_listener } from "@/utils/event"
 import { timeout_clear, timeout_set } from "@/utils/timeout"
-import { element_children, element_dispatch_event, element_focus_by_arrowkey, element_is_same_node, element_set_tabindex, element_tagname } from "@/utils/element"
-import { document_active } from "@/utils/document"
+import { element_dispatch_event } from "@/utils/element"
 
 import List from "@/components/List"
 import Popover, { type PopoverProps, close_popover, open_popover, is_popover_open as is_toast_open, PopoverPosition } from "@/components/Popover"
+import FocusableGroup from "@/components/FocusableGroup"
 import './index.scss'
 
 enum ToastPosition {
@@ -50,20 +50,25 @@ function close_toast(toast: HTMLDivElement): void {
 type ToastProps = PopoverProps & {
 	header?: JSX.Element
 	actions?: JSX.Element
+	action_auto_tabindex?: boolean
 	leading?: JSX.Element
 	trailing?: JSX.Element
+	trailing_auto_tabindex?: boolean
 }
 const Toast: ParentComponent<ToastProps> = ($props) => {
-	const [props, other] = splitProps($props, [
-		'leading', 'trailing', 'children',
-		'header', 'actions', 'classList',
-		'ref', 'on_toggle_open'
+	const $$props = mergeProps({
+		action_auto_tabindex: true,
+		trailing_auto_tabindex: true,
+	}, $props)
+	const [props, other] = splitProps($$props, [
+		'leading', 'trailing', 'children', 'header',
+		'actions', 'classList', 'ref', 'on_toggle_open',
+		'trailing_auto_tabindex', 'action_auto_tabindex'
 	])
 	const actions = children(() => props.actions)
 	let toast_ref: HTMLDivElement
 	let is_open = false
 	let timeout_id: number | null = null
-	let div_action_ref: HTMLDivElement | undefined
 
 	function close_toast(): void {
 		if (!is_open) return;
@@ -128,27 +133,6 @@ const Toast: ParentComponent<ToastProps> = ($props) => {
 		init_custom_event()
 	})
 
-
-	createEffect(() => {
-		actions()
-		if (!div_action_ref) return
-
-		let is_no_tabindex_0 = true
-		const children = element_children<HTMLButtonElement>(div_action_ref)
-		for (const child of children) {
-			const tag_name = child.tagName
-			if (tag_name != 'A' && tag_name != 'BUTTON') continue
-			if (tag_name == 'BUTTON' && child.disabled) continue
-			if (is_no_tabindex_0) {
-				element_set_tabindex(child, 0)
-				is_no_tabindex_0 = false
-				continue
-			}
-
-			element_set_tabindex(child, -1)
-		}
-	})
-
 	return (<Popover
 		on_toggle_open={o => {
 			is_open = o
@@ -164,27 +148,25 @@ const Toast: ParentComponent<ToastProps> = ($props) => {
 		<List
 			leading={props.leading}
 			trailing={props.trailing}
-			subtitle={props.children}>
+			subtitle={props.children}
+			trailing_auto_tabindex={props.trailing_auto_tabindex}>
 			{ props.header }
 		</List>
 		<Show when={actions()}>
-			<div
-				ref={div_action_ref}
-				class="c-toast-actions"
-				onKeyDown={ev => {
-					const active = document_active()
-					if (!active) return
-
-					const tag_name = element_tagname(active)
-					if (tag_name == 'INPUT' || tag_name == 'TEXTAREA') return;
-
-					element_focus_by_arrowkey(
-						event_current_target(ev),
-						ev.code,
-						{ left: 'prev', right: 'next' },
-						(el) => element_tagname(el) != 'INPUT' && element_tagname(el) != 'TEXTAREA'
-					)
-				}}>{actions()}</div>
+			<Show
+				when={props.action_auto_tabindex}
+				fallback={<div class="c-toast-actions">
+					{actions()}
+				</div>}>
+				<FocusableGroup
+					class="c-toast-actions"
+					arrow_options={{
+						left: 'prev',
+						right: 'next'
+					}}>
+					{actions()}
+				</FocusableGroup>
+			</Show>
 		</Show>
 	</Popover>)
 }

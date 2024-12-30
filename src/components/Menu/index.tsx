@@ -3,9 +3,10 @@ import { mergeRefs } from "@solid-primitives/refs"
 
 import { attr_set_if_exist, classlist } from "@/utils/attributes"
 import { is_var_has_value } from "@/utils/object"
-import { event_call, event_stop_immediate_propagation, event_stop_propagation } from "@/utils/event"
+import { event_call, event_prevent_default, event_stop_immediate_propagation, event_stop_propagation } from "@/utils/event"
 import { timeout_clear, timeout_set, wait } from "@/utils/timeout"
 import { element_children, element_classlist, element_first_child, element_is_same_node, element_last_child, element_parent } from "@/utils/element"
+import { ARROW_DOWN, ARROW_UP } from "@/constants/key_code"
 import { AppColors } from "@/enums/colors"
 
 import Divider, { type DividerProps } from "@/components/Divider"
@@ -14,6 +15,7 @@ import Button, { ButtonIndicatorPosition, ButtonVariant, LinkButton, type Button
 import Popover, { close_popover, is_popover_open, open_popover, type PopoverProps, reposition_popover, PopoverPosition as SubMenuPosition } from "@/components/Popover"
 import Modal, { type ModalProps, close_modal, focus_modal, is_modal_open, ModalPosition as MenuPosition, open_modal, reposition_modal } from "@/components/Modal"
 import { RawSwitch, type RawSwitchProps } from "@/components/Switch"
+import FocusableGroup from "@/components/FocusableGroup"
 import './index.scss'
 
 const SUBMENU_CLASSNAME = 'c-submenu'
@@ -204,19 +206,26 @@ type SubMenuProps = PopoverProps & {
 	draggable?: boolean
 	allow_hide_anchor?: boolean
 	attr_wrapper?: Omit<JSX.HTMLAttributes<HTMLDivElement>, 'children'>
+	children_auto_tabindex?: boolean
 }
+
+// TODO: improvise close or open of submenu
 const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
-	const [props, other] = splitProps($props, [
+	const $$props = mergeProps({
+		children_auto_tabindex: true
+	}, $props)
+	const [props, other] = splitProps($$props, [
 		'classList', 'item', 'attr_wrapper',
 		'id', 'onClick', 'ref', 'gap', 'position',
 		'padding', 'draggable', 'allow_hide_anchor',
 		'on_toggle_open', 'children', 'on_before_close',
-		'use_portal'
+		'use_portal', 'children_auto_tabindex'
 	])
 	const [wrapper_props, wrapper_props_other] = splitProps(props.attr_wrapper ?? {}, [
 		'class', 'onClick','onPointerEnter',
 		'onPointerLeave', 'ref'
 	])
+	const content = children(() => props.children)
 	let timeout_id: number | null = null
 	let div_ref: HTMLDivElement
 	let popover_ref: HTMLDivElement
@@ -311,16 +320,33 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 				...props.classList
 			}}
 			{...other}>
-			{ props.children }
+			<Show when={props.children_auto_tabindex} fallback={content()}>
+				<FocusableGroup arrow_options={{
+					up: 'prev',
+					down: 'next'
+				}}
+				onKeyDown={ev => {
+					const code = ev.code
+					if (code != ARROW_UP && code != ARROW_DOWN) return
+
+					event_prevent_default(ev)
+				}}>{content()}</FocusableGroup>
+			</Show>
 		</Popover>
 	</div>)
 }
 
-type MenuProps = ModalProps
+type MenuProps = ModalProps & {
+	children_auto_tabindex?: boolean
+}
 const Menu: ParentComponent<MenuProps> = ($props) => {
-	const [props, other] = splitProps($props, [
+	const $$props = mergeProps({
+		children_auto_tabindex: true
+	}, $props)
+	const [props, other] = splitProps($$props, [
 		'classList', 'gap', 'padding', 'content_auto_focus',
-		'on_before_close', 'ref', 'children'
+		'on_before_close', 'ref', 'children',
+		'children_auto_tabindex'
 	])
 	const content = children(() => props.children)
 	let menu_ref: HTMLDialogElement
@@ -345,17 +371,34 @@ const Menu: ParentComponent<MenuProps> = ($props) => {
 		content_auto_focus={props.content_auto_focus ?? true}
 		gap={props.gap ?? 8}
 		padding={props.padding ?? 4}
-		children={content()}
-		{...other}
-	/>)
+		{...other}>
+		<Show when={props.children_auto_tabindex} fallback={content()}>
+			<FocusableGroup arrow_options={{
+				up: 'prev',
+				down: 'next'
+			}}
+			onKeyDown={ev => {
+				const code = ev.code
+				if (code != ARROW_UP && code != ARROW_DOWN) return
+
+				event_prevent_default(ev)
+			}}>{content()}</FocusableGroup>
+		</Show>
+	</Modal>)
 }
 
-type PopoverMenuProps = PopoverProps
+type PopoverMenuProps = PopoverProps & {
+	children_auto_tabindex?: boolean
+}
 const PopoverMenu: ParentComponent<PopoverMenuProps> = ($props) => {
-	const [props, other] = splitProps($props, [
-		'classList', 'gap', 'padding',
-		'on_before_close', 'ref'
+	const $$props = mergeProps({
+		children_auto_tabindex: true
+	}, $props)
+	const [props, other] = splitProps($$props, [
+		'classList', 'gap', 'padding', 'children',
+		'on_before_close', 'ref', 'children_auto_tabindex'
 	])
+	const content = children(() => props.children)
 	let menu_ref: HTMLDivElement
 
 	function close_submenu_descendant(): void {
@@ -377,8 +420,20 @@ const PopoverMenu: ParentComponent<PopoverMenuProps> = ($props) => {
 		}}
 		gap={props.gap ?? 8}
 		padding={props.padding ?? 4}
-		{...other}
-	/>)
+		{...other}>
+		<Show when={props.children_auto_tabindex} fallback={content()}>
+			<FocusableGroup arrow_options={{
+				up: 'prev',
+				down: 'next'
+			}}
+			onKeyDown={ev => {
+				const code = ev.code
+				if (code != ARROW_UP && code != ARROW_DOWN) return
+
+				event_prevent_default(ev)
+			}}>{content()}</FocusableGroup>
+		</Show>
+	</Popover>)
 }
 
 export {
