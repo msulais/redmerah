@@ -1,7 +1,7 @@
 import { ARROW_UP, ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT } from "@/constants/key_code"
-import { createUniqueId } from "solid-js"
 import { array_length } from "./array"
 import { document_active, document_has_focus } from "./document"
+import { attr_remove } from "./attributes"
 
 export function element_scroll_width(el: HTMLElement): number {
 	return el.scrollWidth
@@ -26,14 +26,17 @@ export function element_client_height(el: HTMLElement): number {
 	return el.clientHeight
 }
 
+// TODO: rename to `element_is_overflow_x`
 export function is_element_overflow_x(el: HTMLElement): boolean {
 	return element_client_width(el) < element_scroll_width(el)
 }
 
+// TODO: rename to `element_is_overflow_y`
 export function is_element_overflow_y(el: HTMLElement): boolean {
 	return element_client_height(el) < element_scroll_height(el)
 }
 
+// TODO: rename to `element_is_overflow`
 export function is_element_overflow(el: HTMLElement): boolean {
 	return is_element_overflow_x(el) || is_element_overflow_y(el)
 }
@@ -54,6 +57,7 @@ export function element_parent(el: HTMLElement): HTMLElement | null {
 	return el.parentElement
 }
 
+// TODO: move to 'attributes.ts'
 export function add_classlist_module(...arr: string[]): Record<string, boolean> {
 	const classlist: Record<string, boolean> = {}
 	for (const i in arr) {
@@ -62,16 +66,19 @@ export function add_classlist_module(...arr: string[]): Record<string, boolean> 
 	return classlist
 }
 
+// TODO: rename to `element_create`
 /** Creates an instance of the element for the specified tag */
 export function create_element<K extends keyof HTMLElementTagNameMap>(tagname: K, options?: ElementCreationOptions): HTMLElementTagNameMap[K] {
 	return document.createElement(tagname, options)
 }
 
+// TODO: rename to `element_by_id`
 /** Returns a reference to the first object with the specified value of the ID attribute */
 export function get_element_by_id(element_id: string): HTMLElement | null {
 	return document.getElementById(element_id)
 }
 
+// TODO: rename to `element_by_selector`
 /** Returns the first element that is a descendant of node that matches selectors */
 export function get_element_by_selector(
 	selectors: string,
@@ -80,6 +87,7 @@ export function get_element_by_selector(
 	return from.querySelector(selectors)
 }
 
+// TODO: rename to `element_all_by_selector`
 /** Returns all element descendants of node that match selectors */
 export function get_multiple_element_by_selector<E extends Element>(
 	selectors: string,
@@ -109,6 +117,14 @@ export function element_tagname(el: HTMLElement): string {
 	return el.tagName
 }
 
+export function element_matches(el: HTMLElement, selectors: string): boolean {
+	return el.matches(selectors)
+}
+
+export function element_id(el: HTMLElement): string {
+	return el.id
+}
+
 export function element_focus_by_arrowkey<T = HTMLElement>(
 	parent: HTMLElement | null,
 	key_code: 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight' | string,
@@ -119,11 +135,11 @@ export function element_focus_by_arrowkey<T = HTMLElement>(
 		right?: 'next' | 'prev'
 	},
 	condition?: (sibling: T) => boolean
-): boolean {
-	if (!document_has_focus()) return false
+): HTMLElement | null {
+	if (!document_has_focus()) return null
 
 	const element = document_active()!
-	if (!options) return false
+	if (!options) return null
 
 	const up = options.up
 	const down = options.down
@@ -154,16 +170,15 @@ export function element_focus_by_arrowkey<T = HTMLElement>(
 			&& !valid_left
 			&& !valid_right
 		)
-	) return false
+	) return null
 
-	if (parent && !parent.id) parent.id = createUniqueId()
-	if (parent && !element_closest(element, '#' + CSS.escape(parent.id))) return false
+	if (parent && !element_contains(parent, element)) return null
 
 	// parent check
 	let el_parent = element_parent(element)
 	let valid_parent = el_parent === parent
 	while (!valid_parent && el_parent) {
-		if (element_style(el_parent, 'display') != 'contents') return false
+		if (element_style(el_parent, 'display') != 'contents') return null
 
 		el_parent = element_parent(el_parent)
 		valid_parent = el_parent === parent
@@ -201,7 +216,7 @@ export function element_focus_by_arrowkey<T = HTMLElement>(
 				else {
 					element_set_tabindex(element, -1)
 					element_set_tabindex(sibling, 0)
-					return true
+					return sibling
 				}
 			}
 		}
@@ -211,7 +226,85 @@ export function element_focus_by_arrowkey<T = HTMLElement>(
 	} while (sibling)
 
 	element_focus(element)
+	return null
+}
+
+export function element_is_child(el: HTMLElement, parent: HTMLElement): boolean {
+	if (!element_contains(parent, el)) return false
+
+	let el_parent: HTMLElement | null = null
+	do {
+		el_parent = element_parent(el_parent ?? el)!
+		if (el_parent === parent) return true
+		else if (element_style(el_parent, 'display') != 'contents') return false
+	} while (el_parent !== parent)
 	return false
+}
+
+/**
+ * Manages `tabIndex` for descendant elements, handling 'display: contents' and active element changes.
+ * Ensures only one eligible descendant has `tabIndex="0"` (focused), others have `tabIndex="-1"`.
+ * Updates `tabIndex` based on the currently active element within the managed group.
+ *
+ * @param element The parent element.
+ * @param condition Optional filter function for eligible descendants.
+ */
+export function element_children_tabindex(
+    element: HTMLElement,
+    condition?: (el: HTMLElement) => boolean
+): HTMLElement | null {
+	let element_with_tabindex_zero: HTMLElement | null = null
+    const traverse = (el: HTMLElement) => {
+        let child = element_first_child(el)
+        while (child) {
+            const source = child
+            if (element_style(child, 'display') === 'contents') {
+                traverse(child)
+            }
+			else if ((condition?.(child) ?? true) && child instanceof HTMLElement) {
+                if (!element_with_tabindex_zero) {
+                    element_set_tabindex(child, 0)
+					element_with_tabindex_zero = child
+                }
+				else if (document_active() == child) {
+					element_set_tabindex(element_with_tabindex_zero, -1)
+                    element_set_tabindex(child, 0)
+				}
+				else element_set_tabindex(child, -1)
+            }
+            child = element_next_sibling(source)
+        }
+    }
+
+    traverse(element)
+	return element_with_tabindex_zero
+}
+
+/**
+ * Recursively removes the `tabIndex` attribute from eligible descendant elements, handling 'display: contents'.
+ *
+ * @param element The parent element.
+ * @param condition Optional filter function to determine which descendants to modify.
+ */
+export function element_children_remove_tabindex(
+    element: HTMLElement,
+    condition?: (el: HTMLElement) => boolean
+): void {
+    const traverse = (el: HTMLElement) => {
+        let child = element_first_child(el)
+        while (child) {
+            const source = child
+            if (element_style(child, 'display') === 'contents') {
+                traverse(child)
+            }
+			else if ((condition?.(child) ?? true) && child instanceof HTMLElement) {
+                attr_remove(child, 'tabindex')
+            }
+            child = element_next_sibling(source)
+        }
+    }
+
+    traverse(element)
 }
 
 export function element_style(

@@ -150,6 +150,8 @@ export function binary_to_float(input: string, bit: 32 | 64 = 64): number {
 export function number_to_binary(input: number, bit: 32 | 64 = 64): string {
 	const sign = input < 0 ? '1' : '0'
 	let n = number_to_string(input, 2)
+
+	// Make sure only float with decimal
 	if (!regex_test(/\./, n)) return n
 
 	let mantissa = number_to_string(math_abs(input), 2)
