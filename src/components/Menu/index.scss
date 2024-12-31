@@ -53,12 +53,13 @@
 	padding: 4px 0;
 }
 
-.c-popover.c-submenu {
-	width: 100%;
+.c-submenu {
+	display: contents;
+	// width: 100%;
 
-	> .c-menu-item {
-		width: calc(100% - 8px);
-	}
+	// > .c-menu-item {
+	// 	width: calc(100% - 8px);
+	// }
 }
 
 .c-switch-menu-item{
