@@ -3,7 +3,7 @@ import { mergeRefs } from "@solid-primitives/refs"
 
 import { attr_has, attr_remove, attr_set, classlist } from "@/utils/attributes"
 import { event_add_listener, event_call, event_stop_propagation } from "@/utils/event"
-import { create_element, element_animate, element_append_child, element_children, element_classlist, element_closest, element_dataset, element_dispatch_event, element_is_same_node, element_rect, element_set_style_property } from "@/utils/element"
+import { element_create, element_animate, element_append_child, element_children, element_classlist, element_closest, element_dataset, element_dispatch_event, element_is_same_node, element_rect, element_set_style_property } from "@/utils/element"
 import { timeout_clear, timeout_set } from "@/utils/timeout"
 import { FlyoutPosition as TooltipPosition } from "@/enums/position"
 import { get_flyout_position } from "@/utils/flyout"
@@ -60,7 +60,7 @@ function init_tooltip(): void {
 	let timeoutId: number | null = null
 
 	function create_tooltip_text(): void {
-		const div = create_element('div')
+		const div = element_create('div')
 		div.id = TEXT_TOOLTIP_ID
 		div.popover = 'manual'
 		element_append_child(body, div)

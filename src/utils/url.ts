@@ -1,4 +1,4 @@
-import { create_element, element_click, element_remove } from "./element"
+import { element_create, element_click, element_remove } from "./element"
 
 export function url_encode(text: string): string {
 	return encodeURIComponent(text)
@@ -38,7 +38,7 @@ export function url_revoke(url: string): void {
 }
 
 export function url_download_file(url: string, filename: string): void {
-	const link = create_element("a")
+	const link = element_create("a")
 	link.href = url
 	link.download = filename
 	element_click(link)

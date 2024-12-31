@@ -121,9 +121,8 @@ export function add_classlist_module(...arr: string[]): Record<string, boolean> 
 	return classlist
 }
 
-// TODO: rename to `element_create`
 /** Creates an instance of the element for the specified tag */
-export function create_element<K extends keyof HTMLElementTagNameMap>(tagname: K, options?: ElementCreationOptions): HTMLElementTagNameMap[K] {
+export function element_create<K extends keyof HTMLElementTagNameMap>(tagname: K, options?: ElementCreationOptions): HTMLElementTagNameMap[K] {
 	return document.createElement(tagname, options)
 }
 

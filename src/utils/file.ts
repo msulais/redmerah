@@ -1,9 +1,9 @@
-import { create_element, element_click, element_remove } from "./element"
+import { element_create, element_click, element_remove } from "./element"
 import { url_create, url_download_file, url_revoke } from "./url"
 
 export async function file_open(accept: string | null, multiple: boolean = false, capture?: string): Promise<FileList | null> {
 	return new Promise<FileList | null>((ok) => {
-		const input = create_element('input')
+		const input = element_create('input')
 		input.type = 'file'
 		if (accept != null) input.accept = accept
 		if (capture != null) input.capture = capture
