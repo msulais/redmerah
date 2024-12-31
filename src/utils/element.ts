@@ -27,19 +27,16 @@ export function element_client_height(el: HTMLElement): number {
 	return el.clientHeight
 }
 
-// TODO: rename to `element_is_overflow_x`
-export function is_element_overflow_x(el: HTMLElement): boolean {
+export function element_is_overflow_x(el: HTMLElement): boolean {
 	return element_client_width(el) < element_scroll_width(el)
 }
 
-// TODO: rename to `element_is_overflow_y`
-export function is_element_overflow_y(el: HTMLElement): boolean {
+export function element_is_overflow_y(el: HTMLElement): boolean {
 	return element_client_height(el) < element_scroll_height(el)
 }
 
-// TODO: rename to `element_is_overflow`
-export function is_element_overflow(el: HTMLElement): boolean {
-	return is_element_overflow_x(el) || is_element_overflow_y(el)
+export function element_is_overflow(el: HTMLElement): boolean {
+	return element_is_overflow_x(el) || element_is_overflow_y(el)
 }
 
 export function element_contains(el: HTMLElement, other: Node | null): boolean {
