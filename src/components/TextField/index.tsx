@@ -161,6 +161,7 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 					const self = event_current_target(ev)
 					set_value(self.value)
 					set_is_invalid(!self.checkValidity())
+
 					event_call(ev, props.onInput)
 					set_height(HEIGHT_TEXT_INPUT_PER_LINE) // set to one line: to calculate the scroll height
 					set_height(math_max(element_scroll_height(self), HEIGHT_TEXT_INPUT_PER_LINE))
