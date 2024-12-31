@@ -86,11 +86,11 @@ function color_app_background(color: HEXColor): string {
 </Html>
 
 <script>
-	import { element_animate, element_by_id, get_multiple_element_by_selector } from "@/utils/element"
+	import { element_animate, element_by_id, element_all_by_selector } from "@/utils/element"
 	import { array_length } from "@/utils/array";
 
 	const quote = element_by_id('quote') as HTMLParagraphElement
-	const spans = get_multiple_element_by_selector<HTMLSpanElement>('#quote span')
+	const spans = element_all_by_selector<HTMLSpanElement>('#quote span')
 	const observer = new IntersectionObserver((entries) => {
 		for (const entry of entries) {
 			if (!entry.isIntersecting) continue;

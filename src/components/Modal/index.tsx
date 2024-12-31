@@ -7,7 +7,7 @@ import { FlyoutPosition as ModalPosition } from '@/enums/position'
 import { get_flyout_position } from '@/utils/flyout'
 import { timeout_clear, timeout_set } from '@/utils/timeout'
 import { attr_has, attr_remove, attr_set, attr_set_if_exist, classlist } from '@/utils/attributes'
-import { element_animate, element_client_width, element_dataset, element_dispatch_event, element_focus, element_is_same_node, element_rect, element_scroll_top, get_multiple_element_by_selector } from '@/utils/element'
+import { element_animate, element_client_width, element_dataset, element_dispatch_event, element_focus, element_is_same_node, element_rect, element_scroll_top, element_all_by_selector } from '@/utils/element'
 import { BodyAttributes } from '@/enums/attributes'
 import { event_add_listener, event_call, event_prevent_default, event_remove_listener, event_stop_immediate_propagation } from "@/utils/event"
 import { math_abs } from '@/utils/math'
@@ -162,7 +162,7 @@ function init_modal_listener(): void {
 		if (timeout_id != null) timeout_clear(timeout_id)
 
 		timeout_id = timeout_set(() => {
-			for (const modal of get_multiple_element_by_selector(selector)) {
+			for (const modal of element_all_by_selector(selector)) {
 				reposition_modal(modal as HTMLDialogElement)
 			}
 			timeout_id = null

@@ -139,9 +139,8 @@ export function element_by_selector(
 	return from.querySelector(selectors)
 }
 
-// TODO: rename to `element_all_by_selector`
 /** Returns all element descendants of node that match selectors */
-export function get_multiple_element_by_selector<E extends Element>(
+export function element_all_by_selector<E extends Element>(
 	selectors: string,
 	from: HTMLElement | Document = document
 ): NodeListOf<E> {

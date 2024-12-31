@@ -3,7 +3,7 @@ import { mergeRefs } from "@solid-primitives/refs"
 
 import { AnimationEffectTiming } from "@/enums/animation"
 import { attr_set_if_exist, classlist } from "@/utils/attributes"
-import { element_animate, element_dispatch_event, element_is_same_node, get_multiple_element_by_selector } from "@/utils/element"
+import { element_animate, element_dispatch_event, element_is_same_node, element_all_by_selector } from "@/utils/element"
 import { event_add_listener, event_call, event_current_target, event_remove_listener } from "@/utils/event"
 import { promise_done } from "@/utils/object"
 
@@ -118,7 +118,7 @@ const CheckBox: ParentComponent<CheckBoxProps> = ($props) => {
 				event_call(ev, props.onChange)
 
 				if (props.variant == CheckBoxVariant.radio && other.name != null) {
-					const getAllRadioWithSameName = get_multiple_element_by_selector(`input[type=radio][name=${CSS.escape(other.name)}]`)
+					const getAllRadioWithSameName = element_all_by_selector(`input[type=radio][name=${CSS.escape(other.name)}]`)
 					for (const el of getAllRadioWithSameName) element_dispatch_event(el as HTMLElement, new CustomEvent(
 						CheckBoxEvents.on_change_radio_state,
 						{detail: input_ref}

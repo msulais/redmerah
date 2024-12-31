@@ -6,7 +6,7 @@ import { FlyoutPosition as PopoverPosition } from '@/enums/position'
 import { get_flyout_position } from '@/utils/flyout'
 import { timeout_clear, timeout_set } from '@/utils/timeout'
 import { attr_has, attr_remove, attr_set, attr_set_if_exist, classlist } from '@/utils/attributes'
-import { element_rect, get_multiple_element_by_selector, element_dataset, element_dispatch_event, element_is_same_node, element_client_width, element_animate } from '@/utils/element'
+import { element_rect, element_all_by_selector, element_dataset, element_dispatch_event, element_is_same_node, element_client_width, element_animate } from '@/utils/element'
 import { BodyAttributes } from '@/enums/attributes'
 import { event_add_listener, event_call, event_remove_listener, event_stop_immediate_propagation } from "@/utils/event"
 import { math_abs } from '@/utils/math'
@@ -87,7 +87,7 @@ function init_popover_listener(): void {
 		if (timeout_id != null) timeout_clear(timeout_id)
 
 		timeout_id = timeout_set(() => {
-			for (const popover of get_multiple_element_by_selector(selector)) {
+			for (const popover of element_all_by_selector(selector)) {
 				reposition_popover(popover as HTMLDivElement)
 			}
 			timeout_id = null
