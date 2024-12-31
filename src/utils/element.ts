@@ -131,9 +131,8 @@ export function element_by_id(element_id: string): HTMLElement | null {
 	return document.getElementById(element_id)
 }
 
-// TODO: rename to `element_by_selector`
 /** Returns the first element that is a descendant of node that matches selectors */
-export function get_element_by_selector(
+export function element_by_selector(
 	selectors: string,
 	from: HTMLElement | Document = document
 ): HTMLElement | null {
