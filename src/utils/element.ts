@@ -1,7 +1,8 @@
 import { ARROW_UP, ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT } from "@/constants/key_code"
 import { array_length } from "./array"
 import { document_active, document_has_focus } from "./document"
-import { attr_remove } from "./attributes"
+import { attr_get, attr_remove } from "./attributes"
+import { number_is_defined, number_parse } from "./number"
 
 export function element_scroll_width(el: HTMLElement): number {
 	return el.scrollWidth
@@ -55,6 +56,60 @@ export function element_last_child(el: HTMLElement): HTMLElement | null {
 
 export function element_parent(el: HTMLElement): HTMLElement | null {
 	return el.parentElement
+}
+
+export function element_visible(el: HTMLElement, options?: CheckVisibilityOptions): boolean {
+	return el.checkVisibility(options)
+}
+
+export function element_editable(el: HTMLElement): boolean {
+	return el.isContentEditable
+}
+
+export function element_connected(el: HTMLElement): boolean {
+	return el.isConnected
+}
+
+export function element_tabindex(el: HTMLElement): number {
+	return el.tabIndex
+}
+
+export function element_focusable(el: HTMLElement): boolean {
+	const visible = element_visible(el, {
+		contentVisibilityAuto: true,
+		visibilityProperty: true,
+	})
+	const connected = element_connected(el)
+	if (!visible || !connected) return false
+
+	const disabled = element_matches(el, '[disabled]')
+	if (disabled) return false
+
+	const tagname = element_tagname(el)
+	if (
+		tagname == 'BUTTON'
+		|| tagname == 'SELECT'
+		|| tagname == 'INPUT'
+		|| tagname == 'TEXTAREA'
+		|| tagname == 'IFRAME'
+	) return true
+
+	if ((
+			tagname == 'A'
+			|| tagname == 'AREA'
+		)
+		&& element_matches(el, '[href]')
+	) return true
+
+	if (element_editable(el)) return true
+	if (element_matches(el, '[tabindex]')) {
+		const tabindex = attr_get(el, 'tabindex')
+		if (tabindex && number_is_defined(number_parse(tabindex, true))) {
+			return true
+		}
+	}
+
+	return false
 }
 
 // TODO: move to 'attributes.ts'
