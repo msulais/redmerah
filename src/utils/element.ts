@@ -126,9 +126,8 @@ export function element_create<K extends keyof HTMLElementTagNameMap>(tagname: K
 	return document.createElement(tagname, options)
 }
 
-// TODO: rename to `element_by_id`
 /** Returns a reference to the first object with the specified value of the ID attribute */
-export function get_element_by_id(element_id: string): HTMLElement | null {
+export function element_by_id(element_id: string): HTMLElement | null {
 	return document.getElementById(element_id)
 }
 

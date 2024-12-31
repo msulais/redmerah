@@ -4,7 +4,7 @@ import { mergeRefs } from "@solid-primitives/refs"
 import type { HEXColor, HSLColor, RGBColor } from "@/types/color"
 import { timeout_set } from "@/utils/timeout"
 import { attr_remove, attr_set, attr_set_if_exist } from "@/utils/attributes"
-import { element_dispatch_event, element_focus_by_arrowkey, element_rect, element_set_tabindex, get_element_by_id } from "@/utils/element"
+import { element_dispatch_event, element_focus_by_arrowkey, element_rect, element_set_tabindex, element_by_id } from "@/utils/element"
 import { event_add_listener, event_current_target, event_remove_listener } from '@/utils/event'
 import { BodyAttributes } from "@/enums/attributes"
 import { math_clamp, math_round } from "@/utils/math"
@@ -691,7 +691,7 @@ const ColorPickerBody: ParentComponent<{
 
 		createEffect(() => {
 			props.disabled_action
-			element_set_tabindex(get_element_by_id(button_colormodel_id)!, 0)
+			element_set_tabindex(element_by_id(button_colormodel_id)!, 0)
 		})
 
 		return (<div

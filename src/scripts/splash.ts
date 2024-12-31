@@ -2,13 +2,13 @@ import { AnimationEffectTiming } from "@/enums/animation"
 import { BodyAttributes } from "@/enums/attributes"
 import { ElementIds } from "@/enums/ids"
 import { attr_get, attr_set } from "@/utils/attributes"
-import { element_animate, element_remove, get_element_by_id } from "@/utils/element"
+import { element_animate, element_remove, element_by_id } from "@/utils/element"
 import { number_parse, number_safe } from "@/utils/number"
 import { timeout_set } from "@/utils/timeout"
 
 export function remove_splash_screen(timeout: number = 0): void {
 	timeout_set(() => {
-		const splash_ref = get_element_by_id(ElementIds.splash)
+		const splash_ref = element_by_id(ElementIds.splash)
 		if (!splash_ref) return;
 		element_animate(
 			splash_ref,

@@ -5,7 +5,7 @@ import type { HEXColor, RGBColor } from '@/types/color'
 import type { Palette } from './_types'
 import { timeout_clear, timeout_set } from '@/utils/timeout'
 import { generate_color, hex_to_rgb, is_color_valid } from '@/utils/color'
-import { add_classlist_module, get_element_by_id } from '@/utils/element'
+import { add_classlist_module, element_by_id } from '@/utils/element'
 import { DatabaseNames, LocalStorageKeys } from '@/enums/storage'
 import { storage_get, storage_set } from '@/utils/storage'
 import { ElementIds } from '@/enums/ids'
@@ -57,7 +57,7 @@ const _: VoidComponent = () => {
 
 	function on_color_change(color: HEXColor): void {
 		const generated_color = generate_color(color)
-		const element_accentcolor_style = get_element_by_id(ElementIds.color_accent)!
+		const element_accentcolor_style = element_by_id(ElementIds.color_accent)!
 		element_accentcolor_style.innerHTML = `:root{--g-color-accent-light: ${rgb_to_css_value(hex_to_rgb(generated_color.color))};--g-color-accent-dark: ${rgb_to_css_value(hex_to_rgb(generated_color.color_dark))};--g-color-on-accent-light: ${rgb_to_css_value(hex_to_rgb(generated_color.on_color))};--g-color-on-accent-dark: ${rgb_to_css_value(hex_to_rgb(generated_color.on_color_dark))};}`;
 		storage_set(LocalStorageKeys.color, color)
 		set_palette({

@@ -13,7 +13,7 @@ import { setAttribute } from "solid-js/web";
 import { Commands } from "./_enums";
 import { NumberTextField } from "@/components/TextField";
 import { IFRAME_PREVIEW_ID } from "./_constants";
-import { get_element_by_id } from "@/utils/element";
+import { element_by_id } from "@/utils/element";
 import { array_includes } from "@/utils/array";
 import { navigator_share } from "@/utils/navigator";
 import { date_year } from "@/utils/datetime";
@@ -273,7 +273,7 @@ const _: VoidComponent<{
 					icon_code={0xECFF}
 					onClick={() => {
 						close_menu(menu_moreactions_ref)
-						const iframe = get_element_by_id(IFRAME_PREVIEW_ID) as HTMLIFrameElement
+						const iframe = element_by_id(IFRAME_PREVIEW_ID) as HTMLIFrameElement
 						iframe?.contentWindow?.print()
 					}}>
 					Print

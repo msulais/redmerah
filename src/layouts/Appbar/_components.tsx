@@ -15,7 +15,7 @@ import { attr_set } from "@/utils/attributes";
 import { ExternalLinks, RoutesLinks } from "@/enums/links";
 import { LocalStorageKeys } from "@/enums/storage";
 import { RootAttributes } from "@/enums/attributes";
-import { add_classlist_module, element_closest, get_element_by_id } from "@/utils/element";
+import { add_classlist_module, element_closest, element_by_id } from "@/utils/element";
 import { ElementIds } from "@/enums/ids";
 import { CornerData } from "@/enums/corner";
 import { ThemeData } from "@/enums/theme";
@@ -142,7 +142,7 @@ export const SettingsElement: VoidComponent = () => {
 	function change_color(color: HEXColor): void {
 		set_color(color)
 		const acc = generate_color(color)
-		const accent_color_element = get_element_by_id(ElementIds.color_accent)!
+		const accent_color_element = element_by_id(ElementIds.color_accent)!
 		accent_color_element.innerHTML = `:root{--g-color-accent-light: ${rgb_to_css(hex_to_rgb(acc.color))};--g-color-accent-dark: ${rgb_to_css(hex_to_rgb(acc.color_dark))};--g-color-on-accent-light: ${rgb_to_css(hex_to_rgb(acc.on_color))};--g-color-on-accent-dark: ${rgb_to_css(hex_to_rgb(acc.on_color_dark))};}`;
 
 		if (timeout_color_id != null) timeout_clear(timeout_color_id)
