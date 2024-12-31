@@ -20,6 +20,10 @@ export function number_is_not_defined(num: number): boolean {
 	return number_is_nan(num) as boolean || number_is_infinite(num)
 }
 
+export function number_is_defined(num: number): boolean {
+	return !number_is_not_defined(num)
+}
+
 export function number_is_finite(num: number): boolean {
 	return Number.isFinite(num)
 }
