@@ -1,4 +1,5 @@
 export enum BodyEvents {
+	// TODO: use custom Element <div> for listener
 	/** @param element `HTMLDivElement` */
 	open_popover = 'on-open-popover',
 

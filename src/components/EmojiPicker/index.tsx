@@ -29,6 +29,7 @@ import { close_popover, is_popover_open, open_popover, Popover, reposition_popov
 import FocusableGroup from '@/components/FocusableGroup'
 import './index.scss'
 
+let HAS_EMOJI_LISTENER: boolean = false
 const ALL_EMOJI: Emoji[] = array_sort(
 	array_map(
 		array_concat(
@@ -69,8 +70,8 @@ enum EmojiPickerEvents {
 function init_emoji_picker(): void {
 	const body = document.body
 
-	if (attr_has(body, BodyAttributes.emoji_listener)) return;
-	attr_set(body, BodyAttributes.emoji_listener)
+	if (HAS_EMOJI_LISTENER) return;
+	HAS_EMOJI_LISTENER = true
 
 	let recents: Emoji[] = []
 
@@ -249,7 +250,11 @@ const EmojiPickerBody: ParentComponent<{
 				left: 'prev', right: 'next'
 			}}
 			onClick={(ev) => {
+				// TODO: use 'event_target()'
 				let button = ev.target as HTMLButtonElement
+
+				// TODO: use 'element_tagname()'
+				// TODO: use 'element_parent()'
 				if (button.tagName == 'I') button = button.parentElement as HTMLButtonElement
 				if (button.tagName != 'BUTTON') return
 

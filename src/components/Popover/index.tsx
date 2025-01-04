@@ -18,6 +18,8 @@ import { promise_done } from '@/utils/object'
 
 import './index.scss'
 
+let HAS_POPOVER_LISTENER: boolean = false
+
 type PopoverOpenDetail = {
 	event: Event
 	anchor?: HTMLElement
@@ -77,8 +79,8 @@ function open_popover(
 function init_popover_listener(): void {
 	const body = document.body
 	// make sure to call this listener once
-	if (attr_has(body, BodyAttributes.popover_listener)) return;
-	attr_set(body, BodyAttributes.popover_listener)
+	if (HAS_POPOVER_LISTENER) return;
+	HAS_POPOVER_LISTENER = true
 
 	const selector: string = 'div.c-popover:popover-open'
 	const popovers: HTMLDivElement[] = []

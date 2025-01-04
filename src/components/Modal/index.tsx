@@ -18,6 +18,8 @@ import { promise_done } from '@/utils/object'
 
 import './index.scss'
 
+let HAS_MODAL_LISTENER: boolean = false
+
 type ModalOpenDetail = {
 	event: Event
 	anchor?: HTMLElement
@@ -47,6 +49,7 @@ type ModalCloseDetail = {
 }
 
 enum ModalEvents {
+	// TODO: use format 'custom:<event-name>'
 	on_short_focus = 'on-short-focus-modal',
 
 	/** @param {ModalCloseDetail} detail `ModalCloseDetail` */
@@ -78,11 +81,12 @@ function open_modal(
 }
 
 function init_modal_listener(): void {
+	// TODO: convert to document_body()
 	const body = document.body
 
 	// make sure to call this listener once
-	if (attr_has(body, BodyAttributes.modal_listener)) return;
-	attr_set(body, BodyAttributes.modal_listener)
+	if (HAS_MODAL_LISTENER) return;
+	HAS_MODAL_LISTENER = true
 
 	const selector: string = 'dialog.c-modal[open]'
 	const modals: HTMLDialogElement[] = []
@@ -148,9 +152,14 @@ function init_modal_listener(): void {
 
 	event_add_listener(document, 'scroll', () => {
 		if (array_length(modals) == 0) {
+
+			// TODO: use 'document_root()'
+			// TODO: use 'window_scroll_y()'
 			scroll_top = window.scrollY || element_scroll_top(document.documentElement)
 			return
 		}
+
+		// TODO: use 'window_scrollto()'
 		window.scrollTo({
 			top: scroll_top,
 			behavior: 'instant'
@@ -245,7 +254,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 	function fix_position(): void {
 		const modal_rect = element_rect(modal_ref)
 		const screen_width = element_client_width(document.body)
-		const screen_height = window.innerHeight
+		const screen_height = window.innerHeight // TODO: use 'window_innerheight'
 
 		if (rect_left(modal_rect) < 8) set_left(8)
 		if (rect_top(modal_rect) < 8) set_top(8)

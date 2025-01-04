@@ -107,6 +107,8 @@ const ColorPickerBody: ParentComponent<{
 			: string_padstart(number_to_string(math_round(opacity() / 100 * 255), 16), 2, '0')
 		;
 		const hex_color = string_touppercase(hsl_to_hex(get_hsl_color()) + $opacity)
+
+		// FIXME: this is super slow especially when the color props changes
 		if (props.is_colorpicker_open) props.on_update_color?.(hex_color as HEXColor)
 		return hex_color
 	})
