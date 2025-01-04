@@ -7,14 +7,14 @@ import { CornerData } from "@/enums/corner"
 import { LocalStorageKeys } from "@/enums/storage"
 import { ThemeData } from "@/enums/theme"
 import { storage_set, storage_get } from "@/utils/storage"
-import { attr_set, attr_set_if_exist } from "@/utils/attributes"
+import { attr_set, attr_set_if_exist, classlist_module } from "@/utils/attributes"
 import { DEFAULT_TASK_LIST, SIZE_SIDE_NAVIGATION_NONE, TASKS_PAGES } from "./_constants"
 import { is_window_media_matches, window_match_media } from "@/utils/window"
 import { event_add_listener, event_current_target } from '@/utils/event'
 import { timeout_clear, timeout_set, wait } from "@/utils/timeout"
 import { RoutesLinks, ExternalLinks } from "@/enums/links"
 import { url_encode } from "@/utils/url"
-import { add_classlist_module, element_blur, element_focus } from "@/utils/element"
+import { element_blur, element_focus } from "@/utils/element"
 import { string_replace, string_trim } from "@/utils/string"
 import { array_filter, array_includes, array_length, array_push, array_slice } from "@/utils/array"
 import { regex_test } from "@/utils/regex"
@@ -332,14 +332,14 @@ const _: VoidComponent<{
 		<Tooltip>
 			<AppBar
 				data-search={attr_set_if_exist(is_searching())}
-				classList={add_classlist_module(CSS.appbar)}
+				classList={classlist_module(CSS.appbar)}
 				leading={<>
 					<IconButton
 						data-tooltip={is_side_navigation_hidden()
 							? "Open navigation"
 							: `${props.is_side_navigation_expanded? 'Shrink' : 'Expand'} navigation`
 						}
-						classList={add_classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
+						classList={classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
 						onClick={(ev) => {
 							if (is_side_navigation_hidden()) return openDrawer(ev, drawer_navigation_ref)
 							command(Commands.toggle_navigation_expand)
@@ -356,7 +356,7 @@ const _: VoidComponent<{
 							set_is_searching(true)
 							element_focus(searchtextfield_ref)
 						}}
-						classList={add_classlist_module(CSS.appbar_search_btn)}
+						classList={classlist_module(CSS.appbar_search_btn)}
 						code={0xEDDF}
 					/>
 					<IconButton
@@ -370,7 +370,7 @@ const _: VoidComponent<{
 					/>
 					<IconButton
 						data-tooltip="Settings"
-						classList={add_classlist_module(CSSAnimation.btn_rotate_icon)}
+						classList={classlist_module(CSSAnimation.btn_rotate_icon)}
 						focused={is_menu_settings_open()}
 						onClick={ev => open_menu(ev, menu_settings_ref, {
 							anchor: event_current_target(ev),
@@ -443,7 +443,7 @@ const _: VoidComponent<{
 			header={<Tooltip>
 				<IconButton
 					data-tooltip="Close navigation"
-					classList={add_classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
+					classList={classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
 					onClick={() => close_drawer(drawer_navigation_ref)}
 					code={0xEAFF}
 				/>

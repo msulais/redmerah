@@ -7,9 +7,9 @@ import { Commands, Pages, SortBy, SortMode } from "./_enums"
 import { get_current_date, date_year, date_text_YMD_HM, date_out_range_YMD_HM } from "@/utils/datetime"
 import { event_current_target, event_prevent_default, event_stop_propagation } from "@/utils/event"
 import { DEFAULT_TASK_LIST } from "./_constants"
-import { attr_set_if_exist } from "@/utils/attributes"
+import { attr_set_if_exist, classlist_module } from "@/utils/attributes"
 import { string_replace, string_starts_with, string_totitlecase, string_trim } from "@/utils/string"
-import { add_classlist_module, element_focus } from "@/utils/element"
+import { element_focus } from "@/utils/element"
 import { is_number } from "@/utils/typecheck"
 import { file_open, file_read_as_text } from "@/utils/file"
 import { url_create, url_revoke } from "@/utils/url"
@@ -224,7 +224,7 @@ const AppbarTasks: VoidComponent<{
 
 	return (<>
 		<AppBar
-			classList={add_classlist_module(CSS.body_appbar)}
+			classList={classlist_module(CSS.body_appbar)}
 			leading={props.leading}
 			headline={props.headline}
 			trailing={<Tooltip>
@@ -426,7 +426,7 @@ const TaskItem: VoidComponent<{
 				props.on_context_menu(ev)
 			}
 		}}
-		classList={add_classlist_module(CSS.body_task_item)}
+		classList={classlist_module(CSS.body_task_item)}
 		open={array_length(task().subtasks) > 0}>
 		<For each={task().subtasks}>{(subtask, index) => <CheckBox
 			checked={subtask.complete}
@@ -1158,7 +1158,7 @@ const _: VoidComponent<{
 		})
 
 		return (<List
-			classList={add_classlist_module(CSS.body_file_list_item)}
+			classList={classlist_module(CSS.body_file_list_item)}
 			trailing={<>
 				<IconButton
 					data-tooltip={"View file" + (is_type_not_supported()? ' (not supported)' : '')}
@@ -1232,7 +1232,7 @@ const _: VoidComponent<{
 			ref={r => dialog_edittask_ref = r}
 			header='Edit task'
 			style={{width: '500px'}}
-			classList={add_classlist_module(CSS.body_dialog_edit)}
+			classList={classlist_module(CSS.body_dialog_edit)}
 			actions={<>
 				<Button
 					variant={ButtonVariant.tonal}

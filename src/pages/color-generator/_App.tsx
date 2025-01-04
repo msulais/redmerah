@@ -5,7 +5,7 @@ import type { HEXColor, RGBColor } from '@/types/color'
 import type { Palette } from './_types'
 import { timeout_clear, timeout_set } from '@/utils/timeout'
 import { generate_color, hex_to_rgb, is_color_valid } from '@/utils/color'
-import { add_classlist_module, element_by_id } from '@/utils/element'
+import { element_by_id } from '@/utils/element'
 import { DatabaseNames, LocalStorageKeys } from '@/enums/storage'
 import { storage_get, storage_set } from '@/utils/storage'
 import { ElementIds } from '@/enums/ids'
@@ -18,6 +18,7 @@ import { navigator_clipboard_writetext } from '@/utils/navigator'
 import { promise_done } from '@/utils/object'
 import { math_round } from '@/utils/math'
 import { event_current_target } from '@/utils/event'
+import { classlist_module } from '@/utils/attributes'
 
 import {Tooltip} from '@/components/Tooltip'
 import Divider from '@/components/Divider'
@@ -223,7 +224,7 @@ const _: VoidComponent = () => {
 				palette_list={palette_list()}
 			/>}
 			floating_action_button={<FloatingActionButton
-				classList={add_classlist_module(CSS.app_fab)}
+				classList={classlist_module(CSS.app_fab)}
 				variant={ButtonVariant.filled}
 				onClick={(ev) => open_colorpicker(ev, colorpicker_ref()!, {anchor: event_current_target(ev)})}>
 				{palette.seed}

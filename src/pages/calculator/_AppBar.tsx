@@ -1,7 +1,6 @@
 import { createMemo, createSignal, For, onMount, type VoidComponent } from "solid-js"
 
 import type { Settings } from "./_types"
-import { add_classlist_module } from "@/utils/element"
 import { event_add_listener, event_current_target } from "@/utils/event"
 import { is_window_media_matches, window_match_media } from "@/utils/window"
 import { CALCULATOR_TYPES, SIZE_SIDE_NAVIGATION_NONE, SIZE_SIDE_NOTEBOOK_NONE } from "./_constants"
@@ -9,7 +8,7 @@ import { RoutesLinks, ExternalLinks } from "@/enums/links"
 import { url_encode } from "@/utils/url"
 import { CornerData } from "@/enums/corner"
 import { ThemeData } from "@/enums/theme"
-import { attr_set } from "@/utils/attributes"
+import { attr_set, classlist_module } from "@/utils/attributes"
 import { RootAttributes } from "@/enums/attributes"
 import { LocalStorageKeys } from "@/enums/storage"
 import { array_includes } from "@/utils/array"
@@ -360,7 +359,7 @@ const _: VoidComponent<{
 				header={<Tooltip>
 					<IconButton
 						data-tooltip="Close navigation"
-						classList={add_classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
+						classList={classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
 						onClick={() => close_drawer(drawer_navigation_ref)}
 						code={0xEAFF}
 					/>
@@ -376,7 +375,7 @@ const _: VoidComponent<{
 				</DrawerItem>}</For>
 			</Drawer>
 			<Drawer
-				classList={add_classlist_module(CSS.appbar_notebook)}
+				classList={classlist_module(CSS.appbar_notebook)}
 				header={<>
 					<Tooltip>
 						<IconButton
@@ -408,7 +407,7 @@ const _: VoidComponent<{
 							? "Open navigation"
 							: "Expand/shrink navigation"
 						}
-						classList={add_classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
+						classList={classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
 						onClick={(ev) => {
 							if (is_sidenavigation_hidden()) return openDrawer(ev, drawer_navigation_ref)
 							command(Commands.toggle_navigation_expand)
@@ -430,7 +429,7 @@ const _: VoidComponent<{
 					/>
 					<IconButton
 						data-tooltip="Settings"
-						classList={add_classlist_module(CSSAnimation.btn_rotate_icon)}
+						classList={classlist_module(CSSAnimation.btn_rotate_icon)}
 						focused={is_menu_settings_open()}
 						onClick={(ev) => open_menu(ev, menu_settings_ref, {
 							anchor: event_current_target(ev),

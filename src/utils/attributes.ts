@@ -63,3 +63,11 @@ export function attr_toggle(element: Element, qualifiedName: string, force?: boo
 export function classlist(...classname: (string | undefined | null)[]): string {
 	return string_trim(array_join(array_filter(classname, name => is_string(name)), ' '))
 }
+
+export function classlist_module(...arr: string[]): Record<string, boolean> {
+	const classlist: Record<string, boolean> = {}
+	for (const i in arr) {
+		classlist[arr[i]] = true
+	}
+	return classlist
+}

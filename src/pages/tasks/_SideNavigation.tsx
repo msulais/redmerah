@@ -3,7 +3,7 @@ import { TransitionGroup } from "solid-transition-group"
 
 import type { Settings, TaskList } from "./_types"
 import { DEFAULT_TASK_LIST, TASKS_PAGES } from "./_constants"
-import { add_classlist_module, element_animate, element_first_child } from "@/utils/element"
+import { element_animate, element_first_child } from "@/utils/element"
 import { Commands, Pages } from "./_enums"
 import { event_prevent_default } from "@/utils/event"
 import { AnimationEffectTiming } from "@/enums/animation"
@@ -16,6 +16,7 @@ import Emoji from "@/components/Emoji"
 import Menu, { close_menu, MenuItem, MenuPosition, open_menu } from "@/components/Menu"
 import SideNavigation, { SideNavigationItem } from "@/components/SideNavigation"
 import CSS from './_styles.module.scss'
+import { classlist_module } from "@/utils/attributes"
 
 const _: VoidComponent<{
 	expanded: boolean
@@ -98,7 +99,7 @@ const _: VoidComponent<{
 
 	return (<Tooltip><SideNavigation
 		style={{"padding-top": '0'}}
-		classList={add_classlist_module(CSS.side_navigation)}
+		classList={classlist_module(CSS.side_navigation)}
 		expanded={expanded()}
 		footer={<Footer />}>
 		<TransitionGroup

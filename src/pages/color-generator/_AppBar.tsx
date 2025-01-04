@@ -10,11 +10,10 @@ import { storage_set, storage_get } from "@/utils/storage"
 import { RoutesLinks, ExternalLinks } from "@/enums/links"
 import { date_year } from "@/utils/datetime"
 import { url_encode } from "@/utils/url"
-import { add_classlist_module } from "@/utils/element"
 import { promise_done } from "@/utils/object"
 import { navigator_clipboard_writetext, navigator_share } from "@/utils/navigator"
 import { array_includes, array_join, array_length } from "@/utils/array"
-import { attr_set } from "@/utils/attributes"
+import { attr_set, classlist_module } from "@/utils/attributes"
 import { event_current_target } from "@/utils/event"
 import { timeout_clear, timeout_set, wait } from "@/utils/timeout"
 import logo_redmerah from '@/assets/logo.svg'
@@ -254,7 +253,7 @@ const _: VoidComponent<{
 				trailing={<>
 					<Button
 						data-tooltip="Select color"
-						classList={add_classlist_module(CSS.appbar_select_color)}
+						classList={classlist_module(CSS.appbar_select_color)}
 						variant={ButtonVariant.filled}
 						onClick={(ev) => open_colorpicker(ev, props.colorpicker_ref, {anchor: event_current_target(ev)})}>
 						{props.seed}
@@ -278,7 +277,7 @@ const _: VoidComponent<{
 					/>
 					<IconButton
 						data-tooltip="Open settings"
-						classList={add_classlist_module(CSSAnimation.btn_rotate_icon)}
+						classList={classlist_module(CSSAnimation.btn_rotate_icon)}
 						focused={is_menu_settings_open()}
 						onClick={ev => open_menu(ev, menu_settings_ref, { anchor: event_current_target(ev) })}
 						code={0xEE0F}

@@ -1,11 +1,11 @@
 import { For, type VoidComponent } from "solid-js";
 
-import { add_classlist_module } from "@/utils/element";
+import { classlist_module } from "@/utils/attributes";
 import { Commands, Pages } from "./_enums";
+import { PAGES } from "./_constants";
 
 import SideNavigation, { SideNavigationItem } from "@/components/SideNavigation";
 import CSS from './_styles.module.scss'
-import { PAGES } from "./_constants";
 
 const _: VoidComponent<{
 	page: Pages
@@ -13,7 +13,7 @@ const _: VoidComponent<{
 }> = (props) => {
 	return (<SideNavigation
 		style={{"padding-top": '0'}}
-		classList={add_classlist_module(CSS.side_navigation)}
+		classList={classlist_module(CSS.side_navigation)}
 		expanded={true}>
 		<For each={PAGES}>{page =>
 			<SideNavigationItem

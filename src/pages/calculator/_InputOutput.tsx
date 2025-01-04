@@ -2,8 +2,8 @@ import { createEffect, createMemo, createSignal, For, Match, Show, Switch, type 
 
 import type { CalculatorInput, CalculatorOutput, DateCalculatorInput, Settings } from "./_types"
 import { CalculatorType, Commands, DateOperation, DecimalNumberFormat, NumberType } from "./_enums"
-import { add_classlist_module, element_focus } from "@/utils/element"
-import { attr_set_if_exist, classlist } from "@/utils/attributes"
+import { element_focus } from "@/utils/element"
+import { classlist_module, attr_set_if_exist, classlist } from "@/utils/attributes"
 import { CONVERTER_TYPES } from "./_constants"
 import { ConverterType, UNIT_ANGLE, UNIT_AREA, UNIT_FREQUENCY, UNIT_LENGTH, UNIT_PRESSURE, UNIT_TEMPERATURE, UNIT_TIME, UNIT_VOLUME, UNIT_WEIGHT, type ConverterUnit } from "./_converter"
 import { string_length, string_match, string_substring, string_totitlecase, string_touppercase, string_trim } from "@/utils/string"
@@ -50,7 +50,7 @@ const ActionButtons: ParentComponent<JSX.HTMLAttributes<HTMLDivElement> & {
 				M
 			</Button>
 			<Menu
-				classList={add_classlist_module(CSS.input_output_memory_menu)}
+				classList={classlist_module(CSS.input_output_memory_menu)}
 				on_toggle_open={(v) => set_is_menu_memory_open(v)}
 				ref={r => menu_memory_ref = r}>
 				<p>Memory value:</p>
@@ -186,8 +186,8 @@ const BasicCalculator: VoidComponent<{
 		<div class={CSS.input_output_basic_buttons}>
 			<Button onClick={() => add_char('%')}>%</Button>
 			<Button onClick={() => add_char('√')}>√</Button>
-			<Button onClick={() => clear()} classList={add_classlist_module(CSS.input_output_remove_symbol)}>C</Button>
-			<Button onClick={() => backspace()} classList={add_classlist_module(CSS.input_output_remove_symbol)}><Icon code={0xE199} /></Button>
+			<Button onClick={() => clear()} classList={classlist_module(CSS.input_output_remove_symbol)}>C</Button>
+			<Button onClick={() => backspace()} classList={classlist_module(CSS.input_output_remove_symbol)}><Icon code={0xE199} /></Button>
 
 			<Button onClick={() => add_char('7')} variant={ButtonVariant.tonal}>7</Button>
 			<Button onClick={() => add_char('8')} variant={ButtonVariant.tonal}>8</Button>
@@ -342,7 +342,7 @@ const ScientificCalculator: VoidComponent<{
 				Function
 			</Button>
 			<Menu
-				classList={add_classlist_module(CSS.input_output_scientific_function_menu)}
+				classList={classlist_module(CSS.input_output_scientific_function_menu)}
 				ref={r => menu_function_ref = r}
 				on_toggle_open={(v) => set_is_menu_function_open(v)}>
 				<div class={CSS.input_output_trigonometry_options}>
@@ -373,8 +373,8 @@ const ScientificCalculator: VoidComponent<{
 			<Button onClick={() => add_char('mod')}>mod</Button>
 			<Button onClick={() => add_char('(')}>{'('}</Button>
 			<Button onClick={() => add_char(')')}>{')'}</Button>
-			<Button onClick={() => clear()} classList={add_classlist_module(CSS.input_output_remove_symbol)}>C</Button>
-			<Button onClick={() => backspace()} classList={add_classlist_module(CSS.input_output_remove_symbol)}><Icon code={0xE199} /></Button>
+			<Button onClick={() => clear()} classList={classlist_module(CSS.input_output_remove_symbol)}>C</Button>
+			<Button onClick={() => backspace()} classList={classlist_module(CSS.input_output_remove_symbol)}><Icon code={0xE199} /></Button>
 
 			<Button onClick={() => add_char('%')}>%</Button>
 			<Button onClick={() => add_char('10^')}>10^</Button>
@@ -675,8 +675,8 @@ const ConverterCalculator: VoidComponent<{
 		</ActionButtons>
 		<div class={CSS.input_output_converter_buttons}>
 			<Button onClick={() => plus_minus()}>±</Button>
-			<Button onClick={() => clear()} classList={add_classlist_module(CSS.input_output_remove_symbol)}>C</Button>
-			<Button onClick={() => backspace()} classList={add_classlist_module(CSS.input_output_remove_symbol)}><Icon code={0xE199} /></Button>
+			<Button onClick={() => clear()} classList={classlist_module(CSS.input_output_remove_symbol)}>C</Button>
+			<Button onClick={() => backspace()} classList={classlist_module(CSS.input_output_remove_symbol)}><Icon code={0xE199} /></Button>
 
 			<Button onClick={() => add_char('7')} variant={ButtonVariant.tonal}>7</Button>
 			<Button onClick={() => add_char('8')} variant={ButtonVariant.tonal}>8</Button>
@@ -906,8 +906,8 @@ const ProgrammerCalculator: VoidComponent<{
 			<div />
 			<Button onClick={() => add_char('(')}>{'('}</Button>
 			<Button onClick={() => add_char(')')}>{')'}</Button>
-			<Button onClick={() => clear()} classList={add_classlist_module(CSS.input_output_remove_symbol)}>C</Button>
-			<Button onClick={() => backspace()} classList={add_classlist_module(CSS.input_output_remove_symbol)}><Icon code={0xE199} /></Button>
+			<Button onClick={() => clear()} classList={classlist_module(CSS.input_output_remove_symbol)}>C</Button>
+			<Button onClick={() => backspace()} classList={classlist_module(CSS.input_output_remove_symbol)}><Icon code={0xE199} /></Button>
 
 			<Button disabled={!is_hex()} onClick={() => add_char('F')} variant={ButtonVariant.tonal}>F</Button>
 			<Button onClick={() => add_char('not(')}>not</Button>

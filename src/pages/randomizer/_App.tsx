@@ -11,11 +11,11 @@ import { PERSON_NAMES, TEAMS_NAMES, ANIMALS, LOREM_IPSUM, DEFAULT_LISTS } from "
 import { ObjectStoreNames, ObjectStoreKeys, type ObjectStoreLists, type ObjectStoreSettings, type ObjectStoreLastResult } from "./_storage";
 import { string_tolowercase, string_touppercase, string_totogglecase, string_totitlecase, string_length, string_padstart, string_trim, string_split, string_locale_compare } from "@/utils/string";
 import { url_create, url_download_file, url_revoke } from "@/utils/url";
-import { add_classlist_module, element_focus } from "@/utils/element";
+import { element_focus } from "@/utils/element";
 import { file_open, file_read_as_text } from "@/utils/file";
 import { IDB, idb_store_delete, idb_store_put } from "@/utils/indexeddb";
 import { DatabaseNames } from "@/enums/storage";
-import { attr_remove, attr_set, attr_set_if_exist } from "@/utils/attributes";
+import { attr_remove, attr_set, attr_set_if_exist, classlist_module } from "@/utils/attributes";
 import { BodyAttributes } from "@/enums/attributes";
 import { remove_splash_screen } from "@/scripts/splash";
 import { array_concat, array_filter, array_find_index, array_includes, array_join, array_length, array_map, array_push, array_slice, array_sort, array_splice } from "@/utils/array";
@@ -1293,7 +1293,7 @@ const _: VoidComponent = () => {
 				header="Delete list">
 				Are you sure want to delete this list?
 				<List
-					classList={add_classlist_module(CSS.app_delete_list)}
+					classList={classlist_module(CSS.app_delete_list)}
 					subtitle={array_length(selected_list_to_delete().items) + ' item' + (array_length(selected_list_to_delete().items) > 1? 's' : '')}>
 					{selected_list_to_delete().name}
 				</List>
@@ -1488,7 +1488,7 @@ const _: VoidComponent = () => {
 				on_change_randomizer={on_change_randomizer}
 			/>}
 			floating_action_button={<FloatingActionButton
-				classList={add_classlist_module(CSSAnimation.btn_rotate_full_icon, CSS.app_fab)}
+				classList={classlist_module(CSSAnimation.btn_rotate_full_icon, CSS.app_fab)}
 				data-g-keep-pointer-event={attr_set_if_exist(is_generating())}
 				variant={ButtonVariant.filled}
 				onClick={() => {
@@ -1497,7 +1497,7 @@ const _: VoidComponent = () => {
 				}}>
 				<Icon
 					filled
-					classList={add_classlist_module(CSS.app_generate_icon)}
+					classList={classlist_module(CSS.app_generate_icon)}
 					data-rotate={attr_set_if_exist(is_generating())}
 					code={0xE143}
 				/>

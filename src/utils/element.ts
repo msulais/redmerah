@@ -109,15 +109,6 @@ export function element_focusable(el: HTMLElement): boolean {
 	return false
 }
 
-// TODO: move to 'attributes.ts'
-export function add_classlist_module(...arr: string[]): Record<string, boolean> {
-	const classlist: Record<string, boolean> = {}
-	for (const i in arr) {
-		classlist[arr[i]] = true
-	}
-	return classlist
-}
-
 /** Creates an instance of the element for the specified tag */
 export function element_create<K extends keyof HTMLElementTagNameMap>(tagname: K, options?: ElementCreationOptions): HTMLElementTagNameMap[K] {
 	return document.createElement(tagname, options)

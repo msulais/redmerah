@@ -5,13 +5,12 @@ import { CornerData } from "@/enums/corner"
 import { LocalStorageKeys } from "@/enums/storage"
 import { ThemeData } from "@/enums/theme"
 import { storage_set, storage_get } from "@/utils/storage"
-import { attr_set } from "@/utils/attributes"
+import { attr_set, classlist_module } from "@/utils/attributes"
 import { is_window_media_matches, window_match_media } from "@/utils/window"
 import { event_add_listener, event_current_target } from '@/utils/event'
 import { Commands, Pages } from "./_enums"
 import { PAGES, SIZE_SIDE_NAVIGATION_NONE } from "./_constants"
 import { wait } from "@/utils/timeout"
-import { add_classlist_module } from "@/utils/element"
 import { RoutesLinks, ExternalLinks } from "@/enums/links"
 import { url_encode } from "@/utils/url"
 import { is_mobile } from "@/utils/platforms"
@@ -278,7 +277,7 @@ const _: VoidComponent<{
 				<Show when={isSideNavigationHidden()}>
 					<IconButton
 						data-tooltip="Open navigation"
-						classList={add_classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
+						classList={classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
 						onClick={(ev) => {
 							openDrawer(ev, drawer_navigation_ref)
 						}}
@@ -315,7 +314,7 @@ const _: VoidComponent<{
 			header={<Tooltip>
 				<IconButton
 					data-tooltip="Close navigation"
-					classList={add_classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
+					classList={classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
 					code={0xEAFF}
 					onClick={() => close_drawer(drawer_navigation_ref)}
 				/>

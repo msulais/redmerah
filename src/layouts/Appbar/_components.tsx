@@ -11,11 +11,11 @@ import CSS from './_index.module.scss'
 import type { HEXColor, RGBColor } from "@/types/color";
 import { storage_get, storage_set } from "@/utils/storage";
 import { generate_color, hex_to_rgb, is_color_valid } from "@/utils/color";
-import { attr_set } from "@/utils/attributes";
+import { attr_set, classlist_module } from "@/utils/attributes";
 import { ExternalLinks, RoutesLinks } from "@/enums/links";
 import { LocalStorageKeys } from "@/enums/storage";
 import { RootAttributes } from "@/enums/attributes";
-import { add_classlist_module, element_closest, element_by_id } from "@/utils/element";
+import { element_closest, element_by_id } from "@/utils/element";
 import { ElementIds } from "@/enums/ids";
 import { CornerData } from "@/enums/corner";
 import { ThemeData } from "@/enums/theme";
@@ -39,7 +39,7 @@ export const NavigationMenu: VoidComponent<NavigationMenuProps> = (props) => {
 		<Tooltip>
 			<IconButton
 				data-tooltip="Open navigation menu"
-				classList={add_classlist_module(CSS.mobile_only)}
+				classList={classlist_module(CSS.mobile_only)}
 				focused={is_menu_navigation_open()}
 				onClick={(ev) => open_menu(ev, menu_navigation_ref, {
 					anchor: event_current_target(ev),
@@ -171,7 +171,7 @@ export const SettingsElement: VoidComponent = () => {
 		<Tooltip>
 			<IconButton
 				data-tooltip="Open settings"
-				classList={add_classlist_module(CSSAnimation.btn_rotate_icon)}
+				classList={classlist_module(CSSAnimation.btn_rotate_icon)}
 				focused={is_menu_settings_open()}
 				onClick={(ev) => open_menu(ev, menu_settings_ref, {
 					anchor: event_current_target(ev),

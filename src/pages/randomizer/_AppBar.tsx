@@ -3,8 +3,7 @@ import type { SetStoreFunction } from "solid-js/store"
 
 import type { Settings } from "./_types"
 import { timeout_clear, timeout_set, wait } from "@/utils/timeout"
-import { attr_set, attr_set_if_exist } from "@/utils/attributes"
-import { add_classlist_module } from "@/utils/element"
+import { attr_set, attr_set_if_exist, classlist_module } from "@/utils/attributes"
 import { RootAttributes } from "@/enums/attributes"
 import { ExternalLinks, RoutesLinks } from "@/enums/links"
 import { ThemeData } from "@/enums/theme"
@@ -525,7 +524,7 @@ const _: Component<{
 			header={<Tooltip>
 				<IconButton
 					data-tooltip="Close navigation"
-					classList={add_classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
+					classList={classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
 					onClick={() => close_drawer(drawer_navigation_ref)}
 					code={0xEAFF}
 				/>
@@ -556,7 +555,7 @@ const _: Component<{
 							if (is_sidenavigation_hidden()) return openDrawer(ev, drawer_navigation_ref)
 							command(Commands.toggle_navigation_expand)
 						}}
-						classList={add_classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
+						classList={classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
 						code={0xEAFF}
 					/>
 					<img width="32" src={logo.src} alt="Randomizer" />
@@ -564,7 +563,7 @@ const _: Component<{
 				headline="Randomizer"
 				trailing={<>
 					<Button
-						classList={add_classlist_module(CSSAnimation.btn_rotate_full_icon, CSS.appbar_generate_btn)}
+						classList={classlist_module(CSSAnimation.btn_rotate_full_icon, CSS.appbar_generate_btn)}
 						data-g-keep-pointer-event={attr_set_if_exist(props.is_generating)}
 						variant={ButtonVariant.filled}
 						onClick={(ev) => {
@@ -573,7 +572,7 @@ const _: Component<{
 						}}>
 						<Icon
 							filled
-							classList={add_classlist_module(CSS.appbar_generate_icon)}
+							classList={classlist_module(CSS.appbar_generate_icon)}
 							data-rotate={attr_set_if_exist(props.is_generating)}
 							code={0xE143}
 						/>
@@ -590,7 +589,7 @@ const _: Component<{
 					/>
 					<IconButton
 						data-tooltip="Settings"
-						classList={add_classlist_module(CSSAnimation.btn_rotate_icon)}
+						classList={classlist_module(CSSAnimation.btn_rotate_icon)}
 						focused={is_menu_settings_open()}
 						onClick={async (ev) => {
 							init_inputs()

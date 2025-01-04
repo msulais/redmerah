@@ -1,12 +1,12 @@
-import { For, type VoidComponent } from "solid-js";
+import { For, type VoidComponent } from "solid-js"
 
-import { add_classlist_module } from "@/utils/element";
-import type { CalculatorType } from "./_enums";
-import { CALCULATOR_TYPES } from "./_constants";
+import type { CalculatorType } from "./_enums"
+import { CALCULATOR_TYPES } from "./_constants"
+import { classlist_module } from "@/utils/attributes"
 
-import Icon from "@/components/Icon";
-import {Tooltip} from "@/components/Tooltip";
-import SideNavigation, { SideNavigationItem } from "@/components/SideNavigation";
+import Icon from "@/components/Icon"
+import {Tooltip} from "@/components/Tooltip"
+import SideNavigation, { SideNavigationItem } from "@/components/SideNavigation"
 import CSS from './_styles.module.scss'
 
 const _: VoidComponent<{
@@ -14,7 +14,7 @@ const _: VoidComponent<{
 	on_change_calculator: (type: CalculatorType) => void
 	expanded: boolean
 }> = (props) => {
-	return (<SideNavigation expanded={props.expanded} classList={add_classlist_module(CSS.side_navigation)}>
+	return (<SideNavigation expanded={props.expanded} classList={classlist_module(CSS.side_navigation)}>
 		<Tooltip>
 			<For each={CALCULATOR_TYPES}>{ r => <SideNavigationItem
 				data-tooltip={!props.expanded? r.text : undefined}
