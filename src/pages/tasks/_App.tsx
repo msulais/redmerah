@@ -19,7 +19,7 @@ import { number_parse } from "@/utils/number"
 import { remove_splash_screen } from "@/scripts/splash"
 import { AppColors } from "@/enums/colors"
 
-import { TextTooltip } from "@/components/Tooltip"
+import { Tooltip } from "@/components/Tooltip"
 import Icon from "@/components/Icon"
 import Button, { ButtonVariant, IconButton } from "@/components/Button"
 import TextField, { change_textfield_value, TextFieldButton } from "@/components/TextField"
@@ -1459,11 +1459,11 @@ const _: VoidComponent = () => {
 					Add label
 				</Button>
 			</>}>
-			<TextTooltip>
+			<Tooltip>
 				<For each={labels} fallback={"No labels"}>{label =>
 					<Show when={label != undefined}><LabelItem {...label!}/></Show>
 				}</For>
-			</TextTooltip>
+			</Tooltip>
 		</Dialog>
 		<Dialog
 			ref={r => dialog_newlabel_ref = r}

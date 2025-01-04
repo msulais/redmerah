@@ -1,4 +1,4 @@
-import { createMemo, createSignal, For, onMount, Show, type VoidComponent } from "solid-js"
+import { createMemo, createSignal, createUniqueId, For, onMount, Show, type VoidComponent } from "solid-js"
 import { createStore } from "solid-js/store"
 
 import type { Gradient, GradientData, RadialGradient, Settings } from "./_type"
@@ -18,7 +18,7 @@ import { rect_width } from "@/utils/rect"
 
 import Icon from "@/components/Icon"
 import Button, { ButtonVariant, IconButton, SquareButton } from "@/components/Button"
-import TextTooltip, { RichTooltip } from "@/components/Tooltip"
+import Tooltip, { PopoverTooltip } from "@/components/Tooltip"
 import CheckBox from "@/components/CheckBox"
 import TextField, { change_textfield_value, NumberTextField, TextFieldButton } from "@/components/TextField"
 import Menu, { close_menu, MenuDivider, MenuItem, MenuPosition, open_menu } from "@/components/Menu"
@@ -58,12 +58,11 @@ const GradientDataList: VoidComponent<{
 	}
 
 	const GradientDataItem: VoidComponent<{data: GradientData; index: number}> = ($props) => {
-		return (<RichTooltip
-			tooltip={<For each={$props.data.gradients}>{gradient =>
-				<pre><code>{gradient_to_css_text(gradient, settings().color_model, true)}</code></pre>
-			}</For>}>
+		const id = createUniqueId()
+		return (<>
 			<SquareButton
 				focused={selected_gradientdata_index() == $props.index && is_menu_action_open()}
+				data-rich-tooltip={id}
 				onClick={(ev) => {
 					set_selected_gradientdata_index($props.index)
 					open_menu(ev, menu_action_ref, {
@@ -73,7 +72,12 @@ const GradientDataList: VoidComponent<{
 				}}>
 				<div data-gradient style={{"background-image": array_join(array_map($props.data.gradients, gradient => gradient_to_css_text(gradient)), ',')}}/>
 			</SquareButton>
-		</RichTooltip>)
+			<PopoverTooltip id={id}>
+				<For each={$props.data.gradients}>{gradient =>
+					<pre><code>{gradient_to_css_text(gradient, settings().color_model, true)}</code></pre>
+				}</For>
+			</PopoverTooltip>
+		</>)
 	}
 
 	const Menus: VoidComponent = () => (<>
@@ -110,9 +114,11 @@ const GradientDataList: VoidComponent<{
 	</>)
 
 	return (<div class={CSS.body_gradient_data_list}>
-		<For each={gradient_data()}>{(data, i) =>
-			<GradientDataItem index={i()} data={data}/>
-		}</For>
+		<Tooltip>
+			<For each={gradient_data()}>{(data, i) =>
+				<GradientDataItem index={i()} data={data}/>
+			}</For>
+		</Tooltip>
 		<Menus/>
 	</div>)
 }
@@ -469,7 +475,7 @@ const GradientControl: VoidComponent<{
 	</div>)
 
 	return (<div class={CSS.body_gradient_control}>
-		<TextTooltip>
+		<Tooltip>
 			<Control/>
 			<Show when={expanded()}>
 				<Options/>
@@ -477,7 +483,7 @@ const GradientControl: VoidComponent<{
 				<ColorStops/>
 				<Actions/>
 			</Show>
-		</TextTooltip>
+		</Tooltip>
 	</div>)
 }
 

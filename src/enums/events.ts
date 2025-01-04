@@ -13,7 +13,6 @@ export enum BodyEvents {
 
 	open_tooltip = 'on-open-text-tooltip',
 	close_tooltip = 'on-close-text-tooltip',
-	update_pointer_tooltip = 'on-update-pointer-text-tooltip',
 
 	/** @param emoji `Emoji` */
 	add_recent_emoji = 'on-add-recent-emoji',

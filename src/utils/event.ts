@@ -54,6 +54,15 @@ export function event_current_target<T extends Event, U, V>(
 	return event.currentTarget
 }
 
+export function event_target<T extends Event, U, V>(
+	event: T & {
+		currentTarget: U
+		target: V
+	}
+): V {
+	return event.target
+}
+
 export function event_call<T extends Event, U, V>(
 	event: T & { currentTarget: U; target: Element },
 	handler: V,

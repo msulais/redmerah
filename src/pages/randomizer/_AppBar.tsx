@@ -25,7 +25,7 @@ import redmerah_logo from '@/assets/logo.svg'
 
 import Icon from "@/components/Icon"
 import Button, { ButtonVariant, IconButton } from "@/components/Button"
-import { TextTooltip } from "@/components/Tooltip"
+import { Tooltip } from "@/components/Tooltip"
 import Menu, { MenuDivider, MenuHeader, MenuIndent, MenuItem, LinkMenuItem, SubMenu, close_submenu, close_menu, open_menu, SubMenuItem, SwitchMenuItem } from "@/components/Menu"
 import TextField, { NumberTextField, change_textfield_value } from "@/components/TextField"
 import Drawer, { close_drawer, DrawerItem, openDrawer } from "@/components/Drawer"
@@ -522,14 +522,14 @@ const _: Component<{
 
 	const Drawers: VoidComponent = () => (<>
 		<Drawer
-			header={<TextTooltip>
+			header={<Tooltip>
 				<IconButton
 					data-tooltip="Close navigation"
 					classList={add_classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
 					onClick={() => close_drawer(drawer_navigation_ref)}
 					code={0xEAFF}
 				/>
-			</TextTooltip>}
+			</Tooltip>}
 			ref={r => drawer_navigation_ref = r}>
 			<For each={RANDOMIZER_TYPES}>{r =>
 				<DrawerItem
@@ -547,7 +547,7 @@ const _: Component<{
 	</>)
 
 	return (<>
-		<TextTooltip>
+		<Tooltip>
 			<AppBar
 				leading={<>
 					<IconButton
@@ -624,7 +624,7 @@ const _: Component<{
 					/>
 				</>}
 			/>
-		</TextTooltip>
+		</Tooltip>
 		<Drawers/>
 		<Menus/>
 	</>)

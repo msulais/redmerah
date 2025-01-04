@@ -13,7 +13,7 @@ import { number_to_binary, number_format, number_parse, number_to_real_digit, nu
 import { regex_test } from "@/utils/regex"
 import { navigator_clipboard_writetext } from "@/utils/navigator"
 
-import { TextTooltip } from "@/components/Tooltip"
+import { Tooltip } from "@/components/Tooltip"
 import Icon from "@/components/Icon"
 import Button, { ButtonIndicatorPosition, ButtonVariant, IconButton } from "@/components/Button"
 import { NumberTextField } from "@/components/TextField"
@@ -1069,7 +1069,7 @@ const _: VoidComponent<{
 	const settings = createMemo(() => props.settings)
 	const memory = createMemo(() => props.memory)
 	return (<main class={CSS.input_output_main}>
-		<TextTooltip>
+		<Tooltip>
 			<Switch>
 				<Match when={calculator() == CalculatorType.basic}>
 					<BasicCalculator
@@ -1116,7 +1116,7 @@ const _: VoidComponent<{
 					/>
 				</Match>
 			</Switch>
-		</TextTooltip>
+		</Tooltip>
 	</main>)
 }
 

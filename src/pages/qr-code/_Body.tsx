@@ -13,7 +13,7 @@ import { promise_done } from "@/utils/object"
 import { array_length } from "@/utils/array"
 import { string_length, string_starts_with } from "@/utils/string"
 
-import TextTooltip from "@/components/Tooltip"
+import Tooltip from "@/components/Tooltip"
 import Icon from "@/components/Icon"
 import Button, { ButtonVariant, IconButton } from "@/components/Button"
 import TextField from "@/components/TextField"
@@ -166,7 +166,7 @@ const _: VoidComponent<{
 						<img ref={r => img_qrcode_ref = r} src={qrcode_image_src()!} alt="" />
 					</Show>
 					<div>
-						<TextTooltip>
+						<Tooltip>
 							<Show when={qrcode_image_src() != null}>
 								<IconButton
 									data-tooltip="Dismiss"
@@ -203,7 +203,7 @@ const _: VoidComponent<{
 									code={0xE354}
 								/>
 							</Show>
-						</TextTooltip>
+						</Tooltip>
 					</div>
 				</div>
 			</div>

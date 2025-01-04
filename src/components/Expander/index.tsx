@@ -9,7 +9,7 @@ import { event_call, event_current_target, event_prevent_default } from "@/utils
 import { rect_height } from "@/utils/rect"
 import { promise_done } from "@/utils/object"
 
-import TextTooltip from "@/components/Tooltip"
+import Tooltip from "@/components/Tooltip"
 import { RawIconButton } from "@/components/Button"
 import { List, RawList, type ListProps, type RawListProps } from "@/components/List"
 import './index.scss'
@@ -43,7 +43,7 @@ const ExpanderHeader: ParentComponent<ExpanderHeaderProps> = ($props) => {
 	return (<List
 		data-c-open={attr_set_if_exist(context?.is_open())}
 		data-c-variant={attr_set_if_exist(context?.variant(), context != null)}
-		trailing={<TextTooltip>
+		trailing={<Tooltip>
 			{props.trailing}
 			<Show when={props.use_expand_icon}>
 				<RawIconButton
@@ -57,7 +57,7 @@ const ExpanderHeader: ParentComponent<ExpanderHeaderProps> = ($props) => {
 					data-c-open={attr_set_if_exist(context?.is_open())}
 				/>
 			</Show>
-		</TextTooltip>}
+		</Tooltip>}
 		{...other}
 	/>)
 }
@@ -76,7 +76,7 @@ const RawExpanderHeader: ParentComponent<RawExpanderHeaderProps> = ($props) => {
 	return (<RawList
 		data-c-open={attr_set_if_exist(context?.is_open())}
 		data-c-variant={attr_set_if_exist(context?.variant(), context != null)}
-		trailing={<TextTooltip>
+		trailing={<Tooltip>
 			{props.trailing}
 			<Show when={props.use_expand_icon}>
 				<RawIconButton
@@ -90,7 +90,7 @@ const RawExpanderHeader: ParentComponent<RawExpanderHeaderProps> = ($props) => {
 					data-c-open={attr_set_if_exist(context?.is_open())}
 				/>
 			</Show>
-		</TextTooltip>}
+		</Tooltip>}
 		{...other}
 	/>)
 }

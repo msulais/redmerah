@@ -22,7 +22,7 @@ import { AppColors } from "@/enums/colors"
 
 import Divider from "@/components/Divider"
 import Icon from "@/components/Icon"
-import {TextTooltip} from "@/components/Tooltip"
+import {Tooltip} from "@/components/Tooltip"
 import Button, { ButtonVariant, IconButton } from "@/components/Button"
 import Emoji from "@/components/Emoji"
 import CheckBox from "@/components/CheckBox"
@@ -227,7 +227,7 @@ const AppbarTasks: VoidComponent<{
 			classList={add_classlist_module(CSS.body_appbar)}
 			leading={props.leading}
 			headline={props.headline}
-			trailing={<TextTooltip>
+			trailing={<Tooltip>
 				<Show when={props.is_any_task}>
 					<IconButton
 						data-tooltip="Sort by"
@@ -252,7 +252,7 @@ const AppbarTasks: VoidComponent<{
 						code={0xEAD9}
 					/>
 				</Show>
-			</TextTooltip>}
+			</Tooltip>}
 		/>
 		<Menus />
 		<Dialogs />
@@ -589,7 +589,7 @@ const SingleTaskList: VoidComponent<{
 			</Show>}
 			headline={get_headline()}
 		/>
-		<TextTooltip>
+		<Tooltip>
 			<For each={tasklist().tasks}>{(task, index) => <TaskItem
 				command={command}
 				task={task}
@@ -603,7 +603,7 @@ const SingleTaskList: VoidComponent<{
 				on_context_menu={ev => props.on_context_menu_task(ev, task, index())}
 				on_delete={ev => props.on_delete_task(ev, task, index())}
 			/>}</For>
-		</TextTooltip>
+		</Tooltip>
 		<Show when={!is_any_task()}><EmptyTasks page={page()} /></Show>
 		<Show when={is_any_task()}><div style={{flex: '1'}}></div></Show>
 		<form onSubmit={ev => {
@@ -753,7 +753,7 @@ const GroupTaskList: VoidComponent<{
 		/>)
 
 		return (<Show when={is_any_task()}>
-			<TextTooltip>
+			<Tooltip>
 				<Headline/>
 				<For each={tasklist().tasks}>{(task, index) =>
 					<Show when={task_condition(task)}>
@@ -772,7 +772,7 @@ const GroupTaskList: VoidComponent<{
 						/>
 					</Show>
 				}</For>
-			</TextTooltip>
+			</Tooltip>
 		</Show>)
 	}
 
@@ -1188,7 +1188,7 @@ const _: VoidComponent<{
 
 		return (<List
 			leading={<Icon style={{color: color() ?? undefined}} code={0xE407}/>}
-			trailing={<TextTooltip>
+			trailing={<Tooltip>
 				<IconButton
 					data-tooltip="Edit label"
 					onClick={ev => {
@@ -1222,7 +1222,7 @@ const _: VoidComponent<{
 					}}
 					code={0xE5E9}
 				/>
-			</TextTooltip>}>
+			</Tooltip>}>
 			{ name() }
 		</List>)
 	}
@@ -1286,14 +1286,14 @@ const _: VoidComponent<{
 				}}
 			/>
 			<div data-subtasks>
-				<TextTooltip>
+				<Tooltip>
 					<For each={selected_task_to_edit.task.subtasks}>{ (subtask, index) => <SubtaskItem
 						subtask={subtask}
 						tasklist_index={selected_task_to_edit.tasklist_index}
 						task_index={selected_task_to_edit.task_index}
 						subtask_index={index()}
 					/>}</For>
-				</TextTooltip>
+				</Tooltip>
 				<Button
 					onClick={ev => {
 						add_subtask_option = 'edit'
@@ -1337,7 +1337,7 @@ const _: VoidComponent<{
 						<Icon code={0xE01D}/>Add reminder
 					</Button>}>
 					<List
-						trailing={<TextTooltip>
+						trailing={<Tooltip>
 							<IconButton
 								data-tooltip="Change datetime reminder"
 								onClick={ev => {
@@ -1362,7 +1362,7 @@ const _: VoidComponent<{
 								}}
 								code={0xE01F}
 							/>
-						</TextTooltip>}
+						</Tooltip>}
 						leading={<Icon code={0xE025}/>}>
 						<span style={{
 							color: date_out_range_YMD_HM(
@@ -1377,7 +1377,7 @@ const _: VoidComponent<{
 			<Divider />
 			<Show when={!props.is_db_file_error}>
 				<div data-file>
-					<TextTooltip>
+					<Tooltip>
 						<For each={selected_task_to_edit.task.files}>{(file, index) =>
 							<FileItem
 								file={file}
@@ -1386,7 +1386,7 @@ const _: VoidComponent<{
 								tasklist_index={selected_task_to_edit.tasklist_index}
 							/>
 						}</For>
-					</TextTooltip>
+					</Tooltip>
 					<Button
 						onClick={() => {
 							const task_index = selected_task_to_edit.task_index

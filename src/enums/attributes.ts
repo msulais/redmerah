@@ -5,6 +5,7 @@ export enum RootAttributes {
 }
 
 export enum BodyAttributes {
+	// TODO: remove and use local variable instead
 	modal_listener = 'data-c-modal-listener',
 	popover_listener = 'data-c-popover-listener',
 	tooltip_listener = 'data-c-tooltip-listener',

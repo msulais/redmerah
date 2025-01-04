@@ -177,3 +177,7 @@ export function string_locale_compare(a: string, b: string): number {
 export function string_indexof(text: string, search_string: string, position?: number): number {
 	return text.indexOf(search_string, position)
 }
+
+export function string_css_escape(text: string): string {
+	return CSS.escape(text)
+}

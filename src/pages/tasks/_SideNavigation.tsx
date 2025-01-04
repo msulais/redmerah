@@ -10,7 +10,7 @@ import { AnimationEffectTiming } from "@/enums/animation"
 import { array_filter, array_includes, array_length } from "@/utils/array"
 import { promise_done } from "@/utils/object"
 
-import { TextTooltip } from "@/components/Tooltip"
+import { Tooltip } from "@/components/Tooltip"
 import Divider from "@/components/Divider"
 import Emoji from "@/components/Emoji"
 import Menu, { close_menu, MenuItem, MenuPosition, open_menu } from "@/components/Menu"
@@ -96,7 +96,7 @@ const _: VoidComponent<{
 		</Menu>
 	</>)
 
-	return (<TextTooltip><SideNavigation
+	return (<Tooltip><SideNavigation
 		style={{"padding-top": '0'}}
 		classList={add_classlist_module(CSS.side_navigation)}
 		expanded={expanded()}
@@ -127,7 +127,7 @@ const _: VoidComponent<{
 			</Show>
 		}</For>
 		<Menus/>
-	</SideNavigation></TextTooltip>)
+	</SideNavigation></Tooltip>)
 }
 
 export default _

@@ -1,8 +1,8 @@
-import { createSignal, For, type VoidComponent } from "solid-js"
+import { createSignal, createUniqueId, For, type VoidComponent } from "solid-js"
 
 import { number_safe } from "@/utils/number"
 
-import { RichTooltip, TextTooltip, TooltipPosition } from "@/components/Tooltip"
+import { PopoverTooltip, Tooltip, TooltipPosition } from "@/components/Tooltip"
 import Button, { ButtonVariant } from "@/components/Button"
 import CheckBox from "@/components/CheckBox"
 import { NumberTextField } from "@/components/TextField"
@@ -12,6 +12,7 @@ import { Page, Playground, PlaygroundOptions } from "../_Body"
 import { event_current_target } from "@/utils/event"
 
 const _: VoidComponent = () => {
+	const rich_tooltip_id = createUniqueId()
 	const [use_anchor, set_use_anchor] = createSignal<boolean>(false)
 	const [position, set_position] = createSignal<TooltipPosition>(TooltipPosition.center_top)
 	const [gap, set_gap] = createSignal<number>(40)
@@ -22,7 +23,7 @@ const _: VoidComponent = () => {
 		title="Tooltip"
 		description="A tooltip is a small, temporary window that appears when a user hovers over an element. It provides a brief explanation or description of the element's purpose or function. Tooltips are often used to clarify the meaning of icons, buttons, or other UI elements.">
 		<Playground>
-			<TextTooltip
+			<Tooltip
 				end_delay_duration={end_delay_duration()}
 				gap={gap()}
 				position={position()}
@@ -32,20 +33,12 @@ const _: VoidComponent = () => {
 					Hover me please
 					<Icon data-tooltip="This is icon" code={0xE4B2}/>
 				</Button>
-			</TextTooltip>
-			<RichTooltip
-				style={{width: '240px'}}
-				end_delay_duration={end_delay_duration()}
-				gap={gap()}
-				position={position()}
-				start_delay_duration={start_delay_duration()}
-				use_anchor={use_anchor()}
-				tooltip={<>
+				<Button data-rich-tooltip={rich_tooltip_id}>Rich tooltip</Button>
+				<PopoverTooltip id={rich_tooltip_id}>
 					<p style={{"margin-bottom": '8px'}}>Ullamco anim in magna ea ut labore velit ex occaecat elit voluptate laboris.</p>
 					<Button style={{color: 'rgb(var(--g-color-accent))'}} variant={ButtonVariant.tonal}>Learn more</Button>
-				</>}>
-				<Button>Rich tooltip</Button>
-			</RichTooltip>
+				</PopoverTooltip>
+			</Tooltip>
 		</Playground>
 		<PlaygroundOptions>
 			<Dropdown

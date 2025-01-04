@@ -53,6 +53,8 @@ enum PopoverEvents {
 	on_open = 'on-open-popover'
 }
 
+const POPOVER_CLASS = 'c-popover'
+
 function is_popover_open(popover: HTMLDivElement): boolean {
 	return element_dataset(popover, 'cOpen') != undefined
 }
@@ -668,7 +670,7 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 	})
 
 	const C: VoidComponent = () => (<div
-		class={classlist('c-popover', props.class ?? '')}
+		class={classlist(POPOVER_CLASS, props.class ?? '')}
 		ref={mergeRefs(props.ref, r => popover_ref = r)}
 		style={{
 			...props.style,
@@ -703,6 +705,7 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 				data-g-keep-pointer-event={attr_set_if_exist(is_dragging())}
 				draggable={false}
 				onPointerDown={(ev) => {
+					// TODO: use setPointerCapture() instead
 					const rect = element_rect(popover_ref)
 					set_is_dragging(true)
 					attr_set(document.body, BodyAttributes.no_pointer_event)
@@ -732,7 +735,8 @@ export {
 	close_popover,
 	Popover,
 	is_popover_open,
-	PopoverPosition
+	PopoverPosition,
+	POPOVER_CLASS
 }
 export type {
 	PopoverOpenDetail,

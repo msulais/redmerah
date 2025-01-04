@@ -1,5 +1,6 @@
 $side_navigation_none: 680px;
 
+// TODO: use import for class from components
 .app :global(.c-app-body) {
 	display: flex;
 	flex-direction: column;

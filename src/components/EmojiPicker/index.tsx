@@ -20,7 +20,7 @@ import { number_parse, number_safe } from '@/utils/number'
 import { ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT, ARROW_UP } from '@/constants/key_code'
 
 import Divider from '@/components/Divider'
-import TextTooltip from '@/components/Tooltip'
+import Tooltip from '@/components/Tooltip'
 import EmojiC from '@/components/Emoji'
 import { ButtonVariant, EmojiButton, IconButton } from '@/components/Button'
 import { close_searchtextfieldmenu, SearchMenuItem, SearchTextField } from '@/components/TextField'
@@ -263,7 +263,7 @@ const EmojiPickerBody: ParentComponent<{
 
 				set_option(dataset_category as EmojiCategory)
 			}}>
-			<TextTooltip>
+			<Tooltip>
 				<Show when={props.use_close_button}>
 					<IconButton
 						id={button_close_id}
@@ -282,7 +282,7 @@ const EmojiPickerBody: ParentComponent<{
 				<Tab icon_code={0xE5F1} category={EmojiCategory.objects}/>
 				<Tab icon_code={0xEF77} category={EmojiCategory.symbols}/>
 				<Tab icon_code={0xE7AB} category={EmojiCategory.flags}/>
-			</TextTooltip>
+			</Tooltip>
 		</FocusableGroup>
 		<div class='c-emoji-picker-search'>
 			<SearchTextField
@@ -335,7 +335,7 @@ const EmojiPickerBody: ParentComponent<{
 		</div>
 		{props.children}
 		<Divider />
-		<TextTooltip>
+		<Tooltip>
 			<Emojis emojis={recents()}                 category={EmojiCategory.recents}/>
 			<Emojis emojis={smiley_and_emotion_emojis} category={EmojiCategory.smiley_and_emotion}/>
 			<Emojis emojis={person_and_body_emojis}    category={EmojiCategory.person_and_body}/>
@@ -346,7 +346,7 @@ const EmojiPickerBody: ParentComponent<{
 			<Emojis emojis={object_emojis}             category={EmojiCategory.objects}/>
 			<Emojis emojis={symbols_emojis}            category={EmojiCategory.symbols}/>
 			<Emojis emojis={flags_emojis}              category={EmojiCategory.flags}/>
-		</TextTooltip>
+		</Tooltip>
 	</>)
 }
 

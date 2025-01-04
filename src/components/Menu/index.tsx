@@ -264,6 +264,7 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 
 		open_popover(ev, popover_ref, {
 			anchor: div_ref,
+			// BUG: position always on top left
 			position: props.position ?? SubMenuPosition.right_center_to_bottom,
 			gap: props.gap ?? -8,
 			padding: props.padding ?? 5,

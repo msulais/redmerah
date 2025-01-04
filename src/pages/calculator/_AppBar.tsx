@@ -22,7 +22,7 @@ import logo_redmerah from '@/assets/logo.svg'
 import logo from '@/assets/apps/calculator-logo.svg'
 
 import Icon from "@/components/Icon"
-import { TextTooltip } from "@/components/Tooltip"
+import { Tooltip } from "@/components/Tooltip"
 import { ButtonVariant, IconButton } from "@/components/Button"
 import { AreaTextField, change_areatextfield_value } from "@/components/TextField"
 import Menu, {  MenuDivider, MenuItem, MenuHeader, close_menu, LinkMenuItem, SubMenu, close_submenu, open_menu, SubMenuItem, SwitchMenuItem } from "@/components/Menu"
@@ -212,7 +212,7 @@ const _: VoidComponent<{
 			style={{width: '224px'}}
 			ref={r => menu_settings_ref = r}
 			on_toggle_open={(v) => set_is_menu_settings_open(v)}>
-			<TextTooltip>
+			<Tooltip>
 				<SwitchMenuItem
 					data-tooltip="Display result in scientific notation (e.g. 1.2E-29)"
 					icon_code={0xEA91}
@@ -232,7 +232,7 @@ const _: VoidComponent<{
 					}}>
 					Memory buttons
 				</SwitchMenuItem>
-			</TextTooltip>
+			</Tooltip>
 			<MenuDivider/>
 			<SubMenu
 				ref={r => submenu_themesettings_ref = r}
@@ -357,14 +357,14 @@ const _: VoidComponent<{
 	const Drawers: VoidComponent = () => {
 		return (<>
 			<Drawer
-				header={<TextTooltip>
+				header={<Tooltip>
 					<IconButton
 						data-tooltip="Close navigation"
 						classList={add_classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
 						onClick={() => close_drawer(drawer_navigation_ref)}
 						code={0xEAFF}
 					/>
-				</TextTooltip>}
+				</Tooltip>}
 				ref={r => drawer_navigation_ref = r}>
 				<For each={CALCULATOR_TYPES}>{r => <DrawerItem
 					onClick={() => {
@@ -378,13 +378,13 @@ const _: VoidComponent<{
 			<Drawer
 				classList={add_classlist_module(CSS.appbar_notebook)}
 				header={<>
-					<TextTooltip>
+					<Tooltip>
 						<IconButton
 							data-tooltip="Close notebook"
 							onClick={() => close_drawer(drawer_notebook_ref)}
 							code={0xE5E9}
 						/>
-					</TextTooltip>
+					</Tooltip>
 					Notebook
 				</>}
 				ref={r => drawer_notebook_ref = r}
@@ -400,7 +400,7 @@ const _: VoidComponent<{
 	}
 
 	return (<>
-		<TextTooltip>
+		<Tooltip>
 			<AppBar
 				leading={<>
 					<IconButton
@@ -453,7 +453,7 @@ const _: VoidComponent<{
 					/>
 				</>}
 			/>
-		</TextTooltip>
+		</Tooltip>
 		<Drawers />
 		<Menus />
 	</>)

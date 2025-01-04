@@ -460,6 +460,7 @@ const ColorPickerBody: ParentComponent<{
 				class="c-color-picker-color"
 				style={{ '--c-color-picker-color': hsl_to_hex({...hsl(), s: 1, l: .5}) }}
 				onPointerDown={(ev) => {
+					// TODO: use setPointerCapture() instead
 					color_dragged = true
 					color_rect = element_rect(event_current_target(ev))
 					set_position(ev.clientX, ev.clientY)
@@ -551,6 +552,7 @@ const ColorPickerBody: ParentComponent<{
 					<div
 						class="c-color-picker-hue"
 						onPointerDown={(ev) => {
+							// TODO: use setPointerCapture() instead
 							hue_dragged = true
 							hue_rect = element_rect(event_current_target(ev))
 							set_position(ev.clientX, ev.clientY)
@@ -606,6 +608,7 @@ const ColorPickerBody: ParentComponent<{
 					<div
 						class="c-color-picker-opacity"
 						onPointerDown={(ev) => {
+							// TODO: use setPointerCapture() instead
 							opacity_dragged = true
 							opacity_rect = element_rect(event_current_target(ev))
 							set_position(ev.clientX, ev.clientY)

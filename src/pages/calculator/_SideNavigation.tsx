@@ -5,7 +5,7 @@ import type { CalculatorType } from "./_enums";
 import { CALCULATOR_TYPES } from "./_constants";
 
 import Icon from "@/components/Icon";
-import {TextTooltip} from "@/components/Tooltip";
+import {Tooltip} from "@/components/Tooltip";
 import SideNavigation, { SideNavigationItem } from "@/components/SideNavigation";
 import CSS from './_styles.module.scss'
 
@@ -15,7 +15,7 @@ const _: VoidComponent<{
 	expanded: boolean
 }> = (props) => {
 	return (<SideNavigation expanded={props.expanded} classList={add_classlist_module(CSS.side_navigation)}>
-		<TextTooltip>
+		<Tooltip>
 			<For each={CALCULATOR_TYPES}>{ r => <SideNavigationItem
 				data-tooltip={!props.expanded? r.text : undefined}
 				icon_only={!props.expanded}
@@ -27,7 +27,7 @@ const _: VoidComponent<{
 				selected={props.calculator == r.type}>
 				{ r.text }
 			</SideNavigationItem>}</For>
-		</TextTooltip>
+		</Tooltip>
 	</SideNavigation>)
 }
 

@@ -8,7 +8,7 @@ import { math_floor } from "@/utils/math"
 import { promise_done } from "@/utils/object"
 import { element_click } from "@/utils/element"
 
-import TextTooltip from "@/components/Tooltip"
+import Tooltip from "@/components/Tooltip"
 import { ButtonVariant, IconButton } from "@/components/Button"
 import Icon from "@/components/Icon"
 import Toast, { close_toast, open_toast } from "@/components/Toast"
@@ -89,14 +89,14 @@ const _: VoidComponent = () => {
 		<Toast
 			ref={r => toast_browsernotsupport_ref = r}
 			leading={<Icon code={0xF29B}/>}
-			trailing={<TextTooltip>
+			trailing={<Tooltip>
 				<IconButton
 					data-tooltip="Close"
 					code={0xE5E9}
 					variant={ButtonVariant.tonal}
 					onClick={() => close_toast(toast_browsernotsupport_ref)}
 				/>
-			</TextTooltip>}>
+			</Tooltip>}>
 			Browser not supported. See <a
 				style={{
 					"text-decoration": 'underline',

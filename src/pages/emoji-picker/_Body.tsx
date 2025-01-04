@@ -11,7 +11,7 @@ import TextField, { change_textfield_value, TextFieldButton } from "@/components
 import Expander, { ExpanderHeader } from "@/components/Expander"
 import Button from "@/components/Button"
 import Emoji from "@/components/Emoji"
-import TextTooltip from "@/components/Tooltip"
+import Tooltip from "@/components/Tooltip"
 import Icon from "@/components/Icon"
 import CSS from './_index.module.scss'
 
@@ -52,7 +52,7 @@ const _: VoidComponent<{
 				</TextFieldButton>}
 			/>
 		</div>
-		<TextTooltip>
+		<Tooltip>
 			<Expander
 				open
 				header={<ExpanderHeader>Smiley & emotion</ExpanderHeader>}>
@@ -144,7 +144,7 @@ const _: VoidComponent<{
 					</Button>
 				}</For>
 			</Expander>
-		</TextTooltip>
+		</Tooltip>
 	</main>)
 }
 

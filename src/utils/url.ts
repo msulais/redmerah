@@ -1,3 +1,4 @@
+import { array_foreach } from "./array"
 import { element_create, element_click, element_remove } from "./element"
 
 export function url_encode(text: string): string {
@@ -12,7 +13,7 @@ export function url_queries(url: string): {[key: string]: string} {
 	const query_object: {[key: string]: string} = {}
 	const url_params = new URL(url).searchParams
 
-	url_params.forEach((value, key) => {
+	array_foreach(url_params as unknown as any[], (value, key) => {
 		query_object[key] = value
 	})
 

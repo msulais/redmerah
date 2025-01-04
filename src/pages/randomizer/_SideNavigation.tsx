@@ -5,7 +5,7 @@ import { add_classlist_module } from "@/utils/element"
 import { RANDOMIZER_TYPES } from "./_constants"
 
 import Icon from "@/components/Icon"
-import {TextTooltip} from "@/components/Tooltip"
+import {Tooltip} from "@/components/Tooltip"
 import SideNavigation, { SideNavigationItem } from "@/components/SideNavigation"
 import CSS from './_styles.module.scss'
 
@@ -17,7 +17,7 @@ const _: VoidComponent<{
 	const expanded = createMemo(() => props.expanded)
 	const randomizer = createMemo(() => props.randomizer)
 	return (<SideNavigation expanded={expanded()} classList={add_classlist_module(CSS.side_navigation)}>
-		<TextTooltip>
+		<Tooltip>
 			<For each={RANDOMIZER_TYPES}>{ r =>
 				<SideNavigationItem
 					data-tooltip={!expanded()? r.text : undefined}
@@ -31,7 +31,7 @@ const _: VoidComponent<{
 					{r.text}
 				</SideNavigationItem>
 			}</For>
-		</TextTooltip>
+		</Tooltip>
 	</SideNavigation>)
 }
 

@@ -1,7 +1,7 @@
 import { FlyoutPosition } from "@/enums/position"
 import { element_client_width } from "./element";
 import { array_includes } from "./array";
-import { rect_height, rect_left, rect_top, rect_width } from "./rect";
+import { rect_height, rect_left, rect_right, rect_top, rect_width } from "./rect";
 
 type GetFlyoutPositionParams = {
 	flyout: { width: number; height: number } | DOMRect
@@ -102,11 +102,10 @@ export function get_flyout_position({
 		LEFT_CENTER_TO_TOP,
 		LEFT_BOTTOM,
 	], position)) {
-		left = element_rect.left - flyout_rect.width - gap
-		if (left < edge_position_left) {
-			if (mid_offset_element_left < mid_offset_screen_left) left = element_rect.right + gap
-			else left = edge_position_left
-		}
+		left = rect_left(element_rect) - rect_width(flyout_rect as DOMRect) - gap
+		if (left < edge_position_left) left = mid_offset_element_left < mid_offset_screen_left
+			? rect_right(element_rect) + gap
+			: edge_position_left
 	}
 
 	else if (array_includes([
@@ -116,12 +115,10 @@ export function get_flyout_position({
 		CENTER_CENTER_LEFT_BOTTOM,
 		CENTER_BOTTOM_TO_RIGHT
 	], position)) {
-		left = element_rect.left - padding
-
-		if (right() > edge_position_right) {
-			if (mid_offset_element_left > mid_offset_screen_left) left = element_rect.right - flyout_rect.width + padding
-			else left = edge_position_right - flyout_rect.width
-		}
+		left = rect_left(element_rect) - padding
+		if (right() > edge_position_right) left = mid_offset_element_left > mid_offset_screen_left
+			? rect_right(element_rect) - rect_width(flyout_rect as DOMRect) + padding
+			: edge_position_right - rect_width(flyout_rect as DOMRect)
 	}
 
 	else if (array_includes([
@@ -131,7 +128,7 @@ export function get_flyout_position({
 		CENTER_CENTER_BOTTOM,
 		CENTER_BOTTOM
 	], position)) {
-		left = element_rect.left + (element_rect.width / 2) - (flyout_rect.width / 2)
+		left = rect_left(element_rect) + (rect_width(element_rect) / 2) - (rect_width(flyout_rect as DOMRect) / 2)
 	}
 
 	else if (array_includes([
@@ -141,12 +138,10 @@ export function get_flyout_position({
 		CENTER_CENTER_RIGHT_BOTTOM,
 		CENTER_BOTTOM_TO_LEFT
 	], position)) {
-		left = element_rect.right - flyout_rect.width + padding
-
-		if (left < edge_position_left) {
-			if (mid_offset_element_left < mid_offset_screen_left) left = element_rect.left - padding
-			else left = edge_position_left
-		}
+		left = rect_right(element_rect) - rect_width(flyout_rect as DOMRect) + padding
+		if (left < edge_position_left) left = mid_offset_element_left < mid_offset_screen_left
+			? rect_left(element_rect) - padding
+			: edge_position_left
 	}
 
 	else if (array_includes([
@@ -156,11 +151,10 @@ export function get_flyout_position({
 		RIGHT_CENTER_TO_TOP,
 		RIGHT_BOTTOM
 	], position)) {
-		left = element_rect.right + gap
-		if (right() > edge_position_right) {
-			if (mid_offset_element_left > mid_offset_screen_left) left = element_rect.left - flyout_rect.width - gap
-			else left = edge_position_right - flyout_rect.width
-		}
+		left = rect_right(element_rect) + gap
+		if (right() > edge_position_right) left = mid_offset_element_left > mid_offset_screen_left
+			? rect_left(element_rect) - rect_width(flyout_rect as DOMRect) - gap
+			: edge_position_right - rect_width(flyout_rect as DOMRect)
 	}
 
 	// find y position
@@ -172,10 +166,9 @@ export function get_flyout_position({
 		RIGHT_TOP
 	], position)) {
 		top = element_rect.top - flyout_rect.height - gap
-		if (top < edge_offset_top) {
-			if (mid_offset_element_top < mid_offset_screen_top) top = element_rect.bottom + gap
-			else top = edge_offset_top
-		}
+		if (top < edge_offset_top) top = mid_offset_element_top < mid_offset_screen_top
+			? element_rect.bottom + gap
+			: edge_offset_top
 	}
 
 	else if (array_includes([
@@ -186,11 +179,9 @@ export function get_flyout_position({
 		RIGHT_CENTER_TO_BOTTOM
 	], position)) {
 		top = element_rect.top - padding
-
-		if (bottom() > edge_position_bottom) {
-			if (mid_offset_element_top > mid_offset_screen_top) top = element_rect.bottom - flyout_rect.height + padding
-			else top = edge_position_bottom - flyout_rect.height
-		}
+		if (bottom() > edge_position_bottom) top = mid_offset_element_top > mid_offset_screen_top
+			? element_rect.bottom - flyout_rect.height + padding
+			: edge_position_bottom - flyout_rect.height
 	}
 
 	else if (array_includes([
@@ -211,11 +202,9 @@ export function get_flyout_position({
 		RIGHT_CENTER_TO_TOP
 	], position)) {
 		top = element_rect.bottom - flyout_rect.height + padding
-
-		if (top < edge_offset_top) {
-			if (mid_offset_element_top < mid_offset_screen_top) top = element_rect.top - padding
-			else top = edge_offset_top
-		}
+		if (top < edge_offset_top) top = mid_offset_element_top < mid_offset_screen_top
+			? element_rect.top - padding
+			: edge_offset_top
 	}
 
 	else if (array_includes([
@@ -226,10 +215,9 @@ export function get_flyout_position({
 		RIGHT_BOTTOM
 	], position)) {
 		top = element_rect.bottom + gap
-		if (bottom() > edge_position_bottom) {
-			if (mid_offset_element_top > mid_offset_screen_top) top = element_rect.top - flyout_rect.height - gap
-			else top = edge_position_bottom - flyout_rect.height
-		}
+		if (bottom() > edge_position_bottom) top = mid_offset_element_top > mid_offset_screen_top
+			? element_rect.top - flyout_rect.height - gap
+			: edge_position_bottom - flyout_rect.height
 	}
 
 	// final fallback

@@ -28,7 +28,7 @@ import AppBar from "@/components/AppBar"
 import Icon from "@/components/Icon"
 import Menu, { LinkMenuItem, MenuDivider, MenuItem, MenuHeader, SubMenu, MenuIndent, SubMenuItem, close_menu, close_submenu, open_menu } from "@/components/Menu"
 import { IconButton } from "@/components/Button"
-import { TextTooltip } from "@/components/Tooltip"
+import { Tooltip } from "@/components/Tooltip"
 import Divider from "@/components/Divider"
 import Emoji from "@/components/Emoji"
 import { close_searchtextfieldmenu, SearchMenuDivider, SearchMenuHeader, SearchMenuItem, SearchTextField, SearchTextFieldButton } from "@/components/TextField"
@@ -329,7 +329,7 @@ const _: VoidComponent<{
 	}
 
 	return (<>
-		<TextTooltip>
+		<Tooltip>
 			<AppBar
 				data-search={attr_set_if_exist(is_searching())}
 				classList={add_classlist_module(CSS.appbar)}
@@ -437,17 +437,17 @@ const _: VoidComponent<{
 					/>
 				</div>
 			</AppBar>
-		</TextTooltip>
+		</Tooltip>
 		<Menus />
 		<Drawer
-			header={<TextTooltip>
+			header={<Tooltip>
 				<IconButton
 					data-tooltip="Close navigation"
 					classList={add_classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
 					onClick={() => close_drawer(drawer_navigation_ref)}
 					code={0xEAFF}
 				/>
-			</TextTooltip>}
+			</Tooltip>}
 			footer={<DrawerItem
 				leading={<Icon code={0xE007}/>}
 				onClick={(ev) => {

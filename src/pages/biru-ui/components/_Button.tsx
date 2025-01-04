@@ -1,6 +1,6 @@
 import { type VoidComponent, createSignal, For, Show } from "solid-js"
 
-import { TextTooltip } from "@/components/Tooltip"
+import { Tooltip } from "@/components/Tooltip"
 import Icon from "@/components/Icon"
 import Button, { ButtonIndicatorPosition, ButtonVariant, EmojiButton, FloatingActionButton, IconButton, LinkButton, LinkEmojiButton, LinkFloatingActionButton, LinkIconButton } from "@/components/Button"
 import CheckBox from "@/components/CheckBox"
@@ -19,7 +19,7 @@ const _: VoidComponent = () => {
 		title="Buttons"
 		description="A button is an interactive UI element that triggers a specific action when clicked or tapped. It typically has a clear label indicating its function and provides visual feedback upon interaction. Buttons are essential for guiding users through an interface and facilitating user-system communication.">
 		<Playground>
-			<TextTooltip>
+			<Tooltip>
 				<Button
 					data-tooltip="Button"
 					disabled={disabled()}
@@ -115,7 +115,7 @@ const _: VoidComponent = () => {
 					</Show>
 					LinkFloatingActionButton
 				</LinkFloatingActionButton>
-			</TextTooltip>
+			</Tooltip>
 		</Playground>
 		<PlaygroundOptions>
 			<Dropdown

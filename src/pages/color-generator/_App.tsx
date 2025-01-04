@@ -19,7 +19,7 @@ import { promise_done } from '@/utils/object'
 import { math_round } from '@/utils/math'
 import { event_current_target } from '@/utils/event'
 
-import {TextTooltip} from '@/components/Tooltip'
+import {Tooltip} from '@/components/Tooltip'
 import Divider from '@/components/Divider'
 import Button, { ButtonVariant, FloatingActionButton, IconButton } from '@/components/Button'
 import List from '@/components/List'
@@ -257,12 +257,12 @@ const _: VoidComponent = () => {
 					Close
 				</Button>
 			</>}>
-			<TextTooltip>
+			<Tooltip>
 				<For each={palette_list()}>{(p, i) => <>
 					<Show when={i() > 0}><Divider /></Show>
 					<ListItem palette={p}/>
 				</>}</For>
-			</TextTooltip>
+			</Tooltip>
 		</Dialog>
 		<Dialog
 			ref={r => dialog_deleteall_ref = r}

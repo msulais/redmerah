@@ -12,7 +12,7 @@ import { array_length } from "@/utils/array"
 
 import Button, { ButtonVariant, IconButton } from "@/components/Button"
 import Icon from "@/components/Icon"
-import TextTooltip from "@/components/Tooltip"
+import Tooltip from "@/components/Tooltip"
 import CSS from './_styles.module.scss'
 
 const LatexEditor: VoidComponent<{
@@ -87,7 +87,7 @@ const LatexEditor: VoidComponent<{
 				variant={ButtonVariant.tonal}>
 				<Icon code={0xE007}/>New equation
 			</Button>
-			<TextTooltip>
+			<Tooltip>
 				<IconButton
 					data-tooltip={timeout_copy_id() != null? "Copied" : "Copy"}
 					onClick={copy}
@@ -102,7 +102,7 @@ const LatexEditor: VoidComponent<{
 						onClick={() => props.command(Commands.delete_equation, props.index)}
 					/>
 				</Show>
-			</TextTooltip>
+			</Tooltip>
 		</div>
 	</div>)
 }

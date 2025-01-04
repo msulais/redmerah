@@ -24,7 +24,7 @@ import { navigator_clipboard_writetext } from "@/utils/navigator";
 import { promise_done } from "@/utils/object";
 
 import App from "@/components/App";
-import { TextTooltip } from "@/components/Tooltip";
+import { Tooltip } from "@/components/Tooltip";
 import Icon from "@/components/Icon";
 import Divider from "@/components/Divider";
 import Dialog, { close_dialog, open_dialog } from "@/components/Dialog";
@@ -1266,12 +1266,12 @@ const _: VoidComponent = () => {
 						Add new list
 					</Button>
 				</>}>
-				<TextTooltip>
+				<Tooltip>
 					<For each={lists}>{(l, i) => <>
 						<Show when={i() != 0}><Divider /></Show>
 						<ListItem {...l} />
 					</>}</For>
-				</TextTooltip>
+				</Tooltip>
 			</Dialog>
 			<Dialog
 				ref={r => dialog_deletelistwarning_ref = r}

@@ -14,7 +14,7 @@ import { number_is_nan, number_is_not_defined, number_parse, number_safe } from 
 import { rect_width } from '@/utils/rect'
 
 import Icon from '@/components/Icon'
-import { TextTooltip } from '@/components/Tooltip'
+import { Tooltip } from '@/components/Tooltip'
 import Button, { IconButton, type ButtonProps } from '@/components/Button'
 import Popover, { close_popover, is_popover_open, open_popover, reposition_popover, PopoverPosition as SearchMenuPosition, type PopoverProps } from '@/components/Popover'
 import { MenuItem, LinkMenuItem, MenuDivider, MenuHeader, MenuPosition, open_menu } from '@/components/Menu'
@@ -121,7 +121,7 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 	})
 
 	const TrailingContent: VoidComponent = () => {
-		return (<TextTooltip>
+		return (<Tooltip>
 			{trailing()}
 			<Show when={is_show_clear_button()}>
 				<TextFieldButton
@@ -131,7 +131,7 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 					<Icon code={0xE5E9}/>
 				</TextFieldButton>
 			</Show>
-		</TextTooltip>)
+		</Tooltip>)
 	}
 
 	return (<div
@@ -266,7 +266,7 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 	})
 
 	const TrailingContent: VoidComponent = () => {
-		return (<TextTooltip>
+		return (<Tooltip>
 			{trailing()}
 			<Show when={is_show_clear_button()}>
 				<TextFieldButton
@@ -276,7 +276,7 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 					<Icon code={0xE5E9}/>
 				</TextFieldButton>
 			</Show>
-		</TextTooltip>)
+		</Tooltip>)
 	}
 
 	return (<div
@@ -568,7 +568,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 				}
 			}}
 			{...actions_props_other}>
-			<TextTooltip>
+			<Tooltip>
 				<IconButton
 					data-tooltip={props.tooltip_increase}
 					ref={r => iconbutton_up_ref = r}
@@ -603,7 +603,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 					onKeyUp={ev => (ev.code == 'Enter' || ev.code == 'Space') && on_press_end('-')}
 					code={0xE3FC}
 				/>
-			</TextTooltip>
+			</Tooltip>
 		</Modal>
 	</>)
 }

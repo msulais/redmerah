@@ -30,7 +30,7 @@ type ModalOpenDetail = {
 	position?: ModalPosition
 	allow_hide_anchor?: boolean
 	draggable?: boolean
-	content_auto_focus?: boolean
+	content_auto_focus?: boolean // TODO: make `true` as default
 
 	/**
 	 * Custom pointer position. Only works if `ModalOpenDetail.anchor` and
@@ -775,6 +775,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 				draggable={false}
 				data-g-keep-pointer-event={attr_set_if_exist(is_dragging())}
 				onPointerDown={(ev) => {
+					// TODO: use setPointerCapture() instead
 					const rect = element_rect(modal_ref)
 					set_is_dragging(true)
 					attr_set(document.body, BodyAttributes.no_pointer_event)

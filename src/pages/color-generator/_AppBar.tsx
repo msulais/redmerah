@@ -20,7 +20,7 @@ import { timeout_clear, timeout_set, wait } from "@/utils/timeout"
 import logo_redmerah from '@/assets/logo.svg'
 import logo from '@/assets/apps/color-generator-logo.svg'
 
-import {TextTooltip} from "@/components/Tooltip"
+import {Tooltip} from "@/components/Tooltip"
 import Button, { ButtonVariant, IconButton } from "@/components/Button"
 import Menu, { SubMenu, MenuItem, MenuDivider, LinkMenuItem, MenuHeader, close_menu, close_submenu, open_menu, SubMenuItem } from "@/components/Menu"
 import { open_dialog } from "@/components/Dialog"
@@ -238,7 +238,7 @@ const _: VoidComponent<{
 	</>)
 
 	return (<>
-		<TextTooltip>
+		<Tooltip>
 			<AppBar
 				leading={<>
 					<Show when={array_length(props.palette_list) > 0}>
@@ -285,7 +285,7 @@ const _: VoidComponent<{
 					/>
 				</>}
 			/>
-		</TextTooltip>
+		</Tooltip>
 		<Menus />
 	</>)
 }

@@ -124,8 +124,8 @@ export function element_create<K extends keyof HTMLElementTagNameMap>(tagname: K
 }
 
 /** Returns a reference to the first object with the specified value of the ID attribute */
-export function element_by_id(element_id: string): HTMLElement | null {
-	return document.getElementById(element_id)
+export function element_by_id<T = HTMLElement>(element_id: string): T | null {
+	return document.getElementById(element_id) as T | null
 }
 
 /** Returns the first element that is a descendant of node that matches selectors */
@@ -148,6 +148,19 @@ export function element_rect(element: Element): DOMRect {
 	return element.getBoundingClientRect()
 }
 
+export function element_set_textcontent(element: HTMLElement, text: string): string {
+	return element.textContent = text
+}
+
+export function element_set_popover(element: HTMLElement, popover: 'auto' | 'manual'): string {
+	return element.popover = popover
+}
+
+export function element_set_id(element: HTMLElement, id: string): string {
+	return element.id = id
+}
+
+// TODO: rename to `element_set_style`
 export function element_set_style_property(
 		element: HTMLElement,
 		property: string,
@@ -367,6 +380,10 @@ export function element_style(
 
 export function element_classlist(el: HTMLElement): DOMTokenList {
 	return el.classList
+}
+
+export function element_classlist_contains(el: HTMLElement, token: string): boolean {
+	return element_classlist(el).contains(token)
 }
 
 export function element_blur(el: HTMLElement): void {
