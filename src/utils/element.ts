@@ -160,7 +160,6 @@ export function element_set_id(element: HTMLElement, id: string): string {
 	return element.id = id
 }
 
-// TODO: rename to `element_set_style`
 export function element_set_style(
 		element: HTMLElement,
 		property: string,

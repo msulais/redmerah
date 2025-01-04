@@ -30,7 +30,7 @@ type ModalOpenDetail = {
 	position?: ModalPosition
 	allow_hide_anchor?: boolean
 	draggable?: boolean
-	content_auto_focus?: boolean // TODO: make `true` as default
+	content_auto_focus?: boolean
 
 	/**
 	 * Custom pointer position. Only works if `ModalOpenDetail.anchor` and
@@ -435,7 +435,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 			important = props.important ?? false,
 			padding = props.padding ?? 0,
 			position = props.position ?? ModalPosition.center_bottom,
-			content_auto_focus = props.content_auto_focus ?? false
+			content_auto_focus = props.content_auto_focus ?? true
 		} = detail;
 
 		set_allow_hide_anchor(allow_hide_anchor)
