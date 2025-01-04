@@ -2,7 +2,7 @@ import { createUniqueId, mergeProps, onCleanup, onMount, splitProps, type FlowCo
 
 import { attr_remove, attr_set, classlist } from "@/utils/attributes"
 import { event_add_listener, event_call, event_current_target, event_target } from "@/utils/event"
-import { element_create, element_animate, element_append_child, element_closest, element_dataset, element_dispatch_event, element_rect, element_set_style_property, element_matches, element_contains, element_by_id, element_classlist_contains, element_set_id, element_set_popover, element_set_textcontent } from "@/utils/element"
+import { element_create, element_animate, element_append_child, element_closest, element_dataset, element_dispatch_event, element_rect, element_set_style, element_matches, element_contains, element_by_id, element_classlist_contains, element_set_id, element_set_popover, element_set_textcontent } from "@/utils/element"
 import { timeout_clear, timeout_set } from "@/utils/timeout"
 import { FlyoutPosition as TooltipPosition } from "@/enums/position"
 import { get_flyout_position } from "@/utils/flyout"
@@ -82,7 +82,7 @@ function init_tooltip(): void {
 	function create_tooltip_listener(): void {
 		const div = element_create('div')
 		element_set_id(div, TOOLTIP_LISTENER_ID)
-		element_set_style_property(div, 'display', 'contents')
+		element_set_style(div, 'display', 'contents')
 		element_append_child(document_body(), div)
 
 		tooltip_listener_ref = div
@@ -355,8 +355,8 @@ function init_tooltip(): void {
 				}
 			}
 
-			element_set_style_property(tooltip_text_ref, 'top', rect_top(pos) + 'px')
-			element_set_style_property(tooltip_text_ref, 'left', rect_left(pos) + 'px')
+			element_set_style(tooltip_text_ref, 'top', rect_top(pos) + 'px')
+			element_set_style(tooltip_text_ref, 'left', rect_left(pos) + 'px')
 			attr_set(tooltip_text_ref, TooltipAttributes.open)
 			promise_done(element_animate(
 				tooltip_text_ref,

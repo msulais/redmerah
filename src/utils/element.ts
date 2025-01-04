@@ -161,7 +161,7 @@ export function element_set_id(element: HTMLElement, id: string): string {
 }
 
 // TODO: rename to `element_set_style`
-export function element_set_style_property(
+export function element_set_style(
 		element: HTMLElement,
 		property: string,
 		value: string | null,
