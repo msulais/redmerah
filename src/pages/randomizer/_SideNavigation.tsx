@@ -21,7 +21,6 @@ const _: VoidComponent<{
 			<For each={RANDOMIZER_TYPES}>{ r =>
 				<SideNavigationItem
 					data-tooltip={!expanded()? r.text : undefined}
-					icon_only={!expanded()}
 					onClick={() => {
 						if (randomizer() == r.type) return;
 						props.on_change_randomizer(r.type);

@@ -62,6 +62,7 @@ const DropdownOption: ParentComponent<DropdownOptionProps> = ($props) => {
 		selected={props.selected ?? context?.multiple()? undefined : selected()}
 		checked={props.checked ?? context?.multiple()? selected() : undefined}
 		onClick={ev => {
+			// TODO: use event delegation
 			context?.on_select_option(props.value)
 			event_call(ev, props.onClick)
 		}}

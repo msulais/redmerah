@@ -18,7 +18,6 @@ const _: VoidComponent<{
 		<Tooltip>
 			<For each={CALCULATOR_TYPES}>{ r => <SideNavigationItem
 				data-tooltip={!props.expanded? r.text : undefined}
-				icon_only={!props.expanded}
 				onClick={() => {
 					if (props.calculator == r.type) return;
 					props.on_change_calculator(r.type);

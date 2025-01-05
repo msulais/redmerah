@@ -42,8 +42,7 @@ const _: VoidComponent<{
 			icon_code={$props.icon}
 			data-tooltip={!expanded()? $props.text : undefined}
 			selected={props.page == $props.type}
-			onClick={() => command(Commands.change_page, $props.type)}
-			icon_only={!expanded()}>
+			onClick={() => command(Commands.change_page, $props.type)}>
 			{$props.text}
 		</SideNavigationItem>)
 	}
@@ -61,8 +60,7 @@ const _: VoidComponent<{
 				open_menu(ev, menu_listaction_ref, {
 					position: MenuPosition.center_bottom_to_right
 				})
-			}}
-			icon_only={!expanded()}>
+			}}>
 			{$props.name}
 		</SideNavigationItem>)
 	}
@@ -70,7 +68,6 @@ const _: VoidComponent<{
 	const Footer: VoidComponent = () => (<SideNavigationItem
 		icon_code={0xE007}
 		data-tooltip={!expanded()? "Add new list" : undefined}
-		icon_only={!expanded()}
 		onClick={ev => command(Commands.add_tasklist, ev)}>
 		New list
 	</SideNavigationItem>)

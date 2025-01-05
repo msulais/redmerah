@@ -1,24 +1,22 @@
 .c-side-navigation {
 	display: flex;
 	flex-direction: column;
-	padding: 8px;
 	gap: 4px;
 	width: 56px;
 	max-width: 56px;
 	height: 100%;
+	max-height: 100%;
+	overflow-y: auto;
 	transition-duration: .3s;
+	position: relative;
 
 	:root[data-platform=desktop] &:not([data-c-expanded]) {
 		width: 52px;
 		max-width: 52px;
 	}
 
-	&[data-c-expanded] {
-		width: 280px;
-		max-width: 280px;
-	}
-
-	&:not([data-c-expanded]) > div {
+	// TODO: need to somehow add scroll without affecting the layout
+	&:not([data-c-expanded]) {
 		-ms-overflow-style: none;
 		scrollbar-width: none;
 
@@ -27,43 +25,43 @@
 		}
 	}
 
-	> div {
-		width: 100%;
-		max-width: inherit;
-		display: flex;
-		flex-direction: column;
-		gap: 4px;
-
-		&:empty {
-			display: none;
-		}
+	&[data-c-expanded] {
+		width: 280px;
+		max-width: 280px;
 	}
 }
 
-.c-side-navigation-content {
-	flex: 1;
-	overflow: auto;
-	align-items: start;
+.c-side-navigation-footer {
+	background-color: rgb(var(--g-color-background));
+	position: sticky;
+	bottom: 0px;
+	padding-top: 8px;
+	border-top: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity2));
+}
+
+.c-side-navigation-header {
+	background-color: rgb(var(--g-color-background));
+	position: sticky;
+	top: 0px;
+	border-bottom: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity2));
 }
 
 .c-btn.c-side-navigation-item {
+	margin: 0 8px;
+
+	&:last-child {
+		margin-bottom: 8px;
+	}
+
 	&[data-c-selected] > .c-icon:first-child {
 		color: rgb(var(--g-color-accent));
 	}
 
-	&:not([data-c-icon]) {
+	&:not(.c-square-btn) {
 		padding: 4px 8px;
 		justify-content: flex-start;
-		width: 100%;
+		width: calc(100% - 16px);
 		white-space: nowrap;
-
-		@media (hover: none) {
-			min-height: 40px !important;
-
-			:root[data-corner=full-round] & {
-				border-radius: 20px !important;
-			}
-		}
 	}
 }
 
