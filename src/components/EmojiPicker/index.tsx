@@ -148,7 +148,6 @@ const EmojiPickerBody: ParentComponent<{
 			? null
 			: new RegExp(array_join(string_split(t, ' '), '|'), 'gi')
 	})
-	const body = document_body()
 	let menu_search_ref: HTMLDivElement
 	let timeout_id: number | null = null
 

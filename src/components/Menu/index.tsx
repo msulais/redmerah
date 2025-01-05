@@ -5,7 +5,7 @@ import { attr_set_if_exist, classlist } from "@/utils/attributes"
 import { object_has_value } from "@/utils/object"
 import { event_call, event_prevent_default, event_stop_immediate_propagation, event_stop_propagation } from "@/utils/event"
 import { timeout_clear, timeout_set, wait } from "@/utils/timeout"
-import { element_children, element_classlist, element_classlist_contains, element_first_child, element_is_same_node, element_last_child, element_parent } from "@/utils/element"
+import { element_children, element_classlist_contains, element_first_child, element_is_same_node, element_last_child, element_parent } from "@/utils/element"
 import { ARROW_DOWN, ARROW_UP } from "@/constants/key_code"
 import { AppColors } from "@/enums/colors"
 
