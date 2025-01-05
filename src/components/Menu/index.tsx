@@ -249,6 +249,8 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 		if (is_open) return;
 
 		let some_submenu_open = false;
+		const first_child = element_first_child(div_ref)
+		if (!first_child) return
 
 		for (const el of (element_parent(div_ref)?.children ?? []) as HTMLElement[]) {
 			if (!element_classlist_contains(el, SUBMENU_CLASSNAME) || element_is_same_node(el, div_ref)) continue
@@ -263,8 +265,7 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 		if (some_submenu_open) await wait(500)
 
 		open_popover(ev, popover_ref, {
-			anchor: div_ref,
-			// BUG: position always on top left
+			anchor: first_child,
 			position: props.position ?? SubMenuPosition.right_center_to_bottom,
 			gap: props.gap ?? -8,
 			padding: props.padding ?? 5,
