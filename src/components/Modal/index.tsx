@@ -17,6 +17,7 @@ import { document_body, document_root } from '@/utils/document'
 import { window_inner_height, window_scroll_y, window_scrollto } from '@/utils/window'
 import { ElementIds } from '@/enums/ids'
 import { promise_done } from '@/utils/object'
+import { ARROW_UP, ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT } from '@/constants/key_code'
 
 import './index.scss'
 
@@ -289,6 +290,10 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 	let padding: number = 0
 	let position: ModalPosition = ModalPosition.center_bottom
 	let timeout_reposition_id: number | null = null
+	let timeout_screensize_id: number | null = null
+	let timeout_fixposition_id: number | null = null
+	let screen_width = element_client_width(document_body())
+	let screen_height = window_inner_height()
 
 	// different of mouse position to top-left of modal position `diffPosition = abs(mousePosition - targetPosition)`
 	let diff_position_x: number = 0
@@ -769,6 +774,46 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 		})
 	}
 
+	function on_move_with_keyboard(ev: KeyboardEvent): void {
+		const code = ev.code
+		if (
+			code != ARROW_UP
+			&& code != ARROW_DOWN
+			&& code != ARROW_LEFT
+			&& code != ARROW_RIGHT
+		) return
+
+		if (timeout_screensize_id == null) {
+			screen_width = element_client_width(document_body())
+			screen_height = window_inner_height()
+			timeout_screensize_id = timeout_set(() => timeout_screensize_id = null)
+		}
+
+		const width_one_percent = screen_width / 100
+		const height_one_percent = screen_height / 100
+		event_prevent_default(ev)
+		switch (code) {
+			case ARROW_UP:
+				set_top(t => t - height_one_percent)
+				break
+			case ARROW_DOWN:
+				set_top(t => t + height_one_percent)
+				break
+			case ARROW_LEFT:
+				set_left(l => l - width_one_percent)
+				break
+			case ARROW_RIGHT:
+				set_left(l => l + width_one_percent)
+				break
+		}
+		if (timeout_fixposition_id != null) timeout_clear(timeout_fixposition_id)
+
+		timeout_fixposition_id = timeout_set(() => {
+			fix_position()
+			timeout_fixposition_id = null
+		}, 300)
+	}
+
 	onMount(() => {
 		init_modal_listener()
 		init_events()
@@ -833,9 +878,11 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 		{...other}>
 		<Show when={is_draggable()}>
 			<span
+				tabindex="0"
 				class="c-modal-drag-handle"
 				draggable={false}
 				data-g-keep-pointer-event={attr_set_if_exist(is_dragging())}
+				onKeyDown={on_move_with_keyboard}
 				onPointerDown={(ev) => {
 					const rect = element_rect(modal_ref)
 					set_is_dragging(true)

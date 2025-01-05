@@ -8,7 +8,7 @@ import { timeout_clear, timeout_set } from '@/utils/timeout'
 import { attr_has, attr_remove, attr_set, attr_set_if_exist, classlist } from '@/utils/attributes'
 import { element_rect, element_all_by_selector, element_dataset, element_dispatch_event, element_is_same_node, element_client_width, element_animate, element_create, element_set_id, element_append_child, element_set_style, element_set_pointercapture, element_release_pointercapture } from '@/utils/element'
 import { BodyAttributes } from '@/enums/attributes'
-import { event_add_listener, event_call, event_remove_listener } from "@/utils/event"
+import { event_add_listener, event_call, event_prevent_default, event_remove_listener } from "@/utils/event"
 import { math_abs } from '@/utils/math'
 import { document_body } from '@/utils/document'
 import { window_inner_height } from '@/utils/window'
@@ -17,6 +17,7 @@ import { rect_bottom, rect_height, rect_left, rect_right, rect_top, rect_width }
 import { AnimationEffectTiming } from '@/enums/animation'
 import { promise_done } from '@/utils/object'
 import { ElementIds } from '@/enums/ids'
+import { ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT, ARROW_UP } from '@/constants/key_code'
 
 import './index.scss'
 
@@ -262,6 +263,10 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 	let padding: number = 0
 	let position: PopoverPosition = PopoverPosition.center_bottom
 	let timeout_reposition_id: number | null = null
+	let timeout_screensize_id: number | null = null
+	let timeout_fixposition_id: number | null = null
+	let screen_width = element_client_width(document_body())
+	let screen_height = window_inner_height()
 
 	// different of mouse position to top-left of popover position `diffPosition = abs(mousePosition - targetPosition)`
 	let diff_position_x: number = 0
@@ -710,6 +715,46 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 		})
 	}
 
+	function on_move_with_keyboard(ev: KeyboardEvent): void {
+		const code = ev.code
+		if (
+			code != ARROW_UP
+			&& code != ARROW_DOWN
+			&& code != ARROW_LEFT
+			&& code != ARROW_RIGHT
+		) return
+
+		if (timeout_screensize_id == null) {
+			screen_width = element_client_width(document_body())
+			screen_height = window_inner_height()
+			timeout_screensize_id = timeout_set(() => timeout_screensize_id = null)
+		}
+
+		const width_one_percent = screen_width / 100
+		const height_one_percent = screen_height / 100
+		event_prevent_default(ev)
+		switch (code) {
+			case ARROW_UP:
+				set_top(t => t - height_one_percent)
+				break
+			case ARROW_DOWN:
+				set_top(t => t + height_one_percent)
+				break
+			case ARROW_LEFT:
+				set_left(l => l - width_one_percent)
+				break
+			case ARROW_RIGHT:
+				set_left(l => l + width_one_percent)
+				break
+		}
+		if (timeout_fixposition_id != null) timeout_clear(timeout_fixposition_id)
+
+		timeout_fixposition_id = timeout_set(() => {
+			fix_position()
+			timeout_fixposition_id = null
+		}, 300)
+	}
+
 	onMount(() => {
 		init_popover_listener()
 		init_events()
@@ -753,9 +798,11 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 		{...other}>
 		<Show when={is_draggable()}>
 			<span
+				tabindex="0"
 				class="c-popover-drag-handle"
 				data-g-keep-pointer-event={attr_set_if_exist(is_dragging())}
 				draggable={false}
+				onKeyDown={on_move_with_keyboard}
 				onPointerDown={(ev) => {
 					const rect = element_rect(popover_ref)
 					pointer_id = ev.pointerId
