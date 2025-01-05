@@ -6,7 +6,7 @@ import { LocalStorageKeys } from "@/enums/storage"
 import { ThemeData } from "@/enums/theme"
 import { storage_set, storage_get } from "@/utils/storage"
 import { attr_set, classlist_module } from "@/utils/attributes"
-import { is_window_media_matches, window_match_media } from "@/utils/window"
+import { window_matches, window_match_media } from "@/utils/window"
 import { event_add_listener, event_current_target } from '@/utils/event'
 import { Commands, Pages } from "./_enums"
 import { PAGES, SIZE_SIDE_NAVIGATION_NONE } from "./_constants"
@@ -18,6 +18,7 @@ import { array_includes } from "@/utils/array"
 import { navigator_share } from "@/utils/navigator"
 import { date_year } from "@/utils/datetime"
 import { PlatformData } from "@/enums/platforms"
+import { document_root } from "@/utils/document"
 import logo from '@/assets/apps/biru-ui-logo.svg'
 import logo_redmerah from '@/assets/logo.svg'
 
@@ -32,7 +33,7 @@ const _: VoidComponent<{
 	command: (type: Commands, ...args: unknown[]) => unknown
 	page: Pages
 }> = (props) => {
-	const root = document.documentElement
+	const root = document_root()
 	const [is_menu_info_open, set_is_menu_info_open] = createSignal<boolean>(false)
 	const [is_menu_settings_open, set_is_menu_settings_open] = createSignal<boolean>(false)
 	const [is_submenu_themesettings_open, set_is_submenu_themesettings_open] = createSignal<boolean>(false)
@@ -50,7 +51,7 @@ const _: VoidComponent<{
 	let submenu_platformsettings_ref: HTMLDivElement
 
 	function init_sidenavigation_listener(): void {
-		setIsSideNavigationHidden(is_window_media_matches(`(max-width: ${SIZE_SIDE_NAVIGATION_NONE}px)`))
+		setIsSideNavigationHidden(window_matches(`(max-width: ${SIZE_SIDE_NAVIGATION_NONE}px)`))
 		event_add_listener(
 			window_match_media(`(max-width: ${SIZE_SIDE_NAVIGATION_NONE}px)`),
 			'change',

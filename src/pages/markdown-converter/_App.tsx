@@ -1,25 +1,25 @@
-import { createSignal, onMount, type VoidComponent } from "solid-js";
+import { createSignal, onMount, type VoidComponent } from "solid-js"
 import { marked } from 'marked'
 import beautiful from 'simply-beautiful'
 
-import type { Settings } from "./_types";
-import { IDB, idb_store_put } from "@/utils/indexeddb";
-import { DatabaseNames } from "@/enums/storage";
-import { ObjectStoreKeys, ObjectStoreNames, type ObjectStoreLastInput, type ObjectStoreSettings } from "./_storage";
-import { createStore } from "solid-js/store";
-import { Commands } from "./_enums";
-import { DEFAULT_CSS_TEXT } from "./_css";
-import { DEFAULT_MARKDOWN_TEXT } from "./_markdown";
-import { file_download, file_open, file_read_as_text } from "@/utils/file";
-import { remove_splash_screen } from "@/scripts/splash";
-import { promise_done } from "@/utils/object";
-import { array_length } from "@/utils/array";
-import { string_replace } from "@/utils/string";
-import { navigator_clipboard_writetext } from "@/utils/navigator";
+import type { Settings } from "./_types"
+import { IDB, idb_store_put } from "@/utils/indexeddb"
+import { DatabaseNames } from "@/enums/storage"
+import { ObjectStoreKeys, ObjectStoreNames, type ObjectStoreLastInput, type ObjectStoreSettings } from "./_storage"
+import { createStore } from "solid-js/store"
+import { Commands } from "./_enums"
+import { DEFAULT_CSS_TEXT } from "./_css"
+import { DEFAULT_MARKDOWN_TEXT } from "./_markdown"
+import { file_download, file_open, file_read_as_text } from "@/utils/file"
+import { remove_splash_screen } from "@/scripts/splash"
+import { promise_done } from "@/utils/object"
+import { array_length } from "@/utils/array"
+import { string_replace } from "@/utils/string"
+import { navigator_clipboard_writetext } from "@/utils/navigator"
 
-import Icon from "@/components/Icon";
-import Toast, { open_toast } from "@/components/Toast";
-import App from "@/components/App";
+import Icon from "@/components/Icon"
+import Toast, { open_toast } from "@/components/Toast"
+import App from "@/components/App"
 import AppBar from './_AppBar'
 import Body from './_Body'
 

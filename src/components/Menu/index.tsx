@@ -2,7 +2,7 @@ import { type Component, type JSX, type ParentComponent, Show, mergeProps, split
 import { mergeRefs } from "@solid-primitives/refs"
 
 import { attr_set_if_exist, classlist } from "@/utils/attributes"
-import { is_var_has_value } from "@/utils/object"
+import { object_has_value } from "@/utils/object"
 import { event_call, event_prevent_default, event_stop_immediate_propagation, event_stop_propagation } from "@/utils/event"
 import { timeout_clear, timeout_set, wait } from "@/utils/timeout"
 import { element_children, element_classlist, element_first_child, element_is_same_node, element_last_child, element_parent } from "@/utils/element"
@@ -49,7 +49,7 @@ const MenuItem: ParentComponent<MenuItemProps> = ($props) => {
 		indicator_position={props.indicator_position ?? ButtonIndicatorPosition.left}
 		classList={{'c-menu-item': true, ...props.classList}}
 		{...other}>
-		<Show when={is_var_has_value(props.checked)}>
+		<Show when={object_has_value(props.checked)}>
 			<Icon
 				style={{color: `rgb(${AppColors.accent})`}}
 				filled={props.checked}
@@ -103,7 +103,7 @@ const LinkMenuItem: ParentComponent<LinkMenuItemProps> = ($props) => {
 		indicator_position={props.indicator_position ?? ButtonIndicatorPosition.left}
 		classList={{'c-menu-item': true, ...props.classList}}
 		{...other}>
-		<Show when={is_var_has_value(props.checked)}>
+		<Show when={object_has_value(props.checked)}>
 			<Icon
 				style={{color: props.checked? `rgb(${AppColors.accent})` : undefined}}
 				filled={props.checked}
@@ -250,7 +250,7 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 
 		let some_submenu_open = false;
 
-		for (const el of element_parent(div_ref)?.children as unknown as HTMLElement[]) {
+		for (const el of element_parent(div_ref)?.children) {
 			if (!element_classlist(el).contains(SUBMENU_CLASSNAME) || element_is_same_node(el, div_ref)) continue
 
 			const popover = element_last_child(el) as HTMLDivElement

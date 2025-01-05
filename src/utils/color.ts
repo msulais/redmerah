@@ -3,7 +3,7 @@ import { math_floor, math_max, math_min, math_pow, math_round } from "./math"
 import { regex_test } from "./regex"
 import { string_padstart, string_slice, string_starts_with, string_substring } from "./string"
 import { number_parse, number_safe, number_to_string } from "./number"
-import { themeFromSourceColor as $material_theme } from "@material/material-color-utilities"
+import { themeFromSourceColor } from "@material/material-color-utilities"
 
 export function is_color_with_alpha_valid(hex: string): boolean {
 	return regex_test(/^#[0-9a-fA-F]{6}([0-9a-fA-F]{2})?$/i, hex)
@@ -365,11 +365,13 @@ export function generate_color(hex: HEXColor): GenerateColorResult {
 		throw new Error("Invalid hex color format!")
 	}
 
-	const theme = $material_theme(number_parse(string_substring(hex, 1), true, 16)).schemes
-	const color = rgb_to_hex(hex_argb_to_rgb('#' + number_to_string(theme.light.primary, 16) as HEXColor))
-	const on_color = rgb_to_hex(hex_argb_to_rgb('#' + number_to_string(theme.light.onPrimary, 16) as HEXColor))
-	const color_dark = rgb_to_hex(hex_argb_to_rgb('#' + number_to_string(theme.dark.primary, 16) as HEXColor))
-	const on_color_dark = rgb_to_hex(hex_argb_to_rgb('#' + number_to_string(theme.dark.onPrimary, 16) as HEXColor))
+	const theme = themeFromSourceColor(number_parse(string_substring(hex, 1), true, 16)).schemes
+	const [color, on_color, color_dark, on_color_dark] = [
+		rgb_to_hex(hex_argb_to_rgb('#' + number_to_string(theme.light.primary  , 16) as HEXColor)),
+		rgb_to_hex(hex_argb_to_rgb('#' + number_to_string(theme.light.onPrimary, 16) as HEXColor)),
+		rgb_to_hex(hex_argb_to_rgb('#' + number_to_string(theme.dark.primary   , 16) as HEXColor)),
+		rgb_to_hex(hex_argb_to_rgb('#' + number_to_string(theme.dark.onPrimary , 16) as HEXColor)),
+	]
 
 	return {color, on_color, color_dark, on_color_dark}
 }

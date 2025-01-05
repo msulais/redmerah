@@ -1,7 +1,9 @@
 import { FlyoutPosition } from "@/enums/position"
-import { element_client_width } from "./element";
-import { array_includes } from "./array";
-import { rect_height, rect_left, rect_right, rect_top, rect_width } from "./rect";
+import { element_client_width } from "./element"
+import { array_includes } from "./array"
+import { rect_height, rect_left, rect_right, rect_top, rect_width } from "./rect"
+import { document_body } from "./document"
+import { window_inner_height } from "./window"
 
 type GetFlyoutPositionParams = {
 	flyout: { width: number; height: number } | DOMRect
@@ -35,8 +37,8 @@ export function get_flyout_position({
 	}
 
 	const FLYOUT_MARGIN = 8
-	const screen_width = element_client_width(document.body)
-	const screen_height = window.innerHeight
+	const screen_width = element_client_width(document_body())
+	const screen_height = window_inner_height()
 	const element_rect = (pointer
 		? {
 			left: pointer.x,
@@ -128,7 +130,9 @@ export function get_flyout_position({
 		CENTER_CENTER_BOTTOM,
 		CENTER_BOTTOM
 	], position)) {
-		left = rect_left(element_rect) + (rect_width(element_rect) / 2) - (rect_width(flyout_rect as DOMRect) / 2)
+		left = rect_left(element_rect)
+		left += (rect_width(element_rect) / 2)
+		left -= (rect_width(flyout_rect as DOMRect) / 2)
 	}
 
 	else if (array_includes([

@@ -5,6 +5,7 @@ import { attr_set_if_exist } from "@/utils/attributes"
 import { event_add_listener, event_remove_listener } from "@/utils/event"
 import { timeout_clear, timeout_set } from "@/utils/timeout"
 import { element_dispatch_event } from "@/utils/element"
+import { document_body } from "@/utils/document"
 
 import List from "@/components/List"
 import Popover, { type PopoverProps, close_popover, open_popover, is_popover_open as is_toast_open, PopoverPosition } from "@/components/Popover"
@@ -28,8 +29,8 @@ type ToastOpenDetail = {
 }
 
 enum ToastEvents {
-	on_open = 'on-open-toast',
-	on_close = 'on-close-toast'
+	open = 'custom:open',
+	close = 'custom:close'
 }
 
 function open_toast(
@@ -38,13 +39,13 @@ function open_toast(
 	options?: Omit<ToastOpenDetail, 'event'>
 ): void {
 	element_dispatch_event(toast, new CustomEvent(
-		ToastEvents.on_open,
+		ToastEvents.open,
 		{detail: {event, ...options} satisfies ToastOpenDetail}
 	))
 }
 
 function close_toast(toast: HTMLDivElement): void {
-	element_dispatch_event(toast, new CustomEvent(ToastEvents.on_close))
+	element_dispatch_event(toast, new CustomEvent(ToastEvents.close))
 }
 
 type ToastProps = PopoverProps & {
@@ -98,7 +99,7 @@ const Toast: ParentComponent<ToastProps> = ($props) => {
 		else if (position == ToastPosition.right_bottom) $position = PopoverPosition.center_center_right_bottom
 
 		open_popover(event, toast_ref, {
-			anchor: document.body,
+			anchor: document_body(),
 			manual_dismiss: true,
 			position: $position
 		})
@@ -120,12 +121,12 @@ const Toast: ParentComponent<ToastProps> = ($props) => {
 	}
 
 	function init_custom_event(): void {
-		event_add_listener<CustomEvent>(toast_ref, ToastEvents.on_open, custom_on_open)
-		event_add_listener<CustomEvent>(toast_ref, ToastEvents.on_close, custom_on_close)
+		event_add_listener<CustomEvent>(toast_ref, ToastEvents.open, custom_on_open)
+		event_add_listener<CustomEvent>(toast_ref, ToastEvents.close, custom_on_close)
 
 		onCleanup(() => {
-			event_remove_listener<CustomEvent>(toast_ref, ToastEvents.on_open, custom_on_open)
-			event_remove_listener<CustomEvent>(toast_ref, ToastEvents.on_close, custom_on_close)
+			event_remove_listener<CustomEvent>(toast_ref, ToastEvents.open, custom_on_open)
+			event_remove_listener<CustomEvent>(toast_ref, ToastEvents.close, custom_on_close)
 		})
 	}
 

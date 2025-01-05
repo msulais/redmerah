@@ -1,47 +1,48 @@
-import { createSignal, For, onMount, Show, type VoidComponent } from "solid-js";
+import { createSignal, For, onMount, Show, type VoidComponent } from "solid-js"
 
-import type { HEXColor } from "@/types/color";
-import type { ItemList, Result, Settings } from "./_types";
-import { rgb_to_hex, hsl_to_hex } from "@/utils/color";
-import { interval_set, interval_clear } from "@/utils/timeout";
-import { createStore } from "solid-js/store";
-import { RandomizerType, WordsRandomizerWordCase, NumbersRandomizerNumberType, NumbersRandomizerSort, ColorsRandomizerColorModel, Commands } from "./_enums";
-import { math_floor, math_random, math_round } from "@/utils/math";
-import { PERSON_NAMES, TEAMS_NAMES, ANIMALS, LOREM_IPSUM, DEFAULT_LISTS } from "./_constants";
-import { ObjectStoreNames, ObjectStoreKeys, type ObjectStoreLists, type ObjectStoreSettings, type ObjectStoreLastResult } from "./_storage";
-import { string_tolowercase, string_touppercase, string_totogglecase, string_totitlecase, string_length, string_padstart, string_trim, string_split, string_locale_compare } from "@/utils/string";
-import { url_create, url_download_file, url_revoke } from "@/utils/url";
-import { element_focus } from "@/utils/element";
-import { file_open, file_read_as_text } from "@/utils/file";
-import { IDB, idb_store_delete, idb_store_put } from "@/utils/indexeddb";
-import { DatabaseNames } from "@/enums/storage";
-import { attr_remove, attr_set, attr_set_if_exist, classlist_module } from "@/utils/attributes";
-import { BodyAttributes } from "@/enums/attributes";
-import { remove_splash_screen } from "@/scripts/splash";
-import { array_concat, array_filter, array_find_index, array_includes, array_join, array_length, array_map, array_push, array_slice, array_sort, array_splice } from "@/utils/array";
-import { number_to_string } from "@/utils/number";
-import { navigator_clipboard_writetext } from "@/utils/navigator";
-import { promise_done } from "@/utils/object";
+import type { HEXColor } from "@/types/color"
+import type { ItemList, Result, Settings } from "./_types"
+import { rgb_to_hex, hsl_to_hex } from "@/utils/color"
+import { interval_set, interval_clear } from "@/utils/timeout"
+import { createStore } from "solid-js/store"
+import { RandomizerType, WordsRandomizerWordCase, NumbersRandomizerNumberType, NumbersRandomizerSort, ColorsRandomizerColorModel, Commands } from "./_enums"
+import { math_floor, math_random, math_round } from "@/utils/math"
+import { PERSON_NAMES, TEAMS_NAMES, ANIMALS, LOREM_IPSUM, DEFAULT_LISTS } from "./_constants"
+import { ObjectStoreNames, ObjectStoreKeys, type ObjectStoreLists, type ObjectStoreSettings, type ObjectStoreLastResult } from "./_storage"
+import { string_tolowercase, string_touppercase, string_totogglecase, string_totitlecase, string_length, string_padstart, string_trim, string_split, string_locale_compare } from "@/utils/string"
+import { url_create, url_download_file, url_revoke } from "@/utils/url"
+import { element_focus } from "@/utils/element"
+import { file_open, file_read_as_text } from "@/utils/file"
+import { IDB, idb_store_delete, idb_store_put } from "@/utils/indexeddb"
+import { DatabaseNames } from "@/enums/storage"
+import { attr_remove, attr_set, attr_set_if_exist, classlist_module } from "@/utils/attributes"
+import { BodyAttributes } from "@/enums/attributes"
+import { remove_splash_screen } from "@/scripts/splash"
+import { array_concat, array_filter, array_find_index, array_includes, array_join, array_length, array_map, array_push, array_slice, array_sort, array_splice } from "@/utils/array"
+import { number_to_string } from "@/utils/number"
+import { navigator_clipboard_writetext } from "@/utils/navigator"
+import { document_body } from "@/utils/document"
+import { promise_done } from "@/utils/object"
 
-import App from "@/components/App";
-import { Tooltip } from "@/components/Tooltip";
-import Icon from "@/components/Icon";
-import Divider from "@/components/Divider";
-import Dialog, { close_dialog, open_dialog } from "@/components/Dialog";
-import Button, { ButtonVariant, FloatingActionButton, IconButton } from "@/components/Button";
-import List from "@/components/List";
-import TextField, { AreaTextField, change_areatextfield_value, change_textfield_value } from "@/components/TextField";
-import Toast, { open_toast } from "@/components/Toast";
+import App from "@/components/App"
+import { Tooltip } from "@/components/Tooltip"
+import Icon from "@/components/Icon"
+import Divider from "@/components/Divider"
+import Dialog, { close_dialog, open_dialog } from "@/components/Dialog"
+import Button, { ButtonVariant, FloatingActionButton, IconButton } from "@/components/Button"
+import List from "@/components/List"
+import TextField, { AreaTextField, change_areatextfield_value, change_textfield_value } from "@/components/TextField"
+import Toast, { open_toast } from "@/components/Toast"
 import AppBar from './_AppBar'
 import SideNavigation from './_SideNavigation'
 import Control from './_Control'
 import ResultComponent from './_Result'
-import CSSAnimation from "@/styles/animation.module.scss";
+import CSSAnimation from "@/styles/animation.module.scss"
 import CSS from './_styles.module.scss'
 
 const _: VoidComponent = () => {
 	const db = new IDB(DatabaseNames.randomizer, 1)
-	const body = document.body
+	const body = document_body()
 	const randomizer_string = RandomizerType.string
 	const randomizer_numbers = RandomizerType.numbers
 	const randomizer_words = RandomizerType.words

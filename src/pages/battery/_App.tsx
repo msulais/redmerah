@@ -5,6 +5,7 @@ import { timeout_set } from "@/utils/timeout"
 import { remove_splash_screen } from "@/scripts/splash"
 import { event_add_listener } from "@/utils/event"
 import { math_floor } from "@/utils/math"
+import { document_body } from "@/utils/document"
 import { promise_done } from "@/utils/object"
 import { element_click } from "@/utils/element"
 
@@ -75,14 +76,14 @@ const _: VoidComponent = () => {
 
 	onMount(() => {
 		let clicked = false
-		event_add_listener(document.body, 'click', ev => {
+		event_add_listener(document_body(), 'click', ev => {
 			if (clicked) return;
 			init_battery(ev)
 			remove_splash_screen()
 			clicked = true
 		})
 
-		element_click(document.body)
+		element_click(document_body())
 	})
 
 	const Toasts: VoidComponent = () => (<>

@@ -14,3 +14,7 @@ export function navigator_clipboard_writetext(data: string): Promise<void> {
 export function navigator_clipboard_write(data: ClipboardItems): Promise<void> {
 	return navigator.clipboard.write(data)
 }
+
+export function navigator_useragent(): string {
+	return navigator.userAgent
+}

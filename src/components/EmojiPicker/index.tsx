@@ -4,20 +4,20 @@ import { mergeRefs } from '@solid-primitives/refs'
 
 import type { Emoji } from '@/types/emoji'
 import { activities_emojis, animal_and_nature_emojis, flags_emojis, food_and_drink_emojis, object_emojis, person_and_body_emojis, smiley_and_emotion_emojis, symbols_emojis, travel_and_places_emojis } from '@/constants/emoji'
-import { attr_has, attr_set_if_exist,attr_set } from '@/utils/attributes'
-import { BodyAttributes } from '@/enums/attributes'
-import { event_add_listener, event_current_target, event_prevent_default, event_remove_listener } from '@/utils/event'
+import { attr_set_if_exist } from '@/utils/attributes'
+import { event_add_listener, event_current_target, event_prevent_default, event_remove_listener, event_target } from '@/utils/event'
 import { timeout_clear, timeout_set } from '@/utils/timeout'
-import { BodyEvents } from '@/enums/events'
 import { AnimationEffectTiming } from '@/enums/animation'
 import { string_length, string_locale_compare, string_replace, string_split, string_trim } from '@/utils/string'
 import { array_concat, array_find_index, array_join, array_length, array_map, array_slice, array_sort, array_splice } from '@/utils/array'
-import { element_animate, element_children, element_dataset, element_dispatch_event, element_focus, element_next_sibling, element_previous_sibling, element_set_tabindex, element_style, element_tagname } from '@/utils/element'
+import { element_animate, element_append_child, element_children, element_create, element_dataset, element_dispatch_event, element_focus, element_id, element_next_sibling, element_parent, element_previous_sibling, element_set_id, element_set_style, element_set_tabindex, element_style, element_tagname } from '@/utils/element'
 import { regex_test } from '@/utils/regex'
 import { promise_done } from '@/utils/object'
 import { AppColors } from '@/enums/colors'
+import { document_body } from '@/utils/document'
 import { number_parse, number_safe } from '@/utils/number'
 import { ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT, ARROW_UP } from '@/constants/key_code'
+import { ElementIds } from '@/enums/ids'
 
 import Divider from '@/components/Divider'
 import Tooltip from '@/components/Tooltip'
@@ -29,6 +29,33 @@ import { close_popover, is_popover_open, open_popover, Popover, reposition_popov
 import FocusableGroup from '@/components/FocusableGroup'
 import './index.scss'
 
+enum EmojiCategory {
+	smiley_and_emotion = 'Smiley & emotion',
+	person_and_body = 'Person & body',
+	animal_and_nature = 'Animal & nature',
+	food_and_drink = 'Food & drink',
+	travel_and_places = 'Travel & places',
+	activities = 'Activities',
+	objects = 'Objects',
+	symbols = 'Symbols',
+	flags = 'Flags',
+	recents = 'Recents'
+}
+
+enum EmojiPickerEvents {
+	/** @param emojis `Emoji[]` */
+	getrecentsemoji = 'custom:getrecentsemoji'
+}
+
+enum EmojiPickerListenerEvents {
+	/** @param detail `Emoji` */
+	add_recents = 'custom:addrecents',
+
+	/** @param detail `HTMLElement` */
+	get_recents = 'custom:getrecents'
+}
+
+let LISTENER_REF: HTMLDivElement
 let HAS_EMOJI_LISTENER: boolean = false
 const ALL_EMOJI: Emoji[] = array_sort(
 	array_map(
@@ -49,47 +76,54 @@ const ALL_EMOJI: Emoji[] = array_sort(
 	(a, b) => string_locale_compare(a[1], b[1])
 )
 
-enum EmojiCategory {
-	smiley_and_emotion = 'Smiley & emotion',
-	person_and_body = 'Person & body',
-	animal_and_nature = 'Animal & nature',
-	food_and_drink = 'Food & drink',
-	travel_and_places = 'Travel & places',
-	activities = 'Activities',
-	objects = 'Objects',
-	symbols = 'Symbols',
-	flags = 'Flags',
-	recents = 'Recents'
-}
-
-enum EmojiPickerEvents {
-	/** @param emojis `Emoji[]` */
-	get_recent_emoji = 'on-get-recent-emoji'
-}
-
 function init_emoji_picker(): void {
-	const body = document.body
-
 	if (HAS_EMOJI_LISTENER) return;
 	HAS_EMOJI_LISTENER = true
 
+	const body = document_body()
 	let recents: Emoji[] = []
 
-	event_add_listener<CustomEvent<{emoji: Emoji}>>(body, BodyEvents.add_recent_emoji, ev => {
-		const emoji = ev.detail.emoji
+	function create_listener_element(): void {
+		const div = element_create('div')
+		element_set_style(div, 'display', 'contents')
+		element_set_id(div, ElementIds.emoji_picker_listener)
+		element_append_child(body, div)
+
+		LISTENER_REF = div
+	}
+
+	function add_recent_emoji(ev: CustomEvent<Emoji>): void {
+		const emoji = ev.detail
 		const index = array_find_index(recents, v => v[0] == emoji[0])
 		if (index >= 0) array_splice(recents, index, 1)
 
 		recents = [emoji, ...array_slice(recents, 0, 41)]
-	})
+	}
 
-	event_add_listener<CustomEvent<{element: HTMLElement}>>(body, BodyEvents.get_recent_emoji, ev => {
-		const element = ev.detail.element
+	function get_recent_emoji(ev: CustomEvent<HTMLElement>): void {
+		const element = ev.detail
 		element_dispatch_event(element, new CustomEvent(
-			EmojiPickerEvents.get_recent_emoji,
+			EmojiPickerEvents.getrecentsemoji,
 			{detail: {emojis: [...recents]}}
 		))
-	})
+	}
+
+	function init_events(): void {
+		event_add_listener<CustomEvent<Emoji>>(
+			LISTENER_REF,
+			EmojiPickerListenerEvents.add_recents,
+			add_recent_emoji
+		)
+
+		event_add_listener<CustomEvent<HTMLElement>>(
+			LISTENER_REF,
+			EmojiPickerListenerEvents.get_recents,
+			get_recent_emoji
+		)
+	}
+
+	create_listener_element()
+	init_events()
 }
 
 const EmojiPickerBody: ParentComponent<{
@@ -114,14 +148,14 @@ const EmojiPickerBody: ParentComponent<{
 			? null
 			: new RegExp(array_join(string_split(t, ' '), '|'), 'gi')
 	})
-	const body = document.body
+	const body = document_body()
 	let menu_search_ref: HTMLDivElement
 	let timeout_id: number | null = null
 
 	function update_recents(): void {
-		element_dispatch_event(body, new CustomEvent(
-			BodyEvents.get_recent_emoji,
-			{detail: {element: props.element}}
+		element_dispatch_event(LISTENER_REF, new CustomEvent(
+			EmojiPickerListenerEvents.get_recents,
+			{detail: props.element}
 		))
 	}
 
@@ -132,14 +166,14 @@ const EmojiPickerBody: ParentComponent<{
 	function init_events(): void {
 		event_add_listener<CustomEvent<{emojis: Emoji[]}>>(
 			props.element,
-			EmojiPickerEvents.get_recent_emoji,
+			EmojiPickerEvents.getrecentsemoji,
 			custom_on_get_recent_emoji
 		)
 
 		onCleanup(() => {
 			event_remove_listener<CustomEvent<{emojis: Emoji[]}>>(
 				props.element,
-				EmojiPickerEvents.get_recent_emoji,
+				EmojiPickerEvents.getrecentsemoji,
 				custom_on_get_recent_emoji
 			)
 		})
@@ -188,7 +222,7 @@ const EmojiPickerBody: ParentComponent<{
 							&& code != ARROW_RIGHT
 						) return;
 
-						const button = ev.target as HTMLButtonElement
+						const button = event_target(ev) as HTMLButtonElement
 						const index = number_safe(number_parse(element_dataset(button, 'index')!, true)) + 1
 						const children = element_children<HTMLButtonElement>(event_current_target(ev))
 						let target: HTMLElement | null = null
@@ -206,24 +240,24 @@ const EmojiPickerBody: ParentComponent<{
 						else if (code == ARROW_RIGHT) target = element_next_sibling(button)
 						else if (code == ARROW_LEFT) target = element_previous_sibling(button)
 
-						if (!target || (target as HTMLButtonElement).disabled || target.tagName != 'BUTTON') return
+						if (!target || (target as HTMLButtonElement).disabled || element_tagname(target) != 'BUTTON') return
 						event_prevent_default(ev) // disable scroll
 						element_set_tabindex(button, -1)
 						element_set_tabindex(target, 0)
 						element_focus(target)
 					}}
 					onClick={(ev) => {
-						const button = ev.target as HTMLButtonElement
-						if (button.tagName != 'BUTTON') return
+						const button = event_target(ev) as HTMLButtonElement
+						if (element_tagname(button) != 'BUTTON') return
 
 						const dataset_index = element_dataset(button, 'index')
 						if (!dataset_index) return
 
 						const index = number_safe(number_parse(dataset_index, true))
 						const emoji = $props.emojis[index]
-						element_dispatch_event(body, new CustomEvent(
-							BodyEvents.add_recent_emoji,
-							{detail: {emoji: [...emoji]}}
+						element_dispatch_event(LISTENER_REF, new CustomEvent(
+							EmojiPickerListenerEvents.add_recents,
+							{detail: [...emoji] satisfies Emoji}
 						))
 						update_recents()
 						if (!props.multiple) props.on_close()
@@ -250,15 +284,12 @@ const EmojiPickerBody: ParentComponent<{
 				left: 'prev', right: 'next'
 			}}
 			onClick={(ev) => {
-				// TODO: use 'event_target()'
-				let button = ev.target as HTMLButtonElement
+				let button = event_target(ev) as HTMLButtonElement
+				const tagname = element_tagname(button)
+				if (tagname == 'I') button = element_parent(button) as HTMLButtonElement
+				if (tagname != 'BUTTON') return
 
-				// TODO: use 'element_tagname()'
-				// TODO: use 'element_parent()'
-				if (button.tagName == 'I') button = button.parentElement as HTMLButtonElement
-				if (button.tagName != 'BUTTON') return
-
-				if (button.id == button_close_id) {
+				if (element_id(button) == button_close_id) {
 					props.on_close()
 					return
 				}
@@ -323,9 +354,9 @@ const EmojiPickerBody: ParentComponent<{
 					}}>
 					<For each={ALL_EMOJI}>{e => <Show when={get_search_regex() != null && regex_test(get_search_regex()!, e[1])}>
 						<SearchMenuItem onClick={() => {
-							element_dispatch_event(body, new CustomEvent(
-								BodyEvents.add_recent_emoji,
-								{detail: {emoji: [...e]}}
+							element_dispatch_event(LISTENER_REF, new CustomEvent(
+								EmojiPickerListenerEvents.add_recents,
+								{detail: [...e]}
 							))
 							update_recents()
 							if (!props.multiple) props.on_close()

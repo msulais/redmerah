@@ -1,20 +1,20 @@
 ---
-import { RoutesLinks } from '@/enums/links';
-import type { HEXColor } from '@/types/color';
-import { hex_to_rgb } from '@/utils/color';
-import { apps } from '@/constants/apps';
-import logo from '@/assets/logo.svg';
+import { RoutesLinks } from '@/enums/links'
+import type { HEXColor } from '@/types/color'
+import { hex_to_rgb } from '@/utils/color'
+import { apps } from '@/constants/apps'
+import logo from '@/assets/logo.svg'
 
-import Html from '@/layouts/Html/index.astro';
-import Icon from '@/components/Icon/index.astro';
-import LinkButton from '@/components/Button/LinkButton.astro';
-import { ButtonVariant } from '@/components/Button';
-import Appbar from '@/layouts/Appbar/index.astro';
-import BottomBar from '@/layouts/BottomBar/index.astro';
-import Splash from '@/layouts/Splash/index.astro';
+import Html from '@/layouts/Html/index.astro'
+import Icon from '@/components/Icon/index.astro'
+import LinkButton from '@/components/Button/LinkButton.astro'
+import { ButtonVariant } from '@/components/Button'
+import Appbar from '@/layouts/Appbar/index.astro'
+import BottomBar from '@/layouts/BottomBar/index.astro'
+import Splash from '@/layouts/Splash/index.astro'
 import CSSAnimation from '@/styles/animation.module.scss'
 import CSS from './_index.module.scss'
-import { math_round } from '@/utils/math';
+import { math_round } from '@/utils/math'
 
 const features = [
 	{
@@ -87,7 +87,7 @@ function color_app_background(color: HEXColor): string {
 
 <script>
 	import { element_animate, element_by_id, element_all_by_selector } from "@/utils/element"
-	import { array_length } from "@/utils/array";
+	import { array_length } from "@/utils/array"
 
 	const quote = element_by_id('quote') as HTMLParagraphElement
 	const spans = element_all_by_selector<HTMLSpanElement>('#quote span')

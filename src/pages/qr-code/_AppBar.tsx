@@ -10,6 +10,7 @@ import { attr_set } from "@/utils/attributes"
 import { timeout_set, wait } from "@/utils/timeout"
 import { RoutesLinks, ExternalLinks } from "@/enums/links"
 import { url_encode } from "@/utils/url"
+import { document_root } from "@/utils/document"
 import { array_includes } from "@/utils/array"
 import { navigator_share } from "@/utils/navigator"
 import { date_year } from "@/utils/datetime"
@@ -34,7 +35,7 @@ const _: VoidComponent<{
 	is_generate_error: boolean
 	page: Pages
 }> = (props) => {
-	const root = document.documentElement
+	const root = document_root()
 	const theme_system = ThemeData.system
 	const theme_light = ThemeData.light
 	const theme_dark = ThemeData.dark

@@ -12,10 +12,11 @@ import { LocalStorageKeys } from "@/enums/storage"
 import { RandomizerType, NumbersRandomizerSort, NumbersRandomizerNumberType, WordsRandomizerWordCase, ColorsRandomizerColorModel, Commands } from "./_enums"
 import { url_encode } from "@/utils/url"
 import { CornerData } from "@/enums/corner"
-import { is_window_media_matches } from "@/utils/window"
+import { window_matches } from "@/utils/window"
 import { RANDOMIZER_TYPES, SIZE_SIDE_NAVIGATION_NONE } from "./_constants"
 import { event_add_listener, event_current_target } from "@/utils/event"
 import { array_includes } from "@/utils/array"
+import { document_root } from "@/utils/document"
 import { navigator_share } from "@/utils/navigator"
 import { date_year } from "@/utils/datetime"
 import { number_safe } from "@/utils/number"
@@ -40,7 +41,7 @@ const _: Component<{
 	command: (type: Commands, ...args: unknown[]) => unknown
 	on_change_randomizer: (type: RandomizerType) => void
 }> = (props) => {
-	const root = document.documentElement
+	const root = document_root()
 	const theme_system = ThemeData.system
 	const theme_light = ThemeData.light
 	const theme_dark = ThemeData.dark
@@ -186,7 +187,7 @@ const _: Component<{
 	}
 
 	function init_sidenavigation_listener(): void {
-		set_is_sidenavigation_hidden(is_window_media_matches(`(max-width: ${SIZE_SIDE_NAVIGATION_NONE}px)`))
+		set_is_sidenavigation_hidden(window_matches(`(max-width: ${SIZE_SIDE_NAVIGATION_NONE}px)`))
 		event_add_listener(matchMedia(`(max-width: ${SIZE_SIDE_NAVIGATION_NONE}px)`), 'change', ev => set_is_sidenavigation_hidden((ev as MediaQueryListEvent).matches))
 	}
 

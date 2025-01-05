@@ -14,6 +14,7 @@ import { number_parse, number_to_string } from "@/utils/number"
 import { file_open } from "@/utils/file"
 import { regex_test } from "@/utils/regex"
 import { url_create, url_revoke } from "@/utils/url"
+import { document_body } from "@/utils/document"
 import { promise_done } from "@/utils/object"
 import { array_join } from "@/utils/array"
 
@@ -25,7 +26,7 @@ export const RectanglePicker: VoidComponent<{
 	input: HSLColor
 	command(type: Commands, ...args: unknown[]): unknown
 }> = (props) => {
-	const body = document.body
+	const body = document_body()
 	const [hue, set_hue] = $signal<number>(0) // 0-100
 	const [left, set_left] = $signal<number>(0) // 0-100
 	const [top, set_top] = $signal<number>(0) // 0-100
@@ -180,7 +181,7 @@ export const RectangleHSLPicker: VoidComponent<{
 	input: HSLColor
 	command(type: Commands, ...args: unknown[]): unknown
 }> = (props) => {
-	const body = document.body
+	const body = document_body()
 	const [hue, set_hue] = $signal<number>(0) // 0-100
 	const [left, set_left] = $signal<number>(0) // 0-100
 	const [top, set_top] = $signal<number>(0) // 0-100
@@ -333,7 +334,7 @@ export const RectangleHSLPicker: VoidComponent<{
 export const ImagePicker: VoidComponent<{
 	command(type: Commands, ...args: unknown[]): unknown
 }> = (props) => {
-	const body = document.body
+	const body = document_body()
 	const [hex_color, set_hex_color] = $signal<HEXColor>('#000000')
 	const [left, set_left] = $signal(0) // 0 -> 100
 	const [top, set_top] = $signal(0) // 0 -> 100
@@ -494,7 +495,7 @@ export const SpectrumPicker: VoidComponent<{
 	input: HSLColor
 	command(type: Commands, ...args: unknown[]): unknown
 }> = (props) => {
-	const body = document.body
+	const body = document_body()
 	const [blackness, set_blackness] = $signal<number>(0) // 0-100
 	const [left, set_left] = $signal<number>(0) // 0-100
 	const [top, set_top] = $signal<number>(0) // 0-100
@@ -659,7 +660,7 @@ export const SliderRGBPicker: VoidComponent<{
 	input: HSLColor
 	command(type: Commands, ...args: unknown[]): unknown
 }> = (props) => {
-	const body = document.body
+	const body = document_body()
 	const [red, set_red] = $signal(0) // 0 - 100
 	const [green, set_green] = $signal(0) // 0 - 100
 	const [blue, set_blue] = $signal(0) // 0 - 100
@@ -837,7 +838,7 @@ export const SliderHSLPicker: VoidComponent<{
 	input: HSLColor
 	command(type: Commands, ...args: unknown[]): unknown
 }> = (props) => {
-	const body = document.body
+	const body = document_body()
 	const [hue, set_hue] = $signal(0) // 0 - 100
 	const [saturation, set_saturation] = $signal(0) // 0 - 100
 	const [lightness, set_lightness] = $signal(0) // 0 - 100
@@ -1018,7 +1019,7 @@ export const SliderCMYKPicker: VoidComponent<{
 	input: HSLColor
 	command(type: Commands, ...args: unknown[]): unknown
 }> = (props) => {
-	const body = document.body
+	const body = document_body()
 	const [cyan, set_cyan] = $signal(0) // 0 - 100
 	const [magenta, set_magenta] = $signal(0) // 0 - 100
 	const [yellow, set_yellow] = $signal(0) // 0 - 100
@@ -1238,7 +1239,7 @@ export const SliderHEXPicker: VoidComponent<{
 	input: HSLColor
 	command(type: Commands, ...args: unknown[]): unknown
 }> = (props) => {
-	const body = document.body
+	const body = document_body()
 	const [hex, set_hex] = $signal(0) // 0 - 100
 	const get_hex_color = $memory(() => {
 		return '#' + string_padstart(number_to_string(math_round(hex() / 100 * 0xffffff), 16), 6, '0') as HEXColor
@@ -1337,7 +1338,7 @@ export const SliderHSVPicker: VoidComponent<{
 	input: HSLColor
 	command(type: Commands, ...args: unknown[]): unknown
 }> = (props) => {
-	const body = document.body
+	const body = document_body()
 	const [hue, set_hue] = $signal(0) // 0 - 100
 	const [saturation, set_saturation] = $signal(0) // 0 - 100
 	const [value, set_value] = $signal(0) // 0 - 100
@@ -1519,7 +1520,7 @@ export const SliderHWBPicker: VoidComponent<{
 	input: HSLColor
 	command(type: Commands, ...args: unknown[]): unknown
 }> = (props) => {
-	const body = document.body
+	const body = document_body()
 	const [hue, set_hue] = $signal(0) // 0 - 100
 	const [whiteness, set_whiteness] = $signal(0) // 0 - 100
 	const [blackness, set_blackness] = $signal(0) // 0 - 100

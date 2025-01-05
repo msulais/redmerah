@@ -4,13 +4,14 @@ import { mergeRefs } from "@solid-primitives/refs"
 import type { HEXColor, HSLColor, RGBColor } from "@/types/color"
 import { timeout_set } from "@/utils/timeout"
 import { attr_remove, attr_set, attr_set_if_exist } from "@/utils/attributes"
-import { element_dispatch_event, element_focus_by_arrowkey, element_rect, element_set_tabindex, element_by_id } from "@/utils/element"
-import { event_add_listener, event_current_target, event_remove_listener } from '@/utils/event'
+import { element_dispatch_event, element_focus_by_arrowkey, element_rect, element_set_tabindex, element_by_id, element_tagname, element_children, element_id, element_set_pointercapture, element_release_pointercapture } from "@/utils/element"
+import { event_add_listener, event_current_target, event_remove_listener, event_target } from '@/utils/event'
 import { BodyAttributes } from "@/enums/attributes"
 import { math_clamp, math_round } from "@/utils/math"
 import { number_is_not_defined, number_parse, number_safe, number_to_string } from "@/utils/number"
 import { string_length, string_padstart, string_replace, string_split, string_substring, string_touppercase, string_trim } from "@/utils/string"
 import { get_contrast_ratio, hex_to_hsl, hex_to_rgb, hsl_to_hex, hsl_to_hsv, hsl_to_rgb, hsv_to_hsl, is_color_with_alpha_valid, rgb_to_hsl } from "@/utils/color"
+import { document_body } from "@/utils/document"
 import { array_join, array_length, array_push } from "@/utils/array"
 import { rect_height, rect_left, rect_top, rect_width } from "@/utils/rect"
 import { ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT, ARROW_UP } from "@/constants/key_code"
@@ -25,7 +26,7 @@ const DEFAULT_HEX_COLOR: HEXColor = '#FF0000'
 
 enum ColorPickerEvents {
 	/** @param {HEXColor} color `HEXColor` */
-	on_change_color = 'on-change-color'
+	changecolor = 'custom:changecolor'
 }
 
 function open_colorpicker(
@@ -53,7 +54,7 @@ function change_colorpicker_value(
 	color: HEXColor
 ): void {
 	element_dispatch_event(color_picker, new CustomEvent(
-		ColorPickerEvents.on_change_color,
+		ColorPickerEvents.changecolor,
 		{ detail: color }
 	))
 }
@@ -71,9 +72,28 @@ const ColorPickerBody: ParentComponent<{
 }> = $props => {
 	const props = mergeProps({
 		color: DEFAULT_HEX_COLOR,
-		disabled_color_control: false
+		disabled_color_control: false,
+		disabled_opacity_control: false
 	}, $props)
-	const body = document.body
+	let textfield_opacity_ref: HTMLInputElement | undefined
+	let textfield_color_ref!: HTMLInputElement
+	let color_ref: HTMLDivElement | undefined
+	let hue_ref: HTMLDivElement | undefined
+	let opacity_ref: HTMLDivElement | undefined
+	let color_rect: DOMRect
+	let hue_rect: DOMRect
+	let opacity_rect: DOMRect
+	let color_dragged: boolean = false
+	let hue_dragged: boolean = false
+	let opacity_dragged: boolean = false
+	let color_pointer_id: number | null = null
+	let hue_pointer_id: number | null = null
+	let opacity_pointer_id: number | null = null
+	let local_color: HEXColor | null = null
+	let local_color_model: 'HEX' | 'RGB' | 'HSL' = 'HEX'
+	let local_hsl: HSLColor = {h: 0, s: 1, l: 0.5}
+	let [key_left_pressed, key_right_pressed, key_up_pressed, key_down_pressed] = [false, false, false, false]
+	const body = document_body()
 	const [color_model, set_color_model2] = createSignal<'HEX' | 'RGB' | 'HSL'>('HEX')
 	const [hsl, set_hsl2] = createSignal<HSLColor>({h: 0, s: 1, l: .5})
 	const [opacity, set_opacity] = createSignal<number>(1) // [0-100]
@@ -101,29 +121,15 @@ const ColorPickerBody: ParentComponent<{
 		}
 		return {h, s, l}
 	})
-	const get_hex_color = createMemo(() => {
+	const get_hex_color = createMemo<HEXColor>(() => {
 		const $opacity: string = opacity() == 100 || is_disabled_opacity_control()
 			? ''
 			: string_padstart(number_to_string(math_round(opacity() / 100 * 255), 16), 2, '0')
 		;
 		const hex_color = string_touppercase(hsl_to_hex(get_hsl_color()) + $opacity)
-
-		// FIXME: this is super slow especially when the color props changes
-		if (props.is_colorpicker_open) props.on_update_color?.(hex_color as HEXColor)
-		return hex_color
+		local_color = hex_color as HEXColor
+		return hex_color as HEXColor
 	})
-	let textfield_opacity_ref: HTMLInputElement | undefined
-	let textfield_color_ref!: HTMLInputElement
-	let color_rect: DOMRect
-	let hue_rect: DOMRect
-	let opacity_rect: DOMRect
-	let color_dragged: boolean = false
-	let hue_dragged: boolean = false
-	let opacity_dragged: boolean = false
-	let local_color: HEXColor | null = null
-	let local_color_model: 'HEX' | 'RGB' | 'HSL' = 'HEX'
-	let local_hsl: HSLColor = {h: 0, s: 1, l: 0.5}
-	let [key_left_pressed, key_right_pressed, key_up_pressed, key_down_pressed] = [false, false, false, false]
 
 	function set_hsl(hsl: HSLColor): void {
 		set_hsl2({...hsl})
@@ -215,6 +221,7 @@ const ColorPickerBody: ParentComponent<{
 
 		set_hsl({...get_hsl_color()})
 		update_inputs()
+		if (props.is_colorpicker_open) props.on_update_color?.(get_hex_color())
 	}
 
 	function on_pointermove(ev: PointerEvent): void {
@@ -223,6 +230,10 @@ const ColorPickerBody: ParentComponent<{
 
 	function on_pointerup(): void {
 		color_dragged = hue_dragged = opacity_dragged = false
+
+		if (color_pointer_id != null) element_release_pointercapture(color_ref!, color_pointer_id)
+		if (opacity_pointer_id != null) element_release_pointercapture(opacity_ref!, opacity_pointer_id)
+		if (hue_pointer_id != null) element_release_pointercapture(hue_ref!, hue_pointer_id)
 
 		// should be run last because <Modal> will mark this to close
 		// when mouse position outside
@@ -236,12 +247,12 @@ const ColorPickerBody: ParentComponent<{
 	}
 
 	function init_events() {
-		event_add_listener<CustomEvent>(props.element, ColorPickerEvents.on_change_color, on_change_color)
+		event_add_listener<CustomEvent>(props.element, ColorPickerEvents.changecolor, on_change_color)
 		event_add_listener<PointerEvent>(document, 'pointermove', on_pointermove)
 		event_add_listener<PointerEvent>(document, 'pointerup', on_pointerup)
 
 		onCleanup(() => {
-			event_remove_listener<CustomEvent>(props.element, ColorPickerEvents.on_change_color, on_change_color)
+			event_remove_listener<CustomEvent>(props.element, ColorPickerEvents.changecolor, on_change_color)
 			event_remove_listener<PointerEvent>(document, 'pointermove', on_pointermove)
 			event_remove_listener<PointerEvent>(document, 'pointerup', on_pointerup)
 		})
@@ -344,6 +355,7 @@ const ColorPickerBody: ParentComponent<{
 		}
 
 		update_position()
+		if (props.is_colorpicker_open) props.on_update_color?.(get_hex_color())
 	}
 
 	function on_opacity_input_change(value: string): void {
@@ -354,6 +366,7 @@ const ColorPickerBody: ParentComponent<{
 		$opacity = math_round(math_clamp($opacity, 0, 100))
 		set_opacity($opacity)
 		update_position()
+		if (props.is_colorpicker_open) props.on_update_color?.(get_hex_color())
 	}
 
 	onMount(() => {
@@ -361,9 +374,9 @@ const ColorPickerBody: ParentComponent<{
 	})
 
 	createEffect(() => {
-		const is_disabled_color_control = props.disabled_color_control ?? false
-		const is_disabled_opacity_control = props.disabled_opacity_control ?? false
-		const color = props.color
+		const $is_disabled_color_control = is_disabled_color_control()
+		const $is_disabled_opacity_control = is_disabled_opacity_control()
+		const color = '#FFFFFF'
 		const handle_color = () => {
 			if (color == local_color) return
 
@@ -372,11 +385,11 @@ const ColorPickerBody: ParentComponent<{
 
 			let hsl = hex_to_hsl(local_color)
 			let opacity = 100
-			if (is_disabled_color_control) {
+			if ($is_disabled_color_control) {
 				hsl = {h: hsl.h, s: 1, l: 0.5}
 			}
 
-			if (string_length(local_color) > 7 && !is_disabled_opacity_control) {
+			if (string_length(local_color) > 7 && !$is_disabled_opacity_control) {
 				opacity = number_safe(number_parse(string_substring(local_color, 7, 9), true, 16))
 				opacity = opacity / 0xff * 100
 				opacity = math_clamp(opacity, 0, 100)
@@ -412,8 +425,10 @@ const ColorPickerBody: ParentComponent<{
 			set_hsl(hsl)
 			set_opacity(opacity)
 		}
+
 		const handle_disable_color_control = () => {
-			if (!is_disabled_color_control) return
+			if (!$is_disabled_color_control) return
+
 			const hsl: HSLColor = {h: local_hsl.h, s: 1, l: 0.5}
 			if (textfield_color_ref) {
 				let text = ''
@@ -439,8 +454,9 @@ const ColorPickerBody: ParentComponent<{
 
 			set_hsl(hsl)
 		}
+
 		const handle_disable_opacity_control = () => {
-			if (!is_disabled_opacity_control) return
+			if (!$is_disabled_opacity_control) return
 
 			if (textfield_opacity_ref) {
 				textfield_opacity_ref.value = '100%'
@@ -460,11 +476,14 @@ const ColorPickerBody: ParentComponent<{
 			data-c-hide-color={attr_set_if_exist(is_disabled_color_control())}>
 			<div
 				class="c-color-picker-color"
+				ref={color_ref}
 				style={{ '--c-color-picker-color': hsl_to_hex({...hsl(), s: 1, l: .5}) }}
 				onPointerDown={(ev) => {
-					// TODO: use setPointerCapture() instead
+					const self = event_current_target(ev)
+					color_pointer_id = ev.pointerId
 					color_dragged = true
-					color_rect = element_rect(event_current_target(ev))
+					color_rect = element_rect(self)
+					element_set_pointercapture(self, color_pointer_id)
 					set_position(ev.clientX, ev.clientY)
 					attr_set(body, BodyAttributes.no_pointer_event)
 				}}
@@ -553,10 +572,13 @@ const ColorPickerBody: ParentComponent<{
 					data-c-hide-opacity={attr_set_if_exist(is_disabled_opacity_control())}>
 					<div
 						class="c-color-picker-hue"
+						ref={hue_ref}
 						onPointerDown={(ev) => {
-							// TODO: use setPointerCapture() instead
+							const self = event_current_target(ev)
 							hue_dragged = true
-							hue_rect = element_rect(event_current_target(ev))
+							hue_rect = element_rect(self)
+							hue_pointer_id = ev.pointerId
+							element_set_pointercapture(self, hue_pointer_id)
 							set_position(ev.clientX, ev.clientY)
 							attr_set(body, BodyAttributes.no_pointer_event)
 						}}
@@ -609,10 +631,13 @@ const ColorPickerBody: ParentComponent<{
 					</div>
 					<div
 						class="c-color-picker-opacity"
+						ref={opacity_ref}
 						onPointerDown={(ev) => {
-							// TODO: use setPointerCapture() instead
+							const self = event_current_target(ev)
 							opacity_dragged = true
-							opacity_rect = element_rect(event_current_target(ev))
+							opacity_rect = element_rect(self)
+							opacity_pointer_id = ev.pointerId
+							element_set_pointercapture(self, opacity_pointer_id)
 							set_position(ev.clientX, ev.clientY)
 							attr_set(body, BodyAttributes.no_pointer_event)
 						}}
@@ -708,18 +733,18 @@ const ColorPickerBody: ParentComponent<{
 			)}
 			data-c-disabled={attr_set_if_exist(props.disabled_action)}
 			onClick={(ev) => {
-				const button = ev.target as HTMLElement
-				if (button.tagName != 'BUTTON') return;
+				const button = event_target(ev) as HTMLElement
+				if (element_tagname(button) != 'BUTTON') return;
 
-				const children = event_current_target(ev).children as unknown as HTMLButtonElement[]
+				const children = element_children(event_current_target(ev))
 				element_set_tabindex(button, 0)
 				for (const child of children) {
-					if (child.id == button.id) continue
+					if (element_id(child) == element_id(button)) continue
 
 					element_set_tabindex(child, -1)
 				}
 
-				switch (button.id) {
+				switch (element_id(button)) {
 					case button_colormodel_id:
 						change_color_model()
 						break

@@ -3,7 +3,8 @@ import { math_floor } from "./math"
 
 /**
  * Sets the date and time value in the Date object.
- * @param time A numeric value representing the number of elapsed milliseconds since midnight, January 1, 1970 GMT.
+ * @param time A numeric value representing the number of elapsed milliseconds since midnight,
+ * January 1, 1970 GMT.
  */
 export function date_settime(date: Date, time: number): number {
 	return date.setTime(time)
@@ -75,8 +76,10 @@ export function date_set_date(current_date: Date = new Date, date: number): numb
 
 /**
  * Sets the month value in the Date object using local time.
- * @param month A numeric value equal to the month. The value for January is 0, and other month values follow consecutively.
- * @param date A numeric value representing the day of the month. If this value is not supplied, the value from a call to the getDate method is used.
+ * @param month A numeric value equal to the month. The value for January is 0, and other month
+ * values follow consecutively.
+ * @param date A numeric value representing the day of the month. If this value is not supplied,
+ * the value from a call to the getDate method is used.
  */
 export function date_set_month(
 	current_date: Date = new Date(),
@@ -89,7 +92,8 @@ export function date_set_month(
 /**
  * Sets the year of the Date object using local time.
  * @param year A numeric value for the year.
- * @param month A zero-based numeric value for the month (0 for January, 11 for December). Must be specified if numDate is specified.
+ * @param month A zero-based numeric value for the month (0 for January, 11 for December). Must be
+ * specified if numDate is specified.
  * @param date A numeric value equal for the day of the month.
  */
 export function date_set_year(
@@ -145,7 +149,8 @@ export function date_minute(date: Date = new Date()): number {
 }
 
 /**
- * Parses a string containing a date, and returns the number of milliseconds between that date and midnight, January 1, 1970.
+ * Parses a string containing a date, and returns the number of milliseconds between that date and
+ * midnight, January 1, 1970.
  * @param date A date string
  */
 export function date_parse(date: string): number {
@@ -184,19 +189,25 @@ export function is_same_date_Y(date1: Date, date2: Date): boolean {
 }
 
 export function date_in_range_YMD(date: Date, min: Date, max: Date): boolean {
-	const dateValue = date_valueof(new Date(date_year(date), date_month(date), date_date(date)))
-	const minValue = date_valueof(new Date(date_year(min), date_month(min), date_date(min)))
-	const maxValue = date_valueof(new Date(date_year(max), date_month(max), date_date(max)))
+	const v = date_valueof(new Date(date_year(date), date_month(date), date_date(date)))
+	const v_min = date_valueof(new Date(date_year(min), date_month(min), date_date(min)))
+	const v_max = date_valueof(new Date(date_year(max), date_month(max), date_date(max)))
 
-	return minValue <= dateValue && dateValue <= maxValue
+	return v_min <= v && v <= v_max
 }
 
 export function date_in_range_YMD_HM(date: Date, min: Date, max: Date): boolean {
-	const dateValue = date_valueof(new Date(date_year(date), date_month(date), date_date(date), date_hour(date), date_minute(date)))
-	const minValue = date_valueof(new Date(date_year(min), date_month(min), date_date(min), date_hour(min), date_minute(min)))
-	const maxValue = date_valueof(new Date(date_year(max), date_month(max), date_date(max), date_hour(max), date_minute(max)))
+	const v = date_valueof(new Date(
+		date_year(date), date_month(date), date_date(date), date_hour(date), date_minute(date)
+	))
+	const v_min = date_valueof(new Date(
+		date_year(min), date_month(min), date_date(min), date_hour(min), date_minute(min)
+	))
+	const v_max = date_valueof(new Date(
+		date_year(max), date_month(max), date_date(max), date_hour(max), date_minute(max)
+	))
 
-	return minValue <= dateValue && dateValue <= maxValue
+	return v_min <= v && v <= v_max
 }
 
 export function date_out_range_YMD(date: Date, min: Date, max: Date): boolean {
@@ -208,11 +219,11 @@ export function date_out_range_YMD_HM(date: Date, min: Date, max: Date): boolean
 }
 
 export function date_in_range_YM(date: Date, min: Date, max: Date): boolean {
-	const dateValue = date_valueof(new Date(date_year(date), date_month(date)))
-	const minValue = date_valueof(new Date(date_year(min), date_month(min)))
-	const maxValue = date_valueof(new Date(date_year(max), date_month(max)))
+	const v = date_valueof(new Date(date_year(date), date_month(date)))
+	const v_min = date_valueof(new Date(date_year(min), date_month(min)))
+	const v_max = date_valueof(new Date(date_year(max), date_month(max)))
 
-	return minValue <= dateValue && dateValue <= maxValue
+	return v_min <= v && v <= v_max
 }
 
 export function date_out_range_YM(date: Date, min: Date, max: Date): boolean {
@@ -220,11 +231,11 @@ export function date_out_range_YM(date: Date, min: Date, max: Date): boolean {
 }
 
 export function date_in_range_Y(date: Date, min: Date, max: Date): boolean {
-	const dateValue = date_year(date)
-	const minValue = date_year(min)
-	const maxValue = date_year(max)
+	const v = date_year(date)
+	const v_min = date_year(min)
+	const v_max = date_year(max)
 
-	return minValue <= dateValue && dateValue <= maxValue
+	return v_min <= v && v <= v_max
 }
 
 export function date_out_range_Y(date: Date, min: Date, max: Date): boolean {
@@ -268,7 +279,9 @@ export function date_text_YMD(date: Date, locales: Intl.LocalesArgument = 'en-US
 }
 
 export function date_text_YMD_HM(date: Date, locales: Intl.LocalesArgument = 'en-US'): string {
-	return date.toLocaleDateString(locales, {day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'})
+	return date.toLocaleDateString(locales, {
+		day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'
+	})
 }
 
 export function date_diff_in_days(date1: Date, date2: Date): number {

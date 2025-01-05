@@ -1,7 +1,7 @@
 import { CookieKeys } from "@/enums/cookies"
-import { url_decode, url_encode } from "./url";
-import { date_gettime, date_settime, date_to_UTC } from "./datetime";
-import { string_indexof, string_length, string_split, string_substring, string_trim } from "./string";
+import { url_decode, url_encode } from "./url"
+import { date_gettime, date_settime, date_to_UTC } from "./datetime"
+import { string_indexof, string_length, string_split, string_substring, string_trim } from "./string"
 
 type CookieOptions = {
 	domain?: string,
@@ -22,7 +22,10 @@ export function set_cookie(
 
 	if (options.expires) {
 		const expiration_date = new Date()
-		date_settime(expiration_date, date_gettime(expiration_date) + (options.expires * 24 * 60 * 60 * 1000))
+		date_settime(
+			expiration_date,
+			date_gettime(expiration_date) + (options.expires * 24 * 60 * 60 * 1000)
+		)
 		cookie += ("; expires=" + date_to_UTC(expiration_date))
 	}
 	if (options.max_age  ) cookie += ("; max-age=" + options.max_age)

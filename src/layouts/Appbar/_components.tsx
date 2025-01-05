@@ -1,29 +1,30 @@
-import { createSignal, createUniqueId, onMount, type VoidComponent } from "solid-js";
+import { createSignal, createUniqueId, onMount, type VoidComponent } from "solid-js"
 
-import Icon from "@/components/Icon";
-import { IconButton } from "@/components/Button";
-import Tooltip from "@/components/Tooltip";
-import Menu, { close_menu, LinkMenuItem, MenuDivider, MenuHeader, MenuItem, open_menu } from "@/components/Menu";
-import { open_popovercolorpicker, PopoverColorPicker } from "@/components/ColorPicker";
+import Icon from "@/components/Icon"
+import { IconButton } from "@/components/Button"
+import Tooltip from "@/components/Tooltip"
+import Menu, { close_menu, LinkMenuItem, MenuDivider, MenuHeader, MenuItem, open_menu } from "@/components/Menu"
+import { open_popovercolorpicker, PopoverColorPicker } from "@/components/ColorPicker"
 import CSSAnimation from '@/styles/animation.module.scss'
 import CSS from './_index.module.scss'
 
-import type { HEXColor, RGBColor } from "@/types/color";
-import { storage_get, storage_set } from "@/utils/storage";
-import { generate_color, hex_to_rgb, is_color_valid } from "@/utils/color";
-import { attr_set, classlist_module } from "@/utils/attributes";
-import { ExternalLinks, RoutesLinks } from "@/enums/links";
-import { LocalStorageKeys } from "@/enums/storage";
-import { RootAttributes } from "@/enums/attributes";
-import { element_closest, element_by_id } from "@/utils/element";
-import { ElementIds } from "@/enums/ids";
-import { CornerData } from "@/enums/corner";
-import { ThemeData } from "@/enums/theme";
-import { timeout_clear, timeout_set } from "@/utils/timeout";
-import { remove_splash_screen_on_load_every_component } from "@/scripts/splash";
-import { array_includes } from "@/utils/array";
-import { math_round } from "@/utils/math";
-import { event_current_target } from "@/utils/event";
+import type { HEXColor, RGBColor } from "@/types/color"
+import { storage_get, storage_set } from "@/utils/storage"
+import { generate_color, hex_to_rgb, is_color_valid } from "@/utils/color"
+import { attr_set, classlist_module } from "@/utils/attributes"
+import { ExternalLinks, RoutesLinks } from "@/enums/links"
+import { LocalStorageKeys } from "@/enums/storage"
+import { RootAttributes } from "@/enums/attributes"
+import { element_closest, element_by_id, element_id } from "@/utils/element"
+import { ElementIds } from "@/enums/ids"
+import { CornerData } from "@/enums/corner"
+import { ThemeData } from "@/enums/theme"
+import { timeout_clear, timeout_set } from "@/utils/timeout"
+import { remove_splash_screen_on_load_every_component } from "@/scripts/splash"
+import { array_includes } from "@/utils/array"
+import { math_round } from "@/utils/math"
+import { event_current_target, event_target } from "@/utils/event"
+import { document_root } from "@/utils/document"
 
 type NavigationMenuProps = {
 	route?: RoutesLinks
@@ -78,7 +79,7 @@ export const NavigationMenu: VoidComponent<NavigationMenuProps> = (props) => {
 }
 
 export const SettingsElement: VoidComponent = () => {
-	const root = document.documentElement
+	const root = document_root()
 	const theme_system = ThemeData.system
 	const theme_light = ThemeData.light
 	const theme_dark = ThemeData.dark
@@ -185,10 +186,10 @@ export const SettingsElement: VoidComponent = () => {
 			ref={r => menu_settings_ref = r}
 			on_toggle_open={(v) => setIs_menu_settings_open(v)}
 			onClick={ev => {
-				const button = element_closest(ev.target as HTMLElement, 'button')
+				const button = element_closest(event_target(ev) as HTMLElement, 'button')
 				if (!button) return
 
-				switch (button.id) {
+				switch (element_id(button)) {
 					case menuitem_themelight_id: change_theme(theme_light); break
 					case menuitem_themedark_id: change_theme(theme_dark); break
 					case menuitem_themesystem_id: change_theme(theme_system); break

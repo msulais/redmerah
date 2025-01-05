@@ -1,5 +1,5 @@
 import { array_length } from "./array"
-import { is_var_has_value } from "./object"
+import { object_has_value } from "./object"
 import { math_abs, math_pow } from "./math"
 import { regex_test } from "./regex"
 import { string_indexof, string_length, string_match, string_repeat, string_replace, string_split, string_substring } from "./string"
@@ -10,7 +10,8 @@ export function number_safe(num: number, fallback: number = 0): number {
 
 /**
  * Returns a string representing a number in fixed-point notation.
- * @param fraction_digits Number of digits after the decimal point. Must be in the range 0 - 20, inclusive.
+ * @param fraction_digits Number of digits after the decimal point. Must be in the range 0 - 20,
+ * inclusive.
  */
 export function number_tofixed(num: number, fraction_digits?: number): string {
 	return num.toFixed(fraction_digits)
@@ -33,7 +34,7 @@ export function number_is_infinite(num: number): boolean {
 }
 
 export function number_is_nan(x: number, fallback?: number): boolean | number {
-	if (is_var_has_value(fallback)) {
+	if (object_has_value(fallback)) {
 		if (Number.isNaN(x)) return fallback!
 		return x
 	}
@@ -65,7 +66,8 @@ export function number_format(num: number, separator: {
 
 /**
  * Returns a string representation of an object.
- * @param radix Specifies a radix for converting numeric values to strings. This value is only used for numbers.
+ * @param radix Specifies a radix for converting numeric values to strings. This value is only used
+ * for numbers.
  */
 export function number_to_string(num: number, radix?: number): string {
 	return num.toString(radix)
@@ -181,7 +183,6 @@ export function number_to_binary(input: number, bit: 32 | 64 = 64): string {
 	}
 	else exponent = '0'
 
-	// // example: [ exponent="101" ] => [ exponent="00000101"(Float32) exponent="00000000101"(Float64) ]
 	if (string_length(exponent) < (bit == 32 ? 8 : 11)) {
 		exponent = (string_repeat('0', (bit == 32 ? 8 : 11) - string_length(exponent))) + exponent
 	}
@@ -194,7 +195,11 @@ export function number_to_binary(input: number, bit: 32 | 64 = 64): string {
 		}
 
 		else if (index_dot > index_one) {
-			if (more) mantissa = string_substring(mantissa, index_dot - (bit == 32 ? 127 : 1023), index_dot + 1);
+			if (more) mantissa = string_substring(
+				mantissa,
+				index_dot - (bit == 32 ? 127 : 1023),
+				index_dot + 1
+			);
 			else mantissa = (
 				string_substring(mantissa, index_one + 1, index_dot)
 				+ string_substring(mantissa, index_dot + 1)

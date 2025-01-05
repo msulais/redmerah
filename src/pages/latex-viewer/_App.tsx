@@ -1,20 +1,20 @@
 import { onMount, type VoidComponent } from "solid-js"
 
-import type { Settings } from "./_types";
-import { IDB, idb_store_put } from "@/utils/indexeddb";
-import { DatabaseNames } from "@/enums/storage";
-import { ObjectStoreKeys, ObjectStoreNames, type ObjectStoreLastInput, type ObjectStoreSettings } from "./_storage";
-import { createStore } from "solid-js/store";
-import { Commands } from "./_enums";
-import { DEFAULT_LATEX_TEXT } from "./_latex";
-import { remove_splash_screen } from "@/scripts/splash";
-import { array_join, array_map, array_slice } from "@/utils/array";
-import { navigator_clipboard_writetext } from "@/utils/navigator";
-import { promise_done } from "@/utils/object";
+import type { Settings } from "./_types"
+import { IDB, idb_store_put } from "@/utils/indexeddb"
+import { DatabaseNames } from "@/enums/storage"
+import { ObjectStoreKeys, ObjectStoreNames, type ObjectStoreLastInput, type ObjectStoreSettings } from "./_storage"
+import { createStore } from "solid-js/store"
+import { Commands } from "./_enums"
+import { DEFAULT_LATEX_TEXT } from "./_latex"
+import { remove_splash_screen } from "@/scripts/splash"
+import { array_join, array_map, array_slice } from "@/utils/array"
+import { navigator_clipboard_writetext } from "@/utils/navigator"
+import { promise_done } from "@/utils/object"
 
-import Icon from "@/components/Icon";
-import Toast, { open_toast } from "@/components/Toast";
-import App from "@/components/App";
+import Icon from "@/components/Icon"
+import Toast, { open_toast } from "@/components/Toast"
+import App from "@/components/App"
 import AppBar from './_AppBar'
 import Body from './_Body'
 

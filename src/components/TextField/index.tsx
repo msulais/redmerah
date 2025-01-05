@@ -3,7 +3,7 @@ import { mergeRefs } from '@solid-primitives/refs'
 
 import { attr_set_if_exist, classlist } from '@/utils/attributes'
 import { timeout_clear, interval_clear, timeout_set, interval_set } from '@/utils/timeout'
-import { event_call, event_current_target, event_prevent_default, event_stop_propagation } from '@/utils/event'
+import { event_call, event_current_target, event_prevent_default, event_stop_propagation, event_target } from '@/utils/event'
 import { math_clamp, math_max, math_round } from '@/utils/math'
 import { element_blur, element_contains, element_dispatch_event, element_focus, element_rect, element_scroll_height } from '@/utils/element'
 import { event_add_listener, event_remove_listener } from '@/utils/event'
@@ -195,7 +195,7 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 					class='c-area-textfield-trailing'
 					onClick={ev => {
 						event_stop_propagation(ev)
-						if (ev.target.id == button_clear_id) {
+						if (event_target(ev).id == button_clear_id) {
 							change_areatextfield_value(areatextfield_ref, '')
 							event_prevent_default(ev)
 							element_focus(areatextfield_ref)
@@ -334,7 +334,7 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 					class='c-textfield-trailing'
 					onClick={ev => {
 						event_stop_propagation(ev)
-						if (ev.target.id == button_clear_id) {
+						if (event_target(ev).id == button_clear_id) {
 							change_textfield_value(textfield_ref, '')
 							event_prevent_default(ev)
 							element_focus(textfield_ref)
@@ -669,7 +669,7 @@ const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
 	function on_click(ev: MouseEvent): void {
 		if (!is_popover_open) return;
 
-		const target = ev.target as HTMLElement
+		const target = event_target(ev) as HTMLElement
 		const is_clicked_inside = element_contains(wrapper_ref, target) || element_contains(menu_ref, target)
 
 		if (is_clicked_inside) return;

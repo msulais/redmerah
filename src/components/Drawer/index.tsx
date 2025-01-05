@@ -1,7 +1,7 @@
 import { type JSX, type ParentComponent, Show, splitProps, children, mergeProps, createMemo } from "solid-js"
 
 import { attr_set_if_exist } from "@/utils/attributes"
-import { is_var_has_value, promise_done } from "@/utils/object"
+import { object_has_value, promise_done } from "@/utils/object"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { element_animate } from "@/utils/element"
 import { AppColors } from "@/enums/colors"
@@ -45,7 +45,7 @@ const DrawerItem: ParentComponent<DrawerItemProps> = ($props) => {
 
 	return (<Button
 		variant={props.variant ?? (selected()? ButtonVariant.tonal : undefined)}
-		indicator_position={props.indicator_position ?? (is_var_has_value(selected())? (props.indicator_position ?? ButtonIndicatorPosition.left) : undefined)}
+		indicator_position={props.indicator_position ?? (object_has_value(selected())? (props.indicator_position ?? ButtonIndicatorPosition.left) : undefined)}
 		classList={{'c-drawer-item': true, ...props.classList}}
 		{...other}>
 		<Show when={props.icon_code != null}>

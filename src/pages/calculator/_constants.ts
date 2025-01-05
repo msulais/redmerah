@@ -1,5 +1,5 @@
-import { CalculatorType } from "./_enums";
-import { ConverterType } from "./_converter";
+import { CalculatorType } from "./_enums"
+import { ConverterType } from "./_converter"
 
 export const
 	SIZE_SIDE_NAVIGATION_NONE = 640,

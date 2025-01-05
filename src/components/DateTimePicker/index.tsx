@@ -4,10 +4,10 @@ import { mergeRefs } from '@solid-primitives/refs'
 
 import { get_current_date, date_year, date_month, date_weekday_names, date_out_range_YMD, is_same_date_YMD, date_month_names, date_out_range_YM, is_same_date_YM, date_out_range_Y, is_same_date_Y, date_text_month, date_in_range_YM, date_day, date_set_month, date_set_year, date_set_date, date_date, date_hour, date_set_hour, date_minute, date_set_minute } from '@/utils/datetime'
 import { AnimationEffectTiming } from '@/enums/animation'
-import { event_call, event_current_target } from '@/utils/event'
+import { event_call, event_current_target, event_target } from '@/utils/event'
 import { array_fill, array_includes, array_map } from '@/utils/array'
 import { string_padstart, string_substring } from '@/utils/string'
-import { element_animate, element_children, element_dataset, element_focus, element_focus_by_arrowkey, element_is_same_node, element_next_sibling, element_previous_sibling, element_set_tabindex } from '@/utils/element'
+import { element_animate, element_children, element_dataset, element_focus, element_focus_by_arrowkey, element_id, element_is_same_node, element_next_sibling, element_previous_sibling, element_set_tabindex, element_tagname } from '@/utils/element'
 import { promise_done } from '@/utils/object'
 import { ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT, ARROW_UP } from '@/constants/key_code'
 import { number_parse, number_safe } from '@/utils/number'
@@ -122,7 +122,7 @@ const DateTimePickerBody: ParentComponent<{
 			const children = element_children<HTMLButtonElement>(div_date_ref!)
 			is_button_focused = false
 			for (const child of children) {
-				if (child.tagName != 'BUTTON') continue
+				if (element_tagname(child) != 'BUTTON') continue
 				if (child.disabled) continue
 
 				element_set_tabindex(child, 0)
@@ -145,7 +145,7 @@ const DateTimePickerBody: ParentComponent<{
 						&& code != ARROW_RIGHT
 					) return;
 
-					const button = ev.target as HTMLButtonElement
+					const button = event_target(ev) as HTMLButtonElement
 					const index = number_safe(number_parse(element_dataset(button, 'index')!, true))
 					const children = element_children<HTMLButtonElement>(event_current_target(ev))
 					let target: HTMLElement | null = null
@@ -155,7 +155,7 @@ const DateTimePickerBody: ParentComponent<{
 					else if (code == ARROW_RIGHT) target = element_next_sibling(button)
 					else if (code == ARROW_LEFT) target = element_previous_sibling(button)
 
-					if (!target || (target as HTMLButtonElement).disabled || target.tagName != 'BUTTON') return
+					if (!target || (target as HTMLButtonElement).disabled || element_tagname(target) != 'BUTTON') return
 					element_set_tabindex(button, -1)
 					element_set_tabindex(target, 0)
 					element_focus(target)
@@ -164,20 +164,20 @@ const DateTimePickerBody: ParentComponent<{
 					if (is_button_focused) return
 
 					const children = element_children<HTMLButtonElement>(event_current_target(ev))
-					const button = ev.target as HTMLButtonElement
+					const button = event_target(ev) as HTMLButtonElement
 					element_set_tabindex(button, 0)
 					is_button_focused = true
 					for (const child of children) {
 						if (element_is_same_node(child, button)) continue
-						if (child.tagName != 'BUTTON') continue
+						if (element_tagname(child) != 'BUTTON') continue
 						if (child.disabled) continue
 
 						element_set_tabindex(child, -1)
 					}
 				}}
 				onClick={(ev) => {
-					const button = ev.target as HTMLButtonElement
-					if (button.tagName != 'BUTTON' || button.disabled) return
+					const button = event_target(ev) as HTMLButtonElement
+					if (element_tagname(button) != 'BUTTON' || button.disabled) return
 
 					const index = number_safe(number_parse(element_dataset(button, 'index')!, true))
 					const date = new Date(
@@ -223,7 +223,7 @@ const DateTimePickerBody: ParentComponent<{
 			const children = element_children<HTMLButtonElement>(div_month_ref!)
 			is_button_focused = false
 			for (const child of children) {
-				if (child.tagName != 'BUTTON') continue
+				if (element_tagname(child) != 'BUTTON') continue
 				if (child.disabled) continue
 
 				element_set_tabindex(child, 0)
@@ -242,7 +242,7 @@ const DateTimePickerBody: ParentComponent<{
 					&& code != ARROW_RIGHT
 				) return;
 
-				const button = ev.target as HTMLButtonElement
+				const button = event_target(ev) as HTMLButtonElement
 				const index = number_safe(number_parse(element_dataset(button, 'index')!, true))
 				const children = element_children<HTMLButtonElement>(event_current_target(ev))
 				let target: HTMLElement | null = null
@@ -261,7 +261,7 @@ const DateTimePickerBody: ParentComponent<{
 				if (is_button_focused) return
 
 				const children = element_children<HTMLButtonElement>(event_current_target(ev))
-				const button = ev.target as HTMLButtonElement
+				const button = event_target(ev) as HTMLButtonElement
 				element_set_tabindex(button, 0)
 				is_button_focused = true
 				for (const child of children) {
@@ -272,8 +272,8 @@ const DateTimePickerBody: ParentComponent<{
 				}
 			}}
 			onClick={ev => {
-				const button = ev.target as HTMLButtonElement
-				if (button.tagName != 'BUTTON' || button.disabled) return;
+				const button = event_target(ev) as HTMLButtonElement
+				if (element_tagname(button) != 'BUTTON' || button.disabled) return;
 
 				const index = number_safe(number_parse(element_dataset(button, 'index')!, true))
 				set_view_date(new Date(date_year(view_date()), index))
@@ -283,7 +283,7 @@ const DateTimePickerBody: ParentComponent<{
 				timeout_set(() => {
 					const children = element_children<HTMLButtonElement>(div_date_ref!)
 					for (const child of children) {
-						if (child.tagName != "BUTTON" || child.disabled) continue
+						if (element_tagname(child) != "BUTTON" || child.disabled) continue
 
 						element_focus(child)
 						break
@@ -314,7 +314,7 @@ const DateTimePickerBody: ParentComponent<{
 			const children = element_children<HTMLButtonElement>(div_year_ref!)
 			is_button_focused = false
 			for (const child of children) {
-				if (child.tagName != 'BUTTON') continue
+				if (element_tagname(child) != 'BUTTON') continue
 				if (child.disabled) continue
 
 				element_set_tabindex(child, 0)
@@ -333,7 +333,7 @@ const DateTimePickerBody: ParentComponent<{
 					&& code != ARROW_RIGHT
 				) return;
 
-				const button = ev.target as HTMLButtonElement
+				const button = event_target(ev) as HTMLButtonElement
 				const index = number_safe(number_parse(element_dataset(button, 'index')!, true))
 				const children = element_children<HTMLButtonElement>(event_current_target(ev))
 				let target: HTMLElement | null = null
@@ -352,7 +352,7 @@ const DateTimePickerBody: ParentComponent<{
 				if (is_button_focused) return
 
 				const children = element_children<HTMLButtonElement>(event_current_target(ev))
-				const button = ev.target as HTMLButtonElement
+				const button = event_target(ev) as HTMLButtonElement
 				element_set_tabindex(button, 0)
 				is_button_focused = true
 				for (const child of children) {
@@ -363,8 +363,8 @@ const DateTimePickerBody: ParentComponent<{
 				}
 			}}
 			onClick={(ev) => {
-				const button = ev.target as HTMLButtonElement
-				if (button.tagName != 'BUTTON' || button.disabled) return;
+				const button = event_target(ev) as HTMLButtonElement
+				if (element_tagname(button) != 'BUTTON' || button.disabled) return;
 
 				let index: string | number | undefined = element_dataset(button, 'index')
 				if (!index) return;
@@ -377,7 +377,7 @@ const DateTimePickerBody: ParentComponent<{
 				timeout_set(() => {
 					const children = element_children<HTMLButtonElement>(div_month_ref!)
 					for (const child of children) {
-						if (child.tagName != "BUTTON" || child.disabled) continue
+						if (element_tagname(child) != "BUTTON" || child.disabled) continue
 
 						element_focus(child)
 						break
@@ -410,10 +410,10 @@ const DateTimePickerBody: ParentComponent<{
 				{ left: 'prev', right: 'next' }
 			)}
 			onClick={(ev) => {
-				const button = ev.target as HTMLButtonElement
-				if (button.tagName != 'BUTTON') return;
+				const button = event_target(ev) as HTMLButtonElement
+				if (element_tagname(button) != 'BUTTON') return;
 
-				switch (button.id) {
+				switch (element_id(button)) {
 					case button_option_id:
 						set_date_option(d => {
 							if (d == option_month) return option_year
@@ -499,7 +499,7 @@ const DateTimePickerBody: ParentComponent<{
 		<div
 			class="c-datetime-picker-time"
 			onKeyDown={(ev) => element_focus_by_arrowkey(
-				ev.target as HTMLButtonElement,
+				event_target(ev) as HTMLButtonElement,
 				ev.code,
 				{ left: 'prev', right: 'next' }
 			)}>
@@ -576,15 +576,15 @@ const DateTimePickerBody: ParentComponent<{
 		<div
 			class="c-datetime-picker-actions"
 			onKeyDown={(ev) => element_focus_by_arrowkey(
-				ev.target as HTMLButtonElement,
+				event_target(ev) as HTMLButtonElement,
 				ev.code,
 				{ left: 'prev', right: 'next' }
 			)}
 			onClick={(ev) => {
-				const button = ev.target as HTMLButtonElement
-				if (button.tagName != 'BUTTON') return
+				const button = event_target(ev) as HTMLButtonElement
+				if (element_tagname(button) != 'BUTTON') return
 
-				switch (button.id) {
+				switch (element_id(button)) {
 					case button_cancel_id:
 						props.on_close()
 						break

@@ -15,6 +15,7 @@ import { url_encode } from "@/utils/url"
 import { event_current_target } from "@/utils/event"
 import logo from '@/assets/apps/battery-logo.svg'
 import logo_redmerah from '@/assets/logo.svg'
+import { document_root } from "@/utils/document"
 
 import Tooltip from "@/components/Tooltip"
 import { IconButton } from "@/components/Button"
@@ -24,7 +25,7 @@ import CSSAnimation from "@/styles/animation.module.scss"
 import Icon from "@/components/Icon"
 
 const _: VoidComponent = () => {
-	const root = document.documentElement
+	const root = document_root()
 	const [is_menu_info_open, set_is_menu_info_open] = createSignal<boolean>(false)
 	const [is_menu_settings_open, set_is_menu_settings_open] = createSignal<boolean>(false)
 	const [is_submenu_themesettings_open, set_is_submenu_themesettings_open] = createSignal<boolean>(false)

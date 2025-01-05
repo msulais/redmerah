@@ -1,36 +1,37 @@
-import { createMemo, createSignal, onMount, type VoidComponent } from "solid-js";
+import { createMemo, createSignal, onMount, type VoidComponent } from "solid-js"
 
-import type { Settings } from "./_types";
-import { RootAttributes } from "@/enums/attributes";
-import { CornerData } from "@/enums/corner";
-import { RoutesLinks, ExternalLinks } from "@/enums/links";
-import { LocalStorageKeys } from "@/enums/storage";
-import { ThemeData } from "@/enums/theme";
-import { storage_set, storage_get } from "@/utils/storage";
-import { wait } from "@/utils/timeout";
-import { url_encode } from "@/utils/url";
-import { setAttribute } from "solid-js/web";
-import { Commands } from "./_enums";
-import { array_includes } from "@/utils/array";
-import { navigator_share } from "@/utils/navigator";
-import { date_year } from "@/utils/datetime";
-import { number_safe } from "@/utils/number";
-import { event_current_target } from "@/utils/event";
+import type { Settings } from "./_types"
+import { RootAttributes } from "@/enums/attributes"
+import { CornerData } from "@/enums/corner"
+import { RoutesLinks, ExternalLinks } from "@/enums/links"
+import { LocalStorageKeys } from "@/enums/storage"
+import { ThemeData } from "@/enums/theme"
+import { storage_set, storage_get } from "@/utils/storage"
+import { wait } from "@/utils/timeout"
+import { url_encode } from "@/utils/url"
+import { setAttribute } from "solid-js/web"
+import { Commands } from "./_enums"
+import { array_includes } from "@/utils/array"
+import { navigator_share } from "@/utils/navigator"
+import { document_root } from "@/utils/document"
+import { date_year } from "@/utils/datetime"
+import { number_safe } from "@/utils/number"
+import { event_current_target } from "@/utils/event"
 import logo from '@/assets/apps/latex-viewer/logo.svg'
 import logo_redmerah from '@/assets/logo.svg'
 
-import { IconButton } from "@/components/Button";
-import TextField, { NumberTextField } from "@/components/TextField";
-import Menu, { close_submenu, close_menu, LinkMenuItem, MenuDivider, MenuHeader, MenuItem, SubMenu, open_menu, SubMenuItem, SwitchMenuItem } from "@/components/Menu";
-import AppBar from "@/components/AppBar";
-import Tooltip from "@/components/Tooltip";
+import { IconButton } from "@/components/Button"
+import TextField, { NumberTextField } from "@/components/TextField"
+import Menu, { close_submenu, close_menu, LinkMenuItem, MenuDivider, MenuHeader, MenuItem, SubMenu, open_menu, SubMenuItem, SwitchMenuItem } from "@/components/Menu"
+import AppBar from "@/components/AppBar"
+import Tooltip from "@/components/Tooltip"
 import CSSAnimation from "@/styles/animation.module.scss"
 
 const _: VoidComponent<{
 	settings: Settings
 	command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
-	const root = document.documentElement
+	const root = document_root()
 	const theme_system = ThemeData.system
 	const theme_light = ThemeData.light
 	const theme_dark = ThemeData.dark

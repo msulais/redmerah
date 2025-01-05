@@ -16,6 +16,7 @@ import { array_includes, array_join, array_length } from "@/utils/array"
 import { attr_set, classlist_module } from "@/utils/attributes"
 import { event_current_target } from "@/utils/event"
 import { timeout_clear, timeout_set, wait } from "@/utils/timeout"
+import { document_root } from "@/utils/document"
 import logo_redmerah from '@/assets/logo.svg'
 import logo from '@/assets/apps/color-generator-logo.svg'
 
@@ -37,7 +38,7 @@ const _: VoidComponent<{
 	dialog_colorlist_ref: HTMLDialogElement
 	seed: string
 }> = (props) => {
-	const root = document.documentElement
+	const root = document_root()
 	const theme_system = ThemeData.system
 	const theme_light = ThemeData.light
 	const theme_dark = ThemeData.dark

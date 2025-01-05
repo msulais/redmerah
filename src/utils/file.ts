@@ -1,7 +1,12 @@
 import { element_create, element_click, element_remove } from "./element"
+import { event_target } from "./event"
 import { url_create, url_download_file, url_revoke } from "./url"
 
-export async function file_open(accept: string | null, multiple: boolean = false, capture?: string): Promise<FileList | null> {
+export async function file_open(
+	accept: string | null,
+	multiple: boolean = false,
+	capture?: string
+): Promise<FileList | null> {
 	return new Promise<FileList | null>((ok) => {
 		const input = element_create('input')
 		input.type = 'file'
@@ -33,7 +38,7 @@ export function file_read_as_text(blob: Blob, encoding?: string): Promise<string
 		const reader = new FileReader()
 		reader.readAsText(blob, encoding)
 		reader.onload = (ev) => {
-			const t = ev.target
+			const t = event_target(ev)
 			if (!t) return ok('');
 
 			ok(t.result as string)

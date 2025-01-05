@@ -1,10 +1,10 @@
-import { is_var_has_value } from "./object"
+import { object_has_value } from "./object"
 import { is_boolean, is_string } from "./typecheck"
 import { array_filter, array_join } from "./array"
 import { string_trim } from "./string"
 
 export function attr_set_if_exist(value: unknown, keepValue: boolean = false): string | undefined {
-	if (!is_var_has_value(value))
+	if (!object_has_value(value))
 		return undefined
 
 	if (is_boolean(value) && !keepValue)
@@ -14,7 +14,8 @@ export function attr_set_if_exist(value: unknown, keepValue: boolean = false): s
 }
 
 /**
- * Returns true if element has an attribute whose qualified name is qualifiedName, and false otherwise.
+ * Returns true if element has an attribute whose qualified name is qualifiedName, and false
+ * otherwise.
  *
  * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/hasAttribute)
  */
@@ -23,7 +24,8 @@ export function attr_has(element: Element, qualifiedName: string): boolean {
 }
 
 /**
- * Returns element's first attribute whose qualified name is qualifiedName, and null if there is no such attribute otherwise.
+ * Returns element's first attribute whose qualified name is qualifiedName, and null if there is no
+ * such attribute otherwise.
  *
  * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/getAttribute)
  */
@@ -50,7 +52,8 @@ export function attr_remove(element: Element, qualifiedName: string): void {
 }
 
 /**
- * If force is not given, "toggles" qualifiedName, removing it if it is present and adding it if it is not present. If force is true, adds qualifiedName. If force is false, removes qualifiedName.
+ * If force is not given, "toggles" qualifiedName, removing it if it is present and adding it if it
+ * is not present. If force is true, adds qualifiedName. If force is false, removes qualifiedName.
  *
  * Returns true if qualifiedName is now present, and false otherwise.
  *

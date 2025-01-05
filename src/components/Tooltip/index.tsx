@@ -13,6 +13,7 @@ import { rect_height, rect_left, rect_top, rect_width } from "@/utils/rect"
 import { promise_done } from "@/utils/object"
 import { document_active, document_body, document_has_focus } from "@/utils/document"
 import { string_css_escape, string_length, string_trim } from "@/utils/string"
+import { ElementIds } from "@/enums/ids"
 
 import { close_popover, open_popover, Popover, POPOVER_CLASS, type PopoverProps } from "@/components/Popover"
 import './index.scss'
@@ -31,11 +32,10 @@ enum TooltipAttributes {
 	open_done = 'data-c-open-done',
 }
 
+let LISTENER_REF: HTMLDivElement
 let TOOLTIP_HAS_LISTENER: boolean = false
 let TOOLTIP_TARGET: Element | null = null
 let TOOLTIP_LISTENER: HTMLDivElement | null = null
-const TOOLTIP_LISTENER_ID = 'c-tooltip-listener-id'
-const TEXT_TOOLTIP_ID = 'c-text-tooltip'
 const TOOLTIP_CLASS = 'c-tooltip'
 
 type TooltipOpenDetail<E = Event> = {
@@ -73,7 +73,6 @@ function init_tooltip(): void {
 	let position: TooltipPosition = TooltipPosition.center_top
 	let gap: number = 40
 	let use_anchor: boolean = false
-	let tooltip_listener_ref: HTMLDivElement
 	let tooltip_text_ref: HTMLDivElement
 	let tooltip_rich_ref: HTMLDivElement | null = null
 	let is_open = false
@@ -81,16 +80,16 @@ function init_tooltip(): void {
 
 	function create_tooltip_listener(): void {
 		const div = element_create('div')
-		element_set_id(div, TOOLTIP_LISTENER_ID)
+		element_set_id(div, ElementIds.tooltip_listener)
 		element_set_style(div, 'display', 'contents')
 		element_append_child(document_body(), div)
 
-		tooltip_listener_ref = div
+		LISTENER_REF = div
 	}
 
 	function create_tooltip_text(): void {
 		const div = element_create('div')
-		element_set_id(div, TEXT_TOOLTIP_ID)
+		element_set_id(div, ElementIds.text_tooltip)
 		element_set_popover(div, 'manual')
 		element_append_child(document_body(), div)
 
@@ -376,19 +375,19 @@ function init_tooltip(): void {
 
 	function init_events(): void {
 		event_add_listener(
-			tooltip_listener_ref,
+			LISTENER_REF,
 			TooltipListenerEvents.open,
 			open_tooltip
 		)
 
 		event_add_listener(
-			tooltip_listener_ref,
+			LISTENER_REF,
 			TooltipListenerEvents.close,
 			close_tooltip
 		)
 
 		event_add_listener(
-			tooltip_listener_ref,
+			LISTENER_REF,
 			TooltipListenerEvents.stop_process,
 			stop_process
 		)
@@ -444,7 +443,6 @@ const Tooltip: FlowComponent<TooltipProps> = ($props) => {
 		'onPointerOver', 'onPointerUp', 'onTouchStart',
 		'position', 'start_delay_duration', 'use_anchor'
 	])
-	let tooltip_listener_ref: HTMLDivElement | null = null
 
 	function open_tooltip(
 		ev: Event & {
@@ -467,9 +465,8 @@ const Tooltip: FlowComponent<TooltipProps> = ($props) => {
 
 		TOOLTIP_LISTENER = self
 		TOOLTIP_TARGET = target
-		if (!tooltip_listener_ref) return
 
-		element_dispatch_event(tooltip_listener_ref, new CustomEvent(TooltipListenerEvents.open, {detail: {
+		element_dispatch_event(LISTENER_REF, new CustomEvent(TooltipListenerEvents.open, {detail: {
 			wrapper_id: props.id,
 			event: ev,
 			by_focus,
@@ -482,22 +479,19 @@ const Tooltip: FlowComponent<TooltipProps> = ($props) => {
 
 	function close_tooltip(): void {
 		TOOLTIP_LISTENER = null
-		if (!tooltip_listener_ref) return
 
-		element_dispatch_event(tooltip_listener_ref, new CustomEvent(TooltipListenerEvents.close, {detail: {
+		element_dispatch_event(LISTENER_REF, new CustomEvent(TooltipListenerEvents.close, {detail: {
 			end_delay_duration: props.end_delay_duration
 		} satisfies TooltipCloseDetail}))
 	}
 
 	onMount(() => {
 		init_tooltip()
-		tooltip_listener_ref = element_by_id(TOOLTIP_LISTENER_ID)
 	})
 
 	onCleanup(() => {
-		if (!tooltip_listener_ref) return
 
-		element_dispatch_event(tooltip_listener_ref, new CustomEvent(TooltipListenerEvents.close, {detail: {
+		element_dispatch_event(LISTENER_REF, new CustomEvent(TooltipListenerEvents.close, {detail: {
 			end_delay_duration: props.end_delay_duration
 		} satisfies TooltipCloseDetail}))
 	})
@@ -561,21 +555,15 @@ const PopoverTooltip: ParentComponent<PopoverTooltipProps> = ($props) => {
 		'onTouchStart',
 		'use_portal',
 	])
-	let tooltip_listener_ref: HTMLDivElement | null = null
 
 	function stop_process(): void {
 		timeout_set(() => {
-			if (!tooltip_listener_ref) return
 			element_dispatch_event(
-				tooltip_listener_ref,
+				LISTENER_REF,
 				new CustomEvent(TooltipListenerEvents.stop_process)
 			)
 		})
 	}
-
-	onMount(() => {
-		tooltip_listener_ref = element_by_id(TOOLTIP_LISTENER_ID)
-	})
 
 	return <Popover
 		use_portal={false}
@@ -614,8 +602,6 @@ const PopoverTooltip: ParentComponent<PopoverTooltipProps> = ($props) => {
 
 export {
 	TooltipAttributes,
-	TEXT_TOOLTIP_ID,
-	TOOLTIP_CLASS,
 	Tooltip,
 	TooltipPosition,
 	PopoverTooltip

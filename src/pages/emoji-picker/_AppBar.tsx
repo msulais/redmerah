@@ -11,6 +11,7 @@ import { array_includes } from "@/utils/array"
 import { navigator_share } from "@/utils/navigator"
 import { date_year } from "@/utils/datetime"
 import { RoutesLinks, ExternalLinks } from "@/enums/links"
+import { document_root } from "@/utils/document"
 import { url_encode } from "@/utils/url"
 import { event_current_target } from "@/utils/event"
 import logo from '@/assets/apps/emoji-picker/logo.svg'
@@ -23,7 +24,7 @@ import AppBar from "@/components/AppBar"
 import CSSAnimation from "@/styles/animation.module.scss"
 
 const _: VoidComponent = () => {
-	const root = document.documentElement
+	const root = document_root()
 	const theme_system = ThemeData.system
 	const theme_light = ThemeData.light
 	const theme_dark = ThemeData.dark

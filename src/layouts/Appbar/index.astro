@@ -1,11 +1,11 @@
 ---
-import Icon from '@/components/Icon/index.astro';
-import LinkButton from '@/components/Button/LinkButton.astro';
-import { ButtonVariant } from '@/components/Button';
+import Icon from '@/components/Icon/index.astro'
+import LinkButton from '@/components/Button/LinkButton.astro'
+import { ButtonVariant } from '@/components/Button'
 import { SettingsElement, NavigationMenu } from './_components'
 import CSS from './_index.module.scss'
 
-import { RoutesLinks, ExternalLinks } from '@/enums/links';
+import { RoutesLinks, ExternalLinks } from '@/enums/links'
 
 type Props = {
 	route?: RoutesLinks
@@ -68,15 +68,16 @@ const { route } = Astro.props
 	import { event_add_listener } from "@/utils/event"
 	import { element_by_id } from "@/utils/element"
 	import { attr_toggle } from "@/utils/attributes"
+	import { window_scroll_y } from "@/utils/window"
 
 	const appbar = element_by_id('_appbar') as HTMLElement
-	let is_top = window.scrollY <= 16
+	let is_top = window_scroll_y() <= 16
 
 	attr_toggle(appbar, 'data-top', is_top)
 	event_add_listener(window, 'scroll', () => {
-		const $is_top = window.scrollY <= 16
+		const $is_top = window_scroll_y() <= 16
 
-		if (is_top == $is_top) return;
+		if (is_top == $is_top) return
 		is_top = $is_top
 
 		attr_toggle(appbar, 'data-top', is_top)

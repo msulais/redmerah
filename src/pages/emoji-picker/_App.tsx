@@ -1,14 +1,14 @@
-import { createSignal, onMount, type VoidComponent } from "solid-js";
+import { createSignal, onMount, type VoidComponent } from "solid-js"
 
-import { remove_splash_screen } from "@/scripts/splash";
-import { IDB, idb_store_put } from "@/utils/indexeddb";
-import { Commands } from "./_enums";
-import { promise_done } from "@/utils/object";
-import { DatabaseNames } from "@/enums/storage";
-import { ObjectStoreNames, type ObjectStoreSettings, ObjectStoreSettingsKeys } from "./_storage";
-import { timeout_clear, timeout_set } from "@/utils/timeout";
+import { remove_splash_screen } from "@/scripts/splash"
+import { IDB, idb_store_put } from "@/utils/indexeddb"
+import { Commands } from "./_enums"
+import { promise_done } from "@/utils/object"
+import { DatabaseNames } from "@/enums/storage"
+import { ObjectStoreNames, type ObjectStoreSettings, ObjectStoreSettingsKeys } from "./_storage"
+import { timeout_clear, timeout_set } from "@/utils/timeout"
 
-import App from "@/components/App";
+import App from "@/components/App"
 import AppBar from './_AppBar'
 import Body from './_Body'
 

@@ -8,7 +8,8 @@ import { BodyAttributes } from "@/enums/attributes"
 import { timeout_clear, timeout_set } from "@/utils/timeout"
 import { Commands } from "./_enums"
 import { IFRAME_PREVIEW_ID, MIN_EDITOR_WIDTH } from "./_constants"
-import { is_window_media_matches } from "@/utils/window"
+import { window_matches } from "@/utils/window"
+import { document_body } from "@/utils/document"
 import { string_replace } from "@/utils/string"
 
 import Button, { ButtonVariant } from "@/components/Button"
@@ -31,7 +32,7 @@ const _: VoidComponent<{
 	text_css: string
 	command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
-	const body = document.body
+	const body = document_body()
 	const [width, set_width] = createSignal<number | null>(null)
 	const [is_dragging, set_is_dragging] = createSignal<boolean>(false)
 	const [input_view_option, set_input_view_option] = createSignal<InputViewOption | null>(InputViewOption.markdown)
@@ -67,7 +68,7 @@ const _: VoidComponent<{
 		attr_remove(body, BodyAttributes.no_pointer_event)
 	}
 
-	function initEvents(): void {
+	function init_events(): void {
 		event_add_listener<TouchEvent>(document, 'touchmove', ev => update_width(ev.touches[0].clientX))
 		event_add_listener<TouchEvent>(document, 'touchend', () => close_drag())
 		event_add_listener<MouseEvent>(document, 'mousemove', ev => update_width(ev.clientX))
@@ -87,14 +88,14 @@ const _: VoidComponent<{
 			callback()
 		})
 
-		is_small_screen = is_window_media_matches(`(max-width: ${MIN_EDITOR_WIDTH}px)`)
+		is_small_screen = window_matches(`(max-width: ${MIN_EDITOR_WIDTH}px)`)
 		if (!is_small_screen) return;
 
 		callback()
 	}
 
 	onMount(() => {
-		initEvents()
+		init_events()
 		init_smallscreen_listener()
 	})
 

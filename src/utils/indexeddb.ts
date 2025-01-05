@@ -86,9 +86,9 @@ export class IDB {
 
 			const $indexs = idb_store_indexnames(store)
 			for (const index of indexs) {
-				const indexName = String(index)
-				if ($indexs.contains(indexName)) continue
-				idb_store_createindex(store, indexName, indexName)
+				const index_name = String(index)
+				if ($indexs.contains(index_name)) continue
+				idb_store_createindex(store, index_name, index_name)
 			}
 
 			for (const index of $indexs) {
@@ -104,7 +104,12 @@ export class IDB {
 
 			for (const index of indexs) {
 				const index_name = String(index)
-				idb_store_createindex(store, index_name, index_name, {unique: index_name == key_path})
+				idb_store_createindex(
+					store,
+					index_name,
+					index_name,
+					{unique: index_name == key_path}
+				)
 			}
 		}
 
@@ -123,7 +128,11 @@ export class IDB {
 		})
 	}
 
-	async get_all<T>(store: IDBObjectStore, query?: IDBValidKey | IDBKeyRange | null, count?: number): Promise<T[]> {
+	async get_all<T>(
+		store: IDBObjectStore,
+		query?: IDBValidKey | IDBKeyRange | null,
+		count?: number
+	): Promise<T[]> {
 		return new Promise<T[]>((ok, err) => {
 			const get_all_request = idb_store_getall(store, query, count)
 			get_all_request.onsuccess = () => ok(get_all_request.result as T[])
@@ -155,7 +164,12 @@ export class IDB {
 		})
 	}
 
-	async cursor(store: IDBObjectStore, result: (cursor: IDBCursorWithValue | null, ev?: Event) => boolean, query?: IDBValidKey | IDBKeyRange | null, direction?: IDBCursorDirection): Promise<void> {
+	async cursor(
+		store: IDBObjectStore,
+		result: (cursor: IDBCursorWithValue | null, ev?: Event) => boolean,
+		query?: IDBValidKey | IDBKeyRange | null,
+		direction?: IDBCursorDirection
+	): Promise<void> {
 		return new Promise((ok, err) => {
 			const open_cursor_request = idb_store_cursor(store, query, direction)
 
@@ -185,7 +199,11 @@ export class IDB {
 		delete_request.onupgradeneeded = (ev) => listeners?.on_upgrade_needed?.(ev, this)
 	}
 
-	transaction(store: string | string[], mode?: IDBTransactionMode, options?: IDBTransactionOptions): IDBTransaction | null {
+	transaction(
+		store: string | string[],
+		mode?: IDBTransactionMode,
+		options?: IDBTransactionOptions
+	): IDBTransaction | null {
 		if (!this._db) return null;
 
 		try {
@@ -243,7 +261,9 @@ export class IDB {
  *
  * If the store uses in-line keys and key is specified a "DataError" DOMException will be thrown.
  *
- * If `put()` is used, any existing record with the key will be replaced. If add() is used, and if a record with the key already exists the request will fail, with request's error set to a "ConstraintError" DOMException.
+ * If `put()` is used, any existing record with the key will be replaced. If add() is used, and if a
+ * record with the key already exists the request will fail, with request's error set to a
+ * "ConstraintError" DOMException.
  *
  * If successful, request's result will be the record's key.
  *
@@ -262,7 +282,9 @@ export function idb_store_put<T>(
  *
  * If the store uses in-line keys and key is specified a "DataError" DOMException will be thrown.
  *
- * If put() is used, any existing record with the key will be replaced. If add() is used, and if a record with the key already exists the request will fail, with request's error set to a "ConstraintError" DOMException.
+ * If put() is used, any existing record with the key will be replaced. If add() is used, and if a
+ * record with the key already exists the request will fail, with request's error set to a
+ * "ConstraintError" DOMException.
  *
  * If successful, request's result will be the record's key.
  *
@@ -291,7 +313,8 @@ export function idb_store_get<T>(
 }
 
 /**
- * Retrieves the values of the records matching the given key or key range in query (up to count if given).
+ * Retrieves the values of the records matching the given key or key range in query (up to count if
+ * given).
  *
  * If successful, request's result will be an Array of the values.
  *
@@ -331,9 +354,11 @@ export function idb_store_clear(store: IDBObjectStore): IDBRequest<undefined> {
 }
 
 /**
- * Opens a cursor over the records matching query, ordered by direction. If query is null, all records in store are matched.
+ * Opens a cursor over the records matching query, ordered by direction. If query is null, all
+ * records in store are matched.
  *
- * If successful, request's result will be an IDBCursorWithValue pointing at the first matching record, or null if there were no matching records.
+ * If successful, request's result will be an IDBCursorWithValue pointing at the first matching
+ * record, or null if there were no matching records.
  *
  * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBObjectStore/openCursor)
  */
@@ -355,7 +380,9 @@ export function idb_store_indexnames(store: IDBObjectStore): DOMStringList {
 }
 
 /**
-* Creates a new index in store with the given name, keyPath and options and returns a new IDBIndex. If the keyPath and options define constraints that cannot be satisfied with the data already in store the upgrade transaction will abort with a "ConstraintError" DOMException.
+* Creates a new index in store with the given name, keyPath and options and returns a new IDBIndex.
+* If the keyPath and options define constraints that cannot be satisfied with the data already in
+* store the upgrade transaction will abort with a "ConstraintError" DOMException.
 *
 * Throws an "InvalidStateError" DOMException if not called within an upgrade transaction.
 *
@@ -394,7 +421,8 @@ export function idb_storenames(db: IDBDatabase): DOMStringList {
 }
 
 /**
- * Attempts to open a connection to the named database with the current version, or 1 if it does not already exist. If the request is successful request's result will be the connection.
+ * Attempts to open a connection to the named database with the current version, or 1 if it does not
+ * already exist. If the request is successful request's result will be the connection.
  *
  * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBFactory/open)
  */
@@ -430,7 +458,9 @@ export function idb_create_store(
 }
 
 /**
- * Attempts to delete the named database. If the database already exists and there are open connections that don't close in response to a versionchange event, the request will be blocked until all they close. If the request is successful request's result will be null.
+ * Attempts to delete the named database. If the database already exists and there are open
+ * connections that don't close in response to a versionchange event, the request will be blocked
+ * until all they close. If the request is successful request's result will be null.
  *
  * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBFactory/deleteDatabase)
  */
@@ -439,7 +469,8 @@ export function idb_delete(name: string): IDBOpenDBRequest {
 }
 
 /**
- * Returns a new transaction with the given mode ("readonly" or "readwrite") and scope which can be a single object store name or an array of names.
+ * Returns a new transaction with the given mode ("readonly" or "readwrite") and scope which can be
+ * a single object store name or an array of names.
  *
  * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBDatabase/transaction)
  */

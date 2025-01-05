@@ -13,7 +13,7 @@ import './index.scss'
 
 enum CheckBoxEvents {
 	/** @param {HTMLInputElement} el `HTMLInputElement` */
-	on_change_radio_state = 'on-change-radio-off'
+	changestate = 'custom:changestate'
 }
 
 enum CheckBoxVariant {
@@ -76,7 +76,7 @@ const CheckBox: ParentComponent<CheckBoxProps> = ($props) => {
 	onMount(() => {
 		event_add_listener<CustomEvent<HTMLInputElement>>(
 			input_ref,
-			CheckBoxEvents.on_change_radio_state,
+			CheckBoxEvents.changestate,
 			on_change_radio_off
 		)
 	})
@@ -99,7 +99,7 @@ const CheckBox: ParentComponent<CheckBoxProps> = ($props) => {
 	onCleanup(() => {
 		event_remove_listener<CustomEvent<HTMLInputElement>>(
 			input_ref,
-			CheckBoxEvents.on_change_radio_state,
+			CheckBoxEvents.changestate,
 			on_change_radio_off
 		)
 	})
@@ -120,7 +120,7 @@ const CheckBox: ParentComponent<CheckBoxProps> = ($props) => {
 				if (props.variant == CheckBoxVariant.radio && other.name != null) {
 					const getAllRadioWithSameName = element_all_by_selector(`input[type=radio][name=${CSS.escape(other.name)}]`)
 					for (const el of getAllRadioWithSameName) element_dispatch_event(el as HTMLElement, new CustomEvent(
-						CheckBoxEvents.on_change_radio_state,
+						CheckBoxEvents.changestate,
 						{detail: input_ref}
 					))
 				}

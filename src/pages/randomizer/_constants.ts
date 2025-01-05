@@ -1,4 +1,4 @@
-import { RandomizerType } from "./_enums";
+import { RandomizerType } from "./_enums"
 
 export const
 	ANIMALS = [ "Lion", "Elephant", "Tiger", "Bear", "Wolf", "Gorilla", "Chimpanzee", "Orangutan", "Dolphin", "Whale", "Zebra", "Giraffe", "Kangaroo", "Koala", "Panda", "Snake", "Eagle", "Owl", "Parrot", "Komodo", "Anoa", ],

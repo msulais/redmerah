@@ -9,13 +9,14 @@ import { ThemeData } from "@/enums/theme"
 import { storage_set, storage_get } from "@/utils/storage"
 import { attr_set, attr_set_if_exist, classlist_module } from "@/utils/attributes"
 import { DEFAULT_TASK_LIST, SIZE_SIDE_NAVIGATION_NONE, TASKS_PAGES } from "./_constants"
-import { is_window_media_matches, window_match_media } from "@/utils/window"
+import { window_matches, window_match_media } from "@/utils/window"
 import { event_add_listener, event_current_target } from '@/utils/event'
 import { timeout_clear, timeout_set, wait } from "@/utils/timeout"
 import { RoutesLinks, ExternalLinks } from "@/enums/links"
 import { url_encode } from "@/utils/url"
 import { element_blur, element_focus } from "@/utils/element"
 import { string_replace, string_trim } from "@/utils/string"
+import { document_root } from "@/utils/document"
 import { array_filter, array_includes, array_length, array_push, array_slice } from "@/utils/array"
 import { regex_test } from "@/utils/regex"
 import { date_year } from "@/utils/datetime"
@@ -50,7 +51,7 @@ const _: VoidComponent<{
 	const corner_semiround = CornerData.semi_round
 	const corner_round = CornerData.round
 	const corner_fullround = CornerData.full_round
-	const root = document.documentElement
+	const root = document_root()
 	const [is_menu_info_open, set_is_menu_info_open] = createSignal<boolean>(false)
 	const [is_submenu_themesettings_open, set_is_submenu_themesettings_open] = createSignal<boolean>(false)
 	const [is_submenu_cornersettings_open, set_is_submenu_cornersettings_open] = createSignal<boolean>(false)
@@ -114,7 +115,7 @@ const _: VoidComponent<{
 	}
 
 	function init_sidenavigation_listener(): void {
-		set_is_side_navigation_hidden(is_window_media_matches(`(max-width: ${SIZE_SIDE_NAVIGATION_NONE}px)`))
+		set_is_side_navigation_hidden(window_matches(`(max-width: ${SIZE_SIDE_NAVIGATION_NONE}px)`))
 		event_add_listener(
 			window_match_media(`(max-width: ${SIZE_SIDE_NAVIGATION_NONE}px)`),
 			'change',

@@ -1,12 +1,18 @@
 export function wait(ms: number): Promise<unknown> {
-	return new Promise(resolve => timeout_set(resolve, ms));
+	return new Promise(resolve => timeout_set(resolve, ms))
 }
 
-export function timeout_set(handler: TimerHandler, timeout?: number | undefined): number {
+export function timeout_set(
+	handler: TimerHandler,
+	timeout?: number | undefined
+): number {
 	return setTimeout(handler, timeout)
 }
 
-export function interval_set(handler: TimerHandler, timeout?: number | undefined): number {
+export function interval_set(
+	handler: TimerHandler,
+	timeout?: number | undefined
+): number {
 	return setInterval(handler, timeout)
 }
 

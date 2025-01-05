@@ -13,6 +13,7 @@ import { url_encode } from "@/utils/url"
 import { attr_set } from "@/utils/attributes"
 import { promise_done } from "@/utils/object"
 import { array_includes } from "@/utils/array"
+import { document_root } from "@/utils/document"
 import { navigator_share } from "@/utils/navigator"
 import { date_year } from "@/utils/datetime"
 import { event_current_target } from "@/utils/event"
@@ -41,7 +42,7 @@ const _: VoidComponent<{
 	const corner_semiround = CornerData.semi_round
 	const corner_round = CornerData.round
 	const corner_fullround = CornerData.full_round
-	const root = document.documentElement
+	const root = document_root()
 	const [is_menu_info_open, set_is_menu_info_open] = createSignal<boolean>(false)
 	const [is_menu_settings_open, set_is_menu_settings_open] = createSignal<boolean>(false)
 	const [is_submenu_themesettings_open, set_is_submenu_themesettings_open] = createSignal<boolean>(false)

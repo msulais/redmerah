@@ -2,7 +2,7 @@ import { createMemo, createSignal, For, onMount, type VoidComponent } from "soli
 
 import type { Settings } from "./_types"
 import { event_add_listener, event_current_target } from "@/utils/event"
-import { is_window_media_matches, window_match_media } from "@/utils/window"
+import { window_matches, window_match_media } from "@/utils/window"
 import { CALCULATOR_TYPES, SIZE_SIDE_NAVIGATION_NONE, SIZE_SIDE_NOTEBOOK_NONE } from "./_constants"
 import { RoutesLinks, ExternalLinks } from "@/enums/links"
 import { url_encode } from "@/utils/url"
@@ -17,6 +17,7 @@ import { date_year } from "@/utils/datetime"
 import { storage_set, storage_get } from "@/utils/storage"
 import { Commands, DecimalNumberFormat, GroupingNumberFormat, type CalculatorType } from "./_enums"
 import { wait } from "@/utils/timeout"
+import { document_root } from "@/utils/document"
 import logo_redmerah from '@/assets/logo.svg'
 import logo from '@/assets/apps/calculator-logo.svg'
 
@@ -27,7 +28,7 @@ import { AreaTextField, change_areatextfield_value } from "@/components/TextFiel
 import Menu, {  MenuDivider, MenuItem, MenuHeader, close_menu, LinkMenuItem, SubMenu, close_submenu, open_menu, SubMenuItem, SwitchMenuItem } from "@/components/Menu"
 import Drawer, { close_drawer, DrawerItem, DrawerPosition, openDrawer } from "@/components/Drawer"
 import AppBar from "@/components/AppBar"
-import CSSAnimation from "@/styles/animation.module.scss";
+import CSSAnimation from "@/styles/animation.module.scss"
 import CSS from './_styles.module.scss'
 
 const _: VoidComponent<{
@@ -39,7 +40,7 @@ const _: VoidComponent<{
 	on_note_changed: (value: string) => unknown
 	command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
-	const root = document.documentElement
+	const root = document_root()
 	const theme_system = ThemeData.system
 	const theme_light = ThemeData.light
 	const theme_dark = ThemeData.dark
@@ -87,7 +88,7 @@ const _: VoidComponent<{
 	}
 
 	function init_sidenavigation_listener(): void {
-		set_is_sidenavigation_hidden(is_window_media_matches(`(max-width: ${SIZE_SIDE_NAVIGATION_NONE}px)`))
+		set_is_sidenavigation_hidden(window_matches(`(max-width: ${SIZE_SIDE_NAVIGATION_NONE}px)`))
 		event_add_listener(window_match_media(
 			`(max-width: ${SIZE_SIDE_NAVIGATION_NONE}px)`),
 			'change',
@@ -96,7 +97,7 @@ const _: VoidComponent<{
 	}
 
 	function init_sidenotebook_listener(): void {
-		set_is_sidenotebook_hidden(is_window_media_matches(`(max-width: ${SIZE_SIDE_NOTEBOOK_NONE}px)`))
+		set_is_sidenotebook_hidden(window_matches(`(max-width: ${SIZE_SIDE_NOTEBOOK_NONE}px)`))
 		event_add_listener(
 			window_match_media(`(max-width: ${SIZE_SIDE_NOTEBOOK_NONE}px)`),
 			'change',

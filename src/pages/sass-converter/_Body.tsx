@@ -4,7 +4,8 @@ import type { Settings } from "./_types"
 import { event_add_listener } from "@/utils/event"
 import { attr_remove, attr_set, attr_set_if_exist } from "@/utils/attributes"
 import { BodyAttributes } from "@/enums/attributes"
-import { is_window_media_matches } from "@/utils/window"
+import { document_body } from "@/utils/document"
+import { window_matches } from "@/utils/window"
 import { DEFAULT_INPUT_VIEW_OPTION, MIN_EDITOR_WIDTH } from "./_constants"
 import { Commands, InputViewOption } from "./_enums"
 import { timeout_clear, timeout_set } from "@/utils/timeout"
@@ -23,7 +24,7 @@ const _: VoidComponent<{
 	settings: Settings
 	command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
-	const body = document.body
+	const body = document_body()
 	const [width, set_width] = createSignal<number | null>(null)
 	const [is_dragging, set_is_dragging] = createSignal<boolean>(false)
 	const [input_view_option, set_input_view_option] = createSignal<InputViewOption | null>(DEFAULT_INPUT_VIEW_OPTION)
@@ -82,7 +83,7 @@ const _: VoidComponent<{
 			callback()
 		})
 
-		is_small_screen = is_window_media_matches(`(max-width: ${MIN_EDITOR_WIDTH}px)`)
+		is_small_screen = window_matches(`(max-width: ${MIN_EDITOR_WIDTH}px)`)
 		if (!is_small_screen) return;
 
 		callback()

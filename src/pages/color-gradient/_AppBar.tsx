@@ -17,6 +17,7 @@ import { array_includes, array_join, array_map } from "@/utils/array"
 import { navigator_clipboard_writetext, navigator_share } from "@/utils/navigator"
 import { date_year } from "@/utils/datetime"
 import { event_current_target } from "@/utils/event"
+import { document_root } from "@/utils/document"
 import logo from '@/assets/apps/color-gradient/logo.svg'
 import logo_redmerah from '@/assets/logo.svg'
 
@@ -33,7 +34,7 @@ const _: VoidComponent<{
 	gradients: Gradient[]
 	command(type: Commands, ...args: unknown[]): unknown
 }> = (props) => {
-	const root = document.documentElement
+	const root = document_root()
 	const theme_system = ThemeData.system
 	const theme_light = ThemeData.light
 	const theme_dark = ThemeData.dark

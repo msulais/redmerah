@@ -1,6 +1,6 @@
 import { is_function } from "./typecheck"
 
-export function is_var_has_value(data: unknown): boolean {
+export function object_has_value(data: unknown): boolean {
 	return data != undefined && data != null
 }
 

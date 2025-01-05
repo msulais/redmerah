@@ -1,10 +1,10 @@
-import { For, type VoidComponent } from "solid-js";
+import { For, type VoidComponent } from "solid-js"
 
-import { classlist_module } from "@/utils/attributes";
-import { Commands, Pages } from "./_enums";
-import { PAGES } from "./_constants";
+import { classlist_module } from "@/utils/attributes"
+import { Commands, Pages } from "./_enums"
+import { PAGES } from "./_constants"
 
-import SideNavigation, { SideNavigationItem } from "@/components/SideNavigation";
+import SideNavigation, { SideNavigationItem } from "@/components/SideNavigation"
 import CSS from './_styles.module.scss'
 
 const _: VoidComponent<{
