@@ -5,7 +5,7 @@ import { attr_set_if_exist, classlist } from "@/utils/attributes"
 import { object_has_value } from "@/utils/object"
 import { event_call, event_prevent_default, event_stop_immediate_propagation, event_stop_propagation } from "@/utils/event"
 import { timeout_clear, timeout_set, wait } from "@/utils/timeout"
-import { element_children, element_classlist, element_first_child, element_is_same_node, element_last_child, element_parent } from "@/utils/element"
+import { element_children, element_classlist, element_classlist_contains, element_first_child, element_is_same_node, element_last_child, element_parent } from "@/utils/element"
 import { ARROW_DOWN, ARROW_UP } from "@/constants/key_code"
 import { AppColors } from "@/enums/colors"
 
@@ -233,7 +233,7 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 
 	function close_submenu_descendant(): void {
 		for (const el of element_children(element_first_child(popover_ref)!) as unknown as HTMLElement[]) {
-			if (!element_classlist(el).contains(SUBMENU_CLASSNAME)) continue;
+			if (!element_classlist_contains(el, SUBMENU_CLASSNAME)) continue;
 			close_popover(element_last_child(el) as HTMLDivElement)
 		}
 	}
@@ -250,8 +250,8 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 
 		let some_submenu_open = false;
 
-		for (const el of element_parent(div_ref)?.children) {
-			if (!element_classlist(el).contains(SUBMENU_CLASSNAME) || element_is_same_node(el, div_ref)) continue
+		for (const el of (element_parent(div_ref)?.children ?? []) as HTMLElement[]) {
+			if (!element_classlist_contains(el, SUBMENU_CLASSNAME) || element_is_same_node(el, div_ref)) continue
 
 			const popover = element_last_child(el) as HTMLDivElement
 			const isOpen = is_popover_open(popover)
@@ -354,7 +354,7 @@ const Menu: ParentComponent<MenuProps> = ($props) => {
 
 	function close_submenu_descendant(): void {
 		for (const el of element_children(element_first_child(menu_ref)!) as unknown as HTMLElement[]) {
-			if (!element_classlist(el).contains(SUBMENU_CLASSNAME)) continue
+			if (!element_classlist_contains(el, SUBMENU_CLASSNAME)) continue
 			close_popover(element_last_child(el) as HTMLDivElement)
 		}
 	}
@@ -404,7 +404,7 @@ const PopoverMenu: ParentComponent<PopoverMenuProps> = ($props) => {
 
 	function close_submenu_descendant(): void {
 		for (const el of element_children(element_first_child(menu_ref)!) as unknown as HTMLElement[]) {
-			if (!element_classlist(el).contains(SUBMENU_CLASSNAME)) continue
+			if (!element_classlist_contains(el, SUBMENU_CLASSNAME)) continue
 			close_popover(element_last_child(el) as HTMLDivElement)
 		}
 	}
