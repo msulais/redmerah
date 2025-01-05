@@ -37,7 +37,7 @@
 	background-color: rgb(var(--g-color-background));
 	border-top: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity2));
 	width: 100%;
-	display: flex;
+	display: flex !important;
 	flex-wrap: wrap;
 	gap: 8px;
 	justify-content: flex-end;

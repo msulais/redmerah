@@ -65,14 +65,18 @@ const Dialog: ParentComponent<DialogProps> = ($props) => {
 		</Show>
 		<div class="c-dialog-content">{props.children}</div>
 		<Show when={actions()}>
-			<div class="c-dialog-actions">
-				<Show when={props.actions_auto_tabindex} fallback={actions()}>
-					<FocusableGroup arrow_options={{
+			<Show
+				when={props.actions_auto_tabindex}
+				fallback={<div class="c-dialog-actions">
+					{actions()}
+				</div>}>
+				<FocusableGroup
+					class="c-dialog-actions"
+					arrow_options={{
 						left: 'prev',
 						right: 'next'
 					}}>{actions()}</FocusableGroup>
-				</Show>
-			</div>
+			</Show>
 		</Show>
 	</Modal>)
 }
