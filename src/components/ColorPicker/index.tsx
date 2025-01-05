@@ -5,7 +5,7 @@ import type { HEXColor, HSLColor, RGBColor } from "@/types/color"
 import { timeout_set } from "@/utils/timeout"
 import { attr_remove, attr_set, attr_set_if_exist } from "@/utils/attributes"
 import { element_dispatch_event, element_focus_by_arrowkey, element_rect, element_set_tabindex, element_by_id, element_tagname, element_children, element_id, element_set_pointercapture, element_release_pointercapture } from "@/utils/element"
-import { event_add_listener, event_current_target, event_remove_listener, event_target } from '@/utils/event'
+import { event_add_listener, event_current_target, event_prevent_default, event_remove_listener, event_target } from '@/utils/event'
 import { BodyAttributes } from "@/enums/attributes"
 import { math_clamp, math_round } from "@/utils/math"
 import { number_is_not_defined, number_parse, number_safe, number_to_string } from "@/utils/number"
@@ -527,6 +527,7 @@ const ColorPickerBody: ParentComponent<{
 					if (key_left_pressed) x -= one_percent_x
 					if (key_right_pressed) x += one_percent_x
 
+					event_prevent_default(ev)
 					set_position(x, y)
 				}}
 				onKeyUp={(ev) => {
@@ -603,6 +604,7 @@ const ColorPickerBody: ParentComponent<{
 							else if (code == ARROW_LEFT) x -= one_percent_x
 							else if (code == ARROW_RIGHT) x += one_percent_x
 
+							event_prevent_default(ev)
 							set_position(x, y)
 						}}
 						onKeyUp={(ev) => {
@@ -662,6 +664,7 @@ const ColorPickerBody: ParentComponent<{
 							else if (code == ARROW_LEFT) x -= one_percent_x
 							else if (code == ARROW_RIGHT) x += one_percent_x
 
+							event_prevent_default(ev)
 							set_position(x, y)
 						}}
 						onKeyUp={(ev) => {

@@ -4,7 +4,7 @@ import { mergeRefs } from '@solid-primitives/refs'
 
 import { get_current_date, date_year, date_month, date_weekday_names, date_out_range_YMD, is_same_date_YMD, date_month_names, date_out_range_YM, is_same_date_YM, date_out_range_Y, is_same_date_Y, date_text_month, date_in_range_YM, date_day, date_set_month, date_set_year, date_set_date, date_date, date_hour, date_set_hour, date_minute, date_set_minute } from '@/utils/datetime'
 import { AnimationEffectTiming } from '@/enums/animation'
-import { event_call, event_current_target, event_target } from '@/utils/event'
+import { event_call, event_current_target, event_prevent_default, event_target } from '@/utils/event'
 import { array_fill, array_includes, array_map } from '@/utils/array'
 import { string_padstart, string_substring } from '@/utils/string'
 import { element_animate, element_children, element_dataset, element_focus, element_focus_by_arrowkey, element_id, element_is_same_node, element_next_sibling, element_previous_sibling, element_set_tabindex, element_tagname } from '@/utils/element'
@@ -156,6 +156,7 @@ const DateTimePickerBody: ParentComponent<{
 					else if (code == ARROW_LEFT) target = element_previous_sibling(button)
 
 					if (!target || (target as HTMLButtonElement).disabled || element_tagname(target) != 'BUTTON') return
+					event_prevent_default(ev)
 					element_set_tabindex(button, -1)
 					element_set_tabindex(target, 0)
 					element_focus(target)
@@ -253,6 +254,7 @@ const DateTimePickerBody: ParentComponent<{
 				else if (code == ARROW_LEFT) target = element_previous_sibling(button)
 
 				if (!target || (target as HTMLButtonElement).disabled) return
+				event_prevent_default(ev)
 				element_set_tabindex(button, -1)
 				element_set_tabindex(target, 0)
 				element_focus(target)
@@ -344,6 +346,7 @@ const DateTimePickerBody: ParentComponent<{
 				else if (code == ARROW_LEFT) target = element_previous_sibling(button)
 
 				if (!target || (target as HTMLButtonElement).disabled) return
+				event_prevent_default(ev)
 				element_set_tabindex(button, -1)
 				element_set_tabindex(target, 0)
 				element_focus(target)

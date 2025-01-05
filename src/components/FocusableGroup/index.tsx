@@ -2,7 +2,7 @@ import { splitProps, type JSX, type ParentComponent } from "solid-js"
 
 import { document_active } from "@/utils/document"
 import { element_tagname, element_focus_by_arrowkey, element_contains, element_children_remove_tabindex, element_children_tabindex, element_set_tabindex, element_is_child, element_focusable } from "@/utils/element"
-import { event_call, event_current_target } from "@/utils/event"
+import { event_call, event_current_target, event_prevent_default } from "@/utils/event"
 import { ARROW_LEFT, ARROW_RIGHT } from "@/constants/key_code"
 import { classlist } from "@/utils/attributes"
 import { timeout_clear, timeout_set } from "@/utils/timeout"
@@ -96,7 +96,10 @@ const FocusableGroup: ParentComponent<FocusableGroupProps> = ($props) => {
 				props.arrow_options,
 				props.on_before_change_focus ?? element_focusable
 			)
-			if (element_with_tabindex_zero) focus_by_arrow_key = true
+			if (element_with_tabindex_zero) {
+				focus_by_arrow_key = true
+				event_prevent_default(ev) // disable scroll
+			}
 		}}
 		{...other}>
 		{props.children}
