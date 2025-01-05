@@ -14,7 +14,7 @@ import { element_animate, element_append_child, element_children, element_create
 import { regex_test } from '@/utils/regex'
 import { promise_done } from '@/utils/object'
 import { AppColors } from '@/enums/colors'
-import { document_body } from '@/utils/document'
+import { document_active, document_body } from '@/utils/document'
 import { number_parse, number_safe } from '@/utils/number'
 import { ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT, ARROW_UP } from '@/constants/key_code'
 import { ElementIds } from '@/enums/ids'
@@ -245,8 +245,8 @@ const EmojiPickerBody: ParentComponent<{
 						element_set_tabindex(target, 0)
 						element_focus(target)
 					}}
-					onClick={(ev) => {
-						const button = event_target(ev) as HTMLButtonElement
+					onClick={() => {
+						const button = document_active()!
 						if (element_tagname(button) != 'BUTTON') return
 
 						const dataset_index = element_dataset(button, 'index')
@@ -282,10 +282,9 @@ const EmojiPickerBody: ParentComponent<{
 			arrow_options={{
 				left: 'prev', right: 'next'
 			}}
-			onClick={(ev) => {
-				let button = event_target(ev) as HTMLButtonElement
+			onClick={() => {
+				let button = document_active()!
 				const tagname = element_tagname(button)
-				if (tagname == 'I') button = element_parent(button) as HTMLButtonElement
 				if (tagname != 'BUTTON') return
 
 				if (element_id(button) == button_close_id) {
