@@ -457,3 +457,23 @@ export function element_animate(
 ): Animation {
 	return element.animate(keyframes, options)
 }
+
+/**
+ * Validation helper for event delegation.
+ * @param parent
+ * @param target if emtpy, `document.activeElement` will be used.
+ * @param condition
+ * @returns
+ */
+export function element_valid_target(
+	parent: HTMLElement,
+	target?: HTMLElement | null,
+	condition?: (el: HTMLElement) => boolean
+): boolean {
+	if (!target) target = document_active()
+	return Boolean(
+		target
+		&& element_contains(parent, target)
+		&& (condition?.(target) ?? true)
+	)
+}
