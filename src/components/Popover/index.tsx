@@ -6,7 +6,7 @@ import { FlyoutPosition as PopoverPosition } from '@/enums/position'
 import { get_flyout_position } from '@/utils/flyout'
 import { timeout_clear, timeout_set } from '@/utils/timeout'
 import { attr_has, attr_remove, attr_set, attr_set_if_exist, classlist } from '@/utils/attributes'
-import { element_rect, element_all_by_selector, element_dataset, element_dispatch_event, element_is_same_node, element_client_width, element_animate, element_create, element_set_id, element_append_child, element_set_style, element_set_pointercapture, element_release_pointercapture } from '@/utils/element'
+import { element_rect, element_all_by_selector, element_dataset, element_dispatch_event, element_is_same_node, element_client_width, element_animate, element_create, element_set_id, element_append_child, element_set_style, element_set_pointercapture, element_release_pointercapture, element_focus } from '@/utils/element'
 import { BodyAttributes } from '@/enums/attributes'
 import { event_add_listener, event_call, event_prevent_default, event_remove_listener } from "@/utils/event"
 import { math_abs } from '@/utils/math'
@@ -17,7 +17,7 @@ import { rect_bottom, rect_height, rect_left, rect_right, rect_top, rect_width }
 import { AnimationEffectTiming } from '@/enums/animation'
 import { promise_done } from '@/utils/object'
 import { ElementIds } from '@/enums/ids'
-import { ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT, ARROW_UP } from '@/constants/key_code'
+import { ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT, ARROW_UP, ESCAPE } from '@/constants/key_code'
 
 import './index.scss'
 
@@ -240,7 +240,8 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 		'class', 'use_portal', 'style', 'open_animation',
 		'close_animation', 'gap', 'padding', 'position',
 		'allow_hide_anchor', 'draggable', 'manual_dismiss',
-		'on_before_open', 'on_before_close'
+		'on_before_open', 'on_before_close', 'tabindex',
+		'onKeyDown'
 	])
 	const style = createMemo(() => props.style)
 	const [is_dragging, set_is_dragging] = createSignal<boolean>(false)
@@ -459,6 +460,7 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 		set_is_draggable(draggable)
 
 		popover_ref.showPopover()
+		element_focus(popover_ref)
 
 		const popover_rect: DOMRect = element_rect(popover_ref)
 		const $anchor_rect: DOMRect | undefined = anchor_rect != null
@@ -767,6 +769,14 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 	})
 
 	const C: VoidComponent = () => (<div
+		tabindex={props.tabindex ?? '0'}
+		onKeyDown={ev => {
+			event_call(ev, props.onKeyDown)
+			if (ev.code != ESCAPE || is_manual_dismiss()) return
+			if (anchor_ref) element_focus(anchor_ref)
+
+			close_popover()
+		}}
 		class={classlist(POPOVER_CLASS, props.class ?? '')}
 		ref={mergeRefs(props.ref, r => popover_ref = r)}
 		style={{
