@@ -2,11 +2,15 @@ import { createStore } from "solid-js/store"
 import { Show, createContext, createEffect, createMemo, createSelector, createSignal, mergeProps, onCleanup, onMount, splitProps, useContext, type Accessor, type ParentComponent } from "solid-js"
 import { mergeRefs } from "@solid-primitives/refs"
 
-import { element_rect } from "@/utils/element"
+import { element_dataset, element_rect } from "@/utils/element"
 import { timeout_clear, timeout_set } from "@/utils/timeout"
 import { event_call } from "@/utils/event"
 import { array_concat, array_equals, array_filter, array_find_index, array_join, array_length, array_map, array_push, array_slice, array_some } from "@/utils/array"
 import { rect_width } from "@/utils/rect"
+import { document_active } from "@/utils/document"
+import { is_number } from "@/utils/typecheck"
+import { string_starts_with, string_substring } from "@/utils/string"
+import { number_parse, number_safe } from "@/utils/number"
 
 import Menu, { MenuItem, type MenuProps, MenuPosition as DropdownPosition, type MenuItemProps, open_menu, close_menu, reposition_menu } from "@/components/Menu"
 import { Button, ButtonVariant, type ButtonProps } from "@/components/Button"
@@ -16,8 +20,7 @@ import './index.scss'
 type DropdownContextProps = {
 	on_mount_option(value: string | number, text: string): unknown
 	on_cleanup_option(value: string | number | null): unknown
-	on_select_option(value: string | number): unknown
-	selected_values: Accessor<(number | string)[]>
+	selected_values: Accessor<(string | number)[]>
 	multiple: Accessor<boolean>
 } | undefined
 
@@ -30,7 +33,7 @@ type DropdownOptionProps = Omit<MenuItemProps, 'value'> & {
 
 const DropdownOption: ParentComponent<DropdownOptionProps> = ($props) => {
 	const [props, other] = splitProps($props, [
-		'value', 'onClick', 'selected', 'id', 'checked',
+		'value', 'selected', 'id', 'checked',
 		'text', 'children'
 	])
 	const context = useContext(DropdownContext)
@@ -61,18 +64,14 @@ const DropdownOption: ParentComponent<DropdownOptionProps> = ($props) => {
 	return (<MenuItem
 		selected={props.selected ?? context?.multiple()? undefined : selected()}
 		checked={props.checked ?? context?.multiple()? selected() : undefined}
-		onClick={ev => {
-			// TODO: use event delegation
-			context?.on_select_option(props.value)
-			event_call(ev, props.onClick)
-		}}
+		data-c-dropdown-value={(is_number(props.value)? 'number:' : '') + props.value}
 		{...other}>
 		{ props.children ?? props.text}
 	</MenuItem>)
 }
 
 type DropdownProps = Omit<ButtonProps, 'value'> & {
-	values?: (number | string)[]
+	values?: (string | number)[]
 	text?: string
 	label?: string
 	multiple?: boolean
@@ -91,7 +90,10 @@ const Dropdown: ParentComponent<DropdownProps> = ($props) => {
 	])
 	const [menu_props, menu_props_other] = splitProps(
 		props.attr_menu! ?? {},
-		['on_toggle_open', 'ref', 'style', 'classList']
+		[
+			'on_toggle_open', 'ref', 'style', 'classList',
+			'onClick'
+		]
 	)
 	const [is_open, set_is_open] = createSignal<boolean>(false)
 	const [options, set_options] = createStore<{value: string | number, text: string}[]>([])
@@ -101,7 +103,7 @@ const Dropdown: ParentComponent<DropdownProps> = ($props) => {
 		() => selected_values,
 		(value, array) => array_some(array, v => v === value)
 	)
-	let local_values: (number | string)[] = []
+	let local_values: (string | number)[] = []
 	let local_multiple: boolean = false
 	let button_dropdown_ref: HTMLButtonElement
 	let menu_dropdown_ref: HTMLDialogElement
@@ -163,7 +165,7 @@ const Dropdown: ParentComponent<DropdownProps> = ($props) => {
 
 		if (!array_equals(values ?? [], local_values)) {
 			local_values = values ?? []
-			const values2: (string | number)[] = []
+			const values2: string[] = []
 			for (const value of local_values) {
 				if (!array_some(options, o => o.value === value)) continue
 
@@ -203,7 +205,7 @@ const Dropdown: ParentComponent<DropdownProps> = ($props) => {
 			])
 			else set_options(d => [...d, {value, text}])
 
-			const selected_values: (string | number)[] = []
+			const selected_values: string[] = []
 			if (Array.isArray(props.values)){
 				for (const value of props.values) {
 					if (!array_some(options, v => v.value === value)) continue
@@ -234,7 +236,6 @@ const Dropdown: ParentComponent<DropdownProps> = ($props) => {
 		},
 		multiple: () => props.multiple ?? false,
 		selected_values: () => selected_values,
-		on_select_option,
 	}}>
 		<Button
 			ref={mergeRefs(props.ref, r => button_dropdown_ref = r)}
@@ -263,6 +264,20 @@ const Dropdown: ParentComponent<DropdownProps> = ($props) => {
 			on_toggle_open={v => {
 				set_is_open(v)
 				menu_props.on_toggle_open?.(v)
+			}}
+			onClick={(ev) => {
+				event_call(ev, menu_props.onClick)
+
+				const button = document_active()!
+				let dropdown_value: string | number | undefined = element_dataset(button, 'cDropdownValue')
+				if (!dropdown_value) return
+
+				if (string_starts_with(dropdown_value, 'number:')) {
+					dropdown_value = number_safe(number_parse(string_substring(dropdown_value, 7)))
+				}
+
+				console.log(dropdown_value)
+				on_select_option(dropdown_value)
 			}}
 			ref={mergeRefs(menu_props.ref, r => menu_dropdown_ref = r)}
 			style={{
