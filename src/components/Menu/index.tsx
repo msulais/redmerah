@@ -216,7 +216,7 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 	}, $props)
 	const [props, other] = splitProps($$props, [
 		'classList', 'item', 'attr_wrapper',
-		'id', 'onClick', 'ref', 'gap', 'position',
+		'id', 'ref', 'gap', 'position',
 		'padding', 'draggable', 'allow_hide_anchor',
 		'on_toggle_open', 'children', 'on_before_close',
 		'use_portal', 'children_auto_tabindex'
@@ -306,11 +306,6 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 			on_toggle_open={$is_open => {
 				is_open = $is_open
 				props.on_toggle_open?.($is_open)
-			}}
-			onClick={(ev) => {
-				event_stop_propagation(ev)
-				event_stop_immediate_propagation(ev)
-				event_call(ev, props.onClick)
 			}}
 			on_before_close={() => {
 				close_submenu_descendant()

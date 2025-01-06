@@ -6,9 +6,9 @@ import { FlyoutPosition as PopoverPosition } from '@/enums/position'
 import { get_flyout_position } from '@/utils/flyout'
 import { timeout_clear, timeout_set } from '@/utils/timeout'
 import { attr_has, attr_remove, attr_set, attr_set_if_exist, classlist } from '@/utils/attributes'
-import { element_rect, element_all_by_selector, element_dataset, element_dispatch_event, element_is_same_node, element_client_width, element_animate, element_create, element_set_id, element_append_child, element_set_style, element_set_pointercapture, element_release_pointercapture, element_focus } from '@/utils/element'
+import { element_rect, element_all_by_selector, element_dataset, element_dispatch_event, element_is_same_node, element_client_width, element_animate, element_create, element_set_id, element_append_child, element_set_style, element_set_pointercapture, element_release_pointercapture, element_focus, element_contains } from '@/utils/element'
 import { BodyAttributes } from '@/enums/attributes'
-import { event_add_listener, event_call, event_prevent_default, event_remove_listener } from "@/utils/event"
+import { event_add_listener, event_call, event_prevent_default, event_remove_listener, event_target } from "@/utils/event"
 import { math_abs } from '@/utils/math'
 import { document_body } from '@/utils/document'
 import { window_inner_height } from '@/utils/window'
@@ -151,18 +151,10 @@ function init_popover_listener(): void {
 			|| array_length(popovers) == 0
 			|| !(ev as any).pointerType
 		) return;
-		const pointer = {
-			x: (ev as MouseEvent).clientX,
-			y: (ev as MouseEvent).clientY
-		}
 
+		const target = event_target(ev) as HTMLElement
 		for (const popover of popovers) {
-			const popover_rect = element_rect(popover)
-			const is_clicked_inside = pointer.x >= popover_rect.left
-				&& pointer.x <= popover_rect.right
-				&& pointer.y >= popover_rect.top
-				&& pointer.y <= popover_rect.bottom
-
+			const is_clicked_inside = element_contains(popover, target)
 			if (is_clicked_inside || attr_has(popover, PopoverAttributes.manual)) return;
 
 			close_popover(popover as HTMLDivElement)
