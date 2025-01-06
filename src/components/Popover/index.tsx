@@ -8,7 +8,7 @@ import { timeout_clear, timeout_set } from '@/utils/timeout'
 import { attr_has, attr_remove, attr_set, attr_set_if_exist, classlist } from '@/utils/attributes'
 import { element_rect, element_all_by_selector, element_dataset, element_dispatch_event, element_is_same_node, element_client_width, element_animate, element_create, element_set_id, element_append_child, element_set_style, element_set_pointercapture, element_release_pointercapture, element_focus, element_contains } from '@/utils/element'
 import { BodyAttributes } from '@/enums/attributes'
-import { event_add_listener, event_call, event_prevent_default, event_remove_listener, event_target } from "@/utils/event"
+import { event_add_listener, event_call, event_prevent_default, event_remove_listener, event_target, event_type } from "@/utils/event"
 import { math_abs } from '@/utils/math'
 import { document_body } from '@/utils/document'
 import { window_inner_height } from '@/utils/window'
@@ -613,7 +613,7 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 			{ duration: 300, easing: AnimationEffectTiming.spring_bounce }
 		).finished, () => set_attr_open_done(true))
 
-		STOP_GLOBAL_CLICK = true
+		STOP_GLOBAL_CLICK = event_type(event) == 'click'
 	}
 
 	function reposition_popover(): void {

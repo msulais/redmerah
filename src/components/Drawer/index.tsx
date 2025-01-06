@@ -14,6 +14,7 @@ import { close_modal, focus_modal, Modal, open_modal, type ModalProps } from "@/
 import FocusableGroup from "@/components/FocusableGroup"
 import './index.scss'
 
+// TODO: rename to 'open_drawer'
 function openDrawer(
 	ev: Event,
 	drawer: HTMLDialogElement,
