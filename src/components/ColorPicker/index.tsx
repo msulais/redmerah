@@ -20,6 +20,7 @@ import Button, { ButtonVariant } from "@/components/Button"
 import TextField from "@/components/TextField"
 import Modal, { type ModalProps, ModalPosition as ColorPickerPosition, type ModalOpenDetail, open_modal, close_modal, focus_modal, is_modal_open, reposition_modal } from "@/components/Modal"
 import Popover, { close_popover, is_popover_open, open_popover, reposition_popover, type PopoverProps } from "@/components/Popover"
+import FocusableGroup from "@/components/FocusableGroup"
 import './index.scss'
 
 const DEFAULT_HEX_COLOR: HEXColor = '#FF0000'
@@ -727,13 +728,9 @@ const ColorPickerBody: ParentComponent<{
 			element_set_tabindex(element_by_id(button_colormodel_id)!, 0)
 		})
 
-		return (<div
+		return (<FocusableGroup
 			class="c-color-picker-actions"
-			onKeyDown={(ev) => element_focus_by_arrowkey(
-				event_current_target(ev),
-				ev.code,
-				{ right: 'next', left: 'prev' }
-			)}
+			arrow_options={{ right: 'next', left: 'prev' }}
 			data-c-disabled={attr_set_if_exist(props.disabled_action)}
 			onClick={(ev) => {
 				const button = event_target(ev) as HTMLElement
@@ -762,26 +759,23 @@ const ColorPickerBody: ParentComponent<{
 				}
 			}}>
 			<Button
-				tabindex="0"
 				id={button_colormodel_id}
 				variant={ButtonVariant.tonal}>
 				{color_model()}
 			</Button>
 			<Show when={!props.disabled_action}>
 				<Button
-					tabindex="-1"
 					id={button_cancel_id}
 					variant={ButtonVariant.tonal}>
 					Cancel
 				</Button>
 				<Button
-					tabindex="-1"
 					id={button_select_id}
 					variant={ButtonVariant.filled}>
 					Select
 				</Button>
 			</Show>
-		</div>)
+		</FocusableGroup>)
 	}
 
 	return (<>

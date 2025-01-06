@@ -9,7 +9,8 @@
 	}
 }
 
-.c-datetime-picker-actions {
+// override 'display:contents' in <FocusableGroup>
+div.c-datetime-picker-actions {
 	display: grid;
 	grid-template-columns: repeat(2, 1fr);
 	gap: 8px;
@@ -75,7 +76,7 @@
 	padding: 8px;
 }
 
-.c-datetime-picker-time {
+div.c-datetime-picker-time {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
 	gap: 8px;

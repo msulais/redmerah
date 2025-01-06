@@ -10,7 +10,8 @@
 	}
 }
 
-.c-color-picker-actions {
+// override 'display:contents' in <FocusableGroup>
+div.c-color-picker-actions {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
 	gap: 8px;

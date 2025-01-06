@@ -19,8 +19,9 @@
 	}
 }
 
-.c-toast-actions {
-	display: flex !important;
+// override 'display:contents' in <FocusableGroup>
+div.c-toast-actions {
+	display: flex;
 	width: 100%;
 	gap: 8px;
 	flex-wrap: wrap;

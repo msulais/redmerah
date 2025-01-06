@@ -20,6 +20,7 @@ import { MenuHeader } from '@/components/Menu'
 import { close_popover, is_popover_open, open_popover, Popover, reposition_popover, type PopoverProps } from '@/components/Popover'
 import Divider from '@/components/Divider'
 import './index.scss'
+import FocusableGroup from '../FocusableGroup'
 
 enum DatePickerOption {
 	year,
@@ -499,16 +500,11 @@ const DateTimePickerBody: ParentComponent<{
 				<Match when={date_option() == option_year}><YearsDate/></Match>
 			</Switch>
 		</Transition>
-		<div
+		<FocusableGroup
 			class="c-datetime-picker-time"
-			onKeyDown={(ev) => element_focus_by_arrowkey(
-				event_target(ev) as HTMLButtonElement,
-				ev.code,
-				{ left: 'prev', right: 'next' }
-			)}>
+			arrow_options={{ left: 'prev', right: 'next' }}>
 			<Dropdown
 				label='Hour'
-				tabindex="0"
 				values={[
 					date_hour(value()) - (date_hour(value()) >= 12? 12 : 0)
 				]}
@@ -528,7 +524,6 @@ const DateTimePickerBody: ParentComponent<{
 				]}>{option => <DropdownOption value={option[0]} text={option[1] as string}/>}</For>
 			</Dropdown>
 			<Dropdown
-				tabindex="-1"
 				values={[date_minute(value())]}
 				label='Minute'
 				attr_menu={{style: {
@@ -544,7 +539,6 @@ const DateTimePickerBody: ParentComponent<{
 				}</For>
 			</Dropdown>
 			<Dropdown
-				tabindex="-1"
 				values={[date_hour(value()) >= 12? 'PM' : 'AM']}
 				on_change_options={(options) => {
 					const hour = date_hour(value())
@@ -574,15 +568,11 @@ const DateTimePickerBody: ParentComponent<{
 					<DropdownOption value={option[0]} text={option[1] as string}/>
 				}</For>
 			</Dropdown>
-		</div>
+		</FocusableGroup>
 		{props.children}
-		<div
+		<FocusableGroup
 			class="c-datetime-picker-actions"
-			onKeyDown={(ev) => element_focus_by_arrowkey(
-				event_target(ev) as HTMLButtonElement,
-				ev.code,
-				{ left: 'prev', right: 'next' }
-			)}
+			arrow_options={{ left: 'prev', right: 'next' }}
 			onClick={(ev) => {
 				const button = event_target(ev) as HTMLButtonElement
 				if (element_tagname(button) != 'BUTTON') return
@@ -598,18 +588,16 @@ const DateTimePickerBody: ParentComponent<{
 				}
 			}}>
 			<Button
-				tabindex="0"
 				id={button_cancel_id}
 				variant={ButtonVariant.tonal}>
 				Cancel
 			</Button>
 			<Button
-				tabindex="-1"
 				id={button_select_id}
 				variant={ButtonVariant.filled}>
 				Select
 			</Button>
-		</div>
+		</FocusableGroup>
 	</>)
 }
 
