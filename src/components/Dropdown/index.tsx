@@ -2,9 +2,9 @@ import { createStore } from "solid-js/store"
 import { Show, createContext, createEffect, createMemo, createSelector, createSignal, mergeProps, onCleanup, onMount, splitProps, useContext, type Accessor, type ParentComponent } from "solid-js"
 import { mergeRefs } from "@solid-primitives/refs"
 
-import { element_dataset, element_rect } from "@/utils/element"
+import { element_dataset, element_rect, element_tagname, element_valid_target } from "@/utils/element"
 import { timeout_clear, timeout_set } from "@/utils/timeout"
-import { event_call } from "@/utils/event"
+import { event_call, event_current_target } from "@/utils/event"
 import { array_concat, array_equals, array_filter, array_find_index, array_join, array_length, array_map, array_push, array_slice, array_some } from "@/utils/array"
 import { rect_width } from "@/utils/rect"
 import { document_active } from "@/utils/document"
@@ -267,8 +267,13 @@ const Dropdown: ParentComponent<DropdownProps> = ($props) => {
 			}}
 			onClick={(ev) => {
 				event_call(ev, menu_props.onClick)
-
 				const button = document_active()!
+				if (!element_valid_target(
+					event_current_target(ev),
+					button,
+					el => element_tagname(el) == 'BUTTON'
+				)) return
+
 				let dropdown_value: string | number | undefined = element_dataset(button, 'cDropdownValue')
 				if (!dropdown_value) return
 
@@ -276,7 +281,6 @@ const Dropdown: ParentComponent<DropdownProps> = ($props) => {
 					dropdown_value = number_safe(number_parse(string_substring(dropdown_value, 7)))
 				}
 
-				console.log(dropdown_value)
 				on_select_option(dropdown_value)
 			}}
 			ref={mergeRefs(menu_props.ref, r => menu_dropdown_ref = r)}

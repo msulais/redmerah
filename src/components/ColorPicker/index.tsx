@@ -4,14 +4,14 @@ import { mergeRefs } from "@solid-primitives/refs"
 import type { HEXColor, HSLColor, RGBColor } from "@/types/color"
 import { timeout_set } from "@/utils/timeout"
 import { attr_remove, attr_set, attr_set_if_exist } from "@/utils/attributes"
-import { element_dispatch_event, element_focus_by_arrowkey, element_rect, element_set_tabindex, element_by_id, element_tagname, element_children, element_id, element_set_pointercapture, element_release_pointercapture } from "@/utils/element"
-import { event_add_listener, event_current_target, event_prevent_default, event_remove_listener, event_target } from '@/utils/event'
+import { element_dispatch_event, element_rect, element_tagname, element_id, element_set_pointercapture, element_release_pointercapture, element_valid_target } from "@/utils/element"
+import { event_add_listener, event_current_target, event_prevent_default, event_remove_listener } from '@/utils/event'
 import { BodyAttributes } from "@/enums/attributes"
 import { math_clamp, math_round } from "@/utils/math"
 import { number_is_not_defined, number_parse, number_safe, number_to_string } from "@/utils/number"
 import { string_length, string_padstart, string_replace, string_split, string_substring, string_touppercase, string_trim } from "@/utils/string"
 import { get_contrast_ratio, hex_to_hsl, hex_to_rgb, hsl_to_hex, hsl_to_hsv, hsl_to_rgb, hsv_to_hsl, is_color_with_alpha_valid, rgb_to_hsl } from "@/utils/color"
-import { document_body } from "@/utils/document"
+import { document_active, document_body } from "@/utils/document"
 import { array_join, array_length, array_push } from "@/utils/array"
 import { rect_height, rect_left, rect_top, rect_width } from "@/utils/rect"
 import { KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT, KEY_ARROW_UP } from "@/constants/key_code"
@@ -723,26 +723,17 @@ const ColorPickerBody: ParentComponent<{
 		const button_cancel_id = createUniqueId()
 		const button_select_id = createUniqueId()
 
-		createEffect(() => {
-			props.disabled_action
-			element_set_tabindex(element_by_id(button_colormodel_id)!, 0)
-		})
-
 		return (<FocusableGroup
 			class="c-color-picker-actions"
 			arrow_options={{ right: 'next', left: 'prev' }}
 			data-c-disabled={attr_set_if_exist(props.disabled_action)}
 			onClick={(ev) => {
-				const button = event_target(ev) as HTMLElement
-				if (element_tagname(button) != 'BUTTON') return;
-
-				const children = element_children(event_current_target(ev))
-				element_set_tabindex(button, 0)
-				for (const child of children) {
-					if (element_id(child) == element_id(button)) continue
-
-					element_set_tabindex(child, -1)
-				}
+				const button = document_active()!
+				if (!element_valid_target(
+					event_current_target(ev),
+					button,
+					el => element_tagname(el) == 'BUTTON'
+				)) return
 
 				switch (element_id(button)) {
 					case button_colormodel_id:

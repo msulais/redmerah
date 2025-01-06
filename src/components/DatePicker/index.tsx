@@ -7,11 +7,12 @@ import { AnimationEffectTiming } from "@/enums/animation"
 import { event_call, event_current_target, event_prevent_default, event_target } from "@/utils/event"
 import { array_fill, array_includes } from "@/utils/array"
 import { string_substring } from "@/utils/string"
-import { element_animate, element_children, element_dataset, element_focus, element_focus_by_arrowkey, element_id, element_is_same_node, element_next_sibling, element_previous_sibling, element_set_tabindex, element_tagname } from "@/utils/element"
+import { element_animate, element_children, element_dataset, element_focus, element_focus_by_arrowkey, element_id, element_is_same_node, element_next_sibling, element_previous_sibling, element_set_tabindex, element_tagname, element_valid_target } from "@/utils/element"
 import { promise_done } from "@/utils/object"
 import { KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT, KEY_ARROW_UP } from "@/constants/key_code"
 import { number_parse, number_safe } from "@/utils/number"
 import { timeout_set } from "@/utils/timeout"
+import { document_active } from "@/utils/document"
 
 import Button, { ButtonVariant, IconButton, SquareButton } from "@/components/Button"
 import { Modal, type ModalProps, ModalPosition as DatePickerPosition, close_modal, focus_modal, open_modal, reposition_modal, is_modal_open } from "@/components/Modal"
@@ -170,8 +171,12 @@ const DatePickerBody: ParentComponent<{
 					}
 				}}
 				onClick={(ev) => {
-					const button = event_target(ev) as HTMLButtonElement
-					if (element_tagname(button) != 'BUTTON' || button.disabled) return
+					const button = document_active()!
+					if (!element_valid_target(
+						event_current_target(ev),
+						button,
+						el => element_tagname(el) == 'BUTTON'
+					)) return
 
 					const index = number_safe(number_parse(element_dataset(button, 'index')!, true))
 					const date = new Date(
@@ -269,8 +274,12 @@ const DatePickerBody: ParentComponent<{
 				}
 			}}
 			onClick={ev => {
-				const button = event_target(ev) as HTMLButtonElement
-				if (element_tagname(button) != 'BUTTON' || button.disabled) return;
+				const button = document_active()!
+				if (!element_valid_target(
+					event_current_target(ev),
+					button,
+					el => element_tagname(el) == 'BUTTON'
+				)) return
 
 				const index = number_safe(number_parse(element_dataset(button, 'index')!, true))
 				set_view_date(new Date(date_year(view_date()), index))
@@ -361,8 +370,12 @@ const DatePickerBody: ParentComponent<{
 				}
 			}}
 			onClick={(ev) => {
-				const button = event_target(ev) as HTMLButtonElement
-				if (element_tagname(button) != 'BUTTON' || button.disabled) return;
+				const button = document_active()!
+				if (!element_valid_target(
+					event_current_target(ev),
+					button,
+					el => element_tagname(el) == 'BUTTON'
+				)) return
 
 				let index: string | number | undefined = element_dataset(button, 'index')
 				if (!index) return;
