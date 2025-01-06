@@ -72,3 +72,7 @@ export function event_call<T extends Event, U, V>(
 
 	return event?.defaultPrevented
 }
+
+export function event_type(ev: Event): string {
+	return ev.type
+}

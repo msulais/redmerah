@@ -45,3 +45,11 @@ export function url_download_file(url: string, filename: string): void {
 	element_click(link)
 	element_remove(link)
 }
+
+export function url_current(): string {
+	return document.URL
+}
+
+export function url_origin(): string {
+	return document.location.origin
+}
