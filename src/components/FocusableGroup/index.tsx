@@ -3,7 +3,7 @@ import { splitProps, type JSX, type ParentComponent } from "solid-js"
 import { document_active } from "@/utils/document"
 import { element_tagname, element_focus_by_arrowkey, element_contains, element_children_remove_tabindex, element_children_tabindex, element_set_tabindex, element_is_child, element_focusable } from "@/utils/element"
 import { event_call, event_current_target, event_prevent_default } from "@/utils/event"
-import { ARROW_LEFT, ARROW_RIGHT } from "@/constants/key_code"
+import { KEY_ARROW_LEFT, KEY_ARROW_RIGHT } from "@/constants/key_code"
 import { classlist } from "@/utils/attributes"
 import { timeout_clear, timeout_set } from "@/utils/timeout"
 import { is_number } from "@/utils/typecheck"
@@ -87,7 +87,7 @@ const FocusableGroup: ParentComponent<FocusableGroupProps> = ($props) => {
 
 			const code = ev.code
 			const tag_name = element_tagname(active)
-			if (tag_name == 'INPUT' && (code == ARROW_RIGHT || code == ARROW_LEFT)) return
+			if (tag_name == 'INPUT' && (code == KEY_ARROW_RIGHT || code == KEY_ARROW_LEFT)) return
 			if (tag_name == 'TEXTAREA') return
 
 			element_with_tabindex_zero = element_focus_by_arrowkey(

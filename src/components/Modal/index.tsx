@@ -17,7 +17,7 @@ import { document_body, document_root } from '@/utils/document'
 import { window_inner_height, window_scroll_y, window_scrollto } from '@/utils/window'
 import { ElementIds } from '@/enums/ids'
 import { promise_done } from '@/utils/object'
-import { ARROW_UP, ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT } from '@/constants/key_code'
+import { KEY_ARROW_UP, KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT } from '@/constants/key_code'
 
 import './index.scss'
 
@@ -777,10 +777,10 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 	function on_move_with_keyboard(ev: KeyboardEvent): void {
 		const code = ev.code
 		if (
-			code != ARROW_UP
-			&& code != ARROW_DOWN
-			&& code != ARROW_LEFT
-			&& code != ARROW_RIGHT
+			code != KEY_ARROW_UP
+			&& code != KEY_ARROW_DOWN
+			&& code != KEY_ARROW_LEFT
+			&& code != KEY_ARROW_RIGHT
 		) return
 
 		if (timeout_screensize_id == null) {
@@ -793,16 +793,16 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 		const height_one_percent = screen_height / 100
 		event_prevent_default(ev)
 		switch (code) {
-			case ARROW_UP:
+			case KEY_ARROW_UP:
 				set_top(t => t - height_one_percent)
 				break
-			case ARROW_DOWN:
+			case KEY_ARROW_DOWN:
 				set_top(t => t + height_one_percent)
 				break
-			case ARROW_LEFT:
+			case KEY_ARROW_LEFT:
 				set_left(l => l - width_one_percent)
 				break
-			case ARROW_RIGHT:
+			case KEY_ARROW_RIGHT:
 				set_left(l => l + width_one_percent)
 				break
 		}

@@ -14,7 +14,7 @@ import { get_contrast_ratio, hex_to_hsl, hex_to_rgb, hsl_to_hex, hsl_to_hsv, hsl
 import { document_body } from "@/utils/document"
 import { array_join, array_length, array_push } from "@/utils/array"
 import { rect_height, rect_left, rect_top, rect_width } from "@/utils/rect"
-import { ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT, ARROW_UP } from "@/constants/key_code"
+import { KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT, KEY_ARROW_UP } from "@/constants/key_code"
 
 import Button, { ButtonVariant } from "@/components/Button"
 import TextField from "@/components/TextField"
@@ -490,19 +490,19 @@ const ColorPickerBody: ParentComponent<{
 				data-c-hsl={attr_set_if_exist(color_model() == 'HSL')}
 				onKeyDown={(ev) => {
 					const code = ev.code
-					if (code == ARROW_UP) {
+					if (code == KEY_ARROW_UP) {
 						key_up_pressed = true
 						key_down_pressed = false
 					}
-					else if (code == ARROW_DOWN) {
+					else if (code == KEY_ARROW_DOWN) {
 						key_down_pressed = true
 						key_up_pressed = false
 					}
-					else if (code == ARROW_LEFT) {
+					else if (code == KEY_ARROW_LEFT) {
 						key_left_pressed = true
 						key_right_pressed = false
 					}
-					else if (code == ARROW_RIGHT) {
+					else if (code == KEY_ARROW_RIGHT) {
 						key_right_pressed = true
 						key_left_pressed = false
 					}
@@ -532,10 +532,10 @@ const ColorPickerBody: ParentComponent<{
 				}}
 				onKeyUp={(ev) => {
 					const code = ev.code
-					if (code == ARROW_UP) key_up_pressed = false
-					if (code == ARROW_DOWN) key_down_pressed = false
-					if (code == ARROW_LEFT) key_left_pressed = false
-					if (code == ARROW_RIGHT) key_right_pressed = false
+					if (code == KEY_ARROW_UP) key_up_pressed = false
+					if (code == KEY_ARROW_DOWN) key_down_pressed = false
+					if (code == KEY_ARROW_LEFT) key_left_pressed = false
+					if (code == KEY_ARROW_RIGHT) key_right_pressed = false
 
 					if (
 						!key_up_pressed
@@ -586,8 +586,8 @@ const ColorPickerBody: ParentComponent<{
 						onKeyDown={(ev) => {
 							const code = ev.code
 							const is_arrow_key = (is_disabled_color_control()
-								? code == ARROW_LEFT || code == ARROW_RIGHT
-								: code == ARROW_UP || code == ARROW_DOWN
+								? code == KEY_ARROW_LEFT || code == KEY_ARROW_RIGHT
+								: code == KEY_ARROW_UP || code == KEY_ARROW_DOWN
 							)
 
 							if (!is_arrow_key) return;
@@ -599,10 +599,10 @@ const ColorPickerBody: ParentComponent<{
 							let x = rect_left(hue_rect) + (hue() * one_percent_x)
 							let y = rect_top(hue_rect) + (hue() * one_percent_y)
 
-							if (code == ARROW_UP) y -= one_percent_y
-							else if (code == ARROW_DOWN) y += one_percent_y
-							else if (code == ARROW_LEFT) x -= one_percent_x
-							else if (code == ARROW_RIGHT) x += one_percent_x
+							if (code == KEY_ARROW_UP) y -= one_percent_y
+							else if (code == KEY_ARROW_DOWN) y += one_percent_y
+							else if (code == KEY_ARROW_LEFT) x -= one_percent_x
+							else if (code == KEY_ARROW_RIGHT) x += one_percent_x
 
 							event_prevent_default(ev)
 							set_position(x, y)
@@ -610,8 +610,8 @@ const ColorPickerBody: ParentComponent<{
 						onKeyUp={(ev) => {
 							const code = ev.code
 							const is_arrow_key = (is_disabled_color_control()
-								? code == ARROW_LEFT || code == ARROW_RIGHT
-								: code == ARROW_UP || code == ARROW_DOWN
+								? code == KEY_ARROW_LEFT || code == KEY_ARROW_RIGHT
+								: code == KEY_ARROW_UP || code == KEY_ARROW_DOWN
 							)
 							if (is_arrow_key) hue_dragged = false
 						}}
@@ -646,8 +646,8 @@ const ColorPickerBody: ParentComponent<{
 						onKeyDown={(ev) => {
 							const code = ev.code
 							const is_arrow_key = (is_disabled_color_control()
-								? code == ARROW_LEFT || code == ARROW_RIGHT
-								: code == ARROW_UP || code == ARROW_DOWN
+								? code == KEY_ARROW_LEFT || code == KEY_ARROW_RIGHT
+								: code == KEY_ARROW_UP || code == KEY_ARROW_DOWN
 							)
 
 							if (!is_arrow_key) return;
@@ -659,10 +659,10 @@ const ColorPickerBody: ParentComponent<{
 							let x = rect_left(opacity_rect) + ((100 - opacity()) * one_percent_x)
 							let y = rect_top(opacity_rect) + ((100 - opacity()) * one_percent_y)
 
-							if (code == ARROW_UP) y -= one_percent_y
-							else if (code == ARROW_DOWN) y += one_percent_y
-							else if (code == ARROW_LEFT) x -= one_percent_x
-							else if (code == ARROW_RIGHT) x += one_percent_x
+							if (code == KEY_ARROW_UP) y -= one_percent_y
+							else if (code == KEY_ARROW_DOWN) y += one_percent_y
+							else if (code == KEY_ARROW_LEFT) x -= one_percent_x
+							else if (code == KEY_ARROW_RIGHT) x += one_percent_x
 
 							event_prevent_default(ev)
 							set_position(x, y)
@@ -670,8 +670,8 @@ const ColorPickerBody: ParentComponent<{
 						onKeyUp={(ev) => {
 							const code = ev.code
 							const is_arrow_key = (is_disabled_color_control()
-								? code == ARROW_LEFT || code == ARROW_RIGHT
-								: code == ARROW_UP || code == ARROW_DOWN
+								? code == KEY_ARROW_LEFT || code == KEY_ARROW_RIGHT
+								: code == KEY_ARROW_UP || code == KEY_ARROW_DOWN
 							)
 							if (is_arrow_key) opacity_dragged = false
 						}}

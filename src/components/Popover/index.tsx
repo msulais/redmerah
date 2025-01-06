@@ -17,7 +17,7 @@ import { rect_bottom, rect_height, rect_left, rect_right, rect_top, rect_width }
 import { AnimationEffectTiming } from '@/enums/animation'
 import { promise_done } from '@/utils/object'
 import { ElementIds } from '@/enums/ids'
-import { ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT, ARROW_UP, ESCAPE } from '@/constants/key_code'
+import { KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT, KEY_ARROW_UP, KEY_ESCAPE } from '@/constants/key_code'
 
 import './index.scss'
 
@@ -720,10 +720,10 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 	function on_move_with_keyboard(ev: KeyboardEvent): void {
 		const code = ev.code
 		if (
-			code != ARROW_UP
-			&& code != ARROW_DOWN
-			&& code != ARROW_LEFT
-			&& code != ARROW_RIGHT
+			code != KEY_ARROW_UP
+			&& code != KEY_ARROW_DOWN
+			&& code != KEY_ARROW_LEFT
+			&& code != KEY_ARROW_RIGHT
 		) return
 
 		if (timeout_screensize_id == null) {
@@ -736,16 +736,16 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 		const height_one_percent = screen_height / 100
 		event_prevent_default(ev)
 		switch (code) {
-			case ARROW_UP:
+			case KEY_ARROW_UP:
 				set_top(t => t - height_one_percent)
 				break
-			case ARROW_DOWN:
+			case KEY_ARROW_DOWN:
 				set_top(t => t + height_one_percent)
 				break
-			case ARROW_LEFT:
+			case KEY_ARROW_LEFT:
 				set_left(l => l - width_one_percent)
 				break
-			case ARROW_RIGHT:
+			case KEY_ARROW_RIGHT:
 				set_left(l => l + width_one_percent)
 				break
 		}
@@ -772,7 +772,7 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 		tabindex={props.tabindex ?? '0'}
 		onKeyDown={ev => {
 			event_call(ev, props.onKeyDown)
-			if (ev.code != ESCAPE || is_manual_dismiss()) return
+			if (ev.code != KEY_ESCAPE || is_manual_dismiss()) return
 			if (anchor_ref) element_focus(anchor_ref)
 
 			close_popover()

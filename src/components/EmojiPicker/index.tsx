@@ -16,7 +16,7 @@ import { promise_done } from '@/utils/object'
 import { AppColors } from '@/enums/colors'
 import { document_active, document_body } from '@/utils/document'
 import { number_parse, number_safe } from '@/utils/number'
-import { ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT, ARROW_UP } from '@/constants/key_code'
+import { KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT, KEY_ARROW_UP } from '@/constants/key_code'
 import { ElementIds } from '@/enums/ids'
 
 import Divider from '@/components/Divider'
@@ -215,10 +215,10 @@ const EmojiPickerBody: ParentComponent<{
 					onKeyDown={(ev) => {
 						const code = ev.code
 						if (
-							code != ARROW_UP
-							&& code != ARROW_DOWN
-							&& code != ARROW_LEFT
-							&& code != ARROW_RIGHT
+							code != KEY_ARROW_UP
+							&& code != KEY_ARROW_DOWN
+							&& code != KEY_ARROW_LEFT
+							&& code != KEY_ARROW_RIGHT
 						) return;
 
 						const button = event_target(ev) as HTMLButtonElement
@@ -234,10 +234,10 @@ const EmojiPickerBody: ParentComponent<{
 						else timeout_clear(timeout_id)
 
 						timeout_id = timeout_set(() => timeout_id = null, 300)
-						if (code == ARROW_UP) target = children[index - grid_column_count]
-						else if (code == ARROW_DOWN) target = children[index + grid_column_count]
-						else if (code == ARROW_RIGHT) target = element_next_sibling(button)
-						else if (code == ARROW_LEFT) target = element_previous_sibling(button)
+						if (code == KEY_ARROW_UP) target = children[index - grid_column_count]
+						else if (code == KEY_ARROW_DOWN) target = children[index + grid_column_count]
+						else if (code == KEY_ARROW_RIGHT) target = element_next_sibling(button)
+						else if (code == KEY_ARROW_LEFT) target = element_previous_sibling(button)
 
 						if (!target || (target as HTMLButtonElement).disabled || element_tagname(target) != 'BUTTON') return
 						event_prevent_default(ev) // disable scroll

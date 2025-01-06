@@ -2,7 +2,7 @@ import { children, createContext, mergeProps, Show, splitProps, useContext, type
 
 import { attr_set_if_exist, classlist } from "@/utils/attributes"
 import { event_prevent_default } from "@/utils/event"
-import { ARROW_DOWN, ARROW_UP } from "@/constants/key_code"
+import { KEY_ARROW_DOWN, KEY_ARROW_UP } from "@/constants/key_code"
 
 import Icon from "@/components/Icon"
 import Button, { ButtonIndicatorPosition, ButtonVariant, type ButtonProps } from "@/components/Button"
@@ -101,7 +101,7 @@ const SideNavigation: ParentComponent<SideNavigationProps> = ($props) => {
 				}}
 				onKeyDown={ev => {
 					const code = ev.code
-					if (code != ARROW_UP && code != ARROW_DOWN) return
+					if (code != KEY_ARROW_UP && code != KEY_ARROW_DOWN) return
 
 					event_prevent_default(ev)
 				}}>{content()}</FocusableGroup>

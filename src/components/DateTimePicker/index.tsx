@@ -9,7 +9,7 @@ import { array_fill, array_includes, array_map } from '@/utils/array'
 import { string_padstart, string_substring } from '@/utils/string'
 import { element_animate, element_children, element_dataset, element_focus, element_focus_by_arrowkey, element_id, element_is_same_node, element_next_sibling, element_previous_sibling, element_set_tabindex, element_tagname } from '@/utils/element'
 import { promise_done } from '@/utils/object'
-import { ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT, ARROW_UP } from '@/constants/key_code'
+import { KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT, KEY_ARROW_UP } from '@/constants/key_code'
 import { number_parse, number_safe } from '@/utils/number'
 import { timeout_set } from '@/utils/timeout'
 
@@ -139,10 +139,10 @@ const DateTimePickerBody: ParentComponent<{
 				onKeyDown={(ev) => {
 					const code = ev.code
 					if (
-						code != ARROW_UP
-						&& code != ARROW_DOWN
-						&& code != ARROW_LEFT
-						&& code != ARROW_RIGHT
+						code != KEY_ARROW_UP
+						&& code != KEY_ARROW_DOWN
+						&& code != KEY_ARROW_LEFT
+						&& code != KEY_ARROW_RIGHT
 					) return;
 
 					const button = event_target(ev) as HTMLButtonElement
@@ -150,10 +150,10 @@ const DateTimePickerBody: ParentComponent<{
 					const children = element_children<HTMLButtonElement>(event_current_target(ev))
 					let target: HTMLElement | null = null
 
-					if (code == ARROW_UP) target = children[start_day() + index - 7]
-					else if (code == ARROW_DOWN) target = children[start_day() + index + 7]
-					else if (code == ARROW_RIGHT) target = element_next_sibling(button)
-					else if (code == ARROW_LEFT) target = element_previous_sibling(button)
+					if (code == KEY_ARROW_UP) target = children[start_day() + index - 7]
+					else if (code == KEY_ARROW_DOWN) target = children[start_day() + index + 7]
+					else if (code == KEY_ARROW_RIGHT) target = element_next_sibling(button)
+					else if (code == KEY_ARROW_LEFT) target = element_previous_sibling(button)
 
 					if (!target || (target as HTMLButtonElement).disabled || element_tagname(target) != 'BUTTON') return
 					event_prevent_default(ev)
@@ -237,10 +237,10 @@ const DateTimePickerBody: ParentComponent<{
 			onKeyDown={(ev) => {
 				const code = ev.code
 				if (
-					code != ARROW_UP
-					&& code != ARROW_DOWN
-					&& code != ARROW_LEFT
-					&& code != ARROW_RIGHT
+					code != KEY_ARROW_UP
+					&& code != KEY_ARROW_DOWN
+					&& code != KEY_ARROW_LEFT
+					&& code != KEY_ARROW_RIGHT
 				) return;
 
 				const button = event_target(ev) as HTMLButtonElement
@@ -248,10 +248,10 @@ const DateTimePickerBody: ParentComponent<{
 				const children = element_children<HTMLButtonElement>(event_current_target(ev))
 				let target: HTMLElement | null = null
 
-				if (code == ARROW_UP) target = children[index - 3]
-				else if (code == ARROW_DOWN) target = children[index + 3]
-				else if (code == ARROW_RIGHT) target = element_next_sibling(button)
-				else if (code == ARROW_LEFT) target = element_previous_sibling(button)
+				if (code == KEY_ARROW_UP) target = children[index - 3]
+				else if (code == KEY_ARROW_DOWN) target = children[index + 3]
+				else if (code == KEY_ARROW_RIGHT) target = element_next_sibling(button)
+				else if (code == KEY_ARROW_LEFT) target = element_previous_sibling(button)
 
 				if (!target || (target as HTMLButtonElement).disabled) return
 				event_prevent_default(ev)
@@ -329,10 +329,10 @@ const DateTimePickerBody: ParentComponent<{
 			onKeyDown={(ev) => {
 				const code = ev.code
 				if (
-					code != ARROW_UP
-					&& code != ARROW_DOWN
-					&& code != ARROW_LEFT
-					&& code != ARROW_RIGHT
+					code != KEY_ARROW_UP
+					&& code != KEY_ARROW_DOWN
+					&& code != KEY_ARROW_LEFT
+					&& code != KEY_ARROW_RIGHT
 				) return;
 
 				const button = event_target(ev) as HTMLButtonElement
@@ -340,10 +340,10 @@ const DateTimePickerBody: ParentComponent<{
 				const children = element_children<HTMLButtonElement>(event_current_target(ev))
 				let target: HTMLElement | null = null
 
-				if (code == ARROW_UP) target = children[index - 4]
-				else if (code == ARROW_DOWN) target = children[index + 4]
-				else if (code == ARROW_RIGHT) target = element_next_sibling(button)
-				else if (code == ARROW_LEFT) target = element_previous_sibling(button)
+				if (code == KEY_ARROW_UP) target = children[index - 4]
+				else if (code == KEY_ARROW_DOWN) target = children[index + 4]
+				else if (code == KEY_ARROW_RIGHT) target = element_next_sibling(button)
+				else if (code == KEY_ARROW_LEFT) target = element_previous_sibling(button)
 
 				if (!target || (target as HTMLButtonElement).disabled) return
 				event_prevent_default(ev)

@@ -6,7 +6,7 @@ import { AnimationEffectTiming } from "@/enums/animation"
 import { element_animate } from "@/utils/element"
 import { AppColors } from "@/enums/colors"
 import { event_prevent_default } from "@/utils/event"
-import { ARROW_DOWN, ARROW_UP } from "@/constants/key_code"
+import { KEY_ARROW_DOWN, KEY_ARROW_UP } from "@/constants/key_code"
 
 import Icon from "@/components/Icon"
 import Button, { ButtonIndicatorPosition, ButtonVariant, type ButtonProps } from "@/components/Button"
@@ -148,7 +148,7 @@ const Drawer: ParentComponent<DrawerProps> = ($props) => {
 				}}
 				onKeyDown={ev => {
 					const code = ev.code
-					if (code != ARROW_UP && code != ARROW_DOWN) return
+					if (code != KEY_ARROW_UP && code != KEY_ARROW_DOWN) return
 
 					event_prevent_default(ev)
 				}}>{content()}</FocusableGroup>

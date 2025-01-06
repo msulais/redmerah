@@ -1,4 +1,4 @@
-import { ARROW_UP, ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT } from "@/constants/key_code"
+import { KEY_ARROW_UP, KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT } from "@/constants/key_code"
 import { array_length } from "./array"
 import { document_active, document_has_focus } from "./document"
 import { attr_get, attr_remove } from "./attributes"
@@ -213,10 +213,10 @@ export function element_focus_by_arrowkey<T = HTMLElement>(
 	const down = options.down
 	const left = options.left
 	const right = options.right
-	const valid_up    = up    && (up    == 'next' || up    == 'prev') && key_code == ARROW_UP
-	const valid_down  = down  && (down  == 'next' || down  == 'prev') && key_code == ARROW_DOWN
-	const valid_left  = left  && (left  == 'next' || left  == 'prev') && key_code == ARROW_LEFT
-	const valid_right = right && (right == 'next' || right == 'prev') && key_code == ARROW_RIGHT
+	const valid_up    = up    && (up    == 'next' || up    == 'prev') && key_code == KEY_ARROW_UP
+	const valid_down  = down  && (down  == 'next' || down  == 'prev') && key_code == KEY_ARROW_DOWN
+	const valid_left  = left  && (left  == 'next' || left  == 'prev') && key_code == KEY_ARROW_LEFT
+	const valid_right = right && (right == 'next' || right == 'prev') && key_code == KEY_ARROW_RIGHT
 	const all_options_invalid = (
 		up != 'next' && up != 'prev'
 		&& up == down
@@ -224,10 +224,10 @@ export function element_focus_by_arrowkey<T = HTMLElement>(
 		&& up == right
 	)
 	const invalid_keys = (
-		key_code != ARROW_UP
-		&& key_code != ARROW_DOWN
-		&& key_code != ARROW_RIGHT
-		&& key_code != ARROW_LEFT
+		key_code != KEY_ARROW_UP
+		&& key_code != KEY_ARROW_DOWN
+		&& key_code != KEY_ARROW_RIGHT
+		&& key_code != KEY_ARROW_LEFT
 	)
 	if (
 		all_options_invalid
