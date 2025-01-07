@@ -90,8 +90,8 @@ export const app_tasks: AppItem = {
 	description: 'Simple and easy-to-use app that helps you stay organized and on track. With Tasks, you can create tasks, add them to lists, and mark them as completed.',
 	link: RoutesLinks.tasks,
 	color: '#9735E4',
-	build_number: 4,
-	build_version: '0.1.4',
+	build_number: 5,
+	build_version: '0.2.0',
 }
 
 export const app_calculator: AppItem = {
