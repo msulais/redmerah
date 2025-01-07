@@ -427,8 +427,12 @@ const DateTimePickerBody: ParentComponent<{
 				{ left: 'prev', right: 'next' }
 			)}
 			onClick={(ev) => {
-				const button = event_target(ev) as HTMLButtonElement
-				if (element_tagname(button) != 'BUTTON') return;
+				const button = document_active()!
+				if (!element_valid_target(
+					event_current_target(ev),
+					button,
+					el => element_tagname(el) === 'BUTTON')
+				) return
 
 				switch (element_id(button)) {
 					case button_option_id:
