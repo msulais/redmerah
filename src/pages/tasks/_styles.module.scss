@@ -224,10 +224,19 @@ $side_navigation_none: 680px;
 	}
 }
 
-.body_task_item:global(.c-expander) {
+.body_task_item {
+	--g-background-color: var(--g-color-on-surface);
+	--g-background-color-opacity: var(--g-opacity2);
+	--c-expander-border-opacity: 0;
+	--c-expander-border-color: var(--g-color-on-surface);
+	border: 1px solid transparent;
 	width: 1080px;
 	max-width: calc(100% - 48px);
-	transition-duration: .3s;
+	border-radius: 12px;
+
+	:root[data-corner=sharp] & {border-radius: 0}
+	:root[data-corner=semi-round] & {border-radius: 8px}
+	:root[data-corner=full-round] & {border-radius: 25px}
 
 	@media (max-width: 500px) {
 		max-width: calc(100% - 16px);
@@ -237,51 +246,42 @@ $side_navigation_none: 680px;
 		text-decoration: line-through;
 	}
 
-	> summary > :global(.c-list) {
+	&:not(:has( .c-btn:hover, .c-btn:active)) {
+		@media (hover:hover) {
+			&:hover {
+				--g-background-color-opacity: var(--g-opacity4);
+				cursor: pointer;
+			}
+		}
+	}
+
+	> :global(.c-list) {
+		padding: 0;
+		user-select: none;
+		padding: 4px 12px;
+		transition-duration: .3s;
 		gap: 4px;
 		padding: 4px;
-		border-radius: 12px;
-
-		:root[data-corner=sharp] & {border-radius: 0}
-		:root[data-corner=semi-round] & {border-radius: 8px}
-		:root[data-corner=full-round] & {border-radius: 25px}
-
-		&[data-open]:not([data-variant=transparent]) {
-			border-bottom-left-radius: 0;
-			border-bottom-right-radius: 0;
-		}
-
-		&:has( :global(.c-btn):hover) {
-			--g-background-color-opacity: var(--g-opacity1);
-		}
-
-		&:has( :global(.c-btn):active) {
-			border-color: transparent;
-		}
 
 		& :global(.c-list-leading) {
 			color: rgb(var(--g-color-accent));
 		}
 	}
+}
 
-	> :global(.c-expander-body){
-		border-radius: 0 0 12px 12px;
+.body_task_item_subtasks {
+	margin: 4px 4px 4px 32px;
 
-		:root[data-corner=sharp] & {border-radius: 0}
-		:root[data-corner=semi-round] & {border-radius: 0 0 8px 8px}
-		:root[data-corner=full-round] & {border-radius: 0 0 25px 25px}
+	:root[data-platform=mobile] {
+		margin-left: 36px;
+	}
 
-		> div {
-			padding: 4px 4px 4px 40px;
-
-			> :global(.c-checkbox) {
-				justify-content: flex-start;
-			}
-		}
+	> :global(.c-btn) {
+		justify-content: flex-start;
 	}
 }
 
-.body_task_item_tags {
+div.body_task_item_tags {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 4px;
@@ -292,7 +292,7 @@ $side_navigation_none: 680px;
 	}
 
 	& :global(.c-btn) {
-		padding: 4px 8px;
+		padding: 2px 8px;
 
 		font-size: var(--g-font-size-s);
 		color: rgb(var(--g-color-on-surface));

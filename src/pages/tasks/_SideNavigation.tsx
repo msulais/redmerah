@@ -1,14 +1,17 @@
-import { createMemo, For, Show, type VoidComponent } from "solid-js"
+import { createMemo, createUniqueId, For, Show, type VoidComponent } from "solid-js"
 import { TransitionGroup } from "solid-transition-group"
 
 import type { Settings, TaskList } from "./_types"
 import { DEFAULT_TASK_LIST, TASKS_PAGES } from "./_constants"
-import { element_animate, element_first_child } from "@/utils/element"
+import { element_animate, element_dataset, element_first_child, element_id, element_tagname, element_valid_target } from "@/utils/element"
 import { Commands, Pages } from "./_enums"
-import { event_prevent_default } from "@/utils/event"
+import { event_current_target, event_prevent_default } from "@/utils/event"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { array_filter, array_includes, array_length } from "@/utils/array"
+import { classlist_module } from "@/utils/attributes"
 import { promise_done } from "@/utils/object"
+import { document_active } from "@/utils/document"
+import { number_is_not_defined, number_parse, number_safe } from "@/utils/number"
 
 import { Tooltip } from "@/components/Tooltip"
 import Divider from "@/components/Divider"
@@ -16,7 +19,6 @@ import Emoji from "@/components/Emoji"
 import Menu, { close_menu, MenuItem, MenuPosition, open_menu } from "@/components/Menu"
 import SideNavigation, { SideNavigationItem } from "@/components/SideNavigation"
 import CSS from './_styles.module.scss'
-import { classlist_module } from "@/utils/attributes"
 
 const _: VoidComponent<{
 	expanded: boolean
@@ -30,6 +32,7 @@ const _: VoidComponent<{
 		easing: AnimationEffectTiming.spring
 	}
 	const expanded = createMemo(() => props.expanded)
+	const button_newlist_id = createUniqueId()
 	let selected_tasklist_index = 0
 	let menu_listaction_ref: HTMLDialogElement
 
@@ -42,7 +45,7 @@ const _: VoidComponent<{
 			icon_code={$props.icon}
 			data-tooltip={!expanded()? $props.text : undefined}
 			selected={props.page == $props.type}
-			onClick={() => command(Commands.change_page, $props.type)}>
+			data-page={$props.type}>
 			{$props.text}
 		</SideNavigationItem>)
 	}
@@ -53,51 +56,109 @@ const _: VoidComponent<{
 			icon_code={$props.emoji == null? 0xF032 : undefined}
 			leading={<Show when={$props.emoji != null}><Emoji emoji={$props.emoji!} /></Show>}
 			selected={props.page == $props.id}
-			onClick={() => command(Commands.change_page, $props.id)}
-			onContextMenu={(ev) => {
-				event_prevent_default(ev)
-				selected_tasklist_index = $props.index
-				open_menu(ev, menu_listaction_ref, {
-					position: MenuPosition.center_bottom_to_right
-				})
-			}}>
+			data-list-id={$props.id}
+			data-index={$props.index}>
 			{$props.name}
 		</SideNavigationItem>)
 	}
 
 	const Footer: VoidComponent = () => (<SideNavigationItem
 		icon_code={0xE007}
-		data-tooltip={!expanded()? "Add new list" : undefined}
-		onClick={ev => command(Commands.add_tasklist, ev)}>
+		id={button_newlist_id}
+		data-tooltip={!expanded()? "Add new list" : undefined}>
 		New list
 	</SideNavigationItem>)
 
-	const Menus: VoidComponent = () => (<>
-		<Menu
-			ref={r => menu_listaction_ref = r}>
-			<MenuItem
+	const Menus: VoidComponent = () => {
+		const button_renamelist_id = createUniqueId()
+		const button_deletelist_id = createUniqueId()
+		return (<>
+			<Menu
+				ref={r => menu_listaction_ref = r}
 				onClick={ev => {
-					close_menu(menu_listaction_ref)
-					command(Commands.rename_taskList, ev, selected_tasklist_index)
-				}}
-				icon_code={0xF0FB}>
-				Rename list
-			</MenuItem>
-			<MenuItem
-				onClick={ev => {
-					close_menu(menu_listaction_ref)
-					command(Commands.delete_taskList, ev, selected_tasklist_index)
-				}}
-				icon_code={0xE59D}>
-				Delete list
-			</MenuItem>
-		</Menu>
-	</>)
+					const button = document_active()!
+					if (!element_valid_target(
+						event_current_target(ev),
+						button,
+						el => element_tagname(el) == 'BUTTON'
+					)) return
+
+					switch (element_id(button)) {
+						case button_renamelist_id:
+							command(Commands.rename_taskList, ev, selected_tasklist_index)
+							close_menu(menu_listaction_ref)
+							break
+						case button_deletelist_id:
+							command(Commands.delete_taskList, ev, selected_tasklist_index)
+							close_menu(menu_listaction_ref)
+							break
+					}
+				}}>
+				<MenuItem
+					id={button_renamelist_id}
+					icon_code={0xF0FB}>
+					Rename list
+				</MenuItem>
+				<MenuItem
+					id={button_deletelist_id}
+					icon_code={0xE59D}>
+					Delete list
+				</MenuItem>
+			</Menu>
+		</>)
+	}
 
 	return (<Tooltip><SideNavigation
 		style={{"padding-top": '0'}}
 		classList={classlist_module(CSS.side_navigation)}
 		expanded={expanded()}
+		onClick={ev => {
+			const button = document_active()!
+			if (!element_valid_target(
+				event_current_target(ev),
+				button,
+				el => element_tagname(el) == 'BUTTON'
+			)) return
+
+			switch (element_id(button)) {
+				case button_newlist_id:
+					command(Commands.add_tasklist, ev)
+					break
+				default:
+					const data_list_id = element_dataset(button, 'listId')
+					if (data_list_id) {
+						const list_id = number_parse(data_list_id)
+						if (number_is_not_defined(list_id)) return
+
+						command(Commands.change_page, list_id)
+					}
+
+					const data_page = element_dataset(button, 'page')
+					if (data_page) {
+						command(Commands.change_page, data_page)
+						return
+					}
+			}
+		}}
+		onContextMenu={ev => {
+			const button = document_active()!
+			if (!element_valid_target(
+				event_current_target(ev),
+				button,
+				el => element_tagname(el) == 'BUTTON'
+			)) return
+
+			const data_list_id = element_dataset(button, 'listId')
+			if (data_list_id) {
+				event_prevent_default(ev)
+				open_menu(ev, menu_listaction_ref, {position: MenuPosition.center_bottom_to_right})
+				const data_index = element_dataset(button, 'index')
+				if (data_index) {
+					const index = number_safe(number_parse(data_index))
+					selected_tasklist_index = index
+				}
+			}
+		}}
 		footer={<Footer />}>
 		<TransitionGroup
 			onEnter={(el, done) => {

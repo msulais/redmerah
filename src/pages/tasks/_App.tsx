@@ -1,5 +1,5 @@
 import { createStore } from "solid-js/store"
-import { createSignal, For, onMount, Show, type VoidComponent } from "solid-js"
+import { createMemo, createSignal, createUniqueId, For, onMount, Show, type VoidComponent } from "solid-js"
 
 import type { TaskList, TaskLabel, Settings, Task, TaskFileMetaData, SubTask } from "./_types"
 import type { HEXColor } from "@/types/color"
@@ -15,9 +15,12 @@ import { array_concat, array_every, array_filter, array_find_index, array_includ
 import { string_locale_compare, string_trim } from "@/utils/string"
 import { navigator_clipboard_writetext } from "@/utils/navigator"
 import { promise_done } from "@/utils/object"
-import { number_parse } from "@/utils/number"
+import { number_is_not_defined, number_parse } from "@/utils/number"
 import { remove_splash_screen } from "@/scripts/splash"
 import { AppColors } from "@/enums/colors"
+import { document_active } from "@/utils/document"
+import { element_dataset, element_id, element_tagname, element_valid_target } from "@/utils/element"
+import { is_string } from "@/utils/typecheck"
 
 import { Tooltip } from "@/components/Tooltip"
 import Icon from "@/components/Icon"
@@ -34,6 +37,7 @@ import AppBar from "./_AppBar"
 import SideNavigation from './_SideNavigation'
 import Body from './_Body'
 
+// TODO: handle navigation with keyboard only
 const _: VoidComponent = () => {
 	const db = new IDB(DatabaseNames.tasks)
 	const [page, set_page] = createSignal<Pages | number>(Pages.tasks)
@@ -85,8 +89,8 @@ const _: VoidComponent = () => {
 				break
 			}
 			case SortBy.importance: {
-				array_sort(tasks, (a, b) => string_locale_compare(a.name, b.name))
-				array_sort(tasks, (a, _b) => (a.important? -1 : 1) * (is_reverse? -1 : 1))
+				array_sort(tasks, (a, b) => string_locale_compare(a.name, b.name) * (is_reverse? 1 : -1))
+				array_sort(tasks, (a) => (a.important? -1 : 1) * (is_reverse? -1 : 1))
 				break
 			}
 			case SortBy.creation_date: {
@@ -94,12 +98,12 @@ const _: VoidComponent = () => {
 				break
 			}
 			case SortBy.completed: {
-				array_sort(tasks, (a, b) => string_locale_compare(a.name, b.name))
+				array_sort(tasks, (a, b) => string_locale_compare(a.name, b.name) * (is_reverse? 1 : -1))
 				array_sort(tasks, (a) => (a.complete? -1 : 1) * (is_reverse? -1 : 1))
 				break
 			}
 			case SortBy.uncompleted: {
-				array_sort(tasks, (a, b) => string_locale_compare(b.name, a.name))
+				array_sort(tasks, (a, b) => string_locale_compare(b.name, a.name) * (is_reverse? 1 : -1))
 				array_sort(tasks, (a) => (!a.complete? -1 : 1) * (is_reverse? -1 : 1))
 				break
 			}
@@ -767,7 +771,7 @@ const _: VoidComponent = () => {
 
 	function reverse_all_tasks(): void {
 		for (let i = 0; i < array_length(tasklists); i++) {
-			set_tasklists(i, 'tasks', array_reverse([...tasklists[i].tasks]))
+			set_tasklists(i, 'tasks', sort_tasks([...tasklists[i].tasks]))
 		}
 	}
 
@@ -1420,301 +1424,437 @@ const _: VoidComponent = () => {
 		remove_splash_screen()
 	})
 
-	const LabelItem: VoidComponent<TaskLabel> = (props) => {
+	const LabelItem: VoidComponent<{index: number, label: TaskLabel}> = (props) => {
+		const label = createMemo(() => props.label)
 		return (<List
-			leading={<Icon style={{color: props.color ?? undefined}} code={0xE407}/>}
+			leading={<Icon style={{color: label().color ?? undefined}} code={0xE407}/>}
 			trailing={<>
 				<IconButton
 					data-tooltip="Edit label"
-					onClick={(ev) => command(Commands.edit_label, ev, props)}
+					data-edit
+					data-index={props.index}
+					onClick={(ev) => command(Commands.edit_label, ev, label())}
 					code={0xE739}
 				/>
 				<IconButton
 					data-tooltip="Delete label"
-					onClick={() => command(Commands.delete_label, props)}
+					data-delete
+					data-index={props.index}
+					onClick={() => command(Commands.delete_label, label())}
 					code={0xE59D}
 				/>
 			</>}>
-			{ props.name }
+			{ label().name }
 		</List>)
 	}
 
-	const Dialogs: VoidComponent = () => (<>
-		<Dialog
-			style={{width: '500px'}}
-			ref={r => dialog_labels_ref = r}
-			header="Labels"
-			actions={<>
-				<Button
-					onClick={() => close_dialog(dialog_labels_ref)}
-					variant={ButtonVariant.tonal}>
-					Close
-				</Button>
-				<Button
-					onClick={ev => open_dialog(ev, dialog_newlabel_ref, {
-						content_auto_focus: true,
-						important: true
-					})}
-					variant={ButtonVariant.filled}>
-					Add label
-				</Button>
-			</>}>
-			<Tooltip>
-				<For each={labels} fallback={"No labels"}>{label =>
-					<Show when={label != undefined}><LabelItem {...label!}/></Show>
-				}</For>
-			</Tooltip>
-		</Dialog>
-		<Dialog
-			ref={r => dialog_newlabel_ref = r}
-			header="New label"
-			onClose={() => {
-				set_selected_label_to_add('name', '')
-				change_textfield_value(textfield_newlabel_ref, '')
-				set_selected_label_to_add('color', null)
-			}}
-			actions={<>
-				<Button
-					onClick={() => close_dialog(dialog_newlabel_ref)}
-					variant={ButtonVariant.tonal}>
-					Cancel
-				</Button>
-				<Button
-					disabled={string_trim(selected_label_to_add.name) == ''}
-					onClick={() => {
-						add_label(string_trim(selected_label_to_add.name), selected_label_to_add.color)
-						close_dialog(dialog_newlabel_ref)
-					}}
-					variant={ButtonVariant.filled}>
-					Add
-				</Button>
-			</>}>
-			<form
-				style={{ display: 'contents' }}
-				onSubmit={ev => {
-					event_prevent_default(ev)
-					if (string_trim(selected_label_to_add.name) == '') return;
+	const Dialogs: VoidComponent = () => {
+		const button_dialoglabels_close_id = createUniqueId()
+		const button_dialoglabels_add_id = createUniqueId()
+		const button_dialognewlabel_cancel_id = createUniqueId()
+		const button_dialognewlabel_add_id = createUniqueId()
+		const button_dialognewlabel_color_id = createUniqueId()
+		const button_dialogeditlabel_cancel_id = createUniqueId()
+		const button_dialogeditlabel_edit_id = createUniqueId()
+		const button_dialogeditlabel_color_id = createUniqueId()
+		const button_dialognewlist_cancel_id = createUniqueId()
+		const button_dialognewlist_add_id = createUniqueId()
+		const button_dialognewlist_emoji_id = createUniqueId()
+		const button_dialogeditlist_cancel_id = createUniqueId()
+		const button_dialogeditlist_rename_id = createUniqueId()
+		const button_dialogeditlist_emoji_id = createUniqueId()
+		const button_dialogdeletelist_cancel_id = createUniqueId()
+		const button_dialogdeletelist_delete_id = createUniqueId()
+		return (<>
+			<Dialog
+				style={{width: '500px'}}
+				ref={r => dialog_labels_ref = r}
+				header="Labels"
+				onClick={(ev) => {
+					const button = document_active()!
+					if (!element_valid_target(
+						event_current_target(ev),
+						button,
+						el => element_tagname(el) == 'BUTTON'
+					)) return
 
-					add_label(string_trim(selected_label_to_add.name), selected_label_to_add.color)
-					close_dialog(dialog_newlabel_ref)
-				}}>
-				<TextField
-					ref={r => textfield_newlabel_ref = r}
-					label="Name"
-					onFocus={() => set_selected_label_to_add('name', textfield_newlabel_ref.value)}
-					onInput={() => set_selected_label_to_add('name', textfield_newlabel_ref.value)}
-					autofocus
-					trailing={<TextFieldButton
-						data-tooltip="Change label color"
-						focused={is_colorpicker_label_open()}
-						onClick={ev => {
+					switch (element_id(button)) {
+						case button_dialoglabels_close_id:
+							close_dialog(dialog_labels_ref)
+							break
+						case button_dialoglabels_add_id:
+							open_dialog(ev, dialog_newlabel_ref, {
+								content_auto_focus: true,
+								important: true
+							})
+							break
+
+						// handle actions
+						default:
+							const data_index = element_dataset(button, 'index')
+							const data_edit = element_dataset(button, 'edit')
+							const data_delete = element_dataset(button, 'delete')
+							if (!data_index)  return
+
+							let index = number_parse(data_index, true)
+							if (number_is_not_defined(index)) return
+
+							if (is_string(data_edit)) {
+								command(Commands.edit_label, ev, labels[index])
+							}
+							else if (is_string(data_delete)) {
+								command(Commands.delete_label, ev, labels[index])
+							}
+					}
+				}}
+				actions={<>
+					<Button
+						id={button_dialoglabels_close_id}
+						variant={ButtonVariant.tonal}>
+						Close
+					</Button>
+					<Button
+						id={button_dialoglabels_add_id}
+						variant={ButtonVariant.filled}>
+						Add label
+					</Button>
+				</>}>
+				<Tooltip>
+					<For each={labels} fallback={"No labels"}>{(label, i) =>
+						<Show when={label != undefined}><LabelItem label={label!} index={i()}/></Show>
+					}</For>
+				</Tooltip>
+			</Dialog>
+			<Dialog
+				ref={r => dialog_newlabel_ref = r}
+				header="New label"
+				onClose={() => {
+					set_selected_label_to_add('name', '')
+					change_textfield_value(textfield_newlabel_ref, '')
+					set_selected_label_to_add('color', null)
+				}}
+				onClick={(ev) => {
+					const button = document_active()!
+					if (!element_valid_target(
+						event_current_target(ev),
+						button,
+						el => element_tagname(el) == 'BUTTON'
+					)) return
+
+					switch (element_id(button)) {
+						case button_dialognewlabel_add_id:
+							add_label(string_trim(selected_label_to_add.name), selected_label_to_add.color)
+							close_dialog(dialog_newlabel_ref)
+							break
+						case button_dialognewlabel_cancel_id:
+							close_dialog(dialog_newlabel_ref)
+							break
+						case button_dialognewlabel_color_id:
 							set_change_labelcolor_option('new')
 							open_colorpicker(ev, colorpicker_label_ref, {
-								anchor: event_current_target(ev),
+								anchor: button,
 							})
-						}}>
-						<Icon
-							style={{color: selected_label_to_add.color ?? undefined}}
-							code={0xE407}
-						/>
-					</TextFieldButton>}
-				/>
-			</form>
-		</Dialog>
-		<Dialog
-			ref={r => dialog_editlabel_ref = r}
-			header="Edit label"
-			actions={<>
-				<Button
-					onClick={() => close_dialog(dialog_editlabel_ref)}
-					variant={ButtonVariant.tonal}>
-					Cancel
-				</Button>
-				<Button
-					disabled={string_trim(selected_label_to_edit.name) == ''}
-					onClick={() => {
+							break
+					}
+				}}
+				actions={<>
+					<Button
+						id={button_dialognewlabel_cancel_id}
+						variant={ButtonVariant.tonal}>
+						Cancel
+					</Button>
+					<Button
+						id={button_dialognewlabel_add_id}
+						disabled={string_trim(selected_label_to_add.name) == ''}
+						variant={ButtonVariant.filled}>
+						Add
+					</Button>
+				</>}>
+				<form
+					style={{ display: 'contents' }}
+					onSubmit={ev => {
+						event_prevent_default(ev)
+						if (string_trim(selected_label_to_add.name) == '') return;
+
+						add_label(string_trim(selected_label_to_add.name), selected_label_to_add.color)
+						close_dialog(dialog_newlabel_ref)
+					}}>
+					<TextField
+						ref={r => textfield_newlabel_ref = r}
+						label="Name"
+						onFocus={() => set_selected_label_to_add('name', textfield_newlabel_ref.value)}
+						onInput={() => set_selected_label_to_add('name', textfield_newlabel_ref.value)}
+						autofocus
+						trailing={<TextFieldButton
+							id={button_dialognewlabel_color_id}
+							data-tooltip="Change label color"
+							focused={is_colorpicker_label_open()}>
+							<Icon
+								style={{color: selected_label_to_add.color ?? undefined}}
+								code={0xE407}
+							/>
+						</TextFieldButton>}
+					/>
+				</form>
+			</Dialog>
+			<Dialog
+				ref={r => dialog_editlabel_ref = r}
+				header="Edit label"
+				onClick={(ev) => {
+					const button = document_active()!
+					if (!element_valid_target(
+						event_current_target(ev),
+						button,
+						el => element_tagname(el) == 'BUTTON'
+					)) return
+
+					switch (element_id(button)) {
+						case button_dialogeditlabel_cancel_id:
+							close_dialog(dialog_editlabel_ref)
+							break
+						case button_dialogeditlabel_edit_id:
+							edit_label({
+								...selected_label_to_edit,
+								name: string_trim(selected_label_to_edit.name),
+							} satisfies TaskLabel)
+							close_dialog(dialog_editlabel_ref)
+							break
+						case button_dialogeditlabel_color_id:
+							set_change_labelcolor_option('edit')
+							open_colorpicker(ev, colorpicker_label_ref, {
+								anchor: button,
+							})
+							break
+					}
+				}}
+				actions={<>
+					<Button
+						id={button_dialogeditlabel_cancel_id}
+						variant={ButtonVariant.tonal}>
+						Cancel
+					</Button>
+					<Button
+						id={button_dialogeditlabel_edit_id}
+						disabled={string_trim(selected_label_to_edit.name) == ''}
+						variant={ButtonVariant.filled}>
+						Edit
+					</Button>
+				</>}>
+				<form
+					style={{display: 'contents'}}
+					onSubmit={ev => {
+						event_prevent_default(ev)
+						if (string_trim(selected_label_to_edit.name) == '') return;
+
 						edit_label({
 							...selected_label_to_edit,
 							name: string_trim(selected_label_to_edit.name),
 						} satisfies TaskLabel)
 						close_dialog(dialog_editlabel_ref)
-					}}
-					variant={ButtonVariant.filled}>
-					Edit
-				</Button>
-			</>}>
-			<form
-				style={{display: 'contents'}}
-				onSubmit={ev => {
-					event_prevent_default(ev)
-					if (string_trim(selected_label_to_edit.name) == '') return;
+					}}>
+					<TextField
+						ref={r => textfield_editlabel_ref = r}
+						label="Name"
+						onFocus={() => set_selected_label_to_edit('name', textfield_editlabel_ref.value)}
+						onInput={() => set_selected_label_to_edit('name', textfield_editlabel_ref.value)}
+						autofocus
+						trailing={<TextFieldButton
+							id={button_dialogeditlabel_color_id}
+							data-tooltip="Change label color"
+							focused={is_colorpicker_label_open()}>
+							<Icon
+								style={{color: selected_label_to_edit.color ?? undefined}}
+								code={0xE407}
+							/>
+						</TextFieldButton>}
+					/>
+				</form>
+			</Dialog>
+			<Dialog
+				ref={r => dialog_newlist_ref = r}
+				header="New list"
+				style={{width: '500px'}}
+				onClose={() => {
+					set_new_listname_text('')
+					set_new_list_emoji(null)
+					change_textfield_value(textfield_newlist_ref, '')
+				}}
+				onClick={(ev) => {
+					const button = document_active()!
+					if (!element_valid_target(
+						event_current_target(ev),
+						button,
+						el => element_tagname(el) == 'BUTTON'
+					)) return
 
-					edit_label({
-						...selected_label_to_edit,
-						name: string_trim(selected_label_to_edit.name),
-					} satisfies TaskLabel)
-					close_dialog(dialog_editlabel_ref)
-				}}>
-				<TextField
-					ref={r => textfield_editlabel_ref = r}
-					label="Name"
-					onFocus={() => set_selected_label_to_edit('name', textfield_editlabel_ref.value)}
-					onInput={() => set_selected_label_to_edit('name', textfield_editlabel_ref.value)}
-					autofocus
-					trailing={<TextFieldButton
-						data-tooltip="Change label color"
-						focused={is_colorpicker_label_open()}
-						onClick={ev => {
-							set_change_labelcolor_option('edit')
-							open_colorpicker(ev, colorpicker_label_ref, {
-								anchor: event_current_target(ev),
-							})
-						}}>
-						<Icon
-							style={{color: selected_label_to_edit.color ?? undefined}}
-							code={0xE407}
-						/>
-					</TextFieldButton>}
-				/>
-			</form>
-		</Dialog>
-		<Dialog
-			ref={r => dialog_newlist_ref = r}
-			header="New list"
-			style={{width: '500px'}}
-			onClose={() => {
-				set_new_listname_text('')
-				set_new_list_emoji(null)
-				change_textfield_value(textfield_newlist_ref, '')
-			}}
-			actions={<>
-				<Button
-					onClick={() => close_dialog(dialog_newlist_ref)}
-					variant={ButtonVariant.tonal}>
-					Cancel
-				</Button>
-				<Button
-					onClick={() => {
-						add_new_tasklist(new_listname_text(), new_list_emoji())
-						close_dialog(dialog_newlist_ref)
-					}}
-					disabled={string_trim(new_listname_text()) == ''}
-					variant={ButtonVariant.filled}>
-					Add
-				</Button>
-			</>}>
-			<form
-				style={{display: 'contents'}}
-				onSubmit={(ev) => {
-					event_prevent_default(ev)
-					if (string_trim(new_listname_text()) == '') return;
-
-					add_new_tasklist(new_listname_text(), new_list_emoji())
-					close_dialog(dialog_newlist_ref)
-				}}>
-				<TextField
-					ref={r => textfield_newlist_ref = r}
-					placeholder="List name"
-					onInput={ev => set_new_listname_text(event_current_target(ev).value)}
-					onFocus={ev => set_new_listname_text(event_current_target(ev).value)}
-					trailing={<TextFieldButton
-						onClick={(ev) => {
+					switch (element_id(button)) {
+						case button_dialognewlist_cancel_id:
+							close_dialog(dialog_newlist_ref)
+							break
+						case button_dialognewlist_add_id:
+							add_new_tasklist(new_listname_text(), new_list_emoji())
+							close_dialog(dialog_newlist_ref)
+							break
+						case button_dialognewlist_emoji_id:
 							set_is_emojipicker_newlist_open(true)
 							open_emojipicker(ev, emojipicker_ref)
-						}}>
-						<Show
-							when={new_list_emoji() == null}
-							fallback={<Emoji emoji={new_list_emoji()!}/>}>
-							<Icon code={0xE747}/>
-						</Show>
-					</TextFieldButton>}
-				/>
-			</form>
-		</Dialog>
-		<Dialog
-			ref={r => dialog_editlist_ref = r}
-			header="Rename list"
-			style={{width: '500px'}}
-			actions={<>
-				<Button
-					onClick={() => close_dialog(dialog_editlist_ref)}
-					variant={ButtonVariant.tonal}>
-					Cancel
-				</Button>
-				<Button
-					onClick={() => {
-						rename_tasklist()
-						close_dialog(dialog_editlist_ref)
-					}}
-					disabled={
-						string_trim(edit_listname_text()) == ''
-						|| (
-							string_trim(edit_listname_text()) == tasklists[selected_tasklist_index_to_rename()].name
-							&& edit_list_emoji() == tasklists[selected_tasklist_index_to_rename()].emoji
-						)
+							break
 					}
-					variant={ButtonVariant.filled}>
-					Rename
-				</Button>
-			</>}>
-			<form
-				style={{display: 'contents'}}
-				onSubmit={(ev) => {
-					event_prevent_default(ev)
-					if (string_trim(edit_listname_text()) == ''
-						|| (
-							string_trim(edit_listname_text()) == tasklists[selected_tasklist_index_to_rename()].name
-							&& edit_list_emoji() == tasklists[selected_tasklist_index_to_rename()].emoji
-						)
-					) return;
-					rename_tasklist()
-					close_dialog(dialog_editlist_ref)
-				}}>
-				<TextField
-					ref={r => textfield_editlist_ref = r}
-					placeholder="List name"
-					onInput={ev => set_edit_listname_text(event_current_target(ev).value)}
-					onFocus={ev => set_edit_listname_text(event_current_target(ev).value)}
-					trailing={<TextFieldButton
-						onClick={(ev) => {
+				}}
+				actions={<>
+					<Button
+						id={button_dialognewlist_cancel_id}
+						variant={ButtonVariant.tonal}>
+						Cancel
+					</Button>
+					<Button
+						id={button_dialognewlist_add_id}
+						disabled={string_trim(new_listname_text()) == ''}
+						variant={ButtonVariant.filled}>
+						Add
+					</Button>
+				</>}>
+				<form
+					style={{display: 'contents'}}
+					onSubmit={(ev) => {
+						event_prevent_default(ev)
+						if (string_trim(new_listname_text()) == '') return;
+
+						add_new_tasklist(new_listname_text(), new_list_emoji())
+						close_dialog(dialog_newlist_ref)
+					}}>
+					<TextField
+						ref={r => textfield_newlist_ref = r}
+						placeholder="List name"
+						onInput={ev => set_new_listname_text(event_current_target(ev).value)}
+						onFocus={ev => set_new_listname_text(event_current_target(ev).value)}
+						trailing={<TextFieldButton
+							id={button_dialognewlist_emoji_id}>
+							<Show
+								when={new_list_emoji() == null}
+								fallback={<Emoji emoji={new_list_emoji()!}/>}>
+								<Icon code={0xE747}/>
+							</Show>
+						</TextFieldButton>}
+					/>
+				</form>
+			</Dialog>
+			<Dialog
+				ref={r => dialog_editlist_ref = r}
+				header="Rename list"
+				style={{width: '500px'}}
+				onClick={(ev) => {
+					const button = document_active()!
+					if (!element_valid_target(
+						event_current_target(ev),
+						button,
+						el => element_tagname(el) == 'BUTTON'
+					)) return
+
+					switch (element_id(button)) {
+						case button_dialogeditlist_cancel_id:
+							close_dialog(dialog_editlist_ref)
+							break
+						case button_dialogeditlist_rename_id:
+							rename_tasklist()
+							close_dialog(dialog_editlist_ref)
+							break
+						case button_dialogeditlist_emoji_id:
 							set_is_emojipicker_editlist_open(true)
 							open_emojipicker(ev, emojipicker_ref)
-						}}>
-						<Show
-							when={edit_list_emoji() == null}
-							fallback={<Emoji emoji={edit_list_emoji()!}/>}>
-							<Icon code={0xE747}/>
-						</Show>
-					</TextFieldButton>}
-				/>
-			</form>
-		</Dialog>
-		<Dialog
-			ref={r => dialog_deletelist_ref = r}
-			style={{width: '500px'}}
-			header="Delete list"
-			actions={<>
-				<Button
-					variant={ButtonVariant.tonal}
-					onClick={() => close_dialog(dialog_deletelist_ref)}>
-					Cancel
-				</Button>
-				<Button
-					variant={ButtonVariant.filled}
-					onClick={() => {
-						close_dialog(dialog_deletelist_ref)
-						delete_tasklist()
+							break
+					}
+				}}
+				actions={<>
+					<Button
+						id={button_dialogeditlist_cancel_id}
+						variant={ButtonVariant.tonal}>
+						Cancel
+					</Button>
+					<Button
+						id={button_dialogeditlist_rename_id}
+						disabled={
+							string_trim(edit_listname_text()) == ''
+							|| (
+								string_trim(edit_listname_text()) == tasklists[selected_tasklist_index_to_rename()].name
+								&& edit_list_emoji() == tasklists[selected_tasklist_index_to_rename()].emoji
+							)
+						}
+						variant={ButtonVariant.filled}>
+						Rename
+					</Button>
+				</>}>
+				<form
+					style={{display: 'contents'}}
+					onSubmit={(ev) => {
+						event_prevent_default(ev)
+						if (string_trim(edit_listname_text()) == ''
+							|| (
+								string_trim(edit_listname_text()) == tasklists[selected_tasklist_index_to_rename()].name
+								&& edit_list_emoji() == tasklists[selected_tasklist_index_to_rename()].emoji
+							)
+						) return;
+						rename_tasklist()
+						close_dialog(dialog_editlist_ref)
 					}}>
-					Delete
-				</Button>
-			</>}>
-			<Show when={tasklists[selected_tasklist_index_to_delete()]}>
-				<>Are you sure want to delete <q style={{"font-weight": 'bold', color: `rgb(${AppColors.accent})`}}>{tasklists[selected_tasklist_index_to_delete()].name}</q> list? </>
-				<>This list contains {array_length(array_filter(tasklists[selected_tasklist_index_to_delete()].tasks, v => !v.complete))} uncompleted tasks </>
-				<>and {array_length(array_filter(tasklists[selected_tasklist_index_to_delete()].tasks, v => v.complete))} completed tasks</>
-			</Show>
-		</Dialog>
-	</>)
+					<TextField
+						ref={r => textfield_editlist_ref = r}
+						placeholder="List name"
+						onInput={ev => set_edit_listname_text(event_current_target(ev).value)}
+						onFocus={ev => set_edit_listname_text(event_current_target(ev).value)}
+						trailing={<TextFieldButton
+							id={button_dialogeditlist_emoji_id}>
+							<Show
+								when={edit_list_emoji() == null}
+								fallback={<Emoji emoji={edit_list_emoji()!}/>}>
+								<Icon code={0xE747}/>
+							</Show>
+						</TextFieldButton>}
+					/>
+				</form>
+			</Dialog>
+			<Dialog
+				ref={r => dialog_deletelist_ref = r}
+				style={{width: '500px'}}
+				header="Delete list"
+				onClick={(ev) => {
+					const button = document_active()!
+					if (!element_valid_target(
+						event_current_target(ev),
+						button,
+						el => element_tagname(el) == 'BUTTON'
+					)) return
+
+					switch (element_id(button)) {
+						case button_dialogdeletelist_cancel_id:
+							close_dialog(dialog_deletelist_ref)
+							break
+						case button_dialogdeletelist_delete_id:
+							close_dialog(dialog_deletelist_ref)
+							delete_tasklist()
+							break
+					}
+				}}
+				actions={<>
+					<Button
+						id={button_dialogdeletelist_cancel_id}
+						variant={ButtonVariant.tonal}>
+						Cancel
+					</Button>
+					<Button
+						id={button_dialogdeletelist_delete_id}
+						variant={ButtonVariant.filled}>
+						Delete
+					</Button>
+				</>}>
+				<Show when={tasklists[selected_tasklist_index_to_delete()]}>
+					<>Are you sure want to delete <q style={{"font-weight": 'bold', color: `rgb(${AppColors.accent})`}}>{tasklists[selected_tasklist_index_to_delete()].name}</q> list? </>
+					<>This list contains {array_length(array_filter(tasklists[selected_tasklist_index_to_delete()].tasks, v => !v.complete))} uncompleted tasks </>
+					<>and {array_length(array_filter(tasklists[selected_tasklist_index_to_delete()].tasks, v => v.complete))} completed tasks</>
+				</Show>
+			</Dialog>
+		</>)
+	}
 
 	const ColorPickers: VoidComponent = () => {
 		return (<>
