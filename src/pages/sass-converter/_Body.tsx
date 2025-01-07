@@ -1,12 +1,13 @@
-import { createMemo, createSignal, onMount, Show, type VoidComponent } from "solid-js"
+import { createMemo, createSignal, createUniqueId, onMount, Show, type VoidComponent } from "solid-js"
 
 import type { Settings } from "./_types"
-import { event_add_listener } from "@/utils/event"
+import { event_add_listener, event_current_target } from "@/utils/event"
 import { attr_remove, attr_set, attr_set_if_exist } from "@/utils/attributes"
 import { BodyAttributes } from "@/enums/attributes"
-import { document_body } from "@/utils/document"
+import { document_active, document_body } from "@/utils/document"
 import { window_matches } from "@/utils/window"
 import { DEFAULT_INPUT_VIEW_OPTION, MIN_EDITOR_WIDTH } from "./_constants"
+import { element_id, element_tagname, element_valid_target } from "@/utils/element"
 import { Commands, InputViewOption } from "./_enums"
 import { timeout_clear, timeout_set } from "@/utils/timeout"
 
@@ -25,6 +26,9 @@ const _: VoidComponent<{
 	command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
 	const body = document_body()
+	const button_input_sass = createUniqueId()
+	const button_input_scss = createUniqueId()
+	const button_output_css = createUniqueId()
 	const [width, set_width] = createSignal<number | null>(null)
 	const [is_dragging, set_is_dragging] = createSignal<boolean>(false)
 	const [input_view_option, set_input_view_option] = createSignal<InputViewOption | null>(DEFAULT_INPUT_VIEW_OPTION)
@@ -97,38 +101,14 @@ const _: VoidComponent<{
 	const InputTabButtons: VoidComponent = () => (<>
 		<Button
 			variant={ButtonVariant.tonal}
-			selected={input_view_option() == InputViewOption.sass}
-			onClick={() => {
-				if (is_small_screen) {
-					set_input_view_option(InputViewOption.sass)
-					set_output_view_option(null)
-					return;
-				}
-
-				if (input_view_option() == InputViewOption.sass && output_view_option() != null)
-					return set_input_view_option(null)
-				set_input_view_option(InputViewOption.sass)
-				command(Commands.change_input_view_option, InputViewOption.sass)
-				textarea_ref.value = sass_text()
-			}}>
+			id={button_input_sass}
+			selected={input_view_option() == InputViewOption.sass}>
 			SASS
 		</Button>
 		<Button
 			variant={ButtonVariant.tonal}
-			selected={input_view_option() == InputViewOption.scss}
-			onClick={() => {
-				if (is_small_screen) {
-					set_input_view_option(InputViewOption.scss)
-					set_output_view_option(null)
-					return;
-				}
-
-				if (input_view_option() == InputViewOption.scss && output_view_option() != null)
-					return set_input_view_option(null)
-				set_input_view_option(InputViewOption.scss)
-				command(Commands.change_input_view_option, InputViewOption.scss)
-				textarea_ref.value = scss_text()
-			}}>
+			id={button_input_scss}
+			selected={input_view_option() == InputViewOption.scss}>
 			SCSS
 		</Button>
 	</>)
@@ -136,23 +116,65 @@ const _: VoidComponent<{
 	const OutputTabButtons: VoidComponent = () => (<>
 		<Button
 			variant={ButtonVariant.tonal}
-			selected={output_view_option() == OutputViewOption.css}
-			onClick={() => {
-				if (is_small_screen) {
-					set_output_view_option(OutputViewOption.css)
-					set_input_view_option(null)
-					return;
-				}
-
-				if (output_view_option() == OutputViewOption.css && input_view_option() != null)
-					return set_output_view_option(null)
-				set_output_view_option(OutputViewOption.css)
-			}}>
+			id={button_output_css}
+			selected={output_view_option() == OutputViewOption.css}>
 			CSS
 		</Button>
 	</>)
 
-	return (<div class={CSS.body}>
+	return (<div
+		class={CSS.body}
+		onClick={ev => {
+			const button = document_active()!
+			if (!element_valid_target(
+				event_current_target(ev),
+				button,
+				el => element_tagname(el) == 'BUTTON'
+			)) return
+
+			switch (element_id(button)) {
+				case button_input_sass:
+					if (is_small_screen) {
+						set_input_view_option(InputViewOption.sass)
+						set_output_view_option(null)
+						return
+					}
+
+					if (input_view_option() == InputViewOption.sass && output_view_option() != null)
+						return set_input_view_option(null)
+
+					set_input_view_option(InputViewOption.sass)
+					command(Commands.change_input_view_option, InputViewOption.sass)
+					textarea_ref.value = sass_text()
+					break
+				case button_input_scss:
+					if (is_small_screen) {
+						set_input_view_option(InputViewOption.scss)
+						set_output_view_option(null)
+						return
+					}
+
+					if (input_view_option() == InputViewOption.scss && output_view_option() != null)
+						return set_input_view_option(null)
+
+					set_input_view_option(InputViewOption.scss)
+					command(Commands.change_input_view_option, InputViewOption.scss)
+					textarea_ref.value = scss_text()
+					break
+				case button_output_css:
+					if (is_small_screen) {
+						set_output_view_option(OutputViewOption.css)
+						set_input_view_option(null)
+						return
+					}
+
+					if (output_view_option() == OutputViewOption.css && input_view_option() != null)
+						return set_output_view_option(null)
+
+					set_output_view_option(OutputViewOption.css)
+					break
+			}
+		}}>
 		<div
 			class={CSS.body_input}
 			data-hidden={attr_set_if_exist(input_view_option() == null)}

@@ -1,4 +1,4 @@
-import { createMemo, createSignal, onMount, type VoidComponent } from "solid-js"
+import { createMemo, createSignal, createUniqueId, onMount, type VoidComponent } from "solid-js"
 
 import type { Settings } from "./_types"
 import { Commands } from "./_enums"
@@ -9,20 +9,22 @@ import { LocalStorageKeys } from "@/enums/storage"
 import { ThemeData } from "@/enums/theme"
 import { storage_set, storage_get } from "@/utils/storage"
 import { wait } from "@/utils/timeout"
-import { url_encode } from "@/utils/url"
+import { url_encode, url_origin } from "@/utils/url"
 import { attr_set } from "@/utils/attributes"
 import { promise_done } from "@/utils/object"
 import { array_includes } from "@/utils/array"
-import { document_root } from "@/utils/document"
+import { document_active, document_root } from "@/utils/document"
 import { navigator_share } from "@/utils/navigator"
 import { date_year } from "@/utils/datetime"
-import { event_current_target } from "@/utils/event"
+import { event_current_target, event_target } from "@/utils/event"
+import { element_valid_target, element_tagname, element_id, element_dataset } from "@/utils/element"
 import { number_safe } from "@/utils/number"
+import { app_sass_converter as app } from "@/constants/apps"
 import logo from '@/assets/apps/sass-converter-logo.svg'
-import redmerah_logo from '@/assets/logo.svg'
-import scss_logo from '@/assets/logos/scss-logo.svg'
-import sass_logo from '@/assets/logos/sass-logo.svg'
-import css_logo from '@/assets/logos/css-logo.svg'
+import logo_redmerah from '@/assets/logo.svg'
+import logo_scss from '@/assets/logos/scss-logo.svg'
+import logo_sass from '@/assets/logos/sass-logo.svg'
+import logo_css from '@/assets/logos/css-logo.svg'
 
 import Tooltip from "@/components/Tooltip"
 import { IconButton } from "@/components/Button"
@@ -43,6 +45,9 @@ const _: VoidComponent<{
 	const corner_round = CornerData.round
 	const corner_fullround = CornerData.full_round
 	const root = document_root()
+	const button_info_id = createUniqueId()
+	const button_settings_id = createUniqueId()
+	const button_moreactions_id = createUniqueId()
 	const [is_menu_info_open, set_is_menu_info_open] = createSignal<boolean>(false)
 	const [is_menu_settings_open, set_is_menu_settings_open] = createSignal<boolean>(false)
 	const [is_submenu_themesettings_open, set_is_submenu_themesettings_open] = createSignal<boolean>(false)
@@ -119,59 +124,78 @@ const _: VoidComponent<{
 	})
 
 	const Menus: VoidComponent = () => {
+		const button_info_share_id = createUniqueId()
+		const button_moreactions_openfile_id = createUniqueId()
+		const button_moreactions_resetinputs_id = createUniqueId()
+		const input_settings_textwrap_id = createUniqueId()
+		const input_settings_minifycss_id = createUniqueId()
+		const input_settings_fontsize_id = createUniqueId()
 		return (<>
 			<Menu
+				onClick={(ev) => {
+					const button = document_active()!
+					if (!element_valid_target(
+						event_current_target(ev),
+						button,
+						el => {
+							const tagname = element_tagname(el)
+							return tagname == 'BUTTON' || tagname == 'A'
+						}
+					)) return
+
+					switch (element_id(button)) {
+						case button_info_share_id:
+							navigator_share({
+								title: app.name,
+								text: app.name + ' v' + app.build_version,
+								url: url_origin() + app.link
+							})
+							break
+					}
+
+					close_menu(menu_info_ref)
+				}}
 				style={{width: '200px'}}
 				ref={r => menu_info_ref = r}
 				on_toggle_open={(v) => set_is_menu_info_open(v)}>
 				<LinkMenuItem
-					onClick={() => close_menu(menu_info_ref)}
 					href={RoutesLinks.home}
-					leading={<img src={redmerah_logo.src} width={16} alt='Redmerah logo'/>}>
+					leading={<img src={logo_redmerah.src} width={16} alt='Redmerah logo'/>}>
 					Redmerah
 				</LinkMenuItem>
 				<LinkMenuItem
-					onClick={() => close_menu(menu_info_ref)}
 					href={RoutesLinks.apps}
 					icon_code={0xE063}>
 					More apps
 				</LinkMenuItem>
 				<LinkMenuItem
-					onClick={() => close_menu(menu_info_ref)}
 					href={RoutesLinks.about}
 					icon_code={0xE930}>
 					About us
 				</LinkMenuItem>
 				<MenuDivider />
 				<LinkMenuItem
-					onClick={() => close_menu(menu_info_ref)}
 					href={RoutesLinks.privacy}
 					icon_code={0xEE51}>
 					Privacy policy
 				</LinkMenuItem>
 				<LinkMenuItem
-					onClick={() => close_menu(menu_info_ref)}
 					href={RoutesLinks.terms}
 					icon_code={0xED47}>
 					Terms & conditions
 				</LinkMenuItem>
 				<MenuDivider />
 				<MenuItem
-					onClick={() => {
-						navigator_share({ title: 'SASS Converter', text: 'SASS Converter', url: document.URL })
-						close_menu(menu_info_ref)
-					}}
+					id={button_info_share_id}
 					icon_code={0xEE23}>
 					Share
 				</MenuItem>
 				<LinkMenuItem
-					onClick={() => close_menu(menu_info_ref)}
-					href={'mailto:' + ExternalLinks.contact_email + '?subject=' + url_encode('SASS Converter')}
+					href={'mailto:' + ExternalLinks.contact_email + '?subject=' + url_encode('Tasks')}
 					icon_code={0xE3A0}>
 					Send feedback
 				</LinkMenuItem>
 				<LinkMenuItem
-					onClick={() => close_menu(menu_info_ref)}
 					href={ExternalLinks.donate}
 					open_in_new_tab
 					icon_code={0xE84B}>
@@ -181,7 +205,45 @@ const _: VoidComponent<{
 			</Menu>
 			<Menu
 				ref={r => menu_settings_ref = r}
-				on_toggle_open={(v) => set_is_menu_settings_open(v)}>
+				on_toggle_open={(v) => set_is_menu_settings_open(v)}
+				onClick={ev => {
+					const button = document_active()!
+					if (!element_valid_target(
+						event_current_target(ev),
+						button,
+						el => element_tagname(el) == 'BUTTON'
+					)) return
+
+					const data_theme = element_dataset(button, 'theme')
+					if (data_theme) return change_theme(data_theme as ThemeData)
+
+					const data_corner = element_dataset(button, 'corner')
+					if (data_corner) return change_corner(data_corner as CornerData)
+				}}
+				onChange={ev => {
+					const target = event_target(ev) as HTMLInputElement
+
+					switch (element_id(target)) {
+						case input_settings_textwrap_id:
+							command(Commands.toggle_textwrap)
+							break
+						case input_settings_minifycss_id:
+							command(Commands.toggle_minify)
+							break
+					}
+				}}
+				onFocusOut={ev => {
+					const target = event_target(ev) as HTMLInputElement
+
+					switch (element_id(target)) {
+						case input_settings_fontsize_id:
+							command(
+								Commands.change_fontsize,
+								number_safe(target.valueAsNumber, settings().font_size)
+							)
+							break
+					}
+				}}>
 				<SubMenu
 					ref={r => submenu_themesettings_ref = r}
 					on_toggle_open={v => set_is_submenu_themesettings_open(v)}
@@ -193,19 +255,19 @@ const _: VoidComponent<{
 					<MenuItem
 						selected={theme() == theme_light}
 						icon_code={0xF2CD}
-						onClick={() => change_theme(theme_light)}>
+						data-theme={theme_light}>
 						Light
 					</MenuItem>
 					<MenuItem
 						selected={theme() == theme_dark}
 						icon_code={0xF2B3}
-						onClick={() => change_theme(theme_dark)}>
+						data-theme={theme_dark}>
 						Dark
 					</MenuItem>
 					<MenuItem
 						selected={theme() == theme_system}
 						icon_code={0xE96D}
-						onClick={() => change_theme(theme_system)}>
+						data-theme={theme_system}>
 						System theme
 					</MenuItem>
 				</SubMenu>
@@ -220,25 +282,25 @@ const _: VoidComponent<{
 					<MenuItem
 						selected={corner() == corner_sharp}
 						icon_code={0xEA99}
-						onClick={() => change_corner(corner_sharp)}>
+						data-corner={corner_sharp}>
 						Sharp
 					</MenuItem>
 					<MenuItem
 						selected={corner() == corner_semiround}
 						icon_code={0xEEF7}
-						onClick={() => change_corner(corner_semiround)}>
+						data-corner={corner_semiround}>
 						Semi round
 					</MenuItem>
 					<MenuItem
 						selected={corner() == corner_round}
 						icon_code={0xF044}
-						onClick={() => change_corner(corner_round)}>
+						data-corner={corner_round}>
 						Round
 					</MenuItem>
 					<MenuItem
 						selected={corner() == corner_fullround}
 						icon_code={0xE408}
-						onClick={() => change_corner(corner_fullround)}>
+						data-corner={corner_fullround}>
 						Full round
 					</MenuItem>
 				</SubMenu>
@@ -246,37 +308,76 @@ const _: VoidComponent<{
 				<SwitchMenuItem
 					icon_code={0xF19D}
 					checked={settings().text_wrap}
-					attr_switch={{onChange: () => command(Commands.toggle_textwrap)}}>
+					attr_switch={{
+						id: input_settings_textwrap_id
+					}}>
 					Text wrap
 				</SwitchMenuItem>
 				<SwitchMenuItem
 					icon_code={0xE0F5}
 					checked={settings().minify}
-					attr_switch={{onChange: () => command(Commands.toggle_minify)}}>
+					attr_switch={{
+						id: input_settings_minifycss_id
+					}}>
 					Minify CSS
 				</SwitchMenuItem>
 				<div style={{padding: '8px 12px'}}>
 					<NumberTextField
 						min={12}
 						label="Font size"
+						id={input_settings_fontsize_id}
 						value={settings().font_size}
-						onBlur={ev => command(
-							Commands.change_fontsize,
-							number_safe(event_current_target(ev).valueAsNumber, settings().font_size)
-						)}
 					/>
 				</div>
 			</Menu>
 			<Menu
 				style={{"min-width": '200px'}}
-				on_toggle_open={isOpen => set_is_menu_moreactions_open(isOpen)}
-				ref={r => menu_moreactions_ref = r}>
+				on_toggle_open={is_open => set_is_menu_moreactions_open(is_open)}
+				ref={r => menu_moreactions_ref = r}
+				onClick={ev => {
+					const button = document_active()!
+					if (!element_valid_target(
+						event_current_target(ev),
+						button,
+						el => element_tagname(el) == "BUTTON"
+					)) return
+
+					switch (element_id(button)) {
+						case button_moreactions_openfile_id:
+							close_menu(menu_moreactions_ref)
+							command(Commands.open_file, ev)
+							break
+						case button_moreactions_resetinputs_id:
+							close_menu(menu_moreactions_ref)
+							command(Commands.reset_inputs)
+							break
+						default:
+							const data_download = element_dataset(button, 'download')
+							if (data_download) {
+								if (
+									data_download != 'sass'
+									&& data_download != 'scss'
+									&& data_download != 'css'
+								) return
+
+								return download_file(data_download)
+							}
+
+							const data_copy = element_dataset(button, 'copy')
+							if (data_copy) {
+								if (
+									data_copy != 'sass'
+									&& data_copy != 'scss'
+									&& data_copy != 'css'
+								) return
+
+								return copy_all(ev, data_copy)
+							}
+					}
+				}}>
 				<MenuItem
 					icon_code={0xE607}
-					onClick={(ev) => {
-						close_menu(menu_moreactions_ref)
-						command(Commands.open_file, ev)
-					}}>
+					id={button_moreactions_openfile_id}>
 					Open file
 				</MenuItem>
 				<MenuDivider/>
@@ -289,18 +390,18 @@ const _: VoidComponent<{
 						Download
 					</SubMenuItem>}>
 					<MenuItem
-						leading={<img width={20} src={sass_logo.src} alt="SASS logo"/>}
-						onClick={() => download_file('sass')}>
+						data-download='sass'
+						leading={<img width={20} src={logo_sass.src} alt="SASS logo"/>}>
 						SASS
 					</MenuItem>
 					<MenuItem
-						leading={<img width={20} src={scss_logo.src} alt="SCSS logo"/>}
-						onClick={() => download_file('scss')}>
+						data-download='scss'
+						leading={<img width={20} src={logo_scss.src} alt="SCSS logo"/>}>
 						SCSS
 					</MenuItem>
 					<MenuItem
-						leading={<img width={20} src={css_logo.src} alt="CSS logo"/>}
-						onClick={() => download_file('css')}>
+						data-download='css'
+						leading={<img width={20} src={logo_css.src} alt="CSS logo"/>}>
 						CSS
 					</MenuItem>
 				</SubMenu>
@@ -313,28 +414,25 @@ const _: VoidComponent<{
 						Copy all
 					</SubMenuItem>}>
 					<MenuItem
-						leading={<img width={20} src={sass_logo.src} alt="SASS logo"/>}
-						onClick={ev => copy_all(ev, 'sass')}>
+						data-copy='sass'
+						leading={<img width={20} src={logo_sass.src} alt="SASS logo"/>}>
 						SASS
 					</MenuItem>
 					<MenuItem
-						leading={<img width={20} src={scss_logo.src} alt="SCSS logo"/>}
-						onClick={ev => copy_all(ev, 'scss')}>
+						data-copy='scss'
+						leading={<img width={20} src={logo_scss.src} alt="SCSS logo"/>}>
 						SCSS
 					</MenuItem>
 					<MenuItem
-						leading={<img width={20} src={css_logo.src} alt="CSS logo"/>}
-						onClick={ev => copy_all(ev, 'css')}>
+						data-copy='css'
+						leading={<img width={20} src={logo_css.src} alt="CSS logo"/>}>
 						CSS
 					</MenuItem>
 				</SubMenu>
 				<MenuDivider/>
 				<MenuItem
 					icon_code={0xE113}
-					onClick={() => {
-						close_menu(menu_moreactions_ref)
-						command(Commands.reset_inputs)
-					}}>
+					id={button_moreactions_resetinputs_id}>
 					Reset input
 				</MenuItem>
 			</Menu>
@@ -345,34 +443,45 @@ const _: VoidComponent<{
 		<AppBar
 			leading={<img alt="Markdown converter logo" width={32} src={logo.src} />}
 			headline="SASS Converter"
+			onClick={ev => {
+				const button = document_active()!
+				if (!element_valid_target(
+					event_current_target(ev),
+					button,
+					el => element_tagname(el) == 'BUTTON'
+				)) return
+
+				switch (element_id(button)) {
+					case button_info_id:
+						open_menu(ev, menu_info_ref, { anchor: button })
+						break
+					case button_settings_id:
+						open_menu(ev, menu_settings_ref, { anchor: button })
+						break
+					case button_moreactions_id:
+						open_menu(ev, menu_moreactions_ref, { anchor: button })
+						break
+				}
+			}}
 			trailing={<Tooltip>
 				<IconButton
 					data-tooltip="Info"
+					id={button_info_id}
 					focused={is_menu_info_open()}
 					code={0xE930}
-					onClick={(ev) => open_menu(ev, menu_info_ref, {
-						anchor: event_current_target(ev),
-						padding: 4
-					})}
 				/>
 				<IconButton
 					data-tooltip="Settings"
+					id={button_settings_id}
 					class={CSSAnimation.btn_rotate_icon}
 					focused={is_menu_settings_open()}
 					code={0xEE0F}
-					onClick={(ev) => open_menu(ev, menu_settings_ref, {
-						anchor: event_current_target(ev),
-						padding: 4
-					})}
 				/>
 				<IconButton
 					data-tooltip="More actions"
+					id={button_moreactions_id}
 					focused={is_menu_moreactions_open()}
 					code={0xEAD9}
-					onClick={(ev) => open_menu(ev, menu_moreactions_ref, {
-						anchor: event_current_target(ev),
-						padding: 4
-					})}
 				/>
 			</Tooltip>}
 		/>
