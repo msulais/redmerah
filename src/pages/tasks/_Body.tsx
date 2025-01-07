@@ -1694,7 +1694,7 @@ const _: VoidComponent<{
 				<Show when={!props.is_db_file_error}>
 					<div data-file>
 						<Tooltip>
-							<For each={selected_task_to_edit.task.files}>{(file, index) =>
+							<For each={selected_task_to_edit.task.files}>{(_, index) =>
 								<FileItem index={index()}/>
 							}</For>
 						</Tooltip>

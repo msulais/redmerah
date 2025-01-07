@@ -7,7 +7,7 @@ import { FlyoutPosition as ModalPosition } from '@/enums/position'
 import { get_flyout_position } from '@/utils/flyout'
 import { timeout_clear, timeout_set } from '@/utils/timeout'
 import { attr_has, attr_remove, attr_set, attr_set_if_exist, classlist } from '@/utils/attributes'
-import { element_animate, element_client_width, element_dataset, element_dispatch_event, element_focus, element_is_same_node, element_rect, element_scroll_top, element_all_by_selector, element_append_child, element_create, element_set_id, element_set_style, element_release_pointercapture, element_set_pointercapture, element_contains } from '@/utils/element'
+import { element_animate, element_client_width, element_dataset, element_dispatch_event, element_focus, element_is_same_node, element_rect, element_scroll_top, element_all_by_selector, element_append_child, element_create, element_set_id, element_set_style, element_release_pointercapture, element_set_pointercapture } from '@/utils/element'
 import { BodyAttributes } from '@/enums/attributes'
 import { event_add_listener, event_call, event_prevent_default, event_remove_listener, event_target, event_type } from "@/utils/event"
 import { math_abs } from '@/utils/math'
