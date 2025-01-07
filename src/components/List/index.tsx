@@ -14,7 +14,7 @@ type ListProps = JSX.HTMLAttributes<HTMLDivElement> & {
 }
 const List: ParentComponent<ListProps> = ($props) => {
 	const $$props = mergeProps({
-		trailing_auto_tabindex: true,
+		trailing_auto_tabindex: false,
 	}, $props)
 	const [props, other] = splitProps($$props, [
 		'leading', 'children', 'trailing', 'subtitle',
@@ -66,7 +66,7 @@ type RawListProps<T extends ValidComponent = keyof JSX.HTMLElementTags> = Dynami
 }
 const RawList: ParentComponent<RawListProps> = ($props) => {
 	const $$props = mergeProps({
-		trailing_auto_tabindex: true,
+		trailing_auto_tabindex: false,
 	}, $props)
 	const [props, other] = splitProps($$props, [
 		'leading', 'children', 'trailing', 'subtitle',
