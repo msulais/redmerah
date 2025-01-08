@@ -9,7 +9,7 @@ import { ExternalLinks, RoutesLinks } from "@/enums/links"
 import { all_ThemeData, ThemeData } from "@/enums/theme"
 import { storage_get, storage_set } from "@/utils/storage"
 import { LocalStorageKeys } from "@/enums/storage"
-import { RandomizerType, NumbersRandomizerSort, NumbersRandomizerNumberType, WordsRandomizerWordCase, ColorsRandomizerColorModel, Commands, all_NumbersRandomizerSort, all_NumbersRandomizerNumberType, all_WordsRandomizerWordCase, all_ColorsRandomizerColorModel } from "./_enums"
+import { RandomizerType, NumbersRandomizerSort, NumbersRandomizerNumberType, WordsRandomizerWordCase, ColorsRandomizerColorModel, Commands, all_NumbersRandomizerSort, all_NumbersRandomizerNumberType, all_WordsRandomizerWordCase, all_ColorsRandomizerColorModel, all_RandomizerType } from "./_enums"
 import { url_encode, url_origin } from "@/utils/url"
 import { all_CornerData, CornerData } from "@/enums/corner"
 import { window_matches } from "@/utils/window"
@@ -19,6 +19,8 @@ import { document_active, document_root } from "@/utils/document"
 import { navigator_share } from "@/utils/navigator"
 import { date_year } from "@/utils/datetime"
 import { app_randomizer as app } from "@/constants/apps"
+import { element_valid_target, element_tagname, element_id, element_dataset } from "@/utils/element"
+import { valid_enum_value } from "@/utils/object"
 import { number_is_not_defined, number_parse, number_safe } from "@/utils/number"
 import logo_redmerah from '@/assets/logo.svg'
 
@@ -31,8 +33,6 @@ import Drawer, { close_drawer, DrawerItem, openDrawer } from "@/components/Drawe
 import AppBar from "@/components/AppBar"
 import CSSAnimation from "@/styles/animation.module.scss"
 import CSS from './_styles.module.scss'
-import { element_valid_target, element_tagname, element_id, element_dataset } from "@/utils/element"
-import { valid_enum_value } from "@/utils/object"
 
 const _: Component<{
 	is_generating: boolean
@@ -188,6 +188,10 @@ const _: Component<{
 		const button_info_share_id = createUniqueId()
 		const input_settings_repeat_id = createUniqueId()
 		const input_settings_animation_id = createUniqueId()
+		const input_settings_prefix_id = createUniqueId()
+		const input_settings_suffix_id = createUniqueId()
+		const input_settings_separator_id = createUniqueId()
+		const input_settings_mindecimallength_id = createUniqueId()
 		return (<>
 			<Menu
 				onClick={(ev) => {
@@ -264,6 +268,27 @@ const _: Component<{
 			<Menu
 				ref={r => menu_settings_ref = r}
 				on_toggle_open={(v) => set_is_menu_settings_open(v)}
+				onFocusOut={ev => {
+					const target = event_target(ev) as HTMLInputElement
+
+					switch (element_id(target)) {
+						case input_settings_prefix_id:
+							command(Commands.change_settings_prefix, target.value)
+							break
+						case input_settings_suffix_id:
+							command(Commands.change_settings_suffix, target.value)
+							break
+						case input_settings_separator_id:
+							command(Commands.change_settings_separator, target.value)
+							break
+						case input_settings_mindecimallength_id:
+							command(
+								Commands.change_settings_numbers_minlength,
+								number_safe(target.valueAsNumber)
+							)
+							break
+					}
+				}}
 				onClick={ev => {
 					const button = document_active()!
 					if (!element_valid_target(
@@ -299,6 +324,16 @@ const _: Component<{
 							if (data_colors_model
 								&& valid_enum_value(data_colors_model, all_ColorsRandomizerColorModel)
 							) return change_colors_model(data_colors_model as ColorsRandomizerColorModel)
+
+							const data_theme = element_dataset(button, 'theme')
+							if (data_theme
+								&& valid_enum_value(data_theme, all_ThemeData)
+							) return change_theme(data_theme as ThemeData)
+
+							const data_corner = element_dataset(button, 'corner')
+							if (data_corner
+								&& valid_enum_value(data_corner, all_CornerData)
+							) return change_corner(data_corner as CornerData)
 					}
 				}}
 				onChange={ev => {
@@ -477,19 +512,19 @@ const _: Component<{
 					<MenuItem
 						selected={theme() == ThemeData.light}
 						icon_code={0xF2CD}
-						onClick={() => change_theme(ThemeData.light)}>
+						data-theme={ThemeData.light}>
 						Light
 					</MenuItem>
 					<MenuItem
 						selected={theme() == ThemeData.dark}
 						icon_code={0xF2B3}
-						onClick={() => change_theme(ThemeData.dark)}>
+						data-theme={ThemeData.dark}>
 						Dark
 					</MenuItem>
 					<MenuItem
 						selected={theme() == ThemeData.system}
 						icon_code={0xE96D}
-						onClick={() => change_theme(ThemeData.system)}>
+						data-theme={ThemeData.system}>
 						System theme
 					</MenuItem>
 				</SubMenu>
@@ -504,25 +539,25 @@ const _: Component<{
 					<MenuItem
 						selected={corner() == CornerData.sharp}
 						icon_code={0xEA99}
-						onClick={() => change_corner(CornerData.sharp)}>
+						data-corner={CornerData.sharp}>
 						Sharp
 					</MenuItem>
 					<MenuItem
 						selected={corner() == CornerData.semi_round}
 						icon_code={0xEEF7}
-						onClick={() => change_corner(CornerData.semi_round)}>
+						data-corner={CornerData.semi_round}>
 						Semi round
 					</MenuItem>
 					<MenuItem
 						selected={corner() == CornerData.round}
 						icon_code={0xF044}
-						onClick={() => change_corner(CornerData.round)}>
+						data-corner={CornerData.round}>
 						Round
 					</MenuItem>
 					<MenuItem
 						selected={corner() == CornerData.full_round}
 						icon_code={0xE408}
-						onClick={() => change_corner(CornerData.full_round)}>
+						data-corner={CornerData.full_round}>
 						Full round
 					</MenuItem>
 				</SubMenu>
@@ -532,7 +567,7 @@ const _: Component<{
 						<TextField
 							ref={r => textfield_prefix_ref = r}
 							label="Prefix"
-							onBlur={(ev) => command(Commands.change_settings_prefix, event_current_target(ev).value)}
+							id={input_settings_prefix_id}
 							leading={<Icon code={0xE043}/>}
 						/>
 					</div>
@@ -540,7 +575,7 @@ const _: Component<{
 						<TextField
 							ref={r => textfield_suffix_ref = r}
 							label="Suffix"
-							onBlur={(ev) => command(Commands.change_settings_suffix, event_current_target(ev).value)}
+							id={input_settings_suffix_id}
 							leading={<Icon code={0xE02D}/>}
 						/>
 					</div>
@@ -548,7 +583,7 @@ const _: Component<{
 						<TextField
 							ref={r => textfield_separator_ref = r}
 							label="Separator"
-							onBlur={(ev) => command(Commands.change_settings_separator, event_current_target(ev).value)}
+							id={input_settings_separator_id}
 							leading={<Icon code={0xE4CF}/>}
 						/>
 					</div>
@@ -558,11 +593,8 @@ const _: Component<{
 						<NumberTextField
 							ref={r => textfield_decimallength_ref = r}
 							min={0}
+							id={input_settings_mindecimallength_id}
 							label="Min decimal length"
-							onBlur={ev => command(
-								Commands.change_settings_numbers_minlength,
-								number_safe(event_current_target(ev).valueAsNumber)
-							)}
 							leading={<Icon code={0xE599}/>}
 						/>
 					</div>
@@ -571,90 +603,89 @@ const _: Component<{
 		</>)
 	}
 
-	const Drawers: VoidComponent = () => (<>
-		<Drawer
-			header={<Tooltip>
-				<IconButton
-					data-tooltip="Close navigation"
-					classList={classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
-					onClick={() => close_drawer(drawer_navigation_ref)}
-					code={0xEAFF}
-				/>
-			</Tooltip>}
-			ref={r => drawer_navigation_ref = r}>
-			<For each={RANDOMIZER_TYPES}>{r =>
-				<DrawerItem
-					onClick={() => {
-						if (randomizer() != r.type) props.on_change_randomizer(r.type)
+	const Drawers: VoidComponent = () => {
+		const button_navigation_close_id = createUniqueId()
+		return (<>
+			<Drawer
+				onClick={ev => {
+					const button = document_active()!
+					if (!element_valid_target(
+						event_current_target(ev),
+						button,
+						el => element_tagname(el) == 'BUTTON'
+					)) return
 
-						close_drawer(drawer_navigation_ref)
-					} }
-					selected={randomizer() == r.type}>
-					<Icon filled={randomizer() == r.type} code={r.icon}/>
-					{ r.text }
-				</DrawerItem>
-			}</For>
-		</Drawer>
-	</>)
+					switch (element_id(button)){
+						case button_navigation_close_id:
+							close_drawer(drawer_navigation_ref)
+							break
+						default:
+							const data_type = element_dataset(button, 'type')
+							if (data_type
+								&& valid_enum_value(data_type, all_RandomizerType)
+							) {
+								if (randomizer() != data_type) {
+									props.on_change_randomizer(data_type as RandomizerType)
+								}
 
-	return (<>
-		<Tooltip>
-			<AppBar
-				leading={<>
+								close_drawer(drawer_navigation_ref)
+							}
+					}
+				}}
+				header={<Tooltip>
 					<IconButton
-						data-tooltip={is_sidenavigation_hidden()? "Open navigation" : "Expand/shrink navigation"}
-						onClick={(ev) => {
-							if (is_sidenavigation_hidden()) return openDrawer(ev, drawer_navigation_ref)
-							command(Commands.toggle_navigation_expand)
-						}}
+						id={button_navigation_close_id}
+						data-tooltip="Close navigation"
 						classList={classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
 						code={0xEAFF}
 					/>
-					<img width="32" src={app.logo_url} alt="Randomizer" />
-				</>}
-				headline="Randomizer"
-				trailing={<>
-					<Button
-						classList={classlist_module(CSSAnimation.btn_rotate_full_icon, CSS.appbar_generate_btn)}
-						data-g-keep-pointer-event={attr_set_if_exist(props.is_generating)}
-						variant={ButtonVariant.filled}
-						onClick={(ev) => {
+				</Tooltip>}
+				ref={r => drawer_navigation_ref = r}>
+				<For each={RANDOMIZER_TYPES}>{r =>
+					<DrawerItem
+						data-type={r.type}
+						selected={randomizer() == r.type}>
+						<Icon filled={randomizer() == r.type} code={r.icon}/>
+						{ r.text }
+					</DrawerItem>
+				}</For>
+			</Drawer>
+		</>)
+	}
+
+	const AppBars: VoidComponent = () => {
+		const button_navigation_id = createUniqueId()
+		const button_generate_id = createUniqueId()
+		const button_info_id = createUniqueId()
+		const button_settings_id = createUniqueId()
+		const button_copyresult_id = createUniqueId()
+		return (<Tooltip>
+			<AppBar
+				onClick={async ev => {
+					const button = document_active()!
+					if (!element_valid_target(
+						event_current_target(ev),
+						button,
+						el => element_tagname(el) == 'BUTTON'
+					)) return
+
+					switch (element_id(button)) {
+						case button_navigation_id:
+							if (is_sidenavigation_hidden()) return openDrawer(ev, drawer_navigation_ref)
+							command(Commands.toggle_navigation_expand)
+							break
+						case button_generate_id:
 							if (props.is_generating) return command(Commands.stop_generate)
 							command(Commands.generate, ev)
-						}}>
-						<Icon
-							filled
-							classList={classlist_module(CSS.appbar_generate_icon)}
-							data-rotate={attr_set_if_exist(props.is_generating)}
-							code={0xE143}
-						/>
-						<Show when={props.is_generating} fallback="Generate">Generating</Show>
-					</Button>
-					<IconButton
-						data-tooltip="Info"
-						focused={is_menu_info_open()}
-						code={0xE930}
-						onClick={(ev) => open_menu(ev, menu_info_ref, {
-							anchor: event_current_target(ev),
-							padding: 4,
-						})}
-					/>
-					<IconButton
-						data-tooltip="Settings"
-						classList={classlist_module(CSSAnimation.btn_rotate_icon)}
-						focused={is_menu_settings_open()}
-						onClick={async (ev) => {
+							break
+						case button_info_id:
+							open_menu(ev, menu_info_ref, { anchor: button })
+							break
+						case button_settings_id:
 							init_inputs()
-							open_menu(ev, menu_settings_ref, {
-								anchor: event_current_target(ev),
-								padding: 4,
-							})
-						}}
-						code={0xEE0F}
-					/>
-					<IconButton
-						data-tooltip="Copy result"
-						onClick={async () => {
+							open_menu(ev, menu_settings_ref, { anchor: button })
+							break
+						case button_copyresult_id:
 							const success = await props.on_copy_result()
 							if (!success) {
 								if (timeout_copyerror_id()) timeout_clear(timeout_copyerror_id()!)
@@ -670,12 +701,58 @@ const _: Component<{
 							set_timeout_copy_id(timeout_set(() => {
 								set_timeout_copy_id(null)
 							}, 1000))
-						}}
+							break
+					}
+				}}
+				leading={<>
+					<IconButton
+						data-tooltip={is_sidenavigation_hidden()? "Open navigation" : "Expand/shrink navigation"}
+						id={button_navigation_id}
+						classList={classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
+						code={0xEAFF}
+					/>
+					<img width="32" src={app.logo_url} alt="Randomizer" />
+				</>}
+				headline="Randomizer"
+				trailing={<>
+					<Button
+						classList={classlist_module(CSSAnimation.btn_rotate_full_icon, CSS.appbar_generate_btn)}
+						data-g-keep-pointer-event={attr_set_if_exist(props.is_generating)}
+						variant={ButtonVariant.filled}
+						id={button_generate_id}>
+						<Icon
+							filled
+							classList={classlist_module(CSS.appbar_generate_icon)}
+							data-rotate={attr_set_if_exist(props.is_generating)}
+							code={0xE143}
+						/>
+						<Show when={props.is_generating} fallback="Generate">Generating</Show>
+					</Button>
+					<IconButton
+						data-tooltip="Info"
+						id={button_info_id}
+						focused={is_menu_info_open()}
+						code={0xE930}
+					/>
+					<IconButton
+						data-tooltip="Settings"
+						classList={classlist_module(CSSAnimation.btn_rotate_icon)}
+						focused={is_menu_settings_open()}
+						id={button_settings_id}
+						code={0xEE0F}
+					/>
+					<IconButton
+						data-tooltip="Copy result"
+						id={button_copyresult_id}
 						code={timeout_copy_id()? 0xE3D8 : timeout_copyerror_id()? 0xE5E9 : 0xE51B}
 					/>
 				</>}
 			/>
-		</Tooltip>
+		</Tooltip>)
+	}
+
+	return (<>
+		<AppBars/>
 		<Drawers/>
 		<Menus/>
 	</>)

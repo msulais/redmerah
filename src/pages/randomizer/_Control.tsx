@@ -1,13 +1,14 @@
-import { For, Match, Show, Switch, type VoidComponent, createEffect, createMemo, createSignal } from "solid-js"
+import { For, Match, Show, Switch, type VoidComponent, createEffect, createMemo, createSignal, createUniqueId } from "solid-js"
 import type { SetStoreFunction, Store } from "solid-js/store/types/store"
 
 import type { ItemList, Settings } from "./_types"
-import { element_rect } from "@/utils/element"
+import { element_dataset, element_id, element_rect, element_tagname, element_valid_target } from "@/utils/element"
 import { RandomizerType, ColorsRandomizerColorModel, Commands } from "./_enums"
 import { event_current_target, event_prevent_default } from "@/utils/event"
 import { array_find, array_join, array_length, array_push } from "@/utils/array"
-import { number_parse, number_safe } from "@/utils/number"
+import { number_is_not_defined, number_parse, number_safe } from "@/utils/number"
 import { string_length, string_match, string_replace } from "@/utils/string"
+import { document_active } from "@/utils/document"
 import { math_clamp } from "@/utils/math"
 import { rect_width } from "@/utils/rect"
 
@@ -26,6 +27,17 @@ const Teams: VoidComponent<{
 	const [is_action_open_for_list_names, set_is_action_open_for_list_names] = createSignal<boolean>(false)
 	const settings = createMemo(() => props.settings[0].teams)
 	const lists = createMemo(() => props.lists[0])
+	const button_action_select_id = createUniqueId()
+	const button_action_viewlist_id = createUniqueId()
+	const button_action_exportlist_id = createUniqueId()
+	const button_action_editlist_id = createUniqueId()
+	const button_action_deletelist_id = createUniqueId()
+	const button_members_addnewlist_id = createUniqueId()
+	const button_members_resetalllist_id = createUniqueId()
+	const button_members_editlist_id = createUniqueId()
+	const button_names_addnewlist_id = createUniqueId()
+	const button_names_resetalllist_id = createUniqueId()
+	const button_names_editlist_id = createUniqueId()
 	let dropdown_menu_listnames_ref: HTMLDialogElement
 	let dropdown_menu_listmember_ref: HTMLDialogElement
 	let menu_action_ref: HTMLDialogElement
@@ -60,6 +72,37 @@ const Teams: VoidComponent<{
 		command(Commands.change_settings_teams_listmembers, list())
 	}
 
+	function on_contextmenu_dropdown_item(ev: MouseEvent & {
+		currentTarget: HTMLDialogElement
+		target: Element
+	}, list_names: boolean): void {
+		const button = document_active()!
+		if (!element_valid_target(
+			event_current_target(ev),
+			button,
+			el => element_tagname(el) == 'BUTTON'
+		)) return
+
+		const data_list_index = element_dataset(button, 'listIndex')
+		if (data_list_index) {
+			const index = number_parse(data_list_index, true)
+			if (number_is_not_defined(index)) return
+
+			const option = itemlist_to_dropdownlist(lists())[index]
+			for (const li of lists()) {
+				if (li.id != option[0]) continue;
+				set_list(li)
+				break
+			}
+			set_is_action_open_for_list_names(list_names)
+			open_menu(ev, menu_action_ref, {
+				position: MenuPosition.center_bottom_to_right
+			})
+			event_prevent_default(ev)
+			return
+		}
+	}
+
 	return (<>
 		<NumberTextField
 			label="Count"
@@ -76,28 +119,48 @@ const Teams: VoidComponent<{
 			label="Names"
 			values={[settings().list_names.id]}
 			on_change_options={(options) => change_listnames(options[0].value as number)}
-			attr_menu={{ ref: (r) => dropdown_menu_listnames_ref = r }}>
+			attr_menu={{
+				ref: (r) => dropdown_menu_listnames_ref = r,
+				onContextMenu: ev => on_contextmenu_dropdown_item(ev, true),
+				onClick: ev => {
+					const button = document_active()!
+					if (!element_valid_target(
+						event_current_target(ev),
+						button,
+						el => element_tagname(el) == 'BUTTON'
+					)) return
+
+					switch (element_id(button)) {
+						case button_names_addnewlist_id: {
+							command(Commands.add_list, ev)
+							close_menu(dropdown_menu_listnames_ref)
+							break
+						}
+						case button_names_resetalllist_id: {
+							command(Commands.reset_list, ev)
+							close_menu(dropdown_menu_listnames_ref)
+							break
+						}
+						case button_names_editlist_id: {
+							command(Commands.edit_list, ev)
+							close_menu(dropdown_menu_listnames_ref)
+							break
+						}
+					}
+				}
+			}}>
 			<MenuItem
-				onClick={(ev) => {
-					command(Commands.add_list, ev)
-					close_menu(dropdown_menu_listnames_ref)
-				}}
+				id={button_names_addnewlist_id}
 				icon_code={0xE007}>
 				Add new list
 			</MenuItem>
 			<MenuItem
-				onClick={(ev) => {
-					command(Commands.reset_list, ev)
-					close_menu(dropdown_menu_listnames_ref)
-				}}
+				id={button_names_resetalllist_id}
 				icon_code={0xF09A}>
 				Reset all list
 			</MenuItem>
 			<MenuItem
-				onClick={(ev) => {
-					command(Commands.edit_list, ev)
-					close_menu(dropdown_menu_listnames_ref)
-				}}
+				id={button_names_editlist_id}
 				icon_code={0xE069}>
 				Edit list
 			</MenuItem>
@@ -105,23 +168,12 @@ const Teams: VoidComponent<{
 			<Show when={array_length(lists()) > 0}>
 				<MenuHeader>Select list</MenuHeader>
 			</Show>
-			<For each={itemlist_to_dropdownlist(lists())}>{option =>
+			<For each={itemlist_to_dropdownlist(lists())}>{(option, i) =>
 				<DropdownOption
 					value={option[0]}
 					text={option[1]}
 					trailing={option[2]}
-					onContextMenu={ev => {
-						for (const li of lists()) {
-							if (li.id != option[0]) continue;
-							set_list(li)
-							break
-						}
-						set_is_action_open_for_list_names(true)
-						open_menu(ev, menu_action_ref, {
-							position: MenuPosition.center_bottom_to_right
-						})
-						event_prevent_default(ev)
-					}}
+					data-list-index={i()}
 				/>
 			}</For>
 		</Dropdown>
@@ -129,28 +181,48 @@ const Teams: VoidComponent<{
 			label="Members"
 			values={[settings().list_members.id]}
 			on_change_options={options => change_listmembers(options[0].value as number)}
-			attr_menu={{ ref: (r) => dropdown_menu_listmember_ref = r }}>
+			attr_menu={{
+				ref: (r) => dropdown_menu_listmember_ref = r,
+				onClick: ev => {
+					const button = document_active()!
+					if (!element_valid_target(
+						event_current_target(ev),
+						button,
+						el => element_tagname(el) == 'BUTTON'
+					)) return
+
+					switch (element_id(button)) {
+						case button_members_addnewlist_id: {
+							command(Commands.add_list, ev)
+							close_menu(dropdown_menu_listmember_ref)
+							break
+						}
+						case button_members_resetalllist_id: {
+							command(Commands.reset_list, ev)
+							close_menu(dropdown_menu_listmember_ref)
+							break
+						}
+						case button_members_editlist_id: {
+							command(Commands.edit_list, ev)
+							close_menu(dropdown_menu_listmember_ref)
+							break
+						}
+					}
+				},
+				onContextMenu: ev => on_contextmenu_dropdown_item(ev, false)
+			}}>
 			<MenuItem
-				onClick={(ev) => {
-					command(Commands.add_list, ev)
-					close_menu(dropdown_menu_listmember_ref)
-				}}
+				id={button_members_addnewlist_id}
 				icon_code={0xE007}>
 				Add new list
 			</MenuItem>
 			<MenuItem
-				onClick={(ev) => {
-					command(Commands.reset_list, ev)
-					close_menu(dropdown_menu_listmember_ref)
-				}}
+				id={button_members_resetalllist_id}
 				icon_code={0xF09A}>
 				Reset all list
 			</MenuItem>
 			<MenuItem
-				onClick={(ev) => {
-					command(Commands.edit_list, ev)
-					close_menu(dropdown_menu_listmember_ref)
-				}}
+				id={button_members_editlist_id}
 				icon_code={0xE069}>
 				Edit list
 			</MenuItem>
@@ -158,79 +230,82 @@ const Teams: VoidComponent<{
 			<Show when={array_length(lists()) > 0}>
 				<MenuHeader>Select list</MenuHeader>
 			</Show>
-			<For each={itemlist_to_dropdownlist(lists())}>{option =>
+			<For each={itemlist_to_dropdownlist(lists())}>{(option, i) =>
 				<DropdownOption
 					value={option[0]}
 					text={option[1]}
 					trailing={option[2]}
-					onContextMenu={ev => {
-						for (const li of lists()) {
-							if (li.id != option[0]) continue;
-							set_list(li)
-							break
-						}
-						set_is_action_open_for_list_names(false)
-						open_menu(ev, menu_action_ref, {
-							position: MenuPosition.center_bottom_to_right
-						})
-						event_prevent_default(ev)
-					}}
+					data-list-index={i()}
 				/>
 			}</For>
 		</Dropdown>
-		<Menu ref={r => menu_action_ref = r} style={{width: '164px'}}>
-			<Show when={list() && list()!.id != (is_action_open_for_list_names()? settings().list_names.id : settings().list_members.id)}>
-				<MenuItem
-					onClick={async () => {
-						close_menu(menu_action_ref)
-						close_menu(dropdown_menu_listnames_ref)
-						close_menu(dropdown_menu_listmember_ref)
+		<Menu
+			ref={r => menu_action_ref = r}
+			style={{width: '164px'}}
+			onClick={ev => {
+				const button = document_active()!
+				if (!element_valid_target(
+					event_current_target(ev),
+					button,
+					el => element_tagname(el) == 'BUTTON'
+				)) return
+
+				const close_all = () => {
+					close_menu(menu_action_ref)
+					close_menu(dropdown_menu_listnames_ref)
+					close_menu(dropdown_menu_listmember_ref)
+				}
+
+				switch (element_id(button)) {
+					case button_action_select_id:
+						close_all()
 						if (is_action_open_for_list_names()) change_listnames(list()!.id)
 						else change_listmembers(list()!.id)
-					}}
+						break
+					case button_action_viewlist_id:
+						close_all()
+						command(Commands.view_list, ev, list())
+						break
+					case button_action_exportlist_id:
+						close_all()
+						command(Commands.export_list, list())
+						break
+					case button_action_editlist_id:
+						close_all()
+						command(Commands.edit_list, ev, list())
+						break
+					case button_action_deletelist_id:
+						close_all()
+						command(Commands.edit_list, ev, list())
+						break
+				}
+			}}>
+			<Show when={list() && list()!.id != (is_action_open_for_list_names()? settings().list_names.id : settings().list_members.id)}>
+				<MenuItem
+					id={button_action_select_id}
 					icon_code={0xE3CC}>
 					Select
 				</MenuItem>
 				<MenuDivider />
 			</Show>
 			<MenuItem
-				onClick={async (ev) => {
-					close_menu(menu_action_ref)
-					close_menu(dropdown_menu_listnames_ref)
-					close_menu(dropdown_menu_listmember_ref)
-					command(Commands.view_list, ev, list())
-				}}
+				id={button_action_viewlist_id}
 				icon_code={0xE77B}>
 				View list
 			</MenuItem>
 			<MenuItem
-				onClick={async () => {
-					close_menu(menu_action_ref)
-					close_menu(dropdown_menu_listnames_ref)
-					close_menu(dropdown_menu_listmember_ref)
-					command(Commands.export_list, list())
-				}}
+				id={button_action_exportlist_id}
 				icon_code={0xE0CF}
 				trailing="*.csv">
 				Export list
 			</MenuItem>
 			<MenuItem
-				onClick={async (ev) => {
-					command(Commands.edit_list, ev, list())
-					close_menu(menu_action_ref)
-					close_menu(dropdown_menu_listnames_ref)
-					close_menu(dropdown_menu_listmember_ref)
-				}}
+				id={button_action_editlist_id}
 				icon_code={0xF09C}>
 				Edit list
 			</MenuItem>
 			<MenuItem
-				onClick={async (ev) => {
-					command(Commands.edit_list, ev, list())
-					close_menu(menu_action_ref)
-					close_menu(dropdown_menu_listnames_ref)
-					close_menu(dropdown_menu_listmember_ref)
-				}}
+				id={button_action_deletelist_id}
 				icon_code={0xE59D}>
 				Delete list
 			</MenuItem>
@@ -246,6 +321,14 @@ const Selection: VoidComponent<{
 	const [list, set_list] = createSignal<ItemList | null>(null)
 	const lists = createMemo(() => props.lists[0])
 	const settings = createMemo(() => props.settings[0].selection)
+	const button_actions_select_id = createUniqueId()
+	const button_actions_viewlist_id = createUniqueId()
+	const button_actions_exportlist_id = createUniqueId()
+	const button_actions_editlist_id = createUniqueId()
+	const button_actions_deletelist_id = createUniqueId()
+	const button_list_addnewlist_id = createUniqueId()
+	const button_list_resetalllist_id = createUniqueId()
+	const button_list_editlist_id = createUniqueId()
 	let menu_dropdown_ref: HTMLDialogElement
 	let menu_action_ref: HTMLDialogElement
 
@@ -277,41 +360,45 @@ const Selection: VoidComponent<{
 			label="List"
 			values={[settings().list.id]}
 			on_change_options={options => change_list(options[0].value as number)}
-			attr_menu={{ ref: (r) => menu_dropdown_ref = r }}>
-			<MenuItem
-				onClick={(ev) => {
-					command(Commands.add_list, ev)
-					close_menu(menu_dropdown_ref)
-				}}
-				icon_code={0xE007}>
-				Add new list
-			</MenuItem>
-			<MenuItem
-				onClick={(ev) => {
-					command(Commands.reset_list, ev)
-					close_menu(menu_dropdown_ref)
-				}}
-				icon_code={0xF09A}>
-				Reset all list
-			</MenuItem>
-			<MenuItem
-				onClick={(ev) => {
-					command(Commands.edit_list, ev)
-					close_menu(menu_dropdown_ref)
-				}}
-				icon_code={0xE069}>
-				Edit list
-			</MenuItem>
-			<MenuDivider />
-			<Show when={array_length(lists()) > 0}>
-				<MenuHeader>Select list</MenuHeader>
-			</Show>
-			<For each={itemlist_to_dropdownlist(lists())}>{option =>
-				<DropdownOption
-					value={option[0]}
-					text={option[1]}
-					trailing={option[2]}
-					onContextMenu={ev => {
+			attr_menu={{
+				ref: (r) => menu_dropdown_ref = r,
+				onClick: ev => {
+					const button = document_active()!
+					if (!element_valid_target(
+						event_current_target(ev),
+						button,
+						el => element_tagname(el) == 'BUTTON'
+					)) return
+
+					switch (element_id(button)) {
+						case button_list_addnewlist_id:
+							command(Commands.add_list, ev)
+							close_menu(menu_dropdown_ref)
+							break
+						case button_list_resetalllist_id:
+							command(Commands.reset_list, ev)
+							close_menu(menu_dropdown_ref)
+							break
+						case button_list_editlist_id:
+							command(Commands.edit_list, ev)
+							close_menu(menu_dropdown_ref)
+							break
+					}
+				},
+				onContextMenu: ev => {
+					const button = document_active()!
+					if (!element_valid_target(
+						event_current_target(ev),
+						button,
+						el => element_tagname(el) == 'BUTTON'
+					)) return
+
+					const data_list_index = element_dataset(button, 'listIndex')
+					if (data_list_index) {
+						const index = number_parse(data_list_index, true)
+						if (number_is_not_defined(index)) return
+
+						const option = itemlist_to_dropdownlist(lists())[index]
 						for (const li of lists()) {
 							if (li.id != option[0]) continue;
 							set_list(li)
@@ -321,57 +408,103 @@ const Selection: VoidComponent<{
 							position: MenuPosition.center_bottom_to_right
 						})
 						event_prevent_default(ev)
-					}}
+						return
+					}
+				}
+			}}>
+			<MenuItem
+				id={button_list_addnewlist_id}
+				icon_code={0xE007}>
+				Add new list
+			</MenuItem>
+			<MenuItem
+				id={button_list_resetalllist_id}
+				icon_code={0xF09A}>
+				Reset all list
+			</MenuItem>
+			<MenuItem
+				id={button_list_editlist_id}
+				icon_code={0xE069}>
+				Edit list
+			</MenuItem>
+			<MenuDivider />
+			<Show when={array_length(lists()) > 0}>
+				<MenuHeader>Select list</MenuHeader>
+			</Show>
+			<For each={itemlist_to_dropdownlist(lists())}>{(option, i) =>
+				<DropdownOption
+					value={option[0]}
+					text={option[1]}
+					trailing={option[2]}
+					data-list-index={i()}
 				/>
 			}</For>
 		</Dropdown>
-		<Menu ref={r => menu_action_ref = r} style={{width: '164px'}}>
-			<Show when={list() && list()!.id != settings().list.id}>
-				<MenuItem
-					onClick={async () => {
+		<Menu
+			ref={r => menu_action_ref = r}
+			style={{width: '164px'}}
+			onClick={ev => {
+				const button = document_active()!
+				if (!element_valid_target(
+					event_current_target(ev),
+					button,
+					el => element_tagname(el) == 'BUTTON'
+				)) return
+
+				switch (element_id(button)) {
+					case button_actions_select_id:
 						close_menu(menu_action_ref)
 						close_menu(menu_dropdown_ref)
 						change_list(list()!.id)
-					}}
+						break
+					case button_actions_viewlist_id:
+						close_menu(menu_action_ref)
+						close_menu(menu_dropdown_ref)
+						command(Commands.view_list, ev, list())
+						break
+					case button_actions_exportlist_id:
+						close_menu(menu_action_ref)
+						close_menu(menu_dropdown_ref)
+						command(Commands.export_list, list())
+						break
+					case button_actions_editlist_id:
+						command(Commands.edit_list, ev, list())
+						close_menu(menu_action_ref)
+						close_menu(menu_dropdown_ref)
+						break
+					case button_actions_deletelist_id:
+						command(Commands.edit_list, ev, list())
+						close_menu(menu_action_ref)
+						close_menu(menu_dropdown_ref)
+						break
+				}
+			}}>
+			<Show when={list() && list()!.id != settings().list.id}>
+				<MenuItem
+					id={button_actions_select_id}
 					icon_code={0xE3CC}>
 					Select
 				</MenuItem>
 				<MenuDivider />
 			</Show>
 			<MenuItem
-				onClick={async (ev) => {
-					close_menu(menu_action_ref)
-					close_menu(menu_dropdown_ref)
-					command(Commands.view_list, ev, list())
-				}}
+				id={button_actions_viewlist_id}
 				icon_code={0xE77B}>
 				View list
 			</MenuItem>
 			<MenuItem
-				onClick={async () => {
-					close_menu(menu_action_ref)
-					close_menu(menu_dropdown_ref)
-					command(Commands.export_list, list())
-				}}
+				id={button_actions_exportlist_id}
 				icon_code={0xE0CF}
 				trailing="*.csv">
 				Export list
 			</MenuItem>
 			<MenuItem
-				onClick={async (ev) => {
-					command(Commands.edit_list, ev, list())
-					close_menu(menu_action_ref)
-					close_menu(menu_dropdown_ref)
-				}}
+				id={button_actions_editlist_id}
 				icon_code={0xF09C}>
 				Edit list
 			</MenuItem>
 			<MenuItem
-				onClick={async (ev) => {
-					command(Commands.edit_list, ev, list())
-					close_menu(menu_action_ref)
-					close_menu(menu_dropdown_ref)
-				}}
+				id={button_actions_deletelist_id}
 				icon_code={0xE59D}>
 				Delete list
 			</MenuItem>
@@ -398,6 +531,9 @@ const Words: VoidComponent<{
 	const [list, set_list] = createSignal<ItemList | null>(null)
 	const lists = createMemo(() => props.lists[0])
 	const settings = createMemo(() => props.settings[0].words)
+	const button_list_addnewlist_id = createUniqueId()
+	const button_list_resetalllist_id = createUniqueId()
+	const button_list_editlist_id = createUniqueId()
 	let menu_dropdown_ref: HTMLDialogElement
 	let menu_action_ref: HTMLDialogElement
 
@@ -429,41 +565,45 @@ const Words: VoidComponent<{
 			label="List"
 			values={[settings().list.id]}
 			on_change_options={options => change_list(options[0].value as number)}
-			attr_menu={{ ref: (r) => menu_dropdown_ref = r }}>
-			<MenuItem
-				onClick={(ev) => {
-					command(Commands.add_list, ev)
-					close_menu(menu_dropdown_ref)
-				}}
-				icon_code={0xE007}>
-				Add new list
-			</MenuItem>
-			<MenuItem
-				onClick={(ev) => {
-					command(Commands.reset_list, ev)
-					close_menu(menu_dropdown_ref)
-				}}
-				icon_code={0xF09A}>
-				Reset all list
-			</MenuItem>
-			<MenuItem
-				onClick={(ev) => {
-					command(Commands.edit_list, ev)
-					close_menu(menu_dropdown_ref)
-				}}
-				icon_code={0xE069}>
-				Edit list
-			</MenuItem>
-			<MenuDivider />
-			<Show when={array_length(lists()) > 0}>
-				<MenuHeader>Select list</MenuHeader>
-			</Show>
-			<For each={itemlist_to_dropdownlist(lists())}>{option =>
-				<DropdownOption
-					value={option[0]}
-					text={option[1]}
-					trailing={option[2]}
-					onContextMenu={ev => {
+			attr_menu={{
+				ref: (r) => menu_dropdown_ref = r,
+				onClick: ev => {
+					const button = document_active()!
+					if (!element_valid_target(
+						event_current_target(ev),
+						button,
+						el => element_tagname(el) == 'BUTTON'
+					)) return
+
+					switch (element_id(button)) {
+						case button_list_addnewlist_id:
+							command(Commands.add_list, ev)
+							close_menu(menu_dropdown_ref)
+							break
+						case button_list_resetalllist_id:
+							command(Commands.reset_list, ev)
+							close_menu(menu_dropdown_ref)
+							break
+						case button_list_editlist_id:
+							command(Commands.edit_list, ev)
+							close_menu(menu_dropdown_ref)
+							break
+					}
+				},
+				onContextMenu: ev => {
+					const button = document_active()!
+					if (!element_valid_target(
+						event_current_target(ev),
+						button,
+						el => element_tagname(el) == 'BUTTON'
+					)) return
+
+					const data_list_index = element_dataset(button, 'listIndex')
+					if (data_list_index) {
+						const index = number_parse(data_list_index, true)
+						if (number_is_not_defined(index)) return
+
+						const option = itemlist_to_dropdownlist(lists())[index]
 						for (const li of lists()) {
 							if (li.id != option[0]) continue;
 							set_list(li)
@@ -473,7 +613,35 @@ const Words: VoidComponent<{
 							position: MenuPosition.center_bottom_to_right
 						})
 						event_prevent_default(ev)
-					}}
+						return
+					}
+				}
+			}}>
+			<MenuItem
+				id={button_list_addnewlist_id}
+				icon_code={0xE007}>
+				Add new list
+			</MenuItem>
+			<MenuItem
+				id={button_list_resetalllist_id}
+				icon_code={0xF09A}>
+				Reset all list
+			</MenuItem>
+			<MenuItem
+				id={button_list_editlist_id}
+				icon_code={0xE069}>
+				Edit list
+			</MenuItem>
+			<MenuDivider />
+			<Show when={array_length(lists()) > 0}>
+				<MenuHeader>Select list</MenuHeader>
+			</Show>
+			<For each={itemlist_to_dropdownlist(lists())}>{(option, i) =>
+				<DropdownOption
+					value={option[0]}
+					text={option[1]}
+					trailing={option[2]}
+					data-list-index={i()}
 				/>
 			}</For>
 		</Dropdown>
@@ -794,6 +962,10 @@ const $String: VoidComponent<{
 	const [is_menu_characters_open, set_is_menu_characters_open] = createSignal<boolean>(false)
 	const [menu_characters_width, set_menu_characters_width] = createSignal<number>(0)
 	const settings = createMemo(() => props.settings[0].string)
+	const button_characters_uppercase_id = createUniqueId()
+	const button_characters_lowercase_id = createUniqueId()
+	const button_characters_numbers_id = createUniqueId()
+	const button_characters_symbols_id = createUniqueId()
 	let label_characters_ref: HTMLDivElement
 	let input_characters_ref: HTMLInputElement
 	let menu_characters_ref: HTMLDialogElement
@@ -863,33 +1035,56 @@ const $String: VoidComponent<{
 		<Menu
 			ref={(r) => menu_characters_ref = r}
 			on_toggle_open={(v) => set_is_menu_characters_open(v)}
-			style={{"min-width": `${menu_characters_width()}px`}}>
+			style={{"min-width": `${menu_characters_width()}px`}}
+			onClick={ev => {
+				const button = document_active()!
+				if (!element_valid_target(
+					event_current_target(ev),
+					button,
+					el => element_tagname(el) == 'BUTTON'
+				)) return
+
+				switch (element_id(button)) {
+					case button_characters_uppercase_id:
+						command(Commands.toggle_settings_string_characters_uppercase)
+						break
+					case button_characters_lowercase_id:
+						command(Commands.toggle_settings_string_characters_lowercase)
+						break
+					case button_characters_numbers_id:
+						command(Commands.toggle_settings_string_characters_numbers)
+						break
+					case button_characters_symbols_id:
+						command(Commands.toggle_settings_string_characters_symbols)
+						break
+				}
+			}}>
 			<MenuHeader>Alphabet</MenuHeader>
 			<MenuItem
 				checked={settings().characters.uppercase}
 				trailing="A-Z"
-				onClick={() => command(Commands.toggle_settings_string_characters_uppercase)}>
+				id={button_characters_uppercase_id}>
 				Uppercase
 			</MenuItem>
 			<MenuItem
 				checked={settings().characters.lowercase}
 				trailing="a-z"
-				onClick={() => command(Commands.toggle_settings_string_characters_lowercase)}>
+				id={button_characters_lowercase_id}>
 				Lowercase
 			</MenuItem>
 			<MenuDivider />
 			<MenuItem
 				checked={settings().characters.numbers}
 				trailing="0-9"
-				onClick={() => command(Commands.toggle_settings_string_characters_numbers)}>
+				id={button_characters_numbers_id}>
 				Numbers
 			</MenuItem>
 			<MenuDivider />
 			<MenuItem
 				checked={settings().characters.symbols}
 				trailing={"<({[!@#$%^&*_-+=~`\\|\"':;?/.,]})>"}
-				onClick={() => command(Commands.toggle_settings_string_characters_symbols)}>
-				Symbol
+				id={button_characters_symbols_id}>
+				Symbols
 			</MenuItem>
 			<MenuDivider />
 			<div class={ CSS.control_string_custom_character}>

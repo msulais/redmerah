@@ -6,6 +6,14 @@ export const enum RandomizerType {
 	colors = 'colors',
 	teams = 'teams'
 }
+export const all_RandomizerType = [
+	RandomizerType.string,
+	RandomizerType.numbers,
+	RandomizerType.words,
+	RandomizerType.selection,
+	RandomizerType.colors,
+	RandomizerType.teams
+]
 
 export const enum NumbersRandomizerNumberType {
 	decimal = 10,
