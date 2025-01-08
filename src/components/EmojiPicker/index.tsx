@@ -29,7 +29,7 @@ import { close_popover, is_popover_open, open_popover, Popover, reposition_popov
 import FocusableGroup from '@/components/FocusableGroup'
 import './index.scss'
 
-enum EmojiCategory {
+const enum EmojiCategory {
 	smiley_and_emotion = 'Smiley & emotion',
 	person_and_body = 'Person & body',
 	animal_and_nature = 'Animal & nature',
@@ -42,12 +42,12 @@ enum EmojiCategory {
 	recents = 'Recents'
 }
 
-enum EmojiPickerEvents {
+const enum EmojiPickerEvents {
 	/** @param emojis `Emoji[]` */
 	getrecentsemoji = 'custom:getrecentsemoji'
 }
 
-enum EmojiPickerListenerEvents {
+const enum EmojiPickerListenerEvents {
 	/** @param detail `Emoji` */
 	add_recents = 'custom:addrecents',
 

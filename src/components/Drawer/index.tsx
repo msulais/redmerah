@@ -25,7 +25,7 @@ function open_drawer(
 	open_modal(ev, drawer, {...options})
 }
 
-enum DrawerPosition {
+const enum DrawerPosition {
 	left,
 	right
 }

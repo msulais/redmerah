@@ -14,7 +14,7 @@ import { timeout_clear, timeout_set } from "@/utils/timeout"
 import Button, { ButtonVariant } from "@/components/Button"
 import CSS from './_styles.module.scss'
 
-enum OutputViewOption {
+const enum OutputViewOption {
 	css
 }
 

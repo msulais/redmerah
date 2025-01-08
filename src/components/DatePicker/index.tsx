@@ -20,7 +20,7 @@ import Divider from "@/components/Divider"
 import Popover, { close_popover, is_popover_open, open_popover, reposition_popover, type PopoverProps } from "@/components/Popover"
 import './index.scss'
 
-enum DatePickerOption {
+const enum DatePickerOption {
 	year,
 	month,
 	day

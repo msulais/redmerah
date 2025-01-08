@@ -15,12 +15,12 @@ import { string_replace } from "@/utils/string"
 import Button, { ButtonVariant } from "@/components/Button"
 import CSS from './_styles.module.scss'
 
-enum InputViewOption {
+const enum InputViewOption {
 	markdown,
 	css
 }
 
-enum OutputViewOption {
+const enum OutputViewOption {
 	preview,
 	html
 }

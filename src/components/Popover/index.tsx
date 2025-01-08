@@ -44,11 +44,11 @@ type PopoverOpenDetail = {
 	}
 }
 
-enum PopoverAttributes {
+const enum PopoverAttributes {
 	manual = 'data-c-manual'
 }
 
-enum PopoverEvents {
+const enum PopoverEvents {
 	close = 'custom:close',
 	reposition = 'custom:reposition',
 
@@ -56,7 +56,7 @@ enum PopoverEvents {
 	open = 'custom:open'
 }
 
-enum PopoverListenerEvents {
+const enum PopoverListenerEvents {
 	/** @param popover `HTMLDivElement` */
 	open = 'custom:open',
 

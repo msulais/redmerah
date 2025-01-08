@@ -12,7 +12,7 @@ import Popover, { type PopoverProps, close_popover, open_popover, is_popover_ope
 import FocusableGroup from "@/components/FocusableGroup"
 import './index.scss'
 
-enum ToastPosition {
+const enum ToastPosition {
 	left_top,
 	center_top,
 	right_top,
@@ -28,7 +28,7 @@ type ToastOpenDetail = {
 	position?: ToastPosition
 }
 
-enum ToastEvents {
+const enum ToastEvents {
 	open = 'custom:open',
 	close = 'custom:close'
 }

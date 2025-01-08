@@ -18,7 +18,7 @@ import { ElementIds } from "@/enums/ids"
 import { close_popover, open_popover, Popover, POPOVER_CLASS, type PopoverProps } from "@/components/Popover"
 import './index.scss'
 
-enum TooltipListenerEvents {
+const enum TooltipListenerEvents {
 	/** @requires TooltipOpenDetail */
 	open = 'custom:open',
 
@@ -27,7 +27,7 @@ enum TooltipListenerEvents {
 	stop_process = 'custom:stopprocess'
 }
 
-enum TooltipAttributes {
+const enum TooltipAttributes {
 	open = 'data-c-open',
 	open_done = 'data-c-open-done',
 }
