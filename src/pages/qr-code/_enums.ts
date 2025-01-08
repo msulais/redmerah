@@ -9,6 +9,12 @@ export const enum ErrorCorrectionLevel {
 	quartile = 'Q',
 	high = 'H'
 }
+export const all_ErrorCorrectionLevel = [
+	ErrorCorrectionLevel.low,
+	ErrorCorrectionLevel.medium,
+	ErrorCorrectionLevel.quartile,
+	ErrorCorrectionLevel.high
+]
 
 export const enum EncodingMode {
 	auto = 'Auto',
@@ -17,17 +23,33 @@ export const enum EncodingMode {
 	byte = 'byte',
 	kanji = 'kanji'
 }
+export const all_EncodingMode = [
+	EncodingMode.auto,
+	EncodingMode.numeric,
+	EncodingMode.alphanumeric,
+	EncodingMode.byte,
+	EncodingMode.kanji
+]
 
 export const enum CopyFileType {
 	png,
 	svg
 }
+export const all_CopyFileType = [
+	CopyFileType.png,
+	CopyFileType.svg
+]
 
 export const enum DownloadFileType {
 	png,
 	jpeg,
 	svg
 }
+export const all_DownloadFileType = [
+	DownloadFileType.png,
+	DownloadFileType.jpeg,
+	DownloadFileType.svg
+]
 
 export const enum Commands {
 	/** @param { Pages } page `Pages` */
