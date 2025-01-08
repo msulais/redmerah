@@ -1,4 +1,27 @@
+import { array_some } from "./array"
 import { is_function } from "./typecheck"
+
+export function object_keys(value: Object): string[] {
+	return Object.keys(value)
+}
+
+export function object_values<T>(value: Object): T[] {
+	return Object.values(value)
+}
+
+export function valid_enum_key<T, U extends Record<any, any>>(key: T, enums: U): boolean {
+	return enums[key] !== undefined
+}
+
+export function valid_enum_value<
+	T,
+	U extends Record<string | number, any>
+>(value: T, enums: U | (string | number)[]): boolean {
+	return array_some(
+		object_values(enums),
+		v => v === value
+	)
+}
 
 export function object_has_value(data: unknown): boolean {
 	return data != undefined && data != null
