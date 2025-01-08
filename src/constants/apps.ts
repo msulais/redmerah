@@ -50,8 +50,8 @@ export const app_qr_code: AppItem = {
 	description: 'Create and read QR codes effortlessly with our user-friendly app. Share information, websites, contacts, and more using QR codes.',
 	link: RoutesLinks.qr_code,
 	color: '#FF2222',
-	build_number: 1,
-	build_version: '0.1.0',
+	build_number: 2,
+	build_version: '0.1.2',
 }
 
 export const app_battery: AppItem = {
