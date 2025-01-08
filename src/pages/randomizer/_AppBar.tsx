@@ -29,7 +29,7 @@ import Button, { ButtonVariant, IconButton } from "@/components/Button"
 import { Tooltip } from "@/components/Tooltip"
 import Menu, { MenuDivider, MenuHeader, MenuIndent, MenuItem, LinkMenuItem, SubMenu, close_submenu, close_menu, open_menu, SubMenuItem, SwitchMenuItem } from "@/components/Menu"
 import TextField, { NumberTextField, change_textfield_value } from "@/components/TextField"
-import Drawer, { close_drawer, DrawerItem, openDrawer } from "@/components/Drawer"
+import Drawer, { close_drawer, DrawerItem, open_drawer } from "@/components/Drawer"
 import AppBar from "@/components/AppBar"
 import CSSAnimation from "@/styles/animation.module.scss"
 import CSS from './_styles.module.scss'
@@ -671,7 +671,7 @@ const _: Component<{
 
 					switch (element_id(button)) {
 						case button_navigation_id:
-							if (is_sidenavigation_hidden()) return openDrawer(ev, drawer_navigation_ref)
+							if (is_sidenavigation_hidden()) return open_drawer(ev, drawer_navigation_ref)
 							command(Commands.toggle_navigation_expand)
 							break
 						case button_generate_id:

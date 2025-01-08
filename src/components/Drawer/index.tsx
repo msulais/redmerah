@@ -14,8 +14,7 @@ import { close_modal, focus_modal, Modal, open_modal, type ModalProps } from "@/
 import FocusableGroup from "@/components/FocusableGroup"
 import './index.scss'
 
-// TODO: rename to 'open_drawer'
-function openDrawer(
+function open_drawer(
 	ev: Event,
 	drawer: HTMLDialogElement,
 	options?: {
@@ -171,7 +170,7 @@ const Drawer: ParentComponent<DrawerProps> = ($props) => {
 export {
 	Drawer,
 	DrawerItem,
-	openDrawer,
+	open_drawer,
 	DrawerPosition,
 	close_modal as close_drawer,
 	focus_modal as focus_drawer

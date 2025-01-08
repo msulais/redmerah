@@ -35,7 +35,7 @@ import { Tooltip } from "@/components/Tooltip"
 import Divider from "@/components/Divider"
 import Emoji from "@/components/Emoji"
 import { close_searchtextfieldmenu, SearchMenuDivider, SearchMenuHeader, SearchMenuItem, SearchTextField, SearchTextFieldButton } from "@/components/TextField"
-import Drawer, { close_drawer, DrawerItem, openDrawer } from "@/components/Drawer"
+import Drawer, { close_drawer, DrawerItem, open_drawer } from "@/components/Drawer"
 import CSSAnimation from "@/styles/animation.module.scss"
 import CSS from './_styles.module.scss'
 
@@ -393,7 +393,7 @@ const _: VoidComponent<{
 
 					switch (element_id(button)) {
 						case button_appbar_menulist_id:
-							if (is_side_navigation_hidden()) return openDrawer(ev, drawer_navigation_ref)
+							if (is_side_navigation_hidden()) return open_drawer(ev, drawer_navigation_ref)
 
 							command(Commands.toggle_navigation_expand)
 							break

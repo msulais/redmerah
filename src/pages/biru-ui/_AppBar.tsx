@@ -25,7 +25,7 @@ import logo_redmerah from '@/assets/logo.svg'
 import Tooltip from "@/components/Tooltip"
 import { IconButton } from "@/components/Button"
 import Menu, { MenuDivider, MenuItem, MenuHeader, open_menu, LinkMenuItem, SubMenu, close_submenu, close_menu, SubMenuItem } from "@/components/Menu"
-import Drawer, { close_drawer, DrawerItem, openDrawer } from "@/components/Drawer"
+import Drawer, { close_drawer, DrawerItem, open_drawer } from "@/components/Drawer"
 import AppBar from "@/components/AppBar"
 import CSSAnimation from "@/styles/animation.module.scss"
 
@@ -280,7 +280,7 @@ const _: VoidComponent<{
 						data-tooltip="Open navigation"
 						classList={classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
 						onClick={(ev) => {
-							openDrawer(ev, drawer_navigation_ref)
+							open_drawer(ev, drawer_navigation_ref)
 						}}
 						code={0xEAFF}
 					/>

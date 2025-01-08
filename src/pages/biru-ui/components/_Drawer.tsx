@@ -4,7 +4,7 @@ import Button, { ButtonVariant, IconButton } from "@/components/Button"
 import CheckBox from "@/components/CheckBox"
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import TextField from "@/components/TextField"
-import Drawer, { close_drawer, DrawerItem, DrawerPosition, openDrawer } from "@/components/Drawer"
+import Drawer, { close_drawer, DrawerItem, DrawerPosition, open_drawer } from "@/components/Drawer"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
 import { event_current_target } from "@/utils/event"
 
@@ -22,7 +22,7 @@ const _: VoidComponent = () => {
 		<Playground>
 			<Button
 				variant={ButtonVariant.tonal}
-				onClick={(ev) => openDrawer(ev, drawer_ref, {
+				onClick={(ev) => open_drawer(ev, drawer_ref, {
 					important: important(),
 					content_auto_focus: content_autofocus()
 				})}>

@@ -26,7 +26,7 @@ import { Tooltip } from "@/components/Tooltip"
 import { ButtonVariant, IconButton } from "@/components/Button"
 import { AreaTextField, change_areatextfield_value } from "@/components/TextField"
 import Menu, {  MenuDivider, MenuItem, MenuHeader, close_menu, LinkMenuItem, SubMenu, close_submenu, open_menu, SubMenuItem, SwitchMenuItem } from "@/components/Menu"
-import Drawer, { close_drawer, DrawerItem, DrawerPosition, openDrawer } from "@/components/Drawer"
+import Drawer, { close_drawer, DrawerItem, DrawerPosition, open_drawer } from "@/components/Drawer"
 import AppBar from "@/components/AppBar"
 import CSSAnimation from "@/styles/animation.module.scss"
 import CSS from './_styles.module.scss'
@@ -410,7 +410,7 @@ const _: VoidComponent<{
 						}
 						classList={classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
 						onClick={(ev) => {
-							if (is_sidenavigation_hidden()) return openDrawer(ev, drawer_navigation_ref)
+							if (is_sidenavigation_hidden()) return open_drawer(ev, drawer_navigation_ref)
 							command(Commands.toggle_navigation_expand)
 						}}
 						code={0xEAFF}
@@ -443,7 +443,7 @@ const _: VoidComponent<{
 						onClick={ev => {
 							if (is_sidenotebook_hidden()) {
 								change_areatextfield_value(areatextfield_notebook_ref, props.note)
-								return openDrawer(ev, drawer_notebook_ref)
+								return open_drawer(ev, drawer_notebook_ref)
 							}
 							command(Commands.toggle_notebook_expand)
 						}}
