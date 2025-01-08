@@ -1,4 +1,4 @@
-export enum RoutesLinks {
+export const enum RoutesLinks {
 	home = '/',
 	apps = '/apps',
 	privacy = '/privacy',
@@ -47,7 +47,7 @@ export enum RoutesLinks {
 	cubic_bezier = '/cubic-bezier'
 }
 
-export enum ExternalLinks {
+export const enum ExternalLinks {
 	site_url = 'https://redmerah.com',
 	contact_email = 'redmerah1813@gmail.com',
 	donate = 'https://buymeacoffee.com/redmerah',

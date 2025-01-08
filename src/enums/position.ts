@@ -15,7 +15,7 @@
  *        |            v                      v
  * ```
  */
-export enum FlyoutPosition {
+export const enum FlyoutPosition {
 	left_top = 'lt',
 	left_center_to_bottom = 'lctb',
 	left_center = 'lc',

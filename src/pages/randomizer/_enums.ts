@@ -1,4 +1,4 @@
-export enum RandomizerType {
+export const enum RandomizerType {
 	string = 'string',
 	numbers = 'numbers',
 	words = 'words',
@@ -7,190 +7,213 @@ export enum RandomizerType {
 	teams = 'teams'
 }
 
-export enum NumbersRandomizerNumberType {
+export const enum NumbersRandomizerNumberType {
 	decimal = 10,
 	hexadecimal = 16,
 	octal = 8,
 	binary = 2
 }
+export const all_NumbersRandomizerNumberType = [
+	NumbersRandomizerNumberType.decimal,
+	NumbersRandomizerNumberType.hexadecimal,
+	NumbersRandomizerNumberType.octal,
+	NumbersRandomizerNumberType.binary
+]
 
-export enum NumbersRandomizerSort {
+export const enum NumbersRandomizerSort {
 	ascending = 'asc',
 	descending = 'desc',
 	none = 'none',
 }
+export const all_NumbersRandomizerSort = [
+	NumbersRandomizerSort.ascending,
+	NumbersRandomizerSort.descending,
+	NumbersRandomizerSort.none,
+]
 
-export enum WordsRandomizerWordCase {
+export const enum WordsRandomizerWordCase {
 	uppercase = 'upper',
 	lowercase = 'lower',
 	titlecase = 'title',
 	togglecase = 'toggle',
 	none = 'none'
 }
+export const all_WordsRandomizerWordCase = [
+	WordsRandomizerWordCase.uppercase,
+	WordsRandomizerWordCase.lowercase,
+	WordsRandomizerWordCase.titlecase,
+	WordsRandomizerWordCase.togglecase,
+	WordsRandomizerWordCase.none
+]
 
-export enum ColorsRandomizerColorModel {
+export const enum ColorsRandomizerColorModel {
 	rgb = 'rgb',
 	hsl = 'hsl',
 	hex = 'hex'
 }
+export const all_ColorsRandomizerColorModel = [
+	ColorsRandomizerColorModel.rgb,
+	ColorsRandomizerColorModel.hsl,
+	ColorsRandomizerColorModel.hex
+]
 
-export enum Commands {
+export const enum Commands {
 	/**
 	@param event `Event` */
-	reset_list = 'a',
+	reset_list,
 
 	/**
 	@param event `Event` */
-	add_list = 'b',
+	add_list,
 
 	/**
 	@param list `ListItems` */
-	export_list = 'c',
+	export_list,
 
 	/**
 	@param event `Event`
 	@param list `ListItems | undefined` */
-	edit_list = 'd',
+	edit_list,
 
 	/**
 	@param event `Event`
 	@param list `ListItems` */
-	view_list = 'e',
+	view_list,
 
 	/**
 	@param event `Event`
 	@param list `ListItems` */
-	delete_list = 'f',
+	delete_list,
 
-	toggle_settings_animation = 'g',
-	toggle_settings_repeat = 'h',
+	toggle_settings_animation,
+	toggle_settings_repeat,
 
 	/**
 	@param sort `NumbersRandomizerSort` */
-	change_settings_numbers_sort = 'i',
+	change_settings_numbers_sort,
 
 	/**
 	@param type `NumbersRandomizerNumberType` */
-	change_settings_numbers_type = 'j',
+	change_settings_numbers_type,
 
 	/**
 	@param value `string` */
-	change_settings_prefix = 'k',
+	change_settings_prefix,
 
 	/**
 	@param value `string` */
-	change_settings_suffix = 'l',
+	change_settings_suffix,
 
 	/**
 	@param value `string` */
-	change_settings_separator = 'm',
+	change_settings_separator,
 
 	/**
 	@param wordcase `WordsRandomizerWordCase` */
-	change_settings_words_wordcase = 'n',
+	change_settings_words_wordcase,
 
 	/**
 	@param model `ColorsRandomizerColorModel` */
-	change_settings_colors_model = 'o',
+	change_settings_colors_model,
 
 	/**
 	@param list `ListItems` */
-	change_settings_words_list = 'p',
+	change_settings_words_list,
 
 	/**
 	@param length `number` */
-	change_settings_string_length = 'q',
+	change_settings_string_length,
 
 	/**
 	@param characters `string` */
-	change_settings_string_characters_custom = 'r',
+	change_settings_string_characters_custom,
 
-	toggle_settings_string_characters_symbols = 's',
-	toggle_settings_string_characters_numbers = 't',
-	toggle_settings_string_characters_lowercase = 'u',
-	toggle_settings_string_characters_uppercase = 'v',
-	change_settings_string_characters_default = 'w',
+	toggle_settings_string_characters_symbols,
+	toggle_settings_string_characters_numbers,
+	toggle_settings_string_characters_lowercase,
+	toggle_settings_string_characters_uppercase,
+	change_settings_string_characters_default,
 
 	/**
 	@param count `number` */
-	change_settings_numbers_count = 'x',
+	change_settings_numbers_count,
 
 	/**
 	@param length `number` */
-	change_settings_numbers_minlength = 'y',
+	change_settings_numbers_minlength,
 
 	/**
 	@param min `number`
 	@param max `number` */
-	change_settings_numbers_range = 'z',
+	change_settings_numbers_range,
 
 	/**
 	@param count `number` */
-	change_settings_words_count = 'aa',
+	change_settings_words_count,
 
 	/**
 	@param count `number` */
-	change_settings_colors_count = 'ab',
+	change_settings_colors_count,
 
 	/**
 	@param min `number`
 	@param max `number` */
-	change_settings_colors_range_hex = 'ac',
+	change_settings_colors_range_hex,
 
 	/**
 	@param min `number`
 	@param max `number` */
-	change_settings_colors_range_hsl_h = 'ad',
+	change_settings_colors_range_hsl_h,
 
 	/**
 	@param min `number`
 	@param max `number` */
-	change_settings_colors_range_hsl_s = 'ae',
+	change_settings_colors_range_hsl_s,
 
 	/**
 	@param min `number`
 	@param max `number` */
-	change_settings_colors_range_hsl_l = 'af',
+	change_settings_colors_range_hsl_l,
 
 	/**
 	@param min `number`
 	@param max `number` */
-	change_settings_colors_range_rgb_r = 'ag',
+	change_settings_colors_range_rgb_r,
 
 	/**
 	@param min `number`
 	@param max `number` */
-	change_settings_colors_range_rgb_g = 'ah',
+	change_settings_colors_range_rgb_g,
 
 	/**
 	@param min `number`
 	@param max `number` */
-	change_settings_colors_range_rgb_b = 'ai',
+	change_settings_colors_range_rgb_b,
 
 	/**
 	@param list `ListItems` */
-	change_settings_selection_list = 'aj',
+	change_settings_selection_list,
 
 	/**
 	@param count `number` */
-	change_settings_selection_count = 'ak',
+	change_settings_selection_count,
 
 	/**
 	@param list `ListItems` */
-	change_settings_teams_listnames = 'al',
+	change_settings_teams_listnames,
 
 	/**
 	@param list `ListItems` */
-	change_settings_teams_listmembers = 'am',
+	change_settings_teams_listmembers,
 
 	/**
 	@param count `number` */
-	change_settings_teams_count = 'an',
+	change_settings_teams_count,
 
-	toggle_navigation_expand = 'ao',
+	toggle_navigation_expand,
 
 	/**
 	@param event `Event` */
-	generate = 'ap',
-	stop_generate = 'aq'
+	generate,
+	stop_generate
 }

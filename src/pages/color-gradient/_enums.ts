@@ -1,10 +1,10 @@
-export enum GradientType {
+export const enum GradientType {
 	linear = 'linear',
 	radial = 'radial',
 	conic = 'conic'
 }
 
-export enum RadialGradientShape {
+export const enum RadialGradientShape {
 	ellipse = 'ellipse',
 	circle = 'circle'
 }
@@ -13,7 +13,7 @@ export enum RadialGradientShape {
  * This will crash if the browser not supported.
  * Currenty not recommended to use in production.
 */
-export enum RectangularColorSpace {
+export const enum RectangularColorSpace {
 	auto = 'auto',
 	srgb = 'srgb',
 	srgb_linear = 'srgb-linear',
@@ -28,7 +28,7 @@ export enum RectangularColorSpace {
 	xyz_d65 = 'xyz-d65',
 }
 
-export enum PolarColorSpace {
+export const enum PolarColorSpace {
 	auto = 'auto',
 	hsl = 'hsl',
 	hwb = 'hwb',
@@ -36,7 +36,7 @@ export enum PolarColorSpace {
 	oklch = 'oklch'
 }
 
-export enum HueInterpolationMethod {
+export const enum HueInterpolationMethod {
 	auto = 'auto',
 	shorter = 'shorter',
 	longer = 'longer',
@@ -44,104 +44,104 @@ export enum HueInterpolationMethod {
 	decreasing = 'decreasing'
 }
 
-export enum Commands {
+export const enum Commands {
 	/**
 	@param { number } gradient_index `number`
 	@param { number } color_stop_index `number`
 	@param { number } length `number` from `0` to `100` */
-	change_color_stop_length = 'a',
+	change_color_stop_length,
 
 	/** @param { number } gradient_index `number` */
-	toggle_gradient_repeat = 'b',
+	toggle_gradient_repeat,
 
 	/**
 	@param { number } gradient_index `number`
 	@param { number } angle `number` from `0` to `360` */
-	change_gradient_angle = 'c',
+	change_gradient_angle,
 
 	/**
 	@param { number } gradient_index `number`
 	@param { RectangularColorSpace | PolarColorSpace } colorspace `RectangularColorSpace | PolarColorSpace`*/
-	change_color_interpolation_method = 'd',
+	change_color_interpolation_method,
 
 	/**
 	@param { number } gradient_index `number`
 	@param { HueInterpolationMethod } method `HueInterpolationMethod` */
-	change_hue_interpolation_method = 'e',
+	change_hue_interpolation_method,
 
 	/**
 	@param { number } gradient_index `number`
 	@param { number } color_stop_index `number`
 	@param { HEXColor } color `HEXColor` */
-	change_color_stop_color = 'f',
+	change_color_stop_color,
 
 	/** @param { number } gradient_index `number` */
-	add_color_stop = 'g',
+	add_color_stop,
 
 	/**
 	@param { number } gradient_index `number`
 	@param { number } color_stop_index `number` */
-	remove_color_stop = 'h',
+	remove_color_stop,
 
-	add_gradient = 'i',
+	add_gradient,
 
 	/** @param { number } gradient_index `number` */
-	remove_gradient = 'j',
+	remove_gradient,
 
 	/** @param { ColorModel } model `ColorModel` */
-	change_settings_colormodel = 'k',
+	change_settings_colormodel,
 
 	/** @param { number } value `number` */
-	change_settings_aspect_ratio = 'l',
+	change_settings_aspect_ratio,
 
 	/** @param { number } value `number` */
-	change_settings_border_radius = 'm',
+	change_settings_border_radius,
 
 	/**
 	@param { number } gradient_index `number`
 	@param { GradientType } type `GradientType` */
-	change_gradient_type = 'n',
+	change_gradient_type,
 
 	/**
 	@param { number } gradient_index `number`
 	@param { RadialGradientShape } shape `RadialGradientShape` */
-	change_radial_gradient_shape = 'o',
+	change_radial_gradient_shape,
 
 	/**
 	@param { number } gradient_index `number`
 	@param { number } x `number` from `0` to `100` */
-	change_gradient_position_x = 'p',
+	change_gradient_position_x,
 
 	/**
 	@param { number } gradient_index `number`
 	@param { number } y `number` from `0` to `100` */
-	change_gradient_position_y = 'q',
+	change_gradient_position_y,
 
 	/**
 	@param { number } gradient_index `number`
 	@param { number } size `number` */
-	change_radial_gradient_size = 'r',
+	change_radial_gradient_size,
 
 	/**
 	@param { number } gradient_index `number`
 	@param { number } width `number` from `0` to `100` */
-	change_radial_gradient_width = 's',
+	change_radial_gradient_width,
 
 	/**
 	@param { number } gradient_index `number`
 	@param { number } height `number` from `0` to `100` */
-	change_radial_gradient_height = 't',
+	change_radial_gradient_height,
 
-	save_gradient = 'u',
-
-	/** @param { number } index `number` */
-	view_gradient_data = 'v',
+	save_gradient,
 
 	/** @param { number } index `number` */
-	delete_gradient_data = 'w',
+	view_gradient_data,
+
+	/** @param { number } index `number` */
+	delete_gradient_data,
 }
 
-export enum ColorModel {
+export const enum ColorModel {
 	hex = 'hex',
 	rgba = 'rgba',
 	hsla = 'hsla'

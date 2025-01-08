@@ -1,67 +1,67 @@
-export enum Commands {
-	toggle_navigation_expand = 'a',
+export const enum Commands {
+	toggle_navigation_expand,
 
 	/** @param {Pages | number} page `Pages | number` either page or list id */
-	change_page = 'b',
+	change_page,
 
 	/** @param {SortBy} sort_by `SortBy` */
-	change_sort_by = 'c',
+	change_sort_by,
 
 	/** @param {SortMode} sort_by `SortMode` */
-	change_sort_mode = 'd',
+	change_sort_mode,
 
 	/**
 	@param {Task} task `Task`
 	@param {number} tasklist_index `number` */
-	add_task = 'e',
+	add_task,
 
 	/**
 	Don't use this to edit single subtask/file. Use `Commands.edit_subtask`/`Commands.edit_file` instead.
 	@param {Task} task `Task`
 	@param {number} tasklist_index `number`
 	@param {number} task_index `number` */
-	edit_task = 'g',
+	edit_task,
 
 	/**
 	@param {Task} task `Task`
 	@param {number} tasklist_index `number`
 	@param {number} task_index `number` */
-	delete_task = 'h',
+	delete_task,
 
 	/** @param {boolean | undefined} value `boolean | undefined` */
-	toggle_delete_task_warning = 'i',
+	toggle_delete_task_warning,
 
 	/** @param {Pages[]} pages `Pages[]` */
-	change_hidden_navigation = 'j',
+	change_hidden_navigation,
 
 	/** @param {number} tasklist_index `number` */
-	mark_all_completed = 'k',
+	mark_all_completed,
 
 	/** @param {number} tasklist_index `number` */
-	mark_all_uncompleted = 'l',
+	mark_all_uncompleted,
 
 	/** @param {number} tasklist_index `number` */
-	clear_tasks = 'm',
+	clear_tasks,
 
 	/** @param {number} tasklist_index `number` */
-	delete_completed_task = 'n',
+	delete_completed_task,
 
 	/** @param {number?} tasklist_index `number?` */
-	copy_tasks = 'o',
+	copy_tasks,
 
 	/** @param {Event} event `Event` */
-	add_label = 'p',
+	add_label,
 
 	/**
 	@param {Event} event `Event`
 	@param {TaskLabel} label `TaskLabel` */
-	edit_label = 'q',
+	edit_label,
 
 	/** @param {TaskLabel} label `TaskLabel` */
-	delete_label = 'r',
+	delete_label,
 
 	/** @param {Event} event `Event` */
-	show_labels_options = 's',
+	show_labels_options,
 
 	/**
 	@param {FileList} files `FileList`
@@ -69,7 +69,7 @@ export enum Commands {
 	@param {number} tasklist_index `number`
 	@param {number} task_index `number`
 	@returns {Promise<TaskFileMetaData[]>} `Promise<TaskFileMetaData[]>` */
-	add_files = 't',
+	add_files,
 
 	/**
 	@param {Event} event `Event`
@@ -77,21 +77,21 @@ export enum Commands {
 	@param {number} tasklist_index `number`
 	@param {number} task_index `number`
 	@param {number} file_index `number` */
-	download_file = 'u',
+	download_file,
 
 	/**
 	@param {TaskFileMetaData} file `TaskFileMetaData`
 	@param {number} tasklist_index `number`
 	@param {number} task_index `number`
 	@param {number} file_index `number` */
-	edit_file = 'v',
+	edit_file,
 
 	/**
 	@param {SubTask} subtask `SubTask`
 	@param {number} tasklist_index `number`
 	@param {number} task_index `number`
 	@param {number} subtask_index `number` */
-	edit_subtask = 'w',
+	edit_subtask,
 
 	/**
 	@param {Event} event `Event`
@@ -100,39 +100,39 @@ export enum Commands {
 	@param {number} task_index `number`
 	@param {number} file_index `number`
 	@returns {Promise<Blob | null>} `Promise<Blob | null>`*/
-	get_file_blob = 'x',
+	get_file_blob,
 
 	/**
 	@param {SubTask} subtask `SubTask`
 	@param {number} tasklist_index `number`
 	@param {number} task_index `number`
 	@returns {SubTask} `Promise<SubTask>`*/
-	add_subtask = 'y',
+	add_subtask,
 
 	/** @param {Event} event `Event` */
-	add_tasklist = 'z',
+	add_tasklist,
 
 	/**
 	@param {Event} event `Event`
 	@param {number} tasklist_index `number` */
-	delete_taskList = 'aa',
+	delete_taskList,
 
 	/**
 	@param {Event} event `Event`
 	@param {number} tasklist_index `number` */
-	rename_taskList = 'ab',
+	rename_taskList,
 
 	/**
 	@param {Task} task `Task`
 	@param {number} tasklist_index `number`
 	@param {number} task_index `number`
 	@param {number} target_tasklist_index `number` */
-	move_task = 'ac',
+	move_task,
 
-	get_all_task = 'ad',
+	get_all_task,
 }
 
-export enum Pages {
+export const enum Pages {
 	tasks = 'tasks',
 	all = 'all',
 	completed = 'completed',
@@ -141,7 +141,7 @@ export enum Pages {
 	planned = 'planned'
 }
 
-export enum SortBy {
+export const enum SortBy {
 	name = 'name',
 	importance = 'importance',
 	creation_date = 'creation_date',
@@ -149,7 +149,7 @@ export enum SortBy {
 	uncompleted = 'uncompleted'
 }
 
-export enum SortMode {
+export const enum SortMode {
 	ascending = 'asc',
 	descending = 'desc'
 }

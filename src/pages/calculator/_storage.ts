@@ -18,14 +18,14 @@ export type ObjectStoreMiscellaneous<T = unknown> = {
 	value: T
 }
 
-export enum ObjectStoreNames {
+export const enum ObjectStoreNames {
 	settings = 'settings',
 	last_input = 'last_input',
 	last_output = 'last_output',
 	miscellaneous = 'miscellaneous'
 }
 
-export enum ObjectStoreKeys {
+export const enum ObjectStoreKeys {
 
 	/** @param value `string|null` */
 	lastinput_basic = 'basic',

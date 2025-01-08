@@ -1,28 +1,28 @@
-export enum Commands {
-	toggle_textwrap = 'a',
+export const enum Commands {
+	toggle_textwrap,
 
 	/** @param {number} fontSize `number` */
-	change_fontsize = 'b',
+	change_fontsize,
 
 	/**
 	@param {string} text `string`
 	@param {number} index `number` */
-	update_latex_input = 'd',
+	update_latex_input,
 
-	reset_inputs = 'e',
+	reset_inputs,
 
 	/** @param {Event} ev `Event`*/
-	copy_all = 'g',
+	copy_all,
 
 	/** @param {number} index `number`*/
-	add_equation = 'h',
+	add_equation,
 
 	/** @param {number} index `number`*/
-	delete_equation = 'i',
+	delete_equation,
 
 	/** @param {string} prefix `string` */
-	change_prefix = 'j',
+	change_prefix,
 
 	/** @param {string} suffix `string` */
-	change_suffix = 'k',
+	change_suffix,
 }

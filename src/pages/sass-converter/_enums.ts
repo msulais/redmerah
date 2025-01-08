@@ -1,35 +1,35 @@
-export enum Commands {
-	toggle_textwrap = 'a',
+export const enum Commands {
+	toggle_textwrap,
 
 	/** @param {number} fontsize `number` */
-	change_fontsize = 'b',
+	change_fontsize,
 
 	/** @param {string} text `string` */
-	update_scss_text = 'c',
+	update_scss_text,
 
 	/** @param {string} text `string` */
-	update_sass_text = 'd',
+	update_sass_text,
 
-	reset_inputs = 'e',
+	reset_inputs,
 
 	/** @param {Event} ev `Event` */
-	open_file = 'f',
+	open_file,
 
 	/**
 	@param {Event} ev `Event`
 	@param {'sass' | 'scss' | 'css'} type `'sass' | 'scss' | 'css'` */
-	copy_all = 'g',
+	copy_all,
 
 	/** @param {'sass' | 'scss' | 'css'} type `'sass' | 'scss' | 'css'` */
-	download_file = 'h',
+	download_file,
 
 	/** @param {InputViewOption} option `InputViewOption` */
-	change_input_view_option = 'i',
+	change_input_view_option,
 
-	toggle_minify = 'j'
+	toggle_minify
 }
 
-export enum InputViewOption {
+export const enum InputViewOption {
 	sass,
 	scss
 }

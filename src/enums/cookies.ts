@@ -1,1 +1,1 @@
-export enum CookieKeys {}
+export const enum CookieKeys {}

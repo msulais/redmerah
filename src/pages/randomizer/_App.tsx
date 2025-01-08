@@ -1,4 +1,4 @@
-import { createSignal, For, onMount, Show, type VoidComponent } from "solid-js"
+import { createSignal, createUniqueId, For, onMount, Show, type VoidComponent } from "solid-js"
 
 import type { HEXColor } from "@/types/color"
 import type { ItemList, Result, Settings } from "./_types"
@@ -11,7 +11,7 @@ import { PERSON_NAMES, TEAMS_NAMES, ANIMALS, LOREM_IPSUM, DEFAULT_LISTS } from "
 import { ObjectStoreNames, ObjectStoreKeys, type ObjectStoreLists, type ObjectStoreSettings, type ObjectStoreLastResult } from "./_storage"
 import { string_tolowercase, string_touppercase, string_totogglecase, string_totitlecase, string_length, string_padstart, string_trim, string_split, string_locale_compare } from "@/utils/string"
 import { url_create, url_download_file, url_revoke } from "@/utils/url"
-import { element_focus } from "@/utils/element"
+import { element_dataset, element_focus, element_id, element_tagname, element_valid_target } from "@/utils/element"
 import { file_open, file_read_as_text } from "@/utils/file"
 import { IDB, idb_store_delete, idb_store_put } from "@/utils/indexeddb"
 import { DatabaseNames } from "@/enums/storage"
@@ -19,9 +19,10 @@ import { attr_remove, attr_set, attr_set_if_exist, classlist_module } from "@/ut
 import { BodyAttributes } from "@/enums/attributes"
 import { remove_splash_screen } from "@/scripts/splash"
 import { array_concat, array_filter, array_find_index, array_includes, array_join, array_length, array_map, array_push, array_slice, array_sort, array_splice } from "@/utils/array"
-import { number_to_string } from "@/utils/number"
+import { number_is_not_defined, number_parse, number_to_string } from "@/utils/number"
 import { navigator_clipboard_writetext } from "@/utils/navigator"
-import { document_body } from "@/utils/document"
+import { document_active, document_body } from "@/utils/document"
+import { event_current_target } from "@/utils/event"
 import { promise_done } from "@/utils/object"
 
 import App from "@/components/App"
@@ -1233,61 +1234,138 @@ const _: VoidComponent = () => {
 		remove_splash_screen()
 	})
 
-	const ListItem: VoidComponent<ItemList> = ($props) => {
-		return (<List
-			trailing={<>
-				<IconButton data-tooltip="Export list" onClick={() => export_list($props)} code={0xE0CF}/>
-				<IconButton data-tooltip="View list" onClick={(ev) => view_list(ev, $props)} code={0xE77B}/>
-				<IconButton data-tooltip="Edit list" onClick={(ev) => open_edit_dialog(ev, $props)} code={0xE739}/>
-				<IconButton data-tooltip="Delete list" onClick={(ev) => open_delete_dialog(ev, $props)} code={0xE59D}/>
-			</>}
-			subtitle={array_length($props.items) + ' item' + (array_length($props.items) > 1? 's' : '')}>
-			{$props.name}
-		</List>)
-	}
-
 	const Dialogs: VoidComponent = () => {
+		const button_lists_close_id = createUniqueId()
+		const button_lists_addnewlist_id = createUniqueId()
+		const button_deletelistwarning_cancel_id = createUniqueId()
+		const button_deletelistwarning_delete_id = createUniqueId()
+		const button_add_cancel_id = createUniqueId()
+		const button_add_importcsv_id = createUniqueId()
+		const button_add_preview_id = createUniqueId()
+		const button_add_save_id = createUniqueId()
+		const button_edit_cancel_id = createUniqueId()
+		const button_edit_importcsv_id = createUniqueId()
+		const button_edit_preview_id = createUniqueId()
+		const button_edit_save_id = createUniqueId()
+		const button_viewitemlist_close_id = createUniqueId()
+		const button_viewitemlist_export_id = createUniqueId()
+		const button_viewitemlist_edit_id = createUniqueId()
 		return (<>
 			<Dialog
 				style={{width: '500px'}}
 				ref={r => dialog_lists_ref = r}
 				header="Lists"
+				onClick={ev => {
+					const button = document_active()!
+					if (!element_valid_target(
+						event_current_target(ev),
+						button,
+						el => element_tagname(el) == 'BUTTON'
+					)) return
+
+					switch (element_id(button)) {
+						case button_lists_close_id:
+							close_dialog(dialog_lists_ref)
+							break
+						case button_lists_addnewlist_id:
+							close_dialog(dialog_lists_ref)
+							open_add_dialog(ev)
+							break
+						default:
+							const data_list_export_index = element_dataset(button, 'listExportIndex')
+							if (data_list_export_index) {
+								const index = number_parse(data_list_export_index, true)
+								if (number_is_not_defined(index)) return
+
+								export_list(lists[index])
+								return
+							}
+
+							const data_list_view_index = element_dataset(button, 'listViewIndex')
+							if (data_list_view_index) {
+								const index = number_parse(data_list_view_index, true)
+								if (number_is_not_defined(index)) return
+
+								view_list(ev, lists[index])
+								return
+							}
+
+							const data_list_edit_index = element_dataset(button, 'listEditIndex')
+							if (data_list_edit_index) {
+								const index = number_parse(data_list_edit_index, true)
+								if (number_is_not_defined(index)) return
+
+								open_edit_dialog(ev, lists[index])
+								return
+							}
+
+							const data_list_delete_index = element_dataset(button, 'listDeleteIndex')
+							if (data_list_delete_index) {
+								const index = number_parse(data_list_delete_index, true)
+								if (number_is_not_defined(index)) return
+
+								open_delete_dialog(ev, lists[index])
+								return
+							}
+					}
+				}}
 				actions={<>
 					<Button
-						onClick={() => close_dialog(dialog_lists_ref)}
+						id={button_lists_close_id}
 						variant={ButtonVariant.tonal}>
 						Close
 					</Button>
 					<Button
-						onClick={(ev) => {
-							close_dialog(dialog_lists_ref)
-							open_add_dialog(ev)
-						}}
+						id={button_lists_addnewlist_id}
 						variant={ButtonVariant.filled}>
 						Add new list
 					</Button>
 				</>}>
 				<Tooltip>
-					<For each={lists}>{(l, i) => <>
+					<For each={lists}>{(list, i) => <>
 						<Show when={i() != 0}><Divider /></Show>
-						<ListItem {...l} />
+						<List
+							trailing={<>
+								<IconButton data-list-export-index={i()} data-tooltip="Export list" code={0xE0CF}/>
+								<IconButton data-list-view-index={i()} data-tooltip="View list" code={0xE77B}/>
+								<IconButton data-list-edit-index={i()} data-tooltip="Edit list" code={0xE739}/>
+								<IconButton data-list-delete-index={i()} data-tooltip="Delete list" code={0xE59D}/>
+							</>}
+							subtitle={array_length(list.items) + ' item' + (array_length(list.items) > 1? 's' : '')}>
+							{list.name}
+						</List>
 					</>}</For>
 				</Tooltip>
 			</Dialog>
 			<Dialog
 				ref={r => dialog_deletelistwarning_ref = r}
+				onClick={ev => {
+					const button = document_active()!
+					if (!element_valid_target(
+						event_current_target(ev),
+						button,
+						el => element_tagname(el) == 'BUTTON'
+					)) return
+
+					switch (element_id(button)) {
+						case button_deletelistwarning_cancel_id:
+							close_dialog(dialog_deletelistwarning_ref)
+							break
+						case button_deletelistwarning_delete_id:
+							close_dialog(dialog_deletelistwarning_ref)
+							delete_list(ev, selected_list_to_delete())
+							break
+					}
+				}}
 				actions={<>
 					<Button
-						variant={ButtonVariant.tonal}
-						onClick={() => close_dialog(dialog_deletelistwarning_ref)}>
+						id={button_deletelistwarning_cancel_id}
+						variant={ButtonVariant.tonal}>
 						Cancel
 					</Button>
 					<Button
-						variant={ButtonVariant.filled}
-						onClick={(ev) => {
-							close_dialog(dialog_deletelistwarning_ref)
-							delete_list(ev, selected_list_to_delete())
-						}}>
+						id={button_deletelistwarning_delete_id}
+						variant={ButtonVariant.filled}>
 						Delete
 					</Button>
 				</>}
@@ -1302,15 +1380,19 @@ const _: VoidComponent = () => {
 			<Dialog
 				ref={r => dialog_add_ref = r}
 				style={{width: '500px'}}
-				actions={<>
-					<Button
-						variant={ButtonVariant.tonal}
-						onClick={() => close_dialog(dialog_add_ref)}>
-						Cancel
-					</Button>
-					<Button
-						variant={ButtonVariant.tonal}
-						onClick={async () => {
+				onClick={async ev => {
+					const button = document_active()!
+					if (!element_valid_target(
+						event_current_target(ev),
+						button,
+						el => element_tagname(el) == 'BUTTON'
+					)) return
+
+					switch (element_id(button)) {
+						case button_add_cancel_id:
+							close_dialog(dialog_add_ref)
+							break
+						case button_add_importcsv_id:
 							const text = await listitem_from_csv_file()
 							change_areatextfield_value(
 								areatextfield_newitemlist_ref,
@@ -1319,11 +1401,8 @@ const _: VoidComponent = () => {
 									v => string_length(string_trim(v)) > 0
 								), ', ')
 							)
-						}}>
-						Import CSV
-					</Button>
-					<Button
-						onClick={(ev) => {
+							break
+						case button_add_preview_id:
 							set_list_viewitem({
 								id: -1,
 								name: textfield_newlistname_ref.value,
@@ -1333,12 +1412,30 @@ const _: VoidComponent = () => {
 								)
 							})
 							open_dialog(ev, dialog_previewitemlist_ref)
-						}}
+							break
+						case button_add_save_id:
+							add_new_list(ev)
+							break
+					}
+				}}
+				actions={<>
+					<Button
+						variant={ButtonVariant.tonal}
+						id={button_add_cancel_id}>
+						Cancel
+					</Button>
+					<Button
+						variant={ButtonVariant.tonal}
+						id={button_add_importcsv_id}>
+						Import CSV
+					</Button>
+					<Button
+						id={button_add_preview_id}
 						variant={ButtonVariant.tonal}>
 						Preview
 					</Button>
 					<Button
-						onClick={(ev) => add_new_list(ev)}
+						id={button_add_save_id}
 						variant={ButtonVariant.filled}>
 						Save
 					</Button>
@@ -1358,31 +1455,29 @@ const _: VoidComponent = () => {
 			<Dialog
 				ref={r => dialog_edit_ref = r}
 				style={{width: '500px'}}
-				actions={<>
-					<Button
-						variant={ButtonVariant.tonal}
-						onClick={() => close_dialog(dialog_edit_ref)}>
-						Cancel
-					</Button>
-					<Button
-						variant={ButtonVariant.tonal}
-						onClick={async () => {
+				onClick={async ev => {
+					const button = document_active()!
+					if (!element_valid_target(
+						event_current_target(ev),
+						button,
+						el => element_tagname(el) == 'BUTTON'
+					)) return
+
+					switch (element_id(button)) {
+						case button_edit_cancel_id:
+							close_dialog(dialog_edit_ref)
+							break
+						case button_edit_importcsv_id:
 							const text = await listitem_from_csv_file()
 							change_areatextfield_value(
 								areatextfield_edititemlist_ref,
-								array_join(
-									array_filter(
-										[areatextfield_newitemlist_ref.value, ...text],
-										v => string_length(string_trim(v)) > 0
-									),
-									', '
-								)
+								array_join(array_filter(
+									[areatextfield_newitemlist_ref.value, ...text],
+									v => string_length(string_trim(v)) > 0
+								), ', ')
 							)
-						}}>
-						Import CSV
-					</Button>
-					<Button
-						onClick={(ev) => {
+							break
+						case button_edit_preview_id:
 							set_list_viewitem({
 								id: -1,
 								name: textfield_editlistname_ref.value,
@@ -1392,12 +1487,30 @@ const _: VoidComponent = () => {
 								)
 							})
 							open_dialog(ev, dialog_previewitemlist_ref)
-						}}
+							break
+						case button_edit_save_id:
+							edit_list(ev)
+							break
+					}
+				}}
+				actions={<>
+					<Button
+						id={button_edit_cancel_id}
+						variant={ButtonVariant.tonal}>
+						Cancel
+					</Button>
+					<Button
+						id={button_edit_importcsv_id}
+						variant={ButtonVariant.tonal}>
+						Import CSV
+					</Button>
+					<Button
+						id={button_edit_preview_id}
 						variant={ButtonVariant.tonal}>
 						Preview
 					</Button>
 					<Button
-						onClick={(ev) => edit_list(ev)}
+						id={button_edit_save_id}
 						variant={ButtonVariant.filled}>
 						Save
 					</Button>
@@ -1421,22 +1534,40 @@ const _: VoidComponent = () => {
 			<Dialog
 				ref={r => dialog_viewitemlist_ref = r}
 				style={{width: '720px'}}
+				onClick={ev => {
+					const button = document_active()!
+					if (!element_valid_target(
+						event_current_target(ev),
+						button,
+						el => element_tagname(el) == 'BUTTON'
+					)) return
+
+					switch (element_id(button)) {
+						case button_viewitemlist_close_id:
+							close_dialog(dialog_viewitemlist_ref)
+							break
+						case button_viewitemlist_edit_id:
+							close_dialog(dialog_viewitemlist_ref)
+							open_edit_dialog(ev, list_viewitem())
+							break
+						case button_viewitemlist_export_id:
+							export_list(list_viewitem())
+							break
+					}
+				}}
 				actions={<>
 					<Button
-						onClick={() => close_dialog(dialog_viewitemlist_ref)}
+						id={button_viewitemlist_close_id}
 						variant={ButtonVariant.tonal}>
 						Close
 					</Button>
 					<Button
-						onClick={() => export_list(list_viewitem())}
+						id={button_viewitemlist_export_id}
 						variant={ButtonVariant.tonal}>
 						Export
 					</Button>
 					<Button
-						onClick={ev => {
-							close_dialog(dialog_viewitemlist_ref)
-							open_edit_dialog(ev, list_viewitem())
-						}}
+						id={button_viewitemlist_edit_id}
 						variant={ButtonVariant.filled}>
 						Edit
 					</Button>

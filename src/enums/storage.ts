@@ -1,11 +1,11 @@
-export enum LocalStorageKeys {
+export const enum LocalStorageKeys {
 	theme = 'theme',
 	color = 'color',
 	corner = 'corner',
 	pinned_apps = 'pinned_apps'
 }
 
-export enum DatabaseNames {
+export const enum DatabaseNames {
 	markdown_converter = 'markdown_converter',
 	randomizer = 'randomizer',
 	color_generator = 'color_generator',

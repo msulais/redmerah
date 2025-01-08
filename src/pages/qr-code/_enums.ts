@@ -1,16 +1,16 @@
-export enum Pages {
+export const enum Pages {
 	scan,
 	generate
 }
 
-export enum ErrorCorrectionLevel {
+export const enum ErrorCorrectionLevel {
 	low = 'L',
 	medium = 'M',
 	quartile = 'Q',
 	high = 'H'
 }
 
-export enum EncodingMode {
+export const enum EncodingMode {
 	auto = 'Auto',
 	numeric = 'numeric',
 	alphanumeric = 'alphanumeric',
@@ -18,47 +18,47 @@ export enum EncodingMode {
 	kanji = 'kanji'
 }
 
-export enum CopyFileType {
+export const enum CopyFileType {
 	png,
 	svg
 }
 
-export enum DownloadFileType {
+export const enum DownloadFileType {
 	png,
 	jpeg,
 	svg
 }
 
-export enum Commands {
+export const enum Commands {
 	/** @param { Pages } page `Pages` */
-	change_page = 'a',
+	change_page,
 
 	/** @param { ErrorCorrectionLevel } level `ErrorCorrectionLevel` */
-	change_settings_errorcorrectionlevel = 'b',
+	change_settings_errorcorrectionlevel,
 
 	/** @param { HEXColor } color `HEXColor` */
-	change_settings_color = 'c',
+	change_settings_color,
 
 	/** @param { HEXColor } color `HEXColor` */
-	change_settings_backgroundcolor = 'd',
+	change_settings_backgroundcolor,
 
 	/** @param { number } value `number` */
-	change_settings_margin = 'e',
+	change_settings_margin,
 
 	/** @param { number | null } version `number | null` */
-	change_settings_version = 'f',
+	change_settings_version,
 
 	/** @param { EncodingMode } mode `EncodingMode` */
-	change_settings_encodingmode = 'g',
+	change_settings_encodingmode,
 
 	/** @param { string } data `string` */
-	change_qrcode_data = 'h',
+	change_qrcode_data,
 
 	/** @param { DownloadFileType } type `DownloadFileType` */
-	download_qrcode = 'i',
+	download_qrcode,
 
 	/**
 	@param { Event } event `Event`
 	@param { CopyFileType } type `CopyFileType` */
-	copy_qrcode = 'j',
+	copy_qrcode,
 }

@@ -8,12 +8,12 @@ export type ObjectStoreMiscellaneous<T = unknown> = {
 	value: T
 }
 
-export enum ObjectStoreNames {
+export const enum ObjectStoreNames {
 	settings = 'settings',
 	miscellaneous = 'miscellaneous'
 }
 
-export enum ObjectStoreKeys {
+export const enum ObjectStoreKeys {
 	/** @param value `Pages` */
 	miscellaneous_lastpage = 'last_page',
 

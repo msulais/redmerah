@@ -4,7 +4,7 @@ export type ConverterUnitType = {
 	value: number
 }
 
-export enum ConverterType {
+export const enum ConverterType {
 	length = 'length',
 	area = 'area',
 	volume = 'volume',
