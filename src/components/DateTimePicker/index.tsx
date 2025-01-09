@@ -23,7 +23,7 @@ import Divider from '@/components/Divider'
 import FocusableGroup from '@/components/FocusableGroup'
 import './index.scss'
 
-const enum DatePickerOption {
+enum DatePickerOption {
 	year,
 	month,
 	day

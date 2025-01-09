@@ -1,4 +1,4 @@
-export const enum PlatformData {
+export enum PlatformData {
 	desktop = 'desktop',
 	mobile = 'mobile',
 	hybrid = 'hybrid'

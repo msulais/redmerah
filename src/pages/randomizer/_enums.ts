@@ -1,4 +1,4 @@
-export const enum RandomizerType {
+export enum RandomizerType {
 	string = 'string',
 	numbers = 'numbers',
 	words = 'words',
@@ -15,7 +15,7 @@ export const all_RandomizerType = [
 	RandomizerType.teams
 ]
 
-export const enum NumbersRandomizerNumberType {
+export enum NumbersRandomizerNumberType {
 	decimal = 10,
 	hexadecimal = 16,
 	octal = 8,
@@ -28,7 +28,7 @@ export const all_NumbersRandomizerNumberType = [
 	NumbersRandomizerNumberType.binary
 ]
 
-export const enum NumbersRandomizerSort {
+export enum NumbersRandomizerSort {
 	ascending = 'asc',
 	descending = 'desc',
 	none = 'none',
@@ -39,7 +39,7 @@ export const all_NumbersRandomizerSort = [
 	NumbersRandomizerSort.none,
 ]
 
-export const enum WordsRandomizerWordCase {
+export enum WordsRandomizerWordCase {
 	uppercase = 'upper',
 	lowercase = 'lower',
 	titlecase = 'title',
@@ -54,7 +54,7 @@ export const all_WordsRandomizerWordCase = [
 	WordsRandomizerWordCase.none
 ]
 
-export const enum ColorsRandomizerColorModel {
+export enum ColorsRandomizerColorModel {
 	rgb = 'rgb',
 	hsl = 'hsl',
 	hex = 'hex'
@@ -65,7 +65,7 @@ export const all_ColorsRandomizerColorModel = [
 	ColorsRandomizerColorModel.hex
 ]
 
-export const enum Commands {
+export enum Commands {
 	/**
 	@param event `Event` */
 	reset_list,

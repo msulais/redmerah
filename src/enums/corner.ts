@@ -1,4 +1,4 @@
-export const enum CornerData {
+export enum CornerData {
 	sharp = 'sharp',
 	semi_round = 'semi-round',
 	round = 'round',

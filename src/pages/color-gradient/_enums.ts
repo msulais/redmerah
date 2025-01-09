@@ -1,10 +1,10 @@
-export const enum GradientType {
+export enum GradientType {
 	linear = 'linear',
 	radial = 'radial',
 	conic = 'conic'
 }
 
-export const enum RadialGradientShape {
+export enum RadialGradientShape {
 	ellipse = 'ellipse',
 	circle = 'circle'
 }
@@ -13,7 +13,7 @@ export const enum RadialGradientShape {
  * This will crash if the browser not supported.
  * Currenty not recommended to use in production.
 */
-export const enum RectangularColorSpace {
+export enum RectangularColorSpace {
 	auto = 'auto',
 	srgb = 'srgb',
 	srgb_linear = 'srgb-linear',
@@ -28,7 +28,7 @@ export const enum RectangularColorSpace {
 	xyz_d65 = 'xyz-d65',
 }
 
-export const enum PolarColorSpace {
+export enum PolarColorSpace {
 	auto = 'auto',
 	hsl = 'hsl',
 	hwb = 'hwb',
@@ -36,7 +36,7 @@ export const enum PolarColorSpace {
 	oklch = 'oklch'
 }
 
-export const enum HueInterpolationMethod {
+export enum HueInterpolationMethod {
 	auto = 'auto',
 	shorter = 'shorter',
 	longer = 'longer',
@@ -44,7 +44,7 @@ export const enum HueInterpolationMethod {
 	decreasing = 'decreasing'
 }
 
-export const enum Commands {
+export enum Commands {
 	/**
 	@param { number } gradient_index `number`
 	@param { number } color_stop_index `number`
@@ -141,7 +141,7 @@ export const enum Commands {
 	delete_gradient_data,
 }
 
-export const enum ColorModel {
+export enum ColorModel {
 	hex = 'hex',
 	rgba = 'rgba',
 	hsla = 'hsla'

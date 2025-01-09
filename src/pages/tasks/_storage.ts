@@ -18,7 +18,7 @@ export type ObjectStoreFiles = {
 	blob: Blob
 }
 
-export const enum ObjectStoreNames {
+export enum ObjectStoreNames {
 	settings = 'settings',
 	miscellaneous = 'miscellaneous',
 	tasks = 'tasks',
@@ -29,7 +29,7 @@ export const enum ObjectStoreNames {
 	files = 'files'
 }
 
-export const enum ObjectStoreKeys {
+export enum ObjectStoreKeys {
 
 	/** @param {SortBy} value `SortBy` */
 	settings_sortby = 'sort_by',

@@ -1,4 +1,4 @@
-export const enum Commands {
+export enum Commands {
 	toggle_textwrap,
 
 	/** @param {number} fontSize `number` */

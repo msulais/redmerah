@@ -25,7 +25,7 @@ import './index.scss'
 
 const DEFAULT_HEX_COLOR: HEXColor = '#FF0000'
 
-const enum ColorPickerEvents {
+enum ColorPickerEvents {
 	/** @param {HEXColor} color `HEXColor` */
 	changecolor = 'custom:changecolor'
 }

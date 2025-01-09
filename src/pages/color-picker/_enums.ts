@@ -1,4 +1,4 @@
-export const enum ColorPickerMode {
+export enum ColorPickerMode {
 	image,
 	rectangle,
 	rectangle_hsl,
@@ -13,7 +13,7 @@ export const enum ColorPickerMode {
 	slider_hwb
 }
 
-export const enum Commands {
+export enum Commands {
 	/** @param mode `ColorPickerMode` */
 	change_mode,
 

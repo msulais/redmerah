@@ -14,7 +14,7 @@ import { RawIconButton } from "@/components/Button"
 import { List, RawList, type ListProps, type RawListProps } from "@/components/List"
 import './index.scss'
 
-const enum ExpanderVariant {
+enum ExpanderVariant {
 	outlined = 'outlined',
 	tonal = 'tonal',
 	filled = 'filled',

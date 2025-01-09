@@ -1,9 +1,9 @@
-export const enum Pages {
+export enum Pages {
 	scan,
 	generate
 }
 
-export const enum ErrorCorrectionLevel {
+export enum ErrorCorrectionLevel {
 	low = 'L',
 	medium = 'M',
 	quartile = 'Q',
@@ -16,7 +16,7 @@ export const all_ErrorCorrectionLevel = [
 	ErrorCorrectionLevel.high
 ]
 
-export const enum EncodingMode {
+export enum EncodingMode {
 	auto = 'Auto',
 	numeric = 'numeric',
 	alphanumeric = 'alphanumeric',
@@ -31,7 +31,7 @@ export const all_EncodingMode = [
 	EncodingMode.kanji
 ]
 
-export const enum CopyFileType {
+export enum CopyFileType {
 	png,
 	svg
 }
@@ -40,7 +40,7 @@ export const all_CopyFileType = [
 	CopyFileType.svg
 ]
 
-export const enum DownloadFileType {
+export enum DownloadFileType {
 	png,
 	jpeg,
 	svg
@@ -51,7 +51,7 @@ export const all_DownloadFileType = [
 	DownloadFileType.svg
 ]
 
-export const enum Commands {
+export enum Commands {
 	/** @param { Pages } page `Pages` */
 	change_page,
 

@@ -11,12 +11,12 @@ import Icon, { type IconProps } from "@/components/Icon"
 import '@/components/Button/index.scss'
 import './index.scss'
 
-const enum CheckBoxEvents {
+enum CheckBoxEvents {
 	/** @param {HTMLInputElement} el `HTMLInputElement` */
 	changestate = 'custom:changestate'
 }
 
-const enum CheckBoxVariant {
+enum CheckBoxVariant {
 	radio,
 	check
 }

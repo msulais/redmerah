@@ -8,14 +8,14 @@ import Icon, { type IconProps } from '@/components/Icon'
 import Emoji from '@/components/Emoji'
 import './index.scss'
 
-const enum ButtonVariant {
+enum ButtonVariant {
 	filled,
 	outlined,
 	tonal,
 	transparent
 }
 
-const enum ButtonIndicatorPosition {
+enum ButtonIndicatorPosition {
 	top = 'top',
 	right = 'right',
 	bottom = 'bottom',

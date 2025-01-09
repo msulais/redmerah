@@ -1,4 +1,4 @@
-export const enum ElementIds {
+export enum ElementIds {
 	color_accent = 'g-color-accent',
 	splash = 'g-splash',
 	text_tooltip = 'c-text-tooltip',

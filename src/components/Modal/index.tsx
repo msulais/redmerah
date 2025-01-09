@@ -49,7 +49,7 @@ type ModalCloseDetail = {
 	soft?: boolean
 }
 
-const enum ModalEvents {
+enum ModalEvents {
 	shortfocus = 'custom:shortfocus',
 
 	/** @param {ModalCloseDetail} detail `ModalCloseDetail` */
@@ -61,7 +61,7 @@ const enum ModalEvents {
 	open = 'custom:open'
 }
 
-const enum ModalListenerEvents {
+enum ModalListenerEvents {
 	/** @param modal `HTMLDialogElement` */
 	open = 'custom:open',
 

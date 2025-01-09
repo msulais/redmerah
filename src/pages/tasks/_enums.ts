@@ -1,4 +1,4 @@
-export const enum Commands {
+export enum Commands {
 	toggle_navigation_expand,
 
 	/** @param {Pages | number} page `Pages | number` either page or list id */
@@ -132,7 +132,7 @@ export const enum Commands {
 	get_all_task,
 }
 
-export const enum Pages {
+export enum Pages {
 	tasks = 'tasks',
 	all = 'all',
 	completed = 'completed',
@@ -141,7 +141,7 @@ export const enum Pages {
 	planned = 'planned'
 }
 
-export const enum SortBy {
+export enum SortBy {
 	name = 'name',
 	importance = 'importance',
 	creation_date = 'creation_date',
@@ -149,7 +149,7 @@ export const enum SortBy {
 	uncompleted = 'uncompleted'
 }
 
-export const enum SortMode {
+export enum SortMode {
 	ascending = 'asc',
 	descending = 'desc'
 }

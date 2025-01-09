@@ -3,11 +3,11 @@ export type ObjectStoreSettings<T = unknown> = {
 	value: T
 }
 
-export const enum ObjectStoreNames {
+export enum ObjectStoreNames {
 	settings = 'settings',
 }
 
-export const enum ObjectStoreSettingsKeys {
+export enum ObjectStoreSettingsKeys {
 	/** @param page `Pages` */
 	last_page = 'last_page',
 }

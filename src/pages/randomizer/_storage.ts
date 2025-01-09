@@ -12,13 +12,13 @@ export type ObjectStoreLastResult = {
 	value: unknown
 }
 
-export const enum ObjectStoreNames {
+export enum ObjectStoreNames {
 	settings = 'settings',
 	lists = 'lists',
 	last_output = 'last_output'
 }
 
-export const enum ObjectStoreKeys {
+export enum ObjectStoreKeys {
 	lastoutput_string = 'string',
 	lastoutput_numbers = 'numbers',
 	lastoutput_words = 'words',

@@ -1,16 +1,16 @@
-export const enum DecimalNumberFormat {
+export enum DecimalNumberFormat {
 	point = '.',
 	comma = ','
 }
 
-export const enum NumberType {
+export enum NumberType {
 	decimal = 'decimal',
 	hexadecimal = 'hexadecimal',
 	octal = 'octal',
 	binary = 'binary',
 }
 
-export const enum GroupingNumberFormat {
+export enum GroupingNumberFormat {
 	point = '.',
 	comma = ',',
 	none = '',
@@ -18,19 +18,19 @@ export const enum GroupingNumberFormat {
 	underscore = '_'
 }
 
-export const enum DateOperation {
+export enum DateOperation {
 	add = 'add',
 	subtract = 'subtract',
 	difference = 'difference'
 }
 
-export const enum ScientificAngleType {
+export enum ScientificAngleType {
 	RAD = 'RAD',
 	DEG = 'DEG',
 	GRAD = 'GRAD'
 }
 
-export const enum CalculatorType {
+export enum CalculatorType {
 	basic = 'basic',
 	scientific = 'scientific',
 	converter = 'converter',
@@ -38,7 +38,7 @@ export const enum CalculatorType {
 	date = 'date'
 }
 
-export const enum Commands {
+export enum Commands {
 	toggle_navigation_expand,
 	toggle_notebook_expand,
 

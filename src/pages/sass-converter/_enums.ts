@@ -1,4 +1,4 @@
-export const enum Commands {
+export enum Commands {
 	toggle_textwrap,
 
 	/** @param {number} fontsize `number` */
@@ -29,7 +29,7 @@ export const enum Commands {
 	toggle_minify
 }
 
-export const enum InputViewOption {
+export enum InputViewOption {
 	sass,
 	scss
 }

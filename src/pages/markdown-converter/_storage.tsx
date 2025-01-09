@@ -8,12 +8,12 @@ export type ObjectStoreLastInput<T = unknown> = {
 	value: T
 }
 
-export const enum ObjectStoreNames {
+export enum ObjectStoreNames {
 	settings = 'settings',
 	last_input = 'last_input',
 }
 
-export const enum ObjectStoreKeys {
+export enum ObjectStoreKeys {
 	settings_textwrap = 'text_wrap',
 	settings_fontsize = 'font_size',
 	lastinput_css = 'css',

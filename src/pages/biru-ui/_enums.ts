@@ -1,9 +1,9 @@
-export const enum Commands {
+export enum Commands {
 	/** @param {Pages} page `Pages` */
 	change_page
 }
 
-export const enum Pages {
+export enum Pages {
 	button = 'button',
 	checkbox = 'checkbox',
 	colorpicker = 'colorpicker',

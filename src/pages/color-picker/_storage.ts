@@ -8,16 +8,16 @@ export type IDBStoreLastInput<T = unknown> = {
 	value: T
 }
 
-export const enum IDBStoreNames {
+export enum IDBStoreNames {
 	settings = 'settings',
 	last_input = 'last_input',
 }
 
-export const enum IDBStoreKeysSettings {
+export enum IDBStoreKeysSettings {
 	mode = 'mode'
 }
 
-export const enum IDBStoreKeysLastInput {
+export enum IDBStoreKeysLastInput {
 	/** @param hex `HEXColor` */
 	hex_color = 'hex_color'
 }

@@ -11,7 +11,7 @@ export type ObjectStoreRadialGradient = Omit<RadialGradient, 'color_stop_list'>
 export type ObjectStoreConicGradient = Omit<ConicGradient, 'color_stop_list'>
 export type ObjectStoreColorStopGradient = ColorStopGradient
 
-export const enum ObjectStoreNames {
+export enum ObjectStoreNames {
 	settings = 'settings',
 	gradient_data = 'gradient_data',
 	linear_gradient = 'linear_gradient',
@@ -20,7 +20,7 @@ export const enum ObjectStoreNames {
 	color_stop_gradient = 'color_stop_gradient'
 }
 
-export const enum ObjectStoreSettingsKeys {
+export enum ObjectStoreSettingsKeys {
 	/** @param value `number` */
 	border_radius = 'border_radius',
 

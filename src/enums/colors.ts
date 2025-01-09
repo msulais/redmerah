@@ -1,4 +1,4 @@
-export const enum AppColors {
+export enum AppColors {
 	background = 'var(--g-color-background)',
 	accent     = 'var(--g-color-accent)',
 	on_accent  = 'var(--g-on-color-accent)',
