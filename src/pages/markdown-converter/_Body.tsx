@@ -1,16 +1,17 @@
-import { createMemo, createSignal, onMount, Show, type VoidComponent } from "solid-js"
+import { createMemo, createSignal, createUniqueId, onMount, Show, type VoidComponent } from "solid-js"
 import beautiful from 'simply-beautiful'
 
 import type { Settings } from "./_types"
-import { event_add_listener } from "@/utils/event"
+import { event_add_listener, event_current_target } from "@/utils/event"
 import { attr_remove, attr_set, attr_set_if_exist } from "@/utils/attributes"
 import { BodyAttributes } from "@/enums/attributes"
 import { timeout_clear, timeout_set } from "@/utils/timeout"
 import { Commands } from "./_enums"
 import { IFRAME_PREVIEW_ID, MIN_EDITOR_WIDTH } from "./_constants"
 import { window_matches } from "@/utils/window"
-import { document_body } from "@/utils/document"
+import { document_active, document_body } from "@/utils/document"
 import { string_replace } from "@/utils/string"
+import { element_id, element_tagname, element_valid_target } from "@/utils/element"
 
 import Button, { ButtonVariant } from "@/components/Button"
 import CSS from './_styles.module.scss'
@@ -38,6 +39,10 @@ const _: VoidComponent<{
 	const [input_view_option, set_input_view_option] = createSignal<InputViewOption | null>(InputViewOption.markdown)
 	const [output_view_option, set_output_view_option] = createSignal<OutputViewOption | null>(OutputViewOption.preview)
 	const settings = createMemo(() => props.settings)
+	const button_input_markdown_id = createUniqueId()
+	const button_input_css_id = createUniqueId()
+	const button_output_preview_id = createUniqueId()
+	const button_output_html_id = createUniqueId()
 	let timeout_id: number | null
 	let textarea_ref: HTMLTextAreaElement
 	let is_small_screen: boolean = false
@@ -101,77 +106,97 @@ const _: VoidComponent<{
 
 	const InputTabButtons: VoidComponent = () => (<>
 		<Button
+			id={button_input_markdown_id}
 			variant={ButtonVariant.tonal}
-			selected={input_view_option() == InputViewOption.markdown}
-			onClick={() => {
-				if (is_small_screen) {
-					set_input_view_option(InputViewOption.markdown)
-					set_output_view_option(null)
-					return;
-				}
-
-				if (input_view_option() == InputViewOption.markdown && output_view_option() != null)
-					return set_input_view_option(null)
-				set_input_view_option(InputViewOption.markdown)
-				textarea_ref.value = props.text_markdown
-			}}>
+			selected={input_view_option() == InputViewOption.markdown}>
 			Markdown
 		</Button>
 		<Button
+			id={button_input_css_id}
 			variant={ButtonVariant.tonal}
-			selected={input_view_option() == InputViewOption.css}
-			onClick={() => {
-				if (is_small_screen) {
-					set_input_view_option(InputViewOption.css)
-					set_output_view_option(null)
-					return;
-				}
-
-				if (input_view_option() == InputViewOption.css && output_view_option() != null)
-					return set_input_view_option(null)
-				set_input_view_option(InputViewOption.css)
-				textarea_ref.value = props.text_css
-			}}>
+			selected={input_view_option() == InputViewOption.css}>
 			CSS
 		</Button>
 	</>)
 
 	const OutputTabButtons: VoidComponent = () => (<>
 		<Button
+			id={button_output_preview_id}
 			variant={ButtonVariant.tonal}
-			selected={output_view_option() == OutputViewOption.preview}
-			onClick={() => {
-				if (is_small_screen) {
-					set_output_view_option(OutputViewOption.preview)
-					set_input_view_option(null)
-					return;
-				}
-
-				if (output_view_option() == OutputViewOption.preview && input_view_option() != null)
-					return set_output_view_option(null)
-				set_output_view_option(OutputViewOption.preview)
-			}}>
+			selected={output_view_option() == OutputViewOption.preview}>
 			Preview
 		</Button>
 		<Button
+			id={button_output_html_id}
 			variant={ButtonVariant.tonal}
-			selected={output_view_option() == OutputViewOption.html}
-			onClick={() => {
-				if (is_small_screen) {
-					set_output_view_option(OutputViewOption.html)
-					set_input_view_option(null)
-					return;
-				}
-
-				if (output_view_option() == OutputViewOption.html && input_view_option() != null)
-					return set_output_view_option(null)
-				set_output_view_option(OutputViewOption.html)
-			}}>
+			selected={output_view_option() == OutputViewOption.html}>
 			HTML
 		</Button>
 	</>)
 
-	return (<div class={CSS.body}>
+	return (<div
+		class={CSS.body}
+		onClick={ev => {
+			const button = document_active()!
+			if (!element_valid_target(
+				event_current_target(ev),
+				button,
+				el => element_tagname(el) == 'BUTTON'
+			)) return
+
+			switch (element_id(button)) {
+				case button_input_markdown_id: {
+					if (is_small_screen) {
+						set_input_view_option(InputViewOption.markdown)
+						set_output_view_option(null)
+						return;
+					}
+
+					if (input_view_option() == InputViewOption.markdown && output_view_option() != null)
+						return set_input_view_option(null)
+					set_input_view_option(InputViewOption.markdown)
+					textarea_ref.value = props.text_markdown
+					break
+				}
+				case button_input_css_id: {
+					if (is_small_screen) {
+						set_input_view_option(InputViewOption.css)
+						set_output_view_option(null)
+						return;
+					}
+
+					if (input_view_option() == InputViewOption.css && output_view_option() != null)
+						return set_input_view_option(null)
+					set_input_view_option(InputViewOption.css)
+					textarea_ref.value = props.text_css
+					break
+				}
+				case button_output_preview_id: {
+					if (is_small_screen) {
+						set_output_view_option(OutputViewOption.preview)
+						set_input_view_option(null)
+						return;
+					}
+
+					if (output_view_option() == OutputViewOption.preview && input_view_option() != null)
+						return set_output_view_option(null)
+					set_output_view_option(OutputViewOption.preview)
+					break
+				}
+				case button_output_html_id: {
+					if (is_small_screen) {
+						set_output_view_option(OutputViewOption.html)
+						set_input_view_option(null)
+						return;
+					}
+
+					if (output_view_option() == OutputViewOption.html && input_view_option() != null)
+						return set_output_view_option(null)
+					set_output_view_option(OutputViewOption.html)
+					break
+				}
+			}
+		}}>
 		<div
 			class={CSS.body_input}
 			data-hidden={attr_set_if_exist(input_view_option() == null)}
