@@ -28,7 +28,8 @@
 	min-height: 40px;
 	position: relative;
 	scrollbar-width: none;
-	transition-duration: .3s;
+	transition-property: all, border-color;
+	transition-duration: .3s, 0s;
 	user-select: none;
 	-ms-overflow-style: none;
 
@@ -62,6 +63,7 @@
 		@media (hover:hover) {
 			&:hover {
 				--g-background-color-opacity: var(--g-opacity2);
+				--c-btn-border-opacity: var(--g-opacity2);
 				cursor: pointer;
 			}
 		}
