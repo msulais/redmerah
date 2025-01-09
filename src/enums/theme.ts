@@ -3,8 +3,3 @@ export enum ThemeData {
 	dark = 'dark',
 	system = 'system'
 }
-export const all_ThemeData = [
-	ThemeData.light,
-	ThemeData.dark,
-	ThemeData.system
-]

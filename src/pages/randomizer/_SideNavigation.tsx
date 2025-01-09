@@ -1,6 +1,6 @@
 import { createMemo, For, type VoidComponent } from "solid-js"
 
-import { all_RandomizerType, RandomizerType } from "./_enums"
+import { RandomizerType } from "./_enums"
 import { classlist_module } from "@/utils/attributes"
 import { RANDOMIZER_TYPES } from "./_constants"
 import { document_active } from "@/utils/document"
@@ -33,7 +33,7 @@ const _: VoidComponent<{
 
 			const data_type = element_dataset(button, 'type')
 			if (data_type
-				&& valid_enum_value(data_type, all_RandomizerType)
+				&& valid_enum_value(data_type, RandomizerType)
 				&& randomizer() != data_type
 			) {
 				props.on_change_randomizer(data_type as RandomizerType)

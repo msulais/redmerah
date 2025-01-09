@@ -4,9 +4,3 @@ export enum CornerData {
 	round = 'round',
 	full_round = 'full-round'
 }
-export const all_CornerData = [
-	CornerData.sharp,
-	CornerData.semi_round,
-	CornerData.round,
-	CornerData.full_round,
-]

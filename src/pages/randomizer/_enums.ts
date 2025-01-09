@@ -6,14 +6,6 @@ export enum RandomizerType {
 	colors = 'colors',
 	teams = 'teams'
 }
-export const all_RandomizerType = [
-	RandomizerType.string,
-	RandomizerType.numbers,
-	RandomizerType.words,
-	RandomizerType.selection,
-	RandomizerType.colors,
-	RandomizerType.teams
-]
 
 export enum NumbersRandomizerNumberType {
 	decimal = 10,
@@ -21,23 +13,12 @@ export enum NumbersRandomizerNumberType {
 	octal = 8,
 	binary = 2
 }
-export const all_NumbersRandomizerNumberType = [
-	NumbersRandomizerNumberType.decimal,
-	NumbersRandomizerNumberType.hexadecimal,
-	NumbersRandomizerNumberType.octal,
-	NumbersRandomizerNumberType.binary
-]
 
 export enum NumbersRandomizerSort {
 	ascending = 'asc',
 	descending = 'desc',
 	none = 'none',
 }
-export const all_NumbersRandomizerSort = [
-	NumbersRandomizerSort.ascending,
-	NumbersRandomizerSort.descending,
-	NumbersRandomizerSort.none,
-]
 
 export enum WordsRandomizerWordCase {
 	uppercase = 'upper',
@@ -46,24 +27,12 @@ export enum WordsRandomizerWordCase {
 	togglecase = 'toggle',
 	none = 'none'
 }
-export const all_WordsRandomizerWordCase = [
-	WordsRandomizerWordCase.uppercase,
-	WordsRandomizerWordCase.lowercase,
-	WordsRandomizerWordCase.titlecase,
-	WordsRandomizerWordCase.togglecase,
-	WordsRandomizerWordCase.none
-]
 
 export enum ColorsRandomizerColorModel {
 	rgb = 'rgb',
 	hsl = 'hsl',
 	hex = 'hex'
 }
-export const all_ColorsRandomizerColorModel = [
-	ColorsRandomizerColorModel.rgb,
-	ColorsRandomizerColorModel.hsl,
-	ColorsRandomizerColorModel.hex
-]
 
 export enum Commands {
 	/**

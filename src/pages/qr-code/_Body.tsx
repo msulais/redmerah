@@ -3,7 +3,7 @@ import { BrowserQRCodeReader } from '@zxing/browser'
 import { BarcodeFormat, DecodeHintType } from "@zxing/library"
 
 import { timeout_set } from "@/utils/timeout"
-import { all_CopyFileType, all_DownloadFileType, Commands, CopyFileType, DownloadFileType, Pages } from "./_enums"
+import { Commands, CopyFileType, DownloadFileType, Pages } from "./_enums"
 import { event_current_target, event_prevent_default, event_target } from "@/utils/event"
 import { attr_set_if_exist } from "@/utils/attributes"
 import { file_open } from "@/utils/file"
@@ -14,7 +14,6 @@ import { array_length } from "@/utils/array"
 import { string_length, string_starts_with } from "@/utils/string"
 import { document_active } from "@/utils/document"
 import { element_dataset, element_id, element_tagname, element_valid_target } from "@/utils/element"
-import { number_is_not_defined, number_parse } from "@/utils/number"
 
 import Tooltip from "@/components/Tooltip"
 import Icon from "@/components/Icon"
@@ -108,28 +107,20 @@ const _: VoidComponent<{
 				)) return
 
 				const data_download = element_dataset(button, 'download')
-				if (data_download) {
-					const type = number_parse(data_download, true)
-					if (
-						number_is_not_defined(type)
-						|| !valid_enum_value(type, all_DownloadFileType)
-					) return
-
-					command(Commands.download_qrcode, type as DownloadFileType)
+				if (data_download
+					&& valid_enum_value(data_download, DownloadFileType)
+				) {
+					command(Commands.download_qrcode, data_download as DownloadFileType)
 					close_submenu(submenu_downloadcanvasactions_ref)
 					timeout_set(() => close_menu(menu_canvasactions_ref), 300)
 					return
 				}
 
 				const data_copy = element_dataset(button, 'copy')
-				if (data_copy) {
-					const type = number_parse(data_copy, true)
-					if (
-						number_is_not_defined(type)
-						|| !valid_enum_value(type, all_CopyFileType)
-					) return
-
-					command(Commands.copy_qrcode, ev, type as CopyFileType)
+				if (data_copy
+					&& valid_enum_value(data_copy, CopyFileType)
+				) {
+					command(Commands.copy_qrcode, ev, data_copy as CopyFileType)
 					close_submenu(submenu_copycanvasactions_ref)
 					timeout_set(() => close_menu(menu_canvasactions_ref), 300)
 					return

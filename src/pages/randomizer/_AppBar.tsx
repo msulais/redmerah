@@ -6,12 +6,12 @@ import { timeout_clear, timeout_set, wait } from "@/utils/timeout"
 import { attr_set, attr_set_if_exist, classlist_module } from "@/utils/attributes"
 import { RootAttributes } from "@/enums/attributes"
 import { ExternalLinks, RoutesLinks } from "@/enums/links"
-import { all_ThemeData, ThemeData } from "@/enums/theme"
+import { ThemeData } from "@/enums/theme"
 import { storage_get, storage_set } from "@/utils/storage"
 import { LocalStorageKeys } from "@/enums/storage"
-import { RandomizerType, NumbersRandomizerSort, NumbersRandomizerNumberType, WordsRandomizerWordCase, ColorsRandomizerColorModel, Commands, all_NumbersRandomizerSort, all_NumbersRandomizerNumberType, all_WordsRandomizerWordCase, all_ColorsRandomizerColorModel, all_RandomizerType } from "./_enums"
+import { RandomizerType, NumbersRandomizerSort, NumbersRandomizerNumberType, WordsRandomizerWordCase, ColorsRandomizerColorModel, Commands } from "./_enums"
 import { url_encode, url_origin } from "@/utils/url"
-import { all_CornerData, CornerData } from "@/enums/corner"
+import { CornerData } from "@/enums/corner"
 import { window_matches } from "@/utils/window"
 import { RANDOMIZER_TYPES, SIZE_SIDE_NAVIGATION_NONE } from "./_constants"
 import { event_add_listener, event_current_target, event_target } from "@/utils/event"
@@ -113,7 +113,7 @@ const _: Component<{
 	function init_theme(): void {
 		const theme = storage_get(LocalStorageKeys.theme)
 
-		if (theme && valid_enum_value(theme, all_ThemeData)) {
+		if (theme && valid_enum_value(theme, ThemeData)) {
 			attr_set(root, RootAttributes.theme, theme)
 			set_theme(theme as ThemeData)
 		}
@@ -122,7 +122,7 @@ const _: Component<{
 	function init_corner(): void {
 		const corner = storage_get(LocalStorageKeys.corner)
 
-		if (corner && valid_enum_value(corner, all_CornerData)) {
+		if (corner && valid_enum_value(corner, CornerData)) {
 			attr_set(root, RootAttributes.corner, corner)
 			set_corner(corner as CornerData)
 		}
@@ -301,7 +301,7 @@ const _: Component<{
 						default:
 							const data_number_sort = element_dataset(button, 'numberSort')
 							if (data_number_sort
-								&& valid_enum_value(data_number_sort, all_NumbersRandomizerSort)
+								&& valid_enum_value(data_number_sort, NumbersRandomizerSort)
 							) return change_numbers_sort(data_number_sort as NumbersRandomizerSort)
 
 							const data_number_type = element_dataset(button, 'numberType')
@@ -309,7 +309,7 @@ const _: Component<{
 								const number_type = number_parse(data_number_type, true)
 								if (
 									number_is_not_defined(number_type)
-									|| valid_enum_value(number_type, all_NumbersRandomizerNumberType)
+									|| valid_enum_value(number_type, NumbersRandomizerNumberType)
 								) return
 
 								return change_number_type(data_number_type as unknown as NumbersRandomizerNumberType)
@@ -317,22 +317,22 @@ const _: Component<{
 
 							const data_words_case = element_dataset(button, 'wordsCase')
 							if (data_words_case
-								&& valid_enum_value(data_words_case, all_WordsRandomizerWordCase)
+								&& valid_enum_value(data_words_case, WordsRandomizerWordCase)
 							) return change_words_wordcase(data_words_case as WordsRandomizerWordCase)
 
 							const data_colors_model = element_dataset(button, 'colorsModel')
 							if (data_colors_model
-								&& valid_enum_value(data_colors_model, all_ColorsRandomizerColorModel)
+								&& valid_enum_value(data_colors_model, ColorsRandomizerColorModel)
 							) return change_colors_model(data_colors_model as ColorsRandomizerColorModel)
 
 							const data_theme = element_dataset(button, 'theme')
 							if (data_theme
-								&& valid_enum_value(data_theme, all_ThemeData)
+								&& valid_enum_value(data_theme, ThemeData)
 							) return change_theme(data_theme as ThemeData)
 
 							const data_corner = element_dataset(button, 'corner')
 							if (data_corner
-								&& valid_enum_value(data_corner, all_CornerData)
+								&& valid_enum_value(data_corner, CornerData)
 							) return change_corner(data_corner as CornerData)
 					}
 				}}
@@ -622,7 +622,7 @@ const _: Component<{
 						default:
 							const data_type = element_dataset(button, 'type')
 							if (data_type
-								&& valid_enum_value(data_type, all_RandomizerType)
+								&& valid_enum_value(data_type, RandomizerType)
 							) {
 								if (randomizer() != data_type) {
 									props.on_change_randomizer(data_type as RandomizerType)

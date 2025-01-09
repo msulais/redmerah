@@ -2,9 +2,9 @@ import { createMemo, createSignal, createUniqueId, onMount, Show, type VoidCompo
 
 import type { Settings } from "./_types"
 import { RootAttributes } from "@/enums/attributes"
-import { all_CornerData, CornerData } from "@/enums/corner"
+import { CornerData } from "@/enums/corner"
 import { LocalStorageKeys } from "@/enums/storage"
-import { all_ThemeData, ThemeData } from "@/enums/theme"
+import { ThemeData } from "@/enums/theme"
 import { storage_set, storage_get } from "@/utils/storage"
 import { attr_set } from "@/utils/attributes"
 import { timeout_set, wait } from "@/utils/timeout"
@@ -14,11 +14,11 @@ import { document_active, document_root } from "@/utils/document"
 import { navigator_share } from "@/utils/navigator"
 import { date_year } from "@/utils/datetime"
 import { event_current_target, event_target } from "@/utils/event"
-import { number_is_not_defined, number_parse, number_safe } from "@/utils/number"
+import { number_safe } from "@/utils/number"
 import { app_qr_code as app } from "@/constants/apps"
 import { valid_enum_value } from "@/utils/object"
 import { element_valid_target, element_tagname, element_id, element_dataset } from "@/utils/element"
-import { all_CopyFileType, all_DownloadFileType, all_EncodingMode, all_ErrorCorrectionLevel, Commands, CopyFileType, DownloadFileType, EncodingMode, ErrorCorrectionLevel, Pages } from "./_enums"
+import { Commands, CopyFileType, DownloadFileType, EncodingMode, ErrorCorrectionLevel, Pages } from "./_enums"
 import logo_redmerah from '@/assets/logo.svg'
 
 import Tooltip from "@/components/Tooltip"
@@ -105,7 +105,7 @@ const _: VoidComponent<{
 	function init_theme(): void {
 		const theme = storage_get(LocalStorageKeys.theme)
 
-		if (theme && valid_enum_value(theme, all_ThemeData)) {
+		if (theme && valid_enum_value(theme, ThemeData)) {
 			attr_set(root, RootAttributes.theme, theme)
 			set_theme(theme as ThemeData)
 		}
@@ -114,7 +114,7 @@ const _: VoidComponent<{
 	function init_corner(): void {
 		const corner = storage_get(LocalStorageKeys.corner)
 
-		if (corner && valid_enum_value(corner, all_CornerData)) {
+		if (corner && valid_enum_value(corner, CornerData)) {
 			attr_set(root, RootAttributes.corner, corner)
 			set_corner(corner as CornerData)
 		}
@@ -241,22 +241,22 @@ const _: VoidComponent<{
 						default: {
 							const data_theme = element_dataset(button, 'theme')
 							if (data_theme
-								&& valid_enum_value(data_theme, all_ThemeData)
+								&& valid_enum_value(data_theme, ThemeData)
 							) return change_theme(data_theme as ThemeData)
 
 							const data_corner = element_dataset(button, 'corner')
 							if (data_corner
-								&& valid_enum_value(data_corner, all_CornerData)
+								&& valid_enum_value(data_corner, CornerData)
 							) return change_corner(data_corner as CornerData)
 
 							const data_ecl = element_dataset(button, 'ecl')
 							if (data_ecl
-								&& valid_enum_value(data_ecl, all_ErrorCorrectionLevel)
+								&& valid_enum_value(data_ecl, ErrorCorrectionLevel)
 							) return change_error_correction_level(data_ecl as ErrorCorrectionLevel)
 
 							const data_encoding = element_dataset(button, 'encoding')
 							if (data_encoding
-								&& valid_enum_value(data_encoding, all_EncodingMode)
+								&& valid_enum_value(data_encoding, EncodingMode)
 							) return change_encoding_mode(data_encoding as EncodingMode)
 						}
 					}
@@ -494,28 +494,20 @@ const _: VoidComponent<{
 					)) return
 
 					const data_download = element_dataset(button, 'download')
-					if (data_download) {
-						const type = number_parse(data_download, true)
-						if (
-							number_is_not_defined(type)
-							|| !valid_enum_value(type, all_DownloadFileType)
-						) return
-
-						command(Commands.download_qrcode, type as DownloadFileType)
+					if (data_download
+						&& valid_enum_value(data_download, DownloadFileType)
+					) {
+						command(Commands.download_qrcode, data_download as DownloadFileType)
 						close_submenu(submenu_downloadmoreactions_ref)
 						timeout_set(() => close_menu(menu_moreactions_ref), 300)
 						return
 					}
 
 					const data_copy = element_dataset(button, 'copy')
-					if (data_copy) {
-						const type = number_parse(data_copy, true)
-						if (
-							number_is_not_defined(type)
-							|| !valid_enum_value(type, all_CopyFileType)
-						) return
-
-						command(Commands.copy_qrcode, ev, type as CopyFileType)
+					if (data_copy
+						&& valid_enum_value(data_copy, CopyFileType)
+					) {
+						command(Commands.copy_qrcode, ev, data_copy as CopyFileType)
 						close_submenu(submenu_copymoreactions_ref)
 						timeout_set(() => close_menu(menu_moreactions_ref), 300)
 						return

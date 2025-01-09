@@ -1,6 +1,6 @@
 export enum Pages {
-	scan,
-	generate
+	scan = 'scan',
+	generate = 'generate'
 }
 
 export enum ErrorCorrectionLevel {
@@ -9,12 +9,6 @@ export enum ErrorCorrectionLevel {
 	quartile = 'Q',
 	high = 'H'
 }
-export const all_ErrorCorrectionLevel = [
-	ErrorCorrectionLevel.low,
-	ErrorCorrectionLevel.medium,
-	ErrorCorrectionLevel.quartile,
-	ErrorCorrectionLevel.high
-]
 
 export enum EncodingMode {
 	auto = 'Auto',
@@ -23,33 +17,17 @@ export enum EncodingMode {
 	byte = 'byte',
 	kanji = 'kanji'
 }
-export const all_EncodingMode = [
-	EncodingMode.auto,
-	EncodingMode.numeric,
-	EncodingMode.alphanumeric,
-	EncodingMode.byte,
-	EncodingMode.kanji
-]
 
 export enum CopyFileType {
-	png,
-	svg
+	png = 'png',
+	svg = 'svg'
 }
-export const all_CopyFileType = [
-	CopyFileType.png,
-	CopyFileType.svg
-]
 
 export enum DownloadFileType {
-	png,
-	jpeg,
-	svg
+	png = 'png',
+	jpeg = 'svg',
+	svg = 'svg'
 }
-export const all_DownloadFileType = [
-	DownloadFileType.png,
-	DownloadFileType.jpeg,
-	DownloadFileType.svg
-]
 
 export enum Commands {
 	/** @param { Pages } page `Pages` */
