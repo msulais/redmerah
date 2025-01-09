@@ -1,4 +1,4 @@
-import { createMemo, createSignal, onMount, type VoidComponent } from "solid-js"
+import { createMemo, createSignal, createUniqueId, onMount, type VoidComponent } from "solid-js"
 
 import type { Settings } from "./_types"
 import { RootAttributes } from "@/enums/attributes"
@@ -8,19 +8,21 @@ import { LocalStorageKeys } from "@/enums/storage"
 import { ThemeData } from "@/enums/theme"
 import { storage_set, storage_get } from "@/utils/storage"
 import { wait } from "@/utils/timeout"
-import { url_encode } from "@/utils/url"
+import { url_encode, url_origin } from "@/utils/url"
 import { setAttribute } from "solid-js/web"
 import { Commands } from "./_enums"
 import { NumberTextField } from "@/components/TextField"
 import { IFRAME_PREVIEW_ID } from "./_constants"
-import { element_by_id } from "@/utils/element"
-import { array_includes } from "@/utils/array"
+import { element_by_id, element_dataset, element_id, element_tagname, element_valid_target } from "@/utils/element"
 import { navigator_share } from "@/utils/navigator"
-import { document_root } from "@/utils/document"
+import { document_active, document_root } from "@/utils/document"
 import { date_year } from "@/utils/datetime"
 import { number_safe } from "@/utils/number"
 import { event_current_target } from "@/utils/event"
-import logo from '@/assets/apps/markdown-converter-logo.svg'
+import { attr_set } from "@/utils/attributes"
+import { array_includes } from "@/utils/array"
+import { valid_enum_value } from "@/utils/object"
+import { app_markdown_converter as app } from "@/constants/apps"
 import logo_redmerah from '@/assets/logo.svg'
 import logo_css from '@/assets/css-logo.svg'
 import logo_html from '@/assets/html-logo.svg'
@@ -36,14 +38,9 @@ const _: VoidComponent<{
 	command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
 	const root = document_root()
-	const theme_system = ThemeData.system
-	const theme_light = ThemeData.light
-	const theme_dark = ThemeData.dark
-	const corner_sharp = CornerData.sharp
-	const corner_semiround = CornerData.semi_round
-	const corner_round = CornerData.round
-	const corner_fullround = CornerData.full_round
-
+	const button_info_id = createUniqueId()
+	const button_settings_id = createUniqueId()
+	const button_moreactions_id = createUniqueId()
 	const [is_menu_info_open, set_is_menu_info_open] = createSignal<boolean>(false)
 	const [is_menu_settings_open, set_is_menu_settings_open] = createSignal<boolean>(false)
 	const [is_submenu_themesettings_open, set_is_submenu_themesettings_open] = createSignal<boolean>(false)
@@ -51,8 +48,8 @@ const _: VoidComponent<{
 	const [is_menu_moreactions_open, set_is_menu_moreactions_open] = createSignal<boolean>(false)
 	const [is_submenu_downloadmoreactions_open, set_is_submenu_downloadmoreactions_open] = createSignal<boolean>(false)
 	const [is_submenu_copyallmoreactions_open, set_is_submenu_copyallmoreactions_open] = createSignal<boolean>(false)
-	const [theme, set_theme] = createSignal<ThemeData>(theme_system)
-	const [corner, set_corner] = createSignal<CornerData>(corner_round)
+	const [theme, set_theme] = createSignal<ThemeData>(ThemeData.system)
+	const [corner, set_corner] = createSignal<CornerData>(CornerData.round)
 	const settings = createMemo(() => props.settings)
 	let menu_info_ref: HTMLDialogElement
 	let menu_settings_ref: HTMLDialogElement
@@ -87,8 +84,8 @@ const _: VoidComponent<{
 	function init_theme(): void {
 		const theme = storage_get(LocalStorageKeys.theme)
 
-		if (theme && array_includes([theme_system, theme_light, theme_dark], theme as ThemeData)) {
-			setAttribute(root, RootAttributes.theme, theme)
+		if (theme && valid_enum_value(theme, ThemeData)) {
+			attr_set(root, RootAttributes.theme, theme)
 			set_theme(theme as ThemeData)
 		}
 	}
@@ -96,8 +93,8 @@ const _: VoidComponent<{
 	function init_corner(): void {
 		const corner = storage_get(LocalStorageKeys.corner)
 
-		if (corner && array_includes([corner_sharp, corner_semiround, corner_round, corner_fullround], corner as CornerData)) {
-			setAttribute(root, RootAttributes.corner, corner)
+		if (corner && valid_enum_value(corner, CornerData)) {
+			attr_set(root, RootAttributes.corner, corner)
 			set_corner(corner as CornerData)
 		}
 	}
@@ -122,59 +119,76 @@ const _: VoidComponent<{
 	})
 
 	const Menus: VoidComponent = () => {
+		const button_info_share_id = createUniqueId()
+		const button_moreactions_print_id = createUniqueId()
+		const button_moreactions_openfile_id = createUniqueId()
+		const button_moreactions_resetinput_id = createUniqueId()
 		return (<>
 			<Menu
+				onClick={(ev) => {
+					const button = document_active()!
+					if (!element_valid_target(
+						event_current_target(ev),
+						button,
+						el => {
+							const tagname = element_tagname(el)
+							return tagname == 'BUTTON' || tagname == 'A'
+						}
+					)) return
+
+					switch (element_id(button)) {
+						case button_info_share_id:
+							navigator_share({
+								title: app.name,
+								text: app.name + ' v' + app.build_version,
+								url: url_origin() + app.link
+							})
+							break
+					}
+
+					close_menu(menu_info_ref)
+				}}
 				style={{width: '200px'}}
 				ref={r => menu_info_ref = r}
 				on_toggle_open={(v) => set_is_menu_info_open(v)}>
 				<LinkMenuItem
-					onClick={() => close_menu(menu_info_ref)}
 					href={RoutesLinks.home}
 					leading={<img src={logo_redmerah.src} width={16} alt='Redmerah logo'/>}>
 					Redmerah
 				</LinkMenuItem>
 				<LinkMenuItem
-					onClick={() => close_menu(menu_info_ref)}
 					href={RoutesLinks.apps}
 					icon_code={0xE063}>
 					More apps
 				</LinkMenuItem>
 				<LinkMenuItem
-					onClick={() => close_menu(menu_info_ref)}
 					href={RoutesLinks.about}
 					icon_code={0xE930}>
 					About us
 				</LinkMenuItem>
 				<MenuDivider />
 				<LinkMenuItem
-					onClick={() => close_menu(menu_info_ref)}
 					href={RoutesLinks.privacy}
 					icon_code={0xEE51}>
 					Privacy policy
 				</LinkMenuItem>
 				<LinkMenuItem
-					onClick={() => close_menu(menu_info_ref)}
 					href={RoutesLinks.terms}
 					icon_code={0xED47}>
 					Terms & conditions
 				</LinkMenuItem>
 				<MenuDivider />
 				<MenuItem
-					onClick={() => {
-						navigator_share({ title: 'Markdown Converter', text: 'Markdown Converter', url: document.URL })
-						close_menu(menu_info_ref)
-					}}
+					id={button_info_share_id}
 					icon_code={0xEE23}>
 					Share
 				</MenuItem>
 				<LinkMenuItem
-					onClick={() => close_menu(menu_info_ref)}
-					href={'mailto:' + ExternalLinks.contact_email + '?subject=' + url_encode('Markdown Converter')}
+					href={'mailto:' + ExternalLinks.contact_email + '?subject=' + url_encode('Tasks')}
 					icon_code={0xE3A0}>
 					Send feedback
 				</LinkMenuItem>
 				<LinkMenuItem
-					onClick={() => close_menu(menu_info_ref)}
 					href={ExternalLinks.donate}
 					open_in_new_tab
 					icon_code={0xE84B}>
@@ -184,7 +198,25 @@ const _: VoidComponent<{
 			</Menu>
 			<Menu
 				ref={r => menu_settings_ref = r}
-				on_toggle_open={(v) => set_is_menu_settings_open(v)}>
+				on_toggle_open={(v) => set_is_menu_settings_open(v)}
+				onClick={ev => {
+					const button = document_active()!
+					if (!element_valid_target(
+						event_current_target(ev),
+						button,
+						el => element_tagname(el) == 'BUTTON'
+					)) return
+
+					const data_theme = element_dataset(button, 'theme')
+					if (data_theme
+						&& valid_enum_value(data_theme, ThemeData)
+					) return change_theme(data_theme as ThemeData)
+
+					const data_corner = element_dataset(button, 'corner')
+					if (data_corner
+						&& valid_enum_value(data_corner, CornerData)
+					) return change_corner(data_corner as CornerData)
+				}}>
 				<SubMenu
 					ref={r => submenu_themesettings_ref = r}
 					on_toggle_open={v => set_is_submenu_themesettings_open(v)}
@@ -194,21 +226,21 @@ const _: VoidComponent<{
 						Theme
 					</SubMenuItem>}>
 					<MenuItem
-						selected={theme() == theme_light}
+						selected={theme() == ThemeData.light}
 						icon_code={0xF2CD}
-						onClick={() => change_theme(theme_light)}>
+						data-theme={ThemeData.light}>
 						Light
 					</MenuItem>
 					<MenuItem
-						selected={theme() == theme_dark}
+						selected={theme() == ThemeData.dark}
 						icon_code={0xF2B3}
-						onClick={() => change_theme(theme_dark)}>
+						data-theme={ThemeData.dark}>
 						Dark
 					</MenuItem>
 					<MenuItem
-						selected={theme() == theme_system}
+						selected={theme() == ThemeData.system}
 						icon_code={0xE96D}
-						onClick={() => change_theme(theme_system)}>
+						data-theme={ThemeData.system}>
 						System theme
 					</MenuItem>
 				</SubMenu>
@@ -221,27 +253,27 @@ const _: VoidComponent<{
 						Corner style
 					</SubMenuItem>}>
 					<MenuItem
-						selected={corner() == corner_sharp}
+						selected={corner() == CornerData.sharp}
 						icon_code={0xEA99}
-						onClick={() => change_corner(corner_sharp)}>
+						data-corner={CornerData.sharp}>
 						Sharp
 					</MenuItem>
 					<MenuItem
-						selected={corner() == corner_semiround}
+						selected={corner() == CornerData.semi_round}
 						icon_code={0xEEF7}
-						onClick={() => change_corner(corner_semiround)}>
+						data-corner={CornerData.semi_round}>
 						Semi round
 					</MenuItem>
 					<MenuItem
-						selected={corner() == corner_round}
+						selected={corner() == CornerData.round}
 						icon_code={0xF044}
-						onClick={() => change_corner(corner_round)}>
+						data-corner={CornerData.round}>
 						Round
 					</MenuItem>
 					<MenuItem
-						selected={corner() == corner_fullround}
+						selected={corner() == CornerData.full_round}
 						icon_code={0xE408}
-						onClick={() => change_corner(corner_fullround)}>
+						data-corner={CornerData.full_round}>
 						Full round
 					</MenuItem>
 				</SubMenu>
@@ -269,22 +301,53 @@ const _: VoidComponent<{
 			<Menu
 				style={{"min-width": '200px'}}
 				on_toggle_open={isOpen => set_is_menu_moreactions_open(isOpen)}
-				ref={r => menu_moreactions_ref = r}>
+				ref={r => menu_moreactions_ref = r}
+				onClick={ev => {
+					const button = document_active()!
+					if (!element_valid_target(
+						event_current_target(ev),
+						button,
+						el => element_tagname(el) == 'BUTTON'
+					)) return
+
+					switch (element_id(button)) {
+						case button_moreactions_print_id: {
+							close_menu(menu_moreactions_ref)
+							const iframe = element_by_id(IFRAME_PREVIEW_ID) as HTMLIFrameElement
+							iframe?.contentWindow?.print()
+							break
+						}
+						case button_moreactions_openfile_id: {
+							close_menu(menu_moreactions_ref)
+							command(Commands.open_file, ev)
+							break
+						}
+						case button_moreactions_resetinput_id: {
+							close_menu(menu_moreactions_ref)
+							command(Commands.reset_inputs)
+							break
+						}
+						default: {
+							const data_download = element_dataset(button, 'download')
+							if (data_download
+								&& array_includes(['markdown', 'html', 'css'], data_download)
+							) return download_file(data_download as ('markdown' | 'html' | 'css'))
+
+							const data_copy = element_dataset(button, 'copy')
+							if (data_copy
+								&& array_includes(['markdown', 'html', 'css'], data_copy)
+							) return copy_all(ev, data_copy as ('markdown' | 'html' | 'css'))
+						}
+					}
+				}}>
 				<MenuItem
 					icon_code={0xECFF}
-					onClick={() => {
-						close_menu(menu_moreactions_ref)
-						const iframe = element_by_id(IFRAME_PREVIEW_ID) as HTMLIFrameElement
-						iframe?.contentWindow?.print()
-					}}>
+					id={button_moreactions_print_id}>
 					Print
 				</MenuItem>
 				<MenuItem
 					icon_code={0xE607}
-					onClick={(ev) => {
-						close_menu(menu_moreactions_ref)
-						command(Commands.open_file, ev)
-					}}>
+					id={button_moreactions_openfile_id}>
 					Open file
 				</MenuItem>
 				<MenuDivider/>
@@ -300,17 +363,17 @@ const _: VoidComponent<{
 						leading={<svg width={20} viewBox="0 0 2560 2560" fill="none" xmlns="http://www.w3.org/2000/svg">
 							<path d="M2375.4 2067.68H184.6C82.8 2067.68 0 1984.88 0 1883.08V676.92C0 575.12 82.8 492.32 184.6 492.32H2375.36C2477.16 492.32 2559.96 575.12 2559.96 676.92V1883.08C2560 1984.88 2477.2 2067.68 2375.4 2067.68ZM615.4 1698.48V1218.48L861.56 1526.16L1107.72 1218.48V1698.48H1353.88V861.52H1107.72L861.56 1169.2L615.4 861.52H369.24V1698.44H615.4V1698.48ZM2264.6 1280H2018.44V861.52H1772.28V1280H1526.12L1895.36 1710.76L2264.6 1280Z" fill="rgb(var(--g-color-on-surface))"/>
 						</svg>}
-						onClick={() => download_file('markdown')}>
+						data-download='markdown'>
 						Markdown
 					</MenuItem>
 					<MenuItem
 						leading={<img width={20} src={logo_html.src} alt="HTML logo"/>}
-						onClick={() => download_file('html')}>
+						data-download="html">
 						HTML
 					</MenuItem>
 					<MenuItem
 						leading={<img width={20} src={logo_css.src} alt="CSS logo"/>}
-						onClick={() => download_file('css')}>
+						data-download="css">
 						CSS
 					</MenuItem>
 				</SubMenu>
@@ -326,27 +389,24 @@ const _: VoidComponent<{
 						leading={<svg width={20} viewBox="0 0 2560 2560" fill="none" xmlns="http://www.w3.org/2000/svg">
 							<path d="M2375.4 2067.68H184.6C82.8 2067.68 0 1984.88 0 1883.08V676.92C0 575.12 82.8 492.32 184.6 492.32H2375.36C2477.16 492.32 2559.96 575.12 2559.96 676.92V1883.08C2560 1984.88 2477.2 2067.68 2375.4 2067.68ZM615.4 1698.48V1218.48L861.56 1526.16L1107.72 1218.48V1698.48H1353.88V861.52H1107.72L861.56 1169.2L615.4 861.52H369.24V1698.44H615.4V1698.48ZM2264.6 1280H2018.44V861.52H1772.28V1280H1526.12L1895.36 1710.76L2264.6 1280Z" fill="rgb(var(--g-color-on-surface))"/>
 						</svg>}
-						onClick={ev => copy_all(ev, 'markdown')}>
+						data-copy="markdown">
 						Markdown
 					</MenuItem>
 					<MenuItem
 						leading={<img width={20} src={logo_html.src} alt="HTML logo"/>}
-						onClick={ev => copy_all(ev, 'html')}>
+						data-copy="html">
 						HTML
 					</MenuItem>
 					<MenuItem
 						leading={<img width={20} src={logo_css.src} alt="CSS logo"/>}
-						onClick={ev => copy_all(ev, 'css')}>
+						data-copy="css">
 						CSS
 					</MenuItem>
 				</SubMenu>
 				<MenuDivider/>
 				<MenuItem
 					icon_code={0xE113}
-					onClick={() => {
-						close_menu(menu_moreactions_ref)
-						command(Commands.reset_inputs)
-					}}>
+					id={button_moreactions_resetinput_id}>
 					Reset input
 				</MenuItem>
 			</Menu>
@@ -355,36 +415,50 @@ const _: VoidComponent<{
 
 	return (<>
 		<AppBar
-			leading={<img alt="Markdown converter logo" width={32} src={logo.src} />}
+			leading={<img alt="Markdown converter logo" width={32} src={app.logo_url} />}
 			headline="Markdown Converter"
+			onClick={ev => {
+				const button = document_active()!
+				if (!element_valid_target(
+					event_current_target(ev),
+					button,
+					el => element_tagname(el) == 'BUTTON'
+				)) return
+
+				switch (element_id(button)) {
+					case button_info_id: {
+						open_menu(ev, menu_info_ref, { anchor: button })
+						break
+					}
+					case button_settings_id: {
+						open_menu(ev, menu_settings_ref, { anchor: button })
+						break
+					}
+					case button_moreactions_id: {
+						open_menu(ev, menu_moreactions_ref, { anchor: button })
+						break
+					}
+				}
+			}}
 			trailing={<Tooltip>
 				<IconButton
+					id={button_info_id}
 					data-tooltip="Info"
 					focused={is_menu_info_open()}
 					code={0xE930}
-					onClick={(ev) => open_menu(ev, menu_info_ref, {
-						anchor: event_current_target(ev),
-						padding: 4
-					})}
 				/>
 				<IconButton
+					id={button_settings_id}
 					data-tooltip="Settings"
 					class={CSSAnimation.btn_rotate_icon}
 					focused={is_menu_settings_open()}
 					code={0xEE0F}
-					onClick={(ev) => open_menu(ev, menu_settings_ref, {
-						anchor: event_current_target(ev),
-						padding: 4
-					})}
 				/>
 				<IconButton
+					id={button_moreactions_id}
 					data-tooltip="More actions"
 					focused={is_menu_moreactions_open()}
 					code={0xEAD9}
-					onClick={(ev) => open_menu(ev, menu_moreactions_ref, {
-						anchor: event_current_target(ev),
-						padding: 4
-					})}
 				/>
 			</Tooltip>}
 		/>

@@ -58,34 +58,32 @@ const _: VoidComponent = () => {
 		set_text_html(marked(text_markdown(), { async: false }) as string)
 	}
 
-	function command(type: Commands, ...args: unknown[]): unknown {
-		// toggle_textWrap
-		if (type == Commands.toggle_textwrap) {
+	function command(type: Commands, ...args: unknown[]): unknown { switch (type) {
+		case Commands.toggle_textwrap: {
 			set_settings('text_wrap', t => !t)
 			save_settings([ObjectStoreKeys.settings_textwrap, settings.text_wrap])
+			break
 		}
-
-		// change_fontSize
-		else if (type == Commands.change_fontsize) {
-			set_settings('font_size', args[0] as number)
-			save_settings([ObjectStoreKeys.settings_fontsize, settings.font_size])
+		case Commands.change_fontsize: {
+			const [font_size] = args as [number]
+			set_settings('font_size', font_size)
+			save_settings([ObjectStoreKeys.settings_fontsize, font_size])
+			break
 		}
-
-		// update_css_text
-		else if (type == Commands.update_css_text) {
-			set_text_css(args[0] as string)
-			save_last_input([ObjectStoreKeys.lastinput_css, args[0]])
+		case Commands.update_css_text: {
+			const [text] = args as [string]
+			set_text_css(text)
+			save_last_input([ObjectStoreKeys.lastinput_css, text])
+			break
 		}
-
-		// update_markdown_text
-		else if (type == Commands.update_markdown_text) {
-			set_text_markdown(args[0] as string)
-			save_last_input([ObjectStoreKeys.lastinput_markdown, args[0]])
+		case Commands.update_markdown_text: {
+			const [text] = args as [string]
+			set_text_markdown(text)
+			save_last_input([ObjectStoreKeys.lastinput_markdown, text])
 			update_output()
+			break
 		}
-
-		// reset_inputs
-		else if (type == Commands.reset_inputs) {
+		case Commands.reset_inputs: {
 			set_text_markdown(DEFAULT_MARKDOWN_TEXT)
 			set_text_css(DEFAULT_CSS_TEXT)
 			save_last_input(
@@ -93,13 +91,13 @@ const _: VoidComponent = () => {
 				[ObjectStoreKeys.lastinput_css, DEFAULT_CSS_TEXT]
 			)
 			update_output()
+			break
 		}
-
-		// open_file
-		else if (type == Commands.open_file) {
+		case Commands.open_file: {
+			const [event] = args as [Event]
 			promise_done(file_open('text/*', true), async (files) => {
 				if (files == null || array_length(files as unknown as any[]) == 0) {
-					open_toast(args[0] as Event, toast_nofileselected_ref)
+					open_toast(event, toast_nofileselected_ref)
 					return
 				}
 
@@ -112,7 +110,7 @@ const _: VoidComponent = () => {
 						text += await file_read_as_text(file)
 					}
 				} catch {
-					open_toast(args[0] as Event, toast_errorreadingfiles_ref)
+					open_toast(event, toast_errorreadingfiles_ref)
 					return
 				}
 
@@ -120,35 +118,48 @@ const _: VoidComponent = () => {
 				save_last_input([ObjectStoreKeys.lastinput_markdown, text])
 				update_output()
 			})
+			break
 		}
-
-		// copy_all
-		else if (type == Commands.copy_all) {
-			const t = args[1] as ('markdown' | 'css' | 'html')
+		case Commands.copy_all: {
+			const [event, type] = args as [Event, 'markdown' | 'css' | 'html']
 			let text = ''
-			if (t == 'markdown') text = text_markdown()
-			else if (t == 'html') text = string_replace(beautiful.html(text_html()), /(?<=>)\n+(?=<)/gs, '\n')
-			else if (t == 'css') text = text_css()
+
+			switch (type) {
+				case "markdown": text = text_markdown(); break
+				case "css":text = text_css(); break
+				case "html": text = string_replace(beautiful.html(text_html()), /(?<=>)\n+(?=<)/gs, '\n'); break
+			}
 
 			promise_done(
 				navigator_clipboard_writetext(text),
-				() => open_toast(args[0] as Event, toast_copied_ref)
+				() => open_toast(event, toast_copied_ref)
 			)
+			break
 		}
-
-		// download_file
-		else if (type == Commands.download_file) {
-			const t = args[0] as ('markdown' | 'css' | 'html')
+		case Commands.download_file: {
+			const [type] = args as ['markdown' | 'css' | 'html']
 			let text = ''
 			let filename = ''
-			if (t == 'markdown') text = text_markdown(), filename = 'markdown.md'
-			else if (t == 'html') text = string_replace(beautiful.html(text_html()), /(?<=>)\n+(?=<)/gs, '\n'), filename = 'hypertext-markup-language.html'
-			else if (t == 'css') text = text_css(), filename = 'cascading-style-sheets.css'
+			switch (type) {
+				case "markdown":
+					text = text_markdown()
+					filename = 'markdown.md'
+					break
+				case "css":
+					text = text_css()
+					filename = 'cascading-style-sheets.css'
+					break
+				case "html":
+					text = string_replace(beautiful.html(text_html()), /(?<=>)\n+(?=<)/gs, '\n')
+					filename = 'hypertext-markup-language.html'
+					break
+			}
 
 			file_download(new Blob([text]), filename)
+			break
 		}
-		return
-	}
+		default: return
+	}}
 
 	function init_settings(): void {
 		const store_settings = db.read_store(ObjectStoreNames.settings)
