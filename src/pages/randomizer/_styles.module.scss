@@ -203,7 +203,7 @@ $appbar_generate_btn_none: 500px;
 	> div {
 		padding: 48px 4px 4px 4px;
 		border-radius: 8px;
-		transition-duration: .3s;
+		transition-duration: .2s;
 
 		:root[data-corner=sharp] & {
 			border-radius: 0;
@@ -249,7 +249,7 @@ $appbar_generate_btn_none: 500px;
 		display: flex;
 		font-weight: 500;
 		padding: 8px 16px;
-		transition-duration: .3s;
+		transition-duration: .2s;
 
 		:root[data-corner=sharp] & {
 			border-radius: 0;
@@ -338,7 +338,7 @@ $appbar_generate_btn_none: 500px;
 			display: flex;
 			font-weight: 500;
 			padding: 8px 16px;
-			transition-duration: .3s;
+			transition-duration: .2s;
 
 			:root[data-corner=sharp] & {
 				border-radius: 0;

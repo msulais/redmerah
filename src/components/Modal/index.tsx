@@ -755,7 +755,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 			timeout_reposition_id = timeout_set(() => {
 				reposition_modal()
 				timeout_reposition_id = null
-			}, 300)
+			}, 200)
 		})
 		observer.observe(modal_ref, {box: 'border-box'})
 
@@ -801,7 +801,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 		timeout_fixposition_id = timeout_set(() => {
 			fix_position()
 			timeout_fixposition_id = null
-		}, 300)
+		}, 200)
 	}
 
 	onMount(() => {

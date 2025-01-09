@@ -9,7 +9,7 @@
 		padding: 20px;
 		display: flex;
 		flex-direction: column;
-		transition-duration: .3s;
+		transition-duration: .2s;
 		position: relative;
 
 		:root[data-corner=sharp] & {
@@ -159,7 +159,7 @@
 
 	& span {
 		display: inline-block;
-		transition-duration: .3s;
+		transition-duration: .2s;
 		position: relative;
 
 		@media (hover: hover) {

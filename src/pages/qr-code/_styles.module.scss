@@ -30,7 +30,7 @@
 	justify-content: center;
 	overflow: hidden;
 	position: relative;
-	transition-duration: .3s;
+	transition-duration: .2s;
 
 	&[data-drag-over] {
 		border-color: rgb(var(--g-color-accent));

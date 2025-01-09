@@ -81,7 +81,7 @@ const _: VoidComponent = () => {
 				ctx?.clearRect(0, 0, canvas_ref.width,  canvas_ref.height)
 			})
 			timeout_id = null
-		}, 300)
+		}, 200)
 	}
 
 	function get_svg(): Promise<string> {

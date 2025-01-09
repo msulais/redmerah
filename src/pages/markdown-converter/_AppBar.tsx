@@ -68,7 +68,7 @@ const _: VoidComponent<{
 		setAttribute(root, RootAttributes.theme, theme)
 		storage_set(LocalStorageKeys.theme, theme)
 		close_submenu(submenu_themesettings_ref)
-		await wait(300)
+		await wait(200)
 		close_menu(menu_settings_ref)
 	}
 
@@ -77,7 +77,7 @@ const _: VoidComponent<{
 		setAttribute(root, RootAttributes.corner, corner)
 		storage_set(LocalStorageKeys.corner, corner)
 		close_submenu(submenu_cornersettings_ref)
-		await wait(300)
+		await wait(200)
 		close_menu(menu_settings_ref)
 	}
 
@@ -102,14 +102,14 @@ const _: VoidComponent<{
 	async function download_file(type: 'markdown' | 'css' | 'html'): Promise<void> {
 		command(Commands.download_file, type)
 		close_submenu(submenu_downloadmoreactions_ref)
-		await wait(300)
+		await wait(200)
 		close_menu(menu_moreactions_ref)
 	}
 
 	async function copy_all(ev: Event, type: 'markdown' | 'css' | 'html'): Promise<void> {
 		command(Commands.copy_all, ev, type)
 		close_submenu(submenu_copyallmoreactions_ref)
-		await wait(300)
+		await wait(200)
 		close_menu(menu_moreactions_ref)
 	}
 

@@ -150,7 +150,7 @@ const Dropdown: ParentComponent<DropdownProps> = ($props) => {
 				set_width(rect_width(element_rect(button_dropdown_ref)))
 				reposition_menu(menu_dropdown_ref)
 				t = null
-			}, 300)
+			}, 200)
 		})
 		observer.observe(button_dropdown_ref!, { box: "border-box" })
 

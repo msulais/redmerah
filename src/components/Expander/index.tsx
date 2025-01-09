@@ -182,7 +182,7 @@ const Expander: ParentComponent<ExpanderProps> = ($props) => {
 					const el = event_current_target(ev)
 					event_prevent_default(ev)
 					set_is_open(false)
-					promise_done(wait(300), () => element_click(el))
+					promise_done(wait(200), () => element_click(el))
 				}}
 				{...header_props_other}>
 				{props.header}

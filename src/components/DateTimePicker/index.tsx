@@ -501,7 +501,7 @@ const DateTimePickerBody: ParentComponent<{
 				promise_done(element_animate(
 					el as HTMLElement,
 					{ opacity: [0, 1], transform: ['translateY(-12px)', 'none'] },
-					{ duration: 300, easing: AnimationEffectTiming.spring }
+					{ duration: 200, easing: AnimationEffectTiming.spring }
 				).finished, done)
 			}}
 			onExit={(el, done) => {

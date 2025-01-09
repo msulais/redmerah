@@ -75,7 +75,7 @@ const _: VoidComponent<{
 		attr_set(root, RootAttributes.theme, theme)
 		storage_set(LocalStorageKeys.theme, theme)
 		close_submenu(submenu_themesettings_ref)
-		await wait(300)
+		await wait(200)
 		close_menu(menu_settings_ref)
 	}
 
@@ -84,21 +84,21 @@ const _: VoidComponent<{
 		attr_set(root, RootAttributes.corner, corner)
 		storage_set(LocalStorageKeys.corner, corner)
 		close_submenu(submenu_cornersettings_ref)
-		await wait(300)
+		await wait(200)
 		close_menu(menu_settings_ref)
 	}
 
 	async function change_encoding_mode(mode: EncodingMode): Promise<void> {
 		command(Commands.change_settings_encodingmode, mode)
 		close_submenu(submenu_encodingmodesettings_ref)
-		await wait(300)
+		await wait(200)
 		close_menu(menu_settings_ref)
 	}
 
 	async function change_error_correction_level(level: ErrorCorrectionLevel): Promise<void> {
 		command(Commands.change_settings_errorcorrectionlevel, level)
 		close_submenu(submenu_errorcorrectionlevelsettings_ref)
-		await wait(300)
+		await wait(200)
 		close_menu(menu_settings_ref)
 	}
 
@@ -499,7 +499,7 @@ const _: VoidComponent<{
 					) {
 						command(Commands.download_qrcode, data_download as DownloadFileType)
 						close_submenu(submenu_downloadmoreactions_ref)
-						timeout_set(() => close_menu(menu_moreactions_ref), 300)
+						timeout_set(() => close_menu(menu_moreactions_ref), 200)
 						return
 					}
 
@@ -509,7 +509,7 @@ const _: VoidComponent<{
 					) {
 						command(Commands.copy_qrcode, ev, data_copy as CopyFileType)
 						close_submenu(submenu_copymoreactions_ref)
-						timeout_set(() => close_menu(menu_moreactions_ref), 300)
+						timeout_set(() => close_menu(menu_moreactions_ref), 200)
 						return
 					}
 				}}>

@@ -132,7 +132,7 @@ div.c-color-picker-actions {
 	z-index: 3;
 	touch-action: none;
 	box-shadow: var(--g-elevation2), inset var(--g-elevation2);
-	transition-duration: .3s;
+	transition-duration: .2s;
 	transition-property: border-color;
 
 	:root[data-corner=sharp] & { border-radius: 0px }

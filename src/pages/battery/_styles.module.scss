@@ -55,7 +55,7 @@
 	display: flex;
 	gap: 8px;
 	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity1));
-	transition-duration: .3s;
+	transition-duration: .2s;
 
 	:root[data-corner=sharp] & { border-radius: 0 }
 	:root[data-corner=semi-round] & { border-radius: 4px }

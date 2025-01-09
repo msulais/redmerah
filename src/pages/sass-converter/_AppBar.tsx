@@ -75,7 +75,7 @@ const _: VoidComponent<{
 		attr_set(root, RootAttributes.theme, theme)
 		storage_set(LocalStorageKeys.theme, theme)
 		close_submenu(submenu_themesettings_ref)
-		promise_done(wait(300), () => close_menu(menu_settings_ref))
+		promise_done(wait(200), () => close_menu(menu_settings_ref))
 	}
 
 	function change_corner(corner: CornerData): void {
@@ -83,8 +83,8 @@ const _: VoidComponent<{
 		attr_set(root, RootAttributes.corner, corner)
 		storage_set(LocalStorageKeys.corner, corner)
 		close_submenu(submenu_cornersettings_ref)
-		wait(300)
-		promise_done(wait(300), () => close_menu(menu_settings_ref))
+		wait(200)
+		promise_done(wait(200), () => close_menu(menu_settings_ref))
 	}
 
 	function init_theme(): void {
@@ -108,14 +108,14 @@ const _: VoidComponent<{
 	function download_file(type: 'sass' | 'scss' | 'css'): void {
 		command(Commands.download_file, type)
 		close_submenu(submenu_downloadmoreactions_ref)
-		promise_done(wait(300), () => close_menu(menu_moreactions_ref))
+		promise_done(wait(200), () => close_menu(menu_moreactions_ref))
 	}
 
 	async function copy_all(ev: Event, type: 'sass' | 'scss' | 'css'): Promise<void> {
 		command(Commands.copy_all, ev, type)
 		close_submenu(submenu_copyallmoreactions_ref)
-		await wait(300)
-		promise_done(wait(300), () => close_menu(menu_moreactions_ref))
+		await wait(200)
+		promise_done(wait(200), () => close_menu(menu_moreactions_ref))
 	}
 
 	onMount(() => {

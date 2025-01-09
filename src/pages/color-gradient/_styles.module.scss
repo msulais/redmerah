@@ -95,7 +95,7 @@
 				height: 16px;
 				position: relative;
 				left: -8px;
-				transition-duration: .3s;
+				transition-duration: .2s;
 				border-radius: 8px;
 
 				:root[data-corner=sharp] & {border-radius: 0px}
@@ -112,7 +112,7 @@
 					&::before {
 						opacity: 1;
 						transform: translate(-50%, 0px);
-						transition-delay: .3s;
+						transition-delay: .2s;
 					}
 				}
 
@@ -152,7 +152,7 @@
 					white-space: nowrap;
 					z-index: 99;
 					transition-property: opacity, transform;
-					transition-duration: .3s;
+					transition-duration: .2s;
 					transition-delay: 0s;
 					transition-timing-function: var(--g-transition-spring-bounce);
 
@@ -176,7 +176,7 @@
 		}
 
 		& :global(.c-icon) {
-			transition-duration: .3s;
+			transition-duration: .2s;
 		}
 	}
 }
@@ -237,7 +237,7 @@
 		min-width: var(--size);
 		min-height: var(--size);
 		border-radius: var(--c-btn-border-radius);
-		transition-duration: .3s;
+		transition-duration: .2s;
 
 		:root[data-platform=mobile] & {
 			--size: 28px;
@@ -248,7 +248,7 @@
 		width: 100%;
 		height: 100%;
 		border-radius: var(--c-btn-border-radius);
-		transition-duration: .3s;
+		transition-duration: .2s;
 	}
 }
 

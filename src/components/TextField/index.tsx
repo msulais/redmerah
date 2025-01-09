@@ -469,7 +469,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 			if (interval_id != null) interval_clear(interval_id)
 			interval_id = interval_set(() => change_value(operator), 30)
 			timeout_id = null
-		}, 300)
+		}, 200)
 	}
 
 	function on_press_end(operator: '+' | '-'): void {
@@ -671,7 +671,7 @@ const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
 				set_width(rect_width(element_rect(wrapper_ref)))
 				reposition_popover(menu_ref)
 				t = null
-			}, 300)
+			}, 200)
 		})
 		observer.observe(wrapper_ref, { box: "border-box" })
 

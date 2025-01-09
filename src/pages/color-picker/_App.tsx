@@ -109,7 +109,7 @@ const _: VoidComponent = () => {
 				timeout_savelastinput_id = timeout_set(() => {
 					save_last_input([IDBStoreKeysLastInput.hex_color, hsl_to_hex(input)])
 					timeout_savelastinput_id = null
-				}, 300)
+				}, 200)
 				break
 			}
 			default: return

@@ -28,7 +28,7 @@ const _: VoidComponent<{
 	command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
 	const animation_options = {
-		duration: 300,
+		duration: 200,
 		easing: AnimationEffectTiming.spring
 	}
 	const expanded = createMemo(() => props.expanded)

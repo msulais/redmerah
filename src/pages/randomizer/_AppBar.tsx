@@ -97,7 +97,7 @@ const _: Component<{
 		attr_set(root, RootAttributes.theme, theme)
 		storage_set(LocalStorageKeys.theme, theme)
 		close_submenu(submenu_themesettings_ref)
-		await wait(300)
+		await wait(200)
 		close_menu(menu_settings_ref)
 	}
 
@@ -106,7 +106,7 @@ const _: Component<{
 		attr_set(root, RootAttributes.corner, corner)
 		storage_set(LocalStorageKeys.corner, corner)
 		close_submenu(submenu_cornersettings_ref)
-		await wait(300)
+		await wait(200)
 		close_menu(menu_settings_ref)
 	}
 
@@ -131,14 +131,14 @@ const _: Component<{
 	async function change_numbers_sort(sort: NumbersRandomizerSort): Promise<void> {
 		command(Commands.change_settings_numbers_sort, sort)
 		close_submenu(submenu_sortsettings_ref)
-		await wait(300)
+		await wait(200)
 		close_menu(menu_settings_ref)
 	}
 
 	async function change_number_type(type: NumbersRandomizerNumberType): Promise<void> {
 		command(Commands.change_settings_numbers_type, type)
 		close_submenu(submenu_numbertypesettings_ref)
-		await wait(300)
+		await wait(200)
 		close_menu(menu_settings_ref)
 	}
 
@@ -162,14 +162,14 @@ const _: Component<{
 	async function change_words_wordcase(wordcase: WordsRandomizerWordCase): Promise<void> {
 		command(Commands.change_settings_words_wordcase, wordcase)
 		close_submenu(submenu_wordcasesettings_ref)
-		await wait(300)
+		await wait(200)
 		close_menu(menu_settings_ref)
 	}
 
 	async function change_colors_model(model: ColorsRandomizerColorModel): Promise<void> {
 		command(Commands.change_settings_colors_model, model)
 		close_submenu(submenu_colormodelsettings_ref)
-		await wait(300)
+		await wait(200)
 		close_menu(menu_settings_ref)
 	}
 

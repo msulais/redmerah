@@ -27,7 +27,7 @@
 		border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity-border));
 		outline: none;
 		scroll-padding: 12px;
-		transition-duration: .3s, 0s;
+		transition-duration: .2s, 0s;
 		transition-property: all, height;
 
 		:root[data-corner=sharp] & { border-radius: 0 }

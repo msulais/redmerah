@@ -42,7 +42,7 @@ const _: VoidComponent = () => {
 		attr_set(root, RootAttributes.theme, theme)
 		storage_set(LocalStorageKeys.theme, theme)
 		close_submenu(submenu_themesettings_ref)
-		await wait(300)
+		await wait(200)
 		close_menu(menu_settings_ref)
 	}
 
@@ -51,7 +51,7 @@ const _: VoidComponent = () => {
 		attr_set(root, RootAttributes.corner, corner)
 		storage_set(LocalStorageKeys.corner, corner)
 		close_submenu(submenu_cornersettings_ref)
-		await wait(300)
+		await wait(200)
 		close_menu(menu_settings_ref)
 	}
 

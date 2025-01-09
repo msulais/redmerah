@@ -220,7 +220,7 @@ const _: VoidComponent = () => {
 				}
 				generate_output()
 				timeout_id = null
-			}, 300)
+			}, 200)
 			break
 		}
 		case Commands.add_memory: {
@@ -250,7 +250,7 @@ const _: VoidComponent = () => {
 			timeout_id = timeout_set(() => {
 				generate_output()
 				timeout_id = null
-			}, 300)
+			}, 200)
 			break
 		}
 		case Commands.change_settings_converter_type: {

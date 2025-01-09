@@ -24,7 +24,7 @@
 	position: fixed;
 	z-index: 99;
 	transition-property: opacity;
-	transition-duration: .3s;
+	transition-duration: .2s;
 	transition-timing-function: var(--g-transition-spring-bounce);
 
 	:root[data-corner=sharp] & { border-radius: 0 }

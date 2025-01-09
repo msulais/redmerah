@@ -76,7 +76,7 @@ const FocusableGroup: ParentComponent<FocusableGroupProps> = ($props) => {
 
 				element_children_remove_tabindex(self, props.on_before_set_tabindex)
 				tabindex_removed = true
-			}, 300)
+			}, 200)
 		}}
 		onKeyDown={ev => {
 			event_call(ev, props.onKeyDown)

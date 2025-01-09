@@ -112,7 +112,7 @@ const _: VoidComponent<{
 				) {
 					command(Commands.download_qrcode, data_download as DownloadFileType)
 					close_submenu(submenu_downloadcanvasactions_ref)
-					timeout_set(() => close_menu(menu_canvasactions_ref), 300)
+					timeout_set(() => close_menu(menu_canvasactions_ref), 200)
 					return
 				}
 
@@ -122,7 +122,7 @@ const _: VoidComponent<{
 				) {
 					command(Commands.copy_qrcode, ev, data_copy as CopyFileType)
 					close_submenu(submenu_copycanvasactions_ref)
-					timeout_set(() => close_menu(menu_canvasactions_ref), 300)
+					timeout_set(() => close_menu(menu_canvasactions_ref), 200)
 					return
 				}
 			}}>

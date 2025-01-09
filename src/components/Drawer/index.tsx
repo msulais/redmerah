@@ -74,7 +74,7 @@ type DrawerProps = Omit<ModalProps, 'style' | 'position'> & {
 	style?: JSX.CSSProperties
 }
 const Drawer: ParentComponent<DrawerProps> = ($props) => {
-	const animation_option = {duration: 300, easing: AnimationEffectTiming.spring}
+	const animation_option = {duration: 200, easing: AnimationEffectTiming.spring}
 	const $$props = mergeProps({
 		position: DrawerPosition.left,
 		header_auto_tabindex: true,

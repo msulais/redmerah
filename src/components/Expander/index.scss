@@ -13,7 +13,7 @@
 		padding: 0;
 		user-select: none;
 		padding: 4px 12px;
-		transition-duration: .3s;
+		transition-duration: .2s;
 		border: 1px solid;
 		border-color: transparent;
 		border-color: rgba(var(--c-expander-border-color), var(--c-expander-border-opacity));
@@ -111,7 +111,7 @@
 
 .c-expander-body {
 	overflow: hidden;
-	transition-duration: .3s;
+	transition-duration: .2s;
 	border-radius: 8px;
 
 	:root[data-corner=sharp] & {border-radius: 0}
@@ -154,7 +154,7 @@
 	}
 
 	& .c-icon {
-		transition-duration: .3s;
+		transition-duration: .2s;
 
 	}
 }

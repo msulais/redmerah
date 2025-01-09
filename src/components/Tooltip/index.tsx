@@ -189,13 +189,13 @@ function init_tooltip(): void {
 		await promise_done(element_animate(
 			tooltip_text_ref,
 			{ transform: `translate(${translate.left}px, ${translate.top}px)` },
-			{ duration: 300, easing: AnimationEffectTiming.spring_bounce }
+			{ duration: 200, easing: AnimationEffectTiming.spring_bounce }
 		).finished, () => tooltip_text_ref.hidePopover())
 	}
 
 	function close_tooltip(ev: CustomEvent<TooltipCloseDetail>): void {
 		const {
-			end_delay_duration = $is_mobile? 1500 : 300
+			end_delay_duration = $is_mobile? 1500 : 200
 		} = ev.detail
 		if (timeout_id != null) timeout_clear(timeout_id)
 		timeout_id = timeout_set(async () => {
@@ -360,7 +360,7 @@ function init_tooltip(): void {
 			promise_done(element_animate(
 				tooltip_text_ref,
 				{ transform: [`translate(${translate.left}px, ${translate.top}px)`, 'none'] },
-				{ duration: 300, easing: AnimationEffectTiming.spring_bounce }
+				{ duration: 200, easing: AnimationEffectTiming.spring_bounce }
 			).finished, () => {
 				attr_set(tooltip_text_ref, TooltipAttributes.open_done)
 			})

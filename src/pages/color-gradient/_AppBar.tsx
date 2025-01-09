@@ -68,7 +68,7 @@ const _: VoidComponent<{
 		attr_set(root, RootAttributes.theme, theme)
 		storage_set(LocalStorageKeys.theme, theme)
 		close_submenu(submenu_themesettings_ref)
-		promise_done(wait(300), () => close_menu(menu_settings_ref))
+		promise_done(wait(200), () => close_menu(menu_settings_ref))
 	}
 
 	function change_corner(corner: CornerData): void {
@@ -76,13 +76,13 @@ const _: VoidComponent<{
 		attr_set(root, RootAttributes.corner, corner)
 		storage_set(LocalStorageKeys.corner, corner)
 		close_submenu(submenu_cornersettings_ref)
-		promise_done(wait(300), () => close_menu(menu_settings_ref))
+		promise_done(wait(200), () => close_menu(menu_settings_ref))
 	}
 
 	function change_color_model(model: ColorModel): void {
 		command(Commands.change_settings_colormodel, model)
 		close_submenu(submenu_colormodelsettings_ref)
-		promise_done(wait(300), () => close_menu(menu_settings_ref))
+		promise_done(wait(200), () => close_menu(menu_settings_ref))
 	}
 
 	function init_theme(): void {

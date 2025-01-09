@@ -14,7 +14,7 @@
 		> a {
 			border-bottom: .1em solid rgb(var(--g-color-accent));
 			position: relative;
-			transition-duration: .3s;
+			transition-duration: .2s;
 
 			@media (hover: hover) {
 				&:hover {
@@ -46,7 +46,7 @@
 		}
 
 		> a {
-			transition-duration: .3s;
+			transition-duration: .2s;
 
 			@media (hover: hover) {
 				&:hover {

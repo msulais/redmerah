@@ -29,7 +29,7 @@
 	position: relative;
 	scrollbar-width: none;
 	transition-property: all, border-color;
-	transition-duration: .3s, 0s;
+	transition-duration: .2s, 0s;
 	user-select: none;
 	-ms-overflow-style: none;
 
@@ -101,7 +101,7 @@
 		height: 0;
 		opacity: 0;
 		position: absolute;
-		transition-duration: .3s;
+		transition-duration: .2s;
 		width: 0;
 
 		:root[data-corner=sharp] & {

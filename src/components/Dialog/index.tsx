@@ -21,7 +21,7 @@ type DialogProps = ModalProps & {
 	actions_auto_tabindex?: boolean
 }
 const Dialog: ParentComponent<DialogProps> = ($props) => {
-	const animation_options = {duration: 300, easing: AnimationEffectTiming.spring_bounce}
+	const animation_options = {duration: 200, easing: AnimationEffectTiming.spring_bounce}
 	const $$props = mergeProps({
 		actions_auto_tabindex: true
 	}, $props)

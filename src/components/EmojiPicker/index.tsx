@@ -233,7 +233,7 @@ const EmojiPickerBody: ParentComponent<{
 						))
 						else timeout_clear(timeout_id)
 
-						timeout_id = timeout_set(() => timeout_id = null, 300)
+						timeout_id = timeout_set(() => timeout_id = null, 200)
 						if (code == KEY_ARROW_UP) target = children[index - grid_column_count]
 						else if (code == KEY_ARROW_DOWN) target = children[index + grid_column_count]
 						else if (code == KEY_ARROW_RIGHT) target = element_next_sibling(button)
@@ -340,14 +340,14 @@ const EmojiPickerBody: ParentComponent<{
 								{ transform: 'translateX(-12px)', opacity: 0 },
 								{ tranform: null, opacity: 1 }
 							],
-							{ duration: 300, easing: AnimationEffectTiming.spring }
+							{ duration: 200, easing: AnimationEffectTiming.spring }
 						).finished, done)
 					}}
 					onExit={(el, done) => {
 						promise_done(element_animate(
 							el as HTMLElement,
 							{ transform: 'translateX(-12px)', opacity: 0 },
-							{ duration: 300, easing: AnimationEffectTiming.spring }
+							{ duration: 200, easing: AnimationEffectTiming.spring }
 						).finished, done)
 					}}>
 					<For each={ALL_EMOJI}>{e => <Show when={get_search_regex() != null && regex_test(get_search_regex()!, e[1])}>

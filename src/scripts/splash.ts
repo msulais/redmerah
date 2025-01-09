@@ -19,7 +19,7 @@ export function remove_splash_screen(timeout: number = 0): void {
 		promise_done(element_animate(
 			splash_ref,
 			{opacity: 0},
-			{duration: 300, easing: AnimationEffectTiming.spring}
+			{duration: 200, easing: AnimationEffectTiming.spring}
 		).finished, () => {
 			element_remove(splash_ref)
 			attr_remove(document_body(), BodyAttributes.component_count)

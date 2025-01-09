@@ -7,7 +7,7 @@
 	height: 100%;
 	max-height: 100%;
 	overflow-y: auto;
-	transition-duration: .3s;
+	transition-duration: .2s;
 	position: relative;
 
 	:root[data-platform=desktop] &:not([data-c-expanded]) {

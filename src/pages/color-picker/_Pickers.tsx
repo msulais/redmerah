@@ -1167,9 +1167,9 @@ export const SliderCMYKPicker: VoidComponent<{
 				draggable={false}
 				style={{
 					left: magenta() + '%',
-					"background-color": `hsl(300, 100%, ${magenta() / 100 * 50}%)`,
+					"background-color": `hsl(200, 100%, ${magenta() / 100 * 50}%)`,
 					"border-color": get_contrast_ratio(
-						hsl_to_rgb({h: 300 / 360, s: 1, l: magenta() / 100 * 0.5}),
+						hsl_to_rgb({h: 200 / 360, s: 1, l: magenta() / 100 * 0.5}),
 						{r: 0, g: 0, b: 0}
 					) > 50 ? '#000' : '#fff',
 					transform: 'translate(-50%, -5px)'
