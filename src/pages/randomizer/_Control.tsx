@@ -1,5 +1,5 @@
 import { For, Match, Show, Switch, type VoidComponent, createEffect, createMemo, createSignal, createUniqueId } from "solid-js"
-import type { SetStoreFunction, Store } from "solid-js/store/types/store"
+import type { SetStoreFunction, Store } from "solid-js/store"
 
 import type { ItemList, Settings } from "./_types"
 import { element_dataset, element_id, element_rect, element_tagname, element_valid_target } from "@/utils/element"

@@ -981,6 +981,7 @@ const _: VoidComponent = () => {
 				set_settings('words', 'repeat', r => !r)
 				save_settings([ObjectStoreKeys.settings_words_repeat, settings.words.repeat])
 			}
+			break
 		}
 		case Commands.change_settings_numbers_sort: {
 			set_settings('numbers', 'sort', args[0] as NumbersRandomizerSort)
@@ -1082,6 +1083,7 @@ const _: VoidComponent = () => {
 				[ObjectStoreKeys.settings_string_characters_uppercase, true],
 				[ObjectStoreKeys.settings_string_characters_numbers, true],
 			)
+			break
 		}
 		case Commands.change_settings_numbers_count: {
 			set_settings('numbers', 'count', args[0] as number)

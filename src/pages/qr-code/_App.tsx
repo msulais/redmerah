@@ -132,6 +132,7 @@ const _: VoidComponent = () => {
 					() => open_toast(ev, toast_copied_ref)
 				)
 			}, 'image/png', 0.95)
+			break
 		}
 		case CopyFileType.svg: {
 			promise_done(

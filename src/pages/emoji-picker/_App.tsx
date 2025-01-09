@@ -39,6 +39,7 @@ const _: VoidComponent = () => {
 				save_settings([ObjectStoreSettingsKeys.last_text, text])
 				timeout_textupdate_id = null
 			}, 100)
+			break
 		}
 		default: return
 	}}
