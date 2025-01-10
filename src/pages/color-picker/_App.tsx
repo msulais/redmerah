@@ -1,13 +1,9 @@
-import { onMount as $mount, createSignal as $signal, type VoidComponent } from "solid-js"
+import { onMount, createSignal, type VoidComponent } from "solid-js"
 import { createStore as $store } from "solid-js/store"
 
 import type { Settings } from "./_types"
 import { remove_splash_screen } from "@/scripts/splash"
 import { ColorPickerMode, Commands } from "./_enums"
-
-import App from "@/components/App"
-import AppBar from './_AppBar'
-import Body from './_Body'
 import { IDB, idb_store_put } from "@/utils/indexeddb"
 import { DatabaseNames } from "@/enums/storage"
 import type { HEXColor, HSLColor } from "@/types/color"
@@ -16,9 +12,13 @@ import { hex_to_hsl, hsl_to_hex } from "@/utils/color"
 import { timeout_clear, timeout_set } from "@/utils/timeout"
 import { promise_done } from "@/utils/object"
 
+import App from "@/components/App"
+import AppBar from './_AppBar'
+import Body from './_Body'
+
 const _: VoidComponent = () => {
 	const db = new IDB(DatabaseNames.color_picker)
-	const [input, set_input] = $signal<HSLColor>({
+	const [input, set_input] = createSignal<HSLColor>({
 		h: 0.3, s: 0.3, l: .33
 	})
 	const [settings, set_settings] = $store<Settings>({
@@ -116,7 +116,7 @@ const _: VoidComponent = () => {
 		}
 	}
 
-	$mount(() => {
+	onMount(() => {
 		remove_splash_screen()
 		init_database()
 	})

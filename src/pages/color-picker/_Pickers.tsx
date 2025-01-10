@@ -1,4 +1,4 @@
-import { createSignal as $signal, onCleanup as $cleanup, onMount as $mount, type VoidComponent, createMemo as $memory, createEffect as $effect, Show } from "solid-js"
+import { createSignal, onCleanup, onMount, type VoidComponent, createMemo, createEffect, Show } from "solid-js"
 
 import type { HSLColor, HEXColor } from "@/types/color"
 import { element_rect } from "@/utils/element"
@@ -27,10 +27,10 @@ export const RectanglePicker: VoidComponent<{
 	command(type: Commands, ...args: unknown[]): unknown
 }> = (props) => {
 	const body = document_body()
-	const [hue, set_hue] = $signal<number>(0) // 0-100
-	const [left, set_left] = $signal<number>(0) // 0-100
-	const [top, set_top] = $signal<number>(0) // 0-100
-	const get_hsl_color = $memory<HSLColor>(() => {
+	const [hue, set_hue] = createSignal<number>(0) // 0-100
+	const [left, set_left] = createSignal<number>(0) // 0-100
+	const [top, set_top] = createSignal<number>(0) // 0-100
+	const get_hsl_color = createMemo<HSLColor>(() => {
 		const [h, s, v] = [
 			hue() / 100,
 			left() / 100,
@@ -38,7 +38,7 @@ export const RectanglePicker: VoidComponent<{
 		]
 		return {...hsv_to_hsl({ h, s, v }), h}
 	})
-	const get_hex_color = $memory<HEXColor>(() => {
+	const get_hex_color = createMemo<HEXColor>(() => {
 		const [h, s, v] = [
 			hue() / 100,
 			left() / 100,
@@ -52,7 +52,7 @@ export const RectanglePicker: VoidComponent<{
 	let color_rect: DOMRect
 	let hue_ref: HTMLDivElement
 	let hue_rect: DOMRect
-	let is_update_locally = false // to avoid unnecesary recalculate in `$effect()`
+	let is_update_locally = false // to avoid unnecesary recalculate in `createEffect()`
 
 	function command(type: Commands, ...args: unknown[]): unknown {
 		return props.command(type, ...args)
@@ -90,7 +90,7 @@ export const RectanglePicker: VoidComponent<{
 		event_add_listener<PointerEvent>(document, 'pointermove', on_pointermove)
 		event_add_listener<PointerEvent>(document, 'pointerup', on_pointerup)
 
-		$cleanup(() => {
+		onCleanup(() => {
 			event_remove_listener<PointerEvent>(document, 'pointermove', on_pointermove)
 			event_remove_listener<PointerEvent>(document, 'pointerup', on_pointerup)
 		})
@@ -108,11 +108,11 @@ export const RectanglePicker: VoidComponent<{
 		set_top((1 - v) * 100)
 	}
 
-	$mount(() => {
+	onMount(() => {
 		init_events()
 	})
 
-	$effect(() => {
+	createEffect(() => {
 		update_position()
 	})
 
@@ -182,10 +182,10 @@ export const RectangleHSLPicker: VoidComponent<{
 	command(type: Commands, ...args: unknown[]): unknown
 }> = (props) => {
 	const body = document_body()
-	const [hue, set_hue] = $signal<number>(0) // 0-100
-	const [left, set_left] = $signal<number>(0) // 0-100
-	const [top, set_top] = $signal<number>(0) // 0-100
-	const get_hsl_color = $memory<HSLColor>(() => {
+	const [hue, set_hue] = createSignal<number>(0) // 0-100
+	const [left, set_left] = createSignal<number>(0) // 0-100
+	const [top, set_top] = createSignal<number>(0) // 0-100
+	const get_hsl_color = createMemo<HSLColor>(() => {
 		const [h, s, l] = [
 			hue() / 100,
 			left() / 100,
@@ -193,7 +193,7 @@ export const RectangleHSLPicker: VoidComponent<{
 		]
 		return {h, s, l}
 	})
-	const get_hex_color = $memory<HEXColor>(() => {
+	const get_hex_color = createMemo<HEXColor>(() => {
 		const [h, s, l] = [
 			hue() / 100,
 			left() / 100,
@@ -207,7 +207,7 @@ export const RectangleHSLPicker: VoidComponent<{
 	let color_rect: DOMRect
 	let hue_ref: HTMLDivElement
 	let hue_rect: DOMRect
-	let is_update_locally = false // to avoid unnecesary recalculate in `$effect()`
+	let is_update_locally = false // to avoid unnecesary recalculate in `createEffect()`
 
 	function command(type: Commands, ...args: unknown[]): unknown {
 		return props.command(type, ...args)
@@ -245,7 +245,7 @@ export const RectangleHSLPicker: VoidComponent<{
 		event_add_listener<PointerEvent>(document, 'pointermove', on_pointermove)
 		event_add_listener<PointerEvent>(document, 'pointerup', on_pointerup)
 
-		$cleanup(() => {
+		onCleanup(() => {
 			event_remove_listener<PointerEvent>(document, 'pointermove', on_pointermove)
 			event_remove_listener<PointerEvent>(document, 'pointerup', on_pointerup)
 		})
@@ -262,11 +262,11 @@ export const RectangleHSLPicker: VoidComponent<{
 		set_top((1 - l) * 100)
 	}
 
-	$mount(() => {
+	onMount(() => {
 		init_events()
 	})
 
-	$effect(() => {
+	createEffect(() => {
 		update_position()
 	})
 
@@ -335,11 +335,11 @@ export const ImagePicker: VoidComponent<{
 	command(type: Commands, ...args: unknown[]): unknown
 }> = (props) => {
 	const body = document_body()
-	const [hex_color, set_hex_color] = $signal<HEXColor>('#000000')
-	const [left, set_left] = $signal(0) // 0 -> 100
-	const [top, set_top] = $signal(0) // 0 -> 100
-	const [any_image, set_any_image] = $signal(false)
-	const get_hsl_color = $memory(() => hex_to_hsl(hex_color()))
+	const [hex_color, set_hex_color] = createSignal<HEXColor>('#000000')
+	const [left, set_left] = createSignal(0) // 0 -> 100
+	const [top, set_top] = createSignal(0) // 0 -> 100
+	const [any_image, set_any_image] = createSignal(false)
+	const get_hsl_color = createMemo(() => hex_to_hsl(hex_color()))
 	const image = new Image()
 	let canvas_ref: HTMLCanvasElement
 	let canvas_context: CanvasRenderingContext2D
@@ -384,7 +384,7 @@ export const ImagePicker: VoidComponent<{
 		event_add_listener<PointerEvent>(document, 'pointermove', on_pointermove)
 		event_add_listener<PointerEvent>(document, 'pointerup', on_pointerup)
 
-		$cleanup(() => {
+		onCleanup(() => {
 			event_remove_listener<PointerEvent>(document, 'pointermove', on_pointermove)
 			event_remove_listener<PointerEvent>(document, 'pointerup', on_pointerup)
 		})
@@ -422,13 +422,13 @@ export const ImagePicker: VoidComponent<{
 		)
 	}
 
-	$mount(() => {
+	onMount(() => {
 		init_events()
 		init_canvas()
 		init_image()
 	})
 
-	$cleanup(() => {
+	onCleanup(() => {
 		url_revoke(image.src)
 	})
 
@@ -453,6 +453,7 @@ export const ImagePicker: VoidComponent<{
 				ref={r => canvas_ref = r}
 				data-has-image={any_image()? '' : undefined}></canvas>
 			<Show when={any_image()}>
+				{/* TODO: keyboard accesiblity */}
 				<div
 					class={CSS.picker_indicator}
 					draggable={false}
@@ -496,20 +497,20 @@ export const SpectrumPicker: VoidComponent<{
 	command(type: Commands, ...args: unknown[]): unknown
 }> = (props) => {
 	const body = document_body()
-	const [blackness, set_blackness] = $signal<number>(0) // 0-100
-	const [left, set_left] = $signal<number>(0) // 0-100
-	const [top, set_top] = $signal<number>(0) // 0-100
-	const get_hue = $memory(() => {
+	const [blackness, set_blackness] = createSignal<number>(0) // 0-100
+	const [left, set_left] = createSignal<number>(0) // 0-100
+	const [top, set_top] = createSignal<number>(0) // 0-100
+	const get_hue = createMemo(() => {
 		return left() / 100 * 360
 	})
-	const get_hsl_color = $memory<HSLColor>(() => {
+	const get_hsl_color = createMemo<HSLColor>(() => {
 		const h = left() / 100
 		const s = (100 - top()) / 100
 		const x = (top() / 2) + 50
 		const l = (x - x * (blackness() / 100)) / 100
 		return {h, s, l}
 	})
-	let is_update_locally = false // to avoid unnecesary recalculate in `$effect()`
+	let is_update_locally = false // to avoid unnecesary recalculate in `createEffect()`
 	let spectrum_dragged = false
 	let blackness_dragged = false
 	let spectrum_ref: HTMLDivElement
@@ -553,7 +554,7 @@ export const SpectrumPicker: VoidComponent<{
 		event_add_listener<PointerEvent>(document, 'pointermove', on_pointermove)
 		event_add_listener<PointerEvent>(document, 'pointerup', on_pointerup)
 
-		$cleanup(() => {
+		onCleanup(() => {
 			event_remove_listener<PointerEvent>(document, 'pointermove', on_pointermove)
 			event_remove_listener<PointerEvent>(document, 'pointerup', on_pointerup)
 		})
@@ -572,11 +573,11 @@ export const SpectrumPicker: VoidComponent<{
 		set_blackness((100 * (x - (100 * l))) / x)
 	}
 
-	$mount(() => {
+	onMount(() => {
 		init_events()
 	})
 
-	$effect(() => {
+	createEffect(() => {
 		update_position()
 	})
 
@@ -661,16 +662,16 @@ export const SliderRGBPicker: VoidComponent<{
 	command(type: Commands, ...args: unknown[]): unknown
 }> = (props) => {
 	const body = document_body()
-	const [red, set_red] = $signal(0) // 0 - 100
-	const [green, set_green] = $signal(0) // 0 - 100
-	const [blue, set_blue] = $signal(0) // 0 - 100
-	const get_hsl_color = $memory(() => {
+	const [red, set_red] = createSignal(0) // 0 - 100
+	const [green, set_green] = createSignal(0) // 0 - 100
+	const [blue, set_blue] = createSignal(0) // 0 - 100
+	const get_hsl_color = createMemo(() => {
 		const r = red() / 100
 		const g = green() / 100
 		const b = blue() / 100
 		return rgb_to_hsl({r, g, b})
 	})
-	let is_update_locally = false // to avoid unnecesary recalculate in `$effect()`
+	let is_update_locally = false // to avoid unnecesary recalculate in `createEffect()`
 	let red_dragged = false
 	let green_dragged = false
 	let blue_dragged = false
@@ -719,7 +720,7 @@ export const SliderRGBPicker: VoidComponent<{
 		event_add_listener<PointerEvent>(document, 'pointermove', on_pointermove)
 		event_add_listener<PointerEvent>(document, 'pointerup', on_pointerup)
 
-		$cleanup(() => {
+		onCleanup(() => {
 			event_remove_listener<PointerEvent>(document, 'pointermove', on_pointermove)
 			event_remove_listener<PointerEvent>(document, 'pointerup', on_pointerup)
 		})
@@ -738,11 +739,11 @@ export const SliderRGBPicker: VoidComponent<{
 		set_blue(b * 100)
 	}
 
-	$mount(() => {
+	onMount(() => {
 		init_events()
 	})
 
-	$effect(() => {
+	createEffect(() => {
 		update_position()
 	})
 
@@ -839,20 +840,20 @@ export const SliderHSLPicker: VoidComponent<{
 	command(type: Commands, ...args: unknown[]): unknown
 }> = (props) => {
 	const body = document_body()
-	const [hue, set_hue] = $signal(0) // 0 - 100
-	const [saturation, set_saturation] = $signal(0) // 0 - 100
-	const [lightness, set_lightness] = $signal(0) // 0 - 100
-	const get_hue = $memory(() => {
+	const [hue, set_hue] = createSignal(0) // 0 - 100
+	const [saturation, set_saturation] = createSignal(0) // 0 - 100
+	const [lightness, set_lightness] = createSignal(0) // 0 - 100
+	const get_hue = createMemo(() => {
 		return hue() / 100 * 360
 	})
-	const get_hsl_color = $memory<HSLColor>(() => {
+	const get_hsl_color = createMemo<HSLColor>(() => {
 		const h = hue() / 100
 		const s = saturation() / 100
 		const l = lightness() / 100
 
 		return {h, s, l}
 	})
-	let is_update_locally = false // to avoid unnecesary recalculate in `$effect()`
+	let is_update_locally = false // to avoid unnecesary recalculate in `createEffect()`
 	let hue_dragged = false
 	let saturation_dragged = false
 	let lightness_dragged = false
@@ -901,7 +902,7 @@ export const SliderHSLPicker: VoidComponent<{
 		event_add_listener<PointerEvent>(document, 'pointermove', on_pointermove)
 		event_add_listener<PointerEvent>(document, 'pointerup', on_pointerup)
 
-		$cleanup(() => {
+		onCleanup(() => {
 			event_remove_listener<PointerEvent>(document, 'pointermove', on_pointermove)
 			event_remove_listener<PointerEvent>(document, 'pointerup', on_pointerup)
 		})
@@ -919,11 +920,11 @@ export const SliderHSLPicker: VoidComponent<{
 		set_lightness(l * 100)
 	}
 
-	$mount(() => {
+	onMount(() => {
 		init_events()
 	})
 
-	$effect(() => {
+	createEffect(() => {
 		update_position()
 	})
 
@@ -1020,11 +1021,11 @@ export const SliderCMYKPicker: VoidComponent<{
 	command(type: Commands, ...args: unknown[]): unknown
 }> = (props) => {
 	const body = document_body()
-	const [cyan, set_cyan] = $signal(0) // 0 - 100
-	const [magenta, set_magenta] = $signal(0) // 0 - 100
-	const [yellow, set_yellow] = $signal(0) // 0 - 100
-	const [key, set_key] = $signal(0) // 0 - 100
-	const get_hsl_color = $memory<HSLColor>(() => {
+	const [cyan, set_cyan] = createSignal(0) // 0 - 100
+	const [magenta, set_magenta] = createSignal(0) // 0 - 100
+	const [yellow, set_yellow] = createSignal(0) // 0 - 100
+	const [key, set_key] = createSignal(0) // 0 - 100
+	const get_hsl_color = createMemo<HSLColor>(() => {
 		const c = cyan() / 100
 		const m = magenta() / 100
 		const y = yellow() / 100
@@ -1032,7 +1033,7 @@ export const SliderCMYKPicker: VoidComponent<{
 
 		return cmyk_to_hsl({c, m, y, k})
 	})
-	let is_update_locally = false // to avoid unnecesary recalculate in `$effect()`
+	let is_update_locally = false // to avoid unnecesary recalculate in `createEffect()`
 	let cyan_dragged = false
 	let magenta_dragged = false
 	let yellow_dragged = false
@@ -1091,7 +1092,7 @@ export const SliderCMYKPicker: VoidComponent<{
 		event_add_listener<PointerEvent>(document, 'pointermove', on_pointermove)
 		event_add_listener<PointerEvent>(document, 'pointerup', on_pointerup)
 
-		$cleanup(() => {
+		onCleanup(() => {
 			event_remove_listener<PointerEvent>(document, 'pointermove', on_pointermove)
 			event_remove_listener<PointerEvent>(document, 'pointerup', on_pointerup)
 		})
@@ -1111,11 +1112,11 @@ export const SliderCMYKPicker: VoidComponent<{
 		set_key(100 - k * 100)
 	}
 
-	$mount(() => {
+	onMount(() => {
 		init_events()
 	})
 
-	$effect(() => {
+	createEffect(() => {
 		update_position()
 	})
 
@@ -1167,9 +1168,9 @@ export const SliderCMYKPicker: VoidComponent<{
 				draggable={false}
 				style={{
 					left: magenta() + '%',
-					"background-color": `hsl(200, 100%, ${magenta() / 100 * 50}%)`,
+					"background-color": `hsl(300, 100%, ${magenta() / 100 * 50}%)`,
 					"border-color": get_contrast_ratio(
-						hsl_to_rgb({h: 200 / 360, s: 1, l: magenta() / 100 * 0.5}),
+						hsl_to_rgb({h: 300 / 360, s: 1, l: magenta() / 100 * 0.5}),
 						{r: 0, g: 0, b: 0}
 					) > 50 ? '#000' : '#fff',
 					transform: 'translate(-50%, -5px)'
@@ -1240,15 +1241,15 @@ export const SliderHEXPicker: VoidComponent<{
 	command(type: Commands, ...args: unknown[]): unknown
 }> = (props) => {
 	const body = document_body()
-	const [hex, set_hex] = $signal(0) // 0 - 100
-	const get_hex_color = $memory(() => {
+	const [hex, set_hex] = createSignal(0) // 0 - 100
+	const get_hex_color = createMemo(() => {
 		return '#' + string_padstart(number_to_string(math_round(hex() / 100 * 0xffffff), 16), 6, '0') as HEXColor
 	})
-	const get_hsl_color = $memory<HSLColor>(() => {
+	const get_hsl_color = createMemo<HSLColor>(() => {
 		const h = get_hex_color()
 		return hex_to_hsl(h)
 	})
-	let is_update_locally = false // to avoid unnecesary recalculate in `$effect()`
+	let is_update_locally = false // to avoid unnecesary recalculate in `createEffect()`
 	let hex_dragged = false
 	let hex_rect: DOMRect
 	let hex_ref: HTMLDivElement
@@ -1277,7 +1278,7 @@ export const SliderHEXPicker: VoidComponent<{
 		event_add_listener<PointerEvent>(document, 'pointermove', on_pointermove)
 		event_add_listener<PointerEvent>(document, 'pointerup', on_pointerup)
 
-		$cleanup(() => {
+		onCleanup(() => {
 			event_remove_listener<PointerEvent>(document, 'pointermove', on_pointermove)
 			event_remove_listener<PointerEvent>(document, 'pointerup', on_pointerup)
 		})
@@ -1294,11 +1295,11 @@ export const SliderHEXPicker: VoidComponent<{
 		set_hex(hex * 100)
 	}
 
-	$mount(() => {
+	onMount(() => {
 		init_events()
 	})
 
-	$effect(() => {
+	createEffect(() => {
 		update_position()
 	})
 
@@ -1339,20 +1340,20 @@ export const SliderHSVPicker: VoidComponent<{
 	command(type: Commands, ...args: unknown[]): unknown
 }> = (props) => {
 	const body = document_body()
-	const [hue, set_hue] = $signal(0) // 0 - 100
-	const [saturation, set_saturation] = $signal(0) // 0 - 100
-	const [value, set_value] = $signal(0) // 0 - 100
-	const get_hue = $memory(() => {
+	const [hue, set_hue] = createSignal(0) // 0 - 100
+	const [saturation, set_saturation] = createSignal(0) // 0 - 100
+	const [value, set_value] = createSignal(0) // 0 - 100
+	const get_hue = createMemo(() => {
 		return hue() / 100 * 360
 	})
-	const get_hsl_color = $memory<HSLColor>(() => {
+	const get_hsl_color = createMemo<HSLColor>(() => {
 		const h = hue() / 100
 		const s = saturation() / 100
 		const v = value() / 100
 
 		return hsv_to_hsl({h, s, v})
 	})
-	let is_update_locally = false // to avoid unnecesary recalculate in `$effect()`
+	let is_update_locally = false // to avoid unnecesary recalculate in `createEffect()`
 	let hue_dragged = false
 	let saturation_dragged = false
 	let value_dragged = false
@@ -1401,7 +1402,7 @@ export const SliderHSVPicker: VoidComponent<{
 		event_add_listener<PointerEvent>(document, 'pointermove', on_pointermove)
 		event_add_listener<PointerEvent>(document, 'pointerup', on_pointerup)
 
-		$cleanup(() => {
+		onCleanup(() => {
 			event_remove_listener<PointerEvent>(document, 'pointermove', on_pointermove)
 			event_remove_listener<PointerEvent>(document, 'pointerup', on_pointerup)
 		})
@@ -1420,11 +1421,11 @@ export const SliderHSVPicker: VoidComponent<{
 		set_value(v * 100)
 	}
 
-	$mount(() => {
+	onMount(() => {
 		init_events()
 	})
 
-	$effect(() => {
+	createEffect(() => {
 		update_position()
 	})
 
@@ -1521,20 +1522,20 @@ export const SliderHWBPicker: VoidComponent<{
 	command(type: Commands, ...args: unknown[]): unknown
 }> = (props) => {
 	const body = document_body()
-	const [hue, set_hue] = $signal(0) // 0 - 100
-	const [whiteness, set_whiteness] = $signal(0) // 0 - 100
-	const [blackness, set_blackness] = $signal(0) // 0 - 100
-	const get_hue = $memory(() => {
+	const [hue, set_hue] = createSignal(0) // 0 - 100
+	const [whiteness, set_whiteness] = createSignal(0) // 0 - 100
+	const [blackness, set_blackness] = createSignal(0) // 0 - 100
+	const get_hue = createMemo(() => {
 		return hue() / 100 * 360
 	})
-	const get_hsl_color = $memory<HSLColor>(() => {
+	const get_hsl_color = createMemo<HSLColor>(() => {
 		const h = hue() / 100
 		const w = math_clamp(whiteness() / 100, 0, 1)
 		const b = math_clamp(blackness() / 100, 0, 1)
 
 		return hwb_to_hsl({h, w, b})
 	})
-	let is_update_locally = false // to avoid unnecesary recalculate in `$effect()`
+	let is_update_locally = false // to avoid unnecesary recalculate in `createEffect()`
 	let hue_dragged = false
 	let whiteness_dragged = false
 	let blackness_dragged = false
@@ -1585,7 +1586,7 @@ export const SliderHWBPicker: VoidComponent<{
 		event_add_listener<PointerEvent>(document, 'pointermove', on_pointermove)
 		event_add_listener<PointerEvent>(document, 'pointerup', on_pointerup)
 
-		$cleanup(() => {
+		onCleanup(() => {
 			event_remove_listener<PointerEvent>(document, 'pointermove', on_pointermove)
 			event_remove_listener<PointerEvent>(document, 'pointerup', on_pointerup)
 		})
@@ -1604,11 +1605,11 @@ export const SliderHWBPicker: VoidComponent<{
 		set_blackness(b * 100)
 	}
 
-	$mount(() => {
+	onMount(() => {
 		init_events()
 	})
 
-	$effect(() => {
+	createEffect(() => {
 		update_position()
 	})
 

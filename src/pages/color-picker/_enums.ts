@@ -1,16 +1,16 @@
 export enum ColorPickerMode {
-	image,
-	rectangle,
-	rectangle_hsl,
-	palette,
-	spectrum,
-	wheel,
-	slider_rgb,
-	slider_hsl,
-	slider_cmyk,
-	slider_hex,
-	slider_hsv,
-	slider_hwb
+	image = 'image',
+	rectangle = 'rectangle',
+	rectangle_hsl = 'rectangle-hsl',
+	palette = 'palette',
+	spectrum = 'spectrum',
+	wheel = 'wheel',
+	slider_rgb = 'slider-rgb',
+	slider_hsl = 'slider-hsl',
+	slider_cmyk = 'slider-cmyk',
+	slider_hex = 'slider-hex',
+	slider_hsv = 'slider-hsv',
+	slider_hwb = 'slider-hwb'
 }
 
 export enum Commands {
