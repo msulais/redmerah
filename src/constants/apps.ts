@@ -20,8 +20,8 @@ export const app_latex_viewer: AppItem = {
 	description: 'Visualize your LaTeX code effortlessly. Our app renders complex mathematical expressions and scientific notation, making it perfect for students, researchers, and educators.',
 	link: RoutesLinks.latex_viewer,
 	color: '#C247FF',
-	build_number: 1,
-	build_version: '0.0.1',
+	build_number: 2,
+	build_version: '0.0.2',
 }
 
 export const app_emoji_picker: AppItem = {
