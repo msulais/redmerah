@@ -13,11 +13,11 @@ import { document_active } from "@/utils/document"
 import { event_current_target } from "@/utils/event"
 import { number_is_not_defined, number_parse } from "@/utils/number"
 
+import Toast, { open_toast } from "@/components/Toast"
 import Button, { ButtonVariant, IconButton } from "@/components/Button"
 import Icon from "@/components/Icon"
 import Tooltip from "@/components/Tooltip"
 import CSS from './_styles.module.scss'
-import Toast, { open_toast } from "@/components/Toast"
 
 const LatexEditor: VoidComponent<{
 	index: number
