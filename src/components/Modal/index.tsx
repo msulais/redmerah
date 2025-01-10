@@ -318,6 +318,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 		element_release_pointercapture(modal_ref, pointer_id)
 		set_is_dragging(false)
 		fix_position()
+		STOP_GLOBAL_CLICK = true
 	}
 
 	function custom_on_short_focus(): void {

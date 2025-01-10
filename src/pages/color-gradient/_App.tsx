@@ -398,17 +398,20 @@ const _: VoidComponent = () => {
 		&& idb_store_delete(store_gradientdata, gradient_data.id)
 
 		for (const gradient of gradient_data.gradients) {
-			gradient.type == GradientType.linear
+			const type = gradient.type
+			const id = gradient.id
+
+			type == GradientType.linear
 			&& store_lineargradient != null
-			&& idb_store_delete(store_lineargradient, gradient.id);
+			&& idb_store_delete(store_lineargradient, id);
 
-			gradient.type == GradientType.radial
+			type == GradientType.radial
 			&& store_radialgradient != null
-			&& idb_store_delete(store_radialgradient, gradient.id);
+			&& idb_store_delete(store_radialgradient, id);
 
-			gradient.type == GradientType.conic
+			type == GradientType.conic
 			&& store_conicgradient != null
-			&& idb_store_delete(store_conicgradient, gradient.id);
+			&& idb_store_delete(store_conicgradient, id);
 
 			store_colorstopgradient != null
 			&& array_foreach(gradient.color_stop_list, color_stop => idb_store_delete(store_colorstopgradient, color_stop.id))

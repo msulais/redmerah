@@ -40,8 +40,8 @@ export const app_color_gradient: AppItem = {
 	description: 'Design beautiful color gradients with our intuitive app. Choose from linear and radial gradients, and stack them for complex effects. Generate clean CSS code to implement your designs.',
 	link: RoutesLinks.color_gradient,
 	color: '#F5FF00',
-	build_number: 1,
-	build_version: '0.0.1',
+	build_number: 2,
+	build_version: '0.0.3',
 }
 
 export const app_qr_code: AppItem = {

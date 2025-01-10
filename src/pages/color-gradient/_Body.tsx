@@ -2,19 +2,21 @@ import { createMemo, createSignal, createUniqueId, For, onMount, Show, type Void
 import { createStore } from "solid-js/store"
 
 import type { Gradient, GradientData, RadialGradient, Settings } from "./_type"
+import type { HEXColor } from "@/types/color"
 import { ColorModel, Commands, GradientType, HueInterpolationMethod, PolarColorSpace, RadialGradientShape } from "./_enums"
 import { attr_remove, attr_set, attr_set_if_exist } from "@/utils/attributes"
 import { event_add_listener, event_current_target } from "@/utils/event"
 import { BodyAttributes } from "@/enums/attributes"
-import { element_rect } from "@/utils/element"
+import { element_dataset, element_id, element_rect, element_tagname, element_valid_target } from "@/utils/element"
 import { math_clamp, math_round } from "@/utils/math"
 import { convert_color_by_color_model, gradient_to_css_text } from "./_utils"
-import { hsl_to_hex, rgb_to_hex } from "@/utils/color"
+import { hsl_to_hex, is_color_valid, rgb_to_hex } from "@/utils/color"
 import { navigator_clipboard_writetext } from "@/utils/navigator"
 import { array_includes, array_join, array_length, array_map, array_sort } from "@/utils/array"
 import { string_length, string_padstart, string_replace, string_split, string_substring, string_touppercase, string_trim } from "@/utils/string"
-import { number_parse, number_safe, number_to_string } from "@/utils/number"
+import { number_is_not_defined, number_parse, number_safe, number_to_string } from "@/utils/number"
 import { rect_width } from "@/utils/rect"
+import { document_active } from "@/utils/document"
 
 import Icon from "@/components/Icon"
 import Button, { ButtonVariant, IconButton, SquareButton } from "@/components/Button"
@@ -63,13 +65,7 @@ const GradientDataList: VoidComponent<{
 			<SquareButton
 				focused={selected_gradientdata_index() == $props.index && is_menu_action_open()}
 				data-rich-tooltip={id}
-				onClick={(ev) => {
-					set_selected_gradientdata_index($props.index)
-					open_menu(ev, menu_action_ref, {
-						anchor: event_current_target(ev),
-						position: MenuPosition.center_bottom_to_right
-					})
-				}}>
+				data-gradient-data-item-index={$props.index}>
 				<div data-gradient style={{"background-image": array_join(array_map($props.data.gradients, gradient => gradient_to_css_text(gradient)), ',')}}/>
 			</SquareButton>
 			<PopoverTooltip id={id}>
@@ -80,40 +76,89 @@ const GradientDataList: VoidComponent<{
 		</>)
 	}
 
-	const Menus: VoidComponent = () => (<>
-		<Menu
-			ref={r => menu_action_ref = r}
-			on_toggle_open={isOpen => set_is_menu_action_open(isOpen)}
-			style={{'min-width': '128px'}}>
-			<MenuItem
-				icon_code={0xE77B}
-				onClick={() => {
-					command(Commands.view_gradient_data, selected_gradientdata_index())
-					close_menu(menu_action_ref)
-				}}>
-				View
-			</MenuItem>
-			<MenuItem
-				icon_code={0xE51B}
-				onClick={() => {
-					copy(gradient_data()[selected_gradientdata_index()])
-					close_menu(menu_action_ref)
-				}}>
-				Copy
-			</MenuItem>
-			<MenuDivider />
-			<MenuItem
-				icon_code={0xE59D}
-				onClick={() => {
-					command(Commands.delete_gradient_data, selected_gradientdata_index())
-					close_menu(menu_action_ref)
-				}}>
-				Delete
-			</MenuItem>
-		</Menu>
-	</>)
+	const Menus: VoidComponent = () => {
+		const button_action_view_id = createUniqueId()
+		const button_action_copy_id = createUniqueId()
+		const button_action_delete_id = createUniqueId()
+		return (<>
+			<Menu
+				ref={r => menu_action_ref = r}
+				on_toggle_open={isOpen => set_is_menu_action_open(isOpen)}
+				style={{'min-width': '128px'}}
+				onClick={ev => {
+					const button = document_active()!
+					if (!element_valid_target(
+						event_current_target(ev),
+						button,
+						el => element_tagname(el) == 'BUTTON'
+					)) return
 
-	return (<div class={CSS.body_gradient_data_list}>
+					switch (element_id(button)) {
+						case button_action_view_id: {
+							command(Commands.view_gradient_data, selected_gradientdata_index())
+							close_menu(menu_action_ref)
+							break
+						}
+						case button_action_copy_id: {
+							copy(gradient_data()[selected_gradientdata_index()])
+							close_menu(menu_action_ref)
+							break
+						}
+						case button_action_delete_id: {
+							command(Commands.delete_gradient_data, selected_gradientdata_index())
+							close_menu(menu_action_ref)
+							break
+						}
+					}
+				}}>
+				<MenuItem
+					icon_code={0xE77B}
+					id={button_action_view_id}>
+					View
+				</MenuItem>
+				<MenuItem
+					icon_code={0xE51B}
+					id={button_action_copy_id}>
+					Copy
+				</MenuItem>
+				<MenuDivider />
+				<MenuItem
+					icon_code={0xE59D}
+					id={button_action_delete_id}>
+					Delete
+				</MenuItem>
+			</Menu>
+		</>)
+	}
+
+	return (<div
+		class={CSS.body_gradient_data_list}
+
+		// !important: must implement here... can't implement this in parent
+		onClick={ev => {
+			const button = document_active()!
+			if (!element_valid_target(
+				event_current_target(ev),
+				button,
+				el => element_tagname(el) == 'BUTTON'
+			)) return
+
+			const data_gradient_data_item_index = element_dataset(
+				button,
+				'gradientDataItemIndex'
+			)
+			if (data_gradient_data_item_index) {
+				const index = number_parse(data_gradient_data_item_index, true)
+				if (number_is_not_defined(index)) return
+
+				set_selected_gradientdata_index(index)
+				open_menu(ev, menu_action_ref, {
+					anchor: button,
+					position: MenuPosition.center_bottom_to_right
+				})
+				return
+			}
+		}}>
 		<Tooltip>
 			<For each={gradient_data()}>{(data, i) =>
 				<GradientDataItem index={i()} data={data}/>
@@ -133,8 +178,6 @@ const GradientControl: VoidComponent<{
 	pointer_position: PointerPosition
 	command(type: Commands, ...args: unknown[]): unknown
 	on_start_drag(gradient_element: HTMLDivElement, position: PointerPosition, colorstop_index: number): void
-	on_start_pick_color(colorstop_index: number): void
-	on_open_actions_menu(ev: Event): void
 }> = (props) => {
 	const [expanded, set_expanded] = createSignal<boolean>(false)
 	const [selected_colorstop_index, set_selected_colorstop_index] = createSignal<number>(-1)
@@ -446,16 +489,13 @@ const GradientControl: VoidComponent<{
 					trailing={<>
 						<TextFieldButton
 							data-tooltip="Pick color"
-							onClick={(ev) => {
-								props.on_start_pick_color(index())
-								open_colorpicker(ev, props.colorpicker_ref, { color: stop.color, anchor: event_current_target(ev) })}
-							}>
+							data-gradientcontrol-pickcolor={array_join([index(), stop.color], ',')}>
 							<Icon code={0xE785} />
 						</TextFieldButton>
 						<Show when={array_length(gradient().color_stop_list) > 2}>
 							<TextFieldButton
 								data-tooltip="Remove color"
-								onClick={() => command(Commands.remove_color_stop, gradient_index(), index())}>
+								data-gradientcontrol-removecolor={array_join([gradient_index(), index()], ',')}>
 								<Icon code={0xE59D} />
 							</TextFieldButton>
 						</Show>
@@ -468,22 +508,24 @@ const GradientControl: VoidComponent<{
 	const Actions: VoidComponent = () => (<div class={CSS.body_gradient_control_actions}>
 		<Button
 			variant={ButtonVariant.filled}
-			onClick={() => command(Commands.add_color_stop, gradient_index())}>
+			data-gradientcontrol-addcolorstop={gradient_index()}>
 			<Icon code={0xE009} filled/>Add color stop
 		</Button>
-		<IconButton data-tooltip="More actions" onClick={ev => props.on_open_actions_menu(ev)} code={0xEAD7}/>
+		<IconButton
+			data-tooltip="More actions"
+			data-gradientcontrol-moreactions={gradient_index()}
+			code={0xEAD7}
+		/>
 	</div>)
 
 	return (<div class={CSS.body_gradient_control}>
-		<Tooltip>
-			<Control/>
-			<Show when={expanded()}>
-				<Options/>
-				<h3>Stops</h3>
-				<ColorStops/>
-				<Actions/>
-			</Show>
-		</Tooltip>
+		<Control/>
+		<Show when={expanded()}>
+			<Options/>
+			<h3>Stops</h3>
+			<ColorStops/>
+			<Actions/>
+		</Show>
 	</div>)
 }
 
@@ -495,6 +537,7 @@ const _: VoidComponent<{
 }> = (props) => {
 	const doc = document
 	const body = doc.body
+	const button_addgradient_id = createUniqueId()
 	const [is_dragging, set_is_dragging] = createSignal<boolean>(false)
 	const [pointer_position, set_pointer_position] = createStore<PointerPosition>({x: 0, y: 0})
 	const [colorpicker_ref, set_colorpicker_ref] = createSignal<HTMLDialogElement | null>(null)
@@ -562,32 +605,52 @@ const _: VoidComponent<{
 		/>
 	</>)
 
-	const Menus: VoidComponent = () => (<>
-		<Menu ref={r => menu_gradientactions_ref = r}>
-			<MenuItem
-				icon_code={0xE51B}
+	const Menus: VoidComponent = () => {
+		const button_gradientactions_copycss_id = createUniqueId()
+		const button_gradientactions_deletegradient_id = createUniqueId()
+		return (<>
+			<Menu
+				ref={r => menu_gradientactions_ref = r}
 				onClick={ev => {
-					navigator_clipboard_writetext(gradient_to_css_text(
-						props.gradients[selected_gradient_index()],
-						settings().color_model,
-						true
-					))
-					close_menu(menu_gradientactions_ref)
-					open_toast(ev, toast_copied_ref)
+					const button = document_active()!
+					if (!element_valid_target(
+						event_current_target(ev),
+						button,
+						el => element_tagname(el) == 'BUTTON'
+					)) return
+
+					switch (element_id(button)) {
+						case button_gradientactions_copycss_id: {
+							navigator_clipboard_writetext(gradient_to_css_text(
+								props.gradients[selected_gradient_index()],
+								settings().color_model,
+								true
+							))
+							close_menu(menu_gradientactions_ref)
+							open_toast(ev, toast_copied_ref)
+							break
+						}
+						case button_gradientactions_deletegradient_id: {
+							close_menu(menu_gradientactions_ref)
+							command(Commands.remove_gradient, selected_gradient_index())
+							break
+						}
+					}
 				}}>
-				Copy CSS
-			</MenuItem>
-			<MenuItem
-				icon_code={0xE59D}
-				disabled={array_length(props.gradients) <= 1}
-				onClick={() => {
-					close_menu(menu_gradientactions_ref)
-					command(Commands.remove_gradient, selected_gradient_index())
-				}}>
-				Delete gradient
-			</MenuItem>
-		</Menu>
-	</>)
+				<MenuItem
+					id={button_gradientactions_copycss_id}
+					icon_code={0xE51B}>
+					Copy CSS
+				</MenuItem>
+				<MenuItem
+					id={button_gradientactions_deletegradient_id}
+					icon_code={0xE59D}
+					disabled={array_length(props.gradients) <= 1}>
+					Delete gradient
+				</MenuItem>
+			</Menu>
+		</>)
+	}
 
 	const Toasts: VoidComponent = () => (<>
 		<Toast
@@ -597,7 +660,90 @@ const _: VoidComponent<{
 		</Toast>
 	</>)
 
-	return (<main class={CSS.body}>
+	return (<main
+		class={CSS.body}
+		onClick={ev => {
+			const button = document_active()!
+			if (!element_valid_target(
+				event_current_target(ev),
+				button,
+				el => element_tagname(el) == 'BUTTON'
+			)) return
+
+			switch (element_id(button)) {
+				case button_addgradient_id: {
+					command(Commands.add_gradient)
+					break
+				}
+				default: {
+					const data_gradientcontrol_addcolorstop = element_dataset(
+						button, 'gradientcontrolAddcolorstop'
+					)
+					if (data_gradientcontrol_addcolorstop) {
+						const index = number_parse(data_gradientcontrol_addcolorstop, true)
+						if (number_is_not_defined(index)) return
+
+						return command(Commands.add_color_stop, index)
+					}
+
+					// data-gradientcontrol-moreactions
+					const data_gradientcontrol_moreactions = element_dataset(
+						button, 'gradientcontrolMoreactions'
+					)
+					if (data_gradientcontrol_moreactions) {
+						const index = number_parse(data_gradientcontrol_moreactions, true)
+						if (number_is_not_defined(index)) return
+
+						set_selected_gradient_index(index)
+						open_menu(ev, menu_gradientactions_ref, {
+							anchor: button,
+							position: MenuPosition.center_center_right_top
+						})
+						return
+					}
+
+					const data_gradientcontrol_pickcolor = element_dataset(
+						button, 'gradientcontrolPickcolor'
+					)
+					if (data_gradientcontrol_pickcolor) {
+						let [color_stop_index, color] = string_split(
+							data_gradientcontrol_pickcolor, ','
+						) as [number|string|undefined, string|undefined]
+						if (!color_stop_index || !color || !is_color_valid(color)) return
+
+						color_stop_index = number_parse(color_stop_index as string, true)
+						if (number_is_not_defined(color_stop_index)) return
+
+						selected_colorstop_index = color_stop_index
+						set_selected_gradient_index(color_stop_index)
+						open_colorpicker(ev, colorpicker_ref()!, {
+							color: color as HEXColor,
+							anchor: button
+						})
+						return
+					}
+
+					// data-gradientcontrol-removecolor
+					const data_gradientcontrol_removecolor = element_dataset(
+						button, 'gradientcontrolRemovecolor'
+					)
+					if (data_gradientcontrol_removecolor) {
+						let [gradient_index, color_stop_index] = string_split(
+							data_gradientcontrol_removecolor, ','
+						) as [number|string|undefined, number|string|undefined]
+						if (!gradient_index || !color_stop_index) return
+
+						gradient_index = number_parse(gradient_index as string, true)
+						color_stop_index = number_parse(color_stop_index as string, true)
+						if (number_is_not_defined(gradient_index)
+							|| number_is_not_defined(color_stop_index)
+						) return
+
+						command(Commands.remove_color_stop, gradient_index, color_stop_index)
+					}
+				}
+			}
+		}}>
 		<div>
 			<div class={CSS.body_preview}>
 				<div style={{
@@ -647,40 +793,31 @@ const _: VoidComponent<{
 				</div>
 				<Button
 					variant={ButtonVariant.filled}
-					onClick={() => command(Commands.add_gradient)}>
+					id={button_addgradient_id}>
 					<Icon code={0xE007} />Add gradient
 				</Button>
-				<For each={props.gradients}>{(gradient, index) =>
-					<GradientControl
-						gradient={gradient}
-						command={command}
-						settings={settings()}
-						colorpicker_ref={colorpicker_ref()!}
-						is_dragging={is_dragging()}
-						gradient_index={index()}
-						pointer_position={pointer_position}
-						on_start_drag={(gradientElement, pointer, colorStopIndex) => {
-							selected_gradient_element_rect = element_rect(gradientElement)
-							selected_colorstop_index = colorStopIndex
-							set_selected_gradient_index(index())
-							set_pointer_position(pointer)
-							set_is_dragging(true)
-							attr_set(body, BodyAttributes.no_pointer_event)
-						}}
-						selected_gradient_index={selected_gradient_index()}
-						on_start_pick_color={(colorStopIndex) => {
-							selected_colorstop_index = colorStopIndex
-							set_selected_gradient_index(index())
-						}}
-						on_open_actions_menu={ev => {
-							set_selected_gradient_index(index())
-							open_menu(ev, menu_gradientactions_ref, {
-								anchor: event_current_target(ev as any) as HTMLElement,
-								position: MenuPosition.center_center_right_top
-							})
-						}}
-					/>
-				}</For>
+				<Tooltip>
+					<For each={props.gradients}>{(gradient, index) =>
+						<GradientControl
+							gradient={gradient}
+							command={command}
+							settings={settings()}
+							colorpicker_ref={colorpicker_ref()!}
+							is_dragging={is_dragging()}
+							gradient_index={index()}
+							pointer_position={pointer_position}
+							on_start_drag={(gradient_el, pointer, colorStopIndex) => {
+								selected_gradient_element_rect = element_rect(gradient_el)
+								selected_colorstop_index = colorStopIndex
+								set_selected_gradient_index(index())
+								set_pointer_position(pointer)
+								set_is_dragging(true)
+								attr_set(body, BodyAttributes.no_pointer_event)
+							}}
+							selected_gradient_index={selected_gradient_index()}
+						/>
+					}</For>
+				</Tooltip>
 			</div>
 		</div>
 		<ColorPickers/>

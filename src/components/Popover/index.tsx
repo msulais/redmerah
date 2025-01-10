@@ -294,6 +294,7 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 		element_release_pointercapture(popover_ref, pointer_id)
 		set_is_dragging(false)
 		fix_position()
+		STOP_GLOBAL_CLICK = true
 	}
 
 	function custom_on_close(_ev: CustomEvent): void {
