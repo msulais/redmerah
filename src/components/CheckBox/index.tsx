@@ -13,7 +13,7 @@ import './index.scss'
 
 enum CheckBoxEvents {
 	/** @param {HTMLInputElement} el `HTMLInputElement` */
-	changestate = 'custom:changestate'
+	changestate = 'custom:checkbox-changestate'
 }
 
 enum CheckBoxVariant {

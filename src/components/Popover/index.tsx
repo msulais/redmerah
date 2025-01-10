@@ -49,8 +49,8 @@ enum PopoverAttributes {
 }
 
 enum PopoverEvents {
-	close = 'custom:close',
-	reposition = 'custom:reposition',
+	close = 'custom:popover-close',
+	reposition = 'custom:popover-reposition',
 
 	/** @param {PopoverOpenDetail} detail `PopoverOpenDetail` */
 	open = 'custom:open'
@@ -58,10 +58,10 @@ enum PopoverEvents {
 
 enum PopoverListenerEvents {
 	/** @param popover `HTMLDivElement` */
-	open = 'custom:open',
+	open = 'custom:popoverlistener-open',
 
 	/** @param popover `HTMLDivElement` */
-	close = 'custom:close'
+	close = 'custom:popoverlistener-close'
 }
 
 let LISTENER_REF: HTMLDivElement

@@ -50,23 +50,23 @@ type ModalCloseDetail = {
 }
 
 enum ModalEvents {
-	shortfocus = 'custom:shortfocus',
+	shortfocus = 'custom:modal-shortfocus',
 
 	/** @param {ModalCloseDetail} detail `ModalCloseDetail` */
-	close = 'custom:close',
+	close = 'custom:modal-close',
 
-	reposition = 'custom:reposition',
+	reposition = 'custom:modal-reposition',
 
 	/** @param {ModalOpenDetail} detail `ModalOpenDetail` */
-	open = 'custom:open'
+	open = 'custom:modal-open'
 }
 
 enum ModalListenerEvents {
 	/** @param modal `HTMLDialogElement` */
-	open = 'custom:open',
+	open = 'custom:modallistener-open',
 
 	/** @param modal `HTMLDialogElement` */
-	close = 'custom:close'
+	close = 'custom:modallistener-close'
 }
 
 let LISTENER_REF: HTMLDivElement

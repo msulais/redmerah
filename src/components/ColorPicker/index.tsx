@@ -27,7 +27,7 @@ const DEFAULT_HEX_COLOR: HEXColor = '#FF0000'
 
 enum ColorPickerEvents {
 	/** @param {HEXColor} color `HEXColor` */
-	changecolor = 'custom:changecolor'
+	changecolor = 'custom:colorpicker-changecolor'
 }
 
 function open_colorpicker(
