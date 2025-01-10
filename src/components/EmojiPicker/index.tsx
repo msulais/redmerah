@@ -44,15 +44,15 @@ enum EmojiCategory {
 
 enum EmojiPickerEvents {
 	/** @param emojis `Emoji[]` */
-	getrecentsemoji = 'custom:getrecentsemoji'
+	getrecentsemoji = 'custom:emojipicker-getrecentsemoji'
 }
 
 enum EmojiPickerListenerEvents {
 	/** @param detail `Emoji` */
-	add_recents = 'custom:addrecents',
+	add_recents = 'custom:emojipickerlistener-addrecents',
 
 	/** @param detail `HTMLElement` */
-	get_recents = 'custom:getrecents'
+	get_recents = 'custom:emojipickerlistener-getrecents'
 }
 
 let LISTENER_REF: HTMLDivElement

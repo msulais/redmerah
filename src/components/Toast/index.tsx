@@ -29,8 +29,8 @@ type ToastOpenDetail = {
 }
 
 enum ToastEvents {
-	open = 'custom:open',
-	close = 'custom:close'
+	open = 'custom:toast-open',
+	close = 'custom:toast-close'
 }
 
 function open_toast(

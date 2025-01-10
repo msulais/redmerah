@@ -20,11 +20,11 @@ import './index.scss'
 
 enum TooltipListenerEvents {
 	/** @requires TooltipOpenDetail */
-	open = 'custom:open',
+	open = 'custom:tooltiplistener-open',
 
 	/** @requires TooltipCloseDetail */
-	close = 'custom:close',
-	stop_process = 'custom:stopprocess'
+	close = 'custom:tooltiplistener-close',
+	stop_process = 'custom:tooltiplistener-stopprocess'
 }
 
 enum TooltipAttributes {
