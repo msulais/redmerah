@@ -26,29 +26,29 @@ type DropdownContextProps = {
 
 const DropdownContext = createContext<DropdownContextProps>()
 
-type DropdownOptionProps = Omit<MenuItemProps, 'value'> & {
-	value: string | number
-	text: string
+type DropdownOptionProps = MenuItemProps & {
+	c_value: string | number
+	c_text: string
 }
 
 const DropdownOption: ParentComponent<DropdownOptionProps> = ($props) => {
 	const [props, other] = splitProps($props, [
-		'value', 'selected', 'id', 'checked',
-		'text', 'children'
+		'c_value', 'c_selected', 'id', 'c_checked',
+		'c_text', 'children'
 	])
 	const context = useContext(DropdownContext)
 	const selected = createMemo<boolean>(() => {
 		const selected_values = context?.selected_values()
 		return selected_values == undefined
 			? false
-			: array_some(selected_values, v => v === props.value)
+			: array_some(selected_values, v => v === props.c_value)
 	})
 	let value: string | number | null = null
 	let text: string | null = null
 
 	createEffect(() => {
-		const _value = props.value
-		const _text = props.text
+		const _value = props.c_value
+		const _text = props.c_text
 		if (_value === value && _text == text) return
 
 		value = _value
@@ -57,41 +57,41 @@ const DropdownOption: ParentComponent<DropdownOptionProps> = ($props) => {
 	})
 
 	onCleanup(() => {
-		context?.on_cleanup_option(props.value)
+		context?.on_cleanup_option(props.c_value)
 		value = text = null
 	})
 
 	return (<MenuItem
-		selected={props.selected ?? context?.multiple()? undefined : selected()}
-		checked={props.checked ?? context?.multiple()? selected() : undefined}
-		data-c-dropdown-value={(is_number(props.value)? 'number:' : '') + props.value}
+		c_selected={props.c_selected ?? context?.multiple()? undefined : selected()}
+		c_checked={props.c_checked ?? context?.multiple()? selected() : undefined}
+		data-c-dropdown-value={(is_number(props.c_value)? 'number:' : '') + props.c_value}
 		{...other}>
-		{ props.children ?? props.text}
+		{ props.children ?? props.c_text}
 	</MenuItem>)
 }
 
-type DropdownProps = Omit<ButtonProps, 'value'> & {
-	values?: (string | number)[]
-	text?: string
-	label?: string
-	multiple?: boolean
-	attr_menu?: MenuProps
-	on_change_options?(values: {value: string | number, text: string}[]): unknown
+type DropdownProps = ButtonProps & {
+	c_values?: (string | number)[]
+	c_text?: string
+	c_label?: string
+	c_multiple?: boolean
+	c_attr_menu?: MenuProps
+	c_on_change?(values: {value: string | number, text: string}[]): unknown
 }
 
 const Dropdown: ParentComponent<DropdownProps> = ($props) => {
 	const [props, other] = splitProps(
-		mergeProps({variant: ButtonVariant.tonal}, $props),
+		mergeProps({c_variant: ButtonVariant.tonal}, $props),
 	[
-		'disabled', 'multiple', 'children', 'text',
-		'attr_menu', 'label', 'on_change_options',
-		'values', 'ref', 'onClick', 'selected',
-		'classList', 'variant'
+		'disabled', 'c_multiple', 'children', 'c_text',
+		'c_attr_menu', 'c_label', 'c_on_change',
+		'c_values', 'ref', 'onClick', 'c_selected',
+		'classList', 'c_variant'
 	])
 	const [menu_props, menu_props_other] = splitProps(
-		props.attr_menu! ?? {},
+		props.c_attr_menu! ?? {},
 		[
-			'on_toggle_open', 'ref', 'style', 'classList',
+			'c_on_toggleopen', 'ref', 'style', 'classList',
 			'onClick'
 		]
 	)
@@ -120,7 +120,7 @@ const Dropdown: ParentComponent<DropdownProps> = ($props) => {
 
 	function on_select_option(value: string | number): void {
 		const index = array_find_index(selected_values, v => v === value)
-		if (props.multiple) {
+		if (props.c_multiple) {
 			set_selected_values(v => index >= 0
 				? array_concat(
 					array_slice(v, 0, index),
@@ -136,7 +136,7 @@ const Dropdown: ParentComponent<DropdownProps> = ($props) => {
 			set_selected_values([value])
 		}
 
-		props.on_change_options?.(array_filter(options, o => is_selected(o.value)))
+		props.c_on_change?.(array_filter(options, o => is_selected(o.value)))
 	}
 
 	onMount(() => {
@@ -160,8 +160,8 @@ const Dropdown: ParentComponent<DropdownProps> = ($props) => {
 	})
 
 	createEffect(() => {
-		const values = props.values
-		const multiple = props.multiple
+		const values = props.c_values
+		const multiple = props.c_multiple
 
 		if (!array_equals(values ?? [], local_values)) {
 			local_values = values ?? []
@@ -206,8 +206,8 @@ const Dropdown: ParentComponent<DropdownProps> = ($props) => {
 			else set_options(d => [...d, {value, text}])
 
 			const selected_values: string[] = []
-			if (Array.isArray(props.values)){
-				for (const value of props.values) {
+			if (Array.isArray(props.c_values)){
+				for (const value of props.c_values) {
 					if (!array_some(options, v => v.value === value)) continue
 
 					array_push(selected_values, value)
@@ -234,36 +234,36 @@ const Dropdown: ParentComponent<DropdownProps> = ($props) => {
 				array_slice(d, index + 1)
 			))
 		},
-		multiple: () => props.multiple ?? false,
+		multiple: () => props.c_multiple ?? false,
 		selected_values: () => selected_values,
 	}}>
 		<Button
 			ref={mergeRefs(props.ref, r => button_dropdown_ref = r)}
-			variant={props.variant}
+			c_variant={props.c_variant}
 			classList={{
 				'c-dropdown': true,
 				...props.classList
 			}}
-			selected={props.selected ?? is_open()}
+			c_selected={props.c_selected ?? is_open()}
 			onClick={ev => {
 				open_dropdown_menu(ev)
 				event_call(ev, props.onClick)
 			}}
 			{...other}>
-			<Show when={props.label}>
-				<div class="c-dropdown-label">{props.label}</div>
+			<Show when={props.c_label}>
+				<div class="c-dropdown-label">{props.c_label}</div>
 			</Show>
 			{array_length(selected_values) == 0
-				? props.text
+				? props.c_text
 				: array_join(array_map(array_filter(options, v => is_selected(v.value)), v => v.text), ', ')
 			}
 			<div style="flex:1"/>
-			<Icon code={0xE3FC}/>
+			<Icon c_code={0xE3FC}/>
 		</Button>
 		<Menu
-			on_toggle_open={v => {
+			c_on_toggleopen={v => {
 				set_is_open(v)
-				menu_props.on_toggle_open?.(v)
+				menu_props.c_on_toggleopen?.(v)
 			}}
 			onClick={(ev) => {
 				event_call(ev, menu_props.onClick)

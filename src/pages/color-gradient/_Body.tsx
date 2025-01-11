@@ -63,7 +63,7 @@ const GradientDataList: VoidComponent<{
 		const id = createUniqueId()
 		return (<>
 			<SquareButton
-				focused={selected_gradientdata_index() == $props.index && is_menu_action_open()}
+				c_focused={selected_gradientdata_index() == $props.index && is_menu_action_open()}
 				data-rich-tooltip={id}
 				data-gradient-data-item-index={$props.index}>
 				<div data-gradient style={{"background-image": array_join(array_map($props.data.gradients, gradient => gradient_to_css_text(gradient)), ',')}}/>
@@ -83,7 +83,7 @@ const GradientDataList: VoidComponent<{
 		return (<>
 			<Menu
 				ref={r => menu_action_ref = r}
-				on_toggle_open={isOpen => set_is_menu_action_open(isOpen)}
+				c_on_toggleopen={isOpen => set_is_menu_action_open(isOpen)}
 				style={{'min-width': '128px'}}
 				onClick={ev => {
 					const button = document_active()!
@@ -112,18 +112,18 @@ const GradientDataList: VoidComponent<{
 					}
 				}}>
 				<MenuItem
-					icon_code={0xE77B}
+					c_icon_code={0xE77B}
 					id={button_action_view_id}>
 					View
 				</MenuItem>
 				<MenuItem
-					icon_code={0xE51B}
+					c_icon_code={0xE51B}
 					id={button_action_copy_id}>
 					Copy
 				</MenuItem>
 				<MenuDivider />
 				<MenuItem
-					icon_code={0xE59D}
+					c_icon_code={0xE59D}
 					id={button_action_delete_id}>
 					Delete
 				</MenuItem>
@@ -246,7 +246,7 @@ const GradientControl: VoidComponent<{
 		</div>
 		<IconButton
 			data-tooltip={expanded()? "Show less" : 'Show more'}
-			code={0xE3FC}
+			c_code={0xE3FC}
 			onClick={() => set_expanded(e => !e)}
 			data-expanded={attr_set_if_exist(expanded())}
 		/>
@@ -254,27 +254,27 @@ const GradientControl: VoidComponent<{
 
 	const Options: VoidComponent = () => (<div class={CSS.body_gradient_control_options}>
 		<Dropdown
-			values={[gradient().type]}
-			on_change_options={(options) => command(
+			c_values={[gradient().type]}
+			c_on_change={(options) => command(
 				Commands.change_gradient_type,
 				gradient_index(),
 				options[0].value
 			)}
-			label="Type">
+			c_label="Type">
 			<For each={[
 				[GradientType.linear, 'Linear'],
 				[GradientType.radial, 'Radial'],
 				[GradientType.conic, 'Conic'],
-			]}>{option => <DropdownOption value={option[0]} text={option[1]}/>}</For>
+			]}>{option => <DropdownOption c_value={option[0]} c_text={option[1]}/>}</For>
 		</Dropdown>
 		<Dropdown
-			values={[gradient().color_interpolation_method]}
-			on_change_options={(options) => command(
+			c_values={[gradient().color_interpolation_method]}
+			c_on_change={(options) => command(
 				Commands.change_color_interpolation_method,
 				gradient_index(),
 				options[0].value
 			)}
-			label="Color space">
+			c_label="Color space">
 			<For each={[
 				[PolarColorSpace.auto, 'Auto'],
 				// [RectangularColorSpace.a98_rgb, 'A98 RGB'],
@@ -292,7 +292,7 @@ const GradientControl: VoidComponent<{
 				// [RectangularColorSpace.xyz, 'XYZ'],
 				// [RectangularColorSpace.xyz_d50, 'XYZ D50'],
 				// [RectangularColorSpace.xyz_d65, 'XYZ D65'],
-			]}>{option => <DropdownOption value={option[0]} text={option[1]}/>}</For>
+			]}>{option => <DropdownOption c_value={option[0]} c_text={option[1]}/>}</For>
 		</Dropdown>
 		<Show
 			when={array_includes([
@@ -300,42 +300,42 @@ const GradientControl: VoidComponent<{
 				PolarColorSpace.lch, PolarColorSpace.oklch
 			], gradient().color_interpolation_method as PolarColorSpace)}>
 			<Dropdown
-				values={[gradient().hue_interpolation_method]}
-				on_change_options={(options) => command(
+				c_values={[gradient().hue_interpolation_method]}
+				c_on_change={(options) => command(
 					Commands.change_hue_interpolation_method,
 					gradient_index(),
 					options[0].value
 				)}
-				label="Hue interpolation">
+				c_label="Hue interpolation">
 				<For each={[
 					[HueInterpolationMethod.auto, 'Auto'],
 					[HueInterpolationMethod.decreasing, 'Decreasing'],
 					[HueInterpolationMethod.increasing, 'Increasing'],
 					[HueInterpolationMethod.longer, 'Longer'],
 					[HueInterpolationMethod.shorter, 'Shorter'],
-				]}>{option => <DropdownOption value={option[0]} text={option[1]}/>}</For>
+				]}>{option => <DropdownOption c_value={option[0]} c_text={option[1]}/>}</For>
 			</Dropdown>
 		</Show>
 		<Show when={gradient().type == GradientType.radial}>
 			<Dropdown
-				values={[(gradient() as RadialGradient).shape]}
-				on_change_options={(options) => command(Commands.change_radial_gradient_shape, gradient_index(), options[0].value)}
-				label="Shape">
+				c_values={[(gradient() as RadialGradient).shape]}
+				c_on_change={(options) => command(Commands.change_radial_gradient_shape, gradient_index(), options[0].value)}
+				c_label="Shape">
 				<For each={[
 					[RadialGradientShape.circle, 'Circle'],
 					[RadialGradientShape.ellipse, 'Ellipse'],
-				]}>{option => <DropdownOption value={option[0]} text={option[1]}/>}</For>
+				]}>{option => <DropdownOption c_value={option[0]} c_text={option[1]}/>}</For>
 			</Dropdown>
 		</Show>
 		<div class={CSS.body_gradient_control_options_2_grid}>
 			<Show when={array_includes([GradientType.conic, GradientType.linear], gradient().type)}>
 				<NumberTextField
-					label="Angle (°)"
+					c_label="Angle (°)"
 					enterkeyhint="done"
 					min={0}
 					max={360}
-					auto_select_all
-					on_input_as_number={(_, v) => command(
+					c_auto_select_all
+					c_on_inputasnumber={(_, v) => command(
 						Commands.change_gradient_angle,
 						gradient_index(),
 						v
@@ -345,11 +345,11 @@ const GradientControl: VoidComponent<{
 			</Show>
 			<Show when={array_includes([GradientType.conic, GradientType.radial], gradient().type)}>
 				<NumberTextField
-					label="X (%)"
+					c_label="X (%)"
 					min={0}
 					enterkeyhint="done"
-					auto_select_all
-					on_input_as_number={(_, v) => command(
+					c_auto_select_all
+					c_on_inputasnumber={(_, v) => command(
 						Commands.change_gradient_position_x,
 						gradient_index(),
 						v
@@ -357,11 +357,11 @@ const GradientControl: VoidComponent<{
 					value={(gradient() as any).position_x as number}
 				/>
 				<NumberTextField
-					label="Y (%)"
+					c_label="Y (%)"
 					enterkeyhint="done"
 					min={0}
-					auto_select_all
-					on_input_as_number={(_, v) => command(
+					c_auto_select_all
+					c_on_inputasnumber={(_, v) => command(
 						Commands.change_gradient_position_y,
 						gradient_index(),
 						v
@@ -371,11 +371,11 @@ const GradientControl: VoidComponent<{
 			</Show>
 			<Show when={gradient().type == GradientType.radial && (gradient() as RadialGradient).shape == RadialGradientShape.circle}>
 				<NumberTextField
-					label="Size (px)"
+					c_label="Size (px)"
 					enterkeyhint="done"
 					min={0}
-					auto_select_all
-					on_input_as_number={(_, v) => command(
+					c_auto_select_all
+					c_on_inputasnumber={(_, v) => command(
 						Commands.change_radial_gradient_size,
 						gradient_index(),
 						v
@@ -385,11 +385,11 @@ const GradientControl: VoidComponent<{
 			</Show>
 			<Show when={gradient().type == GradientType.radial && (gradient() as RadialGradient).shape == RadialGradientShape.ellipse}>
 				<NumberTextField
-					label="Width (%)"
+					c_label="Width (%)"
 					enterkeyhint="done"
 					min={0}
-					auto_select_all
-					on_input_as_number={(_, v) => command(
+					c_auto_select_all
+					c_on_inputasnumber={(_, v) => command(
 						Commands.change_radial_gradient_width,
 						gradient_index(),
 						v
@@ -397,11 +397,11 @@ const GradientControl: VoidComponent<{
 					value={(gradient() as RadialGradient).size_width}
 				/>
 				<NumberTextField
-					label="Height (%)"
+					c_label="Height (%)"
 					enterkeyhint="done"
 					min={0}
-					auto_select_all
-					on_input_as_number={(_, v) => command(
+					c_auto_select_all
+					c_on_inputasnumber={(_, v) => command(
 						Commands.change_radial_gradient_height,
 						gradient_index(),
 						v
@@ -424,14 +424,14 @@ const GradientControl: VoidComponent<{
 		<div class={CSS.body_gradient_control_stop}>
 			<div>
 				<NumberTextField
-					label={is_conic_gradient()? "°" : "%"}
-					auto_select_all
+					c_label={is_conic_gradient()? "°" : "%"}
+					c_auto_select_all
 					enterkeyhint="done"
 					value={stop.size * (is_conic_gradient()? 360 / 100 : 1)}
 					min={0}
 					max={is_conic_gradient()? 360 : 100}
-					integer_only
-					on_input_as_number={(_, v) => command(
+					c_integer_only
+					c_on_inputasnumber={(_, v) => command(
 						Commands.change_color_stop_length,
 						gradient_index(),
 						index(),
@@ -439,7 +439,7 @@ const GradientControl: VoidComponent<{
 					)}
 				/>
 				<TextField
-					leading={<Icon code={0xE408} filled style={{color: stop.color}}/>}
+					c_leading={<Icon c_code={0xE408} c_filled style={{color: stop.color}}/>}
 					value={convert_color_by_color_model(stop.color, settings().color_model, true)}
 					enterkeyhint="done"
 					onBlur={ev => {
@@ -486,17 +486,17 @@ const GradientControl: VoidComponent<{
 						command(Commands.change_color_stop_color, gradient_index(), index(), value)
 						change_textfield_value(event_current_target(ev), value)
 					}}
-					trailing={<>
+					c_trailing={<>
 						<TextFieldButton
 							data-tooltip="Pick color"
 							data-gradientcontrol-pickcolor={array_join([index(), stop.color], ',')}>
-							<Icon code={0xE785} />
+							<Icon c_code={0xE785} />
 						</TextFieldButton>
 						<Show when={array_length(gradient().color_stop_list) > 2}>
 							<TextFieldButton
 								data-tooltip="Remove color"
 								data-gradientcontrol-removecolor={array_join([gradient_index(), index()], ',')}>
-								<Icon code={0xE59D} />
+								<Icon c_code={0xE59D} />
 							</TextFieldButton>
 						</Show>
 					</>}
@@ -507,14 +507,14 @@ const GradientControl: VoidComponent<{
 
 	const Actions: VoidComponent = () => (<div class={CSS.body_gradient_control_actions}>
 		<Button
-			variant={ButtonVariant.filled}
+			c_variant={ButtonVariant.filled}
 			data-gradientcontrol-addcolorstop={gradient_index()}>
-			<Icon code={0xE009} filled/>Add color stop
+			<Icon c_code={0xE009} c_filled/>Add color stop
 		</Button>
 		<IconButton
 			data-tooltip="More actions"
 			data-gradientcontrol-moreactions={gradient_index()}
-			code={0xEAD7}
+			c_code={0xEAD7}
 		/>
 	</div>)
 
@@ -593,10 +593,10 @@ const _: VoidComponent<{
 
 	const ColorPickers: VoidComponent = () => (<>
 		<ColorPicker
-			draggable
-			disabled_action
+			c_draggable
+			c_disabled_action
 			ref={r => set_colorpicker_ref(r)}
-			on_update_color={color => command(
+			c_on_update_color={color => command(
 				Commands.change_color_stop_color,
 				selected_gradient_index(),
 				selected_colorstop_index,
@@ -639,12 +639,12 @@ const _: VoidComponent<{
 				}}>
 				<MenuItem
 					id={button_gradientactions_copycss_id}
-					icon_code={0xE51B}>
+					c_icon_code={0xE51B}>
 					Copy CSS
 				</MenuItem>
 				<MenuItem
 					id={button_gradientactions_deletegradient_id}
-					icon_code={0xE59D}
+					c_icon_code={0xE59D}
 					disabled={array_length(props.gradients) <= 1}>
 					Delete gradient
 				</MenuItem>
@@ -655,7 +655,7 @@ const _: VoidComponent<{
 	const Toasts: VoidComponent = () => (<>
 		<Toast
 			ref={r => toast_copied_ref = r}
-			leading={<Icon code={0xE51B}/>}>
+			c_leading={<Icon c_code={0xE51B}/>}>
 			Copied to clipboard
 		</Toast>
 	</>)
@@ -770,31 +770,31 @@ const _: VoidComponent<{
 							min={0.1}
 							step={0.1}
 							enterkeyhint="done"
-							auto_select_all
+							c_auto_select_all
 							value={settings().aspect_ratio}
-							on_input_as_number={(_, v) => command(
+							c_on_inputasnumber={(_, v) => command(
 								Commands.change_settings_aspect_ratio,
 								v
 							)}
-							label="Aspect ratio"
+							c_label="Aspect ratio"
 						/>
 						<NumberTextField
 							min={0}
 							enterkeyhint="done"
-							auto_select_all
+							c_auto_select_all
 							value={settings().border_radius}
-							on_input_as_number={(_, v) => command(
+							c_on_inputasnumber={(_, v) => command(
 								Commands.change_settings_border_radius,
 								v
 							)}
-							label="Border radius (px)"
+							c_label="Border radius (px)"
 						/>
 					</div>
 				</div>
 				<Button
-					variant={ButtonVariant.filled}
+					c_variant={ButtonVariant.filled}
 					id={button_addgradient_id}>
-					<Icon code={0xE007} />Add gradient
+					<Icon c_code={0xE007} />Add gradient
 				</Button>
 				<Tooltip>
 					<For each={props.gradients}>{(gradient, index) =>

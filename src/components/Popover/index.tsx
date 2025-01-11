@@ -210,29 +210,29 @@ function close_popover(popover: HTMLDivElement): void {
 	element_dispatch_event(popover, new CustomEvent(PopoverEvents.close))
 }
 
-type PopoverProps = Omit<JSX.HTMLAttributes<HTMLDivElement>, 'style' | 'draggable'> & {
-	use_portal?: boolean
+type PopoverProps = Omit<JSX.HTMLAttributes<HTMLDivElement>, 'style'> & {
 	style?: JSX.CSSProperties
-	gap?: number
-	padding?: number
-	position?: PopoverPosition
-	allow_hide_anchor?: boolean
-	draggable?: boolean
-	manual_dismiss?: boolean
-	on_before_open?(): unknown
-	on_before_close?(): unknown
-	on_toggle_open?(isOpen: boolean): unknown
-	open_animation?(el: HTMLDivElement, done: () => void): unknown
-	close_animation?(el: HTMLDivElement, done: () => void): unknown
+	c_use_portal?: boolean
+	c_gap?: number
+	c_padding?: number
+	c_position?: PopoverPosition
+	c_allow_hide_anchor?: boolean
+	c_draggable?: boolean
+	c_manual_dismiss?: boolean
+	c_on_beforeopen?(): unknown
+	c_on_beforeclose?(): unknown
+	c_on_toggleopen?(is_open: boolean): unknown
+	c_open_animation?(el: HTMLDivElement, done: () => void): unknown
+	c_close_animation?(el: HTMLDivElement, done: () => void): unknown
 }
 const Popover: ParentComponent<PopoverProps> = ($props) => {
-	const $$props = mergeProps({use_portal: true, id: createUniqueId()}, $props)
+	const $$props = mergeProps({c_use_portal: true, id: createUniqueId()}, $props)
 	const [props, other] = splitProps($$props, [
-		'ref', 'on_toggle_open', 'children', 'onToggle',
-		'class', 'use_portal', 'style', 'open_animation',
-		'close_animation', 'gap', 'padding', 'position',
-		'allow_hide_anchor', 'draggable', 'manual_dismiss',
-		'on_before_open', 'on_before_close', 'tabindex',
+		'ref', 'c_on_toggleopen', 'children', 'onToggle',
+		'class', 'c_use_portal', 'style', 'c_open_animation',
+		'c_close_animation', 'c_gap', 'c_padding', 'c_position',
+		'c_allow_hide_anchor', 'c_draggable', 'c_manual_dismiss',
+		'c_on_beforeopen', 'c_on_beforeclose', 'tabindex',
 		'onKeyDown'
 	])
 	const style = createMemo(() => props.style)
@@ -410,8 +410,8 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 			PopoverListenerEvents.close,
 			{ detail: popover_ref }
 		))
-		props.on_before_close?.()
-		if (props.close_animation != null) props.close_animation(
+		props.c_on_beforeclose?.()
+		if (props.c_close_animation != null) props.c_close_animation(
 			popover_ref,
 			() => popover_ref.hidePopover()
 		)
@@ -430,13 +430,13 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 			event,
 			pointer,
 			anchor_rect,
-			allow_hide_anchor = props.allow_hide_anchor ?? true,
+			allow_hide_anchor = props.c_allow_hide_anchor ?? true,
 			anchor = null,
-			draggable = props.draggable ?? false,
-			gap: input_gap = props.gap ?? 0,
-			padding: input_padding = props.padding ?? 0,
-			position: input_position = props.position ?? PopoverPosition.center_bottom,
-			manual_dismiss = props.manual_dismiss ?? false
+			draggable = props.c_draggable ?? false,
+			gap: input_gap = props.c_gap ?? 0,
+			padding: input_padding = props.c_padding ?? 0,
+			position: input_position = props.c_position ?? PopoverPosition.center_bottom,
+			manual_dismiss = props.c_manual_dismiss ?? false
 		} = options;
 
 		set_is_manual_dismiss(manual_dismiss)
@@ -600,12 +600,12 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 		set_top(rect_top(pos))
 		set_left(rect_left(pos))
 		set_attr_open(true)
-		props.on_before_open?.()
+		props.c_on_beforeopen?.()
 		element_dispatch_event(LISTENER_REF, new CustomEvent(
 			PopoverListenerEvents.open,
 			{ detail: popover_ref }
 		))
-		if (props.open_animation != null) props.open_animation(
+		if (props.c_open_animation != null) props.c_open_animation(
 			popover_ref,
 			() => set_attr_open_done(true)
 		)
@@ -790,7 +790,7 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 		popover={'manual'}
 		onToggle={(ev) => {
 			is_open = ev.newState == 'open'
-			props.on_toggle_open?.(is_open)
+			props.c_on_toggleopen?.(is_open)
 			event_call(ev, props.onToggle)
 		}}
 		data-c-draggable={attr_set_if_exist(is_draggable())}
@@ -824,7 +824,7 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 	</div>)
 
 	return (<Show
-		when={props.use_portal}
+		when={props.c_use_portal}
 		fallback={<C/>}>
 		<Portal><C/></Portal>
 	</Show>)

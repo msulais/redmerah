@@ -26,7 +26,7 @@ const _: VoidComponent = () => {
 		description="A toast is a lightweight notification that appears briefly at the bottom or top of the screen. It provides users with short messages or alerts without interrupting their primary workflow. Toasts are typically used to display success messages, errors, or informational updates.">
 		<Playground>
 			<Button
-				variant={ButtonVariant.tonal}
+				c_variant={ButtonVariant.tonal}
 				onClick={ev => open_toast(ev, toast_ref, {
 					autoclose: autoclose(),
 					duration: duration(),
@@ -36,17 +36,17 @@ const _: VoidComponent = () => {
 			</Button>
 			<Toast
 				ref={r => toast_ref = r}
-				header={<Show when={header()}>Warning</Show>}
-				trailing={<Show when={trailing()}>
-					<IconButton code={0xEED3} onClick={() => close_toast(toast_ref)}/>
-					<IconButton code={0xEE3B} onClick={() => close_toast(toast_ref)}/>
+				c_header={<Show when={header()}>Warning</Show>}
+				c_trailing={<Show when={trailing()}>
+					<IconButton c_code={0xEED3} onClick={() => close_toast(toast_ref)}/>
+					<IconButton c_code={0xEE3B} onClick={() => close_toast(toast_ref)}/>
 				</Show>}
-				actions={<Show when={actions()}>
-					<Button variant={ButtonVariant.tonal} onClick={() => close_toast(toast_ref)}>Close</Button>
-					<Button variant={ButtonVariant.tonal} onClick={() => close_toast(toast_ref)}>Reject</Button>
-					<Button variant={ButtonVariant.filled} onClick={() => close_toast(toast_ref)}>Accept</Button>
+				c_actions={<Show when={actions()}>
+					<Button c_variant={ButtonVariant.tonal} onClick={() => close_toast(toast_ref)}>Close</Button>
+					<Button c_variant={ButtonVariant.tonal} onClick={() => close_toast(toast_ref)}>Reject</Button>
+					<Button c_variant={ButtonVariant.filled} onClick={() => close_toast(toast_ref)}>Accept</Button>
 				</Show>}
-				leading={<Show when={leading()}><Icon code={0xECB6}/></Show>}>
+				c_leading={<Show when={leading()}><Icon c_code={0xECB6}/></Show>}>
 				<Show when={content()}>
 					Labore ipsum pariatur ea aliquip ex laboris dolor ea in occaecat in. Officia cillum cupidatat est dolor sit.
 				</Show>
@@ -55,19 +55,19 @@ const _: VoidComponent = () => {
 		<PlaygroundOptions>
 			<Show when={autoclose()}>
 				<NumberTextField
-					label="Duration"
+					c_label="Duration"
 					style={{width: '100px'}}
 					value={duration()}
 					step={100}
 					min={100}
 					onBlur={ev => set_duration(d => number_safe(event_current_target(ev).valueAsNumber, d))}
-					trailing="ms"
+					c_trailing="ms"
 				/>
 			</Show>
 			<Dropdown
-				label="Position"
-				values={[position()]}
-				on_change_options={(options) => set_position(options[0].value as ToastPosition)}>
+				c_label="Position"
+				c_values={[position()]}
+				c_on_change={(options) => set_position(options[0].value as ToastPosition)}>
 				<For each={[
 					[ToastPosition.center_bottom, 'Center bottom'],
 					[ToastPosition.center_top, 'Center top'],
@@ -75,7 +75,7 @@ const _: VoidComponent = () => {
 					[ToastPosition.left_top, 'Left top'],
 					[ToastPosition.right_bottom, 'Right bottom'],
 					[ToastPosition.right_top, 'Right top'],
-				]}>{option => <DropdownOption value={option[0]} text={option[1] as string} />}</For>
+				]}>{option => <DropdownOption c_value={option[0]} c_text={option[1] as string} />}</For>
 			</Dropdown>
 			<CheckBox
 				checked={header()}

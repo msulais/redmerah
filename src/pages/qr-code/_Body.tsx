@@ -129,50 +129,50 @@ const _: VoidComponent<{
 			<SubMenu
 				style={{width: '172px'}}
 				ref={r => submenu_downloadcanvasactions_ref = r}
-				on_toggle_open={isOpen => set_is_submenu_downloadcanvasactions_open(isOpen)}
-				item={<SubMenuItem
-					focused={is_submenu_downloadcanvasactions_open()}
-					icon_code={0xE0B9}>
+				c_on_toggleopen={isOpen => set_is_submenu_downloadcanvasactions_open(isOpen)}
+				c_item={<SubMenuItem
+					c_focused={is_submenu_downloadcanvasactions_open()}
+					c_icon_code={0xE0B9}>
 					Download as
 				</SubMenuItem>}>
 				<MenuItem
-					icon_code={0xE8FE}
+					c_icon_code={0xE8FE}
 					data-download={DownloadFileType.png}
-					trailing="PNG">
+					c_trailing="PNG">
 					Image
 				</MenuItem>
 				<MenuItem
-					icon_code={0xE8FE}
+					c_icon_code={0xE8FE}
 					data-download={DownloadFileType.jpeg}
-					trailing="JPEG">
+					c_trailing="JPEG">
 					Image
 				</MenuItem>
 				<MenuItem
-					icon_code={0xE90C}
+					c_icon_code={0xE90C}
 					data-download={DownloadFileType.svg}
-					trailing="SVG">
+					c_trailing="SVG">
 					Vector
 				</MenuItem>
 			</SubMenu>
 			<SubMenu
 				style={{width: '172px'}}
 				ref={r => submenu_copycanvasactions_ref = r}
-				on_toggle_open={isOpen => set_is_submenu_copycanvasactions_open(isOpen)}
-				item={<SubMenuItem
-					focused={is_submenu_copycanvasactions_open()}
-					icon_code={0xE51B}>
+				c_on_toggleopen={isOpen => set_is_submenu_copycanvasactions_open(isOpen)}
+				c_item={<SubMenuItem
+					c_focused={is_submenu_copycanvasactions_open()}
+					c_icon_code={0xE51B}>
 					Copy as
 				</SubMenuItem>}>
 				<MenuItem
-					icon_code={0xE8FE}
+					c_icon_code={0xE8FE}
 					data-copy={CopyFileType.png}
-					trailing="PNG">
+					c_trailing="PNG">
 					Image
 				</MenuItem>
 				<MenuItem
-					icon_code={0xE90C}
+					c_icon_code={0xE90C}
 					data-copy={CopyFileType.svg}
-					trailing="SVG">
+					c_trailing="SVG">
 					Vector
 				</MenuItem>
 			</SubMenu>
@@ -182,7 +182,7 @@ const _: VoidComponent<{
 	const Toasts: VoidComponent = () => {
 		return (<Toast
 			ref={r => toast_errorscanqrcode_ref = r}
-			leading={<Icon code={0xF29B}/>}>
+			c_leading={<Icon c_code={0xF29B}/>}>
 			Unable to scan QR Code in the image
 		</Toast>)
 	}
@@ -191,13 +191,13 @@ const _: VoidComponent<{
 		return (<div class={CSS.body_options}>
 			<Button
 				id={button_option_generate_id}
-				variant={page() == Pages.generate? ButtonVariant.filled : ButtonVariant.tonal}>
-				<Icon code={0xED21}/>Generate
+				c_variant={page() == Pages.generate? ButtonVariant.filled : ButtonVariant.tonal}>
+				<Icon c_code={0xED21}/>Generate
 			</Button>
 			<Button
 				id={button_option_scan_id}
-				variant={page() == Pages.scan? ButtonVariant.filled : ButtonVariant.tonal}>
-				<Icon code={0xEDC5}/>Scan
+				c_variant={page() == Pages.scan? ButtonVariant.filled : ButtonVariant.tonal}>
+				<Icon c_code={0xEDC5}/>Scan
 			</Button>
 		</div>)
 	}
@@ -205,10 +205,10 @@ const _: VoidComponent<{
 	const PageGenerate: VoidComponent = () => {
 		return (<div style={{display: page() == Pages.generate? 'contents' : 'none'}}>
 			<TextField
-				label="Data"
+				c_label="Data"
 				placeholder="Link, email, or any text"
 				onInput={ev => command(Commands.change_qrcode_data, event_current_target(ev).value)}
-				attr_wrapper={{ class: CSS.body_input }}
+				c_attr_wrapper={{ class: CSS.body_input }}
 			/>
 			<canvas
 				class={CSS.body_canvas_output}
@@ -260,7 +260,7 @@ const _: VoidComponent<{
 				onDragLeave={() => set_is_drag_enter(false)}>
 				<div data-g-no-pointer-event={attr_set_if_exist(is_drag_enter())}>
 					<Show when={qrcode_image_src() == null}>
-						<p><Icon code={0xED21}/>Drag QR code image here</p>
+						<p><Icon c_code={0xED21}/>Drag QR code image here</p>
 					</Show>
 					<Show when={qrcode_image_src() != null}>
 						<img ref={r => img_qrcode_ref = r} src={qrcode_image_src()!} alt="" />
@@ -271,25 +271,25 @@ const _: VoidComponent<{
 								<IconButton
 									id={button_scan_dismiss_id}
 									data-tooltip="Dismiss"
-									variant={ButtonVariant.filled}
-									code={0xE5E9}
-									filled
+									c_variant={ButtonVariant.filled}
+									c_code={0xE5E9}
+									c_filled
 								/>
 							</Show>
 							<IconButton
 								id={button_scan_choosefile_id}
 								data-tooltip="Choose file"
-								variant={qrcode_image_src() != null? ButtonVariant.filled : ButtonVariant.tonal}
-								filled={qrcode_image_src() != null}
-								code={0xE900}
+								c_variant={qrcode_image_src() != null? ButtonVariant.filled : ButtonVariant.tonal}
+								c_filled={qrcode_image_src() != null}
+								c_code={0xE900}
 							/>
 							<Show when={is_mobile()}>
 								<IconButton
 									id={button_scan_opencamera_id}
 									data-tooltip="Open camera"
-									variant={qrcode_image_src() != null? ButtonVariant.filled : ButtonVariant.tonal}
-									filled={qrcode_image_src() != null}
-									code={0xE354}
+									c_variant={qrcode_image_src() != null? ButtonVariant.filled : ButtonVariant.tonal}
+									c_filled={qrcode_image_src() != null}
+									c_code={0xE354}
 								/>
 							</Show>
 						</Tooltip>

@@ -152,36 +152,36 @@ const _: VoidComponent<{
 		<Menu
 			ref={r => menu_info_ref = r}
 			style={{"min-width": '200px'}}
-			on_toggle_open={isOpen => set_is_menu_info_open(isOpen)}>
+			c_on_toggleopen={isOpen => set_is_menu_info_open(isOpen)}>
 			<LinkMenuItem
 				onClick={() => close_menu(menu_info_ref)}
 				href={RoutesLinks.home}
-				leading={<img src={logo_redmerah.src} width={16} alt='Redmerah logo'/>}>
+				c_leading={<img src={logo_redmerah.src} width={16} alt='Redmerah logo'/>}>
 				Redmerah
 			</LinkMenuItem>
 			<LinkMenuItem
 				onClick={() => close_menu(menu_info_ref)}
 				href={RoutesLinks.apps}
-				icon_code={0xE063}>
+				c_icon_code={0xE063}>
 				More apps
 			</LinkMenuItem>
 			<LinkMenuItem
 				onClick={() => close_menu(menu_info_ref)}
 				href={RoutesLinks.about}
-				icon_code={0xE930}>
+				c_icon_code={0xE930}>
 				About us
 			</LinkMenuItem>
 			<MenuDivider />
 			<LinkMenuItem
 				onClick={() => close_menu(menu_info_ref)}
 				href={RoutesLinks.privacy}
-				icon_code={0xEE51}>
+				c_icon_code={0xEE51}>
 				Privacy policy
 			</LinkMenuItem>
 			<LinkMenuItem
 				onClick={() => close_menu(menu_info_ref)}
 				href={RoutesLinks.terms}
-				icon_code={0xED47}>
+				c_icon_code={0xED47}>
 				Terms & conditions
 			</LinkMenuItem>
 			<MenuDivider />
@@ -190,20 +190,20 @@ const _: VoidComponent<{
 					navigator_share({ title: 'Calculator', text: 'Calculator', url: document.URL })
 					close_menu(menu_info_ref)
 				}}
-				icon_code={0xEE23}>
+				c_icon_code={0xEE23}>
 				Share
 			</MenuItem>
 			<LinkMenuItem
 				onClick={() => close_menu(menu_info_ref)}
 				href={'mailto:' + ExternalLinks.contact_email + '?subject=' + url_encode('Calculator')}
-				icon_code={0xE3A0}>
+				c_icon_code={0xE3A0}>
 				Send feedback
 			</LinkMenuItem>
 			<LinkMenuItem
 				onClick={() => close_menu(menu_info_ref)}
 				href={ExternalLinks.donate}
-				open_in_new_tab
-				icon_code={0xE84B}>
+				c_new_tab
+				c_icon_code={0xE84B}>
 				Donate
 			</LinkMenuItem>
 			<MenuHeader>&copy; {date_year(new Date())} Redmerah</MenuHeader>
@@ -211,12 +211,12 @@ const _: VoidComponent<{
 		<Menu
 			style={{width: '224px'}}
 			ref={r => menu_settings_ref = r}
-			on_toggle_open={(v) => set_is_menu_settings_open(v)}>
+			c_on_toggleopen={(v) => set_is_menu_settings_open(v)}>
 			<Tooltip>
 				<SwitchMenuItem
 					data-tooltip="Display result in scientific notation (e.g. 1.2E-29)"
-					icon_code={0xEA91}
-					attr_switch={{
+					c_icon_code={0xEA91}
+					c_attr_switch={{
 						checked: settings().scientific_notation,
 						onChange: () => command(Commands.toggle_settings_scientificnotation),
 					}}>
@@ -224,9 +224,9 @@ const _: VoidComponent<{
 				</SwitchMenuItem>
 				<SwitchMenuItem
 					data-tooltip="Show or hide memory button (M, M+, M-, MR, MC)"
-					checked={settings().memory_buttons}
-					icon_code={0xE5CD}
-					attr_switch={{
+					c_checked={settings().memory_buttons}
+					c_icon_code={0xE5CD}
+					c_attr_switch={{
 						checked: settings().memory_buttons,
 						onChange: () => command(Commands.toggle_settings_memorybuttons),
 					}}>
@@ -236,60 +236,60 @@ const _: VoidComponent<{
 			<MenuDivider/>
 			<SubMenu
 				ref={r => submenu_themesettings_ref = r}
-				on_toggle_open={v => set_is_submenu_themesettings_open(v)}
-				item={<SubMenuItem
-					focused={is_submenu_themesettings_open()}
-					icon_code={0xE28A}>
+				c_on_toggleopen={v => set_is_submenu_themesettings_open(v)}
+				c_item={<SubMenuItem
+					c_focused={is_submenu_themesettings_open()}
+					c_icon_code={0xE28A}>
 					Theme
 				</SubMenuItem>}>
 				<MenuItem
-					selected={theme() == theme_light}
-					icon_code={0xF2CD}
+					c_selected={theme() == theme_light}
+					c_icon_code={0xF2CD}
 					onClick={() => change_theme(theme_light)}>
 					Light
 				</MenuItem>
 				<MenuItem
-					selected={theme() == theme_dark}
-					icon_code={0xF2B3}
+					c_selected={theme() == theme_dark}
+					c_icon_code={0xF2B3}
 					onClick={() => change_theme(theme_dark)}>
 					Dark
 				</MenuItem>
 				<MenuItem
-					selected={theme() == theme_system}
-					icon_code={0xE96D}
+					c_selected={theme() == theme_system}
+					c_icon_code={0xE96D}
 					onClick={() => change_theme(theme_system)}>
 					System theme
 				</MenuItem>
 			</SubMenu>
 			<SubMenu
 				ref={r => submenu_cornersettings_ref = r}
-				on_toggle_open={v => set_is_submenu_cornersettings_open(v)}
-				item={<SubMenuItem
-					focused={is_submenu_cornersettings_open()}
-					icon_code={0xF044}>
+				c_on_toggleopen={v => set_is_submenu_cornersettings_open(v)}
+				c_item={<SubMenuItem
+					c_focused={is_submenu_cornersettings_open()}
+					c_icon_code={0xF044}>
 					Corner style
 				</SubMenuItem>}>
 				<MenuItem
-					selected={corner() == corner_sharp}
-					icon_code={0xEA99}
+					c_selected={corner() == corner_sharp}
+					c_icon_code={0xEA99}
 					onClick={() => change_corner(corner_sharp)}>
 					Sharp
 				</MenuItem>
 				<MenuItem
-					selected={corner() == corner_semiround}
-					icon_code={0xEEF7}
+					c_selected={corner() == corner_semiround}
+					c_icon_code={0xEEF7}
 					onClick={() => change_corner(corner_semiround)}>
 					Semi round
 				</MenuItem>
 				<MenuItem
-					selected={corner() == corner_round}
-					icon_code={0xF044}
+					c_selected={corner() == corner_round}
+					c_icon_code={0xF044}
 					onClick={() => change_corner(corner_round)}>
 					Round
 				</MenuItem>
 				<MenuItem
-					selected={corner() == corner_fullround}
-					icon_code={0xE408}
+					c_selected={corner() == corner_fullround}
+					c_icon_code={0xE408}
 					onClick={() => change_corner(corner_fullround)}>
 					Full round
 				</MenuItem>
@@ -299,55 +299,55 @@ const _: VoidComponent<{
 			<SubMenu
 				style={{width: '132px'}}
 				ref={r => submenu_decimalnumberformatsettings_ref = r}
-				on_toggle_open={v => set_is_menu_decimalnumberformatsettings_open(v)}
-				item={<SubMenuItem
-					focused={is_menu_decimalnumberformatsettings_open()}
-					icon_code={0xE599}>
+				c_on_toggleopen={v => set_is_menu_decimalnumberformatsettings_open(v)}
+				c_item={<SubMenuItem
+					c_focused={is_menu_decimalnumberformatsettings_open()}
+					c_icon_code={0xE599}>
 					Decimal
 				</SubMenuItem>}>
 				<MenuItem
 					onClick={() => change_decimal_numberformat(DecimalNumberFormat.comma)}
-					selected={settings().number_format.decimal == DecimalNumberFormat.comma}>
+					c_selected={settings().number_format.decimal == DecimalNumberFormat.comma}>
 					Comma
 				</MenuItem>
 				<MenuItem
 					onClick={() => change_decimal_numberformat(DecimalNumberFormat.point)}
-					selected={settings().number_format.decimal == DecimalNumberFormat.point}>
+					c_selected={settings().number_format.decimal == DecimalNumberFormat.point}>
 					Point
 				</MenuItem>
 			</SubMenu>
 			<SubMenu
 				style={{width: '132px'}}
 				ref={r => submenu_groupingnumberformatsettings_ref = r}
-				on_toggle_open={v => set_is_menu_groupingnumberformatsettings_open(v)}
-				item={<SubMenuItem
-					focused={is_submenu_groupingnumberformatsettings_open()}
-					icon_code={0xEB49}>
+				c_on_toggleopen={v => set_is_menu_groupingnumberformatsettings_open(v)}
+				c_item={<SubMenuItem
+					c_focused={is_submenu_groupingnumberformatsettings_open()}
+					c_icon_code={0xEB49}>
 					Grouping
 				</SubMenuItem>}>
 				<MenuItem
 					onClick={() => change_grouping_numberformat(GroupingNumberFormat.comma)}
-					selected={settings().number_format.grouping == GroupingNumberFormat.comma}>
+					c_selected={settings().number_format.grouping == GroupingNumberFormat.comma}>
 					Comma
 				</MenuItem>
 				<MenuItem
 					onClick={() => change_grouping_numberformat(GroupingNumberFormat.point)}
-					selected={settings().number_format.grouping == GroupingNumberFormat.point}>
+					c_selected={settings().number_format.grouping == GroupingNumberFormat.point}>
 					Point
 				</MenuItem>
 				<MenuItem
 					onClick={() => change_grouping_numberformat(GroupingNumberFormat.space)}
-					selected={settings().number_format.grouping == GroupingNumberFormat.space}>
+					c_selected={settings().number_format.grouping == GroupingNumberFormat.space}>
 					Space
 				</MenuItem>
 				<MenuItem
 					onClick={() => change_grouping_numberformat(GroupingNumberFormat.none)}
-					selected={settings().number_format.grouping == GroupingNumberFormat.none}>
+					c_selected={settings().number_format.grouping == GroupingNumberFormat.none}>
 					None
 				</MenuItem>
 				<MenuItem
 					onClick={() => change_grouping_numberformat(GroupingNumberFormat.underscore)}
-					selected={settings().number_format.grouping == GroupingNumberFormat.underscore}>
+					c_selected={settings().number_format.grouping == GroupingNumberFormat.underscore}>
 					Underscore
 				</MenuItem>
 			</SubMenu>
@@ -357,12 +357,12 @@ const _: VoidComponent<{
 	const Drawers: VoidComponent = () => {
 		return (<>
 			<Drawer
-				header={<Tooltip>
+				c_header={<Tooltip>
 					<IconButton
 						data-tooltip="Close navigation"
 						classList={classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
 						onClick={() => close_drawer(drawer_navigation_ref)}
-						code={0xEAFF}
+						c_code={0xEAFF}
 					/>
 				</Tooltip>}
 				ref={r => drawer_navigation_ref = r}>
@@ -371,27 +371,27 @@ const _: VoidComponent<{
 						if (props.calculator != r.type) props.on_change_calculator(r.type)
 						close_drawer(drawer_navigation_ref)
 					}}
-					selected={props.calculator == r.type}>
-					<Icon filled={props.calculator == r.type} code={r.icon}/>{ r.text }
+					c_selected={props.calculator == r.type}>
+					<Icon c_filled={props.calculator == r.type} c_code={r.icon}/>{ r.text }
 				</DrawerItem>}</For>
 			</Drawer>
 			<Drawer
 				classList={classlist_module(CSS.appbar_notebook)}
-				header={<>
+				c_header={<>
 					<Tooltip>
 						<IconButton
 							data-tooltip="Close notebook"
 							onClick={() => close_drawer(drawer_notebook_ref)}
-							code={0xE5E9}
+							c_code={0xE5E9}
 						/>
 					</Tooltip>
 					Notebook
 				</>}
 				ref={r => drawer_notebook_ref = r}
-				position={DrawerPosition.right}>
+				c_position={DrawerPosition.right}>
 				<AreaTextField
 					ref={r => areatextfield_notebook_ref = r}
-					label="Notebook"
+					c_label="Notebook"
 					placeholder="Type your thought here ..."
 					onInput={(ev) => props.on_note_changed(event_current_target(ev).value)}
 				/>
@@ -402,7 +402,7 @@ const _: VoidComponent<{
 	return (<>
 		<Tooltip>
 			<AppBar
-				leading={<>
+				c_leading={<>
 					<IconButton
 						data-tooltip={is_sidenavigation_hidden()
 							? "Open navigation"
@@ -413,30 +413,30 @@ const _: VoidComponent<{
 							if (is_sidenavigation_hidden()) return open_drawer(ev, drawer_navigation_ref)
 							command(Commands.toggle_navigation_expand)
 						}}
-						code={0xEAFF}
+						c_code={0xEAFF}
 					/>
 					<img width={32} src={logo.src} alt="Calculator logo" />
 				</>}
-				headline="Calculator"
-				trailing={<>
+				c_headline="Calculator"
+				c_trailing={<>
 					<IconButton
 						data-tooltip="Info"
-						focused={is_menu_info_open()}
+						c_focused={is_menu_info_open()}
 						onClick={ev => open_menu(ev, menu_info_ref, {
 							anchor: event_current_target(ev),
 							padding: 4,
 						})}
-						code={0xE930}
+						c_code={0xE930}
 					/>
 					<IconButton
 						data-tooltip="Settings"
 						classList={classlist_module(CSSAnimation.btn_rotate_icon)}
-						focused={is_menu_settings_open()}
+						c_focused={is_menu_settings_open()}
 						onClick={(ev) => open_menu(ev, menu_settings_ref, {
 							anchor: event_current_target(ev),
 							padding: 4,
 						})}
-						code={0xEE0F}
+						c_code={0xEE0F}
 					/>
 					<IconButton
 						data-tooltip="Notebook"
@@ -447,9 +447,9 @@ const _: VoidComponent<{
 							}
 							command(Commands.toggle_notebook_expand)
 						}}
-						variant={props.is_notebook_expanded && !is_sidenotebook_hidden()? ButtonVariant.filled : undefined}
-						filled={props.is_notebook_expanded && !is_sidenotebook_hidden()}
-						code={0xEB19}
+						c_variant={props.is_notebook_expanded && !is_sidenotebook_hidden()? ButtonVariant.filled : undefined}
+						c_filled={props.is_notebook_expanded && !is_sidenotebook_hidden()}
+						c_code={0xEB19}
 					/>
 				</>}
 			/>

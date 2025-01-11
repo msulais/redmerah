@@ -705,13 +705,13 @@ const ColorPickerBody: ParentComponent<{
 			<TextField
 				ref={r => textfield_color_ref = r}
 				onInput={(ev) => on_color_input_change(event_current_target(ev).value)}
-				label={color_model() == 'RGB' ? 'RGB' : color_model() == 'HEX' ? 'Hex' : 'HSL'}
+				c_label={color_model() == 'RGB' ? 'RGB' : color_model() == 'HEX' ? 'Hex' : 'HSL'}
 				placeholder={color_model() == 'RGB' ? "0-255, 0-255, 0-255" : color_model() == 'HEX' ? '#FF0000' : '0-360, 0-100%, 0-100%'}
 			/>
 			<TextField
 				onInput={(ev) => on_opacity_input_change(event_current_target(ev).value)}
 				ref={r => textfield_opacity_ref = r}
-				label="Opacity"
+				c_label="Opacity"
 				value="100%"
 				placeholder="0-100%"
 			/>
@@ -725,7 +725,7 @@ const ColorPickerBody: ParentComponent<{
 
 		return (<FocusableGroup
 			class="c-color-picker-actions"
-			arrow_options={{ right: 'next', left: 'prev' }}
+			c_arrow_options={{ right: 'next', left: 'prev' }}
 			data-c-disabled={attr_set_if_exist(props.disabled_action)}
 			onClick={(ev) => {
 				const button = document_active()!
@@ -751,18 +751,18 @@ const ColorPickerBody: ParentComponent<{
 			}}>
 			<Button
 				id={button_colormodel_id}
-				variant={ButtonVariant.tonal}>
+				c_variant={ButtonVariant.tonal}>
 				{color_model()}
 			</Button>
 			<Show when={!props.disabled_action}>
 				<Button
 					id={button_cancel_id}
-					variant={ButtonVariant.tonal}>
+					c_variant={ButtonVariant.tonal}>
 					Cancel
 				</Button>
 				<Button
 					id={button_select_id}
-					variant={ButtonVariant.filled}>
+					c_variant={ButtonVariant.filled}>
 					Select
 				</Button>
 			</Show>
@@ -778,31 +778,31 @@ const ColorPickerBody: ParentComponent<{
 }
 
 type ColorPickerProps = ModalProps & {
-	color?: HEXColor
-	disabled_opacity_control?: boolean
-	disabled_color_control?: boolean
-	disabled_action?: boolean
-	on_update_color?(color: HEXColor): unknown
-	on_select_color?(color: HEXColor): unknown
+	c_color?: HEXColor
+	c_disabled_opacity_control?: boolean
+	c_disabled_color_control?: boolean
+	c_disabled_action?: boolean
+	c_on_update_color?(color: HEXColor): unknown
+	c_on_select_color?(color: HEXColor): unknown
 }
 const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 	const $$props = mergeProps({
-		color: DEFAULT_HEX_COLOR,
-		disabled_color_control: false
+		c_color: DEFAULT_HEX_COLOR,
+		c_disabled_color_control: false
 	}, $props)
 	const [props, other] = splitProps($$props, [
-		'children', 'disabled_opacity_control', 'on_select_color',
-		'disabled_color_control', 'ref', 'classList', 'color',
-		'on_update_color', 'disabled_action', 'on_toggle_open'
+		'children', 'c_disabled_opacity_control', 'c_on_select_color',
+		'c_disabled_color_control', 'ref', 'classList', 'c_color',
+		'c_on_update_color', 'c_disabled_action', 'c_on_toggleopen'
 	])
 	const [colorpicker_ref, set_colorpicker_ref] = createSignal<HTMLDialogElement | null>(null)
 	const [is_colorpicker_open, set_is_colorpicker_open] = createSignal<boolean>(false)
 
 	return (<Modal
 		ref={mergeRefs(props.ref, r => set_colorpicker_ref(r))}
-		on_toggle_open={o => {
+		c_on_toggleopen={o => {
 			set_is_colorpicker_open(o)
-			props.on_toggle_open?.(o)
+			props.c_on_toggleopen?.(o)
 		}}
 		classList={{
 			'c-color-picker': true,
@@ -814,12 +814,12 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 				element={colorpicker_ref()!}
 				is_colorpicker_open={is_colorpicker_open()}
 				on_close={() => close_modal(colorpicker_ref()!)}
-				color={props.color}
-				disabled_action={props.disabled_action}
-				disabled_color_control={props.disabled_color_control}
-				disabled_opacity_control={props.disabled_opacity_control}
-				on_select_color={props.on_select_color}
-				on_update_color={props.on_update_color}>
+				color={props.c_color}
+				disabled_action={props.c_disabled_action}
+				disabled_color_control={props.c_disabled_color_control}
+				disabled_opacity_control={props.c_disabled_opacity_control}
+				on_select_color={props.c_on_select_color}
+				on_update_color={props.c_on_update_color}>
 				{props.children}
 			</ColorPickerBody>
 		</Show>
@@ -827,31 +827,31 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 }
 
 type PopoverColorPickerProps = PopoverProps & {
-	color?: HEXColor
-	disabled_opacity_control?: boolean
-	disabled_color_control?: boolean
-	disabled_action?: boolean
-	on_update_color?(color: HEXColor): unknown
-	on_select_color?(color: HEXColor): unknown
+	c_color?: HEXColor
+	c_disabled_opacity_control?: boolean
+	c_disabled_color_control?: boolean
+	c_disabled_action?: boolean
+	c_on_update_color?(color: HEXColor): unknown
+	c_on_select_color?(color: HEXColor): unknown
 }
 const PopoverColorPicker: ParentComponent<PopoverColorPickerProps> = ($props) => {
 	const $$props = mergeProps({
-		color: DEFAULT_HEX_COLOR,
-		disabled_color_control: false
+		c_color: DEFAULT_HEX_COLOR,
+		c_disabled_color_control: false
 	}, $props)
 	const [props, other] = splitProps($$props, [
-		'children', 'disabled_opacity_control', 'on_select_color',
-		'disabled_color_control', 'ref', 'classList', 'color',
-		'on_update_color', 'disabled_action', 'on_toggle_open'
+		'children', 'c_disabled_opacity_control', 'c_on_select_color',
+		'c_disabled_color_control', 'ref', 'classList', 'c_color',
+		'c_on_update_color', 'c_disabled_action', 'c_on_toggleopen'
 	])
 	const [colorpicker_ref, set_colorpicker_ref] = createSignal<HTMLDivElement | null>(null)
 	const [is_colorpicker_open, set_is_colorpicker_open] = createSignal<boolean>(false)
 
 	return (<Popover
 		ref={mergeRefs(props.ref, r => set_colorpicker_ref(r))}
-		on_toggle_open={o => {
+		c_on_toggleopen={o => {
 			set_is_colorpicker_open(o)
-			props.on_toggle_open?.(o)
+			props.c_on_toggleopen?.(o)
 		}}
 		classList={{
 			'c-color-picker': true,
@@ -863,12 +863,12 @@ const PopoverColorPicker: ParentComponent<PopoverColorPickerProps> = ($props) =>
 				element={colorpicker_ref()!}
 				is_colorpicker_open={is_colorpicker_open()}
 				on_close={() => close_popover(colorpicker_ref()!)}
-				color={props.color}
-				disabled_action={props.disabled_action}
-				disabled_color_control={props.disabled_color_control}
-				disabled_opacity_control={props.disabled_opacity_control}
-				on_select_color={props.on_select_color}
-				on_update_color={props.on_update_color}>
+				color={props.c_color}
+				disabled_action={props.c_disabled_action}
+				disabled_color_control={props.c_disabled_color_control}
+				disabled_opacity_control={props.c_disabled_opacity_control}
+				on_select_color={props.c_on_select_color}
+				on_update_color={props.c_on_update_color}>
 				{props.children}
 			</ColorPickerBody>
 		</Show>

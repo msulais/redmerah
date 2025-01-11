@@ -250,23 +250,23 @@ const _: VoidComponent = () => {
 	const Toasts: VoidComponent = () => (<>
 		<Toast
 			ref={r => toast_nofileselected_ref = r}
-			leading={<Icon code={0xE631}/>}>
+			c_leading={<Icon c_code={0xE631}/>}>
 			No file selected
 		</Toast>
 		<Toast
 			ref={r => toast_errorreadingfiles_ref = r}
-			leading={<Icon code={0xEDC5}/>}>
+			c_leading={<Icon c_code={0xEDC5}/>}>
 			Error reading files
 		</Toast>
 		<Toast
 			ref={r => toast_copied_ref = r}
-			leading={<Icon code={0xE51B}/>}>
+			c_leading={<Icon c_code={0xE51B}/>}>
 			Copied to clipboard
 		</Toast>
 	</>)
 
 	return (<App
-		appbar={<AppBar
+		c_appbar={<AppBar
 			command={command}
 			settings={settings}
 		/>}>

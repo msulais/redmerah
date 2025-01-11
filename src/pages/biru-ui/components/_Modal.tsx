@@ -26,7 +26,7 @@ const _: VoidComponent = () => {
 		title="Modal"
 		description="A modal is an overlay window that appears on top of the main content, blocking user interaction with the underlying elements until it is dismissed. Modals are often used for critical tasks or to present important information.">
 		<Playground>
-			<Button variant={ButtonVariant.tonal} onClick={(ev) => open_modal(ev, modal_ref, {
+			<Button c_variant={ButtonVariant.tonal} onClick={(ev) => open_modal(ev, modal_ref, {
 				anchor: anchor()? event_current_target(ev) : undefined,
 				allow_hide_anchor: allow_hide_anchor(),
 				draggable: draggable(),
@@ -40,15 +40,15 @@ const _: VoidComponent = () => {
 				<div style={{padding: '16px'}}>
 					<TextField placeholder="Feedback"/>
 					<p style={{margin: '8px 0'}}>Consequat commodo sint incididunt nulla duis commodo elit enim aliquip ex occaecat eiusmod.</p>
-					<Button onClick={(_ev) => close_modal(modal_ref)} variant={ButtonVariant.filled}>Close modal</Button>
+					<Button onClick={(_ev) => close_modal(modal_ref)} c_variant={ButtonVariant.filled}>Close modal</Button>
 				</div>
 			</Modal>
 		</Playground>
 		<PlaygroundOptions>
 			<Dropdown
-				label="Position"
-				values={[position()]}
-				on_change_options={(options) => set_position(options[0].value as ModalPosition)}>
+				c_label="Position"
+				c_values={[position()]}
+				c_on_change={(options) => set_position(options[0].value as ModalPosition)}>
 				<For each={[
 					[ModalPosition.left_top, 'Left top'],
 					[ModalPosition.left_center_to_bottom, 'Left center to bottom'],
@@ -75,14 +75,14 @@ const _: VoidComponent = () => {
 					[ModalPosition.center_center_right_top, 'Center center right top'],
 					[ModalPosition.center_center_right, 'Center center right'],
 					[ModalPosition.center_center_right_bottom, 'Center center right bottom'],
-				]}>{option => <DropdownOption value={option[0]} text={option[1] as string} />}</For>
+				]}>{option => <DropdownOption c_value={option[0]} c_text={option[1] as string} />}</For>
 			</Dropdown>
 			<NumberTextField
 				style={{width: '100px'}}
 				value={gap()}
 				min={0}
 				onBlur={(ev) => set_gap(g => number_safe(event_current_target(ev).valueAsNumber, g))}
-				label="Gap"
+				c_label="Gap"
 			/>
 			<Show when={array_includes([
 				ModalPosition.center_top_to_right,
@@ -107,7 +107,7 @@ const _: VoidComponent = () => {
 					style={{width: '100px'}}
 					min={0}
 					onBlur={(ev) => set_padding(p => number_safe(event_current_target(ev).valueAsNumber, p))}
-					label="Padding"
+					c_label="Padding"
 				/>
 			</Show>
 			<CheckBox

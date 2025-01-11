@@ -39,23 +39,23 @@ const ColorPicker: VoidComponent<{
 
 	return (<div class={CSS.color_picker}>
 		<Dropdown
-			label="Picker mode"
-			text="Select picker mode"
-			values={[settings().mode]}
+			c_label="Picker mode"
+			c_text="Select picker mode"
+			c_values={[settings().mode]}
 			style={{"min-width": '100%'}}
-			on_change_options={(values) => command(Commands.change_mode, values[0].value as ColorPickerMode)}>
-			<DropdownOption text="Image" value={ColorPickerMode.image}/>
-			<DropdownOption text="Rectangle" value={ColorPickerMode.rectangle}/>
-			<DropdownOption text="Rectangle HSL" value={ColorPickerMode.rectangle_hsl}/>
+			c_on_change={(values) => command(Commands.change_mode, values[0].value as ColorPickerMode)}>
+			<DropdownOption c_text="Image" c_value={ColorPickerMode.image}/>
+			<DropdownOption c_text="Rectangle" c_value={ColorPickerMode.rectangle}/>
+			<DropdownOption c_text="Rectangle HSL" c_value={ColorPickerMode.rectangle_hsl}/>
 			{/* <DropdownOption text="Palette" value={ColorPickerMode.palette}/> */}
-			<DropdownOption text="Spectrum (Beta release)" value={ColorPickerMode.spectrum}/>
+			<DropdownOption c_text="Spectrum (Beta release)" c_value={ColorPickerMode.spectrum}/>
 			{/* <DropdownOption text="Wheel" value={ColorPickerMode.wheel}/> */}
-			<DropdownOption text="Slider RGB" value={ColorPickerMode.slider_rgb}/>
-			<DropdownOption text="Slider HSL" value={ColorPickerMode.slider_hsl}/>
-			<DropdownOption text="Slider CMYK" value={ColorPickerMode.slider_cmyk}/>
-			<DropdownOption text="Slider HEX" value={ColorPickerMode.slider_hex}/>
-			<DropdownOption text="Slider HSV" value={ColorPickerMode.slider_hsv}/>
-			<DropdownOption text="Slider HWB" value={ColorPickerMode.slider_hwb}/>
+			<DropdownOption c_text="Slider RGB" c_value={ColorPickerMode.slider_rgb}/>
+			<DropdownOption c_text="Slider HSL" c_value={ColorPickerMode.slider_hsl}/>
+			<DropdownOption c_text="Slider CMYK" c_value={ColorPickerMode.slider_cmyk}/>
+			<DropdownOption c_text="Slider HEX" c_value={ColorPickerMode.slider_hex}/>
+			<DropdownOption c_text="Slider HSV" c_value={ColorPickerMode.slider_hsv}/>
+			<DropdownOption c_text="Slider HWB" c_value={ColorPickerMode.slider_hwb}/>
 		</Dropdown>
 		<Switch>
 			<Match when={is_mode(ColorPickerMode.image)}><ImagePicker command={command} /></Match>
@@ -213,11 +213,11 @@ const ColorInput: VoidComponent<{
 		}}></div>
 		<Toast
 			ref={r => toast_copied_ref = r}
-			leading={<Icon code={0xE51B}/>}>
+			c_leading={<Icon c_code={0xE51B}/>}>
 			Copied to clipboard
 		</Toast>
 		<TextField
-			label="Hex"
+			c_label="Hex"
 			id={input_hex_id}
 			value={hex_color()}
 			readOnly={read_only()}
@@ -233,15 +233,15 @@ const ColorInput: VoidComponent<{
 				text = '#' + text
 				command(Commands.update_input, hex_to_hsl(text as HEXColor))
 			}}
-			trailing={<TextFieldButton
+			c_trailing={<TextFieldButton
 				data-tooltip="Copy"
 				data-copy={get_hex_color()}>
-				<Icon code={0xE51B}/>
+				<Icon c_code={0xE51B}/>
 			</TextFieldButton>}
 		/>
 		<TextField
 			readOnly={read_only()}
-			label="RGB"
+			c_label="RGB"
 			id={input_rgb_id}
 			value={rgb_color()}
 			onInput={(ev) => {
@@ -261,15 +261,15 @@ const ColorInput: VoidComponent<{
 				const b = rgb_array[2] / 0xff
 				command(Commands.update_input, rgb_to_hsl({r, g, b}))
 			}}
-			trailing={<TextFieldButton
+			c_trailing={<TextFieldButton
 				data-tooltip="Copy"
 				data-copy={get_rgb_color()}>
-				<Icon code={0xE51B}/>
+				<Icon c_code={0xE51B}/>
 			</TextFieldButton>}
 		/>
 		<TextField
 			readOnly={read_only()}
-			label="HSL"
+			c_label="HSL"
 			id={input_hsl_id}
 			value={hsl_color()}
 			onInput={(ev) => {
@@ -289,15 +289,15 @@ const ColorInput: VoidComponent<{
 				const l = math_clamp(hsl_array[2], 0, 100) / 100
 				command(Commands.update_input, {h, s, l} satisfies HSLColor)
 			}}
-			trailing={<TextFieldButton
+			c_trailing={<TextFieldButton
 				data-tooltip="Copy"
 				data-copy={get_hsl_color()}>
-				<Icon code={0xE51B}/>
+				<Icon c_code={0xE51B}/>
 			</TextFieldButton>}
 		/>
 		<TextField
 			readOnly={read_only()}
-			label="HSV"
+			c_label="HSV"
 			id={input_hsv_id}
 			value={hsv_color()}
 			onInput={(ev) => {
@@ -317,15 +317,15 @@ const ColorInput: VoidComponent<{
 				const v = math_clamp(hsv_array[2], 0, 100) / 100
 				command(Commands.update_input, hsv_to_hsl({h, s, v}))
 			}}
-			trailing={<TextFieldButton
+			c_trailing={<TextFieldButton
 				data-tooltip="Copy"
 				data-copy={get_hsv_color()}>
-				<Icon code={0xE51B}/>
+				<Icon c_code={0xE51B}/>
 			</TextFieldButton>}
 		/>
 		<TextField
 			readOnly={read_only()}
-			label="HWB"
+			c_label="HWB"
 			id={input_hwb_id}
 			value={hwb_color()}
 			onInput={(ev) => {
@@ -345,15 +345,15 @@ const ColorInput: VoidComponent<{
 				const b = math_clamp(hwb_array[2], 0, 100 - (w * 100)) / 100
 				command(Commands.update_input, hwb_to_hsl({h, w, b}))
 			}}
-			trailing={<TextFieldButton
+			c_trailing={<TextFieldButton
 				data-tooltip="Copy"
 				data-copy={get_hwb_color()}>
-				<Icon code={0xE51B}/>
+				<Icon c_code={0xE51B}/>
 			</TextFieldButton>}
 		/>
 		<TextField
 			readOnly={read_only()}
-			label="CMYK"
+			c_label="CMYK"
 			id={input_cmyk_id}
 			value={cmyk_color()}
 			onInput={(ev) => {
@@ -374,10 +374,10 @@ const ColorInput: VoidComponent<{
 				const k = math_clamp(hwb_array[3], 0, 100) / 100
 				command(Commands.update_input, cmyk_to_hsl({c, m, y, k}))
 			}}
-			trailing={<TextFieldButton
+			c_trailing={<TextFieldButton
 				data-tooltip="Copy"
 				data-copy={get_cmyk_color()}>
-				<Icon code={0xE51B}/>
+				<Icon c_code={0xE51B}/>
 			</TextFieldButton>}
 		/>
 	</div>)

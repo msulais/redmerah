@@ -43,7 +43,7 @@ const ActionButtons: ParentComponent<JSX.HTMLAttributes<HTMLDivElement> & {
 		<div class={CSS.input_output_memory_buttons} data-hidden={attr_set_if_exist(!settings().memory_buttons)}>
 			<Button
 				data-tooltip={"Memory value " + `(${props.memory})`}
-				focused={is_menu_memory_open()}
+				c_focused={is_menu_memory_open()}
 				onClick={(ev) => open_menu(ev, menu_memory_ref, {
 					anchor: event_current_target(ev),
 				})}>
@@ -51,7 +51,7 @@ const ActionButtons: ParentComponent<JSX.HTMLAttributes<HTMLDivElement> & {
 			</Button>
 			<Menu
 				classList={classlist_module(CSS.input_output_memory_menu)}
-				on_toggle_open={(v) => set_is_menu_memory_open(v)}
+				c_on_toggleopen={(v) => set_is_menu_memory_open(v)}
 				ref={r => menu_memory_ref = r}>
 				<p>Memory value:</p>
 				<p>{props.memory}</p>
@@ -187,27 +187,27 @@ const BasicCalculator: VoidComponent<{
 			<Button onClick={() => add_char('%')}>%</Button>
 			<Button onClick={() => add_char('√')}>√</Button>
 			<Button onClick={() => clear()} classList={classlist_module(CSS.input_output_remove_symbol)}>C</Button>
-			<Button onClick={() => backspace()} classList={classlist_module(CSS.input_output_remove_symbol)}><Icon code={0xE199} /></Button>
+			<Button onClick={() => backspace()} classList={classlist_module(CSS.input_output_remove_symbol)}><Icon c_code={0xE199} /></Button>
 
-			<Button onClick={() => add_char('7')} variant={ButtonVariant.tonal}>7</Button>
-			<Button onClick={() => add_char('8')} variant={ButtonVariant.tonal}>8</Button>
-			<Button onClick={() => add_char('9')} variant={ButtonVariant.tonal}>9</Button>
-			<Button onClick={() => add_char('÷')} ><Icon code={0xEE8F}/></Button>
+			<Button onClick={() => add_char('7')} c_variant={ButtonVariant.tonal}>7</Button>
+			<Button onClick={() => add_char('8')} c_variant={ButtonVariant.tonal}>8</Button>
+			<Button onClick={() => add_char('9')} c_variant={ButtonVariant.tonal}>9</Button>
+			<Button onClick={() => add_char('÷')} ><Icon c_code={0xEE8F}/></Button>
 
-			<Button onClick={() => add_char('4')} variant={ButtonVariant.tonal}>4</Button>
-			<Button onClick={() => add_char('5')} variant={ButtonVariant.tonal}>5</Button>
-			<Button onClick={() => add_char('6')} variant={ButtonVariant.tonal}>6</Button>
-			<Button onClick={() => add_char('×')}><Icon code={0xE5E9}/></Button>
+			<Button onClick={() => add_char('4')} c_variant={ButtonVariant.tonal}>4</Button>
+			<Button onClick={() => add_char('5')} c_variant={ButtonVariant.tonal}>5</Button>
+			<Button onClick={() => add_char('6')} c_variant={ButtonVariant.tonal}>6</Button>
+			<Button onClick={() => add_char('×')}><Icon c_code={0xE5E9}/></Button>
 
-			<Button onClick={() => add_char('1')} variant={ButtonVariant.tonal}>1</Button>
-			<Button onClick={() => add_char('2')} variant={ButtonVariant.tonal}>2</Button>
-			<Button onClick={() => add_char('3')} variant={ButtonVariant.tonal}>3</Button>
-			<Button onClick={() => add_char('-')}><Icon code={0xEF5D} /></Button>
+			<Button onClick={() => add_char('1')} c_variant={ButtonVariant.tonal}>1</Button>
+			<Button onClick={() => add_char('2')} c_variant={ButtonVariant.tonal}>2</Button>
+			<Button onClick={() => add_char('3')} c_variant={ButtonVariant.tonal}>3</Button>
+			<Button onClick={() => add_char('-')}><Icon c_code={0xEF5D} /></Button>
 
 			<Button onClick={() => add_char(settings().number_format.decimal == DecimalNumberFormat.comma? ',' : '.')} ><Show when={settings().number_format.decimal == DecimalNumberFormat.comma} fallback=".">,</Show></Button>
-			<Button onClick={() => add_char('0')} variant={ButtonVariant.tonal}>0</Button>
-			<Button onClick={() => equal()} variant={ButtonVariant.filled}>=</Button>
-			<Button onClick={() => add_char('+')}><Icon code={0xE007}/></Button>
+			<Button onClick={() => add_char('0')} c_variant={ButtonVariant.tonal}>0</Button>
+			<Button onClick={() => equal()} c_variant={ButtonVariant.filled}>=</Button>
+			<Button onClick={() => add_char('+')}><Icon c_code={0xE007}/></Button>
 		</div>
 	</>)
 }
@@ -337,17 +337,17 @@ const ScientificCalculator: VoidComponent<{
 					anchor: event_current_target(ev),
 					position: MenuPosition.center_bottom_to_right
 				})}
-				focused={is_menu_function_open()}>
-				<Icon code={0xEA95}/>
+				c_focused={is_menu_function_open()}>
+				<Icon c_code={0xEA95}/>
 				Function
 			</Button>
 			<Menu
 				classList={classlist_module(CSS.input_output_scientific_function_menu)}
 				ref={r => menu_function_ref = r}
-				on_toggle_open={(v) => set_is_menu_function_open(v)}>
+				c_on_toggleopen={(v) => set_is_menu_function_open(v)}>
 				<div class={CSS.input_output_trigonometry_options}>
-					<MenuItem checked={is_inverse()} onClick={() => set_is_inverse(v => !v)}>Invers</MenuItem>
-					<MenuItem checked={is_hyperbolic()} onClick={() => set_is_hyperbolic(v => !v)}>Hyperbolic</MenuItem>
+					<MenuItem c_checked={is_inverse()} onClick={() => set_is_inverse(v => !v)}>Invers</MenuItem>
+					<MenuItem c_checked={is_hyperbolic()} onClick={() => set_is_hyperbolic(v => !v)}>Hyperbolic</MenuItem>
 				</div>
 				<div class={CSS.input_output_grid_3}>
 					<For each={get_trigonometry()}>{t => <MenuItem onClick={() => add_char(t + '(')}>{`${t}(x)`}</MenuItem>}</For>
@@ -374,7 +374,7 @@ const ScientificCalculator: VoidComponent<{
 			<Button onClick={() => add_char('(')}>{'('}</Button>
 			<Button onClick={() => add_char(')')}>{')'}</Button>
 			<Button onClick={() => clear()} classList={classlist_module(CSS.input_output_remove_symbol)}>C</Button>
-			<Button onClick={() => backspace()} classList={classlist_module(CSS.input_output_remove_symbol)}><Icon code={0xE199} /></Button>
+			<Button onClick={() => backspace()} classList={classlist_module(CSS.input_output_remove_symbol)}><Icon c_code={0xE199} /></Button>
 
 			<Button onClick={() => add_char('%')}>%</Button>
 			<Button onClick={() => add_char('10^')}>10^</Button>
@@ -383,28 +383,28 @@ const ScientificCalculator: VoidComponent<{
 			<Button onClick={() => add_char('^')}>^</Button>
 
 			<Button onClick={() => add_char('!')}>!</Button>
-			<Button onClick={() => add_char('7')} variant={ButtonVariant.tonal}>7</Button>
-			<Button onClick={() => add_char('8')} variant={ButtonVariant.tonal}>8</Button>
-			<Button onClick={() => add_char('9')} variant={ButtonVariant.tonal}>9</Button>
-			<Button onClick={() => add_char('÷')} ><Icon code={0xEE8F}/></Button>
+			<Button onClick={() => add_char('7')} c_variant={ButtonVariant.tonal}>7</Button>
+			<Button onClick={() => add_char('8')} c_variant={ButtonVariant.tonal}>8</Button>
+			<Button onClick={() => add_char('9')} c_variant={ButtonVariant.tonal}>9</Button>
+			<Button onClick={() => add_char('÷')} ><Icon c_code={0xEE8F}/></Button>
 
 			<Button onClick={() => add_char('e')}>e</Button>
-			<Button onClick={() => add_char('4')} variant={ButtonVariant.tonal}>4</Button>
-			<Button onClick={() => add_char('5')} variant={ButtonVariant.tonal}>5</Button>
-			<Button onClick={() => add_char('6')} variant={ButtonVariant.tonal}>6</Button>
-			<Button onClick={() => add_char('×')}><Icon code={0xE5E9}/></Button>
+			<Button onClick={() => add_char('4')} c_variant={ButtonVariant.tonal}>4</Button>
+			<Button onClick={() => add_char('5')} c_variant={ButtonVariant.tonal}>5</Button>
+			<Button onClick={() => add_char('6')} c_variant={ButtonVariant.tonal}>6</Button>
+			<Button onClick={() => add_char('×')}><Icon c_code={0xE5E9}/></Button>
 
 			<Button onClick={() => add_char('π')}>π</Button>
-			<Button onClick={() => add_char('1')} variant={ButtonVariant.tonal}>1</Button>
-			<Button onClick={() => add_char('2')} variant={ButtonVariant.tonal}>2</Button>
-			<Button onClick={() => add_char('3')} variant={ButtonVariant.tonal}>3</Button>
-			<Button onClick={() => add_char('-')}><Icon code={0xEF5D} /></Button>
+			<Button onClick={() => add_char('1')} c_variant={ButtonVariant.tonal}>1</Button>
+			<Button onClick={() => add_char('2')} c_variant={ButtonVariant.tonal}>2</Button>
+			<Button onClick={() => add_char('3')} c_variant={ButtonVariant.tonal}>3</Button>
+			<Button onClick={() => add_char('-')}><Icon c_code={0xEF5D} /></Button>
 
 			<Button onClick={() => add_char('√')}>√</Button>
 			<Button onClick={() => add_char(settings().number_format.decimal == DecimalNumberFormat.comma? ',' : '.')} ><Show when={settings().number_format.decimal == DecimalNumberFormat.comma} fallback=".">,</Show></Button>
-			<Button onClick={() => add_char('0')} variant={ButtonVariant.tonal}>0</Button>
-			<Button onClick={() => equal()} variant={ButtonVariant.filled}>=</Button>
-			<Button onClick={() => add_char('+')}><Icon code={0xE007}/></Button>
+			<Button onClick={() => add_char('0')} c_variant={ButtonVariant.tonal}>0</Button>
+			<Button onClick={() => equal()} c_variant={ButtonVariant.filled}>=</Button>
+			<Button onClick={() => add_char('+')}><Icon c_code={0xE007}/></Button>
 		</div>
 	</>)
 }
@@ -586,28 +586,28 @@ const ConverterCalculator: VoidComponent<{
 			settings={settings()}>
 			<Button
 				data-tooltip="Select converter type"
-				focused={is_menu_convertertype_open()}
+				c_focused={is_menu_convertertype_open()}
 				onClick={ev => open_menu(ev, menu_convertertype_ref, {
 					anchor: event_current_target(ev),
 					position: MenuPosition.center_bottom_to_right,
 					allow_hide_anchor: false
 				})}
-				variant={ButtonVariant.tonal}>
-				<Icon code={get_converter_icon()}/>
+				c_variant={ButtonVariant.tonal}>
+				<Icon c_code={get_converter_icon()}/>
 				{get_converter_name()}
 			</Button>
 
 			<Menu
 				ref={r => menu_convertertype_ref = r}
-				on_toggle_open={v => set_is_menu_convertertype_open(v)}>
+				c_on_toggleopen={v => set_is_menu_convertertype_open(v)}>
 				<For each={CONVERTER_TYPES}>{c =>
 					<MenuItem
-						selected={c.type == settings().converter.type}
+						c_selected={c.type == settings().converter.type}
 						onClick={() => {
 							command(Commands.change_settings_converter_type, c.type)
 							close_menu(menu_convertertype_ref)
 						}}
-						leading={<Icon code={c.icon}/>}>
+						c_leading={<Icon c_code={c.icon}/>}>
 						{c.text}
 					</MenuItem>
 				}</For>
@@ -616,7 +616,7 @@ const ConverterCalculator: VoidComponent<{
 			<div class={CSS.input_output_converter_units}>
 				<Button
 					data-tooltip="Select input unit"
-					focused={is_menu_inputunit_open()}
+					c_focused={is_menu_inputunit_open()}
 					onClick={ev => open_menu(ev, menu_inputunit_ref, {
 						anchor: event_current_target(ev),
 						position: MenuPosition.center_bottom_to_right,
@@ -628,14 +628,14 @@ const ConverterCalculator: VoidComponent<{
 
 				<Menu
 					ref={r => menu_inputunit_ref = r}
-					on_toggle_open={v => set_is_menu_inputunit_open(v)}>
+					c_on_toggleopen={v => set_is_menu_inputunit_open(v)}>
 					<For each={get_units()}>{u =>
 						<MenuItem
 							onClick={() => {
 								command(Commands.change_settings_converter_inputunit, u)
 								close_menu(menu_inputunit_ref)
 							}}
-							selected={u.equals(settings().converter.unit_input)}>
+							c_selected={u.equals(settings().converter.unit_input)}>
 							{u.name + ` (${u.symbol})`}
 						</MenuItem>
 					}</For>
@@ -643,11 +643,11 @@ const ConverterCalculator: VoidComponent<{
 				<IconButton
 					data-tooltip="Swap unit"
 					onClick={() => command(Commands.change_settings_converter_swapunit)}
-					code={0xE115}
+					c_code={0xE115}
 				/>
 				<Button
 					data-tooltip="Select output unit"
-					focused={is_menu_outputunit_open()}
+					c_focused={is_menu_outputunit_open()}
 					onClick={ev => open_menu(ev, menu_outputunit_ref, {
 						anchor: event_current_target(ev),
 						position: MenuPosition.center_bottom_to_right,
@@ -660,14 +660,14 @@ const ConverterCalculator: VoidComponent<{
 
 			<Menu
 				ref={r => menu_outputunit_ref = r}
-				on_toggle_open={v => set_is_menu_outputunit_open(v)}>
+				c_on_toggleopen={v => set_is_menu_outputunit_open(v)}>
 				<For each={get_units()}>{u =>
 					<MenuItem
 						onClick={() => {
 							command(Commands.change_settings_converter_outputunit, u)
 							close_menu(menu_outputunit_ref)
 						}}
-						selected={u.equals(settings().converter.unit_output)}>
+						c_selected={u.equals(settings().converter.unit_output)}>
 						{u.name + ` (${u.symbol})`}
 					</MenuItem>
 				}</For>
@@ -676,23 +676,23 @@ const ConverterCalculator: VoidComponent<{
 		<div class={CSS.input_output_converter_buttons}>
 			<Button onClick={() => plus_minus()}>±</Button>
 			<Button onClick={() => clear()} classList={classlist_module(CSS.input_output_remove_symbol)}>C</Button>
-			<Button onClick={() => backspace()} classList={classlist_module(CSS.input_output_remove_symbol)}><Icon code={0xE199} /></Button>
+			<Button onClick={() => backspace()} classList={classlist_module(CSS.input_output_remove_symbol)}><Icon c_code={0xE199} /></Button>
 
-			<Button onClick={() => add_char('7')} variant={ButtonVariant.tonal}>7</Button>
-			<Button onClick={() => add_char('8')} variant={ButtonVariant.tonal}>8</Button>
-			<Button onClick={() => add_char('9')} variant={ButtonVariant.tonal}>9</Button>
+			<Button onClick={() => add_char('7')} c_variant={ButtonVariant.tonal}>7</Button>
+			<Button onClick={() => add_char('8')} c_variant={ButtonVariant.tonal}>8</Button>
+			<Button onClick={() => add_char('9')} c_variant={ButtonVariant.tonal}>9</Button>
 
-			<Button onClick={() => add_char('4')} variant={ButtonVariant.tonal}>4</Button>
-			<Button onClick={() => add_char('5')} variant={ButtonVariant.tonal}>5</Button>
-			<Button onClick={() => add_char('6')} variant={ButtonVariant.tonal}>6</Button>
+			<Button onClick={() => add_char('4')} c_variant={ButtonVariant.tonal}>4</Button>
+			<Button onClick={() => add_char('5')} c_variant={ButtonVariant.tonal}>5</Button>
+			<Button onClick={() => add_char('6')} c_variant={ButtonVariant.tonal}>6</Button>
 
-			<Button onClick={() => add_char('1')} variant={ButtonVariant.tonal}>1</Button>
-			<Button onClick={() => add_char('2')} variant={ButtonVariant.tonal}>2</Button>
-			<Button onClick={() => add_char('3')} variant={ButtonVariant.tonal}>3</Button>
+			<Button onClick={() => add_char('1')} c_variant={ButtonVariant.tonal}>1</Button>
+			<Button onClick={() => add_char('2')} c_variant={ButtonVariant.tonal}>2</Button>
+			<Button onClick={() => add_char('3')} c_variant={ButtonVariant.tonal}>3</Button>
 
 			<Button onClick={() => add_char(settings().number_format.decimal == DecimalNumberFormat.comma? ',' : '.')} ><Show when={settings().number_format.decimal == DecimalNumberFormat.comma} fallback=".">,</Show></Button>
-			<Button onClick={() => add_char('0')} variant={ButtonVariant.tonal}>0</Button>
-			<Button onClick={() => equal()} variant={ButtonVariant.filled}>=</Button>
+			<Button onClick={() => add_char('0')} c_variant={ButtonVariant.tonal}>0</Button>
+			<Button onClick={() => equal()} c_variant={ButtonVariant.filled}>=</Button>
 		</div>
 	</>)
 }
@@ -834,8 +834,8 @@ const ProgrammerCalculator: VoidComponent<{
 				CSSMiscellaneous.no_scrollbar
 			)}>
 			<Button
-				selected={settings().programmer.number_type == NumberType.decimal}
-				indicator_position={ButtonIndicatorPosition.right}
+				c_selected={settings().programmer.number_type == NumberType.decimal}
+				c_indicator_position={ButtonIndicatorPosition.right}
 				onClick={() => command(Commands.change_settings_programmer_numbertype, NumberType.decimal)}
 				onContextMenu={(ev) => {
 					event_prevent_default(ev)
@@ -846,8 +846,8 @@ const ProgrammerCalculator: VoidComponent<{
 				<span>DEC</span>
 			</Button>
 			<Button
-				selected={settings().programmer.number_type == NumberType.hexadecimal}
-				indicator_position={ButtonIndicatorPosition.right}
+				c_selected={settings().programmer.number_type == NumberType.hexadecimal}
+				c_indicator_position={ButtonIndicatorPosition.right}
 				onClick={() => command(Commands.change_settings_programmer_numbertype, NumberType.hexadecimal)}
 				onContextMenu={(ev) => {
 					event_prevent_default(ev)
@@ -860,8 +860,8 @@ const ProgrammerCalculator: VoidComponent<{
 				<span>HEX</span>
 			</Button>
 			<Button
-				selected={settings().programmer.number_type == NumberType.octal}
-				indicator_position={ButtonIndicatorPosition.right}
+				c_selected={settings().programmer.number_type == NumberType.octal}
+				c_indicator_position={ButtonIndicatorPosition.right}
 				onClick={() => command(Commands.change_settings_programmer_numbertype, NumberType.octal)}
 				onContextMenu={(ev) => {
 					event_prevent_default(ev)
@@ -874,8 +874,8 @@ const ProgrammerCalculator: VoidComponent<{
 				<span>OCT</span>
 			</Button>
 			<Button
-				selected={settings().programmer.number_type == NumberType.binary}
-				indicator_position={ButtonIndicatorPosition.right}
+				c_selected={settings().programmer.number_type == NumberType.binary}
+				c_indicator_position={ButtonIndicatorPosition.right}
 				onClick={() => command(Commands.change_settings_programmer_numbertype, NumberType.binary)}
 				onContextMenu={(ev) => {
 					event_prevent_default(ev)
@@ -892,7 +892,7 @@ const ProgrammerCalculator: VoidComponent<{
 				<MenuItem onClick={() => {
 					navigator_clipboard_writetext(text_to_copy)
 					close_menu(menu_copy_ref)
-				}} leading={<Icon code={0xE51B}/>}>Copy</MenuItem>
+				}} c_leading={<Icon c_code={0xE51B}/>}>Copy</MenuItem>
 			</Menu>
 		</div>
 		<ActionButtons
@@ -907,43 +907,43 @@ const ProgrammerCalculator: VoidComponent<{
 			<Button onClick={() => add_char('(')}>{'('}</Button>
 			<Button onClick={() => add_char(')')}>{')'}</Button>
 			<Button onClick={() => clear()} classList={classlist_module(CSS.input_output_remove_symbol)}>C</Button>
-			<Button onClick={() => backspace()} classList={classlist_module(CSS.input_output_remove_symbol)}><Icon code={0xE199} /></Button>
+			<Button onClick={() => backspace()} classList={classlist_module(CSS.input_output_remove_symbol)}><Icon c_code={0xE199} /></Button>
 
-			<Button disabled={!is_hex()} onClick={() => add_char('F')} variant={ButtonVariant.tonal}>F</Button>
+			<Button disabled={!is_hex()} onClick={() => add_char('F')} c_variant={ButtonVariant.tonal}>F</Button>
 			<Button onClick={() => add_char('not(')}>not</Button>
 			<Button onClick={() => add_char('mod')}>mod</Button>
 			<Button onClick={() => add_char('lsh')}>lsh</Button>
 			<Button onClick={() => add_char('rsh')}>rsh</Button>
 
-			<Button disabled={!is_hex()} onClick={() => add_char('E')} variant={ButtonVariant.tonal}>E</Button>
+			<Button disabled={!is_hex()} onClick={() => add_char('E')} c_variant={ButtonVariant.tonal}>E</Button>
 			<Button onClick={() => add_char('or')}>or</Button>
 			<Button onClick={() => add_char('and')}>and</Button>
 			<Button onClick={() => add_char('xor')}>xor</Button>
 			<Button onClick={() => add_char('^')}>^</Button>
 
-			<Button disabled={!is_hex()} onClick={() => add_char('D')} variant={ButtonVariant.tonal}>D</Button>
-			<Button disabled={is_bin()} onClick={() => add_char('7')} variant={ButtonVariant.tonal}>7</Button>
-			<Button disabled={is_oct() || is_bin()} onClick={() => add_char('8')} variant={ButtonVariant.tonal}>8</Button>
-			<Button disabled={is_oct() || is_bin()} onClick={() => add_char('9')} variant={ButtonVariant.tonal}>9</Button>
-			<Button onClick={() => add_char('÷')} ><Icon code={0xEE8F}/></Button>
+			<Button disabled={!is_hex()} onClick={() => add_char('D')} c_variant={ButtonVariant.tonal}>D</Button>
+			<Button disabled={is_bin()} onClick={() => add_char('7')} c_variant={ButtonVariant.tonal}>7</Button>
+			<Button disabled={is_oct() || is_bin()} onClick={() => add_char('8')} c_variant={ButtonVariant.tonal}>8</Button>
+			<Button disabled={is_oct() || is_bin()} onClick={() => add_char('9')} c_variant={ButtonVariant.tonal}>9</Button>
+			<Button onClick={() => add_char('÷')} ><Icon c_code={0xEE8F}/></Button>
 
-			<Button disabled={!is_hex()} onClick={() => add_char('C')} variant={ButtonVariant.tonal}>C</Button>
-			<Button disabled={is_bin()} onClick={() => add_char('4')} variant={ButtonVariant.tonal}>4</Button>
-			<Button disabled={is_bin()} onClick={() => add_char('5')} variant={ButtonVariant.tonal}>5</Button>
-			<Button disabled={is_bin()} onClick={() => add_char('6')} variant={ButtonVariant.tonal}>6</Button>
-			<Button onClick={() => add_char('×')}><Icon code={0xE5E9}/></Button>
+			<Button disabled={!is_hex()} onClick={() => add_char('C')} c_variant={ButtonVariant.tonal}>C</Button>
+			<Button disabled={is_bin()} onClick={() => add_char('4')} c_variant={ButtonVariant.tonal}>4</Button>
+			<Button disabled={is_bin()} onClick={() => add_char('5')} c_variant={ButtonVariant.tonal}>5</Button>
+			<Button disabled={is_bin()} onClick={() => add_char('6')} c_variant={ButtonVariant.tonal}>6</Button>
+			<Button onClick={() => add_char('×')}><Icon c_code={0xE5E9}/></Button>
 
-			<Button disabled={!is_hex()} onClick={() => add_char('B')} variant={ButtonVariant.tonal}>B</Button>
-			<Button onClick={() => add_char('1')} variant={ButtonVariant.tonal}>1</Button>
-			<Button disabled={is_bin()} onClick={() => add_char('2')} variant={ButtonVariant.tonal}>2</Button>
-			<Button disabled={is_bin()} onClick={() => add_char('3')} variant={ButtonVariant.tonal}>3</Button>
-			<Button onClick={() => add_char('-')}><Icon code={0xEF5D} /></Button>
+			<Button disabled={!is_hex()} onClick={() => add_char('B')} c_variant={ButtonVariant.tonal}>B</Button>
+			<Button onClick={() => add_char('1')} c_variant={ButtonVariant.tonal}>1</Button>
+			<Button disabled={is_bin()} onClick={() => add_char('2')} c_variant={ButtonVariant.tonal}>2</Button>
+			<Button disabled={is_bin()} onClick={() => add_char('3')} c_variant={ButtonVariant.tonal}>3</Button>
+			<Button onClick={() => add_char('-')}><Icon c_code={0xEF5D} /></Button>
 
-			<Button disabled={!is_hex()} onClick={() => add_char('A')} variant={ButtonVariant.tonal}>A</Button>
+			<Button disabled={!is_hex()} onClick={() => add_char('A')} c_variant={ButtonVariant.tonal}>A</Button>
 			<Button disabled={!is_dec()} onClick={() => add_char(settings().number_format.decimal == DecimalNumberFormat.comma? ',' : '.')} ><Show when={settings().number_format.decimal == DecimalNumberFormat.comma} fallback=".">,</Show></Button>
-			<Button onClick={() => add_char('0')} variant={ButtonVariant.tonal}>0</Button>
-			<Button onClick={() => equal()} variant={ButtonVariant.filled}>=</Button>
-			<Button onClick={() => add_char('+')}><Icon code={0xE007}/></Button>
+			<Button onClick={() => add_char('0')} c_variant={ButtonVariant.tonal}>0</Button>
+			<Button onClick={() => equal()} c_variant={ButtonVariant.filled}>=</Button>
+			<Button onClick={() => add_char('+')}><Icon c_code={0xE007}/></Button>
 		</div>
 	</>)
 }
@@ -965,24 +965,24 @@ const DateCalculator: VoidComponent<{
 
 	return (<div class={CSS.input_output_date_calculator}>
 		<Dropdown
-			label="Operation"
-			values={[settings().date.operation]}
-			on_change_options={(options) => command(Commands.change_settings_date_operation, options[0].value)}>
+			c_label="Operation"
+			c_values={[settings().date.operation]}
+			c_on_change={(options) => command(Commands.change_settings_date_operation, options[0].value)}>
 			<For each={[
 				[DateOperation.add, 'Add'],
 				[DateOperation.subtract, 'Subtract'],
 				[DateOperation.difference, 'Difference'],
-			]}>{option => <DropdownOption value={option[0]} text={option[1]}/>}</For>
+			]}>{option => <DropdownOption c_value={option[0]} c_text={option[1]}/>}</For>
 		</Dropdown>
 		<div>
 			<p>From</p>
 			<Button
-				variant={ButtonVariant.tonal}
+				c_variant={ButtonVariant.tonal}
 				onClick={(ev) => open_datepicker(ev, datePicker_from_ref, {
 					anchor: event_current_target(ev),
 					position: MenuPosition.center_bottom_to_right
 				})}>
-				<Icon code={0xE2CC}/>
+				<Icon c_code={0xE2CC}/>
 				{date_text_YMD(input().from)}
 			</Button>
 		</div>
@@ -990,7 +990,7 @@ const DateCalculator: VoidComponent<{
 			<NumberTextField
 				min={0}
 				value={input().year + ''}
-				label="Year"
+				c_label="Year"
 				onBlur={(ev) => command(
 					Commands.change_calculator_input,
 					{	...input(),
@@ -1001,7 +1001,7 @@ const DateCalculator: VoidComponent<{
 			<NumberTextField
 				min={0}
 				value={input().month + ''}
-				label="Month"
+				c_label="Month"
 				onBlur={(ev) => command(
 					Commands.change_calculator_input,
 					{	...input(),
@@ -1012,7 +1012,7 @@ const DateCalculator: VoidComponent<{
 			<NumberTextField
 				min={0}
 				value={input().day + ''}
-				label="Day"
+				c_label="Day"
 				onBlur={(ev) => command(
 					Commands.change_calculator_input,
 					{	...input(),
@@ -1024,12 +1024,12 @@ const DateCalculator: VoidComponent<{
 		<div data-hide={attr_set_if_exist(settings().date.operation != DateOperation.difference)}>
 			<p>To</p>
 			<Button
-				variant={ButtonVariant.tonal}
+				c_variant={ButtonVariant.tonal}
 				onClick={(ev) => open_datepicker(ev, datePicker_to_ref, {
 					anchor: event_current_target(ev),
 					position: MenuPosition.center_bottom_to_right
 				})}>
-				<Icon code={0xE2CC}/>
+				<Icon c_code={0xE2CC}/>
 				{date_text_YMD(input().to)}
 			</Button>
 		</div>
@@ -1039,17 +1039,17 @@ const DateCalculator: VoidComponent<{
 		</div>
 		<DatePicker
 			ref={r => datePicker_from_ref = r}
-			date={input().from}
-			first_date={new Date(date_year() - 1000, 0, 1)}
-			last_date={new Date(date_year() + 1000, 11, 31)}
-			on_select_date={(value) => command(Commands.change_calculator_input, {...input(), from: value})}
+			c_date={input().from}
+			c_first_date={new Date(date_year() - 1000, 0, 1)}
+			c_last_date={new Date(date_year() + 1000, 11, 31)}
+			c_on_selectdate={(value) => command(Commands.change_calculator_input, {...input(), from: value})}
 		/>
 		<DatePicker
 			ref={r => datePicker_to_ref = r}
-			date={input().to}
-			first_date={new Date(date_year() - 1000, 0, 1)}
-			last_date={new Date(date_year() + 1000, 11, 31)}
-			on_select_date={(value) => command(Commands.change_calculator_input, {...input(), to: value})}
+			c_date={input().to}
+			c_first_date={new Date(date_year() - 1000, 0, 1)}
+			c_last_date={new Date(date_year() + 1000, 11, 31)}
+			c_on_selectdate={(value) => command(Commands.change_calculator_input, {...input(), to: value})}
 		/>
 	</div>)
 }

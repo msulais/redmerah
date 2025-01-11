@@ -25,22 +25,22 @@ const _: VoidComponent = () => {
 	let menu_ref2: HTMLDialogElement
 
 	const C: VoidComponent = () => (<>
-		<MenuItem icon_code={0xE51B} trailing="Ctrl + C">Copy</MenuItem>
-		<MenuItem icon_code={0xE454} trailing={<>
-			<MenuItemTrailingShortcut shortcuts={['Ctrl', 'V']}/>
+		<MenuItem c_icon_code={0xE51B} c_trailing="Ctrl + C">Copy</MenuItem>
+		<MenuItem c_icon_code={0xE454} c_trailing={<>
+			<MenuItemTrailingShortcut c_shortcuts={['Ctrl', 'V']}/>
 		</>}>Paste</MenuItem>
 		<MenuDivider />
 		<MenuItem>Delete</MenuItem>
-		<MenuItem icon_code={0xE59D}>Delete</MenuItem>
-		<MenuItem trailing={<Icon code={0xE59D}/>}>Delete</MenuItem>
+		<MenuItem c_icon_code={0xE59D}>Delete</MenuItem>
+		<MenuItem c_trailing={<Icon c_code={0xE59D}/>}>Delete</MenuItem>
 		<MenuDivider />
 		<MenuHeader>Select color</MenuHeader>
-		<MenuItem selected>Red</MenuItem>
-		<MenuItem selected={false}>Blue</MenuItem>
+		<MenuItem c_selected>Red</MenuItem>
+		<MenuItem c_selected={false}>Blue</MenuItem>
 		<MenuDivider />
 		<MenuHeader>Check color</MenuHeader>
-		<MenuItem checked>Red</MenuItem>
-		<MenuItem checked={false}>Blue</MenuItem>
+		<MenuItem c_checked>Red</MenuItem>
+		<MenuItem c_checked={false}>Blue</MenuItem>
 		<MenuDivider />
 		<MenuHeader>Switch</MenuHeader>
 		<SwitchMenuItem>On/off</SwitchMenuItem>
@@ -50,7 +50,7 @@ const _: VoidComponent = () => {
 		title="Menu"
 		description="A menu is a collection of options or commands that are presented to the user. It can be a simple list of items, a hierarchical structure, or a combination of both. Menus are commonly used for navigation, actions, or settings.">
 		<Playground>
-			<Button variant={ButtonVariant.tonal} onClick={(ev) => open_menu(ev, menu_ref, {
+			<Button c_variant={ButtonVariant.tonal} onClick={(ev) => open_menu(ev, menu_ref, {
 				anchor: anchor()? event_current_target(ev) : undefined,
 				allow_hide_anchor: allow_hide_anchor(),
 				draggable: draggable(),
@@ -60,7 +60,7 @@ const _: VoidComponent = () => {
 				padding: padding(),
 				position: position()
 			})}>Open menu</Button>
-			<Button variant={ButtonVariant.tonal} onClick={(ev) => open_menu(ev, menu_ref2, {
+			<Button c_variant={ButtonVariant.tonal} onClick={(ev) => open_menu(ev, menu_ref2, {
 				anchor: anchor()? event_current_target(ev) : undefined,
 				allow_hide_anchor: allow_hide_anchor(),
 				draggable: draggable(),
@@ -71,50 +71,50 @@ const _: VoidComponent = () => {
 				position: position()
 			})}>Open menu2</Button>
 			<Menu ref={r => menu_ref = r} style={{width: '240px'}}>
-				<TextField  attr_wrapper={{style: {width: 'calc(100% - 16px)', margin: '4px 8px'}}} placeholder="Input"/>
+				<TextField  c_attr_wrapper={{style: {width: 'calc(100% - 16px)', margin: '4px 8px'}}} placeholder="Input"/>
 				<MenuDivider />
 				<C/>
 				<MenuDivider />
 				<MenuHeader>Sub menu</MenuHeader>
-				<SubMenu style={{width: '240px'}} item={<SubMenuItem>1 Level</SubMenuItem>}>
+				<SubMenu style={{width: '240px'}} c_item={<SubMenuItem>1 Level</SubMenuItem>}>
 					<C/>
 				</SubMenu>
-				<SubMenu style={{width: '240px'}} item={<SubMenuItem>2 Level</SubMenuItem>}>
+				<SubMenu style={{width: '240px'}} c_item={<SubMenuItem>2 Level</SubMenuItem>}>
 					<C/>
 					<MenuDivider />
 					<MenuHeader>Sub menu</MenuHeader>
-					<SubMenu style={{width: '240px'}} item={<SubMenuItem>Next Level</SubMenuItem>}>
+					<SubMenu style={{width: '240px'}} c_item={<SubMenuItem>Next Level</SubMenuItem>}>
 						<C/>
 					</SubMenu>
 				</SubMenu>
-				<SubMenu style={{width: '240px'}} item={<SubMenuItem>3 Level</SubMenuItem>}>
+				<SubMenu style={{width: '240px'}} c_item={<SubMenuItem>3 Level</SubMenuItem>}>
 					<C/>
 					<MenuDivider />
 					<MenuHeader>Sub menu</MenuHeader>
-					<SubMenu style={{width: '240px'}} item={<SubMenuItem>Next Level</SubMenuItem>}>
+					<SubMenu style={{width: '240px'}} c_item={<SubMenuItem>Next Level</SubMenuItem>}>
 						<C/>
 						<MenuDivider />
 						<MenuHeader>Sub menu</MenuHeader>
-						<SubMenu style={{width: '240px'}} item={<SubMenuItem>Next Level</SubMenuItem>}>
+						<SubMenu style={{width: '240px'}} c_item={<SubMenuItem>Next Level</SubMenuItem>}>
 							<C/>
 						</SubMenu>
 					</SubMenu>
 				</SubMenu>
 			</Menu>
 			<Menu ref={r => menu_ref2 = r} style={{width: '200px'}}>
-				<TextField  attr_wrapper={{style: {width: 'calc(100% - 16px)', margin: '4px 8px'}}} placeholder="Input"/>
+				<TextField  c_attr_wrapper={{style: {width: 'calc(100% - 16px)', margin: '4px 8px'}}} placeholder="Input"/>
 				<MenuDivider />
-				<MenuItem icon_code={0xE51B} trailing="Ctrl + C">Copy</MenuItem>
-				<MenuItem icon_code={0xE454} trailing={<>
-					<MenuItemTrailingShortcut shortcuts={['Ctrl', 'V']}/>
+				<MenuItem c_icon_code={0xE51B} c_trailing="Ctrl + C">Copy</MenuItem>
+				<MenuItem c_icon_code={0xE454} c_trailing={<>
+					<MenuItemTrailingShortcut c_shortcuts={['Ctrl', 'V']}/>
 				</>}>Paste</MenuItem>
 			</Menu>
 		</Playground>
 		<PlaygroundOptions>
 			<Dropdown
-				label="Position"
-				values={[position()]}
-				on_change_options={(options) => set_position(options[0].value as MenuPosition)}>
+				c_label="Position"
+				c_values={[position()]}
+				c_on_change={(options) => set_position(options[0].value as MenuPosition)}>
 				<For each={[
 					[MenuPosition.left_top, 'Left top'],
 					[MenuPosition.left_center_to_bottom, 'Left center to bottom'],
@@ -141,14 +141,14 @@ const _: VoidComponent = () => {
 					[MenuPosition.center_center_right_top, 'Center center right top'],
 					[MenuPosition.center_center_right, 'Center center right'],
 					[MenuPosition.center_center_right_bottom, 'Center center right bottom'],
-				]}>{option => <DropdownOption value={option[0]} text={option[1] as string} />}</For>
+				]}>{option => <DropdownOption c_value={option[0]} c_text={option[1] as string} />}</For>
 			</Dropdown>
 			<NumberTextField
 				style={{width: '100px'}}
 				value={gap()}
 				min={0}
 				onBlur={(ev) => set_gap(g => number_safe(event_current_target(ev).valueAsNumber, g))}
-				label="Gap"
+				c_label="Gap"
 			/>
 			<Show when={array_includes([
 				MenuPosition.center_top_to_right,
@@ -173,7 +173,7 @@ const _: VoidComponent = () => {
 					style={{width: '100px'}}
 					min={0}
 					onBlur={(ev) => set_padding(p => number_safe(event_current_target(ev).valueAsNumber, p))}
-					label="Padding"
+					c_label="Padding"
 				/>
 			</Show>
 			<CheckBox

@@ -74,7 +74,7 @@ const _: VoidComponent = () => {
 		init_database()
 	})
 
-	return (<App appbar={<AppBar/>}>
+	return (<App c_appbar={<AppBar/>}>
 		<Body
 			command={command}
 			text={text()}

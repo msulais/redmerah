@@ -15,21 +15,21 @@ type FocusableGroupProps = JSX.HTMLAttributes<HTMLDivElement> & {
 	 * if `true`, the default behaviour of `'keydown'` event
 	 * that control focus with arrow key will not fired
 	 */
-	custom_arrow_focus?: boolean
-	arrow_options?: {
+	c_custom_arrow_focus?: boolean
+	c_arrow_options?: {
 		up?: "next" | "prev"
 		down?: "next" | "prev"
 		left?: "next" | "prev"
 		right?: "next" | "prev"
 	}
-	on_before_set_tabindex?(el: HTMLElement): boolean
-	on_before_change_focus?(el: HTMLElement): boolean
+	c_on_beforesettabindex?(el: HTMLElement): boolean
+	c_on_beforechangefocus?(el: HTMLElement): boolean
 }
 const FocusableGroup: ParentComponent<FocusableGroupProps> = ($props) => {
 	const [props, other] = splitProps($props, [
 		'class', 'onFocusIn', 'children', 'onFocusOut',
-		'onKeyDown', 'on_before_set_tabindex', 'custom_arrow_focus',
-		'arrow_options', 'on_before_change_focus'
+		'onKeyDown', 'c_on_beforesettabindex', 'c_custom_arrow_focus',
+		'c_arrow_options', 'c_on_beforechangefocus'
 	])
 	let tabindex_removed: boolean = true
 	let focus_by_arrow_key: boolean = false
@@ -58,7 +58,7 @@ const FocusableGroup: ParentComponent<FocusableGroupProps> = ($props) => {
 
 				element_with_tabindex_zero = element_children_tabindex(
 					self,
-					props.on_before_set_tabindex ?? element_focusable
+					props.c_on_beforesettabindex ?? element_focusable
 				)
 				tabindex_removed = false
 				focus_by_arrow_key = false
@@ -74,13 +74,13 @@ const FocusableGroup: ParentComponent<FocusableGroupProps> = ($props) => {
 				const active_el = document_active()
 				if (active_el && element_contains(self, active_el)) return
 
-				element_children_remove_tabindex(self, props.on_before_set_tabindex)
+				element_children_remove_tabindex(self, props.c_on_beforesettabindex)
 				tabindex_removed = true
 			}, 200)
 		}}
 		onKeyDown={ev => {
 			event_call(ev, props.onKeyDown)
-			if (props.custom_arrow_focus) return
+			if (props.c_custom_arrow_focus) return
 
 			const active = document_active()
 			if (!active) return
@@ -93,8 +93,8 @@ const FocusableGroup: ParentComponent<FocusableGroupProps> = ($props) => {
 			element_with_tabindex_zero = element_focus_by_arrowkey(
 				event_current_target(ev),
 				code,
-				props.arrow_options,
-				props.on_before_change_focus ?? element_focusable
+				props.c_arrow_options,
+				props.c_on_beforechangefocus ?? element_focusable
 			)
 			if (element_with_tabindex_zero) {
 				focus_by_arrow_key = true

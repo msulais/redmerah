@@ -24,27 +24,27 @@ const _: VoidComponent = () => {
 		description="A tooltip is a small, temporary window that appears when a user hovers over an element. It provides a brief explanation or description of the element's purpose or function. Tooltips are often used to clarify the meaning of icons, buttons, or other UI elements.">
 		<Playground>
 			<Tooltip
-				end_delay_duration={end_delay_duration()}
-				gap={gap()}
-				position={position()}
-				start_delay_duration={start_delay_duration()}
-				use_anchor={use_anchor()}>
+				c_end_delay_duration={end_delay_duration()}
+				c_gap={gap()}
+				c_position={position()}
+				c_start_delay_duration={start_delay_duration()}
+				c_use_anchor={use_anchor()}>
 				<Button data-tooltip="This is tooltip">
 					Hover me please
-					<Icon data-tooltip="This is icon" code={0xE4B2}/>
+					<Icon data-tooltip="This is icon" c_code={0xE4B2}/>
 				</Button>
 				<Button data-rich-tooltip={rich_tooltip_id}>Rich tooltip</Button>
 				<PopoverTooltip id={rich_tooltip_id}>
 					<p style={{"margin-bottom": '8px'}}>Ullamco anim in magna ea ut labore velit ex occaecat elit voluptate laboris.</p>
-					<Button style={{color: 'rgb(var(--g-color-accent))'}} variant={ButtonVariant.tonal}>Learn more</Button>
+					<Button style={{color: 'rgb(var(--g-color-accent))'}} c_variant={ButtonVariant.tonal}>Learn more</Button>
 				</PopoverTooltip>
 			</Tooltip>
 		</Playground>
 		<PlaygroundOptions>
 			<Dropdown
-				label="Position"
-				values={[position()]}
-				on_change_options={(options) => set_position(options[0].value as TooltipPosition)}>
+				c_label="Position"
+				c_values={[position()]}
+				c_on_change={(options) => set_position(options[0].value as TooltipPosition)}>
 				<For each={[
 					[TooltipPosition.left_top, 'Left top'],
 					[TooltipPosition.left_center_to_bottom, 'Left center to bottom'],
@@ -71,14 +71,14 @@ const _: VoidComponent = () => {
 					[TooltipPosition.center_center_right_top, 'Center center right top'],
 					[TooltipPosition.center_center_right, 'Center center right'],
 					[TooltipPosition.center_center_right_bottom, 'Center center right bottom'],
-				]}>{option => <DropdownOption value={option[0]} text={option[1] as string} />}</For>
+				]}>{option => <DropdownOption c_value={option[0]} c_text={option[1] as string} />}</For>
 			</Dropdown>
 			<NumberTextField
 				style={{width: '100px'}}
 				value={gap()}
 				min={0}
 				onBlur={(ev) => set_gap(g => number_safe(event_current_target(ev).valueAsNumber, g))}
-				label="Gap"
+				c_label="Gap"
 			/>
 			<NumberTextField
 				style={{width: '100px'}}
@@ -86,7 +86,7 @@ const _: VoidComponent = () => {
 				min={0}
 				step={100}
 				onBlur={(ev) => set_start_delay_duration(d => number_safe(event_current_target(ev).valueAsNumber, d))}
-				label="Start delay duration"
+				c_label="Start delay duration"
 			/>
 			<NumberTextField
 				style={{width: '100px'}}
@@ -94,7 +94,7 @@ const _: VoidComponent = () => {
 				min={0}
 				step={100}
 				onBlur={(ev) => set_end_delay_duration(d => number_safe(event_current_target(ev).valueAsNumber, d))}
-				label="End delay duration"
+				c_label="End delay duration"
 			/>
 			<CheckBox
 				checked={use_anchor()}

@@ -31,31 +31,31 @@ enum DrawerPosition {
 }
 
 type DrawerItemProps = ButtonProps & {
-	leading?: JSX.Element
-	trailing?: JSX.Element
-	icon_code?: number
+	c_leading?: JSX.Element
+	c_trailing?: JSX.Element
+	c_icon_code?: number
 }
 const DrawerItem: ParentComponent<DrawerItemProps> = ($props) => {
 	const [props, other] = splitProps($props, [
-		'indicator_position', 'leading', 'children',
-		'trailing', 'classList', 'icon_code', 'variant'
+		'c_indicator_position', 'c_leading', 'children',
+		'c_trailing', 'classList', 'c_icon_code', 'c_variant'
 	])
-	const selected = createMemo(() => other.selected)
-	const trailing = children(() => props.trailing)
+	const selected = createMemo(() => other.c_selected)
+	const trailing = children(() => props.c_trailing)
 
 	return (<Button
-		variant={props.variant ?? (selected()? ButtonVariant.tonal : undefined)}
-		indicator_position={props.indicator_position ?? (object_has_value(selected())? (props.indicator_position ?? ButtonIndicatorPosition.left) : undefined)}
+		c_variant={props.c_variant ?? (selected()? ButtonVariant.tonal : undefined)}
+		c_indicator_position={props.c_indicator_position ?? (object_has_value(selected())? (props.c_indicator_position ?? ButtonIndicatorPosition.left) : undefined)}
 		classList={{'c-drawer-item': true, ...props.classList}}
 		{...other}>
-		<Show when={props.icon_code != null}>
+		<Show when={props.c_icon_code != null}>
 			<Icon
 				style={{color: selected()? `rgb(${AppColors.accent})` : undefined}}
-				filled={selected()}
-				code={props.icon_code!}
+				c_filled={selected()}
+				c_code={props.c_icon_code!}
 			/>
 		</Show>
-		{ props.leading }
+		{ props.c_leading }
 		{ props.children }
 		<Show when={trailing()}>
 			<div style="flex:1" />
@@ -64,32 +64,32 @@ const DrawerItem: ParentComponent<DrawerItemProps> = ($props) => {
 	</Button>)
 }
 
-type DrawerProps = Omit<ModalProps, 'style' | 'position'> & {
-	header?: JSX.Element
-	header_auto_tabindex?: boolean
-	footer?: JSX.Element
-	footer_auto_tabindex?: boolean
-	children_auto_tabindex?: boolean
-	position?: DrawerPosition
+type DrawerProps = Omit<ModalProps, 'style' | 'c_position'> & {
+	c_header?: JSX.Element
+	c_header_auto_tabindex?: boolean
+	c_footer?: JSX.Element
+	c_footer_auto_tabindex?: boolean
+	c_children_auto_tabindex?: boolean
+	c_position?: DrawerPosition
 	style?: JSX.CSSProperties
 }
 const Drawer: ParentComponent<DrawerProps> = ($props) => {
 	const animation_option = {duration: 200, easing: AnimationEffectTiming.spring}
 	const $$props = mergeProps({
-		position: DrawerPosition.left,
-		header_auto_tabindex: true,
-		footer_auto_tabindex: true,
-		children_auto_tabindex: true
+		c_position: DrawerPosition.left,
+		c_header_auto_tabindex: true,
+		c_footer_auto_tabindex: true,
+		c_children_auto_tabindex: true
 	}, $props)
 	const [props, other] = splitProps($$props, [
-		'header', 'footer', 'children', 'position',
-		'classList', 'open_animation', 'close_animation',
-		'style', 'header_auto_tabindex', 'footer_auto_tabindex',
-		'children_auto_tabindex'
+		'c_header', 'c_footer', 'children', 'c_position',
+		'classList', 'c_open_animation', 'c_close_animation',
+		'style', 'c_header_auto_tabindex', 'c_footer_auto_tabindex',
+		'c_children_auto_tabindex'
 	])
-	const position = createMemo(() => props.position)
-	const header = children(() => props.header)
-	const footer = children(() => props.footer)
+	const position = createMemo(() => props.c_position)
+	const header = children(() => props.c_header)
+	const footer = children(() => props.c_footer)
 	const content = children(() => props.children)
 
 	return (<Modal
@@ -104,8 +104,8 @@ const Drawer: ParentComponent<DrawerProps> = ($props) => {
 			top: props.style?.top ?? '0px',
 			right: props.style?.right ?? position() == DrawerPosition.right? 0 : 'auto',
 		}}
-		open_animation={(el, done) => {
-			if (props.open_animation) props.open_animation(el, done)
+		c_open_animation={(el, done) => {
+			if (props.c_open_animation) props.c_open_animation(el, done)
 			else promise_done(element_animate(
 				el,
 				{ transform: [
@@ -116,13 +116,13 @@ const Drawer: ParentComponent<DrawerProps> = ($props) => {
 				animation_option
 			).finished, done)
 		}}
-		close_animation={(el, done) => {
-			if (props.close_animation) props.close_animation(el, done)
+		c_close_animation={(el, done) => {
+			if (props.c_close_animation) props.c_close_animation(el, done)
 			else promise_done(element_animate(
 				el,
 				{ transform: [
 					'none',
-					props.position == DrawerPosition.left
+					props.c_position == DrawerPosition.left
 						? 'translateX(-100%)'
 						: 'translateX(100%)',
 				] },
@@ -132,8 +132,8 @@ const Drawer: ParentComponent<DrawerProps> = ($props) => {
 		{...other}>
 		<Show when={header()}>
 			<div class="c-drawer-header">
-				<Show when={props.header_auto_tabindex} fallback={header()}>
-					<FocusableGroup arrow_options={{
+				<Show when={props.c_header_auto_tabindex} fallback={header()}>
+					<FocusableGroup c_arrow_options={{
 						up: 'prev',
 						down: 'next'
 					}}>{header()}</FocusableGroup>
@@ -141,8 +141,8 @@ const Drawer: ParentComponent<DrawerProps> = ($props) => {
 			</div>
 		</Show>
 		<div class="c-drawer-content">
-			<Show when={props.children_auto_tabindex} fallback={content()}>
-				<FocusableGroup arrow_options={{
+			<Show when={props.c_children_auto_tabindex} fallback={content()}>
+				<FocusableGroup c_arrow_options={{
 					up: 'prev',
 					down: 'next'
 				}}
@@ -156,8 +156,8 @@ const Drawer: ParentComponent<DrawerProps> = ($props) => {
 		</div>
 		<Show when={footer()}>
 			<div class="c-drawer-footer">
-				<Show when={props.footer_auto_tabindex} fallback={footer()}>
-					<FocusableGroup arrow_options={{
+				<Show when={props.c_footer_auto_tabindex} fallback={footer()}>
+					<FocusableGroup c_arrow_options={{
 						up: 'prev',
 						down: 'next'
 					}}>{footer()}</FocusableGroup>

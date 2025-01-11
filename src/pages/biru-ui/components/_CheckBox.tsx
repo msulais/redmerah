@@ -13,19 +13,19 @@ const _: VoidComponent = () => {
 		description="A checkbox is a UI element that allows users to select multiple options from a list. It typically displays a square box that can be checked or unchecked to indicate selection or deselection.">
 		<Playground>
 			<CheckBox
-				variant={variant()}
+				c_variant={variant()}
 				disabled={disabled()}
 				name="a">
 				Option 1
 			</CheckBox>
 			<CheckBox
-				variant={variant()}
+				c_variant={variant()}
 				disabled={disabled()}
 				name="a">
 				Option 2
 			</CheckBox>
 			<CheckBox
-				variant={variant()}
+				c_variant={variant()}
 				disabled={disabled()}
 				name="a">
 				Option 3
@@ -33,13 +33,13 @@ const _: VoidComponent = () => {
 		</Playground>
 		<PlaygroundOptions>
 			<Dropdown
-				label="Variant"
-				on_change_options={(items) => set_variant(items[0].value as CheckBoxVariant)}
-				values={[variant()]}>
+				c_label="Variant"
+				c_on_change={(items) => set_variant(items[0].value as CheckBoxVariant)}
+				c_values={[variant()]}>
 				<For each={[
 					[CheckBoxVariant.check, 'Check'],
 					[CheckBoxVariant.radio, 'Radio'],
-				]}>{option => <DropdownOption value={option[0]} text={option[1] as string} />}</For>
+				]}>{option => <DropdownOption c_value={option[0]} c_text={option[1] as string} />}</For>
 			</Dropdown>
 			<CheckBox
 				checked={disabled()}

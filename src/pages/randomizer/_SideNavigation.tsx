@@ -21,7 +21,7 @@ const _: VoidComponent<{
 	const expanded = createMemo(() => props.expanded)
 	const randomizer = createMemo(() => props.randomizer)
 	return (<SideNavigation
-		expanded={expanded()}
+		c_expanded={expanded()}
 		classList={classlist_module(CSS.side_navigation)}
 		onClick={ev => {
 			const button = document_active()!
@@ -45,8 +45,8 @@ const _: VoidComponent<{
 				<SideNavigationItem
 					data-tooltip={!expanded()? r.text : undefined}
 					data-type={r.type}
-					leading={<Icon filled={randomizer() == r.type} code={r.icon}/>}
-					selected={randomizer() == r.type}>
+					c_leading={<Icon c_filled={randomizer() == r.type} c_code={r.icon}/>}
+					c_selected={randomizer() == r.type}>
 					{r.text}
 				</SideNavigationItem>
 			}</For>

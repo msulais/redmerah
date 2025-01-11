@@ -85,25 +85,25 @@ const _: VoidComponent = () => {
 		<h2>TextField</h2>
 		<Playground>
 			<TextField
-				label={label()? 'TextField' : undefined}
+				c_label={label()? 'TextField' : undefined}
 				readOnly={readonly()}
-				leading={<Show when={leading()}><Icon code={0xECC0}/></Show>}
-				trailing={<Show when={trailing()}>
-					<TextFieldButton><Icon code={0xE56B}/></TextFieldButton>
-					<TextFieldButton><Icon code={0xE553}/></TextFieldButton>
+				c_leading={<Show when={leading()}><Icon c_code={0xECC0}/></Show>}
+				c_trailing={<Show when={trailing()}>
+					<TextFieldButton><Icon c_code={0xE56B}/></TextFieldButton>
+					<TextFieldButton><Icon c_code={0xE553}/></TextFieldButton>
 				</Show>}
 				placeholder={placeholder()? 'TextField placeholder' : undefined}
-				message={message()? "Consectetur labore sint aliqua occaecat anim quis aute dolor ex occaecat laborum sit aliqua consequat." : undefined}
-				auto_hide_label={autohide_label()}
-				auto_show_clear_button={autoshow_clear_button()}
+				c_message={message()? "Consectetur labore sint aliqua occaecat anim quis aute dolor ex occaecat laborum sit aliqua consequat." : undefined}
+				c_auto_hide_label={autohide_label()}
+				c_auto_show_clear_button={autoshow_clear_button()}
 				type={type()}
 			/>
 		</Playground>
 		<PlaygroundOptions>
 			<Dropdown
-				label="Type"
-				values={[type()]}
-				on_change_options={(v) => set_type(v[0].value as string)}>
+				c_label="Type"
+				c_values={[type()]}
+				c_on_change={(v) => set_type(v[0].value as string)}>
 				<For each={[
 					['button', 'Button'],
 					['checkbox', 'Checkbox'],
@@ -126,7 +126,7 @@ const _: VoidComponent = () => {
 					['time', 'Time'],
 					['url', 'URL'],
 					['week', 'Week'],
-				]}>{option => <DropdownOption value={option[0]} text={option[1] as string} />}</For>
+				]}>{option => <DropdownOption c_value={option[0]} c_text={option[1] as string} />}</For>
 			</Dropdown>
 			<Options />
 		</PlaygroundOptions>
@@ -134,33 +134,33 @@ const _: VoidComponent = () => {
 		<h2>NumberTextField</h2>
 		<Playground>
 			<NumberTextField
-				label={label()? 'NumberTextField' : undefined}
-				leading={<Show when={leading()}><Icon code={0xECC0}/></Show>}
+				c_label={label()? 'NumberTextField' : undefined}
+				c_leading={<Show when={leading()}><Icon c_code={0xECC0}/></Show>}
 				readOnly={readonly()}
-				trailing={<Show when={trailing()}>
-					<TextFieldButton><Icon code={0xE56B}/></TextFieldButton>
-					<TextFieldButton><Icon code={0xE553}/></TextFieldButton>
+				c_trailing={<Show when={trailing()}>
+					<TextFieldButton><Icon c_code={0xE56B}/></TextFieldButton>
+					<TextFieldButton><Icon c_code={0xE553}/></TextFieldButton>
 				</Show>}
 				step={step()}
 				min={limit_min()? min() : undefined}
 				max={limit_max()? max() : undefined}
 				placeholder={placeholder()? 'NumberTextField placeholder' : undefined}
-				message={message()? "Consectetur labore sint aliqua occaecat anim quis aute dolor ex occaecat laborum sit aliqua consequat." : undefined}
-				auto_hide_label={autohide_label()}
-				auto_show_clear_button={autoshow_clear_button()}
+				c_message={message()? "Consectetur labore sint aliqua occaecat anim quis aute dolor ex occaecat laborum sit aliqua consequat." : undefined}
+				c_auto_hide_label={autohide_label()}
+				c_auto_show_clear_button={autoshow_clear_button()}
 			/>
 		</Playground>
 		<PlaygroundOptions>
 			<NumberTextField
 				value={step()}
-				label="Step"
+				c_label="Step"
 				onBlur={ev => set_step(s => number_safe(event_current_target(ev).valueAsNumber, s))}
 				style={{width: '100px'}}
 			/>
 			<Show when={limit_min()}>
 				<NumberTextField
 					value={min()}
-					label="Min"
+					c_label="Min"
 					max={limit_max()? max() : undefined}
 					onBlur={ev => set_min(m => number_safe(event_current_target(ev).valueAsNumber, m))}
 					style={{width: '100px'}}
@@ -170,7 +170,7 @@ const _: VoidComponent = () => {
 				<NumberTextField
 					value={max()}
 					min={limit_min()? min() : undefined}
-					label="Max"
+					c_label="Max"
 					onBlur={ev => set_max(m => number_safe(event_current_target(ev).valueAsNumber, m))}
 					style={{width: '100px'}}
 				/>
@@ -191,25 +191,25 @@ const _: VoidComponent = () => {
 		<h2>AreaTextField</h2>
 		<Playground>
 			<AreaTextField
-				label={label()? 'AreaTextField' : undefined}
-				leading={<Show when={leading()}><Icon code={0xECC0}/></Show>}
+				c_label={label()? 'AreaTextField' : undefined}
+				c_leading={<Show when={leading()}><Icon c_code={0xECC0}/></Show>}
 				readOnly={readonly()}
-				trailing={<Show when={trailing()}>
-					<TextFieldButton><Icon code={0xE56B}/></TextFieldButton>
-					<TextFieldButton><Icon code={0xE553}/></TextFieldButton>
+				c_trailing={<Show when={trailing()}>
+					<TextFieldButton><Icon c_code={0xE56B}/></TextFieldButton>
+					<TextFieldButton><Icon c_code={0xE553}/></TextFieldButton>
 				</Show>}
 				placeholder={placeholder()? 'AreaTextField placeholder' : undefined}
-				message={message()? "Consectetur labore sint aliqua occaecat anim quis aute dolor ex occaecat laborum sit aliqua consequat." : undefined}
-				auto_hide_label={autohide_label()}
-				auto_show_clear_button={autoshow_clear_button()}
-				min_line={line_min()}
-				max_line={line_limit_max()? line_max() : undefined}
+				c_message={message()? "Consectetur labore sint aliqua occaecat anim quis aute dolor ex occaecat laborum sit aliqua consequat." : undefined}
+				c_auto_hide_label={autohide_label()}
+				c_auto_show_clear_button={autoshow_clear_button()}
+				c_min_line={line_min()}
+				c_max_line={line_limit_max()? line_max() : undefined}
 			/>
 		</Playground>
 		<PlaygroundOptions>
 			<NumberTextField
 				value={line_min()}
-				label="Min line"
+				c_label="Min line"
 				onBlur={ev => set_line_min(m => number_safe(event_current_target(ev).valueAsNumber, m))}
 				min={1}
 				max={line_limit_max()? line_max() : undefined}
@@ -218,7 +218,7 @@ const _: VoidComponent = () => {
 			<Show when={line_limit_max()}>
 				<NumberTextField
 					value={line_max()}
-					label="Max line"
+					c_label="Max line"
 					onBlur={ev => set_line_max(m => number_safe(event_current_target(ev).valueAsNumber, m))}
 					min={line_min()}
 					style={{width: '100px'}}

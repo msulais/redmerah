@@ -31,7 +31,7 @@ const _: VoidComponent = () => {
 		description="An EmojiPicker is a UI element that allows users to select and insert emojis into text fields or other input areas. It typically presents a grid of emojis that can be searched, filtered, or categorized for easy selection.">
 		<Playground>
 			<Button
-				variant={ButtonVariant.tonal}
+				c_variant={ButtonVariant.tonal}
 				onClick={ev => open_emojipicker(ev, emojiPicker_ref, {
 					anchor: anchor()? event_current_target(ev) : undefined,
 					allow_hide_anchor: allow_hide_anchor(),
@@ -41,23 +41,23 @@ const _: VoidComponent = () => {
 					padding: padding(),
 					position: position(),
 				})}>
-				<Show when={emoji() != null} fallback={<><Icon code={0xE747}/>Pick emoji</>}>
-					<EmojiC emoji={emoji()![0]}/>
+				<Show when={emoji() != null} fallback={<><Icon c_code={0xE747}/>Pick emoji</>}>
+					<EmojiC c_emoji={emoji()![0]}/>
 					{emoji()![1]}
 				</Show>
 			</Button>
 			<EmojiPicker
 				ref={r => emojiPicker_ref = r}
-				on_select_emoji={(emoji, name) => set_emoji([emoji, name])}
-				multiple={multiple()}
-				use_close_button={show_close_button()}
+				c_on_selectemoji={(emoji, name) => set_emoji([emoji, name])}
+				c_multiple={multiple()}
+				c_use_close_button={show_close_button()}
 			/>
 		</Playground>
 		<PlaygroundOptions>
 			<Dropdown
-				label="Position"
-				values={[position()]}
-				on_change_options={(options) => set_position(options[0].value as EmojiPickerPosition)}>
+				c_label="Position"
+				c_values={[position()]}
+				c_on_change={(options) => set_position(options[0].value as EmojiPickerPosition)}>
 				<For each={[
 					[EmojiPickerPosition.left_top, 'Left top'],
 					[EmojiPickerPosition.left_center_to_bottom, 'Left center to bottom'],
@@ -84,14 +84,14 @@ const _: VoidComponent = () => {
 					[EmojiPickerPosition.center_center_right_top, 'Center center right top'],
 					[EmojiPickerPosition.center_center_right, 'Center center right'],
 					[EmojiPickerPosition.center_center_right_bottom, 'Center center right bottom'],
-				]}>{option => <DropdownOption value={option[0]} text={option[1] as string} />}</For>
+				]}>{option => <DropdownOption c_value={option[0]} c_text={option[1] as string} />}</For>
 			</Dropdown>
 			<NumberTextField
 				style={{width: '100px'}}
 				value={gap()}
 				min={0}
 				onBlur={(ev) => set_gap(g => number_safe(event_current_target(ev).valueAsNumber, g))}
-				label="Gap"
+				c_label="Gap"
 			/>
 			<Show when={array_includes([
 				EmojiPickerPosition.center_top_to_right,
@@ -116,7 +116,7 @@ const _: VoidComponent = () => {
 					style={{width: '100px'}}
 					min={0}
 					onBlur={(ev) => set_padding(p => number_safe(event_current_target(ev).valueAsNumber, p))}
-					label="Padding"
+					c_label="Padding"
 				/>
 			</Show>
 			<CheckBox

@@ -16,22 +16,22 @@ function open_dialog(ev: Event, dialog: HTMLDialogElement, options?: {
 }
 
 type DialogProps = ModalProps & {
-	header?: JSX.Element
-	actions?: JSX.Element
-	actions_auto_tabindex?: boolean
+	c_header?: JSX.Element
+	c_actions?: JSX.Element
+	c_actions_auto_tabindex?: boolean
 }
 const Dialog: ParentComponent<DialogProps> = ($props) => {
 	const animation_options = {duration: 200, easing: AnimationEffectTiming.spring_bounce}
 	const $$props = mergeProps({
-		actions_auto_tabindex: true
+		c_actions_auto_tabindex: true
 	}, $props)
 	const [props, other] = splitProps($$props, [
-		'header', 'actions', 'children', 'classList',
-		'style', 'open_animation', 'close_animation',
-		'actions_auto_tabindex'
+		'c_header', 'c_actions', 'children', 'classList',
+		'style', 'c_open_animation', 'c_close_animation',
+		'c_actions_auto_tabindex'
 	])
-	const actions = children(() => props.actions)
-	const header = children(() => props.header)
+	const actions = children(() => props.c_actions)
+	const header = children(() => props.c_header)
 
 	return (<Modal
 		classList={{
@@ -43,16 +43,16 @@ const Dialog: ParentComponent<DialogProps> = ($props) => {
 			top: props.style?.top ?? '50%',
 			left: props.style?.left ?? '50%',
 		}}
-		open_animation={(el, done) => {
-			if (props.open_animation) props.open_animation(el, done)
+		c_open_animation={(el, done) => {
+			if (props.c_open_animation) props.c_open_animation(el, done)
 			else promise_done(element_animate(
 				el,
 				{ transform: ['translate(-50%, calc(-50% - 12px))', 'translate(-50%, -50%)'] },
 				animation_options
 			).finished, done)
 		}}
-		close_animation={(el, done) => {
-			if (props.close_animation) props.close_animation(el, done)
+		c_close_animation={(el, done) => {
+			if (props.c_close_animation) props.c_close_animation(el, done)
 			else promise_done(element_animate(
 				el,
 				{ transform: ['translate(-50%, -50%)', 'translate(-50%, calc(-50% - 12px))'] },
@@ -66,13 +66,13 @@ const Dialog: ParentComponent<DialogProps> = ($props) => {
 		<div class="c-dialog-content">{props.children}</div>
 		<Show when={actions()}>
 			<Show
-				when={props.actions_auto_tabindex}
+				when={props.c_actions_auto_tabindex}
 				fallback={<div class="c-dialog-actions">
 					{actions()}
 				</div>}>
 				<FocusableGroup
 					class="c-dialog-actions"
-					arrow_options={{
+					c_arrow_options={{
 						left: 'prev',
 						right: 'next'
 					}}>{actions()}</FocusableGroup>

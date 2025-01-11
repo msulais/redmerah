@@ -22,9 +22,9 @@ enum CheckBoxVariant {
 }
 
 type CheckBoxProps = Omit<JSX.InputHTMLAttributes<HTMLInputElement>, 'type'> & {
-	variant?: CheckBoxVariant
-	attr_label?: Omit<JSX.LabelHTMLAttributes<HTMLLabelElement>, 'for'>
-	attr_icon?: IconProps
+	c_variant?: CheckBoxVariant
+	c_attr_label?: Omit<JSX.LabelHTMLAttributes<HTMLLabelElement>, 'for'>
+	c_attr_icon?: IconProps
 }
 
 const CheckBox: ParentComponent<CheckBoxProps> = ($props) => {
@@ -34,16 +34,16 @@ const CheckBox: ParentComponent<CheckBoxProps> = ($props) => {
 	}
 	const [props, other] = splitProps(
 		mergeProps({
-			variant: CheckBoxVariant.check,
+			c_variant: CheckBoxVariant.check,
 			id: createUniqueId()
 		}, $props),
 		[
-			'variant', 'children', 'attr_label',
-			'attr_icon', 'onChange', 'ref', 'id'
+			'c_variant', 'children', 'c_attr_label',
+			'c_attr_icon', 'onChange', 'ref', 'id'
 		]
 	)
-	const [label_props, other_label_props] = splitProps(props.attr_label ?? {}, ['class'])
-	const [icon_props, other_icon_props] = splitProps(props.attr_icon! ?? {}, ['ref', 'filled', 'code'])
+	const [label_props, other_label_props] = splitProps(props.c_attr_label ?? {}, ['class'])
+	const [icon_props, other_icon_props] = splitProps(props.c_attr_icon! ?? {}, ['ref', 'c_filled', 'c_code'])
 	const [is_checked, set_is_checked] = createSignal<boolean>(false)
 	const is_disabled = createMemo(() => other.disabled == true)
 	let $is_checked: boolean = false
@@ -111,13 +111,13 @@ const CheckBox: ParentComponent<CheckBoxProps> = ($props) => {
 		{...other_label_props}>
 		<input
 			ref={mergeRefs(props.ref, el => input_ref = el)}
-			type={props.variant == CheckBoxVariant.radio? 'radio' : 'checkbox'}
+			type={props.c_variant == CheckBoxVariant.radio? 'radio' : 'checkbox'}
 			id={props.id}
 			onChange={(ev) => {
 				const is_checked = event_current_target(ev).checked
 				event_call(ev, props.onChange)
 
-				if (props.variant == CheckBoxVariant.radio && other.name != null) {
+				if (props.c_variant == CheckBoxVariant.radio && other.name != null) {
 					const getAllRadioWithSameName = element_all_by_selector(`input[type=radio][name=${CSS.escape(other.name)}]`)
 					for (const el of getAllRadioWithSameName) element_dispatch_event(el as HTMLElement, new CustomEvent(
 						CheckBoxEvents.changestate,
@@ -131,8 +131,8 @@ const CheckBox: ParentComponent<CheckBoxProps> = ($props) => {
 		/>
 		<Icon
 			ref={mergeRefs(icon_props.ref, r => icon_ref = r)}
-			code={icon_props.code ?? (props.variant == CheckBoxVariant.check? (is_checked()? 0xE3CB : 0xE3D4) : 0xED2F)}
-			filled={icon_props.filled ?? (props.variant != CheckBoxVariant.check && is_checked())}
+			c_code={icon_props.c_code ?? (props.c_variant == CheckBoxVariant.check? (is_checked()? 0xE3CB : 0xE3D4) : 0xED2F)}
+			c_filled={icon_props.c_filled ?? (props.c_variant != CheckBoxVariant.check && is_checked())}
 			{...other_icon_props}
 		/>
 		{props.children}

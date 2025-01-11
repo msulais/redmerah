@@ -219,55 +219,55 @@ const _: Component<{
 				}}
 				style={{width: '200px'}}
 				ref={r => menu_info_ref = r}
-				on_toggle_open={(v) => set_is_menu_info_open(v)}>
+				c_on_toggleopen={(v) => set_is_menu_info_open(v)}>
 				<LinkMenuItem
 					href={RoutesLinks.home}
-					leading={<img src={logo_redmerah.src} width={16} alt='Redmerah logo'/>}>
+					c_leading={<img src={logo_redmerah.src} width={16} alt='Redmerah logo'/>}>
 					Redmerah
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={RoutesLinks.apps}
-					icon_code={0xE063}>
+					c_icon_code={0xE063}>
 					More apps
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={RoutesLinks.about}
-					icon_code={0xE930}>
+					c_icon_code={0xE930}>
 					About us
 				</LinkMenuItem>
 				<MenuDivider />
 				<LinkMenuItem
 					href={RoutesLinks.privacy}
-					icon_code={0xEE51}>
+					c_icon_code={0xEE51}>
 					Privacy policy
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={RoutesLinks.terms}
-					icon_code={0xED47}>
+					c_icon_code={0xED47}>
 					Terms & conditions
 				</LinkMenuItem>
 				<MenuDivider />
 				<MenuItem
 					id={button_info_share_id}
-					icon_code={0xEE23}>
+					c_icon_code={0xEE23}>
 					Share
 				</MenuItem>
 				<LinkMenuItem
 					href={'mailto:' + ExternalLinks.contact_email + '?subject=' + url_encode('Tasks')}
-					icon_code={0xE3A0}>
+					c_icon_code={0xE3A0}>
 					Send feedback
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={ExternalLinks.donate}
-					open_in_new_tab
-					icon_code={0xE84B}>
+					c_new_tab
+					c_icon_code={0xE84B}>
 					Donate
 				</LinkMenuItem>
 				<MenuHeader>&copy; {date_year(new Date())} Redmerah</MenuHeader>
 			</Menu>
 			<Menu
 				ref={r => menu_settings_ref = r}
-				on_toggle_open={(v) => set_is_menu_settings_open(v)}
+				c_on_toggleopen={(v) => set_is_menu_settings_open(v)}
 				onFocusOut={ev => {
 					const target = event_target(ev) as HTMLInputElement
 
@@ -359,18 +359,18 @@ const _: Component<{
 				</MenuHeader>
 				<Show when={randomizer() == RandomizerType.numbers || randomizer() == RandomizerType.words}>
 					<SwitchMenuItem
-						checked={is_repeat()}
-						icon_code={0xE0A1}
-						attr_switch={{id: input_settings_repeat_id}}
-						trailing={<MenuIndent/>}>
+						c_checked={is_repeat()}
+						c_icon_code={0xE0A1}
+						c_attr_switch={{id: input_settings_repeat_id}}
+						c_trailing={<MenuIndent/>}>
 						Repeat
 					</SwitchMenuItem>
 				</Show>
 				<SwitchMenuItem
-					checked={isAnimation()}
-					attr_switch={{id: input_settings_animation_id}}
-					icon_code={0xECBA}
-					trailing={<MenuIndent/>}>
+					c_checked={isAnimation()}
+					c_attr_switch={{id: input_settings_animation_id}}
+					c_icon_code={0xECBA}
+					c_trailing={<MenuIndent/>}>
 					Animation
 				</SwitchMenuItem>
 				<MenuDivider/>
@@ -379,57 +379,57 @@ const _: Component<{
 				<Show when={randomizer() == RandomizerType.numbers}>
 					<SubMenu
 						ref={r => submenu_sortsettings_ref = r}
-						on_toggle_open={(v) => set_is_submenu_sortsettings_open(v)}
-						item={<SubMenuItem
-							focused={is_submenu_sortsettings_open()}
-							icon_code={0xE123}>
+						c_on_toggleopen={(v) => set_is_submenu_sortsettings_open(v)}
+						c_item={<SubMenuItem
+							c_focused={is_submenu_sortsettings_open()}
+							c_icon_code={0xE123}>
 							Sort
 						</SubMenuItem>}>
 						<MenuItem
-							icon_code={0xE11F}
+							c_icon_code={0xE11F}
 							data-number-sort={NumbersRandomizerSort.none}
-							selected={settings().numbers.sort == NumbersRandomizerSort.none}>
+							c_selected={settings().numbers.sort == NumbersRandomizerSort.none}>
 							None
 						</MenuItem>
 						<MenuItem
-							icon_code={0xF187}
+							c_icon_code={0xF187}
 							data-number-sort={NumbersRandomizerSort.ascending}
-							selected={settings().numbers.sort == NumbersRandomizerSort.ascending}>
+							c_selected={settings().numbers.sort == NumbersRandomizerSort.ascending}>
 							Ascending
 						</MenuItem>
 						<MenuItem
-							icon_code={0xF189}
+							c_icon_code={0xF189}
 							data-number-sort={NumbersRandomizerSort.descending}
-							selected={settings().numbers.sort == NumbersRandomizerSort.descending}>
+							c_selected={settings().numbers.sort == NumbersRandomizerSort.descending}>
 							Descending
 						</MenuItem>
 					</SubMenu>
 					<SubMenu
 						ref={r => submenu_numbertypesettings_ref = r}
-						on_toggle_open={(isOpen) => set_is_submenu_numbertypesettings_open(isOpen)}
-						item={<SubMenuItem
-							focused={is_submenu_numbertypesettings_open()}
-							icon_code={0xEB4B}>
+						c_on_toggleopen={(isOpen) => set_is_submenu_numbertypesettings_open(isOpen)}
+						c_item={<SubMenuItem
+							c_focused={is_submenu_numbertypesettings_open()}
+							c_icon_code={0xEB4B}>
 							Number type
 						</SubMenuItem>}>
 						<MenuItem
 							data-number-type={NumbersRandomizerNumberType.decimal}
-							selected={settings().numbers.type == NumbersRandomizerNumberType.decimal}>
+							c_selected={settings().numbers.type == NumbersRandomizerNumberType.decimal}>
 							Decimal
 						</MenuItem>
 						<MenuItem
 							data-number-type={NumbersRandomizerNumberType.hexadecimal}
-							selected={settings().numbers.type == NumbersRandomizerNumberType.hexadecimal}>
+							c_selected={settings().numbers.type == NumbersRandomizerNumberType.hexadecimal}>
 							Hexadecimal
 						</MenuItem>
 						<MenuItem
 							data-number-type={NumbersRandomizerNumberType.octal}
-							selected={settings().numbers.type == NumbersRandomizerNumberType.octal}>
+							c_selected={settings().numbers.type == NumbersRandomizerNumberType.octal}>
 							Octal
 						</MenuItem>
 						<MenuItem
 							data-number-type={NumbersRandomizerNumberType.binary}
-							selected={settings().numbers.type == NumbersRandomizerNumberType.binary}>
+							c_selected={settings().numbers.type == NumbersRandomizerNumberType.binary}>
 							Binary
 						</MenuItem>
 					</SubMenu>
@@ -439,35 +439,35 @@ const _: Component<{
 				<Show when={randomizer() == RandomizerType.words}>
 					<SubMenu
 						ref={r => submenu_wordcasesettings_ref = r}
-						on_toggle_open={isOpen => set_is_submenu_wordcasesettings_open(isOpen)}
-						item={<SubMenuItem
-							focused={is_submenu_wordcasesettings_open()}
-							icon_code={0xF0FF}>
+						c_on_toggleopen={isOpen => set_is_submenu_wordcasesettings_open(isOpen)}
+						c_item={<SubMenuItem
+							c_focused={is_submenu_wordcasesettings_open()}
+							c_icon_code={0xF0FF}>
 							Word case
 						</SubMenuItem>}>
 						<MenuItem
 							data-words-case={WordsRandomizerWordCase.none}
-							selected={settings().words.wordcase == WordsRandomizerWordCase.none}>
+							c_selected={settings().words.wordcase == WordsRandomizerWordCase.none}>
 							Default
 						</MenuItem>
 						<MenuItem
 							data-words-case={WordsRandomizerWordCase.uppercase}
-							selected={settings().words.wordcase == WordsRandomizerWordCase.uppercase}>
+							c_selected={settings().words.wordcase == WordsRandomizerWordCase.uppercase}>
 							UPPER CASE
 						</MenuItem>
 						<MenuItem
 							data-words-case={WordsRandomizerWordCase.lowercase}
-							selected={settings().words.wordcase == WordsRandomizerWordCase.lowercase}>
+							c_selected={settings().words.wordcase == WordsRandomizerWordCase.lowercase}>
 							lower case
 						</MenuItem>
 						<MenuItem
 							data-words-case={WordsRandomizerWordCase.titlecase}
-							selected={settings().words.wordcase == WordsRandomizerWordCase.titlecase}>
+							c_selected={settings().words.wordcase == WordsRandomizerWordCase.titlecase}>
 							Title Case
 						</MenuItem>
 						<MenuItem
 							data-words-case={WordsRandomizerWordCase.togglecase}
-							selected={settings().words.wordcase == WordsRandomizerWordCase.togglecase}>
+							c_selected={settings().words.wordcase == WordsRandomizerWordCase.togglecase}>
 							tOGGLE cASE
 						</MenuItem>
 					</SubMenu>
@@ -478,85 +478,85 @@ const _: Component<{
 					<SubMenu
 						ref={r => submenu_colormodelsettings_ref = r}
 						style={{width: '128px'}}
-						on_toggle_open={(v) => set_is_submenu_colormodelsettings_open(v)}
-						item={<SubMenuItem
-							focused={is_submenu_colormodelsettings_open()}
-							icon_code={0xE4B6}>
+						c_on_toggleopen={(v) => set_is_submenu_colormodelsettings_open(v)}
+						c_item={<SubMenuItem
+							c_focused={is_submenu_colormodelsettings_open()}
+							c_icon_code={0xE4B6}>
 							Color model
 						</SubMenuItem>}>
 						<MenuItem
 							data-colors-model={ColorsRandomizerColorModel.hex}
-							selected={settings().colors.model == ColorsRandomizerColorModel.hex}>
+							c_selected={settings().colors.model == ColorsRandomizerColorModel.hex}>
 							HEX
 						</MenuItem>
 						<MenuItem
 							data-colors-model={ColorsRandomizerColorModel.rgb}
-							selected={settings().colors.model == ColorsRandomizerColorModel.rgb}>
+							c_selected={settings().colors.model == ColorsRandomizerColorModel.rgb}>
 							RGB
 						</MenuItem>
 						<MenuItem
 							data-colors-model={ColorsRandomizerColorModel.hsl}
-							selected={settings().colors.model == ColorsRandomizerColorModel.hsl}>
+							c_selected={settings().colors.model == ColorsRandomizerColorModel.hsl}>
 							HSL
 						</MenuItem>
 					</SubMenu>
 				</Show>
 				<SubMenu
 					ref={r => submenu_themesettings_ref = r}
-					on_toggle_open={v => set_is_submenu_themesettings_open(v)}
-					item={<SubMenuItem
-						focused={is_submenu_themesettings_open()}
-						icon_code={0xE28A}>
+					c_on_toggleopen={v => set_is_submenu_themesettings_open(v)}
+					c_item={<SubMenuItem
+						c_focused={is_submenu_themesettings_open()}
+						c_icon_code={0xE28A}>
 						Theme
 					</SubMenuItem>}>
 					<MenuItem
-						selected={theme() == ThemeData.light}
-						icon_code={0xF2CD}
+						c_selected={theme() == ThemeData.light}
+						c_icon_code={0xF2CD}
 						data-theme={ThemeData.light}>
 						Light
 					</MenuItem>
 					<MenuItem
-						selected={theme() == ThemeData.dark}
-						icon_code={0xF2B3}
+						c_selected={theme() == ThemeData.dark}
+						c_icon_code={0xF2B3}
 						data-theme={ThemeData.dark}>
 						Dark
 					</MenuItem>
 					<MenuItem
-						selected={theme() == ThemeData.system}
-						icon_code={0xE96D}
+						c_selected={theme() == ThemeData.system}
+						c_icon_code={0xE96D}
 						data-theme={ThemeData.system}>
 						System theme
 					</MenuItem>
 				</SubMenu>
 				<SubMenu
 					ref={r => submenu_cornersettings_ref = r}
-					on_toggle_open={v => set_is_submenu_cornersettings_open(v)}
-					item={<SubMenuItem
-						focused={is_submenu_cornersettings_open()}
-						icon_code={0xF044}>
+					c_on_toggleopen={v => set_is_submenu_cornersettings_open(v)}
+					c_item={<SubMenuItem
+						c_focused={is_submenu_cornersettings_open()}
+						c_icon_code={0xF044}>
 						Corner style
 					</SubMenuItem>}>
 					<MenuItem
-						selected={corner() == CornerData.sharp}
-						icon_code={0xEA99}
+						c_selected={corner() == CornerData.sharp}
+						c_icon_code={0xEA99}
 						data-corner={CornerData.sharp}>
 						Sharp
 					</MenuItem>
 					<MenuItem
-						selected={corner() == CornerData.semi_round}
-						icon_code={0xEEF7}
+						c_selected={corner() == CornerData.semi_round}
+						c_icon_code={0xEEF7}
 						data-corner={CornerData.semi_round}>
 						Semi round
 					</MenuItem>
 					<MenuItem
-						selected={corner() == CornerData.round}
-						icon_code={0xF044}
+						c_selected={corner() == CornerData.round}
+						c_icon_code={0xF044}
 						data-corner={CornerData.round}>
 						Round
 					</MenuItem>
 					<MenuItem
-						selected={corner() == CornerData.full_round}
-						icon_code={0xE408}
+						c_selected={corner() == CornerData.full_round}
+						c_icon_code={0xE408}
 						data-corner={CornerData.full_round}>
 						Full round
 					</MenuItem>
@@ -566,25 +566,25 @@ const _: Component<{
 					<div class={ CSS.appbar_textfield_menu_item }>
 						<TextField
 							ref={r => textfield_prefix_ref = r}
-							label="Prefix"
+							c_label="Prefix"
 							id={input_settings_prefix_id}
-							leading={<Icon code={0xE043}/>}
+							c_leading={<Icon c_code={0xE043}/>}
 						/>
 					</div>
 					<div class={ CSS.appbar_textfield_menu_item }>
 						<TextField
 							ref={r => textfield_suffix_ref = r}
-							label="Suffix"
+							c_label="Suffix"
 							id={input_settings_suffix_id}
-							leading={<Icon code={0xE02D}/>}
+							c_leading={<Icon c_code={0xE02D}/>}
 						/>
 					</div>
 					<div class={ CSS.appbar_textfield_menu_item }>
 						<TextField
 							ref={r => textfield_separator_ref = r}
-							label="Separator"
+							c_label="Separator"
 							id={input_settings_separator_id}
-							leading={<Icon code={0xE4CF}/>}
+							c_leading={<Icon c_code={0xE4CF}/>}
 						/>
 					</div>
 				</Show>
@@ -594,8 +594,8 @@ const _: Component<{
 							ref={r => textfield_decimallength_ref = r}
 							min={0}
 							id={input_settings_mindecimallength_id}
-							label="Min decimal length"
-							leading={<Icon code={0xE599}/>}
+							c_label="Min decimal length"
+							c_leading={<Icon c_code={0xE599}/>}
 						/>
 					</div>
 				</Show>
@@ -632,20 +632,20 @@ const _: Component<{
 							}
 					}
 				}}
-				header={<Tooltip>
+				c_header={<Tooltip>
 					<IconButton
 						id={button_navigation_close_id}
 						data-tooltip="Close navigation"
 						classList={classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
-						code={0xEAFF}
+						c_code={0xEAFF}
 					/>
 				</Tooltip>}
 				ref={r => drawer_navigation_ref = r}>
 				<For each={RANDOMIZER_TYPES}>{r =>
 					<DrawerItem
 						data-type={r.type}
-						selected={randomizer() == r.type}>
-						<Icon filled={randomizer() == r.type} code={r.icon}/>
+						c_selected={randomizer() == r.type}>
+						<Icon c_filled={randomizer() == r.type} c_code={r.icon}/>
 						{ r.text }
 					</DrawerItem>
 				}</For>
@@ -704,47 +704,47 @@ const _: Component<{
 							break
 					}
 				}}
-				leading={<>
+				c_leading={<>
 					<IconButton
 						data-tooltip={is_sidenavigation_hidden()? "Open navigation" : "Expand/shrink navigation"}
 						id={button_navigation_id}
 						classList={classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
-						code={0xEAFF}
+						c_code={0xEAFF}
 					/>
 					<img width="32" src={app.logo_url} alt="Randomizer" />
 				</>}
-				headline="Randomizer"
-				trailing={<>
+				c_headline="Randomizer"
+				c_trailing={<>
 					<Button
 						classList={classlist_module(CSSAnimation.btn_rotate_full_icon, CSS.appbar_generate_btn)}
 						data-g-keep-pointer-event={attr_set_if_exist(props.is_generating)}
-						variant={ButtonVariant.filled}
+						c_variant={ButtonVariant.filled}
 						id={button_generate_id}>
 						<Icon
-							filled
+							c_filled
 							classList={classlist_module(CSS.appbar_generate_icon)}
 							data-rotate={attr_set_if_exist(props.is_generating)}
-							code={0xE143}
+							c_code={0xE143}
 						/>
 						<Show when={props.is_generating} fallback="Generate">Generating</Show>
 					</Button>
 					<IconButton
 						data-tooltip="Info"
 						id={button_info_id}
-						focused={is_menu_info_open()}
-						code={0xE930}
+						c_focused={is_menu_info_open()}
+						c_code={0xE930}
 					/>
 					<IconButton
 						data-tooltip="Settings"
 						classList={classlist_module(CSSAnimation.btn_rotate_icon)}
-						focused={is_menu_settings_open()}
+						c_focused={is_menu_settings_open()}
 						id={button_settings_id}
-						code={0xEE0F}
+						c_code={0xEE0F}
 					/>
 					<IconButton
 						data-tooltip="Copy result"
 						id={button_copyresult_id}
-						code={timeout_copy_id()? 0xE3D8 : timeout_copyerror_id()? 0xE5E9 : 0xE51B}
+						c_code={timeout_copy_id()? 0xE3D8 : timeout_copyerror_id()? 0xE5E9 : 0xE51B}
 					/>
 				</>}
 			/>

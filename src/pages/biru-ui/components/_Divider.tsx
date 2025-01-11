@@ -15,7 +15,7 @@ const _: VoidComponent = () => {
 				"min-width": '100%',
 				"min-height": '32px',
 			}}>
-				<Divider vertical={vertical()} style={{height: vertical()? '32px' : undefined}}/>
+				<Divider c_vertical={vertical()} style={{height: vertical()? '32px' : undefined}}/>
 			</div>
 		</Playground>
 		<PlaygroundOptions>

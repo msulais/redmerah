@@ -221,7 +221,10 @@ function init_tooltip(): void {
 			event_target(event) as HTMLElement,
 			'#' + string_css_escape(wrapper_id) + ' :is([data-tooltip],[data-rich-tooltip])'
 		)
-		if (!anchor || anchor_element === anchor) return
+		if (!anchor || anchor_element === anchor) {
+			hide_tooltip()
+			return
+		}
 
 		let rich_tooltip: HTMLElement | undefined
 		let has_rich_tooltip = false
@@ -231,14 +234,20 @@ function init_tooltip(): void {
 		}
 		else {
 			const tooltip_id = element_dataset(anchor, 'richTooltip') // [data-rich-tooltip]
-			if (!tooltip_id || string_length(string_trim(tooltip_id)) == 0) return
+			if (!tooltip_id || string_length(string_trim(tooltip_id)) == 0) {
+				hide_tooltip()
+				return
+			}
 
 			const tooltip = element_by_id(tooltip_id)
 			if (
 				!tooltip
 				|| !element_classlist_contains(tooltip, POPOVER_CLASS)
 				|| !element_contains(event_current_target(event), tooltip)
-			) return
+			) {
+				hide_tooltip()
+				return
+			}
 
 			rich_tooltip = tooltip
 			has_rich_tooltip = true
@@ -408,11 +417,11 @@ function init_tooltip(): void {
 }
 
 type TooltipProps = JSX.HTMLAttributes<HTMLDivElement> & {
-	position?: TooltipPosition
-	gap?: number
-	start_delay_duration?: number
-	end_delay_duration?: number
-	use_anchor?: boolean
+	c_position?: TooltipPosition
+	c_gap?: number
+	c_start_delay_duration?: number
+	c_end_delay_duration?: number
+	c_use_anchor?: boolean
 }
 
 /**
@@ -437,11 +446,12 @@ const Tooltip: FlowComponent<TooltipProps> = ($props) => {
 		id: createUniqueId()
 	}, $props)
 	const [props, other] = splitProps($$props, [
-		'children', 'class', 'end_delay_duration',
-		'gap', 'id', 'onFocusIn', 'onFocusOut',
+		'children', 'class', 'c_end_delay_duration',
+		'c_gap', 'id', 'onFocusIn', 'onFocusOut',
 		'onMouseDown', 'onPointerLeave',
 		'onPointerOver', 'onPointerUp', 'onTouchStart',
-		'position', 'start_delay_duration', 'use_anchor'
+		'c_position', 'c_start_delay_duration',
+		'c_use_anchor'
 	])
 
 	function open_tooltip(
@@ -470,10 +480,10 @@ const Tooltip: FlowComponent<TooltipProps> = ($props) => {
 			wrapper_id: props.id,
 			event: ev,
 			by_focus,
-			use_anchor: props.use_anchor,
-			gap: props.gap,
-			position: props.position,
-			start_delay_duration: props.start_delay_duration,
+			use_anchor: props.c_use_anchor,
+			gap: props.c_gap,
+			position: props.c_position,
+			start_delay_duration: props.c_start_delay_duration,
 		} satisfies TooltipOpenDetail}))
 	}
 
@@ -481,7 +491,7 @@ const Tooltip: FlowComponent<TooltipProps> = ($props) => {
 		TOOLTIP_LISTENER = null
 
 		element_dispatch_event(LISTENER_REF, new CustomEvent(TooltipListenerEvents.close, {detail: {
-			end_delay_duration: props.end_delay_duration
+			end_delay_duration: props.c_end_delay_duration
 		} satisfies TooltipCloseDetail}))
 	}
 
@@ -492,7 +502,7 @@ const Tooltip: FlowComponent<TooltipProps> = ($props) => {
 	onCleanup(() => {
 
 		element_dispatch_event(LISTENER_REF, new CustomEvent(TooltipListenerEvents.close, {detail: {
-			end_delay_duration: props.end_delay_duration
+			end_delay_duration: props.c_end_delay_duration
 		} satisfies TooltipCloseDetail}))
 	})
 
@@ -553,7 +563,7 @@ const PopoverTooltip: ParentComponent<PopoverTooltipProps> = ($props) => {
 		'onFocusIn',
 		'onPointerOver',
 		'onTouchStart',
-		'use_portal',
+		'c_use_portal',
 	])
 
 	function stop_process(): void {
@@ -566,7 +576,7 @@ const PopoverTooltip: ParentComponent<PopoverTooltipProps> = ($props) => {
 	}
 
 	return <Popover
-		use_portal={false}
+		c_use_portal={false}
 		class={classlist('c-rich-tooltip', props.class)}
 		onFocusIn={ev => {
 			stop_process()

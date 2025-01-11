@@ -19,20 +19,20 @@ const _: VoidComponent = () => {
 		description="A color picker is a UI element that allows users to select a color from a defined color space. It typically provides a visual representation of colors and offers various methods for color selection, such as palettes, sliders, or color wheels.">
 		<Playground>
 			<Button
-				variant={ButtonVariant.tonal}
+				c_variant={ButtonVariant.tonal}
 				onClick={(ev) => open_colorpicker(ev, colorpicker_ref, {
 					anchor: event_current_target(ev),
 					content_auto_focus: false,
 					gap: 8,
 				})}>
-				<Icon style={{color: color() ?? '#FF0000'}} code={0xE408} filled/>
+				<Icon style={{color: color() ?? '#FF0000'}} c_code={0xE408} c_filled/>
 				<Show when={color()} fallback="Select color">{color()!}</Show>
 			</Button>
 			<ColorPicker
 				ref={r => colorpicker_ref = r}
-				on_select_color={(color) => set_color(color)}
-				disabled_color_control={disabled_color_control()}
-				disabled_opacity_control={disabled_opacity_control()}
+				c_on_select_color={(color) => set_color(color)}
+				c_disabled_color_control={disabled_color_control()}
+				c_disabled_opacity_control={disabled_opacity_control()}
 			/>
 		</Playground>
 		<PlaygroundOptions>

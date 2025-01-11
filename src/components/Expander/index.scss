@@ -13,7 +13,8 @@
 		padding: 0;
 		user-select: none;
 		padding: 4px 12px;
-		transition-duration: .2s;
+		transition-property: all, border-color;
+		transition-duration: .2s, 0s;
 		border: 1px solid;
 		border-color: transparent;
 		border-color: rgba(var(--c-expander-border-color), var(--c-expander-border-opacity));
@@ -35,6 +36,7 @@
 			@media (hover:hover) {
 				&:hover {
 					--g-background-color-opacity: var(--g-opacity2);
+					--c-expander-border-opacity: var(--g-opacity2);
 					cursor: pointer;
 				}
 			}

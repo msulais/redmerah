@@ -22,17 +22,17 @@ const _: VoidComponent = () => {
 		description="An expander is a UI element that allows users to reveal or collapse hidden content within a list item.">
 		<Playground>
 			<Expander
-				header={<ExpanderHeader
-					use_expand_icon={use_expand_icon()}
-					subtitle={<Show when={subtitle()}>Deserunt commodo qui aute veniam tempor ipsum.</Show>}
-					leading={<Show when={leading()}><Icon code={0xE569}/></Show>}
-					trailing={<Show when={trailing()}>
-						<IconButton onClick={ev => event_stop_propagation(ev)} code={0xE6BF}/>
-						<IconButton onClick={ev => event_stop_propagation(ev)} code={0xEBB8}/>
+				c_header={<ExpanderHeader
+					c_use_expand_icon={use_expand_icon()}
+					c_subtitle={<Show when={subtitle()}>Deserunt commodo qui aute veniam tempor ipsum.</Show>}
+					c_leading={<Show when={leading()}><Icon c_code={0xE569}/></Show>}
+					c_trailing={<Show when={trailing()}>
+						<IconButton onClick={ev => event_stop_propagation(ev)} c_code={0xE6BF}/>
+						<IconButton onClick={ev => event_stop_propagation(ev)} c_code={0xEBB8}/>
 					</Show>}>
 					<Show when={title()}>Click to expand</Show>
 				</ExpanderHeader>}
-				variant={variant()}>
+				c_variant={variant()}>
 				<Show when={content()}>
 					<p style={{"margin-bottom": '1.15em'}}>Deserunt sint voluptate nisi reprehenderit anim veniam ex quis deserunt ad. Aute duis commodo veniam incididunt aute anim anim et. Ipsum exercitation ea minim voluptate veniam ad duis dolore. Do officia amet adipisicing ea incididunt labore ipsum commodo minim. Quis ipsum dolor non sunt magna ad aliqua. Ea minim reprehenderit sint exercitation nostrud veniam nisi sit. Ut et culpa occaecat proident id sint officia anim adipisicing.</p>
 					<p>Qui culpa cillum sunt sit in dolore ullamco excepteur ipsum ex do ut reprehenderit. Magna dolor excepteur velit ullamco laboris. Esse nulla qui sit enim et ex ullamco tempor eiusmod voluptate eiusmod non dolore. Aliquip mollit tempor id qui do consequat occaecat mollit. Voluptate nisi deserunt ipsum quis eiusmod tempor culpa excepteur tempor velit deserunt.</p>
@@ -41,15 +41,15 @@ const _: VoidComponent = () => {
 		</Playground>
 		<PlaygroundOptions>
 			<Dropdown
-				label="Variant"
-				values={[variant()]}
-				on_change_options={(items) => set_variant(items[0].value as ExpanderVariant)}>
+				c_label="Variant"
+				c_values={[variant()]}
+				c_on_change={(items) => set_variant(items[0].value as ExpanderVariant)}>
 				<For each={[
 					[ExpanderVariant.filled, 'Filled'],
 					[ExpanderVariant.tonal, 'Tonal'],
 					[ExpanderVariant.outlined, 'Outlined'],
 					[ExpanderVariant.transparent, 'Transparent'],
-				]}>{option => <DropdownOption value={option[0]} text={option[1] as string} />}</For>
+				]}>{option => <DropdownOption c_value={option[0]} c_text={option[1] as string} />}</For>
 			</Dropdown>
 			<CheckBox
 				checked={title()}

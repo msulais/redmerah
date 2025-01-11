@@ -94,7 +94,7 @@ const AppbarTasks: VoidComponent<{
 			<Menu
 				style={{width: '200px'}}
 				ref={r => menu_sort_ref = r}
-				on_toggle_open={(v) => set_is_menu_sort_open(v)}
+				c_on_toggleopen={(v) => set_is_menu_sort_open(v)}
 				onClick={ev => {
 					const button = document_active()!
 					if (!element_valid_target(
@@ -116,9 +116,9 @@ const AppbarTasks: VoidComponent<{
 				<MenuHeader>Sort by</MenuHeader>
 				<For each={sort_by}>{by =>
 					<MenuItem
-						selected={settings().sort_by == by[0]}
+						c_selected={settings().sort_by == by[0]}
 						data-sortby={by[0]}
-						icon_code={by[2]}>
+						c_icon_code={by[2]}>
 						{by[1]}
 					</MenuItem>
 				}</For>
@@ -126,8 +126,8 @@ const AppbarTasks: VoidComponent<{
 				<For each={sort_mode}>{mode =>
 					<MenuItem
 						data-sortmode={mode[0]}
-						selected={settings().sort_mode == mode[0]}
-						icon_code={mode[2]}>
+						c_selected={settings().sort_mode == mode[0]}
+						c_icon_code={mode[2]}>
 						{mode[1]}
 					</MenuItem>
 				}</For>
@@ -135,7 +135,7 @@ const AppbarTasks: VoidComponent<{
 			<Menu
 				style={{"min-width": '200px'}}
 				ref={r => menu_more_ref = r}
-				on_toggle_open={(v) => set_is_menu_more_open(v)}
+				c_on_toggleopen={(v) => set_is_menu_more_open(v)}
 				onClick={ev => {
 					const button = document_active()!
 					if (!element_valid_target(
@@ -174,14 +174,14 @@ const AppbarTasks: VoidComponent<{
 				<Show when={props.si_any_uncompleted_task}>
 					<MenuItem
 						id={button_markallcompleted_id}
-						icon_code={0xE3CC}>
+						c_icon_code={0xE3CC}>
 						Mark all completed
 					</MenuItem>
 				</Show>
 				<Show when={props.is_any_completed_task}>
 					<MenuItem
 						id={button_markalluncompleted_id}
-						icon_code={0xE3D4}>
+						c_icon_code={0xE3D4}>
 						Mark all uncompleted
 					</MenuItem>
 				</Show>
@@ -189,14 +189,14 @@ const AppbarTasks: VoidComponent<{
 					<MenuDivider />
 					<MenuItem
 						id={button_cleartasks_id}
-						icon_code={0xE5A1}>
+						c_icon_code={0xE5A1}>
 						Clear tasks
 					</MenuItem>
 				</Show>
 				<Show when={props.is_any_completed_task}>
 					<MenuItem
 						id={button_deletecompletedtasks_id}
-						icon_code={0xE5A3}>
+						c_icon_code={0xE5A3}>
 						Delete completed tasks
 					</MenuItem>
 				</Show>
@@ -204,12 +204,12 @@ const AppbarTasks: VoidComponent<{
 					<Show when={props.is_any_task}><MenuDivider /></Show>
 					<MenuItem
 						id={button_renamelist_id}
-						icon_code={0xF0FB}>
+						c_icon_code={0xF0FB}>
 						Rename list
 					</MenuItem>
 					<MenuItem
 						id={button_deletelist_id}
-						icon_code={0xE59D}>
+						c_icon_code={0xE59D}>
 						Delete list
 					</MenuItem>
 				</Show>
@@ -225,7 +225,7 @@ const AppbarTasks: VoidComponent<{
 		return (<>
 			<Dialog
 				ref={r => dialog_cleartasks_ref = r}
-				header="Clear tasks"
+				c_header="Clear tasks"
 				style={{width: '500px'}}
 				onClick={ev => {
 					const button = document_active()!
@@ -245,15 +245,15 @@ const AppbarTasks: VoidComponent<{
 							break
 					}
 				}}
-				actions={<>
+				c_actions={<>
 					<Button
 						id={button_cleartasks_cancel_id}
-						variant={ButtonVariant.tonal}>
+						c_variant={ButtonVariant.tonal}>
 						Cancel
 					</Button>
 					<Button
 						id={button_cleartasks_clear_id}
-						variant={ButtonVariant.filled}>
+						c_variant={ButtonVariant.filled}>
 						Clear
 					</Button>
 				</>}>
@@ -262,7 +262,7 @@ const AppbarTasks: VoidComponent<{
 			<Dialog
 				style={{width: '500px'}}
 				ref={r => dialog_deletecompletedtasks_ref = r}
-				header={"Delete completed tasks"}
+				c_header={"Delete completed tasks"}
 				onClick={ev => {
 					const button = document_active()!
 					if (!element_valid_target(
@@ -281,15 +281,15 @@ const AppbarTasks: VoidComponent<{
 							break
 					}
 				}}
-				actions={<>
+				c_actions={<>
 					<Button
 						id={button_deletecompletedtasks_cancel_id}
-						variant={ButtonVariant.tonal}>
+						c_variant={ButtonVariant.tonal}>
 						Cancel
 					</Button>
 					<Button
 						id={button_deletecompletedtasks_delete_id}
-						variant={ButtonVariant.filled}>
+						c_variant={ButtonVariant.filled}>
 						Delete
 					</Button>
 				</>}>
@@ -304,8 +304,8 @@ const AppbarTasks: VoidComponent<{
 		const button_moreoptions_id = createUniqueId()
 		return (<AppBar
 			classList={classlist_module(CSS.body_appbar)}
-			leading={props.leading}
-			headline={props.headline}
+			c_leading={props.leading}
+			c_headline={props.headline}
 			onClick={ev => {
 				const button = document_active()!
 				if (!element_valid_target(
@@ -327,26 +327,26 @@ const AppbarTasks: VoidComponent<{
 						break
 				}
 			}}
-			trailing={<Tooltip>
+			c_trailing={<Tooltip>
 				<Show when={props.is_any_task}>
 					<IconButton
 						data-tooltip="Sort by"
-						focused={is_menu_sort_open()}
+						c_focused={is_menu_sort_open()}
 						id={button_sortby_id}
-						code={0xE123}
+						c_code={0xE123}
 					/>
 					<IconButton
 						data-tooltip="Copy tasks"
 						id={button_copytasks_id}
-						code={0xE51B}
+						c_code={0xE51B}
 					/>
 				</Show>
 				<Show when={!props.is_group && ((props.page == Pages.tasks && props.is_any_task) || is_number(props.page))}>
 					<IconButton
 						data-tooltip="More options"
 						id={button_moreoptions_id}
-						focused={is_menu_more_open()}
-						code={0xEAD9}
+						c_focused={is_menu_more_open()}
+						c_code={0xEAD9}
 					/>
 				</Show>
 			</Tooltip>}
@@ -359,7 +359,7 @@ const AppbarTasks: VoidComponent<{
 		<Dialogs />
 		<Toast
 			ref={r => toast_copied_ref = r}
-			leading={<Icon code={0xE51B}/>}>
+			c_leading={<Icon c_code={0xE51B}/>}>
 			Tasks copied
 		</Toast>
 	</>)
@@ -382,25 +382,25 @@ const TaskItem: VoidComponent<{
 		class={CSS.body_task_item}
 		data-done={attr_set_if_exist(task().complete)}>
 		<List
-			leading={<IconButton
+			c_leading={<IconButton
 				data-tooltip={`Mark as ${task().complete? 'un' : ''}completed`}
 				data-taskitem-complete={array_join([tasklist_index(), task_index()], ',')}
-				code={task().complete? 0xE3CB : 0xE3D4}
+				c_code={task().complete? 0xE3CB : 0xE3D4}
 			/>}
-			trailing={<>
+			c_trailing={<>
 				<IconButton
 					data-tooltip={`Mark as ${task().important? 'not ' : ''}important`}
 					data-taskitem-important={array_join([tasklist_index(), task_index()], ',')}
-					filled={task().important}
-					code={0xEF1B}
+					c_filled={task().important}
+					c_code={0xEF1B}
 				/>
 				<IconButton
 					data-tooltip="Delete task"
 					data-taskitem-delete={array_join([tasklist_index(), task_index()], ',')}
-					code={0xE59D}
+					c_code={0xE59D}
 				/>
 			</>}
-			subtitle={<>
+			c_subtitle={<>
 				{ task().description }
 				<Show when={
 					array_length(task().subtasks) > 0
@@ -425,16 +425,16 @@ const TaskItem: VoidComponent<{
 									)? 'rgb(var(--g-color-error))' : undefined
 								}}
 								data-taskitem-reminder={array_join([tasklist_index(), task_index()], ',')}
-								variant={ButtonVariant.outlined}>
-								<Icon filled code={0xE025} inline/>
+								c_variant={ButtonVariant.outlined}>
+								<Icon c_filled c_code={0xE025} c_inline/>
 								{date_text_YMD_HM(task().reminder!)}
 							</Button>
 						</Show>
 						<Show when={array_length(task().files) > 0}>
 							<Button
 								data-taskitem-files={array_join([tasklist_index(), task_index()], ',')}
-								variant={ButtonVariant.outlined}>
-								<Icon filled code={0xE187} inline/>
+								c_variant={ButtonVariant.outlined}>
+								<Icon c_filled c_code={0xE187} c_inline/>
 								{array_length(task().files)} file{array_length(task().files) > 1? "s" : ''}
 							</Button>
 						</Show>
@@ -448,8 +448,8 @@ const TaskItem: VoidComponent<{
 											: undefined
 									}}
 									data-taskitem-label={array_join([tasklist_index(), task_index(), label_id], ',')}
-									variant={ButtonVariant.outlined}>
-									<Icon filled code={0xF00D} inline/>
+									c_variant={ButtonVariant.outlined}>
+									<Icon c_filled c_code={0xF00D} c_inline/>
 									{labels()[label_id]!.name}
 								</Button>
 							</Show>
@@ -492,7 +492,7 @@ const EmptyTasks: VoidComponent<{page: Pages | number}> = (props) => {
 		return `No ${t} Tasks`
 	})
 	return (<div class={CSS.body_empty}>
-		<Icon filled code={get_icon()}/>
+		<Icon c_filled c_code={get_icon()}/>
 		<p>{get_text()}</p>
 	</div>)
 }
@@ -578,11 +578,11 @@ const SingleTaskList: VoidComponent<{
 			settings={props.settings}
 			leading={<Show
 				when={tasklist().emoji == null}
-				fallback={<Emoji emoji={tasklist().emoji!} />}>
+				fallback={<Emoji c_emoji={tasklist().emoji!} />}>
 				<Show
 					when={page() == Pages.tasks}
-					fallback={<Icon code={0xF032}/>}>
-					<Icon code={0xE8E2}/>
+					fallback={<Icon c_code={0xF032}/>}>
+					<Icon c_code={0xE8E2}/>
 				</Show>
 			</Show>}
 			headline={get_headline()}
@@ -604,10 +604,10 @@ const SingleTaskList: VoidComponent<{
 			<TextField
 				placeholder="Add task"
 				ref={r => textfield_newtask_ref = r}
-				trailing={<TextFieldButton
+				c_trailing={<TextFieldButton
 					data-tooltip="Add task"
 					onClick={() => add_task()}>
-					<Icon code={0xE00B}/>
+					<Icon c_code={0xE00B}/>
 				</TextFieldButton>}
 			/>
 		</form>
@@ -685,24 +685,24 @@ const GroupTaskList: VoidComponent<{
 		}
 
 		const Headline: VoidComponent = () => (<AppBar
-			headline={get_headline()}
-			leading={<Show
+			c_headline={get_headline()}
+			c_leading={<Show
 				when={tasklist().emoji == null}
-				fallback={<Emoji emoji={tasklist().emoji!} />}>
+				fallback={<Emoji c_emoji={tasklist().emoji!} />}>
 				<Show
 					when={tasklist().id == DEFAULT_TASK_LIST.id}
-					fallback={<Icon code={0xF032}/>}>
-					<Icon code={0xE8E2}/>
+					fallback={<Icon c_code={0xF032}/>}>
+					<Icon c_code={0xE8E2}/>
 				</Show>
 			</Show>}
-			trailing={<IconButton
+			c_trailing={<IconButton
 				data-tooltip="More options"
-				focused={is_menu_more_open() && selected_tasklist_to_action.tasklist_index == tasklist_index()}
+				c_focused={is_menu_more_open() && selected_tasklist_to_action.tasklist_index == tasklist_index()}
 				onClick={ev => {
 					set_selected_tasklist_to_action({list: tasklist(), tasklist_index: tasklist_index()})
 					open_menu(ev, menu_more_ref, {anchor: event_current_target(ev)})
 				}}
-				code={0xEAD9}
+				c_code={0xEAD9}
 			/>}
 		/>)
 
@@ -735,7 +735,7 @@ const GroupTaskList: VoidComponent<{
 			is_group={true}
 			settings={props.settings}
 			page={page()}
-			leading={<Icon code={get_icon()}/>}
+			leading={<Icon c_code={get_icon()}/>}
 			headline={string_totitlecase(page() as Pages)}
 		/>
 		<Show when={is_not_empty()} fallback={<EmptyTasks page={page()} />}>
@@ -746,9 +746,9 @@ const GroupTaskList: VoidComponent<{
 		</Show>
 		<Menu
 			ref={r => menu_more_ref = r}
-			on_toggle_open={isOpen => set_is_menu_more_open(isOpen)}>
+			c_on_toggleopen={isOpen => set_is_menu_more_open(isOpen)}>
 			<MenuItem
-				icon_code={0xE51B}
+				c_icon_code={0xE51B}
 				onClick={(ev) => {
 					command(Commands.copy_tasks, selected_tasklist_to_action.tasklist_index)
 					close_menu(menu_more_ref)
@@ -759,7 +759,7 @@ const GroupTaskList: VoidComponent<{
 		</Menu>
 		<Toast
 			ref={r => toast_copied_ref = r}
-			leading={<Icon code={0xE51B}/>}>
+			c_leading={<Icon c_code={0xE51B}/>}>
 			Tasks copied
 		</Toast>
 	</div>)
@@ -1307,22 +1307,22 @@ const _: VoidComponent<{
 		const index = createMemo(() => $props.index)
 
 		return (<List
-			trailing={<>
+			c_trailing={<>
 				<IconButton
 					data-tooltip="Edit subtask"
 					data-subtask-edit-index={index()}
-					code={0xE739}
+					c_code={0xE739}
 				/>
 				<IconButton
 					data-tooltip="Delete subtask"
 					data-subtask-delete-index={index()}
-					code={0xE59D}
+					c_code={0xE59D}
 				/>
 			</>}
-			leading={<IconButton
+			c_leading={<IconButton
 				data-tooltip={`Mark as ${subtask().complete? 'un' : ''}completed`}
 				data-subtask-complete-index={index()}
-				code={subtask().complete? 0xE3CB : 0xE3D4}/>}>
+				c_code={subtask().complete? 0xE3CB : 0xE3D4}/>}>
 			{subtask().name}
 		</List>)
 	}
@@ -1348,21 +1348,21 @@ const _: VoidComponent<{
 
 		return (<List
 			classList={classlist_module(CSS.body_file_list_item)}
-			trailing={<>
+			c_trailing={<>
 				<IconButton
 					data-tooltip={"View file" + (is_type_not_supported()? ' (not supported)' : '')}
 					disabled={is_type_not_supported()}
 					data-file-view-index={file_index()}
-					code={0xE77B}
+					c_code={0xE77B}
 				/>
 				<IconButton
 					data-tooltip="More actions"
 					data-file-action-index={file_index()}
-					focused={selected_file_to_action.file.id == file().id && is_menu_fileaction_open()}
-					code={0xEAD9}
+					c_focused={selected_file_to_action.file.id == file().id && is_menu_fileaction_open()}
+					c_code={0xEAD9}
 				/>
 			</>}
-			subtitle={array_join([get_size_text(), string_replace(file().type, /\/.+$/gs, '')], " • ")}>
+			c_subtitle={array_join([get_size_text(), string_replace(file().type, /\/.+$/gs, '')], " • ")}>
 			{file().name}
 		</List>)
 	}
@@ -1373,17 +1373,17 @@ const _: VoidComponent<{
 		const name = createMemo(() => label().name)
 
 		return (<List
-			leading={<Icon style={{color: color() ?? undefined}} code={0xE407}/>}
-			trailing={<>
+			c_leading={<Icon style={{color: color() ?? undefined}} c_code={0xE407}/>}
+			c_trailing={<>
 				<IconButton
 					data-tooltip="Edit label"
 					data-label-edit-index={$props.index}
-					code={0xE739}
+					c_code={0xE739}
 				/>
 				<IconButton
 					data-tooltip="Remove label from task"
 					data-label-remove-index={$props.index}
-					code={0xE5E9}
+					c_code={0xE5E9}
 				/>
 			</>}>
 			{ name() }
@@ -1416,7 +1416,7 @@ const _: VoidComponent<{
 		return (<>
 			<Dialog
 				ref={r => dialog_edittask_ref = r}
-				header='Edit task'
+				c_header='Edit task'
 				style={{width: '500px'}}
 				classList={classlist_module(CSS.body_dialog_edit)}
 				onClick={ev => {
@@ -1606,26 +1606,26 @@ const _: VoidComponent<{
 							break
 					}
 				}}
-				actions={<>
+				c_actions={<>
 					<Button
-						variant={ButtonVariant.tonal}
+						c_variant={ButtonVariant.tonal}
 						id={button_edittask_close_id}>
 						Close
 					</Button>
 					<Button
-						variant={ButtonVariant.filled}
+						c_variant={ButtonVariant.filled}
 						id={button_edittask_markcomplete_id}>
 						Mark as {selected_task_to_edit.task.complete? "not" : ''} completed
 					</Button>
 				</>}>
 				<TextField
-					label="Task"
+					c_label="Task"
 					value={selected_task_to_edit.task.name}
 					id={input_edittask_task_id}
 				/>
 				<AreaTextField
-					label="Description"
-					max_line={3}
+					c_label="Description"
+					c_max_line={3}
 					id={input_edittask_description_id}
 					value={selected_task_to_edit.task.description}
 				/>
@@ -1638,7 +1638,7 @@ const _: VoidComponent<{
 					</Tooltip>
 					<Button
 						id={button_edittask_addsubtask_id}>
-						<Icon code={0xE009}/>Add subtask
+						<Icon c_code={0xE009}/>Add subtask
 					</Button>
 				</div>
 				<Divider />
@@ -1651,9 +1651,9 @@ const _: VoidComponent<{
 						}</For>
 					</Tooltip>
 					<Button
-						focused={is_menu_labels_open()}
+						c_focused={is_menu_labels_open()}
 						id={button_edittask_addlabel_id}>
-						<Icon code={0xF00D}/>Add label
+						<Icon c_code={0xF00D}/>Add label
 					</Button>
 				</div>
 				<Divider />
@@ -1662,24 +1662,24 @@ const _: VoidComponent<{
 						when={selected_task_to_edit.task.reminder != null}
 						fallback={<Button
 							id={button_edittask_addreminder_id}
-							focused={is_datetimepicker_reminder_open()}>
-							<Icon code={0xE01D}/>Add reminder
+							c_focused={is_datetimepicker_reminder_open()}>
+							<Icon c_code={0xE01D}/>Add reminder
 						</Button>}>
 						<List
-							trailing_auto_tabindex
-							trailing={<Tooltip>
+							c_trailing_auto_tabindex
+							c_trailing={<Tooltip>
 								<IconButton
 									id={button_edittask_changereminder_id}
 									data-tooltip="Change datetime reminder"
-									code={0xE2EA}
+									c_code={0xE2EA}
 								/>
 								<IconButton
 									id={button_edittask_removereminder_id}
 									data-tooltip="Remove reminder"
-									code={0xE01F}
+									c_code={0xE01F}
 								/>
 							</Tooltip>}
-							leading={<Icon code={0xE025}/>}>
+							c_leading={<Icon c_code={0xE025}/>}>
 							<span style={{
 								color: date_out_range_YMD_HM(
 									selected_task_to_edit.task.reminder!,
@@ -1699,14 +1699,14 @@ const _: VoidComponent<{
 							}</For>
 						</Tooltip>
 						<Button id={button_edittask_addfile_id}>
-							<Icon code={0xE187}/>Add file
+							<Icon c_code={0xE187}/>Add file
 						</Button>
 					</div>
 					<Divider />
 				</Show>
 				<div data-important>
 					<Button id={button_edittask_markimportant_id}>
-						<Icon filled={selected_task_to_edit.task.important} code={0xEF1B}/>
+						<Icon c_filled={selected_task_to_edit.task.important} c_code={0xEF1B}/>
 						Mark as {selected_task_to_edit.task.important? 'not' : ''} important
 					</Button>
 				</div>
@@ -1714,13 +1714,13 @@ const _: VoidComponent<{
 					<Button
 						id={button_edittask_deletetask_id}
 						style={{color: `rgb(${AppColors.error})`}}>
-						<Icon code={0xE59D}/>
+						<Icon c_code={0xE59D}/>
 						Delete task
 					</Button>
 				</div>
 			</Dialog>
 			<Dialog
-				header="Delete task"
+				c_header="Delete task"
 				style={{width: '560px'}}
 				ref={r => dialog_deletetaskwarning_ref = r}
 				onClick={ev => {
@@ -1746,21 +1746,21 @@ const _: VoidComponent<{
 							break
 					}
 				}}
-				actions={<>
+				c_actions={<>
 					<Button
 						id={button_deletetask_cancel_id}
-						variant={ButtonVariant.tonal}>
+						c_variant={ButtonVariant.tonal}>
 						Cancel
 					</Button>
 					<Button
 						id={button_deletetask_delete_id}
-						variant={ButtonVariant.filled}>
+						c_variant={ButtonVariant.filled}>
 						Delete
 					</Button>
 				</>}>
 				Are you sure want to delete <q><span style={{color: `rgb(${AppColors.accent})`, "font-weight": 'bold'}}>{(selected_task_to_delete.task.name) || ''}</span></q> task?
 				<CheckBox
-					attr_label={{style: "margin-top: 16px"}}
+					c_attr_label={{style: "margin-top: 16px"}}
 					onChange={ev => command(Commands.toggle_delete_task_warning, !event_current_target(ev).checked)}>
 					Don't remind me again
 				</CheckBox>
@@ -1768,7 +1768,7 @@ const _: VoidComponent<{
 			<Dialog
 				ref={r => dialog_filerename_ref = r}
 				style={{width: '500px'}}
-				header="Rename file"
+				c_header="Rename file"
 				onClick={ev => {
 					const button = document_active()!
 					if (!element_valid_target(
@@ -1786,14 +1786,14 @@ const _: VoidComponent<{
 							break
 					}
 				}}
-				actions={<>
+				c_actions={<>
 					<Button
-						variant={ButtonVariant.tonal}
+						c_variant={ButtonVariant.tonal}
 						id={button_filerename_cancel_id}>
 						Cancel
 					</Button>
 					<Button
-						variant={ButtonVariant.filled}
+						c_variant={ButtonVariant.filled}
 						id={button_filerename_rename_id}
 						disabled={string_trim(text_file()) == ''}>
 						Rename
@@ -1843,15 +1843,15 @@ const _: VoidComponent<{
 							break
 					}
 				}}
-				header={selected_file_to_view.file.name}
-				actions={<>
+				c_header={selected_file_to_view.file.name}
+				c_actions={<>
 					<Button
 						id={button_viewfile_close_id}
-						variant={ButtonVariant.tonal}>
+						c_variant={ButtonVariant.tonal}>
 						Close
 					</Button>
 					<Button
-						variant={ButtonVariant.filled}
+						c_variant={ButtonVariant.filled}
 						id={button_viewfile_download_id}>
 						Download
 					</Button>
@@ -1876,7 +1876,7 @@ const _: VoidComponent<{
 			<Dialog
 				ref={r => dialog_newsubtask_ref = r}
 				style={{width: '500px'}}
-				header="New subtask"
+				c_header="New subtask"
 				onClose={() => {
 					set_text_subtask('')
 					change_textfield_value(textfield_newsubtask_ref, '')
@@ -1898,14 +1898,14 @@ const _: VoidComponent<{
 							break
 					}
 				}}
-				actions={<>
+				c_actions={<>
 					<Button
-						variant={ButtonVariant.tonal}
+						c_variant={ButtonVariant.tonal}
 						id={button_newsubtask_close_id}>
 						Close
 					</Button>
 					<Button
-						variant={ButtonVariant.filled}
+						c_variant={ButtonVariant.filled}
 						id={button_newsubtask_add_id}
 						disabled={string_trim(text_subtask()) == ''}>
 						Add
@@ -1928,7 +1928,7 @@ const _: VoidComponent<{
 			<Dialog
 				ref={r => dialog_editsubtask_ref = r}
 				style={{width: '500px'}}
-				header="Edit subtask"
+				c_header="Edit subtask"
 				onClose={() => {
 					set_text_subtask('')
 					change_textfield_value(textfield_editsubtask_ref, '')
@@ -1950,15 +1950,15 @@ const _: VoidComponent<{
 							break
 					}
 				}}
-				actions={<>
+				c_actions={<>
 					<Button
 						id={button_editsubtask_close_id}
-						variant={ButtonVariant.tonal}>
+						c_variant={ButtonVariant.tonal}>
 						Close
 					</Button>
 					<Button
 						id={button_editsubtask_edit_id}
-						variant={ButtonVariant.filled}
+						c_variant={ButtonVariant.filled}
 						disabled={string_trim(text_subtask()) == ''}>
 						Edit
 					</Button>
@@ -2093,51 +2093,51 @@ const _: VoidComponent<{
 				}}>
 				<MenuItem
 					id={button_taskactions_markcomplete_id}
-					icon_code={selected_task_to_action.task.complete? 0xE3D4 : 0xE3CC}
-					trailing={<MenuIndent />}>
+					c_icon_code={selected_task_to_action.task.complete? 0xE3D4 : 0xE3CC}
+					c_trailing={<MenuIndent />}>
 					Mark as {selected_task_to_action.task.complete? 'not' : ''} completed
 				</MenuItem>
 				<MenuItem
 					id={button_taskactions_markimportant_id}
-					leading={<Icon code={0xEF1B} filled={!((selected_task_to_action.task.important) || false)}/>}
-					trailing={<MenuIndent />}>
+					c_leading={<Icon c_code={0xEF1B} c_filled={!((selected_task_to_action.task.important) || false)}/>}
+					c_trailing={<MenuIndent />}>
 					Mark as {selected_task_to_action.task.important? 'not' : ''} important
 				</MenuItem>
 				<MenuDivider />
 				<Show when={!props.is_db_file_error}>
 					<MenuItem
-						icon_code={0xE187}
-						trailing={<MenuIndent />}
+						c_icon_code={0xE187}
+						c_trailing={<MenuIndent />}
 						id={button_taskactions_addfile_id}>
 						Add file
 					</MenuItem>
 				</Show>
 				<MenuItem
-					icon_code={0xE009}
+					c_icon_code={0xE009}
 					id={button_taskactions_addsubtask_id}
-					trailing={<MenuIndent />}>
+					c_trailing={<MenuIndent />}>
 					Add subtask
 				</MenuItem>
 				<Show when={selected_task_to_action.task.reminder == null}>
 					<MenuItem
 						id={button_taskactions_addreminder_id}
-						icon_code={0xE01B}
-						trailing={<MenuIndent />}>
+						c_icon_code={0xE01B}
+						c_trailing={<MenuIndent />}>
 						Add reminder
 					</MenuItem>
 				</Show>
 				<Show when={array_length(props.labels) > 0}>
 					<SubMenu
-						on_toggle_open={v => set_is_menu_taskactionaddlabel_open(v)}
-						item={<SubMenuItem
-							focused={is_menu_taskactionaddlabel_open()}
-							icon_code={0xF00D}>
+						c_on_toggleopen={v => set_is_menu_taskactionaddlabel_open(v)}
+						c_item={<SubMenuItem
+							c_focused={is_menu_taskactionaddlabel_open()}
+							c_icon_code={0xF00D}>
 							Add label
 						</SubMenuItem>}>
 						<For each={props.labels}>{label => <Show when={label != undefined}>
 							<MenuItem
-								leading={<Icon style={{color: label!.color ?? undefined}} code={0xE407}/>}
-								checked={array_includes(selected_task_to_action.task.label_ids, label!.id)}
+								c_leading={<Icon style={{color: label!.color ?? undefined}} c_code={0xE407}/>}
+								c_checked={array_includes(selected_task_to_action.task.label_ids, label!.id)}
 								data-label-id={label!.id}>
 								{label!.name}
 							</MenuItem>
@@ -2148,27 +2148,27 @@ const _: VoidComponent<{
 				<SubMenu
 					ref={r => submenu_movetask_ref = r}
 					style={{"min-width": '200px'}}
-					on_toggle_open={v => set_is_menu_taskaction_move_open(v)}
-					item={<SubMenuItem
-						focused={is_menu_taskactionmove_open()}
-						icon_code={0xE115}>
+					c_on_toggleopen={v => set_is_menu_taskaction_move_open(v)}
+					c_item={<SubMenuItem
+						c_focused={is_menu_taskactionmove_open()}
+						c_icon_code={0xE115}>
 						Move task to ...
 					</SubMenuItem>}>
 					<For each={props.tasklists}>{(list, i) => <>
 						<MenuItem
 							data-tasklist-index={i()}
 							style={{order: list.id == DEFAULT_TASK_LIST.id? '-2' : undefined}}
-							icon_code={list.id == DEFAULT_TASK_LIST.id
+							c_icon_code={list.id == DEFAULT_TASK_LIST.id
 								? 0xE8E2
 								: list.emoji == null
 									? 0xF032
 									: undefined
 							}
-							leading={<Show
+							c_leading={<Show
 								when={list.emoji != null && list.id != DEFAULT_TASK_LIST.id}>
-								<Emoji emoji={list.emoji!} />
+								<Emoji c_emoji={list.emoji!} />
 							</Show>}
-							selected={i() == get_tasklist_index()}>
+							c_selected={i() == get_tasklist_index()}>
 							{list.name}
 						</MenuItem>
 						<Show when={array_length(props.tasklists) > 1 && list.id == DEFAULT_TASK_LIST.id}>
@@ -2179,14 +2179,14 @@ const _: VoidComponent<{
 				<MenuDivider />
 				<MenuItem
 					id={button_taskactions_edittask_id}
-					icon_code={0xE739}
-					trailing={<MenuIndent />}>
+					c_icon_code={0xE739}
+					c_trailing={<MenuIndent />}>
 					Edit task
 				</MenuItem>
 				<MenuItem
 					id={button_taskactions_deletetask_id}
-					icon_code={0xE59D}
-					trailing={<MenuIndent />}>
+					c_icon_code={0xE59D}
+					c_trailing={<MenuIndent />}>
 					Delete task
 				</MenuItem>
 			</Menu>
@@ -2219,19 +2219,19 @@ const _: VoidComponent<{
 					}
 				}}>
 				<MenuItem
-					icon_code={0xE2EA}
+					c_icon_code={0xE2EA}
 					id={button_reminder_change_id}>
 					Change datetime reminder
 				</MenuItem>
 				<MenuItem
-					icon_code={0xE01F}
+					c_icon_code={0xE01F}
 					id={button_reminder_remove_id}>
 					Remove reminder
 				</MenuItem>
 			</Menu>
 			<Menu
 				ref={r => menu_labels_ref = r}
-				on_toggle_open={is_open => set_is_menu_labels_open(is_open)}
+				c_on_toggleopen={is_open => set_is_menu_labels_open(is_open)}
 				onClick={ev => {
 					const button = document_active()!
 					if (!element_valid_target(
@@ -2294,21 +2294,21 @@ const _: VoidComponent<{
 				}}>
 				<MenuItem
 					id={button_labels_new_id}
-					icon_code={0xE007}>
+					c_icon_code={0xE007}>
 					New label
 				</MenuItem>
 				<Show when={array_length(props.labels) > 0}>
 					<MenuItem
 						id={button_labels_edit_id}
-						icon_code={0xE739}>
+						c_icon_code={0xE739}>
 						Edit labels
 					</MenuItem>
 					<Divider/>
 				</Show>
 				<For each={props.labels}>{(label, i) => <Show when={label != undefined}>
 					<MenuItem
-						leading={<Icon style={{color: label!.color ?? undefined}} code={0xE407}/>}
-						checked={array_includes(selected_task_to_edit.task.label_ids, label!.id)}
+						c_leading={<Icon style={{color: label!.color ?? undefined}} c_code={0xE407}/>}
+						c_checked={array_includes(selected_task_to_edit.task.label_ids, label!.id)}
 						data-label-index={i()}>
 						{label!.name}
 					</MenuItem>
@@ -2336,12 +2336,12 @@ const _: VoidComponent<{
 					}
 				}}>
 				<MenuItem
-					icon_code={0xE739}
+					c_icon_code={0xE739}
 					id={button_labelactions_edit_id}>
 					Edit label
 				</MenuItem>
 				<MenuItem
-					icon_code={0xE59D}
+					c_icon_code={0xE59D}
 					id={button_labelactions_delete_id}>
 					Delete label
 				</MenuItem>
@@ -2378,19 +2378,19 @@ const _: VoidComponent<{
 					}
 				}}>
 				<MenuItem
-					icon_code={0xE739}
+					c_icon_code={0xE739}
 					id={button_labelactions_edit2_id}>
 					Edit label
 				</MenuItem>
 				<MenuItem
-					icon_code={0xE5E9}
+					c_icon_code={0xE5E9}
 					id={button_labelactions_delete2_id}>
 					Remove label from task
 				</MenuItem>
 			</Menu>
 			<Menu
 				ref={r => menu_fileaction_ref = r}
-				on_toggle_open={is_open => set_is_menu_fileaction_open(is_open)}
+				c_on_toggleopen={is_open => set_is_menu_fileaction_open(is_open)}
 				onClick={ev => {
 					const button = document_active()!
 					if (!element_valid_target(
@@ -2437,17 +2437,17 @@ const _: VoidComponent<{
 					}
 				}}>
 				<MenuItem
-					icon_code={0xE0B9}
+					c_icon_code={0xE0B9}
 					id={button_fileaction_download_id}>
 					Download
 				</MenuItem>
 				<MenuItem
-					icon_code={0xE739}
+					c_icon_code={0xE739}
 					id={button_fileaction_rename_id}>
 					Rename
 				</MenuItem>
 				<MenuItem
-					icon_code={0xE59D}
+					c_icon_code={0xE59D}
 					id={button_fileaction_delete_id}>
 					Delete
 				</MenuItem>
@@ -2483,7 +2483,7 @@ const _: VoidComponent<{
 				}}>
 				<For each={selected_task_to_fileaction.task.files}>{(file, index) =>
 					<MenuItem
-						focused={is_menu_fileaction3_open() && file.id == selected_file_to_action2.file.id}
+						c_focused={is_menu_fileaction3_open() && file.id == selected_file_to_action2.file.id}
 						data-file-index={index()}>
 						{file.name}
 					</MenuItem>
@@ -2541,26 +2541,26 @@ const _: VoidComponent<{
 					}
 				}}
 				ref={r => menu_fileaction3_ref = r}
-				on_toggle_open={(is_open) => set_is_menu_fileaction3_open(is_open)}>
+				c_on_toggleopen={(is_open) => set_is_menu_fileaction3_open(is_open)}>
 				<Show when={regex_test(/^(audio|image|video|text)/, selected_file_to_action2.file.type)}>
 					<MenuItem
-						icon_code={0xE77B}
+						c_icon_code={0xE77B}
 						id={button_fileaction3_view_id}>
 						View
 					</MenuItem>
 				</Show>
 				<MenuItem
-					icon_code={0xE739}
+					c_icon_code={0xE739}
 					id={button_fileaction3_rename_id}>
 					Rename
 				</MenuItem>
 				<MenuItem
-					icon_code={0xE0B9}
+					c_icon_code={0xE0B9}
 					id={button_fileaction3_download_id}>
 					Download
 				</MenuItem>
 				<MenuItem
-					icon_code={0xE59D}>
+					c_icon_code={0xE59D}>
 					Delete
 				</MenuItem>
 			</Menu>
@@ -2569,8 +2569,8 @@ const _: VoidComponent<{
 
 	const DatePickers: VoidComponent = () => (<>
 		<DateTimePicker
-			on_toggle_open={(v) => set_is_datetimepicker_reminder_open(v)}
-			datetime={(change_reminder_option() == 'edit'
+			c_on_toggleopen={(v) => set_is_datetimepicker_reminder_open(v)}
+			c_datetime={(change_reminder_option() == 'edit'
 				? selected_task_to_edit.task.reminder
 				: change_reminder_option() == 'action'
 					? selected_task_to_action.task.reminder
@@ -2579,7 +2579,7 @@ const _: VoidComponent<{
 						: new Date()
 			) ?? new Date()}
 			ref={r => datetimepicker_reminder_ref = r}
-			on_select_datetime={(date) => {
+			c_on_selectdatetime={(date) => {
 				let task: Task = empty_task()
 				let tasklist_index = 0
 				let task_index = 0

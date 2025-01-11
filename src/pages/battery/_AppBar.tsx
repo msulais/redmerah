@@ -83,36 +83,36 @@ const _: VoidComponent = () => {
 			<Menu
 				style={{width: '200px'}}
 				ref={r => menu_info_ref = r}
-				on_toggle_open={(v) => set_is_menu_info_open(v)}>
+				c_on_toggleopen={(v) => set_is_menu_info_open(v)}>
 				<LinkMenuItem
 					onClick={() => close_menu(menu_info_ref)}
 					href={RoutesLinks.home}
-					leading={<img src={logo_redmerah.src} width={16} alt='Redmerah logo'/>}>
+					c_leading={<img src={logo_redmerah.src} width={16} alt='Redmerah logo'/>}>
 					Redmerah
 				</LinkMenuItem>
 				<LinkMenuItem
 					onClick={() => close_menu(menu_info_ref)}
 					href={RoutesLinks.apps}
-					icon_code={0xE063}>
+					c_icon_code={0xE063}>
 					More apps
 				</LinkMenuItem>
 				<LinkMenuItem
 					onClick={() => close_menu(menu_info_ref)}
 					href={RoutesLinks.about}
-					icon_code={0xE930}>
+					c_icon_code={0xE930}>
 					About us
 				</LinkMenuItem>
 				<MenuDivider />
 				<LinkMenuItem
 					onClick={() => close_menu(menu_info_ref)}
 					href={RoutesLinks.privacy}
-					icon_code={0xEE51}>
+					c_icon_code={0xEE51}>
 					Privacy policy
 				</LinkMenuItem>
 				<LinkMenuItem
 					onClick={() => close_menu(menu_info_ref)}
 					href={RoutesLinks.terms}
-					icon_code={0xED47}>
+					c_icon_code={0xED47}>
 					Terms & conditions
 				</LinkMenuItem>
 				<MenuDivider />
@@ -121,91 +121,91 @@ const _: VoidComponent = () => {
 						navigator_share({ title: 'Battery', text: 'Battery', url: document.URL })
 						close_menu(menu_info_ref)
 					}}
-					icon_code={0xEE23}>
+					c_icon_code={0xEE23}>
 					Share
 				</MenuItem>
 				<LinkMenuItem
 					onClick={() => close_menu(menu_info_ref)}
 					href={'mailto:' + ExternalLinks.contact_email + '?subject=' + url_encode('Battery')}
-					icon_code={0xE3A0}>
+					c_icon_code={0xE3A0}>
 					Send feedback
 				</LinkMenuItem>
 				<LinkMenuItem
 					onClick={() => close_menu(menu_info_ref)}
 					href={ExternalLinks.donate}
-					open_in_new_tab
-					icon_code={0xE84B}>
+					c_new_tab
+					c_icon_code={0xE84B}>
 					Donate
 				</LinkMenuItem>
 				<MenuHeader>&copy; {date_year(new Date())} Redmerah</MenuHeader>
 			</Menu>
 			<Menu
 				ref={r => menu_settings_ref = r}
-				on_toggle_open={(v) => set_is_menu_settings_open(v)}>
+				c_on_toggleopen={(v) => set_is_menu_settings_open(v)}>
 				<LinkMenuItem
-					open_in_new_tab
+					c_new_tab
 					href="https://developer.mozilla.org/en-US/docs/Web/API/BatteryManager#browser_compatibility"
-					icon_code={0xF31B}
-					trailing={<Icon code={0xEB51}/>}>
+					c_icon_code={0xF31B}
+					c_trailing={<Icon c_code={0xEB51}/>}>
 					Browser compatibility
 				</LinkMenuItem>
 				<MenuDivider />
 				<SubMenu
 					ref={r => submenu_themesettings_ref = r}
-					on_toggle_open={v => set_is_submenu_themesettings_open(v)}
-					item={<SubMenuItem
-						focused={is_submenu_themesettings_open()}
-						icon_code={0xE28A}>
+					c_on_toggleopen={v => set_is_submenu_themesettings_open(v)}
+					c_item={<SubMenuItem
+						c_focused={is_submenu_themesettings_open()}
+						c_icon_code={0xE28A}>
 						Theme
 					</SubMenuItem>}>
 					<MenuItem
-						selected={theme() == ThemeData.light}
-						icon_code={0xF2CD}
+						c_selected={theme() == ThemeData.light}
+						c_icon_code={0xF2CD}
 						onClick={() => change_theme(ThemeData.light)}>
 						Light
 					</MenuItem>
 					<MenuItem
-						selected={theme() == ThemeData.dark}
-						icon_code={0xF2B3}
+						c_selected={theme() == ThemeData.dark}
+						c_icon_code={0xF2B3}
 						onClick={() => change_theme(ThemeData.dark)}>
 						Dark
 					</MenuItem>
 					<MenuItem
-						selected={theme() == ThemeData.system}
-						icon_code={0xE96D}
+						c_selected={theme() == ThemeData.system}
+						c_icon_code={0xE96D}
 						onClick={() => change_theme(ThemeData.system)}>
 						System theme
 					</MenuItem>
 				</SubMenu>
 				<SubMenu
 					ref={r => submenu_cornersettings_ref = r}
-					on_toggle_open={v => set_is_submenu_cornersettings_open(v)}
-					item={<SubMenuItem
-						focused={is_submenu_cornersettings_open()}
-						icon_code={0xF044}>
+					c_on_toggleopen={v => set_is_submenu_cornersettings_open(v)}
+					c_item={<SubMenuItem
+						c_focused={is_submenu_cornersettings_open()}
+						c_icon_code={0xF044}>
 						Corner style
 					</SubMenuItem>}>
 					<MenuItem
-						selected={corner() == CornerData.sharp}
-						icon_code={0xEA99}
+						c_selected={corner() == CornerData.sharp}
+						c_icon_code={0xEA99}
 						onClick={() => change_corner(CornerData.sharp)}>
 						Sharp
 					</MenuItem>
 					<MenuItem
-						selected={corner() == CornerData.semi_round}
-						icon_code={0xEEF7}
+						c_selected={corner() == CornerData.semi_round}
+						c_icon_code={0xEEF7}
 						onClick={() => change_corner(CornerData.semi_round)}>
 						Semi round
 					</MenuItem>
 					<MenuItem
-						selected={corner() == CornerData.round}
-						icon_code={0xF044}
+						c_selected={corner() == CornerData.round}
+						c_icon_code={0xF044}
 						onClick={() => change_corner(CornerData.round)}>
 						Round
 					</MenuItem>
 					<MenuItem
-						selected={corner() == CornerData.full_round}
-						icon_code={0xE408}
+						c_selected={corner() == CornerData.full_round}
+						c_icon_code={0xE408}
 						onClick={() => change_corner(CornerData.full_round)}>
 						Full round
 					</MenuItem>
@@ -216,13 +216,13 @@ const _: VoidComponent = () => {
 
 	return (<>
 		<AppBar
-			leading={<img alt="Battery logo" width={32} src={logo.src} />}
-			headline="Battery"
-			trailing={<Tooltip>
+			c_leading={<img alt="Battery logo" width={32} src={logo.src} />}
+			c_headline="Battery"
+			c_trailing={<Tooltip>
 				<IconButton
 					data-tooltip="Info"
-					focused={is_menu_info_open()}
-					code={0xE930}
+					c_focused={is_menu_info_open()}
+					c_code={0xE930}
 					onClick={(ev) => open_menu(ev, menu_info_ref, {
 						anchor: event_current_target(ev),
 						padding: 4,
@@ -231,8 +231,8 @@ const _: VoidComponent = () => {
 				<IconButton
 					data-tooltip="Settings"
 					class={CSSAnimation.btn_rotate_icon}
-					focused={is_menu_settings_open()}
-					code={0xEE0F}
+					c_focused={is_menu_settings_open()}
+					c_code={0xEE0F}
 					onClick={(ev) => open_menu(ev, menu_settings_ref, {
 						anchor: event_current_target(ev),
 						padding: 4,

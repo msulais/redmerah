@@ -157,55 +157,55 @@ const _: VoidComponent<{
 				}}
 				style={{width: '200px'}}
 				ref={r => menu_info_ref = r}
-				on_toggle_open={(v) => set_is_menu_info_open(v)}>
+				c_on_toggleopen={(v) => set_is_menu_info_open(v)}>
 				<LinkMenuItem
 					href={RoutesLinks.home}
-					leading={<img src={logo_redmerah.src} width={16} alt='Redmerah logo'/>}>
+					c_leading={<img src={logo_redmerah.src} width={16} alt='Redmerah logo'/>}>
 					Redmerah
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={RoutesLinks.apps}
-					icon_code={0xE063}>
+					c_icon_code={0xE063}>
 					More apps
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={RoutesLinks.about}
-					icon_code={0xE930}>
+					c_icon_code={0xE930}>
 					About us
 				</LinkMenuItem>
 				<MenuDivider />
 				<LinkMenuItem
 					href={RoutesLinks.privacy}
-					icon_code={0xEE51}>
+					c_icon_code={0xEE51}>
 					Privacy policy
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={RoutesLinks.terms}
-					icon_code={0xED47}>
+					c_icon_code={0xED47}>
 					Terms & conditions
 				</LinkMenuItem>
 				<MenuDivider />
 				<MenuItem
 					id={button_info_share_id}
-					icon_code={0xEE23}>
+					c_icon_code={0xEE23}>
 					Share
 				</MenuItem>
 				<LinkMenuItem
 					href={'mailto:' + ExternalLinks.contact_email + '?subject=' + url_encode('Tasks')}
-					icon_code={0xE3A0}>
+					c_icon_code={0xE3A0}>
 					Send feedback
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={ExternalLinks.donate}
-					open_in_new_tab
-					icon_code={0xE84B}>
+					c_new_tab
+					c_icon_code={0xE84B}>
 					Donate
 				</LinkMenuItem>
 				<MenuHeader>&copy; {date_year(new Date())} Redmerah</MenuHeader>
 			</Menu>
 			<Menu
 				ref={r => menu_settings_ref = r}
-				on_toggle_open={(v) => set_is_menu_settings_open(v)}
+				c_on_toggleopen={(v) => set_is_menu_settings_open(v)}
 				onClick={ev => {
 					const button = document_active()!
 					if (!element_valid_target(
@@ -246,77 +246,77 @@ const _: VoidComponent<{
 				}}>
 				<SubMenu
 					ref={r => submenu_themesettings_ref = r}
-					on_toggle_open={v => set_is_submenu_themesettings_open(v)}
-					item={<SubMenuItem
-						focused={is_submenu_themesettings_open()}
-						icon_code={0xE28A}>
+					c_on_toggleopen={v => set_is_submenu_themesettings_open(v)}
+					c_item={<SubMenuItem
+						c_focused={is_submenu_themesettings_open()}
+						c_icon_code={0xE28A}>
 						Theme
 					</SubMenuItem>}>
 					<MenuItem
-						selected={theme() == theme_light}
-						icon_code={0xF2CD}
+						c_selected={theme() == theme_light}
+						c_icon_code={0xF2CD}
 						data-theme={theme_light}>
 						Light
 					</MenuItem>
 					<MenuItem
-						selected={theme() == theme_dark}
-						icon_code={0xF2B3}
+						c_selected={theme() == theme_dark}
+						c_icon_code={0xF2B3}
 						data-theme={theme_dark}>
 						Dark
 					</MenuItem>
 					<MenuItem
-						selected={theme() == theme_system}
-						icon_code={0xE96D}
+						c_selected={theme() == theme_system}
+						c_icon_code={0xE96D}
 						data-theme={theme_system}>
 						System theme
 					</MenuItem>
 				</SubMenu>
 				<SubMenu
 					ref={r => submenu_cornersettings_ref = r}
-					on_toggle_open={v => set_is_submenu_cornersettings_open(v)}
-					item={<SubMenuItem
-						focused={is_submenu_cornersettings_open()}
-						icon_code={0xF044}>
+					c_on_toggleopen={v => set_is_submenu_cornersettings_open(v)}
+					c_item={<SubMenuItem
+						c_focused={is_submenu_cornersettings_open()}
+						c_icon_code={0xF044}>
 						Corner style
 					</SubMenuItem>}>
 					<MenuItem
-						selected={corner() == corner_sharp}
-						icon_code={0xEA99}
+						c_selected={corner() == corner_sharp}
+						c_icon_code={0xEA99}
 						data-corner={corner_sharp}>
 						Sharp
 					</MenuItem>
 					<MenuItem
-						selected={corner() == corner_semiround}
-						icon_code={0xEEF7}
+						c_selected={corner() == corner_semiround}
+						c_icon_code={0xEEF7}
 						data-corner={corner_semiround}>
 						Semi round
 					</MenuItem>
 					<MenuItem
-						selected={corner() == corner_round}
-						icon_code={0xF044}
+						c_selected={corner() == corner_round}
+						c_icon_code={0xF044}
 						data-corner={corner_round}>
 						Round
 					</MenuItem>
 					<MenuItem
-						selected={corner() == corner_fullround}
-						icon_code={0xE408}
+						c_selected={corner() == corner_fullround}
+						c_icon_code={0xE408}
 						data-corner={corner_fullround}>
 						Full round
 					</MenuItem>
 				</SubMenu>
 				<MenuDivider/>
 				<SwitchMenuItem
-					icon_code={0xF19D}
-					checked={settings().text_wrap}
-					attr_switch={{
+					c_icon_code={0xF19D}
+					c_checked={settings().text_wrap}
+					c_attr_switch={{
 						id: input_settings_textwrap_id
 					}}>
 					Text wrap
 				</SwitchMenuItem>
 				<SwitchMenuItem
-					icon_code={0xE0F5}
-					checked={settings().minify}
-					attr_switch={{
+					c_icon_code={0xE0F5}
+					c_checked={settings().minify}
+					c_attr_switch={{
 						id: input_settings_minifycss_id
 					}}>
 					Minify CSS
@@ -324,7 +324,7 @@ const _: VoidComponent<{
 				<div style={{padding: '8px 12px'}}>
 					<NumberTextField
 						min={12}
-						label="Font size"
+						c_label="Font size"
 						id={input_settings_fontsize_id}
 						value={settings().font_size}
 					/>
@@ -332,7 +332,7 @@ const _: VoidComponent<{
 			</Menu>
 			<Menu
 				style={{"min-width": '200px'}}
-				on_toggle_open={is_open => set_is_menu_moreactions_open(is_open)}
+				c_on_toggleopen={is_open => set_is_menu_moreactions_open(is_open)}
 				ref={r => menu_moreactions_ref = r}
 				onClick={ev => {
 					const button = document_active()!
@@ -376,62 +376,62 @@ const _: VoidComponent<{
 					}
 				}}>
 				<MenuItem
-					icon_code={0xE607}
+					c_icon_code={0xE607}
 					id={button_moreactions_openfile_id}>
 					Open file
 				</MenuItem>
 				<MenuDivider/>
 				<SubMenu
-					on_toggle_open={isOpen => set_is_submenu_downloadMoreActions_open(isOpen)}
+					c_on_toggleopen={isOpen => set_is_submenu_downloadMoreActions_open(isOpen)}
 					ref={r => submenu_downloadmoreactions_ref = r}
-					item={<SubMenuItem
-						icon_code={0xE0B9}
-						focused={is_submenu_downloadmoreactions_open()}>
+					c_item={<SubMenuItem
+						c_icon_code={0xE0B9}
+						c_focused={is_submenu_downloadmoreactions_open()}>
 						Download
 					</SubMenuItem>}>
 					<MenuItem
 						data-download='sass'
-						leading={<img width={20} src={logo_sass.src} alt="SASS logo"/>}>
+						c_leading={<img width={20} src={logo_sass.src} alt="SASS logo"/>}>
 						SASS
 					</MenuItem>
 					<MenuItem
 						data-download='scss'
-						leading={<img width={20} src={logo_scss.src} alt="SCSS logo"/>}>
+						c_leading={<img width={20} src={logo_scss.src} alt="SCSS logo"/>}>
 						SCSS
 					</MenuItem>
 					<MenuItem
 						data-download='css'
-						leading={<img width={20} src={logo_css.src} alt="CSS logo"/>}>
+						c_leading={<img width={20} src={logo_css.src} alt="CSS logo"/>}>
 						CSS
 					</MenuItem>
 				</SubMenu>
 				<SubMenu
 					ref={r => submenu_copyallmoreactions_ref = r}
-					on_toggle_open={isOpen => set_is_submenu_copyallmoreActions_open(isOpen)}
-					item={<SubMenuItem
-						icon_code={0xE51B}
-						focused={is_submenu_copyallmoreactions_open()}>
+					c_on_toggleopen={isOpen => set_is_submenu_copyallmoreActions_open(isOpen)}
+					c_item={<SubMenuItem
+						c_icon_code={0xE51B}
+						c_focused={is_submenu_copyallmoreactions_open()}>
 						Copy all
 					</SubMenuItem>}>
 					<MenuItem
 						data-copy='sass'
-						leading={<img width={20} src={logo_sass.src} alt="SASS logo"/>}>
+						c_leading={<img width={20} src={logo_sass.src} alt="SASS logo"/>}>
 						SASS
 					</MenuItem>
 					<MenuItem
 						data-copy='scss'
-						leading={<img width={20} src={logo_scss.src} alt="SCSS logo"/>}>
+						c_leading={<img width={20} src={logo_scss.src} alt="SCSS logo"/>}>
 						SCSS
 					</MenuItem>
 					<MenuItem
 						data-copy='css'
-						leading={<img width={20} src={logo_css.src} alt="CSS logo"/>}>
+						c_leading={<img width={20} src={logo_css.src} alt="CSS logo"/>}>
 						CSS
 					</MenuItem>
 				</SubMenu>
 				<MenuDivider/>
 				<MenuItem
-					icon_code={0xE113}
+					c_icon_code={0xE113}
 					id={button_moreactions_resetinputs_id}>
 					Reset input
 				</MenuItem>
@@ -441,8 +441,8 @@ const _: VoidComponent<{
 
 	return (<>
 		<AppBar
-			leading={<img alt="Markdown converter logo" width={32} src={logo.src} />}
-			headline="SASS Converter"
+			c_leading={<img alt="Markdown converter logo" width={32} src={logo.src} />}
+			c_headline="SASS Converter"
 			onClick={ev => {
 				const button = document_active()!
 				if (!element_valid_target(
@@ -463,25 +463,25 @@ const _: VoidComponent<{
 						break
 				}
 			}}
-			trailing={<Tooltip>
+			c_trailing={<Tooltip>
 				<IconButton
 					data-tooltip="Info"
 					id={button_info_id}
-					focused={is_menu_info_open()}
-					code={0xE930}
+					c_focused={is_menu_info_open()}
+					c_code={0xE930}
 				/>
 				<IconButton
 					data-tooltip="Settings"
 					id={button_settings_id}
 					class={CSSAnimation.btn_rotate_icon}
-					focused={is_menu_settings_open()}
-					code={0xEE0F}
+					c_focused={is_menu_settings_open()}
+					c_code={0xEE0F}
 				/>
 				<IconButton
 					data-tooltip="More actions"
 					id={button_moreactions_id}
-					focused={is_menu_moreactions_open()}
-					code={0xEAD9}
+					c_focused={is_menu_moreactions_open()}
+					c_code={0xEAD9}
 				/>
 			</Tooltip>}
 		/>

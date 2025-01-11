@@ -22,7 +22,7 @@ const _: VoidComponent = () => {
 		description="A dialog is an overlay window that interrupts the user's main workflow to deliver important information or request user input. It typically contains a title, content area, and buttons for user actions.">
 		<Playground>
 			<Button
-				variant={ButtonVariant.tonal}
+				c_variant={ButtonVariant.tonal}
 				onClick={(ev) => open_dialog(ev, dialog_ref, {
 					important: important(),
 					content_auto_focus: content_autofocus()
@@ -32,25 +32,25 @@ const _: VoidComponent = () => {
 			<Dialog
 				style={{width: '500px'}}
 				ref={r => dialog_ref = r}
-				header={<Show when={has_header()}>{header_text()}</Show>}
-				actions={<Show when={has_actions()}>
-					<Button variant={ButtonVariant.tonal} onClick={() => close_dialog(dialog_ref)}>Close</Button>
-					<Button variant={ButtonVariant.tonal}>Options</Button>
-					<Button variant={ButtonVariant.filled} onClick={() => close_dialog(dialog_ref)}>Accept</Button>
+				c_header={<Show when={has_header()}>{header_text()}</Show>}
+				c_actions={<Show when={has_actions()}>
+					<Button c_variant={ButtonVariant.tonal} onClick={() => close_dialog(dialog_ref)}>Close</Button>
+					<Button c_variant={ButtonVariant.tonal}>Options</Button>
+					<Button c_variant={ButtonVariant.filled} onClick={() => close_dialog(dialog_ref)}>Accept</Button>
 				</Show>}>
 				<Show when={has_content()}>
 					{content_text()}
 					<div style={{height: '16px'}}/>
-					<TextField label="Some input"/>
+					<TextField c_label="Some input"/>
 				</Show>
 			</Dialog>
 		</Playground>
 		<PlaygroundOptions>
 			<Show when={has_header()}>
-				<TextField label="Header text" value="Header" onInput={ev => set_header_text(event_current_target(ev).value)}/>
+				<TextField c_label="Header text" value="Header" onInput={ev => set_header_text(event_current_target(ev).value)}/>
 			</Show>
 			<Show when={has_content()}>
-				<TextField label="Content text" value="Cupidatat aliqua est quis enim commodo. Aute Lorem occaecat commodo nisi amet dolor ut cupidatat qui ipsum magna in. In aliquip voluptate nulla aliquip duis cillum consectetur eiusmod adipisicing reprehenderit officia reprehenderit adipisicing dolor." onInput={ev => set_content_text(event_current_target(ev).value)}/>
+				<TextField c_label="Content text" value="Cupidatat aliqua est quis enim commodo. Aute Lorem occaecat commodo nisi amet dolor ut cupidatat qui ipsum magna in. In aliquip voluptate nulla aliquip duis cillum consectetur eiusmod adipisicing reprehenderit officia reprehenderit adipisicing dolor." onInput={ev => set_content_text(event_current_target(ev).value)}/>
 			</Show>
 			<CheckBox
 				checked={important()}

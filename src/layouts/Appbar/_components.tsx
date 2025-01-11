@@ -41,37 +41,37 @@ export const NavigationMenu: VoidComponent<NavigationMenuProps> = (props) => {
 			<IconButton
 				data-tooltip="Open navigation menu"
 				classList={classlist_module(CSS.mobile_only)}
-				focused={is_menu_navigation_open()}
+				c_focused={is_menu_navigation_open()}
 				onClick={(ev) => open_menu(ev, menu_navigation_ref, {
 					anchor: event_current_target(ev),
 					padding: 0,
 				})}
-				code={0xE4F7}
+				c_code={0xE4F7}
 			/>
 		</Tooltip>
 		<Menu
 			style={{width: '164px'}}
 			ref={r => menu_navigation_ref = r}
-			on_toggle_open={v => set_is_menu_navigation_open(v)}>
+			c_on_toggleopen={v => set_is_menu_navigation_open(v)}>
 			<MenuHeader>Navigation</MenuHeader>
 			<LinkMenuItem
 				href={RoutesLinks.apps}
-				selected={props.route == RoutesLinks.apps}
-				icon_code={0xE063}>
+				c_selected={props.route == RoutesLinks.apps}
+				c_icon_code={0xE063}>
 				Apps
 			</LinkMenuItem>
 			<LinkMenuItem
 				href={RoutesLinks.about}
-				selected={props.route == RoutesLinks.about}
-				icon_code={0xE930}>
+				c_selected={props.route == RoutesLinks.about}
+				c_icon_code={0xE930}>
 				About
 			</LinkMenuItem>
 			<MenuDivider />
 			<LinkMenuItem
 				onClick={() => close_menu(menu_navigation_ref)}
 				href={ExternalLinks.donate}
-				open_in_new_tab
-				icon_code={0xE84B}>
+				c_new_tab
+				c_icon_code={0xE84B}>
 				Donate
 			</LinkMenuItem>
 		</Menu>
@@ -173,18 +173,18 @@ export const SettingsElement: VoidComponent = () => {
 			<IconButton
 				data-tooltip="Open settings"
 				classList={classlist_module(CSSAnimation.btn_rotate_icon)}
-				focused={is_menu_settings_open()}
+				c_focused={is_menu_settings_open()}
 				onClick={(ev) => open_menu(ev, menu_settings_ref, {
 					anchor: event_current_target(ev),
 					padding: 0,
 				})}
-				code={0xEE0F}
+				c_code={0xEE0F}
 			/>
 		</Tooltip>
 		<Menu
 			style={{width: '200px'}}
 			ref={r => menu_settings_ref = r}
-			on_toggle_open={(v) => setIs_menu_settings_open(v)}
+			c_on_toggleopen={(v) => setIs_menu_settings_open(v)}
 			onClick={ev => {
 				const button = element_closest(event_target(ev) as HTMLElement, 'button')
 				if (!button) return
@@ -211,64 +211,64 @@ export const SettingsElement: VoidComponent = () => {
 			<MenuHeader>Theme</MenuHeader>
 			<MenuItem
 				id={menuitem_themelight_id}
-				selected={theme() == theme_light}
-				icon_code={0xF2CD}>
+				c_selected={theme() == theme_light}
+				c_icon_code={0xF2CD}>
 				Light
 			</MenuItem>
 			<MenuItem
 				id={menuitem_themedark_id}
-				selected={theme() == theme_dark}
-				icon_code={0xF2B3}>
+				c_selected={theme() == theme_dark}
+				c_icon_code={0xF2B3}>
 				Dark
 			</MenuItem>
 			<MenuItem
 				id={menuitem_themesystem_id}
-				selected={theme() == theme_system}
-				icon_code={0xE96D}>
+				c_selected={theme() == theme_system}
+				c_icon_code={0xE96D}>
 				System theme
 			</MenuItem>
 			<MenuDivider />
 			<MenuHeader>Corner style</MenuHeader>
 			<MenuItem
 				id={menuitem_cornersharp_id}
-				selected={corner() == corner_sharp}
-				icon_code={0xEA99}>
+				c_selected={corner() == corner_sharp}
+				c_icon_code={0xEA99}>
 				Sharp
 			</MenuItem>
 			<MenuItem
 				id={menuitem_cornersemiround_id}
-				selected={corner() == corner_semiround}
-				icon_code={0xEEF7}>
+				c_selected={corner() == corner_semiround}
+				c_icon_code={0xEEF7}>
 				Semi round
 			</MenuItem>
 			<MenuItem
 				id={menuitem_cornerround_id}
-				selected={corner() == corner_round}
-				icon_code={0xF044}>
+				c_selected={corner() == corner_round}
+				c_icon_code={0xF044}>
 				Round
 			</MenuItem>
 			<MenuItem
 				id={menuitem_cornerfullround_id}
-				selected={corner() == corner_fullround}
-				icon_code={0xE408}>
+				c_selected={corner() == corner_fullround}
+				c_icon_code={0xE408}>
 				Full round
 			</MenuItem>
 			<MenuDivider/>
 			<MenuHeader>Accent color</MenuHeader>
 			<MenuItem
-				focused={is_colorpicker_open()}
+				c_focused={is_colorpicker_open()}
 				id={menuitem_accent_id}
-				leading={<Icon style={{color: color()}} filled code={0xE408}/>}>
+				c_leading={<Icon style={{color: color()}} c_filled c_code={0xE408}/>}>
 				{color()}
 			</MenuItem>
 		</Menu>
 		<PopoverColorPicker
-			disabled_opacity_control
-			disabled_action
-			draggable
-			on_update_color={v => change_color(v)}
+			c_disabled_opacity_control
+			c_disabled_action
+			c_draggable
+			c_on_update_color={v => change_color(v)}
 			ref={r => colorpicker_ref = r}
-			on_toggle_open={(v) => set_is_colorpicker_open(v)}
+			c_on_toggleopen={(v) => set_is_colorpicker_open(v)}
 		/>
 	</>)
 }

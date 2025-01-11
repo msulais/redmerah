@@ -21,49 +21,49 @@ import './index.scss'
 const SUBMENU_CLASSNAME = 'c-submenu'
 
 type MenuItemTrailingShortcutProps = JSX.HTMLAttributes<HTMLDivElement> & {
-	shortcuts: string[]
+	c_shortcuts: string[]
 }
 const MenuItemTrailingShortcut: VoidComponent<MenuItemTrailingShortcutProps> = ($props) => {
-	const [props, other] = splitProps($props, ['shortcuts'])
+	const [props, other] = splitProps($props, ['c_shortcuts'])
 	return (<div class="c-menu-item-trailing-shortcut" {...other}>
-		<For each={props.shortcuts}>{s => <kbd>{s}</kbd>}</For>
+		<For each={props.c_shortcuts}>{s => <kbd>{s}</kbd>}</For>
 	</div>)
 }
 
 type MenuItemProps = ButtonProps & {
-	leading?: JSX.Element
-	trailing?: JSX.Element
-	checked?: boolean
-	icon_code?: number
+	c_leading?: JSX.Element
+	c_trailing?: JSX.Element
+	c_checked?: boolean
+	c_icon_code?: number
 }
 const MenuItem: ParentComponent<MenuItemProps> = ($props) => {
 	const [props, other] = splitProps($props, [
-		'checked', 'leading', 'children', 'trailing',
-		'classList', 'icon_code', 'variant',
-		'indicator_position'
+		'c_checked', 'c_leading', 'children', 'c_trailing',
+		'classList', 'c_icon_code', 'c_variant',
+		'c_indicator_position'
 	])
-	const trailing = children(() => props.trailing)
+	const trailing = children(() => props.c_trailing)
 
 	return (<Button
-		variant={props.variant ?? (other.selected? ButtonVariant.tonal : props.variant)}
-		indicator_position={props.indicator_position ?? ButtonIndicatorPosition.left}
+		c_variant={props.c_variant ?? (other.c_selected? ButtonVariant.tonal : props.c_variant)}
+		c_indicator_position={props.c_indicator_position ?? ButtonIndicatorPosition.left}
 		classList={{'c-menu-item': true, ...props.classList}}
 		{...other}>
-		<Show when={object_has_value(props.checked)}>
+		<Show when={object_has_value(props.c_checked)}>
 			<Icon
 				style={{color: `rgb(${AppColors.accent})`}}
-				filled={props.checked}
-				code={props.checked? 0xE3CC : 0xE3D4}
+				c_filled={props.c_checked}
+				c_code={props.c_checked? 0xE3CC : 0xE3D4}
 			/>
 		</Show>
-		<Show when={props.icon_code != null}>
+		<Show when={props.c_icon_code != null}>
 			<Icon
-				style={{color: other.selected? `rgb(${AppColors.accent})` : undefined}}
-				filled={other.selected}
-				code={props.icon_code!}
+				style={{color: other.c_selected? `rgb(${AppColors.accent})` : undefined}}
+				c_filled={other.c_selected}
+				c_code={props.c_icon_code!}
 			/>
 		</Show>
-		{ props.leading }
+		{ props.c_leading }
 		{ props.children }
 		<Show when={trailing()}>
 			<div style="flex:1"/>
@@ -74,50 +74,50 @@ const MenuItem: ParentComponent<MenuItemProps> = ($props) => {
 
 type SubMenuItemProps = MenuItemProps
 const SubMenuItem: ParentComponent<SubMenuItemProps> = ($props) => {
-	const [props, other] = splitProps($props, ['trailing'])
+	const [props, other] = splitProps($props, ['c_trailing'])
 	return (<MenuItem
-		trailing={<>
-			{props.trailing}
-			<Icon code={0xE402}/>
+		c_trailing={<>
+			{props.c_trailing}
+			<Icon c_code={0xE402}/>
 		</>}
 		{...other}
 	/>)
 }
 
 type LinkMenuItemProps = LinkButtonProps & {
-	leading?: JSX.Element
-	trailing?: JSX.Element
-	checked?: boolean
-	icon_code?: number
+	c_leading?: JSX.Element
+	c_trailing?: JSX.Element
+	c_checked?: boolean
+	c_icon_code?: number
 }
 const LinkMenuItem: ParentComponent<LinkMenuItemProps> = ($props) => {
 	const [props, other] = splitProps($props, [
-		'checked', 'leading', 'children', 'trailing',
-		'classList', 'icon_code', 'variant',
-		'indicator_position'
+		'c_checked', 'c_leading', 'children', 'c_trailing',
+		'classList', 'c_icon_code', 'c_variant',
+		'c_indicator_position'
 	])
-	const trailing = children(() => props.trailing)
+	const trailing = children(() => props.c_trailing)
 
 	return (<LinkButton
-		variant={props.variant ?? (other.selected? ButtonVariant.tonal : props.variant)}
-		indicator_position={props.indicator_position ?? ButtonIndicatorPosition.left}
+		c_variant={props.c_variant ?? (other.c_selected? ButtonVariant.tonal : props.c_variant)}
+		c_indicator_position={props.c_indicator_position ?? ButtonIndicatorPosition.left}
 		classList={{'c-menu-item': true, ...props.classList}}
 		{...other}>
-		<Show when={object_has_value(props.checked)}>
+		<Show when={object_has_value(props.c_checked)}>
 			<Icon
-				style={{color: props.checked? `rgb(${AppColors.accent})` : undefined}}
-				filled={props.checked}
-				code={props.checked? 0xE3CC : 0xE3D4}
+				style={{color: props.c_checked? `rgb(${AppColors.accent})` : undefined}}
+				c_filled={props.c_checked}
+				c_code={props.c_checked? 0xE3CC : 0xE3D4}
 			/>
 		</Show>
-		<Show when={props.icon_code != null}>
+		<Show when={props.c_icon_code != null}>
 			<Icon
-				style={{color: other.selected? `rgb(${AppColors.accent})` : undefined}}
-				filled={other.selected}
-				code={props.icon_code!}
+				style={{color: other.c_selected? `rgb(${AppColors.accent})` : undefined}}
+				c_filled={other.c_selected}
+				c_code={props.c_icon_code!}
 			/>
 		</Show>
-		{ props.leading }
+		{ props.c_leading }
 		{ props.children }
 		<Show when={trailing()}>
 			<div style="flex:1"/>
@@ -141,37 +141,37 @@ const MenuHeader: ParentComponent<JSX.HTMLAttributes<HTMLDivElement>> = ($props)
 }
 
 type SwitchMenuItemProps = Omit<JSX.LabelHTMLAttributes<HTMLLabelElement>, 'for'> & {
-	variant?: ButtonVariant
-	focused?: boolean
-	leading?: JSX.Element
-	trailing?: JSX.Element
-	icon_code?: number
-	checked?: boolean
-	disabled?: boolean
-	attr_switch?: Omit<RawSwitchProps, 'children'>
+	c_variant?: ButtonVariant
+	c_focused?: boolean
+	c_leading?: JSX.Element
+	c_trailing?: JSX.Element
+	c_icon_code?: number
+	c_checked?: boolean
+	c_disabled?: boolean
+	c_attr_switch?: Omit<RawSwitchProps, 'children'>
 }
 const SwitchMenuItem: ParentComponent<SwitchMenuItemProps> = ($props) => {
 	const [props, other] = splitProps(
 		mergeProps({
-			variant: ButtonVariant.transparent,
-			indicator_position: ButtonIndicatorPosition.left
+			c_variant: ButtonVariant.transparent,
+			c_indicator_position: ButtonIndicatorPosition.left
 		}, $props),
 		[
-			'children', 'variant', 'focused',
-			'classList', 'class', 'leading',
-			'trailing', 'icon_code', 'attr_switch',
-			'checked', 'disabled'
+			'children', 'c_variant', 'c_focused',
+			'classList', 'class', 'c_leading',
+			'c_trailing', 'c_icon_code', 'c_attr_switch',
+			'c_checked', 'c_disabled'
 		]
 	)
 	const [switch_props, switch_props_other] = splitProps(
-		mergeProps({component: 'div', id: createUniqueId()}, props.attr_switch! ?? {}),
-		['checked', 'disabled', 'id', 'attr_wrapper']
+		mergeProps({component: 'div', id: createUniqueId()}, props.c_attr_switch! ?? {}),
+		['checked', 'disabled', 'id', 'c_attr_wrapper']
 	)
-	const variant = createMemo(() => props.variant)
+	const variant = createMemo(() => props.c_variant)
 
 	return (<label
 		class={classlist('c-btn', 'c-menu-item', 'c-switch-menu-item', props.class)}
-		data-c-disabled={attr_set_if_exist(props.disabled)}
+		data-c-disabled={attr_set_if_exist(props.c_disabled)}
 		for={switch_props.id}
 		classList={{
 			'c-filled-btn': variant() == ButtonVariant.filled,
@@ -179,19 +179,19 @@ const SwitchMenuItem: ParentComponent<SwitchMenuItemProps> = ($props) => {
 			'c-outlined-btn': variant() == ButtonVariant.outlined,
 			...props.classList
 		}}
-		data-c-focused={attr_set_if_exist(props.focused)}
+		data-c-focused={attr_set_if_exist(props.c_focused)}
 		{...other}>
-		{ props.leading }
-		<Show when={props.icon_code != null}>
-			<Icon code={props.icon_code!}/>
+		{ props.c_leading }
+		<Show when={props.c_icon_code != null}>
+			<Icon c_code={props.c_icon_code!}/>
 		</Show>
 		{ props.children }
 		<div style="flex:1" />
-		{ props.trailing }
+		{ props.c_trailing }
 		<RawSwitch
-			attr_wrapper={mergeProps({'data-g-no-outline': ''}, switch_props.attr_wrapper) as any}
-			disabled={switch_props.disabled ?? props.disabled}
-			checked={switch_props.checked ?? props.checked}
+			c_attr_wrapper={mergeProps({'data-g-no-outline': ''}, switch_props.c_attr_wrapper) as any}
+			disabled={switch_props.disabled ?? props.c_disabled}
+			checked={switch_props.checked ?? props.c_checked}
 			id={switch_props.id}
 			{...switch_props_other}
 		/>
@@ -199,29 +199,24 @@ const SwitchMenuItem: ParentComponent<SwitchMenuItemProps> = ($props) => {
 }
 
 type SubMenuProps = PopoverProps & {
-	item: JSX.Element
-	gap?: number
-	position?: SubMenuPosition
-	padding?: number
-	draggable?: boolean
-	allow_hide_anchor?: boolean
-	attr_wrapper?: Omit<JSX.HTMLAttributes<HTMLDivElement>, 'children'>
-	children_auto_tabindex?: boolean
+	c_item: JSX.Element
+	c_attr_wrapper?: Omit<JSX.HTMLAttributes<HTMLDivElement>, 'children'>
+	c_children_auto_tabindex?: boolean
 }
 
 // TODO: improvise close or open of submenu
 const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 	const $$props = mergeProps({
-		children_auto_tabindex: true
+		c_children_auto_tabindex: true
 	}, $props)
 	const [props, other] = splitProps($$props, [
-		'classList', 'item', 'attr_wrapper',
-		'id', 'ref', 'gap', 'position',
-		'padding', 'draggable', 'allow_hide_anchor',
-		'on_toggle_open', 'children', 'on_before_close',
-		'use_portal', 'children_auto_tabindex'
+		'classList', 'c_item', 'c_attr_wrapper',
+		'id', 'ref', 'c_gap', 'c_position',
+		'c_padding', 'c_draggable', 'c_allow_hide_anchor',
+		'c_on_toggleopen', 'children', 'c_on_beforeclose',
+		'c_use_portal', 'c_children_auto_tabindex'
 	])
-	const [wrapper_props, wrapper_props_other] = splitProps(props.attr_wrapper ?? {}, [
+	const [wrapper_props, wrapper_props_other] = splitProps(props.c_attr_wrapper ?? {}, [
 		'class', 'onClick','onPointerEnter',
 		'onPointerLeave', 'ref'
 	])
@@ -266,11 +261,11 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 
 		open_popover(ev, popover_ref, {
 			anchor: first_child,
-			position: props.position ?? SubMenuPosition.right_center_to_bottom,
-			gap: props.gap ?? -8,
-			padding: props.padding ?? 5,
-			draggable: props.draggable,
-			allow_hide_anchor: props.allow_hide_anchor,
+			position: props.c_position ?? SubMenuPosition.right_center_to_bottom,
+			gap: props.c_gap ?? -8,
+			padding: props.c_padding ?? 5,
+			draggable: props.c_draggable,
+			allow_hide_anchor: props.c_allow_hide_anchor,
 			manual_dismiss: true
 		})
 	}
@@ -300,16 +295,16 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 			event_call(ev, wrapper_props.onPointerLeave)
 		}}
 		{...wrapper_props_other}>
-		{props.item}
+		{props.c_item}
 		<Popover
-			use_portal={false}
-			on_toggle_open={$is_open => {
+			c_use_portal={false}
+			c_on_toggleopen={$is_open => {
 				is_open = $is_open
-				props.on_toggle_open?.($is_open)
+				props.c_on_toggleopen?.($is_open)
 			}}
-			on_before_close={() => {
+			c_on_beforeclose={() => {
 				close_submenu_descendant()
-				props.on_before_close?.()
+				props.c_on_beforeclose?.()
 			}}
 			ref={mergeRefs(props.ref, r => popover_ref = r)}
 			classList={{
@@ -317,8 +312,8 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 				...props.classList
 			}}
 			{...other}>
-			<Show when={props.children_auto_tabindex} fallback={content()}>
-				<FocusableGroup arrow_options={{
+			<Show when={props.c_children_auto_tabindex} fallback={content()}>
+				<FocusableGroup c_arrow_options={{
 					up: 'prev',
 					down: 'next'
 				}}
@@ -334,16 +329,16 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 }
 
 type MenuProps = ModalProps & {
-	children_auto_tabindex?: boolean
+	c_children_auto_tabindex?: boolean
 }
 const Menu: ParentComponent<MenuProps> = ($props) => {
 	const $$props = mergeProps({
-		children_auto_tabindex: true
+		c_children_auto_tabindex: true
 	}, $props)
 	const [props, other] = splitProps($$props, [
-		'classList', 'gap', 'padding', 'content_auto_focus',
-		'on_before_close', 'ref', 'children',
-		'children_auto_tabindex'
+		'classList', 'c_gap', 'c_padding', 'c_content_auto_focus',
+		'c_on_beforeclose', 'ref', 'children',
+		'c_children_auto_tabindex'
 	])
 	const content = children(() => props.children)
 	let menu_ref: HTMLDialogElement
@@ -361,16 +356,16 @@ const Menu: ParentComponent<MenuProps> = ($props) => {
 			'c-menu': true,
 			...props.classList
 		}}
-		on_before_close={() => {
+		c_on_beforeclose={() => {
 			close_submenu_descendant()
-			props.on_before_close?.()
+			props.c_on_beforeclose?.()
 		}}
-		content_auto_focus={props.content_auto_focus ?? true}
-		gap={props.gap ?? 8}
-		padding={props.padding ?? 4}
+		c_content_auto_focus={props.c_content_auto_focus ?? true}
+		c_gap={props.c_gap ?? 8}
+		c_padding={props.c_padding ?? 4}
 		{...other}>
-		<Show when={props.children_auto_tabindex} fallback={content()}>
-			<FocusableGroup arrow_options={{
+		<Show when={props.c_children_auto_tabindex} fallback={content()}>
+			<FocusableGroup c_arrow_options={{
 				up: 'prev',
 				down: 'next'
 			}}
@@ -385,15 +380,15 @@ const Menu: ParentComponent<MenuProps> = ($props) => {
 }
 
 type PopoverMenuProps = PopoverProps & {
-	children_auto_tabindex?: boolean
+	c_children_auto_tabindex?: boolean
 }
 const PopoverMenu: ParentComponent<PopoverMenuProps> = ($props) => {
 	const $$props = mergeProps({
-		children_auto_tabindex: true
+		c_children_auto_tabindex: true
 	}, $props)
 	const [props, other] = splitProps($$props, [
-		'classList', 'gap', 'padding', 'children',
-		'on_before_close', 'ref', 'children_auto_tabindex'
+		'classList', 'c_gap', 'c_padding', 'children',
+		'c_on_beforeclose', 'ref', 'c_children_auto_tabindex'
 	])
 	const content = children(() => props.children)
 	let menu_ref: HTMLDivElement
@@ -411,15 +406,15 @@ const PopoverMenu: ParentComponent<PopoverMenuProps> = ($props) => {
 			'c-menu': true,
 			...props.classList
 		}}
-		on_before_close={() => {
+		c_on_beforeclose={() => {
 			close_submenu_descendant()
-			props.on_before_close?.()
+			props.c_on_beforeclose?.()
 		}}
-		gap={props.gap ?? 8}
-		padding={props.padding ?? 4}
+		c_gap={props.c_gap ?? 8}
+		c_padding={props.c_padding ?? 4}
 		{...other}>
-		<Show when={props.children_auto_tabindex} fallback={content()}>
-			<FocusableGroup arrow_options={{
+		<Show when={props.c_children_auto_tabindex} fallback={content()}>
+			<FocusableGroup c_arrow_options={{
 				up: 'prev',
 				down: 'next'
 			}}

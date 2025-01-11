@@ -117,64 +117,64 @@ const _: VoidComponent<{
 	const Menus: VoidComponent = () => (<>
 		<Menu
 			ref={r => menu_settings_ref = r}
-			on_toggle_open={(v) => set_is_menu_settings_open(v)}
+			c_on_toggleopen={(v) => set_is_menu_settings_open(v)}
 			style={{"min-width": '200px'}}>
 			<SubMenu
 				ref={r => submenu_themesettings_ref = r}
-				on_toggle_open={v => set_is_submenu_themesettings_open(v)}
-				item={<SubMenuItem
-					focused={is_submenu_themesettings_open()}
-					icon_code={0xE28A}>
+				c_on_toggleopen={v => set_is_submenu_themesettings_open(v)}
+				c_item={<SubMenuItem
+					c_focused={is_submenu_themesettings_open()}
+					c_icon_code={0xE28A}>
 					Theme
 				</SubMenuItem>}>
 				<MenuItem
-					selected={theme() == theme_light}
-					icon_code={0xF2CD}
+					c_selected={theme() == theme_light}
+					c_icon_code={0xF2CD}
 					onClick={() => change_theme(theme_light)}>
 					Light
 				</MenuItem>
 				<MenuItem
-					selected={theme() == theme_dark}
-					icon_code={0xF2B3}
+					c_selected={theme() == theme_dark}
+					c_icon_code={0xF2B3}
 					onClick={() => change_theme(theme_dark)}>
 					Dark
 				</MenuItem>
 				<MenuItem
-					selected={theme() == theme_system}
-					icon_code={0xE96D}
+					c_selected={theme() == theme_system}
+					c_icon_code={0xE96D}
 					onClick={() => change_theme(theme_system)}>
 					System theme
 				</MenuItem>
 			</SubMenu>
 			<SubMenu
 				ref={r => submenu_cornersettings_ref = r}
-				on_toggle_open={v => set_is_submenu_cornersettings_open(v)}
-				item={<SubMenuItem
-					focused={is_submenu_cornersettings_open()}
-					icon_code={0xF044}>
+				c_on_toggleopen={v => set_is_submenu_cornersettings_open(v)}
+				c_item={<SubMenuItem
+					c_focused={is_submenu_cornersettings_open()}
+					c_icon_code={0xF044}>
 					Corner style
 				</SubMenuItem>}>
 				<MenuItem
-					selected={corner() == corner_sharp}
-					icon_code={0xEA99}
+					c_selected={corner() == corner_sharp}
+					c_icon_code={0xEA99}
 					onClick={() => change_corner(corner_sharp)}>
 					Sharp
 				</MenuItem>
 				<MenuItem
-					selected={corner() == corner_semiround}
-					icon_code={0xEEF7}
+					c_selected={corner() == corner_semiround}
+					c_icon_code={0xEEF7}
 					onClick={() => change_corner(corner_semiround)}>
 					Semi round
 				</MenuItem>
 				<MenuItem
-					selected={corner() == corner_round}
-					icon_code={0xF044}
+					c_selected={corner() == corner_round}
+					c_icon_code={0xF044}
 					onClick={() => change_corner(corner_round)}>
 					Round
 				</MenuItem>
 				<MenuItem
-					selected={corner() == corner_fullround}
-					icon_code={0xE408}
+					c_selected={corner() == corner_fullround}
+					c_icon_code={0xE408}
 					onClick={() => change_corner(corner_fullround)}>
 					Full round
 				</MenuItem>
@@ -183,32 +183,32 @@ const _: VoidComponent<{
 			<LinkMenuItem
 				onClick={() => close_menu(menu_settings_ref)}
 				href={RoutesLinks.home}
-				leading={<img src={logo_redmerah.src} width={16} alt='Redmerah logo'/>}>
+				c_leading={<img src={logo_redmerah.src} width={16} alt='Redmerah logo'/>}>
 				Redmerah
 			</LinkMenuItem>
 			<LinkMenuItem
 				onClick={() => close_menu(menu_settings_ref)}
 				href={RoutesLinks.apps}
-				icon_code={0xE063}>
+				c_icon_code={0xE063}>
 				More apps
 			</LinkMenuItem>
 			<LinkMenuItem
 				onClick={() => close_menu(menu_settings_ref)}
 				href={RoutesLinks.about}
-				icon_code={0xE930}>
+				c_icon_code={0xE930}>
 				About us
 			</LinkMenuItem>
 			<MenuDivider />
 			<LinkMenuItem
 				onClick={() => close_menu(menu_settings_ref)}
 				href={RoutesLinks.privacy}
-				icon_code={0xEE51}>
+				c_icon_code={0xEE51}>
 				Privacy policy
 			</LinkMenuItem>
 			<LinkMenuItem
 				onClick={() => close_menu(menu_settings_ref)}
 				href={RoutesLinks.terms}
-				icon_code={0xED47}>
+				c_icon_code={0xED47}>
 				Terms & conditions
 			</LinkMenuItem>
 			<MenuDivider/>
@@ -217,20 +217,20 @@ const _: VoidComponent<{
 					navigator_share({text: 'Color Generator', title: 'Color Generator', url: document.URL})
 					close_menu(menu_settings_ref)
 				}}
-				icon_code={0xEE23}>
+				c_icon_code={0xEE23}>
 				Share
 			</MenuItem>
 			<LinkMenuItem
 				onClick={() => close_menu(menu_settings_ref)}
 				href={'mailto:' + ExternalLinks.contact_email + '?subject=' + url_encode('Color Generator')}
-				icon_code={0xE3A0}>
+				c_icon_code={0xE3A0}>
 				Send feedback
 			</LinkMenuItem>
 			<LinkMenuItem
 				onClick={() => close_menu(menu_settings_ref)}
 				href={ExternalLinks.donate}
-				open_in_new_tab
-				icon_code={0xE84B}>
+				c_new_tab
+				c_icon_code={0xE84B}>
 				Donate
 			</LinkMenuItem>
 			<MenuHeader>&copy; {date_year()} Redmerah</MenuHeader>
@@ -240,22 +240,22 @@ const _: VoidComponent<{
 	return (<>
 		<Tooltip>
 			<AppBar
-				leading={<>
+				c_leading={<>
 					<Show when={array_length(props.palette_list) > 0}>
 						<IconButton
 							data-tooltip="Color list"
 							onClick={(ev) => open_dialog(ev, props.dialog_colorlist_ref)}
-							code={0xF098}
+							c_code={0xF098}
 						/>
 					</Show>
 					<img width={32} src={logo.src} alt="Color generator logo" />
 				</>}
-				headline="Color Generator"
-				trailing={<>
+				c_headline="Color Generator"
+				c_trailing={<>
 					<Button
 						data-tooltip="Select color"
 						classList={classlist_module(CSS.appbar_select_color)}
-						variant={ButtonVariant.filled}
+						c_variant={ButtonVariant.filled}
 						onClick={(ev) => open_colorpicker(ev, props.colorpicker_ref, {anchor: event_current_target(ev)})}>
 						{props.seed}
 					</Button>
@@ -269,19 +269,19 @@ const _: VoidComponent<{
 							props.on_add_color()
 							set_timeout_id(timeout_set(() => set_timeout_id(null), 1000))
 						}}
-						code={timeout_id()? 0xE3D8 : 0xF08A}
+						c_code={timeout_id()? 0xE3D8 : 0xF08A}
 					/>
 					<IconButton
 						data-tooltip="Copy all"
 						onClick={() => copy_all()}
-						code={timeout_copy_id()? 0xE3D8 : 0xE51B}
+						c_code={timeout_copy_id()? 0xE3D8 : 0xE51B}
 					/>
 					<IconButton
 						data-tooltip="Open settings"
 						classList={classlist_module(CSSAnimation.btn_rotate_icon)}
-						focused={is_menu_settings_open()}
+						c_focused={is_menu_settings_open()}
 						onClick={ev => open_menu(ev, menu_settings_ref, { anchor: event_current_target(ev) })}
-						code={0xEE0F}
+						c_code={0xEE0F}
 					/>
 				</>}
 			/>

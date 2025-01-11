@@ -201,55 +201,55 @@ const _: VoidComponent<{
 				}}
 				style={{width: '200px'}}
 				ref={r => menu_info_ref = r}
-				on_toggle_open={(v) => set_is_menu_info_open(v)}>
+				c_on_toggleopen={(v) => set_is_menu_info_open(v)}>
 				<LinkMenuItem
 					href={RoutesLinks.home}
-					leading={<img src={redmerah_logo.src} width={16} alt='Redmerah logo'/>}>
+					c_leading={<img src={redmerah_logo.src} width={16} alt='Redmerah logo'/>}>
 					Redmerah
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={RoutesLinks.apps}
-					icon_code={0xE063}>
+					c_icon_code={0xE063}>
 					More apps
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={RoutesLinks.about}
-					icon_code={0xE930}>
+					c_icon_code={0xE930}>
 					About us
 				</LinkMenuItem>
 				<MenuDivider />
 				<LinkMenuItem
 					href={RoutesLinks.privacy}
-					icon_code={0xEE51}>
+					c_icon_code={0xEE51}>
 					Privacy policy
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={RoutesLinks.terms}
-					icon_code={0xED47}>
+					c_icon_code={0xED47}>
 					Terms & conditions
 				</LinkMenuItem>
 				<MenuDivider />
 				<MenuItem
 					id={button_more_share_id}
-					icon_code={0xEE23}>
+					c_icon_code={0xEE23}>
 					Share
 				</MenuItem>
 				<LinkMenuItem
 					href={'mailto:' + ExternalLinks.contact_email + '?subject=' + url_encode('Tasks')}
-					icon_code={0xE3A0}>
+					c_icon_code={0xE3A0}>
 					Send feedback
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={ExternalLinks.donate}
-					open_in_new_tab
-					icon_code={0xE84B}>
+					c_new_tab
+					c_icon_code={0xE84B}>
 					Donate
 				</LinkMenuItem>
 				<MenuHeader>&copy; {date_year(new Date())} Redmerah</MenuHeader>
 			</Menu>
 			<Menu
 				ref={r => menu_settings_ref = r}
-				on_toggle_open={(v) => set_is_menu_settings_open(v)}
+				c_on_toggleopen={(v) => set_is_menu_settings_open(v)}
 				onClick={ev => {
 					const button = document_active()!
 					if (!element_valid_target(
@@ -290,67 +290,67 @@ const _: VoidComponent<{
 				}}>
 				<SubMenu
 					ref={r => submenu_themesettings_ref = r}
-					on_toggle_open={v => set_is_submenu_themesettings_open(v)}
-					item={<SubMenuItem
-						focused={is_submenu_themesettings_open()}
-						icon_code={0xE28A}>
+					c_on_toggleopen={v => set_is_submenu_themesettings_open(v)}
+					c_item={<SubMenuItem
+						c_focused={is_submenu_themesettings_open()}
+						c_icon_code={0xE28A}>
 						Theme
 					</SubMenuItem>}>
 					<MenuItem
-						selected={theme() == theme_light}
-						icon_code={0xF2CD}
+						c_selected={theme() == theme_light}
+						c_icon_code={0xF2CD}
 						data-theme={theme_light}>
 						Light
 					</MenuItem>
 					<MenuItem
-						selected={theme() == theme_dark}
-						icon_code={0xF2B3}
+						c_selected={theme() == theme_dark}
+						c_icon_code={0xF2B3}
 						data-theme={theme_dark}>
 						Dark
 					</MenuItem>
 					<MenuItem
-						selected={theme() == theme_system}
-						icon_code={0xE96D}
+						c_selected={theme() == theme_system}
+						c_icon_code={0xE96D}
 						data-theme={theme_system}>
 						System theme
 					</MenuItem>
 				</SubMenu>
 				<SubMenu
 					ref={r => submenu_cornersettings_ref = r}
-					on_toggle_open={v => set_is_submenu_cornersettings_open(v)}
-					item={<SubMenuItem
-						focused={is_submenu_cornersettings_open()}
-						icon_code={0xF044}>
+					c_on_toggleopen={v => set_is_submenu_cornersettings_open(v)}
+					c_item={<SubMenuItem
+						c_focused={is_submenu_cornersettings_open()}
+						c_icon_code={0xF044}>
 						Corner style
 					</SubMenuItem>}>
 					<MenuItem
-						selected={corner() == corner_sharp}
-						icon_code={0xEA99}
+						c_selected={corner() == corner_sharp}
+						c_icon_code={0xEA99}
 						data-corner={corner_sharp}>
 						Sharp
 					</MenuItem>
 					<MenuItem
-						selected={corner() == corner_semiround}
-						icon_code={0xEEF7}
+						c_selected={corner() == corner_semiround}
+						c_icon_code={0xEEF7}
 						data-corner={corner_semiround}>
 						Semi round
 					</MenuItem>
 					<MenuItem
-						selected={corner() == corner_round}
-						icon_code={0xF044}
+						c_selected={corner() == corner_round}
+						c_icon_code={0xF044}
 						data-corner={corner_round}>
 						Round
 					</MenuItem>
 					<MenuItem
-						selected={corner() == corner_fullround}
-						icon_code={0xE408}
+						c_selected={corner() == corner_fullround}
+						c_icon_code={0xE408}
 						data-corner={corner_fullround}>
 						Full round
 					</MenuItem>
 				</SubMenu>
 				<MenuItem
 					id={button_settings_label_id}
-					icon_code={0xF00D}>
+					c_icon_code={0xF00D}>
 					Labels
 				</MenuItem>
 				<MenuDivider />
@@ -358,16 +358,16 @@ const _: VoidComponent<{
 				<For each={array_slice(TASKS_PAGES, 1)}>{(page, i) =>
 					<MenuItem
 						data-page-index={i()}
-						checked={!array_includes(settings().hidden_navigation, page.type)}>
+						c_checked={!array_includes(settings().hidden_navigation, page.type)}>
 						{page.text}
 					</MenuItem>
 				}</For>
 				<MenuDivider />
 				<MenuHeader>Dialog warning</MenuHeader>
 				<MenuItem
-					checked={settings().is_show_deletetaskwarning}
+					c_checked={settings().is_show_deletetaskwarning}
 					id={button_settings_deletetaskwarning_id}
-					trailing={<MenuIndent />}>
+					c_trailing={<MenuIndent />}>
 					Show delete task warning
 				</MenuItem>
 			</Menu>
@@ -409,7 +409,7 @@ const _: VoidComponent<{
 							break
 					}
 				}}
-				leading={<>
+				c_leading={<>
 					<IconButton
 						data-tooltip={is_side_navigation_hidden()
 							? "Open navigation"
@@ -417,40 +417,40 @@ const _: VoidComponent<{
 						}
 						id={button_appbar_menulist_id}
 						classList={classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
-						code={0xEAFF}
+						c_code={0xEAFF}
 					/>
 					<img alt="Tasks logo" width={32} src={logo.src} />
 				</>}
-				headline="Tasks"
-				trailing={<>
+				c_headline="Tasks"
+				c_trailing={<>
 					<IconButton
 						data-tooltip="Search tasks"
 						id={button_appbar_search_id}
 						classList={classlist_module(CSS.appbar_search_btn)}
-						code={0xEDDF}
+						c_code={0xEDDF}
 					/>
 					<IconButton
 						data-tooltip="Info"
 						id={button_appbar_menuinfo_id}
-						focused={is_menu_info_open()}
-						code={0xE930}
+						c_focused={is_menu_info_open()}
+						c_code={0xE930}
 					/>
 					<IconButton
 						data-tooltip="Settings"
 						id={button_appbar_menusettings_id}
 						classList={classlist_module(CSSAnimation.btn_rotate_icon)}
-						focused={is_menu_settings_open()}
-						code={0xEE0F}
+						c_focused={is_menu_settings_open()}
+						c_code={0xEE0F}
 					/>
 				</>}>
 				<div class={CSS.appbar_search}>
 					<SearchTextField
 						placeholder="Search tasks"
 						ref={r => searchtextfield_ref = r}
-						leading={<Icon code={0xEDDF}/>}
-						attr_menu={{
+						c_leading={<Icon c_code={0xEDDF}/>}
+						c_attr_menu={{
 							ref: r => searchtextfield_menu_ref = r,
-							on_toggle_open: is_open => is_searchtextfield_menu_open = is_open,
+							c_on_toggleopen: is_open => is_searchtextfield_menu_open = is_open,
 							onClick: async (ev) => {
 								const button = document_active()!
 								if (!element_valid_target(
@@ -477,12 +477,12 @@ const _: VoidComponent<{
 								)
 							}
 						}}
-						result={<For each={get_search_result()}>{(list, i) => <>
+						c_result={<For each={get_search_result()}>{(list, i) => <>
 							<Show when={i() > 0}><SearchMenuDivider /></Show>
 							<SearchMenuHeader>{list.name}</SearchMenuHeader>
 							<For each={list.tasks}>{task =>
 								<SearchMenuItem
-									checked={task.complete}
+									c_checked={task.complete}
 									data-list-id={list.id}>
 									{task.name}
 								</SearchMenuItem>
@@ -498,7 +498,7 @@ const _: VoidComponent<{
 							}, 1000)
 						}}
 						onFocus={() => command(Commands.get_all_task)}
-						trailing={<Show when={is_side_navigation_hidden() && is_searching()}>
+						c_trailing={<Show when={is_side_navigation_hidden() && is_searching()}>
 							<SearchTextFieldButton
 								data-tooltip="Close search"
 								onClick={async () => {
@@ -509,7 +509,7 @@ const _: VoidComponent<{
 									}
 									set_is_searching(false)
 								}}>
-								<Icon code={0xE5E9}/>
+								<Icon c_code={0xE5E9}/>
 							</SearchTextFieldButton>
 						</Show>}
 					/>
@@ -561,24 +561,24 @@ const _: VoidComponent<{
 						}
 				}
 			}}
-			header={<Tooltip>
+			c_header={<Tooltip>
 				<IconButton
 					id={button_drawer_close_id}
 					data-tooltip="Close navigation"
 					classList={classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
-					code={0xEAFF}
+					c_code={0xEAFF}
 				/>
 			</Tooltip>}
-			footer={<DrawerItem
-				leading={<Icon code={0xE007}/>}
+			c_footer={<DrawerItem
+				c_leading={<Icon c_code={0xE007}/>}
 				id={button_drawer_newlist_id}>
 				New list
 			</DrawerItem>}
 			ref={r => drawer_navigation_ref = r}>
 			<For each={array_filter(TASKS_PAGES, page => !array_includes(settings().hidden_navigation, page.type))}>{p =>
 				<DrawerItem
-					icon_code={p.icon}
-					selected={props.page == p.type}
+					c_icon_code={p.icon}
+					c_selected={props.page == p.type}
 					data-page={p.type}>
 					{p.text}
 				</DrawerItem>
@@ -586,8 +586,8 @@ const _: VoidComponent<{
 			<Show when={array_length(tasklists()) - 1 > 0}><Divider /></Show>
 			<For each={array_filter(tasklists(), v => v.id != DEFAULT_TASK_LIST.id)}>{p =>
 				<DrawerItem
-					leading={<Show when={p.emoji != null}><Emoji emoji={p.emoji!} /></Show>}
-					selected={props.page == p.id}
+					c_leading={<Show when={p.emoji != null}><Emoji c_emoji={p.emoji!} /></Show>}
+					c_selected={props.page == p.id}
 					data-list-id={p.id}>
 					{p.name}
 				</DrawerItem>

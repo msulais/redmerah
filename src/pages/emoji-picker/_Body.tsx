@@ -63,107 +63,107 @@ const _: VoidComponent<{
 		}}>
 		<div class={CSS.body_textfield}>
 			<TextField
-				label="Emoji"
-				auto_show_clear_button
+				c_label="Emoji"
+				c_auto_show_clear_button
 				value={props.text}
 				onInput={ev => props.command(Commands.update_text, event_current_target(ev).value)}
 				ref={r => textfield_ref = r}
-				trailing={<TextFieldButton
+				c_trailing={<TextFieldButton
 					id={button_copy_id}
 					data-tooltip={timeout_copy_id() != null? 'Copied' : "Copy"}>
-					<Icon code={timeout_copy_id() != null? 0xE3D8 : 0xE51B}/>
+					<Icon c_code={timeout_copy_id() != null? 0xE3D8 : 0xE51B}/>
 				</TextFieldButton>}
 			/>
 		</div>
 		<Tooltip>
 			<Expander
 				open
-				header={<ExpanderHeader>Smiley & emotion</ExpanderHeader>}>
+				c_header={<ExpanderHeader>Smiley & emotion</ExpanderHeader>}>
 				<For each={smiley_and_emotion_emojis}>{emoji =>
 					<Button
 						data-tooltip={emoji[1]}
 						data-emoji={emoji[0]}>
-						<Emoji emoji={emoji[0]}/>
+						<Emoji c_emoji={emoji[0]}/>
 					</Button>
 				}</For>
 			</Expander>
 			<Expander
-				header={<ExpanderHeader>Person & body</ExpanderHeader>}>
+				c_header={<ExpanderHeader>Person & body</ExpanderHeader>}>
 				<For each={person_and_body_emojis}>{emoji =>
 					<Button
 						data-tooltip={emoji[1]}
 						data-emoji={emoji[0]}>
-						<Emoji emoji={emoji[0]}/>
+						<Emoji c_emoji={emoji[0]}/>
 					</Button>
 				}</For>
 			</Expander>
 			<Expander
-				header={<ExpanderHeader>Animal & nature</ExpanderHeader>}>
+				c_header={<ExpanderHeader>Animal & nature</ExpanderHeader>}>
 				<For each={animal_and_nature_emojis}>{emoji =>
 					<Button
 						data-tooltip={emoji[1]}
 						data-emoji={emoji[0]}>
-						<Emoji emoji={emoji[0]}/>
+						<Emoji c_emoji={emoji[0]}/>
 					</Button>
 				}</For>
 			</Expander>
 			<Expander
-				header={<ExpanderHeader>Food & drink</ExpanderHeader>}>
+				c_header={<ExpanderHeader>Food & drink</ExpanderHeader>}>
 				<For each={food_and_drink_emojis}>{emoji =>
 					<Button
 						data-tooltip={emoji[1]}
 						data-emoji={emoji[0]}>
-						<Emoji emoji={emoji[0]}/>
+						<Emoji c_emoji={emoji[0]}/>
 					</Button>
 				}</For>
 			</Expander>
 			<Expander
-				header={<ExpanderHeader>Travel & places</ExpanderHeader>}>
+				c_header={<ExpanderHeader>Travel & places</ExpanderHeader>}>
 				<For each={travel_and_places_emojis}>{emoji =>
 					<Button
 						data-tooltip={emoji[1]}
 						data-emoji={emoji[0]}>
-						<Emoji emoji={emoji[0]}/>
+						<Emoji c_emoji={emoji[0]}/>
 					</Button>
 				}</For>
 			</Expander>
 			<Expander
-				header={<ExpanderHeader>Activities</ExpanderHeader>}>
+				c_header={<ExpanderHeader>Activities</ExpanderHeader>}>
 				<For each={activities_emojis}>{emoji =>
 					<Button
 						data-tooltip={emoji[1]}
 						data-emoji={emoji[0]}>
-						<Emoji emoji={emoji[0]}/>
+						<Emoji c_emoji={emoji[0]}/>
 					</Button>
 				}</For>
 			</Expander>
 			<Expander
-				header={<ExpanderHeader>Objects</ExpanderHeader>}>
+				c_header={<ExpanderHeader>Objects</ExpanderHeader>}>
 				<For each={object_emojis}>{emoji =>
 					<Button
 						data-tooltip={emoji[1]}
 						data-emoji={emoji[0]}>
-						<Emoji emoji={emoji[0]}/>
+						<Emoji c_emoji={emoji[0]}/>
 					</Button>
 				}</For>
 			</Expander>
 			<Expander
-				header={<ExpanderHeader>Symbols</ExpanderHeader>}>
+				c_header={<ExpanderHeader>Symbols</ExpanderHeader>}>
 				<For each={symbols_emojis}>{emoji =>
 					<Button
 						data-tooltip={emoji[1]}
 						data-emoji={emoji[0]}>
-						<Emoji emoji={emoji[0]}/>
+						<Emoji c_emoji={emoji[0]}/>
 					</Button>
 				}</For>
 			</Expander>
 			<Expander
-				header={<ExpanderHeader>Flags</ExpanderHeader>}>
+				c_header={<ExpanderHeader>Flags</ExpanderHeader>}>
 				<For each={flags_emojis}>{emoji =>
 					<Button
 						data-tooltip={emoji[1]}
 						data-emoji={emoji[0]}>
-						<Emoji emoji={emoji[0]}/>
+						<Emoji c_emoji={emoji[0]}/>
 					</Button>
 				}</For>
 			</Expander>
