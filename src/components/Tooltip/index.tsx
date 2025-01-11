@@ -221,7 +221,10 @@ function init_tooltip(): void {
 			event_target(event) as HTMLElement,
 			'#' + string_css_escape(wrapper_id) + ' :is([data-tooltip],[data-rich-tooltip])'
 		)
-		if (!anchor || anchor_element === anchor) return
+		if (!anchor || anchor_element === anchor) {
+			hide_tooltip()
+			return
+		}
 
 		let rich_tooltip: HTMLElement | undefined
 		let has_rich_tooltip = false
@@ -231,14 +234,20 @@ function init_tooltip(): void {
 		}
 		else {
 			const tooltip_id = element_dataset(anchor, 'richTooltip') // [data-rich-tooltip]
-			if (!tooltip_id || string_length(string_trim(tooltip_id)) == 0) return
+			if (!tooltip_id || string_length(string_trim(tooltip_id)) == 0) {
+				hide_tooltip()
+				return
+			}
 
 			const tooltip = element_by_id(tooltip_id)
 			if (
 				!tooltip
 				|| !element_classlist_contains(tooltip, POPOVER_CLASS)
 				|| !element_contains(event_current_target(event), tooltip)
-			) return
+			) {
+				hide_tooltip()
+				return
+			}
 
 			rich_tooltip = tooltip
 			has_rich_tooltip = true
