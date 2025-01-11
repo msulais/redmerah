@@ -5,7 +5,7 @@ import { attr_set_if_exist, classlist } from '@/utils/attributes'
 import { timeout_clear, interval_clear, timeout_set, interval_set } from '@/utils/timeout'
 import { event_call, event_current_target, event_prevent_default, event_target } from '@/utils/event'
 import { math_clamp, math_max, math_round } from '@/utils/math'
-import { element_blur, element_contains, element_dispatch_event, element_focus, element_rect, element_scroll_height } from '@/utils/element'
+import { element_blur, element_contains, element_dispatch_event, element_focus, element_id, element_rect, element_scroll_height } from '@/utils/element'
 import { event_add_listener, event_remove_listener } from '@/utils/event'
 import { is_array, is_number, is_string } from '@/utils/typecheck'
 import { string_length, string_split, string_touppercase, string_trim } from '@/utils/string'
@@ -21,6 +21,7 @@ import { MenuItem, LinkMenuItem, MenuDivider, MenuHeader, MenuPosition, open_men
 import Modal, { type ModalProps } from '@/components/Modal'
 import FocusableGroup from '@/components/FocusableGroup'
 import './index.scss'
+import { document_active } from '@/utils/document'
 
 const HEIGHT_TEXT_INPUT_PER_LINE = 20
 
@@ -199,7 +200,7 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 					class='c-area-textfield-trailing'
 					onClick={ev => {
 						stop_focus = true
-						if (event_target(ev).id == button_clear_id) {
+						if (element_id(document_active()!) == button_clear_id) {
 							change_areatextfield_value(areatextfield_ref, '')
 							event_prevent_default(ev)
 							element_focus(areatextfield_ref)
@@ -347,7 +348,7 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 					class='c-textfield-trailing'
 					onClick={ev => {
 						stop_focus = true
-						if (event_target(ev).id == button_clear_id) {
+						if (element_id(document_active()!) == button_clear_id) {
 							change_textfield_value(textfield_ref, '')
 							event_prevent_default(ev)
 							element_focus(textfield_ref)
@@ -554,7 +555,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 				</Show>
 				<Show when={props.c_auto_show_clear_button && value() != 0}>
 					<TextFieldButton data-tooltip={props.c_tooltip_clear ?? 'Clear'} onClick={(_ev) => {
-						let v = math_clamp(0, get_min(), get_max())
+						let v = math_clamp(0, get_min(0), get_max())
 						if (props.c_integer_only) v = math_round(v)
 
 						numbertextfield_ref.value = `${v}`
