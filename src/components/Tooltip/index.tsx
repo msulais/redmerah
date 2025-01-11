@@ -195,7 +195,7 @@ function init_tooltip(): void {
 
 	function close_tooltip(ev: CustomEvent<TooltipCloseDetail>): void {
 		const {
-			end_delay_duration = $is_mobile? 1500 : 200
+			end_delay_duration = $is_mobile? 1500 : 800
 		} = ev.detail
 		if (timeout_id != null) timeout_clear(timeout_id)
 		timeout_id = timeout_set(async () => {
@@ -222,7 +222,14 @@ function init_tooltip(): void {
 			'#' + string_css_escape(wrapper_id) + ' :is([data-tooltip],[data-rich-tooltip])'
 		)
 		if (!anchor) {
-			hide_tooltip()
+			const end_delay_duration = $is_mobile? 1500 : 800
+			if (timeout_id != null) timeout_clear(timeout_id)
+			timeout_id = timeout_set(async () => {
+				hide_tooltip()
+				tooltip_rich_ref = null
+				is_open = false
+				timeout_id = null
+			}, end_delay_duration)
 			return
 		}
 
@@ -236,20 +243,14 @@ function init_tooltip(): void {
 		}
 		else {
 			const tooltip_id = element_dataset(anchor, 'richTooltip') // [data-rich-tooltip]
-			if (!tooltip_id || string_length(string_trim(tooltip_id)) == 0) {
-				hide_tooltip()
-				return
-			}
+			if (!tooltip_id || string_length(string_trim(tooltip_id)) == 0) return
 
 			const tooltip = element_by_id(tooltip_id)
 			if (
 				!tooltip
 				|| !element_classlist_contains(tooltip, POPOVER_CLASS)
 				|| !element_contains(event_current_target(event), tooltip)
-			) {
-				hide_tooltip()
-				return
-			}
+			) return
 
 			rich_tooltip = tooltip
 			has_rich_tooltip = true
