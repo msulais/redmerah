@@ -221,10 +221,12 @@ function init_tooltip(): void {
 			event_target(event) as HTMLElement,
 			'#' + string_css_escape(wrapper_id) + ' :is([data-tooltip],[data-rich-tooltip])'
 		)
-		if (!anchor || anchor_element === anchor) {
+		if (!anchor) {
 			hide_tooltip()
 			return
 		}
+
+		if (anchor_element === anchor) return
 
 		let rich_tooltip: HTMLElement | undefined
 		let has_rich_tooltip = false
