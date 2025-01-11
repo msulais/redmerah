@@ -22,7 +22,7 @@ import Modal, { type ModalProps } from '@/components/Modal'
 import FocusableGroup from '@/components/FocusableGroup'
 import Tooltip from '@/components/Tooltip'
 import './index.scss'
-import { KEY_ENTER, KEY_SPACE } from '@/constants/key_code'
+import { KEY_ARROW_DOWN, KEY_ARROW_UP, KEY_ENTER, KEY_SPACE } from '@/constants/key_code'
 
 const HEIGHT_TEXT_INPUT_PER_LINE = 20
 
@@ -589,11 +589,24 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 					event_current_target(ev),
 					button,
 					el => element_tagname(el) == 'BUTTON'
-				) || (code != KEY_ENTER && code != KEY_SPACE)) return
+				)) return
+
+				const click_key = code == KEY_ENTER || code == KEY_SPACE
+				const arrow_key = code == KEY_ARROW_UP || code == KEY_ARROW_DOWN
+
+				if (!click_key && !arrow_key) return
 
 				switch (button) {
-					case iconbutton_up_ref: on_press_start('+'); break
-					case iconbutton_down_ref: on_press_start('-'); break
+					case iconbutton_up_ref: {
+						if (click_key) on_press_start('+')
+						if (arrow_key && !iconbutton_down_ref.disabled) element_focus(iconbutton_down_ref)
+							break
+					}
+					case iconbutton_down_ref: {
+						if (click_key) on_press_start('-')
+						if (arrow_key && !iconbutton_up_ref.disabled) element_focus(iconbutton_up_ref)
+						break
+					}
 				}
 			}}
 			onKeyUp={(ev) => {
