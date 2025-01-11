@@ -590,13 +590,15 @@ const _: Component<{
 				</Show>
 				<Show when={randomizer() == RandomizerType.numbers}>
 					<div class={ CSS.appbar_textfield_menu_item }>
-						<NumberTextField
-							ref={r => textfield_decimallength_ref = r}
-							min={0}
-							id={input_settings_mindecimallength_id}
-							c_label="Min decimal length"
-							c_leading={<Icon c_code={0xE599}/>}
-						/>
+						<Tooltip>
+							<NumberTextField
+								ref={r => textfield_decimallength_ref = r}
+								min={0}
+								id={input_settings_mindecimallength_id}
+								c_label="Min decimal length"
+								c_leading={<Icon c_code={0xE599}/>}
+							/>
+						</Tooltip>
 					</div>
 				</Show>
 			</Menu>

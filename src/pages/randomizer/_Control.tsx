@@ -16,6 +16,7 @@ import Icon from "@/components/Icon"
 import TextField, { NumberTextField, TextFieldButton, change_textfield_value } from "@/components/TextField"
 import Menu, { close_menu, MenuDivider, MenuHeader, MenuItem, MenuPosition, open_menu } from "@/components/Menu"
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
+import Tooltip from "@/components/Tooltip"
 import CSS from './_styles.module.scss'
 
 const Teams: VoidComponent<{
@@ -1110,28 +1111,30 @@ const _: VoidComponent<{
 	const settings = createMemo(() => props.settings)
 	const lists = createMemo(() => props.lists)
 
-	return (<div class={CSS.control} data-randomizer={randomizer()}>
-		<Switch>
-			<Match when={randomizer() == RandomizerType.string}>
-				<$String command={command()} settings={settings()}/>
-			</Match>
-			<Match when={randomizer() == RandomizerType.numbers}>
-				<Numbers command={command()} settings={settings()} />
-			</Match>
-			<Match when={randomizer() == RandomizerType.colors}>
-				<Colors command={command()} settings={settings()} />
-			</Match>
-			<Match when={randomizer() == RandomizerType.words}>
-				<Words command={command()} settings={settings()} lists={lists()} />
-			</Match>
-			<Match when={randomizer() == RandomizerType.selection}>
-				<Selection command={command()} settings={settings()} lists={lists()} />
-			</Match>
-			<Match when={randomizer() == RandomizerType.teams}>
-				<Teams command={command()} settings={settings()} lists={lists()} />
-			</Match>
-		</Switch>
-	</div>)
+	return (<Tooltip>
+		<div class={CSS.control} data-randomizer={randomizer()}>
+			<Switch>
+				<Match when={randomizer() == RandomizerType.string}>
+					<$String command={command()} settings={settings()}/>
+				</Match>
+				<Match when={randomizer() == RandomizerType.numbers}>
+					<Numbers command={command()} settings={settings()} />
+				</Match>
+				<Match when={randomizer() == RandomizerType.colors}>
+					<Colors command={command()} settings={settings()} />
+				</Match>
+				<Match when={randomizer() == RandomizerType.words}>
+					<Words command={command()} settings={settings()} lists={lists()} />
+				</Match>
+				<Match when={randomizer() == RandomizerType.selection}>
+					<Selection command={command()} settings={settings()} lists={lists()} />
+				</Match>
+				<Match when={randomizer() == RandomizerType.teams}>
+					<Teams command={command()} settings={settings()} lists={lists()} />
+				</Match>
+			</Switch>
+		</div>
+	</Tooltip>)
 }
 
 export default _

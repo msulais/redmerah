@@ -12,7 +12,6 @@ import { element_dataset, element_id, element_tagname, element_valid_target } fr
 import TextField, { change_textfield_value, TextFieldButton } from "@/components/TextField"
 import Expander, { ExpanderHeader } from "@/components/Expander"
 import Button from "@/components/Button"
-import Emoji from "@/components/Emoji"
 import Tooltip from "@/components/Tooltip"
 import Icon from "@/components/Icon"
 import CSS from './_index.module.scss'
@@ -61,21 +60,21 @@ const _: VoidComponent<{
 				}
 			}
 		}}>
-		<div class={CSS.body_textfield}>
-			<TextField
-				c_label="Emoji"
-				c_auto_show_clear_button
-				value={props.text}
-				onInput={ev => props.command(Commands.update_text, event_current_target(ev).value)}
-				ref={r => textfield_ref = r}
-				c_trailing={<TextFieldButton
-					id={button_copy_id}
-					data-tooltip={timeout_copy_id() != null? 'Copied' : "Copy"}>
-					<Icon c_code={timeout_copy_id() != null? 0xE3D8 : 0xE51B}/>
-				</TextFieldButton>}
-			/>
-		</div>
 		<Tooltip>
+			<div class={CSS.body_textfield}>
+				<TextField
+					c_label="Emoji"
+					c_auto_show_clear_button
+					value={props.text}
+					onInput={ev => props.command(Commands.update_text, event_current_target(ev).value)}
+					ref={r => textfield_ref = r}
+					c_trailing={<TextFieldButton
+						id={button_copy_id}
+						data-tooltip={timeout_copy_id() != null? 'Copied' : "Copy"}>
+						<Icon c_code={timeout_copy_id() != null? 0xE3D8 : 0xE51B}/>
+					</TextFieldButton>}
+				/>
+			</div>
 			<Expander
 				open
 				c_header={<ExpanderHeader>Smiley & emotion</ExpanderHeader>}>
@@ -83,7 +82,7 @@ const _: VoidComponent<{
 					<Button
 						data-tooltip={emoji[1]}
 						data-emoji={emoji[0]}>
-						<Emoji c_emoji={emoji[0]}/>
+						{emoji[0]}
 					</Button>
 				}</For>
 			</Expander>
@@ -93,7 +92,7 @@ const _: VoidComponent<{
 					<Button
 						data-tooltip={emoji[1]}
 						data-emoji={emoji[0]}>
-						<Emoji c_emoji={emoji[0]}/>
+						{emoji[0]}
 					</Button>
 				}</For>
 			</Expander>
@@ -103,7 +102,7 @@ const _: VoidComponent<{
 					<Button
 						data-tooltip={emoji[1]}
 						data-emoji={emoji[0]}>
-						<Emoji c_emoji={emoji[0]}/>
+						{emoji[0]}
 					</Button>
 				}</For>
 			</Expander>
@@ -113,7 +112,7 @@ const _: VoidComponent<{
 					<Button
 						data-tooltip={emoji[1]}
 						data-emoji={emoji[0]}>
-						<Emoji c_emoji={emoji[0]}/>
+						{emoji[0]}
 					</Button>
 				}</For>
 			</Expander>
@@ -123,7 +122,7 @@ const _: VoidComponent<{
 					<Button
 						data-tooltip={emoji[1]}
 						data-emoji={emoji[0]}>
-						<Emoji c_emoji={emoji[0]}/>
+						{emoji[0]}
 					</Button>
 				}</For>
 			</Expander>
@@ -133,7 +132,7 @@ const _: VoidComponent<{
 					<Button
 						data-tooltip={emoji[1]}
 						data-emoji={emoji[0]}>
-						<Emoji c_emoji={emoji[0]}/>
+						{emoji[0]}
 					</Button>
 				}</For>
 			</Expander>
@@ -143,7 +142,7 @@ const _: VoidComponent<{
 					<Button
 						data-tooltip={emoji[1]}
 						data-emoji={emoji[0]}>
-						<Emoji c_emoji={emoji[0]}/>
+						{emoji[0]}
 					</Button>
 				}</For>
 			</Expander>
@@ -153,7 +152,7 @@ const _: VoidComponent<{
 					<Button
 						data-tooltip={emoji[1]}
 						data-emoji={emoji[0]}>
-						<Emoji c_emoji={emoji[0]}/>
+						{emoji[0]}
 					</Button>
 				}</For>
 			</Expander>
@@ -163,7 +162,7 @@ const _: VoidComponent<{
 					<Button
 						data-tooltip={emoji[1]}
 						data-emoji={emoji[0]}>
-						<Emoji c_emoji={emoji[0]}/>
+						{emoji[0]}
 					</Button>
 				}</For>
 			</Expander>

@@ -216,12 +216,7 @@ function init_tooltip(): void {
 			start_delay_duration = 800,
 			use_anchor: input_use_anchor = false,
 		} = ev.detail
-
-		let anchor = element_closest(
-			event_target(event) as HTMLElement,
-			'#' + string_css_escape(wrapper_id) + ' :is([data-tooltip],[data-rich-tooltip])'
-		)
-		if (!anchor) {
+		const close = () => {
 			const end_delay_duration = $is_mobile? 1500 : 800
 			if (timeout_id != null) timeout_clear(timeout_id)
 			timeout_id = timeout_set(async () => {
@@ -230,9 +225,17 @@ function init_tooltip(): void {
 				is_open = false
 				timeout_id = null
 			}, end_delay_duration)
-			return
 		}
+		const target = event_target(event) as HTMLElement
+		const current_target = event_current_target(event)
 
+		if (!element_contains(current_target, target)) return
+
+		let anchor = element_closest(
+			target,
+			'#' + string_css_escape(wrapper_id) + ' :is([data-tooltip],[data-rich-tooltip])'
+		)
+		if (!anchor) return close()
 		if (anchor_element === anchor) return
 
 		let rich_tooltip: HTMLElement | undefined
@@ -249,7 +252,7 @@ function init_tooltip(): void {
 			if (
 				!tooltip
 				|| !element_classlist_contains(tooltip, POPOVER_CLASS)
-				|| !element_contains(event_current_target(event), tooltip)
+				|| !element_contains(current_target, tooltip)
 			) return
 
 			rich_tooltip = tooltip

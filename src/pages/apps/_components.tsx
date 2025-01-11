@@ -17,6 +17,7 @@ import Icon from "@/components/Icon"
 import Button, { ButtonVariant, LinkButton } from "@/components/Button"
 import TextField from "@/components/TextField"
 import Menu, { close_menu, LinkMenuItem, MenuDivider, MenuItem, MenuPosition, open_menu } from "@/components/Menu"
+import Tooltip from "@/components/Tooltip"
 import Dialog, { close_dialog, open_dialog } from "@/components/Dialog"
 import CSS from './_index.module.scss'
 
@@ -58,20 +59,22 @@ export const MainElement: VoidComponent = () => {
 	})
 
 	return (<main class={CSS.main}>
-		<TextField
-			onInput={(ev) => {
-				if (timeout_id != null) timeout_clear(timeout_id)
+		<Tooltip>
+			<TextField
+				onInput={(ev) => {
+					if (timeout_id != null) timeout_clear(timeout_id)
 
-				const text = event_current_target(ev).value
-				timeout_id = timeout_set(() => {
-					set_search_text(text)
-					timeout_id = null
-				}, 500)
-			}}
-			c_auto_show_clear_button
-			c_leading={<Icon c_code={0xEDDF} />}
-			c_label="Search apps"
-		/>
+					const text = event_current_target(ev).value
+					timeout_id = timeout_set(() => {
+						set_search_text(text)
+						timeout_id = null
+					}, 500)
+				}}
+				c_auto_show_clear_button
+				c_leading={<Icon c_code={0xEDDF} />}
+				c_label="Search apps"
+			/>
+		</Tooltip>
 		<div>
 			<For each={array_sort(apps, (a, b) => string_locale_compare(a.name, b.name))}>{app =>
 				<Show when={

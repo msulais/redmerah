@@ -295,12 +295,14 @@ const _: VoidComponent<{
 					Text wrap
 				</SwitchMenuItem>
 				<div style={{padding: '8px 12px'}}>
-					<NumberTextField
-						min={12}
-						c_label="Font size"
-						value={settings().font_size}
-						id={input_settings_fontsize_id}
-					/>
+					<Tooltip>
+						<NumberTextField
+							min={12}
+							c_label="Font size"
+							value={settings().font_size}
+							id={input_settings_fontsize_id}
+						/>
+					</Tooltip>
 					<TextField
 						c_attr_wrapper={{style: {"margin-top": '8px'}}}
 						c_label="Prefix"

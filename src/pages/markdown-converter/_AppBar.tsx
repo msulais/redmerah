@@ -287,15 +287,17 @@ const _: VoidComponent<{
 					Text wrap
 				</SwitchMenuItem>
 				<div style={{padding: '8px 12px'}}>
-					<NumberTextField
-						min={12}
-						c_label="Font size"
-						value={settings().font_size}
-						onBlur={ev => command(
-							Commands.change_fontsize,
-							number_safe(event_current_target(ev).valueAsNumber, settings().font_size)
-						)}
-					/>
+					<Tooltip>
+						<NumberTextField
+							min={12}
+							c_label="Font size"
+							value={settings().font_size}
+							onBlur={ev => command(
+								Commands.change_fontsize,
+								number_safe(event_current_target(ev).valueAsNumber, settings().font_size)
+							)}
+						/>
+					</Tooltip>
 				</div>
 			</Menu>
 			<Menu

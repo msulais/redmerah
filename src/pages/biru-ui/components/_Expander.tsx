@@ -5,6 +5,7 @@ import { event_current_target, event_stop_propagation } from "@/utils/event"
 import Icon from "@/components/Icon"
 import { IconButton } from "@/components/Button"
 import CheckBox from "@/components/CheckBox"
+import Tooltip from "@/components/Tooltip"
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import Expander, { ExpanderHeader, ExpanderVariant } from "@/components/Expander"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
@@ -21,23 +22,25 @@ const _: VoidComponent = () => {
 		title="Expander"
 		description="An expander is a UI element that allows users to reveal or collapse hidden content within a list item.">
 		<Playground>
-			<Expander
-				c_header={<ExpanderHeader
-					c_use_expand_icon={use_expand_icon()}
-					c_subtitle={<Show when={subtitle()}>Deserunt commodo qui aute veniam tempor ipsum.</Show>}
-					c_leading={<Show when={leading()}><Icon c_code={0xE569}/></Show>}
-					c_trailing={<Show when={trailing()}>
-						<IconButton onClick={ev => event_stop_propagation(ev)} c_code={0xE6BF}/>
-						<IconButton onClick={ev => event_stop_propagation(ev)} c_code={0xEBB8}/>
-					</Show>}>
-					<Show when={title()}>Click to expand</Show>
-				</ExpanderHeader>}
-				c_variant={variant()}>
-				<Show when={content()}>
-					<p style={{"margin-bottom": '1.15em'}}>Deserunt sint voluptate nisi reprehenderit anim veniam ex quis deserunt ad. Aute duis commodo veniam incididunt aute anim anim et. Ipsum exercitation ea minim voluptate veniam ad duis dolore. Do officia amet adipisicing ea incididunt labore ipsum commodo minim. Quis ipsum dolor non sunt magna ad aliqua. Ea minim reprehenderit sint exercitation nostrud veniam nisi sit. Ut et culpa occaecat proident id sint officia anim adipisicing.</p>
-					<p>Qui culpa cillum sunt sit in dolore ullamco excepteur ipsum ex do ut reprehenderit. Magna dolor excepteur velit ullamco laboris. Esse nulla qui sit enim et ex ullamco tempor eiusmod voluptate eiusmod non dolore. Aliquip mollit tempor id qui do consequat occaecat mollit. Voluptate nisi deserunt ipsum quis eiusmod tempor culpa excepteur tempor velit deserunt.</p>
-				</Show>
-			</Expander>
+			<Tooltip>
+				<Expander
+					c_header={<ExpanderHeader
+						c_use_expand_icon={use_expand_icon()}
+						c_subtitle={<Show when={subtitle()}>Deserunt commodo qui aute veniam tempor ipsum.</Show>}
+						c_leading={<Show when={leading()}><Icon c_code={0xE569}/></Show>}
+						c_trailing={<Show when={trailing()}>
+							<IconButton onClick={ev => event_stop_propagation(ev)} c_code={0xE6BF}/>
+							<IconButton onClick={ev => event_stop_propagation(ev)} c_code={0xEBB8}/>
+						</Show>}>
+						<Show when={title()}>Click to expand</Show>
+					</ExpanderHeader>}
+					c_variant={variant()}>
+					<Show when={content()}>
+						<p style={{"margin-bottom": '1.15em'}}>Deserunt sint voluptate nisi reprehenderit anim veniam ex quis deserunt ad. Aute duis commodo veniam incididunt aute anim anim et. Ipsum exercitation ea minim voluptate veniam ad duis dolore. Do officia amet adipisicing ea incididunt labore ipsum commodo minim. Quis ipsum dolor non sunt magna ad aliqua. Ea minim reprehenderit sint exercitation nostrud veniam nisi sit. Ut et culpa occaecat proident id sint officia anim adipisicing.</p>
+						<p>Qui culpa cillum sunt sit in dolore ullamco excepteur ipsum ex do ut reprehenderit. Magna dolor excepteur velit ullamco laboris. Esse nulla qui sit enim et ex ullamco tempor eiusmod voluptate eiusmod non dolore. Aliquip mollit tempor id qui do consequat occaecat mollit. Voluptate nisi deserunt ipsum quis eiusmod tempor culpa excepteur tempor velit deserunt.</p>
+					</Show>
+				</Expander>
+			</Tooltip>
 		</Playground>
 		<PlaygroundOptions>
 			<Dropdown

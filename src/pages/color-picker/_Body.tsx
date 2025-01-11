@@ -18,6 +18,7 @@ import { promise_done } from "@/utils/object"
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import TextField, { TextFieldButton } from "@/components/TextField"
 import Toast, { open_toast } from "@/components/Toast"
+import Tooltip from "@/components/Tooltip"
 import Icon from "@/components/Icon"
 import CSS from './_styles.module.scss'
 
@@ -216,170 +217,172 @@ const ColorInput: VoidComponent<{
 			c_leading={<Icon c_code={0xE51B}/>}>
 			Copied to clipboard
 		</Toast>
-		<TextField
-			c_label="Hex"
-			id={input_hex_id}
-			value={hex_color()}
-			readOnly={read_only()}
-			onInput={(ev) => {
-				let text = event_current_target(ev).value
-				text = string_trim(text)
-				text = string_replace(text, /[^0-9A-Fa-f]/g, '')
-				if (string_length(text) == 0) text = '0'
+		<Tooltip>
+			<TextField
+				c_label="Hex"
+				id={input_hex_id}
+				value={hex_color()}
+				readOnly={read_only()}
+				onInput={(ev) => {
+					let text = event_current_target(ev).value
+					text = string_trim(text)
+					text = string_replace(text, /[^0-9A-Fa-f]/g, '')
+					if (string_length(text) == 0) text = '0'
 
-				text = string_padstart(text, 6, '0')
-				if (string_length(text) > 6) text = string_substring(text, 0, 6)
+					text = string_padstart(text, 6, '0')
+					if (string_length(text) > 6) text = string_substring(text, 0, 6)
 
-				text = '#' + text
-				command(Commands.update_input, hex_to_hsl(text as HEXColor))
-			}}
-			c_trailing={<TextFieldButton
-				data-tooltip="Copy"
-				data-copy={get_hex_color()}>
-				<Icon c_code={0xE51B}/>
-			</TextFieldButton>}
-		/>
-		<TextField
-			readOnly={read_only()}
-			c_label="RGB"
-			id={input_rgb_id}
-			value={rgb_color()}
-			onInput={(ev) => {
-				let text = event_current_target(ev).value
-				text = string_trim(text)
-				text = string_replace(text, /[^\d,]/g, '')
-				const rgb_array: number[] = array_map(
-					string_split(text, ','),
-					v => math_clamp(number_safe(number_parse(v, true), 0), 0, 0xff)
-				)
-				while (array_length(rgb_array) < 3) {
-					array_push(rgb_array, 0)
-				}
+					text = '#' + text
+					command(Commands.update_input, hex_to_hsl(text as HEXColor))
+				}}
+				c_trailing={<TextFieldButton
+					data-tooltip="Copy"
+					data-copy={get_hex_color()}>
+					<Icon c_code={0xE51B}/>
+				</TextFieldButton>}
+			/>
+			<TextField
+				readOnly={read_only()}
+				c_label="RGB"
+				id={input_rgb_id}
+				value={rgb_color()}
+				onInput={(ev) => {
+					let text = event_current_target(ev).value
+					text = string_trim(text)
+					text = string_replace(text, /[^\d,]/g, '')
+					const rgb_array: number[] = array_map(
+						string_split(text, ','),
+						v => math_clamp(number_safe(number_parse(v, true), 0), 0, 0xff)
+					)
+					while (array_length(rgb_array) < 3) {
+						array_push(rgb_array, 0)
+					}
 
-				const r = rgb_array[0] / 0xff
-				const g = rgb_array[1] / 0xff
-				const b = rgb_array[2] / 0xff
-				command(Commands.update_input, rgb_to_hsl({r, g, b}))
-			}}
-			c_trailing={<TextFieldButton
-				data-tooltip="Copy"
-				data-copy={get_rgb_color()}>
-				<Icon c_code={0xE51B}/>
-			</TextFieldButton>}
-		/>
-		<TextField
-			readOnly={read_only()}
-			c_label="HSL"
-			id={input_hsl_id}
-			value={hsl_color()}
-			onInput={(ev) => {
-				let text = event_current_target(ev).value
-				text = string_trim(text)
-				text = string_replace(text, /[^\d,]/g, '')
-				const hsl_array: number[] = array_map(
-					string_split(text, ','),
-					v => number_safe(number_parse(v, true), 0)
-				)
-				while (array_length(hsl_array) < 3) {
-					array_push(hsl_array, 0)
-				}
+					const r = rgb_array[0] / 0xff
+					const g = rgb_array[1] / 0xff
+					const b = rgb_array[2] / 0xff
+					command(Commands.update_input, rgb_to_hsl({r, g, b}))
+				}}
+				c_trailing={<TextFieldButton
+					data-tooltip="Copy"
+					data-copy={get_rgb_color()}>
+					<Icon c_code={0xE51B}/>
+				</TextFieldButton>}
+			/>
+			<TextField
+				readOnly={read_only()}
+				c_label="HSL"
+				id={input_hsl_id}
+				value={hsl_color()}
+				onInput={(ev) => {
+					let text = event_current_target(ev).value
+					text = string_trim(text)
+					text = string_replace(text, /[^\d,]/g, '')
+					const hsl_array: number[] = array_map(
+						string_split(text, ','),
+						v => number_safe(number_parse(v, true), 0)
+					)
+					while (array_length(hsl_array) < 3) {
+						array_push(hsl_array, 0)
+					}
 
-				const h = math_clamp(hsl_array[0], 0, 360) / 360
-				const s = math_clamp(hsl_array[1], 0, 100) / 100
-				const l = math_clamp(hsl_array[2], 0, 100) / 100
-				command(Commands.update_input, {h, s, l} satisfies HSLColor)
-			}}
-			c_trailing={<TextFieldButton
-				data-tooltip="Copy"
-				data-copy={get_hsl_color()}>
-				<Icon c_code={0xE51B}/>
-			</TextFieldButton>}
-		/>
-		<TextField
-			readOnly={read_only()}
-			c_label="HSV"
-			id={input_hsv_id}
-			value={hsv_color()}
-			onInput={(ev) => {
-				let text = event_current_target(ev).value
-				text = string_trim(text)
-				text = string_replace(text, /[^\d,]/g, '')
-				const hsv_array: number[] = array_map(
-					string_split(text, ','),
-					v => number_safe(number_parse(v, true), 0)
-				)
-				while (array_length(hsv_array) < 3) {
-					array_push(hsv_array, 0)
-				}
+					const h = math_clamp(hsl_array[0], 0, 360) / 360
+					const s = math_clamp(hsl_array[1], 0, 100) / 100
+					const l = math_clamp(hsl_array[2], 0, 100) / 100
+					command(Commands.update_input, {h, s, l} satisfies HSLColor)
+				}}
+				c_trailing={<TextFieldButton
+					data-tooltip="Copy"
+					data-copy={get_hsl_color()}>
+					<Icon c_code={0xE51B}/>
+				</TextFieldButton>}
+			/>
+			<TextField
+				readOnly={read_only()}
+				c_label="HSV"
+				id={input_hsv_id}
+				value={hsv_color()}
+				onInput={(ev) => {
+					let text = event_current_target(ev).value
+					text = string_trim(text)
+					text = string_replace(text, /[^\d,]/g, '')
+					const hsv_array: number[] = array_map(
+						string_split(text, ','),
+						v => number_safe(number_parse(v, true), 0)
+					)
+					while (array_length(hsv_array) < 3) {
+						array_push(hsv_array, 0)
+					}
 
-				const h = math_clamp(hsv_array[0], 0, 360) / 360
-				const s = math_clamp(hsv_array[1], 0, 100) / 100
-				const v = math_clamp(hsv_array[2], 0, 100) / 100
-				command(Commands.update_input, hsv_to_hsl({h, s, v}))
-			}}
-			c_trailing={<TextFieldButton
-				data-tooltip="Copy"
-				data-copy={get_hsv_color()}>
-				<Icon c_code={0xE51B}/>
-			</TextFieldButton>}
-		/>
-		<TextField
-			readOnly={read_only()}
-			c_label="HWB"
-			id={input_hwb_id}
-			value={hwb_color()}
-			onInput={(ev) => {
-				let text = event_current_target(ev).value
-				text = string_trim(text)
-				text = string_replace(text, /[^\d,]/g, '')
-				const hwb_array: number[] = array_map(
-					string_split(text, ','),
-					v => number_safe(number_parse(v, true), 0)
-				)
-				while (array_length(hwb_array) < 3) {
-					array_push(hwb_array, 0)
-				}
+					const h = math_clamp(hsv_array[0], 0, 360) / 360
+					const s = math_clamp(hsv_array[1], 0, 100) / 100
+					const v = math_clamp(hsv_array[2], 0, 100) / 100
+					command(Commands.update_input, hsv_to_hsl({h, s, v}))
+				}}
+				c_trailing={<TextFieldButton
+					data-tooltip="Copy"
+					data-copy={get_hsv_color()}>
+					<Icon c_code={0xE51B}/>
+				</TextFieldButton>}
+			/>
+			<TextField
+				readOnly={read_only()}
+				c_label="HWB"
+				id={input_hwb_id}
+				value={hwb_color()}
+				onInput={(ev) => {
+					let text = event_current_target(ev).value
+					text = string_trim(text)
+					text = string_replace(text, /[^\d,]/g, '')
+					const hwb_array: number[] = array_map(
+						string_split(text, ','),
+						v => number_safe(number_parse(v, true), 0)
+					)
+					while (array_length(hwb_array) < 3) {
+						array_push(hwb_array, 0)
+					}
 
-				const h = math_clamp(hwb_array[0], 0, 360) / 360
-				const w = math_clamp(hwb_array[1], 0, 100) / 100
-				const b = math_clamp(hwb_array[2], 0, 100 - (w * 100)) / 100
-				command(Commands.update_input, hwb_to_hsl({h, w, b}))
-			}}
-			c_trailing={<TextFieldButton
-				data-tooltip="Copy"
-				data-copy={get_hwb_color()}>
-				<Icon c_code={0xE51B}/>
-			</TextFieldButton>}
-		/>
-		<TextField
-			readOnly={read_only()}
-			c_label="CMYK"
-			id={input_cmyk_id}
-			value={cmyk_color()}
-			onInput={(ev) => {
-				let text = event_current_target(ev).value
-				text = string_trim(text)
-				text = string_replace(text, /[^\d,]/g, '')
-				const hwb_array: number[] = array_map(
-					string_split(text, ','),
-					v => number_safe(number_parse(v, true), 0)
-				)
-				while (array_length(hwb_array) < 4) {
-					array_push(hwb_array, 0)
-				}
+					const h = math_clamp(hwb_array[0], 0, 360) / 360
+					const w = math_clamp(hwb_array[1], 0, 100) / 100
+					const b = math_clamp(hwb_array[2], 0, 100 - (w * 100)) / 100
+					command(Commands.update_input, hwb_to_hsl({h, w, b}))
+				}}
+				c_trailing={<TextFieldButton
+					data-tooltip="Copy"
+					data-copy={get_hwb_color()}>
+					<Icon c_code={0xE51B}/>
+				</TextFieldButton>}
+			/>
+			<TextField
+				readOnly={read_only()}
+				c_label="CMYK"
+				id={input_cmyk_id}
+				value={cmyk_color()}
+				onInput={(ev) => {
+					let text = event_current_target(ev).value
+					text = string_trim(text)
+					text = string_replace(text, /[^\d,]/g, '')
+					const hwb_array: number[] = array_map(
+						string_split(text, ','),
+						v => number_safe(number_parse(v, true), 0)
+					)
+					while (array_length(hwb_array) < 4) {
+						array_push(hwb_array, 0)
+					}
 
-				const c = math_clamp(hwb_array[0], 0, 100) / 100
-				const m = math_clamp(hwb_array[1], 0, 100) / 100
-				const y = math_clamp(hwb_array[2], 0, 100) / 100
-				const k = math_clamp(hwb_array[3], 0, 100) / 100
-				command(Commands.update_input, cmyk_to_hsl({c, m, y, k}))
-			}}
-			c_trailing={<TextFieldButton
-				data-tooltip="Copy"
-				data-copy={get_cmyk_color()}>
-				<Icon c_code={0xE51B}/>
-			</TextFieldButton>}
-		/>
+					const c = math_clamp(hwb_array[0], 0, 100) / 100
+					const m = math_clamp(hwb_array[1], 0, 100) / 100
+					const y = math_clamp(hwb_array[2], 0, 100) / 100
+					const k = math_clamp(hwb_array[3], 0, 100) / 100
+					command(Commands.update_input, cmyk_to_hsl({c, m, y, k}))
+				}}
+				c_trailing={<TextFieldButton
+					data-tooltip="Copy"
+					data-copy={get_cmyk_color()}>
+					<Icon c_code={0xE51B}/>
+				</TextFieldButton>}
+			/>
+		</Tooltip>
 	</div>)
 }
 

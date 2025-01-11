@@ -2,14 +2,15 @@ import { createSignal, For, Show, type VoidComponent } from "solid-js"
 
 import { number_safe } from "@/utils/number"
 import { array_includes } from "@/utils/array"
+import { event_current_target } from "@/utils/event"
 
 import Button, { ButtonVariant } from "@/components/Button"
 import CheckBox from "@/components/CheckBox"
 import TextField, { NumberTextField } from "@/components/TextField"
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
+import Tooltip from "@/components/Tooltip"
 import Modal, { close_modal, ModalPosition, open_modal } from "@/components/Modal"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
-import { event_current_target } from "@/utils/event"
 
 const _: VoidComponent = () => {
 	const [allow_hide_anchor, set_allow_hide_anchor] = createSignal<boolean>(true)
@@ -45,96 +46,98 @@ const _: VoidComponent = () => {
 			</Modal>
 		</Playground>
 		<PlaygroundOptions>
-			<Dropdown
-				c_label="Position"
-				c_values={[position()]}
-				c_on_change={(options) => set_position(options[0].value as ModalPosition)}>
-				<For each={[
-					[ModalPosition.left_top, 'Left top'],
-					[ModalPosition.left_center_to_bottom, 'Left center to bottom'],
-					[ModalPosition.left_center, 'Left center'],
-					[ModalPosition.left_center_to_top, 'Left center to top'],
-					[ModalPosition.left_bottom, 'Left bottom'],
-					[ModalPosition.right_top, 'Right top'],
-					[ModalPosition.right_center_to_bottom, 'Right center to bottom'],
-					[ModalPosition.right_center, 'Right center'],
-					[ModalPosition.right_center_to_top, 'Right center to top'],
-					[ModalPosition.right_bottom, 'Right bottom'],
-					[ModalPosition.center_top_to_right, 'Center top to right'],
-					[ModalPosition.center_top, 'Center top'],
-					[ModalPosition.center_top_to_left, 'Center top to left'],
-					[ModalPosition.center_bottom_to_right, 'Center bottom to right'],
-					[ModalPosition.center_bottom, 'Center bottom'],
-					[ModalPosition.center_bottom_to_left, 'Center bottom to left'],
-					[ModalPosition.center_center_left_top, 'Center center left top'],
-					[ModalPosition.center_center_left, 'Center center left'],
-					[ModalPosition.center_center_left_bottom, 'Center center left bottom'],
-					[ModalPosition.center_center_top, 'Center center top'],
-					[ModalPosition.center_center, 'Center center'],
-					[ModalPosition.center_center_bottom, 'Center center bottom'],
-					[ModalPosition.center_center_right_top, 'Center center right top'],
-					[ModalPosition.center_center_right, 'Center center right'],
-					[ModalPosition.center_center_right_bottom, 'Center center right bottom'],
-				]}>{option => <DropdownOption c_value={option[0]} c_text={option[1] as string} />}</For>
-			</Dropdown>
-			<NumberTextField
-				style={{width: '100px'}}
-				value={gap()}
-				min={0}
-				onBlur={(ev) => set_gap(g => number_safe(event_current_target(ev).valueAsNumber, g))}
-				c_label="Gap"
-			/>
-			<Show when={array_includes([
-				ModalPosition.center_top_to_right,
-				ModalPosition.center_center_left,
-				ModalPosition.center_bottom_to_right,
-				ModalPosition.center_top_to_left,
-				ModalPosition.center_center_right,
-				ModalPosition.center_bottom_to_left,
-				ModalPosition.left_center_to_bottom,
-				ModalPosition.center_center_left_top,
-				ModalPosition.center_center_top,
-				ModalPosition.center_center_right_top,
-				ModalPosition.right_center_to_bottom,
-				ModalPosition.left_center_to_top,
-				ModalPosition.center_center_left_bottom,
-				ModalPosition.center_center_bottom,
-				ModalPosition.center_center_right_bottom,
-				ModalPosition.right_center_to_top
-			], position())}>
+			<Tooltip>
+				<Dropdown
+					c_label="Position"
+					c_values={[position()]}
+					c_on_change={(options) => set_position(options[0].value as ModalPosition)}>
+					<For each={[
+						[ModalPosition.left_top, 'Left top'],
+						[ModalPosition.left_center_to_bottom, 'Left center to bottom'],
+						[ModalPosition.left_center, 'Left center'],
+						[ModalPosition.left_center_to_top, 'Left center to top'],
+						[ModalPosition.left_bottom, 'Left bottom'],
+						[ModalPosition.right_top, 'Right top'],
+						[ModalPosition.right_center_to_bottom, 'Right center to bottom'],
+						[ModalPosition.right_center, 'Right center'],
+						[ModalPosition.right_center_to_top, 'Right center to top'],
+						[ModalPosition.right_bottom, 'Right bottom'],
+						[ModalPosition.center_top_to_right, 'Center top to right'],
+						[ModalPosition.center_top, 'Center top'],
+						[ModalPosition.center_top_to_left, 'Center top to left'],
+						[ModalPosition.center_bottom_to_right, 'Center bottom to right'],
+						[ModalPosition.center_bottom, 'Center bottom'],
+						[ModalPosition.center_bottom_to_left, 'Center bottom to left'],
+						[ModalPosition.center_center_left_top, 'Center center left top'],
+						[ModalPosition.center_center_left, 'Center center left'],
+						[ModalPosition.center_center_left_bottom, 'Center center left bottom'],
+						[ModalPosition.center_center_top, 'Center center top'],
+						[ModalPosition.center_center, 'Center center'],
+						[ModalPosition.center_center_bottom, 'Center center bottom'],
+						[ModalPosition.center_center_right_top, 'Center center right top'],
+						[ModalPosition.center_center_right, 'Center center right'],
+						[ModalPosition.center_center_right_bottom, 'Center center right bottom'],
+					]}>{option => <DropdownOption c_value={option[0]} c_text={option[1] as string} />}</For>
+				</Dropdown>
 				<NumberTextField
-					value={padding()}
 					style={{width: '100px'}}
+					value={gap()}
 					min={0}
-					onBlur={(ev) => set_padding(p => number_safe(event_current_target(ev).valueAsNumber, p))}
-					c_label="Padding"
+					onBlur={(ev) => set_gap(g => number_safe(event_current_target(ev).valueAsNumber, g))}
+					c_label="Gap"
 				/>
-			</Show>
-			<CheckBox
-				checked={anchor()}
-				onChange={ev => set_anchor(event_current_target(ev).checked)}>
-				Anchor
-			</CheckBox>
-			<CheckBox
-				checked={important()}
-				onChange={ev => setImportant(event_current_target(ev).checked)}>
-				Important
-			</CheckBox>
-			<CheckBox
-				checked={content_autofocus()}
-				onChange={ev => set_content_autofocus(event_current_target(ev).checked)}>
-				Input Autofocus
-			</CheckBox>
-			<CheckBox
-				checked={draggable()}
-				onChange={ev => set_draggable(event_current_target(ev).checked)}>
-				Draggable
-			</CheckBox>
-			<CheckBox
-				checked={allow_hide_anchor()}
-				onChange={ev => set_allow_hide_anchor(event_current_target(ev).checked)}>
-				Allow hide anchor
-			</CheckBox>
+				<Show when={array_includes([
+					ModalPosition.center_top_to_right,
+					ModalPosition.center_center_left,
+					ModalPosition.center_bottom_to_right,
+					ModalPosition.center_top_to_left,
+					ModalPosition.center_center_right,
+					ModalPosition.center_bottom_to_left,
+					ModalPosition.left_center_to_bottom,
+					ModalPosition.center_center_left_top,
+					ModalPosition.center_center_top,
+					ModalPosition.center_center_right_top,
+					ModalPosition.right_center_to_bottom,
+					ModalPosition.left_center_to_top,
+					ModalPosition.center_center_left_bottom,
+					ModalPosition.center_center_bottom,
+					ModalPosition.center_center_right_bottom,
+					ModalPosition.right_center_to_top
+				], position())}>
+					<NumberTextField
+						value={padding()}
+						style={{width: '100px'}}
+						min={0}
+						onBlur={(ev) => set_padding(p => number_safe(event_current_target(ev).valueAsNumber, p))}
+						c_label="Padding"
+					/>
+				</Show>
+				<CheckBox
+					checked={anchor()}
+					onChange={ev => set_anchor(event_current_target(ev).checked)}>
+					Anchor
+				</CheckBox>
+				<CheckBox
+					checked={important()}
+					onChange={ev => setImportant(event_current_target(ev).checked)}>
+					Important
+				</CheckBox>
+				<CheckBox
+					checked={content_autofocus()}
+					onChange={ev => set_content_autofocus(event_current_target(ev).checked)}>
+					Input Autofocus
+				</CheckBox>
+				<CheckBox
+					checked={draggable()}
+					onChange={ev => set_draggable(event_current_target(ev).checked)}>
+					Draggable
+				</CheckBox>
+				<CheckBox
+					checked={allow_hide_anchor()}
+					onChange={ev => set_allow_hide_anchor(event_current_target(ev).checked)}>
+					Allow hide anchor
+				</CheckBox>
+			</Tooltip>
 		</PlaygroundOptions>
 	</Page>)
 }

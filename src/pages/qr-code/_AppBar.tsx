@@ -450,36 +450,38 @@ const _: VoidComponent<{
 						c_focused={is_colorpicker_backgroundcolor_open()}>
 						Background color
 					</MenuItem>
-					<div style={{padding: '4px 12px'}}>
-						<NumberTextField
-							c_label="Margin"
-							min={0}
-							value={settings().margin}
-							c_integer_only
-							id={input_settings_margin_id}
-						/>
-					</div>
-					<MenuDivider/>
-					<MenuHeader>QR Code version</MenuHeader>
-					<SwitchMenuItem
-						c_icon_code={0xEB49}
-						c_checked={settings().version == null}
-						c_attr_switch={{
-							id: input_settings_autoversion_id,
-						}}>
-						Auto version
-					</SwitchMenuItem>
-					<div style={{padding: '4px 12px 8px 12px'}}>
-						<NumberTextField
-							disabled={settings().version == null}
-							c_label="Version"
-							min={1}
-							max={40}
-							id={input_settings_version_id}
-							c_integer_only
-							value={settings().version ?? 1}
-						/>
-					</div>
+					<Tooltip>
+						<div style={{padding: '4px 12px'}}>
+							<NumberTextField
+								c_label="Margin"
+								min={0}
+								value={settings().margin}
+								c_integer_only
+								id={input_settings_margin_id}
+							/>
+						</div>
+						<MenuDivider/>
+						<MenuHeader>QR Code version</MenuHeader>
+						<SwitchMenuItem
+							c_icon_code={0xEB49}
+							c_checked={settings().version == null}
+							c_attr_switch={{
+								id: input_settings_autoversion_id,
+							}}>
+							Auto version
+						</SwitchMenuItem>
+						<div style={{padding: '4px 12px 8px 12px'}}>
+							<NumberTextField
+								disabled={settings().version == null}
+								c_label="Version"
+								min={1}
+								max={40}
+								id={input_settings_version_id}
+								c_integer_only
+								value={settings().version ?? 1}
+							/>
+						</div>
+					</Tooltip>
 				</Show>
 			</Menu>
 			<Menu

@@ -2,15 +2,16 @@ import { createSignal, For, Show, type VoidComponent } from "solid-js"
 
 import { number_safe } from "@/utils/number"
 import { array_includes } from "@/utils/array"
+import { event_current_target } from "@/utils/event"
 
 import Icon from "@/components/Icon"
 import Button, { ButtonVariant } from "@/components/Button"
 import Menu, { MenuDivider, MenuHeader, MenuItem, MenuItemTrailingShortcut, MenuPosition, open_menu, SubMenu, SubMenuItem, SwitchMenuItem } from "@/components/Menu"
 import TextField, { NumberTextField } from "@/components/TextField"
 import CheckBox from "@/components/CheckBox"
+import Tooltip from "@/components/Tooltip"
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
-import { event_current_target } from "@/utils/event"
 
 const _: VoidComponent = () => {
 	const [allow_hide_anchor, set_allow_hide_anchor] = createSignal<boolean>(true)
@@ -111,96 +112,98 @@ const _: VoidComponent = () => {
 			</Menu>
 		</Playground>
 		<PlaygroundOptions>
-			<Dropdown
-				c_label="Position"
-				c_values={[position()]}
-				c_on_change={(options) => set_position(options[0].value as MenuPosition)}>
-				<For each={[
-					[MenuPosition.left_top, 'Left top'],
-					[MenuPosition.left_center_to_bottom, 'Left center to bottom'],
-					[MenuPosition.left_center, 'Left center'],
-					[MenuPosition.left_center_to_top, 'Left center to top'],
-					[MenuPosition.left_bottom, 'Left bottom'],
-					[MenuPosition.right_top, 'Right top'],
-					[MenuPosition.right_center_to_bottom, 'Right center to bottom'],
-					[MenuPosition.right_center, 'Right center'],
-					[MenuPosition.right_center_to_top, 'Right center to top'],
-					[MenuPosition.right_bottom, 'Right bottom'],
-					[MenuPosition.center_top_to_right, 'Center top to right'],
-					[MenuPosition.center_top, 'Center top'],
-					[MenuPosition.center_top_to_left, 'Center top to left'],
-					[MenuPosition.center_bottom_to_right, 'Center bottom to right'],
-					[MenuPosition.center_bottom, 'Center bottom'],
-					[MenuPosition.center_bottom_to_left, 'Center bottom to left'],
-					[MenuPosition.center_center_left_top, 'Center center left top'],
-					[MenuPosition.center_center_left, 'Center center left'],
-					[MenuPosition.center_center_left_bottom, 'Center center left bottom'],
-					[MenuPosition.center_center_top, 'Center center top'],
-					[MenuPosition.center_center, 'Center center'],
-					[MenuPosition.center_center_bottom, 'Center center bottom'],
-					[MenuPosition.center_center_right_top, 'Center center right top'],
-					[MenuPosition.center_center_right, 'Center center right'],
-					[MenuPosition.center_center_right_bottom, 'Center center right bottom'],
-				]}>{option => <DropdownOption c_value={option[0]} c_text={option[1] as string} />}</For>
-			</Dropdown>
-			<NumberTextField
-				style={{width: '100px'}}
-				value={gap()}
-				min={0}
-				onBlur={(ev) => set_gap(g => number_safe(event_current_target(ev).valueAsNumber, g))}
-				c_label="Gap"
-			/>
-			<Show when={array_includes([
-				MenuPosition.center_top_to_right,
-				MenuPosition.center_center_left,
-				MenuPosition.center_bottom_to_right,
-				MenuPosition.center_top_to_left,
-				MenuPosition.center_center_right,
-				MenuPosition.center_bottom_to_left,
-				MenuPosition.left_center_to_bottom,
-				MenuPosition.center_center_left_top,
-				MenuPosition.center_center_top,
-				MenuPosition.center_center_right_top,
-				MenuPosition.right_center_to_bottom,
-				MenuPosition.left_center_to_top,
-				MenuPosition.center_center_left_bottom,
-				MenuPosition.center_center_bottom,
-				MenuPosition.center_center_right_bottom,
-				MenuPosition.right_center_to_top
-			], position())}>
+			<Tooltip>
+				<Dropdown
+					c_label="Position"
+					c_values={[position()]}
+					c_on_change={(options) => set_position(options[0].value as MenuPosition)}>
+					<For each={[
+						[MenuPosition.left_top, 'Left top'],
+						[MenuPosition.left_center_to_bottom, 'Left center to bottom'],
+						[MenuPosition.left_center, 'Left center'],
+						[MenuPosition.left_center_to_top, 'Left center to top'],
+						[MenuPosition.left_bottom, 'Left bottom'],
+						[MenuPosition.right_top, 'Right top'],
+						[MenuPosition.right_center_to_bottom, 'Right center to bottom'],
+						[MenuPosition.right_center, 'Right center'],
+						[MenuPosition.right_center_to_top, 'Right center to top'],
+						[MenuPosition.right_bottom, 'Right bottom'],
+						[MenuPosition.center_top_to_right, 'Center top to right'],
+						[MenuPosition.center_top, 'Center top'],
+						[MenuPosition.center_top_to_left, 'Center top to left'],
+						[MenuPosition.center_bottom_to_right, 'Center bottom to right'],
+						[MenuPosition.center_bottom, 'Center bottom'],
+						[MenuPosition.center_bottom_to_left, 'Center bottom to left'],
+						[MenuPosition.center_center_left_top, 'Center center left top'],
+						[MenuPosition.center_center_left, 'Center center left'],
+						[MenuPosition.center_center_left_bottom, 'Center center left bottom'],
+						[MenuPosition.center_center_top, 'Center center top'],
+						[MenuPosition.center_center, 'Center center'],
+						[MenuPosition.center_center_bottom, 'Center center bottom'],
+						[MenuPosition.center_center_right_top, 'Center center right top'],
+						[MenuPosition.center_center_right, 'Center center right'],
+						[MenuPosition.center_center_right_bottom, 'Center center right bottom'],
+					]}>{option => <DropdownOption c_value={option[0]} c_text={option[1] as string} />}</For>
+				</Dropdown>
 				<NumberTextField
-					value={padding()}
 					style={{width: '100px'}}
+					value={gap()}
 					min={0}
-					onBlur={(ev) => set_padding(p => number_safe(event_current_target(ev).valueAsNumber, p))}
-					c_label="Padding"
+					onBlur={(ev) => set_gap(g => number_safe(event_current_target(ev).valueAsNumber, g))}
+					c_label="Gap"
 				/>
-			</Show>
-			<CheckBox
-				checked={anchor()}
-				onChange={ev => set_anchor(event_current_target(ev).checked)}>
-				Anchor
-			</CheckBox>
-			<CheckBox
-				checked={important()}
-				onChange={ev => set_important(event_current_target(ev).checked)}>
-				Important
-			</CheckBox>
-			<CheckBox
-				checked={content_autofocus()}
-				onChange={ev => set_content_autofocus(event_current_target(ev).checked)}>
-				Input Autofocus
-			</CheckBox>
-			<CheckBox
-				checked={draggable()}
-				onChange={ev => set_draggable(event_current_target(ev).checked)}>
-				Dragable
-			</CheckBox>
-			<CheckBox
-				checked={allow_hide_anchor()}
-				onChange={ev => set_allow_hide_anchor(event_current_target(ev).checked)}>
-				Allow hide anchor
-			</CheckBox>
+				<Show when={array_includes([
+					MenuPosition.center_top_to_right,
+					MenuPosition.center_center_left,
+					MenuPosition.center_bottom_to_right,
+					MenuPosition.center_top_to_left,
+					MenuPosition.center_center_right,
+					MenuPosition.center_bottom_to_left,
+					MenuPosition.left_center_to_bottom,
+					MenuPosition.center_center_left_top,
+					MenuPosition.center_center_top,
+					MenuPosition.center_center_right_top,
+					MenuPosition.right_center_to_bottom,
+					MenuPosition.left_center_to_top,
+					MenuPosition.center_center_left_bottom,
+					MenuPosition.center_center_bottom,
+					MenuPosition.center_center_right_bottom,
+					MenuPosition.right_center_to_top
+				], position())}>
+					<NumberTextField
+						value={padding()}
+						style={{width: '100px'}}
+						min={0}
+						onBlur={(ev) => set_padding(p => number_safe(event_current_target(ev).valueAsNumber, p))}
+						c_label="Padding"
+					/>
+				</Show>
+				<CheckBox
+					checked={anchor()}
+					onChange={ev => set_anchor(event_current_target(ev).checked)}>
+					Anchor
+				</CheckBox>
+				<CheckBox
+					checked={important()}
+					onChange={ev => set_important(event_current_target(ev).checked)}>
+					Important
+				</CheckBox>
+				<CheckBox
+					checked={content_autofocus()}
+					onChange={ev => set_content_autofocus(event_current_target(ev).checked)}>
+					Input Autofocus
+				</CheckBox>
+				<CheckBox
+					checked={draggable()}
+					onChange={ev => set_draggable(event_current_target(ev).checked)}>
+					Dragable
+				</CheckBox>
+				<CheckBox
+					checked={allow_hide_anchor()}
+					onChange={ev => set_allow_hide_anchor(event_current_target(ev).checked)}>
+					Allow hide anchor
+				</CheckBox>
+			</Tooltip>
 		</PlaygroundOptions>
 	</Page>)
 }

@@ -21,11 +21,11 @@ import { ElementIds } from '@/enums/ids'
 
 import Divider from '@/components/Divider'
 import Tooltip from '@/components/Tooltip'
-import EmojiC from '@/components/Emoji'
-import { ButtonVariant, EmojiButton, IconButton } from '@/components/Button'
+import { ButtonVariant, IconButton, SquareButton } from '@/components/Button'
 import { close_searchtextfieldmenu, SearchMenuItem, SearchTextField } from '@/components/TextField'
 import { Modal, type ModalProps, ModalPosition as EmojiPickerPosition, close_modal, focus_modal, open_modal, reposition_modal, is_modal_open } from '@/components/Modal'
 import { close_popover, is_popover_open, open_popover, Popover, reposition_popover, type PopoverProps } from '../Popover'
+import EmojiC from '@/components/Emoji'
 import FocusableGroup from '@/components/FocusableGroup'
 import './index.scss'
 
@@ -265,11 +265,11 @@ const EmojiPickerBody: ParentComponent<{
 					}}>
 					<h3>{$props.category}</h3>
 					<For each={$props.emojis}>{(e, i) =>
-						<EmojiButton
+						<SquareButton
 							data-index={i()}
-							data-tooltip={e[1]}
-							c_emoji={e[0]}
-						/>
+							data-tooltip={e[1]}>
+							{e[0]}
+						</SquareButton>
 					}</For>
 				</FocusableGroup>
 			</Show>

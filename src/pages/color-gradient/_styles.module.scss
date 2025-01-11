@@ -38,7 +38,7 @@
 		height: min-content;
 	}
 
-	> div:not(:global(.c-tooltip)), div:global(.c-tooltip) > div:not(:global(.c-popover)) {
+	> div {
 		padding: 12px;
 		border-radius: 8px;
 		background-color: rgb(var(--g-color-surface));

@@ -35,6 +35,11 @@
 		> .c-btn {
 			max-width: 100%;
 			min-width: 100%;
+			font-size: 20px;
+
+			:root[data-platform=mobile] & {
+				font-size: 24px;
+			}
 		}
 	}
 }

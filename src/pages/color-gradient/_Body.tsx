@@ -758,45 +758,45 @@ const _: VoidComponent<{
 					)
 				}}/>
 			</div>
-			<div class={CSS.body_control}>
-				<div>
-					<GradientDataList
-						command={command}
-						gradient_data={props.gradient_data}
-						settings={settings()}
-					/>
-					<div class={CSS.body_control_shape}>
-						<NumberTextField
-							min={0.1}
-							step={0.1}
-							enterkeyhint="done"
-							c_auto_select_all
-							value={settings().aspect_ratio}
-							c_on_inputasnumber={(_, v) => command(
-								Commands.change_settings_aspect_ratio,
-								v
-							)}
-							c_label="Aspect ratio"
+			<Tooltip>
+				<div class={CSS.body_control}>
+					<div>
+						<GradientDataList
+							command={command}
+							gradient_data={props.gradient_data}
+							settings={settings()}
 						/>
-						<NumberTextField
-							min={0}
-							enterkeyhint="done"
-							c_auto_select_all
-							value={settings().border_radius}
-							c_on_inputasnumber={(_, v) => command(
-								Commands.change_settings_border_radius,
-								v
-							)}
-							c_label="Border radius (px)"
-						/>
+						<div class={CSS.body_control_shape}>
+							<NumberTextField
+								min={0.1}
+								step={0.1}
+								enterkeyhint="done"
+								c_auto_select_all
+								value={settings().aspect_ratio}
+								c_on_inputasnumber={(_, v) => command(
+									Commands.change_settings_aspect_ratio,
+									v
+								)}
+								c_label="Aspect ratio"
+							/>
+							<NumberTextField
+								min={0}
+								enterkeyhint="done"
+								c_auto_select_all
+								value={settings().border_radius}
+								c_on_inputasnumber={(_, v) => command(
+									Commands.change_settings_border_radius,
+									v
+								)}
+								c_label="Border radius (px)"
+							/>
+						</div>
 					</div>
-				</div>
-				<Button
-					c_variant={ButtonVariant.filled}
-					id={button_addgradient_id}>
-					<Icon c_code={0xE007} />Add gradient
-				</Button>
-				<Tooltip>
+					<Button
+						c_variant={ButtonVariant.filled}
+						id={button_addgradient_id}>
+						<Icon c_code={0xE007} />Add gradient
+					</Button>
 					<For each={props.gradients}>{(gradient, index) =>
 						<GradientControl
 							gradient={gradient}
@@ -817,8 +817,8 @@ const _: VoidComponent<{
 							selected_gradient_index={selected_gradient_index()}
 						/>
 					}</For>
-				</Tooltip>
-			</div>
+				</div>
+			</Tooltip>
 		</div>
 		<ColorPickers/>
 		<Menus/>

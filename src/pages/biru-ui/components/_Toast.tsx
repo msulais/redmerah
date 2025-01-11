@@ -1,15 +1,16 @@
 import { createSignal, For, Show, type VoidComponent } from "solid-js"
 
 import { number_safe } from "@/utils/number"
+import { event_current_target } from "@/utils/event"
 
 import Icon from "@/components/Icon"
 import Button, { ButtonVariant, IconButton } from "@/components/Button"
 import CheckBox from "@/components/CheckBox"
 import { NumberTextField } from "@/components/TextField"
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
+import Tooltip from "@/components/Tooltip"
 import Toast, { close_toast, open_toast, ToastPosition } from "@/components/Toast"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
-import { event_current_target } from "@/utils/event"
 
 const _: VoidComponent = () => {
 	const [header, set_header] = createSignal<boolean>(false)
@@ -54,15 +55,17 @@ const _: VoidComponent = () => {
 		</Playground>
 		<PlaygroundOptions>
 			<Show when={autoclose()}>
-				<NumberTextField
-					c_label="Duration"
-					style={{width: '100px'}}
-					value={duration()}
-					step={100}
-					min={100}
-					onBlur={ev => set_duration(d => number_safe(event_current_target(ev).valueAsNumber, d))}
-					c_trailing="ms"
-				/>
+				<Tooltip>
+					<NumberTextField
+						c_label="Duration"
+						style={{width: '100px'}}
+						value={duration()}
+						step={100}
+						min={100}
+						onBlur={ev => set_duration(d => number_safe(event_current_target(ev).valueAsNumber, d))}
+						c_trailing="ms"
+					/>
+				</Tooltip>
 			</Show>
 			<Dropdown
 				c_label="Position"
