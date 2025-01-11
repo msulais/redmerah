@@ -12,7 +12,6 @@ import { element_dataset, element_id, element_tagname, element_valid_target } fr
 import TextField, { change_textfield_value, TextFieldButton } from "@/components/TextField"
 import Expander, { ExpanderHeader } from "@/components/Expander"
 import Button from "@/components/Button"
-import Emoji from "@/components/Emoji"
 import Tooltip from "@/components/Tooltip"
 import Icon from "@/components/Icon"
 import CSS from './_index.module.scss'
@@ -83,7 +82,7 @@ const _: VoidComponent<{
 					<Button
 						data-tooltip={emoji[1]}
 						data-emoji={emoji[0]}>
-						<Emoji c_emoji={emoji[0]}/>
+						{emoji[0]}
 					</Button>
 				}</For>
 			</Expander>
@@ -93,7 +92,7 @@ const _: VoidComponent<{
 					<Button
 						data-tooltip={emoji[1]}
 						data-emoji={emoji[0]}>
-						<Emoji c_emoji={emoji[0]}/>
+						{emoji[0]}
 					</Button>
 				}</For>
 			</Expander>
@@ -103,7 +102,7 @@ const _: VoidComponent<{
 					<Button
 						data-tooltip={emoji[1]}
 						data-emoji={emoji[0]}>
-						<Emoji c_emoji={emoji[0]}/>
+						{emoji[0]}
 					</Button>
 				}</For>
 			</Expander>
@@ -113,7 +112,7 @@ const _: VoidComponent<{
 					<Button
 						data-tooltip={emoji[1]}
 						data-emoji={emoji[0]}>
-						<Emoji c_emoji={emoji[0]}/>
+						{emoji[0]}
 					</Button>
 				}</For>
 			</Expander>
@@ -123,7 +122,7 @@ const _: VoidComponent<{
 					<Button
 						data-tooltip={emoji[1]}
 						data-emoji={emoji[0]}>
-						<Emoji c_emoji={emoji[0]}/>
+						{emoji[0]}
 					</Button>
 				}</For>
 			</Expander>
@@ -133,7 +132,7 @@ const _: VoidComponent<{
 					<Button
 						data-tooltip={emoji[1]}
 						data-emoji={emoji[0]}>
-						<Emoji c_emoji={emoji[0]}/>
+						{emoji[0]}
 					</Button>
 				}</For>
 			</Expander>
@@ -143,7 +142,7 @@ const _: VoidComponent<{
 					<Button
 						data-tooltip={emoji[1]}
 						data-emoji={emoji[0]}>
-						<Emoji c_emoji={emoji[0]}/>
+						{emoji[0]}
 					</Button>
 				}</For>
 			</Expander>
@@ -153,7 +152,7 @@ const _: VoidComponent<{
 					<Button
 						data-tooltip={emoji[1]}
 						data-emoji={emoji[0]}>
-						<Emoji c_emoji={emoji[0]}/>
+						{emoji[0]}
 					</Button>
 				}</For>
 			</Expander>
@@ -163,7 +162,7 @@ const _: VoidComponent<{
 					<Button
 						data-tooltip={emoji[1]}
 						data-emoji={emoji[0]}>
-						<Emoji c_emoji={emoji[0]}/>
+						{emoji[0]}
 					</Button>
 				}</For>
 			</Expander>

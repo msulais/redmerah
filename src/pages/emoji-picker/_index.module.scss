@@ -13,6 +13,14 @@
 	& :global(.c-expander-body) > div {
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+
+		& button {
+			font-size: 20px;
+
+			:root[data-platform=mobile] & {
+				font-size: 24px;
+			}
+		}
 	}
 }
 
