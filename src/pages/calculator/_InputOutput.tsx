@@ -1,15 +1,15 @@
-import { createEffect, createMemo, createSignal, For, Match, Show, Switch, type JSX, type ParentComponent, type VoidComponent } from "solid-js"
+import { createEffect, createMemo, createSignal, createUniqueId, For, Match, Show, Switch, type JSX, type ParentComponent, type VoidComponent } from "solid-js"
 
 import type { CalculatorInput, CalculatorOutput, DateCalculatorInput, Settings } from "./_types"
-import { CalculatorType, Commands, DateOperation, DecimalNumberFormat, NumberType } from "./_enums"
-import { element_focus } from "@/utils/element"
+import { CalculatorType, Commands, DateOperation, NumberType } from "./_enums"
+import { element_dataset, element_focus, element_id, element_tagname, element_valid_target } from "@/utils/element"
 import { classlist_module, attr_set_if_exist, classlist } from "@/utils/attributes"
 import { CONVERTER_TYPES } from "./_constants"
 import { ConverterType, UNIT_ANGLE, UNIT_AREA, UNIT_FREQUENCY, UNIT_LENGTH, UNIT_PRESSURE, UNIT_TEMPERATURE, UNIT_TIME, UNIT_VOLUME, UNIT_WEIGHT, type ConverterUnit } from "./_converter"
 import { string_length, string_match, string_substring, string_totitlecase, string_touppercase, string_trim } from "@/utils/string"
-import { event_current_target, event_prevent_default } from "@/utils/event"
+import { event_current_target, event_prevent_default, event_target } from "@/utils/event"
 import { date_year, date_text_YMD } from "@/utils/datetime"
-import { number_to_binary, number_format, number_parse, number_to_real_digit, number_to_string, number_safe } from "@/utils/number"
+import { number_to_binary, number_format, number_parse, number_to_real_digit, number_to_string, number_safe, number_is_not_defined } from "@/utils/number"
 import { regex_test } from "@/utils/regex"
 import { navigator_clipboard_writetext } from "@/utils/navigator"
 
@@ -22,6 +22,8 @@ import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import DatePicker, { open_datepicker } from "@/components/DatePicker"
 import CSSMiscellaneous from '@/styles/miscellaneous.module.scss'
 import CSS from './_styles.module.scss'
+import { document_active } from "@/utils/document"
+import { valid_enum_value } from "@/utils/object"
 
 const ActionButtons: ParentComponent<JSX.HTMLAttributes<HTMLDivElement> & {
 	command: (type: Commands, ...args: unknown[]) => unknown
@@ -32,6 +34,11 @@ const ActionButtons: ParentComponent<JSX.HTMLAttributes<HTMLDivElement> & {
 }> = (props) => {
 	const [is_menu_memory_open, set_is_menu_memory_open] = createSignal<boolean>(false)
 	const settings = createMemo(() => props.settings)
+	const button_memory_id = createUniqueId()
+	const button_clear_id = createUniqueId()
+	const button_recall_id = createUniqueId()
+	const button_add_id = createUniqueId()
+	const button_subtract_id = createUniqueId()
 	let menu_memory_ref: HTMLDialogElement
 
 	function command(type: Commands, ...args: unknown[]): unknown {
@@ -40,13 +47,39 @@ const ActionButtons: ParentComponent<JSX.HTMLAttributes<HTMLDivElement> & {
 
 	return (<div class={CSS.input_output_action_buttons} data-hidden={attr_set_if_exist(props.hide)}>
 		{props.children}
-		<div class={CSS.input_output_memory_buttons} data-hidden={attr_set_if_exist(!settings().memory_buttons)}>
+		<div
+			class={CSS.input_output_memory_buttons}
+			data-hidden={attr_set_if_exist(!settings().memory_buttons)}
+			onClick={ev => {
+				const button = document_active()!
+				if (!element_valid_target(
+					event_current_target(ev),
+					button,
+					el => element_tagname(el) == 'BUTTON'
+				)) return
+
+				switch (element_id(button)) {
+				case button_memory_id:
+					open_menu(ev, menu_memory_ref, { anchor: button })
+					break
+				case button_clear_id:
+					command(Commands.clear_memory)
+					break
+				case button_recall_id:
+					props.on_recall_memory(props.memory)
+					break
+				case button_add_id:
+					command(Commands.add_memory)
+					break
+				case button_subtract_id:
+					command(Commands.subtract_memory)
+					break
+				}
+			}}>
 			<Button
 				data-tooltip={"Memory value " + `(${props.memory})`}
-				c_focused={is_menu_memory_open()}
-				onClick={(ev) => open_menu(ev, menu_memory_ref, {
-					anchor: event_current_target(ev),
-				})}>
+				id={button_memory_id}
+				c_focused={is_menu_memory_open()}>
 				M
 			</Button>
 			<Menu
@@ -58,22 +91,22 @@ const ActionButtons: ParentComponent<JSX.HTMLAttributes<HTMLDivElement> & {
 			</Menu>
 			<Button
 				data-tooltip="Memory clear"
-				onClick={() => command(Commands.clear_memory)}>
+				id={button_clear_id}>
 				MC
 			</Button>
 			<Button
 				data-tooltip="Memory recall"
-				onClick={() => props.on_recall_memory(props.memory)}>
+				id={button_recall_id}>
 				MR
 			</Button>
 			<Button
 				data-tooltip="Memory add"
-				onClick={() => command(Commands.add_memory)}>
+				id={button_add_id}>
 				M+
 			</Button>
 			<Button
 				data-tooltip="Memory subtract"
-				onClick={() => command(Commands.subtract_memory)}>
+				id={button_subtract_id}>
 				M-
 			</Button>
 		</div>
@@ -89,6 +122,9 @@ const BasicCalculator: VoidComponent<{
 }> = (props) => {
 	const settings = createMemo(() => props.settings)
 	const output = createMemo(() => props.output)
+	const button_clear_id = createUniqueId()
+	const button_backspace_id = createUniqueId()
+	const button_equal_id = createUniqueId()
 	let input_ref: HTMLInputElement
 	let caret_pos: number = 0
 
@@ -183,31 +219,55 @@ const BasicCalculator: VoidComponent<{
 			settings={settings()}
 			hide={!settings().memory_buttons}
 		/>
-		<div class={CSS.input_output_basic_buttons}>
-			<Button onClick={() => add_char('%')}>%</Button>
-			<Button onClick={() => add_char('√')}>√</Button>
-			<Button onClick={() => clear()} classList={classlist_module(CSS.input_output_remove_symbol)}>C</Button>
-			<Button onClick={() => backspace()} classList={classlist_module(CSS.input_output_remove_symbol)}><Icon c_code={0xE199} /></Button>
+		<div
+			class={CSS.input_output_basic_buttons}
+			onClick={ev => {
+				const button = document_active()!
+				if (!element_valid_target(
+					event_current_target(ev),
+					button,
+					el => element_tagname(el) == 'BUTTON'
+				)) return
 
-			<Button onClick={() => add_char('7')} c_variant={ButtonVariant.tonal}>7</Button>
-			<Button onClick={() => add_char('8')} c_variant={ButtonVariant.tonal}>8</Button>
-			<Button onClick={() => add_char('9')} c_variant={ButtonVariant.tonal}>9</Button>
-			<Button onClick={() => add_char('÷')} ><Icon c_code={0xEE8F}/></Button>
+				switch (element_id(button)) {
+				case button_clear_id:
+					clear()
+					break
+				case button_backspace_id:
+					backspace()
+					break
+				case button_equal_id:
+					equal()
+					break
+				default:
+					const data_char = element_dataset(button, 'char')
+					if (data_char) return add_char(data_char)
+				}
+			}}>
+			<Button data-char="%">%</Button>
+			<Button data-char="√">√</Button>
+			<Button id={button_clear_id} classList={classlist_module(CSS.input_output_remove_symbol)}>C</Button>
+			<Button id={button_backspace_id} classList={classlist_module(CSS.input_output_remove_symbol)}><Icon c_code={0xE199} /></Button>
 
-			<Button onClick={() => add_char('4')} c_variant={ButtonVariant.tonal}>4</Button>
-			<Button onClick={() => add_char('5')} c_variant={ButtonVariant.tonal}>5</Button>
-			<Button onClick={() => add_char('6')} c_variant={ButtonVariant.tonal}>6</Button>
-			<Button onClick={() => add_char('×')}><Icon c_code={0xE5E9}/></Button>
+			<Button data-char="7" c_variant={ButtonVariant.tonal}>7</Button>
+			<Button data-char="8" c_variant={ButtonVariant.tonal}>8</Button>
+			<Button data-char="9" c_variant={ButtonVariant.tonal}>9</Button>
+			<Button data-char="÷"><Icon c_code={0xEE8F}/></Button>
 
-			<Button onClick={() => add_char('1')} c_variant={ButtonVariant.tonal}>1</Button>
-			<Button onClick={() => add_char('2')} c_variant={ButtonVariant.tonal}>2</Button>
-			<Button onClick={() => add_char('3')} c_variant={ButtonVariant.tonal}>3</Button>
-			<Button onClick={() => add_char('-')}><Icon c_code={0xEF5D} /></Button>
+			<Button data-char="4" c_variant={ButtonVariant.tonal}>4</Button>
+			<Button data-char="5" c_variant={ButtonVariant.tonal}>5</Button>
+			<Button data-char="6" c_variant={ButtonVariant.tonal}>6</Button>
+			<Button data-char="×"><Icon c_code={0xE5E9}/></Button>
 
-			<Button onClick={() => add_char(settings().number_format.decimal == DecimalNumberFormat.comma? ',' : '.')} ><Show when={settings().number_format.decimal == DecimalNumberFormat.comma} fallback=".">,</Show></Button>
-			<Button onClick={() => add_char('0')} c_variant={ButtonVariant.tonal}>0</Button>
-			<Button onClick={() => equal()} c_variant={ButtonVariant.filled}>=</Button>
-			<Button onClick={() => add_char('+')}><Icon c_code={0xE007}/></Button>
+			<Button data-char="1" c_variant={ButtonVariant.tonal}>1</Button>
+			<Button data-char="2" c_variant={ButtonVariant.tonal}>2</Button>
+			<Button data-char="3" c_variant={ButtonVariant.tonal}>3</Button>
+			<Button data-char="-"><Icon c_code={0xEF5D} /></Button>
+
+			<Button data-char={settings().number_format.decimal}>{settings().number_format.decimal}</Button>
+			<Button data-char="0" c_variant={ButtonVariant.tonal}>0</Button>
+			<Button id={button_equal_id} c_variant={ButtonVariant.filled}>=</Button>
+			<Button data-char="+"><Icon c_code={0xE007}/></Button>
 		</div>
 	</>)
 }
@@ -236,6 +296,11 @@ const ScientificCalculator: VoidComponent<{
 			i() + 'cot' + h()
 		]
 	})
+	const button_clear_id = createUniqueId()
+	const button_backspace_id = createUniqueId()
+	const button_equal_id = createUniqueId()
+	const button_inverse_id = createUniqueId()
+	const button_hyperbolic_id = createUniqueId()
 	let input_ref: HTMLInputElement
 	let menu_function_ref: HTMLDialogElement
 	let caret_pos: number = 0
@@ -344,22 +409,42 @@ const ScientificCalculator: VoidComponent<{
 			<Menu
 				classList={classlist_module(CSS.input_output_scientific_function_menu)}
 				ref={r => menu_function_ref = r}
-				c_on_toggleopen={(v) => set_is_menu_function_open(v)}>
+				c_on_toggleopen={(v) => set_is_menu_function_open(v)}
+				onClick={ev => {
+					const button = document_active()!
+					if (!element_valid_target(
+						event_current_target(ev),
+						button,
+						el => element_tagname(el) == 'BUTTON'
+					)) return
+
+					switch (element_id(button)) {
+					case button_inverse_id:
+						set_is_inverse(v => !v)
+						break
+					case button_hyperbolic_id:
+						set_is_hyperbolic(v => !v)
+						break
+					default:
+						const data_char = element_dataset(button, 'char')
+						if (data_char) return add_char(data_char)
+					}
+				}}>
 				<div class={CSS.input_output_trigonometry_options}>
-					<MenuItem c_checked={is_inverse()} onClick={() => set_is_inverse(v => !v)}>Invers</MenuItem>
-					<MenuItem c_checked={is_hyperbolic()} onClick={() => set_is_hyperbolic(v => !v)}>Hyperbolic</MenuItem>
+					<MenuItem c_checked={is_inverse()} id={button_inverse_id}>Invers</MenuItem>
+					<MenuItem c_checked={is_hyperbolic()} id={button_hyperbolic_id}>Hyperbolic</MenuItem>
 				</div>
 				<div class={CSS.input_output_grid_3}>
-					<For each={get_trigonometry()}>{t => <MenuItem onClick={() => add_char(t + '(')}>{`${t}(x)`}</MenuItem>}</For>
+					<For each={get_trigonometry()}>{t => <MenuItem data-char={t + '('}>{`${t}(x)`}</MenuItem>}</For>
 				</div>
 				<MenuDivider />
 				<div class={CSS.input_output_grid_3}>
-					<MenuItem onClick={() => add_char('abs(')}>abs(x)</MenuItem>
-					<MenuItem onClick={() => add_char('log(')}>log(x)</MenuItem>
-					<MenuItem onClick={() => add_char('ln(')}>ln(x)</MenuItem>
-					<MenuItem onClick={() => add_char('ceil(')}>ceil(x)</MenuItem>
-					<MenuItem onClick={() => add_char('round(')}>round(x)</MenuItem>
-					<MenuItem onClick={() => add_char('floor(')}>floor(x)</MenuItem>
+					<MenuItem data-char="abs(">abs(x)</MenuItem>
+					<MenuItem data-char="log(">log(x)</MenuItem>
+					<MenuItem data-char="ln(">ln(x)</MenuItem>
+					<MenuItem data-char="ceil(">ceil(x)</MenuItem>
+					<MenuItem data-char="round(">round(x)</MenuItem>
+					<MenuItem data-char="floor(">floor(x)</MenuItem>
 				</div>
 			</Menu>
 			<Button
@@ -369,42 +454,66 @@ const ScientificCalculator: VoidComponent<{
 				{settings().scientific.angle}
 			</Button>
 		</ActionButtons>
-		<div class={CSS.input_output_scientific_buttons}>
-			<Button onClick={() => add_char('mod')}>mod</Button>
-			<Button onClick={() => add_char('(')}>{'('}</Button>
-			<Button onClick={() => add_char(')')}>{')'}</Button>
-			<Button onClick={() => clear()} classList={classlist_module(CSS.input_output_remove_symbol)}>C</Button>
-			<Button onClick={() => backspace()} classList={classlist_module(CSS.input_output_remove_symbol)}><Icon c_code={0xE199} /></Button>
+		<div
+			class={CSS.input_output_scientific_buttons}
+			onClick={ev => {
+				const button = document_active()!
+				if (!element_valid_target(
+					event_current_target(ev),
+					button,
+					el => element_tagname(el) == 'BUTTON'
+				)) return
 
-			<Button onClick={() => add_char('%')}>%</Button>
-			<Button onClick={() => add_char('10^')}>10^</Button>
-			<Button onClick={() => add_char('^2')}>^2</Button>
-			<Button onClick={() => add_char('e^')}>e^</Button>
-			<Button onClick={() => add_char('^')}>^</Button>
+				switch (element_id(button)) {
+				case button_clear_id:
+					clear()
+					break
+				case button_backspace_id:
+					backspace()
+					break
+				case button_equal_id:
+					equal()
+					break
+				default:
+					const data_char = element_dataset(button, 'char')
+					if (data_char) return add_char(data_char)
+				}
+			}}>
+			<Button data-char="mod">mod</Button>
+			<Button data-char="(">{'('}</Button>
+			<Button data-char=")">{')'}</Button>
+			<Button id={button_clear_id} classList={classlist_module(CSS.input_output_remove_symbol)}>C</Button>
+			<Button id={button_backspace_id} classList={classlist_module(CSS.input_output_remove_symbol)}><Icon c_code={0xE199} /></Button>
 
-			<Button onClick={() => add_char('!')}>!</Button>
-			<Button onClick={() => add_char('7')} c_variant={ButtonVariant.tonal}>7</Button>
-			<Button onClick={() => add_char('8')} c_variant={ButtonVariant.tonal}>8</Button>
-			<Button onClick={() => add_char('9')} c_variant={ButtonVariant.tonal}>9</Button>
-			<Button onClick={() => add_char('÷')} ><Icon c_code={0xEE8F}/></Button>
+			<Button data-char="%">%</Button>
+			<Button data-char="10^">10^</Button>
+			<Button data-char="^2">^2</Button>
+			<Button data-char="e^">e^</Button>
+			<Button data-char="^">^</Button>
 
-			<Button onClick={() => add_char('e')}>e</Button>
-			<Button onClick={() => add_char('4')} c_variant={ButtonVariant.tonal}>4</Button>
-			<Button onClick={() => add_char('5')} c_variant={ButtonVariant.tonal}>5</Button>
-			<Button onClick={() => add_char('6')} c_variant={ButtonVariant.tonal}>6</Button>
-			<Button onClick={() => add_char('×')}><Icon c_code={0xE5E9}/></Button>
+			<Button data-char="!">!</Button>
+			<Button data-char="7" c_variant={ButtonVariant.tonal}>7</Button>
+			<Button data-char="8" c_variant={ButtonVariant.tonal}>8</Button>
+			<Button data-char="9" c_variant={ButtonVariant.tonal}>9</Button>
+			<Button data-char="÷" ><Icon c_code={0xEE8F}/></Button>
 
-			<Button onClick={() => add_char('π')}>π</Button>
-			<Button onClick={() => add_char('1')} c_variant={ButtonVariant.tonal}>1</Button>
-			<Button onClick={() => add_char('2')} c_variant={ButtonVariant.tonal}>2</Button>
-			<Button onClick={() => add_char('3')} c_variant={ButtonVariant.tonal}>3</Button>
-			<Button onClick={() => add_char('-')}><Icon c_code={0xEF5D} /></Button>
+			<Button data-char="e">e</Button>
+			<Button data-char="4" c_variant={ButtonVariant.tonal}>4</Button>
+			<Button data-char="5" c_variant={ButtonVariant.tonal}>5</Button>
+			<Button data-char="6" c_variant={ButtonVariant.tonal}>6</Button>
+			<Button data-char="×"><Icon c_code={0xE5E9}/></Button>
 
-			<Button onClick={() => add_char('√')}>√</Button>
-			<Button onClick={() => add_char(settings().number_format.decimal == DecimalNumberFormat.comma? ',' : '.')} ><Show when={settings().number_format.decimal == DecimalNumberFormat.comma} fallback=".">,</Show></Button>
-			<Button onClick={() => add_char('0')} c_variant={ButtonVariant.tonal}>0</Button>
-			<Button onClick={() => equal()} c_variant={ButtonVariant.filled}>=</Button>
-			<Button onClick={() => add_char('+')}><Icon c_code={0xE007}/></Button>
+			<Button data-char="π">π</Button>
+			<Button data-char="1" c_variant={ButtonVariant.tonal}>1</Button>
+			<Button data-char="2" c_variant={ButtonVariant.tonal}>2</Button>
+			<Button data-char="3" c_variant={ButtonVariant.tonal}>3</Button>
+			<Button data-char="-"><Icon c_code={0xEF5D} /></Button>
+
+			<Button data-char="√">√</Button>
+			<Button data-char={settings().number_format.decimal}>{settings().number_format.decimal}</Button>
+			<Button data-char="0" c_variant={ButtonVariant.tonal}>0</Button>
+			<Button id={button_equal_id} c_variant={ButtonVariant.filled}>=</Button>
+			<Button data-char="+"><Icon c_code={0xE007}/></Button>
 		</div>
 	</>)
 }
@@ -446,6 +555,10 @@ const ConverterCalculator: VoidComponent<{
 		if (type == ConverterType.weight) return 'Weight & mass'
 		return string_totitlecase(type)
 	})
+	const button_clear_id = createUniqueId()
+	const button_backspace_id = createUniqueId()
+	const button_equal_id = createUniqueId()
+	const button_plusminus_id = createUniqueId()
 	let input_ref: HTMLInputElement
 	let menu_convertertype_ref: HTMLDialogElement
 	let menu_inputunit_ref: HTMLDialogElement
@@ -599,14 +712,28 @@ const ConverterCalculator: VoidComponent<{
 
 			<Menu
 				ref={r => menu_convertertype_ref = r}
-				c_on_toggleopen={v => set_is_menu_convertertype_open(v)}>
+				c_on_toggleopen={v => set_is_menu_convertertype_open(v)}
+				onClick={ev => {
+					const button = document_active()!
+					if (!element_valid_target(
+						event_current_target(ev),
+						button,
+						el => element_tagname(el) == 'BUTTON'
+					)) return
+
+					const data_type = element_dataset(button, 'type')
+					if (data_type
+						&& valid_enum_value(data_type, ConverterType)
+					) {
+						command(Commands.change_settings_converter_type, data_type)
+						close_menu(menu_convertertype_ref)
+						return
+					}
+				}}>
 				<For each={CONVERTER_TYPES}>{c =>
 					<MenuItem
 						c_selected={c.type == settings().converter.type}
-						onClick={() => {
-							command(Commands.change_settings_converter_type, c.type)
-							close_menu(menu_convertertype_ref)
-						}}
+						data-type={c.type}
 						c_leading={<Icon c_code={c.icon}/>}>
 						{c.text}
 					</MenuItem>
@@ -628,13 +755,31 @@ const ConverterCalculator: VoidComponent<{
 
 				<Menu
 					ref={r => menu_inputunit_ref = r}
-					c_on_toggleopen={v => set_is_menu_inputunit_open(v)}>
-					<For each={get_units()}>{u =>
+					c_on_toggleopen={v => set_is_menu_inputunit_open(v)}
+					onClick={ev => {
+						const button = document_active()!
+						if (!element_valid_target(
+							event_current_target(ev),
+							button,
+							el => element_tagname(el) == "BUTTON"
+						)) return
+
+						const data_index = element_dataset(button, 'index')
+						if (data_index) {
+							const index = number_parse(data_index, true)
+							if (number_is_not_defined(index)) return
+
+							const unit = get_units()[index]
+							if (!unit) return
+
+							command(Commands.change_settings_converter_inputunit, unit)
+							close_menu(menu_inputunit_ref)
+							return
+						}
+					}}>
+					<For each={get_units()}>{(u, i) =>
 						<MenuItem
-							onClick={() => {
-								command(Commands.change_settings_converter_inputunit, u)
-								close_menu(menu_inputunit_ref)
-							}}
+							data-index={i()}
 							c_selected={u.equals(settings().converter.unit_input)}>
 							{u.name + ` (${u.symbol})`}
 						</MenuItem>
@@ -660,39 +805,84 @@ const ConverterCalculator: VoidComponent<{
 
 			<Menu
 				ref={r => menu_outputunit_ref = r}
-				c_on_toggleopen={v => set_is_menu_outputunit_open(v)}>
-				<For each={get_units()}>{u =>
+				c_on_toggleopen={v => set_is_menu_outputunit_open(v)}
+				onClick={ev => {
+					const button = document_active()!
+					if (!element_valid_target(
+						event_current_target(ev),
+						button,
+						el => element_tagname(el) == "BUTTON"
+					)) return
+
+					const data_index = element_dataset(button, 'index')
+					if (data_index) {
+						const index = number_parse(data_index, true)
+						if (number_is_not_defined(index)) return
+
+						const unit = get_units()[index]
+						if (!unit) return
+
+						command(Commands.change_settings_converter_outputunit, unit)
+						close_menu(menu_inputunit_ref)
+						return
+					}
+				}}>
+				<For each={get_units()}>{(u, i) =>
 					<MenuItem
-						onClick={() => {
-							command(Commands.change_settings_converter_outputunit, u)
-							close_menu(menu_outputunit_ref)
-						}}
+						data-index={i()}
 						c_selected={u.equals(settings().converter.unit_output)}>
 						{u.name + ` (${u.symbol})`}
 					</MenuItem>
 				}</For>
 			</Menu>
 		</ActionButtons>
-		<div class={CSS.input_output_converter_buttons}>
-			<Button onClick={() => plus_minus()}>±</Button>
-			<Button onClick={() => clear()} classList={classlist_module(CSS.input_output_remove_symbol)}>C</Button>
-			<Button onClick={() => backspace()} classList={classlist_module(CSS.input_output_remove_symbol)}><Icon c_code={0xE199} /></Button>
+		<div
+			class={CSS.input_output_converter_buttons}
+			onClick={ev => {
+				const button = document_active()!
+				if (!element_valid_target(
+					event_current_target(ev),
+					button,
+					el => element_tagname(el) == 'BUTTON'
+				)) return
 
-			<Button onClick={() => add_char('7')} c_variant={ButtonVariant.tonal}>7</Button>
-			<Button onClick={() => add_char('8')} c_variant={ButtonVariant.tonal}>8</Button>
-			<Button onClick={() => add_char('9')} c_variant={ButtonVariant.tonal}>9</Button>
+				switch (element_id(button)) {
+				case button_clear_id:
+					clear()
+					break
+				case button_backspace_id:
+					backspace()
+					break
+				case button_equal_id:
+					equal()
+					break
+				case button_plusminus_id:
+					plus_minus()
+					break
+				default:
+					const data_char = element_dataset(button, 'char')
+					if (data_char) return add_char(data_char)
+				}
+			}}>
+			<Button id={button_plusminus_id}>±</Button>
+			<Button id={button_clear_id} classList={classlist_module(CSS.input_output_remove_symbol)}>C</Button>
+			<Button id={button_backspace_id} classList={classlist_module(CSS.input_output_remove_symbol)}><Icon c_code={0xE199} /></Button>
 
-			<Button onClick={() => add_char('4')} c_variant={ButtonVariant.tonal}>4</Button>
-			<Button onClick={() => add_char('5')} c_variant={ButtonVariant.tonal}>5</Button>
-			<Button onClick={() => add_char('6')} c_variant={ButtonVariant.tonal}>6</Button>
+			<Button data-char="7" c_variant={ButtonVariant.tonal}>7</Button>
+			<Button data-char="8" c_variant={ButtonVariant.tonal}>8</Button>
+			<Button data-char="9" c_variant={ButtonVariant.tonal}>9</Button>
 
-			<Button onClick={() => add_char('1')} c_variant={ButtonVariant.tonal}>1</Button>
-			<Button onClick={() => add_char('2')} c_variant={ButtonVariant.tonal}>2</Button>
-			<Button onClick={() => add_char('3')} c_variant={ButtonVariant.tonal}>3</Button>
+			<Button data-char="4" c_variant={ButtonVariant.tonal}>4</Button>
+			<Button data-char="5" c_variant={ButtonVariant.tonal}>5</Button>
+			<Button data-char="6" c_variant={ButtonVariant.tonal}>6</Button>
 
-			<Button onClick={() => add_char(settings().number_format.decimal == DecimalNumberFormat.comma? ',' : '.')} ><Show when={settings().number_format.decimal == DecimalNumberFormat.comma} fallback=".">,</Show></Button>
-			<Button onClick={() => add_char('0')} c_variant={ButtonVariant.tonal}>0</Button>
-			<Button onClick={() => equal()} c_variant={ButtonVariant.filled}>=</Button>
+			<Button data-char="1" c_variant={ButtonVariant.tonal}>1</Button>
+			<Button data-char="2" c_variant={ButtonVariant.tonal}>2</Button>
+			<Button data-char="3" c_variant={ButtonVariant.tonal}>3</Button>
+
+			<Button data-char={settings().number_format.decimal}>{settings().number_format.decimal}</Button>
+			<Button data-char="0" c_variant={ButtonVariant.tonal}>0</Button>
+			<Button id={button_equal_id} c_variant={ButtonVariant.filled}>=</Button>
 		</div>
 	</>)
 }
@@ -738,6 +928,9 @@ const ProgrammerCalculator: VoidComponent<{
 	const is_hex = createMemo(() => settings().programmer.number_type == NumberType.hexadecimal)
 	const is_oct = createMemo(() => settings().programmer.number_type == NumberType.octal)
 	const is_bin = createMemo(() => settings().programmer.number_type == NumberType.binary)
+	const button_clear_id = createUniqueId()
+	const button_backspace_id = createUniqueId()
+	const button_equal_id = createUniqueId()
 	let menu_copy_ref: HTMLDialogElement
 	let input_ref: HTMLInputElement
 	let caret_pos: number = 0
@@ -902,48 +1095,72 @@ const ProgrammerCalculator: VoidComponent<{
 			hide={!settings().memory_buttons}
 			settings={settings()}
 		/>
-		<div class={CSS.input_output_programmer_buttons}>
+		<div
+			class={CSS.input_output_programmer_buttons}
+			onClick={ev => {
+				const button = document_active()!
+				if (!element_valid_target(
+					event_current_target(ev),
+					button,
+					el => element_tagname(el) == 'BUTTON'
+				)) return
+
+				switch (element_id(button)) {
+				case button_clear_id:
+					clear()
+					break
+				case button_backspace_id:
+					backspace()
+					break
+				case button_equal_id:
+					equal()
+					break
+				default:
+					const data_char = element_dataset(button, 'char')
+					if (data_char) return add_char(data_char)
+				}
+			}}>
 			<div />
-			<Button onClick={() => add_char('(')}>{'('}</Button>
-			<Button onClick={() => add_char(')')}>{')'}</Button>
-			<Button onClick={() => clear()} classList={classlist_module(CSS.input_output_remove_symbol)}>C</Button>
-			<Button onClick={() => backspace()} classList={classlist_module(CSS.input_output_remove_symbol)}><Icon c_code={0xE199} /></Button>
+			<Button data-char="(">{'('}</Button>
+			<Button data-char=")">{')'}</Button>
+			<Button id={button_clear_id} classList={classlist_module(CSS.input_output_remove_symbol)}>C</Button>
+			<Button id={button_backspace_id} classList={classlist_module(CSS.input_output_remove_symbol)}><Icon c_code={0xE199} /></Button>
 
-			<Button disabled={!is_hex()} onClick={() => add_char('F')} c_variant={ButtonVariant.tonal}>F</Button>
-			<Button onClick={() => add_char('not(')}>not</Button>
-			<Button onClick={() => add_char('mod')}>mod</Button>
-			<Button onClick={() => add_char('lsh')}>lsh</Button>
-			<Button onClick={() => add_char('rsh')}>rsh</Button>
+			<Button data-char="F" disabled={!is_hex()} c_variant={ButtonVariant.tonal}>F</Button>
+			<Button data-char="not(">not</Button>
+			<Button data-char="mod">mod</Button>
+			<Button data-char="lsh">lsh</Button>
+			<Button data-char="rsh">rsh</Button>
 
-			<Button disabled={!is_hex()} onClick={() => add_char('E')} c_variant={ButtonVariant.tonal}>E</Button>
-			<Button onClick={() => add_char('or')}>or</Button>
-			<Button onClick={() => add_char('and')}>and</Button>
-			<Button onClick={() => add_char('xor')}>xor</Button>
-			<Button onClick={() => add_char('^')}>^</Button>
+			<Button data-char="E" disabled={!is_hex()} c_variant={ButtonVariant.tonal}>E</Button>
+			<Button data-char="or">or</Button>
+			<Button data-char="and">and</Button>
+			<Button data-char="xor">xor</Button>
+			<Button data-char="^">^</Button>
 
-			<Button disabled={!is_hex()} onClick={() => add_char('D')} c_variant={ButtonVariant.tonal}>D</Button>
-			<Button disabled={is_bin()} onClick={() => add_char('7')} c_variant={ButtonVariant.tonal}>7</Button>
-			<Button disabled={is_oct() || is_bin()} onClick={() => add_char('8')} c_variant={ButtonVariant.tonal}>8</Button>
-			<Button disabled={is_oct() || is_bin()} onClick={() => add_char('9')} c_variant={ButtonVariant.tonal}>9</Button>
-			<Button onClick={() => add_char('÷')} ><Icon c_code={0xEE8F}/></Button>
+			<Button data-char="D" disabled={!is_hex()} c_variant={ButtonVariant.tonal}>D</Button>
+			<Button data-char="7" disabled={is_bin()} c_variant={ButtonVariant.tonal}>7</Button>
+			<Button data-char="8" disabled={is_oct() || is_bin()} c_variant={ButtonVariant.tonal}>8</Button>
+			<Button data-char="9" disabled={is_oct() || is_bin()} c_variant={ButtonVariant.tonal}>9</Button>
+			<Button data-char="÷" ><Icon c_code={0xEE8F}/></Button>
 
-			<Button disabled={!is_hex()} onClick={() => add_char('C')} c_variant={ButtonVariant.tonal}>C</Button>
-			<Button disabled={is_bin()} onClick={() => add_char('4')} c_variant={ButtonVariant.tonal}>4</Button>
-			<Button disabled={is_bin()} onClick={() => add_char('5')} c_variant={ButtonVariant.tonal}>5</Button>
-			<Button disabled={is_bin()} onClick={() => add_char('6')} c_variant={ButtonVariant.tonal}>6</Button>
-			<Button onClick={() => add_char('×')}><Icon c_code={0xE5E9}/></Button>
+			<Button data-char="C" disabled={!is_hex()} c_variant={ButtonVariant.tonal}>C</Button>
+			<Button data-char="4" disabled={is_bin()} c_variant={ButtonVariant.tonal}>4</Button>
+			<Button data-char="5" disabled={is_bin()} c_variant={ButtonVariant.tonal}>5</Button>
+			<Button data-char="6" disabled={is_bin()} c_variant={ButtonVariant.tonal}>6</Button>
+			<Button data-char="×"><Icon c_code={0xE5E9}/></Button>
 
-			<Button disabled={!is_hex()} onClick={() => add_char('B')} c_variant={ButtonVariant.tonal}>B</Button>
-			<Button onClick={() => add_char('1')} c_variant={ButtonVariant.tonal}>1</Button>
-			<Button disabled={is_bin()} onClick={() => add_char('2')} c_variant={ButtonVariant.tonal}>2</Button>
-			<Button disabled={is_bin()} onClick={() => add_char('3')} c_variant={ButtonVariant.tonal}>3</Button>
-			<Button onClick={() => add_char('-')}><Icon c_code={0xEF5D} /></Button>
+			<Button data-char="B" disabled={!is_hex()} c_variant={ButtonVariant.tonal}>B</Button>
+			<Button data-char="1" c_variant={ButtonVariant.tonal}>1</Button>
+			<Button data-char="2" disabled={is_bin() } c_variant={ButtonVariant.tonal}>2</Button>
+			<Button data-char="3" disabled={is_bin() } c_variant={ButtonVariant.tonal}>3</Button>
+			<Button data-char="-"><Icon c_code={0xEF5D} /></Button>
 
-			<Button disabled={!is_hex()} onClick={() => add_char('A')} c_variant={ButtonVariant.tonal}>A</Button>
-			<Button disabled={!is_dec()} onClick={() => add_char(settings().number_format.decimal == DecimalNumberFormat.comma? ',' : '.')} ><Show when={settings().number_format.decimal == DecimalNumberFormat.comma} fallback=".">,</Show></Button>
-			<Button onClick={() => add_char('0')} c_variant={ButtonVariant.tonal}>0</Button>
-			<Button onClick={() => equal()} c_variant={ButtonVariant.filled}>=</Button>
-			<Button onClick={() => add_char('+')}><Icon c_code={0xE007}/></Button>
+			<Button data-char="A" disabled={!is_hex()} c_variant={ButtonVariant.tonal}>A</Button>
+			<Button data-char={settings().number_format.decimal} disabled={!is_dec()}>{settings().number_format.decimal}</Button>
+			<Button data-char="0" c_variant={ButtonVariant.tonal}>0</Button>
+			<Button id={button_equal_id} c_variant={ButtonVariant.filled}>=</Button>
+			<Button data-char="+"><Icon c_code={0xE007}/></Button>
 		</div>
 	</>)
 }
@@ -956,6 +1173,11 @@ const DateCalculator: VoidComponent<{
 }> = (props) => {
 	const settings = createMemo(() => props.settings)
 	const input = createMemo(() => props.input)
+	const button_from_id = createUniqueId()
+	const button_to_id = createUniqueId()
+	const input_year_id = createUniqueId()
+	const input_month_id = createUniqueId()
+	const input_day_id = createUniqueId()
 	let datePicker_from_ref: HTMLDialogElement
 	let datePicker_to_ref: HTMLDialogElement
 
@@ -963,7 +1185,55 @@ const DateCalculator: VoidComponent<{
 		return props.command(type, ...args)
 	}
 
-	return (<div class={CSS.input_output_date_calculator}>
+	return (<div
+		class={CSS.input_output_date_calculator}
+		onClick={ev => {
+			const button = document_active()!
+			if (!element_valid_target(
+				event_current_target(ev),
+				button,
+				el => element_tagname(el) == 'BUTTON'
+			)) return
+
+			switch (element_id(button)) {
+			case button_from_id:
+				open_datepicker(ev, datePicker_from_ref, {
+					anchor: button,
+					position: MenuPosition.center_bottom_to_right
+				})
+				break
+			case button_to_id:
+				open_datepicker(ev, datePicker_to_ref, {
+					anchor: button,
+					position: MenuPosition.center_bottom_to_right
+				})
+				break
+			}
+		}}
+		onFocusOut={ev => {
+			const target = event_target(ev) as HTMLInputElement
+
+			switch (element_id(target)) {
+			case input_year_id:
+				command(Commands.change_calculator_input, {
+					...input(),
+					year: number_safe(target.valueAsNumber, input().year)
+				})
+				break
+			case input_month_id:
+				command(Commands.change_calculator_input, {
+					...input(),
+					month: number_safe(target.valueAsNumber, input().month)
+				})
+				break
+			case input_day_id:
+				command(Commands.change_calculator_input, {
+					...input(),
+					day: number_safe(target.valueAsNumber, input().day)
+				})
+				break
+			}
+		}}>
 		<Dropdown
 			c_label="Operation"
 			c_values={[settings().date.operation]}
@@ -978,10 +1248,7 @@ const DateCalculator: VoidComponent<{
 			<p>From</p>
 			<Button
 				c_variant={ButtonVariant.tonal}
-				onClick={(ev) => open_datepicker(ev, datePicker_from_ref, {
-					anchor: event_current_target(ev),
-					position: MenuPosition.center_bottom_to_right
-				})}>
+				id={button_from_id}>
 				<Icon c_code={0xE2CC}/>
 				{date_text_YMD(input().from)}
 			</Button>
@@ -991,44 +1258,26 @@ const DateCalculator: VoidComponent<{
 				min={0}
 				value={input().year + ''}
 				c_label="Year"
-				onBlur={(ev) => command(
-					Commands.change_calculator_input,
-					{	...input(),
-						year: number_safe(event_current_target(ev).valueAsNumber, input().year)
-					}
-				)}
+				id={input_year_id}
 			/>
 			<NumberTextField
 				min={0}
 				value={input().month + ''}
 				c_label="Month"
-				onBlur={(ev) => command(
-					Commands.change_calculator_input,
-					{	...input(),
-						month: number_safe(event_current_target(ev).valueAsNumber, input().month)
-					}
-				)}
+				id={input_month_id}
 			/>
 			<NumberTextField
 				min={0}
 				value={input().day + ''}
 				c_label="Day"
-				onBlur={(ev) => command(
-					Commands.change_calculator_input,
-					{	...input(),
-						day: number_safe(event_current_target(ev).valueAsNumber, input().day)
-					}
-				)}
+				id={input_day_id}
 			/>
 		</div>
 		<div data-hide={attr_set_if_exist(settings().date.operation != DateOperation.difference)}>
 			<p>To</p>
 			<Button
 				c_variant={ButtonVariant.tonal}
-				onClick={(ev) => open_datepicker(ev, datePicker_to_ref, {
-					anchor: event_current_target(ev),
-					position: MenuPosition.center_bottom_to_right
-				})}>
+				id={button_to_id}>
 				<Icon c_code={0xE2CC}/>
 				{date_text_YMD(input().to)}
 			</Button>

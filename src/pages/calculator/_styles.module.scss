@@ -109,23 +109,21 @@ $side_notebook_none: 760px;
 }
 
 .input_output_scientific_function_menu {
-	> div {
-		> .input_output_grid_3 {
-			display: grid;
-			padding: 0 4px;
-			gap: 4px;
-			grid-template-columns: repeat(3, 1fr);
-		}
+	& .input_output_grid_3 {
+		display: grid;
+		padding: 0 4px;
+		gap: 4px;
+		grid-template-columns: repeat(3, 1fr);
+	}
 
-		> .input_output_trigonometry_options {
-			display: flex;
-			padding: 0 4px;
-			gap: 4px;
-			justify-content: flex-start;
+	& .input_output_trigonometry_options {
+		display: flex;
+		padding: 0 4px;
+		gap: 4px;
+		justify-content: flex-start;
 
-			> *:last-child {
-				flex: 1;
-			}
+		> *:last-child {
+			flex: 1;
 		}
 	}
 
