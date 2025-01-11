@@ -601,15 +601,17 @@ const SingleTaskList: VoidComponent<{
 			add_task()
 			event_prevent_default(ev)
 		}}>
-			<TextField
-				placeholder="Add task"
-				ref={r => textfield_newtask_ref = r}
-				c_trailing={<TextFieldButton
-					data-tooltip="Add task"
-					onClick={() => add_task()}>
-					<Icon c_code={0xE00B}/>
-				</TextFieldButton>}
-			/>
+			<Tooltip>
+				<TextField
+					placeholder="Add task"
+					ref={r => textfield_newtask_ref = r}
+					c_trailing={<TextFieldButton
+						data-tooltip="Add task"
+						onClick={() => add_task()}>
+						<Icon c_code={0xE00B}/>
+					</TextFieldButton>}
+				/>
+			</Tooltip>
 		</form>
 	</div>)
 }

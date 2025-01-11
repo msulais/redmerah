@@ -359,7 +359,7 @@ div.body_task_item_tags {
 			padding: 8px;
 		}
 
-		> :global(.c-textfield) {
+		> div > :global(.c-textfield) {
 			width: 1080px;
 			max-width: 100%;
 		}

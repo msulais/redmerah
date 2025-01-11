@@ -1579,22 +1579,24 @@ const _: VoidComponent = () => {
 						add_label(string_trim(selected_label_to_add.name), selected_label_to_add.color)
 						close_dialog(dialog_newlabel_ref)
 					}}>
-					<TextField
-						ref={r => textfield_newlabel_ref = r}
-						c_label="Name"
-						onFocus={() => set_selected_label_to_add('name', textfield_newlabel_ref.value)}
-						onInput={() => set_selected_label_to_add('name', textfield_newlabel_ref.value)}
-						autofocus
-						c_trailing={<TextFieldButton
-							id={button_dialognewlabel_color_id}
-							data-tooltip="Change label color"
-							c_focused={is_colorpicker_label_open()}>
-							<Icon
-								style={{color: selected_label_to_add.color ?? undefined}}
-								c_code={0xE407}
-							/>
-						</TextFieldButton>}
-					/>
+					<Tooltip>
+						<TextField
+							ref={r => textfield_newlabel_ref = r}
+							c_label="Name"
+							onFocus={() => set_selected_label_to_add('name', textfield_newlabel_ref.value)}
+							onInput={() => set_selected_label_to_add('name', textfield_newlabel_ref.value)}
+							autofocus
+							c_trailing={<TextFieldButton
+								id={button_dialognewlabel_color_id}
+								data-tooltip="Change label color"
+								c_focused={is_colorpicker_label_open()}>
+								<Icon
+									style={{color: selected_label_to_add.color ?? undefined}}
+									c_code={0xE407}
+								/>
+							</TextFieldButton>}
+						/>
+					</Tooltip>
 				</form>
 			</Dialog>
 			<Dialog

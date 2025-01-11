@@ -41,66 +41,68 @@ const _: VoidComponent = () => {
 			</Tooltip>
 		</Playground>
 		<PlaygroundOptions>
-			<Dropdown
-				c_label="Position"
-				c_values={[position()]}
-				c_on_change={(options) => set_position(options[0].value as TooltipPosition)}>
-				<For each={[
-					[TooltipPosition.left_top, 'Left top'],
-					[TooltipPosition.left_center_to_bottom, 'Left center to bottom'],
-					[TooltipPosition.left_center, 'Left center'],
-					[TooltipPosition.left_center_to_top, 'Left center to top'],
-					[TooltipPosition.left_bottom, 'Left bottom'],
-					[TooltipPosition.right_top, 'Right top'],
-					[TooltipPosition.right_center_to_bottom, 'Right center to bottom'],
-					[TooltipPosition.right_center, 'Right center'],
-					[TooltipPosition.right_center_to_top, 'Right center to top'],
-					[TooltipPosition.right_bottom, 'Right bottom'],
-					[TooltipPosition.center_top_to_right, 'Center top to right'],
-					[TooltipPosition.center_top, 'Center top'],
-					[TooltipPosition.center_top_to_left, 'Center top to left'],
-					[TooltipPosition.center_bottom_to_right, 'Center bottom to right'],
-					[TooltipPosition.center_bottom, 'Center bottom'],
-					[TooltipPosition.center_bottom_to_left, 'Center bottom to left'],
-					[TooltipPosition.center_center_left_top, 'Center center left top'],
-					[TooltipPosition.center_center_left, 'Center center left'],
-					[TooltipPosition.center_center_left_bottom, 'Center center left bottom'],
-					[TooltipPosition.center_center_top, 'Center center top'],
-					[TooltipPosition.center_center, 'Center center'],
-					[TooltipPosition.center_center_bottom, 'Center center bottom'],
-					[TooltipPosition.center_center_right_top, 'Center center right top'],
-					[TooltipPosition.center_center_right, 'Center center right'],
-					[TooltipPosition.center_center_right_bottom, 'Center center right bottom'],
-				]}>{option => <DropdownOption c_value={option[0]} c_text={option[1] as string} />}</For>
-			</Dropdown>
-			<NumberTextField
-				style={{width: '100px'}}
-				value={gap()}
-				min={0}
-				onBlur={(ev) => set_gap(g => number_safe(event_current_target(ev).valueAsNumber, g))}
-				c_label="Gap"
-			/>
-			<NumberTextField
-				style={{width: '100px'}}
-				value={start_delay_duration()}
-				min={0}
-				step={100}
-				onBlur={(ev) => set_start_delay_duration(d => number_safe(event_current_target(ev).valueAsNumber, d))}
-				c_label="Start delay duration"
-			/>
-			<NumberTextField
-				style={{width: '100px'}}
-				value={end_delay_duration()}
-				min={0}
-				step={100}
-				onBlur={(ev) => set_end_delay_duration(d => number_safe(event_current_target(ev).valueAsNumber, d))}
-				c_label="End delay duration"
-			/>
-			<CheckBox
-				checked={use_anchor()}
-				onChange={ev => set_use_anchor(event_current_target(ev).checked)}>
-				Use anchor
-			</CheckBox>
+			<Tooltip>
+				<Dropdown
+					c_label="Position"
+					c_values={[position()]}
+					c_on_change={(options) => set_position(options[0].value as TooltipPosition)}>
+					<For each={[
+						[TooltipPosition.left_top, 'Left top'],
+						[TooltipPosition.left_center_to_bottom, 'Left center to bottom'],
+						[TooltipPosition.left_center, 'Left center'],
+						[TooltipPosition.left_center_to_top, 'Left center to top'],
+						[TooltipPosition.left_bottom, 'Left bottom'],
+						[TooltipPosition.right_top, 'Right top'],
+						[TooltipPosition.right_center_to_bottom, 'Right center to bottom'],
+						[TooltipPosition.right_center, 'Right center'],
+						[TooltipPosition.right_center_to_top, 'Right center to top'],
+						[TooltipPosition.right_bottom, 'Right bottom'],
+						[TooltipPosition.center_top_to_right, 'Center top to right'],
+						[TooltipPosition.center_top, 'Center top'],
+						[TooltipPosition.center_top_to_left, 'Center top to left'],
+						[TooltipPosition.center_bottom_to_right, 'Center bottom to right'],
+						[TooltipPosition.center_bottom, 'Center bottom'],
+						[TooltipPosition.center_bottom_to_left, 'Center bottom to left'],
+						[TooltipPosition.center_center_left_top, 'Center center left top'],
+						[TooltipPosition.center_center_left, 'Center center left'],
+						[TooltipPosition.center_center_left_bottom, 'Center center left bottom'],
+						[TooltipPosition.center_center_top, 'Center center top'],
+						[TooltipPosition.center_center, 'Center center'],
+						[TooltipPosition.center_center_bottom, 'Center center bottom'],
+						[TooltipPosition.center_center_right_top, 'Center center right top'],
+						[TooltipPosition.center_center_right, 'Center center right'],
+						[TooltipPosition.center_center_right_bottom, 'Center center right bottom'],
+					]}>{option => <DropdownOption c_value={option[0]} c_text={option[1] as string} />}</For>
+				</Dropdown>
+				<NumberTextField
+					style={{width: '100px'}}
+					value={gap()}
+					min={0}
+					onBlur={(ev) => set_gap(g => number_safe(event_current_target(ev).valueAsNumber, g))}
+					c_label="Gap"
+				/>
+				<NumberTextField
+					style={{width: '100px'}}
+					value={start_delay_duration()}
+					min={0}
+					step={100}
+					onBlur={(ev) => set_start_delay_duration(d => number_safe(event_current_target(ev).valueAsNumber, d))}
+					c_label="Start delay duration"
+				/>
+				<NumberTextField
+					style={{width: '100px'}}
+					value={end_delay_duration()}
+					min={0}
+					step={100}
+					onBlur={(ev) => set_end_delay_duration(d => number_safe(event_current_target(ev).valueAsNumber, d))}
+					c_label="End delay duration"
+				/>
+				<CheckBox
+					checked={use_anchor()}
+					onChange={ev => set_use_anchor(event_current_target(ev).checked)}>
+					Use anchor
+				</CheckBox>
+			</Tooltip>
 		</PlaygroundOptions>
 	</Page>)
 }

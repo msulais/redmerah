@@ -322,12 +322,14 @@ const _: VoidComponent<{
 					Minify CSS
 				</SwitchMenuItem>
 				<div style={{padding: '8px 12px'}}>
-					<NumberTextField
-						min={12}
-						c_label="Font size"
-						id={input_settings_fontsize_id}
-						value={settings().font_size}
-					/>
+					<Tooltip>
+						<NumberTextField
+							min={12}
+							c_label="Font size"
+							id={input_settings_fontsize_id}
+							value={settings().font_size}
+						/>
+					</Tooltip>
 				</div>
 			</Menu>
 			<Menu

@@ -1,14 +1,15 @@
 import { createSignal, For, type VoidComponent } from "solid-js"
 
 import { array_slice } from "@/utils/array"
+import { event_current_target } from "@/utils/event"
 import { number_safe } from "@/utils/number"
 
 import CheckBox from "@/components/CheckBox"
 import { NumberTextField } from "@/components/TextField"
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
+import Tooltip from "@/components/Tooltip"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
 import { ButtonVariant } from "@/components/Button"
-import { event_current_target } from "@/utils/event"
 
 const _: VoidComponent = () => {
 	const [multiple, set_multiple] = createSignal<boolean>(false)
@@ -40,34 +41,36 @@ const _: VoidComponent = () => {
 			</Dropdown>
 		</Playground>
 		<PlaygroundOptions>
-			<NumberTextField
-				c_label="Count"
-				style={{width: '100px'}}
-				value={10} min={1}
-				max={10}
-				onBlur={(ev) => set_count(c => number_safe(event_current_target(ev).valueAsNumber, c))}
-			/>
-			<Dropdown
-				c_label="Variant"
-				c_values={[variant()]}
-				c_on_change={(items) => set_variant(items[0].value as ButtonVariant)}>
-				<For each={[
-					[ButtonVariant.filled, 'Filled'],
-					[ButtonVariant.tonal, 'Tonal'],
-					[ButtonVariant.outlined, 'Outlined'],
-					[ButtonVariant.transparent, 'Transparent'],
-				]}>{option => <DropdownOption c_value={option[0]} c_text={option[1] as string} />}</For>
-			</Dropdown>
-			<CheckBox
-				checked={multiple()}
-				onChange={ev => set_multiple(event_current_target(ev).checked)}>
-				Multiple
-			</CheckBox>
-			<CheckBox
-				checked={label()}
-				onChange={ev => set_label(event_current_target(ev).checked)}>
-				Label
-			</CheckBox>
+			<Tooltip>
+				<NumberTextField
+					c_label="Count"
+					style={{width: '100px'}}
+					value={10} min={1}
+					max={10}
+					onBlur={(ev) => set_count(c => number_safe(event_current_target(ev).valueAsNumber, c))}
+				/>
+				<Dropdown
+					c_label="Variant"
+					c_values={[variant()]}
+					c_on_change={(items) => set_variant(items[0].value as ButtonVariant)}>
+					<For each={[
+						[ButtonVariant.filled, 'Filled'],
+						[ButtonVariant.tonal, 'Tonal'],
+						[ButtonVariant.outlined, 'Outlined'],
+						[ButtonVariant.transparent, 'Transparent'],
+					]}>{option => <DropdownOption c_value={option[0]} c_text={option[1] as string} />}</For>
+				</Dropdown>
+				<CheckBox
+					checked={multiple()}
+					onChange={ev => set_multiple(event_current_target(ev).checked)}>
+					Multiple
+				</CheckBox>
+				<CheckBox
+					checked={label()}
+					onChange={ev => set_label(event_current_target(ev).checked)}>
+					Label
+				</CheckBox>
+			</Tooltip>
 		</PlaygroundOptions>
 	</Page>)
 }

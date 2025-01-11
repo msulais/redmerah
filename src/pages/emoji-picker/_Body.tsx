@@ -61,21 +61,21 @@ const _: VoidComponent<{
 				}
 			}
 		}}>
-		<div class={CSS.body_textfield}>
-			<TextField
-				c_label="Emoji"
-				c_auto_show_clear_button
-				value={props.text}
-				onInput={ev => props.command(Commands.update_text, event_current_target(ev).value)}
-				ref={r => textfield_ref = r}
-				c_trailing={<TextFieldButton
-					id={button_copy_id}
-					data-tooltip={timeout_copy_id() != null? 'Copied' : "Copy"}>
-					<Icon c_code={timeout_copy_id() != null? 0xE3D8 : 0xE51B}/>
-				</TextFieldButton>}
-			/>
-		</div>
 		<Tooltip>
+			<div class={CSS.body_textfield}>
+				<TextField
+					c_label="Emoji"
+					c_auto_show_clear_button
+					value={props.text}
+					onInput={ev => props.command(Commands.update_text, event_current_target(ev).value)}
+					ref={r => textfield_ref = r}
+					c_trailing={<TextFieldButton
+						id={button_copy_id}
+						data-tooltip={timeout_copy_id() != null? 'Copied' : "Copy"}>
+						<Icon c_code={timeout_copy_id() != null? 0xE3D8 : 0xE51B}/>
+					</TextFieldButton>}
+				/>
+			</div>
 			<Expander
 				open
 				c_header={<ExpanderHeader>Smiley & emotion</ExpanderHeader>}>
