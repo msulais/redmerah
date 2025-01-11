@@ -14,7 +14,6 @@ import { number_is_nan, number_is_not_defined, number_parse, number_safe } from 
 import { rect_width } from '@/utils/rect'
 
 import Icon from '@/components/Icon'
-import { Tooltip } from '@/components/Tooltip'
 import Button, { IconButton, type ButtonProps } from '@/components/Button'
 import Popover, { close_popover, is_popover_open, open_popover, reposition_popover, PopoverPosition as SearchMenuPosition, type PopoverProps } from '@/components/Popover'
 import { MenuItem, LinkMenuItem, MenuDivider, MenuHeader, MenuPosition, open_menu } from '@/components/Menu'
@@ -582,7 +581,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 				}
 			}}
 			{...actions_props_other}>
-			<Tooltip>
+			<>
 				<IconButton
 					data-tooltip={props.c_tooltip_increase}
 					ref={r => iconbutton_up_ref = r}
@@ -617,7 +616,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 					onKeyUp={ev => (ev.code == 'Enter' || ev.code == 'Space') && on_press_end('-')}
 					c_code={0xE3FC}
 				/>
-			</Tooltip>
+			</>
 		</Modal>
 	</>)
 }

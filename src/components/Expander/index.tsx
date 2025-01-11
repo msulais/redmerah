@@ -9,7 +9,6 @@ import { event_call, event_current_target, event_prevent_default } from "@/utils
 import { rect_height } from "@/utils/rect"
 import { promise_done } from "@/utils/object"
 
-import Tooltip from "@/components/Tooltip"
 import { RawIconButton } from "@/components/Button"
 import { List, RawList, type ListProps, type RawListProps } from "@/components/List"
 import './index.scss'
