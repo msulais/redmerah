@@ -12,6 +12,7 @@ import { string_length, string_split, string_touppercase, string_trim } from '@/
 import { array_length } from '@/utils/array'
 import { number_is_nan, number_is_not_defined, number_parse, number_safe } from '@/utils/number'
 import { rect_width } from '@/utils/rect'
+import { document_active } from '@/utils/document'
 
 import Icon from '@/components/Icon'
 import Button, { IconButton, type ButtonProps } from '@/components/Button'
@@ -19,8 +20,8 @@ import Popover, { close_popover, is_popover_open, open_popover, reposition_popov
 import { MenuItem, LinkMenuItem, MenuDivider, MenuHeader, MenuPosition, open_menu } from '@/components/Menu'
 import Modal, { type ModalProps } from '@/components/Modal'
 import FocusableGroup from '@/components/FocusableGroup'
+import Tooltip from '@/components/Tooltip'
 import './index.scss'
-import { document_active } from '@/utils/document'
 
 const HEIGHT_TEXT_INPUT_PER_LINE = 20
 
@@ -581,7 +582,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 				}
 			}}
 			{...actions_props_other}>
-			<>
+			<Tooltip>
 				<IconButton
 					data-tooltip={props.c_tooltip_increase}
 					ref={r => iconbutton_up_ref = r}
@@ -616,7 +617,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 					onKeyUp={ev => (ev.code == 'Enter' || ev.code == 'Space') && on_press_end('-')}
 					c_code={0xE3FC}
 				/>
-			</>
+			</Tooltip>
 		</Modal>
 	</>)
 }
