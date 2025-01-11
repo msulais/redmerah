@@ -43,7 +43,7 @@ const ExpanderHeader: ParentComponent<ExpanderHeaderProps> = ($props) => {
 	return (<List
 		data-c-open={attr_set_if_exist(context?.is_open())}
 		data-c-variant={attr_set_if_exist(context?.variant(), context != null)}
-		c_trailing={<Tooltip>
+		c_trailing={<>
 			{props.c_trailing}
 			<Show when={props.c_use_expand_icon}>
 				<RawIconButton
@@ -57,7 +57,7 @@ const ExpanderHeader: ParentComponent<ExpanderHeaderProps> = ($props) => {
 					data-c-open={attr_set_if_exist(context?.is_open())}
 				/>
 			</Show>
-		</Tooltip>}
+		</>}
 		{...other}
 	/>)
 }
@@ -76,7 +76,7 @@ const RawExpanderHeader: ParentComponent<RawExpanderHeaderProps> = ($props) => {
 	return (<RawList
 		data-c-open={attr_set_if_exist(context?.is_open())}
 		data-c-variant={attr_set_if_exist(context?.variant(), context != null)}
-		c_trailing={<Tooltip>
+		c_trailing={<>
 			{props.c_trailing}
 			<Show when={props.c_use_expand_icon}>
 				<RawIconButton
@@ -90,7 +90,7 @@ const RawExpanderHeader: ParentComponent<RawExpanderHeaderProps> = ($props) => {
 					data-c-open={attr_set_if_exist(context?.is_open())}
 				/>
 			</Show>
-		</Tooltip>}
+		</>}
 		{...other}
 	/>)
 }

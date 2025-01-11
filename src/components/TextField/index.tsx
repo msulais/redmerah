@@ -122,7 +122,7 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 	})
 
 	const TrailingContent: VoidComponent = () => {
-		return (<Tooltip>
+		return (<>
 			{trailing()}
 			<Show when={is_show_clear_button()}>
 				<TextFieldButton
@@ -132,7 +132,7 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 					<Icon c_code={0xE5E9}/>
 				</TextFieldButton>
 			</Show>
-		</Tooltip>)
+		</>)
 	}
 
 	return (<div
@@ -272,7 +272,7 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 	})
 
 	const TrailingContent: VoidComponent = () => {
-		return (<Tooltip>
+		return (<>
 			{trailing()}
 			<Show when={is_show_clear_button()}>
 				<TextFieldButton
@@ -282,7 +282,7 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 					<Icon c_code={0xE5E9}/>
 				</TextFieldButton>
 			</Show>
-		</Tooltip>)
+		</>)
 	}
 
 	return (<div
