@@ -21,7 +21,7 @@ const _: VoidComponent = () => {
 		description="A drawer is a navigation pattern that slides in from the edge of the screen, typically revealing a list of options or actions. It's often used to conserve screen space and provide access to secondary functions.">
 		<Playground>
 			<Button
-				variant={ButtonVariant.tonal}
+				c_variant={ButtonVariant.tonal}
 				onClick={(ev) => open_drawer(ev, drawer_ref, {
 					important: important(),
 					content_auto_focus: content_autofocus()
@@ -30,32 +30,32 @@ const _: VoidComponent = () => {
 			</Button>
 			<Drawer
 				ref={r => drawer_ref = r}
-				position={position()}
-				header={<Show when={has_header()}><IconButton onClick={() => close_drawer(drawer_ref)} code={0xEAFF}/> BiruUI</Show>}
-				footer={<Show when={has_footer()}>
-					<DrawerItem icon_code={0xE932}>Privacy policy</DrawerItem>
-					<DrawerItem icon_code={0xED47}>Terms & conditions</DrawerItem>
+				c_position={position()}
+				c_header={<Show when={has_header()}><IconButton onClick={() => close_drawer(drawer_ref)} c_code={0xEAFF}/> BiruUI</Show>}
+				c_footer={<Show when={has_footer()}>
+					<DrawerItem c_icon_code={0xE932}>Privacy policy</DrawerItem>
+					<DrawerItem c_icon_code={0xED47}>Terms & conditions</DrawerItem>
 				</Show>}>
 				<Show when={has_content()}>
 					<TextField placeholder="Search" autofocus/>
 					<div/>
-					<DrawerItem selected icon_code={0xE8E2}>Home</DrawerItem>
-					<DrawerItem icon_code={0xE930}>About</DrawerItem>
-					<DrawerItem icon_code={0xE32A}>Contact</DrawerItem>
-					<DrawerItem icon_code={0xE063}>Product</DrawerItem>
-					<DrawerItem icon_code={0xE84B}>Donate</DrawerItem>
+					<DrawerItem c_selected c_icon_code={0xE8E2}>Home</DrawerItem>
+					<DrawerItem c_icon_code={0xE930}>About</DrawerItem>
+					<DrawerItem c_icon_code={0xE32A}>Contact</DrawerItem>
+					<DrawerItem c_icon_code={0xE063}>Product</DrawerItem>
+					<DrawerItem c_icon_code={0xE84B}>Donate</DrawerItem>
 				</Show>
 			</Drawer>
 		</Playground>
 		<PlaygroundOptions>
 			<Dropdown
-				label="Position"
-				on_change_options={(options) => set_position(options[0].value as DrawerPosition)}
-				values={[position()]}>
+				c_label="Position"
+				c_on_change={(options) => set_position(options[0].value as DrawerPosition)}
+				c_values={[position()]}>
 				<For each={[
 					[DrawerPosition.left, 'Left'],
 					[DrawerPosition.right, 'Right'],
-				]}>{option => <DropdownOption value={option[0]} text={option[1] as string} />}</For>
+				]}>{option => <DropdownOption c_value={option[0]} c_text={option[1] as string} />}</For>
 			</Dropdown>
 			<CheckBox
 				checked={important()}

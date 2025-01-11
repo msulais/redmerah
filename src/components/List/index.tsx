@@ -7,23 +7,23 @@ import FocusableGroup from "@/components/FocusableGroup"
 import './index.scss'
 
 type ListProps = JSX.HTMLAttributes<HTMLDivElement> & {
-	leading?: JSX.Element
-	subtitle?: JSX.Element
-	trailing?: JSX.Element
-	trailing_auto_tabindex?: boolean
+	c_leading?: JSX.Element
+	c_subtitle?: JSX.Element
+	c_trailing?: JSX.Element
+	c_trailing_auto_tabindex?: boolean
 }
 const List: ParentComponent<ListProps> = ($props) => {
 	const $$props = mergeProps({
-		trailing_auto_tabindex: false,
+		c_trailing_auto_tabindex: false,
 	}, $props)
 	const [props, other] = splitProps($$props, [
-		'leading', 'children', 'trailing', 'subtitle',
-		'class', 'trailing_auto_tabindex'
+		'c_leading', 'children', 'c_trailing', 'c_subtitle',
+		'class', 'c_trailing_auto_tabindex'
 	])
-	const trailing = children(() => props.trailing)
-	const leading = children(() => props.leading)
+	const trailing = children(() => props.c_trailing)
+	const leading = children(() => props.c_leading)
 	const content = children(() => props.children)
-	const subtitle = children(() => props.subtitle)
+	const subtitle = children(() => props.c_subtitle)
 
 	return (<div
 		class={classlist('c-list', props.class)}
@@ -43,10 +43,10 @@ const List: ParentComponent<ListProps> = ($props) => {
 		<Show when={trailing()}>
 			<div class='c-list-trailing'>
 				<Show
-					when={props.trailing_auto_tabindex}
+					when={props.c_trailing_auto_tabindex}
 					fallback={trailing()}>
 					<FocusableGroup
-						arrow_options={{
+						c_arrow_options={{
 							left: 'prev',
 							right: 'next'
 						}}>
@@ -59,23 +59,23 @@ const List: ParentComponent<ListProps> = ($props) => {
 }
 
 type RawListProps<T extends ValidComponent = keyof JSX.HTMLElementTags> = DynamicProps<T> & {
-	leading?: JSX.Element
-	subtitle?: JSX.Element
-	trailing?: JSX.Element
-	trailing_auto_tabindex?: boolean
+	c_leading?: JSX.Element
+	c_subtitle?: JSX.Element
+	c_trailing?: JSX.Element
+	c_trailing_auto_tabindex?: boolean
 }
 const RawList: ParentComponent<RawListProps> = ($props) => {
 	const $$props = mergeProps({
-		trailing_auto_tabindex: false,
+		c_trailing_auto_tabindex: false,
 	}, $props)
 	const [props, other] = splitProps($$props, [
-		'leading', 'children', 'trailing', 'subtitle',
-		'class', 'trailing_auto_tabindex'
+		'c_leading', 'children', 'c_trailing', 'c_subtitle',
+		'class', 'c_trailing_auto_tabindex'
 	])
-	const trailing = children(() => props.trailing)
-	const leading = children(() => props.leading)
+	const trailing = children(() => props.c_trailing)
+	const leading = children(() => props.c_leading)
 	const content = children(() => props.children)
-	const subtitle = children(() => props.subtitle)
+	const subtitle = children(() => props.c_subtitle)
 
 	return (<Dynamic
 		class={classlist('c-list', props.class)}
@@ -95,10 +95,10 @@ const RawList: ParentComponent<RawListProps> = ($props) => {
 		<Show when={trailing()}>
 			<div class='c-list-trailing'>
 				<Show
-					when={props.trailing_auto_tabindex}
+					when={props.c_trailing_auto_tabindex}
 					fallback={trailing()}>
 					<FocusableGroup
-						arrow_options={{
+						c_arrow_options={{
 							left: 'prev',
 							right: 'next'
 						}}>

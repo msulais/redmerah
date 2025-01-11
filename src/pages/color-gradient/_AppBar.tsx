@@ -150,55 +150,55 @@ const _: VoidComponent<{
 				}}
 				style={{width: '200px'}}
 				ref={r => menu_info_ref = r}
-				on_toggle_open={(v) => set_is_menu_info_open(v)}>
+				c_on_toggleopen={(v) => set_is_menu_info_open(v)}>
 				<LinkMenuItem
 					href={RoutesLinks.home}
-					leading={<img src={logo_redmerah.src} width={16} alt='Redmerah logo'/>}>
+					c_leading={<img src={logo_redmerah.src} width={16} alt='Redmerah logo'/>}>
 					Redmerah
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={RoutesLinks.apps}
-					icon_code={0xE063}>
+					c_icon_code={0xE063}>
 					More apps
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={RoutesLinks.about}
-					icon_code={0xE930}>
+					c_icon_code={0xE930}>
 					About us
 				</LinkMenuItem>
 				<MenuDivider />
 				<LinkMenuItem
 					href={RoutesLinks.privacy}
-					icon_code={0xEE51}>
+					c_icon_code={0xEE51}>
 					Privacy policy
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={RoutesLinks.terms}
-					icon_code={0xED47}>
+					c_icon_code={0xED47}>
 					Terms & conditions
 				</LinkMenuItem>
 				<MenuDivider />
 				<MenuItem
 					id={button_info_share_id}
-					icon_code={0xEE23}>
+					c_icon_code={0xEE23}>
 					Share
 				</MenuItem>
 				<LinkMenuItem
 					href={'mailto:' + ExternalLinks.contact_email + '?subject=' + url_encode('Tasks')}
-					icon_code={0xE3A0}>
+					c_icon_code={0xE3A0}>
 					Send feedback
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={ExternalLinks.donate}
-					open_in_new_tab
-					icon_code={0xE84B}>
+					c_new_tab
+					c_icon_code={0xE84B}>
 					Donate
 				</LinkMenuItem>
 				<MenuHeader>&copy; {date_year(new Date())} Redmerah</MenuHeader>
 			</Menu>
 			<Menu
 				ref={r => menu_settings_ref = r}
-				on_toggle_open={(v) => set_is_menu_settings_open(v)}
+				c_on_toggleopen={(v) => set_is_menu_settings_open(v)}
 				onClick={ev => {
 					const button = document_active()!
 					if (!element_valid_target(
@@ -224,95 +224,95 @@ const _: VoidComponent<{
 				}}>
 				<SubMenu
 					ref={r => submenu_themesettings_ref = r}
-					on_toggle_open={v => set_is_submenu_themesettings_open(v)}
-					item={<SubMenuItem
-						focused={is_submenu_themesettings_open()}
-						icon_code={0xE28A}>
+					c_on_toggleopen={v => set_is_submenu_themesettings_open(v)}
+					c_item={<SubMenuItem
+						c_focused={is_submenu_themesettings_open()}
+						c_icon_code={0xE28A}>
 						Theme
 					</SubMenuItem>}>
 					<MenuItem
-						selected={theme() == ThemeData.light}
-						icon_code={0xF2CD}
+						c_selected={theme() == ThemeData.light}
+						c_icon_code={0xF2CD}
 						data-theme={ThemeData.light}>
 						Light
 					</MenuItem>
 					<MenuItem
-						selected={theme() == ThemeData.dark}
-						icon_code={0xF2B3}
+						c_selected={theme() == ThemeData.dark}
+						c_icon_code={0xF2B3}
 						data-theme={ThemeData.dark}>
 						Dark
 					</MenuItem>
 					<MenuItem
-						selected={theme() == ThemeData.system}
-						icon_code={0xE96D}
+						c_selected={theme() == ThemeData.system}
+						c_icon_code={0xE96D}
 						data-theme={ThemeData.system}>
 						System theme
 					</MenuItem>
 				</SubMenu>
 				<SubMenu
 					ref={r => submenu_cornersettings_ref = r}
-					on_toggle_open={v => set_is_submenu_cornersettings_open(v)}
-					item={<SubMenuItem
-						focused={is_submenu_cornersettings_open()}
-						icon_code={0xF044}>
+					c_on_toggleopen={v => set_is_submenu_cornersettings_open(v)}
+					c_item={<SubMenuItem
+						c_focused={is_submenu_cornersettings_open()}
+						c_icon_code={0xF044}>
 						Corner style
 					</SubMenuItem>}>
 					<MenuItem
-						selected={corner() == CornerData.sharp}
-						icon_code={0xEA99}
+						c_selected={corner() == CornerData.sharp}
+						c_icon_code={0xEA99}
 						data-corner={CornerData.sharp}>
 						Sharp
 					</MenuItem>
 					<MenuItem
-						selected={corner() == CornerData.semi_round}
-						icon_code={0xEEF7}
+						c_selected={corner() == CornerData.semi_round}
+						c_icon_code={0xEEF7}
 						data-corner={CornerData.semi_round}>
 						Semi round
 					</MenuItem>
 					<MenuItem
-						selected={corner() == CornerData.round}
-						icon_code={0xF044}
+						c_selected={corner() == CornerData.round}
+						c_icon_code={0xF044}
 						data-corner={CornerData.round}>
 						Round
 					</MenuItem>
 					<MenuItem
-						selected={corner() == CornerData.full_round}
-						icon_code={0xE408}
+						c_selected={corner() == CornerData.full_round}
+						c_icon_code={0xE408}
 						data-corner={CornerData.full_round}>
 						Full round
 					</MenuItem>
 				</SubMenu>
 				<SubMenu
 					ref={r => submenu_colormodelsettings_ref = r}
-					on_toggle_open={v => set_is_submenu_colormodelsettings_open(v)}
+					c_on_toggleopen={v => set_is_submenu_colormodelsettings_open(v)}
 					style={{"min-width": '180px'}}
-					item={<SubMenuItem
-						focused={is_submenu_colormodelsettings_open()}
-						icon_code={0xE4B6}>
+					c_item={<SubMenuItem
+						c_focused={is_submenu_colormodelsettings_open()}
+						c_icon_code={0xE4B6}>
 						Color model
 					</SubMenuItem>}>
 					<MenuItem
 						data-model={ColorModel.rgba}
-						selected={settings().color_model == ColorModel.rgba}
-						trailing={<MenuItemTrailingShortcut shortcuts={['rgba(R,G,B,A)']}/>}>
+						c_selected={settings().color_model == ColorModel.rgba}
+						c_trailing={<MenuItemTrailingShortcut c_shortcuts={['rgba(R,G,B,A)']}/>}>
 						RGBA
 					</MenuItem>
 					<MenuItem
 						data-model={ColorModel.hsla}
-						selected={settings().color_model == ColorModel.hsla}
-						trailing={<MenuItemTrailingShortcut shortcuts={['hsla(H°,S%,L%,A)']}/>}>
+						c_selected={settings().color_model == ColorModel.hsla}
+						c_trailing={<MenuItemTrailingShortcut c_shortcuts={['hsla(H°,S%,L%,A)']}/>}>
 						HSLA
 					</MenuItem>
 					<MenuItem
 						data-model={ColorModel.hex}
-						selected={settings().color_model == ColorModel.hex}
-						trailing={<MenuItemTrailingShortcut shortcuts={['#RRGGBBAA']}/>}>
+						c_selected={settings().color_model == ColorModel.hex}
+						c_trailing={<MenuItemTrailingShortcut c_shortcuts={['#RRGGBBAA']}/>}>
 						HEX
 					</MenuItem>
 				</SubMenu>
 			</Menu>
 			<Menu
-				on_toggle_open={isOpen => set_is_menu_moreactions_open(isOpen)}
+				c_on_toggleopen={isOpen => set_is_menu_moreactions_open(isOpen)}
 				style={{"min-width": "164px"}}
 				ref={r => menu_moreactions_ref = r}
 				onClick={ev => {
@@ -337,12 +337,12 @@ const _: VoidComponent<{
 					}
 				}}>
 				<MenuItem
-					icon_code={0xEDA1}
+					c_icon_code={0xEDA1}
 					id={button_moreactions_savegradient_id}>
 					Save gradient
 				</MenuItem>
 				<MenuItem
-					icon_code={0xE51B}
+					c_icon_code={0xE51B}
 					id={button_moreactions_copygradient_id}>
 					Copy gradient
 				</MenuItem>
@@ -353,15 +353,15 @@ const _: VoidComponent<{
 	const Toasts: VoidComponent = () => (<>
 		<Toast
 			ref={r => toast_copied_ref = r}
-			leading={<Icon code={0xE51B}/>}>
+			c_leading={<Icon c_code={0xE51B}/>}>
 			Copied to clipboard
 		</Toast>
 	</>)
 
 	return (<>
 		<AppBar
-			leading={<img alt={app.name} width={32} src={app.logo_url} />}
-			headline={app.name}
+			c_leading={<img alt={app.name} width={32} src={app.logo_url} />}
+			c_headline={app.name}
 			onClick={ev => {
 				const button = document_active()!
 				if (!element_valid_target(
@@ -385,25 +385,25 @@ const _: VoidComponent<{
 					}
 				}
 			}}
-			trailing={<Tooltip>
+			c_trailing={<Tooltip>
 				<IconButton
 					data-tooltip="Info"
-					focused={is_menu_info_open()}
+					c_focused={is_menu_info_open()}
 					id={button_info_id}
-					code={0xE930}
+					c_code={0xE930}
 				/>
 				<IconButton
 					data-tooltip="Settings"
 					class={CSSAnimation.btn_rotate_icon}
-					focused={is_menu_settings_open()}
+					c_focused={is_menu_settings_open()}
 					id={button_settings_id}
-					code={0xEE0F}
+					c_code={0xEE0F}
 				/>
 				<IconButton
 					data-tooltip="More actions"
-					focused={is_menu_moreactions_open()}
+					c_focused={is_menu_moreactions_open()}
 					id={button_moreactions_id}
-					code={0xEAD9}
+					c_code={0xEAD9}
 				/>
 			</Tooltip>}
 		/>

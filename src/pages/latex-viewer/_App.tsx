@@ -180,13 +180,13 @@ const _: VoidComponent = () => {
 	const Toasts: VoidComponent = () => (<>
 		<Toast
 			ref={r => toast_copied_ref = r}
-			leading={<Icon code={0xE51B}/>}>
+			c_leading={<Icon c_code={0xE51B}/>}>
 			Copied to clipboard
 		</Toast>
 	</>)
 
 	return (<App
-		appbar={<AppBar
+		c_appbar={<AppBar
 			settings={settings}
 			command={command}
 		/>}>

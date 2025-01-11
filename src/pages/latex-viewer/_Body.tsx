@@ -77,21 +77,21 @@ const LatexEditor: VoidComponent<{
 		<div class={CSS.body_new_equation_bottom}>
 			<Button
 				data-new={index()}
-				variant={ButtonVariant.tonal}>
-				<Icon code={0xE007}/>New equation
+				c_variant={ButtonVariant.tonal}>
+				<Icon c_code={0xE007}/>New equation
 			</Button>
 			<IconButton
 				data-tooltip={"Copy"}
 				data-copy={index()}
-				code={0xE51B}
-				variant={ButtonVariant.tonal}
+				c_code={0xE51B}
+				c_variant={ButtonVariant.tonal}
 			/>
 			<Show when={!props.is_only_one}>
 				<IconButton
 					data-tooltip="Delete"
 					data-delete={index()}
-					code={0xE59D}
-					variant={ButtonVariant.tonal}
+					c_code={0xE59D}
+					c_variant={ButtonVariant.tonal}
 				/>
 			</Show>
 		</div>
@@ -158,8 +158,8 @@ const _: VoidComponent<{
 		<div class={CSS.body_new_equation_top}>
 			<Button
 				onClick={() => command(Commands.add_equation, 0)}
-				variant={ButtonVariant.filled}>
-				<Icon code={0xE007}/>New equation
+				c_variant={ButtonVariant.filled}>
+				<Icon c_code={0xE007}/>New equation
 			</Button>
 		</div>
 		<Tooltip>
@@ -173,7 +173,7 @@ const _: VoidComponent<{
 		</Tooltip>
 		<Toast
 			ref={r => toast_copy_ref = r}
-			leading={<Icon code={0xE51B}/>}>
+			c_leading={<Icon c_code={0xE51B}/>}>
 			Copied to clipboard
 		</Toast>
 	</main>)

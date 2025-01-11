@@ -7,23 +7,23 @@ import '@/styles/index.scss'
 import './index.scss'
 
 type AppProps = JSX.HTMLAttributes<HTMLDivElement> & {
-	appbar?: JSX.Element
-	bottombar?: JSX.Element
-	left_sidebar?: JSX.Element
-	right_sidebar?: JSX.Element
-	floating_action_button?: JSX.Element
+	c_appbar?: JSX.Element
+	c_bottombar?: JSX.Element
+	c_left_sidebar?: JSX.Element
+	c_right_sidebar?: JSX.Element
+	c_floating_action_button?: JSX.Element
 }
 
 const App: ParentComponent<AppProps> = ($props) => {
 	const [props, other] = splitProps($props, [
-		'appbar', 'left_sidebar', 'children', 'right_sidebar',
-		'bottombar', 'floating_action_button', 'class'
+		'c_appbar', 'c_left_sidebar', 'children', 'c_right_sidebar',
+		'c_bottombar', 'c_floating_action_button', 'class'
 	])
-	const appbar = children(() => props.appbar)
-	const left_sidebar = children(() => props.left_sidebar)
-	const right_sidebar = children(() => props.right_sidebar)
-	const bottombar = children(() => props.bottombar)
-	const floating_action_button = children(() => props.floating_action_button)
+	const appbar = children(() => props.c_appbar)
+	const left_sidebar = children(() => props.c_left_sidebar)
+	const right_sidebar = children(() => props.c_right_sidebar)
+	const bottombar = children(() => props.c_bottombar)
+	const floating_action_button = children(() => props.c_floating_action_button)
 
 	return (<div class={classlist('c-app', props.class ?? '')} {...other}>
 		<Show when={appbar()}>

@@ -159,55 +159,55 @@ const _: VoidComponent<{
 				}}
 				style={{width: '200px'}}
 				ref={r => menu_info_ref = r}
-				on_toggle_open={(v) => set_is_menu_info_open(v)}>
+				c_on_toggleopen={(v) => set_is_menu_info_open(v)}>
 				<LinkMenuItem
 					href={RoutesLinks.home}
-					leading={<img src={logo_redmerah.src} width={16} alt='Redmerah logo'/>}>
+					c_leading={<img src={logo_redmerah.src} width={16} alt='Redmerah logo'/>}>
 					Redmerah
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={RoutesLinks.apps}
-					icon_code={0xE063}>
+					c_icon_code={0xE063}>
 					More apps
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={RoutesLinks.about}
-					icon_code={0xE930}>
+					c_icon_code={0xE930}>
 					About us
 				</LinkMenuItem>
 				<MenuDivider />
 				<LinkMenuItem
 					href={RoutesLinks.privacy}
-					icon_code={0xEE51}>
+					c_icon_code={0xEE51}>
 					Privacy policy
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={RoutesLinks.terms}
-					icon_code={0xED47}>
+					c_icon_code={0xED47}>
 					Terms & conditions
 				</LinkMenuItem>
 				<MenuDivider />
 				<MenuItem
 					id={button_info_share_id}
-					icon_code={0xEE23}>
+					c_icon_code={0xEE23}>
 					Share
 				</MenuItem>
 				<LinkMenuItem
 					href={'mailto:' + ExternalLinks.contact_email + '?subject=' + url_encode('Tasks')}
-					icon_code={0xE3A0}>
+					c_icon_code={0xE3A0}>
 					Send feedback
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={ExternalLinks.donate}
-					open_in_new_tab
-					icon_code={0xE84B}>
+					c_new_tab
+					c_icon_code={0xE84B}>
 					Donate
 				</LinkMenuItem>
 				<MenuHeader>&copy; {date_year(new Date())} Redmerah</MenuHeader>
 			</Menu>
 			<Menu
 				ref={r => menu_settings_ref = r}
-				on_toggle_open={(v) => set_is_menu_settings_open(v)}
+				c_on_toggleopen={(v) => set_is_menu_settings_open(v)}
 				onClick={ev => {
 					const button = document_active()!
 					if (!element_valid_target(
@@ -294,60 +294,60 @@ const _: VoidComponent<{
 				}}>
 				<SubMenu
 					ref={r => submenu_themesettings_ref = r}
-					on_toggle_open={v => set_is_submenu_themesettings_open(v)}
-					item={<SubMenuItem
-						focused={is_submenu_themesettings_open()}
-						icon_code={0xE28A}>
+					c_on_toggleopen={v => set_is_submenu_themesettings_open(v)}
+					c_item={<SubMenuItem
+						c_focused={is_submenu_themesettings_open()}
+						c_icon_code={0xE28A}>
 						Theme
 					</SubMenuItem>}>
 					<MenuItem
-						selected={theme() == ThemeData.light}
-						icon_code={0xF2CD}
+						c_selected={theme() == ThemeData.light}
+						c_icon_code={0xF2CD}
 						data-theme={ThemeData.light}>
 						Light
 					</MenuItem>
 					<MenuItem
-						selected={theme() == ThemeData.dark}
-						icon_code={0xF2B3}
+						c_selected={theme() == ThemeData.dark}
+						c_icon_code={0xF2B3}
 						data-theme={ThemeData.dark}>
 						Dark
 					</MenuItem>
 					<MenuItem
-						selected={theme() == ThemeData.system}
-						icon_code={0xE96D}
+						c_selected={theme() == ThemeData.system}
+						c_icon_code={0xE96D}
 						data-theme={ThemeData.system}>
 						System theme
 					</MenuItem>
 				</SubMenu>
 				<SubMenu
 					ref={r => submenu_cornersettings_ref = r}
-					on_toggle_open={v => set_is_submenu_cornersettings_open(v)}
-					item={<SubMenuItem
-						focused={is_submenu_cornersettings_open()}
-						icon_code={0xF044}>
+					c_on_toggleopen={v => set_is_submenu_cornersettings_open(v)}
+					c_item={<SubMenuItem
+						c_focused={is_submenu_cornersettings_open()}
+						c_icon_code={0xF044}>
 						Corner style
 					</SubMenuItem>}>
 					<MenuItem
-						selected={corner() == CornerData.sharp}
-						icon_code={0xEA99}
+						c_selected={corner() == CornerData.sharp}
+						c_icon_code={0xEA99}
 						data-corner={CornerData.sharp}>
 						Sharp
 					</MenuItem>
 					<MenuItem
-						selected={corner() == CornerData.semi_round}
-						icon_code={0xEEF7}
+						c_selected={corner() == CornerData.semi_round}
+						c_icon_code={0xEEF7}
 						data-corner={CornerData.semi_round}>
 						Semi round
 					</MenuItem>
 					<MenuItem
-						selected={corner() == CornerData.round}
-						icon_code={0xF044}
+						c_selected={corner() == CornerData.round}
+						c_icon_code={0xF044}
 						data-corner={CornerData.round}>
 						Round
 					</MenuItem>
 					<MenuItem
-						selected={corner() == CornerData.full_round}
-						icon_code={0xE408}
+						c_selected={corner() == CornerData.full_round}
+						c_icon_code={0xE408}
 						data-corner={CornerData.full_round}>
 						Full round
 					</MenuItem>
@@ -357,114 +357,114 @@ const _: VoidComponent<{
 					<MenuHeader>QR Code generator</MenuHeader>
 					<SubMenu
 						ref={r => submenu_errorcorrectionlevelsettings_ref = r}
-						on_toggle_open={isOpen => set_is_submenu_errorcorrectionlevelsettings_open(isOpen)}
-						item={<SubMenuItem
-							focused={is_submenu_errorcorrectionlevelsettings_open()}
-							icon_code={0xE773}>
+						c_on_toggleopen={isOpen => set_is_submenu_errorcorrectionlevelsettings_open(isOpen)}
+						c_item={<SubMenuItem
+							c_focused={is_submenu_errorcorrectionlevelsettings_open()}
+							c_icon_code={0xE773}>
 							Error correction level
 						</SubMenuItem>}>
 						<MenuItem
-							trailing="~7%"
+							c_trailing="~7%"
 							data-ecl={ErrorCorrectionLevel.low}
-							selected={settings().error_correction_level == ErrorCorrectionLevel.low}>
+							c_selected={settings().error_correction_level == ErrorCorrectionLevel.low}>
 							Low
 						</MenuItem>
 						<MenuItem
-							trailing="~15%"
+							c_trailing="~15%"
 							data-ecl={ErrorCorrectionLevel.medium}
-							selected={settings().error_correction_level == ErrorCorrectionLevel.medium}>
+							c_selected={settings().error_correction_level == ErrorCorrectionLevel.medium}>
 							Medium
 						</MenuItem>
 						<MenuItem
-							trailing="~25%"
+							c_trailing="~25%"
 							data-ecl={ErrorCorrectionLevel.quartile}
-							selected={settings().error_correction_level == ErrorCorrectionLevel.quartile}>
+							c_selected={settings().error_correction_level == ErrorCorrectionLevel.quartile}>
 							Quartile
 						</MenuItem>
 						<MenuItem
-							trailing="~30%"
+							c_trailing="~30%"
 							data-ecl={ErrorCorrectionLevel.high}
-							selected={settings().error_correction_level == ErrorCorrectionLevel.high}>
+							c_selected={settings().error_correction_level == ErrorCorrectionLevel.high}>
 							High
 						</MenuItem>
 					</SubMenu>
 					<SubMenu
 						ref={r => submenu_encodingmodesettings_ref = r}
-						on_toggle_open={isOpen => set_is_submenu_encodingmodesettings_open(isOpen)}
-						item={<SubMenuItem
-							focused={is_submenu_encodingmodesettings_ref_open()}
-							icon_code={0xF1EF}>
+						c_on_toggleopen={isOpen => set_is_submenu_encodingmodesettings_open(isOpen)}
+						c_item={<SubMenuItem
+							c_focused={is_submenu_encodingmodesettings_ref_open()}
+							c_icon_code={0xF1EF}>
 							Encoding mode
 						</SubMenuItem>}>
 						<MenuItem
 							data-encoding={EncodingMode.auto}
-							selected={settings().encoding_mode == EncodingMode.auto}>
+							c_selected={settings().encoding_mode == EncodingMode.auto}>
 							Auto
 						</MenuItem>
 						<MenuItem
 							data-encoding={EncodingMode.alphanumeric}
-							selected={settings().encoding_mode == EncodingMode.alphanumeric}>
+							c_selected={settings().encoding_mode == EncodingMode.alphanumeric}>
 							Alphanumeric
 						</MenuItem>
 						<MenuItem
 							data-encoding={EncodingMode.byte}
-							selected={settings().encoding_mode == EncodingMode.byte}>
+							c_selected={settings().encoding_mode == EncodingMode.byte}>
 							Byte
 						</MenuItem>
 						<MenuItem
 							data-encoding={EncodingMode.kanji}
-							selected={settings().encoding_mode == EncodingMode.kanji}>
+							c_selected={settings().encoding_mode == EncodingMode.kanji}>
 							Kanji
 						</MenuItem>
 						<MenuItem
 							data-encoding={EncodingMode.numeric}
-							selected={settings().encoding_mode == EncodingMode.numeric}>
+							c_selected={settings().encoding_mode == EncodingMode.numeric}>
 							Numeric
 						</MenuItem>
 					</SubMenu>
 					<MenuItem
 						id={button_settings_color_id}
-						leading={<Icon
-							filled
+						c_leading={<Icon
+							c_filled
 							style={{
 								color: settings().color,
 								"border-radius": '999px',
 								border: '1px solid rgba(var(--g-color-on-surface), var(--g-opacity-border))'
 							}}
-							code={0xE408}
+							c_code={0xE408}
 						/>}
-						focused={is_colorpicker_color_open()}>
+						c_focused={is_colorpicker_color_open()}>
 						Color
 					</MenuItem>
 					<MenuItem
 						id={button_settings_backgroundcolor_id}
-						leading={<Icon
-							filled
+						c_leading={<Icon
+							c_filled
 							style={{
 								color: settings().background_color,
 								"border-radius": '999px',
 								border: '1px solid rgba(var(--g-color-on-surface), var(--g-opacity-border))'
 							}}
-							code={0xE408}
+							c_code={0xE408}
 						/>}
-						focused={is_colorpicker_backgroundcolor_open()}>
+						c_focused={is_colorpicker_backgroundcolor_open()}>
 						Background color
 					</MenuItem>
 					<div style={{padding: '4px 12px'}}>
 						<NumberTextField
-							label="Margin"
+							c_label="Margin"
 							min={0}
 							value={settings().margin}
-							integer_only
+							c_integer_only
 							id={input_settings_margin_id}
 						/>
 					</div>
 					<MenuDivider/>
 					<MenuHeader>QR Code version</MenuHeader>
 					<SwitchMenuItem
-						icon_code={0xEB49}
-						checked={settings().version == null}
-						attr_switch={{
+						c_icon_code={0xEB49}
+						c_checked={settings().version == null}
+						c_attr_switch={{
 							id: input_settings_autoversion_id,
 						}}>
 						Auto version
@@ -472,11 +472,11 @@ const _: VoidComponent<{
 					<div style={{padding: '4px 12px 8px 12px'}}>
 						<NumberTextField
 							disabled={settings().version == null}
-							label="Version"
+							c_label="Version"
 							min={1}
 							max={40}
 							id={input_settings_version_id}
-							integer_only
+							c_integer_only
 							value={settings().version ?? 1}
 						/>
 					</div>
@@ -484,7 +484,7 @@ const _: VoidComponent<{
 			</Menu>
 			<Menu
 				ref={r => menu_moreactions_ref = r}
-				on_toggle_open={v => set_is_menu_moreactions_open(v)}
+				c_on_toggleopen={v => set_is_menu_moreactions_open(v)}
 				onClick={ev => {
 					const button = document_active()!
 					if (!element_valid_target(
@@ -516,50 +516,50 @@ const _: VoidComponent<{
 				<SubMenu
 					style={{width: '172px'}}
 					ref={r => submenu_downloadmoreactions_ref = r}
-					on_toggle_open={isOpen => set_is_submenu_downloadmoreactions_open(isOpen)}
-					item={<SubMenuItem
-						focused={is_submenu_downloadmoreactions_open()}
-						icon_code={0xE0B9}>
+					c_on_toggleopen={isOpen => set_is_submenu_downloadmoreactions_open(isOpen)}
+					c_item={<SubMenuItem
+						c_focused={is_submenu_downloadmoreactions_open()}
+						c_icon_code={0xE0B9}>
 						Download as
 					</SubMenuItem>}>
 					<MenuItem
-						icon_code={0xE8FE}
+						c_icon_code={0xE8FE}
 						data-download={DownloadFileType.png}
-						trailing="PNG">
+						c_trailing="PNG">
 						Image
 					</MenuItem>
 					<MenuItem
-						icon_code={0xE8FE}
+						c_icon_code={0xE8FE}
 						data-download={DownloadFileType.jpeg}
-						trailing="JPEG">
+						c_trailing="JPEG">
 						Image
 					</MenuItem>
 					<MenuItem
-						icon_code={0xE90C}
+						c_icon_code={0xE90C}
 						data-download={DownloadFileType.svg}
-						trailing="SVG">
+						c_trailing="SVG">
 						Vector
 					</MenuItem>
 				</SubMenu>
 				<SubMenu
 					style={{width: '172px'}}
 					ref={r => submenu_copymoreactions_ref = r}
-					on_toggle_open={isOpen => set_is_submenu_copymoreactions_open(isOpen)}
-					item={<SubMenuItem
-						focused={is_submenu_copymoreactions_open()}
-						icon_code={0xE51B}>
+					c_on_toggleopen={isOpen => set_is_submenu_copymoreactions_open(isOpen)}
+					c_item={<SubMenuItem
+						c_focused={is_submenu_copymoreactions_open()}
+						c_icon_code={0xE51B}>
 						Copy as
 					</SubMenuItem>}>
 					<MenuItem
-						icon_code={0xE8FE}
+						c_icon_code={0xE8FE}
 						data-copy={CopyFileType.png}
-						trailing="PNG">
+						c_trailing="PNG">
 						Image
 					</MenuItem>
 					<MenuItem
-						icon_code={0xE90C}
+						c_icon_code={0xE90C}
 						data-copy={CopyFileType.svg}
-						trailing="SVG">
+						c_trailing="SVG">
 						Vector
 					</MenuItem>
 				</SubMenu>
@@ -570,22 +570,22 @@ const _: VoidComponent<{
 	const ColorPickers: VoidComponent = () => (<>
 		<ColorPicker
 			ref={r => colorpicker_color_ref = r}
-			color={settings().color}
-			on_toggle_open={isOpen => set_is_colorpicker_color_open(isOpen)}
-			on_select_color={color => command(Commands.change_settings_color, color)}
+			c_color={settings().color}
+			c_on_toggleopen={isOpen => set_is_colorpicker_color_open(isOpen)}
+			c_on_select_color={color => command(Commands.change_settings_color, color)}
 		/>
 		<ColorPicker
 			ref={r => colorpicker_backgroundcolor_ref = r}
-			color={settings().background_color}
-			on_toggle_open={isOpen => set_is_colorpicker_backgroundcolor_open(isOpen)}
-			on_select_color={color => command(Commands.change_settings_backgroundcolor, color)}
+			c_color={settings().background_color}
+			c_on_toggleopen={isOpen => set_is_colorpicker_backgroundcolor_open(isOpen)}
+			c_on_select_color={color => command(Commands.change_settings_backgroundcolor, color)}
 		/>
 	</>)
 
 	return (<>
 		<AppBar
-			leading={<img alt="QR Code logo" width={32} src={app.logo_url} />}
-			headline="QR Code"
+			c_leading={<img alt="QR Code logo" width={32} src={app.logo_url} />}
+			c_headline="QR Code"
 			onClick={ev => {
 				const button = document_active()!
 				if (!element_valid_target(
@@ -609,25 +609,25 @@ const _: VoidComponent<{
 					}
 				}
 			}}
-			trailing={<Tooltip>
+			c_trailing={<Tooltip>
 				<IconButton
 					data-tooltip="Info"
-					focused={is_menu_info_open()}
-					code={0xE930}
+					c_focused={is_menu_info_open()}
+					c_code={0xE930}
 					id={button_appbar_info_id}
 				/>
 				<IconButton
 					data-tooltip="Settings"
 					class={CSSAnimation.btn_rotate_icon}
-					focused={is_menu_settings_open()}
-					code={0xEE0F}
+					c_focused={is_menu_settings_open()}
+					c_code={0xEE0F}
 					id={button_appbar_settings_id}
 				/>
 				<Show when={!props.is_generate_error && props.page == Pages.generate}>
 					<IconButton
 						data-tooltip="More actions"
-						focused={is_menu_moreactions_open()}
-						code={0xEAD9}
+						c_focused={is_menu_moreactions_open()}
+						c_code={0xEAD9}
 						id={button_appbar_moreactions_id}
 					/>
 				</Show>

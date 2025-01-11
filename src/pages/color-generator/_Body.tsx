@@ -43,44 +43,44 @@ const _: VoidComponent<Palette> = (props) => {
 		<div style={{ "background-color": accent_light(), color: on_accent_light() }}>
 			<h2>Accent Light<br />{accent_light()}</h2>
 			<Button
-				variant={ButtonVariant.tonal}
+				c_variant={ButtonVariant.tonal}
 				style={{'--g-color-on-surface': hex_to_css_value(on_accent_light())}}
 				onClick={() => copy_color(accent_light(), timeout_accentlight_id)}>
-				<Show when={timeout_accentlight_id[0]()} fallback={<><Icon code={0xE51B}/>Copy</>}>
-					<Icon code={0xE3D8}/>Copied
+				<Show when={timeout_accentlight_id[0]()} fallback={<><Icon c_code={0xE51B}/>Copy</>}>
+					<Icon c_code={0xE3D8}/>Copied
 				</Show>
 			</Button>
 		</div>
 		<div style={{ "background-color": on_accent_light(), color: accent_light() }}>
 			<h2>On Accent Light<br />{on_accent_light()}</h2>
 			<Button
-				variant={ButtonVariant.tonal}
+				c_variant={ButtonVariant.tonal}
 				style={{'--g-color-on-surface': hex_to_css_value(accent_light())}}
 				onClick={() => copy_color(on_accent_light(), timeout_onaccentlight_id)}>
-				<Show when={timeout_onaccentlight_id[0]()} fallback={<><Icon code={0xE51B}/>Copy</>}>
-					<Icon code={0xE3D8}/>Copied
+				<Show when={timeout_onaccentlight_id[0]()} fallback={<><Icon c_code={0xE51B}/>Copy</>}>
+					<Icon c_code={0xE3D8}/>Copied
 				</Show>
 			</Button>
 		</div>
 		<div style={{ "background-color": accent_dark(), color: on_accent_dark() }}>
 			<h2>Accent Dark<br />{accent_dark()}</h2>
 			<Button
-				variant={ButtonVariant.tonal}
+				c_variant={ButtonVariant.tonal}
 				style={{'--g-color-on-surface': hex_to_css_value(on_accent_dark())}}
 				onClick={() => copy_color(accent_dark(), timeout_accentdark_id)}>
-				<Show when={timeout_accentdark_id[0]()} fallback={<><Icon code={0xE51B}/>Copy</>}>
-					<Icon code={0xE3D8}/>Copied
+				<Show when={timeout_accentdark_id[0]()} fallback={<><Icon c_code={0xE51B}/>Copy</>}>
+					<Icon c_code={0xE3D8}/>Copied
 				</Show>
 			</Button>
 		</div>
 		<div style={{ "background-color": on_accent_dark(), color: accent_dark() }}>
 			<h2>On Accent Dark<br />{on_accent_dark()}</h2>
 			<Button
-				variant={ButtonVariant.tonal}
+				c_variant={ButtonVariant.tonal}
 				style={{'--g-color-on-surface': hex_to_css_value(accent_dark())}}
 				onClick={() => copy_color(on_accent_dark(), timeout_onaccentdark_id)}>
-				<Show when={timeout_onaccentdark_id[0]()} fallback={<><Icon code={0xE51B}/>Copy</>}>
-					<Icon code={0xE3D8}/>Copied
+				<Show when={timeout_onaccentdark_id[0]()} fallback={<><Icon c_code={0xE51B}/>Copy</>}>
+					<Icon c_code={0xE3D8}/>Copied
 				</Show>
 			</Button>
 		</div>

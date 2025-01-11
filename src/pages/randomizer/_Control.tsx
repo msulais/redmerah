@@ -105,21 +105,21 @@ const Teams: VoidComponent<{
 
 	return (<>
 		<NumberTextField
-			label="Count"
+			c_label="Count"
 			min={1}
 			max={array_length(settings().list_members.items)}
 			onBlur={ev => command(
 				Commands.change_settings_teams_count,
 				number_safe(event_current_target(ev).valueAsNumber, settings().count)
 			)}
-			attr_wrapper={{ style: { width: 'min(100%, 164px)' } }}
+			c_attr_wrapper={{ style: { width: 'min(100%, 164px)' } }}
 			value={settings().count}
 		/>
 		<Dropdown
-			label="Names"
-			values={[settings().list_names.id]}
-			on_change_options={(options) => change_listnames(options[0].value as number)}
-			attr_menu={{
+			c_label="Names"
+			c_values={[settings().list_names.id]}
+			c_on_change={(options) => change_listnames(options[0].value as number)}
+			c_attr_menu={{
 				ref: (r) => dropdown_menu_listnames_ref = r,
 				onContextMenu: ev => on_contextmenu_dropdown_item(ev, true),
 				onClick: ev => {
@@ -151,17 +151,17 @@ const Teams: VoidComponent<{
 			}}>
 			<MenuItem
 				id={button_names_addnewlist_id}
-				icon_code={0xE007}>
+				c_icon_code={0xE007}>
 				Add new list
 			</MenuItem>
 			<MenuItem
 				id={button_names_resetalllist_id}
-				icon_code={0xF09A}>
+				c_icon_code={0xF09A}>
 				Reset all list
 			</MenuItem>
 			<MenuItem
 				id={button_names_editlist_id}
-				icon_code={0xE069}>
+				c_icon_code={0xE069}>
 				Edit list
 			</MenuItem>
 			<MenuDivider />
@@ -170,18 +170,18 @@ const Teams: VoidComponent<{
 			</Show>
 			<For each={itemlist_to_dropdownlist(lists())}>{(option, i) =>
 				<DropdownOption
-					value={option[0]}
-					text={option[1]}
-					trailing={option[2]}
+					c_value={option[0]}
+					c_text={option[1]}
+					c_trailing={option[2]}
 					data-list-index={i()}
 				/>
 			}</For>
 		</Dropdown>
 		<Dropdown
-			label="Members"
-			values={[settings().list_members.id]}
-			on_change_options={options => change_listmembers(options[0].value as number)}
-			attr_menu={{
+			c_label="Members"
+			c_values={[settings().list_members.id]}
+			c_on_change={options => change_listmembers(options[0].value as number)}
+			c_attr_menu={{
 				ref: (r) => dropdown_menu_listmember_ref = r,
 				onClick: ev => {
 					const button = document_active()!
@@ -213,17 +213,17 @@ const Teams: VoidComponent<{
 			}}>
 			<MenuItem
 				id={button_members_addnewlist_id}
-				icon_code={0xE007}>
+				c_icon_code={0xE007}>
 				Add new list
 			</MenuItem>
 			<MenuItem
 				id={button_members_resetalllist_id}
-				icon_code={0xF09A}>
+				c_icon_code={0xF09A}>
 				Reset all list
 			</MenuItem>
 			<MenuItem
 				id={button_members_editlist_id}
-				icon_code={0xE069}>
+				c_icon_code={0xE069}>
 				Edit list
 			</MenuItem>
 			<MenuDivider />
@@ -232,9 +232,9 @@ const Teams: VoidComponent<{
 			</Show>
 			<For each={itemlist_to_dropdownlist(lists())}>{(option, i) =>
 				<DropdownOption
-					value={option[0]}
-					text={option[1]}
-					trailing={option[2]}
+					c_value={option[0]}
+					c_text={option[1]}
+					c_trailing={option[2]}
 					data-list-index={i()}
 				/>
 			}</For>
@@ -283,30 +283,30 @@ const Teams: VoidComponent<{
 			<Show when={list() && list()!.id != (is_action_open_for_list_names()? settings().list_names.id : settings().list_members.id)}>
 				<MenuItem
 					id={button_action_select_id}
-					icon_code={0xE3CC}>
+					c_icon_code={0xE3CC}>
 					Select
 				</MenuItem>
 				<MenuDivider />
 			</Show>
 			<MenuItem
 				id={button_action_viewlist_id}
-				icon_code={0xE77B}>
+				c_icon_code={0xE77B}>
 				View list
 			</MenuItem>
 			<MenuItem
 				id={button_action_exportlist_id}
-				icon_code={0xE0CF}
-				trailing="*.csv">
+				c_icon_code={0xE0CF}
+				c_trailing="*.csv">
 				Export list
 			</MenuItem>
 			<MenuItem
 				id={button_action_editlist_id}
-				icon_code={0xF09C}>
+				c_icon_code={0xF09C}>
 				Edit list
 			</MenuItem>
 			<MenuItem
 				id={button_action_deletelist_id}
-				icon_code={0xE59D}>
+				c_icon_code={0xE59D}>
 				Delete list
 			</MenuItem>
 		</Menu>
@@ -357,10 +357,10 @@ const Selection: VoidComponent<{
 
 	return (<>
 		<Dropdown
-			label="List"
-			values={[settings().list.id]}
-			on_change_options={options => change_list(options[0].value as number)}
-			attr_menu={{
+			c_label="List"
+			c_values={[settings().list.id]}
+			c_on_change={options => change_list(options[0].value as number)}
+			c_attr_menu={{
 				ref: (r) => menu_dropdown_ref = r,
 				onClick: ev => {
 					const button = document_active()!
@@ -414,17 +414,17 @@ const Selection: VoidComponent<{
 			}}>
 			<MenuItem
 				id={button_list_addnewlist_id}
-				icon_code={0xE007}>
+				c_icon_code={0xE007}>
 				Add new list
 			</MenuItem>
 			<MenuItem
 				id={button_list_resetalllist_id}
-				icon_code={0xF09A}>
+				c_icon_code={0xF09A}>
 				Reset all list
 			</MenuItem>
 			<MenuItem
 				id={button_list_editlist_id}
-				icon_code={0xE069}>
+				c_icon_code={0xE069}>
 				Edit list
 			</MenuItem>
 			<MenuDivider />
@@ -433,9 +433,9 @@ const Selection: VoidComponent<{
 			</Show>
 			<For each={itemlist_to_dropdownlist(lists())}>{(option, i) =>
 				<DropdownOption
-					value={option[0]}
-					text={option[1]}
-					trailing={option[2]}
+					c_value={option[0]}
+					c_text={option[1]}
+					c_trailing={option[2]}
 					data-list-index={i()}
 				/>
 			}</For>
@@ -482,42 +482,42 @@ const Selection: VoidComponent<{
 			<Show when={list() && list()!.id != settings().list.id}>
 				<MenuItem
 					id={button_actions_select_id}
-					icon_code={0xE3CC}>
+					c_icon_code={0xE3CC}>
 					Select
 				</MenuItem>
 				<MenuDivider />
 			</Show>
 			<MenuItem
 				id={button_actions_viewlist_id}
-				icon_code={0xE77B}>
+				c_icon_code={0xE77B}>
 				View list
 			</MenuItem>
 			<MenuItem
 				id={button_actions_exportlist_id}
-				icon_code={0xE0CF}
-				trailing="*.csv">
+				c_icon_code={0xE0CF}
+				c_trailing="*.csv">
 				Export list
 			</MenuItem>
 			<MenuItem
 				id={button_actions_editlist_id}
-				icon_code={0xF09C}>
+				c_icon_code={0xF09C}>
 				Edit list
 			</MenuItem>
 			<MenuItem
 				id={button_actions_deletelist_id}
-				icon_code={0xE59D}>
+				c_icon_code={0xE59D}>
 				Delete list
 			</MenuItem>
 		</Menu>
 		<NumberTextField
-			label="Count"
+			c_label="Count"
 			min={1}
 			max={array_length(settings().list.items)}
 			onBlur={ev => command(
 				Commands.change_settings_selection_count,
 				number_safe(event_current_target(ev).valueAsNumber, settings().count)
 			)}
-			attr_wrapper={{ style: { width: 'min(100%, 164px)' } }}
+			c_attr_wrapper={{ style: { width: 'min(100%, 164px)' } }}
 			value={settings().count}
 		/>
 	</>)
@@ -562,10 +562,10 @@ const Words: VoidComponent<{
 
 	return (<>
 		<Dropdown
-			label="List"
-			values={[settings().list.id]}
-			on_change_options={options => change_list(options[0].value as number)}
-			attr_menu={{
+			c_label="List"
+			c_values={[settings().list.id]}
+			c_on_change={options => change_list(options[0].value as number)}
+			c_attr_menu={{
 				ref: (r) => menu_dropdown_ref = r,
 				onClick: ev => {
 					const button = document_active()!
@@ -619,17 +619,17 @@ const Words: VoidComponent<{
 			}}>
 			<MenuItem
 				id={button_list_addnewlist_id}
-				icon_code={0xE007}>
+				c_icon_code={0xE007}>
 				Add new list
 			</MenuItem>
 			<MenuItem
 				id={button_list_resetalllist_id}
-				icon_code={0xF09A}>
+				c_icon_code={0xF09A}>
 				Reset all list
 			</MenuItem>
 			<MenuItem
 				id={button_list_editlist_id}
-				icon_code={0xE069}>
+				c_icon_code={0xE069}>
 				Edit list
 			</MenuItem>
 			<MenuDivider />
@@ -638,9 +638,9 @@ const Words: VoidComponent<{
 			</Show>
 			<For each={itemlist_to_dropdownlist(lists())}>{(option, i) =>
 				<DropdownOption
-					value={option[0]}
-					text={option[1]}
-					trailing={option[2]}
+					c_value={option[0]}
+					c_text={option[1]}
+					c_trailing={option[2]}
 					data-list-index={i()}
 				/>
 			}</For>
@@ -653,7 +653,7 @@ const Words: VoidComponent<{
 						close_menu(menu_dropdown_ref)
 						change_list(list()!.id)
 					}}
-					icon_code={0xE3CC}>
+					c_icon_code={0xE3CC}>
 					Select
 				</MenuItem>
 				<MenuDivider />
@@ -664,7 +664,7 @@ const Words: VoidComponent<{
 					close_menu(menu_dropdown_ref)
 					command(Commands.view_list, ev, list())
 				}}
-				icon_code={0xE77B}>
+				c_icon_code={0xE77B}>
 				View list
 			</MenuItem>
 			<MenuItem
@@ -673,8 +673,8 @@ const Words: VoidComponent<{
 					close_menu(menu_dropdown_ref)
 					command(Commands.export_list, list())
 				}}
-				icon_code={0xE0CF}
-				trailing="*.csv">
+				c_icon_code={0xE0CF}
+				c_trailing="*.csv">
 				Export list
 			</MenuItem>
 			<MenuItem
@@ -683,7 +683,7 @@ const Words: VoidComponent<{
 					close_menu(menu_action_ref)
 					close_menu(menu_dropdown_ref)
 				}}
-				icon_code={0xF09C}>
+				c_icon_code={0xF09C}>
 				Edit list
 			</MenuItem>
 			<MenuItem
@@ -692,18 +692,18 @@ const Words: VoidComponent<{
 					close_menu(menu_action_ref)
 					close_menu(menu_dropdown_ref)
 				}}
-				icon_code={0xE59D}>
+				c_icon_code={0xE59D}>
 				Delete list
 			</MenuItem>
 		</Menu>
 		<NumberTextField
-			label="Count"
+			c_label="Count"
 			min={1}
 			onBlur={ev => command(
 				Commands.change_settings_words_count,
 				number_safe(event_current_target(ev).valueAsNumber, settings().count)
 			)}
-			attr_wrapper={{ style: { width: 'min(100%, 164px)' } }}
+			c_attr_wrapper={{ style: { width: 'min(100%, 164px)' } }}
 			value={settings().count}
 		/>
 	</>)
@@ -741,7 +741,7 @@ const Colors: VoidComponent<{
 	return (<>
 		<NumberTextField
 			min={1}
-			label="Count"
+			c_label="Count"
 			value={settings().count}
 			onBlur={ev => command(
 				Commands.change_settings_colors_count,
@@ -751,7 +751,7 @@ const Colors: VoidComponent<{
 		<Switch>
 			<Match when={settings().model == ColorsRandomizerColorModel.hex}>
 				<TextField
-					label="Hex"
+					c_label="Hex"
 					placeholder="0-16777215 - 0-16777215"
 					onBlur={(ev) => {
 						const self = event_current_target(ev)
@@ -774,7 +774,7 @@ const Colors: VoidComponent<{
 			</Match>
 			<Match when={settings().model == ColorsRandomizerColorModel.hsl}>
 				<TextField
-					label="Hue"
+					c_label="Hue"
 					placeholder="0-360 - 0-360"
 					onBlur={(ev) => {
 						const self = event_current_target(ev)
@@ -795,7 +795,7 @@ const Colors: VoidComponent<{
 					], ' - ')}
 				/>
 				<TextField
-					label="Saturation"
+					c_label="Saturation"
 					placeholder="0-100 - 0-100"
 					onBlur={(ev) => {
 						const self = event_current_target(ev)
@@ -816,7 +816,7 @@ const Colors: VoidComponent<{
 					], ' - ')}
 				/>
 				<TextField
-					label="Lightness"
+					c_label="Lightness"
 					placeholder="0-100 - 0-100"
 					onBlur={(ev) => {
 						const self = event_current_target(ev)
@@ -839,7 +839,7 @@ const Colors: VoidComponent<{
 			</Match>
 			<Match when={settings().model == ColorsRandomizerColorModel.rgb}>
 				<TextField
-					label="Red"
+					c_label="Red"
 					placeholder="0-225 - 0-255"
 					onBlur={(ev) => {
 						const self = event_current_target(ev)
@@ -860,7 +860,7 @@ const Colors: VoidComponent<{
 					], ' - ')}
 				/>
 				<TextField
-					label="Green"
+					c_label="Green"
 					placeholder="0-225 - 0-255"
 					onBlur={(ev) => {
 						const self = event_current_target(ev)
@@ -881,7 +881,7 @@ const Colors: VoidComponent<{
 					], ' - ')}
 				/>
 				<TextField
-					label="Blue"
+					c_label="Blue"
 					placeholder="0-225 - 0-255"
 					onBlur={(ev) => {
 						const self = event_current_target(ev)
@@ -937,19 +937,19 @@ const Numbers: VoidComponent<{
 
 	return (<>
 		<TextField
-			label="Range"
+			c_label="Range"
 			onBlur={on_blur_range}
-			attr_wrapper={{ style: { width: 'min(100%, 164px)' } }}
+			c_attr_wrapper={{ style: { width: 'min(100%, 164px)' } }}
 			value={array_join([settings().range.min, settings().range.max], ' - ')}
 		/>
 		<NumberTextField
-			label="Count"
+			c_label="Count"
 			min={1}
 			onBlur={ev => command(
 				Commands.change_settings_numbers_count,
 				number_safe(event_current_target(ev).valueAsNumber, settings().count)
 			)}
-			attr_wrapper={{ style: { width: 'min(100%, 164px)' } }}
+			c_attr_wrapper={{ style: { width: 'min(100%, 164px)' } }}
 			value={settings().count}
 		/>
 	</>)
@@ -998,28 +998,28 @@ const $String: VoidComponent<{
 
 	return (<>
 		<NumberTextField
-			attr_wrapper={{ style: { width: 'min(100%, 164px)' } }}
+			c_attr_wrapper={{ style: { width: 'min(100%, 164px)' } }}
 			value={settings().length}
 			onBlur={ev => command(
 				Commands.change_settings_string_length,
 				number_safe(event_current_target(ev).valueAsNumber, settings().length)
 			)}
 			min={1}
-			label="Length"
+			c_label="Length"
 		/>
 		<TextField
 			ref={r => input_characters_ref = r}
-			focused={is_menu_characters_open()}
+			c_focused={is_menu_characters_open()}
 			readOnly
-			attr_wrapper={{
+			c_attr_wrapper={{
 				ref: r => label_characters_ref = r,
 				style: { width: 'min(100%, 328px)' }
 			}}
 			value={8}
-			label="Characters"
-			trailing={<TextFieldButton
+			c_label="Characters"
+			c_trailing={<TextFieldButton
 				data-tooltip="More character options"
-				focused={is_menu_characters_open()}
+				c_focused={is_menu_characters_open()}
 				onClick={(ev) => {
 					set_menu_characters_width(rect_width(element_rect(label_characters_ref!)))
 					open_menu(ev, menu_characters_ref, {
@@ -1029,12 +1029,12 @@ const $String: VoidComponent<{
 						gap: 8,
 					})
 				}}>
-				<Icon filled code={0xE362}/>
+				<Icon c_filled c_code={0xE362}/>
 			</TextFieldButton>}
 		/>
 		<Menu
 			ref={(r) => menu_characters_ref = r}
-			on_toggle_open={(v) => set_is_menu_characters_open(v)}
+			c_on_toggleopen={(v) => set_is_menu_characters_open(v)}
 			style={{"min-width": `${menu_characters_width()}px`}}
 			onClick={ev => {
 				const button = document_active()!
@@ -1061,35 +1061,35 @@ const $String: VoidComponent<{
 			}}>
 			<MenuHeader>Alphabet</MenuHeader>
 			<MenuItem
-				checked={settings().characters.uppercase}
-				trailing="A-Z"
+				c_checked={settings().characters.uppercase}
+				c_trailing="A-Z"
 				id={button_characters_uppercase_id}>
 				Uppercase
 			</MenuItem>
 			<MenuItem
-				checked={settings().characters.lowercase}
-				trailing="a-z"
+				c_checked={settings().characters.lowercase}
+				c_trailing="a-z"
 				id={button_characters_lowercase_id}>
 				Lowercase
 			</MenuItem>
 			<MenuDivider />
 			<MenuItem
-				checked={settings().characters.numbers}
-				trailing="0-9"
+				c_checked={settings().characters.numbers}
+				c_trailing="0-9"
 				id={button_characters_numbers_id}>
 				Numbers
 			</MenuItem>
 			<MenuDivider />
 			<MenuItem
-				checked={settings().characters.symbols}
-				trailing={"<({[!@#$%^&*_-+=~`\\|\"':;?/.,]})>"}
+				c_checked={settings().characters.symbols}
+				c_trailing={"<({[!@#$%^&*_-+=~`\\|\"':;?/.,]})>"}
 				id={button_characters_symbols_id}>
 				Symbols
 			</MenuItem>
 			<MenuDivider />
 			<div class={ CSS.control_string_custom_character}>
 				<TextField
-					label="Custom characters"
+					c_label="Custom characters"
 					placeholder="#d(23'[])sdf"
 					onInput={(ev) => command(Commands.change_settings_string_characters_custom, event_current_target(ev).value)}
 					value={settings().characters.custom}

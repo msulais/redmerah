@@ -76,11 +76,11 @@ const _: VoidComponent = () => {
 
 	return (<App
 		class={CSS.app}
-		appbar={<AppBar
+		c_appbar={<AppBar
 			page={page()}
 			command={command}
 		/>}
-		left_sidebar={<SideNavigation
+		c_left_sidebar={<SideNavigation
 			page={page()}
 			command={command}
 		/>}>

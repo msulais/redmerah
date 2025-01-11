@@ -58,8 +58,7 @@ function change_areatextfield_value(el: HTMLTextAreaElement, value: string): voi
 
 type TextFieldButtonProps = ButtonProps
 const TextFieldButton: ParentComponent<TextFieldButtonProps> = ($props) => {
-	const $$props = mergeProps({compact: true}, $props)
-	const [props, other] = splitProps($$props, ['classList'])
+	const [props, other] = splitProps($props, ['classList'])
 	return (<Button
 		classList={{
 			'c-textfield-btn': true,
@@ -70,45 +69,45 @@ const TextFieldButton: ParentComponent<TextFieldButtonProps> = ($props) => {
 }
 
 type AreaTextFieldProps = Omit<JSX.TextareaHTMLAttributes<HTMLTextAreaElement>, 'children' | 'rows' | 'columns'> & {
-	leading?: JSX.Element
-	trailing?: JSX.Element
-	trailing_auto_tabindex?: boolean
-	label?: string
-	message?: string
-	focused?: boolean
-	min_line?: number
-	max_line?: number
-	auto_show_clear_button?: boolean
-	auto_hide_label?: boolean
-	tooltip_clear?: string
-	auto_validation?: boolean
-	attr_wrapper?: JSX.HTMLAttributes<HTMLDivElement>
+	c_leading?: JSX.Element
+	c_trailing?: JSX.Element
+	c_trailing_auto_tabindex?: boolean
+	c_label?: string
+	c_message?: string
+	c_focused?: boolean
+	c_min_line?: number
+	c_max_line?: number
+	c_auto_show_clear_button?: boolean
+	c_auto_hide_label?: boolean
+	c_tooltip_clear?: string
+	c_auto_validation?: boolean
+	c_attr_wrapper?: JSX.HTMLAttributes<HTMLDivElement>
 }
 const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 	const $$props = mergeProps({
-		auto_validation: true,
-		trailing_auto_tabindex: true,
-		auto_hide_label: true,
+		c_auto_validation: true,
+		c_trailing_auto_tabindex: true,
+		c_auto_hide_label: true,
 		id: createUniqueId()
 	}, $props)
 	const [props, other] = splitProps($$props, [
-		'leading', 'onInput', 'label', 'focused',
-		'autocomplete', 'id', 'message', 'trailing',
-		'disabled', 'readOnly', 'auto_validation',
-		'onFocus', 'onBlur', 'placeholder', 'auto_hide_label',
-		'value', 'ref', 'auto_show_clear_button', 'tooltip_clear',
-		'min_line', 'max_line', 'attr_wrapper',
-		'trailing_auto_tabindex'
+		'c_leading', 'onInput', 'c_label', 'c_focused',
+		'autocomplete', 'id', 'c_message', 'c_trailing',
+		'disabled', 'readOnly', 'c_auto_validation',
+		'onFocus', 'onBlur', 'placeholder', 'c_auto_hide_label',
+		'value', 'ref', 'c_auto_show_clear_button', 'c_tooltip_clear',
+		'c_min_line', 'c_max_line', 'c_attr_wrapper',
+		'c_trailing_auto_tabindex'
 	])
-	const [wrapper_props, wrapper_props_other] = splitProps(props.attr_wrapper! ?? {}, ['class'])
+	const [wrapper_props, wrapper_props_other] = splitProps(props.c_attr_wrapper! ?? {}, ['class'])
 	const [is_focus, set_is_focus] = createSignal<boolean>(false)
 	const [is_invalid, set_is_invalid] = createSignal<boolean>(false)
 	const [value, set_value] = createSignal<string>('')
 	const [height, set_height] = createSignal<number>(HEIGHT_TEXT_INPUT_PER_LINE)
-	const is_show_clear_button = createMemo(() => props.auto_show_clear_button && string_length(value()) > 0)
-	const trailing = children(() => props.trailing)
-	const leading = children(() => props.leading)
-	const message = children(() => props.message)
+	const is_show_clear_button = createMemo(() => props.c_auto_show_clear_button && string_length(value()) > 0)
+	const trailing = children(() => props.c_trailing)
+	const leading = children(() => props.c_leading)
+	const message = children(() => props.c_message)
 	const button_clear_id = createUniqueId()
 	let areatextfield_ref!: HTMLTextAreaElement
 	let stop_focus: boolean = false
@@ -126,10 +125,10 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 			{trailing()}
 			<Show when={is_show_clear_button()}>
 				<TextFieldButton
-					data-tooltip={props.tooltip_clear ?? 'Clear'}
+					data-tooltip={props.c_tooltip_clear ?? 'Clear'}
 					type={'button'}
 					id={button_clear_id}>
-					<Icon code={0xE5E9}/>
+					<Icon c_code={0xE5E9}/>
 				</TextFieldButton>
 			</Show>
 		</Tooltip>)
@@ -139,18 +138,18 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 		class={classlist('c-area-textfield', wrapper_props.class ?? '')}
 		{...wrapper_props_other}>
 		<div
-			data-c-focused={attr_set_if_exist(props.focused ?? is_focus())}
-			data-c-invalid={attr_set_if_exist(!props.disabled && props.auto_validation && is_invalid())}
+			data-c-focused={attr_set_if_exist(props.c_focused ?? is_focus())}
+			data-c-invalid={attr_set_if_exist(!props.disabled && props.c_auto_validation && is_invalid())}
 			data-c-disabled={attr_set_if_exist(props.disabled)}
-			data-c-trailing={attr_set_if_exist(trailing() || (props.auto_show_clear_button && string_length(value()) > 0))}
+			data-c-trailing={attr_set_if_exist(trailing() || (props.c_auto_show_clear_button && string_length(value()) > 0))}
 			data-c-readonly={attr_set_if_exist(props.readOnly)}
 			onClick={() => {
 				if (stop_focus) return stop_focus = false
 
 				element_focus(areatextfield_ref)
 			}}>
-			<Show when={!(props.auto_hide_label && string_length(value()) == 0 && !props.placeholder)}>
-				<label for={props.id} class='c-area-textfield-label'>{props.label}</label>
+			<Show when={!(props.c_auto_hide_label && string_length(value()) == 0 && !props.placeholder)}>
+				<label for={props.id} class='c-area-textfield-label'>{props.c_label}</label>
 			</Show>
 			<Show when={leading()}>
 				<div
@@ -183,17 +182,17 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 					set_is_focus(false)
 					event_call(ev, props.onBlur)
 				}}
-				rows={props.min_line ?? 1}
+				rows={props.c_min_line ?? 1}
 				disabled={props.disabled}
 				autocomplete={props.autocomplete ?? 'off'}
 				readOnly={props.readOnly}
 				value={props.value}
 				style={{
 					height: height() + 'px',
-					"min-height": props.min_line? ((HEIGHT_TEXT_INPUT_PER_LINE * props.min_line) + 'px') : undefined,
-					"max-height": props.max_line && props.max_line >= (props.min_line ?? 1)? ((HEIGHT_TEXT_INPUT_PER_LINE * props.max_line) + 'px') : undefined
+					"min-height": props.c_min_line? ((HEIGHT_TEXT_INPUT_PER_LINE * props.c_min_line) + 'px') : undefined,
+					"max-height": props.c_max_line && props.c_max_line >= (props.c_min_line ?? 1)? ((HEIGHT_TEXT_INPUT_PER_LINE * props.c_max_line) + 'px') : undefined
 				}}
-				placeholder={props.placeholder ?? (props.auto_hide_label && props.label? `${props.label}` : undefined)}
+				placeholder={props.placeholder ?? (props.c_auto_hide_label && props.c_label? `${props.c_label}` : undefined)}
 				{...other}></textarea>
 			<Show when={trailing() || is_show_clear_button()}>
 				<div
@@ -207,9 +206,9 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 						}
 					}}>
 					<Show
-						when={props.trailing_auto_tabindex}
+						when={props.c_trailing_auto_tabindex}
 						fallback={<TrailingContent />}>
-						<FocusableGroup arrow_options={{left: 'prev', right: 'next'}}>
+						<FocusableGroup c_arrow_options={{left: 'prev', right: 'next'}}>
 							<TrailingContent />
 						</FocusableGroup>
 					</Show>
@@ -224,44 +223,44 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 
 
 type TextFieldProps = JSX.InputHTMLAttributes<HTMLInputElement> & {
-	leading?: JSX.Element
-	trailing?: JSX.Element
-	trailing_auto_tabindex?: boolean
-	label?: string
-	message?: string
-	focused?: boolean
-	auto_show_clear_button?: boolean
-	auto_hide_label?: boolean
-	auto_select_all?: boolean
-	tooltip_clear?: string
-	auto_validation?: boolean
-	attr_wrapper?: JSX.HTMLAttributes<HTMLDivElement>
+	c_leading?: JSX.Element
+	c_trailing?: JSX.Element
+	c_trailing_auto_tabindex?: boolean
+	c_label?: string
+	c_message?: string
+	c_focused?: boolean
+	c_auto_show_clear_button?: boolean
+	c_auto_hide_label?: boolean
+	c_auto_select_all?: boolean
+	c_tooltip_clear?: string
+	c_auto_validation?: boolean
+	c_attr_wrapper?: JSX.HTMLAttributes<HTMLDivElement>
 }
 const TextField: VoidComponent<TextFieldProps> = ($props) => {
 	const $$props = mergeProps({
-		auto_validation: true,
-		trailing_auto_tabindex: true,
+		c_auto_validation: true,
+		c_trailing_auto_tabindex: true,
+		c_auto_hide_label: true,
 		type: 'text',
-		auto_hide_label: true,
 		id: createUniqueId()
 	}, $props)
 	const [props, other] = splitProps($$props, [
-		'leading', 'onInput', 'label', 'focused',
-		'autocomplete', 'id', 'message', 'trailing',
-		'type', 'attr_wrapper', 'disabled', 'readOnly',
-		'onFocus', 'onBlur', 'placeholder', 'auto_hide_label',
-		'value', 'ref', 'auto_show_clear_button', 'tooltip_clear',
-		'auto_select_all', 'onKeyUp', 'auto_validation',
-		'trailing_auto_tabindex'
+		'c_leading', 'onInput', 'c_label', 'c_focused',
+		'autocomplete', 'id', 'c_message', 'c_trailing',
+		'type', 'c_attr_wrapper', 'disabled', 'readOnly',
+		'onFocus', 'onBlur', 'placeholder', 'c_auto_hide_label',
+		'value', 'ref', 'c_auto_show_clear_button', 'c_tooltip_clear',
+		'c_auto_select_all', 'onKeyUp', 'c_auto_validation',
+		'c_trailing_auto_tabindex'
 	])
-	const [wrapper_props, wrapper_props_other] = splitProps(props.attr_wrapper! ?? {}, ['class'])
+	const [wrapper_props, wrapper_props_other] = splitProps(props.c_attr_wrapper! ?? {}, ['class'])
 	const [is_focus, set_is_focus] = createSignal<boolean>(false)
 	const [is_invalid, set_is_invalid] = createSignal<boolean>(false)
 	const [value, set_value] = createSignal<string>('')
-	const is_show_clear_button = createMemo(() => props.auto_show_clear_button && string_length(value()) > 0)
-	const trailing = children(() => props.trailing)
-	const leading = children(() => props.leading)
-	const message = children(() => props.message)
+	const is_show_clear_button = createMemo(() => props.c_auto_show_clear_button && string_length(value()) > 0)
+	const trailing = children(() => props.c_trailing)
+	const leading = children(() => props.c_leading)
+	const message = children(() => props.c_message)
 	const button_clear_id = createUniqueId()
 	let textfield_ref: HTMLInputElement
 	let stop_focus: boolean = false
@@ -276,10 +275,10 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 			{trailing()}
 			<Show when={is_show_clear_button()}>
 				<TextFieldButton
-					data-tooltip={props.tooltip_clear ?? 'Clear'}
+					data-tooltip={props.c_tooltip_clear ?? 'Clear'}
 					type={'button'}
 					id={button_clear_id}>
-					<Icon code={0xE5E9}/>
+					<Icon c_code={0xE5E9}/>
 				</TextFieldButton>
 			</Show>
 		</Tooltip>)
@@ -289,18 +288,18 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 		class={classlist('c-textfield', wrapper_props.class ?? '')}
 		{...wrapper_props_other}>
 		<div
-			data-c-focused={attr_set_if_exist(props.focused ?? is_focus())}
-			data-c-invalid={attr_set_if_exist(!props.disabled && props.auto_validation && is_invalid())}
+			data-c-focused={attr_set_if_exist(props.c_focused ?? is_focus())}
+			data-c-invalid={attr_set_if_exist(!props.disabled && props.c_auto_validation && is_invalid())}
 			data-c-disabled={attr_set_if_exist(props.disabled)}
-			data-c-trailing={attr_set_if_exist(trailing() || (props.auto_show_clear_button && string_length(value()) > 0))}
+			data-c-trailing={attr_set_if_exist(trailing() || (props.c_auto_show_clear_button && string_length(value()) > 0))}
 			data-c-readonly={attr_set_if_exist(props.readOnly)}
 			onClick={() => {
 				if (stop_focus) return stop_focus = false
 
 				element_focus(textfield_ref)
 			}}>
-			<Show when={!(props.auto_hide_label && string_length(value()) == 0 && !props.placeholder)}>
-				<label class='c-textfield-label' for={props.id}>{props.label}</label>
+			<Show when={!(props.c_auto_hide_label && string_length(value()) == 0 && !props.placeholder)}>
+				<label class='c-textfield-label' for={props.id}>{props.c_label}</label>
 			</Show>
 			<Show when={leading()}>
 				<div
@@ -324,7 +323,7 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 					set_is_invalid(!self.checkValidity())
 					set_is_focus(true)
 					event_call(ev, props.onFocus)
-					if (props.auto_select_all) self.setSelectionRange(0, string_length(self.value))
+					if (props.c_auto_select_all) self.setSelectionRange(0, string_length(self.value))
 				}}
 				onKeyUp={ev => {
 					if (ev.key == 'Enter') element_blur(event_current_target(ev))
@@ -340,7 +339,7 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 				autocomplete={props.autocomplete ?? 'off'}
 				readOnly={props.readOnly}
 				value={props.value}
-				placeholder={props.placeholder ?? (props.auto_hide_label && props.label? `${props.label}` : undefined)}
+				placeholder={props.placeholder ?? (props.c_auto_hide_label && props.c_label? `${props.c_label}` : undefined)}
 				{...other}
 			/>
 			<Show when={trailing() || is_show_clear_button()}>
@@ -355,9 +354,9 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 						}
 					}}>
 					<Show
-						when={props.trailing_auto_tabindex}
+						when={props.c_trailing_auto_tabindex}
 						fallback={<TrailingContent />}>
-						<FocusableGroup arrow_options={{left: 'prev', right: 'next'}}>
+						<FocusableGroup c_arrow_options={{left: 'prev', right: 'next'}}>
 							<TrailingContent />
 						</FocusableGroup>
 					</Show>
@@ -371,35 +370,35 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 }
 
 type NumberTextFieldProps = Omit<TextFieldProps, 'type'> & {
-	integer_only?: boolean
-	tooltip_decrease?: string
-	tooltip_increase?: string
-	tooltip_change_value?: string
-	auto_fix_on_blur?: boolean
-	attr_actions?: ModalProps
-	on_input_as_number?(ev: InputEvent & {currentTarget: HTMLInputElement; target: HTMLInputElement}, value: number): unknown
+	c_integer_only?: boolean
+	c_tooltip_decrease?: string
+	c_tooltip_increase?: string
+	c_tooltip_change_value?: string
+	c_auto_fix_on_blur?: boolean
+	c_attr_actions?: ModalProps
+	c_on_inputasnumber?(ev: InputEvent & {currentTarget: HTMLInputElement; target: HTMLInputElement}, value: number): unknown
 }
 const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 	const $$props = mergeProps({
-		tooltip_increase: 'Increase',
-		tooltip_decrease: 'Decrease',
-		tooltip_change_value: 'Change value',
-		auto_fix_on_blur: true
+		c_tooltip_increase: 'Increase',
+		c_tooltip_decrease: 'Decrease',
+		c_tooltip_change_value: 'Change value',
+		c_auto_fix_on_blur: true
 	}, $props)
 	const [props, other] = splitProps($$props, [
-		'max', 'min', 'trailing', 'auto_show_clear_button', 'onBlur',
-		'value', 'ref', 'focused', 'attr_wrapper',
-		'tooltip_decrease', 'tooltip_increase', 'tooltip_change_value',
-		'tooltip_clear', 'disabled', 'integer_only', 'auto_fix_on_blur',
-		'attr_actions', 'on_input_as_number', 'onInput'
+		'max', 'min', 'c_trailing', 'c_auto_show_clear_button', 'onBlur',
+		'value', 'ref', 'c_focused', 'c_attr_wrapper',
+		'c_tooltip_decrease', 'c_tooltip_increase', 'c_tooltip_change_value',
+		'c_tooltip_clear', 'disabled', 'c_integer_only', 'c_auto_fix_on_blur',
+		'c_attr_actions', 'c_on_inputasnumber', 'onInput'
 	])
 	const [wrapper_props, wrapper_props_other] = splitProps(
-		props.attr_wrapper! ?? {},
+		props.c_attr_wrapper! ?? {},
 		['classList']
 	)
 	const [actions_props, actions_props_other] = splitProps(
-		props.attr_actions! ?? {},
-		['ref', 'classList', 'on_toggle_open']
+		props.c_attr_actions! ?? {},
+		['ref', 'classList', 'c_on_toggleopen']
 	)
 
 	const [is_modal_actions_open, set_is_modal_actions_open] = createSignal<boolean>(false)
@@ -415,18 +414,18 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 		const max = props.max
 		let v: number = default_number ?? value()
 
-		if (is_string(max)) v = number_parse(max as string, props.integer_only)
+		if (is_string(max)) v = number_parse(max as string, props.c_integer_only)
 		else if (is_number(max)) v = max as number
-		return props.integer_only? math_round(v) : v
+		return props.c_integer_only? math_round(v) : v
 	}
 
 	function get_min(default_number?: number): number {
 		const min = props.min
 		let v: number = default_number ?? value()
 
-		if (is_string(min)) v = number_parse(min as string, props.integer_only)
+		if (is_string(min)) v = number_parse(min as string, props.c_integer_only)
 		else if (is_number(min)) v = min as number
-		return props.integer_only? math_round(v) : v
+		return props.c_integer_only? math_round(v) : v
 	}
 
 	function change_value(operator: '+' | '-'): void {
@@ -456,7 +455,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 		if (number_is_nan(n)) n = value()
 
 		n = math_clamp(n, get_min(n), get_max(n))
-		if (props.integer_only) n = math_round(n)
+		if (props.c_integer_only) n = math_round(n)
 
 		set_value(n)
 		change_textfield_value(numbertextfield_ref, `${n}`)
@@ -481,12 +480,12 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 
 	function fix_input_number(): void {
 		let n = number_safe(
-			number_parse(numbertextfield_ref.value, props.integer_only),
+			number_parse(numbertextfield_ref.value, props.c_integer_only),
 			value()
 		)
 
 		n = math_clamp(n, get_min(n), get_max(n))
-		if (props.integer_only) n = math_round(n)
+		if (props.c_integer_only) n = math_round(n)
 
 		set_value(n)
 		change_textfield_value(numbertextfield_ref, string_touppercase(`${n}`))
@@ -496,7 +495,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 		let v = number_parse(`${props.value}`)
 		if (number_is_not_defined(v)) return;
 
-		const integer_only = props.integer_only
+		const integer_only = props.c_integer_only
 		let max = props.max ?? v
 		let min = props.min ?? v
 
@@ -511,11 +510,11 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 
 	return (<>
 		<TextField
-			focused={props.focused ?? (is_modal_actions_open()? true : undefined)}
+			c_focused={props.c_focused ?? (is_modal_actions_open()? true : undefined)}
 			disabled={props.disabled}
 			ref={mergeRefs(props.ref, r => numbertextfield_ref = r)}
 			value={value()}
-			attr_wrapper={{
+			c_attr_wrapper={{
 				classList: {
 					'c-number-textfield': true,
 					...wrapper_props.classList
@@ -523,25 +522,25 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 				...wrapper_props_other
 			}}
 			onBlur={ev => {
-				if (props.auto_fix_on_blur) fix_input_number()
+				if (props.c_auto_fix_on_blur) fix_input_number()
 				event_call(ev, props.onBlur)
 			}}
 			onInput={ev => {
-				if (props.on_input_as_number){
-					let n = number_parse(numbertextfield_ref.value, props.integer_only)
+				if (props.c_on_inputasnumber){
+					let n = number_parse(numbertextfield_ref.value, props.c_integer_only)
 					n = number_safe(n, value())
 					n = math_clamp(n, get_min(n), get_max(n))
-					if (props.integer_only) n = math_round(n)
-					props.on_input_as_number(ev, n)
+					if (props.c_integer_only) n = math_round(n)
+					props.c_on_inputasnumber(ev, n)
 				}
 				event_call(ev, props.onInput)
 			}}
 			type='number'
-			trailing={<>
-				{ props.trailing }
+			c_trailing={<>
+				{ props.c_trailing }
 				<Show when={!props.disabled}>
 					<TextFieldButton
-						data-tooltip={props.tooltip_change_value}
+						data-tooltip={props.c_tooltip_change_value}
 						onClick={(ev) => open_menu(
 							ev,
 							modal_actions_ref,
@@ -550,17 +549,17 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 								anchor: event_current_target(ev)
 							})
 						}>
-						<Icon code={0xE406}/>
+						<Icon c_code={0xE406}/>
 					</TextFieldButton>
 				</Show>
-				<Show when={props.auto_show_clear_button && value() != 0}>
-					<TextFieldButton data-tooltip={props.tooltip_clear ?? 'Clear'} onClick={(_ev) => {
+				<Show when={props.c_auto_show_clear_button && value() != 0}>
+					<TextFieldButton data-tooltip={props.c_tooltip_clear ?? 'Clear'} onClick={(_ev) => {
 						let v = math_clamp(0, get_min(), get_max())
-						if (props.integer_only) v = math_round(v)
+						if (props.c_integer_only) v = math_round(v)
 
 						numbertextfield_ref.value = `${v}`
 						set_value(v)
-					}}><Icon code={0xE5E9}/></TextFieldButton>
+					}}><Icon c_code={0xE5E9}/></TextFieldButton>
 				</Show>
 			</>}
 			{...other}
@@ -571,8 +570,8 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 				'c-number-textfield-actions': true,
 				...actions_props.classList
 			}}
-			on_toggle_open={(is_open) => {
-				actions_props.on_toggle_open?.(is_open)
+			c_on_toggleopen={(is_open) => {
+				actions_props.c_on_toggleopen?.(is_open)
 				set_is_modal_actions_open(is_open)
 
 				// I don't remember why I need this
@@ -584,7 +583,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 			{...actions_props_other}>
 			<Tooltip>
 				<IconButton
-					data-tooltip={props.tooltip_increase}
+					data-tooltip={props.c_tooltip_increase}
 					ref={r => iconbutton_up_ref = r}
 					disabled={props.max != null && value() >= get_max()}
 					onPointerUp={() => on_press_end('+')}
@@ -598,10 +597,10 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 						if (updownKey && !iconbutton_down_ref.disabled) element_focus(iconbutton_down_ref)
 					}}
 					onKeyUp={ev => (ev.code == 'Enter' || ev.code == 'Space') && on_press_end('+')}
-					code={0xE404}
+					c_code={0xE404}
 				/>
 				<IconButton
-					data-tooltip={props.tooltip_decrease}
+					data-tooltip={props.c_tooltip_decrease}
 					ref={r => iconbutton_down_ref = r}
 					disabled={props.min != null && value() <= get_min()}
 					onPointerUp={() => on_press_end('-')}
@@ -615,7 +614,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 						if (updownKey && !iconbutton_up_ref.disabled) element_focus(iconbutton_up_ref)
 					}}
 					onKeyUp={ev => (ev.code == 'Enter' || ev.code == 'Space') && on_press_end('-')}
-					code={0xE3FC}
+					c_code={0xE3FC}
 				/>
 			</Tooltip>
 		</Modal>
@@ -623,25 +622,25 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 }
 
 type SearchTextFieldProps = TextFieldProps & {
-	result?: JSX.Element
-	attr_menu?: Omit<PopoverProps, 'style'> & {
+	c_result?: JSX.Element
+	c_attr_menu?: Omit<PopoverProps, 'style'> & {
 		style?: JSX.CSSProperties
 	}
 }
 const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
 	const [props, other] = splitProps($props, [
-		'result', 'attr_wrapper', 'attr_menu', 'onFocus'
+		'c_result', 'c_attr_wrapper', 'c_attr_menu', 'onFocus'
 	])
 	const [wrapper_props, wrapper_props_other] = splitProps(
-		props.attr_wrapper! ?? {},
+		props.c_attr_wrapper! ?? {},
 		['ref', 'classList']
 	)
 	const [menu_props, menu_props_other] = splitProps(
-		props.attr_menu! ?? {},
-		['use_portal', 'ref', 'classList', 'style', 'on_toggle_open']
+		props.c_attr_menu! ?? {},
+		['c_use_portal', 'ref', 'classList', 'style', 'c_on_toggleopen']
 	)
 	const [width, set_width] = createSignal<number>(0)
-	const result = children(() => props.result)
+	const result = children(() => props.c_result)
 	let is_popover_open: boolean = false
 	let is_focus = false
 	let event: FocusEvent
@@ -715,7 +714,7 @@ const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
 
 	return (<>
 		<TextField
-			attr_wrapper={{
+			c_attr_wrapper={{
 				ref: mergeRefs(wrapper_props.ref, r => wrapper_ref = r),
 				classList: {
 					'c-search-textfield': true,
@@ -732,10 +731,10 @@ const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
 			{...other}
 		/>
 		<Popover
-			use_portal={menu_props.use_portal ?? false}
-			on_toggle_open={isOpen => {
+			c_use_portal={menu_props.c_use_portal ?? false}
+			c_on_toggleopen={isOpen => {
 				is_popover_open = isOpen
-				menu_props.on_toggle_open?.(isOpen)
+				menu_props.c_on_toggleopen?.(isOpen)
 			}}
 			ref={mergeRefs(menu_props.ref, r => menu_ref = r)}
 			classList={{

@@ -14,7 +14,7 @@ const _: VoidComponent<{
 	on_change_calculator: (type: CalculatorType) => void
 	expanded: boolean
 }> = (props) => {
-	return (<SideNavigation expanded={props.expanded} classList={classlist_module(CSS.side_navigation)}>
+	return (<SideNavigation c_expanded={props.expanded} classList={classlist_module(CSS.side_navigation)}>
 		<Tooltip>
 			<For each={CALCULATOR_TYPES}>{ r => <SideNavigationItem
 				data-tooltip={!props.expanded? r.text : undefined}
@@ -22,8 +22,8 @@ const _: VoidComponent<{
 					if (props.calculator == r.type) return;
 					props.on_change_calculator(r.type);
 				} }
-				leading={<Icon filled={props.calculator == r.type} code={r.icon}/>}
-				selected={props.calculator == r.type}>
+				c_leading={<Icon c_filled={props.calculator == r.type} c_code={r.icon}/>}
+				c_selected={props.calculator == r.type}>
 				{ r.text }
 			</SideNavigationItem>}</For>
 		</Tooltip>

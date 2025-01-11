@@ -7,15 +7,15 @@ import { event_call, event_current_target } from "@/utils/event"
 import './index.scss'
 
 type SwitchProps = Omit<JSX.InputHTMLAttributes<HTMLInputElement>, 'type'> & {
-	attr_label?: Omit<JSX.LabelHTMLAttributes<HTMLLabelElement>, 'for'>
+	c_attr_label?: Omit<JSX.LabelHTMLAttributes<HTMLLabelElement>, 'for'>
 }
 
 const Switch: VoidComponent<SwitchProps> = ($props) => {
 	const [props, other] = splitProps(
 		mergeProps({id: createUniqueId()}, $props),
-		['id', 'attr_label', 'onChange']
+		['id', 'c_attr_label', 'onChange']
 	)
-	const [label_props, other_label_props] = splitProps(props.attr_label ?? {}, ['class'])
+	const [label_props, other_label_props] = splitProps(props.c_attr_label ?? {}, ['class'])
 	const [is_checked, set_is_checked] = createSignal<boolean>(false)
 	const is_disabled = createMemo(() => other.disabled == true)
 
@@ -45,13 +45,13 @@ const Switch: VoidComponent<SwitchProps> = ($props) => {
 
 type RawSwitchProps = Omit<JSX.InputHTMLAttributes<HTMLInputElement>, 'type'> & {
 	component?: ValidComponent
-	attr_wrapper?: Omit<DynamicProps<keyof JSX.HTMLElementTags & keyof JSX.SVGElementTags>, 'component'>
+	c_attr_wrapper?: Omit<DynamicProps<keyof JSX.HTMLElementTags & keyof JSX.SVGElementTags>, 'component'>
 }
 const RawSwitch: VoidComponent<RawSwitchProps> = ($props) => {
 	const [props, other] = splitProps($props, [
-		'attr_wrapper', 'onChange', 'component'
+		'c_attr_wrapper', 'onChange', 'component'
 	])
-	const [wrapper_props, other_wrapper_props] = splitProps(props.attr_wrapper! ?? {}, ['class'])
+	const [wrapper_props, other_wrapper_props] = splitProps(props.c_attr_wrapper! ?? {}, ['class'])
 	const [is_checked, set_is_checked] = createSignal<boolean>(false)
 	const is_disabled = createMemo(() => other.disabled == true)
 

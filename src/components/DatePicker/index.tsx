@@ -202,7 +202,7 @@ const DatePickerBody: ParentComponent<{
 					return (<SquareButton
 						data-index={i()}
 						disabled={date_out_range_YMD(date(), props.first_date, props.last_date)}
-						variant={is_same_date_YMD(date(), value())
+						c_variant={is_same_date_YMD(date(), value())
 							? ButtonVariant.filled
 							: is_same_date_YMD(date(), get_current_date())
 								? ButtonVariant.outlined
@@ -301,7 +301,7 @@ const DatePickerBody: ParentComponent<{
 				return (<Button
 					data-index={i()}
 					disabled={date_out_range_YM(date(), props.first_date, props.last_date)}
-					variant={is_same_date_YM(date(), value())
+					c_variant={is_same_date_YM(date(), value())
 						? ButtonVariant.filled
 						: is_same_date_YM(date(), get_current_date())
 							? ButtonVariant.outlined
@@ -400,7 +400,7 @@ const DatePickerBody: ParentComponent<{
 				return (<Button
 					data-index={i()}
 					disabled={date_out_range_Y(date(), props.first_date, props.last_date)}
-					variant={is_same_date_Y(date(), value())
+					c_variant={is_same_date_Y(date(), value())
 						? ButtonVariant.filled
 						: is_same_date_Y(date(), get_current_date())
 							? ButtonVariant.outlined
@@ -452,7 +452,7 @@ const DatePickerBody: ParentComponent<{
 			<Button
 				tabindex="0"
 				id={button_option_id}
-				variant={ButtonVariant.tonal}>
+				c_variant={ButtonVariant.tonal}>
 				<Switch>
 					<Match when={date_option() == option_day}>
 						{date_text_month(view_date(), props.locales) + ' ' + date_year(view_date())}
@@ -474,18 +474,18 @@ const DatePickerBody: ParentComponent<{
 				&& date_in_range_YM(value(), props.first_date, props.last_date)}>
 				<IconButton
 					tabindex="-1"
-					code={0xE2E6}
+					c_code={0xE2E6}
 					id={button_selected_id}
 				/>
 			</Show>
 			<IconButton
 				tabindex="-1"
-				code={0xE400}
+				c_code={0xE400}
 				id={button_previous_id}
 			/>
 			<IconButton
 				tabindex="-1"
-				code={0xE402}
+				c_code={0xE402}
 				id={button_next_id}
 			/>
 		</div>
@@ -516,23 +516,23 @@ const DatePickerBody: ParentComponent<{
 }
 
 type DatePickerProps = ModalProps & {
-	date?: Date
-	first_date?: Date
-	last_date?: Date
-	locales?: Intl.LocalesArgument
-	on_select_date?(value: Date): unknown
+	c_date?: Date
+	c_first_date?: Date
+	c_last_date?: Date
+	c_locales?: Intl.LocalesArgument
+	c_on_selectdate?(value: Date): unknown
 }
 
 const DatePicker: VoidComponent<DatePickerProps> = ($props) => {
 	const $$props = mergeProps({
-		locales:'en-US',
-		date: get_current_date(),
-		first_date: new Date(date_year() - 100, 0, 1),
-		last_date: new Date(date_year() + 100, 11, 31),
+		c_locales:'en-US',
+		c_date: get_current_date(),
+		c_first_date: new Date(date_year() - 100, 0, 1),
+		c_last_date: new Date(date_year() + 100, 11, 31),
 	}, $props)
 	const [props, other] = splitProps($$props, [
-		'ref', 'date', 'on_select_date',
-		'first_date', 'last_date', 'locales',
+		'ref', 'c_date', 'c_on_selectdate',
+		'c_first_date', 'c_last_date', 'c_locales',
 		'classList', 'children', 'onClose'
 	])
 	const [close_signal, set_close_signal] = createSignal<boolean>(false)
@@ -551,36 +551,36 @@ const DatePicker: VoidComponent<DatePickerProps> = ($props) => {
 		{...other}>
 		<DatePickerBody
 			close_signal={close_signal()}
-			date={props.date}
-			first_date={props.first_date}
-			last_date={props.last_date}
+			date={props.c_date}
+			first_date={props.c_first_date}
+			last_date={props.c_last_date}
 			on_close={() => close_modal(datepicker_ref)}
-			locales={props.locales}
-			on_select_date={props.on_select_date}>
+			locales={props.c_locales}
+			on_select_date={props.c_on_selectdate}>
 			{props.children}
 		</DatePickerBody>
 	</Modal>)
 }
 
 type PopoverDatePickerProps = PopoverProps & {
-	date?: Date
-	first_date?: Date
-	last_date?: Date
-	locales?: Intl.LocalesArgument
-	on_select_date?(value: Date): unknown
+	c_date?: Date
+	c_first_date?: Date
+	c_last_date?: Date
+	c_locales?: Intl.LocalesArgument
+	c_on_selectdate?(value: Date): unknown
 }
 
 const PopoverDatePicker: VoidComponent<PopoverDatePickerProps> = ($props) => {
 	const $$props = mergeProps({
-		locales:'en-US',
-		date: get_current_date(),
-		first_date: new Date(date_year() - 100, 0, 1),
-		last_date: new Date(date_year() + 100, 11, 31),
+		c_locales:'en-US',
+		c_date: get_current_date(),
+		c_first_date: new Date(date_year() - 100, 0, 1),
+		c_last_date: new Date(date_year() + 100, 11, 31),
 	}, $props)
 	const [props, other] = splitProps($$props, [
-		'ref', 'date', 'on_select_date',
-		'first_date', 'last_date', 'locales',
-		'children', 'classList', 'on_toggle_open'
+		'ref', 'c_date', 'c_on_selectdate',
+		'c_first_date', 'c_last_date', 'c_locales',
+		'children', 'classList', 'c_on_toggleopen'
 	])
 	const [close_signal, set_close_signal] = createSignal<boolean>(false)
 	let datepicker_ref: HTMLDivElement
@@ -591,19 +591,19 @@ const PopoverDatePicker: VoidComponent<PopoverDatePickerProps> = ($props) => {
 			'c-date-picker': true,
 			...props.classList
 		}}
-		on_toggle_open={is_open => {
-			props.on_toggle_open?.(is_open)
+		c_on_toggleopen={is_open => {
+			props.c_on_toggleopen?.(is_open)
 			if (!is_open) set_close_signal(s => !s)
 		}}
 		{...other}>
 		<DatePickerBody
 			close_signal={close_signal()}
-			date={props.date}
-			first_date={props.first_date}
-			last_date={props.last_date}
+			date={props.c_date}
+			first_date={props.c_first_date}
+			last_date={props.c_last_date}
 			on_close={() => close_popover(datepicker_ref)}
-			locales={props.locales}
-			on_select_date={props.on_select_date}>
+			locales={props.c_locales}
+			on_select_date={props.c_on_selectdate}>
 			{props.children}
 		</DatePickerBody>
 	</Popover>)

@@ -100,24 +100,24 @@ const _: VoidComponent<{
 
 	const InputTabButtons: VoidComponent = () => (<>
 		<Button
-			variant={ButtonVariant.tonal}
+			c_variant={ButtonVariant.tonal}
 			id={button_input_sass}
-			selected={input_view_option() == InputViewOption.sass}>
+			c_selected={input_view_option() == InputViewOption.sass}>
 			SASS
 		</Button>
 		<Button
-			variant={ButtonVariant.tonal}
+			c_variant={ButtonVariant.tonal}
 			id={button_input_scss}
-			selected={input_view_option() == InputViewOption.scss}>
+			c_selected={input_view_option() == InputViewOption.scss}>
 			SCSS
 		</Button>
 	</>)
 
 	const OutputTabButtons: VoidComponent = () => (<>
 		<Button
-			variant={ButtonVariant.tonal}
+			c_variant={ButtonVariant.tonal}
 			id={button_output_css}
-			selected={output_view_option() == OutputViewOption.css}>
+			c_selected={output_view_option() == OutputViewOption.css}>
 			CSS
 		</Button>
 	</>)

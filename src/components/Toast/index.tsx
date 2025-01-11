@@ -49,24 +49,24 @@ function close_toast(toast: HTMLDivElement): void {
 }
 
 type ToastProps = PopoverProps & {
-	header?: JSX.Element
-	actions?: JSX.Element
-	action_auto_tabindex?: boolean
-	leading?: JSX.Element
-	trailing?: JSX.Element
-	trailing_auto_tabindex?: boolean
+	c_header?: JSX.Element
+	c_actions?: JSX.Element
+	c_action_auto_tabindex?: boolean
+	c_leading?: JSX.Element
+	c_trailing?: JSX.Element
+	c_trailing_auto_tabindex?: boolean
 }
 const Toast: ParentComponent<ToastProps> = ($props) => {
 	const $$props = mergeProps({
-		action_auto_tabindex: true,
-		trailing_auto_tabindex: true,
+		c_action_auto_tabindex: true,
+		c_trailing_auto_tabindex: true,
 	}, $props)
 	const [props, other] = splitProps($$props, [
-		'leading', 'trailing', 'children', 'header',
-		'actions', 'classList', 'ref', 'on_toggle_open',
-		'trailing_auto_tabindex', 'action_auto_tabindex'
+		'c_leading', 'c_trailing', 'children', 'c_header',
+		'c_actions', 'classList', 'ref', 'c_on_toggleopen',
+		'c_trailing_auto_tabindex', 'c_action_auto_tabindex'
 	])
-	const actions = children(() => props.actions)
+	const actions = children(() => props.c_actions)
 	let toast_ref: HTMLDivElement
 	let is_open = false
 	let timeout_id: number | null = null
@@ -135,9 +135,9 @@ const Toast: ParentComponent<ToastProps> = ($props) => {
 	})
 
 	return (<Popover
-		on_toggle_open={o => {
+		c_on_toggleopen={o => {
 			is_open = o
-			props.on_toggle_open?.(o)
+			props.c_on_toggleopen?.(o)
 		}}
 		ref={mergeRefs(props.ref, r => toast_ref = r)}
 		classList={{
@@ -147,21 +147,21 @@ const Toast: ParentComponent<ToastProps> = ($props) => {
 		data-c-actions={attr_set_if_exist(actions())}
 		{...other}>
 		<List
-			leading={props.leading}
-			trailing={props.trailing}
-			subtitle={props.children}
-			trailing_auto_tabindex={props.trailing_auto_tabindex}>
-			{ props.header }
+			c_leading={props.c_leading}
+			c_trailing={props.c_trailing}
+			c_subtitle={props.children}
+			c_trailing_auto_tabindex={props.c_trailing_auto_tabindex}>
+			{ props.c_header }
 		</List>
 		<Show when={actions()}>
 			<Show
-				when={props.action_auto_tabindex}
+				when={props.c_action_auto_tabindex}
 				fallback={<div class="c-toast-actions">
 					{actions()}
 				</div>}>
 				<FocusableGroup
 					class="c-toast-actions"
-					arrow_options={{
+					c_arrow_options={{
 						left: 'prev',
 						right: 'next'
 					}}>

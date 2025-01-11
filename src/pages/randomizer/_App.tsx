@@ -1256,7 +1256,7 @@ const _: VoidComponent = () => {
 			<Dialog
 				style={{width: '500px'}}
 				ref={r => dialog_lists_ref = r}
-				header="Lists"
+				c_header="Lists"
 				onClick={ev => {
 					const button = document_active()!
 					if (!element_valid_target(
@@ -1311,15 +1311,15 @@ const _: VoidComponent = () => {
 							}
 					}
 				}}
-				actions={<>
+				c_actions={<>
 					<Button
 						id={button_lists_close_id}
-						variant={ButtonVariant.tonal}>
+						c_variant={ButtonVariant.tonal}>
 						Close
 					</Button>
 					<Button
 						id={button_lists_addnewlist_id}
-						variant={ButtonVariant.filled}>
+						c_variant={ButtonVariant.filled}>
 						Add new list
 					</Button>
 				</>}>
@@ -1327,13 +1327,13 @@ const _: VoidComponent = () => {
 					<For each={lists}>{(list, i) => <>
 						<Show when={i() != 0}><Divider /></Show>
 						<List
-							trailing={<>
-								<IconButton data-list-export-index={i()} data-tooltip="Export list" code={0xE0CF}/>
-								<IconButton data-list-view-index={i()} data-tooltip="View list" code={0xE77B}/>
-								<IconButton data-list-edit-index={i()} data-tooltip="Edit list" code={0xE739}/>
-								<IconButton data-list-delete-index={i()} data-tooltip="Delete list" code={0xE59D}/>
+							c_trailing={<>
+								<IconButton data-list-export-index={i()} data-tooltip="Export list" c_code={0xE0CF}/>
+								<IconButton data-list-view-index={i()} data-tooltip="View list" c_code={0xE77B}/>
+								<IconButton data-list-edit-index={i()} data-tooltip="Edit list" c_code={0xE739}/>
+								<IconButton data-list-delete-index={i()} data-tooltip="Delete list" c_code={0xE59D}/>
 							</>}
-							subtitle={array_length(list.items) + ' item' + (array_length(list.items) > 1? 's' : '')}>
+							c_subtitle={array_length(list.items) + ' item' + (array_length(list.items) > 1? 's' : '')}>
 							{list.name}
 						</List>
 					</>}</For>
@@ -1359,23 +1359,23 @@ const _: VoidComponent = () => {
 							break
 					}
 				}}
-				actions={<>
+				c_actions={<>
 					<Button
 						id={button_deletelistwarning_cancel_id}
-						variant={ButtonVariant.tonal}>
+						c_variant={ButtonVariant.tonal}>
 						Cancel
 					</Button>
 					<Button
 						id={button_deletelistwarning_delete_id}
-						variant={ButtonVariant.filled}>
+						c_variant={ButtonVariant.filled}>
 						Delete
 					</Button>
 				</>}
-				header="Delete list">
+				c_header="Delete list">
 				Are you sure want to delete this list?
 				<List
 					classList={classlist_module(CSS.app_delete_list)}
-					subtitle={array_length(selected_list_to_delete().items) + ' item' + (array_length(selected_list_to_delete().items) > 1? 's' : '')}>
+					c_subtitle={array_length(selected_list_to_delete().items) + ' item' + (array_length(selected_list_to_delete().items) > 1? 's' : '')}>
 					{selected_list_to_delete().name}
 				</List>
 			</Dialog>
@@ -1420,38 +1420,38 @@ const _: VoidComponent = () => {
 							break
 					}
 				}}
-				actions={<>
+				c_actions={<>
 					<Button
-						variant={ButtonVariant.tonal}
+						c_variant={ButtonVariant.tonal}
 						id={button_add_cancel_id}>
 						Cancel
 					</Button>
 					<Button
-						variant={ButtonVariant.tonal}
+						c_variant={ButtonVariant.tonal}
 						id={button_add_importcsv_id}>
 						Import CSV
 					</Button>
 					<Button
 						id={button_add_preview_id}
-						variant={ButtonVariant.tonal}>
+						c_variant={ButtonVariant.tonal}>
 						Preview
 					</Button>
 					<Button
 						id={button_add_save_id}
-						variant={ButtonVariant.filled}>
+						c_variant={ButtonVariant.filled}>
 						Save
 					</Button>
 				</>}
-				header="New list">
-				<TextField ref={r => textfield_newlistname_ref = r} label="List name" />
+				c_header="New list">
+				<TextField ref={r => textfield_newlistname_ref = r} c_label="List name" />
 				<div style={{"min-height": '16px'}}/>
 				<AreaTextField
 					ref={r => areatextfield_newitemlist_ref = r}
-					label="Items"
+					c_label="Items"
 					placeholder={"Item1, Item2,\nItem3, Item 4\nItem 5"}
-					message={"Info: Each item separated by comma or new line"}
-					min_line={5}
-					max_line={5}
+					c_message={"Info: Each item separated by comma or new line"}
+					c_min_line={5}
+					c_max_line={5}
 				/>
 			</Dialog>
 			<Dialog
@@ -1495,42 +1495,42 @@ const _: VoidComponent = () => {
 							break
 					}
 				}}
-				actions={<>
+				c_actions={<>
 					<Button
 						id={button_edit_cancel_id}
-						variant={ButtonVariant.tonal}>
+						c_variant={ButtonVariant.tonal}>
 						Cancel
 					</Button>
 					<Button
 						id={button_edit_importcsv_id}
-						variant={ButtonVariant.tonal}>
+						c_variant={ButtonVariant.tonal}>
 						Import CSV
 					</Button>
 					<Button
 						id={button_edit_preview_id}
-						variant={ButtonVariant.tonal}>
+						c_variant={ButtonVariant.tonal}>
 						Preview
 					</Button>
 					<Button
 						id={button_edit_save_id}
-						variant={ButtonVariant.filled}>
+						c_variant={ButtonVariant.filled}>
 						Save
 					</Button>
 				</>}
-				header="Edit list">
+				c_header="Edit list">
 				<TextField
 					ref={r => textfield_editlistname_ref = r}
 					placeholder={selected_list_to_edit().name}
-					label="List name"
+					c_label="List name"
 				/>
 				<div style={{"min-height": '16px'}}/>
 				<AreaTextField
 					ref={r => areatextfield_edititemlist_ref = r}
-					label="Items"
+					c_label="Items"
 					placeholder={array_join(selected_list_to_edit().items, ', ')}
-					message={"Info: Each item separated by comma or new line"}
-					min_line={5}
-					max_line={5}
+					c_message={"Info: Each item separated by comma or new line"}
+					c_min_line={5}
+					c_max_line={5}
 				/>
 			</Dialog>
 			<Dialog
@@ -1557,24 +1557,24 @@ const _: VoidComponent = () => {
 							break
 					}
 				}}
-				actions={<>
+				c_actions={<>
 					<Button
 						id={button_viewitemlist_close_id}
-						variant={ButtonVariant.tonal}>
+						c_variant={ButtonVariant.tonal}>
 						Close
 					</Button>
 					<Button
 						id={button_viewitemlist_export_id}
-						variant={ButtonVariant.tonal}>
+						c_variant={ButtonVariant.tonal}>
 						Export
 					</Button>
 					<Button
 						id={button_viewitemlist_edit_id}
-						variant={ButtonVariant.filled}>
+						c_variant={ButtonVariant.filled}>
 						Edit
 					</Button>
 				</>}
-				header={list_viewitem().name}>
+				c_header={list_viewitem().name}>
 				<div class={CSS.app_view_list}>
 					<For each={[...list_viewitem().items].sort()}>{l =>
 						<div>{l}</div>
@@ -1584,12 +1584,12 @@ const _: VoidComponent = () => {
 			<Dialog
 				ref={r => dialog_previewitemlist_ref = r}
 				style={{width: '720px'}}
-				actions={<Button
+				c_actions={<Button
 					onClick={() => close_dialog(dialog_previewitemlist_ref)}
-					variant={ButtonVariant.filled}>
+					c_variant={ButtonVariant.filled}>
 					Close
 				</Button>}
-				header={list_viewitem().name}>
+				c_header={list_viewitem().name}>
 				<div class={CSS.app_view_list}>
 					<For each={[...list_viewitem().items].sort()}>{l =>
 						<div>{l}</div>
@@ -1601,19 +1601,19 @@ const _: VoidComponent = () => {
 
 	const Toasts: VoidComponent = () => {
 		return (<>
-			<Toast leading={<Icon filled code={0xE4BE}/>} ref={r => toast_listnameempty_ref = r}>List name is empty</Toast>
-			<Toast leading={<Icon filled code={0xF0AA}/>} ref={r => toast_listhavenoitems_ref = r}>List items is empty</Toast>
-			<Toast leading={<Icon filled code={0xEBA8}/>} ref={r => toast_listnamealreadyexist_ref = r}>List name already exist</Toast>
-			<Toast leading={<Icon filled code={0xF09C}/>} ref={r => toast_listedited_ref = r}>List edited</Toast>
-			<Toast leading={<Icon filled code={0xE59D}/>} ref={r => toast_listdeleted_ref = r}>List deleted</Toast>
-			<Toast leading={<Icon filled code={0xF0A6}/>} ref={r => toast_newlistadded_ref = r}>New list added</Toast>
-			<Toast leading={<Icon filled code={0xE069}/>} ref={r => toast_nolistselected_ref = r}>No list selected</Toast>
+			<Toast c_leading={<Icon c_filled c_code={0xE4BE}/>} ref={r => toast_listnameempty_ref = r}>List name is empty</Toast>
+			<Toast c_leading={<Icon c_filled c_code={0xF0AA}/>} ref={r => toast_listhavenoitems_ref = r}>List items is empty</Toast>
+			<Toast c_leading={<Icon c_filled c_code={0xEBA8}/>} ref={r => toast_listnamealreadyexist_ref = r}>List name already exist</Toast>
+			<Toast c_leading={<Icon c_filled c_code={0xF09C}/>} ref={r => toast_listedited_ref = r}>List edited</Toast>
+			<Toast c_leading={<Icon c_filled c_code={0xE59D}/>} ref={r => toast_listdeleted_ref = r}>List deleted</Toast>
+			<Toast c_leading={<Icon c_filled c_code={0xF0A6}/>} ref={r => toast_newlistadded_ref = r}>New list added</Toast>
+			<Toast c_leading={<Icon c_filled c_code={0xE069}/>} ref={r => toast_nolistselected_ref = r}>No list selected</Toast>
 		</>)
 	}
 
 	return (<>
 		<App
-			appbar={<AppBar
+			c_appbar={<AppBar
 				is_generating={is_generating()}
 				randomizer={randomizer()}
 				on_copy_result={on_copy_result}
@@ -1621,23 +1621,23 @@ const _: VoidComponent = () => {
 				command={command}
 				on_change_randomizer={on_change_randomizer}
 			/>}
-			floating_action_button={<FloatingActionButton
+			c_floating_action_button={<FloatingActionButton
 				classList={classlist_module(CSSAnimation.btn_rotate_full_icon, CSS.app_fab)}
 				data-g-keep-pointer-event={attr_set_if_exist(is_generating())}
-				variant={ButtonVariant.filled}
+				c_variant={ButtonVariant.filled}
 				onClick={() => {
 					if (is_generating()) return command(Commands.stop_generate)
 					command(Commands.generate)
 				}}>
 				<Icon
-					filled
+					c_filled
 					classList={classlist_module(CSS.app_generate_icon)}
 					data-rotate={attr_set_if_exist(is_generating())}
-					code={0xE143}
+					c_code={0xE143}
 				/>
 				<Show when={is_generating()} fallback="Generate">Generating</Show>
 			</FloatingActionButton>}
-			left_sidebar={<SideNavigation
+			c_left_sidebar={<SideNavigation
 				expanded={is_sidenavigation_expanded()}
 				randomizer={randomizer()}
 				on_change_randomizer={on_change_randomizer}

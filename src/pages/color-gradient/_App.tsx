@@ -595,7 +595,7 @@ const _: VoidComponent = () => {
 	})
 
 	return (<App
-		appbar={<AppBar
+		c_appbar={<AppBar
 			settings={settings}
 			command={command}
 			gradients={gradients}

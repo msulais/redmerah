@@ -1015,7 +1015,7 @@ const _: VoidComponent = () => {
 	})
 
 	return (<App
-		appbar={<AppBar
+		c_appbar={<AppBar
 			on_change_calculator={on_change_calculator}
 			calculator={calculator()}
 			command={command}
@@ -1024,12 +1024,12 @@ const _: VoidComponent = () => {
 			on_note_changed={on_note_changed}
 			is_notebook_expanded={is_notebook_expanded()}
 		/>}
-		left_sidebar={<SideNavigation
+		c_left_sidebar={<SideNavigation
 			calculator={calculator()}
 			on_change_calculator={on_change_calculator}
 			expanded={is_sidenavigation_expanded()}
 		/>}
-		right_sidebar={<Notebook
+		c_right_sidebar={<Notebook
 			expanded={is_notebook_expanded()}
 			note={note()}
 			on_note_changed={on_note_changed}

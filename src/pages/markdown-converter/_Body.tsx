@@ -107,14 +107,14 @@ const _: VoidComponent<{
 	const InputTabButtons: VoidComponent = () => (<>
 		<Button
 			id={button_input_markdown_id}
-			variant={ButtonVariant.tonal}
-			selected={input_view_option() == InputViewOption.markdown}>
+			c_variant={ButtonVariant.tonal}
+			c_selected={input_view_option() == InputViewOption.markdown}>
 			Markdown
 		</Button>
 		<Button
 			id={button_input_css_id}
-			variant={ButtonVariant.tonal}
-			selected={input_view_option() == InputViewOption.css}>
+			c_variant={ButtonVariant.tonal}
+			c_selected={input_view_option() == InputViewOption.css}>
 			CSS
 		</Button>
 	</>)
@@ -122,14 +122,14 @@ const _: VoidComponent<{
 	const OutputTabButtons: VoidComponent = () => (<>
 		<Button
 			id={button_output_preview_id}
-			variant={ButtonVariant.tonal}
-			selected={output_view_option() == OutputViewOption.preview}>
+			c_variant={ButtonVariant.tonal}
+			c_selected={output_view_option() == OutputViewOption.preview}>
 			Preview
 		</Button>
 		<Button
 			id={button_output_html_id}
-			variant={ButtonVariant.tonal}
-			selected={output_view_option() == OutputViewOption.html}>
+			c_variant={ButtonVariant.tonal}
+			c_selected={output_view_option() == OutputViewOption.html}>
 			HTML
 		</Button>
 	</>)

@@ -122,7 +122,7 @@ const _: VoidComponent = () => {
 	})
 
 	return (<App
-		appbar={<AppBar />}
+		c_appbar={<AppBar />}
 		children={<Body
 			command={command}
 			settings={settings}

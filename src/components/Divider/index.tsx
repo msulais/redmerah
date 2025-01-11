@@ -5,13 +5,13 @@ import { attr_set_if_exist, classlist } from "@/utils/attributes"
 import './index.scss'
 
 type DividerProps = JSX.HTMLAttributes<HTMLDivElement> & {
-	vertical?: boolean
+	c_vertical?: boolean
 }
 const Divider: Component<DividerProps> = ($props) => {
-	const [props, other] = splitProps($props, ['class', 'vertical'])
+	const [props, other] = splitProps($props, ['class', 'c_vertical'])
 
 	return (<div
-		data-c-vertical={attr_set_if_exist(props.vertical)}
+		data-c-vertical={attr_set_if_exist(props.c_vertical)}
 		class={classlist('c-divider', props.class)}
 		{...other}
 	/>)

@@ -23,12 +23,12 @@ const _: VoidComponent = () => {
 				<Button
 					data-tooltip="Button"
 					disabled={disabled()}
-					variant={variant()}
-					focused={focused()}
-					selected={selected()}
-					indicator_position={indicator_position()}>
+					c_variant={variant()}
+					c_focused={focused()}
+					c_selected={selected()}
+					c_indicator_position={indicator_position()}>
 					<Show when={icon()}>
-						<Icon code={0xE54B}/>
+						<Icon c_code={0xE54B}/>
 					</Show>
 					Button
 				</Button>
@@ -36,33 +36,33 @@ const _: VoidComponent = () => {
 				<IconButton
 					data-tooltip="IconButton"
 					disabled={disabled()}
-					variant={variant()}
-					focused={focused()}
-					selected={selected()}
-					indicator_position={indicator_position()}
-					code={0xE54B}
+					c_variant={variant()}
+					c_focused={focused()}
+					c_selected={selected()}
+					c_indicator_position={indicator_position()}
+					c_code={0xE54B}
 				/>
 
 				<EmojiButton
 					data-tooltip="EmojiButton"
 					disabled={disabled()}
-					variant={variant()}
-					focused={focused()}
-					selected={selected()}
-					indicator_position={indicator_position()}
-					emoji={'🏛'}
+					c_variant={variant()}
+					c_focused={focused()}
+					c_selected={selected()}
+					c_indicator_position={indicator_position()}
+					c_emoji={'🏛'}
 				/>
 
 				<LinkButton
 					href="#"
 					data-tooltip="LinkButton"
-					disabled={disabled()}
-					variant={variant()}
-					focused={focused()}
-					selected={selected()}
-					indicator_position={indicator_position()}>
+					c_disabled={disabled()}
+					c_variant={variant()}
+					c_focused={focused()}
+					c_selected={selected()}
+					c_indicator_position={indicator_position()}>
 					<Show when={icon()}>
-						<Icon code={0xE54B}/>
+						<Icon c_code={0xE54B}/>
 					</Show>
 					LinkButton
 				</LinkButton>
@@ -70,34 +70,34 @@ const _: VoidComponent = () => {
 				<LinkIconButton
 					href="#"
 					data-tooltip="LinkIconButton"
-					disabled={disabled()}
-					variant={variant()}
-					focused={focused()}
-					selected={selected()}
-					indicator_position={indicator_position()}
-					code={0xE54B}
+					c_disabled={disabled()}
+					c_variant={variant()}
+					c_focused={focused()}
+					c_selected={selected()}
+					c_indicator_position={indicator_position()}
+					c_code={0xE54B}
 				/>
 
 				<LinkEmojiButton
 					href="#"
 					data-tooltip="LinkEmojiButton"
-					disabled={disabled()}
-					variant={variant()}
-					focused={focused()}
-					selected={selected()}
-					indicator_position={indicator_position()}
-					emoji={'😁'}
+					c_disabled={disabled()}
+					c_variant={variant()}
+					c_focused={focused()}
+					c_selected={selected()}
+					c_indicator_position={indicator_position()}
+					c_emoji={'😁'}
 				/>
 
 				<FloatingActionButton
 					data-tooltip="FloatingActionButton"
 					disabled={disabled()}
-					variant={variant()}
-					focused={focused()}
-					selected={selected()}
-					indicator_position={indicator_position()}>
+					c_variant={variant()}
+					c_focused={focused()}
+					c_selected={selected()}
+					c_indicator_position={indicator_position()}>
 					<Show when={icon()}>
-						<Icon code={0xE54B}/>
+						<Icon c_code={0xE54B}/>
 					</Show>
 					FloatingActionButton
 				</FloatingActionButton>
@@ -105,13 +105,13 @@ const _: VoidComponent = () => {
 				<LinkFloatingActionButton
 					data-tooltip="LinkFloatingActionButton"
 					href={'#'}
-					disabled={disabled()}
-					variant={variant()}
-					focused={focused()}
-					selected={selected()}
-					indicator_position={indicator_position()}>
+					c_disabled={disabled()}
+					c_variant={variant()}
+					c_focused={focused()}
+					c_selected={selected()}
+					c_indicator_position={indicator_position()}>
 					<Show when={icon()}>
-						<Icon code={0xE54B}/>
+						<Icon c_code={0xE54B}/>
 					</Show>
 					LinkFloatingActionButton
 				</LinkFloatingActionButton>
@@ -119,27 +119,27 @@ const _: VoidComponent = () => {
 		</Playground>
 		<PlaygroundOptions>
 			<Dropdown
-				label="Variant"
-				values={[variant()]}
-				on_change_options={(items) => set_variant(items[0].value as ButtonVariant)}>
+				c_label="Variant"
+				c_values={[variant()]}
+				c_on_change={(items) => set_variant(items[0].value as ButtonVariant)}>
 				<For each={[
 					[ButtonVariant.filled, 'Filled'],
 					[ButtonVariant.tonal, 'Tonal'],
 					[ButtonVariant.outlined, 'Outlined'],
 					[ButtonVariant.transparent, 'Transparent'],
-				]}>{option => <DropdownOption value={option[0]} text={option[1] as string} />}</For>
+				]}>{option => <DropdownOption c_value={option[0]} c_text={option[1] as string} />}</For>
 			</Dropdown>
 			<Show when={selected()}>
 				<Dropdown
-					label="Indicator position"
-					on_change_options={(items) => set_indicator_position(items[0].value as ButtonIndicatorPosition)}
-					values={[indicator_position()]}>
+					c_label="Indicator position"
+					c_on_change={(items) => set_indicator_position(items[0].value as ButtonIndicatorPosition)}
+					c_values={[indicator_position()]}>
 					<For each={[
 						[ButtonIndicatorPosition.top, 'Top'],
 						[ButtonIndicatorPosition.right, 'Right'],
 						[ButtonIndicatorPosition.bottom, 'Bottom'],
 						[ButtonIndicatorPosition.left, 'Left'],
-					]}>{option => <DropdownOption value={option[0]} text={option[1] as string} />}</For>
+					]}>{option => <DropdownOption c_value={option[0]} c_text={option[1] as string} />}</For>
 				</Dropdown>
 			</Show>
 			<CheckBox

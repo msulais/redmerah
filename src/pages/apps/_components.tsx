@@ -68,9 +68,9 @@ export const MainElement: VoidComponent = () => {
 					timeout_id = null
 				}, 500)
 			}}
-			auto_show_clear_button
-			leading={<Icon code={0xEDDF} />}
-			label="Search apps"
+			c_auto_show_clear_button
+			c_leading={<Icon c_code={0xEDDF} />}
+			c_label="Search apps"
 		/>
 		<div>
 			<For each={array_sort(apps, (a, b) => string_locale_compare(a.name, b.name))}>{app =>
@@ -84,7 +84,7 @@ export const MainElement: VoidComponent = () => {
 					<LinkButton
 						data-pinned={attr_set_if_exist(is_selected(app.link))}
 						href={app.link}
-						focused={get_selected_link() == app.link && is_menu_actions_open()}
+						c_focused={get_selected_link() == app.link && is_menu_actions_open()}
 						onContextMenu={ev => {
 							set_selected_app(app)
 							open_menu(ev, menu_actions_ref, {
@@ -95,29 +95,29 @@ export const MainElement: VoidComponent = () => {
 						<img loading="eager" width="48" height="48" src={app.logo_url} alt={app.name} />
 						{app.name}
 						<Show when={is_selected(app.link)}>
-							<Icon filled code={0xECA2}/>
+							<Icon c_filled c_code={0xECA2}/>
 						</Show>
 					</LinkButton>
 				</Show>
 			}</For>
 		</div>
-		<Menu ref={r => menu_actions_ref = r} on_toggle_open={isOpen => set_is_menu_actions_open(isOpen)}>
+		<Menu ref={r => menu_actions_ref = r} c_on_toggleopen={isOpen => set_is_menu_actions_open(isOpen)}>
 			<MenuItem
 				onClick={() => {
 					pin_app(get_selected_link() ?? '#')
 					close_menu(menu_actions_ref)
 				}}
-				leading={<Show when={is_selected(get_selected_link() ?? '#')} fallback={<Icon code={0xECA2}/>}><Icon code={0xECA4}/></Show>}>
+				c_leading={<Show when={is_selected(get_selected_link() ?? '#')} fallback={<Icon c_code={0xECA2}/>}><Icon c_code={0xECA4}/></Show>}>
 				<Show when={is_selected(get_selected_link() ?? '#')} fallback="Pin">Unpin</Show> app
 			</MenuItem>
 			<MenuDivider/>
-			<LinkMenuItem href={get_selected_link() ?? '#'} leading={<Icon code={0xEB53}/>}>Open</LinkMenuItem>
+			<LinkMenuItem href={get_selected_link() ?? '#'} c_leading={<Icon c_code={0xEB53}/>}>Open</LinkMenuItem>
 			<MenuItem
 				onClick={() => {
 					window.open(get_selected_link() ?? '#', '_blank', 'noopener noreferrer')
 					close_menu(menu_actions_ref)
 				}}
-				leading={<Icon code={0xEB51}/>}>
+				c_leading={<Icon c_code={0xEB51}/>}>
 				Open in new tab
 			</MenuItem>
 			<MenuDivider/>
@@ -126,12 +126,12 @@ export const MainElement: VoidComponent = () => {
 					navigator_clipboard_writetext('https://' + location.hostname + (get_selected_link() ?? '#'))
 					close_menu(menu_actions_ref)
 				}}
-				leading={<Icon code={0xE51B}/>}>
+				c_leading={<Icon c_code={0xE51B}/>}>
 				Copy link
 			</MenuItem>
 			<MenuItem
 				onClick={() => share()}
-				leading={<Icon code={0xEE23}/>}>
+				c_leading={<Icon c_code={0xEE23}/>}>
 				Share
 			</MenuItem>
 			<MenuDivider/>
@@ -140,26 +140,26 @@ export const MainElement: VoidComponent = () => {
 					close_menu(menu_actions_ref)
 					open_dialog(ev, dialog_info_ref)
 				}}
-				leading={<Icon code={0xE930}/>}>
+				c_leading={<Icon c_code={0xE930}/>}>
 				About app
 			</MenuItem>
 		</Menu>
 		<Dialog
 			ref={r => dialog_info_ref = r}
-			header={get_selected_name()}
+			c_header={get_selected_name()}
 			onClose={() => close_menu(menu_actions_ref)}
 			style={{width: '500px'}}
-			actions={<>
-				<Button onClick={() => close_dialog(dialog_info_ref)} variant={ButtonVariant.tonal}>Close</Button>
+			c_actions={<>
+				<Button onClick={() => close_dialog(dialog_info_ref)} c_variant={ButtonVariant.tonal}>Close</Button>
 				<Button
 					onClick={() => {
 						close_dialog(dialog_info_ref)
 						share()
 					}}
-					variant={ButtonVariant.tonal}>
+					c_variant={ButtonVariant.tonal}>
 					Share
 				</Button>
-				<LinkButton href={get_selected_link()} variant={ButtonVariant.filled}>Open</LinkButton>
+				<LinkButton href={get_selected_link()} c_variant={ButtonVariant.filled}>Open</LinkButton>
 			</>}>
 			{ selected_app() && selected_app()!.description }
 		</Dialog>

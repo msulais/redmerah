@@ -29,30 +29,30 @@ type ExpanderContextProps = {
 const ExpanderContext = createContext<ExpanderContextProps>()
 
 type ExpanderHeaderProps = ListProps & {
-	use_expand_icon?: boolean
-	tooltip_expand?: string
+	c_use_expand_icon?: boolean
+	c_tooltip_expand?: string
 }
 
 const ExpanderHeader: ParentComponent<ExpanderHeaderProps> = ($props) => {
 	const [props, other] = splitProps(
-		mergeProps({ use_expand_icon: true }, $props),
-		['use_expand_icon', 'trailing', 'tooltip_expand']
+		mergeProps({ c_use_expand_icon: true }, $props),
+		['c_use_expand_icon', 'c_trailing', 'c_tooltip_expand']
 	)
 	const context = useContext(ExpanderContext)
 
 	return (<List
 		data-c-open={attr_set_if_exist(context?.is_open())}
 		data-c-variant={attr_set_if_exist(context?.variant(), context != null)}
-		trailing={<Tooltip>
-			{props.trailing}
-			<Show when={props.use_expand_icon}>
+		c_trailing={<Tooltip>
+			{props.c_trailing}
+			<Show when={props.c_use_expand_icon}>
 				<RawIconButton
-					data-tooltip={props.tooltip_expand ?? (context?.is_open()
+					data-tooltip={props.c_tooltip_expand ?? (context?.is_open()
 						? 'Show less'
 						: 'Show more'
 					)}
 					component="div"
-					code={0xE3FC}
+					c_code={0xE3FC}
 					class="c-expander-icon"
 					data-c-open={attr_set_if_exist(context?.is_open())}
 				/>
@@ -63,29 +63,29 @@ const ExpanderHeader: ParentComponent<ExpanderHeaderProps> = ($props) => {
 }
 
 type RawExpanderHeaderProps = RawListProps & {
-	use_expand_icon?: boolean
-	tooltip_expand?: string
+	c_use_expand_icon?: boolean
+	c_tooltip_expand?: string
 }
 
 const RawExpanderHeader: ParentComponent<RawExpanderHeaderProps> = ($props) => {
 	const [props, other] = splitProps($props, [
-		'use_expand_icon', 'trailing', 'tooltip_expand'
+		'c_use_expand_icon', 'c_trailing', 'c_tooltip_expand'
 	])
 	const context = useContext(ExpanderContext)
 
 	return (<RawList
 		data-c-open={attr_set_if_exist(context?.is_open())}
 		data-c-variant={attr_set_if_exist(context?.variant(), context != null)}
-		trailing={<Tooltip>
-			{props.trailing}
-			<Show when={props.use_expand_icon}>
+		c_trailing={<Tooltip>
+			{props.c_trailing}
+			<Show when={props.c_use_expand_icon}>
 				<RawIconButton
-					data-tooltip={props.tooltip_expand ?? (context?.is_open()
+					data-tooltip={props.c_tooltip_expand ?? (context?.is_open()
 						? 'Show less'
 						: 'Show more'
 					)}
 					component="div"
-					code={0xE3FC}
+					c_code={0xE3FC}
 					class="c-expander-icon"
 					data-c-open={attr_set_if_exist(context?.is_open())}
 				/>
@@ -96,28 +96,28 @@ const RawExpanderHeader: ParentComponent<RawExpanderHeaderProps> = ($props) => {
 }
 
 type ExpanderProps = JSX.DetailsHtmlAttributes<HTMLDetailsElement> & {
-	header: JSX.Element
-	variant?: ExpanderVariant
-	attr_body?: Omit<JSX.HTMLAttributes<HTMLDivElement>, 'children'>
-	attr_header?: Omit<JSX.HTMLAttributes<HTMLElement>, 'children'>
+	c_header: JSX.Element
+	c_variant?: ExpanderVariant
+	c_attr_body?: Omit<JSX.HTMLAttributes<HTMLDivElement>, 'children'>
+	c_attr_header?: Omit<JSX.HTMLAttributes<HTMLElement>, 'children'>
 }
 
 const Expander: ParentComponent<ExpanderProps> = ($props) => {
 	const BORDER_BOTTOM_WIDTH = 1
 	const [props, other] = splitProps(
-		mergeProps({variant: ExpanderVariant.tonal}, $props),
+		mergeProps({c_variant: ExpanderVariant.tonal}, $props),
 		[
-			'children', 'class', 'attr_header',
-			'attr_body', 'header', 'variant',
+			'children', 'class', 'c_attr_header',
+			'c_attr_body', 'c_header', 'c_variant',
 			'open', 'onToggle', 'ref'
 		]
 	)
 	const [header_props, header_props_other] = splitProps(
-		props.attr_header! ?? {},
+		props.c_attr_header! ?? {},
 		['class', 'onClick']
 	)
 	const [body_props, body_props_other] = splitProps(
-		props.attr_body! ?? {},
+		props.c_attr_body! ?? {},
 		['class', 'style']
 	)
 	const [is_open, set_is_open] = createSignal<boolean>(false)
@@ -161,7 +161,7 @@ const Expander: ParentComponent<ExpanderProps> = ($props) => {
 	return (<details
 		ref={mergeRefs(props.ref, r => expander_ref = r)}
 		class={classlist('c-expander', props.class)}
-		data-c-variant={props.variant}
+		data-c-variant={props.c_variant}
 		onToggle={ev => {
 			set_is_open(event_current_target(ev).open)
 			event_call(ev, props.onToggle)
@@ -171,7 +171,7 @@ const Expander: ParentComponent<ExpanderProps> = ($props) => {
 		<ExpanderContext.Provider
 			value={{
 				is_open: is_open,
-				variant: () => props.variant
+				variant: () => props.c_variant
 			}}>
 			<summary
 				class={classlist('c-expander-header', header_props.class)}
@@ -185,11 +185,11 @@ const Expander: ParentComponent<ExpanderProps> = ($props) => {
 					promise_done(wait(200), () => element_click(el))
 				}}
 				{...header_props_other}>
-				{props.header}
+				{props.c_header}
 			</summary>
 			<div
 				class={classlist('c-expander-body', body_props.class)}
-				data-c-variant={props.variant}
+				data-c-variant={props.c_variant}
 				data-c-open={attr_set_if_exist(is_open())}
 				style={is_string(body_props.style)
 					? body_props.style

@@ -89,12 +89,12 @@ const _: VoidComponent = () => {
 	const Toasts: VoidComponent = () => (<>
 		<Toast
 			ref={r => toast_browsernotsupport_ref = r}
-			leading={<Icon code={0xF29B}/>}
-			trailing={<Tooltip>
+			c_leading={<Icon c_code={0xF29B}/>}
+			c_trailing={<Tooltip>
 				<IconButton
 					data-tooltip="Close"
-					code={0xE5E9}
-					variant={ButtonVariant.tonal}
+					c_code={0xE5E9}
+					c_variant={ButtonVariant.tonal}
 					onClick={() => close_toast(toast_browsernotsupport_ref)}
 				/>
 			</Tooltip>}>
@@ -109,19 +109,19 @@ const _: VoidComponent = () => {
 		</Toast>
 		<Toast
 			ref={r => toast_batterystatuserror_ref = r}
-			leading={<Icon code={0xF29B}/>}>
+			c_leading={<Icon c_code={0xF29B}/>}>
 			[Error] Unable to get battery status
 		</Toast>
 	</>)
 
-	return (<App appbar={<AppBar />}>
+	return (<App c_appbar={<AppBar />}>
 		<main class={CSS.app_body}>
 			<h1>{level() == null? "???" : level()}%</h1>
 			<div class={CSS.app_body_status}>
 				<Show
 					when={is_charging() != null}
-					fallback={<><Icon filled code={0xE1BD}/>Unknown status</>}>
-					<Icon filled code={is_charging()? 0xE1B7 : 0xE1AD}/>
+					fallback={<><Icon c_filled c_code={0xE1BD}/>Unknown status</>}>
+					<Icon c_filled c_code={is_charging()? 0xE1B7 : 0xE1AD}/>
 					{is_charging()? "Charging" : "Discharging"}
 				</Show>
 			</div>

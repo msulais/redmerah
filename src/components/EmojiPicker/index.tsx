@@ -190,10 +190,10 @@ const EmojiPickerBody: ParentComponent<{
 		return (<IconButton
 			data-tooltip={category()}
 			data-category={category()}
-			code={$props.icon_code}
-			selected={selected()}
-			filled={selected()}
-			variant={selected()? ButtonVariant.tonal : undefined}
+			c_code={$props.icon_code}
+			c_selected={selected()}
+			c_filled={selected()}
+			c_variant={selected()? ButtonVariant.tonal : undefined}
 			style={{
 				color: selected()? `rgb(${AppColors.accent})` : undefined
 			}}
@@ -209,9 +209,9 @@ const EmojiPickerBody: ParentComponent<{
 			data-c-hidden={attr_set_if_exist($props.category != option())}>
 			<Show when={$props.category == option() && props.is_open}>
 				<FocusableGroup
-					custom_arrow_focus
-					on_before_set_tabindex={el => element_tagname(el) != 'H3'}
-					on_before_change_focus={el => element_tagname(el) != 'H3'}
+					c_custom_arrow_focus
+					c_on_beforesettabindex={el => element_tagname(el) != 'H3'}
+					c_on_beforechangefocus={el => element_tagname(el) != 'H3'}
 					onKeyDown={(ev) => {
 						const code = ev.code
 						if (
@@ -268,7 +268,7 @@ const EmojiPickerBody: ParentComponent<{
 						<EmojiButton
 							data-index={i()}
 							data-tooltip={e[1]}
-							emoji={e[0]}
+							c_emoji={e[0]}
 						/>
 					}</For>
 				</FocusableGroup>
@@ -279,7 +279,7 @@ const EmojiPickerBody: ParentComponent<{
 	return (<>
 		<FocusableGroup
 			class="c-emoji-picker-tabs"
-			arrow_options={{
+			c_arrow_options={{
 				left: 'prev', right: 'next'
 			}}
 			onClick={() => {
@@ -302,8 +302,8 @@ const EmojiPickerBody: ParentComponent<{
 					<IconButton
 						id={button_close_id}
 						data-tooltip={props.tooltip_close ?? 'Close'}
-						code={0xE5E9}
-						variant={ButtonVariant.filled}
+						c_code={0xE5E9}
+						c_variant={ButtonVariant.filled}
 					/>
 				</Show>
 				<Tab icon_code={0xE8DE} category={EmojiCategory.recents}/>
@@ -329,10 +329,10 @@ const EmojiPickerBody: ParentComponent<{
 						set_search_text(text)
 					}, 1000)
 				}}
-				attr_menu={{
+				c_attr_menu={{
 					ref: (r) => menu_search_ref = r
 				}}
-				result={<TransitionGroup
+				c_result={<TransitionGroup
 					onEnter={(el, done) => {
 						promise_done(element_animate(
 							el as HTMLElement,
@@ -361,7 +361,7 @@ const EmojiPickerBody: ParentComponent<{
 							close_searchtextfieldmenu(menu_search_ref)
 							props.on_select_emoji?.(e[0], e[1])
 						}}>
-							<EmojiC emoji={e[0]}/>{e[1]}
+							<EmojiC c_emoji={e[0]}/>{e[1]}
 						</SearchMenuItem>
 					</Show>}</For>
 				</TransitionGroup>}
@@ -385,16 +385,16 @@ const EmojiPickerBody: ParentComponent<{
 }
 
 type EmojiPickerProps = ModalProps & {
-	multiple?: boolean
-	use_close_button?: boolean
-	tooltip_close?: string
-	on_select_emoji?(emoji: string, name: string): unknown
+	c_multiple?: boolean
+	c_use_close_button?: boolean
+	c_tooltip_close?: string
+	c_on_selectemoji?(emoji: string, name: string): unknown
 }
 const EmojiPicker: ParentComponent<EmojiPickerProps> = ($props) => {
 	const [props, other] = splitProps($props, [
-		'classList', 'on_select_emoji', 'ref', 'multiple',
-		'use_close_button', 'tooltip_close', 'children',
-		'on_toggle_open'
+		'classList', 'c_on_selectemoji', 'ref', 'c_multiple',
+		'c_use_close_button', 'c_tooltip_close', 'children',
+		'c_on_toggleopen'
 	])
 	const [emojipicker_ref, set_emojipicker_ref] = createSignal<HTMLElement | null>(null)
 	const [is_open, set_is_open] = createSignal<boolean>(false)
@@ -404,9 +404,9 @@ const EmojiPicker: ParentComponent<EmojiPickerProps> = ($props) => {
 			'c-emoji-picker': true,
 			...props.classList
 		}}
-		on_toggle_open={is_open => {
+		c_on_toggleopen={is_open => {
 			set_is_open(is_open)
-			props.on_toggle_open?.(is_open)
+			props.c_on_toggleopen?.(is_open)
 		}}
 		ref={mergeRefs(props.ref, r => set_emojipicker_ref(r))}
 		{...other}>
@@ -415,10 +415,10 @@ const EmojiPicker: ParentComponent<EmojiPickerProps> = ($props) => {
 				is_open={is_open()}
 				element={emojipicker_ref() as HTMLElement}
 				on_close={() => close_modal(emojipicker_ref()! as HTMLDialogElement)}
-				multiple={props.multiple}
-				on_select_emoji={props.on_select_emoji}
-				tooltip_close={props.tooltip_close}
-				use_close_button={props.use_close_button}>
+				multiple={props.c_multiple}
+				on_select_emoji={props.c_on_selectemoji}
+				tooltip_close={props.c_tooltip_close}
+				use_close_button={props.c_use_close_button}>
 				{props.children}
 			</EmojiPickerBody>
 		</Show>
@@ -426,16 +426,16 @@ const EmojiPicker: ParentComponent<EmojiPickerProps> = ($props) => {
 }
 
 type PopoverEmojiPickerProps = PopoverProps & {
-	multiple?: boolean
-	use_close_button?: boolean
-	tooltip_close?: string
-	on_select_emoji?(emoji: string, name: string): unknown
+	c_multiple?: boolean
+	c_use_close_button?: boolean
+	c_tooltip_close?: string
+	c_on_selectemoji?(emoji: string, name: string): unknown
 }
 const PopoverEmojiPicker: ParentComponent<PopoverEmojiPickerProps> = ($props) => {
 	const [props, other] = splitProps($props, [
-		'classList', 'on_select_emoji', 'ref', 'multiple',
-		'use_close_button', 'tooltip_close', 'children',
-		'on_toggle_open'
+		'classList', 'c_on_selectemoji', 'ref', 'c_multiple',
+		'c_use_close_button', 'c_tooltip_close', 'children',
+		'c_on_toggleopen'
 	])
 	const [emojipicker_ref, set_emojipicker_ref] = createSignal<HTMLElement | null>(null)
 	const [is_open, set_is_open] = createSignal<boolean>(false)
@@ -445,9 +445,9 @@ const PopoverEmojiPicker: ParentComponent<PopoverEmojiPickerProps> = ($props) =>
 			'c-emoji-picker': true,
 			...props.classList
 		}}
-		on_toggle_open={is_open => {
+		c_on_toggleopen={is_open => {
 			set_is_open(is_open)
-			props.on_toggle_open?.(is_open)
+			props.c_on_toggleopen?.(is_open)
 		}}
 		ref={mergeRefs(props.ref, r => set_emojipicker_ref(r))}
 		{...other}>
@@ -456,10 +456,10 @@ const PopoverEmojiPicker: ParentComponent<PopoverEmojiPickerProps> = ($props) =>
 				is_open={is_open()}
 				element={emojipicker_ref() as HTMLElement}
 				on_close={() => close_modal(emojipicker_ref()! as HTMLDialogElement)}
-				multiple={props.multiple}
-				on_select_emoji={props.on_select_emoji}
-				tooltip_close={props.tooltip_close}
-				use_close_button={props.use_close_button}>
+				multiple={props.c_multiple}
+				on_select_emoji={props.c_on_selectemoji}
+				tooltip_close={props.c_tooltip_close}
+				use_close_button={props.c_use_close_button}>
 				{props.children}
 			</EmojiPickerBody>
 		</Show>

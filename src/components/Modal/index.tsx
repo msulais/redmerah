@@ -232,30 +232,30 @@ function close_modal(modal: HTMLDialogElement, soft: boolean = false): void {
 	))
 }
 
-type ModalProps = Omit<JSX.DialogHtmlAttributes<HTMLDialogElement>, 'style' | 'draggable'> & {
+type ModalProps = Omit<JSX.DialogHtmlAttributes<HTMLDialogElement>, 'style'> & {
 	style?: JSX.CSSProperties
-	gap?: number
-	padding?: number
-	important?: boolean
-	position?: ModalPosition
-	allow_hide_anchor?: boolean
-	draggable?: boolean
-	content_auto_focus?: boolean
-	on_before_open?(): unknown
-	on_before_close?(): unknown
-	on_toggle_open?(is_open: boolean): unknown
-	open_animation?(el: HTMLDialogElement, done: () => void): unknown
-	close_animation?(el: HTMLDialogElement, done: () => void): unknown
+	c_gap?: number
+	c_padding?: number
+	c_important?: boolean
+	c_position?: ModalPosition
+	c_allow_hide_anchor?: boolean
+	c_draggable?: boolean
+	c_content_auto_focus?: boolean
+	c_on_beforeopen?(): unknown
+	c_on_beforeclose?(): unknown
+	c_on_toggleopen?(is_open: boolean): unknown
+	c_open_animation?(el: HTMLDialogElement, done: () => void): unknown
+	c_close_animation?(el: HTMLDialogElement, done: () => void): unknown
 }
 const Modal: ParentComponent<ModalProps> = ($props) => {
 	const $$props = mergeProps({id: createUniqueId()}, $props)
 	const [props, other] = splitProps($$props, [
-		'ref', 'on_toggle_open', 'onClose', 'onCancel',
-		'children', 'onKeyDown', 'class', 'open_animation',
-		'close_animation', 'style', 'gap', 'padding',
-		'important', 'position', 'allow_hide_anchor',
-		'draggable', 'content_auto_focus', 'on_before_open',
-		'on_before_close'
+		'ref', 'c_on_toggleopen', 'onClose', 'onCancel',
+		'children', 'onKeyDown', 'class', 'c_open_animation',
+		'c_close_animation', 'style', 'c_gap', 'c_padding',
+		'c_important', 'c_position', 'c_allow_hide_anchor',
+		'c_draggable', 'c_content_auto_focus', 'c_on_beforeopen',
+		'c_on_beforeclose'
 	])
 	const style = createMemo(() => props.style)
 	const [is_dragging, set_is_dragging] = createSignal<boolean>(false)
@@ -451,8 +451,8 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 			ModalListenerEvents.close,
 			{detail: modal_ref}
 		))
-		props.on_before_close?.()
-		if (props.close_animation != null) props.close_animation(
+		props.c_on_beforeclose?.()
+		if (props.c_close_animation != null) props.c_close_animation(
 			modal_ref,
 			() => modal_ref.close()
 		)
@@ -475,21 +475,21 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 
 	function open_modal(detail: ModalOpenDetail): void {
 		if (is_open) return;
-		props.on_toggle_open?.(true)
+		props.c_on_toggleopen?.(true)
 
 		const MODAL_MARGIN = 8
 		const {
 			event,
 			pointer,
 			anchor_rect,
-			allow_hide_anchor = props.allow_hide_anchor ?? true,
+			allow_hide_anchor = props.c_allow_hide_anchor ?? true,
 			anchor = null,
-			draggable = props.draggable ?? false,
-			gap: input_gap = props.gap ?? 0,
-			important: input_important = props.important ?? false,
-			padding: input_padding = props.padding ?? 0,
-			position: input_position = props.position ?? ModalPosition.center_bottom,
-			content_auto_focus = props.content_auto_focus ?? true
+			draggable = props.c_draggable ?? false,
+			gap: input_gap = props.c_gap ?? 0,
+			important: input_important = props.c_important ?? false,
+			padding: input_padding = props.c_padding ?? 0,
+			position: input_position = props.c_position ?? ModalPosition.center_bottom,
+			content_auto_focus = props.c_content_auto_focus ?? true
 		} = detail;
 
 		set_allow_hide_anchor(allow_hide_anchor)
@@ -654,12 +654,12 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 		set_top(rect_top(pos))
 		set_left(rect_left(pos))
 		set_attr_open(true)
-		props.on_before_open?.()
+		props.c_on_beforeopen?.()
 		element_dispatch_event(LISTENER_REF, new CustomEvent(
 			ModalListenerEvents.open,
 			{detail: modal_ref}
 		))
-		if (props.open_animation != null) props.open_animation(
+		if (props.c_open_animation != null) props.c_open_animation(
 			modal_ref,
 			() => set_attr_open_done(true)
 		)
@@ -857,7 +857,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 			event_prevent_default(ev)
 		}}
 		onClose={(ev) => {
-			props.on_toggle_open?.(false)
+			props.c_on_toggleopen?.(false)
 			is_open = false
 			event_call(ev, props.onClose)
 		}}

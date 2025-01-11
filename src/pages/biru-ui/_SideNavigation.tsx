@@ -14,11 +14,11 @@ const _: VoidComponent<{
 	return (<SideNavigation
 		style={{"padding-top": '0'}}
 		classList={classlist_module(CSS.side_navigation)}
-		expanded={true}>
+		c_expanded={true}>
 		<For each={PAGES}>{page =>
 			<SideNavigationItem
 				onClick={() => props.command(Commands.change_page, page.type)}
-				selected={props.page == page.type}>
+				c_selected={props.page == page.type}>
 				{page.text}
 			</SideNavigationItem>
 		}</For>

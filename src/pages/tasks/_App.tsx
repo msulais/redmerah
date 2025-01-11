@@ -1427,21 +1427,21 @@ const _: VoidComponent = () => {
 	const LabelItem: VoidComponent<{index: number, label: TaskLabel}> = (props) => {
 		const label = createMemo(() => props.label)
 		return (<List
-			leading={<Icon style={{color: label().color ?? undefined}} code={0xE407}/>}
-			trailing={<>
+			c_leading={<Icon style={{color: label().color ?? undefined}} c_code={0xE407}/>}
+			c_trailing={<>
 				<IconButton
 					data-tooltip="Edit label"
 					data-edit
 					data-index={props.index}
 					onClick={(ev) => command(Commands.edit_label, ev, label())}
-					code={0xE739}
+					c_code={0xE739}
 				/>
 				<IconButton
 					data-tooltip="Delete label"
 					data-delete
 					data-index={props.index}
 					onClick={() => command(Commands.delete_label, label())}
-					code={0xE59D}
+					c_code={0xE59D}
 				/>
 			</>}>
 			{ label().name }
@@ -1469,7 +1469,7 @@ const _: VoidComponent = () => {
 			<Dialog
 				style={{width: '500px'}}
 				ref={r => dialog_labels_ref = r}
-				header="Labels"
+				c_header="Labels"
 				onClick={(ev) => {
 					const button = document_active()!
 					if (!element_valid_target(
@@ -1507,15 +1507,15 @@ const _: VoidComponent = () => {
 							}
 					}
 				}}
-				actions={<>
+				c_actions={<>
 					<Button
 						id={button_dialoglabels_close_id}
-						variant={ButtonVariant.tonal}>
+						c_variant={ButtonVariant.tonal}>
 						Close
 					</Button>
 					<Button
 						id={button_dialoglabels_add_id}
-						variant={ButtonVariant.filled}>
+						c_variant={ButtonVariant.filled}>
 						Add label
 					</Button>
 				</>}>
@@ -1527,7 +1527,7 @@ const _: VoidComponent = () => {
 			</Dialog>
 			<Dialog
 				ref={r => dialog_newlabel_ref = r}
-				header="New label"
+				c_header="New label"
 				onClose={() => {
 					set_selected_label_to_add('name', '')
 					change_textfield_value(textfield_newlabel_ref, '')
@@ -1557,16 +1557,16 @@ const _: VoidComponent = () => {
 							break
 					}
 				}}
-				actions={<>
+				c_actions={<>
 					<Button
 						id={button_dialognewlabel_cancel_id}
-						variant={ButtonVariant.tonal}>
+						c_variant={ButtonVariant.tonal}>
 						Cancel
 					</Button>
 					<Button
 						id={button_dialognewlabel_add_id}
 						disabled={string_trim(selected_label_to_add.name) == ''}
-						variant={ButtonVariant.filled}>
+						c_variant={ButtonVariant.filled}>
 						Add
 					</Button>
 				</>}>
@@ -1581,17 +1581,17 @@ const _: VoidComponent = () => {
 					}}>
 					<TextField
 						ref={r => textfield_newlabel_ref = r}
-						label="Name"
+						c_label="Name"
 						onFocus={() => set_selected_label_to_add('name', textfield_newlabel_ref.value)}
 						onInput={() => set_selected_label_to_add('name', textfield_newlabel_ref.value)}
 						autofocus
-						trailing={<TextFieldButton
+						c_trailing={<TextFieldButton
 							id={button_dialognewlabel_color_id}
 							data-tooltip="Change label color"
-							focused={is_colorpicker_label_open()}>
+							c_focused={is_colorpicker_label_open()}>
 							<Icon
 								style={{color: selected_label_to_add.color ?? undefined}}
-								code={0xE407}
+								c_code={0xE407}
 							/>
 						</TextFieldButton>}
 					/>
@@ -1599,7 +1599,7 @@ const _: VoidComponent = () => {
 			</Dialog>
 			<Dialog
 				ref={r => dialog_editlabel_ref = r}
-				header="Edit label"
+				c_header="Edit label"
 				onClick={(ev) => {
 					const button = document_active()!
 					if (!element_valid_target(
@@ -1627,16 +1627,16 @@ const _: VoidComponent = () => {
 							break
 					}
 				}}
-				actions={<>
+				c_actions={<>
 					<Button
 						id={button_dialogeditlabel_cancel_id}
-						variant={ButtonVariant.tonal}>
+						c_variant={ButtonVariant.tonal}>
 						Cancel
 					</Button>
 					<Button
 						id={button_dialogeditlabel_edit_id}
 						disabled={string_trim(selected_label_to_edit.name) == ''}
-						variant={ButtonVariant.filled}>
+						c_variant={ButtonVariant.filled}>
 						Edit
 					</Button>
 				</>}>
@@ -1654,17 +1654,17 @@ const _: VoidComponent = () => {
 					}}>
 					<TextField
 						ref={r => textfield_editlabel_ref = r}
-						label="Name"
+						c_label="Name"
 						onFocus={() => set_selected_label_to_edit('name', textfield_editlabel_ref.value)}
 						onInput={() => set_selected_label_to_edit('name', textfield_editlabel_ref.value)}
 						autofocus
-						trailing={<TextFieldButton
+						c_trailing={<TextFieldButton
 							id={button_dialogeditlabel_color_id}
 							data-tooltip="Change label color"
-							focused={is_colorpicker_label_open()}>
+							c_focused={is_colorpicker_label_open()}>
 							<Icon
 								style={{color: selected_label_to_edit.color ?? undefined}}
-								code={0xE407}
+								c_code={0xE407}
 							/>
 						</TextFieldButton>}
 					/>
@@ -1672,7 +1672,7 @@ const _: VoidComponent = () => {
 			</Dialog>
 			<Dialog
 				ref={r => dialog_newlist_ref = r}
-				header="New list"
+				c_header="New list"
 				style={{width: '500px'}}
 				onClose={() => {
 					set_new_listname_text('')
@@ -1701,16 +1701,16 @@ const _: VoidComponent = () => {
 							break
 					}
 				}}
-				actions={<>
+				c_actions={<>
 					<Button
 						id={button_dialognewlist_cancel_id}
-						variant={ButtonVariant.tonal}>
+						c_variant={ButtonVariant.tonal}>
 						Cancel
 					</Button>
 					<Button
 						id={button_dialognewlist_add_id}
 						disabled={string_trim(new_listname_text()) == ''}
-						variant={ButtonVariant.filled}>
+						c_variant={ButtonVariant.filled}>
 						Add
 					</Button>
 				</>}>
@@ -1728,12 +1728,12 @@ const _: VoidComponent = () => {
 						placeholder="List name"
 						onInput={ev => set_new_listname_text(event_current_target(ev).value)}
 						onFocus={ev => set_new_listname_text(event_current_target(ev).value)}
-						trailing={<TextFieldButton
+						c_trailing={<TextFieldButton
 							id={button_dialognewlist_emoji_id}>
 							<Show
 								when={new_list_emoji() == null}
-								fallback={<Emoji emoji={new_list_emoji()!}/>}>
-								<Icon code={0xE747}/>
+								fallback={<Emoji c_emoji={new_list_emoji()!}/>}>
+								<Icon c_code={0xE747}/>
 							</Show>
 						</TextFieldButton>}
 					/>
@@ -1741,7 +1741,7 @@ const _: VoidComponent = () => {
 			</Dialog>
 			<Dialog
 				ref={r => dialog_editlist_ref = r}
-				header="Rename list"
+				c_header="Rename list"
 				style={{width: '500px'}}
 				onClick={(ev) => {
 					const button = document_active()!
@@ -1765,10 +1765,10 @@ const _: VoidComponent = () => {
 							break
 					}
 				}}
-				actions={<>
+				c_actions={<>
 					<Button
 						id={button_dialogeditlist_cancel_id}
-						variant={ButtonVariant.tonal}>
+						c_variant={ButtonVariant.tonal}>
 						Cancel
 					</Button>
 					<Button
@@ -1780,7 +1780,7 @@ const _: VoidComponent = () => {
 								&& edit_list_emoji() == tasklists[selected_tasklist_index_to_rename()].emoji
 							)
 						}
-						variant={ButtonVariant.filled}>
+						c_variant={ButtonVariant.filled}>
 						Rename
 					</Button>
 				</>}>
@@ -1802,12 +1802,12 @@ const _: VoidComponent = () => {
 						placeholder="List name"
 						onInput={ev => set_edit_listname_text(event_current_target(ev).value)}
 						onFocus={ev => set_edit_listname_text(event_current_target(ev).value)}
-						trailing={<TextFieldButton
+						c_trailing={<TextFieldButton
 							id={button_dialogeditlist_emoji_id}>
 							<Show
 								when={edit_list_emoji() == null}
-								fallback={<Emoji emoji={edit_list_emoji()!}/>}>
-								<Icon code={0xE747}/>
+								fallback={<Emoji c_emoji={edit_list_emoji()!}/>}>
+								<Icon c_code={0xE747}/>
 							</Show>
 						</TextFieldButton>}
 					/>
@@ -1816,7 +1816,7 @@ const _: VoidComponent = () => {
 			<Dialog
 				ref={r => dialog_deletelist_ref = r}
 				style={{width: '500px'}}
-				header="Delete list"
+				c_header="Delete list"
 				onClick={(ev) => {
 					const button = document_active()!
 					if (!element_valid_target(
@@ -1835,15 +1835,15 @@ const _: VoidComponent = () => {
 							break
 					}
 				}}
-				actions={<>
+				c_actions={<>
 					<Button
 						id={button_dialogdeletelist_cancel_id}
-						variant={ButtonVariant.tonal}>
+						c_variant={ButtonVariant.tonal}>
 						Cancel
 					</Button>
 					<Button
 						id={button_dialogdeletelist_delete_id}
-						variant={ButtonVariant.filled}>
+						c_variant={ButtonVariant.filled}>
 						Delete
 					</Button>
 				</>}>
@@ -1859,12 +1859,12 @@ const _: VoidComponent = () => {
 	const ColorPickers: VoidComponent = () => {
 		return (<>
 			<ColorPicker
-				color={(change_labelcolor_option() == 'new'
+				c_color={(change_labelcolor_option() == 'new'
 					? selected_label_to_add.color
 					: selected_label_to_edit.color
 				) ?? undefined}
-				on_toggle_open={is_open => set_is_colorpicker_label_open(is_open)}
-				on_select_color={color => change_labelcolor_option() == 'new'
+				c_on_toggleopen={is_open => set_is_colorpicker_label_open(is_open)}
+				c_on_select_color={color => change_labelcolor_option() == 'new'
 					? set_selected_label_to_add('color', color)
 					: set_selected_label_to_edit('color', color)
 				}
@@ -1880,8 +1880,8 @@ const _: VoidComponent = () => {
 							if (change_labelcolor_option() == 'new') set_selected_label_to_add('color', null)
 							else set_selected_label_to_edit('color', null)
 						}}
-						variant={ButtonVariant.tonal}>
-						<Icon code={0xE40C}/>No color
+						c_variant={ButtonVariant.tonal}>
+						<Icon c_code={0xE40C}/>No color
 					</Button>
 				</Show>
 			</ColorPicker>
@@ -1895,7 +1895,7 @@ const _: VoidComponent = () => {
 				set_is_emojipicker_newlist_open(false)
 				set_is_emojipicker_editlist_open(false)
 			}}
-			on_select_emoji={e => {
+			c_on_selectemoji={e => {
 				if (is_emojipicker_newlist_open()) set_new_list_emoji(e)
 				if (is_emojipicker_editlist_open()) set_edit_list_emoji(e)
 			}}>
@@ -1906,13 +1906,13 @@ const _: VoidComponent = () => {
 				<div style={{width: '100%', padding: '0 12px 12px 12px'}}>
 					<Button
 						style={{width: '100%'}}
-						variant={ButtonVariant.tonal}
+						c_variant={ButtonVariant.tonal}
 						onClick={() => {
 							if (is_emojipicker_newlist_open()) set_new_list_emoji(null)
 							if (is_emojipicker_editlist_open()) set_edit_list_emoji(null)
 							close_emojipicker(emojipicker_ref)
 						}}>
-						<Icon code={0xE5E9}/>No emoji
+						<Icon c_code={0xE5E9}/>No emoji
 					</Button>
 				</div>
 			</Show>
@@ -1923,21 +1923,21 @@ const _: VoidComponent = () => {
 		return (<>
 			<Toast
 				ref={r => toast_nofile_ref = r}
-				leading={<Icon code={0xE631}/>}>
+				c_leading={<Icon c_code={0xE631}/>}>
 				File is not exist
 			</Toast>
 		</>)
 	}
 
 	return (<App
-		appbar={<AppBar
+		c_appbar={<AppBar
 			tasklists={tasklists}
 			is_side_navigation_expanded={is_sidenavigation_expanded()}
 			command={command}
 			page={page()}
 			settings={settings}
 		/>}
-		left_sidebar={<SideNavigation
+		c_left_sidebar={<SideNavigation
 			expanded={is_sidenavigation_expanded()}
 			tasklists={tasklists}
 			command={command}

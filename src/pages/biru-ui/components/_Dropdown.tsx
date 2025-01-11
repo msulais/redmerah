@@ -20,10 +20,10 @@ const _: VoidComponent = () => {
 		description="A dropdown is a UI element that displays a list of options when clicked. It provides a compact way to present multiple choices while saving screen space.">
 		<Playground>
 			<Dropdown
-				multiple={multiple()}
-				variant={variant()}
-				label={label()? "Animals" : undefined}
-				text="Select animal">
+				c_multiple={multiple()}
+				c_variant={variant()}
+				c_label={label()? "Animals" : undefined}
+				c_text="Select animal">
 				<For each={array_slice([
 					[0, 'Tiger'],
 					[1, 'Lion'],
@@ -36,27 +36,27 @@ const _: VoidComponent = () => {
 					[8, 'Orangutan'],
 					[9, 'Fish'],
 				], 0, count()) as [number, string][]}>{option =>
-				<DropdownOption value={option[0]} text={option[1]}/>}</For>
+				<DropdownOption c_value={option[0]} c_text={option[1]}/>}</For>
 			</Dropdown>
 		</Playground>
 		<PlaygroundOptions>
 			<NumberTextField
-				label="Count"
+				c_label="Count"
 				style={{width: '100px'}}
 				value={10} min={1}
 				max={10}
 				onBlur={(ev) => set_count(c => number_safe(event_current_target(ev).valueAsNumber, c))}
 			/>
 			<Dropdown
-				label="Variant"
-				values={[variant()]}
-				on_change_options={(items) => set_variant(items[0].value as ButtonVariant)}>
+				c_label="Variant"
+				c_values={[variant()]}
+				c_on_change={(items) => set_variant(items[0].value as ButtonVariant)}>
 				<For each={[
 					[ButtonVariant.filled, 'Filled'],
 					[ButtonVariant.tonal, 'Tonal'],
 					[ButtonVariant.outlined, 'Outlined'],
 					[ButtonVariant.transparent, 'Transparent'],
-				]}>{option => <DropdownOption value={option[0]} text={option[1] as string} />}</For>
+				]}>{option => <DropdownOption c_value={option[0]} c_text={option[1] as string} />}</For>
 			</Dropdown>
 			<CheckBox
 				checked={multiple()}

@@ -472,16 +472,16 @@ export const ImagePicker: VoidComponent<{
 			<Show when={!any_image()}>
 				<Button
 					onPointerDown={ev => event_stop_propagation(ev)}
-					variant={ButtonVariant.tonal}
+					c_variant={ButtonVariant.tonal}
 					onClick={pick_image}>
-					<Icon code={0xE8FE}/>
+					<Icon c_code={0xE8FE}/>
 					Pick image
 				</Button>
 			</Show>
 		</div>
 		<Show when={any_image()}>
-			<Button variant={ButtonVariant.tonal} onClick={pick_image}>
-				<Icon code={0xE8FE}/>
+			<Button c_variant={ButtonVariant.tonal} onClick={pick_image}>
+				<Icon c_code={0xE8FE}/>
 				Pick image
 			</Button>
 		</Show>

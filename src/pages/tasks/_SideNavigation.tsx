@@ -42,9 +42,9 @@ const _: VoidComponent<{
 
 	const Page: VoidComponent<{ type: Pages, text: string, icon: number}> = ($props) => {
 		return (<SideNavigationItem
-			icon_code={$props.icon}
+			c_icon_code={$props.icon}
 			data-tooltip={!expanded()? $props.text : undefined}
-			selected={props.page == $props.type}
+			c_selected={props.page == $props.type}
 			data-page={$props.type}>
 			{$props.text}
 		</SideNavigationItem>)
@@ -53,9 +53,9 @@ const _: VoidComponent<{
 	const Item: VoidComponent<TaskList & {index: number}> = ($props) => {
 		return (<SideNavigationItem
 			data-tooltip={!expanded()? $props.name : undefined}
-			icon_code={$props.emoji == null? 0xF032 : undefined}
-			leading={<Show when={$props.emoji != null}><Emoji emoji={$props.emoji!} /></Show>}
-			selected={props.page == $props.id}
+			c_icon_code={$props.emoji == null? 0xF032 : undefined}
+			c_leading={<Show when={$props.emoji != null}><Emoji c_emoji={$props.emoji!} /></Show>}
+			c_selected={props.page == $props.id}
 			data-list-id={$props.id}
 			data-index={$props.index}>
 			{$props.name}
@@ -63,7 +63,7 @@ const _: VoidComponent<{
 	}
 
 	const Footer: VoidComponent = () => (<SideNavigationItem
-		icon_code={0xE007}
+		c_icon_code={0xE007}
 		id={button_newlist_id}
 		data-tooltip={!expanded()? "Add new list" : undefined}>
 		New list
@@ -96,12 +96,12 @@ const _: VoidComponent<{
 				}}>
 				<MenuItem
 					id={button_renamelist_id}
-					icon_code={0xF0FB}>
+					c_icon_code={0xF0FB}>
 					Rename list
 				</MenuItem>
 				<MenuItem
 					id={button_deletelist_id}
-					icon_code={0xE59D}>
+					c_icon_code={0xE59D}>
 					Delete list
 				</MenuItem>
 			</Menu>
@@ -111,7 +111,7 @@ const _: VoidComponent<{
 	return (<Tooltip><SideNavigation
 		style={{"padding-top": '0'}}
 		classList={classlist_module(CSS.side_navigation)}
-		expanded={expanded()}
+		c_expanded={expanded()}
 		onClick={ev => {
 			const button = document_active()!
 			if (!element_valid_target(
@@ -159,7 +159,7 @@ const _: VoidComponent<{
 				}
 			}
 		}}
-		footer={<Footer />}>
+		c_footer={<Footer />}>
 		<TransitionGroup
 			onEnter={(el, done) => {
 				promise_done(element_animate(

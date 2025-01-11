@@ -16,36 +16,36 @@ type SideNavigationContextProps = {
 const SideNavigationContext = createContext<SideNavigationContextProps>()
 
 type SideNavigationItemProps = ButtonProps & {
-	leading?: JSX.Element
-	trailing?: JSX.Element
-	icon_code?: number
+	c_leading?: JSX.Element
+	c_trailing?: JSX.Element
+	c_icon_code?: number
 }
 const SideNavigationItem: ParentComponent<SideNavigationItemProps> = ($props) => {
 	const [props, other] = splitProps($props, [
-		'indicator_position', 'selected', 'leading', 'children',
-		'trailing', 'classList', 'icon_code', 'variant'
+		'c_indicator_position', 'c_selected', 'c_leading', 'children',
+		'c_trailing', 'classList', 'c_icon_code', 'c_variant'
 	])
-	const trailing = children(() => props.trailing)
+	const trailing = children(() => props.c_trailing)
 	const context = useContext(SideNavigationContext)
 
 	return (<Button
-		variant={props.variant ?? (props.selected? ButtonVariant.tonal : undefined)}
-		indicator_position={props.indicator_position ?? ButtonIndicatorPosition.left}
-		selected={props.selected}
+		c_variant={props.c_variant ?? (props.c_selected? ButtonVariant.tonal : undefined)}
+		c_indicator_position={props.c_indicator_position ?? ButtonIndicatorPosition.left}
+		c_selected={props.c_selected}
 		classList={{
 			'c-side-navigation-item': true,
 			'c-square-btn': !(context?.expanded() ?? true),
 			...props.classList
 		}}
 		{...other}>
-		<Show when={props.icon_code != null}>
+		<Show when={props.c_icon_code != null}>
 			<Icon
-				style={{color: props.selected? 'rgb(var(--g-color-accent))' : undefined}}
-				filled={props.selected}
-				code={props.icon_code!}
+				style={{color: props.c_selected? 'rgb(var(--g-color-accent))' : undefined}}
+				c_filled={props.c_selected}
+				c_code={props.c_icon_code!}
 			/>
 		</Show>
-		{ props.leading }
+		{ props.c_leading }
 		<Show when={context?.expanded() ?? true}>
 			<span class="c-side-navigation-item-text">{ props.children }</span>
 			<Show when={trailing()}>
@@ -57,36 +57,36 @@ const SideNavigationItem: ParentComponent<SideNavigationItemProps> = ($props) =>
 }
 
 type SideNavigationProps = JSX.HTMLAttributes<HTMLDivElement> & {
-	header?: JSX.Element
-	header_auto_tabindex?: boolean
-	footer?: JSX.Element
-	footer_auto_tabindex?: boolean
-	children_auto_tabindex?: boolean
-	expanded?: boolean
+	c_header?: JSX.Element
+	c_header_auto_tabindex?: boolean
+	c_footer?: JSX.Element
+	c_footer_auto_tabindex?: boolean
+	c_children_auto_tabindex?: boolean
+	c_expanded?: boolean
 }
 const SideNavigation: ParentComponent<SideNavigationProps> = ($props) => {
 	const $$props = mergeProps({
-		header_auto_tabindex: true,
-		footer_auto_tabindex: true,
-		children_auto_tabindex: true,
-		expanded: true
+		c_header_auto_tabindex: true,
+		c_footer_auto_tabindex: true,
+		c_children_auto_tabindex: true,
+		c_expanded: true
 	}, $props)
 	const [props, other] = splitProps($$props, [
-		'children', 'expanded', 'header', 'footer',
-		'class', 'header_auto_tabindex', 'footer_auto_tabindex',
-		'children_auto_tabindex'
+		'children', 'c_expanded', 'c_header', 'c_footer',
+		'class', 'c_header_auto_tabindex', 'c_footer_auto_tabindex',
+		'c_children_auto_tabindex'
 	])
 
 	// hack to make Context works
 	const Items: VoidComponent = () => {
-		const header = children(() => props.header)
-		const footer = children(() => props.footer)
+		const header = children(() => props.c_header)
+		const footer = children(() => props.c_footer)
 		const content = children(() => props.children)
 		return (<>
 			<Show when={header()}>
 				<div class="c-side-navigation-header">
-					<Show when={props.header_auto_tabindex} fallback={header()}>
-						<FocusableGroup arrow_options={{
+					<Show when={props.c_header_auto_tabindex} fallback={header()}>
+						<FocusableGroup c_arrow_options={{
 							up: 'prev',
 							down: 'next'
 						}}>{header()}</FocusableGroup>
@@ -94,8 +94,8 @@ const SideNavigation: ParentComponent<SideNavigationProps> = ($props) => {
 				</div>
 				<div style="flex:1" />
 			</Show>
-			<Show when={props.children_auto_tabindex} fallback={content()}>
-				<FocusableGroup arrow_options={{
+			<Show when={props.c_children_auto_tabindex} fallback={content()}>
+				<FocusableGroup c_arrow_options={{
 					up: 'prev',
 					down: 'next'
 				}}
@@ -109,8 +109,8 @@ const SideNavigation: ParentComponent<SideNavigationProps> = ($props) => {
 			<Show when={footer()}>
 				<div style="flex:1" />
 				<div class="c-side-navigation-footer">
-					<Show when={props.footer_auto_tabindex} fallback={footer()}>
-						<FocusableGroup arrow_options={{
+					<Show when={props.c_footer_auto_tabindex} fallback={footer()}>
+						<FocusableGroup c_arrow_options={{
 							up: 'prev',
 							down: 'next'
 						}}>{footer()}</FocusableGroup>
@@ -122,10 +122,10 @@ const SideNavigation: ParentComponent<SideNavigationProps> = ($props) => {
 
 	return (<div
 		class={classlist('c-side-navigation', props.class ?? '')}
-		data-c-expanded={attr_set_if_exist(props.expanded)}
+		data-c-expanded={attr_set_if_exist(props.c_expanded)}
 		{...other}>
 		<SideNavigationContext.Provider
-			value={{expanded: () => props.expanded ?? true}}>
+			value={{expanded: () => props.c_expanded ?? true}}>
 			<Items />
 		</SideNavigationContext.Provider>
 	</div>)
