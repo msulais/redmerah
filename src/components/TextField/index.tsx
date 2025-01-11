@@ -400,7 +400,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 	)
 	const [actions_props, actions_props_other] = splitProps(
 		props.c_attr_actions! ?? {},
-		['ref', 'classList', 'c_on_toggleopen']
+		['ref', 'classList', 'c_on_toggleopen', 'onKeyDown', 'onKeyUp']
 	)
 
 	const [is_modal_actions_open, set_is_modal_actions_open] = createSignal<boolean>(false)
@@ -583,6 +583,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 				}
 			}}
 			onKeyDown={(ev) => {
+				event_call(ev, actions_props.onKeyDown)
 				const code = ev.code
 				const button = document_active()!
 				if (!element_valid_target(
@@ -610,6 +611,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 				}
 			}}
 			onKeyUp={(ev) => {
+				event_call(ev, actions_props.onKeyUp)
 				const code = ev.code
 				const button = document_active()!
 				if (!element_valid_target(
