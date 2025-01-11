@@ -1,4 +1,4 @@
-import { createMemo, createSignal, onMount, Show, type VoidComponent } from "solid-js"
+import { createMemo, createSignal, createUniqueId, onMount, Show, type VoidComponent } from "solid-js"
 
 import type { HEXColor } from "@/types/color"
 import type { Palette } from "./_types"
@@ -9,20 +9,21 @@ import { ThemeData } from "@/enums/theme"
 import { storage_set, storage_get } from "@/utils/storage"
 import { RoutesLinks, ExternalLinks } from "@/enums/links"
 import { date_year } from "@/utils/datetime"
-import { url_encode } from "@/utils/url"
-import { promise_done } from "@/utils/object"
+import { url_encode, url_origin } from "@/utils/url"
+import { promise_done, valid_enum_value } from "@/utils/object"
 import { navigator_clipboard_writetext, navigator_share } from "@/utils/navigator"
-import { array_includes, array_join, array_length } from "@/utils/array"
+import { array_join, array_length } from "@/utils/array"
 import { attr_set, classlist_module } from "@/utils/attributes"
 import { event_current_target } from "@/utils/event"
-import { timeout_clear, timeout_set, wait } from "@/utils/timeout"
-import { document_root } from "@/utils/document"
+import { timeout_clear, timeout_set } from "@/utils/timeout"
+import { app_color_generator as app } from "@/constants/apps"
+import { document_active, document_root } from "@/utils/document"
+import { element_valid_target, element_tagname, element_id, element_dataset } from "@/utils/element"
 import logo_redmerah from '@/assets/logo.svg'
-import logo from '@/assets/apps/color-generator-logo.svg'
 
 import {Tooltip} from "@/components/Tooltip"
 import Button, { ButtonVariant, IconButton } from "@/components/Button"
-import Menu, { SubMenu, MenuItem, MenuDivider, LinkMenuItem, MenuHeader, close_menu, close_submenu, open_menu, SubMenuItem } from "@/components/Menu"
+import Menu, { SubMenu, MenuItem, MenuDivider, LinkMenuItem, MenuHeader, close_menu, close_submenu, open_menu, SubMenuItem, MenuIndent } from "@/components/Menu"
 import { open_dialog } from "@/components/Dialog"
 import { open_colorpicker } from "@/components/ColorPicker"
 import AppBar from "@/components/AppBar"
@@ -39,17 +40,15 @@ const _: VoidComponent<{
 	seed: string
 }> = (props) => {
 	const root = document_root()
-	const theme_system = ThemeData.system
-	const theme_light = ThemeData.light
-	const theme_dark = ThemeData.dark
-	const corner_sharp = CornerData.sharp
-	const corner_semiround = CornerData.semi_round
-	const corner_round = CornerData.round
-	const corner_fullround = CornerData.full_round
-	const [theme, set_theme] = createSignal<ThemeData>(theme_system)
+	const button_colorlist_id = createUniqueId()
+	const button_selectcolor_id = createUniqueId()
+	const button_colortolist_id = createUniqueId()
+	const button_copyall_id = createUniqueId()
+	const button_settings_id = createUniqueId()
+	const [theme, set_theme] = createSignal<ThemeData>(ThemeData.system)
 	const [timeout_id, set_timeout_id] = createSignal<number | null>(null)
 	const [timeout_copy_id, set_timeout_copy_id] = createSignal<number | null>(null)
-	const [corner, set_corner] = createSignal<CornerData>(corner_round)
+	const [corner, set_corner] = createSignal<CornerData>(CornerData.round)
 	const [is_menu_settings_open, set_is_menu_settings_open] = createSignal<boolean>(false)
 	const [is_submenu_themesettings_open, set_is_submenu_themesettings_open] = createSignal<boolean>(false)
 	const [is_submenu_cornersettings_open, set_is_submenu_cornersettings_open] = createSignal<boolean>(false)
@@ -80,7 +79,7 @@ const _: VoidComponent<{
 		attr_set(root, RootAttributes.theme, theme)
 		storage_set(LocalStorageKeys.theme, theme)
 		close_submenu(submenu_themesettings_ref)
-		promise_done(wait(200), () => close_menu(menu_settings_ref))
+		close_menu(menu_settings_ref)
 	}
 
 	function change_corner(corner: CornerData): void {
@@ -88,13 +87,13 @@ const _: VoidComponent<{
 		attr_set(root, RootAttributes.corner, corner)
 		storage_set(LocalStorageKeys.corner, corner)
 		close_submenu(submenu_cornersettings_ref)
-		promise_done(wait(200), () => close_menu(menu_settings_ref))
+		close_menu(menu_settings_ref)
 	}
 
 	function init_theme(): void {
 		const theme = storage_get(LocalStorageKeys.theme)
 
-		if (theme && array_includes([theme_system, theme_light, theme_dark], theme as ThemeData)) {
+		if (theme && valid_enum_value(theme, ThemeData)) {
 			attr_set(root, RootAttributes.theme, theme)
 			set_theme(theme as ThemeData)
 		}
@@ -103,7 +102,7 @@ const _: VoidComponent<{
 	function init_corner(): void {
 		const corner = storage_get(LocalStorageKeys.corner)
 
-		if (corner && array_includes([corner_sharp, corner_semiround, corner_round, corner_fullround], corner as CornerData)) {
+		if (corner && valid_enum_value(corner, CornerData)) {
 			attr_set(root, RootAttributes.corner, corner)
 			set_corner(corner as CornerData)
 		}
@@ -114,173 +113,234 @@ const _: VoidComponent<{
 		init_corner()
 	})
 
-	const Menus: VoidComponent = () => (<>
-		<Menu
-			ref={r => menu_settings_ref = r}
-			c_on_toggleopen={(v) => set_is_menu_settings_open(v)}
-			style={{"min-width": '200px'}}>
-			<SubMenu
-				ref={r => submenu_themesettings_ref = r}
-				c_on_toggleopen={v => set_is_submenu_themesettings_open(v)}
-				c_item={<SubMenuItem
-					c_focused={is_submenu_themesettings_open()}
-					c_icon_code={0xE28A}>
-					Theme
-				</SubMenuItem>}>
+	const Menus: VoidComponent = () => {
+		const button_settings_share_id = createUniqueId()
+		return (<>
+			<Menu
+				ref={r => menu_settings_ref = r}
+				c_on_toggleopen={(v) => set_is_menu_settings_open(v)}
+				onClick={(ev) => {
+					const button = document_active()!
+					if (!element_valid_target(
+						event_current_target(ev),
+						button,
+						el => {
+							const tagname = element_tagname(el)
+							return tagname == 'BUTTON' || tagname == 'A'
+						}
+					)) return
+
+					switch (element_id(button)) {
+						case button_settings_share_id:{
+							navigator_share({
+								title: app.name,
+								text: app.name + ' v' + app.build_version,
+								url: url_origin() + app.link
+							})
+							close_menu(menu_settings_ref)
+							break
+						}
+						default: {
+							const data_theme = element_dataset(button, 'theme')
+							if (data_theme
+								&& valid_enum_value(data_theme, ThemeData)
+							) return change_theme(data_theme as ThemeData)
+
+							const data_corner = element_dataset(button, 'corner')
+							if (data_corner
+								&& valid_enum_value(data_corner, CornerData)
+							) return change_corner(data_corner as CornerData)
+						}
+					}
+				}}>
+				<SubMenu
+					ref={r => submenu_themesettings_ref = r}
+					c_on_toggleopen={v => set_is_submenu_themesettings_open(v)}
+					c_item={<SubMenuItem
+						c_focused={is_submenu_themesettings_open()}
+						c_icon_code={0xE28A}>
+						Theme
+					</SubMenuItem>}>
+					<MenuItem
+						c_selected={theme() == ThemeData.light}
+						c_icon_code={0xF2CD}
+						data-theme={ThemeData.light}>
+						Light
+					</MenuItem>
+					<MenuItem
+						c_selected={theme() == ThemeData.dark}
+						c_icon_code={0xF2B3}
+						data-theme={ThemeData.dark}>
+						Dark
+					</MenuItem>
+					<MenuItem
+						c_selected={theme() == ThemeData.system}
+						c_icon_code={0xE96D}
+						data-theme={ThemeData.system}>
+						System theme
+					</MenuItem>
+				</SubMenu>
+				<SubMenu
+					ref={r => submenu_cornersettings_ref = r}
+					c_on_toggleopen={v => set_is_submenu_cornersettings_open(v)}
+					c_item={<SubMenuItem
+						c_focused={is_submenu_cornersettings_open()}
+						c_icon_code={0xF044}>
+						Corner style
+					</SubMenuItem>}>
+					<MenuItem
+						c_selected={corner() == CornerData.sharp}
+						c_icon_code={0xEA99}
+						data-corner={CornerData.sharp}>
+						Sharp
+					</MenuItem>
+					<MenuItem
+						c_selected={corner() == CornerData.semi_round}
+						c_icon_code={0xEEF7}
+						data-corner={CornerData.semi_round}>
+						Semi round
+					</MenuItem>
+					<MenuItem
+						c_selected={corner() == CornerData.round}
+						c_icon_code={0xF044}
+						data-corner={CornerData.round}>
+						Round
+					</MenuItem>
+					<MenuItem
+						c_selected={corner() == CornerData.full_round}
+						c_icon_code={0xE408}
+						data-corner={CornerData.full_round}>
+						Full round
+					</MenuItem>
+				</SubMenu>
+				<MenuDivider />
+				<LinkMenuItem
+					href={RoutesLinks.home}
+					c_leading={<img src={logo_redmerah.src} width={16} alt='Redmerah logo'/>}
+					c_trailing={<MenuIndent />}>
+					Redmerah
+				</LinkMenuItem>
+				<LinkMenuItem
+					href={RoutesLinks.apps}
+					c_icon_code={0xE063}
+					c_trailing={<MenuIndent />}>
+					More apps
+				</LinkMenuItem>
+				<LinkMenuItem
+					href={RoutesLinks.about}
+					c_icon_code={0xE930}
+					c_trailing={<MenuIndent />}>
+					About us
+				</LinkMenuItem>
+				<MenuDivider />
+				<LinkMenuItem
+					href={RoutesLinks.privacy}
+					c_icon_code={0xEE51}
+					c_trailing={<MenuIndent />}>
+					Privacy policy
+				</LinkMenuItem>
+				<LinkMenuItem
+					href={RoutesLinks.terms}
+					c_icon_code={0xED47}
+					c_trailing={<MenuIndent />}>
+					Terms & conditions
+				</LinkMenuItem>
+				<MenuDivider />
 				<MenuItem
-					c_selected={theme() == theme_light}
-					c_icon_code={0xF2CD}
-					onClick={() => change_theme(theme_light)}>
-					Light
+					id={button_settings_share_id}
+					c_icon_code={0xEE23}
+					c_trailing={<MenuIndent />}>
+					Share
 				</MenuItem>
-				<MenuItem
-					c_selected={theme() == theme_dark}
-					c_icon_code={0xF2B3}
-					onClick={() => change_theme(theme_dark)}>
-					Dark
-				</MenuItem>
-				<MenuItem
-					c_selected={theme() == theme_system}
-					c_icon_code={0xE96D}
-					onClick={() => change_theme(theme_system)}>
-					System theme
-				</MenuItem>
-			</SubMenu>
-			<SubMenu
-				ref={r => submenu_cornersettings_ref = r}
-				c_on_toggleopen={v => set_is_submenu_cornersettings_open(v)}
-				c_item={<SubMenuItem
-					c_focused={is_submenu_cornersettings_open()}
-					c_icon_code={0xF044}>
-					Corner style
-				</SubMenuItem>}>
-				<MenuItem
-					c_selected={corner() == corner_sharp}
-					c_icon_code={0xEA99}
-					onClick={() => change_corner(corner_sharp)}>
-					Sharp
-				</MenuItem>
-				<MenuItem
-					c_selected={corner() == corner_semiround}
-					c_icon_code={0xEEF7}
-					onClick={() => change_corner(corner_semiround)}>
-					Semi round
-				</MenuItem>
-				<MenuItem
-					c_selected={corner() == corner_round}
-					c_icon_code={0xF044}
-					onClick={() => change_corner(corner_round)}>
-					Round
-				</MenuItem>
-				<MenuItem
-					c_selected={corner() == corner_fullround}
-					c_icon_code={0xE408}
-					onClick={() => change_corner(corner_fullround)}>
-					Full round
-				</MenuItem>
-			</SubMenu>
-			<MenuDivider />
-			<LinkMenuItem
-				onClick={() => close_menu(menu_settings_ref)}
-				href={RoutesLinks.home}
-				c_leading={<img src={logo_redmerah.src} width={16} alt='Redmerah logo'/>}>
-				Redmerah
-			</LinkMenuItem>
-			<LinkMenuItem
-				onClick={() => close_menu(menu_settings_ref)}
-				href={RoutesLinks.apps}
-				c_icon_code={0xE063}>
-				More apps
-			</LinkMenuItem>
-			<LinkMenuItem
-				onClick={() => close_menu(menu_settings_ref)}
-				href={RoutesLinks.about}
-				c_icon_code={0xE930}>
-				About us
-			</LinkMenuItem>
-			<MenuDivider />
-			<LinkMenuItem
-				onClick={() => close_menu(menu_settings_ref)}
-				href={RoutesLinks.privacy}
-				c_icon_code={0xEE51}>
-				Privacy policy
-			</LinkMenuItem>
-			<LinkMenuItem
-				onClick={() => close_menu(menu_settings_ref)}
-				href={RoutesLinks.terms}
-				c_icon_code={0xED47}>
-				Terms & conditions
-			</LinkMenuItem>
-			<MenuDivider/>
-			<MenuItem
-				onClick={() => {
-					navigator_share({text: 'Color Generator', title: 'Color Generator', url: document.URL})
-					close_menu(menu_settings_ref)
-				}}
-				c_icon_code={0xEE23}>
-				Share
-			</MenuItem>
-			<LinkMenuItem
-				onClick={() => close_menu(menu_settings_ref)}
-				href={'mailto:' + ExternalLinks.contact_email + '?subject=' + url_encode('Color Generator')}
-				c_icon_code={0xE3A0}>
-				Send feedback
-			</LinkMenuItem>
-			<LinkMenuItem
-				onClick={() => close_menu(menu_settings_ref)}
-				href={ExternalLinks.donate}
-				c_new_tab
-				c_icon_code={0xE84B}>
-				Donate
-			</LinkMenuItem>
-			<MenuHeader>&copy; {date_year()} Redmerah</MenuHeader>
-		</Menu>
-	</>)
+				<LinkMenuItem
+					href={'mailto:' + ExternalLinks.contact_email + '?subject=' + url_encode('Tasks')}
+					c_icon_code={0xE3A0}
+					c_trailing={<MenuIndent />}>
+					Send feedback
+				</LinkMenuItem>
+				<LinkMenuItem
+					href={ExternalLinks.donate}
+					c_new_tab
+					c_icon_code={0xE84B}
+					c_trailing={<MenuIndent />}>
+					Donate
+				</LinkMenuItem>
+				<MenuHeader>&copy; {date_year(new Date())} Redmerah</MenuHeader>
+			</Menu>
+		</>)
+	}
 
 	return (<>
 		<Tooltip>
 			<AppBar
+				onClick={ev => {
+					const button = document_active()!
+					if (!element_valid_target(
+						event_current_target(ev),
+						button,
+						el => element_tagname(el) == 'BUTTON'
+					)) return
+
+					switch (element_id(button)) {
+					case button_colorlist_id:
+						open_dialog(ev, props.dialog_colorlist_ref)
+						break
+					case button_selectcolor_id:
+						open_colorpicker(ev, props.colorpicker_ref, {
+							anchor: button,
+							color: props.seed as HEXColor
+						})
+						break
+					case button_colortolist_id:
+						if (timeout_id()) {
+							timeout_clear(timeout_id()!)
+							set_timeout_id(null)
+						}
+						props.on_add_color()
+						set_timeout_id(timeout_set(() => set_timeout_id(null), 1000))
+						break
+					case button_copyall_id:
+						copy_all()
+						break
+					case button_settings_id:
+						open_menu(ev, menu_settings_ref, { anchor: button })
+						break
+					}
+				}}
 				c_leading={<>
 					<Show when={array_length(props.palette_list) > 0}>
 						<IconButton
+							id={button_colorlist_id}
 							data-tooltip="Color list"
-							onClick={(ev) => open_dialog(ev, props.dialog_colorlist_ref)}
 							c_code={0xF098}
 						/>
 					</Show>
-					<img width={32} src={logo.src} alt="Color generator logo" />
+					<img width={32} src={app.logo_url} alt={app.name} />
 				</>}
-				c_headline="Color Generator"
+				c_headline={app.name}
 				c_trailing={<>
 					<Button
 						data-tooltip="Select color"
+						id={button_selectcolor_id}
 						classList={classlist_module(CSS.appbar_select_color)}
-						c_variant={ButtonVariant.filled}
-						onClick={(ev) => open_colorpicker(ev, props.colorpicker_ref, {anchor: event_current_target(ev)})}>
+						c_variant={ButtonVariant.filled}>
 						{props.seed}
 					</Button>
 					<IconButton
 						data-tooltip="Add color to list"
-						onClick={() => {
-							if (timeout_id()) {
-								timeout_clear(timeout_id()!)
-								set_timeout_id(null)
-							}
-							props.on_add_color()
-							set_timeout_id(timeout_set(() => set_timeout_id(null), 1000))
-						}}
+						id={button_colortolist_id}
 						c_code={timeout_id()? 0xE3D8 : 0xF08A}
 					/>
 					<IconButton
 						data-tooltip="Copy all"
-						onClick={() => copy_all()}
+						id={button_copyall_id}
 						c_code={timeout_copy_id()? 0xE3D8 : 0xE51B}
 					/>
 					<IconButton
 						data-tooltip="Open settings"
+						id={button_settings_id}
 						classList={classlist_module(CSSAnimation.btn_rotate_icon)}
 						c_focused={is_menu_settings_open()}
-						onClick={ev => open_menu(ev, menu_settings_ref, { anchor: event_current_target(ev) })}
 						c_code={0xEE0F}
 					/>
 				</>}

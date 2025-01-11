@@ -77,7 +77,7 @@ $appbar_colorpicker_button_none: 500px;
 
 	> div {
 		height: 100%;
-		border-radius: 16px;
+		border-radius: 8px;
 		border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity-border));
 		padding: 24px;
 		display: flex;
@@ -91,7 +91,7 @@ $appbar_colorpicker_button_none: 500px;
 		}
 
 		:root[data-corner=semi-round] & {
-			border-radius: 8px;
+			border-radius: 4px;
 		}
 
 		:root[data-corner=full-round] & {

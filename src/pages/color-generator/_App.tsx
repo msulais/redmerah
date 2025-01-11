@@ -1,11 +1,11 @@
-import { type Component, For, Show, type VoidComponent, createMemo, createSignal, onMount } from 'solid-js'
+import { type Component, For, Show, type VoidComponent, createMemo, createSignal, createUniqueId, onMount } from 'solid-js'
 import { createStore } from 'solid-js/store'
 
 import type { HEXColor, RGBColor } from '@/types/color'
 import type { Palette } from './_types'
 import { timeout_clear, timeout_set } from '@/utils/timeout'
 import { generate_color, hex_to_rgb, is_color_valid } from '@/utils/color'
-import { element_by_id } from '@/utils/element'
+import { element_animate, element_by_id, element_dataset, element_first_child, element_id, element_set_textcontent, element_tagname, element_valid_target } from '@/utils/element'
 import { DatabaseNames, LocalStorageKeys } from '@/enums/storage'
 import { storage_get, storage_set } from '@/utils/storage'
 import { ElementIds } from '@/enums/ids'
@@ -19,6 +19,9 @@ import { promise_done } from '@/utils/object'
 import { math_round } from '@/utils/math'
 import { event_current_target } from '@/utils/event'
 import { classlist_module } from '@/utils/attributes'
+import { document_active } from '@/utils/document'
+import { number_is_not_defined, number_parse } from '@/utils/number'
+import { AnimationEffectTiming } from '@/enums/animation'
 
 import {Tooltip} from '@/components/Tooltip'
 import Divider from '@/components/Divider'
@@ -44,6 +47,7 @@ const _: VoidComponent = () => {
 	const [timeout_id, set_timeout_id] = createSignal<number | null>(null)
 	const [colorpicker_ref, set_colorpicker_ref] = createSignal<HTMLDialogElement | null>(null)
 	const [dialog_colorlist_ref, set_dialog_colorlist_ref] = createSignal<HTMLDialogElement | null>(null)
+	const timeout_copylist: Record<string, number> = {}
 	let dialog_deleteall_ref: HTMLDialogElement
 
 	function delete_all_palette_list(): void {
@@ -96,7 +100,7 @@ const _: VoidComponent = () => {
 
 	function on_add_color(): void {
 		for (const p of palette_list()) {
-			if (p.accent_light == palette.accent_light) return
+			if (p.seed == palette.seed) return
 		}
 
 		set_palette_list(l => [...l, {...palette}])
@@ -137,55 +141,63 @@ const _: VoidComponent = () => {
 		})
 	}
 
+	function copy_list(button: HTMLElement, index: number) {
+		const palette = palette_list()[index]
+		if (timeout_copylist[palette.seed]) return
+
+		promise_done(
+			navigator_clipboard_writetext(array_join([
+				'--seed: ' + palette.seed,
+				'--accent-light: ' + palette.accent_light,
+				'--on-accent-light: ' + palette.on_accent_light,
+				'--accent-dark: ' + palette.accent_dark,
+				'--on-accent-dark: ' + palette.on_accent_dark,
+			], ';\n') + ';'), () => {
+			const icon = element_first_child(button)
+			if (!icon) return
+
+			timeout_copylist[palette.seed] = 1
+			const animation_option = {
+				duration: 150,
+				easing: AnimationEffectTiming.spring
+			}
+			promise_done(
+				element_animate(icon, {scale: [1, 0]}, animation_option).finished,
+			() => {
+				element_set_textcontent(icon, String.fromCharCode(0xE3D8))
+				promise_done(
+					element_animate(icon, {scale: [0, 1]}, animation_option).finished,
+				() =>  timeout_set(() => {
+					promise_done(
+						element_animate(icon, {scale: [1, 0]}, animation_option).finished,
+					() => {
+						element_set_textcontent(icon, String.fromCharCode(0xE51B))
+						element_animate(icon, {scale: [0, 1]}, animation_option)
+						delete timeout_copylist[palette.seed]
+					})
+				}, 1000))
+			})
+		})
+	}
+
 	onMount(() => {
 		init_color()
 		init_database()
 		remove_splash_screen()
 	})
 
-	const ListItem: Component<{palette: Palette}> = (props) => {
-		const [timeout_id, set_timeout_id] = createSignal<number | null>(null)
+	const ListItem: Component<{palette: Palette, index: number}> = (props) => {
 		const palette = createMemo(() => props.palette)
-
-		function copy(): void {
-			if (timeout_id()) {
-				timeout_clear(timeout_id()!)
-				set_timeout_id(null)
-			}
-
-			promise_done(
-				navigator_clipboard_writetext(array_join([
-					'--seed: ' + palette().seed,
-					'--accent-light: ' + palette().accent_light,
-					'--on-accent-light: ' + palette().on_accent_light,
-					'--accent-dark: ' + palette().accent_dark,
-					'--on-accent-dark: ' + palette().on_accent_dark,
-				], ';\n') + ';'),
-				() => set_timeout_id(timeout_set(() => set_timeout_id(null), 1000))
-			)
-		}
-
-		function delete_color(): void {
-			const p = {...palette()}
-			set_palette_list(l => array_filter(l, v => v.accent_light != palette().accent_light))
-			if (array_length(palette_list()) == 0) {
-				close_colorpicker(dialog_colorlist_ref()!)
-			}
-
-			const store_palettelist = db.write_store(ObjectStoreNames.palette_list)
-			if (store_palettelist) idb_store_delete(store_palettelist, p.seed)
-		}
-
 		return (<List
 			c_trailing={<>
 				<IconButton
 					data-tooltip="Copy"
-					onClick={copy}
-					c_code={timeout_id()? 0xE3D8 : 0xE51B}
+					data-listitem-copy={props.index}
+					c_code={0xE51B}
 				/>
 				<IconButton
 					data-tooltip="Delete"
-					onClick={delete_color}
+					data-listitem-delete={props.index}
 					c_code={0xE59D}
 				/>
 			</>}
@@ -212,6 +224,131 @@ const _: VoidComponent = () => {
 		</List>)
 	}
 
+	const Dialogs: VoidComponent = () => {
+		const button_colorlist_deleteall_id = createUniqueId()
+		const button_colorlist_copy_id = createUniqueId()
+		const button_colorlist_close_id = createUniqueId()
+		const button_deleteall_cancel_id = createUniqueId()
+		const button_deleteall_deleteall_id = createUniqueId()
+		return (<>
+			<Dialog
+				ref={r => set_dialog_colorlist_ref(r)}
+				style={{width: '640px'}}
+				c_header="Color list"
+				onClick={ev => {
+					const button = document_active()!
+					if (!element_valid_target(
+						event_current_target(ev),
+						button,
+						el => element_tagname(el) == 'BUTTON'
+					)) return
+
+					switch (element_id(button)) {
+						case button_colorlist_deleteall_id: {
+							open_dialog(ev, dialog_deleteall_ref, {important: true})
+							break
+						}
+						case button_colorlist_copy_id: {
+							copy_all_palette_list()
+							break
+						}
+						case button_colorlist_close_id: {
+							close_dialog(dialog_colorlist_ref()!)
+							break
+						}
+						default: {
+							const data_listitem_copy = element_dataset(button, 'listitemCopy')
+							if (data_listitem_copy) {
+								const index = number_parse(data_listitem_copy, true)
+								if (number_is_not_defined(index)) return
+
+								copy_list(button, index)
+								return
+							}
+
+							const data_listitem_delete = element_dataset(button, 'listitemDelete')
+							if (data_listitem_delete) {
+								const index = number_parse(data_listitem_delete, true)
+								if (number_is_not_defined(index)) return
+
+								const palette = palette_list()[index]
+								set_palette_list(l => array_filter(l, v => v.seed != palette.seed))
+								if (array_length(palette_list()) == 0) {
+									close_colorpicker(dialog_colorlist_ref()!)
+								}
+
+								const store_palettelist = db.write_store(ObjectStoreNames.palette_list)
+								if (store_palettelist) idb_store_delete(store_palettelist, palette.seed)
+								return
+							}
+						}
+					}
+				}}
+				c_actions={<>
+					<Button
+						c_variant={ButtonVariant.tonal}
+						id={button_colorlist_deleteall_id}>
+						Delete all
+					</Button>
+					<Button
+						c_variant={ButtonVariant.tonal}
+						id={button_colorlist_copy_id}>
+						<Show when={timeout_id()} fallback='Copy all'>Copied</Show>
+					</Button>
+					<Button
+						c_variant={ButtonVariant.filled}
+						id={button_colorlist_close_id}>
+						Close
+					</Button>
+				</>}>
+				<Tooltip>
+					<For each={palette_list()}>{(p, i) => <>
+						<Show when={i() > 0}><Divider /></Show>
+						<ListItem palette={p} index={i()}/>
+					</>}</For>
+				</Tooltip>
+			</Dialog>
+			<Dialog
+				ref={r => dialog_deleteall_ref = r}
+				c_header="Delete all"
+				onClick={ev => {
+					const button = document_active()!
+					if (!element_valid_target(
+						event_current_target(ev),
+						button,
+						el => element_tagname(el) == 'BUTTON'
+					)) return
+
+					switch (element_id(button)) {
+						case button_deleteall_cancel_id: {
+							close_dialog(dialog_deleteall_ref)
+							break
+						}
+						case button_deleteall_deleteall_id: {
+							close_dialog(dialog_deleteall_ref)
+							close_dialog(dialog_colorlist_ref()!)
+							delete_all_palette_list()
+							break
+						}
+					}
+				}}
+				c_actions={<>
+					<Button
+						id={button_deleteall_cancel_id}
+						c_variant={ButtonVariant.tonal}>
+						Cancel
+					</Button>
+					<Button
+						id={button_deleteall_deleteall_id}
+						c_variant={ButtonVariant.filled}>
+						Delete all
+					</Button>
+				</>}>
+				Are you sure want to delete all palette color?
+			</Dialog>
+		</>)
+	}
+
 	return (<>
 		<App
 			c_appbar={<AppBar
@@ -226,7 +363,10 @@ const _: VoidComponent = () => {
 			c_floating_action_button={<FloatingActionButton
 				classList={classlist_module(CSS.app_fab)}
 				c_variant={ButtonVariant.filled}
-				onClick={(ev) => open_colorpicker(ev, colorpicker_ref()!, {anchor: event_current_target(ev)})}>
+				onClick={(ev) => open_colorpicker(ev, colorpicker_ref()!, {
+					anchor: event_current_target(ev),
+					color: palette.seed as HEXColor
+				})}>
 				{palette.seed}
 			</FloatingActionButton>}>
 			<Body {...palette} />
@@ -239,45 +379,7 @@ const _: VoidComponent = () => {
 			c_disabled_opacity_control
 			c_on_update_color={on_color_change}
 		/>
-		<Dialog
-			ref={r => set_dialog_colorlist_ref(r)}
-			style={{width: '640px'}}
-			c_header="Color list"
-			c_actions={<>
-				<Button
-					c_variant={ButtonVariant.tonal}
-					onClick={(ev) => open_dialog(ev, dialog_deleteall_ref, {important: true})}>
-					Delete all
-				</Button>
-				<Button c_variant={ButtonVariant.tonal} onClick={copy_all_palette_list}>
-					<Show when={timeout_id()} fallback='Copy all'>Copied</Show>
-				</Button>
-				<Button
-					c_variant={ButtonVariant.filled}
-					onClick={() => close_dialog(dialog_colorlist_ref()!)}>
-					Close
-				</Button>
-			</>}>
-			<Tooltip>
-				<For each={palette_list()}>{(p, i) => <>
-					<Show when={i() > 0}><Divider /></Show>
-					<ListItem palette={p}/>
-				</>}</For>
-			</Tooltip>
-		</Dialog>
-		<Dialog
-			ref={r => dialog_deleteall_ref = r}
-			c_header="Delete all"
-			c_actions={<>
-				<Button onClick={() => close_dialog(dialog_deleteall_ref)} c_variant={ButtonVariant.tonal}>Cancel</Button>
-				<Button onClick={() => {
-					close_dialog(dialog_deleteall_ref)
-					close_dialog(dialog_colorlist_ref()!)
-					delete_all_palette_list()
-				}} c_variant={ButtonVariant.filled}>Delete all</Button>
-			</>}>
-			Are you sure want to delete all palette color?
-		</Dialog>
+		<Dialogs />
 	</>)
 }
 
