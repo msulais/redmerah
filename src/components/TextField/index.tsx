@@ -5,7 +5,7 @@ import { attr_set_if_exist, classlist } from '@/utils/attributes'
 import { timeout_clear, interval_clear, timeout_set, interval_set } from '@/utils/timeout'
 import { event_call, event_current_target, event_prevent_default, event_target } from '@/utils/event'
 import { math_clamp, math_max, math_round } from '@/utils/math'
-import { element_blur, element_contains, element_dispatch_event, element_focus, element_id, element_rect, element_scroll_height } from '@/utils/element'
+import { element_blur, element_contains, element_dispatch_event, element_focus, element_id, element_rect, element_scroll_height, element_tagname, element_valid_target } from '@/utils/element'
 import { event_add_listener, event_remove_listener } from '@/utils/event'
 import { is_array, is_number, is_string } from '@/utils/typecheck'
 import { string_length, string_split, string_touppercase, string_trim } from '@/utils/string'
@@ -22,6 +22,7 @@ import Modal, { type ModalProps } from '@/components/Modal'
 import FocusableGroup from '@/components/FocusableGroup'
 import Tooltip from '@/components/Tooltip'
 import './index.scss'
+import { KEY_ENTER, KEY_SPACE } from '@/constants/key_code'
 
 const HEIGHT_TEXT_INPUT_PER_LINE = 20
 
@@ -581,6 +582,34 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 					element_blur(numbertextfield_ref)
 				}
 			}}
+			onKeyDown={(ev) => {
+				const code = ev.code
+				const button = document_active()!
+				if (!element_valid_target(
+					event_current_target(ev),
+					button,
+					el => element_tagname(el) == 'BUTTON'
+				) || (code != KEY_ENTER && code != KEY_SPACE)) return
+
+				switch (button) {
+					case iconbutton_up_ref: on_press_start('+'); break
+					case iconbutton_down_ref: on_press_start('-'); break
+				}
+			}}
+			onKeyUp={(ev) => {
+				const code = ev.code
+				const button = document_active()!
+				if (!element_valid_target(
+					event_current_target(ev),
+					button,
+					el => element_tagname(el) == 'BUTTON'
+				) || (code != KEY_ENTER && code != KEY_SPACE)) return
+
+				switch (button) {
+					case iconbutton_up_ref: on_press_end('+'); break
+					case iconbutton_down_ref: on_press_end('-'); break
+				}
+			}}
 			{...actions_props_other}>
 			<Tooltip>
 				<IconButton
@@ -589,15 +618,6 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 					disabled={props.max != null && value() >= get_max()}
 					onPointerUp={() => on_press_end('+')}
 					onPointerDown={() => on_press_start('+')}
-					onContextMenu={(ev) => event_prevent_default(ev)}
-					onKeyDown={ev => {
-						const code = ev.code
-						const clickKey = code == 'Enter' || code == 'Space'
-						const updownKey = code == 'ArrowDown' || code == 'ArrowUp'
-						if (clickKey) on_press_start('+')
-						if (updownKey && !iconbutton_down_ref.disabled) element_focus(iconbutton_down_ref)
-					}}
-					onKeyUp={ev => (ev.code == 'Enter' || ev.code == 'Space') && on_press_end('+')}
 					c_code={0xE404}
 				/>
 				<IconButton
@@ -606,15 +626,6 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 					disabled={props.min != null && value() <= get_min()}
 					onPointerUp={() => on_press_end('-')}
 					onPointerDown={() => on_press_start('-')}
-					onContextMenu={(ev) => event_prevent_default(ev)}
-					onKeyDown={ev => {
-						const code = ev.code
-						const clickKey = code == 'Enter' || code == 'Space'
-						const updownKey = code == 'ArrowDown' || code == 'ArrowUp'
-						if (clickKey) on_press_start('-')
-						if (updownKey && !iconbutton_up_ref.disabled) element_focus(iconbutton_up_ref)
-					}}
-					onKeyUp={ev => (ev.code == 'Enter' || ev.code == 'Space') && on_press_end('-')}
 					c_code={0xE3FC}
 				/>
 			</Tooltip>
