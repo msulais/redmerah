@@ -1,4 +1,4 @@
-import { createSignal, onMount, type VoidComponent } from "solid-js"
+import { createSignal, createUniqueId, onMount, type VoidComponent } from "solid-js"
 
 import { RootAttributes } from "@/enums/attributes"
 import { CornerData } from "@/enums/corner"
@@ -6,16 +6,16 @@ import { LocalStorageKeys } from "@/enums/storage"
 import { ThemeData } from "@/enums/theme"
 import { storage_set, storage_get } from "@/utils/storage"
 import { attr_set } from "@/utils/attributes"
-import { wait } from "@/utils/timeout"
-import { array_includes } from "@/utils/array"
 import { navigator_share } from "@/utils/navigator"
 import { date_year } from "@/utils/datetime"
 import { RoutesLinks, ExternalLinks } from "@/enums/links"
-import { url_encode } from "@/utils/url"
+import { url_encode, url_origin } from "@/utils/url"
 import { event_current_target } from "@/utils/event"
-import logo from '@/assets/apps/battery-logo.svg'
+import { app_battery as app } from "@/constants/apps"
+import { document_active, document_root } from "@/utils/document"
+import { valid_enum_value } from "@/utils/object"
+import { element_dataset, element_id, element_tagname, element_valid_target } from "@/utils/element"
 import logo_redmerah from '@/assets/logo.svg'
-import { document_root } from "@/utils/document"
 
 import Tooltip from "@/components/Tooltip"
 import { IconButton } from "@/components/Button"
@@ -26,6 +26,8 @@ import Icon from "@/components/Icon"
 
 const _: VoidComponent = () => {
 	const root = document_root()
+	const button_info_id = createUniqueId()
+	const button_settings_id = createUniqueId()
 	const [is_menu_info_open, set_is_menu_info_open] = createSignal<boolean>(false)
 	const [is_menu_settings_open, set_is_menu_settings_open] = createSignal<boolean>(false)
 	const [is_submenu_themesettings_open, set_is_submenu_themesettings_open] = createSignal<boolean>(false)
@@ -37,28 +39,26 @@ const _: VoidComponent = () => {
 	let submenu_themesettings_ref: HTMLDivElement
 	let submenu_cornersettings_ref: HTMLDivElement
 
-	async function change_theme(theme: ThemeData): Promise<void> {
+	function change_theme(theme: ThemeData): void {
 		set_theme(theme)
 		attr_set(root, RootAttributes.theme, theme)
 		storage_set(LocalStorageKeys.theme, theme)
 		close_submenu(submenu_themesettings_ref)
-		await wait(200)
 		close_menu(menu_settings_ref)
 	}
 
-	async function change_corner(corner: CornerData): Promise<void> {
+	function change_corner(corner: CornerData): void {
 		set_corner(corner)
 		attr_set(root, RootAttributes.corner, corner)
 		storage_set(LocalStorageKeys.corner, corner)
 		close_submenu(submenu_cornersettings_ref)
-		await wait(200)
 		close_menu(menu_settings_ref)
 	}
 
 	function init_theme(): void {
 		const theme = storage_get(LocalStorageKeys.theme)
 
-		if (theme && array_includes([ThemeData.system, ThemeData.light, ThemeData.dark], theme as ThemeData)) {
+		if (theme && valid_enum_value(theme, ThemeData)) {
 			attr_set(root, RootAttributes.theme, theme)
 			set_theme(theme as ThemeData)
 		}
@@ -67,7 +67,7 @@ const _: VoidComponent = () => {
 	function init_corner(): void {
 		const corner = storage_get(LocalStorageKeys.corner)
 
-		if (corner && array_includes([CornerData.sharp, CornerData.semi_round, CornerData.round, CornerData.full_round], corner as CornerData)) {
+		if (corner && valid_enum_value(corner, CornerData)) {
 			attr_set(root, RootAttributes.corner, corner)
 			set_corner(corner as CornerData)
 		}
@@ -79,59 +79,73 @@ const _: VoidComponent = () => {
 	})
 
 	const Menus: VoidComponent = () => {
+		const button_info_share_id = createUniqueId()
 		return (<>
 			<Menu
+				onClick={(ev) => {
+					const button = document_active()!
+					if (!element_valid_target(
+						event_current_target(ev),
+						button,
+						el => {
+							const tagname = element_tagname(el)
+							return tagname == 'BUTTON' || tagname == 'A'
+						}
+					)) return
+
+					switch (element_id(button)) {
+						case button_info_share_id:
+							navigator_share({
+								title: app.name,
+								text: app.name + ' v' + app.build_version,
+								url: url_origin() + app.link
+							})
+							break
+					}
+
+					close_menu(menu_info_ref)
+				}}
 				style={{width: '200px'}}
 				ref={r => menu_info_ref = r}
 				c_on_toggleopen={(v) => set_is_menu_info_open(v)}>
 				<LinkMenuItem
-					onClick={() => close_menu(menu_info_ref)}
 					href={RoutesLinks.home}
 					c_leading={<img src={logo_redmerah.src} width={16} alt='Redmerah logo'/>}>
 					Redmerah
 				</LinkMenuItem>
 				<LinkMenuItem
-					onClick={() => close_menu(menu_info_ref)}
 					href={RoutesLinks.apps}
 					c_icon_code={0xE063}>
 					More apps
 				</LinkMenuItem>
 				<LinkMenuItem
-					onClick={() => close_menu(menu_info_ref)}
 					href={RoutesLinks.about}
 					c_icon_code={0xE930}>
 					About us
 				</LinkMenuItem>
 				<MenuDivider />
 				<LinkMenuItem
-					onClick={() => close_menu(menu_info_ref)}
 					href={RoutesLinks.privacy}
 					c_icon_code={0xEE51}>
 					Privacy policy
 				</LinkMenuItem>
 				<LinkMenuItem
-					onClick={() => close_menu(menu_info_ref)}
 					href={RoutesLinks.terms}
 					c_icon_code={0xED47}>
 					Terms & conditions
 				</LinkMenuItem>
 				<MenuDivider />
 				<MenuItem
-					onClick={() => {
-						navigator_share({ title: 'Battery', text: 'Battery', url: document.URL })
-						close_menu(menu_info_ref)
-					}}
+					id={button_info_share_id}
 					c_icon_code={0xEE23}>
 					Share
 				</MenuItem>
 				<LinkMenuItem
-					onClick={() => close_menu(menu_info_ref)}
-					href={'mailto:' + ExternalLinks.contact_email + '?subject=' + url_encode('Battery')}
+					href={'mailto:' + ExternalLinks.contact_email + '?subject=' + url_encode('Tasks')}
 					c_icon_code={0xE3A0}>
 					Send feedback
 				</LinkMenuItem>
 				<LinkMenuItem
-					onClick={() => close_menu(menu_info_ref)}
 					href={ExternalLinks.donate}
 					c_new_tab
 					c_icon_code={0xE84B}>
@@ -141,7 +155,25 @@ const _: VoidComponent = () => {
 			</Menu>
 			<Menu
 				ref={r => menu_settings_ref = r}
-				c_on_toggleopen={(v) => set_is_menu_settings_open(v)}>
+				c_on_toggleopen={(v) => set_is_menu_settings_open(v)}
+				onClick={ev => {
+					const button = document_active()!
+					if (!element_valid_target(
+						event_current_target(ev),
+						button,
+						el => element_tagname(el) == 'BUTTON'
+					)) return
+
+					const data_theme = element_dataset(button, 'theme')
+					if (data_theme
+						&& valid_enum_value(data_theme, ThemeData)
+					) return change_theme(data_theme as ThemeData)
+
+					const data_corner = element_dataset(button, 'corner')
+					if (data_corner
+						&& valid_enum_value(data_corner, CornerData)
+					) return change_corner(data_corner as CornerData)
+				}}>
 				<LinkMenuItem
 					c_new_tab
 					href="https://developer.mozilla.org/en-US/docs/Web/API/BatteryManager#browser_compatibility"
@@ -161,19 +193,19 @@ const _: VoidComponent = () => {
 					<MenuItem
 						c_selected={theme() == ThemeData.light}
 						c_icon_code={0xF2CD}
-						onClick={() => change_theme(ThemeData.light)}>
+						data-theme={ThemeData.light}>
 						Light
 					</MenuItem>
 					<MenuItem
 						c_selected={theme() == ThemeData.dark}
 						c_icon_code={0xF2B3}
-						onClick={() => change_theme(ThemeData.dark)}>
+						data-theme={ThemeData.dark}>
 						Dark
 					</MenuItem>
 					<MenuItem
 						c_selected={theme() == ThemeData.system}
 						c_icon_code={0xE96D}
-						onClick={() => change_theme(ThemeData.system)}>
+						data-theme={ThemeData.system}>
 						System theme
 					</MenuItem>
 				</SubMenu>
@@ -188,25 +220,25 @@ const _: VoidComponent = () => {
 					<MenuItem
 						c_selected={corner() == CornerData.sharp}
 						c_icon_code={0xEA99}
-						onClick={() => change_corner(CornerData.sharp)}>
+						data-corner={CornerData.sharp}>
 						Sharp
 					</MenuItem>
 					<MenuItem
 						c_selected={corner() == CornerData.semi_round}
 						c_icon_code={0xEEF7}
-						onClick={() => change_corner(CornerData.semi_round)}>
+						data-corner={CornerData.semi_round}>
 						Semi round
 					</MenuItem>
 					<MenuItem
 						c_selected={corner() == CornerData.round}
 						c_icon_code={0xF044}
-						onClick={() => change_corner(CornerData.round)}>
+						data-corner={CornerData.round}>
 						Round
 					</MenuItem>
 					<MenuItem
 						c_selected={corner() == CornerData.full_round}
 						c_icon_code={0xE408}
-						onClick={() => change_corner(CornerData.full_round)}>
+						data-corner={CornerData.full_round}>
 						Full round
 					</MenuItem>
 				</SubMenu>
@@ -216,27 +248,40 @@ const _: VoidComponent = () => {
 
 	return (<>
 		<AppBar
-			c_leading={<img alt="Battery logo" width={32} src={logo.src} />}
-			c_headline="Battery"
+			c_leading={<img alt={app.name} width={32} src={app.logo_url} />}
+			c_headline={app.name}
+			onClick={ev => {
+				const button = document_active()!
+				if (!element_valid_target(
+					event_current_target(ev),
+					button,
+					el => element_tagname(el) == 'BUTTON'
+				)) return
+
+				switch (element_id(button)) {
+					case button_info_id: {
+						open_menu(ev, menu_info_ref, { anchor: button })
+						break
+					}
+					case button_settings_id: {
+						open_menu(ev, menu_settings_ref, { anchor: button })
+						break
+					}
+				}
+			}}
 			c_trailing={<Tooltip>
 				<IconButton
 					data-tooltip="Info"
 					c_focused={is_menu_info_open()}
+					id={button_info_id}
 					c_code={0xE930}
-					onClick={(ev) => open_menu(ev, menu_info_ref, {
-						anchor: event_current_target(ev),
-						padding: 4,
-					})}
 				/>
 				<IconButton
 					data-tooltip="Settings"
 					class={CSSAnimation.btn_rotate_icon}
 					c_focused={is_menu_settings_open()}
+					id={button_settings_id}
 					c_code={0xEE0F}
-					onClick={(ev) => open_menu(ev, menu_settings_ref, {
-						anchor: event_current_target(ev),
-						padding: 4,
-					})}
 				/>
 			</Tooltip>}
 		/>
