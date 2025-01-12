@@ -369,7 +369,7 @@ const _: VoidComponent<{
 
 				switch (element_id(button)) {
 					case button_info_id: {
-						open_menu(ev, menu_settings_ref, { anchor: button })
+						open_menu(ev, menu_info_ref, { anchor: button })
 						break
 					}
 					case button_settings_id: {
