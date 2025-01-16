@@ -489,7 +489,7 @@ const GradientControl: VoidComponent<{
 					c_trailing={<>
 						<TextFieldButton
 							data-tooltip="Pick color"
-							data-gradientcontrol-pickcolor={array_join([index(), stop.color], ',')}>
+							data-gradientcontrol-pickcolor={array_join([gradient_index(), index(), stop.color], ',')}>
 							<Icon c_code={0xE785} />
 						</TextFieldButton>
 						<Show when={array_length(gradient().color_stop_list) > 2}>
@@ -706,16 +706,19 @@ const _: VoidComponent<{
 						button, 'gradientcontrolPickcolor'
 					)
 					if (data_gradientcontrol_pickcolor) {
-						let [color_stop_index, color] = string_split(
+						let [gradient_index, color_stop_index, color] = string_split(
 							data_gradientcontrol_pickcolor, ','
-						) as [number|string|undefined, string|undefined]
+						) as [number|string|undefined, number|string|undefined, string|undefined]
 						if (!color_stop_index || !color || !is_color_valid(color)) return
 
 						color_stop_index = number_parse(color_stop_index as string, true)
 						if (number_is_not_defined(color_stop_index)) return
 
+						gradient_index = number_parse(gradient_index as string, true)
+						if (number_is_not_defined(gradient_index)) return
+
 						selected_colorstop_index = color_stop_index
-						set_selected_gradient_index(color_stop_index)
+						set_selected_gradient_index(gradient_index)
 						open_colorpicker(ev, colorpicker_ref()!, {
 							color: color as HEXColor,
 							anchor: button
