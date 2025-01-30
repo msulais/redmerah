@@ -309,7 +309,7 @@ const _: Component<{
 								const number_type = number_parse(data_number_type, true)
 								if (
 									number_is_not_defined(number_type)
-									|| valid_enum_value(number_type, NumbersRandomizerNumberType)
+									|| !valid_enum_value(number_type, NumbersRandomizerNumberType)
 								) return
 
 								return change_number_type(data_number_type as unknown as NumbersRandomizerNumberType)
