@@ -87,9 +87,6 @@ const ColorPickerBody: ParentComponent<{
 	let color_dragged: boolean = false
 	let hue_dragged: boolean = false
 	let opacity_dragged: boolean = false
-	let color_pointer_id: number | null = null
-	let hue_pointer_id: number | null = null
-	let opacity_pointer_id: number | null = null
 	let local_color: HEXColor | null = null
 	let local_color_model: 'HEX' | 'RGB' | 'HSL' = 'HEX'
 	let local_hsl: HSLColor = {h: 0, s: 1, l: 0.5}
@@ -229,13 +226,13 @@ const ColorPickerBody: ParentComponent<{
 		set_position(ev.clientX, ev.clientY)
 	}
 
-	function on_pointerup(): void {
+	function on_pointerup(ev: PointerEvent): void {
+		const pointer_id = ev.pointerId
+		if (color_dragged) element_release_pointercapture(color_ref!, pointer_id)
+		if (opacity_dragged) element_release_pointercapture(opacity_ref!, pointer_id)
+		if (hue_dragged) element_release_pointercapture(hue_ref!, pointer_id)
+
 		color_dragged = hue_dragged = opacity_dragged = false
-
-		if (color_pointer_id != null) element_release_pointercapture(color_ref!, color_pointer_id)
-		if (opacity_pointer_id != null) element_release_pointercapture(opacity_ref!, opacity_pointer_id)
-		if (hue_pointer_id != null) element_release_pointercapture(hue_ref!, hue_pointer_id)
-
 		// should be run last because <Modal> will mark this to close
 		// when mouse position outside
 		timeout_set(() => attr_remove(body, BodyAttributes.no_pointer_event))
@@ -249,13 +246,9 @@ const ColorPickerBody: ParentComponent<{
 
 	function init_events() {
 		event_add_listener<CustomEvent>(props.element, ColorPickerEvents.changecolor, on_change_color)
-		event_add_listener<PointerEvent>(document, 'pointermove', on_pointermove)
-		event_add_listener<PointerEvent>(document, 'pointerup', on_pointerup)
 
 		onCleanup(() => {
 			event_remove_listener<CustomEvent>(props.element, ColorPickerEvents.changecolor, on_change_color)
-			event_remove_listener<PointerEvent>(document, 'pointermove', on_pointermove)
-			event_remove_listener<PointerEvent>(document, 'pointerup', on_pointerup)
 		})
 	}
 
@@ -481,13 +474,15 @@ const ColorPickerBody: ParentComponent<{
 				style={{ '--c-color-picker-color': hsl_to_hex({...hsl(), s: 1, l: .5}) }}
 				onPointerDown={(ev) => {
 					const self = event_current_target(ev)
-					color_pointer_id = ev.pointerId
 					color_dragged = true
 					color_rect = element_rect(self)
-					element_set_pointercapture(self, color_pointer_id)
+					element_set_pointercapture(self, ev.pointerId)
 					set_position(ev.clientX, ev.clientY)
 					attr_set(body, BodyAttributes.no_pointer_event)
 				}}
+				onPointerMove={on_pointermove}
+				onPointerUp={on_pointerup}
+				onPointerCancel={on_pointerup}
 				data-c-hsl={attr_set_if_exist(color_model() == 'HSL')}
 				onKeyDown={(ev) => {
 					const code = ev.code
@@ -579,11 +574,13 @@ const ColorPickerBody: ParentComponent<{
 							const self = event_current_target(ev)
 							hue_dragged = true
 							hue_rect = element_rect(self)
-							hue_pointer_id = ev.pointerId
-							element_set_pointercapture(self, hue_pointer_id)
+							element_set_pointercapture(self, ev.pointerId)
 							set_position(ev.clientX, ev.clientY)
 							attr_set(body, BodyAttributes.no_pointer_event)
 						}}
+						onPointerMove={on_pointermove}
+						onPointerUp={on_pointerup}
+						onPointerCancel={on_pointerup}
 						onKeyDown={(ev) => {
 							const code = ev.code
 							const is_arrow_key = (is_disabled_color_control()
@@ -639,11 +636,13 @@ const ColorPickerBody: ParentComponent<{
 							const self = event_current_target(ev)
 							opacity_dragged = true
 							opacity_rect = element_rect(self)
-							opacity_pointer_id = ev.pointerId
-							element_set_pointercapture(self, opacity_pointer_id)
+							element_set_pointercapture(self, ev.pointerId)
 							set_position(ev.clientX, ev.clientY)
 							attr_set(body, BodyAttributes.no_pointer_event)
 						}}
+						onPointerMove={on_pointermove}
+						onPointerUp={on_pointerup}
+						onPointerCancel={on_pointerup}
 						onKeyDown={(ev) => {
 							const code = ev.code
 							const is_arrow_key = (is_disabled_color_control()

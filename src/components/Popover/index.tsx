@@ -8,7 +8,7 @@ import { timeout_clear, timeout_set } from '@/utils/timeout'
 import { attr_has, attr_remove, attr_set, attr_set_if_exist, classlist } from '@/utils/attributes'
 import { element_rect, element_all_by_selector, element_dataset, element_dispatch_event, element_is_same_node, element_client_width, element_animate, element_create, element_set_id, element_append_child, element_set_style, element_set_pointercapture, element_release_pointercapture, element_focus, element_contains } from '@/utils/element'
 import { BodyAttributes } from '@/enums/attributes'
-import { event_add_listener, event_call, event_prevent_default, event_remove_listener, event_target, event_type } from "@/utils/event"
+import { event_add_listener, event_call, event_current_target, event_prevent_default, event_remove_listener, event_target, event_type } from "@/utils/event"
 import { math_abs } from '@/utils/math'
 import { document_body } from '@/utils/document'
 import { window_inner_height } from '@/utils/window'
@@ -246,7 +246,6 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 	const [allow_hide_anchor, set_allow_hide_anchor] = createSignal<boolean>(true)
 	const [attr_open, set_attr_open] = createSignal<boolean>(false)
 	const [attr_open_done, set_attr_open_done] = createSignal<boolean>(false)
-	let pointer_id: number = 0
 	let pointer_x: number = 0
 	let pointer_y: number = 0
 	let is_open: boolean = false
@@ -287,11 +286,11 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 		update_position(ev.clientX, ev.clientY)
 	}
 
-	function on_pointer_up(): void {
+	function on_pointer_up(ev: PointerEvent & {currentTarget: HTMLSpanElement}): void {
 		if (!is_dragging()) return;
 
 		attr_remove(document_body(), BodyAttributes.no_pointer_event)
-		element_release_pointercapture(popover_ref, pointer_id)
+		element_release_pointercapture(event_current_target(ev), ev.pointerId)
 		set_is_dragging(false)
 		fix_position()
 		STOP_GLOBAL_CLICK = true
@@ -307,16 +306,6 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 
 	function custom_on_reposition(_ev: CustomEvent): void {
 		reposition_popover()
-	}
-
-	function add_drag_listener() {
-		event_add_listener<PointerEvent>(document, 'pointermove', on_pointer_move)
-		event_add_listener<PointerEvent>(document, 'pointerup', on_pointer_up)
-	}
-
-	function remove_drag_listener(): void {
-		event_remove_listener<PointerEvent>(document, 'pointermove', on_pointer_move)
-		event_remove_listener<PointerEvent>(document, 'pointerup', on_pointer_up)
 	}
 
 	function init_events(): void {
@@ -446,10 +435,6 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 		position = input_position
 		gap = input_gap
 		padding = input_padding
-
-		// handle drag
-		if (is_draggable() && !draggable) remove_drag_listener()
-		else if (!is_draggable() && draggable) add_drag_listener()
 		set_is_draggable(draggable)
 
 		popover_ref.showPopover()
@@ -808,13 +793,15 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 				onKeyDown={on_move_with_keyboard}
 				onPointerDown={(ev) => {
 					const rect = element_rect(popover_ref)
-					pointer_id = ev.pointerId
-					element_set_pointercapture(popover_ref, pointer_id)
+					element_set_pointercapture(event_current_target(ev), ev.pointerId)
 					set_is_dragging(true)
 					attr_set(document_body(), BodyAttributes.no_pointer_event)
 					diff_position_x = ev.clientX - rect.x
 					diff_position_y = ev.clientY - rect.y
 				}}
+				onPointerCancel={on_pointer_up}
+				onPointerUp={on_pointer_up}
+				onPointerMove={on_pointer_move}
 				onDblClick={() => reposition_popover()}
 			/>
 		</Show>
