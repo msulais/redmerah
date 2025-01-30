@@ -198,7 +198,7 @@ const _: VoidComponent = () => {
 				++iteration
 			}
 
-			array_sort(
+			if ($settings.sort != NumbersRandomizerSort.none) array_sort(
 				numbers,
 				(a, b) => $settings.sort == NumbersRandomizerSort.ascending
 					? a - b
