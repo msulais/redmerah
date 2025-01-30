@@ -9,7 +9,7 @@ import { timeout_clear, timeout_set } from '@/utils/timeout'
 import { attr_has, attr_remove, attr_set, attr_set_if_exist, classlist } from '@/utils/attributes'
 import { element_animate, element_client_width, element_dataset, element_dispatch_event, element_focus, element_is_same_node, element_rect, element_scroll_top, element_all_by_selector, element_append_child, element_create, element_set_id, element_set_style, element_release_pointercapture, element_set_pointercapture } from '@/utils/element'
 import { BodyAttributes } from '@/enums/attributes'
-import { event_add_listener, event_call, event_prevent_default, event_remove_listener, event_target, event_type } from "@/utils/event"
+import { event_add_listener, event_call, event_current_target, event_prevent_default, event_remove_listener, event_target, event_type } from "@/utils/event"
 import { math_abs } from '@/utils/math'
 import { array_at, array_find_index, array_length, array_push, array_some, array_splice } from '@/utils/array'
 import { rect_bottom, rect_height, rect_left, rect_right, rect_top, rect_width } from '@/utils/rect'
@@ -268,7 +268,6 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 	const [attr_open, set_attr_open] = createSignal<boolean>(false)
 	const [attr_open_done, set_attr_open_done] = createSignal<boolean>(false)
 	const [attr_focus, set_attr_focus] = createSignal<boolean>(false)
-	let pointer_id: number = 0
 	let pointer_x: number = 0
 	let pointer_y: number = 0
 	let is_open: boolean = false
@@ -311,11 +310,11 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 		update_position(ev.clientX, ev.clientY)
 	}
 
-	function on_pointer_up(): void {
+	function on_pointer_up(ev: PointerEvent & { currentTarget: HTMLSpanElement }): void {
 		if (!is_dragging()) return;
 
 		attr_remove(document_body(), BodyAttributes.no_pointer_event)
-		element_release_pointercapture(modal_ref, pointer_id)
+		element_release_pointercapture(event_current_target(ev), ev.pointerId)
 		set_is_dragging(false)
 		fix_position()
 		STOP_GLOBAL_CLICK = true
@@ -335,16 +334,6 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 
 	function custom_on_reposition(): void {
 		reposition_modal()
-	}
-
-	function add_drag_listener() {
-		event_add_listener<PointerEvent>(document, 'pointermove', on_pointer_move)
-		event_add_listener<PointerEvent>(document, 'pointerup', on_pointer_up)
-	}
-
-	function remove_drag_listener(): void {
-		event_remove_listener<PointerEvent>(document, 'pointermove', on_pointer_move)
-		event_remove_listener<PointerEvent>(document, 'pointerup', on_pointer_up)
 	}
 
 	function init_events(): void {
@@ -499,10 +488,6 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 		gap = input_gap
 		padding = input_padding
 		important = input_important
-
-		// handle drag
-		if (is_draggable() && !draggable) remove_drag_listener()
-		else if (!is_draggable() && draggable) add_drag_listener()
 		set_is_draggable(draggable)
 
 		modal_ref.showModal()
@@ -877,12 +862,14 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 				onPointerDown={(ev) => {
 					const rect = element_rect(modal_ref)
 					set_is_dragging(true)
-					pointer_id = ev.pointerId
-					element_set_pointercapture(modal_ref, pointer_id)
+					element_set_pointercapture(event_current_target(ev), ev.pointerId)
 					attr_set(document_body(), BodyAttributes.no_pointer_event)
 					diff_position_x = ev.clientX - rect.x
 					diff_position_y = ev.clientY - rect.y
 				}}
+				onPointerUp={on_pointer_up}
+				onPointerCancel={on_pointer_up}
+				onPointerMove={on_pointer_move}
 				onDblClick={() => reposition_modal()}
 			/>
 		</Show>
