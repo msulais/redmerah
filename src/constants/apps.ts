@@ -80,8 +80,8 @@ export const app_sass_converter: AppItem = {
 	description: 'Simplify your SASS/SCSS development process with our powerful online converter. Quickly and accurately translate your code into clean, optimized CSS.',
 	link: RoutesLinks.sass_converter,
 	color: '#FF0056',
-	build_number: 3,
-	build_version: '0.1.0',
+	build_number: 4,
+	build_version: '0.1.1',
 }
 
 export const app_tasks: AppItem = {
