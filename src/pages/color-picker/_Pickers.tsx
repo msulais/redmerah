@@ -1,11 +1,11 @@
 import { createSignal, onCleanup, onMount, type VoidComponent, createMemo, createEffect, Show } from "solid-js"
 
 import type { HSLColor, HEXColor } from "@/types/color"
-import { element_rect } from "@/utils/element"
+import { element_rect, element_release_pointercapture, element_set_pointercapture } from "@/utils/element"
 import { rect_height, rect_left, rect_top, rect_width } from "@/utils/rect"
 import { BodyAttributes } from "@/enums/attributes"
 import { attr_remove, attr_set } from "@/utils/attributes"
-import { event_add_listener, event_remove_listener, event_stop_propagation } from "@/utils/event"
+import { event_current_target, event_stop_propagation } from "@/utils/event"
 import { math_clamp, math_round } from "@/utils/math"
 import { cmyk_to_hsl, get_contrast_ratio, hex_to_hsl, hex_to_rgb, hsl_to_cmyk, hsl_to_hex, hsl_to_hsv, hsl_to_hwb, hsl_to_rgb, hsv_to_hex, hsv_to_hsl, hwb_to_hsl, rgb_to_hsl } from "@/utils/color"
 import { Commands } from "./_enums"
@@ -79,21 +79,10 @@ export const RectanglePicker: VoidComponent<{
 		}
 	}
 
-	function on_pointerup(): void {
-		hue_dragged = false
-		color_dragged = false
-		is_update_locally = false
+	function on_pointerup(ev: PointerEvent & {currentTarget: HTMLDivElement}): void {
+		hue_dragged = color_dragged = is_update_locally = false
+		element_release_pointercapture(event_current_target(ev), ev.pointerId)
 		attr_remove(body, BodyAttributes.no_pointer_event)
-	}
-
-	function init_events(): void {
-		event_add_listener<PointerEvent>(document, 'pointermove', on_pointermove)
-		event_add_listener<PointerEvent>(document, 'pointerup', on_pointerup)
-
-		onCleanup(() => {
-			event_remove_listener<PointerEvent>(document, 'pointermove', on_pointermove)
-			event_remove_listener<PointerEvent>(document, 'pointerup', on_pointerup)
-		})
 	}
 
 	function update_position(): void {
@@ -107,10 +96,6 @@ export const RectanglePicker: VoidComponent<{
 		set_left(s * 100)
 		set_top((1 - v) * 100)
 	}
-
-	onMount(() => {
-		init_events()
-	})
 
 	createEffect(() => {
 		update_position()
@@ -130,10 +115,14 @@ export const RectanglePicker: VoidComponent<{
 				color_rect = element_rect(color_ref)
 				set_left(math_clamp((ev.clientX - rect_left(color_rect)) / rect_width(color_rect) * 100, 0, 100))
 				set_top(math_clamp((ev.clientY - rect_top(color_rect)) / rect_height(color_rect) * 100, 0, 100))
+				element_set_pointercapture(event_current_target(ev), ev.pointerId)
 				attr_set(body, BodyAttributes.no_pointer_event)
 				command(Commands.update_input, get_hsl_color())
 				is_update_locally = false
-			}}>
+			}}
+			onPointerMove={on_pointermove}
+			onPointerCancel={on_pointerup}
+			onPointerUp={on_pointerup}>
 			<div
 				draggable={false}
 				class={CSS.picker_indicator}
@@ -157,10 +146,14 @@ export const RectanglePicker: VoidComponent<{
 				hue_dragged = true
 				hue_rect = element_rect(hue_ref)
 				set_hue(math_clamp((ev.clientX - rect_left(hue_rect)) / rect_width(hue_rect) * 100, 0, 100))
+				element_set_pointercapture(event_current_target(ev), ev.pointerId)
 				attr_set(body, BodyAttributes.no_pointer_event)
 				command(Commands.update_input, get_hsl_color())
 				is_update_locally = false
-			}}>
+			}}
+			onPointerMove={on_pointermove}
+			onPointerCancel={on_pointerup}
+			onPointerUp={on_pointerup}>
 			<div
 				class={CSS.picker_indicator}
 				draggable={false}
@@ -234,21 +227,10 @@ export const RectangleHSLPicker: VoidComponent<{
 		}
 	}
 
-	function on_pointerup(): void {
-		hue_dragged = false
-		color_dragged = false
-		is_update_locally = false
+	function on_pointerup(ev: PointerEvent & {currentTarget: HTMLDivElement}): void {
+		hue_dragged = color_dragged = is_update_locally = false
+		element_release_pointercapture(event_current_target(ev), ev.pointerId)
 		attr_remove(body, BodyAttributes.no_pointer_event)
-	}
-
-	function init_events(): void {
-		event_add_listener<PointerEvent>(document, 'pointermove', on_pointermove)
-		event_add_listener<PointerEvent>(document, 'pointerup', on_pointerup)
-
-		onCleanup(() => {
-			event_remove_listener<PointerEvent>(document, 'pointermove', on_pointermove)
-			event_remove_listener<PointerEvent>(document, 'pointerup', on_pointerup)
-		})
 	}
 
 	function update_position(): void {
@@ -261,10 +243,6 @@ export const RectangleHSLPicker: VoidComponent<{
 		set_left(s * 100)
 		set_top((1 - l) * 100)
 	}
-
-	onMount(() => {
-		init_events()
-	})
 
 	createEffect(() => {
 		update_position()
@@ -287,7 +265,11 @@ export const RectangleHSLPicker: VoidComponent<{
 				attr_set(body, BodyAttributes.no_pointer_event)
 				command(Commands.update_input, get_hsl_color())
 				is_update_locally = false
-			}}>
+				element_set_pointercapture(event_current_target(ev), ev.pointerId)
+			}}
+			onPointerMove={on_pointermove}
+			onPointerUp={on_pointerup}
+			onPointerCancel={on_pointerup}>
 			<div
 				draggable={false}
 				class={CSS.picker_indicator}
@@ -314,7 +296,11 @@ export const RectangleHSLPicker: VoidComponent<{
 				attr_set(body, BodyAttributes.no_pointer_event)
 				command(Commands.update_input, get_hsl_color())
 				is_update_locally = false
-			}}>
+				element_set_pointercapture(event_current_target(ev), ev.pointerId)
+			}}
+			onPointerMove={on_pointermove}
+			onPointerUp={on_pointerup}
+			onPointerCancel={on_pointerup}>
 			<div
 				class={CSS.picker_indicator}
 				draggable={false}
@@ -375,19 +361,10 @@ export const ImagePicker: VoidComponent<{
 		}
 	}
 
-	function on_pointerup(): void {
+	function on_pointerup(ev: PointerEvent & {currentTarget: HTMLDivElement}): void {
 		image_dragged = false
+		element_release_pointercapture(event_current_target(ev), ev.pointerId)
 		attr_remove(body, BodyAttributes.no_pointer_event)
-	}
-
-	function init_events(): void {
-		event_add_listener<PointerEvent>(document, 'pointermove', on_pointermove)
-		event_add_listener<PointerEvent>(document, 'pointerup', on_pointerup)
-
-		onCleanup(() => {
-			event_remove_listener<PointerEvent>(document, 'pointermove', on_pointermove)
-			event_remove_listener<PointerEvent>(document, 'pointerup', on_pointerup)
-		})
 	}
 
 	function init_canvas(): void {
@@ -423,7 +400,6 @@ export const ImagePicker: VoidComponent<{
 	}
 
 	onMount(() => {
-		init_events()
 		init_canvas()
 		init_image()
 	})
@@ -447,7 +423,11 @@ export const ImagePicker: VoidComponent<{
 				pick_color()
 				command(Commands.update_input, get_hsl_color())
 				image_dragged = true
-			}}>
+				element_set_pointercapture(event_current_target(ev), ev.pointerId)
+			}}
+			onPointerMove={on_pointermove}
+			onPointerUp={on_pointerup}
+			onPointerCancel={on_pointerup}>
 			<canvas
 				draggable={false}
 				ref={r => canvas_ref = r}
@@ -543,21 +523,10 @@ export const SpectrumPicker: VoidComponent<{
 		}
 	}
 
-	function on_pointerup(): void {
-		spectrum_dragged = false
-		blackness_dragged = false
-		is_update_locally = false
+	function on_pointerup(ev: PointerEvent & {currentTarget: HTMLDivElement}): void {
+		spectrum_dragged = blackness_dragged = is_update_locally = false
+		element_release_pointercapture(event_current_target(ev), ev.pointerId)
 		attr_remove(body, BodyAttributes.no_pointer_event)
-	}
-
-	function init_events(): void {
-		event_add_listener<PointerEvent>(document, 'pointermove', on_pointermove)
-		event_add_listener<PointerEvent>(document, 'pointerup', on_pointerup)
-
-		onCleanup(() => {
-			event_remove_listener<PointerEvent>(document, 'pointermove', on_pointermove)
-			event_remove_listener<PointerEvent>(document, 'pointerup', on_pointerup)
-		})
 	}
 
 	function update_position(): void {
@@ -572,10 +541,6 @@ export const SpectrumPicker: VoidComponent<{
 		const x = top / 2 + 50
 		set_blackness((100 * (x - (100 * l))) / x)
 	}
-
-	onMount(() => {
-		init_events()
-	})
 
 	createEffect(() => {
 		update_position()
@@ -595,7 +560,11 @@ export const SpectrumPicker: VoidComponent<{
 				attr_set(body, BodyAttributes.no_pointer_event)
 				command(Commands.update_input, get_hsl_color())
 				is_update_locally = false
-			}}>
+				element_set_pointercapture(event_current_target(ev), ev.pointerId)
+			}}
+			onPointerMove={on_pointermove}
+			onPointerUp={on_pointerup}
+			onPointerCancel={on_pointerup}>
 			<div
 				class={CSS.picker_indicator}
 				draggable={false}
@@ -627,7 +596,11 @@ export const SpectrumPicker: VoidComponent<{
 				attr_set(body, BodyAttributes.no_pointer_event)
 				command(Commands.update_input, get_hsl_color())
 				is_update_locally = false
+				element_set_pointercapture(event_current_target(ev), ev.pointerId)
 			}}
+			onPointerMove={on_pointermove}
+			onPointerUp={on_pointerup}
+			onPointerCancel={on_pointerup}
 			style={{'--color': `hsl(${get_hue()}, 100%, ${50 + (top() / 2)}%)`}}>
 			<div
 				class={CSS.picker_indicator}
@@ -710,20 +683,10 @@ export const SliderRGBPicker: VoidComponent<{
 		}
 	}
 
-	function on_pointerup(): void {
-		red_dragged = blue_dragged = green_dragged = false
-		is_update_locally = false
+	function on_pointerup(ev: PointerEvent & {currentTarget: HTMLDivElement}): void {
+		red_dragged = blue_dragged = green_dragged = is_update_locally = false
+		element_release_pointercapture(event_current_target(ev), ev.pointerId)
 		attr_remove(body, BodyAttributes.no_pointer_event)
-	}
-
-	function init_events(): void {
-		event_add_listener<PointerEvent>(document, 'pointermove', on_pointermove)
-		event_add_listener<PointerEvent>(document, 'pointerup', on_pointerup)
-
-		onCleanup(() => {
-			event_remove_listener<PointerEvent>(document, 'pointermove', on_pointermove)
-			event_remove_listener<PointerEvent>(document, 'pointerup', on_pointerup)
-		})
 	}
 
 	function update_position(): void {
@@ -738,10 +701,6 @@ export const SliderRGBPicker: VoidComponent<{
 		set_green(g * 100)
 		set_blue(b * 100)
 	}
-
-	onMount(() => {
-		init_events()
-	})
 
 	createEffect(() => {
 		update_position()
@@ -761,7 +720,11 @@ export const SliderRGBPicker: VoidComponent<{
 				attr_set(body, BodyAttributes.no_pointer_event)
 				command(Commands.update_input, get_hsl_color())
 				is_update_locally = false
-			}}>
+				element_set_pointercapture(event_current_target(ev), ev.pointerId)
+			}}
+			onPointerMove={on_pointermove}
+			onPointerUp={on_pointerup}
+			onPointerCancel={on_pointerup}>
 			<div
 				class={CSS.picker_indicator}
 				draggable={false}
@@ -789,7 +752,11 @@ export const SliderRGBPicker: VoidComponent<{
 				attr_set(body, BodyAttributes.no_pointer_event)
 				command(Commands.update_input, get_hsl_color())
 				is_update_locally = false
-			}}>
+				element_set_pointercapture(event_current_target(ev), ev.pointerId)
+			}}
+			onPointerMove={on_pointermove}
+			onPointerUp={on_pointerup}
+			onPointerCancel={on_pointerup}>
 			<div
 				class={CSS.picker_indicator}
 				draggable={false}
@@ -817,7 +784,11 @@ export const SliderRGBPicker: VoidComponent<{
 				attr_set(body, BodyAttributes.no_pointer_event)
 				command(Commands.update_input, get_hsl_color())
 				is_update_locally = false
-			}}>
+				element_set_pointercapture(event_current_target(ev), ev.pointerId)
+			}}
+			onPointerMove={on_pointermove}
+			onPointerUp={on_pointerup}
+			onPointerCancel={on_pointerup}>
 			<div
 				class={CSS.picker_indicator}
 				draggable={false}
@@ -892,20 +863,10 @@ export const SliderHSLPicker: VoidComponent<{
 		}
 	}
 
-	function on_pointerup(): void {
-		hue_dragged = lightness_dragged = saturation_dragged = false
-		is_update_locally = false
+	function on_pointerup(ev: PointerEvent & {currentTarget: HTMLDivElement}): void {
+		hue_dragged = lightness_dragged = saturation_dragged = is_update_locally = false
+		element_release_pointercapture(event_current_target(ev), ev.pointerId)
 		attr_remove(body, BodyAttributes.no_pointer_event)
-	}
-
-	function init_events(): void {
-		event_add_listener<PointerEvent>(document, 'pointermove', on_pointermove)
-		event_add_listener<PointerEvent>(document, 'pointerup', on_pointerup)
-
-		onCleanup(() => {
-			event_remove_listener<PointerEvent>(document, 'pointermove', on_pointermove)
-			event_remove_listener<PointerEvent>(document, 'pointerup', on_pointerup)
-		})
 	}
 
 	function update_position(): void {
@@ -919,10 +880,6 @@ export const SliderHSLPicker: VoidComponent<{
 		set_saturation(s * 100)
 		set_lightness(l * 100)
 	}
-
-	onMount(() => {
-		init_events()
-	})
 
 	createEffect(() => {
 		update_position()
@@ -942,7 +899,11 @@ export const SliderHSLPicker: VoidComponent<{
 				attr_set(body, BodyAttributes.no_pointer_event)
 				command(Commands.update_input, get_hsl_color())
 				is_update_locally = false
-			}}>
+				element_set_pointercapture(event_current_target(ev), ev.pointerId)
+			}}
+			onPointerMove={on_pointermove}
+			onPointerUp={on_pointerup}
+			onPointerCancel={on_pointerup}>
 			<div
 				class={CSS.picker_indicator}
 				draggable={false}
@@ -970,7 +931,11 @@ export const SliderHSLPicker: VoidComponent<{
 				attr_set(body, BodyAttributes.no_pointer_event)
 				command(Commands.update_input, get_hsl_color())
 				is_update_locally = false
-			}}>
+				element_set_pointercapture(event_current_target(ev), ev.pointerId)
+			}}
+			onPointerMove={on_pointermove}
+			onPointerUp={on_pointerup}
+			onPointerCancel={on_pointerup}>
 			<div
 				class={CSS.picker_indicator}
 				draggable={false}
@@ -998,7 +963,11 @@ export const SliderHSLPicker: VoidComponent<{
 				attr_set(body, BodyAttributes.no_pointer_event)
 				command(Commands.update_input, get_hsl_color())
 				is_update_locally = false
-			}}>
+				element_set_pointercapture(event_current_target(ev), ev.pointerId)
+			}}
+			onPointerMove={on_pointermove}
+			onPointerUp={on_pointerup}
+			onPointerCancel={on_pointerup}>
 			<div
 				class={CSS.picker_indicator}
 				draggable={false}
@@ -1082,20 +1051,10 @@ export const SliderCMYKPicker: VoidComponent<{
 		}
 	}
 
-	function on_pointerup(): void {
-		cyan_dragged = yellow_dragged = magenta_dragged = key_dragged = false
-		is_update_locally = false
+	function on_pointerup(ev: PointerEvent & {currentTarget: HTMLDivElement}): void {
+		cyan_dragged = yellow_dragged = magenta_dragged = key_dragged = is_update_locally = false
+		element_release_pointercapture(event_current_target(ev), ev.pointerId)
 		attr_remove(body, BodyAttributes.no_pointer_event)
-	}
-
-	function init_events(): void {
-		event_add_listener<PointerEvent>(document, 'pointermove', on_pointermove)
-		event_add_listener<PointerEvent>(document, 'pointerup', on_pointerup)
-
-		onCleanup(() => {
-			event_remove_listener<PointerEvent>(document, 'pointermove', on_pointermove)
-			event_remove_listener<PointerEvent>(document, 'pointerup', on_pointerup)
-		})
 	}
 
 	function update_position(): void {
@@ -1111,10 +1070,6 @@ export const SliderCMYKPicker: VoidComponent<{
 		set_yellow(y * 100)
 		set_key(100 - k * 100)
 	}
-
-	onMount(() => {
-		init_events()
-	})
 
 	createEffect(() => {
 		update_position()
@@ -1134,7 +1089,11 @@ export const SliderCMYKPicker: VoidComponent<{
 				attr_set(body, BodyAttributes.no_pointer_event)
 				command(Commands.update_input, get_hsl_color())
 				is_update_locally = false
-			}}>
+				element_set_pointercapture(event_current_target(ev), ev.pointerId)
+			}}
+			onPointerMove={on_pointermove}
+			onPointerUp={on_pointerup}
+			onPointerCancel={on_pointerup}>
 			<div
 				class={CSS.picker_indicator}
 				draggable={false}
@@ -1162,7 +1121,11 @@ export const SliderCMYKPicker: VoidComponent<{
 				attr_set(body, BodyAttributes.no_pointer_event)
 				command(Commands.update_input, get_hsl_color())
 				is_update_locally = false
-			}}>
+				element_set_pointercapture(event_current_target(ev), ev.pointerId)
+			}}
+			onPointerMove={on_pointermove}
+			onPointerUp={on_pointerup}
+			onPointerCancel={on_pointerup}>
 			<div
 				class={CSS.picker_indicator}
 				draggable={false}
@@ -1190,7 +1153,11 @@ export const SliderCMYKPicker: VoidComponent<{
 				attr_set(body, BodyAttributes.no_pointer_event)
 				command(Commands.update_input, get_hsl_color())
 				is_update_locally = false
-			}}>
+				element_set_pointercapture(event_current_target(ev), ev.pointerId)
+			}}
+			onPointerMove={on_pointermove}
+			onPointerUp={on_pointerup}
+			onPointerCancel={on_pointerup}>
 			<div
 				class={CSS.picker_indicator}
 				draggable={false}
@@ -1218,7 +1185,11 @@ export const SliderCMYKPicker: VoidComponent<{
 				attr_set(body, BodyAttributes.no_pointer_event)
 				command(Commands.update_input, get_hsl_color())
 				is_update_locally = false
-			}}>
+				element_set_pointercapture(event_current_target(ev), ev.pointerId)
+			}}
+			onPointerMove={on_pointermove}
+			onPointerUp={on_pointerup}
+			onPointerCancel={on_pointerup}>
 			<div
 				class={CSS.picker_indicator}
 				draggable={false}
@@ -1268,20 +1239,10 @@ export const SliderHEXPicker: VoidComponent<{
 		}
 	}
 
-	function on_pointerup(): void {
-		hex_dragged = false
-		is_update_locally = false
+	function on_pointerup(ev: PointerEvent & {currentTarget: HTMLDivElement}): void {
+		hex_dragged = is_update_locally = false
+		element_release_pointercapture(event_current_target(ev), ev.pointerId)
 		attr_remove(body, BodyAttributes.no_pointer_event)
-	}
-
-	function init_events(): void {
-		event_add_listener<PointerEvent>(document, 'pointermove', on_pointermove)
-		event_add_listener<PointerEvent>(document, 'pointerup', on_pointerup)
-
-		onCleanup(() => {
-			event_remove_listener<PointerEvent>(document, 'pointermove', on_pointermove)
-			event_remove_listener<PointerEvent>(document, 'pointerup', on_pointerup)
-		})
 	}
 
 	function update_position(): void {
@@ -1294,10 +1255,6 @@ export const SliderHEXPicker: VoidComponent<{
 		const hex = number_parse(string_substring(hsl_to_hex(input), 1), true, 16) / 0xffffff
 		set_hex(hex * 100)
 	}
-
-	onMount(() => {
-		init_events()
-	})
 
 	createEffect(() => {
 		update_position()
@@ -1317,7 +1274,11 @@ export const SliderHEXPicker: VoidComponent<{
 				attr_set(body, BodyAttributes.no_pointer_event)
 				command(Commands.update_input, get_hsl_color())
 				is_update_locally = false
-			}}>
+				element_set_pointercapture(event_current_target(ev), ev.pointerId)
+			}}
+			onPointerMove={on_pointermove}
+			onPointerUp={on_pointerup}
+			onPointerCancel={on_pointerup}>
 			<div
 				class={CSS.picker_indicator}
 				draggable={false}
@@ -1392,20 +1353,10 @@ export const SliderHSVPicker: VoidComponent<{
 		}
 	}
 
-	function on_pointerup(): void {
-		hue_dragged = value_dragged = saturation_dragged = false
-		is_update_locally = false
+	function on_pointerup(ev: PointerEvent & {currentTarget: HTMLDivElement}): void {
+		hue_dragged = value_dragged = saturation_dragged = is_update_locally = false
+		element_release_pointercapture(event_current_target(ev), ev.pointerId)
 		attr_remove(body, BodyAttributes.no_pointer_event)
-	}
-
-	function init_events(): void {
-		event_add_listener<PointerEvent>(document, 'pointermove', on_pointermove)
-		event_add_listener<PointerEvent>(document, 'pointerup', on_pointerup)
-
-		onCleanup(() => {
-			event_remove_listener<PointerEvent>(document, 'pointermove', on_pointermove)
-			event_remove_listener<PointerEvent>(document, 'pointerup', on_pointerup)
-		})
 	}
 
 	function update_position(): void {
@@ -1420,10 +1371,6 @@ export const SliderHSVPicker: VoidComponent<{
 		set_saturation(s * 100)
 		set_value(v * 100)
 	}
-
-	onMount(() => {
-		init_events()
-	})
 
 	createEffect(() => {
 		update_position()
@@ -1443,7 +1390,11 @@ export const SliderHSVPicker: VoidComponent<{
 				attr_set(body, BodyAttributes.no_pointer_event)
 				command(Commands.update_input, get_hsl_color())
 				is_update_locally = false
-			}}>
+				element_set_pointercapture(event_current_target(ev), ev.pointerId)
+			}}
+			onPointerMove={on_pointermove}
+			onPointerUp={on_pointerup}
+			onPointerCancel={on_pointerup}>
 			<div
 				class={CSS.picker_indicator}
 				draggable={false}
@@ -1471,7 +1422,11 @@ export const SliderHSVPicker: VoidComponent<{
 				attr_set(body, BodyAttributes.no_pointer_event)
 				command(Commands.update_input, get_hsl_color())
 				is_update_locally = false
-			}}>
+				element_set_pointercapture(event_current_target(ev), ev.pointerId)
+			}}
+			onPointerMove={on_pointermove}
+			onPointerUp={on_pointerup}
+			onPointerCancel={on_pointerup}>
 			<div
 				class={CSS.picker_indicator}
 				draggable={false}
@@ -1499,7 +1454,11 @@ export const SliderHSVPicker: VoidComponent<{
 				attr_set(body, BodyAttributes.no_pointer_event)
 				command(Commands.update_input, get_hsl_color())
 				is_update_locally = false
-			}}>
+				element_set_pointercapture(event_current_target(ev), ev.pointerId)
+			}}
+			onPointerMove={on_pointermove}
+			onPointerUp={on_pointerup}
+			onPointerCancel={on_pointerup}>
 			<div
 				class={CSS.picker_indicator}
 				draggable={false}
@@ -1576,20 +1535,10 @@ export const SliderHWBPicker: VoidComponent<{
 		}
 	}
 
-	function on_pointerup(): void {
-		hue_dragged = blackness_dragged = whiteness_dragged = false
-		is_update_locally = false
+	function on_pointerup(ev: PointerEvent & {currentTarget: HTMLDivElement}): void {
+		hue_dragged = blackness_dragged = whiteness_dragged = is_update_locally = false
+		element_release_pointercapture(event_current_target(ev), ev.pointerId)
 		attr_remove(body, BodyAttributes.no_pointer_event)
-	}
-
-	function init_events(): void {
-		event_add_listener<PointerEvent>(document, 'pointermove', on_pointermove)
-		event_add_listener<PointerEvent>(document, 'pointerup', on_pointerup)
-
-		onCleanup(() => {
-			event_remove_listener<PointerEvent>(document, 'pointermove', on_pointermove)
-			event_remove_listener<PointerEvent>(document, 'pointerup', on_pointerup)
-		})
 	}
 
 	function update_position(): void {
@@ -1604,10 +1553,6 @@ export const SliderHWBPicker: VoidComponent<{
 		set_whiteness(w * 100)
 		set_blackness(b * 100)
 	}
-
-	onMount(() => {
-		init_events()
-	})
 
 	createEffect(() => {
 		update_position()
@@ -1626,7 +1571,11 @@ export const SliderHWBPicker: VoidComponent<{
 				set_hue(math_clamp((ev.clientX - rect_left(hue_rect)) / rect_width(hue_rect) * 100, 0, 100))
 				attr_set(body, BodyAttributes.no_pointer_event)
 				command(Commands.update_input, get_hsl_color())
-			}}>
+				element_set_pointercapture(event_current_target(ev), ev.pointerId)
+			}}
+			onPointerMove={on_pointermove}
+			onPointerUp={on_pointerup}
+			onPointerCancel={on_pointerup}>
 			<div
 				class={CSS.picker_indicator}
 				draggable={false}
@@ -1655,7 +1604,11 @@ export const SliderHWBPicker: VoidComponent<{
 				attr_set(body, BodyAttributes.no_pointer_event)
 				command(Commands.update_input, get_hsl_color())
 				is_update_locally = false
-			}}>
+				element_set_pointercapture(event_current_target(ev), ev.pointerId)
+			}}
+			onPointerMove={on_pointermove}
+			onPointerUp={on_pointerup}
+			onPointerCancel={on_pointerup}>
 			<div
 				class={CSS.picker_indicator}
 				draggable={false}
@@ -1684,7 +1637,11 @@ export const SliderHWBPicker: VoidComponent<{
 				attr_set(body, BodyAttributes.no_pointer_event)
 				command(Commands.update_input, get_hsl_color())
 				is_update_locally = false
-			}}>
+				element_set_pointercapture(event_current_target(ev), ev.pointerId)
+			}}
+			onPointerMove={on_pointermove}
+			onPointerUp={on_pointerup}
+			onPointerCancel={on_pointerup}>
 			<div
 				class={CSS.picker_indicator}
 				draggable={false}

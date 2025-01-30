@@ -11,7 +11,7 @@ import { IFRAME_PREVIEW_ID, MIN_EDITOR_WIDTH } from "./_constants"
 import { window_matches } from "@/utils/window"
 import { document_active, document_body } from "@/utils/document"
 import { string_replace } from "@/utils/string"
-import { element_id, element_tagname, element_valid_target } from "@/utils/element"
+import { element_id, element_release_pointercapture, element_set_pointercapture, element_tagname, element_valid_target } from "@/utils/element"
 
 import Button, { ButtonVariant } from "@/components/Button"
 import CSS from './_styles.module.scss'
@@ -63,21 +63,16 @@ const _: VoidComponent<{
 		}, 500)
 	}
 
-	function update_width(width: number): void {
+	function on_pointer_move(ev: PointerEvent): void {
 		if (!is_dragging()) return;
-		set_width(width)
+
+		set_width(ev.clientX)
 	}
 
-	function close_drag(): void {
+	function on_pointer_up(ev: PointerEvent & {currentTarget: HTMLDivElement}): void {
 		set_is_dragging(false)
 		attr_remove(body, BodyAttributes.no_pointer_event)
-	}
-
-	function init_events(): void {
-		event_add_listener<TouchEvent>(document, 'touchmove', ev => update_width(ev.touches[0].clientX))
-		event_add_listener<TouchEvent>(document, 'touchend', () => close_drag())
-		event_add_listener<MouseEvent>(document, 'mousemove', ev => update_width(ev.clientX))
-		event_add_listener<MouseEvent>(document, 'mouseup', () => close_drag())
+		element_release_pointercapture(event_current_target(ev), ev.pointerId)
 	}
 
 	function init_smallscreen_listener(): void {
@@ -100,7 +95,6 @@ const _: VoidComponent<{
 	}
 
 	onMount(() => {
-		init_events()
 		init_smallscreen_listener()
 	})
 
@@ -221,16 +215,15 @@ const _: VoidComponent<{
 				<div
 					data-g-keep-pointer-event={attr_set_if_exist(is_dragging())}
 					class={CSS.body_drag_handle}
-					onMouseDown={(ev) => {
+					onPointerDown={(ev) => {
 						attr_set(body, BodyAttributes.no_pointer_event)
 						set_width(ev.clientX)
 						set_is_dragging(true)
+						element_set_pointercapture(event_current_target(ev), ev.pointerId)
 					}}
-					onTouchStart={(ev) => {
-						set_is_dragging(true)
-						attr_set(body, BodyAttributes.no_pointer_event)
-						set_width(ev.touches[0].clientX)
-					}}
+					onPointerCancel={on_pointer_up}
+					onPointerUp={on_pointer_up}
+					onPointerMove={on_pointer_move}
 					onDblClick={() => set_width(null)}
 				/>
 			</Show>

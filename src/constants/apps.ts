@@ -40,8 +40,8 @@ export const app_color_gradient: AppItem = {
 	description: 'Design beautiful color gradients with our intuitive app. Choose from linear and radial gradients, and stack them for complex effects. Generate clean CSS code to implement your designs.',
 	link: RoutesLinks.color_gradient,
 	color: '#F5FF00',
-	build_number: 3,
-	build_version: '0.0.4',
+	build_number: 4,
+	build_version: '0.0.5',
 }
 
 export const app_qr_code: AppItem = {
@@ -80,8 +80,8 @@ export const app_sass_converter: AppItem = {
 	description: 'Simplify your SASS/SCSS development process with our powerful online converter. Quickly and accurately translate your code into clean, optimized CSS.',
 	link: RoutesLinks.sass_converter,
 	color: '#FF0056',
-	build_number: 3,
-	build_version: '0.1.0',
+	build_number: 4,
+	build_version: '0.1.1',
 }
 
 export const app_tasks: AppItem = {
@@ -130,8 +130,8 @@ export const app_markdown_converter: AppItem = {
 	description: 'Convert markdown to HTML effortlessly with our online markdown converter. Create beautifully formatted web content from plain text using our user-friendly tool.',
 	link: RoutesLinks.markdown_converter,
 	color: '#01B92A',
-	build_number: 7,
-	build_version: '0.1.7',
+	build_number: 8,
+	build_version: '0.1.8',
 }
 
 export const app_color_picker: AppItem = {
@@ -140,8 +140,8 @@ export const app_color_picker: AppItem = {
 	description: 'Quickly and easily pick the perfect color with our online color picker tool.',
 	link: RoutesLinks.color_picker,
 	color: '#FF0401',
-	build_number: 2,
-	build_version: '0.0.3',
+	build_number: 3,
+	build_version: '0.0.4',
 }
 
 export const apps: AppItem[] = [

@@ -1,13 +1,13 @@
-import { createMemo, createSignal, createUniqueId, For, onMount, Show, type VoidComponent } from "solid-js"
+import { createMemo, createSignal, createUniqueId, For, Show, type VoidComponent } from "solid-js"
 import { createStore } from "solid-js/store"
 
 import type { Gradient, GradientData, RadialGradient, Settings } from "./_type"
 import type { HEXColor } from "@/types/color"
 import { ColorModel, Commands, GradientType, HueInterpolationMethod, PolarColorSpace, RadialGradientShape } from "./_enums"
 import { attr_remove, attr_set, attr_set_if_exist } from "@/utils/attributes"
-import { event_add_listener, event_current_target } from "@/utils/event"
+import { event_current_target } from "@/utils/event"
 import { BodyAttributes } from "@/enums/attributes"
-import { element_dataset, element_id, element_rect, element_tagname, element_valid_target } from "@/utils/element"
+import { element_dataset, element_id, element_rect, element_release_pointercapture, element_set_pointercapture, element_tagname, element_valid_target } from "@/utils/element"
 import { math_clamp, math_round } from "@/utils/math"
 import { convert_color_by_color_model, gradient_to_css_text } from "./_utils"
 import { hsl_to_hex, is_color_valid, rgb_to_hex } from "@/utils/color"
@@ -178,6 +178,8 @@ const GradientControl: VoidComponent<{
 	pointer_position: PointerPosition
 	command(type: Commands, ...args: unknown[]): unknown
 	on_start_drag(gradient_element: HTMLDivElement, position: PointerPosition, colorstop_index: number): void
+	on_pointer_up(ev: PointerEvent & {currentTarget: HTMLDivElement}): unknown
+	on_pointer_move(ev: PointerEvent & {currentTarget: HTMLDivElement}): unknown
 }> = (props) => {
 	const [expanded, set_expanded] = createSignal<boolean>(false)
 	const [selected_colorstop_index, set_selected_colorstop_index] = createSignal<number>(-1)
@@ -201,7 +203,11 @@ const GradientControl: VoidComponent<{
 			<For each={gradient().color_stop_list}>{(stop, index) =>
 				<div style={{left: stop.size + '%'}}>
 					<div
-						onMouseDown={ev => {
+						onPointerUp={ev => props.on_pointer_up(ev)}
+						onPointerCancel={ev => props.on_pointer_up(ev)}
+						onPointerMove={ev => props.on_pointer_move(ev)}
+						onPointerDown={ev => {
+							element_set_pointercapture(event_current_target(ev), ev.pointerId)
 							props.on_start_drag(
 								div_gradient_ref,
 								{ x: ev.clientX, y: ev.clientY },
@@ -220,14 +226,6 @@ const GradientControl: VoidComponent<{
 							&& selected_colorstop_index() == index()
 							&& props.is_dragging
 						)}
-						onTouchStart={ev => {
-							props.on_start_drag(
-								div_gradient_ref,
-								{ x: ev.touches[0].clientX, y: ev.touches[0].clientY },
-								index()
-							)
-							set_selected_colorstop_index(index())
-						}}
 						style={{"background-color": stop.color}}
 						data-length={is_conic_gradient()
 							? `${math_round(stop.size / 100 * 360)}°`
@@ -563,33 +561,17 @@ const _: VoidComponent<{
 		command(Commands.change_color_stop_length, selected_gradient_index(), selected_colorstop_index, length)
 	}
 
-	function on_touch_move(ev: TouchEvent): void {
-		if (!is_dragging()) return;
-		set_pointer_position({x: ev.touches[0].clientX, y: ev.touches[0].clientY})
-		update_position()
-	}
-
-	function on_mouse_move(ev: MouseEvent): void {
+	function on_pointer_move(ev: PointerEvent): void {
 		if (!is_dragging()) return;
 		set_pointer_position({x: ev.clientX, y: ev.clientY})
 		update_position()
 	}
 
-	function on_pointer_up(): void {
+	function on_pointer_up(ev: PointerEvent & {currentTarget: HTMLDivElement}): void {
 		set_is_dragging(false)
+		element_release_pointercapture(event_current_target(ev), ev.pointerId)
 		attr_remove(body, BodyAttributes.no_pointer_event)
 	}
-
-	function init_listener() {
-		event_add_listener<TouchEvent>(doc, 'touchmove', on_touch_move)
-		event_add_listener<TouchEvent>(doc, 'touchend', on_pointer_up)
-		event_add_listener<MouseEvent>(doc, 'mousemove', on_mouse_move)
-		event_add_listener<MouseEvent>(doc, 'mouseup', on_pointer_up)
-	}
-
-	onMount(() => {
-		init_listener()
-	})
 
 	const ColorPickers: VoidComponent = () => (<>
 		<ColorPicker
@@ -809,6 +791,8 @@ const _: VoidComponent<{
 							is_dragging={is_dragging()}
 							gradient_index={index()}
 							pointer_position={pointer_position}
+							on_pointer_move={on_pointer_move}
+							on_pointer_up={on_pointer_up}
 							on_start_drag={(gradient_el, pointer, colorStopIndex) => {
 								selected_gradient_element_rect = element_rect(gradient_el)
 								selected_colorstop_index = colorStopIndex
