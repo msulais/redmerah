@@ -130,8 +130,8 @@ export const app_markdown_converter: AppItem = {
 	description: 'Convert markdown to HTML effortlessly with our online markdown converter. Create beautifully formatted web content from plain text using our user-friendly tool.',
 	link: RoutesLinks.markdown_converter,
 	color: '#01B92A',
-	build_number: 7,
-	build_version: '0.1.7',
+	build_number: 8,
+	build_version: '0.1.8',
 }
 
 export const app_color_picker: AppItem = {
