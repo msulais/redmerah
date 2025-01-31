@@ -10,6 +10,8 @@ import { is_number } from "@/utils/typecheck"
 
 import './index.scss'
 
+const FOCUSABLEGROUP_CLASSNAME = 'c-focusable-group'
+
 type FocusableGroupProps = JSX.HTMLAttributes<HTMLDivElement> & {
 	/**
 	 * if `true`, the default behaviour of `'keydown'` event
@@ -37,7 +39,7 @@ const FocusableGroup: ParentComponent<FocusableGroupProps> = ($props) => {
 	let timeout_id: number | null = null
 
 	return <div
-		class={classlist("c-focusable-group", props.class)}
+		class={classlist(FOCUSABLEGROUP_CLASSNAME, props.class)}
 		onFocusIn={ev => {
 			event_call(ev, props.onFocusIn)
 			const self = event_current_target(ev)
@@ -107,7 +109,8 @@ const FocusableGroup: ParentComponent<FocusableGroupProps> = ($props) => {
 }
 
 export {
-	FocusableGroup
+	FocusableGroup,
+	FOCUSABLEGROUP_CLASSNAME
 }
 export type {
 	FocusableGroupProps

@@ -15,7 +15,7 @@ import Button, { ButtonIndicatorPosition, ButtonVariant, LinkButton, type Button
 import Popover, { close_popover, is_popover_open, open_popover, type PopoverProps, reposition_popover, PopoverPosition as SubMenuPosition } from "@/components/Popover"
 import Modal, { type ModalProps, close_modal, focus_modal, is_modal_open, ModalPosition as MenuPosition, open_modal, reposition_modal } from "@/components/Modal"
 import { RawSwitch, type RawSwitchProps } from "@/components/Switch"
-import FocusableGroup from "@/components/FocusableGroup"
+import FocusableGroup, { FOCUSABLEGROUP_CLASSNAME } from "@/components/FocusableGroup"
 import './index.scss'
 
 const SUBMENU_CLASSNAME = 'c-submenu'
@@ -227,9 +227,9 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 	let is_open: boolean = false
 
 	function close_submenu_descendant(): void {
-		const div = element_first_child(popover_ref)!
-		const div_focusablegroup = element_first_child(div)!
-		for (const el of element_children(div_focusablegroup) as unknown as HTMLElement[]) {
+		let div = element_first_child(popover_ref)!
+		if (element_classlist_contains(element_first_child(div)!, FOCUSABLEGROUP_CLASSNAME)) div = element_first_child(div)!
+		for (const el of element_children(div) as unknown as HTMLElement[]) {
 			if (!element_classlist_contains(el, SUBMENU_CLASSNAME)) continue;
 
 			close_popover(element_last_child(el) as HTMLDivElement)
@@ -347,9 +347,9 @@ const Menu: ParentComponent<MenuProps> = ($props) => {
 	let menu_ref: HTMLDialogElement
 
 	function close_submenu_descendant(): void {
-		const div = element_first_child(menu_ref)!
-		const div_focusablegroup = element_first_child(div)!
-		for (const el of element_children(div_focusablegroup) as unknown as HTMLElement[]) {
+		let div = element_first_child(menu_ref)!
+		if (element_classlist_contains(element_first_child(div)!, FOCUSABLEGROUP_CLASSNAME)) div = element_first_child(div)!
+		for (const el of element_children(div) as unknown as HTMLElement[]) {
 			if (!element_classlist_contains(el, SUBMENU_CLASSNAME)) continue
 
 			close_popover(element_last_child(el) as HTMLDivElement)
@@ -400,9 +400,9 @@ const PopoverMenu: ParentComponent<PopoverMenuProps> = ($props) => {
 	let menu_ref: HTMLDivElement
 
 	function close_submenu_descendant(): void {
-		const div = element_first_child(menu_ref)!
-		const div_focusablegroup = element_first_child(div)!
-		for (const el of element_children(div_focusablegroup) as unknown as HTMLElement[]) {
+		let div = element_first_child(menu_ref)!
+		if (element_classlist_contains(element_first_child(div)!, FOCUSABLEGROUP_CLASSNAME)) div = element_first_child(div)!
+		for (const el of element_children(div) as unknown as HTMLElement[]) {
 			if (!element_classlist_contains(el, SUBMENU_CLASSNAME)) continue
 
 			close_popover(element_last_child(el) as HTMLDivElement)
