@@ -227,8 +227,11 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 	let is_open: boolean = false
 
 	function close_submenu_descendant(): void {
-		for (const el of element_children(element_first_child(popover_ref)!) as unknown as HTMLElement[]) {
+		const div = element_first_child(popover_ref)!
+		const div_focusablegroup = element_first_child(div)!
+		for (const el of element_children(div_focusablegroup) as unknown as HTMLElement[]) {
 			if (!element_classlist_contains(el, SUBMENU_CLASSNAME)) continue;
+
 			close_popover(element_last_child(el) as HTMLDivElement)
 		}
 	}
@@ -344,8 +347,11 @@ const Menu: ParentComponent<MenuProps> = ($props) => {
 	let menu_ref: HTMLDialogElement
 
 	function close_submenu_descendant(): void {
-		for (const el of element_children(element_first_child(menu_ref)!) as unknown as HTMLElement[]) {
+		const div = element_first_child(menu_ref)!
+		const div_focusablegroup = element_first_child(div)!
+		for (const el of element_children(div_focusablegroup) as unknown as HTMLElement[]) {
 			if (!element_classlist_contains(el, SUBMENU_CLASSNAME)) continue
+
 			close_popover(element_last_child(el) as HTMLDivElement)
 		}
 	}
@@ -394,8 +400,11 @@ const PopoverMenu: ParentComponent<PopoverMenuProps> = ($props) => {
 	let menu_ref: HTMLDivElement
 
 	function close_submenu_descendant(): void {
-		for (const el of element_children(element_first_child(menu_ref)!) as unknown as HTMLElement[]) {
+		const div = element_first_child(menu_ref)!
+		const div_focusablegroup = element_first_child(div)!
+		for (const el of element_children(div_focusablegroup) as unknown as HTMLElement[]) {
 			if (!element_classlist_contains(el, SUBMENU_CLASSNAME)) continue
+
 			close_popover(element_last_child(el) as HTMLDivElement)
 		}
 	}
