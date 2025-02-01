@@ -1,11 +1,11 @@
-import { type Component, type JSX, type ParentComponent, Show, mergeProps, splitProps, type VoidComponent, For, children, createUniqueId, createMemo } from "solid-js"
+import { type Component, type JSX, type ParentComponent, Show, mergeProps, splitProps, type VoidComponent, For, children, createUniqueId, createMemo, createContext, useContext, type Accessor, createSignal, createEffect } from "solid-js"
 import { mergeRefs } from "@solid-primitives/refs"
 
 import { attr_set_if_exist, classlist } from "@/utils/attributes"
 import { object_has_value } from "@/utils/object"
 import { event_call, event_prevent_default } from "@/utils/event"
 import { timeout_clear, timeout_set, wait } from "@/utils/timeout"
-import { element_children, element_classlist_contains, element_first_child, element_is_same_node, element_last_child, element_parent } from "@/utils/element"
+import { element_all_by_selector, element_first_child } from "@/utils/element"
 import { KEY_ARROW_DOWN, KEY_ARROW_UP } from "@/constants/key_code"
 import { AppColors } from "@/enums/colors"
 
@@ -15,10 +15,17 @@ import Button, { ButtonIndicatorPosition, ButtonVariant, LinkButton, type Button
 import Popover, { close_popover, is_popover_open, open_popover, type PopoverProps, reposition_popover, PopoverPosition as SubMenuPosition } from "@/components/Popover"
 import Modal, { type ModalProps, close_modal, focus_modal, is_modal_open, ModalPosition as MenuPosition, open_modal, reposition_modal } from "@/components/Modal"
 import { RawSwitch, type RawSwitchProps } from "@/components/Switch"
-import FocusableGroup, { FOCUSABLEGROUP_CLASSNAME } from "@/components/FocusableGroup"
+import FocusableGroup from "@/components/FocusableGroup"
 import './index.scss'
 
 const SUBMENU_CLASSNAME = 'c-submenu'
+
+type MenuContextProps = {
+	parent_id: string
+	is_pointer_hover_parent: Accessor<boolean>
+} | undefined
+
+const MenuContext = createContext<MenuContextProps>()
 
 type MenuItemTrailingShortcutProps = JSX.HTMLAttributes<HTMLDivElement> & {
 	c_shortcuts: string[]
@@ -204,118 +211,207 @@ type SubMenuProps = PopoverProps & {
 	c_children_auto_tabindex?: boolean
 }
 
-// TODO: improvise close or open of submenu
 const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 	const $$props = mergeProps({
-		c_children_auto_tabindex: true
+		c_children_auto_tabindex: true,
+		id: createUniqueId()
 	}, $props)
 	const [props, other] = splitProps($$props, [
 		'classList', 'c_item', 'c_attr_wrapper',
-		'id', 'ref', 'c_gap', 'c_position',
+		'ref', 'c_gap', 'c_position', 'c_use_portal',
 		'c_padding', 'c_draggable', 'c_allow_hide_anchor',
 		'c_on_toggleopen', 'children', 'c_on_beforeclose',
-		'c_use_portal', 'c_children_auto_tabindex'
+		'c_children_auto_tabindex', 'onPointerEnter',
+		'onPointerLeave'
 	])
 	const [wrapper_props, wrapper_props_other] = splitProps(props.c_attr_wrapper ?? {}, [
-		'class', 'onClick','onPointerEnter',
-		'onPointerLeave', 'ref'
+		'class', 'onClick','onPointerEnter', 'ref',
+		'onPointerLeave'
 	])
-	const content = children(() => props.children)
+	const [is_hover, set_is_hover] = createSignal<boolean>(false)
+	const context = useContext(MenuContext)
+	const parent_id = context?.parent_id ?? undefined
 	let timeout_id: number | null = null
 	let div_ref: HTMLDivElement
 	let popover_ref: HTMLDivElement
 	let is_open: boolean = false
 
 	function close_submenu_descendant(): void {
-		let div = element_first_child(popover_ref)!
-		if (element_classlist_contains(element_first_child(div)!, FOCUSABLEGROUP_CLASSNAME)) div = element_first_child(div)!
-		for (const el of element_children(div) as unknown as HTMLElement[]) {
-			if (!element_classlist_contains(el, SUBMENU_CLASSNAME)) continue;
-
-			close_popover(element_last_child(el) as HTMLDivElement)
+		for (const popover of element_all_by_selector(`[data-c-menu-parent="${other.id}"]`)) {
+			close_popover(popover as HTMLDivElement)
 		}
 	}
 
-	function cancel_timeout(): void {
-		if (timeout_id == null) return;
+	function close_submenu(instant?: boolean): void {
+		if (timeout_id !== null) timeout_clear(timeout_id)
 
-		timeout_clear(timeout_id)
-		timeout_id = null
+		timeout_id = timeout_set(() => {
+			close_popover(popover_ref)
+			close_submenu_descendant()
+			timeout_id = null
+		}, instant? 0 : 800)
 	}
 
-	async function open(ev: Event): Promise<void> {
-		if (is_open) return;
+	function open_submenu(ev: Event, instant?: boolean): void {
+		if (is_open) return
 
-		let some_submenu_open = false;
-		const first_child = element_first_child(div_ref)
-		if (!first_child) return
+		if (timeout_id !== null) timeout_clear(timeout_id)
+		timeout_id = timeout_set(async () => {
+			const first_child = element_first_child(div_ref)
+			if (!first_child) return
 
-		for (const el of (element_parent(div_ref)?.children ?? []) as HTMLElement[]) {
-			if (!element_classlist_contains(el, SUBMENU_CLASSNAME) || element_is_same_node(el, div_ref)) continue
+			let removed = false
+			const siblings = element_all_by_selector<HTMLDivElement>(`[data-c-menu-parent=${parent_id}]:not(#${other.id})`)
+			for (const submenu of siblings) {
+				removed = true
+				close_popover(submenu)
+			}
 
-			const popover = element_last_child(el) as HTMLDivElement
-			const isOpen = is_popover_open(popover)
-			if (!some_submenu_open && isOpen) some_submenu_open = true
-			if (isOpen) close_popover(popover)
+			if (removed) await wait(500) // wait for animation end
+			open_popover(ev, popover_ref, {
+				anchor: first_child,
+				position: props.c_position ?? SubMenuPosition.right_center_to_bottom,
+				gap: props.c_gap ?? -8,
+				padding: props.c_padding ?? 5,
+				draggable: props.c_draggable,
+				allow_hide_anchor: props.c_allow_hide_anchor,
+				manual_dismiss: true
+			})
+			timeout_id = null
+		}, instant? 0 : 200)
+	}
+
+	createEffect(() => {
+		const is_pointer_hover_parent = context?.is_pointer_hover_parent?.() ?? false
+
+		if (is_pointer_hover_parent && !is_hover()) {
+			close_submenu()
 		}
-
-		// wait for close animation done
-		if (some_submenu_open) await wait(500)
-
-		open_popover(ev, popover_ref, {
-			anchor: first_child,
-			position: props.c_position ?? SubMenuPosition.right_center_to_bottom,
-			gap: props.c_gap ?? -8,
-			padding: props.c_padding ?? 5,
-			draggable: props.c_draggable,
-			allow_hide_anchor: props.c_allow_hide_anchor,
-			manual_dismiss: true
-		})
-	}
+		else if (timeout_id !== null) {
+			timeout_clear(timeout_id)
+			timeout_id = null
+		}
+	})
 
 	return (<div
 		class={classlist(SUBMENU_CLASSNAME, wrapper_props.class)}
 		ref={mergeRefs(wrapper_props.ref, r => div_ref = r)}
-		onClick={(ev) => {
-			cancel_timeout()
-			open(ev)
-			event_call(ev, wrapper_props.onClick)
-		}}
-		onPointerEnter={(ev) => {
-			cancel_timeout()
-			timeout_id = timeout_set(() => {
-				open(ev)
-				timeout_id = null
-			}, 300)
+		onPointerEnter={ev => {
 			event_call(ev, wrapper_props.onPointerEnter)
+			open_submenu(ev)
 		}}
-		onPointerLeave={(ev) => {
-			cancel_timeout()
-			timeout_id = timeout_set(() => {
-				close_popover(popover_ref)
-				timeout_id = null
-			}, 500)
+		onPointerLeave={ev => {
 			event_call(ev, wrapper_props.onPointerLeave)
+			close_submenu()
+		}}
+		onClick={ev => {
+			event_call(ev, wrapper_props.onClick)
+			open_submenu(ev, true)
 		}}
 		{...wrapper_props_other}>
 		{props.c_item}
-		<Popover
-			c_use_portal={false}
-			c_on_toggleopen={$is_open => {
-				is_open = $is_open
-				props.c_on_toggleopen?.($is_open)
+		<MenuContext.Provider value={{
+			parent_id: other.id,
+			is_pointer_hover_parent: () => is_hover()
+		}}>
+			<Popover
+				c_use_portal={false}
+				data-c-menu-parent={parent_id}
+				c_on_toggleopen={$is_open => {
+					is_open = $is_open
+					props.c_on_toggleopen?.($is_open)
+				}}
+				c_on_beforeclose={() => {
+					close_submenu_descendant()
+					props.c_on_beforeclose?.()
+				}}
+				onPointerEnter={ev => {
+					event_call(ev, props.onPointerEnter)
+					set_is_hover(true)
+				}}
+				onPointerLeave={ev => {
+					event_call(ev, props.onPointerLeave)
+					set_is_hover(false)
+				}}
+				ref={mergeRefs(props.ref, r => popover_ref = r)}
+				classList={{
+					'c-menu': true,
+					...props.classList
+				}}
+				{...other}>
+				<Show when={props.c_children_auto_tabindex} fallback={props.children}>
+					<FocusableGroup c_arrow_options={{
+						up: 'prev',
+						down: 'next'
+					}}
+					onKeyDown={ev => {
+						const code = ev.code
+						if (code != KEY_ARROW_UP && code != KEY_ARROW_DOWN) return
+
+						event_prevent_default(ev)
+					}}>{props.children}</FocusableGroup>
+				</Show>
+			</Popover>
+		</MenuContext.Provider>
+	</div>)
+}
+
+type MenuProps = ModalProps & {
+	c_children_auto_tabindex?: boolean
+}
+const Menu: ParentComponent<MenuProps> = ($props) => {
+	const $$props = mergeProps({
+		c_children_auto_tabindex: true,
+		id: createUniqueId()
+	}, $props)
+	const [props, other] = splitProps($$props, [
+		'classList', 'c_gap', 'c_padding', 'c_content_auto_focus',
+		'c_on_beforeclose', 'children', 'c_children_auto_tabindex',
+		'c_attr_content_wrapper'
+	])
+	const [content_wrapper_props, content_wrapper_props_other] = splitProps(
+		props.c_attr_content_wrapper ?? {},
+		['onPointerEnter', 'onPointerLeave']
+	)
+	const [is_hover, set_is_hover] = createSignal<boolean>(false)
+
+	function close_submenu_descendant(): void {
+		for (const popover of element_all_by_selector(`[data-c-menu-parent="${other.id}"]`)) {
+			close_popover(popover as HTMLDivElement)
+		}
+	}
+
+	return (<MenuContext.Provider value={{
+			parent_id: other.id,
+			is_pointer_hover_parent: () => is_hover()
+		}}>
+		<Modal
+			classList={{
+				'c-menu': true,
+				...props.classList
 			}}
 			c_on_beforeclose={() => {
 				close_submenu_descendant()
 				props.c_on_beforeclose?.()
 			}}
-			ref={mergeRefs(props.ref, r => popover_ref = r)}
-			classList={{
-				'c-menu': true,
-				...props.classList
+
+			// exclusive to <Modal> since it use <dialog> and hides everything if not inside
+			c_attr_content_wrapper={{
+				...content_wrapper_props_other,
+				onPointerEnter: ev => {
+					event_call(ev, content_wrapper_props.onPointerEnter)
+					set_is_hover(true)
+				},
+				onPointerLeave: ev => {
+					event_call(ev, content_wrapper_props.onPointerLeave)
+					set_is_hover(false)
+				}
 			}}
+			c_content_auto_focus={props.c_content_auto_focus ?? true}
+			c_gap={props.c_gap ?? 8}
+			c_padding={props.c_padding ?? 4}
 			{...other}>
-			<Show when={props.c_children_auto_tabindex} fallback={content()}>
+			<Show when={props.c_children_auto_tabindex} fallback={props.children}>
 				<FocusableGroup c_arrow_options={{
 					up: 'prev',
 					down: 'next'
@@ -325,64 +421,10 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 					if (code != KEY_ARROW_UP && code != KEY_ARROW_DOWN) return
 
 					event_prevent_default(ev)
-				}}>{content()}</FocusableGroup>
+				}}>{props.children}</FocusableGroup>
 			</Show>
-		</Popover>
-	</div>)
-}
-
-type MenuProps = ModalProps & {
-	c_children_auto_tabindex?: boolean
-}
-const Menu: ParentComponent<MenuProps> = ($props) => {
-	const $$props = mergeProps({
-		c_children_auto_tabindex: true
-	}, $props)
-	const [props, other] = splitProps($$props, [
-		'classList', 'c_gap', 'c_padding', 'c_content_auto_focus',
-		'c_on_beforeclose', 'ref', 'children',
-		'c_children_auto_tabindex'
-	])
-	const content = children(() => props.children)
-	let menu_ref: HTMLDialogElement
-
-	function close_submenu_descendant(): void {
-		let div = element_first_child(menu_ref)!
-		if (element_classlist_contains(element_first_child(div)!, FOCUSABLEGROUP_CLASSNAME)) div = element_first_child(div)!
-		for (const el of element_children(div) as unknown as HTMLElement[]) {
-			if (!element_classlist_contains(el, SUBMENU_CLASSNAME)) continue
-
-			close_popover(element_last_child(el) as HTMLDivElement)
-		}
-	}
-
-	return (<Modal
-		ref={mergeRefs(props.ref, r => menu_ref = r)}
-		classList={{
-			'c-menu': true,
-			...props.classList
-		}}
-		c_on_beforeclose={() => {
-			close_submenu_descendant()
-			props.c_on_beforeclose?.()
-		}}
-		c_content_auto_focus={props.c_content_auto_focus ?? true}
-		c_gap={props.c_gap ?? 8}
-		c_padding={props.c_padding ?? 4}
-		{...other}>
-		<Show when={props.c_children_auto_tabindex} fallback={content()}>
-			<FocusableGroup c_arrow_options={{
-				up: 'prev',
-				down: 'next'
-			}}
-			onKeyDown={ev => {
-				const code = ev.code
-				if (code != KEY_ARROW_UP && code != KEY_ARROW_DOWN) return
-
-				event_prevent_default(ev)
-			}}>{content()}</FocusableGroup>
-		</Show>
-	</Modal>)
+		</Modal>
+	</MenuContext.Provider>)
 }
 
 type PopoverMenuProps = PopoverProps & {
@@ -390,51 +432,60 @@ type PopoverMenuProps = PopoverProps & {
 }
 const PopoverMenu: ParentComponent<PopoverMenuProps> = ($props) => {
 	const $$props = mergeProps({
-		c_children_auto_tabindex: true
+		c_children_auto_tabindex: true,
+		id: createUniqueId()
 	}, $props)
 	const [props, other] = splitProps($$props, [
 		'classList', 'c_gap', 'c_padding', 'children',
-		'c_on_beforeclose', 'ref', 'c_children_auto_tabindex'
+		'c_on_beforeclose', 'c_children_auto_tabindex',
+		'onPointerEnter', 'onPointerLeave'
 	])
-	const content = children(() => props.children)
-	let menu_ref: HTMLDivElement
+	const [is_hover, set_is_hover] = createSignal<boolean>(false)
 
 	function close_submenu_descendant(): void {
-		let div = element_first_child(menu_ref)!
-		if (element_classlist_contains(element_first_child(div)!, FOCUSABLEGROUP_CLASSNAME)) div = element_first_child(div)!
-		for (const el of element_children(div) as unknown as HTMLElement[]) {
-			if (!element_classlist_contains(el, SUBMENU_CLASSNAME)) continue
-
-			close_popover(element_last_child(el) as HTMLDivElement)
+		for (const popover of element_all_by_selector(`[data-c-menu-parent="${other.id}"]`)) {
+			close_popover(popover as HTMLDivElement)
 		}
 	}
 
-	return (<Popover
-		ref={mergeRefs(props.ref, r => menu_ref = r)}
-		classList={{
-			'c-menu': true,
-			...props.classList
-		}}
-		c_on_beforeclose={() => {
-			close_submenu_descendant()
-			props.c_on_beforeclose?.()
-		}}
-		c_gap={props.c_gap ?? 8}
-		c_padding={props.c_padding ?? 4}
-		{...other}>
-		<Show when={props.c_children_auto_tabindex} fallback={content()}>
-			<FocusableGroup c_arrow_options={{
-				up: 'prev',
-				down: 'next'
+	return (<MenuContext.Provider value={{
+			parent_id: other.id,
+			is_pointer_hover_parent: () => is_hover()
+		}}>
+		<Popover
+			classList={{
+				'c-menu': true,
+				...props.classList
 			}}
-			onKeyDown={ev => {
-				const code = ev.code
-				if (code != KEY_ARROW_UP && code != KEY_ARROW_DOWN) return
+			c_on_beforeclose={() => {
+				close_submenu_descendant()
+				props.c_on_beforeclose?.()
+			}}
+			onPointerEnter={ev => {
+				event_call(ev, props.onPointerEnter)
+				set_is_hover(true)
+			}}
+			onPointerLeave={ev => {
+				event_call(ev, props.onPointerLeave)
+				set_is_hover(false)
+			}}
+			c_gap={props.c_gap ?? 8}
+			c_padding={props.c_padding ?? 4}
+			{...other}>
+			<Show when={props.c_children_auto_tabindex} fallback={props.children}>
+				<FocusableGroup c_arrow_options={{
+					up: 'prev',
+					down: 'next'
+				}}
+				onKeyDown={ev => {
+					const code = ev.code
+					if (code != KEY_ARROW_UP && code != KEY_ARROW_DOWN) return
 
-				event_prevent_default(ev)
-			}}>{content()}</FocusableGroup>
-		</Show>
-	</Popover>)
+					event_prevent_default(ev)
+				}}>{props.children}</FocusableGroup>
+			</Show>
+		</Popover>
+	</MenuContext.Provider>)
 }
 
 export {
@@ -464,9 +515,11 @@ export {
 	is_modal_open as is_menu_open,
 	SubMenuPosition,
 	MenuPosition,
+	MenuContext
 }
 export type {
 	MenuProps,
+	MenuContextProps,
 	MenuItemProps,
 	SwitchMenuItemProps,
 	SubMenuProps,

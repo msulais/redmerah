@@ -1,5 +1,5 @@
 import { KEY_ARROW_UP, KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT } from "@/constants/key_code"
-import { array_length } from "./array"
+import { array_join, array_length } from "./array"
 import { document_active, document_has_focus } from "./document"
 import { attr_get, attr_remove } from "./attributes"
 import { number_is_defined, number_parse } from "./number"
@@ -81,6 +81,29 @@ export function element_connected(element: HTMLElement): boolean {
 
 export function element_tabindex(element: HTMLElement): number {
 	return element.tabIndex
+}
+
+export function element_focus_any(
+	parent: HTMLElement,
+	condition?: (el: HTMLElement) => boolean
+): void {
+	const selector = ':is(' +  array_join([
+		'[tabindex]',
+		'a[href]',
+		'area[href]',
+		'button:not(:disabled)',
+		'select:not(:disabled)',
+		'input:not(:disabled)',
+		'textarea:not(:disabled)',
+		'iframe:not(:disabled)',
+	], ',') + ')'
+	const elements = element_all_by_selector(selector, parent)
+	for (const el of elements) {
+		if (condition && !condition(el as HTMLElement)) continue
+
+		element_focus(el as HTMLElement)
+		if (document_active() === el) break
+	}
 }
 
 export function element_focusable(element: HTMLElement): boolean {

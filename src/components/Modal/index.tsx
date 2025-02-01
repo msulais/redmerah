@@ -241,6 +241,7 @@ type ModalProps = Omit<JSX.DialogHtmlAttributes<HTMLDialogElement>, 'style'> & {
 	c_allow_hide_anchor?: boolean
 	c_draggable?: boolean
 	c_content_auto_focus?: boolean
+	c_attr_content_wrapper?: JSX.HTMLAttributes<HTMLDivElement>
 	c_on_beforeopen?(): unknown
 	c_on_beforeclose?(): unknown
 	c_on_toggleopen?(is_open: boolean): unknown
@@ -255,7 +256,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 		'c_close_animation', 'style', 'c_gap', 'c_padding',
 		'c_important', 'c_position', 'c_allow_hide_anchor',
 		'c_draggable', 'c_content_auto_focus', 'c_on_beforeopen',
-		'c_on_beforeclose'
+		'c_on_beforeclose', 'c_attr_content_wrapper'
 	])
 	const style = createMemo(() => props.style)
 	const [is_dragging, set_is_dragging] = createSignal<boolean>(false)
@@ -873,7 +874,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 				onDblClick={() => reposition_modal()}
 			/>
 		</Show>
-		<div>
+		<div {...props.c_attr_content_wrapper ?? {}}>
 			{props.children}
 		</div>
 	</dialog></Portal>)
