@@ -283,8 +283,6 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 
 	createEffect(() => {
 		const is_pointer_hover_parent = context?.is_pointer_hover_parent?.() ?? false
-
-		console.log(is_pointer_hover_parent, is_hover())
 		if (is_pointer_hover_parent && !is_hover()) {
 			close_submenu()
 		}
