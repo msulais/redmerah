@@ -5,7 +5,7 @@ import { attr_set_if_exist, classlist } from "@/utils/attributes"
 import { object_has_value } from "@/utils/object"
 import { event_call, event_prevent_default } from "@/utils/event"
 import { timeout_clear, timeout_set, wait } from "@/utils/timeout"
-import { element_all_by_selector, element_first_child } from "@/utils/element"
+import { element_all_by_selector, element_by_selector, element_first_child } from "@/utils/element"
 import { KEY_ARROW_DOWN, KEY_ARROW_UP } from "@/constants/key_code"
 import { AppColors } from "@/enums/colors"
 
@@ -17,6 +17,7 @@ import Modal, { type ModalProps, close_modal, focus_modal, is_modal_open, ModalP
 import { RawSwitch, type RawSwitchProps } from "@/components/Switch"
 import FocusableGroup from "@/components/FocusableGroup"
 import './index.scss'
+import { string_css_escape } from "@/utils/string"
 
 const SUBMENU_CLASSNAME = 'c-submenu'
 
@@ -221,8 +222,7 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 		'ref', 'c_gap', 'c_position', 'c_use_portal',
 		'c_padding', 'c_draggable', 'c_allow_hide_anchor',
 		'c_on_toggleopen', 'children', 'c_on_beforeclose',
-		'c_children_auto_tabindex', 'onPointerEnter',
-		'onPointerLeave'
+		'c_children_auto_tabindex'
 	])
 	const [wrapper_props, wrapper_props_other] = splitProps(props.c_attr_wrapper ?? {}, [
 		'class', 'onClick','onPointerEnter', 'ref',
@@ -284,11 +284,16 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 	createEffect(() => {
 		const is_pointer_hover_parent = context?.is_pointer_hover_parent?.() ?? false
 
+		console.log(is_pointer_hover_parent, is_hover())
 		if (is_pointer_hover_parent && !is_hover()) {
 			close_submenu()
 		}
-		else if (timeout_id !== null) {
-			timeout_clear(timeout_id)
+		else if (!is_pointer_hover_parent && !is_hover()) {
+			if (timeout_id !== null) timeout_clear(timeout_id)
+			timeout_id = null
+		}
+		else if (is_pointer_hover_parent && is_hover() && is_open) {
+			if (timeout_id !== null) timeout_clear(timeout_id)
 			timeout_id = null
 		}
 	})
@@ -299,10 +304,11 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 		onPointerEnter={ev => {
 			event_call(ev, wrapper_props.onPointerEnter)
 			open_submenu(ev)
+			set_is_hover(true)
 		}}
 		onPointerLeave={ev => {
 			event_call(ev, wrapper_props.onPointerLeave)
-			close_submenu()
+			set_is_hover(false)
 		}}
 		onClick={ev => {
 			event_call(ev, wrapper_props.onClick)
@@ -315,8 +321,8 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 			is_pointer_hover_parent: () => is_hover()
 		}}>
 			<Popover
-				c_use_portal={false}
 				data-c-menu-parent={parent_id}
+				c_portal_mount={element_by_selector(`#${string_css_escape(parent_id ?? '')} :is(.c-modal-portal-placeholder,.c-popover-portal-placeholder)`)!}
 				c_on_toggleopen={$is_open => {
 					is_open = $is_open
 					props.c_on_toggleopen?.($is_open)
@@ -324,14 +330,6 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 				c_on_beforeclose={() => {
 					close_submenu_descendant()
 					props.c_on_beforeclose?.()
-				}}
-				onPointerEnter={ev => {
-					event_call(ev, props.onPointerEnter)
-					set_is_hover(true)
-				}}
-				onPointerLeave={ev => {
-					event_call(ev, props.onPointerLeave)
-					set_is_hover(false)
 				}}
 				ref={mergeRefs(props.ref, r => popover_ref = r)}
 				classList={{

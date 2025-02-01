@@ -212,6 +212,7 @@ function close_popover(popover: HTMLDivElement): void {
 
 type PopoverProps = Omit<JSX.HTMLAttributes<HTMLDivElement>, 'style'> & {
 	style?: JSX.CSSProperties
+	c_portal_mount?: Node
 	c_use_portal?: boolean
 	c_gap?: number
 	c_padding?: number
@@ -234,7 +235,7 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 		'c_close_animation', 'c_gap', 'c_padding', 'c_position',
 		'c_allow_hide_anchor', 'c_draggable', 'c_manual_dismiss',
 		'c_on_beforeopen', 'c_on_beforeclose', 'tabindex',
-		'onKeyDown', 'c_attr_content_wrapper'
+		'onKeyDown', 'c_attr_content_wrapper', 'c_portal_mount'
 	])
 	const style = createMemo(() => props.style)
 	const [is_dragging, set_is_dragging] = createSignal<boolean>(false)
@@ -809,12 +810,13 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 		<div {...props.c_attr_content_wrapper ?? {}}>
 			{props.children}
 		</div>
+		<div style="display:contents" class="c-popover-portal-placeholder"></div>
 	</div>)
 
 	return (<Show
 		when={props.c_use_portal}
 		fallback={<C/>}>
-		<Portal><C/></Portal>
+		<Portal mount={props.c_portal_mount}><C/></Portal>
 	</Show>)
 }
 

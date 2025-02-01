@@ -234,6 +234,7 @@ function close_modal(modal: HTMLDialogElement, soft: boolean = false): void {
 
 type ModalProps = Omit<JSX.DialogHtmlAttributes<HTMLDialogElement>, 'style'> & {
 	style?: JSX.CSSProperties
+	c_portal_mount?: Node
 	c_gap?: number
 	c_padding?: number
 	c_important?: boolean
@@ -256,7 +257,8 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 		'c_close_animation', 'style', 'c_gap', 'c_padding',
 		'c_important', 'c_position', 'c_allow_hide_anchor',
 		'c_draggable', 'c_content_auto_focus', 'c_on_beforeopen',
-		'c_on_beforeclose', 'c_attr_content_wrapper'
+		'c_on_beforeclose', 'c_attr_content_wrapper',
+		'c_portal_mount'
 	])
 	const style = createMemo(() => props.style)
 	const [is_dragging, set_is_dragging] = createSignal<boolean>(false)
@@ -802,7 +804,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 		await close_modal({})
 	})
 
-	return (<Portal><dialog
+	return (<Portal mount={props.c_portal_mount}><dialog
 		class={classlist(MODAL_CLASS, props.class ?? '')}
 		ref={mergeRefs(props.ref, r => modal_ref = r)}
 		style={{
@@ -877,6 +879,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 		<div {...props.c_attr_content_wrapper ?? {}}>
 			{props.children}
 		</div>
+		<div style="display:contents" class="c-modal-portal-placeholder"></div>
 	</dialog></Portal>)
 }
 
