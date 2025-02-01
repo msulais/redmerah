@@ -112,10 +112,10 @@ const LinkButton: ParentComponent<LinkButtonProps> = ($props) => {
 	return (<a
 		class={classlist('c-btn', props.class ?? '')}
 		onClick={(ev) => {
+			event_call(ev, props.onClick)
 			if (props.c_disabled) {
 				event_prevent_default(ev)
 			}
-			event_call(ev, props.onClick)
 		}}
 		classList={{
 			'c-filled-btn': variant() == ButtonVariant.filled,

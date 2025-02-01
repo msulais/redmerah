@@ -521,31 +521,30 @@ const Tooltip: FlowComponent<TooltipProps> = ($props) => {
 			if (!element_matches(active, ':focus-visible')) return
 
 			open_tooltip(ev, true)
-
 		}}
 		onFocusOut={ev => {
 			event_call(ev, props.onFocusOut)
 			close_tooltip()
 		}}
 		onPointerOver={ev => {
-			open_tooltip(ev)
 			event_call(ev, props.onPointerOver)
+			open_tooltip(ev)
 		}}
 		onTouchStart={ev => {
-			open_tooltip(ev)
 			event_call(ev, props.onTouchStart)
+			open_tooltip(ev)
 		}}
 		onPointerLeave={ev => {
-			close_tooltip()
 			event_call(ev, props.onPointerLeave)
+			close_tooltip()
 		}}
 		onMouseDown={ev => {
-			close_tooltip()
 			event_call(ev, props.onMouseDown)
+			close_tooltip()
 		}}
 		onPointerUp={ev => {
-			close_tooltip()
 			event_call(ev, props.onPointerUp)
+			close_tooltip()
 		}}
 		{...other}>
 		{props.children}
@@ -585,32 +584,32 @@ const PopoverTooltip: ParentComponent<PopoverTooltipProps> = ($props) => {
 		c_use_portal={false}
 		class={classlist('c-rich-tooltip', props.class)}
 		onFocusIn={ev => {
-			stop_process()
 			event_call(ev, props.onFocusIn)
+			stop_process()
 		}}
 		onFocusOut={ev => {
-			stop_process()
 			event_call(ev, props.onFocusOut)
+			stop_process()
 		}}
 		onPointerOver={ev => {
-			stop_process()
 			event_call(ev, props.onPointerOver)
+			stop_process()
 		}}
 		onTouchStart={ev => {
-			stop_process()
 			event_call(ev, props.onTouchStart)
+			stop_process()
 		}}
 		onPointerLeave={ev => {
-			close()
 			event_call(ev, props.onPointerLeave)
+			close()
 		}}
 		onMouseDown={ev => {
-			stop_process()
 			event_call(ev, props.onMouseDown)
+			stop_process()
 		}}
 		onPointerUp={ev => {
-			stop_process()
 			event_call(ev, props.onPointerUp)
+			stop_process()
 		}}
 		{...other}
 	/>

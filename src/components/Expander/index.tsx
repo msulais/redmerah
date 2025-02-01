@@ -162,8 +162,8 @@ const Expander: ParentComponent<ExpanderProps> = ($props) => {
 		class={classlist('c-expander', props.class)}
 		data-c-variant={props.c_variant}
 		onToggle={ev => {
-			set_is_open(event_current_target(ev).open)
 			event_call(ev, props.onToggle)
+			set_is_open(event_current_target(ev).open)
 		}}
 		open={props.open}
 		{...other}>

@@ -821,6 +821,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 				: style()?.['max-height'] ?? undefined,
 		}}
 		onKeyDown={(ev) => {
+			event_call(ev, props.onKeyDown)
 			if (ev.key == 'Escape'
 				&& !ev.altKey
 				&& !ev.ctrlKey
@@ -831,7 +832,6 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 				focus_modal(modal_ref)
 				event_prevent_default(ev)
 			}
-			event_call(ev, props.onKeyDown)
 		}}
 		onCancel={(ev) => {
 			event_call(ev, props.onCancel)
@@ -843,9 +843,9 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 			event_prevent_default(ev)
 		}}
 		onClose={(ev) => {
+			event_call(ev, props.onClose)
 			props.c_on_toggleopen?.(false)
 			is_open = false
-			event_call(ev, props.onClose)
 		}}
 		data-c-draggable={attr_set_if_exist(is_draggable())}
 		data-c-drag={attr_set_if_exist(is_dragging())}

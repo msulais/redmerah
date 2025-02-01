@@ -775,9 +775,9 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 		}}
 		popover={'manual'}
 		onToggle={(ev) => {
+			event_call(ev, props.onToggle)
 			is_open = ev.newState == 'open'
 			props.c_on_toggleopen?.(is_open)
-			event_call(ev, props.onToggle)
 		}}
 		data-c-draggable={attr_set_if_exist(is_draggable())}
 		data-c-open={attr_set_if_exist(attr_open())}
