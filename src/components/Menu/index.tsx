@@ -3,10 +3,10 @@ import { mergeRefs } from "@solid-primitives/refs"
 
 import { attr_set_if_exist, classlist } from "@/utils/attributes"
 import { object_has_value } from "@/utils/object"
-import { event_call, event_prevent_default } from "@/utils/event"
+import { event_call, event_prevent_default, event_stop_propagation } from "@/utils/event"
 import { timeout_clear, timeout_set, wait } from "@/utils/timeout"
-import { element_all_by_selector, element_by_selector, element_first_child } from "@/utils/element"
-import { KEY_ARROW_DOWN, KEY_ARROW_UP } from "@/constants/key_code"
+import { element_all_by_selector, element_by_id, element_by_selector, element_first_child, element_focus, element_focus_any, element_tagname } from "@/utils/element"
+import { KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT, KEY_ARROW_UP } from "@/constants/key_code"
 import { AppColors } from "@/enums/colors"
 
 import Divider, { type DividerProps } from "@/components/Divider"
@@ -18,10 +18,13 @@ import { RawSwitch, type RawSwitchProps } from "@/components/Switch"
 import FocusableGroup from "@/components/FocusableGroup"
 import './index.scss'
 import { string_css_escape } from "@/utils/string"
+import { document_active } from "@/utils/document"
+import { array_includes } from "@/utils/array"
 
 const SUBMENU_CLASSNAME = 'c-submenu'
 
 type MenuContextProps = {
+	first_parent_id: string
 	parent_id: string
 	is_pointer_hover_parent: Accessor<boolean>
 } | undefined
@@ -222,19 +225,23 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 		'ref', 'c_gap', 'c_position', 'c_use_portal',
 		'c_padding', 'c_draggable', 'c_allow_hide_anchor',
 		'c_on_toggleopen', 'children', 'c_on_beforeclose',
-		'c_children_auto_tabindex'
+		'c_children_auto_tabindex', 'onKeyDown',
+		'onPointerEnter', 'onPointerLeave'
 	])
 	const [wrapper_props, wrapper_props_other] = splitProps(props.c_attr_wrapper ?? {}, [
 		'class', 'onClick','onPointerEnter', 'ref',
-		'onPointerLeave'
+		'onPointerLeave', 'onKeyDown'
 	])
 	const [is_hover, set_is_hover] = createSignal<boolean>(false)
 	const context = useContext(MenuContext)
 	const parent_id = context?.parent_id ?? undefined
+	const first_parent_id = context?.first_parent_id ?? undefined
+	let try_open: boolean = false
 	let timeout_id: number | null = null
 	let div_ref: HTMLDivElement
 	let popover_ref: HTMLDivElement
 	let is_open: boolean = false
+	let first_child: HTMLElement | undefined
 
 	function close_submenu_descendant(): void {
 		for (const popover of element_all_by_selector(`[data-c-menu-parent="${other.id}"]`)) {
@@ -242,12 +249,20 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 		}
 	}
 
-	function close_submenu(instant?: boolean): void {
+	function close_submenu(instant?: boolean, from_key?: boolean): void {
 		if (timeout_id !== null) timeout_clear(timeout_id)
 
 		timeout_id = timeout_set(() => {
 			close_popover(popover_ref)
 			close_submenu_descendant()
+			if (from_key) {
+				if (first_child) {
+					element_focus(first_child)
+					if (document_active() !== first_child) element_focus_any(element_by_id(parent_id ?? '')!)
+				}
+				else element_focus_any(element_by_id(parent_id ?? '')!)
+			}
+
 			timeout_id = null
 		}, instant? 0 : 800)
 	}
@@ -255,9 +270,10 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 	function open_submenu(ev: Event, instant?: boolean): void {
 		if (is_open) return
 
+		try_open = true
 		if (timeout_id !== null) timeout_clear(timeout_id)
 		timeout_id = timeout_set(async () => {
-			const first_child = element_first_child(div_ref)
+			first_child = element_first_child(div_ref)!
 			if (!first_child) return
 
 			let removed = false
@@ -278,27 +294,32 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 				manual_dismiss: true
 			})
 			timeout_id = null
+			try_open = false
 		}, instant? 0 : 200)
 	}
 
 	createEffect(() => {
 		const is_pointer_hover_parent = context?.is_pointer_hover_parent?.() ?? false
-		if (is_pointer_hover_parent && !is_hover()) {
-			close_submenu()
-		}
-		else if (!is_pointer_hover_parent && !is_hover()) {
-			if (timeout_id !== null) timeout_clear(timeout_id)
-			timeout_id = null
-		}
-		else if (is_pointer_hover_parent && is_hover() && is_open) {
-			if (timeout_id !== null) timeout_clear(timeout_id)
-			timeout_id = null
-		}
+		if (is_pointer_hover_parent && !is_hover()) return close_submenu()
+		if (try_open) return
+
+		if (timeout_id !== null) timeout_clear(timeout_id)
+		timeout_id = null
 	})
 
 	return (<div
 		class={classlist(SUBMENU_CLASSNAME, wrapper_props.class)}
 		ref={mergeRefs(wrapper_props.ref, r => div_ref = r)}
+		onKeyDown={ev => {
+			event_call(ev, wrapper_props.onKeyDown)
+			const code = ev.code
+			if (code !== KEY_ARROW_RIGHT) return
+
+			const active = document_active()
+			if (active && array_includes(['INPUT', 'TEXTAREA'], element_tagname(active))) return
+
+			open_submenu(ev, true)
+		}}
 		onPointerEnter={ev => {
 			event_call(ev, wrapper_props.onPointerEnter)
 			open_submenu(ev)
@@ -315,15 +336,35 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 		{...wrapper_props_other}>
 		{props.c_item}
 		<MenuContext.Provider value={{
+			first_parent_id: first_parent_id ?? '',
 			parent_id: other.id,
 			is_pointer_hover_parent: () => is_hover()
 		}}>
 			<Popover
 				data-c-menu-parent={parent_id}
-				c_portal_mount={element_by_selector(`#${string_css_escape(parent_id ?? '')} :is(.c-modal-portal-placeholder,.c-popover-portal-placeholder)`)!}
+				c_portal_mount={element_by_selector(`#${string_css_escape(first_parent_id ?? '')} :is(.c-modal-portal-placeholder,.c-popover-portal-placeholder)`)!}
 				c_on_toggleopen={$is_open => {
 					is_open = $is_open
 					props.c_on_toggleopen?.($is_open)
+				}}
+				onKeyDown={ev => {
+					event_call(ev, props.onKeyDown)
+					const code = ev.code
+					if (code !== KEY_ARROW_LEFT) return
+
+					const active = document_active()
+					if (active && array_includes(['INPUT', 'TEXTAREA'], element_tagname(active))) return
+
+					close_submenu(true, true)
+					event_stop_propagation(ev)
+				}}
+				onPointerEnter={ev => {
+					event_call(ev, props.onPointerEnter)
+					set_is_hover(true)
+				}}
+				onPointerLeave={ev => {
+					event_call(ev, props.onPointerLeave)
+					set_is_hover(false)
 				}}
 				c_on_beforeclose={() => {
 					close_submenu_descendant()
@@ -378,6 +419,7 @@ const Menu: ParentComponent<MenuProps> = ($props) => {
 	}
 
 	return (<MenuContext.Provider value={{
+			first_parent_id: other.id,
 			parent_id: other.id,
 			is_pointer_hover_parent: () => is_hover()
 		}}>
@@ -445,6 +487,7 @@ const PopoverMenu: ParentComponent<PopoverMenuProps> = ($props) => {
 	}
 
 	return (<MenuContext.Provider value={{
+			first_parent_id: other.id,
 			parent_id: other.id,
 			is_pointer_hover_parent: () => is_hover()
 		}}>
