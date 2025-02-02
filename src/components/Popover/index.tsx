@@ -810,7 +810,7 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 		<div {...props.c_attr_content_wrapper ?? {}}>
 			{props.children}
 		</div>
-		<div style="display:contents" class="c-popover-portal-placeholder"></div>
+		<span class="c-popover-portal-placeholder"></span>
 	</div>)
 
 	return (<Show

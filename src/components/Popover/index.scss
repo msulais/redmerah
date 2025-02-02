@@ -100,3 +100,12 @@
 		width: min(80px, calc(var(--c-popover-drag-handle-width-hover) - 16px));
 	}
 }
+
+.c-popover-portal-placeholder {
+	display: contents;
+
+	// extra div of <Portal> by SolidJS
+	> div {
+		display: inherit;
+	}
+}

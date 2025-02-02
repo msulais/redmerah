@@ -879,7 +879,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 		<div {...props.c_attr_content_wrapper ?? {}}>
 			{props.children}
 		</div>
-		<div style="display:contents" class="c-modal-portal-placeholder"></div>
+		<span class="c-modal-portal-placeholder"></span>
 	</dialog></Portal>)
 }
 
