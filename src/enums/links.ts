@@ -44,7 +44,9 @@ export enum RoutesLinks {
 	sorter = '/sorter',
 	text_editor = '/text-editor',
 	compass = '/compass',
-	cubic_bezier = '/cubic-bezier'
+	cubic_bezier = '/cubic-bezier',
+	screen_recorder = '/screen-recorder',
+	usb_checker = '/usb-checker'
 }
 
 export enum ExternalLinks {
