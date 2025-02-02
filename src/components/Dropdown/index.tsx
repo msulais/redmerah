@@ -246,8 +246,8 @@ const Dropdown: ParentComponent<DropdownProps> = ($props) => {
 			}}
 			c_selected={props.c_selected ?? is_open()}
 			onClick={ev => {
-				open_dropdown_menu(ev)
 				event_call(ev, props.onClick)
+				open_dropdown_menu(ev)
 			}}
 			{...other}>
 			<Show when={props.c_label}>

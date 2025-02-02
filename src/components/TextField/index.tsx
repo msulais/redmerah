@@ -164,25 +164,24 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 				id={props.id}
 				ref={mergeRefs(props.ref, r => areatextfield_ref = r)}
 				onInput={(ev) => {
+					event_call(ev, props.onInput)
 					const self = event_current_target(ev)
 					set_value(self.value)
 					set_is_invalid(!self.checkValidity())
-
-					event_call(ev, props.onInput)
 					set_height(HEIGHT_TEXT_INPUT_PER_LINE) // set to one line: to calculate the scroll height
 					set_height(math_max(element_scroll_height(self), HEIGHT_TEXT_INPUT_PER_LINE))
 				}}
 				onFocus={(ev) => {
+					event_call(ev, props.onFocus)
 					const self = event_current_target(ev)
 					set_value(self.value)
 					set_is_invalid(!self.checkValidity())
 					set_is_focus(true)
-					event_call(ev, props.onFocus)
 				}}
 				onBlur={(ev) => {
+					event_call(ev, props.onBlur)
 					set_value(event_current_target(ev).value)
 					set_is_focus(false)
-					event_call(ev, props.onBlur)
 				}}
 				rows={props.c_min_line ?? 1}
 				disabled={props.disabled}
@@ -314,22 +313,22 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 				id={props.id}
 				ref={mergeRefs(props.ref, r => textfield_ref = r)}
 				onInput={(ev) => {
+					event_call(ev, props.onInput)
 					const self = event_current_target(ev)
 					set_value(self.value)
 					set_is_invalid(!self.checkValidity())
-					event_call(ev, props.onInput)
 				}}
 				onFocus={(ev) => {
+					event_call(ev, props.onFocus)
 					const self = event_current_target(ev)
 					set_value(self.value)
 					set_is_invalid(!self.checkValidity())
 					set_is_focus(true)
-					event_call(ev, props.onFocus)
 					if (props.c_auto_select_all) self.setSelectionRange(0, string_length(self.value))
 				}}
 				onKeyUp={ev => {
-					if (ev.key == 'Enter') element_blur(event_current_target(ev))
 					event_call(ev, props.onKeyUp)
+					if (ev.key == 'Enter') element_blur(event_current_target(ev))
 				}}
 				onBlur={(ev) => {
 					set_value(event_current_target(ev).value)
@@ -524,10 +523,11 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 				...wrapper_props_other
 			}}
 			onBlur={ev => {
-				if (props.c_auto_fix_on_blur) fix_input_number()
 				event_call(ev, props.onBlur)
+				if (props.c_auto_fix_on_blur) fix_input_number()
 			}}
 			onInput={ev => {
+				event_call(ev, props.onInput)
 				if (props.c_on_inputasnumber){
 					let n = number_parse(numbertextfield_ref.value, props.c_integer_only)
 					n = number_safe(n, value())
@@ -535,7 +535,6 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 					if (props.c_integer_only) n = math_round(n)
 					props.c_on_inputasnumber(ev, n)
 				}
-				event_call(ev, props.onInput)
 			}}
 			type='number'
 			c_trailing={<>
@@ -750,10 +749,10 @@ const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
 				...wrapper_props_other
 			}}
 			onFocus={ev => {
+				event_call(ev, props.onFocus)
 				$open_popover(ev)
 				is_focus = is_focus
 				event = ev
-				event_call(ev, props.onFocus)
 			}}
 			{...other}
 		/>

@@ -234,6 +234,7 @@ function close_modal(modal: HTMLDialogElement, soft: boolean = false): void {
 
 type ModalProps = Omit<JSX.DialogHtmlAttributes<HTMLDialogElement>, 'style'> & {
 	style?: JSX.CSSProperties
+	c_portal_mount?: Node
 	c_gap?: number
 	c_padding?: number
 	c_important?: boolean
@@ -241,6 +242,7 @@ type ModalProps = Omit<JSX.DialogHtmlAttributes<HTMLDialogElement>, 'style'> & {
 	c_allow_hide_anchor?: boolean
 	c_draggable?: boolean
 	c_content_auto_focus?: boolean
+	c_attr_content_wrapper?: JSX.HTMLAttributes<HTMLDivElement>
 	c_on_beforeopen?(): unknown
 	c_on_beforeclose?(): unknown
 	c_on_toggleopen?(is_open: boolean): unknown
@@ -255,7 +257,8 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 		'c_close_animation', 'style', 'c_gap', 'c_padding',
 		'c_important', 'c_position', 'c_allow_hide_anchor',
 		'c_draggable', 'c_content_auto_focus', 'c_on_beforeopen',
-		'c_on_beforeclose'
+		'c_on_beforeclose', 'c_attr_content_wrapper',
+		'c_portal_mount'
 	])
 	const style = createMemo(() => props.style)
 	const [is_dragging, set_is_dragging] = createSignal<boolean>(false)
@@ -801,7 +804,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 		await close_modal({})
 	})
 
-	return (<Portal><dialog
+	return (<Portal mount={props.c_portal_mount}><dialog
 		class={classlist(MODAL_CLASS, props.class ?? '')}
 		ref={mergeRefs(props.ref, r => modal_ref = r)}
 		style={{
@@ -820,6 +823,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 				: style()?.['max-height'] ?? undefined,
 		}}
 		onKeyDown={(ev) => {
+			event_call(ev, props.onKeyDown)
 			if (ev.key == 'Escape'
 				&& !ev.altKey
 				&& !ev.ctrlKey
@@ -830,7 +834,6 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 				focus_modal(modal_ref)
 				event_prevent_default(ev)
 			}
-			event_call(ev, props.onKeyDown)
 		}}
 		onCancel={(ev) => {
 			event_call(ev, props.onCancel)
@@ -842,9 +845,9 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 			event_prevent_default(ev)
 		}}
 		onClose={(ev) => {
+			event_call(ev, props.onClose)
 			props.c_on_toggleopen?.(false)
 			is_open = false
-			event_call(ev, props.onClose)
 		}}
 		data-c-draggable={attr_set_if_exist(is_draggable())}
 		data-c-drag={attr_set_if_exist(is_dragging())}
@@ -873,9 +876,10 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 				onDblClick={() => reposition_modal()}
 			/>
 		</Show>
-		<div>
+		<div {...props.c_attr_content_wrapper ?? {}}>
 			{props.children}
 		</div>
+		<span class="c-modal-portal-placeholder"></span>
 	</dialog></Portal>)
 }
 

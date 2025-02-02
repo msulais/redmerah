@@ -545,8 +545,8 @@ const DatePicker: VoidComponent<DatePickerProps> = ($props) => {
 			...props.classList
 		}}
 		onClose={(ev) => {
-			set_close_signal(s => !s)
 			event_call(ev, props.onClose)
+			set_close_signal(s => !s)
 		}}
 		{...other}>
 		<DatePickerBody

@@ -6,7 +6,7 @@ import { FlyoutPosition as PopoverPosition } from '@/enums/position'
 import { get_flyout_position } from '@/utils/flyout'
 import { timeout_clear, timeout_set } from '@/utils/timeout'
 import { attr_has, attr_remove, attr_set, attr_set_if_exist, classlist } from '@/utils/attributes'
-import { element_rect, element_all_by_selector, element_dataset, element_dispatch_event, element_is_same_node, element_client_width, element_animate, element_create, element_set_id, element_append_child, element_set_style, element_set_pointercapture, element_release_pointercapture, element_focus, element_contains } from '@/utils/element'
+import { element_rect, element_all_by_selector, element_dataset, element_dispatch_event, element_is_same_node, element_client_width, element_animate, element_create, element_set_id, element_append_child, element_set_style, element_set_pointercapture, element_release_pointercapture, element_focus, element_contains, element_focus_any } from '@/utils/element'
 import { BodyAttributes } from '@/enums/attributes'
 import { event_add_listener, event_call, event_current_target, event_prevent_default, event_remove_listener, event_target, event_type } from "@/utils/event"
 import { math_abs } from '@/utils/math'
@@ -53,7 +53,7 @@ enum PopoverEvents {
 	reposition = 'custom:popover-reposition',
 
 	/** @param {PopoverOpenDetail} detail `PopoverOpenDetail` */
-	open = 'custom:open'
+	open = 'custom:popover-open'
 }
 
 enum PopoverListenerEvents {
@@ -212,6 +212,7 @@ function close_popover(popover: HTMLDivElement): void {
 
 type PopoverProps = Omit<JSX.HTMLAttributes<HTMLDivElement>, 'style'> & {
 	style?: JSX.CSSProperties
+	c_portal_mount?: Node
 	c_use_portal?: boolean
 	c_gap?: number
 	c_padding?: number
@@ -219,6 +220,7 @@ type PopoverProps = Omit<JSX.HTMLAttributes<HTMLDivElement>, 'style'> & {
 	c_allow_hide_anchor?: boolean
 	c_draggable?: boolean
 	c_manual_dismiss?: boolean
+	c_attr_content_wrapper?: JSX.HTMLAttributes<HTMLDivElement>
 	c_on_beforeopen?(): unknown
 	c_on_beforeclose?(): unknown
 	c_on_toggleopen?(is_open: boolean): unknown
@@ -233,7 +235,7 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 		'c_close_animation', 'c_gap', 'c_padding', 'c_position',
 		'c_allow_hide_anchor', 'c_draggable', 'c_manual_dismiss',
 		'c_on_beforeopen', 'c_on_beforeclose', 'tabindex',
-		'onKeyDown'
+		'onKeyDown', 'c_attr_content_wrapper', 'c_portal_mount'
 	])
 	const style = createMemo(() => props.style)
 	const [is_dragging, set_is_dragging] = createSignal<boolean>(false)
@@ -438,7 +440,7 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 		set_is_draggable(draggable)
 
 		popover_ref.showPopover()
-		element_focus(popover_ref)
+		element_focus_any(popover_ref)
 
 		const popover_rect: DOMRect = element_rect(popover_ref)
 		const $anchor_rect: DOMRect | undefined = anchor_rect != null
@@ -774,9 +776,9 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 		}}
 		popover={'manual'}
 		onToggle={(ev) => {
+			event_call(ev, props.onToggle)
 			is_open = ev.newState == 'open'
 			props.c_on_toggleopen?.(is_open)
-			event_call(ev, props.onToggle)
 		}}
 		data-c-draggable={attr_set_if_exist(is_draggable())}
 		data-c-open={attr_set_if_exist(attr_open())}
@@ -805,15 +807,16 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 				onDblClick={() => reposition_popover()}
 			/>
 		</Show>
-		<div>
+		<div {...props.c_attr_content_wrapper ?? {}}>
 			{props.children}
 		</div>
+		<span class="c-popover-portal-placeholder"></span>
 	</div>)
 
 	return (<Show
 		when={props.c_use_portal}
 		fallback={<C/>}>
-		<Portal><C/></Portal>
+		<Portal mount={props.c_portal_mount}><C/></Portal>
 	</Show>)
 }
 

@@ -34,8 +34,8 @@ const Switch: VoidComponent<SwitchProps> = ($props) => {
 			type="checkbox"
 			id={props.id}
 			onChange={(ev) => {
-				set_is_checked(event_current_target(ev).checked)
 				event_call(ev, props.onChange)
+				set_is_checked(event_current_target(ev).checked)
 			}}
 			{...other}
 		/>
@@ -69,8 +69,8 @@ const RawSwitch: VoidComponent<RawSwitchProps> = ($props) => {
 		<input
 			type="checkbox"
 			onChange={(ev) => {
-				set_is_checked(event_current_target(ev).checked)
 				event_call(ev, props.onChange)
+				set_is_checked(event_current_target(ev).checked)
 			}}
 			{...other}
 		/>

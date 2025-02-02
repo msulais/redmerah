@@ -114,8 +114,8 @@ const CheckBox: ParentComponent<CheckBoxProps> = ($props) => {
 			type={props.c_variant == CheckBoxVariant.radio? 'radio' : 'checkbox'}
 			id={props.id}
 			onChange={(ev) => {
-				const is_checked = event_current_target(ev).checked
 				event_call(ev, props.onChange)
+				const is_checked = event_current_target(ev).checked
 
 				if (props.c_variant == CheckBoxVariant.radio && other.name != null) {
 					const getAllRadioWithSameName = element_all_by_selector(`input[type=radio][name=${CSS.escape(other.name)}]`)
