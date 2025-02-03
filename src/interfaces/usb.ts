@@ -12,10 +12,14 @@ export type USBRequestType = 'standard' | 'class' | 'vendor'
 export type USBTransferStatus = 'ok' | 'stall' | 'babble'
 
 export interface USB extends EventTarget {
-	onconnect(ev: Event): any
-	ondisconnect(ev: Event): any
+	onconnect(ev: USBConnectionEvent): any
+	ondisconnect(ev: USBConnectionEvent): any
 	getDevices(): Promise<USBDevice>
 	requestDevice(options: USBDeviceRequestOptions): Promise<USBDevice>
+}
+
+export interface USBConnectionEvent extends Event {
+	readonly device: USBDevice
 }
 
 export interface USBAlternateInterface {
