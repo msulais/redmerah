@@ -14,6 +14,7 @@ import { array_length } from "@/utils/array"
 import { string_length, string_starts_with } from "@/utils/string"
 import { document_active } from "@/utils/document"
 import { element_dataset, element_id, element_tagname, element_valid_target } from "@/utils/element"
+import { ICON_ARROW_DOWNLOAD, ICON_CAMERA_ADD, ICON_COPY, ICON_DISMISS, ICON_IMAGE, ICON_IMAGE_ADD, ICON_IMAGE_CIRCLE, ICON_QR_CODE, ICON_SCAN_TEXT, ICON_WARNING } from "@/constants/icons"
 
 import Tooltip from "@/components/Tooltip"
 import Icon from "@/components/Icon"
@@ -132,23 +133,23 @@ const _: VoidComponent<{
 				c_on_toggleopen={isOpen => set_is_submenu_downloadcanvasactions_open(isOpen)}
 				c_item={<SubMenuItem
 					c_focused={is_submenu_downloadcanvasactions_open()}
-					c_icon_code={0xE0B9}>
+					c_icon_code={ICON_ARROW_DOWNLOAD}>
 					Download as
 				</SubMenuItem>}>
 				<MenuItem
-					c_icon_code={0xE8FE}
+					c_icon_code={ICON_IMAGE}
 					data-download={DownloadFileType.png}
 					c_trailing="PNG">
 					Image
 				</MenuItem>
 				<MenuItem
-					c_icon_code={0xE8FE}
+					c_icon_code={ICON_IMAGE}
 					data-download={DownloadFileType.jpeg}
 					c_trailing="JPEG">
 					Image
 				</MenuItem>
 				<MenuItem
-					c_icon_code={0xE90C}
+					c_icon_code={ICON_IMAGE_CIRCLE}
 					data-download={DownloadFileType.svg}
 					c_trailing="SVG">
 					Vector
@@ -160,17 +161,17 @@ const _: VoidComponent<{
 				c_on_toggleopen={isOpen => set_is_submenu_copycanvasactions_open(isOpen)}
 				c_item={<SubMenuItem
 					c_focused={is_submenu_copycanvasactions_open()}
-					c_icon_code={0xE51B}>
+					c_icon_code={ICON_COPY}>
 					Copy as
 				</SubMenuItem>}>
 				<MenuItem
-					c_icon_code={0xE8FE}
+					c_icon_code={ICON_IMAGE}
 					data-copy={CopyFileType.png}
 					c_trailing="PNG">
 					Image
 				</MenuItem>
 				<MenuItem
-					c_icon_code={0xE90C}
+					c_icon_code={ICON_IMAGE_CIRCLE}
 					data-copy={CopyFileType.svg}
 					c_trailing="SVG">
 					Vector
@@ -182,7 +183,7 @@ const _: VoidComponent<{
 	const Toasts: VoidComponent = () => {
 		return (<Toast
 			ref={r => toast_errorscanqrcode_ref = r}
-			c_leading={<Icon c_code={0xF29B}/>}>
+			c_leading={<Icon c_code={ICON_WARNING}/>}>
 			Unable to scan QR Code in the image
 		</Toast>)
 	}
@@ -192,12 +193,12 @@ const _: VoidComponent<{
 			<Button
 				id={button_option_generate_id}
 				c_variant={page() == Pages.generate? ButtonVariant.filled : ButtonVariant.tonal}>
-				<Icon c_code={0xED21}/>Generate
+				<Icon c_code={ICON_QR_CODE}/>Generate
 			</Button>
 			<Button
 				id={button_option_scan_id}
 				c_variant={page() == Pages.scan? ButtonVariant.filled : ButtonVariant.tonal}>
-				<Icon c_code={0xEDC5}/>Scan
+				<Icon c_code={ICON_SCAN_TEXT}/>Scan
 			</Button>
 		</div>)
 	}
@@ -260,7 +261,7 @@ const _: VoidComponent<{
 				onDragLeave={() => set_is_drag_enter(false)}>
 				<div data-g-no-pointer-event={attr_set_if_exist(is_drag_enter())}>
 					<Show when={qrcode_image_src() == null}>
-						<p><Icon c_code={0xED21}/>Drag QR code image here</p>
+						<p><Icon c_code={ICON_QR_CODE}/>Drag QR code image here</p>
 					</Show>
 					<Show when={qrcode_image_src() != null}>
 						<img ref={r => img_qrcode_ref = r} src={qrcode_image_src()!} alt="" />
@@ -272,7 +273,7 @@ const _: VoidComponent<{
 									id={button_scan_dismiss_id}
 									data-tooltip="Dismiss"
 									c_variant={ButtonVariant.filled}
-									c_code={0xE5E9}
+									c_code={ICON_DISMISS}
 									c_filled
 								/>
 							</Show>
@@ -281,7 +282,7 @@ const _: VoidComponent<{
 								data-tooltip="Choose file"
 								c_variant={qrcode_image_src() != null? ButtonVariant.filled : ButtonVariant.tonal}
 								c_filled={qrcode_image_src() != null}
-								c_code={0xE900}
+								c_code={ICON_IMAGE_ADD}
 							/>
 							<Show when={is_mobile()}>
 								<IconButton
@@ -289,7 +290,7 @@ const _: VoidComponent<{
 									data-tooltip="Open camera"
 									c_variant={qrcode_image_src() != null? ButtonVariant.filled : ButtonVariant.tonal}
 									c_filled={qrcode_image_src() != null}
-									c_code={0xE354}
+									c_code={ICON_CAMERA_ADD}
 								/>
 							</Show>
 						</Tooltip>

@@ -8,6 +8,7 @@ import { timeout_clear, timeout_set, wait } from "@/utils/timeout"
 import { event_call, event_current_target, event_prevent_default } from "@/utils/event"
 import { rect_height } from "@/utils/rect"
 import { promise_done } from "@/utils/object"
+import { ICON_CHEVRON_DOWN } from "@/constants/icons"
 
 import { RawIconButton } from "@/components/Button"
 import { List, RawList, type ListProps, type RawListProps } from "@/components/List"
@@ -51,7 +52,7 @@ const ExpanderHeader: ParentComponent<ExpanderHeaderProps> = ($props) => {
 						: 'Show more'
 					)}
 					component="div"
-					c_code={0xE3FC}
+					c_code={ICON_CHEVRON_DOWN}
 					class="c-expander-icon"
 					data-c-open={attr_set_if_exist(context?.is_open())}
 				/>
@@ -84,7 +85,7 @@ const RawExpanderHeader: ParentComponent<RawExpanderHeaderProps> = ($props) => {
 						: 'Show more'
 					)}
 					component="div"
-					c_code={0xE3FC}
+					c_code={ICON_CHEVRON_DOWN}
 					class="c-expander-icon"
 					data-c-open={attr_set_if_exist(context?.is_open())}
 				/>

@@ -21,6 +21,7 @@ import { promise_done } from "@/utils/object"
 import { KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT, KEY_ARROW_UP, KEY_ENTER, KEY_SPACE } from "@/constants/key_code"
 import { AppColors } from "@/enums/colors"
 import { document_active } from "@/utils/document"
+import { ICON_ADD, ICON_ADD_CIRCLE, ICON_ADD_SQUARE, ICON_ALERT, ICON_ALERT_BADGE, ICON_ALERT_OFF, ICON_ALERT_URGENT, ICON_APPS_LIST_DETAIL, ICON_ARROW_DOWNLOAD, ICON_ARROW_RIGHT, ICON_ARROW_SORT, ICON_ATTACH, ICON_CALENDAR, ICON_CALENDAR_EDIT, ICON_CHECKBOX_CHECKED, ICON_CHECKBOX_UNCHECKED, ICON_CIRCLE, ICON_COPY, ICON_DELETE, ICON_DELETE_DISMISS, ICON_DELETE_LINES, ICON_DISMISS, ICON_EDIT, ICON_EYE, ICON_HOME, ICON_MORE_VERTICAL, ICON_STAR, ICON_TAG, ICON_TASK_LIST_SQUARE_LTR, ICON_TEXT_CASE_TITLE, ICON_TEXT_EDIT_STYLE, ICON_TEXT_SORT_ASCENDING, ICON_TEXT_SORT_DESCENDING } from "@/constants/icons"
 
 import Divider from "@/components/Divider"
 import Icon from "@/components/Icon"
@@ -74,15 +75,15 @@ const AppbarTasks: VoidComponent<{
 
 	const Menus: VoidComponent = () => {
 		const sort_by: [by: SortBy, name: string, icon_code: number][] = [
-			[SortBy.name, 'Name', 0xF0B0],
-			[SortBy.importance, 'Importance', 0xEF1B],
-			[SortBy.creation_date, 'Creation date', 0xE310],
-			[SortBy.completed, 'Completed', 0xE3CC],
-			[SortBy.uncompleted, 'Uncompleted', 0xE3D4],
+			[SortBy.name, 'Name', ICON_TEXT_CASE_TITLE],
+			[SortBy.importance, 'Importance', ICON_STAR],
+			[SortBy.creation_date, 'Creation date', ICON_CALENDAR],
+			[SortBy.completed, 'Completed', ICON_CHECKBOX_CHECKED],
+			[SortBy.uncompleted, 'Uncompleted', ICON_CHECKBOX_UNCHECKED],
 		]
 		const sort_mode: [mode: SortMode, name: string, icon_code: number][] = [
-			[SortMode.ascending, 'Ascending', 0xF187],
-			[SortMode.descending, 'Descending', 0xF189],
+			[SortMode.ascending, 'Ascending', ICON_TEXT_SORT_ASCENDING],
+			[SortMode.descending, 'Descending', ICON_TEXT_SORT_DESCENDING],
 		]
 		const button_markallcompleted_id = createUniqueId()
 		const button_markalluncompleted_id = createUniqueId()
@@ -174,14 +175,14 @@ const AppbarTasks: VoidComponent<{
 				<Show when={props.si_any_uncompleted_task}>
 					<MenuItem
 						id={button_markallcompleted_id}
-						c_icon_code={0xE3CC}>
+						c_icon_code={ICON_CHECKBOX_CHECKED}>
 						Mark all completed
 					</MenuItem>
 				</Show>
 				<Show when={props.is_any_completed_task}>
 					<MenuItem
 						id={button_markalluncompleted_id}
-						c_icon_code={0xE3D4}>
+						c_icon_code={ICON_CHECKBOX_UNCHECKED}>
 						Mark all uncompleted
 					</MenuItem>
 				</Show>
@@ -189,14 +190,14 @@ const AppbarTasks: VoidComponent<{
 					<MenuDivider />
 					<MenuItem
 						id={button_cleartasks_id}
-						c_icon_code={0xE5A1}>
+						c_icon_code={ICON_DELETE_DISMISS}>
 						Clear tasks
 					</MenuItem>
 				</Show>
 				<Show when={props.is_any_completed_task}>
 					<MenuItem
 						id={button_deletecompletedtasks_id}
-						c_icon_code={0xE5A3}>
+						c_icon_code={ICON_DELETE_LINES}>
 						Delete completed tasks
 					</MenuItem>
 				</Show>
@@ -204,12 +205,12 @@ const AppbarTasks: VoidComponent<{
 					<Show when={props.is_any_task}><MenuDivider /></Show>
 					<MenuItem
 						id={button_renamelist_id}
-						c_icon_code={0xF0FB}>
+						c_icon_code={ICON_TEXT_EDIT_STYLE}>
 						Rename list
 					</MenuItem>
 					<MenuItem
 						id={button_deletelist_id}
-						c_icon_code={0xE59D}>
+						c_icon_code={ICON_DELETE}>
 						Delete list
 					</MenuItem>
 				</Show>
@@ -333,12 +334,12 @@ const AppbarTasks: VoidComponent<{
 						data-tooltip="Sort by"
 						c_focused={is_menu_sort_open()}
 						id={button_sortby_id}
-						c_code={0xE123}
+						c_code={ICON_ARROW_SORT}
 					/>
 					<IconButton
 						data-tooltip="Copy tasks"
 						id={button_copytasks_id}
-						c_code={0xE51B}
+						c_code={ICON_COPY}
 					/>
 				</Show>
 				<Show when={!props.is_group && ((props.page == Pages.tasks && props.is_any_task) || is_number(props.page))}>
@@ -346,7 +347,7 @@ const AppbarTasks: VoidComponent<{
 						data-tooltip="More options"
 						id={button_moreoptions_id}
 						c_focused={is_menu_more_open()}
-						c_code={0xEAD9}
+						c_code={ICON_MORE_VERTICAL}
 					/>
 				</Show>
 			</Tooltip>}
@@ -359,7 +360,7 @@ const AppbarTasks: VoidComponent<{
 		<Dialogs />
 		<Toast
 			ref={r => toast_copied_ref = r}
-			c_leading={<Icon c_code={0xE51B}/>}>
+			c_leading={<Icon c_code={ICON_COPY}/>}>
 			Tasks copied
 		</Toast>
 	</>)
@@ -385,19 +386,19 @@ const TaskItem: VoidComponent<{
 			c_leading={<IconButton
 				data-tooltip={`Mark as ${task().complete? 'un' : ''}completed`}
 				data-taskitem-complete={array_join([tasklist_index(), task_index()], ',')}
-				c_code={task().complete? 0xE3CB : 0xE3D4}
+				c_code={task().complete? ICON_CHECKBOX_CHECKED : ICON_CHECKBOX_UNCHECKED}
 			/>}
 			c_trailing={<>
 				<IconButton
 					data-tooltip={`Mark as ${task().important? 'not ' : ''}important`}
 					data-taskitem-important={array_join([tasklist_index(), task_index()], ',')}
 					c_filled={task().important}
-					c_code={0xEF1B}
+					c_code={ICON_STAR}
 				/>
 				<IconButton
 					data-tooltip="Delete task"
 					data-taskitem-delete={array_join([tasklist_index(), task_index()], ',')}
-					c_code={0xE59D}
+					c_code={ICON_DELETE}
 				/>
 			</>}
 			c_subtitle={<>
@@ -426,7 +427,7 @@ const TaskItem: VoidComponent<{
 								}}
 								data-taskitem-reminder={array_join([tasklist_index(), task_index()], ',')}
 								c_variant={ButtonVariant.outlined}>
-								<Icon c_filled c_code={0xE025} c_inline/>
+								<Icon c_filled c_code={ICON_ALERT_URGENT} c_inline/>
 								{date_text_YMD_HM(task().reminder!)}
 							</Button>
 						</Show>
@@ -434,7 +435,7 @@ const TaskItem: VoidComponent<{
 							<Button
 								data-taskitem-files={array_join([tasklist_index(), task_index()], ',')}
 								c_variant={ButtonVariant.outlined}>
-								<Icon c_filled c_code={0xE187} c_inline/>
+								<Icon c_filled c_code={ICON_ATTACH} c_inline/>
 								{array_length(task().files)} file{array_length(task().files) > 1? "s" : ''}
 							</Button>
 						</Show>
@@ -449,7 +450,7 @@ const TaskItem: VoidComponent<{
 									}}
 									data-taskitem-label={array_join([tasklist_index(), task_index(), label_id], ',')}
 									c_variant={ButtonVariant.outlined}>
-									<Icon c_filled c_code={0xF00D} c_inline/>
+									<Icon c_filled c_code={ICON_TAG} c_inline/>
 									{labels()[label_id]!.name}
 								</Button>
 							</Show>
@@ -475,13 +476,13 @@ const EmptyTasks: VoidComponent<{page: Pages | number}> = (props) => {
 	const get_icon = createMemo<number>(() => {
 		const page = props.page
 		switch (page) {
-			case Pages.all: return 0xE069
-			case Pages.completed: return 0xE3CC
-			case Pages.uncompleted: return 0xE3D4
-			case Pages.important: return 0xEF1B
-			case Pages.planned: return 0xE01B
+			case Pages.all: return ICON_APPS_LIST_DETAIL
+			case Pages.completed: return ICON_CHECKBOX_CHECKED
+			case Pages.uncompleted: return ICON_CHECKBOX_UNCHECKED
+			case Pages.important: return ICON_STAR
+			case Pages.planned: return ICON_ALERT
 		}
-		return 0xE3CC
+		return ICON_CHECKBOX_CHECKED
 	})
 	const get_text = createMemo<string>(() => {
 		let t = ''
@@ -581,8 +582,8 @@ const SingleTaskList: VoidComponent<{
 				fallback={<Emoji c_emoji={tasklist().emoji!} />}>
 				<Show
 					when={page() == Pages.tasks}
-					fallback={<Icon c_code={0xF032}/>}>
-					<Icon c_code={0xE8E2}/>
+					fallback={<Icon c_code={ICON_TASK_LIST_SQUARE_LTR}/>}>
+					<Icon c_code={ICON_HOME}/>
 				</Show>
 			</Show>}
 			headline={get_headline()}
@@ -608,7 +609,7 @@ const SingleTaskList: VoidComponent<{
 					c_trailing={<TextFieldButton
 						data-tooltip="Add task"
 						onClick={() => add_task()}>
-						<Icon c_code={0xE00B}/>
+						<Icon c_code={ICON_ADD_SQUARE}/>
 					</TextFieldButton>}
 				/>
 			</Tooltip>
@@ -631,13 +632,13 @@ const GroupTaskList: VoidComponent<{
 	const page = createMemo(() => props.page)
 	const get_icon = createMemo<number>(() => {
 		const $page = page()
-		if ($page == Pages.all) return 0xE069
-		if ($page == Pages.completed) return 0xE3CC
-		if ($page == Pages.uncompleted) return 0xE3D4
-		if ($page == Pages.important) return 0xEF1B
-		if ($page == Pages.planned) return 0xE01B
+		if ($page == Pages.all) return ICON_APPS_LIST_DETAIL
+		if ($page == Pages.completed) return ICON_CHECKBOX_CHECKED
+		if ($page == Pages.uncompleted) return ICON_CHECKBOX_UNCHECKED
+		if ($page == Pages.important) return ICON_STAR
+		if ($page == Pages.planned) return ICON_ALERT
 
-		return 0xE3CC
+		return ICON_CHECKBOX_CHECKED
 	})
 	const is_not_empty = createMemo<boolean>(() => {
 		const $page = page()
@@ -693,8 +694,8 @@ const GroupTaskList: VoidComponent<{
 				fallback={<Emoji c_emoji={tasklist().emoji!} />}>
 				<Show
 					when={tasklist().id == DEFAULT_TASK_LIST.id}
-					fallback={<Icon c_code={0xF032}/>}>
-					<Icon c_code={0xE8E2}/>
+					fallback={<Icon c_code={ICON_TASK_LIST_SQUARE_LTR}/>}>
+					<Icon c_code={ICON_HOME}/>
 				</Show>
 			</Show>}
 			c_trailing={<IconButton
@@ -704,7 +705,7 @@ const GroupTaskList: VoidComponent<{
 					set_selected_tasklist_to_action({list: tasklist(), tasklist_index: tasklist_index()})
 					open_menu(ev, menu_more_ref, {anchor: event_current_target(ev)})
 				}}
-				c_code={0xEAD9}
+				c_code={ICON_MORE_VERTICAL}
 			/>}
 		/>)
 
@@ -750,7 +751,7 @@ const GroupTaskList: VoidComponent<{
 			ref={r => menu_more_ref = r}
 			c_on_toggleopen={isOpen => set_is_menu_more_open(isOpen)}>
 			<MenuItem
-				c_icon_code={0xE51B}
+				c_icon_code={ICON_COPY}
 				onClick={(ev) => {
 					command(Commands.copy_tasks, selected_tasklist_to_action.tasklist_index)
 					close_menu(menu_more_ref)
@@ -761,7 +762,7 @@ const GroupTaskList: VoidComponent<{
 		</Menu>
 		<Toast
 			ref={r => toast_copied_ref = r}
-			c_leading={<Icon c_code={0xE51B}/>}>
+			c_leading={<Icon c_code={ICON_COPY}/>}>
 			Tasks copied
 		</Toast>
 	</div>)
@@ -1313,18 +1314,18 @@ const _: VoidComponent<{
 				<IconButton
 					data-tooltip="Edit subtask"
 					data-subtask-edit-index={index()}
-					c_code={0xE739}
+					c_code={ICON_EDIT}
 				/>
 				<IconButton
 					data-tooltip="Delete subtask"
 					data-subtask-delete-index={index()}
-					c_code={0xE59D}
+					c_code={ICON_DELETE}
 				/>
 			</>}
 			c_leading={<IconButton
 				data-tooltip={`Mark as ${subtask().complete? 'un' : ''}completed`}
 				data-subtask-complete-index={index()}
-				c_code={subtask().complete? 0xE3CB : 0xE3D4}/>}>
+				c_code={subtask().complete? ICON_CHECKBOX_CHECKED : ICON_CHECKBOX_UNCHECKED}/>}>
 			{subtask().name}
 		</List>)
 	}
@@ -1355,13 +1356,13 @@ const _: VoidComponent<{
 					data-tooltip={"View file" + (is_type_not_supported()? ' (not supported)' : '')}
 					disabled={is_type_not_supported()}
 					data-file-view-index={file_index()}
-					c_code={0xE77B}
+					c_code={ICON_EYE}
 				/>
 				<IconButton
 					data-tooltip="More actions"
 					data-file-action-index={file_index()}
 					c_focused={selected_file_to_action.file.id == file().id && is_menu_fileaction_open()}
-					c_code={0xEAD9}
+					c_code={ICON_MORE_VERTICAL}
 				/>
 			</>}
 			c_subtitle={array_join([get_size_text(), string_replace(file().type, /\/.+$/gs, '')], " • ")}>
@@ -1375,17 +1376,17 @@ const _: VoidComponent<{
 		const name = createMemo(() => label().name)
 
 		return (<List
-			c_leading={<Icon style={{color: color() ?? undefined}} c_code={0xE407}/>}
+			c_leading={<Icon style={{color: color() ?? undefined}} c_code={ICON_CIRCLE}/>}
 			c_trailing={<>
 				<IconButton
 					data-tooltip="Edit label"
 					data-label-edit-index={$props.index}
-					c_code={0xE739}
+					c_code={ICON_EDIT}
 				/>
 				<IconButton
 					data-tooltip="Remove label from task"
 					data-label-remove-index={$props.index}
-					c_code={0xE5E9}
+					c_code={ICON_DISMISS}
 				/>
 			</>}>
 			{ name() }
@@ -1640,7 +1641,7 @@ const _: VoidComponent<{
 					</Tooltip>
 					<Button
 						id={button_edittask_addsubtask_id}>
-						<Icon c_code={0xE009}/>Add subtask
+						<Icon c_code={ICON_ADD_CIRCLE}/>Add subtask
 					</Button>
 				</div>
 				<Divider />
@@ -1655,7 +1656,7 @@ const _: VoidComponent<{
 					<Button
 						c_focused={is_menu_labels_open()}
 						id={button_edittask_addlabel_id}>
-						<Icon c_code={0xF00D}/>Add label
+						<Icon c_code={ICON_TAG}/>Add label
 					</Button>
 				</div>
 				<Divider />
@@ -1665,7 +1666,7 @@ const _: VoidComponent<{
 						fallback={<Button
 							id={button_edittask_addreminder_id}
 							c_focused={is_datetimepicker_reminder_open()}>
-							<Icon c_code={0xE01D}/>Add reminder
+							<Icon c_code={ICON_ALERT_BADGE}/>Add reminder
 						</Button>}>
 						<List
 							c_trailing_auto_tabindex
@@ -1673,15 +1674,15 @@ const _: VoidComponent<{
 								<IconButton
 									id={button_edittask_changereminder_id}
 									data-tooltip="Change datetime reminder"
-									c_code={0xE2EA}
+									c_code={ICON_CALENDAR_EDIT}
 								/>
 								<IconButton
 									id={button_edittask_removereminder_id}
 									data-tooltip="Remove reminder"
-									c_code={0xE01F}
+									c_code={ICON_ALERT_OFF}
 								/>
 							</Tooltip>}
-							c_leading={<Icon c_code={0xE025}/>}>
+							c_leading={<Icon c_code={ICON_ALERT_URGENT}/>}>
 							<span style={{
 								color: date_out_range_YMD_HM(
 									selected_task_to_edit.task.reminder!,
@@ -1701,14 +1702,14 @@ const _: VoidComponent<{
 							}</For>
 						</Tooltip>
 						<Button id={button_edittask_addfile_id}>
-							<Icon c_code={0xE187}/>Add file
+							<Icon c_code={ICON_ATTACH}/>Add file
 						</Button>
 					</div>
 					<Divider />
 				</Show>
 				<div data-important>
 					<Button id={button_edittask_markimportant_id}>
-						<Icon c_filled={selected_task_to_edit.task.important} c_code={0xEF1B}/>
+						<Icon c_filled={selected_task_to_edit.task.important} c_code={ICON_STAR}/>
 						Mark as {selected_task_to_edit.task.important? 'not' : ''} important
 					</Button>
 				</div>
@@ -1716,7 +1717,7 @@ const _: VoidComponent<{
 					<Button
 						id={button_edittask_deletetask_id}
 						style={{color: `rgb(${AppColors.error})`}}>
-						<Icon c_code={0xE59D}/>
+						<Icon c_code={ICON_DELETE}/>
 						Delete task
 					</Button>
 				</div>
@@ -2095,27 +2096,27 @@ const _: VoidComponent<{
 				}}>
 				<MenuItem
 					id={button_taskactions_markcomplete_id}
-					c_icon_code={selected_task_to_action.task.complete? 0xE3D4 : 0xE3CC}
+					c_icon_code={selected_task_to_action.task.complete? ICON_CHECKBOX_UNCHECKED : ICON_CHECKBOX_CHECKED}
 					c_trailing={<MenuIndent />}>
 					Mark as {selected_task_to_action.task.complete? 'not' : ''} completed
 				</MenuItem>
 				<MenuItem
 					id={button_taskactions_markimportant_id}
-					c_leading={<Icon c_code={0xEF1B} c_filled={!((selected_task_to_action.task.important) || false)}/>}
+					c_leading={<Icon c_code={ICON_STAR} c_filled={!((selected_task_to_action.task.important) || false)}/>}
 					c_trailing={<MenuIndent />}>
 					Mark as {selected_task_to_action.task.important? 'not' : ''} important
 				</MenuItem>
 				<MenuDivider />
 				<Show when={!props.is_db_file_error}>
 					<MenuItem
-						c_icon_code={0xE187}
+						c_icon_code={ICON_ATTACH}
 						c_trailing={<MenuIndent />}
 						id={button_taskactions_addfile_id}>
 						Add file
 					</MenuItem>
 				</Show>
 				<MenuItem
-					c_icon_code={0xE009}
+					c_icon_code={ICON_ADD_CIRCLE}
 					id={button_taskactions_addsubtask_id}
 					c_trailing={<MenuIndent />}>
 					Add subtask
@@ -2123,7 +2124,7 @@ const _: VoidComponent<{
 				<Show when={selected_task_to_action.task.reminder == null}>
 					<MenuItem
 						id={button_taskactions_addreminder_id}
-						c_icon_code={0xE01B}
+						c_icon_code={ICON_ALERT}
 						c_trailing={<MenuIndent />}>
 						Add reminder
 					</MenuItem>
@@ -2133,12 +2134,12 @@ const _: VoidComponent<{
 						c_on_toggleopen={v => set_is_menu_taskactionaddlabel_open(v)}
 						c_item={<SubMenuItem
 							c_focused={is_menu_taskactionaddlabel_open()}
-							c_icon_code={0xF00D}>
+							c_icon_code={ICON_TAG}>
 							Add label
 						</SubMenuItem>}>
 						<For each={props.labels}>{label => <Show when={label != undefined}>
 							<MenuItem
-								c_leading={<Icon style={{color: label!.color ?? undefined}} c_code={0xE407}/>}
+								c_leading={<Icon style={{color: label!.color ?? undefined}} c_code={ICON_CIRCLE}/>}
 								c_checked={array_includes(selected_task_to_action.task.label_ids, label!.id)}
 								data-label-id={label!.id}>
 								{label!.name}
@@ -2153,7 +2154,7 @@ const _: VoidComponent<{
 					c_on_toggleopen={v => set_is_menu_taskaction_move_open(v)}
 					c_item={<SubMenuItem
 						c_focused={is_menu_taskactionmove_open()}
-						c_icon_code={0xE115}>
+						c_icon_code={ICON_ARROW_RIGHT}>
 						Move task to ...
 					</SubMenuItem>}>
 					<For each={props.tasklists}>{(list, i) => <>
@@ -2161,9 +2162,9 @@ const _: VoidComponent<{
 							data-tasklist-index={i()}
 							style={{order: list.id == DEFAULT_TASK_LIST.id? '-2' : undefined}}
 							c_icon_code={list.id == DEFAULT_TASK_LIST.id
-								? 0xE8E2
+								? ICON_HOME
 								: list.emoji == null
-									? 0xF032
+									? ICON_TASK_LIST_SQUARE_LTR
 									: undefined
 							}
 							c_leading={<Show
@@ -2181,13 +2182,13 @@ const _: VoidComponent<{
 				<MenuDivider />
 				<MenuItem
 					id={button_taskactions_edittask_id}
-					c_icon_code={0xE739}
+					c_icon_code={ICON_EDIT}
 					c_trailing={<MenuIndent />}>
 					Edit task
 				</MenuItem>
 				<MenuItem
 					id={button_taskactions_deletetask_id}
-					c_icon_code={0xE59D}
+					c_icon_code={ICON_DELETE}
 					c_trailing={<MenuIndent />}>
 					Delete task
 				</MenuItem>
@@ -2221,12 +2222,12 @@ const _: VoidComponent<{
 					}
 				}}>
 				<MenuItem
-					c_icon_code={0xE2EA}
+					c_icon_code={ICON_CALENDAR_EDIT}
 					id={button_reminder_change_id}>
 					Change datetime reminder
 				</MenuItem>
 				<MenuItem
-					c_icon_code={0xE01F}
+					c_icon_code={ICON_ALERT_OFF}
 					id={button_reminder_remove_id}>
 					Remove reminder
 				</MenuItem>
@@ -2296,20 +2297,20 @@ const _: VoidComponent<{
 				}}>
 				<MenuItem
 					id={button_labels_new_id}
-					c_icon_code={0xE007}>
+					c_icon_code={ICON_ADD}>
 					New label
 				</MenuItem>
 				<Show when={array_length(props.labels) > 0}>
 					<MenuItem
 						id={button_labels_edit_id}
-						c_icon_code={0xE739}>
+						c_icon_code={ICON_EDIT}>
 						Edit labels
 					</MenuItem>
 					<Divider/>
 				</Show>
 				<For each={props.labels}>{(label, i) => <Show when={label != undefined}>
 					<MenuItem
-						c_leading={<Icon style={{color: label!.color ?? undefined}} c_code={0xE407}/>}
+						c_leading={<Icon style={{color: label!.color ?? undefined}} c_code={ICON_CIRCLE}/>}
 						c_checked={array_includes(selected_task_to_edit.task.label_ids, label!.id)}
 						data-label-index={i()}>
 						{label!.name}
@@ -2338,12 +2339,12 @@ const _: VoidComponent<{
 					}
 				}}>
 				<MenuItem
-					c_icon_code={0xE739}
+					c_icon_code={ICON_EDIT}
 					id={button_labelactions_edit_id}>
 					Edit label
 				</MenuItem>
 				<MenuItem
-					c_icon_code={0xE59D}
+					c_icon_code={ICON_DELETE}
 					id={button_labelactions_delete_id}>
 					Delete label
 				</MenuItem>
@@ -2380,12 +2381,12 @@ const _: VoidComponent<{
 					}
 				}}>
 				<MenuItem
-					c_icon_code={0xE739}
+					c_icon_code={ICON_EDIT}
 					id={button_labelactions_edit2_id}>
 					Edit label
 				</MenuItem>
 				<MenuItem
-					c_icon_code={0xE5E9}
+					c_icon_code={ICON_DISMISS}
 					id={button_labelactions_delete2_id}>
 					Remove label from task
 				</MenuItem>
@@ -2439,17 +2440,17 @@ const _: VoidComponent<{
 					}
 				}}>
 				<MenuItem
-					c_icon_code={0xE0B9}
+					c_icon_code={ICON_ARROW_DOWNLOAD}
 					id={button_fileaction_download_id}>
 					Download
 				</MenuItem>
 				<MenuItem
-					c_icon_code={0xE739}
+					c_icon_code={ICON_EDIT}
 					id={button_fileaction_rename_id}>
 					Rename
 				</MenuItem>
 				<MenuItem
-					c_icon_code={0xE59D}
+					c_icon_code={ICON_DELETE}
 					id={button_fileaction_delete_id}>
 					Delete
 				</MenuItem>
@@ -2546,23 +2547,23 @@ const _: VoidComponent<{
 				c_on_toggleopen={(is_open) => set_is_menu_fileaction3_open(is_open)}>
 				<Show when={regex_test(/^(audio|image|video|text)/, selected_file_to_action2.file.type)}>
 					<MenuItem
-						c_icon_code={0xE77B}
+						c_icon_code={ICON_EYE}
 						id={button_fileaction3_view_id}>
 						View
 					</MenuItem>
 				</Show>
 				<MenuItem
-					c_icon_code={0xE739}
+					c_icon_code={ICON_EDIT}
 					id={button_fileaction3_rename_id}>
 					Rename
 				</MenuItem>
 				<MenuItem
-					c_icon_code={0xE0B9}
+					c_icon_code={ICON_ARROW_DOWNLOAD}
 					id={button_fileaction3_download_id}>
 					Download
 				</MenuItem>
 				<MenuItem
-					c_icon_code={0xE59D}>
+					c_icon_code={ICON_DELETE}>
 					Delete
 				</MenuItem>
 			</Menu>

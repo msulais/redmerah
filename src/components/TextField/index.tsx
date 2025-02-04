@@ -13,6 +13,8 @@ import { array_length } from '@/utils/array'
 import { number_is_nan, number_is_not_defined, number_parse, number_safe } from '@/utils/number'
 import { rect_width } from '@/utils/rect'
 import { document_active } from '@/utils/document'
+import { KEY_ARROW_DOWN, KEY_ARROW_UP, KEY_ENTER, KEY_SPACE } from '@/constants/key_code'
+import { ICON_CHEVRON_DOWN, ICON_CHEVRON_UP, ICON_CHEVRON_UP_DOWN, ICON_DISMISS } from '@/constants/icons'
 
 import Icon from '@/components/Icon'
 import Button, { IconButton, type ButtonProps } from '@/components/Button'
@@ -22,7 +24,6 @@ import Modal, { type ModalProps } from '@/components/Modal'
 import FocusableGroup from '@/components/FocusableGroup'
 import Tooltip from '@/components/Tooltip'
 import './index.scss'
-import { KEY_ARROW_DOWN, KEY_ARROW_UP, KEY_ENTER, KEY_SPACE } from '@/constants/key_code'
 
 const HEIGHT_TEXT_INPUT_PER_LINE = 20
 
@@ -130,7 +131,7 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 					data-tooltip={props.c_tooltip_clear ?? 'Clear'}
 					type={'button'}
 					id={button_clear_id}>
-					<Icon c_code={0xE5E9}/>
+					<Icon c_code={ICON_DISMISS}/>
 				</TextFieldButton>
 			</Show>
 		</>)
@@ -279,7 +280,7 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 					data-tooltip={props.c_tooltip_clear ?? 'Clear'}
 					type={'button'}
 					id={button_clear_id}>
-					<Icon c_code={0xE5E9}/>
+					<Icon c_code={ICON_DISMISS}/>
 				</TextFieldButton>
 			</Show>
 		</>)
@@ -550,7 +551,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 								anchor: event_current_target(ev)
 							})
 						}>
-						<Icon c_code={0xE406}/>
+						<Icon c_code={ICON_CHEVRON_UP_DOWN}/>
 					</TextFieldButton>
 				</Show>
 				<Show when={props.c_auto_show_clear_button && value() != 0}>
@@ -560,7 +561,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 
 						numbertextfield_ref.value = `${v}`
 						set_value(v)
-					}}><Icon c_code={0xE5E9}/></TextFieldButton>
+					}}><Icon c_code={ICON_DISMISS}/></TextFieldButton>
 				</Show>
 			</>}
 			{...other}
@@ -632,7 +633,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 					disabled={props.max != null && value() >= get_max()}
 					onPointerUp={() => on_press_end('+')}
 					onPointerDown={() => on_press_start('+')}
-					c_code={0xE404}
+					c_code={ICON_CHEVRON_UP}
 				/>
 				<IconButton
 					data-tooltip={props.c_tooltip_decrease}
@@ -640,7 +641,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 					disabled={props.min != null && value() <= get_min()}
 					onPointerUp={() => on_press_end('-')}
 					onPointerDown={() => on_press_start('-')}
-					c_code={0xE3FC}
+					c_code={ICON_CHEVRON_DOWN}
 				/>
 			</Tooltip>
 		</Modal>

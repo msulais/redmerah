@@ -10,6 +10,7 @@ import { math_round } from "@/utils/math"
 import { event_current_target } from "@/utils/event"
 import { document_active } from "@/utils/document"
 import { element_valid_target, element_tagname, element_id } from "@/utils/element"
+import { ICON_CHECKMARK, ICON_COPY } from "@/constants/icons"
 
 import Icon from "@/components/Icon"
 import Button, { ButtonVariant } from "@/components/Button"
@@ -77,8 +78,8 @@ const _: VoidComponent<Palette> = (props) => {
 				c_variant={ButtonVariant.tonal}
 				style={{'--g-color-on-surface': hex_to_css_value(on_accent_light())}}
 				id={button_acclight_id}>
-				<Show when={timeout_accentlight_id[0]()} fallback={<><Icon c_code={0xE51B}/>Copy</>}>
-					<Icon c_code={0xE3D8}/>Copied
+				<Show when={timeout_accentlight_id[0]()} fallback={<><Icon c_code={ICON_COPY}/>Copy</>}>
+					<Icon c_code={ICON_CHECKMARK}/>Copied
 				</Show>
 			</Button>
 		</div>
@@ -88,8 +89,8 @@ const _: VoidComponent<Palette> = (props) => {
 				c_variant={ButtonVariant.tonal}
 				style={{'--g-color-on-surface': hex_to_css_value(accent_light())}}
 				id={button_onacclight_id}>
-				<Show when={timeout_onaccentlight_id[0]()} fallback={<><Icon c_code={0xE51B}/>Copy</>}>
-					<Icon c_code={0xE3D8}/>Copied
+				<Show when={timeout_onaccentlight_id[0]()} fallback={<><Icon c_code={ICON_COPY}/>Copy</>}>
+					<Icon c_code={ICON_CHECKMARK}/>Copied
 				</Show>
 			</Button>
 		</div>
@@ -99,8 +100,8 @@ const _: VoidComponent<Palette> = (props) => {
 				c_variant={ButtonVariant.tonal}
 				style={{'--g-color-on-surface': hex_to_css_value(on_accent_dark())}}
 				id={button_accdark_id}>
-				<Show when={timeout_accentdark_id[0]()} fallback={<><Icon c_code={0xE51B}/>Copy</>}>
-					<Icon c_code={0xE3D8}/>Copied
+				<Show when={timeout_accentdark_id[0]()} fallback={<><Icon c_code={ICON_COPY}/>Copy</>}>
+					<Icon c_code={ICON_CHECKMARK}/>Copied
 				</Show>
 			</Button>
 		</div>
@@ -110,8 +111,8 @@ const _: VoidComponent<Palette> = (props) => {
 				c_variant={ButtonVariant.tonal}
 				style={{'--g-color-on-surface': hex_to_css_value(accent_dark())}}
 				id={button_onaccdark_id}>
-				<Show when={timeout_onaccentdark_id[0]()} fallback={<><Icon c_code={0xE51B}/>Copy</>}>
-					<Icon c_code={0xE3D8}/>Copied
+				<Show when={timeout_onaccentdark_id[0]()} fallback={<><Icon c_code={ICON_COPY}/>Copy</>}>
+					<Icon c_code={ICON_CHECKMARK}/>Copied
 				</Show>
 			</Button>
 		</div>

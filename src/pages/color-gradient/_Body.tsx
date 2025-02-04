@@ -17,6 +17,7 @@ import { string_length, string_padstart, string_replace, string_split, string_su
 import { number_is_not_defined, number_parse, number_safe, number_to_string } from "@/utils/number"
 import { rect_width } from "@/utils/rect"
 import { document_active } from "@/utils/document"
+import { ICON_ADD, ICON_ADD_CIRCLE, ICON_CHEVRON_DOWN, ICON_CIRCLE, ICON_COPY, ICON_DELETE, ICON_EYE, ICON_EYEDROPPER, ICON_MORE_HORIZONTAL } from "@/constants/icons"
 
 import Icon from "@/components/Icon"
 import Button, { ButtonVariant, IconButton, SquareButton } from "@/components/Button"
@@ -112,18 +113,18 @@ const GradientDataList: VoidComponent<{
 					}
 				}}>
 				<MenuItem
-					c_icon_code={0xE77B}
+					c_icon_code={ICON_EYE}
 					id={button_action_view_id}>
 					View
 				</MenuItem>
 				<MenuItem
-					c_icon_code={0xE51B}
+					c_icon_code={ICON_COPY}
 					id={button_action_copy_id}>
 					Copy
 				</MenuItem>
 				<MenuDivider />
 				<MenuItem
-					c_icon_code={0xE59D}
+					c_icon_code={ICON_DELETE}
 					id={button_action_delete_id}>
 					Delete
 				</MenuItem>
@@ -244,7 +245,7 @@ const GradientControl: VoidComponent<{
 		</div>
 		<IconButton
 			data-tooltip={expanded()? "Show less" : 'Show more'}
-			c_code={0xE3FC}
+			c_code={ICON_CHEVRON_DOWN}
 			onClick={() => set_expanded(e => !e)}
 			data-expanded={attr_set_if_exist(expanded())}
 		/>
@@ -437,7 +438,7 @@ const GradientControl: VoidComponent<{
 					)}
 				/>
 				<TextField
-					c_leading={<Icon c_code={0xE408} c_filled style={{color: stop.color}}/>}
+					c_leading={<Icon c_code={ICON_CIRCLE} c_filled style={{color: stop.color}}/>}
 					value={convert_color_by_color_model(stop.color, settings().color_model, true)}
 					enterkeyhint="done"
 					onBlur={ev => {
@@ -488,13 +489,13 @@ const GradientControl: VoidComponent<{
 						<TextFieldButton
 							data-tooltip="Pick color"
 							data-gradientcontrol-pickcolor={array_join([gradient_index(), index(), stop.color], ',')}>
-							<Icon c_code={0xE785} />
+							<Icon c_code={ICON_EYEDROPPER} />
 						</TextFieldButton>
 						<Show when={array_length(gradient().color_stop_list) > 2}>
 							<TextFieldButton
 								data-tooltip="Remove color"
 								data-gradientcontrol-removecolor={array_join([gradient_index(), index()], ',')}>
-								<Icon c_code={0xE59D} />
+								<Icon c_code={ICON_DELETE} />
 							</TextFieldButton>
 						</Show>
 					</>}
@@ -507,12 +508,12 @@ const GradientControl: VoidComponent<{
 		<Button
 			c_variant={ButtonVariant.filled}
 			data-gradientcontrol-addcolorstop={gradient_index()}>
-			<Icon c_code={0xE009} c_filled/>Add color stop
+			<Icon c_code={ICON_ADD_CIRCLE} c_filled/>Add color stop
 		</Button>
 		<IconButton
 			data-tooltip="More actions"
 			data-gradientcontrol-moreactions={gradient_index()}
-			c_code={0xEAD7}
+			c_code={ICON_MORE_HORIZONTAL}
 		/>
 	</div>)
 
@@ -621,12 +622,12 @@ const _: VoidComponent<{
 				}}>
 				<MenuItem
 					id={button_gradientactions_copycss_id}
-					c_icon_code={0xE51B}>
+					c_icon_code={ICON_COPY}>
 					Copy CSS
 				</MenuItem>
 				<MenuItem
 					id={button_gradientactions_deletegradient_id}
-					c_icon_code={0xE59D}
+					c_icon_code={ICON_DELETE}
 					disabled={array_length(props.gradients) <= 1}>
 					Delete gradient
 				</MenuItem>
@@ -637,7 +638,7 @@ const _: VoidComponent<{
 	const Toasts: VoidComponent = () => (<>
 		<Toast
 			ref={r => toast_copied_ref = r}
-			c_leading={<Icon c_code={0xE51B}/>}>
+			c_leading={<Icon c_code={ICON_COPY}/>}>
 			Copied to clipboard
 		</Toast>
 	</>)
@@ -780,7 +781,7 @@ const _: VoidComponent<{
 					<Button
 						c_variant={ButtonVariant.filled}
 						id={button_addgradient_id}>
-						<Icon c_code={0xE007} />Add gradient
+						<Icon c_code={ICON_ADD} />Add gradient
 					</Button>
 					<For each={props.gradients}>{(gradient, index) =>
 						<GradientControl

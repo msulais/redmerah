@@ -9,6 +9,7 @@ import Tooltip from "@/components/Tooltip"
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import Expander, { ExpanderHeader, ExpanderVariant } from "@/components/Expander"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
+import { ICON_HISTORY, ICON_INFO, ICON_OPEN } from "@/constants/icons"
 
 const _: VoidComponent = () => {
 	const [title, set_title] = createSignal<boolean>(true)
@@ -27,10 +28,10 @@ const _: VoidComponent = () => {
 					c_header={<ExpanderHeader
 						c_use_expand_icon={use_expand_icon()}
 						c_subtitle={<Show when={subtitle()}>Deserunt commodo qui aute veniam tempor ipsum.</Show>}
-						c_leading={<Show when={leading()}><Icon c_code={0xE569}/></Show>}
+						c_leading={<Show when={leading()}><Icon c_code={ICON_INFO}/></Show>}
 						c_trailing={<Show when={trailing()}>
-							<IconButton onClick={ev => event_stop_propagation(ev)} c_code={0xE6BF}/>
-							<IconButton onClick={ev => event_stop_propagation(ev)} c_code={0xEBB8}/>
+							<IconButton onClick={ev => event_stop_propagation(ev)} c_code={ICON_HISTORY}/>
+							<IconButton onClick={ev => event_stop_propagation(ev)} c_code={ICON_OPEN}/>
 						</Show>}>
 						<Show when={title()}>Click to expand</Show>
 					</ExpanderHeader>}

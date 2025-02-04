@@ -14,6 +14,7 @@ import { event_current_target, event_target } from "@/utils/event"
 import { element_dataset, element_id, element_tagname, element_valid_target } from "@/utils/element"
 import { document_active } from "@/utils/document"
 import { promise_done } from "@/utils/object"
+import { ICON_COPY } from "@/constants/icons"
 
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import TextField, { TextFieldButton } from "@/components/TextField"
@@ -214,7 +215,7 @@ const ColorInput: VoidComponent<{
 		}}></div>
 		<Toast
 			ref={r => toast_copied_ref = r}
-			c_leading={<Icon c_code={0xE51B}/>}>
+			c_leading={<Icon c_code={ICON_COPY}/>}>
 			Copied to clipboard
 		</Toast>
 		<Tooltip>
@@ -238,7 +239,7 @@ const ColorInput: VoidComponent<{
 				c_trailing={<TextFieldButton
 					data-tooltip="Copy"
 					data-copy={get_hex_color()}>
-					<Icon c_code={0xE51B}/>
+					<Icon c_code={ICON_COPY}/>
 				</TextFieldButton>}
 			/>
 			<TextField
@@ -266,7 +267,7 @@ const ColorInput: VoidComponent<{
 				c_trailing={<TextFieldButton
 					data-tooltip="Copy"
 					data-copy={get_rgb_color()}>
-					<Icon c_code={0xE51B}/>
+					<Icon c_code={ICON_COPY}/>
 				</TextFieldButton>}
 			/>
 			<TextField
@@ -294,7 +295,7 @@ const ColorInput: VoidComponent<{
 				c_trailing={<TextFieldButton
 					data-tooltip="Copy"
 					data-copy={get_hsl_color()}>
-					<Icon c_code={0xE51B}/>
+					<Icon c_code={ICON_COPY}/>
 				</TextFieldButton>}
 			/>
 			<TextField
@@ -322,7 +323,7 @@ const ColorInput: VoidComponent<{
 				c_trailing={<TextFieldButton
 					data-tooltip="Copy"
 					data-copy={get_hsv_color()}>
-					<Icon c_code={0xE51B}/>
+					<Icon c_code={ICON_COPY}/>
 				</TextFieldButton>}
 			/>
 			<TextField
@@ -350,7 +351,7 @@ const ColorInput: VoidComponent<{
 				c_trailing={<TextFieldButton
 					data-tooltip="Copy"
 					data-copy={get_hwb_color()}>
-					<Icon c_code={0xE51B}/>
+					<Icon c_code={ICON_COPY}/>
 				</TextFieldButton>}
 			/>
 			<TextField
@@ -379,7 +380,7 @@ const ColorInput: VoidComponent<{
 				c_trailing={<TextFieldButton
 					data-tooltip="Copy"
 					data-copy={get_cmyk_color()}>
-					<Icon c_code={0xE51B}/>
+					<Icon c_code={ICON_COPY}/>
 				</TextFieldButton>}
 			/>
 		</Tooltip>

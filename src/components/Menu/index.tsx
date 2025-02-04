@@ -20,6 +20,7 @@ import './index.scss'
 import { string_css_escape } from "@/utils/string"
 import { document_active } from "@/utils/document"
 import { array_includes } from "@/utils/array"
+import { ICON_CHECKBOX_CHECKED, ICON_CHECKBOX_UNCHECKED, ICON_CHEVRON_RIGHT } from "@/constants/icons"
 
 const SUBMENU_CLASSNAME = 'c-submenu'
 
@@ -64,7 +65,7 @@ const MenuItem: ParentComponent<MenuItemProps> = ($props) => {
 			<Icon
 				style={{color: `rgb(${AppColors.accent})`}}
 				c_filled={props.c_checked}
-				c_code={props.c_checked? 0xE3CC : 0xE3D4}
+				c_code={props.c_checked? ICON_CHECKBOX_CHECKED : ICON_CHECKBOX_UNCHECKED}
 			/>
 		</Show>
 		<Show when={props.c_icon_code != null}>
@@ -89,7 +90,7 @@ const SubMenuItem: ParentComponent<SubMenuItemProps> = ($props) => {
 	return (<MenuItem
 		c_trailing={<>
 			{props.c_trailing}
-			<Icon c_code={0xE402}/>
+			<Icon c_code={ICON_CHEVRON_RIGHT}/>
 		</>}
 		{...other}
 	/>)
@@ -118,7 +119,7 @@ const LinkMenuItem: ParentComponent<LinkMenuItemProps> = ($props) => {
 			<Icon
 				style={{color: props.c_checked? `rgb(${AppColors.accent})` : undefined}}
 				c_filled={props.c_checked}
-				c_code={props.c_checked? 0xE3CC : 0xE3D4}
+				c_code={props.c_checked? ICON_CHECKBOX_CHECKED : ICON_CHECKBOX_UNCHECKED}
 			/>
 		</Show>
 		<Show when={props.c_icon_code != null}>

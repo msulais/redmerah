@@ -6,6 +6,7 @@ import { SettingsElement, NavigationMenu } from './_components'
 import CSS from './_index.module.scss'
 
 import { RoutesLinks, ExternalLinks } from '@/enums/links'
+import { ICON_APPS, ICON_ARROW_RIGHT_UP, ICON_GIFT, ICON_INFO } from '@/constants/icons'
 
 type Props = {
 	route?: RoutesLinks
@@ -31,7 +32,7 @@ const { route } = Astro.props
 			selected={route == RoutesLinks.apps}
 			href={RoutesLinks.apps}>
 			<Icon
-				code={0xE063}
+				code={ICON_APPS}
 				filled={route == RoutesLinks.apps}
 				style={route == RoutesLinks.apps? 'color:rgb(var(--g-color-accent))' : undefined}
 			/>
@@ -43,7 +44,7 @@ const { route } = Astro.props
 			selected={route == RoutesLinks.about}
 			href={RoutesLinks.about}>
 			<Icon
-				code={0xE930}
+				code={ICON_INFO}
 				filled={route == RoutesLinks.about}
 				style={route == RoutesLinks.about? 'color:rgb(var(--g-color-accent))' : undefined}
 			/>
@@ -53,9 +54,9 @@ const { route } = Astro.props
 			classList={[CSS.desktop_only]}
 			href={ExternalLinks.donate}
 			openInNewTab>
-			<Icon code={0xE84B}/>
+			<Icon code={ICON_GIFT}/>
 			Donate
-			<Icon code={0xE17D} inline/>
+			<Icon code={ICON_ARROW_RIGHT_UP} inline/>
 		</LinkButton>
 	</nav>
 	<div>

@@ -6,6 +6,7 @@ import { attr_set_if_exist, classlist } from "@/utils/attributes"
 import { element_animate, element_dispatch_event, element_is_same_node, element_all_by_selector } from "@/utils/element"
 import { event_add_listener, event_call, event_current_target, event_remove_listener } from "@/utils/event"
 import { promise_done } from "@/utils/object"
+import { ICON_CHECKBOX_CHECKED, ICON_CHECKBOX_UNCHECKED, ICON_RADIO_BUTTON } from "@/constants/icons"
 
 import Icon, { type IconProps } from "@/components/Icon"
 import '@/components/Button/index.scss'
@@ -131,8 +132,8 @@ const CheckBox: ParentComponent<CheckBoxProps> = ($props) => {
 		/>
 		<Icon
 			ref={mergeRefs(icon_props.ref, r => icon_ref = r)}
-			c_code={icon_props.c_code ?? (props.c_variant == CheckBoxVariant.check? (is_checked()? 0xE3CB : 0xE3D4) : 0xED2F)}
-			c_filled={icon_props.c_filled ?? (props.c_variant != CheckBoxVariant.check && is_checked())}
+			c_code={icon_props.c_code ?? (props.c_variant == CheckBoxVariant.check? (is_checked()? ICON_CHECKBOX_CHECKED : ICON_CHECKBOX_UNCHECKED) : ICON_RADIO_BUTTON)}
+			c_filled={icon_props.c_filled ?? is_checked()}
 			{...other_icon_props}
 		/>
 		{props.children}

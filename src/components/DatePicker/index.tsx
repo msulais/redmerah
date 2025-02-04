@@ -13,6 +13,7 @@ import { KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT, KEY_ARROW_UP } from "@
 import { number_parse, number_safe } from "@/utils/number"
 import { timeout_set } from "@/utils/timeout"
 import { document_active } from "@/utils/document"
+import { ICON_CALENDAR_DATE, ICON_CHEVRON_LEFT, ICON_CHEVRON_RIGHT } from "@/constants/icons"
 
 import Button, { ButtonVariant, IconButton, SquareButton } from "@/components/Button"
 import { Modal, type ModalProps, ModalPosition as DatePickerPosition, close_modal, focus_modal, open_modal, reposition_modal, is_modal_open } from "@/components/Modal"
@@ -474,18 +475,18 @@ const DatePickerBody: ParentComponent<{
 				&& date_in_range_YM(value(), props.first_date, props.last_date)}>
 				<IconButton
 					tabindex="-1"
-					c_code={0xE2E6}
+					c_code={ICON_CALENDAR_DATE}
 					id={button_selected_id}
 				/>
 			</Show>
 			<IconButton
 				tabindex="-1"
-				c_code={0xE400}
+				c_code={ICON_CHEVRON_LEFT}
 				id={button_previous_id}
 			/>
 			<IconButton
 				tabindex="-1"
-				c_code={0xE402}
+				c_code={ICON_CHEVRON_RIGHT}
 				id={button_next_id}
 			/>
 		</div>

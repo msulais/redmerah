@@ -11,6 +11,7 @@ import { array_filter, array_join, array_some, array_sort } from "@/utils/array"
 import { string_locale_compare, string_split, string_tolowercase, string_trim } from "@/utils/string"
 import { navigator_clipboard_writetext, navigator_share } from "@/utils/navigator"
 import { regex_test } from "@/utils/regex"
+import { ICON_COPY, ICON_INFO, ICON_OPEN, ICON_OPEN_FOLDER, ICON_PIN, ICON_PIN_OFF, ICON_SEARCH, ICON_SHARE_ANDROID } from "@/constants/icons"
 import { timeout_clear, timeout_set } from "@/utils/timeout"
 
 import Icon from "@/components/Icon"
@@ -71,7 +72,7 @@ export const MainElement: VoidComponent = () => {
 					}, 500)
 				}}
 				c_auto_show_clear_button
-				c_leading={<Icon c_code={0xEDDF} />}
+				c_leading={<Icon c_code={ICON_SEARCH} />}
 				c_label="Search apps"
 			/>
 		</Tooltip>
@@ -98,7 +99,7 @@ export const MainElement: VoidComponent = () => {
 						<img loading="eager" width="48" height="48" src={app.logo_url} alt={app.name} />
 						{app.name}
 						<Show when={is_selected(app.link)}>
-							<Icon c_filled c_code={0xECA2}/>
+							<Icon c_filled c_code={ICON_PIN}/>
 						</Show>
 					</LinkButton>
 				</Show>
@@ -110,17 +111,17 @@ export const MainElement: VoidComponent = () => {
 					pin_app(get_selected_link() ?? '#')
 					close_menu(menu_actions_ref)
 				}}
-				c_leading={<Show when={is_selected(get_selected_link() ?? '#')} fallback={<Icon c_code={0xECA2}/>}><Icon c_code={0xECA4}/></Show>}>
+				c_leading={<Show when={is_selected(get_selected_link() ?? '#')} fallback={<Icon c_code={ICON_PIN}/>}><Icon c_code={ICON_PIN_OFF}/></Show>}>
 				<Show when={is_selected(get_selected_link() ?? '#')} fallback="Pin">Unpin</Show> app
 			</MenuItem>
 			<MenuDivider/>
-			<LinkMenuItem href={get_selected_link() ?? '#'} c_leading={<Icon c_code={0xEB53}/>}>Open</LinkMenuItem>
+			<LinkMenuItem href={get_selected_link() ?? '#'} c_leading={<Icon c_code={ICON_OPEN_FOLDER}/>}>Open</LinkMenuItem>
 			<MenuItem
 				onClick={() => {
 					window.open(get_selected_link() ?? '#', '_blank', 'noopener noreferrer')
 					close_menu(menu_actions_ref)
 				}}
-				c_leading={<Icon c_code={0xEB51}/>}>
+				c_leading={<Icon c_code={ICON_OPEN}/>}>
 				Open in new tab
 			</MenuItem>
 			<MenuDivider/>
@@ -129,12 +130,12 @@ export const MainElement: VoidComponent = () => {
 					navigator_clipboard_writetext('https://' + location.hostname + (get_selected_link() ?? '#'))
 					close_menu(menu_actions_ref)
 				}}
-				c_leading={<Icon c_code={0xE51B}/>}>
+				c_leading={<Icon c_code={ICON_COPY}/>}>
 				Copy link
 			</MenuItem>
 			<MenuItem
 				onClick={() => share()}
-				c_leading={<Icon c_code={0xEE23}/>}>
+				c_leading={<Icon c_code={ICON_SHARE_ANDROID}/>}>
 				Share
 			</MenuItem>
 			<MenuDivider/>
@@ -143,7 +144,7 @@ export const MainElement: VoidComponent = () => {
 					close_menu(menu_actions_ref)
 					open_dialog(ev, dialog_info_ref)
 				}}
-				c_leading={<Icon c_code={0xE930}/>}>
+				c_leading={<Icon c_code={ICON_INFO}/>}>
 				About app
 			</MenuItem>
 		</Menu>

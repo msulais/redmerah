@@ -13,6 +13,7 @@ import { IDB, idb_store_put } from "@/utils/indexeddb"
 import { promise_done } from "@/utils/object"
 import { array_length } from "@/utils/array"
 import { navigator_clipboard_writetext } from "@/utils/navigator"
+import { ICON_COPY, ICON_DOCUMENT_ERROR, ICON_SCAN_TEXT } from "@/constants/icons"
 
 import Icon from "@/components/Icon"
 import Toast, { open_toast } from "@/components/Toast"
@@ -250,17 +251,17 @@ const _: VoidComponent = () => {
 	const Toasts: VoidComponent = () => (<>
 		<Toast
 			ref={r => toast_nofileselected_ref = r}
-			c_leading={<Icon c_code={0xE631}/>}>
+			c_leading={<Icon c_code={ICON_DOCUMENT_ERROR}/>}>
 			No file selected
 		</Toast>
 		<Toast
 			ref={r => toast_errorreadingfiles_ref = r}
-			c_leading={<Icon c_code={0xEDC5}/>}>
+			c_leading={<Icon c_code={ICON_SCAN_TEXT}/>}>
 			Error reading files
 		</Toast>
 		<Toast
 			ref={r => toast_copied_ref = r}
-			c_leading={<Icon c_code={0xE51B}/>}>
+			c_leading={<Icon c_code={ICON_COPY}/>}>
 			Copied to clipboard
 		</Toast>
 	</>)

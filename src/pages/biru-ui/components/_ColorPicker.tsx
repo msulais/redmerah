@@ -8,6 +8,7 @@ import CheckBox from "@/components/CheckBox"
 import ColorPicker, { open_colorpicker } from "@/components/ColorPicker"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
 import { event_current_target } from "@/utils/event"
+import { ICON_CIRCLE } from "@/constants/icons"
 
 const _: VoidComponent = () => {
 	const [disabled_opacity_control, set_disabled_opacity_control] = createSignal<boolean>(false)
@@ -25,7 +26,7 @@ const _: VoidComponent = () => {
 					content_auto_focus: false,
 					gap: 8,
 				})}>
-				<Icon style={{color: color() ?? '#FF0000'}} c_code={0xE408} c_filled/>
+				<Icon style={{color: color() ?? '#FF0000'}} c_code={ICON_CIRCLE} c_filled/>
 				<Show when={color()} fallback="Select color">{color()!}</Show>
 			</Button>
 			<ColorPicker

@@ -3,6 +3,7 @@ import { createSignal, For, Show, type VoidComponent } from "solid-js"
 import { number_safe } from "@/utils/number"
 import { array_includes } from "@/utils/array"
 import { event_current_target } from "@/utils/event"
+import { ICON_CLIPBOARD_PASTE, ICON_COPY, ICON_DELETE } from "@/constants/icons"
 
 import Icon from "@/components/Icon"
 import Button, { ButtonVariant } from "@/components/Button"
@@ -26,14 +27,14 @@ const _: VoidComponent = () => {
 	let menu_ref2: HTMLDialogElement
 
 	const C: VoidComponent = () => (<>
-		<MenuItem c_icon_code={0xE51B} c_trailing="Ctrl + C">Copy</MenuItem>
-		<MenuItem c_icon_code={0xE454} c_trailing={<>
+		<MenuItem c_icon_code={ICON_COPY} c_trailing="Ctrl + C">Copy</MenuItem>
+		<MenuItem c_icon_code={ICON_CLIPBOARD_PASTE} c_trailing={<>
 			<MenuItemTrailingShortcut c_shortcuts={['Ctrl', 'V']}/>
 		</>}>Paste</MenuItem>
 		<MenuDivider />
 		<MenuItem>Delete</MenuItem>
-		<MenuItem c_icon_code={0xE59D}>Delete</MenuItem>
-		<MenuItem c_trailing={<Icon c_code={0xE59D}/>}>Delete</MenuItem>
+		<MenuItem c_icon_code={ICON_DELETE}>Delete</MenuItem>
+		<MenuItem c_trailing={<Icon c_code={ICON_DELETE}/>}>Delete</MenuItem>
 		<MenuDivider />
 		<MenuHeader>Select color</MenuHeader>
 		<MenuItem c_selected>Red</MenuItem>
@@ -105,8 +106,8 @@ const _: VoidComponent = () => {
 			<Menu ref={r => menu_ref2 = r} style={{width: '200px'}}>
 				<TextField  c_attr_wrapper={{style: {width: 'calc(100% - 16px)', margin: '4px 8px'}}} placeholder="Input"/>
 				<MenuDivider />
-				<MenuItem c_icon_code={0xE51B} c_trailing="Ctrl + C">Copy</MenuItem>
-				<MenuItem c_icon_code={0xE454} c_trailing={<>
+				<MenuItem c_icon_code={ICON_COPY} c_trailing="Ctrl + C">Copy</MenuItem>
+				<MenuItem c_icon_code={ICON_CLIPBOARD_PASTE} c_trailing={<>
 					<MenuItemTrailingShortcut c_shortcuts={['Ctrl', 'V']}/>
 				</>}>Paste</MenuItem>
 			</Menu>

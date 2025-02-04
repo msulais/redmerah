@@ -20,6 +20,7 @@ import { event_current_target, event_target } from "@/utils/event"
 import { element_valid_target, element_tagname, element_id, element_dataset } from "@/utils/element"
 import { number_safe } from "@/utils/number"
 import { app_sass_converter as app } from "@/constants/apps"
+import { ICON_APPS, ICON_ARROW_DOWNLOAD, ICON_ARROW_MINIMIZE_VERTICAL, ICON_ARROW_RESET, ICON_CHAT, ICON_CIRCLE, ICON_COPY, ICON_DOCUMENT_ARROW_RIGHT, ICON_GIFT, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_MAXIMIZE, ICON_MORE_VERTICAL, ICON_RECEIPT, ICON_SETTINGS, ICON_SHARE_ANDROID, ICON_SHIELD_CHECKMARK, ICON_SQUARE, ICON_TEARDROP_BOTTOM_RIGHT, ICON_TEXT_WRAP, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from "@/constants/icons"
 import logo from '@/assets/apps/sass-converter-logo.svg'
 import logo_redmerah from '@/assets/logo.svg'
 import logo_scss from '@/assets/logos/scss-logo.svg'
@@ -165,40 +166,40 @@ const _: VoidComponent<{
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={RoutesLinks.apps}
-					c_icon_code={0xE063}>
+					c_icon_code={ICON_APPS}>
 					More apps
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={RoutesLinks.about}
-					c_icon_code={0xE930}>
+					c_icon_code={ICON_INFO}>
 					About us
 				</LinkMenuItem>
 				<MenuDivider />
 				<LinkMenuItem
 					href={RoutesLinks.privacy}
-					c_icon_code={0xEE51}>
+					c_icon_code={ICON_SHIELD_CHECKMARK}>
 					Privacy policy
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={RoutesLinks.terms}
-					c_icon_code={0xED47}>
+					c_icon_code={ICON_RECEIPT}>
 					Terms & conditions
 				</LinkMenuItem>
 				<MenuDivider />
 				<MenuItem
 					id={button_info_share_id}
-					c_icon_code={0xEE23}>
+					c_icon_code={ICON_SHARE_ANDROID}>
 					Share
 				</MenuItem>
 				<LinkMenuItem
 					href={'mailto:' + ExternalLinks.contact_email + '?subject=' + url_encode('Tasks')}
-					c_icon_code={0xE3A0}>
+					c_icon_code={ICON_CHAT}>
 					Send feedback
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={ExternalLinks.donate}
 					c_new_tab
-					c_icon_code={0xE84B}>
+					c_icon_code={ICON_GIFT}>
 					Donate
 				</LinkMenuItem>
 				<MenuHeader>&copy; {date_year(new Date())} Redmerah</MenuHeader>
@@ -249,24 +250,24 @@ const _: VoidComponent<{
 					c_on_toggleopen={v => set_is_submenu_themesettings_open(v)}
 					c_item={<SubMenuItem
 						c_focused={is_submenu_themesettings_open()}
-						c_icon_code={0xE28A}>
+						c_icon_code={ICON_WEATHER_SUNNY}>
 						Theme
 					</SubMenuItem>}>
 					<MenuItem
 						c_selected={theme() == theme_light}
-						c_icon_code={0xF2CD}
+						c_icon_code={ICON_WEATHER_SUNNY}
 						data-theme={theme_light}>
 						Light
 					</MenuItem>
 					<MenuItem
 						c_selected={theme() == theme_dark}
-						c_icon_code={0xF2B3}
+						c_icon_code={ICON_WEATHER_MOON}
 						data-theme={theme_dark}>
 						Dark
 					</MenuItem>
 					<MenuItem
 						c_selected={theme() == theme_system}
-						c_icon_code={0xE96D}
+						c_icon_code={ICON_LAPTOP_SETTINGS}
 						data-theme={theme_system}>
 						System theme
 					</MenuItem>
@@ -276,37 +277,37 @@ const _: VoidComponent<{
 					c_on_toggleopen={v => set_is_submenu_cornersettings_open(v)}
 					c_item={<SubMenuItem
 						c_focused={is_submenu_cornersettings_open()}
-						c_icon_code={0xF044}>
+						c_icon_code={ICON_TEARDROP_BOTTOM_RIGHT}>
 						Corner style
 					</SubMenuItem>}>
 					<MenuItem
 						c_selected={corner() == corner_sharp}
-						c_icon_code={0xEA99}
+						c_icon_code={ICON_MAXIMIZE}
 						data-corner={corner_sharp}>
 						Sharp
 					</MenuItem>
 					<MenuItem
 						c_selected={corner() == corner_semiround}
-						c_icon_code={0xEEF7}
+						c_icon_code={ICON_SQUARE}
 						data-corner={corner_semiround}>
 						Semi round
 					</MenuItem>
 					<MenuItem
 						c_selected={corner() == corner_round}
-						c_icon_code={0xF044}
+						c_icon_code={ICON_TEARDROP_BOTTOM_RIGHT}
 						data-corner={corner_round}>
 						Round
 					</MenuItem>
 					<MenuItem
 						c_selected={corner() == corner_fullround}
-						c_icon_code={0xE408}
+						c_icon_code={ICON_CIRCLE}
 						data-corner={corner_fullround}>
 						Full round
 					</MenuItem>
 				</SubMenu>
 				<MenuDivider/>
 				<SwitchMenuItem
-					c_icon_code={0xF19D}
+					c_icon_code={ICON_TEXT_WRAP}
 					c_checked={settings().text_wrap}
 					c_attr_switch={{
 						id: input_settings_textwrap_id
@@ -314,7 +315,7 @@ const _: VoidComponent<{
 					Text wrap
 				</SwitchMenuItem>
 				<SwitchMenuItem
-					c_icon_code={0xE0F5}
+					c_icon_code={ICON_ARROW_MINIMIZE_VERTICAL}
 					c_checked={settings().minify}
 					c_attr_switch={{
 						id: input_settings_minifycss_id
@@ -378,7 +379,7 @@ const _: VoidComponent<{
 					}
 				}}>
 				<MenuItem
-					c_icon_code={0xE607}
+					c_icon_code={ICON_DOCUMENT_ARROW_RIGHT}
 					id={button_moreactions_openfile_id}>
 					Open file
 				</MenuItem>
@@ -387,7 +388,7 @@ const _: VoidComponent<{
 					c_on_toggleopen={isOpen => set_is_submenu_downloadMoreActions_open(isOpen)}
 					ref={r => submenu_downloadmoreactions_ref = r}
 					c_item={<SubMenuItem
-						c_icon_code={0xE0B9}
+						c_icon_code={ICON_ARROW_DOWNLOAD}
 						c_focused={is_submenu_downloadmoreactions_open()}>
 						Download
 					</SubMenuItem>}>
@@ -411,7 +412,7 @@ const _: VoidComponent<{
 					ref={r => submenu_copyallmoreactions_ref = r}
 					c_on_toggleopen={isOpen => set_is_submenu_copyallmoreActions_open(isOpen)}
 					c_item={<SubMenuItem
-						c_icon_code={0xE51B}
+						c_icon_code={ICON_COPY}
 						c_focused={is_submenu_copyallmoreactions_open()}>
 						Copy all
 					</SubMenuItem>}>
@@ -433,7 +434,7 @@ const _: VoidComponent<{
 				</SubMenu>
 				<MenuDivider/>
 				<MenuItem
-					c_icon_code={0xE113}
+					c_icon_code={ICON_ARROW_RESET}
 					id={button_moreactions_resetinputs_id}>
 					Reset input
 				</MenuItem>
@@ -470,20 +471,20 @@ const _: VoidComponent<{
 					data-tooltip="Info"
 					id={button_info_id}
 					c_focused={is_menu_info_open()}
-					c_code={0xE930}
+					c_code={ICON_INFO}
 				/>
 				<IconButton
 					data-tooltip="Settings"
 					id={button_settings_id}
 					class={CSSAnimation.btn_rotate_icon}
 					c_focused={is_menu_settings_open()}
-					c_code={0xEE0F}
+					c_code={ICON_SETTINGS}
 				/>
 				<IconButton
 					data-tooltip="More actions"
 					id={button_moreactions_id}
 					c_focused={is_menu_moreactions_open()}
-					c_code={0xEAD9}
+					c_code={ICON_MORE_VERTICAL}
 				/>
 			</Tooltip>}
 		/>

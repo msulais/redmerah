@@ -12,6 +12,7 @@ import { classlist_module } from "@/utils/attributes"
 import { promise_done } from "@/utils/object"
 import { document_active } from "@/utils/document"
 import { number_is_not_defined, number_parse, number_safe } from "@/utils/number"
+import { ICON_ADD, ICON_DELETE, ICON_TASK_LIST_SQUARE_LTR, ICON_TEXT_EDIT_STYLE } from "@/constants/icons"
 
 import { Tooltip } from "@/components/Tooltip"
 import Divider from "@/components/Divider"
@@ -53,7 +54,7 @@ const _: VoidComponent<{
 	const Item: VoidComponent<TaskList & {index: number}> = ($props) => {
 		return (<SideNavigationItem
 			data-tooltip={!expanded()? $props.name : undefined}
-			c_icon_code={$props.emoji == null? 0xF032 : undefined}
+			c_icon_code={$props.emoji == null? ICON_TASK_LIST_SQUARE_LTR : undefined}
 			c_leading={<Show when={$props.emoji != null}><Emoji c_emoji={$props.emoji!} /></Show>}
 			c_selected={props.page == $props.id}
 			data-list-id={$props.id}
@@ -63,7 +64,7 @@ const _: VoidComponent<{
 	}
 
 	const Footer: VoidComponent = () => (<SideNavigationItem
-		c_icon_code={0xE007}
+		c_icon_code={ICON_ADD}
 		id={button_newlist_id}
 		data-tooltip={!expanded()? "Add new list" : undefined}>
 		New list
@@ -96,12 +97,12 @@ const _: VoidComponent<{
 				}}>
 				<MenuItem
 					id={button_renamelist_id}
-					c_icon_code={0xF0FB}>
+					c_icon_code={ICON_TEXT_EDIT_STYLE}>
 					Rename list
 				</MenuItem>
 				<MenuItem
 					id={button_deletelist_id}
-					c_icon_code={0xE59D}>
+					c_icon_code={ICON_DELETE}>
 					Delete list
 				</MenuItem>
 			</Menu>

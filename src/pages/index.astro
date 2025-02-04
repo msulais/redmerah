@@ -15,22 +15,23 @@ import Splash from '@/layouts/Splash/index.astro'
 import CSSAnimation from '@/styles/animation.module.scss'
 import CSS from './_index.module.scss'
 import { math_round } from '@/utils/math'
+import { ICON_ARROW_RIGHT, ICON_DATABASE_PERSON, ICON_OPEN, ICON_SETTINGS_COG_MULTIPLE, ICON_SPARKLE } from '@/constants/icons'
 
 const features = [
 	{
 		title: 'Prioritize UI/UX & functionality',
 		description: 'Experience the perfect blend of aesthetics and usability. Our apps offer a visually stunning interface that is easy to navigate and packed with features.',
-		icon: 0xEECB
+		icon: ICON_SPARKLE
 	},
 	{
 		title: 'Store data locally on your device',
 		description: 'We respect your privacy. All your settings, preferences, and history are stored securely in your browser, not on our server. Your data, your control.',
-		icon: 0xE58D
+		icon: ICON_DATABASE_PERSON
 	},
 	{
 		title: 'Continue working offline',
 		description: 'No internet connection? No problem! Our apps work seamlessly offline, ensuring you can stay productive wherever you are.',
-		icon: 0xEE13
+		icon: ICON_SETTINGS_COG_MULTIPLE
 	},
 ]
 
@@ -57,7 +58,7 @@ function color_app_background(color: HEXColor): string {
 					<img src={v.logo_url} alt={v.name} />
 					<h3>{v.name}</h3>
 					<p>{v.description}</p>
-					<LinkButton classList={[CSSAnimation.btn_scale_up_icon]} variant={ButtonVariant.outlined} href={v.link}>Open <Icon filled code={0xEB51}/></LinkButton>
+					<LinkButton classList={[CSSAnimation.btn_scale_up_icon]} variant={ButtonVariant.outlined} href={v.link}>Open <Icon filled code={ICON_OPEN}/></LinkButton>
 				</div>}</>)}
 			</section>
 			<LinkButton
@@ -65,7 +66,7 @@ function color_app_background(color: HEXColor): string {
 				variant={ButtonVariant.filled}
 				href={RoutesLinks.apps}>
 				See more apps
-				<Icon filled code={0xE115}/>
+				<Icon filled code={ICON_ARROW_RIGHT}/>
 			</LinkButton>
 			<section class={CSS.features}>
 				<h2>Features</h2>

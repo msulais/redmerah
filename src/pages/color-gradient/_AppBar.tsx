@@ -19,6 +19,7 @@ import { event_current_target } from "@/utils/event"
 import { document_active, document_root } from "@/utils/document"
 import { app_color_gradient as app } from "@/constants/apps"
 import { element_valid_target, element_tagname, element_id, element_dataset } from "@/utils/element"
+import { ICON_APPS, ICON_CHAT, ICON_CIRCLE, ICON_COLOR, ICON_COPY, ICON_GIFT, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_MAXIMIZE, ICON_MORE_VERTICAL, ICON_RECEIPT, ICON_SAVE, ICON_SETTINGS, ICON_SHARE_ANDROID, ICON_SHIELD_CHECKMARK, ICON_SQUARE, ICON_TEARDROP_BOTTOM_RIGHT, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from "@/constants/icons"
 import logo_redmerah from '@/assets/logo.svg'
 
 import Icon from "@/components/Icon"
@@ -158,40 +159,40 @@ const _: VoidComponent<{
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={RoutesLinks.apps}
-					c_icon_code={0xE063}>
+					c_icon_code={ICON_APPS}>
 					More apps
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={RoutesLinks.about}
-					c_icon_code={0xE930}>
+					c_icon_code={ICON_INFO}>
 					About us
 				</LinkMenuItem>
 				<MenuDivider />
 				<LinkMenuItem
 					href={RoutesLinks.privacy}
-					c_icon_code={0xEE51}>
+					c_icon_code={ICON_SHIELD_CHECKMARK}>
 					Privacy policy
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={RoutesLinks.terms}
-					c_icon_code={0xED47}>
+					c_icon_code={ICON_RECEIPT}>
 					Terms & conditions
 				</LinkMenuItem>
 				<MenuDivider />
 				<MenuItem
 					id={button_info_share_id}
-					c_icon_code={0xEE23}>
+					c_icon_code={ICON_SHARE_ANDROID}>
 					Share
 				</MenuItem>
 				<LinkMenuItem
 					href={'mailto:' + ExternalLinks.contact_email + '?subject=' + url_encode('Tasks')}
-					c_icon_code={0xE3A0}>
+					c_icon_code={ICON_CHAT}>
 					Send feedback
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={ExternalLinks.donate}
 					c_new_tab
-					c_icon_code={0xE84B}>
+					c_icon_code={ICON_GIFT}>
 					Donate
 				</LinkMenuItem>
 				<MenuHeader>&copy; {date_year(new Date())} Redmerah</MenuHeader>
@@ -227,24 +228,24 @@ const _: VoidComponent<{
 					c_on_toggleopen={v => set_is_submenu_themesettings_open(v)}
 					c_item={<SubMenuItem
 						c_focused={is_submenu_themesettings_open()}
-						c_icon_code={0xE28A}>
+						c_icon_code={ICON_WEATHER_SUNNY}>
 						Theme
 					</SubMenuItem>}>
 					<MenuItem
 						c_selected={theme() == ThemeData.light}
-						c_icon_code={0xF2CD}
+						c_icon_code={ICON_WEATHER_SUNNY}
 						data-theme={ThemeData.light}>
 						Light
 					</MenuItem>
 					<MenuItem
 						c_selected={theme() == ThemeData.dark}
-						c_icon_code={0xF2B3}
+						c_icon_code={ICON_WEATHER_MOON}
 						data-theme={ThemeData.dark}>
 						Dark
 					</MenuItem>
 					<MenuItem
 						c_selected={theme() == ThemeData.system}
-						c_icon_code={0xE96D}
+						c_icon_code={ICON_LAPTOP_SETTINGS}
 						data-theme={ThemeData.system}>
 						System theme
 					</MenuItem>
@@ -254,30 +255,30 @@ const _: VoidComponent<{
 					c_on_toggleopen={v => set_is_submenu_cornersettings_open(v)}
 					c_item={<SubMenuItem
 						c_focused={is_submenu_cornersettings_open()}
-						c_icon_code={0xF044}>
+						c_icon_code={ICON_TEARDROP_BOTTOM_RIGHT}>
 						Corner style
 					</SubMenuItem>}>
 					<MenuItem
 						c_selected={corner() == CornerData.sharp}
-						c_icon_code={0xEA99}
+						c_icon_code={ICON_MAXIMIZE}
 						data-corner={CornerData.sharp}>
 						Sharp
 					</MenuItem>
 					<MenuItem
 						c_selected={corner() == CornerData.semi_round}
-						c_icon_code={0xEEF7}
+						c_icon_code={ICON_SQUARE}
 						data-corner={CornerData.semi_round}>
 						Semi round
 					</MenuItem>
 					<MenuItem
 						c_selected={corner() == CornerData.round}
-						c_icon_code={0xF044}
+						c_icon_code={ICON_TEARDROP_BOTTOM_RIGHT}
 						data-corner={CornerData.round}>
 						Round
 					</MenuItem>
 					<MenuItem
 						c_selected={corner() == CornerData.full_round}
-						c_icon_code={0xE408}
+						c_icon_code={ICON_CIRCLE}
 						data-corner={CornerData.full_round}>
 						Full round
 					</MenuItem>
@@ -288,7 +289,7 @@ const _: VoidComponent<{
 					style={{"min-width": '180px'}}
 					c_item={<SubMenuItem
 						c_focused={is_submenu_colormodelsettings_open()}
-						c_icon_code={0xE4B6}>
+						c_icon_code={ICON_COLOR}>
 						Color model
 					</SubMenuItem>}>
 					<MenuItem
@@ -337,12 +338,12 @@ const _: VoidComponent<{
 					}
 				}}>
 				<MenuItem
-					c_icon_code={0xEDA1}
+					c_icon_code={ICON_SAVE}
 					id={button_moreactions_savegradient_id}>
 					Save gradient
 				</MenuItem>
 				<MenuItem
-					c_icon_code={0xE51B}
+					c_icon_code={ICON_COPY}
 					id={button_moreactions_copygradient_id}>
 					Copy gradient
 				</MenuItem>
@@ -353,7 +354,7 @@ const _: VoidComponent<{
 	const Toasts: VoidComponent = () => (<>
 		<Toast
 			ref={r => toast_copied_ref = r}
-			c_leading={<Icon c_code={0xE51B}/>}>
+			c_leading={<Icon c_code={ICON_COPY}/>}>
 			Copied to clipboard
 		</Toast>
 	</>)
@@ -390,20 +391,20 @@ const _: VoidComponent<{
 					data-tooltip="Info"
 					c_focused={is_menu_info_open()}
 					id={button_info_id}
-					c_code={0xE930}
+					c_code={ICON_INFO}
 				/>
 				<IconButton
 					data-tooltip="Settings"
 					class={CSSAnimation.btn_rotate_icon}
 					c_focused={is_menu_settings_open()}
 					id={button_settings_id}
-					c_code={0xEE0F}
+					c_code={ICON_SETTINGS}
 				/>
 				<IconButton
 					data-tooltip="More actions"
 					c_focused={is_menu_moreactions_open()}
 					id={button_moreactions_id}
-					c_code={0xEAD9}
+					c_code={ICON_MORE_VERTICAL}
 				/>
 			</Tooltip>}
 		/>

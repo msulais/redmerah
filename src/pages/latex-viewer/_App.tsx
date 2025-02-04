@@ -11,6 +11,7 @@ import { remove_splash_screen } from "@/scripts/splash"
 import { array_join, array_map, array_slice } from "@/utils/array"
 import { navigator_clipboard_writetext } from "@/utils/navigator"
 import { promise_done } from "@/utils/object"
+import { ICON_COPY } from "@/constants/icons"
 
 import Icon from "@/components/Icon"
 import Toast, { open_toast } from "@/components/Toast"
@@ -180,7 +181,7 @@ const _: VoidComponent = () => {
 	const Toasts: VoidComponent = () => (<>
 		<Toast
 			ref={r => toast_copied_ref = r}
-			c_leading={<Icon c_code={0xE51B}/>}>
+			c_leading={<Icon c_code={ICON_COPY}/>}>
 			Copied to clipboard
 		</Toast>
 	</>)

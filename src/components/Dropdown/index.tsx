@@ -11,6 +11,7 @@ import { document_active } from "@/utils/document"
 import { is_number } from "@/utils/typecheck"
 import { string_starts_with, string_substring } from "@/utils/string"
 import { number_parse, number_safe } from "@/utils/number"
+import { ICON_CHEVRON_DOWN } from "@/constants/icons"
 
 import Menu, { MenuItem, type MenuProps, MenuPosition as DropdownPosition, type MenuItemProps, open_menu, close_menu, reposition_menu } from "@/components/Menu"
 import { Button, ButtonVariant, type ButtonProps } from "@/components/Button"
@@ -258,7 +259,7 @@ const Dropdown: ParentComponent<DropdownProps> = ($props) => {
 				: array_join(array_map(array_filter(options, v => is_selected(v.value)), v => v.text), ', ')
 			}
 			<div style="flex:1"/>
-			<Icon c_code={0xE3FC}/>
+			<Icon c_code={ICON_CHEVRON_DOWN}/>
 		</Button>
 		<Menu
 			c_on_toggleopen={v => {
