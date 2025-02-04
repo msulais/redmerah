@@ -245,7 +245,7 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 	let first_child: HTMLElement | undefined
 
 	function close_submenu_descendant(): void {
-		for (const popover of element_all_by_selector(`[data-c-menu-parent="${other.id}"]`)) {
+		for (const popover of element_all_by_selector(`[data-c-menu-parent="${other.id}"]:popover-open`)) {
 			close_popover(popover as HTMLDivElement)
 		}
 	}
@@ -278,7 +278,7 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 			if (!first_child) return
 
 			let removed = false
-			const siblings = element_all_by_selector<HTMLDivElement>(`[data-c-menu-parent=${parent_id}]:not(#${other.id})`)
+			const siblings = element_all_by_selector<HTMLDivElement>(`[data-c-menu-parent=${parent_id}]:not(#${other.id}):popover-open`)
 			for (const submenu of siblings) {
 				removed = true
 				close_popover(submenu)
@@ -414,7 +414,7 @@ const Menu: ParentComponent<MenuProps> = ($props) => {
 	const [is_hover, set_is_hover] = createSignal<boolean>(false)
 
 	function close_submenu_descendant(): void {
-		for (const popover of element_all_by_selector(`[data-c-menu-parent="${other.id}"]`)) {
+		for (const popover of element_all_by_selector(`[data-c-menu-parent="${other.id}"]:popover-open`)) {
 			close_popover(popover as HTMLDivElement)
 		}
 	}
@@ -482,7 +482,7 @@ const PopoverMenu: ParentComponent<PopoverMenuProps> = ($props) => {
 	const [is_hover, set_is_hover] = createSignal<boolean>(false)
 
 	function close_submenu_descendant(): void {
-		for (const popover of element_all_by_selector(`[data-c-menu-parent="${other.id}"]`)) {
+		for (const popover of element_all_by_selector(`[data-c-menu-parent="${other.id}"]:popover-open`)) {
 			close_popover(popover as HTMLDivElement)
 		}
 	}
