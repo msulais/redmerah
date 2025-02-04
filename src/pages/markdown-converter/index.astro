@@ -1,4 +1,5 @@
 ---
+import { app_markdown_converter as app } from '@/constants/apps'
 import icon from '@/assets/apps/markdown-converter-splash.svg'
 
 import Html from '@/layouts/Html/index.astro'
@@ -9,18 +10,18 @@ export const prerender = true
 ---
 
 <Html
-	title='Markdown Converter'
-	accent_color='#01B92A'
-	description='Convert markdown to HTML effortlessly with our online markdown converter. Create beautifully formatted web content from plain text using our user-friendly tool.'>
-	<Fragment slot="favicon">
-		<link rel="shortcut icon" type="image/ico" href="/favicon/markdown-converter/favicon.ico" />
-		<link rel="apple-touch-icon" sizes="180x180" href="/favicon/markdown-converter/apple-touch-icon.png">
-		<link rel="icon" type="image/png" sizes="32x32" href="/favicon/markdown-converter/favicon-32x32.png">
-		<link rel="icon" type="image/png" sizes="16x16" href="/favicon/markdown-converter/favicon-16x16.png">
-		<link rel="manifest" href="/favicon/markdown-converter/site.webmanifest">
-	</Fragment>
-	<script is:inline src='/scripts/theme.js'/>
-	<script is:inline src='/scripts/platform.js'/>
-	<Splash src={icon.src} alt="Markdown Converter icon splash"/>
-	<App client:only="solid-js" />
+title={app.name + ' | Redmerah'}
+accent_color={app.color}
+description={app.description}>
+<Fragment slot="favicon">
+	<link rel="shortcut icon" type="image/ico" href={`/favicon${app.link}/favicon.ico`} />
+	<link rel="apple-touch-icon" sizes="180x180" href={`/favicon${app.link}/apple-touch-icon.png`}>
+	<link rel="icon" type="image/png" sizes="32x32" href={`/favicon${app.link}/favicon-32x32.png`}>
+	<link rel="icon" type="image/png" sizes="16x16" href={`/favicon${app.link}/favicon-16x16.png`}>
+	<link rel="manifest" href={`/favicon${app.link}/site.webmanifest`}>
+</Fragment>
+<script is:inline src='/scripts/theme.js'/>
+<script is:inline src='/scripts/platform.js'/>
+<Splash src={icon.src} alt={`${app.name} splash icon`} />
+<App client:only="solid-js"/>
 </Html>
