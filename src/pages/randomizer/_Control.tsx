@@ -11,6 +11,7 @@ import { string_length, string_match, string_replace } from "@/utils/string"
 import { document_active } from "@/utils/document"
 import { math_clamp } from "@/utils/math"
 import { rect_width } from "@/utils/rect"
+import { ICON_ADD, ICON_APPS_LIST_DETAIL, ICON_ARROW_EXPORT_UP, ICON_CHECKBOX_CHECKED, ICON_CHEVRON_DOWN, ICON_DELETE, ICON_EYE, ICON_TEXT_BULLET_LIST_SQUARE_CLOCK, ICON_TEXT_BULLET_LIST_SQUARE_EDIT } from "@/constants/icons"
 
 import Icon from "@/components/Icon"
 import TextField, { NumberTextField, TextFieldButton, change_textfield_value } from "@/components/TextField"
@@ -152,17 +153,17 @@ const Teams: VoidComponent<{
 			}}>
 			<MenuItem
 				id={button_names_addnewlist_id}
-				c_icon_code={0xE007}>
+				c_icon_code={ICON_ADD}>
 				Add new list
 			</MenuItem>
 			<MenuItem
 				id={button_names_resetalllist_id}
-				c_icon_code={0xF09A}>
+				c_icon_code={ICON_TEXT_BULLET_LIST_SQUARE_CLOCK}>
 				Reset all list
 			</MenuItem>
 			<MenuItem
 				id={button_names_editlist_id}
-				c_icon_code={0xE069}>
+				c_icon_code={ICON_APPS_LIST_DETAIL}>
 				Edit list
 			</MenuItem>
 			<MenuDivider />
@@ -214,17 +215,17 @@ const Teams: VoidComponent<{
 			}}>
 			<MenuItem
 				id={button_members_addnewlist_id}
-				c_icon_code={0xE007}>
+				c_icon_code={ICON_ADD}>
 				Add new list
 			</MenuItem>
 			<MenuItem
 				id={button_members_resetalllist_id}
-				c_icon_code={0xF09A}>
+				c_icon_code={ICON_TEXT_BULLET_LIST_SQUARE_CLOCK}>
 				Reset all list
 			</MenuItem>
 			<MenuItem
 				id={button_members_editlist_id}
-				c_icon_code={0xE069}>
+				c_icon_code={ICON_APPS_LIST_DETAIL}>
 				Edit list
 			</MenuItem>
 			<MenuDivider />
@@ -284,30 +285,30 @@ const Teams: VoidComponent<{
 			<Show when={list() && list()!.id != (is_action_open_for_list_names()? settings().list_names.id : settings().list_members.id)}>
 				<MenuItem
 					id={button_action_select_id}
-					c_icon_code={0xE3CC}>
+					c_icon_code={ICON_CHECKBOX_CHECKED}>
 					Select
 				</MenuItem>
 				<MenuDivider />
 			</Show>
 			<MenuItem
 				id={button_action_viewlist_id}
-				c_icon_code={0xE77B}>
+				c_icon_code={ICON_EYE}>
 				View list
 			</MenuItem>
 			<MenuItem
 				id={button_action_exportlist_id}
-				c_icon_code={0xE0CF}
+				c_icon_code={ICON_ARROW_EXPORT_UP}
 				c_trailing="*.csv">
 				Export list
 			</MenuItem>
 			<MenuItem
 				id={button_action_editlist_id}
-				c_icon_code={0xF09C}>
+				c_icon_code={ICON_TEXT_BULLET_LIST_SQUARE_EDIT}>
 				Edit list
 			</MenuItem>
 			<MenuItem
 				id={button_action_deletelist_id}
-				c_icon_code={0xE59D}>
+				c_icon_code={ICON_DELETE}>
 				Delete list
 			</MenuItem>
 		</Menu>
@@ -415,17 +416,17 @@ const Selection: VoidComponent<{
 			}}>
 			<MenuItem
 				id={button_list_addnewlist_id}
-				c_icon_code={0xE007}>
+				c_icon_code={ICON_ADD}>
 				Add new list
 			</MenuItem>
 			<MenuItem
 				id={button_list_resetalllist_id}
-				c_icon_code={0xF09A}>
+				c_icon_code={ICON_TEXT_BULLET_LIST_SQUARE_CLOCK}>
 				Reset all list
 			</MenuItem>
 			<MenuItem
 				id={button_list_editlist_id}
-				c_icon_code={0xE069}>
+				c_icon_code={ICON_APPS_LIST_DETAIL}>
 				Edit list
 			</MenuItem>
 			<MenuDivider />
@@ -483,30 +484,30 @@ const Selection: VoidComponent<{
 			<Show when={list() && list()!.id != settings().list.id}>
 				<MenuItem
 					id={button_actions_select_id}
-					c_icon_code={0xE3CC}>
+					c_icon_code={ICON_CHECKBOX_CHECKED}>
 					Select
 				</MenuItem>
 				<MenuDivider />
 			</Show>
 			<MenuItem
 				id={button_actions_viewlist_id}
-				c_icon_code={0xE77B}>
+				c_icon_code={ICON_EYE}>
 				View list
 			</MenuItem>
 			<MenuItem
 				id={button_actions_exportlist_id}
-				c_icon_code={0xE0CF}
+				c_icon_code={ICON_ARROW_EXPORT_UP}
 				c_trailing="*.csv">
 				Export list
 			</MenuItem>
 			<MenuItem
 				id={button_actions_editlist_id}
-				c_icon_code={0xF09C}>
+				c_icon_code={ICON_TEXT_BULLET_LIST_SQUARE_EDIT}>
 				Edit list
 			</MenuItem>
 			<MenuItem
 				id={button_actions_deletelist_id}
-				c_icon_code={0xE59D}>
+				c_icon_code={ICON_DELETE}>
 				Delete list
 			</MenuItem>
 		</Menu>
@@ -620,17 +621,17 @@ const Words: VoidComponent<{
 			}}>
 			<MenuItem
 				id={button_list_addnewlist_id}
-				c_icon_code={0xE007}>
+				c_icon_code={ICON_ADD}>
 				Add new list
 			</MenuItem>
 			<MenuItem
 				id={button_list_resetalllist_id}
-				c_icon_code={0xF09A}>
+				c_icon_code={ICON_TEXT_BULLET_LIST_SQUARE_CLOCK}>
 				Reset all list
 			</MenuItem>
 			<MenuItem
 				id={button_list_editlist_id}
-				c_icon_code={0xE069}>
+				c_icon_code={ICON_APPS_LIST_DETAIL}>
 				Edit list
 			</MenuItem>
 			<MenuDivider />
@@ -654,7 +655,7 @@ const Words: VoidComponent<{
 						close_menu(menu_dropdown_ref)
 						change_list(list()!.id)
 					}}
-					c_icon_code={0xE3CC}>
+					c_icon_code={ICON_CHECKBOX_CHECKED}>
 					Select
 				</MenuItem>
 				<MenuDivider />
@@ -665,7 +666,7 @@ const Words: VoidComponent<{
 					close_menu(menu_dropdown_ref)
 					command(Commands.view_list, ev, list())
 				}}
-				c_icon_code={0xE77B}>
+				c_icon_code={ICON_EYE}>
 				View list
 			</MenuItem>
 			<MenuItem
@@ -674,7 +675,7 @@ const Words: VoidComponent<{
 					close_menu(menu_dropdown_ref)
 					command(Commands.export_list, list())
 				}}
-				c_icon_code={0xE0CF}
+				c_icon_code={ICON_ARROW_EXPORT_UP}
 				c_trailing="*.csv">
 				Export list
 			</MenuItem>
@@ -684,7 +685,7 @@ const Words: VoidComponent<{
 					close_menu(menu_action_ref)
 					close_menu(menu_dropdown_ref)
 				}}
-				c_icon_code={0xF09C}>
+				c_icon_code={ICON_TEXT_BULLET_LIST_SQUARE_EDIT}>
 				Edit list
 			</MenuItem>
 			<MenuItem
@@ -693,7 +694,7 @@ const Words: VoidComponent<{
 					close_menu(menu_action_ref)
 					close_menu(menu_dropdown_ref)
 				}}
-				c_icon_code={0xE59D}>
+				c_icon_code={ICON_DELETE}>
 				Delete list
 			</MenuItem>
 		</Menu>
@@ -1030,7 +1031,7 @@ const $String: VoidComponent<{
 						gap: 8,
 					})
 				}}>
-				<Icon c_filled c_code={0xE362}/>
+				<Icon c_filled c_code={ICON_CHEVRON_DOWN}/>
 			</TextFieldButton>}
 		/>
 		<Menu

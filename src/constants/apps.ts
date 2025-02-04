@@ -11,8 +11,19 @@ import color_gradient_logo from '@/assets/apps/color-gradient/logo.svg'
 import emoji_picker_logo from '@/assets/apps/emoji-picker/logo.svg'
 import latex_viewer_logo from '@/assets/apps/latex-viewer/logo.svg'
 import color_picker_logo from '@/assets/apps/color-picker/logo.svg'
+import usb_checker_logo from '@/assets/apps/usb-checker/logo.svg'
 import { RoutesLinks } from '@/enums/links'
 import type { AppItem } from '@/types/apps'
+
+export const app_usb_checker: AppItem = {
+	logo_url: usb_checker_logo.src,
+	name: 'USB Checker',
+	description: 'Easily check your device\'s USB specifications with our USB Checker web app, powered by the WebUSB API. Ensure compatibility and optimize performance with just a click.',
+	link: RoutesLinks.usb_checker,
+	color: '#297BE6',
+	build_number: 1,
+	build_version: '0.0.1',
+}
 
 export const app_latex_viewer: AppItem = {
 	logo_url: latex_viewer_logo.src,
@@ -145,6 +156,7 @@ export const app_color_picker: AppItem = {
 }
 
 export const apps: AppItem[] = [
+	app_usb_checker,
 	app_color_picker,
 	app_latex_viewer,
 	app_emoji_picker,

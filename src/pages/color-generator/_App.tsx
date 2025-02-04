@@ -22,6 +22,7 @@ import { classlist_module } from '@/utils/attributes'
 import { document_active } from '@/utils/document'
 import { number_is_not_defined, number_parse } from '@/utils/number'
 import { AnimationEffectTiming } from '@/enums/animation'
+import { ICON_CHECKMARK, ICON_COPY, ICON_DELETE } from '@/constants/icons'
 
 import {Tooltip} from '@/components/Tooltip'
 import Divider from '@/components/Divider'
@@ -164,14 +165,14 @@ const _: VoidComponent = () => {
 			promise_done(
 				element_animate(icon, {scale: [1, 0]}, animation_option).finished,
 			() => {
-				element_set_textcontent(icon, String.fromCharCode(0xE3D8))
+				element_set_textcontent(icon, String.fromCharCode(ICON_CHECKMARK))
 				promise_done(
 					element_animate(icon, {scale: [0, 1]}, animation_option).finished,
 				() =>  timeout_set(() => {
 					promise_done(
 						element_animate(icon, {scale: [1, 0]}, animation_option).finished,
 					() => {
-						element_set_textcontent(icon, String.fromCharCode(0xE51B))
+						element_set_textcontent(icon, String.fromCharCode(ICON_COPY))
 						element_animate(icon, {scale: [0, 1]}, animation_option)
 						delete timeout_copylist[palette.seed]
 					})
@@ -193,12 +194,12 @@ const _: VoidComponent = () => {
 				<IconButton
 					data-tooltip="Copy"
 					data-listitem-copy={props.index}
-					c_code={0xE51B}
+					c_code={ICON_COPY}
 				/>
 				<IconButton
 					data-tooltip="Delete"
 					data-listitem-delete={props.index}
-					c_code={0xE59D}
+					c_code={ICON_DELETE}
 				/>
 			</>}
 			c_subtitle={<div class={CSS.app_dialog_colors}>

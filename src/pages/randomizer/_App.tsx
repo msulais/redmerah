@@ -24,6 +24,7 @@ import { navigator_clipboard_writetext } from "@/utils/navigator"
 import { document_active, document_body } from "@/utils/document"
 import { event_current_target } from "@/utils/event"
 import { promise_done } from "@/utils/object"
+import { ICON_APPS_LIST_DETAIL, ICON_ARROW_EXPORT_UP, ICON_ARROW_SYNC, ICON_DELETE, ICON_EDIT, ICON_EYE, ICON_TASK_LIST_SQUARE_LTR, ICON_WARNING } from "@/constants/icons"
 
 import App from "@/components/App"
 import { Tooltip } from "@/components/Tooltip"
@@ -1328,10 +1329,10 @@ const _: VoidComponent = () => {
 						<Show when={i() != 0}><Divider /></Show>
 						<List
 							c_trailing={<>
-								<IconButton data-list-export-index={i()} data-tooltip="Export list" c_code={0xE0CF}/>
-								<IconButton data-list-view-index={i()} data-tooltip="View list" c_code={0xE77B}/>
-								<IconButton data-list-edit-index={i()} data-tooltip="Edit list" c_code={0xE739}/>
-								<IconButton data-list-delete-index={i()} data-tooltip="Delete list" c_code={0xE59D}/>
+								<IconButton data-list-export-index={i()} data-tooltip="Export list" c_code={ICON_ARROW_EXPORT_UP}/>
+								<IconButton data-list-view-index={i()} data-tooltip="View list" c_code={ICON_EYE}/>
+								<IconButton data-list-edit-index={i()} data-tooltip="Edit list" c_code={ICON_EDIT}/>
+								<IconButton data-list-delete-index={i()} data-tooltip="Delete list" c_code={ICON_DELETE}/>
 							</>}
 							c_subtitle={array_length(list.items) + ' item' + (array_length(list.items) > 1? 's' : '')}>
 							{list.name}
@@ -1601,13 +1602,13 @@ const _: VoidComponent = () => {
 
 	const Toasts: VoidComponent = () => {
 		return (<>
-			<Toast c_leading={<Icon c_filled c_code={0xE4BE}/>} ref={r => toast_listnameempty_ref = r}>List name is empty</Toast>
-			<Toast c_leading={<Icon c_filled c_code={0xF0AA}/>} ref={r => toast_listhavenoitems_ref = r}>List items is empty</Toast>
-			<Toast c_leading={<Icon c_filled c_code={0xEBA8}/>} ref={r => toast_listnamealreadyexist_ref = r}>List name already exist</Toast>
-			<Toast c_leading={<Icon c_filled c_code={0xF09C}/>} ref={r => toast_listedited_ref = r}>List edited</Toast>
-			<Toast c_leading={<Icon c_filled c_code={0xE59D}/>} ref={r => toast_listdeleted_ref = r}>List deleted</Toast>
-			<Toast c_leading={<Icon c_filled c_code={0xF0A6}/>} ref={r => toast_newlistadded_ref = r}>New list added</Toast>
-			<Toast c_leading={<Icon c_filled c_code={0xE069}/>} ref={r => toast_nolistselected_ref = r}>No list selected</Toast>
+			<Toast c_leading={<Icon c_filled c_code={ICON_WARNING}/>} ref={r => toast_listnameempty_ref = r}>List name is empty</Toast>
+			<Toast c_leading={<Icon c_filled c_code={ICON_WARNING}/>} ref={r => toast_listhavenoitems_ref = r}>List items is empty</Toast>
+			<Toast c_leading={<Icon c_filled c_code={ICON_WARNING}/>} ref={r => toast_listnamealreadyexist_ref = r}>List name already exist</Toast>
+			<Toast c_leading={<Icon c_filled c_code={ICON_TASK_LIST_SQUARE_LTR}/>} ref={r => toast_listedited_ref = r}>List edited</Toast>
+			<Toast c_leading={<Icon c_filled c_code={ICON_DELETE}/>} ref={r => toast_listdeleted_ref = r}>List deleted</Toast>
+			<Toast c_leading={<Icon c_filled c_code={ICON_TASK_LIST_SQUARE_LTR}/>} ref={r => toast_newlistadded_ref = r}>New list added</Toast>
+			<Toast c_leading={<Icon c_filled c_code={ICON_APPS_LIST_DETAIL}/>} ref={r => toast_nolistselected_ref = r}>No list selected</Toast>
 		</>)
 	}
 
@@ -1633,7 +1634,7 @@ const _: VoidComponent = () => {
 					c_filled
 					classList={classlist_module(CSS.app_generate_icon)}
 					data-rotate={attr_set_if_exist(is_generating())}
-					c_code={0xE143}
+					c_code={ICON_ARROW_SYNC}
 				/>
 				<Show when={is_generating()} fallback="Generate">Generating</Show>
 			</FloatingActionButton>}

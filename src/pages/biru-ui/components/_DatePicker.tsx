@@ -1,6 +1,8 @@
 import { For, Show, type VoidComponent, createSignal } from "solid-js"
 
 import { date_year, date_text_YMD } from "@/utils/datetime"
+import { event_current_target } from "@/utils/event"
+import { ICON_CALENDAR } from "@/constants/icons"
 
 import Tooltip from "@/components/Tooltip"
 import Icon from "@/components/Icon"
@@ -9,7 +11,6 @@ import DatePicker, { open_datepicker } from "@/components/DatePicker"
 import TextField, { TextFieldButton } from "@/components/TextField"
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
-import { event_current_target } from "@/utils/event"
 
 const _: VoidComponent = () => {
 	const [first_date, set_first_date] = createSignal<Date>(new Date(date_year() - 100, 0, 1))
@@ -34,7 +35,7 @@ const _: VoidComponent = () => {
 					anchor: event_current_target(ev),
 					gap: 8
 				})}>
-				<Icon c_code={0xE2CC}/>
+				<Icon c_code={ICON_CALENDAR}/>
 				<Show when={date() != null} fallback="Select date">
 					{date_text_YMD(date()!, locale())}
 				</Show>
@@ -82,7 +83,7 @@ const _: VoidComponent = () => {
 								datepicker_firstdate_ref,
 								{ anchor: event_current_target(ev) }
 							)}>
-							<Icon c_code={0xE2CC}/>
+							<Icon c_code={ICON_CALENDAR}/>
 						</TextFieldButton>
 					</Tooltip>}
 				/>
@@ -110,7 +111,7 @@ const _: VoidComponent = () => {
 								datepicker_lastdate_ref,
 								{ anchor: event_current_target(ev) }
 							)}>
-							<Icon c_code={0xE2CC}/>
+							<Icon c_code={ICON_CALENDAR}/>
 						</TextFieldButton>
 					</Tooltip>}
 				/>

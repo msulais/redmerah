@@ -16,6 +16,7 @@ import { IDB, idb_store_put } from "@/utils/indexeddb"
 import { DatabaseNames } from "@/enums/storage"
 import { ObjectStoreKeys, ObjectStoreNames, type ObjectStoreMiscellaneous, type ObjectStoreSettings } from "./_storage"
 import { remove_splash_screen } from "@/scripts/splash"
+import { ICON_COPY } from "@/constants/icons"
 
 import Icon from "@/components/Icon"
 import Toast, { open_toast } from "@/components/Toast"
@@ -273,7 +274,7 @@ const _: VoidComponent = () => {
 	})
 
 	const Toasts: VoidComponent = () => (<>
-		<Toast ref={r => toast_copied_ref = r} c_leading={<Icon c_code={0xE51B}/>}>Copied to clipboard</Toast>
+		<Toast ref={r => toast_copied_ref = r} c_leading={<Icon c_code={ICON_COPY}/>}>Copied to clipboard</Toast>
 	</>)
 
 	return (<App

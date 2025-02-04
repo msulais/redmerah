@@ -25,6 +25,7 @@ import { array_includes } from "@/utils/array"
 import { math_round } from "@/utils/math"
 import { event_current_target, event_target } from "@/utils/event"
 import { document_root } from "@/utils/document"
+import { ICON_APPS, ICON_CIRCLE, ICON_COMPASS_NORTHWEST, ICON_GIFT, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_MAXIMIZE, ICON_SETTINGS, ICON_SQUARE, ICON_TEARDROP_BOTTOM_RIGHT, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from "@/constants/icons"
 
 type NavigationMenuProps = {
 	route?: RoutesLinks
@@ -46,7 +47,7 @@ export const NavigationMenu: VoidComponent<NavigationMenuProps> = (props) => {
 					anchor: event_current_target(ev),
 					padding: 0,
 				})}
-				c_code={0xE4F7}
+				c_code={ICON_COMPASS_NORTHWEST}
 			/>
 		</Tooltip>
 		<Menu
@@ -57,13 +58,13 @@ export const NavigationMenu: VoidComponent<NavigationMenuProps> = (props) => {
 			<LinkMenuItem
 				href={RoutesLinks.apps}
 				c_selected={props.route == RoutesLinks.apps}
-				c_icon_code={0xE063}>
+				c_icon_code={ICON_APPS}>
 				Apps
 			</LinkMenuItem>
 			<LinkMenuItem
 				href={RoutesLinks.about}
 				c_selected={props.route == RoutesLinks.about}
-				c_icon_code={0xE930}>
+				c_icon_code={ICON_INFO}>
 				About
 			</LinkMenuItem>
 			<MenuDivider />
@@ -71,7 +72,7 @@ export const NavigationMenu: VoidComponent<NavigationMenuProps> = (props) => {
 				onClick={() => close_menu(menu_navigation_ref)}
 				href={ExternalLinks.donate}
 				c_new_tab
-				c_icon_code={0xE84B}>
+				c_icon_code={ICON_GIFT}>
 				Donate
 			</LinkMenuItem>
 		</Menu>
@@ -178,7 +179,7 @@ export const SettingsElement: VoidComponent = () => {
 					anchor: event_current_target(ev),
 					padding: 0,
 				})}
-				c_code={0xEE0F}
+				c_code={ICON_SETTINGS}
 			/>
 		</Tooltip>
 		<Menu
@@ -212,19 +213,19 @@ export const SettingsElement: VoidComponent = () => {
 			<MenuItem
 				id={menuitem_themelight_id}
 				c_selected={theme() == theme_light}
-				c_icon_code={0xF2CD}>
+				c_icon_code={ICON_WEATHER_SUNNY}>
 				Light
 			</MenuItem>
 			<MenuItem
 				id={menuitem_themedark_id}
 				c_selected={theme() == theme_dark}
-				c_icon_code={0xF2B3}>
+				c_icon_code={ICON_WEATHER_MOON}>
 				Dark
 			</MenuItem>
 			<MenuItem
 				id={menuitem_themesystem_id}
 				c_selected={theme() == theme_system}
-				c_icon_code={0xE96D}>
+				c_icon_code={ICON_LAPTOP_SETTINGS}>
 				System theme
 			</MenuItem>
 			<MenuDivider />
@@ -232,25 +233,25 @@ export const SettingsElement: VoidComponent = () => {
 			<MenuItem
 				id={menuitem_cornersharp_id}
 				c_selected={corner() == corner_sharp}
-				c_icon_code={0xEA99}>
+				c_icon_code={ICON_MAXIMIZE}>
 				Sharp
 			</MenuItem>
 			<MenuItem
 				id={menuitem_cornersemiround_id}
 				c_selected={corner() == corner_semiround}
-				c_icon_code={0xEEF7}>
+				c_icon_code={ICON_SQUARE}>
 				Semi round
 			</MenuItem>
 			<MenuItem
 				id={menuitem_cornerround_id}
 				c_selected={corner() == corner_round}
-				c_icon_code={0xF044}>
+				c_icon_code={ICON_TEARDROP_BOTTOM_RIGHT}>
 				Round
 			</MenuItem>
 			<MenuItem
 				id={menuitem_cornerfullround_id}
 				c_selected={corner() == corner_fullround}
-				c_icon_code={0xE408}>
+				c_icon_code={ICON_CIRCLE}>
 				Full round
 			</MenuItem>
 			<MenuDivider/>
@@ -258,7 +259,7 @@ export const SettingsElement: VoidComponent = () => {
 			<MenuItem
 				c_focused={is_colorpicker_open()}
 				id={menuitem_accent_id}
-				c_leading={<Icon style={{color: color()}} c_filled c_code={0xE408}/>}>
+				c_leading={<Icon style={{color: color()}} c_filled c_code={ICON_CIRCLE}/>}>
 				{color()}
 			</MenuItem>
 		</Menu>

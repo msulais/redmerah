@@ -12,6 +12,7 @@ import { date_year, date_text_YMD } from "@/utils/datetime"
 import { number_to_binary, number_format, number_parse, number_to_real_digit, number_to_string, number_safe, number_is_not_defined } from "@/utils/number"
 import { regex_test } from "@/utils/regex"
 import { navigator_clipboard_writetext } from "@/utils/navigator"
+import { ICON_ADD, ICON_ARROW_RIGHT, ICON_BACKSPACE, ICON_CALENDAR, ICON_COPY, ICON_DISMISS, ICON_LINE_HORIZONTAL_1, ICON_MATH_FORMULA, ICON_SLASH_FORWARD } from "@/constants/icons"
 
 import { Tooltip } from "@/components/Tooltip"
 import Icon from "@/components/Icon"
@@ -247,27 +248,27 @@ const BasicCalculator: VoidComponent<{
 			<Button data-char="%">%</Button>
 			<Button data-char="√">√</Button>
 			<Button id={button_clear_id} classList={classlist_module(CSS.input_output_remove_symbol)}>C</Button>
-			<Button id={button_backspace_id} classList={classlist_module(CSS.input_output_remove_symbol)}><Icon c_code={0xE199} /></Button>
+			<Button id={button_backspace_id} classList={classlist_module(CSS.input_output_remove_symbol)}><Icon c_code={ICON_BACKSPACE} /></Button>
 
 			<Button data-char="7" c_variant={ButtonVariant.tonal}>7</Button>
 			<Button data-char="8" c_variant={ButtonVariant.tonal}>8</Button>
 			<Button data-char="9" c_variant={ButtonVariant.tonal}>9</Button>
-			<Button data-char="÷"><Icon c_code={0xEE8F}/></Button>
+			<Button data-char="÷"><Icon c_code={ICON_SLASH_FORWARD}/></Button>
 
 			<Button data-char="4" c_variant={ButtonVariant.tonal}>4</Button>
 			<Button data-char="5" c_variant={ButtonVariant.tonal}>5</Button>
 			<Button data-char="6" c_variant={ButtonVariant.tonal}>6</Button>
-			<Button data-char="×"><Icon c_code={0xE5E9}/></Button>
+			<Button data-char="×"><Icon c_code={ICON_DISMISS}/></Button>
 
 			<Button data-char="1" c_variant={ButtonVariant.tonal}>1</Button>
 			<Button data-char="2" c_variant={ButtonVariant.tonal}>2</Button>
 			<Button data-char="3" c_variant={ButtonVariant.tonal}>3</Button>
-			<Button data-char="-"><Icon c_code={0xEF5D} /></Button>
+			<Button data-char="-"><Icon c_code={ICON_LINE_HORIZONTAL_1} /></Button>
 
 			<Button data-char={settings().number_format.decimal}>{settings().number_format.decimal}</Button>
 			<Button data-char="0" c_variant={ButtonVariant.tonal}>0</Button>
 			<Button id={button_equal_id} c_variant={ButtonVariant.filled}>=</Button>
-			<Button data-char="+"><Icon c_code={0xE007}/></Button>
+			<Button data-char="+"><Icon c_code={ICON_ADD}/></Button>
 		</div>
 	</>)
 }
@@ -403,7 +404,7 @@ const ScientificCalculator: VoidComponent<{
 					position: MenuPosition.center_bottom_to_right
 				})}
 				c_focused={is_menu_function_open()}>
-				<Icon c_code={0xEA95}/>
+				<Icon c_code={ICON_MATH_FORMULA}/>
 				Function
 			</Button>
 			<Menu
@@ -483,7 +484,7 @@ const ScientificCalculator: VoidComponent<{
 			<Button data-char="(">{'('}</Button>
 			<Button data-char=")">{')'}</Button>
 			<Button id={button_clear_id} classList={classlist_module(CSS.input_output_remove_symbol)}>C</Button>
-			<Button id={button_backspace_id} classList={classlist_module(CSS.input_output_remove_symbol)}><Icon c_code={0xE199} /></Button>
+			<Button id={button_backspace_id} classList={classlist_module(CSS.input_output_remove_symbol)}><Icon c_code={ICON_BACKSPACE} /></Button>
 
 			<Button data-char="%">%</Button>
 			<Button data-char="10^">10^</Button>
@@ -495,25 +496,25 @@ const ScientificCalculator: VoidComponent<{
 			<Button data-char="7" c_variant={ButtonVariant.tonal}>7</Button>
 			<Button data-char="8" c_variant={ButtonVariant.tonal}>8</Button>
 			<Button data-char="9" c_variant={ButtonVariant.tonal}>9</Button>
-			<Button data-char="÷" ><Icon c_code={0xEE8F}/></Button>
+			<Button data-char="÷" ><Icon c_code={ICON_SLASH_FORWARD}/></Button>
 
 			<Button data-char="e">e</Button>
 			<Button data-char="4" c_variant={ButtonVariant.tonal}>4</Button>
 			<Button data-char="5" c_variant={ButtonVariant.tonal}>5</Button>
 			<Button data-char="6" c_variant={ButtonVariant.tonal}>6</Button>
-			<Button data-char="×"><Icon c_code={0xE5E9}/></Button>
+			<Button data-char="×"><Icon c_code={ICON_DISMISS}/></Button>
 
 			<Button data-char="π">π</Button>
 			<Button data-char="1" c_variant={ButtonVariant.tonal}>1</Button>
 			<Button data-char="2" c_variant={ButtonVariant.tonal}>2</Button>
 			<Button data-char="3" c_variant={ButtonVariant.tonal}>3</Button>
-			<Button data-char="-"><Icon c_code={0xEF5D} /></Button>
+			<Button data-char="-"><Icon c_code={ICON_LINE_HORIZONTAL_1} /></Button>
 
 			<Button data-char="√">√</Button>
 			<Button data-char={settings().number_format.decimal}>{settings().number_format.decimal}</Button>
 			<Button data-char="0" c_variant={ButtonVariant.tonal}>0</Button>
 			<Button id={button_equal_id} c_variant={ButtonVariant.filled}>=</Button>
-			<Button data-char="+"><Icon c_code={0xE007}/></Button>
+			<Button data-char="+"><Icon c_code={ICON_ADD}/></Button>
 		</div>
 	</>)
 }
@@ -788,7 +789,7 @@ const ConverterCalculator: VoidComponent<{
 				<IconButton
 					data-tooltip="Swap unit"
 					onClick={() => command(Commands.change_settings_converter_swapunit)}
-					c_code={0xE115}
+					c_code={ICON_ARROW_RIGHT}
 				/>
 				<Button
 					data-tooltip="Select output unit"
@@ -866,7 +867,7 @@ const ConverterCalculator: VoidComponent<{
 			}}>
 			<Button id={button_plusminus_id}>±</Button>
 			<Button id={button_clear_id} classList={classlist_module(CSS.input_output_remove_symbol)}>C</Button>
-			<Button id={button_backspace_id} classList={classlist_module(CSS.input_output_remove_symbol)}><Icon c_code={0xE199} /></Button>
+			<Button id={button_backspace_id} classList={classlist_module(CSS.input_output_remove_symbol)}><Icon c_code={ICON_BACKSPACE} /></Button>
 
 			<Button data-char="7" c_variant={ButtonVariant.tonal}>7</Button>
 			<Button data-char="8" c_variant={ButtonVariant.tonal}>8</Button>
@@ -1085,7 +1086,7 @@ const ProgrammerCalculator: VoidComponent<{
 				<MenuItem onClick={() => {
 					navigator_clipboard_writetext(text_to_copy)
 					close_menu(menu_copy_ref)
-				}} c_leading={<Icon c_code={0xE51B}/>}>Copy</MenuItem>
+				}} c_leading={<Icon c_code={ICON_COPY}/>}>Copy</MenuItem>
 			</Menu>
 		</div>
 		<ActionButtons
@@ -1124,7 +1125,7 @@ const ProgrammerCalculator: VoidComponent<{
 			<Button data-char="(">{'('}</Button>
 			<Button data-char=")">{')'}</Button>
 			<Button id={button_clear_id} classList={classlist_module(CSS.input_output_remove_symbol)}>C</Button>
-			<Button id={button_backspace_id} classList={classlist_module(CSS.input_output_remove_symbol)}><Icon c_code={0xE199} /></Button>
+			<Button id={button_backspace_id} classList={classlist_module(CSS.input_output_remove_symbol)}><Icon c_code={ICON_BACKSPACE} /></Button>
 
 			<Button data-char="F" disabled={!is_hex()} c_variant={ButtonVariant.tonal}>F</Button>
 			<Button data-char="not(">not</Button>
@@ -1142,25 +1143,25 @@ const ProgrammerCalculator: VoidComponent<{
 			<Button data-char="7" disabled={is_bin()} c_variant={ButtonVariant.tonal}>7</Button>
 			<Button data-char="8" disabled={is_oct() || is_bin()} c_variant={ButtonVariant.tonal}>8</Button>
 			<Button data-char="9" disabled={is_oct() || is_bin()} c_variant={ButtonVariant.tonal}>9</Button>
-			<Button data-char="÷" ><Icon c_code={0xEE8F}/></Button>
+			<Button data-char="÷" ><Icon c_code={ICON_SLASH_FORWARD}/></Button>
 
 			<Button data-char="C" disabled={!is_hex()} c_variant={ButtonVariant.tonal}>C</Button>
 			<Button data-char="4" disabled={is_bin()} c_variant={ButtonVariant.tonal}>4</Button>
 			<Button data-char="5" disabled={is_bin()} c_variant={ButtonVariant.tonal}>5</Button>
 			<Button data-char="6" disabled={is_bin()} c_variant={ButtonVariant.tonal}>6</Button>
-			<Button data-char="×"><Icon c_code={0xE5E9}/></Button>
+			<Button data-char="×"><Icon c_code={ICON_DISMISS}/></Button>
 
 			<Button data-char="B" disabled={!is_hex()} c_variant={ButtonVariant.tonal}>B</Button>
 			<Button data-char="1" c_variant={ButtonVariant.tonal}>1</Button>
 			<Button data-char="2" disabled={is_bin() } c_variant={ButtonVariant.tonal}>2</Button>
 			<Button data-char="3" disabled={is_bin() } c_variant={ButtonVariant.tonal}>3</Button>
-			<Button data-char="-"><Icon c_code={0xEF5D} /></Button>
+			<Button data-char="-"><Icon c_code={ICON_LINE_HORIZONTAL_1} /></Button>
 
 			<Button data-char="A" disabled={!is_hex()} c_variant={ButtonVariant.tonal}>A</Button>
 			<Button data-char={settings().number_format.decimal} disabled={!is_dec()}>{settings().number_format.decimal}</Button>
 			<Button data-char="0" c_variant={ButtonVariant.tonal}>0</Button>
 			<Button id={button_equal_id} c_variant={ButtonVariant.filled}>=</Button>
-			<Button data-char="+"><Icon c_code={0xE007}/></Button>
+			<Button data-char="+"><Icon c_code={ICON_ADD}/></Button>
 		</div>
 	</>)
 }
@@ -1249,7 +1250,7 @@ const DateCalculator: VoidComponent<{
 			<Button
 				c_variant={ButtonVariant.tonal}
 				id={button_from_id}>
-				<Icon c_code={0xE2CC}/>
+				<Icon c_code={ICON_CALENDAR}/>
 				{date_text_YMD(input().from)}
 			</Button>
 		</div>
@@ -1278,7 +1279,7 @@ const DateCalculator: VoidComponent<{
 			<Button
 				c_variant={ButtonVariant.tonal}
 				id={button_to_id}>
-				<Icon c_code={0xE2CC}/>
+				<Icon c_code={ICON_CALENDAR}/>
 				{date_text_YMD(input().to)}
 			</Button>
 		</div>

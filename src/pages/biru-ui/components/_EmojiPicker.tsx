@@ -1,13 +1,14 @@
 import { createSignal, For, Show, type VoidComponent } from "solid-js"
 
+import type { Emoji } from "@/types/emoji"
 import { number_safe } from "@/utils/number"
 import { array_includes } from "@/utils/array"
 import { event_current_target } from "@/utils/event"
+import { ICON_EMOJI_ADD } from "@/constants/icons"
 
 import { Page, Playground, PlaygroundOptions } from "../_Body"
 import Button, { ButtonVariant } from "@/components/Button"
 import EmojiPicker, { EmojiPickerPosition, open_emojipicker } from "@/components/EmojiPicker"
-import type { Emoji } from "@/types/emoji"
 import Icon from "@/components/Icon"
 import EmojiC from "@/components/Emoji"
 import CheckBox from "@/components/CheckBox"
@@ -42,7 +43,7 @@ const _: VoidComponent = () => {
 					padding: padding(),
 					position: position(),
 				})}>
-				<Show when={emoji() != null} fallback={<><Icon c_code={0xE747}/>Pick emoji</>}>
+				<Show when={emoji() != null} fallback={<><Icon c_code={ICON_EMOJI_ADD}/>Pick emoji</>}>
 					<EmojiC c_emoji={emoji()![0]}/>
 					{emoji()![1]}
 				</Show>

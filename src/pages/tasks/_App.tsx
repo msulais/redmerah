@@ -21,6 +21,7 @@ import { AppColors } from "@/enums/colors"
 import { document_active } from "@/utils/document"
 import { element_dataset, element_id, element_tagname, element_valid_target } from "@/utils/element"
 import { is_string } from "@/utils/typecheck"
+import { ICON_CIRCLE, ICON_CIRCLE_ERASER, ICON_DELETE, ICON_DISMISS, ICON_DOCUMENT_ERROR, ICON_EDIT, ICON_EMOJI_ADD } from "@/constants/icons"
 
 import { Tooltip } from "@/components/Tooltip"
 import Icon from "@/components/Icon"
@@ -1427,21 +1428,21 @@ const _: VoidComponent = () => {
 	const LabelItem: VoidComponent<{index: number, label: TaskLabel}> = (props) => {
 		const label = createMemo(() => props.label)
 		return (<List
-			c_leading={<Icon style={{color: label().color ?? undefined}} c_code={0xE407}/>}
+			c_leading={<Icon style={{color: label().color ?? undefined}} c_code={ICON_CIRCLE}/>}
 			c_trailing={<>
 				<IconButton
 					data-tooltip="Edit label"
 					data-edit
 					data-index={props.index}
 					onClick={(ev) => command(Commands.edit_label, ev, label())}
-					c_code={0xE739}
+					c_code={ICON_EDIT}
 				/>
 				<IconButton
 					data-tooltip="Delete label"
 					data-delete
 					data-index={props.index}
 					onClick={() => command(Commands.delete_label, label())}
-					c_code={0xE59D}
+					c_code={ICON_DELETE}
 				/>
 			</>}>
 			{ label().name }
@@ -1592,7 +1593,7 @@ const _: VoidComponent = () => {
 								c_focused={is_colorpicker_label_open()}>
 								<Icon
 									style={{color: selected_label_to_add.color ?? undefined}}
-									c_code={0xE407}
+									c_code={ICON_CIRCLE}
 								/>
 							</TextFieldButton>}
 						/>
@@ -1666,7 +1667,7 @@ const _: VoidComponent = () => {
 							c_focused={is_colorpicker_label_open()}>
 							<Icon
 								style={{color: selected_label_to_edit.color ?? undefined}}
-								c_code={0xE407}
+								c_code={ICON_CIRCLE}
 							/>
 						</TextFieldButton>}
 					/>
@@ -1735,7 +1736,7 @@ const _: VoidComponent = () => {
 							<Show
 								when={new_list_emoji() == null}
 								fallback={<Emoji c_emoji={new_list_emoji()!}/>}>
-								<Icon c_code={0xE747}/>
+								<Icon c_code={ICON_EMOJI_ADD}/>
 							</Show>
 						</TextFieldButton>}
 					/>
@@ -1809,7 +1810,7 @@ const _: VoidComponent = () => {
 							<Show
 								when={edit_list_emoji() == null}
 								fallback={<Emoji c_emoji={edit_list_emoji()!}/>}>
-								<Icon c_code={0xE747}/>
+								<Icon c_code={ICON_EMOJI_ADD}/>
 							</Show>
 						</TextFieldButton>}
 					/>
@@ -1883,7 +1884,7 @@ const _: VoidComponent = () => {
 							else set_selected_label_to_edit('color', null)
 						}}
 						c_variant={ButtonVariant.tonal}>
-						<Icon c_code={0xE40C}/>No color
+						<Icon c_code={ICON_CIRCLE_ERASER}/>No color
 					</Button>
 				</Show>
 			</ColorPicker>
@@ -1914,7 +1915,7 @@ const _: VoidComponent = () => {
 							if (is_emojipicker_editlist_open()) set_edit_list_emoji(null)
 							close_emojipicker(emojipicker_ref)
 						}}>
-						<Icon c_code={0xE5E9}/>No emoji
+						<Icon c_code={ICON_DISMISS}/>No emoji
 					</Button>
 				</div>
 			</Show>
@@ -1925,7 +1926,7 @@ const _: VoidComponent = () => {
 		return (<>
 			<Toast
 				ref={r => toast_nofile_ref = r}
-				c_leading={<Icon c_code={0xE631}/>}>
+				c_leading={<Icon c_code={ICON_DOCUMENT_ERROR}/>}>
 				File is not exist
 			</Toast>
 		</>)

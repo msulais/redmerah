@@ -24,6 +24,7 @@ import { navigator_share } from "@/utils/navigator"
 import { promise_done } from "@/utils/object"
 import { number_is_not_defined, number_parse } from "@/utils/number"
 import { app_tasks as app } from "@/constants/apps"
+import { ICON_ADD, ICON_APPS, ICON_CHAT, ICON_CIRCLE, ICON_DISMISS, ICON_GIFT, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_LINE_HORIZONTAL_3, ICON_MAXIMIZE, ICON_RECEIPT, ICON_SEARCH, ICON_SETTINGS, ICON_SHARE_ANDROID, ICON_SHIELD_CHECKMARK, ICON_SQUARE, ICON_TAG, ICON_TEARDROP_BOTTOM_RIGHT, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from "@/constants/icons"
 import logo from '@/assets/apps/tasks-logo.svg'
 import redmerah_logo from '@/assets/logo.svg'
 
@@ -209,40 +210,40 @@ const _: VoidComponent<{
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={RoutesLinks.apps}
-					c_icon_code={0xE063}>
+					c_icon_code={ICON_APPS}>
 					More apps
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={RoutesLinks.about}
-					c_icon_code={0xE930}>
+					c_icon_code={ICON_INFO}>
 					About us
 				</LinkMenuItem>
 				<MenuDivider />
 				<LinkMenuItem
 					href={RoutesLinks.privacy}
-					c_icon_code={0xEE51}>
+					c_icon_code={ICON_SHIELD_CHECKMARK}>
 					Privacy policy
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={RoutesLinks.terms}
-					c_icon_code={0xED47}>
+					c_icon_code={ICON_RECEIPT}>
 					Terms & conditions
 				</LinkMenuItem>
 				<MenuDivider />
 				<MenuItem
 					id={button_more_share_id}
-					c_icon_code={0xEE23}>
+					c_icon_code={ICON_SHARE_ANDROID}>
 					Share
 				</MenuItem>
 				<LinkMenuItem
 					href={'mailto:' + ExternalLinks.contact_email + '?subject=' + url_encode('Tasks')}
-					c_icon_code={0xE3A0}>
+					c_icon_code={ICON_CHAT}>
 					Send feedback
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={ExternalLinks.donate}
 					c_new_tab
-					c_icon_code={0xE84B}>
+					c_icon_code={ICON_GIFT}>
 					Donate
 				</LinkMenuItem>
 				<MenuHeader>&copy; {date_year(new Date())} Redmerah</MenuHeader>
@@ -293,24 +294,24 @@ const _: VoidComponent<{
 					c_on_toggleopen={v => set_is_submenu_themesettings_open(v)}
 					c_item={<SubMenuItem
 						c_focused={is_submenu_themesettings_open()}
-						c_icon_code={0xE28A}>
+						c_icon_code={ICON_WEATHER_SUNNY}>
 						Theme
 					</SubMenuItem>}>
 					<MenuItem
 						c_selected={theme() == theme_light}
-						c_icon_code={0xF2CD}
+						c_icon_code={ICON_WEATHER_SUNNY}
 						data-theme={theme_light}>
 						Light
 					</MenuItem>
 					<MenuItem
 						c_selected={theme() == theme_dark}
-						c_icon_code={0xF2B3}
+						c_icon_code={ICON_WEATHER_MOON}
 						data-theme={theme_dark}>
 						Dark
 					</MenuItem>
 					<MenuItem
 						c_selected={theme() == theme_system}
-						c_icon_code={0xE96D}
+						c_icon_code={ICON_LAPTOP_SETTINGS}
 						data-theme={theme_system}>
 						System theme
 					</MenuItem>
@@ -320,37 +321,37 @@ const _: VoidComponent<{
 					c_on_toggleopen={v => set_is_submenu_cornersettings_open(v)}
 					c_item={<SubMenuItem
 						c_focused={is_submenu_cornersettings_open()}
-						c_icon_code={0xF044}>
+						c_icon_code={ICON_TEARDROP_BOTTOM_RIGHT}>
 						Corner style
 					</SubMenuItem>}>
 					<MenuItem
 						c_selected={corner() == corner_sharp}
-						c_icon_code={0xEA99}
+						c_icon_code={ICON_MAXIMIZE}
 						data-corner={corner_sharp}>
 						Sharp
 					</MenuItem>
 					<MenuItem
 						c_selected={corner() == corner_semiround}
-						c_icon_code={0xEEF7}
+						c_icon_code={ICON_SQUARE}
 						data-corner={corner_semiround}>
 						Semi round
 					</MenuItem>
 					<MenuItem
 						c_selected={corner() == corner_round}
-						c_icon_code={0xF044}
+						c_icon_code={ICON_TEARDROP_BOTTOM_RIGHT}
 						data-corner={corner_round}>
 						Round
 					</MenuItem>
 					<MenuItem
 						c_selected={corner() == corner_fullround}
-						c_icon_code={0xE408}
+						c_icon_code={ICON_CIRCLE}
 						data-corner={corner_fullround}>
 						Full round
 					</MenuItem>
 				</SubMenu>
 				<MenuItem
 					id={button_settings_label_id}
-					c_icon_code={0xF00D}>
+					c_icon_code={ICON_TAG}>
 					Labels
 				</MenuItem>
 				<MenuDivider />
@@ -417,7 +418,7 @@ const _: VoidComponent<{
 						}
 						id={button_appbar_menulist_id}
 						classList={classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
-						c_code={0xEAFF}
+						c_code={ICON_LINE_HORIZONTAL_3}
 					/>
 					<img alt="Tasks logo" width={32} src={logo.src} />
 				</>}
@@ -427,27 +428,27 @@ const _: VoidComponent<{
 						data-tooltip="Search tasks"
 						id={button_appbar_search_id}
 						classList={classlist_module(CSS.appbar_search_btn)}
-						c_code={0xEDDF}
+						c_code={ICON_SEARCH}
 					/>
 					<IconButton
 						data-tooltip="Info"
 						id={button_appbar_menuinfo_id}
 						c_focused={is_menu_info_open()}
-						c_code={0xE930}
+						c_code={ICON_INFO}
 					/>
 					<IconButton
 						data-tooltip="Settings"
 						id={button_appbar_menusettings_id}
 						classList={classlist_module(CSSAnimation.btn_rotate_icon)}
 						c_focused={is_menu_settings_open()}
-						c_code={0xEE0F}
+						c_code={ICON_SETTINGS}
 					/>
 				</>}>
 				<div class={CSS.appbar_search}>
 					<SearchTextField
 						placeholder="Search tasks"
 						ref={r => searchtextfield_ref = r}
-						c_leading={<Icon c_code={0xEDDF}/>}
+						c_leading={<Icon c_code={ICON_SEARCH}/>}
 						c_attr_menu={{
 							ref: r => searchtextfield_menu_ref = r,
 							c_on_toggleopen: is_open => is_searchtextfield_menu_open = is_open,
@@ -509,7 +510,7 @@ const _: VoidComponent<{
 									}
 									set_is_searching(false)
 								}}>
-								<Icon c_code={0xE5E9}/>
+								<Icon c_code={ICON_DISMISS}/>
 							</SearchTextFieldButton>
 						</Show>}
 					/>
@@ -566,11 +567,11 @@ const _: VoidComponent<{
 					id={button_drawer_close_id}
 					data-tooltip="Close navigation"
 					classList={classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
-					c_code={0xEAFF}
+					c_code={ICON_LINE_HORIZONTAL_3}
 				/>
 			</Tooltip>}
 			c_footer={<DrawerItem
-				c_leading={<Icon c_code={0xE007}/>}
+				c_leading={<Icon c_code={ICON_ADD}/>}
 				id={button_drawer_newlist_id}>
 				New list
 			</DrawerItem>}

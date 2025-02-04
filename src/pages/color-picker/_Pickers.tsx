@@ -17,6 +17,7 @@ import { url_create, url_revoke } from "@/utils/url"
 import { document_body } from "@/utils/document"
 import { promise_done } from "@/utils/object"
 import { array_join } from "@/utils/array"
+import { ICON_IMAGE } from "@/constants/icons"
 
 import Button, { ButtonVariant } from "@/components/Button"
 import Icon from "@/components/Icon"
@@ -454,14 +455,14 @@ export const ImagePicker: VoidComponent<{
 					onPointerDown={ev => event_stop_propagation(ev)}
 					c_variant={ButtonVariant.tonal}
 					onClick={pick_image}>
-					<Icon c_code={0xE8FE}/>
+					<Icon c_code={ICON_IMAGE}/>
 					Pick image
 				</Button>
 			</Show>
 		</div>
 		<Show when={any_image()}>
 			<Button c_variant={ButtonVariant.tonal} onClick={pick_image}>
-				<Icon c_code={0xE8FE}/>
+				<Icon c_code={ICON_IMAGE}/>
 				Pick image
 			</Button>
 		</Show>

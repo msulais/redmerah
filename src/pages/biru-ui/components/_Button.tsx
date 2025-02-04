@@ -7,6 +7,7 @@ import CheckBox from "@/components/CheckBox"
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
 import { event_current_target } from "@/utils/event"
+import { ICON_CURSOR_CLICK } from "@/constants/icons"
 
 const _: VoidComponent = () => {
 	const [variant, set_variant] = createSignal<ButtonVariant>(ButtonVariant.transparent)
@@ -28,7 +29,7 @@ const _: VoidComponent = () => {
 					c_selected={selected()}
 					c_indicator_position={indicator_position()}>
 					<Show when={icon()}>
-						<Icon c_code={0xE54B}/>
+						<Icon c_code={ICON_CURSOR_CLICK}/>
 					</Show>
 					Button
 				</Button>
@@ -40,7 +41,7 @@ const _: VoidComponent = () => {
 					c_focused={focused()}
 					c_selected={selected()}
 					c_indicator_position={indicator_position()}
-					c_code={0xE54B}
+					c_code={ICON_CURSOR_CLICK}
 				/>
 
 				<EmojiButton
@@ -62,7 +63,7 @@ const _: VoidComponent = () => {
 					c_selected={selected()}
 					c_indicator_position={indicator_position()}>
 					<Show when={icon()}>
-						<Icon c_code={0xE54B}/>
+						<Icon c_code={ICON_CURSOR_CLICK}/>
 					</Show>
 					LinkButton
 				</LinkButton>
@@ -75,7 +76,7 @@ const _: VoidComponent = () => {
 					c_focused={focused()}
 					c_selected={selected()}
 					c_indicator_position={indicator_position()}
-					c_code={0xE54B}
+					c_code={ICON_CURSOR_CLICK}
 				/>
 
 				<LinkEmojiButton
@@ -97,7 +98,7 @@ const _: VoidComponent = () => {
 					c_selected={selected()}
 					c_indicator_position={indicator_position()}>
 					<Show when={icon()}>
-						<Icon c_code={0xE54B}/>
+						<Icon c_code={ICON_CURSOR_CLICK}/>
 					</Show>
 					FloatingActionButton
 				</FloatingActionButton>
@@ -111,7 +112,7 @@ const _: VoidComponent = () => {
 					c_selected={selected()}
 					c_indicator_position={indicator_position()}>
 					<Show when={icon()}>
-						<Icon c_code={0xE54B}/>
+						<Icon c_code={ICON_CURSOR_CLICK}/>
 					</Show>
 					LinkFloatingActionButton
 				</LinkFloatingActionButton>

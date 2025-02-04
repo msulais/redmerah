@@ -22,6 +22,7 @@ import { app_randomizer as app } from "@/constants/apps"
 import { element_valid_target, element_tagname, element_id, element_dataset } from "@/utils/element"
 import { valid_enum_value } from "@/utils/object"
 import { number_is_not_defined, number_parse, number_safe } from "@/utils/number"
+import { ICON_ALIGN_END_HORIZONTAL, ICON_ALIGN_START_HORIZONTAL, ICON_APPS, ICON_ARROW_CLOCKWISE, ICON_ARROW_SHUFFLE, ICON_ARROW_SORT, ICON_ARROW_SYNC, ICON_CHAT, ICON_CHECKMARK, ICON_CIRCLE, ICON_COLOR, ICON_COMMA, ICON_COPY, ICON_DECIMAL_ARROW_LEFT, ICON_DISMISS, ICON_GIFT, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_LINE_HORIZONTAL_3, ICON_MAXIMIZE, ICON_NUMBER_SYMBOL, ICON_PLAY_CIRCLE_HINT, ICON_RECEIPT, ICON_SETTINGS, ICON_SHARE_ANDROID, ICON_SHIELD_CHECKMARK, ICON_SQUARE, ICON_TEARDROP_BOTTOM_RIGHT, ICON_TEXT_CASE_TITLE, ICON_TEXT_SORT_ASCENDING, ICON_TEXT_SORT_DESCENDING, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from "@/constants/icons"
 import logo_redmerah from '@/assets/logo.svg'
 
 import Icon from "@/components/Icon"
@@ -227,40 +228,40 @@ const _: Component<{
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={RoutesLinks.apps}
-					c_icon_code={0xE063}>
+					c_icon_code={ICON_APPS}>
 					More apps
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={RoutesLinks.about}
-					c_icon_code={0xE930}>
+					c_icon_code={ICON_INFO}>
 					About us
 				</LinkMenuItem>
 				<MenuDivider />
 				<LinkMenuItem
 					href={RoutesLinks.privacy}
-					c_icon_code={0xEE51}>
+					c_icon_code={ICON_SHIELD_CHECKMARK}>
 					Privacy policy
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={RoutesLinks.terms}
-					c_icon_code={0xED47}>
+					c_icon_code={ICON_RECEIPT}>
 					Terms & conditions
 				</LinkMenuItem>
 				<MenuDivider />
 				<MenuItem
 					id={button_info_share_id}
-					c_icon_code={0xEE23}>
+					c_icon_code={ICON_SHARE_ANDROID}>
 					Share
 				</MenuItem>
 				<LinkMenuItem
 					href={'mailto:' + ExternalLinks.contact_email + '?subject=' + url_encode('Tasks')}
-					c_icon_code={0xE3A0}>
+					c_icon_code={ICON_CHAT}>
 					Send feedback
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={ExternalLinks.donate}
 					c_new_tab
-					c_icon_code={0xE84B}>
+					c_icon_code={ICON_GIFT}>
 					Donate
 				</LinkMenuItem>
 				<MenuHeader>&copy; {date_year(new Date())} Redmerah</MenuHeader>
@@ -360,7 +361,7 @@ const _: Component<{
 				<Show when={randomizer() == RandomizerType.numbers || randomizer() == RandomizerType.words}>
 					<SwitchMenuItem
 						c_checked={is_repeat()}
-						c_icon_code={0xE0A1}
+						c_icon_code={ICON_ARROW_CLOCKWISE}
 						c_attr_switch={{id: input_settings_repeat_id}}
 						c_trailing={<MenuIndent/>}>
 						Repeat
@@ -369,7 +370,7 @@ const _: Component<{
 				<SwitchMenuItem
 					c_checked={isAnimation()}
 					c_attr_switch={{id: input_settings_animation_id}}
-					c_icon_code={0xECBA}
+					c_icon_code={ICON_PLAY_CIRCLE_HINT}
 					c_trailing={<MenuIndent/>}>
 					Animation
 				</SwitchMenuItem>
@@ -382,23 +383,23 @@ const _: Component<{
 						c_on_toggleopen={(v) => set_is_submenu_sortsettings_open(v)}
 						c_item={<SubMenuItem
 							c_focused={is_submenu_sortsettings_open()}
-							c_icon_code={0xE123}>
+							c_icon_code={ICON_ARROW_SORT}>
 							Sort
 						</SubMenuItem>}>
 						<MenuItem
-							c_icon_code={0xE11F}
+							c_icon_code={ICON_ARROW_SHUFFLE}
 							data-number-sort={NumbersRandomizerSort.none}
 							c_selected={settings().numbers.sort == NumbersRandomizerSort.none}>
 							None
 						</MenuItem>
 						<MenuItem
-							c_icon_code={0xF187}
+							c_icon_code={ICON_TEXT_SORT_ASCENDING}
 							data-number-sort={NumbersRandomizerSort.ascending}
 							c_selected={settings().numbers.sort == NumbersRandomizerSort.ascending}>
 							Ascending
 						</MenuItem>
 						<MenuItem
-							c_icon_code={0xF189}
+							c_icon_code={ICON_TEXT_SORT_DESCENDING}
 							data-number-sort={NumbersRandomizerSort.descending}
 							c_selected={settings().numbers.sort == NumbersRandomizerSort.descending}>
 							Descending
@@ -409,7 +410,7 @@ const _: Component<{
 						c_on_toggleopen={(isOpen) => set_is_submenu_numbertypesettings_open(isOpen)}
 						c_item={<SubMenuItem
 							c_focused={is_submenu_numbertypesettings_open()}
-							c_icon_code={0xEB4B}>
+							c_icon_code={ICON_NUMBER_SYMBOL}>
 							Number type
 						</SubMenuItem>}>
 						<MenuItem
@@ -442,7 +443,7 @@ const _: Component<{
 						c_on_toggleopen={isOpen => set_is_submenu_wordcasesettings_open(isOpen)}
 						c_item={<SubMenuItem
 							c_focused={is_submenu_wordcasesettings_open()}
-							c_icon_code={0xF0FF}>
+							c_icon_code={ICON_TEXT_CASE_TITLE}>
 							Word case
 						</SubMenuItem>}>
 						<MenuItem
@@ -481,7 +482,7 @@ const _: Component<{
 						c_on_toggleopen={(v) => set_is_submenu_colormodelsettings_open(v)}
 						c_item={<SubMenuItem
 							c_focused={is_submenu_colormodelsettings_open()}
-							c_icon_code={0xE4B6}>
+							c_icon_code={ICON_COLOR}>
 							Color model
 						</SubMenuItem>}>
 						<MenuItem
@@ -506,24 +507,24 @@ const _: Component<{
 					c_on_toggleopen={v => set_is_submenu_themesettings_open(v)}
 					c_item={<SubMenuItem
 						c_focused={is_submenu_themesettings_open()}
-						c_icon_code={0xE28A}>
+						c_icon_code={ICON_WEATHER_SUNNY}>
 						Theme
 					</SubMenuItem>}>
 					<MenuItem
 						c_selected={theme() == ThemeData.light}
-						c_icon_code={0xF2CD}
+						c_icon_code={ICON_WEATHER_SUNNY}
 						data-theme={ThemeData.light}>
 						Light
 					</MenuItem>
 					<MenuItem
 						c_selected={theme() == ThemeData.dark}
-						c_icon_code={0xF2B3}
+						c_icon_code={ICON_WEATHER_MOON}
 						data-theme={ThemeData.dark}>
 						Dark
 					</MenuItem>
 					<MenuItem
 						c_selected={theme() == ThemeData.system}
-						c_icon_code={0xE96D}
+						c_icon_code={ICON_LAPTOP_SETTINGS}
 						data-theme={ThemeData.system}>
 						System theme
 					</MenuItem>
@@ -533,30 +534,30 @@ const _: Component<{
 					c_on_toggleopen={v => set_is_submenu_cornersettings_open(v)}
 					c_item={<SubMenuItem
 						c_focused={is_submenu_cornersettings_open()}
-						c_icon_code={0xF044}>
+						c_icon_code={ICON_TEARDROP_BOTTOM_RIGHT}>
 						Corner style
 					</SubMenuItem>}>
 					<MenuItem
 						c_selected={corner() == CornerData.sharp}
-						c_icon_code={0xEA99}
+						c_icon_code={ICON_MAXIMIZE}
 						data-corner={CornerData.sharp}>
 						Sharp
 					</MenuItem>
 					<MenuItem
 						c_selected={corner() == CornerData.semi_round}
-						c_icon_code={0xEEF7}
+						c_icon_code={ICON_SQUARE}
 						data-corner={CornerData.semi_round}>
 						Semi round
 					</MenuItem>
 					<MenuItem
 						c_selected={corner() == CornerData.round}
-						c_icon_code={0xF044}
+						c_icon_code={ICON_TEARDROP_BOTTOM_RIGHT}
 						data-corner={CornerData.round}>
 						Round
 					</MenuItem>
 					<MenuItem
 						c_selected={corner() == CornerData.full_round}
-						c_icon_code={0xE408}
+						c_icon_code={ICON_CIRCLE}
 						data-corner={CornerData.full_round}>
 						Full round
 					</MenuItem>
@@ -568,7 +569,7 @@ const _: Component<{
 							ref={r => textfield_prefix_ref = r}
 							c_label="Prefix"
 							id={input_settings_prefix_id}
-							c_leading={<Icon c_code={0xE043}/>}
+							c_leading={<Icon c_code={ICON_ALIGN_START_HORIZONTAL}/>}
 						/>
 					</div>
 					<div class={ CSS.appbar_textfield_menu_item }>
@@ -576,7 +577,7 @@ const _: Component<{
 							ref={r => textfield_suffix_ref = r}
 							c_label="Suffix"
 							id={input_settings_suffix_id}
-							c_leading={<Icon c_code={0xE02D}/>}
+							c_leading={<Icon c_code={ICON_ALIGN_END_HORIZONTAL}/>}
 						/>
 					</div>
 					<div class={ CSS.appbar_textfield_menu_item }>
@@ -584,7 +585,7 @@ const _: Component<{
 							ref={r => textfield_separator_ref = r}
 							c_label="Separator"
 							id={input_settings_separator_id}
-							c_leading={<Icon c_code={0xE4CF}/>}
+							c_leading={<Icon c_code={ICON_COMMA}/>}
 						/>
 					</div>
 				</Show>
@@ -596,7 +597,7 @@ const _: Component<{
 								min={0}
 								id={input_settings_mindecimallength_id}
 								c_label="Min decimal length"
-								c_leading={<Icon c_code={0xE599}/>}
+								c_leading={<Icon c_code={ICON_DECIMAL_ARROW_LEFT}/>}
 							/>
 						</Tooltip>
 					</div>
@@ -639,7 +640,7 @@ const _: Component<{
 						id={button_navigation_close_id}
 						data-tooltip="Close navigation"
 						classList={classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
-						c_code={0xEAFF}
+						c_code={ICON_LINE_HORIZONTAL_3}
 					/>
 				</Tooltip>}
 				ref={r => drawer_navigation_ref = r}>
@@ -711,7 +712,7 @@ const _: Component<{
 						data-tooltip={is_sidenavigation_hidden()? "Open navigation" : "Expand/shrink navigation"}
 						id={button_navigation_id}
 						classList={classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
-						c_code={0xEAFF}
+						c_code={ICON_LINE_HORIZONTAL_3}
 					/>
 					<img width="32" src={app.logo_url} alt="Randomizer" />
 				</>}
@@ -726,7 +727,7 @@ const _: Component<{
 							c_filled
 							classList={classlist_module(CSS.appbar_generate_icon)}
 							data-rotate={attr_set_if_exist(props.is_generating)}
-							c_code={0xE143}
+							c_code={ICON_ARROW_SYNC}
 						/>
 						<Show when={props.is_generating} fallback="Generate">Generating</Show>
 					</Button>
@@ -734,19 +735,19 @@ const _: Component<{
 						data-tooltip="Info"
 						id={button_info_id}
 						c_focused={is_menu_info_open()}
-						c_code={0xE930}
+						c_code={ICON_INFO}
 					/>
 					<IconButton
 						data-tooltip="Settings"
 						classList={classlist_module(CSSAnimation.btn_rotate_icon)}
 						c_focused={is_menu_settings_open()}
 						id={button_settings_id}
-						c_code={0xEE0F}
+						c_code={ICON_SETTINGS}
 					/>
 					<IconButton
 						data-tooltip="Copy result"
 						id={button_copyresult_id}
-						c_code={timeout_copy_id()? 0xE3D8 : timeout_copyerror_id()? 0xE5E9 : 0xE51B}
+						c_code={timeout_copy_id()? ICON_CHECKMARK : timeout_copyerror_id()? ICON_DISMISS : ICON_COPY}
 					/>
 				</>}
 			/>

@@ -11,11 +11,11 @@ import { date_year } from "@/utils/datetime"
 import { RoutesLinks, ExternalLinks } from "@/enums/links"
 import { document_active, document_root } from "@/utils/document"
 import { url_encode, url_origin } from "@/utils/url"
-import { app_color_picker as app } from "@/constants/apps"
-import { event_current_target } from "@/utils/event"
+import { app_usb_checker as app } from "@/constants/apps"
 import { valid_enum_value } from "@/utils/object"
 import { element_valid_target, element_tagname, element_id, element_dataset } from "@/utils/element"
-import { ICON_APPS, ICON_CHAT, ICON_CIRCLE, ICON_GIFT, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_MAXIMIZE, ICON_RECEIPT, ICON_SETTINGS, ICON_SHARE_ANDROID, ICON_SHIELD_CHECKMARK, ICON_SQUARE, ICON_TEARDROP_BOTTOM_RIGHT, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from "@/constants/icons"
+import { event_current_target } from "@/utils/event"
+import { ICON_APPS, ICON_CHAT, ICON_CIRCLE, ICON_GIFT, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_MAXIMIZE, ICON_OPEN, ICON_RECEIPT, ICON_SETTINGS, ICON_SHARE_ANDROID, ICON_SHIELD_CHECKMARK, ICON_SQUARE, ICON_TEARDROP_BOTTOM_RIGHT, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY, ICON_WINDOW_SETTINGS } from "@/constants/icons"
 import logo_redmerah from '@/assets/logo.svg'
 
 import Tooltip from "@/components/Tooltip"
@@ -23,6 +23,7 @@ import { IconButton } from "@/components/Button"
 import Menu, { MenuDivider, MenuItem, MenuHeader, open_menu, LinkMenuItem, SubMenu, close_submenu, close_menu, SubMenuItem } from "@/components/Menu"
 import AppBar from "@/components/AppBar"
 import CSSAnimation from "@/styles/animation.module.scss"
+import Icon from "@/components/Icon"
 
 const _: VoidComponent = () => {
 	const root = document_root()
@@ -174,6 +175,14 @@ const _: VoidComponent = () => {
 						&& valid_enum_value(data_corner, CornerData)
 					) return change_corner(data_corner as CornerData)
 				}}>
+				<LinkMenuItem
+					c_new_tab
+					href="https://caniuse.com/webusb"
+					c_icon_code={ICON_WINDOW_SETTINGS}
+					c_trailing={<Icon c_code={ICON_OPEN}/>}>
+					Browser compatibility
+				</LinkMenuItem>
+				<MenuDivider />
 				<SubMenu
 					ref={r => submenu_themesettings_ref = r}
 					c_on_toggleopen={v => set_is_submenu_themesettings_open(v)}

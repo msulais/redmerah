@@ -19,6 +19,7 @@ import { timeout_clear, timeout_set } from "@/utils/timeout"
 import { app_color_generator as app } from "@/constants/apps"
 import { document_active, document_root } from "@/utils/document"
 import { element_valid_target, element_tagname, element_id, element_dataset } from "@/utils/element"
+import { ICON_APPS, ICON_CHAT, ICON_CHECKMARK, ICON_CIRCLE, ICON_COPY, ICON_GIFT, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_MAXIMIZE, ICON_RECEIPT, ICON_SETTINGS, ICON_SHARE_ANDROID, ICON_SHIELD_CHECKMARK, ICON_SQUARE, ICON_TEARDROP_BOTTOM_RIGHT, ICON_TEXT_BULLET_LIST_ADD, ICON_TEXT_BULLET_LIST_SQUARE, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from "@/constants/icons"
 import logo_redmerah from '@/assets/logo.svg'
 
 import {Tooltip} from "@/components/Tooltip"
@@ -158,24 +159,24 @@ const _: VoidComponent<{
 					c_on_toggleopen={v => set_is_submenu_themesettings_open(v)}
 					c_item={<SubMenuItem
 						c_focused={is_submenu_themesettings_open()}
-						c_icon_code={0xE28A}>
+						c_icon_code={ICON_WEATHER_SUNNY}>
 						Theme
 					</SubMenuItem>}>
 					<MenuItem
 						c_selected={theme() == ThemeData.light}
-						c_icon_code={0xF2CD}
+						c_icon_code={ICON_WEATHER_SUNNY}
 						data-theme={ThemeData.light}>
 						Light
 					</MenuItem>
 					<MenuItem
 						c_selected={theme() == ThemeData.dark}
-						c_icon_code={0xF2B3}
+						c_icon_code={ICON_WEATHER_MOON}
 						data-theme={ThemeData.dark}>
 						Dark
 					</MenuItem>
 					<MenuItem
 						c_selected={theme() == ThemeData.system}
-						c_icon_code={0xE96D}
+						c_icon_code={ICON_LAPTOP_SETTINGS}
 						data-theme={ThemeData.system}>
 						System theme
 					</MenuItem>
@@ -185,30 +186,30 @@ const _: VoidComponent<{
 					c_on_toggleopen={v => set_is_submenu_cornersettings_open(v)}
 					c_item={<SubMenuItem
 						c_focused={is_submenu_cornersettings_open()}
-						c_icon_code={0xF044}>
+						c_icon_code={ICON_TEARDROP_BOTTOM_RIGHT}>
 						Corner style
 					</SubMenuItem>}>
 					<MenuItem
 						c_selected={corner() == CornerData.sharp}
-						c_icon_code={0xEA99}
+						c_icon_code={ICON_MAXIMIZE}
 						data-corner={CornerData.sharp}>
 						Sharp
 					</MenuItem>
 					<MenuItem
 						c_selected={corner() == CornerData.semi_round}
-						c_icon_code={0xEEF7}
+						c_icon_code={ICON_SQUARE}
 						data-corner={CornerData.semi_round}>
 						Semi round
 					</MenuItem>
 					<MenuItem
 						c_selected={corner() == CornerData.round}
-						c_icon_code={0xF044}
+						c_icon_code={ICON_TEARDROP_BOTTOM_RIGHT}
 						data-corner={CornerData.round}>
 						Round
 					</MenuItem>
 					<MenuItem
 						c_selected={corner() == CornerData.full_round}
-						c_icon_code={0xE408}
+						c_icon_code={ICON_CIRCLE}
 						data-corner={CornerData.full_round}>
 						Full round
 					</MenuItem>
@@ -222,46 +223,46 @@ const _: VoidComponent<{
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={RoutesLinks.apps}
-					c_icon_code={0xE063}
+					c_icon_code={ICON_APPS}
 					c_trailing={<MenuIndent />}>
 					More apps
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={RoutesLinks.about}
-					c_icon_code={0xE930}
+					c_icon_code={ICON_INFO}
 					c_trailing={<MenuIndent />}>
 					About us
 				</LinkMenuItem>
 				<MenuDivider />
 				<LinkMenuItem
 					href={RoutesLinks.privacy}
-					c_icon_code={0xEE51}
+					c_icon_code={ICON_SHIELD_CHECKMARK}
 					c_trailing={<MenuIndent />}>
 					Privacy policy
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={RoutesLinks.terms}
-					c_icon_code={0xED47}
+					c_icon_code={ICON_RECEIPT}
 					c_trailing={<MenuIndent />}>
 					Terms & conditions
 				</LinkMenuItem>
 				<MenuDivider />
 				<MenuItem
 					id={button_settings_share_id}
-					c_icon_code={0xEE23}
+					c_icon_code={ICON_SHARE_ANDROID}
 					c_trailing={<MenuIndent />}>
 					Share
 				</MenuItem>
 				<LinkMenuItem
 					href={'mailto:' + ExternalLinks.contact_email + '?subject=' + url_encode('Tasks')}
-					c_icon_code={0xE3A0}
+					c_icon_code={ICON_CHAT}
 					c_trailing={<MenuIndent />}>
 					Send feedback
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={ExternalLinks.donate}
 					c_new_tab
-					c_icon_code={0xE84B}
+					c_icon_code={ICON_GIFT}
 					c_trailing={<MenuIndent />}>
 					Donate
 				</LinkMenuItem>
@@ -312,7 +313,7 @@ const _: VoidComponent<{
 						<IconButton
 							id={button_colorlist_id}
 							data-tooltip="Color list"
-							c_code={0xF098}
+							c_code={ICON_TEXT_BULLET_LIST_SQUARE}
 						/>
 					</Show>
 					<img width={32} src={app.logo_url} alt={app.name} />
@@ -329,19 +330,19 @@ const _: VoidComponent<{
 					<IconButton
 						data-tooltip="Add color to list"
 						id={button_colortolist_id}
-						c_code={timeout_id()? 0xE3D8 : 0xF08A}
+						c_code={timeout_id()? ICON_CHECKMARK : ICON_TEXT_BULLET_LIST_ADD}
 					/>
 					<IconButton
 						data-tooltip="Copy all"
 						id={button_copyall_id}
-						c_code={timeout_copy_id()? 0xE3D8 : 0xE51B}
+						c_code={timeout_copy_id()? ICON_CHECKMARK : ICON_COPY}
 					/>
 					<IconButton
 						data-tooltip="Open settings"
 						id={button_settings_id}
 						classList={classlist_module(CSSAnimation.btn_rotate_icon)}
 						c_focused={is_menu_settings_open()}
-						c_code={0xEE0F}
+						c_code={ICON_SETTINGS}
 					/>
 				</>}
 			/>

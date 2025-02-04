@@ -8,6 +8,7 @@ import { math_floor } from "@/utils/math"
 import { document_body } from "@/utils/document"
 import { promise_done } from "@/utils/object"
 import { element_click } from "@/utils/element"
+import { ICON_BATTERY_5, ICON_BATTERY_CHARGE, ICON_DISMISS, ICON_QUESTION_CIRCLE, ICON_WARNING } from "@/constants/icons"
 
 import Tooltip from "@/components/Tooltip"
 import { ButtonVariant, IconButton } from "@/components/Button"
@@ -89,11 +90,11 @@ const _: VoidComponent = () => {
 	const Toasts: VoidComponent = () => (<>
 		<Toast
 			ref={r => toast_browsernotsupport_ref = r}
-			c_leading={<Icon c_code={0xF29B}/>}
+			c_leading={<Icon c_code={ICON_WARNING}/>}
 			c_trailing={<Tooltip>
 				<IconButton
 					data-tooltip="Close"
-					c_code={0xE5E9}
+					c_code={ICON_DISMISS}
 					c_variant={ButtonVariant.tonal}
 					onClick={() => close_toast(toast_browsernotsupport_ref)}
 				/>
@@ -109,7 +110,7 @@ const _: VoidComponent = () => {
 		</Toast>
 		<Toast
 			ref={r => toast_batterystatuserror_ref = r}
-			c_leading={<Icon c_code={0xF29B}/>}>
+			c_leading={<Icon c_code={ICON_WARNING}/>}>
 			[Error] Unable to get battery status
 		</Toast>
 	</>)
@@ -120,8 +121,8 @@ const _: VoidComponent = () => {
 			<div class={CSS.app_body_status}>
 				<Show
 					when={is_charging() != null}
-					fallback={<><Icon c_filled c_code={0xE1BD}/>Unknown status</>}>
-					<Icon c_filled c_code={is_charging()? 0xE1B7 : 0xE1AD}/>
+					fallback={<><Icon c_filled c_code={ICON_QUESTION_CIRCLE}/>Unknown status</>}>
+					<Icon c_filled c_code={is_charging()? ICON_BATTERY_CHARGE : ICON_BATTERY_5}/>
 					{is_charging()? "Charging" : "Discharging"}
 				</Show>
 			</div>

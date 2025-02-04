@@ -8,6 +8,7 @@ import { event_current_target } from "@/utils/event"
 import { promise_done } from "@/utils/object"
 import { document_active } from "@/utils/document"
 import { element_dataset, element_id, element_tagname, element_valid_target } from "@/utils/element"
+import { ICON_CHECKMARK, ICON_COPY } from "@/constants/icons"
 
 import TextField, { change_textfield_value, TextFieldButton } from "@/components/TextField"
 import Expander, { ExpanderHeader } from "@/components/Expander"
@@ -71,7 +72,7 @@ const _: VoidComponent<{
 					c_trailing={<TextFieldButton
 						id={button_copy_id}
 						data-tooltip={timeout_copy_id() != null? 'Copied' : "Copy"}>
-						<Icon c_code={timeout_copy_id() != null? 0xE3D8 : 0xE51B}/>
+						<Icon c_code={timeout_copy_id() != null? ICON_CHECKMARK : ICON_COPY}/>
 					</TextFieldButton>}
 				/>
 			</div>

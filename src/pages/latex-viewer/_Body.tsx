@@ -12,6 +12,7 @@ import { array_length } from "@/utils/array"
 import { document_active } from "@/utils/document"
 import { event_current_target } from "@/utils/event"
 import { number_is_not_defined, number_parse } from "@/utils/number"
+import { ICON_ADD, ICON_COPY, ICON_DELETE } from "@/constants/icons"
 
 import Toast, { open_toast } from "@/components/Toast"
 import Button, { ButtonVariant, IconButton } from "@/components/Button"
@@ -78,19 +79,19 @@ const LatexEditor: VoidComponent<{
 			<Button
 				data-new={index()}
 				c_variant={ButtonVariant.tonal}>
-				<Icon c_code={0xE007}/>New equation
+				<Icon c_code={ICON_ADD}/>New equation
 			</Button>
 			<IconButton
 				data-tooltip={"Copy"}
 				data-copy={index()}
-				c_code={0xE51B}
+				c_code={ICON_COPY}
 				c_variant={ButtonVariant.tonal}
 			/>
 			<Show when={!props.is_only_one}>
 				<IconButton
 					data-tooltip="Delete"
 					data-delete={index()}
-					c_code={0xE59D}
+					c_code={ICON_DELETE}
 					c_variant={ButtonVariant.tonal}
 				/>
 			</Show>
@@ -159,7 +160,7 @@ const _: VoidComponent<{
 			<Button
 				onClick={() => command(Commands.add_equation, 0)}
 				c_variant={ButtonVariant.filled}>
-				<Icon c_code={0xE007}/>New equation
+				<Icon c_code={ICON_ADD}/>New equation
 			</Button>
 		</div>
 		<Tooltip>
@@ -173,7 +174,7 @@ const _: VoidComponent<{
 		</Tooltip>
 		<Toast
 			ref={r => toast_copy_ref = r}
-			c_leading={<Icon c_code={0xE51B}/>}>
+			c_leading={<Icon c_code={ICON_COPY}/>}>
 			Copied to clipboard
 		</Toast>
 	</main>)

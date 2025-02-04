@@ -1,6 +1,7 @@
 import { createSignal, Show, type VoidComponent } from "solid-js"
 
 import { event_current_target, event_stop_propagation } from "@/utils/event"
+import { ICON_HISTORY, ICON_INFO, ICON_OPEN } from "@/constants/icons"
 
 import Icon from "@/components/Icon"
 import List from "@/components/List"
@@ -19,10 +20,10 @@ const _: VoidComponent = () => {
 		<Playground>
 			<List
 				c_subtitle={<Show when={subtitle()}>Deserunt commodo qui aute veniam tempor ipsum.</Show>}
-				c_leading={<Show when={leading()}><Icon c_code={0xE569}/></Show>}
+				c_leading={<Show when={leading()}><Icon c_code={ICON_INFO}/></Show>}
 				c_trailing={<Show when={trailing()}>
-					<IconButton onClick={ev => event_stop_propagation(ev)} c_code={0xE6BF}/>
-					<IconButton onClick={ev => event_stop_propagation(ev)} c_code={0xEBB8}/>
+					<IconButton onClick={ev => event_stop_propagation(ev)} c_code={ICON_HISTORY}/>
+					<IconButton onClick={ev => event_stop_propagation(ev)} c_code={ICON_OPEN}/>
 				</Show>}>
 				<Show when={title()}>
 					Amet ad ad sint deserunt fugiat
@@ -30,10 +31,10 @@ const _: VoidComponent = () => {
 			</List>
 			<List
 				c_subtitle={<Show when={subtitle()}>Anim ea ad dolor pariatur laboris et ipsum nisi aute eu eu.</Show>}
-				c_leading={<Show when={leading()}><Icon c_code={0xE569}/></Show>}
+				c_leading={<Show when={leading()}><Icon c_code={ICON_INFO}/></Show>}
 				c_trailing={<Show when={trailing()}>
-					<IconButton onClick={ev => event_stop_propagation(ev)} c_code={0xE6BF}/>
-					<IconButton onClick={ev => event_stop_propagation(ev)} c_code={0xEBB8}/>
+					<IconButton onClick={ev => event_stop_propagation(ev)} c_code={ICON_HISTORY}/>
+					<IconButton onClick={ev => event_stop_propagation(ev)} c_code={ICON_OPEN}/>
 				</Show>}>
 				<Show when={title()}>
 					Tempor ut est adipisicing amet laborum
@@ -41,10 +42,10 @@ const _: VoidComponent = () => {
 			</List>
 			<List
 				c_subtitle={<Show when={subtitle()}>Culpa elit enim aliquip aliqua est et adipisicing Lorem laboris nulla.</Show>}
-				c_leading={<Show when={leading()}><Icon c_code={0xE569}/></Show>}
+				c_leading={<Show when={leading()}><Icon c_code={ICON_INFO}/></Show>}
 				c_trailing={<Show when={trailing()}>
-					<IconButton onClick={ev => event_stop_propagation(ev)} c_code={0xE6BF}/>
-					<IconButton onClick={ev => event_stop_propagation(ev)} c_code={0xEBB8}/>
+					<IconButton onClick={ev => event_stop_propagation(ev)} c_code={ICON_HISTORY}/>
+					<IconButton onClick={ev => event_stop_propagation(ev)} c_code={ICON_OPEN}/>
 				</Show>}>
 				<Show when={title()}>
 					Aute commodo eiusmod exercitation nulla amet

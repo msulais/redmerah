@@ -18,6 +18,7 @@ import { document_active, document_body } from '@/utils/document'
 import { number_parse, number_safe } from '@/utils/number'
 import { KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT, KEY_ARROW_UP } from '@/constants/key_code'
 import { ElementIds } from '@/enums/ids'
+import { ICON_ANIMAL_CAT, ICON_DISMISS, ICON_DIVERSITY, ICON_EMOJI, ICON_FLAG, ICON_FOOD, ICON_HISTORY, ICON_PERSON, ICON_RUNNING_PERSON, ICON_SYMBOLS, ICON_VEHICLE_CAR } from '@/constants/icons'
 
 import Divider from '@/components/Divider'
 import Tooltip from '@/components/Tooltip'
@@ -302,20 +303,20 @@ const EmojiPickerBody: ParentComponent<{
 					<IconButton
 						id={button_close_id}
 						data-tooltip={props.tooltip_close ?? 'Close'}
-						c_code={0xE5E9}
+						c_code={ICON_DISMISS}
 						c_variant={ButtonVariant.filled}
 					/>
 				</Show>
-				<Tab icon_code={0xE8DE} category={EmojiCategory.recents}/>
-				<Tab icon_code={0xE745} category={EmojiCategory.smiley_and_emotion}/>
-				<Tab icon_code={0xEBF8} category={EmojiCategory.person_and_body}/>
-				<Tab icon_code={0xE04F} category={EmojiCategory.animal_and_nature}/>
-				<Tab icon_code={0xE80B} category={EmojiCategory.food_and_drink}/>
-				<Tab icon_code={0xF227} category={EmojiCategory.travel_and_places}/>
-				<Tab icon_code={0xEC3C} category={EmojiCategory.activities}/>
-				<Tab icon_code={0xE5F1} category={EmojiCategory.objects}/>
-				<Tab icon_code={0xEF77} category={EmojiCategory.symbols}/>
-				<Tab icon_code={0xE7AB} category={EmojiCategory.flags}/>
+				<Tab icon_code={ICON_HISTORY} category={EmojiCategory.recents}/>
+				<Tab icon_code={ICON_EMOJI} category={EmojiCategory.smiley_and_emotion}/>
+				<Tab icon_code={ICON_PERSON} category={EmojiCategory.person_and_body}/>
+				<Tab icon_code={ICON_ANIMAL_CAT} category={EmojiCategory.animal_and_nature}/>
+				<Tab icon_code={ICON_FOOD} category={EmojiCategory.food_and_drink}/>
+				<Tab icon_code={ICON_VEHICLE_CAR} category={EmojiCategory.travel_and_places}/>
+				<Tab icon_code={ICON_RUNNING_PERSON} category={EmojiCategory.activities}/>
+				<Tab icon_code={ICON_DIVERSITY} category={EmojiCategory.objects}/>
+				<Tab icon_code={ICON_SYMBOLS} category={EmojiCategory.symbols}/>
+				<Tab icon_code={ICON_FLAG} category={EmojiCategory.flags}/>
 			</Tooltip>
 		</FocusableGroup>
 		<div class='c-emoji-picker-search'>

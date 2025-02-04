@@ -1,12 +1,14 @@
 import { createSignal, For, Show, type VoidComponent } from "solid-js"
 
+import { ICON_APPS, ICON_CALL, ICON_GIFT, ICON_HOME, ICON_INFO, ICON_LINE_HORIZONTAL_3, ICON_RECEIPT, ICON_SHIELD_CHECKMARK } from "@/constants/icons"
+import { event_current_target } from "@/utils/event"
+
 import Button, { ButtonVariant, IconButton } from "@/components/Button"
 import CheckBox from "@/components/CheckBox"
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import TextField from "@/components/TextField"
 import Drawer, { close_drawer, DrawerItem, DrawerPosition, open_drawer } from "@/components/Drawer"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
-import { event_current_target } from "@/utils/event"
 
 const _: VoidComponent = () => {
 	const [important, set_important] = createSignal<boolean>(false)
@@ -31,19 +33,19 @@ const _: VoidComponent = () => {
 			<Drawer
 				ref={r => drawer_ref = r}
 				c_position={position()}
-				c_header={<Show when={has_header()}><IconButton onClick={() => close_drawer(drawer_ref)} c_code={0xEAFF}/> BiruUI</Show>}
+				c_header={<Show when={has_header()}><IconButton onClick={() => close_drawer(drawer_ref)} c_code={ICON_LINE_HORIZONTAL_3}/> BiruUI</Show>}
 				c_footer={<Show when={has_footer()}>
-					<DrawerItem c_icon_code={0xE932}>Privacy policy</DrawerItem>
-					<DrawerItem c_icon_code={0xED47}>Terms & conditions</DrawerItem>
+					<DrawerItem c_icon_code={ICON_SHIELD_CHECKMARK}>Privacy policy</DrawerItem>
+					<DrawerItem c_icon_code={ICON_RECEIPT}>Terms & conditions</DrawerItem>
 				</Show>}>
 				<Show when={has_content()}>
 					<TextField placeholder="Search" autofocus/>
 					<div/>
-					<DrawerItem c_selected c_icon_code={0xE8E2}>Home</DrawerItem>
-					<DrawerItem c_icon_code={0xE930}>About</DrawerItem>
-					<DrawerItem c_icon_code={0xE32A}>Contact</DrawerItem>
-					<DrawerItem c_icon_code={0xE063}>Product</DrawerItem>
-					<DrawerItem c_icon_code={0xE84B}>Donate</DrawerItem>
+					<DrawerItem c_selected c_icon_code={ICON_HOME}>Home</DrawerItem>
+					<DrawerItem c_icon_code={ICON_INFO}>About</DrawerItem>
+					<DrawerItem c_icon_code={ICON_CALL}>Contact</DrawerItem>
+					<DrawerItem c_icon_code={ICON_APPS}>Product</DrawerItem>
+					<DrawerItem c_icon_code={ICON_GIFT}>Donate</DrawerItem>
 				</Show>
 			</Drawer>
 		</Playground>
