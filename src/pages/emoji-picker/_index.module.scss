@@ -10,7 +10,7 @@
 		max-width: 100%;
 	}
 
-	& :global(.c-expander-body) > div {
+	& :global(.c-expander-body) {
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
 
