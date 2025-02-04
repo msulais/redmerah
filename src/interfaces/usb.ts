@@ -14,7 +14,7 @@ export type USBTransferStatus = 'ok' | 'stall' | 'babble'
 export interface USB extends EventTarget {
 	onconnect(ev: USBConnectionEvent): any
 	ondisconnect(ev: USBConnectionEvent): any
-	getDevices(): Promise<USBDevice>
+	getDevices(): Promise<USBDevice[]>
 	requestDevice(options: USBDeviceRequestOptions): Promise<USBDevice>
 }
 
