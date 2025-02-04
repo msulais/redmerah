@@ -2,7 +2,7 @@
 	"name": "USB Checker",
 	"short_name": "USB Checker",
 	"id": "/usb-checker",
-	"description": "",
+	"description": "Easily check your device's USB specifications with our USB Checker web app, powered by the WebUSB API. Ensure compatibility and optimize performance with just a click.",
 	"start_url": "/usb-checker",
 	"icons": [
 		{

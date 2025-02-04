@@ -18,7 +18,7 @@ import type { AppItem } from '@/types/apps'
 export const app_usb_checker: AppItem = {
 	logo_url: usb_checker_logo.src,
 	name: 'USB Checker',
-	description: '',
+	description: 'Easily check your device\'s USB specifications with our USB Checker web app, powered by the WebUSB API. Ensure compatibility and optimize performance with just a click.',
 	link: RoutesLinks.usb_checker,
 	color: '#297BE6',
 	build_number: 1,
