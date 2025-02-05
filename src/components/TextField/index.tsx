@@ -18,7 +18,7 @@ import { ICON_CHEVRON_DOWN, ICON_CHEVRON_UP, ICON_CHEVRON_UP_DOWN, ICON_DISMISS 
 
 import Icon from '@/components/Icon'
 import Button, { IconButton, type ButtonProps } from '@/components/Button'
-import Popover, { close_popover, is_popover_open, open_popover, reposition_popover, PopoverPosition as SearchMenuPosition, type PopoverProps } from '@/components/Popover'
+import { close_popover, is_popover_open, open_popover, reposition_popover, PopoverPosition as SearchMenuPosition } from '@/components/Popover'
 import { MenuItem, LinkMenuItem, MenuDivider, MenuHeader, MenuPosition, open_menu, PopoverMenu, type PopoverMenuProps } from '@/components/Menu'
 import Modal, { type ModalProps } from '@/components/Modal'
 import FocusableGroup from '@/components/FocusableGroup'
