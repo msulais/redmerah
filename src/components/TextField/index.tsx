@@ -689,6 +689,7 @@ const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
 		open_popover(ev, menu_ref, {
 			allow_hide_anchor: false,
 			anchor: wrapper_ref,
+			content_auto_focus: false,
 			gap: 0,
 			position: SearchMenuPosition.center_bottom,
 			manual_dismiss: true,
