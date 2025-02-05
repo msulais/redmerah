@@ -256,7 +256,6 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 	let gap: number = 0
 	let padding: number = 0
 	let position: PopoverPosition = PopoverPosition.center_bottom
-	let timeout_reposition_id: number | null = null
 	let timeout_screensize_id: number | null = null
 	let timeout_fixposition_id: number | null = null
 	let screen_width = element_client_width(document_body())
@@ -682,21 +681,6 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 		set_left(rect_left(pos))
 	}
 
-	function init_observer(): void {
-		const observer = new ResizeObserver(() => {
-			if (timeout_reposition_id != null) timeout_clear(timeout_reposition_id)
-			timeout_reposition_id = timeout_set(() => {
-				reposition_popover()
-				timeout_reposition_id = null
-			}, 200)
-		})
-		observer.observe(popover_ref, {box: 'border-box'})
-
-		onCleanup(() => {
-			observer.disconnect()
-		})
-	}
-
 	function on_move_with_keyboard(ev: KeyboardEvent): void {
 		const code = ev.code
 		if (
@@ -740,7 +724,6 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 	onMount(() => {
 		init_popover_listener()
 		init_events()
-		init_observer()
 	})
 
 	onCleanup(async () => {

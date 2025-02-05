@@ -5,7 +5,7 @@ import { attr_set_if_exist, classlist } from '@/utils/attributes'
 import { timeout_clear, interval_clear, timeout_set, interval_set } from '@/utils/timeout'
 import { event_call, event_current_target, event_prevent_default, event_target } from '@/utils/event'
 import { math_clamp, math_max, math_round } from '@/utils/math'
-import { element_blur, element_contains, element_dispatch_event, element_focus, element_id, element_rect, element_scroll_height, element_tagname, element_valid_target } from '@/utils/element'
+import { element_blur, element_contains, element_dispatch_event, element_focus, element_id, element_rect, element_remove_style, element_scroll_height, element_set_style, element_tagname, element_valid_target } from '@/utils/element'
 import { event_add_listener, event_remove_listener } from '@/utils/event'
 import { is_array, is_number, is_string } from '@/utils/typecheck'
 import { string_length, string_split, string_touppercase, string_trim } from '@/utils/string'
@@ -664,9 +664,8 @@ const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
 	)
 	const [menu_props, menu_props_other] = splitProps(
 		props.c_attr_menu! ?? {},
-		['c_use_portal', 'ref', 'classList', 'style', 'c_on_toggleopen']
+		['c_use_portal', 'ref', 'classList', 'c_on_toggleopen']
 	)
-	const [width, set_width] = createSignal<number>(0)
 	const result = children(() => props.c_result)
 	let is_popover_open: boolean = false
 	let is_focus = false
@@ -679,30 +678,19 @@ const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
 
 		if (is_array(result()) && array_length(result() as unknown[]) == 0) return;
 
-		set_width(rect_width(element_rect(wrapper_ref)))
+		element_remove_style(menu_ref, 'width')
+		const textfield_width = rect_width(element_rect(wrapper_ref))
+		const menu_width = rect_width(element_rect(menu_ref))
+		if (textfield_width > menu_width) element_set_style(
+			menu_ref,
+			'width',
+			`${textfield_width}px`
+		)
 		open_popover(ev, menu_ref, {
 			allow_hide_anchor: false,
 			anchor: wrapper_ref,
 			position: SearchMenuPosition.center_bottom,
 			manual_dismiss: true,
-		})
-	}
-
-	function resize_observer(): void {
-		let t: number | null = null
-		const observer = new ResizeObserver(() => {
-			if (t != null) timeout_clear(t)
-
-			t = timeout_set(() => {
-				set_width(rect_width(element_rect(wrapper_ref)))
-				reposition_popover(menu_ref)
-				t = null
-			}, 200)
-		})
-		observer.observe(wrapper_ref, { box: "border-box" })
-
-		onCleanup(() => {
-			observer.disconnect()
 		})
 	}
 
@@ -726,7 +714,6 @@ const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
 	}
 
 	onMount(() => {
-		resize_observer()
 		init_events()
 	})
 
@@ -767,10 +754,6 @@ const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
 			classList={{
 				'c-search-textfield-menu': true,
 				...menu_props.classList
-			}}
-			style={{
-				'min-width': width() + 'px',
-				...menu_props.style
 			}}
 			{...menu_props_other}>
 			{result()}

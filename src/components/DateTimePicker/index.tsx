@@ -38,6 +38,7 @@ const DateTimePickerBody: ParentComponent<{
 	locales?: Intl.LocalesArgument
 	on_select_datetime?(value: Date): unknown
 	on_close(): unknown
+	on_update(): unknown
 }> = props => {
 	const option_day = DatePickerOption.day
 	const option_month = DatePickerOption.month
@@ -85,6 +86,7 @@ const DateTimePickerBody: ParentComponent<{
 
 		set_view_date(new_date)
 		update_date_view()
+		props.on_update()
 	}
 
 	function previous(): void {
@@ -97,6 +99,7 @@ const DateTimePickerBody: ParentComponent<{
 
 		set_view_date(new_date)
 		update_date_view()
+		props.on_update()
 	}
 
 	function goto_selected_datetime(): void {
@@ -663,6 +666,7 @@ const DateTimePicker: VoidComponent<DateTimePickerProps> = ($props) => {
 			first_date={props.c_first_date}
 			last_date={props.c_last_date}
 			on_close={() => close_modal(datetimepicker_ref)}
+			on_update={() => reposition_modal(datetimepicker_ref)}
 			locales={props.c_locales}
 			on_select_datetime={props.c_on_selectdatetime}>
 			{props.children}
@@ -710,6 +714,7 @@ const PopoverDateTimePicker: VoidComponent<PopoverDateTimePickerProps> = ($props
 			first_date={props.c_first_date}
 			last_date={props.c_last_date}
 			on_close={() => close_popover(datetimepicker_ref)}
+			on_update={() => reposition_popover(datetimepicker_ref)}
 			locales={props.c_locales}
 			on_select_datetime={props.c_on_selectdatetime}>
 			{props.children}
