@@ -19,7 +19,7 @@ import { ICON_CHEVRON_DOWN, ICON_CHEVRON_UP, ICON_CHEVRON_UP_DOWN, ICON_DISMISS 
 import Icon from '@/components/Icon'
 import Button, { IconButton, type ButtonProps } from '@/components/Button'
 import Popover, { close_popover, is_popover_open, open_popover, reposition_popover, PopoverPosition as SearchMenuPosition, type PopoverProps } from '@/components/Popover'
-import { MenuItem, LinkMenuItem, MenuDivider, MenuHeader, MenuPosition, open_menu } from '@/components/Menu'
+import { MenuItem, LinkMenuItem, MenuDivider, MenuHeader, MenuPosition, open_menu, PopoverMenu, type PopoverMenuProps } from '@/components/Menu'
 import Modal, { type ModalProps } from '@/components/Modal'
 import FocusableGroup from '@/components/FocusableGroup'
 import Tooltip from '@/components/Tooltip'
@@ -650,7 +650,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 
 type SearchTextFieldProps = TextFieldProps & {
 	c_result?: JSX.Element
-	c_attr_menu?: Omit<PopoverProps, 'style'> & {
+	c_attr_menu?: Omit<PopoverMenuProps, 'style'> & {
 		style?: JSX.CSSProperties
 	}
 }
@@ -689,6 +689,7 @@ const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
 		open_popover(ev, menu_ref, {
 			allow_hide_anchor: false,
 			anchor: wrapper_ref,
+			gap: 0,
 			position: SearchMenuPosition.center_bottom,
 			manual_dismiss: true,
 		})
@@ -744,8 +745,8 @@ const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
 			}}
 			{...other}
 		/>
-		<Popover
-			c_use_portal={menu_props.c_use_portal ?? false}
+		<PopoverMenu
+			c_use_portal={menu_props.c_use_portal ?? false} // for quick keyboard accessibilty
 			c_on_toggleopen={isOpen => {
 				is_popover_open = isOpen
 				menu_props.c_on_toggleopen?.(isOpen)
@@ -757,7 +758,7 @@ const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
 			}}
 			{...menu_props_other}>
 			{result()}
-		</Popover>
+		</PopoverMenu>
 	</>)
 }
 
