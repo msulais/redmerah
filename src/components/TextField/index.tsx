@@ -40,7 +40,7 @@ const HEIGHT_TEXT_INPUT_PER_LINE = 20
  */
 function change_textfield_value(el: HTMLInputElement, value: string): void {
 	el.value = value
-	element_dispatch_event(el, new Event('input', { bubbles: true }))
+	element_dispatch_event(el, new Event('input', { bubbles: false }))
 }
 
 /**
@@ -56,7 +56,7 @@ function change_textfield_value(el: HTMLInputElement, value: string): void {
  */
 function change_areatextfield_value(el: HTMLTextAreaElement, value: string): void {
 	el.value = value
-	element_dispatch_event(el, new Event('input', { bubbles: true }))
+	element_dispatch_event(el, new Event('input', { bubbles: false }))
 }
 
 type TextFieldButtonProps = ButtonProps
