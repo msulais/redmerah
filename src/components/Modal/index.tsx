@@ -491,10 +491,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 		padding = input_padding
 		important = input_important
 		set_is_draggable(draggable)
-
 		modal_ref.showModal()
-
-		// input auto focus
 		if (!content_auto_focus) element_focus(modal_ref)
 
 		const modal_rect: DOMRect = element_rect(modal_ref)
