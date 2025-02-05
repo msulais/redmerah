@@ -200,6 +200,13 @@ export function element_set_style(
 	return element.style.setProperty(property, value, priority)
 }
 
+export function element_remove_style(
+	element: HTMLElement,
+	property: string
+): string {
+	return element.style.removeProperty(property)
+}
+
 export function element_append_child(element: HTMLElement, node: Node): Node {
 	return element.appendChild(node)
 }

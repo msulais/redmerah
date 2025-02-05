@@ -113,6 +113,7 @@
 
 .c-expander-body {
 	overflow: hidden;
+	padding: 12px;
 	transition-duration: .2s;
 	border-radius: 8px;
 
@@ -142,11 +143,6 @@
 	&[data-c-variant=outlined][data-c-open] {
 		border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity-border));
 		border-top: none;
-	}
-
-	> div {
-		padding: 12px;
-		overflow: auto;
 	}
 }
 

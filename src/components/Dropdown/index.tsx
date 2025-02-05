@@ -1,9 +1,8 @@
 import { createStore } from "solid-js/store"
-import { Show, createContext, createEffect, createMemo, createSelector, createSignal, mergeProps, onCleanup, onMount, splitProps, useContext, type Accessor, type ParentComponent } from "solid-js"
+import { Show, createContext, createEffect, createMemo, createSelector, createSignal, mergeProps, onCleanup, splitProps, useContext, type Accessor, type ParentComponent } from "solid-js"
 import { mergeRefs } from "@solid-primitives/refs"
 
-import { element_dataset, element_rect, element_tagname, element_valid_target } from "@/utils/element"
-import { timeout_clear, timeout_set } from "@/utils/timeout"
+import { element_dataset, element_rect, element_remove_style, element_set_style, element_tagname, element_valid_target } from "@/utils/element"
 import { event_call, event_current_target } from "@/utils/event"
 import { array_concat, array_equals, array_filter, array_find_index, array_join, array_length, array_map, array_push, array_slice, array_some } from "@/utils/array"
 import { rect_width } from "@/utils/rect"
@@ -92,14 +91,13 @@ const Dropdown: ParentComponent<DropdownProps> = ($props) => {
 	const [menu_props, menu_props_other] = splitProps(
 		props.c_attr_menu! ?? {},
 		[
-			'c_on_toggleopen', 'ref', 'style', 'classList',
+			'c_on_toggleopen', 'ref', 'classList',
 			'onClick'
 		]
 	)
 	const [is_open, set_is_open] = createSignal<boolean>(false)
 	const [options, set_options] = createStore<{value: string | number, text: string}[]>([])
 	const [selected_values, set_selected_values] = createStore<(string | number)[]>([])
-	const [width, set_width] = createSignal<number>(0)
 	const is_selected = createSelector<(string | number)[], string | number>(
 		() => selected_values,
 		(value, array) => array_some(array, v => v === value)
@@ -110,13 +108,21 @@ const Dropdown: ParentComponent<DropdownProps> = ($props) => {
 	let menu_dropdown_ref: HTMLDialogElement
 
 	function open_dropdown_menu(ev: MouseEvent): void {
-		set_width(rect_width(element_rect(button_dropdown_ref)))
 		open_menu(ev, menu_dropdown_ref, {
 			anchor: button_dropdown_ref,
 			padding: 0,
 			gap: 4,
 			position: DropdownPosition.center_bottom,
 		})
+		element_remove_style(menu_dropdown_ref, 'width')
+		const button_width = rect_width(element_rect(button_dropdown_ref))
+		const menu_width = rect_width(element_rect(menu_dropdown_ref))
+		if (button_width > menu_width) element_set_style(
+			menu_dropdown_ref,
+			'width',
+			`${button_width}px`
+		)
+		reposition_menu(menu_dropdown_ref)
 	}
 
 	function on_select_option(value: string | number): void {
@@ -137,28 +143,17 @@ const Dropdown: ParentComponent<DropdownProps> = ($props) => {
 			set_selected_values([value])
 		}
 
+		element_remove_style(menu_dropdown_ref, 'width')
+		const button_width = rect_width(element_rect(button_dropdown_ref))
+		const menu_width = rect_width(element_rect(menu_dropdown_ref))
+		if (button_width > menu_width) element_set_style(
+			menu_dropdown_ref,
+			'width',
+			`${button_width}px`
+		)
+		reposition_menu(menu_dropdown_ref)
 		props.c_on_change?.(array_filter(options, o => is_selected(o.value)))
 	}
-
-	onMount(() => {
-		let t: number | null = null
-
-		const observer = new ResizeObserver(() => {
-			if (!is_open()) return
-			if (t != null) timeout_clear(t)
-
-			t = timeout_set(() => {
-				set_width(rect_width(element_rect(button_dropdown_ref)))
-				reposition_menu(menu_dropdown_ref)
-				t = null
-			}, 200)
-		})
-		observer.observe(button_dropdown_ref!, { box: "border-box" })
-
-		onCleanup(() => {
-			observer.disconnect()
-		})
-	})
 
 	createEffect(() => {
 		const values = props.c_values
@@ -285,10 +280,6 @@ const Dropdown: ParentComponent<DropdownProps> = ($props) => {
 				on_select_option(dropdown_value)
 			}}
 			ref={mergeRefs(menu_props.ref, r => menu_dropdown_ref = r)}
-			style={{
-				'min-width': width() + 'px',
-				...menu_props.style
-			}}
 			classList={{
 				'c-dropdown-menu': true,
 				...menu_props.classList

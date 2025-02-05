@@ -10,7 +10,7 @@ import { element_rect, element_all_by_selector, element_dataset, element_dispatc
 import { BodyAttributes } from '@/enums/attributes'
 import { event_add_listener, event_call, event_current_target, event_prevent_default, event_remove_listener, event_target, event_type } from "@/utils/event"
 import { math_abs } from '@/utils/math'
-import { document_body } from '@/utils/document'
+import { document_active, document_body } from '@/utils/document'
 import { window_inner_height } from '@/utils/window'
 import { array_find_index, array_length, array_push, array_some, array_splice } from '@/utils/array'
 import { rect_bottom, rect_height, rect_left, rect_right, rect_top, rect_width } from '@/utils/rect'
@@ -33,6 +33,7 @@ type PopoverOpenDetail = {
 	allow_hide_anchor?: boolean
 	draggable?: boolean
 	manual_dismiss?: boolean
+	content_auto_focus?: boolean
 
 	/**
 	 * Custom pointer position. Only works if `PopoverOpenDetail.anchor` and
@@ -219,6 +220,7 @@ type PopoverProps = Omit<JSX.HTMLAttributes<HTMLDivElement>, 'style'> & {
 	c_position?: PopoverPosition
 	c_allow_hide_anchor?: boolean
 	c_draggable?: boolean
+	c_content_auto_focus?: boolean
 	c_manual_dismiss?: boolean
 	c_attr_content_wrapper?: JSX.HTMLAttributes<HTMLDivElement>
 	c_on_beforeopen?(): unknown
@@ -235,7 +237,8 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 		'c_close_animation', 'c_gap', 'c_padding', 'c_position',
 		'c_allow_hide_anchor', 'c_draggable', 'c_manual_dismiss',
 		'c_on_beforeopen', 'c_on_beforeclose', 'tabindex',
-		'onKeyDown', 'c_attr_content_wrapper', 'c_portal_mount'
+		'onKeyDown', 'c_attr_content_wrapper', 'c_portal_mount',
+		'c_content_auto_focus'
 	])
 	const style = createMemo(() => props.style)
 	const [is_dragging, set_is_dragging] = createSignal<boolean>(false)
@@ -256,7 +259,6 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 	let gap: number = 0
 	let padding: number = 0
 	let position: PopoverPosition = PopoverPosition.center_bottom
-	let timeout_reposition_id: number | null = null
 	let timeout_screensize_id: number | null = null
 	let timeout_fixposition_id: number | null = null
 	let screen_width = element_client_width(document_body())
@@ -416,6 +418,7 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 	function open_popover(options: PopoverOpenDetail): void {
 		if (is_open) return
 
+		const active = document_active()
 		const POPOVER_MARGIN = 8
 		const {
 			event,
@@ -427,7 +430,8 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 			gap: input_gap = props.c_gap ?? 0,
 			padding: input_padding = props.c_padding ?? 0,
 			position: input_position = props.c_position ?? PopoverPosition.center_bottom,
-			manual_dismiss = props.c_manual_dismiss ?? false
+			manual_dismiss = props.c_manual_dismiss ?? false,
+			content_auto_focus = props.c_content_auto_focus ?? true
 		} = options;
 
 		set_is_manual_dismiss(manual_dismiss)
@@ -438,9 +442,10 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 		gap = input_gap
 		padding = input_padding
 		set_is_draggable(draggable)
-
 		popover_ref.showPopover()
-		element_focus_any(popover_ref)
+		if (content_auto_focus) element_focus_any(popover_ref)
+		else if (active) element_focus(active)
+		else element_focus(popover_ref)
 
 		const popover_rect: DOMRect = element_rect(popover_ref)
 		const $anchor_rect: DOMRect | undefined = anchor_rect != null
@@ -682,21 +687,6 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 		set_left(rect_left(pos))
 	}
 
-	function init_observer(): void {
-		const observer = new ResizeObserver(() => {
-			if (timeout_reposition_id != null) timeout_clear(timeout_reposition_id)
-			timeout_reposition_id = timeout_set(() => {
-				reposition_popover()
-				timeout_reposition_id = null
-			}, 200)
-		})
-		observer.observe(popover_ref, {box: 'border-box'})
-
-		onCleanup(() => {
-			observer.disconnect()
-		})
-	}
-
 	function on_move_with_keyboard(ev: KeyboardEvent): void {
 		const code = ev.code
 		if (
@@ -740,7 +730,6 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 	onMount(() => {
 		init_popover_listener()
 		init_events()
-		init_observer()
 	})
 
 	onCleanup(async () => {

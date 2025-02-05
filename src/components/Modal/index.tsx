@@ -281,7 +281,6 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 	let gap: number = 0
 	let padding: number = 0
 	let position: ModalPosition = ModalPosition.center_bottom
-	let timeout_reposition_id: number | null = null
 	let timeout_screensize_id: number | null = null
 	let timeout_fixposition_id: number | null = null
 	let screen_width = element_client_width(document_body())
@@ -492,10 +491,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 		padding = input_padding
 		important = input_important
 		set_is_draggable(draggable)
-
 		modal_ref.showModal()
-
-		// input auto focus
 		if (!content_auto_focus) element_focus(modal_ref)
 
 		const modal_rect: DOMRect = element_rect(modal_ref)
@@ -738,21 +734,6 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 		set_left(rect_left(pos))
 	}
 
-	function init_observer(): void {
-		const observer = new ResizeObserver(() => {
-			if (timeout_reposition_id != null) timeout_clear(timeout_reposition_id)
-			timeout_reposition_id = timeout_set(() => {
-				reposition_modal()
-				timeout_reposition_id = null
-			}, 200)
-		})
-		observer.observe(modal_ref, {box: 'border-box'})
-
-		onCleanup(() => {
-			observer.disconnect()
-		})
-	}
-
 	function on_move_with_keyboard(ev: KeyboardEvent): void {
 		const code = ev.code
 		if (
@@ -796,7 +777,6 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 	onMount(() => {
 		init_modal_listener()
 		init_events()
-		init_observer()
 	})
 
 	onCleanup(async () => {

@@ -224,15 +224,6 @@
 	}
 }
 
-.c-popover.c-search-textfield-menu {
-	box-shadow: var(--g-elevation1);
-
-	> div {
-		padding: 4px 0;
-		display: flex;
-		flex-direction: column;
-		gap: 4px;
-		align-items: stretch;
-		justify-content: flex-start;
-	}
+.c-popover.c-menu.c-search-textfield-menu {
+	box-shadow: var(--g-elevation2);
 }
