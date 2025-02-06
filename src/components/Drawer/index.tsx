@@ -9,7 +9,7 @@ import { event_prevent_default } from "@/utils/event"
 import { KEY_ARROW_DOWN, KEY_ARROW_UP } from "@/constants/key_code"
 
 import Icon from "@/components/Icon"
-import Button, { ButtonIndicatorPosition, ButtonVariant, type ButtonProps } from "@/components/Button"
+import Button, { ButtonIndicatorPosition, ButtonVariant, LinkButton, type ButtonProps, type LinkButtonProps } from "@/components/Button"
 import { close_modal, focus_modal, Modal, open_modal, type ModalProps } from "@/components/Modal"
 import FocusableGroup from "@/components/FocusableGroup"
 import './index.scss'
@@ -62,6 +62,40 @@ const DrawerItem: ParentComponent<DrawerItemProps> = ($props) => {
 		</Show>
 		{ trailing() }
 	</Button>)
+}
+
+type LinkDrawerItemProps = LinkButtonProps & {
+	c_leading?: JSX.Element
+	c_trailing?: JSX.Element
+	c_icon_code?: number
+}
+const LinkDrawerItem: ParentComponent<LinkDrawerItemProps> = ($props) => {
+	const [props, other] = splitProps($props, [
+		'c_indicator_position', 'c_leading', 'children',
+		'c_trailing', 'classList', 'c_icon_code', 'c_variant'
+	])
+	const selected = createMemo(() => other.c_selected)
+	const trailing = children(() => props.c_trailing)
+
+	return (<LinkButton
+		c_variant={props.c_variant ?? (selected()? ButtonVariant.tonal : undefined)}
+		c_indicator_position={props.c_indicator_position ?? (object_has_value(selected())? (props.c_indicator_position ?? ButtonIndicatorPosition.left) : undefined)}
+		classList={{'c-drawer-item': true, ...props.classList}}
+		{...other}>
+		<Show when={props.c_icon_code != null}>
+			<Icon
+				style={{color: selected()? `rgb(${AppColors.accent})` : undefined}}
+				c_filled={selected()}
+				c_code={props.c_icon_code!}
+			/>
+		</Show>
+		{ props.c_leading }
+		{ props.children }
+		<Show when={trailing()}>
+			<div style="flex:1" />
+		</Show>
+		{ trailing() }
+	</LinkButton>)
 }
 
 type DrawerProps = Omit<ModalProps, 'style' | 'c_position'> & {
@@ -170,6 +204,7 @@ const Drawer: ParentComponent<DrawerProps> = ($props) => {
 export {
 	Drawer,
 	DrawerItem,
+	LinkDrawerItem,
 	open_drawer,
 	DrawerPosition,
 	close_modal as close_drawer,
@@ -177,6 +212,7 @@ export {
 }
 export type {
 	DrawerProps,
-	DrawerItemProps
+	DrawerItemProps,
+	LinkDrawerItemProps
 }
 export default Drawer
