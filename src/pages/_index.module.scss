@@ -4,6 +4,8 @@
 	gap: 16px;
 
 	> div {
+		--color-accent-light: rgb(var(--g-color-accent));
+		--color-accent-dark: rgb(var(--g-color-accent));
 		flex: 1 1 240px;
 		border-radius: 16px;
 		padding: 20px;
@@ -11,6 +13,9 @@
 		flex-direction: column;
 		transition-duration: .2s;
 		position: relative;
+		background-color: var(--color-accent-light);
+		:root[data-theme=dark] & { background-color: var(--color-accent-dark) }
+		:root[data-theme=system] & {@media (prefers-color-scheme: dark) { background-color: var(--color-accent-dark) }}
 
 		:root[data-corner=sharp] & {
 			border-radius: 0;
@@ -34,6 +39,7 @@
 	& img {
 		width: 112px;
 		margin-bottom: 16px;
+		filter: drop-shadow(var(--g-elevation2));
 	}
 
 	& h3 {
