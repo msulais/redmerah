@@ -168,11 +168,15 @@
 		display: inline-block;
 		transition-duration: .2s;
 		position: relative;
+		border-radius: 4px;
+		user-select: none;
+		padding-bottom: max(2px, .1em);
 
 		@media (hover: hover) {
 			&:hover {
 				color: rgb(var(--g-color-surface));
-				padding: 0 .3em;
+				padding-right: .3em;
+				padding-left: .3em;
 				background-color: rgb(var(--g-color-on-surface));
 				scale: 1.15;
 			}
