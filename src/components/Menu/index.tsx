@@ -367,9 +367,9 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 					event_call(ev, props.onPointerLeave)
 					set_is_hover(false)
 				}}
-				c_on_beforeclose={() => {
+				c_on_close={() => {
 					close_submenu_descendant()
-					props.c_on_beforeclose?.()
+					props.c_on_close?.()
 				}}
 				ref={mergeRefs(props.ref, r => popover_ref = r)}
 				classList={{
@@ -429,9 +429,9 @@ const Menu: ParentComponent<MenuProps> = ($props) => {
 				'c-menu': true,
 				...props.classList
 			}}
-			c_on_beforeclose={() => {
+			c_on_close={() => {
 				close_submenu_descendant()
-				props.c_on_beforeclose?.()
+				props.c_on_close?.()
 			}}
 
 			// exclusive to <Modal> since it use <dialog> and hides everything if not inside
@@ -497,9 +497,9 @@ const PopoverMenu: ParentComponent<PopoverMenuProps> = ($props) => {
 				'c-menu': true,
 				...props.classList
 			}}
-			c_on_beforeclose={() => {
+			c_on_close={() => {
 				close_submenu_descendant()
-				props.c_on_beforeclose?.()
+				props.c_on_close?.()
 			}}
 			onPointerEnter={ev => {
 				event_call(ev, props.onPointerEnter)

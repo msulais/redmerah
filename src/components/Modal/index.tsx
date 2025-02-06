@@ -34,6 +34,7 @@ type ModalOpenDetail = {
 	allow_hide_anchor?: boolean
 	draggable?: boolean
 	content_auto_focus?: boolean
+	on_open?(): unknown
 
 	/**
 	 * Custom pointer position. Only works if `ModalOpenDetail.anchor` and
@@ -46,7 +47,9 @@ type ModalOpenDetail = {
 }
 
 type ModalCloseDetail = {
+	/** if the modal is important, it will not closed */
 	soft?: boolean
+	on_close?(): unknown
 }
 
 enum ModalEvents {
@@ -173,7 +176,7 @@ function init_modal_listener(): void {
 		const is_clicked_inside = modal !== event_target(ev)
 		if (is_clicked_inside) return
 
-		close_modal(modal as HTMLDialogElement, true)
+		close_modal(modal as HTMLDialogElement, {soft: true})
 	}
 
 	function global_scroll(): void {
@@ -225,10 +228,10 @@ function focus_modal(modal: HTMLDialogElement): void {
 	element_dispatch_event(modal, new CustomEvent(ModalEvents.shortfocus))
 }
 
-function close_modal(modal: HTMLDialogElement, soft: boolean = false): void {
+function close_modal(modal: HTMLDialogElement, options?: ModalCloseDetail): void {
 	element_dispatch_event(modal, new CustomEvent(
 		ModalEvents.close,
-		{detail: {soft} satisfies ModalCloseDetail}
+		{detail: {...options}}
 	))
 }
 
@@ -243,8 +246,8 @@ type ModalProps = Omit<JSX.DialogHtmlAttributes<HTMLDialogElement>, 'style'> & {
 	c_draggable?: boolean
 	c_content_auto_focus?: boolean
 	c_attr_content_wrapper?: JSX.HTMLAttributes<HTMLDivElement>
-	c_on_beforeopen?(): unknown
-	c_on_beforeclose?(): unknown
+	c_on_open?(): unknown
+	c_on_close?(): unknown
 	c_on_toggleopen?(is_open: boolean): unknown
 	c_open_animation?(el: HTMLDialogElement, done: () => void): unknown
 	c_close_animation?(el: HTMLDialogElement, done: () => void): unknown
@@ -256,8 +259,8 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 		'children', 'onKeyDown', 'class', 'c_open_animation',
 		'c_close_animation', 'style', 'c_gap', 'c_padding',
 		'c_important', 'c_position', 'c_allow_hide_anchor',
-		'c_draggable', 'c_content_auto_focus', 'c_on_beforeopen',
-		'c_on_beforeclose', 'c_attr_content_wrapper',
+		'c_draggable', 'c_content_auto_focus', 'c_on_open',
+		'c_on_close', 'c_attr_content_wrapper',
 		'c_portal_mount'
 	])
 	const style = createMemo(() => props.style)
@@ -352,8 +355,11 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 		event_remove_listener<CustomEvent>(modal_ref, ModalEvents.reposition, custom_on_reposition)
 	}
 
-	async function close_modal(detail: {soft?: boolean}): Promise<void> {
-		const { soft = false } = detail;
+	async function close_modal(detail: ModalCloseDetail): Promise<void> {
+		const {
+			soft = false,
+			on_close
+		} = detail;
 
 		if (soft && important && is_open) {
 			focus_modal(modal_ref)
@@ -442,7 +448,8 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 			ModalListenerEvents.close,
 			{detail: modal_ref}
 		))
-		props.c_on_beforeclose?.()
+		props.c_on_close?.()
+		on_close?.()
 		if (props.c_close_animation != null) props.c_close_animation(
 			modal_ref,
 			() => modal_ref.close()
@@ -473,6 +480,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 			event,
 			pointer,
 			anchor_rect,
+			on_open,
 			allow_hide_anchor = props.c_allow_hide_anchor ?? true,
 			anchor = null,
 			draggable = props.c_draggable ?? false,
@@ -638,11 +646,12 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 		set_top(rect_top(pos))
 		set_left(rect_left(pos))
 		set_attr_open(true)
-		props.c_on_beforeopen?.()
 		element_dispatch_event(LISTENER_REF, new CustomEvent(
 			ModalListenerEvents.open,
 			{detail: modal_ref}
 		))
+		props.c_on_open?.()
+		on_open?.()
 		if (props.c_open_animation != null) props.c_open_animation(
 			modal_ref,
 			() => set_attr_open_done(true)
