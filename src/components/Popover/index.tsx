@@ -34,6 +34,7 @@ type PopoverOpenDetail = {
 	draggable?: boolean
 	manual_dismiss?: boolean
 	content_auto_focus?: boolean
+	on_open?(): unknown
 
 	/**
 	 * Custom pointer position. Only works if `PopoverOpenDetail.anchor` and
@@ -43,6 +44,10 @@ type PopoverOpenDetail = {
 		x: number
 		y: number
 	}
+}
+
+type PopoverCloseDetail = {
+	on_close?(): unknown
 }
 
 enum PopoverAttributes {
@@ -207,8 +212,11 @@ function reposition_popover(popover: HTMLDivElement): void {
 	element_dispatch_event(popover, new CustomEvent(PopoverEvents.reposition))
 }
 
-function close_popover(popover: HTMLDivElement): void {
-	element_dispatch_event(popover, new CustomEvent(PopoverEvents.close))
+function close_popover(popover: HTMLDivElement, options?: PopoverCloseDetail): void {
+	element_dispatch_event(popover, new CustomEvent(
+		PopoverEvents.close,
+		{detail: {...options} }
+	))
 }
 
 type PopoverProps = Omit<JSX.HTMLAttributes<HTMLDivElement>, 'style'> & {
@@ -223,8 +231,8 @@ type PopoverProps = Omit<JSX.HTMLAttributes<HTMLDivElement>, 'style'> & {
 	c_content_auto_focus?: boolean
 	c_manual_dismiss?: boolean
 	c_attr_content_wrapper?: JSX.HTMLAttributes<HTMLDivElement>
-	c_on_beforeopen?(): unknown
-	c_on_beforeclose?(): unknown
+	c_on_open?(): unknown
+	c_on_close?(): unknown
 	c_on_toggleopen?(is_open: boolean): unknown
 	c_open_animation?(el: HTMLDivElement, done: () => void): unknown
 	c_close_animation?(el: HTMLDivElement, done: () => void): unknown
@@ -236,8 +244,8 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 		'class', 'c_use_portal', 'style', 'c_open_animation',
 		'c_close_animation', 'c_gap', 'c_padding', 'c_position',
 		'c_allow_hide_anchor', 'c_draggable', 'c_manual_dismiss',
-		'c_on_beforeopen', 'c_on_beforeclose', 'tabindex',
-		'onKeyDown', 'c_attr_content_wrapper', 'c_portal_mount',
+		'c_on_open', 'c_on_close', 'tabindex', 'onKeyDown',
+		'c_attr_content_wrapper', 'c_portal_mount',
 		'c_content_auto_focus'
 	])
 	const style = createMemo(() => props.style)
@@ -300,12 +308,12 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 		STOP_GLOBAL_CLICK = true
 	}
 
-	function custom_on_close(_ev: CustomEvent): void {
-		close_popover()
+	function custom_on_close(ev: CustomEvent<PopoverCloseDetail>): void {
+		close_popover(ev.detail)
 	}
 
-	function custom_on_open(ev: CustomEvent): void {
-		open_popover(ev.detail as PopoverOpenDetail)
+	function custom_on_open(ev: CustomEvent<PopoverOpenDetail>): void {
+		open_popover(ev.detail)
 	}
 
 	function custom_on_reposition(_ev: CustomEvent): void {
@@ -324,7 +332,10 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 		event_remove_listener<CustomEvent>(popover_ref, PopoverEvents.reposition, custom_on_reposition)
 	}
 
-	async function close_popover(): Promise<void> {
+	function close_popover(options: PopoverCloseDetail): void {
+		const {
+			on_close
+		} = options
 		if (!is_open) return;
 		is_open = false
 
@@ -403,7 +414,8 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 			PopoverListenerEvents.close,
 			{ detail: popover_ref }
 		))
-		props.c_on_beforeclose?.()
+		props.c_on_close?.()
+		on_close?.()
 		if (props.c_close_animation != null) props.c_close_animation(
 			popover_ref,
 			() => popover_ref.hidePopover()
@@ -431,7 +443,8 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 			padding: input_padding = props.c_padding ?? 0,
 			position: input_position = props.c_position ?? PopoverPosition.center_bottom,
 			manual_dismiss = props.c_manual_dismiss ?? false,
-			content_auto_focus = props.c_content_auto_focus ?? true
+			content_auto_focus = props.c_content_auto_focus ?? true,
+			on_open
 		} = options;
 
 		set_is_manual_dismiss(manual_dismiss)
@@ -592,11 +605,12 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 		set_top(rect_top(pos))
 		set_left(rect_left(pos))
 		set_attr_open(true)
-		props.c_on_beforeopen?.()
 		element_dispatch_event(LISTENER_REF, new CustomEvent(
 			PopoverListenerEvents.open,
 			{ detail: popover_ref }
 		))
+		props.c_on_open?.()
+		on_open?.()
 		if (props.c_open_animation != null) props.c_open_animation(
 			popover_ref,
 			() => set_attr_open_done(true)
@@ -732,9 +746,9 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 		init_events()
 	})
 
-	onCleanup(async () => {
+	onCleanup(() => {
 		remove_events()
-		await close_popover()
+		close_popover({})
 	})
 
 	const C: VoidComponent = () => (<div
@@ -744,7 +758,7 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 			if (ev.code != KEY_ESCAPE || is_manual_dismiss()) return
 			if (anchor_ref) element_focus(anchor_ref)
 
-			close_popover()
+			close_popover({})
 		}}
 		class={classlist(POPOVER_CLASS, props.class ?? '')}
 		ref={mergeRefs(props.ref, r => popover_ref = r)}
@@ -822,6 +836,7 @@ export {
 }
 export type {
 	PopoverOpenDetail,
+	PopoverCloseDetail,
 	PopoverProps
 }
 export default Popover
