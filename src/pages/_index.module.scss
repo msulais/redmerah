@@ -80,7 +80,7 @@
 		}
 
 		> :global(.c-icon) {
-			--c-icon-size: var(--g-font-size-xxd);
+			--c-icon-size: var(--g-font-size-xxd) !important;
 		}
 	}
 
