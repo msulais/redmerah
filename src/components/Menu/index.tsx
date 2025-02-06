@@ -225,7 +225,7 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 		'classList', 'c_item', 'c_attr_wrapper',
 		'ref', 'c_gap', 'c_position', 'c_use_portal',
 		'c_padding', 'c_draggable', 'c_allow_hide_anchor',
-		'c_on_toggleopen', 'children', 'c_on_beforeclose',
+		'c_on_toggleopen', 'children', 'c_on_close',
 		'c_children_auto_tabindex', 'onKeyDown',
 		'onPointerEnter', 'onPointerLeave'
 	])
@@ -404,7 +404,7 @@ const Menu: ParentComponent<MenuProps> = ($props) => {
 	}, $props)
 	const [props, other] = splitProps($$props, [
 		'classList', 'c_gap', 'c_padding', 'c_content_auto_focus',
-		'c_on_beforeclose', 'children', 'c_children_auto_tabindex',
+		'c_on_close', 'children', 'c_children_auto_tabindex',
 		'c_attr_content_wrapper'
 	])
 	const [content_wrapper_props, content_wrapper_props_other] = splitProps(
@@ -476,7 +476,7 @@ const PopoverMenu: ParentComponent<PopoverMenuProps> = ($props) => {
 	}, $props)
 	const [props, other] = splitProps($$props, [
 		'classList', 'c_gap', 'c_padding', 'children',
-		'c_on_beforeclose', 'c_children_auto_tabindex',
+		'c_on_close', 'c_children_auto_tabindex',
 		'onPointerEnter', 'onPointerLeave'
 	])
 	const [is_hover, set_is_hover] = createSignal<boolean>(false)
