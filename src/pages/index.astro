@@ -1,7 +1,9 @@
 ---
+import { themeFromSourceColor } from "@material/material-color-utilities"
+
 import { RoutesLinks } from '@/enums/links'
 import type { HEXColor } from '@/types/color'
-import { hex_to_rgb } from '@/utils/color'
+import { hex_argb_to_rgb, rgb_to_hex } from '@/utils/color'
 import { apps } from '@/constants/apps'
 import logo from '@/assets/logo.svg'
 
@@ -14,8 +16,9 @@ import BottomBar from '@/layouts/BottomBar/index.astro'
 import Splash from '@/layouts/Splash/index.astro'
 import CSSAnimation from '@/styles/animation.module.scss'
 import CSS from './_index.module.scss'
-import { math_round } from '@/utils/math'
 import { ICON_ARROW_RIGHT, ICON_DATABASE_PERSON, ICON_OPEN, ICON_SETTINGS_COG_MULTIPLE, ICON_SPARKLE } from '@/constants/icons'
+import { number_parse, number_to_string } from "@/utils/number"
+import { string_substring } from "@/utils/string"
 
 const features = [
 	{
@@ -36,8 +39,10 @@ const features = [
 ]
 
 function color_app_background(color: HEXColor): string {
-	const rgb = hex_to_rgb(color)
-	return `rgba(${math_round(rgb.r * 0xff)},${math_round(rgb.g * 0xff)},${math_round(rgb.b * 0xff)},.24)`
+	const theme = themeFromSourceColor(number_parse(string_substring(color, 1), true, 16)).schemes
+	const light = rgb_to_hex(hex_argb_to_rgb('#' + number_to_string(theme.light.primaryContainer, 16) as HEXColor))
+	const dark = rgb_to_hex(hex_argb_to_rgb('#' + number_to_string(theme.dark.primaryContainer, 16) as HEXColor))
+	return `--color-accent-light:${light};--color-accent-dark:${dark}7F;`
 }
 ---
 
@@ -48,13 +53,13 @@ function color_app_background(color: HEXColor): string {
 	<Appbar />
 	<div class={CSS.body}>
 		<div class={CSS.header}>
-			<h1>📱✅🔥🚀<br/>Discover a suite of powerful <span data-color=green>apps</span> designed to simplify your <span data-color=blue>tasks</span> and enhance your <span data-color=red>productivity</span></h1>
+			<h1>📱✅🔥🚀<br/>Discover a suite of powerful <span data-color=green>apps</span> designed to simplify your <span data-color=blue>tasks</span> and enhance your <span data-color=red>productivity</span>.</h1>
 			<p>Whether you’re a developer, designer, or just someone who loves efficiency, our app has something for you.</p>
 		</div>
 		<main class={CSS.main}>
 			<section class={CSS.apps}>
 				{apps.map((v, i) => <>{i < 3 && <div
-					style={{backgroundColor: color_app_background(v.color)}}>
+					style={color_app_background(v.color)}>
 					<img src={v.logo_url} alt={v.name} />
 					<h3>{v.name}</h3>
 					<p>{v.description}</p>

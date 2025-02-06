@@ -3,7 +3,7 @@ import { createSignal, createUniqueId, onMount, type VoidComponent } from "solid
 import Icon from "@/components/Icon"
 import { IconButton } from "@/components/Button"
 import Tooltip from "@/components/Tooltip"
-import Menu, { close_menu, LinkMenuItem, MenuDivider, MenuHeader, MenuItem, open_menu } from "@/components/Menu"
+import Menu, { close_menu, MenuDivider, MenuHeader, MenuItem, open_menu } from "@/components/Menu"
 import { open_popovercolorpicker, PopoverColorPicker } from "@/components/ColorPicker"
 import CSSAnimation from '@/styles/animation.module.scss'
 import CSS from './_index.module.scss'
@@ -25,57 +25,72 @@ import { array_includes } from "@/utils/array"
 import { math_round } from "@/utils/math"
 import { event_current_target, event_target } from "@/utils/event"
 import { document_root } from "@/utils/document"
-import { ICON_APPS, ICON_CIRCLE, ICON_COMPASS_NORTHWEST, ICON_GIFT, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_MAXIMIZE, ICON_SETTINGS, ICON_SQUARE, ICON_TEARDROP_BOTTOM_RIGHT, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from "@/constants/icons"
+import { ICON_APPS, ICON_CIRCLE, ICON_GIFT, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_LINE_HORIZONTAL_3, ICON_MAXIMIZE, ICON_RECEIPT, ICON_SETTINGS, ICON_SHIELD_CHECKMARK, ICON_SQUARE, ICON_TEARDROP_BOTTOM_RIGHT, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from "@/constants/icons"
+import Drawer, { close_drawer, LinkDrawerItem, open_drawer } from "@/components/Drawer"
 
-type NavigationMenuProps = {
+type NavigationDrawerProps = {
 	route?: RoutesLinks
 }
 
-export const NavigationMenu: VoidComponent<NavigationMenuProps> = (props) => {
-	const [is_menu_navigation_open, set_is_menu_navigation_open] = createSignal<boolean>(false)
-	let menu_navigation_ref: HTMLDialogElement
+export const NavigationDrawer: VoidComponent<NavigationDrawerProps> = (props) => {
+	const [isDrawerOpen, setIsDrawerOpen] = createSignal<boolean>(false)
+	let drawerRef: HTMLDialogElement
 
 	onMount(() => remove_splash_screen_on_load_every_component())
 
 	return (<>
 		<Tooltip>
 			<IconButton
-				data-tooltip="Open navigation menu"
+				data-tooltip="Open navigation"
 				classList={classlist_module(CSS.mobile_only)}
-				c_focused={is_menu_navigation_open()}
-				onClick={(ev) => open_menu(ev, menu_navigation_ref, {
-					anchor: event_current_target(ev),
-					padding: 0,
-				})}
-				c_code={ICON_COMPASS_NORTHWEST}
+				c_focused={isDrawerOpen()}
+				onClick={(ev) => open_drawer(ev, drawerRef)}
+				c_code={ICON_LINE_HORIZONTAL_3}
 			/>
 		</Tooltip>
-		<Menu
-			style={{width: '164px'}}
-			ref={r => menu_navigation_ref = r}
-			c_on_toggleopen={v => set_is_menu_navigation_open(v)}>
-			<MenuHeader>Navigation</MenuHeader>
-			<LinkMenuItem
+		<Drawer
+			ref={r => drawerRef = r}
+			c_on_toggleopen={v => setIsDrawerOpen(v)}
+			c_header={<Tooltip>
+				<IconButton
+					data-tooltip="Close navigation"
+					classList={classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
+					c_code={ICON_LINE_HORIZONTAL_3}
+					onClick={() => close_drawer(drawerRef)}
+				/>
+			</Tooltip>}
+			c_footer={<Tooltip>
+				<LinkDrawerItem
+					href={RoutesLinks.privacy}
+					c_icon_code={ICON_SHIELD_CHECKMARK}>
+					Privacy policy
+				</LinkDrawerItem>
+				<LinkDrawerItem
+					href={RoutesLinks.terms}
+					c_icon_code={ICON_RECEIPT}>
+					Terms & conditions
+				</LinkDrawerItem>
+			</Tooltip>}>
+			<LinkDrawerItem
 				href={RoutesLinks.apps}
 				c_selected={props.route == RoutesLinks.apps}
 				c_icon_code={ICON_APPS}>
 				Apps
-			</LinkMenuItem>
-			<LinkMenuItem
+			</LinkDrawerItem>
+			<LinkDrawerItem
 				href={RoutesLinks.about}
 				c_selected={props.route == RoutesLinks.about}
 				c_icon_code={ICON_INFO}>
 				About
-			</LinkMenuItem>
-			<MenuDivider />
-			<LinkMenuItem
-				onClick={() => close_menu(menu_navigation_ref)}
+			</LinkDrawerItem>
+			<LinkDrawerItem
+				onClick={() => close_drawer(drawerRef)}
 				href={ExternalLinks.donate}
 				c_new_tab
 				c_icon_code={ICON_GIFT}>
 				Donate
-			</LinkMenuItem>
-		</Menu>
+			</LinkDrawerItem>
+		</Drawer>
 	</>)
 }
 
