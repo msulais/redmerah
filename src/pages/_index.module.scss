@@ -97,29 +97,36 @@
 	padding: 64px 16px;
 
 	> h1 {
-		font-size: var(--g-font-size-xxl);
-		font-weight: 500;
-		margin-bottom: 8px;
+		font-size: var(--g-font-size-xxd);
+		font-weight: 100;
+		margin-bottom: 32px;
+
+		@media (max-width: 600px) {
+			font-size: var(--g-font-size-xxl);
+		}
 
 		> span {
 			text-decoration: underline;
+			font-weight: bold;
+			text-decoration-thickness: max(1px, 0.05em);
+			text-underline-offset: 0.1em;
 
 			&[data-color=green] {
-				color: #00DB3A;
-				:root[data-theme=dark] & { color: #00CC36 }
-				:root[data-theme=system] & {@media (prefers-color-scheme: dark) { color: #00CC36 }}
+				color: #026E00;
+				:root[data-theme=dark] & { color: #02E600 }
+				:root[data-theme=system] & {@media (prefers-color-scheme: dark) { color: #02E600 }}
 			}
 
 			&[data-color=blue] {
-				color: #0060C2;
-				:root[data-theme=dark] & { color: #70B7FF }
-				:root[data-theme=system] & {@media (prefers-color-scheme: dark) { color: #70B7FF }}
+				color: #343DFF;
+				:root[data-theme=dark] & { color: #BEC2FF }
+				:root[data-theme=system] & {@media (prefers-color-scheme: dark) { color: #BEC2FF }}
 			}
 
 			&[data-color=red] {
-				color: #C20000;
-				:root[data-theme=dark] & { color: #FF9494 }
-				:root[data-theme=system] & {@media (prefers-color-scheme: dark) { color: #FF9494 }}
+				color: #C00100;
+				:root[data-theme=dark] & { color: #FFB4A8 }
+				:root[data-theme=system] & {@media (prefers-color-scheme: dark) { color: #FFB4A8 }}
 			}
 		}
 	}
