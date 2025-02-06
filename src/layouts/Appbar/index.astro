@@ -2,7 +2,7 @@
 import Icon from '@/components/Icon/index.astro'
 import LinkButton from '@/components/Button/LinkButton.astro'
 import { ButtonVariant } from '@/components/Button'
-import { SettingsElement, NavigationMenu } from './_components'
+import { SettingsElement, NavigationDrawer } from './_components'
 import CSS from './_index.module.scss'
 
 import { RoutesLinks, ExternalLinks } from '@/enums/links'
@@ -61,7 +61,7 @@ const { route } = Astro.props
 	</nav>
 	<div>
 		<SettingsElement client:only="solid-js"/>
-		<NavigationMenu client:only="solid-js" route={route}/>
+		<NavigationDrawer client:only="solid-js" route={route}/>
 	</div>
 </header>
 
