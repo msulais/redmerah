@@ -2,7 +2,7 @@ import { createStore } from "solid-js/store"
 import { Show, createContext, createEffect, createMemo, createSelector, createSignal, mergeProps, onCleanup, splitProps, useContext, type Accessor, type ParentComponent } from "solid-js"
 import { mergeRefs } from "@solid-primitives/refs"
 
-import { element_dataset, element_rect, element_remove_style, element_set_style, element_tagname, element_valid_target } from "@/utils/element"
+import { element_by_selector, element_dataset, element_focus, element_rect, element_remove_style, element_set_style, element_tagname, element_valid_target } from "@/utils/element"
 import { event_call, event_current_target } from "@/utils/event"
 import { array_concat, array_equals, array_filter, array_find_index, array_join, array_length, array_map, array_push, array_slice, array_some } from "@/utils/array"
 import { rect_width } from "@/utils/rect"
@@ -113,6 +113,7 @@ const Dropdown: ParentComponent<DropdownProps> = ($props) => {
 			padding: 0,
 			gap: 4,
 			position: DropdownPosition.center_bottom,
+			on_open: () => focus_to_selected_options()
 		})
 		element_remove_style(menu_dropdown_ref, 'width')
 		const button_width = rect_width(element_rect(button_dropdown_ref))
@@ -153,6 +154,13 @@ const Dropdown: ParentComponent<DropdownProps> = ($props) => {
 		)
 		reposition_menu(menu_dropdown_ref)
 		props.c_on_change?.(array_filter(options, o => is_selected(o.value)))
+	}
+
+	function focus_to_selected_options(){
+		const btn = element_by_selector('button[data-c-dropdown-value][data-c-selected]', menu_dropdown_ref)
+		if (!btn) return
+
+		element_focus(btn)
 	}
 
 	createEffect(() => {
