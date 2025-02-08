@@ -4,23 +4,23 @@ import { createStore } from "solid-js/store"
 
 import type { TaskLabel, Settings, Task, TaskList, SubTask, TaskFileMetaData } from "./_types"
 import { Commands, Pages, SortBy, SortMode } from "./_enums"
-import { get_current_date, date_year, date_text_YMD_HM, date_out_range_YMD_HM } from "@/utils/datetime"
-import { event_current_target, event_prevent_default, event_stop_propagation, event_target } from "@/utils/event"
+import { dateCurrent, dateYear, dateTextYMD_HM, dateOutRangeYMD_HM } from "@/utils/datetime"
+import { eventCurrentTarget, eventPreventDefault, eventStopPropagation, eventTarget } from "@/utils/event"
 import { DEFAULT_TASK_LIST } from "./_constants"
-import { attr_set_if_exist, classlist_module } from "@/utils/attributes"
-import { string_replace, string_split, string_starts_with, string_totitlecase, string_trim } from "@/utils/string"
-import { element_by_selector, element_click, element_closest, element_dataset, element_focus, element_id, element_next_sibling, element_previous_sibling, element_tagname, element_valid_target } from "@/utils/element"
-import { is_number } from "@/utils/typecheck"
-import { file_open, file_read_as_text } from "@/utils/file"
-import { url_create, url_revoke } from "@/utils/url"
-import { array_concat, array_find_index, array_includes, array_join, array_length, array_slice, array_some } from "@/utils/array"
-import { regex_test } from "@/utils/regex"
-import { number_is_not_defined, number_parse, number_tofixed } from "@/utils/number"
-import { timeout_set } from "@/utils/timeout"
-import { promise_done } from "@/utils/object"
+import { attrSetIfExist, attrClassListModule } from "@/utils/attributes"
+import { stringReplace, stringSplit, stringStartsWith, stringToTitleCase, stringTrim } from "@/utils/string"
+import { elementBySelector, elementClick, elementClosest, elementDataset, elementFocus, elementId, elementSiblingNext, elementSiblingPrevious, elementTagName, elementValidTarget } from "@/utils/element"
+import { typeIsNumber } from "@/utils/typecheck"
+import { fileOpen, fileReadAsText } from "@/utils/file"
+import { urlCreate, urlRevoke } from "@/utils/url"
+import { arrayConcat, arrayFindIndex, arrayIncludes, arrayJoin, arrayLength, arraySlice, arraySome } from "@/utils/array"
+import { regexTest } from "@/utils/regex"
+import { numberIsNotDefined, numberParse, numberToFixed } from "@/utils/number"
+import { timeTimerSet } from "@/utils/time"
+import { promiseDone } from "@/utils/object"
 import { KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT, KEY_ARROW_UP, KEY_ENTER, KEY_SPACE } from "@/constants/key_code"
 import { AppColors } from "@/enums/colors"
-import { document_active } from "@/utils/document"
+import { documentActive } from "@/utils/document"
 import { ICON_ADD, ICON_ADD_CIRCLE, ICON_ADD_SQUARE, ICON_ALERT, ICON_ALERT_BADGE, ICON_ALERT_OFF, ICON_ALERT_URGENT, ICON_APPS_LIST_DETAIL, ICON_ARROW_DOWNLOAD, ICON_ARROW_RIGHT, ICON_ARROW_SORT, ICON_ATTACH, ICON_CALENDAR, ICON_CALENDAR_EDIT, ICON_CHECKBOX_CHECKED, ICON_CHECKBOX_UNCHECKED, ICON_CIRCLE, ICON_COPY, ICON_DELETE, ICON_DELETE_DISMISS, ICON_DELETE_LINES, ICON_DISMISS, ICON_EDIT, ICON_EYE, ICON_HOME, ICON_MORE_VERTICAL, ICON_STAR, ICON_TAG, ICON_TASK_LIST_SQUARE_LTR, ICON_TEXT_CASE_TITLE, ICON_TEXT_EDIT_STYLE, ICON_TEXT_SORT_ASCENDING, ICON_TEXT_SORT_DESCENDING } from "@/constants/icons"
 
 import Divider from "@/components/Divider"
@@ -30,11 +30,11 @@ import Button, { ButtonVariant, IconButton } from "@/components/Button"
 import Emoji from "@/components/Emoji"
 import CheckBox from "@/components/CheckBox"
 import List from "@/components/List"
-import TextField, { AreaTextField, change_textfield_value, TextFieldButton } from "@/components/TextField"
-import Menu, { close_menu, close_submenu, MenuDivider, MenuHeader, MenuIndent, MenuItem, MenuPosition, open_menu, SubMenu, SubMenuItem } from "@/components/Menu"
-import Dialog, { close_dialog, open_dialog } from "@/components/Dialog"
-import Toast, { open_toast } from "@/components/Toast"
-import DateTimePicker, { DateTimePickerPosition, open_datetimepicker } from "@/components/DateTimePicker"
+import TextField, { AreaTextField, updateTextFieldValue, TextFieldButton } from "@/components/TextField"
+import Menu, { closeMenu, closeSubMenu, MenuDivider, MenuHeader, MenuIndent, MenuItem, MenuPosition, openMenu, SubMenu, SubMenuItem } from "@/components/Menu"
+import Dialog, { closeDialog, openDialog } from "@/components/Dialog"
+import Toast, { openToast } from "@/components/Toast"
+import DateTimePicker, { DateTimePickerPosition, openDateTimePicker } from "@/components/DateTimePicker"
 import AppBar from "@/components/AppBar"
 import CSS from './_styles.module.scss'
 
@@ -43,174 +43,174 @@ const AppbarTasks: VoidComponent<{
 	leading: JSX.Element
 	headline: JSX.Element
 	settings: Settings
-	tasklist_index: number
-	is_group: boolean
-	is_any_task: boolean
-	is_any_completed_task: boolean
-	si_any_uncompleted_task: boolean
+	taskListIndex: number
+	isGroup: boolean
+	isAnyTask: boolean
+	isAnyCompletedTask: boolean
+	isAnyUncompletedTask: boolean
 	command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
-	const [is_menu_sort_open, set_is_menu_sort_open] = createSignal<boolean>(false)
-	const [is_menu_more_open, set_is_menu_more_open] = createSignal<boolean>(false)
+	const [isMenuSortOpen, setIsMenuSortOpen] = createSignal<boolean>(false)
+	const [isMenuMoreOpen, setIsMenuMoreOpen] = createSignal<boolean>(false)
 	const settings = createMemo(() => props.settings)
-	let menu_sort_ref: HTMLDialogElement
-	let menu_more_ref: HTMLDialogElement
-	let dialog_cleartasks_ref: HTMLDialogElement
-	let dialog_deletecompletedtasks_ref: HTMLDialogElement
-	let toast_copied_ref: HTMLDivElement
+	let menuSortRef: HTMLDialogElement
+	let menuMoreRef: HTMLDialogElement
+	let dialogClearTasksRef: HTMLDialogElement
+	let dialogDeleteCompletedTasksRef: HTMLDialogElement
+	let toastCopiedRef: HTMLDivElement
 
 	function command(type: Commands, ...args: unknown[]): unknown {
 		return props.command(type, ...args)
 	}
 
-	function change_sort_by(sort_by: SortBy): void {
-		command(Commands.change_sort_by, sort_by)
-		close_menu(menu_sort_ref)
+	function updateSortBy(sortBy: SortBy): void {
+		command(Commands.updateSortBy, sortBy)
+		closeMenu(menuSortRef)
 	}
 
-	function change_sort_mode(sort_mode: SortMode): void {
-		command(Commands.change_sort_mode, sort_mode)
-		close_menu(menu_sort_ref)
+	function updateSortMode(sortMode: SortMode): void {
+		command(Commands.updateSortMode, sortMode)
+		closeMenu(menuSortRef)
 	}
 
 	const Menus: VoidComponent = () => {
-		const sort_by: [by: SortBy, name: string, icon_code: number][] = [
+		const sortBy: [by: SortBy, name: string, icon_code: number][] = [
 			[SortBy.name, 'Name', ICON_TEXT_CASE_TITLE],
 			[SortBy.importance, 'Importance', ICON_STAR],
-			[SortBy.creation_date, 'Creation date', ICON_CALENDAR],
+			[SortBy.creationDate, 'Creation date', ICON_CALENDAR],
 			[SortBy.completed, 'Completed', ICON_CHECKBOX_CHECKED],
 			[SortBy.uncompleted, 'Uncompleted', ICON_CHECKBOX_UNCHECKED],
 		]
-		const sort_mode: [mode: SortMode, name: string, icon_code: number][] = [
+		const sortMode: [mode: SortMode, name: string, icon_code: number][] = [
 			[SortMode.ascending, 'Ascending', ICON_TEXT_SORT_ASCENDING],
 			[SortMode.descending, 'Descending', ICON_TEXT_SORT_DESCENDING],
 		]
-		const button_markallcompleted_id = createUniqueId()
-		const button_markalluncompleted_id = createUniqueId()
-		const button_cleartasks_id = createUniqueId()
-		const button_deletecompletedtasks_id = createUniqueId()
-		const button_renamelist_id = createUniqueId()
-		const button_deletelist_id = createUniqueId()
+		const buttonMarkAllCompletedId = createUniqueId()
+		const buttonMarkAllUncompletedId = createUniqueId()
+		const buttonClearTasksId = createUniqueId()
+		const buttonDeleteCompletedTasksId = createUniqueId()
+		const buttonRenameListId = createUniqueId()
+		const buttonDeleteListId = createUniqueId()
 		return (<>
 			<Menu
 				style={{width: '200px'}}
-				ref={r => menu_sort_ref = r}
-				c_on_toggleopen={(v) => set_is_menu_sort_open(v)}
+				ref={r => menuSortRef = r}
+				c:onToggleOpen={(v) => setIsMenuSortOpen(v)}
 				onClick={ev => {
-					const button = document_active()!
-					if (!element_valid_target(
-						event_current_target(ev),
+					const button = documentActive()!
+					if (!elementValidTarget(
+						eventCurrentTarget(ev),
 						button,
-						el => element_tagname(el) == 'BUTTON'
+						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					const data_sortby = element_dataset(button, 'sortby')
-					if (data_sortby) {
-						return change_sort_by(data_sortby as SortBy)
+					const dataSortby = elementDataset(button, 'sortby')
+					if (dataSortby) {
+						return updateSortBy(dataSortby as SortBy)
 					}
 
-					const data_sortmode = element_dataset(button, 'sortmode')
-					if (data_sortmode) {
-						return change_sort_mode(data_sortmode as SortMode)
+					const dataSortmode = elementDataset(button, 'sortmode')
+					if (dataSortmode) {
+						return updateSortMode(dataSortmode as SortMode)
 					}
 				}}>
 				<MenuHeader>Sort by</MenuHeader>
-				<For each={sort_by}>{by =>
+				<For each={sortBy}>{by =>
 					<MenuItem
-						c_selected={settings().sort_by == by[0]}
+						c:selected={settings().sortBy == by[0]}
 						data-sortby={by[0]}
-						c_icon_code={by[2]}>
+						c:iconCode={by[2]}>
 						{by[1]}
 					</MenuItem>
 				}</For>
 				<MenuDivider/>
-				<For each={sort_mode}>{mode =>
+				<For each={sortMode}>{mode =>
 					<MenuItem
 						data-sortmode={mode[0]}
-						c_selected={settings().sort_mode == mode[0]}
-						c_icon_code={mode[2]}>
+						c:selected={settings().sortMode == mode[0]}
+						c:iconCode={mode[2]}>
 						{mode[1]}
 					</MenuItem>
 				}</For>
 			</Menu>
 			<Menu
 				style={{"min-width": '200px'}}
-				ref={r => menu_more_ref = r}
-				c_on_toggleopen={(v) => set_is_menu_more_open(v)}
+				ref={r => menuMoreRef = r}
+				c:onToggleOpen={(v) => setIsMenuMoreOpen(v)}
 				onClick={ev => {
-					const button = document_active()!
-					if (!element_valid_target(
-						event_current_target(ev),
+					const button = documentActive()!
+					if (!elementValidTarget(
+						eventCurrentTarget(ev),
 						button,
-						el => element_tagname(el) == 'BUTTON'
+						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					switch (element_id(button)) {
-						case button_markallcompleted_id:
-							close_menu(menu_more_ref)
-							command(Commands.mark_all_completed, props.tasklist_index)
-							break
-						case button_markalluncompleted_id:
-							close_menu(menu_more_ref)
-							command(Commands.mark_all_uncompleted, props.tasklist_index)
-							break
-						case button_cleartasks_id:
-							open_dialog(ev, dialog_cleartasks_ref, {important: true})
-							close_menu(menu_more_ref)
-							break
-						case button_deletecompletedtasks_id:
-							open_dialog(ev, dialog_deletecompletedtasks_ref, {important: true})
-							close_menu(menu_more_ref)
-							break
-						case button_renamelist_id:
-							close_menu(menu_more_ref)
-							command(Commands.rename_taskList, ev, props.tasklist_index)
-							break
-						case button_deletelist_id:
-							close_menu(menu_more_ref)
-							command(Commands.delete_taskList, ev, props.tasklist_index)
-							break
+					switch (elementId(button)) {
+					case buttonMarkAllCompletedId:
+						closeMenu(menuMoreRef)
+						command(Commands.markAllCompleted, props.taskListIndex)
+						break
+					case buttonMarkAllUncompletedId:
+						closeMenu(menuMoreRef)
+						command(Commands.markAllUncompleted, props.taskListIndex)
+						break
+					case buttonClearTasksId:
+						openDialog(ev, dialogClearTasksRef, {important: true})
+						closeMenu(menuMoreRef)
+						break
+					case buttonDeleteCompletedTasksId:
+						openDialog(ev, dialogDeleteCompletedTasksRef, {important: true})
+						closeMenu(menuMoreRef)
+						break
+					case buttonRenameListId:
+						closeMenu(menuMoreRef)
+						command(Commands.renameTaskList, ev, props.taskListIndex)
+						break
+					case buttonDeleteListId:
+						closeMenu(menuMoreRef)
+						command(Commands.deleteTaskList, ev, props.taskListIndex)
+						break
 					}
 				}}>
-				<Show when={props.si_any_uncompleted_task}>
+				<Show when={props.isAnyUncompletedTask}>
 					<MenuItem
-						id={button_markallcompleted_id}
-						c_icon_code={ICON_CHECKBOX_CHECKED}>
+						id={buttonMarkAllCompletedId}
+						c:iconCode={ICON_CHECKBOX_CHECKED}>
 						Mark all completed
 					</MenuItem>
 				</Show>
-				<Show when={props.is_any_completed_task}>
+				<Show when={props.isAnyCompletedTask}>
 					<MenuItem
-						id={button_markalluncompleted_id}
-						c_icon_code={ICON_CHECKBOX_UNCHECKED}>
+						id={buttonMarkAllUncompletedId}
+						c:iconCode={ICON_CHECKBOX_UNCHECKED}>
 						Mark all uncompleted
 					</MenuItem>
 				</Show>
-				<Show when={props.is_any_task}>
+				<Show when={props.isAnyTask}>
 					<MenuDivider />
 					<MenuItem
-						id={button_cleartasks_id}
-						c_icon_code={ICON_DELETE_DISMISS}>
+						id={buttonClearTasksId}
+						c:iconCode={ICON_DELETE_DISMISS}>
 						Clear tasks
 					</MenuItem>
 				</Show>
-				<Show when={props.is_any_completed_task}>
+				<Show when={props.isAnyCompletedTask}>
 					<MenuItem
-						id={button_deletecompletedtasks_id}
-						c_icon_code={ICON_DELETE_LINES}>
+						id={buttonDeleteCompletedTasksId}
+						c:iconCode={ICON_DELETE_LINES}>
 						Delete completed tasks
 					</MenuItem>
 				</Show>
-				<Show when={is_number(props.page)}>
-					<Show when={props.is_any_task}><MenuDivider /></Show>
+				<Show when={typeIsNumber(props.page)}>
+					<Show when={props.isAnyTask}><MenuDivider /></Show>
 					<MenuItem
-						id={button_renamelist_id}
-						c_icon_code={ICON_TEXT_EDIT_STYLE}>
+						id={buttonRenameListId}
+						c:iconCode={ICON_TEXT_EDIT_STYLE}>
 						Rename list
 					</MenuItem>
 					<MenuItem
-						id={button_deletelist_id}
-						c_icon_code={ICON_DELETE}>
+						id={buttonDeleteListId}
+						c:iconCode={ICON_DELETE}>
 						Delete list
 					</MenuItem>
 				</Show>
@@ -219,42 +219,42 @@ const AppbarTasks: VoidComponent<{
 	}
 
 	const Dialogs: VoidComponent = () => {
-		const button_cleartasks_cancel_id = createUniqueId()
-		const button_cleartasks_clear_id = createUniqueId()
-		const button_deletecompletedtasks_cancel_id = createUniqueId()
-		const button_deletecompletedtasks_delete_id = createUniqueId()
+		const buttonClearTasksCancelId = createUniqueId()
+		const buttonClearTasksClearId = createUniqueId()
+		const buttonDeleteCompletedTasksCancelId = createUniqueId()
+		const buttonDeleteCompletedTasksDeleteId = createUniqueId()
 		return (<>
 			<Dialog
-				ref={r => dialog_cleartasks_ref = r}
-				c_header="Clear tasks"
+				ref={r => dialogClearTasksRef = r}
+				c:header="Clear tasks"
 				style={{width: '500px'}}
 				onClick={ev => {
-					const button = document_active()!
-					if (!element_valid_target(
-						event_current_target(ev),
+					const button = documentActive()!
+					if (!elementValidTarget(
+						eventCurrentTarget(ev),
 						button,
-						el => element_tagname(el) == "BUTTON"
+						el => elementTagName(el) == "BUTTON"
 					)) return
 
-					switch (element_id(button)) {
-						case button_cleartasks_cancel_id:
-							close_dialog(dialog_cleartasks_ref)
-							break
-						case button_cleartasks_clear_id:
-							command(Commands.clear_tasks, props.tasklist_index)
-							close_dialog(dialog_cleartasks_ref)
-							break
+					switch (elementId(button)) {
+					case buttonClearTasksCancelId:
+						closeDialog(dialogClearTasksRef)
+						break
+					case buttonClearTasksClearId:
+						command(Commands.clearTasks, props.taskListIndex)
+						closeDialog(dialogClearTasksRef)
+						break
 					}
 				}}
-				c_actions={<>
+				c:actions={<>
 					<Button
-						id={button_cleartasks_cancel_id}
-						c_variant={ButtonVariant.tonal}>
+						id={buttonClearTasksCancelId}
+						c:variant={ButtonVariant.tonal}>
 						Cancel
 					</Button>
 					<Button
-						id={button_cleartasks_clear_id}
-						c_variant={ButtonVariant.filled}>
+						id={buttonClearTasksClearId}
+						c:variant={ButtonVariant.filled}>
 						Clear
 					</Button>
 				</>}>
@@ -262,35 +262,35 @@ const AppbarTasks: VoidComponent<{
 			</Dialog>
 			<Dialog
 				style={{width: '500px'}}
-				ref={r => dialog_deletecompletedtasks_ref = r}
-				c_header={"Delete completed tasks"}
+				ref={r => dialogDeleteCompletedTasksRef = r}
+				c:header={"Delete completed tasks"}
 				onClick={ev => {
-					const button = document_active()!
-					if (!element_valid_target(
-						event_current_target(ev),
+					const button = documentActive()!
+					if (!elementValidTarget(
+						eventCurrentTarget(ev),
 						button,
-						el => element_tagname(el) == "BUTTON"
+						el => elementTagName(el) == "BUTTON"
 					)) return
 
-					switch (element_id(button)) {
-						case button_deletecompletedtasks_cancel_id:
-							close_dialog(dialog_deletecompletedtasks_ref)
-							break
-						case button_deletecompletedtasks_delete_id:
-							command(Commands.delete_completed_task, props.tasklist_index)
-							close_dialog(dialog_deletecompletedtasks_ref)
-							break
+					switch (elementId(button)) {
+					case buttonDeleteCompletedTasksCancelId:
+						closeDialog(dialogDeleteCompletedTasksRef)
+						break
+					case buttonDeleteCompletedTasksDeleteId:
+						command(Commands.deleteCompletedTask, props.taskListIndex)
+						closeDialog(dialogDeleteCompletedTasksRef)
+						break
 					}
 				}}
-				c_actions={<>
+				c:actions={<>
 					<Button
-						id={button_deletecompletedtasks_cancel_id}
-						c_variant={ButtonVariant.tonal}>
+						id={buttonDeleteCompletedTasksCancelId}
+						c:variant={ButtonVariant.tonal}>
 						Cancel
 					</Button>
 					<Button
-						id={button_deletecompletedtasks_delete_id}
-						c_variant={ButtonVariant.filled}>
+						id={buttonDeleteCompletedTasksDeleteId}
+						c:variant={ButtonVariant.filled}>
 						Delete
 					</Button>
 				</>}>
@@ -300,54 +300,54 @@ const AppbarTasks: VoidComponent<{
 	}
 
 	const AppBars: VoidComponent = () => {
-		const button_sortby_id = createUniqueId()
-		const button_copytasks_id = createUniqueId()
-		const button_moreoptions_id = createUniqueId()
+		const buttonSortById = createUniqueId()
+		const buttonCopyTasksId = createUniqueId()
+		const buttonMoreOptionsId = createUniqueId()
 		return (<AppBar
-			classList={classlist_module(CSS.body_appbar)}
-			c_leading={props.leading}
-			c_headline={props.headline}
+			classList={attrClassListModule(CSS.body_appbar)}
+			c:leading={props.leading}
+			c:headline={props.headline}
 			onClick={ev => {
-				const button = document_active()!
-				if (!element_valid_target(
-					event_current_target(ev),
+				const button = documentActive()!
+				if (!elementValidTarget(
+					eventCurrentTarget(ev),
 					button,
-					el => element_tagname(el) == "BUTTON"
+					el => elementTagName(el) == "BUTTON"
 				)) return
 
-				switch (element_id(button)) {
-					case button_sortby_id:
-						open_menu(ev, menu_sort_ref, {anchor: button})
-						break
-					case button_copytasks_id:
-						command(Commands.copy_tasks, props.is_group? undefined : props.tasklist_index)
-						open_toast(ev, toast_copied_ref)
-						break
-					case button_moreoptions_id:
-						open_menu(ev, menu_more_ref, {anchor: button})
-						break
+				switch (elementId(button)) {
+				case buttonSortById:
+					openMenu(ev, menuSortRef, {anchor: button})
+					break
+				case buttonCopyTasksId:
+					command(Commands.copyTasks, props.isGroup? undefined : props.taskListIndex)
+					openToast(ev, toastCopiedRef)
+					break
+				case buttonMoreOptionsId:
+					openMenu(ev, menuMoreRef, {anchor: button})
+					break
 				}
 			}}
-			c_trailing={<Tooltip>
-				<Show when={props.is_any_task}>
+			c:trailing={<Tooltip>
+				<Show when={props.isAnyTask}>
 					<IconButton
 						data-tooltip="Sort by"
-						c_focused={is_menu_sort_open()}
-						id={button_sortby_id}
-						c_code={ICON_ARROW_SORT}
+						c:focused={isMenuSortOpen()}
+						id={buttonSortById}
+						c:code={ICON_ARROW_SORT}
 					/>
 					<IconButton
 						data-tooltip="Copy tasks"
-						id={button_copytasks_id}
-						c_code={ICON_COPY}
+						id={buttonCopyTasksId}
+						c:code={ICON_COPY}
 					/>
 				</Show>
-				<Show when={!props.is_group && ((props.page == Pages.tasks && props.is_any_task) || is_number(props.page))}>
+				<Show when={!props.isGroup && ((props.page == Pages.tasks && props.isAnyTask) || typeIsNumber(props.page))}>
 					<IconButton
 						data-tooltip="More options"
-						id={button_moreoptions_id}
-						c_focused={is_menu_more_open()}
-						c_code={ICON_MORE_VERTICAL}
+						id={buttonMoreOptionsId}
+						c:focused={isMenuMoreOpen()}
+						c:code={ICON_MORE_VERTICAL}
 					/>
 				</Show>
 			</Tooltip>}
@@ -359,8 +359,8 @@ const AppbarTasks: VoidComponent<{
 		<Menus />
 		<Dialogs />
 		<Toast
-			ref={r => toast_copied_ref = r}
-			c_leading={<Icon c_code={ICON_COPY}/>}>
+			ref={r => toastCopiedRef = r}
+			c:leading={<Icon c:code={ICON_COPY}/>}>
 			Tasks copied
 		</Toast>
 	</>)
@@ -368,78 +368,78 @@ const AppbarTasks: VoidComponent<{
 
 const TaskItem: VoidComponent<{
 	task: Task
-	task_index: number
-	tasklist_index: number
+	taskIndex: number
+	taskListIndex: number
 	labels: (TaskLabel | undefined)[]
 }> = (props) => {
 	const task = createMemo(() => props.task)
-	const tasklist_index = createMemo(() => props.tasklist_index)
-	const task_index = createMemo(() => props.task_index)
+	const taskListIndex = createMemo(() => props.taskListIndex)
+	const taskIndex = createMemo(() => props.taskIndex)
 	const labels = createMemo(() => props.labels)
 
 	return (<div
 		tabindex={0}
-		data-taskitem={array_join([tasklist_index(), task_index()], ',')}
+		data-taskitem={arrayJoin([taskListIndex(), taskIndex()], ',')}
 		class={CSS.body_task_item}
-		data-done={attr_set_if_exist(task().complete)}>
+		data-done={attrSetIfExist(task().complete)}>
 		<List
-			c_leading={<IconButton
+			c:leading={<IconButton
 				data-tooltip={`Mark as ${task().complete? 'un' : ''}completed`}
-				data-taskitem-complete={array_join([tasklist_index(), task_index()], ',')}
-				c_code={task().complete? ICON_CHECKBOX_CHECKED : ICON_CHECKBOX_UNCHECKED}
+				data-taskitem-complete={arrayJoin([taskListIndex(), taskIndex()], ',')}
+				c:code={task().complete? ICON_CHECKBOX_CHECKED : ICON_CHECKBOX_UNCHECKED}
 			/>}
-			c_trailing={<>
+			c:trailing={<>
 				<IconButton
 					data-tooltip={`Mark as ${task().important? 'not ' : ''}important`}
-					data-taskitem-important={array_join([tasklist_index(), task_index()], ',')}
-					c_filled={task().important}
-					c_code={ICON_STAR}
+					data-taskitem-important={arrayJoin([taskListIndex(), taskIndex()], ',')}
+					c:filled={task().important}
+					c:code={ICON_STAR}
 				/>
 				<IconButton
 					data-tooltip="Delete task"
-					data-taskitem-delete={array_join([tasklist_index(), task_index()], ',')}
-					c_code={ICON_DELETE}
+					data-taskitem-delete={arrayJoin([taskListIndex(), taskIndex()], ',')}
+					c:code={ICON_DELETE}
 				/>
 			</>}
-			c_subtitle={<>
+			c:subtitle={<>
 				{ task().description }
 				<Show when={
-					array_length(task().subtasks) > 0
+					arrayLength(task().subtasks) > 0
 					|| task().reminder != null
-					|| array_length(task().files) > 0
-					|| array_length(task().label_ids) > 0
+					|| arrayLength(task().files) > 0
+					|| arrayLength(task().labelIds) > 0
 				}>
 					<div class={CSS.body_task_item_tags}>
 						<Show when={task().reminder != null}>
 							<Button
 								data-tooltip={
-									"Task reminder" + (date_out_range_YMD_HM(
+									"Task reminder" + (dateOutRangeYMD_HM(
 										task().reminder!,
-										get_current_date(),
-										new Date(date_year() + 100, 2, 2)
+										dateCurrent(),
+										new Date(dateYear() + 100, 2, 2)
 									)? " (outdated)" : "")}
 								style={{
-									"border-color": date_out_range_YMD_HM(
+									"border-color": dateOutRangeYMD_HM(
 										task().reminder!,
-										get_current_date(),
-										new Date(date_year() + 100, 2, 2)
+										dateCurrent(),
+										new Date(dateYear() + 100, 2, 2)
 									)? 'rgb(var(--g-color-error))' : undefined
 								}}
-								data-taskitem-reminder={array_join([tasklist_index(), task_index()], ',')}
-								c_variant={ButtonVariant.outlined}>
-								<Icon c_filled c_code={ICON_ALERT_URGENT} c_inline/>
-								{date_text_YMD_HM(task().reminder!)}
+								data-taskitem-reminder={arrayJoin([taskListIndex(), taskIndex()], ',')}
+								c:variant={ButtonVariant.outlined}>
+								<Icon c:filled c:code={ICON_ALERT_URGENT} c:inline/>
+								{dateTextYMD_HM(task().reminder!)}
 							</Button>
 						</Show>
-						<Show when={array_length(task().files) > 0}>
+						<Show when={arrayLength(task().files) > 0}>
 							<Button
-								data-taskitem-files={array_join([tasklist_index(), task_index()], ',')}
-								c_variant={ButtonVariant.outlined}>
-								<Icon c_filled c_code={ICON_ATTACH} c_inline/>
-								{array_length(task().files)} file{array_length(task().files) > 1? "s" : ''}
+								data-taskitem-files={arrayJoin([taskListIndex(), taskIndex()], ',')}
+								c:variant={ButtonVariant.outlined}>
+								<Icon c:filled c:code={ICON_ATTACH} c:inline/>
+								{arrayLength(task().files)} file{arrayLength(task().files) > 1? "s" : ''}
 							</Button>
 						</Show>
-						<For each={task().label_ids}>{label_id =>
+						<For each={task().labelIds}>{label_id =>
 							<Show when={labels()[label_id] != undefined}>
 								<Button
 									style={{
@@ -448,9 +448,9 @@ const TaskItem: VoidComponent<{
 											? labels()[label_id]!.color + '14'
 											: undefined
 									}}
-									data-taskitem-label={array_join([tasklist_index(), task_index(), label_id], ',')}
-									c_variant={ButtonVariant.outlined}>
-									<Icon c_filled c_code={ICON_TAG} c_inline/>
+									data-taskitem-label={arrayJoin([taskListIndex(), taskIndex(), label_id], ',')}
+									c:variant={ButtonVariant.outlined}>
+									<Icon c:filled c:code={ICON_TAG} c:inline/>
 									{labels()[label_id]!.name}
 								</Button>
 							</Show>
@@ -460,11 +460,11 @@ const TaskItem: VoidComponent<{
 			</>}>
 			{task().name}
 		</List>
-		<Show when={array_length(task().subtasks) > 0}>
-			<div class={CSS.body_task_item_subtasks} onClick={ev => event_stop_propagation(ev)}>
+		<Show when={arrayLength(task().subtasks) > 0}>
+			<div class={CSS.body_task_item_subtasks} onClick={ev => eventStopPropagation(ev)}>
 				<For each={task().subtasks}>{(subtask, index) => <CheckBox
 					checked={subtask.complete}
-					data-taskitem-subtask={array_join([tasklist_index(), task_index(), index()], ',')}>
+					data-taskitem-subtask={arrayJoin([taskListIndex(), taskIndex(), index()], ',')}>
 					{subtask.name}
 				</CheckBox>}</For>
 			</div>
@@ -473,143 +473,143 @@ const TaskItem: VoidComponent<{
 }
 
 const EmptyTasks: VoidComponent<{page: Pages | number}> = (props) => {
-	const get_icon = createMemo<number>(() => {
+	const getIcon = createMemo<number>(() => {
 		const page = props.page
 		switch (page) {
-			case Pages.all: return ICON_APPS_LIST_DETAIL
-			case Pages.completed: return ICON_CHECKBOX_CHECKED
-			case Pages.uncompleted: return ICON_CHECKBOX_UNCHECKED
-			case Pages.important: return ICON_STAR
-			case Pages.planned: return ICON_ALERT
+		case Pages.all: return ICON_APPS_LIST_DETAIL
+		case Pages.completed: return ICON_CHECKBOX_CHECKED
+		case Pages.uncompleted: return ICON_CHECKBOX_UNCHECKED
+		case Pages.important: return ICON_STAR
+		case Pages.planned: return ICON_ALERT
 		}
 		return ICON_CHECKBOX_CHECKED
 	})
-	const get_text = createMemo<string>(() => {
+	const getText = createMemo<string>(() => {
 		let t = ''
 		const page = props.page
-		if (array_includes([Pages.completed, Pages.uncompleted, Pages.important, Pages.planned], page as Pages)) {
-			t = string_totitlecase(page as Pages)
+		if (arrayIncludes([Pages.completed, Pages.uncompleted, Pages.important, Pages.planned], page as Pages)) {
+			t = stringToTitleCase(page as Pages)
 		}
 		return `No ${t} Tasks`
 	})
 	return (<div class={CSS.body_empty}>
-		<Icon c_filled c_code={get_icon()}/>
-		<p>{get_text()}</p>
+		<Icon c:filled c:code={getIcon()}/>
+		<p>{getText()}</p>
 	</div>)
 }
 
 const SingleTaskList: VoidComponent<{
 	page: Pages | number
-	tasklist: TaskList
+	taskList: TaskList
 	lists: TaskList[]
 	labels: (TaskLabel | undefined)[]
 	settings: Settings
-	tasklist_index: number
+	taskListIndex: number
 	command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
-	const [is_any_completed_task, set_is_any_completed_task] = createSignal<boolean>(true)
-	const [isAnyUncompletedTask, set_is_any_uncompleted_task] = createSignal<boolean>(true)
+	const [isAnyCompletedTask, setIsAnyCompletedTask] = createSignal<boolean>(true)
+	const [isAnyUncompletedTask, setIsAnyUncompletedTask] = createSignal<boolean>(true)
 	const page = createMemo(() => props.page)
-	const tasklist = createMemo(() => props.tasklist)
-	const get_headline = createMemo<string>(() => page() != Pages.tasks? tasklist().name : 'Tasks')
-	const is_any_task = createMemo<boolean>(() => array_length(tasklist().tasks) > 0)
-	let textfield_newtask_ref: HTMLInputElement
+	const taskList = createMemo(() => props.taskList)
+	const getHeadline = createMemo<string>(() => page() != Pages.tasks? taskList().name : 'Tasks')
+	const isAnyTask = createMemo<boolean>(() => arrayLength(taskList().tasks) > 0)
+	let textFieldNewTaskRef: HTMLInputElement
 
 	function command(type: Commands, ...args: unknown[]): unknown {
 		return props.command(type, ...args)
 	}
 
-	function add_task(): void {
+	function addTask(): void {
 		if (
-			!(page() == Pages.tasks || is_number(page()))
-			|| string_trim(textfield_newtask_ref.value) == ''
+			!(page() == Pages.tasks || typeIsNumber(page()))
+			|| stringTrim(textFieldNewTaskRef.value) == ''
 		) return;
 
-		const list_id: number = (page() == Pages.tasks
+		const listId: number = (page() == Pages.tasks
 			? DEFAULT_TASK_LIST.id
 			: page() as number
 		)
 
-		command(Commands.add_task, {
+		command(Commands.addTask, {
 			description: '',
 			complete: false,
 			files: [],
 			id: -1,
 			important: false,
-			label_ids: [],
-			list_id,
-			name: string_trim(textfield_newtask_ref.value),
+			labelIds: [],
+			listId: listId,
+			name: stringTrim(textFieldNewTaskRef.value),
 			reminder: null,
 			subtasks: []
-		} satisfies Task, props.tasklist_index)
-		change_textfield_value(textfield_newtask_ref, '')
+		} satisfies Task, props.taskListIndex)
+		updateTextFieldValue(textFieldNewTaskRef, '')
 
-		timeout_set(() => {
+		timeTimerSet(() => {
 			// FIXME: can't focus textfield without this wrapper
-			element_focus(textfield_newtask_ref)
+			elementFocus(textFieldNewTaskRef)
 		}, 200)
 	}
 
 	createEffect(() => {
-		const tasks = tasklist().tasks
-		let is_any_completed_task = false
-		let is_any_uncompleted_task = false
+		const tasks = taskList().tasks
+		let isAnyCompletedTask = false
+		let isAnyUncompletedTask = false
 
 		for (const task of tasks) {
-			if (is_any_completed_task && is_any_uncompleted_task) break
-			if (task.complete) is_any_completed_task = true
-			else is_any_uncompleted_task = true
+			if (isAnyCompletedTask && isAnyUncompletedTask) break
+			if (task.complete) isAnyCompletedTask = true
+			else isAnyUncompletedTask = true
 		}
 
-		set_is_any_completed_task(is_any_completed_task)
-		set_is_any_uncompleted_task(is_any_uncompleted_task)
+		setIsAnyCompletedTask(isAnyCompletedTask)
+		setIsAnyUncompletedTask(isAnyUncompletedTask)
 	})
 
 	return (<div
 		class={CSS.body_single_task_list}
-		data-empty={attr_set_if_exist(!is_any_task())}>
+		data-empty={attrSetIfExist(!isAnyTask())}>
 		<AppbarTasks
 			command={command}
-			tasklist_index={props.tasklist_index}
+			taskListIndex={props.taskListIndex}
 			page={page()}
-			is_group={false}
-			is_any_task={is_any_task()}
-			is_any_completed_task={is_any_completed_task()}
-			si_any_uncompleted_task={isAnyUncompletedTask()}
+			isGroup={false}
+			isAnyTask={isAnyTask()}
+			isAnyCompletedTask={isAnyCompletedTask()}
+			isAnyUncompletedTask={isAnyUncompletedTask()}
 			settings={props.settings}
 			leading={<Show
-				when={tasklist().emoji == null}
-				fallback={<Emoji c_emoji={tasklist().emoji!} />}>
+				when={taskList().emoji == null}
+				fallback={<Emoji c:emoji={taskList().emoji!} />}>
 				<Show
 					when={page() == Pages.tasks}
-					fallback={<Icon c_code={ICON_TASK_LIST_SQUARE_LTR}/>}>
-					<Icon c_code={ICON_HOME}/>
+					fallback={<Icon c:code={ICON_TASK_LIST_SQUARE_LTR}/>}>
+					<Icon c:code={ICON_HOME}/>
 				</Show>
 			</Show>}
-			headline={get_headline()}
+			headline={getHeadline()}
 		/>
 		<Tooltip>
-			<For each={tasklist().tasks}>{(task, index) => <TaskItem
+			<For each={taskList().tasks}>{(task, index) => <TaskItem
 				task={task}
 				labels={props.labels}
-				task_index={index()}
-				tasklist_index={props.tasklist_index}
+				taskIndex={index()}
+				taskListIndex={props.taskListIndex}
 			/>}</For>
 		</Tooltip>
-		<Show when={!is_any_task()}><EmptyTasks page={page()} /></Show>
-		<Show when={is_any_task()}><div style={{flex: '1'}}></div></Show>
+		<Show when={!isAnyTask()}><EmptyTasks page={page()} /></Show>
+		<Show when={isAnyTask()}><div style={{flex: '1'}}></div></Show>
 		<form onSubmit={ev => {
-			add_task()
-			event_prevent_default(ev)
+			addTask()
+			eventPreventDefault(ev)
 		}}>
 			<Tooltip>
 				<TextField
 					placeholder="Add task"
-					ref={r => textfield_newtask_ref = r}
-					c_trailing={<TextFieldButton
+					ref={r => textFieldNewTaskRef = r}
+					c:trailing={<TextFieldButton
 						data-tooltip="Add task"
-						onClick={() => add_task()}>
-						<Icon c_code={ICON_ADD_SQUARE}/>
+						onClick={() => addTask()}>
+						<Icon c:code={ICON_ADD_SQUARE}/>
 					</TextFieldButton>}
 				/>
 			</Tooltip>
@@ -619,18 +619,18 @@ const SingleTaskList: VoidComponent<{
 
 const GroupTaskList: VoidComponent<{
 	page: Pages | number
-	tasklists: TaskList[]
+	taskLists: TaskList[]
 	labels: (TaskLabel | undefined)[]
 	settings: Settings
 	command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
-	const [is_menu_more_open, set_is_menu_more_open] = createSignal<boolean>(false)
-	const [selected_tasklist_to_action, set_selected_tasklist_to_action] = createStore<{list: TaskList, tasklist_index: number}>({
+	const [isMenuMoreOpen, setIsMenuMoreOpen] = createSignal<boolean>(false)
+	const [selectedTaskListToAction, setSelectedTaskListToAction] = createStore<{list: TaskList, taskListIndex: number}>({
 		list: {emoji: null, id: -1, name: '', tasks: []},
-		tasklist_index: -1
+		taskListIndex: -1
 	})
 	const page = createMemo(() => props.page)
-	const get_icon = createMemo<number>(() => {
+	const getIcon = createMemo<number>(() => {
 		const $page = page()
 		if ($page == Pages.all) return ICON_APPS_LIST_DETAIL
 		if ($page == Pages.completed) return ICON_CHECKBOX_CHECKED
@@ -640,45 +640,45 @@ const GroupTaskList: VoidComponent<{
 
 		return ICON_CHECKBOX_CHECKED
 	})
-	const is_not_empty = createMemo<boolean>(() => {
+	const isNotEmpty = createMemo<boolean>(() => {
 		const $page = page()
-		const tasklists = props.tasklists
-		return array_some(tasklists, tasklist => {
+		const taskLists = props.taskLists
+		return arraySome(taskLists, tasklist => {
 			const tasks = tasklist.tasks
-			if ($page == Pages.all) return array_length(tasks) > 0
-			if ($page == Pages.completed) return array_some(tasks, task => task.complete)
-			if ($page == Pages.uncompleted) return array_some(tasks, task => !task.complete)
-			if ($page == Pages.important) return array_some(tasks, task => task.important)
-			if ($page == Pages.planned) return array_some(tasks, task => task.reminder != null)
+			if ($page == Pages.all) return arrayLength(tasks) > 0
+			if ($page == Pages.completed) return arraySome(tasks, task => task.complete)
+			if ($page == Pages.uncompleted) return arraySome(tasks, task => !task.complete)
+			if ($page == Pages.important) return arraySome(tasks, task => task.important)
+			if ($page == Pages.planned) return arraySome(tasks, task => task.reminder != null)
 			return false
 		})
 	})
-	let menu_more_ref: HTMLDialogElement
-	let toast_copied_ref: HTMLDivElement
+	let menuMoreRef: HTMLDialogElement
+	let toastCopiedRef: HTMLDivElement
 
 	function command(type: Commands, ...args: unknown[]): unknown {
 		return props.command(type, ...args)
 	}
 
 	const TaskListGroup: VoidComponent<{
-		tasklist: TaskList
-		tasklist_index: number
+		taskList: TaskList
+		taskListIndex: number
 	}> = ($props) => {
-		const get_headline = createMemo<string>(() =>  page() != Pages.tasks? $props.tasklist.name : 'Tasks')
-		const tasklist = createMemo(() => $props.tasklist)
-		const tasklist_index = createMemo(() => $props.tasklist_index)
-		const is_any_task = createMemo<boolean>(() => {
+		const getHeadline = createMemo<string>(() =>  page() != Pages.tasks? $props.taskList.name : 'Tasks')
+		const taskList = createMemo(() => $props.taskList)
+		const taskListIndex = createMemo(() => $props.taskListIndex)
+		const isAnyTask = createMemo<boolean>(() => {
 			const $page = page()
-			const tasks = tasklist().tasks
-			if ($page == Pages.all) return array_length(tasks) > 0
-			if ($page == Pages.completed) return array_some(tasks, task => task.complete)
-			if ($page == Pages.uncompleted) return array_some(tasks, task => !task.complete)
-			if ($page == Pages.important) return array_some(tasks, task => task.important)
-			if ($page == Pages.planned) return array_some(tasks, task => task.reminder != null)
+			const tasks = taskList().tasks
+			if ($page == Pages.all) return arrayLength(tasks) > 0
+			if ($page == Pages.completed) return arraySome(tasks, task => task.complete)
+			if ($page == Pages.uncompleted) return arraySome(tasks, task => !task.complete)
+			if ($page == Pages.important) return arraySome(tasks, task => task.important)
+			if ($page == Pages.planned) return arraySome(tasks, task => task.reminder != null)
 			return false
 		})
 
-		function task_condition(task: Task): boolean {
+		function taskCondition(task: Task): boolean {
 			const $page = page()
 			if ($page == Pages.completed) return task.complete
 			if ($page == Pages.uncompleted) return !task.complete
@@ -688,37 +688,37 @@ const GroupTaskList: VoidComponent<{
 		}
 
 		const Headline: VoidComponent = () => (<AppBar
-			c_headline={get_headline()}
-			c_leading={<Show
-				when={tasklist().emoji == null}
-				fallback={<Emoji c_emoji={tasklist().emoji!} />}>
+			c:headline={getHeadline()}
+			c:leading={<Show
+				when={taskList().emoji == null}
+				fallback={<Emoji c:emoji={taskList().emoji!} />}>
 				<Show
-					when={tasklist().id == DEFAULT_TASK_LIST.id}
-					fallback={<Icon c_code={ICON_TASK_LIST_SQUARE_LTR}/>}>
-					<Icon c_code={ICON_HOME}/>
+					when={taskList().id == DEFAULT_TASK_LIST.id}
+					fallback={<Icon c:code={ICON_TASK_LIST_SQUARE_LTR}/>}>
+					<Icon c:code={ICON_HOME}/>
 				</Show>
 			</Show>}
-			c_trailing={<IconButton
+			c:trailing={<IconButton
 				data-tooltip="More options"
-				c_focused={is_menu_more_open() && selected_tasklist_to_action.tasklist_index == tasklist_index()}
+				c:focused={isMenuMoreOpen() && selectedTaskListToAction.taskListIndex == taskListIndex()}
 				onClick={ev => {
-					set_selected_tasklist_to_action({list: tasklist(), tasklist_index: tasklist_index()})
-					open_menu(ev, menu_more_ref, {anchor: event_current_target(ev)})
+					setSelectedTaskListToAction({list: taskList(), taskListIndex: taskListIndex()})
+					openMenu(ev, menuMoreRef, {anchor: eventCurrentTarget(ev)})
 				}}
-				c_code={ICON_MORE_VERTICAL}
+				c:code={ICON_MORE_VERTICAL}
 			/>}
 		/>)
 
-		return (<Show when={is_any_task()}>
+		return (<Show when={isAnyTask()}>
 			<Tooltip>
 				<Headline/>
-				<For each={tasklist().tasks}>{(task, index) =>
-					<Show when={task_condition(task)}>
+				<For each={taskList().tasks}>{(task, index) =>
+					<Show when={taskCondition(task)}>
 						<TaskItem
 							task={task}
 							labels={props.labels}
-							task_index={index()}
-							tasklist_index={tasklist_index()}
+							taskIndex={index()}
+							taskListIndex={taskListIndex()}
 						/>
 					</Show>
 				}</For>
@@ -728,41 +728,41 @@ const GroupTaskList: VoidComponent<{
 
 	return (<div
 		class={CSS.body_group_task_list}
-		data-empty={attr_set_if_exist(!is_not_empty())}>
+		data-empty={attrSetIfExist(!isNotEmpty())}>
 		<AppbarTasks
-			tasklist_index={-1}
-			is_any_task={is_not_empty()}
-			is_any_completed_task={false}
-			si_any_uncompleted_task={false}
+			taskListIndex={-1}
+			isAnyTask={isNotEmpty()}
+			isAnyCompletedTask={false}
+			isAnyUncompletedTask={false}
 			command={command}
-			is_group={true}
+			isGroup={true}
 			settings={props.settings}
 			page={page()}
-			leading={<Icon c_code={get_icon()}/>}
-			headline={string_totitlecase(page() as Pages)}
+			leading={<Icon c:code={getIcon()}/>}
+			headline={stringToTitleCase(page() as Pages)}
 		/>
-		<Show when={is_not_empty()} fallback={<EmptyTasks page={page()} />}>
-			<For each={props.tasklists}>{(taskList, index) => <TaskListGroup
-				tasklist_index={index()}
-				tasklist={taskList}
+		<Show when={isNotEmpty()} fallback={<EmptyTasks page={page()} />}>
+			<For each={props.taskLists}>{(taskList, index) => <TaskListGroup
+				taskListIndex={index()}
+				taskList={taskList}
 			/>}</For>
 		</Show>
 		<Menu
-			ref={r => menu_more_ref = r}
-			c_on_toggleopen={isOpen => set_is_menu_more_open(isOpen)}>
+			ref={r => menuMoreRef = r}
+			c:onToggleOpen={isOpen => setIsMenuMoreOpen(isOpen)}>
 			<MenuItem
-				c_icon_code={ICON_COPY}
+				c:iconCode={ICON_COPY}
 				onClick={(ev) => {
-					command(Commands.copy_tasks, selected_tasklist_to_action.tasklist_index)
-					close_menu(menu_more_ref)
-					open_toast(ev, toast_copied_ref)
+					command(Commands.copyTasks, selectedTaskListToAction.taskListIndex)
+					closeMenu(menuMoreRef)
+					openToast(ev, toastCopiedRef)
 				}}>
 				Copy tasks
 			</MenuItem>
 		</Menu>
 		<Toast
-			ref={r => toast_copied_ref = r}
-			c_leading={<Icon c_code={ICON_COPY}/>}>
+			ref={r => toastCopiedRef = r}
+			c:leading={<Icon c:code={ICON_COPY}/>}>
 			Tasks copied
 		</Toast>
 	</div>)
@@ -770,602 +770,618 @@ const GroupTaskList: VoidComponent<{
 
 const _: VoidComponent<{
 	page: Pages | number
-	tasklists: TaskList[]
+	taskLists: TaskList[]
 	settings: Settings
-	is_db_file_error: boolean
+	isDBFileError: boolean
 	labels: (TaskLabel | undefined)[]
 	command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
 	type SelectedTask = {
 		task: Task
-		tasklist_index: number
-		task_index: number
+		taskListIndex: number
+		taskIndex: number
 	}
 	type SelectedFile = {
 		file: TaskFileMetaData
-		tasklist_index: number
-		task_index: number
-		file_index: number
+		taskListIndex: number
+		taskIndex: number
+		fileIndex: number
 	}
-	const empty_task = () => ({
+	const emptyTask = () => ({
 		complete: false,
 		description: '',
 		files: [],
 		id: -1,
 		important: false,
-		label_ids: [],
-		list_id: -1,
+		labelIds: [],
+		listId: -1,
 		name: '',
 		reminder: null,
 		subtasks: []
 	}) satisfies Task
-	const empty_file = () => ({
+	const emptyFile = () => ({
 		id: -1,
-		list_id: -1,
+		listId: -1,
 		name: '',
 		size: 0,
-		task_id: -1,
+		taskId: -1,
 		type: ''
 	}) satisfies TaskFileMetaData
-	const [is_menu_taskactionmove_open, set_is_menu_taskaction_move_open] = createSignal<boolean>(false)
-	const [is_menu_taskactionaddlabel_open, set_is_menu_taskactionaddlabel_open] = createSignal<boolean>(false)
-	const [is_datetimepicker_reminder_open, set_is_datetimepicker_reminder_open] = createSignal<boolean>(false)
-	const [is_menu_labels_open, set_is_menu_labels_open] = createSignal<boolean>(false)
-	const [is_menu_fileaction_open, set_is_menu_fileaction_open] = createSignal<boolean>(false)
-	const [is_menu_fileaction3_open, set_is_menu_fileaction3_open] = createSignal<boolean>(false)
-	const [text_file, set_text_file] = createSignal('')
-	const [text_subtask, set_text_subtask] = createSignal('')
-	const [file_url_or_content, set_file_url_or_content] = createSignal<string>('')
+	const [isMenuTaskActionMoveOpen, setIsMenuTaskActionMoveOpen] = createSignal<boolean>(false)
+	const [isMenuTaskActionAddLabelOpen, setIsMenuTaskActionAddLabelOpen] = createSignal<boolean>(false)
+	const [isDateTimePickerReminderOpen, setIsDateTimePickerReminderOpen] = createSignal<boolean>(false)
+	const [isMenuLabelsOpen, setIsMenuLabelsOpen] = createSignal<boolean>(false)
+	const [isMenuFileActionOpen, setIsMenuFileActionOpen] = createSignal<boolean>(false)
+	const [isMenuFileAction3Open, setIsMenuFileAction3Open] = createSignal<boolean>(false)
+	const [textFile, setTextFile] = createSignal('')
+	const [textSubTask, setTextSubTask] = createSignal('')
+	const [fileURLOrContent, setFileURLOrContent] = createSignal<string>('')
 
 	// 'edit' = open from left click to task
 	// 'action' = open from right click to task
 	// 'chip' = open from left click to reminder chip below task name
-	const [change_reminder_option, set_change_reminder_option] = createSignal<'edit' | 'action' | 'chip'>('edit')
-	const [selected_label, set_selected_label] = createStore<TaskLabel>({id: -1, name: '', color: null})
-	const [selected_task_to_edit, set_selected_task_to_edit] = createStore<SelectedTask>({task: empty_task(), task_index: -1, tasklist_index: -1})
-	const [selected_task_to_action, set_selected_task_to_action] = createStore<SelectedTask>({task: empty_task(), task_index: -1, tasklist_index: -1})
-	const [selected_task_to_delete, set_selected_task_to_delete] = createStore<SelectedTask>({task: empty_task(), task_index: -1, tasklist_index: -1})
-	const [selected_task_to_fileaction, set_selected_task_to_fileaction] = createStore<SelectedTask>({task: empty_task(), task_index: -1, tasklist_index: -1})
-	const [selected_task_to_changereminder, set_selected_task_to_changereminder] = createStore<SelectedTask>({task: empty_task(), task_index: -1, tasklist_index: -1})
-	const [selected_task_to_editlabel, set_selected_task_to_editlabel] = createStore<SelectedTask>({task: empty_task(), task_index: -1, tasklist_index: -1})
-	const [selected_file_to_view, set_selected_file_to_view] = createStore<SelectedFile>({file: empty_file(), tasklist_index: -1, task_index: -1, file_index: -1})
-	const [selected_file_to_rename, set_selected_file_to_rename] = createStore<SelectedFile>({file: empty_file(), tasklist_index: -1, task_index: -1, file_index: -1})
-	const [selected_file_to_action, set_selected_file_to_action] = createStore<SelectedFile>({file: empty_file(), tasklist_index: -1, task_index: -1, file_index: -1})
-	const [selected_file_to_action2, set_selected_file_to_action2] = createStore<SelectedFile>({file: empty_file(), tasklist_index: -1, task_index: -1, file_index: -1})
-	const [selected_subtask_to_edit, set_selected_subtask_to_edit] = createStore<{subtask: SubTask, tasklist_index: number, task_index: number, subtask_index: number}>({subtask: {complete: false, id: -1, list_id: -1, name: '', task_id: -1}, tasklist_index: -1, task_index: -1, subtask_index: -1})
+	const [changeReminderOption, setChangeReminderOption] = createSignal<'edit' | 'action' | 'chip'>('edit')
+	const [selectedLabel, setSelectedLabel] = createStore<TaskLabel>({id: -1, name: '', color: null})
+	const [selectedTaskToEdit, setSelectedTaskToEdit] = createStore<SelectedTask>({task: emptyTask(), taskIndex: -1, taskListIndex: -1})
+	const [selectedTaskToAction, setSelectedTaskToAction] = createStore<SelectedTask>({task: emptyTask(), taskIndex: -1, taskListIndex: -1})
+	const [selectedTaskToDelete, setSelectedTaskToDelete] = createStore<SelectedTask>({task: emptyTask(), taskIndex: -1, taskListIndex: -1})
+	const [selectedTaskToFileAction, setSelectedTaskToFileAction] = createStore<SelectedTask>({task: emptyTask(), taskIndex: -1, taskListIndex: -1})
+	const [selectedTaskToChangeReminder, setSelectedTaskToChangeReminder] = createStore<SelectedTask>({task: emptyTask(), taskIndex: -1, taskListIndex: -1})
+	const [selectedTaskToEditLabel, setSelectedTaskToEditLabel] = createStore<SelectedTask>({task: emptyTask(), taskIndex: -1, taskListIndex: -1})
+	const [selectedFileToView, setSelectedFileToView] = createStore<SelectedFile>({file: emptyFile(), taskListIndex: -1, taskIndex: -1, fileIndex: -1})
+	const [selectedFileToRename, setSelectedFileToRename] = createStore<SelectedFile>({file: emptyFile(), taskListIndex: -1, taskIndex: -1, fileIndex: -1})
+	const [selectedFileToAction, setSelectedFileToAction] = createStore<SelectedFile>({file: emptyFile(), taskListIndex: -1, taskIndex: -1, fileIndex: -1})
+	const [selectedFileToAction2, setSelectedFileToAction2] = createStore<SelectedFile>({file: emptyFile(), taskListIndex: -1, taskIndex: -1, fileIndex: -1})
+	const [selectedSubTaskToEdit, setSelectedSubTaskToEdit] = createStore<{subTask: SubTask, taskListIndex: number, taskIndex: number, subTaskIndex: number}>({subTask: {complete: false, id: -1, listId: -1, name: '', taskId: -1}, taskListIndex: -1, taskIndex: -1, subTaskIndex: -1})
 	const page = createMemo(() => props.page)
-	const tasklists = createMemo(() => props.tasklists)
+	const taskLists = createMemo(() => props.taskLists)
 	const settings = createMemo(() => props.settings)
-	const get_tasklist_index = createMemo<number | null>(() => {
-		const taskLists = tasklists()
-		for (let i = 0; i < array_length(taskLists); i++) {
-			const taskList = taskLists[i]
+	const getTaskListIndex = createMemo<number | null>(() => {
+		const $taskLists = taskLists()
+		for (let i = 0; i < arrayLength($taskLists); i++) {
+			const taskList = $taskLists[i]
 			if (page() == Pages.tasks && taskList.id == DEFAULT_TASK_LIST.id) return i
-			if (is_number(page()) && taskList.id == page()) return i
+			if (typeIsNumber(page()) && taskList.id == page()) return i
 		}
 		return null
 	})
 
 	// 'edit' = open from left click to task
 	// 'action' = open from left click to file chip below task name
-	let rename_file_option: 'edit' | 'action' = 'edit'
-	let add_subtask_option: 'edit' | 'action' = 'edit'
-	let textfield_newsubtask_ref: HTMLInputElement
-	let textfield_editsubtask_ref: HTMLInputElement
-	let textfield_renamefile_ref: HTMLInputElement
-	let menu_taskaction_ref: HTMLDialogElement
-	let menu_reminder_ref: HTMLDialogElement
-	let menu_labels_ref: HTMLDialogElement
-	let menu_labelaction_ref: HTMLDialogElement
-	let menu_labelaction2_ref: HTMLDialogElement
-	let menu_fileaction_ref: HTMLDialogElement
-	let menu_fileaction2_ref: HTMLDialogElement
-	let menu_fileaction3_ref: HTMLDialogElement
-	let submenu_movetask_ref: HTMLDivElement
-	let datetimepicker_reminder_ref: HTMLDialogElement
-	let dialog_filerename_ref: HTMLDialogElement
-	let dialog_edittask_ref: HTMLDialogElement
-	let dialog_deletetaskwarning_ref: HTMLDialogElement
-	let dialog_viewfile_ref: HTMLDialogElement
-	let dialog_newsubtask_ref: HTMLDialogElement
-	let dialog_editsubtask_ref: HTMLDialogElement
+	let renameFileOption: 'edit' | 'action' = 'edit'
+	let addSubTaskOption: 'edit' | 'action' = 'edit'
+	let textFieldNewSubTaskRef: HTMLInputElement
+	let textFieldEditSubTaskRef: HTMLInputElement
+	let textFieldRenamefileRef: HTMLInputElement
+	let menuTaskActionRef: HTMLDialogElement
+	let menuReminderRef: HTMLDialogElement
+	let menuLabelsRef: HTMLDialogElement
+	let menuLabelActionRef: HTMLDialogElement
+	let menuLabelAction2Ref: HTMLDialogElement
+	let menuFileActionRef: HTMLDialogElement
+	let menuFileAction2Ref: HTMLDialogElement
+	let menuFileAction3Ref: HTMLDialogElement
+	let subMenuMoveTaskRef: HTMLDivElement
+	let dateTimePickerReminderRef: HTMLDialogElement
+	let dialogFileRenameRef: HTMLDialogElement
+	let dialogEditTaskRef: HTMLDialogElement
+	let dialogDeleteTaskWarningRef: HTMLDialogElement
+	let dialogViewFileRef: HTMLDialogElement
+	let dialogNewSubTaskRef: HTMLDialogElement
+	let dialogEditSubTaskRef: HTMLDialogElement
 
 	function command(type: Commands, ...args: unknown[]): unknown {
 		return props.command(type, ...args)
 	}
 
-	async function delete_task(ev: Event, task: Task, tasklist_index: number, task_index: number): Promise<void> {
-		if (!settings().is_show_deletetaskwarning) {
-			close_dialog(dialog_deletetaskwarning_ref)
-			close_dialog(dialog_edittask_ref)
-			close_menu(menu_taskaction_ref)
-			command(Commands.delete_task, task, tasklist_index, task_index)
+	function delete_task(
+		ev: Event,
+		task: Task,
+		taskListIndex: number,
+		taskIndex: number
+	): void {
+		if (!settings().showDeleteTaskWarning) {
+			closeDialog(dialogDeleteTaskWarningRef)
+			closeDialog(dialogEditTaskRef)
+			closeMenu(menuTaskActionRef)
+			command(Commands.deleteTask, task, taskListIndex, taskIndex)
 			return
 		}
 
-		set_selected_task_to_delete({task, tasklist_index, task_index})
-		open_dialog(ev, dialog_deletetaskwarning_ref, {important: true})
+		setSelectedTaskToDelete({task, taskListIndex: taskListIndex, taskIndex: taskIndex})
+		openDialog(ev, dialogDeleteTaskWarningRef, {important: true})
 	}
 
-	function edit_task(ev: Event, task: Task, tasklist_index: number, task_index: number): void {
-		set_selected_task_to_edit({task, tasklist_index: tasklist_index, task_index: task_index})
-		open_dialog(ev, dialog_edittask_ref)
+	function editTask(ev: Event, task: Task, taskListIndex: number, taskIndex: number): void {
+		setSelectedTaskToEdit({task, taskListIndex: taskListIndex, taskIndex: taskIndex})
+		openDialog(ev, dialogEditTaskRef)
 	}
 
-	async function view_file(ev: Event, file: TaskFileMetaData, tasklist_index: number, task_index: number, file_index: number): Promise<void> {
-		set_selected_file_to_view({file, tasklist_index, task_index, file_index})
+	async function viewFile(
+		ev: Event,
+		file: TaskFileMetaData,
+		taskListIndex: number,
+		taskIndex: number,
+		fileIndex: number
+	): Promise<void> {
+		setSelectedFileToView({file, taskListIndex: taskListIndex, taskIndex: taskIndex, fileIndex: fileIndex})
 		const blob = (await command(
-			Commands.get_file_blob,
+			Commands.getFileBlob,
 			ev,
 			file,
-			tasklist_index,
-			task_index,
-			file_index
+			taskListIndex,
+			taskIndex,
+			fileIndex
 		) as (Blob | null))
 		if (blob == null) return;
 
-		set_file_url_or_content(string_starts_with(selected_file_to_view.file.type, 'text')
-			? await file_read_as_text(blob)
-			: url_create(blob)
+		setFileURLOrContent(stringStartsWith(selectedFileToView.file.type, 'text')
+			? await fileReadAsText(blob)
+			: urlCreate(blob)
 		)
-		open_dialog(ev, dialog_viewfile_ref)
+		openDialog(ev, dialogViewFileRef)
 	}
 
-	function delete_subtask(index: number): void {
-		set_selected_task_to_edit(
+	function deleteSubTask(index: number): void {
+		setSelectedTaskToEdit(
 			'task', 'subtasks',
-			subtasks => array_concat(
-				array_slice(subtasks, 0, index),
-				array_slice(subtasks, index + 1)
+			subtasks => arrayConcat(
+				arraySlice(subtasks, 0, index),
+				arraySlice(subtasks, index + 1)
 			)
 		)
 		command(
-			Commands.edit_task,
-			selected_task_to_edit.task,
-			selected_task_to_edit.tasklist_index,
-			selected_task_to_edit.task_index
+			Commands.editTask,
+			selectedTaskToEdit.task,
+			selectedTaskToEdit.taskListIndex,
+			selectedTaskToEdit.taskIndex
 		)
 	}
 
-	function edit_subtask(
+	function editSubTask(
 		ev: Event,
-		subtask: SubTask,
-		tasklist_index: number,
-		task_index: number,
-		subtask_index: number
+		subTask: SubTask,
+		taskListIndex: number,
+		taskIndex: number,
+		subTaskIndex: number
 	): void {
-		set_selected_subtask_to_edit({subtask, tasklist_index, task_index, subtask_index})
-		change_textfield_value(textfield_editsubtask_ref, subtask.name)
-		set_text_subtask(subtask.name)
-		open_dialog(ev, dialog_editsubtask_ref, {
+		setSelectedSubTaskToEdit({subTask: subTask, taskListIndex: taskListIndex, taskIndex: taskIndex, subTaskIndex: subTaskIndex})
+		updateTextFieldValue(textFieldEditSubTaskRef, subTask.name)
+		setTextSubTask(subTask.name)
+		openDialog(ev, dialogEditSubTaskRef, {
 			important: true,
-			content_auto_focus: true
+			contentAutoFocus: true
 		})
 	}
 
-	function confirm_edit_subtask(): void {
-		close_dialog(dialog_editsubtask_ref)
+	function confirmEditSubTask(): void {
+		closeDialog(dialogEditSubTaskRef)
 		command(
-			Commands.edit_subtask,
-			{...selected_subtask_to_edit.subtask, name: string_trim(text_subtask())} satisfies SubTask,
-			selected_subtask_to_edit.tasklist_index,
-			selected_subtask_to_edit.task_index,
-			selected_subtask_to_edit.subtask_index
+			Commands.editSubTask,
+			{...selectedSubTaskToEdit.subTask, name: stringTrim(textSubTask())} satisfies SubTask,
+			selectedSubTaskToEdit.taskListIndex,
+			selectedSubTaskToEdit.taskIndex,
+			selectedSubTaskToEdit.subTaskIndex
 		)
 
-		set_selected_task_to_edit(
+		setSelectedTaskToEdit(
 			'task', 'subtasks',
-			tasklists()[selected_subtask_to_edit.tasklist_index].tasks[selected_subtask_to_edit.task_index].subtasks
+			taskLists()[selectedSubTaskToEdit.taskListIndex].tasks[selectedSubTaskToEdit.taskIndex].subtasks
 		)
 	}
 
-	async function confirm_add_subtask(): Promise<void> {
-		const task = add_subtask_option == 'action'? selected_task_to_action.task : selected_task_to_edit.task
-		const tasklist_index = add_subtask_option == 'action'? selected_task_to_action.tasklist_index : selected_task_to_edit.tasklist_index
-		const task_index = add_subtask_option == 'action'? selected_task_to_action.task_index : selected_task_to_edit.task_index
+	async function confirmAddSubTask(): Promise<void> {
+		const task = addSubTaskOption == 'action'? selectedTaskToAction.task : selectedTaskToEdit.task
+		const taskListIndex = addSubTaskOption == 'action'? selectedTaskToAction.taskListIndex : selectedTaskToEdit.taskListIndex
+		const taskIndex = addSubTaskOption == 'action'? selectedTaskToAction.taskIndex : selectedTaskToEdit.taskIndex
 
-		close_dialog(dialog_newsubtask_ref)
-		const subtasks = (await command(
-			Commands.add_subtask,
+		closeDialog(dialogNewSubTaskRef)
+		const subTasks = (await command(
+			Commands.addSubTask,
 			{   complete: false,
 				id: -1,
-				list_id: task.list_id,
-				name: string_trim(text_subtask()),
-				task_id: task.id
+				listId: task.listId,
+				name: stringTrim(textSubTask()),
+				taskId: task.id
 			} satisfies SubTask,
-			tasklist_index,
-			task_index
+			taskListIndex,
+			taskIndex
 		) as SubTask[])
 
-		if (add_subtask_option == 'edit') set_selected_task_to_edit('task', 'subtasks', subtasks)
-		else set_selected_task_to_action('task', 'subtasks', subtasks)
+		if (addSubTaskOption == 'edit') setSelectedTaskToEdit('task', 'subtasks', subTasks)
+		else setSelectedTaskToAction('task', 'subtasks', subTasks)
 	}
 
-	function confirm_file_rename(): void {
-		close_dialog(dialog_filerename_ref)
+	function confirmFileRename(): void {
+		closeDialog(dialogFileRenameRef)
 
-		const s = selected_file_to_rename
+		const s = selectedFileToRename
 		const file = s.file
-		const task_index = s.task_index
-		const tasklist_index = s.tasklist_index
-		const new_file: TaskFileMetaData = {
+		const taskIndex = s.taskIndex
+		const taskListIndex = s.taskListIndex
+		const newFile: TaskFileMetaData = {
 			id: file.id,
-			list_id: file.list_id,
-			name: string_trim(text_file()) + '.' + string_replace(file.name, /^[^\.]+\./gs, ''),
+			listId: file.listId,
+			name: stringTrim(textFile()) + '.' + stringReplace(file.name, /^[^\.]+\./gs, ''),
 			size: file.size,
-			task_id: file.task_id,
+			taskId: file.taskId,
 			type: file.type
 		}
-		command(Commands.edit_file, new_file, tasklist_index, task_index, s.file_index)
+		command(Commands.editFile, newFile, taskListIndex, taskIndex, s.fileIndex)
 
-		const files = props.tasklists[tasklist_index].tasks[task_index].files
-		if (rename_file_option == 'edit') set_selected_task_to_edit('task', 'files', files)
-		else if (rename_file_option == 'action') set_selected_task_to_fileaction('task', 'files', files)
+		const files = props.taskLists[taskListIndex].tasks[taskIndex].files
+		if (renameFileOption == 'edit') setSelectedTaskToEdit('task', 'files', files)
+		else if (renameFileOption == 'action') setSelectedTaskToFileAction('task', 'files', files)
 	}
 
-	function on_context_menu_task(ev: MouseEvent & {currentTarget: HTMLElement; target: DOMElement}, task: Task, tasklist_index: number, task_index: number): void {
-		set_selected_task_to_action({task, tasklist_index: tasklist_index, task_index: task_index})
-		open_menu(ev, menu_taskaction_ref, {position: MenuPosition.center_top_to_right})
+	function onContextMenuTask(
+		ev: MouseEvent & {currentTarget: HTMLElement; target: DOMElement},
+		task: Task,
+		taskListIndex: number,
+		taskIndex: number
+	): void {
+		setSelectedTaskToAction({task, taskListIndex, taskIndex})
+		openMenu(ev, menuTaskActionRef, {position: MenuPosition.centerTopToRight})
 	}
 
-	function global_click(ev: MouseEvent & {
+	function globalClick(ev: MouseEvent & {
 		currentTarget: HTMLDivElement
 		target: DOMElement
 	}): void {
-		const button = document_active()!
-		if (!element_valid_target(
-			event_current_target(ev),
+		const button = documentActive()!
+		if (!elementValidTarget(
+			eventCurrentTarget(ev),
 			button,
 		)) return
 
-		const data_taskitem_files = element_dataset(button, 'taskitemFiles')
-		if (data_taskitem_files) {
-			let [tasklist_index, task_index] = string_split(
-				data_taskitem_files, ','
+		const dataTaskitemFiles = elementDataset(button, 'taskitemFiles')
+		if (dataTaskitemFiles) {
+			let [taskListIndex, taskIndex] = stringSplit(
+				dataTaskitemFiles, ','
 			) as [string|number|undefined, string|number|undefined]
-			if (!tasklist_index || !task_index) return
+			if (!taskListIndex || !taskIndex) return
 
-			tasklist_index = number_parse(tasklist_index as string, true)
-			task_index = number_parse(task_index as string, true)
+			taskListIndex = numberParse(taskListIndex as string, true)
+			taskIndex = numberParse(taskIndex as string, true)
 			if (
-				number_is_not_defined(tasklist_index)
-				|| number_is_not_defined(task_index)
+				numberIsNotDefined(taskListIndex)
+				|| numberIsNotDefined(taskIndex)
 			) return
 
-			const task = tasklists()[tasklist_index].tasks[task_index]
-			set_selected_task_to_fileaction({task, tasklist_index, task_index})
-			open_menu(ev, menu_fileaction2_ref, {
+			const task = taskLists()[taskListIndex].tasks[taskIndex]
+			setSelectedTaskToFileAction({task, taskListIndex, taskIndex})
+			openMenu(ev, menuFileAction2Ref, {
 				anchor: button,
-				position: MenuPosition.center_bottom_to_right
+				position: MenuPosition.centerBottomToRight
 			})
 			return
 		}
 
-		const data_taskitem_reminder = element_dataset(button, 'taskitemReminder')
-		if (data_taskitem_reminder) {
-			let [tasklist_index, task_index] = string_split(
-				data_taskitem_reminder, ','
+		const dataTaskitemReminder = elementDataset(button, 'taskitemReminder')
+		if (dataTaskitemReminder) {
+			let [taskListIndex, taskIndex] = stringSplit(
+				dataTaskitemReminder, ','
 			) as [string|number|undefined, string|number|undefined]
-			if (!tasklist_index || !task_index) return
+			if (!taskListIndex || !taskIndex) return
 
-			tasklist_index = number_parse(tasklist_index as string, true)
-			task_index = number_parse(task_index as string, true)
+			taskListIndex = numberParse(taskListIndex as string, true)
+			taskIndex = numberParse(taskIndex as string, true)
 			if (
-				number_is_not_defined(tasklist_index)
-				|| number_is_not_defined(task_index)
+				numberIsNotDefined(taskListIndex)
+				|| numberIsNotDefined(taskIndex)
 			) return
 
-			const task = tasklists()[tasklist_index].tasks[task_index]
-			set_selected_task_to_changereminder({task, tasklist_index, task_index})
-			open_menu(ev, menu_reminder_ref, {
+			const task = taskLists()[taskListIndex].tasks[taskIndex]
+			setSelectedTaskToChangeReminder({task, taskListIndex, taskIndex})
+			openMenu(ev, menuReminderRef, {
 				anchor: button,
-				position: MenuPosition.center_bottom_to_right
+				position: MenuPosition.centerBottomToRight
 			})
 			return
 		}
 
-		const data_taskitem_delete = element_dataset(button, 'taskitemDelete')
-		if (data_taskitem_delete) {
-			let [tasklist_index, task_index] = string_split(
-				data_taskitem_delete, ','
+		const dataTaskitemDelete = elementDataset(button, 'taskitemDelete')
+		if (dataTaskitemDelete) {
+			let [taskListIndex, taskIndex] = stringSplit(
+				dataTaskitemDelete, ','
 			) as [string|number|undefined, string|number|undefined]
-			if (!tasklist_index || !task_index) return
+			if (!taskListIndex || !taskIndex) return
 
-			tasklist_index = number_parse(tasklist_index as string, true)
-			task_index = number_parse(task_index as string, true)
+			taskListIndex = numberParse(taskListIndex as string, true)
+			taskIndex = numberParse(taskIndex as string, true)
 			if (
-				number_is_not_defined(tasklist_index)
-				|| number_is_not_defined(task_index)
+				numberIsNotDefined(taskListIndex)
+				|| numberIsNotDefined(taskIndex)
 			) return
 
-			const task = tasklists()[tasklist_index].tasks[task_index]
-			delete_task(ev, task, tasklist_index, task_index)
+			const task = taskLists()[taskListIndex].tasks[taskIndex]
+			delete_task(ev, task, taskListIndex, taskIndex)
 			return
 		}
 
-		const data_taskitem_important = element_dataset(button, 'taskitemImportant')
-		if (data_taskitem_important) {
-			let [tasklist_index, task_index] = string_split(
-				data_taskitem_important, ','
+		const dataTaskitemImportant = elementDataset(button, 'taskitemImportant')
+		if (dataTaskitemImportant) {
+			let [taskListIndex, taskIndex] = stringSplit(
+				dataTaskitemImportant, ','
 			) as [string|number|undefined, string|number|undefined]
-			if (!tasklist_index || !task_index) return
+			if (!taskListIndex || !taskIndex) return
 
-			tasklist_index = number_parse(tasklist_index as string, true)
-			task_index = number_parse(task_index as string, true)
+			taskListIndex = numberParse(taskListIndex as string, true)
+			taskIndex = numberParse(taskIndex as string, true)
 			if (
-				number_is_not_defined(tasklist_index)
-				|| number_is_not_defined(task_index)
+				numberIsNotDefined(taskListIndex)
+				|| numberIsNotDefined(taskIndex)
 			) return
 
-			const task = tasklists()[tasklist_index].tasks[task_index]
+			const task = taskLists()[taskListIndex].tasks[taskIndex]
 			command(
-				Commands.edit_task,
+				Commands.editTask,
 				{...task, important: !task.important} satisfies Task,
-				tasklist_index,
-				task_index
+				taskListIndex,
+				taskIndex
 			)
 			return
 		}
 
-		const data_taskitem = element_dataset(button, 'taskitem')
-		if (data_taskitem) {
-			let [tasklist_index, task_index] = string_split(
-				data_taskitem, ','
+		const dataTaskitem = elementDataset(button, 'taskitem')
+		if (dataTaskitem) {
+			let [taskListIndex, taskIndex] = stringSplit(
+				dataTaskitem, ','
 			) as [string|number|undefined, string|number|undefined]
-			if (!tasklist_index || !task_index) return
+			if (!taskListIndex || !taskIndex) return
 
-			tasklist_index = number_parse(tasklist_index as string, true)
-			task_index = number_parse(task_index as string, true)
+			taskListIndex = numberParse(taskListIndex as string, true)
+			taskIndex = numberParse(taskIndex as string, true)
 			if (
-				number_is_not_defined(tasklist_index)
-				|| number_is_not_defined(task_index)
+				numberIsNotDefined(taskListIndex)
+				|| numberIsNotDefined(taskIndex)
 			) return
 
-			const task = tasklists()[tasklist_index].tasks[task_index]
-			edit_task(ev, task, tasklist_index, task_index)
+			const task = taskLists()[taskListIndex].tasks[taskIndex]
+			editTask(ev, task, taskListIndex, taskIndex)
 			return
 		}
 
-		const data_taskitem_complete = element_dataset(button, 'taskitemComplete')
-		if (data_taskitem_complete) {
-			let [tasklist_index, task_index] = string_split(
-				data_taskitem_complete, ','
+		const dataTaskItemComplete = elementDataset(button, 'taskitemComplete')
+		if (dataTaskItemComplete) {
+			let [taskListIndex, taskIndex] = stringSplit(
+				dataTaskItemComplete, ','
 			) as [string|number|undefined, string|number|undefined]
-			if (!tasklist_index || !task_index) return
+			if (!taskListIndex || !taskIndex) return
 
-			tasklist_index = number_parse(tasklist_index as string, true)
-			task_index = number_parse(task_index as string, true)
+			taskListIndex = numberParse(taskListIndex as string, true)
+			taskIndex = numberParse(taskIndex as string, true)
 			if (
-				number_is_not_defined(tasklist_index)
-				|| number_is_not_defined(task_index)
+				numberIsNotDefined(taskListIndex)
+				|| numberIsNotDefined(taskIndex)
 			) return
 
-			const task = tasklists()[tasklist_index].tasks[task_index]
+			const task = taskLists()[taskListIndex].tasks[taskIndex]
 			command(
-				Commands.edit_task,
+				Commands.editTask,
 				{...task, complete: !task.complete} satisfies Task,
-				tasklist_index,
-				task_index
+				taskListIndex,
+				taskIndex
 			)
 			return
 		}
 
-		const data_taskitem_label = element_dataset(button, 'taskitemLabel')
-		if (data_taskitem_label) {
-			let [tasklist_index, task_index, label_id] = string_split(
-				data_taskitem_label, ','
+		const dataTaskitemLabel = elementDataset(button, 'taskitemLabel')
+		if (dataTaskitemLabel) {
+			let [taskListIndex, taskIndex, labelId] = stringSplit(
+				dataTaskitemLabel, ','
 			) as [string|number|undefined, string|number|undefined, string|number|undefined]
-			if (!tasklist_index || !task_index) return
+			if (!taskListIndex || !taskIndex) return
 
-			tasklist_index = number_parse(tasklist_index as string, true)
-			task_index = number_parse(task_index as string, true)
-			label_id = number_parse(label_id as string, true)
+			taskListIndex = numberParse(taskListIndex as string, true)
+			taskIndex = numberParse(taskIndex as string, true)
+			labelId = numberParse(labelId as string, true)
 			if (
-				number_is_not_defined(tasklist_index)
-				|| number_is_not_defined(task_index)
-				|| number_is_not_defined(label_id)
+				numberIsNotDefined(taskListIndex)
+				|| numberIsNotDefined(taskIndex)
+				|| numberIsNotDefined(labelId)
 			) return
 
-			const task = tasklists()[tasklist_index].tasks[task_index]
-			const label = props.labels[label_id]!
-			set_selected_task_to_editlabel({task, tasklist_index, task_index})
-			set_selected_label(label)
-			open_menu(ev, menu_labelaction2_ref, {
+			const task = taskLists()[taskListIndex].tasks[taskIndex]
+			const label = props.labels[labelId]!
+			setSelectedTaskToEditLabel({task, taskListIndex, taskIndex})
+			setSelectedLabel(label)
+			openMenu(ev, menuLabelAction2Ref, {
 				anchor: button,
-				position: MenuPosition.center_bottom_to_right
+				position: MenuPosition.centerBottomToRight
 			})
 			return
 		}
 	}
 
-	function global_keydown(ev: KeyboardEvent & {
+	function globalKeyDown(ev: KeyboardEvent & {
 		currentTarget: HTMLDivElement
 		target: DOMElement
 	}): void {
 		const code = ev.code
-		const target = event_target(ev) as HTMLElement
-		const is_press_key = code == KEY_SPACE || code == KEY_ENTER
-		const is_arrow_up = code == KEY_ARROW_UP
-		const is_arrow_down = code == KEY_ARROW_DOWN
-		const is_arrow_right = code == KEY_ARROW_RIGHT
-		const is_arrow_left = code == KEY_ARROW_LEFT
-		const is_arrow_key = is_arrow_up || is_arrow_down || is_arrow_right || is_arrow_left
+		const target = eventTarget(ev) as HTMLElement
+		const isPressKey = code == KEY_SPACE || code == KEY_ENTER
+		const isArrowUp = code == KEY_ARROW_UP
+		const isArrowDown = code == KEY_ARROW_DOWN
+		const isArrowRight = code == KEY_ARROW_RIGHT
+		const isArrowLeft = code == KEY_ARROW_LEFT
+		const isArrowKey = isArrowUp || isArrowDown || isArrowRight || isArrowLeft
 
 		// handle custom interactive element using keyboard
-		if (is_press_key) {
-			const data_taskitem = element_dataset(target, 'taskitem')
+		if (isPressKey) {
+			const data_taskitem = elementDataset(target, 'taskitem')
 			if (data_taskitem) {
-				event_prevent_default(ev)
-				element_click(target)
+				eventPreventDefault(ev)
+				elementClick(target)
 				return
 			}
 		}
 
 		// handle move focus
-		if (is_arrow_key) {
+		if (isArrowKey) {
 			// Move between subtasks
-			const data_taskitem_subtask = element_dataset(target, 'taskitemSubtask')
-			if (data_taskitem_subtask && (is_arrow_down || is_arrow_up)) {
-				const label = element_closest(target, 'label')!
+			const dataTaskitemSubtask = elementDataset(target, 'taskitemSubtask')
+			if (dataTaskitemSubtask && (isArrowDown || isArrowUp)) {
+				const label = elementClosest(target, 'label')!
 
-				let sibling: HTMLElement | null = is_arrow_up
-					? element_previous_sibling(label)
-					: element_next_sibling(label)
+				let sibling: HTMLElement | null = isArrowUp
+					? elementSiblingPrevious(label)
+					: elementSiblingNext(label)
 				if (!sibling) return
 
-				sibling = element_by_selector('input', sibling)
+				sibling = elementBySelector('input', sibling)
 				if (!sibling) return
 
-				event_prevent_default(ev)
-				element_focus(sibling)
+				eventPreventDefault(ev)
+				elementFocus(sibling)
 				return
 			}
 
-			const data_taskitem = element_dataset(target, 'taskitem')
-			if (data_taskitem && (is_arrow_down || is_arrow_up)) {
-				const sibling: HTMLElement | null = is_arrow_up
-					? element_previous_sibling(target)
-					: element_next_sibling(target)
+			const dataTaskitem = elementDataset(target, 'taskitem')
+			if (dataTaskitem && (isArrowDown || isArrowUp)) {
+				const sibling: HTMLElement | null = isArrowUp
+					? elementSiblingPrevious(target)
+					: elementSiblingNext(target)
 				if (!sibling) return
 
-				event_prevent_default(ev)
-				element_focus(sibling)
+				eventPreventDefault(ev)
+				elementFocus(sibling)
 				return
 			}
 			return
 		}
 	}
 
-	function global_contextmenu(ev: MouseEvent & {
+	function globalContextMenu(ev: MouseEvent & {
 		currentTarget: HTMLDivElement
 		target: DOMElement
 	}): void {
-		const target = document_active()!
-		if (!element_valid_target(
-			event_current_target(ev),
+		const target = documentActive()!
+		if (!elementValidTarget(
+			eventCurrentTarget(ev),
 			target,
 		)) return
 
-		const data_taskitem = element_dataset(target, 'taskitem')
-		if (data_taskitem) {
-			let [tasklist_index, task_index] = string_split(
-				data_taskitem, ','
+		const dataTaskItem = elementDataset(target, 'taskitem')
+		if (dataTaskItem) {
+			let [taskListIndex, taskIndex] = stringSplit(
+				dataTaskItem, ','
 			) as [string|number|undefined, string|number|undefined]
-			if (!tasklist_index || !task_index) return
+			if (!taskListIndex || !taskIndex) return
 
-			tasklist_index = number_parse(tasklist_index as string, true)
-			task_index = number_parse(task_index as string, true)
+			taskListIndex = numberParse(taskListIndex as string, true)
+			taskIndex = numberParse(taskIndex as string, true)
 			if (
-				number_is_not_defined(tasklist_index)
-				|| number_is_not_defined(task_index)
+				numberIsNotDefined(taskListIndex)
+				|| numberIsNotDefined(taskIndex)
 			) return
 
-			const task = tasklists()[tasklist_index].tasks[task_index]
-			on_context_menu_task(ev, task, tasklist_index, task_index)
-			event_prevent_default(ev)
+			const task = taskLists()[taskListIndex].tasks[taskIndex]
+			onContextMenuTask(ev, task, taskListIndex, taskIndex)
+			eventPreventDefault(ev)
 			return
 		}
 	}
 
-	function global_change(ev: Event & {
+	function globalChange(ev: Event & {
 		currentTarget: HTMLDivElement
 		target: Element
 	}): void {
-		const target = event_target(ev) as HTMLElement
+		const target = eventTarget(ev) as HTMLElement
 
 		// subtask
-		const data_taskitem_subtask = element_dataset(target, 'taskitemSubtask')
-		if (data_taskitem_subtask) {
-			let [tasklist_index, task_index, subtask_index] = string_split(
-				data_taskitem_subtask, ','
+		const dataTaskitemSubtask = elementDataset(target, 'taskitemSubtask')
+		if (dataTaskitemSubtask) {
+			let [taskListIndex, taskIndex, subTaskIndex] = stringSplit(
+				dataTaskitemSubtask, ','
 			) as [string|number|undefined, string|number|undefined, string|number|undefined]
-			if (!tasklist_index || !task_index || !subtask_index) return
+			if (!taskListIndex || !taskIndex || !subTaskIndex) return
 
-			tasklist_index = number_parse(tasklist_index as string, true)
-			task_index = number_parse(task_index as string, true)
-			subtask_index = number_parse(subtask_index as string, true)
+			taskListIndex = numberParse(taskListIndex as string, true)
+			taskIndex = numberParse(taskIndex as string, true)
+			subTaskIndex = numberParse(subTaskIndex as string, true)
 			if (
-				number_is_not_defined(tasklist_index)
-				|| number_is_not_defined(task_index)
-				|| number_is_not_defined(subtask_index)
+				numberIsNotDefined(taskListIndex)
+				|| numberIsNotDefined(taskIndex)
+				|| numberIsNotDefined(subTaskIndex)
 			) return
 
-			const subtask = props.tasklists[tasklist_index].tasks[task_index].subtasks[subtask_index]
+			const subtask = props.taskLists[taskListIndex].tasks[taskIndex].subtasks[subTaskIndex]
 			command(
-				Commands.edit_subtask,
+				Commands.editSubTask,
 				{...subtask, complete: (target as HTMLInputElement).checked} satisfies SubTask,
-				tasklist_index,
-				task_index,
-				subtask_index
+				taskListIndex,
+				taskIndex,
+				subTaskIndex
 			)
 			return
 		}
 	}
 
 	const SubtaskItem: VoidComponent<{
-		subtask: SubTask
+		subTask: SubTask
 		index: number
 	}> = ($props) => {
-		const subtask = createMemo(() => $props.subtask)
+		const subTask = createMemo(() => $props.subTask)
 		const index = createMemo(() => $props.index)
 
 		return (<List
-			c_trailing={<>
+			c:trailing={<>
 				<IconButton
 					data-tooltip="Edit subtask"
 					data-subtask-edit-index={index()}
-					c_code={ICON_EDIT}
+					c:code={ICON_EDIT}
 				/>
 				<IconButton
 					data-tooltip="Delete subtask"
 					data-subtask-delete-index={index()}
-					c_code={ICON_DELETE}
+					c:code={ICON_DELETE}
 				/>
 			</>}
-			c_leading={<IconButton
-				data-tooltip={`Mark as ${subtask().complete? 'un' : ''}completed`}
+			c:leading={<IconButton
+				data-tooltip={`Mark as ${subTask().complete? 'un' : ''}completed`}
 				data-subtask-complete-index={index()}
-				c_code={subtask().complete? ICON_CHECKBOX_CHECKED : ICON_CHECKBOX_UNCHECKED}/>}>
-			{subtask().name}
+				c:code={subTask().complete? ICON_CHECKBOX_CHECKED : ICON_CHECKBOX_UNCHECKED}/>}>
+			{subTask().name}
 		</List>)
 	}
 
 	const FileItem: VoidComponent<{index: number}> = ($props) => {
-		const file_index = createMemo(() => $props.index)
-		const file = createMemo(() => selected_task_to_edit.task.files[file_index()])
-		const is_type_not_supported = createMemo<boolean>(() => !regex_test(/^(audio|image|video|text)/, file().type))
-		const get_size_text = createMemo(() => {
+		const fileIndex = createMemo(() => $props.index)
+		const file = createMemo(() => selectedTaskToEdit.task.files[fileIndex()])
+		const isTypeNotSupported = createMemo<boolean>(() => !regexTest(/^(audio|image|video|text)/, file().type))
+		const getSizeText = createMemo(() => {
 			const value = file().size
 			const TERA = 1_000_000_000_000
 			const GIGA = 1_000_000_000
 			const MEGA = 1_000_000
 			const KILO = 1_000
-			let unit_value = value + ' B'
+			let unitValue = value + ' B'
 
-			if      (value >= TERA) unit_value = number_parse(number_tofixed(value / TERA, 2)) + ' TB'
-			else if (value >= GIGA) unit_value = number_parse(number_tofixed(value / GIGA, 2)) + ' GB'
-			else if (value >= MEGA) unit_value = number_parse(number_tofixed(value / MEGA, 2)) + ' MB'
-			else if (value >= KILO) unit_value = number_parse(number_tofixed(value / KILO, 2)) + ' KB'
-			return unit_value
+			if      (value >= TERA) unitValue = numberParse(numberToFixed(value / TERA, 2)) + ' TB'
+			else if (value >= GIGA) unitValue = numberParse(numberToFixed(value / GIGA, 2)) + ' GB'
+			else if (value >= MEGA) unitValue = numberParse(numberToFixed(value / MEGA, 2)) + ' MB'
+			else if (value >= KILO) unitValue = numberParse(numberToFixed(value / KILO, 2)) + ' KB'
+			return unitValue
 		})
 
 		return (<List
-			classList={classlist_module(CSS.body_file_list_item)}
-			c_trailing={<>
+			classList={attrClassListModule(CSS.body_file_list_item)}
+			c:trailing={<>
 				<IconButton
-					data-tooltip={"View file" + (is_type_not_supported()? ' (not supported)' : '')}
-					disabled={is_type_not_supported()}
-					data-file-view-index={file_index()}
-					c_code={ICON_EYE}
+					data-tooltip={"View file" + (isTypeNotSupported()? ' (not supported)' : '')}
+					disabled={isTypeNotSupported()}
+					data-file-view-index={fileIndex()}
+					c:code={ICON_EYE}
 				/>
 				<IconButton
 					data-tooltip="More actions"
-					data-file-action-index={file_index()}
-					c_focused={selected_file_to_action.file.id == file().id && is_menu_fileaction_open()}
-					c_code={ICON_MORE_VERTICAL}
+					data-file-action-index={fileIndex()}
+					c:focused={selectedFileToAction.file.id == file().id && isMenuFileActionOpen()}
+					c:code={ICON_MORE_VERTICAL}
 				/>
 			</>}
-			c_subtitle={array_join([get_size_text(), string_replace(file().type, /\/.+$/gs, '')], " • ")}>
+			c:subtitle={arrayJoin([getSizeText(), stringReplace(file().type, /\/.+$/gs, '')], " • ")}>
 			{file().name}
 		</List>)
 	}
@@ -1376,17 +1392,17 @@ const _: VoidComponent<{
 		const name = createMemo(() => label().name)
 
 		return (<List
-			c_leading={<Icon style={{color: color() ?? undefined}} c_code={ICON_CIRCLE}/>}
-			c_trailing={<>
+			c:leading={<Icon style={{color: color() ?? undefined}} c:code={ICON_CIRCLE}/>}
+			c:trailing={<>
 				<IconButton
 					data-tooltip="Edit label"
 					data-label-edit-index={$props.index}
-					c_code={ICON_EDIT}
+					c:code={ICON_EDIT}
 				/>
 				<IconButton
 					data-tooltip="Remove label from task"
 					data-label-remove-index={$props.index}
-					c_code={ICON_DISMISS}
+					c:code={ICON_DISMISS}
 				/>
 			</>}>
 			{ name() }
@@ -1394,588 +1410,588 @@ const _: VoidComponent<{
 	}
 
 	const Dialogs: VoidComponent = () => {
-		const input_edittask_task_id = createUniqueId()
-		const input_edittask_description_id = createUniqueId()
-		const button_edittask_close_id = createUniqueId()
-		const button_edittask_markcomplete_id = createUniqueId()
-		const button_edittask_addsubtask_id = createUniqueId()
-		const button_edittask_addlabel_id = createUniqueId()
-		const button_edittask_addreminder_id = createUniqueId()
-		const button_edittask_addfile_id = createUniqueId()
-		const button_edittask_changereminder_id = createUniqueId()
-		const button_edittask_removereminder_id = createUniqueId()
-		const button_edittask_markimportant_id = createUniqueId()
-		const button_edittask_deletetask_id = createUniqueId()
-		const button_deletetask_cancel_id = createUniqueId()
-		const button_deletetask_delete_id = createUniqueId()
-		const button_filerename_cancel_id = createUniqueId()
-		const button_filerename_rename_id = createUniqueId()
-		const button_viewfile_close_id = createUniqueId()
-		const button_viewfile_download_id = createUniqueId()
-		const button_newsubtask_close_id = createUniqueId()
-		const button_newsubtask_add_id = createUniqueId()
-		const button_editsubtask_close_id = createUniqueId()
-		const button_editsubtask_edit_id = createUniqueId()
+		const input_editTask_taskId = createUniqueId()
+		const input_editTask_descriptionId = createUniqueId()
+		const button_editTask_closeId = createUniqueId()
+		const button_editTask_markCompleteId = createUniqueId()
+		const button_editTask_AddSubTaskId = createUniqueId()
+		const button_editTask_addLabelId = createUniqueId()
+		const button_editTask_addReminderId = createUniqueId()
+		const button_editTask_addFileId = createUniqueId()
+		const button_editTask_changeReminderId = createUniqueId()
+		const button_editTask_removeReminderId = createUniqueId()
+		const button_editTask_markImportantId = createUniqueId()
+		const button_editTask_deleteTaskId = createUniqueId()
+		const button_deleteTask_cancelId = createUniqueId()
+		const button_deleteTask_deleteId = createUniqueId()
+		const button_fileRename_cancelId = createUniqueId()
+		const button_fileRename_renameId = createUniqueId()
+		const button_viewFile_closeId = createUniqueId()
+		const button_viewFile_downloadId = createUniqueId()
+		const button_newSubTask_closeId = createUniqueId()
+		const button_newSubTask_addId = createUniqueId()
+		const button_editSubTask_closeId = createUniqueId()
+		const button_editSubTask_editId = createUniqueId()
 		return (<>
 			<Dialog
-				ref={r => dialog_edittask_ref = r}
-				c_header='Edit task'
+				ref={r => dialogEditTaskRef = r}
+				c:header='Edit task'
 				style={{width: '500px'}}
-				classList={classlist_module(CSS.body_dialog_edit)}
+				classList={attrClassListModule(CSS.body_dialog_edit)}
 				onClick={ev => {
-					const button = document_active()!
-					if (!element_valid_target(
-						event_current_target(ev),
+					const button = documentActive()!
+					if (!elementValidTarget(
+						eventCurrentTarget(ev),
 						button,
-						el => element_tagname(el) == 'BUTTON'
+						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					const task = selected_task_to_edit.task
-					const tasklist_index = selected_task_to_edit.tasklist_index
-					const task_index = selected_task_to_edit.task_index
-					switch (element_id(button)) {
-						case button_edittask_close_id:
-							close_dialog(dialog_edittask_ref)
-							break
-						case button_edittask_markcomplete_id:
-							command(Commands.edit_task,
-								{...task, complete: !task.complete} satisfies Task,
-								tasklist_index, task_index
+					const task = selectedTaskToEdit.task
+					const taskListIndex = selectedTaskToEdit.taskListIndex
+					const taskIndex = selectedTaskToEdit.taskIndex
+					switch (elementId(button)) {
+					case button_editTask_closeId:
+						closeDialog(dialogEditTaskRef)
+						break
+					case button_editTask_markCompleteId:
+						command(Commands.editTask,
+							{...task, complete: !task.complete} satisfies Task,
+							taskListIndex, taskIndex
+						)
+
+						setSelectedTaskToEdit('task', task)
+						break
+					case button_editTask_AddSubTaskId:
+						addSubTaskOption = 'edit'
+						openDialog(ev, dialogNewSubTaskRef, {
+							important: true,
+							contentAutoFocus: true
+						})
+						break
+					case button_editTask_addLabelId:
+						openMenu(ev, menuLabelsRef, {
+							anchor: button,
+							position: MenuPosition.centerBottomToRight
+						})
+						break
+					case button_editTask_addReminderId:
+						setChangeReminderOption('edit')
+						openDateTimePicker(ev, dateTimePickerReminderRef, {
+							anchor: button,
+							position: DateTimePickerPosition.centerBottomToRight
+						})
+						break
+					case button_editTask_changeReminderId:
+						setChangeReminderOption('edit')
+						openDateTimePicker(ev, dateTimePickerReminderRef, {
+							anchor: button,
+							position: DateTimePickerPosition.centerBottomToRight
+						})
+						break
+					case button_editTask_removeReminderId:
+						setSelectedTaskToEdit('task', 'reminder', null)
+						command(Commands.editTask, task, taskListIndex, taskIndex)
+						break
+					case button_editTask_addFileId:
+						promiseDone(fileOpen(null, true), async (files) => {
+							if (files == null) return;
+							const result = (await command(
+								Commands.addFiles,
+								files,
+								task,
+								taskListIndex,
+								taskIndex
+							) as TaskFileMetaData[])
+							setSelectedTaskToEdit('task', 'files', result)
+						})
+						break
+					case button_editTask_markImportantId:
+						setSelectedTaskToEdit('task', 'important', t => !t)
+						command(Commands.editTask, task, taskListIndex, taskIndex)
+						break
+					case button_editTask_deleteTaskId:
+						delete_task(ev, task, taskListIndex, taskIndex)
+						break
+					default:
+						const dataSubtaskEditIndex = elementDataset(button, 'subtaskEditIndex')
+						if (dataSubtaskEditIndex) {
+							const index = numberParse(dataSubtaskEditIndex, true)
+							if (numberIsNotDefined(index)) return
+
+							editSubTask(
+								ev, task.subtasks[index], taskListIndex, taskIndex, index
 							)
+							return
+						}
 
-							set_selected_task_to_edit('task', task)
-							break
-						case button_edittask_addsubtask_id:
-							add_subtask_option = 'edit'
-							open_dialog(ev, dialog_newsubtask_ref, {
-								important: true,
-								content_auto_focus: true
+						const dataSubtaskDeleteIndex = elementDataset(button, 'subtaskDeleteIndex')
+						if (dataSubtaskDeleteIndex) {
+							const index = numberParse(dataSubtaskDeleteIndex, true)
+							if (numberIsNotDefined(index)) return
+
+							deleteSubTask(index)
+							return
+						}
+
+						const dataSubTaskCompleteIndex = elementDataset(button, 'subtaskCompleteIndex')
+						if (dataSubTaskCompleteIndex) {
+							const index = numberParse(dataSubTaskCompleteIndex, true)
+							if (numberIsNotDefined(index)) return
+
+							const subtask = task.subtasks[index]
+							const $subtask: SubTask = {
+								...subtask,
+								complete: !subtask.complete
+							}
+							command(Commands.editSubTask,
+								$subtask, taskListIndex, taskIndex, index
+							)
+							setSelectedTaskToEdit('task', 'subtasks', index, $subtask)
+							return
+						}
+
+						const dataLabelEditIndex = elementDataset(button, 'labelEditIndex')
+						if (dataLabelEditIndex) {
+							const index = numberParse(dataLabelEditIndex, true)
+							if (numberIsNotDefined(index)) return
+
+							setSelectedLabel(props.labels[index]!)
+							command(Commands.editLabel, ev, selectedLabel)
+							return
+						}
+
+						const dataLabelRemoveIndex = elementDataset(button, 'labelRemoveIndex')
+						if (dataLabelRemoveIndex) {
+							const index = numberParse(dataLabelRemoveIndex, true)
+							if (numberIsNotDefined(index)) return
+
+							const i = arrayFindIndex(
+								selectedTaskToEdit.task.labelIds,
+								$id => $id == props.labels[index]!.id
+							)
+							if (i < 0) return
+
+							setSelectedTaskToEdit('task', 'labelIds', ids => arrayConcat(
+								arraySlice(ids, 0, i),
+								arraySlice(ids, i + 1)
+							))
+							command(Commands.editTask, task, taskListIndex, taskIndex)
+							return
+						}
+
+						const dataFileViewIndex = elementDataset(button, 'fileViewIndex')
+						if (dataFileViewIndex) {
+							const index = numberParse(dataFileViewIndex, true)
+							if (numberIsNotDefined(index)) return
+
+							viewFile(ev, task.files[index], taskListIndex, taskIndex, index)
+							return
+						}
+
+						const dataFileActionIndex = elementDataset(button, 'fileActionIndex')
+						if (dataFileActionIndex) {
+							const index = numberParse(dataFileActionIndex, true)
+							if (numberIsNotDefined(index)) return
+
+							setSelectedFileToAction({
+								file: task.files[index],
+								fileIndex: index,
+								taskIndex: taskIndex,
+								taskListIndex: taskListIndex
 							})
-							break
-						case button_edittask_addlabel_id:
-							open_menu(ev, menu_labels_ref, {
-								anchor: button,
-								position: MenuPosition.center_bottom_to_right
-							})
-							break
-						case button_edittask_addreminder_id:
-							set_change_reminder_option('edit')
-							open_datetimepicker(ev, datetimepicker_reminder_ref, {
-								anchor: button,
-								position: DateTimePickerPosition.center_bottom_to_right
-							})
-							break
-						case button_edittask_changereminder_id:
-							set_change_reminder_option('edit')
-							open_datetimepicker(ev, datetimepicker_reminder_ref, {
-								anchor: button,
-								position: DateTimePickerPosition.center_bottom_to_right
-							})
-							break
-						case button_edittask_removereminder_id:
-							set_selected_task_to_edit('task', 'reminder', null)
-							command(Commands.edit_task, task, tasklist_index, task_index)
-							break
-						case button_edittask_addfile_id:
-							promise_done(file_open(null, true), async (files) => {
-								if (files == null) return;
-								const result = (await command(
-									Commands.add_files,
-									files,
-									task,
-									tasklist_index,
-									task_index
-								) as TaskFileMetaData[])
-								set_selected_task_to_edit('task', 'files', result)
-							})
-							break
-						case button_edittask_markimportant_id:
-							set_selected_task_to_edit('task', 'important', t => !t)
-							command(Commands.edit_task, task, tasklist_index, task_index)
-							break
-						case button_edittask_deletetask_id:
-							delete_task(ev, task, tasklist_index, task_index)
-							break
-						default:
-							const data_subtask_edit_index = element_dataset(button, 'subtaskEditIndex')
-							if (data_subtask_edit_index) {
-								const index = number_parse(data_subtask_edit_index, true)
-								if (number_is_not_defined(index)) return
-
-								edit_subtask(
-									ev, task.subtasks[index], tasklist_index, task_index, index
-								)
-								return
-							}
-
-							const data_subtask_delete_index = element_dataset(button, 'subtaskDeleteIndex')
-							if (data_subtask_delete_index) {
-								const index = number_parse(data_subtask_delete_index, true)
-								if (number_is_not_defined(index)) return
-
-								delete_subtask(index)
-								return
-							}
-
-							const data_subtask_complete_index = element_dataset(button, 'subtaskCompleteIndex')
-							if (data_subtask_complete_index) {
-								const index = number_parse(data_subtask_complete_index, true)
-								if (number_is_not_defined(index)) return
-
-								const subtask = task.subtasks[index]
-								const $subtask: SubTask = {
-									...subtask,
-									complete: !subtask.complete
-								}
-								command(Commands.edit_subtask,
-									$subtask, tasklist_index, task_index, index
-								)
-								set_selected_task_to_edit('task', 'subtasks', index, $subtask)
-								return
-							}
-
-							const data_label_edit_index = element_dataset(button, 'labelEditIndex')
-							if (data_label_edit_index) {
-								const index = number_parse(data_label_edit_index, true)
-								if (number_is_not_defined(index)) return
-
-								set_selected_label(props.labels[index]!)
-								command(Commands.edit_label, ev, selected_label)
-								return
-							}
-
-							const data_label_remove_index = element_dataset(button, 'labelRemoveIndex')
-							if (data_label_remove_index) {
-								const index = number_parse(data_label_remove_index, true)
-								if (number_is_not_defined(index)) return
-
-								const i = array_find_index(
-									selected_task_to_edit.task.label_ids,
-									$id => $id == props.labels[index]!.id
-								)
-								if (i < 0) return
-
-								set_selected_task_to_edit('task', 'label_ids', ids => array_concat(
-									array_slice(ids, 0, i),
-									array_slice(ids, i + 1)
-								))
-								command(Commands.edit_task, task, tasklist_index, task_index)
-								return
-							}
-
-							const data_file_view_index = element_dataset(button, 'fileViewIndex')
-							if (data_file_view_index) {
-								const index = number_parse(data_file_view_index, true)
-								if (number_is_not_defined(index)) return
-
-								view_file(ev, task.files[index], tasklist_index, task_index, index)
-								return
-							}
-
-							const data_file_action_index = element_dataset(button, 'fileActionIndex')
-							if (data_file_action_index) {
-								const index = number_parse(data_file_action_index, true)
-								if (number_is_not_defined(index)) return
-
-								set_selected_file_to_action({
-									file: task.files[index],
-									file_index: index,
-									task_index,
-									tasklist_index
-								})
-								open_menu(ev, menu_fileaction_ref, {anchor: button})
-								return
-							}
+							openMenu(ev, menuFileActionRef, {anchor: button})
+							return
+						}
 					}
 				}}
 				onFocusOut={ev => {
-					const input = event_target(ev) as HTMLInputElement
-					const task = selected_task_to_edit.task
-					const tasklist_index = selected_task_to_edit.tasklist_index
-					const task_index = selected_task_to_edit.task_index
-					switch (element_id(input)) {
-						case input_edittask_task_id:
+					const input = eventTarget(ev) as HTMLInputElement
+					const task = selectedTaskToEdit.task
+					const taskListIndex = selectedTaskToEdit.taskListIndex
+					const taskIndex = selectedTaskToEdit.taskIndex
+					switch (elementId(input)) {
+						case input_editTask_taskId:
 							if (input.value == task.name) return
 
-							set_selected_task_to_edit('task', 'name', input.value)
-							command(Commands.edit_task, task, tasklist_index, task_index)
+							setSelectedTaskToEdit('task', 'name', input.value)
+							command(Commands.editTask, task, taskListIndex, taskIndex)
 							break
-						case input_edittask_description_id:
+						case input_editTask_descriptionId:
 							const value = input.value
 							if (value == task.description) return
 
-							set_selected_task_to_edit('task', 'description', value)
-							command(Commands.edit_task, task, tasklist_index, task_index)
+							setSelectedTaskToEdit('task', 'description', value)
+							command(Commands.editTask, task, taskListIndex, taskIndex)
 							break
 					}
 				}}
-				c_actions={<>
+				c:actions={<>
 					<Button
-						c_variant={ButtonVariant.tonal}
-						id={button_edittask_close_id}>
+						c:variant={ButtonVariant.tonal}
+						id={button_editTask_closeId}>
 						Close
 					</Button>
 					<Button
-						c_variant={ButtonVariant.filled}
-						id={button_edittask_markcomplete_id}>
-						Mark as {selected_task_to_edit.task.complete? "not" : ''} completed
+						c:variant={ButtonVariant.filled}
+						id={button_editTask_markCompleteId}>
+						Mark as {selectedTaskToEdit.task.complete? "not" : ''} completed
 					</Button>
 				</>}>
 				<TextField
-					c_label="Task"
-					value={selected_task_to_edit.task.name}
-					id={input_edittask_task_id}
+					c:label="Task"
+					value={selectedTaskToEdit.task.name}
+					id={input_editTask_taskId}
 				/>
 				<AreaTextField
-					c_label="Description"
-					c_max_line={3}
-					id={input_edittask_description_id}
-					value={selected_task_to_edit.task.description}
+					c:label="Description"
+					c:maxLine={3}
+					id={input_editTask_descriptionId}
+					value={selectedTaskToEdit.task.description}
 				/>
 				<div data-subtasks>
 					<Tooltip>
-						<For each={selected_task_to_edit.task.subtasks}>{ (subtask, index) => <SubtaskItem
-							subtask={subtask}
+						<For each={selectedTaskToEdit.task.subtasks}>{ (subtask, index) => <SubtaskItem
+							subTask={subtask}
 							index={index()}
 						/>}</For>
 					</Tooltip>
 					<Button
-						id={button_edittask_addsubtask_id}>
-						<Icon c_code={ICON_ADD_CIRCLE}/>Add subtask
+						id={button_editTask_AddSubTaskId}>
+						<Icon c:code={ICON_ADD_CIRCLE}/>Add subtask
 					</Button>
 				</div>
 				<Divider />
 				<div data-label>
 					<Tooltip>
-						<For each={selected_task_to_edit.task.label_ids}>{label_id =>
+						<For each={selectedTaskToEdit.task.labelIds}>{label_id =>
 							<Show when={props.labels[label_id] != undefined}>
 								<LabelItem index={label_id} />
 							</Show>
 						}</For>
 					</Tooltip>
 					<Button
-						c_focused={is_menu_labels_open()}
-						id={button_edittask_addlabel_id}>
-						<Icon c_code={ICON_TAG}/>Add label
+						c:focused={isMenuLabelsOpen()}
+						id={button_editTask_addLabelId}>
+						<Icon c:code={ICON_TAG}/>Add label
 					</Button>
 				</div>
 				<Divider />
 				<div data-reminder>
 					<Show
-						when={selected_task_to_edit.task.reminder != null}
+						when={selectedTaskToEdit.task.reminder != null}
 						fallback={<Button
-							id={button_edittask_addreminder_id}
-							c_focused={is_datetimepicker_reminder_open()}>
-							<Icon c_code={ICON_ALERT_BADGE}/>Add reminder
+							id={button_editTask_addReminderId}
+							c:focused={isDateTimePickerReminderOpen()}>
+							<Icon c:code={ICON_ALERT_BADGE}/>Add reminder
 						</Button>}>
 						<List
-							c_trailing_auto_tabindex
-							c_trailing={<Tooltip>
+							c:trailingAutoTabIndex
+							c:trailing={<Tooltip>
 								<IconButton
-									id={button_edittask_changereminder_id}
+									id={button_editTask_changeReminderId}
 									data-tooltip="Change datetime reminder"
-									c_code={ICON_CALENDAR_EDIT}
+									c:code={ICON_CALENDAR_EDIT}
 								/>
 								<IconButton
-									id={button_edittask_removereminder_id}
+									id={button_editTask_removeReminderId}
 									data-tooltip="Remove reminder"
-									c_code={ICON_ALERT_OFF}
+									c:code={ICON_ALERT_OFF}
 								/>
 							</Tooltip>}
-							c_leading={<Icon c_code={ICON_ALERT_URGENT}/>}>
+							c:leading={<Icon c:code={ICON_ALERT_URGENT}/>}>
 							<span style={{
-								color: date_out_range_YMD_HM(
-									selected_task_to_edit.task.reminder!,
-									get_current_date(),
-									new Date(date_year() + 100, 2, 2)
+								color: dateOutRangeYMD_HM(
+									selectedTaskToEdit.task.reminder!,
+									dateCurrent(),
+									new Date(dateYear() + 100, 2, 2)
 								)? 'rgb(var(--g-color-error))' : undefined
-							}}>{date_text_YMD_HM(selected_task_to_edit.task.reminder!)}</span>
+							}}>{dateTextYMD_HM(selectedTaskToEdit.task.reminder!)}</span>
 						</List>
 					</Show>
 				</div>
 				<Divider />
-				<Show when={!props.is_db_file_error}>
+				<Show when={!props.isDBFileError}>
 					<div data-file>
 						<Tooltip>
-							<For each={selected_task_to_edit.task.files}>{(_, index) =>
+							<For each={selectedTaskToEdit.task.files}>{(_, index) =>
 								<FileItem index={index()}/>
 							}</For>
 						</Tooltip>
-						<Button id={button_edittask_addfile_id}>
-							<Icon c_code={ICON_ATTACH}/>Add file
+						<Button id={button_editTask_addFileId}>
+							<Icon c:code={ICON_ATTACH}/>Add file
 						</Button>
 					</div>
 					<Divider />
 				</Show>
 				<div data-important>
-					<Button id={button_edittask_markimportant_id}>
-						<Icon c_filled={selected_task_to_edit.task.important} c_code={ICON_STAR}/>
-						Mark as {selected_task_to_edit.task.important? 'not' : ''} important
+					<Button id={button_editTask_markImportantId}>
+						<Icon c:filled={selectedTaskToEdit.task.important} c:code={ICON_STAR}/>
+						Mark as {selectedTaskToEdit.task.important? 'not' : ''} important
 					</Button>
 				</div>
 				<div data-delete>
 					<Button
-						id={button_edittask_deletetask_id}
+						id={button_editTask_deleteTaskId}
 						style={{color: `rgb(${AppColors.error})`}}>
-						<Icon c_code={ICON_DELETE}/>
+						<Icon c:code={ICON_DELETE}/>
 						Delete task
 					</Button>
 				</div>
 			</Dialog>
 			<Dialog
-				c_header="Delete task"
+				c:header="Delete task"
 				style={{width: '560px'}}
-				ref={r => dialog_deletetaskwarning_ref = r}
+				ref={r => dialogDeleteTaskWarningRef = r}
 				onClick={ev => {
-					const button = document_active()!
-					if (!element_valid_target(
-						event_current_target(ev),
+					const button = documentActive()!
+					if (!elementValidTarget(
+						eventCurrentTarget(ev),
 						button,
-						el => element_tagname(el) == "BUTTON"
+						el => elementTagName(el) == "BUTTON"
 					)) return
 
-					const task = selected_task_to_delete.task
-					const tasklist_index = selected_task_to_delete.tasklist_index
-					const task_index = selected_task_to_delete.task_index
-					switch (element_id(button)) {
-						case button_deletetask_cancel_id:
-							close_dialog(dialog_deletetaskwarning_ref)
-							break
-						case button_deletetask_delete_id:
-							close_dialog(dialog_deletetaskwarning_ref)
-							close_dialog(dialog_edittask_ref)
-							close_menu(menu_taskaction_ref)
-							command(Commands.delete_task, task, tasklist_index, task_index)
-							break
+					const task = selectedTaskToDelete.task
+					const taskListIndex = selectedTaskToDelete.taskListIndex
+					const taskIndex = selectedTaskToDelete.taskIndex
+					switch (elementId(button)) {
+					case button_deleteTask_cancelId:
+						closeDialog(dialogDeleteTaskWarningRef)
+						break
+					case button_deleteTask_deleteId:
+						closeDialog(dialogDeleteTaskWarningRef)
+						closeDialog(dialogEditTaskRef)
+						closeMenu(menuTaskActionRef)
+						command(Commands.deleteTask, task, taskListIndex, taskIndex)
+						break
 					}
 				}}
-				c_actions={<>
+				c:actions={<>
 					<Button
-						id={button_deletetask_cancel_id}
-						c_variant={ButtonVariant.tonal}>
+						id={button_deleteTask_cancelId}
+						c:variant={ButtonVariant.tonal}>
 						Cancel
 					</Button>
 					<Button
-						id={button_deletetask_delete_id}
-						c_variant={ButtonVariant.filled}>
+						id={button_deleteTask_deleteId}
+						c:variant={ButtonVariant.filled}>
 						Delete
 					</Button>
 				</>}>
-				Are you sure want to delete <q><span style={{color: `rgb(${AppColors.accent})`, "font-weight": 'bold'}}>{(selected_task_to_delete.task.name) || ''}</span></q> task?
+				Are you sure want to delete <q><span style={{color: `rgb(${AppColors.accent})`, "font-weight": 'bold'}}>{(selectedTaskToDelete.task.name) || ''}</span></q> task?
 				<CheckBox
-					c_attr_label={{style: "margin-top: 16px"}}
-					onChange={ev => command(Commands.toggle_delete_task_warning, !event_current_target(ev).checked)}>
+					c:attrLabel={{style: "margin-top: 16px"}}
+					onChange={ev => command(Commands.toggleDeleteTaskWarning, !eventCurrentTarget(ev).checked)}>
 					Don't remind me again
 				</CheckBox>
 			</Dialog>
 			<Dialog
-				ref={r => dialog_filerename_ref = r}
+				ref={r => dialogFileRenameRef = r}
 				style={{width: '500px'}}
-				c_header="Rename file"
+				c:header="Rename file"
 				onClick={ev => {
-					const button = document_active()!
-					if (!element_valid_target(
-						event_current_target(ev),
+					const button = documentActive()!
+					if (!elementValidTarget(
+						eventCurrentTarget(ev),
 						button,
-						el => element_tagname(el) == "BUTTON"
+						el => elementTagName(el) == "BUTTON"
 					)) return
 
-					switch (element_id(button)) {
-						case button_filerename_cancel_id:
-							close_dialog(dialog_filerename_ref)
-							break
-						case button_filerename_rename_id:
-							confirm_file_rename()
-							break
+					switch (elementId(button)) {
+					case button_fileRename_cancelId:
+						closeDialog(dialogFileRenameRef)
+						break
+					case button_fileRename_renameId:
+						confirmFileRename()
+						break
 					}
 				}}
-				c_actions={<>
+				c:actions={<>
 					<Button
-						c_variant={ButtonVariant.tonal}
-						id={button_filerename_cancel_id}>
+						c:variant={ButtonVariant.tonal}
+						id={button_fileRename_cancelId}>
 						Cancel
 					</Button>
 					<Button
-						c_variant={ButtonVariant.filled}
-						id={button_filerename_rename_id}
-						disabled={string_trim(text_file()) == ''}>
+						c:variant={ButtonVariant.filled}
+						id={button_fileRename_renameId}
+						disabled={stringTrim(textFile()) == ''}>
 						Rename
 					</Button>
 				</>}>
 				<form onSubmit={ev => {
-					event_prevent_default(ev)
-					if (string_trim(text_file()) == '') return;
+					eventPreventDefault(ev)
+					if (stringTrim(textFile()) == '') return;
 
-					confirm_file_rename()
+					confirmFileRename()
 				}}>
 					<TextField
-						ref={r => textfield_renamefile_ref = r}
+						ref={r => textFieldRenamefileRef = r}
 						autofocus
-						onInput={ev => set_text_file(event_current_target(ev).value)}
+						onInput={ev => setTextFile(eventCurrentTarget(ev).value)}
 						placeholder="File name"
 					/>
 				</form>
 			</Dialog>
 			<Dialog
 				style={{width: '720px'}}
-				ref={r => dialog_viewfile_ref = r}
+				ref={r => dialogViewFileRef = r}
 				onClose={() => {
-					if (!string_starts_with(selected_file_to_view.file.type, 'text')) url_revoke(file_url_or_content())
-					set_file_url_or_content('')
+					if (!stringStartsWith(selectedFileToView.file.type, 'text')) urlRevoke(fileURLOrContent())
+					setFileURLOrContent('')
 				}}
 				onClick={ev => {
-					const button = document_active()!
-					if (!element_valid_target(
-						event_current_target(ev),
+					const button = documentActive()!
+					if (!elementValidTarget(
+						eventCurrentTarget(ev),
 						button,
-						el => element_tagname(el) == "BUTTON"
+						el => elementTagName(el) == "BUTTON"
 					)) return
 
-					const file = selected_file_to_view.file
-					const tasklist_index = selected_file_to_view.tasklist_index
-					const task_index = selected_file_to_view.task_index
-					const file_index = selected_file_to_view.file_index
-					switch (element_id(button)) {
-						case button_viewfile_close_id:
-							close_dialog(dialog_viewfile_ref)
-							break
-						case button_viewfile_download_id:
-							command(Commands.download_file,
-								ev, file, tasklist_index, task_index, file_index
-							)
-							break
+					const file = selectedFileToView.file
+					const taskListIndex = selectedFileToView.taskListIndex
+					const taskIndex = selectedFileToView.taskIndex
+					const fileIndex = selectedFileToView.fileIndex
+					switch (elementId(button)) {
+					case button_viewFile_closeId:
+						closeDialog(dialogViewFileRef)
+						break
+					case button_viewFile_downloadId:
+						command(Commands.downloadFile,
+							ev, file, taskListIndex, taskIndex, fileIndex
+						)
+						break
 					}
 				}}
-				c_header={selected_file_to_view.file.name}
-				c_actions={<>
+				c:header={selectedFileToView.file.name}
+				c:actions={<>
 					<Button
-						id={button_viewfile_close_id}
-						c_variant={ButtonVariant.tonal}>
+						id={button_viewFile_closeId}
+						c:variant={ButtonVariant.tonal}>
 						Close
 					</Button>
 					<Button
-						c_variant={ButtonVariant.filled}
-						id={button_viewfile_download_id}>
+						c:variant={ButtonVariant.filled}
+						id={button_viewFile_downloadId}>
 						Download
 					</Button>
 				</>}>
-				<Show when={file_url_or_content() != ''}>
+				<Show when={fileURLOrContent() != ''}>
 					<Switch>
-						<Match when={string_starts_with(selected_file_to_view.file.type, 'image')}>
-							<img src={file_url_or_content()} width={'100%'}/>
+						<Match when={stringStartsWith(selectedFileToView.file.type, 'image')}>
+							<img src={fileURLOrContent()} width={'100%'}/>
 						</Match>
-						<Match when={string_starts_with(selected_file_to_view.file.type, 'video')}>
-							<video src={file_url_or_content()} autoplay controls width={'100%'}></video>
+						<Match when={stringStartsWith(selectedFileToView.file.type, 'video')}>
+							<video src={fileURLOrContent()} autoplay controls width={'100%'}></video>
 						</Match>
-						<Match when={string_starts_with(selected_file_to_view.file.type, 'audio')}>
-							<audio src={file_url_or_content()} autoplay controls style={{width: '100%'}}></audio>
+						<Match when={stringStartsWith(selectedFileToView.file.type, 'audio')}>
+							<audio src={fileURLOrContent()} autoplay controls style={{width: '100%'}}></audio>
 						</Match>
-						<Match when={string_starts_with(selected_file_to_view.file.type, 'text')}>
-							<pre><code style="white-space:normal">{file_url_or_content()}</code></pre>
+						<Match when={stringStartsWith(selectedFileToView.file.type, 'text')}>
+							<pre><code style="white-space:normal">{fileURLOrContent()}</code></pre>
 						</Match>
 					</Switch>
 				</Show>
 			</Dialog>
 			<Dialog
-				ref={r => dialog_newsubtask_ref = r}
+				ref={r => dialogNewSubTaskRef = r}
 				style={{width: '500px'}}
-				c_header="New subtask"
+				c:header="New subtask"
 				onClose={() => {
-					set_text_subtask('')
-					change_textfield_value(textfield_newsubtask_ref, '')
+					setTextSubTask('')
+					updateTextFieldValue(textFieldNewSubTaskRef, '')
 				}}
 				onClick={ev => {
-					const button = document_active()!
-					if (!element_valid_target(
-						event_current_target(ev),
+					const button = documentActive()!
+					if (!elementValidTarget(
+						eventCurrentTarget(ev),
 						button,
-						el => element_tagname(el) == "BUTTON"
+						el => elementTagName(el) == "BUTTON"
 					)) return
 
-					switch (element_id(button)) {
-						case button_newsubtask_close_id:
-							close_dialog(dialog_newsubtask_ref)
-							break
-						case button_newsubtask_add_id:
-							confirm_add_subtask()
-							break
+					switch (elementId(button)) {
+					case button_newSubTask_closeId:
+						closeDialog(dialogNewSubTaskRef)
+						break
+					case button_newSubTask_addId:
+						confirmAddSubTask()
+						break
 					}
 				}}
-				c_actions={<>
+				c:actions={<>
 					<Button
-						c_variant={ButtonVariant.tonal}
-						id={button_newsubtask_close_id}>
+						c:variant={ButtonVariant.tonal}
+						id={button_newSubTask_closeId}>
 						Close
 					</Button>
 					<Button
-						c_variant={ButtonVariant.filled}
-						id={button_newsubtask_add_id}
-						disabled={string_trim(text_subtask()) == ''}>
+						c:variant={ButtonVariant.filled}
+						id={button_newSubTask_addId}
+						disabled={stringTrim(textSubTask()) == ''}>
 						Add
 					</Button>
 				</>}>
 				<form onSubmit={ev => {
-					event_prevent_default(ev)
-					if (string_trim(text_subtask()) == '') return;
+					eventPreventDefault(ev)
+					if (stringTrim(textSubTask()) == '') return;
 
-					confirm_add_subtask()
+					confirmAddSubTask()
 				}}>
 					<TextField
-						ref={r => textfield_newsubtask_ref = r}
+						ref={r => textFieldNewSubTaskRef = r}
 						placeholder="Subtask name"
-						onFocus={ev => set_text_subtask(event_current_target(ev).value)}
-						onInput={ev => set_text_subtask(event_current_target(ev).value)}
+						onFocus={ev => setTextSubTask(eventCurrentTarget(ev).value)}
+						onInput={ev => setTextSubTask(eventCurrentTarget(ev).value)}
 					/>
 				</form>
 			</Dialog>
 			<Dialog
-				ref={r => dialog_editsubtask_ref = r}
+				ref={r => dialogEditSubTaskRef = r}
 				style={{width: '500px'}}
-				c_header="Edit subtask"
+				c:header="Edit subtask"
 				onClose={() => {
-					set_text_subtask('')
-					change_textfield_value(textfield_editsubtask_ref, '')
+					setTextSubTask('')
+					updateTextFieldValue(textFieldEditSubTaskRef, '')
 				}}
 				onClick={ev => {
-					const button = document_active()!
-					if (!element_valid_target(
-						event_current_target(ev),
+					const button = documentActive()!
+					if (!elementValidTarget(
+						eventCurrentTarget(ev),
 						button,
-						el => element_tagname(el) == "BUTTON"
+						el => elementTagName(el) == "BUTTON"
 					)) return
 
-					switch (element_id(button)) {
-						case button_editsubtask_close_id:
-							close_dialog(dialog_editsubtask_ref)
-							break
-						case button_editsubtask_edit_id:
-							confirm_edit_subtask()
-							break
+					switch (elementId(button)) {
+					case button_editSubTask_closeId:
+						closeDialog(dialogEditSubTaskRef)
+						break
+					case button_editSubTask_editId:
+						confirmEditSubTask()
+						break
 					}
 				}}
-				c_actions={<>
+				c:actions={<>
 					<Button
-						id={button_editsubtask_close_id}
-						c_variant={ButtonVariant.tonal}>
+						id={button_editSubTask_closeId}
+						c:variant={ButtonVariant.tonal}>
 						Close
 					</Button>
 					<Button
-						id={button_editsubtask_edit_id}
-						c_variant={ButtonVariant.filled}
-						disabled={string_trim(text_subtask()) == ''}>
+						id={button_editSubTask_editId}
+						c:variant={ButtonVariant.filled}
+						disabled={stringTrim(textSubTask()) == ''}>
 						Edit
 					</Button>
 				</>}>
 				<form style="display:contents" onSubmit={ev => {
-					event_prevent_default(ev)
-					if (string_trim(text_subtask()) == '') return;
-					confirm_edit_subtask()
+					eventPreventDefault(ev)
+					if (stringTrim(textSubTask()) == '') return;
+					confirmEditSubTask()
 				}}>
 					<TextField
-						ref={r => textfield_editsubtask_ref = r}
+						ref={r => textFieldEditSubTaskRef = r}
 						placeholder="Subtask name"
-						onFocus={ev => set_text_subtask(event_current_target(ev).value)}
-						onInput={ev => set_text_subtask(event_current_target(ev).value)}
+						onFocus={ev => setTextSubTask(eventCurrentTarget(ev).value)}
+						onInput={ev => setTextSubTask(eventCurrentTarget(ev).value)}
 					/>
 				</form>
 			</Dialog>
@@ -1983,164 +1999,164 @@ const _: VoidComponent<{
 	}
 
 	const Menus: VoidComponent = () => {
-		const button_taskactions_markcomplete_id = createUniqueId()
-		const button_taskactions_markimportant_id = createUniqueId()
-		const button_taskactions_addfile_id = createUniqueId()
-		const button_taskactions_addsubtask_id = createUniqueId()
-		const button_taskactions_addreminder_id = createUniqueId()
-		const button_taskactions_edittask_id = createUniqueId()
-		const button_taskactions_deletetask_id = createUniqueId()
-		const button_reminder_change_id = createUniqueId()
-		const button_reminder_remove_id = createUniqueId()
-		const button_labels_new_id = createUniqueId()
-		const button_labels_edit_id = createUniqueId()
-		const button_labelactions_edit_id = createUniqueId()
-		const button_labelactions_delete_id = createUniqueId()
-		const button_labelactions_edit2_id = createUniqueId()
-		const button_labelactions_delete2_id = createUniqueId()
-		const button_fileaction_download_id = createUniqueId()
-		const button_fileaction_rename_id = createUniqueId()
-		const button_fileaction_delete_id = createUniqueId()
-		const button_fileaction3_view_id = createUniqueId()
-		const button_fileaction3_rename_id = createUniqueId()
-		const button_fileaction3_download_id = createUniqueId()
-		const button_fileaction3_delete_id = createUniqueId()
+		const button_taskActions_markCompleteId = createUniqueId()
+		const button_taskActions_markImportantId = createUniqueId()
+		const button_taskActions_addFileId = createUniqueId()
+		const button_taskActions_addSubTaskId = createUniqueId()
+		const button_taskActions_addReminderId = createUniqueId()
+		const button_taskActions_editTaskId = createUniqueId()
+		const button_taskActions_deleteTaskId = createUniqueId()
+		const button_reminder_changedId = createUniqueId()
+		const button_reminder_removeId = createUniqueId()
+		const button_labels_newId = createUniqueId()
+		const button_labels_editId = createUniqueId()
+		const button_labelActions_editId = createUniqueId()
+		const button_labelActions_deleteId = createUniqueId()
+		const button_labelActions_edit2Id = createUniqueId()
+		const button_labelActions_delete2Id = createUniqueId()
+		const button_fileAction_downloadId = createUniqueId()
+		const button_fileAction_renameId = createUniqueId()
+		const button_fileAction_deleteId = createUniqueId()
+		const button_fileAction3_viewId = createUniqueId()
+		const button_fileAction3_renameId = createUniqueId()
+		const button_fileAction3_downloadId = createUniqueId()
+		const button_fileAction3_deleteId = createUniqueId()
 		return (<>
 			<Menu
-				ref={r => menu_taskaction_ref = r}
+				ref={r => menuTaskActionRef = r}
 				onClick={ev => {
-					const button = document_active()!
-					if (!element_valid_target(
-						event_current_target(ev),
+					const button = documentActive()!
+					if (!elementValidTarget(
+						eventCurrentTarget(ev),
 						button,
-						el => element_tagname(el) == 'BUTTON'
+						el => elementTagName(el) == 'BUTTON'
 					)) return
-					const task = selected_task_to_action.task
-					const tasklist_index = selected_task_to_action.tasklist_index
-					const task_index = selected_task_to_action.task_index
+					const task = selectedTaskToAction.task
+					const taskListIndex = selectedTaskToAction.taskListIndex
+					const taskIndex = selectedTaskToAction.taskIndex
 
-					switch (element_id(button)){
-						case button_taskactions_markcomplete_id:
-							close_menu(menu_taskaction_ref)
-							command(Commands.edit_task,
-								{ ...task, complete: !task.complete } satisfies Task,
-								tasklist_index, task_index
-							)
-							break
-						case button_taskactions_markimportant_id:
-							close_menu(menu_taskaction_ref)
-							command(Commands.edit_task,
-								{ ...task, important: !task.important } satisfies Task,
-								tasklist_index, task_index
-							)
-							break
-						case button_taskactions_addfile_id:
-							close_menu(menu_taskaction_ref)
-							promise_done(file_open(null, true), async (files) => {
-								if (files == null) return;
-								const result = await command(Commands.add_files,
-									files, task, tasklist_index, task_index
-								) as TaskFileMetaData[]
-								set_selected_task_to_action('task', 'files', result)
-							})
-							break
-						case button_taskactions_addsubtask_id:
-							close_menu(menu_taskaction_ref)
-							add_subtask_option = 'action'
-							open_dialog(ev, dialog_newsubtask_ref, {
-								important: true,
-								content_auto_focus: true
-							})
-							break
-						case button_taskactions_addreminder_id:
-							close_menu(menu_taskaction_ref)
-							set_change_reminder_option('action')
-							open_datetimepicker(ev, datetimepicker_reminder_ref)
-							break
-						case button_taskactions_edittask_id:
-							close_menu(menu_taskaction_ref)
-							edit_task(ev, task, tasklist_index, task_index)
-							break
-						case button_taskactions_deletetask_id:
-							delete_task(ev, task, tasklist_index, task_index)
-							break
-						default:
-							const data_label_id = element_dataset(button, 'labelId')
-							if (data_label_id) {
-								const label_id = number_parse(data_label_id, true)
-								if (number_is_not_defined(label_id)) return
+					switch (elementId(button)){
+					case button_taskActions_markCompleteId:
+						closeMenu(menuTaskActionRef)
+						command(Commands.editTask,
+							{ ...task, complete: !task.complete } satisfies Task,
+							taskListIndex, taskIndex
+						)
+						break
+					case button_taskActions_markImportantId:
+						closeMenu(menuTaskActionRef)
+						command(Commands.editTask,
+							{ ...task, important: !task.important } satisfies Task,
+							taskListIndex, taskIndex
+						)
+						break
+					case button_taskActions_addFileId:
+						closeMenu(menuTaskActionRef)
+						promiseDone(fileOpen(null, true), async (files) => {
+							if (files == null) return;
+							const result = await command(Commands.addFiles,
+								files, task, taskListIndex, taskIndex
+							) as TaskFileMetaData[]
+							setSelectedTaskToAction('task', 'files', result)
+						})
+						break
+					case button_taskActions_addSubTaskId:
+						closeMenu(menuTaskActionRef)
+						addSubTaskOption = 'action'
+						openDialog(ev, dialogNewSubTaskRef, {
+							important: true,
+							contentAutoFocus: true
+						})
+						break
+					case button_taskActions_addReminderId:
+						closeMenu(menuTaskActionRef)
+						setChangeReminderOption('action')
+						openDateTimePicker(ev, dateTimePickerReminderRef)
+						break
+					case button_taskActions_editTaskId:
+						closeMenu(menuTaskActionRef)
+						editTask(ev, task, taskListIndex, taskIndex)
+						break
+					case button_taskActions_deleteTaskId:
+						delete_task(ev, task, taskListIndex, taskIndex)
+						break
+					default:
+						const dataLabelId = elementDataset(button, 'labelId')
+						if (dataLabelId) {
+							const labelId = numberParse(dataLabelId, true)
+							if (numberIsNotDefined(labelId)) return
 
-								const index = array_find_index(task.label_ids, id => id == label_id)
-								set_selected_task_to_action('task', 'label_ids', ids => index >= 0
-									? array_concat(
-										array_slice(ids, 0, index),
-										array_slice(ids, index + 1)
-									)
-									: [...ids, label_id]
+							const index = arrayFindIndex(task.labelIds, id => id == labelId)
+							setSelectedTaskToAction('task', 'labelIds', ids => index >= 0
+								? arrayConcat(
+									arraySlice(ids, 0, index),
+									arraySlice(ids, index + 1)
 								)
-								command(Commands.edit_task, task, tasklist_index, task_index)
-								return
-							}
+								: [...ids, labelId]
+							)
+							command(Commands.editTask, task, taskListIndex, taskIndex)
+							return
+						}
 
-							const data_tasklist_index = element_dataset(button, 'tasklistIndex')
-							if (data_tasklist_index) {
-								const i = number_parse(data_tasklist_index, true)
-								if (number_is_not_defined(i)) return
+						const dataTasklistIndex = elementDataset(button, 'tasklistIndex')
+						if (dataTasklistIndex) {
+							const i = numberParse(dataTasklistIndex, true)
+							if (numberIsNotDefined(i)) return
 
-								command(Commands.move_task, task, tasklist_index, task_index, i)
-								close_submenu(submenu_movetask_ref)
-								close_menu(menu_taskaction_ref)
-								return
-							}
+							command(Commands.moveTask, task, taskListIndex, taskIndex, i)
+							closeSubMenu(subMenuMoveTaskRef)
+							closeMenu(menuTaskActionRef)
+							return
+						}
 					}
 				}}>
 				<MenuItem
-					id={button_taskactions_markcomplete_id}
-					c_icon_code={selected_task_to_action.task.complete? ICON_CHECKBOX_UNCHECKED : ICON_CHECKBOX_CHECKED}
-					c_trailing={<MenuIndent />}>
-					Mark as {selected_task_to_action.task.complete? 'not' : ''} completed
+					id={button_taskActions_markCompleteId}
+					c:iconCode={selectedTaskToAction.task.complete? ICON_CHECKBOX_UNCHECKED : ICON_CHECKBOX_CHECKED}
+					c:trailing={<MenuIndent />}>
+					Mark as {selectedTaskToAction.task.complete? 'not' : ''} completed
 				</MenuItem>
 				<MenuItem
-					id={button_taskactions_markimportant_id}
-					c_leading={<Icon c_code={ICON_STAR} c_filled={!((selected_task_to_action.task.important) || false)}/>}
-					c_trailing={<MenuIndent />}>
-					Mark as {selected_task_to_action.task.important? 'not' : ''} important
+					id={button_taskActions_markImportantId}
+					c:leading={<Icon c:code={ICON_STAR} c:filled={!((selectedTaskToAction.task.important) || false)}/>}
+					c:trailing={<MenuIndent />}>
+					Mark as {selectedTaskToAction.task.important? 'not' : ''} important
 				</MenuItem>
 				<MenuDivider />
-				<Show when={!props.is_db_file_error}>
+				<Show when={!props.isDBFileError}>
 					<MenuItem
-						c_icon_code={ICON_ATTACH}
-						c_trailing={<MenuIndent />}
-						id={button_taskactions_addfile_id}>
+						c:iconCode={ICON_ATTACH}
+						c:trailing={<MenuIndent />}
+						id={button_taskActions_addFileId}>
 						Add file
 					</MenuItem>
 				</Show>
 				<MenuItem
-					c_icon_code={ICON_ADD_CIRCLE}
-					id={button_taskactions_addsubtask_id}
-					c_trailing={<MenuIndent />}>
+					c:iconCode={ICON_ADD_CIRCLE}
+					id={button_taskActions_addSubTaskId}
+					c:trailing={<MenuIndent />}>
 					Add subtask
 				</MenuItem>
-				<Show when={selected_task_to_action.task.reminder == null}>
+				<Show when={selectedTaskToAction.task.reminder == null}>
 					<MenuItem
-						id={button_taskactions_addreminder_id}
-						c_icon_code={ICON_ALERT}
-						c_trailing={<MenuIndent />}>
+						id={button_taskActions_addReminderId}
+						c:iconCode={ICON_ALERT}
+						c:trailing={<MenuIndent />}>
 						Add reminder
 					</MenuItem>
 				</Show>
-				<Show when={array_length(props.labels) > 0}>
+				<Show when={arrayLength(props.labels) > 0}>
 					<SubMenu
-						c_on_toggleopen={v => set_is_menu_taskactionaddlabel_open(v)}
-						c_item={<SubMenuItem
-							c_focused={is_menu_taskactionaddlabel_open()}
-							c_icon_code={ICON_TAG}>
+						c:onToggleOpen={v => setIsMenuTaskActionAddLabelOpen(v)}
+						c:item={<SubMenuItem
+							c:focused={isMenuTaskActionAddLabelOpen()}
+							c:iconCode={ICON_TAG}>
 							Add label
 						</SubMenuItem>}>
 						<For each={props.labels}>{label => <Show when={label != undefined}>
 							<MenuItem
-								c_leading={<Icon style={{color: label!.color ?? undefined}} c_code={ICON_CIRCLE}/>}
-								c_checked={array_includes(selected_task_to_action.task.label_ids, label!.id)}
+								c:leading={<Icon style={{color: label!.color ?? undefined}} c:code={ICON_CIRCLE}/>}
+								c:checked={arrayIncludes(selectedTaskToAction.task.labelIds, label!.id)}
 								data-label-id={label!.id}>
 								{label!.name}
 							</MenuItem>
@@ -2149,344 +2165,344 @@ const _: VoidComponent<{
 				</Show>
 				<MenuDivider />
 				<SubMenu
-					ref={r => submenu_movetask_ref = r}
+					ref={r => subMenuMoveTaskRef = r}
 					style={{"min-width": '200px'}}
-					c_on_toggleopen={v => set_is_menu_taskaction_move_open(v)}
-					c_item={<SubMenuItem
-						c_focused={is_menu_taskactionmove_open()}
-						c_icon_code={ICON_ARROW_RIGHT}>
+					c:onToggleOpen={v => setIsMenuTaskActionMoveOpen(v)}
+					c:item={<SubMenuItem
+						c:focused={isMenuTaskActionMoveOpen()}
+						c:iconCode={ICON_ARROW_RIGHT}>
 						Move task to ...
 					</SubMenuItem>}>
-					<For each={props.tasklists}>{(list, i) => <>
+					<For each={props.taskLists}>{(list, i) => <>
 						<MenuItem
 							data-tasklist-index={i()}
 							style={{order: list.id == DEFAULT_TASK_LIST.id? '-2' : undefined}}
-							c_icon_code={list.id == DEFAULT_TASK_LIST.id
+							c:iconCode={list.id == DEFAULT_TASK_LIST.id
 								? ICON_HOME
 								: list.emoji == null
 									? ICON_TASK_LIST_SQUARE_LTR
 									: undefined
 							}
-							c_leading={<Show
+							c:leading={<Show
 								when={list.emoji != null && list.id != DEFAULT_TASK_LIST.id}>
-								<Emoji c_emoji={list.emoji!} />
+								<Emoji c:emoji={list.emoji!} />
 							</Show>}
-							c_selected={i() == get_tasklist_index()}>
+							c:selected={i() == getTaskListIndex()}>
 							{list.name}
 						</MenuItem>
-						<Show when={array_length(props.tasklists) > 1 && list.id == DEFAULT_TASK_LIST.id}>
+						<Show when={arrayLength(props.taskLists) > 1 && list.id == DEFAULT_TASK_LIST.id}>
 							<MenuDivider style={{order: '-1'}}/>
 						</Show>
 					</>}</For>
 				</SubMenu>
 				<MenuDivider />
 				<MenuItem
-					id={button_taskactions_edittask_id}
-					c_icon_code={ICON_EDIT}
-					c_trailing={<MenuIndent />}>
+					id={button_taskActions_editTaskId}
+					c:iconCode={ICON_EDIT}
+					c:trailing={<MenuIndent />}>
 					Edit task
 				</MenuItem>
 				<MenuItem
-					id={button_taskactions_deletetask_id}
-					c_icon_code={ICON_DELETE}
-					c_trailing={<MenuIndent />}>
+					id={button_taskActions_deleteTaskId}
+					c:iconCode={ICON_DELETE}
+					c:trailing={<MenuIndent />}>
 					Delete task
 				</MenuItem>
 			</Menu>
 			<Menu
-				ref={r => menu_reminder_ref = r}
+				ref={r => menuReminderRef = r}
 				onClick={ev => {
-					const button = document_active()!
-					if (!element_valid_target(
-						event_current_target(ev),
+					const button = documentActive()!
+					if (!elementValidTarget(
+						eventCurrentTarget(ev),
 						button,
-						el => element_tagname(el) == 'BUTTON'
+						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					switch (element_id(button)) {
-						case button_reminder_change_id:
-							close_menu(menu_reminder_ref)
-							set_change_reminder_option('chip')
-							open_datetimepicker(ev, datetimepicker_reminder_ref)
-							break
-						case button_reminder_remove_id:
-							close_menu(menu_reminder_ref)
-							set_selected_task_to_changereminder('task', 'reminder', null)
-							command(
-								Commands.edit_task,
-								selected_task_to_changereminder.task,
-								selected_task_to_changereminder.tasklist_index,
-								selected_task_to_changereminder.task_index
-							)
-							break
+					switch (elementId(button)) {
+					case button_reminder_changedId:
+						closeMenu(menuReminderRef)
+						setChangeReminderOption('chip')
+						openDateTimePicker(ev, dateTimePickerReminderRef)
+						break
+					case button_reminder_removeId:
+						closeMenu(menuReminderRef)
+						setSelectedTaskToChangeReminder('task', 'reminder', null)
+						command(
+							Commands.editTask,
+							selectedTaskToChangeReminder.task,
+							selectedTaskToChangeReminder.taskListIndex,
+							selectedTaskToChangeReminder.taskIndex
+						)
+						break
 					}
 				}}>
 				<MenuItem
-					c_icon_code={ICON_CALENDAR_EDIT}
-					id={button_reminder_change_id}>
+					c:iconCode={ICON_CALENDAR_EDIT}
+					id={button_reminder_changedId}>
 					Change datetime reminder
 				</MenuItem>
 				<MenuItem
-					c_icon_code={ICON_ALERT_OFF}
-					id={button_reminder_remove_id}>
+					c:iconCode={ICON_ALERT_OFF}
+					id={button_reminder_removeId}>
 					Remove reminder
 				</MenuItem>
 			</Menu>
 			<Menu
-				ref={r => menu_labels_ref = r}
-				c_on_toggleopen={is_open => set_is_menu_labels_open(is_open)}
+				ref={r => menuLabelsRef = r}
+				c:onToggleOpen={is_open => setIsMenuLabelsOpen(is_open)}
 				onClick={ev => {
-					const button = document_active()!
-					if (!element_valid_target(
-						event_current_target(ev),
+					const button = documentActive()!
+					if (!elementValidTarget(
+						eventCurrentTarget(ev),
 						button,
-						el => element_tagname(el) == 'BUTTON'
+						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					const task = selected_task_to_edit.task
-					const tasklist_index = selected_task_to_edit.tasklist_index
-					const task_index = selected_task_to_edit.task_index
-					switch (element_id(button)) {
-						case button_labels_new_id:
-							command(Commands.add_label, ev)
+					const task = selectedTaskToEdit.task
+					const taskListIndex = selectedTaskToEdit.taskListIndex
+					const taskIndex = selectedTaskToEdit.taskIndex
+					switch (elementId(button)) {
+						case button_labels_newId:
+							command(Commands.addLabel, ev)
 							break
-						case button_labels_edit_id:
-							close_dialog(dialog_edittask_ref)
-							close_menu(menu_labels_ref)
-							command(Commands.show_labels_options, ev)
+						case button_labels_editId:
+							closeDialog(dialogEditTaskRef)
+							closeMenu(menuLabelsRef)
+							command(Commands.showLabelsOptions, ev)
 							break
 						default:
-							const data_label_index = element_dataset(button, 'labelIndex')
-							if (data_label_index) {
-								const label_index = number_parse(data_label_index, true)
-								if (number_is_not_defined(label_index)) return
+							const dataLabelIndex = elementDataset(button, 'labelIndex')
+							if (dataLabelIndex) {
+								const labelIndex = numberParse(dataLabelIndex, true)
+								if (numberIsNotDefined(labelIndex)) return
 
-								const label_id = props.labels![label_index]!.id
-								const index = array_find_index(task.label_ids, id => id == label_id)
-								set_selected_task_to_edit('task', 'label_ids', ids => index < 0
-									? [...ids, label_id]
-									: array_concat(
-										array_slice(ids, 0, index),
-										array_slice(ids, index + 1)
+								const labelId = props.labels![labelIndex]!.id
+								const index = arrayFindIndex(task.labelIds, id => id == labelId)
+								setSelectedTaskToEdit('task', 'labelIds', ids => index < 0
+									? [...ids, labelId]
+									: arrayConcat(
+										arraySlice(ids, 0, index),
+										arraySlice(ids, index + 1)
 									)
 								)
-								command(Commands.edit_task, task, tasklist_index, task_index)
+								command(Commands.editTask, task, taskListIndex, taskIndex)
 								return
 							}
 					}
 				}}
 				onContextMenu={ev => {
-					const button = document_active()!
-					if (!element_valid_target(
-						event_current_target(ev),
+					const button = documentActive()!
+					if (!elementValidTarget(
+						eventCurrentTarget(ev),
 						button,
-						el => element_tagname(el) == 'BUTTON'
+						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					const data_label_index = element_dataset(button, 'labelIndex')
-					if (data_label_index) {
-						const label_index = number_parse(data_label_index, true)
-						if (number_is_not_defined(label_index)) return
+					const dataLabelIndex = elementDataset(button, 'labelIndex')
+					if (dataLabelIndex) {
+						const label_index = numberParse(dataLabelIndex, true)
+						if (numberIsNotDefined(label_index)) return
 
 						const label = props.labels![label_index]!
-						set_selected_label(label)
-						event_prevent_default(ev)
-						open_menu(ev, menu_labelaction_ref, {position: MenuPosition.center_bottom_to_right})
+						setSelectedLabel(label)
+						eventPreventDefault(ev)
+						openMenu(ev, menuLabelActionRef, {position: MenuPosition.centerBottomToRight})
 						return
 					}
 				}}>
 				<MenuItem
-					id={button_labels_new_id}
-					c_icon_code={ICON_ADD}>
+					id={button_labels_newId}
+					c:iconCode={ICON_ADD}>
 					New label
 				</MenuItem>
-				<Show when={array_length(props.labels) > 0}>
+				<Show when={arrayLength(props.labels) > 0}>
 					<MenuItem
-						id={button_labels_edit_id}
-						c_icon_code={ICON_EDIT}>
+						id={button_labels_editId}
+						c:iconCode={ICON_EDIT}>
 						Edit labels
 					</MenuItem>
 					<Divider/>
 				</Show>
 				<For each={props.labels}>{(label, i) => <Show when={label != undefined}>
 					<MenuItem
-						c_leading={<Icon style={{color: label!.color ?? undefined}} c_code={ICON_CIRCLE}/>}
-						c_checked={array_includes(selected_task_to_edit.task.label_ids, label!.id)}
+						c:leading={<Icon style={{color: label!.color ?? undefined}} c:code={ICON_CIRCLE}/>}
+						c:checked={arrayIncludes(selectedTaskToEdit.task.labelIds, label!.id)}
 						data-label-index={i()}>
 						{label!.name}
 					</MenuItem>
 				</Show>}</For>
 			</Menu>
 			<Menu
-				ref={r => menu_labelaction_ref = r}
+				ref={r => menuLabelActionRef = r}
 				onClick={ev => {
-					const button = document_active()!
-					if (!element_valid_target(
-						event_current_target(ev),
+					const button = documentActive()!
+					if (!elementValidTarget(
+						eventCurrentTarget(ev),
 						button,
-						el => element_tagname(el) == 'BUTTON'
+						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					switch (element_id(button)) {
-						case button_labelactions_edit_id:
-							close_menu(menu_labelaction_ref)
-							command(Commands.edit_label, ev, selected_label)
-							break
-						case button_labelactions_delete_id:
-							close_menu(menu_labelaction_ref)
-							command(Commands.delete_label, selected_label)
-							break
+					switch (elementId(button)) {
+					case button_labelActions_editId:
+						closeMenu(menuLabelActionRef)
+						command(Commands.editLabel, ev, selectedLabel)
+						break
+					case button_labelActions_deleteId:
+						closeMenu(menuLabelActionRef)
+						command(Commands.deleteLabel, selectedLabel)
+						break
 					}
 				}}>
 				<MenuItem
-					c_icon_code={ICON_EDIT}
-					id={button_labelactions_edit_id}>
+					c:iconCode={ICON_EDIT}
+					id={button_labelActions_editId}>
 					Edit label
 				</MenuItem>
 				<MenuItem
-					c_icon_code={ICON_DELETE}
-					id={button_labelactions_delete_id}>
+					c:iconCode={ICON_DELETE}
+					id={button_labelActions_deleteId}>
 					Delete label
 				</MenuItem>
 			</Menu>
 			<Menu
-				ref={r => menu_labelaction2_ref = r}
+				ref={r => menuLabelAction2Ref = r}
 				onClick={ev => {
-					const button = document_active()!
-					if (!element_valid_target(
-						event_current_target(ev),
+					const button = documentActive()!
+					if (!elementValidTarget(
+						eventCurrentTarget(ev),
 						button,
-						el => element_tagname(el) == 'BUTTON'
+						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					const task = selected_task_to_editlabel.task
-					const tasklist_index = selected_task_to_editlabel.tasklist_index
-					const task_index = selected_task_to_editlabel.task_index
-					switch (element_id(button)) {
-						case button_labelactions_edit2_id:
-							close_menu(menu_labelaction2_ref)
-							command(Commands.edit_label, ev, selected_label)
-							break
-						case button_labelactions_delete2_id:
-							close_menu(menu_labelaction2_ref)
-							const index = array_find_index(task.label_ids, v => v == selected_label.id)
-							if (index < 0) return;
+					const task = selectedTaskToEditLabel.task
+					const taskListIndex = selectedTaskToEditLabel.taskListIndex
+					const taskIndex = selectedTaskToEditLabel.taskIndex
+					switch (elementId(button)) {
+					case button_labelActions_edit2Id:
+						closeMenu(menuLabelAction2Ref)
+						command(Commands.editLabel, ev, selectedLabel)
+						break
+					case button_labelActions_delete2Id:
+						closeMenu(menuLabelAction2Ref)
+						const index = arrayFindIndex(task.labelIds, v => v == selectedLabel.id)
+						if (index < 0) return;
 
-							set_selected_task_to_editlabel('task', 'label_ids', ids => array_concat(
-								array_slice(ids, 0, index),
-								array_slice(ids, index + 1)
-							))
-							command(Commands.edit_task, task, tasklist_index, task_index)
-							break
+						setSelectedTaskToEditLabel('task', 'labelIds', ids => arrayConcat(
+							arraySlice(ids, 0, index),
+							arraySlice(ids, index + 1)
+						))
+						command(Commands.editTask, task, taskListIndex, taskIndex)
+						break
 					}
 				}}>
 				<MenuItem
-					c_icon_code={ICON_EDIT}
-					id={button_labelactions_edit2_id}>
+					c:iconCode={ICON_EDIT}
+					id={button_labelActions_edit2Id}>
 					Edit label
 				</MenuItem>
 				<MenuItem
-					c_icon_code={ICON_DISMISS}
-					id={button_labelactions_delete2_id}>
+					c:iconCode={ICON_DISMISS}
+					id={button_labelActions_delete2Id}>
 					Remove label from task
 				</MenuItem>
 			</Menu>
 			<Menu
-				ref={r => menu_fileaction_ref = r}
-				c_on_toggleopen={is_open => set_is_menu_fileaction_open(is_open)}
+				ref={r => menuFileActionRef = r}
+				c:onToggleOpen={is_open => setIsMenuFileActionOpen(is_open)}
 				onClick={ev => {
-					const button = document_active()!
-					if (!element_valid_target(
-						event_current_target(ev),
+					const button = documentActive()!
+					if (!elementValidTarget(
+						eventCurrentTarget(ev),
 						button,
-						el => element_tagname(el) == 'BUTTON'
+						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					const file = selected_file_to_action.file
-					const tasklist_index = selected_file_to_action.tasklist_index
-					const task_index = selected_file_to_action.task_index
-					const file_index = selected_file_to_action.file_index
-					switch (element_id(button)) {
-						case button_fileaction_download_id:
-							close_menu(menu_fileaction_ref)
-							command(Commands.download_file,
-								ev, file, tasklist_index, task_index, file_index
-							)
-							break
-						case button_fileaction_rename_id:
-							close_menu(menu_fileaction_ref)
+					const file = selectedFileToAction.file
+					const taskListIndex = selectedFileToAction.taskListIndex
+					const taskIndex = selectedFileToAction.taskIndex
+					const fileIndex = selectedFileToAction.fileIndex
+					switch (elementId(button)) {
+					case button_fileAction_downloadId:
+						closeMenu(menuFileActionRef)
+						command(Commands.downloadFile,
+							ev, file, taskListIndex, taskIndex, fileIndex
+						)
+						break
+					case button_fileAction_renameId:
+						closeMenu(menuFileActionRef)
 
-							const text = string_replace(file.name, /\.[^\.]*$/, '')
-							change_textfield_value(textfield_renamefile_ref, text)
-							set_text_file(text)
-							set_selected_file_to_rename({...selected_file_to_action})
-							rename_file_option = 'edit'
-							open_dialog(ev, dialog_filerename_ref, {
-								content_auto_focus: true,
-								important: true
-							})
-							break
-						case button_fileaction_delete_id:
-							close_menu(menu_fileaction_ref)
-							set_selected_task_to_edit('task', 'files', files => [
-								...array_slice(files, 0, file_index),
-								...array_slice(files, file_index + 1)
-							])
-							command(Commands.edit_task,
-								props.tasklists[tasklist_index].tasks[task_index],
-								tasklist_index, task_index
-							)
-							break
+						const text = stringReplace(file.name, /\.[^\.]*$/, '')
+						updateTextFieldValue(textFieldRenamefileRef, text)
+						setTextFile(text)
+						setSelectedFileToRename({...selectedFileToAction})
+						renameFileOption = 'edit'
+						openDialog(ev, dialogFileRenameRef, {
+							contentAutoFocus: true,
+							important: true
+						})
+						break
+					case button_fileAction_deleteId:
+						closeMenu(menuFileActionRef)
+						setSelectedTaskToEdit('task', 'files', files => [
+							...arraySlice(files, 0, fileIndex),
+							...arraySlice(files, fileIndex + 1)
+						])
+						command(Commands.editTask,
+							props.taskLists[taskListIndex].tasks[taskIndex],
+							taskListIndex, taskIndex
+						)
+						break
 					}
 				}}>
 				<MenuItem
-					c_icon_code={ICON_ARROW_DOWNLOAD}
-					id={button_fileaction_download_id}>
+					c:iconCode={ICON_ARROW_DOWNLOAD}
+					id={button_fileAction_downloadId}>
 					Download
 				</MenuItem>
 				<MenuItem
-					c_icon_code={ICON_EDIT}
-					id={button_fileaction_rename_id}>
+					c:iconCode={ICON_EDIT}
+					id={button_fileAction_renameId}>
 					Rename
 				</MenuItem>
 				<MenuItem
-					c_icon_code={ICON_DELETE}
-					id={button_fileaction_delete_id}>
+					c:iconCode={ICON_DELETE}
+					id={button_fileAction_deleteId}>
 					Delete
 				</MenuItem>
 			</Menu>
 			<Menu
 				style={{'min-width': '164px'}}
-				ref={r => menu_fileaction2_ref = r}
+				ref={r => menuFileAction2Ref = r}
 				onClick={ev => {
-					const button = document_active()!
-					if (!element_valid_target(
-						event_current_target(ev),
+					const button = documentActive()!
+					if (!elementValidTarget(
+						eventCurrentTarget(ev),
 						button,
-						el => element_tagname(el) == 'BUTTON'
+						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					const data_file_index = element_dataset(button, 'fileIndex')
-					if (data_file_index) {
-						const file_index = number_parse(data_file_index, true)
-						if (number_is_not_defined(file_index)) return
+					const dataFileIndex = elementDataset(button, 'fileIndex')
+					if (dataFileIndex) {
+						const file_index = numberParse(dataFileIndex, true)
+						if (numberIsNotDefined(file_index)) return
 
-						set_selected_file_to_action2({
-							file: selected_task_to_fileaction.task.files[file_index],
-							file_index: file_index,
-							task_index: selected_task_to_fileaction.task_index,
-							tasklist_index: selected_task_to_fileaction.tasklist_index
+						setSelectedFileToAction2({
+							file: selectedTaskToFileAction.task.files[file_index],
+							fileIndex: file_index,
+							taskIndex: selectedTaskToFileAction.taskIndex,
+							taskListIndex: selectedTaskToFileAction.taskListIndex
 						})
-						open_menu(ev, menu_fileaction3_ref, {
-							anchor: event_current_target(ev),
-							position: MenuPosition.right_center_to_bottom
+						openMenu(ev, menuFileAction3Ref, {
+							anchor: eventCurrentTarget(ev),
+							position: MenuPosition.rightCenterToBottom
 						})
 						return
 					}
 				}}>
-				<For each={selected_task_to_fileaction.task.files}>{(file, index) =>
+				<For each={selectedTaskToFileAction.task.files}>{(file, index) =>
 					<MenuItem
-						c_focused={is_menu_fileaction3_open() && file.id == selected_file_to_action2.file.id}
+						c:focused={isMenuFileAction3Open() && file.id == selectedFileToAction2.file.id}
 						data-file-index={index()}>
 						{file.name}
 					</MenuItem>
@@ -2495,75 +2511,75 @@ const _: VoidComponent<{
 			<Menu
 				style={{'min-width': '164px'}}
 				onClick={ev => {
-					const button = document_active()!
-					if (!element_valid_target(
-						event_current_target(ev),
+					const button = documentActive()!
+					if (!elementValidTarget(
+						eventCurrentTarget(ev),
 						button,
-						el => element_tagname(el) == 'BUTTON'
+						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					const file = selected_file_to_action2.file
-					const tasklist_index = selected_file_to_action2.tasklist_index
-					const task_index = selected_file_to_action2.task_index
-					const file_index = selected_file_to_action2.file_index
-					const task = props.tasklists[tasklist_index].tasks[task_index]
-					switch (element_id(button)) {
-						case button_fileaction3_view_id:
-							close_menu(menu_fileaction3_ref)
-							view_file(ev, file, tasklist_index, task_index, file_index)
-							break
-						case button_fileaction3_rename_id:
-							close_menu(menu_fileaction3_ref)
+					const file = selectedFileToAction2.file
+					const taskListIndex = selectedFileToAction2.taskListIndex
+					const taskIndex = selectedFileToAction2.taskIndex
+					const fileIndex = selectedFileToAction2.fileIndex
+					const task = props.taskLists[taskListIndex].tasks[taskIndex]
+					switch (elementId(button)) {
+					case button_fileAction3_viewId:
+						closeMenu(menuFileAction3Ref)
+						viewFile(ev, file, taskListIndex, taskIndex, fileIndex)
+						break
+					case button_fileAction3_renameId:
+						closeMenu(menuFileAction3Ref)
 
-							const text = string_replace(file.name, /\.[^\.]*$/, '')
-							change_textfield_value(textfield_renamefile_ref, text)
-							set_text_file(text)
-							set_selected_file_to_rename({...selected_file_to_action2})
-							rename_file_option = 'action'
-							open_dialog(ev, dialog_filerename_ref, {
-								content_auto_focus: true,
-								important: true
-							})
-							break
-						case button_fileaction3_download_id:
-							close_menu(menu_fileaction3_ref)
-							command(Commands.download_file,
-								ev, file, tasklist_index, task_index, file_index
-							)
-							break
-						case button_fileaction3_delete_id:
-							close_menu(menu_fileaction3_ref)
-							if (array_length(task.files) == 1) close_menu(menu_fileaction2_ref)
+						const text = stringReplace(file.name, /\.[^\.]*$/, '')
+						updateTextFieldValue(textFieldRenamefileRef, text)
+						setTextFile(text)
+						setSelectedFileToRename({...selectedFileToAction2})
+						renameFileOption = 'action'
+						openDialog(ev, dialogFileRenameRef, {
+							contentAutoFocus: true,
+							important: true
+						})
+						break
+					case button_fileAction3_downloadId:
+						closeMenu(menuFileAction3Ref)
+						command(Commands.downloadFile,
+							ev, file, taskListIndex, taskIndex, fileIndex
+						)
+						break
+					case button_fileAction3_deleteId:
+						closeMenu(menuFileAction3Ref)
+						if (arrayLength(task.files) == 1) closeMenu(menuFileAction2Ref)
 
-							set_selected_task_to_fileaction('task', 'files', files => [
-								...array_slice(files, 0, file_index),
-								...array_slice(files, file_index + 1)
-							])
-							command(Commands.edit_task, task, tasklist_index, task_index)
-							break
+						setSelectedTaskToFileAction('task', 'files', files => [
+							...arraySlice(files, 0, fileIndex),
+							...arraySlice(files, fileIndex + 1)
+						])
+						command(Commands.editTask, task, taskListIndex, taskIndex)
+						break
 					}
 				}}
-				ref={r => menu_fileaction3_ref = r}
-				c_on_toggleopen={(is_open) => set_is_menu_fileaction3_open(is_open)}>
-				<Show when={regex_test(/^(audio|image|video|text)/, selected_file_to_action2.file.type)}>
+				ref={r => menuFileAction3Ref = r}
+				c:onToggleOpen={(is_open) => setIsMenuFileAction3Open(is_open)}>
+				<Show when={regexTest(/^(audio|image|video|text)/, selectedFileToAction2.file.type)}>
 					<MenuItem
-						c_icon_code={ICON_EYE}
-						id={button_fileaction3_view_id}>
+						c:iconCode={ICON_EYE}
+						id={button_fileAction3_viewId}>
 						View
 					</MenuItem>
 				</Show>
 				<MenuItem
-					c_icon_code={ICON_EDIT}
-					id={button_fileaction3_rename_id}>
+					c:iconCode={ICON_EDIT}
+					id={button_fileAction3_renameId}>
 					Rename
 				</MenuItem>
 				<MenuItem
-					c_icon_code={ICON_ARROW_DOWNLOAD}
-					id={button_fileaction3_download_id}>
+					c:iconCode={ICON_ARROW_DOWNLOAD}
+					id={button_fileAction3_downloadId}>
 					Download
 				</MenuItem>
 				<MenuItem
-					c_icon_code={ICON_DELETE}>
+					c:iconCode={ICON_DELETE}>
 					Delete
 				</MenuItem>
 			</Menu>
@@ -2572,65 +2588,65 @@ const _: VoidComponent<{
 
 	const DatePickers: VoidComponent = () => (<>
 		<DateTimePicker
-			c_on_toggleopen={(v) => set_is_datetimepicker_reminder_open(v)}
-			c_datetime={(change_reminder_option() == 'edit'
-				? selected_task_to_edit.task.reminder
-				: change_reminder_option() == 'action'
-					? selected_task_to_action.task.reminder
-					: change_reminder_option() == 'chip'
-						? selected_task_to_changereminder.task.reminder
+			c:onToggleOpen={(v) => setIsDateTimePickerReminderOpen(v)}
+			c:datetime={(changeReminderOption() == 'edit'
+				? selectedTaskToEdit.task.reminder
+				: changeReminderOption() == 'action'
+					? selectedTaskToAction.task.reminder
+					: changeReminderOption() == 'chip'
+						? selectedTaskToChangeReminder.task.reminder
 						: new Date()
 			) ?? new Date()}
-			ref={r => datetimepicker_reminder_ref = r}
-			c_on_selectdatetime={(date) => {
-				let task: Task = empty_task()
-				let tasklist_index = 0
-				let task_index = 0
-				if (change_reminder_option() == 'edit') {
-					set_selected_task_to_edit('task', 'reminder', date)
-					tasklist_index = selected_task_to_edit.tasklist_index
-					task_index = selected_task_to_edit.task_index
-					task = selected_task_to_edit.task
+			ref={r => dateTimePickerReminderRef = r}
+			c:onSelectDatetime={(date) => {
+				let task: Task = emptyTask()
+				let taskListIndex = 0
+				let taskIndex = 0
+				if (changeReminderOption() == 'edit') {
+					setSelectedTaskToEdit('task', 'reminder', date)
+					taskListIndex = selectedTaskToEdit.taskListIndex
+					taskIndex = selectedTaskToEdit.taskIndex
+					task = selectedTaskToEdit.task
 				}
-				else if (change_reminder_option() == 'action') {
-					set_selected_task_to_action('task', 'reminder', date)
-					tasklist_index = selected_task_to_action.tasklist_index
-					task_index = selected_task_to_action.task_index
-					task = selected_task_to_action.task
+				else if (changeReminderOption() == 'action') {
+					setSelectedTaskToAction('task', 'reminder', date)
+					taskListIndex = selectedTaskToAction.taskListIndex
+					taskIndex = selectedTaskToAction.taskIndex
+					task = selectedTaskToAction.task
 				}
-				else if (change_reminder_option() == 'chip') {
-					set_selected_task_to_changereminder('task', 'reminder', date)
-					tasklist_index = selected_task_to_changereminder.tasklist_index
-					task_index = selected_task_to_changereminder.task_index
-					task = selected_task_to_changereminder.task
+				else if (changeReminderOption() == 'chip') {
+					setSelectedTaskToChangeReminder('task', 'reminder', date)
+					taskListIndex = selectedTaskToChangeReminder.taskListIndex
+					taskIndex = selectedTaskToChangeReminder.taskIndex
+					task = selectedTaskToChangeReminder.task
 				}
 
-				command(Commands.edit_task, task, tasklist_index, task_index)
+				command(Commands.editTask, task, taskListIndex, taskIndex)
 			}}
 		/>
 	</>)
 
 	return (<div class={CSS.body}
-		onClick={global_click}
-		onKeyDown={global_keydown}
-		onContextMenu={global_contextmenu}
-		onChange={global_change}>
+		onClick={globalClick}
+		onKeyDown={globalKeyDown}
+		onContextMenu={globalContextMenu}
+		onChange={globalChange}>
 		<Show
-			when={get_tasklist_index() == null}
+			when={getTaskListIndex() == null}
 			fallback={<SingleTaskList
-				lists={props.tasklists}
+				lists={props.taskLists}
 				command={command}
 				settings={settings()}
 				page={page()}
 				labels={props.labels}
-				tasklist={props.tasklists[get_tasklist_index()!]}
-				tasklist_index={get_tasklist_index()!}
+				taskList={props.taskLists[getTaskListIndex()!]}
+				taskListIndex={getTaskListIndex()!}
 			/>}>
 			<GroupTaskList
 				command={command}
 				settings={settings()}
 				page={page()}
-				tasklists={props.tasklists}
+				taskLists={props.taskLists}
 				labels={props.labels}
 			/>
 		</Show>

@@ -1,6 +1,6 @@
 import { createSignal, For, Show, type VoidComponent } from "solid-js"
 
-import { number_safe } from "@/utils/number"
+import { numberSafe } from "@/utils/number"
 
 import Icon from "@/components/Icon"
 import CheckBox from "@/components/CheckBox"
@@ -8,74 +8,74 @@ import TextField, { AreaTextField, NumberTextField, TextFieldButton } from "@/co
 import Tooltip from "@/components/Tooltip"
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
-import { event_current_target } from "@/utils/event"
+import { eventCurrentTarget } from "@/utils/event"
 
 const _: VoidComponent = () => {
-	const [leading, set_leading] = createSignal<boolean>(false)
-	const [trailing, set_trailing] = createSignal<boolean>(false)
-	const [label, set_label] = createSignal<boolean>(true)
-	const [placeholder, set_placeholder] = createSignal<boolean>(false)
-	const [message, set_message] = createSignal<boolean>(false)
-	const [autohide_label, set_autohide_label] = createSignal<boolean>(true)
-	const [autoshow_clear_button, set_autoshow_clear_button] = createSignal<boolean>(false)
-	const [readonly, set_readonly] = createSignal<boolean>(false)
+	const [leading, setLeading] = createSignal<boolean>(false)
+	const [trailing, setTrailing] = createSignal<boolean>(false)
+	const [label, setLabel] = createSignal<boolean>(true)
+	const [placeholder, setPlaceholder] = createSignal<boolean>(false)
+	const [message, setMessage] = createSignal<boolean>(false)
+	const [autoHideLabel, setAutoHideLabel] = createSignal<boolean>(true)
+	const [autoShowClearButton, setAutoShowClearButton] = createSignal<boolean>(false)
+	const [readonly, setReadonly] = createSignal<boolean>(false)
 
 	// <TextField>
-	const [type, set_type] = createSignal<string>('text')
+	const [type, setType] = createSignal<string>('text')
 
 	// <NumberTextField>
-	const [step, set_step] = createSignal<number>(1)
-	const [min, set_min] = createSignal<number>(0)
-	const [max, set_max] = createSignal<number>(Number.MAX_SAFE_INTEGER)
-	const [limit_min, set_limit_min] = createSignal<boolean>(false)
-	const [limit_max, set_limit_max] = createSignal<boolean>(false)
+	const [step, setStep] = createSignal<number>(1)
+	const [min, setMin] = createSignal<number>(0)
+	const [max, setMax] = createSignal<number>(Number.MAX_SAFE_INTEGER)
+	const [limitMin, setLimitMin] = createSignal<boolean>(false)
+	const [limitMax, setLimitMax] = createSignal<boolean>(false)
 
 	// <AreaTextField>
-	const [line_min, set_line_min] = createSignal<number>(1)
-	const [line_max, set_line_max] = createSignal<number>(Number.MAX_SAFE_INTEGER)
-	const [line_limit_max, set_line_limit_max] = createSignal<boolean>(false)
+	const [lineMin, setLineMin] = createSignal<number>(1)
+	const [lineMax, setLineMax] = createSignal<number>(Number.MAX_SAFE_INTEGER)
+	const [lineLimitMax, setLineLimitMax] = createSignal<boolean>(false)
 
 	const Options: VoidComponent = () => (<>
 		<CheckBox
 			checked={leading()}
-			onChange={ev => set_leading(event_current_target(ev).checked)}>
+			onChange={ev => setLeading(eventCurrentTarget(ev).checked)}>
 			Leading
 		</CheckBox>
 		<CheckBox
 			checked={trailing()}
-			onChange={ev => set_trailing(event_current_target(ev).checked)}>
+			onChange={ev => setTrailing(eventCurrentTarget(ev).checked)}>
 			Trailing
 		</CheckBox>
 		<CheckBox
 			checked={label()}
-			onChange={ev => set_label(event_current_target(ev).checked)}>
+			onChange={ev => setLabel(eventCurrentTarget(ev).checked)}>
 			Label text
 		</CheckBox>
 		<Show when={label()}>
 			<CheckBox
-				checked={autohide_label()}
-				onChange={ev => set_autohide_label(event_current_target(ev).checked)}>
+				checked={autoHideLabel()}
+				onChange={ev => setAutoHideLabel(eventCurrentTarget(ev).checked)}>
 				Auto hide label
 			</CheckBox>
 		</Show>
 		<CheckBox
 			checked={placeholder()}
-			onChange={ev => set_placeholder(event_current_target(ev).checked)}>
+			onChange={ev => setPlaceholder(eventCurrentTarget(ev).checked)}>
 			Placeholder
 		</CheckBox>
 		<CheckBox
 			checked={message()}
-			onChange={ev => set_message(event_current_target(ev).checked)}>
+			onChange={ev => setMessage(eventCurrentTarget(ev).checked)}>
 			Message text
 		</CheckBox>
 		<CheckBox
-			checked={autoshow_clear_button()}
-			onChange={ev => set_autoshow_clear_button(event_current_target(ev).checked)}>
+			checked={autoShowClearButton()}
+			onChange={ev => setAutoShowClearButton(eventCurrentTarget(ev).checked)}>
 			Auto show clear button
 		</CheckBox>
 		<CheckBox
 			checked={readonly()}
-			onChange={ev => set_readonly(event_current_target(ev).checked)}>
+			onChange={ev => setReadonly(eventCurrentTarget(ev).checked)}>
 			Read only
 		</CheckBox>
 	</>)
@@ -87,26 +87,26 @@ const _: VoidComponent = () => {
 		<Playground>
 			<Tooltip>
 				<TextField
-					c_label={label()? 'TextField' : undefined}
+					c:label={label()? 'TextField' : undefined}
 					readOnly={readonly()}
-					c_leading={<Show when={leading()}><Icon c_code={0xECC0}/></Show>}
-					c_trailing={<Show when={trailing()}>
-						<TextFieldButton><Icon c_code={0xE56B}/></TextFieldButton>
-						<TextFieldButton><Icon c_code={0xE553}/></TextFieldButton>
+					c:leading={<Show when={leading()}><Icon c:code={0xECC0}/></Show>}
+					c:trailing={<Show when={trailing()}>
+						<TextFieldButton><Icon c:code={0xE56B}/></TextFieldButton>
+						<TextFieldButton><Icon c:code={0xE553}/></TextFieldButton>
 					</Show>}
 					placeholder={placeholder()? 'TextField placeholder' : undefined}
-					c_message={message()? "Consectetur labore sint aliqua occaecat anim quis aute dolor ex occaecat laborum sit aliqua consequat." : undefined}
-					c_auto_hide_label={autohide_label()}
-					c_auto_show_clear_button={autoshow_clear_button()}
+					c:message={message()? "Consectetur labore sint aliqua occaecat anim quis aute dolor ex occaecat laborum sit aliqua consequat." : undefined}
+					c:autoHideLabel={autoHideLabel()}
+					c:autoShowClearButton={autoShowClearButton()}
 					type={type()}
 				/>
 			</Tooltip>
 		</Playground>
 		<PlaygroundOptions>
 			<Dropdown
-				c_label="Type"
-				c_values={[type()]}
-				c_on_change={(v) => set_type(v[0].value as string)}>
+				c:label="Type"
+				c:values={[type()]}
+				c:onChange={(v) => setType(v[0].value as string)}>
 				<For each={[
 					['button', 'Button'],
 					['checkbox', 'Checkbox'],
@@ -129,7 +129,7 @@ const _: VoidComponent = () => {
 					['time', 'Time'],
 					['url', 'URL'],
 					['week', 'Week'],
-				]}>{option => <DropdownOption c_value={option[0]} c_text={option[1] as string} />}</For>
+				]}>{option => <DropdownOption c:value={option[0]} c:text={option[1] as string} />}</For>
 			</Dropdown>
 			<Options />
 		</PlaygroundOptions>
@@ -138,20 +138,20 @@ const _: VoidComponent = () => {
 		<Playground>
 			<Tooltip>
 				<NumberTextField
-					c_label={label()? 'NumberTextField' : undefined}
-					c_leading={<Show when={leading()}><Icon c_code={0xECC0}/></Show>}
+					c:label={label()? 'NumberTextField' : undefined}
+					c:leading={<Show when={leading()}><Icon c:code={0xECC0}/></Show>}
 					readOnly={readonly()}
-					c_trailing={<Show when={trailing()}>
-						<TextFieldButton><Icon c_code={0xE56B}/></TextFieldButton>
-						<TextFieldButton><Icon c_code={0xE553}/></TextFieldButton>
+					c:trailing={<Show when={trailing()}>
+						<TextFieldButton><Icon c:code={0xE56B}/></TextFieldButton>
+						<TextFieldButton><Icon c:code={0xE553}/></TextFieldButton>
 					</Show>}
 					step={step()}
-					min={limit_min()? min() : undefined}
-					max={limit_max()? max() : undefined}
+					min={limitMin()? min() : undefined}
+					max={limitMax()? max() : undefined}
 					placeholder={placeholder()? 'NumberTextField placeholder' : undefined}
-					c_message={message()? "Consectetur labore sint aliqua occaecat anim quis aute dolor ex occaecat laborum sit aliqua consequat." : undefined}
-					c_auto_hide_label={autohide_label()}
-					c_auto_show_clear_button={autoshow_clear_button()}
+					c:message={message()? "Consectetur labore sint aliqua occaecat anim quis aute dolor ex occaecat laborum sit aliqua consequat." : undefined}
+					c:autoHideLabel={autoHideLabel()}
+					c:autoShowClearButton={autoShowClearButton()}
 				/>
 			</Tooltip>
 		</Playground>
@@ -159,37 +159,37 @@ const _: VoidComponent = () => {
 			<Tooltip>
 				<NumberTextField
 					value={step()}
-					c_label="Step"
-					onBlur={ev => set_step(s => number_safe(event_current_target(ev).valueAsNumber, s))}
+					c:label="Step"
+					onBlur={ev => setStep(s => numberSafe(eventCurrentTarget(ev).valueAsNumber, s))}
 					style={{width: '100px'}}
 				/>
-				<Show when={limit_min()}>
+				<Show when={limitMin()}>
 					<NumberTextField
 						value={min()}
-						c_label="Min"
-						max={limit_max()? max() : undefined}
-						onBlur={ev => set_min(m => number_safe(event_current_target(ev).valueAsNumber, m))}
+						c:label="Min"
+						max={limitMax()? max() : undefined}
+						onBlur={ev => setMin(m => numberSafe(eventCurrentTarget(ev).valueAsNumber, m))}
 						style={{width: '100px'}}
 					/>
 				</Show>
-				<Show when={limit_max()}>
+				<Show when={limitMax()}>
 					<NumberTextField
 						value={max()}
-						min={limit_min()? min() : undefined}
-						c_label="Max"
-						onBlur={ev => set_max(m => number_safe(event_current_target(ev).valueAsNumber, m))}
+						min={limitMin()? min() : undefined}
+						c:label="Max"
+						onBlur={ev => setMax(m => numberSafe(eventCurrentTarget(ev).valueAsNumber, m))}
 						style={{width: '100px'}}
 					/>
 				</Show>
 				<Options />
 				<CheckBox
-					checked={limit_min()}
-					onChange={ev => set_limit_min(event_current_target(ev).checked)}>
+					checked={limitMin()}
+					onChange={ev => setLimitMin(eventCurrentTarget(ev).checked)}>
 					Limit min
 				</CheckBox>
 				<CheckBox
-					checked={limit_max()}
-					onChange={ev => set_limit_max(event_current_target(ev).checked)}>
+					checked={limitMax()}
+					onChange={ev => setLimitMax(eventCurrentTarget(ev).checked)}>
 					Limit max
 				</CheckBox>
 			</Tooltip>
@@ -199,44 +199,44 @@ const _: VoidComponent = () => {
 		<Playground>
 			<Tooltip>
 				<AreaTextField
-					c_label={label()? 'AreaTextField' : undefined}
-					c_leading={<Show when={leading()}><Icon c_code={0xECC0}/></Show>}
+					c:label={label()? 'AreaTextField' : undefined}
+					c:leading={<Show when={leading()}><Icon c:code={0xECC0}/></Show>}
 					readOnly={readonly()}
-					c_trailing={<Show when={trailing()}>
-						<TextFieldButton><Icon c_code={0xE56B}/></TextFieldButton>
-						<TextFieldButton><Icon c_code={0xE553}/></TextFieldButton>
+					c:trailing={<Show when={trailing()}>
+						<TextFieldButton><Icon c:code={0xE56B}/></TextFieldButton>
+						<TextFieldButton><Icon c:code={0xE553}/></TextFieldButton>
 					</Show>}
 					placeholder={placeholder()? 'AreaTextField placeholder' : undefined}
-					c_message={message()? "Consectetur labore sint aliqua occaecat anim quis aute dolor ex occaecat laborum sit aliqua consequat." : undefined}
-					c_auto_hide_label={autohide_label()}
-					c_auto_show_clear_button={autoshow_clear_button()}
-					c_min_line={line_min()}
-					c_max_line={line_limit_max()? line_max() : undefined}
+					c:message={message()? "Consectetur labore sint aliqua occaecat anim quis aute dolor ex occaecat laborum sit aliqua consequat." : undefined}
+					c:autoHideLabel={autoHideLabel()}
+					c:autoShowClearButton={autoShowClearButton()}
+					c:minLine={lineMin()}
+					c:maxLine={lineLimitMax()? lineMax() : undefined}
 				/>
 			</Tooltip>
 		</Playground>
 		<PlaygroundOptions>
 			<NumberTextField
-				value={line_min()}
-				c_label="Min line"
-				onBlur={ev => set_line_min(m => number_safe(event_current_target(ev).valueAsNumber, m))}
+				value={lineMin()}
+				c:label="Min line"
+				onBlur={ev => setLineMin(m => numberSafe(eventCurrentTarget(ev).valueAsNumber, m))}
 				min={1}
-				max={line_limit_max()? line_max() : undefined}
+				max={lineLimitMax()? lineMax() : undefined}
 				style={{width: '100px'}}
 			/>
-			<Show when={line_limit_max()}>
+			<Show when={lineLimitMax()}>
 				<NumberTextField
-					value={line_max()}
-					c_label="Max line"
-					onBlur={ev => set_line_max(m => number_safe(event_current_target(ev).valueAsNumber, m))}
-					min={line_min()}
+					value={lineMax()}
+					c:label="Max line"
+					onBlur={ev => setLineMax(m => numberSafe(eventCurrentTarget(ev).valueAsNumber, m))}
+					min={lineMin()}
 					style={{width: '100px'}}
 				/>
 			</Show>
 			<Options />
 			<CheckBox
-				checked={line_limit_max()}
-				onChange={ev => set_line_limit_max(event_current_target(ev).checked)}>
+				checked={lineLimitMax()}
+				onChange={ev => setLineLimitMax(eventCurrentTarget(ev).checked)}>
 				Limit max line
 			</CheckBox>
 		</PlaygroundOptions>

@@ -1,53 +1,51 @@
 import { CookieKeys } from "@/enums/cookies"
-import { url_decode, url_encode } from "./url"
-import { date_gettime, date_settime, date_to_UTC } from "./datetime"
-import { string_indexof, string_length, string_split, string_substring, string_trim } from "./string"
+import { urlDecode, urlEncode } from "./url"
+import { dateTime, dateTimeSet, dateToUTC } from "./datetime"
+import { stringIndexOf, stringLength, stringSplit, stringSubstring, stringTrim } from "./string"
 
 type CookieOptions = {
 	domain?: string,
 	expires?: number,
-	max_age?: number,
+	maxAge?: number,
 	path?: string,
-	same_site?: 'Lax' | 'Strict' | 'None',
+	sameSite?: 'Lax' | 'Strict' | 'None',
 	secure?: boolean,
-	http_only?: boolean
+	httpOnly?: boolean
 }
 
-export function set_cookie(
+export function cookieSet(
 	key: CookieKeys,
 	value: string,
-	options: CookieOptions = {same_site: 'Lax', expires: 9999, path: '/'}
+	options: CookieOptions = {sameSite: 'Lax', expires: 9999, path: '/'}
 ): void {
-	let cookie = key + "=" + url_encode(value)
+	let cookie = key + "=" + urlEncode(value)
 
 	if (options.expires) {
 		const expiration_date = new Date()
-		date_settime(
+		dateTimeSet(
 			expiration_date,
-			date_gettime(expiration_date) + (options.expires * 24 * 60 * 60 * 1000)
+			dateTime(expiration_date) + (options.expires * 24 * 60 * 60 * 1000)
 		)
-		cookie += ("; expires=" + date_to_UTC(expiration_date))
+		cookie += ("; expires=" + dateToUTC(expiration_date))
 	}
-	if (options.max_age  ) cookie += ("; max-age=" + options.max_age)
-	if (options.path     ) cookie += (`; path=` + options.path)
-	if (options.domain   ) cookie += (`; domain=` + options.domain)
-	if (options.same_site) cookie += ("; SameSite=" + options.same_site)
-	if (options.secure   ) cookie += (`; secure`)
-	if (options.http_only) cookie += (`; httpOnly`)
+	if (options.maxAge  ) cookie += ("; max-age=" + options.maxAge)
+	if (options.path    ) cookie += (`; path=` + options.path)
+	if (options.domain  ) cookie += (`; domain=` + options.domain)
+	if (options.sameSite) cookie += ("; SameSite=" + options.sameSite)
+	if (options.secure  ) cookie += (`; secure`)
+	if (options.httpOnly) cookie += (`; httpOnly`)
 
 	document.cookie = cookie
 }
 
-export function get_cookie(key: CookieKeys): string | null {
-
+export function cookieGet(key: CookieKeys): string | null {
 	const cookieName = key + "="
-	const cookies = string_split(document.cookie, ';')
-
+	const cookies = stringSplit(document.cookie, ';')
 	for (const i in cookies) {
-		const cookie = string_trim(cookies[i])
+		const cookie = stringTrim(cookies[i])
 
-		if (string_indexof(cookie, cookieName) === 0) {
-			return url_decode(string_substring(cookie, string_length(cookieName)))
+		if (stringIndexOf(cookie, cookieName) === 0) {
+			return urlDecode(stringSubstring(cookie, stringLength(cookieName)))
 		}
 	}
 

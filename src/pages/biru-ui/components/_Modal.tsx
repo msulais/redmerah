@@ -1,140 +1,140 @@
 import { createSignal, For, Show, type VoidComponent } from "solid-js"
 
-import { number_safe } from "@/utils/number"
-import { array_includes } from "@/utils/array"
-import { event_current_target } from "@/utils/event"
+import { numberSafe } from "@/utils/number"
+import { arrayIncludes } from "@/utils/array"
+import { eventCurrentTarget } from "@/utils/event"
 
 import Button, { ButtonVariant } from "@/components/Button"
 import CheckBox from "@/components/CheckBox"
 import TextField, { NumberTextField } from "@/components/TextField"
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import Tooltip from "@/components/Tooltip"
-import Modal, { close_modal, ModalPosition, open_modal } from "@/components/Modal"
+import Modal, { closeModal, ModalPosition, openModal } from "@/components/Modal"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
 
 const _: VoidComponent = () => {
-	const [allow_hide_anchor, set_allow_hide_anchor] = createSignal<boolean>(true)
-	const [draggable, set_draggable] = createSignal<boolean>(false)
-	const [gap, set_gap] = createSignal<number>(12)
-	const [content_autofocus, set_content_autofocus] = createSignal<boolean>(false)
+	const [allowHideAnchor, setAllowHideAnchor] = createSignal<boolean>(true)
+	const [draggable, setDraggable] = createSignal<boolean>(false)
+	const [gap, setGap] = createSignal<number>(12)
+	const [contentAutoFocus, setContentAutoFocus] = createSignal<boolean>(false)
 	const [important, setImportant] = createSignal<boolean>(false)
-	const [padding, set_padding] = createSignal<number>(0)
-	const [position, set_position] = createSignal<ModalPosition>(ModalPosition.center_bottom)
-	const [anchor, set_anchor] = createSignal<boolean>(true)
-	let modal_ref: HTMLDialogElement
+	const [padding, setPadding] = createSignal<number>(0)
+	const [position, setPosition] = createSignal<ModalPosition>(ModalPosition.centerBottom)
+	const [anchor, setAnchor] = createSignal<boolean>(true)
+	let modalRef: HTMLDialogElement
 
 	return (<Page
 		title="Modal"
 		description="A modal is an overlay window that appears on top of the main content, blocking user interaction with the underlying elements until it is dismissed. Modals are often used for critical tasks or to present important information.">
 		<Playground>
-			<Button c_variant={ButtonVariant.tonal} onClick={(ev) => open_modal(ev, modal_ref, {
-				anchor: anchor()? event_current_target(ev) : undefined,
-				allow_hide_anchor: allow_hide_anchor(),
+			<Button c:variant={ButtonVariant.tonal} onClick={(ev) => openModal(ev, modalRef, {
+				anchor: anchor()? eventCurrentTarget(ev) : undefined,
+				allowHideAnchor: allowHideAnchor(),
 				draggable: draggable(),
 				gap: gap(),
 				important: important(),
-				content_auto_focus: content_autofocus(),
+				contentAutoFocus: contentAutoFocus(),
 				padding: padding(),
 				position: position(),
 			})}>Open modal</Button>
-			<Modal ref={r => modal_ref = r} style={{width: '300px'}}>
+			<Modal ref={r => modalRef = r} style={{width: '300px'}}>
 				<div style={{padding: '16px'}}>
 					<TextField placeholder="Feedback"/>
 					<p style={{margin: '8px 0'}}>Consequat commodo sint incididunt nulla duis commodo elit enim aliquip ex occaecat eiusmod.</p>
-					<Button onClick={(_ev) => close_modal(modal_ref)} c_variant={ButtonVariant.filled}>Close modal</Button>
+					<Button onClick={(_ev) => closeModal(modalRef)} c:variant={ButtonVariant.filled}>Close modal</Button>
 				</div>
 			</Modal>
 		</Playground>
 		<PlaygroundOptions>
 			<Tooltip>
 				<Dropdown
-					c_label="Position"
-					c_values={[position()]}
-					c_on_change={(options) => set_position(options[0].value as ModalPosition)}>
+					c:label="Position"
+					c:values={[position()]}
+					c:onChange={(options) => setPosition(options[0].value as ModalPosition)}>
 					<For each={[
-						[ModalPosition.left_top, 'Left top'],
-						[ModalPosition.left_center_to_bottom, 'Left center to bottom'],
-						[ModalPosition.left_center, 'Left center'],
-						[ModalPosition.left_center_to_top, 'Left center to top'],
-						[ModalPosition.left_bottom, 'Left bottom'],
-						[ModalPosition.right_top, 'Right top'],
-						[ModalPosition.right_center_to_bottom, 'Right center to bottom'],
-						[ModalPosition.right_center, 'Right center'],
-						[ModalPosition.right_center_to_top, 'Right center to top'],
-						[ModalPosition.right_bottom, 'Right bottom'],
-						[ModalPosition.center_top_to_right, 'Center top to right'],
-						[ModalPosition.center_top, 'Center top'],
-						[ModalPosition.center_top_to_left, 'Center top to left'],
-						[ModalPosition.center_bottom_to_right, 'Center bottom to right'],
-						[ModalPosition.center_bottom, 'Center bottom'],
-						[ModalPosition.center_bottom_to_left, 'Center bottom to left'],
-						[ModalPosition.center_center_left_top, 'Center center left top'],
-						[ModalPosition.center_center_left, 'Center center left'],
-						[ModalPosition.center_center_left_bottom, 'Center center left bottom'],
-						[ModalPosition.center_center_top, 'Center center top'],
-						[ModalPosition.center_center, 'Center center'],
-						[ModalPosition.center_center_bottom, 'Center center bottom'],
-						[ModalPosition.center_center_right_top, 'Center center right top'],
-						[ModalPosition.center_center_right, 'Center center right'],
-						[ModalPosition.center_center_right_bottom, 'Center center right bottom'],
-					]}>{option => <DropdownOption c_value={option[0]} c_text={option[1] as string} />}</For>
+						[ModalPosition.leftTop, 'Left top'],
+						[ModalPosition.leftCenterToBottom, 'Left center to bottom'],
+						[ModalPosition.leftCenter, 'Left center'],
+						[ModalPosition.leftCenterToTop, 'Left center to top'],
+						[ModalPosition.leftBottom, 'Left bottom'],
+						[ModalPosition.rightTop, 'Right top'],
+						[ModalPosition.rightCenterToBottom, 'Right center to bottom'],
+						[ModalPosition.rightCenter, 'Right center'],
+						[ModalPosition.rightCenterToTop, 'Right center to top'],
+						[ModalPosition.rightBottom, 'Right bottom'],
+						[ModalPosition.centerTopToRight, 'Center top to right'],
+						[ModalPosition.centerTop, 'Center top'],
+						[ModalPosition.centerTopToLeft, 'Center top to left'],
+						[ModalPosition.centerBottomToRight, 'Center bottom to right'],
+						[ModalPosition.centerBottom, 'Center bottom'],
+						[ModalPosition.centerBottomToLeft, 'Center bottom to left'],
+						[ModalPosition.centerCenterLeftTop, 'Center center left top'],
+						[ModalPosition.centerCenterLeft, 'Center center left'],
+						[ModalPosition.centerCenterLeftBottom, 'Center center left bottom'],
+						[ModalPosition.centerCenterTop, 'Center center top'],
+						[ModalPosition.centerCenter, 'Center center'],
+						[ModalPosition.centerCenterBottom, 'Center center bottom'],
+						[ModalPosition.centerCenterRightTop, 'Center center right top'],
+						[ModalPosition.centerCenterRight, 'Center center right'],
+						[ModalPosition.centerCenterRightBottom, 'Center center right bottom'],
+					]}>{option => <DropdownOption c:value={option[0]} c:text={option[1] as string} />}</For>
 				</Dropdown>
 				<NumberTextField
 					style={{width: '100px'}}
 					value={gap()}
 					min={0}
-					onBlur={(ev) => set_gap(g => number_safe(event_current_target(ev).valueAsNumber, g))}
-					c_label="Gap"
+					onBlur={(ev) => setGap(g => numberSafe(eventCurrentTarget(ev).valueAsNumber, g))}
+					c:label="Gap"
 				/>
-				<Show when={array_includes([
-					ModalPosition.center_top_to_right,
-					ModalPosition.center_center_left,
-					ModalPosition.center_bottom_to_right,
-					ModalPosition.center_top_to_left,
-					ModalPosition.center_center_right,
-					ModalPosition.center_bottom_to_left,
-					ModalPosition.left_center_to_bottom,
-					ModalPosition.center_center_left_top,
-					ModalPosition.center_center_top,
-					ModalPosition.center_center_right_top,
-					ModalPosition.right_center_to_bottom,
-					ModalPosition.left_center_to_top,
-					ModalPosition.center_center_left_bottom,
-					ModalPosition.center_center_bottom,
-					ModalPosition.center_center_right_bottom,
-					ModalPosition.right_center_to_top
+				<Show when={arrayIncludes([
+					ModalPosition.centerTopToRight,
+					ModalPosition.centerCenterLeft,
+					ModalPosition.centerBottomToRight,
+					ModalPosition.centerTopToLeft,
+					ModalPosition.centerCenterRight,
+					ModalPosition.centerBottomToLeft,
+					ModalPosition.leftCenterToBottom,
+					ModalPosition.centerCenterLeftTop,
+					ModalPosition.centerCenterTop,
+					ModalPosition.centerCenterRightTop,
+					ModalPosition.rightCenterToBottom,
+					ModalPosition.leftCenterToTop,
+					ModalPosition.centerCenterLeftBottom,
+					ModalPosition.centerCenterBottom,
+					ModalPosition.centerCenterRightBottom,
+					ModalPosition.rightCenterToTop
 				], position())}>
 					<NumberTextField
 						value={padding()}
 						style={{width: '100px'}}
 						min={0}
-						onBlur={(ev) => set_padding(p => number_safe(event_current_target(ev).valueAsNumber, p))}
-						c_label="Padding"
+						onBlur={(ev) => setPadding(p => numberSafe(eventCurrentTarget(ev).valueAsNumber, p))}
+						c:label="Padding"
 					/>
 				</Show>
 				<CheckBox
 					checked={anchor()}
-					onChange={ev => set_anchor(event_current_target(ev).checked)}>
+					onChange={ev => setAnchor(eventCurrentTarget(ev).checked)}>
 					Anchor
 				</CheckBox>
 				<CheckBox
 					checked={important()}
-					onChange={ev => setImportant(event_current_target(ev).checked)}>
+					onChange={ev => setImportant(eventCurrentTarget(ev).checked)}>
 					Important
 				</CheckBox>
 				<CheckBox
-					checked={content_autofocus()}
-					onChange={ev => set_content_autofocus(event_current_target(ev).checked)}>
+					checked={contentAutoFocus()}
+					onChange={ev => setContentAutoFocus(eventCurrentTarget(ev).checked)}>
 					Input Autofocus
 				</CheckBox>
 				<CheckBox
 					checked={draggable()}
-					onChange={ev => set_draggable(event_current_target(ev).checked)}>
+					onChange={ev => setDraggable(eventCurrentTarget(ev).checked)}>
 					Draggable
 				</CheckBox>
 				<CheckBox
-					checked={allow_hide_anchor()}
-					onChange={ev => set_allow_hide_anchor(event_current_target(ev).checked)}>
+					checked={allowHideAnchor()}
+					onChange={ev => setAllowHideAnchor(eventCurrentTarget(ev).checked)}>
 					Allow hide anchor
 				</CheckBox>
 			</Tooltip>

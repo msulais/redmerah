@@ -10,7 +10,7 @@ export type IDBStoreLastInput<T = unknown> = {
 
 export enum IDBStoreNames {
 	settings = 'settings',
-	last_input = 'last_input',
+	lastInput = 'last-input',
 }
 
 export enum IDBStoreKeysSettings {
@@ -19,5 +19,5 @@ export enum IDBStoreKeysSettings {
 
 export enum IDBStoreKeysLastInput {
 	/** @param hex `HEXColor` */
-	hex_color = 'hex_color'
+	hexColor = 'hex-color'
 }

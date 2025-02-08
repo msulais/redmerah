@@ -1,22 +1,22 @@
 import { createSignal, onCleanup, onMount, type VoidComponent, createMemo, createEffect, Show } from "solid-js"
 
 import type { HSLColor, HEXColor } from "@/types/color"
-import { element_rect, element_release_pointercapture, element_set_pointercapture } from "@/utils/element"
-import { rect_height, rect_left, rect_top, rect_width } from "@/utils/rect"
+import { elementRect, elementPointerCaptureRelease, elementPointerCaptureSet } from "@/utils/element"
+import { rectHeight, rectLeft, rectTop, rectWidth } from "@/utils/rect"
 import { BodyAttributes } from "@/enums/attributes"
-import { attr_remove, attr_set } from "@/utils/attributes"
-import { event_current_target, event_stop_propagation } from "@/utils/event"
-import { math_clamp, math_round } from "@/utils/math"
-import { cmyk_to_hsl, get_contrast_ratio, hex_to_hsl, hex_to_rgb, hsl_to_cmyk, hsl_to_hex, hsl_to_hsv, hsl_to_hwb, hsl_to_rgb, hsv_to_hex, hsv_to_hsl, hwb_to_hsl, rgb_to_hsl } from "@/utils/color"
+import { attrRemove, attrSet } from "@/utils/attributes"
+import { eventCurrentTarget, eventStopPropagation } from "@/utils/event"
+import { mathClamp, mathRound } from "@/utils/math"
+import { colorCmykToHsl, colorContrastRatio, colorHexToHsl, colorHexToRgb, colorHslToCmyk, colorHslToHex, colorHslToHsv, colorHslToHwb, colorHslToRgb, colorHsvToHex, colorHsvToHsl, colorHwbToHsl, colorRgbToHsl } from "@/utils/color"
 import { Commands } from "./_enums"
-import { string_padstart, string_substring, string_touppercase } from "@/utils/string"
-import { number_parse, number_to_string } from "@/utils/number"
-import { file_open } from "@/utils/file"
-import { regex_test } from "@/utils/regex"
-import { url_create, url_revoke } from "@/utils/url"
-import { document_body } from "@/utils/document"
-import { promise_done } from "@/utils/object"
-import { array_join } from "@/utils/array"
+import { stringPadStart, stringSubstring, stringToUpperCase } from "@/utils/string"
+import { numberParse, numberToString } from "@/utils/number"
+import { fileOpen } from "@/utils/file"
+import { regexTest } from "@/utils/regex"
+import { urlCreate, urlRevoke } from "@/utils/url"
+import { documentBody } from "@/utils/document"
+import { promiseDone } from "@/utils/object"
+import { arrayJoin } from "@/utils/array"
 import { ICON_IMAGE } from "@/constants/icons"
 
 import Button, { ButtonVariant } from "@/components/Button"
@@ -27,109 +27,109 @@ export const RectanglePicker: VoidComponent<{
 	input: HSLColor
 	command(type: Commands, ...args: unknown[]): unknown
 }> = (props) => {
-	const body = document_body()
-	const [hue, set_hue] = createSignal<number>(0) // 0-100
-	const [left, set_left] = createSignal<number>(0) // 0-100
-	const [top, set_top] = createSignal<number>(0) // 0-100
-	const get_hsl_color = createMemo<HSLColor>(() => {
+	const body = documentBody()
+	const [hue, setHue] = createSignal<number>(0) // 0-100
+	const [left, setLeft] = createSignal<number>(0) // 0-100
+	const [top, setTop] = createSignal<number>(0) // 0-100
+	const getHSLColor = createMemo<HSLColor>(() => {
 		const [h, s, v] = [
 			hue() / 100,
 			left() / 100,
 			(100 - top()) / 100
 		]
-		return {...hsv_to_hsl({ h, s, v }), h}
+		return {...colorHsvToHsl({ h, s, v }), h}
 	})
-	const get_hex_color = createMemo<HEXColor>(() => {
+	const getHEXColor = createMemo<HEXColor>(() => {
 		const [h, s, v] = [
 			hue() / 100,
 			left() / 100,
 			(100 - top()) / 100
 		]
-		return hsv_to_hex({ h, s, v })
+		return colorHsvToHex({ h, s, v })
 	})
-	let color_dragged = false
-	let hue_dragged = false
-	let color_ref: HTMLDivElement
-	let color_rect: DOMRect
-	let hue_ref: HTMLDivElement
-	let hue_rect: DOMRect
-	let is_update_locally = false // to avoid unnecesary recalculate in `createEffect()`
+	let colorDragged = false
+	let hueDragged = false
+	let colorRef: HTMLDivElement
+	let colorRect: DOMRect
+	let hueRef: HTMLDivElement
+	let hueRect: DOMRect
+	let isUpdateLocally = false // to avoid unnecesary recalculate in `createEffect()`
 
 	function command(type: Commands, ...args: unknown[]): unknown {
 		return props.command(type, ...args)
 	}
 
-	function on_pointermove(ev: PointerEvent): void {
-		if (color_dragged) {
-			is_update_locally = true
-			let x = (ev.clientX - rect_left(color_rect)) / rect_width(color_rect) * 100
-			x = math_clamp(x, 0, 100)
-			set_left(x)
+	function onPointerMove(ev: PointerEvent): void {
+		if (colorDragged) {
+			isUpdateLocally = true
+			let x = (ev.clientX - rectLeft(colorRect)) / rectWidth(colorRect) * 100
+			x = mathClamp(x, 0, 100)
+			setLeft(x)
 
-			let y = (ev.clientY - rect_top(color_rect)) / rect_height(color_rect) * 100
-			y = math_clamp(y, 0, 100)
-			set_top(y)
-			command(Commands.update_input, get_hsl_color())
+			let y = (ev.clientY - rectTop(colorRect)) / rectHeight(colorRect) * 100
+			y = mathClamp(y, 0, 100)
+			setTop(y)
+			command(Commands.updateInput, getHSLColor())
 		}
-		else if (hue_dragged) {
-			is_update_locally = true
-			let x = (ev.clientX - rect_left(hue_rect)) / rect_width(hue_rect) * 100
-			x = math_clamp(x, 0, 100)
-			set_hue(x)
-			command(Commands.update_input, get_hsl_color())
+		else if (hueDragged) {
+			isUpdateLocally = true
+			let x = (ev.clientX - rectLeft(hueRect)) / rectWidth(hueRect) * 100
+			x = mathClamp(x, 0, 100)
+			setHue(x)
+			command(Commands.updateInput, getHSLColor())
 		}
 	}
 
-	function on_pointerup(ev: PointerEvent & {currentTarget: HTMLDivElement}): void {
-		hue_dragged = color_dragged = is_update_locally = false
-		element_release_pointercapture(event_current_target(ev), ev.pointerId)
-		attr_remove(body, BodyAttributes.no_pointer_event)
+	function onPointerUp(ev: PointerEvent & {currentTarget: HTMLDivElement}): void {
+		hueDragged = colorDragged = isUpdateLocally = false
+		elementPointerCaptureRelease(eventCurrentTarget(ev), ev.pointerId)
+		attrRemove(body, BodyAttributes.noPointerEvent)
 	}
 
-	function update_position(): void {
+	function updatePosition(): void {
 		const input = props.input
-		if (is_update_locally) {
-			is_update_locally = false
+		if (isUpdateLocally) {
+			isUpdateLocally = false
 			return
 		}
-		const {s, v} = hsl_to_hsv(input)
-		set_hue(input.h * 100)
-		set_left(s * 100)
-		set_top((1 - v) * 100)
+		const {s, v} = colorHslToHsv(input)
+		setHue(input.h * 100)
+		setLeft(s * 100)
+		setTop((1 - v) * 100)
 	}
 
 	createEffect(() => {
-		update_position()
+		updatePosition()
 	})
 
 	return (<div class={CSS.picker_rectangle}>
 		<div
 			data-color
-			ref={r => color_ref = r}
+			ref={r => colorRef = r}
 			draggable={false}
 			style={{
 				'--hue': `hsl(${hue() / 100 * 360}, 100%, 50%)`
 			}}
 			onPointerDown={ev => {
-				is_update_locally = true
-				color_dragged = true
-				color_rect = element_rect(color_ref)
-				set_left(math_clamp((ev.clientX - rect_left(color_rect)) / rect_width(color_rect) * 100, 0, 100))
-				set_top(math_clamp((ev.clientY - rect_top(color_rect)) / rect_height(color_rect) * 100, 0, 100))
-				element_set_pointercapture(event_current_target(ev), ev.pointerId)
-				attr_set(body, BodyAttributes.no_pointer_event)
-				command(Commands.update_input, get_hsl_color())
-				is_update_locally = false
+				isUpdateLocally = true
+				colorDragged = true
+				colorRect = elementRect(colorRef)
+				setLeft(mathClamp((ev.clientX - rectLeft(colorRect)) / rectWidth(colorRect) * 100, 0, 100))
+				setTop(mathClamp((ev.clientY - rectTop(colorRect)) / rectHeight(colorRect) * 100, 0, 100))
+				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
+				attrSet(body, BodyAttributes.noPointerEvent)
+				command(Commands.updateInput, getHSLColor())
+				isUpdateLocally = false
 			}}
-			onPointerMove={on_pointermove}
-			onPointerCancel={on_pointerup}
-			onPointerUp={on_pointerup}>
+			onPointerMove={onPointerMove}
+			onPointerCancel={onPointerUp}
+			onPointerUp={onPointerUp}>
 			<div
 				draggable={false}
 				class={CSS.picker_indicator}
 				style={{
-					"background-color": get_hex_color(),
-					"border-color": get_contrast_ratio(hex_to_rgb(get_hex_color()), {r: 0, g: 0, b: 0}) > 50
+					"background-color": getHEXColor(),
+					"border-color": colorContrastRatio(colorHexToRgb(getHEXColor()), {r: 0, g: 0, b: 0}) > 50
 						? '#000'
 						: '#fff',
 					left: left() + '%',
@@ -141,27 +141,27 @@ export const RectanglePicker: VoidComponent<{
 		<div
 			data-hue
 			draggable={false}
-			ref={r => hue_ref = r}
+			ref={r => hueRef = r}
 			onPointerDown={ev => {
-				is_update_locally = true
-				hue_dragged = true
-				hue_rect = element_rect(hue_ref)
-				set_hue(math_clamp((ev.clientX - rect_left(hue_rect)) / rect_width(hue_rect) * 100, 0, 100))
-				element_set_pointercapture(event_current_target(ev), ev.pointerId)
-				attr_set(body, BodyAttributes.no_pointer_event)
-				command(Commands.update_input, get_hsl_color())
-				is_update_locally = false
+				isUpdateLocally = true
+				hueDragged = true
+				hueRect = elementRect(hueRef)
+				setHue(mathClamp((ev.clientX - rectLeft(hueRect)) / rectWidth(hueRect) * 100, 0, 100))
+				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
+				attrSet(body, BodyAttributes.noPointerEvent)
+				command(Commands.updateInput, getHSLColor())
+				isUpdateLocally = false
 			}}
-			onPointerMove={on_pointermove}
-			onPointerCancel={on_pointerup}
-			onPointerUp={on_pointerup}>
+			onPointerMove={onPointerMove}
+			onPointerCancel={onPointerUp}
+			onPointerUp={onPointerUp}>
 			<div
 				class={CSS.picker_indicator}
 				draggable={false}
 				style={{
 					"background-color": `hsl(${hue() / 100 * 360}, 100%, 50%)`,
 					left: hue() + '%',
-					"border-color": get_contrast_ratio(hsl_to_rgb({h: hue() / 100, s: 1, l: 0.5}), {r: 0, g: 0, b: 0}) > 50
+					"border-color": colorContrastRatio(colorHslToRgb({h: hue() / 100, s: 1, l: 0.5}), {r: 0, g: 0, b: 0}) > 50
 						? '#000'
 						: '#fff',
 					transform: 'translate(-50%, -5px)'
@@ -175,11 +175,11 @@ export const RectangleHSLPicker: VoidComponent<{
 	input: HSLColor
 	command(type: Commands, ...args: unknown[]): unknown
 }> = (props) => {
-	const body = document_body()
-	const [hue, set_hue] = createSignal<number>(0) // 0-100
-	const [left, set_left] = createSignal<number>(0) // 0-100
-	const [top, set_top] = createSignal<number>(0) // 0-100
-	const get_hsl_color = createMemo<HSLColor>(() => {
+	const body = documentBody()
+	const [hue, setHUE] = createSignal<number>(0) // 0-100
+	const [left, setLeft] = createSignal<number>(0) // 0-100
+	const [top, setTop] = createSignal<number>(0) // 0-100
+	const getHSLColor = createMemo<HSLColor>(() => {
 		const [h, s, l] = [
 			hue() / 100,
 			left() / 100,
@@ -187,96 +187,96 @@ export const RectangleHSLPicker: VoidComponent<{
 		]
 		return {h, s, l}
 	})
-	const get_hex_color = createMemo<HEXColor>(() => {
+	const getHEXColor = createMemo<HEXColor>(() => {
 		const [h, s, l] = [
 			hue() / 100,
 			left() / 100,
 			(100 - top()) / 100
 		]
-		return hsl_to_hex({ h, s, l })
+		return colorHslToHex({ h, s, l })
 	})
-	let color_dragged = false
-	let hue_dragged = false
-	let color_ref: HTMLDivElement
-	let color_rect: DOMRect
-	let hue_ref: HTMLDivElement
-	let hue_rect: DOMRect
-	let is_update_locally = false // to avoid unnecesary recalculate in `createEffect()`
+	let colorDragged = false
+	let hueDragged = false
+	let colorRef: HTMLDivElement
+	let colorRect: DOMRect
+	let hueRef: HTMLDivElement
+	let hueRect: DOMRect
+	let isUpdateLocally = false // to avoid unnecesary recalculate in `createEffect()`
 
 	function command(type: Commands, ...args: unknown[]): unknown {
 		return props.command(type, ...args)
 	}
 
-	function on_pointermove(ev: PointerEvent): void {
-		if (color_dragged) {
-			is_update_locally = true
-			let x = (ev.clientX - rect_left(color_rect)) / rect_width(color_rect) * 100
-			x = math_clamp(x, 0, 100)
-			set_left(x)
+	function onPointerMove(ev: PointerEvent): void {
+		if (colorDragged) {
+			isUpdateLocally = true
+			let x = (ev.clientX - rectLeft(colorRect)) / rectWidth(colorRect) * 100
+			x = mathClamp(x, 0, 100)
+			setLeft(x)
 
-			let y = (ev.clientY - rect_top(color_rect)) / rect_height(color_rect) * 100
-			y = math_clamp(y, 0, 100)
-			set_top(y)
-			command(Commands.update_input, get_hsl_color())
+			let y = (ev.clientY - rectTop(colorRect)) / rectHeight(colorRect) * 100
+			y = mathClamp(y, 0, 100)
+			setTop(y)
+			command(Commands.updateInput, getHSLColor())
 		}
-		else if (hue_dragged) {
-			is_update_locally = true
-			let x = (ev.clientX - rect_left(hue_rect)) / rect_width(hue_rect) * 100
-			x = math_clamp(x, 0, 100)
-			set_hue(x)
-			command(Commands.update_input, get_hsl_color())
+		else if (hueDragged) {
+			isUpdateLocally = true
+			let x = (ev.clientX - rectLeft(hueRect)) / rectWidth(hueRect) * 100
+			x = mathClamp(x, 0, 100)
+			setHUE(x)
+			command(Commands.updateInput, getHSLColor())
 		}
 	}
 
-	function on_pointerup(ev: PointerEvent & {currentTarget: HTMLDivElement}): void {
-		hue_dragged = color_dragged = is_update_locally = false
-		element_release_pointercapture(event_current_target(ev), ev.pointerId)
-		attr_remove(body, BodyAttributes.no_pointer_event)
+	function onPointerUp(ev: PointerEvent & {currentTarget: HTMLDivElement}): void {
+		hueDragged = colorDragged = isUpdateLocally = false
+		elementPointerCaptureRelease(eventCurrentTarget(ev), ev.pointerId)
+		attrRemove(body, BodyAttributes.noPointerEvent)
 	}
 
-	function update_position(): void {
+	function updatePosition(): void {
 		const {h, s, l} = props.input
-		if (is_update_locally) {
-			is_update_locally = false
+		if (isUpdateLocally) {
+			isUpdateLocally = false
 			return
 		}
-		set_hue(h * 100)
-		set_left(s * 100)
-		set_top((1 - l) * 100)
+		setHUE(h * 100)
+		setLeft(s * 100)
+		setTop((1 - l) * 100)
 	}
 
 	createEffect(() => {
-		update_position()
+		updatePosition()
 	})
 
 	return (<div class={CSS.picker_rectangle_hsl}>
 		<div
 			data-color
-			ref={r => color_ref = r}
+			ref={r => colorRef = r}
 			draggable={false}
 			style={{
 				'--hue': `hsl(${hue() / 100 * 360}, 100%, 50%)`
 			}}
 			onPointerDown={ev => {
-				is_update_locally = true
-				color_dragged = true
-				color_rect = element_rect(color_ref)
-				set_left(math_clamp((ev.clientX - rect_left(color_rect)) / rect_width(color_rect) * 100, 0, 100))
-				set_top(math_clamp((ev.clientY - rect_top(color_rect)) / rect_height(color_rect) * 100, 0, 100))
-				attr_set(body, BodyAttributes.no_pointer_event)
-				command(Commands.update_input, get_hsl_color())
-				is_update_locally = false
-				element_set_pointercapture(event_current_target(ev), ev.pointerId)
+				isUpdateLocally = true
+				colorDragged = true
+				colorRect = elementRect(colorRef)
+				setLeft(mathClamp((ev.clientX - rectLeft(colorRect)) / rectWidth(colorRect) * 100, 0, 100))
+				setTop(mathClamp((ev.clientY - rectTop(colorRect)) / rectHeight(colorRect) * 100, 0, 100))
+				attrSet(body, BodyAttributes.noPointerEvent)
+				command(Commands.updateInput, getHSLColor())
+				isUpdateLocally = false
+				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
 			}}
-			onPointerMove={on_pointermove}
-			onPointerUp={on_pointerup}
-			onPointerCancel={on_pointerup}>
+			onPointerMove={onPointerMove}
+			onPointerUp={onPointerUp}
+			onPointerCancel={onPointerUp}>
 			<div
 				draggable={false}
 				class={CSS.picker_indicator}
 				style={{
-					"background-color": get_hex_color(),
-					"border-color": get_contrast_ratio(hex_to_rgb(get_hex_color()), {r: 0, g: 0, b: 0}) > 50
+					"background-color": getHEXColor(),
+					"border-color": colorContrastRatio(colorHexToRgb(getHEXColor()), {r: 0, g: 0, b: 0}) > 50
 						? '#000'
 						: '#fff',
 					left: left() + '%',
@@ -288,27 +288,27 @@ export const RectangleHSLPicker: VoidComponent<{
 		<div
 			data-hue
 			draggable={false}
-			ref={r => hue_ref = r}
+			ref={r => hueRef = r}
 			onPointerDown={ev => {
-				is_update_locally = true
-				hue_dragged = true
-				hue_rect = element_rect(hue_ref)
-				set_hue(math_clamp((ev.clientX - rect_left(hue_rect)) / rect_width(hue_rect) * 100, 0, 100))
-				attr_set(body, BodyAttributes.no_pointer_event)
-				command(Commands.update_input, get_hsl_color())
-				is_update_locally = false
-				element_set_pointercapture(event_current_target(ev), ev.pointerId)
+				isUpdateLocally = true
+				hueDragged = true
+				hueRect = elementRect(hueRef)
+				setHUE(mathClamp((ev.clientX - rectLeft(hueRect)) / rectWidth(hueRect) * 100, 0, 100))
+				attrSet(body, BodyAttributes.noPointerEvent)
+				command(Commands.updateInput, getHSLColor())
+				isUpdateLocally = false
+				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
 			}}
-			onPointerMove={on_pointermove}
-			onPointerUp={on_pointerup}
-			onPointerCancel={on_pointerup}>
+			onPointerMove={onPointerMove}
+			onPointerUp={onPointerUp}
+			onPointerCancel={onPointerUp}>
 			<div
 				class={CSS.picker_indicator}
 				draggable={false}
 				style={{
 					"background-color": `hsl(${hue() / 100 * 360}, 100%, 50%)`,
 					left: hue() + '%',
-					"border-color": get_contrast_ratio(hsl_to_rgb({h: hue() / 100, s: 1, l: 0.5}), {r: 0, g: 0, b: 0}) > 50
+					"border-color": colorContrastRatio(colorHslToRgb({h: hue() / 100, s: 1, l: 0.5}), {r: 0, g: 0, b: 0}) > 50
 						? '#000'
 						: '#fff',
 					transform: 'translate(-50%, -5px)'
@@ -321,26 +321,26 @@ export const RectangleHSLPicker: VoidComponent<{
 export const ImagePicker: VoidComponent<{
 	command(type: Commands, ...args: unknown[]): unknown
 }> = (props) => {
-	const body = document_body()
-	const [hex_color, set_hex_color] = createSignal<HEXColor>('#000000')
-	const [left, set_left] = createSignal(0) // 0 -> 100
-	const [top, set_top] = createSignal(0) // 0 -> 100
-	const [any_image, set_any_image] = createSignal(false)
-	const get_hsl_color = createMemo(() => hex_to_hsl(hex_color()))
+	const body = documentBody()
+	const [hexColor, setHexColor] = createSignal<HEXColor>('#000000')
+	const [left, setLeft] = createSignal(0) // 0 -> 100
+	const [top, setTop] = createSignal(0) // 0 -> 100
+	const [anyImage, setAnyImage] = createSignal(false)
+	const getHSLColor = createMemo(() => colorHexToHsl(hexColor()))
 	const image = new Image()
-	let canvas_ref: HTMLCanvasElement
-	let canvas_context: CanvasRenderingContext2D
-	let image_dragged = false
-	let image_ref: HTMLDivElement
-	let image_rect: DOMRect
+	let canvasRef: HTMLCanvasElement
+	let canvasContext: CanvasRenderingContext2D
+	let imageDragged = false
+	let imageRef: HTMLDivElement
+	let imageRect: DOMRect
 
-	function pick_color(): void {
-		const data = canvas_context.getImageData(left() / 100 * canvas_ref.width, top() / 100 * canvas_ref.height, 1, 1).data
-		set_hex_color(array_join([
+	function pickColor(): void {
+		const data = canvasContext.getImageData(left() / 100 * canvasRef.width, top() / 100 * canvasRef.height, 1, 1).data
+		setHexColor(arrayJoin([
 			'#',
-			string_touppercase(string_padstart(number_to_string(data[0], 16), 2, '0')),
-			string_touppercase(string_padstart(number_to_string(data[1], 16), 2, '0')),
-			string_touppercase(string_padstart(number_to_string(data[2], 16), 2, '0')),
+			stringToUpperCase(stringPadStart(numberToString(data[0], 16), 2, '0')),
+			stringToUpperCase(stringPadStart(numberToString(data[1], 16), 2, '0')),
+			stringToUpperCase(stringPadStart(numberToString(data[2], 16), 2, '0')),
 		], '') as HEXColor)
 	}
 
@@ -348,52 +348,52 @@ export const ImagePicker: VoidComponent<{
 		return props.command(type, ...args)
 	}
 
-	function on_pointermove(ev: PointerEvent): void {
-		if (image_dragged) {
-			let x = (ev.clientX - rect_left(image_rect)) / rect_width(image_rect) * 100
-			x = math_clamp(x, 0, 100)
-			set_left(x)
+	function onPointerMove(ev: PointerEvent): void {
+		if (imageDragged) {
+			let x = (ev.clientX - rectLeft(imageRect)) / rectWidth(imageRect) * 100
+			x = mathClamp(x, 0, 100)
+			setLeft(x)
 
-			let y = (ev.clientY - rect_top(image_rect)) / rect_height(image_rect) * 100
-			y = math_clamp(y, 0, 100)
-			set_top(y)
-			pick_color()
-			command(Commands.update_input, get_hsl_color())
+			let y = (ev.clientY - rectTop(imageRect)) / rectHeight(imageRect) * 100
+			y = mathClamp(y, 0, 100)
+			setTop(y)
+			pickColor()
+			command(Commands.updateInput, getHSLColor())
 		}
 	}
 
-	function on_pointerup(ev: PointerEvent & {currentTarget: HTMLDivElement}): void {
-		image_dragged = false
-		element_release_pointercapture(event_current_target(ev), ev.pointerId)
-		attr_remove(body, BodyAttributes.no_pointer_event)
+	function onPointerUp(ev: PointerEvent & {currentTarget: HTMLDivElement}): void {
+		imageDragged = false
+		elementPointerCaptureRelease(eventCurrentTarget(ev), ev.pointerId)
+		attrRemove(body, BodyAttributes.noPointerEvent)
 	}
 
-	function init_canvas(): void {
-		canvas_context = canvas_ref.getContext('2d', {
+	function initCanvas(): void {
+		canvasContext = canvasRef.getContext('2d', {
 			willReadFrequently: true,
 		})!
 	}
 
-	function init_image(): void {
+	function initImage(): void {
 		image.onload = () => {
-			canvas_ref.width = image.naturalWidth
-			canvas_ref.height = image.naturalHeight
-			canvas_context.drawImage(image, 0, 0)
+			canvasRef.width = image.naturalWidth
+			canvasRef.height = image.naturalHeight
+			canvasContext.drawImage(image, 0, 0)
 		}
 	}
 
-	function pick_image(): void {
-		promise_done(
-			file_open('image/*', false),
+	function pickImage(): void {
+		promiseDone(
+			fileOpen('image/*', false),
 			(files) => {
 				if (!files || files?.length == 0) return;
 
 				for (const file of files) {
-					if (!regex_test(/^image/, file.type)) continue
+					if (!regexTest(/^image/, file.type)) continue
 
-					url_revoke(image.src)
-					image.src = url_create(file)
-					if (!any_image()) set_any_image(true)
+					urlRevoke(image.src)
+					image.src = urlCreate(file)
+					if (!anyImage()) setAnyImage(true)
 					break
 				}
 			}
@@ -401,47 +401,47 @@ export const ImagePicker: VoidComponent<{
 	}
 
 	onMount(() => {
-		init_canvas()
-		init_image()
+		initCanvas()
+		initImage()
 	})
 
 	onCleanup(() => {
-		url_revoke(image.src)
+		urlRevoke(image.src)
 	})
 
 	return (<div class={CSS.picker_image}>
 		<div
 			data-image
-			ref={r => image_ref = r}
-			data-has-image={any_image()? '' : undefined}
+			ref={r => imageRef = r}
+			data-has-image={anyImage()? '' : undefined}
 			onPointerDown={ev => {
-				image_rect = element_rect(image_ref)
-				if (!any_image()) return;
+				imageRect = elementRect(imageRef)
+				if (!anyImage()) return;
 
-				set_left(math_clamp((ev.clientX - rect_left(image_rect)) / rect_width(image_rect) * 100, 0, 100))
-				set_top(math_clamp((ev.clientY - rect_top(image_rect)) / rect_height(image_rect) * 100, 0, 100))
-				attr_set(body, BodyAttributes.no_pointer_event)
-				pick_color()
-				command(Commands.update_input, get_hsl_color())
-				image_dragged = true
-				element_set_pointercapture(event_current_target(ev), ev.pointerId)
+				setLeft(mathClamp((ev.clientX - rectLeft(imageRect)) / rectWidth(imageRect) * 100, 0, 100))
+				setTop(mathClamp((ev.clientY - rectTop(imageRect)) / rectHeight(imageRect) * 100, 0, 100))
+				attrSet(body, BodyAttributes.noPointerEvent)
+				pickColor()
+				command(Commands.updateInput, getHSLColor())
+				imageDragged = true
+				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
 			}}
-			onPointerMove={on_pointermove}
-			onPointerUp={on_pointerup}
-			onPointerCancel={on_pointerup}>
+			onPointerMove={onPointerMove}
+			onPointerUp={onPointerUp}
+			onPointerCancel={onPointerUp}>
 			<canvas
 				draggable={false}
-				ref={r => canvas_ref = r}
-				data-has-image={any_image()? '' : undefined}></canvas>
-			<Show when={any_image()}>
+				ref={r => canvasRef = r}
+				data-has-image={anyImage()? '' : undefined}></canvas>
+			<Show when={anyImage()}>
 				{/* TODO: keyboard accesiblity */}
 				<div
 					class={CSS.picker_indicator}
 					draggable={false}
 					style={{
-						"background-color": hex_color(),
-						"border-color": get_contrast_ratio(
-							hex_to_rgb(hex_color()),
+						"background-color": hexColor(),
+						"border-color": colorContrastRatio(
+							colorHexToRgb(hexColor()),
 							{r: 0, g: 0, b: 0}) > 50
 								? '#000'
 								: '#fff',
@@ -450,19 +450,19 @@ export const ImagePicker: VoidComponent<{
 						transform: 'translate(-12px, -12px)',
 					}}></div>
 			</Show>
-			<Show when={!any_image()}>
+			<Show when={!anyImage()}>
 				<Button
-					onPointerDown={ev => event_stop_propagation(ev)}
-					c_variant={ButtonVariant.tonal}
-					onClick={pick_image}>
-					<Icon c_code={ICON_IMAGE}/>
+					onPointerDown={ev => eventStopPropagation(ev)}
+					c:variant={ButtonVariant.tonal}
+					onClick={pickImage}>
+					<Icon c:code={ICON_IMAGE}/>
 					Pick image
 				</Button>
 			</Show>
 		</div>
-		<Show when={any_image()}>
-			<Button c_variant={ButtonVariant.tonal} onClick={pick_image}>
-				<Icon c_code={ICON_IMAGE}/>
+		<Show when={anyImage()}>
+			<Button c:variant={ButtonVariant.tonal} onClick={pickImage}>
+				<Icon c:code={ICON_IMAGE}/>
 				Pick image
 			</Button>
 		</Show>
@@ -477,103 +477,103 @@ export const SpectrumPicker: VoidComponent<{
 	input: HSLColor
 	command(type: Commands, ...args: unknown[]): unknown
 }> = (props) => {
-	const body = document_body()
-	const [blackness, set_blackness] = createSignal<number>(0) // 0-100
-	const [left, set_left] = createSignal<number>(0) // 0-100
-	const [top, set_top] = createSignal<number>(0) // 0-100
-	const get_hue = createMemo(() => {
+	const body = documentBody()
+	const [blackness, setBlackness] = createSignal<number>(0) // 0-100
+	const [left, setLeft] = createSignal<number>(0) // 0-100
+	const [top, setTop] = createSignal<number>(0) // 0-100
+	const getHue = createMemo(() => {
 		return left() / 100 * 360
 	})
-	const get_hsl_color = createMemo<HSLColor>(() => {
+	const getHSLColor = createMemo<HSLColor>(() => {
 		const h = left() / 100
 		const s = (100 - top()) / 100
 		const x = (top() / 2) + 50
 		const l = (x - x * (blackness() / 100)) / 100
 		return {h, s, l}
 	})
-	let is_update_locally = false // to avoid unnecesary recalculate in `createEffect()`
-	let spectrum_dragged = false
-	let blackness_dragged = false
-	let spectrum_ref: HTMLDivElement
-	let spectrum_rect: DOMRect
-	let blackness_ref: HTMLDivElement
-	let blackness_rect: DOMRect
+	let isUpdateLocally = false // to avoid unnecesary recalculate in `createEffect()`
+	let spectrumDragged = false
+	let blacknessDragged = false
+	let spectrumRef: HTMLDivElement
+	let spectrumRect: DOMRect
+	let blacknessRef: HTMLDivElement
+	let blacknessRect: DOMRect
 
 	function command(type: Commands, ...args: unknown[]): unknown {
 		return props.command(type, ...args)
 	}
 
-	function on_pointermove(ev: PointerEvent): void {
-		if (spectrum_dragged) {
-			is_update_locally = true
-			let x = (ev.clientX - rect_left(spectrum_rect)) / rect_width(spectrum_rect) * 100
-			x = math_clamp(x, 0, 100)
-			set_left(x)
+	function onPointerMove(ev: PointerEvent): void {
+		if (spectrumDragged) {
+			isUpdateLocally = true
+			let x = (ev.clientX - rectLeft(spectrumRect)) / rectWidth(spectrumRect) * 100
+			x = mathClamp(x, 0, 100)
+			setLeft(x)
 
-			let y = (ev.clientY - rect_top(spectrum_rect)) / rect_height(spectrum_rect) * 100
-			y = math_clamp(y, 0, 100)
-			set_top(y)
-			command(Commands.update_input, get_hsl_color())
+			let y = (ev.clientY - rectTop(spectrumRect)) / rectHeight(spectrumRect) * 100
+			y = mathClamp(y, 0, 100)
+			setTop(y)
+			command(Commands.updateInput, getHSLColor())
 		}
-		else if (blackness_dragged) {
-			is_update_locally = true
-			let x = (ev.clientX - rect_left(blackness_rect)) / rect_width(blackness_rect) * 100
-			x = math_clamp(x, 0, 100)
-			set_blackness(x)
-			command(Commands.update_input, get_hsl_color())
+		else if (blacknessDragged) {
+			isUpdateLocally = true
+			let x = (ev.clientX - rectLeft(blacknessRect)) / rectWidth(blacknessRect) * 100
+			x = mathClamp(x, 0, 100)
+			setBlackness(x)
+			command(Commands.updateInput, getHSLColor())
 		}
 	}
 
-	function on_pointerup(ev: PointerEvent & {currentTarget: HTMLDivElement}): void {
-		spectrum_dragged = blackness_dragged = is_update_locally = false
-		element_release_pointercapture(event_current_target(ev), ev.pointerId)
-		attr_remove(body, BodyAttributes.no_pointer_event)
+	function onPointerUp(ev: PointerEvent & {currentTarget: HTMLDivElement}): void {
+		spectrumDragged = blacknessDragged = isUpdateLocally = false
+		elementPointerCaptureRelease(eventCurrentTarget(ev), ev.pointerId)
+		attrRemove(body, BodyAttributes.noPointerEvent)
 	}
 
-	function update_position(): void {
+	function updatePosition(): void {
 		const {h, s, l} = props.input
-		if (is_update_locally) {
-			is_update_locally = false
+		if (isUpdateLocally) {
+			isUpdateLocally = false
 			return
 		}
-		set_left(h * 100)
+		setLeft(h * 100)
 		const top = 100 - (100 * s)
-		set_top(top)
+		setTop(top)
 		const x = top / 2 + 50
-		set_blackness((100 * (x - (100 * l))) / x)
+		setBlackness((100 * (x - (100 * l))) / x)
 	}
 
 	createEffect(() => {
-		update_position()
+		updatePosition()
 	})
 
 	return (<div class={CSS.picker_spectrum}>
 		<div
 			data-spectrum
 			draggable={false}
-			ref={r => spectrum_ref = r}
+			ref={r => spectrumRef = r}
 			onPointerDown={ev => {
-				is_update_locally = true
-				spectrum_dragged = true
-				spectrum_rect = element_rect(spectrum_ref)
-				set_left(math_clamp((ev.clientX - rect_left(spectrum_rect)) / rect_width(spectrum_rect) * 100, 0, 100))
-				set_top(math_clamp((ev.clientY - rect_top(spectrum_rect)) / rect_height(spectrum_rect) * 100, 0, 100))
-				attr_set(body, BodyAttributes.no_pointer_event)
-				command(Commands.update_input, get_hsl_color())
-				is_update_locally = false
-				element_set_pointercapture(event_current_target(ev), ev.pointerId)
+				isUpdateLocally = true
+				spectrumDragged = true
+				spectrumRect = elementRect(spectrumRef)
+				setLeft(mathClamp((ev.clientX - rectLeft(spectrumRect)) / rectWidth(spectrumRect) * 100, 0, 100))
+				setTop(mathClamp((ev.clientY - rectTop(spectrumRect)) / rectHeight(spectrumRect) * 100, 0, 100))
+				attrSet(body, BodyAttributes.noPointerEvent)
+				command(Commands.updateInput, getHSLColor())
+				isUpdateLocally = false
+				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
 			}}
-			onPointerMove={on_pointermove}
-			onPointerUp={on_pointerup}
-			onPointerCancel={on_pointerup}>
+			onPointerMove={onPointerMove}
+			onPointerUp={onPointerUp}
+			onPointerCancel={onPointerUp}>
 			<div
 				class={CSS.picker_indicator}
 				draggable={false}
 				style={{
-					"background-color": `hsl(${get_hue()}, 100%, ${50 + (top() / 2)}%)`,
-					"border-color": get_contrast_ratio(
-						hsl_to_rgb({
-							h: get_hue() / 360,
+					"background-color": `hsl(${getHue()}, 100%, ${50 + (top() / 2)}%)`,
+					"border-color": colorContrastRatio(
+						colorHslToRgb({
+							h: getHue() / 360,
 							s: 1,
 							l: 0.5 + (top() / 100 / 2)
 						}),
@@ -588,30 +588,30 @@ export const SpectrumPicker: VoidComponent<{
 		<div
 			data-blackness
 			draggable={false}
-			ref={r => blackness_ref = r}
+			ref={r => blacknessRef = r}
 			onPointerDown={ev => {
-				blackness_rect = element_rect(blackness_ref)
-				is_update_locally = true
-				blackness_dragged = true
-				set_blackness(math_clamp((ev.clientX - rect_left(blackness_rect)) / rect_width(blackness_rect) * 100, 0, 100))
-				attr_set(body, BodyAttributes.no_pointer_event)
-				command(Commands.update_input, get_hsl_color())
-				is_update_locally = false
-				element_set_pointercapture(event_current_target(ev), ev.pointerId)
+				blacknessRect = elementRect(blacknessRef)
+				isUpdateLocally = true
+				blacknessDragged = true
+				setBlackness(mathClamp((ev.clientX - rectLeft(blacknessRect)) / rectWidth(blacknessRect) * 100, 0, 100))
+				attrSet(body, BodyAttributes.noPointerEvent)
+				command(Commands.updateInput, getHSLColor())
+				isUpdateLocally = false
+				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
 			}}
-			onPointerMove={on_pointermove}
-			onPointerUp={on_pointerup}
-			onPointerCancel={on_pointerup}
-			style={{'--color': `hsl(${get_hue()}, 100%, ${50 + (top() / 2)}%)`}}>
+			onPointerMove={onPointerMove}
+			onPointerUp={onPointerUp}
+			onPointerCancel={onPointerUp}
+			style={{'--color': `hsl(${getHue()}, 100%, ${50 + (top() / 2)}%)`}}>
 			<div
 				class={CSS.picker_indicator}
 				draggable={false}
 				style={{
-					"background-color": `hsl(${get_hue()}, ${100 - top()}%, ${((top() / 2) + 50) - ((top() / 2) + 50) * (blackness() / 100)}%)`,
+					"background-color": `hsl(${getHue()}, ${100 - top()}%, ${((top() / 2) + 50) - ((top() / 2) + 50) * (blackness() / 100)}%)`,
 					left: blackness() + '%',
-					"border-color": get_contrast_ratio(
-						hsl_to_rgb({
-							h: get_hue() / 360,
+					"border-color": colorContrastRatio(
+						colorHslToRgb({
+							h: getHue() / 360,
 							s: (100 - top()) / 100,
 							l: (((top() / 2) + 50) - ((top() / 2) + 50) * (blackness() / 100)) / 100
 						}),
@@ -635,169 +635,169 @@ export const SliderRGBPicker: VoidComponent<{
 	input: HSLColor
 	command(type: Commands, ...args: unknown[]): unknown
 }> = (props) => {
-	const body = document_body()
-	const [red, set_red] = createSignal(0) // 0 - 100
-	const [green, set_green] = createSignal(0) // 0 - 100
-	const [blue, set_blue] = createSignal(0) // 0 - 100
-	const get_hsl_color = createMemo(() => {
+	const body = documentBody()
+	const [red, setRed] = createSignal(0) // 0 - 100
+	const [green, setGreen] = createSignal(0) // 0 - 100
+	const [blue, setBlue] = createSignal(0) // 0 - 100
+	const getHSLColor = createMemo(() => {
 		const r = red() / 100
 		const g = green() / 100
 		const b = blue() / 100
-		return rgb_to_hsl({r, g, b})
+		return colorRgbToHsl({r, g, b})
 	})
-	let is_update_locally = false // to avoid unnecesary recalculate in `createEffect()`
-	let red_dragged = false
-	let green_dragged = false
-	let blue_dragged = false
-	let red_rect: DOMRect
-	let green_rect: DOMRect
-	let blue_rect: DOMRect
-	let red_ref: HTMLDivElement
-	let green_ref: HTMLDivElement
-	let blue_ref: HTMLDivElement
+	let isUpdateLocally = false // to avoid unnecesary recalculate in `createEffect()`
+	let redDragged = false
+	let greenDragged = false
+	let blueDragged = false
+	let redRect: DOMRect
+	let greenRect: DOMRect
+	let blueRect: DOMRect
+	let redRef: HTMLDivElement
+	let greenRef: HTMLDivElement
+	let blueRef: HTMLDivElement
 
 	function command(type: Commands, ...args: unknown[]): unknown {
 		return props.command(type, ...args)
 	}
 
-	function on_pointermove(ev: PointerEvent): void {
-		if (red_dragged) {
-			is_update_locally = true
-			let x = (ev.clientX - rect_left(red_rect)) / rect_width(red_rect) * 100
-			x = math_clamp(x, 0, 100)
-			set_red(x)
-			command(Commands.update_input, get_hsl_color())
+	function onPointerMove(ev: PointerEvent): void {
+		if (redDragged) {
+			isUpdateLocally = true
+			let x = (ev.clientX - rectLeft(redRect)) / rectWidth(redRect) * 100
+			x = mathClamp(x, 0, 100)
+			setRed(x)
+			command(Commands.updateInput, getHSLColor())
 		}
-		else if (blue_dragged) {
-			is_update_locally = true
-			let x = (ev.clientX - rect_left(blue_rect)) / rect_width(blue_rect) * 100
-			x = math_clamp(x, 0, 100)
-			set_blue(x)
-			command(Commands.update_input, get_hsl_color())
+		else if (blueDragged) {
+			isUpdateLocally = true
+			let x = (ev.clientX - rectLeft(blueRect)) / rectWidth(blueRect) * 100
+			x = mathClamp(x, 0, 100)
+			setBlue(x)
+			command(Commands.updateInput, getHSLColor())
 		}
-		else if (green_dragged) {
-			is_update_locally = true
-			let x = (ev.clientX - rect_left(green_rect)) / rect_width(green_rect) * 100
-			x = math_clamp(x, 0, 100)
-			set_green(x)
-			command(Commands.update_input, get_hsl_color())
+		else if (greenDragged) {
+			isUpdateLocally = true
+			let x = (ev.clientX - rectLeft(greenRect)) / rectWidth(greenRect) * 100
+			x = mathClamp(x, 0, 100)
+			setGreen(x)
+			command(Commands.updateInput, getHSLColor())
 		}
 	}
 
-	function on_pointerup(ev: PointerEvent & {currentTarget: HTMLDivElement}): void {
-		red_dragged = blue_dragged = green_dragged = is_update_locally = false
-		element_release_pointercapture(event_current_target(ev), ev.pointerId)
-		attr_remove(body, BodyAttributes.no_pointer_event)
+	function onPointerUp(ev: PointerEvent & {currentTarget: HTMLDivElement}): void {
+		redDragged = blueDragged = greenDragged = isUpdateLocally = false
+		elementPointerCaptureRelease(eventCurrentTarget(ev), ev.pointerId)
+		attrRemove(body, BodyAttributes.noPointerEvent)
 	}
 
-	function update_position(): void {
+	function updatePosition(): void {
 		const input = props.input
-		if (is_update_locally) {
-			is_update_locally = false
+		if (isUpdateLocally) {
+			isUpdateLocally = false
 			return
 		}
 
-		const {r, g, b} = hsl_to_rgb(input)
-		set_red(r * 100)
-		set_green(g * 100)
-		set_blue(b * 100)
+		const {r, g, b} = colorHslToRgb(input)
+		setRed(r * 100)
+		setGreen(g * 100)
+		setBlue(b * 100)
 	}
 
 	createEffect(() => {
-		update_position()
+		updatePosition()
 	})
 
 	return (<div class={CSS.picker_slider_rgb}>
-		<p>Red: {math_round(red() / 100 * 0xff)} ({math_round(red())}%)</p>
+		<p>Red: {mathRound(red() / 100 * 0xff)} ({mathRound(red())}%)</p>
 		<div
 			data-red
 			draggable={false}
-			ref={r => red_ref = r}
+			ref={r => redRef = r}
 			onPointerDown={ev => {
-				is_update_locally = true
-				red_dragged = true
-				red_rect = element_rect(red_ref)
-				set_red(math_clamp((ev.clientX - rect_left(red_rect)) / rect_width(red_rect) * 100, 0, 100))
-				attr_set(body, BodyAttributes.no_pointer_event)
-				command(Commands.update_input, get_hsl_color())
-				is_update_locally = false
-				element_set_pointercapture(event_current_target(ev), ev.pointerId)
+				isUpdateLocally = true
+				redDragged = true
+				redRect = elementRect(redRef)
+				setRed(mathClamp((ev.clientX - rectLeft(redRect)) / rectWidth(redRect) * 100, 0, 100))
+				attrSet(body, BodyAttributes.noPointerEvent)
+				command(Commands.updateInput, getHSLColor())
+				isUpdateLocally = false
+				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
 			}}
-			onPointerMove={on_pointermove}
-			onPointerUp={on_pointerup}
-			onPointerCancel={on_pointerup}>
+			onPointerMove={onPointerMove}
+			onPointerUp={onPointerUp}
+			onPointerCancel={onPointerUp}>
 			<div
 				class={CSS.picker_indicator}
 				draggable={false}
 				style={{
 					"background-color": `hsl(0, 100%, ${red() / 100 * 50}%)`,
 					left: red() + '%',
-					"border-color": get_contrast_ratio(
-						hsl_to_rgb({h: 0, s: 1, l: (red() / 100 * 50) / 100}),
+					"border-color": colorContrastRatio(
+						colorHslToRgb({h: 0, s: 1, l: (red() / 100 * 50) / 100}),
 						{r: 0, g: 0, b: 0}
 					) > 50 ? '#000' : '#fff',
 					transform: 'translate(-50%, -5px)'
 				}}
 			/>
 		</div>
-		<p>Green: {math_round(green() / 100 * 0xff)} ({math_round(green())}%)</p>
+		<p>Green: {mathRound(green() / 100 * 0xff)} ({mathRound(green())}%)</p>
 		<div
 			data-green
 			draggable={false}
-			ref={r => green_ref = r}
+			ref={r => greenRef = r}
 			onPointerDown={ev => {
-				is_update_locally = true
-				green_dragged = true
-				green_rect = element_rect(green_ref)
-				set_green(math_clamp((ev.clientX - rect_left(green_rect)) / rect_width(green_rect) * 100, 0, 100))
-				attr_set(body, BodyAttributes.no_pointer_event)
-				command(Commands.update_input, get_hsl_color())
-				is_update_locally = false
-				element_set_pointercapture(event_current_target(ev), ev.pointerId)
+				isUpdateLocally = true
+				greenDragged = true
+				greenRect = elementRect(greenRef)
+				setGreen(mathClamp((ev.clientX - rectLeft(greenRect)) / rectWidth(greenRect) * 100, 0, 100))
+				attrSet(body, BodyAttributes.noPointerEvent)
+				command(Commands.updateInput, getHSLColor())
+				isUpdateLocally = false
+				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
 			}}
-			onPointerMove={on_pointermove}
-			onPointerUp={on_pointerup}
-			onPointerCancel={on_pointerup}>
+			onPointerMove={onPointerMove}
+			onPointerUp={onPointerUp}
+			onPointerCancel={onPointerUp}>
 			<div
 				class={CSS.picker_indicator}
 				draggable={false}
 				style={{
 					"background-color": `hsl(120, 100%, ${green() / 100 * 50}%)`,
 					left: green() + '%',
-					"border-color": get_contrast_ratio(
-						hsl_to_rgb({h: 120 / 360, s: 1, l: (green() / 100 * 50) / 100}),
+					"border-color": colorContrastRatio(
+						colorHslToRgb({h: 120 / 360, s: 1, l: (green() / 100 * 50) / 100}),
 						{r: 0, g: 0, b: 0}
 					) > 50 ? '#000' : '#fff',
 					transform: 'translate(-50%, -5px)'
 				}}
 			/>
 		</div>
-		<p>Blue: {math_round(blue() / 100 * 0xff)} ({math_round(blue())}%)</p>
+		<p>Blue: {mathRound(blue() / 100 * 0xff)} ({mathRound(blue())}%)</p>
 		<div
 			data-blue
 			draggable={false}
-			ref={r => blue_ref = r}
+			ref={r => blueRef = r}
 			onPointerDown={ev => {
-				blue_dragged = true
-				is_update_locally = true
-				blue_rect = element_rect(blue_ref)
-				set_blue(math_clamp((ev.clientX - rect_left(blue_rect)) / rect_width(blue_rect) * 100, 0, 100))
-				attr_set(body, BodyAttributes.no_pointer_event)
-				command(Commands.update_input, get_hsl_color())
-				is_update_locally = false
-				element_set_pointercapture(event_current_target(ev), ev.pointerId)
+				blueDragged = true
+				isUpdateLocally = true
+				blueRect = elementRect(blueRef)
+				setBlue(mathClamp((ev.clientX - rectLeft(blueRect)) / rectWidth(blueRect) * 100, 0, 100))
+				attrSet(body, BodyAttributes.noPointerEvent)
+				command(Commands.updateInput, getHSLColor())
+				isUpdateLocally = false
+				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
 			}}
-			onPointerMove={on_pointermove}
-			onPointerUp={on_pointerup}
-			onPointerCancel={on_pointerup}>
+			onPointerMove={onPointerMove}
+			onPointerUp={onPointerUp}
+			onPointerCancel={onPointerUp}>
 			<div
 				class={CSS.picker_indicator}
 				draggable={false}
 				style={{
 					"background-color": `hsl(240, 100%, ${blue() / 100 * 50}%)`,
 					left: blue() + '%',
-					"border-color": get_contrast_ratio(
-						hsl_to_rgb({h: 240 / 360, s: 1, l: (blue() / 100 * 50) / 100}),
+					"border-color": colorContrastRatio(
+						colorHslToRgb({h: 240 / 360, s: 1, l: (blue() / 100 * 50) / 100}),
 						{r: 0, g: 0, b: 0}
 					) > 50 ? '#000' : '#fff',
 					transform: 'translate(-50%, -5px)'
@@ -811,172 +811,172 @@ export const SliderHSLPicker: VoidComponent<{
 	input: HSLColor
 	command(type: Commands, ...args: unknown[]): unknown
 }> = (props) => {
-	const body = document_body()
-	const [hue, set_hue] = createSignal(0) // 0 - 100
-	const [saturation, set_saturation] = createSignal(0) // 0 - 100
-	const [lightness, set_lightness] = createSignal(0) // 0 - 100
-	const get_hue = createMemo(() => {
+	const body = documentBody()
+	const [hue, setHUE] = createSignal(0) // 0 - 100
+	const [saturation, setSaturation] = createSignal(0) // 0 - 100
+	const [lightness, setLightness] = createSignal(0) // 0 - 100
+	const getHue = createMemo(() => {
 		return hue() / 100 * 360
 	})
-	const get_hsl_color = createMemo<HSLColor>(() => {
+	const getHSLColor = createMemo<HSLColor>(() => {
 		const h = hue() / 100
 		const s = saturation() / 100
 		const l = lightness() / 100
 
 		return {h, s, l}
 	})
-	let is_update_locally = false // to avoid unnecesary recalculate in `createEffect()`
-	let hue_dragged = false
-	let saturation_dragged = false
-	let lightness_dragged = false
-	let hue_rect: DOMRect
-	let saturation_rect: DOMRect
-	let lightness_rect: DOMRect
-	let hue_ref: HTMLDivElement
-	let saturation_ref: HTMLDivElement
-	let lightness_ref: HTMLDivElement
+	let isUpdateLocally = false // to avoid unnecesary recalculate in `createEffect()`
+	let hueDragged = false
+	let saturationDragged = false
+	let lightnessDragged = false
+	let hueRect: DOMRect
+	let saturationRect: DOMRect
+	let lightnessRect: DOMRect
+	let hueRef: HTMLDivElement
+	let saturationRef: HTMLDivElement
+	let lightnessRef: HTMLDivElement
 
 	function command(type: Commands, ...args: unknown[]): unknown {
 		return props.command(type, ...args)
 	}
 
-	function on_pointermove(ev: PointerEvent): void {
-		if (hue_dragged) {
-			is_update_locally = true
-			let x = (ev.clientX - rect_left(hue_rect)) / rect_width(hue_rect) * 100
-			x = math_clamp(x, 0, 100)
-			set_hue(x)
-			command(Commands.update_input, get_hsl_color())
+	function onPointerMove(ev: PointerEvent): void {
+		if (hueDragged) {
+			isUpdateLocally = true
+			let x = (ev.clientX - rectLeft(hueRect)) / rectWidth(hueRect) * 100
+			x = mathClamp(x, 0, 100)
+			setHUE(x)
+			command(Commands.updateInput, getHSLColor())
 		}
-		else if (lightness_dragged) {
-			is_update_locally = true
-			let x = (ev.clientX - rect_left(lightness_rect)) / rect_width(lightness_rect) * 100
-			x = math_clamp(x, 0, 100)
-			set_lightness(x)
-			command(Commands.update_input, get_hsl_color())
+		else if (lightnessDragged) {
+			isUpdateLocally = true
+			let x = (ev.clientX - rectLeft(lightnessRect)) / rectWidth(lightnessRect) * 100
+			x = mathClamp(x, 0, 100)
+			setLightness(x)
+			command(Commands.updateInput, getHSLColor())
 		}
-		else if (saturation_dragged) {
-			is_update_locally = true
-			let x = (ev.clientX - rect_left(saturation_rect)) / rect_width(saturation_rect) * 100
-			x = math_clamp(x, 0, 100)
-			set_saturation(x)
-			command(Commands.update_input, get_hsl_color())
+		else if (saturationDragged) {
+			isUpdateLocally = true
+			let x = (ev.clientX - rectLeft(saturationRect)) / rectWidth(saturationRect) * 100
+			x = mathClamp(x, 0, 100)
+			setSaturation(x)
+			command(Commands.updateInput, getHSLColor())
 		}
 	}
 
-	function on_pointerup(ev: PointerEvent & {currentTarget: HTMLDivElement}): void {
-		hue_dragged = lightness_dragged = saturation_dragged = is_update_locally = false
-		element_release_pointercapture(event_current_target(ev), ev.pointerId)
-		attr_remove(body, BodyAttributes.no_pointer_event)
+	function onPointerUp(ev: PointerEvent & {currentTarget: HTMLDivElement}): void {
+		hueDragged = lightnessDragged = saturationDragged = isUpdateLocally = false
+		elementPointerCaptureRelease(eventCurrentTarget(ev), ev.pointerId)
+		attrRemove(body, BodyAttributes.noPointerEvent)
 	}
 
-	function update_position(): void {
+	function updatePosition(): void {
 		const {h, s, l} = props.input
-		if (is_update_locally) {
-			is_update_locally = false
+		if (isUpdateLocally) {
+			isUpdateLocally = false
 			return
 		}
 
-		set_hue(h * 100)
-		set_saturation(s * 100)
-		set_lightness(l * 100)
+		setHUE(h * 100)
+		setSaturation(s * 100)
+		setLightness(l * 100)
 	}
 
 	createEffect(() => {
-		update_position()
+		updatePosition()
 	})
 
-	return (<div class={CSS.picker_slider_hsl} style={{'--hue': get_hue()}}>
-		<p>Hue: {math_round(get_hue())}° ({math_round(hue())}%)</p>
+	return (<div class={CSS.picker_slider_hsl} style={{'--hue': getHue()}}>
+		<p>Hue: {mathRound(getHue())}° ({mathRound(hue())}%)</p>
 		<div
 			data-hue
 			draggable={false}
-			ref={r => hue_ref = r}
+			ref={r => hueRef = r}
 			onPointerDown={ev => {
-				is_update_locally = true
-				hue_dragged = true
-				hue_rect = element_rect(hue_ref)
-				set_hue(math_clamp((ev.clientX - rect_left(hue_rect)) / rect_width(hue_rect) * 100, 0, 100))
-				attr_set(body, BodyAttributes.no_pointer_event)
-				command(Commands.update_input, get_hsl_color())
-				is_update_locally = false
-				element_set_pointercapture(event_current_target(ev), ev.pointerId)
+				isUpdateLocally = true
+				hueDragged = true
+				hueRect = elementRect(hueRef)
+				setHUE(mathClamp((ev.clientX - rectLeft(hueRect)) / rectWidth(hueRect) * 100, 0, 100))
+				attrSet(body, BodyAttributes.noPointerEvent)
+				command(Commands.updateInput, getHSLColor())
+				isUpdateLocally = false
+				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
 			}}
-			onPointerMove={on_pointermove}
-			onPointerUp={on_pointerup}
-			onPointerCancel={on_pointerup}>
+			onPointerMove={onPointerMove}
+			onPointerUp={onPointerUp}
+			onPointerCancel={onPointerUp}>
 			<div
 				class={CSS.picker_indicator}
 				draggable={false}
 				style={{
-					"background-color": `hsl(${get_hue()}, 100%, 50%)`,
+					"background-color": `hsl(${getHue()}, 100%, 50%)`,
 					left: hue() + '%',
-					"border-color": get_contrast_ratio(
-						hsl_to_rgb({h: hue() / 100, s: 1, l: .5}),
+					"border-color": colorContrastRatio(
+						colorHslToRgb({h: hue() / 100, s: 1, l: .5}),
 						{r: 0, g: 0, b: 0}
 					) > 50 ? '#000' : '#fff',
 					transform: 'translate(-50%, -5px)'
 				}}
 			/>
 		</div>
-		<p>Saturation: {math_round(saturation())}%</p>
+		<p>Saturation: {mathRound(saturation())}%</p>
 		<div
 			data-saturation
 			draggable={false}
-			ref={r => saturation_ref = r}
+			ref={r => saturationRef = r}
 			onPointerDown={ev => {
-				is_update_locally = true
-				saturation_dragged = true
-				saturation_rect = element_rect(saturation_ref)
-				set_saturation(math_clamp((ev.clientX - rect_left(saturation_rect)) / rect_width(saturation_rect) * 100, 0, 100))
-				attr_set(body, BodyAttributes.no_pointer_event)
-				command(Commands.update_input, get_hsl_color())
-				is_update_locally = false
-				element_set_pointercapture(event_current_target(ev), ev.pointerId)
+				isUpdateLocally = true
+				saturationDragged = true
+				saturationRect = elementRect(saturationRef)
+				setSaturation(mathClamp((ev.clientX - rectLeft(saturationRect)) / rectWidth(saturationRect) * 100, 0, 100))
+				attrSet(body, BodyAttributes.noPointerEvent)
+				command(Commands.updateInput, getHSLColor())
+				isUpdateLocally = false
+				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
 			}}
-			onPointerMove={on_pointermove}
-			onPointerUp={on_pointerup}
-			onPointerCancel={on_pointerup}>
+			onPointerMove={onPointerMove}
+			onPointerUp={onPointerUp}
+			onPointerCancel={onPointerUp}>
 			<div
 				class={CSS.picker_indicator}
 				draggable={false}
 				style={{
-					"background-color": `hsl(${get_hue()}, ${saturation()}%, 50%)`,
+					"background-color": `hsl(${getHue()}, ${saturation()}%, 50%)`,
 					left: saturation() + '%',
-					"border-color": get_contrast_ratio(
-						hsl_to_rgb({h: hue() / 100, s: saturation() / 100, l: .5}),
+					"border-color": colorContrastRatio(
+						colorHslToRgb({h: hue() / 100, s: saturation() / 100, l: .5}),
 						{r: 0, g: 0, b: 0}
 					) > 50 ? '#000' : '#fff',
 					transform: 'translate(-50%, -5px)'
 				}}
 			/>
 		</div>
-		<p>Lightness: {math_round(lightness())}%</p>
+		<p>Lightness: {mathRound(lightness())}%</p>
 		<div
 			data-lightness
 			draggable={false}
-			ref={r => lightness_ref = r}
+			ref={r => lightnessRef = r}
 			onPointerDown={ev => {
-				is_update_locally = true
-				lightness_dragged = true
-				lightness_rect = element_rect(lightness_ref)
-				set_lightness(math_clamp((ev.clientX - rect_left(lightness_rect)) / rect_width(lightness_rect) * 100, 0, 100))
-				attr_set(body, BodyAttributes.no_pointer_event)
-				command(Commands.update_input, get_hsl_color())
-				is_update_locally = false
-				element_set_pointercapture(event_current_target(ev), ev.pointerId)
+				isUpdateLocally = true
+				lightnessDragged = true
+				lightnessRect = elementRect(lightnessRef)
+				setLightness(mathClamp((ev.clientX - rectLeft(lightnessRect)) / rectWidth(lightnessRect) * 100, 0, 100))
+				attrSet(body, BodyAttributes.noPointerEvent)
+				command(Commands.updateInput, getHSLColor())
+				isUpdateLocally = false
+				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
 			}}
-			onPointerMove={on_pointermove}
-			onPointerUp={on_pointerup}
-			onPointerCancel={on_pointerup}>
+			onPointerMove={onPointerMove}
+			onPointerUp={onPointerUp}
+			onPointerCancel={onPointerUp}>
 			<div
 				class={CSS.picker_indicator}
 				draggable={false}
 				style={{
 					left: lightness() + '%',
 					"background-color": `hsl(0, 0%, ${lightness()}%)`,
-					"border-color": get_contrast_ratio(
-						hsl_to_rgb({h: 0, s: 1, l: lightness()/ 100}),
+					"border-color": colorContrastRatio(
+						colorHslToRgb({h: 0, s: 1, l: lightness()/ 100}),
 						{r: 0, g: 0, b: 0}
 					) > 50 ? '#000' : '#fff',
 					transform: 'translate(-50%, -5px)'
@@ -990,215 +990,215 @@ export const SliderCMYKPicker: VoidComponent<{
 	input: HSLColor
 	command(type: Commands, ...args: unknown[]): unknown
 }> = (props) => {
-	const body = document_body()
-	const [cyan, set_cyan] = createSignal(0) // 0 - 100
-	const [magenta, set_magenta] = createSignal(0) // 0 - 100
-	const [yellow, set_yellow] = createSignal(0) // 0 - 100
-	const [key, set_key] = createSignal(0) // 0 - 100
-	const get_hsl_color = createMemo<HSLColor>(() => {
+	const body = documentBody()
+	const [cyan, setCyan] = createSignal(0) // 0 - 100
+	const [magenta, setMagenta] = createSignal(0) // 0 - 100
+	const [yellow, setYellow] = createSignal(0) // 0 - 100
+	const [key, setKey] = createSignal(0) // 0 - 100
+	const getHSLColor = createMemo<HSLColor>(() => {
 		const c = cyan() / 100
 		const m = magenta() / 100
 		const y = yellow() / 100
 		const k = (100 - key()) / 100
 
-		return cmyk_to_hsl({c, m, y, k})
+		return colorCmykToHsl({c, m, y, k})
 	})
-	let is_update_locally = false // to avoid unnecesary recalculate in `createEffect()`
-	let cyan_dragged = false
-	let magenta_dragged = false
-	let yellow_dragged = false
-	let key_dragged = false
-	let cyan_rect: DOMRect
-	let magenta_rect: DOMRect
-	let yellow_rect: DOMRect
-	let key_rect: DOMRect
-	let cyan_ref: HTMLDivElement
-	let magenta_ref: HTMLDivElement
-	let yellow_ref: HTMLDivElement
-	let key_ref: HTMLDivElement
+	let isUpdateLocally = false // to avoid unnecesary recalculate in `createEffect()`
+	let cyanDragged = false
+	let magentaDragged = false
+	let yellowDragged = false
+	let keyDragged = false
+	let cyanRect: DOMRect
+	let magentaRect: DOMRect
+	let yellowRect: DOMRect
+	let keyRect: DOMRect
+	let cyanRef: HTMLDivElement
+	let magentaRef: HTMLDivElement
+	let yellowRef: HTMLDivElement
+	let keyRef: HTMLDivElement
 
 	function command(type: Commands, ...args: unknown[]): unknown {
 		return props.command(type, ...args)
 	}
 
-	function on_pointermove(ev: PointerEvent): void {
-		if (cyan_dragged) {
-			is_update_locally = true
-			let x = (ev.clientX - rect_left(cyan_rect)) / rect_width(cyan_rect) * 100
-			x = math_clamp(x, 0, 100)
-			set_cyan(x)
-			command(Commands.update_input, get_hsl_color())
+	function onPointerMove(ev: PointerEvent): void {
+		if (cyanDragged) {
+			isUpdateLocally = true
+			let x = (ev.clientX - rectLeft(cyanRect)) / rectWidth(cyanRect) * 100
+			x = mathClamp(x, 0, 100)
+			setCyan(x)
+			command(Commands.updateInput, getHSLColor())
 		}
-		else if (yellow_dragged) {
-			is_update_locally = true
-			let x = (ev.clientX - rect_left(yellow_rect)) / rect_width(yellow_rect) * 100
-			x = math_clamp(x, 0, 100)
-			set_yellow(x)
-			command(Commands.update_input, get_hsl_color())
+		else if (yellowDragged) {
+			isUpdateLocally = true
+			let x = (ev.clientX - rectLeft(yellowRect)) / rectWidth(yellowRect) * 100
+			x = mathClamp(x, 0, 100)
+			setYellow(x)
+			command(Commands.updateInput, getHSLColor())
 		}
-		else if (magenta_dragged) {
-			is_update_locally = true
-			let x = (ev.clientX - rect_left(magenta_rect)) / rect_width(magenta_rect) * 100
-			x = math_clamp(x, 0, 100)
-			set_magenta(x)
-			command(Commands.update_input, get_hsl_color())
+		else if (magentaDragged) {
+			isUpdateLocally = true
+			let x = (ev.clientX - rectLeft(magentaRect)) / rectWidth(magentaRect) * 100
+			x = mathClamp(x, 0, 100)
+			setMagenta(x)
+			command(Commands.updateInput, getHSLColor())
 		}
-		else if (key_dragged) {
-			is_update_locally = true
-			let x = (ev.clientX - rect_left(key_rect)) / rect_width(key_rect) * 100
-			x = math_clamp(x, 0, 100)
-			set_key(x)
-			command(Commands.update_input, get_hsl_color())
+		else if (keyDragged) {
+			isUpdateLocally = true
+			let x = (ev.clientX - rectLeft(keyRect)) / rectWidth(keyRect) * 100
+			x = mathClamp(x, 0, 100)
+			setKey(x)
+			command(Commands.updateInput, getHSLColor())
 		}
 	}
 
-	function on_pointerup(ev: PointerEvent & {currentTarget: HTMLDivElement}): void {
-		cyan_dragged = yellow_dragged = magenta_dragged = key_dragged = is_update_locally = false
-		element_release_pointercapture(event_current_target(ev), ev.pointerId)
-		attr_remove(body, BodyAttributes.no_pointer_event)
+	function onPointerUp(ev: PointerEvent & {currentTarget: HTMLDivElement}): void {
+		cyanDragged = yellowDragged = magentaDragged = keyDragged = isUpdateLocally = false
+		elementPointerCaptureRelease(eventCurrentTarget(ev), ev.pointerId)
+		attrRemove(body, BodyAttributes.noPointerEvent)
 	}
 
-	function update_position(): void {
+	function updatePosition(): void {
 		const input = props.input
-		if (is_update_locally) {
-			is_update_locally = false
+		if (isUpdateLocally) {
+			isUpdateLocally = false
 			return
 		}
 
-		const {c, m, y, k} = hsl_to_cmyk(input)
-		set_cyan(c * 100)
-		set_magenta(m * 100)
-		set_yellow(y * 100)
-		set_key(100 - k * 100)
+		const {c, m, y, k} = colorHslToCmyk(input)
+		setCyan(c * 100)
+		setMagenta(m * 100)
+		setYellow(y * 100)
+		setKey(100 - k * 100)
 	}
 
 	createEffect(() => {
-		update_position()
+		updatePosition()
 	})
 
 	return (<div class={CSS.picker_slider_cmyk}>
-		<p>Cyan: {math_round(cyan())}%</p>
+		<p>Cyan: {mathRound(cyan())}%</p>
 		<div
 			data-cyan
 			draggable={false}
-			ref={r => cyan_ref = r}
+			ref={r => cyanRef = r}
 			onPointerDown={ev => {
-				is_update_locally = true
-				cyan_dragged = true
-				cyan_rect = element_rect(cyan_ref)
-				set_cyan(math_clamp((ev.clientX - rect_left(cyan_rect)) / rect_width(cyan_rect) * 100, 0, 100))
-				attr_set(body, BodyAttributes.no_pointer_event)
-				command(Commands.update_input, get_hsl_color())
-				is_update_locally = false
-				element_set_pointercapture(event_current_target(ev), ev.pointerId)
+				isUpdateLocally = true
+				cyanDragged = true
+				cyanRect = elementRect(cyanRef)
+				setCyan(mathClamp((ev.clientX - rectLeft(cyanRect)) / rectWidth(cyanRect) * 100, 0, 100))
+				attrSet(body, BodyAttributes.noPointerEvent)
+				command(Commands.updateInput, getHSLColor())
+				isUpdateLocally = false
+				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
 			}}
-			onPointerMove={on_pointermove}
-			onPointerUp={on_pointerup}
-			onPointerCancel={on_pointerup}>
+			onPointerMove={onPointerMove}
+			onPointerUp={onPointerUp}
+			onPointerCancel={onPointerUp}>
 			<div
 				class={CSS.picker_indicator}
 				draggable={false}
 				style={{
 					left: cyan() + '%',
 					"background-color": `hsl(180, 100%, ${cyan() / 100 * 50}%)`,
-					"border-color": get_contrast_ratio(
-						hsl_to_rgb({h: 180 / 360, s: 1, l: cyan() / 100 * 0.5}),
+					"border-color": colorContrastRatio(
+						colorHslToRgb({h: 180 / 360, s: 1, l: cyan() / 100 * 0.5}),
 						{r: 0, g: 0, b: 0}
 					) > 50 ? '#000' : '#fff',
 					transform: 'translate(-50%, -5px)'
 				}}
 			/>
 		</div>
-		<p>Magenta: {math_round(magenta())}%</p>
+		<p>Magenta: {mathRound(magenta())}%</p>
 		<div
 			data-magenta
 			draggable={false}
-			ref={r => magenta_ref = r}
+			ref={r => magentaRef = r}
 			onPointerDown={ev => {
-				is_update_locally = true
-				magenta_dragged = true
-				magenta_rect = element_rect(magenta_ref)
-				set_magenta(math_clamp((ev.clientX - rect_left(magenta_rect)) / rect_width(magenta_rect) * 100, 0, 100))
-				attr_set(body, BodyAttributes.no_pointer_event)
-				command(Commands.update_input, get_hsl_color())
-				is_update_locally = false
-				element_set_pointercapture(event_current_target(ev), ev.pointerId)
+				isUpdateLocally = true
+				magentaDragged = true
+				magentaRect = elementRect(magentaRef)
+				setMagenta(mathClamp((ev.clientX - rectLeft(magentaRect)) / rectWidth(magentaRect) * 100, 0, 100))
+				attrSet(body, BodyAttributes.noPointerEvent)
+				command(Commands.updateInput, getHSLColor())
+				isUpdateLocally = false
+				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
 			}}
-			onPointerMove={on_pointermove}
-			onPointerUp={on_pointerup}
-			onPointerCancel={on_pointerup}>
+			onPointerMove={onPointerMove}
+			onPointerUp={onPointerUp}
+			onPointerCancel={onPointerUp}>
 			<div
 				class={CSS.picker_indicator}
 				draggable={false}
 				style={{
 					left: magenta() + '%',
 					"background-color": `hsl(300, 100%, ${magenta() / 100 * 50}%)`,
-					"border-color": get_contrast_ratio(
-						hsl_to_rgb({h: 300 / 360, s: 1, l: magenta() / 100 * 0.5}),
+					"border-color": colorContrastRatio(
+						colorHslToRgb({h: 300 / 360, s: 1, l: magenta() / 100 * 0.5}),
 						{r: 0, g: 0, b: 0}
 					) > 50 ? '#000' : '#fff',
 					transform: 'translate(-50%, -5px)'
 				}}
 			/>
 		</div>
-		<p>Yellow: {math_round(yellow())}%</p>
+		<p>Yellow: {mathRound(yellow())}%</p>
 		<div
 			data-yellow
 			draggable={false}
-			ref={r => yellow_ref = r}
+			ref={r => yellowRef = r}
 			onPointerDown={ev => {
-				is_update_locally = true
-				yellow_dragged = true
-				yellow_rect = element_rect(yellow_ref)
-				set_yellow(math_clamp((ev.clientX - rect_left(yellow_rect)) / rect_width(yellow_rect) * 100, 0, 100))
-				attr_set(body, BodyAttributes.no_pointer_event)
-				command(Commands.update_input, get_hsl_color())
-				is_update_locally = false
-				element_set_pointercapture(event_current_target(ev), ev.pointerId)
+				isUpdateLocally = true
+				yellowDragged = true
+				yellowRect = elementRect(yellowRef)
+				setYellow(mathClamp((ev.clientX - rectLeft(yellowRect)) / rectWidth(yellowRect) * 100, 0, 100))
+				attrSet(body, BodyAttributes.noPointerEvent)
+				command(Commands.updateInput, getHSLColor())
+				isUpdateLocally = false
+				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
 			}}
-			onPointerMove={on_pointermove}
-			onPointerUp={on_pointerup}
-			onPointerCancel={on_pointerup}>
+			onPointerMove={onPointerMove}
+			onPointerUp={onPointerUp}
+			onPointerCancel={onPointerUp}>
 			<div
 				class={CSS.picker_indicator}
 				draggable={false}
 				style={{
 					"background-color": `hsl(60, 100%, ${yellow() / 100 * 50}%)`,
 					left: yellow() + '%',
-					"border-color": get_contrast_ratio(
-						hsl_to_rgb({h: 60 / 360, s: 1, l: yellow() / 100 * 0.5}),
+					"border-color": colorContrastRatio(
+						colorHslToRgb({h: 60 / 360, s: 1, l: yellow() / 100 * 0.5}),
 						{r: 0, g: 0, b: 0}
 					) > 50 ? '#000' : '#fff',
 					transform: 'translate(-50%, -5px)'
 				}}
 			/>
 		</div>
-		<p>Key: {100 - math_round(key())}%</p>
+		<p>Key: {100 - mathRound(key())}%</p>
 		<div
 			data-key
 			draggable={false}
-			ref={r => key_ref = r}
+			ref={r => keyRef = r}
 			onPointerDown={ev => {
-				is_update_locally = true
-				key_dragged = true
-				key_rect = element_rect(key_ref)
-				set_key(math_clamp((ev.clientX - rect_left(key_rect)) / rect_width(key_rect) * 100, 0, 100))
-				attr_set(body, BodyAttributes.no_pointer_event)
-				command(Commands.update_input, get_hsl_color())
-				is_update_locally = false
-				element_set_pointercapture(event_current_target(ev), ev.pointerId)
+				isUpdateLocally = true
+				keyDragged = true
+				keyRect = elementRect(keyRef)
+				setKey(mathClamp((ev.clientX - rectLeft(keyRect)) / rectWidth(keyRect) * 100, 0, 100))
+				attrSet(body, BodyAttributes.noPointerEvent)
+				command(Commands.updateInput, getHSLColor())
+				isUpdateLocally = false
+				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
 			}}
-			onPointerMove={on_pointermove}
-			onPointerUp={on_pointerup}
-			onPointerCancel={on_pointerup}>
+			onPointerMove={onPointerMove}
+			onPointerUp={onPointerUp}
+			onPointerCancel={onPointerUp}>
 			<div
 				class={CSS.picker_indicator}
 				draggable={false}
 				style={{
 					left: key() + '%',
 					"background-color": `hsl(0, 0%, ${key()}%)`,
-					"border-color": get_contrast_ratio(
-						hsl_to_rgb({h: 0, s: 1, l: key() / 100}),
+					"border-color": colorContrastRatio(
+						colorHslToRgb({h: 0, s: 1, l: key() / 100}),
 						{r: 0, g: 0, b: 0}
 					) > 50 ? '#000' : '#fff',
 					transform: 'translate(-50%, -5px)'
@@ -1212,82 +1212,82 @@ export const SliderHEXPicker: VoidComponent<{
 	input: HSLColor
 	command(type: Commands, ...args: unknown[]): unknown
 }> = (props) => {
-	const body = document_body()
-	const [hex, set_hex] = createSignal(0) // 0 - 100
-	const get_hex_color = createMemo(() => {
-		return '#' + string_padstart(number_to_string(math_round(hex() / 100 * 0xffffff), 16), 6, '0') as HEXColor
+	const body = documentBody()
+	const [hex, setHex] = createSignal(0) // 0 - 100
+	const getHEXColor = createMemo(() => {
+		return '#' + stringPadStart(numberToString(mathRound(hex() / 100 * 0xffffff), 16), 6, '0') as HEXColor
 	})
-	const get_hsl_color = createMemo<HSLColor>(() => {
-		const h = get_hex_color()
-		return hex_to_hsl(h)
+	const getHSLColor = createMemo<HSLColor>(() => {
+		const h = getHEXColor()
+		return colorHexToHsl(h)
 	})
-	let is_update_locally = false // to avoid unnecesary recalculate in `createEffect()`
-	let hex_dragged = false
-	let hex_rect: DOMRect
-	let hex_ref: HTMLDivElement
+	let isUpdateLocally = false // to avoid unnecesary recalculate in `createEffect()`
+	let hexDragged = false
+	let hexRect: DOMRect
+	let hexRef: HTMLDivElement
 
 	function command(type: Commands, ...args: unknown[]): unknown {
 		return props.command(type, ...args)
 	}
 
-	function on_pointermove(ev: PointerEvent): void {
-		if (hex_dragged) {
-			is_update_locally = true
-			let x = (ev.clientX - rect_left(hex_rect)) / rect_width(hex_rect) * 100
-			x = math_clamp(x, 0, 100)
-			set_hex(x)
-			command(Commands.update_input, get_hsl_color())
+	function onPointerMove(ev: PointerEvent): void {
+		if (hexDragged) {
+			isUpdateLocally = true
+			let x = (ev.clientX - rectLeft(hexRect)) / rectWidth(hexRect) * 100
+			x = mathClamp(x, 0, 100)
+			setHex(x)
+			command(Commands.updateInput, getHSLColor())
 		}
 	}
 
-	function on_pointerup(ev: PointerEvent & {currentTarget: HTMLDivElement}): void {
-		hex_dragged = is_update_locally = false
-		element_release_pointercapture(event_current_target(ev), ev.pointerId)
-		attr_remove(body, BodyAttributes.no_pointer_event)
+	function onPointerUp(ev: PointerEvent & {currentTarget: HTMLDivElement}): void {
+		hexDragged = isUpdateLocally = false
+		elementPointerCaptureRelease(eventCurrentTarget(ev), ev.pointerId)
+		attrRemove(body, BodyAttributes.noPointerEvent)
 	}
 
-	function update_position(): void {
+	function updatePosition(): void {
 		const input = props.input
-		if (is_update_locally) {
-			is_update_locally = false
+		if (isUpdateLocally) {
+			isUpdateLocally = false
 			return
 		}
 
-		const hex = number_parse(string_substring(hsl_to_hex(input), 1), true, 16) / 0xffffff
-		set_hex(hex * 100)
+		const hex = numberParse(stringSubstring(colorHslToHex(input), 1), true, 16) / 0xffffff
+		setHex(hex * 100)
 	}
 
 	createEffect(() => {
-		update_position()
+		updatePosition()
 	})
 
 	return (<div class={CSS.picker_slider_hex}>
-		<p>Hex: {string_touppercase(get_hex_color())} ({math_round(hex() / 100 * 0xffffff)})</p>
+		<p>Hex: {stringToUpperCase(getHEXColor())} ({mathRound(hex() / 100 * 0xffffff)})</p>
 		<div
 			data-hex
 			draggable={false}
-			ref={r => hex_ref = r}
+			ref={r => hexRef = r}
 			onPointerDown={ev => {
-				is_update_locally = true
-				hex_dragged = true
-				hex_rect = element_rect(hex_ref)
-				set_hex(math_clamp((ev.clientX - rect_left(hex_rect)) / rect_width(hex_rect) * 100, 0, 100))
-				attr_set(body, BodyAttributes.no_pointer_event)
-				command(Commands.update_input, get_hsl_color())
-				is_update_locally = false
-				element_set_pointercapture(event_current_target(ev), ev.pointerId)
+				isUpdateLocally = true
+				hexDragged = true
+				hexRect = elementRect(hexRef)
+				setHex(mathClamp((ev.clientX - rectLeft(hexRect)) / rectWidth(hexRect) * 100, 0, 100))
+				attrSet(body, BodyAttributes.noPointerEvent)
+				command(Commands.updateInput, getHSLColor())
+				isUpdateLocally = false
+				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
 			}}
-			onPointerMove={on_pointermove}
-			onPointerUp={on_pointerup}
-			onPointerCancel={on_pointerup}>
+			onPointerMove={onPointerMove}
+			onPointerUp={onPointerUp}
+			onPointerCancel={onPointerUp}>
 			<div
 				class={CSS.picker_indicator}
 				draggable={false}
 				style={{
 					left: hex() + '%',
-					"background-color": get_hex_color(),
-					"border-color": get_contrast_ratio(
-						hex_to_rgb(get_hex_color()),
+					"background-color": getHEXColor(),
+					"border-color": colorContrastRatio(
+						colorHexToRgb(getHEXColor()),
 						{r: 0, g: 0, b: 0}
 					) > 50 ? '#000' : '#fff',
 					transform: 'translate(-50%, -5px)'
@@ -1301,173 +1301,173 @@ export const SliderHSVPicker: VoidComponent<{
 	input: HSLColor
 	command(type: Commands, ...args: unknown[]): unknown
 }> = (props) => {
-	const body = document_body()
-	const [hue, set_hue] = createSignal(0) // 0 - 100
-	const [saturation, set_saturation] = createSignal(0) // 0 - 100
-	const [value, set_value] = createSignal(0) // 0 - 100
-	const get_hue = createMemo(() => {
+	const body = documentBody()
+	const [hue, setHUE] = createSignal(0) // 0 - 100
+	const [saturation, setSaturation] = createSignal(0) // 0 - 100
+	const [value, setValue] = createSignal(0) // 0 - 100
+	const getHue = createMemo(() => {
 		return hue() / 100 * 360
 	})
-	const get_hsl_color = createMemo<HSLColor>(() => {
+	const getHSLColor = createMemo<HSLColor>(() => {
 		const h = hue() / 100
 		const s = saturation() / 100
 		const v = value() / 100
 
-		return hsv_to_hsl({h, s, v})
+		return colorHsvToHsl({h, s, v})
 	})
-	let is_update_locally = false // to avoid unnecesary recalculate in `createEffect()`
-	let hue_dragged = false
+	let isUpdateLocally = false // to avoid unnecesary recalculate in `createEffect()`
+	let hueDragged = false
 	let saturation_dragged = false
-	let value_dragged = false
-	let hue_rect: DOMRect
-	let saturation_rect: DOMRect
-	let value_rect: DOMRect
-	let hue_ref: HTMLDivElement
-	let saturation_ref: HTMLDivElement
-	let value_ref: HTMLDivElement
+	let valueDragged = false
+	let hueRect: DOMRect
+	let saturationRect: DOMRect
+	let valueRect: DOMRect
+	let hueRef: HTMLDivElement
+	let saturationRef: HTMLDivElement
+	let valueRef: HTMLDivElement
 
 	function command(type: Commands, ...args: unknown[]): unknown {
 		return props.command(type, ...args)
 	}
 
-	function on_pointermove(ev: PointerEvent): void {
-		if (hue_dragged) {
-			is_update_locally = true
-			let x = (ev.clientX - rect_left(hue_rect)) / rect_width(hue_rect) * 100
-			x = math_clamp(x, 0, 100)
-			set_hue(x)
-			command(Commands.update_input, get_hsl_color())
+	function onPointerMove(ev: PointerEvent): void {
+		if (hueDragged) {
+			isUpdateLocally = true
+			let x = (ev.clientX - rectLeft(hueRect)) / rectWidth(hueRect) * 100
+			x = mathClamp(x, 0, 100)
+			setHUE(x)
+			command(Commands.updateInput, getHSLColor())
 		}
-		else if (value_dragged) {
-			is_update_locally = true
-			let x = (ev.clientX - rect_left(value_rect)) / rect_width(value_rect) * 100
-			x = math_clamp(x, 0, 100)
-			set_value(x)
-			command(Commands.update_input, get_hsl_color())
+		else if (valueDragged) {
+			isUpdateLocally = true
+			let x = (ev.clientX - rectLeft(valueRect)) / rectWidth(valueRect) * 100
+			x = mathClamp(x, 0, 100)
+			setValue(x)
+			command(Commands.updateInput, getHSLColor())
 		}
 		else if (saturation_dragged) {
-			is_update_locally = true
-			let x = (ev.clientX - rect_left(saturation_rect)) / rect_width(saturation_rect) * 100
-			x = math_clamp(x, 0, 100)
-			set_saturation(x)
-			command(Commands.update_input, get_hsl_color())
+			isUpdateLocally = true
+			let x = (ev.clientX - rectLeft(saturationRect)) / rectWidth(saturationRect) * 100
+			x = mathClamp(x, 0, 100)
+			setSaturation(x)
+			command(Commands.updateInput, getHSLColor())
 		}
 	}
 
-	function on_pointerup(ev: PointerEvent & {currentTarget: HTMLDivElement}): void {
-		hue_dragged = value_dragged = saturation_dragged = is_update_locally = false
-		element_release_pointercapture(event_current_target(ev), ev.pointerId)
-		attr_remove(body, BodyAttributes.no_pointer_event)
+	function onPointerUp(ev: PointerEvent & {currentTarget: HTMLDivElement}): void {
+		hueDragged = valueDragged = saturation_dragged = isUpdateLocally = false
+		elementPointerCaptureRelease(eventCurrentTarget(ev), ev.pointerId)
+		attrRemove(body, BodyAttributes.noPointerEvent)
 	}
 
-	function update_position(): void {
+	function updatePosition(): void {
 		const input = props.input
-		if (is_update_locally) {
-			is_update_locally = false
+		if (isUpdateLocally) {
+			isUpdateLocally = false
 			return
 		}
 
-		const {h, s, v} = hsl_to_hsv(input)
-		set_hue(h * 100)
-		set_saturation(s * 100)
-		set_value(v * 100)
+		const {h, s, v} = colorHslToHsv(input)
+		setHUE(h * 100)
+		setSaturation(s * 100)
+		setValue(v * 100)
 	}
 
 	createEffect(() => {
-		update_position()
+		updatePosition()
 	})
 
-	return (<div class={CSS.picker_slider_hsv} style={{'--hue': get_hue()}}>
-		<p>Hue: {math_round(get_hue())}° ({math_round(hue())}%)</p>
+	return (<div class={CSS.picker_slider_hsv} style={{'--hue': getHue()}}>
+		<p>Hue: {mathRound(getHue())}° ({mathRound(hue())}%)</p>
 		<div
 			data-hue
 			draggable={false}
-			ref={r => hue_ref = r}
+			ref={r => hueRef = r}
 			onPointerDown={ev => {
-				is_update_locally = true
-				hue_dragged = true
-				hue_rect = element_rect(hue_ref)
-				set_hue(math_clamp((ev.clientX - rect_left(hue_rect)) / rect_width(hue_rect) * 100, 0, 100))
-				attr_set(body, BodyAttributes.no_pointer_event)
-				command(Commands.update_input, get_hsl_color())
-				is_update_locally = false
-				element_set_pointercapture(event_current_target(ev), ev.pointerId)
+				isUpdateLocally = true
+				hueDragged = true
+				hueRect = elementRect(hueRef)
+				setHUE(mathClamp((ev.clientX - rectLeft(hueRect)) / rectWidth(hueRect) * 100, 0, 100))
+				attrSet(body, BodyAttributes.noPointerEvent)
+				command(Commands.updateInput, getHSLColor())
+				isUpdateLocally = false
+				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
 			}}
-			onPointerMove={on_pointermove}
-			onPointerUp={on_pointerup}
-			onPointerCancel={on_pointerup}>
+			onPointerMove={onPointerMove}
+			onPointerUp={onPointerUp}
+			onPointerCancel={onPointerUp}>
 			<div
 				class={CSS.picker_indicator}
 				draggable={false}
 				style={{
-					"background-color": `hsl(${get_hue()}, 100%, 50%)`,
+					"background-color": `hsl(${getHue()}, 100%, 50%)`,
 					left: hue() + '%',
-					"border-color": get_contrast_ratio(
-						hsl_to_rgb({h: hue() / 100, s: 1, l: .5}),
+					"border-color": colorContrastRatio(
+						colorHslToRgb({h: hue() / 100, s: 1, l: .5}),
 						{r: 0, g: 0, b: 0}
 					) > 50 ? '#000' : '#fff',
 					transform: 'translate(-50%, -5px)'
 				}}
 			/>
 		</div>
-		<p>Saturation: {math_round(saturation())}%</p>
+		<p>Saturation: {mathRound(saturation())}%</p>
 		<div
 			data-saturation
 			draggable={false}
-			ref={r => saturation_ref = r}
+			ref={r => saturationRef = r}
 			onPointerDown={ev => {
-				is_update_locally = true
+				isUpdateLocally = true
 				saturation_dragged = true
-				saturation_rect = element_rect(saturation_ref)
-				set_saturation(math_clamp((ev.clientX - rect_left(saturation_rect)) / rect_width(saturation_rect) * 100, 0, 100))
-				attr_set(body, BodyAttributes.no_pointer_event)
-				command(Commands.update_input, get_hsl_color())
-				is_update_locally = false
-				element_set_pointercapture(event_current_target(ev), ev.pointerId)
+				saturationRect = elementRect(saturationRef)
+				setSaturation(mathClamp((ev.clientX - rectLeft(saturationRect)) / rectWidth(saturationRect) * 100, 0, 100))
+				attrSet(body, BodyAttributes.noPointerEvent)
+				command(Commands.updateInput, getHSLColor())
+				isUpdateLocally = false
+				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
 			}}
-			onPointerMove={on_pointermove}
-			onPointerUp={on_pointerup}
-			onPointerCancel={on_pointerup}>
+			onPointerMove={onPointerMove}
+			onPointerUp={onPointerUp}
+			onPointerCancel={onPointerUp}>
 			<div
 				class={CSS.picker_indicator}
 				draggable={false}
 				style={{
-					"background-color": `hsl(${get_hue()}, ${saturation()}%, 50%)`,
+					"background-color": `hsl(${getHue()}, ${saturation()}%, 50%)`,
 					left: saturation() + '%',
-					"border-color": get_contrast_ratio(
-						hsl_to_rgb({h: hue() / 100, s: saturation() / 100, l: .5}),
+					"border-color": colorContrastRatio(
+						colorHslToRgb({h: hue() / 100, s: saturation() / 100, l: .5}),
 						{r: 0, g: 0, b: 0}
 					) > 50 ? '#000' : '#fff',
 					transform: 'translate(-50%, -5px)'
 				}}
 			/>
 		</div>
-		<p>Value: {math_round(value())}%</p>
+		<p>Value: {mathRound(value())}%</p>
 		<div
 			data-value
 			draggable={false}
-			ref={r => value_ref = r}
+			ref={r => valueRef = r}
 			onPointerDown={ev => {
-				is_update_locally = true
-				value_dragged = true
-				value_rect = element_rect(value_ref)
-				set_value(math_clamp((ev.clientX - rect_left(value_rect)) / rect_width(value_rect) * 100, 0, 100))
-				attr_set(body, BodyAttributes.no_pointer_event)
-				command(Commands.update_input, get_hsl_color())
-				is_update_locally = false
-				element_set_pointercapture(event_current_target(ev), ev.pointerId)
+				isUpdateLocally = true
+				valueDragged = true
+				valueRect = elementRect(valueRef)
+				setValue(mathClamp((ev.clientX - rectLeft(valueRect)) / rectWidth(valueRect) * 100, 0, 100))
+				attrSet(body, BodyAttributes.noPointerEvent)
+				command(Commands.updateInput, getHSLColor())
+				isUpdateLocally = false
+				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
 			}}
-			onPointerMove={on_pointermove}
-			onPointerUp={on_pointerup}
-			onPointerCancel={on_pointerup}>
+			onPointerMove={onPointerMove}
+			onPointerUp={onPointerUp}
+			onPointerCancel={onPointerUp}>
 			<div
 				class={CSS.picker_indicator}
 				draggable={false}
 				style={{
 					left: value() + '%',
 					"background-color": `hsl(0, 0%, ${value()}%)`,
-					"border-color": get_contrast_ratio(
-						hsl_to_rgb({h: 0, s: 1, l: value()/ 100}),
+					"border-color": colorContrastRatio(
+						colorHslToRgb({h: 0, s: 1, l: value()/ 100}),
 						{r: 0, g: 0, b: 0}
 					) > 50 ? '#000' : '#fff',
 					transform: 'translate(-50%, -5px)'
@@ -1481,176 +1481,176 @@ export const SliderHWBPicker: VoidComponent<{
 	input: HSLColor
 	command(type: Commands, ...args: unknown[]): unknown
 }> = (props) => {
-	const body = document_body()
-	const [hue, set_hue] = createSignal(0) // 0 - 100
-	const [whiteness, set_whiteness] = createSignal(0) // 0 - 100
-	const [blackness, set_blackness] = createSignal(0) // 0 - 100
-	const get_hue = createMemo(() => {
+	const body = documentBody()
+	const [hue, setHUE] = createSignal(0) // 0 - 100
+	const [whiteness, setWhiteness] = createSignal(0) // 0 - 100
+	const [blackness, setBlackness] = createSignal(0) // 0 - 100
+	const getHue = createMemo(() => {
 		return hue() / 100 * 360
 	})
-	const get_hsl_color = createMemo<HSLColor>(() => {
+	const getHSLColor = createMemo<HSLColor>(() => {
 		const h = hue() / 100
-		const w = math_clamp(whiteness() / 100, 0, 1)
-		const b = math_clamp(blackness() / 100, 0, 1)
+		const w = mathClamp(whiteness() / 100, 0, 1)
+		const b = mathClamp(blackness() / 100, 0, 1)
 
-		return hwb_to_hsl({h, w, b})
+		return colorHwbToHsl({h, w, b})
 	})
-	let is_update_locally = false // to avoid unnecesary recalculate in `createEffect()`
-	let hue_dragged = false
-	let whiteness_dragged = false
-	let blackness_dragged = false
-	let hue_rect: DOMRect
-	let whiteness_rect: DOMRect
-	let blackness_rect: DOMRect
-	let hue_ref: HTMLDivElement
-	let whiteness_ref: HTMLDivElement
-	let blackness_ref: HTMLDivElement
+	let isUpdateLocally = false // to avoid unnecesary recalculate in `createEffect()`
+	let hueDragged = false
+	let whitenessDragged = false
+	let blacknessDragged = false
+	let hueRect: DOMRect
+	let whitenessRect: DOMRect
+	let blacknessRect: DOMRect
+	let hueRef: HTMLDivElement
+	let whitenessRef: HTMLDivElement
+	let blacknessRef: HTMLDivElement
 
 	function command(type: Commands, ...args: unknown[]): unknown {
 		return props.command(type, ...args)
 	}
 
-	function on_pointermove(ev: PointerEvent): void {
-		if (hue_dragged) {
-			is_update_locally = true
-			let x = (ev.clientX - rect_left(hue_rect)) / rect_width(hue_rect) * 100
-			x = math_clamp(x, 0, 100)
-			set_hue(x)
-			command(Commands.update_input, get_hsl_color())
+	function onPointerMove(ev: PointerEvent): void {
+		if (hueDragged) {
+			isUpdateLocally = true
+			let x = (ev.clientX - rectLeft(hueRect)) / rectWidth(hueRect) * 100
+			x = mathClamp(x, 0, 100)
+			setHUE(x)
+			command(Commands.updateInput, getHSLColor())
 		}
-		else if (blackness_dragged) {
-			is_update_locally = true
-			let x = (ev.clientX - rect_left(blackness_rect)) / rect_width(blackness_rect) * 100
-			x = math_clamp(x, 0, 100)
-			set_blackness(x)
-			set_whiteness(math_clamp(whiteness(), 0, 100 - blackness()))
-			command(Commands.update_input, get_hsl_color())
+		else if (blacknessDragged) {
+			isUpdateLocally = true
+			let x = (ev.clientX - rectLeft(blacknessRect)) / rectWidth(blacknessRect) * 100
+			x = mathClamp(x, 0, 100)
+			setBlackness(x)
+			setWhiteness(mathClamp(whiteness(), 0, 100 - blackness()))
+			command(Commands.updateInput, getHSLColor())
 		}
-		else if (whiteness_dragged) {
-			is_update_locally = true
-			let x = (ev.clientX - rect_left(whiteness_rect)) / rect_width(whiteness_rect) * 100
-			x = math_clamp(x, 0, 100)
-			set_whiteness(x)
-			set_blackness(math_clamp(blackness(), 0, 100 - whiteness()))
-			command(Commands.update_input, get_hsl_color())
+		else if (whitenessDragged) {
+			isUpdateLocally = true
+			let x = (ev.clientX - rectLeft(whitenessRect)) / rectWidth(whitenessRect) * 100
+			x = mathClamp(x, 0, 100)
+			setWhiteness(x)
+			setBlackness(mathClamp(blackness(), 0, 100 - whiteness()))
+			command(Commands.updateInput, getHSLColor())
 		}
 	}
 
-	function on_pointerup(ev: PointerEvent & {currentTarget: HTMLDivElement}): void {
-		hue_dragged = blackness_dragged = whiteness_dragged = is_update_locally = false
-		element_release_pointercapture(event_current_target(ev), ev.pointerId)
-		attr_remove(body, BodyAttributes.no_pointer_event)
+	function onPointerUp(ev: PointerEvent & {currentTarget: HTMLDivElement}): void {
+		hueDragged = blacknessDragged = whitenessDragged = isUpdateLocally = false
+		elementPointerCaptureRelease(eventCurrentTarget(ev), ev.pointerId)
+		attrRemove(body, BodyAttributes.noPointerEvent)
 	}
 
-	function update_position(): void {
+	function updatePosition(): void {
 		const input = props.input
-		if (is_update_locally) {
-			is_update_locally = false
+		if (isUpdateLocally) {
+			isUpdateLocally = false
 			return
 		}
 
-		const {h, w, b} = hsl_to_hwb(input)
-		set_hue(h * 100)
-		set_whiteness(w * 100)
-		set_blackness(b * 100)
+		const {h, w, b} = colorHslToHwb(input)
+		setHUE(h * 100)
+		setWhiteness(w * 100)
+		setBlackness(b * 100)
 	}
 
 	createEffect(() => {
-		update_position()
+		updatePosition()
 	})
 
-	return (<div class={CSS.picker_slider_hwb} style={{'--hue': get_hue()}}>
-		<p>Hue: {math_round(get_hue())}° ({math_round(hue())}%)</p>
+	return (<div class={CSS.picker_slider_hwb} style={{'--hue': getHue()}}>
+		<p>Hue: {mathRound(getHue())}° ({mathRound(hue())}%)</p>
 		<div
 			data-hue
 			draggable={false}
-			ref={r => hue_ref = r}
+			ref={r => hueRef = r}
 			onPointerDown={ev => {
-				is_update_locally = true
-				hue_dragged = true
-				hue_rect = element_rect(hue_ref)
-				set_hue(math_clamp((ev.clientX - rect_left(hue_rect)) / rect_width(hue_rect) * 100, 0, 100))
-				attr_set(body, BodyAttributes.no_pointer_event)
-				command(Commands.update_input, get_hsl_color())
-				element_set_pointercapture(event_current_target(ev), ev.pointerId)
+				isUpdateLocally = true
+				hueDragged = true
+				hueRect = elementRect(hueRef)
+				setHUE(mathClamp((ev.clientX - rectLeft(hueRect)) / rectWidth(hueRect) * 100, 0, 100))
+				attrSet(body, BodyAttributes.noPointerEvent)
+				command(Commands.updateInput, getHSLColor())
+				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
 			}}
-			onPointerMove={on_pointermove}
-			onPointerUp={on_pointerup}
-			onPointerCancel={on_pointerup}>
+			onPointerMove={onPointerMove}
+			onPointerUp={onPointerUp}
+			onPointerCancel={onPointerUp}>
 			<div
 				class={CSS.picker_indicator}
 				draggable={false}
 				style={{
-					"background-color": `hsl(${get_hue()}, 100%, 50%)`,
+					"background-color": `hsl(${getHue()}, 100%, 50%)`,
 					left: hue() + '%',
-					"border-color": get_contrast_ratio(
-						hsl_to_rgb({h: hue() / 100, s: 1, l: .5}),
+					"border-color": colorContrastRatio(
+						colorHslToRgb({h: hue() / 100, s: 1, l: .5}),
 						{r: 0, g: 0, b: 0}
 					) > 50 ? '#000' : '#fff',
 					transform: 'translate(-50%, -5px)'
 				}}
 			/>
 		</div>
-		<p>Whiteness: {math_round(whiteness())}%</p>
+		<p>Whiteness: {mathRound(whiteness())}%</p>
 		<div
 			data-whiteness
 			draggable={false}
-			ref={r => whiteness_ref = r}
+			ref={r => whitenessRef = r}
 			onPointerDown={ev => {
-				is_update_locally = true
-				whiteness_dragged = true
-				whiteness_rect = element_rect(whiteness_ref)
-				set_whiteness(math_clamp((ev.clientX - rect_left(whiteness_rect)) / rect_width(whiteness_rect) * 100, 0, 100))
-				set_blackness(math_clamp(blackness(), 0, 100 - whiteness()))
-				attr_set(body, BodyAttributes.no_pointer_event)
-				command(Commands.update_input, get_hsl_color())
-				is_update_locally = false
-				element_set_pointercapture(event_current_target(ev), ev.pointerId)
+				isUpdateLocally = true
+				whitenessDragged = true
+				whitenessRect = elementRect(whitenessRef)
+				setWhiteness(mathClamp((ev.clientX - rectLeft(whitenessRect)) / rectWidth(whitenessRect) * 100, 0, 100))
+				setBlackness(mathClamp(blackness(), 0, 100 - whiteness()))
+				attrSet(body, BodyAttributes.noPointerEvent)
+				command(Commands.updateInput, getHSLColor())
+				isUpdateLocally = false
+				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
 			}}
-			onPointerMove={on_pointermove}
-			onPointerUp={on_pointerup}
-			onPointerCancel={on_pointerup}>
+			onPointerMove={onPointerMove}
+			onPointerUp={onPointerUp}
+			onPointerCancel={onPointerUp}>
 			<div
 				class={CSS.picker_indicator}
 				draggable={false}
 				style={{
-					"background-color": `hsl(${get_hue()}, 100%, ${50 + (whiteness() / 100 * 50)}%)`,
+					"background-color": `hsl(${getHue()}, 100%, ${50 + (whiteness() / 100 * 50)}%)`,
 					left: whiteness() + '%',
-					"border-color": get_contrast_ratio(
-						hsl_to_rgb({h: hue() / 100, s: 1, l: 0.5 + (whiteness() / 100 * 0.5)}),
+					"border-color": colorContrastRatio(
+						colorHslToRgb({h: hue() / 100, s: 1, l: 0.5 + (whiteness() / 100 * 0.5)}),
 						{r: 0, g: 0, b: 0}
 					) > 50 ? '#000' : '#fff',
 					transform: 'translate(-50%, -5px)'
 				}}
 			/>
 		</div>
-		<p>Blackness: {math_round(blackness())}%</p>
+		<p>Blackness: {mathRound(blackness())}%</p>
 		<div
 			data-blackness
 			draggable={false}
-			ref={r => blackness_ref = r}
+			ref={r => blacknessRef = r}
 			onPointerDown={ev => {
-				is_update_locally = true
-				blackness_dragged = true
-				blackness_rect = element_rect(blackness_ref)
-				set_blackness(math_clamp((ev.clientX - rect_left(blackness_rect)) / rect_width(blackness_rect) * 100, 0, 100))
-				set_whiteness(math_clamp(whiteness(), 0, 100 - blackness()))
-				attr_set(body, BodyAttributes.no_pointer_event)
-				command(Commands.update_input, get_hsl_color())
-				is_update_locally = false
-				element_set_pointercapture(event_current_target(ev), ev.pointerId)
+				isUpdateLocally = true
+				blacknessDragged = true
+				blacknessRect = elementRect(blacknessRef)
+				setBlackness(mathClamp((ev.clientX - rectLeft(blacknessRect)) / rectWidth(blacknessRect) * 100, 0, 100))
+				setWhiteness(mathClamp(whiteness(), 0, 100 - blackness()))
+				attrSet(body, BodyAttributes.noPointerEvent)
+				command(Commands.updateInput, getHSLColor())
+				isUpdateLocally = false
+				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
 			}}
-			onPointerMove={on_pointermove}
-			onPointerUp={on_pointerup}
-			onPointerCancel={on_pointerup}>
+			onPointerMove={onPointerMove}
+			onPointerUp={onPointerUp}
+			onPointerCancel={onPointerUp}>
 			<div
 				class={CSS.picker_indicator}
 				draggable={false}
 				style={{
 					left: blackness() + '%',
-					"background-color": `hsl(${get_hue()}, 100%, ${50 - (blackness() / 100 * 50)}%)`,
-					"border-color": get_contrast_ratio(
-						hsl_to_rgb({h: hue() / 100, s: 1, l: 0.5 - (blackness() / 100 * 0.5)}),
+					"background-color": `hsl(${getHue()}, 100%, ${50 - (blackness() / 100 * 50)}%)`,
+					"border-color": colorContrastRatio(
+						colorHslToRgb({h: hue() / 100, s: 1, l: 0.5 - (blackness() / 100 * 0.5)}),
 						{r: 0, g: 0, b: 0}
 					) > 50 ? '#000' : '#fff',
 					transform: 'translate(-50%, -5px)'

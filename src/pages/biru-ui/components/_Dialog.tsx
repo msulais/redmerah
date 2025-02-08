@@ -3,78 +3,78 @@ import { createSignal, Show, type VoidComponent } from "solid-js"
 import Button, { ButtonVariant } from "@/components/Button"
 import CheckBox from "@/components/CheckBox"
 import TextField from "@/components/TextField"
-import Dialog, { close_dialog, open_dialog } from "@/components/Dialog"
+import Dialog, { closeDialog, openDialog } from "@/components/Dialog"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
-import { event_current_target } from "@/utils/event"
+import { eventCurrentTarget } from "@/utils/event"
 
 const _: VoidComponent = () => {
-	const [important, set_important] = createSignal<boolean>(false)
-	const [content_autofocus, set_content_autofocus] = createSignal<boolean>(false)
-	const [has_header, set_has_header] = createSignal<boolean>(true)
-	const [has_actions, set_has_actions] = createSignal<boolean>(true)
-	const [has_content, set_has_content] = createSignal<boolean>(true)
-	const [header_text, set_header_text] = createSignal<string>('Header')
-	const [content_text, set_content_text] = createSignal<string>('Cupidatat aliqua est quis enim commodo. Aute Lorem occaecat commodo nisi amet dolor ut cupidatat qui ipsum magna in. In aliquip voluptate nulla aliquip duis cillum consectetur eiusmod adipisicing reprehenderit officia reprehenderit adipisicing dolor.')
-	let dialog_ref: HTMLDialogElement
+	const [important, setImportant] = createSignal<boolean>(false)
+	const [contentAutoFocus, setContentAutoFocus] = createSignal<boolean>(false)
+	const [hasHeader, setHasHeader] = createSignal<boolean>(true)
+	const [hasActions, setHasActions] = createSignal<boolean>(true)
+	const [hasContent, setHasContent] = createSignal<boolean>(true)
+	const [headerText, setHeaderText] = createSignal<string>('Header')
+	const [contentText, setContentText] = createSignal<string>('Cupidatat aliqua est quis enim commodo. Aute Lorem occaecat commodo nisi amet dolor ut cupidatat qui ipsum magna in. In aliquip voluptate nulla aliquip duis cillum consectetur eiusmod adipisicing reprehenderit officia reprehenderit adipisicing dolor.')
+	let dialogRef: HTMLDialogElement
 
 	return (<Page
 		title="Dialog"
 		description="A dialog is an overlay window that interrupts the user's main workflow to deliver important information or request user input. It typically contains a title, content area, and buttons for user actions.">
 		<Playground>
 			<Button
-				c_variant={ButtonVariant.tonal}
-				onClick={(ev) => open_dialog(ev, dialog_ref, {
+				c:variant={ButtonVariant.tonal}
+				onClick={(ev) => openDialog(ev, dialogRef, {
 					important: important(),
-					content_auto_focus: content_autofocus()
+					contentAutoFocus: contentAutoFocus()
 				})}>
 				Open dialog
 			</Button>
 			<Dialog
 				style={{width: '500px'}}
-				ref={r => dialog_ref = r}
-				c_header={<Show when={has_header()}>{header_text()}</Show>}
-				c_actions={<Show when={has_actions()}>
-					<Button c_variant={ButtonVariant.tonal} onClick={() => close_dialog(dialog_ref)}>Close</Button>
-					<Button c_variant={ButtonVariant.tonal}>Options</Button>
-					<Button c_variant={ButtonVariant.filled} onClick={() => close_dialog(dialog_ref)}>Accept</Button>
+				ref={r => dialogRef = r}
+				c:header={<Show when={hasHeader()}>{headerText()}</Show>}
+				c:actions={<Show when={hasActions()}>
+					<Button c:variant={ButtonVariant.tonal} onClick={() => closeDialog(dialogRef)}>Close</Button>
+					<Button c:variant={ButtonVariant.tonal}>Options</Button>
+					<Button c:variant={ButtonVariant.filled} onClick={() => closeDialog(dialogRef)}>Accept</Button>
 				</Show>}>
-				<Show when={has_content()}>
-					{content_text()}
+				<Show when={hasContent()}>
+					{contentText()}
 					<div style={{height: '16px'}}/>
-					<TextField c_label="Some input"/>
+					<TextField c:label="Some input"/>
 				</Show>
 			</Dialog>
 		</Playground>
 		<PlaygroundOptions>
-			<Show when={has_header()}>
-				<TextField c_label="Header text" value="Header" onInput={ev => set_header_text(event_current_target(ev).value)}/>
+			<Show when={hasHeader()}>
+				<TextField c:label="Header text" value="Header" onInput={ev => setHeaderText(eventCurrentTarget(ev).value)}/>
 			</Show>
-			<Show when={has_content()}>
-				<TextField c_label="Content text" value="Cupidatat aliqua est quis enim commodo. Aute Lorem occaecat commodo nisi amet dolor ut cupidatat qui ipsum magna in. In aliquip voluptate nulla aliquip duis cillum consectetur eiusmod adipisicing reprehenderit officia reprehenderit adipisicing dolor." onInput={ev => set_content_text(event_current_target(ev).value)}/>
+			<Show when={hasContent()}>
+				<TextField c:label="Content text" value="Cupidatat aliqua est quis enim commodo. Aute Lorem occaecat commodo nisi amet dolor ut cupidatat qui ipsum magna in. In aliquip voluptate nulla aliquip duis cillum consectetur eiusmod adipisicing reprehenderit officia reprehenderit adipisicing dolor." onInput={ev => setContentText(eventCurrentTarget(ev).value)}/>
 			</Show>
 			<CheckBox
 				checked={important()}
-				onChange={ev => set_important(event_current_target(ev).checked)}>
+				onChange={ev => setImportant(eventCurrentTarget(ev).checked)}>
 				Important
 			</CheckBox>
 			<CheckBox
-				checked={content_autofocus()}
-				onChange={ev => set_content_autofocus(event_current_target(ev).checked)}>
+				checked={contentAutoFocus()}
+				onChange={ev => setContentAutoFocus(eventCurrentTarget(ev).checked)}>
 				Content autofocus
 			</CheckBox>
 			<CheckBox
-				checked={has_header()}
-				onChange={ev => set_has_header(event_current_target(ev).checked)}>
+				checked={hasHeader()}
+				onChange={ev => setHasHeader(eventCurrentTarget(ev).checked)}>
 				Header
 			</CheckBox>
 			<CheckBox
-				checked={has_actions()}
-				onChange={ev => set_has_actions(event_current_target(ev).checked)}>
+				checked={hasActions()}
+				onChange={ev => setHasActions(eventCurrentTarget(ev).checked)}>
 				Actions
 			</CheckBox>
 			<CheckBox
-				checked={has_content()}
-				onChange={ev => set_has_content(event_current_target(ev).checked)}>
+				checked={hasContent()}
+				onChange={ev => setHasContent(eventCurrentTarget(ev).checked)}>
 				Content
 			</CheckBox>
 		</PlaygroundOptions>

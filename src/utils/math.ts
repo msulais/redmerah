@@ -1,165 +1,165 @@
-export function math_clamp(value: number, min: number, max: number): number {
-	return math_max(min, math_min(max, value))
+export function mathClamp(value: number, min: number, max: number): number {
+	return mathMax(min, mathMin(max, value))
 }
 
-export function math_pow(x: number, y: number): number {
+export function mathPow(x: number, y: number): number {
 	return Math.pow(x, y)
 }
 
-export function math_min(...values: number[]): number {
+export function mathMin(...values: number[]): number {
 	return Math.min(...values)
 }
 
-export function math_max(...values: number[]): number {
+export function mathMax(...values: number[]): number {
 	return Math.max(...values)
 }
 
-export function math_round(x: number): number {
+export function mathRound(x: number): number {
 	return Math.round(x)
 }
 
-export function math_floor(x: number): number {
+export function mathFloor(x: number): number {
 	return Math.floor(x)
 }
 
-export function math_abs(x: number): number {
+export function mathAbs(x: number): number {
 	return Math.abs(x)
 }
 
-export function math_random(): number {
+export function mathRandom(): number {
 	return Math.random()
 }
 
-export function math_sqrt(x: number): number {
+export function mathSqrt(x: number): number {
 	return Math.sqrt(x)
 }
 
-export function math_sin(x: number): number {
+export function mathSin(x: number): number {
 	return Math.sin(x)
 }
 
-export function math_cos(x: number): number {
+export function mathCos(x: number): number {
 	return Math.cos(x)
 }
 
-export function math_tan(x: number): number {
+export function mathTan(x: number): number {
 	return Math.tan(x)
 }
 
-export function math_log(x: number): number {
+export function mathLog(x: number): number {
 	return Math.log10(x)
 }
 
-export function math_ln(x: number): number {
+export function mathLn(x: number): number {
 	return Math.log(x)
 }
 
-export function math_not(x: number): number {
+export function mathNot(x: number): number {
 	return ~x
 }
 
-export function math_ceil(x: number): number {
+export function mathCeil(x: number): number {
 	return Math.ceil(x)
 }
 
 // sinh(x) = (e^x - e^(-x)) / 2
-export function math_sinh(x: number): number {
+export function mathSinH(x: number): number {
 	return Math.sinh(x)
 }
 
-export function math_asin(x: number): number {
+export function mathASin(x: number): number {
 	return Math.asin(x)
 }
 
 // asinh(x) = ln(x + sqrt(x^2 + 1))
-export function math_asinh(x: number): number {
+export function mathASinH(x: number): number {
 	return Math.asinh(x)
 }
 
 // csc(x) = 1 / sin(x)
-export function math_csc(x: number): number {
-	return 1 / math_sin(x)
+export function mathCsc(x: number): number {
+	return 1 / mathSin(x)
 }
 
 // csch(x) = 1 / sinh(x)
-export function math_csch(x: number): number {
-	return 1 / math_sinh(x)
+export function mathCscH(x: number): number {
+	return 1 / mathSinH(x)
 }
 
 // acsc(x) = asin(1 / x), -1 <= x <= 1, x != 0
-export function math_acsc(x: number): number {
-	return math_asin(1 / x)
+export function mathACsc(x: number): number {
+	return mathASin(1 / x)
 }
 
 // acsch(x) = ln(1 / x + sqrt(1 / x ^ 2 + 1)), x != 0
-export function math_acsch(x: number): number {
-	return math_ln(1 / x + math_sqrt(1 / math_pow(x, 2) + 1))
+export function mathACscH(x: number): number {
+	return mathLn(1 / x + mathSqrt(1 / mathPow(x, 2) + 1))
 }
 
-export function math_acos(x: number): number {
+export function mathAcos(x: number): number {
 	return Math.acos(x)
 }
 
 // cosh(x) = (e ^ x + e ^ (-x))/2
-export function math_cosh(x: number): number {
+export function mathCosH(x: number): number {
 	return Math.cosh(x)
 }
 
 // acosh(x) = ln(x + sqrt(x ^ 2 - 1)), x >= 1
-export function math_acosh(x: number): number {
+export function mathACosH(x: number): number {
 	return Math.acosh(x)
 }
 
 // sec(x) = 1 / cos(x)
-export function math_sec(x: number): number {
-	return 1 / math_cos(x)
+export function mathSec(x: number): number {
+	return 1 / mathCos(x)
 }
 
 // asec(x) = acos(1 / x), x <= -1, x >= 1
-export function math_asec(x: number): number {
-	return math_acos(1 / x)
+export function mathASec(x: number): number {
+	return mathAcos(1 / x)
 }
 
 // sech(x) = 1 / cosh(x)
-export function math_sech(x: number): number {
-	return 1 / math_cosh(x)
+export function mathSecH(x: number): number {
+	return 1 / mathCosH(x)
 }
 
 // asech(x) = ln((1 + sqrt(1 - x^2)) / x), 0 < x < 1
-export function math_asech(x: number): number {
-	return math_ln((1 + math_sqrt(1 - math_pow(x, 2))) / x)
+export function mathASecH(x: number): number {
+	return mathLn((1 + mathSqrt(1 - mathPow(x, 2))) / x)
 }
 
-export function math_atan(x: number): number {
+export function mathATan(x: number): number {
 	return Math.atan(x)
 }
 
 // tanh(x) = sinh(x) / cosh(x)
-export function math_tanh(x: number): number {
+export function mathTanH(x: number): number {
 	return Math.tanh(x)
 }
 
 // atanh(x) = ln((1 + x) / (1 - x)) / 2, -1 <= x <= 1
-export function math_atanh(x: number): number {
+export function mathATanH(x: number): number {
 	return Math.atanh(x)
 }
 
 // cot(x) = 1 / tan(x), tan(x) != 0
-export function math_cot(x: number): number {
-	return 1 / math_tan(x)
+export function mathCot(x: number): number {
+	return 1 / mathTan(x)
 }
 
 // acot(x) = atan(1 / x), x != 0
-export function math_acot(x: number): number {
-	return math_atan(1 / x)
+export function mathACot(x: number): number {
+	return mathATan(1 / x)
 }
 
 // coth(x) = cosh(x) / sinh(x), tanh(x) != 0
-export function math_coth(x: number): number {
-	return math_cosh(x) / math_sinh(x)
+export function mathCotH(x: number): number {
+	return mathCosH(x) / mathSinH(x)
 }
 
 // acoth(x) = ln[(x + 1) / (x - 1)] / 2, x > 1, x < -1
-export function math_acoth(x: number): number {
-	return math_ln((x + 1) / (x - 1)) / 2
+export function mathACotH(x: number): number {
+	return mathLn((x + 1) / (x - 1)) / 2
 }

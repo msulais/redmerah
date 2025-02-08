@@ -8,13 +8,13 @@ const _: VoidComponent = () => {
 		title="Emoji"
 		description="An emoji is a small, expressive graphic symbol used to represent emotions, objects, or ideas. Emojis are often used in digital communication to convey feelings or add context to messages. They are similar to icons in that they are small, graphic representations, but they are specifically designed to express emotions or ideas.">
 		<Playground>
-			<Emoji c_emoji="😊"/>
-			<Emoji c_emoji="🤣"/>
-			<Emoji c_emoji="🙌"/>
-			<Emoji c_emoji="💕"/>
-			<Emoji c_emoji="👌"/>
-			<Emoji c_emoji="🍞"/>
-			<Emoji c_emoji="🚚"/>
+			<Emoji c:emoji="😊"/>
+			<Emoji c:emoji="🤣"/>
+			<Emoji c:emoji="🙌"/>
+			<Emoji c:emoji="💕"/>
+			<Emoji c:emoji="👌"/>
+			<Emoji c:emoji="🍞"/>
+			<Emoji c:emoji="🚚"/>
 		</Playground>
 		<PlaygroundOptions>
 		</PlaygroundOptions>

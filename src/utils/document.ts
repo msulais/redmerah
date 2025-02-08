@@ -1,19 +1,19 @@
-export function document_active(): HTMLElement | null {
+export function documentActive(): HTMLElement | null {
 	return document.activeElement as HTMLElement | null
 }
 
-export function document_has_focus(): boolean {
+export function documentHasFocus(): boolean {
 	return document.hasFocus()
 }
 
-export function document_root(): HTMLElement {
+export function documentRoot(): HTMLElement {
 	return document.documentElement
 }
 
-export function document_body(): HTMLElement {
+export function documentBody(): HTMLElement {
 	return document.body
 }
 
-export function document_head(): HTMLElement {
+export function documentHead(): HTMLElement {
 	return document.head
 }

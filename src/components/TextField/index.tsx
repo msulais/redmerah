@@ -1,25 +1,25 @@
 import { type JSX, type ParentComponent, createSignal, createUniqueId, mergeProps, onMount, splitProps, type VoidComponent, children, createEffect, Show, onCleanup, createMemo } from 'solid-js'
 import { mergeRefs } from '@solid-primitives/refs'
 
-import { attr_set_if_exist, classlist } from '@/utils/attributes'
-import { timeout_clear, interval_clear, timeout_set, interval_set } from '@/utils/timeout'
-import { event_call, event_current_target, event_prevent_default, event_target } from '@/utils/event'
-import { math_clamp, math_max, math_round } from '@/utils/math'
-import { element_blur, element_contains, element_dispatch_event, element_focus, element_id, element_rect, element_remove_style, element_scroll_height, element_set_style, element_tagname, element_valid_target } from '@/utils/element'
-import { event_add_listener, event_remove_listener } from '@/utils/event'
-import { is_array, is_number, is_string } from '@/utils/typecheck'
-import { string_length, string_split, string_touppercase, string_trim } from '@/utils/string'
-import { array_length } from '@/utils/array'
-import { number_is_nan, number_is_not_defined, number_parse, number_safe } from '@/utils/number'
-import { rect_width } from '@/utils/rect'
-import { document_active } from '@/utils/document'
+import { attrSetIfExist, attrClassList } from '@/utils/attributes'
+import { timeTimerClear, timeIntervalClear, timeTimerSet, timeIntervalSet } from '@/utils/time'
+import { eventCall, eventCurrentTarget, eventPreventDefault, eventTarget } from '@/utils/event'
+import { mathClamp, mathMax, mathRound } from '@/utils/math'
+import { elementBlur, elementContains, elementDispatchEvent, elementFocus, elementId, elementRect, elementStyleRemove, elementScrollHeight, elementStyleSet, elementTagName, elementValidTarget } from '@/utils/element'
+import { eventListenerAdd, eventListenerRemove } from '@/utils/event'
+import { typeIsArray, typeIsNumber, typeIsString } from '@/utils/typecheck'
+import { stringLength, stringSplit, stringToUpperCase, stringTrim } from '@/utils/string'
+import { arrayLength } from '@/utils/array'
+import { numberIsNaN, numberIsNotDefined, numberParse, numberSafe } from '@/utils/number'
+import { rectWidth } from '@/utils/rect'
+import { documentActive } from '@/utils/document'
 import { KEY_ARROW_DOWN, KEY_ARROW_UP, KEY_ENTER, KEY_SPACE } from '@/constants/key_code'
 import { ICON_CHEVRON_DOWN, ICON_CHEVRON_UP, ICON_CHEVRON_UP_DOWN, ICON_DISMISS } from '@/constants/icons'
 
 import Icon from '@/components/Icon'
 import Button, { IconButton, type ButtonProps } from '@/components/Button'
-import { close_popover, is_popover_open, open_popover, reposition_popover, PopoverPosition as SearchMenuPosition } from '@/components/Popover'
-import { MenuItem, LinkMenuItem, MenuDivider, MenuHeader, MenuPosition, open_menu, PopoverMenu, type PopoverMenuProps } from '@/components/Menu'
+import { closePopover, isPopoverOpen, openPopover, repositionPopover, PopoverPosition as SearchMenuPosition } from '@/components/Popover'
+import { MenuItem, LinkMenuItem, MenuDivider, MenuHeader, MenuPosition, openMenu, PopoverMenu, type PopoverMenuProps } from '@/components/Menu'
 import Modal, { type ModalProps } from '@/components/Modal'
 import FocusableGroup from '@/components/FocusableGroup'
 import Tooltip from '@/components/Tooltip'
@@ -32,15 +32,15 @@ const HEIGHT_TEXT_INPUT_PER_LINE = 20
  *
  * ```ts
  * // don't => (not trigger 'input' event)
- * textfield_ref.value = 'new value'
+ * textfieldRef.value = 'new value'
  *
  * // do => (trigger 'input' event)
- * change_textfield_value(textfield_ref, 'new value')
+ * updateTextFieldValue(textfieldRef, 'new value')
  * ```
  */
-function change_textfield_value(el: HTMLInputElement, value: string): void {
+function updateTextFieldValue(el: HTMLInputElement, value: string): void {
 	el.value = value
-	element_dispatch_event(el, new Event('input', { bubbles: false }))
+	elementDispatchEvent(el, new Event('input', { bubbles: false }))
 }
 
 /**
@@ -48,15 +48,15 @@ function change_textfield_value(el: HTMLInputElement, value: string): void {
  *
  * ```ts
  * // don't => (not trigger 'input' event)
- * areatextfield_ref.value = 'new value'
+ * areatextfieldRef.value = 'new value'
  *
  * // do => (trigger 'input' event)
- * change_areatextfield_value(areatextfield_ref, 'new value')
+ * updateAreaTextFieldValue(areatextfieldRef, 'new value')
  * ```
  */
-function change_areatextfield_value(el: HTMLTextAreaElement, value: string): void {
+function updateAreaTextFieldValue(el: HTMLTextAreaElement, value: string): void {
 	el.value = value
-	element_dispatch_event(el, new Event('input', { bubbles: false }))
+	elementDispatchEvent(el, new Event('input', { bubbles: false }))
 }
 
 type TextFieldButtonProps = ButtonProps
@@ -72,145 +72,145 @@ const TextFieldButton: ParentComponent<TextFieldButtonProps> = ($props) => {
 }
 
 type AreaTextFieldProps = Omit<JSX.TextareaHTMLAttributes<HTMLTextAreaElement>, 'children' | 'rows' | 'columns'> & {
-	c_leading?: JSX.Element
-	c_trailing?: JSX.Element
-	c_trailing_auto_tabindex?: boolean
-	c_label?: string
-	c_message?: string
-	c_focused?: boolean
-	c_min_line?: number
-	c_max_line?: number
-	c_auto_show_clear_button?: boolean
-	c_auto_hide_label?: boolean
-	c_tooltip_clear?: string
-	c_auto_validation?: boolean
-	c_attr_wrapper?: JSX.HTMLAttributes<HTMLDivElement>
+	'c:leading'?: JSX.Element
+	'c:trailing'?: JSX.Element
+	'c:trailingAutoTabIndex'?: boolean
+	'c:label'?: string
+	'c:message'?: string
+	'c:focused'?: boolean
+	'c:minLine'?: number
+	'c:maxLine'?: number
+	'c:autoShowClearButton'?: boolean
+	'c:autoHideLabel'?: boolean
+	'c:tooltipClear'?: string
+	'c:autoValidation'?: boolean
+	'c:attrWrapper'?: JSX.HTMLAttributes<HTMLDivElement>
 }
 const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 	const $$props = mergeProps({
-		c_auto_validation: true,
-		c_trailing_auto_tabindex: true,
-		c_auto_hide_label: true,
+		'c:autoValidation': true,
+		'c:trailingAutoTabIndex': true,
+		'c:autoHideLabel': true,
 		id: createUniqueId()
 	}, $props)
 	const [props, other] = splitProps($$props, [
-		'c_leading', 'onInput', 'c_label', 'c_focused',
-		'autocomplete', 'id', 'c_message', 'c_trailing',
-		'disabled', 'readOnly', 'c_auto_validation',
-		'onFocus', 'onBlur', 'placeholder', 'c_auto_hide_label',
-		'value', 'ref', 'c_auto_show_clear_button', 'c_tooltip_clear',
-		'c_min_line', 'c_max_line', 'c_attr_wrapper',
-		'c_trailing_auto_tabindex'
+		'c:leading', 'onInput', 'c:label', 'c:focused',
+		'autocomplete', 'id', 'c:message', 'c:trailing',
+		'disabled', 'readOnly', 'c:autoValidation',
+		'onFocus', 'onBlur', 'placeholder', 'c:autoHideLabel',
+		'value', 'ref', 'c:autoShowClearButton', 'c:tooltipClear',
+		'c:minLine', 'c:maxLine', 'c:attrWrapper',
+		'c:trailingAutoTabIndex'
 	])
-	const [wrapper_props, wrapper_props_other] = splitProps(props.c_attr_wrapper! ?? {}, ['class'])
-	const [is_focus, set_is_focus] = createSignal<boolean>(false)
-	const [is_invalid, set_is_invalid] = createSignal<boolean>(false)
-	const [value, set_value] = createSignal<string>('')
-	const [height, set_height] = createSignal<number>(HEIGHT_TEXT_INPUT_PER_LINE)
-	const is_show_clear_button = createMemo(() => props.c_auto_show_clear_button && string_length(value()) > 0)
-	const trailing = children(() => props.c_trailing)
-	const leading = children(() => props.c_leading)
-	const message = children(() => props.c_message)
+	const [wrapperProps, otherWrapperProps] = splitProps(props['c:attrWrapper']! ?? {}, ['class'])
+	const [isFocus, setIsFocus] = createSignal<boolean>(false)
+	const [isInvalid, setIsInvalid] = createSignal<boolean>(false)
+	const [value, setValue] = createSignal<string>('')
+	const [height, setHeight] = createSignal<number>(HEIGHT_TEXT_INPUT_PER_LINE)
+	const isShowClearButton = createMemo(() => props['c:autoShowClearButton'] && stringLength(value()) > 0)
+	const trailing = children(() => props['c:trailing'])
+	const leading = children(() => props['c:leading'])
+	const message = children(() => props['c:message'])
 	const button_clear_id = createUniqueId()
-	let areatextfield_ref!: HTMLTextAreaElement
-	let stop_focus: boolean = false
+	let areaTextFieldRef!: HTMLTextAreaElement
+	let stopFocus: boolean = false
 
 	createEffect(() => {
 		const value = `${props.value ?? ''}`
 
-		const lines = array_length(string_split(string_trim(value ?? ''), '\n'))
-		set_height(lines * HEIGHT_TEXT_INPUT_PER_LINE)
-		set_value(value ?? '')
+		const lines = arrayLength(stringSplit(stringTrim(value ?? ''), '\n'))
+		setHeight(lines * HEIGHT_TEXT_INPUT_PER_LINE)
+		setValue(value ?? '')
 	})
 
 	const TrailingContent: VoidComponent = () => {
 		return (<>
 			{trailing()}
-			<Show when={is_show_clear_button()}>
+			<Show when={isShowClearButton()}>
 				<TextFieldButton
-					data-tooltip={props.c_tooltip_clear ?? 'Clear'}
+					data-tooltip={props['c:tooltipClear'] ?? 'Clear'}
 					type={'button'}
 					id={button_clear_id}>
-					<Icon c_code={ICON_DISMISS}/>
+					<Icon c:code={ICON_DISMISS}/>
 				</TextFieldButton>
 			</Show>
 		</>)
 	}
 
 	return (<div
-		class={classlist('c-area-textfield', wrapper_props.class ?? '')}
-		{...wrapper_props_other}>
+		class={attrClassList('c-area-textfield', wrapperProps.class ?? '')}
+		{...otherWrapperProps}>
 		<div
-			data-c-focused={attr_set_if_exist(props.c_focused ?? is_focus())}
-			data-c-invalid={attr_set_if_exist(!props.disabled && props.c_auto_validation && is_invalid())}
-			data-c-disabled={attr_set_if_exist(props.disabled)}
-			data-c-trailing={attr_set_if_exist(trailing() || (props.c_auto_show_clear_button && string_length(value()) > 0))}
-			data-c-readonly={attr_set_if_exist(props.readOnly)}
+			data-c-focused={attrSetIfExist(props['c:focused'] ?? isFocus())}
+			data-c-invalid={attrSetIfExist(!props.disabled && props['c:autoValidation'] && isInvalid())}
+			data-c-disabled={attrSetIfExist(props.disabled)}
+			data-c-trailing={attrSetIfExist(trailing() || (props['c:autoShowClearButton'] && stringLength(value()) > 0))}
+			data-c-readonly={attrSetIfExist(props.readOnly)}
 			onClick={() => {
-				if (stop_focus) return stop_focus = false
+				if (stopFocus) return stopFocus = false
 
-				element_focus(areatextfield_ref)
+				elementFocus(areaTextFieldRef)
 			}}>
-			<Show when={!(props.c_auto_hide_label && string_length(value()) == 0 && !props.placeholder)}>
-				<label for={props.id} class='c-area-textfield-label'>{props.c_label}</label>
+			<Show when={!(props['c:autoHideLabel'] && stringLength(value()) == 0 && !props.placeholder)}>
+				<label for={props.id} class='c-area-textfield-label'>{props['c:label']}</label>
 			</Show>
 			<Show when={leading()}>
 				<div
 					class='c-area-textfield-leading'
-					onClick={() => stop_focus = true}>
+					onClick={() => stopFocus = true}>
 					{leading()}
 				</div>
 			</Show>
 			<textarea
 				id={props.id}
-				ref={mergeRefs(props.ref, r => areatextfield_ref = r)}
+				ref={mergeRefs(props.ref, r => areaTextFieldRef = r)}
 				onInput={(ev) => {
-					event_call(ev, props.onInput)
-					const self = event_current_target(ev)
-					set_value(self.value)
-					set_is_invalid(!self.checkValidity())
-					set_height(HEIGHT_TEXT_INPUT_PER_LINE) // set to one line: to calculate the scroll height
-					set_height(math_max(element_scroll_height(self), HEIGHT_TEXT_INPUT_PER_LINE))
+					eventCall(ev, props.onInput)
+					const self = eventCurrentTarget(ev)
+					setValue(self.value)
+					setIsInvalid(!self.checkValidity())
+					setHeight(HEIGHT_TEXT_INPUT_PER_LINE) // set to one line: to calculate the scroll height
+					setHeight(mathMax(elementScrollHeight(self), HEIGHT_TEXT_INPUT_PER_LINE))
 				}}
 				onFocus={(ev) => {
-					event_call(ev, props.onFocus)
-					const self = event_current_target(ev)
-					set_value(self.value)
-					set_is_invalid(!self.checkValidity())
-					set_is_focus(true)
+					eventCall(ev, props.onFocus)
+					const self = eventCurrentTarget(ev)
+					setValue(self.value)
+					setIsInvalid(!self.checkValidity())
+					setIsFocus(true)
 				}}
 				onBlur={(ev) => {
-					event_call(ev, props.onBlur)
-					set_value(event_current_target(ev).value)
-					set_is_focus(false)
+					eventCall(ev, props.onBlur)
+					setValue(eventCurrentTarget(ev).value)
+					setIsFocus(false)
 				}}
-				rows={props.c_min_line ?? 1}
+				rows={props['c:minLine'] ?? 1}
 				disabled={props.disabled}
 				autocomplete={props.autocomplete ?? 'off'}
 				readOnly={props.readOnly}
 				value={props.value}
 				style={{
 					height: height() + 'px',
-					"min-height": props.c_min_line? ((HEIGHT_TEXT_INPUT_PER_LINE * props.c_min_line) + 'px') : undefined,
-					"max-height": props.c_max_line && props.c_max_line >= (props.c_min_line ?? 1)? ((HEIGHT_TEXT_INPUT_PER_LINE * props.c_max_line) + 'px') : undefined
+					"min-height": props['c:minLine']? ((HEIGHT_TEXT_INPUT_PER_LINE * props['c:minLine']) + 'px') : undefined,
+					"max-height": props['c:maxLine'] && props['c:maxLine'] >= (props['c:minLine'] ?? 1)? ((HEIGHT_TEXT_INPUT_PER_LINE * props['c:maxLine']) + 'px') : undefined
 				}}
-				placeholder={props.placeholder ?? (props.c_auto_hide_label && props.c_label? `${props.c_label}` : undefined)}
+				placeholder={props.placeholder ?? (props['c:autoHideLabel'] && props['c:label']? `${props['c:label']}` : undefined)}
 				{...other}></textarea>
-			<Show when={trailing() || is_show_clear_button()}>
+			<Show when={trailing() || isShowClearButton()}>
 				<div
 					class='c-area-textfield-trailing'
 					onClick={ev => {
-						stop_focus = true
-						if (element_id(document_active()!) == button_clear_id) {
-							change_areatextfield_value(areatextfield_ref, '')
-							event_prevent_default(ev)
-							element_focus(areatextfield_ref)
+						stopFocus = true
+						if (elementId(documentActive()!) == button_clear_id) {
+							updateAreaTextFieldValue(areaTextFieldRef, '')
+							eventPreventDefault(ev)
+							elementFocus(areaTextFieldRef)
 						}
 					}}>
 					<Show
-						when={props.c_trailing_auto_tabindex}
+						when={props['c:trailingAutoTabIndex']}
 						fallback={<TrailingContent />}>
-						<FocusableGroup c_arrow_options={{left: 'prev', right: 'next'}}>
+						<FocusableGroup c:arrowOptions={{left: 'prev', right: 'next'}}>
 							<TrailingContent />
 						</FocusableGroup>
 					</Show>
@@ -225,140 +225,140 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 
 
 type TextFieldProps = JSX.InputHTMLAttributes<HTMLInputElement> & {
-	c_leading?: JSX.Element
-	c_trailing?: JSX.Element
-	c_trailing_auto_tabindex?: boolean
-	c_label?: string
-	c_message?: string
-	c_focused?: boolean
-	c_auto_show_clear_button?: boolean
-	c_auto_hide_label?: boolean
-	c_auto_select_all?: boolean
-	c_tooltip_clear?: string
-	c_auto_validation?: boolean
-	c_attr_wrapper?: JSX.HTMLAttributes<HTMLDivElement>
+	'c:leading'?: JSX.Element
+	'c:trailing'?: JSX.Element
+	'c:trailingAutoTabIndex'?: boolean
+	'c:label'?: string
+	'c:message'?: string
+	'c:focused'?: boolean
+	'c:autoShowClearButton'?: boolean
+	'c:autoHideLabel'?: boolean
+	'c:autoSelectAll'?: boolean
+	'c:tooltipClear'?: string
+	'c:autoValidation'?: boolean
+	'c:attrWrapper'?: JSX.HTMLAttributes<HTMLDivElement>
 }
 const TextField: VoidComponent<TextFieldProps> = ($props) => {
 	const $$props = mergeProps({
-		c_auto_validation: true,
-		c_trailing_auto_tabindex: true,
-		c_auto_hide_label: true,
+		'c:autoValidation': true,
+		'c:trailingAutoTabIndex': true,
+		'c:autoHideLabel': true,
 		type: 'text',
 		id: createUniqueId()
 	}, $props)
 	const [props, other] = splitProps($$props, [
-		'c_leading', 'onInput', 'c_label', 'c_focused',
-		'autocomplete', 'id', 'c_message', 'c_trailing',
-		'type', 'c_attr_wrapper', 'disabled', 'readOnly',
-		'onFocus', 'onBlur', 'placeholder', 'c_auto_hide_label',
-		'value', 'ref', 'c_auto_show_clear_button', 'c_tooltip_clear',
-		'c_auto_select_all', 'onKeyUp', 'c_auto_validation',
-		'c_trailing_auto_tabindex'
+		'c:leading', 'onInput', 'c:label', 'c:focused',
+		'autocomplete', 'id', 'c:message', 'c:trailing',
+		'type', 'c:attrWrapper', 'disabled', 'readOnly',
+		'onFocus', 'onBlur', 'placeholder', 'c:autoHideLabel',
+		'value', 'ref', 'c:autoShowClearButton', 'c:tooltipClear',
+		'c:autoSelectAll', 'onKeyUp', 'c:autoValidation',
+		'c:trailingAutoTabIndex'
 	])
-	const [wrapper_props, wrapper_props_other] = splitProps(props.c_attr_wrapper! ?? {}, ['class'])
-	const [is_focus, set_is_focus] = createSignal<boolean>(false)
-	const [is_invalid, set_is_invalid] = createSignal<boolean>(false)
-	const [value, set_value] = createSignal<string>('')
-	const is_show_clear_button = createMemo(() => props.c_auto_show_clear_button && string_length(value()) > 0)
-	const trailing = children(() => props.c_trailing)
-	const leading = children(() => props.c_leading)
-	const message = children(() => props.c_message)
-	const button_clear_id = createUniqueId()
-	let textfield_ref: HTMLInputElement
-	let stop_focus: boolean = false
+	const [wrapperProps, otherWrapperProps] = splitProps(props['c:attrWrapper']! ?? {}, ['class'])
+	const [isFocus, setIsFocus] = createSignal<boolean>(false)
+	const [isInvalid, setIsInvalid] = createSignal<boolean>(false)
+	const [value, setValue] = createSignal<string>('')
+	const isShowClearButton = createMemo(() => props['c:autoShowClearButton'] && stringLength(value()) > 0)
+	const trailing = children(() => props['c:trailing'])
+	const leading = children(() => props['c:leading'])
+	const message = children(() => props['c:message'])
+	const buttonClearId = createUniqueId()
+	let textFieldRef: HTMLInputElement
+	let stopFocus: boolean = false
 
 	createEffect(() => {
 		const value = props.value
-		set_value(v => `${value ?? v}`)
+		setValue(v => `${value ?? v}`)
 	})
 
 	const TrailingContent: VoidComponent = () => {
 		return (<>
 			{trailing()}
-			<Show when={is_show_clear_button()}>
+			<Show when={isShowClearButton()}>
 				<TextFieldButton
-					data-tooltip={props.c_tooltip_clear ?? 'Clear'}
+					data-tooltip={props['c:tooltipClear'] ?? 'Clear'}
 					type={'button'}
-					id={button_clear_id}>
-					<Icon c_code={ICON_DISMISS}/>
+					id={buttonClearId}>
+					<Icon c:code={ICON_DISMISS}/>
 				</TextFieldButton>
 			</Show>
 		</>)
 	}
 
 	return (<div
-		class={classlist('c-textfield', wrapper_props.class ?? '')}
-		{...wrapper_props_other}>
+		class={attrClassList('c-textfield', wrapperProps.class ?? '')}
+		{...otherWrapperProps}>
 		<div
-			data-c-focused={attr_set_if_exist(props.c_focused ?? is_focus())}
-			data-c-invalid={attr_set_if_exist(!props.disabled && props.c_auto_validation && is_invalid())}
-			data-c-disabled={attr_set_if_exist(props.disabled)}
-			data-c-trailing={attr_set_if_exist(trailing() || (props.c_auto_show_clear_button && string_length(value()) > 0))}
-			data-c-readonly={attr_set_if_exist(props.readOnly)}
+			data-c-focused={attrSetIfExist(props['c:focused'] ?? isFocus())}
+			data-c-invalid={attrSetIfExist(!props.disabled && props['c:autoValidation'] && isInvalid())}
+			data-c-disabled={attrSetIfExist(props.disabled)}
+			data-c-trailing={attrSetIfExist(trailing() || (props['c:autoShowClearButton'] && stringLength(value()) > 0))}
+			data-c-readonly={attrSetIfExist(props.readOnly)}
 			onClick={() => {
-				if (stop_focus) return stop_focus = false
+				if (stopFocus) return stopFocus = false
 
-				element_focus(textfield_ref)
+				elementFocus(textFieldRef)
 			}}>
-			<Show when={!(props.c_auto_hide_label && string_length(value()) == 0 && !props.placeholder)}>
-				<label class='c-textfield-label' for={props.id}>{props.c_label}</label>
+			<Show when={!(props['c:autoHideLabel'] && stringLength(value()) == 0 && !props.placeholder)}>
+				<label class='c-textfield-label' for={props.id}>{props['c:label']}</label>
 			</Show>
 			<Show when={leading()}>
 				<div
 					class='c-textfield-leading'
-					onClick={() => stop_focus = true}>
+					onClick={() => stopFocus = true}>
 					{leading()}
 				</div>
 			</Show>
 			<input
 				id={props.id}
-				ref={mergeRefs(props.ref, r => textfield_ref = r)}
+				ref={mergeRefs(props.ref, r => textFieldRef = r)}
 				onInput={(ev) => {
-					event_call(ev, props.onInput)
-					const self = event_current_target(ev)
-					set_value(self.value)
-					set_is_invalid(!self.checkValidity())
+					eventCall(ev, props.onInput)
+					const self = eventCurrentTarget(ev)
+					setValue(self.value)
+					setIsInvalid(!self.checkValidity())
 				}}
 				onFocus={(ev) => {
-					event_call(ev, props.onFocus)
-					const self = event_current_target(ev)
-					set_value(self.value)
-					set_is_invalid(!self.checkValidity())
-					set_is_focus(true)
-					if (props.c_auto_select_all) self.setSelectionRange(0, string_length(self.value))
+					eventCall(ev, props.onFocus)
+					const self = eventCurrentTarget(ev)
+					setValue(self.value)
+					setIsInvalid(!self.checkValidity())
+					setIsFocus(true)
+					if (props['c:autoSelectAll']) self.setSelectionRange(0, stringLength(self.value))
 				}}
 				onKeyUp={ev => {
-					event_call(ev, props.onKeyUp)
-					if (ev.key == 'Enter') element_blur(event_current_target(ev))
+					eventCall(ev, props.onKeyUp)
+					if (ev.key == 'Enter') elementBlur(eventCurrentTarget(ev))
 				}}
 				onBlur={(ev) => {
-					set_value(event_current_target(ev).value)
-					set_is_focus(false)
-					event_call(ev, props.onBlur)
+					setValue(eventCurrentTarget(ev).value)
+					setIsFocus(false)
+					eventCall(ev, props.onBlur)
 				}}
 				type={props.type}
 				disabled={props.disabled}
 				autocomplete={props.autocomplete ?? 'off'}
 				readOnly={props.readOnly}
 				value={props.value}
-				placeholder={props.placeholder ?? (props.c_auto_hide_label && props.c_label? `${props.c_label}` : undefined)}
+				placeholder={props.placeholder ?? (props['c:autoHideLabel'] && props['c:label']? `${props['c:label']}` : undefined)}
 				{...other}
 			/>
-			<Show when={trailing() || is_show_clear_button()}>
+			<Show when={trailing() || isShowClearButton()}>
 				<div
 					class='c-textfield-trailing'
 					onClick={ev => {
-						stop_focus = true
-						if (element_id(document_active()!) == button_clear_id) {
-							change_textfield_value(textfield_ref, '')
-							event_prevent_default(ev)
-							element_focus(textfield_ref)
+						stopFocus = true
+						if (elementId(documentActive()!) == buttonClearId) {
+							updateTextFieldValue(textFieldRef, '')
+							eventPreventDefault(ev)
+							elementFocus(textFieldRef)
 						}
 					}}>
 					<Show
-						when={props.c_trailing_auto_tabindex}
+						when={props['c:trailingAutoTabIndex']}
 						fallback={<TrailingContent />}>
-						<FocusableGroup c_arrow_options={{left: 'prev', right: 'next'}}>
+						<FocusableGroup c:arrowOptions={{left: 'prev', right: 'next'}}>
 							<TrailingContent />
 						</FocusableGroup>
 					</Show>
@@ -372,276 +372,274 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 }
 
 type NumberTextFieldProps = Omit<TextFieldProps, 'type'> & {
-	c_integer_only?: boolean
-	c_tooltip_decrease?: string
-	c_tooltip_increase?: string
-	c_tooltip_change_value?: string
-	c_auto_fix_on_blur?: boolean
-	c_attr_actions?: ModalProps
-	c_on_inputasnumber?(ev: InputEvent & {currentTarget: HTMLInputElement; target: HTMLInputElement}, value: number): unknown
+	'c:integerOnly'?: boolean
+	'c:tooltipDecrease'?: string
+	'c:tooltipIncrease'?: string
+	'c:tooltipChangeValue'?: string
+	'c:autoFixOnBlur'?: boolean
+	'c:attrActions'?: ModalProps
+	'c:onInputAsNumber'?(ev: InputEvent & {currentTarget: HTMLInputElement; target: HTMLInputElement}, value: number): unknown
 }
 const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 	const $$props = mergeProps({
-		c_tooltip_increase: 'Increase',
-		c_tooltip_decrease: 'Decrease',
-		c_tooltip_change_value: 'Change value',
-		c_auto_fix_on_blur: true
+		'c:tooltipIncrease': 'Increase',
+		'c:tooltipDecrease': 'Decrease',
+		'c:tooltipChangeValue': 'Change value',
+		'c:autoFixOnBlur': true
 	}, $props)
 	const [props, other] = splitProps($$props, [
-		'max', 'min', 'c_trailing', 'c_auto_show_clear_button', 'onBlur',
-		'value', 'ref', 'c_focused', 'c_attr_wrapper',
-		'c_tooltip_decrease', 'c_tooltip_increase', 'c_tooltip_change_value',
-		'c_tooltip_clear', 'disabled', 'c_integer_only', 'c_auto_fix_on_blur',
-		'c_attr_actions', 'c_on_inputasnumber', 'onInput'
+		'max', 'min', 'c:trailing', 'c:autoShowClearButton', 'onBlur',
+		'value', 'ref', 'c:focused', 'c:attrWrapper',
+		'c:tooltipDecrease', 'c:tooltipIncrease', 'c:tooltipChangeValue',
+		'c:tooltipClear', 'disabled', 'c:integerOnly', 'c:autoFixOnBlur',
+		'c:attrActions', 'c:onInputAsNumber', 'onInput'
 	])
-	const [wrapper_props, wrapper_props_other] = splitProps(
-		props.c_attr_wrapper! ?? {},
+	const [wrapperProps, otherWrapperProps] = splitProps(
+		props['c:attrWrapper']! ?? {},
 		['classList']
 	)
-	const [actions_props, actions_props_other] = splitProps(
-		props.c_attr_actions! ?? {},
-		['ref', 'classList', 'c_on_toggleopen', 'onKeyDown', 'onKeyUp']
+	const [actionsProps, otherActionsProps] = splitProps(
+		props['c:attrActions']! ?? {},
+		['ref', 'classList', 'c:onToggleOpen', 'onKeyDown', 'onKeyUp']
 	)
 
-	const [is_modal_actions_open, set_is_modal_actions_open] = createSignal<boolean>(false)
-	const [value, set_value] = createSignal<number>(0)
-	let timeout_id: number | null = null
-	let interval_id: number | null = null
-	let numbertextfield_ref: HTMLInputElement
-	let modal_actions_ref: HTMLDialogElement
-	let iconbutton_up_ref: HTMLButtonElement
-	let iconbutton_down_ref: HTMLButtonElement
+	const [isModalActionsOpen, setIsModalActionsOpen] = createSignal<boolean>(false)
+	const [value, setValue] = createSignal<number>(0)
+	let timeId: number | null = null
+	let timeIntervalId: number | null = null
+	let numberTextFieldRef: HTMLInputElement
+	let modalActionsRef: HTMLDialogElement
+	let iconButtonUpRef: HTMLButtonElement
+	let iconButtonDownRef: HTMLButtonElement
 
-	function get_max(default_number?: number): number {
+	function getMax(defaultNumber?: number): number {
 		const max = props.max
-		let v: number = default_number ?? value()
+		let v: number = defaultNumber ?? value()
 
-		if (is_string(max)) v = number_parse(max as string, props.c_integer_only)
-		else if (is_number(max)) v = max as number
-		return props.c_integer_only? math_round(v) : v
+		if (typeIsString(max)) v = numberParse(max as string, props['c:integerOnly'])
+		else if (typeIsNumber(max)) v = max as number
+		return props['c:integerOnly']? mathRound(v) : v
 	}
 
-	function get_min(default_number?: number): number {
+	function getMin(defaultNumber?: number): number {
 		const min = props.min
-		let v: number = default_number ?? value()
+		let v: number = defaultNumber ?? value()
 
-		if (is_string(min)) v = number_parse(min as string, props.c_integer_only)
-		else if (is_number(min)) v = min as number
-		return props.c_integer_only? math_round(v) : v
+		if (typeIsString(min)) v = numberParse(min as string, props['c:integerOnly'])
+		else if (typeIsNumber(min)) v = min as number
+		return props['c:integerOnly']? mathRound(v) : v
 	}
 
-	function change_value(operator: '+' | '-'): void {
-		const is_reach_limit = (
+	function updateValue(operator: '+' | '-'): void {
+		const isReachLimit = (
 			(
 				operator == '+'
 				&& props.max != null
-				&& value() >= get_max()
+				&& value() >= getMax()
 			)
 			|| (
 				operator == '-'
 				&& props.min != null
-				&& value() <= get_min()
+				&& value() <= getMin()
 			)
 		)
-		if (is_reach_limit) {
-			if (interval_id != null) interval_clear(interval_id)
-			if (timeout_id != null) timeout_clear(timeout_id)
-			interval_id = timeout_id = null
+		if (isReachLimit) {
+			if (timeIntervalId != null) timeIntervalClear(timeIntervalId)
+			if (timeId != null) timeTimerClear(timeId)
+			timeIntervalId = timeId = null
 			return
 		}
 
-		if (operator == '+') numbertextfield_ref.stepUp()
-		else numbertextfield_ref.stepDown()
+		if (operator == '+') numberTextFieldRef.stepUp()
+		else numberTextFieldRef.stepDown()
 
-		let n = numbertextfield_ref.valueAsNumber
-		if (number_is_nan(n)) n = value()
+		let n = numberTextFieldRef.valueAsNumber
+		if (numberIsNaN(n)) n = value()
 
-		n = math_clamp(n, get_min(n), get_max(n))
-		if (props.c_integer_only) n = math_round(n)
+		n = mathClamp(n, getMin(n), getMax(n))
+		if (props['c:integerOnly']) n = mathRound(n)
 
-		set_value(n)
-		change_textfield_value(numbertextfield_ref, `${n}`)
+		setValue(n)
+		updateTextFieldValue(numberTextFieldRef, `${n}`)
 	}
 
-	function on_press_start(operator: '+' | '-'): void {
-		if (timeout_id != null) timeout_clear(timeout_id)
+	function onPressStart(operator: '+' | '-'): void {
+		if (timeId != null) timeTimerClear(timeId)
 
-		timeout_id = timeout_set(() => {
-			if (interval_id != null) interval_clear(interval_id)
-			interval_id = interval_set(() => change_value(operator), 30)
-			timeout_id = null
+		timeId = timeTimerSet(() => {
+			if (timeIntervalId != null) timeIntervalClear(timeIntervalId)
+			timeIntervalId = timeIntervalSet(() => updateValue(operator), 30)
+			timeId = null
 		}, 200)
 	}
 
-	function on_press_end(operator: '+' | '-'): void {
-		if (interval_id != null) interval_clear(interval_id)
-		if (timeout_id != null) timeout_clear(timeout_id)
-		interval_id = timeout_id = null
-		change_value(operator)
+	function onPressEnd(operator: '+' | '-'): void {
+		if (timeIntervalId != null) timeIntervalClear(timeIntervalId)
+		if (timeId != null) timeTimerClear(timeId)
+		timeIntervalId = timeId = null
+		updateValue(operator)
 	}
 
-	function fix_input_number(): void {
-		let n = number_safe(
-			number_parse(numbertextfield_ref.value, props.c_integer_only),
+	function fixInputNumber(): void {
+		let n = numberSafe(
+			numberParse(numberTextFieldRef.value, props['c:integerOnly']),
 			value()
 		)
 
-		n = math_clamp(n, get_min(n), get_max(n))
-		if (props.c_integer_only) n = math_round(n)
+		n = mathClamp(n, getMin(n), getMax(n))
+		if (props['c:integerOnly']) n = mathRound(n)
 
-		set_value(n)
-		change_textfield_value(numbertextfield_ref, string_touppercase(`${n}`))
+		setValue(n)
+		updateTextFieldValue(numberTextFieldRef, stringToUpperCase(`${n}`))
 	}
 
 	createEffect(() => {
-		let v = number_parse(`${props.value}`)
-		if (number_is_not_defined(v)) return;
+		let v = numberParse(`${props.value}`)
+		if (numberIsNotDefined(v)) return;
 
-		const integer_only = props.c_integer_only
+		const integer_only = props['c:integerOnly']
 		let max = props.max ?? v
 		let min = props.min ?? v
 
-		if (is_string(max)) max = number_parse(max as string, integer_only)
-		if (is_string(min)) min = number_parse(min as string, integer_only)
+		if (typeIsString(max)) max = numberParse(max as string, integer_only)
+		if (typeIsString(min)) min = numberParse(min as string, integer_only)
 
-		v = math_clamp(v, min as number, max as number)
-		if (integer_only) v = math_round(v)
+		v = mathClamp(v, min as number, max as number)
+		if (integer_only) v = mathRound(v)
 
-		set_value(v)
+		setValue(v)
 	})
 
 	return (<>
 		<TextField
-			c_focused={props.c_focused ?? (is_modal_actions_open()? true : undefined)}
+			c:focused={props['c:focused'] ?? (isModalActionsOpen()? true : undefined)}
 			disabled={props.disabled}
-			ref={mergeRefs(props.ref, r => numbertextfield_ref = r)}
+			ref={mergeRefs(props.ref, r => numberTextFieldRef = r)}
 			value={value()}
-			c_attr_wrapper={{
+			c:attrWrapper={{
 				classList: {
 					'c-number-textfield': true,
-					...wrapper_props.classList
+					...wrapperProps.classList
 				},
-				...wrapper_props_other
+				...otherWrapperProps
 			}}
 			onBlur={ev => {
-				event_call(ev, props.onBlur)
-				if (props.c_auto_fix_on_blur) fix_input_number()
+				eventCall(ev, props.onBlur)
+				if (props['c:autoFixOnBlur']) fixInputNumber()
 			}}
 			onInput={ev => {
-				event_call(ev, props.onInput)
-				if (props.c_on_inputasnumber){
-					let n = number_parse(numbertextfield_ref.value, props.c_integer_only)
-					n = number_safe(n, value())
-					n = math_clamp(n, get_min(n), get_max(n))
-					if (props.c_integer_only) n = math_round(n)
-					props.c_on_inputasnumber(ev, n)
+				eventCall(ev, props.onInput)
+				if (props['c:onInputAsNumber']){
+					let n = numberParse(numberTextFieldRef.value, props['c:integerOnly'])
+					n = numberSafe(n, value())
+					n = mathClamp(n, getMin(n), getMax(n))
+					if (props['c:integerOnly']) n = mathRound(n)
+					props['c:onInputAsNumber'](ev, n)
 				}
 			}}
 			type='number'
-			c_trailing={<>
-				{ props.c_trailing }
+			c:trailing={<>
+				{ props['c:trailing'] }
 				<Show when={!props.disabled}>
 					<TextFieldButton
-						data-tooltip={props.c_tooltip_change_value}
-						onClick={(ev) => open_menu(
+						data-tooltip={props['c:tooltipChangeValue']}
+						onClick={(ev) => openMenu(
 							ev,
-							modal_actions_ref,
+							modalActionsRef,
 							{
-								position: MenuPosition.center_center_left,
-								anchor: event_current_target(ev)
+								position: MenuPosition.centerCenterLeft,
+								anchor: eventCurrentTarget(ev)
 							})
 						}>
-						<Icon c_code={ICON_CHEVRON_UP_DOWN}/>
+						<Icon c:code={ICON_CHEVRON_UP_DOWN}/>
 					</TextFieldButton>
 				</Show>
-				<Show when={props.c_auto_show_clear_button && value() != 0}>
-					<TextFieldButton data-tooltip={props.c_tooltip_clear ?? 'Clear'} onClick={(_ev) => {
-						let v = math_clamp(0, get_min(0), get_max())
-						if (props.c_integer_only) v = math_round(v)
+				<Show when={props['c:autoShowClearButton'] && value() != 0}>
+					<TextFieldButton data-tooltip={props['c:tooltipClear'] ?? 'Clear'} onClick={(_ev) => {
+						let v = mathClamp(0, getMin(0), getMax())
+						if (props['c:integerOnly']) v = mathRound(v)
 
-						numbertextfield_ref.value = `${v}`
-						set_value(v)
-					}}><Icon c_code={ICON_DISMISS}/></TextFieldButton>
+						numberTextFieldRef.value = `${v}`
+						setValue(v)
+					}}><Icon c:code={ICON_DISMISS}/></TextFieldButton>
 				</Show>
 			</>}
 			{...other}
 		/>
 		<Modal
-			ref={mergeRefs(actions_props.ref, r => modal_actions_ref = r)}
+			ref={mergeRefs(actionsProps.ref, r => modalActionsRef = r)}
 			classList={{
 				'c-number-textfield-actions': true,
-				...actions_props.classList
+				...actionsProps.classList
 			}}
-			c_on_toggleopen={(is_open) => {
-				actions_props.c_on_toggleopen?.(is_open)
-				set_is_modal_actions_open(is_open)
+			c:onToggleOpen={(is_open) => {
+				actionsProps['c:onToggleOpen']?.(is_open)
+				setIsModalActionsOpen(is_open)
 
 				// I don't remember why I need this
 				if (!is_open) {
-					element_focus(numbertextfield_ref)
-					element_blur(numbertextfield_ref)
+					elementFocus(numberTextFieldRef)
+					elementBlur(numberTextFieldRef)
 				}
 			}}
 			onKeyDown={(ev) => {
-				event_call(ev, actions_props.onKeyDown)
+				eventCall(ev, actionsProps.onKeyDown)
 				const code = ev.code
-				const button = document_active()!
-				if (!element_valid_target(
-					event_current_target(ev),
+				const button = documentActive()!
+				if (!elementValidTarget(
+					eventCurrentTarget(ev),
 					button,
-					el => element_tagname(el) == 'BUTTON'
+					el => elementTagName(el) == 'BUTTON'
 				)) return
 
 				const click_key = code == KEY_ENTER || code == KEY_SPACE
 				const arrow_key = code == KEY_ARROW_UP || code == KEY_ARROW_DOWN
-
 				if (!click_key && !arrow_key) return
 
 				switch (button) {
-					case iconbutton_up_ref: {
-						if (click_key) on_press_start('+')
-						if (arrow_key && !iconbutton_down_ref.disabled) element_focus(iconbutton_down_ref)
-							break
-					}
-					case iconbutton_down_ref: {
-						if (click_key) on_press_start('-')
-						if (arrow_key && !iconbutton_up_ref.disabled) element_focus(iconbutton_up_ref)
+				case iconButtonUpRef: {
+					if (click_key) onPressStart('+')
+					if (arrow_key && !iconButtonDownRef.disabled) elementFocus(iconButtonDownRef)
 						break
-					}
 				}
+				case iconButtonDownRef: {
+					if (click_key) onPressStart('-')
+					if (arrow_key && !iconButtonUpRef.disabled) elementFocus(iconButtonUpRef)
+					break
+				}}
 			}}
 			onKeyUp={(ev) => {
-				event_call(ev, actions_props.onKeyUp)
+				eventCall(ev, actionsProps.onKeyUp)
 				const code = ev.code
-				const button = document_active()!
-				if (!element_valid_target(
-					event_current_target(ev),
+				const button = documentActive()!
+				if (!elementValidTarget(
+					eventCurrentTarget(ev),
 					button,
-					el => element_tagname(el) == 'BUTTON'
+					el => elementTagName(el) == 'BUTTON'
 				) || (code != KEY_ENTER && code != KEY_SPACE)) return
 
 				switch (button) {
-					case iconbutton_up_ref: on_press_end('+'); break
-					case iconbutton_down_ref: on_press_end('-'); break
+				case iconButtonUpRef: onPressEnd('+'); break
+				case iconButtonDownRef: onPressEnd('-'); break
 				}
 			}}
-			{...actions_props_other}>
+			{...otherActionsProps}>
 			<Tooltip>
 				<IconButton
-					data-tooltip={props.c_tooltip_increase}
-					ref={r => iconbutton_up_ref = r}
-					disabled={props.max != null && value() >= get_max()}
-					onPointerUp={() => on_press_end('+')}
-					onPointerDown={() => on_press_start('+')}
-					c_code={ICON_CHEVRON_UP}
+					data-tooltip={props['c:tooltipIncrease']}
+					ref={r => iconButtonUpRef = r}
+					disabled={props.max != null && value() >= getMax()}
+					onPointerUp={() => onPressEnd('+')}
+					onPointerDown={() => onPressStart('+')}
+					c:code={ICON_CHEVRON_UP}
 				/>
 				<IconButton
-					data-tooltip={props.c_tooltip_decrease}
-					ref={r => iconbutton_down_ref = r}
-					disabled={props.min != null && value() <= get_min()}
-					onPointerUp={() => on_press_end('-')}
-					onPointerDown={() => on_press_start('-')}
-					c_code={ICON_CHEVRON_DOWN}
+					data-tooltip={props['c:tooltipDecrease']}
+					ref={r => iconButtonDownRef = r}
+					disabled={props.min != null && value() <= getMin()}
+					onPointerUp={() => onPressEnd('-')}
+					onPointerDown={() => onPressStart('-')}
+					c:code={ICON_CHEVRON_DOWN}
 				/>
 			</Tooltip>
 		</Modal>
@@ -649,123 +647,123 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 }
 
 type SearchTextFieldProps = TextFieldProps & {
-	c_result?: JSX.Element
-	c_attr_menu?: Omit<PopoverMenuProps, 'style'> & {
+	'c:result'?: JSX.Element
+	'c:attrMenu'?: Omit<PopoverMenuProps, 'style'> & {
 		style?: JSX.CSSProperties
 	}
 }
 const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
 	const [props, other] = splitProps($props, [
-		'c_result', 'c_attr_wrapper', 'c_attr_menu', 'onFocus'
+		'c:result', 'c:attrWrapper', 'c:attrMenu', 'onFocus'
 	])
-	const [wrapper_props, wrapper_props_other] = splitProps(
-		props.c_attr_wrapper! ?? {},
+	const [wrapperProps, otherWrapperProps] = splitProps(
+		props['c:attrWrapper']! ?? {},
 		['ref', 'classList']
 	)
-	const [menu_props, menu_props_other] = splitProps(
-		props.c_attr_menu! ?? {},
-		['c_use_portal', 'ref', 'classList', 'c_on_toggleopen']
+	const [menuProps, otherMenuProps] = splitProps(
+		props['c:attrMenu']! ?? {},
+		['c:usePortal', 'ref', 'classList', 'c:onToggleOpen']
 	)
-	const result = children(() => props.c_result)
-	let is_popover_open: boolean = false
-	let is_focus = false
+	const result = children(() => props['c:result'])
+	let isPopoverOpen: boolean = false
+	let isFocus = false
 	let event: FocusEvent
-	let wrapper_ref: HTMLDivElement
-	let menu_ref: HTMLDivElement
+	let wrapperRef: HTMLDivElement
+	let menuRef: HTMLDivElement
 
-	function $open_popover(ev: Event): void {
-		if (is_popover_open) return;
+	function $openPopover(ev: Event): void {
+		if (isPopoverOpen) return;
 
-		if (is_array(result()) && array_length(result() as unknown[]) == 0) return;
+		if (typeIsArray(result()) && arrayLength(result() as unknown[]) == 0) return;
 
-		element_remove_style(menu_ref, 'width')
-		const textfield_width = rect_width(element_rect(wrapper_ref))
-		const menu_width = rect_width(element_rect(menu_ref))
-		if (textfield_width > menu_width) element_set_style(
-			menu_ref,
+		elementStyleRemove(menuRef, 'width')
+		const textFieldWidth = rectWidth(elementRect(wrapperRef))
+		const menuWidth = rectWidth(elementRect(menuRef))
+		if (textFieldWidth > menuWidth) elementStyleSet(
+			menuRef,
 			'width',
-			`${textfield_width}px`
+			`${textFieldWidth}px`
 		)
-		open_popover(ev, menu_ref, {
-			allow_hide_anchor: false,
-			anchor: wrapper_ref,
-			content_auto_focus: false,
+		openPopover(ev, menuRef, {
+			allowHideAnchor: false,
+			anchor: wrapperRef,
+			contentAutoFocus: false,
 			gap: 0,
-			position: SearchMenuPosition.center_bottom,
-			manual_dismiss: true,
+			position: SearchMenuPosition.centerBottom,
+			manualDismiss: true,
 		})
 	}
 
-	function on_click(ev: MouseEvent): void {
-		if (!is_popover_open) return;
+	function onClick(ev: MouseEvent): void {
+		if (!isPopoverOpen) return;
 
-		const target = event_target(ev) as HTMLElement
-		const is_clicked_inside = element_contains(wrapper_ref, target) || element_contains(menu_ref, target)
+		const target = eventTarget(ev) as HTMLElement
+		const isClickedInside = elementContains(wrapperRef, target) || elementContains(menuRef, target)
 
-		if (is_clicked_inside) return;
+		if (isClickedInside) return;
 
-		close_popover(menu_ref)
+		closePopover(menuRef)
 	}
 
-	function init_events(): void {
-		event_add_listener<MouseEvent>(document, 'click', on_click)
+	function initEvents(): void {
+		eventListenerAdd<MouseEvent>(document, 'click', onClick)
 
 		onCleanup(() => {
-			event_remove_listener<MouseEvent>(document, 'click', on_click)
+			eventListenerRemove<MouseEvent>(document, 'click', onClick)
 		})
 	}
 
 	onMount(() => {
-		init_events()
+		initEvents()
 	})
 
 	createEffect(() => {
 		const r = result()
-		if (!is_focus && !event) return;
-		if (is_array(r) && array_length(r as unknown[]) == 0) {
-			return close_popover(menu_ref)
+		if (!isFocus && !event) return;
+		if (typeIsArray(r) && arrayLength(r as unknown[]) == 0) {
+			return closePopover(menuRef)
 		}
-		$open_popover(event)
+		$openPopover(event)
 	})
 
 	return (<>
 		<TextField
-			c_attr_wrapper={{
-				ref: mergeRefs(wrapper_props.ref, r => wrapper_ref = r),
+			c:attrWrapper={{
+				ref: mergeRefs(wrapperProps.ref, r => wrapperRef = r),
 				classList: {
 					'c-search-textfield': true,
-					...wrapper_props.classList
+					...wrapperProps.classList
 				},
-				...wrapper_props_other
+				...otherWrapperProps
 			}}
 			onFocus={ev => {
-				event_call(ev, props.onFocus)
-				$open_popover(ev)
-				is_focus = is_focus
+				eventCall(ev, props.onFocus)
+				$openPopover(ev)
+				isFocus = isFocus
 				event = ev
 			}}
 			{...other}
 		/>
 		<PopoverMenu
-			c_use_portal={menu_props.c_use_portal ?? false} // for quick keyboard accessibilty
-			c_on_toggleopen={isOpen => {
-				is_popover_open = isOpen
-				menu_props.c_on_toggleopen?.(isOpen)
+			c:usePortal={menuProps['c:usePortal'] ?? false} // for quick keyboard accessibilty
+			c:onToggleOpen={isOpen => {
+				isPopoverOpen = isOpen
+				menuProps['c:onToggleOpen']?.(isOpen)
 			}}
-			ref={mergeRefs(menu_props.ref, r => menu_ref = r)}
+			ref={mergeRefs(menuProps.ref, r => menuRef = r)}
 			classList={{
 				'c-search-textfield-menu': true,
-				...menu_props.classList
+				...menuProps.classList
 			}}
-			{...menu_props_other}>
+			{...otherMenuProps}>
 			{result()}
 		</PopoverMenu>
 	</>)
 }
 
 export {
-	change_textfield_value,
-	change_areatextfield_value,
+	updateTextFieldValue,
+	updateAreaTextFieldValue,
 	TextFieldButton,
 	TextFieldButton as SearchTextFieldButton,
 	TextFieldButton as NumberTextFieldButton,
@@ -778,10 +776,10 @@ export {
 	LinkMenuItem as LinkSearchMenuItem,
 	MenuDivider as SearchMenuDivider,
 	MenuHeader as SearchMenuHeader,
-	is_popover_open as is_searchtextfieldmenu_open,
-	close_popover as close_searchtextfieldmenu,
-	open_popover as open_searchtextfieldmenu,
-	reposition_popover as reposition_searchtextfieldmenu,
+	isPopoverOpen as isSearchTextFieldMenuOpen,
+	closePopover as closeSearchTextFieldMenu,
+	openPopover as openSearchTextFieldMenu,
+	repositionPopover as repositionSearchTextFieldMenu,
 	SearchMenuPosition
 }
 export type {

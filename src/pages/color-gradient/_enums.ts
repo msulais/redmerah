@@ -16,16 +16,16 @@ export enum RadialGradientShape {
 export enum RectangularColorSpace {
 	auto = 'auto',
 	srgb = 'srgb',
-	srgb_linear = 'srgb-linear',
-	display_p3 = 'display-p3',
-	a98_rgb = 'a98-rgb',
-	prophoto_rgb = 'prophoto-rgb',
+	srgbLinear = 'srgb-linear',
+	displayP3 = 'display-p3',
+	a98Rgb = 'a98-rgb',
+	prophotoRgb = 'prophoto-rgb',
 	rec2020 = 'rec2020',
 	lab = 'lab',
 	oklab = 'oklab',
 	xyz = 'xyz',
-	xyz_d50 = 'xyz-d50',
-	xyz_d65 = 'xyz-d65',
+	xyzD50 = 'xyz-d50',
+	xyzD65 = 'xyz-d65',
 }
 
 export enum PolarColorSpace {
@@ -49,99 +49,99 @@ export enum Commands {
 	@param { number } gradient_index `number`
 	@param { number } color_stop_index `number`
 	@param { number } length `number` from `0` to `100` */
-	change_color_stop_length,
+	updateColorStopLength,
 
 	/** @param { number } gradient_index `number` */
-	toggle_gradient_repeat,
+	toggleGradientRepeat,
 
 	/**
 	@param { number } gradient_index `number`
 	@param { number } angle `number` from `0` to `360` */
-	change_gradient_angle,
+	updateGradientAngle,
 
 	/**
 	@param { number } gradient_index `number`
 	@param { RectangularColorSpace | PolarColorSpace } colorspace `RectangularColorSpace | PolarColorSpace`*/
-	change_color_interpolation_method,
+	updateColorInterpolationMethod,
 
 	/**
 	@param { number } gradient_index `number`
 	@param { HueInterpolationMethod } method `HueInterpolationMethod` */
-	change_hue_interpolation_method,
+	updateHueInterpolationMethod,
 
 	/**
 	@param { number } gradient_index `number`
 	@param { number } color_stop_index `number`
 	@param { HEXColor } color `HEXColor` */
-	change_color_stop_color,
+	updateColorStopColor,
 
 	/** @param { number } gradient_index `number` */
-	add_color_stop,
+	addColorStop,
 
 	/**
 	@param { number } gradient_index `number`
 	@param { number } color_stop_index `number` */
-	remove_color_stop,
+	removeColorStop,
 
-	add_gradient,
+	addGradient,
 
 	/** @param { number } gradient_index `number` */
-	remove_gradient,
+	removeGradient,
 
-	/** @param { ColorModel } model `ColorModel` */
-	change_settings_colormodel,
-
-	/** @param { number } value `number` */
-	change_settings_aspect_ratio,
+	/** @param { ColorSpace } space `ColorSpace` */
+	updateSettingsColorSpace,
 
 	/** @param { number } value `number` */
-	change_settings_border_radius,
+	updateSettingsAspectRatio,
+
+	/** @param { number } value `number` */
+	updateSettingsBorderRadius,
 
 	/**
 	@param { number } gradient_index `number`
 	@param { GradientType } type `GradientType` */
-	change_gradient_type,
+	updateGradientType,
 
 	/**
 	@param { number } gradient_index `number`
 	@param { RadialGradientShape } shape `RadialGradientShape` */
-	change_radial_gradient_shape,
+	updateRadialGradientShape,
 
 	/**
 	@param { number } gradient_index `number`
 	@param { number } x `number` from `0` to `100` */
-	change_gradient_position_x,
+	updateGradientPositionX,
 
 	/**
 	@param { number } gradient_index `number`
 	@param { number } y `number` from `0` to `100` */
-	change_gradient_position_y,
+	updateGradientPositionY,
 
 	/**
 	@param { number } gradient_index `number`
 	@param { number } size `number` */
-	change_radial_gradient_size,
+	updateRadialGradientSize,
 
 	/**
 	@param { number } gradient_index `number`
 	@param { number } width `number` from `0` to `100` */
-	change_radial_gradient_width,
+	updateRadialGradientWidth,
 
 	/**
 	@param { number } gradient_index `number`
 	@param { number } height `number` from `0` to `100` */
-	change_radial_gradient_height,
+	updateRadialGradientHeight,
 
-	save_gradient,
-
-	/** @param { number } index `number` */
-	view_gradient_data,
+	saveGradient,
 
 	/** @param { number } index `number` */
-	delete_gradient_data,
+	viewGradientData,
+
+	/** @param { number } index `number` */
+	deleteGradientData,
 }
 
-export enum ColorModel {
+export enum ColorSpace {
 	hex = 'hex',
 	rgba = 'rgba',
 	hsla = 'hsla'

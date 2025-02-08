@@ -3,31 +3,31 @@ import { createStore } from "solid-js/store"
 
 import type { Gradient, GradientData, RadialGradient, Settings } from "./_type"
 import type { HEXColor } from "@/types/color"
-import { ColorModel, Commands, GradientType, HueInterpolationMethod, PolarColorSpace, RadialGradientShape } from "./_enums"
-import { attr_remove, attr_set, attr_set_if_exist } from "@/utils/attributes"
-import { event_current_target } from "@/utils/event"
+import { ColorSpace, Commands, GradientType, HueInterpolationMethod, PolarColorSpace, RadialGradientShape } from "./_enums"
+import { attrRemove, attrSet, attrSetIfExist } from "@/utils/attributes"
+import { eventCurrentTarget } from "@/utils/event"
 import { BodyAttributes } from "@/enums/attributes"
-import { element_dataset, element_id, element_rect, element_release_pointercapture, element_set_pointercapture, element_tagname, element_valid_target } from "@/utils/element"
-import { math_clamp, math_round } from "@/utils/math"
-import { convert_color_by_color_model, gradient_to_css_text } from "./_utils"
-import { hsl_to_hex, is_color_valid, rgb_to_hex } from "@/utils/color"
-import { navigator_clipboard_writetext } from "@/utils/navigator"
-import { array_includes, array_join, array_length, array_map, array_sort } from "@/utils/array"
-import { string_length, string_padstart, string_replace, string_split, string_substring, string_touppercase, string_trim } from "@/utils/string"
-import { number_is_not_defined, number_parse, number_safe, number_to_string } from "@/utils/number"
-import { rect_width } from "@/utils/rect"
-import { document_active } from "@/utils/document"
+import { elementDataset, elementId, elementRect, elementPointerCaptureRelease, elementPointerCaptureSet, elementTagName, elementValidTarget } from "@/utils/element"
+import { mathClamp, mathRound } from "@/utils/math"
+import { convertColorByColorSpace, gradientToCSSText } from "./_utils"
+import { colorHslToHex, colorIsValid, colorRgbToHex } from "@/utils/color"
+import { navigatorClipboardWriteText } from "@/utils/navigator"
+import { arrayIncludes, arrayJoin, arrayLength, arrayMap, arraySort } from "@/utils/array"
+import { stringLength, stringPadStart, stringReplace, stringSplit, stringSubstring, stringToUpperCase, stringTrim } from "@/utils/string"
+import { numberIsNotDefined, numberParse, numberSafe, numberToString } from "@/utils/number"
+import { rectWidth } from "@/utils/rect"
+import { documentActive, documentBody } from "@/utils/document"
 import { ICON_ADD, ICON_ADD_CIRCLE, ICON_CHEVRON_DOWN, ICON_CIRCLE, ICON_COPY, ICON_DELETE, ICON_EYE, ICON_EYEDROPPER, ICON_MORE_HORIZONTAL } from "@/constants/icons"
 
 import Icon from "@/components/Icon"
 import Button, { ButtonVariant, IconButton, SquareButton } from "@/components/Button"
 import Tooltip, { PopoverTooltip } from "@/components/Tooltip"
 import CheckBox from "@/components/CheckBox"
-import TextField, { change_textfield_value, NumberTextField, TextFieldButton } from "@/components/TextField"
-import Menu, { close_menu, MenuDivider, MenuItem, MenuPosition, open_menu } from "@/components/Menu"
-import ColorPicker, { open_colorpicker } from "@/components/ColorPicker"
+import TextField, { updateTextFieldValue, NumberTextField, TextFieldButton } from "@/components/TextField"
+import Menu, { closeMenu, MenuDivider, MenuItem, MenuPosition, openMenu } from "@/components/Menu"
+import ColorPicker, { openColorPicker } from "@/components/ColorPicker"
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
-import Toast, { open_toast } from "@/components/Toast"
+import Toast, { openToast } from "@/components/Toast"
 import CSS from './_styles.module.scss'
 
 type PointerPosition = {
@@ -36,25 +36,25 @@ type PointerPosition = {
 }
 
 const GradientDataList: VoidComponent<{
-	gradient_data: GradientData[]
+	gradientData: GradientData[]
 	settings: Settings
 	command(type: Commands, ...args: unknown[]): unknown
 }> = (props) => {
-	const [is_menu_action_open, set_is_menu_action_open] = createSignal<boolean>(false)
-	const [selected_gradientdata_index, set_selected_gradientdata_index] = createSignal<number>(-1)
+	const [isMenuActionOpen, setIsMenuActionOpen] = createSignal<boolean>(false)
+	const [selectedGradientDataIndex, setSelectedGradientDataIndex] = createSignal<number>(-1)
 	const settings = createMemo(() => props.settings)
-	const gradient_data = createMemo(() => props.gradient_data)
-	let menu_action_ref: HTMLDialogElement
+	const gradientData = createMemo(() => props.gradientData)
+	let menuActionRef: HTMLDialogElement
 
 	function command(type: Commands, ...args: unknown[]): unknown {
 		return props.command(type, ...args)
 	}
 
 	function copy(data: GradientData): void {
-		navigator_clipboard_writetext(
-			array_join(array_map(data.gradients, gradient => gradient_to_css_text(
+		navigatorClipboardWriteText(
+			arrayJoin(arrayMap(data.gradients, gradient => gradientToCSSText(
 				gradient,
-				settings().color_model,
+				settings().colorSpace,
 				true
 			)), '\n')
 		)
@@ -64,68 +64,65 @@ const GradientDataList: VoidComponent<{
 		const id = createUniqueId()
 		return (<>
 			<SquareButton
-				c_focused={selected_gradientdata_index() == $props.index && is_menu_action_open()}
+				c:focused={selectedGradientDataIndex() == $props.index && isMenuActionOpen()}
 				data-rich-tooltip={id}
 				data-gradient-data-item-index={$props.index}>
-				<div data-gradient style={{"background-image": array_join(array_map($props.data.gradients, gradient => gradient_to_css_text(gradient)), ',')}}/>
+				<div data-gradient style={{"background-image": arrayJoin(arrayMap($props.data.gradients, gradient => gradientToCSSText(gradient)), ',')}}/>
 			</SquareButton>
 			<PopoverTooltip id={id}>
 				<For each={$props.data.gradients}>{gradient =>
-					<pre><code>{gradient_to_css_text(gradient, settings().color_model, true)}</code></pre>
+					<pre><code>{gradientToCSSText(gradient, settings().colorSpace, true)}</code></pre>
 				}</For>
 			</PopoverTooltip>
 		</>)
 	}
 
 	const Menus: VoidComponent = () => {
-		const button_action_view_id = createUniqueId()
-		const button_action_copy_id = createUniqueId()
-		const button_action_delete_id = createUniqueId()
+		const buttonAction_viewId = createUniqueId()
+		const buttonAction_copyId = createUniqueId()
+		const buttonAction_deleteId = createUniqueId()
 		return (<>
 			<Menu
-				ref={r => menu_action_ref = r}
-				c_on_toggleopen={isOpen => set_is_menu_action_open(isOpen)}
+				ref={r => menuActionRef = r}
+				c:onToggleOpen={isOpen => setIsMenuActionOpen(isOpen)}
 				style={{'min-width': '128px'}}
 				onClick={ev => {
-					const button = document_active()!
-					if (!element_valid_target(
-						event_current_target(ev),
+					const button = documentActive()!
+					if (!elementValidTarget(
+						eventCurrentTarget(ev),
 						button,
-						el => element_tagname(el) == 'BUTTON'
+						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					switch (element_id(button)) {
-						case button_action_view_id: {
-							command(Commands.view_gradient_data, selected_gradientdata_index())
-							close_menu(menu_action_ref)
-							break
-						}
-						case button_action_copy_id: {
-							copy(gradient_data()[selected_gradientdata_index()])
-							close_menu(menu_action_ref)
-							break
-						}
-						case button_action_delete_id: {
-							command(Commands.delete_gradient_data, selected_gradientdata_index())
-							close_menu(menu_action_ref)
-							break
-						}
+					switch (elementId(button)) {
+					case buttonAction_viewId:
+						command(Commands.viewGradientData, selectedGradientDataIndex())
+						closeMenu(menuActionRef)
+						break
+					case buttonAction_copyId:
+						copy(gradientData()[selectedGradientDataIndex()])
+						closeMenu(menuActionRef)
+						break
+					case buttonAction_deleteId:
+						command(Commands.deleteGradientData, selectedGradientDataIndex())
+						closeMenu(menuActionRef)
+						break
 					}
 				}}>
 				<MenuItem
-					c_icon_code={ICON_EYE}
-					id={button_action_view_id}>
+					c:iconCode={ICON_EYE}
+					id={buttonAction_viewId}>
 					View
 				</MenuItem>
 				<MenuItem
-					c_icon_code={ICON_COPY}
-					id={button_action_copy_id}>
+					c:iconCode={ICON_COPY}
+					id={buttonAction_copyId}>
 					Copy
 				</MenuItem>
 				<MenuDivider />
 				<MenuItem
-					c_icon_code={ICON_DELETE}
-					id={button_action_delete_id}>
+					c:iconCode={ICON_DELETE}
+					id={buttonAction_deleteId}>
 					Delete
 				</MenuItem>
 			</Menu>
@@ -137,31 +134,31 @@ const GradientDataList: VoidComponent<{
 
 		// !important: must implement here... can't implement this in parent
 		onClick={ev => {
-			const button = document_active()!
-			if (!element_valid_target(
-				event_current_target(ev),
+			const button = documentActive()!
+			if (!elementValidTarget(
+				eventCurrentTarget(ev),
 				button,
-				el => element_tagname(el) == 'BUTTON'
+				el => elementTagName(el) == 'BUTTON'
 			)) return
 
-			const data_gradient_data_item_index = element_dataset(
+			const dataGradientDataItemIndex = elementDataset(
 				button,
 				'gradientDataItemIndex'
 			)
-			if (data_gradient_data_item_index) {
-				const index = number_parse(data_gradient_data_item_index, true)
-				if (number_is_not_defined(index)) return
+			if (dataGradientDataItemIndex) {
+				const index = numberParse(dataGradientDataItemIndex, true)
+				if (numberIsNotDefined(index)) return
 
-				set_selected_gradientdata_index(index)
-				open_menu(ev, menu_action_ref, {
+				setSelectedGradientDataIndex(index)
+				openMenu(ev, menuActionRef, {
 					anchor: button,
-					position: MenuPosition.center_bottom_to_right
+					position: MenuPosition.centerBottomToRight
 				})
 				return
 			}
 		}}>
 		<Tooltip>
-			<For each={gradient_data()}>{(data, i) =>
+			<For each={gradientData()}>{(data, i) =>
 				<GradientDataItem index={i()} data={data}/>
 			}</For>
 		</Tooltip>
@@ -171,29 +168,29 @@ const GradientDataList: VoidComponent<{
 
 const GradientControl: VoidComponent<{
 	gradient: Gradient
-	is_dragging: boolean
-	colorpicker_ref: HTMLDialogElement
-	gradient_index: number
+	isDragging: boolean
+	colorPickerRef: HTMLDialogElement
+	gradientIndex: number
 	settings: Settings
-	selected_gradient_index: number
-	pointer_position: PointerPosition
+	selectedGradientIndex: number
+	pointerPosition: PointerPosition
 	command(type: Commands, ...args: unknown[]): unknown
-	on_start_drag(gradient_element: HTMLDivElement, position: PointerPosition, colorstop_index: number): void
-	on_pointer_up(ev: PointerEvent & {currentTarget: HTMLDivElement}): unknown
-	on_pointer_move(ev: PointerEvent & {currentTarget: HTMLDivElement}): unknown
+	onStartDrag(gradient_element: HTMLDivElement, position: PointerPosition, colorstop_index: number): void
+	onPointerUp(ev: PointerEvent & {currentTarget: HTMLDivElement}): unknown
+	onPointerMove(ev: PointerEvent & {currentTarget: HTMLDivElement}): unknown
 }> = (props) => {
-	const [expanded, set_expanded] = createSignal<boolean>(false)
-	const [selected_colorstop_index, set_selected_colorstop_index] = createSignal<number>(-1)
+	const [expanded, setExpanded] = createSignal<boolean>(false)
+	const [selectedColorStopIndex, setSelectedColorStopIndex] = createSignal<number>(-1)
 	const gradient = createMemo(() => props.gradient)
-	const get_list_stop_gradient = createMemo<string>(() => array_join(array_map(
-		array_sort([...gradient().color_stop_list], (a, b) => a.size - b.size),
+	const getListStopGradient = createMemo<string>(() => arrayJoin(arrayMap(
+		arraySort([...gradient().colorStopList], (a, b) => a.size - b.size),
 		stop => `${stop.color} ${stop.size}%`
 	), ','))
 	const settings = createMemo(() => props.settings)
-	const selected_gradient_index = createMemo(() => props.selected_gradient_index)
-	const gradient_index = createMemo(() => props.gradient_index)
-	const is_conic_gradient = createMemo<boolean>(() => gradient().type == GradientType.conic)
-	let div_gradient_ref: HTMLDivElement
+	const selectedGradientIndex = createMemo(() => props.selectedGradientIndex)
+	const gradientIndex = createMemo(() => props.gradientIndex)
+	const isConicGradient = createMemo<boolean>(() => gradient().type == GradientType.conic)
+	let divGradientRef: HTMLDivElement
 
 	function command(type: Commands, ...args: unknown[]): unknown {
 		return props.command(type, ...args)
@@ -201,35 +198,35 @@ const GradientControl: VoidComponent<{
 
 	const Control: VoidComponent = () => (<div class={CSS.body_gradient_control_gradient}>
 		<div>
-			<For each={gradient().color_stop_list}>{(stop, index) =>
+			<For each={gradient().colorStopList}>{(stop, index) =>
 				<div style={{left: stop.size + '%'}}>
 					<div
-						onPointerUp={ev => props.on_pointer_up(ev)}
-						onPointerCancel={ev => props.on_pointer_up(ev)}
-						onPointerMove={ev => props.on_pointer_move(ev)}
+						onPointerUp={ev => props.onPointerUp(ev)}
+						onPointerCancel={ev => props.onPointerUp(ev)}
+						onPointerMove={ev => props.onPointerMove(ev)}
 						onPointerDown={ev => {
-							element_set_pointercapture(event_current_target(ev), ev.pointerId)
-							props.on_start_drag(
-								div_gradient_ref,
+							elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
+							props.onStartDrag(
+								divGradientRef,
 								{ x: ev.clientX, y: ev.clientY },
 								index()
 							)
-							set_selected_colorstop_index(index())
+							setSelectedColorStopIndex(index())
 						}}
 						draggable="false"
-						data-dragged={attr_set_if_exist(
-							selected_gradient_index() == gradient_index()
-							&& selected_colorstop_index() == index()
-							&& props.is_dragging
+						data-dragged={attrSetIfExist(
+							selectedGradientIndex() == gradientIndex()
+							&& selectedColorStopIndex() == index()
+							&& props.isDragging
 						)}
-						data-g-keep-pointer-event={attr_set_if_exist(
-							selected_gradient_index() == gradient_index()
-							&& selected_colorstop_index() == index()
-							&& props.is_dragging
+						data-g-keep-pointer-event={attrSetIfExist(
+							selectedGradientIndex() == gradientIndex()
+							&& selectedColorStopIndex() == index()
+							&& props.isDragging
 						)}
 						style={{"background-color": stop.color}}
-						data-length={is_conic_gradient()
-							? `${math_round(stop.size / 100 * 360)}°`
+						data-length={isConicGradient()
+							? `${mathRound(stop.size / 100 * 360)}°`
 							: `${stop.size}%`
 						}
 					/>
@@ -237,43 +234,43 @@ const GradientControl: VoidComponent<{
 			}</For>
 			<div
 				data-gradient
-				ref={r => div_gradient_ref = r}
+				ref={r => divGradientRef = r}
 				style={{
-					'background': `linear-gradient(to right,${get_list_stop_gradient()})`
+					'background': `linear-gradient(to right,${getListStopGradient()})`
 				}}
 			/>
 		</div>
 		<IconButton
 			data-tooltip={expanded()? "Show less" : 'Show more'}
-			c_code={ICON_CHEVRON_DOWN}
-			onClick={() => set_expanded(e => !e)}
-			data-expanded={attr_set_if_exist(expanded())}
+			c:code={ICON_CHEVRON_DOWN}
+			onClick={() => setExpanded(e => !e)}
+			data-expanded={attrSetIfExist(expanded())}
 		/>
 	</div>)
 
 	const Options: VoidComponent = () => (<div class={CSS.body_gradient_control_options}>
 		<Dropdown
-			c_values={[gradient().type]}
-			c_on_change={(options) => command(
-				Commands.change_gradient_type,
-				gradient_index(),
+			c:values={[gradient().type]}
+			c:onChange={(options) => command(
+				Commands.updateGradientType,
+				gradientIndex(),
 				options[0].value
 			)}
-			c_label="Type">
+			c:label="Type">
 			<For each={[
 				[GradientType.linear, 'Linear'],
 				[GradientType.radial, 'Radial'],
 				[GradientType.conic, 'Conic'],
-			]}>{option => <DropdownOption c_value={option[0]} c_text={option[1]}/>}</For>
+			]}>{option => <DropdownOption c:value={option[0]} c:text={option[1]}/>}</For>
 		</Dropdown>
 		<Dropdown
-			c_values={[gradient().color_interpolation_method]}
-			c_on_change={(options) => command(
-				Commands.change_color_interpolation_method,
-				gradient_index(),
+			c:values={[gradient().colorInterpolationMethod]}
+			c:onChange={(options) => command(
+				Commands.updateColorInterpolationMethod,
+				gradientIndex(),
 				options[0].value
 			)}
-			c_label="Color space">
+			c:label="Color space">
 			<For each={[
 				[PolarColorSpace.auto, 'Auto'],
 				// [RectangularColorSpace.a98_rgb, 'A98 RGB'],
@@ -291,78 +288,78 @@ const GradientControl: VoidComponent<{
 				// [RectangularColorSpace.xyz, 'XYZ'],
 				// [RectangularColorSpace.xyz_d50, 'XYZ D50'],
 				// [RectangularColorSpace.xyz_d65, 'XYZ D65'],
-			]}>{option => <DropdownOption c_value={option[0]} c_text={option[1]}/>}</For>
+			]}>{option => <DropdownOption c:value={option[0]} c:text={option[1]}/>}</For>
 		</Dropdown>
 		<Show
-			when={array_includes([
+			when={arrayIncludes([
 				PolarColorSpace.hsl, PolarColorSpace.hwb,
 				PolarColorSpace.lch, PolarColorSpace.oklch
-			], gradient().color_interpolation_method as PolarColorSpace)}>
+			], gradient().colorInterpolationMethod as PolarColorSpace)}>
 			<Dropdown
-				c_values={[gradient().hue_interpolation_method]}
-				c_on_change={(options) => command(
-					Commands.change_hue_interpolation_method,
-					gradient_index(),
+				c:values={[gradient().hueInterpolationMethod]}
+				c:onChange={(options) => command(
+					Commands.updateHueInterpolationMethod,
+					gradientIndex(),
 					options[0].value
 				)}
-				c_label="Hue interpolation">
+				c:label="Hue interpolation">
 				<For each={[
 					[HueInterpolationMethod.auto, 'Auto'],
 					[HueInterpolationMethod.decreasing, 'Decreasing'],
 					[HueInterpolationMethod.increasing, 'Increasing'],
 					[HueInterpolationMethod.longer, 'Longer'],
 					[HueInterpolationMethod.shorter, 'Shorter'],
-				]}>{option => <DropdownOption c_value={option[0]} c_text={option[1]}/>}</For>
+				]}>{option => <DropdownOption c:value={option[0]} c:text={option[1]}/>}</For>
 			</Dropdown>
 		</Show>
 		<Show when={gradient().type == GradientType.radial}>
 			<Dropdown
-				c_values={[(gradient() as RadialGradient).shape]}
-				c_on_change={(options) => command(Commands.change_radial_gradient_shape, gradient_index(), options[0].value)}
-				c_label="Shape">
+				c:values={[(gradient() as RadialGradient).shape]}
+				c:onChange={(options) => command(Commands.updateRadialGradientShape, gradientIndex(), options[0].value)}
+				c:label="Shape">
 				<For each={[
 					[RadialGradientShape.circle, 'Circle'],
 					[RadialGradientShape.ellipse, 'Ellipse'],
-				]}>{option => <DropdownOption c_value={option[0]} c_text={option[1]}/>}</For>
+				]}>{option => <DropdownOption c:value={option[0]} c:text={option[1]}/>}</For>
 			</Dropdown>
 		</Show>
 		<div class={CSS.body_gradient_control_options_2_grid}>
-			<Show when={array_includes([GradientType.conic, GradientType.linear], gradient().type)}>
+			<Show when={arrayIncludes([GradientType.conic, GradientType.linear], gradient().type)}>
 				<NumberTextField
-					c_label="Angle (°)"
+					c:label="Angle (°)"
 					enterkeyhint="done"
 					min={0}
 					max={360}
-					c_auto_select_all
-					c_on_inputasnumber={(_, v) => command(
-						Commands.change_gradient_angle,
-						gradient_index(),
+					c:autoSelectAll
+					c:onInputAsNumber={(_, v) => command(
+						Commands.updateGradientAngle,
+						gradientIndex(),
 						v
 					)}
 					value={(gradient() as any).angle as number}
 				/>
 			</Show>
-			<Show when={array_includes([GradientType.conic, GradientType.radial], gradient().type)}>
+			<Show when={arrayIncludes([GradientType.conic, GradientType.radial], gradient().type)}>
 				<NumberTextField
-					c_label="X (%)"
+					c:label="X (%)"
 					min={0}
 					enterkeyhint="done"
-					c_auto_select_all
-					c_on_inputasnumber={(_, v) => command(
-						Commands.change_gradient_position_x,
-						gradient_index(),
+					c:autoSelectAll
+					c:onInputAsNumber={(_, v) => command(
+						Commands.updateGradientPositionX,
+						gradientIndex(),
 						v
 					)}
 					value={(gradient() as any).position_x as number}
 				/>
 				<NumberTextField
-					c_label="Y (%)"
+					c:label="Y (%)"
 					enterkeyhint="done"
 					min={0}
-					c_auto_select_all
-					c_on_inputasnumber={(_, v) => command(
-						Commands.change_gradient_position_y,
-						gradient_index(),
+					c:autoSelectAll
+					c:onInputAsNumber={(_, v) => command(
+						Commands.updateGradientPositionY,
+						gradientIndex(),
 						v
 					)}
 					value={(gradient() as any).position_y as number}
@@ -370,132 +367,132 @@ const GradientControl: VoidComponent<{
 			</Show>
 			<Show when={gradient().type == GradientType.radial && (gradient() as RadialGradient).shape == RadialGradientShape.circle}>
 				<NumberTextField
-					c_label="Size (px)"
+					c:label="Size (px)"
 					enterkeyhint="done"
 					min={0}
-					c_auto_select_all
-					c_on_inputasnumber={(_, v) => command(
-						Commands.change_radial_gradient_size,
-						gradient_index(),
+					c:autoSelectAll
+					c:onInputAsNumber={(_, v) => command(
+						Commands.updateRadialGradientSize,
+						gradientIndex(),
 						v
 					)}
-					value={(gradient() as RadialGradient).size_length}
+					value={(gradient() as RadialGradient).sizeLength}
 				/>
 			</Show>
 			<Show when={gradient().type == GradientType.radial && (gradient() as RadialGradient).shape == RadialGradientShape.ellipse}>
 				<NumberTextField
-					c_label="Width (%)"
+					c:label="Width (%)"
 					enterkeyhint="done"
 					min={0}
-					c_auto_select_all
-					c_on_inputasnumber={(_, v) => command(
-						Commands.change_radial_gradient_width,
-						gradient_index(),
+					c:autoSelectAll
+					c:onInputAsNumber={(_, v) => command(
+						Commands.updateRadialGradientWidth,
+						gradientIndex(),
 						v
 					)}
-					value={(gradient() as RadialGradient).size_width}
+					value={(gradient() as RadialGradient).sizeWidth}
 				/>
 				<NumberTextField
-					c_label="Height (%)"
+					c:label="Height (%)"
 					enterkeyhint="done"
 					min={0}
-					c_auto_select_all
-					c_on_inputasnumber={(_, v) => command(
-						Commands.change_radial_gradient_height,
-						gradient_index(),
+					c:autoSelectAll
+					c:onInputAsNumber={(_, v) => command(
+						Commands.updateRadialGradientHeight,
+						gradientIndex(),
 						v
 					)}
-					value={(gradient() as RadialGradient).size_height}
+					value={(gradient() as RadialGradient).sizeHeight}
 				/>
 			</Show>
 			<CheckBox
 				checked={gradient().repeat}
 				onChange={() => command(
-					Commands.toggle_gradient_repeat,
-					gradient_index()
+					Commands.toggleGradientRepeat,
+					gradientIndex()
 				)}>
 				Repeat
 			</CheckBox>
 		</div>
 	</div>)
 
-	const ColorStops: VoidComponent = () => (<For each={gradient().color_stop_list}>{(stop, index) =>
+	const ColorStops: VoidComponent = () => (<For each={gradient().colorStopList}>{(stop, index) =>
 		<div class={CSS.body_gradient_control_stop}>
 			<div>
 				<NumberTextField
-					c_label={is_conic_gradient()? "°" : "%"}
-					c_auto_select_all
+					c:label={isConicGradient()? "°" : "%"}
+					c:autoSelectAll
 					enterkeyhint="done"
-					value={stop.size * (is_conic_gradient()? 360 / 100 : 1)}
+					value={stop.size * (isConicGradient()? 360 / 100 : 1)}
 					min={0}
-					max={is_conic_gradient()? 360 : 100}
-					c_integer_only
-					c_on_inputasnumber={(_, v) => command(
-						Commands.change_color_stop_length,
-						gradient_index(),
+					max={isConicGradient()? 360 : 100}
+					c:integerOnly
+					c:onInputAsNumber={(_, v) => command(
+						Commands.updateColorStopLength,
+						gradientIndex(),
 						index(),
-						v * (is_conic_gradient()? (100 / 360) : 1)
+						v * (isConicGradient()? (100 / 360) : 1)
 					)}
 				/>
 				<TextField
-					c_leading={<Icon c_code={ICON_CIRCLE} c_filled style={{color: stop.color}}/>}
-					value={convert_color_by_color_model(stop.color, settings().color_model, true)}
+					c:leading={<Icon c:code={ICON_CIRCLE} c:filled style={{color: stop.color}}/>}
+					value={convertColorByColorSpace(stop.color, settings().colorSpace, true)}
 					enterkeyhint="done"
 					onBlur={ev => {
-						let value = event_current_target(ev).value
-						const model = settings().color_model
-						if (model == ColorModel.hsla) {
-							value = string_replace(value, /[^-\d.,]+/gs, '')
+						let value = eventCurrentTarget(ev).value
+						const model = settings().colorSpace
+						if (model == ColorSpace.hsla) {
+							value = stringReplace(value, /[^-\d.,]+/gs, '')
 
-							const values = string_split(value, ',')
-							const h = math_clamp(number_parse(values[0] ?? '0', true), 0, 360)
-							const s = math_clamp(number_parse(values[1] ?? '100', true), 0, 100)
-							const l = math_clamp(number_parse(values[2] ?? '100', true), 0, 100)
-							const opacity = math_round(math_clamp(number_parse(values[3] ?? '1'), 0, 1) * 0xff)
-							const hex = hsl_to_hex({h: h / 360, s: s / 100, l: l / 100})
+							const values = stringSplit(value, ',')
+							const h = mathClamp(numberParse(values[0] ?? '0', true), 0, 360)
+							const s = mathClamp(numberParse(values[1] ?? '100', true), 0, 100)
+							const l = mathClamp(numberParse(values[2] ?? '100', true), 0, 100)
+							const opacity = mathRound(mathClamp(numberParse(values[3] ?? '1'), 0, 1) * 0xff)
+							const hex = colorHslToHex({h: h / 360, s: s / 100, l: l / 100})
 
-							value = string_touppercase((hex + (opacity < 0xff? string_padstart(number_to_string(opacity, 16), 2, '0') : '')))
-							command(Commands.change_color_stop_color, gradient_index(), index(), value)
-							change_textfield_value(event_current_target(ev), `hsla(${h}, ${s}%, ${l}%, ${math_clamp(number_parse(values[3] ?? '1'), 0, 1)})`)
+							value = stringToUpperCase((hex + (opacity < 0xff? stringPadStart(numberToString(opacity, 16), 2, '0') : '')))
+							command(Commands.updateColorStopColor, gradientIndex(), index(), value)
+							updateTextFieldValue(eventCurrentTarget(ev), `hsla(${h}, ${s}%, ${l}%, ${mathClamp(numberParse(values[3] ?? '1'), 0, 1)})`)
 							return
 						}
 
-						if (model == ColorModel.rgba) {
-							value = string_replace(value, /[^-\d.,]+/gs, '')
+						if (model == ColorSpace.rgba) {
+							value = stringReplace(value, /[^-\d.,]+/gs, '')
 
-							const values = string_split(value, ',')
-							const r = math_clamp(number_parse(values[0] ?? '0', true), 0, 0xff)
-							const g = math_clamp(number_parse(values[1] ?? '100', true), 0, 0xff)
-							const b = math_clamp(number_parse(values[2] ?? '100', true), 0, 0xff)
-							const opacity = math_round(math_clamp(number_parse(values[3] ?? '1'), 0, 1) * 0xff)
-							const hex = rgb_to_hex({r: r / 0xff, g: g / 0xff, b: b / 0xff})
+							const values = stringSplit(value, ',')
+							const r = mathClamp(numberParse(values[0] ?? '0', true), 0, 0xff)
+							const g = mathClamp(numberParse(values[1] ?? '100', true), 0, 0xff)
+							const b = mathClamp(numberParse(values[2] ?? '100', true), 0, 0xff)
+							const opacity = mathRound(mathClamp(numberParse(values[3] ?? '1'), 0, 1) * 0xff)
+							const hex = colorRgbToHex({r: r / 0xff, g: g / 0xff, b: b / 0xff})
 
-							value = string_touppercase((hex + (opacity < 255? string_padstart(number_to_string(opacity, 16), 2, '0') : '')))
-							command(Commands.change_color_stop_color, gradient_index(), index(), value)
-							change_textfield_value(event_current_target(ev), `rgba(${r}, ${g}, ${b}, ${math_clamp(number_parse(values[3] ?? '1'), 0, 1)})`)
+							value = stringToUpperCase((hex + (opacity < 255? stringPadStart(numberToString(opacity, 16), 2, '0') : '')))
+							command(Commands.updateColorStopColor, gradientIndex(), index(), value)
+							updateTextFieldValue(eventCurrentTarget(ev), `rgba(${r}, ${g}, ${b}, ${mathClamp(numberParse(values[3] ?? '1'), 0, 1)})`)
 							return
 						}
 
-						value = string_replace(value, /[^0-9a-fA-F]+/g, '')
-						if (string_length(string_trim(value)) == 0) value = '0'
+						value = stringReplace(value, /[^0-9a-fA-F]+/g, '')
+						if (stringLength(stringTrim(value)) == 0) value = '0'
 
-						let $value: number = math_clamp(number_safe(number_parse(value, true, 16), 0), 0, 0xffffffff)
+						let $value: number = mathClamp(numberSafe(numberParse(value, true, 16), 0), 0, 0xffffffff)
 
-						value = '#' + string_touppercase(string_substring(string_padstart(number_to_string($value, 16), 6, '0'), 0, 8))
-						command(Commands.change_color_stop_color, gradient_index(), index(), value)
-						change_textfield_value(event_current_target(ev), value)
+						value = '#' + stringToUpperCase(stringSubstring(stringPadStart(numberToString($value, 16), 6, '0'), 0, 8))
+						command(Commands.updateColorStopColor, gradientIndex(), index(), value)
+						updateTextFieldValue(eventCurrentTarget(ev), value)
 					}}
-					c_trailing={<>
+					c:trailing={<>
 						<TextFieldButton
 							data-tooltip="Pick color"
-							data-gradientcontrol-pickcolor={array_join([gradient_index(), index(), stop.color], ',')}>
-							<Icon c_code={ICON_EYEDROPPER} />
+							data-gradientcontrol-pickcolor={arrayJoin([gradientIndex(), index(), stop.color], ',')}>
+							<Icon c:code={ICON_EYEDROPPER} />
 						</TextFieldButton>
-						<Show when={array_length(gradient().color_stop_list) > 2}>
+						<Show when={arrayLength(gradient().colorStopList) > 2}>
 							<TextFieldButton
 								data-tooltip="Remove color"
-								data-gradientcontrol-removecolor={array_join([gradient_index(), index()], ',')}>
-								<Icon c_code={ICON_DELETE} />
+								data-gradientcontrol-removecolor={arrayJoin([gradientIndex(), index()], ',')}>
+								<Icon c:code={ICON_DELETE} />
 							</TextFieldButton>
 						</Show>
 					</>}
@@ -506,14 +503,14 @@ const GradientControl: VoidComponent<{
 
 	const Actions: VoidComponent = () => (<div class={CSS.body_gradient_control_actions}>
 		<Button
-			c_variant={ButtonVariant.filled}
-			data-gradientcontrol-addcolorstop={gradient_index()}>
-			<Icon c_code={ICON_ADD_CIRCLE} c_filled/>Add color stop
+			c:variant={ButtonVariant.filled}
+			data-gradientcontrol-addcolorstop={gradientIndex()}>
+			<Icon c:code={ICON_ADD_CIRCLE} c:filled/>Add color stop
 		</Button>
 		<IconButton
 			data-tooltip="More actions"
-			data-gradientcontrol-moreactions={gradient_index()}
-			c_code={ICON_MORE_HORIZONTAL}
+			data-gradientcontrol-moreactions={gradientIndex()}
+			c:code={ICON_MORE_HORIZONTAL}
 		/>
 	</div>)
 
@@ -530,105 +527,102 @@ const GradientControl: VoidComponent<{
 
 const _: VoidComponent<{
 	gradients: Gradient[]
-	gradient_data: GradientData[]
+	gradientData: GradientData[]
 	settings: Settings
 	command(type: Commands, ...args: unknown[]): unknown
 }> = (props) => {
-	const doc = document
-	const body = doc.body
-	const button_addgradient_id = createUniqueId()
-	const [is_dragging, set_is_dragging] = createSignal<boolean>(false)
-	const [pointer_position, set_pointer_position] = createStore<PointerPosition>({x: 0, y: 0})
-	const [colorpicker_ref, set_colorpicker_ref] = createSignal<HTMLDialogElement | null>(null)
-	const [selected_gradient_index, set_selected_gradient_index] = createSignal<number>(-1)
+	const body = documentBody()
+	const buttonAddGradientId = createUniqueId()
+	const [isDragging, setIsDragging] = createSignal<boolean>(false)
+	const [pointerPosition, setPointerPosition] = createStore<PointerPosition>({x: 0, y: 0})
+	const [colorPickerRef, setColorPickerRef] = createSignal<HTMLDialogElement | null>(null)
+	const [selectedGradientIndex, setSelectedGradientIndex] = createSignal<number>(-1)
 	const settings = createMemo(() => props.settings)
-	let selected_colorstop_index: number = -1
-	let selected_gradient_element_rect: DOMRect | null = null
-	let menu_gradientactions_ref: HTMLDialogElement
-	let toast_copied_ref: HTMLDivElement
+	let selectedColorStopIndex: number = -1
+	let selectedGradientElementRect: DOMRect | null = null
+	let menuGradientActionsRef: HTMLDialogElement
+	let toastCopied: HTMLDivElement
 
 	function command(type: Commands, ...args: unknown[]): unknown {
 		return props.command(type, ...args)
 	}
 
-	function update_position(): void {
-		if (selected_gradient_element_rect == null) return;
+	function updatePosition(): void {
+		if (selectedGradientElementRect == null) return;
 
-		const length = math_round(math_clamp(
-			(pointer_position.x - selected_gradient_element_rect.x) / rect_width(selected_gradient_element_rect) * 100,
+		const length = mathRound(mathClamp(
+			(pointerPosition.x - selectedGradientElementRect.x) / rectWidth(selectedGradientElementRect) * 100,
 			0,
 			100
 		))
-		command(Commands.change_color_stop_length, selected_gradient_index(), selected_colorstop_index, length)
+		command(Commands.updateColorStopLength, selectedGradientIndex(), selectedColorStopIndex, length)
 	}
 
-	function on_pointer_move(ev: PointerEvent): void {
-		if (!is_dragging()) return;
-		set_pointer_position({x: ev.clientX, y: ev.clientY})
-		update_position()
+	function onPointerMove(ev: PointerEvent): void {
+		if (!isDragging()) return;
+		setPointerPosition({x: ev.clientX, y: ev.clientY})
+		updatePosition()
 	}
 
-	function on_pointer_up(ev: PointerEvent & {currentTarget: HTMLDivElement}): void {
-		set_is_dragging(false)
-		element_release_pointercapture(event_current_target(ev), ev.pointerId)
-		attr_remove(body, BodyAttributes.no_pointer_event)
+	function onPointerUp(ev: PointerEvent & {currentTarget: HTMLDivElement}): void {
+		setIsDragging(false)
+		elementPointerCaptureRelease(eventCurrentTarget(ev), ev.pointerId)
+		attrRemove(body, BodyAttributes.noPointerEvent)
 	}
 
 	const ColorPickers: VoidComponent = () => (<>
 		<ColorPicker
-			c_draggable
-			c_disabled_action
-			ref={r => set_colorpicker_ref(r)}
-			c_on_update_color={color => command(
-				Commands.change_color_stop_color,
-				selected_gradient_index(),
-				selected_colorstop_index,
+			c:draggable
+			c:disabledAction
+			ref={r => setColorPickerRef(r)}
+			c:onUpdateColor={color => command(
+				Commands.updateColorStopColor,
+				selectedGradientIndex(),
+				selectedColorStopIndex,
 				color
 			)}
 		/>
 	</>)
 
 	const Menus: VoidComponent = () => {
-		const button_gradientactions_copycss_id = createUniqueId()
-		const button_gradientactions_deletegradient_id = createUniqueId()
+		const buttonGradientActions_copyCSSId = createUniqueId()
+		const buttonGradientActions_deleteGradientId = createUniqueId()
 		return (<>
 			<Menu
-				ref={r => menu_gradientactions_ref = r}
+				ref={r => menuGradientActionsRef = r}
 				onClick={ev => {
-					const button = document_active()!
-					if (!element_valid_target(
-						event_current_target(ev),
+					const button = documentActive()!
+					if (!elementValidTarget(
+						eventCurrentTarget(ev),
 						button,
-						el => element_tagname(el) == 'BUTTON'
+						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					switch (element_id(button)) {
-						case button_gradientactions_copycss_id: {
-							navigator_clipboard_writetext(gradient_to_css_text(
-								props.gradients[selected_gradient_index()],
-								settings().color_model,
-								true
-							))
-							close_menu(menu_gradientactions_ref)
-							open_toast(ev, toast_copied_ref)
-							break
-						}
-						case button_gradientactions_deletegradient_id: {
-							close_menu(menu_gradientactions_ref)
-							command(Commands.remove_gradient, selected_gradient_index())
-							break
-						}
+					switch (elementId(button)) {
+					case buttonGradientActions_copyCSSId:
+						navigatorClipboardWriteText(gradientToCSSText(
+							props.gradients[selectedGradientIndex()],
+							settings().colorSpace,
+							true
+						))
+						closeMenu(menuGradientActionsRef)
+						openToast(ev, toastCopied)
+						break
+					case buttonGradientActions_deleteGradientId:
+						closeMenu(menuGradientActionsRef)
+						command(Commands.removeGradient, selectedGradientIndex())
+						break
 					}
 				}}>
 				<MenuItem
-					id={button_gradientactions_copycss_id}
-					c_icon_code={ICON_COPY}>
+					id={buttonGradientActions_copyCSSId}
+					c:iconCode={ICON_COPY}>
 					Copy CSS
 				</MenuItem>
 				<MenuItem
-					id={button_gradientactions_deletegradient_id}
-					c_icon_code={ICON_DELETE}
-					disabled={array_length(props.gradients) <= 1}>
+					id={buttonGradientActions_deleteGradientId}
+					c:iconCode={ICON_DELETE}
+					disabled={arrayLength(props.gradients) <= 1}>
 					Delete gradient
 				</MenuItem>
 			</Menu>
@@ -637,8 +631,8 @@ const _: VoidComponent<{
 
 	const Toasts: VoidComponent = () => (<>
 		<Toast
-			ref={r => toast_copied_ref = r}
-			c_leading={<Icon c_code={ICON_COPY}/>}>
+			ref={r => toastCopied = r}
+			c:leading={<Icon c:code={ICON_COPY}/>}>
 			Copied to clipboard
 		</Toast>
 	</>)
@@ -646,99 +640,98 @@ const _: VoidComponent<{
 	return (<main
 		class={CSS.body}
 		onClick={ev => {
-			const button = document_active()!
-			if (!element_valid_target(
-				event_current_target(ev),
+			const button = documentActive()!
+			if (!elementValidTarget(
+				eventCurrentTarget(ev),
 				button,
-				el => element_tagname(el) == 'BUTTON'
+				el => elementTagName(el) == 'BUTTON'
 			)) return
 
-			switch (element_id(button)) {
-				case button_addgradient_id: {
-					command(Commands.add_gradient)
-					break
+			switch (elementId(button)) {
+			case buttonAddGradientId:
+				command(Commands.addGradient)
+				break
+			default:
+				const dataGradientcontrolAddcolorstop = elementDataset(
+					button, 'gradientcontrolAddcolorstop'
+				)
+				if (dataGradientcontrolAddcolorstop) {
+					const index = numberParse(dataGradientcontrolAddcolorstop, true)
+					if (numberIsNotDefined(index)) return
+
+					return command(Commands.addColorStop, index)
 				}
-				default: {
-					const data_gradientcontrol_addcolorstop = element_dataset(
-						button, 'gradientcontrolAddcolorstop'
-					)
-					if (data_gradientcontrol_addcolorstop) {
-						const index = number_parse(data_gradientcontrol_addcolorstop, true)
-						if (number_is_not_defined(index)) return
 
-						return command(Commands.add_color_stop, index)
-					}
+				// data-gradientcontrol-moreactions
+				const dataGradientcontrolMoreactions = elementDataset(
+					button, 'gradientcontrolMoreactions'
+				)
+				if (dataGradientcontrolMoreactions) {
+					const index = numberParse(dataGradientcontrolMoreactions, true)
+					if (numberIsNotDefined(index)) return
 
-					// data-gradientcontrol-moreactions
-					const data_gradientcontrol_moreactions = element_dataset(
-						button, 'gradientcontrolMoreactions'
-					)
-					if (data_gradientcontrol_moreactions) {
-						const index = number_parse(data_gradientcontrol_moreactions, true)
-						if (number_is_not_defined(index)) return
+					setSelectedGradientIndex(index)
+					openMenu(ev, menuGradientActionsRef, {
+						anchor: button,
+						position: MenuPosition.centerCenterRightTop
+					})
+					return
+				}
 
-						set_selected_gradient_index(index)
-						open_menu(ev, menu_gradientactions_ref, {
-							anchor: button,
-							position: MenuPosition.center_center_right_top
-						})
-						return
-					}
+				// data-gradientcontrol-pickcolor
+				const dataGradientcontrolPickcolor = elementDataset(
+					button, 'gradientcontrolPickcolor'
+				)
+				if (dataGradientcontrolPickcolor) {
+					let [gradientIndex, colorStopIndex, color] = stringSplit(
+						dataGradientcontrolPickcolor, ','
+					) as [number|string|undefined, number|string|undefined, string|undefined]
+					if (!colorStopIndex || !color || !colorIsValid(color)) return
 
-					const data_gradientcontrol_pickcolor = element_dataset(
-						button, 'gradientcontrolPickcolor'
-					)
-					if (data_gradientcontrol_pickcolor) {
-						let [gradient_index, color_stop_index, color] = string_split(
-							data_gradientcontrol_pickcolor, ','
-						) as [number|string|undefined, number|string|undefined, string|undefined]
-						if (!color_stop_index || !color || !is_color_valid(color)) return
+					colorStopIndex = numberParse(colorStopIndex as string, true)
+					if (numberIsNotDefined(colorStopIndex)) return
 
-						color_stop_index = number_parse(color_stop_index as string, true)
-						if (number_is_not_defined(color_stop_index)) return
+					gradientIndex = numberParse(gradientIndex as string, true)
+					if (numberIsNotDefined(gradientIndex)) return
 
-						gradient_index = number_parse(gradient_index as string, true)
-						if (number_is_not_defined(gradient_index)) return
+					selectedColorStopIndex = colorStopIndex
+					setSelectedGradientIndex(gradientIndex)
+					openColorPicker(ev, colorPickerRef()!, {
+						color: color as HEXColor,
+						anchor: button
+					})
+					return
+				}
 
-						selected_colorstop_index = color_stop_index
-						set_selected_gradient_index(gradient_index)
-						open_colorpicker(ev, colorpicker_ref()!, {
-							color: color as HEXColor,
-							anchor: button
-						})
-						return
-					}
+				// data-gradientcontrol-removecolor
+				const dataGradientcontrolRemovecolor = elementDataset(
+					button, 'gradientcontrolRemovecolor'
+				)
+				if (dataGradientcontrolRemovecolor) {
+					let [gradientIndex, colorStopIndex] = stringSplit(
+						dataGradientcontrolRemovecolor, ','
+					) as [number|string|undefined, number|string|undefined]
+					if (!gradientIndex || !colorStopIndex) return
 
-					// data-gradientcontrol-removecolor
-					const data_gradientcontrol_removecolor = element_dataset(
-						button, 'gradientcontrolRemovecolor'
-					)
-					if (data_gradientcontrol_removecolor) {
-						let [gradient_index, color_stop_index] = string_split(
-							data_gradientcontrol_removecolor, ','
-						) as [number|string|undefined, number|string|undefined]
-						if (!gradient_index || !color_stop_index) return
+					gradientIndex = numberParse(gradientIndex as string, true)
+					colorStopIndex = numberParse(colorStopIndex as string, true)
+					if (numberIsNotDefined(gradientIndex)
+						|| numberIsNotDefined(colorStopIndex)
+					) return
 
-						gradient_index = number_parse(gradient_index as string, true)
-						color_stop_index = number_parse(color_stop_index as string, true)
-						if (number_is_not_defined(gradient_index)
-							|| number_is_not_defined(color_stop_index)
-						) return
-
-						command(Commands.remove_color_stop, gradient_index, color_stop_index)
-					}
+					command(Commands.removeColorStop, gradientIndex, colorStopIndex)
 				}
 			}
 		}}>
 		<div>
 			<div class={CSS.body_preview}>
 				<div style={{
-					"aspect-ratio": settings().aspect_ratio,
-					"border-radius": settings().border_radius + 'px',
-					"background-image": array_join(
-						array_map(
+					"aspect-ratio": settings().aspectRatio,
+					"border-radius": settings().borderRadius + 'px',
+					"background-image": arrayJoin(
+						arrayMap(
 							props.gradients,
-							gradient => gradient_to_css_text(gradient)
+							gradient => gradientToCSSText(gradient)
 						),
 						','
 					)
@@ -749,7 +742,7 @@ const _: VoidComponent<{
 					<div>
 						<GradientDataList
 							command={command}
-							gradient_data={props.gradient_data}
+							gradientData={props.gradientData}
 							settings={settings()}
 						/>
 						<div class={CSS.body_control_shape}>
@@ -757,52 +750,52 @@ const _: VoidComponent<{
 								min={0.1}
 								step={0.1}
 								enterkeyhint="done"
-								c_auto_select_all
-								value={settings().aspect_ratio}
-								c_on_inputasnumber={(_, v) => command(
-									Commands.change_settings_aspect_ratio,
+								c:autoSelectAll
+								value={settings().aspectRatio}
+								c:onInputAsNumber={(_, v) => command(
+									Commands.updateSettingsAspectRatio,
 									v
 								)}
-								c_label="Aspect ratio"
+								c:label="Aspect ratio"
 							/>
 							<NumberTextField
 								min={0}
 								enterkeyhint="done"
-								c_auto_select_all
-								value={settings().border_radius}
-								c_on_inputasnumber={(_, v) => command(
-									Commands.change_settings_border_radius,
+								c:autoSelectAll
+								value={settings().borderRadius}
+								c:onInputAsNumber={(_, v) => command(
+									Commands.updateSettingsBorderRadius,
 									v
 								)}
-								c_label="Border radius (px)"
+								c:label="Border radius (px)"
 							/>
 						</div>
 					</div>
 					<Button
-						c_variant={ButtonVariant.filled}
-						id={button_addgradient_id}>
-						<Icon c_code={ICON_ADD} />Add gradient
+						c:variant={ButtonVariant.filled}
+						id={buttonAddGradientId}>
+						<Icon c:code={ICON_ADD} />Add gradient
 					</Button>
 					<For each={props.gradients}>{(gradient, index) =>
 						<GradientControl
 							gradient={gradient}
 							command={command}
 							settings={settings()}
-							colorpicker_ref={colorpicker_ref()!}
-							is_dragging={is_dragging()}
-							gradient_index={index()}
-							pointer_position={pointer_position}
-							on_pointer_move={on_pointer_move}
-							on_pointer_up={on_pointer_up}
-							on_start_drag={(gradient_el, pointer, colorStopIndex) => {
-								selected_gradient_element_rect = element_rect(gradient_el)
-								selected_colorstop_index = colorStopIndex
-								set_selected_gradient_index(index())
-								set_pointer_position(pointer)
-								set_is_dragging(true)
-								attr_set(body, BodyAttributes.no_pointer_event)
+							colorPickerRef={colorPickerRef()!}
+							isDragging={isDragging()}
+							gradientIndex={index()}
+							pointerPosition={pointerPosition}
+							onPointerMove={onPointerMove}
+							onPointerUp={onPointerUp}
+							onStartDrag={(gradient_el, pointer, colorStopIndex) => {
+								selectedGradientElementRect = elementRect(gradient_el)
+								selectedColorStopIndex = colorStopIndex
+								setSelectedGradientIndex(index())
+								setPointerPosition(pointer)
+								setIsDragging(true)
+								attrSet(body, BodyAttributes.noPointerEvent)
 							}}
-							selected_gradient_index={selected_gradient_index()}
+							selectedGradientIndex={selectedGradientIndex()}
 						/>
 					}</For>
 				</div>

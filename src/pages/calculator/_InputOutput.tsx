@@ -2,112 +2,112 @@ import { createEffect, createMemo, createSignal, createUniqueId, For, Match, Sho
 
 import type { CalculatorInput, CalculatorOutput, DateCalculatorInput, Settings } from "./_types"
 import { CalculatorType, Commands, DateOperation, NumberType } from "./_enums"
-import { element_dataset, element_focus, element_id, element_tagname, element_valid_target } from "@/utils/element"
-import { classlist_module, attr_set_if_exist, classlist } from "@/utils/attributes"
+import { elementDataset, elementFocus, elementId, elementTagName, elementValidTarget } from "@/utils/element"
+import { attrClassListModule, attrSetIfExist, attrClassList } from "@/utils/attributes"
 import { CONVERTER_TYPES } from "./_constants"
 import { ConverterType, UNIT_ANGLE, UNIT_AREA, UNIT_FREQUENCY, UNIT_LENGTH, UNIT_PRESSURE, UNIT_TEMPERATURE, UNIT_TIME, UNIT_VOLUME, UNIT_WEIGHT, type ConverterUnit } from "./_converter"
-import { string_length, string_match, string_substring, string_totitlecase, string_touppercase, string_trim } from "@/utils/string"
-import { event_current_target, event_prevent_default, event_target } from "@/utils/event"
-import { date_year, date_text_YMD } from "@/utils/datetime"
-import { number_to_binary, number_format, number_parse, number_to_real_digit, number_to_string, number_safe, number_is_not_defined } from "@/utils/number"
-import { regex_test } from "@/utils/regex"
-import { navigator_clipboard_writetext } from "@/utils/navigator"
+import { stringLength, stringMatch, stringSubstring, stringToTitleCase, stringToUpperCase, stringTrim } from "@/utils/string"
+import { eventCurrentTarget, eventPreventDefault, eventTarget } from "@/utils/event"
+import { dateYear, dateTextYMD } from "@/utils/datetime"
+import { numberToBinary, numberFormat, numberParse, numberToRealDigits, numberToString, numberSafe, numberIsNotDefined } from "@/utils/number"
+import { regexTest } from "@/utils/regex"
+import { navigatorClipboardWriteText } from "@/utils/navigator"
 import { ICON_ADD, ICON_ARROW_RIGHT, ICON_BACKSPACE, ICON_CALENDAR, ICON_COPY, ICON_DISMISS, ICON_LINE_HORIZONTAL_1, ICON_MATH_FORMULA, ICON_SLASH_FORWARD } from "@/constants/icons"
 
 import { Tooltip } from "@/components/Tooltip"
 import Icon from "@/components/Icon"
 import Button, { ButtonIndicatorPosition, ButtonVariant, IconButton } from "@/components/Button"
 import { NumberTextField } from "@/components/TextField"
-import Menu, { close_menu, MenuDivider, MenuItem, MenuPosition, open_menu } from "@/components/Menu"
+import Menu, { closeMenu, MenuDivider, MenuItem, MenuPosition, openMenu } from "@/components/Menu"
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
-import DatePicker, { open_datepicker } from "@/components/DatePicker"
+import DatePicker, { openDatePicker } from "@/components/DatePicker"
 import CSSMiscellaneous from '@/styles/miscellaneous.module.scss'
 import CSS from './_styles.module.scss'
-import { document_active } from "@/utils/document"
-import { valid_enum_value } from "@/utils/object"
+import { documentActive } from "@/utils/document"
+import { validEnumValue } from "@/utils/object"
 
 const ActionButtons: ParentComponent<JSX.HTMLAttributes<HTMLDivElement> & {
 	command: (type: Commands, ...args: unknown[]) => unknown
 	memory: number
 	settings: Settings
-	on_recall_memory: (memory: number) => unknown
+	onRecallMemory: (memory: number) => unknown
 	hide?: boolean
 }> = (props) => {
-	const [is_menu_memory_open, set_is_menu_memory_open] = createSignal<boolean>(false)
+	const [isMenuMemoryOpen, setIsMenuMemoryOpen] = createSignal<boolean>(false)
 	const settings = createMemo(() => props.settings)
-	const button_memory_id = createUniqueId()
-	const button_clear_id = createUniqueId()
-	const button_recall_id = createUniqueId()
-	const button_add_id = createUniqueId()
-	const button_subtract_id = createUniqueId()
-	let menu_memory_ref: HTMLDialogElement
+	const buttonMemoryId = createUniqueId()
+	const buttonClearId = createUniqueId()
+	const buttonRecallId = createUniqueId()
+	const buttonAddId = createUniqueId()
+	const buttonSubtractId = createUniqueId()
+	let menuMemoryRef: HTMLDialogElement
 
 	function command(type: Commands, ...args: unknown[]): unknown {
 		return props.command(type, ...args)
 	}
 
-	return (<div class={CSS.input_output_action_buttons} data-hidden={attr_set_if_exist(props.hide)}>
+	return (<div class={CSS.input_output_action_buttons} data-hidden={attrSetIfExist(props.hide)}>
 		{props.children}
 		<div
 			class={CSS.input_output_memory_buttons}
-			data-hidden={attr_set_if_exist(!settings().memory_buttons)}
+			data-hidden={attrSetIfExist(!settings().memoryButtons)}
 			onClick={ev => {
-				const button = document_active()!
-				if (!element_valid_target(
-					event_current_target(ev),
+				const button = documentActive()!
+				if (!elementValidTarget(
+					eventCurrentTarget(ev),
 					button,
-					el => element_tagname(el) == 'BUTTON'
+					el => elementTagName(el) == 'BUTTON'
 				)) return
 
-				switch (element_id(button)) {
-				case button_memory_id:
-					open_menu(ev, menu_memory_ref, { anchor: button })
+				switch (elementId(button)) {
+				case buttonMemoryId:
+					openMenu(ev, menuMemoryRef, { anchor: button })
 					break
-				case button_clear_id:
-					command(Commands.clear_memory)
+				case buttonClearId:
+					command(Commands.clearMemory)
 					break
-				case button_recall_id:
-					props.on_recall_memory(props.memory)
+				case buttonRecallId:
+					props.onRecallMemory(props.memory)
 					break
-				case button_add_id:
-					command(Commands.add_memory)
+				case buttonAddId:
+					command(Commands.addMemory)
 					break
-				case button_subtract_id:
-					command(Commands.subtract_memory)
+				case buttonSubtractId:
+					command(Commands.subtractMemory)
 					break
 				}
 			}}>
 			<Button
 				data-tooltip={"Memory value " + `(${props.memory})`}
-				id={button_memory_id}
-				c_focused={is_menu_memory_open()}>
+				id={buttonMemoryId}
+				c:focused={isMenuMemoryOpen()}>
 				M
 			</Button>
 			<Menu
-				classList={classlist_module(CSS.input_output_memory_menu)}
-				c_on_toggleopen={(v) => set_is_menu_memory_open(v)}
-				ref={r => menu_memory_ref = r}>
+				classList={attrClassListModule(CSS.input_output_memory_menu)}
+				c:onToggleOpen={(v) => setIsMenuMemoryOpen(v)}
+				ref={r => menuMemoryRef = r}>
 				<p>Memory value:</p>
 				<p>{props.memory}</p>
 			</Menu>
 			<Button
 				data-tooltip="Memory clear"
-				id={button_clear_id}>
+				id={buttonClearId}>
 				MC
 			</Button>
 			<Button
 				data-tooltip="Memory recall"
-				id={button_recall_id}>
+				id={buttonRecallId}>
 				MR
 			</Button>
 			<Button
 				data-tooltip="Memory add"
-				id={button_add_id}>
+				id={buttonAddId}>
 				M+
 			</Button>
 			<Button
 				data-tooltip="Memory subtract"
-				id={button_subtract_id}>
+				id={buttonSubtractId}>
 				M-
 			</Button>
 		</div>
@@ -123,92 +123,92 @@ const BasicCalculator: VoidComponent<{
 }> = (props) => {
 	const settings = createMemo(() => props.settings)
 	const output = createMemo(() => props.output)
-	const button_clear_id = createUniqueId()
-	const button_backspace_id = createUniqueId()
-	const button_equal_id = createUniqueId()
-	let input_ref: HTMLInputElement
-	let caret_pos: number = 0
+	const buttonClearId = createUniqueId()
+	const buttonBackspaceId = createUniqueId()
+	const buttonEqualId = createUniqueId()
+	let inputRef: HTMLInputElement
+	let caretPos: number = 0
 
 	function command(type: Commands, ...args: unknown[]): unknown {
 		return props.command(type, ...args)
 	}
 
-	function add_char(char: string): void {
-		let value = input_ref.value
-		const prefix = string_substring(value, 0, caret_pos)
-		const suffix = string_substring(value, caret_pos)
+	function addChar(char: string): void {
+		let value = inputRef.value
+		const prefix = stringSubstring(value, 0, caretPos)
+		const suffix = stringSubstring(value, caretPos)
 		value = prefix + char + suffix
-		input_ref.value = value
-		caret_pos += string_length(char)
-		input_ref.setSelectionRange(caret_pos, caret_pos)
-		element_focus(input_ref)
-		command(Commands.change_calculator_input, value)
+		inputRef.value = value
+		caretPos += stringLength(char)
+		inputRef.setSelectionRange(caretPos, caretPos)
+		elementFocus(inputRef)
+		command(Commands.updateCalculatorInput, value)
 	}
 
 	function backspace(): void {
-		let value = input_ref.value
-		const prefix = string_substring(value, 0, caret_pos-1)
-		const suffix = string_substring(value, caret_pos)
+		let value = inputRef.value
+		const prefix = stringSubstring(value, 0, caretPos-1)
+		const suffix = stringSubstring(value, caretPos)
 		value = prefix + suffix
-		input_ref.value = value
-		--caret_pos
-		if (caret_pos < 0) caret_pos = 0
-		input_ref.setSelectionRange(caret_pos, caret_pos)
-		element_focus(input_ref)
-		command(Commands.change_calculator_input, value)
+		inputRef.value = value
+		--caretPos
+		if (caretPos < 0) caretPos = 0
+		inputRef.setSelectionRange(caretPos, caretPos)
+		elementFocus(inputRef)
+		command(Commands.updateCalculatorInput, value)
 	}
 
 	function clear(): void {
-		caret_pos = 0
-		input_ref.value = ''
-		input_ref.setSelectionRange(caret_pos, caret_pos)
-		element_focus(input_ref)
-		command(Commands.change_calculator_input, '')
+		caretPos = 0
+		inputRef.value = ''
+		inputRef.setSelectionRange(caretPos, caretPos)
+		elementFocus(inputRef)
+		command(Commands.updateCalculatorInput, '')
 	}
 
 	function equal(): void {
 		if (output() == null) return;
 
-		caret_pos = string_length(number_to_string(output()!))
-		input_ref.value = number_to_string(output()!)
-		input_ref.setSelectionRange(caret_pos, caret_pos)
-		element_focus(input_ref)
-		command(Commands.change_calculator_input, number_to_real_digit(output()!))
+		caretPos = stringLength(numberToString(output()!))
+		inputRef.value = numberToString(output()!)
+		inputRef.setSelectionRange(caretPos, caretPos)
+		elementFocus(inputRef)
+		command(Commands.updateCalculatorInput, numberToRealDigits(output()!))
 	}
 
 	createEffect(() => {
-		input_ref.value = props.input
-		element_focus(input_ref)
+		inputRef.value = props.input
+		elementFocus(inputRef)
 	})
 
 	return (<>
 		<input
-			ref={r => input_ref = r}
+			ref={r => inputRef = r}
 			inputMode="none"
 			class={CSS.input_output_basic_text_input}
 			type="text"
 			onKeyDown={ev => {
 				if (!(ev.code == "Equal" && !ev.shiftKey)) return
 				equal()
-				event_prevent_default(ev)
+				eventPreventDefault(ev)
 			}}
-			onFocus={ev => caret_pos = event_current_target(ev).selectionStart ?? caret_pos}
-			onBlur={ev => caret_pos = event_current_target(ev).selectionStart ?? caret_pos}
-			onInput={ev => command(Commands.change_calculator_input, event_current_target(ev).value)}
+			onFocus={ev => caretPos = eventCurrentTarget(ev).selectionStart ?? caretPos}
+			onBlur={ev => caretPos = eventCurrentTarget(ev).selectionStart ?? caretPos}
+			onInput={ev => command(Commands.updateCalculatorInput, eventCurrentTarget(ev).value)}
 		/>
 		<div
-			class={classlist(CSS.input_output_basic_text_output, CSSMiscellaneous.no_scrollbar)}>
+			class={attrClassList(CSS.input_output_basic_text_output, CSSMiscellaneous.no_scrollbar)}>
 			<Show
-				when={settings().scientific_notation}
-				fallback={output() != null && number_format(output()!, {
-					decimal: settings().number_format.decimal,
-					thousand: settings().number_format.grouping
+				when={settings().scientificNotation}
+				fallback={output() != null && numberFormat(output()!, {
+					decimal: settings().numberFormat.decimal,
+					thousand: settings().numberFormat.grouping
 				})}>
-				{output() != null && (regex_test(/[eE]/, number_to_string(output()!))
-					? string_touppercase(number_to_string(output()!))
-					: number_format(output()!, {
-						decimal: settings().number_format.decimal,
-						thousand: settings().number_format.grouping
+				{output() != null && (regexTest(/[eE]/, numberToString(output()!))
+					? stringToUpperCase(numberToString(output()!))
+					: numberFormat(output()!, {
+						decimal: settings().numberFormat.decimal,
+						thousand: settings().numberFormat.grouping
 					})
 				)}
 			</Show>
@@ -216,59 +216,59 @@ const BasicCalculator: VoidComponent<{
 		<ActionButtons
 			command={command}
 			memory={props.memory}
-			on_recall_memory={(v) => add_char(number_to_real_digit(v))}
+			onRecallMemory={(v) => addChar(numberToRealDigits(v))}
 			settings={settings()}
-			hide={!settings().memory_buttons}
+			hide={!settings().memoryButtons}
 		/>
 		<div
 			class={CSS.input_output_basic_buttons}
 			onClick={ev => {
-				const button = document_active()!
-				if (!element_valid_target(
-					event_current_target(ev),
+				const button = documentActive()!
+				if (!elementValidTarget(
+					eventCurrentTarget(ev),
 					button,
-					el => element_tagname(el) == 'BUTTON'
+					el => elementTagName(el) == 'BUTTON'
 				)) return
 
-				switch (element_id(button)) {
-				case button_clear_id:
+				switch (elementId(button)) {
+				case buttonClearId:
 					clear()
 					break
-				case button_backspace_id:
+				case buttonBackspaceId:
 					backspace()
 					break
-				case button_equal_id:
+				case buttonEqualId:
 					equal()
 					break
 				default:
-					const data_char = element_dataset(button, 'char')
-					if (data_char) return add_char(data_char)
+					const dataChar = elementDataset(button, 'char')
+					if (dataChar) return addChar(dataChar)
 				}
 			}}>
 			<Button data-char="%">%</Button>
 			<Button data-char="√">√</Button>
-			<Button id={button_clear_id} classList={classlist_module(CSS.input_output_remove_symbol)}>C</Button>
-			<Button id={button_backspace_id} classList={classlist_module(CSS.input_output_remove_symbol)}><Icon c_code={ICON_BACKSPACE} /></Button>
+			<Button id={buttonClearId} classList={attrClassListModule(CSS.input_output_remove_symbol)}>C</Button>
+			<Button id={buttonBackspaceId} classList={attrClassListModule(CSS.input_output_remove_symbol)}><Icon c:code={ICON_BACKSPACE} /></Button>
 
-			<Button data-char="7" c_variant={ButtonVariant.tonal}>7</Button>
-			<Button data-char="8" c_variant={ButtonVariant.tonal}>8</Button>
-			<Button data-char="9" c_variant={ButtonVariant.tonal}>9</Button>
-			<Button data-char="÷"><Icon c_code={ICON_SLASH_FORWARD}/></Button>
+			<Button data-char="7" c:variant={ButtonVariant.tonal}>7</Button>
+			<Button data-char="8" c:variant={ButtonVariant.tonal}>8</Button>
+			<Button data-char="9" c:variant={ButtonVariant.tonal}>9</Button>
+			<Button data-char="÷"><Icon c:code={ICON_SLASH_FORWARD}/></Button>
 
-			<Button data-char="4" c_variant={ButtonVariant.tonal}>4</Button>
-			<Button data-char="5" c_variant={ButtonVariant.tonal}>5</Button>
-			<Button data-char="6" c_variant={ButtonVariant.tonal}>6</Button>
-			<Button data-char="×"><Icon c_code={ICON_DISMISS}/></Button>
+			<Button data-char="4" c:variant={ButtonVariant.tonal}>4</Button>
+			<Button data-char="5" c:variant={ButtonVariant.tonal}>5</Button>
+			<Button data-char="6" c:variant={ButtonVariant.tonal}>6</Button>
+			<Button data-char="×"><Icon c:code={ICON_DISMISS}/></Button>
 
-			<Button data-char="1" c_variant={ButtonVariant.tonal}>1</Button>
-			<Button data-char="2" c_variant={ButtonVariant.tonal}>2</Button>
-			<Button data-char="3" c_variant={ButtonVariant.tonal}>3</Button>
-			<Button data-char="-"><Icon c_code={ICON_LINE_HORIZONTAL_1} /></Button>
+			<Button data-char="1" c:variant={ButtonVariant.tonal}>1</Button>
+			<Button data-char="2" c:variant={ButtonVariant.tonal}>2</Button>
+			<Button data-char="3" c:variant={ButtonVariant.tonal}>3</Button>
+			<Button data-char="-"><Icon c:code={ICON_LINE_HORIZONTAL_1} /></Button>
 
-			<Button data-char={settings().number_format.decimal}>{settings().number_format.decimal}</Button>
-			<Button data-char="0" c_variant={ButtonVariant.tonal}>0</Button>
-			<Button id={button_equal_id} c_variant={ButtonVariant.filled}>=</Button>
-			<Button data-char="+"><Icon c_code={ICON_ADD}/></Button>
+			<Button data-char={settings().numberFormat.decimal}>{settings().numberFormat.decimal}</Button>
+			<Button data-char="0" c:variant={ButtonVariant.tonal}>0</Button>
+			<Button id={buttonEqualId} c:variant={ButtonVariant.filled}>=</Button>
+			<Button data-char="+"><Icon c:code={ICON_ADD}/></Button>
 		</div>
 	</>)
 }
@@ -280,14 +280,14 @@ const ScientificCalculator: VoidComponent<{
 	output: number | null
 	command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
-	const [is_menu_function_open, set_is_menu_function_open] = createSignal<boolean>(false)
-	const [is_hyperbolic, set_is_hyperbolic] = createSignal<boolean>(false)
-	const [is_inverse, set_is_inverse] = createSignal<boolean>(false)
+	const [isMenuFunctionOpen, setIsMenuFunctionOpen] = createSignal<boolean>(false)
+	const [isHyperbolic, setIsHyperbolic] = createSignal<boolean>(false)
+	const [isInverse, setIsInverse] = createSignal<boolean>(false)
 	const settings = createMemo(() => props.settings)
 	const output = createMemo(() => props.output)
-	const get_trigonometry = createMemo<string[]>(() => {
-		const i = () => is_inverse()? 'a' : ''
-		const h = () => is_hyperbolic()? 'h' : ''
+	const getTrigonometry = createMemo<string[]>(() => {
+		const i = () => isInverse()? 'a' : ''
+		const h = () => isHyperbolic()? 'h' : ''
 		return [
 			i() + 'sin' + h(),
 			i() + 'cos' + h(),
@@ -297,98 +297,98 @@ const ScientificCalculator: VoidComponent<{
 			i() + 'cot' + h()
 		]
 	})
-	const button_clear_id = createUniqueId()
-	const button_backspace_id = createUniqueId()
-	const button_equal_id = createUniqueId()
+	const buttonClearId = createUniqueId()
+	const buttonBackspaceId = createUniqueId()
+	const buttonEqualId = createUniqueId()
 	const button_inverse_id = createUniqueId()
 	const button_hyperbolic_id = createUniqueId()
-	let input_ref: HTMLInputElement
-	let menu_function_ref: HTMLDialogElement
-	let caret_pos: number = 0
+	let inputRef: HTMLInputElement
+	let menuFunctionRef: HTMLDialogElement
+	let caretPos: number = 0
 
 	function command(type: Commands, ...args: unknown[]): unknown {
 		return props.command(type, ...args)
 	}
 
-	function add_char(char: string): void {
-		let value = input_ref.value
-		const prefix = string_substring(value, 0, caret_pos)
-		const suffix = string_substring(value, caret_pos)
+	function addChar(char: string): void {
+		let value = inputRef.value
+		const prefix = stringSubstring(value, 0, caretPos)
+		const suffix = stringSubstring(value, caretPos)
 		value = prefix + char + suffix
-		input_ref.value = value
-		caret_pos += string_length(char)
-		input_ref.setSelectionRange(caret_pos, caret_pos)
-		element_focus(input_ref)
-		command(Commands.change_calculator_input, value)
+		inputRef.value = value
+		caretPos += stringLength(char)
+		inputRef.setSelectionRange(caretPos, caretPos)
+		elementFocus(inputRef)
+		command(Commands.updateCalculatorInput, value)
 	}
 
 	function backspace(): void {
-		let value = input_ref.value
-		const prefix = string_substring(value, 0, caret_pos-1)
-		const suffix = string_substring(value, caret_pos)
+		let value = inputRef.value
+		const prefix = stringSubstring(value, 0, caretPos-1)
+		const suffix = stringSubstring(value, caretPos)
 		value = prefix + suffix
-		input_ref.value = value
-		--caret_pos
-		if (caret_pos < 0) caret_pos = 0
-		input_ref.setSelectionRange(caret_pos, caret_pos)
-		element_focus(input_ref)
-		command(Commands.change_calculator_input, value)
+		inputRef.value = value
+		--caretPos
+		if (caretPos < 0) caretPos = 0
+		inputRef.setSelectionRange(caretPos, caretPos)
+		elementFocus(inputRef)
+		command(Commands.updateCalculatorInput, value)
 	}
 
 	function clear(): void {
-		caret_pos = 0
-		input_ref.value = ''
-		input_ref.setSelectionRange(caret_pos, caret_pos)
-		element_focus(input_ref)
-		command(Commands.change_calculator_input, '')
+		caretPos = 0
+		inputRef.value = ''
+		inputRef.setSelectionRange(caretPos, caretPos)
+		elementFocus(inputRef)
+		command(Commands.updateCalculatorInput, '')
 	}
 
 	function equal(): void {
 		if (output() == null) return;
 
-		caret_pos = string_length(number_to_string(output()!))
-		input_ref.value = number_to_string(output()!)
-		input_ref.setSelectionRange(caret_pos, caret_pos)
-		element_focus(input_ref)
-		command(Commands.change_calculator_input, number_to_real_digit(output()!))
+		caretPos = stringLength(numberToString(output()!))
+		inputRef.value = numberToString(output()!)
+		inputRef.setSelectionRange(caretPos, caretPos)
+		elementFocus(inputRef)
+		command(Commands.updateCalculatorInput, numberToRealDigits(output()!))
 	}
 
 	createEffect(() => {
-		input_ref.value = props.input
-		element_focus(input_ref)
+		inputRef.value = props.input
+		elementFocus(inputRef)
 	})
 
 	return (<>
 		<input
-			ref={r => input_ref = r}
+			ref={r => inputRef = r}
 			inputMode="none"
 			class={CSS.input_output_scientific_text_input}
 			type="text"
 			onKeyDown={ev => {
 				if (!(ev.code == "Equal" && !ev.shiftKey)) return
 				equal()
-				event_prevent_default(ev)
+				eventPreventDefault(ev)
 			}}
-			onFocus={ev => caret_pos = event_current_target(ev).selectionStart ?? caret_pos}
-			onBlur={ev => caret_pos = event_current_target(ev).selectionStart ?? caret_pos}
-			onInput={ev => command(Commands.change_calculator_input, event_current_target(ev).value)}
+			onFocus={ev => caretPos = eventCurrentTarget(ev).selectionStart ?? caretPos}
+			onBlur={ev => caretPos = eventCurrentTarget(ev).selectionStart ?? caretPos}
+			onInput={ev => command(Commands.updateCalculatorInput, eventCurrentTarget(ev).value)}
 		/>
 		<div
-			class={classlist(
+			class={attrClassList(
 				CSS.input_output_scientific_text_output,
 				CSSMiscellaneous.no_scrollbar
 			)}>
 			<Show
-				when={settings().scientific_notation}
-				fallback={output() != null && number_format(output()!, {
-					decimal: settings().number_format.decimal,
-					thousand: settings().number_format.grouping
+				when={settings().scientificNotation}
+				fallback={output() != null && numberFormat(output()!, {
+					decimal: settings().numberFormat.decimal,
+					thousand: settings().numberFormat.grouping
 				})}>
-				{output() != null && (regex_test(/[eE]/, number_to_string(output()!))
-					? string_touppercase(number_to_string(output()!))
-					: number_format(output()!, {
-						decimal: settings().number_format.decimal,
-						thousand: settings().number_format.grouping
+				{output() != null && (regexTest(/[eE]/, numberToString(output()!))
+					? stringToUpperCase(numberToString(output()!))
+					: numberFormat(output()!, {
+						decimal: settings().numberFormat.decimal,
+						thousand: settings().numberFormat.grouping
 					})
 				)}
 			</Show>
@@ -396,47 +396,47 @@ const ScientificCalculator: VoidComponent<{
 		<ActionButtons
 			command={command}
 			memory={props.memory}
-			on_recall_memory={(v) => add_char(number_to_real_digit(v))}
+			onRecallMemory={(v) => addChar(numberToRealDigits(v))}
 			settings={settings()}>
 			<Button
-				onClick={ev => open_menu(ev, menu_function_ref, {
-					anchor: event_current_target(ev),
-					position: MenuPosition.center_bottom_to_right
+				onClick={ev => openMenu(ev, menuFunctionRef, {
+					anchor: eventCurrentTarget(ev),
+					position: MenuPosition.centerBottomToRight
 				})}
-				c_focused={is_menu_function_open()}>
-				<Icon c_code={ICON_MATH_FORMULA}/>
+				c:focused={isMenuFunctionOpen()}>
+				<Icon c:code={ICON_MATH_FORMULA}/>
 				Function
 			</Button>
 			<Menu
-				classList={classlist_module(CSS.input_output_scientific_function_menu)}
-				ref={r => menu_function_ref = r}
-				c_on_toggleopen={(v) => set_is_menu_function_open(v)}
+				classList={attrClassListModule(CSS.input_output_scientific_function_menu)}
+				ref={r => menuFunctionRef = r}
+				c:onToggleOpen={(v) => setIsMenuFunctionOpen(v)}
 				onClick={ev => {
-					const button = document_active()!
-					if (!element_valid_target(
-						event_current_target(ev),
+					const button = documentActive()!
+					if (!elementValidTarget(
+						eventCurrentTarget(ev),
 						button,
-						el => element_tagname(el) == 'BUTTON'
+						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					switch (element_id(button)) {
+					switch (elementId(button)) {
 					case button_inverse_id:
-						set_is_inverse(v => !v)
+						setIsInverse(v => !v)
 						break
 					case button_hyperbolic_id:
-						set_is_hyperbolic(v => !v)
+						setIsHyperbolic(v => !v)
 						break
 					default:
-						const data_char = element_dataset(button, 'char')
-						if (data_char) return add_char(data_char)
+						const dataChar = elementDataset(button, 'char')
+						if (dataChar) return addChar(dataChar)
 					}
 				}}>
 				<div class={CSS.input_output_trigonometry_options}>
-					<MenuItem c_checked={is_inverse()} id={button_inverse_id}>Invers</MenuItem>
-					<MenuItem c_checked={is_hyperbolic()} id={button_hyperbolic_id}>Hyperbolic</MenuItem>
+					<MenuItem c:checked={isInverse()} id={button_inverse_id}>Invers</MenuItem>
+					<MenuItem c:checked={isHyperbolic()} id={button_hyperbolic_id}>Hyperbolic</MenuItem>
 				</div>
 				<div class={CSS.input_output_grid_3}>
-					<For each={get_trigonometry()}>{t => <MenuItem data-char={t + '('}>{`${t}(x)`}</MenuItem>}</For>
+					<For each={getTrigonometry()}>{t => <MenuItem data-char={t + '('}>{`${t}(x)`}</MenuItem>}</For>
 				</div>
 				<MenuDivider />
 				<div class={CSS.input_output_grid_3}>
@@ -451,40 +451,40 @@ const ScientificCalculator: VoidComponent<{
 			<Button
 				data-tooltip="Angle mode"
 				style={{width: '68px'}}
-				onClick={() => command(Commands.toggle_settings_scientific_angle)}>
+				onClick={() => command(Commands.toggleSettingsScientificAngle)}>
 				{settings().scientific.angle}
 			</Button>
 		</ActionButtons>
 		<div
 			class={CSS.input_output_scientific_buttons}
 			onClick={ev => {
-				const button = document_active()!
-				if (!element_valid_target(
-					event_current_target(ev),
+				const button = documentActive()!
+				if (!elementValidTarget(
+					eventCurrentTarget(ev),
 					button,
-					el => element_tagname(el) == 'BUTTON'
+					el => elementTagName(el) == 'BUTTON'
 				)) return
 
-				switch (element_id(button)) {
-				case button_clear_id:
+				switch (elementId(button)) {
+				case buttonClearId:
 					clear()
 					break
-				case button_backspace_id:
+				case buttonBackspaceId:
 					backspace()
 					break
-				case button_equal_id:
+				case buttonEqualId:
 					equal()
 					break
 				default:
-					const data_char = element_dataset(button, 'char')
-					if (data_char) return add_char(data_char)
+					const dataChar = elementDataset(button, 'char')
+					if (dataChar) return addChar(dataChar)
 				}
 			}}>
 			<Button data-char="mod">mod</Button>
 			<Button data-char="(">{'('}</Button>
 			<Button data-char=")">{')'}</Button>
-			<Button id={button_clear_id} classList={classlist_module(CSS.input_output_remove_symbol)}>C</Button>
-			<Button id={button_backspace_id} classList={classlist_module(CSS.input_output_remove_symbol)}><Icon c_code={ICON_BACKSPACE} /></Button>
+			<Button id={buttonClearId} classList={attrClassListModule(CSS.input_output_remove_symbol)}>C</Button>
+			<Button id={buttonBackspaceId} classList={attrClassListModule(CSS.input_output_remove_symbol)}><Icon c:code={ICON_BACKSPACE} /></Button>
 
 			<Button data-char="%">%</Button>
 			<Button data-char="10^">10^</Button>
@@ -493,28 +493,28 @@ const ScientificCalculator: VoidComponent<{
 			<Button data-char="^">^</Button>
 
 			<Button data-char="!">!</Button>
-			<Button data-char="7" c_variant={ButtonVariant.tonal}>7</Button>
-			<Button data-char="8" c_variant={ButtonVariant.tonal}>8</Button>
-			<Button data-char="9" c_variant={ButtonVariant.tonal}>9</Button>
-			<Button data-char="÷" ><Icon c_code={ICON_SLASH_FORWARD}/></Button>
+			<Button data-char="7" c:variant={ButtonVariant.tonal}>7</Button>
+			<Button data-char="8" c:variant={ButtonVariant.tonal}>8</Button>
+			<Button data-char="9" c:variant={ButtonVariant.tonal}>9</Button>
+			<Button data-char="÷" ><Icon c:code={ICON_SLASH_FORWARD}/></Button>
 
 			<Button data-char="e">e</Button>
-			<Button data-char="4" c_variant={ButtonVariant.tonal}>4</Button>
-			<Button data-char="5" c_variant={ButtonVariant.tonal}>5</Button>
-			<Button data-char="6" c_variant={ButtonVariant.tonal}>6</Button>
-			<Button data-char="×"><Icon c_code={ICON_DISMISS}/></Button>
+			<Button data-char="4" c:variant={ButtonVariant.tonal}>4</Button>
+			<Button data-char="5" c:variant={ButtonVariant.tonal}>5</Button>
+			<Button data-char="6" c:variant={ButtonVariant.tonal}>6</Button>
+			<Button data-char="×"><Icon c:code={ICON_DISMISS}/></Button>
 
 			<Button data-char="π">π</Button>
-			<Button data-char="1" c_variant={ButtonVariant.tonal}>1</Button>
-			<Button data-char="2" c_variant={ButtonVariant.tonal}>2</Button>
-			<Button data-char="3" c_variant={ButtonVariant.tonal}>3</Button>
-			<Button data-char="-"><Icon c_code={ICON_LINE_HORIZONTAL_1} /></Button>
+			<Button data-char="1" c:variant={ButtonVariant.tonal}>1</Button>
+			<Button data-char="2" c:variant={ButtonVariant.tonal}>2</Button>
+			<Button data-char="3" c:variant={ButtonVariant.tonal}>3</Button>
+			<Button data-char="-"><Icon c:code={ICON_LINE_HORIZONTAL_1} /></Button>
 
 			<Button data-char="√">√</Button>
-			<Button data-char={settings().number_format.decimal}>{settings().number_format.decimal}</Button>
-			<Button data-char="0" c_variant={ButtonVariant.tonal}>0</Button>
-			<Button id={button_equal_id} c_variant={ButtonVariant.filled}>=</Button>
-			<Button data-char="+"><Icon c_code={ICON_ADD}/></Button>
+			<Button data-char={settings().numberFormat.decimal}>{settings().numberFormat.decimal}</Button>
+			<Button data-char="0" c:variant={ButtonVariant.tonal}>0</Button>
+			<Button id={buttonEqualId} c:variant={ButtonVariant.filled}>=</Button>
+			<Button data-char="+"><Icon c:code={ICON_ADD}/></Button>
 		</div>
 	</>)
 }
@@ -526,19 +526,19 @@ const ConverterCalculator: VoidComponent<{
 	output: number | null
 	command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
-	const [is_menu_convertertype_open, set_is_menu_convertertype_open] = createSignal<boolean>(false)
-	const [is_menu_inputunit_open, set_is_menu_inputunit_open] = createSignal<boolean>(false)
-	const [is_menu_outputunit_open, set_is_menu_outputunit_open] = createSignal<boolean>(false)
+	const [isMenuConverterTypeOpen, setIsMenuConverterTypeOpen] = createSignal<boolean>(false)
+	const [isMenuInputUnitOpen, setIsMenuInputUnitOpen] = createSignal<boolean>(false)
+	const [isMenuOutputUnitOpen, setIsMenuOutputUnitOpen] = createSignal<boolean>(false)
 	const settings = createMemo(() => props.settings)
 	const output = createMemo(() => props.output)
 	const input = createMemo(() => props.input)
-	const get_converter_icon = createMemo<number>(() => {
+	const getConverterIcon = createMemo<number>(() => {
 		for (const c of CONVERTER_TYPES) {
 			if (c.type == settings().converter.type) return c.icon
 		}
 		return 0
 	})
-	const get_units = createMemo<ConverterUnit[]>(() => {
+	const getUnits = createMemo<ConverterUnit[]>(() => {
 		const type = settings().converter.type
 		if (type == ConverterType.length) return UNIT_LENGTH
 		if (type == ConverterType.area) return UNIT_AREA
@@ -551,75 +551,75 @@ const ConverterCalculator: VoidComponent<{
 		if (type == ConverterType.angle) return UNIT_ANGLE
 		return []
 	})
-	const get_converter_name = createMemo<string>(() => {
+	const getConverterName = createMemo<string>(() => {
 		const type = settings().converter.type
 		if (type == ConverterType.weight) return 'Weight & mass'
-		return string_totitlecase(type)
+		return stringToTitleCase(type)
 	})
-	const button_clear_id = createUniqueId()
-	const button_backspace_id = createUniqueId()
-	const button_equal_id = createUniqueId()
+	const buttonClearId = createUniqueId()
+	const buttonBackspaceId = createUniqueId()
+	const buttonEqualId = createUniqueId()
 	const button_plusminus_id = createUniqueId()
-	let input_ref: HTMLInputElement
-	let menu_convertertype_ref: HTMLDialogElement
-	let menu_inputunit_ref: HTMLDialogElement
-	let menu_outputunit_ref: HTMLDialogElement
-	let caret_pos: number = 0
+	let inputRef: HTMLInputElement
+	let menuConverterTypeRef: HTMLDialogElement
+	let menuInputUnitRef: HTMLDialogElement
+	let menuOutputUnitRef: HTMLDialogElement
+	let caretPos: number = 0
 
 	function command(type: Commands, ...args: unknown[]): unknown {
 		return props.command(type, ...args)
 	}
 
-	function add_char(char: string): void {
-		let value = input_ref.value
-		const prefix = string_substring(value, 0, caret_pos)
-		const suffix = string_substring(value, caret_pos)
+	function addChar(char: string): void {
+		let value = inputRef.value
+		const prefix = stringSubstring(value, 0, caretPos)
+		const suffix = stringSubstring(value, caretPos)
 		value = prefix + char + suffix
-		input_ref.value = value
-		caret_pos += string_length(char)
-		input_ref.setSelectionRange(caret_pos, caret_pos)
-		element_focus(input_ref)
-		command(Commands.change_calculator_input, value)
+		inputRef.value = value
+		caretPos += stringLength(char)
+		inputRef.setSelectionRange(caretPos, caretPos)
+		elementFocus(inputRef)
+		command(Commands.updateCalculatorInput, value)
 	}
 
 	function backspace(): void {
-		let value = input_ref.value
-		const prefix = string_substring(value, 0, caret_pos-1)
-		const suffix = string_substring(value, caret_pos)
+		let value = inputRef.value
+		const prefix = stringSubstring(value, 0, caretPos-1)
+		const suffix = stringSubstring(value, caretPos)
 		value = prefix + suffix
-		input_ref.value = value
-		--caret_pos
-		if (caret_pos < 0) caret_pos = 0
-		input_ref.setSelectionRange(caret_pos, caret_pos)
-		element_focus(input_ref)
-		command(Commands.change_calculator_input, value)
+		inputRef.value = value
+		--caretPos
+		if (caretPos < 0) caretPos = 0
+		inputRef.setSelectionRange(caretPos, caretPos)
+		elementFocus(inputRef)
+		command(Commands.updateCalculatorInput, value)
 	}
 
 	function clear(): void {
-		caret_pos = 0
-		input_ref.value = ''
-		input_ref.setSelectionRange(caret_pos, caret_pos)
-		element_focus(input_ref)
-		command(Commands.change_calculator_input, '')
+		caretPos = 0
+		inputRef.value = ''
+		inputRef.setSelectionRange(caretPos, caretPos)
+		elementFocus(inputRef)
+		command(Commands.updateCalculatorInput, '')
 	}
 
 	function equal(): void {
 		if (output() == null) return;
 
-		caret_pos = string_length(number_to_string(output()!))
-		input_ref.value = number_to_string(output()!)
-		input_ref.setSelectionRange(caret_pos, caret_pos)
-		element_focus(input_ref)
-		command(Commands.change_calculator_input, number_to_real_digit(output()!))
+		caretPos = stringLength(numberToString(output()!))
+		inputRef.value = numberToString(output()!)
+		inputRef.setSelectionRange(caretPos, caretPos)
+		elementFocus(inputRef)
+		command(Commands.updateCalculatorInput, numberToRealDigits(output()!))
 	}
 
-	function plus_minus(): void {
+	function plusMinus(): void {
 		const re = /(.*?)([-+]{0,2})(\d*(?:\.\d*)?)$/s
-		const match = string_match(string_substring(input(), 0, caret_pos), re)
+		const match = stringMatch(stringSubstring(input(), 0, caretPos), re)
 		let value: string = input()
-		if (string_trim(input()) == '') {
+		if (stringTrim(input()) == '') {
 			value = '-'
-			caret_pos = 1
+			caretPos = 1
 		}
 		else if (match) {
 			const pre = match[1] ?? ''
@@ -641,54 +641,54 @@ const ConverterCalculator: VoidComponent<{
 				|| sign == ''
 			) value = '-' + number
 
-			const prefix = string_substring(input(), 0, string_length(pre))
-			const suffix = string_substring(input(), caret_pos)
-			caret_pos = string_length(prefix) + string_length(value)
+			const prefix = stringSubstring(input(), 0, stringLength(pre))
+			const suffix = stringSubstring(input(), caretPos)
+			caretPos = stringLength(prefix) + stringLength(value)
 			value = prefix + value + suffix
 		}
 
-		input_ref.value = value
-		input_ref.setSelectionRange(caret_pos, caret_pos)
-		element_focus(input_ref)
-		command(Commands.change_calculator_input, value)
+		inputRef.value = value
+		inputRef.setSelectionRange(caretPos, caretPos)
+		elementFocus(inputRef)
+		command(Commands.updateCalculatorInput, value)
 	}
 
 	createEffect(() => {
-		input_ref.value = input()
-		element_focus(input_ref)
+		inputRef.value = input()
+		elementFocus(inputRef)
 	})
 
 	return (<>
 		<input
-			ref={r => input_ref = r}
+			ref={r => inputRef = r}
 			inputMode="none"
 			class={CSS.input_output_converter_text_input}
 			type="text"
 			onKeyDown={ev => {
 				if (!(ev.code == "Equal" && !ev.shiftKey)) return
 				equal()
-				event_prevent_default(ev)
+				eventPreventDefault(ev)
 			}}
-			onFocus={ev => caret_pos = event_current_target(ev).selectionStart ?? caret_pos}
-			onBlur={ev => caret_pos = event_current_target(ev).selectionStart ?? caret_pos}
-			onInput={ev => command(Commands.change_calculator_input, event_current_target(ev).value)}
+			onFocus={ev => caretPos = eventCurrentTarget(ev).selectionStart ?? caretPos}
+			onBlur={ev => caretPos = eventCurrentTarget(ev).selectionStart ?? caretPos}
+			onInput={ev => command(Commands.updateCalculatorInput, eventCurrentTarget(ev).value)}
 		/>
 		<div
-			class={classlist(
+			class={attrClassList(
 				CSS.input_output_converter_text_output,
 				CSSMiscellaneous.no_scrollbar
 			)}>
 			<Show
-				when={settings().scientific_notation}
-				fallback={output() != null && number_format(output()!, {
-					decimal: settings().number_format.decimal,
-					thousand: settings().number_format.grouping
+				when={settings().scientificNotation}
+				fallback={output() != null && numberFormat(output()!, {
+					decimal: settings().numberFormat.decimal,
+					thousand: settings().numberFormat.grouping
 				})}>
-				{output() != null && (regex_test(/[eE]/, number_to_string(output()!))
-					? string_touppercase(number_to_string(output()!))
-					: number_format(output()!, {
-						decimal: settings().number_format.decimal,
-						thousand: settings().number_format.grouping
+				{output() != null && (regexTest(/[eE]/, numberToString(output()!))
+					? stringToUpperCase(numberToString(output()!))
+					: numberFormat(output()!, {
+						decimal: settings().numberFormat.decimal,
+						thousand: settings().numberFormat.grouping
 					})
 				)}
 			</Show>
@@ -696,46 +696,46 @@ const ConverterCalculator: VoidComponent<{
 		<ActionButtons
 			command={command}
 			memory={props.memory}
-			on_recall_memory={(v) => add_char(number_to_real_digit(v))}
+			onRecallMemory={(v) => addChar(numberToRealDigits(v))}
 			settings={settings()}>
 			<Button
 				data-tooltip="Select converter type"
-				c_focused={is_menu_convertertype_open()}
-				onClick={ev => open_menu(ev, menu_convertertype_ref, {
-					anchor: event_current_target(ev),
-					position: MenuPosition.center_bottom_to_right,
-					allow_hide_anchor: false
+				c:focused={isMenuConverterTypeOpen()}
+				onClick={ev => openMenu(ev, menuConverterTypeRef, {
+					anchor: eventCurrentTarget(ev),
+					position: MenuPosition.centerBottomToRight,
+					allowHideAnchor: false
 				})}
-				c_variant={ButtonVariant.tonal}>
-				<Icon c_code={get_converter_icon()}/>
-				{get_converter_name()}
+				c:variant={ButtonVariant.tonal}>
+				<Icon c:code={getConverterIcon()}/>
+				{getConverterName()}
 			</Button>
 
 			<Menu
-				ref={r => menu_convertertype_ref = r}
-				c_on_toggleopen={v => set_is_menu_convertertype_open(v)}
+				ref={r => menuConverterTypeRef = r}
+				c:onToggleOpen={v => setIsMenuConverterTypeOpen(v)}
 				onClick={ev => {
-					const button = document_active()!
-					if (!element_valid_target(
-						event_current_target(ev),
+					const button = documentActive()!
+					if (!elementValidTarget(
+						eventCurrentTarget(ev),
 						button,
-						el => element_tagname(el) == 'BUTTON'
+						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					const data_type = element_dataset(button, 'type')
-					if (data_type
-						&& valid_enum_value(data_type, ConverterType)
+					const dataType = elementDataset(button, 'type')
+					if (dataType
+						&& validEnumValue(dataType, ConverterType)
 					) {
-						command(Commands.change_settings_converter_type, data_type)
-						close_menu(menu_convertertype_ref)
+						command(Commands.updateSettingsConverterType, dataType)
+						closeMenu(menuConverterTypeRef)
 						return
 					}
 				}}>
 				<For each={CONVERTER_TYPES}>{c =>
 					<MenuItem
-						c_selected={c.type == settings().converter.type}
+						c:selected={c.type == settings().converter.type}
 						data-type={c.type}
-						c_leading={<Icon c_code={c.icon}/>}>
+						c:leading={<Icon c:code={c.icon}/>}>
 						{c.text}
 					</MenuItem>
 				}</For>
@@ -744,94 +744,94 @@ const ConverterCalculator: VoidComponent<{
 			<div class={CSS.input_output_converter_units}>
 				<Button
 					data-tooltip="Select input unit"
-					c_focused={is_menu_inputunit_open()}
-					onClick={ev => open_menu(ev, menu_inputunit_ref, {
-						anchor: event_current_target(ev),
-						position: MenuPosition.center_bottom_to_right,
-						allow_hide_anchor: false
+					c:focused={isMenuInputUnitOpen()}
+					onClick={ev => openMenu(ev, menuInputUnitRef, {
+						anchor: eventCurrentTarget(ev),
+						position: MenuPosition.centerBottomToRight,
+						allowHideAnchor: false
 					})}
 					style={{color: 'rgb(var(--g-color-accent))'}}>
-					{settings().converter.unit_input.name + ` (${settings().converter.unit_input.symbol})`}
+					{settings().converter.unitInput.name + ` (${settings().converter.unitInput.symbol})`}
 				</Button>
 
 				<Menu
-					ref={r => menu_inputunit_ref = r}
-					c_on_toggleopen={v => set_is_menu_inputunit_open(v)}
+					ref={r => menuInputUnitRef = r}
+					c:onToggleOpen={v => setIsMenuInputUnitOpen(v)}
 					onClick={ev => {
-						const button = document_active()!
-						if (!element_valid_target(
-							event_current_target(ev),
+						const button = documentActive()!
+						if (!elementValidTarget(
+							eventCurrentTarget(ev),
 							button,
-							el => element_tagname(el) == "BUTTON"
+							el => elementTagName(el) == "BUTTON"
 						)) return
 
-						const data_index = element_dataset(button, 'index')
-						if (data_index) {
-							const index = number_parse(data_index, true)
-							if (number_is_not_defined(index)) return
+						const dataIndex = elementDataset(button, 'index')
+						if (dataIndex) {
+							const index = numberParse(dataIndex, true)
+							if (numberIsNotDefined(index)) return
 
-							const unit = get_units()[index]
+							const unit = getUnits()[index]
 							if (!unit) return
 
-							command(Commands.change_settings_converter_inputunit, unit)
-							close_menu(menu_inputunit_ref)
+							command(Commands.updateSettingsConverterInputUnit, unit)
+							closeMenu(menuInputUnitRef)
 							return
 						}
 					}}>
-					<For each={get_units()}>{(u, i) =>
+					<For each={getUnits()}>{(u, i) =>
 						<MenuItem
 							data-index={i()}
-							c_selected={u.equals(settings().converter.unit_input)}>
+							c:selected={u.equals(settings().converter.unitInput)}>
 							{u.name + ` (${u.symbol})`}
 						</MenuItem>
 					}</For>
 				</Menu>
 				<IconButton
 					data-tooltip="Swap unit"
-					onClick={() => command(Commands.change_settings_converter_swapunit)}
-					c_code={ICON_ARROW_RIGHT}
+					onClick={() => command(Commands.swapConverterUnits)}
+					c:code={ICON_ARROW_RIGHT}
 				/>
 				<Button
 					data-tooltip="Select output unit"
-					c_focused={is_menu_outputunit_open()}
-					onClick={ev => open_menu(ev, menu_outputunit_ref, {
-						anchor: event_current_target(ev),
-						position: MenuPosition.center_bottom_to_right,
-						allow_hide_anchor: false
+					c:focused={isMenuOutputUnitOpen()}
+					onClick={ev => openMenu(ev, menuOutputUnitRef, {
+						anchor: eventCurrentTarget(ev),
+						position: MenuPosition.centerBottomToRight,
+						allowHideAnchor: false
 					})}
 					style={{color: 'rgb(var(--g-color-accent))'}}>
-					{settings().converter.unit_output.name + ` (${settings().converter.unit_output.symbol})`}
+					{settings().converter.unitOutput.name + ` (${settings().converter.unitOutput.symbol})`}
 				</Button>
 			</div>
 
 			<Menu
-				ref={r => menu_outputunit_ref = r}
-				c_on_toggleopen={v => set_is_menu_outputunit_open(v)}
+				ref={r => menuOutputUnitRef = r}
+				c:onToggleOpen={v => setIsMenuOutputUnitOpen(v)}
 				onClick={ev => {
-					const button = document_active()!
-					if (!element_valid_target(
-						event_current_target(ev),
+					const button = documentActive()!
+					if (!elementValidTarget(
+						eventCurrentTarget(ev),
 						button,
-						el => element_tagname(el) == "BUTTON"
+						el => elementTagName(el) == "BUTTON"
 					)) return
 
-					const data_index = element_dataset(button, 'index')
-					if (data_index) {
-						const index = number_parse(data_index, true)
-						if (number_is_not_defined(index)) return
+					const dataIndex = elementDataset(button, 'index')
+					if (dataIndex) {
+						const index = numberParse(dataIndex, true)
+						if (numberIsNotDefined(index)) return
 
-						const unit = get_units()[index]
+						const unit = getUnits()[index]
 						if (!unit) return
 
-						command(Commands.change_settings_converter_outputunit, unit)
-						close_menu(menu_inputunit_ref)
+						command(Commands.updateSettingsConverterOutputUnit, unit)
+						closeMenu(menuInputUnitRef)
 						return
 					}
 				}}>
-				<For each={get_units()}>{(u, i) =>
+				<For each={getUnits()}>{(u, i) =>
 					<MenuItem
 						data-index={i()}
-						c_selected={u.equals(settings().converter.unit_output)}>
+						c:selected={u.equals(settings().converter.unitOutput)}>
 						{u.name + ` (${u.symbol})`}
 					</MenuItem>
 				}</For>
@@ -840,50 +840,50 @@ const ConverterCalculator: VoidComponent<{
 		<div
 			class={CSS.input_output_converter_buttons}
 			onClick={ev => {
-				const button = document_active()!
-				if (!element_valid_target(
-					event_current_target(ev),
+				const button = documentActive()!
+				if (!elementValidTarget(
+					eventCurrentTarget(ev),
 					button,
-					el => element_tagname(el) == 'BUTTON'
+					el => elementTagName(el) == 'BUTTON'
 				)) return
 
-				switch (element_id(button)) {
-				case button_clear_id:
+				switch (elementId(button)) {
+				case buttonClearId:
 					clear()
 					break
-				case button_backspace_id:
+				case buttonBackspaceId:
 					backspace()
 					break
-				case button_equal_id:
+				case buttonEqualId:
 					equal()
 					break
 				case button_plusminus_id:
-					plus_minus()
+					plusMinus()
 					break
 				default:
-					const data_char = element_dataset(button, 'char')
-					if (data_char) return add_char(data_char)
+					const dataChar = elementDataset(button, 'char')
+					if (dataChar) return addChar(dataChar)
 				}
 			}}>
 			<Button id={button_plusminus_id}>±</Button>
-			<Button id={button_clear_id} classList={classlist_module(CSS.input_output_remove_symbol)}>C</Button>
-			<Button id={button_backspace_id} classList={classlist_module(CSS.input_output_remove_symbol)}><Icon c_code={ICON_BACKSPACE} /></Button>
+			<Button id={buttonClearId} classList={attrClassListModule(CSS.input_output_remove_symbol)}>C</Button>
+			<Button id={buttonBackspaceId} classList={attrClassListModule(CSS.input_output_remove_symbol)}><Icon c:code={ICON_BACKSPACE} /></Button>
 
-			<Button data-char="7" c_variant={ButtonVariant.tonal}>7</Button>
-			<Button data-char="8" c_variant={ButtonVariant.tonal}>8</Button>
-			<Button data-char="9" c_variant={ButtonVariant.tonal}>9</Button>
+			<Button data-char="7" c:variant={ButtonVariant.tonal}>7</Button>
+			<Button data-char="8" c:variant={ButtonVariant.tonal}>8</Button>
+			<Button data-char="9" c:variant={ButtonVariant.tonal}>9</Button>
 
-			<Button data-char="4" c_variant={ButtonVariant.tonal}>4</Button>
-			<Button data-char="5" c_variant={ButtonVariant.tonal}>5</Button>
-			<Button data-char="6" c_variant={ButtonVariant.tonal}>6</Button>
+			<Button data-char="4" c:variant={ButtonVariant.tonal}>4</Button>
+			<Button data-char="5" c:variant={ButtonVariant.tonal}>5</Button>
+			<Button data-char="6" c:variant={ButtonVariant.tonal}>6</Button>
 
-			<Button data-char="1" c_variant={ButtonVariant.tonal}>1</Button>
-			<Button data-char="2" c_variant={ButtonVariant.tonal}>2</Button>
-			<Button data-char="3" c_variant={ButtonVariant.tonal}>3</Button>
+			<Button data-char="1" c:variant={ButtonVariant.tonal}>1</Button>
+			<Button data-char="2" c:variant={ButtonVariant.tonal}>2</Button>
+			<Button data-char="3" c:variant={ButtonVariant.tonal}>3</Button>
 
-			<Button data-char={settings().number_format.decimal}>{settings().number_format.decimal}</Button>
-			<Button data-char="0" c_variant={ButtonVariant.tonal}>0</Button>
-			<Button id={button_equal_id} c_variant={ButtonVariant.filled}>=</Button>
+			<Button data-char={settings().numberFormat.decimal}>{settings().numberFormat.decimal}</Button>
+			<Button data-char="0" c:variant={ButtonVariant.tonal}>0</Button>
+			<Button id={buttonEqualId} c:variant={ButtonVariant.filled}>=</Button>
 		</div>
 	</>)
 }
@@ -897,271 +897,271 @@ const ProgrammerCalculator: VoidComponent<{
 }> = (props) => {
 	const settings = createMemo(() => props.settings)
 	const output = createMemo(() => props.output)
-	const output_decimal = createMemo<string>(() => {
+	const outputDecimal = createMemo<string>(() => {
 		if (output() == null) return ''
 
-		if (settings().scientific_notation) return (regex_test(/[eE]/, number_to_string(output()!))
-			? string_touppercase(number_to_string(output()!))
-			: number_format(output()!, {
-				decimal: settings().number_format.decimal,
-				thousand: settings().number_format.grouping
+		if (settings().scientificNotation) return (regexTest(/[eE]/, numberToString(output()!))
+			? stringToUpperCase(numberToString(output()!))
+			: numberFormat(output()!, {
+				decimal: settings().numberFormat.decimal,
+				thousand: settings().numberFormat.grouping
 			})
 		)
 
-		return number_format(output()!, {
-			decimal: settings().number_format.decimal,
-			thousand: settings().number_format.grouping
+		return numberFormat(output()!, {
+			decimal: settings().numberFormat.decimal,
+			thousand: settings().numberFormat.grouping
 		})
 	})
-	const output_binary = createMemo<string>(() => output() != null
-		? number_to_binary(output()!)
+	const outputBinary = createMemo<string>(() => output() != null
+		? numberToBinary(output()!)
 		: ''
 	)
-	const output_hexadecimal = createMemo<string>(() => output() != null
-		? string_touppercase(number_to_string(number_parse(output_binary(), true, 2), 16))
+	const outputHex = createMemo<string>(() => output() != null
+		? stringToUpperCase(numberToString(numberParse(outputBinary(), true, 2), 16))
 		: ''
 	)
-	const output_octal = createMemo<string>(() => output() != null
-		? number_to_string(number_parse(output_binary(), true, 2), 8)
+	const outputOctal = createMemo<string>(() => output() != null
+		? numberToString(numberParse(outputBinary(), true, 2), 8)
 		: ''
 	)
-	const is_dec = createMemo(() => settings().programmer.number_type == NumberType.decimal)
-	const is_hex = createMemo(() => settings().programmer.number_type == NumberType.hexadecimal)
-	const is_oct = createMemo(() => settings().programmer.number_type == NumberType.octal)
-	const is_bin = createMemo(() => settings().programmer.number_type == NumberType.binary)
-	const button_clear_id = createUniqueId()
-	const button_backspace_id = createUniqueId()
-	const button_equal_id = createUniqueId()
-	let menu_copy_ref: HTMLDialogElement
-	let input_ref: HTMLInputElement
-	let caret_pos: number = 0
-	let text_to_copy: string = ''
+	const isDec = createMemo(() => settings().programmer.numberType == NumberType.decimal)
+	const isHex = createMemo(() => settings().programmer.numberType == NumberType.hexadecimal)
+	const isOct = createMemo(() => settings().programmer.numberType == NumberType.octal)
+	const isBin = createMemo(() => settings().programmer.numberType == NumberType.binary)
+	const buttonClearId = createUniqueId()
+	const buttonBackspaceId = createUniqueId()
+	const buttonEqualId = createUniqueId()
+	let menuCopyRef: HTMLDialogElement
+	let inputRef: HTMLInputElement
+	let caretPos: number = 0
+	let textToCopy: string = ''
 
 	function command(type: Commands, ...args: unknown[]): unknown {
 		return props.command(type, ...args)
 	}
 
-	function add_char(char: string): void {
-		let value = input_ref.value
-		const prefix = string_substring(value, 0, caret_pos)
-		const suffix = string_substring(value, caret_pos)
+	function addChar(char: string): void {
+		let value = inputRef.value
+		const prefix = stringSubstring(value, 0, caretPos)
+		const suffix = stringSubstring(value, caretPos)
 		value = prefix + char + suffix
-		input_ref.value = value
-		caret_pos += string_length(char)
-		input_ref.setSelectionRange(caret_pos, caret_pos)
-		element_focus(input_ref)
-		command(Commands.change_calculator_input, value)
+		inputRef.value = value
+		caretPos += stringLength(char)
+		inputRef.setSelectionRange(caretPos, caretPos)
+		elementFocus(inputRef)
+		command(Commands.updateCalculatorInput, value)
 	}
 
 	function backspace(): void {
-		let value = input_ref.value
-		const prefix = string_substring(value, 0, caret_pos-1)
-		const suffix = string_substring(value, caret_pos)
+		let value = inputRef.value
+		const prefix = stringSubstring(value, 0, caretPos-1)
+		const suffix = stringSubstring(value, caretPos)
 		value = prefix + suffix
-		input_ref.value = value
-		--caret_pos
-		if (caret_pos < 0) caret_pos = 0
-		input_ref.setSelectionRange(caret_pos, caret_pos)
-		element_focus(input_ref)
-		command(Commands.change_calculator_input, value)
+		inputRef.value = value
+		--caretPos
+		if (caretPos < 0) caretPos = 0
+		inputRef.setSelectionRange(caretPos, caretPos)
+		elementFocus(inputRef)
+		command(Commands.updateCalculatorInput, value)
 	}
 
 	function clear(): void {
-		caret_pos = 0
-		input_ref.value = ''
-		input_ref.setSelectionRange(caret_pos, caret_pos)
-		element_focus(input_ref)
-		command(Commands.change_calculator_input, '')
+		caretPos = 0
+		inputRef.value = ''
+		inputRef.setSelectionRange(caretPos, caretPos)
+		elementFocus(inputRef)
+		command(Commands.updateCalculatorInput, '')
 	}
 
 	function equal(): void {
 		if (output() == null) return;
 
-		let $output = number_to_string(output()!)
-		const type = settings().programmer.number_type
-		if (type == NumberType.hexadecimal) $output = output_hexadecimal()
-		else if (type == NumberType.octal) $output = output_octal()
-		else if (type == NumberType.binary) $output = output_binary()
+		let $output = numberToString(output()!)
+		const type = settings().programmer.numberType
+		if (type == NumberType.hexadecimal) $output = outputHex()
+		else if (type == NumberType.octal) $output = outputOctal()
+		else if (type == NumberType.binary) $output = outputBinary()
 
-		caret_pos = string_length($output)
-		input_ref.value = $output
-		input_ref.setSelectionRange(caret_pos, caret_pos)
-		element_focus(input_ref)
-		command(Commands.change_calculator_input, $output)
+		caretPos = stringLength($output)
+		inputRef.value = $output
+		inputRef.setSelectionRange(caretPos, caretPos)
+		elementFocus(inputRef)
+		command(Commands.updateCalculatorInput, $output)
 	}
 
-	function on_recall_memory(value: number): void {
-		const type = settings().programmer.number_type
+	function onRecallMemory(value: number): void {
+		const type = settings().programmer.numberType
 		let $value = ''
 
-		if (type == NumberType.decimal) $value = number_to_real_digit(value)
-		else if (type == NumberType.hexadecimal) $value = string_touppercase(number_to_string(number_parse(number_to_binary(value), true, 2), 16))
-		else if (type == NumberType.octal) $value = number_to_string(number_parse(number_to_binary(value), true, 2), 8)
-		else if (type == NumberType.binary) $value = number_to_binary(value)
+		if (type == NumberType.decimal) $value = numberToRealDigits(value)
+		else if (type == NumberType.hexadecimal) $value = stringToUpperCase(numberToString(numberParse(numberToBinary(value), true, 2), 16))
+		else if (type == NumberType.octal) $value = numberToString(numberParse(numberToBinary(value), true, 2), 8)
+		else if (type == NumberType.binary) $value = numberToBinary(value)
 
-		add_char($value)
+		addChar($value)
 	}
 
 	createEffect(() => {
-		input_ref.value = props.input
-		element_focus(input_ref)
+		inputRef.value = props.input
+		elementFocus(inputRef)
 	})
 
 	return (<>
 		<input
-			ref={r => input_ref = r}
+			ref={r => inputRef = r}
 			inputMode="none"
 			class={CSS.input_output_programmer_text_input}
 			type="text"
 			onKeyDown={ev => {
 				if (!(ev.code == "Equal" && !ev.shiftKey)) return
 				equal()
-				event_prevent_default(ev)
+				eventPreventDefault(ev)
 			}}
-			onFocus={ev => caret_pos = event_current_target(ev).selectionStart ?? caret_pos}
-			onBlur={ev => caret_pos = event_current_target(ev).selectionStart ?? caret_pos}
-			onInput={ev => command(Commands.change_calculator_input, event_current_target(ev).value)}
+			onFocus={ev => caretPos = eventCurrentTarget(ev).selectionStart ?? caretPos}
+			onBlur={ev => caretPos = eventCurrentTarget(ev).selectionStart ?? caretPos}
+			onInput={ev => command(Commands.updateCalculatorInput, eventCurrentTarget(ev).value)}
 		/>
 		<div
-			class={classlist(
+			class={attrClassList(
 				CSS.input_output_programmer_text_output,
 				CSSMiscellaneous.no_scrollbar
 			)}>
 			<Button
-				c_selected={settings().programmer.number_type == NumberType.decimal}
-				c_indicator_position={ButtonIndicatorPosition.right}
-				onClick={() => command(Commands.change_settings_programmer_numbertype, NumberType.decimal)}
+				c:selected={settings().programmer.numberType == NumberType.decimal}
+				c:indicatorPosition={ButtonIndicatorPosition.right}
+				onClick={() => command(Commands.updateSettingsProgrammerNumberType, NumberType.decimal)}
 				onContextMenu={(ev) => {
-					event_prevent_default(ev)
-					text_to_copy = output_decimal()
-					open_menu(ev, menu_copy_ref)
+					eventPreventDefault(ev)
+					textToCopy = outputDecimal()
+					openMenu(ev, menuCopyRef)
 				}}>
-				<div class={CSSMiscellaneous.no_scrollbar}>{output_decimal()}</div>
+				<div class={CSSMiscellaneous.no_scrollbar}>{outputDecimal()}</div>
 				<span>DEC</span>
 			</Button>
 			<Button
-				c_selected={settings().programmer.number_type == NumberType.hexadecimal}
-				c_indicator_position={ButtonIndicatorPosition.right}
-				onClick={() => command(Commands.change_settings_programmer_numbertype, NumberType.hexadecimal)}
+				c:selected={settings().programmer.numberType == NumberType.hexadecimal}
+				c:indicatorPosition={ButtonIndicatorPosition.right}
+				onClick={() => command(Commands.updateSettingsProgrammerNumberType, NumberType.hexadecimal)}
 				onContextMenu={(ev) => {
-					event_prevent_default(ev)
+					eventPreventDefault(ev)
 					if (output() == null) return;
 
-					text_to_copy = output_hexadecimal()
-					open_menu(ev, menu_copy_ref)
+					textToCopy = outputHex()
+					openMenu(ev, menuCopyRef)
 				}}>
-				<div class={CSSMiscellaneous.no_scrollbar}>{output_hexadecimal()}</div>
+				<div class={CSSMiscellaneous.no_scrollbar}>{outputHex()}</div>
 				<span>HEX</span>
 			</Button>
 			<Button
-				c_selected={settings().programmer.number_type == NumberType.octal}
-				c_indicator_position={ButtonIndicatorPosition.right}
-				onClick={() => command(Commands.change_settings_programmer_numbertype, NumberType.octal)}
+				c:selected={settings().programmer.numberType == NumberType.octal}
+				c:indicatorPosition={ButtonIndicatorPosition.right}
+				onClick={() => command(Commands.updateSettingsProgrammerNumberType, NumberType.octal)}
 				onContextMenu={(ev) => {
-					event_prevent_default(ev)
+					eventPreventDefault(ev)
 					if (output() == null) return;
 
-					text_to_copy = output_octal()
-					open_menu(ev, menu_copy_ref)
+					textToCopy = outputOctal()
+					openMenu(ev, menuCopyRef)
 				}}>
-				<div class={CSSMiscellaneous.no_scrollbar}>{output_octal()}</div>
+				<div class={CSSMiscellaneous.no_scrollbar}>{outputOctal()}</div>
 				<span>OCT</span>
 			</Button>
 			<Button
-				c_selected={settings().programmer.number_type == NumberType.binary}
-				c_indicator_position={ButtonIndicatorPosition.right}
-				onClick={() => command(Commands.change_settings_programmer_numbertype, NumberType.binary)}
+				c:selected={settings().programmer.numberType == NumberType.binary}
+				c:indicatorPosition={ButtonIndicatorPosition.right}
+				onClick={() => command(Commands.updateSettingsProgrammerNumberType, NumberType.binary)}
 				onContextMenu={(ev) => {
-					event_prevent_default(ev)
+					eventPreventDefault(ev)
 					if (output() == null) return;
 
-					text_to_copy = output_binary()
-					open_menu(ev, menu_copy_ref)
+					textToCopy = outputBinary()
+					openMenu(ev, menuCopyRef)
 				}}>
-				<div class={CSSMiscellaneous.no_scrollbar}><Show when={output() != null}>{output_binary()}</Show></div>
+				<div class={CSSMiscellaneous.no_scrollbar}><Show when={output() != null}>{outputBinary()}</Show></div>
 				<span>BIN</span>
 			</Button>
 
-			<Menu ref={r => menu_copy_ref = r}>
+			<Menu ref={r => menuCopyRef = r}>
 				<MenuItem onClick={() => {
-					navigator_clipboard_writetext(text_to_copy)
-					close_menu(menu_copy_ref)
-				}} c_leading={<Icon c_code={ICON_COPY}/>}>Copy</MenuItem>
+					navigatorClipboardWriteText(textToCopy)
+					closeMenu(menuCopyRef)
+				}} c:leading={<Icon c:code={ICON_COPY}/>}>Copy</MenuItem>
 			</Menu>
 		</div>
 		<ActionButtons
 			command={command}
 			memory={props.memory}
-			on_recall_memory={on_recall_memory}
-			hide={!settings().memory_buttons}
+			onRecallMemory={onRecallMemory}
+			hide={!settings().memoryButtons}
 			settings={settings()}
 		/>
 		<div
 			class={CSS.input_output_programmer_buttons}
 			onClick={ev => {
-				const button = document_active()!
-				if (!element_valid_target(
-					event_current_target(ev),
+				const button = documentActive()!
+				if (!elementValidTarget(
+					eventCurrentTarget(ev),
 					button,
-					el => element_tagname(el) == 'BUTTON'
+					el => elementTagName(el) == 'BUTTON'
 				)) return
 
-				switch (element_id(button)) {
-				case button_clear_id:
+				switch (elementId(button)) {
+				case buttonClearId:
 					clear()
 					break
-				case button_backspace_id:
+				case buttonBackspaceId:
 					backspace()
 					break
-				case button_equal_id:
+				case buttonEqualId:
 					equal()
 					break
 				default:
-					const data_char = element_dataset(button, 'char')
-					if (data_char) return add_char(data_char)
+					const dataChar = elementDataset(button, 'char')
+					if (dataChar) return addChar(dataChar)
 				}
 			}}>
 			<div />
 			<Button data-char="(">{'('}</Button>
 			<Button data-char=")">{')'}</Button>
-			<Button id={button_clear_id} classList={classlist_module(CSS.input_output_remove_symbol)}>C</Button>
-			<Button id={button_backspace_id} classList={classlist_module(CSS.input_output_remove_symbol)}><Icon c_code={ICON_BACKSPACE} /></Button>
+			<Button id={buttonClearId} classList={attrClassListModule(CSS.input_output_remove_symbol)}>C</Button>
+			<Button id={buttonBackspaceId} classList={attrClassListModule(CSS.input_output_remove_symbol)}><Icon c:code={ICON_BACKSPACE} /></Button>
 
-			<Button data-char="F" disabled={!is_hex()} c_variant={ButtonVariant.tonal}>F</Button>
+			<Button data-char="F" disabled={!isHex()} c:variant={ButtonVariant.tonal}>F</Button>
 			<Button data-char="not(">not</Button>
 			<Button data-char="mod">mod</Button>
 			<Button data-char="lsh">lsh</Button>
 			<Button data-char="rsh">rsh</Button>
 
-			<Button data-char="E" disabled={!is_hex()} c_variant={ButtonVariant.tonal}>E</Button>
+			<Button data-char="E" disabled={!isHex()} c:variant={ButtonVariant.tonal}>E</Button>
 			<Button data-char="or">or</Button>
 			<Button data-char="and">and</Button>
 			<Button data-char="xor">xor</Button>
 			<Button data-char="^">^</Button>
 
-			<Button data-char="D" disabled={!is_hex()} c_variant={ButtonVariant.tonal}>D</Button>
-			<Button data-char="7" disabled={is_bin()} c_variant={ButtonVariant.tonal}>7</Button>
-			<Button data-char="8" disabled={is_oct() || is_bin()} c_variant={ButtonVariant.tonal}>8</Button>
-			<Button data-char="9" disabled={is_oct() || is_bin()} c_variant={ButtonVariant.tonal}>9</Button>
-			<Button data-char="÷" ><Icon c_code={ICON_SLASH_FORWARD}/></Button>
+			<Button data-char="D" disabled={!isHex()} c:variant={ButtonVariant.tonal}>D</Button>
+			<Button data-char="7" disabled={isBin()} c:variant={ButtonVariant.tonal}>7</Button>
+			<Button data-char="8" disabled={isOct() || isBin()} c:variant={ButtonVariant.tonal}>8</Button>
+			<Button data-char="9" disabled={isOct() || isBin()} c:variant={ButtonVariant.tonal}>9</Button>
+			<Button data-char="÷" ><Icon c:code={ICON_SLASH_FORWARD}/></Button>
 
-			<Button data-char="C" disabled={!is_hex()} c_variant={ButtonVariant.tonal}>C</Button>
-			<Button data-char="4" disabled={is_bin()} c_variant={ButtonVariant.tonal}>4</Button>
-			<Button data-char="5" disabled={is_bin()} c_variant={ButtonVariant.tonal}>5</Button>
-			<Button data-char="6" disabled={is_bin()} c_variant={ButtonVariant.tonal}>6</Button>
-			<Button data-char="×"><Icon c_code={ICON_DISMISS}/></Button>
+			<Button data-char="C" disabled={!isHex()} c:variant={ButtonVariant.tonal}>C</Button>
+			<Button data-char="4" disabled={isBin()} c:variant={ButtonVariant.tonal}>4</Button>
+			<Button data-char="5" disabled={isBin()} c:variant={ButtonVariant.tonal}>5</Button>
+			<Button data-char="6" disabled={isBin()} c:variant={ButtonVariant.tonal}>6</Button>
+			<Button data-char="×"><Icon c:code={ICON_DISMISS}/></Button>
 
-			<Button data-char="B" disabled={!is_hex()} c_variant={ButtonVariant.tonal}>B</Button>
-			<Button data-char="1" c_variant={ButtonVariant.tonal}>1</Button>
-			<Button data-char="2" disabled={is_bin() } c_variant={ButtonVariant.tonal}>2</Button>
-			<Button data-char="3" disabled={is_bin() } c_variant={ButtonVariant.tonal}>3</Button>
-			<Button data-char="-"><Icon c_code={ICON_LINE_HORIZONTAL_1} /></Button>
+			<Button data-char="B" disabled={!isHex()} c:variant={ButtonVariant.tonal}>B</Button>
+			<Button data-char="1" c:variant={ButtonVariant.tonal}>1</Button>
+			<Button data-char="2" disabled={isBin() } c:variant={ButtonVariant.tonal}>2</Button>
+			<Button data-char="3" disabled={isBin() } c:variant={ButtonVariant.tonal}>3</Button>
+			<Button data-char="-"><Icon c:code={ICON_LINE_HORIZONTAL_1} /></Button>
 
-			<Button data-char="A" disabled={!is_hex()} c_variant={ButtonVariant.tonal}>A</Button>
-			<Button data-char={settings().number_format.decimal} disabled={!is_dec()}>{settings().number_format.decimal}</Button>
-			<Button data-char="0" c_variant={ButtonVariant.tonal}>0</Button>
-			<Button id={button_equal_id} c_variant={ButtonVariant.filled}>=</Button>
-			<Button data-char="+"><Icon c_code={ICON_ADD}/></Button>
+			<Button data-char="A" disabled={!isHex()} c:variant={ButtonVariant.tonal}>A</Button>
+			<Button data-char={settings().numberFormat.decimal} disabled={!isDec()}>{settings().numberFormat.decimal}</Button>
+			<Button data-char="0" c:variant={ButtonVariant.tonal}>0</Button>
+			<Button id={buttonEqualId} c:variant={ButtonVariant.filled}>=</Button>
+			<Button data-char="+"><Icon c:code={ICON_ADD}/></Button>
 		</div>
 	</>)
 }
@@ -1174,13 +1174,13 @@ const DateCalculator: VoidComponent<{
 }> = (props) => {
 	const settings = createMemo(() => props.settings)
 	const input = createMemo(() => props.input)
-	const button_from_id = createUniqueId()
-	const button_to_id = createUniqueId()
-	const input_year_id = createUniqueId()
-	const input_month_id = createUniqueId()
-	const input_day_id = createUniqueId()
-	let datePicker_from_ref: HTMLDialogElement
-	let datePicker_to_ref: HTMLDialogElement
+	const buttonFromId = createUniqueId()
+	const buttonToId = createUniqueId()
+	const inputYearId = createUniqueId()
+	const inputMonthId = createUniqueId()
+	const inputDayId = createUniqueId()
+	let datePickerFromRef: HTMLDialogElement
+	let datePickerToRef: HTMLDialogElement
 
 	function command(type: Commands, ...args: unknown[]): unknown {
 		return props.command(type, ...args)
@@ -1189,117 +1189,117 @@ const DateCalculator: VoidComponent<{
 	return (<div
 		class={CSS.input_output_date_calculator}
 		onClick={ev => {
-			const button = document_active()!
-			if (!element_valid_target(
-				event_current_target(ev),
+			const button = documentActive()!
+			if (!elementValidTarget(
+				eventCurrentTarget(ev),
 				button,
-				el => element_tagname(el) == 'BUTTON'
+				el => elementTagName(el) == 'BUTTON'
 			)) return
 
-			switch (element_id(button)) {
-			case button_from_id:
-				open_datepicker(ev, datePicker_from_ref, {
+			switch (elementId(button)) {
+			case buttonFromId:
+				openDatePicker(ev, datePickerFromRef, {
 					anchor: button,
-					position: MenuPosition.center_bottom_to_right
+					position: MenuPosition.centerBottomToRight
 				})
 				break
-			case button_to_id:
-				open_datepicker(ev, datePicker_to_ref, {
+			case buttonToId:
+				openDatePicker(ev, datePickerToRef, {
 					anchor: button,
-					position: MenuPosition.center_bottom_to_right
+					position: MenuPosition.centerBottomToRight
 				})
 				break
 			}
 		}}
 		onFocusOut={ev => {
-			const target = event_target(ev) as HTMLInputElement
+			const target = eventTarget(ev) as HTMLInputElement
 
-			switch (element_id(target)) {
-			case input_year_id:
-				command(Commands.change_calculator_input, {
+			switch (elementId(target)) {
+			case inputYearId:
+				command(Commands.updateCalculatorInput, {
 					...input(),
-					year: number_safe(target.valueAsNumber, input().year)
+					year: numberSafe(target.valueAsNumber, input().year)
 				})
 				break
-			case input_month_id:
-				command(Commands.change_calculator_input, {
+			case inputMonthId:
+				command(Commands.updateCalculatorInput, {
 					...input(),
-					month: number_safe(target.valueAsNumber, input().month)
+					month: numberSafe(target.valueAsNumber, input().month)
 				})
 				break
-			case input_day_id:
-				command(Commands.change_calculator_input, {
+			case inputDayId:
+				command(Commands.updateCalculatorInput, {
 					...input(),
-					day: number_safe(target.valueAsNumber, input().day)
+					day: numberSafe(target.valueAsNumber, input().day)
 				})
 				break
 			}
 		}}>
 		<Dropdown
-			c_label="Operation"
-			c_values={[settings().date.operation]}
-			c_on_change={(options) => command(Commands.change_settings_date_operation, options[0].value)}>
+			c:label="Operation"
+			c:values={[settings().date.operation]}
+			c:onChange={(options) => command(Commands.updateSettingsDateOperation, options[0].value)}>
 			<For each={[
 				[DateOperation.add, 'Add'],
 				[DateOperation.subtract, 'Subtract'],
 				[DateOperation.difference, 'Difference'],
-			]}>{option => <DropdownOption c_value={option[0]} c_text={option[1]}/>}</For>
+			]}>{option => <DropdownOption c:value={option[0]} c:text={option[1]}/>}</For>
 		</Dropdown>
 		<div>
 			<p>From</p>
 			<Button
-				c_variant={ButtonVariant.tonal}
-				id={button_from_id}>
-				<Icon c_code={ICON_CALENDAR}/>
-				{date_text_YMD(input().from)}
+				c:variant={ButtonVariant.tonal}
+				id={buttonFromId}>
+				<Icon c:code={ICON_CALENDAR}/>
+				{dateTextYMD(input().from)}
 			</Button>
 		</div>
-		<div class={CSS.input_output_date_inputs} data-hide={attr_set_if_exist(settings().date.operation == DateOperation.difference)}>
+		<div class={CSS.input_output_date_inputs} data-hide={attrSetIfExist(settings().date.operation == DateOperation.difference)}>
 			<NumberTextField
 				min={0}
 				value={input().year + ''}
-				c_label="Year"
-				id={input_year_id}
+				c:label="Year"
+				id={inputYearId}
 			/>
 			<NumberTextField
 				min={0}
 				value={input().month + ''}
-				c_label="Month"
-				id={input_month_id}
+				c:label="Month"
+				id={inputMonthId}
 			/>
 			<NumberTextField
 				min={0}
 				value={input().day + ''}
-				c_label="Day"
-				id={input_day_id}
+				c:label="Day"
+				id={inputDayId}
 			/>
 		</div>
-		<div data-hide={attr_set_if_exist(settings().date.operation != DateOperation.difference)}>
+		<div data-hide={attrSetIfExist(settings().date.operation != DateOperation.difference)}>
 			<p>To</p>
 			<Button
-				c_variant={ButtonVariant.tonal}
-				id={button_to_id}>
-				<Icon c_code={ICON_CALENDAR}/>
-				{date_text_YMD(input().to)}
+				c:variant={ButtonVariant.tonal}
+				id={buttonToId}>
+				<Icon c:code={ICON_CALENDAR}/>
+				{dateTextYMD(input().to)}
 			</Button>
 		</div>
 		<div>
-			<p><Show when={attr_set_if_exist(settings().date.operation != DateOperation.difference)} fallback="Result">Difference</Show></p>
+			<p><Show when={attrSetIfExist(settings().date.operation != DateOperation.difference)} fallback="Result">Difference</Show></p>
 			<h2>{props.output}</h2>
 		</div>
 		<DatePicker
-			ref={r => datePicker_from_ref = r}
-			c_date={input().from}
-			c_first_date={new Date(date_year() - 1000, 0, 1)}
-			c_last_date={new Date(date_year() + 1000, 11, 31)}
-			c_on_selectdate={(value) => command(Commands.change_calculator_input, {...input(), from: value})}
+			ref={r => datePickerFromRef = r}
+			c:date={input().from}
+			c:firstDate={new Date(dateYear() - 1000, 0, 1)}
+			c:lastDate={new Date(dateYear() + 1000, 11, 31)}
+			c:onSelectDate={(value) => command(Commands.updateCalculatorInput, {...input(), from: value})}
 		/>
 		<DatePicker
-			ref={r => datePicker_to_ref = r}
-			c_date={input().to}
-			c_first_date={new Date(date_year() - 1000, 0, 1)}
-			c_last_date={new Date(date_year() + 1000, 11, 31)}
-			c_on_selectdate={(value) => command(Commands.change_calculator_input, {...input(), to: value})}
+			ref={r => datePickerToRef = r}
+			c:date={input().to}
+			c:firstDate={new Date(dateYear() - 1000, 0, 1)}
+			c:lastDate={new Date(dateYear() + 1000, 11, 31)}
+			c:onSelectDate={(value) => command(Commands.updateCalculatorInput, {...input(), to: value})}
 		/>
 	</div>)
 }

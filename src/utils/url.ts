@@ -1,27 +1,27 @@
-import { array_foreach } from "./array"
-import { element_create, element_click, element_remove } from "./element"
+import { arrayForEach } from "./array"
+import { elementCreate, elementClick, elementRemove } from "./element"
 
-export function url_encode(text: string): string {
+export function urlEncode(text: string): string {
 	return encodeURIComponent(text)
 }
 
-export function url_decode(url: string): string {
+export function urlDecode(url: string): string {
 	return decodeURIComponent(url)
 }
 
-export function url_queries(url: string): {[key: string]: string} {
-	const query_object: {[key: string]: string} = {}
-	const url_params = new URL(url).searchParams
+export function urlQueries(url: string): {[key: string]: string} {
+	const queryObject: {[key: string]: string} = {}
+	const urlParams = new URL(url).searchParams
 
-	array_foreach(url_params as unknown as any[], (value, key) => {
-		query_object[key] = value
+	arrayForEach(urlParams as unknown as any[], (value, key) => {
+		queryObject[key] = value
 	})
 
-	return query_object
+	return queryObject
 }
 
-export function url_query(url: string, key: string): string | null {
-	const queries = url_queries(url)
+export function urlQuery(url: string, key: string): string | null {
+	const queries = urlQueries(url)
 
 	for (const $key in queries) {
 		if ($key == key) return queries[$key]
@@ -30,26 +30,26 @@ export function url_query(url: string, key: string): string | null {
 	return null
 }
 
-export function url_create(obj: Blob | MediaSource): string {
+export function urlCreate(obj: Blob | MediaSource): string {
 	return URL.createObjectURL(obj)
 }
 
-export function url_revoke(url: string): void {
+export function urlRevoke(url: string): void {
 	return URL.revokeObjectURL(url)
 }
 
-export function url_download_file(url: string, filename: string): void {
-	const link = element_create("a")
+export function urlDownloadFile(url: string, filename: string): void {
+	const link = elementCreate("a")
 	link.href = url
 	link.download = filename
-	element_click(link)
-	element_remove(link)
+	elementClick(link)
+	elementRemove(link)
 }
 
-export function url_current(): string {
+export function urlCurrent(): string {
 	return document.URL
 }
 
-export function url_origin(): string {
+export function urlOrigin(): string {
 	return document.location.origin
 }

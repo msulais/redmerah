@@ -4,21 +4,21 @@ import type { HEXColor, HSLColor } from "@/types/color"
 import type { Settings } from "./_types"
 import { ColorPickerMode, Commands } from "./_enums"
 import { ImagePicker, PalettePicker, RectangleHSLPicker, RectanglePicker, SliderCMYKPicker, SliderHEXPicker, SliderHSLPicker, SliderHSVPicker, SliderHWBPicker, SliderRGBPicker, SpectrumPicker, WheelPicker } from "./_Pickers"
-import { string_length, string_padstart, string_replace, string_split, string_substring, string_touppercase, string_trim } from "@/utils/string"
-import { cmyk_to_hsl, hex_to_hsl, hsl_to_cmyk, hsl_to_hex, hsl_to_hsv, hsl_to_hwb, hsl_to_rgb, hsv_to_hsl, hwb_to_hsl, rgb_to_hsl } from "@/utils/color"
-import { math_clamp, math_round } from "@/utils/math"
-import { array_join, array_length, array_map, array_push } from "@/utils/array"
-import { number_parse, number_safe } from "@/utils/number"
-import { navigator_clipboard_writetext } from "@/utils/navigator"
-import { event_current_target, event_target } from "@/utils/event"
-import { element_dataset, element_id, element_tagname, element_valid_target } from "@/utils/element"
-import { document_active } from "@/utils/document"
-import { promise_done } from "@/utils/object"
+import { stringLength, stringPadStart, stringReplace, stringSplit, stringSubstring, stringToUpperCase, stringTrim } from "@/utils/string"
+import { colorCmykToHsl, colorHexToHsl, colorHslToCmyk, colorHslToHex, colorHslToHsv, colorHslToHwb, colorHslToRgb, colorHsvToHsl, colorHwbToHsl, colorRgbToHsl } from "@/utils/color"
+import { mathClamp, mathRound } from "@/utils/math"
+import { arrayJoin, arrayLength, arrayMap, arrayPush } from "@/utils/array"
+import { numberParse, numberSafe } from "@/utils/number"
+import { navigatorClipboardWriteText } from "@/utils/navigator"
+import { eventCurrentTarget, eventTarget } from "@/utils/event"
+import { elementDataset, elementId, elementTagName, elementValidTarget } from "@/utils/element"
+import { documentActive } from "@/utils/document"
+import { promiseDone } from "@/utils/object"
 import { ICON_COPY } from "@/constants/icons"
 
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import TextField, { TextFieldButton } from "@/components/TextField"
-import Toast, { open_toast } from "@/components/Toast"
+import Toast, { openToast } from "@/components/Toast"
 import Tooltip from "@/components/Tooltip"
 import Icon from "@/components/Icon"
 import CSS from './_styles.module.scss'
@@ -35,43 +35,43 @@ const ColorPicker: VoidComponent<{
 		return props.command(type, ...args)
 	}
 
-	function is_mode(mode: ColorPickerMode): boolean {
+	function isModeEqual(mode: ColorPickerMode): boolean {
 		return settings().mode == mode
 	}
 
 	return (<div class={CSS.color_picker}>
 		<Dropdown
-			c_label="Picker mode"
-			c_text="Select picker mode"
-			c_values={[settings().mode]}
+			c:label="Picker mode"
+			c:text="Select picker mode"
+			c:values={[settings().mode]}
 			style={{"min-width": '100%'}}
-			c_on_change={(values) => command(Commands.change_mode, values[0].value as ColorPickerMode)}>
-			<DropdownOption c_text="Image" c_value={ColorPickerMode.image}/>
-			<DropdownOption c_text="Rectangle" c_value={ColorPickerMode.rectangle}/>
-			<DropdownOption c_text="Rectangle HSL" c_value={ColorPickerMode.rectangle_hsl}/>
+			c:onChange={(values) => command(Commands.updateMode, values[0].value as ColorPickerMode)}>
+			<DropdownOption c:text="Image" c:value={ColorPickerMode.image}/>
+			<DropdownOption c:text="Rectangle" c:value={ColorPickerMode.rectangle}/>
+			<DropdownOption c:text="Rectangle HSL" c:value={ColorPickerMode.rectangleHsl}/>
 			{/* <DropdownOption text="Palette" value={ColorPickerMode.palette}/> */}
-			<DropdownOption c_text="Spectrum (Beta release)" c_value={ColorPickerMode.spectrum}/>
+			<DropdownOption c:text="Spectrum (Beta release)" c:value={ColorPickerMode.spectrum}/>
 			{/* <DropdownOption text="Wheel" value={ColorPickerMode.wheel}/> */}
-			<DropdownOption c_text="Slider RGB" c_value={ColorPickerMode.slider_rgb}/>
-			<DropdownOption c_text="Slider HSL" c_value={ColorPickerMode.slider_hsl}/>
-			<DropdownOption c_text="Slider CMYK" c_value={ColorPickerMode.slider_cmyk}/>
-			<DropdownOption c_text="Slider HEX" c_value={ColorPickerMode.slider_hex}/>
-			<DropdownOption c_text="Slider HSV" c_value={ColorPickerMode.slider_hsv}/>
-			<DropdownOption c_text="Slider HWB" c_value={ColorPickerMode.slider_hwb}/>
+			<DropdownOption c:text="Slider RGB" c:value={ColorPickerMode.sliderRgb}/>
+			<DropdownOption c:text="Slider HSL" c:value={ColorPickerMode.sliderHsl}/>
+			<DropdownOption c:text="Slider CMYK" c:value={ColorPickerMode.sliderCmyk}/>
+			<DropdownOption c:text="Slider HEX" c:value={ColorPickerMode.sliderHex}/>
+			<DropdownOption c:text="Slider HSV" c:value={ColorPickerMode.sliderHsv}/>
+			<DropdownOption c:text="Slider HWB" c:value={ColorPickerMode.sliderHwb}/>
 		</Dropdown>
 		<Switch>
-			<Match when={is_mode(ColorPickerMode.image)}><ImagePicker command={command} /></Match>
-			<Match when={is_mode(ColorPickerMode.rectangle)}><RectanglePicker command={command} input={input()} /></Match>
-			<Match when={is_mode(ColorPickerMode.rectangle_hsl)}><RectangleHSLPicker command={command} input={input()} /></Match>
-			<Match when={is_mode(ColorPickerMode.palette)}><PalettePicker /></Match>
-			<Match when={is_mode(ColorPickerMode.spectrum)}><SpectrumPicker command={command} input={input()} /></Match>
-			<Match when={is_mode(ColorPickerMode.wheel)}><WheelPicker /></Match>
-			<Match when={is_mode(ColorPickerMode.slider_rgb)}><SliderRGBPicker command={command} input={input()} /></Match>
-			<Match when={is_mode(ColorPickerMode.slider_hsl)}><SliderHSLPicker command={command} input={input()} /></Match>
-			<Match when={is_mode(ColorPickerMode.slider_cmyk)}><SliderCMYKPicker command={command} input={input()} /></Match>
-			<Match when={is_mode(ColorPickerMode.slider_hex)}><SliderHEXPicker command={command} input={input()} /></Match>
-			<Match when={is_mode(ColorPickerMode.slider_hsv)}><SliderHSVPicker command={command} input={input()} /></Match>
-			<Match when={is_mode(ColorPickerMode.slider_hwb)}><SliderHWBPicker command={command} input={input()} /></Match>
+			<Match when={isModeEqual(ColorPickerMode.image)}><ImagePicker command={command} /></Match>
+			<Match when={isModeEqual(ColorPickerMode.rectangle)}><RectanglePicker command={command} input={input()} /></Match>
+			<Match when={isModeEqual(ColorPickerMode.rectangleHsl)}><RectangleHSLPicker command={command} input={input()} /></Match>
+			<Match when={isModeEqual(ColorPickerMode.palette)}><PalettePicker /></Match>
+			<Match when={isModeEqual(ColorPickerMode.spectrum)}><SpectrumPicker command={command} input={input()} /></Match>
+			<Match when={isModeEqual(ColorPickerMode.wheel)}><WheelPicker /></Match>
+			<Match when={isModeEqual(ColorPickerMode.sliderRgb)}><SliderRGBPicker command={command} input={input()} /></Match>
+			<Match when={isModeEqual(ColorPickerMode.sliderHsl)}><SliderHSLPicker command={command} input={input()} /></Match>
+			<Match when={isModeEqual(ColorPickerMode.sliderCmyk)}><SliderCMYKPicker command={command} input={input()} /></Match>
+			<Match when={isModeEqual(ColorPickerMode.sliderHex)}><SliderHEXPicker command={command} input={input()} /></Match>
+			<Match when={isModeEqual(ColorPickerMode.sliderHsv)}><SliderHSVPicker command={command} input={input()} /></Match>
+			<Match when={isModeEqual(ColorPickerMode.sliderHwb)}><SliderHWBPicker command={command} input={input()} /></Match>
 		</Switch>
 	</div>)
 }
@@ -83,304 +83,298 @@ const ColorInput: VoidComponent<{
 }> = (props) => {
 	const input = createMemo(() => props.input)
 	const settings = createMemo(() => props.settings)
-	const read_only = createMemo(() => {
+	const readOnly = createMemo(() => {
 		const mode = settings().mode
 		return mode == ColorPickerMode.palette || mode == ColorPickerMode.image
 	})
-	const get_hex_color = createMemo(() => string_touppercase(hsl_to_hex(input())))
-	const get_rgb_color = createMemo(() => {
-		const {r, g, b} = hsl_to_rgb(input())
-		return array_join([
-			math_round(r * 0xff),
-			math_round(g * 0xff),
-			math_round(b * 0xff)
+	const getHEXColor = createMemo(() => stringToUpperCase(colorHslToHex(input())))
+	const getRGBColor = createMemo(() => {
+		const {r, g, b} = colorHslToRgb(input())
+		return arrayJoin([
+			mathRound(r * 0xff),
+			mathRound(g * 0xff),
+			mathRound(b * 0xff)
 		], ', ')
 	})
-	const get_hsl_color = createMemo(() => {
+	const getHSLColor = createMemo(() => {
 		const {h, s, l} = input()
-		return `${math_round(h * 360)}°, ${math_round(s * 100)}%, ${math_round(l * 100)}%`
+		return `${mathRound(h * 360)}°, ${mathRound(s * 100)}%, ${mathRound(l * 100)}%`
 	})
-	const get_hsv_color = createMemo(() => {
-		const {h, s, v} = hsl_to_hsv(input())
-		return `${math_round(h * 360)}°, ${math_round(s * 100)}%, ${math_round(v * 100)}%`
+	const getHSVColor = createMemo(() => {
+		const {h, s, v} = colorHslToHsv(input())
+		return `${mathRound(h * 360)}°, ${mathRound(s * 100)}%, ${mathRound(v * 100)}%`
 	})
-	const get_hwb_color = createMemo(() => {
-		const {h, w, b} = hsl_to_hwb(input())
-		return `${math_round(h * 360)}°, ${math_round(w * 100)}%, ${math_round(b * 100)}%`
+	const getHWBColor = createMemo(() => {
+		const {h, w, b} = colorHslToHwb(input())
+		return `${mathRound(h * 360)}°, ${mathRound(w * 100)}%, ${mathRound(b * 100)}%`
 	})
-	const get_cmyk_color = createMemo(() => {
-		const {c, m, y, k} = hsl_to_cmyk(input())
-		return `${math_round(c * 100)}%, ${math_round(m * 100)}%, ${math_round(y * 100)}%, ${math_round(k * 100)}%`
+	const getCMYKColor = createMemo(() => {
+		const {c, m, y, k} = colorHslToCmyk(input())
+		return `${mathRound(c * 100)}%, ${mathRound(m * 100)}%, ${mathRound(y * 100)}%, ${mathRound(k * 100)}%`
 	})
-	const [hex_color, set_hex_color] = createSignal<string>('#000000')
-	const [rgb_color, set_rgb_color] = createSignal<string>('0, 0, 0')
-	const [hsl_color, set_hsl_color] = createSignal<string>('0°, 0%, 0%')
-	const [hsv_color, set_hsv_color] = createSignal<string>('0°, 0%, 0%')
-	const [hwb_color, set_hwb_color] = createSignal<string>('0°, 0%, 0%')
-	const [cmyk_color, set_cmyk_color] = createSignal<string>('0%, 0%, 0%, 0%')
-	const input_hex_id = createUniqueId()
-	const input_rgb_id = createUniqueId()
-	const input_hsl_id = createUniqueId()
-	const input_hsv_id = createUniqueId()
-	const input_hwb_id = createUniqueId()
-	const input_cmyk_id = createUniqueId()
-	let is_hex_color_focus = false
-	let is_rgb_color_focus = false
-	let is_hsl_color_focus = false
-	let is_hsv_color_focus = false
-	let is_hwb_color_focus = false
-	let is_cmyk_color_focus = false
-	let toast_copied_ref: HTMLDivElement
+	const [hexColor, setHEXColor] = createSignal<string>('#000000')
+	const [rgbColor, setRGBColor] = createSignal<string>('0, 0, 0')
+	const [hslColor, setHSLColor] = createSignal<string>('0°, 0%, 0%')
+	const [hsvColor, setHSVColor] = createSignal<string>('0°, 0%, 0%')
+	const [HWBColor, setHWBColor] = createSignal<string>('0°, 0%, 0%')
+	const [cmykColor, setCMYKColor] = createSignal<string>('0%, 0%, 0%, 0%')
+	const inputHEXId = createUniqueId()
+	const inputRGBId = createUniqueId()
+	const inputHSLId = createUniqueId()
+	const inputHSVId = createUniqueId()
+	const inputHWBId = createUniqueId()
+	const inputCMYKId = createUniqueId()
+	let isHEXColorFocused = false
+	let isRGBColorFocused = false
+	let isHSLColorFocused = false
+	let isHSVColorFocused = false
+	let isHWBColorFocused = false
+	let isCMYKColorFocused = false
+	let toastCopiedRef: HTMLDivElement
 
 	function command(type: Commands, ...args: unknown[]): unknown {
 		return props.command(type, ...args)
 	}
 
-	function update_color(): void {
-		if (!is_hex_color_focus ) set_hex_color (get_hex_color())
-		if (!is_rgb_color_focus ) set_rgb_color (get_rgb_color())
-		if (!is_hsl_color_focus ) set_hsl_color (get_hsl_color())
-		if (!is_hsv_color_focus ) set_hsv_color (get_hsv_color())
-		if (!is_hwb_color_focus ) set_hwb_color (get_hwb_color())
-		if (!is_cmyk_color_focus) set_cmyk_color(get_cmyk_color())
+	function updateColor(): void {
+		if (!isHEXColorFocused ) setHEXColor (getHEXColor())
+		if (!isRGBColorFocused ) setRGBColor (getRGBColor())
+		if (!isHSLColorFocused ) setHSLColor (getHSLColor())
+		if (!isHSVColorFocused ) setHSVColor (getHSVColor())
+		if (!isHWBColorFocused ) setHWBColor (getHWBColor())
+		if (!isCMYKColorFocused) setCMYKColor(getCMYKColor())
 	}
 
 	createEffect(() => {
-		update_color()
+		updateColor()
 	})
 
 	return (<div class={CSS.color_input}
 		onClick={ev => {
-			const button = document_active()!
-			if (!element_valid_target(
-				event_current_target(ev),
+			const button = documentActive()!
+			if (!elementValidTarget(
+				eventCurrentTarget(ev),
 				button,
-				el => element_tagname(el) == 'BUTTON'
+				el => elementTagName(el) == 'BUTTON'
 			)) return
 
-			const data_copy = element_dataset(button, 'copy')
-			if (data_copy) return promise_done(
-				navigator_clipboard_writetext(data_copy),
-				() => open_toast(ev, toast_copied_ref)
+			const data_copy = elementDataset(button, 'copy')
+			if (data_copy) return promiseDone(
+				navigatorClipboardWriteText(data_copy),
+				() => openToast(ev, toastCopiedRef)
 			)
 		}}
 		onFocusIn={ev => {
-			const target = event_target(ev) as HTMLInputElement
-			switch (element_id(target)) {
-				case input_hex_id: is_hex_color_focus = true; break
-				case input_rgb_id: is_rgb_color_focus = true; break
-				case input_hsl_id: is_hsl_color_focus = true; break
-				case input_hsv_id: is_hsv_color_focus = true; break
-				case input_hwb_id: is_hwb_color_focus = true; break
-				case input_cmyk_id: is_cmyk_color_focus = true; break
+			const target = eventTarget(ev) as HTMLInputElement
+			switch (elementId(target)) {
+			case inputHEXId: isHEXColorFocused = true; break
+			case inputRGBId: isRGBColorFocused = true; break
+			case inputHSLId: isHSLColorFocused = true; break
+			case inputHSVId: isHSVColorFocused = true; break
+			case inputHWBId: isHWBColorFocused = true; break
+			case inputCMYKId: isCMYKColorFocused = true; break
 			}
 		}}
 		onFocusOut={ev => {
-			const target = event_target(ev) as HTMLInputElement
-			switch (element_id(target)) {
-				case input_hex_id: {
-					set_hex_color(get_hex_color())
-					is_hex_color_focus = false
-					break
-				}
-				case input_rgb_id: {
-					set_rgb_color(get_rgb_color())
-					is_rgb_color_focus = false
-					break
-				}
-				case input_hsl_id: {
-					set_hsl_color(get_hsl_color())
-					is_hsl_color_focus = false
-					break
-				}
-				case input_hsv_id: {
-					set_hsv_color(get_hsv_color())
-					is_hsv_color_focus = false
-					break
-				}
-				case input_hwb_id: {
-					set_hwb_color(get_hwb_color())
-					is_hwb_color_focus = false
-					break
-				}
-				case input_cmyk_id: {
-					set_cmyk_color(get_cmyk_color())
-					is_cmyk_color_focus = false
-					break
-				}
+			const target = eventTarget(ev) as HTMLInputElement
+			switch (elementId(target)) {
+			case inputHEXId:
+				setHEXColor(getHEXColor())
+				isHEXColorFocused = false
+				break
+			case inputRGBId:
+				setRGBColor(getRGBColor())
+				isRGBColorFocused = false
+				break
+			case inputHSLId:
+				setHSLColor(getHSLColor())
+				isHSLColorFocused = false
+				break
+			case inputHSVId:
+				setHSVColor(getHSVColor())
+				isHSVColorFocused = false
+				break
+			case inputHWBId:
+				setHWBColor(getHWBColor())
+				isHWBColorFocused = false
+				break
+			case inputCMYKId:
+				setCMYKColor(getCMYKColor())
+				isCMYKColorFocused = false
+				break
 			}
 		}}>
 		<div style={{
-			"background-color": hsl_to_hex(input())
+			"background-color": colorHslToHex(input())
 		}}></div>
 		<Toast
-			ref={r => toast_copied_ref = r}
-			c_leading={<Icon c_code={ICON_COPY}/>}>
+			ref={r => toastCopiedRef = r}
+			c:leading={<Icon c:code={ICON_COPY}/>}>
 			Copied to clipboard
 		</Toast>
 		<Tooltip>
 			<TextField
-				c_label="Hex"
-				id={input_hex_id}
-				value={hex_color()}
-				readOnly={read_only()}
+				c:label="Hex"
+				id={inputHEXId}
+				value={hexColor()}
+				readOnly={readOnly()}
 				onInput={(ev) => {
-					let text = event_current_target(ev).value
-					text = string_trim(text)
-					text = string_replace(text, /[^0-9A-Fa-f]/g, '')
-					if (string_length(text) == 0) text = '0'
+					let text = eventCurrentTarget(ev).value
+					text = stringTrim(text)
+					text = stringReplace(text, /[^0-9A-Fa-f]/g, '')
+					if (stringLength(text) == 0) text = '0'
 
-					text = string_padstart(text, 6, '0')
-					if (string_length(text) > 6) text = string_substring(text, 0, 6)
+					text = stringPadStart(text, 6, '0')
+					if (stringLength(text) > 6) text = stringSubstring(text, 0, 6)
 
 					text = '#' + text
-					command(Commands.update_input, hex_to_hsl(text as HEXColor))
+					command(Commands.updateInput, colorHexToHsl(text as HEXColor))
 				}}
-				c_trailing={<TextFieldButton
+				c:trailing={<TextFieldButton
 					data-tooltip="Copy"
-					data-copy={get_hex_color()}>
-					<Icon c_code={ICON_COPY}/>
+					data-copy={getHEXColor()}>
+					<Icon c:code={ICON_COPY}/>
 				</TextFieldButton>}
 			/>
 			<TextField
-				readOnly={read_only()}
-				c_label="RGB"
-				id={input_rgb_id}
-				value={rgb_color()}
+				readOnly={readOnly()}
+				c:label="RGB"
+				id={inputRGBId}
+				value={rgbColor()}
 				onInput={(ev) => {
-					let text = event_current_target(ev).value
-					text = string_trim(text)
-					text = string_replace(text, /[^\d,]/g, '')
-					const rgb_array: number[] = array_map(
-						string_split(text, ','),
-						v => math_clamp(number_safe(number_parse(v, true), 0), 0, 0xff)
+					let text = eventCurrentTarget(ev).value
+					text = stringTrim(text)
+					text = stringReplace(text, /[^\d,]/g, '')
+					const rgb_array: number[] = arrayMap(
+						stringSplit(text, ','),
+						v => mathClamp(numberSafe(numberParse(v, true), 0), 0, 0xff)
 					)
-					while (array_length(rgb_array) < 3) {
-						array_push(rgb_array, 0)
+					while (arrayLength(rgb_array) < 3) {
+						arrayPush(rgb_array, 0)
 					}
 
 					const r = rgb_array[0] / 0xff
 					const g = rgb_array[1] / 0xff
 					const b = rgb_array[2] / 0xff
-					command(Commands.update_input, rgb_to_hsl({r, g, b}))
+					command(Commands.updateInput, colorRgbToHsl({r, g, b}))
 				}}
-				c_trailing={<TextFieldButton
+				c:trailing={<TextFieldButton
 					data-tooltip="Copy"
-					data-copy={get_rgb_color()}>
-					<Icon c_code={ICON_COPY}/>
+					data-copy={getRGBColor()}>
+					<Icon c:code={ICON_COPY}/>
 				</TextFieldButton>}
 			/>
 			<TextField
-				readOnly={read_only()}
-				c_label="HSL"
-				id={input_hsl_id}
-				value={hsl_color()}
+				readOnly={readOnly()}
+				c:label="HSL"
+				id={inputHSLId}
+				value={hslColor()}
 				onInput={(ev) => {
-					let text = event_current_target(ev).value
-					text = string_trim(text)
-					text = string_replace(text, /[^\d,]/g, '')
-					const hsl_array: number[] = array_map(
-						string_split(text, ','),
-						v => number_safe(number_parse(v, true), 0)
+					let text = eventCurrentTarget(ev).value
+					text = stringTrim(text)
+					text = stringReplace(text, /[^\d,]/g, '')
+					const hsl_array: number[] = arrayMap(
+						stringSplit(text, ','),
+						v => numberSafe(numberParse(v, true), 0)
 					)
-					while (array_length(hsl_array) < 3) {
-						array_push(hsl_array, 0)
+					while (arrayLength(hsl_array) < 3) {
+						arrayPush(hsl_array, 0)
 					}
 
-					const h = math_clamp(hsl_array[0], 0, 360) / 360
-					const s = math_clamp(hsl_array[1], 0, 100) / 100
-					const l = math_clamp(hsl_array[2], 0, 100) / 100
-					command(Commands.update_input, {h, s, l} satisfies HSLColor)
+					const h = mathClamp(hsl_array[0], 0, 360) / 360
+					const s = mathClamp(hsl_array[1], 0, 100) / 100
+					const l = mathClamp(hsl_array[2], 0, 100) / 100
+					command(Commands.updateInput, {h, s, l} satisfies HSLColor)
 				}}
-				c_trailing={<TextFieldButton
+				c:trailing={<TextFieldButton
 					data-tooltip="Copy"
-					data-copy={get_hsl_color()}>
-					<Icon c_code={ICON_COPY}/>
+					data-copy={getHSLColor()}>
+					<Icon c:code={ICON_COPY}/>
 				</TextFieldButton>}
 			/>
 			<TextField
-				readOnly={read_only()}
-				c_label="HSV"
-				id={input_hsv_id}
-				value={hsv_color()}
+				readOnly={readOnly()}
+				c:label="HSV"
+				id={inputHSVId}
+				value={hsvColor()}
 				onInput={(ev) => {
-					let text = event_current_target(ev).value
-					text = string_trim(text)
-					text = string_replace(text, /[^\d,]/g, '')
-					const hsv_array: number[] = array_map(
-						string_split(text, ','),
-						v => number_safe(number_parse(v, true), 0)
+					let text = eventCurrentTarget(ev).value
+					text = stringTrim(text)
+					text = stringReplace(text, /[^\d,]/g, '')
+					const hsv_array: number[] = arrayMap(
+						stringSplit(text, ','),
+						v => numberSafe(numberParse(v, true), 0)
 					)
-					while (array_length(hsv_array) < 3) {
-						array_push(hsv_array, 0)
+					while (arrayLength(hsv_array) < 3) {
+						arrayPush(hsv_array, 0)
 					}
 
-					const h = math_clamp(hsv_array[0], 0, 360) / 360
-					const s = math_clamp(hsv_array[1], 0, 100) / 100
-					const v = math_clamp(hsv_array[2], 0, 100) / 100
-					command(Commands.update_input, hsv_to_hsl({h, s, v}))
+					const h = mathClamp(hsv_array[0], 0, 360) / 360
+					const s = mathClamp(hsv_array[1], 0, 100) / 100
+					const v = mathClamp(hsv_array[2], 0, 100) / 100
+					command(Commands.updateInput, colorHsvToHsl({h, s, v}))
 				}}
-				c_trailing={<TextFieldButton
+				c:trailing={<TextFieldButton
 					data-tooltip="Copy"
-					data-copy={get_hsv_color()}>
-					<Icon c_code={ICON_COPY}/>
+					data-copy={getHSVColor()}>
+					<Icon c:code={ICON_COPY}/>
 				</TextFieldButton>}
 			/>
 			<TextField
-				readOnly={read_only()}
-				c_label="HWB"
-				id={input_hwb_id}
-				value={hwb_color()}
+				readOnly={readOnly()}
+				c:label="HWB"
+				id={inputHWBId}
+				value={HWBColor()}
 				onInput={(ev) => {
-					let text = event_current_target(ev).value
-					text = string_trim(text)
-					text = string_replace(text, /[^\d,]/g, '')
-					const hwb_array: number[] = array_map(
-						string_split(text, ','),
-						v => number_safe(number_parse(v, true), 0)
+					let text = eventCurrentTarget(ev).value
+					text = stringTrim(text)
+					text = stringReplace(text, /[^\d,]/g, '')
+					const hwb_array: number[] = arrayMap(
+						stringSplit(text, ','),
+						v => numberSafe(numberParse(v, true), 0)
 					)
-					while (array_length(hwb_array) < 3) {
-						array_push(hwb_array, 0)
+					while (arrayLength(hwb_array) < 3) {
+						arrayPush(hwb_array, 0)
 					}
 
-					const h = math_clamp(hwb_array[0], 0, 360) / 360
-					const w = math_clamp(hwb_array[1], 0, 100) / 100
-					const b = math_clamp(hwb_array[2], 0, 100 - (w * 100)) / 100
-					command(Commands.update_input, hwb_to_hsl({h, w, b}))
+					const h = mathClamp(hwb_array[0], 0, 360) / 360
+					const w = mathClamp(hwb_array[1], 0, 100) / 100
+					const b = mathClamp(hwb_array[2], 0, 100 - (w * 100)) / 100
+					command(Commands.updateInput, colorHwbToHsl({h, w, b}))
 				}}
-				c_trailing={<TextFieldButton
+				c:trailing={<TextFieldButton
 					data-tooltip="Copy"
-					data-copy={get_hwb_color()}>
-					<Icon c_code={ICON_COPY}/>
+					data-copy={getHWBColor()}>
+					<Icon c:code={ICON_COPY}/>
 				</TextFieldButton>}
 			/>
 			<TextField
-				readOnly={read_only()}
-				c_label="CMYK"
-				id={input_cmyk_id}
-				value={cmyk_color()}
+				readOnly={readOnly()}
+				c:label="CMYK"
+				id={inputCMYKId}
+				value={cmykColor()}
 				onInput={(ev) => {
-					let text = event_current_target(ev).value
-					text = string_trim(text)
-					text = string_replace(text, /[^\d,]/g, '')
-					const hwb_array: number[] = array_map(
-						string_split(text, ','),
-						v => number_safe(number_parse(v, true), 0)
+					let text = eventCurrentTarget(ev).value
+					text = stringTrim(text)
+					text = stringReplace(text, /[^\d,]/g, '')
+					const hwb_array: number[] = arrayMap(
+						stringSplit(text, ','),
+						v => numberSafe(numberParse(v, true), 0)
 					)
-					while (array_length(hwb_array) < 4) {
-						array_push(hwb_array, 0)
+					while (arrayLength(hwb_array) < 4) {
+						arrayPush(hwb_array, 0)
 					}
 
-					const c = math_clamp(hwb_array[0], 0, 100) / 100
-					const m = math_clamp(hwb_array[1], 0, 100) / 100
-					const y = math_clamp(hwb_array[2], 0, 100) / 100
-					const k = math_clamp(hwb_array[3], 0, 100) / 100
-					command(Commands.update_input, cmyk_to_hsl({c, m, y, k}))
+					const c = mathClamp(hwb_array[0], 0, 100) / 100
+					const m = mathClamp(hwb_array[1], 0, 100) / 100
+					const y = mathClamp(hwb_array[2], 0, 100) / 100
+					const k = mathClamp(hwb_array[3], 0, 100) / 100
+					command(Commands.updateInput, colorCmykToHsl({c, m, y, k}))
 				}}
-				c_trailing={<TextFieldButton
+				c:trailing={<TextFieldButton
 					data-tooltip="Copy"
-					data-copy={get_cmyk_color()}>
-					<Icon c_code={ICON_COPY}/>
+					data-copy={getCMYKColor()}>
+					<Icon c:code={ICON_COPY}/>
 				</TextFieldButton>}
 			/>
 		</Tooltip>

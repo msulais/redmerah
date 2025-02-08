@@ -1,6 +1,6 @@
 export enum Commands {
 	/** @param {Pages} page `Pages` */
-	change_page
+	updatePage
 }
 
 export enum Pages {

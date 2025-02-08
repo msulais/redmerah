@@ -5,19 +5,19 @@ import { RootAttributes } from "@/enums/attributes"
 import { CornerData } from "@/enums/corner"
 import { LocalStorageKeys } from "@/enums/storage"
 import { ThemeData } from "@/enums/theme"
-import { storage_set, storage_get } from "@/utils/storage"
-import { attr_set } from "@/utils/attributes"
-import { timeout_set, wait } from "@/utils/timeout"
+import { storageSet, storageGet } from "@/utils/storage"
+import { attrSet } from "@/utils/attributes"
+import { timeTimerSet } from "@/utils/time"
 import { RoutesLinks, ExternalLinks } from "@/enums/links"
-import { url_encode, url_origin } from "@/utils/url"
-import { document_active, document_root } from "@/utils/document"
-import { navigator_share } from "@/utils/navigator"
-import { date_year } from "@/utils/datetime"
-import { event_current_target, event_target } from "@/utils/event"
-import { number_safe } from "@/utils/number"
-import { app_qr_code as app } from "@/constants/apps"
-import { valid_enum_value } from "@/utils/object"
-import { element_valid_target, element_tagname, element_id, element_dataset } from "@/utils/element"
+import { urlEncode, urlOrigin } from "@/utils/url"
+import { documentActive, documentRoot } from "@/utils/document"
+import { navigatorShare } from "@/utils/navigator"
+import { dateYear } from "@/utils/datetime"
+import { eventCurrentTarget, eventTarget } from "@/utils/event"
+import { numberSafe } from "@/utils/number"
+import { APP_QR_CODE as app } from "@/constants/apps"
+import { validEnumValue } from "@/utils/object"
+import { elementValidTarget, elementTagName, elementId, elementDataset } from "@/utils/element"
 import { Commands, CopyFileType, DownloadFileType, EncodingMode, ErrorCorrectionLevel, Pages } from "./_enums"
 import { ICON_APPS, ICON_ARROW_DOWNLOAD, ICON_CHAT, ICON_CIRCLE, ICON_COPY, ICON_ERROR_CIRCLE_SETTINGS, ICON_GIFT, ICON_IMAGE, ICON_IMAGE_CIRCLE, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_MAXIMIZE, ICON_MORE_VERTICAL, ICON_NUMBER_ROW, ICON_RECEIPT, ICON_SETTINGS, ICON_SHARE_ANDROID, ICON_SHIELD_CHECKMARK, ICON_SQUARE, ICON_TEARDROP_BOTTOM_RIGHT, ICON_TRANSLATE, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from "@/constants/icons"
 import logo_redmerah from '@/assets/logo.svg'
@@ -26,330 +26,320 @@ import Tooltip from "@/components/Tooltip"
 import Icon from "@/components/Icon"
 import { IconButton } from "@/components/Button"
 import { NumberTextField } from "@/components/TextField"
-import Menu, { MenuDivider, MenuItem, MenuHeader, open_menu, LinkMenuItem, SubMenu, close_submenu, close_menu, SubMenuItem, SwitchMenuItem } from "@/components/Menu"
-import ColorPicker, { ColorPickerPosition, open_colorpicker } from "@/components/ColorPicker"
+import Menu, { MenuDivider, MenuItem, MenuHeader, openMenu, LinkMenuItem, SubMenu, closeSubMenu, closeMenu, SubMenuItem, SwitchMenuItem } from "@/components/Menu"
+import ColorPicker, { ColorPickerPosition, openColorPicker } from "@/components/ColorPicker"
 import AppBar from "@/components/AppBar"
 import CSSAnimation from "@/styles/animation.module.scss"
 
 const _: VoidComponent<{
 	settings: Settings
 	command: (type: Commands, ...args: unknown[]) => unknown
-	is_generate_error: boolean
+	isGenerateError: boolean
 	page: Pages
 }> = (props) => {
-	const root = document_root()
-	const [is_menu_info_open, set_is_menu_info_open] = createSignal<boolean>(false)
-	const [is_menu_settings_open, set_is_menu_settings_open] = createSignal<boolean>(false)
-	const [is_menu_moreactions_open, set_is_menu_moreactions_open] = createSignal<boolean>(false)
-	const [is_submenu_themesettings_open, set_is_submenu_themesettings_open] = createSignal<boolean>(false)
-	const [is_submenu_cornersettings_open, set_is_submenu_cornersettings_open] = createSignal<boolean>(false)
-	const [is_submenu_errorcorrectionlevelsettings_open, set_is_submenu_errorcorrectionlevelsettings_open] = createSignal<boolean>(false)
-	const [is_submenu_encodingmodesettings_ref_open, set_is_submenu_encodingmodesettings_open] = createSignal<boolean>(false)
-	const [is_colorpicker_color_open, set_is_colorpicker_color_open] = createSignal<boolean>(false)
-	const [is_colorpicker_backgroundcolor_open, set_is_colorpicker_backgroundcolor_open] = createSignal<boolean>(false)
-	const [is_submenu_downloadmoreactions_open, set_is_submenu_downloadmoreactions_open] = createSignal<boolean>(false)
-	const [is_submenu_copymoreactions_open, set_is_submenu_copymoreactions_open] = createSignal<boolean>(false)
-	const [theme, set_theme] = createSignal<ThemeData>(ThemeData.system)
-	const [corner, set_corner] = createSignal<CornerData>(CornerData.round)
+	const root = documentRoot()
+	const [isMenuInfoOpen, setIsMenuInfoOpen] = createSignal<boolean>(false)
+	const [isMenuSettingsOpen, setIsMenuSettingsOpen] = createSignal<boolean>(false)
+	const [isMenuMoreActionsOpen, setIsMenuMoreActionsOpen] = createSignal<boolean>(false)
+	const [isSubMenuSettings_themeOpen, setIsSubMenuSettings_themeOpen] = createSignal<boolean>(false)
+	const [isSubMenuSettings_cornerOpen, setIsSubMenuSettings_cornerOpen] = createSignal<boolean>(false)
+	const [isSubMenuSettings_errorCorrectionLevelOpen, setIsSubMenuSettings_errorCorrectionLevelOpen] = createSignal<boolean>(false)
+	const [isSubMenuSettings_encodingModeOpen, setIsSubMenuSettings_encodingModeOpen] = createSignal<boolean>(false)
+	const [isColorPickerColorOpen, setIsColorPickerColorOpen] = createSignal<boolean>(false)
+	const [isColorPickerBackgroundColorOpen, setIsColorPickerBackgroundColorOpen] = createSignal<boolean>(false)
+	const [isSubMenuMoreActions_downloadOpen, setIsSubMenuMoreActions_downloadOpen] = createSignal<boolean>(false)
+	const [isSubMenuMoreActions_copyOpen, setIsSubMenuMoreActions_copyOpen] = createSignal<boolean>(false)
+	const [theme, setTheme] = createSignal<ThemeData>(ThemeData.system)
+	const [corner, setCorner] = createSignal<CornerData>(CornerData.round)
 	const settings = createMemo(() => props.settings)
-	const button_appbar_info_id = createUniqueId()
-	const button_appbar_settings_id = createUniqueId()
-	const button_appbar_moreactions_id = createUniqueId()
-	let menu_info_ref: HTMLDialogElement
-	let menu_settings_ref: HTMLDialogElement
-	let menu_moreactions_ref: HTMLDialogElement
-	let submenu_downloadmoreactions_ref: HTMLDivElement
-	let submenu_copymoreactions_ref: HTMLDivElement
-	let submenu_themesettings_ref: HTMLDivElement
-	let submenu_cornersettings_ref: HTMLDivElement
-	let submenu_errorcorrectionlevelsettings_ref: HTMLDivElement
-	let submenu_encodingmodesettings_ref: HTMLDivElement
-	let colorpicker_color_ref: HTMLDialogElement
-	let colorpicker_backgroundcolor_ref: HTMLDialogElement
+	const buttonAppBar_infoId = createUniqueId()
+	const buttonAppBar_settingsId = createUniqueId()
+	const buttonAppBar_moreActionsId = createUniqueId()
+	let menuInfoRef: HTMLDialogElement
+	let menuSettingsRef: HTMLDialogElement
+	let menuMoreActionsRef: HTMLDialogElement
+	let subMenuMoreActions_downloadRef: HTMLDivElement
+	let subMenuMoreActions_copyRef: HTMLDivElement
+	let subMenuSettings_themeRef: HTMLDivElement
+	let subMenuSettings_cornerRef: HTMLDivElement
+	let subMenuSettings_errorCorrectionLevelRef: HTMLDivElement
+	let subMenuSettings_encodingModeRef: HTMLDivElement
+	let colorPickerColorRef: HTMLDialogElement
+	let colorPickerBackgroundColorRef: HTMLDialogElement
 
 	function command(type: Commands, ...args: unknown[]): unknown {
 		return props.command(type, ...args)
 	}
 
-	async function change_theme(theme: ThemeData): Promise<void> {
-		set_theme(theme)
-		attr_set(root, RootAttributes.theme, theme)
-		storage_set(LocalStorageKeys.theme, theme)
-		close_submenu(submenu_themesettings_ref)
-		await wait(200)
-		close_menu(menu_settings_ref)
+	function updateTheme(theme: ThemeData): void {
+		setTheme(theme)
+		attrSet(root, RootAttributes.theme, theme)
+		storageSet(LocalStorageKeys.theme, theme)
+		closeSubMenu(subMenuSettings_themeRef)
+		closeMenu(menuSettingsRef)
 	}
 
-	async function change_corner(corner: CornerData): Promise<void> {
-		set_corner(corner)
-		attr_set(root, RootAttributes.corner, corner)
-		storage_set(LocalStorageKeys.corner, corner)
-		close_submenu(submenu_cornersettings_ref)
-		await wait(200)
-		close_menu(menu_settings_ref)
+	function updateCorner(corner: CornerData): void {
+		setCorner(corner)
+		attrSet(root, RootAttributes.corner, corner)
+		storageSet(LocalStorageKeys.corner, corner)
+		closeSubMenu(subMenuSettings_cornerRef)
+		closeMenu(menuSettingsRef)
 	}
 
-	async function change_encoding_mode(mode: EncodingMode): Promise<void> {
-		command(Commands.change_settings_encodingmode, mode)
-		close_submenu(submenu_encodingmodesettings_ref)
-		await wait(200)
-		close_menu(menu_settings_ref)
+	function updateEncodingMode(mode: EncodingMode): void {
+		command(Commands.updateSettingsEncodingMode, mode)
+		closeSubMenu(subMenuSettings_encodingModeRef)
+		closeMenu(menuSettingsRef)
 	}
 
-	async function change_error_correction_level(level: ErrorCorrectionLevel): Promise<void> {
-		command(Commands.change_settings_errorcorrectionlevel, level)
-		close_submenu(submenu_errorcorrectionlevelsettings_ref)
-		await wait(200)
-		close_menu(menu_settings_ref)
+	function updateErrorCorrectionlevel(level: ErrorCorrectionLevel): void {
+		command(Commands.updateSettingsErrorCorrectionLevel, level)
+		closeSubMenu(subMenuSettings_errorCorrectionLevelRef)
+		closeMenu(menuSettingsRef)
 	}
 
-	function init_theme(): void {
-		const theme = storage_get(LocalStorageKeys.theme)
+	function initTheme(): void {
+		const theme = storageGet(LocalStorageKeys.theme)
 
-		if (theme && valid_enum_value(theme, ThemeData)) {
-			attr_set(root, RootAttributes.theme, theme)
-			set_theme(theme as ThemeData)
+		if (theme && validEnumValue(theme, ThemeData)) {
+			attrSet(root, RootAttributes.theme, theme)
+			setTheme(theme as ThemeData)
 		}
 	}
 
-	function init_corner(): void {
-		const corner = storage_get(LocalStorageKeys.corner)
+	function initCorner(): void {
+		const corner = storageGet(LocalStorageKeys.corner)
 
-		if (corner && valid_enum_value(corner, CornerData)) {
-			attr_set(root, RootAttributes.corner, corner)
-			set_corner(corner as CornerData)
+		if (corner && validEnumValue(corner, CornerData)) {
+			attrSet(root, RootAttributes.corner, corner)
+			setCorner(corner as CornerData)
 		}
 	}
 
 	onMount(() => {
-		init_theme()
-		init_corner()
+		initTheme()
+		initCorner()
 	})
 
 	const Menus: VoidComponent = () => {
-		const input_settings_margin_id = createUniqueId()
-		const input_settings_version_id = createUniqueId()
-		const input_settings_autoversion_id = createUniqueId()
-		const button_info_share_id = createUniqueId()
-		const button_settings_color_id = createUniqueId()
-		const button_settings_backgroundcolor_id = createUniqueId()
+		const inputSettings_marginId = createUniqueId()
+		const inputSettings_versionId = createUniqueId()
+		const inputSettings_autoVersionId = createUniqueId()
+		const buttonInfo_shareId = createUniqueId()
+		const buttonSettings_colorId = createUniqueId()
+		const buttonSettings_backgroundColorId = createUniqueId()
 		return (<>
 			<Menu
 				onClick={(ev) => {
-					const button = document_active()!
-					if (!element_valid_target(
-						event_current_target(ev),
+					const button = documentActive()!
+					if (!elementValidTarget(
+						eventCurrentTarget(ev),
 						button,
 						el => {
-							const tagname = element_tagname(el)
+							const tagname = elementTagName(el)
 							return tagname == 'BUTTON' || tagname == 'A'
 						}
 					)) return
 
-					switch (element_id(button)) {
-						case button_info_share_id:
-							navigator_share({
-								title: app.name,
-								text: app.name + ' v' + app.build_version,
-								url: url_origin() + app.link
-							})
-							break
+					switch (elementId(button)) {
+					case buttonInfo_shareId:
+						navigatorShare({
+							title: app.name,
+							text: app.name + ' v' + app.buildVersion,
+							url: urlOrigin() + app.link
+						})
+						break
 					}
 
-					close_menu(menu_info_ref)
+					closeMenu(menuInfoRef)
 				}}
 				style={{width: '200px'}}
-				ref={r => menu_info_ref = r}
-				c_on_toggleopen={(v) => set_is_menu_info_open(v)}>
+				ref={r => menuInfoRef = r}
+				c:onToggleOpen={(v) => setIsMenuInfoOpen(v)}>
 				<LinkMenuItem
 					href={RoutesLinks.home}
-					c_leading={<img src={logo_redmerah.src} width={16} alt='Redmerah logo'/>}>
+					c:leading={<img src={logo_redmerah.src} width={16} alt='Redmerah logo'/>}>
 					Redmerah
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={RoutesLinks.apps}
-					c_icon_code={ICON_APPS}>
+					c:iconCode={ICON_APPS}>
 					More apps
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={RoutesLinks.about}
-					c_icon_code={ICON_INFO}>
+					c:iconCode={ICON_INFO}>
 					About us
 				</LinkMenuItem>
 				<MenuDivider />
 				<LinkMenuItem
 					href={RoutesLinks.privacy}
-					c_icon_code={ICON_SHIELD_CHECKMARK}>
+					c:iconCode={ICON_SHIELD_CHECKMARK}>
 					Privacy policy
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={RoutesLinks.terms}
-					c_icon_code={ICON_RECEIPT}>
+					c:iconCode={ICON_RECEIPT}>
 					Terms & conditions
 				</LinkMenuItem>
 				<MenuDivider />
 				<MenuItem
-					id={button_info_share_id}
-					c_icon_code={ICON_SHARE_ANDROID}>
+					id={buttonInfo_shareId}
+					c:iconCode={ICON_SHARE_ANDROID}>
 					Share
 				</MenuItem>
 				<LinkMenuItem
-					href={'mailto:' + ExternalLinks.contact_email + '?subject=' + url_encode('Tasks')}
-					c_icon_code={ICON_CHAT}>
+					href={'mailto:' + ExternalLinks.contactEmail + '?subject=' + urlEncode('Tasks')}
+					c:iconCode={ICON_CHAT}>
 					Send feedback
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={ExternalLinks.donate}
-					c_new_tab
-					c_icon_code={ICON_GIFT}>
+					c:newTab
+					c:iconCode={ICON_GIFT}>
 					Donate
 				</LinkMenuItem>
-				<MenuHeader>&copy; {date_year(new Date())} Redmerah</MenuHeader>
+				<MenuHeader>&copy; {dateYear(new Date())} Redmerah</MenuHeader>
 			</Menu>
 			<Menu
-				ref={r => menu_settings_ref = r}
-				c_on_toggleopen={(v) => set_is_menu_settings_open(v)}
+				ref={r => menuSettingsRef = r}
+				c:onToggleOpen={(v) => setIsMenuSettingsOpen(v)}
 				onClick={ev => {
-					const button = document_active()!
-					if (!element_valid_target(
-						event_current_target(ev),
+					const button = documentActive()!
+					if (!elementValidTarget(
+						eventCurrentTarget(ev),
 						button,
 						el => {
-							const tagname = element_tagname(el)
+							const tagname = elementTagName(el)
 							return tagname == 'BUTTON' || tagname == 'A'
 						}
 					)) return
 
-					switch (element_id(button)) {
-						case button_settings_color_id: {
-							open_colorpicker(ev, colorpicker_color_ref, {
-								anchor: button,
-								position: ColorPickerPosition.left_center_to_bottom,
-								padding: 12,
-								gap: -4
-							})
-							break
-						}
-						case button_settings_backgroundcolor_id: {
-							open_colorpicker(ev, colorpicker_backgroundcolor_ref, {
-								anchor: button,
-								position: ColorPickerPosition.left_center_to_bottom,
-								padding: 12,
-								gap: -4
-							})
-							break
-						}
-						default: {
-							const data_theme = element_dataset(button, 'theme')
-							if (data_theme
-								&& valid_enum_value(data_theme, ThemeData)
-							) return change_theme(data_theme as ThemeData)
+					switch (elementId(button)) {
+					case buttonSettings_colorId:
+						openColorPicker(ev, colorPickerColorRef, {
+							anchor: button,
+							position: ColorPickerPosition.leftCenterToBottom,
+							padding: 12,
+							gap: -4
+						})
+						break
+					case buttonSettings_backgroundColorId:
+						openColorPicker(ev, colorPickerBackgroundColorRef, {
+							anchor: button,
+							position: ColorPickerPosition.leftCenterToBottom,
+							padding: 12,
+							gap: -4
+						})
+						break
+					default:
+						const dataTheme = elementDataset(button, 'theme')
+						if (dataTheme
+							&& validEnumValue(dataTheme, ThemeData)
+						) return updateTheme(dataTheme as ThemeData)
 
-							const data_corner = element_dataset(button, 'corner')
-							if (data_corner
-								&& valid_enum_value(data_corner, CornerData)
-							) return change_corner(data_corner as CornerData)
+						const dataCorner = elementDataset(button, 'corner')
+						if (dataCorner
+							&& validEnumValue(dataCorner, CornerData)
+						) return updateCorner(dataCorner as CornerData)
 
-							const data_ecl = element_dataset(button, 'ecl')
-							if (data_ecl
-								&& valid_enum_value(data_ecl, ErrorCorrectionLevel)
-							) return change_error_correction_level(data_ecl as ErrorCorrectionLevel)
+						const dataEcl = elementDataset(button, 'ecl')
+						if (dataEcl
+							&& validEnumValue(dataEcl, ErrorCorrectionLevel)
+						) return updateErrorCorrectionlevel(dataEcl as ErrorCorrectionLevel)
 
-							const data_encoding = element_dataset(button, 'encoding')
-							if (data_encoding
-								&& valid_enum_value(data_encoding, EncodingMode)
-							) return change_encoding_mode(data_encoding as EncodingMode)
-						}
+						const dataEncoding = elementDataset(button, 'encoding')
+						if (dataEncoding
+							&& validEnumValue(dataEncoding, EncodingMode)
+						) return updateEncodingMode(dataEncoding as EncodingMode)
 					}
 				}}
 				onFocusOut={ev => {
-					const target = event_target(ev) as HTMLInputElement
-					switch (element_id(target)) {
-						case input_settings_margin_id: {
-							command(
-								Commands.change_settings_margin,
-								number_safe(target.valueAsNumber, settings().margin)
-							)
-							break
-						}
-						case input_settings_version_id: {
-							command(
-								Commands.change_settings_version,
-								number_safe(target.valueAsNumber, settings().version ?? 1)
-							)
-							break
-						}
+					const target = eventTarget(ev) as HTMLInputElement
+					switch (elementId(target)) {
+					case inputSettings_marginId:
+						command(
+							Commands.updateSettingsMargin,
+							numberSafe(target.valueAsNumber, settings().margin)
+						)
+						break
+					case inputSettings_versionId:
+						command(
+							Commands.updateSettingsVersion,
+							numberSafe(target.valueAsNumber, settings().version ?? 1)
+						)
+						break
 					}
 				}}
 				onChange={ev => {
-					const target = event_target(ev) as HTMLInputElement
-					switch (element_id(target)) {
-						case input_settings_autoversion_id: {
-							command(
-								Commands.change_settings_version,
-								target.checked? null : 1
-							)
-							break
-						}
+					const target = eventTarget(ev) as HTMLInputElement
+					switch (elementId(target)) {
+					case inputSettings_autoVersionId:
+						command(
+							Commands.updateSettingsVersion,
+							target.checked? null : 1
+						)
+						break
 					}
 				}}>
 				<SubMenu
-					ref={r => submenu_themesettings_ref = r}
-					c_on_toggleopen={v => set_is_submenu_themesettings_open(v)}
-					c_item={<SubMenuItem
-						c_focused={is_submenu_themesettings_open()}
-						c_icon_code={ICON_WEATHER_SUNNY}>
+					ref={r => subMenuSettings_themeRef = r}
+					c:onToggleOpen={v => setIsSubMenuSettings_themeOpen(v)}
+					c:item={<SubMenuItem
+						c:focused={isSubMenuSettings_themeOpen()}
+						c:iconCode={ICON_WEATHER_SUNNY}>
 						Theme
 					</SubMenuItem>}>
 					<MenuItem
-						c_selected={theme() == ThemeData.light}
-						c_icon_code={ICON_WEATHER_SUNNY}
+						c:selected={theme() == ThemeData.light}
+						c:iconCode={ICON_WEATHER_SUNNY}
 						data-theme={ThemeData.light}>
 						Light
 					</MenuItem>
 					<MenuItem
-						c_selected={theme() == ThemeData.dark}
-						c_icon_code={ICON_WEATHER_MOON}
+						c:selected={theme() == ThemeData.dark}
+						c:iconCode={ICON_WEATHER_MOON}
 						data-theme={ThemeData.dark}>
 						Dark
 					</MenuItem>
 					<MenuItem
-						c_selected={theme() == ThemeData.system}
-						c_icon_code={ICON_LAPTOP_SETTINGS}
+						c:selected={theme() == ThemeData.system}
+						c:iconCode={ICON_LAPTOP_SETTINGS}
 						data-theme={ThemeData.system}>
 						System theme
 					</MenuItem>
 				</SubMenu>
 				<SubMenu
-					ref={r => submenu_cornersettings_ref = r}
-					c_on_toggleopen={v => set_is_submenu_cornersettings_open(v)}
-					c_item={<SubMenuItem
-						c_focused={is_submenu_cornersettings_open()}
-						c_icon_code={ICON_TEARDROP_BOTTOM_RIGHT}>
+					ref={r => subMenuSettings_cornerRef = r}
+					c:onToggleOpen={v => setIsSubMenuSettings_cornerOpen(v)}
+					c:item={<SubMenuItem
+						c:focused={isSubMenuSettings_cornerOpen()}
+						c:iconCode={ICON_TEARDROP_BOTTOM_RIGHT}>
 						Corner style
 					</SubMenuItem>}>
 					<MenuItem
-						c_selected={corner() == CornerData.sharp}
-						c_icon_code={ICON_MAXIMIZE}
+						c:selected={corner() == CornerData.sharp}
+						c:iconCode={ICON_MAXIMIZE}
 						data-corner={CornerData.sharp}>
 						Sharp
 					</MenuItem>
 					<MenuItem
-						c_selected={corner() == CornerData.semi_round}
-						c_icon_code={ICON_SQUARE}
-						data-corner={CornerData.semi_round}>
+						c:selected={corner() == CornerData.semiRound}
+						c:iconCode={ICON_SQUARE}
+						data-corner={CornerData.semiRound}>
 						Semi round
 					</MenuItem>
 					<MenuItem
-						c_selected={corner() == CornerData.round}
-						c_icon_code={ICON_TEARDROP_BOTTOM_RIGHT}
+						c:selected={corner() == CornerData.round}
+						c:iconCode={ICON_TEARDROP_BOTTOM_RIGHT}
 						data-corner={CornerData.round}>
 						Round
 					</MenuItem>
 					<MenuItem
-						c_selected={corner() == CornerData.full_round}
-						c_icon_code={ICON_CIRCLE}
-						data-corner={CornerData.full_round}>
+						c:selected={corner() == CornerData.fullRound}
+						c:iconCode={ICON_CIRCLE}
+						data-corner={CornerData.fullRound}>
 						Full round
 					</MenuItem>
 				</SubMenu>
@@ -357,128 +347,128 @@ const _: VoidComponent<{
 					<MenuDivider/>
 					<MenuHeader>QR Code generator</MenuHeader>
 					<SubMenu
-						ref={r => submenu_errorcorrectionlevelsettings_ref = r}
-						c_on_toggleopen={isOpen => set_is_submenu_errorcorrectionlevelsettings_open(isOpen)}
-						c_item={<SubMenuItem
-							c_focused={is_submenu_errorcorrectionlevelsettings_open()}
-							c_icon_code={ICON_ERROR_CIRCLE_SETTINGS}>
+						ref={r => subMenuSettings_errorCorrectionLevelRef = r}
+						c:onToggleOpen={isOpen => setIsSubMenuSettings_errorCorrectionLevelOpen(isOpen)}
+						c:item={<SubMenuItem
+							c:focused={isSubMenuSettings_errorCorrectionLevelOpen()}
+							c:iconCode={ICON_ERROR_CIRCLE_SETTINGS}>
 							Error correction level
 						</SubMenuItem>}>
 						<MenuItem
-							c_trailing="~7%"
+							c:trailing="~7%"
 							data-ecl={ErrorCorrectionLevel.low}
-							c_selected={settings().error_correction_level == ErrorCorrectionLevel.low}>
+							c:selected={settings().errorCorrectionLevel == ErrorCorrectionLevel.low}>
 							Low
 						</MenuItem>
 						<MenuItem
-							c_trailing="~15%"
+							c:trailing="~15%"
 							data-ecl={ErrorCorrectionLevel.medium}
-							c_selected={settings().error_correction_level == ErrorCorrectionLevel.medium}>
+							c:selected={settings().errorCorrectionLevel == ErrorCorrectionLevel.medium}>
 							Medium
 						</MenuItem>
 						<MenuItem
-							c_trailing="~25%"
+							c:trailing="~25%"
 							data-ecl={ErrorCorrectionLevel.quartile}
-							c_selected={settings().error_correction_level == ErrorCorrectionLevel.quartile}>
+							c:selected={settings().errorCorrectionLevel == ErrorCorrectionLevel.quartile}>
 							Quartile
 						</MenuItem>
 						<MenuItem
-							c_trailing="~30%"
+							c:trailing="~30%"
 							data-ecl={ErrorCorrectionLevel.high}
-							c_selected={settings().error_correction_level == ErrorCorrectionLevel.high}>
+							c:selected={settings().errorCorrectionLevel == ErrorCorrectionLevel.high}>
 							High
 						</MenuItem>
 					</SubMenu>
 					<SubMenu
-						ref={r => submenu_encodingmodesettings_ref = r}
-						c_on_toggleopen={isOpen => set_is_submenu_encodingmodesettings_open(isOpen)}
-						c_item={<SubMenuItem
-							c_focused={is_submenu_encodingmodesettings_ref_open()}
-							c_icon_code={ICON_TRANSLATE}>
+						ref={r => subMenuSettings_encodingModeRef = r}
+						c:onToggleOpen={isOpen => setIsSubMenuSettings_encodingModeOpen(isOpen)}
+						c:item={<SubMenuItem
+							c:focused={isSubMenuSettings_encodingModeOpen()}
+							c:iconCode={ICON_TRANSLATE}>
 							Encoding mode
 						</SubMenuItem>}>
 						<MenuItem
 							data-encoding={EncodingMode.auto}
-							c_selected={settings().encoding_mode == EncodingMode.auto}>
+							c:selected={settings().encodingMode == EncodingMode.auto}>
 							Auto
 						</MenuItem>
 						<MenuItem
 							data-encoding={EncodingMode.alphanumeric}
-							c_selected={settings().encoding_mode == EncodingMode.alphanumeric}>
+							c:selected={settings().encodingMode == EncodingMode.alphanumeric}>
 							Alphanumeric
 						</MenuItem>
 						<MenuItem
 							data-encoding={EncodingMode.byte}
-							c_selected={settings().encoding_mode == EncodingMode.byte}>
+							c:selected={settings().encodingMode == EncodingMode.byte}>
 							Byte
 						</MenuItem>
 						<MenuItem
 							data-encoding={EncodingMode.kanji}
-							c_selected={settings().encoding_mode == EncodingMode.kanji}>
+							c:selected={settings().encodingMode == EncodingMode.kanji}>
 							Kanji
 						</MenuItem>
 						<MenuItem
 							data-encoding={EncodingMode.numeric}
-							c_selected={settings().encoding_mode == EncodingMode.numeric}>
+							c:selected={settings().encodingMode == EncodingMode.numeric}>
 							Numeric
 						</MenuItem>
 					</SubMenu>
 					<MenuItem
-						id={button_settings_color_id}
-						c_leading={<Icon
-							c_filled
+						id={buttonSettings_colorId}
+						c:leading={<Icon
+							c:filled
 							style={{
 								color: settings().color,
 								"border-radius": '999px',
 								border: '1px solid rgba(var(--g-color-on-surface), var(--g-opacity-border))'
 							}}
-							c_code={ICON_CIRCLE}
+							c:code={ICON_CIRCLE}
 						/>}
-						c_focused={is_colorpicker_color_open()}>
+						c:focused={isColorPickerColorOpen()}>
 						Color
 					</MenuItem>
 					<MenuItem
-						id={button_settings_backgroundcolor_id}
-						c_leading={<Icon
-							c_filled
+						id={buttonSettings_backgroundColorId}
+						c:leading={<Icon
+							c:filled
 							style={{
-								color: settings().background_color,
+								color: settings().backgroundColor,
 								"border-radius": '999px',
 								border: '1px solid rgba(var(--g-color-on-surface), var(--g-opacity-border))'
 							}}
-							c_code={ICON_CIRCLE}
+							c:code={ICON_CIRCLE}
 						/>}
-						c_focused={is_colorpicker_backgroundcolor_open()}>
+						c:focused={isColorPickerBackgroundColorOpen()}>
 						Background color
 					</MenuItem>
 					<Tooltip>
 						<div style={{padding: '4px 12px'}}>
 							<NumberTextField
-								c_label="Margin"
+								c:label="Margin"
 								min={0}
 								value={settings().margin}
-								c_integer_only
-								id={input_settings_margin_id}
+								c:integerOnly
+								id={inputSettings_marginId}
 							/>
 						</div>
 						<MenuDivider/>
 						<MenuHeader>QR Code version</MenuHeader>
 						<SwitchMenuItem
-							c_icon_code={ICON_NUMBER_ROW}
-							c_checked={settings().version == null}
-							c_attr_switch={{
-								id: input_settings_autoversion_id,
+							c:iconCode={ICON_NUMBER_ROW}
+							c:checked={settings().version == null}
+							c:attrSwitch={{
+								id: inputSettings_autoVersionId,
 							}}>
 							Auto version
 						</SwitchMenuItem>
 						<div style={{padding: '4px 12px 8px 12px'}}>
 							<NumberTextField
 								disabled={settings().version == null}
-								c_label="Version"
+								c:label="Version"
 								min={1}
 								max={40}
-								id={input_settings_version_id}
-								c_integer_only
+								id={inputSettings_versionId}
+								c:integerOnly
 								value={settings().version ?? 1}
 							/>
 						</div>
@@ -486,83 +476,83 @@ const _: VoidComponent<{
 				</Show>
 			</Menu>
 			<Menu
-				ref={r => menu_moreactions_ref = r}
-				c_on_toggleopen={v => set_is_menu_moreactions_open(v)}
+				ref={r => menuMoreActionsRef = r}
+				c:onToggleOpen={v => setIsMenuMoreActionsOpen(v)}
 				onClick={ev => {
-					const button = document_active()!
-					if (!element_valid_target(
-						event_current_target(ev),
+					const button = documentActive()!
+					if (!elementValidTarget(
+						eventCurrentTarget(ev),
 						button,
-						el => element_tagname(el) == 'BUTTON'
+						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					const data_download = element_dataset(button, 'download')
-					if (data_download
-						&& valid_enum_value(data_download, DownloadFileType)
+					const dataDownload = elementDataset(button, 'download')
+					if (dataDownload
+						&& validEnumValue(dataDownload, DownloadFileType)
 					) {
-						command(Commands.download_qrcode, data_download as DownloadFileType)
-						close_submenu(submenu_downloadmoreactions_ref)
-						timeout_set(() => close_menu(menu_moreactions_ref), 200)
+						command(Commands.downloadQRCode, dataDownload as DownloadFileType)
+						closeSubMenu(subMenuMoreActions_downloadRef)
+						timeTimerSet(() => closeMenu(menuMoreActionsRef), 200)
 						return
 					}
 
-					const data_copy = element_dataset(button, 'copy')
-					if (data_copy
-						&& valid_enum_value(data_copy, CopyFileType)
+					const dataCopy = elementDataset(button, 'copy')
+					if (dataCopy
+						&& validEnumValue(dataCopy, CopyFileType)
 					) {
-						command(Commands.copy_qrcode, ev, data_copy as CopyFileType)
-						close_submenu(submenu_copymoreactions_ref)
-						timeout_set(() => close_menu(menu_moreactions_ref), 200)
+						command(Commands.copyQRCode, ev, dataCopy as CopyFileType)
+						closeSubMenu(subMenuMoreActions_copyRef)
+						timeTimerSet(() => closeMenu(menuMoreActionsRef), 200)
 						return
 					}
 				}}>
 				<SubMenu
 					style={{width: '172px'}}
-					ref={r => submenu_downloadmoreactions_ref = r}
-					c_on_toggleopen={isOpen => set_is_submenu_downloadmoreactions_open(isOpen)}
-					c_item={<SubMenuItem
-						c_focused={is_submenu_downloadmoreactions_open()}
-						c_icon_code={ICON_ARROW_DOWNLOAD}>
+					ref={r => subMenuMoreActions_downloadRef = r}
+					c:onToggleOpen={isOpen => setIsSubMenuMoreActions_downloadOpen(isOpen)}
+					c:item={<SubMenuItem
+						c:focused={isSubMenuMoreActions_downloadOpen()}
+						c:iconCode={ICON_ARROW_DOWNLOAD}>
 						Download as
 					</SubMenuItem>}>
 					<MenuItem
-						c_icon_code={ICON_IMAGE}
+						c:iconCode={ICON_IMAGE}
 						data-download={DownloadFileType.png}
-						c_trailing="PNG">
+						c:trailing="PNG">
 						Image
 					</MenuItem>
 					<MenuItem
-						c_icon_code={ICON_IMAGE}
+						c:iconCode={ICON_IMAGE}
 						data-download={DownloadFileType.jpeg}
-						c_trailing="JPEG">
+						c:trailing="JPEG">
 						Image
 					</MenuItem>
 					<MenuItem
-						c_icon_code={ICON_IMAGE_CIRCLE}
+						c:iconCode={ICON_IMAGE_CIRCLE}
 						data-download={DownloadFileType.svg}
-						c_trailing="SVG">
+						c:trailing="SVG">
 						Vector
 					</MenuItem>
 				</SubMenu>
 				<SubMenu
 					style={{width: '172px'}}
-					ref={r => submenu_copymoreactions_ref = r}
-					c_on_toggleopen={isOpen => set_is_submenu_copymoreactions_open(isOpen)}
-					c_item={<SubMenuItem
-						c_focused={is_submenu_copymoreactions_open()}
-						c_icon_code={ICON_COPY}>
+					ref={r => subMenuMoreActions_copyRef = r}
+					c:onToggleOpen={isOpen => setIsSubMenuMoreActions_copyOpen(isOpen)}
+					c:item={<SubMenuItem
+						c:focused={isSubMenuMoreActions_copyOpen()}
+						c:iconCode={ICON_COPY}>
 						Copy as
 					</SubMenuItem>}>
 					<MenuItem
-						c_icon_code={ICON_IMAGE}
+						c:iconCode={ICON_IMAGE}
 						data-copy={CopyFileType.png}
-						c_trailing="PNG">
+						c:trailing="PNG">
 						Image
 					</MenuItem>
 					<MenuItem
-						c_icon_code={ICON_IMAGE_CIRCLE}
+						c:iconCode={ICON_IMAGE_CIRCLE}
 						data-copy={CopyFileType.svg}
-						c_trailing="SVG">
+						c:trailing="SVG">
 						Vector
 					</MenuItem>
 				</SubMenu>
@@ -572,66 +562,63 @@ const _: VoidComponent<{
 
 	const ColorPickers: VoidComponent = () => (<>
 		<ColorPicker
-			ref={r => colorpicker_color_ref = r}
-			c_color={settings().color}
-			c_on_toggleopen={isOpen => set_is_colorpicker_color_open(isOpen)}
-			c_on_select_color={color => command(Commands.change_settings_color, color)}
+			ref={r => colorPickerColorRef = r}
+			c:color={settings().color}
+			c:onToggleOpen={isOpen => setIsColorPickerColorOpen(isOpen)}
+			c:onSelectColor={color => command(Commands.updateSettingsColor, color)}
 		/>
 		<ColorPicker
-			ref={r => colorpicker_backgroundcolor_ref = r}
-			c_color={settings().background_color}
-			c_on_toggleopen={isOpen => set_is_colorpicker_backgroundcolor_open(isOpen)}
-			c_on_select_color={color => command(Commands.change_settings_backgroundcolor, color)}
+			ref={r => colorPickerBackgroundColorRef = r}
+			c:color={settings().backgroundColor}
+			c:onToggleOpen={isOpen => setIsColorPickerBackgroundColorOpen(isOpen)}
+			c:onSelectColor={color => command(Commands.updateSettingsBackgroundColor, color)}
 		/>
 	</>)
 
 	return (<>
 		<AppBar
-			c_leading={<img alt="QR Code logo" width={32} src={app.logo_url} />}
-			c_headline="QR Code"
+			c:leading={<img alt="QR Code logo" width={32} src={app.logoUrl} />}
+			c:headline="QR Code"
 			onClick={ev => {
-				const button = document_active()!
-				if (!element_valid_target(
-					event_current_target(ev),
+				const button = documentActive()!
+				if (!elementValidTarget(
+					eventCurrentTarget(ev),
 					button,
-					el => element_tagname(el) == 'BUTTON'
+					el => elementTagName(el) == 'BUTTON'
 				)) return
 
-				switch (element_id(button)) {
-					case button_appbar_info_id: {
-						open_menu(ev, menu_info_ref, {anchor: button})
-						break
-					}
-					case button_appbar_settings_id: {
-						open_menu(ev, menu_settings_ref, {anchor: button})
-						break
-					}
-					case button_appbar_moreactions_id: {
-						open_menu(ev, menu_moreactions_ref, {anchor: button})
-						break
-					}
+				switch (elementId(button)) {
+				case buttonAppBar_infoId:
+					openMenu(ev, menuInfoRef, {anchor: button})
+					break
+				case buttonAppBar_settingsId:
+					openMenu(ev, menuSettingsRef, {anchor: button})
+					break
+				case buttonAppBar_moreActionsId:
+					openMenu(ev, menuMoreActionsRef, {anchor: button})
+					break
 				}
 			}}
-			c_trailing={<Tooltip>
+			c:trailing={<Tooltip>
 				<IconButton
 					data-tooltip="Info"
-					c_focused={is_menu_info_open()}
-					c_code={ICON_INFO}
-					id={button_appbar_info_id}
+					c:focused={isMenuInfoOpen()}
+					c:code={ICON_INFO}
+					id={buttonAppBar_infoId}
 				/>
 				<IconButton
 					data-tooltip="Settings"
 					class={CSSAnimation.btn_rotate_icon}
-					c_focused={is_menu_settings_open()}
-					c_code={ICON_SETTINGS}
-					id={button_appbar_settings_id}
+					c:focused={isMenuSettingsOpen()}
+					c:code={ICON_SETTINGS}
+					id={buttonAppBar_settingsId}
 				/>
-				<Show when={!props.is_generate_error && props.page == Pages.generate}>
+				<Show when={!props.isGenerateError && props.page == Pages.generate}>
 					<IconButton
 						data-tooltip="More actions"
-						c_focused={is_menu_moreactions_open()}
-						c_code={ICON_MORE_VERTICAL}
-						id={button_appbar_moreactions_id}
+						c:focused={isMenuMoreActionsOpen()}
+						c:code={ICON_MORE_VERTICAL}
+						id={buttonAppBar_moreActionsId}
 					/>
 				</Show>
 			</Tooltip>}

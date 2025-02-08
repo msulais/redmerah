@@ -3,30 +3,30 @@ import { createSignal, createUniqueId, onMount, type VoidComponent } from "solid
 import Icon from "@/components/Icon"
 import { IconButton } from "@/components/Button"
 import Tooltip from "@/components/Tooltip"
-import Menu, { close_menu, MenuDivider, MenuHeader, MenuItem, open_menu } from "@/components/Menu"
-import { open_popovercolorpicker, PopoverColorPicker } from "@/components/ColorPicker"
+import Menu, { closeMenu, MenuDivider, MenuHeader, MenuItem, openMenu } from "@/components/Menu"
+import { openPopoverColorPicker, PopoverColorPicker } from "@/components/ColorPicker"
 import CSSAnimation from '@/styles/animation.module.scss'
 import CSS from './_index.module.scss'
 
 import type { HEXColor, RGBColor } from "@/types/color"
-import { storage_get, storage_set } from "@/utils/storage"
-import { generate_color, hex_to_rgb, is_color_valid } from "@/utils/color"
-import { attr_set, classlist_module } from "@/utils/attributes"
+import { storageGet, storageSet } from "@/utils/storage"
+import { colorGeneratePalette, colorHexToRgb, colorIsValid } from "@/utils/color"
+import { attrSet, attrClassListModule } from "@/utils/attributes"
 import { ExternalLinks, RoutesLinks } from "@/enums/links"
 import { LocalStorageKeys } from "@/enums/storage"
 import { RootAttributes } from "@/enums/attributes"
-import { element_closest, element_by_id, element_id } from "@/utils/element"
+import { elementClosest, elementById, elementId, elementDataset } from "@/utils/element"
 import { ElementIds } from "@/enums/ids"
 import { CornerData } from "@/enums/corner"
 import { ThemeData } from "@/enums/theme"
-import { timeout_clear, timeout_set } from "@/utils/timeout"
-import { remove_splash_screen_on_load_every_component } from "@/scripts/splash"
-import { array_includes } from "@/utils/array"
-import { math_round } from "@/utils/math"
-import { event_current_target, event_target } from "@/utils/event"
-import { document_root } from "@/utils/document"
+import { timeTimerClear, timeTimerSet } from "@/utils/time"
+import { tryRemoveSplashScreen } from "@/scripts/splash"
+import { mathRound } from "@/utils/math"
+import { eventCurrentTarget, eventTarget } from "@/utils/event"
+import { documentRoot } from "@/utils/document"
 import { ICON_APPS, ICON_CIRCLE, ICON_GIFT, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_LINE_HORIZONTAL_3, ICON_MAXIMIZE, ICON_RECEIPT, ICON_SETTINGS, ICON_SHIELD_CHECKMARK, ICON_SQUARE, ICON_TEARDROP_BOTTOM_RIGHT, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from "@/constants/icons"
-import Drawer, { close_drawer, LinkDrawerItem, open_drawer } from "@/components/Drawer"
+import Drawer, { closeDrawer, LinkDrawerItem, openDrawer } from "@/components/Drawer"
+import { validEnumValue } from "@/utils/object"
 
 type NavigationDrawerProps = {
 	route?: RoutesLinks
@@ -36,58 +36,58 @@ export const NavigationDrawer: VoidComponent<NavigationDrawerProps> = (props) =>
 	const [isDrawerOpen, setIsDrawerOpen] = createSignal<boolean>(false)
 	let drawerRef: HTMLDialogElement
 
-	onMount(() => remove_splash_screen_on_load_every_component())
+	onMount(() => tryRemoveSplashScreen())
 
 	return (<>
 		<Tooltip>
 			<IconButton
 				data-tooltip="Open navigation"
-				classList={classlist_module(CSS.mobile_only)}
-				c_focused={isDrawerOpen()}
-				onClick={(ev) => open_drawer(ev, drawerRef)}
-				c_code={ICON_LINE_HORIZONTAL_3}
+				classList={attrClassListModule(CSS.mobile_only)}
+				c:focused={isDrawerOpen()}
+				onClick={(ev) => openDrawer(ev, drawerRef)}
+				c:code={ICON_LINE_HORIZONTAL_3}
 			/>
 		</Tooltip>
 		<Drawer
 			ref={r => drawerRef = r}
-			c_on_toggleopen={v => setIsDrawerOpen(v)}
-			c_header={<Tooltip>
+			c:onToggleOpen={v => setIsDrawerOpen(v)}
+			c:header={<Tooltip>
 				<IconButton
 					data-tooltip="Close navigation"
-					classList={classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
-					c_code={ICON_LINE_HORIZONTAL_3}
-					onClick={() => close_drawer(drawerRef)}
+					classList={attrClassListModule(CSSAnimation.btn_shrink_horizontal_icon)}
+					c:code={ICON_LINE_HORIZONTAL_3}
+					onClick={() => closeDrawer(drawerRef)}
 				/>
 			</Tooltip>}
-			c_footer={<Tooltip>
+			c:footer={<Tooltip>
 				<LinkDrawerItem
 					href={RoutesLinks.privacy}
-					c_icon_code={ICON_SHIELD_CHECKMARK}>
+					c:iconCode={ICON_SHIELD_CHECKMARK}>
 					Privacy policy
 				</LinkDrawerItem>
 				<LinkDrawerItem
 					href={RoutesLinks.terms}
-					c_icon_code={ICON_RECEIPT}>
+					c:iconCode={ICON_RECEIPT}>
 					Terms & conditions
 				</LinkDrawerItem>
 			</Tooltip>}>
 			<LinkDrawerItem
 				href={RoutesLinks.apps}
-				c_selected={props.route == RoutesLinks.apps}
-				c_icon_code={ICON_APPS}>
+				c:selected={props.route == RoutesLinks.apps}
+				c:iconCode={ICON_APPS}>
 				Apps
 			</LinkDrawerItem>
 			<LinkDrawerItem
 				href={RoutesLinks.about}
-				c_selected={props.route == RoutesLinks.about}
-				c_icon_code={ICON_INFO}>
+				c:selected={props.route == RoutesLinks.about}
+				c:iconCode={ICON_INFO}>
 				About
 			</LinkDrawerItem>
 			<LinkDrawerItem
-				onClick={() => close_drawer(drawerRef)}
+				onClick={() => closeDrawer(drawerRef)}
 				href={ExternalLinks.donate}
-				c_new_tab
-				c_icon_code={ICON_GIFT}>
+				c:newTab
+				c:iconCode={ICON_GIFT}>
 				Donate
 			</LinkDrawerItem>
 		</Drawer>
@@ -95,196 +95,176 @@ export const NavigationDrawer: VoidComponent<NavigationDrawerProps> = (props) =>
 }
 
 export const SettingsElement: VoidComponent = () => {
-	const root = document_root()
-	const theme_system = ThemeData.system
-	const theme_light = ThemeData.light
-	const theme_dark = ThemeData.dark
-	const corner_sharp = CornerData.sharp
-	const corner_semiround = CornerData.semi_round
-	const corner_round = CornerData.round
-	const corner_fullround = CornerData.full_round
-	const menuitem_themelight_id = createUniqueId()
-	const menuitem_themedark_id = createUniqueId()
-	const menuitem_themesystem_id = createUniqueId()
-	const menuitem_cornersharp_id = createUniqueId()
-	const menuitem_cornersemiround_id = createUniqueId()
-	const menuitem_cornerround_id = createUniqueId()
-	const menuitem_cornerfullround_id = createUniqueId()
-	const menuitem_accent_id = createUniqueId()
-	const [color, set_color] = createSignal<HEXColor>('#FF0000')
-	const [theme, set_theme] = createSignal<ThemeData>(theme_system)
-	const [corner, set_corner] = createSignal<CornerData>(corner_round)
-	const [is_menu_settings_open, setIs_menu_settings_open] = createSignal<boolean>(false)
-	const [is_colorpicker_open, set_is_colorpicker_open] = createSignal<boolean>(false)
-	let menu_settings_ref: HTMLDialogElement
-	let colorpicker_ref: HTMLDivElement
-	let timeout_color_id: number | null = null
+	const root = documentRoot()
+	const menuItemAccentId = createUniqueId()
+	const [color, setColor] = createSignal<HEXColor>('#FF0000')
+	const [theme, setTheme] = createSignal<ThemeData>(ThemeData.system)
+	const [corner, setCorner] = createSignal<CornerData>(CornerData.round)
+	const [isMenuSettingsOpen, setIsMenuSettingsOpen] = createSignal<boolean>(false)
+	const [isColorPickerOpen, setIsColorPickerOpen] = createSignal<boolean>(false)
+	let menuSettingsRef: HTMLDialogElement
+	let colorPickerRef: HTMLDivElement
+	let timeColorId: number | null = null
 
-	function change_theme(theme: ThemeData): void {
-		set_theme(theme)
-		attr_set(root, RootAttributes.theme, theme)
-		storage_set(LocalStorageKeys.theme, theme)
-		close_menu(menu_settings_ref)
+	function updateTheme(theme: ThemeData): void {
+		setTheme(theme)
+		attrSet(root, RootAttributes.theme, theme)
+		storageSet(LocalStorageKeys.theme, theme)
+		closeMenu(menuSettingsRef)
 	}
 
-	function change_corner(corner: CornerData): void {
-		set_corner(corner)
-		attr_set(root, RootAttributes.corner, corner)
-		storage_set(LocalStorageKeys.corner, corner)
-		close_menu(menu_settings_ref)
+	function updateCorner(corner: CornerData): void {
+		setCorner(corner)
+		attrSet(root, RootAttributes.corner, corner)
+		storageSet(LocalStorageKeys.corner, corner)
+		closeMenu(menuSettingsRef)
 	}
 
-	function init_theme(): void {
-		const theme = storage_get(LocalStorageKeys.theme)
-
-		if (theme && array_includes([theme_system, theme_light, theme_dark], theme as ThemeData)) {
-			attr_set(root, RootAttributes.theme, theme)
-			set_theme(theme as ThemeData)
+	function initTheme(): void {
+		const theme = storageGet(LocalStorageKeys.theme)
+		if (theme && validEnumValue(theme, ThemeData)) {
+			attrSet(root, RootAttributes.theme, theme)
+			setTheme(theme as ThemeData)
 		}
 	}
 
-	function init_corner(): void {
-		const corner = storage_get(LocalStorageKeys.corner)
-
-		if (corner && array_includes([corner_sharp, corner_semiround, corner_round, corner_fullround], corner as CornerData)) {
-			attr_set(root, RootAttributes.corner, corner)
-			set_corner(corner as CornerData)
+	function initCorner(): void {
+		const corner = storageGet(LocalStorageKeys.corner)
+		if (corner && validEnumValue(corner, CornerData)) {
+			attrSet(root, RootAttributes.corner, corner)
+			setCorner(corner as CornerData)
 		}
 	}
 
-	function rgb_to_css(rgb: RGBColor): string {
-		return `${math_round(rgb.r * 0xff)}, ${math_round(rgb.g * 0xff)}, ${math_round(rgb.b * 0xff)}`
+	function rgbToCSS(rgb: RGBColor): string {
+		return `${mathRound(rgb.r * 0xff)}, ${mathRound(rgb.g * 0xff)}, ${mathRound(rgb.b * 0xff)}`
 	}
 
-	function change_color(color: HEXColor): void {
-		set_color(color)
-		const acc = generate_color(color)
-		const accent_color_element = element_by_id(ElementIds.color_accent)!
-		accent_color_element.innerHTML = `:root{--g-color-accent-light: ${rgb_to_css(hex_to_rgb(acc.color))};--g-color-accent-dark: ${rgb_to_css(hex_to_rgb(acc.color_dark))};--g-color-on-accent-light: ${rgb_to_css(hex_to_rgb(acc.on_color))};--g-color-on-accent-dark: ${rgb_to_css(hex_to_rgb(acc.on_color_dark))};}`;
+	function updateColor(color: HEXColor): void {
+		setColor(color)
+		const acc = colorGeneratePalette(color)
+		const accentColorElement = elementById(ElementIds.colorAccent)!
+		accentColorElement.innerHTML = `:root{--g-color-accent-light: ${rgbToCSS(colorHexToRgb(acc.color))};--g-color-accent-dark: ${rgbToCSS(colorHexToRgb(acc.colorDark))};--g-color-on-accent-light: ${rgbToCSS(colorHexToRgb(acc.onColor))};--g-color-on-accent-dark: ${rgbToCSS(colorHexToRgb(acc.onColorDark))};}`;
 
-		if (timeout_color_id != null) timeout_clear(timeout_color_id)
-		timeout_color_id = timeout_set(() => {
-			storage_set(LocalStorageKeys.color, color)
-			timeout_color_id = null
+		if (timeColorId != null) timeTimerClear(timeColorId)
+		timeColorId = timeTimerSet(() => {
+			storageSet(LocalStorageKeys.color, color)
+			timeColorId = null
 		}, 100)
-		close_menu(menu_settings_ref)
+		closeMenu(menuSettingsRef)
 	}
 
-	function init_color(): void {
-		const color = storage_get(LocalStorageKeys.color)
-		if (!is_color_valid(color ?? '')) return;
+	function initColor(): void {
+		const color = storageGet(LocalStorageKeys.color)
+		if (!colorIsValid(color ?? '')) return;
 
-		change_color(color as HEXColor)
+		updateColor(color as HEXColor)
 	}
 
 	onMount(() => {
-		init_theme()
-		init_corner()
-		init_color()
-		remove_splash_screen_on_load_every_component()
+		initTheme()
+		initCorner()
+		initColor()
+		tryRemoveSplashScreen()
 	})
 
 	return (<>
 		<Tooltip>
 			<IconButton
 				data-tooltip="Open settings"
-				classList={classlist_module(CSSAnimation.btn_rotate_icon)}
-				c_focused={is_menu_settings_open()}
-				onClick={(ev) => open_menu(ev, menu_settings_ref, {
-					anchor: event_current_target(ev),
+				classList={attrClassListModule(CSSAnimation.btn_rotate_icon)}
+				c:focused={isMenuSettingsOpen()}
+				onClick={(ev) => openMenu(ev, menuSettingsRef, {
+					anchor: eventCurrentTarget(ev),
 					padding: 0,
 				})}
-				c_code={ICON_SETTINGS}
+				c:code={ICON_SETTINGS}
 			/>
 		</Tooltip>
 		<Menu
 			style={{width: '200px'}}
-			ref={r => menu_settings_ref = r}
-			c_on_toggleopen={(v) => setIs_menu_settings_open(v)}
+			ref={r => menuSettingsRef = r}
+			c:onToggleOpen={(v) => setIsMenuSettingsOpen(v)}
 			onClick={ev => {
-				const button = element_closest(event_target(ev) as HTMLElement, 'button')
+				const button = elementClosest(eventTarget(ev) as HTMLElement, 'button')
 				if (!button) return
 
-				switch (element_id(button)) {
-					case menuitem_themelight_id: change_theme(theme_light); break
-					case menuitem_themedark_id: change_theme(theme_dark); break
-					case menuitem_themesystem_id: change_theme(theme_system); break
+				switch (elementId(button)) {
+				case menuItemAccentId:
+					closeMenu(menuSettingsRef)
+					openPopoverColorPicker(ev, colorPickerRef, {
+						color: color(),
+					})
+					break
+				default:
+					const dataTheme = elementDataset(button, 'theme')
+					if (dataTheme) return updateTheme(dataTheme as ThemeData)
 
-					case menuitem_cornersharp_id: change_corner(corner_sharp); break
-					case menuitem_cornersemiround_id: change_corner(corner_semiround); break
-					case menuitem_cornerround_id: change_corner(corner_round); break
-					case menuitem_cornerfullround_id: change_corner(corner_fullround); break
-
-					case menuitem_accent_id: {
-						close_menu(menu_settings_ref)
-						open_popovercolorpicker(ev, colorpicker_ref, {
-							color: color(),
-						})
-						break
-					}
+					const dataCorner = elementDataset(button, 'corner')
+					if (dataCorner) return updateCorner(dataCorner as CornerData)
 				}
 			}}>
 			<MenuHeader>Theme</MenuHeader>
 			<MenuItem
-				id={menuitem_themelight_id}
-				c_selected={theme() == theme_light}
-				c_icon_code={ICON_WEATHER_SUNNY}>
+				data-theme={ThemeData.light}
+				c:selected={theme() == ThemeData.light}
+				c:iconCode={ICON_WEATHER_SUNNY}>
 				Light
 			</MenuItem>
 			<MenuItem
-				id={menuitem_themedark_id}
-				c_selected={theme() == theme_dark}
-				c_icon_code={ICON_WEATHER_MOON}>
+				data-theme={ThemeData.dark}
+				c:selected={theme() == ThemeData.dark}
+				c:iconCode={ICON_WEATHER_MOON}>
 				Dark
 			</MenuItem>
 			<MenuItem
-				id={menuitem_themesystem_id}
-				c_selected={theme() == theme_system}
-				c_icon_code={ICON_LAPTOP_SETTINGS}>
+				data-theme={ThemeData.system}
+				c:selected={theme() == ThemeData.system}
+				c:iconCode={ICON_LAPTOP_SETTINGS}>
 				System theme
 			</MenuItem>
 			<MenuDivider />
 			<MenuHeader>Corner style</MenuHeader>
 			<MenuItem
-				id={menuitem_cornersharp_id}
-				c_selected={corner() == corner_sharp}
-				c_icon_code={ICON_MAXIMIZE}>
+				data-corner={CornerData.sharp}
+				c:selected={corner() == CornerData.sharp}
+				c:iconCode={ICON_MAXIMIZE}>
 				Sharp
 			</MenuItem>
 			<MenuItem
-				id={menuitem_cornersemiround_id}
-				c_selected={corner() == corner_semiround}
-				c_icon_code={ICON_SQUARE}>
+				data-corner={CornerData.semiRound}
+				c:selected={corner() == CornerData.semiRound}
+				c:iconCode={ICON_SQUARE}>
 				Semi round
 			</MenuItem>
 			<MenuItem
-				id={menuitem_cornerround_id}
-				c_selected={corner() == corner_round}
-				c_icon_code={ICON_TEARDROP_BOTTOM_RIGHT}>
+				data-corner={CornerData.round}
+				c:selected={corner() == CornerData.round}
+				c:iconCode={ICON_TEARDROP_BOTTOM_RIGHT}>
 				Round
 			</MenuItem>
 			<MenuItem
-				id={menuitem_cornerfullround_id}
-				c_selected={corner() == corner_fullround}
-				c_icon_code={ICON_CIRCLE}>
+				data-corner={CornerData.fullRound}
+				c:selected={corner() == CornerData.fullRound}
+				c:iconCode={ICON_CIRCLE}>
 				Full round
 			</MenuItem>
 			<MenuDivider/>
 			<MenuHeader>Accent color</MenuHeader>
 			<MenuItem
-				c_focused={is_colorpicker_open()}
-				id={menuitem_accent_id}
-				c_leading={<Icon style={{color: color()}} c_filled c_code={ICON_CIRCLE}/>}>
+				c:focused={isColorPickerOpen()}
+				id={menuItemAccentId}
+				c:leading={<Icon style={{color: color()}} c:filled c:code={ICON_CIRCLE}/>}>
 				{color()}
 			</MenuItem>
 		</Menu>
 		<PopoverColorPicker
-			c_disabled_opacity_control
-			c_disabled_action
-			c_draggable
-			c_on_update_color={v => change_color(v)}
-			ref={r => colorpicker_ref = r}
-			c_on_toggleopen={(v) => set_is_colorpicker_open(v)}
+			c:disabledOpacityControl
+			c:disabledAction
+			c:draggable
+			c:onUpdateColor={v => updateColor(v)}
+			ref={r => colorPickerRef = r}
+			c:onToggleOpen={(v) => setIsColorPickerOpen(v)}
 		/>
 	</>)
 }

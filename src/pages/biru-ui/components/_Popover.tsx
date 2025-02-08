@@ -1,132 +1,132 @@
 import { createSignal, For, Show, type VoidComponent } from "solid-js"
 
-import { event_current_target } from "@/utils/event"
-import { number_safe } from "@/utils/number"
-import { array_includes } from "@/utils/array"
+import { eventCurrentTarget } from "@/utils/event"
+import { numberSafe } from "@/utils/number"
+import { arrayIncludes } from "@/utils/array"
 
 import Button, { ButtonVariant } from "@/components/Button"
 import CheckBox from "@/components/CheckBox"
 import TextField, { NumberTextField } from "@/components/TextField"
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import Tooltip from "@/components/Tooltip"
-import Popover, { close_popover, open_popover, PopoverPosition } from "@/components/Popover"
+import Popover, { closePopover, openPopover, PopoverPosition } from "@/components/Popover"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
 
 const _: VoidComponent = () => {
-	const [allow_hide_anchor, set_allow_hide_anchor] = createSignal<boolean>(true)
-	const [draggable, set_draggable] = createSignal<boolean>(false)
-	const [gap, set_gap] = createSignal<number>(12)
-	const [padding, set_padding] = createSignal<number>(0)
-	const [position, set_position] = createSignal<PopoverPosition>(PopoverPosition.center_bottom)
-	const [anchor, set_anchor] = createSignal<boolean>(true)
-	const [manual_dismiss, set_manual_dismiss] = createSignal<boolean>(false)
-	let popover_ref: HTMLDivElement
+	const [allowHideAnchor, setAllowHideAnchor] = createSignal<boolean>(true)
+	const [draggable, setDraggable] = createSignal<boolean>(false)
+	const [gap, setGap] = createSignal<number>(12)
+	const [padding, setPadding] = createSignal<number>(0)
+	const [position, setPosition] = createSignal<PopoverPosition>(PopoverPosition.centerBottom)
+	const [anchor, setAnchor] = createSignal<boolean>(true)
+	const [manualDismiss, setManualDismiss] = createSignal<boolean>(false)
+	let popoverRef: HTMLDivElement
 	return (<Page
 		title="Popover"
 		description="A popover is a small, temporary window that appears when a user interacts with an element (e.g., hovers over a button). It provides additional information, options, or tools related to the element. Popover content can be triggered by hover, click, or focus.">
 		<Playground>
-			<Button c_variant={ButtonVariant.tonal} onClick={(ev) => open_popover(ev, popover_ref, {
-				anchor: anchor()? event_current_target(ev) : undefined,
-				allow_hide_anchor: allow_hide_anchor(),
+			<Button c:variant={ButtonVariant.tonal} onClick={(ev) => openPopover(ev, popoverRef, {
+				anchor: anchor()? eventCurrentTarget(ev) : undefined,
+				allowHideAnchor: allowHideAnchor(),
 				draggable: draggable(),
 				gap: gap(),
 				padding: padding(),
 				position: position(),
-				manual_dismiss: manual_dismiss()
+				manualDismiss: manualDismiss()
 			})}>Open popover</Button>
-			<Popover ref={r => popover_ref = r} style={{width: '300px'}}>
+			<Popover ref={r => popoverRef = r} style={{width: '300px'}}>
 				<div style={{padding: '16px'}}>
 					<TextField placeholder="Feedback"/>
 					<p style={{margin: '8px 0'}}>Consequat commodo sint incididunt nulla duis commodo elit enim aliquip ex occaecat eiusmod.</p>
-					<Button onClick={(_ev) => close_popover(popover_ref)} c_variant={ButtonVariant.filled}>Close popover</Button>
+					<Button onClick={(_ev) => closePopover(popoverRef)} c:variant={ButtonVariant.filled}>Close popover</Button>
 				</div>
 			</Popover>
 		</Playground>
 		<PlaygroundOptions>
 			<Tooltip>
 				<Dropdown
-					c_label="Position"
-					c_values={[position()]}
-					c_on_change={(options) => set_position(options[0].value as PopoverPosition)}>
+					c:label="Position"
+					c:values={[position()]}
+					c:onChange={(options) => setPosition(options[0].value as PopoverPosition)}>
 					<For each={[
-						[PopoverPosition.left_top, 'Left top'],
-						[PopoverPosition.left_center_to_bottom, 'Left center to bottom'],
-						[PopoverPosition.left_center, 'Left center'],
-						[PopoverPosition.left_center_to_top, 'Left center to top'],
-						[PopoverPosition.left_bottom, 'Left bottom'],
-						[PopoverPosition.right_top, 'Right top'],
-						[PopoverPosition.right_center_to_bottom, 'Right center to bottom'],
-						[PopoverPosition.right_center, 'Right center'],
-						[PopoverPosition.right_center_to_top, 'Right center to top'],
-						[PopoverPosition.right_bottom, 'Right bottom'],
-						[PopoverPosition.center_top_to_right, 'Center top to right'],
-						[PopoverPosition.center_top, 'Center top'],
-						[PopoverPosition.center_top_to_left, 'Center top to left'],
-						[PopoverPosition.center_bottom_to_right, 'Center bottom to right'],
-						[PopoverPosition.center_bottom, 'Center bottom'],
-						[PopoverPosition.center_bottom_to_left, 'Center bottom to left'],
-						[PopoverPosition.center_center_left_top, 'Center center left top'],
-						[PopoverPosition.center_center_left, 'Center center left'],
-						[PopoverPosition.center_center_left_bottom, 'Center center left bottom'],
-						[PopoverPosition.center_center_top, 'Center center top'],
-						[PopoverPosition.center_center, 'Center center'],
-						[PopoverPosition.center_center_bottom, 'Center center bottom'],
-						[PopoverPosition.center_center_right_top, 'Center center right top'],
-						[PopoverPosition.center_center_right, 'Center center right'],
-						[PopoverPosition.center_center_right_bottom, 'Center center right bottom'],
-					]}>{option => <DropdownOption c_value={option[0]} c_text={option[1] as string} />}</For>
+						[PopoverPosition.leftTop, 'Left top'],
+						[PopoverPosition.leftCenterToBottom, 'Left center to bottom'],
+						[PopoverPosition.leftCenter, 'Left center'],
+						[PopoverPosition.leftCenterToTop, 'Left center to top'],
+						[PopoverPosition.leftBottom, 'Left bottom'],
+						[PopoverPosition.rightTop, 'Right top'],
+						[PopoverPosition.rightCenterToBottom, 'Right center to bottom'],
+						[PopoverPosition.rightCenter, 'Right center'],
+						[PopoverPosition.rightCenterToTop, 'Right center to top'],
+						[PopoverPosition.rightBottom, 'Right bottom'],
+						[PopoverPosition.centerTopToRight, 'Center top to right'],
+						[PopoverPosition.centerTop, 'Center top'],
+						[PopoverPosition.centerTopToLeft, 'Center top to left'],
+						[PopoverPosition.centerBottomToRight, 'Center bottom to right'],
+						[PopoverPosition.centerBottom, 'Center bottom'],
+						[PopoverPosition.centerBottomToLeft, 'Center bottom to left'],
+						[PopoverPosition.centerCenterLeftTop, 'Center center left top'],
+						[PopoverPosition.centerCenterLeft, 'Center center left'],
+						[PopoverPosition.centerCenterLeftBottom, 'Center center left bottom'],
+						[PopoverPosition.centerCenterTop, 'Center center top'],
+						[PopoverPosition.centerCenter, 'Center center'],
+						[PopoverPosition.centerCenterBottom, 'Center center bottom'],
+						[PopoverPosition.centerCenterRightTop, 'Center center right top'],
+						[PopoverPosition.centerCenterRight, 'Center center right'],
+						[PopoverPosition.centerCenterRightBottom, 'Center center right bottom'],
+					]}>{option => <DropdownOption c:value={option[0]} c:text={option[1] as string} />}</For>
 				</Dropdown>
 				<NumberTextField
 					style={{width: '100px'}}
 					value={gap()}
 					min={0}
-					onBlur={(ev) => set_gap(g => number_safe(event_current_target(ev).valueAsNumber, g))}
-					c_label="Gap"
+					onBlur={(ev) => setGap(g => numberSafe(eventCurrentTarget(ev).valueAsNumber, g))}
+					c:label="Gap"
 				/>
-				<Show when={array_includes([
-					PopoverPosition.center_top_to_right,
-					PopoverPosition.center_center_left,
-					PopoverPosition.center_bottom_to_right,
-					PopoverPosition.center_top_to_left,
-					PopoverPosition.center_center_right,
-					PopoverPosition.center_bottom_to_left,
-					PopoverPosition.left_center_to_bottom,
-					PopoverPosition.center_center_left_top,
-					PopoverPosition.center_center_top,
-					PopoverPosition.center_center_right_top,
-					PopoverPosition.right_center_to_bottom,
-					PopoverPosition.left_center_to_top,
-					PopoverPosition.center_center_left_bottom,
-					PopoverPosition.center_center_bottom,
-					PopoverPosition.center_center_right_bottom,
-					PopoverPosition.right_center_to_top
+				<Show when={arrayIncludes([
+					PopoverPosition.centerTopToRight,
+					PopoverPosition.centerCenterLeft,
+					PopoverPosition.centerBottomToRight,
+					PopoverPosition.centerTopToLeft,
+					PopoverPosition.centerCenterRight,
+					PopoverPosition.centerBottomToLeft,
+					PopoverPosition.leftCenterToBottom,
+					PopoverPosition.centerCenterLeftTop,
+					PopoverPosition.centerCenterTop,
+					PopoverPosition.centerCenterRightTop,
+					PopoverPosition.rightCenterToBottom,
+					PopoverPosition.leftCenterToTop,
+					PopoverPosition.centerCenterLeftBottom,
+					PopoverPosition.centerCenterBottom,
+					PopoverPosition.centerCenterRightBottom,
+					PopoverPosition.rightCenterToTop
 				], position())}>
 					<NumberTextField
 						value={padding()}
 						style={{width: '100px'}}
 						min={0}
-						onBlur={(ev) => set_padding(p => number_safe(event_current_target(ev).valueAsNumber, p))}
-						c_label="Padding"
+						onBlur={(ev) => setPadding(p => numberSafe(eventCurrentTarget(ev).valueAsNumber, p))}
+						c:label="Padding"
 					/>
 				</Show>
 				<CheckBox
 					checked={anchor()}
-					onChange={ev => set_anchor(event_current_target(ev).checked)}>
+					onChange={ev => setAnchor(eventCurrentTarget(ev).checked)}>
 					Anchor
 				</CheckBox>
 				<CheckBox
 					checked={draggable()}
-					onChange={ev => set_draggable(event_current_target(ev).checked)}>
+					onChange={ev => setDraggable(eventCurrentTarget(ev).checked)}>
 					Dragable
 				</CheckBox>
 				<CheckBox
-					checked={allow_hide_anchor()}
-					onChange={ev => set_allow_hide_anchor(event_current_target(ev).checked)}>
+					checked={allowHideAnchor()}
+					onChange={ev => setAllowHideAnchor(eventCurrentTarget(ev).checked)}>
 					Allow hide anchor
 				</CheckBox>
 				<CheckBox
-					checked={manual_dismiss()}
-					onChange={ev => set_manual_dismiss(event_current_target(ev).checked)}>
+					checked={manualDismiss()}
+					onChange={ev => setManualDismiss(eventCurrentTarget(ev).checked)}>
 					Manual dismiss
 				</CheckBox>
 			</Tooltip>

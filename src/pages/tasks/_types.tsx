@@ -2,16 +2,16 @@ import type { HEXColor } from "@/types/color"
 import type { Pages, SortBy, SortMode } from "./_enums"
 
 export type Settings = {
-	sort_by: SortBy
-	sort_mode: SortMode
-	is_show_deletetaskwarning: boolean
-	hidden_navigation: Pages[]
+	sortBy: SortBy
+	sortMode: SortMode
+	showDeleteTaskWarning: boolean
+	hiddenNavigation: Pages[]
 }
 
 export type SubTask = {
 	id: number
-	list_id: number
-	task_id: number
+	listId: number
+	taskId: number
 	name: string
 	complete: boolean
 }
@@ -24,8 +24,8 @@ export type TaskLabel = {
 
 export type TaskFileMetaData = {
 	id: number
-	list_id: number
-	task_id: number
+	listId: number
+	taskId: number
 	name: string
 	size: number
 	type: string
@@ -33,10 +33,10 @@ export type TaskFileMetaData = {
 
 export type Task = {
 	id: number
-	list_id: number
+	listId: number
 	name: string
 	complete: boolean
-	label_ids: number[]
+	labelIds: number[]
 	files: TaskFileMetaData[]
 	reminder: Date | null
 	important: boolean

@@ -1,347 +1,345 @@
 import { createMemo, createSignal, createUniqueId, For, onMount, type VoidComponent } from "solid-js"
 
 import type { Settings } from "./_types"
-import { event_add_listener, event_current_target, event_target } from "@/utils/event"
-import { window_matches, window_match_media } from "@/utils/window"
+import { eventListenerAdd, eventCurrentTarget, eventTarget } from "@/utils/event"
+import { windowMatches, windowMatchMedia } from "@/utils/window"
 import { CALCULATOR_TYPES, SIZE_SIDE_NAVIGATION_NONE, SIZE_SIDE_NOTEBOOK_NONE } from "./_constants"
 import { RoutesLinks, ExternalLinks } from "@/enums/links"
-import { url_encode, url_origin } from "@/utils/url"
+import { urlEncode, urlOrigin } from "@/utils/url"
 import { CornerData } from "@/enums/corner"
 import { ThemeData } from "@/enums/theme"
-import { attr_set, classlist_module } from "@/utils/attributes"
+import { attrSet, attrClassListModule } from "@/utils/attributes"
 import { RootAttributes } from "@/enums/attributes"
 import { LocalStorageKeys } from "@/enums/storage"
-import { navigator_share } from "@/utils/navigator"
-import { date_year } from "@/utils/datetime"
-import { storage_set, storage_get } from "@/utils/storage"
-import { app_calculator as app } from "@/constants/apps"
+import { navigatorShare } from "@/utils/navigator"
+import { dateYear } from "@/utils/datetime"
+import { storageSet, storageGet } from "@/utils/storage"
+import { APP_CALCULATOR as app } from "@/constants/apps"
 import { CalculatorType, Commands, DecimalNumberFormat, GroupingNumberFormat } from "./_enums"
-import { document_active, document_root } from "@/utils/document"
-import { valid_enum_value } from "@/utils/object"
-import { element_valid_target, element_tagname, element_id, element_dataset } from "@/utils/element"
+import { documentActive, documentRoot } from "@/utils/document"
+import { validEnumValue } from "@/utils/object"
+import { elementValidTarget, elementTagName, elementId, elementDataset } from "@/utils/element"
 import { ICON_APPS, ICON_CHAT, ICON_CIRCLE, ICON_DECIMAL_ARROW_LEFT, ICON_DEVELOPER_BOARD, ICON_DISMISS, ICON_GIFT, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_LINE_HORIZONTAL_3, ICON_MATH_FORMAT_PROFESSIONAL, ICON_MAXIMIZE, ICON_NOTEBOOK, ICON_NUMBER_ROW, ICON_RECEIPT, ICON_SETTINGS, ICON_SHARE_ANDROID, ICON_SHIELD_CHECKMARK, ICON_SQUARE, ICON_TEARDROP_BOTTOM_RIGHT, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from "@/constants/icons"
 import logo_redmerah from '@/assets/logo.svg'
 
 import Icon from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
 import { ButtonVariant, IconButton } from "@/components/Button"
-import { AreaTextField, change_areatextfield_value } from "@/components/TextField"
-import Menu, {  MenuDivider, MenuItem, MenuHeader, close_menu, LinkMenuItem, SubMenu, close_submenu, open_menu, SubMenuItem, SwitchMenuItem } from "@/components/Menu"
-import Drawer, { close_drawer, DrawerItem, DrawerPosition, open_drawer } from "@/components/Drawer"
+import { AreaTextField, updateAreaTextFieldValue } from "@/components/TextField"
+import Menu, {  MenuDivider, MenuItem, MenuHeader, closeMenu, LinkMenuItem, SubMenu, closeSubMenu, openMenu, SubMenuItem, SwitchMenuItem } from "@/components/Menu"
+import Drawer, { closeDrawer, DrawerItem, DrawerPosition, openDrawer } from "@/components/Drawer"
 import AppBar from "@/components/AppBar"
 import CSSAnimation from "@/styles/animation.module.scss"
 import CSS from './_styles.module.scss'
 
 const _: VoidComponent<{
-	on_change_calculator: (type: CalculatorType) => unknown
+	onChangeCalculator: (type: CalculatorType) => unknown
 	calculator: CalculatorType
 	is_notebook_expanded: boolean
 	note: string
 	settings: Settings
-	on_note_changed: (value: string) => unknown
+	onNoteChanged: (value: string) => unknown
 	command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
-	const root = document_root()
-	const button_navigation_id = createUniqueId()
-	const button_info_id = createUniqueId()
-	const button_settings_id = createUniqueId()
-	const button_notebook_id = createUniqueId()
-	const [is_menu_info_open, set_is_menu_info_open] = createSignal<boolean>(false)
-	const [is_menu_settings_open, set_is_menu_settings_open] = createSignal<boolean>(false)
-	const [is_submenu_themesettings_open, set_is_submenu_themesettings_open] = createSignal<boolean>(false)
-	const [is_submenu_cornersettings_open, set_is_submenu_cornersettings_open] = createSignal<boolean>(false)
-	const [is_submenu_groupingnumberformatsettings_open, set_is_menu_groupingnumberformatsettings_open] = createSignal<boolean>(false)
-	const [is_menu_decimalnumberformatsettings_open, set_is_menu_decimalnumberformatsettings_open] = createSignal<boolean>(false)
-	const [is_sidenavigation_hidden, set_is_sidenavigation_hidden] = createSignal<boolean>(false)
-	const [is_sidenotebook_hidden, set_is_sidenotebook_hidden] = createSignal<boolean>(false)
-	const [theme, set_theme] = createSignal<ThemeData>(ThemeData.system)
-	const [corner, set_corner] = createSignal<CornerData>(CornerData.round)
+	const root = documentRoot()
+	const buttonNavigationId = createUniqueId()
+	const buttonInfoId = createUniqueId()
+	const buttonSettingsId = createUniqueId()
+	const buttonNotebookId = createUniqueId()
+	const [isMenuInfoOpen, setIsMenuInfoOpen] = createSignal<boolean>(false)
+	const [isMenuSettingsOpen, setIsMenuSettingsOpen] = createSignal<boolean>(false)
+	const [isSubMenuSettings_themeOpen, setIsSubMenuSettings_themeOpen] = createSignal<boolean>(false)
+	const [isSubMenuSettings_cornerOpen, setIsSubMenuSettings_cornerOpen] = createSignal<boolean>(false)
+	const [isSubMenuSettings_groupingNumberFormatOpen, setIsSubMenuSettings_groupingNumberFormatOpen] = createSignal<boolean>(false)
+	const [isSubMenuSettings_decimalNumberFormatOpen, setIsSubMenuSettings_decimalNumberFormatOpen] = createSignal<boolean>(false)
+	const [isSideNavigationHidden, setIsSideNavigationHidden] = createSignal<boolean>(false)
+	const [isSideNotebookHidden, setIsSideNotebookHidden] = createSignal<boolean>(false)
+	const [theme, setTheme] = createSignal<ThemeData>(ThemeData.system)
+	const [corner, setCorner] = createSignal<CornerData>(CornerData.round)
 	const settings = createMemo(() => props.settings)
-	let menu_info_ref: HTMLDialogElement
-	let menu_settings_ref: HTMLDialogElement
-	let submenu_themesettings_ref: HTMLDivElement
-	let submenu_cornersettings_ref: HTMLDivElement
-	let submenu_decimalnumberformatsettings_ref: HTMLDivElement
-	let submenu_groupingnumberformatsettings_ref: HTMLDivElement
-	let drawer_navigation_ref: HTMLDialogElement
-	let drawer_notebook_ref: HTMLDialogElement
-	let areatextfield_notebook_ref: HTMLTextAreaElement
+	let menuInfoRef: HTMLDialogElement
+	let menuSettingsRef: HTMLDialogElement
+	let subMenuSettings_themeRef: HTMLDivElement
+	let subMenuSettings_cornerRef: HTMLDivElement
+	let subMenuSettings_decimalNumberFormatOpen: HTMLDivElement
+	let subMenuSettings_groupingNumberFormatOpen: HTMLDivElement
+	let drawerNavigationRef: HTMLDialogElement
+	let drawerNotebookRef: HTMLDialogElement
+	let areaTextFieldNotebookRef: HTMLTextAreaElement
 
 	function command(type: Commands, ...args: unknown[]): unknown {
 		return props.command(type, ...args)
 	}
 
-	function change_decimal_numberformat(type: DecimalNumberFormat): void {
-		command(Commands.change_settings_numberformatdecimal, type)
-		close_submenu(submenu_decimalnumberformatsettings_ref)
-		close_menu(menu_settings_ref)
+	function updateDecimalNumberFormat(type: DecimalNumberFormat): void {
+		command(Commands.updateSettingsNumberFormatDecimal, type)
+		closeSubMenu(subMenuSettings_decimalNumberFormatOpen)
+		closeMenu(menuSettingsRef)
 	}
 
-	function change_grouping_numberformat(type: GroupingNumberFormat): void {
-		command(Commands.change_settings_numberformatgrouping, type)
-		close_submenu(submenu_groupingnumberformatsettings_ref)
-		close_menu(menu_settings_ref)
+	function updateGroupingNumberFormat(type: GroupingNumberFormat): void {
+		command(Commands.updateSettingsNumberFormatGrouping, type)
+		closeSubMenu(subMenuSettings_groupingNumberFormatOpen)
+		closeMenu(menuSettingsRef)
 	}
 
-	function init_sidenavigation_listener(): void {
-		set_is_sidenavigation_hidden(window_matches(`(max-width: ${SIZE_SIDE_NAVIGATION_NONE}px)`))
-		event_add_listener(window_match_media(
+	function initSideNavigationListener(): void {
+		setIsSideNavigationHidden(windowMatches(`(max-width: ${SIZE_SIDE_NAVIGATION_NONE}px)`))
+		eventListenerAdd(windowMatchMedia(
 			`(max-width: ${SIZE_SIDE_NAVIGATION_NONE}px)`),
 			'change',
-			ev => set_is_sidenavigation_hidden((ev as MediaQueryListEvent).matches)
+			ev => setIsSideNavigationHidden((ev as MediaQueryListEvent).matches)
 		)
 	}
 
-	function init_sidenotebook_listener(): void {
-		set_is_sidenotebook_hidden(window_matches(`(max-width: ${SIZE_SIDE_NOTEBOOK_NONE}px)`))
-		event_add_listener(
-			window_match_media(`(max-width: ${SIZE_SIDE_NOTEBOOK_NONE}px)`),
+	function initSideNotebookListener(): void {
+		setIsSideNotebookHidden(windowMatches(`(max-width: ${SIZE_SIDE_NOTEBOOK_NONE}px)`))
+		eventListenerAdd(
+			windowMatchMedia(`(max-width: ${SIZE_SIDE_NOTEBOOK_NONE}px)`),
 			'change',
-			ev => set_is_sidenotebook_hidden((ev as MediaQueryListEvent).matches)
+			ev => setIsSideNotebookHidden((ev as MediaQueryListEvent).matches)
 		)
 	}
 
-	function change_theme(theme: ThemeData): void {
-		set_theme(theme)
-		attr_set(root, RootAttributes.theme, theme)
-		storage_set(LocalStorageKeys.theme, theme)
-		close_submenu(submenu_themesettings_ref)
-		close_menu(menu_settings_ref)
+	function updateTheme(theme: ThemeData): void {
+		setTheme(theme)
+		attrSet(root, RootAttributes.theme, theme)
+		storageSet(LocalStorageKeys.theme, theme)
+		closeSubMenu(subMenuSettings_themeRef)
+		closeMenu(menuSettingsRef)
 	}
 
-	function change_corner(corner: CornerData): void {
-		set_corner(corner)
-		attr_set(root, RootAttributes.corner, corner)
-		storage_set(LocalStorageKeys.corner, corner)
-		close_submenu(submenu_cornersettings_ref)
-		close_menu(menu_settings_ref)
+	function updateCorner(corner: CornerData): void {
+		setCorner(corner)
+		attrSet(root, RootAttributes.corner, corner)
+		storageSet(LocalStorageKeys.corner, corner)
+		closeSubMenu(subMenuSettings_cornerRef)
+		closeMenu(menuSettingsRef)
 	}
 
-	function init_theme(): void {
-		const theme = storage_get(LocalStorageKeys.theme)
-
-		if (theme && valid_enum_value(theme, ThemeData)) {
-			attr_set(root, RootAttributes.theme, theme)
-			set_theme(theme as ThemeData)
+	function initTheme(): void {
+		const theme = storageGet(LocalStorageKeys.theme)
+		if (theme && validEnumValue(theme, ThemeData)) {
+			attrSet(root, RootAttributes.theme, theme)
+			setTheme(theme as ThemeData)
 		}
 	}
 
-	function init_corner(): void {
-		const corner = storage_get(LocalStorageKeys.corner)
-
-		if (corner && valid_enum_value(corner, CornerData)) {
-			attr_set(root, RootAttributes.corner, corner)
-			set_corner(corner as CornerData)
+	function initCorner(): void {
+		const corner = storageGet(LocalStorageKeys.corner)
+		if (corner && validEnumValue(corner, CornerData)) {
+			attrSet(root, RootAttributes.corner, corner)
+			setCorner(corner as CornerData)
 		}
 	}
 
 	onMount(() => {
-		init_theme()
-		init_corner()
-		init_sidenavigation_listener()
-		init_sidenotebook_listener()
+		initTheme()
+		initCorner()
+		initSideNavigationListener()
+		initSideNotebookListener()
 	})
 
 	const Menus: VoidComponent = () => {
-		const button_info_share_id = createUniqueId()
-		const input_settings_scientificnotation_id = createUniqueId()
-		const input_settings_memorybuttons_id = createUniqueId()
+		const buttonInfo_shareId = createUniqueId()
+		const inputSettings_scientificNotationId = createUniqueId()
+		const inputSettings_memoryButtonId = createUniqueId()
 		return (<>
 			<Menu
 				onClick={(ev) => {
-					const button = document_active()!
-					if (!element_valid_target(
-						event_current_target(ev),
+					const button = documentActive()!
+					if (!elementValidTarget(
+						eventCurrentTarget(ev),
 						button,
 						el => {
-							const tagname = element_tagname(el)
+							const tagname = elementTagName(el)
 							return tagname == 'BUTTON' || tagname == 'A'
 						}
 					)) return
 
-					switch (element_id(button)) {
-						case button_info_share_id:
-							navigator_share({
-								title: app.name,
-								text: app.name + ' v' + app.build_version,
-								url: url_origin() + app.link
-							})
-							break
+					switch (elementId(button)) {
+					case buttonInfo_shareId:
+						navigatorShare({
+							title: app.name,
+							text: app.name + ' v' + app.buildVersion,
+							url: urlOrigin() + app.link
+						})
+						break
 					}
 
-					close_menu(menu_info_ref)
+					closeMenu(menuInfoRef)
 				}}
 				style={{width: '200px'}}
-				ref={r => menu_info_ref = r}
-				c_on_toggleopen={(v) => set_is_menu_info_open(v)}>
+				ref={r => menuInfoRef = r}
+				c:onToggleOpen={(v) => setIsMenuInfoOpen(v)}>
 				<LinkMenuItem
 					href={RoutesLinks.home}
-					c_leading={<img src={logo_redmerah.src} width={16} alt='Redmerah logo'/>}>
+					c:leading={<img src={logo_redmerah.src} width={16} alt='Redmerah logo'/>}>
 					Redmerah
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={RoutesLinks.apps}
-					c_icon_code={ICON_APPS}>
+					c:iconCode={ICON_APPS}>
 					More apps
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={RoutesLinks.about}
-					c_icon_code={ICON_INFO}>
+					c:iconCode={ICON_INFO}>
 					About us
 				</LinkMenuItem>
 				<MenuDivider />
 				<LinkMenuItem
 					href={RoutesLinks.privacy}
-					c_icon_code={ICON_SHIELD_CHECKMARK}>
+					c:iconCode={ICON_SHIELD_CHECKMARK}>
 					Privacy policy
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={RoutesLinks.terms}
-					c_icon_code={ICON_RECEIPT}>
+					c:iconCode={ICON_RECEIPT}>
 					Terms & conditions
 				</LinkMenuItem>
 				<MenuDivider />
 				<MenuItem
-					id={button_info_share_id}
-					c_icon_code={ICON_SHARE_ANDROID}>
+					id={buttonInfo_shareId}
+					c:iconCode={ICON_SHARE_ANDROID}>
 					Share
 				</MenuItem>
 				<LinkMenuItem
-					href={'mailto:' + ExternalLinks.contact_email + '?subject=' + url_encode('Tasks')}
-					c_icon_code={ICON_CHAT}>
+					href={'mailto:' + ExternalLinks.contactEmail + '?subject=' + urlEncode('Tasks')}
+					c:iconCode={ICON_CHAT}>
 					Send feedback
 				</LinkMenuItem>
 				<LinkMenuItem
 					href={ExternalLinks.donate}
-					c_new_tab
-					c_icon_code={ICON_GIFT}>
+					c:newTab
+					c:iconCode={ICON_GIFT}>
 					Donate
 				</LinkMenuItem>
-				<MenuHeader>&copy; {date_year(new Date())} Redmerah</MenuHeader>
+				<MenuHeader>&copy; {dateYear(new Date())} Redmerah</MenuHeader>
 			</Menu>
 			<Menu
 				style={{width: '224px'}}
-				ref={r => menu_settings_ref = r}
-				c_on_toggleopen={(v) => set_is_menu_settings_open(v)}
+				ref={r => menuSettingsRef = r}
+				c:onToggleOpen={(v) => setIsMenuSettingsOpen(v)}
 				onClick={ev => {
-					const button = document_active()!
-					if (!element_valid_target(
-						event_current_target(ev),
+					const button = documentActive()!
+					if (!elementValidTarget(
+						eventCurrentTarget(ev),
 						button,
-						el => element_tagname(el) == 'BUTTON'
+						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					const data_theme = element_dataset(button, 'theme')
-					if (data_theme
-						&& valid_enum_value(data_theme, ThemeData)
-					) return change_theme(data_theme as ThemeData)
+					const dataTheme = elementDataset(button, 'theme')
+					if (dataTheme
+						&& validEnumValue(dataTheme, ThemeData)
+					) return updateTheme(dataTheme as ThemeData)
 
-					const data_corner = element_dataset(button, 'corner')
-					if (data_corner
-						&& valid_enum_value(data_corner, CornerData)
-					) return change_corner(data_corner as CornerData)
+					const dataCorner = elementDataset(button, 'corner')
+					if (dataCorner
+						&& validEnumValue(dataCorner, CornerData)
+					) return updateCorner(dataCorner as CornerData)
 
-					const data_decimal = element_dataset(button, 'decimal')
-					if (data_decimal
-						&& valid_enum_value(data_decimal, DecimalNumberFormat)
-					) return change_decimal_numberformat(data_decimal as DecimalNumberFormat)
+					const dataDecimal = elementDataset(button, 'decimal')
+					if (dataDecimal
+						&& validEnumValue(dataDecimal, DecimalNumberFormat)
+					) return updateDecimalNumberFormat(dataDecimal as DecimalNumberFormat)
 
-					const data_grouping = element_dataset(button, 'grouping')
-					if (data_grouping
-						&& valid_enum_value(data_grouping, GroupingNumberFormat)
-					) return change_grouping_numberformat(data_grouping as GroupingNumberFormat)
+					const dataGrouping = elementDataset(button, 'grouping')
+					if (dataGrouping
+						&& validEnumValue(dataGrouping, GroupingNumberFormat)
+					) return updateGroupingNumberFormat(dataGrouping as GroupingNumberFormat)
 				}}
 				onChange={ev => {
-					const target = event_target(ev) as HTMLInputElement
+					const target = eventTarget(ev) as HTMLInputElement
 
-					switch (element_id(target)) {
-					case input_settings_scientificnotation_id:
-						command(Commands.toggle_settings_scientificnotation)
+					switch (elementId(target)) {
+					case inputSettings_scientificNotationId:
+						command(Commands.toggleSettingsScientificNotation)
 						break
-					case input_settings_memorybuttons_id:
-						command(Commands.toggle_settings_memorybuttons)
+					case inputSettings_memoryButtonId:
+						command(Commands.toggleSettingsMemoryButtons)
 						break
 					}
 				}}>
 				<Tooltip>
 					<SwitchMenuItem
 						data-tooltip="Display result in scientific notation (e.g. 1.2E-29)"
-						c_icon_code={ICON_MATH_FORMAT_PROFESSIONAL}
-						c_attr_switch={{
-							id: input_settings_scientificnotation_id,
-							checked: settings().scientific_notation,
+						c:iconCode={ICON_MATH_FORMAT_PROFESSIONAL}
+						c:attrSwitch={{
+							id: inputSettings_scientificNotationId,
+							checked: settings().scientificNotation,
 						}}>
 						Scientific notation
 					</SwitchMenuItem>
 					<SwitchMenuItem
 						data-tooltip="Show or hide memory button (M, M+, M-, MR, MC)"
-						c_checked={settings().memory_buttons}
-						c_icon_code={ICON_DEVELOPER_BOARD}
-						c_attr_switch={{
-							id: input_settings_memorybuttons_id,
-							checked: settings().memory_buttons,
+						c:checked={settings().memoryButtons}
+						c:iconCode={ICON_DEVELOPER_BOARD}
+						c:attrSwitch={{
+							id: inputSettings_memoryButtonId,
+							checked: settings().memoryButtons,
 						}}>
 						Memory buttons
 					</SwitchMenuItem>
 				</Tooltip>
 				<MenuDivider/>
 				<SubMenu
-					ref={r => submenu_themesettings_ref = r}
-					c_on_toggleopen={v => set_is_submenu_themesettings_open(v)}
-					c_item={<SubMenuItem
-						c_focused={is_submenu_themesettings_open()}
-						c_icon_code={ICON_WEATHER_SUNNY}>
+					ref={r => subMenuSettings_themeRef = r}
+					c:onToggleOpen={v => setIsSubMenuSettings_themeOpen(v)}
+					c:item={<SubMenuItem
+						c:focused={isSubMenuSettings_themeOpen()}
+						c:iconCode={ICON_WEATHER_SUNNY}>
 						Theme
 					</SubMenuItem>}>
 					<MenuItem
-						c_selected={theme() == ThemeData.light}
-						c_icon_code={ICON_WEATHER_SUNNY}
+						c:selected={theme() == ThemeData.light}
+						c:iconCode={ICON_WEATHER_SUNNY}
 						data-theme={ThemeData.light}>
 						Light
 					</MenuItem>
 					<MenuItem
-						c_selected={theme() == ThemeData.dark}
-						c_icon_code={ICON_WEATHER_MOON}
+						c:selected={theme() == ThemeData.dark}
+						c:iconCode={ICON_WEATHER_MOON}
 						data-theme={ThemeData.dark}>
 						Dark
 					</MenuItem>
 					<MenuItem
-						c_selected={theme() == ThemeData.system}
-						c_icon_code={ICON_LAPTOP_SETTINGS}
+						c:selected={theme() == ThemeData.system}
+						c:iconCode={ICON_LAPTOP_SETTINGS}
 						data-theme={ThemeData.system}>
 						System theme
 					</MenuItem>
 				</SubMenu>
 				<SubMenu
-					ref={r => submenu_cornersettings_ref = r}
-					c_on_toggleopen={v => set_is_submenu_cornersettings_open(v)}
-					c_item={<SubMenuItem
-						c_focused={is_submenu_cornersettings_open()}
-						c_icon_code={ICON_TEARDROP_BOTTOM_RIGHT}>
+					ref={r => subMenuSettings_cornerRef = r}
+					c:onToggleOpen={v => setIsSubMenuSettings_cornerOpen(v)}
+					c:item={<SubMenuItem
+						c:focused={isSubMenuSettings_cornerOpen()}
+						c:iconCode={ICON_TEARDROP_BOTTOM_RIGHT}>
 						Corner style
 					</SubMenuItem>}>
 					<MenuItem
-						c_selected={corner() == CornerData.sharp}
-						c_icon_code={ICON_MAXIMIZE}
+						c:selected={corner() == CornerData.sharp}
+						c:iconCode={ICON_MAXIMIZE}
 						data-corner={CornerData.sharp}>
 						Sharp
 					</MenuItem>
 					<MenuItem
-						c_selected={corner() == CornerData.semi_round}
-						c_icon_code={ICON_SQUARE}
-						data-corner={CornerData.semi_round}>
+						c:selected={corner() == CornerData.semiRound}
+						c:iconCode={ICON_SQUARE}
+						data-corner={CornerData.semiRound}>
 						Semi round
 					</MenuItem>
 					<MenuItem
-						c_selected={corner() == CornerData.round}
-						c_icon_code={ICON_TEARDROP_BOTTOM_RIGHT}
+						c:selected={corner() == CornerData.round}
+						c:iconCode={ICON_TEARDROP_BOTTOM_RIGHT}
 						data-corner={CornerData.round}>
 						Round
 					</MenuItem>
 					<MenuItem
-						c_selected={corner() == CornerData.full_round}
-						c_icon_code={ICON_CIRCLE}
-						data-corner={CornerData.full_round}>
+						c:selected={corner() == CornerData.fullRound}
+						c:iconCode={ICON_CIRCLE}
+						data-corner={CornerData.fullRound}>
 						Full round
 					</MenuItem>
 				</SubMenu>
@@ -349,56 +347,56 @@ const _: VoidComponent<{
 				<MenuHeader>Number format</MenuHeader>
 				<SubMenu
 					style={{width: '132px'}}
-					ref={r => submenu_decimalnumberformatsettings_ref = r}
-					c_on_toggleopen={v => set_is_menu_decimalnumberformatsettings_open(v)}
-					c_item={<SubMenuItem
-						c_focused={is_menu_decimalnumberformatsettings_open()}
-						c_icon_code={ICON_DECIMAL_ARROW_LEFT}>
+					ref={r => subMenuSettings_decimalNumberFormatOpen = r}
+					c:onToggleOpen={v => setIsSubMenuSettings_decimalNumberFormatOpen(v)}
+					c:item={<SubMenuItem
+						c:focused={isSubMenuSettings_decimalNumberFormatOpen()}
+						c:iconCode={ICON_DECIMAL_ARROW_LEFT}>
 						Decimal
 					</SubMenuItem>}>
 					<MenuItem
 						data-decimal={DecimalNumberFormat.comma}
-						c_selected={settings().number_format.decimal == DecimalNumberFormat.comma}>
+						c:selected={settings().numberFormat.decimal == DecimalNumberFormat.comma}>
 						Comma
 					</MenuItem>
 					<MenuItem
 						data-decimal={DecimalNumberFormat.point}
-						c_selected={settings().number_format.decimal == DecimalNumberFormat.point}>
+						c:selected={settings().numberFormat.decimal == DecimalNumberFormat.point}>
 						Point
 					</MenuItem>
 				</SubMenu>
 				<SubMenu
 					style={{width: '132px'}}
-					ref={r => submenu_groupingnumberformatsettings_ref = r}
-					c_on_toggleopen={v => set_is_menu_groupingnumberformatsettings_open(v)}
-					c_item={<SubMenuItem
-						c_focused={is_submenu_groupingnumberformatsettings_open()}
-						c_icon_code={ICON_NUMBER_ROW}>
+					ref={r => subMenuSettings_groupingNumberFormatOpen = r}
+					c:onToggleOpen={v => setIsSubMenuSettings_groupingNumberFormatOpen(v)}
+					c:item={<SubMenuItem
+						c:focused={isSubMenuSettings_groupingNumberFormatOpen()}
+						c:iconCode={ICON_NUMBER_ROW}>
 						Grouping
 					</SubMenuItem>}>
 					<MenuItem
 						data-grouping={GroupingNumberFormat.comma}
-						c_selected={settings().number_format.grouping == GroupingNumberFormat.comma}>
+						c:selected={settings().numberFormat.grouping == GroupingNumberFormat.comma}>
 						Comma
 					</MenuItem>
 					<MenuItem
 						data-grouping={GroupingNumberFormat.point}
-						c_selected={settings().number_format.grouping == GroupingNumberFormat.point}>
+						c:selected={settings().numberFormat.grouping == GroupingNumberFormat.point}>
 						Point
 					</MenuItem>
 					<MenuItem
 						data-grouping={GroupingNumberFormat.space}
-						c_selected={settings().number_format.grouping == GroupingNumberFormat.space}>
+						c:selected={settings().numberFormat.grouping == GroupingNumberFormat.space}>
 						Space
 					</MenuItem>
 					<MenuItem
 						data-grouping={GroupingNumberFormat.none}
-						c_selected={settings().number_format.grouping == GroupingNumberFormat.none}>
+						c:selected={settings().numberFormat.grouping == GroupingNumberFormat.none}>
 						None
 					</MenuItem>
 					<MenuItem
 						data-grouping={GroupingNumberFormat.underscore}
-						c_selected={settings().number_format.grouping == GroupingNumberFormat.underscore}>
+						c:selected={settings().numberFormat.grouping == GroupingNumberFormat.underscore}>
 						Underscore
 					</MenuItem>
 				</SubMenu>
@@ -407,67 +405,67 @@ const _: VoidComponent<{
 	}
 
 	const Drawers: VoidComponent = () => {
-		const button_navigation_close_id = createUniqueId()
+		const buttonNavigation_closeId = createUniqueId()
 		return (<>
 			<Drawer
 				onClick={ev => {
-					const button = document_active()!
-					if (!element_valid_target(
-						event_current_target(ev),
+					const button = documentActive()!
+					if (!elementValidTarget(
+						eventCurrentTarget(ev),
 						button,
-						el => element_tagname(el) == 'BUTTON'
+						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					switch (element_id(button)) {
-					case button_navigation_close_id:
-						close_drawer(drawer_navigation_ref)
+					switch (elementId(button)) {
+					case buttonNavigation_closeId:
+						closeDrawer(drawerNavigationRef)
 						break
 					default: {
-						const data_navigation = element_dataset(button, 'navigation')
-						if (data_navigation && valid_enum_value(data_navigation, CalculatorType)) {
-							if (props.calculator != data_navigation) props.on_change_calculator(
-								data_navigation as CalculatorType
+						const dataNavigation = elementDataset(button, 'navigation')
+						if (dataNavigation && validEnumValue(dataNavigation, CalculatorType)) {
+							if (props.calculator != dataNavigation) props.onChangeCalculator(
+								dataNavigation as CalculatorType
 							)
 
-							close_drawer(drawer_navigation_ref)
+							closeDrawer(drawerNavigationRef)
 							return
 						}
 					}}
 				}}
-				c_header={<Tooltip>
+				c:header={<Tooltip>
 					<IconButton
 						data-tooltip="Close navigation"
-						id={button_navigation_close_id}
-						classList={classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
-						c_code={ICON_LINE_HORIZONTAL_3}
+						id={buttonNavigation_closeId}
+						classList={attrClassListModule(CSSAnimation.btn_shrink_horizontal_icon)}
+						c:code={ICON_LINE_HORIZONTAL_3}
 					/>
 				</Tooltip>}
-				ref={r => drawer_navigation_ref = r}>
+				ref={r => drawerNavigationRef = r}>
 				<For each={CALCULATOR_TYPES}>{r => <DrawerItem
 					data-navigation={r.type}
-					c_selected={props.calculator == r.type}>
-					<Icon c_filled={props.calculator == r.type} c_code={r.icon}/>{ r.text }
+					c:selected={props.calculator == r.type}>
+					<Icon c:filled={props.calculator == r.type} c:code={r.icon}/>{ r.text }
 				</DrawerItem>}</For>
 			</Drawer>
 			<Drawer
-				classList={classlist_module(CSS.appbar_notebook)}
-				c_header={<>
+				classList={attrClassListModule(CSS.appbar_notebook)}
+				c:header={<>
 					<Tooltip>
 						<IconButton
 							data-tooltip="Close notebook"
-							onClick={() => close_drawer(drawer_notebook_ref)}
-							c_code={ICON_DISMISS}
+							onClick={() => closeDrawer(drawerNotebookRef)}
+							c:code={ICON_DISMISS}
 						/>
 					</Tooltip>
 					Notebook
 				</>}
-				ref={r => drawer_notebook_ref = r}
-				c_position={DrawerPosition.right}>
+				ref={r => drawerNotebookRef = r}
+				c:position={DrawerPosition.right}>
 				<AreaTextField
-					ref={r => areatextfield_notebook_ref = r}
-					c_label="Notebook"
+					ref={r => areaTextFieldNotebookRef = r}
+					c:label="Notebook"
 					placeholder="Type your thought here ..."
-					onInput={(ev) => props.on_note_changed(event_current_target(ev).value)}
+					onInput={(ev) => props.onNoteChanged(eventCurrentTarget(ev).value)}
 				/>
 			</Drawer>
 		</>)
@@ -477,67 +475,67 @@ const _: VoidComponent<{
 		<Tooltip>
 			<AppBar
 				onClick={ev => {
-					const button = document_active()!
-					if (!element_valid_target(
-						event_current_target(ev),
+					const button = documentActive()!
+					if (!elementValidTarget(
+						eventCurrentTarget(ev),
 						button,
-						el => element_tagname(el) == 'BUTTON'
+						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					switch (element_id(button)) {
-					case button_navigation_id:
-						if (is_sidenavigation_hidden()) return open_drawer(ev, drawer_navigation_ref)
+					switch (elementId(button)) {
+					case buttonNavigationId:
+						if (isSideNavigationHidden()) return openDrawer(ev, drawerNavigationRef)
 
-						command(Commands.toggle_navigation_expand)
+						command(Commands.toggleNavigationExpand)
 						break
-					case button_info_id:
-						open_menu(ev, menu_info_ref, { anchor: button })
+					case buttonInfoId:
+						openMenu(ev, menuInfoRef, { anchor: button })
 						break
-					case button_settings_id:
-						open_menu(ev, menu_settings_ref, { anchor: button })
+					case buttonSettingsId:
+						openMenu(ev, menuSettingsRef, { anchor: button })
 						break
-					case button_notebook_id:
-						if (is_sidenotebook_hidden()) {
-							change_areatextfield_value(areatextfield_notebook_ref, props.note)
-							return open_drawer(ev, drawer_notebook_ref)
+					case buttonNotebookId:
+						if (isSideNotebookHidden()) {
+							updateAreaTextFieldValue(areaTextFieldNotebookRef, props.note)
+							return openDrawer(ev, drawerNotebookRef)
 						}
-						command(Commands.toggle_notebook_expand)
+						command(Commands.toggleNotebookExpand)
 						break
 					}
 				}}
-				c_leading={<>
+				c:leading={<>
 					<IconButton
-						data-tooltip={is_sidenavigation_hidden()
+						data-tooltip={isSideNavigationHidden()
 							? "Open navigation"
 							: "Expand/shrink navigation"
 						}
-						id={button_navigation_id}
-						classList={classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
-						c_code={ICON_LINE_HORIZONTAL_3}
+						id={buttonNavigationId}
+						classList={attrClassListModule(CSSAnimation.btn_shrink_horizontal_icon)}
+						c:code={ICON_LINE_HORIZONTAL_3}
 					/>
-					<img width={32} src={app.logo_url} alt={app.name} />
+					<img width={32} src={app.logoUrl} alt={app.name} />
 				</>}
-				c_headline={app.name}
-				c_trailing={<>
+				c:headline={app.name}
+				c:trailing={<>
 					<IconButton
 						data-tooltip="Info"
-						id={button_info_id}
-						c_focused={is_menu_info_open()}
-						c_code={ICON_INFO}
+						id={buttonInfoId}
+						c:focused={isMenuInfoOpen()}
+						c:code={ICON_INFO}
 					/>
 					<IconButton
 						data-tooltip="Settings"
-						id={button_settings_id}
-						classList={classlist_module(CSSAnimation.btn_rotate_icon)}
-						c_focused={is_menu_settings_open()}
-						c_code={ICON_SETTINGS}
+						id={buttonSettingsId}
+						classList={attrClassListModule(CSSAnimation.btn_rotate_icon)}
+						c:focused={isMenuSettingsOpen()}
+						c:code={ICON_SETTINGS}
 					/>
 					<IconButton
 						data-tooltip="Notebook"
-						id={button_notebook_id}
-						c_variant={props.is_notebook_expanded && !is_sidenotebook_hidden()? ButtonVariant.filled : undefined}
-						c_filled={props.is_notebook_expanded && !is_sidenotebook_hidden()}
-						c_code={ICON_NOTEBOOK}
+						id={buttonNotebookId}
+						c:variant={props.is_notebook_expanded && !isSideNotebookHidden()? ButtonVariant.filled : undefined}
+						c:filled={props.is_notebook_expanded && !isSideNotebookHidden()}
+						c:code={ICON_NOTEBOOK}
 					/>
 				</>}
 			/>

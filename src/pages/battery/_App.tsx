@@ -1,46 +1,45 @@
 import { createSignal, onMount, Show, type VoidComponent } from "solid-js"
 
 import type { BatteryManager } from "@/interfaces/battery"
-import { timeout_set } from "@/utils/timeout"
-import { remove_splash_screen } from "@/scripts/splash"
-import { event_add_listener } from "@/utils/event"
-import { math_floor } from "@/utils/math"
-import { document_body } from "@/utils/document"
-import { promise_done } from "@/utils/object"
-import { element_click } from "@/utils/element"
+import { timeTimerSet } from "@/utils/time"
+import { removeSplashScreen } from "@/scripts/splash"
+import { eventListenerAdd } from "@/utils/event"
+import { mathFloor } from "@/utils/math"
+import { documentBody } from "@/utils/document"
+import { promiseDone } from "@/utils/object"
+import { elementClick } from "@/utils/element"
 import { ICON_BATTERY_5, ICON_BATTERY_CHARGE, ICON_DISMISS, ICON_QUESTION_CIRCLE, ICON_WARNING } from "@/constants/icons"
 
 import Tooltip from "@/components/Tooltip"
 import { ButtonVariant, IconButton } from "@/components/Button"
 import Icon from "@/components/Icon"
-import Toast, { close_toast, open_toast } from "@/components/Toast"
+import Toast, { closeToast, openToast } from "@/components/Toast"
 import AppBar from './_AppBar'
 import App from "@/components/App"
 import CSS from './_styles.module.scss'
 
 const _: VoidComponent = () => {
-	const [level, set_level] = createSignal<number | null>(null)
-	const [is_charging, set_is_charging] = createSignal<boolean | null>(null)
-	const [charging_time, set_charging_time] = createSignal<number | null>(null)
-	const [discharging_time, set_discharging_time] = createSignal<number | null>(null)
-	let toast_browsernotsupport_ref: HTMLDivElement
-	let toast_batterystatuserror_ref: HTMLDivElement
+	const [level, setLevel] = createSignal<number | null>(null)
+	const [isCharging, setIsCharging] = createSignal<boolean | null>(null)
+	const [chargingTime, setChargingTime] = createSignal<number | null>(null)
+	const [dischargingTime, setDischargingTime] = createSignal<number | null>(null)
+	let toastBrowserNotSupportRef: HTMLDivElement
+	let toastBatterStatusErrorRef: HTMLDivElement
 
-	function get_remaining_time_text(seconds: number): string {
+	function getRemainingTimeText(seconds: number): string {
 		const SECOND_PER_MINUTE = 60
 		const SECOND_PER_HOUR = SECOND_PER_MINUTE * 60
-
 		let text = ''
 		if (seconds >= SECOND_PER_HOUR) {
-			const n = math_floor(seconds / SECOND_PER_HOUR)
+			const n = mathFloor(seconds / SECOND_PER_HOUR)
 			text = text + `${n} hour${n > 1? "s" : ""}`
-			seconds = math_floor(seconds % SECOND_PER_HOUR)
+			seconds = mathFloor(seconds % SECOND_PER_HOUR)
 		}
 		if (seconds >= SECOND_PER_MINUTE) {
 			if (text != '') text += ", "
-			const n = math_floor(seconds / SECOND_PER_MINUTE)
+			const n = mathFloor(seconds / SECOND_PER_MINUTE)
 			text = text + `${n} minute${n > 1? "s" : ""}`
-			seconds = math_floor(seconds % SECOND_PER_MINUTE)
+			seconds = mathFloor(seconds % SECOND_PER_MINUTE)
 		}
 		if (seconds > 0) {
 			if (text != '') text += ", "
@@ -49,54 +48,54 @@ const _: VoidComponent = () => {
 		return text
 	}
 
-	function init_battery(ev: Event): void {
+	function initBattery(ev: Event): void {
 		if (!(navigator as any).getBattery) {
-			timeout_set(() => open_toast(ev, toast_browsernotsupport_ref, {
+			timeTimerSet(() => openToast(ev, toastBrowserNotSupportRef, {
 				autoclose: false
 			}))
 			return
 		}
-		promise_done(
+		promiseDone(
 			((navigator as any).getBattery() as Promise<BatteryManager>),
 			battery => {
 				const update = () => {
-					set_is_charging(battery.charging)
-					set_level(battery.level * 100)
-					set_charging_time(battery.chargingTime == Infinity? null : battery.chargingTime)
-					set_discharging_time(battery.dischargingTime == Infinity? null : battery.dischargingTime)
+					setIsCharging(battery.charging)
+					setLevel(battery.level * 100)
+					setChargingTime(battery.chargingTime == Infinity? null : battery.chargingTime)
+					setDischargingTime(battery.dischargingTime == Infinity? null : battery.dischargingTime)
 				}
 				update()
-				event_add_listener(battery, 'chargingchange', () => update())
-				event_add_listener(battery, 'levelchange', () => update())
-				event_add_listener(battery, 'chargingtimechange', () => update())
-				event_add_listener(battery, 'dischargingtimechange', () => update())
+				eventListenerAdd(battery, 'chargingchange', () => update())
+				eventListenerAdd(battery, 'levelchange', () => update())
+				eventListenerAdd(battery, 'chargingtimechange', () => update())
+				eventListenerAdd(battery, 'dischargingtimechange', () => update())
 			},
-			() => open_toast(ev, toast_batterystatuserror_ref, {duration: 8E3})
+			() => openToast(ev, toastBatterStatusErrorRef, {duration: 8E3})
 		)
 	}
 
 	onMount(() => {
 		let clicked = false
-		event_add_listener(document_body(), 'click', ev => {
+		eventListenerAdd(documentBody(), 'click', ev => {
 			if (clicked) return;
-			init_battery(ev)
-			remove_splash_screen()
+			initBattery(ev)
+			removeSplashScreen()
 			clicked = true
 		})
 
-		element_click(document_body())
+		elementClick(documentBody())
 	})
 
 	const Toasts: VoidComponent = () => (<>
 		<Toast
-			ref={r => toast_browsernotsupport_ref = r}
-			c_leading={<Icon c_code={ICON_WARNING}/>}
-			c_trailing={<Tooltip>
+			ref={r => toastBrowserNotSupportRef = r}
+			c:leading={<Icon c:code={ICON_WARNING}/>}
+			c:trailing={<Tooltip>
 				<IconButton
 					data-tooltip="Close"
-					c_code={ICON_DISMISS}
-					c_variant={ButtonVariant.tonal}
-					onClick={() => close_toast(toast_browsernotsupport_ref)}
+					c:code={ICON_DISMISS}
+					c:variant={ButtonVariant.tonal}
+					onClick={() => closeToast(toastBrowserNotSupportRef)}
 				/>
 			</Tooltip>}>
 			Browser not supported. See <a
@@ -109,28 +108,28 @@ const _: VoidComponent = () => {
 				href="https://developer.mozilla.org/en-US/docs/Web/API/BatteryManager#browser_compatibility">browser compatibility</a>.
 		</Toast>
 		<Toast
-			ref={r => toast_batterystatuserror_ref = r}
-			c_leading={<Icon c_code={ICON_WARNING}/>}>
+			ref={r => toastBatterStatusErrorRef = r}
+			c:leading={<Icon c:code={ICON_WARNING}/>}>
 			[Error] Unable to get battery status
 		</Toast>
 	</>)
 
-	return (<App c_appbar={<AppBar />}>
+	return (<App c:appBar={<AppBar />}>
 		<main class={CSS.app_body}>
 			<h1>{level() == null? "???" : level()}%</h1>
 			<div class={CSS.app_body_status}>
 				<Show
-					when={is_charging() != null}
-					fallback={<><Icon c_filled c_code={ICON_QUESTION_CIRCLE}/>Unknown status</>}>
-					<Icon c_filled c_code={is_charging()? ICON_BATTERY_CHARGE : ICON_BATTERY_5}/>
-					{is_charging()? "Charging" : "Discharging"}
+					when={isCharging() != null}
+					fallback={<><Icon c:filled c:code={ICON_QUESTION_CIRCLE}/>Unknown status</>}>
+					<Icon c:filled c:code={isCharging()? ICON_BATTERY_CHARGE : ICON_BATTERY_5}/>
+					{isCharging()? "Charging" : "Discharging"}
 				</Show>
 			</div>
-			<Show when={charging_time() != null && level() != null && level()! < 100}>
-				<p>{get_remaining_time_text(charging_time()!)} remaining</p>
+			<Show when={chargingTime() != null && level() != null && level()! < 100}>
+				<p>{getRemainingTimeText(chargingTime()!)} remaining</p>
 			</Show>
-			<Show when={discharging_time() != null && level() != null && level()! > 0}>
-				<p>{get_remaining_time_text(discharging_time()!)} remaining</p>
+			<Show when={dischargingTime() != null && level() != null && level()! > 0}>
+				<p>{getRemainingTimeText(dischargingTime()!)} remaining</p>
 			</Show>
 		</main>
 		<Toasts/>

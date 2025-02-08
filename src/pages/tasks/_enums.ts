@@ -1,135 +1,135 @@
 export enum Commands {
-	toggle_navigation_expand,
+	toggleNavigationExpand,
 
 	/** @param {Pages | number} page `Pages | number` either page or list id */
-	change_page,
+	updatePage,
 
-	/** @param {SortBy} sort_by `SortBy` */
-	change_sort_by,
+	/** @param {SortBy} sortBy `SortBy` */
+	updateSortBy,
 
-	/** @param {SortMode} sort_by `SortMode` */
-	change_sort_mode,
+	/** @param {SortMode} sortBy `SortMode` */
+	updateSortMode,
 
 	/**
 	@param {Task} task `Task`
-	@param {number} tasklist_index `number` */
-	add_task,
+	@param {number} taskListIndex `number` */
+	addTask,
 
 	/**
 	Don't use this to edit single subtask/file. Use `Commands.edit_subtask`/`Commands.edit_file` instead.
 	@param {Task} task `Task`
-	@param {number} tasklist_index `number`
-	@param {number} task_index `number` */
-	edit_task,
+	@param {number} taskListIndex `number`
+	@param {number} taskIndex `number` */
+	editTask,
 
 	/**
 	@param {Task} task `Task`
-	@param {number} tasklist_index `number`
-	@param {number} task_index `number` */
-	delete_task,
+	@param {number} taskListIndex `number`
+	@param {number} taskIndex `number` */
+	deleteTask,
 
 	/** @param {boolean | undefined} value `boolean | undefined` */
-	toggle_delete_task_warning,
+	toggleDeleteTaskWarning,
 
 	/** @param {Pages[]} pages `Pages[]` */
-	change_hidden_navigation,
+	updateHiddenNavigation,
 
-	/** @param {number} tasklist_index `number` */
-	mark_all_completed,
+	/** @param {number} taskListIndex `number` */
+	markAllCompleted,
 
-	/** @param {number} tasklist_index `number` */
-	mark_all_uncompleted,
+	/** @param {number} taskListIndex `number` */
+	markAllUncompleted,
 
-	/** @param {number} tasklist_index `number` */
-	clear_tasks,
+	/** @param {number} taskListIndex `number` */
+	clearTasks,
 
-	/** @param {number} tasklist_index `number` */
-	delete_completed_task,
+	/** @param {number} taskListIndex `number` */
+	deleteCompletedTask,
 
-	/** @param {number?} tasklist_index `number?` */
-	copy_tasks,
+	/** @param {number?} taskListIndex `number?` */
+	copyTasks,
 
 	/** @param {Event} event `Event` */
-	add_label,
+	addLabel,
 
 	/**
 	@param {Event} event `Event`
 	@param {TaskLabel} label `TaskLabel` */
-	edit_label,
+	editLabel,
 
 	/** @param {TaskLabel} label `TaskLabel` */
-	delete_label,
+	deleteLabel,
 
 	/** @param {Event} event `Event` */
-	show_labels_options,
+	showLabelsOptions,
 
 	/**
 	@param {FileList} files `FileList`
 	@param {Task} task `Task`
-	@param {number} tasklist_index `number`
-	@param {number} task_index `number`
+	@param {number} taskListIndex `number`
+	@param {number} taskIndex `number`
 	@returns {Promise<TaskFileMetaData[]>} `Promise<TaskFileMetaData[]>` */
-	add_files,
+	addFiles,
 
 	/**
 	@param {Event} event `Event`
 	@param {TaskFileMetaData} file `TaskFileMetaData`
-	@param {number} tasklist_index `number`
-	@param {number} task_index `number`
-	@param {number} file_index `number` */
-	download_file,
+	@param {number} taskListIndex `number`
+	@param {number} taskIndex `number`
+	@param {number} fileIndex `number` */
+	downloadFile,
 
 	/**
 	@param {TaskFileMetaData} file `TaskFileMetaData`
-	@param {number} tasklist_index `number`
-	@param {number} task_index `number`
-	@param {number} file_index `number` */
-	edit_file,
+	@param {number} taskListIndex `number`
+	@param {number} taskIndex `number`
+	@param {number} fileIndex `number` */
+	editFile,
 
 	/**
 	@param {SubTask} subtask `SubTask`
-	@param {number} tasklist_index `number`
-	@param {number} task_index `number`
-	@param {number} subtask_index `number` */
-	edit_subtask,
+	@param {number} taskListIndex `number`
+	@param {number} taskIndex `number`
+	@param {number} subtaskIndex `number` */
+	editSubTask,
 
 	/**
 	@param {Event} event `Event`
 	@param {TaskFileMetaData} file `TaskFileMetaData`
-	@param {number} tasklist_index `number`
-	@param {number} task_index `number`
-	@param {number} file_index `number`
+	@param {number} taskListIndex `number`
+	@param {number} taskIndex `number`
+	@param {number} fileIndex `number`
 	@returns {Promise<Blob | null>} `Promise<Blob | null>`*/
-	get_file_blob,
+	getFileBlob,
 
 	/**
 	@param {SubTask} subtask `SubTask`
-	@param {number} tasklist_index `number`
-	@param {number} task_index `number`
+	@param {number} taskListIndex `number`
+	@param {number} taskIndex `number`
 	@returns {SubTask} `Promise<SubTask>`*/
-	add_subtask,
+	addSubTask,
 
 	/** @param {Event} event `Event` */
-	add_tasklist,
+	addTaskList,
 
 	/**
 	@param {Event} event `Event`
-	@param {number} tasklist_index `number` */
-	delete_taskList,
+	@param {number} taskListIndex `number` */
+	deleteTaskList,
 
 	/**
 	@param {Event} event `Event`
-	@param {number} tasklist_index `number` */
-	rename_taskList,
+	@param {number} taskListIndex `number` */
+	renameTaskList,
 
 	/**
 	@param {Task} task `Task`
-	@param {number} tasklist_index `number`
-	@param {number} task_index `number`
-	@param {number} target_tasklist_index `number` */
-	move_task,
+	@param {number} taskListIndex `number`
+	@param {number} taskIndex `number`
+	@param {number} targetTaskListIndex `number` */
+	moveTask,
 
-	get_all_task,
+	getAllTask,
 }
 
 export enum Pages {
@@ -144,7 +144,7 @@ export enum Pages {
 export enum SortBy {
 	name = 'name',
 	importance = 'importance',
-	creation_date = 'creation_date',
+	creationDate = 'creation-date',
 	completed = 'completed',
 	uncompleted = 'uncompleted'
 }

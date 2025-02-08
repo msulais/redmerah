@@ -1,31 +1,31 @@
 import { children, mergeProps, Show, splitProps, type JSX, type ParentComponent } from "solid-js"
 
-import { classlist } from "@/utils/attributes"
+import { attrClassList } from "@/utils/attributes"
 
 import FocusableGroup from "@/components/FocusableGroup"
 import './index.scss'
 
 type AppBarProps = JSX.HTMLAttributes<HTMLDivElement> & {
-	c_leading?: JSX.Element
-	c_trailing?: JSX.Element
-	c_trailing_auto_tabindex?: boolean
-	c_headline?: JSX.Element
+	'c:leading'?: JSX.Element
+	'c:trailing'?: JSX.Element
+	'c:trailingAutoTabIndex'?: boolean
+	'c:headline'?: JSX.Element
 }
 
 const AppBar: ParentComponent<AppBarProps> = ($props) => {
 	const $$props = mergeProps({
-		c_trailing_auto_tabindex: true
+		'c:trailingAutoTabIndex': true
 	}, $props)
 	const [props, other] = splitProps($$props, [
-		'children', 'c_leading', 'c_trailing', 'c_headline',
-		'class', 'c_trailing_auto_tabindex'
+		'children', 'c:leading', 'c:trailing', 'c:headline',
+		'class', 'c:trailingAutoTabIndex'
 	])
-	const leading = children(() => props.c_leading)
-	const headline = children(() => props.c_headline)
-	const trailing = children(() => props.c_trailing)
+	const leading = children(() => props['c:leading'])
+	const headline = children(() => props['c:headline'])
+	const trailing = children(() => props['c:trailing'])
 
 	return (<div
-		class={classlist('c-appbar', props.class ?? '')}
+		class={attrClassList('c-appbar', props.class ?? '')}
 		{...other}>
 		<Show when={leading()}>
 			<div class="c-appbar-leading">{leading()}</div>
@@ -39,10 +39,10 @@ const AppBar: ParentComponent<AppBarProps> = ($props) => {
 		<Show when={trailing()}>
 			<div class="c-appbar-trailing">
 				<Show
-					when={props.c_trailing_auto_tabindex}
+					when={props['c:trailingAutoTabIndex']}
 					fallback={trailing()}>
 					<FocusableGroup
-						c_arrow_options={{
+						c:arrowOptions={{
 							left: 'prev',
 							right: 'next'
 						}}>

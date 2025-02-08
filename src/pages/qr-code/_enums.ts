@@ -31,34 +31,34 @@ export enum DownloadFileType {
 
 export enum Commands {
 	/** @param { Pages } page `Pages` */
-	change_page,
+	updatePage,
 
 	/** @param { ErrorCorrectionLevel } level `ErrorCorrectionLevel` */
-	change_settings_errorcorrectionlevel,
+	updateSettingsErrorCorrectionLevel,
 
 	/** @param { HEXColor } color `HEXColor` */
-	change_settings_color,
+	updateSettingsColor,
 
 	/** @param { HEXColor } color `HEXColor` */
-	change_settings_backgroundcolor,
+	updateSettingsBackgroundColor,
 
 	/** @param { number } value `number` */
-	change_settings_margin,
+	updateSettingsMargin,
 
 	/** @param { number | null } version `number | null` */
-	change_settings_version,
+	updateSettingsVersion,
 
 	/** @param { EncodingMode } mode `EncodingMode` */
-	change_settings_encodingmode,
+	updateSettingsEncodingMode,
 
 	/** @param { string } data `string` */
-	change_qrcode_data,
+	updateQRCodeData,
 
 	/** @param { DownloadFileType } type `DownloadFileType` */
-	download_qrcode,
+	downloadQRCode,
 
 	/**
 	@param { Event } event `Event`
 	@param { CopyFileType } type `CopyFileType` */
-	copy_qrcode,
+	copyQRCode,
 }

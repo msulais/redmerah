@@ -28,7 +28,7 @@ export enum WordsRandomizerWordCase {
 	none = 'none'
 }
 
-export enum ColorsRandomizerColorModel {
+export enum ColorsRandomizerColorSpace {
 	rgb = 'rgb',
 	hsl = 'hsl',
 	hex = 'hex'
@@ -37,160 +37,160 @@ export enum ColorsRandomizerColorModel {
 export enum Commands {
 	/**
 	@param event `Event` */
-	reset_list,
+	resetList,
 
 	/**
 	@param event `Event` */
-	add_list,
+	addList,
 
 	/**
 	@param list `ListItems` */
-	export_list,
+	exportList,
 
 	/**
 	@param event `Event`
 	@param list `ListItems | undefined` */
-	edit_list,
+	editList,
 
 	/**
 	@param event `Event`
 	@param list `ListItems` */
-	view_list,
+	viewList,
 
 	/**
 	@param event `Event`
 	@param list `ListItems` */
-	delete_list,
+	deleteList,
 
-	toggle_settings_animation,
-	toggle_settings_repeat,
+	toggleSettingsAnimation,
+	toggleSettingsRepeat,
 
 	/**
 	@param sort `NumbersRandomizerSort` */
-	change_settings_numbers_sort,
+	updateSettingsNumbersSort,
 
 	/**
 	@param type `NumbersRandomizerNumberType` */
-	change_settings_numbers_type,
+	updateSettingsNumbersType,
 
 	/**
 	@param value `string` */
-	change_settings_prefix,
+	updateSettingsPrefix,
 
 	/**
 	@param value `string` */
-	change_settings_suffix,
+	updateSettingsSuffix,
 
 	/**
 	@param value `string` */
-	change_settings_separator,
+	updateSettingsSeparator,
 
 	/**
 	@param wordcase `WordsRandomizerWordCase` */
-	change_settings_words_wordcase,
+	updateSettingsWordsWordcase,
 
 	/**
-	@param model `ColorsRandomizerColorModel` */
-	change_settings_colors_model,
+	@param space `ColorsRandomizerColorSpace` */
+	updateSettingsColorsSpace,
 
 	/**
 	@param list `ListItems` */
-	change_settings_words_list,
+	updateSettingsWordsList,
 
 	/**
 	@param length `number` */
-	change_settings_string_length,
+	updateSettingsStringLength,
 
 	/**
 	@param characters `string` */
-	change_settings_string_characters_custom,
+	updateSettingsStringCharactersCustom,
 
-	toggle_settings_string_characters_symbols,
-	toggle_settings_string_characters_numbers,
-	toggle_settings_string_characters_lowercase,
-	toggle_settings_string_characters_uppercase,
-	change_settings_string_characters_default,
+	toggleSettingsStrnigCharactersSymbols,
+	toggleSettingsStringCharactersNumbers,
+	toggleSettingsStringCharactersLowercase,
+	toggleSettingsStringCharactersUppercase,
+	updateSettingsStringCharactersDefault,
 
 	/**
 	@param count `number` */
-	change_settings_numbers_count,
+	updateSettingsNumbersCount,
 
 	/**
 	@param length `number` */
-	change_settings_numbers_minlength,
+	updateSettingsNumbersMinDigits,
 
 	/**
 	@param min `number`
 	@param max `number` */
-	change_settings_numbers_range,
+	updateSettingsNumbersRange,
 
 	/**
 	@param count `number` */
-	change_settings_words_count,
+	updateSettingsWordsCount,
 
 	/**
 	@param count `number` */
-	change_settings_colors_count,
+	updateSettingsColorsCount,
 
 	/**
 	@param min `number`
 	@param max `number` */
-	change_settings_colors_range_hex,
+	updateSettingsColorsRangeHex,
 
 	/**
 	@param min `number`
 	@param max `number` */
-	change_settings_colors_range_hsl_h,
+	updateSettingsColorsRangeHslH,
 
 	/**
 	@param min `number`
 	@param max `number` */
-	change_settings_colors_range_hsl_s,
+	updateSettingsColorsRangeHslS,
 
 	/**
 	@param min `number`
 	@param max `number` */
-	change_settings_colors_range_hsl_l,
+	updateSettingsColorsRangeHslL,
 
 	/**
 	@param min `number`
 	@param max `number` */
-	change_settings_colors_range_rgb_r,
+	updateSettingsColorsRangeRgbR,
 
 	/**
 	@param min `number`
 	@param max `number` */
-	change_settings_colors_range_rgb_g,
+	updateSettingsColorsRangeRgbG,
 
 	/**
 	@param min `number`
 	@param max `number` */
-	change_settings_colors_range_rgb_b,
+	updateSettingsColorsRangeRgbB,
 
 	/**
 	@param list `ListItems` */
-	change_settings_selection_list,
+	updateSettingsSelectionList,
 
 	/**
 	@param count `number` */
-	change_settings_selection_count,
+	updateSettingsSelectionCount,
 
 	/**
 	@param list `ListItems` */
-	change_settings_teams_listnames,
+	updateSettingsTeamsListNames,
 
 	/**
 	@param list `ListItems` */
-	change_settings_teams_listmembers,
+	updateSettingsTeamsListMembers,
 
 	/**
 	@param count `number` */
-	change_settings_teams_count,
+	updateSettingsTeamsCount,
 
-	toggle_navigation_expand,
+	toggleNavigationExpand,
 
 	/**
 	@param event `Event` */
 	generate,
-	stop_generate
+	stopGenerate
 }

@@ -1,93 +1,94 @@
 import { KEY_ARROW_UP, KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT } from "@/constants/key_code"
-import { array_join, array_length } from "./array"
-import { document_active, document_has_focus } from "./document"
-import { attr_get, attr_remove } from "./attributes"
-import { number_is_defined, number_parse } from "./number"
+import { arrayJoin, arrayLength } from "./array"
+import { documentActive, documentHasFocus } from "./document"
+import { attrGet, attrRemove } from "./attributes"
+import { numberIsDefined, numberParse } from "./number"
 
-export function element_scroll_width(element: HTMLElement): number {
+export function elementScrollWidth(element: HTMLElement): number {
 	return element.scrollWidth
 }
 
-export function element_closest<T = HTMLElement>(
+export function elementClosest<T = HTMLElement>(
 	element: HTMLElement,
 	selector: string
 ): T | null {
 	return element.closest(selector) as T | null
 }
 
-export function element_client_width(element: HTMLElement): number {
+export function elementClientWidth(element: HTMLElement): number {
 	return element.clientWidth
 }
 
-export function element_scroll_height(element: HTMLElement): number {
+export function elementScrollHeight(element: HTMLElement): number {
 	return element.scrollHeight
 }
 
-export function element_client_height(element: HTMLElement): number {
+export function elementClientHeight(element: HTMLElement): number {
 	return element.clientHeight
 }
 
-export function element_is_overflow_x(element: HTMLElement): boolean {
-	return element_client_width(element) < element_scroll_width(element)
+export function elementIsOverflowX(element: HTMLElement): boolean {
+	return elementClientWidth(element) < elementScrollWidth(element)
 }
 
-export function element_is_overflow_y(element: HTMLElement): boolean {
-	return element_client_height(element) < element_scroll_height(element)
+export function elementIsOverflowY(element: HTMLElement): boolean {
+	return elementClientHeight(element) < elementScrollHeight(element)
 }
 
-export function element_is_overflow(element: HTMLElement): boolean {
-	return element_is_overflow_x(element) || element_is_overflow_y(element)
+export function elementIsOverflow(element: HTMLElement): boolean {
+	return elementIsOverflowX(element) || elementIsOverflowY(element)
 }
 
-export function element_contains(
+export function elementContains(
 	element: HTMLElement,
 	other: Node | null
 ): boolean {
 	return element.contains(other)
 }
 
-export function element_first_child<T = HTMLElement>(
+export function elementFirstChild<T = HTMLElement>(
 	element: HTMLElement
 ): T | null {
 	return element.firstElementChild as T | null
 }
 
-export function element_last_child<T = HTMLElement>(
+export function elementLastChild<T = HTMLElement>(
 	element: HTMLElement
 ): T | null {
 	return element.lastElementChild as T | null
 }
 
-export function element_parent<T = HTMLElement>(
+export function elementParent<T = HTMLElement>(
 	element: HTMLElement
 ): T | null {
 	return element.parentElement as T | null
 }
 
-export function element_visible(
+export function elementIsVisible(
 	element: HTMLElement,
 	options?: CheckVisibilityOptions
 ): boolean {
 	return element.checkVisibility(options)
 }
 
-export function element_editable(element: HTMLElement): boolean {
+export function elementIsEditable(element: HTMLElement): boolean {
 	return element.isContentEditable
 }
 
-export function element_connected(element: HTMLElement): boolean {
+export function elementIsConnected(element: HTMLElement): boolean {
 	return element.isConnected
 }
 
-export function element_tabindex(element: HTMLElement): number {
+export function elementTabIndex(element: HTMLElement): number {
 	return element.tabIndex
 }
 
-export function element_focus_any(
+export function elementFocusAny(
 	parent: HTMLElement,
 	condition?: (el: HTMLElement) => boolean
 ): void {
-	const selector = ':is(' +  array_join([
+	const selector = ':is(' +  arrayJoin([
+		'[contenteditable]',
 		'[tabindex]',
 		'a[href]',
 		'area[href]',
@@ -97,27 +98,27 @@ export function element_focus_any(
 		'textarea:not(:disabled)',
 		'iframe:not(:disabled)',
 	], ',') + ')'
-	const elements = element_all_by_selector(selector, parent)
+	const elements = elementAllBySelector(selector, parent)
 	for (const el of elements) {
 		if (condition && !condition(el as HTMLElement)) continue
 
-		element_focus(el as HTMLElement)
-		if (document_active() === el) break
+		elementFocus(el as HTMLElement)
+		if (documentActive() === el) break
 	}
 }
 
-export function element_focusable(element: HTMLElement): boolean {
-	const visible = element_visible(element, {
+export function elementIsFocusable(element: HTMLElement): boolean {
+	const visible = elementIsVisible(element, {
 		contentVisibilityAuto: true,
 		visibilityProperty: true,
 	})
-	const connected = element_connected(element)
+	const connected = elementIsConnected(element)
 	if (!visible || !connected) return false
 
-	const disabled = element_matches(element, '[disabled]')
+	const disabled = elementMatches(element, '[disabled]')
 	if (disabled) return false
 
-	const tagname = element_tagname(element)
+	const tagname = elementTagName(element)
 	if (
 		tagname == 'BUTTON'
 		|| tagname == 'SELECT'
@@ -130,13 +131,13 @@ export function element_focusable(element: HTMLElement): boolean {
 			tagname == 'A'
 			|| tagname == 'AREA'
 		)
-		&& element_matches(element, '[href]')
+		&& elementMatches(element, '[href]')
 	) return true
 
-	if (element_editable(element)) return true
-	if (element_matches(element, '[tabindex]')) {
-		const tabindex = attr_get(element, 'tabindex')
-		if (tabindex && number_is_defined(number_parse(tabindex, true))) {
+	if (elementIsEditable(element)) return true
+	if (elementMatches(element, '[tabindex]')) {
+		const tabindex = attrGet(element, 'tabindex')
+		if (tabindex && numberIsDefined(numberParse(tabindex, true))) {
 			return true
 		}
 	}
@@ -144,54 +145,48 @@ export function element_focusable(element: HTMLElement): boolean {
 	return false
 }
 
-/** Creates an instance of the element for the specified tag */
-export function element_create<K extends keyof HTMLElementTagNameMap>(
+export function elementCreate<K extends keyof HTMLElementTagNameMap>(
 	tagname: K,
 	options?: ElementCreationOptions
 ): HTMLElementTagNameMap[K] {
 	return document.createElement(tagname, options)
 }
 
-/** Returns a reference to the first object with the specified value of the ID
- * attribute */
-export function element_by_id<T = HTMLElement>(element_id: string): T | null {
-	return document.getElementById(element_id) as T | null
+export function elementById<T = HTMLElement>(elementId: string): T | null {
+	return document.getElementById(elementId) as T | null
 }
 
-/** Returns the first element that is a descendant of node that matches
- * selectors */
-export function element_by_selector(
+export function elementBySelector(
 	selectors: string,
 	from: HTMLElement | Document = document
 ): HTMLElement | null {
 	return from.querySelector(selectors)
 }
 
-/** Returns all element descendants of node that match selectors */
-export function element_all_by_selector<E extends Element>(
+export function elementAllBySelector<E extends Element>(
 	selectors: string,
 	from: HTMLElement | Document = document
 ): NodeListOf<E> {
 	return from.querySelectorAll<E>(selectors)
 }
 
-export function element_rect(element: Element): DOMRect {
+export function elementRect(element: Element): DOMRect {
 	return element.getBoundingClientRect()
 }
 
-export function element_set_textcontent(element: HTMLElement, text: string): string {
+export function elementTextContentSet(element: HTMLElement, text: string): string {
 	return element.textContent = text
 }
 
-export function element_set_popover(element: HTMLElement, popover: 'auto' | 'manual'): string {
+export function elementPopoverSet(element: HTMLElement, popover: 'auto' | 'manual'): string {
 	return element.popover = popover
 }
 
-export function element_set_id(element: HTMLElement, id: string): string {
+export function elementIdSet(element: HTMLElement, id: string): string {
 	return element.id = id
 }
 
-export function element_set_style(
+export function elementStyleSet(
 		element: HTMLElement,
 		property: string,
 		value: string | null,
@@ -200,32 +195,32 @@ export function element_set_style(
 	return element.style.setProperty(property, value, priority)
 }
 
-export function element_remove_style(
+export function elementStyleRemove(
 	element: HTMLElement,
 	property: string
 ): string {
 	return element.style.removeProperty(property)
 }
 
-export function element_append_child(element: HTMLElement, node: Node): Node {
+export function elementAppendChild(element: HTMLElement, node: Node): Node {
 	return element.appendChild(node)
 }
 
-export function element_tagname(element: HTMLElement): string {
+export function elementTagName(element: HTMLElement): string {
 	return element.tagName
 }
 
-export function element_matches(element: HTMLElement, selectors: string): boolean {
+export function elementMatches(element: HTMLElement, selectors: string): boolean {
 	return element.matches(selectors)
 }
 
-export function element_id(element: HTMLElement): string {
+export function elementId(element: HTMLElement): string {
 	return element.id
 }
 
-export function element_focus_by_arrowkey<T = HTMLElement>(
+export function elementFocusByArrowKey<T = HTMLElement>(
 	parent: HTMLElement | null,
-	key_code: 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight' | string,
+	keyCode: 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight' | string,
 	options?: {
 		up?: 'next' | 'prev'
 		down?: 'next' | 'prev'
@@ -234,52 +229,52 @@ export function element_focus_by_arrowkey<T = HTMLElement>(
 	},
 	condition?: (sibling: T) => boolean
 ): HTMLElement | null {
-	if (!document_has_focus()) return null
+	if (!documentHasFocus()) return null
 
-	const element = document_active()!
+	const element = documentActive()!
 	if (!options) return null
 
 	const up = options.up
 	const down = options.down
 	const left = options.left
 	const right = options.right
-	const valid_up    = up    && (up    == 'next' || up    == 'prev') && key_code == KEY_ARROW_UP
-	const valid_down  = down  && (down  == 'next' || down  == 'prev') && key_code == KEY_ARROW_DOWN
-	const valid_left  = left  && (left  == 'next' || left  == 'prev') && key_code == KEY_ARROW_LEFT
-	const valid_right = right && (right == 'next' || right == 'prev') && key_code == KEY_ARROW_RIGHT
-	const all_options_invalid = (
+	const validUp    = up    && (up    == 'next' || up    == 'prev') && keyCode == KEY_ARROW_UP
+	const validDown  = down  && (down  == 'next' || down  == 'prev') && keyCode == KEY_ARROW_DOWN
+	const validLeft  = left  && (left  == 'next' || left  == 'prev') && keyCode == KEY_ARROW_LEFT
+	const validRight = right && (right == 'next' || right == 'prev') && keyCode == KEY_ARROW_RIGHT
+	const allOptionsInvalid = (
 		up != 'next' && up != 'prev'
 		&& up == down
 		&& up == left
 		&& up == right
 	)
-	const invalid_keys = (
-		key_code != KEY_ARROW_UP
-		&& key_code != KEY_ARROW_DOWN
-		&& key_code != KEY_ARROW_RIGHT
-		&& key_code != KEY_ARROW_LEFT
+	const invalidKeys = (
+		keyCode != KEY_ARROW_UP
+		&& keyCode != KEY_ARROW_DOWN
+		&& keyCode != KEY_ARROW_RIGHT
+		&& keyCode != KEY_ARROW_LEFT
 	)
 	if (
-		all_options_invalid
-		|| invalid_keys
+		allOptionsInvalid
+		|| invalidKeys
 		|| (
-			!valid_up
-			&& !valid_down
-			&& !valid_left
-			&& !valid_right
+			!validUp
+			&& !validDown
+			&& !validLeft
+			&& !validRight
 		)
 	) return null
 
-	if (parent && !element_contains(parent, element)) return null
+	if (parent && !elementContains(parent, element)) return null
 
 	// parent check
-	let el_parent = element_parent(element)
-	let valid_parent = el_parent === parent
-	while (!valid_parent && el_parent) {
-		if (element_style(el_parent, 'display') != 'contents') return null
+	let elParent = elementParent(element)
+	let validParent = elParent === parent
+	while (!validParent && elParent) {
+		if (elementStyle(elParent, 'display') != 'contents') return null
 
-		el_parent = element_parent(el_parent)
-		valid_parent = el_parent === parent
+		elParent = elementParent(elParent)
+		validParent = elParent === parent
 	}
 
 	// Support nested element as long the CSS
@@ -287,55 +282,55 @@ export function element_focus_by_arrowkey<T = HTMLElement>(
 	let sibling: HTMLElement | null = null
 	do {
 		let direction: 'next' | 'prev' = 'next'
-		if (valid_up) direction = up
-		else if (valid_down) direction = down
-		else if (valid_left) direction = left
-		else if (valid_right) direction = right
+		if (validUp) direction = up
+		else if (validDown) direction = down
+		else if (validLeft) direction = left
+		else if (validRight) direction = right
 
 		let source = (sibling? sibling : element) as HTMLElement
 		sibling = (direction == 'next'
-			? element_next_sibling(source)
-			: element_previous_sibling(source)
+			? elementSiblingNext(source)
+			: elementSiblingPrevious(source)
 		)
 		if (sibling) {
 			if (
-				element_style(sibling, 'display') == 'contents'
-				&& array_length(element_children(sibling)) > 0
+				elementStyle(sibling, 'display') == 'contents'
+				&& arrayLength(elementChildren(sibling)) > 0
 			) {
 				sibling = (direction == 'next'
-					? element_first_child(sibling)
-					: element_last_child(sibling)
+					? elementFirstChild(sibling)
+					: elementLastChild(sibling)
 				) as HTMLElement
 			}
 
 			if (condition?.(sibling as T) ?? true) {
-				element_focus(sibling)
+				elementFocus(sibling)
 				if (document.activeElement != sibling) continue
 				else {
-					element_set_tabindex(element, -1)
-					element_set_tabindex(sibling, 0)
+					elementTabIndexSet(element, -1)
+					elementTabIndexSet(sibling, 0)
 					return sibling
 				}
 			}
 		}
-		else if (element_parent(source) != parent) {
-			sibling = element_parent(source)
+		else if (elementParent(source) != parent) {
+			sibling = elementParent(source)
 		}
 	} while (sibling)
 
-	element_focus(element)
+	elementFocus(element)
 	return null
 }
 
-export function element_is_child(element: HTMLElement, parent: HTMLElement): boolean {
-	if (!element_contains(parent, element)) return false
+export function elementIsChild(element: HTMLElement, parent: HTMLElement): boolean {
+	if (!elementContains(parent, element)) return false
 
-	let el_parent: HTMLElement | null = null
+	let elParent: HTMLElement | null = null
 	do {
-		el_parent = element_parent(el_parent ?? element)!
-		if (el_parent === parent) return true
-		else if (element_style(el_parent, 'display') != 'contents') return false
-	} while (el_parent !== parent)
+		elParent = elementParent(elParent ?? element)!
+		if (elParent === parent) return true
+		else if (elementStyle(elParent, 'display') != 'contents') return false
+	} while (elParent !== parent)
 	return false
 }
 
@@ -347,35 +342,35 @@ export function element_is_child(element: HTMLElement, parent: HTMLElement): boo
  * @param element The parent element.
  * @param condition Optional filter function for eligible descendants.
  */
-export function element_children_tabindex(
+export function elementChildrenTabIndex(
     element: HTMLElement,
     condition?: (el: HTMLElement) => boolean
 ): HTMLElement | null {
-	let element_with_tabindex_zero: HTMLElement | null = null
+	let elWithTabIndexZero: HTMLElement | null = null
     const traverse = (el: HTMLElement) => {
-        let child = element_first_child(el)
+        let child = elementFirstChild(el)
         while (child) {
             const source = child
-            if (element_style(child, 'display') === 'contents') {
+            if (elementStyle(child, 'display') === 'contents') {
                 traverse(child)
             }
 			else if ((condition?.(child) ?? true) && child instanceof HTMLElement) {
-                if (!element_with_tabindex_zero) {
-                    element_set_tabindex(child, 0)
-					element_with_tabindex_zero = child
+                if (!elWithTabIndexZero) {
+                    elementTabIndexSet(child, 0)
+					elWithTabIndexZero = child
                 }
-				else if (document_active() == child) {
-					element_set_tabindex(element_with_tabindex_zero, -1)
-                    element_set_tabindex(child, 0)
+				else if (documentActive() == child) {
+					elementTabIndexSet(elWithTabIndexZero, -1)
+                    elementTabIndexSet(child, 0)
 				}
-				else element_set_tabindex(child, -1)
+				else elementTabIndexSet(child, -1)
             }
-            child = element_next_sibling(source)
+            child = elementSiblingNext(source)
         }
     }
 
     traverse(element)
-	return element_with_tabindex_zero
+	return elWithTabIndexZero
 }
 
 /**
@@ -385,102 +380,102 @@ export function element_children_tabindex(
  * @param element The parent element.
  * @param condition Optional filter function to determine which descendants to modify.
  */
-export function element_children_remove_tabindex(
+export function elementChildrenRemoveTabIndex(
     element: HTMLElement,
     condition?: (el: HTMLElement) => boolean
 ): void {
     const traverse = (el: HTMLElement) => {
-        let child = element_first_child(el)
+        let child = elementFirstChild(el)
         while (child) {
             const source = child
-            if (element_style(child, 'display') === 'contents') {
+            if (elementStyle(child, 'display') === 'contents') {
                 traverse(child)
             }
 			else if ((condition?.(child) ?? true) && child instanceof HTMLElement) {
-                attr_remove(child, 'tabindex')
+                attrRemove(child, 'tabindex')
             }
-            child = element_next_sibling(source)
+            child = elementSiblingNext(source)
         }
     }
 
     traverse(element)
 }
 
-export function element_style(
+export function elementStyle(
 	element: Element,
 	property: string,
-	pseudo_element?: string | null
+	pseudoElement?: string | null
 ): string {
 	return window
-		.getComputedStyle(element, pseudo_element)
+		.getComputedStyle(element, pseudoElement)
 		.getPropertyValue(property)
 }
 
-export function element_classlist(element: HTMLElement): DOMTokenList {
+export function elementClassList(element: HTMLElement): DOMTokenList {
 	return element.classList
 }
 
-export function element_classlist_contains(element: HTMLElement, token: string): boolean {
-	return element_classlist(element).contains(token)
+export function elementClassListContains(element: HTMLElement, token: string): boolean {
+	return elementClassList(element).contains(token)
 }
 
-export function element_blur(element: HTMLElement): void {
+export function elementBlur(element: HTMLElement): void {
 	return element.blur()
 }
 
-export function element_children<T = HTMLElement>(element: HTMLElement): T[] {
+export function elementChildren<T = HTMLElement>(element: HTMLElement): T[] {
 	return [...element.children] as unknown as T[]
 }
 
-export function element_set_pointercapture(element: HTMLElement, pointer_id: number): void {
+export function elementPointerCaptureSet(element: HTMLElement, pointer_id: number): void {
 	return element.setPointerCapture(pointer_id)
 }
 
-export function element_release_pointercapture(element: HTMLElement, pointer_id: number): void {
+export function elementPointerCaptureRelease(element: HTMLElement, pointer_id: number): void {
 	return element.releasePointerCapture(pointer_id)
 }
 
-export function element_click(element: HTMLElement): void {
+export function elementClick(element: HTMLElement): void {
 	return element.click()
 }
 
-export function element_focus(element: HTMLElement, options?: FocusOptions): void {
+export function elementFocus(element: HTMLElement, options?: FocusOptions): void {
 	return element.focus(options)
 }
 
-export function element_set_tabindex(element: HTMLElement, value: number): number {
+export function elementTabIndexSet(element: HTMLElement, value: number): number {
 	return element.tabIndex = value
 }
 
-export function element_next_sibling<T = HTMLElement>(element: HTMLElement): T | null {
+export function elementSiblingNext<T = HTMLElement>(element: HTMLElement): T | null {
 	return element.nextElementSibling as T | null
 }
 
-export function element_previous_sibling<T = HTMLElement>(element: HTMLElement): T | null {
+export function elementSiblingPrevious<T = HTMLElement>(element: HTMLElement): T | null {
 	return element.previousElementSibling as T | null
 }
 
-export function element_scroll_top(element: HTMLElement): number {
+export function elementScrollTop(element: HTMLElement): number {
 	return element.scrollTop
 }
 
-export function element_dataset(element: HTMLElement, key: string): string | undefined {
+export function elementDataset(element: HTMLElement, key: string): string | undefined {
 	return element.dataset[key]
 }
 
-export function element_remove(element: HTMLElement): void {
+export function elementRemove(element: HTMLElement): void {
 	return element.remove()
 }
 
-export function element_dispatch_event(element: HTMLElement, event: Event): boolean {
+export function elementDispatchEvent(element: HTMLElement, event: Event): boolean {
 	return element.dispatchEvent(event)
 }
 
-export function element_is_same_node(element: HTMLElement, other: Node | null): boolean {
+export function elementIsSame(element: HTMLElement, other: Node | null): boolean {
 	return element === other
 }
 
-export function element_animate(
+export function elementAnimate(
 	element: HTMLElement,
 	keyframes: Keyframe[] | PropertyIndexedKeyframes | null,
 	options?: number | KeyframeAnimationOptions
@@ -495,15 +490,15 @@ export function element_animate(
  * @param condition
  * @returns
  */
-export function element_valid_target(
+export function elementValidTarget(
 	parent: HTMLElement,
 	target?: HTMLElement | null,
 	condition?: (el: HTMLElement) => boolean
 ): boolean {
-	if (!target) target = document_active()
+	if (!target) target = documentActive()
 	return Boolean(
 		target
-		&& element_contains(parent, target)
+		&& elementContains(parent, target)
 		&& (condition?.(target) ?? true)
 	)
 }

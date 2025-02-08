@@ -1,33 +1,33 @@
-import { array_some } from "./array"
-import { is_function } from "./typecheck"
+import { arraySome } from "./array"
+import { typeIsFunction } from "./typecheck"
 
-export function object_keys(value: Object): string[] {
+export function objectKeys(value: Object): string[] {
 	return Object.keys(value)
 }
 
-export function object_values<T>(value: Object): T[] {
+export function objectValues<T>(value: Object): T[] {
 	return Object.values(value)
 }
 
-export function valid_enum_key<T, U extends Record<any, any>>(key: T, enums: U): boolean {
+export function validEnumKey<T, U extends Record<any, any>>(key: T, enums: U): boolean {
 	return enums[key] !== undefined
 }
 
-export function valid_enum_value<
+export function validEnumValue<
 	T,
 	U extends Record<string | number, any>
 >(value: T, enums: U | (string | number)[]): boolean {
-	return array_some(
-		object_values(enums),
+	return arraySome(
+		objectValues(enums),
 		v => v === value
 	)
 }
 
-export function object_has_value(data: unknown): boolean {
+export function objectHasValue(data: unknown): boolean {
 	return data != undefined && data != null
 }
 
-export function create_object<T>(...data: [key: keyof T, value: unknown][]): T {
+export function objectCreate<T>(...data: [key: keyof T, value: unknown][]): T {
 	const obj = {} as Record<keyof T, unknown>
 
 	for (const i in data) {
@@ -37,11 +37,11 @@ export function create_object<T>(...data: [key: keyof T, value: unknown][]): T {
 	return obj as T
 }
 
-export function deep_clone<T = unknown>(value: T, options?: StructuredSerializeOptions): T {
+export function objectDeepClone<T = unknown>(value: T, options?: StructuredSerializeOptions): T {
 	return structuredClone(value, options)
 }
 
-export function promise_done<T, U = any>(
+export function promiseDone<T, U = any>(
 	prom: Promise<T>,
 	on_done: (data: T) => unknown,
 	on_error?: (reason: U) => unknown
@@ -57,13 +57,13 @@ export function promise_done<T, U = any>(
  * @param args
  * @returns
  */
-export function match_case<T, U>(
+export function statementMatchCase<T, U>(
 	source: T,
 	...args: [value: T, callback: (() => U) | U][]
 ): U | void {
 	for (const arg of args) {
 		if (arg[0] == source) {
-			return is_function(arg[1])
+			return typeIsFunction(arg[1])
 				? (arg[1] as () => U)()
 				: arg[1] as U
 		}

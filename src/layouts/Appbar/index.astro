@@ -66,21 +66,21 @@ const { route } = Astro.props
 </header>
 
 <script>
-	import { event_add_listener } from "@/utils/event"
-	import { element_by_id } from "@/utils/element"
-	import { attr_toggle } from "@/utils/attributes"
-	import { window_scroll_y } from "@/utils/window"
+	import { eventListenerAdd } from "@/utils/event"
+	import { elementById } from "@/utils/element"
+	import { attrToggle } from "@/utils/attributes"
+	import { windowScrollY } from "@/utils/window"
 
-	const appbar = element_by_id('_appbar') as HTMLElement
-	let is_top = window_scroll_y() <= 16
+	const appbar = elementById('_appbar') as HTMLElement
+	let is_top = windowScrollY() <= 16
 
-	attr_toggle(appbar, 'data-top', is_top)
-	event_add_listener(window, 'scroll', () => {
-		const $is_top = window_scroll_y() <= 16
+	attrToggle(appbar, 'data-top', is_top)
+	eventListenerAdd(window, 'scroll', () => {
+		const $is_top = windowScrollY() <= 16
 
 		if (is_top == $is_top) return
 		is_top = $is_top
 
-		attr_toggle(appbar, 'data-top', is_top)
+		attrToggle(appbar, 'data-top', is_top)
 	})
 </script>

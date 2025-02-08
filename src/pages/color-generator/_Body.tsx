@@ -2,14 +2,14 @@ import { type VoidComponent, type Signal, createSignal, Show, createMemo, create
 
 import type { HEXColor } from "@/types/color"
 import type { Palette } from "./_types"
-import { hex_to_rgb } from "@/utils/color"
-import { timeout_clear, timeout_set } from "@/utils/timeout"
-import { navigator_clipboard_writetext } from "@/utils/navigator"
-import { promise_done } from "@/utils/object"
-import { math_round } from "@/utils/math"
-import { event_current_target } from "@/utils/event"
-import { document_active } from "@/utils/document"
-import { element_valid_target, element_tagname, element_id } from "@/utils/element"
+import { colorHexToRgb } from "@/utils/color"
+import { timeTimerClear, timeTimerSet } from "@/utils/time"
+import { navigatorClipboardWriteText } from "@/utils/navigator"
+import { promiseDone } from "@/utils/object"
+import { mathRound } from "@/utils/math"
+import { eventCurrentTarget } from "@/utils/event"
+import { documentActive } from "@/utils/document"
+import { elementValidTarget, elementTagName, elementId } from "@/utils/element"
 import { ICON_CHECKMARK, ICON_COPY } from "@/constants/icons"
 
 import Icon from "@/components/Icon"
@@ -17,102 +17,102 @@ import Button, { ButtonVariant } from "@/components/Button"
 import CSS from './_styles.module.scss'
 
 const _: VoidComponent<Palette> = (props) => {
-	const timeout_accentlight_id: Signal<number | null> = createSignal<number | null>(null)
-	const timeout_onaccentlight_id: Signal<number | null> = createSignal<number | null>(null)
-	const timeout_accentdark_id: Signal<number | null> = createSignal<number | null>(null)
-	const timeout_onaccentdark_id: Signal<number | null> = createSignal<number | null>(null)
-	const accent_light = createMemo(() => props.accent_light)
-	const on_accent_light = createMemo(() => props.on_accent_light)
-	const accent_dark = createMemo(() => props.accent_dark)
-	const on_accent_dark = createMemo(() => props.on_accent_dark)
-	const button_acclight_id = createUniqueId()
-	const button_onacclight_id = createUniqueId()
-	const button_accdark_id = createUniqueId()
-	const button_onaccdark_id = createUniqueId()
+	const timeAccentLightId: Signal<number | null> = createSignal<number | null>(null)
+	const timeOnAccentLightId: Signal<number | null> = createSignal<number | null>(null)
+	const timeAccentDarkId: Signal<number | null> = createSignal<number | null>(null)
+	const timeOnAccentDarkId: Signal<number | null> = createSignal<number | null>(null)
+	const accentLight = createMemo(() => props.accentLight)
+	const onAccentLight = createMemo(() => props.onAccentLight)
+	const accentDark = createMemo(() => props.accentDark)
+	const onAccentDark = createMemo(() => props.onAccentDark)
+	const buttonAccentLightId = createUniqueId()
+	const buttonOnAccentLightId = createUniqueId()
+	const buttonAccentDarkId = createUniqueId()
+	const buttonOnAccentDarkId = createUniqueId()
 
-	function copy_color(color: string, [timeout_id, set_timeout_id]: Signal<number | null>): void {
-		if (timeout_id()) {
-			timeout_clear(timeout_id()!)
-			set_timeout_id(null)
+	function copyColor(color: string, [timeId, setTimeId]: Signal<number | null>): void {
+		if (timeId()) {
+			timeTimerClear(timeId()!)
+			setTimeId(null)
 		}
 
-		promise_done(
-			navigator_clipboard_writetext(color),
-			() => set_timeout_id(timeout_set(() => set_timeout_id(null), 1000))
+		promiseDone(
+			navigatorClipboardWriteText(color),
+			() => setTimeId(timeTimerSet(() => setTimeId(null), 1000))
 		)
 	}
 
-	function hex_to_css_value(hex: HEXColor): string {
-		const rgb = hex_to_rgb(hex)
-		return `${math_round(rgb.r * 0xff)}, ${math_round(rgb.g * 0xff)}, ${math_round(rgb.b * 0xff)}`
+	function hexToCSSValue(hex: HEXColor): string {
+		const rgb = colorHexToRgb(hex)
+		return `${mathRound(rgb.r * 0xff)}, ${mathRound(rgb.g * 0xff)}, ${mathRound(rgb.b * 0xff)}`
 	}
 
 	return (<main
 		class={CSS.body_main}
 		onClick={ev => {
-			const button = document_active()!
-			if (!element_valid_target(
-				event_current_target(ev),
+			const button = documentActive()!
+			if (!elementValidTarget(
+				eventCurrentTarget(ev),
 				button,
-				el => element_tagname(el) == 'BUTTON'
+				el => elementTagName(el) == 'BUTTON'
 			)) return
 
-			switch (element_id(button)) {
-			case button_acclight_id:
-				copy_color(accent_light(), timeout_accentlight_id)
+			switch (elementId(button)) {
+			case buttonAccentLightId:
+				copyColor(accentLight(), timeAccentLightId)
 				break
-			case button_onacclight_id:
-				copy_color(on_accent_light(), timeout_onaccentlight_id)
+			case buttonOnAccentLightId:
+				copyColor(onAccentLight(), timeOnAccentLightId)
 				break
-			case button_accdark_id:
-				copy_color(accent_dark(), timeout_accentdark_id)
+			case buttonAccentDarkId:
+				copyColor(accentDark(), timeAccentDarkId)
 				break
-			case button_onaccdark_id:
-				copy_color(on_accent_dark(), timeout_onaccentdark_id)
+			case buttonOnAccentDarkId:
+				copyColor(onAccentDark(), timeOnAccentDarkId)
 				break
 			}
 		}}>
-		<div style={{ "background-color": accent_light(), color: on_accent_light() }}>
-			<h2>Accent Light<br />{accent_light()}</h2>
+		<div style={{ "background-color": accentLight(), color: onAccentLight() }}>
+			<h2>Accent Light<br />{accentLight()}</h2>
 			<Button
-				c_variant={ButtonVariant.tonal}
-				style={{'--g-color-on-surface': hex_to_css_value(on_accent_light())}}
-				id={button_acclight_id}>
-				<Show when={timeout_accentlight_id[0]()} fallback={<><Icon c_code={ICON_COPY}/>Copy</>}>
-					<Icon c_code={ICON_CHECKMARK}/>Copied
+				c:variant={ButtonVariant.tonal}
+				style={{'--g-color-on-surface': hexToCSSValue(onAccentLight())}}
+				id={buttonAccentLightId}>
+				<Show when={timeAccentLightId[0]()} fallback={<><Icon c:code={ICON_COPY}/>Copy</>}>
+					<Icon c:code={ICON_CHECKMARK}/>Copied
 				</Show>
 			</Button>
 		</div>
-		<div style={{ "background-color": on_accent_light(), color: accent_light() }}>
-			<h2>On Accent Light<br />{on_accent_light()}</h2>
+		<div style={{ "background-color": onAccentLight(), color: accentLight() }}>
+			<h2>On Accent Light<br />{onAccentLight()}</h2>
 			<Button
-				c_variant={ButtonVariant.tonal}
-				style={{'--g-color-on-surface': hex_to_css_value(accent_light())}}
-				id={button_onacclight_id}>
-				<Show when={timeout_onaccentlight_id[0]()} fallback={<><Icon c_code={ICON_COPY}/>Copy</>}>
-					<Icon c_code={ICON_CHECKMARK}/>Copied
+				c:variant={ButtonVariant.tonal}
+				style={{'--g-color-on-surface': hexToCSSValue(accentLight())}}
+				id={buttonOnAccentLightId}>
+				<Show when={timeOnAccentLightId[0]()} fallback={<><Icon c:code={ICON_COPY}/>Copy</>}>
+					<Icon c:code={ICON_CHECKMARK}/>Copied
 				</Show>
 			</Button>
 		</div>
-		<div style={{ "background-color": accent_dark(), color: on_accent_dark() }}>
-			<h2>Accent Dark<br />{accent_dark()}</h2>
+		<div style={{ "background-color": accentDark(), color: onAccentDark() }}>
+			<h2>Accent Dark<br />{accentDark()}</h2>
 			<Button
-				c_variant={ButtonVariant.tonal}
-				style={{'--g-color-on-surface': hex_to_css_value(on_accent_dark())}}
-				id={button_accdark_id}>
-				<Show when={timeout_accentdark_id[0]()} fallback={<><Icon c_code={ICON_COPY}/>Copy</>}>
-					<Icon c_code={ICON_CHECKMARK}/>Copied
+				c:variant={ButtonVariant.tonal}
+				style={{'--g-color-on-surface': hexToCSSValue(onAccentDark())}}
+				id={buttonAccentDarkId}>
+				<Show when={timeAccentDarkId[0]()} fallback={<><Icon c:code={ICON_COPY}/>Copy</>}>
+					<Icon c:code={ICON_CHECKMARK}/>Copied
 				</Show>
 			</Button>
 		</div>
-		<div style={{ "background-color": on_accent_dark(), color: accent_dark() }}>
-			<h2>On Accent Dark<br />{on_accent_dark()}</h2>
+		<div style={{ "background-color": onAccentDark(), color: accentDark() }}>
+			<h2>On Accent Dark<br />{onAccentDark()}</h2>
 			<Button
-				c_variant={ButtonVariant.tonal}
-				style={{'--g-color-on-surface': hex_to_css_value(accent_dark())}}
-				id={button_onaccdark_id}>
-				<Show when={timeout_onaccentdark_id[0]()} fallback={<><Icon c_code={ICON_COPY}/>Copy</>}>
-					<Icon c_code={ICON_CHECKMARK}/>Copied
+				c:variant={ButtonVariant.tonal}
+				style={{'--g-color-on-surface': hexToCSSValue(accentDark())}}
+				id={buttonOnAccentDarkId}>
+				<Show when={timeOnAccentDarkId[0]()} fallback={<><Icon c:code={ICON_COPY}/>Copy</>}>
+					<Icon c:code={ICON_CHECKMARK}/>Copied
 				</Show>
 			</Button>
 		</div>

@@ -1,18 +1,18 @@
 ---
 import { RoutesLinks, ExternalLinks } from '@/enums/links'
-import { date_year } from '@/utils/datetime'
+import { dateYear } from '@/utils/datetime'
 import CSS from './_index.module.scss'
 ---
 
 <div style="flex: 1"/>
 <footer class={CSS.footer}>
-	<p>&copy; { date_year() } Redmerah</p>
+	<p>&copy; { dateYear() } Redmerah</p>
 	<div>
 		<a href={RoutesLinks.about}>About</a>
 		<a href={RoutesLinks.apps}>Apps</a>
 		<a href={RoutesLinks.privacy}>Privacy</a>
 		<a href={RoutesLinks.terms}>Terms</a>
-		<a href={'mailto:' + ExternalLinks.contact_email}>Contact</a>
+		<a href={'mailto:' + ExternalLinks.contactEmail}>Contact</a>
 		<a href={ExternalLinks.donate}>Donate</a>
 	</div>
 </footer>

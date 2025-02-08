@@ -1,7 +1,7 @@
 import { createSignal, For, Show, type VoidComponent } from "solid-js"
 
-import { number_safe } from "@/utils/number"
-import { event_current_target } from "@/utils/event"
+import { numberSafe } from "@/utils/number"
+import { eventCurrentTarget } from "@/utils/event"
 
 import Icon from "@/components/Icon"
 import Button, { ButtonVariant, IconButton } from "@/components/Button"
@@ -9,26 +9,26 @@ import CheckBox from "@/components/CheckBox"
 import { NumberTextField } from "@/components/TextField"
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import Tooltip from "@/components/Tooltip"
-import Toast, { close_toast, open_toast, ToastPosition } from "@/components/Toast"
+import Toast, { closeToast, openToast, ToastPosition } from "@/components/Toast"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
 
 const _: VoidComponent = () => {
-	const [header, set_header] = createSignal<boolean>(false)
-	const [actions, set_actions] = createSignal<boolean>(false)
-	const [leading, set_leading] = createSignal<boolean>(true)
-	const [trailing, set_trailing] = createSignal<boolean>(false)
-	const [content, set_content] = createSignal<boolean>(true)
-	const [autoclose, set_autoclose] = createSignal<boolean>(true)
-	const [duration, set_duration] = createSignal<number>(5000)
-	const [position, set_position] = createSignal<ToastPosition>(ToastPosition.center_top)
+	const [header, setHeader] = createSignal<boolean>(false)
+	const [actions, setActions] = createSignal<boolean>(false)
+	const [leading, setLeading] = createSignal<boolean>(true)
+	const [trailing, setTrailing] = createSignal<boolean>(false)
+	const [content, setContent] = createSignal<boolean>(true)
+	const [autoclose, setAutoclose] = createSignal<boolean>(true)
+	const [duration, setDuration] = createSignal<number>(5000)
+	const [position, setPosition] = createSignal<ToastPosition>(ToastPosition.centerTop)
 	let toast_ref: HTMLDivElement
 	return (<Page
 		title="Toast"
 		description="A toast is a lightweight notification that appears briefly at the bottom or top of the screen. It provides users with short messages or alerts without interrupting their primary workflow. Toasts are typically used to display success messages, errors, or informational updates.">
 		<Playground>
 			<Button
-				c_variant={ButtonVariant.tonal}
-				onClick={ev => open_toast(ev, toast_ref, {
+				c:variant={ButtonVariant.tonal}
+				onClick={ev => openToast(ev, toast_ref, {
 					autoclose: autoclose(),
 					duration: duration(),
 					position: position()
@@ -37,17 +37,17 @@ const _: VoidComponent = () => {
 			</Button>
 			<Toast
 				ref={r => toast_ref = r}
-				c_header={<Show when={header()}>Warning</Show>}
-				c_trailing={<Show when={trailing()}>
-					<IconButton c_code={0xEED3} onClick={() => close_toast(toast_ref)}/>
-					<IconButton c_code={0xEE3B} onClick={() => close_toast(toast_ref)}/>
+				c:header={<Show when={header()}>Warning</Show>}
+				c:trailing={<Show when={trailing()}>
+					<IconButton c:code={0xEED3} onClick={() => closeToast(toast_ref)}/>
+					<IconButton c:code={0xEE3B} onClick={() => closeToast(toast_ref)}/>
 				</Show>}
-				c_actions={<Show when={actions()}>
-					<Button c_variant={ButtonVariant.tonal} onClick={() => close_toast(toast_ref)}>Close</Button>
-					<Button c_variant={ButtonVariant.tonal} onClick={() => close_toast(toast_ref)}>Reject</Button>
-					<Button c_variant={ButtonVariant.filled} onClick={() => close_toast(toast_ref)}>Accept</Button>
+				c:actions={<Show when={actions()}>
+					<Button c:variant={ButtonVariant.tonal} onClick={() => closeToast(toast_ref)}>Close</Button>
+					<Button c:variant={ButtonVariant.tonal} onClick={() => closeToast(toast_ref)}>Reject</Button>
+					<Button c:variant={ButtonVariant.filled} onClick={() => closeToast(toast_ref)}>Accept</Button>
 				</Show>}
-				c_leading={<Show when={leading()}><Icon c_code={0xECB6}/></Show>}>
+				c:leading={<Show when={leading()}><Icon c:code={0xECB6}/></Show>}>
 				<Show when={content()}>
 					Labore ipsum pariatur ea aliquip ex laboris dolor ea in occaecat in. Officia cillum cupidatat est dolor sit.
 				</Show>
@@ -57,57 +57,57 @@ const _: VoidComponent = () => {
 			<Show when={autoclose()}>
 				<Tooltip>
 					<NumberTextField
-						c_label="Duration"
+						c:label="Duration"
 						style={{width: '100px'}}
 						value={duration()}
 						step={100}
 						min={100}
-						onBlur={ev => set_duration(d => number_safe(event_current_target(ev).valueAsNumber, d))}
-						c_trailing="ms"
+						onBlur={ev => setDuration(d => numberSafe(eventCurrentTarget(ev).valueAsNumber, d))}
+						c:trailing="ms"
 					/>
 				</Tooltip>
 			</Show>
 			<Dropdown
-				c_label="Position"
-				c_values={[position()]}
-				c_on_change={(options) => set_position(options[0].value as ToastPosition)}>
+				c:label="Position"
+				c:values={[position()]}
+				c:onChange={(options) => setPosition(options[0].value as ToastPosition)}>
 				<For each={[
-					[ToastPosition.center_bottom, 'Center bottom'],
-					[ToastPosition.center_top, 'Center top'],
-					[ToastPosition.left_bottom, 'Left bottom'],
-					[ToastPosition.left_top, 'Left top'],
-					[ToastPosition.right_bottom, 'Right bottom'],
-					[ToastPosition.right_top, 'Right top'],
-				]}>{option => <DropdownOption c_value={option[0]} c_text={option[1] as string} />}</For>
+					[ToastPosition.centerBottom, 'Center bottom'],
+					[ToastPosition.centerTop, 'Center top'],
+					[ToastPosition.leftBottom, 'Left bottom'],
+					[ToastPosition.leftTop, 'Left top'],
+					[ToastPosition.rightBottom, 'Right bottom'],
+					[ToastPosition.rightCenter, 'Right top'],
+				]}>{option => <DropdownOption c:value={option[0]} c:text={option[1] as string} />}</For>
 			</Dropdown>
 			<CheckBox
 				checked={header()}
-				onChange={ev => set_header(event_current_target(ev).checked)}>
+				onChange={ev => setHeader(eventCurrentTarget(ev).checked)}>
 				Header
 			</CheckBox>
 			<CheckBox
 				checked={actions()}
-				onChange={ev => set_actions(event_current_target(ev).checked)}>
+				onChange={ev => setActions(eventCurrentTarget(ev).checked)}>
 				Actions
 			</CheckBox>
 			<CheckBox
 				checked={leading()}
-				onChange={ev => set_leading(event_current_target(ev).checked)}>
+				onChange={ev => setLeading(eventCurrentTarget(ev).checked)}>
 				Leading
 			</CheckBox>
 			<CheckBox
 				checked={trailing()}
-				onChange={ev => set_trailing(event_current_target(ev).checked)}>
+				onChange={ev => setTrailing(eventCurrentTarget(ev).checked)}>
 				Trailing
 			</CheckBox>
 			<CheckBox
 				checked={content()}
-				onChange={ev => set_content(event_current_target(ev).checked)}>
+				onChange={ev => setContent(eventCurrentTarget(ev).checked)}>
 				Content
 			</CheckBox>
 			<CheckBox
 				checked={autoclose()}
-				onChange={ev => set_autoclose(event_current_target(ev).checked)}>
+				onChange={ev => setAutoclose(eventCurrentTarget(ev).checked)}>
 				Auto close
 			</CheckBox>
 		</PlaygroundOptions>

@@ -1,6 +1,6 @@
 ---
 import { ThemeData } from '@/enums/theme'
-import { generate_color, hex_to_rgb } from '@/utils/color'
+import { colorGeneratePalette, colorHexToRgb } from '@/utils/color'
 import { CornerData } from '@/enums/corner'
 import { ElementIds } from '@/enums/ids'
 import type { HEXColor } from '@/types/color'
@@ -8,7 +8,7 @@ import { PlatformData } from '@/enums/platforms'
 import '@/styles/variables.scss'
 import '@/styles/animations.scss'
 import '@/styles/index.scss'
-import { math_round } from '@/utils/math'
+import { mathRound } from '@/utils/math'
 
 type Props = {
 	title?: string
@@ -30,10 +30,10 @@ const {
 	component_count = 0
 } = Astro.props
 
-const colors = generate_color(accent_color)
+const colors = colorGeneratePalette(accent_color)
 const color_to_css = (hex: HEXColor) => {
-	const rgb = hex_to_rgb(hex)
-	return `${math_round(rgb.r * 0xff)}, ${math_round(rgb.g * 0xff)}, ${math_round(rgb.b * 0xff)}`
+	const rgb = colorHexToRgb(hex)
+	return `${mathRound(rgb.r * 0xff)}, ${mathRound(rgb.g * 0xff)}, ${mathRound(rgb.b * 0xff)}`
 }
 ---
 
@@ -44,7 +44,7 @@ const color_to_css = (hex: HEXColor) => {
 		<meta name="theme-color" content={ accent_color } />
 		<meta name="description" content={ description }>
 		<title>{ title }</title>
-		<style id={ElementIds.color_accent} set:html={`:root{--g-color-accent-light: ${color_to_css(colors.color)};--g-color-accent-dark: ${color_to_css(colors.color_dark)};--g-color-on-accent-light: ${color_to_css(colors.on_color)};--g-color-on-accent-dark: ${color_to_css(colors.on_color_dark)};}`}/>
+		<style id={ElementIds.colorAccent} set:html={`:root{--g-color-accent-light: ${color_to_css(colors.color)};--g-color-accent-dark: ${color_to_css(colors.colorDark)};--g-color-on-accent-light: ${color_to_css(colors.onColor)};--g-color-on-accent-dark: ${color_to_css(colors.onColorDark)};}`}/>
 		<slot name="favicon">
 			<link rel="shortcut icon" type="image/ico" href="/favicon/favicon.ico" />
 			<link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">

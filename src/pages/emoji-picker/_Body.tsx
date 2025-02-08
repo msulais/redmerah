@@ -1,16 +1,16 @@
 import { createSignal, createUniqueId, For, type VoidComponent } from "solid-js"
 
-import { activities_emojis, animal_and_nature_emojis, flags_emojis, food_and_drink_emojis, object_emojis, person_and_body_emojis, smiley_and_emotion_emojis, symbols_emojis, travel_and_places_emojis } from "@/constants/emoji"
-import { timeout_clear, timeout_set } from "@/utils/timeout"
+import { EMOJIS_ACTIVITIES, EMOJIS_ANIMAL_AND_NATURE, EMOJIS_FLAGS, EMOJIS_FOOD_AND_DRINK, EMOJIS_OBJECT, EMOJIS_PERSON_AND_BODY, EMOJIS_SMILEY_AND_EMOTION, EMOJIS_SYMBOLS, EMOJIS_TRAVEL_AND_PLACES } from "@/constants/emoji"
+import { timeTimerClear, timeTimerSet } from "@/utils/time"
 import { Commands } from "./_enums"
-import { navigator_clipboard_writetext } from "@/utils/navigator"
-import { event_current_target } from "@/utils/event"
-import { promise_done } from "@/utils/object"
-import { document_active } from "@/utils/document"
-import { element_dataset, element_id, element_tagname, element_valid_target } from "@/utils/element"
+import { navigatorClipboardWriteText } from "@/utils/navigator"
+import { eventCurrentTarget } from "@/utils/event"
+import { promiseDone } from "@/utils/object"
+import { documentActive } from "@/utils/document"
+import { elementDataset, elementId, elementTagName, elementValidTarget } from "@/utils/element"
 import { ICON_CHECKMARK, ICON_COPY } from "@/constants/icons"
 
-import TextField, { change_textfield_value, TextFieldButton } from "@/components/TextField"
+import TextField, { updateTextFieldValue, TextFieldButton } from "@/components/TextField"
 import Expander, { ExpanderHeader } from "@/components/Expander"
 import Button from "@/components/Button"
 import Tooltip from "@/components/Tooltip"
@@ -21,20 +21,20 @@ const _: VoidComponent<{
 	text: string
 	command(type: Commands, ...args: unknown[]): unknown
 }> = (props) => {
-	const [timeout_copy_id, set_timeout_copy_id] = createSignal<number | null>(null)
-	const button_copy_id = createUniqueId()
-	let textfield_ref: HTMLInputElement
+	const [timeCopyId, setTimeCopyId] = createSignal<number | null>(null)
+	const buttonCopyId = createUniqueId()
+	let textFieldRef: HTMLInputElement
 
-	function pick_emoji(emoji: string): void {
-		change_textfield_value(textfield_ref, textfield_ref.value + emoji)
+	function pickEmoji(emoji: string): void {
+		updateTextFieldValue(textFieldRef, textFieldRef.value + emoji)
 	}
 
 	function copy(): void {
-		promise_done(navigator_clipboard_writetext(textfield_ref.value), () => {
-			if (timeout_copy_id() != null) timeout_clear(timeout_copy_id()!)
+		promiseDone(navigatorClipboardWriteText(textFieldRef.value), () => {
+			if (timeCopyId() != null) timeTimerClear(timeCopyId()!)
 
-			set_timeout_copy_id(timeout_set(
-				() => set_timeout_copy_id(null),
+			setTimeCopyId(timeTimerSet(
+				() => setTimeCopyId(null),
 				3000
 			))
 		})
@@ -43,43 +43,41 @@ const _: VoidComponent<{
 	return (<main
 		class={CSS.body}
 		onClick={ev => {
-			const button = document_active()!
-			if (!element_valid_target(
-				event_current_target(ev),
+			const button = documentActive()!
+			if (!elementValidTarget(
+				eventCurrentTarget(ev),
 				button,
-				el => element_tagname(el) == 'BUTTON'
+				el => elementTagName(el) == 'BUTTON'
 			)) return
 
-			switch (element_id(button)) {
-				case button_copy_id: {
-					copy()
-					break
-				}
-				default: {
-					const data_emoji = element_dataset(button, 'emoji')
-					if (data_emoji) return pick_emoji(data_emoji)
-				}
+			switch (elementId(button)) {
+			case buttonCopyId:
+				copy()
+				break
+			default:
+				const dataEmoji = elementDataset(button, 'emoji')
+				if (dataEmoji) return pickEmoji(dataEmoji)
 			}
 		}}>
 		<Tooltip>
 			<div class={CSS.body_textfield}>
 				<TextField
-					c_label="Emoji"
-					c_auto_show_clear_button
+					c:label="Emoji"
+					c:autoShowClearButton
 					value={props.text}
-					onInput={ev => props.command(Commands.update_text, event_current_target(ev).value)}
-					ref={r => textfield_ref = r}
-					c_trailing={<TextFieldButton
-						id={button_copy_id}
-						data-tooltip={timeout_copy_id() != null? 'Copied' : "Copy"}>
-						<Icon c_code={timeout_copy_id() != null? ICON_CHECKMARK : ICON_COPY}/>
+					onInput={ev => props.command(Commands.updateText, eventCurrentTarget(ev).value)}
+					ref={r => textFieldRef = r}
+					c:trailing={<TextFieldButton
+						id={buttonCopyId}
+						data-tooltip={timeCopyId() != null? 'Copied' : "Copy"}>
+						<Icon c:code={timeCopyId() != null? ICON_CHECKMARK : ICON_COPY}/>
 					</TextFieldButton>}
 				/>
 			</div>
 			<Expander
 				open
-				c_header={<ExpanderHeader>Smiley & emotion</ExpanderHeader>}>
-				<For each={smiley_and_emotion_emojis}>{emoji =>
+				c:header={<ExpanderHeader>Smiley & emotion</ExpanderHeader>}>
+				<For each={EMOJIS_SMILEY_AND_EMOTION}>{emoji =>
 					<Button
 						data-tooltip={emoji[1]}
 						data-emoji={emoji[0]}>
@@ -88,8 +86,8 @@ const _: VoidComponent<{
 				}</For>
 			</Expander>
 			<Expander
-				c_header={<ExpanderHeader>Person & body</ExpanderHeader>}>
-				<For each={person_and_body_emojis}>{emoji =>
+				c:header={<ExpanderHeader>Person & body</ExpanderHeader>}>
+				<For each={EMOJIS_PERSON_AND_BODY}>{emoji =>
 					<Button
 						data-tooltip={emoji[1]}
 						data-emoji={emoji[0]}>
@@ -98,8 +96,8 @@ const _: VoidComponent<{
 				}</For>
 			</Expander>
 			<Expander
-				c_header={<ExpanderHeader>Animal & nature</ExpanderHeader>}>
-				<For each={animal_and_nature_emojis}>{emoji =>
+				c:header={<ExpanderHeader>Animal & nature</ExpanderHeader>}>
+				<For each={EMOJIS_ANIMAL_AND_NATURE}>{emoji =>
 					<Button
 						data-tooltip={emoji[1]}
 						data-emoji={emoji[0]}>
@@ -108,8 +106,8 @@ const _: VoidComponent<{
 				}</For>
 			</Expander>
 			<Expander
-				c_header={<ExpanderHeader>Food & drink</ExpanderHeader>}>
-				<For each={food_and_drink_emojis}>{emoji =>
+				c:header={<ExpanderHeader>Food & drink</ExpanderHeader>}>
+				<For each={EMOJIS_FOOD_AND_DRINK}>{emoji =>
 					<Button
 						data-tooltip={emoji[1]}
 						data-emoji={emoji[0]}>
@@ -118,8 +116,8 @@ const _: VoidComponent<{
 				}</For>
 			</Expander>
 			<Expander
-				c_header={<ExpanderHeader>Travel & places</ExpanderHeader>}>
-				<For each={travel_and_places_emojis}>{emoji =>
+				c:header={<ExpanderHeader>Travel & places</ExpanderHeader>}>
+				<For each={EMOJIS_TRAVEL_AND_PLACES}>{emoji =>
 					<Button
 						data-tooltip={emoji[1]}
 						data-emoji={emoji[0]}>
@@ -128,8 +126,8 @@ const _: VoidComponent<{
 				}</For>
 			</Expander>
 			<Expander
-				c_header={<ExpanderHeader>Activities</ExpanderHeader>}>
-				<For each={activities_emojis}>{emoji =>
+				c:header={<ExpanderHeader>Activities</ExpanderHeader>}>
+				<For each={EMOJIS_ACTIVITIES}>{emoji =>
 					<Button
 						data-tooltip={emoji[1]}
 						data-emoji={emoji[0]}>
@@ -138,8 +136,8 @@ const _: VoidComponent<{
 				}</For>
 			</Expander>
 			<Expander
-				c_header={<ExpanderHeader>Objects</ExpanderHeader>}>
-				<For each={object_emojis}>{emoji =>
+				c:header={<ExpanderHeader>Objects</ExpanderHeader>}>
+				<For each={EMOJIS_OBJECT}>{emoji =>
 					<Button
 						data-tooltip={emoji[1]}
 						data-emoji={emoji[0]}>
@@ -148,8 +146,8 @@ const _: VoidComponent<{
 				}</For>
 			</Expander>
 			<Expander
-				c_header={<ExpanderHeader>Symbols</ExpanderHeader>}>
-				<For each={symbols_emojis}>{emoji =>
+				c:header={<ExpanderHeader>Symbols</ExpanderHeader>}>
+				<For each={EMOJIS_SYMBOLS}>{emoji =>
 					<Button
 						data-tooltip={emoji[1]}
 						data-emoji={emoji[0]}>
@@ -158,8 +156,8 @@ const _: VoidComponent<{
 				}</For>
 			</Expander>
 			<Expander
-				c_header={<ExpanderHeader>Flags</ExpanderHeader>}>
-				<For each={flags_emojis}>{emoji =>
+				c:header={<ExpanderHeader>Flags</ExpanderHeader>}>
+				<For each={EMOJIS_FLAGS}>{emoji =>
 					<Button
 						data-tooltip={emoji[1]}
 						data-emoji={emoji[0]}>

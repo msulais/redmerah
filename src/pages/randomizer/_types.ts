@@ -1,5 +1,5 @@
 import type { HEXColor } from "@/types/color"
-import type { NumbersRandomizerNumberType, NumbersRandomizerSort, WordsRandomizerWordCase, ColorsRandomizerColorModel } from "./_enums"
+import type { NumbersRandomizerNumberType, NumbersRandomizerSort, WordsRandomizerWordCase, ColorsRandomizerColorSpace } from "./_enums"
 
 export type Settings = {
 	string: {
@@ -22,7 +22,7 @@ export type Settings = {
 		prefix: string
 		suffix: string
 		separator: string
-		min_length: number
+		minDigits: number
 		range: { min: number; max: number }
 	}
 	words: {
@@ -30,7 +30,7 @@ export type Settings = {
 		animation: boolean
 		list: ItemList
 		repeat: boolean
-		wordcase: WordsRandomizerWordCase
+		wordCase: WordsRandomizerWordCase
 		prefix: string
 		suffix: string
 		separator: string
@@ -43,7 +43,7 @@ export type Settings = {
 	colors: {
 		count: number
 		animation: boolean
-		model: ColorsRandomizerColorModel
+		space: ColorsRandomizerColorSpace
 		range: {
 			hex: { min: number; max: number }
 			hsl: {
@@ -60,8 +60,8 @@ export type Settings = {
 	},
 	teams: {
 		count: number
-		list_names: ItemList
-		list_members: ItemList
+		listNames: ItemList
+		listMembers: ItemList
 		animation: boolean
 	}
 }

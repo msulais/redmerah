@@ -1,172 +1,171 @@
 import { onMount, type VoidComponent } from "solid-js"
 
 import type { Settings } from "./_types"
-import { IDB, idb_store_put } from "@/utils/indexeddb"
+import { IDB, idbStorePut } from "@/utils/indexeddb"
 import { DatabaseNames } from "@/enums/storage"
 import { ObjectStoreKeys, ObjectStoreNames, type ObjectStoreLastInput, type ObjectStoreSettings } from "./_storage"
 import { createStore } from "solid-js/store"
 import { Commands } from "./_enums"
 import { DEFAULT_LATEX_TEXT } from "./_latex"
-import { remove_splash_screen } from "@/scripts/splash"
-import { array_join, array_map, array_slice } from "@/utils/array"
-import { navigator_clipboard_writetext } from "@/utils/navigator"
-import { promise_done } from "@/utils/object"
+import { removeSplashScreen } from "@/scripts/splash"
+import { arrayJoin, arrayMap, arraySlice } from "@/utils/array"
+import { navigatorClipboardWriteText } from "@/utils/navigator"
+import { promiseDone } from "@/utils/object"
 import { ICON_COPY } from "@/constants/icons"
 
 import Icon from "@/components/Icon"
-import Toast, { open_toast } from "@/components/Toast"
+import Toast, { openToast } from "@/components/Toast"
 import App from "@/components/App"
 import AppBar from './_AppBar'
 import Body from './_Body'
 
 const _: VoidComponent = () => {
-	const db = new IDB(DatabaseNames.latex_viewer)
-	const [latex, set_latex] = createStore<string[]>([DEFAULT_LATEX_TEXT])
-	const [settings, set_settings] = createStore<Settings>({
-		text_wrap: true,
-		font_size: 14,
+	const db = new IDB(DatabaseNames.latexViewer)
+	const [latex, setLatex] = createStore<string[]>([DEFAULT_LATEX_TEXT])
+	const [settings, setSettings] = createStore<Settings>({
+		textWrap: true,
+		fontSize: 14,
 		suffix: '\\]',
 		prefix: '\\['
 	})
-	let toast_copied_ref: HTMLDivElement
+	let toastCopiedRef: HTMLDivElement
 
-	function save_settings(...items: [key: ObjectStoreKeys, value: unknown][]): void {
-		const store_settings = db.write_store(ObjectStoreNames.settings)
-		if (!store_settings) return;
+	function saveSettings(...items: [key: ObjectStoreKeys, value: unknown][]): void {
+		const store = db.writeStore(ObjectStoreNames.settings)
+		if (!store) return;
 
 		for (const item of items) {
-			idb_store_put(store_settings, {
+			idbStorePut(store, {
 				key: item[0],
 				value: item[1]
 			})
 		}
 	}
 
-	function save_last_input(...items: [key: ObjectStoreKeys, value: unknown][]): void {
-		const store_lastinput = db.write_store(ObjectStoreNames.last_input)
-		if (!store_lastinput) return;
+	function saveLastInput(...items: [key: ObjectStoreKeys, value: unknown][]): void {
+		const store = db.writeStore(ObjectStoreNames.lastInput)
+		if (!store) return;
 
 		for (const item of items) {
-			idb_store_put(store_lastinput, {
+			idbStorePut(store, {
 				key: item[0],
 				value: item[1]
 			})
 		}
 	}
 
-	function command(type: Commands, ...args: unknown[]): unknown { switch (type) {
-		case Commands.add_equation: {
-			const index = args[0] as number
-			set_latex(prev => [...array_slice(prev, 0, index), '', ...array_slice(prev, index)])
-			save_last_input([ObjectStoreKeys.lastInput_latex, [...latex]])
+	function command(type: Commands, ...args: unknown[]): unknown {
+		switch (type) {
+		case Commands.addEquation: {
+			const [index] = args as [number]
+			setLatex(prev => [...arraySlice(prev, 0, index), '', ...arraySlice(prev, index)])
+			saveLastInput([ObjectStoreKeys.lastInput_latex, [...latex]])
 			break
 		}
-		case Commands.delete_equation: {
-			const index = args[0] as number
-			set_latex(prev => [...array_slice(prev, 0, index), ...array_slice(prev, index + 1)])
-			save_last_input([ObjectStoreKeys.lastInput_latex, [...latex]])
+		case Commands.deleteEquation: {
+			const [index] = args as [number]
+			setLatex(prev => [...arraySlice(prev, 0, index), ...arraySlice(prev, index + 1)])
+			saveLastInput([ObjectStoreKeys.lastInput_latex, [...latex]])
 			break
 		}
-		case Commands.toggle_textwrap: {
-			set_settings('text_wrap', t => !t)
-			save_settings([ObjectStoreKeys.settings_textwrap, settings.text_wrap])
+		case Commands.toggleTextWrap:
+			setSettings('textWrap', t => !t)
+			saveSettings([ObjectStoreKeys.settings_textWrap, settings.textWrap])
+			break
+		case Commands.updateFontSize: {
+			const [fontSize] = args as [number]
+			setSettings('fontSize', fontSize)
+			saveSettings([ObjectStoreKeys.settings_fontSize, settings.fontSize])
 			break
 		}
-		case Commands.change_fontsize: {
-			set_settings('font_size', args[0] as number)
-			save_settings([ObjectStoreKeys.settings_fontsize, settings.font_size])
+		case Commands.updatePrefix: {
+			const [prefix] = args as [string]
+			setSettings('prefix', prefix)
+			saveSettings([ObjectStoreKeys.settings_prefix, settings.prefix])
 			break
 		}
-		case Commands.change_prefix: {
-			const prefix = args[0] as string
-			set_settings('prefix', prefix)
-			save_settings([ObjectStoreKeys.settings_prefix, settings.prefix])
+		case Commands.updateSuffix: {
+			const [suffix] = args as [string]
+			setSettings('suffix', suffix)
+			saveSettings([ObjectStoreKeys.settings_suffix, settings.suffix])
 			break
 		}
-		case Commands.change_suffix: {
-			const suffix = args[0] as string
-			set_settings('suffix', suffix)
-			save_settings([ObjectStoreKeys.settings_suffix, settings.suffix])
+		case Commands.updateLatexInput: {
+			const [text, index] = args as [string, number]
+			setLatex(index, text)
+			saveLastInput([ObjectStoreKeys.lastInput_latex, [...latex]])
 			break
 		}
-		case Commands.update_latex_input: {
-			const text = args[0] as string
-			const index = args[1] as number
-			set_latex(index, text)
-			save_last_input([ObjectStoreKeys.lastInput_latex, [...latex]])
+		case Commands.resetInputs:
+			setLatex([''])
+			saveLastInput([ObjectStoreKeys.lastInput_latex, ['']])
 			break
-		}
-		case Commands.reset_inputs: {
-			set_latex([''])
-			save_last_input([ObjectStoreKeys.lastInput_latex, ['']])
-			break
-		}
-		case Commands.copy_all: {
-			const event = args[0] as Event
-			promise_done(
-				navigator_clipboard_writetext(
-					array_join(array_map(latex, l => settings.prefix + l + settings.suffix), '\n\n')
+		case Commands.copyAll: {
+			const [event] = args as [Event]
+			promiseDone(
+				navigatorClipboardWriteText(
+					arrayJoin(arrayMap(latex, l => settings.prefix + l + settings.suffix), '\n\n')
 				),
-				() => open_toast(event, toast_copied_ref)
+				() => openToast(event, toastCopiedRef)
 			)
 			break
 		}
 		default: return
 	}}
 
-	function init_settings(): void {
-		const store_settings = db.read_store(ObjectStoreNames.settings)
-		if (store_settings == null) return
+	function initSettings(): void {
+		const store = db.readStore(ObjectStoreNames.settings)
+		if (store == null) return
 
-		promise_done(db.get<ObjectStoreSettings<boolean>>(
-			store_settings,
-			ObjectStoreKeys.settings_textwrap
-		), result => set_settings('text_wrap', t => result?.value ?? t))
+		promiseDone(db.get<ObjectStoreSettings<boolean>>(
+			store,
+			ObjectStoreKeys.settings_textWrap
+		), result => setSettings('textWrap', t => result?.value ?? t))
 
-		promise_done(db.get<ObjectStoreSettings<number>>(
-			store_settings,
-			ObjectStoreKeys.settings_fontsize
-		), result => set_settings('font_size', f => result?.value ?? f))
+		promiseDone(db.get<ObjectStoreSettings<number>>(
+			store,
+			ObjectStoreKeys.settings_fontSize
+		), result => setSettings('fontSize', f => result?.value ?? f))
 
-		promise_done(db.get<ObjectStoreSettings<string>>(
-			store_settings,
+		promiseDone(db.get<ObjectStoreSettings<string>>(
+			store,
 			ObjectStoreKeys.settings_prefix
-		), result => set_settings('prefix', p => result?.value ?? p))
+		), result => setSettings('prefix', p => result?.value ?? p))
 
-		promise_done(db.get<ObjectStoreSettings<string>>(
-			store_settings,
+		promiseDone(db.get<ObjectStoreSettings<string>>(
+			store,
 			ObjectStoreKeys.settings_suffix
-		), result => set_settings('suffix', s => result?.value ?? s))
+		), result => setSettings('suffix', s => result?.value ?? s))
 	}
 
-	function init_last_input(): void {
-		const store_lastinput = db.read_store(ObjectStoreNames.last_input)
+	function initLastInput(): void {
+		const store_lastinput = db.readStore(ObjectStoreNames.lastInput)
 		if (store_lastinput == null) return
 
-		promise_done(db.get<ObjectStoreLastInput<string[]>>(
+		promiseDone(db.get<ObjectStoreLastInput<string[]>>(
 			store_lastinput,
 			ObjectStoreKeys.lastInput_latex
-		), result => set_latex(result?.value ??[DEFAULT_LATEX_TEXT]))
+		), result => setLatex(result?.value ??[DEFAULT_LATEX_TEXT]))
 	}
 
-	function init_database(): void {
+	function initDatabase(): void {
 		db.open({
-			on_success() {
-				init_settings()
-				init_last_input()
+			onSuccess() {
+				initSettings()
+				initLastInput()
 			},
-			on_error() {
-				set_latex([DEFAULT_LATEX_TEXT])
+			onError() {
+				setLatex([DEFAULT_LATEX_TEXT])
 			},
-			on_upgrade_needed(_, db) {
-				db.create_store({
+			onUpgrade(_, db) {
+				db.createStore({
 					name: ObjectStoreNames.settings,
-					key_path: 'key',
+					keyPath: 'key',
 					indexs: ['key', 'value']
 				})
-				db.create_store({
-					name: ObjectStoreNames.last_input,
-					key_path: 'key',
+				db.createStore({
+					name: ObjectStoreNames.lastInput,
+					keyPath: 'key',
 					indexs: ['key', 'value']
 				})
 			}
@@ -174,20 +173,20 @@ const _: VoidComponent = () => {
 	}
 
 	onMount(() => {
-		init_database()
-		remove_splash_screen()
+		initDatabase()
+		removeSplashScreen()
 	})
 
 	const Toasts: VoidComponent = () => (<>
 		<Toast
-			ref={r => toast_copied_ref = r}
-			c_leading={<Icon c_code={ICON_COPY}/>}>
+			ref={r => toastCopiedRef = r}
+			c:leading={<Icon c:code={ICON_COPY}/>}>
 			Copied to clipboard
 		</Toast>
 	</>)
 
 	return (<App
-		c_appbar={<AppBar
+		c:appBar={<AppBar
 			settings={settings}
 			command={command}
 		/>}>

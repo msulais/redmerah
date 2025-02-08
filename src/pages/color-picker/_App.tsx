@@ -2,89 +2,89 @@ import { onMount, createSignal, type VoidComponent } from "solid-js"
 import { createStore as $store } from "solid-js/store"
 
 import type { Settings } from "./_types"
-import { remove_splash_screen } from "@/scripts/splash"
+import { removeSplashScreen } from "@/scripts/splash"
 import { ColorPickerMode, Commands } from "./_enums"
-import { IDB, idb_store_put } from "@/utils/indexeddb"
+import { IDB, idbStorePut } from "@/utils/indexeddb"
 import { DatabaseNames } from "@/enums/storage"
 import type { HEXColor, HSLColor } from "@/types/color"
 import { IDBStoreKeysLastInput, IDBStoreKeysSettings, IDBStoreNames, type IDBStoreSettings, type IDBStoreLastInput } from "./_storage"
-import { hex_to_hsl, hsl_to_hex } from "@/utils/color"
-import { timeout_clear, timeout_set } from "@/utils/timeout"
-import { promise_done } from "@/utils/object"
+import { colorHexToHsl, colorHslToHex } from "@/utils/color"
+import { timeTimerClear, timeTimerSet } from "@/utils/time"
+import { promiseDone } from "@/utils/object"
 
 import App from "@/components/App"
 import AppBar from './_AppBar'
 import Body from './_Body'
 
 const _: VoidComponent = () => {
-	const db = new IDB(DatabaseNames.color_picker)
-	const [input, set_input] = createSignal<HSLColor>({
+	const db = new IDB(DatabaseNames.colorPicker)
+	const [input, setInput] = createSignal<HSLColor>({
 		h: 0.3, s: 0.3, l: .33
 	})
-	const [settings, set_settings] = $store<Settings>({
+	const [settings, setSettings] = $store<Settings>({
 		mode: ColorPickerMode.image
 	})
-	let timeout_savelastinput_id: number | null = null
+	let timeSaveLastInputId: number | null = null
 
-	function init_database(): void {
+	function initDatabase(): void {
 		db.open({
-			on_success() {
-				init_settings()
-				init_last_input()
+			onSuccess() {
+				initSettings()
+				initLastInput()
 			},
-			on_upgrade_needed(_, db) {
-				db.create_store<IDBStoreSettings>({
+			onUpgrade(_, db) {
+				db.createStore<IDBStoreSettings>({
 					name: IDBStoreNames.settings,
-					key_path: 'key',
+					keyPath: 'key',
 					indexs: ["key", 'value']
 				})
-				db.create_store<IDBStoreLastInput>({
-					name: IDBStoreNames.last_input,
-					key_path: 'key',
+				db.createStore<IDBStoreLastInput>({
+					name: IDBStoreNames.lastInput,
+					keyPath: 'key',
 					indexs: ['key', 'value']
 				})
 			},
 		})
 	}
 
-	function init_settings(): void {
-		const store = db.read_store(IDBStoreNames.settings)
+	function initSettings(): void {
+		const store = db.readStore(IDBStoreNames.settings)
 		if (!store) return
 
-		promise_done(db.get<IDBStoreSettings<ColorPickerMode>>(
+		promiseDone(db.get<IDBStoreSettings<ColorPickerMode>>(
 			store,
 			IDBStoreKeysSettings.mode
-		), (result) => set_settings('mode', m => result?.value ?? m))
+		), (result) => setSettings('mode', m => result?.value ?? m))
 	}
 
-	function init_last_input(): void {
-		const store = db.read_store(IDBStoreNames.last_input)
+	function initLastInput(): void {
+		const store = db.readStore(IDBStoreNames.lastInput)
 		if (!store) return
 
-		promise_done(db.get<IDBStoreLastInput<HEXColor>>(
+		promiseDone(db.get<IDBStoreLastInput<HEXColor>>(
 			store,
-			IDBStoreKeysLastInput.hex_color
-		), (result) => set_input(m => result? hex_to_hsl(result.value) : m))
+			IDBStoreKeysLastInput.hexColor
+		), (result) => setInput(m => result? colorHexToHsl(result.value) : m))
 	}
 
-	function save_settings(...items: [key: IDBStoreKeysSettings, value: unknown][]): void {
-		const store = db.write_store(IDBStoreNames.settings)
+	function saveSettings(...items: [key: IDBStoreKeysSettings, value: unknown][]): void {
+		const store = db.writeStore(IDBStoreNames.settings)
 		if (!store) return;
 
 		for (const item of items) {
-			idb_store_put(store, {
+			idbStorePut(store, {
 				key: item[0],
 				value: item[1]
 			})
 		}
 	}
 
-	function save_last_input(...items: [key: IDBStoreKeysLastInput, value: unknown][]): void {
-		const store = db.write_store(IDBStoreNames.last_input)
+	function saveLastInput(...items: [key: IDBStoreKeysLastInput, value: unknown][]): void {
+		const store = db.writeStore(IDBStoreNames.lastInput)
 		if (!store) return;
 
 		for (const item of items) {
-			idb_store_put(store, {
+			idbStorePut(store, {
 				key: item[0],
 				value: item[1]
 			})
@@ -93,36 +93,35 @@ const _: VoidComponent = () => {
 
 	function command(type: Commands, ...args: unknown[]): unknown {
 		switch (type) {
-			case Commands.change_mode:{
-				const [mode] = args as [ColorPickerMode]
-				set_settings('mode', mode)
-				save_settings([IDBStoreKeysSettings.mode, mode])
-				break
-			}
-			case Commands.update_input: {
-				const [input] = args as [HSLColor]
-				set_input(input)
-				if (timeout_savelastinput_id != null) {
-					timeout_clear(timeout_savelastinput_id)
-				}
-
-				timeout_savelastinput_id = timeout_set(() => {
-					save_last_input([IDBStoreKeysLastInput.hex_color, hsl_to_hex(input)])
-					timeout_savelastinput_id = null
-				}, 200)
-				break
-			}
-			default: return
+		case Commands.updateMode:{
+			const [mode] = args as [ColorPickerMode]
+			setSettings('mode', mode)
+			saveSettings([IDBStoreKeysSettings.mode, mode])
+			break
 		}
+		case Commands.updateInput: {
+			const [input] = args as [HSLColor]
+			setInput(input)
+			if (timeSaveLastInputId != null) {
+				timeTimerClear(timeSaveLastInputId)
+			}
+
+			timeSaveLastInputId = timeTimerSet(() => {
+				saveLastInput([IDBStoreKeysLastInput.hexColor, colorHslToHex(input)])
+				timeSaveLastInputId = null
+			}, 200)
+			break
+		}}
+		return
 	}
 
 	onMount(() => {
-		remove_splash_screen()
-		init_database()
+		removeSplashScreen()
+		initDatabase()
 	})
 
 	return (<App
-		c_appbar={<AppBar />}
+		c:appBar={<AppBar />}
 		children={<Body
 			command={command}
 			settings={settings}

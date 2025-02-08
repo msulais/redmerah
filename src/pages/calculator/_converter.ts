@@ -43,7 +43,7 @@ export class ConverterUnit {
 		}
 	}
 
-	static parse_json(unit: ConverterUnitType): ConverterUnit {
+	static parseJSON(unit: ConverterUnitType): ConverterUnit {
 		return new ConverterUnit(
 			unit.name,
 			unit.symbol,

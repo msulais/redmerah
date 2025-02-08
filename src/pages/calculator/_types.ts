@@ -2,22 +2,22 @@ import type { ConverterType, ConverterUnit } from "./_converter"
 import type { DateOperation, DecimalNumberFormat, GroupingNumberFormat, NumberType, ScientificAngleType } from "./_enums"
 
 export type Settings = {
-	number_format: {
+	numberFormat: {
 		decimal: DecimalNumberFormat
 		grouping: GroupingNumberFormat
 	}
-	scientific_notation: boolean
-	memory_buttons: boolean
+	scientificNotation: boolean
+	memoryButtons: boolean
 	converter: {
 		type: ConverterType
-		unit_input: ConverterUnit
-		unit_output: ConverterUnit
+		unitInput: ConverterUnit
+		unitOutput: ConverterUnit
 	}
 	scientific: {
 		angle: ScientificAngleType
 	}
 	programmer: {
-		number_type: NumberType
+		numberType: NumberType
 	}
 	date: {
 		operation: DateOperation

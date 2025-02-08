@@ -1,5 +1,5 @@
 import type { HEXColor } from "@/types/color"
-import type { ColorModel, GradientType, HueInterpolationMethod, PolarColorSpace, RadialGradientShape, RectangularColorSpace } from "./_enums"
+import type { ColorSpace, GradientType, HueInterpolationMethod, PolarColorSpace, RadialGradientShape, RectangularColorSpace } from "./_enums"
 
 export type Gradient = ConicGradient | LinearGradient | RadialGradient
 
@@ -13,11 +13,11 @@ export type ColorStopGradient = {
 	id: number
 
 	/** only use to save/delete db */
-	data_id: number
+	dataId: number
 
 	/** only use to save/delete db */
-	gradient_id: number
-	gradient_type: GradientType
+	gradientId: number
+	gradientType: GradientType
 	color: HEXColor
 
 	/** `0-100` in percentage `%` */
@@ -29,15 +29,15 @@ export type LinearGradient = {
 	id: number
 
 	/** only use to save/delete db */
-	data_id: number
+	dataId: number
 	type: GradientType.linear
 	repeat: boolean
 
 	/** in degree `deg` */
 	angle: number
-	color_interpolation_method: RectangularColorSpace | PolarColorSpace
-	hue_interpolation_method: HueInterpolationMethod
-	color_stop_list: ColorStopGradient[]
+	colorInterpolationMethod: RectangularColorSpace | PolarColorSpace
+	hueInterpolationMethod: HueInterpolationMethod
+	colorStopList: ColorStopGradient[]
 }
 
 export type RadialGradient = {
@@ -45,28 +45,28 @@ export type RadialGradient = {
 	id: number
 
 	/** only use to save/delete db */
-	data_id: number
+	dataId: number
 	type: GradientType.radial
 	repeat: boolean
 	shape: RadialGradientShape
 
 	/** in percentage `%` */
-	position_x: number
+	positionX: number
 
 	/** in percentage `%` */
-	position_y: number
+	positionY: number
 
 	/** in percentage `%` */
-	size_width: number
+	sizeWidth: number
 
 	/** in percentage `%` */
-	size_height: number
+	sizeHeight: number
 
 	/** in pixel `px` */
-	size_length: number
-	color_interpolation_method: RectangularColorSpace | PolarColorSpace
-	hue_interpolation_method: HueInterpolationMethod
-	color_stop_list: ColorStopGradient[]
+	sizeLength: number
+	colorInterpolationMethod: RectangularColorSpace | PolarColorSpace
+	hueInterpolationMethod: HueInterpolationMethod
+	colorStopList: ColorStopGradient[]
 }
 
 export type ConicGradient = {
@@ -74,7 +74,7 @@ export type ConicGradient = {
 	id: number
 
 	/** only use to save/delete db */
-	data_id: number
+	dataId: number
 	type: GradientType.conic
 	repeat: boolean
 
@@ -82,17 +82,17 @@ export type ConicGradient = {
 	angle: number
 
 	/** in percentage `%` */
-	position_x: number
+	positionX: number
 
 	/** in percentage `%` */
-	position_y: number
-	color_interpolation_method: RectangularColorSpace | PolarColorSpace
-	hue_interpolation_method: HueInterpolationMethod
-	color_stop_list: ColorStopGradient[]
+	positionY: number
+	colorInterpolationMethod: RectangularColorSpace | PolarColorSpace
+	hueInterpolationMethod: HueInterpolationMethod
+	colorStopList: ColorStopGradient[]
 }
 
 export type Settings = {
-	border_radius: number
-	aspect_ratio: number
-	color_model: ColorModel
+	borderRadius: number
+	aspectRatio: number
+	colorSpace: ColorSpace
 }

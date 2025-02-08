@@ -2,20 +2,20 @@ import { For, Match, Show, Switch, type VoidComponent, createEffect, createMemo,
 import type { SetStoreFunction, Store } from "solid-js/store"
 
 import type { ItemList, Settings } from "./_types"
-import { element_dataset, element_id, element_rect, element_tagname, element_valid_target } from "@/utils/element"
-import { RandomizerType, ColorsRandomizerColorModel, Commands } from "./_enums"
-import { event_current_target, event_prevent_default } from "@/utils/event"
-import { array_find, array_join, array_length, array_push } from "@/utils/array"
-import { number_is_not_defined, number_parse, number_safe } from "@/utils/number"
-import { string_length, string_match, string_replace } from "@/utils/string"
-import { document_active } from "@/utils/document"
-import { math_clamp } from "@/utils/math"
-import { rect_width } from "@/utils/rect"
+import { elementDataset, elementId, elementRect, elementTagName, elementValidTarget } from "@/utils/element"
+import { RandomizerType, ColorsRandomizerColorSpace, Commands } from "./_enums"
+import { eventCurrentTarget, eventPreventDefault } from "@/utils/event"
+import { arrayFind, arrayJoin, arrayLength, arrayPush } from "@/utils/array"
+import { numberIsNotDefined, numberParse, numberSafe } from "@/utils/number"
+import { stringLength, stringMatch, stringReplace } from "@/utils/string"
+import { documentActive } from "@/utils/document"
+import { mathClamp } from "@/utils/math"
+import { rectWidth } from "@/utils/rect"
 import { ICON_ADD, ICON_APPS_LIST_DETAIL, ICON_ARROW_EXPORT_UP, ICON_CHECKBOX_CHECKED, ICON_CHEVRON_DOWN, ICON_DELETE, ICON_EYE, ICON_TEXT_BULLET_LIST_SQUARE_CLOCK, ICON_TEXT_BULLET_LIST_SQUARE_EDIT } from "@/constants/icons"
 
 import Icon from "@/components/Icon"
-import TextField, { NumberTextField, TextFieldButton, change_textfield_value } from "@/components/TextField"
-import Menu, { close_menu, MenuDivider, MenuHeader, MenuItem, MenuPosition, open_menu } from "@/components/Menu"
+import TextField, { NumberTextField, TextFieldButton, updateTextFieldValue } from "@/components/TextField"
+import Menu, { closeMenu, MenuDivider, MenuHeader, MenuItem, MenuPosition, openMenu } from "@/components/Menu"
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import Tooltip from "@/components/Tooltip"
 import CSS from './_styles.module.scss'
@@ -25,290 +25,284 @@ const Teams: VoidComponent<{
 	lists: [Store<ItemList[]>, SetStoreFunction<ItemList[]>]
 	command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
-	const [list, set_list] = createSignal<ItemList | null>(null)
-	const [is_action_open_for_list_names, set_is_action_open_for_list_names] = createSignal<boolean>(false)
+	const [list, setLists] = createSignal<ItemList | null>(null)
+	const [isActionOpenForListNames, setIsActionOpenForListNames] = createSignal<boolean>(false)
 	const settings = createMemo(() => props.settings[0].teams)
 	const lists = createMemo(() => props.lists[0])
-	const button_action_select_id = createUniqueId()
-	const button_action_viewlist_id = createUniqueId()
-	const button_action_exportlist_id = createUniqueId()
-	const button_action_editlist_id = createUniqueId()
-	const button_action_deletelist_id = createUniqueId()
-	const button_members_addnewlist_id = createUniqueId()
-	const button_members_resetalllist_id = createUniqueId()
-	const button_members_editlist_id = createUniqueId()
-	const button_names_addnewlist_id = createUniqueId()
-	const button_names_resetalllist_id = createUniqueId()
-	const button_names_editlist_id = createUniqueId()
-	let dropdown_menu_listnames_ref: HTMLDialogElement
-	let dropdown_menu_listmember_ref: HTMLDialogElement
-	let menu_action_ref: HTMLDialogElement
+	const buttonAction_selectId = createUniqueId()
+	const buttonAction_viewListId = createUniqueId()
+	const buttonAction_exportListId = createUniqueId()
+	const buttonAction_editListId = createUniqueId()
+	const buttonAction_deleteListId = createUniqueId()
+	const buttonMembers_addNewListId = createUniqueId()
+	const buttonMembers_resetAllListId = createUniqueId()
+	const buttonMembers_editListId = createUniqueId()
+	const buttonNames_addNewListId = createUniqueId()
+	const buttonNames_resetAllListId = createUniqueId()
+	const buttonNames_editListId = createUniqueId()
+	let dropdownMenu_listNamesRef: HTMLDialogElement
+	let dropdownMenu_ListMembersRef: HTMLDialogElement
+	let menuActionRef: HTMLDialogElement
 
 	function command(type: Commands, ...args: unknown[]): unknown {
 		return props.command(type, ...args)
 	}
 
-	function itemlist_to_dropdownlist(list: ItemList[]): [number, string, string][] {
+	function itemListToDropdownList(list: ItemList[]): [number, string, string][] {
 		const items: [number, string, string][] = []
 
 		for (const l of list) {
-			array_push(items, [l.id, l.name, array_length(l.items) + ''])
+			arrayPush(items, [l.id, l.name, arrayLength(l.items) + ''])
 		}
 
 		return items
 	}
 
-	function change_listnames(id: number): void {
-		const $list = array_find(lists(), list => list.id == id)
+	function updateListNames(id: number): void {
+		const $list = arrayFind(lists(), list => list.id == id)
 		if ($list == undefined) return;
 
-		set_list($list)
-		command(Commands.change_settings_teams_listnames, list())
+		setLists($list)
+		command(Commands.updateSettingsTeamsListNames, list())
 	}
 
-	function change_listmembers(id: number): void {
-		const $list = array_find(lists(), list => list.id == id)
+	function updateListMembers(id: number): void {
+		const $list = arrayFind(lists(), list => list.id == id)
 		if ($list == undefined) return;
 
-		set_list($list)
-		command(Commands.change_settings_teams_listmembers, list())
+		setLists($list)
+		command(Commands.updateSettingsTeamsListMembers, list())
 	}
 
-	function on_contextmenu_dropdown_item(ev: MouseEvent & {
+	function onContextMenuDropdownItem(ev: MouseEvent & {
 		currentTarget: HTMLDialogElement
 		target: Element
-	}, list_names: boolean): void {
-		const button = document_active()!
-		if (!element_valid_target(
-			event_current_target(ev),
+	}, listNames: boolean): void {
+		const button = documentActive()!
+		if (!elementValidTarget(
+			eventCurrentTarget(ev),
 			button,
-			el => element_tagname(el) == 'BUTTON'
+			el => elementTagName(el) == 'BUTTON'
 		)) return
 
-		const data_list_index = element_dataset(button, 'listIndex')
-		if (data_list_index) {
-			const index = number_parse(data_list_index, true)
-			if (number_is_not_defined(index)) return
+		const dataListIndex = elementDataset(button, 'listIndex')
+		if (dataListIndex) {
+			const index = numberParse(dataListIndex, true)
+			if (numberIsNotDefined(index)) return
 
-			const option = itemlist_to_dropdownlist(lists())[index]
+			const option = itemListToDropdownList(lists())[index]
 			for (const li of lists()) {
 				if (li.id != option[0]) continue;
-				set_list(li)
+				setLists(li)
 				break
 			}
-			set_is_action_open_for_list_names(list_names)
-			open_menu(ev, menu_action_ref, {
-				position: MenuPosition.center_bottom_to_right
+			setIsActionOpenForListNames(listNames)
+			openMenu(ev, menuActionRef, {
+				position: MenuPosition.centerBottomToRight
 			})
-			event_prevent_default(ev)
+			eventPreventDefault(ev)
 			return
 		}
 	}
 
 	return (<>
 		<NumberTextField
-			c_label="Count"
+			c:label="Count"
 			min={1}
-			max={array_length(settings().list_members.items)}
+			max={arrayLength(settings().listMembers.items)}
 			onBlur={ev => command(
-				Commands.change_settings_teams_count,
-				number_safe(event_current_target(ev).valueAsNumber, settings().count)
+				Commands.updateSettingsTeamsCount,
+				numberSafe(eventCurrentTarget(ev).valueAsNumber, settings().count)
 			)}
-			c_attr_wrapper={{ style: { width: 'min(100%, 164px)' } }}
+			c:attrWrapper={{ style: { width: 'min(100%, 164px)' } }}
 			value={settings().count}
 		/>
 		<Dropdown
-			c_label="Names"
-			c_values={[settings().list_names.id]}
-			c_on_change={(options) => change_listnames(options[0].value as number)}
-			c_attr_menu={{
-				ref: (r) => dropdown_menu_listnames_ref = r,
-				onContextMenu: ev => on_contextmenu_dropdown_item(ev, true),
+			c:label="Names"
+			c:values={[settings().listNames.id]}
+			c:onChange={(options) => updateListNames(options[0].value as number)}
+			c:attrMenu={{
+				ref: (r) => dropdownMenu_listNamesRef = r,
+				onContextMenu: ev => onContextMenuDropdownItem(ev, true),
 				onClick: ev => {
-					const button = document_active()!
-					if (!element_valid_target(
-						event_current_target(ev),
+					const button = documentActive()!
+					if (!elementValidTarget(
+						eventCurrentTarget(ev),
 						button,
-						el => element_tagname(el) == 'BUTTON'
+						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					switch (element_id(button)) {
-						case button_names_addnewlist_id: {
-							command(Commands.add_list, ev)
-							close_menu(dropdown_menu_listnames_ref)
-							break
-						}
-						case button_names_resetalllist_id: {
-							command(Commands.reset_list, ev)
-							close_menu(dropdown_menu_listnames_ref)
-							break
-						}
-						case button_names_editlist_id: {
-							command(Commands.edit_list, ev)
-							close_menu(dropdown_menu_listnames_ref)
-							break
-						}
+					switch (elementId(button)) {
+					case buttonNames_addNewListId:
+						command(Commands.addList, ev)
+						closeMenu(dropdownMenu_listNamesRef)
+						break
+					case buttonNames_resetAllListId:
+						command(Commands.resetList, ev)
+						closeMenu(dropdownMenu_listNamesRef)
+						break
+					case buttonNames_editListId:
+						command(Commands.editList, ev)
+						closeMenu(dropdownMenu_listNamesRef)
+						break
 					}
 				}
 			}}>
 			<MenuItem
-				id={button_names_addnewlist_id}
-				c_icon_code={ICON_ADD}>
+				id={buttonNames_addNewListId}
+				c:iconCode={ICON_ADD}>
 				Add new list
 			</MenuItem>
 			<MenuItem
-				id={button_names_resetalllist_id}
-				c_icon_code={ICON_TEXT_BULLET_LIST_SQUARE_CLOCK}>
+				id={buttonNames_resetAllListId}
+				c:iconCode={ICON_TEXT_BULLET_LIST_SQUARE_CLOCK}>
 				Reset all list
 			</MenuItem>
 			<MenuItem
-				id={button_names_editlist_id}
-				c_icon_code={ICON_APPS_LIST_DETAIL}>
+				id={buttonNames_editListId}
+				c:iconCode={ICON_APPS_LIST_DETAIL}>
 				Edit list
 			</MenuItem>
 			<MenuDivider />
-			<Show when={array_length(lists()) > 0}>
+			<Show when={arrayLength(lists()) > 0}>
 				<MenuHeader>Select list</MenuHeader>
 			</Show>
-			<For each={itemlist_to_dropdownlist(lists())}>{(option, i) =>
+			<For each={itemListToDropdownList(lists())}>{(option, i) =>
 				<DropdownOption
-					c_value={option[0]}
-					c_text={option[1]}
-					c_trailing={option[2]}
+					c:value={option[0]}
+					c:text={option[1]}
+					c:trailing={option[2]}
 					data-list-index={i()}
 				/>
 			}</For>
 		</Dropdown>
 		<Dropdown
-			c_label="Members"
-			c_values={[settings().list_members.id]}
-			c_on_change={options => change_listmembers(options[0].value as number)}
-			c_attr_menu={{
-				ref: (r) => dropdown_menu_listmember_ref = r,
+			c:label="Members"
+			c:values={[settings().listMembers.id]}
+			c:onChange={options => updateListMembers(options[0].value as number)}
+			c:attrMenu={{
+				ref: (r) => dropdownMenu_ListMembersRef = r,
 				onClick: ev => {
-					const button = document_active()!
-					if (!element_valid_target(
-						event_current_target(ev),
+					const button = documentActive()!
+					if (!elementValidTarget(
+						eventCurrentTarget(ev),
 						button,
-						el => element_tagname(el) == 'BUTTON'
+						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					switch (element_id(button)) {
-						case button_members_addnewlist_id: {
-							command(Commands.add_list, ev)
-							close_menu(dropdown_menu_listmember_ref)
-							break
-						}
-						case button_members_resetalllist_id: {
-							command(Commands.reset_list, ev)
-							close_menu(dropdown_menu_listmember_ref)
-							break
-						}
-						case button_members_editlist_id: {
-							command(Commands.edit_list, ev)
-							close_menu(dropdown_menu_listmember_ref)
-							break
-						}
+					switch (elementId(button)) {
+					case buttonMembers_addNewListId:
+						command(Commands.addList, ev)
+						closeMenu(dropdownMenu_ListMembersRef)
+						break
+					case buttonMembers_resetAllListId:
+						command(Commands.resetList, ev)
+						closeMenu(dropdownMenu_ListMembersRef)
+						break
+					case buttonMembers_editListId:
+						command(Commands.editList, ev)
+						closeMenu(dropdownMenu_ListMembersRef)
+						break
 					}
 				},
-				onContextMenu: ev => on_contextmenu_dropdown_item(ev, false)
+				onContextMenu: ev => onContextMenuDropdownItem(ev, false)
 			}}>
 			<MenuItem
-				id={button_members_addnewlist_id}
-				c_icon_code={ICON_ADD}>
+				id={buttonMembers_addNewListId}
+				c:iconCode={ICON_ADD}>
 				Add new list
 			</MenuItem>
 			<MenuItem
-				id={button_members_resetalllist_id}
-				c_icon_code={ICON_TEXT_BULLET_LIST_SQUARE_CLOCK}>
+				id={buttonMembers_resetAllListId}
+				c:iconCode={ICON_TEXT_BULLET_LIST_SQUARE_CLOCK}>
 				Reset all list
 			</MenuItem>
 			<MenuItem
-				id={button_members_editlist_id}
-				c_icon_code={ICON_APPS_LIST_DETAIL}>
+				id={buttonMembers_editListId}
+				c:iconCode={ICON_APPS_LIST_DETAIL}>
 				Edit list
 			</MenuItem>
 			<MenuDivider />
-			<Show when={array_length(lists()) > 0}>
+			<Show when={arrayLength(lists()) > 0}>
 				<MenuHeader>Select list</MenuHeader>
 			</Show>
-			<For each={itemlist_to_dropdownlist(lists())}>{(option, i) =>
+			<For each={itemListToDropdownList(lists())}>{(option, i) =>
 				<DropdownOption
-					c_value={option[0]}
-					c_text={option[1]}
-					c_trailing={option[2]}
+					c:value={option[0]}
+					c:text={option[1]}
+					c:trailing={option[2]}
 					data-list-index={i()}
 				/>
 			}</For>
 		</Dropdown>
 		<Menu
-			ref={r => menu_action_ref = r}
+			ref={r => menuActionRef = r}
 			style={{width: '164px'}}
 			onClick={ev => {
-				const button = document_active()!
-				if (!element_valid_target(
-					event_current_target(ev),
+				const button = documentActive()!
+				if (!elementValidTarget(
+					eventCurrentTarget(ev),
 					button,
-					el => element_tagname(el) == 'BUTTON'
+					el => elementTagName(el) == 'BUTTON'
 				)) return
 
-				const close_all = () => {
-					close_menu(menu_action_ref)
-					close_menu(dropdown_menu_listnames_ref)
-					close_menu(dropdown_menu_listmember_ref)
+				const closeAll = () => {
+					closeMenu(menuActionRef)
+					closeMenu(dropdownMenu_listNamesRef)
+					closeMenu(dropdownMenu_ListMembersRef)
 				}
 
-				switch (element_id(button)) {
-					case button_action_select_id:
-						close_all()
-						if (is_action_open_for_list_names()) change_listnames(list()!.id)
-						else change_listmembers(list()!.id)
-						break
-					case button_action_viewlist_id:
-						close_all()
-						command(Commands.view_list, ev, list())
-						break
-					case button_action_exportlist_id:
-						close_all()
-						command(Commands.export_list, list())
-						break
-					case button_action_editlist_id:
-						close_all()
-						command(Commands.edit_list, ev, list())
-						break
-					case button_action_deletelist_id:
-						close_all()
-						command(Commands.edit_list, ev, list())
-						break
+				switch (elementId(button)) {
+				case buttonAction_selectId:
+					closeAll()
+					if (isActionOpenForListNames()) updateListNames(list()!.id)
+					else updateListMembers(list()!.id)
+					break
+				case buttonAction_viewListId:
+					closeAll()
+					command(Commands.viewList, ev, list())
+					break
+				case buttonAction_exportListId:
+					closeAll()
+					command(Commands.exportList, list())
+					break
+				case buttonAction_editListId:
+					closeAll()
+					command(Commands.editList, ev, list())
+					break
+				case buttonAction_deleteListId:
+					closeAll()
+					command(Commands.editList, ev, list())
+					break
 				}
 			}}>
-			<Show when={list() && list()!.id != (is_action_open_for_list_names()? settings().list_names.id : settings().list_members.id)}>
+			<Show when={list() && list()!.id != (isActionOpenForListNames()? settings().listNames.id : settings().listMembers.id)}>
 				<MenuItem
-					id={button_action_select_id}
-					c_icon_code={ICON_CHECKBOX_CHECKED}>
+					id={buttonAction_selectId}
+					c:iconCode={ICON_CHECKBOX_CHECKED}>
 					Select
 				</MenuItem>
 				<MenuDivider />
 			</Show>
 			<MenuItem
-				id={button_action_viewlist_id}
-				c_icon_code={ICON_EYE}>
+				id={buttonAction_viewListId}
+				c:iconCode={ICON_EYE}>
 				View list
 			</MenuItem>
 			<MenuItem
-				id={button_action_exportlist_id}
-				c_icon_code={ICON_ARROW_EXPORT_UP}
-				c_trailing="*.csv">
+				id={buttonAction_exportListId}
+				c:iconCode={ICON_ARROW_EXPORT_UP}
+				c:trailing="*.csv">
 				Export list
 			</MenuItem>
 			<MenuItem
-				id={button_action_editlist_id}
-				c_icon_code={ICON_TEXT_BULLET_LIST_SQUARE_EDIT}>
+				id={buttonAction_editListId}
+				c:iconCode={ICON_TEXT_BULLET_LIST_SQUARE_EDIT}>
 				Edit list
 			</MenuItem>
 			<MenuItem
-				id={button_action_deletelist_id}
-				c_icon_code={ICON_DELETE}>
+				id={buttonAction_deleteListId}
+				c:iconCode={ICON_DELETE}>
 				Delete list
 			</MenuItem>
 		</Menu>
@@ -320,206 +314,206 @@ const Selection: VoidComponent<{
 	lists: [Store<ItemList[]>, SetStoreFunction<ItemList[]>]
 	command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
-	const [list, set_list] = createSignal<ItemList | null>(null)
+	const [list, setList] = createSignal<ItemList | null>(null)
 	const lists = createMemo(() => props.lists[0])
 	const settings = createMemo(() => props.settings[0].selection)
-	const button_actions_select_id = createUniqueId()
-	const button_actions_viewlist_id = createUniqueId()
-	const button_actions_exportlist_id = createUniqueId()
-	const button_actions_editlist_id = createUniqueId()
-	const button_actions_deletelist_id = createUniqueId()
-	const button_list_addnewlist_id = createUniqueId()
-	const button_list_resetalllist_id = createUniqueId()
-	const button_list_editlist_id = createUniqueId()
-	let menu_dropdown_ref: HTMLDialogElement
-	let menu_action_ref: HTMLDialogElement
+	const buttonActions_selectId = createUniqueId()
+	const buttonActions_viewListId = createUniqueId()
+	const buttonActions_exportListId = createUniqueId()
+	const buttonActions_editListId = createUniqueId()
+	const buttonActions_deleteListId = createUniqueId()
+	const buttonList_addNewListId = createUniqueId()
+	const buttonList_resetAllListId = createUniqueId()
+	const buttonList_editListId = createUniqueId()
+	let menuDropdownRef: HTMLDialogElement
+	let menuActionRef: HTMLDialogElement
 
 	function command(type: Commands, ...args: unknown[]): unknown {
 		return props.command(type, ...args)
 	}
 
-	function itemlist_to_dropdownlist(list: ItemList[]): [number, string, string][] {
+	function itemListToDropdownList(list: ItemList[]): [number, string, string][] {
 		const items: [number, string, string][] = []
 
 		for (const l of list) {
-			array_push(items, [l.id, l.name, array_length(l.items) + ''])
+			arrayPush(items, [l.id, l.name, arrayLength(l.items) + ''])
 		}
 
 		return items
 	}
 
-	function change_list(id: number): void {
+	function updateList(id: number): void {
 		for (const li of lists()) {
 			if (li.id != id) continue;
-			set_list(li)
+			setList(li)
 			break
 		}
-		command(Commands.change_settings_selection_list, list())
+		command(Commands.updateSettingsSelectionList, list())
 	}
 
 	return (<>
 		<Dropdown
-			c_label="List"
-			c_values={[settings().list.id]}
-			c_on_change={options => change_list(options[0].value as number)}
-			c_attr_menu={{
-				ref: (r) => menu_dropdown_ref = r,
+			c:label="List"
+			c:values={[settings().list.id]}
+			c:onChange={options => updateList(options[0].value as number)}
+			c:attrMenu={{
+				ref: (r) => menuDropdownRef = r,
 				onClick: ev => {
-					const button = document_active()!
-					if (!element_valid_target(
-						event_current_target(ev),
+					const button = documentActive()!
+					if (!elementValidTarget(
+						eventCurrentTarget(ev),
 						button,
-						el => element_tagname(el) == 'BUTTON'
+						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					switch (element_id(button)) {
-						case button_list_addnewlist_id:
-							command(Commands.add_list, ev)
-							close_menu(menu_dropdown_ref)
-							break
-						case button_list_resetalllist_id:
-							command(Commands.reset_list, ev)
-							close_menu(menu_dropdown_ref)
-							break
-						case button_list_editlist_id:
-							command(Commands.edit_list, ev)
-							close_menu(menu_dropdown_ref)
-							break
+					switch (elementId(button)) {
+					case buttonList_addNewListId:
+						command(Commands.addList, ev)
+						closeMenu(menuDropdownRef)
+						break
+					case buttonList_resetAllListId:
+						command(Commands.resetList, ev)
+						closeMenu(menuDropdownRef)
+						break
+					case buttonList_editListId:
+						command(Commands.editList, ev)
+						closeMenu(menuDropdownRef)
+						break
 					}
 				},
 				onContextMenu: ev => {
-					const button = document_active()!
-					if (!element_valid_target(
-						event_current_target(ev),
+					const button = documentActive()!
+					if (!elementValidTarget(
+						eventCurrentTarget(ev),
 						button,
-						el => element_tagname(el) == 'BUTTON'
+						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					const data_list_index = element_dataset(button, 'listIndex')
-					if (data_list_index) {
-						const index = number_parse(data_list_index, true)
-						if (number_is_not_defined(index)) return
+					const dataListIndex = elementDataset(button, 'listIndex')
+					if (dataListIndex) {
+						const index = numberParse(dataListIndex, true)
+						if (numberIsNotDefined(index)) return
 
-						const option = itemlist_to_dropdownlist(lists())[index]
+						const option = itemListToDropdownList(lists())[index]
 						for (const li of lists()) {
 							if (li.id != option[0]) continue;
-							set_list(li)
+							setList(li)
 							break
 						}
-						open_menu(ev, menu_action_ref, {
-							position: MenuPosition.center_bottom_to_right
+						openMenu(ev, menuActionRef, {
+							position: MenuPosition.centerBottomToRight
 						})
-						event_prevent_default(ev)
+						eventPreventDefault(ev)
 						return
 					}
 				}
 			}}>
 			<MenuItem
-				id={button_list_addnewlist_id}
-				c_icon_code={ICON_ADD}>
+				id={buttonList_addNewListId}
+				c:iconCode={ICON_ADD}>
 				Add new list
 			</MenuItem>
 			<MenuItem
-				id={button_list_resetalllist_id}
-				c_icon_code={ICON_TEXT_BULLET_LIST_SQUARE_CLOCK}>
+				id={buttonList_resetAllListId}
+				c:iconCode={ICON_TEXT_BULLET_LIST_SQUARE_CLOCK}>
 				Reset all list
 			</MenuItem>
 			<MenuItem
-				id={button_list_editlist_id}
-				c_icon_code={ICON_APPS_LIST_DETAIL}>
+				id={buttonList_editListId}
+				c:iconCode={ICON_APPS_LIST_DETAIL}>
 				Edit list
 			</MenuItem>
 			<MenuDivider />
-			<Show when={array_length(lists()) > 0}>
+			<Show when={arrayLength(lists()) > 0}>
 				<MenuHeader>Select list</MenuHeader>
 			</Show>
-			<For each={itemlist_to_dropdownlist(lists())}>{(option, i) =>
+			<For each={itemListToDropdownList(lists())}>{(option, i) =>
 				<DropdownOption
-					c_value={option[0]}
-					c_text={option[1]}
-					c_trailing={option[2]}
+					c:value={option[0]}
+					c:text={option[1]}
+					c:trailing={option[2]}
 					data-list-index={i()}
 				/>
 			}</For>
 		</Dropdown>
 		<Menu
-			ref={r => menu_action_ref = r}
+			ref={r => menuActionRef = r}
 			style={{width: '164px'}}
 			onClick={ev => {
-				const button = document_active()!
-				if (!element_valid_target(
-					event_current_target(ev),
+				const button = documentActive()!
+				if (!elementValidTarget(
+					eventCurrentTarget(ev),
 					button,
-					el => element_tagname(el) == 'BUTTON'
+					el => elementTagName(el) == 'BUTTON'
 				)) return
 
-				switch (element_id(button)) {
-					case button_actions_select_id:
-						close_menu(menu_action_ref)
-						close_menu(menu_dropdown_ref)
-						change_list(list()!.id)
-						break
-					case button_actions_viewlist_id:
-						close_menu(menu_action_ref)
-						close_menu(menu_dropdown_ref)
-						command(Commands.view_list, ev, list())
-						break
-					case button_actions_exportlist_id:
-						close_menu(menu_action_ref)
-						close_menu(menu_dropdown_ref)
-						command(Commands.export_list, list())
-						break
-					case button_actions_editlist_id:
-						command(Commands.edit_list, ev, list())
-						close_menu(menu_action_ref)
-						close_menu(menu_dropdown_ref)
-						break
-					case button_actions_deletelist_id:
-						command(Commands.edit_list, ev, list())
-						close_menu(menu_action_ref)
-						close_menu(menu_dropdown_ref)
-						break
+				switch (elementId(button)) {
+				case buttonActions_selectId:
+					closeMenu(menuActionRef)
+					closeMenu(menuDropdownRef)
+					updateList(list()!.id)
+					break
+				case buttonActions_viewListId:
+					closeMenu(menuActionRef)
+					closeMenu(menuDropdownRef)
+					command(Commands.viewList, ev, list())
+					break
+				case buttonActions_exportListId:
+					closeMenu(menuActionRef)
+					closeMenu(menuDropdownRef)
+					command(Commands.exportList, list())
+					break
+				case buttonActions_editListId:
+					command(Commands.editList, ev, list())
+					closeMenu(menuActionRef)
+					closeMenu(menuDropdownRef)
+					break
+				case buttonActions_deleteListId:
+					command(Commands.editList, ev, list())
+					closeMenu(menuActionRef)
+					closeMenu(menuDropdownRef)
+					break
 				}
 			}}>
 			<Show when={list() && list()!.id != settings().list.id}>
 				<MenuItem
-					id={button_actions_select_id}
-					c_icon_code={ICON_CHECKBOX_CHECKED}>
+					id={buttonActions_selectId}
+					c:iconCode={ICON_CHECKBOX_CHECKED}>
 					Select
 				</MenuItem>
 				<MenuDivider />
 			</Show>
 			<MenuItem
-				id={button_actions_viewlist_id}
-				c_icon_code={ICON_EYE}>
+				id={buttonActions_viewListId}
+				c:iconCode={ICON_EYE}>
 				View list
 			</MenuItem>
 			<MenuItem
-				id={button_actions_exportlist_id}
-				c_icon_code={ICON_ARROW_EXPORT_UP}
-				c_trailing="*.csv">
+				id={buttonActions_exportListId}
+				c:iconCode={ICON_ARROW_EXPORT_UP}
+				c:trailing="*.csv">
 				Export list
 			</MenuItem>
 			<MenuItem
-				id={button_actions_editlist_id}
-				c_icon_code={ICON_TEXT_BULLET_LIST_SQUARE_EDIT}>
+				id={buttonActions_editListId}
+				c:iconCode={ICON_TEXT_BULLET_LIST_SQUARE_EDIT}>
 				Edit list
 			</MenuItem>
 			<MenuItem
-				id={button_actions_deletelist_id}
-				c_icon_code={ICON_DELETE}>
+				id={buttonActions_deleteListId}
+				c:iconCode={ICON_DELETE}>
 				Delete list
 			</MenuItem>
 		</Menu>
 		<NumberTextField
-			c_label="Count"
+			c:label="Count"
 			min={1}
-			max={array_length(settings().list.items)}
+			max={arrayLength(settings().list.items)}
 			onBlur={ev => command(
-				Commands.change_settings_selection_count,
-				number_safe(event_current_target(ev).valueAsNumber, settings().count)
+				Commands.updateSettingsSelectionCount,
+				numberSafe(eventCurrentTarget(ev).valueAsNumber, settings().count)
 			)}
-			c_attr_wrapper={{ style: { width: 'min(100%, 164px)' } }}
+			c:attrWrapper={{ style: { width: 'min(100%, 164px)' } }}
 			value={settings().count}
 		/>
 	</>)
@@ -533,179 +527,179 @@ const Words: VoidComponent<{
 	const [list, set_list] = createSignal<ItemList | null>(null)
 	const lists = createMemo(() => props.lists[0])
 	const settings = createMemo(() => props.settings[0].words)
-	const button_list_addnewlist_id = createUniqueId()
-	const button_list_resetalllist_id = createUniqueId()
-	const button_list_editlist_id = createUniqueId()
-	let menu_dropdown_ref: HTMLDialogElement
-	let menu_action_ref: HTMLDialogElement
+	const buttonList_addNewListId = createUniqueId()
+	const buttonList_resetAllListId = createUniqueId()
+	const buttonList_editListId = createUniqueId()
+	let menuDropdownRef: HTMLDialogElement
+	let menuActionRef: HTMLDialogElement
 
 	function command(type: Commands, ...args: unknown[]): unknown {
 		return props.command(type, ...args)
 	}
 
-	function itemlist_to_dropdownlist(list: ItemList[]): [number, string, string][] {
+	function itemListToDropdownList(list: ItemList[]): [number, string, string][] {
 		const items: [number, string, string][] = []
 
 		for (const l of list) {
-			array_push(items, [l.id, l.name, array_length(l.items) + ''])
+			arrayPush(items, [l.id, l.name, arrayLength(l.items) + ''])
 		}
 
 		return items
 	}
 
-	function change_list(id: number): void {
+	function updateList(id: number): void {
 		for (const li of lists()) {
 			if (li.id != id) continue;
 			set_list(li)
 			break
 		}
-		command(Commands.change_settings_words_list, list())
+		command(Commands.updateSettingsWordsList, list())
 	}
 
 	return (<>
 		<Dropdown
-			c_label="List"
-			c_values={[settings().list.id]}
-			c_on_change={options => change_list(options[0].value as number)}
-			c_attr_menu={{
-				ref: (r) => menu_dropdown_ref = r,
+			c:label="List"
+			c:values={[settings().list.id]}
+			c:onChange={options => updateList(options[0].value as number)}
+			c:attrMenu={{
+				ref: (r) => menuDropdownRef = r,
 				onClick: ev => {
-					const button = document_active()!
-					if (!element_valid_target(
-						event_current_target(ev),
+					const button = documentActive()!
+					if (!elementValidTarget(
+						eventCurrentTarget(ev),
 						button,
-						el => element_tagname(el) == 'BUTTON'
+						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					switch (element_id(button)) {
-						case button_list_addnewlist_id:
-							command(Commands.add_list, ev)
-							close_menu(menu_dropdown_ref)
-							break
-						case button_list_resetalllist_id:
-							command(Commands.reset_list, ev)
-							close_menu(menu_dropdown_ref)
-							break
-						case button_list_editlist_id:
-							command(Commands.edit_list, ev)
-							close_menu(menu_dropdown_ref)
-							break
+					switch (elementId(button)) {
+					case buttonList_addNewListId:
+						command(Commands.addList, ev)
+						closeMenu(menuDropdownRef)
+						break
+					case buttonList_resetAllListId:
+						command(Commands.resetList, ev)
+						closeMenu(menuDropdownRef)
+						break
+					case buttonList_editListId:
+						command(Commands.editList, ev)
+						closeMenu(menuDropdownRef)
+						break
 					}
 				},
 				onContextMenu: ev => {
-					const button = document_active()!
-					if (!element_valid_target(
-						event_current_target(ev),
+					const button = documentActive()!
+					if (!elementValidTarget(
+						eventCurrentTarget(ev),
 						button,
-						el => element_tagname(el) == 'BUTTON'
+						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					const data_list_index = element_dataset(button, 'listIndex')
-					if (data_list_index) {
-						const index = number_parse(data_list_index, true)
-						if (number_is_not_defined(index)) return
+					const dataListIndex = elementDataset(button, 'listIndex')
+					if (dataListIndex) {
+						const index = numberParse(dataListIndex, true)
+						if (numberIsNotDefined(index)) return
 
-						const option = itemlist_to_dropdownlist(lists())[index]
+						const option = itemListToDropdownList(lists())[index]
 						for (const li of lists()) {
 							if (li.id != option[0]) continue;
 							set_list(li)
 							break
 						}
-						open_menu(ev, menu_action_ref, {
-							position: MenuPosition.center_bottom_to_right
+						openMenu(ev, menuActionRef, {
+							position: MenuPosition.centerBottomToRight
 						})
-						event_prevent_default(ev)
+						eventPreventDefault(ev)
 						return
 					}
 				}
 			}}>
 			<MenuItem
-				id={button_list_addnewlist_id}
-				c_icon_code={ICON_ADD}>
+				id={buttonList_addNewListId}
+				c:iconCode={ICON_ADD}>
 				Add new list
 			</MenuItem>
 			<MenuItem
-				id={button_list_resetalllist_id}
-				c_icon_code={ICON_TEXT_BULLET_LIST_SQUARE_CLOCK}>
+				id={buttonList_resetAllListId}
+				c:iconCode={ICON_TEXT_BULLET_LIST_SQUARE_CLOCK}>
 				Reset all list
 			</MenuItem>
 			<MenuItem
-				id={button_list_editlist_id}
-				c_icon_code={ICON_APPS_LIST_DETAIL}>
+				id={buttonList_editListId}
+				c:iconCode={ICON_APPS_LIST_DETAIL}>
 				Edit list
 			</MenuItem>
 			<MenuDivider />
-			<Show when={array_length(lists()) > 0}>
+			<Show when={arrayLength(lists()) > 0}>
 				<MenuHeader>Select list</MenuHeader>
 			</Show>
-			<For each={itemlist_to_dropdownlist(lists())}>{(option, i) =>
+			<For each={itemListToDropdownList(lists())}>{(option, i) =>
 				<DropdownOption
-					c_value={option[0]}
-					c_text={option[1]}
-					c_trailing={option[2]}
+					c:value={option[0]}
+					c:text={option[1]}
+					c:trailing={option[2]}
 					data-list-index={i()}
 				/>
 			}</For>
 		</Dropdown>
-		<Menu ref={r => menu_action_ref = r} style={{width: '164px'}}>
+		<Menu ref={r => menuActionRef = r} style={{width: '164px'}}>
 			<Show when={list() && list()!.id != settings().list.id}>
 				<MenuItem
 					onClick={async () => {
-						close_menu(menu_action_ref)
-						close_menu(menu_dropdown_ref)
-						change_list(list()!.id)
+						closeMenu(menuActionRef)
+						closeMenu(menuDropdownRef)
+						updateList(list()!.id)
 					}}
-					c_icon_code={ICON_CHECKBOX_CHECKED}>
+					c:iconCode={ICON_CHECKBOX_CHECKED}>
 					Select
 				</MenuItem>
 				<MenuDivider />
 			</Show>
 			<MenuItem
 				onClick={async (ev) => {
-					close_menu(menu_action_ref)
-					close_menu(menu_dropdown_ref)
-					command(Commands.view_list, ev, list())
+					closeMenu(menuActionRef)
+					closeMenu(menuDropdownRef)
+					command(Commands.viewList, ev, list())
 				}}
-				c_icon_code={ICON_EYE}>
+				c:iconCode={ICON_EYE}>
 				View list
 			</MenuItem>
 			<MenuItem
 				onClick={async () => {
-					close_menu(menu_action_ref)
-					close_menu(menu_dropdown_ref)
-					command(Commands.export_list, list())
+					closeMenu(menuActionRef)
+					closeMenu(menuDropdownRef)
+					command(Commands.exportList, list())
 				}}
-				c_icon_code={ICON_ARROW_EXPORT_UP}
-				c_trailing="*.csv">
+				c:iconCode={ICON_ARROW_EXPORT_UP}
+				c:trailing="*.csv">
 				Export list
 			</MenuItem>
 			<MenuItem
 				onClick={async (ev) => {
-					command(Commands.edit_list, ev, list())
-					close_menu(menu_action_ref)
-					close_menu(menu_dropdown_ref)
+					command(Commands.editList, ev, list())
+					closeMenu(menuActionRef)
+					closeMenu(menuDropdownRef)
 				}}
-				c_icon_code={ICON_TEXT_BULLET_LIST_SQUARE_EDIT}>
+				c:iconCode={ICON_TEXT_BULLET_LIST_SQUARE_EDIT}>
 				Edit list
 			</MenuItem>
 			<MenuItem
 				onClick={async (ev) => {
-					command(Commands.edit_list, ev, list())
-					close_menu(menu_action_ref)
-					close_menu(menu_dropdown_ref)
+					command(Commands.editList, ev, list())
+					closeMenu(menuActionRef)
+					closeMenu(menuDropdownRef)
 				}}
-				c_icon_code={ICON_DELETE}>
+				c:iconCode={ICON_DELETE}>
 				Delete list
 			</MenuItem>
 		</Menu>
 		<NumberTextField
-			c_label="Count"
+			c:label="Count"
 			min={1}
 			onBlur={ev => command(
-				Commands.change_settings_words_count,
-				number_safe(event_current_target(ev).valueAsNumber, settings().count)
+				Commands.updateSettingsWordsCount,
+				numberSafe(eventCurrentTarget(ev).valueAsNumber, settings().count)
 			)}
-			c_attr_wrapper={{ style: { width: 'min(100%, 164px)' } }}
+			c:attrWrapper={{ style: { width: 'min(100%, 164px)' } }}
 			value={settings().count}
 		/>
 	</>)
@@ -721,20 +715,20 @@ const Colors: VoidComponent<{
 		return props.command(type, ...args)
 	}
 
-	function get_minmax(
+	function getMinMax(
 		value: string,
-		max_value: number,
-		default_value: {min: number; max: number }
+		maxValue: number,
+		defaultValue: {min: number; max: number }
 	): {min: number; max: number} {
-		let min: number = default_value.min
-		let max: number = default_value.max
-		const unnecesary_char = /[^\d-.]|(?<=\d)\.\d+|(?<!\d)\.(?=\d)/gs
-		const range_regex = /([-+]?\d+?) ?- ?([-+]?\d+)/
-		const r =  string_match(string_replace(value, unnecesary_char, ''), range_regex)
+		let min: number = defaultValue.min
+		let max: number = defaultValue.max
+		const unnecesaryChar = /[^\d-.]|(?<=\d)\.\d+|(?<!\d)\.(?=\d)/gs
+		const rangeRegex = /([-+]?\d+?) ?- ?([-+]?\d+)/
+		const r =  stringMatch(stringReplace(value, unnecesaryChar, ''), rangeRegex)
 		if (r == null) return {min, max}
 
-		min = math_clamp(number_safe(number_parse(r[1], true), default_value.min), 0, max_value)
-		max = math_clamp(number_safe(number_parse(r[2], true), default_value.max), 0, max_value)
+		min = mathClamp(numberSafe(numberParse(r[1], true), defaultValue.min), 0, maxValue)
+		max = mathClamp(numberSafe(numberParse(r[2], true), defaultValue.max), 0, maxValue)
 
 		if (min > max) min = max
 		return {min, max}
@@ -743,21 +737,21 @@ const Colors: VoidComponent<{
 	return (<>
 		<NumberTextField
 			min={1}
-			c_label="Count"
+			c:label="Count"
 			value={settings().count}
 			onBlur={ev => command(
-				Commands.change_settings_colors_count,
-				number_safe(event_current_target(ev).valueAsNumber, settings().count)
+				Commands.updateSettingsColorsCount,
+				numberSafe(eventCurrentTarget(ev).valueAsNumber, settings().count)
 			)}
 		/>
 		<Switch>
-			<Match when={settings().model == ColorsRandomizerColorModel.hex}>
+			<Match when={settings().space == ColorsRandomizerColorSpace.hex}>
 				<TextField
-					c_label="Hex"
+					c:label="Hex"
 					placeholder="0-16777215 - 0-16777215"
 					onBlur={(ev) => {
-						const self = event_current_target(ev)
-						const values = get_minmax(
+						const self = eventCurrentTarget(ev)
+						const values = getMinMax(
 							self.value,
 							0xffffff,
 							{
@@ -765,22 +759,22 @@ const Colors: VoidComponent<{
 								max: settings().range.hex.max
 							}
 						)
-						command(Commands.change_settings_colors_range_hex, values.min, values.max)
-						change_textfield_value(self, array_join([values.min, values.max], ' - '))
+						command(Commands.updateSettingsColorsRangeHex, values.min, values.max)
+						updateTextFieldValue(self, arrayJoin([values.min, values.max], ' - '))
 					}}
-					value={array_join([
+					value={arrayJoin([
 						settings().range.hex.min,
 						settings().range.hex.max
 					], ' - ')}
 				/>
 			</Match>
-			<Match when={settings().model == ColorsRandomizerColorModel.hsl}>
+			<Match when={settings().space == ColorsRandomizerColorSpace.hsl}>
 				<TextField
-					c_label="Hue"
+					c:label="Hue"
 					placeholder="0-360 - 0-360"
 					onBlur={(ev) => {
-						const self = event_current_target(ev)
-						const values = get_minmax(
+						const self = eventCurrentTarget(ev)
+						const values = getMinMax(
 							self.value,
 							360,
 							{
@@ -788,20 +782,20 @@ const Colors: VoidComponent<{
 								max: settings().range.hsl.h.max
 							}
 						)
-						command(Commands.change_settings_colors_range_hsl_h, values.min, values.max)
-						change_textfield_value(self, array_join([values.min, values.max], ' - '))
+						command(Commands.updateSettingsColorsRangeHslH, values.min, values.max)
+						updateTextFieldValue(self, arrayJoin([values.min, values.max], ' - '))
 					}}
-					value={array_join([
+					value={arrayJoin([
 						settings().range.hsl.h.min,
 						settings().range.hsl.h.max
 					], ' - ')}
 				/>
 				<TextField
-					c_label="Saturation"
+					c:label="Saturation"
 					placeholder="0-100 - 0-100"
 					onBlur={(ev) => {
-						const self = event_current_target(ev)
-						const values = get_minmax(
+						const self = eventCurrentTarget(ev)
+						const values = getMinMax(
 							self.value,
 							100,
 							{
@@ -809,20 +803,20 @@ const Colors: VoidComponent<{
 								max: settings().range.hsl.s.max
 							}
 						)
-						command(Commands.change_settings_colors_range_hsl_s, values.min, values.max)
-						change_textfield_value(self, array_join([values.min, values.max], ' - '))
+						command(Commands.updateSettingsColorsRangeHslS, values.min, values.max)
+						updateTextFieldValue(self, arrayJoin([values.min, values.max], ' - '))
 					}}
-					value={array_join([
+					value={arrayJoin([
 						settings().range.hsl.s.min,
 						settings().range.hsl.s.max
 					], ' - ')}
 				/>
 				<TextField
-					c_label="Lightness"
+					c:label="Lightness"
 					placeholder="0-100 - 0-100"
 					onBlur={(ev) => {
-						const self = event_current_target(ev)
-						const values = get_minmax(
+						const self = eventCurrentTarget(ev)
+						const values = getMinMax(
 							self.value,
 							100,
 							{
@@ -830,22 +824,22 @@ const Colors: VoidComponent<{
 								max: settings().range.hsl.l.max
 							}
 						)
-						command(Commands.change_settings_colors_range_hsl_l, values.min, values.max)
-						change_textfield_value(self, array_join([values.min, values.max], ' - '))
+						command(Commands.updateSettingsColorsRangeHslL, values.min, values.max)
+						updateTextFieldValue(self, arrayJoin([values.min, values.max], ' - '))
 					}}
-					value={array_join([
+					value={arrayJoin([
 						settings().range.hsl.l.min,
 						settings().range.hsl.l.max
 					], ' - ')}
 				/>
 			</Match>
-			<Match when={settings().model == ColorsRandomizerColorModel.rgb}>
+			<Match when={settings().space == ColorsRandomizerColorSpace.rgb}>
 				<TextField
-					c_label="Red"
+					c:label="Red"
 					placeholder="0-225 - 0-255"
 					onBlur={(ev) => {
-						const self = event_current_target(ev)
-						const values = get_minmax(
+						const self = eventCurrentTarget(ev)
+						const values = getMinMax(
 							self.value,
 							255,
 							{
@@ -853,20 +847,20 @@ const Colors: VoidComponent<{
 								max: settings().range.rgb.r.max
 							}
 						)
-						command(Commands.change_settings_colors_range_rgb_r, values.min, values.max)
-						change_textfield_value(self, array_join([values.min, values.max], ' - '))
+						command(Commands.updateSettingsColorsRangeRgbR, values.min, values.max)
+						updateTextFieldValue(self, arrayJoin([values.min, values.max], ' - '))
 					}}
-					value={array_join([
+					value={arrayJoin([
 						settings().range.rgb.r.min,
 						settings().range.rgb.r.max
 					], ' - ')}
 				/>
 				<TextField
-					c_label="Green"
+					c:label="Green"
 					placeholder="0-225 - 0-255"
 					onBlur={(ev) => {
-						const self = event_current_target(ev)
-						const values = get_minmax(
+						const self = eventCurrentTarget(ev)
+						const values = getMinMax(
 							self.value,
 							255,
 							{
@@ -874,20 +868,20 @@ const Colors: VoidComponent<{
 								max: settings().range.rgb.g.max
 							}
 						)
-						command(Commands.change_settings_colors_range_rgb_g, values.min, values.max)
-						change_textfield_value(self, array_join([values.min, values.max], ' - '))
+						command(Commands.updateSettingsColorsRangeRgbG, values.min, values.max)
+						updateTextFieldValue(self, arrayJoin([values.min, values.max], ' - '))
 					}}
-					value={array_join([
+					value={arrayJoin([
 						settings().range.rgb.g.min,
 						settings().range.rgb.g.max
 					], ' - ')}
 				/>
 				<TextField
-					c_label="Blue"
+					c:label="Blue"
 					placeholder="0-225 - 0-255"
 					onBlur={(ev) => {
-						const self = event_current_target(ev)
-						const values = get_minmax(
+						const self = eventCurrentTarget(ev)
+						const values = getMinMax(
 							self.value,
 							255,
 							{
@@ -895,10 +889,10 @@ const Colors: VoidComponent<{
 								max: settings().range.rgb.b.max
 							}
 						)
-						command(Commands.change_settings_colors_range_rgb_b, values.min, values.max)
-						change_textfield_value(self, array_join([values.min, values.max], ' - '))
+						command(Commands.updateSettingsColorsRangeRgbB, values.min, values.max)
+						updateTextFieldValue(self, arrayJoin([values.min, values.max], ' - '))
 					}}
-					value={array_join([
+					value={arrayJoin([
 						settings().range.rgb.b.min,
 						settings().range.rgb.b.max
 					], ' - ')}
@@ -918,40 +912,40 @@ const Numbers: VoidComponent<{
 		return props.command(type, ...args)
 	}
 
-	function on_blur_range(ev: FocusEvent & {currentTarget: HTMLInputElement; target: HTMLInputElement}): void {
-		const self = event_current_target(ev)
-		const range_regex = /([-+]?\d+?) ?- ?([-+]?\d+)/
-		const unnecesary_char = /[^\d-.]|(?<=\d)\.\d+|(?<!\d)\.(?=\d)/gs
-		const r = string_match(string_replace(self.value, unnecesary_char, ''), range_regex)
-		if (r == null) return change_textfield_value(
+	function onBlurRange(ev: FocusEvent & {currentTarget: HTMLInputElement; target: HTMLInputElement}): void {
+		const self = eventCurrentTarget(ev)
+		const rangeRegex = /([-+]?\d+?) ?- ?([-+]?\d+)/
+		const unnecesaryChar = /[^\d-.]|(?<=\d)\.\d+|(?<!\d)\.(?=\d)/gs
+		const r = stringMatch(stringReplace(self.value, unnecesaryChar, ''), rangeRegex)
+		if (r == null) return updateTextFieldValue(
 			self,
-			array_join([settings().range.min, settings().range.max], ' - ')
+			arrayJoin([settings().range.min, settings().range.max], ' - ')
 		)
 
-		const max = number_parse(r[2], true)
-		let min = number_parse(r[1], true)
+		const max = numberParse(r[2], true)
+		let min = numberParse(r[1], true)
 
 		if (min > max) min = max
 
-		command(Commands.change_settings_numbers_range, min, max)
-		change_textfield_value(self, array_join([min, max], ' - '))
+		command(Commands.updateSettingsNumbersRange, min, max)
+		updateTextFieldValue(self, arrayJoin([min, max], ' - '))
 	}
 
 	return (<>
 		<TextField
-			c_label="Range"
-			onBlur={on_blur_range}
-			c_attr_wrapper={{ style: { width: 'min(100%, 164px)' } }}
-			value={array_join([settings().range.min, settings().range.max], ' - ')}
+			c:label="Range"
+			onBlur={onBlurRange}
+			c:attrWrapper={{ style: { width: 'min(100%, 164px)' } }}
+			value={arrayJoin([settings().range.min, settings().range.max], ' - ')}
 		/>
 		<NumberTextField
-			c_label="Count"
+			c:label="Count"
 			min={1}
 			onBlur={ev => command(
-				Commands.change_settings_numbers_count,
-				number_safe(event_current_target(ev).valueAsNumber, settings().count)
+				Commands.updateSettingsNumbersCount,
+				numberSafe(eventCurrentTarget(ev).valueAsNumber, settings().count)
 			)}
-			c_attr_wrapper={{ style: { width: 'min(100%, 164px)' } }}
+			c:attrWrapper={{ style: { width: 'min(100%, 164px)' } }}
 			value={settings().count}
 		/>
 	</>)
@@ -961,16 +955,16 @@ const $String: VoidComponent<{
 	settings: [Settings, SetStoreFunction<Settings>]
 	command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
-	const [is_menu_characters_open, set_is_menu_characters_open] = createSignal<boolean>(false)
-	const [menu_characters_width, set_menu_characters_width] = createSignal<number>(0)
+	const [isMenuCharactersOpen, setIsMenuCharactersOpen] = createSignal<boolean>(false)
+	const [menuCharactersWidth, setMenuCharactersWidth] = createSignal<number>(0)
 	const settings = createMemo(() => props.settings[0].string)
-	const button_characters_uppercase_id = createUniqueId()
-	const button_characters_lowercase_id = createUniqueId()
-	const button_characters_numbers_id = createUniqueId()
-	const button_characters_symbols_id = createUniqueId()
-	let label_characters_ref: HTMLDivElement
-	let input_characters_ref: HTMLInputElement
-	let menu_characters_ref: HTMLDialogElement
+	const buttonCharacters_uppercaseId = createUniqueId()
+	const buttonCharacters_lowercaseId = createUniqueId()
+	const buttonCharacters_numbersId = createUniqueId()
+	const buttonCharacters_symbolsId = createUniqueId()
+	let labelCharactersRef: HTMLDivElement
+	let inputCharactersRef: HTMLInputElement
+	let menuCharactersRef: HTMLDialogElement
 
 	function command(type: Commands, ...args: unknown[]): unknown {
 		return props.command(type, ...args)
@@ -984,116 +978,116 @@ const $String: VoidComponent<{
 		const symbols = characters.symbols
 		const custom = characters.custom
 
-		if (!lowercase && !uppercase && !numbers && !symbols && string_length(custom) == 0) {
-			command(Commands.change_settings_string_characters_default)
+		if (!lowercase && !uppercase && !numbers && !symbols && stringLength(custom) == 0) {
+			command(Commands.updateSettingsStringCharactersDefault)
 		}
 
 		const text: string[] = []
-		if (uppercase) array_push(text, 'A-Z')
-		if (lowercase) array_push(text, 'a-z')
-		if (numbers) array_push(text, '0-9')
-		if (symbols) array_push(text, '<({[!@#$%^&*_-+=~`\\|"\':;?/.,]})>')
-		if (string_length(custom) > 0) array_push(text, custom)
+		if (uppercase) arrayPush(text, 'A-Z')
+		if (lowercase) arrayPush(text, 'a-z')
+		if (numbers) arrayPush(text, '0-9')
+		if (symbols) arrayPush(text, '<({[!@#$%^&*_-+=~`\\|"\':;?/.,]})>')
+		if (stringLength(custom) > 0) arrayPush(text, custom)
 
-		change_textfield_value(input_characters_ref, array_join(text, ', '))
+		updateTextFieldValue(inputCharactersRef, arrayJoin(text, ', '))
 	})
 
 	return (<>
 		<NumberTextField
-			c_attr_wrapper={{ style: { width: 'min(100%, 164px)' } }}
+			c:attrWrapper={{ style: { width: 'min(100%, 164px)' } }}
 			value={settings().length}
 			onBlur={ev => command(
-				Commands.change_settings_string_length,
-				number_safe(event_current_target(ev).valueAsNumber, settings().length)
+				Commands.updateSettingsStringLength,
+				numberSafe(eventCurrentTarget(ev).valueAsNumber, settings().length)
 			)}
 			min={1}
-			c_label="Length"
+			c:label="Length"
 		/>
 		<TextField
-			ref={r => input_characters_ref = r}
-			c_focused={is_menu_characters_open()}
+			ref={r => inputCharactersRef = r}
+			c:focused={isMenuCharactersOpen()}
 			readOnly
-			c_attr_wrapper={{
-				ref: r => label_characters_ref = r,
+			c:attrWrapper={{
+				ref: r => labelCharactersRef = r,
 				style: { width: 'min(100%, 328px)' }
 			}}
 			value={8}
-			c_label="Characters"
-			c_trailing={<TextFieldButton
+			c:label="Characters"
+			c:trailing={<TextFieldButton
 				data-tooltip="More character options"
-				c_focused={is_menu_characters_open()}
+				c:focused={isMenuCharactersOpen()}
 				onClick={(ev) => {
-					set_menu_characters_width(rect_width(element_rect(label_characters_ref!)))
-					open_menu(ev, menu_characters_ref, {
-						anchor: event_current_target(ev),
-						position: MenuPosition.center_bottom_to_left,
+					setMenuCharactersWidth(rectWidth(elementRect(labelCharactersRef!)))
+					openMenu(ev, menuCharactersRef, {
+						anchor: eventCurrentTarget(ev),
+						position: MenuPosition.centerBottomToLeft,
 						padding: 6.5,
 						gap: 8,
 					})
 				}}>
-				<Icon c_filled c_code={ICON_CHEVRON_DOWN}/>
+				<Icon c:filled c:code={ICON_CHEVRON_DOWN}/>
 			</TextFieldButton>}
 		/>
 		<Menu
-			ref={(r) => menu_characters_ref = r}
-			c_on_toggleopen={(v) => set_is_menu_characters_open(v)}
-			style={{"min-width": `${menu_characters_width()}px`}}
+			ref={(r) => menuCharactersRef = r}
+			c:onToggleOpen={(v) => setIsMenuCharactersOpen(v)}
+			style={{"min-width": `${menuCharactersWidth()}px`}}
 			onClick={ev => {
-				const button = document_active()!
-				if (!element_valid_target(
-					event_current_target(ev),
+				const button = documentActive()!
+				if (!elementValidTarget(
+					eventCurrentTarget(ev),
 					button,
-					el => element_tagname(el) == 'BUTTON'
+					el => elementTagName(el) == 'BUTTON'
 				)) return
 
-				switch (element_id(button)) {
-					case button_characters_uppercase_id:
-						command(Commands.toggle_settings_string_characters_uppercase)
-						break
-					case button_characters_lowercase_id:
-						command(Commands.toggle_settings_string_characters_lowercase)
-						break
-					case button_characters_numbers_id:
-						command(Commands.toggle_settings_string_characters_numbers)
-						break
-					case button_characters_symbols_id:
-						command(Commands.toggle_settings_string_characters_symbols)
-						break
+				switch (elementId(button)) {
+				case buttonCharacters_uppercaseId:
+					command(Commands.toggleSettingsStringCharactersUppercase)
+					break
+				case buttonCharacters_lowercaseId:
+					command(Commands.toggleSettingsStringCharactersLowercase)
+					break
+				case buttonCharacters_numbersId:
+					command(Commands.toggleSettingsStringCharactersNumbers)
+					break
+				case buttonCharacters_symbolsId:
+					command(Commands.toggleSettingsStrnigCharactersSymbols)
+					break
 				}
 			}}>
 			<MenuHeader>Alphabet</MenuHeader>
 			<MenuItem
-				c_checked={settings().characters.uppercase}
-				c_trailing="A-Z"
-				id={button_characters_uppercase_id}>
+				c:checked={settings().characters.uppercase}
+				c:trailing="A-Z"
+				id={buttonCharacters_uppercaseId}>
 				Uppercase
 			</MenuItem>
 			<MenuItem
-				c_checked={settings().characters.lowercase}
-				c_trailing="a-z"
-				id={button_characters_lowercase_id}>
+				c:checked={settings().characters.lowercase}
+				c:trailing="a-z"
+				id={buttonCharacters_lowercaseId}>
 				Lowercase
 			</MenuItem>
 			<MenuDivider />
 			<MenuItem
-				c_checked={settings().characters.numbers}
-				c_trailing="0-9"
-				id={button_characters_numbers_id}>
+				c:checked={settings().characters.numbers}
+				c:trailing="0-9"
+				id={buttonCharacters_numbersId}>
 				Numbers
 			</MenuItem>
 			<MenuDivider />
 			<MenuItem
-				c_checked={settings().characters.symbols}
-				c_trailing={"<({[!@#$%^&*_-+=~`\\|\"':;?/.,]})>"}
-				id={button_characters_symbols_id}>
+				c:checked={settings().characters.symbols}
+				c:trailing={"<({[!@#$%^&*_-+=~`\\|\"':;?/.,]})>"}
+				id={buttonCharacters_symbolsId}>
 				Symbols
 			</MenuItem>
 			<MenuDivider />
 			<div class={ CSS.control_string_custom_character}>
 				<TextField
-					c_label="Custom characters"
+					c:label="Custom characters"
 					placeholder="#d(23'[])sdf"
-					onInput={(ev) => command(Commands.change_settings_string_characters_custom, event_current_target(ev).value)}
+					onInput={(ev) => command(Commands.updateSettingsStringCharactersCustom, eventCurrentTarget(ev).value)}
 					value={settings().characters.custom}
 				/>
 			</div>

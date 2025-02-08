@@ -4,268 +4,262 @@ import { RootAttributes } from "@/enums/attributes"
 import { CornerData } from "@/enums/corner"
 import { LocalStorageKeys } from "@/enums/storage"
 import { ThemeData } from "@/enums/theme"
-import { storage_set, storage_get } from "@/utils/storage"
-import { attr_set, classlist_module } from "@/utils/attributes"
-import { window_matches, window_match_media } from "@/utils/window"
-import { event_add_listener, event_current_target } from '@/utils/event'
+import { storageSet, storageGet } from "@/utils/storage"
+import { attrSet, attrClassListModule } from "@/utils/attributes"
+import { windowMatches, windowMatchMedia } from "@/utils/window"
+import { eventListenerAdd, eventCurrentTarget } from '@/utils/event'
 import { Commands, Pages } from "./_enums"
 import { PAGES, SIZE_SIDE_NAVIGATION_NONE } from "./_constants"
-import { wait } from "@/utils/timeout"
 import { RoutesLinks, ExternalLinks } from "@/enums/links"
-import { url_encode } from "@/utils/url"
-import { is_mobile } from "@/utils/platforms"
-import { array_includes } from "@/utils/array"
-import { navigator_share } from "@/utils/navigator"
-import { date_year } from "@/utils/datetime"
+import { urlEncode } from "@/utils/url"
+import { isMobile } from "@/utils/platforms"
+import { navigatorShare } from "@/utils/navigator"
+import { dateYear } from "@/utils/datetime"
 import { PlatformData } from "@/enums/platforms"
-import { document_root } from "@/utils/document"
+import { documentRoot } from "@/utils/document"
 import { ICON_APPS, ICON_CHAT, ICON_CIRCLE, ICON_DESKTOP, ICON_DESKTOP_TOWER, ICON_GIFT, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_LINE_HORIZONTAL_3, ICON_MAXIMIZE, ICON_PHONE, ICON_PHONE_LAPTOP, ICON_RECEIPT, ICON_SETTINGS, ICON_SHARE_ANDROID, ICON_SHIELD_CHECKMARK, ICON_SQUARE, ICON_TEARDROP_BOTTOM_RIGHT, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from "@/constants/icons"
 import logo from '@/assets/apps/biru-ui-logo.svg'
 import logo_redmerah from '@/assets/logo.svg'
 
 import Tooltip from "@/components/Tooltip"
 import { IconButton } from "@/components/Button"
-import Menu, { MenuDivider, MenuItem, MenuHeader, open_menu, LinkMenuItem, SubMenu, close_submenu, close_menu, SubMenuItem } from "@/components/Menu"
-import Drawer, { close_drawer, DrawerItem, open_drawer } from "@/components/Drawer"
+import Menu, { MenuDivider, MenuItem, MenuHeader, openMenu, LinkMenuItem, SubMenu, closeSubMenu, closeMenu, SubMenuItem } from "@/components/Menu"
+import Drawer, { closeDrawer, DrawerItem, openDrawer } from "@/components/Drawer"
 import AppBar from "@/components/AppBar"
 import CSSAnimation from "@/styles/animation.module.scss"
+import { validEnumValue } from "@/utils/object"
 
 const _: VoidComponent<{
 	command: (type: Commands, ...args: unknown[]) => unknown
 	page: Pages
 }> = (props) => {
-	const root = document_root()
-	const [is_menu_info_open, set_is_menu_info_open] = createSignal<boolean>(false)
-	const [is_menu_settings_open, set_is_menu_settings_open] = createSignal<boolean>(false)
-	const [is_submenu_themesettings_open, set_is_submenu_themesettings_open] = createSignal<boolean>(false)
-	const [is_submenu_cornersettings_open, set_is_submenu_cornersettings_open] = createSignal<boolean>(false)
-	const [is_submenu_platformsettings_open, set_is_submenu_platformsettings_open] = createSignal<boolean>(false)
+	const root = documentRoot()
+	const [isMenuInfoOpen, setIsMenuInfoOpen] = createSignal<boolean>(false)
+	const [isMenuSettingsOpen, setIsMenuSettingsOpen] = createSignal<boolean>(false)
+	const [isSubMenuSettings_themeOpen, setIsSubMenuSettings_themeOpen] = createSignal<boolean>(false)
+	const [isSubMenuSettings_cornerOpen, setIsSubMenuSettings_cornerOpen] = createSignal<boolean>(false)
+	const [isSubMenuSettings_platformOpen, setIsSubMenuSettings_platformOpen] = createSignal<boolean>(false)
 	const [isSideNavigationHidden, setIsSideNavigationHidden] = createSignal<boolean>(false)
 	const [theme, setTheme] = createSignal<ThemeData>(ThemeData.system)
 	const [corner, setCorner] = createSignal<CornerData>(CornerData.round)
 	const [platform, setPlatform] = createSignal<PlatformData>(PlatformData.desktop)
-	let drawer_navigation_ref: HTMLDialogElement
-	let menu_info_ref: HTMLDialogElement
-	let menu_settings_ref: HTMLDialogElement
-	let submenu_themesettings_ref: HTMLDivElement
-	let submenu_cornersettings_ref: HTMLDivElement
-	let submenu_platformsettings_ref: HTMLDivElement
+	let drawerNavigationRef: HTMLDialogElement
+	let menuInfoRef: HTMLDialogElement
+	let menuSettingsRef: HTMLDialogElement
+	let subMenuSettings_themeRef: HTMLDivElement
+	let subMenuSettings_cornerRef: HTMLDivElement
+	let subMenuSettings_platformRef: HTMLDivElement
 
-	function init_sidenavigation_listener(): void {
-		setIsSideNavigationHidden(window_matches(`(max-width: ${SIZE_SIDE_NAVIGATION_NONE}px)`))
-		event_add_listener(
-			window_match_media(`(max-width: ${SIZE_SIDE_NAVIGATION_NONE}px)`),
+	function initSideNavigationListener(): void {
+		setIsSideNavigationHidden(windowMatches(`(max-width: ${SIZE_SIDE_NAVIGATION_NONE}px)`))
+		eventListenerAdd(
+			windowMatchMedia(`(max-width: ${SIZE_SIDE_NAVIGATION_NONE}px)`),
 			'change',
 			ev => setIsSideNavigationHidden((ev as MediaQueryListEvent).matches)
 		)
 	}
 
-	async function change_platform(platform: PlatformData): Promise<void> {
+	function updatePlatform(platform: PlatformData): void {
 		setPlatform(platform)
-		attr_set(root, RootAttributes.platform, platform)
-		close_submenu(submenu_platformsettings_ref)
-		await wait(200)
-		close_menu(menu_settings_ref)
+		attrSet(root, RootAttributes.platform, platform)
+		closeSubMenu(subMenuSettings_platformRef)
+		closeMenu(menuSettingsRef)
 	}
 
-	async function change_theme(theme: ThemeData): Promise<void> {
+	function updateTheme(theme: ThemeData): void {
 		setTheme(theme)
-		attr_set(root, RootAttributes.theme, theme)
-		storage_set(LocalStorageKeys.theme, theme)
-		close_submenu(submenu_themesettings_ref)
-		await wait(200)
-		close_menu(menu_settings_ref)
+		attrSet(root, RootAttributes.theme, theme)
+		storageSet(LocalStorageKeys.theme, theme)
+		closeSubMenu(subMenuSettings_themeRef)
+		closeMenu(menuSettingsRef)
 	}
 
-	async function change_corner(corner: CornerData): Promise<void> {
+	function updateCorner(corner: CornerData): void {
 		setCorner(corner)
-		attr_set(root, RootAttributes.corner, corner)
-		storage_set(LocalStorageKeys.corner, corner)
-		close_submenu(submenu_cornersettings_ref)
-		await wait(200)
-		close_menu(menu_settings_ref)
+		attrSet(root, RootAttributes.corner, corner)
+		storageSet(LocalStorageKeys.corner, corner)
+		closeSubMenu(subMenuSettings_cornerRef)
+		closeMenu(menuSettingsRef)
 	}
 
-	function init_theme(): void {
-		const theme = storage_get(LocalStorageKeys.theme)
-
-		if (theme && array_includes([ThemeData.system, ThemeData.light, ThemeData.dark], theme as ThemeData)) {
-			attr_set(root, RootAttributes.theme, theme)
+	function initTheme(): void {
+		const theme = storageGet(LocalStorageKeys.theme)
+		if (theme && validEnumValue(theme, ThemeData)) {
+			attrSet(root, RootAttributes.theme, theme)
 			setTheme(theme as ThemeData)
 		}
 	}
 
-	function init_corner(): void {
-		const corner = storage_get(LocalStorageKeys.corner)
-
-		if (corner && array_includes([CornerData.sharp, CornerData.semi_round, CornerData.round, CornerData.full_round], corner as CornerData)) {
-			attr_set(root, RootAttributes.corner, corner)
+	function initCorner(): void {
+		const corner = storageGet(LocalStorageKeys.corner)
+		if (corner && validEnumValue(corner, CornerData)) {
+			attrSet(root, RootAttributes.corner, corner)
 			setCorner(corner as CornerData)
 		}
 	}
 
-	function init_platform(): void {
-		const $isMobile = is_mobile()
+	function initPlatform(): void {
+		const $isMobile = isMobile()
 		if (!$isMobile) return
 
 		setPlatform(PlatformData.mobile)
 	}
 
 	onMount(() => {
-		init_theme()
-		init_corner()
-		init_sidenavigation_listener()
-		init_platform()
+		initTheme()
+		initCorner()
+		initSideNavigationListener()
+		initPlatform()
 	})
 
 	const Menus: VoidComponent = () => {
 		return (<>
 			<Menu
 				style={{width: '200px'}}
-				ref={r => menu_info_ref = r}
-				c_on_toggleopen={(v) => set_is_menu_info_open(v)}>
+				ref={r => menuInfoRef = r}
+				c:onToggleOpen={(v) => setIsMenuInfoOpen(v)}>
 				<LinkMenuItem
-					onClick={() => close_menu(menu_info_ref)}
+					onClick={() => closeMenu(menuInfoRef)}
 					href={RoutesLinks.home}
-					c_leading={<img src={logo_redmerah.src} width={16} alt='Redmerah logo'/>}>
+					c:leading={<img src={logo_redmerah.src} width={16} alt='Redmerah logo'/>}>
 					Redmerah
 				</LinkMenuItem>
 				<LinkMenuItem
-					onClick={() => close_menu(menu_info_ref)}
+					onClick={() => closeMenu(menuInfoRef)}
 					href={RoutesLinks.apps}
-					c_icon_code={ICON_APPS}>
+					c:iconCode={ICON_APPS}>
 					More apps
 				</LinkMenuItem>
 				<LinkMenuItem
-					onClick={() => close_menu(menu_info_ref)}
+					onClick={() => closeMenu(menuInfoRef)}
 					href={RoutesLinks.about}
-					c_icon_code={ICON_INFO}>
+					c:iconCode={ICON_INFO}>
 					About us
 				</LinkMenuItem>
 				<MenuDivider />
 				<LinkMenuItem
-					onClick={() => close_menu(menu_info_ref)}
+					onClick={() => closeMenu(menuInfoRef)}
 					href={RoutesLinks.privacy}
-					c_icon_code={ICON_SHIELD_CHECKMARK}>
+					c:iconCode={ICON_SHIELD_CHECKMARK}>
 					Privacy policy
 				</LinkMenuItem>
 				<LinkMenuItem
-					onClick={() => close_menu(menu_info_ref)}
+					onClick={() => closeMenu(menuInfoRef)}
 					href={RoutesLinks.terms}
-					c_icon_code={ICON_RECEIPT}>
+					c:iconCode={ICON_RECEIPT}>
 					Terms & conditions
 				</LinkMenuItem>
 				<MenuDivider />
 				<MenuItem
 					onClick={() => {
-						navigator_share({ title: 'BiruUI', text: 'BiruUI', url: document.URL })
-						close_menu(menu_info_ref)
+						navigatorShare({ title: 'BiruUI', text: 'BiruUI', url: document.URL })
+						closeMenu(menuInfoRef)
 					}}
-					c_icon_code={ICON_SHARE_ANDROID}>
+					c:iconCode={ICON_SHARE_ANDROID}>
 					Share
 				</MenuItem>
 				<LinkMenuItem
-					onClick={() => close_menu(menu_info_ref)}
-					href={'mailto:' + ExternalLinks.contact_email + '?subject=' + url_encode('BiruUI')}
-					c_icon_code={ICON_CHAT}>
+					onClick={() => closeMenu(menuInfoRef)}
+					href={'mailto:' + ExternalLinks.contactEmail + '?subject=' + urlEncode('BiruUI')}
+					c:iconCode={ICON_CHAT}>
 					Send feedback
 				</LinkMenuItem>
 				<LinkMenuItem
-					onClick={() => close_menu(menu_info_ref)}
+					onClick={() => closeMenu(menuInfoRef)}
 					href={ExternalLinks.donate}
-					c_new_tab
-					c_icon_code={ICON_GIFT}>
+					c:newTab
+					c:iconCode={ICON_GIFT}>
 					Donate
 				</LinkMenuItem>
-				<MenuHeader>&copy; {date_year(new Date())} Redmerah</MenuHeader>
+				<MenuHeader>&copy; {dateYear(new Date())} Redmerah</MenuHeader>
 			</Menu>
 			<Menu
-				ref={r => menu_settings_ref = r}
-				c_on_toggleopen={(v) => set_is_menu_settings_open(v)}>
+				ref={r => menuSettingsRef = r}
+				c:onToggleOpen={(v) => setIsMenuSettingsOpen(v)}>
 				<SubMenu
-					ref={r => submenu_themesettings_ref = r}
-					c_on_toggleopen={v => set_is_submenu_themesettings_open(v)}
-					c_item={<SubMenuItem
-						c_focused={is_submenu_themesettings_open()}
-						c_icon_code={ICON_WEATHER_SUNNY}>
+					ref={r => subMenuSettings_themeRef = r}
+					c:onToggleOpen={v => setIsSubMenuSettings_themeOpen(v)}
+					c:item={<SubMenuItem
+						c:focused={isSubMenuSettings_themeOpen()}
+						c:iconCode={ICON_WEATHER_SUNNY}>
 						Theme
 					</SubMenuItem>}>
 					<MenuItem
-						c_selected={theme() == ThemeData.light}
-						c_icon_code={ICON_WEATHER_SUNNY}
-						onClick={() => change_theme(ThemeData.light)}>
+						c:selected={theme() == ThemeData.light}
+						c:iconCode={ICON_WEATHER_SUNNY}
+						onClick={() => updateTheme(ThemeData.light)}>
 						Light
 					</MenuItem>
 					<MenuItem
-						c_selected={theme() == ThemeData.dark}
-						c_icon_code={ICON_WEATHER_MOON}
-						onClick={() => change_theme(ThemeData.dark)}>
+						c:selected={theme() == ThemeData.dark}
+						c:iconCode={ICON_WEATHER_MOON}
+						onClick={() => updateTheme(ThemeData.dark)}>
 						Dark
 					</MenuItem>
 					<MenuItem
-						c_selected={theme() == ThemeData.system}
-						c_icon_code={ICON_LAPTOP_SETTINGS}
-						onClick={() => change_theme(ThemeData.system)}>
+						c:selected={theme() == ThemeData.system}
+						c:iconCode={ICON_LAPTOP_SETTINGS}
+						onClick={() => updateTheme(ThemeData.system)}>
 						System theme
 					</MenuItem>
 				</SubMenu>
 				<SubMenu
-					ref={r => submenu_cornersettings_ref = r}
-					c_on_toggleopen={v => set_is_submenu_cornersettings_open(v)}
-					c_item={<SubMenuItem
-						c_focused={is_submenu_cornersettings_open()}
-						c_icon_code={ICON_TEARDROP_BOTTOM_RIGHT}>
+					ref={r => subMenuSettings_cornerRef = r}
+					c:onToggleOpen={v => setIsSubMenuSettings_cornerOpen(v)}
+					c:item={<SubMenuItem
+						c:focused={isSubMenuSettings_cornerOpen()}
+						c:iconCode={ICON_TEARDROP_BOTTOM_RIGHT}>
 						Corner style
 					</SubMenuItem>}>
 					<MenuItem
-						c_selected={corner() == CornerData.sharp}
-						c_icon_code={ICON_MAXIMIZE}
-						onClick={() => change_corner(CornerData.sharp)}>
+						c:selected={corner() == CornerData.sharp}
+						c:iconCode={ICON_MAXIMIZE}
+						onClick={() => updateCorner(CornerData.sharp)}>
 						Sharp
 					</MenuItem>
 					<MenuItem
-						c_selected={corner() == CornerData.semi_round}
-						c_icon_code={ICON_SQUARE}
-						onClick={() => change_corner(CornerData.semi_round)}>
+						c:selected={corner() == CornerData.semiRound}
+						c:iconCode={ICON_SQUARE}
+						onClick={() => updateCorner(CornerData.semiRound)}>
 						Semi round
 					</MenuItem>
 					<MenuItem
-						c_selected={corner() == CornerData.round}
-						c_icon_code={ICON_TEARDROP_BOTTOM_RIGHT}
-						onClick={() => change_corner(CornerData.round)}>
+						c:selected={corner() == CornerData.round}
+						c:iconCode={ICON_TEARDROP_BOTTOM_RIGHT}
+						onClick={() => updateCorner(CornerData.round)}>
 						Round
 					</MenuItem>
 					<MenuItem
-						c_selected={corner() == CornerData.full_round}
-						c_icon_code={ICON_CIRCLE}
-						onClick={() => change_corner(CornerData.full_round)}>
+						c:selected={corner() == CornerData.fullRound}
+						c:iconCode={ICON_CIRCLE}
+						onClick={() => updateCorner(CornerData.fullRound)}>
 						Full round
 					</MenuItem>
 				</SubMenu>
 				<SubMenu
-					ref={r => submenu_platformsettings_ref = r}
-					c_on_toggleopen={v => set_is_submenu_platformsettings_open(v)}
-					c_item={<SubMenuItem
-						c_focused={is_submenu_platformsettings_open()}
-						c_icon_code={ICON_DESKTOP_TOWER}>
+					ref={r => subMenuSettings_platformRef = r}
+					c:onToggleOpen={v => setIsSubMenuSettings_platformOpen(v)}
+					c:item={<SubMenuItem
+						c:focused={isSubMenuSettings_platformOpen()}
+						c:iconCode={ICON_DESKTOP_TOWER}>
 						Platform
 					</SubMenuItem>}>
 					<MenuItem
-						c_selected={platform() == PlatformData.hybrid}
-						c_icon_code={ICON_PHONE_LAPTOP}
-						onClick={() => change_platform(PlatformData.hybrid)}>
+						c:selected={platform() == PlatformData.hybrid}
+						c:iconCode={ICON_PHONE_LAPTOP}
+						onClick={() => updatePlatform(PlatformData.hybrid)}>
 						Hybrid
 					</MenuItem>
 					<MenuItem
-						c_selected={platform() == PlatformData.desktop}
-						c_icon_code={ICON_DESKTOP}
-						onClick={() => change_platform(PlatformData.desktop)}>
+						c:selected={platform() == PlatformData.desktop}
+						c:iconCode={ICON_DESKTOP}
+						onClick={() => updatePlatform(PlatformData.desktop)}>
 						Desktop
 					</MenuItem>
 					<MenuItem
-						c_selected={platform() == PlatformData.mobile}
-						c_icon_code={ICON_PHONE}
-						onClick={() => change_platform(PlatformData.mobile)}>
+						c:selected={platform() == PlatformData.mobile}
+						c:iconCode={ICON_PHONE}
+						onClick={() => updatePlatform(PlatformData.mobile)}>
 						Mobile
 					</MenuItem>
 				</SubMenu>
@@ -275,37 +269,37 @@ const _: VoidComponent<{
 
 	return (<>
 		<AppBar
-			c_leading={<Tooltip>
+			c:leading={<Tooltip>
 				<Show when={isSideNavigationHidden()}>
 					<IconButton
 						data-tooltip="Open navigation"
-						classList={classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
+						classList={attrClassListModule(CSSAnimation.btn_shrink_horizontal_icon)}
 						onClick={(ev) => {
-							open_drawer(ev, drawer_navigation_ref)
+							openDrawer(ev, drawerNavigationRef)
 						}}
-						c_code={ICON_LINE_HORIZONTAL_3}
+						c:code={ICON_LINE_HORIZONTAL_3}
 					/>
 				</Show>
 				<img alt="BiruUI logo" width={32} src={logo.src} />
 			</Tooltip>}
-			c_headline="BiruUI"
-			c_trailing={<Tooltip>
+			c:headline="BiruUI"
+			c:trailing={<Tooltip>
 				<IconButton
 					data-tooltip="Info"
-					c_focused={is_menu_info_open()}
-					c_code={ICON_INFO}
-					onClick={(ev) => open_menu(ev, menu_info_ref, {
-						anchor: event_current_target(ev),
+					c:focused={isMenuInfoOpen()}
+					c:code={ICON_INFO}
+					onClick={(ev) => openMenu(ev, menuInfoRef, {
+						anchor: eventCurrentTarget(ev),
 						padding: 4,
 					})}
 				/>
 				<IconButton
 					data-tooltip="Settings"
 					class={CSSAnimation.btn_rotate_icon}
-					c_focused={is_menu_settings_open()}
-					c_code={ICON_SETTINGS}
-					onClick={(ev) => open_menu(ev, menu_settings_ref, {
-						anchor: event_current_target(ev),
+					c:focused={isMenuSettingsOpen()}
+					c:code={ICON_SETTINGS}
+					onClick={(ev) => openMenu(ev, menuSettingsRef, {
+						anchor: eventCurrentTarget(ev),
 						padding: 4,
 					})}
 				/>
@@ -313,22 +307,22 @@ const _: VoidComponent<{
 		/>
 		<Menus />
 		<Drawer
-			c_header={<Tooltip>
+			c:header={<Tooltip>
 				<IconButton
 					data-tooltip="Close navigation"
-					classList={classlist_module(CSSAnimation.btn_shrink_horizontal_icon)}
-					c_code={ICON_LINE_HORIZONTAL_3}
-					onClick={() => close_drawer(drawer_navigation_ref)}
+					classList={attrClassListModule(CSSAnimation.btn_shrink_horizontal_icon)}
+					c:code={ICON_LINE_HORIZONTAL_3}
+					onClick={() => closeDrawer(drawerNavigationRef)}
 				/>
 			</Tooltip>}
-			ref={r => drawer_navigation_ref = r}>
+			ref={r => drawerNavigationRef = r}>
 			<For each={PAGES}>{page =>
 				<DrawerItem
 					onClick={() => {
-						props.command(Commands.change_page, page.type)
-						close_drawer(drawer_navigation_ref)
+						props.command(Commands.updatePage, page.type)
+						closeDrawer(drawerNavigationRef)
 					}}
-					c_selected={props.page == page.type}>
+					c:selected={props.page == page.type}>
 					{page.text}
 				</DrawerItem>
 			}</For>

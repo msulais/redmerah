@@ -32,20 +32,20 @@ export enum ObjectStoreNames {
 export enum ObjectStoreKeys {
 
 	/** @param {SortBy} value `SortBy` */
-	settings_sortby = 'sort_by',
+	settings_sortBy = 'sort-by',
 
 	/** @param {SortMode} value `SortMode` */
-	settings_sortmode = 'sort_mode',
+	settings_sortMode = 'sort-mode',
 
 	/** @param {boolean} value `boolean` */
-	settings_isshowdeletetaskwarning = 'is_show_delete_task_warning',
+	settings_showDeleteTaskWarning = 'show-delete-task-warning',
 
 	/** @param {Pages[]} value `Pages[]` */
-	settings_hidden_navigation = 'hidden_navigation',
+	settings_hiddenNavigation = 'hidden-navigation',
 
 	/** @param {boolean} value `boolean` */
-	miscellaneous_issidenavigationexpanded = 'is_side_navigation_expanded',
+	miscellaneous_isSideNavigationExpanded = 'is-side-navigation-expanded',
 
 	/** @param value `Pages|number` */
-	miscellaneous_lastpage = 'last_page',
+	miscellaneous_lastPage = 'last-page',
 }

@@ -1,25 +1,25 @@
 export enum Commands {
-	toggle_textwrap,
+	toggleTextWrap,
 
 	/** @param {number} fontSize `number` */
-	change_fontsize,
+	updateFontSize,
 
 	/** @param {string} text `string` */
-	update_css_text,
+	updateCSSText,
 
 	/** @param {string} text `string` */
-	update_markdown_text,
+	updateMarkdownText,
 
-	reset_inputs,
+	resetInputs,
 
 	/** @param {Event} ev `Event` */
-	open_file,
+	openFile,
 
 	/**
 	@param {Event} ev `Event`
 	@param {'html' | 'css' | 'markdown'} type `'html' | 'css' | 'markdown'` */
-	copy_all,
+	copyAll,
 
 	/** @param {'html' | 'css' | 'markdown'} type `'html' | 'css' | 'markdown'` */
-	download_file,
+	downloadFile,
 }

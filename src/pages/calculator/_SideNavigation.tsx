@@ -2,11 +2,11 @@ import { For, type VoidComponent } from "solid-js"
 
 import { CalculatorType } from "./_enums"
 import { CALCULATOR_TYPES } from "./_constants"
-import { classlist_module } from "@/utils/attributes"
-import { document_active } from "@/utils/document"
-import { element_dataset, element_tagname, element_valid_target } from "@/utils/element"
-import { event_current_target } from "@/utils/event"
-import { valid_enum_value } from "@/utils/object"
+import { attrClassListModule } from "@/utils/attributes"
+import { documentActive } from "@/utils/document"
+import { elementDataset, elementTagName, elementValidTarget } from "@/utils/element"
+import { eventCurrentTarget } from "@/utils/event"
+import { validEnumValue } from "@/utils/object"
 
 import Icon from "@/components/Icon"
 import {Tooltip} from "@/components/Tooltip"
@@ -15,27 +15,27 @@ import CSS from './_styles.module.scss'
 
 const _: VoidComponent<{
 	calculator: CalculatorType
-	on_change_calculator: (type: CalculatorType) => void
+	onChangeCalculator: (type: CalculatorType) => void
 	expanded: boolean
 }> = (props) => {
 	return (<SideNavigation
-		c_expanded={props.expanded}
-		classList={classlist_module(CSS.side_navigation)}
+		c:expanded={props.expanded}
+		classList={attrClassListModule(CSS.side_navigation)}
 		onClick={ev => {
-			const button = document_active()!
-			if (!element_valid_target(
-				event_current_target(ev),
+			const button = documentActive()!
+			if (!elementValidTarget(
+				eventCurrentTarget(ev),
 				button,
-				el => element_tagname(el) == 'BUTTON'
+				el => elementTagName(el) == 'BUTTON'
 			)) return
 
-			const data_navigation = element_dataset(button, 'navigation')
-			if (data_navigation
-				&& valid_enum_value(data_navigation, CalculatorType)
+			const dataNavigation = elementDataset(button, 'navigation')
+			if (dataNavigation
+				&& validEnumValue(dataNavigation, CalculatorType)
 			) {
-				if (props.calculator == data_navigation) return
+				if (props.calculator == dataNavigation) return
 
-				props.on_change_calculator(data_navigation as CalculatorType)
+				props.onChangeCalculator(dataNavigation as CalculatorType)
 				return
 			}
 		}}>
@@ -43,8 +43,8 @@ const _: VoidComponent<{
 			<For each={CALCULATOR_TYPES}>{ r => <SideNavigationItem
 				data-tooltip={!props.expanded? r.text : undefined}
 				data-navigation={r.type}
-				c_leading={<Icon c_filled={props.calculator == r.type} c_code={r.icon}/>}
-				c_selected={props.calculator == r.type}>
+				c:leading={<Icon c:filled={props.calculator == r.type} c:code={r.icon}/>}
+				c:selected={props.calculator == r.type}>
 				{ r.text }
 			</SideNavigationItem>}</For>
 		</Tooltip>

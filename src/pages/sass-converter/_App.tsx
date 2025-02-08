@@ -3,240 +3,232 @@ import { createStore } from "solid-js/store"
 import { compileString } from 'sass'
 
 import type { Settings } from "./_types"
-import { remove_splash_screen } from "@/scripts/splash"
+import { removeSplashScreen } from "@/scripts/splash"
 import { Commands, InputViewOption } from "./_enums"
-import { file_open, file_read_as_text, file_download } from "@/utils/file"
+import { fileOpen, fileReadAsText, fileDownload } from "@/utils/file"
 import { ObjectStoreKeys, ObjectStoreNames, type ObjectStoreSettings, type ObjectStoreLastInput } from "./_storage"
 import { DatabaseNames } from "@/enums/storage"
 import { DEFAULT_INPUT_VIEW_OPTION, DEFAULT_SASS_INPUT, DEFAULT_SCSS_INPUT } from "./_constants"
-import { IDB, idb_store_put } from "@/utils/indexeddb"
-import { promise_done } from "@/utils/object"
-import { array_length } from "@/utils/array"
-import { navigator_clipboard_writetext } from "@/utils/navigator"
+import { IDB, idbStorePut } from "@/utils/indexeddb"
+import { promiseDone } from "@/utils/object"
+import { arrayLength } from "@/utils/array"
+import { navigatorClipboardWriteText } from "@/utils/navigator"
 import { ICON_COPY, ICON_DOCUMENT_ERROR, ICON_SCAN_TEXT } from "@/constants/icons"
 
 import Icon from "@/components/Icon"
-import Toast, { open_toast } from "@/components/Toast"
+import Toast, { openToast } from "@/components/Toast"
 import App from "@/components/App"
 import AppBar from './_AppBar'
 import Body from './_Body'
 
 const _: VoidComponent = () => {
-	const db = new IDB(DatabaseNames.sass_converter)
-	const [css_text, set_css_text] = createSignal<string>('')
-	const [sass_text, set_sass_text] = createSignal<string>(DEFAULT_SASS_INPUT)
-	const [scss_text, set_scss_text] = createSignal<string>(DEFAULT_SCSS_INPUT)
-	const [settings, set_settings] = createStore<Settings>({
-		font_size: 14,
-		text_wrap: true,
+	const db = new IDB(DatabaseNames.sassConverter)
+	const [cssText, setCSSText] = createSignal<string>('')
+	const [sassText, setSASSText] = createSignal<string>(DEFAULT_SASS_INPUT)
+	const [scssText, setSCSSText] = createSignal<string>(DEFAULT_SCSS_INPUT)
+	const [settings, setSettings] = createStore<Settings>({
+		fontSize: 14,
+		textWrap: true,
 		minify: false
 	})
-	let input_view_option: InputViewOption = DEFAULT_INPUT_VIEW_OPTION
-	let toast_nofileselected_ref: HTMLDivElement
-	let toast_errorreadingfiles_ref: HTMLDivElement
-	let toast_copied_ref: HTMLDivElement
+	let inputViewOption: InputViewOption = DEFAULT_INPUT_VIEW_OPTION
+	let toastNoFileSelectedRef: HTMLDivElement
+	let toastErrorReadingFilesRef: HTMLDivElement
+	let toastCopiedRef: HTMLDivElement
 
-	function save_settings(...items: [key: ObjectStoreKeys, value: unknown][]): void {
-		const store_settings = db.write_store(ObjectStoreNames.settings)
-		if (!store_settings) return;
+	function saveSettings(...items: [key: ObjectStoreKeys, value: unknown][]): void {
+		const storeSettings = db.writeStore(ObjectStoreNames.settings)
+		if (!storeSettings) return;
 
 		for (const item of items) {
-			idb_store_put(store_settings, { key: item[0], value: item[1] })
+			idbStorePut(storeSettings, { key: item[0], value: item[1] })
 		}
 	}
 
-	function save_last_input(...items: [key: ObjectStoreKeys, value: unknown][]): void {
-		const store_lastinput = db.write_store(ObjectStoreNames.last_input)
-		if (!store_lastinput) return;
+	function saveLastInput(...items: [key: ObjectStoreKeys, value: unknown][]): void {
+		const storeLastInput = db.writeStore(ObjectStoreNames.lastInput)
+		if (!storeLastInput) return;
 
 		for (const item of items) {
-			idb_store_put(store_lastinput, { key: item[0], value: item[1] })
+			idbStorePut(storeLastInput, { key: item[0], value: item[1] })
 		}
 	}
 
-	function update_output(): void {
-		const text = input_view_option == InputViewOption.sass? sass_text() : scss_text()
+	function updateOutput(): void {
+		const text = inputViewOption == InputViewOption.sass? sassText() : scssText()
 		let output = ''
 		try {
 			output = compileString(text, {
 				style: settings.minify? 'compressed' : 'expanded',
-				syntax: input_view_option == InputViewOption.sass? 'indented' : 'scss',
+				syntax: inputViewOption == InputViewOption.sass? 'indented' : 'scss',
 			}).css
 		} catch { output = ''}
 
-		set_css_text(output)
+		setCSSText(output)
 	}
 
 	function command(type: Commands, ...args: unknown[]): unknown {
-		// toggle_textWrap
-		if (type == Commands.toggle_textwrap) {
-			set_settings('text_wrap', t => !t)
-			save_settings([ObjectStoreKeys.settings_textwrap, settings.text_wrap])
+		switch (type) {
+		case Commands.toggleTextWrap:
+			setSettings('textWrap', t => !t)
+			saveSettings([ObjectStoreKeys.settings_textWrap, settings.textWrap])
+			break
+		case Commands.updateFontSize:{
+			const [fontSize] = args as [number]
+			setSettings('fontSize', fontSize)
+			saveSettings([ObjectStoreKeys.settings_fontSize, settings.fontSize])
+			break
 		}
-
-		// toggle_minify
-		else if (type == Commands.toggle_minify) {
-			set_settings('minify', t => !t)
-			save_settings([ObjectStoreKeys.settings_minify, settings.minify])
-			update_output()
+		case Commands.updateSCSSText:{
+			const [text] = args as [string]
+			setSCSSText(text)
+			saveLastInput([ObjectStoreKeys.lastInput_scss, text])
+			updateOutput()
+			break
 		}
-
-		// change_fontSize
-		else if (type == Commands.change_fontsize) {
-			set_settings('font_size', args[0] as number)
-			save_settings([ObjectStoreKeys.settings_fontsize, settings.font_size])
+		case Commands.updateSASSText: {
+			const [text] = args as [string]
+			setSASSText(text)
+			saveLastInput([ObjectStoreKeys.lastInput_sass, text])
+			updateOutput()
+			break
 		}
-
-		// change_input_view_option
-		else if (type == Commands.change_input_view_option) {
-			input_view_option = args[0] as InputViewOption
-			update_output()
-		}
-
-		// update_scss_text
-		else if (type == Commands.update_scss_text) {
-			set_scss_text(args[0] as string)
-			save_last_input([ObjectStoreKeys.lastinput_scss, args[0]])
-			update_output()
-		}
-
-		// update_sass_text
-		else if (type == Commands.update_sass_text) {
-			set_sass_text(args[0] as string)
-			save_last_input([ObjectStoreKeys.lastinput_sass, args[0]])
-			update_output()
-		}
-
-		// reset_inputs
-		else if (type == Commands.reset_inputs) {
-			set_scss_text(DEFAULT_SCSS_INPUT)
-			set_sass_text(DEFAULT_SASS_INPUT)
-			save_last_input(
-				[ObjectStoreKeys.lastinput_sass, DEFAULT_SASS_INPUT],
-				[ObjectStoreKeys.lastinput_scss, DEFAULT_SCSS_INPUT]
+		case Commands.resetInputs:
+			setSCSSText(DEFAULT_SCSS_INPUT)
+			setSASSText(DEFAULT_SASS_INPUT)
+			saveLastInput(
+				[ObjectStoreKeys.lastInput_sass, DEFAULT_SASS_INPUT],
+				[ObjectStoreKeys.lastInput_scss, DEFAULT_SCSS_INPUT]
 			)
-			update_output()
-		}
-
-		// open_file
-		else if (type == Commands.open_file) {
-			promise_done(file_open('text/*', true), async (files) => {
-				if (files == null || array_length(files as unknown as any[]) == 0) {
-					open_toast(args[0] as Event, toast_nofileselected_ref)
+			updateOutput()
+			break
+		case Commands.openFile:
+			promiseDone(fileOpen('text/*', true), async (files) => {
+				if (files == null || arrayLength(files as unknown as any[]) == 0) {
+					openToast(args[0] as Event, toastNoFileSelectedRef)
 					return
 				}
 
 				let text: string = ''
 				try {
-					for (let i = 0; i < array_length(files as unknown as any[]); i++) {
+					for (let i = 0; i < arrayLength(files as unknown as any[]); i++) {
 						if (i > 0) text += '\n\n'
 
 						const file = files[i]
-						text += await file_read_as_text(file)
+						text += await fileReadAsText(file)
 					}
 				} catch {
-					open_toast(args[0] as Event, toast_errorreadingfiles_ref)
+					openToast(args[0] as Event, toastErrorReadingFilesRef)
 					return
 				}
 
-				if (input_view_option == InputViewOption.sass) {
-					set_sass_text(text)
-					save_last_input([ObjectStoreKeys.lastinput_sass, text])
+				if (inputViewOption == InputViewOption.sass) {
+					setSASSText(text)
+					saveLastInput([ObjectStoreKeys.lastInput_sass, text])
 				}
-				else if (input_view_option == InputViewOption.scss) {
-					set_scss_text(text)
-					save_last_input([ObjectStoreKeys.lastinput_scss, text])
+				else if (inputViewOption == InputViewOption.scss) {
+					setSCSSText(text)
+					saveLastInput([ObjectStoreKeys.lastInput_scss, text])
 				}
-				update_output()
+				updateOutput()
 			})
-		}
-
-		// copy_all
-		else if (type == Commands.copy_all) {
-			const t = args[1] as ('sass' | 'scss' | 'css')
+			break
+		case Commands.copyAll: {
+			const [ev, type] = args as [Event, 'sass' | 'scss' | 'css']
 			let text = ''
-			if (t == 'sass') text = sass_text()
-			else if (t == 'scss') text = scss_text()
-			else if (t == 'css') text = css_text()
+			if (type == 'sass') text = sassText()
+			else if (type == 'scss') text = scssText()
+			else if (type == 'css') text = cssText()
 
-			promise_done(
-				navigator_clipboard_writetext(text),
-				() => open_toast(args[0] as Event, toast_copied_ref)
+			promiseDone(
+				navigatorClipboardWriteText(text),
+				() => openToast(ev, toastCopiedRef)
 			)
+			break
 		}
-
-		// download_file
-		else if (type == Commands.download_file) {
-			const t = args[0] as ('sass' | 'scss' | 'css')
+		case Commands.downloadFile: {
+			const [type] = args as ['sass' | 'scss' | 'css']
 			let text = ''
 			let filename = ''
-			if (t == 'sass') text = sass_text(), filename = 'syntactically-awesome-style-sheets.sass'
-			else if (t == 'scss') text = scss_text(), filename = 'sassy-cascading-style-sheets.scss'
-			else if (t == 'css') text = css_text(), filename = 'cascading-style-sheets.css'
+			if (type == 'sass') text = sassText(), filename = 'syntactically-awesome-style-sheets.sass'
+			else if (type == 'scss') text = scssText(), filename = 'sassy-cascading-style-sheets.scss'
+			else if (type == 'css') text = cssText(), filename = 'cascading-style-sheets.css'
 
-			file_download(new Blob([text]), filename)
+			fileDownload(new Blob([text]), filename)
+			break
+		}
+		case Commands.changeInputViewOption: {
+			const [option] = args as [InputViewOption]
+			inputViewOption = option
+			updateOutput()
+			break
+		}
+		case Commands.toggleMinify:
+			setSettings('minify', t => !t)
+			saveSettings([ObjectStoreKeys.settings_minify, settings.minify])
+			updateOutput()
 		}
 		return
 	}
 
-	function init_settings(): void {
-		const store_settings = db.read_store(ObjectStoreNames.settings)
-		if (store_settings == null) return
+	function initSettings(): void {
+		const storeSettings = db.readStore(ObjectStoreNames.settings)
+		if (storeSettings == null) return
 
-		promise_done(db.get<ObjectStoreSettings<boolean>>(
-			store_settings,
-			ObjectStoreKeys.settings_textwrap
-		), result => set_settings('text_wrap', w => result?.value ?? w))
+		promiseDone(db.get<ObjectStoreSettings<boolean>>(
+			storeSettings,
+			ObjectStoreKeys.settings_textWrap
+		), result => setSettings('textWrap', w => result?.value ?? w))
 
-		promise_done(db.get<ObjectStoreSettings<number>>(
-			store_settings,
-			ObjectStoreKeys.settings_fontsize
-		), result => set_settings('font_size', d => result?.value ?? d))
+		promiseDone(db.get<ObjectStoreSettings<number>>(
+			storeSettings,
+			ObjectStoreKeys.settings_fontSize
+		), result => setSettings('fontSize', d => result?.value ?? d))
 
-		promise_done(db.get<ObjectStoreSettings<boolean>>(
-			store_settings,
+		promiseDone(db.get<ObjectStoreSettings<boolean>>(
+			storeSettings,
 			ObjectStoreKeys.settings_minify
-		), result => set_settings('minify', m => result?.value ?? m))
+		), result => setSettings('minify', m => result?.value ?? m))
 	}
 
-	function init_last_inputs(): void {
-		const store_lastinput = db.read_store(ObjectStoreNames.last_input)
-		if (store_lastinput == null) return
+	function initLastInputs(): void {
+		const storeLastInput = db.readStore(ObjectStoreNames.lastInput)
+		if (storeLastInput == null) return
 
-		promise_done(db.get<ObjectStoreLastInput<string>>(
-			store_lastinput,
-			ObjectStoreKeys.lastinput_scss
-		), result => set_scss_text(result?.value ?? DEFAULT_SCSS_INPUT))
+		promiseDone(db.get<ObjectStoreLastInput<string>>(
+			storeLastInput,
+			ObjectStoreKeys.lastInput_scss
+		), result => setSCSSText(result?.value ?? DEFAULT_SCSS_INPUT))
 
-		promise_done(db.get<ObjectStoreLastInput<string>>(
-			store_lastinput,
-			ObjectStoreKeys.lastinput_sass
+		promiseDone(db.get<ObjectStoreLastInput<string>>(
+			storeLastInput,
+			ObjectStoreKeys.lastInput_sass
 		), result => {
-			set_sass_text(result?.value ?? DEFAULT_SASS_INPUT)
-			update_output() // SASS is the default view
+			setSASSText(result?.value ?? DEFAULT_SASS_INPUT)
+			updateOutput() // SASS is the default view
 		})
 	}
 
-	function init_database(): void {
+	function initDatabase(): void {
 		db.open({
-			on_success() {
-				init_settings()
-				init_last_inputs()
+			onSuccess() {
+				initSettings()
+				initLastInputs()
 			},
-			on_error() {
-				set_sass_text(DEFAULT_SASS_INPUT)
-				set_scss_text(DEFAULT_SCSS_INPUT)
-				update_output()
+			onError() {
+				setSASSText(DEFAULT_SASS_INPUT)
+				setSCSSText(DEFAULT_SCSS_INPUT)
+				updateOutput()
 			},
-			on_upgrade_needed(_, db) {
-				db.create_store({
+			onUpgrade(_, db) {
+				db.createStore({
 					name: ObjectStoreNames.settings,
-					key_path: 'key',
+					keyPath: 'key',
 					indexs: ['key', 'value']
 				})
-				db.create_store({
-					name: ObjectStoreNames.last_input,
-					key_path: 'key',
+				db.createStore({
+					name: ObjectStoreNames.lastInput,
+					keyPath: 'key',
 					indexs: ['key', 'value']
 				})
 			}
@@ -244,38 +236,38 @@ const _: VoidComponent = () => {
 	}
 
 	onMount(() => {
-		init_database()
-		remove_splash_screen()
+		initDatabase()
+		removeSplashScreen()
 	})
 
 	const Toasts: VoidComponent = () => (<>
 		<Toast
-			ref={r => toast_nofileselected_ref = r}
-			c_leading={<Icon c_code={ICON_DOCUMENT_ERROR}/>}>
+			ref={r => toastNoFileSelectedRef = r}
+			c:leading={<Icon c:code={ICON_DOCUMENT_ERROR}/>}>
 			No file selected
 		</Toast>
 		<Toast
-			ref={r => toast_errorreadingfiles_ref = r}
-			c_leading={<Icon c_code={ICON_SCAN_TEXT}/>}>
+			ref={r => toastErrorReadingFilesRef = r}
+			c:leading={<Icon c:code={ICON_SCAN_TEXT}/>}>
 			Error reading files
 		</Toast>
 		<Toast
-			ref={r => toast_copied_ref = r}
-			c_leading={<Icon c_code={ICON_COPY}/>}>
+			ref={r => toastCopiedRef = r}
+			c:leading={<Icon c:code={ICON_COPY}/>}>
 			Copied to clipboard
 		</Toast>
 	</>)
 
 	return (<App
-		c_appbar={<AppBar
+		c:appBar={<AppBar
 			command={command}
 			settings={settings}
 		/>}>
 		<Body
 			command={command}
-			css_text={css_text()}
-			sass_text={sass_text()}
-			scss_text={scss_text()}
+			cssText={cssText()}
+			sassText={sassText()}
+			scssText={scssText()}
 			settings={settings}
 		/>
 		<Toasts/>

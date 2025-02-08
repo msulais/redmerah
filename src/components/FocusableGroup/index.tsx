@@ -1,12 +1,12 @@
 import { splitProps, type JSX, type ParentComponent } from "solid-js"
 
-import { document_active } from "@/utils/document"
-import { element_tagname, element_focus_by_arrowkey, element_contains, element_children_remove_tabindex, element_children_tabindex, element_set_tabindex, element_is_child, element_focusable } from "@/utils/element"
-import { event_call, event_current_target, event_prevent_default } from "@/utils/event"
+import { documentActive } from "@/utils/document"
+import { elementTagName, elementFocusByArrowKey, elementContains, elementChildrenRemoveTabIndex, elementChildrenTabIndex, elementTabIndexSet, elementIsChild, elementIsFocusable } from "@/utils/element"
+import { eventCall, eventCurrentTarget, eventPreventDefault } from "@/utils/event"
 import { KEY_ARROW_LEFT, KEY_ARROW_RIGHT } from "@/constants/key_code"
-import { classlist } from "@/utils/attributes"
-import { timeout_clear, timeout_set } from "@/utils/timeout"
-import { is_number } from "@/utils/typecheck"
+import { attrClassList } from "@/utils/attributes"
+import { timeTimerClear, timeTimerSet } from "@/utils/time"
+import { typeIsNumber } from "@/utils/typecheck"
 
 import './index.scss'
 
@@ -17,90 +17,90 @@ type FocusableGroupProps = JSX.HTMLAttributes<HTMLDivElement> & {
 	 * if `true`, the default behaviour of `'keydown'` event
 	 * that control focus with arrow key will not fired
 	 */
-	c_custom_arrow_focus?: boolean
-	c_arrow_options?: {
+	'c:customArrowFocus'?: boolean
+	'c:arrowOptions'?: {
 		up?: "next" | "prev"
 		down?: "next" | "prev"
 		left?: "next" | "prev"
 		right?: "next" | "prev"
 	}
-	c_on_beforesettabindex?(el: HTMLElement): boolean
-	c_on_beforechangefocus?(el: HTMLElement): boolean
+	'c:onBeforeSetTabIndex'?(el: HTMLElement): boolean
+	'c:onBeforeChangeFocus'?(el: HTMLElement): boolean
 }
 const FocusableGroup: ParentComponent<FocusableGroupProps> = ($props) => {
 	const [props, other] = splitProps($props, [
 		'class', 'onFocusIn', 'children', 'onFocusOut',
-		'onKeyDown', 'c_on_beforesettabindex', 'c_custom_arrow_focus',
-		'c_arrow_options', 'c_on_beforechangefocus'
+		'onKeyDown', 'c:onBeforeSetTabIndex', 'c:customArrowFocus',
+		'c:arrowOptions', 'c:onBeforeChangeFocus'
 	])
-	let tabindex_removed: boolean = true
-	let focus_by_arrow_key: boolean = false
-	let element_with_tabindex_zero: HTMLElement | null = null
-	let timeout_id: number | null = null
+	let isTabIndexRemoved: boolean = true
+	let isFocusByArrowKey: boolean = false
+	let elementWithTabIndexZero: HTMLElement | null = null
+	let timeId: number | null = null
 
 	return <div
-		class={classlist(FOCUSABLEGROUP_CLASSNAME, props.class)}
+		class={attrClassList(FOCUSABLEGROUP_CLASSNAME, props.class)}
 		onFocusIn={ev => {
-			event_call(ev, props.onFocusIn)
-			const self = event_current_target(ev)
+			eventCall(ev, props.onFocusIn)
+			const self = eventCurrentTarget(ev)
 
 			// 'focusin' event fired before `from_arrow_key` assigned
-			timeout_set(() => {
-				if (!tabindex_removed) {
-					if (!focus_by_arrow_key && element_with_tabindex_zero) {
-						const is_child = element_is_child(document_active()!, self)
+			timeTimerSet(() => {
+				if (!isTabIndexRemoved) {
+					if (!isFocusByArrowKey && elementWithTabIndexZero) {
+						const is_child = elementIsChild(documentActive()!, self)
 						if (is_child) {
-							element_set_tabindex(document_active()!, 0)
-							element_set_tabindex(element_with_tabindex_zero, -1)
+							elementTabIndexSet(documentActive()!, 0)
+							elementTabIndexSet(elementWithTabIndexZero, -1)
 						}
 					}
-					focus_by_arrow_key = false
+					isFocusByArrowKey = false
 					return
 				}
 
-				element_with_tabindex_zero = element_children_tabindex(
+				elementWithTabIndexZero = elementChildrenTabIndex(
 					self,
-					props.c_on_beforesettabindex ?? element_focusable
+					props['c:onBeforeSetTabIndex'] ?? elementIsFocusable
 				)
-				tabindex_removed = false
-				focus_by_arrow_key = false
+				isTabIndexRemoved = false
+				isFocusByArrowKey = false
 			})
 		}}
 		onFocusOut={ev => {
-			event_call(ev, props.onFocusOut)
-			const self = event_current_target(ev)
+			eventCall(ev, props.onFocusOut)
+			const self = eventCurrentTarget(ev)
 
-			if (is_number(timeout_id)) timeout_clear(timeout_id!)
-			timeout_id = timeout_set(() => {
-				timeout_id = null
-				const active_el = document_active()
-				if (active_el && element_contains(self, active_el)) return
+			if (typeIsNumber(timeId)) timeTimerClear(timeId!)
+			timeId = timeTimerSet(() => {
+				timeId = null
+				const active_el = documentActive()
+				if (active_el && elementContains(self, active_el)) return
 
-				element_children_remove_tabindex(self, props.c_on_beforesettabindex)
-				tabindex_removed = true
+				elementChildrenRemoveTabIndex(self, props['c:onBeforeSetTabIndex'])
+				isTabIndexRemoved = true
 			}, 200)
 		}}
 		onKeyDown={ev => {
-			event_call(ev, props.onKeyDown)
-			if (props.c_custom_arrow_focus) return
+			eventCall(ev, props.onKeyDown)
+			if (props['c:customArrowFocus']) return
 
-			const active = document_active()
+			const active = documentActive()
 			if (!active) return
 
 			const code = ev.code
-			const tag_name = element_tagname(active)
-			if (tag_name == 'INPUT' && (code == KEY_ARROW_RIGHT || code == KEY_ARROW_LEFT)) return
-			if (tag_name == 'TEXTAREA') return
+			const tagName = elementTagName(active)
+			if (tagName == 'INPUT' && (code == KEY_ARROW_RIGHT || code == KEY_ARROW_LEFT)) return
+			if (tagName == 'TEXTAREA') return
 
-			element_with_tabindex_zero = element_focus_by_arrowkey(
-				event_current_target(ev),
+			elementWithTabIndexZero = elementFocusByArrowKey(
+				eventCurrentTarget(ev),
 				code,
-				props.c_arrow_options,
-				props.c_on_beforechangefocus ?? element_focusable
+				props['c:arrowOptions'],
+				props['c:onBeforeChangeFocus'] ?? elementIsFocusable
 			)
-			if (element_with_tabindex_zero) {
-				focus_by_arrow_key = true
-				event_prevent_default(ev) // disable scroll
+			if (elementWithTabIndexZero) {
+				isFocusByArrowKey = true
+				eventPreventDefault(ev) // disable scroll
 			}
 		}}
 		{...other}>

@@ -9,5 +9,5 @@ export enum ObjectStoreNames {
 
 export enum ObjectStoreSettingsKeys {
 	/** @param text `string` */
-	last_text = 'last_text',
+	lastText = 'last-text',
 }

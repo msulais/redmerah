@@ -2,24 +2,24 @@ import { type Component, type ParentComponent, Show, createEffect, createMemo, c
 import { mergeRefs } from "@solid-primitives/refs"
 
 import type { HEXColor, HSLColor, RGBColor } from "@/types/color"
-import { timeout_set } from "@/utils/timeout"
-import { attr_remove, attr_set, attr_set_if_exist } from "@/utils/attributes"
-import { element_dispatch_event, element_rect, element_tagname, element_id, element_set_pointercapture, element_release_pointercapture, element_valid_target } from "@/utils/element"
-import { event_add_listener, event_current_target, event_prevent_default, event_remove_listener } from '@/utils/event'
+import { timeTimerSet } from "@/utils/time"
+import { attrRemove, attrSet, attrSetIfExist } from "@/utils/attributes"
+import { elementDispatchEvent, elementRect, elementTagName, elementId, elementPointerCaptureSet, elementPointerCaptureRelease, elementValidTarget } from "@/utils/element"
+import { eventListenerAdd, eventCurrentTarget, eventPreventDefault, eventListenerRemove } from '@/utils/event'
 import { BodyAttributes } from "@/enums/attributes"
-import { math_clamp, math_round } from "@/utils/math"
-import { number_is_not_defined, number_parse, number_safe, number_to_string } from "@/utils/number"
-import { string_length, string_padstart, string_replace, string_split, string_substring, string_touppercase, string_trim } from "@/utils/string"
-import { get_contrast_ratio, hex_to_hsl, hex_to_rgb, hsl_to_hex, hsl_to_hsv, hsl_to_rgb, hsv_to_hsl, is_color_with_alpha_valid, rgb_to_hsl } from "@/utils/color"
-import { document_active, document_body } from "@/utils/document"
-import { array_join, array_length, array_push } from "@/utils/array"
-import { rect_height, rect_left, rect_top, rect_width } from "@/utils/rect"
+import { mathClamp, mathRound } from "@/utils/math"
+import { numberIsNotDefined, numberParse, numberSafe, numberToString } from "@/utils/number"
+import { stringLength, stringPadStart, stringReplace, stringSplit, stringSubstring, stringToUpperCase, stringTrim } from "@/utils/string"
+import { colorContrastRatio, colorHexToHsl, colorHexToRgb, colorHslToHex, colorHslToHsv, colorHslToRgb, colorHsvToHsl, colorIsValidWithAlpha, colorRgbToHsl } from "@/utils/color"
+import { documentActive, documentBody } from "@/utils/document"
+import { arrayJoin, arrayLength, arrayPush } from "@/utils/array"
+import { rectHeight, rectLeft, rectTop, rectWidth } from "@/utils/rect"
 import { KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT, KEY_ARROW_UP } from "@/constants/key_code"
 
 import Button, { ButtonVariant } from "@/components/Button"
 import TextField from "@/components/TextField"
-import Modal, { type ModalProps, ModalPosition as ColorPickerPosition, type ModalOpenDetail, open_modal, close_modal, focus_modal, is_modal_open, reposition_modal } from "@/components/Modal"
-import Popover, { close_popover, is_popover_open, open_popover, reposition_popover, type PopoverProps } from "@/components/Popover"
+import Modal, { type ModalProps, ModalPosition as ColorPickerPosition, type ModalOpenDetail, openModal, closeModal, focusModal, isModalOpen, repositionModal } from "@/components/Modal"
+import Popover, { closePopover, isPopoverOpen, openPopover, repositionPopover, type PopoverProps } from "@/components/Popover"
 import FocusableGroup from "@/components/FocusableGroup"
 import './index.scss'
 
@@ -30,31 +30,31 @@ enum ColorPickerEvents {
 	changecolor = 'custom:colorpicker-changecolor'
 }
 
-function open_colorpicker(
+function openColorPicker(
 	event: Event,
-	color_picker: HTMLDialogElement,
+	colorPicker: HTMLDialogElement,
 	options?: Omit<ModalOpenDetail, 'event'> & { color?: HEXColor }
 ): void {
-	if (options?.color != null) change_colorpicker_value(color_picker, options.color)
+	if (options?.color != null) changeColorPickerValue(colorPicker, options.color)
 
-	open_modal(event, color_picker, options)
+	openModal(event, colorPicker, options)
 }
 
-function open_popovercolorpicker(
+function openPopoverColorPicker(
 	event: Event,
-	color_picker: HTMLDivElement,
+	colorPicker: HTMLDivElement,
 	options?: Omit<ModalOpenDetail, 'event'> & { color?: HEXColor }
 ): void {
-	if (options?.color != null) change_colorpicker_value(color_picker, options.color)
+	if (options?.color != null) changeColorPickerValue(colorPicker, options.color)
 
-	open_popover(event, color_picker, options)
+	openPopover(event, colorPicker, options)
 }
 
-function change_colorpicker_value(
-	color_picker: HTMLElement,
+function changeColorPickerValue(
+	colorPicker: HTMLDivElement | HTMLDialogElement,
 	color: HEXColor
 ): void {
-	element_dispatch_event(color_picker, new CustomEvent(
+	elementDispatchEvent(colorPicker, new CustomEvent(
 		ColorPickerEvents.changecolor,
 		{ detail: color }
 	))
@@ -63,50 +63,50 @@ function change_colorpicker_value(
 const ColorPickerBody: ParentComponent<{
 	color?: HEXColor
 	element: HTMLElement
-	disabled_opacity_control?: boolean
-	disabled_color_control?: boolean
-	disabled_action?: boolean
-	is_colorpicker_open: boolean
-	on_update_color?(color: HEXColor): unknown
-	on_select_color?(color: HEXColor): unknown
-	on_close(): unknown
+	disabledOpacityControl?: boolean
+	disabledColorControl?: boolean
+	disabledActions?: boolean
+	isColorPickerOpen: boolean
+	onUpdateColor?(color: HEXColor): unknown
+	onSelectColor?(color: HEXColor): unknown
+	onClose(): unknown
 }> = $props => {
 	const props = mergeProps({
 		color: DEFAULT_HEX_COLOR,
-		disabled_color_control: false,
-		disabled_opacity_control: false
+		disabledColorControl: false,
+		disabledOpacityControl: false
 	}, $props)
-	let textfield_opacity_ref: HTMLInputElement | undefined
-	let textfield_color_ref!: HTMLInputElement
-	let color_ref: HTMLDivElement | undefined
-	let hue_ref: HTMLDivElement | undefined
-	let opacity_ref: HTMLDivElement | undefined
-	let color_rect: DOMRect
-	let hue_rect: DOMRect
-	let opacity_rect: DOMRect
-	let color_dragged: boolean = false
-	let hue_dragged: boolean = false
-	let opacity_dragged: boolean = false
-	let local_color: HEXColor | null = null
-	let local_color_model: 'HEX' | 'RGB' | 'HSL' = 'HEX'
-	let local_hsl: HSLColor = {h: 0, s: 1, l: 0.5}
-	let [key_left_pressed, key_right_pressed, key_up_pressed, key_down_pressed] = [false, false, false, false]
-	const body = document_body()
-	const [color_model, set_color_model2] = createSignal<'HEX' | 'RGB' | 'HSL'>('HEX')
-	const [hsl, set_hsl2] = createSignal<HSLColor>({h: 0, s: 1, l: .5})
-	const [opacity, set_opacity] = createSignal<number>(1) // [0-100]
-	const [hue, set_hue] = createSignal<number>(1) // [0-100]
-	const [left, set_left] = createSignal<number>(1) // [0-100]
-	const [top, set_top] = createSignal<number>(1) // [0-100]
-	const is_disabled_opacity_control = createMemo(() => props.disabled_opacity_control)
-	const is_disabled_color_control = createMemo(() => props.disabled_color_control)
-	const get_hsl_color = createMemo<HSLColor>(() => {
+	let textFieldOpacityRef: HTMLInputElement | undefined
+	let textFieldColorRef!: HTMLInputElement
+	let colorRef: HTMLDivElement | undefined
+	let hueRef: HTMLDivElement | undefined
+	let opacityRef: HTMLDivElement | undefined
+	let colorRect: DOMRect
+	let hueRect: DOMRect
+	let opacityRect: DOMRect
+	let colorDragged: boolean = false
+	let hueDragged: boolean = false
+	let opacityDragged: boolean = false
+	let localColor: HEXColor | null = null
+	let localColorSpace: 'HEX' | 'RGB' | 'HSL' = 'HEX'
+	let localHSL: HSLColor = {h: 0, s: 1, l: 0.5}
+	let [keyLeftPressed, keyRightPressed, keyUpPressed, keyDownPressed] = [false, false, false, false]
+	const body = documentBody()
+	const [colorSpace, setColorSpace2] = createSignal<'HEX' | 'RGB' | 'HSL'>('HEX')
+	const [hsl, setHsl2] = createSignal<HSLColor>({h: 0, s: 1, l: .5})
+	const [opacity, setOpacity] = createSignal<number>(1) // [0-100]
+	const [hue, setHue] = createSignal<number>(1) // [0-100]
+	const [left, setLeft] = createSignal<number>(1) // [0-100]
+	const [top, setTop] = createSignal<number>(1) // [0-100]
+	const isDisabledOpacityControl = createMemo(() => props.disabledOpacityControl)
+	const isDisabledColorControl = createMemo(() => props.disabledColorControl)
+	const getHSLColor = createMemo<HSLColor>(() => {
 		let h = hue() / 100
 		let s = 1
 		let l = 0.5
-		if (!is_disabled_color_control()) {
-			if (color_model() != 'HSL') {
-				const hsl = hsv_to_hsl({
+		if (!isDisabledColorControl()) {
+			if (colorSpace() != 'HSL') {
+				const hsl = colorHsvToHsl({
 					h, s: left() / 100, v: (100 - top()) / 100
 				})
 				s = hsl.s
@@ -119,426 +119,436 @@ const ColorPickerBody: ParentComponent<{
 		}
 		return {h, s, l}
 	})
-	const get_hex_color = createMemo<HEXColor>(() => {
-		const $opacity: string = opacity() == 100 || is_disabled_opacity_control()
+	const getHexColor = createMemo<HEXColor>(() => {
+		const $opacity: string = opacity() == 100 || isDisabledOpacityControl()
 			? ''
-			: string_padstart(number_to_string(math_round(opacity() / 100 * 255), 16), 2, '0')
+			: stringPadStart(numberToString(mathRound(opacity() / 100 * 255), 16), 2, '0')
 		;
-		const hex_color = string_touppercase(hsl_to_hex(get_hsl_color()) + $opacity)
-		local_color = hex_color as HEXColor
+		const hex_color = stringToUpperCase(colorHslToHex(getHSLColor()) + $opacity)
+		localColor = hex_color as HEXColor
 		return hex_color as HEXColor
 	})
 
-	function set_hsl(hsl: HSLColor): void {
-		set_hsl2({...hsl})
-		local_hsl = {...hsl}
+	function setHsl(hsl: HSLColor): void {
+		setHsl2({...hsl})
+		localHSL = {...hsl}
 	}
 
-	function set_color_model(model: 'HEX' | 'RGB' | 'HSL'): void {
-		set_color_model2(model)
-		local_color_model = model
+	function setColorSpace(space: 'HEX' | 'RGB' | 'HSL'): void {
+		setColorSpace2(space)
+		localColorSpace = space
 	}
 
 	/**
 	 * @param opacity value from [0-1]
 	 */
-	function update_position(opacity?: number): void {
+	function updatePosition(opacity?: number): void {
 		const {h, s, l} = hsl()
-		set_hue(h * 100)
+		setHue(h * 100)
 
 		let left = s * 100
 		let top = (1 - l) * 100
-		if (color_model() != 'HSL') {
-			const {s, v} = hsl_to_hsv(hsl())
+		if (colorSpace() != 'HSL') {
+			const {s, v} = colorHslToHsv(hsl())
 			left = s * 100
 			top = (1 - v) * 100
 		}
 
-		if (opacity) set_opacity(math_clamp(opacity, 0, 1) * 100)
+		if (opacity) setOpacity(mathClamp(opacity, 0, 1) * 100)
 
-		set_left(left)
-		set_top(top)
+		setLeft(left)
+		setTop(top)
 	}
 
-	function change_color_model(): void {
-		const c = color_model()
-		if (c == 'RGB') set_color_model('HSL')
-		else if (c == 'HSL') set_color_model('HEX')
-		else if (c == 'HEX') set_color_model('RGB')
-
-		update_inputs()
-		update_position()
-	}
-
-	function update_inputs(): void {
-		// don't trigger input event
-		if (color_model() == 'RGB') {
-			const rgb = hsl_to_rgb(get_hsl_color())
-			textfield_color_ref.value = `${math_round(rgb.r * 0xff)}, ${math_round(rgb.g * 0xff)}, ${math_round(rgb.b * 0xff)}`
+	function changeColorSpace(): void {
+		switch (colorSpace()) {
+		case 'RGB': setColorSpace('HSL'); break
+		case 'HSL': setColorSpace('HEX'); break
+		case 'HEX': setColorSpace('RGB'); break
 		}
-		else if (color_model() == 'HSL') textfield_color_ref.value = array_join([
-			math_round(get_hsl_color().h * 360),
-			math_round(get_hsl_color().s * 100) + '%',
-			math_round(get_hsl_color().l * 100) + '%',
-		], ', ')
-		else if (color_model() == 'HEX')
-			textfield_color_ref.value = string_substring(get_hex_color(), 0, 7)
 
-		if (textfield_opacity_ref) textfield_opacity_ref.value = math_round(opacity()) + '%'
+		updateInputs()
+		updatePosition()
 	}
 
-	function set_position(x: number, y: number): void {
-		if (color_dragged) {
-			x = (x - rect_left(color_rect)) / rect_width(color_rect) * 100
-			x = math_clamp(x, 0, 100)
-			set_left(x)
-
-			y = (y - rect_top(color_rect)) / rect_height(color_rect) * 100
-			y = math_clamp(y, 0, 100)
-			set_top(y)
+	// don't trigger input event
+	function updateInputs(): void {
+		switch (colorSpace()) {
+		case "RGB":
+			const rgb = colorHslToRgb(getHSLColor())
+			textFieldColorRef.value = `${mathRound(rgb.r * 0xff)}, ${mathRound(rgb.g * 0xff)}, ${mathRound(rgb.b * 0xff)}`
+			break
+		case "HSL":
+			textFieldColorRef.value = arrayJoin([
+				mathRound(getHSLColor().h * 360),
+				mathRound(getHSLColor().s * 100) + '%',
+				mathRound(getHSLColor().l * 100) + '%',
+			], ', ')
+			break
+		case "HEX":
+			textFieldColorRef.value = stringSubstring(getHexColor(), 0, 7)
+			break
 		}
-		else if (hue_dragged) {
-			let v = is_disabled_color_control()? x : y
-			let rect_offset = is_disabled_color_control()? rect_left(hue_rect) : rect_top(hue_rect)
-			let rect_size = is_disabled_color_control()? rect_width(hue_rect) : rect_height(hue_rect)
+
+		if (textFieldOpacityRef) textFieldOpacityRef.value = mathRound(opacity()) + '%'
+	}
+
+	function setPosition(x: number, y: number): void {
+		if (colorDragged) {
+			x = (x - rectLeft(colorRect)) / rectWidth(colorRect) * 100
+			x = mathClamp(x, 0, 100)
+			setLeft(x)
+
+			y = (y - rectTop(colorRect)) / rectHeight(colorRect) * 100
+			y = mathClamp(y, 0, 100)
+			setTop(y)
+		}
+		else if (hueDragged) {
+			let v = isDisabledColorControl()? x : y
+			let rect_offset = isDisabledColorControl()? rectLeft(hueRect) : rectTop(hueRect)
+			let rect_size = isDisabledColorControl()? rectWidth(hueRect) : rectHeight(hueRect)
 			v = (v - rect_offset) / rect_size * 100
-			v = math_clamp(v, 0, 100)
-			set_hue(v)
+			v = mathClamp(v, 0, 100)
+			setHue(v)
 		}
-		else if (opacity_dragged) {
-			let v = is_disabled_color_control()? x : y
-			let rect_offset = is_disabled_color_control()? rect_left(opacity_rect) : rect_top(opacity_rect)
-			let rect_size = is_disabled_color_control()? rect_width(opacity_rect) : rect_height(opacity_rect)
+		else if (opacityDragged) {
+			let v = isDisabledColorControl()? x : y
+			let rect_offset = isDisabledColorControl()? rectLeft(opacityRect) : rectTop(opacityRect)
+			let rect_size = isDisabledColorControl()? rectWidth(opacityRect) : rectHeight(opacityRect)
 			v = (v - rect_offset) / rect_size * 100
-			v = math_clamp(v, 0, 100)
-			set_opacity(100 - v)
+			v = mathClamp(v, 0, 100)
+			setOpacity(100 - v)
 		}
 
-		const dragged = color_dragged || hue_dragged || opacity_dragged
+		const dragged = colorDragged || hueDragged || opacityDragged
 		if (!dragged) return
 
-		set_hsl({...get_hsl_color()})
-		update_inputs()
-		if (props.is_colorpicker_open) props.on_update_color?.(get_hex_color())
+		setHsl({...getHSLColor()})
+		updateInputs()
+		if (props.isColorPickerOpen) props.onUpdateColor?.(getHexColor())
 	}
 
-	function on_pointermove(ev: PointerEvent): void {
-		set_position(ev.clientX, ev.clientY)
+	function onPointerMove(ev: PointerEvent): void {
+		setPosition(ev.clientX, ev.clientY)
 	}
 
-	function on_pointerup(ev: PointerEvent): void {
-		const pointer_id = ev.pointerId
-		if (color_dragged) element_release_pointercapture(color_ref!, pointer_id)
-		if (opacity_dragged) element_release_pointercapture(opacity_ref!, pointer_id)
-		if (hue_dragged) element_release_pointercapture(hue_ref!, pointer_id)
+	function onPointerUp(ev: PointerEvent): void {
+		const pointerId = ev.pointerId
+		if (colorDragged) elementPointerCaptureRelease(colorRef!, pointerId)
+		if (opacityDragged) elementPointerCaptureRelease(opacityRef!, pointerId)
+		if (hueDragged) elementPointerCaptureRelease(hueRef!, pointerId)
 
-		color_dragged = hue_dragged = opacity_dragged = false
+		colorDragged = hueDragged = opacityDragged = false
 		// should be run last because <Modal> will mark this to close
 		// when mouse position outside
-		timeout_set(() => attr_remove(body, BodyAttributes.no_pointer_event))
+		timeTimerSet(() => attrRemove(body, BodyAttributes.noPointerEvent))
 	}
 
-	function on_change_color(ev: CustomEvent<HEXColor>): void {
+	function onChangeColor(ev: CustomEvent<HEXColor>): void {
 		const color = ev.detail
-		if (!is_color_with_alpha_valid(color)) return;
-		update_color(color)
+		if (!colorIsValidWithAlpha(color)) return;
+		updateColor(color)
 	}
 
-	function init_events() {
-		event_add_listener<CustomEvent>(props.element, ColorPickerEvents.changecolor, on_change_color)
+	function initEvents() {
+		eventListenerAdd<CustomEvent>(props.element, ColorPickerEvents.changecolor, onChangeColor)
 
 		onCleanup(() => {
-			event_remove_listener<CustomEvent>(props.element, ColorPickerEvents.changecolor, on_change_color)
+			eventListenerRemove<CustomEvent>(props.element, ColorPickerEvents.changecolor, onChangeColor)
 		})
 	}
 
-	function update_color(color: HEXColor): void {
-		if (!is_color_with_alpha_valid(color)) return;
-		const hsl = hex_to_hsl(
-			string_substring(color, 0, 7) as HEXColor
+	function updateColor(color: HEXColor): void {
+		if (!colorIsValidWithAlpha(color)) return;
+		const hsl = colorHexToHsl(
+			stringSubstring(color, 0, 7) as HEXColor
 		)
-		set_hsl({...hsl})
+		setHsl({...hsl})
 
-		if (string_length(color) == 9 && !is_disabled_opacity_control()) {
-			const opacity = number_parse(string_substring(color, 7, 9), true, 16) / 255
-			set_opacity(math_round(opacity * 100))
+		if (stringLength(color) == 9 && !isDisabledOpacityControl()) {
+			const opacity = numberParse(stringSubstring(color, 7, 9), true, 16) / 255
+			setOpacity(mathRound(opacity * 100))
 		}
 
-		if (is_disabled_color_control()) set_hsl({ h: hsl.h, s: 1, l: 0.5 })
+		if (isDisabledColorControl()) setHsl({ h: hsl.h, s: 1, l: 0.5 })
 
-		update_inputs()
-		update_position()
+		updateInputs()
+		updatePosition()
 	}
 
-	function on_color_input_change(value: string): void {
-		if (color_model() == 'RGB') {
+	function onColorInputChange(value: string): void {
+		switch (colorSpace()) {
+		case "RGB": {
 			const rgb: RGBColor = { r: 0, g: 0, b: 0 }
-			const rgb_array: string[] = string_split(string_replace(value, /[^0-9,.]/g, ''), ',')
-			while (array_length(rgb_array) < 3) array_push(rgb_array, '0')
+			const rgbArray: string[] = stringSplit(stringReplace(value, /[^0-9,.]/g, ''), ',')
+			while (arrayLength(rgbArray) < 3) arrayPush(rgbArray, '0')
 
 			const parse = (value: string | number): number => {
-				value = number_parse(`${value}`, true)
-				value = number_safe(value, 0)
-				value = math_clamp(value, 0, 255)
+				value = numberParse(`${value}`, true)
+				value = numberSafe(value, 0)
+				value = mathClamp(value, 0, 255)
 				value = value / 0xff
 				return value as number
 			}
 
-			rgb.r = parse(rgb_array[0])
-			rgb.g = parse(rgb_array[1])
-			rgb.b = parse(rgb_array[2])
+			rgb.r = parse(rgbArray[0])
+			rgb.g = parse(rgbArray[1])
+			rgb.b = parse(rgbArray[2])
 
-			const hsl = rgb_to_hsl(rgb)
-			if (is_disabled_color_control()) {
+			const hsl = colorRgbToHsl(rgb)
+			if (isDisabledColorControl()) {
 				hsl.s = 1
 				hsl.l = 0.5
 			}
 
-			set_hsl(hsl)
+			setHsl(hsl)
+			break
 		}
-		else if (color_model() == 'HSL') {
+		case "HSL": {
 			const hsl: HSLColor = { h: 0, s: 0, l: 0 }
-			const hsl_array: string[] = string_split(string_replace(value, /[^0-9,.]/g, ''), ',')
-			while (array_length(hsl_array) < 3) array_push(hsl_array, "0")
+			const hslArray: string[] = stringSplit(stringReplace(value, /[^0-9,.]/g, ''), ',')
+			while (arrayLength(hslArray) < 3) arrayPush(hslArray, "0")
 
-			let $value: number = number_parse(hsl_array[0])
-			$value = number_safe($value, 0)
-			$value = math_clamp($value, 0, 360)
+			let $value: number = numberParse(hslArray[0])
+			$value = numberSafe($value, 0)
+			$value = mathClamp($value, 0, 360)
 
 			hsl.h = $value / 360
 
-			$value = number_parse(hsl_array[1])
-			$value = number_safe($value, 0)
-			$value = math_clamp($value, 0, 100)
+			$value = numberParse(hslArray[1])
+			$value = numberSafe($value, 0)
+			$value = mathClamp($value, 0, 100)
 
 			hsl.s = $value / 100
 
-			$value = number_parse(hsl_array[2])
-			$value = number_safe($value, 0)
-			$value = math_clamp($value, 0, 100)
+			$value = numberParse(hslArray[2])
+			$value = numberSafe($value, 0)
+			$value = mathClamp($value, 0, 100)
 
 			hsl.l = $value / 100
 
-			if (is_disabled_color_control()) {
+			if (isDisabledColorControl()) {
 				hsl.s = 1
 				hsl.l = 0.5
 			}
-			set_hsl(hsl)
+			setHsl(hsl)
+			break
 		}
-		else if (color_model() == 'HEX') {
-			value = string_replace(value, /[^0-9a-fA-F]/g, '')
-			if (string_length(string_trim(value)) == 0) value = '0'
+		case "HEX": {
+			value = stringReplace(value, /[^0-9a-fA-F]/g, '')
+			if (stringLength(stringTrim(value)) == 0) value = '0'
 
-			const $value: number = math_clamp(
-				number_safe(number_parse(value, true, 16), 0),
+			const $value: number = mathClamp(
+				numberSafe(numberParse(value, true, 16), 0),
 				0,
 				0xffffff
 			)
 
-			value = string_substring(
-				string_padstart(`${number_to_string($value, 16)}`, 6, '0'),
+			value = stringSubstring(
+				stringPadStart(`${numberToString($value, 16)}`, 6, '0'),
 				0, 6
 			)
 
-			const hsl = rgb_to_hsl(hex_to_rgb(('#' + value) as HEXColor))
-			if (is_disabled_color_control()) {
+			const hsl = colorRgbToHsl(colorHexToRgb(('#' + value) as HEXColor))
+			if (isDisabledColorControl()) {
 				hsl.s = 1
 				hsl.l = 0.5
 			}
-			set_hsl(hsl)
-		}
+			setHsl(hsl)
+			break
+		}}
 
-		update_position()
-		if (props.is_colorpicker_open) props.on_update_color?.(get_hex_color())
+		updatePosition()
+		if (props.isColorPickerOpen) props.onUpdateColor?.(getHexColor())
 	}
 
-	function on_opacity_input_change(value: string): void {
-		let $opacity: number = number_parse(value)
+	function onOpacityInputChange(value: string): void {
+		let $opacity: number = numberParse(value)
 
-		if (number_is_not_defined($opacity)) return
+		if (numberIsNotDefined($opacity)) return
 
-		$opacity = math_round(math_clamp($opacity, 0, 100))
-		set_opacity($opacity)
-		update_position()
-		if (props.is_colorpicker_open) props.on_update_color?.(get_hex_color())
+		$opacity = mathRound(mathClamp($opacity, 0, 100))
+		setOpacity($opacity)
+		updatePosition()
+		if (props.isColorPickerOpen) props.onUpdateColor?.(getHexColor())
 	}
 
 	onMount(() => {
-		init_events()
+		initEvents()
 	})
 
 	createEffect(() => {
-		const $is_disabled_color_control = is_disabled_color_control()
-		const $is_disabled_opacity_control = is_disabled_opacity_control()
+		const $isDisabledColorControl = isDisabledColorControl()
+		const $isDisabledOpacityControl = isDisabledOpacityControl()
 		const color = '#FFFFFF'
-		const handle_color = () => {
-			if (color == local_color) return
+		const handleColor = () => {
+			if (color == localColor) return
 
-			local_color = color
-			if (!is_color_with_alpha_valid(local_color)) return
+			localColor = color
+			if (!colorIsValidWithAlpha(localColor)) return
 
-			let hsl = hex_to_hsl(local_color)
+			let hsl = colorHexToHsl(localColor)
 			let opacity = 100
-			if ($is_disabled_color_control) {
+			if ($isDisabledColorControl) {
 				hsl = {h: hsl.h, s: 1, l: 0.5}
 			}
 
-			if (string_length(local_color) > 7 && !$is_disabled_opacity_control) {
-				opacity = number_safe(number_parse(string_substring(local_color, 7, 9), true, 16))
+			if (stringLength(localColor) > 7 && !$isDisabledOpacityControl) {
+				opacity = numberSafe(numberParse(stringSubstring(localColor, 7, 9), true, 16))
 				opacity = opacity / 0xff * 100
-				opacity = math_clamp(opacity, 0, 100)
+				opacity = mathClamp(opacity, 0, 100)
 			}
 
-			if (textfield_color_ref) {
+			if (textFieldColorRef) {
 				let text = ''
-				if (local_color_model == 'HSL') text = array_join([
-					math_round(hsl.h * 360),
-					math_round(hsl.s * 100) + '%',
-					math_round(hsl.l * 100) + '%',
+				if (localColorSpace == 'HSL') text = arrayJoin([
+					mathRound(hsl.h * 360),
+					mathRound(hsl.s * 100) + '%',
+					mathRound(hsl.l * 100) + '%',
 				], ', ')
-				else if (local_color_model == 'HEX') {
-					text = string_touppercase(hsl_to_hex(hsl))
+				else if (localColorSpace == 'HEX') {
+					text = stringToUpperCase(colorHslToHex(hsl))
 				}
-				else if (local_color_model == 'RGB') {
-					const {r, g, b} = hsl_to_rgb(hsl)
-					text = array_join([
-						math_round(r * 0xff),
-						math_round(g * 0xff),
-						math_round(b * 0xff),
+				else if (localColorSpace == 'RGB') {
+					const {r, g, b} = colorHslToRgb(hsl)
+					text = arrayJoin([
+						mathRound(r * 0xff),
+						mathRound(g * 0xff),
+						mathRound(b * 0xff),
 					], ', ')
 				}
 
-				textfield_color_ref.value = text
+				textFieldColorRef.value = text
 			}
 
-			if (textfield_opacity_ref) {
-				textfield_opacity_ref.value = opacity + '%'
+			if (textFieldOpacityRef) {
+				textFieldOpacityRef.value = opacity + '%'
 			}
 
-			set_hue(hsl.h * 100)
-			set_hsl(hsl)
-			set_opacity(opacity)
+			setHue(hsl.h * 100)
+			setHsl(hsl)
+			setOpacity(opacity)
 		}
 
-		const handle_disable_color_control = () => {
-			if (!$is_disabled_color_control) return
+		const handleDisableColorControl = () => {
+			if (!$isDisabledColorControl) return
 
-			const hsl: HSLColor = {h: local_hsl.h, s: 1, l: 0.5}
-			if (textfield_color_ref) {
+			const hsl: HSLColor = {h: localHSL.h, s: 1, l: 0.5}
+			if (textFieldColorRef) {
 				let text = ''
-				if (local_color_model == 'HSL') text = array_join([
-					math_round(hsl.h * 360),
-					math_round(hsl.s * 100) + '%',
-					math_round(hsl.l * 100) + '%',
+				if (localColorSpace == 'HSL') text = arrayJoin([
+					mathRound(hsl.h * 360),
+					mathRound(hsl.s * 100) + '%',
+					mathRound(hsl.l * 100) + '%',
 				], ', ')
-				else if (local_color_model == 'HEX') {
-					text = string_touppercase(hsl_to_hex(hsl))
+				else if (localColorSpace == 'HEX') {
+					text = stringToUpperCase(colorHslToHex(hsl))
 				}
-				else if (local_color_model == 'RGB') {
-					const {r, g, b} = hsl_to_rgb(hsl)
-					text = array_join([
-						math_round(r * 0xff),
-						math_round(g * 0xff),
-						math_round(b * 0xff),
+				else if (localColorSpace == 'RGB') {
+					const {r, g, b} = colorHslToRgb(hsl)
+					text = arrayJoin([
+						mathRound(r * 0xff),
+						mathRound(g * 0xff),
+						mathRound(b * 0xff),
 					], ', ')
 				}
 
-				textfield_color_ref.value = text
+				textFieldColorRef.value = text
 			}
 
-			set_hsl(hsl)
+			setHsl(hsl)
 		}
 
-		const handle_disable_opacity_control = () => {
-			if (!$is_disabled_opacity_control) return
+		const handleDisableOpacityControl = () => {
+			if (!$isDisabledOpacityControl) return
 
-			if (textfield_opacity_ref) {
-				textfield_opacity_ref.value = '100%'
+			if (textFieldOpacityRef) {
+				textFieldOpacityRef.value = '100%'
 			}
 
-			set_opacity(100)
+			setOpacity(100)
 		}
 
-		handle_color()
-		handle_disable_color_control()
-		handle_disable_opacity_control()
+		handleColor()
+		handleDisableColorControl()
+		handleDisableOpacityControl()
 	})
 
 	const Control: Component = () => {
 		return (<div
 			class="c-color-picker-control"
-			data-c-hide-color={attr_set_if_exist(is_disabled_color_control())}>
+			data-c-hide-color={attrSetIfExist(isDisabledColorControl())}>
 			<div
 				class="c-color-picker-color"
-				ref={color_ref}
-				style={{ '--c-color-picker-color': hsl_to_hex({...hsl(), s: 1, l: .5}) }}
+				ref={colorRef}
+				style={{ '--c-color-picker-color': colorHslToHex({...hsl(), s: 1, l: .5}) }}
 				onPointerDown={(ev) => {
-					const self = event_current_target(ev)
-					color_dragged = true
-					color_rect = element_rect(self)
-					element_set_pointercapture(self, ev.pointerId)
-					set_position(ev.clientX, ev.clientY)
-					attr_set(body, BodyAttributes.no_pointer_event)
+					const self = eventCurrentTarget(ev)
+					colorDragged = true
+					colorRect = elementRect(self)
+					elementPointerCaptureSet(self, ev.pointerId)
+					setPosition(ev.clientX, ev.clientY)
+					attrSet(body, BodyAttributes.noPointerEvent)
 				}}
-				onPointerMove={on_pointermove}
-				onPointerUp={on_pointerup}
-				onPointerCancel={on_pointerup}
-				data-c-hsl={attr_set_if_exist(color_model() == 'HSL')}
+				onPointerMove={onPointerMove}
+				onPointerUp={onPointerUp}
+				onPointerCancel={onPointerUp}
+				data-c-hsl={attrSetIfExist(colorSpace() == 'HSL')}
 				onKeyDown={(ev) => {
 					const code = ev.code
 					if (code == KEY_ARROW_UP) {
-						key_up_pressed = true
-						key_down_pressed = false
+						keyUpPressed = true
+						keyDownPressed = false
 					}
 					else if (code == KEY_ARROW_DOWN) {
-						key_down_pressed = true
-						key_up_pressed = false
+						keyDownPressed = true
+						keyUpPressed = false
 					}
 					else if (code == KEY_ARROW_LEFT) {
-						key_left_pressed = true
-						key_right_pressed = false
+						keyLeftPressed = true
+						keyRightPressed = false
 					}
 					else if (code == KEY_ARROW_RIGHT) {
-						key_right_pressed = true
-						key_left_pressed = false
+						keyRightPressed = true
+						keyLeftPressed = false
 					}
 
 					if (
-						!key_left_pressed
-						&& !key_right_pressed
-						&& !key_up_pressed
-						&& !key_down_pressed
+						!keyLeftPressed
+						&& !keyRightPressed
+						&& !keyUpPressed
+						&& !keyDownPressed
 					) return;
 
 
-					color_dragged = true
-					color_rect = element_rect(event_current_target(ev))
-					const one_percent_x = rect_width(color_rect) / 100
-					const one_percent_y = rect_height(color_rect) / 100
-					let x = rect_left(color_rect) + (left() * one_percent_x)
-					let y = rect_top(color_rect) + (top() * one_percent_y)
+					colorDragged = true
+					colorRect = elementRect(eventCurrentTarget(ev))
+					const onePercentX = rectWidth(colorRect) / 100
+					const onePercentY = rectHeight(colorRect) / 100
+					let x = rectLeft(colorRect) + (left() * onePercentX)
+					let y = rectTop(colorRect) + (top() * onePercentY)
 
-					if (key_up_pressed) y -= one_percent_y
-					if (key_down_pressed) y += one_percent_y
-					if (key_left_pressed) x -= one_percent_x
-					if (key_right_pressed) x += one_percent_x
+					if (keyUpPressed) y -= onePercentY
+					if (keyDownPressed) y += onePercentY
+					if (keyLeftPressed) x -= onePercentX
+					if (keyRightPressed) x += onePercentX
 
-					event_prevent_default(ev)
-					set_position(x, y)
+					eventPreventDefault(ev)
+					setPosition(x, y)
 				}}
 				onKeyUp={(ev) => {
 					const code = ev.code
-					if (code == KEY_ARROW_UP) key_up_pressed = false
-					if (code == KEY_ARROW_DOWN) key_down_pressed = false
-					if (code == KEY_ARROW_LEFT) key_left_pressed = false
-					if (code == KEY_ARROW_RIGHT) key_right_pressed = false
+					if (code == KEY_ARROW_UP) keyUpPressed = false
+					if (code == KEY_ARROW_DOWN) keyDownPressed = false
+					if (code == KEY_ARROW_LEFT) keyLeftPressed = false
+					if (code == KEY_ARROW_RIGHT) keyRightPressed = false
 
 					if (
-						!key_up_pressed
-						&& !key_down_pressed
-						&& !key_left_pressed
-						&& !key_right_pressed
-					) color_dragged = false
+						!keyUpPressed
+						&& !keyDownPressed
+						&& !keyLeftPressed
+						&& !keyRightPressed
+					) colorDragged = false
 				}}
 				draggable={false}>
 				<div
@@ -546,10 +556,10 @@ const ColorPickerBody: ParentComponent<{
 					tabindex="0"
 					class="c-color-picker-indicator"
 					style={{
-						"background-color": hsl_to_hex(hsl()),
+						"background-color": colorHslToHex(hsl()),
 						top: top() + '%',
 						left: left() + '%',
-						"border-color": get_contrast_ratio(hsl_to_rgb(get_hsl_color()), {r: 0, g: 0, b: 0}) > 50
+						"border-color": colorContrastRatio(colorHslToRgb(getHSLColor()), {r: 0, g: 0, b: 0}) > 50
 							? '#000'
 							: '#fff',
 						transform: 'translate(-12px, -12px)',
@@ -558,60 +568,60 @@ const ColorPickerBody: ParentComponent<{
 			</div>
 			<div>
 				<div
-					data-c-hide-color={attr_set_if_exist(is_disabled_color_control())}
-					data-c-hide-opacity={attr_set_if_exist(is_disabled_opacity_control())}
+					data-c-hide-color={attrSetIfExist(isDisabledColorControl())}
+					data-c-hide-opacity={attrSetIfExist(isDisabledOpacityControl())}
 					class="c-color-picker-selected-color"
-					style={{ 'background-color': get_hex_color() }}
+					style={{ 'background-color': getHexColor() }}
 				/>
 				<div
 					class="c-color-picker-range"
-					data-c-hide-color={attr_set_if_exist(is_disabled_color_control())}
-					data-c-hide-opacity={attr_set_if_exist(is_disabled_opacity_control())}>
+					data-c-hide-color={attrSetIfExist(isDisabledColorControl())}
+					data-c-hide-opacity={attrSetIfExist(isDisabledOpacityControl())}>
 					<div
 						class="c-color-picker-hue"
-						ref={hue_ref}
+						ref={hueRef}
 						onPointerDown={(ev) => {
-							const self = event_current_target(ev)
-							hue_dragged = true
-							hue_rect = element_rect(self)
-							element_set_pointercapture(self, ev.pointerId)
-							set_position(ev.clientX, ev.clientY)
-							attr_set(body, BodyAttributes.no_pointer_event)
+							const self = eventCurrentTarget(ev)
+							hueDragged = true
+							hueRect = elementRect(self)
+							elementPointerCaptureSet(self, ev.pointerId)
+							setPosition(ev.clientX, ev.clientY)
+							attrSet(body, BodyAttributes.noPointerEvent)
 						}}
-						onPointerMove={on_pointermove}
-						onPointerUp={on_pointerup}
-						onPointerCancel={on_pointerup}
+						onPointerMove={onPointerMove}
+						onPointerUp={onPointerUp}
+						onPointerCancel={onPointerUp}
 						onKeyDown={(ev) => {
 							const code = ev.code
-							const is_arrow_key = (is_disabled_color_control()
+							const is_arrow_key = (isDisabledColorControl()
 								? code == KEY_ARROW_LEFT || code == KEY_ARROW_RIGHT
 								: code == KEY_ARROW_UP || code == KEY_ARROW_DOWN
 							)
 
 							if (!is_arrow_key) return;
 
-							hue_dragged = true
-							hue_rect = element_rect(event_current_target(ev))
-							const one_percent_x = rect_width(hue_rect) / 100
-							const one_percent_y = rect_height(hue_rect) / 100
-							let x = rect_left(hue_rect) + (hue() * one_percent_x)
-							let y = rect_top(hue_rect) + (hue() * one_percent_y)
+							hueDragged = true
+							hueRect = elementRect(eventCurrentTarget(ev))
+							const one_percent_x = rectWidth(hueRect) / 100
+							const one_percent_y = rectHeight(hueRect) / 100
+							let x = rectLeft(hueRect) + (hue() * one_percent_x)
+							let y = rectTop(hueRect) + (hue() * one_percent_y)
 
 							if (code == KEY_ARROW_UP) y -= one_percent_y
 							else if (code == KEY_ARROW_DOWN) y += one_percent_y
 							else if (code == KEY_ARROW_LEFT) x -= one_percent_x
 							else if (code == KEY_ARROW_RIGHT) x += one_percent_x
 
-							event_prevent_default(ev)
-							set_position(x, y)
+							eventPreventDefault(ev)
+							setPosition(x, y)
 						}}
 						onKeyUp={(ev) => {
 							const code = ev.code
-							const is_arrow_key = (is_disabled_color_control()
+							const is_arrow_key = (isDisabledColorControl()
 								? code == KEY_ARROW_LEFT || code == KEY_ARROW_RIGHT
 								: code == KEY_ARROW_UP || code == KEY_ARROW_DOWN
 							)
-							if (is_arrow_key) hue_dragged = false
+							if (is_arrow_key) hueDragged = false
 						}}
 						draggable={false}>
 						<div
@@ -620,60 +630,60 @@ const ColorPickerBody: ParentComponent<{
 							class="c-color-picker-indicator"
 							style={{
 								"background-color": `hsl(${hue() / 100 * 360}, 100%, 50%)`,
-								top: is_disabled_color_control()? undefined : hue() + '%',
-								left: is_disabled_color_control()? hue() + '%' : undefined,
-								"border-color": get_contrast_ratio(hsl_to_rgb({h: hue() / 100, s: 1, l: 0.5}), {r: 0, g: 0, b: 0}) > 50
+								top: isDisabledColorControl()? undefined : hue() + '%',
+								left: isDisabledColorControl()? hue() + '%' : undefined,
+								"border-color": colorContrastRatio(colorHslToRgb({h: hue() / 100, s: 1, l: 0.5}), {r: 0, g: 0, b: 0}) > 50
 									? '#000'
 									: '#fff',
-								transform: is_disabled_color_control()? 'translate(-50%, -4px)' : 'translate(-4px, -50%)'
+								transform: isDisabledColorControl()? 'translate(-50%, -4px)' : 'translate(-4px, -50%)'
 							}}
 						/>
 					</div>
 					<div
 						class="c-color-picker-opacity"
-						ref={opacity_ref}
+						ref={opacityRef}
 						onPointerDown={(ev) => {
-							const self = event_current_target(ev)
-							opacity_dragged = true
-							opacity_rect = element_rect(self)
-							element_set_pointercapture(self, ev.pointerId)
-							set_position(ev.clientX, ev.clientY)
-							attr_set(body, BodyAttributes.no_pointer_event)
+							const self = eventCurrentTarget(ev)
+							opacityDragged = true
+							opacityRect = elementRect(self)
+							elementPointerCaptureSet(self, ev.pointerId)
+							setPosition(ev.clientX, ev.clientY)
+							attrSet(body, BodyAttributes.noPointerEvent)
 						}}
-						onPointerMove={on_pointermove}
-						onPointerUp={on_pointerup}
-						onPointerCancel={on_pointerup}
+						onPointerMove={onPointerMove}
+						onPointerUp={onPointerUp}
+						onPointerCancel={onPointerUp}
 						onKeyDown={(ev) => {
 							const code = ev.code
-							const is_arrow_key = (is_disabled_color_control()
+							const is_arrow_key = (isDisabledColorControl()
 								? code == KEY_ARROW_LEFT || code == KEY_ARROW_RIGHT
 								: code == KEY_ARROW_UP || code == KEY_ARROW_DOWN
 							)
 
 							if (!is_arrow_key) return;
 
-							opacity_dragged = true
-							opacity_rect = element_rect(event_current_target(ev))
-							const one_percent_x = rect_width(opacity_rect) / 100
-							const one_percent_y = rect_height(opacity_rect) / 100
-							let x = rect_left(opacity_rect) + ((100 - opacity()) * one_percent_x)
-							let y = rect_top(opacity_rect) + ((100 - opacity()) * one_percent_y)
+							opacityDragged = true
+							opacityRect = elementRect(eventCurrentTarget(ev))
+							const one_percent_x = rectWidth(opacityRect) / 100
+							const one_percent_y = rectHeight(opacityRect) / 100
+							let x = rectLeft(opacityRect) + ((100 - opacity()) * one_percent_x)
+							let y = rectTop(opacityRect) + ((100 - opacity()) * one_percent_y)
 
 							if (code == KEY_ARROW_UP) y -= one_percent_y
 							else if (code == KEY_ARROW_DOWN) y += one_percent_y
 							else if (code == KEY_ARROW_LEFT) x -= one_percent_x
 							else if (code == KEY_ARROW_RIGHT) x += one_percent_x
 
-							event_prevent_default(ev)
-							set_position(x, y)
+							eventPreventDefault(ev)
+							setPosition(x, y)
 						}}
 						onKeyUp={(ev) => {
 							const code = ev.code
-							const is_arrow_key = (is_disabled_color_control()
+							const is_arrow_key = (isDisabledColorControl()
 								? code == KEY_ARROW_LEFT || code == KEY_ARROW_RIGHT
 								: code == KEY_ARROW_UP || code == KEY_ARROW_DOWN
 							)
-							if (is_arrow_key) opacity_dragged = false
+							if (is_arrow_key) opacityDragged = false
 						}}
 						draggable={false}>
 						<div
@@ -682,12 +692,12 @@ const ColorPickerBody: ParentComponent<{
 							class="c-color-picker-indicator"
 							style={{
 								"background-color": `hsla(0, 0%, ${opacity()}%)`,
-								top: is_disabled_color_control()? undefined : (100 - opacity()) + '%',
-								left: is_disabled_color_control()? (100 - opacity()) + '%' : undefined,
-								"border-color": get_contrast_ratio(hsl_to_rgb({h: 0, s: 0, l: opacity() / 100}), {r: 0, g: 0, b: 0}) > 50
+								top: isDisabledColorControl()? undefined : (100 - opacity()) + '%',
+								left: isDisabledColorControl()? (100 - opacity()) + '%' : undefined,
+								"border-color": colorContrastRatio(colorHslToRgb({h: 0, s: 0, l: opacity() / 100}), {r: 0, g: 0, b: 0}) > 50
 									? '#000'
 									: '#fff',
-								transform: is_disabled_color_control()? 'translate(-50%, -4px)' : 'translate(-4px, -50%)'
+								transform: isDisabledColorControl()? 'translate(-50%, -4px)' : 'translate(-4px, -50%)'
 							}}
 						/>
 					</div>
@@ -699,18 +709,18 @@ const ColorPickerBody: ParentComponent<{
 	const Input: Component = () => {
 		return (<div
 			class="c-color-picker-input"
-			data-c-hide-opacity={attr_set_if_exist(is_disabled_opacity_control())}
-			onFocusOut={() => update_inputs()}>
+			data-c-hide-opacity={attrSetIfExist(isDisabledOpacityControl())}
+			onFocusOut={() => updateInputs()}>
 			<TextField
-				ref={r => textfield_color_ref = r}
-				onInput={(ev) => on_color_input_change(event_current_target(ev).value)}
-				c_label={color_model() == 'RGB' ? 'RGB' : color_model() == 'HEX' ? 'Hex' : 'HSL'}
-				placeholder={color_model() == 'RGB' ? "0-255, 0-255, 0-255" : color_model() == 'HEX' ? '#FF0000' : '0-360, 0-100%, 0-100%'}
+				ref={r => textFieldColorRef = r}
+				onInput={(ev) => onColorInputChange(eventCurrentTarget(ev).value)}
+				c:label={colorSpace() == 'RGB' ? 'RGB' : colorSpace() == 'HEX' ? 'Hex' : 'HSL'}
+				placeholder={colorSpace() == 'RGB' ? "0-255, 0-255, 0-255" : colorSpace() == 'HEX' ? '#FF0000' : '0-360, 0-100%, 0-100%'}
 			/>
 			<TextField
-				onInput={(ev) => on_opacity_input_change(event_current_target(ev).value)}
-				ref={r => textfield_opacity_ref = r}
-				c_label="Opacity"
+				onInput={(ev) => onOpacityInputChange(eventCurrentTarget(ev).value)}
+				ref={r => textFieldOpacityRef = r}
+				c:label="Opacity"
 				value="100%"
 				placeholder="0-100%"
 			/>
@@ -724,44 +734,44 @@ const ColorPickerBody: ParentComponent<{
 
 		return (<FocusableGroup
 			class="c-color-picker-actions"
-			c_arrow_options={{ right: 'next', left: 'prev' }}
-			data-c-disabled={attr_set_if_exist(props.disabled_action)}
+			c:arrowOptions={{ right: 'next', left: 'prev' }}
+			data-c-disabled={attrSetIfExist(props.disabledActions)}
 			onClick={(ev) => {
-				const button = document_active()!
-				if (!element_valid_target(
-					event_current_target(ev),
+				const button = documentActive()!
+				if (!elementValidTarget(
+					eventCurrentTarget(ev),
 					button,
-					el => element_tagname(el) == 'BUTTON'
+					el => elementTagName(el) == 'BUTTON'
 				)) return
 
-				switch (element_id(button)) {
+				switch (elementId(button)) {
 					case button_colormodel_id:
-						change_color_model()
+						changeColorSpace()
 						break
 					case button_cancel_id:
-						update_color(props.color)
-						props.on_close()
+						updateColor(props.color)
+						props.onClose()
 						break
 					case button_select_id:
-						props.on_select_color?.(get_hex_color() as HEXColor)
-						props.on_close()
+						props.onSelectColor?.(getHexColor() as HEXColor)
+						props.onClose()
 						break
 				}
 			}}>
 			<Button
 				id={button_colormodel_id}
-				c_variant={ButtonVariant.tonal}>
-				{color_model()}
+				c:variant={ButtonVariant.tonal}>
+				{colorSpace()}
 			</Button>
-			<Show when={!props.disabled_action}>
+			<Show when={!props.disabledActions}>
 				<Button
 					id={button_cancel_id}
-					c_variant={ButtonVariant.tonal}>
+					c:variant={ButtonVariant.tonal}>
 					Cancel
 				</Button>
 				<Button
 					id={button_select_id}
-					c_variant={ButtonVariant.filled}>
+					c:variant={ButtonVariant.filled}>
 					Select
 				</Button>
 			</Show>
@@ -777,48 +787,48 @@ const ColorPickerBody: ParentComponent<{
 }
 
 type ColorPickerProps = ModalProps & {
-	c_color?: HEXColor
-	c_disabled_opacity_control?: boolean
-	c_disabled_color_control?: boolean
-	c_disabled_action?: boolean
-	c_on_update_color?(color: HEXColor): unknown
-	c_on_select_color?(color: HEXColor): unknown
+	'c:color'?: HEXColor
+	'c:disabledOpacityControl'?: boolean
+	'c:disabledColorControl'?: boolean
+	'c:disabledAction'?: boolean
+	'c:onUpdateColor'?(color: HEXColor): unknown
+	'c:onSelectColor'?(color: HEXColor): unknown
 }
 const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 	const $$props = mergeProps({
-		c_color: DEFAULT_HEX_COLOR,
-		c_disabled_color_control: false
+		'c:color': DEFAULT_HEX_COLOR,
+		'c:disabledColorControl': false
 	}, $props)
 	const [props, other] = splitProps($$props, [
-		'children', 'c_disabled_opacity_control', 'c_on_select_color',
-		'c_disabled_color_control', 'ref', 'classList', 'c_color',
-		'c_on_update_color', 'c_disabled_action', 'c_on_toggleopen'
+		'children', 'c:disabledOpacityControl', 'c:onSelectColor',
+		'c:disabledColorControl', 'ref', 'classList', 'c:color',
+		'c:onUpdateColor', 'c:disabledAction', 'c:onToggleOpen'
 	])
-	const [colorpicker_ref, set_colorpicker_ref] = createSignal<HTMLDialogElement | null>(null)
-	const [is_colorpicker_open, set_is_colorpicker_open] = createSignal<boolean>(false)
+	const [colorPickerRef, setColorPickerRef] = createSignal<HTMLDialogElement | null>(null)
+	const [isColorPickerOpen, setIsColorPickerOpen] = createSignal<boolean>(false)
 
 	return (<Modal
-		ref={mergeRefs(props.ref, r => set_colorpicker_ref(r))}
-		c_on_toggleopen={o => {
-			set_is_colorpicker_open(o)
-			props.c_on_toggleopen?.(o)
+		ref={mergeRefs(props.ref, r => setColorPickerRef(r))}
+		c:onToggleOpen={o => {
+			setIsColorPickerOpen(o)
+			props["c:onToggleOpen"]?.(o)
 		}}
 		classList={{
 			'c-color-picker': true,
 			...props.classList
 		}}
 		{...other}>
-		<Show when={colorpicker_ref() != null}>
+		<Show when={colorPickerRef() != null}>
 			<ColorPickerBody
-				element={colorpicker_ref()!}
-				is_colorpicker_open={is_colorpicker_open()}
-				on_close={() => close_modal(colorpicker_ref()!)}
-				color={props.c_color}
-				disabled_action={props.c_disabled_action}
-				disabled_color_control={props.c_disabled_color_control}
-				disabled_opacity_control={props.c_disabled_opacity_control}
-				on_select_color={props.c_on_select_color}
-				on_update_color={props.c_on_update_color}>
+				element={colorPickerRef()!}
+				isColorPickerOpen={isColorPickerOpen()}
+				onClose={() => closeModal(colorPickerRef()!)}
+				color={props['c:color']}
+				disabledActions={props['c:disabledAction']}
+				disabledColorControl={props['c:disabledColorControl']}
+				disabledOpacityControl={props['c:disabledOpacityControl']}
+				onSelectColor={props['c:onSelectColor']}
+				onUpdateColor={props['c:onUpdateColor']}>
 				{props.children}
 			</ColorPickerBody>
 		</Show>
@@ -826,48 +836,48 @@ const ColorPicker: ParentComponent<ColorPickerProps> = ($props) => {
 }
 
 type PopoverColorPickerProps = PopoverProps & {
-	c_color?: HEXColor
-	c_disabled_opacity_control?: boolean
-	c_disabled_color_control?: boolean
-	c_disabled_action?: boolean
-	c_on_update_color?(color: HEXColor): unknown
-	c_on_select_color?(color: HEXColor): unknown
+	'c:color'?: HEXColor
+	'c:disabledOpacityControl'?: boolean
+	'c:disabledColorControl'?: boolean
+	'c:disabledAction'?: boolean
+	'c:onUpdateColor'?(color: HEXColor): unknown
+	'c:onSelectColor'?(color: HEXColor): unknown
 }
 const PopoverColorPicker: ParentComponent<PopoverColorPickerProps> = ($props) => {
 	const $$props = mergeProps({
-		c_color: DEFAULT_HEX_COLOR,
-		c_disabled_color_control: false
+		'c:color': DEFAULT_HEX_COLOR,
+		'c:disabledColorControl': false
 	}, $props)
 	const [props, other] = splitProps($$props, [
-		'children', 'c_disabled_opacity_control', 'c_on_select_color',
-		'c_disabled_color_control', 'ref', 'classList', 'c_color',
-		'c_on_update_color', 'c_disabled_action', 'c_on_toggleopen'
+		'children', 'c:disabledOpacityControl', 'c:onSelectColor',
+		'c:disabledColorControl', 'ref', 'classList', 'c:color',
+		'c:onUpdateColor', 'c:disabledAction', 'c:onToggleOpen'
 	])
-	const [colorpicker_ref, set_colorpicker_ref] = createSignal<HTMLDivElement | null>(null)
-	const [is_colorpicker_open, set_is_colorpicker_open] = createSignal<boolean>(false)
+	const [colorPickerRef, setColorPickerRef] = createSignal<HTMLDivElement | null>(null)
+	const [isColorPickerOpen, setIsColorPickerOpen] = createSignal<boolean>(false)
 
 	return (<Popover
-		ref={mergeRefs(props.ref, r => set_colorpicker_ref(r))}
-		c_on_toggleopen={o => {
-			set_is_colorpicker_open(o)
-			props.c_on_toggleopen?.(o)
+		ref={mergeRefs(props.ref, r => setColorPickerRef(r))}
+		c:onToggleOpen={o => {
+			setIsColorPickerOpen(o)
+			props["c:onToggleOpen"]?.(o)
 		}}
 		classList={{
 			'c-color-picker': true,
 			...props.classList
 		}}
 		{...other}>
-		<Show when={colorpicker_ref() != null}>
+		<Show when={colorPickerRef() != null}>
 			<ColorPickerBody
-				element={colorpicker_ref()!}
-				is_colorpicker_open={is_colorpicker_open()}
-				on_close={() => close_popover(colorpicker_ref()!)}
-				color={props.c_color}
-				disabled_action={props.c_disabled_action}
-				disabled_color_control={props.c_disabled_color_control}
-				disabled_opacity_control={props.c_disabled_opacity_control}
-				on_select_color={props.c_on_select_color}
-				on_update_color={props.c_on_update_color}>
+				element={colorPickerRef()!}
+				isColorPickerOpen={isColorPickerOpen()}
+				onClose={() => closePopover(colorPickerRef()!)}
+				color={props['c:color']}
+				disabledActions={props['c:disabledAction']}
+				disabledColorControl={props['c:disabledColorControl']}
+				disabledOpacityControl={props['c:disabledOpacityControl']}
+				onSelectColor={props['c:onSelectColor']}
+				onUpdateColor={props['c:onUpdateColor']}>
 				{props.children}
 			</ColorPickerBody>
 		</Show>
@@ -877,17 +887,17 @@ const PopoverColorPicker: ParentComponent<PopoverColorPickerProps> = ($props) =>
 export {
 	ColorPicker,
 	PopoverColorPicker,
-	change_colorpicker_value,
-	change_colorpicker_value as change_popovercolorpicker_value,
-	open_colorpicker,
-	open_popovercolorpicker,
-	is_modal_open as is_colorpicker_open,
-	focus_modal as focus_colorpicker,
-	close_modal as close_colorpicker,
-	reposition_modal as reposition_colorpicker,
-	is_popover_open as is_popovercolorpicker_open,
-	close_popover as close_popovercolorpicker,
-	reposition_popover as reposition_popovercolorpicker,
+	changeColorPickerValue as changeColorPickerValue,
+	changeColorPickerValue as changePopoverColorPickerValue,
+	openColorPicker,
+	openPopoverColorPicker,
+	isModalOpen as isColorPickerOpen,
+	focusModal as focusColorPicker,
+	closeModal as closeColorPicker,
+	repositionModal as repositionColorPicker,
+	isPopoverOpen as isPopoverColorPickerOpen,
+	closePopover as closePopoverColorPicker,
+	repositionPopover as repositionPopoverColorPicker,
 	ColorPickerPosition,
 	ColorPickerPosition as PopoverColorPickerPosition,
 	ColorPickerEvents

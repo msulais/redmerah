@@ -1,7 +1,7 @@
 import type { Emoji } from "@/types/emoji"
 
 // source: https://unicode.org/emoji/charts/full-emoji-list.html
-export const smiley_and_emotion_emojis: Emoji[] = [
+export const EMOJIS_SMILEY_AND_EMOTION: Emoji[] = [
 	['😀', 'Grinning face'],
 	['😃', 'Grinning face with big eyes'],
 	['😄', 'Grinning face with smiling eyes'],
@@ -172,7 +172,7 @@ export const smiley_and_emotion_emojis: Emoji[] = [
 	['💤', 'ZZZ'],
 ]
 
-export const person_and_body_emojis: Emoji[] = [
+export const EMOJIS_PERSON_AND_BODY: Emoji[] = [
 	['👋', 'Waving hand'],
 	['🤚', 'Raised back of hand'],
 	['🖐', 'Hand with fingers splayed'],
@@ -558,7 +558,7 @@ export const person_and_body_emojis: Emoji[] = [
 	['👣', 'Footprints'],
 ]
 
-export const animal_and_nature_emojis: Emoji[] = [
+export const EMOJIS_ANIMAL_AND_NATURE: Emoji[] = [
 	['🐵', 'Monkey face'],
 	['🐒', 'Monkey'],
 	['🦍', 'Gorilla'],
@@ -714,7 +714,7 @@ export const animal_and_nature_emojis: Emoji[] = [
 	['🍄', 'Mushroom'],
 ]
 
-export const food_and_drink_emojis: Emoji[] = [
+export const EMOJIS_FOOD_AND_DRINK: Emoji[] = [
 	['🍇', 'Grapes'],
 	['🍈', 'Melon'],
 	['🍉', 'Watermelon'],
@@ -852,7 +852,7 @@ export const food_and_drink_emojis: Emoji[] = [
 	['🏺', 'Amphora'],
 ]
 
-export const travel_and_places_emojis: Emoji[] = [
+export const EMOJIS_TRAVEL_AND_PLACES: Emoji[] = [
 	['🌍', 'Globe showing Europe-Africa'],
 	['🌎', 'Globe showing Americas'],
 	['🌏', 'Globe showing Asia-Australia'],
@@ -1073,7 +1073,7 @@ export const travel_and_places_emojis: Emoji[] = [
 	['🌊', 'Water wave'],
 ]
 
-export const activities_emojis: Emoji[] = [
+export const EMOJIS_ACTIVITIES: Emoji[] = [
 	['🎃', 'Jack-o-lantern'],
 	['🎄', 'Christmas tree'],
 	['🎆', 'Fireworks'],
@@ -1161,7 +1161,7 @@ export const activities_emojis: Emoji[] = [
 	['🪢', 'Knot'],
 ]
 
-export const object_emojis: Emoji[] = [
+export const EMOJIS_OBJECT: Emoji[] = [
 	['👓', 'Glasses'],
 	['🕶', 'Sunglasses'],
 	['🥽', 'Goggles'],
@@ -1426,7 +1426,7 @@ export const object_emojis: Emoji[] = [
 	['🪪', 'Identification card'],
 ]
 
-export const symbols_emojis: Emoji[] = [
+export const EMOJIS_SYMBOLS: Emoji[] = [
 	['🏧', 'ATM sign'],
 	['🚮', 'Litter in bin sign'],
 	['🚰', 'Potable water'],
@@ -1652,7 +1652,7 @@ export const symbols_emojis: Emoji[] = [
 	['🔲', 'Black square button'],
 ]
 
-export const flags_emojis: Emoji[] = [
+export const EMOJIS_FLAGS: Emoji[] = [
 	['🏁', 'Chequered flag'],
 	['🚩', 'Triangular flag'],
 	['🎌', 'Crossed flags'],

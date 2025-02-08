@@ -1,37 +1,37 @@
 import { type JSX, type ParentComponent, splitProps, children, Show, mergeProps } from "solid-js"
 
 import { AnimationEffectTiming } from "@/enums/animation"
-import { element_animate } from "@/utils/element"
-import { promise_done } from "@/utils/object"
+import { elementAnimate } from "@/utils/element"
+import { promiseDone } from "@/utils/object"
 
-import { close_modal, focus_modal, Modal, open_modal, type ModalProps } from "@/components/Modal"
+import { closeModal, focusModal, Modal, openModal, type ModalProps } from "@/components/Modal"
 import FocusableGroup from "@/components/FocusableGroup"
 import './index.scss'
 
-function open_dialog(ev: Event, dialog: HTMLDialogElement, options?: {
-	content_auto_focus?: boolean
+function openDialog(ev: Event, dialog: HTMLDialogElement, options?: {
+	contentAutoFocus?: boolean
 	important?: boolean
 }): void {
-	open_modal(ev, dialog, {...options})
+	openModal(ev, dialog, {...options})
 }
 
 type DialogProps = ModalProps & {
-	c_header?: JSX.Element
-	c_actions?: JSX.Element
-	c_actions_auto_tabindex?: boolean
+	'c:header'?: JSX.Element
+	'c:actions'?: JSX.Element
+	'c:actionsAutoTabIndex'?: boolean
 }
 const Dialog: ParentComponent<DialogProps> = ($props) => {
-	const animation_options = {duration: 200, easing: AnimationEffectTiming.spring_bounce}
+	const animation_options = {duration: 200, easing: AnimationEffectTiming.springBounce}
 	const $$props = mergeProps({
-		c_actions_auto_tabindex: true
+		'c:actionsAutoTabIndex': true
 	}, $props)
 	const [props, other] = splitProps($$props, [
-		'c_header', 'c_actions', 'children', 'classList',
-		'style', 'c_open_animation', 'c_close_animation',
-		'c_actions_auto_tabindex'
+		'c:header', 'c:actions', 'children', 'classList',
+		'style', 'c:openAnimation', 'c:closeAnimation',
+		'c:actionsAutoTabIndex'
 	])
-	const actions = children(() => props.c_actions)
-	const header = children(() => props.c_header)
+	const actions = children(() => props['c:actions'])
+	const header = children(() => props['c:header'])
 
 	return (<Modal
 		classList={{
@@ -43,17 +43,17 @@ const Dialog: ParentComponent<DialogProps> = ($props) => {
 			top: props.style?.top ?? '50%',
 			left: props.style?.left ?? '50%',
 		}}
-		c_open_animation={(el, done) => {
-			if (props.c_open_animation) props.c_open_animation(el, done)
-			else promise_done(element_animate(
+		c:openAnimation={(el, done) => {
+			if (props['c:openAnimation']) props['c:openAnimation'](el, done)
+			else promiseDone(elementAnimate(
 				el,
 				{ transform: ['translate(-50%, calc(-50% - 12px))', 'translate(-50%, -50%)'] },
 				animation_options
 			).finished, done)
 		}}
-		c_close_animation={(el, done) => {
-			if (props.c_close_animation) props.c_close_animation(el, done)
-			else promise_done(element_animate(
+		c:closeAnimation={(el, done) => {
+			if (props['c:closeAnimation']) props['c:closeAnimation'](el, done)
+			else promiseDone(elementAnimate(
 				el,
 				{ transform: ['translate(-50%, -50%)', 'translate(-50%, calc(-50% - 12px))'] },
 				animation_options
@@ -66,13 +66,13 @@ const Dialog: ParentComponent<DialogProps> = ($props) => {
 		<div class="c-dialog-content">{props.children}</div>
 		<Show when={actions()}>
 			<Show
-				when={props.c_actions_auto_tabindex}
+				when={props['c:actionsAutoTabIndex']}
 				fallback={<div class="c-dialog-actions">
 					{actions()}
 				</div>}>
 				<FocusableGroup
 					class="c-dialog-actions"
-					c_arrow_options={{
+					c:arrowOptions={{
 						left: 'prev',
 						right: 'next'
 					}}>{actions()}</FocusableGroup>
@@ -83,9 +83,9 @@ const Dialog: ParentComponent<DialogProps> = ($props) => {
 
 export {
 	Dialog,
-	open_dialog as open_dialog,
-	close_modal as close_dialog,
-	focus_modal as focus_dialog,
+	openDialog as openDialog,
+	closeModal as closeDialog,
+	focusModal as focusDialog,
 }
 export type {
 	DialogProps

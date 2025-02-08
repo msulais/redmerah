@@ -3,24 +3,24 @@ import { createStore } from 'solid-js/store'
 
 import type { HEXColor, RGBColor } from '@/types/color'
 import type { Palette } from './_types'
-import { timeout_clear, timeout_set } from '@/utils/timeout'
-import { generate_color, hex_to_rgb, is_color_valid } from '@/utils/color'
-import { element_animate, element_by_id, element_dataset, element_first_child, element_id, element_set_textcontent, element_tagname, element_valid_target } from '@/utils/element'
+import { timeTimerClear, timeTimerSet } from '@/utils/time'
+import { colorGeneratePalette, colorHexToRgb, colorIsValid } from '@/utils/color'
+import { elementAnimate, elementById, elementDataset, elementFirstChild, elementId, elementTextContentSet, elementTagName, elementValidTarget } from '@/utils/element'
 import { DatabaseNames, LocalStorageKeys } from '@/enums/storage'
-import { storage_get, storage_set } from '@/utils/storage'
+import { storageGet, storageSet } from '@/utils/storage'
 import { ElementIds } from '@/enums/ids'
-import { IDB, idb_store_clear, idb_store_delete, idb_store_put } from '@/utils/indexeddb'
+import { IDB, idbStoreClear, idbStoreDelete, idbStorePut } from '@/utils/indexeddb'
 import { ObjectStoreNames, type ObjectStorePaletteList } from './_storage'
-import { remove_splash_screen } from '@/scripts/splash'
-import { string_touppercase } from '@/utils/string'
-import { array_filter, array_join, array_length, array_push } from '@/utils/array'
-import { navigator_clipboard_writetext } from '@/utils/navigator'
-import { promise_done } from '@/utils/object'
-import { math_round } from '@/utils/math'
-import { event_current_target } from '@/utils/event'
-import { classlist_module } from '@/utils/attributes'
-import { document_active } from '@/utils/document'
-import { number_is_not_defined, number_parse } from '@/utils/number'
+import { removeSplashScreen } from '@/scripts/splash'
+import { stringToUpperCase } from '@/utils/string'
+import { arrayFilter, arrayJoin, arrayLength, arrayPush } from '@/utils/array'
+import { navigatorClipboardWriteText } from '@/utils/navigator'
+import { promiseDone } from '@/utils/object'
+import { mathRound } from '@/utils/math'
+import { eventCurrentTarget } from '@/utils/event'
+import { attrClassListModule } from '@/utils/attributes'
+import { documentActive } from '@/utils/document'
+import { numberIsNotDefined, numberParse } from '@/utils/number'
 import { AnimationEffectTiming } from '@/enums/animation'
 import { ICON_CHECKMARK, ICON_COPY, ICON_DELETE } from '@/constants/icons'
 
@@ -28,153 +28,153 @@ import {Tooltip} from '@/components/Tooltip'
 import Divider from '@/components/Divider'
 import Button, { ButtonVariant, FloatingActionButton, IconButton } from '@/components/Button'
 import List from '@/components/List'
-import ColorPicker, { close_colorpicker, open_colorpicker } from '@/components/ColorPicker'
-import Dialog, { close_dialog, open_dialog } from '@/components/Dialog'
+import ColorPicker, { closeColorPicker, openColorPicker } from '@/components/ColorPicker'
+import Dialog, { closeDialog, openDialog } from '@/components/Dialog'
 import App from '@/components/App'
 import AppBar from './_AppBar'
 import Body from './_Body'
 import CSS from './_styles.module.scss'
 
 const _: VoidComponent = () => {
-	const db = new IDB(DatabaseNames.color_generator)
-	const [palette, set_palette] = createStore<Palette>({
+	const db = new IDB(DatabaseNames.colorGenerator)
+	const [palette, setPalette] = createStore<Palette>({
 		seed: '#00FFF0',
-		accent_light: '#005C56',
-		on_accent_light: '#FFFFFF',
-		accent_dark: '#00C7BB',
-		on_accent_dark: '#000000'
+		accentLight: '#005C56',
+		onAccentLight: '#FFFFFF',
+		accentDark: '#00C7BB',
+		onAccentDark: '#000000'
 	})
-	const [palette_list, set_palette_list] = createSignal<Palette[]>([])
-	const [timeout_id, set_timeout_id] = createSignal<number | null>(null)
-	const [colorpicker_ref, set_colorpicker_ref] = createSignal<HTMLDialogElement | null>(null)
-	const [dialog_colorlist_ref, set_dialog_colorlist_ref] = createSignal<HTMLDialogElement | null>(null)
-	const timeout_copylist: Record<string, number> = {}
-	let dialog_deleteall_ref: HTMLDialogElement
+	const [paletteList, setPaletteList] = createSignal<Palette[]>([])
+	const [timeId, setTimeId] = createSignal<number | null>(null)
+	const [colorPickerRef, setColorPickerRef] = createSignal<HTMLDialogElement | null>(null)
+	const [dialogColorListRef, setDialogColorListRef] = createSignal<HTMLDialogElement | null>(null)
+	const timeCopyList: Record<string, number> = {}
+	let dialogDeleteAllRef: HTMLDialogElement
 
-	function delete_all_palette_list(): void {
-		set_palette_list([])
-		const store_paletteList = db.write_store(ObjectStoreNames.palette_list)
-		if (store_paletteList) idb_store_clear(store_paletteList)
+	function deleteAllPaletteList(): void {
+		setPaletteList([])
+		const storePaletteList = db.writeStore(ObjectStoreNames.paletteList)
+		if (storePaletteList) idbStoreClear(storePaletteList)
 	}
 
-	function rgb_to_css_value(rgb: RGBColor): string {
-		return `${math_round(rgb.r * 0xff)}, ${math_round(rgb.g * 0xff)}, ${math_round(rgb.b * 0xff)}`
+	function rgbToCSSValue(rgb: RGBColor): string {
+		return `${mathRound(rgb.r * 0xff)}, ${mathRound(rgb.g * 0xff)}, ${mathRound(rgb.b * 0xff)}`
 	}
 
-	function on_color_change(color: HEXColor): void {
-		const generated_color = generate_color(color)
-		const element_accentcolor_style = element_by_id(ElementIds.color_accent)!
-		element_accentcolor_style.innerHTML = `:root{--g-color-accent-light: ${rgb_to_css_value(hex_to_rgb(generated_color.color))};--g-color-accent-dark: ${rgb_to_css_value(hex_to_rgb(generated_color.color_dark))};--g-color-on-accent-light: ${rgb_to_css_value(hex_to_rgb(generated_color.on_color))};--g-color-on-accent-dark: ${rgb_to_css_value(hex_to_rgb(generated_color.on_color_dark))};}`;
-		storage_set(LocalStorageKeys.color, color)
-		set_palette({
-			seed: string_touppercase(color) as HEXColor,
-			accent_light: string_touppercase(generated_color.color) as HEXColor,
-			on_accent_light: string_touppercase(generated_color.on_color) as HEXColor,
-			accent_dark: string_touppercase(generated_color.color_dark) as HEXColor,
-			on_accent_dark: string_touppercase(generated_color.on_color_dark) as HEXColor
+	function onColorChange(color: HEXColor): void {
+		const generatedColor = colorGeneratePalette(color)
+		const elementAccentColorStyle = elementById(ElementIds.colorAccent)!
+		elementAccentColorStyle.innerHTML = `:root{--g-color-accent-light: ${rgbToCSSValue(colorHexToRgb(generatedColor.color))};--g-color-accent-dark: ${rgbToCSSValue(colorHexToRgb(generatedColor.colorDark))};--g-color-on-accent-light: ${rgbToCSSValue(colorHexToRgb(generatedColor.onColor))};--g-color-on-accent-dark: ${rgbToCSSValue(colorHexToRgb(generatedColor.onColorDark))};}`;
+		storageSet(LocalStorageKeys.color, color)
+		setPalette({
+			seed: stringToUpperCase(color) as HEXColor,
+			accentLight: stringToUpperCase(generatedColor.color) as HEXColor,
+			onAccentLight: stringToUpperCase(generatedColor.onColor) as HEXColor,
+			accentDark: stringToUpperCase(generatedColor.colorDark) as HEXColor,
+			onAccentDark: stringToUpperCase(generatedColor.onColorDark) as HEXColor
 		})
 	}
 
-	function copy_all_palette_list(): void {
-		if (timeout_id()) {
-			timeout_clear(timeout_id()!)
-			set_timeout_id(null)
+	function copyAllPaletteList(): void {
+		if (timeId()) {
+			timeTimerClear(timeId()!)
+			setTimeId(null)
 		}
 
-		const colors_text: string[] = []
-		for (const i in palette_list()) {
-			const palette = palette_list()[i]
-			array_push(colors_text, array_join([
+		const colorsText: string[] = []
+		for (const i in paletteList()) {
+			const palette = paletteList()[i]
+			arrayPush(colorsText, arrayJoin([
 				`--seed-${i + 1}: ` + palette.seed,
-				`--accent-light-${i + 1}: ` + palette.accent_light,
-				`--on-accent-light-${i + 1}: ` + palette.on_accent_light,
-				`--accent-dark-${i + 1}: ` + palette.accent_dark,
-				`--on-accent-dark-${i + 1}: ` + palette.on_accent_dark,
+				`--accent-light-${i + 1}: ` + palette.accentLight,
+				`--on-accent-light-${i + 1}: ` + palette.onAccentLight,
+				`--accent-dark-${i + 1}: ` + palette.accentDark,
+				`--on-accent-dark-${i + 1}: ` + palette.onAccentDark,
 			], ';\n') + ';')
 		}
 
-		promise_done(
-			navigator_clipboard_writetext(array_join(colors_text, '\n\n')),
-			() => set_timeout_id(timeout_set(() => set_timeout_id(null), 2000))
+		promiseDone(
+			navigatorClipboardWriteText(arrayJoin(colorsText, '\n\n')),
+			() => setTimeId(timeTimerSet(() => setTimeId(null), 2000))
 		)
 	}
 
-	function on_add_color(): void {
-		for (const p of palette_list()) {
+	function onAddColor(): void {
+		for (const p of paletteList()) {
 			if (p.seed == palette.seed) return
 		}
 
-		set_palette_list(l => [...l, {...palette}])
-		const store_paletteList = db.write_store(ObjectStoreNames.palette_list)
-		if (store_paletteList) idb_store_put(store_paletteList, {...palette})
+		setPaletteList(l => [...l, {...palette}])
+		const storePaletteList = db.writeStore(ObjectStoreNames.paletteList)
+		if (storePaletteList) idbStorePut(storePaletteList, {...palette})
 	}
 
-	function init_color(): void {
-		const color = storage_get(LocalStorageKeys.color)
+	function initColor(): void {
+		const color = storageGet(LocalStorageKeys.color)
+		if (!colorIsValid(color ?? '')) return;
 
-		if (!is_color_valid(color ?? '')) return;
-		on_color_change(color as HEXColor)
-		set_palette('seed', color as HEXColor)
+		onColorChange(color as HEXColor)
+		setPalette('seed', color as HEXColor)
 	}
 
-	function init_palette_list(): void {
-		const store_palettelist = db.read_store(ObjectStoreNames.palette_list)
+	function initPaletteList(): void {
+		const store_palettelist = db.readStore(ObjectStoreNames.paletteList)
 		if (store_palettelist == null) return;
 
-		promise_done(
-			db.get_all<ObjectStorePaletteList>(store_palettelist),
-			(result) => set_palette_list(v => result? [...result] : v)
+		promiseDone(
+			db.getAll<ObjectStorePaletteList>(store_palettelist),
+			(result) => setPaletteList(v => result? [...result] : v)
 		)
 	}
 
-	function init_database(): void {
+	function initDatabase(): void {
 		db.open({
-			on_success() {
-				init_palette_list()
+			onSuccess() {
+				initPaletteList()
 			},
-			on_upgrade_needed(_, db) {
-				db.create_store<ObjectStorePaletteList>({
-					name: ObjectStoreNames.palette_list,
-					key_path: 'seed',
-					indexs: ['seed', 'accent_light', 'on_accent_light', 'accent_dark', 'on_accent_dark']
+			onUpgrade(_, db) {
+				db.createStore<ObjectStorePaletteList>({
+					name: ObjectStoreNames.paletteList,
+					keyPath: 'seed',
+					indexs: ['seed', 'accentLight', 'onAccentLight', 'accentDark', 'onAccentDark']
 				})
 			},
 		})
 	}
 
-	function copy_list(button: HTMLElement, index: number) {
-		const palette = palette_list()[index]
-		if (timeout_copylist[palette.seed]) return
+	function copyList(button: HTMLElement, index: number) {
+		const palette = paletteList()[index]
+		if (timeCopyList[palette.seed]) return
 
-		promise_done(
-			navigator_clipboard_writetext(array_join([
+		promiseDone(
+			navigatorClipboardWriteText(arrayJoin([
 				'--seed: ' + palette.seed,
-				'--accent-light: ' + palette.accent_light,
-				'--on-accent-light: ' + palette.on_accent_light,
-				'--accent-dark: ' + palette.accent_dark,
-				'--on-accent-dark: ' + palette.on_accent_dark,
+				'--accent-light: ' + palette.accentLight,
+				'--on-accent-light: ' + palette.onAccentLight,
+				'--accent-dark: ' + palette.accentDark,
+				'--on-accent-dark: ' + palette.onAccentDark,
 			], ';\n') + ';'), () => {
-			const icon = element_first_child(button)
+			const icon = elementFirstChild(button)
 			if (!icon) return
 
-			timeout_copylist[palette.seed] = 1
+			timeCopyList[palette.seed] = 1
 			const animation_option = {
 				duration: 150,
 				easing: AnimationEffectTiming.spring
 			}
-			promise_done(
-				element_animate(icon, {scale: [1, 0]}, animation_option).finished,
+			promiseDone(
+				elementAnimate(icon, {scale: [1, 0]}, animation_option).finished,
 			() => {
-				element_set_textcontent(icon, String.fromCharCode(ICON_CHECKMARK))
-				promise_done(
-					element_animate(icon, {scale: [0, 1]}, animation_option).finished,
-				() =>  timeout_set(() => {
-					promise_done(
-						element_animate(icon, {scale: [1, 0]}, animation_option).finished,
+				elementTextContentSet(icon, String.fromCharCode(ICON_CHECKMARK))
+				promiseDone(
+					elementAnimate(icon, {scale: [0, 1]}, animation_option).finished,
+				() =>  timeTimerSet(() => {
+					promiseDone(
+						elementAnimate(icon, {scale: [1, 0]}, animation_option).finished,
 					() => {
-						element_set_textcontent(icon, String.fromCharCode(ICON_COPY))
-						element_animate(icon, {scale: [0, 1]}, animation_option)
-						delete timeout_copylist[palette.seed]
+						elementTextContentSet(icon, String.fromCharCode(ICON_COPY))
+						elementAnimate(icon, {scale: [0, 1]}, animation_option)
+						delete timeCopyList[palette.seed]
 					})
 				}, 1000))
 			})
@@ -182,166 +182,160 @@ const _: VoidComponent = () => {
 	}
 
 	onMount(() => {
-		init_color()
-		init_database()
-		remove_splash_screen()
+		initColor()
+		initDatabase()
+		removeSplashScreen()
 	})
 
 	const ListItem: Component<{palette: Palette, index: number}> = (props) => {
 		const palette = createMemo(() => props.palette)
 		return (<List
-			c_trailing={<>
+			c:trailing={<>
 				<IconButton
 					data-tooltip="Copy"
 					data-listitem-copy={props.index}
-					c_code={ICON_COPY}
+					c:code={ICON_COPY}
 				/>
 				<IconButton
 					data-tooltip="Delete"
 					data-listitem-delete={props.index}
-					c_code={ICON_DELETE}
+					c:code={ICON_DELETE}
 				/>
 			</>}
-			c_subtitle={<div class={CSS.app_dialog_colors}>
+			c:subtitle={<div class={CSS.app_dialog_colors}>
 				<div data-tooltip="Accent Light" style={{
-					"background-color": palette().accent_light,
-					color: palette().on_accent_light,
-				}}>{palette().accent_light}</div>
+					"background-color": palette().accentLight,
+					color: palette().onAccentLight,
+				}}>{palette().accentLight}</div>
 				<div data-tooltip="On Accent Light" style={{
-					"background-color": palette().on_accent_light,
-					color: palette().accent_light,
-				}}>{palette().on_accent_light}</div>
+					"background-color": palette().onAccentLight,
+					color: palette().accentLight,
+				}}>{palette().onAccentLight}</div>
 				<div data-tooltip="Accent Dark" style={{
-					"background-color": palette().accent_dark,
-					color: palette().on_accent_dark,
-				}}>{palette().accent_dark}</div>
+					"background-color": palette().accentDark,
+					color: palette().onAccentDark,
+				}}>{palette().accentDark}</div>
 					<div data-tooltip="On Accent Dark" style={{
-					"background-color": palette().on_accent_dark,
-					color: palette().accent_dark,
-				}}>{palette().on_accent_dark}</div>
+					"background-color": palette().onAccentDark,
+					color: palette().accentDark,
+				}}>{palette().onAccentDark}</div>
 			</div>}
-			c_leading={<div class={CSS.app_seed} style={{"background-color": palette().seed}}/>}>
+			c:leading={<div class={CSS.app_seed} style={{"background-color": palette().seed}}/>}>
 			{ palette().seed }
 		</List>)
 	}
 
 	const Dialogs: VoidComponent = () => {
-		const button_colorlist_deleteall_id = createUniqueId()
-		const button_colorlist_copy_id = createUniqueId()
-		const button_colorlist_close_id = createUniqueId()
-		const button_deleteall_cancel_id = createUniqueId()
-		const button_deleteall_deleteall_id = createUniqueId()
+		const buttonColorList_deleteAllId = createUniqueId()
+		const buttonColorList_copyId = createUniqueId()
+		const buttonColorList_closeId = createUniqueId()
+		const buttonDeleteAll_cancelId = createUniqueId()
+		const buttonDeleteAll_deleteAllId = createUniqueId()
 		return (<>
 			<Dialog
-				ref={r => set_dialog_colorlist_ref(r)}
+				ref={r => setDialogColorListRef(r)}
 				style={{width: '640px'}}
-				c_header="Color list"
+				c:header="Color list"
 				onClick={ev => {
-					const button = document_active()!
-					if (!element_valid_target(
-						event_current_target(ev),
+					const button = documentActive()!
+					if (!elementValidTarget(
+						eventCurrentTarget(ev),
 						button,
-						el => element_tagname(el) == 'BUTTON'
+						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					switch (element_id(button)) {
-						case button_colorlist_deleteall_id: {
-							open_dialog(ev, dialog_deleteall_ref, {important: true})
-							break
-						}
-						case button_colorlist_copy_id: {
-							copy_all_palette_list()
-							break
-						}
-						case button_colorlist_close_id: {
-							close_dialog(dialog_colorlist_ref()!)
-							break
-						}
-						default: {
-							const data_listitem_copy = element_dataset(button, 'listitemCopy')
-							if (data_listitem_copy) {
-								const index = number_parse(data_listitem_copy, true)
-								if (number_is_not_defined(index)) return
+					switch (elementId(button)) {
+					case buttonColorList_deleteAllId:
+						openDialog(ev, dialogDeleteAllRef, {important: true})
+						break
+					case buttonColorList_copyId:
+						copyAllPaletteList()
+						break
+					case buttonColorList_closeId:
+						closeDialog(dialogColorListRef()!)
+						break
+					default:
+						const dataListitemCopy = elementDataset(button, 'listitemCopy')
+						if (dataListitemCopy) {
+							const index = numberParse(dataListitemCopy, true)
+							if (numberIsNotDefined(index)) return
 
-								copy_list(button, index)
-								return
+							copyList(button, index)
+							return
+						}
+
+						const dataListitemDelete = elementDataset(button, 'listitemDelete')
+						if (dataListitemDelete) {
+							const index = numberParse(dataListitemDelete, true)
+							if (numberIsNotDefined(index)) return
+
+							const palette = paletteList()[index]
+							setPaletteList(l => arrayFilter(l, v => v.seed != palette.seed))
+							if (arrayLength(paletteList()) == 0) {
+								closeColorPicker(dialogColorListRef()!)
 							}
 
-							const data_listitem_delete = element_dataset(button, 'listitemDelete')
-							if (data_listitem_delete) {
-								const index = number_parse(data_listitem_delete, true)
-								if (number_is_not_defined(index)) return
-
-								const palette = palette_list()[index]
-								set_palette_list(l => array_filter(l, v => v.seed != palette.seed))
-								if (array_length(palette_list()) == 0) {
-									close_colorpicker(dialog_colorlist_ref()!)
-								}
-
-								const store_palettelist = db.write_store(ObjectStoreNames.palette_list)
-								if (store_palettelist) idb_store_delete(store_palettelist, palette.seed)
-								return
-							}
+							const storePaletteList = db.writeStore(ObjectStoreNames.paletteList)
+							if (storePaletteList) idbStoreDelete(storePaletteList, palette.seed)
+							return
 						}
 					}
 				}}
-				c_actions={<>
+				c:actions={<>
 					<Button
-						c_variant={ButtonVariant.tonal}
-						id={button_colorlist_deleteall_id}>
+						c:variant={ButtonVariant.tonal}
+						id={buttonColorList_deleteAllId}>
 						Delete all
 					</Button>
 					<Button
-						c_variant={ButtonVariant.tonal}
-						id={button_colorlist_copy_id}>
-						<Show when={timeout_id()} fallback='Copy all'>Copied</Show>
+						c:variant={ButtonVariant.tonal}
+						id={buttonColorList_copyId}>
+						<Show when={timeId()} fallback='Copy all'>Copied</Show>
 					</Button>
 					<Button
-						c_variant={ButtonVariant.filled}
-						id={button_colorlist_close_id}>
+						c:variant={ButtonVariant.filled}
+						id={buttonColorList_closeId}>
 						Close
 					</Button>
 				</>}>
 				<Tooltip>
-					<For each={palette_list()}>{(p, i) => <>
+					<For each={paletteList()}>{(p, i) => <>
 						<Show when={i() > 0}><Divider /></Show>
 						<ListItem palette={p} index={i()}/>
 					</>}</For>
 				</Tooltip>
 			</Dialog>
 			<Dialog
-				ref={r => dialog_deleteall_ref = r}
-				c_header="Delete all"
+				ref={r => dialogDeleteAllRef = r}
+				c:header="Delete all"
 				onClick={ev => {
-					const button = document_active()!
-					if (!element_valid_target(
-						event_current_target(ev),
+					const button = documentActive()!
+					if (!elementValidTarget(
+						eventCurrentTarget(ev),
 						button,
-						el => element_tagname(el) == 'BUTTON'
+						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					switch (element_id(button)) {
-						case button_deleteall_cancel_id: {
-							close_dialog(dialog_deleteall_ref)
-							break
-						}
-						case button_deleteall_deleteall_id: {
-							close_dialog(dialog_deleteall_ref)
-							close_dialog(dialog_colorlist_ref()!)
-							delete_all_palette_list()
-							break
-						}
+					switch (elementId(button)) {
+					case buttonDeleteAll_cancelId:
+						closeDialog(dialogDeleteAllRef)
+						break
+					case buttonDeleteAll_deleteAllId:
+						closeDialog(dialogDeleteAllRef)
+						closeDialog(dialogColorListRef()!)
+						deleteAllPaletteList()
+						break
 					}
 				}}
-				c_actions={<>
+				c:actions={<>
 					<Button
-						id={button_deleteall_cancel_id}
-						c_variant={ButtonVariant.tonal}>
+						id={buttonDeleteAll_cancelId}
+						c:variant={ButtonVariant.tonal}>
 						Cancel
 					</Button>
 					<Button
-						id={button_deleteall_deleteall_id}
-						c_variant={ButtonVariant.filled}>
+						id={buttonDeleteAll_deleteAllId}
+						c:variant={ButtonVariant.filled}>
 						Delete all
 					</Button>
 				</>}>
@@ -352,20 +346,20 @@ const _: VoidComponent = () => {
 
 	return (<>
 		<App
-			c_appbar={<AppBar
-				colorpicker_ref={colorpicker_ref()!}
-				dialog_colorlist_ref={dialog_colorlist_ref()!}
-				on_add_color={on_add_color}
+			c:appBar={<AppBar
+				colorPickerRef={colorPickerRef()!}
+				dialogColorListRef={dialogColorListRef()!}
+				onAddColor={onAddColor}
 				seed={palette.seed}
 				palette={palette}
-				on_color_change={on_color_change}
-				palette_list={palette_list()}
+				onColorChange={onColorChange}
+				paletteList={paletteList()}
 			/>}
-			c_floating_action_button={<FloatingActionButton
-				classList={classlist_module(CSS.app_fab)}
-				c_variant={ButtonVariant.filled}
-				onClick={(ev) => open_colorpicker(ev, colorpicker_ref()!, {
-					anchor: event_current_target(ev),
+			c:floatingActionButton={<FloatingActionButton
+				classList={attrClassListModule(CSS.app_fab)}
+				c:variant={ButtonVariant.filled}
+				onClick={(ev) => openColorPicker(ev, colorPickerRef()!, {
+					anchor: eventCurrentTarget(ev),
 					color: palette.seed as HEXColor
 				})}>
 				{palette.seed}
@@ -373,12 +367,12 @@ const _: VoidComponent = () => {
 			<Body {...palette} />
 		</App>
 		<ColorPicker
-			ref={r => set_colorpicker_ref(r)}
-			c_color={palette.seed}
-			c_draggable
-			c_disabled_action
-			c_disabled_opacity_control
-			c_on_update_color={on_color_change}
+			ref={r => setColorPickerRef(r)}
+			c:color={palette.seed}
+			c:draggable
+			c:disabledAction
+			c:disabledOpacityControl
+			c:onUpdateColor={onColorChange}
 		/>
 		<Dialogs />
 	</>)

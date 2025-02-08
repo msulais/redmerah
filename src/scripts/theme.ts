@@ -1,19 +1,14 @@
 import { RootAttributes } from "@/enums/attributes"
 import { LocalStorageKeys } from "@/enums/storage"
 import { ThemeData } from "@/enums/theme"
-import { attr_set } from "@/utils/attributes"
-import { document_root } from "@/utils/document"
-import { storage_get } from "@/utils/storage"
+import { attrSet } from "@/utils/attributes"
+import { documentRoot } from "@/utils/document"
+import { validEnumValue } from "@/utils/object"
+import { storageGet } from "@/utils/storage"
 
-export function check_theme(): void {
-	const theme = storage_get(LocalStorageKeys.theme)
-	if (
-		!theme
-		|| (
-			theme != ThemeData.system
-			&& theme != ThemeData.dark
-			&& theme != ThemeData.light
-		)
-	) return
-	attr_set(document_root(), RootAttributes.theme, theme)
+export function checkTheme(): void {
+	const theme = storageGet(LocalStorageKeys.theme)
+	if (!theme || !validEnumValue(theme, ThemeData)) return
+
+	attrSet(documentRoot(), RootAttributes.theme, theme)
 }

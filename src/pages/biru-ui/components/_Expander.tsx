@@ -1,6 +1,6 @@
 import { createSignal, For, Show, type VoidComponent } from "solid-js"
 
-import { event_current_target, event_stop_propagation } from "@/utils/event"
+import { eventCurrentTarget, eventStopPropagation } from "@/utils/event"
 
 import Icon from "@/components/Icon"
 import { IconButton } from "@/components/Button"
@@ -12,30 +12,30 @@ import { Page, Playground, PlaygroundOptions } from "../_Body"
 import { ICON_HISTORY, ICON_INFO, ICON_OPEN } from "@/constants/icons"
 
 const _: VoidComponent = () => {
-	const [title, set_title] = createSignal<boolean>(true)
-	const [subtitle, set_subtitle] = createSignal<boolean>(false)
-	const [leading, set_leading] = createSignal<boolean>(false)
-	const [trailing, set_trailing] = createSignal<boolean>(false)
-	const [use_expand_icon, set_use_expand_icon] = createSignal<boolean>(true)
-	const [variant, set_variant] = createSignal<ExpanderVariant>(ExpanderVariant.tonal)
-	const [content, set_content] = createSignal<boolean>(true)
+	const [title, setTitle] = createSignal<boolean>(true)
+	const [subtitle, setSubtitle] = createSignal<boolean>(false)
+	const [leading, setLeading] = createSignal<boolean>(false)
+	const [trailing, setTrailing] = createSignal<boolean>(false)
+	const [useExpandIcon, setUseExpandIcon] = createSignal<boolean>(true)
+	const [variant, setVariant] = createSignal<ExpanderVariant>(ExpanderVariant.tonal)
+	const [content, setContent] = createSignal<boolean>(true)
 	return (<Page
 		title="Expander"
 		description="An expander is a UI element that allows users to reveal or collapse hidden content within a list item.">
 		<Playground>
 			<Tooltip>
 				<Expander
-					c_header={<ExpanderHeader
-						c_use_expand_icon={use_expand_icon()}
-						c_subtitle={<Show when={subtitle()}>Deserunt commodo qui aute veniam tempor ipsum.</Show>}
-						c_leading={<Show when={leading()}><Icon c_code={ICON_INFO}/></Show>}
-						c_trailing={<Show when={trailing()}>
-							<IconButton onClick={ev => event_stop_propagation(ev)} c_code={ICON_HISTORY}/>
-							<IconButton onClick={ev => event_stop_propagation(ev)} c_code={ICON_OPEN}/>
+					c:header={<ExpanderHeader
+						c:useExpandIcon={useExpandIcon()}
+						c:subtitle={<Show when={subtitle()}>Deserunt commodo qui aute veniam tempor ipsum.</Show>}
+						c:leading={<Show when={leading()}><Icon c:code={ICON_INFO}/></Show>}
+						c:trailing={<Show when={trailing()}>
+							<IconButton onClick={ev => eventStopPropagation(ev)} c:code={ICON_HISTORY}/>
+							<IconButton onClick={ev => eventStopPropagation(ev)} c:code={ICON_OPEN}/>
 						</Show>}>
 						<Show when={title()}>Click to expand</Show>
 					</ExpanderHeader>}
-					c_variant={variant()}>
+					c:variant={variant()}>
 					<Show when={content()}>
 						<p style={{"margin-bottom": '1.15em'}}>Deserunt sint voluptate nisi reprehenderit anim veniam ex quis deserunt ad. Aute duis commodo veniam incididunt aute anim anim et. Ipsum exercitation ea minim voluptate veniam ad duis dolore. Do officia amet adipisicing ea incididunt labore ipsum commodo minim. Quis ipsum dolor non sunt magna ad aliqua. Ea minim reprehenderit sint exercitation nostrud veniam nisi sit. Ut et culpa occaecat proident id sint officia anim adipisicing.</p>
 						<p>Qui culpa cillum sunt sit in dolore ullamco excepteur ipsum ex do ut reprehenderit. Magna dolor excepteur velit ullamco laboris. Esse nulla qui sit enim et ex ullamco tempor eiusmod voluptate eiusmod non dolore. Aliquip mollit tempor id qui do consequat occaecat mollit. Voluptate nisi deserunt ipsum quis eiusmod tempor culpa excepteur tempor velit deserunt.</p>
@@ -45,44 +45,44 @@ const _: VoidComponent = () => {
 		</Playground>
 		<PlaygroundOptions>
 			<Dropdown
-				c_label="Variant"
-				c_values={[variant()]}
-				c_on_change={(items) => set_variant(items[0].value as ExpanderVariant)}>
+				c:label="Variant"
+				c:values={[variant()]}
+				c:onChange={(items) => setVariant(items[0].value as ExpanderVariant)}>
 				<For each={[
 					[ExpanderVariant.filled, 'Filled'],
 					[ExpanderVariant.tonal, 'Tonal'],
 					[ExpanderVariant.outlined, 'Outlined'],
 					[ExpanderVariant.transparent, 'Transparent'],
-				]}>{option => <DropdownOption c_value={option[0]} c_text={option[1] as string} />}</For>
+				]}>{option => <DropdownOption c:value={option[0]} c:text={option[1] as string} />}</For>
 			</Dropdown>
 			<CheckBox
 				checked={title()}
-				onChange={ev => set_title(event_current_target(ev).checked)}>
+				onChange={ev => setTitle(eventCurrentTarget(ev).checked)}>
 				Title
 			</CheckBox>
 			<CheckBox
 				checked={subtitle()}
-				onChange={ev => set_subtitle(event_current_target(ev).checked)}>
+				onChange={ev => setSubtitle(eventCurrentTarget(ev).checked)}>
 				Subtitle
 			</CheckBox>
 			<CheckBox
 				checked={leading()}
-				onChange={ev => set_leading(event_current_target(ev).checked)}>
+				onChange={ev => setLeading(eventCurrentTarget(ev).checked)}>
 				Leading
 			</CheckBox>
 			<CheckBox
 				checked={trailing()}
-				onChange={ev => set_trailing(event_current_target(ev).checked)}>
+				onChange={ev => setTrailing(eventCurrentTarget(ev).checked)}>
 				Trailing
 			</CheckBox>
 			<CheckBox
-				checked={use_expand_icon()}
-				onChange={ev => set_use_expand_icon(event_current_target(ev).checked)}>
+				checked={useExpandIcon()}
+				onChange={ev => setUseExpandIcon(eventCurrentTarget(ev).checked)}>
 				Show expand icon
 			</CheckBox>
 			<CheckBox
 				checked={content()}
-				onChange={ev => set_content(event_current_target(ev).checked)}>
+				onChange={ev => setContent(eventCurrentTarget(ev).checked)}>
 				Content
 			</CheckBox>
 		</PlaygroundOptions>

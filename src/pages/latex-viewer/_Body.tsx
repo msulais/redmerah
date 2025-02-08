@@ -2,19 +2,19 @@ import { createEffect, createMemo, createSignal, Index, Show, type Accessor, typ
 import katex from 'katex'
 
 import type { Settings } from "./_types"
-import { timeout_clear, timeout_set } from "@/utils/timeout"
+import { timeTimerClear, timeTimerSet } from "@/utils/time"
 import { Commands } from "./_enums"
-import { attr_set_if_exist } from "@/utils/attributes"
-import { navigator_clipboard_writetext } from "@/utils/navigator"
-import { promise_done } from "@/utils/object"
-import { element_dataset, element_scroll_height, element_tagname, element_valid_target } from "@/utils/element"
-import { array_length } from "@/utils/array"
-import { document_active } from "@/utils/document"
-import { event_current_target } from "@/utils/event"
-import { number_is_not_defined, number_parse } from "@/utils/number"
+import { attrSetIfExist } from "@/utils/attributes"
+import { navigatorClipboardWriteText } from "@/utils/navigator"
+import { promiseDone } from "@/utils/object"
+import { elementDataset, elementScrollHeight, elementTagName, elementValidTarget } from "@/utils/element"
+import { arrayLength } from "@/utils/array"
+import { documentActive } from "@/utils/document"
+import { eventCurrentTarget } from "@/utils/event"
+import { numberIsNotDefined, numberParse } from "@/utils/number"
 import { ICON_ADD, ICON_COPY, ICON_DELETE } from "@/constants/icons"
 
-import Toast, { open_toast } from "@/components/Toast"
+import Toast, { openToast } from "@/components/Toast"
 import Button, { ButtonVariant, IconButton } from "@/components/Button"
 import Icon from "@/components/Icon"
 import Tooltip from "@/components/Tooltip"
@@ -22,50 +22,50 @@ import CSS from './_styles.module.scss'
 
 const LatexEditor: VoidComponent<{
 	index: number
-	is_only_one: boolean
+	isOnlyOne: boolean
 	latex: Accessor<string>
 	settings: Settings
 	command: (type: Commands, ...args: unknown[]) => unknown
 }> = props => {
-	const [height, set_height] = createSignal<number>(0)
+	const [height, setHeight] = createSignal<number>(0)
 	const settings = createMemo(() => props.settings)
 	const index = createMemo(() => props.index)
-	let timeout_update_id: number | null = null
-	let textarea_ref: HTMLTextAreaElement
+	let timeUpdateId: number | null = null
+	let textAreaRef: HTMLTextAreaElement
 
 	function save_input(): void {
-		if (timeout_update_id != null) timeout_clear(timeout_update_id)
-		timeout_update_id = timeout_set(() => {
-			const text = textarea_ref.value
-			props.command(Commands.update_latex_input, text, index())
-			timeout_update_id = null
+		if (timeUpdateId != null) timeTimerClear(timeUpdateId)
+		timeUpdateId = timeTimerSet(() => {
+			const text = textAreaRef.value
+			props.command(Commands.updateLatexInput, text, index())
+			timeUpdateId = null
 		}, 500)
 	}
 
 	createEffect(() => {
 		const latex = props.latex()
 
-		textarea_ref.value = latex
-		timeout_set(() => {
-			set_height(0)
-			set_height(element_scroll_height(textarea_ref))
+		textAreaRef.value = latex
+		timeTimerSet(() => {
+			setHeight(0)
+			setHeight(elementScrollHeight(textAreaRef))
 		})
 	})
 
 	return (<div class={CSS.body_latex_editor}>
 		<textarea
-			ref={r => textarea_ref = r}
+			ref={r => textAreaRef = r}
 			rows={1}
 			placeholder="Type your LaTeX here ..."
 			onInput={() => {
-				set_height(0)
-				set_height(element_scroll_height(textarea_ref!))
+				setHeight(0)
+				setHeight(elementScrollHeight(textAreaRef!))
 				save_input()
 			}}
 			value={props.latex()}
-			data-text-wrap={attr_set_if_exist(settings().text_wrap)}
+			data-text-wrap={attrSetIfExist(settings().textWrap)}
 			style={{
-				"font-size": settings().font_size + 'px',
+				"font-size": settings().fontSize + 'px',
 				"height": height() + 'px'
 			}}
 		/>
@@ -78,21 +78,21 @@ const LatexEditor: VoidComponent<{
 		<div class={CSS.body_new_equation_bottom}>
 			<Button
 				data-new={index()}
-				c_variant={ButtonVariant.tonal}>
-				<Icon c_code={ICON_ADD}/>New equation
+				c:variant={ButtonVariant.tonal}>
+				<Icon c:code={ICON_ADD}/>New equation
 			</Button>
 			<IconButton
 				data-tooltip={"Copy"}
 				data-copy={index()}
-				c_code={ICON_COPY}
-				c_variant={ButtonVariant.tonal}
+				c:code={ICON_COPY}
+				c:variant={ButtonVariant.tonal}
 			/>
-			<Show when={!props.is_only_one}>
+			<Show when={!props.isOnlyOne}>
 				<IconButton
 					data-tooltip="Delete"
 					data-delete={index()}
-					c_code={ICON_DELETE}
-					c_variant={ButtonVariant.tonal}
+					c:code={ICON_DELETE}
+					c:variant={ButtonVariant.tonal}
 				/>
 			</Show>
 		</div>
@@ -106,7 +106,7 @@ const _: VoidComponent<{
 }> = (props) => {
 	const settings = createMemo(() => props.settings)
 	const latex = createMemo(() => props.latex)
-	let toast_copy_ref: HTMLDivElement
+	let toastCopyRef: HTMLDivElement
 
 	function command(type: Commands, ...args: unknown[]): unknown {
 		return props.command(type, ...args)
@@ -115,52 +115,52 @@ const _: VoidComponent<{
 	return (<main
 		class={CSS.body}
 		onClick={ev => {
-			const button = document_active()!
-			if (!element_valid_target(
-				event_current_target(ev),
+			const button = documentActive()!
+			if (!elementValidTarget(
+				eventCurrentTarget(ev),
 				button,
-				el => element_tagname(el) == 'BUTTON'
+				el => elementTagName(el) == 'BUTTON'
 			)) return
 
-			const data_new = element_dataset(button, 'new')
-			if (data_new) {
-				const index = number_parse(data_new, true)
-				if (number_is_not_defined(index)) return
+			const dataNew = elementDataset(button, 'new')
+			if (dataNew) {
+				const index = numberParse(dataNew, true)
+				if (numberIsNotDefined(index)) return
 
-				command(Commands.add_equation, index + 1)
+				command(Commands.addEquation, index + 1)
 				return
 			}
 
-			const data_delete = element_dataset(button, 'delete')
-			if (data_delete) {
-				const index = number_parse(data_delete, true)
-				if (number_is_not_defined(index)) return
+			const dataDelete = elementDataset(button, 'delete')
+			if (dataDelete) {
+				const index = numberParse(dataDelete, true)
+				if (numberIsNotDefined(index)) return
 
-				command(Commands.delete_equation, index)
+				command(Commands.deleteEquation, index)
 				return
 			}
 
-			const data_copy = element_dataset(button, 'copy')
-			if (data_copy) {
-				const index = number_parse(data_copy, true)
-				if (number_is_not_defined(index)) return
+			const dataCopy = elementDataset(button, 'copy')
+			if (dataCopy) {
+				const index = numberParse(dataCopy, true)
+				if (numberIsNotDefined(index)) return
 
-				promise_done(
-					navigator_clipboard_writetext(
+				promiseDone(
+					navigatorClipboardWriteText(
 						settings().prefix
 						+ latex()[index]
 						+ settings().suffix
 					),
-					() => open_toast(ev, toast_copy_ref)
+					() => openToast(ev, toastCopyRef)
 				)
 				return
 			}
 		}}>
 		<div class={CSS.body_new_equation_top}>
 			<Button
-				onClick={() => command(Commands.add_equation, 0)}
-				c_variant={ButtonVariant.filled}>
-				<Icon c_code={ICON_ADD}/>New equation
+				onClick={() => command(Commands.addEquation, 0)}
+				c:variant={ButtonVariant.filled}>
+				<Icon c:code={ICON_ADD}/>New equation
 			</Button>
 		</div>
 		<Tooltip>
@@ -168,13 +168,13 @@ const _: VoidComponent<{
 				command={command}
 				latex={l}
 				index={i}
-				is_only_one={array_length(latex()) == 1}
+				isOnlyOne={arrayLength(latex()) == 1}
 				settings={props.settings}
 			/>}</Index>
 		</Tooltip>
 		<Toast
-			ref={r => toast_copy_ref = r}
-			c_leading={<Icon c_code={ICON_COPY}/>}>
+			ref={r => toastCopyRef = r}
+			c:leading={<Icon c:code={ICON_COPY}/>}>
 			Copied to clipboard
 		</Toast>
 	</main>)

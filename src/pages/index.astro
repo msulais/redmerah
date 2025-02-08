@@ -3,8 +3,8 @@ import { themeFromSourceColor } from "@material/material-color-utilities"
 
 import { RoutesLinks } from '@/enums/links'
 import type { HEXColor } from '@/types/color'
-import { hex_argb_to_rgb, rgb_to_hex } from '@/utils/color'
-import { apps } from '@/constants/apps'
+import { colorHexArgbToRgb, colorRgbToHex } from '@/utils/color'
+import { APPS } from '@/constants/apps'
 import logo from '@/assets/logo.svg'
 
 import Html from '@/layouts/Html/index.astro'
@@ -17,8 +17,8 @@ import Splash from '@/layouts/Splash/index.astro'
 import CSSAnimation from '@/styles/animation.module.scss'
 import CSS from './_index.module.scss'
 import { ICON_ARROW_RIGHT, ICON_DATABASE_PERSON, ICON_OPEN, ICON_SETTINGS_COG_MULTIPLE, ICON_SPARKLE } from '@/constants/icons'
-import { number_parse, number_to_string } from "@/utils/number"
-import { string_substring } from "@/utils/string"
+import { numberParse, numberToString } from "@/utils/number"
+import { stringSubstring } from "@/utils/string"
 
 const features = [
 	{
@@ -39,9 +39,9 @@ const features = [
 ]
 
 function color_app_background(color: HEXColor): string {
-	const theme = themeFromSourceColor(number_parse(string_substring(color, 1), true, 16)).schemes
-	const light = rgb_to_hex(hex_argb_to_rgb('#' + number_to_string(theme.light.primaryContainer, 16) as HEXColor))
-	const dark = rgb_to_hex(hex_argb_to_rgb('#' + number_to_string(theme.dark.primaryContainer, 16) as HEXColor))
+	const theme = themeFromSourceColor(numberParse(stringSubstring(color, 1), true, 16)).schemes
+	const light = colorRgbToHex(colorHexArgbToRgb('#' + numberToString(theme.light.primaryContainer, 16) as HEXColor))
+	const dark = colorRgbToHex(colorHexArgbToRgb('#' + numberToString(theme.dark.primaryContainer, 16) as HEXColor))
 	return `--color-accent-light:${light};--color-accent-dark:${dark}7F;`
 }
 ---
@@ -58,9 +58,9 @@ function color_app_background(color: HEXColor): string {
 		</div>
 		<main class={CSS.main}>
 			<section class={CSS.apps}>
-				{apps.map((v, i) => <>{i < 3 && <div
+				{APPS.map((v, i) => <>{i < 3 && <div
 					style={color_app_background(v.color)}>
-					<img src={v.logo_url} alt={v.name} />
+					<img src={v.logoUrl} alt={v.name} />
 					<h3>{v.name}</h3>
 					<p>{v.description}</p>
 					<LinkButton classList={[CSSAnimation.btn_scale_up_icon]} variant={ButtonVariant.outlined} href={v.link}>Open <Icon filled code={ICON_OPEN}/></LinkButton>
@@ -92,16 +92,16 @@ function color_app_background(color: HEXColor): string {
 </Html>
 
 <script>
-	import { element_animate, element_by_id, element_all_by_selector } from "@/utils/element"
-	import { array_length } from "@/utils/array"
+	import { elementAnimate, elementById, elementAllBySelector } from "@/utils/element"
+	import { arrayLength } from "@/utils/array"
 
-	const quote = element_by_id('quote') as HTMLParagraphElement
-	const spans = element_all_by_selector<HTMLSpanElement>('#quote span')
+	const quote = elementById('quote') as HTMLParagraphElement
+	const spans = elementAllBySelector<HTMLSpanElement>('#quote span')
 	const observer = new IntersectionObserver((entries) => {
 		for (const entry of entries) {
 			if (!entry.isIntersecting) continue;
-			for (let i = 0; i < array_length(spans as unknown as any[]); i++) {
-				element_animate(spans[i], [{
+			for (let i = 0; i < arrayLength(spans as unknown as any[]); i++) {
+				elementAnimate(spans[i], [{
 					transform: 'translateY(-0.4em)',
 					offset: 0.5
 				}], {

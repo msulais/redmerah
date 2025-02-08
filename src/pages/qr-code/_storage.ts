@@ -15,10 +15,10 @@ export enum ObjectStoreNames {
 
 export enum ObjectStoreKeys {
 	/** @param value `Pages` */
-	miscellaneous_lastpage = 'last_page',
+	miscellaneous_lastPage = 'last-page',
 
 	/** @param value `HEXColor` */
-	settings_backgroundcolor = 'background_color',
+	settings_backgroundColor = 'background-color',
 
 	/** @param value `HEXColor` */
 	settings_color = 'color',
@@ -30,8 +30,8 @@ export enum ObjectStoreKeys {
 	settings_version = 'version',
 
 	/** @param value `ErrorCorrectionLevel` */
-	settings_errorcorrectionlevel = 'error_correction_level',
+	settings_errorCorrectionLevel = 'error-correction-level',
 
 	/** @param value `EncodingMode` */
-	settings_encodingmode = 'encoding_mode',
+	settings_encodingMode = 'encoding-mode',
 }

@@ -1,11 +1,11 @@
 import type { HEXColor } from "./color"
 
 export type AppItem = {
-	logo_url: string
+	logoUrl: string
 	name: string
 	description: string
 	link: string
 	color: HEXColor
-	build_number: number
-	build_version: `${string}.${string}.${string}`
+	buildNumber: number
+	buildVersion: `${string}.${string}.${string}`
 }

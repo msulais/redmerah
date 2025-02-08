@@ -1,95 +1,95 @@
-import { math_floor } from "./math"
+import { mathFloor } from "./math"
 
-export function array_filter<T>(
+export function arrayFilter<T>(
 	arr: T[],
 	predicate: (value: T, index: number, array: T[]) => boolean,
-	this_arg?: any
+	thisArg?: any
 ): T[] {
-	return arr.filter(predicate, this_arg)
+	return arr.filter(predicate, thisArg)
 }
 
-export function array_find_index<T>(
+export function arrayFindIndex<T>(
 	arr: T[],
 	predicate: (value: T, index: number, array: T[]) => boolean,
-	this_arg?: any
+	thisArg?: any
 ): number {
-	return arr.findIndex(predicate, this_arg)
+	return arr.findIndex(predicate, thisArg)
 }
 
-export function array_splice<T>(arr: T[], start: number, delete_count?: number): T[] {
-	return arr.splice(start, delete_count)
+export function arraySplice<T>(arr: T[], start: number, deleteCount?: number): T[] {
+	return arr.splice(start, deleteCount)
 }
 
-export function array_concat<T>(arr: T[], ...items: ConcatArray<T>[]): T[] {
+export function arrayConcat<T>(arr: T[], ...items: ConcatArray<T>[]): T[] {
 	return arr.concat(...items)
 }
 
-export function array_at<T>(arr: T[], index: number): T | undefined {
+export function arrayAt<T>(arr: T[], index: number): T | undefined {
 	return arr.at(index)
 }
 
-export function array_fill<T>(arr: T[], value: T, start?: number, end?: number): T[] {
+export function arrayFill<T>(arr: T[], value: T, start?: number, end?: number): T[] {
 	return arr.fill(value, start, end)
 }
 
-export function array_slice<T>(arr: T[], start?: number, end?: number): T[] {
+export function arraySlice<T>(arr: T[], start?: number, end?: number): T[] {
 	return arr.slice(start, end)
 }
 
-export function array_sort<T>(arr: T[], comparefn?: ((a: T, b: T) => number) | undefined): T[] {
-	return arr.sort(comparefn)
+export function arraySort<T>(arr: T[], compareFn?: ((a: T, b: T) => number) | undefined): T[] {
+	return arr.sort(compareFn)
 }
 
-export function array_some<T>(
+export function arraySome<T>(
 	arr: T[],
 	predicate: (value: T, index: number, array: T[]) => boolean,
-	this_arg?: any
+	thisArg?: any
 ): boolean {
-	return arr.some(predicate, this_arg)
+	return arr.some(predicate, thisArg)
 }
 
-export function array_push<T>(arr: T[], ...items: T[]): number {
+export function arrayPush<T>(arr: T[], ...items: T[]): number {
 	return arr.push(...items)
 }
 
-export function array_join<T>(arr: T[], separator?: string): string {
+export function arrayJoin<T>(arr: T[], separator?: string): string {
 	return arr.join(separator)
 }
 
-export function array_map<T, U>(
+export function arrayMap<T, U>(
 	arr: T[],
-	callbackfn: (value: T, index: number, array: T[]) => U,
-	thisarg?: any
+	callbackFn: (value: T, index: number, array: T[]) => U,
+	thisArg?: any
 ): U[] {
-	return arr.map(callbackfn, thisarg)
+	return arr.map(callbackFn, thisArg)
 }
 
-export function array_length<T>(arr: T[]): number {
+export function arrayLength<T>(arr: T[]): number {
 	return arr.length
 }
 
-export function array_reverse<T>(arr: T[]): T[] {
+export function arrayReverse<T>(arr: T[]): T[] {
 	return arr.reverse()
 }
 
-export function array_includes<T>(arr: T[], search_element: T, from_index?: number): boolean {
-	return arr.includes(search_element, from_index)
+export function arrayIncludes<T>(arr: T[], searchValue: T, startIndex?: number): boolean {
+	return arr.includes(searchValue, startIndex)
 }
 
-export function array_foreach<T>(
+export function arrayForEach<T>(
 	arr: T[],
-	callbackfn: (value: T, index: number, array: T[]) => void,
-	this_arg?: any
+	callbackFn: (value: T, index: number, array: T[]) => void,
+	thisArg?: any
 ): void {
-	return arr.forEach(callbackfn, this_arg)
+	return arr.forEach(callbackFn, thisArg)
 }
 
-export function binary_search(array: number[], target: number): number | null {
+export function arrayBinarySearch(array: number[], target: number): number | null {
 	let left = 0
-	let right = array_length(array) - 1
+	let right = arrayLength(array) - 1
 
 	while (left <= right) {
-		const middle = math_floor((left + right) / 2)
+		const middle = mathFloor((left + right) / 2)
 		if (array[middle] === target) return middle
 		else if (array[middle] < target) left = middle + 1
 		else right = middle - 1
@@ -98,26 +98,26 @@ export function binary_search(array: number[], target: number): number | null {
 	return null
 }
 
-export function array_find<T>(
+export function arrayFind<T>(
 	arr: T[],
 	predicate: (value: T, index: number, obj: T[]) => boolean,
-	this_arg?: any
+	thisArg?: any
 ): T | undefined {
-	return arr.find(predicate, this_arg)
+	return arr.find(predicate, thisArg)
 }
 
-export function array_every<T>(
+export function arrayEvery<T>(
 	arr: T[],
 	predicate: (value: T, index: number, array: T[]) => boolean,
-	this_arg?: any
+	thisArg?: any
 ): boolean {
-	return arr.every(predicate, this_arg)
+	return arr.every(predicate, thisArg)
 }
 
-export function array_to_string<T>(arr: T[]): string {
+export function arrayToString<T>(arr: T[]): string {
 	return arr.toString()
 }
 
-export function array_equals<T, U>(arr: T[], target: U[]): boolean {
-	return array_to_string(arr) == array_to_string(target)
+export function arrayEquals<T, U>(arr: T[], target: U[]): boolean {
+	return arrayToString(arr) == arrayToString(target)
 }

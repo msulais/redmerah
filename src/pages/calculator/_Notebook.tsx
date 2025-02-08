@@ -1,33 +1,33 @@
 import { createEffect, createMemo, type VoidComponent } from "solid-js"
 
-import { attr_set_if_exist } from "@/utils/attributes"
-import { event_current_target } from "@/utils/event"
+import { attrSetIfExist } from "@/utils/attributes"
+import { eventCurrentTarget } from "@/utils/event"
 
-import { AreaTextField, change_areatextfield_value } from "@/components/TextField"
+import { AreaTextField, updateAreaTextFieldValue } from "@/components/TextField"
 import CSS from './_styles.module.scss'
 
 const _: VoidComponent<{
 	expanded: boolean
 	note: string
-	on_note_changed: (value: string) => unknown
+	onNoteChanged: (value: string) => unknown
 }> = (props) => {
 	const note = createMemo(() => props.note)
-	let textarea_ref: HTMLTextAreaElement
+	let textAreaRef: HTMLTextAreaElement
 
 	createEffect(() => {
-		const value = textarea_ref.value
+		const value = textAreaRef.value
 		if (note() == value) return;
 
-		if (value == '') return change_areatextfield_value(textarea_ref, note())
-		textarea_ref.value = note()
+		if (value == '') return updateAreaTextFieldValue(textAreaRef, note())
+		textAreaRef.value = note()
 	})
 
-	return (<div class={CSS.notebook} data-expand={attr_set_if_exist(props.expanded)}>
+	return (<div class={CSS.notebook} data-expand={attrSetIfExist(props.expanded)}>
 		<AreaTextField
-			ref={r => textarea_ref = r}
-			c_label="Notebook"
+			ref={r => textAreaRef = r}
+			c:label="Notebook"
 			placeholder="Type your thought here ..."
-			onInput={(ev) => props.on_note_changed(event_current_target(ev).value)}
+			onInput={(ev) => props.onNoteChanged(eventCurrentTarget(ev).value)}
 		/>
 	</div>)
 }

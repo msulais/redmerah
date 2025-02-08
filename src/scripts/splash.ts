@@ -1,43 +1,43 @@
 import { AnimationEffectTiming } from "@/enums/animation"
 import { BodyAttributes } from "@/enums/attributes"
 import { ElementIds } from "@/enums/ids"
-import { attr_get, attr_remove } from "@/utils/attributes"
-import { document_body } from "@/utils/document"
-import { element_animate, element_remove, element_by_id } from "@/utils/element"
-import { number_parse, number_safe } from "@/utils/number"
-import { promise_done } from "@/utils/object"
-import { timeout_set } from "@/utils/timeout"
+import { attrGet, attrRemove } from "@/utils/attributes"
+import { documentBody } from "@/utils/document"
+import { elementAnimate, elementRemove, elementById } from "@/utils/element"
+import { numberParse, numberSafe } from "@/utils/number"
+import { promiseDone } from "@/utils/object"
+import { timeTimerSet } from "@/utils/time"
 
 let COMPONENT_COUNT: number = 0
 let COMPONENT_COUNT_MAX: number | null = null
 
-export function remove_splash_screen(timeout: number = 0): void {
-	timeout_set(() => {
-		const splash_ref = element_by_id(ElementIds.splash)
-		if (!splash_ref) return;
+export function removeSplashScreen(timeout: number = 0): void {
+	timeTimerSet(() => {
+		const splashRef = elementById(ElementIds.splash)
+		if (!splashRef) return;
 
-		promise_done(element_animate(
-			splash_ref,
+		promiseDone(elementAnimate(
+			splashRef,
 			{opacity: 0},
 			{duration: 200, easing: AnimationEffectTiming.spring}
 		).finished, () => {
-			element_remove(splash_ref)
-			attr_remove(document_body(), BodyAttributes.component_count)
+			elementRemove(splashRef)
+			attrRemove(documentBody(), BodyAttributes.componentCount)
 		})
 	}, timeout)
 }
 
-export function remove_splash_screen_on_load_every_component(timeout: number = 0): void {
+export function tryRemoveSplashScreen(timeout: number = 0): void {
 	++COMPONENT_COUNT
-	if (COMPONENT_COUNT_MAX == null) COMPONENT_COUNT_MAX = number_safe(
-		number_parse(attr_get(
-			document_body(),
-			BodyAttributes.component_count
+	if (COMPONENT_COUNT_MAX == null) COMPONENT_COUNT_MAX = numberSafe(
+		numberParse(attrGet(
+			documentBody(),
+			BodyAttributes.componentCount
 		) ?? '0'), 0
 	)
 
 	if (COMPONENT_COUNT >= COMPONENT_COUNT_MAX) {
-		remove_splash_screen(timeout)
-		attr_remove(document_body(), BodyAttributes.component_count)
+		removeSplashScreen(timeout)
+		attrRemove(documentBody(), BodyAttributes.componentCount)
 	}
 }

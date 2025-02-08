@@ -1,26 +1,26 @@
 import type { USB } from "@/interfaces/usb";
 
-export function navigator_share(data?: ShareData): Promise<void> | void {
-	if (!navigator_can_share(data)) return;
+export function navigatorShare(data?: ShareData): Promise<void> | void {
+	if (!navigatorCanShare(data)) return;
 	return navigator.share(data)
 }
 
-export function navigator_can_share(data?: ShareData): boolean {
+export function navigatorCanShare(data?: ShareData): boolean {
 	return navigator.canShare(data)
 }
 
-export function navigator_clipboard_writetext(data: string): Promise<void> {
+export function navigatorClipboardWriteText(data: string): Promise<void> {
 	return navigator.clipboard.writeText(data)
 }
 
-export function navigator_clipboard_write(data: ClipboardItems): Promise<void> {
+export function navigatorClipboardWrite(data: ClipboardItems): Promise<void> {
 	return navigator.clipboard.write(data)
 }
 
-export function navigator_useragent(): string {
+export function navigatorUserAgent(): string {
 	return navigator.userAgent
 }
 
-export function navigator_usb(): USB {
+export function navigatorUSB(): USB {
 	return (navigator as any).usb as USB
 }

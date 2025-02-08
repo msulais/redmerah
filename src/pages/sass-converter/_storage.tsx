@@ -10,13 +10,13 @@ export type ObjectStoreLastInput<T = unknown> = {
 
 export enum ObjectStoreNames {
 	settings = 'settings',
-	last_input = 'last_input',
+	lastInput = 'last-input',
 }
 
 export enum ObjectStoreKeys {
-	settings_textwrap = 'text_wrap',
-	settings_fontsize = 'font_size',
+	settings_textWrap = 'text-wrap',
+	settings_fontSize = 'font-size',
 	settings_minify = 'minify',
-	lastinput_sass = 'sass',
-	lastinput_scss = 'scss'
+	lastInput_sass = 'sass',
+	lastInput_scss = 'scss'
 }

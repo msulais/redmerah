@@ -1,6 +1,6 @@
 export enum CornerData {
 	sharp = 'sharp',
-	semi_round = 'semi-round',
+	semiRound = 'semi-round',
 	round = 'round',
-	full_round = 'full-round'
+	fullRound = 'full-round'
 }

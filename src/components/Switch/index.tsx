@@ -1,41 +1,41 @@
 import { createEffect, createMemo, createSignal, createUniqueId, mergeProps, splitProps, type JSX, type ValidComponent, type VoidComponent } from "solid-js"
 import { Dynamic, type DynamicProps } from "solid-js/web"
 
-import { attr_set_if_exist, classlist } from "@/utils/attributes"
-import { event_call, event_current_target } from "@/utils/event"
+import { attrSetIfExist, attrClassList } from "@/utils/attributes"
+import { eventCall, eventCurrentTarget } from "@/utils/event"
 
 import './index.scss'
 
 type SwitchProps = Omit<JSX.InputHTMLAttributes<HTMLInputElement>, 'type'> & {
-	c_attr_label?: Omit<JSX.LabelHTMLAttributes<HTMLLabelElement>, 'for'>
+	'c:attrLabel'?: Omit<JSX.LabelHTMLAttributes<HTMLLabelElement>, 'for'>
 }
 
 const Switch: VoidComponent<SwitchProps> = ($props) => {
-	const [props, other] = splitProps(
-		mergeProps({id: createUniqueId()}, $props),
-		['id', 'c_attr_label', 'onChange']
-	)
-	const [label_props, other_label_props] = splitProps(props.c_attr_label ?? {}, ['class'])
-	const [is_checked, set_is_checked] = createSignal<boolean>(false)
-	const is_disabled = createMemo(() => other.disabled == true)
+	const $$props = mergeProps({id: createUniqueId()}, $props)
+	const [props, other] = splitProps($$props, [
+		'id', 'c:attrLabel', 'onChange'
+	])
+	const [labelProps, otherLabelProps] = splitProps(props['c:attrLabel'] ?? {}, ['class'])
+	const [isChecked, setIsChecked] = createSignal<boolean>(false)
+	const isDisabled = createMemo(() => other.disabled == true)
 
 	createEffect(() => {
 		const checked = other.checked
-		set_is_checked(c => checked ?? c)
+		setIsChecked(c => checked ?? c)
 	})
 
 	return (<label
-		class={classlist('c-switch', label_props.class ?? '')}
-		data-c-disabled={attr_set_if_exist(is_disabled())}
-		data-c-checked={attr_set_if_exist(is_checked())}
+		class={attrClassList('c-switch', labelProps.class ?? '')}
+		data-c-disabled={attrSetIfExist(isDisabled())}
+		data-c-checked={attrSetIfExist(isChecked())}
 		for={props.id}
-		{...other_label_props}>
+		{...otherLabelProps}>
 		<input
 			type="checkbox"
 			id={props.id}
 			onChange={(ev) => {
-				event_call(ev, props.onChange)
-				set_is_checked(event_current_target(ev).checked)
+				eventCall(ev, props.onChange)
+				setIsChecked(eventCurrentTarget(ev).checked)
 			}}
 			{...other}
 		/>
@@ -45,32 +45,32 @@ const Switch: VoidComponent<SwitchProps> = ($props) => {
 
 type RawSwitchProps = Omit<JSX.InputHTMLAttributes<HTMLInputElement>, 'type'> & {
 	component?: ValidComponent
-	c_attr_wrapper?: Omit<DynamicProps<keyof JSX.HTMLElementTags & keyof JSX.SVGElementTags>, 'component'>
+	'c:attrWrapper'?: Omit<DynamicProps<keyof JSX.HTMLElementTags & keyof JSX.SVGElementTags>, 'component'>
 }
 const RawSwitch: VoidComponent<RawSwitchProps> = ($props) => {
 	const [props, other] = splitProps($props, [
-		'c_attr_wrapper', 'onChange', 'component'
+		'c:attrWrapper', 'onChange', 'component'
 	])
-	const [wrapper_props, other_wrapper_props] = splitProps(props.c_attr_wrapper! ?? {}, ['class'])
-	const [is_checked, set_is_checked] = createSignal<boolean>(false)
-	const is_disabled = createMemo(() => other.disabled == true)
+	const [wrapperProps, otherWrapperProps] = splitProps(props['c:attrWrapper']! ?? {}, ['class'])
+	const [isChecked, setIsChecked] = createSignal<boolean>(false)
+	const isDisabled = createMemo(() => other.disabled == true)
 
 	createEffect(() => {
 		const checked = other.checked
-		set_is_checked(c => checked ?? c)
+		setIsChecked(c => checked ?? c)
 	})
 
 	return (<Dynamic
 		component={props.component ?? 'label'}
-		class={classlist('c-switch', wrapper_props.class ?? '')}
-		data-c-disabled={attr_set_if_exist(is_disabled())}
-		data-c-checked={attr_set_if_exist(is_checked())}
-		{...other_wrapper_props}>
+		class={attrClassList('c-switch', wrapperProps.class ?? '')}
+		data-c-disabled={attrSetIfExist(isDisabled())}
+		data-c-checked={attrSetIfExist(isChecked())}
+		{...otherWrapperProps}>
 		<input
 			type="checkbox"
 			onChange={(ev) => {
-				event_call(ev, props.onChange)
-				set_is_checked(event_current_target(ev).checked)
+				eventCall(ev, props.onChange)
+				setIsChecked(eventCurrentTarget(ev).checked)
 			}}
 			{...other}
 		/>

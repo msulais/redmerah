@@ -1,6 +1,6 @@
 import { createSignal, createUniqueId, For, type VoidComponent } from "solid-js"
 
-import { number_safe } from "@/utils/number"
+import { numberSafe } from "@/utils/number"
 
 import { PopoverTooltip, Tooltip, TooltipPosition } from "@/components/Tooltip"
 import Button, { ButtonVariant } from "@/components/Button"
@@ -9,97 +9,97 @@ import { NumberTextField } from "@/components/TextField"
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import Icon from "@/components/Icon"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
-import { event_current_target } from "@/utils/event"
+import { eventCurrentTarget } from "@/utils/event"
 
 const _: VoidComponent = () => {
-	const rich_tooltip_id = createUniqueId()
-	const [use_anchor, set_use_anchor] = createSignal<boolean>(false)
-	const [position, set_position] = createSignal<TooltipPosition>(TooltipPosition.center_top)
-	const [gap, set_gap] = createSignal<number>(40)
-	const [start_delay_duration, set_start_delay_duration] = createSignal<number>(500)
-	const [end_delay_duration, set_end_delay_duration] = createSignal<number>(500)
+	const richTooltipId = createUniqueId()
+	const [useAnchor, setUseAnchor] = createSignal<boolean>(false)
+	const [position, setPosition] = createSignal<TooltipPosition>(TooltipPosition.centerTop)
+	const [gap, setGap] = createSignal<number>(40)
+	const [startDelayDuration, setStartDelayDuration] = createSignal<number>(500)
+	const [endDelayDuration, setEndDelayDuration] = createSignal<number>(500)
 
 	return (<Page
 		title="Tooltip"
 		description="A tooltip is a small, temporary window that appears when a user hovers over an element. It provides a brief explanation or description of the element's purpose or function. Tooltips are often used to clarify the meaning of icons, buttons, or other UI elements.">
 		<Playground>
 			<Tooltip
-				c_end_delay_duration={end_delay_duration()}
-				c_gap={gap()}
-				c_position={position()}
-				c_start_delay_duration={start_delay_duration()}
-				c_use_anchor={use_anchor()}>
+				c:endDelayDuration={endDelayDuration()}
+				c:gap={gap()}
+				c:position={position()}
+				c:startDelayDuration={startDelayDuration()}
+				c:useAnchor={useAnchor()}>
 				<Button data-tooltip="This is tooltip">
 					Hover me please
-					<Icon data-tooltip="This is icon" c_code={0xE4B2}/>
+					<Icon data-tooltip="This is icon" c:code={0xE4B2}/>
 				</Button>
-				<Button data-rich-tooltip={rich_tooltip_id}>Rich tooltip</Button>
-				<PopoverTooltip id={rich_tooltip_id}>
+				<Button data-rich-tooltip={richTooltipId}>Rich tooltip</Button>
+				<PopoverTooltip id={richTooltipId}>
 					<p style={{"margin-bottom": '8px'}}>Ullamco anim in magna ea ut labore velit ex occaecat elit voluptate laboris.</p>
-					<Button style={{color: 'rgb(var(--g-color-accent))'}} c_variant={ButtonVariant.tonal}>Learn more</Button>
+					<Button style={{color: 'rgb(var(--g-color-accent))'}} c:variant={ButtonVariant.tonal}>Learn more</Button>
 				</PopoverTooltip>
 			</Tooltip>
 		</Playground>
 		<PlaygroundOptions>
 			<Tooltip>
 				<Dropdown
-					c_label="Position"
-					c_values={[position()]}
-					c_on_change={(options) => set_position(options[0].value as TooltipPosition)}>
+					c:label="Position"
+					c:values={[position()]}
+					c:onChange={(options) => setPosition(options[0].value as TooltipPosition)}>
 					<For each={[
-						[TooltipPosition.left_top, 'Left top'],
-						[TooltipPosition.left_center_to_bottom, 'Left center to bottom'],
-						[TooltipPosition.left_center, 'Left center'],
-						[TooltipPosition.left_center_to_top, 'Left center to top'],
-						[TooltipPosition.left_bottom, 'Left bottom'],
-						[TooltipPosition.right_top, 'Right top'],
-						[TooltipPosition.right_center_to_bottom, 'Right center to bottom'],
-						[TooltipPosition.right_center, 'Right center'],
-						[TooltipPosition.right_center_to_top, 'Right center to top'],
-						[TooltipPosition.right_bottom, 'Right bottom'],
-						[TooltipPosition.center_top_to_right, 'Center top to right'],
-						[TooltipPosition.center_top, 'Center top'],
-						[TooltipPosition.center_top_to_left, 'Center top to left'],
-						[TooltipPosition.center_bottom_to_right, 'Center bottom to right'],
-						[TooltipPosition.center_bottom, 'Center bottom'],
-						[TooltipPosition.center_bottom_to_left, 'Center bottom to left'],
-						[TooltipPosition.center_center_left_top, 'Center center left top'],
-						[TooltipPosition.center_center_left, 'Center center left'],
-						[TooltipPosition.center_center_left_bottom, 'Center center left bottom'],
-						[TooltipPosition.center_center_top, 'Center center top'],
-						[TooltipPosition.center_center, 'Center center'],
-						[TooltipPosition.center_center_bottom, 'Center center bottom'],
-						[TooltipPosition.center_center_right_top, 'Center center right top'],
-						[TooltipPosition.center_center_right, 'Center center right'],
-						[TooltipPosition.center_center_right_bottom, 'Center center right bottom'],
-					]}>{option => <DropdownOption c_value={option[0]} c_text={option[1] as string} />}</For>
+						[TooltipPosition.leftTop, 'Left top'],
+						[TooltipPosition.leftCenterToBottom, 'Left center to bottom'],
+						[TooltipPosition.leftCenter, 'Left center'],
+						[TooltipPosition.leftCenterToTop, 'Left center to top'],
+						[TooltipPosition.leftBottom, 'Left bottom'],
+						[TooltipPosition.rightTop, 'Right top'],
+						[TooltipPosition.rightCenterToBottom, 'Right center to bottom'],
+						[TooltipPosition.rightCenter, 'Right center'],
+						[TooltipPosition.rightCenterToTop, 'Right center to top'],
+						[TooltipPosition.rightBottom, 'Right bottom'],
+						[TooltipPosition.centerTopToRight, 'Center top to right'],
+						[TooltipPosition.centerTop, 'Center top'],
+						[TooltipPosition.centerTopToLeft, 'Center top to left'],
+						[TooltipPosition.centerBottomToRight, 'Center bottom to right'],
+						[TooltipPosition.centerBottom, 'Center bottom'],
+						[TooltipPosition.centerBottomToLeft, 'Center bottom to left'],
+						[TooltipPosition.centerCenterLeftTop, 'Center center left top'],
+						[TooltipPosition.centerCenterLeft, 'Center center left'],
+						[TooltipPosition.centerCenterLeftBottom, 'Center center left bottom'],
+						[TooltipPosition.centerCenterTop, 'Center center top'],
+						[TooltipPosition.centerCenter, 'Center center'],
+						[TooltipPosition.centerCenterBottom, 'Center center bottom'],
+						[TooltipPosition.centerCenterRightTop, 'Center center right top'],
+						[TooltipPosition.centerCenterRight, 'Center center right'],
+						[TooltipPosition.centerCenterRightBottom, 'Center center right bottom'],
+					]}>{option => <DropdownOption c:value={option[0]} c:text={option[1] as string} />}</For>
 				</Dropdown>
 				<NumberTextField
 					style={{width: '100px'}}
 					value={gap()}
 					min={0}
-					onBlur={(ev) => set_gap(g => number_safe(event_current_target(ev).valueAsNumber, g))}
-					c_label="Gap"
+					onBlur={(ev) => setGap(g => numberSafe(eventCurrentTarget(ev).valueAsNumber, g))}
+					c:label="Gap"
 				/>
 				<NumberTextField
 					style={{width: '100px'}}
-					value={start_delay_duration()}
+					value={startDelayDuration()}
 					min={0}
 					step={100}
-					onBlur={(ev) => set_start_delay_duration(d => number_safe(event_current_target(ev).valueAsNumber, d))}
-					c_label="Start delay duration"
+					onBlur={(ev) => setStartDelayDuration(d => numberSafe(eventCurrentTarget(ev).valueAsNumber, d))}
+					c:label="Start delay duration"
 				/>
 				<NumberTextField
 					style={{width: '100px'}}
-					value={end_delay_duration()}
+					value={endDelayDuration()}
 					min={0}
 					step={100}
-					onBlur={(ev) => set_end_delay_duration(d => number_safe(event_current_target(ev).valueAsNumber, d))}
-					c_label="End delay duration"
+					onBlur={(ev) => setEndDelayDuration(d => numberSafe(eventCurrentTarget(ev).valueAsNumber, d))}
+					c:label="End delay duration"
 				/>
 				<CheckBox
-					checked={use_anchor()}
-					onChange={ev => set_use_anchor(event_current_target(ev).checked)}>
+					checked={useAnchor()}
+					onChange={ev => setUseAnchor(eventCurrentTarget(ev).checked)}>
 					Use anchor
 				</CheckBox>
 			</Tooltip>

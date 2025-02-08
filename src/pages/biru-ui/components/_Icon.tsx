@@ -1,32 +1,32 @@
 import { createSignal, type VoidComponent } from "solid-js"
 
 import { ICON_ALERT, ICON_SYMBOLS } from "@/constants/icons"
-import { event_current_target } from "@/utils/event"
+import { eventCurrentTarget } from "@/utils/event"
 
 import Icon from "@/components/Icon"
 import CheckBox from "@/components/CheckBox"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
 
 const _: VoidComponent = () => {
-	const [filled, set_filled] = createSignal<boolean>(false)
+	const [filled, setFilled] = createSignal<boolean>(false)
 	return (<Page
 		title="Icon"
 		description="An icon is a small graphic symbol representing an action, object, or concept. Icons are used to enhance user understanding and interaction within an interface.">
 		<Playground>
-			<Icon c_code={0xEB11} c_filled={filled()}/>
-			<Icon c_code={ICON_ALERT} c_filled={filled()}/>
-			<Icon c_code={0xE47C} c_filled={filled()}/>
-			<Icon c_code={0xEA6D} c_filled={filled()}/>
-			<Icon c_code={0xEA9D} c_filled={filled()}/>
-			<Icon c_code={0xEB6D} c_filled={filled()}/>
-			<Icon c_code={0xECB8} c_filled={filled()}/>
-			<Icon c_code={0xED37} c_filled={filled()}/>
-			<Icon c_code={0xEE15} c_filled={filled()}/>
-			<Icon c_code={0xEEA1} c_filled={filled()}/>
-			<Icon c_code={ICON_SYMBOLS} c_filled={filled()}/>
+			<Icon c:code={0xEB11} c:filled={filled()}/>
+			<Icon c:code={ICON_ALERT} c:filled={filled()}/>
+			<Icon c:code={0xE47C} c:filled={filled()}/>
+			<Icon c:code={0xEA6D} c:filled={filled()}/>
+			<Icon c:code={0xEA9D} c:filled={filled()}/>
+			<Icon c:code={0xEB6D} c:filled={filled()}/>
+			<Icon c:code={0xECB8} c:filled={filled()}/>
+			<Icon c:code={0xED37} c:filled={filled()}/>
+			<Icon c:code={0xEE15} c:filled={filled()}/>
+			<Icon c:code={0xEEA1} c:filled={filled()}/>
+			<Icon c:code={ICON_SYMBOLS} c:filled={filled()}/>
 		</Playground>
 		<PlaygroundOptions>
-			<CheckBox checked={filled()} onChange={ev => set_filled(event_current_target(ev).checked)}>Filled</CheckBox>
+			<CheckBox checked={filled()} onChange={ev => setFilled(eventCurrentTarget(ev).checked)}>Filled</CheckBox>
 		</PlaygroundOptions>
 	</Page>)
 }

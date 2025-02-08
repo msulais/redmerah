@@ -1,44 +1,44 @@
-import { element_create, element_click, element_remove } from "./element"
-import { event_target } from "./event"
-import { url_create, url_download_file, url_revoke } from "./url"
+import { elementCreate, elementClick, elementRemove } from "./element"
+import { eventTarget } from "./event"
+import { urlCreate, urlDownloadFile, urlRevoke } from "./url"
 
-export async function file_open(
+export async function fileOpen(
 	accept: string | null,
 	multiple: boolean = false,
 	capture?: string
 ): Promise<FileList | null> {
 	return new Promise<FileList | null>((ok) => {
-		const input = element_create('input')
+		const input = elementCreate('input')
 		input.type = 'file'
 		if (accept != null) input.accept = accept
 		if (capture != null) input.capture = capture
 
 		input.multiple = multiple
-		element_click(input)
+		elementClick(input)
 
 		input.onchange = () => {
 			ok(input.files)
-			element_remove(input)
+			elementRemove(input)
 		}
 		input.oncancel = () =>{
 			ok(null)
-			element_remove(input)
+			elementRemove(input)
 		}
 	})
 }
 
-export function file_download(blob: Blob, filename: string): void {
-	const url = url_create(blob)
-	url_download_file(url, filename)
-	url_revoke(url)
+export function fileDownload(blob: Blob, filename: string): void {
+	const url = urlCreate(blob)
+	urlDownloadFile(url, filename)
+	urlRevoke(url)
 }
 
-export function file_read_as_text(blob: Blob, encoding?: string): Promise<string> {
+export function fileReadAsText(blob: Blob, encoding?: string): Promise<string> {
 	return new Promise((ok) => {
 		const reader = new FileReader()
 		reader.readAsText(blob, encoding)
 		reader.onload = (ev) => {
-			const t = event_target(ev)
+			const t = eventTarget(ev)
 			if (!t) return ok('');
 
 			ok(t.result as string)

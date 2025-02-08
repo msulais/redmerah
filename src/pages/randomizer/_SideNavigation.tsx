@@ -1,42 +1,42 @@
 import { createMemo, For, type VoidComponent } from "solid-js"
 
 import { RandomizerType } from "./_enums"
-import { classlist_module } from "@/utils/attributes"
+import { attrClassListModule } from "@/utils/attributes"
 import { RANDOMIZER_TYPES } from "./_constants"
-import { document_active } from "@/utils/document"
-import { element_dataset, element_tagname, element_valid_target } from "@/utils/element"
-import { event_current_target } from "@/utils/event"
+import { documentActive } from "@/utils/document"
+import { elementDataset, elementTagName, elementValidTarget } from "@/utils/element"
+import { eventCurrentTarget } from "@/utils/event"
 
 import Icon from "@/components/Icon"
 import {Tooltip} from "@/components/Tooltip"
 import SideNavigation, { SideNavigationItem } from "@/components/SideNavigation"
 import CSS from './_styles.module.scss'
-import { valid_enum_value } from "@/utils/object"
+import { validEnumValue } from "@/utils/object"
 
 const _: VoidComponent<{
 	randomizer: RandomizerType
-	on_change_randomizer: (type: RandomizerType) => void
+	onChangeRandomizer: (type: RandomizerType) => void
 	expanded: boolean
 }> = (props) => {
 	const expanded = createMemo(() => props.expanded)
 	const randomizer = createMemo(() => props.randomizer)
 	return (<SideNavigation
-		c_expanded={expanded()}
-		classList={classlist_module(CSS.side_navigation)}
+		c:expanded={expanded()}
+		classList={attrClassListModule(CSS.side_navigation)}
 		onClick={ev => {
-			const button = document_active()!
-			if (!element_valid_target(
-				event_current_target(ev),
+			const button = documentActive()!
+			if (!elementValidTarget(
+				eventCurrentTarget(ev),
 				button,
-				el => element_tagname(el) == 'BUTTON'
+				el => elementTagName(el) == 'BUTTON'
 			)) return
 
-			const data_type = element_dataset(button, 'type')
-			if (data_type
-				&& valid_enum_value(data_type, RandomizerType)
-				&& randomizer() != data_type
+			const dataType = elementDataset(button, 'type')
+			if (dataType
+				&& validEnumValue(dataType, RandomizerType)
+				&& randomizer() != dataType
 			) {
-				props.on_change_randomizer(data_type as RandomizerType)
+				props.onChangeRandomizer(dataType as RandomizerType)
 				return
 			}
 		}}>
@@ -45,8 +45,8 @@ const _: VoidComponent<{
 				<SideNavigationItem
 					data-tooltip={!expanded()? r.text : undefined}
 					data-type={r.type}
-					c_leading={<Icon c_filled={randomizer() == r.type} c_code={r.icon}/>}
-					c_selected={randomizer() == r.type}>
+					c:leading={<Icon c:filled={randomizer() == r.type} c:code={r.icon}/>}
+					c:selected={randomizer() == r.type}>
 					{r.text}
 				</SideNavigationItem>
 			}</For>

@@ -3,292 +3,306 @@ import { toCanvas as dataToQRCanvas, toString as dataToQRString } from "qrcode"
 
 import type { HEXColor } from "@/types/color"
 import type { Settings } from "./_types"
-import { timeout_clear, timeout_set } from "@/utils/timeout"
+import { timeTimerClear, timeTimerSet } from "@/utils/time"
 import { Commands, CopyFileType, DownloadFileType, EncodingMode, ErrorCorrectionLevel, Pages } from "./_enums"
 import { createStore } from "solid-js/store"
 import { DEFAULT_BACKGROUND_COLOR, DEFAULT_COLOR, DEFAULT_ENCODING_MODE, DEFAULT_ERROR_CORRECTION_LEVEL, DEFAULT_MARGIN, DEFAULT_VERSION } from "./_constants"
-import { url_download_file } from "@/utils/url"
-import { string_replace, string_touppercase } from "@/utils/string"
-import { promise_done } from "@/utils/object"
-import { navigator_clipboard_write, navigator_clipboard_writetext } from "@/utils/navigator"
-import { file_download } from "@/utils/file"
-import { IDB, idb_store_put } from "@/utils/indexeddb"
+import { urlDownloadFile } from "@/utils/url"
+import { stringReplace, stringToUpperCase } from "@/utils/string"
+import { promiseDone } from "@/utils/object"
+import { navigatorClipboardWrite, navigatorClipboardWriteText } from "@/utils/navigator"
+import { fileDownload } from "@/utils/file"
+import { IDB, idbStorePut } from "@/utils/indexeddb"
 import { DatabaseNames } from "@/enums/storage"
 import { ObjectStoreKeys, ObjectStoreNames, type ObjectStoreMiscellaneous, type ObjectStoreSettings } from "./_storage"
-import { remove_splash_screen } from "@/scripts/splash"
+import { removeSplashScreen } from "@/scripts/splash"
 import { ICON_COPY } from "@/constants/icons"
 
 import Icon from "@/components/Icon"
-import Toast, { open_toast } from "@/components/Toast"
+import Toast, { openToast } from "@/components/Toast"
 import App from "@/components/App"
 import AppBar from './_AppBar'
 import Body from './_Body'
 
 const _: VoidComponent = () => {
-	const db = new IDB(DatabaseNames.qr_code)
-	const [page, set_page] = createSignal<Pages>(Pages.generate)
-	const [is_generate_error, set_is_generate_error] = createSignal<boolean>(true)
-	const [qrcode_data, set_qrcode_data] = createSignal<string>('')
-	const [settings, set_settings] = createStore<Settings>({
-		background_color: DEFAULT_BACKGROUND_COLOR,
+	const db = new IDB(DatabaseNames.qrCode)
+	const [page, setPage] = createSignal<Pages>(Pages.generate)
+	const [isGenerateError, setIsGenerateError] = createSignal<boolean>(true)
+	const [qrCodeData, setQRCodeData] = createSignal<string>('')
+	const [settings, setSettings] = createStore<Settings>({
+		backgroundColor: DEFAULT_BACKGROUND_COLOR,
 		color: DEFAULT_COLOR,
-		encoding_mode: DEFAULT_ENCODING_MODE,
-		error_correction_level: DEFAULT_ERROR_CORRECTION_LEVEL,
+		encodingMode: DEFAULT_ENCODING_MODE,
+		errorCorrectionLevel: DEFAULT_ERROR_CORRECTION_LEVEL,
 		margin: DEFAULT_MARGIN,
 		version: DEFAULT_VERSION
 	})
-	let canvas_ref: HTMLCanvasElement
-	let toast_copied_ref: HTMLDivElement
-	let timeout_id: number | null = null
+	let canvasRef: HTMLCanvasElement
+	let toastCopiedRef: HTMLDivElement
+	let timeId: number | null = null
 
-	function save_settings(...items: [key: ObjectStoreKeys, value: unknown][]): void {
-		const store_settings = db.write_store(ObjectStoreNames.settings)
-		if (!store_settings) return;
+	function saveSettings(...items: [key: ObjectStoreKeys, value: unknown][]): void {
+		const storeSettings = db.writeStore(ObjectStoreNames.settings)
+		if (!storeSettings) return;
 
 		for (const item of items) {
-			idb_store_put(store_settings, { key: item[0], value: item[1] })
+			idbStorePut(storeSettings, { key: item[0], value: item[1] })
 		}
 	}
 
-	function save_miscellaneous(...items: [key: ObjectStoreKeys, value: unknown][]): void {
-		const store = db.write_store(ObjectStoreNames.miscellaneous)
+	function saveMiscellaneous(...items: [key: ObjectStoreKeys, value: unknown][]): void {
+		const store = db.writeStore(ObjectStoreNames.miscellaneous)
 		if (store == null) return;
 
 		for (const item of items) {
-			idb_store_put(store, { key: item[0], value: item[1] })
+			idbStorePut(store, { key: item[0], value: item[1] })
 		}
 	}
 
 	function generate(): void {
-		if (timeout_id != null) timeout_clear(timeout_id)
+		if (timeId != null) timeTimerClear(timeId)
 
-		timeout_id = timeout_set(() => {
-			dataToQRCanvas(canvas_ref, settings.encoding_mode == EncodingMode.auto
-				? qrcode_data()
-				: [{data: qrcode_data(), mode: settings.encoding_mode as any}],
+		timeId = timeTimerSet(() => {
+			dataToQRCanvas(canvasRef, settings.encodingMode == EncodingMode.auto
+				? qrCodeData()
+				: [{data: qrCodeData(), mode: settings.encodingMode as any}],
 			{
 				color: {
 					dark: settings.color,
-					light: settings.background_color
+					light: settings.backgroundColor
 				},
 				scale: 16,
-				errorCorrectionLevel: settings.error_correction_level,
+				errorCorrectionLevel: settings.errorCorrectionLevel,
 				margin: settings.margin,
 				version: settings.version == null? undefined : settings.version,
 			}, (error) => {
-				set_is_generate_error(error != null)
+				setIsGenerateError(error != null)
 				if (!error) return;
-				const ctx = canvas_ref.getContext('2d')
-				ctx?.clearRect(0, 0, canvas_ref.width,  canvas_ref.height)
+				const ctx = canvasRef.getContext('2d')
+				ctx?.clearRect(0, 0, canvasRef.width,  canvasRef.height)
 			})
-			timeout_id = null
+			timeId = null
 		}, 200)
 	}
 
-	function get_svg(): Promise<string> {
+	function getSVG(): Promise<string> {
 		return new Promise((ok, err) => {
-			dataToQRString(settings.encoding_mode == EncodingMode.auto
-				? qrcode_data()
-				: [{data: qrcode_data(), mode: settings.encoding_mode as any}],
+			dataToQRString(settings.encodingMode == EncodingMode.auto
+				? qrCodeData()
+				: [{data: qrCodeData(), mode: settings.encodingMode as any}],
 			{
 				color: {
 					dark: settings.color,
-					light: settings.background_color
+					light: settings.backgroundColor
 				},
 				scale: 16,
 				type: 'svg',
-				errorCorrectionLevel: settings.error_correction_level,
+				errorCorrectionLevel: settings.errorCorrectionLevel,
 				margin: settings.margin,
 				version: settings.version == null? undefined : settings.version,
 			}, (error, svg) => {
 				if (error) return err(error)
 
-				ok(string_replace(svg, /(?<!\w)(?<=d=)".+?"/gs, (value) => string_touppercase(value)))
+				ok(stringReplace(svg, /(?<!\w)(?<=d=)".+?"/gs, (value) => stringToUpperCase(value)))
 			})
 		})
 	}
 
-	function download_qrcode(type: DownloadFileType): void { switch (type) {
-		case DownloadFileType.jpeg: {
-			url_download_file(canvas_ref.toDataURL('image/jpeg', 0.95), 'redmerah-qr-code.jpeg')
+	function downloadQRCode(type: DownloadFileType): void {
+		switch (type) {
+		case DownloadFileType.jpeg:
+			urlDownloadFile(canvasRef.toDataURL('image/jpeg', 0.95), 'redmerah-qr-code.jpeg')
+			break
+		case DownloadFileType.png:
+			urlDownloadFile(canvasRef.toDataURL('image/png', 0.95), 'redmerah-qr-code.png')
+			break
+		case DownloadFileType.svg:
+			promiseDone(getSVG(), svg => fileDownload(new Blob([svg], {type: 'image/svg+xml'}), 'redmerah-qr-code.svg'))
 			break
 		}
-		case DownloadFileType.png: {
-			url_download_file(canvas_ref.toDataURL('image/png', 0.95), 'redmerah-qr-code.png')
-			break
-		}
-		case DownloadFileType.svg: {
-			promise_done(get_svg(), svg => file_download(new Blob([svg], {type: 'image/svg+xml'}), 'redmerah-qr-code.svg'))
-			break
-		}
-	}}
+	}
 
-	function copy_qrcode(ev: Event, type: CopyFileType): void { switch (type) {
-		case CopyFileType.png: {
-			canvas_ref.toBlob((blob) => {
+	function copyQRCode(ev: Event, type: CopyFileType): void {
+		switch (type) {
+		case CopyFileType.png:
+			canvasRef.toBlob((blob) => {
 				if (blob == null) return;
 
-				promise_done(
-					navigator_clipboard_write([new ClipboardItem({ 'image/png': blob })]),
-					() => open_toast(ev, toast_copied_ref)
+				promiseDone(
+					navigatorClipboardWrite([new ClipboardItem({ 'image/png': blob })]),
+					() => openToast(ev, toastCopiedRef)
 				)
 			}, 'image/png', 0.95)
 			break
-		}
-		case CopyFileType.svg: {
-			promise_done(
-				get_svg(),
-				svg => promise_done(navigator_clipboard_writetext(svg), () => open_toast(ev, toast_copied_ref))
+		case CopyFileType.svg:
+			promiseDone(
+				getSVG(),
+				svg => promiseDone(navigatorClipboardWriteText(svg), () => openToast(ev, toastCopiedRef))
 			)
 			break
 		}
-	}}
+	}
 
-	function command(type: Commands, ...args: unknown[]): unknown { switch (type) {
-		case Commands.change_page: {
-			set_page(args[0] as Pages)
-			save_miscellaneous([ObjectStoreKeys.miscellaneous_lastpage, args[0]])
+	function command(type: Commands, ...args: unknown[]): unknown {
+		switch (type) {
+		case Commands.updatePage: {
+			const [page] = args as [Pages]
+			setPage(page)
+			saveMiscellaneous([ObjectStoreKeys.miscellaneous_lastPage, page])
 			break
 		}
-		case Commands.change_settings_errorcorrectionlevel: {
-			set_settings('error_correction_level', args[0] as Settings['error_correction_level'])
-			save_settings([ObjectStoreKeys.settings_errorcorrectionlevel, args[0]])
+		case Commands.updateSettingsErrorCorrectionLevel: {
+			const [level] = args as [ErrorCorrectionLevel]
+			setSettings('errorCorrectionLevel', level)
+			saveSettings([ObjectStoreKeys.settings_errorCorrectionLevel, level])
 			generate()
 			break
 		}
-		case Commands.change_settings_color: {
-			set_settings('color', args[0] as Settings['color'])
-			save_settings([ObjectStoreKeys.settings_color, args[0]])
+		case Commands.updateSettingsColor: {
+			const [color] = args as [HEXColor]
+			setSettings('color', color)
+			saveSettings([ObjectStoreKeys.settings_color, color])
 			generate()
 			break
 		}
-		case Commands.change_settings_backgroundcolor: {
-			set_settings('background_color', args[0] as Settings['background_color'])
-			save_settings([ObjectStoreKeys.settings_backgroundcolor, args[0]])
+		case Commands.updateSettingsBackgroundColor: {
+			const [color] = args as [HEXColor]
+			setSettings('backgroundColor', color)
+			saveSettings([ObjectStoreKeys.settings_backgroundColor, color])
 			generate()
 			break
 		}
-		case Commands.change_settings_version: {
-			set_settings('version', args[0] as Settings['version'])
-			save_settings([ObjectStoreKeys.settings_version, args[0]])
+		case Commands.updateSettingsVersion: {
+			const [version] = args as [number | null]
+			setSettings('version', version as Settings['version'])
+			saveSettings([ObjectStoreKeys.settings_version, version])
 			generate()
 			break
 		}
-		case Commands.change_settings_encodingmode: {
-			set_settings('encoding_mode', args[0] as Settings['encoding_mode'])
-			save_settings([ObjectStoreKeys.settings_encodingmode, args[0]])
+		case Commands.updateSettingsEncodingMode: {
+			const [mode] = args as [EncodingMode]
+			setSettings('encodingMode', mode)
+			saveSettings([ObjectStoreKeys.settings_encodingMode, mode])
 			generate()
 			break
 		}
-		case Commands.change_settings_margin: {
-			set_settings('margin', args[0] as Settings['margin'])
-			save_settings([ObjectStoreKeys.settings_margin, args[0]])
+		case Commands.updateSettingsMargin: {
+			const [margin] = args as [number]
+			setSettings('margin', margin)
+			saveSettings([ObjectStoreKeys.settings_margin, margin])
 			generate()
 			break
 		}
-		case Commands.change_qrcode_data: {
-			set_qrcode_data(args[0] as string)
+		case Commands.updateQRCodeData: {
+			const [data] = args as [string]
+			setQRCodeData(data)
 			generate()
 			break
 		}
-		case Commands.download_qrcode: {
-			download_qrcode(args[0] as DownloadFileType)
+		case Commands.downloadQRCode: {
+			const [type] = args as [DownloadFileType]
+			downloadQRCode(type)
 			break
 		}
-		case Commands.copy_qrcode: {
-			copy_qrcode(args[0] as Event, args[1] as CopyFileType)
+		case Commands.copyQRCode: {
+			const [event, type] = args as [Event, CopyFileType]
+			copyQRCode(event, type)
 			break
-		}
-		default: return
-	}}
+		}}
+		return
+	}
 
-	function init_database(): void {
+	function initDatabase(): void {
 		db.open({
-			on_success() {
-				init_settings()
-				init_last_page()
+			onSuccess() {
+				initSettings()
+				initLastPage()
 			},
-			on_upgrade_needed(_, db) {
-				db.create_store<ObjectStoreSettings>({
+			onUpgrade(_, db) {
+				db.createStore<ObjectStoreSettings>({
 					name: ObjectStoreNames.settings,
-					key_path: 'key',
+					keyPath: 'key',
 					indexs: ['key', 'value']
 				})
-				db.create_store<ObjectStoreMiscellaneous>({
+				db.createStore<ObjectStoreMiscellaneous>({
 					name: ObjectStoreNames.miscellaneous,
-					key_path: 'key',
+					keyPath: 'key',
 					indexs: ['key', 'value']
 				})
 			},
 		})
 	}
 
-	function init_settings(): void {
-		const store_settings = db.read_store(ObjectStoreNames.settings)
-		if (store_settings == null) return
+	function initSettings(): void {
+		const storeSettings = db.readStore(ObjectStoreNames.settings)
+		if (storeSettings == null) return
 
-		promise_done(db.get<ObjectStoreSettings<ErrorCorrectionLevel>>(
-			store_settings,
-			ObjectStoreKeys.settings_errorcorrectionlevel
-		), result => set_settings('error_correction_level', e => result?.value ?? e))
+		promiseDone(db.get<ObjectStoreSettings<ErrorCorrectionLevel>>(
+			storeSettings,
+			ObjectStoreKeys.settings_errorCorrectionLevel
+		), result => setSettings('errorCorrectionLevel', e => result?.value ?? e))
 
-		promise_done(db.get<ObjectStoreSettings<HEXColor>>(
-			store_settings,
+		promiseDone(db.get<ObjectStoreSettings<HEXColor>>(
+			storeSettings,
 			ObjectStoreKeys.settings_color
-		), result => set_settings('color', c => result?.value ?? c))
+		), result => setSettings('color', c => result?.value ?? c))
 
-		promise_done(db.get<ObjectStoreSettings<HEXColor>>(
-			store_settings,
-			ObjectStoreKeys.settings_backgroundcolor
-		), result => set_settings('background_color', b => result?.value ?? b))
+		promiseDone(db.get<ObjectStoreSettings<HEXColor>>(
+			storeSettings,
+			ObjectStoreKeys.settings_backgroundColor
+		), result => setSettings('backgroundColor', b => result?.value ?? b))
 
-		promise_done(db.get<ObjectStoreSettings<Settings['version']>>(
-			store_settings,
+		promiseDone(db.get<ObjectStoreSettings<Settings['version']>>(
+			storeSettings,
 			ObjectStoreKeys.settings_version
-		), result => set_settings('version', v => result?.value ?? v))
+		), result => setSettings('version', v => result?.value ?? v))
 
-		promise_done(db.get<ObjectStoreSettings<Settings['encoding_mode']>>(
-			store_settings,
-			ObjectStoreKeys.settings_encodingmode
-		), result => set_settings('encoding_mode', e => result?.value ?? e))
+		promiseDone(db.get<ObjectStoreSettings<Settings['encodingMode']>>(
+			storeSettings,
+			ObjectStoreKeys.settings_encodingMode
+		), result => setSettings('encodingMode', e => result?.value ?? e))
 
-		promise_done(db.get<ObjectStoreSettings<Settings['margin']>>(
-			store_settings,
+		promiseDone(db.get<ObjectStoreSettings<Settings['margin']>>(
+			storeSettings,
 			ObjectStoreKeys.settings_margin
-		), result => set_settings('margin', m => result?.value ?? m))
+		), result => setSettings('margin', m => result?.value ?? m))
 	}
 
-	function init_last_page(): void {
-		const store_miscellaneous = db.read_store(ObjectStoreNames.miscellaneous)
-		if (store_miscellaneous == null) return
+	function initLastPage(): void {
+		const store = db.readStore(ObjectStoreNames.miscellaneous)
+		if (store == null) return
 
-		promise_done(db.get<ObjectStoreMiscellaneous<Pages>>(
-			store_miscellaneous,
-			ObjectStoreKeys.miscellaneous_lastpage
-		), result => set_page(p => result?.value ?? p))
+		promiseDone(db.get<ObjectStoreMiscellaneous<Pages>>(
+			store,
+			ObjectStoreKeys.miscellaneous_lastPage
+		), result => setPage(p => result?.value ?? p))
 	}
 
 	onMount(() => {
-		init_database()
-		remove_splash_screen()
+		initDatabase()
+		removeSplashScreen()
 	})
 
 	const Toasts: VoidComponent = () => (<>
-		<Toast ref={r => toast_copied_ref = r} c_leading={<Icon c_code={ICON_COPY}/>}>Copied to clipboard</Toast>
+		<Toast
+			ref={r => toastCopiedRef = r}
+			c:leading={<Icon c:code={ICON_COPY}/>}>
+			Copied to clipboard
+		</Toast>
 	</>)
 
 	return (<App
-		c_appbar={<AppBar
+		c:appBar={<AppBar
 			settings={settings}
 			command={command}
-			is_generate_error={is_generate_error()}
+			isGenerateError={isGenerateError()}
 			page={page()}
 		/>}>
 		<Body
 			page={page()}
-			is_generate_error={is_generate_error()}
+			isGenerateError={isGenerateError()}
 			command={command}
-			canvas_ref={r => canvas_ref = r}
+			canvasRef={r => canvasRef = r}
 		/>
 		<Toasts/>
 	</App>)

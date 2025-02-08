@@ -39,45 +39,45 @@ export enum CalculatorType {
 }
 
 export enum Commands {
-	toggle_navigation_expand,
-	toggle_notebook_expand,
+	toggleNavigationExpand,
+	toggleNotebookExpand,
 
 	/**
 	@param {GroupingNumberFormat} type `GroupingNumberFormat` */
-	change_settings_numberformatgrouping,
+	updateSettingsNumberFormatGrouping,
 
 	/**
 	@param {DecimalNumberFormat} type `DecimalNumberFormat` */
-	change_settings_numberformatdecimal,
+	updateSettingsNumberFormatDecimal,
 
-	toggle_settings_scientificnotation,
-	toggle_settings_memorybuttons,
+	toggleSettingsScientificNotation,
+	toggleSettingsMemoryButtons,
 
 	/**
 	@param {string | DateCalculatorInput} value `string | DateCalculatorInput` */
-	change_calculator_input,
+	updateCalculatorInput,
 
-	add_memory,
-	subtract_memory,
-	clear_memory,
+	addMemory,
+	subtractMemory,
+	clearMemory,
 
-	toggle_settings_scientific_angle,
+	toggleSettingsScientificAngle,
 
 	/** @param {ConverterType} value `ConverterType` */
-	change_settings_converter_type,
+	updateSettingsConverterType,
 
 	/**
 	@param {ConverterUnit} value `ConverterUnit` */
-	change_settings_converter_inputunit,
+	updateSettingsConverterInputUnit,
 
 	/**
 	@param {ConverterUnit} value `ConverterUnit` */
-	change_settings_converter_outputunit,
-	change_settings_converter_swapunit,
+	updateSettingsConverterOutputUnit,
+	swapConverterUnits,
 
 	/** @param {NumberType} type `NumberType` */
-	change_settings_programmer_numbertype,
+	updateSettingsProgrammerNumberType,
 
 	/** @param {DateOperation} operation `DateOperation` */
-	change_settings_date_operation,
+	updateSettingsDateOperation,
 }

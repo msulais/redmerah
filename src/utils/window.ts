@@ -1,27 +1,27 @@
-export function window_match_media(query: string): MediaQueryList {
+export function windowMatchMedia(query: string): MediaQueryList {
 	return window.matchMedia(query)
 }
 
-export function window_matches(query: string): boolean {
-	return window_match_media(query).matches
+export function windowMatches(query: string): boolean {
+	return windowMatchMedia(query).matches
 }
 
-export function window_scroll_y(): number {
+export function windowScrollY(): number {
 	return window.scrollY
 }
 
-export function window_scroll_x(): number {
+export function windowScrollX(): number {
 	return window.scrollX
 }
 
-export function window_scrollto(options?: ScrollToOptions): void {
+export function windowScrollTo(options?: ScrollToOptions): void {
 	return window.scrollTo(options)
 }
 
-export function window_inner_height(): number {
+export function windowInnerHeight(): number {
 	return window.innerHeight
 }
 
-export function window_inner_width(): number {
+export function windowInnerWidth(): number {
 	return window.innerWidth
 }

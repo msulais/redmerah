@@ -1,21 +1,21 @@
 import { createUniqueId, mergeProps, onCleanup, onMount, splitProps, type FlowComponent, type JSX, type ParentComponent } from "solid-js"
 
-import { attr_remove, attr_set, classlist } from "@/utils/attributes"
-import { event_add_listener, event_call, event_current_target, event_target } from "@/utils/event"
-import { element_create, element_animate, element_append_child, element_closest, element_dataset, element_dispatch_event, element_rect, element_set_style, element_matches, element_contains, element_by_id, element_classlist_contains, element_set_id, element_set_popover, element_set_textcontent } from "@/utils/element"
-import { timeout_clear, timeout_set } from "@/utils/timeout"
+import { attrRemove, attrSet, attrClassList } from "@/utils/attributes"
+import { eventListenerAdd, eventCall, eventCurrentTarget, eventTarget } from "@/utils/event"
+import { elementCreate, elementAnimate, elementAppendChild, elementClosest, elementDataset, elementDispatchEvent, elementRect, elementStyleSet, elementMatches, elementContains, elementById, elementClassListContains, elementIdSet, elementPopoverSet, elementTextContentSet } from "@/utils/element"
+import { timeTimerClear, timeTimerSet } from "@/utils/time"
 import { FlyoutPosition as TooltipPosition } from "@/enums/position"
-import { get_flyout_position } from "@/utils/flyout"
-import { math_abs } from "@/utils/math"
+import { getFlyoutPosition } from "@/utils/flyout"
+import { mathAbs } from "@/utils/math"
 import { AnimationEffectTiming } from "@/enums/animation"
-import { is_mobile } from "@/utils/platforms"
-import { rect_height, rect_left, rect_top, rect_width } from "@/utils/rect"
-import { promise_done } from "@/utils/object"
-import { document_active, document_body, document_has_focus } from "@/utils/document"
-import { string_css_escape, string_length, string_trim } from "@/utils/string"
+import { isMobile } from "@/utils/platforms"
+import { rectHeight, rectLeft, rectTop, rectWidth } from "@/utils/rect"
+import { promiseDone } from "@/utils/object"
+import { documentActive, documentBody, documentHasFocus } from "@/utils/document"
+import { stringCSSEscape, stringLength, stringTrim } from "@/utils/string"
 import { ElementIds } from "@/enums/ids"
 
-import { close_popover, open_popover, Popover, POPOVER_CLASS, type PopoverProps } from "@/components/Popover"
+import { closePopover, openPopover, Popover, POPOVER_CLASS, type PopoverProps } from "@/components/Popover"
 import './index.scss'
 
 enum TooltipListenerEvents {
@@ -24,12 +24,12 @@ enum TooltipListenerEvents {
 
 	/** @requires TooltipCloseDetail */
 	close = 'custom:tooltiplistener-close',
-	stop_process = 'custom:tooltiplistener-stopprocess'
+	stopProcess = 'custom:tooltiplistener-stopprocess'
 }
 
 enum TooltipAttributes {
 	open = 'data-c-open',
-	open_done = 'data-c-open-done',
+	openDone = 'data-c-open-done',
 }
 
 let LISTENER_REF: HTMLDivElement
@@ -43,249 +43,249 @@ type TooltipOpenDetail<E = Event> = {
 		currentTarget: HTMLDivElement
 		target: Element
 	}
-	by_focus?: boolean
+	byFocus?: boolean
 	gap?: number
 	position?: TooltipPosition
-	start_delay_duration?: number
-	use_anchor?: boolean
-	wrapper_id: string
+	startDelayDuration?: number
+	useAnchor?: boolean
+	wrapperId: string
 }
 
 type TooltipCloseDetail = {
-	end_delay_duration?: number
+	endDelayDuration?: number
 }
 
-function init_tooltip(): void {
+function initTooltip(): void {
 	if (TOOLTIP_HAS_LISTENER) return;
 	TOOLTIP_HAS_LISTENER = true
 
-	const $is_mobile = is_mobile()
-	let pointer_x: number = 0
-	let pointer_y: number = 0
-	let pointer_open_x: number = 0
-	let pointer_open_y: number = 0
+	const $isMobile = isMobile()
+	let pointerX: number = 0
+	let pointerY: number = 0
+	let pointerOpenX: number = 0
+	let pointerOpenY: number = 0
 
 	/**
 	 * - (Text tooltip) Element with `[data-tooltip=<content>]`
 	 * - (Rich tooltip) Element with `[data-rich-tooltip=<id>]`
 	 */
-	let anchor_element: HTMLElement | null = null
-	let position: TooltipPosition = TooltipPosition.center_top
+	let anchorElement: HTMLElement | null = null
+	let position: TooltipPosition = TooltipPosition.centerTop
 	let gap: number = 40
-	let use_anchor: boolean = false
-	let tooltip_text_ref: HTMLDivElement
-	let tooltip_rich_ref: HTMLDivElement | null = null
-	let is_open = false
-	let timeout_id: number | null = null
+	let useAnchor: boolean = false
+	let tooltipTextRef: HTMLDivElement
+	let tooltipRichRef: HTMLDivElement | null = null
+	let isOpen = false
+	let timeId: number | null = null
 
-	function create_tooltip_listener(): void {
-		const div = element_create('div')
-		element_set_id(div, ElementIds.tooltip_listener)
-		element_set_style(div, 'display', 'contents')
-		element_append_child(document_body(), div)
+	function createTooltipListener(): void {
+		const div = elementCreate('div')
+		elementIdSet(div, ElementIds.tooltipListener)
+		elementStyleSet(div, 'display', 'contents')
+		elementAppendChild(documentBody(), div)
 
 		LISTENER_REF = div
 	}
 
-	function create_tooltip_text(): void {
-		const div = element_create('div')
-		element_set_id(div, ElementIds.text_tooltip)
-		element_set_popover(div, 'manual')
-		element_append_child(document_body(), div)
+	function createTooltipText(): void {
+		const div = elementCreate('div')
+		elementIdSet(div, ElementIds.textTooltip)
+		elementPopoverSet(div, 'manual')
+		elementAppendChild(documentBody(), div)
 
-		tooltip_text_ref = div
+		tooltipTextRef = div
 	}
 
-	async function hide_tooltip(): Promise<void> {
-		if (!is_open) return
+	async function hideTooltip(): Promise<void> {
+		if (!isOpen) return
 
-		is_open = false
-		if (tooltip_rich_ref) {
-			close_popover(tooltip_rich_ref)
-			anchor_element = null
-			tooltip_rich_ref = null
+		isOpen = false
+		if (tooltipRichRef) {
+			closePopover(tooltipRichRef)
+			anchorElement = null
+			tooltipRichRef = null
 			return
 		}
 
-		if (!anchor_element) return
+		if (!anchorElement) return
 
-		const anchor_rect: DOMRect | undefined = use_anchor
-			? element_rect(anchor_element)
+		const anchorRect: DOMRect | undefined = useAnchor
+			? elementRect(anchorElement)
 			: undefined
-		const tooltip_rect = element_rect(tooltip_text_ref)
-		const pos = get_flyout_position({
-			flyout: tooltip_rect,
-			anchor: use_anchor? anchor_rect : undefined,
+		const tooltipRect = elementRect(tooltipTextRef)
+		const pos = getFlyoutPosition({
+			flyout: tooltipRect,
+			anchor: useAnchor? anchorRect : undefined,
 			gap: gap,
-			pointer: use_anchor? undefined : {
-				x: pointer_open_x,
-				y: pointer_open_y
+			pointer: useAnchor? undefined : {
+				x: pointerOpenX,
+				y: pointerOpenY
 			},
 			position: position
 		}) as DOMRect
 
-		const tooltip_position = {
+		const tooltipPosition = {
 			...pos,
-			bottom: rect_top(pos) + rect_height(tooltip_rect),
-			right: rect_left(pos) + rect_width(tooltip_rect)
+			bottom: rectTop(pos) + rectHeight(tooltipRect),
+			right: rectLeft(pos) + rectWidth(tooltipRect)
 		}
-		const tooltip_mid_position = {
-			x: rect_left(tooltip_position) + (rect_width(tooltip_rect) / 2),
-			y: rect_top(tooltip_position) + (rect_height(tooltip_rect) / 2),
+		const tooltipMidPosition = {
+			x: rectLeft(tooltipPosition) + (rectWidth(tooltipRect) / 2),
+			y: rectTop(tooltipPosition) + (rectHeight(tooltipRect) / 2),
 		}
 		const translate = {
 			left: 0,
 			top: 0
 		}
 
-		let anchor_center_left = pointer_open_x
-		let anchor_center_top = pointer_open_y
+		let anchorCenterLeft = pointerOpenX
+		let anchorCenterTop = pointerOpenY
 
-		if (use_anchor) {
-			anchor_center_left = rect_left(anchor_rect!) + (rect_width(anchor_rect!) / 2)
-			anchor_center_top = rect_top(anchor_rect!) + (rect_height(anchor_rect!) / 2)
+		if (useAnchor) {
+			anchorCenterLeft = rectLeft(anchorRect!) + (rectWidth(anchorRect!) / 2)
+			anchorCenterTop = rectTop(anchorRect!) + (rectHeight(anchorRect!) / 2)
 		}
 
-		const range_x = math_abs(tooltip_mid_position.x - anchor_center_left)
-		const range_y = math_abs(tooltip_mid_position.y - anchor_center_top)
+		const rangeX = mathAbs(tooltipMidPosition.x - anchorCenterLeft)
+		const rangeY = mathAbs(tooltipMidPosition.y - anchorCenterTop)
 
-		if (range_x > range_y) {
-			if ((tooltip_mid_position.x < anchor_center_top || tooltip_mid_position.x > anchor_center_top) && (
-				position == TooltipPosition.center_bottom
-				|| position == TooltipPosition.center_bottom_to_left
-				|| position == TooltipPosition.center_bottom_to_right
-				|| position == TooltipPosition.center_top
-				|| position == TooltipPosition.center_top_to_left
-				|| position == TooltipPosition.center_top_to_right
+		if (rangeX > rangeY) {
+			if ((tooltipMidPosition.x < anchorCenterTop || tooltipMidPosition.x > anchorCenterTop) && (
+				position == TooltipPosition.centerBottom
+				|| position == TooltipPosition.centerBottomToLeft
+				|| position == TooltipPosition.centerBottomToRight
+				|| position == TooltipPosition.centerTop
+				|| position == TooltipPosition.centerTopToLeft
+				|| position == TooltipPosition.centerTopToRight
 			)) {
-				if (tooltip_mid_position.y > anchor_center_top ) translate.top = -12
-				if (tooltip_mid_position.y < anchor_center_top ) translate.top = 12
+				if (tooltipMidPosition.y > anchorCenterTop ) translate.top = -12
+				if (tooltipMidPosition.y < anchorCenterTop ) translate.top = 12
 			} else {
-				if (tooltip_mid_position.x > anchor_center_left) translate.left = -12
-				if (tooltip_mid_position.x < anchor_center_left) translate.left = 12
+				if (tooltipMidPosition.x > anchorCenterLeft) translate.left = -12
+				if (tooltipMidPosition.x < anchorCenterLeft) translate.left = 12
 			}
 		} else {
-			if ((tooltip_mid_position.y < anchor_center_left || tooltip_mid_position.y > anchor_center_left) && (
-				position == TooltipPosition.left_center
-				|| position == TooltipPosition.left_center_to_bottom
-				|| position == TooltipPosition.left_center_to_top
-				|| position == TooltipPosition.right_center
-				|| position == TooltipPosition.right_center_to_bottom
-				|| position == TooltipPosition.right_center_to_top
+			if ((tooltipMidPosition.y < anchorCenterLeft || tooltipMidPosition.y > anchorCenterLeft) && (
+				position == TooltipPosition.leftCenter
+				|| position == TooltipPosition.leftCenterToBottom
+				|| position == TooltipPosition.leftCenterToTop
+				|| position == TooltipPosition.rightCenter
+				|| position == TooltipPosition.rightCenterToBottom
+				|| position == TooltipPosition.rightCenterToTop
 			)) {
-				if (tooltip_mid_position.x > anchor_center_left) translate.left = -12
-				if (tooltip_mid_position.x < anchor_center_left) translate.left = 12
+				if (tooltipMidPosition.x > anchorCenterLeft) translate.left = -12
+				if (tooltipMidPosition.x < anchorCenterLeft) translate.left = 12
 			} else {
-				if (tooltip_mid_position.y > anchor_center_top ) translate.top = -12
-				if (tooltip_mid_position.y < anchor_center_top ) translate.top = 12
+				if (tooltipMidPosition.y > anchorCenterTop ) translate.top = -12
+				if (tooltipMidPosition.y < anchorCenterTop ) translate.top = 12
 			}
 		}
 
-		attr_remove(tooltip_text_ref, TooltipAttributes.open)
-		attr_remove(tooltip_text_ref, TooltipAttributes.open_done)
-		anchor_element = null
+		attrRemove(tooltipTextRef, TooltipAttributes.open)
+		attrRemove(tooltipTextRef, TooltipAttributes.openDone)
+		anchorElement = null
 
 		// don't remove keyword `await`
-		await promise_done(element_animate(
-			tooltip_text_ref,
+		await promiseDone(elementAnimate(
+			tooltipTextRef,
 			{ transform: `translate(${translate.left}px, ${translate.top}px)` },
-			{ duration: 200, easing: AnimationEffectTiming.spring_bounce }
-		).finished, () => tooltip_text_ref.hidePopover())
+			{ duration: 200, easing: AnimationEffectTiming.springBounce }
+		).finished, () => tooltipTextRef.hidePopover())
 	}
 
-	function close_tooltip(ev: CustomEvent<TooltipCloseDetail>): void {
+	function closeTooltip(ev: CustomEvent<TooltipCloseDetail>): void {
 		const {
-			end_delay_duration = $is_mobile? 1500 : 800
+			endDelayDuration = $isMobile? 1500 : 800
 		} = ev.detail
-		if (timeout_id != null) timeout_clear(timeout_id)
-		timeout_id = timeout_set(async () => {
-			hide_tooltip()
-			tooltip_rich_ref = null
-			is_open = false
-			timeout_id = null
-		}, end_delay_duration)
+		if (timeId != null) timeTimerClear(timeId)
+		timeId = timeTimerSet(async () => {
+			hideTooltip()
+			tooltipRichRef = null
+			isOpen = false
+			timeId = null
+		}, endDelayDuration)
 	}
 
-	function open_tooltip(ev: CustomEvent<TooltipOpenDetail>): void {
+	function openTooltip(ev: CustomEvent<TooltipOpenDetail>): void {
 		const {
-			wrapper_id,
+			wrapperId,
 			event,
-			by_focus,
-			gap: input_gap = 40,
-			position: input_position = TooltipPosition.center_top,
-			start_delay_duration = 800,
-			use_anchor: input_use_anchor = false,
+			byFocus,
+			gap: inputGap = 40,
+			position: inputPosition = TooltipPosition.centerTop,
+			useAnchor: inputUseAnchor = false,
+			startDelayDuration = 800,
 		} = ev.detail
 		const close = () => {
-			const end_delay_duration = $is_mobile? 1500 : 800
-			if (timeout_id != null) timeout_clear(timeout_id)
-			timeout_id = timeout_set(async () => {
-				hide_tooltip()
-				tooltip_rich_ref = null
-				is_open = false
-				timeout_id = null
-			}, end_delay_duration)
+			const endDelayDuration = $isMobile? 1500 : 800
+			if (timeId != null) timeTimerClear(timeId)
+			timeId = timeTimerSet(async () => {
+				hideTooltip()
+				tooltipRichRef = null
+				isOpen = false
+				timeId = null
+			}, endDelayDuration)
 		}
-		const target = event_target(event) as HTMLElement
-		const current_target = event_current_target(event)
+		const target = eventTarget(event) as HTMLElement
+		const currentTarget = eventCurrentTarget(event)
 
-		if (!element_contains(current_target, target)) return
+		if (!elementContains(currentTarget, target)) return
 
-		let anchor = element_closest(
+		let anchor = elementClosest(
 			target,
-			'#' + string_css_escape(wrapper_id) + ' :is([data-tooltip],[data-rich-tooltip])'
+			'#' + stringCSSEscape(wrapperId) + ' :is([data-tooltip],[data-rich-tooltip])'
 		)
 		if (!anchor) return close()
-		if (anchor_element === anchor) return
+		if (anchorElement === anchor) return
 
-		let rich_tooltip: HTMLElement | undefined
-		let has_rich_tooltip = false
-		let text = element_dataset(anchor, 'tooltip') // [data-tooltip]
-		if (text && string_length(string_trim(text)) > 0) {
-			text = string_trim(text)
+		let richTooltip: HTMLElement | undefined
+		let hasRichTooltip = false
+		let text = elementDataset(anchor, 'tooltip') // [data-tooltip]
+		if (text && stringLength(stringTrim(text)) > 0) {
+			text = stringTrim(text)
 		}
 		else {
-			const tooltip_id = element_dataset(anchor, 'richTooltip') // [data-rich-tooltip]
-			if (!tooltip_id || string_length(string_trim(tooltip_id)) == 0) return
+			const tooltipId = elementDataset(anchor, 'richTooltip') // [data-rich-tooltip]
+			if (!tooltipId || stringLength(stringTrim(tooltipId)) == 0) return
 
-			const tooltip = element_by_id(tooltip_id)
+			const tooltip = elementById(tooltipId)
 			if (
 				!tooltip
-				|| !element_classlist_contains(tooltip, POPOVER_CLASS)
-				|| !element_contains(current_target, tooltip)
+				|| !elementClassListContains(tooltip, POPOVER_CLASS)
+				|| !elementContains(currentTarget, tooltip)
 			) return
 
-			rich_tooltip = tooltip
-			has_rich_tooltip = true
+			richTooltip = tooltip
+			hasRichTooltip = true
 		}
 
-		if (by_focus && document_has_focus()) {
-			anchor = document_active()!
+		if (byFocus && documentHasFocus()) {
+			anchor = documentActive()!
 
-			const rect = element_rect(anchor)
-			pointer_x = rect_left(rect) + rect_width(rect) / 2
-			pointer_y = rect_top(rect) + rect_height(rect) / 2
+			const rect = elementRect(anchor)
+			pointerX = rectLeft(rect) + rectWidth(rect) / 2
+			pointerY = rectTop(rect) + rectHeight(rect) / 2
 		}
 
-		if (timeout_id != null) timeout_clear(timeout_id)
-		timeout_id = timeout_set(async () => {
-			if (is_open) await hide_tooltip()
+		if (timeId != null) timeTimerClear(timeId)
+		timeId = timeTimerSet(async () => {
+			if (isOpen) await hideTooltip()
 
-			timeout_id = null
-			is_open = true
-			anchor_element = anchor
-			gap = input_gap
-			position = input_position
-			use_anchor = input_use_anchor
+			timeId = null
+			isOpen = true
+			anchorElement = anchor
+			gap = inputGap
+			position = inputPosition
+			useAnchor = inputUseAnchor
 
-			if (has_rich_tooltip) {
-				tooltip_rich_ref = rich_tooltip! as HTMLDivElement
-				open_popover(event, tooltip_rich_ref, {
-					manual_dismiss: true,
-					anchor_rect: use_anchor? element_rect(anchor) : undefined,
+			if (hasRichTooltip) {
+				tooltipRichRef = richTooltip! as HTMLDivElement
+				openPopover(event, tooltipRichRef, {
+					manualDismiss: true,
+					anchorRect: useAnchor? elementRect(anchor) : undefined,
 					pointer: {
-						x: pointer_x,
-						y: pointer_y
+						x: pointerX,
+						y: pointerY
 					},
 					gap,
 					position,
@@ -293,141 +293,141 @@ function init_tooltip(): void {
 				return
 			}
 
-			element_set_textcontent(tooltip_text_ref, text!)
-			tooltip_text_ref.showPopover()
-			const tooltip_rect: DOMRect = element_rect(tooltip_text_ref)
-			const anchor_rect: DOMRect | undefined = use_anchor? element_rect(anchor) : undefined
-			const pos = get_flyout_position({
-				flyout: tooltip_rect,
-				anchor: use_anchor? anchor_rect : undefined,
+			elementTextContentSet(tooltipTextRef, text!)
+			tooltipTextRef.showPopover()
+			const tooltipRect: DOMRect = elementRect(tooltipTextRef)
+			const anchorRect: DOMRect | undefined = useAnchor? elementRect(anchor) : undefined
+			const pos = getFlyoutPosition({
+				flyout: tooltipRect,
+				anchor: useAnchor? anchorRect : undefined,
 				gap,
-				pointer: use_anchor? undefined : {
-					x: pointer_x,
-					y: pointer_y
+				pointer: useAnchor? undefined : {
+					x: pointerX,
+					y: pointerY
 				},
 				position
 			}) as DOMRect
 
 			// save to close later
-			pointer_open_x = pointer_x
-			pointer_open_y = pointer_y
+			pointerOpenX = pointerX
+			pointerOpenY = pointerY
 
-			const tooltip_position = {
+			const tooltipPosition = {
 				...pos,
-				bottom: rect_top(pos) + rect_height(tooltip_rect),
-				right: rect_left(pos) + rect_width(tooltip_rect)
+				bottom: rectTop(pos) + rectHeight(tooltipRect),
+				right: rectLeft(pos) + rectWidth(tooltipRect)
 			}
-			const tooltip_mid_position = {
-				x: rect_left(tooltip_position) + (rect_width(tooltip_rect) / 2),
-				y: rect_top(tooltip_position) + (rect_height(tooltip_rect) / 2),
+			const tooltipMidPosition = {
+				x: rectLeft(tooltipPosition) + (rectWidth(tooltipRect) / 2),
+				y: rectTop(tooltipPosition) + (rectHeight(tooltipRect) / 2),
 			}
 			const translate = {
 				left: 0,
 				top: 0
 			}
 
-			let anchor_center_left = pointer_x
-			let anchro_center_top = pointer_y
+			let anchorCenterLeft = pointerX
+			let anchroCenterTop = pointerY
 
-			if (use_anchor) {
-				anchor_center_left = rect_left(anchor_rect!) + (rect_width(anchor_rect!) / 2)
-				anchro_center_top = rect_top(anchor_rect!) + (rect_height(anchor_rect!) / 2)
+			if (useAnchor) {
+				anchorCenterLeft = rectLeft(anchorRect!) + (rectWidth(anchorRect!) / 2)
+				anchroCenterTop = rectTop(anchorRect!) + (rectHeight(anchorRect!) / 2)
 			}
 
-			const range_x = math_abs(tooltip_mid_position.x - anchor_center_left)
-			const range_y = math_abs(tooltip_mid_position.y - anchro_center_top)
+			const rangeX = mathAbs(tooltipMidPosition.x - anchorCenterLeft)
+			const rangeY = mathAbs(tooltipMidPosition.y - anchroCenterTop)
 
-			if (range_x > range_y) {
-				if ((tooltip_mid_position.x < anchro_center_top || tooltip_mid_position.x > anchro_center_top) && (
-					position == TooltipPosition.center_bottom
-					|| position == TooltipPosition.center_bottom_to_left
-					|| position == TooltipPosition.center_bottom_to_right
-					|| position == TooltipPosition.center_top
-					|| position == TooltipPosition.center_top_to_left
-					|| position == TooltipPosition.center_top_to_right
+			if (rangeX > rangeY) {
+				if ((tooltipMidPosition.x < anchroCenterTop || tooltipMidPosition.x > anchroCenterTop) && (
+					position == TooltipPosition.centerBottom
+					|| position == TooltipPosition.centerBottomToLeft
+					|| position == TooltipPosition.centerBottomToRight
+					|| position == TooltipPosition.centerTop
+					|| position == TooltipPosition.centerTopToLeft
+					|| position == TooltipPosition.centerTopToRight
 				)) {
-					if (tooltip_mid_position.y > anchro_center_top ) translate.top = -12
-					if (tooltip_mid_position.y < anchro_center_top ) translate.top = 12
+					if (tooltipMidPosition.y > anchroCenterTop ) translate.top = -12
+					if (tooltipMidPosition.y < anchroCenterTop ) translate.top = 12
 				} else {
-					if (tooltip_mid_position.x > anchor_center_left) translate.left = -12
-					if (tooltip_mid_position.x < anchor_center_left) translate.left = 12
+					if (tooltipMidPosition.x > anchorCenterLeft) translate.left = -12
+					if (tooltipMidPosition.x < anchorCenterLeft) translate.left = 12
 				}
 			} else {
-				if ((tooltip_mid_position.y < anchor_center_left || tooltip_mid_position.y > anchor_center_left) && (
-					position == TooltipPosition.left_center
-					|| position == TooltipPosition.left_center_to_bottom
-					|| position == TooltipPosition.left_center_to_top
-					|| position == TooltipPosition.right_center
-					|| position == TooltipPosition.right_center_to_bottom
-					|| position == TooltipPosition.right_center_to_top
+				if ((tooltipMidPosition.y < anchorCenterLeft || tooltipMidPosition.y > anchorCenterLeft) && (
+					position == TooltipPosition.leftCenter
+					|| position == TooltipPosition.leftCenterToBottom
+					|| position == TooltipPosition.leftCenterToTop
+					|| position == TooltipPosition.rightCenter
+					|| position == TooltipPosition.rightCenterToBottom
+					|| position == TooltipPosition.rightCenterToTop
 				)) {
-					if (tooltip_mid_position.x > anchor_center_left) translate.left = -12
-					if (tooltip_mid_position.x < anchor_center_left) translate.left = 12
+					if (tooltipMidPosition.x > anchorCenterLeft) translate.left = -12
+					if (tooltipMidPosition.x < anchorCenterLeft) translate.left = 12
 				} else {
-					if (tooltip_mid_position.y > anchro_center_top ) translate.top  = -12
-					if (tooltip_mid_position.y < anchro_center_top ) translate.top  = 12
+					if (tooltipMidPosition.y > anchroCenterTop ) translate.top  = -12
+					if (tooltipMidPosition.y < anchroCenterTop ) translate.top  = 12
 				}
 			}
 
-			element_set_style(tooltip_text_ref, 'top', rect_top(pos) + 'px')
-			element_set_style(tooltip_text_ref, 'left', rect_left(pos) + 'px')
-			attr_set(tooltip_text_ref, TooltipAttributes.open)
-			promise_done(element_animate(
-				tooltip_text_ref,
+			elementStyleSet(tooltipTextRef, 'top', rectTop(pos) + 'px')
+			elementStyleSet(tooltipTextRef, 'left', rectLeft(pos) + 'px')
+			attrSet(tooltipTextRef, TooltipAttributes.open)
+			promiseDone(elementAnimate(
+				tooltipTextRef,
 				{ transform: [`translate(${translate.left}px, ${translate.top}px)`, 'none'] },
-				{ duration: 200, easing: AnimationEffectTiming.spring_bounce }
+				{ duration: 200, easing: AnimationEffectTiming.springBounce }
 			).finished, () => {
-				attr_set(tooltip_text_ref, TooltipAttributes.open_done)
+				attrSet(tooltipTextRef, TooltipAttributes.openDone)
 			})
-		}, start_delay_duration)
+		}, startDelayDuration)
 	}
 
-	function stop_process(): void {
-		if (timeout_id == null) return
+	function stopProcess(): void {
+		if (timeId == null) return
 
-		timeout_clear(timeout_id)
+		timeTimerClear(timeId)
 	}
 
-	function init_events(): void {
-		event_add_listener(
+	function initEvents(): void {
+		eventListenerAdd(
 			LISTENER_REF,
 			TooltipListenerEvents.open,
-			open_tooltip
+			openTooltip
 		)
 
-		event_add_listener(
+		eventListenerAdd(
 			LISTENER_REF,
 			TooltipListenerEvents.close,
-			close_tooltip
+			closeTooltip
 		)
 
-		event_add_listener(
+		eventListenerAdd(
 			LISTENER_REF,
-			TooltipListenerEvents.stop_process,
-			stop_process
+			TooltipListenerEvents.stopProcess,
+			stopProcess
 		)
 
-		event_add_listener<PointerEvent>(
+		eventListenerAdd<PointerEvent>(
 			document,
 			'pointermove',
 			(ev) => {
-				pointer_x = ev.clientX
-				pointer_y = ev.clientY
+				pointerX = ev.clientX
+				pointerY = ev.clientY
 			}
 		)
 	}
 
-	create_tooltip_listener()
-	create_tooltip_text()
-	init_events()
+	createTooltipListener()
+	createTooltipText()
+	initEvents()
 }
 
 type TooltipProps = JSX.HTMLAttributes<HTMLDivElement> & {
-	c_position?: TooltipPosition
-	c_gap?: number
-	c_start_delay_duration?: number
-	c_end_delay_duration?: number
-	c_use_anchor?: boolean
+	'c:position'?: TooltipPosition
+	'c:gap'?: number
+	'c:startDelayDuration'?: number
+	'c:endDelayDuration'?: number
+	'c:useAnchor'?: boolean
 }
 
 /**
@@ -452,99 +452,98 @@ const Tooltip: FlowComponent<TooltipProps> = ($props) => {
 		id: createUniqueId()
 	}, $props)
 	const [props, other] = splitProps($$props, [
-		'children', 'class', 'c_end_delay_duration',
-		'c_gap', 'id', 'onFocusIn', 'onFocusOut',
+		'children', 'class', 'c:endDelayDuration',
+		'c:gap', 'id', 'onFocusIn', 'onFocusOut',
 		'onMouseDown', 'onPointerLeave',
 		'onPointerOver', 'onPointerUp', 'onTouchStart',
-		'c_position', 'c_start_delay_duration',
-		'c_use_anchor'
+		'c:position', 'c:startDelayDuration',
+		'c:useAnchor'
 	])
 
-	function open_tooltip(
+	function openTooltip(
 		ev: Event & {
 			currentTarget: HTMLDivElement
 			target: Element
 		},
 		by_focus: boolean = false
 	): void {
-		const self = event_current_target(ev)
-		const target = event_target(ev)
+		const self = eventCurrentTarget(ev)
+		const target = eventTarget(ev)
 
 		// Basically the same as `event.stopPropagation()`. Since this is component,
 		// we should avoid using `event.stopPropagation()` as possible. This is used
 		// to handle nested <Tooltip>.
 		if (
 			TOOLTIP_LISTENER
-			&& element_contains(self, TOOLTIP_LISTENER)
+			&& elementContains(self, TOOLTIP_LISTENER)
 			&& TOOLTIP_TARGET === target
 		) return
 
 		TOOLTIP_LISTENER = self
 		TOOLTIP_TARGET = target
 
-		element_dispatch_event(LISTENER_REF, new CustomEvent(TooltipListenerEvents.open, {detail: {
-			wrapper_id: props.id,
+		elementDispatchEvent(LISTENER_REF, new CustomEvent(TooltipListenerEvents.open, {detail: {
+			wrapperId: props.id,
 			event: ev,
-			by_focus,
-			use_anchor: props.c_use_anchor,
-			gap: props.c_gap,
-			position: props.c_position,
-			start_delay_duration: props.c_start_delay_duration,
+			byFocus: by_focus,
+			useAnchor: props['c:useAnchor'],
+			gap: props['c:gap'],
+			position: props['c:position'],
+			startDelayDuration: props['c:startDelayDuration'],
 		} satisfies TooltipOpenDetail}))
 	}
 
-	function close_tooltip(): void {
+	function closeTooltip(): void {
 		TOOLTIP_LISTENER = null
 
-		element_dispatch_event(LISTENER_REF, new CustomEvent(TooltipListenerEvents.close, {detail: {
-			end_delay_duration: props.c_end_delay_duration
+		elementDispatchEvent(LISTENER_REF, new CustomEvent(TooltipListenerEvents.close, {detail: {
+			endDelayDuration: props['c:endDelayDuration']
 		} satisfies TooltipCloseDetail}))
 	}
 
 	onMount(() => {
-		init_tooltip()
+		initTooltip()
 	})
 
 	onCleanup(() => {
-
-		element_dispatch_event(LISTENER_REF, new CustomEvent(TooltipListenerEvents.close, {detail: {
-			end_delay_duration: props.c_end_delay_duration
+		elementDispatchEvent(LISTENER_REF, new CustomEvent(TooltipListenerEvents.close, {detail: {
+			endDelayDuration: props['c:endDelayDuration']
 		} satisfies TooltipCloseDetail}))
 	})
 
 	return (<div
-		class={classlist(TOOLTIP_CLASS, props.class)}
+		class={attrClassList(TOOLTIP_CLASS, props.class)}
 		id={props.id}
 		onFocusIn={ev => {
-			event_call(ev, props.onFocusIn)
-			const active = document_active()!
-			if (!element_matches(active, ':focus-visible')) return
+			eventCall(ev, props.onFocusIn)
+			const active = documentActive()!
+			if (!elementMatches(active, ':focus-visible')) return
 
-			open_tooltip(ev, true)
+			openTooltip(ev, true)
 		}}
 		onFocusOut={ev => {
-			event_call(ev, props.onFocusOut)
-			close_tooltip()
+			eventCall(ev, props.onFocusOut)
+			closeTooltip()
 		}}
 		onPointerOver={ev => {
-			event_call(ev, props.onPointerOver)
-			open_tooltip(ev)
+			eventCall(ev, props.onPointerOver)
+			openTooltip(ev)
 		}}
 		onTouchStart={ev => {
-			event_call(ev, props.onTouchStart)
-			open_tooltip(ev)
+			eventCall(ev, props.onTouchStart)
+			openTooltip(ev)
 		}}
 		onPointerLeave={ev => {
-			event_call(ev, props.onPointerLeave)
-			close_tooltip()
+			eventCall(ev, props.onPointerLeave)
+			closeTooltip()
 		}}
 		onMouseDown={ev => {
-			event_call(ev, props.onMouseDown)
-			close_tooltip()
+			eventCall(ev, props.onMouseDown)
+			closeTooltip()
 		}}
 		onPointerUp={ev => {
-			event_call(ev, props.onPointerUp)
-			close_tooltip()
+			eventCall(ev, props.onPointerUp)
+			closeTooltip()
 		}}
 		{...other}>
 		{props.children}
@@ -568,48 +567,48 @@ const PopoverTooltip: ParentComponent<PopoverTooltipProps> = ($props) => {
 		'onFocusIn',
 		'onPointerOver',
 		'onTouchStart',
-		'c_use_portal',
+		'c:usePortal',
 	])
 
-	function stop_process(): void {
-		timeout_set(() => {
-			element_dispatch_event(
+	function stopProcess(): void {
+		timeTimerSet(() => {
+			elementDispatchEvent(
 				LISTENER_REF,
-				new CustomEvent(TooltipListenerEvents.stop_process)
+				new CustomEvent(TooltipListenerEvents.stopProcess)
 			)
 		})
 	}
 
 	return <Popover
-		c_use_portal={false}
-		class={classlist('c-rich-tooltip', props.class)}
+		c:usePortal={false}
+		class={attrClassList('c-rich-tooltip', props.class)}
 		onFocusIn={ev => {
-			event_call(ev, props.onFocusIn)
-			stop_process()
+			eventCall(ev, props.onFocusIn)
+			stopProcess()
 		}}
 		onFocusOut={ev => {
-			event_call(ev, props.onFocusOut)
-			stop_process()
+			eventCall(ev, props.onFocusOut)
+			stopProcess()
 		}}
 		onPointerOver={ev => {
-			event_call(ev, props.onPointerOver)
-			stop_process()
+			eventCall(ev, props.onPointerOver)
+			stopProcess()
 		}}
 		onTouchStart={ev => {
-			event_call(ev, props.onTouchStart)
-			stop_process()
+			eventCall(ev, props.onTouchStart)
+			stopProcess()
 		}}
 		onPointerLeave={ev => {
-			event_call(ev, props.onPointerLeave)
+			eventCall(ev, props.onPointerLeave)
 			close()
 		}}
 		onMouseDown={ev => {
-			event_call(ev, props.onMouseDown)
-			stop_process()
+			eventCall(ev, props.onMouseDown)
+			stopProcess()
 		}}
 		onPointerUp={ev => {
-			event_call(ev, props.onPointerUp)
-			stop_process()
+			eventCall(ev, props.onPointerUp)
+			stopProcess()
 		}}
 		{...other}
 	/>

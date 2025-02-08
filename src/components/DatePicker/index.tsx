@@ -2,23 +2,23 @@ import { Transition } from "solid-transition-group"
 import { For, Match, Show, Switch, createEffect, createMemo, createSignal, createUniqueId, mergeProps, splitProps, type ParentComponent, type VoidComponent } from "solid-js"
 import { mergeRefs } from "@solid-primitives/refs"
 
-import { get_current_date, date_year, date_month, date_weekday_names, date_out_range_YMD, is_same_date_YMD, date_month_names, date_out_range_YM, is_same_date_YM, date_out_range_Y, is_same_date_Y, date_text_month, date_in_range_YM, date_day, date_set_month, date_set_year, date_date, date_set_date } from "@/utils/datetime"
+import { dateCurrent, dateYear, dateMonth, dateWeekdayNames, dateOutRangeYMD, dateIsSameYMD, dateMonthNames, dateOutRangeYM, dateIsSameYM, dateOutRangeY, dateIsSameY, dateTextMonth, dateInRangeYM, dateDay, dateMonthSet, dateYearSet, dateDate, dateDateSet } from "@/utils/datetime"
 import { AnimationEffectTiming } from "@/enums/animation"
-import { event_call, event_current_target, event_prevent_default, event_target } from "@/utils/event"
-import { array_fill, array_includes } from "@/utils/array"
-import { string_substring } from "@/utils/string"
-import { element_animate, element_children, element_dataset, element_focus, element_focus_by_arrowkey, element_id, element_is_same_node, element_next_sibling, element_previous_sibling, element_set_tabindex, element_tagname, element_valid_target } from "@/utils/element"
-import { promise_done } from "@/utils/object"
+import { eventCall, eventCurrentTarget, eventPreventDefault, eventTarget } from "@/utils/event"
+import { arrayFill, arrayIncludes } from "@/utils/array"
+import { stringSubstring } from "@/utils/string"
+import { elementAnimate, elementChildren, elementDataset, elementFocus, elementFocusByArrowKey, elementId, elementIsSame, elementSiblingNext, elementSiblingPrevious, elementTabIndexSet, elementTagName, elementValidTarget } from "@/utils/element"
+import { promiseDone } from "@/utils/object"
 import { KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT, KEY_ARROW_UP } from "@/constants/key_code"
-import { number_parse, number_safe } from "@/utils/number"
-import { timeout_set } from "@/utils/timeout"
-import { document_active } from "@/utils/document"
+import { numberParse, numberSafe } from "@/utils/number"
+import { timeTimerSet } from "@/utils/time"
+import { documentActive } from "@/utils/document"
 import { ICON_CALENDAR_DATE, ICON_CHEVRON_LEFT, ICON_CHEVRON_RIGHT } from "@/constants/icons"
 
 import Button, { ButtonVariant, IconButton, SquareButton } from "@/components/Button"
-import { Modal, type ModalProps, ModalPosition as DatePickerPosition, close_modal, focus_modal, open_modal, reposition_modal, is_modal_open } from "@/components/Modal"
+import { Modal, type ModalProps, ModalPosition as DatePickerPosition, closeModal, focusModal, openModal, repositionModal, isModalOpen } from "@/components/Modal"
 import Divider from "@/components/Divider"
-import Popover, { close_popover, is_popover_open, open_popover, reposition_popover, type PopoverProps } from "@/components/Popover"
+import Popover, { closePopover, isPopoverOpen, openPopover, repositionPopover, type PopoverProps } from "@/components/Popover"
 import './index.scss'
 
 enum DatePickerOption {
@@ -28,112 +28,109 @@ enum DatePickerOption {
 }
 
 const DatePickerBody: ParentComponent<{
-	close_signal: boolean
+	closeSignal: boolean
 	date: Date
-	first_date: Date
-	last_date: Date
+	firstDate: Date
+	lastDate: Date
 	locales?: Intl.LocalesArgument
-	on_select_date?(value: Date): unknown
-	on_close(): unknown
-	on_update(): unknown
+	onSelectDate?(value: Date): unknown
+	onClose(): unknown
+	onUpdate(): unknown
 }> = props => {
-	const option_day = DatePickerOption.day
-	const option_month = DatePickerOption.month
-	const option_year = DatePickerOption.year
-	const button_option_id = createUniqueId()
-	const button_selected_id = createUniqueId()
-	const button_previous_id = createUniqueId()
-	const button_next_id = createUniqueId()
-	const [value, set_value] = createSignal<Date>(get_current_date())
-	const [date_option, set_date_option] = createSignal<DatePickerOption>(option_day)
-	const [view_date, set_view_date] = createSignal<Date>(get_current_date())
-	const [start_day, set_start_day] = createSignal<number>(0)
-	const [days_per_month, set_days_per_month] = createSignal<number>(31)
-	let div_month_ref: HTMLDivElement | undefined
-	let div_date_ref: HTMLDivElement | undefined
+	const buttonOptionId = createUniqueId()
+	const buttonSelectedId = createUniqueId()
+	const buttonPreviousId = createUniqueId()
+	const buttonNextId = createUniqueId()
+	const [value, setValue] = createSignal<Date>(dateCurrent())
+	const [dateOption, setDateOption] = createSignal<DatePickerOption>(DatePickerOption.day)
+	const [viewDate, setViewDate] = createSignal<Date>(dateCurrent())
+	const [startDay, setStartDay] = createSignal<number>(0)
+	const [daysPerMonth, setDaysPerMonth] = createSignal<number>(31)
+	let divMonthRef: HTMLDivElement | undefined
+	let divDateRef: HTMLDivElement | undefined
 	let div_year_ref: HTMLDivElement | undefined
 
-	function update_date_view(): void {
-		let days_per_month = 31 // reset to default
-		set_start_day(date_day(new Date(date_year(view_date()), date_month(view_date()), 1)))
+	function updateDateView(): void {
+		let daysPerMonth = 31 // reset to default
+		setStartDay(dateDay(new Date(dateYear(viewDate()), dateMonth(viewDate()), 1)))
 
 		// february
-		if (date_month(view_date()) == 1) {
-			days_per_month = 28
-			if (date_year(view_date()) % 4 == 0) days_per_month = 29
+		if (dateMonth(viewDate()) == 1) {
+			daysPerMonth = 28
+			if (dateYear(viewDate()) % 4 == 0) daysPerMonth = 29
 		}
 
 		// april, june, september, november
-		else if (array_includes([3, 5, 8, 10], date_month(view_date()))) days_per_month = 30
+		else if (arrayIncludes([3, 5, 8, 10], dateMonth(viewDate()))) daysPerMonth = 30
 
-		set_days_per_month(days_per_month)
+		setDaysPerMonth(daysPerMonth)
 	}
 
 	function next(): void {
-		const new_date = new Date(view_date())
-		switch (date_option()) {
-			case option_day: date_set_month(new_date, date_month(new_date) + 1); break
-			case option_month: date_set_year(new_date, date_year(new_date) + 1); break
-			case option_year: date_set_year(new_date, date_year(new_date) + 16); break
+		const new_date = new Date(viewDate())
+		switch (dateOption()) {
+			case DatePickerOption.day: dateMonthSet(new_date, dateMonth(new_date) + 1); break
+			case DatePickerOption.month: dateYearSet(new_date, dateYear(new_date) + 1); break
+			case DatePickerOption.year: dateYearSet(new_date, dateYear(new_date) + 16); break
 		}
-		set_view_date(new_date)
-		update_date_view()
-		props.on_update()
+		setViewDate(new_date)
+		updateDateView()
+		props.onUpdate()
 	}
 
 	function previous(): void {
-		const new_date = new Date(view_date())
-		switch (date_option()) {
-			case option_day: date_set_month(new_date, date_month(new_date) - 1); break
-			case option_month: date_set_year(new_date, date_year(new_date) - 1); break
-			case option_year: date_set_year(new_date, date_year(new_date) - 16); break
+		const new_date = new Date(viewDate())
+		switch (dateOption()) {
+			case DatePickerOption.day: dateMonthSet(new_date, dateMonth(new_date) - 1); break
+			case DatePickerOption.month: dateYearSet(new_date, dateYear(new_date) - 1); break
+			case DatePickerOption.year: dateYearSet(new_date, dateYear(new_date) - 16); break
 		}
 
-		set_view_date(new_date)
-		update_date_view()
-		props.on_update()
+		setViewDate(new_date)
+		updateDateView()
+		props.onUpdate()
 	}
 
-	function goto_selected_date(): void {
-		set_view_date(value())
-		update_date_view()
+	function goToSelectedDate(): void {
+		setViewDate(value())
+		updateDateView()
 	}
 
 	createEffect(() => {
-		props.close_signal // to trigger close signal
-		set_date_option(option_day)
+		props.closeSignal // to trigger close signal
+		setDateOption(DatePickerOption.day)
 	})
 
 	createEffect(() => {
 		const date = props.date
 
-		set_view_date(date)
-		set_value(date)
+		setViewDate(date)
+		setValue(date)
 	})
 
 	const DaysDate: VoidComponent = () => {
-		let is_button_focused = false
+		let isButtonFocused = false
 
 		createEffect(() => {
-			days_per_month()
+			daysPerMonth()
 
-			const children = element_children<HTMLButtonElement>(div_date_ref!)
-			is_button_focused = false
+			const children = elementChildren<HTMLButtonElement>(divDateRef!)
+			isButtonFocused = false
 			for (const child of children) {
-				if (element_tagname(child) != 'BUTTON') continue
+				if (elementTagName(child) != 'BUTTON') continue
 				if (child.disabled) continue
 
-				element_set_tabindex(child, 0)
+				elementTabIndexSet(child, 0)
 			}
 		})
 
 		return (<div style="display: contents">
 			<div class="c-date-picker-days-name">
-				<For each={date_weekday_names(props.locales)}>{d => <p>{string_substring(d, 0, 3)}</p>}</For>
+				<For each={dateWeekdayNames(props.locales)}>{d => <p>{stringSubstring(d, 0, 3)}</p>}</For>
 			</div>
 			<div
 				class="c-date-picker-days"
-				ref={div_date_ref}
+				ref={divDateRef}
 				onKeyDown={(ev) => {
 					const code = ev.code
 					if (
@@ -143,72 +140,72 @@ const DatePickerBody: ParentComponent<{
 						&& code != KEY_ARROW_RIGHT
 					) return;
 
-					const button = event_target(ev) as HTMLButtonElement
-					const index = number_safe(number_parse(element_dataset(button, 'index')!, true))
-					const children = element_children<HTMLButtonElement>(event_current_target(ev))
+					const button = eventTarget(ev) as HTMLButtonElement
+					const index = numberSafe(numberParse(elementDataset(button, 'index')!, true))
+					const children = elementChildren<HTMLButtonElement>(eventCurrentTarget(ev))
 					let target: HTMLElement | null = null
 
-					if (code == KEY_ARROW_UP) target = children[start_day() + index - 7]
-					else if (code == KEY_ARROW_DOWN) target = children[start_day() + index + 7]
-					else if (code == KEY_ARROW_RIGHT) target = element_next_sibling(button)
-					else if (code == KEY_ARROW_LEFT) target = element_previous_sibling(button)
+					if (code == KEY_ARROW_UP) target = children[startDay() + index - 7]
+					else if (code == KEY_ARROW_DOWN) target = children[startDay() + index + 7]
+					else if (code == KEY_ARROW_RIGHT) target = elementSiblingNext(button)
+					else if (code == KEY_ARROW_LEFT) target = elementSiblingPrevious(button)
 
-					if (!target || (target as HTMLButtonElement).disabled || element_tagname(target) != 'BUTTON') return
-					element_set_tabindex(button, -1)
-					element_set_tabindex(target, 0)
-					event_prevent_default(ev)
-					element_focus(target)
+					if (!target || (target as HTMLButtonElement).disabled || elementTagName(target) != 'BUTTON') return
+					elementTabIndexSet(button, -1)
+					elementTabIndexSet(target, 0)
+					eventPreventDefault(ev)
+					elementFocus(target)
 				}}
 				onFocusIn={(ev) => {
-					if (is_button_focused) return
+					if (isButtonFocused) return
 
-					const children = element_children<HTMLButtonElement>(event_current_target(ev))
-					const button = event_target(ev) as HTMLButtonElement
-					element_set_tabindex(button, 0)
-					is_button_focused = true
+					const children = elementChildren<HTMLButtonElement>(eventCurrentTarget(ev))
+					const button = eventTarget(ev) as HTMLButtonElement
+					elementTabIndexSet(button, 0)
+					isButtonFocused = true
 					for (const child of children) {
-						if (element_is_same_node(child, button)) continue
-						if (element_tagname(child) != 'BUTTON') continue
+						if (elementIsSame(child, button)) continue
+						if (elementTagName(child) != 'BUTTON') continue
 						if (child.disabled) continue
 
-						element_set_tabindex(child, -1)
+						elementTabIndexSet(child, -1)
 					}
 				}}
 				onClick={(ev) => {
-					const button = document_active()!
-					if (!element_valid_target(
-						event_current_target(ev),
+					const button = documentActive()!
+					if (!elementValidTarget(
+						eventCurrentTarget(ev),
 						button,
-						el => element_tagname(el) == 'BUTTON'
+						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					const index = number_safe(number_parse(element_dataset(button, 'index')!, true))
+					const index = numberSafe(numberParse(elementDataset(button, 'index')!, true))
 					const date = new Date(
-						date_year(view_date()),
-						date_month(view_date()),
+						dateYear(viewDate()),
+						dateMonth(viewDate()),
 						index + 1
 					)
 					const d = new Date(value())
-					date_set_date(d, date_date(date))
-					date_set_month(d, date_month(date))
-					date_set_year(d, date_year(date))
-					set_value(d)
-					props.on_select_date?.(value())
-					props.on_close()
+					dateDateSet(d, dateDate(date))
+					dateMonthSet(d, dateMonth(date))
+					dateYearSet(d, dateYear(date))
+					setValue(d)
+					props.onSelectDate?.(value())
+					props.onClose()
 				}}>
-				<For each={array_fill(Array(start_day()), 0)}>{_v => <div/>}</For>
-				<For each={array_fill(Array(days_per_month()), 0)}>{(_v, i) => {
+				<For each={arrayFill(Array(startDay()), 0)}>{_v => <div/>}</For>
+				<For each={arrayFill(Array(daysPerMonth()), 0)}>{(_v, i) => {
 					const date = createMemo(() => new Date(
-						date_year(view_date()),
-						date_month(view_date()),
+						dateYear(viewDate()),
+						dateMonth(viewDate()),
 						i() + 1
 					))
 					return (<SquareButton
 						data-index={i()}
-						disabled={date_out_range_YMD(date(), props.first_date, props.last_date)}
-						c_variant={is_same_date_YMD(date(), value())
+						disabled={dateOutRangeYMD(date(), props.firstDate, props.lastDate)}
+						c:variant={dateIsSameYMD(date(), value())
 							? ButtonVariant.filled
-							: is_same_date_YMD(date(), get_current_date())
+							: dateIsSameYMD(date(), dateCurrent())
 								? ButtonVariant.outlined
 								: undefined
 						}>
@@ -220,23 +217,23 @@ const DatePickerBody: ParentComponent<{
 	}
 
 	const MonthsDate: VoidComponent = () => {
-		let is_button_focused = false
+		let isButtonFocused = false
 
 		createEffect(() => {
-			view_date()
+			viewDate()
 
-			const children = element_children<HTMLButtonElement>(div_month_ref!)
-			is_button_focused = false
+			const children = elementChildren<HTMLButtonElement>(divMonthRef!)
+			isButtonFocused = false
 			for (const child of children) {
-				if (element_tagname(child) != 'BUTTON') continue
+				if (elementTagName(child) != 'BUTTON') continue
 				if (child.disabled) continue
 
-				element_set_tabindex(child, 0)
+				elementTabIndexSet(child, 0)
 			}
 		})
 
 		return (<div
-			ref={div_month_ref}
+			ref={divMonthRef}
 			class="c-date-picker-month"
 			onKeyDown={(ev) => {
 				const code = ev.code
@@ -247,67 +244,67 @@ const DatePickerBody: ParentComponent<{
 					&& code != KEY_ARROW_RIGHT
 				) return;
 
-				const button = event_target(ev) as HTMLButtonElement
-				const index = number_safe(number_parse(element_dataset(button, 'index')!, true))
-				const children = element_children<HTMLButtonElement>(event_current_target(ev))
+				const button = eventTarget(ev) as HTMLButtonElement
+				const index = numberSafe(numberParse(elementDataset(button, 'index')!, true))
+				const children = elementChildren<HTMLButtonElement>(eventCurrentTarget(ev))
 				let target: HTMLElement | null = null
 
 				if (code == KEY_ARROW_UP) target = children[index - 3]
 				else if (code == KEY_ARROW_DOWN) target = children[index + 3]
-				else if (code == KEY_ARROW_RIGHT) target = element_next_sibling(button)
-				else if (code == KEY_ARROW_LEFT) target = element_previous_sibling(button)
+				else if (code == KEY_ARROW_RIGHT) target = elementSiblingNext(button)
+				else if (code == KEY_ARROW_LEFT) target = elementSiblingPrevious(button)
 
 				if (!target || (target as HTMLButtonElement).disabled) return
-				event_prevent_default(ev)
-				element_set_tabindex(button, -1)
-				element_set_tabindex(target, 0)
-				element_focus(target)
+				eventPreventDefault(ev)
+				elementTabIndexSet(button, -1)
+				elementTabIndexSet(target, 0)
+				elementFocus(target)
 			}}
 			onFocusIn={(ev) => {
-				if (is_button_focused) return
+				if (isButtonFocused) return
 
-				const children = element_children<HTMLButtonElement>(event_current_target(ev))
-				const button = event_target(ev) as HTMLButtonElement
-				element_set_tabindex(button, 0)
-				is_button_focused = true
+				const children = elementChildren<HTMLButtonElement>(eventCurrentTarget(ev))
+				const button = eventTarget(ev) as HTMLButtonElement
+				elementTabIndexSet(button, 0)
+				isButtonFocused = true
 				for (const child of children) {
-					if (element_is_same_node(child, button)) continue
+					if (elementIsSame(child, button)) continue
 					if (child.disabled) continue
 
-					element_set_tabindex(child, -1)
+					elementTabIndexSet(child, -1)
 				}
 			}}
 			onClick={ev => {
-				const button = document_active()!
-				if (!element_valid_target(
-					event_current_target(ev),
+				const button = documentActive()!
+				if (!elementValidTarget(
+					eventCurrentTarget(ev),
 					button,
-					el => element_tagname(el) == 'BUTTON'
+					el => elementTagName(el) == 'BUTTON'
 				)) return
 
-				const index = number_safe(number_parse(element_dataset(button, 'index')!, true))
-				set_view_date(new Date(date_year(view_date()), index))
-				set_date_option(option_day)
-				update_date_view()
+				const index = numberSafe(numberParse(elementDataset(button, 'index')!, true))
+				setViewDate(new Date(dateYear(viewDate()), index))
+				setDateOption(DatePickerOption.day)
+				updateDateView()
 
-				timeout_set(() => {
-					const children = element_children<HTMLButtonElement>(div_date_ref!)
+				timeTimerSet(() => {
+					const children = elementChildren<HTMLButtonElement>(divDateRef!)
 					for (const child of children) {
-						if (element_tagname(child) != "BUTTON" || child.disabled) continue
+						if (elementTagName(child) != "BUTTON" || child.disabled) continue
 
-						element_focus(child)
+						elementFocus(child)
 						break
 					}
 				})
 			}}>
-			<For each={date_month_names(props.locales)}>{(m, i) => {
-				const date = createMemo(() => new Date(date_year(view_date()), i()))
+			<For each={dateMonthNames(props.locales)}>{(m, i) => {
+				const date = createMemo(() => new Date(dateYear(viewDate()), i()))
 				return (<Button
 					data-index={i()}
-					disabled={date_out_range_YM(date(), props.first_date, props.last_date)}
-					c_variant={is_same_date_YM(date(), value())
+					disabled={dateOutRangeYM(date(), props.firstDate, props.lastDate)}
+					c:variant={dateIsSameYM(date(), value())
 						? ButtonVariant.filled
-						: is_same_date_YM(date(), get_current_date())
+						: dateIsSameYM(date(), dateCurrent())
 							? ButtonVariant.outlined
 							: undefined
 					}>{m}</Button>)
@@ -316,18 +313,18 @@ const DatePickerBody: ParentComponent<{
 	}
 
 	const YearsDate: VoidComponent = () => {
-		let is_button_focused = false
+		let isButtonFocused = false
 
 		createEffect(() => {
-			view_date()
+			viewDate()
 
-			const children = element_children<HTMLButtonElement>(div_year_ref!)
-			is_button_focused = false
+			const children = elementChildren<HTMLButtonElement>(div_year_ref!)
+			isButtonFocused = false
 			for (const child of children) {
-				if (element_tagname(child) != 'BUTTON') continue
+				if (elementTagName(child) != 'BUTTON') continue
 				if (child.disabled) continue
 
-				element_set_tabindex(child, 0)
+				elementTabIndexSet(child, 0)
 			}
 		})
 
@@ -343,74 +340,74 @@ const DatePickerBody: ParentComponent<{
 					&& code != KEY_ARROW_RIGHT
 				) return;
 
-				const button = event_target(ev) as HTMLButtonElement
-				const index = number_safe(number_parse(element_dataset(button, 'index')!, true))
-				const children = element_children<HTMLButtonElement>(event_current_target(ev))
+				const button = eventTarget(ev) as HTMLButtonElement
+				const index = numberSafe(numberParse(elementDataset(button, 'index')!, true))
+				const children = elementChildren<HTMLButtonElement>(eventCurrentTarget(ev))
 				let target: HTMLElement | null = null
 
 				if (code == KEY_ARROW_UP) target = children[index - 4]
 				else if (code == KEY_ARROW_DOWN) target = children[index + 4]
-				else if (code == KEY_ARROW_RIGHT) target = element_next_sibling(button)
-				else if (code == KEY_ARROW_LEFT) target = element_previous_sibling(button)
+				else if (code == KEY_ARROW_RIGHT) target = elementSiblingNext(button)
+				else if (code == KEY_ARROW_LEFT) target = elementSiblingPrevious(button)
 
 				if (!target || (target as HTMLButtonElement).disabled) return
-				event_prevent_default(ev)
-				element_set_tabindex(button, -1)
-				element_set_tabindex(target, 0)
-				element_focus(target)
+				eventPreventDefault(ev)
+				elementTabIndexSet(button, -1)
+				elementTabIndexSet(target, 0)
+				elementFocus(target)
 			}}
 			onFocusIn={(ev) => {
-				if (is_button_focused) return
+				if (isButtonFocused) return
 
-				const children = element_children<HTMLButtonElement>(event_current_target(ev))
-				const button = event_target(ev) as HTMLButtonElement
-				element_set_tabindex(button, 0)
-				is_button_focused = true
+				const children = elementChildren<HTMLButtonElement>(eventCurrentTarget(ev))
+				const button = eventTarget(ev) as HTMLButtonElement
+				elementTabIndexSet(button, 0)
+				isButtonFocused = true
 				for (const child of children) {
-					if (element_is_same_node(child, button)) continue
+					if (elementIsSame(child, button)) continue
 					if (child.disabled) continue
 
-					element_set_tabindex(child, -1)
+					elementTabIndexSet(child, -1)
 				}
 			}}
 			onClick={(ev) => {
-				const button = document_active()!
-				if (!element_valid_target(
-					event_current_target(ev),
+				const button = documentActive()!
+				if (!elementValidTarget(
+					eventCurrentTarget(ev),
 					button,
-					el => element_tagname(el) == 'BUTTON'
+					el => elementTagName(el) == 'BUTTON'
 				)) return
 
-				let index: string | number | undefined = element_dataset(button, 'index')
+				let index: string | number | undefined = elementDataset(button, 'index')
 				if (!index) return;
 
-				index = number_safe(number_parse(index, true))
-				set_view_date(new Date(date_year(view_date()) + index, 0))
-				set_date_option(option_month)
-				update_date_view()
+				index = numberSafe(numberParse(index, true))
+				setViewDate(new Date(dateYear(viewDate()) + index, 0))
+				setDateOption(DatePickerOption.month)
+				updateDateView()
 
-				timeout_set(() => {
-					const children = element_children<HTMLButtonElement>(div_month_ref!)
+				timeTimerSet(() => {
+					const children = elementChildren<HTMLButtonElement>(divMonthRef!)
 					for (const child of children) {
-						if (element_tagname(child) != "BUTTON" || child.disabled) continue
+						if (elementTagName(child) != "BUTTON" || child.disabled) continue
 
-						element_focus(child)
+						elementFocus(child)
 						break
 					}
 				})
 			}}>
-			<For each={array_fill(Array(16), 0)}>{(_v, i) => {
-				const date = createMemo(() => new Date(date_year(view_date()) + i(), 0))
+			<For each={arrayFill(Array(16), 0)}>{(_v, i) => {
+				const date = createMemo(() => new Date(dateYear(viewDate()) + i(), 0))
 				return (<Button
 					data-index={i()}
-					disabled={date_out_range_Y(date(), props.first_date, props.last_date)}
-					c_variant={is_same_date_Y(date(), value())
+					disabled={dateOutRangeY(date(), props.firstDate, props.lastDate)}
+					c:variant={dateIsSameY(date(), value())
 						? ButtonVariant.filled
-						: is_same_date_Y(date(), get_current_date())
+						: dateIsSameY(date(), dateCurrent())
 							? ButtonVariant.outlined
 							: undefined
 					}>
-					{date_year(view_date()) + i()}
+					{dateYear(viewDate()) + i()}
 				</Button>)
 			}}</For>
 		</div>)
@@ -419,100 +416,100 @@ const DatePickerBody: ParentComponent<{
 	return (<>
 		<div
 			class="c-date-picker-header"
-			onKeyDown={(ev) => element_focus_by_arrowkey(
-				event_current_target(ev),
+			onKeyDown={(ev) => elementFocusByArrowKey(
+				eventCurrentTarget(ev),
 				ev.code,
 				{ left: 'prev', right: 'next' }
 			)}
 			onClick={(ev) => {
-				const button = document_active()!
-				if (!element_valid_target(
-					event_current_target(ev),
+				const button = documentActive()!
+				if (!elementValidTarget(
+					eventCurrentTarget(ev),
 					button,
-					el => element_tagname(el) === 'BUTTON')
+					el => elementTagName(el) === 'BUTTON')
 				) return
 
-				switch (element_id(button)) {
-					case button_option_id:
-						set_date_option(d => {
-							if (d == option_month) return option_year
-							return option_month
+				switch (elementId(button)) {
+					case buttonOptionId:
+						setDateOption(d => {
+							if (d == DatePickerOption.month) return DatePickerOption.year
+							return DatePickerOption.month
 						})
 						break
-					case button_selected_id:
-						const sibling = element_previous_sibling(button)!
-						element_set_tabindex(sibling, 0)
-						element_focus(sibling)
-						goto_selected_date()
+					case buttonSelectedId:
+						const sibling = elementSiblingPrevious(button)!
+						elementTabIndexSet(sibling, 0)
+						elementFocus(sibling)
+						goToSelectedDate()
 						break
-					case button_previous_id:
+					case buttonPreviousId:
 						previous()
 						break
-					case button_next_id:
+					case buttonNextId:
 						next()
 						break
 				}
 			}}>
 			<Button
 				tabindex="0"
-				id={button_option_id}
-				c_variant={ButtonVariant.tonal}>
+				id={buttonOptionId}
+				c:variant={ButtonVariant.tonal}>
 				<Switch>
-					<Match when={date_option() == option_day}>
-						{date_text_month(view_date(), props.locales) + ' ' + date_year(view_date())}
+					<Match when={dateOption() == DatePickerOption.day}>
+						{dateTextMonth(viewDate(), props.locales) + ' ' + dateYear(viewDate())}
 					</Match>
-					<Match when={date_option() == option_month}>
-						{date_year(view_date())}
+					<Match when={dateOption() == DatePickerOption.month}>
+						{dateYear(viewDate())}
 					</Match>
-					<Match when={date_option() == option_year}>
-						{date_year(view_date()) + '-' + (date_year(view_date()) + 15)}
+					<Match when={dateOption() == DatePickerOption.year}>
+						{dateYear(viewDate()) + '-' + (dateYear(viewDate()) + 15)}
 					</Match>
 				</Switch>
 			</Button>
 			<Show when={
 				(
-					(date_option() == option_day && !is_same_date_YM(view_date(), value()))
-					|| (date_option() == option_month && !is_same_date_Y(view_date(), value()))
-					|| (date_option() == option_year && date_out_range_Y(value(), view_date(), new Date(date_year(view_date()) + 15, 2, 3)))
+					(dateOption() == DatePickerOption.day && !dateIsSameYM(viewDate(), value()))
+					|| (dateOption() == DatePickerOption.month && !dateIsSameY(viewDate(), value()))
+					|| (dateOption() == DatePickerOption.year && dateOutRangeY(value(), viewDate(), new Date(dateYear(viewDate()) + 15, 2, 3)))
 				)
-				&& date_in_range_YM(value(), props.first_date, props.last_date)}>
+				&& dateInRangeYM(value(), props.firstDate, props.lastDate)}>
 				<IconButton
 					tabindex="-1"
-					c_code={ICON_CALENDAR_DATE}
-					id={button_selected_id}
+					c:code={ICON_CALENDAR_DATE}
+					id={buttonSelectedId}
 				/>
 			</Show>
 			<IconButton
 				tabindex="-1"
-				c_code={ICON_CHEVRON_LEFT}
-				id={button_previous_id}
+				c:code={ICON_CHEVRON_LEFT}
+				id={buttonPreviousId}
 			/>
 			<IconButton
 				tabindex="-1"
-				c_code={ICON_CHEVRON_RIGHT}
-				id={button_next_id}
+				c:code={ICON_CHEVRON_RIGHT}
+				id={buttonNextId}
 			/>
 		</div>
 		<Divider />
 		<Transition
 			onEnter={(el, done) => {
-				promise_done(element_animate(
+				promiseDone(elementAnimate(
 					el as HTMLElement,
 					{ opacity: [0, 1], transform: ['translateY(-12px)', 'none'] },
 					{ duration: 200, easing: AnimationEffectTiming.spring }
 				).finished, done)
 			}}
 			onExit={(el, done) => {
-				promise_done(element_animate(
+				promiseDone(elementAnimate(
 					el as HTMLElement,
 					{},
 					{ duration: 0 }
 				).finished, done)
 			}}>
 			<Switch>
-				<Match when={date_option() == option_day}><DaysDate/></Match>
-				<Match when={date_option() == option_month}><MonthsDate/></Match>
-				<Match when={date_option() == option_year}><YearsDate/></Match>
+				<Match when={dateOption() == DatePickerOption.day}><DaysDate/></Match>
+				<Match when={dateOption() == DatePickerOption.month}><MonthsDate/></Match>
+				<Match when={dateOption() == DatePickerOption.year}><YearsDate/></Match>
 			</Switch>
 		</Transition>
 		{props.children}
@@ -520,96 +517,96 @@ const DatePickerBody: ParentComponent<{
 }
 
 type DatePickerProps = ModalProps & {
-	c_date?: Date
-	c_first_date?: Date
-	c_last_date?: Date
-	c_locales?: Intl.LocalesArgument
-	c_on_selectdate?(value: Date): unknown
+	'c:date'?: Date
+	'c:firstDate'?: Date
+	'c:lastDate'?: Date
+	'c:locales'?: Intl.LocalesArgument
+	'c:onSelectDate'?(value: Date): unknown
 }
 
 const DatePicker: VoidComponent<DatePickerProps> = ($props) => {
 	const $$props = mergeProps({
-		c_locales:'en-US',
-		c_date: get_current_date(),
-		c_first_date: new Date(date_year() - 100, 0, 1),
-		c_last_date: new Date(date_year() + 100, 11, 31),
+		'c:locales':'en-US',
+		'c:date': dateCurrent(),
+		'c:firstDate': new Date(dateYear() - 100, 0, 1),
+		'c:lastDate': new Date(dateYear() + 100, 11, 31),
 	}, $props)
 	const [props, other] = splitProps($$props, [
-		'ref', 'c_date', 'c_on_selectdate',
-		'c_first_date', 'c_last_date', 'c_locales',
+		'ref', 'c:date', 'c:onSelectDate',
+		'c:firstDate', 'c:lastDate', 'c:locales',
 		'classList', 'children', 'onClose'
 	])
-	const [close_signal, set_close_signal] = createSignal<boolean>(false)
-	let datepicker_ref: HTMLDialogElement
+	const [closeSignal, setCloseSignal] = createSignal<boolean>(false)
+	let datePickerRef: HTMLDialogElement
 
 	return (<Modal
-		ref={mergeRefs(props.ref, r => datepicker_ref = r)}
+		ref={mergeRefs(props.ref, r => datePickerRef = r)}
 		classList={{
 			'c-date-picker': true,
 			...props.classList
 		}}
 		onClose={(ev) => {
-			event_call(ev, props.onClose)
-			set_close_signal(s => !s)
+			eventCall(ev, props.onClose)
+			setCloseSignal(s => !s)
 		}}
 		{...other}>
 		<DatePickerBody
-			close_signal={close_signal()}
-			date={props.c_date}
-			first_date={props.c_first_date}
-			last_date={props.c_last_date}
-			on_close={() => close_modal(datepicker_ref)}
-			on_update={() => reposition_modal(datepicker_ref)}
-			locales={props.c_locales}
-			on_select_date={props.c_on_selectdate}>
+			closeSignal={closeSignal()}
+			date={props['c:date']}
+			firstDate={props['c:firstDate']}
+			lastDate={props['c:lastDate']}
+			onClose={() => closeModal(datePickerRef)}
+			onUpdate={() => repositionModal(datePickerRef)}
+			locales={props['c:locales']}
+			onSelectDate={props['c:onSelectDate']}>
 			{props.children}
 		</DatePickerBody>
 	</Modal>)
 }
 
 type PopoverDatePickerProps = PopoverProps & {
-	c_date?: Date
-	c_first_date?: Date
-	c_last_date?: Date
-	c_locales?: Intl.LocalesArgument
-	c_on_selectdate?(value: Date): unknown
+	'c:date'?: Date
+	'c:firstDate'?: Date
+	'c:lastDate'?: Date
+	'c:locales'?: Intl.LocalesArgument
+	'c:onSelectDate'?(value: Date): unknown
 }
 
 const PopoverDatePicker: VoidComponent<PopoverDatePickerProps> = ($props) => {
 	const $$props = mergeProps({
-		c_locales:'en-US',
-		c_date: get_current_date(),
-		c_first_date: new Date(date_year() - 100, 0, 1),
-		c_last_date: new Date(date_year() + 100, 11, 31),
+		'c:locales':'en-US',
+		'c:date': dateCurrent(),
+		'c:firstDate': new Date(dateYear() - 100, 0, 1),
+		'c:lastDate': new Date(dateYear() + 100, 11, 31),
 	}, $props)
 	const [props, other] = splitProps($$props, [
-		'ref', 'c_date', 'c_on_selectdate',
-		'c_first_date', 'c_last_date', 'c_locales',
-		'children', 'classList', 'c_on_toggleopen'
+		'ref', 'c:date', 'c:onSelectDate',
+		'c:firstDate', 'c:lastDate', 'c:locales',
+		'children', 'classList', 'c:onToggleOpen'
 	])
-	const [close_signal, set_close_signal] = createSignal<boolean>(false)
-	let datepicker_ref: HTMLDivElement
+	const [closeSignal, setCloseSignal] = createSignal<boolean>(false)
+	let datePickerRef: HTMLDivElement
 
 	return (<Popover
-		ref={mergeRefs(props.ref, r => datepicker_ref = r)}
+		ref={mergeRefs(props.ref, r => datePickerRef = r)}
 		classList={{
 			'c-date-picker': true,
 			...props.classList
 		}}
-		c_on_toggleopen={is_open => {
-			props.c_on_toggleopen?.(is_open)
-			if (!is_open) set_close_signal(s => !s)
+		c:onToggleOpen={isOpen => {
+			props['c:onToggleOpen']?.(isOpen)
+			if (!isOpen) setCloseSignal(s => !s)
 		}}
 		{...other}>
 		<DatePickerBody
-			close_signal={close_signal()}
-			date={props.c_date}
-			first_date={props.c_first_date}
-			last_date={props.c_last_date}
-			on_close={() => close_popover(datepicker_ref)}
-			on_update={() => reposition_popover(datepicker_ref)}
-			locales={props.c_locales}
-			on_select_date={props.c_on_selectdate}>
+			closeSignal={closeSignal()}
+			date={props['c:date']}
+			firstDate={props['c:firstDate']}
+			lastDate={props['c:lastDate']}
+			onClose={() => closePopover(datePickerRef)}
+			onUpdate={() => repositionPopover(datePickerRef)}
+			locales={props['c:locales']}
+			onSelectDate={props['c:onSelectDate']}>
 			{props.children}
 		</DatePickerBody>
 	</Popover>)
@@ -618,15 +615,15 @@ const PopoverDatePicker: VoidComponent<PopoverDatePickerProps> = ($props) => {
 export {
 	DatePicker,
 	PopoverDatePicker,
-	is_modal_open as is_datepicker_open,
-	focus_modal as focus_datepicker,
-	open_modal as open_datepicker,
-	close_modal as close_datepicker,
-	reposition_modal as reposition_datepicker,
-	is_popover_open as is_popoverdatepicker_open,
-	open_popover as open_popoverdatepicker,
-	close_popover as close_popoverdatepicker,
-	reposition_popover as reposition_popoverdatepicker,
+	isModalOpen as isDatePickerOpen,
+	focusModal as focusDatePicker,
+	openModal as openDatePicker,
+	closeModal as closeDatePicker,
+	repositionModal as repositionDatePicker,
+	isPopoverOpen as isPopoverDatePickerOpen,
+	openPopover as openPopoverDatePicker,
+	closePopover as closePopoverDatePicker,
+	repositionPopover as repositionPopoverDatePicker,
 	DatePickerPosition
 }
 export type {

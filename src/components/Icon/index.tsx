@@ -1,27 +1,27 @@
 import { type JSX, splitProps, type VoidComponent } from "solid-js"
 
-import { attr_set_if_exist, classlist } from '@/utils/attributes'
+import { attrSetIfExist, attrClassList } from '@/utils/attributes'
 
 import './index.scss'
 
 type IconProps = Omit<JSX.HTMLAttributes<HTMLElement>, 'children'> & {
-	c_filled?: boolean
-	c_inline?: boolean
-	c_code: number
+	'c:filled'?: boolean
+	'c:inline'?: boolean
+	'c:code': number
 }
 
 const Icon: VoidComponent<IconProps> = ($props) => {
 	const [props, other] = splitProps($props, [
-		'c_filled', 'c_inline', 'c_code',
+		'c:filled', 'c:inline', 'c:code',
 		'class', 'translate'
 	])
 
 	return (<i
-		class={classlist('c-icon', props.class)}
-		data-c-inline={attr_set_if_exist(props.c_inline)}
+		class={attrClassList('c-icon', props.class)}
+		data-c-inline={attrSetIfExist(props['c:inline'])}
 		translate={props.translate ?? "no"}
 		{...other}>
-		{ String.fromCharCode(props.c_code - (props.c_filled? 1 : 0)) }
+		{ String.fromCharCode(props['c:code'] - (props['c:filled']? 1 : 0)) }
 	</i>)
 }
 

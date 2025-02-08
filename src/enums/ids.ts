@@ -1,9 +1,9 @@
 export enum ElementIds {
-	color_accent = 'g-color-accent',
+	colorAccent = 'g-color-accent',
 	splash = 'g-splash',
-	text_tooltip = 'c-text-tooltip',
-	tooltip_listener = 'c-tooltip-listener',
-	popover_listener = 'c-popover-listener',
-	modal_listener = 'c-modal-listener',
-	emoji_picker_listener = 'c-emoji-picker-listener'
+	textTooltip = 'c-text-tooltip',
+	tooltipListener = 'c-tooltip-listener',
+	popoverListener = 'c-popover-listener',
+	modalListener = 'c-modal-listener',
+	emojiPickerListener = 'c-emoji-picker-listener'
 }

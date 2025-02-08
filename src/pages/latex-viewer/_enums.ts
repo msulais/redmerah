@@ -1,28 +1,28 @@
 export enum Commands {
-	toggle_textwrap,
+	toggleTextWrap,
 
 	/** @param {number} fontSize `number` */
-	change_fontsize,
+	updateFontSize,
 
 	/**
 	@param {string} text `string`
 	@param {number} index `number` */
-	update_latex_input,
+	updateLatexInput,
 
-	reset_inputs,
+	resetInputs,
 
 	/** @param {Event} ev `Event`*/
-	copy_all,
+	copyAll,
 
 	/** @param {number} index `number`*/
-	add_equation,
+	addEquation,
 
 	/** @param {number} index `number`*/
-	delete_equation,
+	deleteEquation,
 
 	/** @param {string} prefix `string` */
-	change_prefix,
+	updatePrefix,
 
 	/** @param {string} suffix `string` */
-	change_suffix,
+	updateSuffix,
 }
