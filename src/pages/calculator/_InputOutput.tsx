@@ -61,7 +61,7 @@ const ActionButtons: ParentComponent<JSX.HTMLAttributes<HTMLDivElement> & {
 
 				switch (elementId(button)) {
 				case buttonMemoryId:
-					openMenu(ev, menuMemoryRef, { anchor: button })
+					openMenu(menuMemoryRef, { anchor: button })
 					break
 				case buttonClearId:
 					command(Commands.clearMemory)
@@ -399,7 +399,7 @@ const ScientificCalculator: VoidComponent<{
 			onRecallMemory={(v) => addChar(numberToRealDigits(v))}
 			settings={settings()}>
 			<Button
-				onClick={ev => openMenu(ev, menuFunctionRef, {
+				onClick={ev => openMenu(menuFunctionRef, {
 					anchor: eventCurrentTarget(ev),
 					position: MenuPosition.centerBottomToRight
 				})}
@@ -701,7 +701,7 @@ const ConverterCalculator: VoidComponent<{
 			<Button
 				data-tooltip="Select converter type"
 				c:focused={isMenuConverterTypeOpen()}
-				onClick={ev => openMenu(ev, menuConverterTypeRef, {
+				onClick={ev => openMenu(menuConverterTypeRef, {
 					anchor: eventCurrentTarget(ev),
 					position: MenuPosition.centerBottomToRight,
 					allowHideAnchor: false
@@ -745,7 +745,7 @@ const ConverterCalculator: VoidComponent<{
 				<Button
 					data-tooltip="Select input unit"
 					c:focused={isMenuInputUnitOpen()}
-					onClick={ev => openMenu(ev, menuInputUnitRef, {
+					onClick={ev => openMenu(menuInputUnitRef, {
 						anchor: eventCurrentTarget(ev),
 						position: MenuPosition.centerBottomToRight,
 						allowHideAnchor: false
@@ -794,7 +794,7 @@ const ConverterCalculator: VoidComponent<{
 				<Button
 					data-tooltip="Select output unit"
 					c:focused={isMenuOutputUnitOpen()}
-					onClick={ev => openMenu(ev, menuOutputUnitRef, {
+					onClick={ev => openMenu(menuOutputUnitRef, {
 						anchor: eventCurrentTarget(ev),
 						position: MenuPosition.centerBottomToRight,
 						allowHideAnchor: false
@@ -1034,7 +1034,7 @@ const ProgrammerCalculator: VoidComponent<{
 				onContextMenu={(ev) => {
 					eventPreventDefault(ev)
 					textToCopy = outputDecimal()
-					openMenu(ev, menuCopyRef)
+					openMenu(menuCopyRef)
 				}}>
 				<div class={CSSMiscellaneous.no_scrollbar}>{outputDecimal()}</div>
 				<span>DEC</span>
@@ -1048,7 +1048,7 @@ const ProgrammerCalculator: VoidComponent<{
 					if (output() == null) return;
 
 					textToCopy = outputHex()
-					openMenu(ev, menuCopyRef)
+					openMenu(menuCopyRef)
 				}}>
 				<div class={CSSMiscellaneous.no_scrollbar}>{outputHex()}</div>
 				<span>HEX</span>
@@ -1062,7 +1062,7 @@ const ProgrammerCalculator: VoidComponent<{
 					if (output() == null) return;
 
 					textToCopy = outputOctal()
-					openMenu(ev, menuCopyRef)
+					openMenu(menuCopyRef)
 				}}>
 				<div class={CSSMiscellaneous.no_scrollbar}>{outputOctal()}</div>
 				<span>OCT</span>
@@ -1076,7 +1076,7 @@ const ProgrammerCalculator: VoidComponent<{
 					if (output() == null) return;
 
 					textToCopy = outputBinary()
-					openMenu(ev, menuCopyRef)
+					openMenu(menuCopyRef)
 				}}>
 				<div class={CSSMiscellaneous.no_scrollbar}><Show when={output() != null}>{outputBinary()}</Show></div>
 				<span>BIN</span>
@@ -1198,13 +1198,13 @@ const DateCalculator: VoidComponent<{
 
 			switch (elementId(button)) {
 			case buttonFromId:
-				openDatePicker(ev, datePickerFromRef, {
+				openDatePicker(datePickerFromRef, {
 					anchor: button,
 					position: MenuPosition.centerBottomToRight
 				})
 				break
 			case buttonToId:
-				openDatePicker(ev, datePickerToRef, {
+				openDatePicker(datePickerToRef, {
 					anchor: button,
 					position: MenuPosition.centerBottomToRight
 				})

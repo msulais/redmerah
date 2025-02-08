@@ -218,7 +218,7 @@ const _: VoidComponent<{
 
 					switch (elementId(button)) {
 					case buttonSettings_colorId:
-						openColorPicker(ev, colorPickerColorRef, {
+						openColorPicker(colorPickerColorRef, {
 							anchor: button,
 							position: ColorPickerPosition.leftCenterToBottom,
 							padding: 12,
@@ -226,7 +226,7 @@ const _: VoidComponent<{
 						})
 						break
 					case buttonSettings_backgroundColorId:
-						openColorPicker(ev, colorPickerBackgroundColorRef, {
+						openColorPicker(colorPickerBackgroundColorRef, {
 							anchor: button,
 							position: ColorPickerPosition.leftCenterToBottom,
 							padding: 12,
@@ -500,7 +500,7 @@ const _: VoidComponent<{
 					if (dataCopy
 						&& validEnumValue(dataCopy, CopyFileType)
 					) {
-						command(Commands.copyQRCode, ev, dataCopy as CopyFileType)
+						command(Commands.copyQRCode, dataCopy as CopyFileType)
 						closeSubMenu(subMenuMoreActions_copyRef)
 						timeTimerSet(() => closeMenu(menuMoreActionsRef), 200)
 						return
@@ -589,13 +589,13 @@ const _: VoidComponent<{
 
 				switch (elementId(button)) {
 				case buttonAppBar_infoId:
-					openMenu(ev, menuInfoRef, {anchor: button})
+					openMenu(menuInfoRef, {anchor: button})
 					break
 				case buttonAppBar_settingsId:
-					openMenu(ev, menuSettingsRef, {anchor: button})
+					openMenu(menuSettingsRef, {anchor: button})
 					break
 				case buttonAppBar_moreActionsId:
-					openMenu(ev, menuMoreActionsRef, {anchor: button})
+					openMenu(menuMoreActionsRef, {anchor: button})
 					break
 				}
 			}}

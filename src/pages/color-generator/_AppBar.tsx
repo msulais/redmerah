@@ -280,10 +280,10 @@ const _: VoidComponent<{
 
 					switch (elementId(button)) {
 					case buttonColorListId:
-						openDialog(ev, props.dialogColorListRef)
+						openDialog(props.dialogColorListRef)
 						break
 					case buttonSelectColorId:
-						openColorPicker(ev, props.colorPickerRef, {
+						openColorPicker(props.colorPickerRef, {
 							anchor: button,
 							color: props.seed as HEXColor
 						})
@@ -300,7 +300,7 @@ const _: VoidComponent<{
 						copyAll()
 						break
 					case buttonSettingsId:
-						openMenu(ev, menuSettingsRef, { anchor: button })
+						openMenu(menuSettingsRef, { anchor: button })
 						break
 					}
 				}}

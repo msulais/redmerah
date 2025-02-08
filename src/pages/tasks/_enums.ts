@@ -49,18 +49,15 @@ export enum Commands {
 	/** @param {number?} taskListIndex `number?` */
 	copyTasks,
 
-	/** @param {Event} event `Event` */
 	addLabel,
 
 	/**
-	@param {Event} event `Event`
 	@param {TaskLabel} label `TaskLabel` */
 	editLabel,
 
 	/** @param {TaskLabel} label `TaskLabel` */
 	deleteLabel,
 
-	/** @param {Event} event `Event` */
 	showLabelsOptions,
 
 	/**
@@ -72,7 +69,6 @@ export enum Commands {
 	addFiles,
 
 	/**
-	@param {Event} event `Event`
 	@param {TaskFileMetaData} file `TaskFileMetaData`
 	@param {number} taskListIndex `number`
 	@param {number} taskIndex `number`
@@ -94,7 +90,6 @@ export enum Commands {
 	editSubTask,
 
 	/**
-	@param {Event} event `Event`
 	@param {TaskFileMetaData} file `TaskFileMetaData`
 	@param {number} taskListIndex `number`
 	@param {number} taskIndex `number`
@@ -109,16 +104,13 @@ export enum Commands {
 	@returns {SubTask} `Promise<SubTask>`*/
 	addSubTask,
 
-	/** @param {Event} event `Event` */
 	addTaskList,
 
 	/**
-	@param {Event} event `Event`
 	@param {number} taskListIndex `number` */
 	deleteTaskList,
 
 	/**
-	@param {Event} event `Event`
 	@param {number} taskListIndex `number` */
 	renameTaskList,
 

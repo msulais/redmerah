@@ -106,8 +106,8 @@ const Dropdown: ParentComponent<DropdownProps> = ($props) => {
 	let buttonRef: HTMLButtonElement
 	let menuRef: HTMLDialogElement
 
-	function openDrowdownMenu(ev: MouseEvent): void {
-		openMenu(ev, menuRef, {
+	function openDrowdownMenu(): void {
+		openMenu(menuRef, {
 			anchor: buttonRef,
 			padding: 0,
 			gap: 4,
@@ -250,7 +250,7 @@ const Dropdown: ParentComponent<DropdownProps> = ($props) => {
 			c:selected={props["c:selected"] ?? isOpen()}
 			onClick={ev => {
 				eventCall(ev, props.onClick)
-				openDrowdownMenu(ev)
+				openDrowdownMenu()
 			}}
 			{...other}>
 			<Show when={props['c:label']}>

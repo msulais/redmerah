@@ -98,7 +98,7 @@ const _: VoidComponent<{
 		}
 	}
 
-	function copyGradient(ev: Event): void {
+	function copyGradient(): void {
 		const text = arrayJoin(
 			arrayMap(
 				props.gradients,
@@ -109,7 +109,7 @@ const _: VoidComponent<{
 
 		promiseDone(
 			navigatorClipboardWriteText(text),
-			() => openToast(ev, toastCopiedRef)
+			() => openToast(toastCopiedRef)
 		)
 	}
 
@@ -329,7 +329,7 @@ const _: VoidComponent<{
 						break
 					case buttonMoreActions_copyGradientId:
 						closeMenu(menuMoreActionsRef)
-						copyGradient(ev)
+						copyGradient()
 						break
 					}
 				}}>
@@ -369,13 +369,13 @@ const _: VoidComponent<{
 
 				switch (elementId(button)) {
 				case buttonInfoId:
-					openMenu(ev, menuInfoRef, { anchor: button })
+					openMenu(menuInfoRef, { anchor: button })
 					break
 				case buttonSettingsId:
-					openMenu(ev, menuSettingsRef, { anchor: button })
+					openMenu(menuSettingsRef, { anchor: button })
 					break
 				case buttonMoreActionsId:
-					openMenu(ev, menuMoreActionsRef, { anchor: button })
+					openMenu(menuMoreActionsRef, { anchor: button })
 					break
 				}
 			}}

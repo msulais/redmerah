@@ -44,7 +44,7 @@ export const NavigationDrawer: VoidComponent<NavigationDrawerProps> = (props) =>
 				data-tooltip="Open navigation"
 				classList={attrClassListModule(CSS.mobile_only)}
 				c:focused={isDrawerOpen()}
-				onClick={(ev) => openDrawer(ev, drawerRef)}
+				onClick={() => openDrawer(drawerRef)}
 				c:code={ICON_LINE_HORIZONTAL_3}
 			/>
 		</Tooltip>
@@ -174,7 +174,7 @@ export const SettingsElement: VoidComponent = () => {
 				data-tooltip="Open settings"
 				classList={attrClassListModule(CSSAnimation.btn_rotate_icon)}
 				c:focused={isMenuSettingsOpen()}
-				onClick={(ev) => openMenu(ev, menuSettingsRef, {
+				onClick={(ev) => openMenu(menuSettingsRef, {
 					anchor: eventCurrentTarget(ev),
 					padding: 0,
 				})}
@@ -192,7 +192,7 @@ export const SettingsElement: VoidComponent = () => {
 				switch (elementId(button)) {
 				case menuItemAccentId:
 					closeMenu(menuSettingsRef)
-					openPopoverColorPicker(ev, colorPickerRef, {
+					openPopoverColorPicker(colorPickerRef, {
 						color: color(),
 					})
 					break

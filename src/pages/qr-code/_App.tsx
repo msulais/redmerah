@@ -122,7 +122,7 @@ const _: VoidComponent = () => {
 		}
 	}
 
-	function copyQRCode(ev: Event, type: CopyFileType): void {
+	function copyQRCode(type: CopyFileType): void {
 		switch (type) {
 		case CopyFileType.png:
 			canvasRef.toBlob((blob) => {
@@ -130,14 +130,14 @@ const _: VoidComponent = () => {
 
 				promiseDone(
 					navigatorClipboardWrite([new ClipboardItem({ 'image/png': blob })]),
-					() => openToast(ev, toastCopiedRef)
+					() => openToast(toastCopiedRef)
 				)
 			}, 'image/png', 0.95)
 			break
 		case CopyFileType.svg:
 			promiseDone(
 				getSVG(),
-				svg => promiseDone(navigatorClipboardWriteText(svg), () => openToast(ev, toastCopiedRef))
+				svg => promiseDone(navigatorClipboardWriteText(svg), () => openToast(toastCopiedRef))
 			)
 			break
 		}
@@ -205,8 +205,8 @@ const _: VoidComponent = () => {
 			break
 		}
 		case Commands.copyQRCode: {
-			const [event, type] = args as [Event, CopyFileType]
-			copyQRCode(event, type)
+			const [type] = args as [CopyFileType]
+			copyQRCode(type)
 			break
 		}}
 		return

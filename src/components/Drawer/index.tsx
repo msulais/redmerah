@@ -15,14 +15,13 @@ import FocusableGroup from "@/components/FocusableGroup"
 import './index.scss'
 
 function openDrawer(
-	ev: Event,
 	drawer: HTMLDialogElement,
 	options?: {
 		important?: boolean
 		contentAutoFocus?: boolean
 	}
 ): void {
-	openModal(ev, drawer, {...options})
+	openModal(drawer, {...options})
 }
 
 enum DrawerPosition {

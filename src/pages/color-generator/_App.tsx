@@ -246,7 +246,7 @@ const _: VoidComponent = () => {
 
 					switch (elementId(button)) {
 					case buttonColorList_deleteAllId:
-						openDialog(ev, dialogDeleteAllRef, {important: true})
+						openDialog(dialogDeleteAllRef, {important: true})
 						break
 					case buttonColorList_copyId:
 						copyAllPaletteList()
@@ -358,7 +358,7 @@ const _: VoidComponent = () => {
 			c:floatingActionButton={<FloatingActionButton
 				classList={attrClassListModule(CSS.app_fab)}
 				c:variant={ButtonVariant.filled}
-				onClick={(ev) => openColorPicker(ev, colorPickerRef()!, {
+				onClick={(ev) => openColorPicker(colorPickerRef()!, {
 					anchor: eventCurrentTarget(ev),
 					color: palette.seed as HEXColor
 				})}>

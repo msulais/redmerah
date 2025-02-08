@@ -25,7 +25,7 @@ const _: VoidComponent = () => {
 		title="Popover"
 		description="A popover is a small, temporary window that appears when a user interacts with an element (e.g., hovers over a button). It provides additional information, options, or tools related to the element. Popover content can be triggered by hover, click, or focus.">
 		<Playground>
-			<Button c:variant={ButtonVariant.tonal} onClick={(ev) => openPopover(ev, popoverRef, {
+			<Button c:variant={ButtonVariant.tonal} onClick={(ev) => openPopover(popoverRef, {
 				anchor: anchor()? eventCurrentTarget(ev) : undefined,
 				allowHideAnchor: allowHideAnchor(),
 				draggable: draggable(),

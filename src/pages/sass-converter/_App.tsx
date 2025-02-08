@@ -105,7 +105,7 @@ const _: VoidComponent = () => {
 		case Commands.openFile:
 			promiseDone(fileOpen('text/*', true), async (files) => {
 				if (files == null || arrayLength(files as unknown as any[]) == 0) {
-					openToast(args[0] as Event, toastNoFileSelectedRef)
+					openToast(toastNoFileSelectedRef)
 					return
 				}
 
@@ -118,7 +118,7 @@ const _: VoidComponent = () => {
 						text += await fileReadAsText(file)
 					}
 				} catch {
-					openToast(args[0] as Event, toastErrorReadingFilesRef)
+					openToast(toastErrorReadingFilesRef)
 					return
 				}
 
@@ -134,7 +134,7 @@ const _: VoidComponent = () => {
 			})
 			break
 		case Commands.copyAll: {
-			const [ev, type] = args as [Event, 'sass' | 'scss' | 'css']
+			const [type] = args as ['sass' | 'scss' | 'css']
 			let text = ''
 			if (type == 'sass') text = sassText()
 			else if (type == 'scss') text = scssText()
@@ -142,7 +142,7 @@ const _: VoidComponent = () => {
 
 			promiseDone(
 				navigatorClipboardWriteText(text),
-				() => openToast(ev, toastCopiedRef)
+				() => openToast(toastCopiedRef)
 			)
 			break
 		}

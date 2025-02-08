@@ -248,7 +248,7 @@ const _: VoidComponent<{
 					switch (elementId(button)) {
 					case buttonSettings_labelId:
 						closeMenu(menuSettingsRef)
-						command(Commands.showLabelsOptions, ev)
+						command(Commands.showLabelsOptions)
 						break
 					case buttonSettings_deleteTaskWarningId:
 						command(Commands.toggleDeleteTaskWarning)
@@ -380,7 +380,7 @@ const _: VoidComponent<{
 
 					switch (elementId(button)) {
 					case buttonAppBar_menuListId:
-						if (isSideNavigationHidden()) return openDrawer(ev, drawerNavigationRef)
+						if (isSideNavigationHidden()) return openDrawer(drawerNavigationRef)
 
 						command(Commands.toggleNavigationExpand)
 						break
@@ -389,10 +389,10 @@ const _: VoidComponent<{
 						elementFocus(searchTextFieldRef)
 						break
 					case buttonAppBar_menuInfoId:
-						openMenu(ev, menuInfoRef, {anchor: button})
+						openMenu(menuInfoRef, {anchor: button})
 						break
 					case buttonAppBar_menuSettingsId:
-						openMenu(ev, menuSettingsRef, {anchor: button})
+						openMenu(menuSettingsRef, {anchor: button})
 						break
 					}
 				}}
@@ -523,7 +523,7 @@ const _: VoidComponent<{
 					break
 				case buttonDrawer_newListId:
 					closeDrawer(drawerNavigationRef)
-					command(Commands.addTaskList, ev)
+					command(Commands.addTaskList)
 					break
 				default:
 					const dataPage = elementDataset(button, 'page')

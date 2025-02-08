@@ -27,7 +27,7 @@ const _: VoidComponent = () => {
 		title="Modal"
 		description="A modal is an overlay window that appears on top of the main content, blocking user interaction with the underlying elements until it is dismissed. Modals are often used for critical tasks or to present important information.">
 		<Playground>
-			<Button c:variant={ButtonVariant.tonal} onClick={(ev) => openModal(ev, modalRef, {
+			<Button c:variant={ButtonVariant.tonal} onClick={(ev) => openModal(modalRef, {
 				anchor: anchor()? eventCurrentTarget(ev) : undefined,
 				allowHideAnchor: allowHideAnchor(),
 				draggable: draggable(),

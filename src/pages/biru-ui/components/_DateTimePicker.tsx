@@ -32,7 +32,7 @@ const _: VoidComponent = () => {
 			<Button
 				c:focused={isDateTimePickerOpen()}
 				c:variant={ButtonVariant.tonal}
-				onClick={(ev) => openDatePicker(ev, dateTimePickerRef, {
+				onClick={(ev) => openDatePicker(dateTimePickerRef, {
 					anchor: eventCurrentTarget(ev),
 					gap: 8
 				})}>
@@ -79,7 +79,7 @@ const _: VoidComponent = () => {
 						<TextFieldButton
 							data-tooltip="Select first date"
 							c:focused={isDatePickerFirstDateOpen()}
-							onClick={(ev) => openDatePicker(ev, datePickerFirstDateRef, { anchor: eventCurrentTarget(ev) })}>
+							onClick={(ev) => openDatePicker(datePickerFirstDateRef, { anchor: eventCurrentTarget(ev) })}>
 							<Icon c:code={ICON_CALENDAR}/>
 						</TextFieldButton>
 					</Tooltip>}
@@ -104,7 +104,6 @@ const _: VoidComponent = () => {
 							data-tooltip="Select last date"
 							c:focused={isDatePickerLastDateOpen()}
 							onClick={(ev) => openDatePicker(
-								ev,
 								datePickerLastDateRef,
 								{ anchor: eventCurrentTarget(ev) }
 							)}>

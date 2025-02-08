@@ -16,7 +16,6 @@ export enum Commands {
 	openFile,
 
 	/**
-	@param {Event} ev `Event`
 	@param {'sass' | 'scss' | 'css'} type `'sass' | 'scss' | 'css'` */
 	copyAll,
 

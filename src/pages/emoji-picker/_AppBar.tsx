@@ -250,10 +250,10 @@ const _: VoidComponent = () => {
 
 				switch (elementId(button)) {
 				case buttonInfoId:
-					openMenu(ev, menuInfoRef, { anchor: button })
+					openMenu(menuInfoRef, { anchor: button })
 					break
 				case buttonSettingsId:
-					openMenu(ev, menuSettingsRef, { anchor: button })
+					openMenu(menuSettingsRef, { anchor: button })
 					break
 				}
 			}}

@@ -8,7 +8,7 @@ import { timeTimerClear, timeTimerSet } from '@/utils/time'
 import { attrHas, attrRemove, attrSet, attrSetIfExist, attrClassList } from '@/utils/attributes'
 import { elementRect, elementAllBySelector, elementDataset, elementDispatchEvent, elementIsSame, elementClientWidth, elementAnimate, elementCreate, elementIdSet, elementAppendChild, elementStyleSet, elementPointerCaptureSet, elementPointerCaptureRelease, elementFocus, elementContains, elementFocusAny } from '@/utils/element'
 import { BodyAttributes } from '@/enums/attributes'
-import { eventListenerAdd, eventCall, eventCurrentTarget, eventPreventDefault, eventListenerRemove, eventTarget, eventType } from "@/utils/event"
+import { eventListenerAdd, eventCall, eventCurrentTarget, eventPreventDefault, eventListenerRemove, eventTarget } from "@/utils/event"
 import { mathAbs } from '@/utils/math'
 import { documentActive, documentBody } from '@/utils/document'
 import { windowInnerHeight } from '@/utils/window'
@@ -22,7 +22,6 @@ import { KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT, KEY_ARROW_UP, KEY_ESCA
 import './index.scss'
 
 type PopoverOpenDetail = {
-	event: Event
 	anchor?: HTMLElement
 
 	/** Use this if you want to override the `PopoverOpenDetail.anchor` `DOMRect` */
@@ -73,6 +72,8 @@ enum PopoverListenerEvents {
 let LISTENER_REF: HTMLDivElement
 let STOP_GLOBAL_CLICK: boolean = false
 let HAS_POPOVER_LISTENER: boolean = false
+let POINTER_X: number = 0
+let POINTER_Y: number = 0
 const POPOVER_CLASS = 'c-popover'
 const POPOVER_MARGIN = 8
 
@@ -81,13 +82,12 @@ function isPopoverOpen(popover: HTMLDivElement): boolean {
 }
 
 function openPopover(
-	event: Event,
 	popover: HTMLDivElement,
-	options?: Omit<PopoverOpenDetail, 'event'>
+	options?: PopoverOpenDetail
 ): void {
 	elementDispatchEvent(popover, new CustomEvent(
 		PopoverEvents.open,
-		{detail: {event: event, ...options} satisfies PopoverOpenDetail}
+		{detail: {...options} satisfies PopoverOpenDetail}
 	))
 }
 
@@ -121,12 +121,14 @@ function initPopoverListener(): void {
 		}, 250)
 	}
 
+	// when `globalClick()` below will fire, this must call after it
 	function open(ev: CustomEvent<HTMLDivElement>): void {
 		const element = ev.detail
 		const isExist = arraySome(
 			popovers,
 			popover => elementIsSame(popover, element)
 		)
+		STOP_GLOBAL_CLICK = false
 		if (isExist) return;
 
 		arrayPush(popovers, element)
@@ -194,6 +196,11 @@ function initPopoverListener(): void {
 		eventListenerAdd(window, 'resize', () => {
 			if (arrayLength(popovers) == 0) return;
 			repositionAllPopover()
+		})
+
+		eventListenerAdd<PointerEvent>(document, 'pointermove', ev => {
+			POINTER_X = ev.clientX
+			POINTER_Y = ev.clientY
 		})
 	}
 
@@ -432,7 +439,6 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 
 		const active = documentActive()
 		const {
-			event,
 			pointer,
 			anchorRect,
 			allowHideAnchor = props['c:allowHideAnchor'] ?? true,
@@ -465,12 +471,8 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 			: anchor
 				? elementRect(anchor)
 				: undefined
-		const $event = (event as TouchEvent).touches
-			? (event as TouchEvent).touches[0]
-			: (event as MouseEvent)
-
-		pointerX = pointer? pointer.x : $event.clientX ?? 0
-		pointerY = pointer? pointer.y : $event.clientY ?? 0
+		pointerX = pointer? pointer.x : POINTER_X
+		pointerY = pointer? pointer.y : POINTER_Y
 		let pos = getFlyoutPosition({
 			flyout: popoverRect,
 			anchor: $anchorRect,
@@ -604,10 +606,6 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 		setTop(rectTop(pos))
 		setLeft(rectLeft(pos))
 		setAttrOpen(true)
-		elementDispatchEvent(LISTENER_REF, new CustomEvent(
-			PopoverListenerEvents.open,
-			{ detail: popoverRef }
-		))
 		props['c:onOpen']?.()
 		onOpen?.()
 		if (props['c:openAnimation'] != null) props['c:openAnimation'](
@@ -619,7 +617,13 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 			{ duration: 300, easing: AnimationEffectTiming.springBounce }
 		).finished, () => setAttrOpenDone(true))
 
-		STOP_GLOBAL_CLICK = eventType(event) == 'click'
+		STOP_GLOBAL_CLICK = true
+
+		// run after document.onclick
+		timeTimerSet(() => elementDispatchEvent(LISTENER_REF, new CustomEvent(
+			PopoverListenerEvents.open,
+			{ detail: popoverRef }
+		)))
 	}
 
 	function repositionPopover(): void {

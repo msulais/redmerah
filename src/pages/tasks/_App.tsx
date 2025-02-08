@@ -650,7 +650,6 @@ const _: VoidComponent = () => {
 	}
 
 	function downloadTaskFile(
-		ev: Event,
 		file: TaskFileMetaData,
 		taskListIndex: number,
 		taskIndex: number,
@@ -674,7 +673,7 @@ const _: VoidComponent = () => {
 					idbStoreDelete(storeFileMetaData, file.id)
 				}
 
-				openToast(ev, toastNoFileRef)
+				openToast(toastNoFileRef)
 				return;
 			}
 
@@ -683,7 +682,6 @@ const _: VoidComponent = () => {
 	}
 
 	async function getBlob(
-		ev: Event,
 		file: TaskFileMetaData,
 		taskListIndex: number,
 		taskIndex: number,
@@ -711,7 +709,7 @@ const _: VoidComponent = () => {
 					idbStoreDelete(storeFileMetaData, file.id)
 				}
 
-				openToast(ev, toastNoFileRef)
+				openToast(toastNoFileRef)
 				return null
 			}
 
@@ -900,19 +898,17 @@ const _: VoidComponent = () => {
 			copyTasks(taskListIndex)
 			break
 		}
-		case Commands.addLabel: {
-			const [event] = args as [Event]
-			openDialog(event, dialogNewLabelRef, {
+		case Commands.addLabel:
+			openDialog(dialogNewLabelRef, {
 				contentAutoFocus: true,
 				important: true
 			})
 			break
-		}
 		case Commands.editLabel: {
-			const [event, label] = args as [Event, TaskLabel]
+			const [label] = args as [TaskLabel]
 			updateTextFieldValue(textFieldEditLabelRef, label.name)
 			setSelectedLabelToEdit(label)
-			openDialog(event, dialogEditLabelRef, {
+			openDialog(dialogEditLabelRef, {
 				contentAutoFocus: true,
 				important: true
 			})
@@ -923,11 +919,9 @@ const _: VoidComponent = () => {
 			deleteLabel(label)
 			break
 		}
-		case Commands.showLabelsOptions: {
-			const [event] = args as [Event]
-			openDialog(event, dialogLabelsRef)
+		case Commands.showLabelsOptions:
+			openDialog(dialogLabelsRef)
 			break
-		}
 		case Commands.addFiles: {
 			const [
 				files,
@@ -939,13 +933,12 @@ const _: VoidComponent = () => {
 		}
 		case Commands.downloadFile: {
 			const [
-				event,
 				file,
 				taskListIndex,
 				taskIndex,
 				fileIndex
-			] = args as [Event, TaskFileMetaData, number, number, number]
-			downloadTaskFile(event, file, taskListIndex, taskIndex, fileIndex)
+			] = args as [TaskFileMetaData, number, number, number]
+			downloadTaskFile(file, taskListIndex, taskIndex, fileIndex)
 			break
 		}
 		case Commands.editFile: {
@@ -964,10 +957,8 @@ const _: VoidComponent = () => {
 			break
 		}
 		case Commands.getFileBlob: {
-			const [
-				event, file, taskListIndex, taskIndex, fileIndex
-			] = args as [Event, TaskFileMetaData, number, number, number]
-			return await getBlob(event, file, taskListIndex, taskIndex, fileIndex)
+			const [file, taskListIndex, taskIndex, fileIndex] = args as [TaskFileMetaData, number, number, number]
+			return await getBlob(file, taskListIndex, taskIndex, fileIndex)
 		}
 		case Commands.addSubTask: {
 			const [
@@ -975,30 +966,28 @@ const _: VoidComponent = () => {
 			] = args as [SubTask, number, number]
 			return await addSubTask(subtask, taskListIndex, taskIndex)
 		}
-		case Commands.addTaskList: {
-			const [event] = args as [Event]
-			openDialog(event, dialogNewListRef, {
+		case Commands.addTaskList:
+			openDialog(dialogNewListRef, {
 				important: true,
 				contentAutoFocus: true
 			})
 			break
-		}
 		case Commands.deleteTaskList: {
-			const [event, taskListIndex] = args as [Event, number]
+			const [taskListIndex] = args as [number]
 			setSelectedTaskListIndexToDelete(taskListIndex)
-			openDialog(event, dialogDeleteListRef, {
+			openDialog(dialogDeleteListRef, {
 				important: true
 			})
 			break
 		}
 		case Commands.renameTaskList: {
-			const [event, taskListIndex] = args as [Event, number]
+			const [taskListIndex] = args as [number]
 			const list = taskLists[taskListIndex]
 			setSelectedTaskListIndexToRename(taskListIndex)
 			setEditListEmoji(list.emoji)
 			setEditListNameText(list.name)
 			updateTextFieldValue(textFieldEditListRef, list.name)
-			openDialog(event, dialogEditListRef, {
+			openDialog(dialogEditListRef, {
 				important: true,
 				contentAutoFocus: true
 			})
@@ -1434,7 +1423,7 @@ const _: VoidComponent = () => {
 					data-tooltip="Edit label"
 					data-edit
 					data-index={props.index}
-					onClick={(ev) => command(Commands.editLabel, ev, label())}
+					onClick={() => command(Commands.editLabel, label())}
 					c:code={ICON_EDIT}
 				/>
 				<IconButton
@@ -1484,7 +1473,7 @@ const _: VoidComponent = () => {
 						closeDialog(dialogLabelsRef)
 						break
 					case button_dialogLabels_addId:
-						openDialog(ev, dialogNewLabelRef, {
+						openDialog(dialogNewLabelRef, {
 							contentAutoFocus: true,
 							important: true
 						})
@@ -1501,10 +1490,10 @@ const _: VoidComponent = () => {
 						if (numberIsNotDefined(index)) return
 
 						if (typeIsString(data_edit)) {
-							command(Commands.editLabel, ev, labels[index])
+							command(Commands.editLabel, labels[index])
 						}
 						else if (typeIsString(data_delete)) {
-							command(Commands.deleteLabel, ev, labels[index])
+							command(Commands.deleteLabel, labels[index])
 						}
 					}
 				}}
@@ -1552,7 +1541,7 @@ const _: VoidComponent = () => {
 						break
 					case button_dialogNewLabel_colorId:
 						setChangeLabelColorOption('new')
-						openColorPicker(ev, colorPickerLabelRef, {
+						openColorPicker(colorPickerLabelRef, {
 							anchor: button,
 						})
 						break
@@ -1624,7 +1613,7 @@ const _: VoidComponent = () => {
 						break
 					case button_dialogEditLabel_colorId:
 						setChangeLabelColorOption('edit')
-						openColorPicker(ev, colorPickerLabelRef, {
+						openColorPicker(colorPickerLabelRef, {
 							anchor: button,
 						})
 						break
@@ -1700,7 +1689,7 @@ const _: VoidComponent = () => {
 						break
 					case button_dialogNewList_emojiId:
 						setIsEmojiPickerNewListOpen(true)
-						openEmojiPicker(ev, emojiPickerRef)
+						openEmojiPicker(emojiPickerRef)
 						break
 					}
 				}}
@@ -1764,7 +1753,7 @@ const _: VoidComponent = () => {
 							break
 						case button_dialogEditList_emojiId:
 							setIsEmojiPickerEditListOpen(true)
-							openEmojiPicker(ev, emojiPickerRef)
+							openEmojiPicker(emojiPickerRef)
 							break
 					}
 				}}

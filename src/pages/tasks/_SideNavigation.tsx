@@ -86,11 +86,11 @@ const _: VoidComponent<{
 
 					switch (elementId(button)) {
 					case buttonRenameListId:
-						command(Commands.renameTaskList, ev, selectdTaskListIndex)
+						command(Commands.renameTaskList, selectdTaskListIndex)
 						closeMenu(menuListActionRef)
 						break
 					case buttonDeleteListId:
-						command(Commands.deleteTaskList, ev, selectdTaskListIndex)
+						command(Commands.deleteTaskList, selectdTaskListIndex)
 						closeMenu(menuListActionRef)
 						break
 					}
@@ -123,7 +123,7 @@ const _: VoidComponent<{
 
 			switch (elementId(button)) {
 			case buttonNewListId:
-				command(Commands.addTaskList, ev)
+				command(Commands.addTaskList)
 				break
 			default:
 				const data_list_id = elementDataset(button, 'listId')
@@ -152,7 +152,7 @@ const _: VoidComponent<{
 			const data_list_id = elementDataset(button, 'listId')
 			if (data_list_id) {
 				eventPreventDefault(ev)
-				openMenu(ev, menuListActionRef, {position: MenuPosition.centerBottomToRight})
+				openMenu(menuListActionRef, {position: MenuPosition.centerBottomToRight})
 				const data_index = elementDataset(button, 'index')
 				if (data_index) {
 					const index = numberSafe(numberParse(data_index))

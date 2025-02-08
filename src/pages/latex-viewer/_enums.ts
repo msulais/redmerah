@@ -10,8 +10,6 @@ export enum Commands {
 	updateLatexInput,
 
 	resetInputs,
-
-	/** @param {Event} ev `Event`*/
 	copyAll,
 
 	/** @param {number} index `number`*/

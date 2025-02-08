@@ -21,14 +21,14 @@ const _: VoidComponent = () => {
 	const [autoclose, setAutoclose] = createSignal<boolean>(true)
 	const [duration, setDuration] = createSignal<number>(5000)
 	const [position, setPosition] = createSignal<ToastPosition>(ToastPosition.centerTop)
-	let toast_ref: HTMLDivElement
+	let toastRef: HTMLDivElement
 	return (<Page
 		title="Toast"
 		description="A toast is a lightweight notification that appears briefly at the bottom or top of the screen. It provides users with short messages or alerts without interrupting their primary workflow. Toasts are typically used to display success messages, errors, or informational updates.">
 		<Playground>
 			<Button
 				c:variant={ButtonVariant.tonal}
-				onClick={ev => openToast(ev, toast_ref, {
+				onClick={() => openToast(toastRef, {
 					autoclose: autoclose(),
 					duration: duration(),
 					position: position()
@@ -36,16 +36,16 @@ const _: VoidComponent = () => {
 				Open toast
 			</Button>
 			<Toast
-				ref={r => toast_ref = r}
+				ref={r => toastRef = r}
 				c:header={<Show when={header()}>Warning</Show>}
 				c:trailing={<Show when={trailing()}>
-					<IconButton c:code={0xEED3} onClick={() => closeToast(toast_ref)}/>
-					<IconButton c:code={0xEE3B} onClick={() => closeToast(toast_ref)}/>
+					<IconButton c:code={0xEED3} onClick={() => closeToast(toastRef)}/>
+					<IconButton c:code={0xEE3B} onClick={() => closeToast(toastRef)}/>
 				</Show>}
 				c:actions={<Show when={actions()}>
-					<Button c:variant={ButtonVariant.tonal} onClick={() => closeToast(toast_ref)}>Close</Button>
-					<Button c:variant={ButtonVariant.tonal} onClick={() => closeToast(toast_ref)}>Reject</Button>
-					<Button c:variant={ButtonVariant.filled} onClick={() => closeToast(toast_ref)}>Accept</Button>
+					<Button c:variant={ButtonVariant.tonal} onClick={() => closeToast(toastRef)}>Close</Button>
+					<Button c:variant={ButtonVariant.tonal} onClick={() => closeToast(toastRef)}>Reject</Button>
+					<Button c:variant={ButtonVariant.filled} onClick={() => closeToast(toastRef)}>Accept</Button>
 				</Show>}
 				c:leading={<Show when={leading()}><Icon c:code={0xECB6}/></Show>}>
 				<Show when={content()}>

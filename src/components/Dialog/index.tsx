@@ -8,11 +8,11 @@ import { closeModal, focusModal, Modal, openModal, type ModalProps } from "@/com
 import FocusableGroup from "@/components/FocusableGroup"
 import './index.scss'
 
-function openDialog(ev: Event, dialog: HTMLDialogElement, options?: {
+function openDialog(dialog: HTMLDialogElement, options?: {
 	contentAutoFocus?: boolean
 	important?: boolean
 }): void {
-	openModal(ev, dialog, {...options})
+	openModal(dialog, {...options})
 }
 
 type DialogProps = ModalProps & {

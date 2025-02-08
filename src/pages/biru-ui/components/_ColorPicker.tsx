@@ -21,7 +21,7 @@ const _: VoidComponent = () => {
 		<Playground>
 			<Button
 				c:variant={ButtonVariant.tonal}
-				onClick={(ev) => openColorPicker(ev, colorPickerRef, {
+				onClick={(ev) => openColorPicker(colorPickerRef, {
 					anchor: eventCurrentTarget(ev),
 					contentAutoFocus: false,
 					gap: 8,

@@ -24,7 +24,7 @@ const _: VoidComponent = () => {
 		<Playground>
 			<Button
 				c:variant={ButtonVariant.tonal}
-				onClick={(ev) => openDrawer(ev, drawer_ref, {
+				onClick={() => openDrawer(drawer_ref, {
 					important: important(),
 					contentAutoFocus: contentAutoFocus()
 				})}>

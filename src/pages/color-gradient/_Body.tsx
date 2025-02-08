@@ -150,7 +150,7 @@ const GradientDataList: VoidComponent<{
 				if (numberIsNotDefined(index)) return
 
 				setSelectedGradientDataIndex(index)
-				openMenu(ev, menuActionRef, {
+				openMenu(menuActionRef, {
 					anchor: button,
 					position: MenuPosition.centerBottomToRight
 				})
@@ -606,7 +606,7 @@ const _: VoidComponent<{
 							true
 						))
 						closeMenu(menuGradientActionsRef)
-						openToast(ev, toastCopied)
+						openToast(toastCopied)
 						break
 					case buttonGradientActions_deleteGradientId:
 						closeMenu(menuGradientActionsRef)
@@ -671,7 +671,7 @@ const _: VoidComponent<{
 					if (numberIsNotDefined(index)) return
 
 					setSelectedGradientIndex(index)
-					openMenu(ev, menuGradientActionsRef, {
+					openMenu(menuGradientActionsRef, {
 						anchor: button,
 						position: MenuPosition.centerCenterRightTop
 					})
@@ -696,7 +696,7 @@ const _: VoidComponent<{
 
 					selectedColorStopIndex = colorStopIndex
 					setSelectedGradientIndex(gradientIndex)
-					openColorPicker(ev, colorPickerRef()!, {
+					openColorPicker(colorPickerRef()!, {
 						color: color as HEXColor,
 						anchor: button
 					})

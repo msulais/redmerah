@@ -5,9 +5,7 @@ import { timeTimerSet } from "@/utils/time"
 import { removeSplashScreen } from "@/scripts/splash"
 import { eventListenerAdd } from "@/utils/event"
 import { mathFloor } from "@/utils/math"
-import { documentBody } from "@/utils/document"
 import { promiseDone } from "@/utils/object"
-import { elementClick } from "@/utils/element"
 import { ICON_BATTERY_5, ICON_BATTERY_CHARGE, ICON_DISMISS, ICON_QUESTION_CIRCLE, ICON_WARNING } from "@/constants/icons"
 
 import Tooltip from "@/components/Tooltip"
@@ -48,9 +46,9 @@ const _: VoidComponent = () => {
 		return text
 	}
 
-	function initBattery(ev: Event): void {
+	function initBattery(): void {
 		if (!(navigator as any).getBattery) {
-			timeTimerSet(() => openToast(ev, toastBrowserNotSupportRef, {
+			timeTimerSet(() => openToast(toastBrowserNotSupportRef, {
 				autoclose: false
 			}))
 			return
@@ -70,20 +68,13 @@ const _: VoidComponent = () => {
 				eventListenerAdd(battery, 'chargingtimechange', () => update())
 				eventListenerAdd(battery, 'dischargingtimechange', () => update())
 			},
-			() => openToast(ev, toastBatterStatusErrorRef, {duration: 8E3})
+			() => openToast(toastBatterStatusErrorRef, {duration: 8E3})
 		)
 	}
 
 	onMount(() => {
-		let clicked = false
-		eventListenerAdd(documentBody(), 'click', ev => {
-			if (clicked) return;
-			initBattery(ev)
-			removeSplashScreen()
-			clicked = true
-		})
-
-		elementClick(documentBody())
+		initBattery()
+		removeSplashScreen()
 	})
 
 	const Toasts: VoidComponent = () => (<>

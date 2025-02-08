@@ -31,23 +31,21 @@ enum ColorPickerEvents {
 }
 
 function openColorPicker(
-	event: Event,
 	colorPicker: HTMLDialogElement,
 	options?: Omit<ModalOpenDetail, 'event'> & { color?: HEXColor }
 ): void {
 	if (options?.color != null) changeColorPickerValue(colorPicker, options.color)
 
-	openModal(event, colorPicker, options)
+	openModal(colorPicker, options)
 }
 
 function openPopoverColorPicker(
-	event: Event,
 	colorPicker: HTMLDivElement,
 	options?: Omit<ModalOpenDetail, 'event'> & { color?: HEXColor }
 ): void {
 	if (options?.color != null) changeColorPickerValue(colorPicker, options.color)
 
-	openPopover(event, colorPicker, options)
+	openPopover(colorPicker, options)
 }
 
 function changeColorPickerValue(

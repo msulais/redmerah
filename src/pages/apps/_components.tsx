@@ -91,7 +91,7 @@ export const MainElement: VoidComponent = () => {
 						c:focused={getSelectedLink() == app.link && isMenuActionsOpen()}
 						onContextMenu={ev => {
 							setSelectedApp(app)
-							openMenu(ev, menuActionsRef, {
+							openMenu(menuActionsRef, {
 								position: MenuPosition.centerBottomToRight,
 							})
 							eventPreventDefault(ev)
@@ -140,9 +140,9 @@ export const MainElement: VoidComponent = () => {
 			</MenuItem>
 			<MenuDivider/>
 			<MenuItem
-				onClick={(ev) => {
+				onClick={() => {
 					closeMenu(menuActionsRef)
-					openDialog(ev, dialogInfoRef)
+					openDialog(dialogInfoRef)
 				}}
 				c:leading={<Icon c:code={ICON_INFO}/>}>
 				About app

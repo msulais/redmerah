@@ -101,12 +101,11 @@ const _: VoidComponent = () => {
 			saveLastInput([ObjectStoreKeys.lastInput_latex, ['']])
 			break
 		case Commands.copyAll: {
-			const [event] = args as [Event]
 			promiseDone(
 				navigatorClipboardWriteText(
 					arrayJoin(arrayMap(latex, l => settings.prefix + l + settings.suffix), '\n\n')
 				),
-				() => openToast(event, toastCopiedRef)
+				() => openToast(toastCopiedRef)
 			)
 			break
 		}

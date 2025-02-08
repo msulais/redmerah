@@ -64,7 +64,7 @@ const _: VoidComponent<{
 		return props.command(type, ...args)
 	}
 
-	async function scanQRCodeImage(ev: Event): Promise<unknown> {
+	async function scanQRCodeImage(): Promise<unknown> {
 		if (QRCodeImageSource() == null) return;
 
 		const decodeImage = async (decoder: BrowserQRCodeReader) => (await decoder.decodeFromImageElement(imgQRCodeRef)).getText()
@@ -76,10 +76,10 @@ const _: VoidComponent<{
 		try { return setQRCodeDecodedText(await decodeImage(decoder5)) } catch {}
 
 		setQRCodeDecodedText('')
-		openToast(ev, toastErrorScanQRCodeRef)
+		openToast(toastErrorScanQRCodeRef)
 	}
 
-	function chooseFile(ev: Event, capture?: string): void {
+	function chooseFile(capture?: string): void {
 		promiseDone(
 			fileOpen('image/*', false, capture),
 			(files) => {
@@ -90,7 +90,7 @@ const _: VoidComponent<{
 
 					if (QRCodeImageSource() != null) urlRevoke(QRCodeImageSource()!)
 					setQRCodeImageSource(urlCreate(file))
-					scanQRCodeImage(ev)
+					scanQRCodeImage()
 				}
 			}
 		)
@@ -121,7 +121,7 @@ const _: VoidComponent<{
 				if (dataCopy
 					&& validEnumValue(dataCopy, CopyFileType)
 				) {
-					command(Commands.copyQRCode, ev, dataCopy as CopyFileType)
+					command(Commands.copyQRCode, dataCopy as CopyFileType)
 					closeSubMenu(subMenuCanvasActions_copyRef)
 					timeTimerSet(() => closeMenu(menuCanvasActionsRef), 200)
 					return
@@ -254,7 +254,7 @@ const _: VoidComponent<{
 					if (!stringStartsWith($file.type, 'image')) return
 					if (QRCodeImageSource() != null) urlRevoke(QRCodeImageSource()!)
 					setQRCodeImageSource(urlCreate($file))
-					scanQRCodeImage(ev)
+					scanQRCodeImage()
 				}}
 				onDragOver={ev => eventPreventDefault(ev)}
 				onDragEnter={() => setIsDragEnter(true)}
@@ -325,12 +325,12 @@ const _: VoidComponent<{
 				if (props.isGenerateError) return
 
 				openMenu(
-					ev, menuCanvasActionsRef,
+					menuCanvasActionsRef,
 					{position: MenuPosition.centerBottomToRight}
 				)
 				break
 			case divScan_imageId:
-				chooseFile(ev)
+				chooseFile()
 				break
 			case buttonScan_dismissId:
 				urlRevoke(QRCodeImageSource()!)
@@ -338,10 +338,10 @@ const _: VoidComponent<{
 				setQRCodeDecodedText('')
 				break
 			case buttonScan_chooseFileId:
-				chooseFile(ev)
+				chooseFile()
 				break
 			case buttonScan_openCameraId:
-				chooseFile(ev, 'environment')
+				chooseFile('environment')
 				break
 			}
 		}}
@@ -353,7 +353,7 @@ const _: VoidComponent<{
 
 				eventPreventDefault(ev)
 				openMenu(
-					ev, menuCanvasActionsRef,
+					menuCanvasActionsRef,
 					{position: MenuPosition.centerBottomToRight}
 				)
 				break

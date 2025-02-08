@@ -544,7 +544,6 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 					<TextFieldButton
 						data-tooltip={props['c:tooltipChangeValue']}
 						onClick={(ev) => openMenu(
-							ev,
 							modalActionsRef,
 							{
 								position: MenuPosition.centerCenterLeft,
@@ -667,11 +666,10 @@ const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
 	const result = children(() => props['c:result'])
 	let isPopoverOpen: boolean = false
 	let isFocus = false
-	let event: FocusEvent
 	let wrapperRef: HTMLDivElement
 	let menuRef: HTMLDivElement
 
-	function $openPopover(ev: Event): void {
+	function $openPopover(): void {
 		if (isPopoverOpen) return;
 
 		if (typeIsArray(result()) && arrayLength(result() as unknown[]) == 0) return;
@@ -684,7 +682,7 @@ const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
 			'width',
 			`${textFieldWidth}px`
 		)
-		openPopover(ev, menuRef, {
+		openPopover(menuRef, {
 			allowHideAnchor: false,
 			anchor: wrapperRef,
 			contentAutoFocus: false,
@@ -719,11 +717,11 @@ const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
 
 	createEffect(() => {
 		const r = result()
-		if (!isFocus && !event) return;
+		if (!isFocus) return;
 		if (typeIsArray(r) && arrayLength(r as unknown[]) == 0) {
 			return closePopover(menuRef)
 		}
-		$openPopover(event)
+		$openPopover()
 	})
 
 	return (<>
@@ -738,9 +736,8 @@ const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
 			}}
 			onFocus={ev => {
 				eventCall(ev, props.onFocus)
-				$openPopover(ev)
+				$openPopover()
 				isFocus = isFocus
-				event = ev
 			}}
 			{...other}
 		/>
