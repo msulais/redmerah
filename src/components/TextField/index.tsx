@@ -5,7 +5,7 @@ import { attrSetIfExist, attrClassList } from '@/utils/attributes'
 import { timeTimerClear, timeIntervalClear, timeTimerSet, timeIntervalSet } from '@/utils/time'
 import { eventCall, eventCurrentTarget, eventTarget } from '@/utils/event'
 import { mathClamp, mathMax, mathRound } from '@/utils/math'
-import { elementBlur, elementContains, elementDispatchEvent, elementFocus, elementRect, elementStyleRemove, elementScrollHeight, elementStyleSet, elementTagName, elementValidTarget, elementId } from '@/utils/element'
+import { elementBlur, elementContains, elementDispatchEvent, elementFocus, elementRect, elementStyleRemove, elementScrollHeight, elementStyleSet, elementTagName, elementValidTarget, elementId, elementStyle } from '@/utils/element'
 import { eventListenerAdd, eventListenerRemove } from '@/utils/event'
 import { typeIsArray, typeIsNumber, typeIsString } from '@/utils/typecheck'
 import { stringLength, stringSplit, stringToUpperCase, stringTrim } from '@/utils/string'
@@ -24,8 +24,6 @@ import Modal, { type ModalProps } from '@/components/Modal'
 import FocusableGroup from '@/components/FocusableGroup'
 import Tooltip from '@/components/Tooltip'
 import './index.scss'
-
-const HEIGHT_TEXT_INPUT_PER_LINE = 20
 
 /**
  * To trigger 'input' event
@@ -104,21 +102,26 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 	const [wrapperProps, otherWrapperProps] = splitProps(props['c:attrWrapper']! ?? {}, [
 		'class', 'onClick'
 	])
+	const [lineHeight, setLineHeight] = createSignal<number>(20)
 	const [isFocus, setIsFocus] = createSignal<boolean>(false)
 	const [isInvalid, setIsInvalid] = createSignal<boolean>(false)
 	const [value, setValue] = createSignal<string>('')
-	const [height, setHeight] = createSignal<number>(HEIGHT_TEXT_INPUT_PER_LINE)
+	const [height, setHeight] = createSignal<number>(lineHeight())
 	const isShowClearButton = createMemo(() => props['c:autoShowClearButton'] && stringLength(value()) > 0)
 	const trailing = children(() => props['c:trailing'])
 	const leading = children(() => props['c:leading'])
 	const buttonClearId = createUniqueId()
 	let areaTextFieldRef: HTMLTextAreaElement
 
+	onMount(() => {
+		setLineHeight(numberSafe(numberParse(elementStyle(areaTextFieldRef, 'line-height')), 20))
+	})
+
 	createEffect(() => {
 		const value = `${props.value ?? ''}`
 
 		const lines = arrayLength(stringSplit(stringTrim(value ?? ''), '\n'))
-		setHeight(lines * HEIGHT_TEXT_INPUT_PER_LINE)
+		setHeight(lines * lineHeight())
 		setValue(value ?? '')
 	})
 
@@ -173,8 +176,8 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 				const self = eventCurrentTarget(ev)
 				setValue(self.value)
 				setIsInvalid(!self.checkValidity())
-				setHeight(HEIGHT_TEXT_INPUT_PER_LINE) // set to one line: to calculate the scroll height
-				setHeight(mathMax(elementScrollHeight(self), HEIGHT_TEXT_INPUT_PER_LINE))
+				setHeight(lineHeight())
+				setHeight(mathMax(elementScrollHeight(self), lineHeight()))
 			}}
 			onFocus={(ev) => {
 				eventCall(ev, props.onFocus)
@@ -195,8 +198,13 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 			value={props.value}
 			style={{
 				height: height() + 'px',
-				"min-height": props['c:minLine']? ((HEIGHT_TEXT_INPUT_PER_LINE * props['c:minLine']) + 'px') : undefined,
-				"max-height": props['c:maxLine'] && props['c:maxLine'] >= (props['c:minLine'] ?? 1)? ((HEIGHT_TEXT_INPUT_PER_LINE * props['c:maxLine']) + 'px') : undefined
+				"min-height": props['c:minLine']
+					? ((lineHeight() * props['c:minLine']) + 'px')
+					: undefined,
+				"max-height": props['c:maxLine']
+					&& props['c:maxLine'] >= (props['c:minLine'] ?? 1)
+						? ((lineHeight() * props['c:maxLine']) + 'px')
+						: undefined
 			}}
 			placeholder={props.placeholder ?? (props['c:autoHideLabel'] && props['c:label']? `${props['c:label']}` : undefined)}
 			{...other}></textarea>

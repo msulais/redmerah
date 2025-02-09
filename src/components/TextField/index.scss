@@ -126,6 +126,12 @@
 		font-size: var(--g-font-size-xs);
 		line-height: 20px;
 		transition-duration: .2s;
+		-ms-overflow-style: none;
+		scrollbar-width: none;
+
+		&::-webkit-scrollbar {
+			display: none;
+		}
 
 		&::placeholder {
 			color: rgba(var(--g-color-on-surface), var(--g-opacity-inv3));
