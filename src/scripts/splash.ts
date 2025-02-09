@@ -1,11 +1,9 @@
-import { AnimationEffectTiming } from "@/enums/animation"
 import { BodyAttributes } from "@/enums/attributes"
 import { ElementIds } from "@/enums/ids"
 import { attrGet, attrRemove } from "@/utils/attributes"
 import { documentBody } from "@/utils/document"
-import { elementAnimate, elementRemove, elementById } from "@/utils/element"
+import { elementRemove, elementById } from "@/utils/element"
 import { numberParse, numberSafe } from "@/utils/number"
-import { promiseDone } from "@/utils/object"
 import { timeTimerSet } from "@/utils/time"
 
 let COMPONENT_COUNT: number = 0
@@ -16,14 +14,8 @@ export function removeSplashScreen(timeout: number = 0): void {
 		const splashRef = elementById(ElementIds.splash)
 		if (!splashRef) return;
 
-		promiseDone(elementAnimate(
-			splashRef,
-			{opacity: 0},
-			{duration: 200, easing: AnimationEffectTiming.spring}
-		).finished, () => {
-			elementRemove(splashRef)
-			attrRemove(documentBody(), BodyAttributes.componentCount)
-		})
+		elementRemove(splashRef)
+		attrRemove(documentBody(), BodyAttributes.componentCount)
 	}, timeout)
 }
 
