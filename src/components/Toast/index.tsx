@@ -22,7 +22,6 @@ enum ToastPosition {
 }
 
 type ToastOpenDetail = {
-	event: Event
 	autoclose?: boolean
 	duration?: number
 	position?: ToastPosition
@@ -34,13 +33,12 @@ enum ToastEvents {
 }
 
 function openToast(
-	event: Event,
 	toast: HTMLDivElement,
 	options?: Omit<ToastOpenDetail, 'event'>
 ): void {
 	elementDispatchEvent(toast, new CustomEvent(
 		ToastEvents.open,
-		{detail: {event, ...options} satisfies ToastOpenDetail}
+		{detail: {...options} satisfies ToastOpenDetail}
 	))
 }
 
@@ -84,7 +82,6 @@ const Toast: ParentComponent<ToastProps> = ($props) => {
 		if (isOpen) return
 
 		const {
-			event,
 			position = ToastPosition.centerTop,
 			autoclose = true,
 			duration = 5E3
@@ -98,7 +95,7 @@ const Toast: ParentComponent<ToastProps> = ($props) => {
 		else if (position == ToastPosition.rightCenter) $position = PopoverPosition.centerCenterRightTop
 		else if (position == ToastPosition.rightBottom) $position = PopoverPosition.centerCenterRightBottom
 
-		openPopover(event, toastRef, {
+		openPopover(toastRef, {
 			anchor: documentBody(),
 			manualDismiss: true,
 			position: $position

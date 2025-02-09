@@ -9,7 +9,7 @@ import { timeTimerClear, timeTimerSet } from '@/utils/time'
 import { attrHas, attrRemove, attrSet, attrSetIfExist, attrClassList } from '@/utils/attributes'
 import { elementAnimate, elementClientWidth, elementDataset, elementDispatchEvent, elementFocus, elementIsSame, elementRect, elementScrollTop, elementAllBySelector, elementAppendChild, elementCreate, elementIdSet, elementStyleSet, elementPointerCaptureRelease, elementPointerCaptureSet } from '@/utils/element'
 import { BodyAttributes } from '@/enums/attributes'
-import { eventListenerAdd, eventCall, eventCurrentTarget, eventPreventDefault, eventListenerRemove, eventTarget, eventType } from "@/utils/event"
+import { eventListenerAdd, eventCall, eventCurrentTarget, eventPreventDefault, eventListenerRemove, eventTarget } from "@/utils/event"
 import { mathAbs } from '@/utils/math'
 import { arrayAt, arrayFindIndex, arrayLength, arrayPush, arraySome, arraySplice } from '@/utils/array'
 import { rectBottom, rectHeight, rectLeft, rectRight, rectTop, rectWidth } from '@/utils/rect'
@@ -22,7 +22,6 @@ import { KEY_ARROW_UP, KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT } from '@
 import './index.scss'
 
 type ModalOpenDetail = {
-	event: Event
 	anchor?: HTMLElement
 
 	/** Use this if you want to override the `ModalOpenDetail.anchor` `DOMRect` */
@@ -75,6 +74,8 @@ enum ModalListenerEvents {
 let LISTENER_REF: HTMLDivElement
 let STOP_GLOBAL_CLICK: boolean = false
 let HAS_MODAL_LISTENER: boolean = false
+let POINTER_X: number = 0
+let POINTER_Y: number = 0
 const MODAL_CLASS = 'c-modal'
 const MODAL_MARGIN = 8
 
@@ -83,13 +84,12 @@ function isModalOpen(modal: HTMLDialogElement): boolean {
 }
 
 function openModal(
-	event: Event,
 	modal: HTMLDialogElement,
 	options?: Omit<ModalOpenDetail, 'event'>
 ): void {
 	elementDispatchEvent(modal, new CustomEvent(
 		ModalEvents.open,
-		{detail: {event: event, ...options} satisfies ModalOpenDetail}
+		{detail: {...options} satisfies ModalOpenDetail}
 	))
 }
 
@@ -129,9 +129,11 @@ function initModalListener(): void {
 		}, 250)
 	}
 
+	// when `globalClick()` below will fire, this must call after it
 	function open(ev: CustomEvent<HTMLDialogElement>): void {
 		const element: HTMLDialogElement = ev.detail
 		const isExist = arraySome(modals, modal => elementIsSame(modal, element))
+		STOP_GLOBAL_CLICK = false
 		if (isExist) return;
 
 		arrayPush(modals, element)
@@ -202,6 +204,11 @@ function initModalListener(): void {
 			ModalListenerEvents.close,
 			close
 		)
+
+		eventListenerAdd<PointerEvent>(document, 'pointermove', ev => {
+			POINTER_X = ev.clientX
+			POINTER_Y = ev.clientY
+		})
 
 		eventListenerAdd(document, 'click', globalClick)
 		eventListenerAdd(document, 'scroll', globalScroll)
@@ -475,7 +482,6 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 		props['c:onToggleOpen']?.(true)
 
 		const {
-			event,
 			pointer,
 			anchorRect,
 			onOpen,
@@ -506,11 +512,8 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 			: anchor
 				? elementRect(anchor)
 				: undefined
-		const $event = (event as TouchEvent).touches
-			? (event as TouchEvent).touches[0]
-			: (event as MouseEvent)
-		pointerX = pointer? pointer.x : $event.clientX ?? 0
-		pointerY = pointer? pointer.y : $event.clientY ?? 0
+		pointerX = pointer? pointer.x : POINTER_X
+		pointerY = pointer? pointer.y : POINTER_Y
 		let pos = getFlyoutPosition({
 			flyout: modalRect,
 			anchor: $anchorRect,
@@ -644,10 +647,6 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 		setTop(rectTop(pos))
 		setLeft(rectLeft(pos))
 		setAttrOpen(true)
-		elementDispatchEvent(LISTENER_REF, new CustomEvent(
-			ModalListenerEvents.open,
-			{detail: modalRef}
-		))
 		props['c:onOpen']?.()
 		onOpen?.()
 		if (props['c:openAnimation'] != null) props['c:openAnimation'](
@@ -660,7 +659,13 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 			{ duration: 300, easing: AnimationEffectTiming.springBounce }
 		).finished, () => setAttrOpenDone(true))
 
-		STOP_GLOBAL_CLICK = eventType(event) == 'click'
+		STOP_GLOBAL_CLICK = true
+
+		// run after document.onclick
+		timeTimerSet(() => elementDispatchEvent(LISTENER_REF, new CustomEvent(
+			ModalListenerEvents.open,
+			{detail: modalRef}
+		)))
 	}
 
 	function repositionModal(): void {

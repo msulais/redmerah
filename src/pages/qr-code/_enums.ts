@@ -58,7 +58,6 @@ export enum Commands {
 	downloadQRCode,
 
 	/**
-	@param { Event } event `Event`
 	@param { CopyFileType } type `CopyFileType` */
 	copyQRCode,
 }

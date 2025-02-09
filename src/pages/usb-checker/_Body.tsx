@@ -7,9 +7,9 @@ import { stringLocaleCompare, stringToUpperCase } from "@/utils/string"
 import { promiseDone } from "@/utils/object"
 import { arrayLength, arrayPush, arraySome, arraySort, arraySplice } from "@/utils/array"
 import { navigatorUSB } from "@/utils/navigator"
-import { documentActive, documentBody } from "@/utils/document"
-import { elementClick, elementDataset, elementId, elementTagName, elementValidTarget } from "@/utils/element"
-import { eventListenerAdd, eventCurrentTarget } from "@/utils/event"
+import { documentActive } from "@/utils/document"
+import { elementDataset, elementId, elementTagName, elementValidTarget } from "@/utils/element"
+import { eventCurrentTarget } from "@/utils/event"
 import { numberParse } from "@/utils/number"
 import { removeSplashScreen } from "@/scripts/splash"
 import { AppColors } from "@/enums/colors"
@@ -41,10 +41,10 @@ const _: VoidComponent = () => {
 		}))
 	}
 
-	function initUSBDevices(ev: Event): void {
+	function initUSBDevices(): void {
 		if (!usb) {
 			setIsBrowserNotSupport(true)
-			timeTimerSet(() => openToast(ev, toastBrowserNotSupportRef, {
+			timeTimerSet(() => openToast(toastBrowserNotSupportRef, {
 				autoclose: false
 			}))
 			return
@@ -77,15 +77,8 @@ const _: VoidComponent = () => {
 	}
 
 	onMount(() => {
-		let clicked = false
-		eventListenerAdd(documentBody(), 'click', ev => {
-			if (clicked) return;
-			initUSBDevices(ev)
-			removeSplashScreen()
-			clicked = true
-		})
-
-		elementClick(documentBody())
+		initUSBDevices()
+		removeSplashScreen()
 	})
 
 	const Toasts: VoidComponent = () => (<>

@@ -155,20 +155,20 @@ const AppbarTasks: VoidComponent<{
 						command(Commands.markAllUncompleted, props.taskListIndex)
 						break
 					case buttonClearTasksId:
-						openDialog(ev, dialogClearTasksRef, {important: true})
+						openDialog(dialogClearTasksRef, {important: true})
 						closeMenu(menuMoreRef)
 						break
 					case buttonDeleteCompletedTasksId:
-						openDialog(ev, dialogDeleteCompletedTasksRef, {important: true})
+						openDialog(dialogDeleteCompletedTasksRef, {important: true})
 						closeMenu(menuMoreRef)
 						break
 					case buttonRenameListId:
 						closeMenu(menuMoreRef)
-						command(Commands.renameTaskList, ev, props.taskListIndex)
+						command(Commands.renameTaskList, props.taskListIndex)
 						break
 					case buttonDeleteListId:
 						closeMenu(menuMoreRef)
-						command(Commands.deleteTaskList, ev, props.taskListIndex)
+						command(Commands.deleteTaskList, props.taskListIndex)
 						break
 					}
 				}}>
@@ -317,14 +317,14 @@ const AppbarTasks: VoidComponent<{
 
 				switch (elementId(button)) {
 				case buttonSortById:
-					openMenu(ev, menuSortRef, {anchor: button})
+					openMenu(menuSortRef, {anchor: button})
 					break
 				case buttonCopyTasksId:
 					command(Commands.copyTasks, props.isGroup? undefined : props.taskListIndex)
-					openToast(ev, toastCopiedRef)
+					openToast(toastCopiedRef)
 					break
 				case buttonMoreOptionsId:
-					openMenu(ev, menuMoreRef, {anchor: button})
+					openMenu(menuMoreRef, {anchor: button})
 					break
 				}
 			}}
@@ -703,7 +703,7 @@ const GroupTaskList: VoidComponent<{
 				c:focused={isMenuMoreOpen() && selectedTaskListToAction.taskListIndex == taskListIndex()}
 				onClick={ev => {
 					setSelectedTaskListToAction({list: taskList(), taskListIndex: taskListIndex()})
-					openMenu(ev, menuMoreRef, {anchor: eventCurrentTarget(ev)})
+					openMenu(menuMoreRef, {anchor: eventCurrentTarget(ev)})
 				}}
 				c:code={ICON_MORE_VERTICAL}
 			/>}
@@ -752,10 +752,10 @@ const GroupTaskList: VoidComponent<{
 			c:onToggleOpen={isOpen => setIsMenuMoreOpen(isOpen)}>
 			<MenuItem
 				c:iconCode={ICON_COPY}
-				onClick={(ev) => {
+				onClick={() => {
 					command(Commands.copyTasks, selectedTaskListToAction.taskListIndex)
 					closeMenu(menuMoreRef)
-					openToast(ev, toastCopiedRef)
+					openToast(toastCopiedRef)
 				}}>
 				Copy tasks
 			</MenuItem>
@@ -874,8 +874,7 @@ const _: VoidComponent<{
 		return props.command(type, ...args)
 	}
 
-	function delete_task(
-		ev: Event,
+	function deleteTask(
 		task: Task,
 		taskListIndex: number,
 		taskIndex: number
@@ -889,16 +888,15 @@ const _: VoidComponent<{
 		}
 
 		setSelectedTaskToDelete({task, taskListIndex: taskListIndex, taskIndex: taskIndex})
-		openDialog(ev, dialogDeleteTaskWarningRef, {important: true})
+		openDialog(dialogDeleteTaskWarningRef, {important: true})
 	}
 
-	function editTask(ev: Event, task: Task, taskListIndex: number, taskIndex: number): void {
+	function editTask(task: Task, taskListIndex: number, taskIndex: number): void {
 		setSelectedTaskToEdit({task, taskListIndex: taskListIndex, taskIndex: taskIndex})
-		openDialog(ev, dialogEditTaskRef)
+		openDialog(dialogEditTaskRef)
 	}
 
 	async function viewFile(
-		ev: Event,
 		file: TaskFileMetaData,
 		taskListIndex: number,
 		taskIndex: number,
@@ -907,7 +905,6 @@ const _: VoidComponent<{
 		setSelectedFileToView({file, taskListIndex: taskListIndex, taskIndex: taskIndex, fileIndex: fileIndex})
 		const blob = (await command(
 			Commands.getFileBlob,
-			ev,
 			file,
 			taskListIndex,
 			taskIndex,
@@ -919,7 +916,7 @@ const _: VoidComponent<{
 			? await fileReadAsText(blob)
 			: urlCreate(blob)
 		)
-		openDialog(ev, dialogViewFileRef)
+		openDialog(dialogViewFileRef)
 	}
 
 	function deleteSubTask(index: number): void {
@@ -939,7 +936,6 @@ const _: VoidComponent<{
 	}
 
 	function editSubTask(
-		ev: Event,
 		subTask: SubTask,
 		taskListIndex: number,
 		taskIndex: number,
@@ -948,7 +944,7 @@ const _: VoidComponent<{
 		setSelectedSubTaskToEdit({subTask: subTask, taskListIndex: taskListIndex, taskIndex: taskIndex, subTaskIndex: subTaskIndex})
 		updateTextFieldValue(textFieldEditSubTaskRef, subTask.name)
 		setTextSubTask(subTask.name)
-		openDialog(ev, dialogEditSubTaskRef, {
+		openDialog(dialogEditSubTaskRef, {
 			important: true,
 			contentAutoFocus: true
 		})
@@ -1015,13 +1011,12 @@ const _: VoidComponent<{
 	}
 
 	function onContextMenuTask(
-		ev: MouseEvent & {currentTarget: HTMLElement; target: DOMElement},
 		task: Task,
 		taskListIndex: number,
 		taskIndex: number
 	): void {
 		setSelectedTaskToAction({task, taskListIndex, taskIndex})
-		openMenu(ev, menuTaskActionRef, {position: MenuPosition.centerTopToRight})
+		openMenu(menuTaskActionRef, {position: MenuPosition.centerTopToRight})
 	}
 
 	function globalClick(ev: MouseEvent & {
@@ -1050,7 +1045,7 @@ const _: VoidComponent<{
 
 			const task = taskLists()[taskListIndex].tasks[taskIndex]
 			setSelectedTaskToFileAction({task, taskListIndex, taskIndex})
-			openMenu(ev, menuFileAction2Ref, {
+			openMenu(menuFileAction2Ref, {
 				anchor: button,
 				position: MenuPosition.centerBottomToRight
 			})
@@ -1073,7 +1068,7 @@ const _: VoidComponent<{
 
 			const task = taskLists()[taskListIndex].tasks[taskIndex]
 			setSelectedTaskToChangeReminder({task, taskListIndex, taskIndex})
-			openMenu(ev, menuReminderRef, {
+			openMenu(menuReminderRef, {
 				anchor: button,
 				position: MenuPosition.centerBottomToRight
 			})
@@ -1095,7 +1090,7 @@ const _: VoidComponent<{
 			) return
 
 			const task = taskLists()[taskListIndex].tasks[taskIndex]
-			delete_task(ev, task, taskListIndex, taskIndex)
+			deleteTask(task, taskListIndex, taskIndex)
 			return
 		}
 
@@ -1138,7 +1133,7 @@ const _: VoidComponent<{
 			) return
 
 			const task = taskLists()[taskListIndex].tasks[taskIndex]
-			editTask(ev, task, taskListIndex, taskIndex)
+			editTask(task, taskListIndex, taskIndex)
 			return
 		}
 
@@ -1186,7 +1181,7 @@ const _: VoidComponent<{
 			const label = props.labels[labelId]!
 			setSelectedTaskToEditLabel({task, taskListIndex, taskIndex})
 			setSelectedLabel(label)
-			openMenu(ev, menuLabelAction2Ref, {
+			openMenu(menuLabelAction2Ref, {
 				anchor: button,
 				position: MenuPosition.centerBottomToRight
 			})
@@ -1277,7 +1272,7 @@ const _: VoidComponent<{
 			) return
 
 			const task = taskLists()[taskListIndex].tasks[taskIndex]
-			onContextMenuTask(ev, task, taskListIndex, taskIndex)
+			onContextMenuTask(task, taskListIndex, taskIndex)
 			eventPreventDefault(ev)
 			return
 		}
@@ -1463,27 +1458,27 @@ const _: VoidComponent<{
 						break
 					case button_editTask_AddSubTaskId:
 						addSubTaskOption = 'edit'
-						openDialog(ev, dialogNewSubTaskRef, {
+						openDialog(dialogNewSubTaskRef, {
 							important: true,
 							contentAutoFocus: true
 						})
 						break
 					case button_editTask_addLabelId:
-						openMenu(ev, menuLabelsRef, {
+						openMenu(menuLabelsRef, {
 							anchor: button,
 							position: MenuPosition.centerBottomToRight
 						})
 						break
 					case button_editTask_addReminderId:
 						setChangeReminderOption('edit')
-						openDateTimePicker(ev, dateTimePickerReminderRef, {
+						openDateTimePicker(dateTimePickerReminderRef, {
 							anchor: button,
 							position: DateTimePickerPosition.centerBottomToRight
 						})
 						break
 					case button_editTask_changeReminderId:
 						setChangeReminderOption('edit')
-						openDateTimePicker(ev, dateTimePickerReminderRef, {
+						openDateTimePicker(dateTimePickerReminderRef, {
 							anchor: button,
 							position: DateTimePickerPosition.centerBottomToRight
 						})
@@ -1510,7 +1505,7 @@ const _: VoidComponent<{
 						command(Commands.editTask, task, taskListIndex, taskIndex)
 						break
 					case button_editTask_deleteTaskId:
-						delete_task(ev, task, taskListIndex, taskIndex)
+						deleteTask(task, taskListIndex, taskIndex)
 						break
 					default:
 						const dataSubtaskEditIndex = elementDataset(button, 'subtaskEditIndex')
@@ -1519,7 +1514,7 @@ const _: VoidComponent<{
 							if (numberIsNotDefined(index)) return
 
 							editSubTask(
-								ev, task.subtasks[index], taskListIndex, taskIndex, index
+								task.subtasks[index], taskListIndex, taskIndex, index
 							)
 							return
 						}
@@ -1556,7 +1551,7 @@ const _: VoidComponent<{
 							if (numberIsNotDefined(index)) return
 
 							setSelectedLabel(props.labels[index]!)
-							command(Commands.editLabel, ev, selectedLabel)
+							command(Commands.editLabel, selectedLabel)
 							return
 						}
 
@@ -1584,7 +1579,7 @@ const _: VoidComponent<{
 							const index = numberParse(dataFileViewIndex, true)
 							if (numberIsNotDefined(index)) return
 
-							viewFile(ev, task.files[index], taskListIndex, taskIndex, index)
+							viewFile(task.files[index], taskListIndex, taskIndex, index)
 							return
 						}
 
@@ -1599,7 +1594,7 @@ const _: VoidComponent<{
 								taskIndex: taskIndex,
 								taskListIndex: taskListIndex
 							})
-							openMenu(ev, menuFileActionRef, {anchor: button})
+							openMenu(menuFileActionRef, {anchor: button})
 							return
 						}
 					}
@@ -1610,19 +1605,19 @@ const _: VoidComponent<{
 					const taskListIndex = selectedTaskToEdit.taskListIndex
 					const taskIndex = selectedTaskToEdit.taskIndex
 					switch (elementId(input)) {
-						case input_editTask_taskId:
-							if (input.value == task.name) return
+					case input_editTask_taskId:
+						if (input.value == task.name) return
 
-							setSelectedTaskToEdit('task', 'name', input.value)
-							command(Commands.editTask, task, taskListIndex, taskIndex)
-							break
-						case input_editTask_descriptionId:
-							const value = input.value
-							if (value == task.description) return
+						setSelectedTaskToEdit('task', 'name', input.value)
+						command(Commands.editTask, task, taskListIndex, taskIndex)
+						break
+					case input_editTask_descriptionId:
+						const value = input.value
+						if (value == task.description) return
 
-							setSelectedTaskToEdit('task', 'description', value)
-							command(Commands.editTask, task, taskListIndex, taskIndex)
-							break
+						setSelectedTaskToEdit('task', 'description', value)
+						command(Commands.editTask, task, taskListIndex, taskIndex)
+						break
 					}
 				}}
 				c:actions={<>
@@ -1857,7 +1852,7 @@ const _: VoidComponent<{
 						break
 					case button_viewFile_downloadId:
 						command(Commands.downloadFile,
-							ev, file, taskListIndex, taskIndex, fileIndex
+							file, taskListIndex, taskIndex, fileIndex
 						)
 						break
 					}
@@ -2063,7 +2058,7 @@ const _: VoidComponent<{
 					case button_taskActions_addSubTaskId:
 						closeMenu(menuTaskActionRef)
 						addSubTaskOption = 'action'
-						openDialog(ev, dialogNewSubTaskRef, {
+						openDialog(dialogNewSubTaskRef, {
 							important: true,
 							contentAutoFocus: true
 						})
@@ -2071,14 +2066,14 @@ const _: VoidComponent<{
 					case button_taskActions_addReminderId:
 						closeMenu(menuTaskActionRef)
 						setChangeReminderOption('action')
-						openDateTimePicker(ev, dateTimePickerReminderRef)
+						openDateTimePicker(dateTimePickerReminderRef)
 						break
 					case button_taskActions_editTaskId:
 						closeMenu(menuTaskActionRef)
-						editTask(ev, task, taskListIndex, taskIndex)
+						editTask(task, taskListIndex, taskIndex)
 						break
 					case button_taskActions_deleteTaskId:
-						delete_task(ev, task, taskListIndex, taskIndex)
+						deleteTask(task, taskListIndex, taskIndex)
 						break
 					default:
 						const dataLabelId = elementDataset(button, 'labelId')
@@ -2223,7 +2218,7 @@ const _: VoidComponent<{
 					case button_reminder_changedId:
 						closeMenu(menuReminderRef)
 						setChangeReminderOption('chip')
-						openDateTimePicker(ev, dateTimePickerReminderRef)
+						openDateTimePicker(dateTimePickerReminderRef)
 						break
 					case button_reminder_removeId:
 						closeMenu(menuReminderRef)
@@ -2264,12 +2259,12 @@ const _: VoidComponent<{
 					const taskIndex = selectedTaskToEdit.taskIndex
 					switch (elementId(button)) {
 						case button_labels_newId:
-							command(Commands.addLabel, ev)
+							command(Commands.addLabel)
 							break
 						case button_labels_editId:
 							closeDialog(dialogEditTaskRef)
 							closeMenu(menuLabelsRef)
-							command(Commands.showLabelsOptions, ev)
+							command(Commands.showLabelsOptions)
 							break
 						default:
 							const dataLabelIndex = elementDataset(button, 'labelIndex')
@@ -2307,7 +2302,7 @@ const _: VoidComponent<{
 						const label = props.labels![label_index]!
 						setSelectedLabel(label)
 						eventPreventDefault(ev)
-						openMenu(ev, menuLabelActionRef, {position: MenuPosition.centerBottomToRight})
+						openMenu(menuLabelActionRef, {position: MenuPosition.centerBottomToRight})
 						return
 					}
 				}}>
@@ -2346,7 +2341,7 @@ const _: VoidComponent<{
 					switch (elementId(button)) {
 					case button_labelActions_editId:
 						closeMenu(menuLabelActionRef)
-						command(Commands.editLabel, ev, selectedLabel)
+						command(Commands.editLabel, selectedLabel)
 						break
 					case button_labelActions_deleteId:
 						closeMenu(menuLabelActionRef)
@@ -2381,7 +2376,7 @@ const _: VoidComponent<{
 					switch (elementId(button)) {
 					case button_labelActions_edit2Id:
 						closeMenu(menuLabelAction2Ref)
-						command(Commands.editLabel, ev, selectedLabel)
+						command(Commands.editLabel, selectedLabel)
 						break
 					case button_labelActions_delete2Id:
 						closeMenu(menuLabelAction2Ref)
@@ -2426,7 +2421,7 @@ const _: VoidComponent<{
 					case button_fileAction_downloadId:
 						closeMenu(menuFileActionRef)
 						command(Commands.downloadFile,
-							ev, file, taskListIndex, taskIndex, fileIndex
+							file, taskListIndex, taskIndex, fileIndex
 						)
 						break
 					case button_fileAction_renameId:
@@ -2437,7 +2432,7 @@ const _: VoidComponent<{
 						setTextFile(text)
 						setSelectedFileToRename({...selectedFileToAction})
 						renameFileOption = 'edit'
-						openDialog(ev, dialogFileRenameRef, {
+						openDialog(dialogFileRenameRef, {
 							contentAutoFocus: true,
 							important: true
 						})
@@ -2493,7 +2488,7 @@ const _: VoidComponent<{
 							taskIndex: selectedTaskToFileAction.taskIndex,
 							taskListIndex: selectedTaskToFileAction.taskListIndex
 						})
-						openMenu(ev, menuFileAction3Ref, {
+						openMenu(menuFileAction3Ref, {
 							anchor: eventCurrentTarget(ev),
 							position: MenuPosition.rightCenterToBottom
 						})
@@ -2526,7 +2521,7 @@ const _: VoidComponent<{
 					switch (elementId(button)) {
 					case button_fileAction3_viewId:
 						closeMenu(menuFileAction3Ref)
-						viewFile(ev, file, taskListIndex, taskIndex, fileIndex)
+						viewFile(file, taskListIndex, taskIndex, fileIndex)
 						break
 					case button_fileAction3_renameId:
 						closeMenu(menuFileAction3Ref)
@@ -2536,7 +2531,7 @@ const _: VoidComponent<{
 						setTextFile(text)
 						setSelectedFileToRename({...selectedFileToAction2})
 						renameFileOption = 'action'
-						openDialog(ev, dialogFileRenameRef, {
+						openDialog(dialogFileRenameRef, {
 							contentAutoFocus: true,
 							important: true
 						})
@@ -2544,7 +2539,7 @@ const _: VoidComponent<{
 					case button_fileAction3_downloadId:
 						closeMenu(menuFileAction3Ref)
 						command(Commands.downloadFile,
-							ev, file, taskListIndex, taskIndex, fileIndex
+							file, taskListIndex, taskIndex, fileIndex
 						)
 						break
 					case button_fileAction3_deleteId:

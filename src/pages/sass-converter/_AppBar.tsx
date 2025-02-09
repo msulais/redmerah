@@ -100,8 +100,8 @@ const _: VoidComponent<{
 		closeMenu(menuMoreActionsRef)
 	}
 
-	function copyAll(ev: Event, type: 'sass' | 'scss' | 'css'): void {
-		command(Commands.copyAll, ev, type)
+	function copyAll(type: 'sass' | 'scss' | 'css'): void {
+		command(Commands.copyAll, type)
 		closeSubMenu(subMenuMoreActions_copyAllRef)
 		closeMenu(menuMoreActionsRef)
 	}
@@ -361,7 +361,7 @@ const _: VoidComponent<{
 								&& dataCopy != 'css'
 							) return
 
-							return copyAll(ev, dataCopy)
+							return copyAll(dataCopy)
 						}
 					}
 				}}>
@@ -443,13 +443,13 @@ const _: VoidComponent<{
 
 				switch (elementId(button)) {
 				case buttonInfoId:
-					openMenu(ev, menuInfoRef, { anchor: button })
+					openMenu(menuInfoRef, { anchor: button })
 					break
 				case buttonSettingsId:
-					openMenu(ev, menuSettingsRef, { anchor: button })
+					openMenu(menuSettingsRef, { anchor: button })
 					break
 				case buttonMoreActionsId:
-					openMenu(ev, menuMoreActionsRef, { anchor: button })
+					openMenu(menuMoreActionsRef, { anchor: button })
 					break
 				}
 			}}

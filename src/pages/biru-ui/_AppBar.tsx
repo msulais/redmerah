@@ -274,8 +274,8 @@ const _: VoidComponent<{
 					<IconButton
 						data-tooltip="Open navigation"
 						classList={attrClassListModule(CSSAnimation.btn_shrink_horizontal_icon)}
-						onClick={(ev) => {
-							openDrawer(ev, drawerNavigationRef)
+						onClick={() => {
+							openDrawer(drawerNavigationRef)
 						}}
 						c:code={ICON_LINE_HORIZONTAL_3}
 					/>
@@ -288,9 +288,8 @@ const _: VoidComponent<{
 					data-tooltip="Info"
 					c:focused={isMenuInfoOpen()}
 					c:code={ICON_INFO}
-					onClick={(ev) => openMenu(ev, menuInfoRef, {
+					onClick={(ev) => openMenu( menuInfoRef, {
 						anchor: eventCurrentTarget(ev),
-						padding: 4,
 					})}
 				/>
 				<IconButton
@@ -298,9 +297,8 @@ const _: VoidComponent<{
 					class={CSSAnimation.btn_rotate_icon}
 					c:focused={isMenuSettingsOpen()}
 					c:code={ICON_SETTINGS}
-					onClick={(ev) => openMenu(ev, menuSettingsRef, {
+					onClick={(ev) => openMenu(menuSettingsRef, {
 						anchor: eventCurrentTarget(ev),
-						padding: 4,
 					})}
 				/>
 			</Tooltip>}

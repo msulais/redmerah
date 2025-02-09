@@ -101,8 +101,8 @@ const _: VoidComponent<{
 		closeMenu(menuMoreActionsRef)
 	}
 
-	function copyAll(ev: Event, type: 'markdown' | 'css' | 'html'): void {
-		command(Commands.copyAll, ev, type)
+	function copyAll(type: 'markdown' | 'css' | 'html'): void {
+		command(Commands.copyAll, type)
 		closeSubMenu(subMenuMoreActions_copyAllRef)
 		closeMenu(menuMoreActionsRef)
 	}
@@ -315,7 +315,7 @@ const _: VoidComponent<{
 					}
 					case buttonMoreActions_openFileId:
 						closeMenu(menuMoreActionsRef)
-						command(Commands.openFile, ev)
+						command(Commands.openFile)
 						break
 					case buttonMoreActions_resetInputId:
 						closeMenu(menuMoreActionsRef)
@@ -330,7 +330,7 @@ const _: VoidComponent<{
 						const dataCopy = elementDataset(button, 'copy')
 						if (dataCopy
 							&& arrayIncludes(['markdown', 'html', 'css'], dataCopy)
-						) return copyAll(ev, dataCopy as ('markdown' | 'html' | 'css'))
+						) return copyAll(dataCopy as ('markdown' | 'html' | 'css'))
 					}
 				}}>
 				<MenuItem
@@ -420,13 +420,13 @@ const _: VoidComponent<{
 
 				switch (elementId(button)) {
 				case buttonInfoId:
-					openMenu(ev, menuInfoRef, { anchor: button })
+					openMenu(menuInfoRef, { anchor: button })
 					break
 				case buttonSettingsId:
-					openMenu(ev, menuSettingsRef, { anchor: button })
+					openMenu(menuSettingsRef, { anchor: button })
 					break
 				case buttonMoreActionsId:
-					openMenu(ev, menuMoreActionsRef, { anchor: button })
+					openMenu(menuMoreActionsRef, { anchor: button })
 					break
 				}
 			}}

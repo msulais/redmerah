@@ -352,7 +352,7 @@ const _: VoidComponent = () => {
 		}}
 	}
 
-	async function onGenerate(ev: Event): Promise<void> { return new Promise((ok) => {
+	async function onGenerate(): Promise<void> { return new Promise((ok) => {
 		setIsGenerating(true)
 		attrSet(body, BodyAttributes.noPointerEvent)
 
@@ -367,14 +367,14 @@ const _: VoidComponent = () => {
 		case RandomizerType.words:
 			type = 'words'
 			if (settings.words.list.id == -1) {
-				openToast(ev, toastNoListSelectedRef)
+				openToast(toastNoListSelectedRef)
 				return ok()
 			}
 			break
 		case RandomizerType.selection:
 			type = 'selection'
 			if (settings.selection.list.id == -1) {
-				openToast(ev, toastNoListSelectedRef)
+				openToast(toastNoListSelectedRef)
 				return ok()
 			}
 			break
@@ -385,7 +385,7 @@ const _: VoidComponent = () => {
 			type = 'teams'
 			const teams = settings.teams
 			if (teams.listMembers.id == -1 || teams.listNames.id == -1) {
-				openToast(ev, toastNoListSelectedRef)
+				openToast(toastNoListSelectedRef)
 				return ok()
 			}
 			break
@@ -752,12 +752,12 @@ const _: VoidComponent = () => {
 		urlRevoke(url)
 	}
 
-	function editList(ev: Event): void {
+	function editList(): void {
 		const name = stringTrim(textFieldEditListNameRef.value)
 		const id = selectedListToEdit().id
 		if (stringLength(name) == 0) {
 			elementFocus(textFieldEditListNameRef)
-			openToast(ev, toastListNameEmptyRef)
+			openToast(toastListNameEmptyRef)
 			return
 		}
 
@@ -767,7 +767,7 @@ const _: VoidComponent = () => {
 		)
 		if (arrayLength(items) == 0) {
 			elementFocus(areaTextFieldExitItemListRef)
-			openToast(ev, toastListHaveNoItemsRef)
+			openToast(toastListHaveNoItemsRef)
 			return
 		}
 
@@ -775,7 +775,7 @@ const _: VoidComponent = () => {
 			if (list.name != name || list.id == id) continue;
 
 			elementFocus(textFieldEditListNameRef)
-			openToast(ev, toastListNameAlreadyExistRef)
+			openToast(toastListNameAlreadyExistRef)
 			return
 		}
 
@@ -793,22 +793,22 @@ const _: VoidComponent = () => {
 		if (settings.teams.listNames.id == id) command(Commands.updateSettingsTeamsListNames, newList)
 		if (settings.teams.listMembers.id == id) command(Commands.updateSettingsTeamsListMembers, newList)
 
-		openToast(ev, toastListEditedRef)
+		openToast(toastListEditedRef)
 
 		const storeLists = db.writeStore(ObjectStoreNames.lists)
 		if (storeLists) idbStorePut(storeLists, newList)
 	}
 
-	function openEditDialog(ev: Event, list: ItemList): void {
+	function openEditDialog(list: ItemList): void {
 		setSelectedListToEdit(list)
 		updateTextFieldValue(textFieldEditListNameRef, list.name)
 		updateAreaTextFieldValue(areaTextFieldExitItemListRef, arrayJoin(list.items, ', '))
-		openDialog(ev, dialogEditRef, {
+		openDialog(dialogEditRef, {
 			important: true
 		})
 	}
 
-	function deleteList(ev: Event, list: ItemList): void {
+	function deleteList(list: ItemList): void {
 		const index = arrayFindIndex(lists, v => v.id == list.id)
 		if (index < 0) return;
 
@@ -823,25 +823,25 @@ const _: VoidComponent = () => {
 		if (settings.teams.listNames.id == list.id) command(Commands.updateSettingsTeamsListNames, {...newList})
 		if (settings.teams.listMembers.id == list.id) command(Commands.updateSettingsTeamsListMembers, {...newList})
 
-		openToast(ev, toastListDeletedRef)
+		openToast(toastListDeletedRef)
 
 		const storeLists = db.writeStore(ObjectStoreNames.lists)
 		if (storeLists) idbStoreDelete(storeLists, list.id)
 	}
 
-	function openDeleteDialog(ev: Event, list: ItemList): void {
+	function openDeleteDialog(list: ItemList): void {
 		setSelectedListToDelete(list)
-		openDialog(ev, dialogDeleteListWarningRef, {
+		openDialog(dialogDeleteListWarningRef, {
 			important: true
 		})
 	}
 
-	function addNewList(ev: MouseEvent): void {
+	function addNewList(): void {
 		const value = textFieldNewListNameRef.value
 		const name = stringTrim(value)
 		if (stringLength(name) == 0) {
 			elementFocus(textFieldNewListNameRef)
-			openToast(ev, toastListNameEmptyRef)
+			openToast(toastListNameEmptyRef)
 			return
 		}
 
@@ -851,7 +851,7 @@ const _: VoidComponent = () => {
 		)
 		if (arrayLength(items) == 0) {
 			elementFocus(areaTextFieldNewItemListRef)
-			openToast(ev, toastListHaveNoItemsRef)
+			openToast(toastListHaveNoItemsRef)
 			return
 		}
 
@@ -859,7 +859,7 @@ const _: VoidComponent = () => {
 			if (list.name != name) continue;
 
 			elementFocus(textFieldNewListNameRef)
-			openToast(ev, toastListNameAlreadyExistRef)
+			openToast(toastListNameAlreadyExistRef)
 			return
 		}
 
@@ -872,22 +872,22 @@ const _: VoidComponent = () => {
 		}
 		id += 1
 		const new_lists: ItemList = {id, name, items}
-		openToast(ev, toastNewListAddedRef)
+		openToast(toastNewListAddedRef)
 		setlists(l => arraySort([...l, {id, name, items}], (a, b) => stringLocaleCompare(a.name, b.name)))
 
 		const storeLists = db.writeStore(ObjectStoreNames.lists)
 		if (storeLists) idbStorePut(storeLists, new_lists)
 	}
 
-	function openAddDialog(ev: Event): void {
+	function openAddDialog(): void {
 		updateTextFieldValue(textFieldNewListNameRef, '')
 		updateAreaTextFieldValue(areaTextFieldNewItemListRef, '')
-		openDialog(ev, dialogAddRef)
+		openDialog(dialogAddRef)
 	}
 
-	function viewList(ev: Event, list: ItemList): void {
+	function viewList(list: ItemList): void {
 		setListViewItem(list)
-		openDialog(ev, dialogViewItemListRef)
+		openDialog(dialogViewItemListRef)
 	}
 
 	async function lsitItemFromCSVFile(): Promise<string[]> {
@@ -909,12 +909,12 @@ const _: VoidComponent = () => {
 		)
 	}
 
-	function resetLists(ev: Event): void {
+	function resetLists(): void {
 		const defaultListIds = arrayMap(DEFAULT_LISTS, v => v.id)
 		for (const list of lists) {
 			if (arrayIncludes(defaultListIds, list.id)) continue
 
-			deleteList(ev, list)
+			deleteList(list)
 		}
 		setlists(arrayMap(DEFAULT_LISTS, l => ({id: l.id, name: l.name, items: [...l.items]})))
 
@@ -932,35 +932,26 @@ const _: VoidComponent = () => {
 
 	function command(type: Commands, ...args: unknown[]): unknown {
 		switch (type) {
-		case Commands.resetList: {
-			const [event] = args as [Event]
-			resetLists(event)
+		case Commands.resetList:
+			resetLists()
 			break
-		}
-		case Commands.addList: {
-			const [event] = args as [Event]
-			openAddDialog(event)
+		case Commands.addList:
+			openAddDialog()
 			break
-		}
 		case Commands.exportList: {
 			const [list] = args as [ItemList]
 			exportList(list)
 			break
 		}
 		case Commands.editList: {
-			const [event, list] = args as [Event, ItemList | undefined]
-			if (arrayLength(args) > 1) return openEditDialog(event, list!)
-			openDialog(event, dialogListsRef)
+			const [list] = args as [ItemList | undefined]
+			if (arrayLength(args) > 0) return openEditDialog(list!)
+			openDialog(dialogListsRef)
 			break
 		}
 		case Commands.viewList: {
-			const [event, list] = args as [Event, ItemList]
-			viewList(event, list)
-			break
-		}
-		case Commands.deleteList: {
-			const [event, list] = args as [Event, ItemList]
-			openDeleteDialog(event, list)
+			const [list] = args as [ItemList]
+			viewList(list)
 			break
 		}
 		case Commands.toggleSettingsAnimation: {
@@ -1268,10 +1259,8 @@ const _: VoidComponent = () => {
 		case Commands.toggleNavigationExpand:
 			setIsSideNavigationExpanded(v => !v)
 			break
-		case Commands.generate: {
-			const [event] = args as [Event]
-			return onGenerate(event)
-		}
+		case Commands.generate:
+			return onGenerate()
 		case Commands.stopGenerate:
 			return onStopGenerate()
 		default: return
@@ -1317,7 +1306,7 @@ const _: VoidComponent = () => {
 						break
 					case buttonLists_addNewListId:
 						closeDialog(dialogListsRef)
-						openAddDialog(ev)
+						openAddDialog()
 						break
 					default:
 						const dataListExportIndex = elementDataset(button, 'listExportIndex')
@@ -1334,7 +1323,7 @@ const _: VoidComponent = () => {
 							const index = numberParse(dataListViewIndex, true)
 							if (numberIsNotDefined(index)) return
 
-							viewList(ev, lists[index])
+							viewList(lists[index])
 							return
 						}
 
@@ -1343,7 +1332,7 @@ const _: VoidComponent = () => {
 							const index = numberParse(dataListEditIndex, true)
 							if (numberIsNotDefined(index)) return
 
-							openEditDialog(ev, lists[index])
+							openEditDialog(lists[index])
 							return
 						}
 
@@ -1352,7 +1341,7 @@ const _: VoidComponent = () => {
 							const index = numberParse(dataListDeleteIndex, true)
 							if (numberIsNotDefined(index)) return
 
-							openDeleteDialog(ev, lists[index])
+							openDeleteDialog(lists[index])
 							return
 						}
 					}
@@ -1401,7 +1390,7 @@ const _: VoidComponent = () => {
 						break
 					case buttonDeleteListWarning_deleteId:
 						closeDialog(dialogDeleteListWarningRef)
-						deleteList(ev, selectedListToDelete())
+						deleteList(selectedListToDelete())
 						break
 					}
 				}}
@@ -1459,10 +1448,10 @@ const _: VoidComponent = () => {
 								v => stringLength(stringTrim(v)) > 0
 							)
 						})
-						openDialog(ev, dialogPreviewItemListRef)
+						openDialog(dialogPreviewItemListRef)
 						break
 					case buttonAdd_saveId:
-						addNewList(ev)
+						addNewList()
 						break
 					}
 				}}
@@ -1495,10 +1484,10 @@ const _: VoidComponent = () => {
 					ref={r => areaTextFieldNewItemListRef = r}
 					c:label="Items"
 					placeholder={"Item1, Item2,\nItem3, Item 4\nItem 5"}
-					c:message={"Info: Each item separated by comma or new line"}
 					c:minLine={5}
 					c:maxLine={5}
 				/>
+				<p><small>Info: Each item separated by comma or new line</small></p>
 			</Dialog>
 			<Dialog
 				ref={r => dialogEditRef = r}
@@ -1534,10 +1523,10 @@ const _: VoidComponent = () => {
 								v => stringLength(stringTrim(v)) > 0
 							)
 						})
-						openDialog(ev, dialogPreviewItemListRef)
+						openDialog(dialogPreviewItemListRef)
 						break
 					case buttonEdit_saveId:
-						editList(ev)
+						editList()
 						break
 					}
 				}}
@@ -1574,10 +1563,10 @@ const _: VoidComponent = () => {
 					ref={r => areaTextFieldExitItemListRef = r}
 					c:label="Items"
 					placeholder={arrayJoin(selectedListToEdit().items, ', ')}
-					c:message={"Info: Each item separated by comma or new line"}
 					c:minLine={5}
 					c:maxLine={5}
 				/>
+				<p><small>Info: Each item separated by comma or new line</small></p>
 			</Dialog>
 			<Dialog
 				ref={r => dialogViewItemListRef = r}
@@ -1596,7 +1585,7 @@ const _: VoidComponent = () => {
 						break
 					case buttonViewItemList_editId:
 						closeDialog(dialogViewItemListRef)
-						openEditDialog(ev, listViewItem())
+						openEditDialog(listViewItem())
 						break
 					case buttonViewItemList_exportId:
 						exportList(listViewItem())

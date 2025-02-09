@@ -11,12 +11,9 @@ export enum Commands {
 	updateMarkdownText,
 
 	resetInputs,
-
-	/** @param {Event} ev `Event` */
 	openFile,
 
 	/**
-	@param {Event} ev `Event`
 	@param {'html' | 'css' | 'markdown'} type `'html' | 'css' | 'markdown'` */
 	copyAll,
 

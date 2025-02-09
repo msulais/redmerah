@@ -151,7 +151,7 @@ const _: VoidComponent<{
 						+ latex()[index]
 						+ settings().suffix
 					),
-					() => openToast(ev, toastCopyRef)
+					() => openToast(toastCopyRef)
 				)
 				return
 			}

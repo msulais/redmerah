@@ -280,7 +280,7 @@ function initTooltip(): void {
 
 			if (hasRichTooltip) {
 				tooltipRichRef = richTooltip! as HTMLDivElement
-				openPopover(event, tooltipRichRef, {
+				openPopover(tooltipRichRef, {
 					manualDismiss: true,
 					anchorRect: useAnchor? elementRect(anchor) : undefined,
 					pointer: {

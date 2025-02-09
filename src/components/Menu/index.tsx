@@ -266,7 +266,7 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 		}, instant? 0 : 800)
 	}
 
-	function openSubMenu(ev: Event, instant?: boolean): void {
+	function openSubMenu(instant?: boolean): void {
 		if (isOpen) return
 
 		tryOpen = true
@@ -283,7 +283,7 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 			}
 
 			if (removed) await timeWait(500) // wait for animation end
-			openPopover(ev, popoverRef, {
+			openPopover(popoverRef, {
 				anchor: firstChild,
 				position: props["c:position"] ?? SubMenuPosition.rightCenterToBottom,
 				gap: props["c:gap"] ?? -8,
@@ -317,11 +317,11 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 			const active = documentActive()
 			if (active && arrayIncludes(['INPUT', 'TEXTAREA'], elementTagName(active))) return
 
-			openSubMenu(ev, true)
+			openSubMenu(true)
 		}}
 		onPointerEnter={ev => {
 			eventCall(ev, wrapperProps.onPointerEnter)
-			openSubMenu(ev)
+			openSubMenu()
 			setIsHover(true)
 		}}
 		onPointerLeave={ev => {
@@ -330,7 +330,7 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 		}}
 		onClick={ev => {
 			eventCall(ev, wrapperProps.onClick)
-			openSubMenu(ev, true)
+			openSubMenu(true)
 		}}
 		{...otherWrapperProps}>
 		{props['c:item']}

@@ -35,12 +35,7 @@ export enum ColorsRandomizerColorSpace {
 }
 
 export enum Commands {
-	/**
-	@param event `Event` */
 	resetList,
-
-	/**
-	@param event `Event` */
 	addList,
 
 	/**
@@ -48,19 +43,12 @@ export enum Commands {
 	exportList,
 
 	/**
-	@param event `Event`
 	@param list `ListItems | undefined` */
 	editList,
 
 	/**
-	@param event `Event`
 	@param list `ListItems` */
 	viewList,
-
-	/**
-	@param event `Event`
-	@param list `ListItems` */
-	deleteList,
 
 	toggleSettingsAnimation,
 	toggleSettingsRepeat,
@@ -189,8 +177,6 @@ export enum Commands {
 
 	toggleNavigationExpand,
 
-	/**
-	@param event `Event` */
 	generate,
 	stopGenerate
 }

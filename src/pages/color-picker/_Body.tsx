@@ -161,7 +161,7 @@ const ColorInput: VoidComponent<{
 			const data_copy = elementDataset(button, 'copy')
 			if (data_copy) return promiseDone(
 				navigatorClipboardWriteText(data_copy),
-				() => openToast(ev, toastCopiedRef)
+				() => openToast(toastCopiedRef)
 			)
 		}}
 		onFocusIn={ev => {

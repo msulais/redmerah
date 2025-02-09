@@ -668,19 +668,19 @@ const _: Component<{
 
 					switch (elementId(button)) {
 					case buttonNavigationId:
-						if (isSideNavigationHidden()) return openDrawer(ev, drawerNavigationRef)
+						if (isSideNavigationHidden()) return openDrawer(drawerNavigationRef)
 						command(Commands.toggleNavigationExpand)
 						break
 					case buttonGenerateId:
 						if (props.isGenerating) return command(Commands.stopGenerate)
-						command(Commands.generate, ev)
+						command(Commands.generate)
 						break
 					case buttonInfoId:
-						openMenu(ev, menuInfoRef, { anchor: button })
+						openMenu(menuInfoRef, { anchor: button })
 						break
 					case buttonSettingsId:
 						initInputs()
-						openMenu(ev, menuSettingsRef, { anchor: button })
+						openMenu(menuSettingsRef, { anchor: button })
 						break
 					case buttonCopyResultId:
 						const success = await props.onCopyResult()

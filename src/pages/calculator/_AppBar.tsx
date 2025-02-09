@@ -484,20 +484,20 @@ const _: VoidComponent<{
 
 					switch (elementId(button)) {
 					case buttonNavigationId:
-						if (isSideNavigationHidden()) return openDrawer(ev, drawerNavigationRef)
+						if (isSideNavigationHidden()) return openDrawer(drawerNavigationRef)
 
 						command(Commands.toggleNavigationExpand)
 						break
 					case buttonInfoId:
-						openMenu(ev, menuInfoRef, { anchor: button })
+						openMenu(menuInfoRef, { anchor: button })
 						break
 					case buttonSettingsId:
-						openMenu(ev, menuSettingsRef, { anchor: button })
+						openMenu(menuSettingsRef, { anchor: button })
 						break
 					case buttonNotebookId:
 						if (isSideNotebookHidden()) {
 							updateAreaTextFieldValue(areaTextFieldNotebookRef, props.note)
-							return openDrawer(ev, drawerNotebookRef)
+							return openDrawer(drawerNotebookRef)
 						}
 						command(Commands.toggleNotebookExpand)
 						break

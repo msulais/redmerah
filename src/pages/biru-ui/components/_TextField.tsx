@@ -15,7 +15,6 @@ const _: VoidComponent = () => {
 	const [trailing, setTrailing] = createSignal<boolean>(false)
 	const [label, setLabel] = createSignal<boolean>(true)
 	const [placeholder, setPlaceholder] = createSignal<boolean>(false)
-	const [message, setMessage] = createSignal<boolean>(false)
 	const [autoHideLabel, setAutoHideLabel] = createSignal<boolean>(true)
 	const [autoShowClearButton, setAutoShowClearButton] = createSignal<boolean>(false)
 	const [readonly, setReadonly] = createSignal<boolean>(false)
@@ -64,11 +63,6 @@ const _: VoidComponent = () => {
 			Placeholder
 		</CheckBox>
 		<CheckBox
-			checked={message()}
-			onChange={ev => setMessage(eventCurrentTarget(ev).checked)}>
-			Message text
-		</CheckBox>
-		<CheckBox
 			checked={autoShowClearButton()}
 			onChange={ev => setAutoShowClearButton(eventCurrentTarget(ev).checked)}>
 			Auto show clear button
@@ -95,7 +89,6 @@ const _: VoidComponent = () => {
 						<TextFieldButton><Icon c:code={0xE553}/></TextFieldButton>
 					</Show>}
 					placeholder={placeholder()? 'TextField placeholder' : undefined}
-					c:message={message()? "Consectetur labore sint aliqua occaecat anim quis aute dolor ex occaecat laborum sit aliqua consequat." : undefined}
 					c:autoHideLabel={autoHideLabel()}
 					c:autoShowClearButton={autoShowClearButton()}
 					type={type()}
@@ -149,7 +142,6 @@ const _: VoidComponent = () => {
 					min={limitMin()? min() : undefined}
 					max={limitMax()? max() : undefined}
 					placeholder={placeholder()? 'NumberTextField placeholder' : undefined}
-					c:message={message()? "Consectetur labore sint aliqua occaecat anim quis aute dolor ex occaecat laborum sit aliqua consequat." : undefined}
 					c:autoHideLabel={autoHideLabel()}
 					c:autoShowClearButton={autoShowClearButton()}
 				/>
@@ -207,7 +199,6 @@ const _: VoidComponent = () => {
 						<TextFieldButton><Icon c:code={0xE553}/></TextFieldButton>
 					</Show>}
 					placeholder={placeholder()? 'AreaTextField placeholder' : undefined}
-					c:message={message()? "Consectetur labore sint aliqua occaecat anim quis aute dolor ex occaecat laborum sit aliqua consequat." : undefined}
 					c:autoHideLabel={autoHideLabel()}
 					c:autoShowClearButton={autoShowClearButton()}
 					c:minLine={lineMin()}

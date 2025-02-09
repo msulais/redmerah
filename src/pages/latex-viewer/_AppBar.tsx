@@ -326,7 +326,7 @@ const _: VoidComponent<{
 					switch (elementId(button)) {
 					case buttonMoreActions_copyAllId:
 						closeMenu(menuMoreActionsRef)
-						command(Commands.copyAll, ev)
+						command(Commands.copyAll)
 						break
 					case buttonMoreActions_resetInputId:
 						closeMenu(menuMoreActionsRef)
@@ -361,13 +361,13 @@ const _: VoidComponent<{
 
 				switch (elementId(button)) {
 				case buttonInfoId:
-					openMenu(ev, menuInfoRef, { anchor: button })
+					openMenu(menuInfoRef, { anchor: button })
 					break
 				case buttonSettingsId:
-					openMenu(ev, menuSettingsRef, { anchor: button })
+					openMenu(menuSettingsRef, { anchor: button })
 					break
 				case buttonMoreActionsId:
-					openMenu(ev, menuMoreActionsRef, { anchor: button })
+					openMenu(menuMoreActionsRef, { anchor: button })
 				}
 			}}
 			c:trailing={<Tooltip>

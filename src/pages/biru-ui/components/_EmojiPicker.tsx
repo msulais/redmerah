@@ -34,7 +34,7 @@ const _: VoidComponent = () => {
 		<Playground>
 			<Button
 				c:variant={ButtonVariant.tonal}
-				onClick={ev => openEmojiPicker(ev, emojiPickerRef, {
+				onClick={ev => openEmojiPicker(emojiPickerRef, {
 					anchor: anchor()? eventCurrentTarget(ev) : undefined,
 					allowHideAnchor: allowHideAnchor(),
 					draggable: draggable(),

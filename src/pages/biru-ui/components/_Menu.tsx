@@ -52,7 +52,7 @@ const _: VoidComponent = () => {
 		title="Menu"
 		description="A menu is a collection of options or commands that are presented to the user. It can be a simple list of items, a hierarchical structure, or a combination of both. Menus are commonly used for navigation, actions, or settings.">
 		<Playground>
-			<Button c:variant={ButtonVariant.tonal} onClick={(ev) => openMenu(ev, menuRef, {
+			<Button c:variant={ButtonVariant.tonal} onClick={(ev) => openMenu(menuRef, {
 				anchor: anchor()? eventCurrentTarget(ev) : undefined,
 				allowHideAnchor: allowHideAnchor(),
 				draggable: draggable(),
@@ -62,7 +62,7 @@ const _: VoidComponent = () => {
 				padding: padding(),
 				position: position()
 			})}>Open menu</Button>
-			<Button c:variant={ButtonVariant.tonal} onClick={(ev) => openMenu(ev, menuRef2, {
+			<Button c:variant={ButtonVariant.tonal} onClick={(ev) => openMenu(menuRef2, {
 				anchor: anchor()? eventCurrentTarget(ev) : undefined,
 				allowHideAnchor: allowHideAnchor(),
 				draggable: draggable(),

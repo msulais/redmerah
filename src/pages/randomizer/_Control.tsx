@@ -97,7 +97,7 @@ const Teams: VoidComponent<{
 				break
 			}
 			setIsActionOpenForListNames(listNames)
-			openMenu(ev, menuActionRef, {
+			openMenu(menuActionRef, {
 				position: MenuPosition.centerBottomToRight
 			})
 			eventPreventDefault(ev)
@@ -134,15 +134,15 @@ const Teams: VoidComponent<{
 
 					switch (elementId(button)) {
 					case buttonNames_addNewListId:
-						command(Commands.addList, ev)
+						command(Commands.addList)
 						closeMenu(dropdownMenu_listNamesRef)
 						break
 					case buttonNames_resetAllListId:
-						command(Commands.resetList, ev)
+						command(Commands.resetList)
 						closeMenu(dropdownMenu_listNamesRef)
 						break
 					case buttonNames_editListId:
-						command(Commands.editList, ev)
+						command(Commands.editList)
 						closeMenu(dropdownMenu_listNamesRef)
 						break
 					}
@@ -192,15 +192,15 @@ const Teams: VoidComponent<{
 
 					switch (elementId(button)) {
 					case buttonMembers_addNewListId:
-						command(Commands.addList, ev)
+						command(Commands.addList)
 						closeMenu(dropdownMenu_ListMembersRef)
 						break
 					case buttonMembers_resetAllListId:
-						command(Commands.resetList, ev)
+						command(Commands.resetList)
 						closeMenu(dropdownMenu_ListMembersRef)
 						break
 					case buttonMembers_editListId:
-						command(Commands.editList, ev)
+						command(Commands.editList)
 						closeMenu(dropdownMenu_ListMembersRef)
 						break
 					}
@@ -260,7 +260,7 @@ const Teams: VoidComponent<{
 					break
 				case buttonAction_viewListId:
 					closeAll()
-					command(Commands.viewList, ev, list())
+					command(Commands.viewList, list())
 					break
 				case buttonAction_exportListId:
 					closeAll()
@@ -268,11 +268,11 @@ const Teams: VoidComponent<{
 					break
 				case buttonAction_editListId:
 					closeAll()
-					command(Commands.editList, ev, list())
+					command(Commands.editList, list())
 					break
 				case buttonAction_deleteListId:
 					closeAll()
-					command(Commands.editList, ev, list())
+					command(Commands.editList, list())
 					break
 				}
 			}}>
@@ -368,15 +368,15 @@ const Selection: VoidComponent<{
 
 					switch (elementId(button)) {
 					case buttonList_addNewListId:
-						command(Commands.addList, ev)
+						command(Commands.addList)
 						closeMenu(menuDropdownRef)
 						break
 					case buttonList_resetAllListId:
-						command(Commands.resetList, ev)
+						command(Commands.resetList)
 						closeMenu(menuDropdownRef)
 						break
 					case buttonList_editListId:
-						command(Commands.editList, ev)
+						command(Commands.editList)
 						closeMenu(menuDropdownRef)
 						break
 					}
@@ -400,7 +400,7 @@ const Selection: VoidComponent<{
 							setList(li)
 							break
 						}
-						openMenu(ev, menuActionRef, {
+						openMenu(menuActionRef, {
 							position: MenuPosition.centerBottomToRight
 						})
 						eventPreventDefault(ev)
@@ -456,7 +456,7 @@ const Selection: VoidComponent<{
 				case buttonActions_viewListId:
 					closeMenu(menuActionRef)
 					closeMenu(menuDropdownRef)
-					command(Commands.viewList, ev, list())
+					command(Commands.viewList, list())
 					break
 				case buttonActions_exportListId:
 					closeMenu(menuActionRef)
@@ -464,12 +464,12 @@ const Selection: VoidComponent<{
 					command(Commands.exportList, list())
 					break
 				case buttonActions_editListId:
-					command(Commands.editList, ev, list())
+					command(Commands.editList, list())
 					closeMenu(menuActionRef)
 					closeMenu(menuDropdownRef)
 					break
 				case buttonActions_deleteListId:
-					command(Commands.editList, ev, list())
+					command(Commands.editList, list())
 					closeMenu(menuActionRef)
 					closeMenu(menuDropdownRef)
 					break
@@ -573,15 +573,15 @@ const Words: VoidComponent<{
 
 					switch (elementId(button)) {
 					case buttonList_addNewListId:
-						command(Commands.addList, ev)
+						command(Commands.addList)
 						closeMenu(menuDropdownRef)
 						break
 					case buttonList_resetAllListId:
-						command(Commands.resetList, ev)
+						command(Commands.resetList)
 						closeMenu(menuDropdownRef)
 						break
 					case buttonList_editListId:
-						command(Commands.editList, ev)
+						command(Commands.editList)
 						closeMenu(menuDropdownRef)
 						break
 					}
@@ -605,7 +605,7 @@ const Words: VoidComponent<{
 							set_list(li)
 							break
 						}
-						openMenu(ev, menuActionRef, {
+						openMenu(menuActionRef, {
 							position: MenuPosition.centerBottomToRight
 						})
 						eventPreventDefault(ev)
@@ -655,10 +655,10 @@ const Words: VoidComponent<{
 				<MenuDivider />
 			</Show>
 			<MenuItem
-				onClick={async (ev) => {
+				onClick={async () => {
 					closeMenu(menuActionRef)
 					closeMenu(menuDropdownRef)
-					command(Commands.viewList, ev, list())
+					command(Commands.viewList, list())
 				}}
 				c:iconCode={ICON_EYE}>
 				View list
@@ -674,8 +674,8 @@ const Words: VoidComponent<{
 				Export list
 			</MenuItem>
 			<MenuItem
-				onClick={async (ev) => {
-					command(Commands.editList, ev, list())
+				onClick={async () => {
+					command(Commands.editList, list())
 					closeMenu(menuActionRef)
 					closeMenu(menuDropdownRef)
 				}}
@@ -683,8 +683,8 @@ const Words: VoidComponent<{
 				Edit list
 			</MenuItem>
 			<MenuItem
-				onClick={async (ev) => {
-					command(Commands.editList, ev, list())
+				onClick={async () => {
+					command(Commands.editList, list())
 					closeMenu(menuActionRef)
 					closeMenu(menuDropdownRef)
 				}}
@@ -1018,7 +1018,7 @@ const $String: VoidComponent<{
 				c:focused={isMenuCharactersOpen()}
 				onClick={(ev) => {
 					setMenuCharactersWidth(rectWidth(elementRect(labelCharactersRef!)))
-					openMenu(ev, menuCharactersRef, {
+					openMenu(menuCharactersRef, {
 						anchor: eventCurrentTarget(ev),
 						position: MenuPosition.centerBottomToLeft,
 						padding: 6.5,

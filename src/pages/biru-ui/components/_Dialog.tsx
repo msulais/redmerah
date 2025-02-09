@@ -23,7 +23,7 @@ const _: VoidComponent = () => {
 		<Playground>
 			<Button
 				c:variant={ButtonVariant.tonal}
-				onClick={(ev) => openDialog(ev, dialogRef, {
+				onClick={() => openDialog(dialogRef, {
 					important: important(),
 					contentAutoFocus: contentAutoFocus()
 				})}>

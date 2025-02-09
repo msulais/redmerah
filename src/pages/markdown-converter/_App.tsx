@@ -94,10 +94,9 @@ const _: VoidComponent = () => {
 			updateOutput()
 			break
 		case Commands.openFile: {
-			const [event] = args as [Event]
 			promiseDone(fileOpen('text/*', true), async (files) => {
 				if (files == null || arrayLength(files as unknown as any[]) == 0) {
-					openToast(event, toastNoFileSelectedRef)
+					openToast(toastNoFileSelectedRef)
 					return
 				}
 
@@ -110,7 +109,7 @@ const _: VoidComponent = () => {
 						text += await fileReadAsText(file)
 					}
 				} catch {
-					openToast(event, toastErrorReadingFilesRef)
+					openToast(toastErrorReadingFilesRef)
 					return
 				}
 
@@ -121,7 +120,7 @@ const _: VoidComponent = () => {
 			break
 		}
 		case Commands.copyAll: {
-			const [event, type] = args as [Event, 'markdown' | 'css' | 'html']
+			const [type] = args as ['markdown' | 'css' | 'html']
 			let text = ''
 
 			switch (type) {
@@ -132,7 +131,7 @@ const _: VoidComponent = () => {
 
 			promiseDone(
 				navigatorClipboardWriteText(text),
-				() => openToast(event, toastCopiedRef)
+				() => openToast(toastCopiedRef)
 			)
 			break
 		}
