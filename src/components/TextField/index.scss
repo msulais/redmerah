@@ -150,6 +150,14 @@
 
 .c-area-textfield {
 	align-items: flex-start;
+
+	> .c-icon {
+		margin-top: 8px;
+	}
+
+	* .c-btn.c-textfield-btn {
+		margin-top: 3px;
+	}
 }
 
 @keyframes input-start-focus {
