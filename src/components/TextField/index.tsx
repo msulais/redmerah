@@ -5,7 +5,7 @@ import { attrSetIfExist, attrClassList } from '@/utils/attributes'
 import { timeTimerClear, timeIntervalClear, timeTimerSet, timeIntervalSet } from '@/utils/time'
 import { eventCall, eventCurrentTarget, eventTarget } from '@/utils/event'
 import { mathClamp, mathMax, mathRound } from '@/utils/math'
-import { elementBlur, elementContains, elementDispatchEvent, elementFocus, elementRect, elementStyleRemove, elementScrollHeight, elementStyleSet, elementTagName, elementValidTarget } from '@/utils/element'
+import { elementBlur, elementContains, elementDispatchEvent, elementFocus, elementRect, elementStyleRemove, elementScrollHeight, elementStyleSet, elementTagName, elementValidTarget, elementId } from '@/utils/element'
 import { eventListenerAdd, eventListenerRemove } from '@/utils/event'
 import { typeIsArray, typeIsNumber, typeIsString } from '@/utils/typecheck'
 import { stringLength, stringSplit, stringToUpperCase, stringTrim } from '@/utils/string'
@@ -94,14 +94,16 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 	}, $props)
 	const [props, other] = splitProps($$props, [
 		'c:leading', 'onInput', 'c:label', 'c:focused',
-		'autocomplete', 'id', 'c:trailing',
+		'autocomplete', 'id', 'c:trailing', 'ref',
 		'disabled', 'readOnly', 'c:autoValidation',
 		'onFocus', 'onBlur', 'placeholder', 'c:autoHideLabel',
 		'value', 'c:autoShowClearButton', 'c:tooltipClear',
 		'c:minLine', 'c:maxLine', 'c:attrWrapper',
 		'c:trailingAutoTabIndex'
 	])
-	const [wrapperProps, otherWrapperProps] = splitProps(props['c:attrWrapper']! ?? {}, ['class'])
+	const [wrapperProps, otherWrapperProps] = splitProps(props['c:attrWrapper']! ?? {}, [
+		'class', 'onClick'
+	])
 	const [isFocus, setIsFocus] = createSignal<boolean>(false)
 	const [isInvalid, setIsInvalid] = createSignal<boolean>(false)
 	const [value, setValue] = createSignal<string>('')
@@ -110,6 +112,7 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 	const trailing = children(() => props['c:trailing'])
 	const leading = children(() => props['c:leading'])
 	const buttonClearId = createUniqueId()
+	let areaTextFieldRef: HTMLTextAreaElement
 
 	createEffect(() => {
 		const value = `${props.value ?? ''}`
@@ -141,6 +144,22 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 		data-c-trailing={attrSetIfExist(trailing() || (props['c:autoShowClearButton'] && stringLength(value()) > 0))}
 		data-c-leading={attrSetIfExist(leading())}
 		data-c-readonly={attrSetIfExist(props.readOnly)}
+		onClick={ev => {
+			eventCall(ev, wrapperProps.onClick)
+
+			const button = documentActive()!
+			if (!elementValidTarget(
+				eventCurrentTarget(ev),
+				button,
+				el => elementTagName(el) === 'BUTTON'
+			)) return
+
+			switch (elementId(button)) {
+			case buttonClearId:
+				updateAreaTextFieldValue(areaTextFieldRef, '')
+				break
+			}
+		}}
 		{...otherWrapperProps}>
 		<Show when={!(props['c:autoHideLabel'] && stringLength(value()) == 0 && !props.placeholder)}>
 			<label for={props.id} class='c-area-textfield-label'>{props['c:label']}</label>
@@ -148,6 +167,7 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 		{leading()}
 		<textarea
 			id={props.id}
+			ref={mergeRefs(props.ref, r => areaTextFieldRef = r)}
 			onInput={(ev) => {
 				eventCall(ev, props.onInput)
 				const self = eventCurrentTarget(ev)
@@ -216,14 +236,16 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 	}, $props)
 	const [props, other] = splitProps($$props, [
 		'c:leading', 'onInput', 'c:label', 'c:focused',
-		'autocomplete', 'id', 'c:trailing',
+		'autocomplete', 'id', 'c:trailing', 'ref',
 		'type', 'c:attrWrapper', 'disabled', 'readOnly',
 		'onFocus', 'onBlur', 'placeholder', 'c:autoHideLabel',
 		'value', 'c:autoShowClearButton', 'c:tooltipClear',
 		'c:autoSelectAll', 'c:autoValidation',
 		'c:trailingAutoTabIndex'
 	])
-	const [wrapperProps, otherWrapperProps] = splitProps(props['c:attrWrapper']! ?? {}, ['class'])
+	const [wrapperProps, otherWrapperProps] = splitProps(props['c:attrWrapper']! ?? {}, [
+		'class', 'onClick'
+	])
 	const [isFocus, setIsFocus] = createSignal<boolean>(false)
 	const [isInvalid, setIsInvalid] = createSignal<boolean>(false)
 	const [value, setValue] = createSignal<string>('')
@@ -231,6 +253,7 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 	const trailing = children(() => props['c:trailing'])
 	const leading = children(() => props['c:leading'])
 	const buttonClearId = createUniqueId()
+	let textFieldRef: HTMLInputElement
 
 	createEffect(() => {
 		const value = props.value
@@ -259,6 +282,21 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 		data-c-trailing={attrSetIfExist(trailing() || (props['c:autoShowClearButton'] && stringLength(value()) > 0))}
 		data-c-leading={attrSetIfExist(leading())}
 		data-c-readonly={attrSetIfExist(props.readOnly)}
+		onClick={ev => {
+			eventCall(ev, wrapperProps.onClick)
+
+			const button = documentActive()!
+			if (!elementValidTarget(
+				eventCurrentTarget(ev),
+				button,
+				el => elementTagName(el) === 'BUTTON'
+			)) return
+
+			switch (elementId(button)) {
+			case buttonClearId:
+				updateTextFieldValue(textFieldRef, '')
+			}
+		}}
 		{...otherWrapperProps}>
 		<Show when={!(props['c:autoHideLabel'] && stringLength(value()) == 0 && !props.placeholder)}>
 			<label class='c-textfield-label' for={props.id}>{props['c:label']}</label>
@@ -266,6 +304,7 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 		{leading()}
 		<input
 			id={props.id}
+			ref={mergeRefs(props.ref, r => textFieldRef = r)}
 			onInput={(ev) => {
 				eventCall(ev, props.onInput)
 				const self = eventCurrentTarget(ev)
