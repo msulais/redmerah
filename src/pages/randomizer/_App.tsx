@@ -1484,10 +1484,10 @@ const _: VoidComponent = () => {
 					ref={r => areaTextFieldNewItemListRef = r}
 					c:label="Items"
 					placeholder={"Item1, Item2,\nItem3, Item 4\nItem 5"}
-					c:message={"Info: Each item separated by comma or new line"}
 					c:minLine={5}
 					c:maxLine={5}
 				/>
+				<p><small>Info: Each item separated by comma or new line</small></p>
 			</Dialog>
 			<Dialog
 				ref={r => dialogEditRef = r}
@@ -1563,10 +1563,10 @@ const _: VoidComponent = () => {
 					ref={r => areaTextFieldExitItemListRef = r}
 					c:label="Items"
 					placeholder={arrayJoin(selectedListToEdit().items, ', ')}
-					c:message={"Info: Each item separated by comma or new line"}
 					c:minLine={5}
 					c:maxLine={5}
 				/>
+				<p><small>Info: Each item separated by comma or new line</small></p>
 			</Dialog>
 			<Dialog
 				ref={r => dialogViewItemListRef = r}

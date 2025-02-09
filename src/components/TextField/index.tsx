@@ -3,9 +3,9 @@ import { mergeRefs } from '@solid-primitives/refs'
 
 import { attrSetIfExist, attrClassList } from '@/utils/attributes'
 import { timeTimerClear, timeIntervalClear, timeTimerSet, timeIntervalSet } from '@/utils/time'
-import { eventCall, eventCurrentTarget, eventPreventDefault, eventTarget } from '@/utils/event'
+import { eventCall, eventCurrentTarget, eventTarget } from '@/utils/event'
 import { mathClamp, mathMax, mathRound } from '@/utils/math'
-import { elementBlur, elementContains, elementDispatchEvent, elementFocus, elementId, elementRect, elementStyleRemove, elementScrollHeight, elementStyleSet, elementTagName, elementValidTarget } from '@/utils/element'
+import { elementBlur, elementContains, elementDispatchEvent, elementFocus, elementRect, elementStyleRemove, elementScrollHeight, elementStyleSet, elementTagName, elementValidTarget } from '@/utils/element'
 import { eventListenerAdd, eventListenerRemove } from '@/utils/event'
 import { typeIsArray, typeIsNumber, typeIsString } from '@/utils/typecheck'
 import { stringLength, stringSplit, stringToUpperCase, stringTrim } from '@/utils/string'
@@ -76,7 +76,6 @@ type AreaTextFieldProps = Omit<JSX.TextareaHTMLAttributes<HTMLTextAreaElement>, 
 	'c:trailing'?: JSX.Element
 	'c:trailingAutoTabIndex'?: boolean
 	'c:label'?: string
-	'c:message'?: string
 	'c:focused'?: boolean
 	'c:minLine'?: number
 	'c:maxLine'?: number
@@ -95,10 +94,10 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 	}, $props)
 	const [props, other] = splitProps($$props, [
 		'c:leading', 'onInput', 'c:label', 'c:focused',
-		'autocomplete', 'id', 'c:message', 'c:trailing',
+		'autocomplete', 'id', 'c:trailing',
 		'disabled', 'readOnly', 'c:autoValidation',
 		'onFocus', 'onBlur', 'placeholder', 'c:autoHideLabel',
-		'value', 'ref', 'c:autoShowClearButton', 'c:tooltipClear',
+		'value', 'c:autoShowClearButton', 'c:tooltipClear',
 		'c:minLine', 'c:maxLine', 'c:attrWrapper',
 		'c:trailingAutoTabIndex'
 	])
@@ -110,10 +109,7 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 	const isShowClearButton = createMemo(() => props['c:autoShowClearButton'] && stringLength(value()) > 0)
 	const trailing = children(() => props['c:trailing'])
 	const leading = children(() => props['c:leading'])
-	const message = children(() => props['c:message'])
-	const button_clear_id = createUniqueId()
-	let areaTextFieldRef!: HTMLTextAreaElement
-	let stopFocus: boolean = false
+	const buttonClearId = createUniqueId()
 
 	createEffect(() => {
 		const value = `${props.value ?? ''}`
@@ -130,7 +126,7 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 				<TextFieldButton
 					data-tooltip={props['c:tooltipClear'] ?? 'Clear'}
 					type={'button'}
-					id={button_clear_id}>
+					id={buttonClearId}>
 					<Icon c:code={ICON_DISMISS}/>
 				</TextFieldButton>
 			</Show>
@@ -139,86 +135,58 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 
 	return (<div
 		class={attrClassList('c-area-textfield', wrapperProps.class ?? '')}
+		data-c-focused={attrSetIfExist(props['c:focused'] ?? isFocus())}
+		data-c-invalid={attrSetIfExist(!props.disabled && props['c:autoValidation'] && isInvalid())}
+		data-c-disabled={attrSetIfExist(props.disabled)}
+		data-c-trailing={attrSetIfExist(trailing() || (props['c:autoShowClearButton'] && stringLength(value()) > 0))}
+		data-c-readonly={attrSetIfExist(props.readOnly)}
 		{...otherWrapperProps}>
-		<div
-			data-c-focused={attrSetIfExist(props['c:focused'] ?? isFocus())}
-			data-c-invalid={attrSetIfExist(!props.disabled && props['c:autoValidation'] && isInvalid())}
-			data-c-disabled={attrSetIfExist(props.disabled)}
-			data-c-trailing={attrSetIfExist(trailing() || (props['c:autoShowClearButton'] && stringLength(value()) > 0))}
-			data-c-readonly={attrSetIfExist(props.readOnly)}
-			onClick={() => {
-				if (stopFocus) return stopFocus = false
-
-				elementFocus(areaTextFieldRef)
-			}}>
-			<Show when={!(props['c:autoHideLabel'] && stringLength(value()) == 0 && !props.placeholder)}>
-				<label for={props.id} class='c-area-textfield-label'>{props['c:label']}</label>
+		<Show when={!(props['c:autoHideLabel'] && stringLength(value()) == 0 && !props.placeholder)}>
+			<label for={props.id} class='c-area-textfield-label'>{props['c:label']}</label>
+		</Show>
+		{leading()}
+		<textarea
+			id={props.id}
+			onInput={(ev) => {
+				eventCall(ev, props.onInput)
+				const self = eventCurrentTarget(ev)
+				setValue(self.value)
+				setIsInvalid(!self.checkValidity())
+				setHeight(HEIGHT_TEXT_INPUT_PER_LINE) // set to one line: to calculate the scroll height
+				setHeight(mathMax(elementScrollHeight(self), HEIGHT_TEXT_INPUT_PER_LINE))
+			}}
+			onFocus={(ev) => {
+				eventCall(ev, props.onFocus)
+				const self = eventCurrentTarget(ev)
+				setValue(self.value)
+				setIsInvalid(!self.checkValidity())
+				setIsFocus(true)
+			}}
+			onBlur={(ev) => {
+				eventCall(ev, props.onBlur)
+				setValue(eventCurrentTarget(ev).value)
+				setIsFocus(false)
+			}}
+			rows={props['c:minLine'] ?? 1}
+			disabled={props.disabled}
+			autocomplete={props.autocomplete ?? 'off'}
+			readOnly={props.readOnly}
+			value={props.value}
+			style={{
+				height: height() + 'px',
+				"min-height": props['c:minLine']? ((HEIGHT_TEXT_INPUT_PER_LINE * props['c:minLine']) + 'px') : undefined,
+				"max-height": props['c:maxLine'] && props['c:maxLine'] >= (props['c:minLine'] ?? 1)? ((HEIGHT_TEXT_INPUT_PER_LINE * props['c:maxLine']) + 'px') : undefined
+			}}
+			placeholder={props.placeholder ?? (props['c:autoHideLabel'] && props['c:label']? `${props['c:label']}` : undefined)}
+			{...other}></textarea>
+		<Show when={trailing() || isShowClearButton()}>
+			<Show
+				when={props['c:trailingAutoTabIndex']}
+				fallback={<TrailingContent />}>
+				<FocusableGroup c:arrowOptions={{left: 'prev', right: 'next'}}>
+					<TrailingContent />
+				</FocusableGroup>
 			</Show>
-			<Show when={leading()}>
-				<div
-					class='c-area-textfield-leading'
-					onClick={() => stopFocus = true}>
-					{leading()}
-				</div>
-			</Show>
-			<textarea
-				id={props.id}
-				ref={mergeRefs(props.ref, r => areaTextFieldRef = r)}
-				onInput={(ev) => {
-					eventCall(ev, props.onInput)
-					const self = eventCurrentTarget(ev)
-					setValue(self.value)
-					setIsInvalid(!self.checkValidity())
-					setHeight(HEIGHT_TEXT_INPUT_PER_LINE) // set to one line: to calculate the scroll height
-					setHeight(mathMax(elementScrollHeight(self), HEIGHT_TEXT_INPUT_PER_LINE))
-				}}
-				onFocus={(ev) => {
-					eventCall(ev, props.onFocus)
-					const self = eventCurrentTarget(ev)
-					setValue(self.value)
-					setIsInvalid(!self.checkValidity())
-					setIsFocus(true)
-				}}
-				onBlur={(ev) => {
-					eventCall(ev, props.onBlur)
-					setValue(eventCurrentTarget(ev).value)
-					setIsFocus(false)
-				}}
-				rows={props['c:minLine'] ?? 1}
-				disabled={props.disabled}
-				autocomplete={props.autocomplete ?? 'off'}
-				readOnly={props.readOnly}
-				value={props.value}
-				style={{
-					height: height() + 'px',
-					"min-height": props['c:minLine']? ((HEIGHT_TEXT_INPUT_PER_LINE * props['c:minLine']) + 'px') : undefined,
-					"max-height": props['c:maxLine'] && props['c:maxLine'] >= (props['c:minLine'] ?? 1)? ((HEIGHT_TEXT_INPUT_PER_LINE * props['c:maxLine']) + 'px') : undefined
-				}}
-				placeholder={props.placeholder ?? (props['c:autoHideLabel'] && props['c:label']? `${props['c:label']}` : undefined)}
-				{...other}></textarea>
-			<Show when={trailing() || isShowClearButton()}>
-				<div
-					class='c-area-textfield-trailing'
-					onClick={ev => {
-						stopFocus = true
-						if (elementId(documentActive()!) == button_clear_id) {
-							updateAreaTextFieldValue(areaTextFieldRef, '')
-							eventPreventDefault(ev)
-							elementFocus(areaTextFieldRef)
-						}
-					}}>
-					<Show
-						when={props['c:trailingAutoTabIndex']}
-						fallback={<TrailingContent />}>
-						<FocusableGroup c:arrowOptions={{left: 'prev', right: 'next'}}>
-							<TrailingContent />
-						</FocusableGroup>
-					</Show>
-				</div>
-			</Show>
-		</div>
-		<Show when={message()}>
-			<div class='c-area-textfield-message'>{message()}</div>
 		</Show>
 	</div>)
 }
@@ -229,7 +197,6 @@ type TextFieldProps = JSX.InputHTMLAttributes<HTMLInputElement> & {
 	'c:trailing'?: JSX.Element
 	'c:trailingAutoTabIndex'?: boolean
 	'c:label'?: string
-	'c:message'?: string
 	'c:focused'?: boolean
 	'c:autoShowClearButton'?: boolean
 	'c:autoHideLabel'?: boolean
@@ -248,11 +215,11 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 	}, $props)
 	const [props, other] = splitProps($$props, [
 		'c:leading', 'onInput', 'c:label', 'c:focused',
-		'autocomplete', 'id', 'c:message', 'c:trailing',
+		'autocomplete', 'id', 'c:trailing',
 		'type', 'c:attrWrapper', 'disabled', 'readOnly',
 		'onFocus', 'onBlur', 'placeholder', 'c:autoHideLabel',
-		'value', 'ref', 'c:autoShowClearButton', 'c:tooltipClear',
-		'c:autoSelectAll', 'onKeyUp', 'c:autoValidation',
+		'value', 'c:autoShowClearButton', 'c:tooltipClear',
+		'c:autoSelectAll', 'c:autoValidation',
 		'c:trailingAutoTabIndex'
 	])
 	const [wrapperProps, otherWrapperProps] = splitProps(props['c:attrWrapper']! ?? {}, ['class'])
@@ -262,10 +229,7 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 	const isShowClearButton = createMemo(() => props['c:autoShowClearButton'] && stringLength(value()) > 0)
 	const trailing = children(() => props['c:trailing'])
 	const leading = children(() => props['c:leading'])
-	const message = children(() => props['c:message'])
 	const buttonClearId = createUniqueId()
-	let textFieldRef: HTMLInputElement
-	let stopFocus: boolean = false
 
 	createEffect(() => {
 		const value = props.value
@@ -288,85 +252,53 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 
 	return (<div
 		class={attrClassList('c-textfield', wrapperProps.class ?? '')}
+		data-c-focused={attrSetIfExist(props['c:focused'] ?? isFocus())}
+		data-c-invalid={attrSetIfExist(!props.disabled && props['c:autoValidation'] && isInvalid())}
+		data-c-disabled={attrSetIfExist(props.disabled)}
+		data-c-trailing={attrSetIfExist(trailing() || (props['c:autoShowClearButton'] && stringLength(value()) > 0))}
+		data-c-readonly={attrSetIfExist(props.readOnly)}
 		{...otherWrapperProps}>
-		<div
-			data-c-focused={attrSetIfExist(props['c:focused'] ?? isFocus())}
-			data-c-invalid={attrSetIfExist(!props.disabled && props['c:autoValidation'] && isInvalid())}
-			data-c-disabled={attrSetIfExist(props.disabled)}
-			data-c-trailing={attrSetIfExist(trailing() || (props['c:autoShowClearButton'] && stringLength(value()) > 0))}
-			data-c-readonly={attrSetIfExist(props.readOnly)}
-			onClick={() => {
-				if (stopFocus) return stopFocus = false
-
-				elementFocus(textFieldRef)
-			}}>
-			<Show when={!(props['c:autoHideLabel'] && stringLength(value()) == 0 && !props.placeholder)}>
-				<label class='c-textfield-label' for={props.id}>{props['c:label']}</label>
+		<Show when={!(props['c:autoHideLabel'] && stringLength(value()) == 0 && !props.placeholder)}>
+			<label class='c-textfield-label' for={props.id}>{props['c:label']}</label>
+		</Show>
+		{leading()}
+		<input
+			id={props.id}
+			onInput={(ev) => {
+				eventCall(ev, props.onInput)
+				const self = eventCurrentTarget(ev)
+				setValue(self.value)
+				setIsInvalid(!self.checkValidity())
+			}}
+			onFocus={(ev) => {
+				eventCall(ev, props.onFocus)
+				const self = eventCurrentTarget(ev)
+				setValue(self.value)
+				setIsInvalid(!self.checkValidity())
+				setIsFocus(true)
+				if (props['c:autoSelectAll']) self.setSelectionRange(0, stringLength(self.value))
+			}}
+			onBlur={(ev) => {
+				setValue(eventCurrentTarget(ev).value)
+				setIsFocus(false)
+				eventCall(ev, props.onBlur)
+			}}
+			type={props.type}
+			disabled={props.disabled}
+			autocomplete={props.autocomplete ?? 'off'}
+			readOnly={props.readOnly}
+			value={props.value}
+			placeholder={props.placeholder ?? (props['c:autoHideLabel'] && props['c:label']? `${props['c:label']}` : undefined)}
+			{...other}
+		/>
+		<Show when={trailing() || isShowClearButton()}>
+			<Show
+				when={props['c:trailingAutoTabIndex']}
+				fallback={<TrailingContent />}>
+				<FocusableGroup c:arrowOptions={{left: 'prev', right: 'next'}}>
+					<TrailingContent />
+				</FocusableGroup>
 			</Show>
-			<Show when={leading()}>
-				<div
-					class='c-textfield-leading'
-					onClick={() => stopFocus = true}>
-					{leading()}
-				</div>
-			</Show>
-			<input
-				id={props.id}
-				ref={mergeRefs(props.ref, r => textFieldRef = r)}
-				onInput={(ev) => {
-					eventCall(ev, props.onInput)
-					const self = eventCurrentTarget(ev)
-					setValue(self.value)
-					setIsInvalid(!self.checkValidity())
-				}}
-				onFocus={(ev) => {
-					eventCall(ev, props.onFocus)
-					const self = eventCurrentTarget(ev)
-					setValue(self.value)
-					setIsInvalid(!self.checkValidity())
-					setIsFocus(true)
-					if (props['c:autoSelectAll']) self.setSelectionRange(0, stringLength(self.value))
-				}}
-				onKeyUp={ev => {
-					eventCall(ev, props.onKeyUp)
-					if (ev.key == 'Enter') elementBlur(eventCurrentTarget(ev))
-				}}
-				onBlur={(ev) => {
-					setValue(eventCurrentTarget(ev).value)
-					setIsFocus(false)
-					eventCall(ev, props.onBlur)
-				}}
-				type={props.type}
-				disabled={props.disabled}
-				autocomplete={props.autocomplete ?? 'off'}
-				readOnly={props.readOnly}
-				value={props.value}
-				placeholder={props.placeholder ?? (props['c:autoHideLabel'] && props['c:label']? `${props['c:label']}` : undefined)}
-				{...other}
-			/>
-			<Show when={trailing() || isShowClearButton()}>
-				<div
-					class='c-textfield-trailing'
-					onClick={ev => {
-						stopFocus = true
-						if (elementId(documentActive()!) == buttonClearId) {
-							updateTextFieldValue(textFieldRef, '')
-							eventPreventDefault(ev)
-							elementFocus(textFieldRef)
-						}
-					}}>
-					<Show
-						when={props['c:trailingAutoTabIndex']}
-						fallback={<TrailingContent />}>
-						<FocusableGroup c:arrowOptions={{left: 'prev', right: 'next'}}>
-							<TrailingContent />
-						</FocusableGroup>
-					</Show>
-				</div>
-			</Show>
-		</div>
-		<Show when={message()}>
-			<div class='c-textfield-message'>{message()}</div>
 		</Show>
 	</div>)
 }
