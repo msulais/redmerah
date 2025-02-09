@@ -6,7 +6,7 @@
 	position: relative;
 	align-items: center;
 	min-height: 40px;
-	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity4));
+	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity2));
 	padding: 0 12px;
 	border-radius: var(--c-textfield-border-radius);
 	gap: 3px;
@@ -58,6 +58,22 @@
 
 	&[data-c-trailing] {
 		padding-right: 3px;
+	}
+
+	&[data-c-leading] {
+		padding-left: 10px;
+
+		:root:is([data-platform=mobile],[data-platform=desktop]) & {
+			padding-left: 8px;
+
+			> :is(input,textarea) {
+				padding-left: 4px;
+			}
+		}
+
+		> :is(input,textarea) {
+			padding-left: 5px;
+		}
 	}
 
 	&[data-c-disabled] {

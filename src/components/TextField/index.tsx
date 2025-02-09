@@ -139,6 +139,7 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 		data-c-invalid={attrSetIfExist(!props.disabled && props['c:autoValidation'] && isInvalid())}
 		data-c-disabled={attrSetIfExist(props.disabled)}
 		data-c-trailing={attrSetIfExist(trailing() || (props['c:autoShowClearButton'] && stringLength(value()) > 0))}
+		data-c-leading={attrSetIfExist(leading())}
 		data-c-readonly={attrSetIfExist(props.readOnly)}
 		{...otherWrapperProps}>
 		<Show when={!(props['c:autoHideLabel'] && stringLength(value()) == 0 && !props.placeholder)}>
@@ -256,6 +257,7 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 		data-c-invalid={attrSetIfExist(!props.disabled && props['c:autoValidation'] && isInvalid())}
 		data-c-disabled={attrSetIfExist(props.disabled)}
 		data-c-trailing={attrSetIfExist(trailing() || (props['c:autoShowClearButton'] && stringLength(value()) > 0))}
+		data-c-leading={attrSetIfExist(leading())}
 		data-c-readonly={attrSetIfExist(props.readOnly)}
 		{...otherWrapperProps}>
 		<Show when={!(props['c:autoHideLabel'] && stringLength(value()) == 0 && !props.placeholder)}>
