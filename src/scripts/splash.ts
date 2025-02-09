@@ -19,7 +19,7 @@ export function removeSplashScreen(timeout: number = 0): void {
 		promiseDone(elementAnimate(
 			splashRef,
 			{opacity: 0},
-			{duration: 200, easing: AnimationEffectTiming.spring}
+			{duration: 300, easing: AnimationEffectTiming.spring}
 		).finished, () => {
 			elementRemove(splashRef)
 			attrRemove(documentBody(), BodyAttributes.componentCount)
