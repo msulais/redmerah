@@ -111,8 +111,8 @@ export const APP_CALCULATOR: AppItem = {
 	description: 'Perform a wide range of calculations with our versatile calculator. From basic arithmetic to advanced scientific functions and programmer tools, we\'ve got you covered.',
 	link: RoutesLinks.calculator,
 	color: '#026BE3',
-	buildNumber: 7,
-	buildVersion: '0.1.6',
+	buildNumber: 8,
+	buildVersion: '0.1.7',
 }
 
 export const APP_RANDOMIZER: AppItem = {
