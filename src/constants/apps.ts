@@ -131,8 +131,8 @@ export const APP_COLOR_GENERATOR: AppItem = {
 	description: 'Generate accent pallete color for your app. Including color for light and dark mode.',
 	link: RoutesLinks.colorGenerator,
 	color: '#39BBFF',
-	buildNumber: 4,
-	buildVersion: '0.1.5',
+	buildNumber: 5,
+	buildVersion: '0.1.6',
 }
 
 export const APP_MARKDOWN_CONVERTER: AppItem = {
