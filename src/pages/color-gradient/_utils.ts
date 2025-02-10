@@ -19,7 +19,10 @@ export function convertColorByColorSpace(color: HEXColor, space: ColorSpace, kee
 		return arrayJoin([
 			'rgb',
 			opacity < 1 || keepOpacity? 'a' : '',
-			'(', rgb.r, ', ', rgb.g, ', ', rgb.b,
+			'(',
+			mathRound(rgb.r * 0xff), ', ',
+			mathRound(rgb.g * 0xff), ', ',
+			mathRound(rgb.b * 0xff),
 			opacity < 1 || keepOpacity? ', ' + numberParse(numberToFixed(opacity, 2)) : '',
 			')'
 		], '')
