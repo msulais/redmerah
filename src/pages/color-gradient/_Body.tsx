@@ -737,8 +737,8 @@ const _: VoidComponent<{
 					)
 				}}/>
 			</div>
-			<Tooltip>
-				<div class={CSS.body_control}>
+			<div class={CSS.body_control}>
+				<Tooltip>
 					<div>
 						<GradientDataList
 							command={command}
@@ -798,8 +798,8 @@ const _: VoidComponent<{
 							selectedGradientIndex={selectedGradientIndex()}
 						/>
 					}</For>
-				</div>
-			</Tooltip>
+				</Tooltip>
+			</div>
 		</div>
 		<ColorPickers/>
 		<Menus/>
