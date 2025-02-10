@@ -1,8 +1,8 @@
-import { createEffect, createMemo, createSignal, createUniqueId, For, Match, Show, Switch, type JSX, type ParentComponent, type VoidComponent } from "solid-js"
+import { createEffect, createMemo, createSignal, createUniqueId, For, Match, onMount, Show, Switch, type JSX, type ParentComponent, type VoidComponent } from "solid-js"
 
 import type { CalculatorInput, CalculatorOutput, DateCalculatorInput, Settings } from "./_types"
 import { CalculatorType, Commands, DateOperation, NumberType } from "./_enums"
-import { elementDataset, elementFocus, elementId, elementTagName, elementValidTarget } from "@/utils/element"
+import { elementAllBySelector, elementChildren, elementDataset, elementFocus, elementId, elementTagName, elementValidTarget } from "@/utils/element"
 import { attrClassListModule, attrSetIfExist, attrClassList } from "@/utils/attributes"
 import { CONVERTER_TYPES } from "./_constants"
 import { ConverterType, UNIT_ANGLE, UNIT_AREA, UNIT_FREQUENCY, UNIT_LENGTH, UNIT_PRESSURE, UNIT_TEMPERATURE, UNIT_TIME, UNIT_VOLUME, UNIT_WEIGHT, type ConverterUnit } from "./_converter"
@@ -12,6 +12,9 @@ import { dateYear, dateTextYMD } from "@/utils/datetime"
 import { numberToBinary, numberFormat, numberParse, numberToRealDigits, numberToString, numberSafe, numberIsNotDefined } from "@/utils/number"
 import { regexTest } from "@/utils/regex"
 import { navigatorClipboardWriteText } from "@/utils/navigator"
+import { documentActive } from "@/utils/document"
+import { validEnumValue } from "@/utils/object"
+import { arrayLength, arrayPush } from "@/utils/array"
 import { ICON_ADD, ICON_ARROW_RIGHT, ICON_BACKSPACE, ICON_CALENDAR, ICON_COPY, ICON_DISMISS, ICON_LINE_HORIZONTAL_1, ICON_MATH_FORMULA, ICON_SLASH_FORWARD } from "@/constants/icons"
 
 import { Tooltip } from "@/components/Tooltip"
@@ -23,8 +26,7 @@ import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import DatePicker, { openDatePicker } from "@/components/DatePicker"
 import CSSMiscellaneous from '@/styles/miscellaneous.module.scss'
 import CSS from './_styles.module.scss'
-import { documentActive } from "@/utils/document"
-import { validEnumValue } from "@/utils/object"
+import { keyboardOnFocusIn, keyboardOnFocusOut, keyboardOnKeyDown, keyboardOnKeyDown2D } from "@/utils/keyboard"
 
 const ActionButtons: ParentComponent<JSX.HTMLAttributes<HTMLDivElement> & {
 	command: (type: Commands, ...args: unknown[]) => unknown
@@ -40,13 +42,34 @@ const ActionButtons: ParentComponent<JSX.HTMLAttributes<HTMLDivElement> & {
 	const buttonRecallId = createUniqueId()
 	const buttonAddId = createUniqueId()
 	const buttonSubtractId = createUniqueId()
+	const buttons: HTMLButtonElement[] = []
 	let menuMemoryRef: HTMLDialogElement
+	let divRef: HTMLDivElement
 
 	function command(type: Commands, ...args: unknown[]): unknown {
 		return props.command(type, ...args)
 	}
 
-	return (<div class={CSS.input_output_action_buttons} data-hidden={attrSetIfExist(props.hide)}>
+	onMount(() => {
+		arrayPush(
+			buttons,
+			...elementAllBySelector<HTMLButtonElement>('button', divRef)
+		)
+	})
+
+	return (<div
+		ref={r => divRef = r}
+		class={CSS.input_output_action_buttons}
+		data-hidden={attrSetIfExist(props.hide)}
+		onFocusIn={ev => {
+			keyboardOnFocusIn(ev, buttons)
+		}}
+		onFocusOut={ev => {
+			keyboardOnFocusOut(ev, buttons)
+		}}
+		onKeyDown={ev => {
+			keyboardOnKeyDown(ev, buttons, {left: 'prev', right: 'next'})
+		}}>
 		{props.children}
 		<div
 			class={CSS.input_output_memory_buttons}
@@ -126,6 +149,7 @@ const BasicCalculator: VoidComponent<{
 	const buttonClearId = createUniqueId()
 	const buttonBackspaceId = createUniqueId()
 	const buttonEqualId = createUniqueId()
+	const buttons: HTMLButtonElement[] = []
 	let inputRef: HTMLInputElement
 	let caretPos: number = 0
 
@@ -244,7 +268,18 @@ const BasicCalculator: VoidComponent<{
 					const dataChar = elementDataset(button, 'char')
 					if (dataChar) return addChar(dataChar)
 				}
-			}}>
+			}}
+			onFocusIn={ev => {
+				if (arrayLength(buttons) === 0) {
+					arrayPush(
+						buttons,
+						...elementChildren<HTMLButtonElement>(eventCurrentTarget(ev))
+					)
+				}
+				keyboardOnFocusIn(ev, buttons)
+			}}
+			onFocusOut={ev => keyboardOnFocusOut(ev, buttons)}
+			onKeyDown={ev => keyboardOnKeyDown2D(ev, buttons, 4)}>
 			<Button data-char="%">%</Button>
 			<Button data-char="√">√</Button>
 			<Button id={buttonClearId} classList={attrClassListModule(CSS.input_output_remove_symbol)}>C</Button>
@@ -297,11 +332,15 @@ const ScientificCalculator: VoidComponent<{
 			i() + 'cot' + h()
 		]
 	})
+	const buttons: HTMLButtonElement[] = []
+	const buttonsFunction: HTMLButtonElement[] = []
+	const buttonsTrigonometry: HTMLButtonElement[] = []
+	const buttonsTrigonometryOptions: HTMLButtonElement[] = []
 	const buttonClearId = createUniqueId()
 	const buttonBackspaceId = createUniqueId()
 	const buttonEqualId = createUniqueId()
-	const button_inverse_id = createUniqueId()
-	const button_hyperbolic_id = createUniqueId()
+	const buttonInverseId = createUniqueId()
+	const buttonHyperbolicId = createUniqueId()
 	let inputRef: HTMLInputElement
 	let menuFunctionRef: HTMLDialogElement
 	let caretPos: number = 0
@@ -420,10 +459,10 @@ const ScientificCalculator: VoidComponent<{
 					)) return
 
 					switch (elementId(button)) {
-					case button_inverse_id:
+					case buttonInverseId:
 						setIsInverse(v => !v)
 						break
-					case button_hyperbolic_id:
+					case buttonHyperbolicId:
 						setIsHyperbolic(v => !v)
 						break
 					default:
@@ -431,15 +470,56 @@ const ScientificCalculator: VoidComponent<{
 						if (dataChar) return addChar(dataChar)
 					}
 				}}>
-				<div class={CSS.input_output_trigonometry_options}>
-					<MenuItem c:checked={isInverse()} id={button_inverse_id}>Invers</MenuItem>
-					<MenuItem c:checked={isHyperbolic()} id={button_hyperbolic_id}>Hyperbolic</MenuItem>
+				<div
+					class={CSS.input_output_trigonometry_options}
+					onFocusIn={ev => {
+						if (arrayLength(buttonsTrigonometryOptions) === 0) {
+							arrayPush(
+								buttonsTrigonometryOptions,
+								...elementChildren<HTMLButtonElement>(eventCurrentTarget(ev))
+							)
+						}
+						keyboardOnFocusIn(ev, buttonsTrigonometryOptions)
+					}}
+					onFocusOut={ev => keyboardOnFocusOut(ev, buttonsTrigonometryOptions)}
+					onKeyDown={ev => keyboardOnKeyDown(ev, buttonsTrigonometryOptions, {right: 'next', left: 'prev'})}>
+					<MenuItem c:checked={isInverse()} id={buttonInverseId}>Invers</MenuItem>
+					<MenuItem c:checked={isHyperbolic()} id={buttonHyperbolicId}>Hyperbolic</MenuItem>
 				</div>
-				<div class={CSS.input_output_grid_3}>
+				<div
+					class={CSS.input_output_grid_3}
+					onFocusIn={ev => {
+						const self = eventCurrentTarget(ev)
+						if (
+							arrayLength(buttonsTrigonometry) === 0
+							|| buttonsTrigonometry[0] !== elementChildren(self)[0]
+						) {
+							buttonsTrigonometry.length = 0
+							arrayPush(
+								buttonsTrigonometry,
+								...elementChildren<HTMLButtonElement>(self)
+							)
+						}
+						keyboardOnFocusIn(ev, buttonsTrigonometry)
+					}}
+					onFocusOut={ev => keyboardOnFocusOut(ev, buttonsTrigonometry)}
+					onKeyDown={ev => keyboardOnKeyDown2D(ev, buttonsTrigonometry, 3)}>
 					<For each={getTrigonometry()}>{t => <MenuItem data-char={t + '('}>{`${t}(x)`}</MenuItem>}</For>
 				</div>
 				<MenuDivider />
-				<div class={CSS.input_output_grid_3}>
+				<div
+					class={CSS.input_output_grid_3}
+					onFocusIn={ev => {
+						if (arrayLength(buttonsFunction) === 0) {
+							arrayPush(
+								buttonsFunction,
+								...elementChildren<HTMLButtonElement>(eventCurrentTarget(ev))
+							)
+						}
+						keyboardOnFocusIn(ev, buttonsFunction)
+					}}
+					onFocusOut={ev => keyboardOnFocusOut(ev, buttonsFunction)}
+					onKeyDown={ev => keyboardOnKeyDown2D(ev, buttonsFunction, 3)}>
 					<MenuItem data-char="abs(">abs(x)</MenuItem>
 					<MenuItem data-char="log(">log(x)</MenuItem>
 					<MenuItem data-char="ln(">ln(x)</MenuItem>
@@ -479,7 +559,18 @@ const ScientificCalculator: VoidComponent<{
 					const dataChar = elementDataset(button, 'char')
 					if (dataChar) return addChar(dataChar)
 				}
-			}}>
+			}}
+			onFocusIn={ev => {
+				if (arrayLength(buttons) === 0) {
+					arrayPush(
+						buttons,
+						...elementChildren<HTMLButtonElement>(eventCurrentTarget(ev))
+					)
+				}
+				keyboardOnFocusIn(ev, buttons)
+			}}
+			onFocusOut={ev => keyboardOnFocusOut(ev, buttons)}
+			onKeyDown={ev => keyboardOnKeyDown2D(ev, buttons, 5)}>
 			<Button data-char="mod">mod</Button>
 			<Button data-char="(">{'('}</Button>
 			<Button data-char=")">{')'}</Button>
@@ -556,6 +647,7 @@ const ConverterCalculator: VoidComponent<{
 		if (type == ConverterType.weight) return 'Weight & mass'
 		return stringToTitleCase(type)
 	})
+	const buttons: HTMLButtonElement[] = []
 	const buttonClearId = createUniqueId()
 	const buttonBackspaceId = createUniqueId()
 	const buttonEqualId = createUniqueId()
@@ -864,7 +956,18 @@ const ConverterCalculator: VoidComponent<{
 					const dataChar = elementDataset(button, 'char')
 					if (dataChar) return addChar(dataChar)
 				}
-			}}>
+			}}
+			onFocusIn={ev => {
+				if (arrayLength(buttons) === 0) {
+					arrayPush(
+						buttons,
+						...elementChildren<HTMLButtonElement>(eventCurrentTarget(ev))
+					)
+				}
+				keyboardOnFocusIn(ev, buttons)
+			}}
+			onFocusOut={ev => keyboardOnFocusOut(ev, buttons)}
+			onKeyDown={ev => keyboardOnKeyDown2D(ev, buttons, 3)}>
 			<Button id={button_plusminus_id}>±</Button>
 			<Button id={buttonClearId} classList={attrClassListModule(CSS.input_output_remove_symbol)}>C</Button>
 			<Button id={buttonBackspaceId} classList={attrClassListModule(CSS.input_output_remove_symbol)}><Icon c:code={ICON_BACKSPACE} /></Button>
@@ -932,6 +1035,8 @@ const ProgrammerCalculator: VoidComponent<{
 	const buttonClearId = createUniqueId()
 	const buttonBackspaceId = createUniqueId()
 	const buttonEqualId = createUniqueId()
+	const buttons: HTMLButtonElement[] = []
+	const buttonsTypes: HTMLButtonElement[] = []
 	let menuCopyRef: HTMLDialogElement
 	let inputRef: HTMLInputElement
 	let caretPos: number = 0
@@ -1026,7 +1131,18 @@ const ProgrammerCalculator: VoidComponent<{
 			class={attrClassList(
 				CSS.input_output_programmer_text_output,
 				CSSMiscellaneous.no_scrollbar
-			)}>
+			)}
+			onFocusIn={ev => {
+				if (arrayLength(buttonsTypes) === 0) {
+					arrayPush(
+						buttonsTypes,
+						...elementChildren<HTMLButtonElement>(eventCurrentTarget(ev))
+					)
+				}
+				keyboardOnFocusIn(ev, buttonsTypes)
+			}}
+			onFocusOut={ev => keyboardOnFocusOut(ev, buttonsTypes)}
+			onKeyDown={ev => keyboardOnKeyDown(ev, buttonsTypes, {down: 'next', up: 'prev'})}>
 			<Button
 				c:selected={settings().programmer.numberType == NumberType.decimal}
 				c:indicatorPosition={ButtonIndicatorPosition.right}
@@ -1120,8 +1236,19 @@ const ProgrammerCalculator: VoidComponent<{
 					const dataChar = elementDataset(button, 'char')
 					if (dataChar) return addChar(dataChar)
 				}
-			}}>
-			<div />
+			}}
+			onFocusIn={ev => {
+				if (arrayLength(buttons) === 0) {
+					arrayPush(
+						buttons,
+						...elementChildren<HTMLButtonElement>(eventCurrentTarget(ev))
+					)
+				}
+				keyboardOnFocusIn(ev, buttons)
+			}}
+			onFocusOut={ev => keyboardOnFocusOut(ev, buttons)}
+			onKeyDown={ev => keyboardOnKeyDown2D(ev, buttons, 5)}>
+			<button disabled style="border:none"></button>
 			<Button data-char="(">{'('}</Button>
 			<Button data-char=")">{')'}</Button>
 			<Button id={buttonClearId} classList={attrClassListModule(CSS.input_output_remove_symbol)}>C</Button>
