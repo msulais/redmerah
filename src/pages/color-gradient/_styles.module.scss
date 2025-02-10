@@ -102,7 +102,7 @@
 				:root[data-corner=semi-round] & {border-radius: 4px}
 				:root[data-corner=full-round] & {border-radius: 20px}
 
-				&:is(:hover,[data-dragged]) {
+				&:is(:hover,[data-dragged],:focus-visible) {
 					z-index: 5;
 					cursor: e-resize;
 					width: 32px;
