@@ -11,7 +11,7 @@ import { arrayJoin, arrayLength, arrayMap, arrayPush } from "@/utils/array"
 import { numberParse, numberSafe } from "@/utils/number"
 import { navigatorClipboardWriteText } from "@/utils/navigator"
 import { eventCurrentTarget, eventTarget } from "@/utils/event"
-import { elementDataset, elementId, elementTagName, elementValidTarget } from "@/utils/element"
+import { elementAllBySelector, elementDataset, elementId, elementTagName, elementValidTarget } from "@/utils/element"
 import { documentActive } from "@/utils/document"
 import { promiseDone } from "@/utils/object"
 import { ICON_COPY } from "@/constants/icons"
@@ -22,6 +22,7 @@ import Toast, { openToast } from "@/components/Toast"
 import Tooltip from "@/components/Tooltip"
 import Icon from "@/components/Icon"
 import CSS from './_styles.module.scss'
+import { keyboardOnFocusIn, keyboardOnFocusOut, keyboardOnKeyDown } from "@/utils/keyboard"
 
 const ColorPicker: VoidComponent<{
 	command(type: Commands, ...args: unknown[]): unknown
@@ -124,6 +125,7 @@ const ColorInput: VoidComponent<{
 	const inputHSVId = createUniqueId()
 	const inputHWBId = createUniqueId()
 	const inputCMYKId = createUniqueId()
+	const textFields: HTMLInputElement[] = []
 	let isHEXColorFocused = false
 	let isRGBColorFocused = false
 	let isHSLColorFocused = false
@@ -212,7 +214,16 @@ const ColorInput: VoidComponent<{
 			c:leading={<Icon c:code={ICON_COPY}/>}>
 			Copied to clipboard
 		</Toast>
-		<Tooltip>
+		<Tooltip
+			onFocusIn={ev => {
+				const self = eventCurrentTarget(ev)
+				if (arrayLength(textFields) === 0) {
+					arrayPush(textFields, ...elementAllBySelector('input[type=text]', self))
+				}
+				keyboardOnFocusIn(ev, textFields)
+			}}
+			onFocusOut={ev => keyboardOnFocusOut(ev, textFields)}
+			onKeyDown={ev => keyboardOnKeyDown(ev, textFields, {up: 'prev', down: 'next'})}>
 			<TextField
 				c:label="Hex"
 				id={inputHEXId}

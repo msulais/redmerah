@@ -1,11 +1,11 @@
 import { createSignal, onCleanup, onMount, type VoidComponent, createMemo, createEffect, Show } from "solid-js"
 
 import type { HSLColor, HEXColor } from "@/types/color"
-import { elementRect, elementPointerCaptureRelease, elementPointerCaptureSet } from "@/utils/element"
+import { elementRect, elementPointerCaptureRelease, elementPointerCaptureSet, elementSiblingNext, elementScrollIntoView, elementFirstChild } from "@/utils/element"
 import { rectHeight, rectLeft, rectTop, rectWidth } from "@/utils/rect"
 import { BodyAttributes } from "@/enums/attributes"
 import { attrRemove, attrSet } from "@/utils/attributes"
-import { eventCurrentTarget, eventStopPropagation } from "@/utils/event"
+import { eventCurrentTarget, eventPreventDefault, eventStopPropagation } from "@/utils/event"
 import { mathClamp, mathRound } from "@/utils/math"
 import { colorCmykToHsl, colorContrastRatio, colorHexToHsl, colorHexToRgb, colorHslToCmyk, colorHslToHex, colorHslToHsv, colorHslToHwb, colorHslToRgb, colorHsvToHex, colorHsvToHsl, colorHwbToHsl, colorRgbToHsl } from "@/utils/color"
 import { Commands } from "./_enums"
@@ -22,6 +22,7 @@ import { ICON_IMAGE } from "@/constants/icons"
 import Button, { ButtonVariant } from "@/components/Button"
 import Icon from "@/components/Icon"
 import CSS from './_styles.module.scss'
+import { KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT, KEY_ARROW_UP } from "@/constants/key_code"
 
 export const RectanglePicker: VoidComponent<{
 	input: HSLColor
@@ -86,6 +87,56 @@ export const RectanglePicker: VoidComponent<{
 		attrRemove(body, BodyAttributes.noPointerEvent)
 	}
 
+	function onKeyDown(ev: KeyboardEvent) {
+		const code = ev.code
+		const isUp = code === KEY_ARROW_UP
+		const isRight = code === KEY_ARROW_RIGHT
+		const isDown = code === KEY_ARROW_DOWN
+		const isLeft = code === KEY_ARROW_LEFT
+		if (colorDragged && (isUp || isRight || isDown || isLeft)) {
+			eventPreventDefault(ev) // disable scroll
+			isUpdateLocally = true
+			let x = left()
+			let y = top()
+
+			switch (code) {
+			case KEY_ARROW_UP: y -= 1; break
+			case KEY_ARROW_RIGHT: x += 1; break
+			case KEY_ARROW_DOWN: y += 1; break
+			case KEY_ARROW_LEFT: x -= 1; break
+			}
+
+			x = mathClamp(x, 0, 100)
+			y = mathClamp(y, 0, 100)
+			setLeft(x)
+			setTop(y)
+			command(Commands.updateInput, getHSLColor())
+			elementScrollIntoView(elementFirstChild(colorRef)!, {
+				behavior: 'instant',
+				block: 'nearest'
+			})
+		}
+		else if (hueDragged && (isRight || isLeft)) {
+			isUpdateLocally = true
+			let x = hue()
+
+			switch (code) {
+			case KEY_ARROW_RIGHT: x += 1; break
+			case KEY_ARROW_LEFT: x -= 1; break
+			}
+
+			x = mathClamp(x, 0, 100)
+			setHue(x)
+			command(Commands.updateInput, getHSLColor())
+			elementScrollIntoView(elementFirstChild(hueRef)!, {
+				behavior: 'instant',
+				block: 'nearest'
+			})
+		}
+
+		hueDragged = colorDragged = isUpdateLocally = false
+	}
+
 	function updatePosition(): void {
 		const input = props.input
 		if (isUpdateLocally) {
@@ -121,11 +172,17 @@ export const RectanglePicker: VoidComponent<{
 				command(Commands.updateInput, getHSLColor())
 				isUpdateLocally = false
 			}}
+			onKeyDown={ev => {
+				colorDragged = true
+				colorRect = elementRect(colorRef)
+				onKeyDown(ev)
+			}}
 			onPointerMove={onPointerMove}
 			onPointerCancel={onPointerUp}
 			onPointerUp={onPointerUp}>
 			<div
 				draggable={false}
+				tabIndex={0}
 				class={CSS.picker_indicator}
 				style={{
 					"background-color": getHEXColor(),
@@ -152,10 +209,16 @@ export const RectanglePicker: VoidComponent<{
 				command(Commands.updateInput, getHSLColor())
 				isUpdateLocally = false
 			}}
+			onKeyDown={ev => {
+				hueDragged = true
+				hueRect = elementRect(hueRef)
+				onKeyDown(ev)
+			}}
 			onPointerMove={onPointerMove}
 			onPointerCancel={onPointerUp}
 			onPointerUp={onPointerUp}>
 			<div
+				tabIndex={0}
 				class={CSS.picker_indicator}
 				draggable={false}
 				style={{
@@ -176,7 +239,7 @@ export const RectangleHSLPicker: VoidComponent<{
 	command(type: Commands, ...args: unknown[]): unknown
 }> = (props) => {
 	const body = documentBody()
-	const [hue, setHUE] = createSignal<number>(0) // 0-100
+	const [hue, setHue] = createSignal<number>(0) // 0-100
 	const [left, setLeft] = createSignal<number>(0) // 0-100
 	const [top, setTop] = createSignal<number>(0) // 0-100
 	const getHSLColor = createMemo<HSLColor>(() => {
@@ -223,7 +286,7 @@ export const RectangleHSLPicker: VoidComponent<{
 			isUpdateLocally = true
 			let x = (ev.clientX - rectLeft(hueRect)) / rectWidth(hueRect) * 100
 			x = mathClamp(x, 0, 100)
-			setHUE(x)
+			setHue(x)
 			command(Commands.updateInput, getHSLColor())
 		}
 	}
@@ -234,13 +297,63 @@ export const RectangleHSLPicker: VoidComponent<{
 		attrRemove(body, BodyAttributes.noPointerEvent)
 	}
 
+	function onKeyDown(ev: KeyboardEvent) {
+		const code = ev.code
+		const isUp = code === KEY_ARROW_UP
+		const isRight = code === KEY_ARROW_RIGHT
+		const isDown = code === KEY_ARROW_DOWN
+		const isLeft = code === KEY_ARROW_LEFT
+		if (colorDragged && (isUp || isRight || isDown || isLeft)) {
+			eventPreventDefault(ev) // disable scroll
+			isUpdateLocally = true
+			let x = left()
+			let y = top()
+
+			switch (code) {
+			case KEY_ARROW_UP: y -= 1; break
+			case KEY_ARROW_RIGHT: x += 1; break
+			case KEY_ARROW_DOWN: y += 1; break
+			case KEY_ARROW_LEFT: x -= 1; break
+			}
+
+			x = mathClamp(x, 0, 100)
+			y = mathClamp(y, 0, 100)
+			setLeft(x)
+			setTop(y)
+			command(Commands.updateInput, getHSLColor())
+			elementScrollIntoView(elementFirstChild(colorRef)!, {
+				behavior: 'instant',
+				block: 'nearest'
+			})
+		}
+		else if (hueDragged && (isRight || isLeft)) {
+			isUpdateLocally = true
+			let x = hue()
+
+			switch (code) {
+			case KEY_ARROW_RIGHT: x += 1; break
+			case KEY_ARROW_LEFT: x -= 1; break
+			}
+
+			x = mathClamp(x, 0, 100)
+			setHue(x)
+			command(Commands.updateInput, getHSLColor())
+			elementScrollIntoView(elementFirstChild(hueRef)!, {
+				behavior: 'instant',
+				block: 'nearest'
+			})
+		}
+
+		hueDragged = colorDragged = isUpdateLocally = false
+	}
+
 	function updatePosition(): void {
 		const {h, s, l} = props.input
 		if (isUpdateLocally) {
 			isUpdateLocally = false
 			return
 		}
-		setHUE(h * 100)
+		setHue(h * 100)
 		setLeft(s * 100)
 		setTop((1 - l) * 100)
 	}
@@ -268,10 +381,16 @@ export const RectangleHSLPicker: VoidComponent<{
 				isUpdateLocally = false
 				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
 			}}
+			onKeyDown={ev => {
+				colorDragged = true
+				colorRect = elementRect(colorRef)
+				onKeyDown(ev)
+			}}
 			onPointerMove={onPointerMove}
 			onPointerUp={onPointerUp}
 			onPointerCancel={onPointerUp}>
 			<div
+				tabIndex={0}
 				draggable={false}
 				class={CSS.picker_indicator}
 				style={{
@@ -293,16 +412,22 @@ export const RectangleHSLPicker: VoidComponent<{
 				isUpdateLocally = true
 				hueDragged = true
 				hueRect = elementRect(hueRef)
-				setHUE(mathClamp((ev.clientX - rectLeft(hueRect)) / rectWidth(hueRect) * 100, 0, 100))
+				setHue(mathClamp((ev.clientX - rectLeft(hueRect)) / rectWidth(hueRect) * 100, 0, 100))
 				attrSet(body, BodyAttributes.noPointerEvent)
 				command(Commands.updateInput, getHSLColor())
 				isUpdateLocally = false
 				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
 			}}
+			onKeyDown={ev => {
+				hueDragged = true
+				hueRect = elementRect(hueRef)
+				onKeyDown(ev)
+			}}
 			onPointerMove={onPointerMove}
 			onPointerUp={onPointerUp}
 			onPointerCancel={onPointerUp}>
 			<div
+				tabIndex={0}
 				class={CSS.picker_indicator}
 				draggable={false}
 				style={{
@@ -368,6 +493,39 @@ export const ImagePicker: VoidComponent<{
 		attrRemove(body, BodyAttributes.noPointerEvent)
 	}
 
+	function onKeyDown(ev: KeyboardEvent) {
+		const code = ev.code
+		const isUp = code === KEY_ARROW_UP
+		const isRight = code === KEY_ARROW_RIGHT
+		const isDown = code === KEY_ARROW_DOWN
+		const isLeft = code === KEY_ARROW_LEFT
+		if (imageDragged && (isUp || isRight || isDown || isLeft)) {
+			eventPreventDefault(ev) // disable scroll
+			let x = left()
+			let y = top()
+
+			switch (code) {
+			case KEY_ARROW_UP: y -= 1; break
+			case KEY_ARROW_RIGHT: x += 1; break
+			case KEY_ARROW_DOWN: y += 1; break
+			case KEY_ARROW_LEFT: x -= 1; break
+			}
+
+			x = mathClamp(x, 0, 100)
+			y = mathClamp(y, 0, 100)
+			setLeft(x)
+			setTop(y)
+			pickColor()
+			elementScrollIntoView(elementSiblingNext(canvasRef)!, {
+				behavior: 'instant',
+				block: 'nearest'
+			})
+			command(Commands.updateInput, getHSLColor())
+		}
+
+		imageDragged = false
+	}
+
 	function initCanvas(): void {
 		canvasContext = canvasRef.getContext('2d', {
 			willReadFrequently: true,
@@ -426,6 +584,10 @@ export const ImagePicker: VoidComponent<{
 				imageDragged = true
 				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
 			}}
+			onKeyDown={ev => {
+				imageDragged = true
+				onKeyDown(ev)
+			}}
 			onPointerMove={onPointerMove}
 			onPointerUp={onPointerUp}
 			onPointerCancel={onPointerUp}>
@@ -434,8 +596,8 @@ export const ImagePicker: VoidComponent<{
 				ref={r => canvasRef = r}
 				data-has-image={anyImage()? '' : undefined}></canvas>
 			<Show when={anyImage()}>
-				{/* TODO: keyboard accesiblity */}
 				<div
+					tabIndex={0}
 					class={CSS.picker_indicator}
 					draggable={false}
 					style={{
@@ -530,6 +692,56 @@ export const SpectrumPicker: VoidComponent<{
 		attrRemove(body, BodyAttributes.noPointerEvent)
 	}
 
+	function onKeyDown(ev: KeyboardEvent) {
+		const code = ev.code
+		const isUp = code === KEY_ARROW_UP
+		const isRight = code === KEY_ARROW_RIGHT
+		const isDown = code === KEY_ARROW_DOWN
+		const isLeft = code === KEY_ARROW_LEFT
+		if (spectrumDragged && (isUp || isRight || isDown || isLeft)) {
+			eventPreventDefault(ev) // disable scroll
+			isUpdateLocally = true
+			let x = left()
+			let y = top()
+
+			switch (code) {
+			case KEY_ARROW_UP: y -= 1; break
+			case KEY_ARROW_RIGHT: x += 1; break
+			case KEY_ARROW_DOWN: y += 1; break
+			case KEY_ARROW_LEFT: x -= 1; break
+			}
+
+			x = mathClamp(x, 0, 100)
+			y = mathClamp(y, 0, 100)
+			setLeft(x)
+			setTop(y)
+			command(Commands.updateInput, getHSLColor())
+			elementScrollIntoView(elementFirstChild(spectrumRef)!, {
+				behavior: 'instant',
+				block: 'nearest'
+			})
+		}
+		else if (blacknessDragged && (isRight || isLeft)) {
+			isUpdateLocally = true
+			let x = blackness()
+
+			switch (code) {
+			case KEY_ARROW_RIGHT: x += 1; break
+			case KEY_ARROW_LEFT: x -= 1; break
+			}
+
+			x = mathClamp(x, 0, 100)
+			setBlackness(x)
+			command(Commands.updateInput, getHSLColor())
+			elementScrollIntoView(elementFirstChild(blacknessRef)!, {
+				behavior: 'instant',
+				block: 'nearest'
+			})
+		}
+
+		spectrumDragged = blacknessDragged = isUpdateLocally = false
+	}
+
 	function updatePosition(): void {
 		const {h, s, l} = props.input
 		if (isUpdateLocally) {
@@ -563,10 +775,16 @@ export const SpectrumPicker: VoidComponent<{
 				isUpdateLocally = false
 				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
 			}}
+			onKeyDown={ev => {
+				spectrumDragged = true
+				spectrumRect = elementRect(spectrumRef)
+				onKeyDown(ev)
+			}}
 			onPointerMove={onPointerMove}
 			onPointerUp={onPointerUp}
 			onPointerCancel={onPointerUp}>
 			<div
+				tabIndex={0}
 				class={CSS.picker_indicator}
 				draggable={false}
 				style={{
@@ -599,11 +817,17 @@ export const SpectrumPicker: VoidComponent<{
 				isUpdateLocally = false
 				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
 			}}
+			onKeyDown={ev => {
+				blacknessDragged = true
+				blacknessRect = elementRect(blacknessRef)
+				onKeyDown(ev)
+			}}
 			onPointerMove={onPointerMove}
 			onPointerUp={onPointerUp}
 			onPointerCancel={onPointerUp}
 			style={{'--color': `hsl(${getHue()}, 100%, ${50 + (top() / 2)}%)`}}>
 			<div
+				tabIndex={0}
 				class={CSS.picker_indicator}
 				draggable={false}
 				style={{
@@ -690,6 +914,51 @@ export const SliderRGBPicker: VoidComponent<{
 		attrRemove(body, BodyAttributes.noPointerEvent)
 	}
 
+	function onKeyDown(ev: KeyboardEvent) {
+		const code = ev.code
+		if (code !== KEY_ARROW_RIGHT && code !== KEY_ARROW_LEFT) {
+			redDragged = blueDragged = greenDragged = isUpdateLocally = false
+			return
+		}
+
+		isUpdateLocally = true
+
+		let ref = redRef
+		let x = 0
+		if (redDragged) x = red()
+		else if (greenDragged) x = green()
+		else if (blueDragged) x = blue()
+
+		switch (code) {
+		case KEY_ARROW_RIGHT: x += 1; break
+		case KEY_ARROW_LEFT: x -= 1; break
+		}
+
+		x = mathClamp(x, 0, 100)
+		if (redDragged) {
+			setRed(x)
+			ref = redRef
+		}
+		else if (greenDragged) {
+			setGreen(x)
+			ref = greenRef
+		}
+		else if (blueDragged) {
+			setBlue(x)
+			ref = blueRef
+		}
+
+		if (redDragged || greenDragged || blueDragged){
+			elementScrollIntoView(elementFirstChild(ref)!, {
+				behavior: 'instant',
+				block: 'nearest'
+			})
+			command(Commands.updateInput, getHSLColor())
+		}
+
+		redDragged = blueDragged = greenDragged = isUpdateLocally = false
+	}
+
 	function updatePosition(): void {
 		const input = props.input
 		if (isUpdateLocally) {
@@ -723,10 +992,16 @@ export const SliderRGBPicker: VoidComponent<{
 				isUpdateLocally = false
 				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
 			}}
+			onKeyDown={ev => {
+				redDragged = true
+				redRect = elementRect(redRef)
+				onKeyDown(ev)
+			}}
 			onPointerMove={onPointerMove}
 			onPointerUp={onPointerUp}
 			onPointerCancel={onPointerUp}>
 			<div
+				tabIndex={0}
 				class={CSS.picker_indicator}
 				draggable={false}
 				style={{
@@ -755,10 +1030,16 @@ export const SliderRGBPicker: VoidComponent<{
 				isUpdateLocally = false
 				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
 			}}
+			onKeyDown={ev => {
+				greenDragged = true
+				greenRect = elementRect(greenRef)
+				onKeyDown(ev)
+			}}
 			onPointerMove={onPointerMove}
 			onPointerUp={onPointerUp}
 			onPointerCancel={onPointerUp}>
 			<div
+				tabIndex={0}
 				class={CSS.picker_indicator}
 				draggable={false}
 				style={{
@@ -787,10 +1068,16 @@ export const SliderRGBPicker: VoidComponent<{
 				isUpdateLocally = false
 				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
 			}}
+			onKeyDown={ev => {
+				blueDragged = true
+				blueRect = elementRect(blueRef)
+				onKeyDown(ev)
+			}}
 			onPointerMove={onPointerMove}
 			onPointerUp={onPointerUp}
 			onPointerCancel={onPointerUp}>
 			<div
+				tabIndex={0}
 				class={CSS.picker_indicator}
 				draggable={false}
 				style={{
@@ -812,7 +1099,7 @@ export const SliderHSLPicker: VoidComponent<{
 	command(type: Commands, ...args: unknown[]): unknown
 }> = (props) => {
 	const body = documentBody()
-	const [hue, setHUE] = createSignal(0) // 0 - 100
+	const [hue, setHue] = createSignal(0) // 0 - 100
 	const [saturation, setSaturation] = createSignal(0) // 0 - 100
 	const [lightness, setLightness] = createSignal(0) // 0 - 100
 	const getHue = createMemo(() => {
@@ -845,7 +1132,7 @@ export const SliderHSLPicker: VoidComponent<{
 			isUpdateLocally = true
 			let x = (ev.clientX - rectLeft(hueRect)) / rectWidth(hueRect) * 100
 			x = mathClamp(x, 0, 100)
-			setHUE(x)
+			setHue(x)
 			command(Commands.updateInput, getHSLColor())
 		}
 		else if (lightnessDragged) {
@@ -870,6 +1157,51 @@ export const SliderHSLPicker: VoidComponent<{
 		attrRemove(body, BodyAttributes.noPointerEvent)
 	}
 
+	function onKeyDown(ev: KeyboardEvent) {
+		const code = ev.code
+		if (code !== KEY_ARROW_RIGHT && code !== KEY_ARROW_LEFT) {
+			hueDragged = lightnessDragged = saturationDragged = isUpdateLocally = false
+			return
+		}
+
+		isUpdateLocally = true
+
+		let ref = hueRef
+		let x = 0
+		if (hueDragged) x = hue()
+		else if (lightnessDragged) x = lightness()
+		else if (saturationDragged) x = saturation()
+
+		switch (code) {
+		case KEY_ARROW_RIGHT: x += 1; break
+		case KEY_ARROW_LEFT: x -= 1; break
+		}
+
+		x = mathClamp(x, 0, 100)
+		if (hueDragged) {
+			setHue(x)
+			ref = hueRef
+		}
+		else if (lightnessDragged) {
+			setLightness(x)
+			ref = lightnessRef
+		}
+		else if (saturationDragged) {
+			setSaturation(x)
+			ref = saturationRef
+		}
+
+		if (hueDragged || lightnessDragged || saturationDragged){
+			elementScrollIntoView(elementFirstChild(ref)!, {
+				behavior: 'instant',
+				block: 'nearest'
+			})
+			command(Commands.updateInput, getHSLColor())
+		}
+
+		hueDragged = lightnessDragged = saturationDragged = isUpdateLocally = false
+	}
+
 	function updatePosition(): void {
 		const {h, s, l} = props.input
 		if (isUpdateLocally) {
@@ -877,7 +1209,7 @@ export const SliderHSLPicker: VoidComponent<{
 			return
 		}
 
-		setHUE(h * 100)
+		setHue(h * 100)
 		setSaturation(s * 100)
 		setLightness(l * 100)
 	}
@@ -896,16 +1228,22 @@ export const SliderHSLPicker: VoidComponent<{
 				isUpdateLocally = true
 				hueDragged = true
 				hueRect = elementRect(hueRef)
-				setHUE(mathClamp((ev.clientX - rectLeft(hueRect)) / rectWidth(hueRect) * 100, 0, 100))
+				setHue(mathClamp((ev.clientX - rectLeft(hueRect)) / rectWidth(hueRect) * 100, 0, 100))
 				attrSet(body, BodyAttributes.noPointerEvent)
 				command(Commands.updateInput, getHSLColor())
 				isUpdateLocally = false
 				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
 			}}
+			onKeyDown={ev => {
+				hueDragged = true
+				hueRect = elementRect(hueRef)
+				onKeyDown(ev)
+			}}
 			onPointerMove={onPointerMove}
 			onPointerUp={onPointerUp}
 			onPointerCancel={onPointerUp}>
 			<div
+				tabIndex={0}
 				class={CSS.picker_indicator}
 				draggable={false}
 				style={{
@@ -934,10 +1272,16 @@ export const SliderHSLPicker: VoidComponent<{
 				isUpdateLocally = false
 				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
 			}}
+			onKeyDown={ev => {
+				saturationDragged = true
+				saturationRect = elementRect(saturationRef)
+				onKeyDown(ev)
+			}}
 			onPointerMove={onPointerMove}
 			onPointerUp={onPointerUp}
 			onPointerCancel={onPointerUp}>
 			<div
+				tabIndex={0}
 				class={CSS.picker_indicator}
 				draggable={false}
 				style={{
@@ -966,10 +1310,16 @@ export const SliderHSLPicker: VoidComponent<{
 				isUpdateLocally = false
 				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
 			}}
+			onKeyDown={ev => {
+				lightnessDragged = true
+				lightnessRect = elementRect(lightnessRef)
+				onKeyDown(ev)
+			}}
 			onPointerMove={onPointerMove}
 			onPointerUp={onPointerUp}
 			onPointerCancel={onPointerUp}>
 			<div
+				tabIndex={0}
 				class={CSS.picker_indicator}
 				draggable={false}
 				style={{
@@ -1058,6 +1408,56 @@ export const SliderCMYKPicker: VoidComponent<{
 		attrRemove(body, BodyAttributes.noPointerEvent)
 	}
 
+	function onKeyDown(ev: KeyboardEvent) {
+		const code = ev.code
+		if (code !== KEY_ARROW_RIGHT && code !== KEY_ARROW_LEFT) {
+			cyanDragged = yellowDragged = magentaDragged = keyDragged = isUpdateLocally = false
+			return
+		}
+
+		isUpdateLocally = true
+
+		let ref: HTMLElement = cyanRef
+		let x = 0
+		if (cyanDragged) x = cyan()
+		else if (yellowDragged) x = yellow()
+		else if (magentaDragged) x = magenta()
+		else if (keyDragged) x = key()
+
+		switch (code) {
+		case KEY_ARROW_RIGHT: x += 1; break
+		case KEY_ARROW_LEFT: x -= 1; break
+		}
+
+		x = mathClamp(x, 0, 100)
+		if (cyanDragged) {
+			setCyan(x)
+			ref = cyanRef
+		}
+		else if (yellowDragged) {
+			setYellow(x)
+			ref = yellowRef
+		}
+		else if (magentaDragged) {
+			setMagenta(x)
+			ref = magentaRef
+		}
+		else if (keyDragged) {
+			setKey(x)
+			ref = keyRef
+		}
+
+		if (cyanDragged || yellowDragged || magentaDragged || keyDragged){
+			elementScrollIntoView(elementFirstChild(ref)!, {
+				behavior: 'instant',
+				block: 'nearest'
+			})
+			command(Commands.updateInput, getHSLColor())
+		}
+
+		cyanDragged = yellowDragged = magentaDragged = keyDragged = isUpdateLocally = false
+	}
+
 	function updatePosition(): void {
 		const input = props.input
 		if (isUpdateLocally) {
@@ -1092,10 +1492,16 @@ export const SliderCMYKPicker: VoidComponent<{
 				isUpdateLocally = false
 				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
 			}}
+			onKeyDown={ev => {
+				cyanDragged = true
+				cyanRect = elementRect(cyanRef)
+				onKeyDown(ev)
+			}}
 			onPointerMove={onPointerMove}
 			onPointerUp={onPointerUp}
 			onPointerCancel={onPointerUp}>
 			<div
+				tabIndex={0}
 				class={CSS.picker_indicator}
 				draggable={false}
 				style={{
@@ -1124,10 +1530,16 @@ export const SliderCMYKPicker: VoidComponent<{
 				isUpdateLocally = false
 				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
 			}}
+			onKeyDown={ev => {
+				magentaDragged = true
+				magentaRect = elementRect(magentaRef)
+				onKeyDown(ev)
+			}}
 			onPointerMove={onPointerMove}
 			onPointerUp={onPointerUp}
 			onPointerCancel={onPointerUp}>
 			<div
+				tabIndex={0}
 				class={CSS.picker_indicator}
 				draggable={false}
 				style={{
@@ -1156,10 +1568,16 @@ export const SliderCMYKPicker: VoidComponent<{
 				isUpdateLocally = false
 				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
 			}}
+			onKeyDown={ev => {
+				yellowDragged = true
+				yellowRect = elementRect(yellowRef)
+				onKeyDown(ev)
+			}}
 			onPointerMove={onPointerMove}
 			onPointerUp={onPointerUp}
 			onPointerCancel={onPointerUp}>
 			<div
+				tabIndex={0}
 				class={CSS.picker_indicator}
 				draggable={false}
 				style={{
@@ -1188,10 +1606,16 @@ export const SliderCMYKPicker: VoidComponent<{
 				isUpdateLocally = false
 				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
 			}}
+			onKeyDown={ev => {
+				keyDragged = true
+				keyRect = elementRect(keyRef)
+				onKeyDown(ev)
+			}}
 			onPointerMove={onPointerMove}
 			onPointerUp={onPointerUp}
 			onPointerCancel={onPointerUp}>
 			<div
+				tabIndex={0}
 				class={CSS.picker_indicator}
 				draggable={false}
 				style={{
@@ -1246,6 +1670,41 @@ export const SliderHEXPicker: VoidComponent<{
 		attrRemove(body, BodyAttributes.noPointerEvent)
 	}
 
+	function onKeyDown(ev: KeyboardEvent) {
+		const code = ev.code
+		if (code !== KEY_ARROW_RIGHT && code !== KEY_ARROW_LEFT) {
+			hexDragged = isUpdateLocally = false
+			return
+		}
+
+		isUpdateLocally = true
+
+		let ref: HTMLElement = hexRef
+		let x = 0
+		if (hexDragged) x = hex()
+
+		switch (code) {
+		case KEY_ARROW_RIGHT: x += 1; break
+		case KEY_ARROW_LEFT: x -= 1; break
+		}
+
+		x = mathClamp(x, 0, 100)
+		if (hexDragged) {
+			setHex(x)
+			ref = hexRef
+		}
+
+		if (hexDragged){
+			elementScrollIntoView(elementFirstChild(ref)!, {
+				behavior: 'instant',
+				block: 'nearest'
+			})
+			command(Commands.updateInput, getHSLColor())
+		}
+
+		hexDragged = isUpdateLocally = false
+	}
+
 	function updatePosition(): void {
 		const input = props.input
 		if (isUpdateLocally) {
@@ -1277,10 +1736,16 @@ export const SliderHEXPicker: VoidComponent<{
 				isUpdateLocally = false
 				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
 			}}
+			onKeyDown={ev => {
+				hexDragged = true
+				hexRect = elementRect(hexRef)
+				onKeyDown(ev)
+			}}
 			onPointerMove={onPointerMove}
 			onPointerUp={onPointerUp}
 			onPointerCancel={onPointerUp}>
 			<div
+				tabIndex={0}
 				class={CSS.picker_indicator}
 				draggable={false}
 				style={{
@@ -1302,7 +1767,7 @@ export const SliderHSVPicker: VoidComponent<{
 	command(type: Commands, ...args: unknown[]): unknown
 }> = (props) => {
 	const body = documentBody()
-	const [hue, setHUE] = createSignal(0) // 0 - 100
+	const [hue, setHue] = createSignal(0) // 0 - 100
 	const [saturation, setSaturation] = createSignal(0) // 0 - 100
 	const [value, setValue] = createSignal(0) // 0 - 100
 	const getHue = createMemo(() => {
@@ -1317,7 +1782,7 @@ export const SliderHSVPicker: VoidComponent<{
 	})
 	let isUpdateLocally = false // to avoid unnecesary recalculate in `createEffect()`
 	let hueDragged = false
-	let saturation_dragged = false
+	let saturationDragged = false
 	let valueDragged = false
 	let hueRect: DOMRect
 	let saturationRect: DOMRect
@@ -1335,7 +1800,7 @@ export const SliderHSVPicker: VoidComponent<{
 			isUpdateLocally = true
 			let x = (ev.clientX - rectLeft(hueRect)) / rectWidth(hueRect) * 100
 			x = mathClamp(x, 0, 100)
-			setHUE(x)
+			setHue(x)
 			command(Commands.updateInput, getHSLColor())
 		}
 		else if (valueDragged) {
@@ -1345,7 +1810,7 @@ export const SliderHSVPicker: VoidComponent<{
 			setValue(x)
 			command(Commands.updateInput, getHSLColor())
 		}
-		else if (saturation_dragged) {
+		else if (saturationDragged) {
 			isUpdateLocally = true
 			let x = (ev.clientX - rectLeft(saturationRect)) / rectWidth(saturationRect) * 100
 			x = mathClamp(x, 0, 100)
@@ -1355,9 +1820,54 @@ export const SliderHSVPicker: VoidComponent<{
 	}
 
 	function onPointerUp(ev: PointerEvent & {currentTarget: HTMLDivElement}): void {
-		hueDragged = valueDragged = saturation_dragged = isUpdateLocally = false
+		hueDragged = valueDragged = saturationDragged = isUpdateLocally = false
 		elementPointerCaptureRelease(eventCurrentTarget(ev), ev.pointerId)
 		attrRemove(body, BodyAttributes.noPointerEvent)
+	}
+
+	function onKeyDown(ev: KeyboardEvent) {
+		const code = ev.code
+		if (code !== KEY_ARROW_RIGHT && code !== KEY_ARROW_LEFT) {
+			hueDragged = valueDragged = saturationDragged = isUpdateLocally = false
+			return
+		}
+
+		isUpdateLocally = true
+
+		let ref = hueRef
+		let x = 0
+		if (hueDragged) x = hue()
+		else if (saturationDragged) x = saturation()
+		else if (valueDragged) x = value()
+
+		switch (code) {
+		case KEY_ARROW_RIGHT: x += 1; break
+		case KEY_ARROW_LEFT: x -= 1; break
+		}
+
+		x = mathClamp(x, 0, 100)
+		if (hueDragged) {
+			setHue(x)
+			ref = hueRef
+		}
+		else if (saturationDragged) {
+			setSaturation(x)
+			ref = saturationRef
+		}
+		else if (valueDragged) {
+			setValue(x)
+			ref = valueRef
+		}
+
+		if (hueDragged || valueDragged || saturationDragged){
+			elementScrollIntoView(elementFirstChild(ref)!, {
+				behavior: 'instant',
+				block: 'nearest'
+			})
+			command(Commands.updateInput, getHSLColor())
+		}
+
+		hueDragged = valueDragged = saturationDragged = isUpdateLocally = false
 	}
 
 	function updatePosition(): void {
@@ -1368,7 +1878,7 @@ export const SliderHSVPicker: VoidComponent<{
 		}
 
 		const {h, s, v} = colorHslToHsv(input)
-		setHUE(h * 100)
+		setHue(h * 100)
 		setSaturation(s * 100)
 		setValue(v * 100)
 	}
@@ -1387,16 +1897,22 @@ export const SliderHSVPicker: VoidComponent<{
 				isUpdateLocally = true
 				hueDragged = true
 				hueRect = elementRect(hueRef)
-				setHUE(mathClamp((ev.clientX - rectLeft(hueRect)) / rectWidth(hueRect) * 100, 0, 100))
+				setHue(mathClamp((ev.clientX - rectLeft(hueRect)) / rectWidth(hueRect) * 100, 0, 100))
 				attrSet(body, BodyAttributes.noPointerEvent)
 				command(Commands.updateInput, getHSLColor())
 				isUpdateLocally = false
 				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
 			}}
+			onKeyDown={ev => {
+				hueDragged = true
+				hueRect = elementRect(hueRef)
+				onKeyDown(ev)
+			}}
 			onPointerMove={onPointerMove}
 			onPointerUp={onPointerUp}
 			onPointerCancel={onPointerUp}>
 			<div
+				tabIndex={0}
 				class={CSS.picker_indicator}
 				draggable={false}
 				style={{
@@ -1417,7 +1933,7 @@ export const SliderHSVPicker: VoidComponent<{
 			ref={r => saturationRef = r}
 			onPointerDown={ev => {
 				isUpdateLocally = true
-				saturation_dragged = true
+				saturationDragged = true
 				saturationRect = elementRect(saturationRef)
 				setSaturation(mathClamp((ev.clientX - rectLeft(saturationRect)) / rectWidth(saturationRect) * 100, 0, 100))
 				attrSet(body, BodyAttributes.noPointerEvent)
@@ -1425,10 +1941,16 @@ export const SliderHSVPicker: VoidComponent<{
 				isUpdateLocally = false
 				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
 			}}
+			onKeyDown={ev => {
+				saturationDragged = true
+				saturationRect = elementRect(saturationRef)
+				onKeyDown(ev)
+			}}
 			onPointerMove={onPointerMove}
 			onPointerUp={onPointerUp}
 			onPointerCancel={onPointerUp}>
 			<div
+				tabIndex={0}
 				class={CSS.picker_indicator}
 				draggable={false}
 				style={{
@@ -1457,10 +1979,16 @@ export const SliderHSVPicker: VoidComponent<{
 				isUpdateLocally = false
 				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
 			}}
+			onKeyDown={ev => {
+				valueDragged = true
+				valueRect = elementRect(valueRef)
+				onKeyDown(ev)
+			}}
 			onPointerMove={onPointerMove}
 			onPointerUp={onPointerUp}
 			onPointerCancel={onPointerUp}>
 			<div
+				tabIndex={0}
 				class={CSS.picker_indicator}
 				draggable={false}
 				style={{
@@ -1482,7 +2010,7 @@ export const SliderHWBPicker: VoidComponent<{
 	command(type: Commands, ...args: unknown[]): unknown
 }> = (props) => {
 	const body = documentBody()
-	const [hue, setHUE] = createSignal(0) // 0 - 100
+	const [hue, setHue] = createSignal(0) // 0 - 100
 	const [whiteness, setWhiteness] = createSignal(0) // 0 - 100
 	const [blackness, setBlackness] = createSignal(0) // 0 - 100
 	const getHue = createMemo(() => {
@@ -1515,7 +2043,7 @@ export const SliderHWBPicker: VoidComponent<{
 			isUpdateLocally = true
 			let x = (ev.clientX - rectLeft(hueRect)) / rectWidth(hueRect) * 100
 			x = mathClamp(x, 0, 100)
-			setHUE(x)
+			setHue(x)
 			command(Commands.updateInput, getHSLColor())
 		}
 		else if (blacknessDragged) {
@@ -1542,6 +2070,53 @@ export const SliderHWBPicker: VoidComponent<{
 		attrRemove(body, BodyAttributes.noPointerEvent)
 	}
 
+	function onKeyDown(ev: KeyboardEvent) {
+		const code = ev.code
+		if (code !== KEY_ARROW_RIGHT && code !== KEY_ARROW_LEFT) {
+			hueDragged = blacknessDragged = whitenessDragged = isUpdateLocally = false
+			return
+		}
+
+		isUpdateLocally = true
+
+		let ref = hueRef
+		let x = 0
+		if (hueDragged) x = hue()
+		else if (blacknessDragged) x = blackness()
+		else if (whitenessDragged) x = whiteness()
+
+		switch (code) {
+		case KEY_ARROW_RIGHT: x += 1; break
+		case KEY_ARROW_LEFT: x -= 1; break
+		}
+
+		x = mathClamp(x, 0, 100)
+		if (hueDragged) {
+			setHue(x)
+			ref = hueRef
+		}
+		else if (blacknessDragged) {
+			setBlackness(x)
+			setWhiteness(mathClamp(whiteness(), 0, 100 - blackness()))
+			ref = blacknessRef
+		}
+		else if (whitenessDragged) {
+			setWhiteness(x)
+			setBlackness(mathClamp(blackness(), 0, 100 - whiteness()))
+			ref = whitenessRef
+		}
+
+		if (hueDragged || blacknessDragged || whitenessDragged){
+			elementScrollIntoView(elementFirstChild(ref)!, {
+				behavior: 'instant',
+				block: 'nearest'
+			})
+			command(Commands.updateInput, getHSLColor())
+		}
+
+		hueDragged = blacknessDragged = whitenessDragged = isUpdateLocally = false
+	}
+
 	function updatePosition(): void {
 		const input = props.input
 		if (isUpdateLocally) {
@@ -1550,7 +2125,7 @@ export const SliderHWBPicker: VoidComponent<{
 		}
 
 		const {h, w, b} = colorHslToHwb(input)
-		setHUE(h * 100)
+		setHue(h * 100)
 		setWhiteness(w * 100)
 		setBlackness(b * 100)
 	}
@@ -1569,15 +2144,21 @@ export const SliderHWBPicker: VoidComponent<{
 				isUpdateLocally = true
 				hueDragged = true
 				hueRect = elementRect(hueRef)
-				setHUE(mathClamp((ev.clientX - rectLeft(hueRect)) / rectWidth(hueRect) * 100, 0, 100))
+				setHue(mathClamp((ev.clientX - rectLeft(hueRect)) / rectWidth(hueRect) * 100, 0, 100))
 				attrSet(body, BodyAttributes.noPointerEvent)
 				command(Commands.updateInput, getHSLColor())
 				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
+			}}
+			onKeyDown={ev => {
+				hueDragged = true
+				hueRect = elementRect(hueRef)
+				onKeyDown(ev)
 			}}
 			onPointerMove={onPointerMove}
 			onPointerUp={onPointerUp}
 			onPointerCancel={onPointerUp}>
 			<div
+				tabIndex={0}
 				class={CSS.picker_indicator}
 				draggable={false}
 				style={{
@@ -1607,10 +2188,16 @@ export const SliderHWBPicker: VoidComponent<{
 				isUpdateLocally = false
 				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
 			}}
+			onKeyDown={ev => {
+				whitenessDragged = true
+				whitenessRect = elementRect(whitenessRef)
+				onKeyDown(ev)
+			}}
 			onPointerMove={onPointerMove}
 			onPointerUp={onPointerUp}
 			onPointerCancel={onPointerUp}>
 			<div
+				tabIndex={0}
 				class={CSS.picker_indicator}
 				draggable={false}
 				style={{
@@ -1640,10 +2227,16 @@ export const SliderHWBPicker: VoidComponent<{
 				isUpdateLocally = false
 				elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
 			}}
+			onKeyDown={ev => {
+				blacknessDragged = true
+				blacknessRect = elementRect(blacknessRef)
+				onKeyDown(ev)
+			}}
 			onPointerMove={onPointerMove}
 			onPointerUp={onPointerUp}
 			onPointerCancel={onPointerUp}>
 			<div
+				tabIndex={0}
 				class={CSS.picker_indicator}
 				draggable={false}
 				style={{
