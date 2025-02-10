@@ -216,10 +216,10 @@ const _: VoidComponent<{
 						&& validEnumValue(dataCorner, CornerData)
 					) return updateCorner(dataCorner as CornerData)
 
-					const dataModel = elementDataset(button, 'model')
-					if (dataModel
-						&& validEnumValue(dataModel, ColorSpace)
-					) updateColorSpace(dataModel as ColorSpace)
+					const dataSpace = elementDataset(button, 'space')
+					if (dataSpace
+						&& validEnumValue(dataSpace, ColorSpace)
+					) updateColorSpace(dataSpace as ColorSpace)
 				}}>
 				<SubMenu
 					ref={r => subMenuSettings_themeRef = r}
@@ -288,22 +288,22 @@ const _: VoidComponent<{
 					c:item={<SubMenuItem
 						c:focused={isSubMenuSettings_colorSpaceOpen()}
 						c:iconCode={ICON_COLOR}>
-						Color model
+						Color space
 					</SubMenuItem>}>
 					<MenuItem
-						data-model={ColorSpace.rgba}
+						data-space={ColorSpace.rgba}
 						c:selected={settings().colorSpace == ColorSpace.rgba}
 						c:trailing={<MenuItemTrailingShortcut c:shortcuts={['rgba(R,G,B,A)']}/>}>
 						RGBA
 					</MenuItem>
 					<MenuItem
-						data-model={ColorSpace.hsla}
+						data-space={ColorSpace.hsla}
 						c:selected={settings().colorSpace == ColorSpace.hsla}
 						c:trailing={<MenuItemTrailingShortcut c:shortcuts={['hsla(H°,S%,L%,A)']}/>}>
 						HSLA
 					</MenuItem>
 					<MenuItem
-						data-model={ColorSpace.hex}
+						data-space={ColorSpace.hex}
 						c:selected={settings().colorSpace == ColorSpace.hex}
 						c:trailing={<MenuItemTrailingShortcut c:shortcuts={['#RRGGBBAA']}/>}>
 						HEX
