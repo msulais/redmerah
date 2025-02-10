@@ -5,7 +5,7 @@ import type { HEXColor, RGBColor } from '@/types/color'
 import type { Palette } from './_types'
 import { timeTimerClear, timeTimerSet } from '@/utils/time'
 import { colorGeneratePalette, colorHexToRgb, colorIsValid } from '@/utils/color'
-import { elementAnimate, elementById, elementDataset, elementFirstChild, elementId, elementTextContentSet, elementTagName, elementValidTarget } from '@/utils/element'
+import { elementAnimate, elementById, elementDataset, elementFirstChild, elementId, elementTextContentSet, elementTagName, elementValidTarget, elementAllBySelector } from '@/utils/element'
 import { DatabaseNames, LocalStorageKeys } from '@/enums/storage'
 import { storageGet, storageSet } from '@/utils/storage'
 import { ElementIds } from '@/enums/ids'
@@ -34,6 +34,7 @@ import App from '@/components/App'
 import AppBar from './_AppBar'
 import Body from './_Body'
 import CSS from './_styles.module.scss'
+import { keyboardOnFocusIn, keyboardOnFocusOut, keyboardOnKeyDown } from '@/utils/keyboard'
 
 const _: VoidComponent = () => {
 	const db = new IDB(DatabaseNames.colorGenerator)
@@ -190,6 +191,7 @@ const _: VoidComponent = () => {
 	const ListItem: Component<{palette: Palette, index: number}> = (props) => {
 		const palette = createMemo(() => props.palette)
 		return (<List
+			tabIndex={props.index === 0? 0 : undefined}
 			c:trailing={<>
 				<IconButton
 					data-tooltip="Copy"
@@ -231,6 +233,7 @@ const _: VoidComponent = () => {
 		const buttonColorList_closeId = createUniqueId()
 		const buttonDeleteAll_cancelId = createUniqueId()
 		const buttonDeleteAll_deleteAllId = createUniqueId()
+		const colorPaletteList: HTMLElement[] = []
 		return (<>
 			<Dialog
 				ref={r => setDialogColorListRef(r)}
@@ -298,7 +301,23 @@ const _: VoidComponent = () => {
 						Close
 					</Button>
 				</>}>
-				<Tooltip>
+				<Tooltip
+					onFocusIn={ev => {
+						const self = eventCurrentTarget(ev)
+						if (
+							arrayLength(colorPaletteList) === 0
+							|| colorPaletteList[0] !== elementFirstChild(self)
+						) {
+							colorPaletteList.length = 0
+							arrayPush(
+								colorPaletteList,
+								...elementAllBySelector<HTMLDivElement>('.c-list', self)
+							)
+						}
+						keyboardOnFocusIn(ev, colorPaletteList)
+					}}
+					onFocusOut={ev => keyboardOnFocusOut(ev, colorPaletteList)}
+					onKeyDown={ev => keyboardOnKeyDown(ev, colorPaletteList, {up: 'prev', down: 'next'})}>
 					<For each={paletteList()}>{(p, i) => <>
 						<Show when={i() > 0}><Divider /></Show>
 						<ListItem palette={p} index={i()}/>

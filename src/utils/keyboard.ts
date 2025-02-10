@@ -1,12 +1,16 @@
 import { KEY_ARROW_UP, KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT } from "@/constants/key_code"
-import { attrRemove } from "./attributes"
+import { attrGet, attrHas, attrRemove, attrSet } from "./attributes"
 import { documentActive } from "./document"
-import { elementContains, elementFocus, elementId, elementIdSet, elementTabIndexSet, elementTagName, elementValidTarget } from "./element"
+import { elementContains, elementFocus, elementId, elementIdSet, elementTabIndex, elementTabIndexSet, elementValidTarget } from "./element"
 import { eventCurrentTarget } from "./event"
 import { timeTimerClear, timeTimerSet } from "./time"
-import { arrayFindIndex, arrayLength } from "./array"
+import { arrayFindIndex, arrayLength, arraySome } from "./array"
 import { createUniqueId } from "solid-js"
 import { typeIsNumber } from "./typecheck"
+
+enum ElementCustomAttributes {
+	tabIndex = 'data-tabindex'
+}
 
 const ELEMENTS_DATA: Record<
 	string,
@@ -23,7 +27,6 @@ export function keyboardOnFocusIn(
 	if (!elementValidTarget(
 		self,
 		active,
-		el => elementTagName(el) === 'BUTTON'
 	)) return
 
 	if (id === '') {
@@ -32,8 +35,12 @@ export function keyboardOnFocusIn(
 	}
 
 	if (ELEMENTS_DATA[id] && !ELEMENTS_DATA[id].isTabIndexRemoved) return
+	if (!arraySome(elements, e => e === active)) return
 
 	for (const b of elements) {
+		if (attrHas(b, 'tabindex')) {
+			attrSet(b, ElementCustomAttributes.tabIndex, elementTabIndex(b) + '')
+		}
 		if (active === b) {
 			elementTabIndexSet(b, 0)
 			continue
@@ -79,6 +86,14 @@ export function keyboardOnFocusOut(
 		if (active && elementContains(self, active)) return
 
 		for (const el of elements) {
+			if (attrHas(el, ElementCustomAttributes.tabIndex)) {
+				const tabIndex = attrGet(el, ElementCustomAttributes.tabIndex)
+				attrRemove(el, ElementCustomAttributes.tabIndex)
+				if (tabIndex) {
+					attrSet(el, 'tabindex',  tabIndex)
+					continue
+				}
+			}
 			attrRemove(el, 'tabindex')
 		}
 
