@@ -325,7 +325,7 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 				setValue(self.value)
 				setIsInvalid(!self.checkValidity())
 				setIsFocus(true)
-				if (props['c:autoSelectAll']) self.setSelectionRange(0, stringLength(self.value))
+				if (props['c:autoSelectAll']) self.select()
 			}}
 			onBlur={(ev) => {
 				setValue(eventCurrentTarget(ev).value)
