@@ -1,4 +1,4 @@
-import { createEffect, createMemo, Index, Show, type Accessor, type VoidComponent } from "solid-js"
+import { createEffect, createMemo, Index, type Accessor, type VoidComponent } from "solid-js"
 import katex from 'katex'
 
 import type { Settings } from "./_types"
@@ -7,11 +7,12 @@ import { Commands } from "./_enums"
 import { attrSetIfExist } from "@/utils/attributes"
 import { navigatorClipboardWriteText } from "@/utils/navigator"
 import { promiseDone } from "@/utils/object"
-import { elementDataset, elementTagName, elementValidTarget } from "@/utils/element"
-import { arrayLength } from "@/utils/array"
+import { elementChildren, elementDataset, elementTagName, elementValidTarget } from "@/utils/element"
+import { arrayLength, arrayPush } from "@/utils/array"
 import { documentActive } from "@/utils/document"
 import { eventCurrentTarget } from "@/utils/event"
 import { numberIsNotDefined, numberParse } from "@/utils/number"
+import { keyboardOnFocusIn, keyboardOnFocusOut, keyboardOnKeyDown } from "@/utils/keyboard"
 import { ICON_ADD, ICON_COPY, ICON_DELETE } from "@/constants/icons"
 
 import Toast, { openToast } from "@/components/Toast"
@@ -30,6 +31,7 @@ const LatexEditor: VoidComponent<{
 }> = props => {
 	const settings = createMemo(() => props.settings)
 	const index = createMemo(() => props.index)
+	const buttons: HTMLButtonElement[] = []
 	let timeUpdateId: number | null = null
 	let textAreaRef: HTMLTextAreaElement
 
@@ -65,26 +67,38 @@ const LatexEditor: VoidComponent<{
 			errorColor: 'rgb(var(--color-on-error))',
 			throwOnError: false
 		})}/>
-		<div class={CSS.body_new_equation_bottom}>
+		<div
+			class={CSS.body_new_equation_bottom}
+			onFocusIn={ev => {
+				const self = eventCurrentTarget(ev)
+				if (arrayLength(buttons) === 0) {
+					arrayPush(buttons, ...elementChildren(self))
+				}
+				keyboardOnFocusIn(ev, buttons)
+			}}
+			onFocusOut={ev => keyboardOnFocusOut(ev, buttons)}
+			onKeyDown={ev => keyboardOnKeyDown(ev, buttons, {left: 'prev', right: 'next'})}>
 			<Button
 				data-new={index()}
+				style="outline-offset:0"
 				c:variant={ButtonVariant.tonal}>
 				<Icon c:code={ICON_ADD}/>New equation
 			</Button>
 			<IconButton
 				data-tooltip={"Copy"}
 				data-copy={index()}
+				style="outline-offset:0"
 				c:code={ICON_COPY}
 				c:variant={ButtonVariant.tonal}
 			/>
-			<Show when={!props.isOnlyOne}>
-				<IconButton
-					data-tooltip="Delete"
-					data-delete={index()}
-					c:code={ICON_DELETE}
-					c:variant={ButtonVariant.tonal}
-				/>
-			</Show>
+			<IconButton
+				disabled={props.isOnlyOne}
+				data-tooltip="Delete"
+				style="outline-offset:0"
+				data-delete={index()}
+				c:code={ICON_DELETE}
+				c:variant={ButtonVariant.tonal}
+			/>
 		</div>
 	</div>)
 }
