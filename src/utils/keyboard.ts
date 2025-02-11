@@ -2,11 +2,12 @@ import { KEY_ARROW_UP, KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT } from "@
 import { attrGet, attrHas, attrRemove, attrSet } from "./attributes"
 import { documentActive } from "./document"
 import { elementContains, elementFocus, elementId, elementIdSet, elementTabIndex, elementTabIndexSet, elementValidTarget } from "./element"
-import { eventCurrentTarget } from "./event"
+import { eventCurrentTarget, eventPreventDefault } from "./event"
 import { timeTimerClear, timeTimerSet } from "./time"
 import { arrayFindIndex, arrayLength, arraySome } from "./array"
 import { createUniqueId } from "solid-js"
 import { typeIsNumber } from "./typecheck"
+import { mathAbs, mathFloor } from "./math"
 
 enum ElementCustomAttributes {
 	tabIndex = 'data-tabindex'
@@ -83,7 +84,10 @@ export function keyboardOnFocusOut(
 	data.timeRemovedId = timeTimerSet(() => {
 		data.timeRemovedId = null
 		const active = documentActive()
-		if (active && elementContains(self, active)) return
+		if (active
+			&& elementContains(self, active)
+			&& arraySome(elements, e => e === active)
+		) return
 
 		for (const el of elements) {
 			if (attrHas(el, ElementCustomAttributes.tabIndex)) {
@@ -163,6 +167,7 @@ export function keyboardOnKeyDown(
 		if (target) {
 			elementFocus(target)
 			if (documentActive() === target) {
+				eventPreventDefault(ev) // disable auto scroll
 				elementTabIndexSet(target, 0)
 				elementTabIndexSet(active, -1)
 				break
@@ -223,6 +228,7 @@ export function keyboardOnKeyDown2D(
 		if (target) {
 			elementFocus(target)
 			if (documentActive() === target) {
+				eventPreventDefault(ev) // disable auto scroll
 				elementTabIndexSet(target, 0)
 				elementTabIndexSet(active, -1)
 				break
@@ -232,7 +238,7 @@ export function keyboardOnKeyDown2D(
 		switch (keyCode) {
 		case KEY_ARROW_UP:
 			i = i - columnCount
-			if (i < 0) i = elementsLength + i + columnCount
+			if (i < 0) i = (columnCount * mathFloor(elementsLength / columnCount)) + (mathAbs(index) % columnCount)
 
 			break
 		case KEY_ARROW_RIGHT:
