@@ -97,7 +97,7 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 		'onFocus', 'onBlur', 'placeholder', 'c:autoHideLabel',
 		'value', 'c:autoShowClearButton', 'c:tooltipClear',
 		'c:minLine', 'c:maxLine', 'c:attrWrapper',
-		'c:trailingAutoTabIndex'
+		'c:trailingAutoTabIndex', 'style'
 	])
 	const [wrapperProps, otherWrapperProps] = splitProps(props['c:attrWrapper']! ?? {}, [
 		'class', 'onClick'
@@ -196,16 +196,19 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 			autocomplete={props.autocomplete ?? 'off'}
 			readOnly={props.readOnly}
 			value={props.value}
-			style={{
-				height: height() + 'px',
-				"min-height": props['c:minLine']
-					? ((lineHeight() * props['c:minLine']) + 'px')
-					: undefined,
-				"max-height": props['c:maxLine']
-					&& props['c:maxLine'] >= (props['c:minLine'] ?? 1)
-						? ((lineHeight() * props['c:maxLine']) + 'px')
-						: undefined
-			}}
+			style={typeIsString(props.style)
+				? props.style
+				: {
+					height: height() + 'px',
+					"min-height": props['c:minLine']
+						? ((lineHeight() * props['c:minLine']) + 'px')
+						: undefined,
+					"max-height": props['c:maxLine']
+						&& props['c:maxLine'] >= (props['c:minLine'] ?? 1)
+							? ((lineHeight() * props['c:maxLine']) + 'px')
+							: undefined,
+					...(props.style as JSX.CSSProperties)
+				}}
 			placeholder={props.placeholder ?? (props['c:autoHideLabel'] && props['c:label']? `${props['c:label']}` : undefined)}
 			{...other}></textarea>
 		<Show when={trailing() || isShowClearButton()}>
