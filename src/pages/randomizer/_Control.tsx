@@ -272,7 +272,7 @@ const Teams: VoidComponent<{
 					break
 				case buttonAction_deleteListId:
 					closeAll()
-					command(Commands.editList, list())
+					command(Commands.deleteList, list())
 					break
 				}
 			}}>
@@ -469,7 +469,7 @@ const Selection: VoidComponent<{
 					closeMenu(menuDropdownRef)
 					break
 				case buttonActions_deleteListId:
-					command(Commands.editList, list())
+					command(Commands.deleteList, list())
 					closeMenu(menuActionRef)
 					closeMenu(menuDropdownRef)
 					break
@@ -684,7 +684,7 @@ const Words: VoidComponent<{
 			</MenuItem>
 			<MenuItem
 				onClick={async () => {
-					command(Commands.editList, list())
+					command(Commands.deleteList, list())
 					closeMenu(menuActionRef)
 					closeMenu(menuDropdownRef)
 				}}
