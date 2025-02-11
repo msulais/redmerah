@@ -10,10 +10,11 @@ import { fileOpen } from "@/utils/file"
 import { urlCreate, urlRevoke } from "@/utils/url"
 import { isMobile } from "@/utils/platforms"
 import { promiseDone, validEnumValue } from "@/utils/object"
-import { arrayLength } from "@/utils/array"
+import { arrayLength, arrayPush } from "@/utils/array"
 import { stringLength, stringStartsWith } from "@/utils/string"
 import { documentActive } from "@/utils/document"
-import { elementDataset, elementId, elementTagName, elementValidTarget } from "@/utils/element"
+import { elementChildren, elementDataset, elementId, elementTagName, elementValidTarget } from "@/utils/element"
+import { keyboardOnFocusIn, keyboardOnFocusOut, keyboardOnKeyDown } from "@/utils/keyboard"
 import { ICON_ARROW_DOWNLOAD, ICON_CAMERA_ADD, ICON_COPY, ICON_DISMISS, ICON_IMAGE, ICON_IMAGE_ADD, ICON_IMAGE_CIRCLE, ICON_QR_CODE, ICON_SCAN_TEXT, ICON_WARNING } from "@/constants/icons"
 
 import Tooltip from "@/components/Tooltip"
@@ -189,7 +190,19 @@ const _: VoidComponent<{
 	}
 
 	const OptionPage: VoidComponent = () => {
-		return (<div class={CSS.body_options}>
+		const buttons: HTMLButtonElement[] = []
+
+		return (<div
+			class={CSS.body_options}
+			onFocusIn={ev => {
+				const self = eventCurrentTarget(ev)
+				if (arrayLength(buttons) === 0) {
+					arrayPush(buttons, ...elementChildren(self))
+				}
+				keyboardOnFocusIn(ev, buttons)
+			}}
+			onFocusOut={ev => keyboardOnFocusOut(ev, buttons)}
+			onKeyDown={ev => keyboardOnKeyDown(ev, buttons, {left: 'prev', right: 'next'})}>
 			<Button
 				id={buttonOption_generateId}
 				c:variant={page() == Pages.generate? ButtonVariant.filled : ButtonVariant.tonal}>
