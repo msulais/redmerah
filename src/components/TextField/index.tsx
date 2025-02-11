@@ -164,7 +164,11 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 			}
 		}}
 		{...otherWrapperProps}>
-		<Show when={!(props['c:autoHideLabel'] && stringLength(value()) == 0 && !props.placeholder)}>
+		<Show when={
+			!props['c:autoHideLabel']
+			|| stringLength(value()) > 0
+			|| props.placeholder
+		}>
 			<label for={props.id} class='c-area-textfield-label'>{props['c:label']}</label>
 		</Show>
 		{leading()}
@@ -309,7 +313,11 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 			}
 		}}
 		{...otherWrapperProps}>
-		<Show when={!(props['c:autoHideLabel'] && stringLength(value()) == 0 && !props.placeholder)}>
+		<Show when={
+			!props['c:autoHideLabel']
+			|| stringLength(value()) > 0
+			|| props.placeholder
+		}>
 			<label class='c-textfield-label' for={props.id}>{props['c:label']}</label>
 		</Show>
 		{leading()}
