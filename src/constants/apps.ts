@@ -121,8 +121,8 @@ export const APP_RANDOMIZER: AppItem = {
 	description: 'Explore our Randomizer Hub for a variety of tools that add a touch of unpredictability to your life. Generate random strings, words, numbers, colors, and even assemble teams. Embrace the unexpected!',
 	link: RoutesLinks.randomizer,
 	color: '#00FF48',
-	buildNumber: 5,
-	buildVersion: '0.1.6',
+	buildNumber: 6,
+	buildVersion: '0.1.7',
 }
 
 export const APP_COLOR_GENERATOR: AppItem = {
