@@ -1,4 +1,4 @@
-import { createMemo, createSignal, createUniqueId, For, Show, type VoidComponent } from "solid-js"
+import { createMemo, createSignal, createUniqueId, For, onMount, Show, type VoidComponent } from "solid-js"
 import { createStore } from "solid-js/store"
 
 import type { Gradient, GradientData, RadialGradient, Settings } from "./_type"
@@ -12,10 +12,10 @@ import { mathClamp, mathRound } from "@/utils/math"
 import { convertColorByColorSpace, gradientToCSSText } from "./_utils"
 import { colorHslToHex, colorIsValid, colorRgbToHex } from "@/utils/color"
 import { navigatorClipboardWriteText } from "@/utils/navigator"
-import { arrayIncludes, arrayJoin, arrayLength, arrayMap, arraySort } from "@/utils/array"
+import { arrayIncludes, arrayJoin, arrayLength, arrayMap, arrayPush, arraySort } from "@/utils/array"
 import { stringLength, stringPadStart, stringReplace, stringSplit, stringSubstring, stringToUpperCase, stringTrim } from "@/utils/string"
 import { numberIsNotDefined, numberParse, numberSafe, numberToString } from "@/utils/number"
-import { rectWidth } from "@/utils/rect"
+import { rectLeft, rectWidth } from "@/utils/rect"
 import { documentActive, documentBody } from "@/utils/document"
 import { ICON_ADD, ICON_ADD_CIRCLE, ICON_CHEVRON_DOWN, ICON_CIRCLE, ICON_COPY, ICON_DELETE, ICON_EYE, ICON_EYEDROPPER, ICON_MORE_HORIZONTAL } from "@/constants/icons"
 
@@ -29,6 +29,8 @@ import ColorPicker, { openColorPicker } from "@/components/ColorPicker"
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import Toast, { openToast } from "@/components/Toast"
 import CSS from './_styles.module.scss'
+import { keyboardOnFocusIn, keyboardOnFocusOut, keyboardOnKeyDown } from "@/utils/keyboard"
+import { KEY_ARROW_LEFT, KEY_ARROW_RIGHT } from "@/constants/key_code"
 
 type PointerPosition = {
 	x: number
@@ -175,7 +177,8 @@ const GradientControl: VoidComponent<{
 	selectedGradientIndex: number
 	pointerPosition: PointerPosition
 	command(type: Commands, ...args: unknown[]): unknown
-	onStartDrag(gradient_element: HTMLDivElement, position: PointerPosition, colorstop_index: number): void
+	onKeyDown(ev: KeyboardEvent & {currentTarget: HTMLDivElement}, gradientElement: HTMLDivElement, colorStopIndex: number): unknown
+	onStartDrag(gradientElement: HTMLDivElement, position: PointerPosition, colorStopIndex: number): void
 	onPointerUp(ev: PointerEvent & {currentTarget: HTMLDivElement}): unknown
 	onPointerMove(ev: PointerEvent & {currentTarget: HTMLDivElement}): unknown
 }> = (props) => {
@@ -201,6 +204,7 @@ const GradientControl: VoidComponent<{
 			<For each={gradient().colorStopList}>{(stop, index) =>
 				<div style={{left: stop.size + '%'}}>
 					<div
+						tabIndex={0}
 						onPointerUp={ev => props.onPointerUp(ev)}
 						onPointerCancel={ev => props.onPointerUp(ev)}
 						onPointerMove={ev => props.onPointerMove(ev)}
@@ -211,6 +215,13 @@ const GradientControl: VoidComponent<{
 								{ x: ev.clientX, y: ev.clientY },
 								index()
 							)
+							setSelectedColorStopIndex(index())
+						}}
+						onKeyDown={ev => {
+							const code = ev.code
+							if (code !== KEY_ARROW_LEFT && code !== KEY_ARROW_RIGHT) return
+
+							props.onKeyDown(ev, divGradientRef, index())
 							setSelectedColorStopIndex(index())
 						}}
 						draggable="false"
@@ -501,18 +512,34 @@ const GradientControl: VoidComponent<{
 		</div>
 	}</For>)
 
-	const Actions: VoidComponent = () => (<div class={CSS.body_gradient_control_actions}>
-		<Button
-			c:variant={ButtonVariant.filled}
-			data-gradientcontrol-addcolorstop={gradientIndex()}>
-			<Icon c:code={ICON_ADD_CIRCLE} c:filled/>Add color stop
-		</Button>
-		<IconButton
-			data-tooltip="More actions"
-			data-gradientcontrol-moreactions={gradientIndex()}
-			c:code={ICON_MORE_HORIZONTAL}
-		/>
-	</div>)
+	const Actions: VoidComponent = () => {
+		const buttons: HTMLButtonElement[] = []
+		let buttonAddColorStop: HTMLButtonElement
+		let buttonMoreActions: HTMLButtonElement
+
+		onMount(() => {
+			arrayPush(buttons, buttonAddColorStop, buttonMoreActions)
+		})
+
+		return (<div
+			class={CSS.body_gradient_control_actions}
+			onFocusIn={ev => keyboardOnFocusIn(ev, buttons)}
+			onFocusOut={ev => keyboardOnFocusOut(ev, buttons)}
+			onKeyDown={ev => keyboardOnKeyDown(ev, buttons, {left: 'prev', right: 'next'})}>
+			<Button
+				c:variant={ButtonVariant.filled}
+				ref={r => buttonAddColorStop = r}
+				data-gradientcontrol-addcolorstop={gradientIndex()}>
+				<Icon c:code={ICON_ADD_CIRCLE} c:filled/>Add color stop
+			</Button>
+			<IconButton
+				data-tooltip="More actions"
+				ref={r => buttonMoreActions = r}
+				data-gradientcontrol-moreactions={gradientIndex()}
+				c:code={ICON_MORE_HORIZONTAL}
+			/>
+		</div>)
+	}
 
 	return (<div class={CSS.body_gradient_control}>
 		<Control/>
@@ -568,6 +595,18 @@ const _: VoidComponent<{
 		setIsDragging(false)
 		elementPointerCaptureRelease(eventCurrentTarget(ev), ev.pointerId)
 		attrRemove(body, BodyAttributes.noPointerEvent)
+	}
+
+	function onKeyDown(ev: KeyboardEvent & {currentTarget: HTMLDivElement}): void {
+		if (selectedGradientElementRect == null) return;
+
+		const code = ev.code
+		const rect = elementRect(eventCurrentTarget(ev))
+		const currentPosition = rectLeft(rect) + (rectWidth(rect) / 2)
+		const onePercentPosition = rectWidth(selectedGradientElementRect) / 100
+		const nextPositionX = currentPosition + (onePercentPosition * (code === KEY_ARROW_LEFT? -1 : 1))
+		setPointerPosition({x: nextPositionX, y: 0})
+		updatePosition()
 	}
 
 	const ColorPickers: VoidComponent = () => (<>
@@ -737,8 +776,8 @@ const _: VoidComponent<{
 					)
 				}}/>
 			</div>
-			<Tooltip>
-				<div class={CSS.body_control}>
+			<div class={CSS.body_control}>
+				<Tooltip>
 					<div>
 						<GradientDataList
 							command={command}
@@ -787,8 +826,14 @@ const _: VoidComponent<{
 							pointerPosition={pointerPosition}
 							onPointerMove={onPointerMove}
 							onPointerUp={onPointerUp}
-							onStartDrag={(gradient_el, pointer, colorStopIndex) => {
-								selectedGradientElementRect = elementRect(gradient_el)
+							onKeyDown={(ev, gradientElement, colorStopIndex) => {
+								selectedGradientElementRect = elementRect(gradientElement)
+								selectedColorStopIndex = colorStopIndex
+								setSelectedGradientIndex(index())
+								onKeyDown(ev)
+							}}
+							onStartDrag={(gradientElement, pointer, colorStopIndex) => {
+								selectedGradientElementRect = elementRect(gradientElement)
 								selectedColorStopIndex = colorStopIndex
 								setSelectedGradientIndex(index())
 								setPointerPosition(pointer)
@@ -798,8 +843,8 @@ const _: VoidComponent<{
 							selectedGradientIndex={selectedGradientIndex()}
 						/>
 					}</For>
-				</div>
-			</Tooltip>
+				</Tooltip>
+			</div>
 		</div>
 		<ColorPickers/>
 		<Menus/>

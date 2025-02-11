@@ -16,7 +16,6 @@ import { urlCreate, urlRevoke } from "@/utils/url"
 import { arrayConcat, arrayFindIndex, arrayIncludes, arrayJoin, arrayLength, arraySlice, arraySome } from "@/utils/array"
 import { regexTest } from "@/utils/regex"
 import { numberIsNotDefined, numberParse, numberToFixed } from "@/utils/number"
-import { timeTimerSet } from "@/utils/time"
 import { promiseDone } from "@/utils/object"
 import { KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT, KEY_ARROW_UP, KEY_ENTER, KEY_SPACE } from "@/constants/key_code"
 import { AppColors } from "@/enums/colors"
@@ -544,10 +543,7 @@ const SingleTaskList: VoidComponent<{
 		} satisfies Task, props.taskListIndex)
 		updateTextFieldValue(textFieldNewTaskRef, '')
 
-		timeTimerSet(() => {
-			// FIXME: can't focus textfield without this wrapper
-			elementFocus(textFieldNewTaskRef)
-		}, 200)
+		elementFocus(textFieldNewTaskRef)
 	}
 
 	createEffect(() => {

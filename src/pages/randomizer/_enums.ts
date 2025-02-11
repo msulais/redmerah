@@ -50,6 +50,10 @@ export enum Commands {
 	@param list `ListItems` */
 	viewList,
 
+	/**
+	@param list `ListItems` */
+	deleteList,
+
 	toggleSettingsAnimation,
 	toggleSettingsRepeat,
 

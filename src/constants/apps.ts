@@ -31,8 +31,8 @@ export const APP_LATEX_VIEWER: AppItem = {
 	description: 'Visualize your LaTeX code effortlessly. Our app renders complex mathematical expressions and scientific notation, making it perfect for students, researchers, and educators.',
 	link: RoutesLinks.latexViewer,
 	color: '#C247FF',
-	buildNumber: 2,
-	buildVersion: '0.0.2',
+	buildNumber: 4,
+	buildVersion: '0.0.4',
 }
 
 export const APP_EMOJI_PICKER: AppItem = {
@@ -41,8 +41,8 @@ export const APP_EMOJI_PICKER: AppItem = {
 	description: 'Emoji Picker is your ultimate emoji companion. Browse, search, and copy emojis with ease. Express yourself with the perfect emoji every time.',
 	link: RoutesLinks.emojiPicker,
 	color: '#00B0FF',
-	buildNumber: 1,
-	buildVersion: '0.0.1',
+	buildNumber: 2,
+	buildVersion: '0.0.2',
 }
 
 export const APP_COLOR_GRADIENT: AppItem = {
@@ -51,8 +51,8 @@ export const APP_COLOR_GRADIENT: AppItem = {
 	description: 'Design beautiful color gradients with our intuitive app. Choose from linear and radial gradients, and stack them for complex effects. Generate clean CSS code to implement your designs.',
 	link: RoutesLinks.colorGradient,
 	color: '#F5FF00',
-	buildNumber: 4,
-	buildVersion: '0.0.5',
+	buildNumber: 5,
+	buildVersion: '0.0.9',
 }
 
 export const APP_QR_CODE: AppItem = {
@@ -61,8 +61,8 @@ export const APP_QR_CODE: AppItem = {
 	description: 'Create and read QR codes effortlessly with our user-friendly app. Share information, websites, contacts, and more using QR codes.',
 	link: RoutesLinks.qrCode,
 	color: '#FF2222',
-	buildNumber: 2,
-	buildVersion: '0.1.2',
+	buildNumber: 3,
+	buildVersion: '0.1.3',
 }
 
 export const APP_BATTERY: AppItem = {
@@ -111,8 +111,8 @@ export const APP_CALCULATOR: AppItem = {
 	description: 'Perform a wide range of calculations with our versatile calculator. From basic arithmetic to advanced scientific functions and programmer tools, we\'ve got you covered.',
 	link: RoutesLinks.calculator,
 	color: '#026BE3',
-	buildNumber: 7,
-	buildVersion: '0.1.6',
+	buildNumber: 8,
+	buildVersion: '0.1.7',
 }
 
 export const APP_RANDOMIZER: AppItem = {
@@ -121,8 +121,8 @@ export const APP_RANDOMIZER: AppItem = {
 	description: 'Explore our Randomizer Hub for a variety of tools that add a touch of unpredictability to your life. Generate random strings, words, numbers, colors, and even assemble teams. Embrace the unexpected!',
 	link: RoutesLinks.randomizer,
 	color: '#00FF48',
-	buildNumber: 5,
-	buildVersion: '0.1.6',
+	buildNumber: 6,
+	buildVersion: '0.1.7',
 }
 
 export const APP_COLOR_GENERATOR: AppItem = {
@@ -131,8 +131,8 @@ export const APP_COLOR_GENERATOR: AppItem = {
 	description: 'Generate accent pallete color for your app. Including color for light and dark mode.',
 	link: RoutesLinks.colorGenerator,
 	color: '#39BBFF',
-	buildNumber: 4,
-	buildVersion: '0.1.5',
+	buildNumber: 5,
+	buildVersion: '0.1.6',
 }
 
 export const APP_MARKDOWN_CONVERTER: AppItem = {
@@ -151,8 +151,8 @@ export const APP_COLOR_PICKER: AppItem = {
 	description: 'Quickly and easily pick the perfect color with our online color picker tool.',
 	link: RoutesLinks.colorPicker,
 	color: '#FF0401',
-	buildNumber: 3,
-	buildVersion: '0.0.4',
+	buildNumber: 4,
+	buildVersion: '0.0.5',
 }
 
 export const APPS: AppItem[] = [

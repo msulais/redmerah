@@ -81,7 +81,8 @@
 .body_options {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
-	gap: 4px;
+	gap: 8px;
+	padding-top: 8px;
 }
 
 .body_scan {

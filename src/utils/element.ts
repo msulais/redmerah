@@ -4,6 +4,13 @@ import { documentActive, documentHasFocus } from "./document"
 import { attrGet, attrRemove } from "./attributes"
 import { numberIsDefined, numberParse } from "./number"
 
+export function elementScrollIntoView(
+	element: HTMLElement,
+	options?: ScrollIntoViewOptions
+): void {
+	return element.scrollIntoView(options)
+}
+
 export function elementScrollWidth(element: HTMLElement): number {
 	return element.scrollWidth
 }

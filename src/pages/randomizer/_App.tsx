@@ -954,6 +954,11 @@ const _: VoidComponent = () => {
 			viewList(list)
 			break
 		}
+		case Commands.deleteList: {
+			const [list] = args as [ItemList]
+			openDeleteDialog(list)
+			break
+		}
 		case Commands.toggleSettingsAnimation: {
 			switch (randomizer()) {
 				case RandomizerType.numbers: {
