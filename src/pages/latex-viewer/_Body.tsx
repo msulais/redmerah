@@ -1,4 +1,4 @@
-import { createEffect, createMemo, createSignal, Index, Show, type Accessor, type VoidComponent } from "solid-js"
+import { createEffect, createMemo, Index, Show, type Accessor, type VoidComponent } from "solid-js"
 import katex from 'katex'
 
 import type { Settings } from "./_types"
@@ -7,7 +7,7 @@ import { Commands } from "./_enums"
 import { attrSetIfExist } from "@/utils/attributes"
 import { navigatorClipboardWriteText } from "@/utils/navigator"
 import { promiseDone } from "@/utils/object"
-import { elementDataset, elementScrollHeight, elementTagName, elementValidTarget } from "@/utils/element"
+import { elementDataset, elementTagName, elementValidTarget } from "@/utils/element"
 import { arrayLength } from "@/utils/array"
 import { documentActive } from "@/utils/document"
 import { eventCurrentTarget } from "@/utils/event"
@@ -19,6 +19,7 @@ import Button, { ButtonVariant, IconButton } from "@/components/Button"
 import Icon from "@/components/Icon"
 import Tooltip from "@/components/Tooltip"
 import CSS from './_styles.module.scss'
+import { AreaTextField } from "@/components/TextField"
 
 const LatexEditor: VoidComponent<{
 	index: number
@@ -27,7 +28,6 @@ const LatexEditor: VoidComponent<{
 	settings: Settings
 	command: (type: Commands, ...args: unknown[]) => unknown
 }> = props => {
-	const [height, setHeight] = createSignal<number>(0)
 	const settings = createMemo(() => props.settings)
 	const index = createMemo(() => props.index)
 	let timeUpdateId: number | null = null
@@ -46,27 +46,17 @@ const LatexEditor: VoidComponent<{
 		const latex = props.latex()
 
 		textAreaRef.value = latex
-		timeTimerSet(() => {
-			setHeight(0)
-			setHeight(elementScrollHeight(textAreaRef))
-		})
 	})
 
 	return (<div class={CSS.body_latex_editor}>
-		<textarea
+		<AreaTextField
+			onInput={() => save_input()}
 			ref={r => textAreaRef = r}
-			rows={1}
 			placeholder="Type your LaTeX here ..."
-			onInput={() => {
-				setHeight(0)
-				setHeight(elementScrollHeight(textAreaRef!))
-				save_input()
-			}}
 			value={props.latex()}
 			data-text-wrap={attrSetIfExist(settings().textWrap)}
 			style={{
 				"font-size": settings().fontSize + 'px',
-				"height": height() + 'px'
 			}}
 		/>
 		<div innerHTML={katex.renderToString(props.latex(), {
