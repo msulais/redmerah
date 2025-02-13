@@ -743,17 +743,17 @@ const ColorPickerBody: ParentComponent<{
 				)) return
 
 				switch (elementId(button)) {
-					case button_colormodel_id:
-						changeColorSpace()
-						break
-					case button_cancel_id:
-						updateColor(props.color)
-						props.onClose()
-						break
-					case button_select_id:
-						props.onSelectColor?.(getHexColor() as HEXColor)
-						props.onClose()
-						break
+				case button_colormodel_id:
+					changeColorSpace()
+					break
+				case button_cancel_id:
+					updateColor(props.color)
+					props.onClose()
+					break
+				case button_select_id:
+					props.onSelectColor?.(getHexColor() as HEXColor)
+					props.onClose()
+					break
 				}
 			}}>
 			<Button

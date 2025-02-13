@@ -20,6 +20,7 @@ import { Modal, type ModalProps, ModalPosition as DatePickerPosition, closeModal
 import Divider from "@/components/Divider"
 import Popover, { closePopover, isPopoverOpen, openPopover, repositionPopover, type PopoverProps } from "@/components/Popover"
 import './index.scss'
+import { FocusableGroup2D } from "../FocusableGroup"
 
 enum DatePickerOption {
 	year,
@@ -48,7 +49,7 @@ const DatePickerBody: ParentComponent<{
 	const [daysPerMonth, setDaysPerMonth] = createSignal<number>(31)
 	let divMonthRef: HTMLDivElement | undefined
 	let divDateRef: HTMLDivElement | undefined
-	let div_year_ref: HTMLDivElement | undefined
+	let divYearRef: HTMLDivElement | undefined
 
 	function updateDateView(): void {
 		let daysPerMonth = 31 // reset to default
@@ -79,14 +80,14 @@ const DatePickerBody: ParentComponent<{
 	}
 
 	function previous(): void {
-		const new_date = new Date(viewDate())
+		const nexDate = new Date(viewDate())
 		switch (dateOption()) {
-			case DatePickerOption.day: dateMonthSet(new_date, dateMonth(new_date) - 1); break
-			case DatePickerOption.month: dateYearSet(new_date, dateYear(new_date) - 1); break
-			case DatePickerOption.year: dateYearSet(new_date, dateYear(new_date) - 16); break
+			case DatePickerOption.day: dateMonthSet(nexDate, dateMonth(nexDate) - 1); break
+			case DatePickerOption.month: dateYearSet(nexDate, dateYear(nexDate) - 1); break
+			case DatePickerOption.year: dateYearSet(nexDate, dateYear(nexDate) - 16); break
 		}
 
-		setViewDate(new_date)
+		setViewDate(nexDate)
 		updateDateView()
 		props.onUpdate()
 	}
@@ -109,68 +110,14 @@ const DatePickerBody: ParentComponent<{
 	})
 
 	const DaysDate: VoidComponent = () => {
-		let isButtonFocused = false
-
-		createEffect(() => {
-			daysPerMonth()
-
-			const children = elementChildren<HTMLButtonElement>(divDateRef!)
-			isButtonFocused = false
-			for (const child of children) {
-				if (elementTagName(child) != 'BUTTON') continue
-				if (child.disabled) continue
-
-				elementTabIndexSet(child, 0)
-			}
-		})
-
 		return (<div style="display: contents">
 			<div class="c-date-picker-days-name">
 				<For each={dateWeekdayNames(props.locales)}>{d => <p>{stringSubstring(d, 0, 3)}</p>}</For>
 			</div>
-			<div
+			<FocusableGroup2D
 				class="c-date-picker-days"
+				c:columnCount={7}
 				ref={divDateRef}
-				onKeyDown={(ev) => {
-					const code = ev.code
-					if (
-						code != KEY_ARROW_UP
-						&& code != KEY_ARROW_DOWN
-						&& code != KEY_ARROW_LEFT
-						&& code != KEY_ARROW_RIGHT
-					) return;
-
-					const button = eventTarget(ev) as HTMLButtonElement
-					const index = numberSafe(numberParse(elementDataset(button, 'index')!, true))
-					const children = elementChildren<HTMLButtonElement>(eventCurrentTarget(ev))
-					let target: HTMLElement | null = null
-
-					if (code == KEY_ARROW_UP) target = children[startDay() + index - 7]
-					else if (code == KEY_ARROW_DOWN) target = children[startDay() + index + 7]
-					else if (code == KEY_ARROW_RIGHT) target = elementSiblingNext(button)
-					else if (code == KEY_ARROW_LEFT) target = elementSiblingPrevious(button)
-
-					if (!target || (target as HTMLButtonElement).disabled || elementTagName(target) != 'BUTTON') return
-					elementTabIndexSet(button, -1)
-					elementTabIndexSet(target, 0)
-					eventPreventDefault(ev)
-					elementFocus(target)
-				}}
-				onFocusIn={(ev) => {
-					if (isButtonFocused) return
-
-					const children = elementChildren<HTMLButtonElement>(eventCurrentTarget(ev))
-					const button = eventTarget(ev) as HTMLButtonElement
-					elementTabIndexSet(button, 0)
-					isButtonFocused = true
-					for (const child of children) {
-						if (elementIsSame(child, button)) continue
-						if (elementTagName(child) != 'BUTTON') continue
-						if (child.disabled) continue
-
-						elementTabIndexSet(child, -1)
-					}
-				}}
 				onClick={(ev) => {
 					const button = documentActive()!
 					if (!elementValidTarget(
@@ -212,7 +159,7 @@ const DatePickerBody: ParentComponent<{
 						{ i() + 1 }
 					</SquareButton>)
 				}}</For>
-			</div>
+			</FocusableGroup2D>
 		</div>)
 	}
 
@@ -318,7 +265,7 @@ const DatePickerBody: ParentComponent<{
 		createEffect(() => {
 			viewDate()
 
-			const children = elementChildren<HTMLButtonElement>(div_year_ref!)
+			const children = elementChildren<HTMLButtonElement>(divYearRef!)
 			isButtonFocused = false
 			for (const child of children) {
 				if (elementTagName(child) != 'BUTTON') continue
@@ -330,7 +277,7 @@ const DatePickerBody: ParentComponent<{
 
 		return (<div
 			class="c-date-picker-year"
-			ref={div_year_ref}
+			ref={divYearRef}
 			onKeyDown={(ev) => {
 				const code = ev.code
 				if (

@@ -1,13 +1,13 @@
 import { mergeRefs } from "@solid-primitives/refs"
-import { children, createEffect, splitProps, type JSX, type ParentComponent } from "solid-js"
+import { children, createEffect, createMemo, splitProps, type JSX, type ParentComponent } from "solid-js"
 
 import { keyboardOnFocusIn, keyboardOnFocusOut, keyboardOnKeyDown, keyboardOnKeyDown2D } from "@/utils/keyboard"
 import { eventCall } from "@/utils/event"
-import { attrClassList } from "@/utils/attributes"
 import { arrayClear, arrayPush } from "@/utils/array"
 import { typeIsArray, typeIsString } from "@/utils/typecheck"
 import { elementAllBySelector } from "@/utils/element"
 import { cssIsValidSelector } from "@/utils/css"
+import { objectValues } from "@/utils/object"
 
 import './index.scss'
 
@@ -41,6 +41,17 @@ const FocusableGroup: ParentComponent<FocusableGroupProps> = ($props) => {
 		'onKeyDown', 'c:elements', 'c:arrowOptions',
 		'ref'
 	])
+	const hasClassName = createMemo<boolean>(() => {
+		const classList = other.classList
+		if (!classList) return false
+
+		const values = objectValues<boolean | undefined>(classList)
+		for (const value of values) {
+			if (value === true) return true
+		}
+
+		return false
+	})
 	const elements: HTMLElement[] = []
 	const content = children(() => props.children)
 	let divRef: HTMLDivElement
@@ -65,7 +76,7 @@ const FocusableGroup: ParentComponent<FocusableGroupProps> = ($props) => {
 
 	return <div
 		ref={mergeRefs(props.ref, r => divRef = r)}
-		class={attrClassList(FOCUSABLEGROUP_CLASSNAME, props.class)}
+		class={props.class ?? (hasClassName()? undefined : FOCUSABLEGROUP_CLASSNAME)}
 		onFocusIn={ev => {
 			eventCall(ev, props.onFocusIn)
 			keyboardOnFocusIn(ev, elements)
@@ -93,6 +104,17 @@ const FocusableGroup2D: ParentComponent<FocusableGroup2DProps> = ($props) => {
 		'onKeyDown', 'c:elements', 'c:columnCount',
 		'ref'
 	])
+	const hasClassName = createMemo<boolean>(() => {
+		const classList = other.classList
+		if (!classList) return false
+
+		const values = objectValues<boolean | undefined>(classList)
+		for (const value of values) {
+			if (value === true) return true
+		}
+
+		return false
+	})
 	const elements: HTMLElement[] = []
 	const content = children(() => props.children)
 	let divRef: HTMLDivElement
@@ -100,6 +122,8 @@ const FocusableGroup2D: ParentComponent<FocusableGroup2DProps> = ($props) => {
 	createEffect(() => {
 		const $elements = props["c:elements"]
 		content() // trigger effect
+
+		divRef.classList.length > 0
 
 		if (typeIsArray($elements)) {
 			arrayClear(elements)
@@ -117,7 +141,7 @@ const FocusableGroup2D: ParentComponent<FocusableGroup2DProps> = ($props) => {
 
 	return <div
 		ref={mergeRefs(props.ref, r => divRef = r)}
-		class={attrClassList(FOCUSABLEGROUP_CLASSNAME, props.class)}
+		class={props.class ?? (hasClassName()? undefined : FOCUSABLEGROUP_CLASSNAME)}
 		onFocusIn={ev => {
 			eventCall(ev, props.onFocusIn)
 			keyboardOnFocusIn(ev, elements)
