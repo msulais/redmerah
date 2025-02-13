@@ -16,6 +16,10 @@ export function arrayFindIndex<T>(
 	return arr.findIndex(predicate, thisArg)
 }
 
+export function arrayClear<T>(arr: T[]): void {
+	arr.length = 0
+}
+
 export function arraySplice<T>(arr: T[], start: number, deleteCount?: number): T[] {
 	return arr.splice(start, deleteCount)
 }
