@@ -1,4 +1,4 @@
-import { type JSX, type ParentComponent, splitProps, children, onMount, onCleanup, Show, mergeProps } from "solid-js"
+import { type JSX, type ParentComponent, splitProps, children, onMount, onCleanup, Show, createMemo } from "solid-js"
 import { mergeRefs } from "@solid-primitives/refs"
 
 import { attrSetIfExist } from "@/utils/attributes"
@@ -6,6 +6,7 @@ import { eventListenerAdd, eventListenerRemove } from "@/utils/event"
 import { timeTimerClear, timeTimerSet } from "@/utils/time"
 import { elementDispatchEvent } from "@/utils/element"
 import { documentBody } from "@/utils/document"
+import { typeIsBoolean } from "@/utils/typecheck"
 
 import List from "@/components/List"
 import Popover, { type PopoverProps, closePopover, openPopover, isPopoverOpen as isToastOpen, PopoverPosition } from "@/components/Popover"
@@ -49,22 +50,24 @@ function closeToast(toast: HTMLDivElement): void {
 type ToastProps = PopoverProps & {
 	'c:header'?: JSX.Element
 	'c:actions'?: JSX.Element
-	'c:actionAutoTabIndex'?: boolean
+	'c:actions_interactiveElements'?: string | HTMLElement[] | boolean
 	'c:leading'?: JSX.Element
 	'c:trailing'?: JSX.Element
-	'c:trailingAutoTabIndex'?: boolean
 }
 const Toast: ParentComponent<ToastProps> = ($props) => {
-	const $$props = mergeProps({
-		'c:actionAutoTabIndex': true,
-		'c:trailingAutoTabIndex': true,
-	}, $props)
-	const [props, other] = splitProps($$props, [
+	const [props, other] = splitProps($props, [
 		'c:leading', 'c:trailing', 'children', 'c:header',
 		'c:actions', 'classList', 'ref', 'c:onToggleOpen',
-		'c:trailingAutoTabIndex', 'c:actionAutoTabIndex'
+		'c:actions_interactiveElements'
 	])
 	const actions = children(() => props['c:actions'])
+	const actionInteractiveElements = createMemo(() => props["c:actions_interactiveElements"])
+
+	// hack to solve https://github.com/solidjs/solid/issues/2130
+	const getActionInteractiveElement = createMemo(() => typeIsBoolean(actionInteractiveElements())
+		? undefined
+		: actionInteractiveElements() as string | HTMLElement[]
+	)
 	let toastRef: HTMLDivElement
 	let isOpen = false
 	let timeId: number | null = null
@@ -146,24 +149,24 @@ const Toast: ParentComponent<ToastProps> = ($props) => {
 		<List
 			c:leading={props['c:leading']}
 			c:trailing={props['c:trailing']}
-			c:subtitle={props.children}
-			c:trailingAutoTabIndex={props['c:trailingAutoTabIndex']}>
+			c:subtitle={props.children}>
 			{ props['c:header'] }
 		</List>
 		<Show when={actions()}>
 			<Show
-				when={props['c:actionAutoTabIndex']}
-				fallback={<div class="c-toast-actions">
-					{actions()}
-				</div>}>
-				<FocusableGroup
+				when={actionInteractiveElements() === false}
+				fallback={<FocusableGroup
 					class="c-toast-actions"
+					c:elements={getActionInteractiveElement()}
 					c:arrowOptions={{
 						left: 'prev',
 						right: 'next'
 					}}>
 					{actions()}
-				</FocusableGroup>
+				</FocusableGroup>}>
+				<div class="c-toast-actions">
+					{actions()}
+				</div>
 			</Show>
 		</Show>
 	</Popover>)

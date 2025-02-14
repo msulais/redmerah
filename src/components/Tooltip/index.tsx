@@ -1,8 +1,8 @@
-import { createUniqueId, mergeProps, onCleanup, onMount, splitProps, type FlowComponent, type JSX, type ParentComponent } from "solid-js"
+import { createUniqueId, mergeProps, onCleanup, onMount, splitProps, type FlowComponent, type JSX } from "solid-js"
 
 import { attrRemove, attrSet, attrClassList } from "@/utils/attributes"
 import { eventListenerAdd, eventCall, eventCurrentTarget, eventTarget } from "@/utils/event"
-import { elementCreate, elementAnimate, elementAppendChild, elementClosest, elementDataset, elementDispatchEvent, elementRect, elementStyleSet, elementMatches, elementContains, elementById, elementClassListContains, elementIdSet, elementPopoverSet, elementTextContentSet } from "@/utils/element"
+import { elementCreate, elementAnimate, elementAppendChild, elementClosest, elementDataset, elementDispatchEvent, elementRect, elementStyleSet, elementMatches, elementContains, elementIdSet, elementPopoverSet, elementTextContentSet } from "@/utils/element"
 import { timeTimerClear, timeTimerSet } from "@/utils/time"
 import { FlyoutPosition as TooltipPosition } from "@/enums/position"
 import { getFlyoutPosition } from "@/utils/flyout"
@@ -15,7 +15,6 @@ import { documentActive, documentBody, documentHasFocus } from "@/utils/document
 import { stringCSSEscape, stringLength, stringTrim } from "@/utils/string"
 import { ElementIds } from "@/enums/ids"
 
-import { closePopover, openPopover, Popover, POPOVER_CLASS, type PopoverProps } from "@/components/Popover"
 import './index.scss'
 
 enum TooltipListenerEvents {
@@ -74,7 +73,6 @@ function initTooltip(): void {
 	let gap: number = 40
 	let useAnchor: boolean = false
 	let tooltipTextRef: HTMLDivElement
-	let tooltipRichRef: HTMLDivElement | null = null
 	let isOpen = false
 	let timeId: number | null = null
 
@@ -100,12 +98,6 @@ function initTooltip(): void {
 		if (!isOpen) return
 
 		isOpen = false
-		if (tooltipRichRef) {
-			closePopover(tooltipRichRef)
-			anchorElement = null
-			tooltipRichRef = null
-			return
-		}
 
 		if (!anchorElement) return
 
@@ -195,12 +187,11 @@ function initTooltip(): void {
 
 	function closeTooltip(ev: CustomEvent<TooltipCloseDetail>): void {
 		const {
-			endDelayDuration = $isMobile? 1500 : 800
+			endDelayDuration = $isMobile? 1500 : 200
 		} = ev.detail
 		if (timeId != null) timeTimerClear(timeId)
 		timeId = timeTimerSet(async () => {
 			hideTooltip()
-			tooltipRichRef = null
 			isOpen = false
 			timeId = null
 		}, endDelayDuration)
@@ -214,14 +205,13 @@ function initTooltip(): void {
 			gap: inputGap = 40,
 			position: inputPosition = TooltipPosition.centerTop,
 			useAnchor: inputUseAnchor = false,
-			startDelayDuration = 800,
+			startDelayDuration = isOpen? 200 : 500,
 		} = ev.detail
 		const close = () => {
-			const endDelayDuration = $isMobile? 1500 : 800
+			const endDelayDuration = $isMobile? 1500 : 200
 			if (timeId != null) timeTimerClear(timeId)
 			timeId = timeTimerSet(async () => {
 				hideTooltip()
-				tooltipRichRef = null
 				isOpen = false
 				timeId = null
 			}, endDelayDuration)
@@ -238,25 +228,9 @@ function initTooltip(): void {
 		if (!anchor) return close()
 		if (anchorElement === anchor) return
 
-		let richTooltip: HTMLElement | undefined
-		let hasRichTooltip = false
 		let text = elementDataset(anchor, 'tooltip') // [data-tooltip]
 		if (text && stringLength(stringTrim(text)) > 0) {
 			text = stringTrim(text)
-		}
-		else {
-			const tooltipId = elementDataset(anchor, 'richTooltip') // [data-rich-tooltip]
-			if (!tooltipId || stringLength(stringTrim(tooltipId)) == 0) return
-
-			const tooltip = elementById(tooltipId)
-			if (
-				!tooltip
-				|| !elementClassListContains(tooltip, POPOVER_CLASS)
-				|| !elementContains(currentTarget, tooltip)
-			) return
-
-			richTooltip = tooltip
-			hasRichTooltip = true
 		}
 
 		if (byFocus && documentHasFocus()) {
@@ -277,22 +251,6 @@ function initTooltip(): void {
 			gap = inputGap
 			position = inputPosition
 			useAnchor = inputUseAnchor
-
-			if (hasRichTooltip) {
-				tooltipRichRef = richTooltip! as HTMLDivElement
-				openPopover(tooltipRichRef, {
-					manualDismiss: true,
-					anchorRect: useAnchor? elementRect(anchor) : undefined,
-					pointer: {
-						x: pointerX,
-						y: pointerY
-					},
-					gap,
-					position,
-				})
-				return
-			}
-
 			elementTextContentSet(tooltipTextRef, text!)
 			tooltipTextRef.showPopover()
 			const tooltipRect: DOMRect = elementRect(tooltipTextRef)
@@ -550,80 +508,14 @@ const Tooltip: FlowComponent<TooltipProps> = ($props) => {
 	</div>)
 }
 
-type PopoverTooltipProps = PopoverProps
-
-/**
- * **Important**: This component must inside `<Tooltip>`
- * @param $props
- * @returns
- */
-const PopoverTooltip: ParentComponent<PopoverTooltipProps> = ($props) => {
-	const [props, other] = splitProps($props, [
-		'class',
-		'onFocusOut',
-		'onPointerLeave',
-		'onMouseDown',
-		'onPointerUp',
-		'onFocusIn',
-		'onPointerOver',
-		'onTouchStart',
-		'c:usePortal',
-	])
-
-	function stopProcess(): void {
-		timeTimerSet(() => {
-			elementDispatchEvent(
-				LISTENER_REF,
-				new CustomEvent(TooltipListenerEvents.stopProcess)
-			)
-		})
-	}
-
-	return <Popover
-		c:usePortal={false}
-		class={attrClassList('c-rich-tooltip', props.class)}
-		onFocusIn={ev => {
-			eventCall(ev, props.onFocusIn)
-			stopProcess()
-		}}
-		onFocusOut={ev => {
-			eventCall(ev, props.onFocusOut)
-			stopProcess()
-		}}
-		onPointerOver={ev => {
-			eventCall(ev, props.onPointerOver)
-			stopProcess()
-		}}
-		onTouchStart={ev => {
-			eventCall(ev, props.onTouchStart)
-			stopProcess()
-		}}
-		onPointerLeave={ev => {
-			eventCall(ev, props.onPointerLeave)
-			close()
-		}}
-		onMouseDown={ev => {
-			eventCall(ev, props.onMouseDown)
-			stopProcess()
-		}}
-		onPointerUp={ev => {
-			eventCall(ev, props.onPointerUp)
-			stopProcess()
-		}}
-		{...other}
-	/>
-}
-
 export {
 	TooltipAttributes,
 	Tooltip,
 	TooltipPosition,
-	PopoverTooltip
 }
 export type {
 	TooltipProps as TextTooltipProps,
 	TooltipOpenDetail,
 	TooltipCloseDetail,
-	PopoverTooltipProps
 }
 export default Tooltip

@@ -1,7 +1,7 @@
 import { KEY_ARROW_UP, KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT } from "@/constants/key_code"
 import { attrGet, attrHas, attrRemove, attrSet } from "./attributes"
 import { documentActive } from "./document"
-import { elementContains, elementFocus, elementId, elementIdSet, elementTabIndex, elementTabIndexSet, elementValidTarget } from "./element"
+import { elementContains, elementFocus, elementId, elementIdSet, elementTabIndex, elementTabIndexSet, elementTagName, elementValidTarget } from "./element"
 import { eventCurrentTarget, eventPreventDefault } from "./event"
 import { timeTimerClear, timeTimerSet } from "./time"
 import { arrayFindIndex, arrayLength, arraySome } from "./array"
@@ -19,7 +19,7 @@ const ELEMENTS_DATA: Record<
 > = {}
 
 export function keyboardOnFocusIn(
-	ev: FocusEvent & {currentTarget: HTMLDivElement},
+	ev: Event & {currentTarget: HTMLDivElement},
 	elements: HTMLElement[]
 ): void {
 	const active = documentActive()!
@@ -63,7 +63,7 @@ export function keyboardOnFocusIn(
 }
 
 export function keyboardOnFocusOut(
-	ev: FocusEvent & {currentTarget: HTMLDivElement},
+	ev: Event & {currentTarget: HTMLDivElement},
 	elements: HTMLElement[]
 ): void {
 	const self = eventCurrentTarget(ev)
@@ -141,6 +141,7 @@ export function keyboardOnKeyDown(
 	)
 	const isChildOfParent = elementContains(eventCurrentTarget(ev), active)
 	const index = arrayFindIndex(elements, e => e === active)
+	const tagName = elementTagName(active)
 	if (
 		allOptionsInvalid
 		|| invalidKeys
@@ -152,6 +153,8 @@ export function keyboardOnKeyDown(
 			&& !validLeft
 			&& !validRight
 		)
+		|| (tagName === 'INPUT' && (validLeft || validRight))
+		|| (tagName === 'TEXTAREA' && (validLeft || validRight || validUp || validDown))
 	) return
 
 	let direction: 'next' | 'prev' = 'next'
@@ -170,6 +173,11 @@ export function keyboardOnKeyDown(
 				eventPreventDefault(ev) // disable auto scroll
 				elementTabIndexSet(target, 0)
 				elementTabIndexSet(active, -1)
+
+				const tagName = elementTagName(target)
+				if (tagName === 'INPUT' || tagName === 'TEXTAREA') {
+					keyboardOnFocusOut(ev, elements) // to remove tabindex
+				}
 				break
 			}
 		}
@@ -194,18 +202,25 @@ export function keyboardOnKeyDown2D(
 	if (!active) return
 
 	const keyCode = ev.code
+	const validUp    = keyCode == KEY_ARROW_UP
+	const validDown  = keyCode == KEY_ARROW_DOWN
+	const validLeft  = keyCode == KEY_ARROW_LEFT
+	const validRight = keyCode == KEY_ARROW_RIGHT
 	const invalidKeys = (
-		keyCode != KEY_ARROW_UP
-		&& keyCode != KEY_ARROW_DOWN
-		&& keyCode != KEY_ARROW_RIGHT
-		&& keyCode != KEY_ARROW_LEFT
+		!validUp
+		&& !validRight
+		&& !validDown
+		&& !validLeft
 	)
 	const isChildOfParent = elementContains(eventCurrentTarget(ev), active)
 	const index = arrayFindIndex(elements, e => e === active)
+	const tagName = elementTagName(active)
 	if (
 		invalidKeys
 		|| !isChildOfParent
 		|| index < 0
+		|| (tagName === 'INPUT' && (validLeft || validRight))
+		|| (tagName === 'TEXTAREA' && (validLeft || validRight || validUp || validDown))
 	) return
 
 	let i = index
@@ -231,6 +246,11 @@ export function keyboardOnKeyDown2D(
 				eventPreventDefault(ev) // disable auto scroll
 				elementTabIndexSet(target, 0)
 				elementTabIndexSet(active, -1)
+
+				const tagName = elementTagName(target)
+				if (tagName === 'INPUT' || tagName === 'TEXTAREA') {
+					keyboardOnFocusOut(ev, elements) // to remove tabindex
+				}
 				break
 			}
 		}

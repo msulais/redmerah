@@ -1,9 +1,9 @@
-import { createSignal, createUniqueId, For, type VoidComponent } from "solid-js"
+import { createSignal, For, type VoidComponent } from "solid-js"
 
 import { numberSafe } from "@/utils/number"
 
-import { PopoverTooltip, Tooltip, TooltipPosition } from "@/components/Tooltip"
-import Button, { ButtonVariant } from "@/components/Button"
+import { Tooltip, TooltipPosition } from "@/components/Tooltip"
+import Button from "@/components/Button"
 import CheckBox from "@/components/CheckBox"
 import { NumberTextField } from "@/components/TextField"
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
@@ -12,7 +12,6 @@ import { Page, Playground, PlaygroundOptions } from "../_Body"
 import { eventCurrentTarget } from "@/utils/event"
 
 const _: VoidComponent = () => {
-	const richTooltipId = createUniqueId()
 	const [useAnchor, setUseAnchor] = createSignal<boolean>(false)
 	const [position, setPosition] = createSignal<TooltipPosition>(TooltipPosition.centerTop)
 	const [gap, setGap] = createSignal<number>(40)
@@ -33,11 +32,6 @@ const _: VoidComponent = () => {
 					Hover me please
 					<Icon data-tooltip="This is icon" c:code={0xE4B2}/>
 				</Button>
-				<Button data-rich-tooltip={richTooltipId}>Rich tooltip</Button>
-				<PopoverTooltip id={richTooltipId}>
-					<p style={{"margin-bottom": '8px'}}>Ullamco anim in magna ea ut labore velit ex occaecat elit voluptate laboris.</p>
-					<Button style={{color: 'rgb(var(--g-color-accent))'}} c:variant={ButtonVariant.tonal}>Learn more</Button>
-				</PopoverTooltip>
 			</Tooltip>
 		</Playground>
 		<PlaygroundOptions>

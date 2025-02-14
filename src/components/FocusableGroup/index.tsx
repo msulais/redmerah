@@ -1,118 +1,222 @@
-import { splitProps, type JSX, type ParentComponent } from "solid-js"
+import { mergeRefs } from "@solid-primitives/refs"
+import { children, createEffect, createMemo, splitProps, type JSX, type ParentComponent } from "solid-js"
 
-import { documentActive } from "@/utils/document"
-import { elementTagName, elementFocusByArrowKey, elementContains, elementChildrenRemoveTabIndex, elementChildrenTabIndex, elementTabIndexSet, elementIsChild, elementIsFocusable } from "@/utils/element"
-import { eventCall, eventCurrentTarget, eventPreventDefault } from "@/utils/event"
-import { KEY_ARROW_LEFT, KEY_ARROW_RIGHT } from "@/constants/key_code"
-import { attrClassList } from "@/utils/attributes"
-import { timeTimerClear, timeTimerSet } from "@/utils/time"
-import { typeIsNumber } from "@/utils/typecheck"
+import { keyboardOnFocusIn, keyboardOnFocusOut, keyboardOnKeyDown, keyboardOnKeyDown2D } from "@/utils/keyboard"
+import { eventCall } from "@/utils/event"
+import { arrayClear, arrayPush } from "@/utils/array"
+import { typeIsArray, typeIsString } from "@/utils/typecheck"
+import { elementAllBySelector } from "@/utils/element"
+import { cssIsValidSelector } from "@/utils/css"
+import { objectValues } from "@/utils/object"
+import { timeTimerSet } from "@/utils/time"
 
 import './index.scss'
 
+const INTERACTIVE_ELEMENT_SELECTOR = (
+	':is('
+		+ '[contenteditable],'
+		+ '[tabindex],'
+		+ 'a[href],'
+		+ 'area[href],'
+		+ 'button,'
+		+ 'select,'
+		+ 'input,'
+		+ 'textarea,'
+		+ 'iframe'
+	+ ')'
+)
 const FOCUSABLEGROUP_CLASSNAME = 'c-focusable-group'
 
 type FocusableGroupProps = JSX.HTMLAttributes<HTMLDivElement> & {
-	/**
-	 * if `true`, the default behaviour of `'keydown'` event
-	 * that control focus with arrow key will not fired
-	 */
-	'c:customArrowFocus'?: boolean
-	'c:arrowOptions'?: {
+	'c:elements'?: string | HTMLElement[]
+	'c:arrowOptions': {
 		up?: "next" | "prev"
 		down?: "next" | "prev"
 		left?: "next" | "prev"
 		right?: "next" | "prev"
 	}
-	'c:onBeforeSetTabIndex'?(el: HTMLElement): boolean
-	'c:onBeforeChangeFocus'?(el: HTMLElement): boolean
 }
 const FocusableGroup: ParentComponent<FocusableGroupProps> = ($props) => {
 	const [props, other] = splitProps($props, [
 		'class', 'onFocusIn', 'children', 'onFocusOut',
-		'onKeyDown', 'c:onBeforeSetTabIndex', 'c:customArrowFocus',
-		'c:arrowOptions', 'c:onBeforeChangeFocus'
+		'onKeyDown', 'c:elements', 'c:arrowOptions',
+		'ref'
 	])
-	let isTabIndexRemoved: boolean = true
-	let isFocusByArrowKey: boolean = false
-	let elementWithTabIndexZero: HTMLElement | null = null
-	let timeId: number | null = null
+	const hasClassName = createMemo<boolean>(() => {
+		const classList = other.classList
+		if (!classList) return false
+
+		const values = objectValues<boolean | undefined>(classList)
+		for (const value of values) {
+			if (value === true) return true
+		}
+
+		return false
+	})
+	const elements: HTMLElement[] = []
+	const content = children(() => props.children)
+	let timeOnFocusInId: number | null = null
+	let divRef: HTMLDivElement
+
+	function updateElements(): void {
+		if (timeOnFocusInId !== null) return
+
+		const $elements = props["c:elements"]
+		if (typeIsArray($elements)) {
+			arrayClear(elements)
+			arrayPush(elements, ...($elements as HTMLElement[]))
+		}
+		else if (typeIsString($elements) && cssIsValidSelector($elements as string)) {
+			arrayClear(elements)
+			arrayPush(elements, ...elementAllBySelector($elements as string, divRef))
+		}
+		else {
+			arrayClear(elements)
+			arrayPush(elements, ...elementAllBySelector(INTERACTIVE_ELEMENT_SELECTOR, divRef))
+		}
+
+		timeOnFocusInId = timeTimerSet(
+			() => timeOnFocusInId = null,
+			200
+		)
+	}
+
+	createEffect(() => {
+		const $elements = props["c:elements"]
+		content() // trigger effect
+
+		if (typeIsArray($elements)) {
+			arrayClear(elements)
+			arrayPush(elements, ...($elements as HTMLElement[]))
+		}
+		else if (typeIsString($elements) && cssIsValidSelector($elements as string)) {
+			arrayClear(elements)
+			arrayPush(elements, ...elementAllBySelector($elements as string, divRef))
+		}
+		else {
+			arrayClear(elements)
+			arrayPush(elements, ...elementAllBySelector(INTERACTIVE_ELEMENT_SELECTOR, divRef))
+		}
+	})
 
 	return <div
-		class={attrClassList(FOCUSABLEGROUP_CLASSNAME, props.class)}
+		ref={mergeRefs(props.ref, r => divRef = r)}
+		class={props.class ?? (hasClassName()? undefined : FOCUSABLEGROUP_CLASSNAME)}
 		onFocusIn={ev => {
 			eventCall(ev, props.onFocusIn)
-			const self = eventCurrentTarget(ev)
-
-			// 'focusin' event fired before `from_arrow_key` assigned
-			timeTimerSet(() => {
-				if (!isTabIndexRemoved) {
-					if (!isFocusByArrowKey && elementWithTabIndexZero) {
-						const is_child = elementIsChild(documentActive()!, self)
-						if (is_child) {
-							elementTabIndexSet(documentActive()!, 0)
-							elementTabIndexSet(elementWithTabIndexZero, -1)
-						}
-					}
-					isFocusByArrowKey = false
-					return
-				}
-
-				elementWithTabIndexZero = elementChildrenTabIndex(
-					self,
-					props['c:onBeforeSetTabIndex'] ?? elementIsFocusable
-				)
-				isTabIndexRemoved = false
-				isFocusByArrowKey = false
-			})
+			updateElements()
+			keyboardOnFocusIn(ev, elements)
 		}}
 		onFocusOut={ev => {
 			eventCall(ev, props.onFocusOut)
-			const self = eventCurrentTarget(ev)
-
-			if (typeIsNumber(timeId)) timeTimerClear(timeId!)
-			timeId = timeTimerSet(() => {
-				timeId = null
-				const active_el = documentActive()
-				if (active_el && elementContains(self, active_el)) return
-
-				elementChildrenRemoveTabIndex(self, props['c:onBeforeSetTabIndex'])
-				isTabIndexRemoved = true
-			}, 200)
+			keyboardOnFocusOut(ev, elements)
 		}}
 		onKeyDown={ev => {
 			eventCall(ev, props.onKeyDown)
-			if (props['c:customArrowFocus']) return
-
-			const active = documentActive()
-			if (!active) return
-
-			const code = ev.code
-			const tagName = elementTagName(active)
-			if (tagName == 'INPUT' && (code == KEY_ARROW_RIGHT || code == KEY_ARROW_LEFT)) return
-			if (tagName == 'TEXTAREA') return
-
-			elementWithTabIndexZero = elementFocusByArrowKey(
-				eventCurrentTarget(ev),
-				code,
-				props['c:arrowOptions'],
-				props['c:onBeforeChangeFocus'] ?? elementIsFocusable
-			)
-			if (elementWithTabIndexZero) {
-				isFocusByArrowKey = true
-				eventPreventDefault(ev) // disable scroll
-			}
+			keyboardOnKeyDown(ev, elements, props["c:arrowOptions"])
 		}}
 		{...other}>
-		{props.children}
+		{content()}
+	</div>
+}
+
+type FocusableGroup2DProps = JSX.HTMLAttributes<HTMLDivElement> & {
+	'c:elements'?: string | HTMLElement[]
+	'c:columnCount': number
+}
+const FocusableGroup2D: ParentComponent<FocusableGroup2DProps> = ($props) => {
+	const [props, other] = splitProps($props, [
+		'class', 'onFocusIn', 'children', 'onFocusOut',
+		'onKeyDown', 'c:elements', 'c:columnCount',
+		'ref'
+	])
+	const hasClassName = createMemo<boolean>(() => {
+		const classList = other.classList
+		if (!classList) return false
+
+		const values = objectValues<boolean | undefined>(classList)
+		for (const value of values) {
+			if (value === true) return true
+		}
+
+		return false
+	})
+	const elements: HTMLElement[] = []
+	const content = children(() => props.children)
+	let timeOnFocusInId: number | null = null
+	let divRef: HTMLDivElement
+
+	function updateElements(): void {
+		if (timeOnFocusInId !== null) return
+
+		const $elements = props["c:elements"]
+		if (typeIsArray($elements)) {
+			arrayClear(elements)
+			arrayPush(elements, ...($elements as HTMLElement[]))
+		}
+		else if (typeIsString($elements) && cssIsValidSelector($elements as string)) {
+			arrayClear(elements)
+			arrayPush(elements, ...elementAllBySelector($elements as string, divRef))
+		}
+		else {
+			arrayClear(elements)
+			arrayPush(elements, ...elementAllBySelector(INTERACTIVE_ELEMENT_SELECTOR, divRef))
+		}
+
+		timeOnFocusInId = timeTimerSet(
+			() => timeOnFocusInId = null,
+			200
+		)
+	}
+
+	createEffect(() => {
+		const $elements = props["c:elements"]
+		content() // trigger effect
+
+		divRef.classList.length > 0
+
+		if (typeIsArray($elements)) {
+			arrayClear(elements)
+			arrayPush(elements, ...($elements as HTMLElement[]))
+		}
+		else if (typeIsString($elements) && cssIsValidSelector($elements as string)) {
+			arrayClear(elements)
+			arrayPush(elements, ...elementAllBySelector($elements as string, divRef))
+		}
+		else {
+			arrayClear(elements)
+			arrayPush(elements, ...elementAllBySelector(INTERACTIVE_ELEMENT_SELECTOR, divRef))
+		}
+	})
+
+	return <div
+		ref={mergeRefs(props.ref, r => divRef = r)}
+		class={props.class ?? (hasClassName()? undefined : FOCUSABLEGROUP_CLASSNAME)}
+		onFocusIn={ev => {
+			eventCall(ev, props.onFocusIn)
+			updateElements()
+			keyboardOnFocusIn(ev, elements)
+		}}
+		onFocusOut={ev => {
+			eventCall(ev, props.onFocusOut)
+			keyboardOnFocusOut(ev, elements)
+		}}
+		onKeyDown={ev => {
+			eventCall(ev, props.onKeyDown)
+			keyboardOnKeyDown2D(ev, elements, props["c:columnCount"])
+		}}
+		{...other}>
+		{content()}
 	</div>
 }
 
 export {
 	FocusableGroup,
+	FocusableGroup2D,
 	FOCUSABLEGROUP_CLASSNAME
 }
 export type {
-	FocusableGroupProps
+	FocusableGroupProps,
+	FocusableGroup2DProps
 }
 export default FocusableGroup

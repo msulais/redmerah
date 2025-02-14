@@ -1,8 +1,9 @@
-import { type JSX, type ParentComponent, splitProps, children, Show, mergeProps } from "solid-js"
+import { type JSX, type ParentComponent, splitProps, children, Show, createMemo } from "solid-js"
 
 import { AnimationEffectTiming } from "@/enums/animation"
 import { elementAnimate } from "@/utils/element"
 import { promiseDone } from "@/utils/object"
+import { typeIsBoolean } from "@/utils/typecheck"
 
 import { closeModal, focusModal, Modal, openModal, type ModalProps } from "@/components/Modal"
 import FocusableGroup from "@/components/FocusableGroup"
@@ -18,18 +19,22 @@ function openDialog(dialog: HTMLDialogElement, options?: {
 type DialogProps = ModalProps & {
 	'c:header'?: JSX.Element
 	'c:actions'?: JSX.Element
-	'c:actionsAutoTabIndex'?: boolean
+	'c:actions_interactiveElements'?: string | HTMLElement[] | boolean
 }
 const Dialog: ParentComponent<DialogProps> = ($props) => {
-	const animation_options = {duration: 200, easing: AnimationEffectTiming.springBounce}
-	const $$props = mergeProps({
-		'c:actionsAutoTabIndex': true
-	}, $props)
-	const [props, other] = splitProps($$props, [
+	const animationOptions = {duration: 200, easing: AnimationEffectTiming.springBounce}
+	const [props, other] = splitProps($props, [
 		'c:header', 'c:actions', 'children', 'classList',
 		'style', 'c:openAnimation', 'c:closeAnimation',
-		'c:actionsAutoTabIndex'
+		'c:actions_interactiveElements'
 	])
+	const actionInteractiveElements = createMemo(() => props["c:actions_interactiveElements"])
+
+	// hack to solve https://github.com/solidjs/solid/issues/2130
+	const getActionInteractiveElement = createMemo(() => typeIsBoolean(actionInteractiveElements())
+		? undefined
+		: actionInteractiveElements() as string | HTMLElement[]
+	)
 	const actions = children(() => props['c:actions'])
 	const header = children(() => props['c:header'])
 
@@ -48,7 +53,7 @@ const Dialog: ParentComponent<DialogProps> = ($props) => {
 			else promiseDone(elementAnimate(
 				el,
 				{ transform: ['translate(-50%, calc(-50% - 12px))', 'translate(-50%, -50%)'] },
-				animation_options
+				animationOptions
 			).finished, done)
 		}}
 		c:closeAnimation={(el, done) => {
@@ -56,7 +61,7 @@ const Dialog: ParentComponent<DialogProps> = ($props) => {
 			else promiseDone(elementAnimate(
 				el,
 				{ transform: ['translate(-50%, -50%)', 'translate(-50%, calc(-50% - 12px))'] },
-				animation_options
+				animationOptions
 			).finished, done)
 		}}
 		{...other}>
@@ -66,16 +71,19 @@ const Dialog: ParentComponent<DialogProps> = ($props) => {
 		<div class="c-dialog-content">{props.children}</div>
 		<Show when={actions()}>
 			<Show
-				when={props['c:actionsAutoTabIndex']}
-				fallback={<div class="c-dialog-actions">
-					{actions()}
-				</div>}>
-				<FocusableGroup
+				when={actionInteractiveElements() === false}
+				fallback={<FocusableGroup
 					class="c-dialog-actions"
+					c:elements={getActionInteractiveElement()}
 					c:arrowOptions={{
 						left: 'prev',
 						right: 'next'
-					}}>{actions()}</FocusableGroup>
+					}}>
+					{actions()}
+				</FocusableGroup>}>
+				<div class="c-dialog-actions">
+					{actions()}
+				</div>
 			</Show>
 		</Show>
 	</Modal>)

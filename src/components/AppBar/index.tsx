@@ -1,32 +1,34 @@
-import { children, mergeProps, Show, splitProps, type JSX, type ParentComponent } from "solid-js"
+import { children, createMemo, Show, splitProps, type JSX, type ParentComponent } from "solid-js"
 
 import { attrClassList } from "@/utils/attributes"
+import { typeIsBoolean } from "@/utils/typecheck"
 
 import FocusableGroup from "@/components/FocusableGroup"
 import './index.scss'
 
 type AppBarProps = JSX.HTMLAttributes<HTMLDivElement> & {
+	'c:interactiveElements'?: string | HTMLElement[] | boolean
 	'c:leading'?: JSX.Element
 	'c:trailing'?: JSX.Element
-	'c:trailingAutoTabIndex'?: boolean
 	'c:headline'?: JSX.Element
 }
 
 const AppBar: ParentComponent<AppBarProps> = ($props) => {
-	const $$props = mergeProps({
-		'c:trailingAutoTabIndex': true
-	}, $props)
-	const [props, other] = splitProps($$props, [
+	const [props, other] = splitProps($props, [
 		'children', 'c:leading', 'c:trailing', 'c:headline',
-		'class', 'c:trailingAutoTabIndex'
+		'class', 'c:interactiveElements'
 	])
+	const interactiveElement = createMemo(() => props["c:interactiveElements"])
+
+	// hack to solve https://github.com/solidjs/solid/issues/2130
+	const getInteractiveElement = createMemo(() => typeIsBoolean(interactiveElement())
+		? undefined
+		: interactiveElement() as string | HTMLElement[]
+	)
 	const leading = children(() => props['c:leading'])
 	const headline = children(() => props['c:headline'])
 	const trailing = children(() => props['c:trailing'])
-
-	return (<div
-		class={attrClassList('c-appbar', props.class ?? '')}
-		{...other}>
+	const C = () => (<>
 		<Show when={leading()}>
 			<div class="c-appbar-leading">{leading()}</div>
 		</Show>
@@ -38,20 +40,29 @@ const AppBar: ParentComponent<AppBarProps> = ($props) => {
 		</div>
 		<Show when={trailing()}>
 			<div class="c-appbar-trailing">
-				<Show
-					when={props['c:trailingAutoTabIndex']}
-					fallback={trailing()}>
-					<FocusableGroup
-						c:arrowOptions={{
-							left: 'prev',
-							right: 'next'
-						}}>
-						{trailing()}
-					</FocusableGroup>
-				</Show>
+				{trailing()}
 			</div>
 		</Show>
-	</div>)
+	</>)
+
+	return (<Show
+		when={interactiveElement() === false}
+		fallback={<FocusableGroup
+			c:arrowOptions={{
+				left: 'prev',
+				right: 'next'
+			}}
+			c:elements={getInteractiveElement()}
+			class={attrClassList('c-appbar', props.class ?? '')}
+			{...other}>
+			<C/>
+		</FocusableGroup>}>
+		<div
+			class={attrClassList('c-appbar', props.class ?? '')}
+			{...other}>
+			<C/>
+		</div>
+	</Show>)
 }
 
 export default AppBar

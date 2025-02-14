@@ -21,7 +21,6 @@ import Button, { IconButton, type ButtonProps } from '@/components/Button'
 import { closePopover, isPopoverOpen, openPopover, repositionPopover, PopoverPosition as SearchMenuPosition } from '@/components/Popover'
 import { MenuItem, LinkMenuItem, MenuDivider, MenuHeader, MenuPosition, openMenu, PopoverMenu, type PopoverMenuProps } from '@/components/Menu'
 import Modal, { type ModalProps } from '@/components/Modal'
-import FocusableGroup from '@/components/FocusableGroup'
 import Tooltip from '@/components/Tooltip'
 import './index.scss'
 
@@ -72,7 +71,6 @@ const TextFieldButton: ParentComponent<TextFieldButtonProps> = ($props) => {
 type AreaTextFieldProps = Omit<JSX.TextareaHTMLAttributes<HTMLTextAreaElement>, 'children' | 'rows' | 'columns'> & {
 	'c:leading'?: JSX.Element
 	'c:trailing'?: JSX.Element
-	'c:trailingAutoTabIndex'?: boolean
 	'c:label'?: string
 	'c:focused'?: boolean
 	'c:minLine'?: number
@@ -86,7 +84,6 @@ type AreaTextFieldProps = Omit<JSX.TextareaHTMLAttributes<HTMLTextAreaElement>, 
 const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 	const $$props = mergeProps({
 		'c:autoValidation': true,
-		'c:trailingAutoTabIndex': true,
 		'c:autoHideLabel': true,
 		id: createUniqueId()
 	}, $props)
@@ -97,7 +94,7 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 		'onFocus', 'onBlur', 'placeholder', 'c:autoHideLabel',
 		'value', 'c:autoShowClearButton', 'c:tooltipClear',
 		'c:minLine', 'c:maxLine', 'c:attrWrapper',
-		'c:trailingAutoTabIndex', 'style'
+		'style'
 	])
 	const [wrapperProps, otherWrapperProps] = splitProps(props['c:attrWrapper']! ?? {}, [
 		'class', 'onClick'
@@ -124,20 +121,6 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 		setHeight(lines * lineHeight())
 		setValue(value ?? '')
 	})
-
-	const TrailingContent: VoidComponent = () => {
-		return (<>
-			{trailing()}
-			<Show when={isShowClearButton()}>
-				<TextFieldButton
-					data-tooltip={props['c:tooltipClear'] ?? 'Clear'}
-					type={'button'}
-					id={buttonClearId}>
-					<Icon c:code={ICON_DISMISS}/>
-				</TextFieldButton>
-			</Show>
-		</>)
-	}
 
 	return (<div
 		class={attrClassList('c-area-textfield', wrapperProps.class ?? '')}
@@ -216,12 +199,14 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 			placeholder={props.placeholder ?? (props['c:autoHideLabel'] && props['c:label']? `${props['c:label']}` : undefined)}
 			{...other}></textarea>
 		<Show when={trailing() || isShowClearButton()}>
-			<Show
-				when={props['c:trailingAutoTabIndex']}
-				fallback={<TrailingContent />}>
-				<FocusableGroup c:arrowOptions={{left: 'prev', right: 'next'}}>
-					<TrailingContent />
-				</FocusableGroup>
+			{trailing()}
+			<Show when={isShowClearButton()}>
+				<TextFieldButton
+					data-tooltip={props['c:tooltipClear'] ?? 'Clear'}
+					type={'button'}
+					id={buttonClearId}>
+					<Icon c:code={ICON_DISMISS}/>
+				</TextFieldButton>
 			</Show>
 		</Show>
 	</div>)
@@ -231,7 +216,6 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 type TextFieldProps = JSX.InputHTMLAttributes<HTMLInputElement> & {
 	'c:leading'?: JSX.Element
 	'c:trailing'?: JSX.Element
-	'c:trailingAutoTabIndex'?: boolean
 	'c:label'?: string
 	'c:focused'?: boolean
 	'c:autoShowClearButton'?: boolean
@@ -244,7 +228,6 @@ type TextFieldProps = JSX.InputHTMLAttributes<HTMLInputElement> & {
 const TextField: VoidComponent<TextFieldProps> = ($props) => {
 	const $$props = mergeProps({
 		'c:autoValidation': true,
-		'c:trailingAutoTabIndex': true,
 		'c:autoHideLabel': true,
 		type: 'text',
 		id: createUniqueId()
@@ -256,7 +239,6 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 		'onFocus', 'onBlur', 'placeholder', 'c:autoHideLabel',
 		'value', 'c:autoShowClearButton', 'c:tooltipClear',
 		'c:autoSelectAll', 'c:autoValidation',
-		'c:trailingAutoTabIndex'
 	])
 	const [wrapperProps, otherWrapperProps] = splitProps(props['c:attrWrapper']! ?? {}, [
 		'class', 'onClick'
@@ -274,20 +256,6 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 		const value = props.value
 		setValue(v => `${value ?? v}`)
 	})
-
-	const TrailingContent: VoidComponent = () => {
-		return (<>
-			{trailing()}
-			<Show when={isShowClearButton()}>
-				<TextFieldButton
-					data-tooltip={props['c:tooltipClear'] ?? 'Clear'}
-					type={'button'}
-					id={buttonClearId}>
-					<Icon c:code={ICON_DISMISS}/>
-				</TextFieldButton>
-			</Show>
-		</>)
-	}
 
 	return (<div
 		class={attrClassList('c-textfield', wrapperProps.class ?? '')}
@@ -352,12 +320,14 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 			{...other}
 		/>
 		<Show when={trailing() || isShowClearButton()}>
-			<Show
-				when={props['c:trailingAutoTabIndex']}
-				fallback={<TrailingContent />}>
-				<FocusableGroup c:arrowOptions={{left: 'prev', right: 'next'}}>
-					<TrailingContent />
-				</FocusableGroup>
+			{trailing()}
+			<Show when={isShowClearButton()}>
+				<TextFieldButton
+					data-tooltip={props['c:tooltipClear'] ?? 'Clear'}
+					type={'button'}
+					id={buttonClearId}>
+					<Icon c:code={ICON_DISMISS}/>
+				</TextFieldButton>
 			</Show>
 		</Show>
 	</div>)

@@ -1,14 +1,13 @@
-import { children, createContext, mergeProps, Show, splitProps, useContext, type Accessor, type JSX, type ParentComponent, type VoidComponent } from "solid-js"
+import { children, createContext, createMemo, mergeProps, Show, splitProps, useContext, type Accessor, type JSX, type ParentComponent, type VoidComponent } from "solid-js"
 
 import { attrSetIfExist, attrClassList } from "@/utils/attributes"
-import { eventPreventDefault } from "@/utils/event"
-import { KEY_ARROW_DOWN, KEY_ARROW_UP } from "@/constants/key_code"
+import { AppColors } from "@/enums/colors"
+import { typeIsBoolean } from "@/utils/typecheck"
 
 import Icon from "@/components/Icon"
 import Button, { ButtonIndicatorPosition, ButtonVariant, type ButtonProps } from "@/components/Button"
 import FocusableGroup from "@/components/FocusableGroup"
 import './index.scss'
-import { AppColors } from "@/enums/colors"
 
 type SideNavigationContextProps = {
 	expanded: Accessor<boolean>
@@ -59,66 +58,58 @@ const SideNavigationItem: ParentComponent<SideNavigationItemProps> = ($props) =>
 
 type SideNavigationProps = JSX.HTMLAttributes<HTMLDivElement> & {
 	'c:header'?: JSX.Element
-	'c:headerAutoTabIndex'?: boolean
 	'c:footer'?: JSX.Element
-	'c:footerAutoTabIndex'?: boolean
-	'c:childrenAutoTabIndex'?: boolean
 	'c:expanded'?: boolean
+	'c:interactiveElements'?: string | HTMLElement[] | boolean
 }
 const SideNavigation: ParentComponent<SideNavigationProps> = ($props) => {
 	const $$props = mergeProps({
-		'c:headerAutoTabIndex': true,
-		'c:footerAutoTabIndex': true,
-		'c:childrenAutoTabIndex': true,
 		'c:expanded': true
 	}, $props)
 	const [props, other] = splitProps($$props, [
 		'children', 'c:expanded', 'c:header', 'c:footer',
-		'class', 'c:headerAutoTabIndex', 'c:footerAutoTabIndex',
-		'c:childrenAutoTabIndex'
+		'class', 'c:interactiveElements'
 	])
+	const interactiveElement = createMemo(() => props["c:interactiveElements"])
+
+	// hack to solve https://github.com/solidjs/solid/issues/2130
+	const getInteractiveElement = createMemo(() => typeIsBoolean(interactiveElement())
+		? undefined
+		: interactiveElement() as string | HTMLElement[]
+	)
 
 	// hack to make Context works
 	const Items: VoidComponent = () => {
 		const header = children(() => props['c:header'])
 		const footer = children(() => props['c:footer'])
 		const content = children(() => props.children)
-		return (<>
+		const C = () => (<>
 			<Show when={header()}>
 				<div class="c-side-navigation-header">
-					<Show when={props['c:headerAutoTabIndex']} fallback={header()}>
-						<FocusableGroup c:arrowOptions={{
-							up: 'prev',
-							down: 'next'
-						}}>{header()}</FocusableGroup>
-					</Show>
+					{header()}
 				</div>
 				<div style="flex:1" />
 			</Show>
-			<Show when={props['c:childrenAutoTabIndex']} fallback={content()}>
-				<FocusableGroup c:arrowOptions={{
-					up: 'prev',
-					down: 'next'
-				}}
-				onKeyDown={ev => {
-					const code = ev.code
-					if (code != KEY_ARROW_UP && code != KEY_ARROW_DOWN) return
-
-					eventPreventDefault(ev)
-				}}>{content()}</FocusableGroup>
-			</Show>
+			{content()}
 			<Show when={footer()}>
 				<div style="flex:1" />
 				<div class="c-side-navigation-footer">
-					<Show when={props['c:footerAutoTabIndex']} fallback={footer()}>
-						<FocusableGroup c:arrowOptions={{
-							up: 'prev',
-							down: 'next'
-						}}>{footer()}</FocusableGroup>
-					</Show>
+					{footer()}
 				</div>
 			</Show>
 		</>)
+		return (<Show
+			when={interactiveElement() === false}
+			fallback={<FocusableGroup
+				c:arrowOptions={{
+					up: 'prev',
+					down: 'next'
+				}}
+				c:elements={getInteractiveElement()}>
+				<C/>
+			</FocusableGroup>}>
+			<C/>
+		</Show>)
 	}
 
 	return (<div
