@@ -2,7 +2,6 @@ import { For, Show, createMemo, createSelector, createSignal, onMount, type Void
 
 import type { AppItem } from "@/types/apps"
 import { storageGet, storageSet } from "@/utils/storage"
-import { attrSetIfExist } from "@/utils/attributes"
 import { LocalStorageKeys } from "@/enums/storage"
 import { APPS } from "@/constants/apps"
 import { eventCurrentTarget, eventPreventDefault } from "@/utils/event"
@@ -21,15 +20,17 @@ import Menu, { closeMenu, LinkMenuItem, MenuDivider, MenuItem, MenuPosition, ope
 import Tooltip from "@/components/Tooltip"
 import Dialog, { closeDialog, openDialog } from "@/components/Dialog"
 import CSS from './_index.module.scss'
-import { elementAnimate, elementStyleRemove, elementStyleSet } from "@/utils/element"
+import { elementAnimate, elementStyle, elementStyleRemove, elementStyleSet } from "@/utils/element"
 import { promiseDone } from "@/utils/object"
 import { AnimationEffectTiming } from "@/enums/animation"
+import { FocusableGroup2D } from "@/components/FocusableGroup"
 
 export const MainElement: VoidComponent = () => {
 	const [isMenuActionsOpen, setIsMenuActionsOpen] = createSignal<boolean>(false)
 	const [pinnedApps, setPinnedApps] = createSignal<string[]>([])
 	const [selectedApp, setSelectedApp] = createSignal<AppItem | null>(null)
 	const [searchText, setSearchText] = createSignal<string>('')
+	const [columnCount, setColumnCount] = createSignal<number>(0)
 	const isSelected = createSelector<string[], string>(pinnedApps, (a, b) => arraySome(b, (v) => v == a))
 	const getSelectedLink = createMemo(() => selectedApp()? selectedApp()!.link : '')
 	const getSelectedName = createMemo(() => selectedApp()? selectedApp()!.name : '')
@@ -37,6 +38,7 @@ export const MainElement: VoidComponent = () => {
 	let dialogInfoRef: HTMLDialogElement
 	let menuActionsRef: HTMLDialogElement
 	let timeId: number | null = null
+	let timeColumnCountId: number | null = null
 
 	function pinApp(link: string): void {
 		setPinnedApps(v => isSelected(link)? arrayFilter(v, a => a != link) :  [...v, link])
@@ -80,8 +82,21 @@ export const MainElement: VoidComponent = () => {
 				c:label="Search apps"
 			/>
 		</Tooltip>
-		<div>
-			<For each={arraySort(APPS, (a, b) => stringLocaleCompare(a.name, b.name))}>{(app, i) =>
+		<FocusableGroup2D
+			c:columnCount={columnCount()}
+			onFocusIn={(ev) => {
+				if (timeColumnCountId === null) setColumnCount(arrayLength(stringSplit(
+					stringTrim(elementStyle(eventCurrentTarget(ev), "grid-template-columns")),
+					" "
+				)))
+				else timeTimerClear(timeColumnCountId)
+
+				timeColumnCountId = timeTimerSet(() => timeColumnCountId = null, 200)
+			}}>
+			<For each={arraySort(
+				arraySort(APPS, (a, b) => stringLocaleCompare(a.name, b.name)),
+				(a) => isSelected(a.link)? -1 : 1
+			)}>{(app, i) =>
 				<Show when={
 					stringTrim(searchText()) == ''
 					|| regexTest(
@@ -90,7 +105,6 @@ export const MainElement: VoidComponent = () => {
 					)
 				}>
 					<LinkButton
-						data-pinned={attrSetIfExist(isSelected(app.link))}
 						href={app.link}
 						c:focused={getSelectedLink() == app.link && isMenuActionsOpen()}
 						onContextMenu={ev => {
@@ -140,7 +154,7 @@ export const MainElement: VoidComponent = () => {
 					</LinkButton>
 				</Show>
 			}</For>
-		</div>
+		</FocusableGroup2D>
 		<Menu ref={r => menuActionsRef = r} c:onToggleOpen={isOpen => setIsMenuActionsOpen(isOpen)}>
 			<MenuItem
 				onClick={() => {

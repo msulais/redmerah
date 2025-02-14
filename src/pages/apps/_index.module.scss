@@ -31,10 +31,6 @@
 			text-transform: capitalize;
 			position: relative;
 			width: 100%;
-
-			&[data-pinned] {
-				order: -1;
-			}
 		}
 
 		& :global(.c-icon) {
