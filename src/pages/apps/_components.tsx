@@ -110,7 +110,7 @@ export const MainElement: VoidComponent = () => {
 							onLoad={ev => {
 								const self = eventCurrentTarget(ev)
 								images[i()] = self
-								if (arrayLength(images) < arrayLength(APPS)) return
+								if (arrayLength(images) !== arrayLength(APPS)) return
 
 								for (let i = 0; i < arrayLength(images); i++) {
 									const img = images[i]
@@ -122,7 +122,7 @@ export const MainElement: VoidComponent = () => {
 											transform: ['scale(0)', 'scale(1)']
 										}, {
 											duration: 300,
-											easing: AnimationEffectTiming.spring,
+											easing: AnimationEffectTiming.springBounce,
 											delay: i * 50
 										}).finished,
 										() => {
