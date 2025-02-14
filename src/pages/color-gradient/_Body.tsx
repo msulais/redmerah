@@ -21,7 +21,7 @@ import { ICON_ADD, ICON_ADD_CIRCLE, ICON_CHEVRON_DOWN, ICON_CIRCLE, ICON_COPY, I
 
 import Icon from "@/components/Icon"
 import Button, { ButtonVariant, IconButton, SquareButton } from "@/components/Button"
-import Tooltip, { PopoverTooltip } from "@/components/Tooltip"
+import Tooltip from "@/components/Tooltip"
 import CheckBox from "@/components/CheckBox"
 import TextField, { updateTextFieldValue, NumberTextField, TextFieldButton } from "@/components/TextField"
 import Menu, { closeMenu, MenuDivider, MenuItem, MenuPosition, openMenu } from "@/components/Menu"
@@ -63,19 +63,12 @@ const GradientDataList: VoidComponent<{
 	}
 
 	const GradientDataItem: VoidComponent<{data: GradientData; index: number}> = ($props) => {
-		const id = createUniqueId()
 		return (<>
 			<SquareButton
 				c:focused={selectedGradientDataIndex() == $props.index && isMenuActionOpen()}
-				data-rich-tooltip={id}
 				data-gradient-data-item-index={$props.index}>
 				<div data-gradient style={{"background-image": arrayJoin(arrayMap($props.data.gradients, gradient => gradientToCSSText(gradient)), ',')}}/>
 			</SquareButton>
-			<PopoverTooltip id={id}>
-				<For each={$props.data.gradients}>{gradient =>
-					<pre><code>{gradientToCSSText(gradient, settings().colorSpace, true)}</code></pre>
-				}</For>
-			</PopoverTooltip>
 		</>)
 	}
 
