@@ -21,25 +21,15 @@ export function removeSplashScreen(timeout: number = 0): void {
 		const animationOption = {duration: 500, easing: AnimationEffectTiming.spring}
 		const body = documentBody()
 
-		// !important: don't remove. Use to make splash `transform` property works
 		windowScrollTo({top: 0, behavior: 'instant'})
-
+		elementRemove(splashRef)
 		elementStyleSet(body, 'will-change', 'transform')
-		elementStyleSet(splashRef, 'will-change', 'transform opacity')
 		promiseDone(
 			elementAnimate(body, {
 				transform: ['translateY(10dvh)', 'translateY(0)'],
 			}, animationOption).finished,
-			() => elementStyleRemove(body, 'will-change')
-		)
-		promiseDone(
-			elementAnimate(splashRef, {
-				transform: ['translateY(0)', 'translateY(100dvh)'],
-				opacity: [1, 0]
-			}, animationOption).finished,
 			() => {
-				elementStyleRemove(splashRef, 'will-change')
-				elementRemove(splashRef)
+				elementStyleRemove(body, 'will-change')
 				windowScrollTo({top: scrollY, behavior: 'smooth'})
 			}
 		)
