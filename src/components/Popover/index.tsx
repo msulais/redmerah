@@ -245,7 +245,7 @@ type PopoverProps = Omit<JSX.HTMLAttributes<HTMLDivElement>, 'style'> & {
 	'c:closeAnimation'?(el: HTMLDivElement, done: () => void): unknown
 }
 const Popover: ParentComponent<PopoverProps> = ($props) => {
-	const $$props = mergeProps({c_use_portal: true, id: createUniqueId()}, $props)
+	const $$props = mergeProps({'c:usePortal': true, id: createUniqueId()}, $props)
 	const [props, other] = splitProps($$props, [
 		'ref', 'c:onToggleOpen', 'children', 'onToggle',
 		'class', 'c:usePortal', 'style', 'c:openAnimation',
