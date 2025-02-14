@@ -7,7 +7,7 @@ import { LocalStorageKeys } from "@/enums/storage"
 import { APPS } from "@/constants/apps"
 import { eventCurrentTarget, eventPreventDefault } from "@/utils/event"
 import { tryRemoveSplashScreen } from "@/scripts/splash"
-import { arrayFilter, arrayJoin, arraySome, arraySort } from "@/utils/array"
+import { arrayFilter, arrayJoin, arrayLength, arraySome, arraySort } from "@/utils/array"
 import { stringLocaleCompare, stringSplit, stringToLowerCase, stringTrim } from "@/utils/string"
 import { navigatorClipboardWriteText, navigatorShare } from "@/utils/navigator"
 import { regexTest } from "@/utils/regex"
@@ -21,6 +21,9 @@ import Menu, { closeMenu, LinkMenuItem, MenuDivider, MenuItem, MenuPosition, ope
 import Tooltip from "@/components/Tooltip"
 import Dialog, { closeDialog, openDialog } from "@/components/Dialog"
 import CSS from './_index.module.scss'
+import { elementAnimate, elementStyleRemove, elementStyleSet } from "@/utils/element"
+import { promiseDone } from "@/utils/object"
+import { AnimationEffectTiming } from "@/enums/animation"
 
 export const MainElement: VoidComponent = () => {
 	const [isMenuActionsOpen, setIsMenuActionsOpen] = createSignal<boolean>(false)
@@ -30,6 +33,7 @@ export const MainElement: VoidComponent = () => {
 	const isSelected = createSelector<string[], string>(pinnedApps, (a, b) => arraySome(b, (v) => v == a))
 	const getSelectedLink = createMemo(() => selectedApp()? selectedApp()!.link : '')
 	const getSelectedName = createMemo(() => selectedApp()? selectedApp()!.name : '')
+	const images: HTMLImageElement[] = []
 	let dialogInfoRef: HTMLDialogElement
 	let menuActionsRef: HTMLDialogElement
 	let timeId: number | null = null
@@ -77,7 +81,7 @@ export const MainElement: VoidComponent = () => {
 			/>
 		</Tooltip>
 		<div>
-			<For each={arraySort(APPS, (a, b) => stringLocaleCompare(a.name, b.name))}>{app =>
+			<For each={arraySort(APPS, (a, b) => stringLocaleCompare(a.name, b.name))}>{(app, i) =>
 				<Show when={
 					stringTrim(searchText()) == ''
 					|| regexTest(
@@ -96,7 +100,39 @@ export const MainElement: VoidComponent = () => {
 							})
 							eventPreventDefault(ev)
 						}}>
-						<img loading="eager" width="48" height="48" src={app.logoUrl} alt={app.name} />
+						<img
+							loading="eager"
+							width="48"
+							height="48"
+							style="transform:scale(0)"
+							src={app.logoUrl}
+							alt={app.name}
+							onLoad={ev => {
+								const self = eventCurrentTarget(ev)
+								images[i()] = self
+								if (arrayLength(images) < arrayLength(APPS)) return
+
+								for (let i = 0; i < arrayLength(images); i++) {
+									const img = images[i]
+									if (!(img instanceof HTMLImageElement)) continue
+
+									elementStyleSet(img, 'will-change', 'transform')
+									promiseDone(
+										elementAnimate(img, {
+											transform: ['scale(0)', 'scale(1)']
+										}, {
+											duration: 300,
+											easing: AnimationEffectTiming.spring,
+											delay: i * 50
+										}).finished,
+										() => {
+											elementStyleRemove(img, 'will-change')
+											elementStyleRemove(img, 'transform')
+										}
+									)
+								}
+							}}
+						/>
 						{app.name}
 						<Show when={isSelected(app.link)}>
 							<Icon c:filled c:code={ICON_PIN}/>
