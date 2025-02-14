@@ -4,12 +4,11 @@ import { mergeRefs } from "@solid-primitives/refs"
 
 import { dateCurrent, dateYear, dateMonth, dateWeekdayNames, dateOutRangeYMD, dateIsSameYMD, dateMonthNames, dateOutRangeYM, dateIsSameYM, dateOutRangeY, dateIsSameY, dateTextMonth, dateInRangeYM, dateDay, dateMonthSet, dateYearSet, dateDate, dateDateSet } from "@/utils/datetime"
 import { AnimationEffectTiming } from "@/enums/animation"
-import { eventCall, eventCurrentTarget, eventPreventDefault, eventTarget } from "@/utils/event"
+import { eventCall, eventCurrentTarget } from "@/utils/event"
 import { arrayFill, arrayIncludes } from "@/utils/array"
 import { stringSubstring } from "@/utils/string"
-import { elementAnimate, elementChildren, elementDataset, elementFocus, elementFocusByArrowKey, elementId, elementIsSame, elementSiblingNext, elementSiblingPrevious, elementTabIndexSet, elementTagName, elementValidTarget } from "@/utils/element"
+import { elementAnimate, elementChildren, elementDataset, elementFocus, elementFocusByArrowKey, elementId, elementSiblingPrevious, elementTabIndexSet, elementTagName, elementValidTarget } from "@/utils/element"
 import { promiseDone } from "@/utils/object"
-import { KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT, KEY_ARROW_UP } from "@/constants/key_code"
 import { numberParse, numberSafe } from "@/utils/number"
 import { timeTimerSet } from "@/utils/time"
 import { documentActive } from "@/utils/document"
@@ -19,8 +18,8 @@ import Button, { ButtonVariant, IconButton, SquareButton } from "@/components/Bu
 import { Modal, type ModalProps, ModalPosition as DatePickerPosition, closeModal, focusModal, openModal, repositionModal, isModalOpen } from "@/components/Modal"
 import Divider from "@/components/Divider"
 import Popover, { closePopover, isPopoverOpen, openPopover, repositionPopover, type PopoverProps } from "@/components/Popover"
+import FocusableGroup, { FocusableGroup2D } from "@/components/FocusableGroup"
 import './index.scss'
-import { FocusableGroup2D } from "../FocusableGroup"
 
 enum DatePickerOption {
 	year,
@@ -164,63 +163,10 @@ const DatePickerBody: ParentComponent<{
 	}
 
 	const MonthsDate: VoidComponent = () => {
-		let isButtonFocused = false
-
-		createEffect(() => {
-			viewDate()
-
-			const children = elementChildren<HTMLButtonElement>(divMonthRef!)
-			isButtonFocused = false
-			for (const child of children) {
-				if (elementTagName(child) != 'BUTTON') continue
-				if (child.disabled) continue
-
-				elementTabIndexSet(child, 0)
-			}
-		})
-
-		return (<div
+		return (<FocusableGroup2D
 			ref={divMonthRef}
+			c:columnCount={3}
 			class="c-date-picker-month"
-			onKeyDown={(ev) => {
-				const code = ev.code
-				if (
-					code != KEY_ARROW_UP
-					&& code != KEY_ARROW_DOWN
-					&& code != KEY_ARROW_LEFT
-					&& code != KEY_ARROW_RIGHT
-				) return;
-
-				const button = eventTarget(ev) as HTMLButtonElement
-				const index = numberSafe(numberParse(elementDataset(button, 'index')!, true))
-				const children = elementChildren<HTMLButtonElement>(eventCurrentTarget(ev))
-				let target: HTMLElement | null = null
-
-				if (code == KEY_ARROW_UP) target = children[index - 3]
-				else if (code == KEY_ARROW_DOWN) target = children[index + 3]
-				else if (code == KEY_ARROW_RIGHT) target = elementSiblingNext(button)
-				else if (code == KEY_ARROW_LEFT) target = elementSiblingPrevious(button)
-
-				if (!target || (target as HTMLButtonElement).disabled) return
-				eventPreventDefault(ev)
-				elementTabIndexSet(button, -1)
-				elementTabIndexSet(target, 0)
-				elementFocus(target)
-			}}
-			onFocusIn={(ev) => {
-				if (isButtonFocused) return
-
-				const children = elementChildren<HTMLButtonElement>(eventCurrentTarget(ev))
-				const button = eventTarget(ev) as HTMLButtonElement
-				elementTabIndexSet(button, 0)
-				isButtonFocused = true
-				for (const child of children) {
-					if (elementIsSame(child, button)) continue
-					if (child.disabled) continue
-
-					elementTabIndexSet(child, -1)
-				}
-			}}
 			onClick={ev => {
 				const button = documentActive()!
 				if (!elementValidTarget(
@@ -256,67 +202,14 @@ const DatePickerBody: ParentComponent<{
 							: undefined
 					}>{m}</Button>)
 			}}</For>
-		</div>)
+		</FocusableGroup2D>)
 	}
 
 	const YearsDate: VoidComponent = () => {
-		let isButtonFocused = false
-
-		createEffect(() => {
-			viewDate()
-
-			const children = elementChildren<HTMLButtonElement>(divYearRef!)
-			isButtonFocused = false
-			for (const child of children) {
-				if (elementTagName(child) != 'BUTTON') continue
-				if (child.disabled) continue
-
-				elementTabIndexSet(child, 0)
-			}
-		})
-
-		return (<div
+		return (<FocusableGroup2D
+			c:columnCount={4}
 			class="c-date-picker-year"
 			ref={divYearRef}
-			onKeyDown={(ev) => {
-				const code = ev.code
-				if (
-					code != KEY_ARROW_UP
-					&& code != KEY_ARROW_DOWN
-					&& code != KEY_ARROW_LEFT
-					&& code != KEY_ARROW_RIGHT
-				) return;
-
-				const button = eventTarget(ev) as HTMLButtonElement
-				const index = numberSafe(numberParse(elementDataset(button, 'index')!, true))
-				const children = elementChildren<HTMLButtonElement>(eventCurrentTarget(ev))
-				let target: HTMLElement | null = null
-
-				if (code == KEY_ARROW_UP) target = children[index - 4]
-				else if (code == KEY_ARROW_DOWN) target = children[index + 4]
-				else if (code == KEY_ARROW_RIGHT) target = elementSiblingNext(button)
-				else if (code == KEY_ARROW_LEFT) target = elementSiblingPrevious(button)
-
-				if (!target || (target as HTMLButtonElement).disabled) return
-				eventPreventDefault(ev)
-				elementTabIndexSet(button, -1)
-				elementTabIndexSet(target, 0)
-				elementFocus(target)
-			}}
-			onFocusIn={(ev) => {
-				if (isButtonFocused) return
-
-				const children = elementChildren<HTMLButtonElement>(eventCurrentTarget(ev))
-				const button = eventTarget(ev) as HTMLButtonElement
-				elementTabIndexSet(button, 0)
-				isButtonFocused = true
-				for (const child of children) {
-					if (elementIsSame(child, button)) continue
-					if (child.disabled) continue
-
-					elementTabIndexSet(child, -1)
-				}
-			}}
 			onClick={(ev) => {
 				const button = documentActive()!
 				if (!elementValidTarget(
@@ -357,11 +250,15 @@ const DatePickerBody: ParentComponent<{
 					{dateYear(viewDate()) + i()}
 				</Button>)
 			}}</For>
-		</div>)
+		</FocusableGroup2D>)
 	}
 
 	return (<>
-		<div
+		<FocusableGroup
+			c:arrowOptions={{
+				left: 'prev',
+				right: 'next'
+			}}
 			class="c-date-picker-header"
 			onKeyDown={(ev) => elementFocusByArrowKey(
 				eventCurrentTarget(ev),
@@ -377,28 +274,27 @@ const DatePickerBody: ParentComponent<{
 				) return
 
 				switch (elementId(button)) {
-					case buttonOptionId:
-						setDateOption(d => {
-							if (d == DatePickerOption.month) return DatePickerOption.year
-							return DatePickerOption.month
-						})
-						break
-					case buttonSelectedId:
-						const sibling = elementSiblingPrevious(button)!
-						elementTabIndexSet(sibling, 0)
-						elementFocus(sibling)
-						goToSelectedDate()
-						break
-					case buttonPreviousId:
-						previous()
-						break
-					case buttonNextId:
-						next()
-						break
+				case buttonOptionId:
+					setDateOption(d => {
+						if (d == DatePickerOption.month) return DatePickerOption.year
+						return DatePickerOption.month
+					})
+					break
+				case buttonSelectedId:
+					const sibling = elementSiblingPrevious(button)!
+					elementTabIndexSet(sibling, 0)
+					elementFocus(sibling)
+					goToSelectedDate()
+					break
+				case buttonPreviousId:
+					previous()
+					break
+				case buttonNextId:
+					next()
+					break
 				}
 			}}>
 			<Button
-				tabindex="0"
 				id={buttonOptionId}
 				c:variant={ButtonVariant.tonal}>
 				<Switch>
@@ -421,22 +317,19 @@ const DatePickerBody: ParentComponent<{
 				)
 				&& dateInRangeYM(value(), props.firstDate, props.lastDate)}>
 				<IconButton
-					tabindex="-1"
 					c:code={ICON_CALENDAR_DATE}
 					id={buttonSelectedId}
 				/>
 			</Show>
 			<IconButton
-				tabindex="-1"
 				c:code={ICON_CHEVRON_LEFT}
 				id={buttonPreviousId}
 			/>
 			<IconButton
-				tabindex="-1"
 				c:code={ICON_CHEVRON_RIGHT}
 				id={buttonNextId}
 			/>
-		</div>
+		</FocusableGroup>
 		<Divider />
 		<Transition
 			onEnter={(el, done) => {

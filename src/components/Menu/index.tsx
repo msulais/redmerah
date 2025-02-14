@@ -3,10 +3,10 @@ import { mergeRefs } from "@solid-primitives/refs"
 
 import { attrSetIfExist, attrClassList } from "@/utils/attributes"
 import { objectHasValue } from "@/utils/object"
-import { eventCall, eventPreventDefault, eventStopPropagation } from "@/utils/event"
+import { eventCall, eventStopPropagation } from "@/utils/event"
 import { timeTimerClear, timeTimerSet, timeWait } from "@/utils/time"
 import { elementAllBySelector, elementById, elementBySelector, elementFirstChild, elementFocus, elementFocusAny, elementTagName } from "@/utils/element"
-import { KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT, KEY_ARROW_UP } from "@/constants/key_code"
+import { KEY_ARROW_LEFT, KEY_ARROW_RIGHT } from "@/constants/key_code"
 import { AppColors } from "@/enums/colors"
 import { stringCSSEscape } from "@/utils/string"
 import { documentActive } from "@/utils/document"
@@ -21,6 +21,7 @@ import Modal, { type ModalProps, closeModal, focusModal, isModalOpen, ModalPosit
 import { RawSwitch, type RawSwitchProps } from "@/components/Switch"
 import FocusableGroup from "@/components/FocusableGroup"
 import './index.scss'
+import { typeIsBoolean } from "@/utils/typecheck"
 
 const SUBMENU_CLASSNAME = 'c-submenu'
 
@@ -211,12 +212,11 @@ const SwitchMenuItem: ParentComponent<SwitchMenuItemProps> = ($props) => {
 type SubMenuProps = PopoverProps & {
 	'c:item': JSX.Element
 	'c:attrWrapper'?: Omit<JSX.HTMLAttributes<HTMLDivElement>, 'children'>
-	'c:childrenAutoTabIndex'?: boolean
+	'c:interactiveElements'?: string | HTMLElement[] | boolean
 }
 
 const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 	const $$props = mergeProps({
-		'c:childrenAutoTabIndex': true,
 		id: createUniqueId()
 	}, $props)
 	const [props, other] = splitProps($$props, [
@@ -224,7 +224,7 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 		'ref', 'c:gap', 'c:position', 'c:usePortal',
 		'c:padding', 'c:draggable', 'c:allowHideAnchor',
 		'c:onToggleOpen', 'children', 'c:onClose',
-		'c:childrenAutoTabIndex', 'onKeyDown',
+		'c:interactiveElements', 'onKeyDown',
 		'onPointerEnter', 'onPointerLeave'
 	])
 	const [wrapperProps, otherWrapperProps] = splitProps(props["c:attrWrapper"] ?? {}, [
@@ -232,6 +232,13 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 		'onPointerLeave', 'onKeyDown'
 	])
 	const [isHover, setIsHover] = createSignal<boolean>(false)
+	const interactiveElement = createMemo(() => props["c:interactiveElements"])
+
+	// hack to solve https://github.com/solidjs/solid/issues/2130
+	const getInteractiveElement = createMemo(() => typeIsBoolean(interactiveElement())
+		? undefined
+		: interactiveElement() as string | HTMLElement[]
+	)
 	const context = useContext(MenuContext)
 	const parentId = context?.parentId ?? undefined
 	const firstParentId = context?.firstParentId ?? undefined
@@ -375,17 +382,17 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 					...props.classList
 				}}
 				{...other}>
-				<Show when={props['c:childrenAutoTabIndex']} fallback={props.children}>
-					<FocusableGroup c:arrowOptions={{
-						up: 'prev',
-						down: 'next'
-					}}
-					onKeyDown={ev => {
-						const code = ev.code
-						if (code != KEY_ARROW_UP && code != KEY_ARROW_DOWN) return
-
-						eventPreventDefault(ev)
-					}}>{props.children}</FocusableGroup>
+				<Show
+					when={interactiveElement() === false}
+					fallback={<FocusableGroup
+						c:arrowOptions={{
+							up: 'prev',
+							down: 'next'
+						}}
+						c:elements={getInteractiveElement()}>
+						{props.children}
+					</FocusableGroup>}>
+					{props.children}
 				</Show>
 			</Popover>
 		</MenuContext.Provider>
@@ -393,16 +400,15 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 }
 
 type MenuProps = ModalProps & {
-	'c:childrenAutoTabIndex'?: boolean
+	'c:interactiveElements'?: string | HTMLElement[] | boolean
 }
 const Menu: ParentComponent<MenuProps> = ($props) => {
 	const $$props = mergeProps({
-		'c:childrenAutoTabIndex': true,
 		id: createUniqueId()
 	}, $props)
 	const [props, other] = splitProps($$props, [
 		'classList', 'c:gap', 'c:padding', 'c:contentAutoFocus',
-		'c:onClose', 'children', 'c:childrenAutoTabIndex',
+		'c:onClose', 'children', 'c:interactiveElements',
 		'c:attrContentWrappwer'
 	])
 	const [contentWrapperProps, otherContentWrapperProps] = splitProps(
@@ -410,6 +416,13 @@ const Menu: ParentComponent<MenuProps> = ($props) => {
 		['onPointerEnter', 'onPointerLeave']
 	)
 	const [isHover, setIsHover] = createSignal<boolean>(false)
+	const interactiveElement = createMemo(() => props["c:interactiveElements"])
+
+	// hack to solve https://github.com/solidjs/solid/issues/2130
+	const getInteractiveElement = createMemo(() => typeIsBoolean(interactiveElement())
+		? undefined
+		: interactiveElement() as string | HTMLElement[]
+	)
 
 	function closeSubMenuDescendant(): void {
 		for (const popover of elementAllBySelector(`[data-c-menu-parent="${other.id}"]:popover-open`)) {
@@ -448,36 +461,42 @@ const Menu: ParentComponent<MenuProps> = ($props) => {
 			c:gap={props["c:gap"] ?? 8}
 			c:padding={props["c:padding"] ?? 4}
 			{...other}>
-			<Show when={props['c:childrenAutoTabIndex']} fallback={props.children}>
-				<FocusableGroup c:arrowOptions={{
-					up: 'prev',
-					down: 'next'
-				}}
-				onKeyDown={ev => {
-					const code = ev.code
-					if (code != KEY_ARROW_UP && code != KEY_ARROW_DOWN) return
-
-					eventPreventDefault(ev)
-				}}>{props.children}</FocusableGroup>
+			<Show
+				when={interactiveElement() === false}
+				fallback={<FocusableGroup
+					c:arrowOptions={{
+						up: 'prev',
+						down: 'next'
+					}}
+					c:elements={getInteractiveElement()}>
+					{props.children}
+				</FocusableGroup>}>
+				{props.children}
 			</Show>
 		</Modal>
 	</MenuContext.Provider>)
 }
 
 type PopoverMenuProps = PopoverProps & {
-	'c:childrenAutoTabIndex'?: boolean
+	'c:interactiveElements'?: string | HTMLElement[] | boolean
 }
 const PopoverMenu: ParentComponent<PopoverMenuProps> = ($props) => {
 	const $$props = mergeProps({
-		'c:childrenAutoTabIndex': true,
 		id: createUniqueId()
 	}, $props)
 	const [props, other] = splitProps($$props, [
 		'classList', 'c:gap', 'c:padding', 'children',
-		'c:onClose', 'c:childrenAutoTabIndex',
+		'c:onClose', 'c:interactiveElements',
 		'onPointerEnter', 'onPointerLeave'
 	])
 	const [isHover, setIsHover] = createSignal<boolean>(false)
+	const interactiveElement = createMemo(() => props["c:interactiveElements"])
+
+	// hack to solve https://github.com/solidjs/solid/issues/2130
+	const getInteractiveElement = createMemo(() => typeIsBoolean(interactiveElement())
+		? undefined
+		: interactiveElement() as string | HTMLElement[]
+	)
 
 	function closeSubMenuDescendant(): void {
 		for (const popover of elementAllBySelector(`[data-c-menu-parent="${other.id}"]:popover-open`)) {
@@ -510,17 +529,17 @@ const PopoverMenu: ParentComponent<PopoverMenuProps> = ($props) => {
 			c:gap={props["c:gap"] ?? 8}
 			c:padding={props["c:padding"] ?? 4}
 			{...other}>
-			<Show when={props['c:childrenAutoTabIndex']} fallback={props.children}>
-				<FocusableGroup c:arrowOptions={{
-					up: 'prev',
-					down: 'next'
-				}}
-				onKeyDown={ev => {
-					const code = ev.code
-					if (code != KEY_ARROW_UP && code != KEY_ARROW_DOWN) return
-
-					eventPreventDefault(ev)
-				}}>{props.children}</FocusableGroup>
+			<Show
+				when={interactiveElement() === false}
+				fallback={<FocusableGroup
+					c:arrowOptions={{
+						up: 'prev',
+						down: 'next'
+					}}
+					c:elements={getInteractiveElement()}>
+					{props.children}
+				</FocusableGroup>}>
+				{props.children}
 			</Show>
 		</Popover>
 	</MenuContext.Provider>)

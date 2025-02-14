@@ -1,24 +1,19 @@
-import { children, type JSX, type ParentComponent, mergeProps, Show, splitProps, type ValidComponent } from "solid-js"
+import { children, type JSX, type ParentComponent, Show, splitProps, type ValidComponent } from "solid-js"
 import { Dynamic, type DynamicProps } from "solid-js/web"
 
 import { attrSetIfExist, attrClassList } from '@/utils/attributes'
 
-import FocusableGroup from "@/components/FocusableGroup"
 import './index.scss'
 
 type ListProps = JSX.HTMLAttributes<HTMLDivElement> & {
 	'c:leading'?: JSX.Element
 	'c:subtitle'?: JSX.Element
 	'c:trailing'?: JSX.Element
-	'c:trailingAutoTabIndex'?: boolean
 }
 const List: ParentComponent<ListProps> = ($props) => {
-	const $$props = mergeProps({
-		'c:trailingAutoTabIndex': false,
-	}, $props)
-	const [props, other] = splitProps($$props, [
+	const [props, other] = splitProps($props, [
 		'c:leading', 'children', 'c:trailing', 'c:subtitle',
-		'class', 'c:trailingAutoTabIndex'
+		'class'
 	])
 	const trailing = children(() => props['c:trailing'])
 	const leading = children(() => props['c:leading'])
@@ -42,17 +37,7 @@ const List: ParentComponent<ListProps> = ($props) => {
 		</div>
 		<Show when={trailing()}>
 			<div class='c-list-trailing'>
-				<Show
-					when={props['c:trailingAutoTabIndex']}
-					fallback={trailing()}>
-					<FocusableGroup
-						c:arrowOptions={{
-							left: 'prev',
-							right: 'next'
-						}}>
-						{trailing()}
-					</FocusableGroup>
-				</Show>
+				{trailing()}
 			</div>
 		</Show>
 	</div>)
@@ -62,15 +47,11 @@ type RawListProps<T extends ValidComponent = keyof JSX.HTMLElementTags> = Dynami
 	'c:leading'?: JSX.Element
 	'c:subtitle'?: JSX.Element
 	'c:trailing'?: JSX.Element
-	'c:trailingAutoTabIndex'?: boolean
 }
 const RawList: ParentComponent<RawListProps> = ($props) => {
-	const $$props = mergeProps({
-		'c:trailingAutoTabIndex': false,
-	}, $props)
-	const [props, other] = splitProps($$props, [
+	const [props, other] = splitProps($props, [
 		'c:leading', 'children', 'c:trailing', 'c:subtitle',
-		'class', 'c:trailingAutoTabIndex'
+		'class'
 	])
 	const trailing = children(() => props['c:trailing'])
 	const leading = children(() => props['c:leading'])
@@ -94,17 +75,7 @@ const RawList: ParentComponent<RawListProps> = ($props) => {
 		</div>
 		<Show when={trailing()}>
 			<div class='c-list-trailing'>
-				<Show
-					when={props['c:trailingAutoTabIndex']}
-					fallback={trailing()}>
-					<FocusableGroup
-						c:arrowOptions={{
-							left: 'prev',
-							right: 'next'
-						}}>
-						{trailing()}
-					</FocusableGroup>
-				</Show>
+				{trailing()}
 			</div>
 		</Show>
 	</Dynamic>)

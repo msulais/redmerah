@@ -5,18 +5,17 @@ import { mergeRefs } from '@solid-primitives/refs'
 import type { Emoji } from '@/types/emoji'
 import { EMOJIS_ACTIVITIES, EMOJIS_ANIMAL_AND_NATURE, EMOJIS_FLAGS, EMOJIS_FOOD_AND_DRINK, EMOJIS_OBJECT, EMOJIS_PERSON_AND_BODY, EMOJIS_SMILEY_AND_EMOTION, EMOJIS_SYMBOLS, EMOJIS_TRAVEL_AND_PLACES } from '@/constants/emoji'
 import { attrSetIfExist } from '@/utils/attributes'
-import { eventListenerAdd, eventCurrentTarget, eventPreventDefault, eventListenerRemove, eventTarget } from '@/utils/event'
+import { eventListenerAdd, eventCurrentTarget, eventListenerRemove } from '@/utils/event'
 import { timeTimerClear, timeTimerSet } from '@/utils/time'
 import { AnimationEffectTiming } from '@/enums/animation'
 import { stringLength, stringLocaleCompare, stringReplace, stringSplit, stringTrim } from '@/utils/string'
 import { arrayConcat, arrayFindIndex, arrayJoin, arrayLength, arrayMap, arraySlice, arraySort, arraySplice } from '@/utils/array'
-import { elementAnimate, elementAppendChild, elementChildren, elementCreate, elementDataset, elementDispatchEvent, elementFocus, elementId, elementSiblingNext, elementSiblingPrevious, elementIdSet, elementStyleSet, elementTabIndexSet, elementStyle, elementTagName } from '@/utils/element'
+import { elementAnimate, elementAppendChild, elementCreate, elementDataset, elementDispatchEvent, elementId, elementIdSet, elementStyleSet, elementStyle, elementTagName } from '@/utils/element'
 import { regexTest } from '@/utils/regex'
 import { promiseDone } from '@/utils/object'
 import { AppColors } from '@/enums/colors'
 import { documentActive, documentBody } from '@/utils/document'
 import { numberParse, numberSafe } from '@/utils/number'
-import { KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT, KEY_ARROW_UP } from '@/constants/key_code'
 import { ElementIds } from '@/enums/ids'
 import { ICON_ANIMAL_CAT, ICON_DISMISS, ICON_DIVERSITY, ICON_EMOJI, ICON_FLAG, ICON_FOOD, ICON_HISTORY, ICON_PERSON, ICON_RUNNING_PERSON, ICON_SYMBOLS, ICON_VEHICLE_CAR } from '@/constants/icons'
 
@@ -27,7 +26,7 @@ import { closeSearchTextFieldMenu, SearchMenuItem, SearchTextField } from '@/com
 import { Modal, type ModalProps, ModalPosition as EmojiPickerPosition, closeModal, focusModal, openModal, repositionModal, isModalOpen } from '@/components/Modal'
 import { closePopover, isPopoverOpen, openPopover, Popover, repositionPopover, type PopoverProps } from '../Popover'
 import EmojiC from '@/components/Emoji'
-import FocusableGroup from '@/components/FocusableGroup'
+import FocusableGroup, { FocusableGroup2D } from '@/components/FocusableGroup'
 import './index.scss'
 
 enum EmojiCategory {
@@ -202,49 +201,23 @@ const EmojiPickerBody: ParentComponent<{
 	}
 
 	const Emojis: VoidComponent<{category: EmojiCategory, emojis: Emoji[]}> = $props => {
-		let timeout_id: number | null = null
-		let gridColumnCount = 0
+		const [columnCount, setColumnCount] = createSignal<number>(0)
+		let timeId: number | null = null
 
 		return (<div
 			class='c-emoji-picker-emojis'
 			data-c-hidden={attrSetIfExist($props.category != option())}>
 			<Show when={$props.category == option() && props.isOpen}>
-				<FocusableGroup
-					c:customArrowFocus
-					c:onBeforeSetTabIndex={el => elementTagName(el) != 'H3'}
-					c:onBeforeChangeFocus={el => elementTagName(el) != 'H3'}
-					onKeyDown={(ev) => {
-						const code = ev.code
-						if (
-							code != KEY_ARROW_UP
-							&& code != KEY_ARROW_DOWN
-							&& code != KEY_ARROW_LEFT
-							&& code != KEY_ARROW_RIGHT
-						) return;
-
-						const button = eventTarget(ev) as HTMLButtonElement
-						const index = numberSafe(numberParse(elementDataset(button, 'index')!, true)) + 1
-						const children = elementChildren<HTMLButtonElement>(eventCurrentTarget(ev))
-						let target: HTMLElement | null = null
-
-						// don't update every key press
-						if (timeout_id == null) gridColumnCount = arrayLength(stringSplit(
+				<FocusableGroup2D
+					c:columnCount={columnCount()}
+					onFocusIn={(ev) => {
+						if (timeId === null) setColumnCount(arrayLength(stringSplit(
 							stringTrim(elementStyle(eventCurrentTarget(ev), "grid-template-columns")),
 							" "
-						))
-						else timeTimerClear(timeout_id)
+						)))
+						else timeTimerClear(timeId)
 
-						timeout_id = timeTimerSet(() => timeout_id = null, 200)
-						if (code == KEY_ARROW_UP) target = children[index - gridColumnCount]
-						else if (code == KEY_ARROW_DOWN) target = children[index + gridColumnCount]
-						else if (code == KEY_ARROW_RIGHT) target = elementSiblingNext(button)
-						else if (code == KEY_ARROW_LEFT) target = elementSiblingPrevious(button)
-
-						if (!target || (target as HTMLButtonElement).disabled || elementTagName(target) != 'BUTTON') return
-						eventPreventDefault(ev) // disable scroll
-						elementTabIndexSet(button, -1)
-						elementTabIndexSet(target, 0)
-						elementFocus(target)
+						timeId = timeTimerSet(() => timeId = null, 200)
 					}}
 					onClick={() => {
 						const button = documentActive()!
@@ -272,7 +245,7 @@ const EmojiPickerBody: ParentComponent<{
 							{e[0]}
 						</SquareButton>
 					}</For>
-				</FocusableGroup>
+				</FocusableGroup2D>
 			</Show>
 		</div>)
 	}

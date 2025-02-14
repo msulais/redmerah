@@ -8,6 +8,7 @@ import { typeIsArray, typeIsString } from "@/utils/typecheck"
 import { elementAllBySelector } from "@/utils/element"
 import { cssIsValidSelector } from "@/utils/css"
 import { objectValues } from "@/utils/object"
+import { timeTimerSet } from "@/utils/time"
 
 import './index.scss'
 
@@ -54,7 +55,31 @@ const FocusableGroup: ParentComponent<FocusableGroupProps> = ($props) => {
 	})
 	const elements: HTMLElement[] = []
 	const content = children(() => props.children)
+	let timeOnFocusInId: number | null = null
 	let divRef: HTMLDivElement
+
+	function updateElements(): void {
+		if (timeOnFocusInId !== null) return
+
+		const $elements = props["c:elements"]
+		if (typeIsArray($elements)) {
+			arrayClear(elements)
+			arrayPush(elements, ...($elements as HTMLElement[]))
+		}
+		else if (typeIsString($elements) && cssIsValidSelector($elements as string)) {
+			arrayClear(elements)
+			arrayPush(elements, ...elementAllBySelector($elements as string, divRef))
+		}
+		else {
+			arrayClear(elements)
+			arrayPush(elements, ...elementAllBySelector(INTERACTIVE_ELEMENT_SELECTOR, divRef))
+		}
+
+		timeOnFocusInId = timeTimerSet(
+			() => timeOnFocusInId = null,
+			200
+		)
+	}
 
 	createEffect(() => {
 		const $elements = props["c:elements"]
@@ -79,6 +104,7 @@ const FocusableGroup: ParentComponent<FocusableGroupProps> = ($props) => {
 		class={props.class ?? (hasClassName()? undefined : FOCUSABLEGROUP_CLASSNAME)}
 		onFocusIn={ev => {
 			eventCall(ev, props.onFocusIn)
+			updateElements()
 			keyboardOnFocusIn(ev, elements)
 		}}
 		onFocusOut={ev => {
@@ -117,7 +143,31 @@ const FocusableGroup2D: ParentComponent<FocusableGroup2DProps> = ($props) => {
 	})
 	const elements: HTMLElement[] = []
 	const content = children(() => props.children)
+	let timeOnFocusInId: number | null = null
 	let divRef: HTMLDivElement
+
+	function updateElements(): void {
+		if (timeOnFocusInId !== null) return
+
+		const $elements = props["c:elements"]
+		if (typeIsArray($elements)) {
+			arrayClear(elements)
+			arrayPush(elements, ...($elements as HTMLElement[]))
+		}
+		else if (typeIsString($elements) && cssIsValidSelector($elements as string)) {
+			arrayClear(elements)
+			arrayPush(elements, ...elementAllBySelector($elements as string, divRef))
+		}
+		else {
+			arrayClear(elements)
+			arrayPush(elements, ...elementAllBySelector(INTERACTIVE_ELEMENT_SELECTOR, divRef))
+		}
+
+		timeOnFocusInId = timeTimerSet(
+			() => timeOnFocusInId = null,
+			200
+		)
+	}
 
 	createEffect(() => {
 		const $elements = props["c:elements"]
@@ -144,6 +194,7 @@ const FocusableGroup2D: ParentComponent<FocusableGroup2DProps> = ($props) => {
 		class={props.class ?? (hasClassName()? undefined : FOCUSABLEGROUP_CLASSNAME)}
 		onFocusIn={ev => {
 			eventCall(ev, props.onFocusIn)
+			updateElements()
 			keyboardOnFocusIn(ev, elements)
 		}}
 		onFocusOut={ev => {

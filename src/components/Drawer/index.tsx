@@ -5,13 +5,12 @@ import { objectHasValue, promiseDone } from "@/utils/object"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { elementAnimate } from "@/utils/element"
 import { AppColors } from "@/enums/colors"
-import { eventPreventDefault } from "@/utils/event"
-import { KEY_ARROW_DOWN, KEY_ARROW_UP } from "@/constants/key_code"
 
 import Icon from "@/components/Icon"
 import Button, { ButtonIndicatorPosition, ButtonVariant, LinkButton, type ButtonProps, type LinkButtonProps } from "@/components/Button"
 import { closeModal, focusModal, Modal, openModal, type ModalProps } from "@/components/Modal"
 import FocusableGroup from "@/components/FocusableGroup"
+import { typeIsBoolean } from "@/utils/typecheck"
 import './index.scss'
 
 function openDrawer(
@@ -99,10 +98,8 @@ const LinkDrawerItem: ParentComponent<LinkDrawerItemProps> = ($props) => {
 
 type DrawerProps = Omit<ModalProps, 'style' | 'c:position'> & {
 	'c:header'?: JSX.Element
-	'c:headerAutoTabIndex'?: boolean
 	'c:footer'?: JSX.Element
-	'c:footerAutoTabIndex'?: boolean
-	'c:childrenAutoTabIndex'?: boolean
+	'c:interactiveElements'?: string | HTMLElement[] | boolean
 	'c:position'?: DrawerPosition
 	style?: JSX.CSSProperties
 }
@@ -110,20 +107,38 @@ const Drawer: ParentComponent<DrawerProps> = ($props) => {
 	const animation_option = {duration: 200, easing: AnimationEffectTiming.spring}
 	const $$props = mergeProps({
 		'c:position': DrawerPosition.left,
-		'c:headerAutoTabIndex': true,
-		'c:footerAutoTabIndex': true,
-		'c:childrenAutoTabIndex': true
 	}, $props)
 	const [props, other] = splitProps($$props, [
 		'c:header', 'c:footer', 'children', 'c:position',
 		'classList', 'c:openAnimation', 'c:closeAnimation',
-		'style', 'c:headerAutoTabIndex', 'c:footerAutoTabIndex',
-		'c:childrenAutoTabIndex'
+		'style', 'c:interactiveElements'
 	])
+	const interactiveElement = createMemo(() => props["c:interactiveElements"])
+
+	// hack to solve https://github.com/solidjs/solid/issues/2130
+	const getInteractiveElement = createMemo(() => typeIsBoolean(interactiveElement())
+		? undefined
+		: interactiveElement() as string | HTMLElement[]
+	)
 	const position = createMemo(() => props['c:position'])
 	const header = children(() => props['c:header'])
 	const footer = children(() => props['c:footer'])
 	const content = children(() => props.children)
+	const C = () => (<>
+		<Show when={header()}>
+			<div class="c-drawer-header">
+				{header()}
+			</div>
+		</Show>
+		<div class="c-drawer-content">
+			{content()}
+		</div>
+		<Show when={footer()}>
+			<div class="c-drawer-footer">
+				{footer()}
+			</div>
+		</Show>
+	</>)
 
 	return (<Modal
 		data-c-right={attrSetIfExist(position() == DrawerPosition.right)}
@@ -163,39 +178,17 @@ const Drawer: ParentComponent<DrawerProps> = ($props) => {
 			).finished, done)
 		}}
 		{...other}>
-		<Show when={header()}>
-			<div class="c-drawer-header">
-				<Show when={props['c:headerAutoTabIndex']} fallback={header()}>
-					<FocusableGroup c:arrowOptions={{
-						up: 'prev',
-						down: 'next'
-					}}>{header()}</FocusableGroup>
-				</Show>
-			</div>
-		</Show>
-		<div class="c-drawer-content">
-			<Show when={props['c:childrenAutoTabIndex']} fallback={content()}>
-				<FocusableGroup c:arrowOptions={{
+		<Show
+			when={interactiveElement() === false}
+			fallback={<FocusableGroup
+				c:arrowOptions={{
 					up: 'prev',
 					down: 'next'
 				}}
-				onKeyDown={ev => {
-					const code = ev.code
-					if (code != KEY_ARROW_UP && code != KEY_ARROW_DOWN) return
-
-					eventPreventDefault(ev)
-				}}>{content()}</FocusableGroup>
-			</Show>
-		</div>
-		<Show when={footer()}>
-			<div class="c-drawer-footer">
-				<Show when={props['c:footerAutoTabIndex']} fallback={footer()}>
-					<FocusableGroup c:arrowOptions={{
-						up: 'prev',
-						down: 'next'
-					}}>{footer()}</FocusableGroup>
-				</Show>
-			</div>
+				c:elements={getInteractiveElement()}>
+				<C/>
+			</FocusableGroup>}>
+			<C/>
 		</Show>
 	</Modal>)
 }
