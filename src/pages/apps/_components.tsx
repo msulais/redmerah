@@ -6,7 +6,7 @@ import { LocalStorageKeys } from "@/enums/storage"
 import { APPS } from "@/constants/apps"
 import { eventCurrentTarget, eventPreventDefault } from "@/utils/event"
 import { tryRemoveSplashScreen } from "@/scripts/splash"
-import { arrayFilter, arrayJoin, arrayLength, arraySome, arraySort } from "@/utils/array"
+import { arrayFilter, arrayJoin, arrayLength, arrayPush, arraySome, arraySort } from "@/utils/array"
 import { stringLocaleCompare, stringSplit, stringToLowerCase, stringTrim } from "@/utils/string"
 import { navigatorClipboardWriteText, navigatorShare } from "@/utils/navigator"
 import { regexTest } from "@/utils/regex"
@@ -20,10 +20,11 @@ import Menu, { closeMenu, LinkMenuItem, MenuDivider, MenuItem, MenuPosition, ope
 import Tooltip from "@/components/Tooltip"
 import Dialog, { closeDialog, openDialog } from "@/components/Dialog"
 import CSS from './_index.module.scss'
-import { elementAnimate, elementStyle, elementStyleRemove, elementStyleSet } from "@/utils/element"
+import { elementAnimate, elementDataset, elementStyle, elementStyleRemove, elementStyleSet } from "@/utils/element"
 import { promiseDone } from "@/utils/object"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { FocusableGroup2D } from "@/components/FocusableGroup"
+import { numberParse } from "@/utils/number"
 
 export const MainElement: VoidComponent = () => {
 	const [isMenuActionsOpen, setIsMenuActionsOpen] = createSignal<boolean>(false)
@@ -115,6 +116,7 @@ export const MainElement: VoidComponent = () => {
 							eventPreventDefault(ev)
 						}}>
 						<img
+							data-i={i()}
 							loading="eager"
 							width="48"
 							height="48"
@@ -123,13 +125,16 @@ export const MainElement: VoidComponent = () => {
 							alt={app.name}
 							onLoad={ev => {
 								const self = eventCurrentTarget(ev)
-								images[i()] = self
+								arrayPush(images, self)
 								if (arrayLength(images) !== arrayLength(APPS)) return
+
+								arraySort(images, (a, b) =>
+									numberParse(elementDataset(a, 'i')!, true)
+									- numberParse(elementDataset(b, 'i')!, true)
+								)
 
 								for (let i = 0; i < arrayLength(images); i++) {
 									const img = images[i]
-									if (!(img instanceof HTMLImageElement)) continue
-
 									elementStyleSet(img, 'will-change', 'transform')
 									promiseDone(
 										elementAnimate(img, {
