@@ -1676,7 +1676,6 @@ const _: VoidComponent<{
 							<Icon c:code={ICON_ALERT_BADGE}/>Add reminder
 						</Button>}>
 						<List
-							c:trailingAutoTabIndex
 							c:trailing={<Tooltip>
 								<IconButton
 									id={button_editTask_changeReminderId}
