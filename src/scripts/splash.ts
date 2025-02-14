@@ -7,6 +7,7 @@ import { elementRemove, elementById, elementStyleSet, elementStyleRemove, elemen
 import { numberParse, numberSafe } from "@/utils/number"
 import { promiseDone } from "@/utils/object"
 import { timeTimerSet } from "@/utils/time"
+import { windowScrollTo } from "@/utils/window"
 
 let COMPONENT_COUNT: number = 0
 let COMPONENT_COUNT_MAX: number | null = null
@@ -16,8 +17,13 @@ export function removeSplashScreen(timeout: number = 0): void {
 		const splashRef = elementById(ElementIds.splash)
 		if (!splashRef) return;
 
+		const scrollY = window.scrollY // original scroll offset Y
 		const animationOption = {duration: 500, easing: AnimationEffectTiming.spring}
 		const body = documentBody()
+
+		// !important: don't remove. Use to make splash `transform` property works
+		windowScrollTo({top: 0, behavior: 'instant'})
+
 		elementStyleSet(body, 'will-change', 'transform')
 		elementStyleSet(splashRef, 'will-change', 'transform opacity')
 		promiseDone(
@@ -28,12 +34,13 @@ export function removeSplashScreen(timeout: number = 0): void {
 		)
 		promiseDone(
 			elementAnimate(splashRef, {
-				transform: ['translateY(0)', 'translateY(100%)'],
+				transform: ['translateY(0)', 'translateY(100dvh)'],
 				opacity: [1, 0]
 			}, animationOption).finished,
 			() => {
 				elementStyleRemove(splashRef, 'will-change')
 				elementRemove(splashRef)
+				windowScrollTo({top: scrollY, behavior: 'smooth'})
 			}
 		)
 		attrRemove(documentBody(), BodyAttributes.componentCount)
