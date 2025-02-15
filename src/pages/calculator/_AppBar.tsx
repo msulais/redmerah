@@ -35,7 +35,7 @@ import CSS from './_styles.module.scss'
 const _: VoidComponent<{
 	onChangeCalculator: (type: CalculatorType) => unknown
 	calculator: CalculatorType
-	is_notebook_expanded: boolean
+	isNotebookExpanded: boolean
 	note: string
 	settings: Settings
 	onNoteChanged: (value: string) => unknown
@@ -533,8 +533,8 @@ const _: VoidComponent<{
 					<IconButton
 						data-tooltip="Notebook"
 						id={buttonNotebookId}
-						c:variant={props.is_notebook_expanded && !isSideNotebookHidden()? ButtonVariant.filled : undefined}
-						c:filled={props.is_notebook_expanded && !isSideNotebookHidden()}
+						c:variant={props.isNotebookExpanded && !isSideNotebookHidden()? ButtonVariant.filled : undefined}
+						c:filled={props.isNotebookExpanded && !isSideNotebookHidden()}
 						c:code={ICON_NOTEBOOK}
 					/>
 				</>}

@@ -1067,7 +1067,7 @@ const _: VoidComponent = () => {
 			settings={settings}
 			note={note()}
 			onNoteChanged={onNoteChanged}
-			is_notebook_expanded={isNotebookExpanded()}
+			isNotebookExpanded={isNotebookExpanded()}
 		/>}
 		c:leftSideBar={<SideNavigation
 			calculator={calculator()}
