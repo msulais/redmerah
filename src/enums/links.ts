@@ -20,13 +20,13 @@ export enum RoutesLinks {
 	latexViewer = '/latex-viewer',
 	usbChecker = '/usb-checker',
 	colorPicker = '/color-picker',
+	clock = '/clock',
 
 	// TODO: create these apps
 	notes = '/notes',
 	codeFormatter = '/code-formatter',
 	whiteboard = '/whiteboard',
 	voiceRecorder = '/voice-recorder',
-	clock = '/clock',
 	stopwatch = '/stopwatch',
 	weather = '/weather',
 	calendar = '/calendar',

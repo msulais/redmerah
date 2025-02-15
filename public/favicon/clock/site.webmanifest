@@ -1,0 +1,32 @@
+{
+	"name": "Clock",
+	"short_name": "Clock",
+	"id": "/clock",
+	"description": "Discover our versatile clock web app! Display current time, set timers, and more. Your all-in-one time management solution.",
+	"start_url": "/clock",
+	"icons": [
+		{
+			"src": "/favicon/clock/favicon-16x16.png",
+			"sizes": "16x16",
+			"type": "image/png"
+		},
+		{
+			"src": "/favicon/clock/favicon-32x32.png",
+			"sizes": "32x32",
+			"type": "image/png"
+		},
+		{
+			"src": "/favicon/clock/android-chrome-192x192.png",
+			"sizes": "192x192",
+			"type": "image/png"
+		},
+		{
+			"src": "/favicon/clock/android-chrome-512x512.png",
+			"sizes": "512x512",
+			"type": "image/png"
+		}
+	],
+	"theme_color": "#0BEA57",
+	"background_color": "#ffffff",
+	"display": "standalone"
+}

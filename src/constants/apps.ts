@@ -12,8 +12,19 @@ import logoEmojiPicker from '@/assets/apps/emoji-picker/logo.svg'
 import logoLatexViewer from '@/assets/apps/latex-viewer/logo.svg'
 import logoColorPicker from '@/assets/apps/color-picker/logo.svg'
 import logoUSBChecker from '@/assets/apps/usb-checker/logo.svg'
+import logoClock from '@/assets/apps/clock/logo.svg'
 import { RoutesLinks } from '@/enums/links'
 import type { AppItem } from '@/types/apps'
+
+export const APP_CLOCK: AppItem = {
+	logoUrl: logoClock.src,
+	name: 'Clock',
+	description: 'Discover our versatile clock web app! Display current time, set timers, and more. Your all-in-one time management solution.',
+	link: RoutesLinks.clock,
+	color: '#0BEA57',
+	buildNumber: 1,
+	buildVersion: '0.0.1',
+}
 
 export const APP_USB_CHECKER: AppItem = {
 	logoUrl: logoUSBChecker.src,
@@ -156,6 +167,7 @@ export const APP_COLOR_PICKER: AppItem = {
 }
 
 export const APPS: AppItem[] = [
+	APP_CLOCK,
 	APP_USB_CHECKER,
 	APP_COLOR_PICKER,
 	APP_LATEX_VIEWER,
