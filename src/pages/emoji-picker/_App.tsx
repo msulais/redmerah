@@ -69,7 +69,7 @@ const _: VoidComponent = () => {
 	}
 
 	onMount(() => {
-		removeSplashScreen(1000)
+		removeSplashScreen()
 		initDatabase()
 	})
 
