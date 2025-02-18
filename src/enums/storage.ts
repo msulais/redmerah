@@ -18,5 +18,6 @@ export enum DatabaseNames {
 	biruUi = 'biru-ui',
 	emojiPicker = 'emoji-picker',
 	latexViewer = 'latex-viewer',
-	colorPicker = 'color-picker'
+	colorPicker = 'color-picker',
+	clock = 'clock'
 }
