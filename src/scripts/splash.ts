@@ -27,7 +27,7 @@ export function removeSplashScreen(timeout: number = 0): void {
 		elementStyleSet(body, 'overflow', 'hidden')
 		promiseDone(
 			elementAnimate(body, {
-				transform: ['translateY(10dvh)', 'translateY(0)'],
+				transform: ['translateY(10vmin)', 'translateY(0)'],
 			}, animationOption).finished,
 			() => {
 				elementStyleRemove(body, 'will-change')
