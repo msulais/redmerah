@@ -9,7 +9,7 @@ import { documentBody } from "@/utils/document"
 import { typeIsBoolean } from "@/utils/typecheck"
 
 import List from "@/components/List"
-import Popover, { type PopoverProps, closePopover, openPopover, isPopoverOpen as isToastOpen, PopoverPosition } from "@/components/Popover"
+import Popover, { type PopoverProps, repositionPopover, closePopover, openPopover, isPopoverOpen as isToastOpen, PopoverPosition } from "@/components/Popover"
 import FocusableGroup from "@/components/FocusableGroup"
 import './index.scss'
 
@@ -35,7 +35,7 @@ enum ToastEvents {
 
 function openToast(
 	toast: HTMLDivElement,
-	options?: Omit<ToastOpenDetail, 'event'>
+	options?: ToastOpenDetail
 ): void {
 	elementDispatchEvent(toast, new CustomEvent(
 		ToastEvents.open,
@@ -177,6 +177,7 @@ export {
 	openToast,
 	closeToast,
 	isToastOpen,
+	repositionPopover as repositionToast,
 	ToastPosition
 }
 export type {

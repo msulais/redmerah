@@ -7,7 +7,7 @@ import Body from './_Body'
 
 const _: VoidComponent = () => {
 	onMount(() => {
-		removeSplashScreen(1000)
+		removeSplashScreen()
 	})
 
 	return (<App

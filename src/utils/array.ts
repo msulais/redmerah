@@ -16,6 +16,12 @@ export function arrayFindIndex<T>(
 	return arr.findIndex(predicate, thisArg)
 }
 
+export function arrayReduce<T>(
+	arr: T[],
+	callbackfn: (previousValue: T, currentValue: T, currentIndex: number, array: T[]) => T): T {
+	return arr.reduce(callbackfn)
+}
+
 export function arrayClear<T>(arr: T[]): void {
 	arr.length = 0
 }

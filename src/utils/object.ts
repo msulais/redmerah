@@ -43,12 +43,12 @@ export function objectDeepClone<T = unknown>(value: T, options?: StructuredSeria
 
 export function promiseDone<T, U = any>(
 	prom: Promise<T>,
-	on_done: (data: T) => unknown,
-	on_error?: (reason: U) => unknown
+	onDone: (data: T) => unknown,
+	onError?: (reason: U) => unknown
 ): Promise<unknown> {
-	return on_error
-		? prom.then(on_done).catch(on_error)
-		: prom.then(on_done)
+	return onError
+		? prom.then(onDone).catch(onError)
+		: prom.then(onDone)
 }
 
 /**

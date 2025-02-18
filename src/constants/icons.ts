@@ -14,6 +14,8 @@ export const ICON_APPS_LIST_DETAIL = 0xE071
 export const ICON_ARROW_CLOCKWISE = 0xE0AD
 export const ICON_ARROW_DOWNLOAD = 0xE0C9
 export const ICON_ARROW_EXPORT_UP = 0xE0E1
+export const ICON_ARROW_MAXIMIZE = 0xE101
+export const ICON_ARROW_MINIMIZE = 0xE105
 export const ICON_ARROW_MINIMIZE_VERTICAL = 0xE107
 export const ICON_ARROW_RESET = 0xE125
 export const ICON_ARROW_RIGHT = 0xE127
@@ -49,6 +51,7 @@ export const ICON_CHEVRON_RIGHT = 0xE430
 export const ICON_CHEVRON_UP = 0xE432
 export const ICON_CHEVRON_UP_DOWN = 0xE434
 export const ICON_CLIPBOARD_PASTE = 0xE490
+export const ICON_CLOCK = 0xE4A6
 export const ICON_CODE = 0xE4E8
 export const ICON_CODE_TEXT = 0xE4EE
 export const ICON_COLOR = 0xE4FA
@@ -72,6 +75,7 @@ export const ICON_DISMISS = 0xE63F
 export const ICON_DIVERSITY = 0xE647
 export const ICON_DOCUMENT_ERROR = 0xE68D
 export const ICON_DOCUMENT_ARROW_RIGHT = 0xE65D
+export const ICON_DOCUMENT_ARROW_UP = 0xE65F
 export const ICON_DUMBELL = 0xE78F
 
 // E
@@ -92,6 +96,8 @@ export const ICON_GIFT = 0xE8B9
 // H
 export const ICON_HISTORY = 0xE95A
 export const ICON_HOME = 0xE95E
+export const ICON_HOURGLASS = 0xE972
+export const ICON_HOURGLASS_HALF = 0xE974
 
 // I
 export const ICON_IMAGE = 0xE97C
@@ -121,12 +127,15 @@ export const ICON_OPEN = 0xEBE6
 export const ICON_OPEN_FOLDER = 0xEBE8
 
 // P
+export const ICON_PAUSE = 0xEC49
 export const ICON_PEOPLE = 0xEC63
 export const ICON_PERSON = 0xEC9B
 export const ICON_PHONE = 0xED0D
+export const ICON_PHONE_LOCK = 0xED2B
 export const ICON_PHONE_LAPTOP = 0xED27
 export const ICON_PIN = 0xED53
 export const ICON_PIN_OFF = 0xED57
+export const ICON_PLAY = 0xED69
 export const ICON_PLAY_CIRCLE_HINT = 0xED6D
 export const ICON_PRINT = 0xEDB5
 export const ICON_PULSE = 0xEDCD

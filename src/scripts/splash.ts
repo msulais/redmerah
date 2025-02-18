@@ -24,12 +24,14 @@ export function removeSplashScreen(timeout: number = 0): void {
 		windowScrollTo({top: 0, behavior: 'instant'})
 		elementRemove(splashRef)
 		elementStyleSet(body, 'will-change', 'transform')
+		elementStyleSet(body, 'overflow', 'hidden')
 		promiseDone(
 			elementAnimate(body, {
-				transform: ['translateY(10dvh)', 'translateY(0)'],
+				transform: ['translateY(10vmin)', 'translateY(0)'],
 			}, animationOption).finished,
 			() => {
 				elementStyleRemove(body, 'will-change')
+				elementStyleRemove(body, 'overflow')
 				windowScrollTo({top: scrollY, behavior: 'smooth'})
 			}
 		)
