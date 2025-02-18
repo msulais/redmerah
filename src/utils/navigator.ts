@@ -24,3 +24,7 @@ export function navigatorUserAgent(): string {
 export function navigatorUSB(): USB {
 	return (navigator as any).usb as USB
 }
+
+export function navigatonWakeLock(): WakeLock {
+	return navigator.wakeLock
+}
