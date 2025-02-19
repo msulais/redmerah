@@ -1,6 +1,5 @@
 ---
 import { APP_TASKS as app } from '@/constants/apps'
-import icon from '@/assets/apps/tasks-splash.svg'
 
 import Html from '@/layouts/Html/index.astro'
 import Splash from '@/layouts/Splash/index.astro'
@@ -22,6 +21,6 @@ export const prerender = true
 	</Fragment>
 	<script is:inline src='/scripts/theme.js'/>
 	<script is:inline src='/scripts/platform.js'/>
-	<Splash src={icon.src} alt={`${app.name} splash icon`} />
+	<Splash src={app.logoUrl} alt={`${app.name} splash icon`} />
 	<App client:only="solid-js"/>
 </Html>

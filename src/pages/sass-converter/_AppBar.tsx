@@ -19,11 +19,10 @@ import { elementValidTarget, elementTagName, elementId, elementDataset } from "@
 import { numberSafe } from "@/utils/number"
 import { APP_SASS_CONVERTER as app } from "@/constants/apps"
 import { ICON_APPS, ICON_ARROW_DOWNLOAD, ICON_ARROW_MINIMIZE_VERTICAL, ICON_ARROW_RESET, ICON_CHAT, ICON_CIRCLE, ICON_COPY, ICON_DOCUMENT_ARROW_RIGHT, ICON_GIFT, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_MAXIMIZE, ICON_MORE_VERTICAL, ICON_RECEIPT, ICON_SETTINGS, ICON_SHARE_ANDROID, ICON_SHIELD_CHECKMARK, ICON_SQUARE, ICON_TEARDROP_BOTTOM_RIGHT, ICON_TEXT_WRAP, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from "@/constants/icons"
-import logo from '@/assets/apps/sass-converter-logo.svg'
-import logo_redmerah from '@/assets/logo.svg'
-import logo_scss from '@/assets/logos/scss-logo.svg'
-import logo_sass from '@/assets/logos/sass-logo.svg'
-import logo_css from '@/assets/logos/css-logo.svg'
+import logoRedmerah from '@/assets/images/logos/redmerah-logo.svg'
+import logoSCSS from '@/assets/images/logos/scss-logo.svg'
+import logoSASS from '@/assets/images/logos/sass-logo.svg'
+import logoCSS from '@/assets/images/logos/css-logo.svg'
 
 import Tooltip from "@/components/Tooltip"
 import { IconButton } from "@/components/Button"
@@ -148,7 +147,7 @@ const _: VoidComponent<{
 				c:onToggleOpen={(v) => setIsMenuInfoOpen(v)}>
 				<LinkMenuItem
 					href={RoutesLinks.home}
-					c:leading={<img src={logo_redmerah.src} width={16} alt='Redmerah logo'/>}>
+					c:leading={<img src={logoRedmerah.src} width={16} alt='Redmerah logo'/>}>
 					Redmerah
 				</LinkMenuItem>
 				<LinkMenuItem
@@ -381,17 +380,17 @@ const _: VoidComponent<{
 					</SubMenuItem>}>
 					<MenuItem
 						data-download='sass'
-						c:leading={<img width={20} src={logo_sass.src} alt="SASS logo"/>}>
+						c:leading={<img width={20} src={logoSASS.src} alt="SASS logo"/>}>
 						SASS
 					</MenuItem>
 					<MenuItem
 						data-download='scss'
-						c:leading={<img width={20} src={logo_scss.src} alt="SCSS logo"/>}>
+						c:leading={<img width={20} src={logoSCSS.src} alt="SCSS logo"/>}>
 						SCSS
 					</MenuItem>
 					<MenuItem
 						data-download='css'
-						c:leading={<img width={20} src={logo_css.src} alt="CSS logo"/>}>
+						c:leading={<img width={20} src={logoCSS.src} alt="CSS logo"/>}>
 						CSS
 					</MenuItem>
 				</SubMenu>
@@ -405,17 +404,17 @@ const _: VoidComponent<{
 					</SubMenuItem>}>
 					<MenuItem
 						data-copy='sass'
-						c:leading={<img width={20} src={logo_sass.src} alt="SASS logo"/>}>
+						c:leading={<img width={20} src={logoSASS.src} alt="SASS logo"/>}>
 						SASS
 					</MenuItem>
 					<MenuItem
 						data-copy='scss'
-						c:leading={<img width={20} src={logo_scss.src} alt="SCSS logo"/>}>
+						c:leading={<img width={20} src={logoSCSS.src} alt="SCSS logo"/>}>
 						SCSS
 					</MenuItem>
 					<MenuItem
 						data-copy='css'
-						c:leading={<img width={20} src={logo_css.src} alt="CSS logo"/>}>
+						c:leading={<img width={20} src={logoCSS.src} alt="CSS logo"/>}>
 						CSS
 					</MenuItem>
 				</SubMenu>
@@ -431,7 +430,7 @@ const _: VoidComponent<{
 
 	return (<>
 		<AppBar
-			c:leading={<img alt="Markdown converter logo" width={32} src={logo.src} />}
+			c:leading={<img alt="Markdown converter logo" width={32} src={app.logoUrl} />}
 			c:headline="SASS Converter"
 			onClick={ev => {
 				const button = documentActive()!

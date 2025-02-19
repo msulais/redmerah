@@ -1,20 +1,19 @@
-import logoMarkdownConverter from '@/assets/apps/markdown-converter-logo.svg'
-import logoRandomizerConverter from '@/assets/apps/randomizer-logo.svg'
-import logoColorGenerator from '@/assets/apps/color-generator-logo.svg'
-import logoCalculator from '@/assets/apps/calculator-logo.svg'
-import logoTasks from '@/assets/apps/tasks-logo.svg'
-import logoSassConverter from '@/assets/apps/sass-converter-logo.svg'
-import logoNotes from '@/assets/apps/notes-logo.svg'
-import logoBattery from '@/assets/apps/battery-logo.svg'
-import logoQRCode from '@/assets/apps/qr-code-logo.svg'
-import logoColorGradient from '@/assets/apps/color-gradient/logo.svg'
-import logoEmojiPicker from '@/assets/apps/emoji-picker/logo.svg'
-import logoLatexViewer from '@/assets/apps/latex-viewer/logo.svg'
-import logoColorPicker from '@/assets/apps/color-picker/logo.svg'
-import logoUSBChecker from '@/assets/apps/usb-checker/logo.svg'
-import logoClock from '@/assets/apps/clock/logo.svg'
-import { RoutesLinks } from '@/enums/links'
 import type { AppItem } from '@/types/apps'
+import { RoutesLinks } from '@/enums/links'
+import logoMarkdownConverter from '@/assets/images/apps/markdown-converter.svg'
+import logoRandomizer from '@/assets/images/apps/randomizer.svg'
+import logoColorGenerator from '@/assets/images/apps/color-generator.svg'
+import logoCalculator from '@/assets/images/apps/calculator.svg'
+import logoTasks from '@/assets/images/apps/tasks.svg'
+import logoSassConverter from '@/assets/images/apps/sass-converter.svg'
+import logoBattery from '@/assets/images/apps/battery.svg'
+import logoQRCode from '@/assets/images/apps/qr-code.svg'
+import logoColorGradient from '@/assets/images/apps/color-gradient.svg'
+import logoEmojiPicker from '@/assets/images/apps/emoji-picker.svg'
+import logoLatexViewer from '@/assets/images/apps/latex-viewer.svg'
+import logoColorPicker from '@/assets/images/apps/color-picker.svg'
+import logoUSBChecker from '@/assets/images/apps/usb-checker.svg'
+import logoClock from '@/assets/images/apps/clock.svg'
 
 export const APP_CLOCK: AppItem = {
 	logoUrl: logoClock.src,
@@ -86,16 +85,6 @@ export const APP_BATTERY: AppItem = {
 	buildVersion: '0.1.2',
 }
 
-export const APP_NOTES: AppItem = {
-	logoUrl: logoNotes.src,
-	name: 'Notes',
-	description: 'Notes is your all-in-one note-taking solution. Capture ideas, add multimedia, and create task lists with ease. Stay organized and productive on the go.',
-	link: RoutesLinks.notes,
-	color: '#FF1F1F',
-	buildNumber: 1,
-	buildVersion: '0.1.0',
-}
-
 export const APP_SASS_CONVERTER: AppItem = {
 	logoUrl: logoSassConverter.src,
 	name: 'SASS Converter',
@@ -127,7 +116,7 @@ export const APP_CALCULATOR: AppItem = {
 }
 
 export const APP_RANDOMIZER: AppItem = {
-	logoUrl: logoRandomizerConverter.src,
+	logoUrl: logoRandomizer.src,
 	name: 'Randomizer',
 	description: 'Explore our Randomizer Hub for a variety of tools that add a touch of unpredictability to your life. Generate random strings, words, numbers, colors, and even assemble teams. Embrace the unexpected!',
 	link: RoutesLinks.randomizer,
@@ -175,7 +164,6 @@ export const APPS: AppItem[] = [
 	APP_COLOR_GRADIENT,
 	APP_QR_CODE,
 	APP_BATTERY,
-	// APP_NOTES
 	APP_SASS_CONVERTER,
 	APP_TASKS,
 	APP_CALCULATOR,

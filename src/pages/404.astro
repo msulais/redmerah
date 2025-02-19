@@ -1,4 +1,8 @@
 ---
+import { ICON_HOME } from '@/constants/icons'
+import { RoutesLinks } from '@/enums/links'
+import logo from '@/assets/images/logos/redmerah-logo.svg'
+
 import Html from '@/layouts/Html/index.astro'
 import Icon from '@/components/Icon/index.astro'
 import LinkButton from '@/components/Button/LinkButton.astro'
@@ -7,15 +11,12 @@ import Appbar from '@/layouts/Appbar/index.astro'
 import Main from '@/layouts/Main/index.astro'
 import BottomBar from '@/layouts/BottomBar/index.astro'
 import CSS from './_404.module.scss'
-import { RoutesLinks } from '@/enums/links'
-import logo from '@/assets/logo.svg'
 import Splash from '@/layouts/Splash/index.astro'
-import { ICON_HOME } from '@/constants/icons'
 
 export const prerender = true
 ---
 
-<Html component_count={2} title='Page not found | 404 | Redmerah'>
+<Html component_count={2} title='404: Page not found | Redmerah'>
 	<script is:inline src='/scripts/theme.js'/>
 	<script is:inline src='/scripts/platform.js'/>
 	<Splash src={logo.src} alt={`Redmerah splash icon`} />

@@ -20,7 +20,7 @@ import { APP_COLOR_GENERATOR as app } from "@/constants/apps"
 import { documentActive, documentRoot } from "@/utils/document"
 import { elementValidTarget, elementTagName, elementId, elementDataset } from "@/utils/element"
 import { ICON_APPS, ICON_CHAT, ICON_CHECKMARK, ICON_CIRCLE, ICON_COPY, ICON_GIFT, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_MAXIMIZE, ICON_RECEIPT, ICON_SETTINGS, ICON_SHARE_ANDROID, ICON_SHIELD_CHECKMARK, ICON_SQUARE, ICON_TEARDROP_BOTTOM_RIGHT, ICON_TEXT_BULLET_LIST_ADD, ICON_TEXT_BULLET_LIST_SQUARE, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from "@/constants/icons"
-import logo_redmerah from '@/assets/logo.svg'
+import logoRedmerah from '@/assets/images/logos/redmerah-logo.svg'
 
 import {Tooltip} from "@/components/Tooltip"
 import Button, { ButtonVariant, IconButton } from "@/components/Button"
@@ -213,7 +213,7 @@ const _: VoidComponent<{
 				<MenuDivider />
 				<LinkMenuItem
 					href={RoutesLinks.home}
-					c:leading={<img src={logo_redmerah.src} width={16} alt='Redmerah logo'/>}
+					c:leading={<img src={logoRedmerah.src} width={16} alt='Redmerah logo'/>}
 					c:trailing={<MenuIndent />}>
 					Redmerah
 				</LinkMenuItem>

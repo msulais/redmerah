@@ -20,7 +20,7 @@ import { ICON_APPS, ICON_ARROW_MAXIMIZE, ICON_ARROW_MINIMIZE, ICON_CHAT, ICON_CI
 import { PAGES, SIZE_SIDE_NAVIGATION_NONE } from "./_constant"
 import { windowMatches, windowMatchMedia } from "@/utils/window"
 import { Commands, Pages } from "./_enums"
-import logoRedmerah from '@/assets/logo.svg'
+import logoRedmerah from '@/assets/images/logos/redmerah-logo.svg'
 
 import Tooltip from "@/components/Tooltip"
 import { IconButton } from "@/components/Button"

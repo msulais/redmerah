@@ -25,8 +25,7 @@ import { validEnumValue } from "@/utils/object"
 import { numberIsNotDefined, numberParse } from "@/utils/number"
 import { APP_TASKS as app } from "@/constants/apps"
 import { ICON_ADD, ICON_APPS, ICON_CHAT, ICON_CIRCLE, ICON_DISMISS, ICON_GIFT, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_LINE_HORIZONTAL_3, ICON_MAXIMIZE, ICON_RECEIPT, ICON_SEARCH, ICON_SETTINGS, ICON_SHARE_ANDROID, ICON_SHIELD_CHECKMARK, ICON_SQUARE, ICON_TAG, ICON_TEARDROP_BOTTOM_RIGHT, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from "@/constants/icons"
-import logo from '@/assets/apps/tasks-logo.svg'
-import logo_redmerah from '@/assets/logo.svg'
+import logoRedmerah from '@/assets/images/logos/redmerah-logo.svg'
 
 import AppBar from "@/components/AppBar"
 import Icon from "@/components/Icon"
@@ -191,7 +190,7 @@ const _: VoidComponent<{
 				c:onToggleOpen={(v) => setIsMenuInfoOpen(v)}>
 				<LinkMenuItem
 					href={RoutesLinks.home}
-					c:leading={<img src={logo_redmerah.src} width={16} alt='Redmerah logo'/>}>
+					c:leading={<img src={logoRedmerah.src} width={16} alt='Redmerah logo'/>}>
 					Redmerah
 				</LinkMenuItem>
 				<LinkMenuItem
@@ -406,7 +405,7 @@ const _: VoidComponent<{
 						classList={attrClassListModule(CSSAnimation.btn_shrink_horizontal_icon)}
 						c:code={ICON_LINE_HORIZONTAL_3}
 					/>
-					<img alt="Tasks logo" width={32} src={logo.src} />
+					<img alt="Tasks logo" width={32} src={app.logoUrl} />
 				</>}
 				c:headline="Tasks"
 				c:trailing={<>

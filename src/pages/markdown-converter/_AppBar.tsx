@@ -23,9 +23,9 @@ import { arrayIncludes } from "@/utils/array"
 import { validEnumValue } from "@/utils/object"
 import { APP_MARKDOWN_CONVERTER as app } from "@/constants/apps"
 import { ICON_APPS, ICON_ARROW_DOWNLOAD, ICON_ARROW_RESET, ICON_CHAT, ICON_CIRCLE, ICON_COPY, ICON_DOCUMENT_ARROW_RIGHT, ICON_GIFT, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_MAXIMIZE, ICON_MORE_VERTICAL, ICON_PRINT, ICON_RECEIPT, ICON_SETTINGS, ICON_SHARE_ANDROID, ICON_SHIELD_CHECKMARK, ICON_SQUARE, ICON_TEARDROP_BOTTOM_RIGHT, ICON_TEXT_WRAP, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from "@/constants/icons"
-import logo_redmerah from '@/assets/logo.svg'
-import logo_css from '@/assets/css-logo.svg'
-import logo_html from '@/assets/html-logo.svg'
+import logoRedmerah from '@/assets/images/logos/redmerah-logo.svg'
+import logoCSS from '@/assets/images/logos/css-logo.svg'
+import logoHTML from '@/assets/images/logos/html-logo.svg'
 
 import { IconButton } from "@/components/Button"
 import Menu, { closeSubMenu, closeMenu, LinkMenuItem, MenuDivider, MenuHeader, MenuItem, SubMenu, openMenu, SubMenuItem, SwitchMenuItem } from "@/components/Menu"
@@ -147,7 +147,7 @@ const _: VoidComponent<{
 				c:onToggleOpen={(v) => setIsMenuInfoOpen(v)}>
 				<LinkMenuItem
 					href={RoutesLinks.home}
-					c:leading={<img src={logo_redmerah.src} width={16} alt='Redmerah logo'/>}>
+					c:leading={<img src={logoRedmerah.src} width={16} alt='Redmerah logo'/>}>
 					Redmerah
 				</LinkMenuItem>
 				<LinkMenuItem
@@ -360,12 +360,12 @@ const _: VoidComponent<{
 						Markdown
 					</MenuItem>
 					<MenuItem
-						c:leading={<img width={20} src={logo_html.src} alt="HTML logo"/>}
+						c:leading={<img width={20} src={logoHTML.src} alt="HTML logo"/>}
 						data-download="html">
 						HTML
 					</MenuItem>
 					<MenuItem
-						c:leading={<img width={20} src={logo_css.src} alt="CSS logo"/>}
+						c:leading={<img width={20} src={logoCSS.src} alt="CSS logo"/>}
 						data-download="css">
 						CSS
 					</MenuItem>
@@ -386,12 +386,12 @@ const _: VoidComponent<{
 						Markdown
 					</MenuItem>
 					<MenuItem
-						c:leading={<img width={20} src={logo_html.src} alt="HTML logo"/>}
+						c:leading={<img width={20} src={logoHTML.src} alt="HTML logo"/>}
 						data-copy="html">
 						HTML
 					</MenuItem>
 					<MenuItem
-						c:leading={<img width={20} src={logo_css.src} alt="CSS logo"/>}
+						c:leading={<img width={20} src={logoCSS.src} alt="CSS logo"/>}
 						data-copy="css">
 						CSS
 					</MenuItem>

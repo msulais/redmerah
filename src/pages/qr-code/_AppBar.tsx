@@ -20,7 +20,7 @@ import { validEnumValue } from "@/utils/object"
 import { elementValidTarget, elementTagName, elementId, elementDataset } from "@/utils/element"
 import { Commands, CopyFileType, DownloadFileType, EncodingMode, ErrorCorrectionLevel, Pages } from "./_enums"
 import { ICON_APPS, ICON_ARROW_DOWNLOAD, ICON_CHAT, ICON_CIRCLE, ICON_COPY, ICON_ERROR_CIRCLE_SETTINGS, ICON_GIFT, ICON_IMAGE, ICON_IMAGE_CIRCLE, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_MAXIMIZE, ICON_MORE_VERTICAL, ICON_NUMBER_ROW, ICON_RECEIPT, ICON_SETTINGS, ICON_SHARE_ANDROID, ICON_SHIELD_CHECKMARK, ICON_SQUARE, ICON_TEARDROP_BOTTOM_RIGHT, ICON_TRANSLATE, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from "@/constants/icons"
-import logo_redmerah from '@/assets/logo.svg'
+import logoRedmerah from '@/assets/images/logos/redmerah-logo.svg'
 
 import Tooltip from "@/components/Tooltip"
 import Icon from "@/components/Icon"
@@ -159,7 +159,7 @@ const _: VoidComponent<{
 				c:onToggleOpen={(v) => setIsMenuInfoOpen(v)}>
 				<LinkMenuItem
 					href={RoutesLinks.home}
-					c:leading={<img src={logo_redmerah.src} width={16} alt='Redmerah logo'/>}>
+					c:leading={<img src={logoRedmerah.src} width={16} alt='Redmerah logo'/>}>
 					Redmerah
 				</LinkMenuItem>
 				<LinkMenuItem

@@ -1,11 +1,14 @@
 ---
 import { themeFromSourceColor } from "@material/material-color-utilities"
 
-import { RoutesLinks } from '@/enums/links'
 import type { HEXColor } from '@/types/color'
-import { colorHexArgbToRgb, colorRgbToHex } from '@/utils/color'
+import { RoutesLinks } from '@/enums/links'
 import { APPS } from '@/constants/apps'
-import logo from '@/assets/logo.svg'
+import { colorHexArgbToRgb, colorRgbToHex } from '@/utils/color'
+import { ICON_ARROW_RIGHT, ICON_DATABASE_PERSON, ICON_OPEN, ICON_SETTINGS_COG_MULTIPLE, ICON_SPARKLE } from '@/constants/icons'
+import { numberParse, numberToString } from "@/utils/number"
+import { stringSubstring } from "@/utils/string"
+import logo from '@/assets/images/logos/redmerah-logo.svg'
 
 import Html from '@/layouts/Html/index.astro'
 import Icon from '@/components/Icon/index.astro'
@@ -16,9 +19,6 @@ import BottomBar from '@/layouts/BottomBar/index.astro'
 import Splash from '@/layouts/Splash/index.astro'
 import CSSAnimation from '@/styles/animation.module.scss'
 import CSS from './_index.module.scss'
-import { ICON_ARROW_RIGHT, ICON_DATABASE_PERSON, ICON_OPEN, ICON_SETTINGS_COG_MULTIPLE, ICON_SPARKLE } from '@/constants/icons'
-import { numberParse, numberToString } from "@/utils/number"
-import { stringSubstring } from "@/utils/string"
 
 const features = [
 	{

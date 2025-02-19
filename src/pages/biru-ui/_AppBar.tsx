@@ -18,8 +18,8 @@ import { dateYear } from "@/utils/datetime"
 import { PlatformData } from "@/enums/platforms"
 import { documentRoot } from "@/utils/document"
 import { ICON_APPS, ICON_CHAT, ICON_CIRCLE, ICON_DESKTOP, ICON_DESKTOP_TOWER, ICON_GIFT, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_LINE_HORIZONTAL_3, ICON_MAXIMIZE, ICON_PHONE, ICON_PHONE_LAPTOP, ICON_RECEIPT, ICON_SETTINGS, ICON_SHARE_ANDROID, ICON_SHIELD_CHECKMARK, ICON_SQUARE, ICON_TEARDROP_BOTTOM_RIGHT, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from "@/constants/icons"
-import logo from '@/assets/apps/biru-ui-logo.svg'
-import logo_redmerah from '@/assets/logo.svg'
+import logo from '@/assets/images/apps/biru-ui.svg'
+import logoRedmerah from '@/assets/images/logos/redmerah-logo.svg'
 
 import Tooltip from "@/components/Tooltip"
 import { IconButton } from "@/components/Button"
@@ -121,7 +121,7 @@ const _: VoidComponent<{
 				<LinkMenuItem
 					onClick={() => closeMenu(menuInfoRef)}
 					href={RoutesLinks.home}
-					c:leading={<img src={logo_redmerah.src} width={16} alt='Redmerah logo'/>}>
+					c:leading={<img src={logoRedmerah.src} width={16} alt='Redmerah logo'/>}>
 					Redmerah
 				</LinkMenuItem>
 				<LinkMenuItem
