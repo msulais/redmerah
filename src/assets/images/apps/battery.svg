@@ -54,9 +54,9 @@
 <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_585_25"/>
 <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_585_25" result="shape"/>
 </filter>
-<linearGradient id="paint0_linear_585_25" x1="-4.19629e-06" y1="256" x2="102" y2="256" gradientUnits="userSpaceOnUse">
-<stop stop-color="#EBEBEB"/>
-<stop offset="1" stop-color="#999999"/>
+<linearGradient id="paint0_linear_585_25" x1="-82" y1="261.5" x2="64" y2="256" gradientUnits="userSpaceOnUse">
+<stop stop-color="#FF800A"/>
+<stop offset="1" stop-color="#FFCD30"/>
 </linearGradient>
 <linearGradient id="paint1_linear_585_25" x1="77.5" y1="430" x2="604" y2="-15.5" gradientUnits="userSpaceOnUse">
 <stop stop-color="#FF7F09"/>
