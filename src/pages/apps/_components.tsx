@@ -141,7 +141,7 @@ export const MainElement: VoidComponent = () => {
 											transform: ['scale(0)', 'scale(1)']
 										}, {
 											duration: 300,
-											easing: AnimationEffectTiming.springBounce,
+											easing: AnimationEffectTiming.spring,
 											delay: i * 50
 										}).finished,
 										() => {

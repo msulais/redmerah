@@ -21,6 +21,7 @@ export enum RoutesLinks {
 	usbChecker = '/usb-checker',
 	colorPicker = '/color-picker',
 	clock = '/clock',
+	xmlEscape = '/xml-escape',
 
 	// TODO: create these apps
 	notes = '/notes',

@@ -14,6 +14,17 @@ import logoLatexViewer from '@/assets/images/apps/latex-viewer.svg'
 import logoColorPicker from '@/assets/images/apps/color-picker.svg'
 import logoUSBChecker from '@/assets/images/apps/usb-checker.svg'
 import logoClock from '@/assets/images/apps/clock.svg'
+import logoXmlEscape from '@/assets/images/apps/xml-escape.svg'
+
+export const APP_XML_ESCAPE: AppItem = {
+	logoUrl: logoXmlEscape.src,
+	name: 'XML Escape',
+	description: 'Effortlessly escape and unescape XML entities with our user-friendly web app. Ensure your data is correctly formatted for XML with our reliable, privacy-focused tool. No third-party dependencies, enhancing performance and security.',
+	link: RoutesLinks.xmlEscape,
+	color: '#FFF600',
+	buildNumber: 1,
+	buildVersion: '0.0.1',
+}
 
 export const APP_CLOCK: AppItem = {
 	logoUrl: logoClock.src,
@@ -156,6 +167,7 @@ export const APP_COLOR_PICKER: AppItem = {
 }
 
 export const APPS: AppItem[] = [
+	APP_XML_ESCAPE,
 	APP_CLOCK,
 	APP_USB_CHECKER,
 	APP_COLOR_PICKER,
