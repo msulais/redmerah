@@ -19,5 +19,6 @@ export enum DatabaseNames {
 	emojiPicker = 'emoji-picker',
 	latexViewer = 'latex-viewer',
 	colorPicker = 'color-picker',
-	clock = 'clock'
+	clock = 'clock',
+	xmlEscape = 'xml-escape'
 }
