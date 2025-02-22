@@ -28,6 +28,7 @@ export function removeSplashScreen(timeout: number = 0): void {
 		promiseDone(
 			elementAnimate(body, {
 				transform: ['translateY(10vmin)', 'translateY(0)'],
+				opacity: [0, 1],
 			}, animationOption).finished,
 			() => {
 				elementStyleRemove(body, 'will-change')
