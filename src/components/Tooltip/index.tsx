@@ -35,6 +35,8 @@ let LISTENER_REF: HTMLDivElement
 let TOOLTIP_HAS_LISTENER: boolean = false
 let TOOLTIP_TARGET: Element | null = null
 let TOOLTIP_LISTENER: HTMLDivElement | null = null
+let POINTER_X: number = 0
+let POINTER_Y: number = 0
 const TOOLTIP_CLASS = 'c-tooltip'
 
 type TooltipOpenDetail<E = Event> = {
@@ -59,8 +61,6 @@ function initTooltip(): void {
 	TOOLTIP_HAS_LISTENER = true
 
 	const $isMobile = isMobile()
-	let pointerX: number = 0
-	let pointerY: number = 0
 	let pointerOpenX: number = 0
 	let pointerOpenY: number = 0
 
@@ -237,8 +237,8 @@ function initTooltip(): void {
 			anchor = documentActive()!
 
 			const rect = elementRect(anchor)
-			pointerX = rectLeft(rect) + rectWidth(rect) / 2
-			pointerY = rectTop(rect) + rectHeight(rect) / 2
+			POINTER_X = rectLeft(rect) + rectWidth(rect) / 2
+			POINTER_Y = rectTop(rect) + rectHeight(rect) / 2
 		}
 
 		if (timeId != null) timeTimerClear(timeId)
@@ -260,15 +260,15 @@ function initTooltip(): void {
 				anchor: useAnchor? anchorRect : undefined,
 				gap,
 				pointer: useAnchor? undefined : {
-					x: pointerX,
-					y: pointerY
+					x: POINTER_X,
+					y: POINTER_Y
 				},
 				position
 			}) as DOMRect
 
 			// save to close later
-			pointerOpenX = pointerX
-			pointerOpenY = pointerY
+			pointerOpenX = POINTER_X
+			pointerOpenY = POINTER_Y
 
 			const tooltipPosition = {
 				...pos,
@@ -284,8 +284,8 @@ function initTooltip(): void {
 				top: 0
 			}
 
-			let anchorCenterLeft = pointerX
-			let anchroCenterTop = pointerY
+			let anchorCenterLeft = POINTER_X
+			let anchroCenterTop = POINTER_Y
 
 			if (useAnchor) {
 				anchorCenterLeft = rectLeft(anchorRect!) + (rectWidth(anchorRect!) / 2)
@@ -369,8 +369,8 @@ function initTooltip(): void {
 			document,
 			'pointermove',
 			(ev) => {
-				pointerX = ev.clientX
-				pointerY = ev.clientY
+				POINTER_X = ev.clientX
+				POINTER_Y = ev.clientY
 			}
 		)
 	}
@@ -484,10 +484,14 @@ const Tooltip: FlowComponent<TooltipProps> = ($props) => {
 			closeTooltip()
 		}}
 		onPointerOver={ev => {
+			POINTER_X = ev.clientX
+			POINTER_Y = ev.clientY
 			eventCall(ev, props.onPointerOver)
 			openTooltip(ev)
 		}}
 		onTouchStart={ev => {
+			POINTER_X = ev.touches[0].clientX
+			POINTER_Y = ev.touches[0].clientY
 			eventCall(ev, props.onTouchStart)
 			openTooltip(ev)
 		}}
