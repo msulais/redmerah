@@ -12,7 +12,6 @@ export enum DatabaseNames {
 	calculator = 'calculator',
 	tasks = 'tasks',
 	sassConverter = 'sass-converter',
-	notes = 'notes',
 	qrCode = 'qr-code',
 	colorGradient = 'color-gradient',
 	biruUi = 'biru-ui',
@@ -20,5 +19,6 @@ export enum DatabaseNames {
 	latexViewer = 'latex-viewer',
 	colorPicker = 'color-picker',
 	clock = 'clock',
-	xmlEscape = 'xml-escape'
+	xmlEscape = 'xml-escape',
+	javascriptMinifier = 'javascript-minifier'
 }

@@ -6,7 +6,7 @@ import { LocalStorageKeys } from "@/enums/storage"
 import { APPS } from "@/constants/apps"
 import { eventCurrentTarget, eventPreventDefault } from "@/utils/event"
 import { tryRemoveSplashScreen } from "@/scripts/splash"
-import { arrayFilter, arrayJoin, arrayLength, arrayPush, arraySome, arraySort } from "@/utils/array"
+import { arrayFilter, arrayJoin, arrayLength, arraySome, arraySort } from "@/utils/array"
 import { stringLocaleCompare, stringSplit, stringToLowerCase, stringTrim } from "@/utils/string"
 import { navigatorClipboardWriteText, navigatorShare } from "@/utils/navigator"
 import { regexTest } from "@/utils/regex"
@@ -20,11 +20,10 @@ import Menu, { closeMenu, LinkMenuItem, MenuDivider, MenuItem, MenuPosition, ope
 import Tooltip from "@/components/Tooltip"
 import Dialog, { closeDialog, openDialog } from "@/components/Dialog"
 import CSS from './_index.module.scss'
-import { elementAnimate, elementDataset, elementStyle, elementStyleRemove, elementStyleSet } from "@/utils/element"
+import { elementAnimate, elementStyle, elementStyleRemove, elementStyleSet } from "@/utils/element"
 import { promiseDone } from "@/utils/object"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { FocusableGroup2D } from "@/components/FocusableGroup"
-import { numberParse } from "@/utils/number"
 
 export const MainElement: VoidComponent = () => {
 	const [isMenuActionsOpen, setIsMenuActionsOpen] = createSignal<boolean>(false)
@@ -35,7 +34,6 @@ export const MainElement: VoidComponent = () => {
 	const isSelected = createSelector<string[], string>(pinnedApps, (a, b) => arraySome(b, (v) => v == a))
 	const getSelectedLink = createMemo(() => selectedApp()? selectedApp()!.link : '')
 	const getSelectedName = createMemo(() => selectedApp()? selectedApp()!.name : '')
-	const images: HTMLImageElement[] = []
 	let dialogInfoRef: HTMLDialogElement
 	let menuActionsRef: HTMLDialogElement
 	let timeId: number | null = null
@@ -124,32 +122,20 @@ export const MainElement: VoidComponent = () => {
 							src={app.logoUrl}
 							alt={app.name}
 							onLoad={ev => {
-								const self = eventCurrentTarget(ev)
-								arrayPush(images, self)
-								if (arrayLength(images) !== arrayLength(APPS)) return
-
-								arraySort(images, (a, b) =>
-									numberParse(elementDataset(a, 'i')!, true)
-									- numberParse(elementDataset(b, 'i')!, true)
+								const img = eventCurrentTarget(ev)
+								elementStyleSet(img, 'will-change', 'transform')
+								promiseDone(
+									elementAnimate(img, {
+										transform: ['scale(0)', 'scale(1)']
+									}, {
+										duration: 300,
+										easing: AnimationEffectTiming.spring,
+									}).finished,
+									() => {
+										elementStyleRemove(img, 'will-change')
+										elementStyleRemove(img, 'transform')
+									}
 								)
-
-								for (let i = 0; i < arrayLength(images); i++) {
-									const img = images[i]
-									elementStyleSet(img, 'will-change', 'transform')
-									promiseDone(
-										elementAnimate(img, {
-											transform: ['scale(0)', 'scale(1)']
-										}, {
-											duration: 300,
-											easing: AnimationEffectTiming.spring,
-											delay: i * 50
-										}).finished,
-										() => {
-											elementStyleRemove(img, 'will-change')
-											elementStyleRemove(img, 'transform')
-										}
-									)
-								}
 							}}
 						/>
 						{app.name}

@@ -1,0 +1,32 @@
+{
+	"name": "JavaScript Minifier",
+	"short_name": "JavaScript Minifier",
+	"id": "/javascript-minifier",
+	"description": "Optimize your website's performance with our JavaScript Minifier. Quickly minify JavaScript code for faster load times and reduced file sizes.",
+	"start_url": "/javascript-minifier",
+	"icons": [
+		{
+			"src": "/favicon/javascript-minifier/favicon-16x16.png",
+			"sizes": "16x16",
+			"type": "image/png"
+		},
+		{
+			"src": "/favicon/javascript-minifier/favicon-32x32.png",
+			"sizes": "32x32",
+			"type": "image/png"
+		},
+		{
+			"src": "/favicon/javascript-minifier/android-chrome-192x192.png",
+			"sizes": "192x192",
+			"type": "image/png"
+		},
+		{
+			"src": "/favicon/javascript-minifier/android-chrome-512x512.png",
+			"sizes": "512x512",
+			"type": "image/png"
+		}
+	],
+	"theme_color": "#FFC500",
+	"background_color": "#ffffff",
+	"display": "standalone"
+}
