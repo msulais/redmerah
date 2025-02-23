@@ -15,6 +15,17 @@ import logoColorPicker from '@/assets/images/apps/color-picker.svg'
 import logoUSBChecker from '@/assets/images/apps/usb-checker.svg'
 import logoClock from '@/assets/images/apps/clock.svg'
 import logoXmlEscape from '@/assets/images/apps/xml-escape.svg'
+import logoJavaScriptMinifer from '@/assets/images/apps/javascript-minifier.svg'
+
+export const APP_JAVASCRIPT_MINIFIER: AppItem = {
+	logoUrl: logoJavaScriptMinifer.src,
+	name: 'JavaScript Minifier',
+	description: 'Optimize your website\'s performance with our JavaScript Minifier. Quickly minify JavaScript code for faster load times and reduced file sizes.',
+	link: RoutesLinks.javascriptMinifier,
+	color: '#FFC500',
+	buildNumber: 1,
+	buildVersion: '0.0.1',
+}
 
 export const APP_XML_ESCAPE: AppItem = {
 	logoUrl: logoXmlEscape.src,
@@ -167,6 +178,7 @@ export const APP_COLOR_PICKER: AppItem = {
 }
 
 export const APPS: AppItem[] = [
+	APP_JAVASCRIPT_MINIFIER,
 	APP_XML_ESCAPE,
 	APP_CLOCK,
 	APP_USB_CHECKER,

@@ -1,0 +1,134 @@
+.body {
+	height: calc(100dvh - 56px);
+	max-height: calc(100dvh - 56px);
+	display: flex;
+
+	:root[data-platform=desktop] & {
+		max-height: calc(100dvh - 52px);
+		height: calc(100dvh - 52px);
+	}
+}
+
+.body_drag_handle {
+	--drag-handle-width: 4px;
+	position: absolute;
+	left: calc(100% - var(--drag-handle-width) / 2);
+	top: 0;
+	width: var(--drag-handle-width);
+	height: 100%;
+	transition-duration: .2s;
+
+	@media (hover: hover) {
+		&:hover {
+			background-color: rgb(var(--g-color-accent));
+			cursor: ew-resize;
+		}
+	}
+
+	&:active {
+		background-color: rgb(var(--g-color-accent));
+		cursor: ew-resize;
+	}
+}
+
+.body_html_output {
+	flex: 1;
+	padding: 6px 8px;
+	max-height: 100%;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+	font-family: var(--g-font-family-monospace);
+	white-space: pre-wrap;
+	word-break: break-all;
+
+	&[data-hidden] {
+		display: none;
+	}
+}
+
+.body_preview_output {
+	flex: 1;
+	max-height: 100%;
+	height: 100%;
+	overflow: auto;
+	width: 100%;
+	border: none;
+	outline: none;
+
+	&[data-hidden] {
+		display: none;
+	}
+}
+
+.body_input {
+	--min-max: 280px;
+
+	width: 50%;
+	border-right: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity2));
+	background-color: rgb(var(--g-color-surface));
+	position: relative;
+	min-width: var(--min-max);
+	max-width: calc(100% - var(--min-max));
+	display: flex;
+	flex-direction: column;
+
+	&[data-hidden] {
+		display: none;
+	}
+
+	&[data-output-hidden] {
+		width: 100% !important;
+		max-width: 100%;
+		border-right: none;
+	}
+}
+
+.body_output {
+	flex: 1;
+	background-color: rgb(var(--g-color-surface));
+	display: flex;
+	flex-direction: column;
+
+	&[data-hidden] {
+		display: none;
+	}
+}
+
+.body_tabs {
+	display: flex;
+	gap: 8px;
+	padding: 0 8px 8px 8px;
+	background-color: rgb(var(--g-color-background));
+	border-bottom: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity2));
+}
+
+.body_textfield {
+	flex: 1;
+	max-height: 100%;
+	overflow: auto;
+	height: 100%;
+	width: 100%;
+	border: none;
+	padding: 6px 8px;
+	font-size: 14px;
+	font-weight: normal;
+	scroll-padding-top: 6px;
+	scroll-padding-bottom: 6px;
+	font-family: var(--g-font-family-monospace);
+	resize: none;
+
+	&:focus {
+		outline: none;
+	}
+
+	&::placeholder {
+		color: rgba(var(--g-color-on-surface), var(--g-opacity-inv3));
+	}
+
+	&:not([data-text-wrap]) {
+		white-space: pre;
+		scroll-padding-left: 8px;
+		scroll-padding-right: 8px;
+	}
+}
