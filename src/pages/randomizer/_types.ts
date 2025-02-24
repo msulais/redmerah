@@ -4,7 +4,7 @@ import type { NumbersRandomizerNumberType, NumbersRandomizerSort, WordsRandomize
 export type Settings = {
 	string: {
 		length: number
-		animation: boolean
+		instant: boolean
 		characters: {
 			custom: string
 			symbols: boolean
@@ -15,7 +15,7 @@ export type Settings = {
 	}
 	numbers: {
 		count: number
-		animation: boolean
+		instant: boolean
 		type: NumbersRandomizerNumberType
 		repeat: boolean
 		sort: NumbersRandomizerSort
@@ -27,7 +27,7 @@ export type Settings = {
 	}
 	words: {
 		count: number
-		animation: boolean
+		instant: boolean
 		list: ItemList
 		repeat: boolean
 		wordCase: WordsRandomizerWordCase
@@ -38,11 +38,11 @@ export type Settings = {
 	selection: {
 		count: number
 		list: ItemList
-		animation: boolean
+		instant: boolean
 	},
 	colors: {
 		count: number
-		animation: boolean
+		instant: boolean
 		space: ColorsRandomizerColorSpace
 		range: {
 			hex: { min: number; max: number }
@@ -62,7 +62,7 @@ export type Settings = {
 		count: number
 		listNames: ItemList
 		listMembers: ItemList
-		animation: boolean
+		instant: boolean
 	}
 }
 

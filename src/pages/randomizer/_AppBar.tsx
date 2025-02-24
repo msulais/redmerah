@@ -22,7 +22,7 @@ import { APP_RANDOMIZER as app } from "@/constants/apps"
 import { elementValidTarget, elementTagName, elementId, elementDataset } from "@/utils/element"
 import { validEnumValue } from "@/utils/object"
 import { numberIsNotDefined, numberParse, numberSafe } from "@/utils/number"
-import { ICON_ALIGN_END_HORIZONTAL, ICON_ALIGN_START_HORIZONTAL, ICON_APPS, ICON_ARROW_CLOCKWISE, ICON_ARROW_SHUFFLE, ICON_ARROW_SORT, ICON_ARROW_SYNC, ICON_CHAT, ICON_CHECKMARK, ICON_CIRCLE, ICON_COLOR, ICON_COMMA, ICON_COPY, ICON_DECIMAL_ARROW_LEFT, ICON_DISMISS, ICON_GIFT, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_LINE_HORIZONTAL_3, ICON_MAXIMIZE, ICON_NUMBER_SYMBOL, ICON_PLAY_CIRCLE_HINT, ICON_RECEIPT, ICON_SETTINGS, ICON_SHARE_ANDROID, ICON_SHIELD_CHECKMARK, ICON_SQUARE, ICON_TEARDROP_BOTTOM_RIGHT, ICON_TEXT_CASE_TITLE, ICON_TEXT_SORT_ASCENDING, ICON_TEXT_SORT_DESCENDING, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from "@/constants/icons"
+import { ICON_ALIGN_END_HORIZONTAL, ICON_ALIGN_START_HORIZONTAL, ICON_APPROVALS_APP, ICON_APPS, ICON_ARROW_CLOCKWISE, ICON_ARROW_SHUFFLE, ICON_ARROW_SORT, ICON_ARROW_SYNC, ICON_CHAT, ICON_CHECKMARK, ICON_CIRCLE, ICON_COLOR, ICON_COMMA, ICON_COPY, ICON_DECIMAL_ARROW_LEFT, ICON_DISMISS, ICON_GIFT, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_LINE_HORIZONTAL_3, ICON_MAXIMIZE, ICON_NUMBER_SYMBOL, ICON_RECEIPT, ICON_SETTINGS, ICON_SHARE_ANDROID, ICON_SHIELD_CHECKMARK, ICON_SQUARE, ICON_TEARDROP_BOTTOM_RIGHT, ICON_TEXT_CASE_TITLE, ICON_TEXT_SORT_ASCENDING, ICON_TEXT_SORT_DESCENDING, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from "@/constants/icons"
 import logoRedmerah from '@/assets/images/logos/redmerah-logo.svg'
 
 import Icon from "@/components/Icon"
@@ -65,14 +65,14 @@ const _: Component<{
 		if (randomizer() == RandomizerType.words) return s.words.repeat
 		return false
 	})
-	const isAnimation = createMemo<boolean>(() => {
+	const isInstant = createMemo<boolean>(() => {
 		const s = settings()
-		if (randomizer() == RandomizerType.numbers) return s.numbers.animation
-		if (randomizer() == RandomizerType.words) return s.words.animation
-		if (randomizer() == RandomizerType.string) return s.string.animation
-		if (randomizer() == RandomizerType.selection) return s.selection.animation
-		if (randomizer() == RandomizerType.colors) return s.colors.animation
-		if (randomizer() == RandomizerType.teams) return s.teams.animation
+		if (randomizer() == RandomizerType.numbers) return s.numbers.instant
+		if (randomizer() == RandomizerType.words) return s.words.instant
+		if (randomizer() == RandomizerType.string) return s.string.instant
+		if (randomizer() == RandomizerType.selection) return s.selection.instant
+		if (randomizer() == RandomizerType.colors) return s.colors.instant
+		if (randomizer() == RandomizerType.teams) return s.teams.instant
 		return false
 	})
 	let textFieldPrefixRef: HTMLInputElement
@@ -362,11 +362,11 @@ const _: Component<{
 					</SwitchMenuItem>
 				</Show>
 				<SwitchMenuItem
-					c:checked={isAnimation()}
+					c:checked={isInstant()}
 					c:attrSwitch={{id: inputSettings_animationId}}
-					c:iconCode={ICON_PLAY_CIRCLE_HINT}
+					c:iconCode={ICON_APPROVALS_APP}
 					c:trailing={<MenuIndent/>}>
-					Animation
+					Instant result
 				</SwitchMenuItem>
 				<MenuDivider/>
 

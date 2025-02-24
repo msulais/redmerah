@@ -9,7 +9,9 @@ $appbar_generate_btn_none: 500px;
 
 .appbar_generate_icon {
 	&[data-rotate] {
-		animation: rotate-animation 1s infinite linear !important;
+		:root[data-animation=on] & {
+			animation: rotate-animation 1s infinite linear !important;
+		}
 	}
 }
 
@@ -42,7 +44,9 @@ $appbar_generate_btn_none: 500px;
 
 .app_generate_icon {
 	&[data-rotate] {
-		animation: rotate-animation 1s infinite linear !important;
+		:root[data-animation=on] & {
+			animation: rotate-animation 1s infinite linear !important;
+		}
 	}
 }
 
@@ -203,7 +207,10 @@ $appbar_generate_btn_none: 500px;
 	> div {
 		padding: 48px 4px 4px 4px;
 		border-radius: 8px;
-		transition-duration: .2s;
+
+		:root[data-animation=on] & {
+			transition-duration: .2s;
+		}
 
 		:root[data-corner=sharp] & {
 			border-radius: 0;
@@ -249,7 +256,10 @@ $appbar_generate_btn_none: 500px;
 		display: flex;
 		font-weight: 500;
 		padding: 8px 16px;
-		transition-duration: .2s;
+
+		:root[data-animation=on] & {
+			transition-duration: .2s;
+		}
 
 		:root[data-corner=sharp] & {
 			border-radius: 0;
@@ -338,7 +348,10 @@ $appbar_generate_btn_none: 500px;
 			display: flex;
 			font-weight: 500;
 			padding: 8px 16px;
-			transition-duration: .2s;
+
+			:root[data-animation=on] & {
+				transition-duration: .2s;
+			}
 
 			:root[data-corner=sharp] & {
 				border-radius: 0;

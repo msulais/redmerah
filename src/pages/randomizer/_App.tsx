@@ -54,7 +54,7 @@ const _: VoidComponent = () => {
 	const [lists, setlists] = createStore<ItemList[]>(arrayMap(DEFAULT_LISTS, l => ({id: l.id, name: l.name, items: [...l.items]})))
 	const [settings, setSettings] = createStore<Settings>({
 		string: {
-			animation: true,
+			instant: true,
 			length: 8,
 			characters: {
 				lowercase: true,
@@ -65,7 +65,7 @@ const _: VoidComponent = () => {
 			}
 		},
 		words: {
-			animation: true,
+			instant: true,
 			count: 3,
 			list: {id: 5, name: 'Lorem Ipsum', items: [...LOREM_IPSUM ]},
 			prefix: '',
@@ -75,7 +75,7 @@ const _: VoidComponent = () => {
 			wordCase: WordsRandomizerWordCase.none
 		},
 		numbers: {
-			animation: true,
+			instant: true,
 			count: 3,
 			minDigits: 0,
 			type: NumbersRandomizerNumberType.decimal,
@@ -90,7 +90,7 @@ const _: VoidComponent = () => {
 			suffix: '',
 		},
 		colors: {
-			animation: true,
+			instant: true,
 			space: ColorsRandomizerColorSpace.rgb,
 			count: 3,
 			range: {
@@ -108,12 +108,12 @@ const _: VoidComponent = () => {
 			}
 		},
 		selection: {
-			animation: true,
+			instant: true,
 			count: 4,
 			list: {id: 4, name: 'Animals', items: [...ANIMALS]},
 		},
 		teams: {
-			animation: true,
+			instant: true,
 			count: 3,
 			listMembers: {id: 1, name: 'Person', items: [...PERSON_NAMES]},
 			listNames: {id: 2, name: 'Teams', items: [...TEAMS_NAMES]},
@@ -391,7 +391,7 @@ const _: VoidComponent = () => {
 			break
 		}
 
-		if (settings[type as keyof Settings].animation){
+		if (!settings[type as keyof Settings].instant){
 			const duration = 3000
 			const step = 250
 			let i = 0
@@ -670,14 +670,14 @@ const _: VoidComponent = () => {
 			const value = cursor.value.value
 			switch (cursor.key as ObjectStoreKeys) {
 			case ObjectStoreKeys.settings_stringLength: setSettings('string', 'length', value as number); break
-			case ObjectStoreKeys.settings_stringAnimation: setSettings('string', 'animation', value as boolean); break
+			case ObjectStoreKeys.settings_stringInstant: setSettings('string', 'instant', value as boolean); break
 			case ObjectStoreKeys.settings_stringCharactersCustom: setSettings('string', 'characters', 'custom', value as string); break
 			case ObjectStoreKeys.settings_stringCharactersSymbols: setSettings('string', 'characters', 'symbols', value as boolean); break
 			case ObjectStoreKeys.settings_stringCharactersNumbers: setSettings('string', 'characters', 'numbers', value as boolean); break
 			case ObjectStoreKeys.settings_stringCharactersLowercase: setSettings('string', 'characters', 'lowercase', value as boolean); break
 			case ObjectStoreKeys.settings_stringCharactersUppercase: setSettings('string', 'characters', 'uppercase', value as boolean); break
 			case ObjectStoreKeys.settings_numbersCount: setSettings('numbers', 'count', value as number); break
-			case ObjectStoreKeys.settings_numbersAnimation: setSettings('numbers', 'animation', value as boolean); break
+			case ObjectStoreKeys.settings_numbersInstant: setSettings('numbers', 'instant', value as boolean); break
 			case ObjectStoreKeys.settings_numbersType: setSettings('numbers', 'type', value as NumbersRandomizerNumberType); break
 			case ObjectStoreKeys.settings_numbersRepeat: setSettings('numbers', 'repeat', value as boolean); break
 			case ObjectStoreKeys.settings_numbersSort: setSettings('numbers', 'sort', value as NumbersRandomizerSort); break
@@ -688,16 +688,16 @@ const _: VoidComponent = () => {
 			case ObjectStoreKeys.settings_numbersRangeMin: setSettings('numbers', 'range', 'min', value as number); break
 			case ObjectStoreKeys.settings_numbersRangeMax: setSettings('numbers', 'range', 'max', value as number); break
 			case ObjectStoreKeys.settings_wordsCount: setSettings('words', 'count', value as number); break
-			case ObjectStoreKeys.settings_wordsAnimation: setSettings('words', 'animation', value as boolean); break
+			case ObjectStoreKeys.settings_wordsInstant: setSettings('words', 'instant', value as boolean); break
 			case ObjectStoreKeys.settings_wordsRepeat: setSettings('words', 'repeat', value as boolean); break
 			case ObjectStoreKeys.settings_wordsWordCase: setSettings('words', 'wordCase', value as WordsRandomizerWordCase); break
 			case ObjectStoreKeys.settings_wordsPrefix: setSettings('words', 'prefix', value as string); break
 			case ObjectStoreKeys.settings_wordsSuffix: setSettings('words', 'suffix', value as string); break
 			case ObjectStoreKeys.settings_wordsSeparator: setSettings('words', 'separator', value as string); break
 			case ObjectStoreKeys.settings_selectionCount: setSettings('selection', 'count', value as number); break
-			case ObjectStoreKeys.settings_selectionAnimation: setSettings('selection', 'animation', value as boolean); break
+			case ObjectStoreKeys.settings_selectionInstant: setSettings('selection', 'instant', value as boolean); break
 			case ObjectStoreKeys.settings_colorsCount: setSettings('colors', 'count', value as number); break
-			case ObjectStoreKeys.settings_colorsAnimation: setSettings('colors', 'animation', value as boolean); break
+			case ObjectStoreKeys.settings_colorsInstant: setSettings('colors', 'instant', value as boolean); break
 			case ObjectStoreKeys.settings_colorsModel: setSettings('colors', 'space', value as ColorsRandomizerColorSpace); break
 			case ObjectStoreKeys.settings_colorsRangeHexMin: setSettings('colors', 'range', 'hex', 'min', value as number); break
 			case ObjectStoreKeys.settings_colorsRangeHexMax: setSettings('colors', 'range', 'hex', 'max', value as number); break
@@ -714,7 +714,7 @@ const _: VoidComponent = () => {
 			case ObjectStoreKeys.settings_colorsRangeRgbBMin: setSettings('colors', 'range', 'rgb', 'b', 'min', value as number); break
 			case ObjectStoreKeys.settings_colorsRangeRgbBMax: setSettings('colors', 'range', 'rgb', 'b', 'max', value as number); break
 			case ObjectStoreKeys.settings_teamsCount: setSettings('teams', 'count', value as number); break
-			case ObjectStoreKeys.settings_teamsAnimation: setSettings('teams', 'animation', value as boolean); break
+			case ObjectStoreKeys.settings_teamsInstant: setSettings('teams', 'instant', value as boolean); break
 
 			// already init by other function
 			case ObjectStoreKeys.settings_teamsListNamesId:
@@ -962,33 +962,33 @@ const _: VoidComponent = () => {
 		case Commands.toggleSettingsAnimation: {
 			switch (randomizer()) {
 				case RandomizerType.numbers: {
-					setSettings('numbers', 'animation', a => !a)
-					saveSettings([ObjectStoreKeys.settings_numbersAnimation, settings.numbers.animation])
+					setSettings('numbers', 'instant', a => !a)
+					saveSettings([ObjectStoreKeys.settings_numbersInstant, settings.numbers.instant])
 					break
 				}
 				case RandomizerType.words: {
-					setSettings('words', 'animation', a => !a)
-					saveSettings([ObjectStoreKeys.settings_wordsAnimation, settings.words.animation])
+					setSettings('words', 'instant', a => !a)
+					saveSettings([ObjectStoreKeys.settings_wordsInstant, settings.words.instant])
 					break
 				}
 				case RandomizerType.string: {
-					setSettings('string', 'animation', a => !a)
-					saveSettings([ObjectStoreKeys.settings_stringAnimation, settings.string.animation])
+					setSettings('string', 'instant', a => !a)
+					saveSettings([ObjectStoreKeys.settings_stringInstant, settings.string.instant])
 					break
 				}
 				case RandomizerType.selection: {
-					setSettings('selection', 'animation', a => !a)
-					saveSettings([ObjectStoreKeys.settings_selectionAnimation, settings.selection.animation])
+					setSettings('selection', 'instant', a => !a)
+					saveSettings([ObjectStoreKeys.settings_selectionInstant, settings.selection.instant])
 					break
 				}
 				case RandomizerType.colors: {
-					setSettings('colors', 'animation', a => !a)
-					saveSettings([ObjectStoreKeys.settings_colorsAnimation, settings.colors.animation])
+					setSettings('colors', 'instant', a => !a)
+					saveSettings([ObjectStoreKeys.settings_colorsInstant, settings.colors.instant])
 					break
 				}
 				case RandomizerType.teams: {
-					setSettings('teams', 'animation', a => !a)
-					saveSettings([ObjectStoreKeys.settings_teamsAnimation, settings.teams.animation])
+					setSettings('teams', 'instant', a => !a)
+					saveSettings([ObjectStoreKeys.settings_teamsInstant, settings.teams.instant])
 					break
 				}
 			}
