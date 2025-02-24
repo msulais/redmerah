@@ -11,6 +11,7 @@ export const ICON_ALIGN_START_HORIZONTAL = 0xE049
 export const ICON_ANIMAL_CAT = 0xE055
 export const ICON_APPS = 0xE06B
 export const ICON_APPS_LIST_DETAIL = 0xE071
+export const ICON_APPROVALS_APP = 0xE069
 export const ICON_ARROW_CLOCKWISE = 0xE0AD
 export const ICON_ARROW_DOWNLOAD = 0xE0C9
 export const ICON_ARROW_EXPORT_UP = 0xE0E1
@@ -186,6 +187,8 @@ export const ICON_TRANSLATE = 0xF2D1
 
 // V
 export const ICON_VEHICLE_CAR = 0xF30B
+export const ICON_VIDEO_CLIP = 0xF33B
+export const ICON_VIDEO_CLIP_OFF = 0xF33F
 
 // W
 export const ICON_WARNING = 0xF387
