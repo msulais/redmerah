@@ -9,6 +9,8 @@ import { elementAllBySelector, elementById, elementBySelector, elementFirstChild
 import { KEY_ARROW_LEFT, KEY_ARROW_RIGHT } from "@/constants/key_code"
 import { AppColors } from "@/enums/colors"
 import { stringCSSEscape } from "@/utils/string"
+import { typeIsBoolean } from "@/utils/typecheck"
+import { animationIsOn } from "@/utils/animation"
 import { documentActive } from "@/utils/document"
 import { arrayIncludes } from "@/utils/array"
 import { ICON_CHECKBOX_CHECKED, ICON_CHECKBOX_UNCHECKED, ICON_CHEVRON_RIGHT } from "@/constants/icons"
@@ -21,7 +23,6 @@ import Modal, { type ModalProps, closeModal, focusModal, isModalOpen, ModalPosit
 import { RawSwitch, type RawSwitchProps } from "@/components/Switch"
 import FocusableGroup from "@/components/FocusableGroup"
 import './index.scss'
-import { typeIsBoolean } from "@/utils/typecheck"
 
 const SUBMENU_CLASSNAME = 'c-submenu'
 
@@ -29,6 +30,7 @@ type MenuContextProps = {
 	firstParentId: string
 	parentId: string
 	isPointerHoverParent: Accessor<boolean>
+	isMenuOpen: Accessor<boolean>
 } | undefined
 
 const MenuContext = createContext<MenuContextProps>()
@@ -87,8 +89,13 @@ const MenuItem: ParentComponent<MenuItemProps> = ($props) => {
 
 type SubMenuItemProps = MenuItemProps
 const SubMenuItem: ParentComponent<SubMenuItemProps> = ($props) => {
-	const [props, other] = splitProps($props, ['c:trailing'])
+	const [props, other] = splitProps($props, [
+		'c:trailing', 'c:focused'
+	])
+	const context = useContext(MenuContext)
+
 	return (<MenuItem
+		c:focused={context?.isMenuOpen() ?? props["c:focused"]}
 		c:trailing={<>
 			{props['c:trailing']}
 			<Icon c:code={ICON_CHEVRON_RIGHT}/>
@@ -231,6 +238,7 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 		'class', 'onClick','onPointerEnter', 'ref',
 		'onPointerLeave', 'onKeyDown'
 	])
+	const [isOpen, setIsOpen] = createSignal<boolean>(false)
 	const [isHover, setIsHover] = createSignal<boolean>(false)
 	const interactiveElement = createMemo(() => props["c:interactiveElements"])
 
@@ -246,7 +254,6 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 	let timeId: number | null = null
 	let divRef: HTMLDivElement
 	let popoverRef: HTMLDivElement
-	let isOpen: boolean = false
 	let firstChild: HTMLElement | undefined
 
 	function closeSubMenuDescendant(): void {
@@ -274,7 +281,7 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 	}
 
 	function openSubMenu(instant?: boolean): void {
-		if (isOpen) return
+		if (isOpen()) return
 
 		tryOpen = true
 		if (timeId !== null) timeTimerClear(timeId)
@@ -289,7 +296,7 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 				closePopover(submenu)
 			}
 
-			if (removed) await timeWait(500) // wait for animation end
+			if (removed && animationIsOn()) await timeWait(500) // wait for animation end
 			openPopover(popoverRef, {
 				anchor: firstChild,
 				position: props["c:position"] ?? SubMenuPosition.rightCenterToBottom,
@@ -340,18 +347,19 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 			openSubMenu(true)
 		}}
 		{...otherWrapperProps}>
-		{props['c:item']}
 		<MenuContext.Provider value={{
 			firstParentId: firstParentId ?? '',
 			parentId: other.id,
-			isPointerHoverParent: () => isHover()
+			isPointerHoverParent: () => isHover(),
+			isMenuOpen: () => isOpen()
 		}}>
+			{props['c:item']}
 			<Popover
 				data-c-menu-parent={parentId}
 				c:portalMount={elementBySelector(`#${stringCSSEscape(firstParentId ?? '')} :is(.c-modal-portal-placeholder,.c-popover-portal-placeholder)`)!}
-				c:onToggleOpen={$isOpen => {
-					isOpen = $isOpen
-					props["c:onToggleOpen"]?.($isOpen)
+				c:onToggleOpen={o => {
+					setIsOpen(o)
+					props["c:onToggleOpen"]?.(o)
 				}}
 				onKeyDown={ev => {
 					eventCall(ev, props.onKeyDown)
@@ -409,12 +417,13 @@ const Menu: ParentComponent<MenuProps> = ($props) => {
 	const [props, other] = splitProps($$props, [
 		'classList', 'c:gap', 'c:padding', 'c:contentAutoFocus',
 		'c:onClose', 'children', 'c:interactiveElements',
-		'c:attrContentWrappwer'
+		'c:attrContentWrappwer', 'c:onToggleOpen'
 	])
 	const [contentWrapperProps, otherContentWrapperProps] = splitProps(
 		props["c:attrContentWrappwer"] ?? {},
 		['onPointerEnter', 'onPointerLeave']
 	)
+	const [isOpen, setIsOpen] = createSignal<boolean>(false)
 	const [isHover, setIsHover] = createSignal<boolean>(false)
 	const interactiveElement = createMemo(() => props["c:interactiveElements"])
 
@@ -433,7 +442,8 @@ const Menu: ParentComponent<MenuProps> = ($props) => {
 	return (<MenuContext.Provider value={{
 			firstParentId: other.id,
 			parentId: other.id,
-			isPointerHoverParent: () => isHover()
+			isPointerHoverParent: () => isHover(),
+			isMenuOpen: () => isOpen()
 		}}>
 		<Modal
 			classList={{
@@ -443,6 +453,10 @@ const Menu: ParentComponent<MenuProps> = ($props) => {
 			c:onClose={() => {
 				closeSubMenuDescendant()
 				props["c:onClose"]?.()
+			}}
+			c:onToggleOpen={o => {
+				setIsOpen(o)
+				props["c:onToggleOpen"]?.(o)
 			}}
 
 			// exclusive to <Modal> since it use <dialog> and hides everything if not inside
@@ -487,8 +501,9 @@ const PopoverMenu: ParentComponent<PopoverMenuProps> = ($props) => {
 	const [props, other] = splitProps($$props, [
 		'classList', 'c:gap', 'c:padding', 'children',
 		'c:onClose', 'c:interactiveElements',
-		'onPointerEnter', 'onPointerLeave'
+		'onPointerEnter', 'onPointerLeave', 'c:onToggleOpen'
 	])
+	const [isOpen, setIsOpen] = createSignal<boolean>(false)
 	const [isHover, setIsHover] = createSignal<boolean>(false)
 	const interactiveElement = createMemo(() => props["c:interactiveElements"])
 
@@ -507,12 +522,17 @@ const PopoverMenu: ParentComponent<PopoverMenuProps> = ($props) => {
 	return (<MenuContext.Provider value={{
 			firstParentId: other.id,
 			parentId: other.id,
-			isPointerHoverParent: () => isHover()
+			isPointerHoverParent: () => isHover(),
+			isMenuOpen: () => isOpen()
 		}}>
 		<Popover
 			classList={{
 				'c-menu': true,
 				...props.classList
+			}}
+			c:onToggleOpen={o => {
+				setIsOpen(o)
+				props["c:onToggleOpen"]?.(o)
 			}}
 			c:onClose={() => {
 				closeSubMenuDescendant()
