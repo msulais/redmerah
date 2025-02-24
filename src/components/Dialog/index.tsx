@@ -3,6 +3,7 @@ import { type JSX, type ParentComponent, splitProps, children, Show, createMemo 
 import { AnimationEffectTiming } from "@/enums/animation"
 import { elementAnimate } from "@/utils/element"
 import { promiseDone } from "@/utils/object"
+import { animationIsOn } from "@/utils/animation"
 import { typeIsBoolean } from "@/utils/typecheck"
 
 import { closeModal, focusModal, Modal, openModal, type ModalProps } from "@/components/Modal"
@@ -49,20 +50,30 @@ const Dialog: ParentComponent<DialogProps> = ($props) => {
 			left: props.style?.left ?? '50%',
 		}}
 		c:openAnimation={(el, done) => {
-			if (props['c:openAnimation']) props['c:openAnimation'](el, done)
-			else promiseDone(elementAnimate(
-				el,
-				{ transform: ['translate(-50%, calc(-50% - 12px))', 'translate(-50%, -50%)'] },
-				animationOptions
-			).finished, done)
+			if (animationIsOn()) {
+				if (props['c:openAnimation']) props['c:openAnimation'](el, done)
+				else promiseDone(elementAnimate(
+					el,
+					{ transform: ['translate(-50%, calc(-50% - 12px))', 'translate(-50%, -50%)'] },
+					animationOptions
+				).finished, done)
+				return
+			}
+
+			done()
 		}}
 		c:closeAnimation={(el, done) => {
-			if (props['c:closeAnimation']) props['c:closeAnimation'](el, done)
-			else promiseDone(elementAnimate(
-				el,
-				{ transform: ['translate(-50%, -50%)', 'translate(-50%, calc(-50% - 12px))'] },
-				animationOptions
-			).finished, done)
+			if (animationIsOn()) {
+				if (props['c:closeAnimation']) props['c:closeAnimation'](el, done)
+				else promiseDone(elementAnimate(
+					el,
+					{ transform: ['translate(-50%, -50%)', 'translate(-50%, calc(-50% - 12px))'] },
+					animationOptions
+				).finished, done)
+				return
+			}
+
+			done()
 		}}
 		{...other}>
 		<Show when={header()}>

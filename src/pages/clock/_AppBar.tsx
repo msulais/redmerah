@@ -15,16 +15,17 @@ import { urlEncode, urlOrigin } from "@/utils/url"
 import { APP_CLOCK as app } from "@/constants/apps"
 import { validEnumValue } from "@/utils/object"
 import { elementValidTarget, elementTagName, elementId, elementDataset } from "@/utils/element"
-import { eventCurrentTarget, eventListenerAdd } from "@/utils/event"
-import { ICON_APPS, ICON_ARROW_MAXIMIZE, ICON_ARROW_MINIMIZE, ICON_CHAT, ICON_CIRCLE, ICON_GIFT, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_LINE_HORIZONTAL_3, ICON_MAXIMIZE, ICON_PHONE_LOCK, ICON_RECEIPT, ICON_SETTINGS, ICON_SHARE_ANDROID, ICON_SHIELD_CHECKMARK, ICON_SQUARE, ICON_TEARDROP_BOTTOM_RIGHT, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from "@/constants/icons"
+import { eventCurrentTarget, eventListenerAdd, eventTarget } from "@/utils/event"
+import { ICON_APPS, ICON_ARROW_MAXIMIZE, ICON_ARROW_MINIMIZE, ICON_CHAT, ICON_CIRCLE, ICON_GIFT, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_LINE_HORIZONTAL_3, ICON_MAXIMIZE, ICON_PHONE_LOCK, ICON_PLAY_CIRCLE_HINT, ICON_RECEIPT, ICON_SETTINGS, ICON_SHARE_ANDROID, ICON_SHIELD_CHECKMARK, ICON_SQUARE, ICON_TEARDROP_BOTTOM_RIGHT, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from "@/constants/icons"
 import { PAGES, SIZE_SIDE_NAVIGATION_NONE } from "./_constant"
 import { windowMatches, windowMatchMedia } from "@/utils/window"
 import { Commands, Pages } from "./_enums"
+import { AnimationData } from "@/enums/animation"
 import logoRedmerah from '@/assets/images/logos/redmerah-logo.svg'
 
 import Tooltip from "@/components/Tooltip"
 import { IconButton } from "@/components/Button"
-import Menu, { MenuDivider, MenuItem, MenuHeader, openMenu, LinkMenuItem, SubMenu, closeSubMenu, closeMenu, SubMenuItem, SwitchMenuItem } from "@/components/Menu"
+import Menu, { MenuDivider, MenuItem, MenuHeader, openMenu, LinkMenuItem, SubMenu, closeMenu, SubMenuItem, SwitchMenuItem } from "@/components/Menu"
 import Drawer, { closeDrawer, DrawerItem, openDrawer } from "@/components/Drawer"
 import AppBar from "@/components/AppBar"
 import CSSAnimation from "@/styles/animation.module.scss"
@@ -40,29 +41,30 @@ const _: VoidComponent<{
 	const buttonInfoId = createUniqueId()
 	const buttonSettingsId = createUniqueId()
 	const buttonExpandId = createUniqueId()
-	const inputKeepAwakeId = createUniqueId()
 	const [isMenuInfoOpen, setIsMenuInfoOpen] = createSignal<boolean>(false)
 	const [isMenuSettingsOpen, setIsMenuSettingsOpen] = createSignal<boolean>(false)
-	const [isSubMenuSettings_themeOpen, setIsSubMenuSettings_themeOpen] = createSignal<boolean>(false)
-	const [isSubMenuSettings_cornerOpen, setIsSubMenuSettings_cornerOpen] = createSignal<boolean>(false)
 	const [isSideNavigationHidden, setIsSideNavigationHidden] = createSignal<boolean>(false)
+	const [animation, setAnimation] = createSignal<AnimationData>(AnimationData.on)
 	const [theme, setTheme] = createSignal<ThemeData>(ThemeData.system)
 	const [corner, setCorner] = createSignal<CornerData>(CornerData.round)
 	let menuInfoRef: HTMLDialogElement
 	let menuSettingsRef: HTMLDialogElement
-	let subMenuSettings_themeRef: HTMLDivElement
-	let subMenuSettings_cornerRef: HTMLDivElement
 	let drawerNavigationRef: HTMLDialogElement
 
 	function command(type: Commands, ...args: unknown[]): unknown {
 		return props.command(type, ...args)
 	}
 
+	function updateAnimation(animation: AnimationData): void {
+		setAnimation(animation)
+		attrSet(root, RootAttributes.animation, animation)
+		storageSet(LocalStorageKeys.animation, animation)
+	}
+
 	function udpateTheme(theme: ThemeData): void {
 		setTheme(theme)
 		attrSet(root, RootAttributes.theme, theme)
 		storageSet(LocalStorageKeys.theme, theme)
-		closeSubMenu(subMenuSettings_themeRef)
 		closeMenu(menuSettingsRef)
 	}
 
@@ -70,7 +72,6 @@ const _: VoidComponent<{
 		setCorner(corner)
 		attrSet(root, RootAttributes.corner, corner)
 		storageSet(LocalStorageKeys.corner, corner)
-		closeSubMenu(subMenuSettings_cornerRef)
 		closeMenu(menuSettingsRef)
 	}
 
@@ -99,14 +100,25 @@ const _: VoidComponent<{
 		)
 	}
 
+	function initAnimation(): void {
+		const animation = storageGet(LocalStorageKeys.animation)
+		if (animation && validEnumValue(animation, AnimationData)) {
+			attrSet(root, RootAttributes.animation, animation)
+			setAnimation(animation as AnimationData)
+		}
+	}
+
 	onMount(() => {
 		initTheme()
 		initCorner()
 		initSideNavigationListener()
+		initAnimation()
 	})
 
 	const Menus: VoidComponent = () => {
 		const buttonInfo_shareId = createUniqueId()
+		const inputSettings_animationId = createUniqueId()
+		const inputSettings_keepAwakeId = createUniqueId()
 		return (<>
 			<Menu
 				onClick={(ev) => {
@@ -183,6 +195,21 @@ const _: VoidComponent<{
 			<Menu
 				ref={r => menuSettingsRef = r}
 				c:onToggleOpen={(v) => setIsMenuSettingsOpen(v)}
+				onChange={ev => {
+					const target = eventTarget(ev) as HTMLInputElement
+
+					switch (elementId(target)) {
+					case inputSettings_animationId:
+						updateAnimation(animation() === AnimationData.on
+							? AnimationData.off
+							: AnimationData.on
+						)
+						break
+					case inputSettings_keepAwakeId:
+						command(Commands.toggleKeepAwake, target.checked)
+						break
+					}
+				}}
 				onClick={ev => {
 					const button = documentActive()!
 					if (!elementValidTarget(
@@ -205,18 +232,19 @@ const _: VoidComponent<{
 					c:checked={props.settings.keepAwake}
 					c:iconCode={ICON_PHONE_LOCK}
 					c:attrSwitch={{
-						id: inputKeepAwakeId,
-						onChange: ev => command(
-							Commands.toggleKeepAwake,
-							eventCurrentTarget(ev).checked
-						)
-					}}
-				>Keep awake</SwitchMenuItem>
+						id: inputSettings_keepAwakeId
+					}}>
+					Keep awake
+				</SwitchMenuItem>
+				<MenuDivider />
+				<SwitchMenuItem
+					c:checked={animation() === AnimationData.on}
+					c:iconCode={ICON_PLAY_CIRCLE_HINT}
+					c:attrSwitch={{id: inputSettings_animationId}}>
+					Animation
+				</SwitchMenuItem>
 				<SubMenu
-					ref={r => subMenuSettings_themeRef = r}
-					c:onToggleOpen={v => setIsSubMenuSettings_themeOpen(v)}
 					c:item={<SubMenuItem
-						c:focused={isSubMenuSettings_themeOpen()}
 						c:iconCode={ICON_WEATHER_SUNNY}>
 						Theme
 					</SubMenuItem>}>
@@ -240,10 +268,7 @@ const _: VoidComponent<{
 					</MenuItem>
 				</SubMenu>
 				<SubMenu
-					ref={r => subMenuSettings_cornerRef = r}
-					c:onToggleOpen={v => setIsSubMenuSettings_cornerOpen(v)}
 					c:item={<SubMenuItem
-						c:focused={isSubMenuSettings_cornerOpen()}
 						c:iconCode={ICON_TEARDROP_BOTTOM_RIGHT}>
 						Corner style
 					</SubMenuItem>}>

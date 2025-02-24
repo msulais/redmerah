@@ -18,6 +18,7 @@ import { documentActive, documentBody } from '@/utils/document'
 import { numberParse, numberSafe } from '@/utils/number'
 import { ElementIds } from '@/enums/ids'
 import { ICON_ANIMAL_CAT, ICON_DISMISS, ICON_DIVERSITY, ICON_EMOJI, ICON_FLAG, ICON_FOOD, ICON_HISTORY, ICON_PERSON, ICON_RUNNING_PERSON, ICON_SYMBOLS, ICON_VEHICLE_CAR } from '@/constants/icons'
+import { animationIsOn } from '@/utils/animation'
 
 import Divider from '@/components/Divider'
 import Tooltip from '@/components/Tooltip'
@@ -308,21 +309,31 @@ const EmojiPickerBody: ParentComponent<{
 				}}
 				c:result={<TransitionGroup
 					onEnter={(el, done) => {
-						promiseDone(elementAnimate(
-							el as HTMLElement,
-							[
-								{ transform: 'translateX(-12px)', opacity: 0 },
-								{ tranform: null, opacity: 1 }
-							],
-							{ duration: 200, easing: AnimationEffectTiming.spring }
-						).finished, done)
+						if (animationIsOn()){
+							promiseDone(elementAnimate(
+								el as HTMLElement,
+								[
+									{ transform: 'translateX(-12px)', opacity: 0 },
+									{ tranform: null, opacity: 1 }
+								],
+								{ duration: 200, easing: AnimationEffectTiming.spring }
+							).finished, done)
+							return
+						}
+
+						done()
 					}}
 					onExit={(el, done) => {
-						promiseDone(elementAnimate(
-							el as HTMLElement,
-							{ transform: 'translateX(-12px)', opacity: 0 },
-							{ duration: 200, easing: AnimationEffectTiming.spring }
-						).finished, done)
+						if (animationIsOn()) {
+							promiseDone(elementAnimate(
+								el as HTMLElement,
+								{ transform: 'translateX(-12px)', opacity: 0 },
+								{ duration: 200, easing: AnimationEffectTiming.spring }
+							).finished, done)
+							return
+						}
+
+						done()
 					}}>
 					<For each={ALL_EMOJI}>{e => <Show when={getSearchRegex() != null && regexTest(getSearchRegex()!, e[1])}>
 						<SearchMenuItem onClick={() => {

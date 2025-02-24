@@ -20,6 +20,7 @@ import Emoji from "@/components/Emoji"
 import Menu, { closeMenu, MenuItem, MenuPosition, openMenu } from "@/components/Menu"
 import SideNavigation, { SideNavigationItem } from "@/components/SideNavigation"
 import CSS from './_styles.module.scss'
+import { animationIsOn } from "@/utils/animation"
 
 const _: VoidComponent<{
 	expanded: boolean
@@ -163,6 +164,8 @@ const _: VoidComponent<{
 		c:footer={<Footer />}>
 		<TransitionGroup
 			onEnter={(el, done) => {
+				if (!animationIsOn()) return done()
+
 				promiseDone(elementAnimate(
 					elementFirstChild(el as HTMLElement)!,
 					{ opacity: [0, 1], transform: ['translate(-12px)', 'none'] },
@@ -170,6 +173,8 @@ const _: VoidComponent<{
 				).finished, done)
 			}}
 			onExit={(el, done) => {
+				if (!animationIsOn()) return done()
+
 				promiseDone(elementAnimate(
 					elementFirstChild(el as HTMLElement)!,
 					{ opacity: 0, transform: 'translate(-12px)'},

@@ -11,7 +11,10 @@
 	border-radius: var(--c-textfield-border-radius);
 	gap: 3px;
 	min-width: 0;
-	transition-duration: .2s;
+
+	:root[data-animation=on] & {
+		transition-duration: .2s;
+	}
 
 	:root[data-corner=sharp] & { --c-textfield-border-radius: 0px }
 	:root[data-corner=semi-round] & { --c-textfield-border-radius: 4px }
@@ -44,7 +47,10 @@
 		left: 50%;
 		transform: translateX(-50%);
 		border-radius: 2px 2px 0 0;
-		transition-duration: .2s;
+
+		:root[data-animation=on] & {
+			transition-duration: .2s;
+		}
 
 		:root[data-corner=sharp] & {
 			border-radius: 0;
@@ -98,7 +104,10 @@
 
 			&::before {
 				background-color: rgb(var(--g-color-accent));
-				animation: input-start-focus .2s var(--g-transition-spring);
+
+				:root[data-animation=on] & {
+					animation: input-start-focus .2s var(--g-transition-spring);
+				}
 			}
 		}
 
@@ -125,9 +134,12 @@
 		outline: none;
 		font-size: var(--g-font-size-xs);
 		line-height: 20px;
-		transition-duration: .2s;
 		-ms-overflow-style: none;
 		scrollbar-width: none;
+
+		:root[data-animation=on] & {
+			transition-duration: .2s;
+		}
 
 		&::-webkit-scrollbar {
 			display: none;
@@ -140,9 +152,12 @@
 
 	> textarea {
 		margin: 10px 0;
-		transition-duration: .2s, 0s;
-		transition-property: all, height;
 		resize: none;
+
+		:root[data-animation=on] & {
+			transition-duration: .2s, 0s;
+			transition-property: all, height;
+		}
 
 		&[data-c-resize] {
 			resize: vertical;

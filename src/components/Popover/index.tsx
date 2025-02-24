@@ -18,6 +18,7 @@ import { AnimationEffectTiming } from '@/enums/animation'
 import { promiseDone } from '@/utils/object'
 import { ElementIds } from '@/enums/ids'
 import { KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT, KEY_ARROW_UP, KEY_ESCAPE } from '@/constants/key_code'
+import { animationIsOn } from '@/utils/animation'
 
 import './index.scss'
 
@@ -422,6 +423,11 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 			{ detail: popoverRef }
 		))
 		props['c:onClose']?.()
+		if (!animationIsOn()) {
+			popoverRef.hidePopover()
+			return
+		}
+
 		onClose?.()
 		if (props['c:closeAnimation'] != null) props['c:closeAnimation'](
 			popoverRef,
@@ -608,14 +614,19 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 		setAttrOpen(true)
 		props['c:onOpen']?.()
 		onOpen?.()
-		if (props['c:openAnimation'] != null) props['c:openAnimation'](
-			popoverRef,
-			() => setAttrOpenDone(true)
-		)
-		else promiseDone(elementAnimate(popoverRef,
-			{ transform: [`translate(${translate.left}px, ${translate.top}px)`, 'none'] },
-			{ duration: 300, easing: AnimationEffectTiming.springBounce }
-		).finished, () => setAttrOpenDone(true))
+		if (!animationIsOn()) {
+			setAttrOpenDone(true)
+		}
+		else {
+			if (props['c:openAnimation'] != null) props['c:openAnimation'](
+				popoverRef,
+				() => setAttrOpenDone(true)
+			)
+			else promiseDone(elementAnimate(popoverRef,
+				{ transform: [`translate(${translate.left}px, ${translate.top}px)`, 'none'] },
+				{ duration: 300, easing: AnimationEffectTiming.springBounce }
+			).finished, () => setAttrOpenDone(true))
+		}
 
 		STOP_GLOBAL_CLICK = true
 

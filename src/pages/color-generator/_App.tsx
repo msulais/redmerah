@@ -35,6 +35,7 @@ import AppBar from './_AppBar'
 import Body from './_Body'
 import CSS from './_styles.module.scss'
 import { keyboardOnFocusIn, keyboardOnFocusOut, keyboardOnKeyDown } from '@/utils/keyboard'
+import { animationIsOn } from '@/utils/animation'
 
 const _: VoidComponent = () => {
 	const db = new IDB(DatabaseNames.colorGenerator)
@@ -163,6 +164,17 @@ const _: VoidComponent = () => {
 				duration: 150,
 				easing: AnimationEffectTiming.spring
 			}
+
+			if (!animationIsOn()){
+				elementTextContentSet(icon, String.fromCharCode(ICON_CHECKMARK))
+				timeTimerSet(() => {
+					elementTextContentSet(icon, String.fromCharCode(ICON_COPY))
+					elementAnimate(icon, {scale: [0, 1]}, animation_option)
+					delete timeCopyList[palette.seed]
+				}, 1000)
+				return
+			}
+
 			promiseDone(
 				elementAnimate(icon, {scale: [1, 0]}, animation_option).finished,
 			() => {

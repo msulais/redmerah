@@ -1,6 +1,7 @@
 import { AnimationEffectTiming } from "@/enums/animation"
 import { BodyAttributes } from "@/enums/attributes"
 import { ElementIds } from "@/enums/ids"
+import { animationIsOn } from "@/utils/animation"
 import { attrGet, attrRemove } from "@/utils/attributes"
 import { documentBody } from "@/utils/document"
 import { elementRemove, elementById, elementStyleSet, elementStyleRemove, elementAnimate } from "@/utils/element"
@@ -20,23 +21,26 @@ export function removeSplashScreen(timeout: number = 0): void {
 		const scrollY = window.scrollY // original scroll offset Y
 		const animationOption = {duration: 500, easing: AnimationEffectTiming.spring}
 		const body = documentBody()
-
-		windowScrollTo({top: 0, behavior: 'instant'})
 		elementRemove(splashRef)
-		elementStyleSet(body, 'will-change', 'transform opacity')
-		elementStyleSet(body, 'overflow', 'hidden')
-		promiseDone(
-			elementAnimate(body, {
-				transform: ['translateY(10vmin)', 'translateY(0)'],
-				opacity: [0, 1],
-			}, animationOption).finished,
-			() => {
-				elementStyleRemove(body, 'will-change')
-				elementStyleRemove(body, 'overflow')
-				windowScrollTo({top: scrollY, behavior: 'smooth'})
-			}
-		)
 		attrRemove(documentBody(), BodyAttributes.componentCount)
+
+		if (animationIsOn()) {
+			windowScrollTo({top: 0, behavior: 'instant'})
+			elementStyleSet(body, 'will-change', 'transform opacity')
+			elementStyleSet(body, 'overflow', 'hidden')
+			promiseDone(
+				elementAnimate(body, {
+					transform: ['translateY(10vmin)', 'translateY(0)'],
+					opacity: [0, 1],
+				}, animationOption).finished,
+				() => {
+					elementStyleRemove(body, 'will-change')
+					elementStyleRemove(body, 'overflow')
+					windowScrollTo({top: scrollY, behavior: 'smooth'})
+				}
+			)
+		}
+
 	}, timeout)
 }
 

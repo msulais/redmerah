@@ -1,7 +1,8 @@
 export enum RootAttributes {
 	theme = 'data-theme',
 	corner = 'data-corner',
-	platform = 'data-platform'
+	platform = 'data-platform',
+	animation = 'data-animation'
 }
 
 export enum BodyAttributes {

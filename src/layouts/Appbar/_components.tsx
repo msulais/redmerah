@@ -24,9 +24,10 @@ import { tryRemoveSplashScreen } from "@/scripts/splash"
 import { mathRound } from "@/utils/math"
 import { eventCurrentTarget, eventTarget } from "@/utils/event"
 import { documentRoot } from "@/utils/document"
-import { ICON_APPS, ICON_CIRCLE, ICON_GIFT, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_LINE_HORIZONTAL_3, ICON_MAXIMIZE, ICON_RECEIPT, ICON_SETTINGS, ICON_SHIELD_CHECKMARK, ICON_SQUARE, ICON_TEARDROP_BOTTOM_RIGHT, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from "@/constants/icons"
+import { ICON_APPS, ICON_CIRCLE, ICON_GIFT, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_LINE_HORIZONTAL_3, ICON_MAXIMIZE, ICON_RECEIPT, ICON_SETTINGS, ICON_SHIELD_CHECKMARK, ICON_SQUARE, ICON_TEARDROP_BOTTOM_RIGHT, ICON_VIDEO_CLIP, ICON_VIDEO_CLIP_OFF, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from "@/constants/icons"
 import Drawer, { closeDrawer, LinkDrawerItem, openDrawer } from "@/components/Drawer"
 import { validEnumValue } from "@/utils/object"
+import { AnimationData } from "@/enums/animation"
 
 type NavigationDrawerProps = {
 	route?: RoutesLinks
@@ -98,6 +99,7 @@ export const SettingsElement: VoidComponent = () => {
 	const root = documentRoot()
 	const menuItemAccentId = createUniqueId()
 	const [color, setColor] = createSignal<HEXColor>('#FF0000')
+	const [animation, setAnimation] = createSignal<AnimationData>(AnimationData.on)
 	const [theme, setTheme] = createSignal<ThemeData>(ThemeData.system)
 	const [corner, setCorner] = createSignal<CornerData>(CornerData.round)
 	const [isMenuSettingsOpen, setIsMenuSettingsOpen] = createSignal<boolean>(false)
@@ -110,6 +112,13 @@ export const SettingsElement: VoidComponent = () => {
 		setTheme(theme)
 		attrSet(root, RootAttributes.theme, theme)
 		storageSet(LocalStorageKeys.theme, theme)
+		closeMenu(menuSettingsRef)
+	}
+
+	function updateAnimation(animation: AnimationData): void {
+		setAnimation(animation)
+		attrSet(root, RootAttributes.animation, animation)
+		storageSet(LocalStorageKeys.animation, animation)
 		closeMenu(menuSettingsRef)
 	}
 
@@ -133,6 +142,14 @@ export const SettingsElement: VoidComponent = () => {
 		if (corner && validEnumValue(corner, CornerData)) {
 			attrSet(root, RootAttributes.corner, corner)
 			setCorner(corner as CornerData)
+		}
+	}
+
+	function initAnimation(): void {
+		const animation = storageGet(LocalStorageKeys.animation)
+		if (animation && validEnumValue(animation, AnimationData)) {
+			attrSet(root, RootAttributes.animation, animation)
+			setAnimation(animation as AnimationData)
 		}
 	}
 
@@ -162,6 +179,7 @@ export const SettingsElement: VoidComponent = () => {
 	}
 
 	onMount(() => {
+		initAnimation()
 		initTheme()
 		initCorner()
 		initColor()
@@ -198,10 +216,19 @@ export const SettingsElement: VoidComponent = () => {
 					break
 				default:
 					const dataTheme = elementDataset(button, 'theme')
-					if (dataTheme) return updateTheme(dataTheme as ThemeData)
+					if (dataTheme
+						&& validEnumValue(dataTheme, ThemeData)
+					) return updateTheme(dataTheme as ThemeData)
 
 					const dataCorner = elementDataset(button, 'corner')
-					if (dataCorner) return updateCorner(dataCorner as CornerData)
+					if (dataCorner
+						&& validEnumValue(dataCorner, CornerData)
+					) return updateCorner(dataCorner as CornerData)
+
+					const dataAnimation = elementDataset(button, 'animation')
+					if (dataAnimation
+						&& validEnumValue(dataAnimation, AnimationData)
+					) return updateAnimation(dataAnimation as AnimationData)
 				}
 			}}>
 			<MenuHeader>Theme</MenuHeader>
@@ -248,6 +275,20 @@ export const SettingsElement: VoidComponent = () => {
 				c:selected={corner() == CornerData.fullRound}
 				c:iconCode={ICON_CIRCLE}>
 				Full round
+			</MenuItem>
+			<MenuDivider />
+			<MenuHeader>Animation</MenuHeader>
+			<MenuItem
+				data-animation={AnimationData.on}
+				c:selected={animation() === AnimationData.on}
+				c:iconCode={ICON_VIDEO_CLIP}>
+				On
+			</MenuItem>
+			<MenuItem
+				data-animation={AnimationData.off}
+				c:selected={animation() === AnimationData.off}
+				c:iconCode={ICON_VIDEO_CLIP_OFF}>
+				Off
 			</MenuItem>
 			<MenuDivider/>
 			<MenuHeader>Accent color</MenuHeader>

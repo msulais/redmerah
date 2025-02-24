@@ -23,7 +23,10 @@
 		margin-bottom: 8px;
 		border-radius: 8px;
 		box-shadow: var(--g-elevation2);
-		transition-duration: .2s;
+
+		:root[data-animation=on] & {
+			transition-duration: .2s;
+		}
 
 		:root[data-corner=sharp] & { border-radius: 0 }
 		:root[data-corner=semi-round] & { border-radius: 4px }
@@ -89,8 +92,11 @@
 	z-index: 3;
 	touch-action: none;
 	box-shadow: var(--g-elevation2), inset var(--g-elevation2);
-	transition-duration: .2s;
-	transition-property: border-color;
+
+	:root[data-animation=on] & {
+		transition-duration: .2s;
+		transition-property: border-color;
+	}
 
 	:root[data-corner=sharp] & { border-radius: 0px }
 }

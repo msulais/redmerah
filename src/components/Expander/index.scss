@@ -13,11 +13,14 @@
 		padding: 0;
 		user-select: none;
 		padding: 4px 12px;
-		transition-property: all, border-color;
-		transition-duration: .2s, 0s;
 		border: 1px solid;
 		border-color: transparent;
 		border-color: rgba(var(--c-expander-border-color), var(--c-expander-border-opacity));
+		transition-property: all, border-color;
+
+		:root[data-animation=on] & {
+			transition-duration: .2s, 0s;
+		}
 
 		&[data-c-trailing] {
 			padding-right: 4px;
@@ -114,8 +117,11 @@
 .c-expander-body {
 	overflow: hidden;
 	padding: 12px;
-	transition-duration: .2s;
 	border-radius: 8px;
+
+	:root[data-animation=on] & {
+		transition-duration: .2s;
+	}
 
 	:root[data-corner=sharp] & {border-radius: 0}
 	:root[data-corner=semi-round] & {border-radius: 4px}
@@ -152,7 +158,8 @@
 	}
 
 	& .c-icon {
-		transition-duration: .2s;
-
+		:root[data-animation=on] & {
+			transition-duration: .2s;
+		}
 	}
 }

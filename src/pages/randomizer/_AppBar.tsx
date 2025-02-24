@@ -10,6 +10,7 @@ import { ThemeData } from "@/enums/theme"
 import { storageGet, storageSet } from "@/utils/storage"
 import { LocalStorageKeys } from "@/enums/storage"
 import { RandomizerType, NumbersRandomizerSort, NumbersRandomizerNumberType, WordsRandomizerWordCase, ColorsRandomizerColorSpace, Commands } from "./_enums"
+import { AnimationData } from "@/enums/animation"
 import { urlEncode, urlOrigin } from "@/utils/url"
 import { CornerData } from "@/enums/corner"
 import { windowMatches } from "@/utils/window"
@@ -22,13 +23,13 @@ import { APP_RANDOMIZER as app } from "@/constants/apps"
 import { elementValidTarget, elementTagName, elementId, elementDataset } from "@/utils/element"
 import { validEnumValue } from "@/utils/object"
 import { numberIsNotDefined, numberParse, numberSafe } from "@/utils/number"
-import { ICON_ALIGN_END_HORIZONTAL, ICON_ALIGN_START_HORIZONTAL, ICON_APPROVALS_APP, ICON_APPS, ICON_ARROW_CLOCKWISE, ICON_ARROW_SHUFFLE, ICON_ARROW_SORT, ICON_ARROW_SYNC, ICON_CHAT, ICON_CHECKMARK, ICON_CIRCLE, ICON_COLOR, ICON_COMMA, ICON_COPY, ICON_DECIMAL_ARROW_LEFT, ICON_DISMISS, ICON_GIFT, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_LINE_HORIZONTAL_3, ICON_MAXIMIZE, ICON_NUMBER_SYMBOL, ICON_RECEIPT, ICON_SETTINGS, ICON_SHARE_ANDROID, ICON_SHIELD_CHECKMARK, ICON_SQUARE, ICON_TEARDROP_BOTTOM_RIGHT, ICON_TEXT_CASE_TITLE, ICON_TEXT_SORT_ASCENDING, ICON_TEXT_SORT_DESCENDING, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from "@/constants/icons"
+import { ICON_ALIGN_END_HORIZONTAL, ICON_ALIGN_START_HORIZONTAL, ICON_APPROVALS_APP, ICON_APPS, ICON_ARROW_CLOCKWISE, ICON_ARROW_SHUFFLE, ICON_ARROW_SORT, ICON_ARROW_SYNC, ICON_CHAT, ICON_CHECKMARK, ICON_CIRCLE, ICON_COLOR, ICON_COMMA, ICON_COPY, ICON_DECIMAL_ARROW_LEFT, ICON_DISMISS, ICON_GIFT, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_LINE_HORIZONTAL_3, ICON_MAXIMIZE, ICON_NUMBER_SYMBOL, ICON_PLAY_CIRCLE_HINT, ICON_RECEIPT, ICON_SETTINGS, ICON_SHARE_ANDROID, ICON_SHIELD_CHECKMARK, ICON_SQUARE, ICON_TEARDROP_BOTTOM_RIGHT, ICON_TEXT_CASE_TITLE, ICON_TEXT_SORT_ASCENDING, ICON_TEXT_SORT_DESCENDING, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from "@/constants/icons"
 import logoRedmerah from '@/assets/images/logos/redmerah-logo.svg'
 
 import Icon from "@/components/Icon"
 import Button, { ButtonVariant, IconButton } from "@/components/Button"
 import { Tooltip } from "@/components/Tooltip"
-import Menu, { MenuDivider, MenuHeader, MenuIndent, MenuItem, LinkMenuItem, SubMenu, closeSubMenu, closeMenu, openMenu, SubMenuItem, SwitchMenuItem } from "@/components/Menu"
+import Menu, { MenuDivider, MenuHeader, MenuIndent, MenuItem, LinkMenuItem, SubMenu, closeMenu, openMenu, SubMenuItem, SwitchMenuItem } from "@/components/Menu"
 import TextField, { NumberTextField, updateTextFieldValue } from "@/components/TextField"
 import Drawer, { closeDrawer, DrawerItem, openDrawer } from "@/components/Drawer"
 import AppBar from "@/components/AppBar"
@@ -46,15 +47,10 @@ const _: Component<{
 	const root = documentRoot()
 	const [isMenuInfoOpen, setIsMenuInfoOpen] = createSignal<boolean>(false)
 	const [isMenuSettingsOpen, setIsMenuSettingsOpen] = createSignal<boolean>(false)
-	const [isSubMenuSettings_themeOpen, setIsSubMenuSettings_themeOpen] = createSignal<boolean>(false)
-	const [isSubMenuSettings_cornerOpen, setIsSubMenuSettings_cornerOpen] = createSignal<boolean>(false)
-	const [isSubMenuSettings_colorSpaceOpen, setIsSubMenuSettings_colorSpaceOpen] = createSignal<boolean>(false)
-	const [isSubMenuSettings_wordCaseOpen, setIsSubMenuSettings_wordCaseOpen] = createSignal<boolean>(false)
-	const [isSubMenuSettings_sortOpen, setIsSubMenuSettings_sortOpen] = createSignal<boolean>(false)
-	const [isSubMenuSettings_numberTypeOpen, setIsSubMenuSettings_numberTypeOpen] = createSignal<boolean>(false)
 	const [theme, setTheme] = createSignal<ThemeData>(ThemeData.system)
 	const [timeCopyId, setTimeCopyId] = createSignal<number | null>(null)
 	const [timeCopyErrorId, setTimeCopyErrorId] = createSignal<number | null>(null)
+	const [animation, setAnimation] = createSignal<AnimationData>(AnimationData.on)
 	const [corner, setCorner] = createSignal<CornerData>(CornerData.round)
 	const [isSideNavigationHidden, setIsSideNavigationHidden] = createSignal<boolean>(false)
 	const settings = createMemo<Settings>(() => props.settings[0])
@@ -82,22 +78,21 @@ const _: Component<{
 	let drawerNavigationRef: HTMLDialogElement
 	let menuInfoRef: HTMLDialogElement
 	let menuSettingsRef: HTMLDialogElement
-	let subMenuSettings_cornerRef: HTMLDivElement
-	let subMenuSettings_themeRef: HTMLDivElement
-	let subMenuSettings_wordCaseRef: HTMLDivElement
-	let subMenuSettings_sortRef: HTMLDivElement
-	let subMenuSettings_numberTypeRef: HTMLDivElement
-	let subMenuSettings_colorSpaceRef: HTMLDivElement
 
 	function command(type: Commands, ...args: unknown[]): unknown {
 		return props.command(type, ...args)
+	}
+
+	function updateAnimation(animation: AnimationData): void {
+		setAnimation(animation)
+		attrSet(root, RootAttributes.animation, animation)
+		storageSet(LocalStorageKeys.animation, animation)
 	}
 
 	function updateTheme(theme: ThemeData): void {
 		setTheme(theme)
 		attrSet(root, RootAttributes.theme, theme)
 		storageSet(LocalStorageKeys.theme, theme)
-		closeSubMenu(subMenuSettings_themeRef)
 		closeMenu(menuSettingsRef)
 	}
 
@@ -105,7 +100,6 @@ const _: Component<{
 		setCorner(corner)
 		attrSet(root, RootAttributes.corner, corner)
 		storageSet(LocalStorageKeys.corner, corner)
-		closeSubMenu(subMenuSettings_cornerRef)
 		closeMenu(menuSettingsRef)
 	}
 
@@ -129,13 +123,11 @@ const _: Component<{
 
 	function updateNumbersSort(sort: NumbersRandomizerSort): void {
 		command(Commands.updateSettingsNumbersSort, sort)
-		closeSubMenu(subMenuSettings_sortRef)
 		closeMenu(menuSettingsRef)
 	}
 
 	function updateNumberType(type: NumbersRandomizerNumberType): void {
 		command(Commands.updateSettingsNumbersType, type)
-		closeSubMenu(subMenuSettings_numberTypeRef)
 		closeMenu(menuSettingsRef)
 	}
 
@@ -158,13 +150,11 @@ const _: Component<{
 
 	function updateWordsWordCase(wordcase: WordsRandomizerWordCase): void {
 		command(Commands.updateSettingsWordsWordcase, wordcase)
-		closeSubMenu(subMenuSettings_wordCaseRef)
 		closeMenu(menuSettingsRef)
 	}
 
 	function updateColorsSpace(space: ColorsRandomizerColorSpace): void {
 		command(Commands.updateSettingsColorsSpace, space)
-		closeSubMenu(subMenuSettings_colorSpaceRef)
 		closeMenu(menuSettingsRef)
 	}
 
@@ -173,20 +163,30 @@ const _: Component<{
 		eventListenerAdd(matchMedia(`(max-width: ${SIZE_SIDE_NAVIGATION_NONE}px)`), 'change', ev => setIsSideNavigationHidden((ev as MediaQueryListEvent).matches))
 	}
 
+	function initAnimation(): void {
+		const animation = storageGet(LocalStorageKeys.animation)
+		if (animation && validEnumValue(animation, AnimationData)) {
+			attrSet(root, RootAttributes.animation, animation)
+			setAnimation(animation as AnimationData)
+		}
+	}
+
 	onMount(() => {
 		initTheme()
 		initCorner()
 		initSideNavigationListener()
+		initAnimation()
 	})
 
 	const Menus: VoidComponent = () => {
 		const buttonInfo_shareId = createUniqueId()
 		const inputSettings_repeatId = createUniqueId()
-		const inputSettings_animationId = createUniqueId()
+		const inputSettings_instantId = createUniqueId()
 		const inputSettings_prefixId = createUniqueId()
 		const inputSettings_suffixId = createUniqueId()
 		const inputSettings_separatorId = createUniqueId()
 		const inputSettings_minDigitsId = createUniqueId()
+		const inputSettings_animationId = createUniqueId()
 		return (<>
 			<Menu
 				onClick={(ev) => {
@@ -337,8 +337,14 @@ const _: Component<{
 					case inputSettings_repeatId:
 						command(Commands.toggleSettingsRepeat)
 						break
-					case inputSettings_animationId:
+					case inputSettings_instantId:
 						command(Commands.toggleSettingsAnimation)
+						break
+					case inputSettings_animationId:
+						updateAnimation(animation() === AnimationData.on
+							? AnimationData.off
+							: AnimationData.on
+						)
 						break
 					}
 				}}>
@@ -363,20 +369,23 @@ const _: Component<{
 				</Show>
 				<SwitchMenuItem
 					c:checked={isInstant()}
-					c:attrSwitch={{id: inputSettings_animationId}}
+					c:attrSwitch={{id: inputSettings_instantId}}
 					c:iconCode={ICON_APPROVALS_APP}
 					c:trailing={<MenuIndent/>}>
 					Instant result
+				</SwitchMenuItem>
+				<SwitchMenuItem
+					c:checked={animation() === AnimationData.on}
+					c:iconCode={ICON_PLAY_CIRCLE_HINT}
+					c:attrSwitch={{id: inputSettings_animationId}}>
+					Animation
 				</SwitchMenuItem>
 				<MenuDivider/>
 
 				{/* Numbers */}
 				<Show when={randomizer() == RandomizerType.numbers}>
 					<SubMenu
-						ref={r => subMenuSettings_sortRef = r}
-						c:onToggleOpen={(v) => setIsSubMenuSettings_sortOpen(v)}
 						c:item={<SubMenuItem
-							c:focused={isSubMenuSettings_sortOpen()}
 							c:iconCode={ICON_ARROW_SORT}>
 							Sort
 						</SubMenuItem>}>
@@ -400,10 +409,7 @@ const _: Component<{
 						</MenuItem>
 					</SubMenu>
 					<SubMenu
-						ref={r => subMenuSettings_numberTypeRef = r}
-						c:onToggleOpen={(isOpen) => setIsSubMenuSettings_numberTypeOpen(isOpen)}
 						c:item={<SubMenuItem
-							c:focused={isSubMenuSettings_numberTypeOpen()}
 							c:iconCode={ICON_NUMBER_SYMBOL}>
 							Number type
 						</SubMenuItem>}>
@@ -433,10 +439,7 @@ const _: Component<{
 				{/* Words */}
 				<Show when={randomizer() == RandomizerType.words}>
 					<SubMenu
-						ref={r => subMenuSettings_wordCaseRef = r}
-						c:onToggleOpen={isOpen => setIsSubMenuSettings_wordCaseOpen(isOpen)}
 						c:item={<SubMenuItem
-							c:focused={isSubMenuSettings_wordCaseOpen()}
 							c:iconCode={ICON_TEXT_CASE_TITLE}>
 							Word case
 						</SubMenuItem>}>
@@ -471,11 +474,8 @@ const _: Component<{
 				{/* Colors */}
 				<Show when={randomizer() == RandomizerType.colors}>
 					<SubMenu
-						ref={r => subMenuSettings_colorSpaceRef = r}
 						style={{width: '128px'}}
-						c:onToggleOpen={(v) => setIsSubMenuSettings_colorSpaceOpen(v)}
 						c:item={<SubMenuItem
-							c:focused={isSubMenuSettings_colorSpaceOpen()}
 							c:iconCode={ICON_COLOR}>
 							Color space
 						</SubMenuItem>}>
@@ -497,10 +497,7 @@ const _: Component<{
 					</SubMenu>
 				</Show>
 				<SubMenu
-					ref={r => subMenuSettings_themeRef = r}
-					c:onToggleOpen={v => setIsSubMenuSettings_themeOpen(v)}
 					c:item={<SubMenuItem
-						c:focused={isSubMenuSettings_themeOpen()}
 						c:iconCode={ICON_WEATHER_SUNNY}>
 						Theme
 					</SubMenuItem>}>
@@ -524,10 +521,7 @@ const _: Component<{
 					</MenuItem>
 				</SubMenu>
 				<SubMenu
-					ref={r => subMenuSettings_cornerRef = r}
-					c:onToggleOpen={v => setIsSubMenuSettings_cornerOpen(v)}
 					c:item={<SubMenuItem
-						c:focused={isSubMenuSettings_cornerOpen()}
 						c:iconCode={ICON_TEARDROP_BOTTOM_RIGHT}>
 						Corner style
 					</SubMenuItem>}>

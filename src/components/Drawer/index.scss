@@ -25,7 +25,9 @@
 	}
 
 	&::backdrop {
-		transition-duration: .2s;
+		:root[data-animation=on] & {
+			transition-duration: .2s;
+		}
 	}
 
 	&[data-c-open]{

@@ -7,6 +7,7 @@ import { elementAnimate, elementDispatchEvent, elementIsSame, elementAllBySelect
 import { eventListenerAdd, eventCall, eventCurrentTarget, eventListenerRemove } from "@/utils/event"
 import { promiseDone } from "@/utils/object"
 import { ICON_CHECKBOX_CHECKED, ICON_CHECKBOX_UNCHECKED, ICON_RADIO_BUTTON } from "@/constants/icons"
+import { animationIsOn } from "@/utils/animation"
 
 import Icon, { type IconProps } from "@/components/Icon"
 import '@/components/Button/index.scss'
@@ -54,17 +55,23 @@ const CheckBox: ParentComponent<CheckBoxProps> = ($props) => {
 	function changeCheckedState(checked: boolean): void {
 		if (animation != null) animation.cancel()
 
-		animation = elementAnimate(iconRef, {scale: [1, 0]}, animationOptions)
-		promiseDone(animation.finished, () => {
-			$isChecked = checked
-			setIsChecked(checked)
-			animation = elementAnimate(iconRef, {scale: [0, 1]}, animationOptions)
-			promiseDone(
-				animation.finished,
-				() => animation = null,
-				() => {}
-			)
-		}, () => {})
+		if (animationIsOn()) {
+			animation = elementAnimate(iconRef, {scale: [1, 0]}, animationOptions)
+			promiseDone(animation.finished, () => {
+				$isChecked = checked
+				setIsChecked(checked)
+				animation = elementAnimate(iconRef, {scale: [0, 1]}, animationOptions)
+				promiseDone(
+					animation.finished,
+					() => animation = null,
+					() => {}
+				)
+			}, () => {})
+			return
+		}
+
+		$isChecked = checked
+		setIsChecked(checked)
 	}
 
 	function onChangeRadioOff(ev: CustomEvent<HTMLInputElement>): void {

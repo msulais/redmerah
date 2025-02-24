@@ -21,7 +21,10 @@
 		display: inline-block;
 		border-bottom: 2px solid rgb(var(--g-color-accent));
 		padding-top: 8px;
-		transition-duration: .2s;
+
+		:root[data-animation=on] & {
+			transition-duration: .2s;
+		}
 
 		@media (hover: hover) {
 			&:hover {

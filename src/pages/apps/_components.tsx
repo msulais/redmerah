@@ -24,6 +24,7 @@ import { elementAnimate, elementStyle, elementStyleRemove, elementStyleSet } fro
 import { promiseDone } from "@/utils/object"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { FocusableGroup2D } from "@/components/FocusableGroup"
+import { animationIsOn } from "@/utils/animation"
 
 export const MainElement: VoidComponent = () => {
 	const [isMenuActionsOpen, setIsMenuActionsOpen] = createSignal<boolean>(false)
@@ -123,6 +124,12 @@ export const MainElement: VoidComponent = () => {
 							alt={app.name}
 							onLoad={ev => {
 								const img = eventCurrentTarget(ev)
+								if (!animationIsOn()) {
+									elementStyleRemove(img, 'will-change')
+									elementStyleRemove(img, 'transform')
+									return
+								}
+
 								elementStyleSet(img, 'will-change', 'transform')
 								promiseDone(
 									elementAnimate(img, {

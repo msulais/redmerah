@@ -16,7 +16,10 @@
 	top: 0;
 	width: var(--drag-handle-width);
 	height: 100%;
-	transition-duration: .2s;
+
+	:root[data-animation=on] & {
+		transition-duration: .2s;
+	}
 
 	@media (hover: hover) {
 		&:hover {

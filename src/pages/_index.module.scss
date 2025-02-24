@@ -11,9 +11,13 @@
 		padding: 20px;
 		display: flex;
 		flex-direction: column;
-		transition-duration: .2s;
 		position: relative;
 		background-color: var(--color-accent-light);
+
+		:root[data-animation=on] & {
+			transition-duration: .2s;
+		}
+
 		:root[data-theme=dark] & { background-color: var(--color-accent-dark) }
 		:root[data-theme=system] & {@media (prefers-color-scheme: dark) { background-color: var(--color-accent-dark) }}
 
@@ -122,7 +126,10 @@
 			-webkit-text-fill-color: transparent;
 			text-fill-color: transparent;
 			background-size: 500% auto;
-			animation: textShine 2s ease-in-out infinite alternate;
+
+			:root[data-animation=on] & {
+				animation: textShine 2s ease-in-out infinite alternate;
+			}
 
 			&[data-color=green] {
 				--color-gradient1: #15E811;
@@ -176,11 +183,14 @@
 
 	& span {
 		display: inline-block;
-		transition-duration: .2s;
 		position: relative;
 		border-radius: 4px;
 		user-select: none;
 		padding-bottom: max(2px, .1em);
+
+		:root[data-animation=on] & {
+			transition-duration: .2s;
+		}
 
 		@media (hover: hover) {
 			&:hover {

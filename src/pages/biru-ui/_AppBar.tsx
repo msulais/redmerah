@@ -17,17 +17,18 @@ import { navigatorShare } from "@/utils/navigator"
 import { dateYear } from "@/utils/datetime"
 import { PlatformData } from "@/enums/platforms"
 import { documentRoot } from "@/utils/document"
-import { ICON_APPS, ICON_CHAT, ICON_CIRCLE, ICON_DESKTOP, ICON_DESKTOP_TOWER, ICON_GIFT, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_LINE_HORIZONTAL_3, ICON_MAXIMIZE, ICON_PHONE, ICON_PHONE_LAPTOP, ICON_RECEIPT, ICON_SETTINGS, ICON_SHARE_ANDROID, ICON_SHIELD_CHECKMARK, ICON_SQUARE, ICON_TEARDROP_BOTTOM_RIGHT, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from "@/constants/icons"
+import { ICON_APPS, ICON_CHAT, ICON_CIRCLE, ICON_DESKTOP, ICON_DESKTOP_TOWER, ICON_GIFT, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_LINE_HORIZONTAL_3, ICON_MAXIMIZE, ICON_PHONE, ICON_PHONE_LAPTOP, ICON_PLAY_CIRCLE_HINT, ICON_RECEIPT, ICON_SETTINGS, ICON_SHARE_ANDROID, ICON_SHIELD_CHECKMARK, ICON_SQUARE, ICON_TEARDROP_BOTTOM_RIGHT, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from "@/constants/icons"
+import { AnimationData } from "@/enums/animation"
+import { validEnumValue } from "@/utils/object"
 import logo from '@/assets/images/apps/biru-ui.svg'
 import logoRedmerah from '@/assets/images/logos/redmerah-logo.svg'
 
 import Tooltip from "@/components/Tooltip"
 import { IconButton } from "@/components/Button"
-import Menu, { MenuDivider, MenuItem, MenuHeader, openMenu, LinkMenuItem, SubMenu, closeSubMenu, closeMenu, SubMenuItem } from "@/components/Menu"
+import Menu, { MenuDivider, MenuItem, MenuHeader, openMenu, LinkMenuItem, SubMenu, closeMenu, SubMenuItem, SwitchMenuItem } from "@/components/Menu"
 import Drawer, { closeDrawer, DrawerItem, openDrawer } from "@/components/Drawer"
 import AppBar from "@/components/AppBar"
 import CSSAnimation from "@/styles/animation.module.scss"
-import { validEnumValue } from "@/utils/object"
 
 const _: VoidComponent<{
 	command: (type: Commands, ...args: unknown[]) => unknown
@@ -36,19 +37,14 @@ const _: VoidComponent<{
 	const root = documentRoot()
 	const [isMenuInfoOpen, setIsMenuInfoOpen] = createSignal<boolean>(false)
 	const [isMenuSettingsOpen, setIsMenuSettingsOpen] = createSignal<boolean>(false)
-	const [isSubMenuSettings_themeOpen, setIsSubMenuSettings_themeOpen] = createSignal<boolean>(false)
-	const [isSubMenuSettings_cornerOpen, setIsSubMenuSettings_cornerOpen] = createSignal<boolean>(false)
-	const [isSubMenuSettings_platformOpen, setIsSubMenuSettings_platformOpen] = createSignal<boolean>(false)
 	const [isSideNavigationHidden, setIsSideNavigationHidden] = createSignal<boolean>(false)
 	const [theme, setTheme] = createSignal<ThemeData>(ThemeData.system)
 	const [corner, setCorner] = createSignal<CornerData>(CornerData.round)
+	const [animation, setAnimation] = createSignal<AnimationData>(AnimationData.on)
 	const [platform, setPlatform] = createSignal<PlatformData>(PlatformData.desktop)
 	let drawerNavigationRef: HTMLDialogElement
 	let menuInfoRef: HTMLDialogElement
 	let menuSettingsRef: HTMLDialogElement
-	let subMenuSettings_themeRef: HTMLDivElement
-	let subMenuSettings_cornerRef: HTMLDivElement
-	let subMenuSettings_platformRef: HTMLDivElement
 
 	function initSideNavigationListener(): void {
 		setIsSideNavigationHidden(windowMatches(`(max-width: ${SIZE_SIDE_NAVIGATION_NONE}px)`))
@@ -62,7 +58,6 @@ const _: VoidComponent<{
 	function updatePlatform(platform: PlatformData): void {
 		setPlatform(platform)
 		attrSet(root, RootAttributes.platform, platform)
-		closeSubMenu(subMenuSettings_platformRef)
 		closeMenu(menuSettingsRef)
 	}
 
@@ -70,7 +65,6 @@ const _: VoidComponent<{
 		setTheme(theme)
 		attrSet(root, RootAttributes.theme, theme)
 		storageSet(LocalStorageKeys.theme, theme)
-		closeSubMenu(subMenuSettings_themeRef)
 		closeMenu(menuSettingsRef)
 	}
 
@@ -78,8 +72,13 @@ const _: VoidComponent<{
 		setCorner(corner)
 		attrSet(root, RootAttributes.corner, corner)
 		storageSet(LocalStorageKeys.corner, corner)
-		closeSubMenu(subMenuSettings_cornerRef)
 		closeMenu(menuSettingsRef)
+	}
+
+	function updateAnimation(animation: AnimationData): void {
+		setAnimation(animation)
+		attrSet(root, RootAttributes.animation, animation)
+		storageSet(LocalStorageKeys.animation, animation)
 	}
 
 	function initTheme(): void {
@@ -98,6 +97,14 @@ const _: VoidComponent<{
 		}
 	}
 
+	function initAnimation(): void {
+		const animation = storageGet(LocalStorageKeys.animation)
+		if (animation && validEnumValue(animation, AnimationData)) {
+			attrSet(root, RootAttributes.animation, animation)
+			setAnimation(animation as AnimationData)
+		}
+	}
+
 	function initPlatform(): void {
 		const $isMobile = isMobile()
 		if (!$isMobile) return
@@ -110,6 +117,7 @@ const _: VoidComponent<{
 		initCorner()
 		initSideNavigationListener()
 		initPlatform()
+		initAnimation()
 	})
 
 	const Menus: VoidComponent = () => {
@@ -176,11 +184,19 @@ const _: VoidComponent<{
 			<Menu
 				ref={r => menuSettingsRef = r}
 				c:onToggleOpen={(v) => setIsMenuSettingsOpen(v)}>
+				<SwitchMenuItem
+					c:checked={animation() === AnimationData.on}
+					c:iconCode={ICON_PLAY_CIRCLE_HINT}
+					c:attrSwitch={{
+						onChange: () => updateAnimation(animation() === AnimationData.on
+							? AnimationData.off
+							: AnimationData.on
+						)
+					}}>
+					Animation
+				</SwitchMenuItem>
 				<SubMenu
-					ref={r => subMenuSettings_themeRef = r}
-					c:onToggleOpen={v => setIsSubMenuSettings_themeOpen(v)}
 					c:item={<SubMenuItem
-						c:focused={isSubMenuSettings_themeOpen()}
 						c:iconCode={ICON_WEATHER_SUNNY}>
 						Theme
 					</SubMenuItem>}>
@@ -204,10 +220,7 @@ const _: VoidComponent<{
 					</MenuItem>
 				</SubMenu>
 				<SubMenu
-					ref={r => subMenuSettings_cornerRef = r}
-					c:onToggleOpen={v => setIsSubMenuSettings_cornerOpen(v)}
 					c:item={<SubMenuItem
-						c:focused={isSubMenuSettings_cornerOpen()}
 						c:iconCode={ICON_TEARDROP_BOTTOM_RIGHT}>
 						Corner style
 					</SubMenuItem>}>
@@ -237,10 +250,7 @@ const _: VoidComponent<{
 					</MenuItem>
 				</SubMenu>
 				<SubMenu
-					ref={r => subMenuSettings_platformRef = r}
-					c:onToggleOpen={v => setIsSubMenuSettings_platformOpen(v)}
 					c:item={<SubMenuItem
-						c:focused={isSubMenuSettings_platformOpen()}
 						c:iconCode={ICON_DESKTOP_TOWER}>
 						Platform
 					</SubMenuItem>}>

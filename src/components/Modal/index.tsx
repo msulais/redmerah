@@ -17,6 +17,7 @@ import { documentBody, documentRoot } from '@/utils/document'
 import { windowInnerHeight, windowScrollY, windowScrollTo } from '@/utils/window'
 import { ElementIds } from '@/enums/ids'
 import { promiseDone } from '@/utils/object'
+import { animationIsOn } from '@/utils/animation'
 import { KEY_ARROW_UP, KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT } from '@/constants/key_code'
 
 import './index.scss'
@@ -456,6 +457,11 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 		))
 		props['c:onClose']?.()
 		onClose?.()
+		if (!animationIsOn()) {
+			modalRef.close()
+			return
+		}
+
 		if (props['c:closeAnimation'] != null) props['c:closeAnimation'](
 			modalRef,
 			() => modalRef.close()
@@ -649,15 +655,20 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 		setAttrOpen(true)
 		props['c:onOpen']?.()
 		onOpen?.()
-		if (props['c:openAnimation'] != null) props['c:openAnimation'](
-			modalRef,
-			() => setAttrOpenDone(true)
-		)
-		else promiseDone(elementAnimate(
-			modalRef,
-			{ transform: [`translate(${translate.left}px, ${translate.top}px)`, 'none'] },
-			{ duration: 300, easing: AnimationEffectTiming.springBounce }
-		).finished, () => setAttrOpenDone(true))
+		if (!animationIsOn()) {
+			setAttrOpenDone(true)
+		}
+		else {
+			if (props['c:openAnimation'] != null) props['c:openAnimation'](
+				modalRef,
+				() => setAttrOpenDone(true)
+			)
+			else promiseDone(elementAnimate(
+				modalRef,
+				{ transform: [`translate(${translate.left}px, ${translate.top}px)`, 'none'] },
+				{ duration: 300, easing: AnimationEffectTiming.springBounce }
+			).finished, () => setAttrOpenDone(true))
+		}
 
 		STOP_GLOBAL_CLICK = true
 

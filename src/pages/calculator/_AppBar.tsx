@@ -19,14 +19,15 @@ import { CalculatorType, Commands, DecimalNumberFormat, GroupingNumberFormat } f
 import { documentActive, documentRoot } from "@/utils/document"
 import { validEnumValue } from "@/utils/object"
 import { elementValidTarget, elementTagName, elementId, elementDataset } from "@/utils/element"
-import { ICON_APPS, ICON_CHAT, ICON_CIRCLE, ICON_DECIMAL_ARROW_LEFT, ICON_DEVELOPER_BOARD, ICON_DISMISS, ICON_GIFT, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_LINE_HORIZONTAL_3, ICON_MATH_FORMAT_PROFESSIONAL, ICON_MAXIMIZE, ICON_NOTEBOOK, ICON_NUMBER_ROW, ICON_RECEIPT, ICON_SETTINGS, ICON_SHARE_ANDROID, ICON_SHIELD_CHECKMARK, ICON_SQUARE, ICON_TEARDROP_BOTTOM_RIGHT, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from "@/constants/icons"
+import { ICON_APPS, ICON_CHAT, ICON_CIRCLE, ICON_DECIMAL_ARROW_LEFT, ICON_DEVELOPER_BOARD, ICON_DISMISS, ICON_GIFT, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_LINE_HORIZONTAL_3, ICON_MATH_FORMAT_PROFESSIONAL, ICON_MAXIMIZE, ICON_NOTEBOOK, ICON_NUMBER_ROW, ICON_PLAY_CIRCLE_HINT, ICON_RECEIPT, ICON_SETTINGS, ICON_SHARE_ANDROID, ICON_SHIELD_CHECKMARK, ICON_SQUARE, ICON_TEARDROP_BOTTOM_RIGHT, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from "@/constants/icons"
+import { AnimationData } from "@/enums/animation"
 import logoRedmerah from '@/assets/images/logos/redmerah-logo.svg'
 
 import Icon from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
 import { ButtonVariant, IconButton } from "@/components/Button"
 import { AreaTextField, updateAreaTextFieldValue } from "@/components/TextField"
-import Menu, {  MenuDivider, MenuItem, MenuHeader, closeMenu, LinkMenuItem, SubMenu, closeSubMenu, openMenu, SubMenuItem, SwitchMenuItem } from "@/components/Menu"
+import Menu, {  MenuDivider, MenuItem, MenuHeader, closeMenu, LinkMenuItem, SubMenu, openMenu, SubMenuItem, SwitchMenuItem } from "@/components/Menu"
 import Drawer, { closeDrawer, DrawerItem, DrawerPosition, openDrawer } from "@/components/Drawer"
 import AppBar from "@/components/AppBar"
 import CSSAnimation from "@/styles/animation.module.scss"
@@ -48,21 +49,14 @@ const _: VoidComponent<{
 	const buttonNotebookId = createUniqueId()
 	const [isMenuInfoOpen, setIsMenuInfoOpen] = createSignal<boolean>(false)
 	const [isMenuSettingsOpen, setIsMenuSettingsOpen] = createSignal<boolean>(false)
-	const [isSubMenuSettings_themeOpen, setIsSubMenuSettings_themeOpen] = createSignal<boolean>(false)
-	const [isSubMenuSettings_cornerOpen, setIsSubMenuSettings_cornerOpen] = createSignal<boolean>(false)
-	const [isSubMenuSettings_groupingNumberFormatOpen, setIsSubMenuSettings_groupingNumberFormatOpen] = createSignal<boolean>(false)
-	const [isSubMenuSettings_decimalNumberFormatOpen, setIsSubMenuSettings_decimalNumberFormatOpen] = createSignal<boolean>(false)
 	const [isSideNavigationHidden, setIsSideNavigationHidden] = createSignal<boolean>(false)
 	const [isSideNotebookHidden, setIsSideNotebookHidden] = createSignal<boolean>(false)
+	const [animation, setAnimation] = createSignal<AnimationData>(AnimationData.on)
 	const [theme, setTheme] = createSignal<ThemeData>(ThemeData.system)
 	const [corner, setCorner] = createSignal<CornerData>(CornerData.round)
 	const settings = createMemo(() => props.settings)
 	let menuInfoRef: HTMLDialogElement
 	let menuSettingsRef: HTMLDialogElement
-	let subMenuSettings_themeRef: HTMLDivElement
-	let subMenuSettings_cornerRef: HTMLDivElement
-	let subMenuSettings_decimalNumberFormatOpen: HTMLDivElement
-	let subMenuSettings_groupingNumberFormatOpen: HTMLDivElement
 	let drawerNavigationRef: HTMLDialogElement
 	let drawerNotebookRef: HTMLDialogElement
 	let areaTextFieldNotebookRef: HTMLTextAreaElement
@@ -73,13 +67,11 @@ const _: VoidComponent<{
 
 	function updateDecimalNumberFormat(type: DecimalNumberFormat): void {
 		command(Commands.updateSettingsNumberFormatDecimal, type)
-		closeSubMenu(subMenuSettings_decimalNumberFormatOpen)
 		closeMenu(menuSettingsRef)
 	}
 
 	function updateGroupingNumberFormat(type: GroupingNumberFormat): void {
 		command(Commands.updateSettingsNumberFormatGrouping, type)
-		closeSubMenu(subMenuSettings_groupingNumberFormatOpen)
 		closeMenu(menuSettingsRef)
 	}
 
@@ -101,11 +93,16 @@ const _: VoidComponent<{
 		)
 	}
 
+	function updateAnimation(animation: AnimationData): void {
+		setAnimation(animation)
+		attrSet(root, RootAttributes.animation, animation)
+		storageSet(LocalStorageKeys.animation, animation)
+	}
+
 	function updateTheme(theme: ThemeData): void {
 		setTheme(theme)
 		attrSet(root, RootAttributes.theme, theme)
 		storageSet(LocalStorageKeys.theme, theme)
-		closeSubMenu(subMenuSettings_themeRef)
 		closeMenu(menuSettingsRef)
 	}
 
@@ -113,7 +110,6 @@ const _: VoidComponent<{
 		setCorner(corner)
 		attrSet(root, RootAttributes.corner, corner)
 		storageSet(LocalStorageKeys.corner, corner)
-		closeSubMenu(subMenuSettings_cornerRef)
 		closeMenu(menuSettingsRef)
 	}
 
@@ -133,17 +129,27 @@ const _: VoidComponent<{
 		}
 	}
 
+	function initAnimation(): void {
+		const animation = storageGet(LocalStorageKeys.animation)
+		if (animation && validEnumValue(animation, AnimationData)) {
+			attrSet(root, RootAttributes.animation, animation)
+			setAnimation(animation as AnimationData)
+		}
+	}
+
 	onMount(() => {
 		initTheme()
 		initCorner()
 		initSideNavigationListener()
 		initSideNotebookListener()
+		initAnimation()
 	})
 
 	const Menus: VoidComponent = () => {
 		const buttonInfo_shareId = createUniqueId()
 		const inputSettings_scientificNotationId = createUniqueId()
 		const inputSettings_memoryButtonId = createUniqueId()
+		const inputSettings_animationId = createUniqueId()
 		return (<>
 			<Menu
 				onClick={(ev) => {
@@ -259,35 +265,22 @@ const _: VoidComponent<{
 					case inputSettings_memoryButtonId:
 						command(Commands.toggleSettingsMemoryButtons)
 						break
+					case inputSettings_animationId:
+						updateAnimation(animation() === AnimationData.on
+							? AnimationData.off
+							: AnimationData.on
+						)
+						break
 					}
 				}}>
-				<Tooltip>
-					<SwitchMenuItem
-						data-tooltip="Display result in scientific notation (e.g. 1.2E-29)"
-						c:iconCode={ICON_MATH_FORMAT_PROFESSIONAL}
-						c:attrSwitch={{
-							id: inputSettings_scientificNotationId,
-							checked: settings().scientificNotation,
-						}}>
-						Scientific notation
-					</SwitchMenuItem>
-					<SwitchMenuItem
-						data-tooltip="Show or hide memory button (M, M+, M-, MR, MC)"
-						c:checked={settings().memoryButtons}
-						c:iconCode={ICON_DEVELOPER_BOARD}
-						c:attrSwitch={{
-							id: inputSettings_memoryButtonId,
-							checked: settings().memoryButtons,
-						}}>
-						Memory buttons
-					</SwitchMenuItem>
-				</Tooltip>
-				<MenuDivider/>
+				<SwitchMenuItem
+					c:checked={animation() === AnimationData.on}
+					c:iconCode={ICON_PLAY_CIRCLE_HINT}
+					c:attrSwitch={{id: inputSettings_animationId}}>
+					Animation
+				</SwitchMenuItem>
 				<SubMenu
-					ref={r => subMenuSettings_themeRef = r}
-					c:onToggleOpen={v => setIsSubMenuSettings_themeOpen(v)}
 					c:item={<SubMenuItem
-						c:focused={isSubMenuSettings_themeOpen()}
 						c:iconCode={ICON_WEATHER_SUNNY}>
 						Theme
 					</SubMenuItem>}>
@@ -311,10 +304,7 @@ const _: VoidComponent<{
 					</MenuItem>
 				</SubMenu>
 				<SubMenu
-					ref={r => subMenuSettings_cornerRef = r}
-					c:onToggleOpen={v => setIsSubMenuSettings_cornerOpen(v)}
 					c:item={<SubMenuItem
-						c:focused={isSubMenuSettings_cornerOpen()}
 						c:iconCode={ICON_TEARDROP_BOTTOM_RIGHT}>
 						Corner style
 					</SubMenuItem>}>
@@ -344,13 +334,32 @@ const _: VoidComponent<{
 					</MenuItem>
 				</SubMenu>
 				<MenuDivider />
+				<Tooltip>
+					<SwitchMenuItem
+						data-tooltip="Display result in scientific notation (e.g. 1.2E-29)"
+						c:iconCode={ICON_MATH_FORMAT_PROFESSIONAL}
+						c:attrSwitch={{
+							id: inputSettings_scientificNotationId,
+							checked: settings().scientificNotation,
+						}}>
+						Scientific notation
+					</SwitchMenuItem>
+					<SwitchMenuItem
+						data-tooltip="Show or hide memory button (M, M+, M-, MR, MC)"
+						c:checked={settings().memoryButtons}
+						c:iconCode={ICON_DEVELOPER_BOARD}
+						c:attrSwitch={{
+							id: inputSettings_memoryButtonId,
+							checked: settings().memoryButtons,
+						}}>
+						Memory buttons
+					</SwitchMenuItem>
+				</Tooltip>
+				<MenuDivider />
 				<MenuHeader>Number format</MenuHeader>
 				<SubMenu
 					style={{width: '132px'}}
-					ref={r => subMenuSettings_decimalNumberFormatOpen = r}
-					c:onToggleOpen={v => setIsSubMenuSettings_decimalNumberFormatOpen(v)}
 					c:item={<SubMenuItem
-						c:focused={isSubMenuSettings_decimalNumberFormatOpen()}
 						c:iconCode={ICON_DECIMAL_ARROW_LEFT}>
 						Decimal
 					</SubMenuItem>}>
@@ -367,10 +376,7 @@ const _: VoidComponent<{
 				</SubMenu>
 				<SubMenu
 					style={{width: '132px'}}
-					ref={r => subMenuSettings_groupingNumberFormatOpen = r}
-					c:onToggleOpen={v => setIsSubMenuSettings_groupingNumberFormatOpen(v)}
 					c:item={<SubMenuItem
-						c:focused={isSubMenuSettings_groupingNumberFormatOpen()}
 						c:iconCode={ICON_NUMBER_ROW}>
 						Grouping
 					</SubMenuItem>}>

@@ -19,8 +19,7 @@ export const prerender = true
 		<link rel="icon" type="image/png" sizes="16x16" href={`/favicon${app.link}/favicon-16x16.png`}>
 		<link rel="manifest" href={`/favicon${app.link}/site.webmanifest`}>
 	</Fragment>
-	<script is:inline src='/scripts/theme.js'/>
-	<script is:inline src='/scripts/platform.js'/>
+	<script is:inline src='/scripts/root-settings.min.js'/>
 	<Splash src={app.logoUrl} alt={`${app.name} splash icon`} />
 	<App client:only="solid-js"/>
 </Html>

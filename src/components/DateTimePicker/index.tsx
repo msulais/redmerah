@@ -13,6 +13,7 @@ import { numberParse, numberSafe } from '@/utils/number'
 import { timeTimerSet } from '@/utils/time'
 import { documentActive } from '@/utils/document'
 import { ICON_CALENDAR_DATE, ICON_CHEVRON_LEFT, ICON_CHEVRON_RIGHT } from '@/constants/icons'
+import { animationIsOn } from '@/utils/animation'
 
 import Button, { ButtonVariant, IconButton, SquareButton } from '@/components/Button'
 import Dropdown, { DropdownOption } from '@/components/Dropdown'
@@ -334,19 +335,18 @@ const DateTimePickerBody: ParentComponent<{
 		<Divider />
 		<Transition
 			onEnter={(el, done) => {
-				promiseDone(elementAnimate(
-					el as HTMLElement,
-					{ opacity: [0, 1], transform: ['translateY(-12px)', 'none'] },
-					{ duration: 200, easing: AnimationEffectTiming.spring }
-				).finished, done)
+				if (animationIsOn()) {
+					promiseDone(elementAnimate(
+						el as HTMLElement,
+						{ opacity: [0, 1], transform: ['translateY(-12px)', 'none'] },
+						{ duration: 200, easing: AnimationEffectTiming.spring }
+					).finished, done)
+					return
+				}
+
+				done()
 			}}
-			onExit={(el, done) => {
-				promiseDone(elementAnimate(
-					el as HTMLElement,
-					{},
-					{ duration: 0 }
-				).finished, done)
-			}}>
+			onExit={(_, done) => done()}>
 			<Switch>
 				<Match when={dateOption() == DatePickerOption.day}><DaysDate/></Match>
 				<Match when={dateOption() == DatePickerOption.month}><MonthsDate/></Match>

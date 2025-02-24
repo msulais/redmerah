@@ -19,7 +19,10 @@
 	backdrop-filter: blur(32px);
 	border-radius: 16px;
 	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity3));
-	transition-duration: .2s;
+
+	:root[data-animation=on] & {
+		transition-duration: .2s;
+	}
 
 	&[data-top] {
 		border-color: transparent !important;

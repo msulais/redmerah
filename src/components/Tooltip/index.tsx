@@ -16,6 +16,7 @@ import { stringCSSEscape, stringLength, stringTrim } from "@/utils/string"
 import { ElementIds } from "@/enums/ids"
 
 import './index.scss'
+import { animationIsOn } from "@/utils/animation"
 
 enum TooltipListenerEvents {
 	/** @requires TooltipOpenDetail */
@@ -177,6 +178,10 @@ function initTooltip(): void {
 		attrRemove(tooltipTextRef, TooltipAttributes.openDone)
 		anchorElement = null
 
+		if (!animationIsOn()) {
+			return tooltipTextRef.hidePopover()
+		}
+
 		// don't remove keyword `await`
 		await promiseDone(elementAnimate(
 			tooltipTextRef,
@@ -330,6 +335,10 @@ function initTooltip(): void {
 			elementStyleSet(tooltipTextRef, 'top', rectTop(pos) + 'px')
 			elementStyleSet(tooltipTextRef, 'left', rectLeft(pos) + 'px')
 			attrSet(tooltipTextRef, TooltipAttributes.open)
+			if (!animationIsOn()) {
+				return attrSet(tooltipTextRef, TooltipAttributes.openDone)
+			}
+
 			promiseDone(elementAnimate(
 				tooltipTextRef,
 				{ transform: [`translate(${translate.left}px, ${translate.top}px)`, 'none'] },

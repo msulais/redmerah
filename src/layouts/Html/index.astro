@@ -1,14 +1,15 @@
 ---
+import type { HEXColor } from '@/types/color'
 import { ThemeData } from '@/enums/theme'
 import { colorGeneratePalette, colorHexToRgb } from '@/utils/color'
 import { CornerData } from '@/enums/corner'
 import { ElementIds } from '@/enums/ids'
-import type { HEXColor } from '@/types/color'
 import { PlatformData } from '@/enums/platforms'
+import { AnimationData } from '@/enums/animation'
+import { mathRound } from '@/utils/math'
 import '@/styles/variables.scss'
 import '@/styles/animations.scss'
 import '@/styles/index.scss'
-import { mathRound } from '@/utils/math'
 
 type Props = {
 	title?: string
@@ -37,7 +38,7 @@ const color_to_css = (hex: HEXColor) => {
 }
 ---
 
-<html lang={ lang } data-platform={ PlatformData.desktop } data-theme={ theme } data-corner={ corner }>
+<html lang={ lang } data-animation={AnimationData.on} data-platform={ PlatformData.desktop } data-theme={ theme } data-corner={ corner }>
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />

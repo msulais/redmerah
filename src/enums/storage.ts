@@ -2,6 +2,7 @@ export enum LocalStorageKeys {
 	theme = 'theme',
 	color = 'color',
 	corner = 'corner',
+	animation = 'animation',
 	pinnedApps = 'pinned-apps'
 }
 

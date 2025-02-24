@@ -8,6 +8,7 @@ import { promiseDone } from "@/utils/object"
 import { ICON_CHEVRON_DOWN } from "@/constants/icons"
 import { rectHeight } from "@/utils/rect"
 import { AnimationEffectTiming } from "@/enums/animation"
+import { animationIsOn } from "@/utils/animation"
 import { arrayJoin } from "@/utils/array"
 
 import { RawIconButton } from "@/components/Button"
@@ -160,27 +161,41 @@ const Expander: ParentComponent<ExpanderProps> = ($props) => {
 						['0px', paddingRight, '0px', paddingLeft], ' '
 					)
 					isAnimationDone = false
-					if (isOpen()) return promiseDone(
-						elementAnimate(contentRef, {
-							opacity: [1, 0],
-							height: [rectHeight(rect) + 'px', '0px'],
-							padding: [padding, padding2]
-						}, options).finished,
-						() => {
-							isAnimationDone = true
-							setIsOpen(false)
+					if (isOpen()) {
+						if (animationIsOn()){
+							promiseDone(
+								elementAnimate(contentRef, {
+									opacity: [1, 0],
+									height: [rectHeight(rect) + 'px', '0px'],
+									padding: [padding, padding2]
+								}, options).finished,
+								() => {
+									isAnimationDone = true
+									setIsOpen(false)
+								}
+							)
+							return
 						}
-					)
+
+						isAnimationDone = true
+						setIsOpen(false)
+						return
+					}
 
 					setIsOpen(true)
-					promiseDone(
-						elementAnimate(contentRef, {
-							opacity: [0, 1],
-							height: ['0px', rectHeight(rect) + 'px'],
-							padding: [padding2, padding]
-						}, options).finished,
-						() => isAnimationDone = true
-					)
+					if (animationIsOn()) {
+						promiseDone(
+							elementAnimate(contentRef, {
+								opacity: [0, 1],
+								height: ['0px', rectHeight(rect) + 'px'],
+								padding: [padding2, padding]
+							}, options).finished,
+							() => isAnimationDone = true
+						)
+						return
+					}
+
+					isAnimationDone = true
 				}}
 				{...otherHeaderProps}>
 				{props['c:header']}

@@ -14,7 +14,10 @@
 		> a {
 			border-bottom: .1em solid rgb(var(--g-color-accent));
 			position: relative;
-			transition-duration: .2s;
+
+			:root[data-animation=on] & {
+				transition-duration: .2s;
+			}
 
 			@media (hover: hover) {
 				&:hover {
@@ -46,7 +49,9 @@
 		}
 
 		> a {
-			transition-duration: .2s;
+			:root[data-animation=on] & {
+				transition-duration: .2s;
+			}
 
 			@media (hover: hover) {
 				&:hover {

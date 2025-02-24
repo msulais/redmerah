@@ -4,14 +4,19 @@
 	width: max-content;
 	box-shadow: var(--g-elevation5);
 	transform: translate(-50%, -50%);
-	transition-duration: .2s;
+
+	:root[data-animation=on] & {
+		transition-duration: .2s;
+	}
 
 	:root[data-corner=sharp] & { border-radius: 0 }
 	:root[data-corner=semi-round] & { border-radius: 8px }
 	:root[data-corner=full-round] & { border-radius: 44px }
 
 	&::backdrop {
-		transition-duration: .2s;
+		:root[data-animation=on] & {
+			transition-duration: .2s;
+		}
 	}
 
 	&[data-c-open] {

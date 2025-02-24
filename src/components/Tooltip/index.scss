@@ -23,9 +23,12 @@
 	white-space: pre-wrap;
 	position: fixed;
 	z-index: 99;
-	transition-property: opacity;
-	transition-duration: .2s;
-	transition-timing-function: var(--g-transition-spring-bounce);
+
+	:root[data-animation=on] & {
+		transition-property: opacity;
+		transition-duration: .2s;
+		transition-timing-function: var(--g-transition-spring-bounce);
+	}
 
 	:root[data-corner=sharp] & { border-radius: 0 }
 	:root[data-corner=full-round] & { border-radius: 14px }

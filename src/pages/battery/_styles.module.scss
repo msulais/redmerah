@@ -29,7 +29,10 @@
 		-webkit-text-fill-color: transparent;
 		text-fill-color: transparent;
 		background-size: 500% auto;
-		animation: textShine 5s ease-in-out infinite alternate;
+
+		:root[data-animation=on] & {
+			animation: textShine 5s ease-in-out infinite alternate;
+		}
 	}
 
 	> p {
@@ -55,7 +58,10 @@
 	display: flex;
 	gap: 8px;
 	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity1));
-	transition-duration: .2s;
+
+	:root[data-animation=on] & {
+		transition-duration: .2s;
+	}
 
 	:root[data-corner=sharp] & { border-radius: 0 }
 	:root[data-corner=semi-round] & { border-radius: 4px }

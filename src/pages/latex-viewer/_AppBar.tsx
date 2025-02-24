@@ -18,13 +18,14 @@ import { eventCurrentTarget, eventTarget } from "@/utils/event"
 import { APP_LATEX_VIEWER as app } from "@/constants/apps"
 import { attrSet } from "@/utils/attributes"
 import { elementDataset, elementId, elementTagName, elementValidTarget } from "@/utils/element"
+import { AnimationData } from "@/enums/animation"
 import { validEnumValue } from "@/utils/object"
-import { ICON_APPS, ICON_ARROW_RESET, ICON_CHAT, ICON_CIRCLE, ICON_COPY, ICON_GIFT, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_MAXIMIZE, ICON_MORE_VERTICAL, ICON_RECEIPT, ICON_SETTINGS, ICON_SHARE_ANDROID, ICON_SHIELD_CHECKMARK, ICON_SQUARE, ICON_TEARDROP_BOTTOM_RIGHT, ICON_TEXT_WRAP, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from "@/constants/icons"
+import { ICON_APPS, ICON_ARROW_RESET, ICON_CHAT, ICON_CIRCLE, ICON_COPY, ICON_GIFT, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_MAXIMIZE, ICON_MORE_VERTICAL, ICON_PLAY_CIRCLE_HINT, ICON_RECEIPT, ICON_SETTINGS, ICON_SHARE_ANDROID, ICON_SHIELD_CHECKMARK, ICON_SQUARE, ICON_TEARDROP_BOTTOM_RIGHT, ICON_TEXT_WRAP, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from "@/constants/icons"
 import logoRedmerah from '@/assets/images/logos/redmerah-logo.svg'
 
 import { IconButton } from "@/components/Button"
 import TextField, { NumberTextField } from "@/components/TextField"
-import Menu, { closeSubMenu, closeMenu, LinkMenuItem, MenuDivider, MenuHeader, MenuItem, SubMenu, openMenu, SubMenuItem, SwitchMenuItem } from "@/components/Menu"
+import Menu, { closeMenu, LinkMenuItem, MenuDivider, MenuHeader, MenuItem, SubMenu, openMenu, SubMenuItem, SwitchMenuItem } from "@/components/Menu"
 import AppBar from "@/components/AppBar"
 import Tooltip from "@/components/Tooltip"
 import CSSAnimation from "@/styles/animation.module.scss"
@@ -39,27 +40,29 @@ const _: VoidComponent<{
 	const buttonMoreActionsId = createUniqueId()
 	const [isMenuInfoOpen, setIsMenuInfoOpen] = createSignal<boolean>(false)
 	const [isMenuSettingsOpen, setIsMenuSettingsOpen] = createSignal<boolean>(false)
-	const [isSubMenuSettings_themeOpen, setIsSubMenuSettings_themeOpen] = createSignal<boolean>(false)
-	const [isSubMenuSettings_cornerOpen, setIsSubMenuSettings_cornerOpen] = createSignal<boolean>(false)
 	const [isMenuMoreActionsOpen, setIsMenuMoreActionsOpen] = createSignal<boolean>(false)
+	const [animation, setAnimation] = createSignal<AnimationData>(AnimationData.on)
 	const [theme, setTheme] = createSignal<ThemeData>(ThemeData.system)
 	const [corner, setCorner] = createSignal<CornerData>(CornerData.round)
 	const settings = createMemo(() => props.settings)
 	let menuInfoRef: HTMLDialogElement
 	let menuSettingsRef: HTMLDialogElement
 	let menuMoreActionsRef: HTMLDialogElement
-	let subMenuSettings_themeRef: HTMLDivElement
-	let subMenuSettings_cornerRef: HTMLDivElement
 
 	function command(type: Commands, ...args: unknown[]): unknown {
 		return props.command(type, ...args)
+	}
+
+	function updateAnimation(animation: AnimationData): void {
+		setAnimation(animation)
+		attrSet(root, RootAttributes.animation, animation)
+		storageSet(LocalStorageKeys.animation, animation)
 	}
 
 	function udpateTheme(theme: ThemeData): void {
 		setTheme(theme)
 		setAttribute(root, RootAttributes.theme, theme)
 		storageSet(LocalStorageKeys.theme, theme)
-		closeSubMenu(subMenuSettings_themeRef)
 		closeMenu(menuSettingsRef)
 	}
 
@@ -67,7 +70,6 @@ const _: VoidComponent<{
 		setCorner(corner)
 		setAttribute(root, RootAttributes.corner, corner)
 		storageSet(LocalStorageKeys.corner, corner)
-		closeSubMenu(subMenuSettings_cornerRef)
 		closeMenu(menuSettingsRef)
 	}
 
@@ -87,9 +89,18 @@ const _: VoidComponent<{
 		}
 	}
 
+	function initAnimation(): void {
+		const animation = storageGet(LocalStorageKeys.animation)
+		if (animation && validEnumValue(animation, AnimationData)) {
+			attrSet(root, RootAttributes.animation, animation)
+			setAnimation(animation as AnimationData)
+		}
+	}
+
 	onMount(() => {
 		initTheme()
 		initCorner()
+		initAnimation()
 	})
 
 	const Menus: VoidComponent = () => {
@@ -98,6 +109,7 @@ const _: VoidComponent<{
 		const inputSettings_fontSizeId = createUniqueId()
 		const inputSettings_prefixId = createUniqueId()
 		const inputSettings_suffixId = createUniqueId()
+		const inputSettings_animationId = createUniqueId()
 		const buttonMoreActions_copyAllId = createUniqueId()
 		const buttonMoreActions_resetInputId = createUniqueId()
 		return (<>
@@ -198,6 +210,12 @@ const _: VoidComponent<{
 					const target = eventTarget(ev) as HTMLInputElement
 
 					switch (elementId(target)) {
+					case inputSettings_animationId:
+						updateAnimation(animation() === AnimationData.on
+							? AnimationData.off
+							: AnimationData.on
+						)
+						break
 					case inputSettings_textWrapId:
 						command(Commands.toggleTextWrap)
 						break
@@ -220,11 +238,14 @@ const _: VoidComponent<{
 						break
 					}
 				}}>
+				<SwitchMenuItem
+					c:checked={animation() === AnimationData.on}
+					c:iconCode={ICON_PLAY_CIRCLE_HINT}
+					c:attrSwitch={{id: inputSettings_animationId}}>
+					Animation
+				</SwitchMenuItem>
 				<SubMenu
-					ref={r => subMenuSettings_themeRef = r}
-					c:onToggleOpen={v => setIsSubMenuSettings_themeOpen(v)}
 					c:item={<SubMenuItem
-						c:focused={isSubMenuSettings_themeOpen()}
 						c:iconCode={ICON_WEATHER_SUNNY}>
 						Theme
 					</SubMenuItem>}>
@@ -248,10 +269,7 @@ const _: VoidComponent<{
 					</MenuItem>
 				</SubMenu>
 				<SubMenu
-					ref={r => subMenuSettings_cornerRef = r}
-					c:onToggleOpen={v => setIsSubMenuSettings_cornerOpen(v)}
 					c:item={<SubMenuItem
-						c:focused={isSubMenuSettings_cornerOpen()}
 						c:iconCode={ICON_TEARDROP_BOTTOM_RIGHT}>
 						Corner style
 					</SubMenuItem>}>

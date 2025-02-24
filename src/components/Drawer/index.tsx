@@ -12,6 +12,7 @@ import { closeModal, focusModal, Modal, openModal, type ModalProps } from "@/com
 import FocusableGroup from "@/components/FocusableGroup"
 import { typeIsBoolean } from "@/utils/typecheck"
 import './index.scss'
+import { animationIsOn } from "@/utils/animation"
 
 function openDrawer(
 	drawer: HTMLDialogElement,
@@ -153,29 +154,39 @@ const Drawer: ParentComponent<DrawerProps> = ($props) => {
 			right: props.style?.right ?? position() == DrawerPosition.right? 0 : 'auto',
 		}}
 		c:openAnimation={(el, done) => {
-			if (props["c:openAnimation"]) props["c:openAnimation"](el, done)
-			else promiseDone(elementAnimate(
-				el,
-				{ transform: [
-					position() == DrawerPosition.left
-						? 'translateX(-100%)'
-						: 'translateX(100%)',
-				'none'] },
-				animation_option
-			).finished, done)
+			if (animationIsOn()) {
+				if (props["c:openAnimation"]) props["c:openAnimation"](el, done)
+				else promiseDone(elementAnimate(
+					el,
+					{ transform: [
+						position() == DrawerPosition.left
+							? 'translateX(-100%)'
+							: 'translateX(100%)',
+					'none'] },
+					animation_option
+				).finished, done)
+				return
+			}
+
+			done()
 		}}
 		c:closeAnimation={(el, done) => {
-			if (props["c:closeAnimation"]) props["c:closeAnimation"](el, done)
-			else promiseDone(elementAnimate(
-				el,
-				{ transform: [
-					'none',
-					props['c:position'] == DrawerPosition.left
-						? 'translateX(-100%)'
-						: 'translateX(100%)',
-				] },
-				animation_option
-			).finished, done)
+			if (animationIsOn()){
+				if (props["c:closeAnimation"]) props["c:closeAnimation"](el, done)
+				else promiseDone(elementAnimate(
+					el,
+					{ transform: [
+						'none',
+						props['c:position'] == DrawerPosition.left
+							? 'translateX(-100%)'
+							: 'translateX(100%)',
+					] },
+					animation_option
+				).finished, done)
+				return
+			}
+
+			done()
 		}}
 		{...other}>
 		<Show

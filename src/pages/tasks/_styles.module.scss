@@ -87,7 +87,10 @@ $side_navigation_none: 680px;
 	padding-right: 4px;
 	width: 1080px;
 	max-width: calc(100% - 48px);
-	transition-duration: .2s;
+
+	:root[data-animation=on] & {
+		transition-duration: .2s;
+	}
 
 	> :global(.c-appbar-leading) > :global(.c-icon) {
 		width: 24px;
@@ -216,7 +219,10 @@ $side_navigation_none: 680px;
 		padding-right: 4px;
 		width: 1080px;
 		max-width: calc(100% - 48px);
-		transition-duration: .2s;
+
+		:root[data-animation=on] & {
+			transition-duration: .2s;
+		}
 
 		@media (max-width: 500px) {
 			max-width: calc(100% - 16px);
@@ -259,9 +265,12 @@ $side_navigation_none: 680px;
 		padding: 0;
 		user-select: none;
 		padding: 4px 12px;
-		transition-duration: .2s;
 		gap: 4px;
 		padding: 4px;
+
+		:root[data-animation=on] & {
+			transition-duration: .2s;
+		}
 
 		& :global(.c-list-leading) {
 			color: rgb(var(--g-color-accent));
@@ -353,7 +362,10 @@ div.body_task_item_tags {
 		position: sticky;
 		bottom: 0px;
 		left: 0;
-		transition-duration: .2s;
+
+		:root[data-animation=on] & {
+			transition-duration: .2s;
+		}
 
 		@media (max-width: 500px) {
 			padding: 8px;

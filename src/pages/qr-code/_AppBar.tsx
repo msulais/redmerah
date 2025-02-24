@@ -7,7 +7,6 @@ import { LocalStorageKeys } from "@/enums/storage"
 import { ThemeData } from "@/enums/theme"
 import { storageSet, storageGet } from "@/utils/storage"
 import { attrSet } from "@/utils/attributes"
-import { timeTimerSet } from "@/utils/time"
 import { RoutesLinks, ExternalLinks } from "@/enums/links"
 import { urlEncode, urlOrigin } from "@/utils/url"
 import { documentActive, documentRoot } from "@/utils/document"
@@ -15,18 +14,19 @@ import { navigatorShare } from "@/utils/navigator"
 import { dateYear } from "@/utils/datetime"
 import { eventCurrentTarget, eventTarget } from "@/utils/event"
 import { numberSafe } from "@/utils/number"
+import { AnimationData } from "@/enums/animation"
 import { APP_QR_CODE as app } from "@/constants/apps"
 import { validEnumValue } from "@/utils/object"
 import { elementValidTarget, elementTagName, elementId, elementDataset } from "@/utils/element"
 import { Commands, CopyFileType, DownloadFileType, EncodingMode, ErrorCorrectionLevel, Pages } from "./_enums"
-import { ICON_APPS, ICON_ARROW_DOWNLOAD, ICON_CHAT, ICON_CIRCLE, ICON_COPY, ICON_ERROR_CIRCLE_SETTINGS, ICON_GIFT, ICON_IMAGE, ICON_IMAGE_CIRCLE, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_MAXIMIZE, ICON_MORE_VERTICAL, ICON_NUMBER_ROW, ICON_RECEIPT, ICON_SETTINGS, ICON_SHARE_ANDROID, ICON_SHIELD_CHECKMARK, ICON_SQUARE, ICON_TEARDROP_BOTTOM_RIGHT, ICON_TRANSLATE, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from "@/constants/icons"
+import { ICON_APPS, ICON_ARROW_DOWNLOAD, ICON_CHAT, ICON_CIRCLE, ICON_COPY, ICON_ERROR_CIRCLE_SETTINGS, ICON_GIFT, ICON_IMAGE, ICON_IMAGE_CIRCLE, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_MAXIMIZE, ICON_MORE_VERTICAL, ICON_NUMBER_ROW, ICON_PLAY_CIRCLE_HINT, ICON_RECEIPT, ICON_SETTINGS, ICON_SHARE_ANDROID, ICON_SHIELD_CHECKMARK, ICON_SQUARE, ICON_TEARDROP_BOTTOM_RIGHT, ICON_TRANSLATE, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from "@/constants/icons"
 import logoRedmerah from '@/assets/images/logos/redmerah-logo.svg'
 
 import Tooltip from "@/components/Tooltip"
 import Icon from "@/components/Icon"
 import { IconButton } from "@/components/Button"
 import { NumberTextField } from "@/components/TextField"
-import Menu, { MenuDivider, MenuItem, MenuHeader, openMenu, LinkMenuItem, SubMenu, closeSubMenu, closeMenu, SubMenuItem, SwitchMenuItem } from "@/components/Menu"
+import Menu, { MenuDivider, MenuItem, MenuHeader, openMenu, LinkMenuItem, SubMenu, closeMenu, SubMenuItem, SwitchMenuItem } from "@/components/Menu"
 import ColorPicker, { ColorPickerPosition, openColorPicker } from "@/components/ColorPicker"
 import AppBar from "@/components/AppBar"
 import CSSAnimation from "@/styles/animation.module.scss"
@@ -41,14 +41,9 @@ const _: VoidComponent<{
 	const [isMenuInfoOpen, setIsMenuInfoOpen] = createSignal<boolean>(false)
 	const [isMenuSettingsOpen, setIsMenuSettingsOpen] = createSignal<boolean>(false)
 	const [isMenuMoreActionsOpen, setIsMenuMoreActionsOpen] = createSignal<boolean>(false)
-	const [isSubMenuSettings_themeOpen, setIsSubMenuSettings_themeOpen] = createSignal<boolean>(false)
-	const [isSubMenuSettings_cornerOpen, setIsSubMenuSettings_cornerOpen] = createSignal<boolean>(false)
-	const [isSubMenuSettings_errorCorrectionLevelOpen, setIsSubMenuSettings_errorCorrectionLevelOpen] = createSignal<boolean>(false)
-	const [isSubMenuSettings_encodingModeOpen, setIsSubMenuSettings_encodingModeOpen] = createSignal<boolean>(false)
 	const [isColorPickerColorOpen, setIsColorPickerColorOpen] = createSignal<boolean>(false)
 	const [isColorPickerBackgroundColorOpen, setIsColorPickerBackgroundColorOpen] = createSignal<boolean>(false)
-	const [isSubMenuMoreActions_downloadOpen, setIsSubMenuMoreActions_downloadOpen] = createSignal<boolean>(false)
-	const [isSubMenuMoreActions_copyOpen, setIsSubMenuMoreActions_copyOpen] = createSignal<boolean>(false)
+	const [animation, setAnimation] = createSignal<AnimationData>(AnimationData.on)
 	const [theme, setTheme] = createSignal<ThemeData>(ThemeData.system)
 	const [corner, setCorner] = createSignal<CornerData>(CornerData.round)
 	const settings = createMemo(() => props.settings)
@@ -58,12 +53,6 @@ const _: VoidComponent<{
 	let menuInfoRef: HTMLDialogElement
 	let menuSettingsRef: HTMLDialogElement
 	let menuMoreActionsRef: HTMLDialogElement
-	let subMenuMoreActions_downloadRef: HTMLDivElement
-	let subMenuMoreActions_copyRef: HTMLDivElement
-	let subMenuSettings_themeRef: HTMLDivElement
-	let subMenuSettings_cornerRef: HTMLDivElement
-	let subMenuSettings_errorCorrectionLevelRef: HTMLDivElement
-	let subMenuSettings_encodingModeRef: HTMLDivElement
 	let colorPickerColorRef: HTMLDialogElement
 	let colorPickerBackgroundColorRef: HTMLDialogElement
 
@@ -71,11 +60,16 @@ const _: VoidComponent<{
 		return props.command(type, ...args)
 	}
 
+	function updateAnimation(animation: AnimationData): void {
+		setAnimation(animation)
+		attrSet(root, RootAttributes.animation, animation)
+		storageSet(LocalStorageKeys.animation, animation)
+	}
+
 	function updateTheme(theme: ThemeData): void {
 		setTheme(theme)
 		attrSet(root, RootAttributes.theme, theme)
 		storageSet(LocalStorageKeys.theme, theme)
-		closeSubMenu(subMenuSettings_themeRef)
 		closeMenu(menuSettingsRef)
 	}
 
@@ -83,19 +77,16 @@ const _: VoidComponent<{
 		setCorner(corner)
 		attrSet(root, RootAttributes.corner, corner)
 		storageSet(LocalStorageKeys.corner, corner)
-		closeSubMenu(subMenuSettings_cornerRef)
 		closeMenu(menuSettingsRef)
 	}
 
 	function updateEncodingMode(mode: EncodingMode): void {
 		command(Commands.updateSettingsEncodingMode, mode)
-		closeSubMenu(subMenuSettings_encodingModeRef)
 		closeMenu(menuSettingsRef)
 	}
 
 	function updateErrorCorrectionlevel(level: ErrorCorrectionLevel): void {
 		command(Commands.updateSettingsErrorCorrectionLevel, level)
-		closeSubMenu(subMenuSettings_errorCorrectionLevelRef)
 		closeMenu(menuSettingsRef)
 	}
 
@@ -117,15 +108,25 @@ const _: VoidComponent<{
 		}
 	}
 
+	function initAnimation(): void {
+		const animation = storageGet(LocalStorageKeys.animation)
+		if (animation && validEnumValue(animation, AnimationData)) {
+			attrSet(root, RootAttributes.animation, animation)
+			setAnimation(animation as AnimationData)
+		}
+	}
+
 	onMount(() => {
 		initTheme()
 		initCorner()
+		initAnimation()
 	})
 
 	const Menus: VoidComponent = () => {
 		const inputSettings_marginId = createUniqueId()
 		const inputSettings_versionId = createUniqueId()
 		const inputSettings_autoVersionId = createUniqueId()
+		const inputSettings_animationId = createUniqueId()
 		const buttonInfo_shareId = createUniqueId()
 		const buttonSettings_colorId = createUniqueId()
 		const buttonSettings_backgroundColorId = createUniqueId()
@@ -275,6 +276,12 @@ const _: VoidComponent<{
 				onChange={ev => {
 					const target = eventTarget(ev) as HTMLInputElement
 					switch (elementId(target)) {
+					case inputSettings_animationId:
+						updateAnimation(animation() === AnimationData.on
+							? AnimationData.off
+							: AnimationData.on
+						)
+						break
 					case inputSettings_autoVersionId:
 						command(
 							Commands.updateSettingsVersion,
@@ -283,11 +290,14 @@ const _: VoidComponent<{
 						break
 					}
 				}}>
+				<SwitchMenuItem
+					c:checked={animation() === AnimationData.on}
+					c:iconCode={ICON_PLAY_CIRCLE_HINT}
+					c:attrSwitch={{id: inputSettings_animationId}}>
+					Animation
+				</SwitchMenuItem>
 				<SubMenu
-					ref={r => subMenuSettings_themeRef = r}
-					c:onToggleOpen={v => setIsSubMenuSettings_themeOpen(v)}
 					c:item={<SubMenuItem
-						c:focused={isSubMenuSettings_themeOpen()}
 						c:iconCode={ICON_WEATHER_SUNNY}>
 						Theme
 					</SubMenuItem>}>
@@ -311,10 +321,7 @@ const _: VoidComponent<{
 					</MenuItem>
 				</SubMenu>
 				<SubMenu
-					ref={r => subMenuSettings_cornerRef = r}
-					c:onToggleOpen={v => setIsSubMenuSettings_cornerOpen(v)}
 					c:item={<SubMenuItem
-						c:focused={isSubMenuSettings_cornerOpen()}
 						c:iconCode={ICON_TEARDROP_BOTTOM_RIGHT}>
 						Corner style
 					</SubMenuItem>}>
@@ -347,10 +354,7 @@ const _: VoidComponent<{
 					<MenuDivider/>
 					<MenuHeader>QR Code generator</MenuHeader>
 					<SubMenu
-						ref={r => subMenuSettings_errorCorrectionLevelRef = r}
-						c:onToggleOpen={isOpen => setIsSubMenuSettings_errorCorrectionLevelOpen(isOpen)}
 						c:item={<SubMenuItem
-							c:focused={isSubMenuSettings_errorCorrectionLevelOpen()}
 							c:iconCode={ICON_ERROR_CIRCLE_SETTINGS}>
 							Error correction level
 						</SubMenuItem>}>
@@ -380,10 +384,7 @@ const _: VoidComponent<{
 						</MenuItem>
 					</SubMenu>
 					<SubMenu
-						ref={r => subMenuSettings_encodingModeRef = r}
-						c:onToggleOpen={isOpen => setIsSubMenuSettings_encodingModeOpen(isOpen)}
 						c:item={<SubMenuItem
-							c:focused={isSubMenuSettings_encodingModeOpen()}
 							c:iconCode={ICON_TRANSLATE}>
 							Encoding mode
 						</SubMenuItem>}>
@@ -491,8 +492,7 @@ const _: VoidComponent<{
 						&& validEnumValue(dataDownload, DownloadFileType)
 					) {
 						command(Commands.downloadQRCode, dataDownload as DownloadFileType)
-						closeSubMenu(subMenuMoreActions_downloadRef)
-						timeTimerSet(() => closeMenu(menuMoreActionsRef), 200)
+						closeMenu(menuMoreActionsRef)
 						return
 					}
 
@@ -501,17 +501,13 @@ const _: VoidComponent<{
 						&& validEnumValue(dataCopy, CopyFileType)
 					) {
 						command(Commands.copyQRCode, dataCopy as CopyFileType)
-						closeSubMenu(subMenuMoreActions_copyRef)
-						timeTimerSet(() => closeMenu(menuMoreActionsRef), 200)
+						closeMenu(menuMoreActionsRef)
 						return
 					}
 				}}>
 				<SubMenu
 					style={{width: '172px'}}
-					ref={r => subMenuMoreActions_downloadRef = r}
-					c:onToggleOpen={isOpen => setIsSubMenuMoreActions_downloadOpen(isOpen)}
 					c:item={<SubMenuItem
-						c:focused={isSubMenuMoreActions_downloadOpen()}
 						c:iconCode={ICON_ARROW_DOWNLOAD}>
 						Download as
 					</SubMenuItem>}>
@@ -536,10 +532,7 @@ const _: VoidComponent<{
 				</SubMenu>
 				<SubMenu
 					style={{width: '172px'}}
-					ref={r => subMenuMoreActions_copyRef = r}
-					c:onToggleOpen={isOpen => setIsSubMenuMoreActions_copyOpen(isOpen)}
 					c:item={<SubMenuItem
-						c:focused={isSubMenuMoreActions_copyOpen()}
 						c:iconCode={ICON_COPY}>
 						Copy as
 					</SubMenuItem>}>
