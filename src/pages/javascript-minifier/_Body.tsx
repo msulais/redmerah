@@ -15,11 +15,11 @@ import Button, { ButtonVariant } from "@/components/Button"
 import CSS from './_styles.module.scss'
 
 enum InputViewOption {
-	result,
+	input,
 }
 
 enum OutputViewOption {
-	source
+	output
 }
 
 const _: VoidComponent<{
@@ -31,8 +31,8 @@ const _: VoidComponent<{
 	const body = documentBody()
 	const [width, setWidth] = createSignal<number | null>(null)
 	const [isDragging, setIsDragging] = createSignal<boolean>(false)
-	const [inputViewOption, setInputViewOption] = createSignal<InputViewOption | null>(InputViewOption.result)
-	const [outputViewOption, setOutputViewOption] = createSignal<OutputViewOption | null>(OutputViewOption.source)
+	const [inputViewOption, setInputViewOption] = createSignal<InputViewOption | null>(InputViewOption.input)
+	const [outputViewOption, setOutputViewOption] = createSignal<OutputViewOption | null>(OutputViewOption.output)
 	const settings = createMemo(() => props.settings)
 	const buttonInput_sourceId = createUniqueId()
 	const buttonOutput_resultId = createUniqueId()
@@ -92,7 +92,7 @@ const _: VoidComponent<{
 			id={buttonInput_sourceId}
 			c:variant={ButtonVariant.tonal}
 			c:selected={inputViewOption() !== null}>
-			Source
+			Input
 		</Button>
 	</>)
 
@@ -101,7 +101,7 @@ const _: VoidComponent<{
 			id={buttonOutput_resultId}
 			c:variant={ButtonVariant.tonal}
 			c:selected={outputViewOption() !== null}>
-			Result
+			Output
 		</Button>
 	</>)
 
@@ -118,30 +118,30 @@ const _: VoidComponent<{
 			switch (elementId(button)) {
 			case buttonInput_sourceId:
 				if (isSmallScreen) {
-					setInputViewOption(InputViewOption.result)
+					setInputViewOption(InputViewOption.input)
 					setOutputViewOption(null)
 					return;
 				}
 
-				if (inputViewOption() === InputViewOption.result
+				if (inputViewOption() === InputViewOption.input
 					&& outputViewOption() !== null
 				) return setInputViewOption(null)
 
-				setInputViewOption(InputViewOption.result)
+				setInputViewOption(InputViewOption.input)
 				textAreaRef.value = props.inputText
 				break
 			case buttonOutput_resultId:
 				if (isSmallScreen) {
-					setOutputViewOption(OutputViewOption.source)
+					setOutputViewOption(OutputViewOption.output)
 					setInputViewOption(null)
 					return;
 				}
 
-				if (outputViewOption() === OutputViewOption.source
+				if (outputViewOption() === OutputViewOption.output
 					&& inputViewOption() !== null
 				) return setOutputViewOption(null)
 
-				setOutputViewOption(OutputViewOption.source)
+				setOutputViewOption(OutputViewOption.output)
 				break
 			}
 		}}>
