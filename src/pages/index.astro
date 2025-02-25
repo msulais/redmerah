@@ -1,13 +1,9 @@
 ---
-import { themeFromSourceColor } from "@material/material-color-utilities"
-
 import type { HEXColor } from '@/types/color'
 import { RoutesLinks } from '@/enums/links'
 import { APPS } from '@/constants/apps'
-import { colorHexArgbToRgb, colorRgbToHex } from '@/utils/color'
-import { ICON_ARROW_RIGHT, ICON_DATABASE_PERSON, ICON_OPEN, ICON_SETTINGS_COG_MULTIPLE, ICON_SPARKLE } from '@/constants/icons'
-import { numberParse, numberToString } from "@/utils/number"
-import { stringSubstring } from "@/utils/string"
+import { colorGeneratePalette } from '@/utils/color'
+import { ICON_ARROW_RIGHT, ICON_DATABASE_PERSON, ICON_OPEN_FOLDER, ICON_SETTINGS_COG_MULTIPLE, ICON_SPARKLE } from '@/constants/icons'
 import logo from '@/assets/images/logos/redmerah-logo.svg'
 
 import Html from '@/layouts/Html/index.astro'
@@ -39,10 +35,8 @@ const features = [
 ]
 
 function color_app_background(color: HEXColor): string {
-	const theme = themeFromSourceColor(numberParse(stringSubstring(color, 1), true, 16)).schemes
-	const light = colorRgbToHex(colorHexArgbToRgb('#' + numberToString(theme.light.primaryContainer, 16) as HEXColor))
-	const dark = colorRgbToHex(colorHexArgbToRgb('#' + numberToString(theme.dark.primaryContainer, 16) as HEXColor))
-	return `--color-accent-light:${light};--color-accent-dark:${dark}7F;`
+	const theme = colorGeneratePalette(color)
+	return `--color-accent-light:${theme.color};--color-accent-dark:${theme.colorDark};`
 }
 ---
 
@@ -62,7 +56,7 @@ function color_app_background(color: HEXColor): string {
 					<img src={v.logoUrl} alt={v.name} />
 					<h3>{v.name}</h3>
 					<p>{v.description}</p>
-					<LinkButton classList={[CSSAnimation.btn_scale_up_icon]} variant={ButtonVariant.outlined} href={v.link}>Open <Icon filled code={ICON_OPEN}/></LinkButton>
+					<LinkButton classList={[CSSAnimation.btn_scale_up_icon]} variant={ButtonVariant.outlined} href={v.link}>Open <Icon code={ICON_OPEN_FOLDER}/></LinkButton>
 				</div>}</>)}
 			</section>
 			<LinkButton
