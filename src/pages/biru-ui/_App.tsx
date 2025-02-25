@@ -4,7 +4,7 @@ import { type ObjectStoreSettings, ObjectStoreNames, ObjectStoreSettingsKeys } f
 import { Commands, Pages } from "./_enums"
 import { IDB, idbStorePut } from "@/utils/indexeddb"
 import { DatabaseNames } from "@/enums/storage"
-import { removeSplashScreen } from "@/scripts/splash"
+import { removeSplashScreen } from "@/utils/splash"
 import { ALL_PAGES_ENUM } from "./_constants"
 import { promiseDone } from "@/utils/object"
 import { arrayIncludes } from "@/utils/array"

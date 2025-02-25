@@ -15,7 +15,7 @@ import { fileDownload } from "@/utils/file"
 import { IDB, idbStorePut } from "@/utils/indexeddb"
 import { DatabaseNames } from "@/enums/storage"
 import { ObjectStoreKeys, ObjectStoreNames, type ObjectStoreMiscellaneous, type ObjectStoreSettings } from "./_storage"
-import { removeSplashScreen } from "@/scripts/splash"
+import { removeSplashScreen } from "@/utils/splash"
 import { ICON_COPY } from "@/constants/icons"
 
 import Icon from "@/components/Icon"

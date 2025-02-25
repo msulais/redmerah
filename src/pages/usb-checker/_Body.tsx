@@ -11,7 +11,7 @@ import { documentActive } from "@/utils/document"
 import { elementDataset, elementId, elementTagName, elementValidTarget } from "@/utils/element"
 import { eventCurrentTarget } from "@/utils/event"
 import { numberParse } from "@/utils/number"
-import { removeSplashScreen } from "@/scripts/splash"
+import { removeSplashScreen } from "@/utils/splash"
 import { AppColors } from "@/enums/colors"
 import { timeTimerSet } from "@/utils/time"
 

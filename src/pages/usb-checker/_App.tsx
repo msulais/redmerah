@@ -1,5 +1,5 @@
 import { onMount, type VoidComponent } from "solid-js"
-import { removeSplashScreen } from "@/scripts/splash"
+import { removeSplashScreen } from "@/utils/splash"
 
 import App from "@/components/App"
 import AppBar from './_AppBar'

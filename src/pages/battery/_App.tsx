@@ -2,7 +2,7 @@ import { createSignal, onMount, Show, type VoidComponent } from "solid-js"
 
 import type { BatteryManager } from "@/interfaces/battery"
 import { timeTimerSet } from "@/utils/time"
-import { removeSplashScreen } from "@/scripts/splash"
+import { removeSplashScreen } from "@/utils/splash"
 import { eventListenerAdd } from "@/utils/event"
 import { mathFloor } from "@/utils/math"
 import { promiseDone } from "@/utils/object"

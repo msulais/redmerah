@@ -7,7 +7,7 @@ import { ObjectStoreKeys, ObjectStoreNames, type ObjectStoreLastInput, type Obje
 import { createStore } from "solid-js/store"
 import { Commands } from "./_enums"
 import { DEFAULT_LATEX_TEXT } from "./_latex"
-import { removeSplashScreen } from "@/scripts/splash"
+import { removeSplashScreen } from "@/utils/splash"
 import { arrayJoin, arrayMap, arraySlice } from "@/utils/array"
 import { navigatorClipboardWriteText } from "@/utils/navigator"
 import { promiseDone } from "@/utils/object"

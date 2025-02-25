@@ -3,7 +3,7 @@ import { createStore } from "solid-js/store"
 import { compileString } from 'sass'
 
 import type { Settings } from "./_types"
-import { removeSplashScreen } from "@/scripts/splash"
+import { removeSplashScreen } from "@/utils/splash"
 import { Commands, InputViewOption } from "./_enums"
 import { fileOpen, fileReadAsText, fileDownload } from "@/utils/file"
 import { ObjectStoreKeys, ObjectStoreNames, type ObjectStoreSettings, type ObjectStoreLastInput } from "./_storage"

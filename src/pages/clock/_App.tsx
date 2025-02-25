@@ -3,7 +3,7 @@ import { createSignal, onMount, type VoidComponent } from "solid-js"
 
 import type { Settings, Stopwatch, Timer } from "./_types"
 import { Pages, Commands, StopwatchState, TimerState } from "./_enums"
-import { removeSplashScreen } from "@/scripts/splash"
+import { removeSplashScreen } from "@/utils/splash"
 import { dateValueOf } from "@/utils/datetime"
 import { eventListenerAdd } from "@/utils/event"
 import { mathFloor } from "@/utils/math"

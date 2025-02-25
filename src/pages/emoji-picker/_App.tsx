@@ -1,6 +1,6 @@
 import { createSignal, onMount, type VoidComponent } from "solid-js"
 
-import { removeSplashScreen } from "@/scripts/splash"
+import { removeSplashScreen } from "@/utils/splash"
 import { IDB, idbStorePut } from "@/utils/indexeddb"
 import { Commands } from "./_enums"
 import { promiseDone } from "@/utils/object"

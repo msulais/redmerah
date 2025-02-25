@@ -3,7 +3,7 @@ import { createStore } from "solid-js/store"
 
 import type { Settings, Gradient, LinearGradient, RadialGradient, ConicGradient, GradientData, ColorStopGradient } from "./_type"
 import type { HEXColor } from "@/types/color"
-import { removeSplashScreen } from "@/scripts/splash"
+import { removeSplashScreen } from "@/utils/splash"
 import { ColorSpace, Commands, GradientType, HueInterpolationMethod, PolarColorSpace, RadialGradientShape, RectangularColorSpace } from "./_enums"
 import { colorIsValidWithAlpha } from "@/utils/color"
 import { mathAbs, mathMin, mathRound } from "@/utils/math"

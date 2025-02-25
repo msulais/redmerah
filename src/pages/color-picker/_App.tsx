@@ -2,7 +2,7 @@ import { onMount, createSignal, type VoidComponent } from "solid-js"
 import { createStore as $store } from "solid-js/store"
 
 import type { Settings } from "./_types"
-import { removeSplashScreen } from "@/scripts/splash"
+import { removeSplashScreen } from "@/utils/splash"
 import { ColorPickerMode, Commands } from "./_enums"
 import { IDB, idbStorePut } from "@/utils/indexeddb"
 import { DatabaseNames } from "@/enums/storage"

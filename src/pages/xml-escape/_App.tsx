@@ -7,7 +7,7 @@ import { ObjectStoreKeys, ObjectStoreNames, type ObjectStoreLastInput, type Obje
 import { createStore } from "solid-js/store"
 import { Commands, TextTypes } from "./_enums"
 import { DEFAULT_UNESCAPE_XML_TEXT } from "./_unescape-xml"
-import { removeSplashScreen } from "@/scripts/splash"
+import { removeSplashScreen } from "@/utils/splash"
 import { promiseDone } from "@/utils/object"
 import { stringReplace } from "@/utils/string"
 import { navigatorClipboardWriteText } from "@/utils/navigator"
