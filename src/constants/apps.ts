@@ -23,8 +23,8 @@ export const APP_JAVASCRIPT_MINIFIER: AppItem = {
 	description: 'Optimize your website\'s performance with our JavaScript Minifier. Quickly minify JavaScript code for faster load times and reduced file sizes.',
 	link: RoutesLinks.javascriptMinifier,
 	color: '#FFC500',
-	buildNumber: 1,
-	buildVersion: '0.0.1',
+	buildNumber: 2,
+	buildVersion: '0.0.2',
 }
 
 export const APP_XML_ESCAPE: AppItem = {
