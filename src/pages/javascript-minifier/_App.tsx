@@ -174,11 +174,11 @@ const _: VoidComponent = () => {
 			switch (type) {
 			case TextTypes.input:
 				text = inputText()
-				filename = 'source.js'
+				filename = 'input.js'
 				break
 			case TextTypes.output:
 				text = outputText()
-				filename = 'result.min.js'
+				filename = 'output.min.js'
 				break
 			}
 

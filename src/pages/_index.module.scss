@@ -4,33 +4,97 @@
 	gap: 16px;
 
 	> div {
+		--border-angle: 0deg;
 		--color-accent-light: rgb(var(--g-color-accent));
 		--color-accent-dark: rgb(var(--g-color-accent));
+		--color-accent: var(--color-accent-light);
+
+		:root[data-theme=dark] & { --color-accent: var(--color-accent-dark) }
+
+		@media (prefers-color-scheme: dark) {
+			:root[data-theme=system] & {
+				--color-accent: var(--color-accent-dark)
+			}
+		}
+
 		flex: 1 1 240px;
-		border-radius: 16px;
+		border-radius: 20px;
 		padding: 20px;
 		display: flex;
 		flex-direction: column;
 		position: relative;
-		background-color: var(--color-accent-light);
+		overflow: hidden;
+		background: conic-gradient(
+			from var(--border-angle) at 50% 50%,
+			var(--color-accent) 0deg,
+			rgb(var(--g-color-surface)) 0deg,
+			rgb(var(--g-color-surface)) 90deg,
+			var(--color-accent) 90deg,
+			var(--color-accent) 180deg,
+			rgb(var(--g-color-surface)) 180deg,
+			rgb(var(--g-color-surface)) 270deg,
+			var(--color-accent) 270deg
+		);
+
+		@media (hover: hover) {
+			&:hover {
+				box-shadow: var(--g-elevation2);
+				transform: translateY(-8px);
+			}
+		}
+
+		& * {
+			position: relative;
+			z-index: 2;
+		}
+
+		&::after {
+			content: '';
+			width: calc(100% - 8px);
+			height: calc(100% - 8px);
+			position: absolute;
+			left: 4px;
+			top: 4px;
+			background-color: rgb(var(--g-color-surface));
+			border-radius: 16px;
+
+			:root[data-animation=on] & {
+				transition-duration: .2s;
+			}
+
+			:root[data-corner=sharp] & {
+				border-radius: 0;
+			}
+
+			:root[data-corner=semi-round] & {
+				border-radius: 8px;
+			}
+
+			:root[data-corner=full-round] & {
+				border-radius: 36px;
+			}
+		}
+
+		:root[data-animation=off] & {
+			background: none;
+			background-color: var(--color-accent);
+		}
 
 		:root[data-animation=on] & {
 			transition-duration: .2s;
+			animation: rotate1 5s linear infinite;
 		}
-
-		:root[data-theme=dark] & { background-color: var(--color-accent-dark) }
-		:root[data-theme=system] & {@media (prefers-color-scheme: dark) { background-color: var(--color-accent-dark) }}
 
 		:root[data-corner=sharp] & {
 			border-radius: 0;
 		}
 
 		:root[data-corner=semi-round] & {
-			border-radius: 8px;
+			border-radius: 12px;
 		}
 
 		:root[data-corner=full-round] & {
-			border-radius: 36px;
+			border-radius: 40px;
 		}
 
 		> :global(.c-btn) {
@@ -43,7 +107,6 @@
 	& img {
 		width: 112px;
 		margin-bottom: 16px;
-		filter: drop-shadow(var(--g-elevation2));
 	}
 
 	& h3 {
@@ -55,6 +118,18 @@
 		padding-bottom: 16px;
 	}
 }
+
+@keyframes rotate1 {
+	from { --border-angle: 0deg }
+	to { --border-angle: 180deg }
+}
+
+@property --border-angle {
+	syntax: "<angle>";
+	initial-value: 0deg;
+	inherits: false;
+  }
+
 
 .body {
 	width: 1080px;

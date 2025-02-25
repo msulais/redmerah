@@ -450,11 +450,11 @@ const _: VoidComponent<{
 					</SubMenuItem>}>
 					<MenuItem
 						data-download={TextTypes.input}>
-						Source
+						Input
 					</MenuItem>
 					<MenuItem
 						data-download={TextTypes.output}>
-						Result
+						Output
 					</MenuItem>
 				</SubMenu>
 				<SubMenu
@@ -465,11 +465,11 @@ const _: VoidComponent<{
 					</SubMenuItem>}>
 					<MenuItem
 						data-copy={TextTypes.input}>
-						Source
+						Input
 					</MenuItem>
 					<MenuItem
 						data-copy={TextTypes.output}>
-						Result
+						Output
 					</MenuItem>
 				</SubMenu>
 				<MenuDivider/>

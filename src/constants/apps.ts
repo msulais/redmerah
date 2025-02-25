@@ -23,8 +23,8 @@ export const APP_JAVASCRIPT_MINIFIER: AppItem = {
 	description: 'Optimize your website\'s performance with our JavaScript Minifier. Quickly minify JavaScript code for faster load times and reduced file sizes.',
 	link: RoutesLinks.javascriptMinifier,
 	color: '#FFC500',
-	buildNumber: 1,
-	buildVersion: '0.0.1',
+	buildNumber: 2,
+	buildVersion: '0.0.2',
 }
 
 export const APP_XML_ESCAPE: AppItem = {
@@ -143,8 +143,8 @@ export const APP_RANDOMIZER: AppItem = {
 	description: 'Explore our Randomizer Hub for a variety of tools that add a touch of unpredictability to your life. Generate random strings, words, numbers, colors, and even assemble teams. Embrace the unexpected!',
 	link: RoutesLinks.randomizer,
 	color: '#00FF48',
-	buildNumber: 6,
-	buildVersion: '0.1.7',
+	buildNumber: 7,
+	buildVersion: '0.1.8',
 }
 
 export const APP_COLOR_GENERATOR: AppItem = {
