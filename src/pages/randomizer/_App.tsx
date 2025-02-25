@@ -54,7 +54,7 @@ const _: VoidComponent = () => {
 	const [lists, setlists] = createStore<ItemList[]>(arrayMap(DEFAULT_LISTS, l => ({id: l.id, name: l.name, items: [...l.items]})))
 	const [settings, setSettings] = createStore<Settings>({
 		string: {
-			instant: true,
+			instant: false,
 			length: 8,
 			characters: {
 				lowercase: true,
@@ -65,7 +65,7 @@ const _: VoidComponent = () => {
 			}
 		},
 		words: {
-			instant: true,
+			instant: false,
 			count: 3,
 			list: {id: 5, name: 'Lorem Ipsum', items: [...LOREM_IPSUM ]},
 			prefix: '',
@@ -75,7 +75,7 @@ const _: VoidComponent = () => {
 			wordCase: WordsRandomizerWordCase.none
 		},
 		numbers: {
-			instant: true,
+			instant: false,
 			count: 3,
 			minDigits: 0,
 			type: NumbersRandomizerNumberType.decimal,
@@ -90,7 +90,7 @@ const _: VoidComponent = () => {
 			suffix: '',
 		},
 		colors: {
-			instant: true,
+			instant: false,
 			space: ColorsRandomizerColorSpace.rgb,
 			count: 3,
 			range: {
@@ -108,12 +108,12 @@ const _: VoidComponent = () => {
 			}
 		},
 		selection: {
-			instant: true,
+			instant: false,
 			count: 4,
 			list: {id: 4, name: 'Animals', items: [...ANIMALS]},
 		},
 		teams: {
-			instant: true,
+			instant: false,
 			count: 3,
 			listMembers: {id: 1, name: 'Person', items: [...PERSON_NAMES]},
 			listNames: {id: 2, name: 'Teams', items: [...TEAMS_NAMES]},
