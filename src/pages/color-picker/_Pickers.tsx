@@ -22,7 +22,7 @@ import { ICON_IMAGE } from "@/constants/icons"
 import Button, { ButtonVariant } from "@/components/Button"
 import Icon from "@/components/Icon"
 import CSS from './_styles.module.scss'
-import { KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT, KEY_ARROW_UP } from "@/constants/key_code"
+import { KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT, KEY_ARROW_UP } from "@/constants/key-code"
 
 export const RectanglePicker: VoidComponent<{
 	input: HSLColor

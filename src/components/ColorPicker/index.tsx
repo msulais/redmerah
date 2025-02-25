@@ -14,7 +14,7 @@ import { colorContrastRatio, colorHexToHsl, colorHexToRgb, colorHslToHex, colorH
 import { documentActive, documentBody } from "@/utils/document"
 import { arrayJoin, arrayLength, arrayPush } from "@/utils/array"
 import { rectHeight, rectLeft, rectTop, rectWidth } from "@/utils/rect"
-import { KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT, KEY_ARROW_UP } from "@/constants/key_code"
+import { KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT, KEY_ARROW_UP } from "@/constants/key-code"
 
 import Button, { ButtonVariant } from "@/components/Button"
 import TextField from "@/components/TextField"

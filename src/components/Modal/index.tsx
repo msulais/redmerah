@@ -18,7 +18,7 @@ import { windowInnerHeight, windowScrollY, windowScrollTo } from '@/utils/window
 import { ElementIds } from '@/enums/ids'
 import { promiseDone } from '@/utils/object'
 import { animationIsOn } from '@/utils/animation'
-import { KEY_ARROW_UP, KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT } from '@/constants/key_code'
+import { KEY_ARROW_UP, KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT } from '@/constants/key-code'
 
 import './index.scss'
 

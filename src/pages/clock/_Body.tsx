@@ -10,7 +10,7 @@ import { dateHours, dateMinutes, dateSeconds, dateValueOf } from "@/utils/dateti
 import { timeIntervalClear, timeIntervalSet, timeTimerClear, timeTimerSet } from "@/utils/time"
 import { eventCurrentTarget, eventListenerAdd, eventListenerRemove } from "@/utils/event"
 import { ICON_ARROW_RESET, ICON_CHEVRON_DOWN, ICON_CHEVRON_UP, ICON_COPY, ICON_DISMISS, ICON_DOCUMENT_ARROW_UP, ICON_EDIT, ICON_FLAG, ICON_MORE_VERTICAL, ICON_PAUSE, ICON_PLAY, ICON_TIMER } from "@/constants/icons"
-import { KEY_ARROW_DOWN, KEY_ARROW_UP, KEY_DIGIT_0, KEY_DIGIT_1, KEY_DIGIT_2, KEY_DIGIT_3, KEY_DIGIT_4, KEY_DIGIT_5, KEY_DIGIT_6, KEY_DIGIT_7, KEY_DIGIT_8, KEY_DIGIT_9 } from "@/constants/key_code"
+import { KEY_ARROW_DOWN, KEY_ARROW_UP, KEY_DIGIT_0, KEY_DIGIT_1, KEY_DIGIT_2, KEY_DIGIT_3, KEY_DIGIT_4, KEY_DIGIT_5, KEY_DIGIT_6, KEY_DIGIT_7, KEY_DIGIT_8, KEY_DIGIT_9 } from "@/constants/key-code"
 import { mathFloor } from "@/utils/math"
 import { navigatorClipboardWriteText } from "@/utils/navigator"
 import { promiseDone } from "@/utils/object"

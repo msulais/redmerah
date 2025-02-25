@@ -17,7 +17,7 @@ import { rectBottom, rectHeight, rectLeft, rectRight, rectTop, rectWidth } from 
 import { AnimationEffectTiming } from '@/enums/animation'
 import { promiseDone } from '@/utils/object'
 import { ElementIds } from '@/enums/ids'
-import { KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT, KEY_ARROW_UP, KEY_ESCAPE } from '@/constants/key_code'
+import { KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT, KEY_ARROW_UP, KEY_ESCAPE } from '@/constants/key-code'
 import { animationIsOn } from '@/utils/animation'
 
 import './index.scss'

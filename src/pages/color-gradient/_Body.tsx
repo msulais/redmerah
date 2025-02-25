@@ -30,7 +30,7 @@ import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import Toast, { openToast } from "@/components/Toast"
 import CSS from './_styles.module.scss'
 import { keyboardOnFocusIn, keyboardOnFocusOut, keyboardOnKeyDown } from "@/utils/keyboard"
-import { KEY_ARROW_LEFT, KEY_ARROW_RIGHT } from "@/constants/key_code"
+import { KEY_ARROW_LEFT, KEY_ARROW_RIGHT } from "@/constants/key-code"
 
 type PointerPosition = {
 	x: number

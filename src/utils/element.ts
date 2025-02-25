@@ -1,4 +1,4 @@
-import { KEY_ARROW_UP, KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT } from "@/constants/key_code"
+import { KEY_ARROW_UP, KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT } from "@/constants/key-code"
 import { arrayJoin, arrayLength } from "./array"
 import { documentActive, documentHasFocus } from "./document"
 import { attrGet, attrRemove } from "./attributes"

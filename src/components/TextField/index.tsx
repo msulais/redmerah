@@ -13,7 +13,7 @@ import { arrayLength } from '@/utils/array'
 import { numberIsNaN, numberIsNotDefined, numberParse, numberSafe } from '@/utils/number'
 import { rectWidth } from '@/utils/rect'
 import { documentActive } from '@/utils/document'
-import { KEY_ARROW_DOWN, KEY_ARROW_UP, KEY_ENTER, KEY_SPACE } from '@/constants/key_code'
+import { KEY_ARROW_DOWN, KEY_ARROW_UP, KEY_ENTER, KEY_SPACE } from '@/constants/key-code'
 import { ICON_CHEVRON_DOWN, ICON_CHEVRON_UP, ICON_CHEVRON_UP_DOWN, ICON_DISMISS } from '@/constants/icons'
 
 import Icon from '@/components/Icon'
