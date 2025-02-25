@@ -85,7 +85,7 @@ const { route } = Astro.props
 		if (isTop === localIsTop) return
 		isTop = localIsTop
 
-		elementStyleSet(appbar, 'will-change', 'border-color background-color box-shadow transform max-width')
+		elementStyleSet(appbar, 'will-change', 'border-color, background-color, box-shadow, transform, max-width')
 		attrToggle(appbar, 'data-top', isTop)
 	})
 </script>
