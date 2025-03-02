@@ -64,6 +64,7 @@ export const ICON_CUBE = 0xE581
 export const ICON_CURSOR_CLICK = 0xE599
 
 // D
+export const ICON_DATA_SCATTER = 0xE5BB
 export const ICON_DATABASE_PERSON = 0xE5E1
 export const ICON_DECIMAL_ARROW_LEFT = 0xE5ED
 export const ICON_DELETE = 0xE5F1
