@@ -21,5 +21,6 @@ export enum DatabaseNames {
 	colorPicker = 'color-picker',
 	clock = 'clock',
 	xmlEscape = 'xml-escape',
-	javascriptMinifier = 'javascript-minifier'
+	javascriptMinifier = 'javascript-minifier',
+	cubicBezier = 'cubic-bezier'
 }

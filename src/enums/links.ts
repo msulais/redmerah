@@ -22,6 +22,7 @@ export enum RoutesLinks {
 	colorPicker = '/color-picker',
 	clock = '/clock',
 	xmlEscape = '/xml-escape',
+	cubicBezier = '/cubic-bezier',
 	javascriptMinifier = '/javascript-minifier',
 
 	// TODO: create these apps
@@ -46,7 +47,6 @@ export enum RoutesLinks {
 	sorter = '/sorter',
 	textEditor = '/text-editor',
 	compass = '/compass',
-	cubicBezier = '/cubic-bezier',
 	screenRecorder = '/screen-recorder',
 }
 

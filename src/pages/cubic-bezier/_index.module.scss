@@ -1,0 +1,130 @@
+.body {
+	display: flex;
+	justify-content: center;
+	height: 100%;
+
+	@media (max-width: 600px) {
+		display: grid;
+		grid-template-columns: 1fr;
+	}
+
+	> div:first-child {
+		display: flex;
+
+		@media (max-width: 950px) {
+			align-items: center;
+			flex-direction: column;
+			max-height: 100%;
+			overflow: auto;
+		}
+
+		@media (max-width: 600px) {
+			overflow: visible;
+			max-height: fit-content;
+		}
+
+		> svg {
+			margin: 16px;
+			position: relative;
+			z-index: 9;
+
+			> rect {
+				:root[data-animation=on] & {
+					transition-property: rx;
+					transition-duration: .2s;
+				}
+
+				&:first-child {
+					rx: 8px;
+
+					:root[data-corner=sharp] & { rx: 0 }
+					:root[data-corner=semi-round] & { rx: 4px }
+					:root[data-corner=full-round] & { rx: 20px }
+				}
+
+				&:not(:first-child) {
+					border-radius: 9999px;
+
+					&:focus:not(:focus-visible) {
+						outline: none;
+					}
+
+					&:hover {
+						cursor: move;
+					}
+
+					:root[data-corner=sharp] & { rx: 0 !important}
+				}
+			}
+		}
+	}
+}
+
+.bodyOptions {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	padding: 0 12px 12px 12px;
+	width: 300px;
+
+	@media (min-width: 951px) {
+		max-height: 100%;
+		overflow: auto;
+	}
+
+	@media (max-width: 600px) {
+		width: 100%;
+		padding: 12px;
+
+		> button:first-child {
+			order: 999
+		}
+	}
+
+	& :global(.c-expander) > div {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 12px;
+	}
+}
+
+.bodyPlayground {
+	flex: 1;
+	border: 1px solid;
+	height: 100%;
+	background-color: rgb(var(--g-color-surface));
+	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity3));
+	border-right: none;
+	border-bottom: none;
+	overflow: hidden;
+	border-radius: 8px 0 0 0;
+	position: relative;
+
+	@media (max-width: 600px) {
+		min-height: calc(100dvh - calc(52px + 52px));
+		border-left: none;
+		border-radius: 0 !important;
+
+		:root[data-platform=mobile] & {
+			min-height: calc(100dvh - calc(56px + 56px));
+		}
+	}
+
+	:root[data-corner=sharp] & { border-radius: 0 }
+	:root[data-corner=semi-round] & { border-radius: 4px 0 0 0 }
+	:root[data-corner=full-round] & { border-radius: 20px 0 0 0 }
+
+	> div {
+		position: absolute;
+		background-color: rgb(var(--g-color-accent));
+		width: 32px;
+		height: 32px;
+		translate: 8px 8px;
+		border-radius: 8px;
+		transition-duration: .2s;
+
+		:root[data-corner=sharp] & { border-radius: 0 }
+		:root[data-corner=semi-round] & { border-radius: 4px}
+		:root[data-corner=full-round] & { border-radius: 20px}
+	}
+}
