@@ -143,6 +143,7 @@ const Dropdown: ParentComponent<DropdownProps> = ($props) => {
 			setSelectedValues([value])
 		}
 
+		props["c:onChange"]?.(arrayFilter(options, o => isSelected(o.value)))
 		elementStyleRemove(menuRef, 'width')
 		const buttonWidth = rectWidth(elementRect(buttonRef))
 		const menuWidth = rectWidth(elementRect(menuRef))
@@ -152,7 +153,6 @@ const Dropdown: ParentComponent<DropdownProps> = ($props) => {
 			`${buttonWidth}px`
 		)
 		repositionMenu(menuRef)
-		props["c:onChange"]?.(arrayFilter(options, o => isSelected(o.value)))
 	}
 
 	function focusToSelectedOptions(){
