@@ -22,7 +22,8 @@ const INTERACTIVE_ELEMENT_SELECTOR = (
 		+ 'select,'
 		+ 'input,'
 		+ 'textarea,'
-		+ 'iframe'
+		+ 'iframe,'
+		+ 'summary'
 	+ ')'
 )
 const FOCUSABLEGROUP_CLASSNAME = 'c-focusable-group'
