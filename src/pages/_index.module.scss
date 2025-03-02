@@ -8,15 +8,6 @@
 		--color-accent-light: rgb(var(--g-color-accent));
 		--color-accent-dark: rgb(var(--g-color-accent));
 		--color-accent: var(--color-accent-light);
-
-		:root[data-theme=dark] & { --color-accent: var(--color-accent-dark) }
-
-		@media (prefers-color-scheme: dark) {
-			:root[data-theme=system] & {
-				--color-accent: var(--color-accent-dark)
-			}
-		}
-
 		flex: 1 1 240px;
 		border-radius: 20px;
 		padding: 20px;
@@ -35,6 +26,26 @@
 			rgb(var(--g-color-surface)) 270deg,
 			var(--color-accent) 270deg
 		);
+
+		background: conic-gradient(
+			from var(--border-angle) at 50% 50%,
+			var(--color-accent) 0deg,
+			rgb(var(--g-color-surface)) 0deg,
+			rgb(var(--g-color-surface)) 90deg,
+			var(--color-accent) 90deg,
+			var(--color-accent) 180deg,
+			rgb(var(--g-color-surface)) 180deg,
+			rgb(var(--g-color-surface)) 270deg,
+			var(--color-accent) 270deg
+		);
+
+		:root[data-theme=dark] & { --color-accent: var(--color-accent-dark) }
+
+		@media (prefers-color-scheme: dark) {
+			:root[data-theme=system] & {
+				--color-accent: var(--color-accent-dark)
+			}
+		}
 
 		@media (hover: hover) {
 			&:hover {
