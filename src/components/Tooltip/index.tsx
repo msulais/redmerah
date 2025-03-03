@@ -1,22 +1,15 @@
 import { createUniqueId, mergeProps, onCleanup, onMount, splitProps, type FlowComponent, type JSX } from "solid-js"
 
-import { attrRemove, attrSet, attrClassList } from "@/utils/attributes"
-import { eventListenerAdd, eventCall, eventCurrentTarget, eventTarget } from "@/utils/event"
-import { elementCreate, elementAnimate, elementAppendChild, elementClosest, elementDataset, elementDispatchEvent, elementRect, elementStyleSet, elementMatches, elementContains, elementIdSet, elementPopoverSet, elementTextContentSet } from "@/utils/element"
-import { timeTimerClear, timeTimerSet } from "@/utils/time"
+import { attrClassList } from "@/utils/attributes"
+import { eventCall } from "@/utils/event"
 import { FlyoutPosition as TooltipPosition } from "@/enums/position"
 import { getFlyoutPosition } from "@/utils/flyout"
-import { mathAbs } from "@/utils/math"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { isMobile } from "@/utils/platforms"
-import { rectHeight, rectLeft, rectTop, rectWidth } from "@/utils/rect"
-import { promiseDone } from "@/utils/object"
-import { documentActive, documentBody, documentHasFocus } from "@/utils/document"
-import { stringCSSEscape, stringLength, stringTrim } from "@/utils/string"
 import { ElementIds } from "@/enums/ids"
+import { animationIsOn } from "@/utils/animation"
 
 import './index.scss'
-import { animationIsOn } from "@/utils/animation"
 
 enum TooltipListenerEvents {
 	/** @requires TooltipOpenDetail */
@@ -75,22 +68,21 @@ function initTooltip(): void {
 	let useAnchor: boolean = false
 	let tooltipTextRef: HTMLDivElement
 	let isOpen = false
-	let timeId: number | null = null
+	let timeId: number | NodeJS.Timeout | null = null
 
 	function createTooltipListener(): void {
-		const div = elementCreate('div')
-		elementIdSet(div, ElementIds.tooltipListener)
-		elementStyleSet(div, 'display', 'contents')
-		elementAppendChild(documentBody(), div)
-
+		const div = document.createElement('div')
+		div.id = ElementIds.tooltipListener
+		div.style.setProperty('display', 'contents')
+		document.body.appendChild(div)
 		LISTENER_REF = div
 	}
 
 	function createTooltipText(): void {
-		const div = elementCreate('div')
-		elementIdSet(div, ElementIds.textTooltip)
-		elementPopoverSet(div, 'manual')
-		elementAppendChild(documentBody(), div)
+		const div = document.createElement('div')
+		div.id = ElementIds.textTooltip
+		div.popover = 'manual'
+		document.body.appendChild(div)
 
 		tooltipTextRef = div
 	}
@@ -103,9 +95,9 @@ function initTooltip(): void {
 		if (!anchorElement) return
 
 		const anchorRect: DOMRect | undefined = useAnchor
-			? elementRect(anchorElement)
+			? anchorElement.getBoundingClientRect()
 			: undefined
-		const tooltipRect = elementRect(tooltipTextRef)
+		const tooltipRect = tooltipTextRef.getBoundingClientRect()
 		const pos = getFlyoutPosition({
 			flyout: tooltipRect,
 			anchor: useAnchor? anchorRect : undefined,
@@ -119,12 +111,12 @@ function initTooltip(): void {
 
 		const tooltipPosition = {
 			...pos,
-			bottom: rectTop(pos) + rectHeight(tooltipRect),
-			right: rectLeft(pos) + rectWidth(tooltipRect)
+			bottom: pos.top + tooltipRect.height,
+			right: pos.left + tooltipRect.width
 		}
 		const tooltipMidPosition = {
-			x: rectLeft(tooltipPosition) + (rectWidth(tooltipRect) / 2),
-			y: rectTop(tooltipPosition) + (rectHeight(tooltipRect) / 2),
+			x: tooltipPosition.left + (tooltipRect.width / 2),
+			y: tooltipPosition.top + (tooltipRect.height / 2),
 		}
 		const translate = {
 			left: 0,
@@ -135,12 +127,12 @@ function initTooltip(): void {
 		let anchorCenterTop = pointerOpenY
 
 		if (useAnchor) {
-			anchorCenterLeft = rectLeft(anchorRect!) + (rectWidth(anchorRect!) / 2)
-			anchorCenterTop = rectTop(anchorRect!) + (rectHeight(anchorRect!) / 2)
+			anchorCenterLeft = anchorRect!.left + (anchorRect!.width / 2)
+			anchorCenterTop = anchorRect!.top + (anchorRect!.height / 2)
 		}
 
-		const rangeX = mathAbs(tooltipMidPosition.x - anchorCenterLeft)
-		const rangeY = mathAbs(tooltipMidPosition.y - anchorCenterTop)
+		const rangeX = Math.abs(tooltipMidPosition.x - anchorCenterLeft)
+		const rangeY = Math.abs(tooltipMidPosition.y - anchorCenterTop)
 
 		if (rangeX > rangeY) {
 			if ((tooltipMidPosition.x < anchorCenterTop || tooltipMidPosition.x > anchorCenterTop) && (
@@ -174,8 +166,8 @@ function initTooltip(): void {
 			}
 		}
 
-		attrRemove(tooltipTextRef, TooltipAttributes.open)
-		attrRemove(tooltipTextRef, TooltipAttributes.openDone)
+		tooltipTextRef.removeAttribute(TooltipAttributes.open)
+		tooltipTextRef.removeAttribute(TooltipAttributes.openDone)
 		anchorElement = null
 
 		if (!animationIsOn()) {
@@ -183,19 +175,18 @@ function initTooltip(): void {
 		}
 
 		// don't remove keyword `await`
-		await promiseDone(elementAnimate(
-			tooltipTextRef,
+		await tooltipTextRef.animate(
 			{ transform: `translate(${translate.left}px, ${translate.top}px)` },
 			{ duration: 200, easing: AnimationEffectTiming.springBounce }
-		).finished, () => tooltipTextRef.hidePopover())
+		).finished.then(() => tooltipTextRef.hidePopover())
 	}
 
 	function closeTooltip(ev: CustomEvent<TooltipCloseDetail>): void {
 		const {
 			endDelayDuration = $isMobile? 1500 : 200
 		} = ev.detail
-		if (timeId != null) timeTimerClear(timeId)
-		timeId = timeTimerSet(async () => {
+		if (timeId != null) clearTimeout(timeId)
+		timeId = setTimeout(async () => {
 			hideTooltip()
 			isOpen = false
 			timeId = null
@@ -214,40 +205,39 @@ function initTooltip(): void {
 		} = ev.detail
 		const close = () => {
 			const endDelayDuration = $isMobile? 1500 : 200
-			if (timeId != null) timeTimerClear(timeId)
-			timeId = timeTimerSet(async () => {
+			if (timeId != null) clearTimeout(timeId)
+			timeId = setTimeout(async () => {
 				hideTooltip()
 				isOpen = false
 				timeId = null
 			}, endDelayDuration)
 		}
-		const target = eventTarget(event) as HTMLElement
-		const currentTarget = eventCurrentTarget(event)
+		const target = event.target as HTMLElement
+		const currentTarget = event.currentTarget
 
-		if (!elementContains(currentTarget, target)) return
+		if (!currentTarget.contains(target)) return
 
-		let anchor = elementClosest(
-			target,
-			'#' + stringCSSEscape(wrapperId) + ' :is([data-tooltip],[data-rich-tooltip])'
-		)
+		let anchor = target.closest(
+			'#' + CSS.escape(wrapperId) + ' :is([data-tooltip],[data-rich-tooltip])'
+		) as HTMLElement
 		if (!anchor) return close()
 		if (anchorElement === anchor) return
 
-		let text = elementDataset(anchor, 'tooltip') // [data-tooltip]
-		if (text && stringLength(stringTrim(text)) > 0) {
-			text = stringTrim(text)
+		let text = anchor.dataset.tooltip
+		if (text && text.trim().length > 0) {
+			text = text.trim()
 		}
 
-		if (byFocus && documentHasFocus()) {
-			anchor = documentActive()!
+		if (byFocus && document.hasFocus()) {
+			anchor = document.activeElement! as HTMLElement
 
-			const rect = elementRect(anchor)
-			POINTER_X = rectLeft(rect) + rectWidth(rect) / 2
-			POINTER_Y = rectTop(rect) + rectHeight(rect) / 2
+			const rect = anchor.getBoundingClientRect()
+			POINTER_X = rect.left + rect.width / 2
+			POINTER_Y = rect.top + rect.height / 2
 		}
 
-		if (timeId != null) timeTimerClear(timeId)
-		timeId = timeTimerSet(async () => {
+		if (timeId != null) clearTimeout(timeId)
+		timeId = setTimeout(async () => {
 			if (isOpen) await hideTooltip()
 
 			timeId = null
@@ -256,10 +246,10 @@ function initTooltip(): void {
 			gap = inputGap
 			position = inputPosition
 			useAnchor = inputUseAnchor
-			elementTextContentSet(tooltipTextRef, text!)
+			tooltipTextRef.textContent = text!
 			tooltipTextRef.showPopover()
-			const tooltipRect: DOMRect = elementRect(tooltipTextRef)
-			const anchorRect: DOMRect | undefined = useAnchor? elementRect(anchor) : undefined
+			const tooltipRect: DOMRect = tooltipTextRef.getBoundingClientRect()
+			const anchorRect: DOMRect | undefined = useAnchor? anchor.getBoundingClientRect() : undefined
 			const pos = getFlyoutPosition({
 				flyout: tooltipRect,
 				anchor: useAnchor? anchorRect : undefined,
@@ -277,12 +267,12 @@ function initTooltip(): void {
 
 			const tooltipPosition = {
 				...pos,
-				bottom: rectTop(pos) + rectHeight(tooltipRect),
-				right: rectLeft(pos) + rectWidth(tooltipRect)
+				bottom: pos.top + tooltipRect.height,
+				right: pos.left + tooltipRect.width
 			}
 			const tooltipMidPosition = {
-				x: rectLeft(tooltipPosition) + (rectWidth(tooltipRect) / 2),
-				y: rectTop(tooltipPosition) + (rectHeight(tooltipRect) / 2),
+				x: tooltipPosition.left + (tooltipRect.width / 2),
+				y: tooltipPosition.top + (tooltipRect.height / 2),
 			}
 			const translate = {
 				left: 0,
@@ -293,12 +283,12 @@ function initTooltip(): void {
 			let anchroCenterTop = POINTER_Y
 
 			if (useAnchor) {
-				anchorCenterLeft = rectLeft(anchorRect!) + (rectWidth(anchorRect!) / 2)
-				anchroCenterTop = rectTop(anchorRect!) + (rectHeight(anchorRect!) / 2)
+				anchorCenterLeft = anchorRect!.left + (anchorRect!.width / 2)
+				anchroCenterTop = anchorRect!.top + (anchorRect!.height / 2)
 			}
 
-			const rangeX = mathAbs(tooltipMidPosition.x - anchorCenterLeft)
-			const rangeY = mathAbs(tooltipMidPosition.y - anchroCenterTop)
+			const rangeX = Math.abs(tooltipMidPosition.x - anchorCenterLeft)
+			const rangeY = Math.abs(tooltipMidPosition.y - anchroCenterTop)
 
 			if (rangeX > rangeY) {
 				if ((tooltipMidPosition.x < anchroCenterTop || tooltipMidPosition.x > anchroCenterTop) && (
@@ -332,19 +322,18 @@ function initTooltip(): void {
 				}
 			}
 
-			elementStyleSet(tooltipTextRef, 'top', rectTop(pos) + 'px')
-			elementStyleSet(tooltipTextRef, 'left', rectLeft(pos) + 'px')
-			attrSet(tooltipTextRef, TooltipAttributes.open)
+			tooltipTextRef.style.setProperty('top', pos.top + 'px')
+			tooltipTextRef.style.setProperty('left', pos.left + 'px')
+			tooltipTextRef.setAttribute(TooltipAttributes.open, '')
 			if (!animationIsOn()) {
-				return attrSet(tooltipTextRef, TooltipAttributes.openDone)
+				return tooltipTextRef.setAttribute(TooltipAttributes.openDone, '')
 			}
 
-			promiseDone(elementAnimate(
-				tooltipTextRef,
+			tooltipTextRef.animate(
 				{ transform: [`translate(${translate.left}px, ${translate.top}px)`, 'none'] },
 				{ duration: 200, easing: AnimationEffectTiming.springBounce }
-			).finished, () => {
-				attrSet(tooltipTextRef, TooltipAttributes.openDone)
+			).finished.then(() => {
+				tooltipTextRef.setAttribute(TooltipAttributes.openDone, '')
 			})
 		}, startDelayDuration)
 	}
@@ -352,36 +341,29 @@ function initTooltip(): void {
 	function stopProcess(): void {
 		if (timeId == null) return
 
-		timeTimerClear(timeId)
+		clearTimeout(timeId)
 	}
 
 	function initEvents(): void {
-		eventListenerAdd(
-			LISTENER_REF,
-			TooltipListenerEvents.open,
+		LISTENER_REF.addEventListener(
+			TooltipListenerEvents.open as any,
 			openTooltip
 		)
 
-		eventListenerAdd(
-			LISTENER_REF,
-			TooltipListenerEvents.close,
+		LISTENER_REF.addEventListener(
+			TooltipListenerEvents.close as any,
 			closeTooltip
 		)
 
-		eventListenerAdd(
-			LISTENER_REF,
-			TooltipListenerEvents.stopProcess,
+		LISTENER_REF.addEventListener(
+			TooltipListenerEvents.stopProcess as any,
 			stopProcess
 		)
 
-		eventListenerAdd<PointerEvent>(
-			document,
-			'pointermove',
-			(ev) => {
-				POINTER_X = ev.clientX
-				POINTER_Y = ev.clientY
-			}
-		)
+		document.addEventListener('pointermove', (ev) => {
+			POINTER_X = ev.clientX
+			POINTER_Y = ev.clientY
+		})
 	}
 
 	createTooltipListener()
@@ -434,22 +416,22 @@ const Tooltip: FlowComponent<TooltipProps> = ($props) => {
 		},
 		by_focus: boolean = false
 	): void {
-		const self = eventCurrentTarget(ev)
-		const target = eventTarget(ev)
+		const self = ev.currentTarget
+		const target = ev.target
 
 		// Basically the same as `event.stopPropagation()`. Since this is component,
 		// we should avoid using `event.stopPropagation()` as possible. This is used
 		// to handle nested <Tooltip>.
 		if (
 			TOOLTIP_LISTENER
-			&& elementContains(self, TOOLTIP_LISTENER)
+			&& self.contains(TOOLTIP_LISTENER)
 			&& TOOLTIP_TARGET === target
 		) return
 
 		TOOLTIP_LISTENER = self
 		TOOLTIP_TARGET = target
 
-		elementDispatchEvent(LISTENER_REF, new CustomEvent(TooltipListenerEvents.open, {detail: {
+		LISTENER_REF.dispatchEvent(new CustomEvent(TooltipListenerEvents.open, {detail: {
 			wrapperId: props.id,
 			event: ev,
 			byFocus: by_focus,
@@ -463,7 +445,7 @@ const Tooltip: FlowComponent<TooltipProps> = ($props) => {
 	function closeTooltip(): void {
 		TOOLTIP_LISTENER = null
 
-		elementDispatchEvent(LISTENER_REF, new CustomEvent(TooltipListenerEvents.close, {detail: {
+		LISTENER_REF.dispatchEvent(new CustomEvent(TooltipListenerEvents.close, {detail: {
 			endDelayDuration: props['c:endDelayDuration']
 		} satisfies TooltipCloseDetail}))
 	}
@@ -473,7 +455,7 @@ const Tooltip: FlowComponent<TooltipProps> = ($props) => {
 	})
 
 	onCleanup(() => {
-		elementDispatchEvent(LISTENER_REF, new CustomEvent(TooltipListenerEvents.close, {detail: {
+		LISTENER_REF.dispatchEvent(new CustomEvent(TooltipListenerEvents.close, {detail: {
 			endDelayDuration: props['c:endDelayDuration']
 		} satisfies TooltipCloseDetail}))
 	})
@@ -483,8 +465,8 @@ const Tooltip: FlowComponent<TooltipProps> = ($props) => {
 		id={props.id}
 		onFocusIn={ev => {
 			eventCall(ev, props.onFocusIn)
-			const active = documentActive()!
-			if (!elementMatches(active, ':focus-visible')) return
+			const active = document.activeElement!
+			if (!active.matches(':focus-visible')) return
 
 			openTooltip(ev, true)
 		}}

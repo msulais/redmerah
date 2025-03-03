@@ -2,12 +2,10 @@ import { createSignal, onMount, type VoidComponent } from "solid-js"
 
 import { type ObjectStoreSettings, ObjectStoreNames, ObjectStoreSettingsKeys } from "./_storage"
 import { Commands, Pages } from "./_enums"
-import { IDB, idbStorePut } from "@/utils/indexeddb"
+import { IDB } from "@/utils/indexeddb"
 import { DatabaseNames } from "@/enums/storage"
 import { removeSplashScreen } from "@/utils/splash"
 import { ALL_PAGES_ENUM } from "./_constants"
-import { promiseDone } from "@/utils/object"
-import { arrayIncludes } from "@/utils/array"
 
 import App from "@/components/App"
 import AppBar from './_AppBar'
@@ -24,7 +22,7 @@ const _: VoidComponent = () => {
 		if (!store) return
 
 		for (const item of items) {
-			idbStorePut(store, {
+			store.put({
 				key: item[0],
 				value: item[1]
 			})
@@ -47,12 +45,12 @@ const _: VoidComponent = () => {
 		const store = db.readStore(ObjectStoreNames.settings)
 		if (!store) return
 
-		promiseDone(db.get<ObjectStoreSettings<Pages>>(
+		db.get<ObjectStoreSettings<Pages>>(
 			store,
 			ObjectStoreSettingsKeys.lastPage
-		), result => setPage(d => {
+		).then(result => setPage(d => {
 			const page = result?.value ?? d
-			return arrayIncludes(ALL_PAGES_ENUM, page)? page : d
+			return ALL_PAGES_ENUM.includes(page)? page : d
 		}))
 	}
 

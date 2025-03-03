@@ -3,7 +3,6 @@ import { createSignal, type VoidComponent } from "solid-js"
 import Divider from "@/components/Divider"
 import CheckBox from "@/components/CheckBox"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
-import { eventCurrentTarget } from "@/utils/event"
 
 const _: VoidComponent = () => {
 	const [vertical, setVertical] = createSignal<boolean>(false)
@@ -21,7 +20,7 @@ const _: VoidComponent = () => {
 		<PlaygroundOptions>
 			<CheckBox
 				checked={vertical()}
-				onChange={ev => setVertical(eventCurrentTarget(ev).checked)}>
+				onChange={ev => setVertical(ev.currentTarget.checked)}>
 				Vertical
 			</CheckBox>
 		</PlaygroundOptions>

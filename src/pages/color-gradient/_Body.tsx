@@ -4,19 +4,13 @@ import { createStore } from "solid-js/store"
 import type { Gradient, GradientData, RadialGradient, Settings } from "./_type"
 import type { HEXColor } from "@/types/color"
 import { ColorSpace, Commands, GradientType, HueInterpolationMethod, PolarColorSpace, RadialGradientShape } from "./_enums"
-import { attrRemove, attrSet, attrSetIfExist } from "@/utils/attributes"
-import { eventCurrentTarget } from "@/utils/event"
+import { attrSetIfExist } from "@/utils/attributes"
 import { BodyAttributes } from "@/enums/attributes"
-import { elementDataset, elementId, elementRect, elementPointerCaptureRelease, elementPointerCaptureSet, elementTagName, elementValidTarget } from "@/utils/element"
-import { mathClamp, mathRound } from "@/utils/math"
+import { elementValidTarget } from "@/utils/element"
+import { mathClamp } from "@/utils/math"
 import { convertColorByColorSpace, gradientToCSSText } from "./_utils"
 import { colorHslToHex, colorIsValid, colorRgbToHex } from "@/utils/color"
-import { navigatorClipboardWriteText } from "@/utils/navigator"
-import { arrayIncludes, arrayJoin, arrayLength, arrayMap, arrayPush, arraySort } from "@/utils/array"
-import { stringLength, stringPadStart, stringReplace, stringSplit, stringSubstring, stringToUpperCase, stringTrim } from "@/utils/string"
-import { numberIsNotDefined, numberParse, numberSafe, numberToString } from "@/utils/number"
-import { rectLeft, rectWidth } from "@/utils/rect"
-import { documentActive, documentBody } from "@/utils/document"
+import { numberIsNotDefined, numberSafe } from "@/utils/number"
 import { ICON_ADD, ICON_ADD_CIRCLE, ICON_CHEVRON_DOWN, ICON_CIRCLE, ICON_COPY, ICON_DELETE, ICON_EYE, ICON_EYEDROPPER, ICON_MORE_HORIZONTAL } from "@/constants/icons"
 
 import Icon from "@/components/Icon"
@@ -53,12 +47,12 @@ const GradientDataList: VoidComponent<{
 	}
 
 	function copy(data: GradientData): void {
-		navigatorClipboardWriteText(
-			arrayJoin(arrayMap(data.gradients, gradient => gradientToCSSText(
+		navigator.clipboard.writeText(
+			data.gradients.map(gradient => gradientToCSSText(
 				gradient,
 				settings().colorSpace,
 				true
-			)), '\n')
+			)).join('\n')
 		)
 	}
 
@@ -67,7 +61,15 @@ const GradientDataList: VoidComponent<{
 			<SquareButton
 				c:focused={selectedGradientDataIndex() == $props.index && isMenuActionOpen()}
 				data-gradient-data-item-index={$props.index}>
-				<div data-gradient style={{"background-image": arrayJoin(arrayMap($props.data.gradients, gradient => gradientToCSSText(gradient)), ',')}}/>
+				<div
+					data-gradient
+					style={{"background-image": $props
+						.data
+						.gradients
+						.map(gradient => gradientToCSSText(gradient))
+						.join(',')
+					}}
+				/>
 			</SquareButton>
 		</>)
 	}
@@ -82,14 +84,13 @@ const GradientDataList: VoidComponent<{
 				c:onToggleOpen={isOpen => setIsMenuActionOpen(isOpen)}
 				style={{'min-width': '128px'}}
 				onClick={ev => {
-					const button = documentActive()!
+					const button = document.activeElement!
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					switch (elementId(button)) {
+					switch (button.id) {
 					case buttonAction_viewId:
 						command(Commands.viewGradientData, selectedGradientDataIndex())
 						closeMenu(menuActionRef)
@@ -129,19 +130,17 @@ const GradientDataList: VoidComponent<{
 
 		// !important: must implement here... can't implement this in parent
 		onClick={ev => {
-			const button = documentActive()!
+			const button = document.activeElement! as HTMLButtonElement
 			if (!elementValidTarget(
-				eventCurrentTarget(ev),
+				ev.currentTarget,
 				button,
-				el => elementTagName(el) == 'BUTTON'
 			)) return
 
-			const dataGradientDataItemIndex = elementDataset(
-				button,
-				'gradientDataItemIndex'
-			)
+			const dataset = button.dataset
+
+			const dataGradientDataItemIndex = dataset.gradientDataItemIndex
 			if (dataGradientDataItemIndex) {
-				const index = numberParse(dataGradientDataItemIndex, true)
+				const index = Number.parseInt(dataGradientDataItemIndex)
 				if (numberIsNotDefined(index)) return
 
 				setSelectedGradientDataIndex(index)
@@ -178,10 +177,11 @@ const GradientControl: VoidComponent<{
 	const [expanded, setExpanded] = createSignal<boolean>(false)
 	const [selectedColorStopIndex, setSelectedColorStopIndex] = createSignal<number>(-1)
 	const gradient = createMemo(() => props.gradient)
-	const getListStopGradient = createMemo<string>(() => arrayJoin(arrayMap(
-		arraySort([...gradient().colorStopList], (a, b) => a.size - b.size),
-		stop => `${stop.color} ${stop.size}%`
-	), ','))
+	const getListStopGradient = createMemo<string>(() => [...gradient().colorStopList]
+		.sort((a, b) => a.size - b.size)
+		.map(stop => `${stop.color} ${stop.size}%`)
+		.join(',')
+	)
 	const settings = createMemo(() => props.settings)
 	const selectedGradientIndex = createMemo(() => props.selectedGradientIndex)
 	const gradientIndex = createMemo(() => props.gradientIndex)
@@ -202,7 +202,7 @@ const GradientControl: VoidComponent<{
 						onPointerCancel={ev => props.onPointerUp(ev)}
 						onPointerMove={ev => props.onPointerMove(ev)}
 						onPointerDown={ev => {
-							elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
+							ev.currentTarget.setPointerCapture(ev.pointerId)
 							props.onStartDrag(
 								divGradientRef,
 								{ x: ev.clientX, y: ev.clientY },
@@ -230,7 +230,7 @@ const GradientControl: VoidComponent<{
 						)}
 						style={{"background-color": stop.color}}
 						data-length={isConicGradient()
-							? `${mathRound(stop.size / 100 * 360)}°`
+							? `${Math.round(stop.size / 100 * 360)}°`
 							: `${stop.size}%`
 						}
 					/>
@@ -295,10 +295,10 @@ const GradientControl: VoidComponent<{
 			]}>{option => <DropdownOption c:value={option[0]} c:text={option[1]}/>}</For>
 		</Dropdown>
 		<Show
-			when={arrayIncludes([
+			when={[
 				PolarColorSpace.hsl, PolarColorSpace.hwb,
 				PolarColorSpace.lch, PolarColorSpace.oklch
-			], gradient().colorInterpolationMethod as PolarColorSpace)}>
+			].includes(gradient().colorInterpolationMethod as PolarColorSpace)}>
 			<Dropdown
 				c:values={[gradient().hueInterpolationMethod]}
 				c:onChange={(options) => command(
@@ -328,7 +328,7 @@ const GradientControl: VoidComponent<{
 			</Dropdown>
 		</Show>
 		<div class={CSS.body_gradient_control_options_2_grid}>
-			<Show when={arrayIncludes([GradientType.conic, GradientType.linear], gradient().type)}>
+			<Show when={[GradientType.conic, GradientType.linear].includes(gradient().type)}>
 				<NumberTextField
 					c:label="Angle (°)"
 					enterkeyhint="done"
@@ -343,7 +343,7 @@ const GradientControl: VoidComponent<{
 					value={(gradient() as any).angle as number}
 				/>
 			</Show>
-			<Show when={arrayIncludes([GradientType.conic, GradientType.radial], gradient().type)}>
+			<Show when={[GradientType.conic, GradientType.radial].includes(gradient().type)}>
 				<NumberTextField
 					c:label="X (%)"
 					min={0}
@@ -443,59 +443,65 @@ const GradientControl: VoidComponent<{
 					value={convertColorByColorSpace(stop.color, settings().colorSpace, true)}
 					enterkeyhint="done"
 					onBlur={ev => {
-						let value = eventCurrentTarget(ev).value
+						let value = ev.currentTarget.value
 						const model = settings().colorSpace
 						if (model == ColorSpace.hsla) {
-							value = stringReplace(value, /[^-\d.,]+/gs, '')
+							value = value.replace(/[^-\d.,]+/gs, '')
 
-							const values = stringSplit(value, ',')
-							const h = mathClamp(numberParse(values[0] ?? '0', true), 0, 360)
-							const s = mathClamp(numberParse(values[1] ?? '100', true), 0, 100)
-							const l = mathClamp(numberParse(values[2] ?? '100', true), 0, 100)
-							const opacity = mathRound(mathClamp(numberParse(values[3] ?? '1'), 0, 1) * 0xff)
+							const values = value.split(',')
+							const h = mathClamp(Number.parseInt(values[0] ?? '0'), 0, 360)
+							const s = mathClamp(Number.parseInt(values[1] ?? '100'), 0, 100)
+							const l = mathClamp(Number.parseInt(values[2] ?? '100'), 0, 100)
+							const opacity = Math.round(mathClamp(Number.parseFloat(values[3] ?? '1'), 0, 1) * 0xff)
 							const hex = colorHslToHex({h: h / 360, s: s / 100, l: l / 100})
 
-							value = stringToUpperCase((hex + (opacity < 0xff? stringPadStart(numberToString(opacity, 16), 2, '0') : '')))
+							value = (hex + (opacity < 0xff? opacity.toString(16).padStart(2, '0') : '')).toUpperCase()
 							command(Commands.updateColorStopColor, gradientIndex(), index(), value)
-							updateTextFieldValue(eventCurrentTarget(ev), `hsla(${h}, ${s}%, ${l}%, ${mathClamp(numberParse(values[3] ?? '1'), 0, 1)})`)
+							updateTextFieldValue(
+								ev.currentTarget,
+								`hsla(${h}, ${s}%, ${l}%, ${mathClamp(Number.parseFloat(values[3] ?? '1'), 0, 1)})`
+							)
 							return
 						}
 
 						if (model == ColorSpace.rgba) {
-							value = stringReplace(value, /[^-\d.,]+/gs, '')
+							value = value.replace(/[^-\d.,]+/gs, '')
 
-							const values = stringSplit(value, ',')
-							const r = mathClamp(numberParse(values[0] ?? '0', true), 0, 0xff)
-							const g = mathClamp(numberParse(values[1] ?? '100', true), 0, 0xff)
-							const b = mathClamp(numberParse(values[2] ?? '100', true), 0, 0xff)
-							const opacity = mathRound(mathClamp(numberParse(values[3] ?? '1'), 0, 1) * 0xff)
+							const values = value.split(',')
+							const r = mathClamp(Number.parseInt(values[0] ?? '0'), 0, 0xff)
+							const g = mathClamp(Number.parseInt(values[1] ?? '100'), 0, 0xff)
+							const b = mathClamp(Number.parseInt(values[2] ?? '100'), 0, 0xff)
+							const opacity = Math.round(mathClamp(Number.parseFloat(values[3] ?? '1'), 0, 1) * 0xff)
 							const hex = colorRgbToHex({r: r / 0xff, g: g / 0xff, b: b / 0xff})
 
-							value = stringToUpperCase((hex + (opacity < 255? stringPadStart(numberToString(opacity, 16), 2, '0') : '')))
+							value = (hex + (opacity < 255? opacity.toString(16).padStart(2, '0') : '')).toUpperCase()
 							command(Commands.updateColorStopColor, gradientIndex(), index(), value)
-							updateTextFieldValue(eventCurrentTarget(ev), `rgba(${r}, ${g}, ${b}, ${mathClamp(numberParse(values[3] ?? '1'), 0, 1)})`)
+							updateTextFieldValue(
+								ev.currentTarget,
+								`rgba(${r}, ${g}, ${b}, ${mathClamp(Number.parseFloat(values[3] ?? '1'), 0, 1)})`
+							)
 							return
 						}
 
-						value = stringReplace(value, /[^0-9a-fA-F]+/g, '')
-						if (stringLength(stringTrim(value)) == 0) value = '0'
+						value = value.replace(/[^0-9a-fA-F]+/g, '')
+						if (value.trim().length == 0) value = '0'
 
-						let $value: number = mathClamp(numberSafe(numberParse(value, true, 16), 0), 0, 0xffffffff)
+						let $value: number = mathClamp(numberSafe(Number.parseInt(value, 16), 0), 0, 0xffffffff)
 
-						value = '#' + stringToUpperCase(stringSubstring(stringPadStart(numberToString($value, 16), 6, '0'), 0, 8))
+						value = '#' + $value.toString(16).padStart(6, '0').substring(0, 8).toUpperCase()
 						command(Commands.updateColorStopColor, gradientIndex(), index(), value)
-						updateTextFieldValue(eventCurrentTarget(ev), value)
+						updateTextFieldValue(ev.currentTarget, value)
 					}}
 					c:trailing={<>
 						<TextFieldButton
 							data-tooltip="Pick color"
-							data-gradientcontrol-pickcolor={arrayJoin([gradientIndex(), index(), stop.color], ',')}>
+							data-gradientcontrol-pickcolor={[gradientIndex(), index(), stop.color].join(',')}>
 							<Icon c:code={ICON_EYEDROPPER} />
 						</TextFieldButton>
-						<Show when={arrayLength(gradient().colorStopList) > 2}>
+						<Show when={gradient().colorStopList.length > 2}>
 							<TextFieldButton
 								data-tooltip="Remove color"
-								data-gradientcontrol-removecolor={arrayJoin([gradientIndex(), index()], ',')}>
+								data-gradientcontrol-removecolor={[gradientIndex(), index()].join(',')}>
 								<Icon c:code={ICON_DELETE} />
 							</TextFieldButton>
 						</Show>
@@ -511,7 +517,7 @@ const GradientControl: VoidComponent<{
 		let buttonMoreActions: HTMLButtonElement
 
 		onMount(() => {
-			arrayPush(buttons, buttonAddColorStop, buttonMoreActions)
+			buttons.push(buttonAddColorStop, buttonMoreActions)
 		})
 
 		return (<div
@@ -551,7 +557,7 @@ const _: VoidComponent<{
 	settings: Settings
 	command(type: Commands, ...args: unknown[]): unknown
 }> = (props) => {
-	const body = documentBody()
+	const body = document.body
 	const buttonAddGradientId = createUniqueId()
 	const [isDragging, setIsDragging] = createSignal<boolean>(false)
 	const [pointerPosition, setPointerPosition] = createStore<PointerPosition>({x: 0, y: 0})
@@ -570,8 +576,8 @@ const _: VoidComponent<{
 	function updatePosition(): void {
 		if (selectedGradientElementRect == null) return;
 
-		const length = mathRound(mathClamp(
-			(pointerPosition.x - selectedGradientElementRect.x) / rectWidth(selectedGradientElementRect) * 100,
+		const length = Math.round(mathClamp(
+			(pointerPosition.x - selectedGradientElementRect.x) / selectedGradientElementRect.width * 100,
 			0,
 			100
 		))
@@ -586,17 +592,17 @@ const _: VoidComponent<{
 
 	function onPointerUp(ev: PointerEvent & {currentTarget: HTMLDivElement}): void {
 		setIsDragging(false)
-		elementPointerCaptureRelease(eventCurrentTarget(ev), ev.pointerId)
-		attrRemove(body, BodyAttributes.noPointerEvent)
+		ev.currentTarget.releasePointerCapture(ev.pointerId)
+		body.removeAttribute(BodyAttributes.noPointerEvent)
 	}
 
 	function onKeyDown(ev: KeyboardEvent & {currentTarget: HTMLDivElement}): void {
 		if (selectedGradientElementRect == null) return;
 
 		const code = ev.code
-		const rect = elementRect(eventCurrentTarget(ev))
-		const currentPosition = rectLeft(rect) + (rectWidth(rect) / 2)
-		const onePercentPosition = rectWidth(selectedGradientElementRect) / 100
+		const rect = ev.currentTarget.getBoundingClientRect()
+		const currentPosition = rect.left + (rect.width / 2)
+		const onePercentPosition = selectedGradientElementRect.width / 100
 		const nextPositionX = currentPosition + (onePercentPosition * (code === KEY_ARROW_LEFT? -1 : 1))
 		setPointerPosition({x: nextPositionX, y: 0})
 		updatePosition()
@@ -623,16 +629,15 @@ const _: VoidComponent<{
 			<Menu
 				ref={r => menuGradientActionsRef = r}
 				onClick={ev => {
-					const button = documentActive()!
+					const button = document.activeElement!
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					switch (elementId(button)) {
+					switch (button.id) {
 					case buttonGradientActions_copyCSSId:
-						navigatorClipboardWriteText(gradientToCSSText(
+						navigator.clipboard.writeText(gradientToCSSText(
 							props.gradients[selectedGradientIndex()],
 							settings().colorSpace,
 							true
@@ -654,7 +659,7 @@ const _: VoidComponent<{
 				<MenuItem
 					id={buttonGradientActions_deleteGradientId}
 					c:iconCode={ICON_DELETE}
-					disabled={arrayLength(props.gradients) <= 1}>
+					disabled={props.gradients.length <= 1}>
 					Delete gradient
 				</MenuItem>
 			</Menu>
@@ -672,34 +677,30 @@ const _: VoidComponent<{
 	return (<main
 		class={CSS.body}
 		onClick={ev => {
-			const button = documentActive()!
+			const button = document.activeElement! as HTMLButtonElement
 			if (!elementValidTarget(
-				eventCurrentTarget(ev),
+				ev.currentTarget,
 				button,
-				el => elementTagName(el) == 'BUTTON'
 			)) return
 
-			switch (elementId(button)) {
+			switch (button.id) {
 			case buttonAddGradientId:
 				command(Commands.addGradient)
 				break
 			default:
-				const dataGradientcontrolAddcolorstop = elementDataset(
-					button, 'gradientcontrolAddcolorstop'
-				)
+				const dataset = button.dataset
+				const dataGradientcontrolAddcolorstop = dataset.gradientcontrolAddcolorstop
 				if (dataGradientcontrolAddcolorstop) {
-					const index = numberParse(dataGradientcontrolAddcolorstop, true)
+					const index = Number.parseInt(dataGradientcontrolAddcolorstop)
 					if (numberIsNotDefined(index)) return
 
 					return command(Commands.addColorStop, index)
 				}
 
 				// data-gradientcontrol-moreactions
-				const dataGradientcontrolMoreactions = elementDataset(
-					button, 'gradientcontrolMoreactions'
-				)
+				const dataGradientcontrolMoreactions = dataset.gradientcontrolMoreactions
 				if (dataGradientcontrolMoreactions) {
-					const index = numberParse(dataGradientcontrolMoreactions, true)
+					const index = Number.parseInt(dataGradientcontrolMoreactions)
 					if (numberIsNotDefined(index)) return
 
 					setSelectedGradientIndex(index)
@@ -711,19 +712,17 @@ const _: VoidComponent<{
 				}
 
 				// data-gradientcontrol-pickcolor
-				const dataGradientcontrolPickcolor = elementDataset(
-					button, 'gradientcontrolPickcolor'
-				)
+				const dataGradientcontrolPickcolor = dataset.gradientcontrolPickcolor
 				if (dataGradientcontrolPickcolor) {
-					let [gradientIndex, colorStopIndex, color] = stringSplit(
-						dataGradientcontrolPickcolor, ','
-					) as [number|string|undefined, number|string|undefined, string|undefined]
+					let [gradientIndex, colorStopIndex, color] = dataGradientcontrolPickcolor
+						.split(',') as [number|string|undefined, number|string|undefined, string|undefined]
+
 					if (!colorStopIndex || !color || !colorIsValid(color)) return
 
-					colorStopIndex = numberParse(colorStopIndex as string, true)
+					colorStopIndex = Number.parseInt(colorStopIndex as string)
 					if (numberIsNotDefined(colorStopIndex)) return
 
-					gradientIndex = numberParse(gradientIndex as string, true)
+					gradientIndex = Number.parseInt(gradientIndex as string)
 					if (numberIsNotDefined(gradientIndex)) return
 
 					selectedColorStopIndex = colorStopIndex
@@ -736,17 +735,14 @@ const _: VoidComponent<{
 				}
 
 				// data-gradientcontrol-removecolor
-				const dataGradientcontrolRemovecolor = elementDataset(
-					button, 'gradientcontrolRemovecolor'
-				)
+				const dataGradientcontrolRemovecolor = dataset.gradientcontrolRemovecolor
 				if (dataGradientcontrolRemovecolor) {
-					let [gradientIndex, colorStopIndex] = stringSplit(
-						dataGradientcontrolRemovecolor, ','
-					) as [number|string|undefined, number|string|undefined]
+					let [gradientIndex, colorStopIndex] = dataGradientcontrolRemovecolor
+						.split(',') as [number|string|undefined, number|string|undefined]
 					if (!gradientIndex || !colorStopIndex) return
 
-					gradientIndex = numberParse(gradientIndex as string, true)
-					colorStopIndex = numberParse(colorStopIndex as string, true)
+					gradientIndex = Number.parseInt(gradientIndex as string)
+					colorStopIndex = Number.parseInt(colorStopIndex as string)
 					if (numberIsNotDefined(gradientIndex)
 						|| numberIsNotDefined(colorStopIndex)
 					) return
@@ -760,13 +756,9 @@ const _: VoidComponent<{
 				<div style={{
 					"aspect-ratio": settings().aspectRatio,
 					"border-radius": settings().borderRadius + 'px',
-					"background-image": arrayJoin(
-						arrayMap(
-							props.gradients,
-							gradient => gradientToCSSText(gradient)
-						),
-						','
-					)
+					"background-image": props.gradients
+						.map(gradient => gradientToCSSText(gradient))
+						.join(',')
 				}}/>
 			</div>
 			<div class={CSS.body_control}>
@@ -820,18 +812,18 @@ const _: VoidComponent<{
 							onPointerMove={onPointerMove}
 							onPointerUp={onPointerUp}
 							onKeyDown={(ev, gradientElement, colorStopIndex) => {
-								selectedGradientElementRect = elementRect(gradientElement)
+								selectedGradientElementRect = gradientElement.getBoundingClientRect()
 								selectedColorStopIndex = colorStopIndex
 								setSelectedGradientIndex(index())
 								onKeyDown(ev)
 							}}
 							onStartDrag={(gradientElement, pointer, colorStopIndex) => {
-								selectedGradientElementRect = elementRect(gradientElement)
+								selectedGradientElementRect = gradientElement.getBoundingClientRect()
 								selectedColorStopIndex = colorStopIndex
 								setSelectedGradientIndex(index())
 								setPointerPosition(pointer)
 								setIsDragging(true)
-								attrSet(body, BodyAttributes.noPointerEvent)
+								body.setAttribute(BodyAttributes.noPointerEvent, '')
 							}}
 							selectedGradientIndex={selectedGradientIndex()}
 						/>

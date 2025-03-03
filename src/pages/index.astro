@@ -40,7 +40,7 @@ function color_app_background(color: HEXColor): string {
 }
 ---
 
-<Html component_count={2}>
+<Html componentCount={2}>
 	<script is:inline src='/scripts/root-settings.min.js'/>
 	<Splash src={logo.src} alt={`Redmerah splash icon`} />
 	<Appbar />
@@ -85,19 +85,17 @@ function color_app_background(color: HEXColor): string {
 </Html>
 
 <script>
-	import { elementAnimate, elementById, elementAllBySelector } from "@/utils/element"
-	import { arrayLength } from "@/utils/array"
 	import { animationIsOn } from "@/utils/animation"
 
-	const quote = elementById('quote') as HTMLParagraphElement
-	const spans = elementAllBySelector<HTMLSpanElement>('#quote span')
+	const quote = document.getElementById('quote') as HTMLParagraphElement
+	const spans = document.querySelectorAll<HTMLSpanElement>('#quote span')
 	const observer = new IntersectionObserver((entries) => {
 		if (!animationIsOn()) return
 
 		for (const entry of entries) {
 			if (!entry.isIntersecting) continue;
-			for (let i = 0; i < arrayLength(spans as unknown as any[]); i++) {
-				elementAnimate(spans[i], [{
+			for (let i = 0; i < (spans as unknown as any[]).length; i++) {
+				spans[i].animate([{
 					transform: 'translateY(-0.4em)',
 					offset: 0.5
 				}], {

@@ -2,17 +2,10 @@ import { type JSX, type ParentComponent, createSignal, createUniqueId, mergeProp
 import { mergeRefs } from '@solid-primitives/refs'
 
 import { attrSetIfExist, attrClassList } from '@/utils/attributes'
-import { timeTimerClear, timeIntervalClear, timeTimerSet, timeIntervalSet } from '@/utils/time'
-import { eventCall, eventCurrentTarget, eventTarget } from '@/utils/event'
-import { mathClamp, mathMax, mathRound } from '@/utils/math'
-import { elementBlur, elementContains, elementDispatchEvent, elementFocus, elementRect, elementStyleRemove, elementScrollHeight, elementStyleSet, elementTagName, elementValidTarget, elementId, elementStyle } from '@/utils/element'
-import { eventListenerAdd, eventListenerRemove } from '@/utils/event'
-import { typeIsArray, typeIsNumber, typeIsString } from '@/utils/typecheck'
-import { stringLength, stringSplit, stringToUpperCase, stringTrim } from '@/utils/string'
-import { arrayLength } from '@/utils/array'
-import { numberIsNaN, numberIsNotDefined, numberParse, numberSafe } from '@/utils/number'
-import { rectWidth } from '@/utils/rect'
-import { documentActive } from '@/utils/document'
+import { eventCall } from '@/utils/event'
+import { mathClamp } from '@/utils/math'
+import { elementValidTarget } from '@/utils/element'
+import { numberIsNotDefined, numberSafe } from '@/utils/number'
 import { KEY_ARROW_DOWN, KEY_ARROW_UP, KEY_ENTER, KEY_SPACE } from '@/constants/key-code'
 import { ICON_CHEVRON_DOWN, ICON_CHEVRON_UP, ICON_CHEVRON_UP_DOWN, ICON_DISMISS } from '@/constants/icons'
 
@@ -37,7 +30,7 @@ import './index.scss'
  */
 function updateTextFieldValue(el: HTMLInputElement, value: string): void {
 	el.value = value
-	elementDispatchEvent(el, new Event('input', { bubbles: false }))
+	el.dispatchEvent(new Event('input', { bubbles: false }))
 }
 
 /**
@@ -53,7 +46,7 @@ function updateTextFieldValue(el: HTMLInputElement, value: string): void {
  */
 function updateAreaTextFieldValue(el: HTMLTextAreaElement, value: string): void {
 	el.value = value
-	elementDispatchEvent(el, new Event('input', { bubbles: false }))
+	el.dispatchEvent(new Event('input', { bubbles: false }))
 }
 
 type TextFieldButtonProps = ButtonProps
@@ -104,20 +97,24 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 	const [isInvalid, setIsInvalid] = createSignal<boolean>(false)
 	const [value, setValue] = createSignal<string>('')
 	const [height, setHeight] = createSignal<number>(lineHeight())
-	const isShowClearButton = createMemo(() => props['c:autoShowClearButton'] && stringLength(value()) > 0)
+	const isShowClearButton = createMemo(() => props['c:autoShowClearButton'] && value().length > 0)
 	const trailing = children(() => props['c:trailing'])
 	const leading = children(() => props['c:leading'])
 	const buttonClearId = createUniqueId()
 	let areaTextFieldRef: HTMLTextAreaElement
 
 	onMount(() => {
-		setLineHeight(numberSafe(numberParse(elementStyle(areaTextFieldRef, 'line-height')), 20))
+		setLineHeight(numberSafe(Number.parseFloat(
+			window
+			.getComputedStyle(areaTextFieldRef)
+			.getPropertyValue('line-height')
+		), 20))
 	})
 
 	createEffect(() => {
 		const value = `${props.value ?? ''}`
 
-		const lines = arrayLength(stringSplit(stringTrim(value ?? ''), '\n'))
+		const lines = (value ?? '').trim().split('\n').length
 		setHeight(lines * lineHeight())
 		setValue(value ?? '')
 	})
@@ -127,20 +124,20 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 		data-c-focused={attrSetIfExist(props['c:focused'] ?? isFocus())}
 		data-c-invalid={attrSetIfExist(!props.disabled && props['c:autoValidation'] && isInvalid())}
 		data-c-disabled={attrSetIfExist(props.disabled)}
-		data-c-trailing={attrSetIfExist(trailing() || (props['c:autoShowClearButton'] && stringLength(value()) > 0))}
+		data-c-trailing={attrSetIfExist(trailing() || (props['c:autoShowClearButton'] && value().length > 0))}
 		data-c-leading={attrSetIfExist(leading())}
 		data-c-readonly={attrSetIfExist(props.readOnly)}
 		onClick={ev => {
 			eventCall(ev, wrapperProps.onClick)
 
-			const button = documentActive()!
+			const button = document.activeElement!
 			if (!elementValidTarget(
-				eventCurrentTarget(ev),
+				ev.currentTarget,
 				button,
-				el => elementTagName(el) === 'BUTTON'
+				el => el.tagName === 'BUTTON'
 			)) return
 
-			switch (elementId(button)) {
+			switch (button.id) {
 			case buttonClearId:
 				updateAreaTextFieldValue(areaTextFieldRef, '')
 				break
@@ -149,7 +146,7 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 		{...otherWrapperProps}>
 		<Show when={
 			!props['c:autoHideLabel']
-			|| stringLength(value()) > 0
+			|| value().length > 0
 			|| props.placeholder
 		}>
 			<label for={props.id} class='c-area-textfield-label'>{props['c:label']}</label>
@@ -160,22 +157,22 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 			ref={mergeRefs(props.ref, r => areaTextFieldRef = r)}
 			onInput={(ev) => {
 				eventCall(ev, props.onInput)
-				const self = eventCurrentTarget(ev)
+				const self = ev.currentTarget
 				setValue(self.value)
 				setIsInvalid(!self.checkValidity())
 				setHeight(lineHeight())
-				setHeight(mathMax(elementScrollHeight(self), lineHeight()))
+				setHeight(Math.max(self.scrollHeight, lineHeight()))
 			}}
 			onFocus={(ev) => {
 				eventCall(ev, props.onFocus)
-				const self = eventCurrentTarget(ev)
+				const self = ev.currentTarget
 				setValue(self.value)
 				setIsInvalid(!self.checkValidity())
 				setIsFocus(true)
 			}}
 			onBlur={(ev) => {
 				eventCall(ev, props.onBlur)
-				setValue(eventCurrentTarget(ev).value)
+				setValue(ev.currentTarget.value)
 				setIsFocus(false)
 			}}
 			rows={props['c:minLine'] ?? 1}
@@ -183,7 +180,7 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 			autocomplete={props.autocomplete ?? 'off'}
 			readOnly={props.readOnly}
 			value={props.value}
-			style={typeIsString(props.style)
+			style={typeof props.style === 'string'
 				? props.style
 				: {
 					height: height() + 'px',
@@ -246,7 +243,7 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 	const [isFocus, setIsFocus] = createSignal<boolean>(false)
 	const [isInvalid, setIsInvalid] = createSignal<boolean>(false)
 	const [value, setValue] = createSignal<string>('')
-	const isShowClearButton = createMemo(() => props['c:autoShowClearButton'] && stringLength(value()) > 0)
+	const isShowClearButton = createMemo(() => props['c:autoShowClearButton'] && value().length > 0)
 	const trailing = children(() => props['c:trailing'])
 	const leading = children(() => props['c:leading'])
 	const buttonClearId = createUniqueId()
@@ -262,20 +259,20 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 		data-c-focused={attrSetIfExist(props['c:focused'] ?? isFocus())}
 		data-c-invalid={attrSetIfExist(!props.disabled && props['c:autoValidation'] && isInvalid())}
 		data-c-disabled={attrSetIfExist(props.disabled)}
-		data-c-trailing={attrSetIfExist(trailing() || (props['c:autoShowClearButton'] && stringLength(value()) > 0))}
+		data-c-trailing={attrSetIfExist(trailing() || (props['c:autoShowClearButton'] && value().length > 0))}
 		data-c-leading={attrSetIfExist(leading())}
 		data-c-readonly={attrSetIfExist(props.readOnly)}
 		onClick={ev => {
 			eventCall(ev, wrapperProps.onClick)
 
-			const button = documentActive()!
+			const button = document.activeElement!
 			if (!elementValidTarget(
-				eventCurrentTarget(ev),
+				ev.currentTarget,
 				button,
-				el => elementTagName(el) === 'BUTTON'
+				el => el.tagName === 'BUTTON'
 			)) return
 
-			switch (elementId(button)) {
+			switch (button.id) {
 			case buttonClearId:
 				updateTextFieldValue(textFieldRef, '')
 			}
@@ -283,7 +280,7 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 		{...otherWrapperProps}>
 		<Show when={
 			!props['c:autoHideLabel']
-			|| stringLength(value()) > 0
+			|| value().length > 0
 			|| props.placeholder
 		}>
 			<label class='c-textfield-label' for={props.id}>{props['c:label']}</label>
@@ -294,20 +291,20 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 			ref={mergeRefs(props.ref, r => textFieldRef = r)}
 			onInput={(ev) => {
 				eventCall(ev, props.onInput)
-				const self = eventCurrentTarget(ev)
+				const self = ev.currentTarget
 				setValue(self.value)
 				setIsInvalid(!self.checkValidity())
 			}}
 			onFocus={(ev) => {
 				eventCall(ev, props.onFocus)
-				const self = eventCurrentTarget(ev)
+				const self = ev.currentTarget
 				setValue(self.value)
 				setIsInvalid(!self.checkValidity())
 				setIsFocus(true)
 				if (props['c:autoSelectAll']) self.select()
 			}}
 			onBlur={(ev) => {
-				setValue(eventCurrentTarget(ev).value)
+				setValue(ev.currentTarget.value)
 				setIsFocus(false)
 				eventCall(ev, props.onBlur)
 			}}
@@ -367,8 +364,8 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 
 	const [isModalActionsOpen, setIsModalActionsOpen] = createSignal<boolean>(false)
 	const [value, setValue] = createSignal<number>(0)
-	let timeId: number | null = null
-	let timeIntervalId: number | null = null
+	let timeId: number | NodeJS.Timeout | null = null
+	let timeIntervalId: number | NodeJS.Timeout | null = null
 	let numberTextFieldRef: HTMLInputElement
 	let modalActionsRef: HTMLDialogElement
 	let iconButtonUpRef: HTMLButtonElement
@@ -378,18 +375,22 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 		const max = props.max
 		let v: number = defaultNumber ?? value()
 
-		if (typeIsString(max)) v = numberParse(max as string, props['c:integerOnly'])
-		else if (typeIsNumber(max)) v = max as number
-		return props['c:integerOnly']? mathRound(v) : v
+		if (typeof max === 'string') v = props['c:integerOnly']
+			? Number.parseInt(max as string)
+			: Number.parseFloat(max as string)
+		else if (typeof max === 'number') v = max as number
+		return props['c:integerOnly']? Math.round(v) : v
 	}
 
 	function getMin(defaultNumber?: number): number {
 		const min = props.min
 		let v: number = defaultNumber ?? value()
 
-		if (typeIsString(min)) v = numberParse(min as string, props['c:integerOnly'])
-		else if (typeIsNumber(min)) v = min as number
-		return props['c:integerOnly']? mathRound(v) : v
+		if (typeof min === 'string') v = props['c:integerOnly']
+			? Number.parseInt(min as string)
+			: Number.parseFloat(min as string)
+		else if (typeof min === 'number') v = min as number
+		return props['c:integerOnly']? Math.round(v) : v
 	}
 
 	function updateValue(operator: '+' | '-'): void {
@@ -406,8 +407,8 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 			)
 		)
 		if (isReachLimit) {
-			if (timeIntervalId != null) timeIntervalClear(timeIntervalId)
-			if (timeId != null) timeTimerClear(timeId)
+			if (timeIntervalId != null) clearInterval(timeIntervalId)
+			if (timeId != null) clearTimeout(timeId)
 			timeIntervalId = timeId = null
 			return
 		}
@@ -416,58 +417,60 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 		else numberTextFieldRef.stepDown()
 
 		let n = numberTextFieldRef.valueAsNumber
-		if (numberIsNaN(n)) n = value()
+		if (Number.isNaN(n)) n = value()
 
 		n = mathClamp(n, getMin(n), getMax(n))
-		if (props['c:integerOnly']) n = mathRound(n)
+		if (props['c:integerOnly']) n = Math.round(n)
 
 		setValue(n)
 		updateTextFieldValue(numberTextFieldRef, `${n}`)
 	}
 
 	function onPressStart(operator: '+' | '-'): void {
-		if (timeId != null) timeTimerClear(timeId)
+		if (timeId != null) clearTimeout(timeId)
 
-		timeId = timeTimerSet(() => {
-			if (timeIntervalId != null) timeIntervalClear(timeIntervalId)
-			timeIntervalId = timeIntervalSet(() => updateValue(operator), 30)
+		timeId = setTimeout(() => {
+			if (timeIntervalId != null) clearInterval(timeIntervalId)
+			timeIntervalId = setInterval(() => updateValue(operator), 30)
 			timeId = null
 		}, 200)
 	}
 
 	function onPressEnd(operator: '+' | '-'): void {
-		if (timeIntervalId != null) timeIntervalClear(timeIntervalId)
-		if (timeId != null) timeTimerClear(timeId)
+		if (timeIntervalId != null) clearInterval(timeIntervalId)
+		if (timeId != null) clearTimeout(timeId)
 		timeIntervalId = timeId = null
 		updateValue(operator)
 	}
 
 	function fixInputNumber(): void {
 		let n = numberSafe(
-			numberParse(numberTextFieldRef.value, props['c:integerOnly']),
+			props['c:integerOnly']
+				? Number.parseInt(numberTextFieldRef.value)
+				: Number.parseFloat(numberTextFieldRef.value),
 			value()
 		)
 
 		n = mathClamp(n, getMin(n), getMax(n))
-		if (props['c:integerOnly']) n = mathRound(n)
+		if (props['c:integerOnly']) n = Math.round(n)
 
 		setValue(n)
-		updateTextFieldValue(numberTextFieldRef, stringToUpperCase(`${n}`))
+		updateTextFieldValue(numberTextFieldRef, `${n}`.toUpperCase())
 	}
 
 	createEffect(() => {
-		let v = numberParse(`${props.value}`)
+		let v = Number.parseFloat(`${props.value}`)
 		if (numberIsNotDefined(v)) return;
 
-		const integer_only = props['c:integerOnly']
+		const integerOnly = props['c:integerOnly']
 		let max = props.max ?? v
 		let min = props.min ?? v
 
-		if (typeIsString(max)) max = numberParse(max as string, integer_only)
-		if (typeIsString(min)) min = numberParse(min as string, integer_only)
+		if (typeof max === 'string') max = integerOnly? Number.parseInt(max) : Number.parseFloat(max)
+		if (typeof min === 'string') min = integerOnly? Number.parseInt(min) : Number.parseFloat(min)
 
 		v = mathClamp(v, min as number, max as number)
-		if (integer_only) v = mathRound(v)
+		if (integerOnly) v = Math.round(v)
 
 		setValue(v)
 	})
@@ -492,10 +495,12 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 			onInput={ev => {
 				eventCall(ev, props.onInput)
 				if (props['c:onInputAsNumber']){
-					let n = numberParse(numberTextFieldRef.value, props['c:integerOnly'])
+					let n = props['c:integerOnly']
+						? Number.parseInt(numberTextFieldRef.value)
+						: Number.parseFloat(numberTextFieldRef.value)
 					n = numberSafe(n, value())
 					n = mathClamp(n, getMin(n), getMax(n))
-					if (props['c:integerOnly']) n = mathRound(n)
+					if (props['c:integerOnly']) n = Math.round(n)
 					props['c:onInputAsNumber'](ev, n)
 				}
 			}}
@@ -509,7 +514,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 							modalActionsRef,
 							{
 								position: MenuPosition.centerCenterLeft,
-								anchor: eventCurrentTarget(ev)
+								anchor: ev.currentTarget
 							})
 						}>
 						<Icon c:code={ICON_CHEVRON_UP_DOWN}/>
@@ -518,7 +523,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 				<Show when={props['c:autoShowClearButton'] && value() != 0}>
 					<TextFieldButton data-tooltip={props['c:tooltipClear'] ?? 'Clear'} onClick={(_ev) => {
 						let v = mathClamp(0, getMin(0), getMax())
-						if (props['c:integerOnly']) v = mathRound(v)
+						if (props['c:integerOnly']) v = Math.round(v)
 
 						numberTextFieldRef.value = `${v}`
 						setValue(v)
@@ -533,24 +538,24 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 				'c-number-textfield-actions': true,
 				...actionsProps.classList
 			}}
-			c:onToggleOpen={(is_open) => {
-				actionsProps['c:onToggleOpen']?.(is_open)
-				setIsModalActionsOpen(is_open)
+			c:onToggleOpen={(isOpen) => {
+				actionsProps['c:onToggleOpen']?.(isOpen)
+				setIsModalActionsOpen(isOpen)
 
 				// I don't remember why I need this
-				if (!is_open) {
-					elementFocus(numberTextFieldRef)
-					elementBlur(numberTextFieldRef)
+				if (!isOpen) {
+					numberTextFieldRef.focus()
+					numberTextFieldRef.blur()
 				}
 			}}
 			onKeyDown={(ev) => {
 				eventCall(ev, actionsProps.onKeyDown)
 				const code = ev.code
-				const button = documentActive()!
+				const button = document.activeElement!
 				if (!elementValidTarget(
-					eventCurrentTarget(ev),
+					ev.currentTarget,
 					button,
-					el => elementTagName(el) == 'BUTTON'
+					el => el.tagName == 'BUTTON'
 				)) return
 
 				const click_key = code == KEY_ENTER || code == KEY_SPACE
@@ -560,23 +565,23 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 				switch (button) {
 				case iconButtonUpRef: {
 					if (click_key) onPressStart('+')
-					if (arrow_key && !iconButtonDownRef.disabled) elementFocus(iconButtonDownRef)
+					if (arrow_key && !iconButtonDownRef.disabled) iconButtonDownRef.focus()
 						break
 				}
 				case iconButtonDownRef: {
 					if (click_key) onPressStart('-')
-					if (arrow_key && !iconButtonUpRef.disabled) elementFocus(iconButtonUpRef)
+					if (arrow_key && !iconButtonUpRef.disabled) iconButtonUpRef.focus()
 					break
 				}}
 			}}
 			onKeyUp={(ev) => {
 				eventCall(ev, actionsProps.onKeyUp)
 				const code = ev.code
-				const button = documentActive()!
+				const button = document.activeElement!
 				if (!elementValidTarget(
-					eventCurrentTarget(ev),
+					ev.currentTarget,
 					button,
-					el => elementTagName(el) == 'BUTTON'
+					el => el.tagName == 'BUTTON'
 				) || (code != KEY_ENTER && code != KEY_SPACE)) return
 
 				switch (button) {
@@ -634,16 +639,13 @@ const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
 	function $openPopover(): void {
 		if (isPopoverOpen) return;
 
-		if (typeIsArray(result()) && arrayLength(result() as unknown[]) == 0) return;
+		if (Array.isArray(result()) && (result() as unknown[]).length == 0) return;
 
-		elementStyleRemove(menuRef, 'width')
-		const textFieldWidth = rectWidth(elementRect(wrapperRef))
-		const menuWidth = rectWidth(elementRect(menuRef))
-		if (textFieldWidth > menuWidth) elementStyleSet(
-			menuRef,
-			'width',
-			`${textFieldWidth}px`
-		)
+		menuRef.style.removeProperty('width')
+		const textFieldWidth = wrapperRef.getBoundingClientRect().width
+		const menuWidth = menuRef.getBoundingClientRect().width
+		if (textFieldWidth > menuWidth) menuRef.style.setProperty('width', `${textFieldWidth}px`)
+
 		openPopover(menuRef, {
 			allowHideAnchor: false,
 			anchor: wrapperRef,
@@ -657,8 +659,8 @@ const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
 	function onClick(ev: MouseEvent): void {
 		if (!isPopoverOpen) return;
 
-		const target = eventTarget(ev) as HTMLElement
-		const isClickedInside = elementContains(wrapperRef, target) || elementContains(menuRef, target)
+		const target = ev.target as HTMLElement
+		const isClickedInside = wrapperRef.contains(target) || menuRef.contains(target)
 
 		if (isClickedInside) return;
 
@@ -666,10 +668,10 @@ const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
 	}
 
 	function initEvents(): void {
-		eventListenerAdd<MouseEvent>(document, 'click', onClick)
+		document.addEventListener('click', onClick)
 
 		onCleanup(() => {
-			eventListenerRemove<MouseEvent>(document, 'click', onClick)
+			document.removeEventListener('click', onClick)
 		})
 	}
 
@@ -680,7 +682,7 @@ const SearchTextField: VoidComponent<SearchTextFieldProps> = ($props) => {
 	createEffect(() => {
 		const r = result()
 		if (!isFocus) return;
-		if (typeIsArray(r) && arrayLength(r as unknown[]) == 0) {
+		if (Array.isArray(r) && (r as unknown[]).length == 0) {
 			return closePopover(menuRef)
 		}
 		$openPopover()

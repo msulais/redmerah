@@ -3,7 +3,7 @@ import type { StopwatchState, TimerState } from "./_enums"
 export type Stopwatch = {
 	ms: number
 	state: StopwatchState
-	timeIntervalId: number | null
+	timeIntervalId: number | NodeJS.Timeout | null
 
 	/** value of date in milliseconds */
 	startDate: number | null
@@ -17,7 +17,7 @@ export type Timer = {
 	seconds: number
 	startSeconds: number
 	state: TimerState
-	timeIntervalId: number | null
+	timeIntervalId: number | NodeJS.Timeout | null
 
 	/** value of date in seconds */
 	startDate: number | null

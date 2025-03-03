@@ -1,26 +1,13 @@
-import { arraySome } from "./array"
-import { typeIsFunction } from "./typecheck"
-
-export function objectKeys(value: Object): string[] {
-	return Object.keys(value)
-}
-
-export function objectValues<T>(value: Object): T[] {
-	return Object.values(value)
-}
-
 export function validEnumKey<T, U extends Record<any, any>>(key: T, enums: U): boolean {
 	return enums[key] !== undefined
 }
 
 export function validEnumValue<
-	T,
-	U extends Record<string | number, any>
+	T, U extends Record<string | number, any>
 >(value: T, enums: U | (string | number)[]): boolean {
-	return arraySome(
-		objectValues(enums),
-		v => v === value
-	)
+	return Object
+		.values(enums)
+		.some(v => v === value)
 }
 
 export function objectHasValue(data: unknown): boolean {
@@ -37,20 +24,6 @@ export function objectCreate<T>(...data: [key: keyof T, value: unknown][]): T {
 	return obj as T
 }
 
-export function objectDeepClone<T = unknown>(value: T, options?: StructuredSerializeOptions): T {
-	return structuredClone(value, options)
-}
-
-export function promiseDone<T, U = any>(
-	prom: Promise<T>,
-	onDone: (data: T) => unknown,
-	onError?: (reason: U) => unknown
-): Promise<unknown> {
-	return onError
-		? prom.then(onDone).catch(onError)
-		: prom.then(onDone)
-}
-
 /**
  * Basically switch-case but without `break` keyword
  * @param source
@@ -63,7 +36,7 @@ export function statementMatchCase<T, U>(
 ): U | void {
 	for (const arg of args) {
 		if (arg[0] == source) {
-			return typeIsFunction(arg[1])
+			return typeof arg[1] === 'function'
 				? (arg[1] as () => U)()
 				: arg[1] as U
 		}

@@ -1,7 +1,6 @@
 import { createEffect, createMemo, type VoidComponent } from "solid-js"
 
 import { attrSetIfExist } from "@/utils/attributes"
-import { eventCurrentTarget } from "@/utils/event"
 
 import { AreaTextField, updateAreaTextFieldValue } from "@/components/TextField"
 import CSS from './_styles.module.scss'
@@ -27,7 +26,7 @@ const _: VoidComponent<{
 			ref={r => textAreaRef = r}
 			c:label="Notebook"
 			placeholder="Type your thought here ..."
-			onInput={(ev) => props.onNoteChanged(eventCurrentTarget(ev).value)}
+			onInput={(ev) => props.onNoteChanged(ev.currentTarget.value)}
 		/>
 	</div>)
 }

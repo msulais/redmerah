@@ -3,12 +3,7 @@ import { children, createEffect, createMemo, splitProps, type JSX, type ParentCo
 
 import { keyboardOnFocusIn, keyboardOnFocusOut, keyboardOnKeyDown, keyboardOnKeyDown2D } from "@/utils/keyboard"
 import { eventCall } from "@/utils/event"
-import { arrayClear, arrayPush } from "@/utils/array"
-import { typeIsArray, typeIsString } from "@/utils/typecheck"
-import { elementAllBySelector } from "@/utils/element"
 import { cssIsValidSelector } from "@/utils/css"
-import { objectValues } from "@/utils/object"
-import { timeTimerSet } from "@/utils/time"
 
 import './index.scss'
 
@@ -47,7 +42,7 @@ const FocusableGroup: ParentComponent<FocusableGroupProps> = ($props) => {
 		const classList = other.classList
 		if (!classList) return false
 
-		const values = objectValues<boolean | undefined>(classList)
+		const values = Object.values<boolean | undefined>(classList)
 		for (const value of values) {
 			if (value === true) return true
 		}
@@ -56,27 +51,27 @@ const FocusableGroup: ParentComponent<FocusableGroupProps> = ($props) => {
 	})
 	const elements: HTMLElement[] = []
 	const content = children(() => props.children)
-	let timeOnFocusInId: number | null = null
+	let timeOnFocusInId: number | NodeJS.Timeout | null = null
 	let divRef: HTMLDivElement
 
 	function updateElements(): void {
 		if (timeOnFocusInId !== null) return
 
 		const $elements = props["c:elements"]
-		if (typeIsArray($elements)) {
-			arrayClear(elements)
-			arrayPush(elements, ...($elements as HTMLElement[]))
+		if (Array.isArray($elements)) {
+			elements.length = 0
+			elements.push(...($elements as HTMLElement[]))
 		}
-		else if (typeIsString($elements) && cssIsValidSelector($elements as string)) {
-			arrayClear(elements)
-			arrayPush(elements, ...elementAllBySelector($elements as string, divRef))
+		else if (typeof $elements === 'string' && cssIsValidSelector($elements as string)) {
+			elements.length = 0
+			elements.push(...divRef.querySelectorAll<HTMLElement>($elements))
 		}
 		else {
-			arrayClear(elements)
-			arrayPush(elements, ...elementAllBySelector(INTERACTIVE_ELEMENT_SELECTOR, divRef))
+			elements.length = 0
+			elements.push(...divRef.querySelectorAll<HTMLElement>(INTERACTIVE_ELEMENT_SELECTOR))
 		}
 
-		timeOnFocusInId = timeTimerSet(
+		timeOnFocusInId = setTimeout(
 			() => timeOnFocusInId = null,
 			200
 		)
@@ -86,17 +81,17 @@ const FocusableGroup: ParentComponent<FocusableGroupProps> = ($props) => {
 		const $elements = props["c:elements"]
 		content() // trigger effect
 
-		if (typeIsArray($elements)) {
-			arrayClear(elements)
-			arrayPush(elements, ...($elements as HTMLElement[]))
+		if (Array.isArray($elements)) {
+			elements.length = 0
+			elements.push(...($elements as HTMLElement[]))
 		}
-		else if (typeIsString($elements) && cssIsValidSelector($elements as string)) {
-			arrayClear(elements)
-			arrayPush(elements, ...elementAllBySelector($elements as string, divRef))
+		else if (typeof $elements === 'string' && cssIsValidSelector($elements as string)) {
+			elements.length = 0
+			elements.push(...divRef.querySelectorAll<HTMLElement>($elements))
 		}
 		else {
-			arrayClear(elements)
-			arrayPush(elements, ...elementAllBySelector(INTERACTIVE_ELEMENT_SELECTOR, divRef))
+			elements.length = 0
+			elements.push(...divRef.querySelectorAll<HTMLElement>(INTERACTIVE_ELEMENT_SELECTOR))
 		}
 	})
 
@@ -135,7 +130,7 @@ const FocusableGroup2D: ParentComponent<FocusableGroup2DProps> = ($props) => {
 		const classList = other.classList
 		if (!classList) return false
 
-		const values = objectValues<boolean | undefined>(classList)
+		const values = Object.values<boolean | undefined>(classList)
 		for (const value of values) {
 			if (value === true) return true
 		}
@@ -144,27 +139,27 @@ const FocusableGroup2D: ParentComponent<FocusableGroup2DProps> = ($props) => {
 	})
 	const elements: HTMLElement[] = []
 	const content = children(() => props.children)
-	let timeOnFocusInId: number | null = null
+	let timeOnFocusInId: number | NodeJS.Timeout | null = null
 	let divRef: HTMLDivElement
 
 	function updateElements(): void {
 		if (timeOnFocusInId !== null) return
 
 		const $elements = props["c:elements"]
-		if (typeIsArray($elements)) {
-			arrayClear(elements)
-			arrayPush(elements, ...($elements as HTMLElement[]))
+		if (Array.isArray($elements)) {
+			elements.length = 0
+			elements.push(...($elements as HTMLElement[]))
 		}
-		else if (typeIsString($elements) && cssIsValidSelector($elements as string)) {
-			arrayClear(elements)
-			arrayPush(elements, ...elementAllBySelector($elements as string, divRef))
+		else if (typeof $elements === 'string' && cssIsValidSelector($elements as string)) {
+			elements.length = 0
+			elements.push(...divRef.querySelectorAll<HTMLElement>($elements))
 		}
 		else {
-			arrayClear(elements)
-			arrayPush(elements, ...elementAllBySelector(INTERACTIVE_ELEMENT_SELECTOR, divRef))
+			elements.length = 0
+			elements.push(...divRef.querySelectorAll<HTMLElement>(INTERACTIVE_ELEMENT_SELECTOR))
 		}
 
-		timeOnFocusInId = timeTimerSet(
+		timeOnFocusInId = setTimeout(
 			() => timeOnFocusInId = null,
 			200
 		)
@@ -176,17 +171,17 @@ const FocusableGroup2D: ParentComponent<FocusableGroup2DProps> = ($props) => {
 
 		divRef.classList.length > 0
 
-		if (typeIsArray($elements)) {
-			arrayClear(elements)
-			arrayPush(elements, ...($elements as HTMLElement[]))
+		if (Array.isArray($elements)) {
+			elements.length = 0
+			elements.push(...($elements as HTMLElement[]))
 		}
-		else if (typeIsString($elements) && cssIsValidSelector($elements as string)) {
-			arrayClear(elements)
-			arrayPush(elements, ...elementAllBySelector($elements as string, divRef))
+		else if (typeof $elements === 'string' && cssIsValidSelector($elements as string)) {
+			elements.length = 0
+			elements.push(...divRef.querySelectorAll<HTMLElement>($elements))
 		}
 		else {
-			arrayClear(elements)
-			arrayPush(elements, ...elementAllBySelector(INTERACTIVE_ELEMENT_SELECTOR, divRef))
+			elements.length = 0
+			elements.push(...divRef.querySelectorAll<HTMLElement>(INTERACTIVE_ELEMENT_SELECTOR))
 		}
 	})
 

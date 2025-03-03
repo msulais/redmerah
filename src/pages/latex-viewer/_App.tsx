@@ -1,16 +1,13 @@
 import { onMount, type VoidComponent } from "solid-js"
 
 import type { Settings } from "./_types"
-import { IDB, idbStorePut } from "@/utils/indexeddb"
+import { IDB } from "@/utils/indexeddb"
 import { DatabaseNames } from "@/enums/storage"
 import { ObjectStoreKeys, ObjectStoreNames, type ObjectStoreLastInput, type ObjectStoreSettings } from "./_storage"
 import { createStore } from "solid-js/store"
 import { Commands } from "./_enums"
 import { DEFAULT_LATEX_TEXT } from "./_latex"
 import { removeSplashScreen } from "@/utils/splash"
-import { arrayJoin, arrayMap, arraySlice } from "@/utils/array"
-import { navigatorClipboardWriteText } from "@/utils/navigator"
-import { promiseDone } from "@/utils/object"
 import { ICON_COPY } from "@/constants/icons"
 
 import Icon from "@/components/Icon"
@@ -35,7 +32,7 @@ const _: VoidComponent = () => {
 		if (!store) return;
 
 		for (const item of items) {
-			idbStorePut(store, {
+			store.put({
 				key: item[0],
 				value: item[1]
 			})
@@ -47,7 +44,7 @@ const _: VoidComponent = () => {
 		if (!store) return;
 
 		for (const item of items) {
-			idbStorePut(store, {
+			store.put({
 				key: item[0],
 				value: item[1]
 			})
@@ -58,13 +55,13 @@ const _: VoidComponent = () => {
 		switch (type) {
 		case Commands.addEquation: {
 			const [index] = args as [number]
-			setLatex(prev => [...arraySlice(prev, 0, index), '', ...arraySlice(prev, index)])
+			setLatex(prev => [...prev.slice(0, index), '', ...prev.slice(index)])
 			saveLastInput([ObjectStoreKeys.lastInput_latex, [...latex]])
 			break
 		}
 		case Commands.deleteEquation: {
 			const [index] = args as [number]
-			setLatex(prev => [...arraySlice(prev, 0, index), ...arraySlice(prev, index + 1)])
+			setLatex(prev => [...prev.slice(0, index), ...prev.slice(index + 1)])
 			saveLastInput([ObjectStoreKeys.lastInput_latex, [...latex]])
 			break
 		}
@@ -101,12 +98,9 @@ const _: VoidComponent = () => {
 			saveLastInput([ObjectStoreKeys.lastInput_latex, ['']])
 			break
 		case Commands.copyAll: {
-			promiseDone(
-				navigatorClipboardWriteText(
-					arrayJoin(arrayMap(latex, l => settings.prefix + l + settings.suffix), '\n\n')
-				),
-				() => openToast(toastCopiedRef)
-			)
+			navigator.clipboard.writeText(
+				latex.map(l => settings.prefix + l + settings.suffix).join('\n\n')
+			).then(() => openToast(toastCopiedRef))
 			break
 		}
 		default: return
@@ -116,35 +110,35 @@ const _: VoidComponent = () => {
 		const store = db.readStore(ObjectStoreNames.settings)
 		if (store == null) return
 
-		promiseDone(db.get<ObjectStoreSettings<boolean>>(
+		db.get<ObjectStoreSettings<boolean>>(
 			store,
 			ObjectStoreKeys.settings_textWrap
-		), result => setSettings('textWrap', t => result?.value ?? t))
+		).then(result => setSettings('textWrap', t => result?.value ?? t))
 
-		promiseDone(db.get<ObjectStoreSettings<number>>(
+		db.get<ObjectStoreSettings<number>>(
 			store,
 			ObjectStoreKeys.settings_fontSize
-		), result => setSettings('fontSize', f => result?.value ?? f))
+		).then(result => setSettings('fontSize', f => result?.value ?? f))
 
-		promiseDone(db.get<ObjectStoreSettings<string>>(
+		db.get<ObjectStoreSettings<string>>(
 			store,
 			ObjectStoreKeys.settings_prefix
-		), result => setSettings('prefix', p => result?.value ?? p))
+		).then(result => setSettings('prefix', p => result?.value ?? p))
 
-		promiseDone(db.get<ObjectStoreSettings<string>>(
+		db.get<ObjectStoreSettings<string>>(
 			store,
 			ObjectStoreKeys.settings_suffix
-		), result => setSettings('suffix', s => result?.value ?? s))
+		).then(result => setSettings('suffix', s => result?.value ?? s))
 	}
 
 	function initLastInput(): void {
 		const store_lastinput = db.readStore(ObjectStoreNames.lastInput)
 		if (store_lastinput == null) return
 
-		promiseDone(db.get<ObjectStoreLastInput<string[]>>(
+		db.get<ObjectStoreLastInput<string[]>>(
 			store_lastinput,
 			ObjectStoreKeys.lastInput_latex
-		), result => setLatex(result?.value ??[DEFAULT_LATEX_TEXT]))
+		).then(result => setLatex(result?.value ??[DEFAULT_LATEX_TEXT]))
 	}
 
 	function initDatabase(): void {

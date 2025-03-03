@@ -9,7 +9,6 @@ import { NumberTextField } from "@/components/TextField"
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import Icon from "@/components/Icon"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
-import { eventCurrentTarget } from "@/utils/event"
 
 const _: VoidComponent = () => {
 	const [useAnchor, setUseAnchor] = createSignal<boolean>(false)
@@ -72,7 +71,7 @@ const _: VoidComponent = () => {
 					style={{width: '100px'}}
 					value={gap()}
 					min={0}
-					onBlur={(ev) => setGap(g => numberSafe(eventCurrentTarget(ev).valueAsNumber, g))}
+					onBlur={(ev) => setGap(g => numberSafe(ev.currentTarget.valueAsNumber, g))}
 					c:label="Gap"
 				/>
 				<NumberTextField
@@ -80,7 +79,7 @@ const _: VoidComponent = () => {
 					value={startDelayDuration()}
 					min={0}
 					step={100}
-					onBlur={(ev) => setStartDelayDuration(d => numberSafe(eventCurrentTarget(ev).valueAsNumber, d))}
+					onBlur={(ev) => setStartDelayDuration(d => numberSafe(ev.currentTarget.valueAsNumber, d))}
 					c:label="Start delay duration"
 				/>
 				<NumberTextField
@@ -88,12 +87,12 @@ const _: VoidComponent = () => {
 					value={endDelayDuration()}
 					min={0}
 					step={100}
-					onBlur={(ev) => setEndDelayDuration(d => numberSafe(eventCurrentTarget(ev).valueAsNumber, d))}
+					onBlur={(ev) => setEndDelayDuration(d => numberSafe(ev.currentTarget.valueAsNumber, d))}
 					c:label="End delay duration"
 				/>
 				<CheckBox
 					checked={useAnchor()}
-					onChange={ev => setUseAnchor(eventCurrentTarget(ev).checked)}>
+					onChange={ev => setUseAnchor(ev.currentTarget.checked)}>
 					Use anchor
 				</CheckBox>
 			</Tooltip>

@@ -1,12 +1,11 @@
 ---
 import { RoutesLinks, ExternalLinks } from '@/enums/links'
-import { dateYear } from '@/utils/datetime'
 import CSS from './_index.module.scss'
 ---
 
 <div style="flex: 1"/>
 <footer class={CSS.footer}>
-	<p>&copy; { dateYear() } Redmerah</p>
+	<p>&copy; { new Date().getFullYear() } Redmerah</p>
 	<div>
 		<a href={RoutesLinks.about}>About</a>
 		<a href={RoutesLinks.apps}>Apps</a>

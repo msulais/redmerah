@@ -1,8 +1,6 @@
 import { For, Show, type VoidComponent } from "solid-js"
 
-import { documentActive } from "@/utils/document"
-import { elementDataset, elementTagName, elementValidTarget } from "@/utils/element"
-import { eventCurrentTarget } from "@/utils/event"
+import { elementValidTarget } from "@/utils/element"
 import { validEnumValue } from "@/utils/object"
 import { Commands, Pages } from "./_enums"
 import { PAGES } from "./_constant"
@@ -27,14 +25,14 @@ const _: VoidComponent<{
 			c:expanded={props.expanded}
 			class={CSS.sideNavigation}
 			onClick={ev => {
-				const button = documentActive()!
+				const button = document.activeElement! as HTMLButtonElement
 				if (!elementValidTarget(
-					eventCurrentTarget(ev),
+					ev.currentTarget,
 					button,
-					el => elementTagName(el) === 'BUTTON'
 				)) return
 
-				const dataNavigation = elementDataset(button, 'navigation')
+				const dataset = button.dataset
+				const dataNavigation = dataset.navigation
 				if (dataNavigation
 					&& validEnumValue(dataNavigation, Pages)
 				) return command(Commands.updatePage, dataNavigation)

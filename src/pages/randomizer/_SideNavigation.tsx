@@ -3,9 +3,7 @@ import { createMemo, For, type VoidComponent } from "solid-js"
 import { RandomizerType } from "./_enums"
 import { attrClassListModule } from "@/utils/attributes"
 import { RANDOMIZER_TYPES } from "./_constants"
-import { documentActive } from "@/utils/document"
-import { elementDataset, elementTagName, elementValidTarget } from "@/utils/element"
-import { eventCurrentTarget } from "@/utils/event"
+import { elementValidTarget } from "@/utils/element"
 
 import Icon from "@/components/Icon"
 import {Tooltip} from "@/components/Tooltip"
@@ -24,14 +22,14 @@ const _: VoidComponent<{
 		c:expanded={expanded()}
 		classList={attrClassListModule(CSS.side_navigation)}
 		onClick={ev => {
-			const button = documentActive()!
+			const button = document.activeElement! as HTMLButtonElement
 			if (!elementValidTarget(
-				eventCurrentTarget(ev),
+				ev.currentTarget,
 				button,
-				el => elementTagName(el) == 'BUTTON'
 			)) return
 
-			const dataType = elementDataset(button, 'type')
+			const dataset = button.dataset
+			const dataType = dataset.type
 			if (dataType
 				&& validEnumValue(dataType, RandomizerType)
 				&& randomizer() != dataType

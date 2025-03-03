@@ -1,9 +1,4 @@
 import { FlyoutPosition } from "@/enums/position"
-import { elementClientWidth } from "./element"
-import { arrayIncludes } from "./array"
-import { rectHeight, rectLeft, rectRight, rectTop, rectWidth } from "./rect"
-import { documentBody } from "./document"
-import { windowInnerHeight } from "./window"
 
 const FLYOUT_MARGIN = 8
 const LEFT_TOP = FlyoutPosition.leftTop
@@ -63,8 +58,8 @@ export function getFlyoutPosition({
 		left: 0
 	}
 
-	const screenWidth = elementClientWidth(documentBody())
-	const screenHeight = windowInnerHeight()
+	const screenWidth = document.body.clientWidth
+	const screenHeight = window.innerHeight
 	const elementRect = (pointer
 		? {
 			left: pointer.x,
@@ -77,8 +72,8 @@ export function getFlyoutPosition({
 	const flyoutRect = flyout
 	const midOffsetScreenTop = screenHeight / 2
 	const midOffsetScreenLeft = screenWidth / 2
-	const midOffsetElementTop = rectTop(elementRect) + (rectHeight(elementRect) / 2)
-	const midOffsetElementLeft = rectLeft(elementRect) + (rectWidth(elementRect)  / 2)
+	const midOffsetElementTop = elementRect.top + (elementRect.height / 2)
+	const midOffsetElementLeft = elementRect.left + (elementRect.width  / 2)
 	const maxWidth = screenWidth - FLYOUT_MARGIN * 2
 	const maxHeight = screenHeight - FLYOUT_MARGIN * 2
 	const edgeOffsetTop = FLYOUT_MARGIN
@@ -87,138 +82,138 @@ export function getFlyoutPosition({
 	const edgePositionRight = screenWidth - FLYOUT_MARGIN
 	let top: number = 0
 	let left: number = 0
-	const right: () => number = () => left + rectWidth(flyoutRect as DOMRect)
-	const bottom: () => number = () => top + rectHeight(flyoutRect as DOMRect)
+	const right: () => number = () => left + flyoutRect.width
+	const bottom: () => number = () => top + flyoutRect.height
 
-	flyoutRect.width = rectWidth(flyoutRect as DOMRect) > maxWidth
+	flyoutRect.width = flyoutRect.width > maxWidth
 		? maxWidth
-		: rectWidth(flyoutRect as DOMRect)
-	flyoutRect.height = rectHeight(flyoutRect as DOMRect) > maxHeight
+		: flyoutRect.width
+	flyoutRect.height = flyoutRect.height > maxHeight
 		? maxHeight
-		: rectHeight(flyoutRect as DOMRect)
+		: flyoutRect.height
 
 	// find x position
-	if (arrayIncludes([
+	if ([
 		LEFT_TOP,
 		LEFT_CENTER_TO_BOTTOM,
 		LEFT_CENTER,
 		LEFT_CENTER_TO_TOP,
 		LEFT_BOTTOM,
-	], position)) {
-		left = rectLeft(elementRect) - rectWidth(flyoutRect as DOMRect) - gap
+	].includes(position)) {
+		left = elementRect.left - flyoutRect.width - gap
 		if (left < edgePsitionLeft) left = midOffsetElementLeft < midOffsetScreenLeft
-			? rectRight(elementRect) + gap
+			? elementRect.right + gap
 			: edgePsitionLeft
 	}
 
-	else if (arrayIncludes([
+	else if ([
 		CENTER_TOP_TO_RIGHT,
 		CENTER_CENTER_LEFT_TOP,
 		CENTER_CENTER_LEFT,
 		CENTER_CENTER_LEFT_BOTTOM,
 		CENTER_BOTTOM_TO_RIGHT
-	], position)) {
-		left = rectLeft(elementRect) - padding
+	].includes(position)) {
+		left = elementRect.left - padding
 		if (right() > edgePositionRight) left = midOffsetElementLeft > midOffsetScreenLeft
-			? rectRight(elementRect) - rectWidth(flyoutRect as DOMRect) + padding
-			: edgePositionRight - rectWidth(flyoutRect as DOMRect)
+			? elementRect.right - flyoutRect.width + padding
+			: edgePositionRight - flyoutRect.width
 	}
 
-	else if (arrayIncludes([
+	else if ([
 		CENTER_TOP,
 		CENTER_CENTER_TOP,
 		CENTER_CENTER,
 		CENTER_CENTER_BOTTOM,
 		CENTER_BOTTOM
-	], position)) {
-		left = rectLeft(elementRect)
-		left += (rectWidth(elementRect) / 2)
-		left -= (rectWidth(flyoutRect as DOMRect) / 2)
+	].includes(position)) {
+		left = elementRect.left
+		left += (elementRect.width / 2)
+		left -= (flyoutRect.width / 2)
 	}
 
-	else if (arrayIncludes([
+	else if ([
 		CENTER_TOP_TO_LEFT,
 		CENTER_CENTER_RIGHT_TOP,
 		CENTER_CENTER_RIGHT,
 		CENTER_CENTER_RIGHT_BOTTOM,
 		CENTER_BOTTOM_TO_LEFT
-	], position)) {
-		left = rectRight(elementRect) - rectWidth(flyoutRect as DOMRect) + padding
+	].includes(position)) {
+		left = elementRect.right - flyoutRect.width + padding
 		if (left < edgePsitionLeft) left = midOffsetElementLeft < midOffsetScreenLeft
-			? rectLeft(elementRect) - padding
+			? elementRect.left - padding
 			: edgePsitionLeft
 	}
 
-	else if (arrayIncludes([
+	else if ([
 		RIGHT_TOP,
 		RIGHT_CENTER_TO_BOTTOM,
 		RIGHT_CENTER,
 		RIGHT_CENTER_TO_TOP,
 		RIGHT_BOTTOM
-	], position)) {
-		left = rectRight(elementRect) + gap
+	].includes(position)) {
+		left = elementRect.right + gap
 		if (right() > edgePositionRight) left = midOffsetElementLeft > midOffsetScreenLeft
-			? rectLeft(elementRect) - rectWidth(flyoutRect as DOMRect) - gap
-			: edgePositionRight - rectWidth(flyoutRect as DOMRect)
+			? elementRect.left - flyoutRect.width - gap
+			: edgePositionRight - flyoutRect.width
 	}
 
 	// find y position
-	if (arrayIncludes([
+	if ([
 		LEFT_TOP,
 		CENTER_TOP_TO_RIGHT,
 		CENTER_TOP,
 		CENTER_TOP_TO_LEFT,
 		RIGHT_TOP
-	], position)) {
+	].includes(position)) {
 		top = elementRect.top - flyoutRect.height - gap
 		if (top < edgeOffsetTop) top = midOffsetElementTop < midOffsetScreenTop
 			? elementRect.bottom + gap
 			: edgeOffsetTop
 	}
 
-	else if (arrayIncludes([
+	else if ([
 		LEFT_CENTER_TO_BOTTOM,
 		CENTER_CENTER_LEFT_TOP,
 		CENTER_CENTER_TOP,
 		CENTER_CENTER_RIGHT_TOP,
 		RIGHT_CENTER_TO_BOTTOM
-	], position)) {
+	].includes(position)) {
 		top = elementRect.top - padding
 		if (bottom() > edgePositionBottom) top = midOffsetElementTop > midOffsetScreenTop
 			? elementRect.bottom - flyoutRect.height + padding
 			: edgePositionBottom - flyoutRect.height
 	}
 
-	else if (arrayIncludes([
+	else if ([
 		LEFT_CENTER,
 		CENTER_CENTER_LEFT,
 		CENTER_CENTER,
 		CENTER_CENTER_RIGHT,
 		RIGHT_CENTER
-	], position)) {
+	].includes(position)) {
 		top = elementRect.top + (elementRect.height / 2) - (flyoutRect.height / 2)
 	}
 
-	else if (arrayIncludes([
+	else if ([
 		LEFT_CENTER_TO_TOP,
 		CENTER_CENTER_LEFT_BOTTOM,
 		CENTER_CENTER_BOTTOM,
 		CENTER_CENTER_RIGHT_BOTTOM,
 		RIGHT_CENTER_TO_TOP
-	], position)) {
+	].includes(position)) {
 		top = elementRect.bottom - flyoutRect.height + padding
 		if (top < edgeOffsetTop) top = midOffsetElementTop < midOffsetScreenTop
 			? elementRect.top - padding
 			: edgeOffsetTop
 	}
 
-	else if (arrayIncludes([
+	else if ([
 		LEFT_BOTTOM,
 		CENTER_BOTTOM_TO_RIGHT,
 		CENTER_BOTTOM,
 		CENTER_BOTTOM_TO_LEFT,
 		RIGHT_BOTTOM
-	], position)) {
+	].includes(position)) {
 		top = elementRect.bottom + gap
 		if (bottom() > edgePositionBottom) top = midOffsetElementTop > midOffsetScreenTop
 			? elementRect.top - flyoutRect.height - gap

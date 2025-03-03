@@ -1,8 +1,6 @@
 import { createSignal, For, Show, type VoidComponent } from "solid-js"
 
 import { numberSafe } from "@/utils/number"
-import { arrayIncludes } from "@/utils/array"
-import { eventCurrentTarget } from "@/utils/event"
 import { ICON_CLIPBOARD_PASTE, ICON_COPY, ICON_DELETE } from "@/constants/icons"
 
 import Icon from "@/components/Icon"
@@ -53,7 +51,7 @@ const _: VoidComponent = () => {
 		description="A menu is a collection of options or commands that are presented to the user. It can be a simple list of items, a hierarchical structure, or a combination of both. Menus are commonly used for navigation, actions, or settings.">
 		<Playground>
 			<Button c:variant={ButtonVariant.tonal} onClick={(ev) => openMenu(menuRef, {
-				anchor: anchor()? eventCurrentTarget(ev) : undefined,
+				anchor: anchor()? ev.currentTarget : undefined,
 				allowHideAnchor: allowHideAnchor(),
 				draggable: draggable(),
 				gap: gap(),
@@ -63,7 +61,7 @@ const _: VoidComponent = () => {
 				position: position()
 			})}>Open menu</Button>
 			<Button c:variant={ButtonVariant.tonal} onClick={(ev) => openMenu(menuRef2, {
-				anchor: anchor()? eventCurrentTarget(ev) : undefined,
+				anchor: anchor()? ev.currentTarget : undefined,
 				allowHideAnchor: allowHideAnchor(),
 				draggable: draggable(),
 				gap: gap(),
@@ -150,10 +148,10 @@ const _: VoidComponent = () => {
 					style={{width: '100px'}}
 					value={gap()}
 					min={0}
-					onBlur={(ev) => setGap(g => numberSafe(eventCurrentTarget(ev).valueAsNumber, g))}
+					onBlur={(ev) => setGap(g => numberSafe(ev.currentTarget.valueAsNumber, g))}
 					c:label="Gap"
 				/>
-				<Show when={arrayIncludes([
+				<Show when={[
 					MenuPosition.centerTopToRight,
 					MenuPosition.centerCenterLeft,
 					MenuPosition.centerBottomToRight,
@@ -170,38 +168,38 @@ const _: VoidComponent = () => {
 					MenuPosition.centerCenterBottom,
 					MenuPosition.centerCenterRightBottom,
 					MenuPosition.rightCenterToTop
-				], position())}>
+				].includes(position())}>
 					<NumberTextField
 						value={padding()}
 						style={{width: '100px'}}
 						min={0}
-						onBlur={(ev) => setPadding(p => numberSafe(eventCurrentTarget(ev).valueAsNumber, p))}
+						onBlur={(ev) => setPadding(p => numberSafe(ev.currentTarget.valueAsNumber, p))}
 						c:label="Padding"
 					/>
 				</Show>
 				<CheckBox
 					checked={anchor()}
-					onChange={ev => setAnchor(eventCurrentTarget(ev).checked)}>
+					onChange={ev => setAnchor(ev.currentTarget.checked)}>
 					Anchor
 				</CheckBox>
 				<CheckBox
 					checked={important()}
-					onChange={ev => setImportant(eventCurrentTarget(ev).checked)}>
+					onChange={ev => setImportant(ev.currentTarget.checked)}>
 					Important
 				</CheckBox>
 				<CheckBox
 					checked={contentAutoFocus()}
-					onChange={ev => setContentAutoFocus(eventCurrentTarget(ev).checked)}>
+					onChange={ev => setContentAutoFocus(ev.currentTarget.checked)}>
 					Input Autofocus
 				</CheckBox>
 				<CheckBox
 					checked={draggable()}
-					onChange={ev => setDraggable(eventCurrentTarget(ev).checked)}>
+					onChange={ev => setDraggable(ev.currentTarget.checked)}>
 					Dragable
 				</CheckBox>
 				<CheckBox
 					checked={allowHideAnchor()}
-					onChange={ev => setAllowHideAnchor(eventCurrentTarget(ev).checked)}>
+					onChange={ev => setAllowHideAnchor(ev.currentTarget.checked)}>
 					Allow hide anchor
 				</CheckBox>
 			</Tooltip>

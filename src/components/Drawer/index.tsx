@@ -1,18 +1,16 @@
 import { type JSX, type ParentComponent, Show, splitProps, children, mergeProps, createMemo } from "solid-js"
 
 import { attrSetIfExist } from "@/utils/attributes"
-import { objectHasValue, promiseDone } from "@/utils/object"
+import { objectHasValue } from "@/utils/object"
 import { AnimationEffectTiming } from "@/enums/animation"
-import { elementAnimate } from "@/utils/element"
 import { AppColors } from "@/enums/colors"
+import { animationIsOn } from "@/utils/animation"
 
 import Icon from "@/components/Icon"
 import Button, { ButtonIndicatorPosition, ButtonVariant, LinkButton, type ButtonProps, type LinkButtonProps } from "@/components/Button"
 import { closeModal, focusModal, Modal, openModal, type ModalProps } from "@/components/Modal"
 import FocusableGroup from "@/components/FocusableGroup"
-import { typeIsBoolean } from "@/utils/typecheck"
 import './index.scss'
-import { animationIsOn } from "@/utils/animation"
 
 function openDrawer(
 	drawer: HTMLDialogElement,
@@ -117,7 +115,7 @@ const Drawer: ParentComponent<DrawerProps> = ($props) => {
 	const interactiveElement = createMemo(() => props["c:interactiveElements"])
 
 	// hack to solve https://github.com/solidjs/solid/issues/2130
-	const getInteractiveElement = createMemo(() => typeIsBoolean(interactiveElement())
+	const getInteractiveElement = createMemo(() => typeof interactiveElement() === 'boolean'
 		? undefined
 		: interactiveElement() as string | HTMLElement[]
 	)
@@ -156,15 +154,14 @@ const Drawer: ParentComponent<DrawerProps> = ($props) => {
 		c:openAnimation={(el, done) => {
 			if (animationIsOn()) {
 				if (props["c:openAnimation"]) props["c:openAnimation"](el, done)
-				else promiseDone(elementAnimate(
-					el,
+				else el.animate(
 					{ transform: [
 						position() == DrawerPosition.left
 							? 'translateX(-100%)'
 							: 'translateX(100%)',
 					'none'] },
 					animation_option
-				).finished, done)
+				).finished.then(done)
 				return
 			}
 
@@ -173,8 +170,7 @@ const Drawer: ParentComponent<DrawerProps> = ($props) => {
 		c:closeAnimation={(el, done) => {
 			if (animationIsOn()){
 				if (props["c:closeAnimation"]) props["c:closeAnimation"](el, done)
-				else promiseDone(elementAnimate(
-					el,
+				else el.animate(
 					{ transform: [
 						'none',
 						props['c:position'] == DrawerPosition.left
@@ -182,7 +178,7 @@ const Drawer: ParentComponent<DrawerProps> = ($props) => {
 							: 'translateX(100%)',
 					] },
 					animation_option
-				).finished, done)
+				).finished.then(done)
 				return
 			}
 

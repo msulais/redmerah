@@ -3,16 +3,12 @@ import { mergeRefs } from "@solid-primitives/refs"
 
 import { attrSetIfExist, attrClassList } from "@/utils/attributes"
 import { objectHasValue } from "@/utils/object"
-import { eventCall, eventStopPropagation } from "@/utils/event"
-import { timeTimerClear, timeTimerSet, timeWait } from "@/utils/time"
-import { elementAllBySelector, elementById, elementBySelector, elementFirstChild, elementFocus, elementFocusAny, elementTagName } from "@/utils/element"
+import { eventCall } from "@/utils/event"
+import { timeWait } from "@/utils/time"
+import { elementFocusAny } from "@/utils/element"
 import { KEY_ARROW_LEFT, KEY_ARROW_RIGHT } from "@/constants/key-code"
-import { AppColors } from "@/enums/colors"
-import { stringCSSEscape } from "@/utils/string"
-import { typeIsBoolean } from "@/utils/typecheck"
 import { animationIsOn } from "@/utils/animation"
-import { documentActive } from "@/utils/document"
-import { arrayIncludes } from "@/utils/array"
+import { AppColors } from "@/enums/colors"
 import { ICON_CHECKBOX_CHECKED, ICON_CHECKBOX_UNCHECKED, ICON_CHEVRON_RIGHT } from "@/constants/icons"
 
 import Divider, { type DividerProps } from "@/components/Divider"
@@ -243,7 +239,7 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 	const interactiveElement = createMemo(() => props["c:interactiveElements"])
 
 	// hack to solve https://github.com/solidjs/solid/issues/2130
-	const getInteractiveElement = createMemo(() => typeIsBoolean(interactiveElement())
+	const getInteractiveElement = createMemo(() => typeof interactiveElement() === 'boolean'
 		? undefined
 		: interactiveElement() as string | HTMLElement[]
 	)
@@ -251,29 +247,29 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 	const parentId = context?.parentId ?? undefined
 	const firstParentId = context?.firstParentId ?? undefined
 	let tryOpen: boolean = false
-	let timeId: number | null = null
+	let timeId: number | NodeJS.Timeout | null = null
 	let divRef: HTMLDivElement
 	let popoverRef: HTMLDivElement
 	let firstChild: HTMLElement | undefined
 
 	function closeSubMenuDescendant(): void {
-		for (const popover of elementAllBySelector(`[data-c-menu-parent="${other.id}"]:popover-open`)) {
+		for (const popover of document.querySelectorAll(`[data-c-menu-parent="${other.id}"]:popover-open`)) {
 			closePopover(popover as HTMLDivElement)
 		}
 	}
 
 	function closeSubMenu(instant?: boolean, fromKey?: boolean): void {
-		if (timeId !== null) timeTimerClear(timeId)
+		if (timeId !== null) clearTimeout(timeId)
 
-		timeId = timeTimerSet(() => {
+		timeId = setTimeout(() => {
 			closePopover(popoverRef)
 			closeSubMenuDescendant()
 			if (fromKey) {
 				if (firstChild) {
-					elementFocus(firstChild)
-					if (documentActive() !== firstChild) elementFocusAny(elementById(parentId ?? '')!)
+					firstChild.focus()
+					if (document.activeElement !== firstChild) elementFocusAny(document.getElementById(parentId ?? '')!)
 				}
-				else elementFocusAny(elementById(parentId ?? '')!)
+				else elementFocusAny(document.getElementById(parentId ?? '')!)
 			}
 
 			timeId = null
@@ -284,13 +280,13 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 		if (isOpen()) return
 
 		tryOpen = true
-		if (timeId !== null) timeTimerClear(timeId)
-		timeId = timeTimerSet(async () => {
-			firstChild = elementFirstChild(divRef)!
+		if (timeId !== null) clearTimeout(timeId)
+		timeId = setTimeout(async () => {
+			firstChild = divRef.firstElementChild as HTMLElement
 			if (!firstChild) return
 
 			let removed = false
-			const siblings = elementAllBySelector<HTMLDivElement>(`[data-c-menu-parent=${parentId}]:not(#${other.id}):popover-open`)
+			const siblings = document.querySelectorAll<HTMLDivElement>(`[data-c-menu-parent=${parentId}]:not(#${other.id}):popover-open`)
 			for (const submenu of siblings) {
 				removed = true
 				closePopover(submenu)
@@ -316,7 +312,7 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 		if (isPointerHoverParent && !isHover()) return closeSubMenu()
 		if (tryOpen) return
 
-		if (timeId !== null) timeTimerClear(timeId)
+		if (timeId !== null) clearTimeout(timeId)
 		timeId = null
 	})
 
@@ -328,8 +324,8 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 			const code = ev.code
 			if (code !== KEY_ARROW_RIGHT) return
 
-			const active = documentActive()
-			if (active && arrayIncludes(['INPUT', 'TEXTAREA'], elementTagName(active))) return
+			const active = document.activeElement
+			if (active && ['INPUT', 'TEXTAREA'].includes(active.tagName)) return
 
 			openSubMenu(true)
 		}}
@@ -356,7 +352,7 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 			{props['c:item']}
 			<Popover
 				data-c-menu-parent={parentId}
-				c:portalMount={elementBySelector(`#${stringCSSEscape(firstParentId ?? '')} :is(.c-modal-portal-placeholder,.c-popover-portal-placeholder)`)!}
+				c:portalMount={document.querySelector(`#${CSS.escape(firstParentId ?? '')} :is(.c-modal-portal-placeholder,.c-popover-portal-placeholder)`)!}
 				c:onToggleOpen={o => {
 					setIsOpen(o)
 					props["c:onToggleOpen"]?.(o)
@@ -366,11 +362,11 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 					const code = ev.code
 					if (code !== KEY_ARROW_LEFT) return
 
-					const active = documentActive()
-					if (active && arrayIncludes(['INPUT', 'TEXTAREA'], elementTagName(active))) return
+					const active = document.activeElement
+					if (active && ['INPUT', 'TEXTAREA'].includes(active.tagName)) return
 
 					closeSubMenu(true, true)
-					eventStopPropagation(ev)
+					ev.stopPropagation()
 				}}
 				onPointerEnter={ev => {
 					eventCall(ev, props.onPointerEnter)
@@ -428,13 +424,13 @@ const Menu: ParentComponent<MenuProps> = ($props) => {
 	const interactiveElement = createMemo(() => props["c:interactiveElements"])
 
 	// hack to solve https://github.com/solidjs/solid/issues/2130
-	const getInteractiveElement = createMemo(() => typeIsBoolean(interactiveElement())
+	const getInteractiveElement = createMemo(() => typeof interactiveElement() === 'boolean'
 		? undefined
 		: interactiveElement() as string | HTMLElement[]
 	)
 
 	function closeSubMenuDescendant(): void {
-		for (const popover of elementAllBySelector(`[data-c-menu-parent="${other.id}"]:popover-open`)) {
+		for (const popover of document.querySelectorAll(`[data-c-menu-parent="${other.id}"]:popover-open`)) {
 			closePopover(popover as HTMLDivElement)
 		}
 	}
@@ -508,13 +504,13 @@ const PopoverMenu: ParentComponent<PopoverMenuProps> = ($props) => {
 	const interactiveElement = createMemo(() => props["c:interactiveElements"])
 
 	// hack to solve https://github.com/solidjs/solid/issues/2130
-	const getInteractiveElement = createMemo(() => typeIsBoolean(interactiveElement())
+	const getInteractiveElement = createMemo(() => typeof interactiveElement() === 'boolean'
 		? undefined
 		: interactiveElement() as string | HTMLElement[]
 	)
 
 	function closeSubMenuDescendant(): void {
-		for (const popover of elementAllBySelector(`[data-c-menu-parent="${other.id}"]:popover-open`)) {
+		for (const popover of document.querySelectorAll(`[data-c-menu-parent="${other.id}"]:popover-open`)) {
 			closePopover(popover as HTMLDivElement)
 		}
 	}

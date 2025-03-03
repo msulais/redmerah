@@ -2,7 +2,7 @@ import { type ParentComponent, type JSX, mergeProps, splitProps, type VoidCompon
 import { Dynamic, type DynamicProps } from 'solid-js/web'
 
 import { attrClassList, attrSetIfExist } from '@/utils/attributes'
-import { eventCall, eventPreventDefault } from '@/utils/event'
+import { eventCall } from '@/utils/event'
 
 import Icon, { type IconProps } from '@/components/Icon'
 import Emoji from '@/components/Emoji'
@@ -114,7 +114,7 @@ const LinkButton: ParentComponent<LinkButtonProps> = ($props) => {
 		onClick={(ev) => {
 			eventCall(ev, props.onClick)
 			if (props['c:disabled']) {
-				eventPreventDefault(ev)
+				ev.preventDefault()
 			}
 		}}
 		classList={{

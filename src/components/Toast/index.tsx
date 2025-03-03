@@ -2,11 +2,6 @@ import { type JSX, type ParentComponent, splitProps, children, onMount, onCleanu
 import { mergeRefs } from "@solid-primitives/refs"
 
 import { attrSetIfExist } from "@/utils/attributes"
-import { eventListenerAdd, eventListenerRemove } from "@/utils/event"
-import { timeTimerClear, timeTimerSet } from "@/utils/time"
-import { elementDispatchEvent } from "@/utils/element"
-import { documentBody } from "@/utils/document"
-import { typeIsBoolean } from "@/utils/typecheck"
 
 import List from "@/components/List"
 import Popover, { type PopoverProps, repositionPopover, closePopover, openPopover, isPopoverOpen as isToastOpen, PopoverPosition } from "@/components/Popover"
@@ -37,14 +32,14 @@ function openToast(
 	toast: HTMLDivElement,
 	options?: ToastOpenDetail
 ): void {
-	elementDispatchEvent(toast, new CustomEvent(
+	toast.dispatchEvent(new CustomEvent(
 		ToastEvents.open,
 		{detail: {...options} satisfies ToastOpenDetail}
 	))
 }
 
 function closeToast(toast: HTMLDivElement): void {
-	elementDispatchEvent(toast, new CustomEvent(ToastEvents.close))
+	toast.dispatchEvent(new CustomEvent(ToastEvents.close))
 }
 
 type ToastProps = PopoverProps & {
@@ -64,18 +59,18 @@ const Toast: ParentComponent<ToastProps> = ($props) => {
 	const actionInteractiveElements = createMemo(() => props["c:actions_interactiveElements"])
 
 	// hack to solve https://github.com/solidjs/solid/issues/2130
-	const getActionInteractiveElement = createMemo(() => typeIsBoolean(actionInteractiveElements())
+	const getActionInteractiveElement = createMemo(() => typeof actionInteractiveElements() === 'boolean'
 		? undefined
 		: actionInteractiveElements() as string | HTMLElement[]
 	)
 	let toastRef: HTMLDivElement
 	let isOpen = false
-	let timeId: number | null = null
+	let timeId: number | NodeJS.Timeout | null = null
 
 	function closeToast(): void {
 		if (!isOpen) return;
 		if (timeId != null) {
-			timeTimerClear(timeId)
+			clearTimeout(timeId)
 			timeId = null
 		}
 		closePopover(toastRef)
@@ -99,14 +94,14 @@ const Toast: ParentComponent<ToastProps> = ($props) => {
 		else if (position == ToastPosition.rightBottom) $position = PopoverPosition.centerCenterRightBottom
 
 		openPopover(toastRef, {
-			anchor: documentBody(),
+			anchor: document.body,
 			manualDismiss: true,
 			position: $position
 		})
 
 		if (!autoclose) return;
 
-		timeId = timeTimerSet(() => {
+		timeId = setTimeout(() => {
 			closeToast()
 			timeId = null
 		}, duration)
@@ -121,12 +116,12 @@ const Toast: ParentComponent<ToastProps> = ($props) => {
 	}
 
 	function initCustomEvent(): void {
-		eventListenerAdd<CustomEvent>(toastRef, ToastEvents.open, customOnOpen)
-		eventListenerAdd<CustomEvent>(toastRef, ToastEvents.close, customOnClose)
+		toastRef.addEventListener(ToastEvents.open as any, customOnOpen)
+		toastRef.addEventListener(ToastEvents.close as any, customOnClose)
 
 		onCleanup(() => {
-			eventListenerRemove<CustomEvent>(toastRef, ToastEvents.open, customOnOpen)
-			eventListenerRemove<CustomEvent>(toastRef, ToastEvents.close, customOnClose)
+			toastRef.removeEventListener(ToastEvents.open as any, customOnOpen)
+			toastRef.removeEventListener(ToastEvents.close as any, customOnClose)
 		})
 	}
 

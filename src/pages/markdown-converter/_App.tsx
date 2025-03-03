@@ -3,7 +3,7 @@ import { marked } from 'marked'
 import beautiful from 'simply-beautiful'
 
 import type { Settings } from "./_types"
-import { IDB, idbStorePut } from "@/utils/indexeddb"
+import { IDB } from "@/utils/indexeddb"
 import { DatabaseNames } from "@/enums/storage"
 import { ObjectStoreKeys, ObjectStoreNames, type ObjectStoreLastInput, type ObjectStoreSettings } from "./_storage"
 import { createStore } from "solid-js/store"
@@ -12,10 +12,6 @@ import { DEFAULT_CSS_TEXT } from "./_css"
 import { DEFAULT_MARKDOWN_TEXT } from "./_markdown"
 import { fileDownload, fileOpen, fileReadAsText } from "@/utils/file"
 import { removeSplashScreen } from "@/utils/splash"
-import { promiseDone } from "@/utils/object"
-import { arrayLength } from "@/utils/array"
-import { stringReplace } from "@/utils/string"
-import { navigatorClipboardWriteText } from "@/utils/navigator"
 import { ICON_COPY, ICON_DOCUMENT_ERROR, ICON_SCAN_TEXT } from "@/constants/icons"
 
 import Icon from "@/components/Icon"
@@ -42,7 +38,7 @@ const _: VoidComponent = () => {
 		if (!store) return;
 
 		for (const item of items) {
-			idbStorePut(store, { key: item[0], value: item[1] })
+			store.put({ key: item[0], value: item[1] })
 		}
 	}
 
@@ -51,7 +47,7 @@ const _: VoidComponent = () => {
 		if (!store) return;
 
 		for (const item of items) {
-			idbStorePut(store, { key: item[0], value: item[1] })
+			store.put({ key: item[0], value: item[1] })
 		}
 	}
 
@@ -94,15 +90,15 @@ const _: VoidComponent = () => {
 			updateOutput()
 			break
 		case Commands.openFile: {
-			promiseDone(fileOpen('text/*', true), async (files) => {
-				if (files == null || arrayLength(files as unknown as any[]) == 0) {
+			fileOpen('text/*', true).then(async (files) => {
+				if (files == null || files.length == 0) {
 					openToast(toastNoFileSelectedRef)
 					return
 				}
 
 				let text: string = ''
 				try {
-					for (let i = 0; i < arrayLength(files as unknown as any[]); i++) {
+					for (let i = 0; i < files.length; i++) {
 						if (i > 0) text += '\n\n'
 
 						const file = files[i]
@@ -126,13 +122,10 @@ const _: VoidComponent = () => {
 			switch (type) {
 				case "markdown": text = textMarkdown(); break
 				case "css":text = textCSS(); break
-				case "html": text = stringReplace(beautiful.html(textHTML()), /(?<=>)\n+(?=<)/gs, '\n'); break
-			}
+				case "html": text = beautiful.html(textHTML()).replace(/(?<=>)\n+(?=<)/gs, '\n'); break
 
-			promiseDone(
-				navigatorClipboardWriteText(text),
-				() => openToast(toastCopiedRef)
-			)
+			}
+			navigator.clipboard.writeText(text).then(() => openToast(toastCopiedRef))
 			break
 		}
 		case Commands.downloadFile: {
@@ -149,7 +142,7 @@ const _: VoidComponent = () => {
 				filename = 'cascading-style-sheets.css'
 				break
 			case "html":
-				text = stringReplace(beautiful.html(textHTML()), /(?<=>)\n+(?=<)/gs, '\n')
+				text = beautiful.html(textHTML()).replace(/(?<=>)\n+(?=<)/gs, '\n')
 				filename = 'hypertext-markup-language.html'
 				break
 			}
@@ -164,30 +157,30 @@ const _: VoidComponent = () => {
 		const store = db.readStore(ObjectStoreNames.settings)
 		if (store == null) return
 
-		promiseDone(db.get<ObjectStoreSettings<boolean>>(
+		db.get<ObjectStoreSettings<boolean>>(
 			store,
 			ObjectStoreKeys.settings_textWrap
-		),  result => setSettings('textWrap', t => result?.value ?? t))
+		).then(result => setSettings('textWrap', t => result?.value ?? t))
 
-		promiseDone(db.get<ObjectStoreSettings<number>>(
+		db.get<ObjectStoreSettings<number>>(
 			store,
 			ObjectStoreKeys.settings_fontSize
-		), result => setSettings('fontSize', f => result?.value ?? f))
+		).then(result => setSettings('fontSize', f => result?.value ?? f))
 	}
 
 	function initLastInput(): void {
 		const store = db.readStore(ObjectStoreNames.lastInput)
 		if (store == null) return
 
-		promiseDone(db.get<ObjectStoreLastInput<string>>(
+		db.get<ObjectStoreLastInput<string>>(
 			store,
 			ObjectStoreKeys.lastInput_css
-		), r => setTextCSS(r?.value ?? DEFAULT_CSS_TEXT))
+		).then(r => setTextCSS(r?.value ?? DEFAULT_CSS_TEXT))
 
-		promiseDone(db.get<ObjectStoreLastInput<string>>(
+		db.get<ObjectStoreLastInput<string>>(
 			store,
 			ObjectStoreKeys.lastinput_markdown
-		), result => {
+		).then(result => {
 			setTextMarkdown(result?.value ?? DEFAULT_MARKDOWN_TEXT)
 			updateOutput()
 		})

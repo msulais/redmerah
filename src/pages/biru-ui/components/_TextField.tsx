@@ -8,7 +8,6 @@ import TextField, { AreaTextField, NumberTextField, TextFieldButton } from "@/co
 import Tooltip from "@/components/Tooltip"
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
-import { eventCurrentTarget } from "@/utils/event"
 
 const _: VoidComponent = () => {
 	const [leading, setLeading] = createSignal<boolean>(false)
@@ -37,39 +36,39 @@ const _: VoidComponent = () => {
 	const Options: VoidComponent = () => (<>
 		<CheckBox
 			checked={leading()}
-			onChange={ev => setLeading(eventCurrentTarget(ev).checked)}>
+			onChange={ev => setLeading(ev.currentTarget.checked)}>
 			Leading
 		</CheckBox>
 		<CheckBox
 			checked={trailing()}
-			onChange={ev => setTrailing(eventCurrentTarget(ev).checked)}>
+			onChange={ev => setTrailing(ev.currentTarget.checked)}>
 			Trailing
 		</CheckBox>
 		<CheckBox
 			checked={label()}
-			onChange={ev => setLabel(eventCurrentTarget(ev).checked)}>
+			onChange={ev => setLabel(ev.currentTarget.checked)}>
 			Label text
 		</CheckBox>
 		<Show when={label()}>
 			<CheckBox
 				checked={autoHideLabel()}
-				onChange={ev => setAutoHideLabel(eventCurrentTarget(ev).checked)}>
+				onChange={ev => setAutoHideLabel(ev.currentTarget.checked)}>
 				Auto hide label
 			</CheckBox>
 		</Show>
 		<CheckBox
 			checked={placeholder()}
-			onChange={ev => setPlaceholder(eventCurrentTarget(ev).checked)}>
+			onChange={ev => setPlaceholder(ev.currentTarget.checked)}>
 			Placeholder
 		</CheckBox>
 		<CheckBox
 			checked={autoShowClearButton()}
-			onChange={ev => setAutoShowClearButton(eventCurrentTarget(ev).checked)}>
+			onChange={ev => setAutoShowClearButton(ev.currentTarget.checked)}>
 			Auto show clear button
 		</CheckBox>
 		<CheckBox
 			checked={readonly()}
-			onChange={ev => setReadonly(eventCurrentTarget(ev).checked)}>
+			onChange={ev => setReadonly(ev.currentTarget.checked)}>
 			Read only
 		</CheckBox>
 	</>)
@@ -152,7 +151,7 @@ const _: VoidComponent = () => {
 				<NumberTextField
 					value={step()}
 					c:label="Step"
-					onBlur={ev => setStep(s => numberSafe(eventCurrentTarget(ev).valueAsNumber, s))}
+					onBlur={ev => setStep(s => numberSafe(ev.currentTarget.valueAsNumber, s))}
 					style={{width: '100px'}}
 				/>
 				<Show when={limitMin()}>
@@ -160,7 +159,7 @@ const _: VoidComponent = () => {
 						value={min()}
 						c:label="Min"
 						max={limitMax()? max() : undefined}
-						onBlur={ev => setMin(m => numberSafe(eventCurrentTarget(ev).valueAsNumber, m))}
+						onBlur={ev => setMin(m => numberSafe(ev.currentTarget.valueAsNumber, m))}
 						style={{width: '100px'}}
 					/>
 				</Show>
@@ -169,19 +168,19 @@ const _: VoidComponent = () => {
 						value={max()}
 						min={limitMin()? min() : undefined}
 						c:label="Max"
-						onBlur={ev => setMax(m => numberSafe(eventCurrentTarget(ev).valueAsNumber, m))}
+						onBlur={ev => setMax(m => numberSafe(ev.currentTarget.valueAsNumber, m))}
 						style={{width: '100px'}}
 					/>
 				</Show>
 				<Options />
 				<CheckBox
 					checked={limitMin()}
-					onChange={ev => setLimitMin(eventCurrentTarget(ev).checked)}>
+					onChange={ev => setLimitMin(ev.currentTarget.checked)}>
 					Limit min
 				</CheckBox>
 				<CheckBox
 					checked={limitMax()}
-					onChange={ev => setLimitMax(eventCurrentTarget(ev).checked)}>
+					onChange={ev => setLimitMax(ev.currentTarget.checked)}>
 					Limit max
 				</CheckBox>
 			</Tooltip>
@@ -210,7 +209,7 @@ const _: VoidComponent = () => {
 			<NumberTextField
 				value={lineMin()}
 				c:label="Min line"
-				onBlur={ev => setLineMin(m => numberSafe(eventCurrentTarget(ev).valueAsNumber, m))}
+				onBlur={ev => setLineMin(m => numberSafe(ev.currentTarget.valueAsNumber, m))}
 				min={1}
 				max={lineLimitMax()? lineMax() : undefined}
 				style={{width: '100px'}}
@@ -219,7 +218,7 @@ const _: VoidComponent = () => {
 				<NumberTextField
 					value={lineMax()}
 					c:label="Max line"
-					onBlur={ev => setLineMax(m => numberSafe(eventCurrentTarget(ev).valueAsNumber, m))}
+					onBlur={ev => setLineMax(m => numberSafe(ev.currentTarget.valueAsNumber, m))}
 					min={lineMin()}
 					style={{width: '100px'}}
 				/>
@@ -227,7 +226,7 @@ const _: VoidComponent = () => {
 			<Options />
 			<CheckBox
 				checked={lineLimitMax()}
-				onChange={ev => setLineLimitMax(eventCurrentTarget(ev).checked)}>
+				onChange={ev => setLineLimitMax(ev.currentTarget.checked)}>
 				Limit max line
 			</CheckBox>
 		</PlaygroundOptions>

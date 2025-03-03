@@ -4,15 +4,10 @@ import { createSignal, onMount, type VoidComponent } from "solid-js"
 import type { Settings, Stopwatch, Timer } from "./_types"
 import { Pages, Commands, StopwatchState, TimerState } from "./_enums"
 import { removeSplashScreen } from "@/utils/splash"
-import { dateValueOf } from "@/utils/datetime"
-import { eventListenerAdd } from "@/utils/event"
-import { mathFloor } from "@/utils/math"
 import { ICON_WARNING } from "@/constants/icons"
-import { IDB, idbStorePut } from "@/utils/indexeddb"
+import { IDB } from "@/utils/indexeddb"
 import { DatabaseNames } from "@/enums/storage"
 import { IDBStoreKeysLastInput, IDBStoreKeysSettings, IDBStoreNames, type IDBStoreLastInput, type IDBStoreSettings } from "./_storage"
-import { promiseDone } from "@/utils/object"
-import { navigatonWakeLock } from "@/utils/navigator"
 
 import App from "@/components/App"
 import Icon from "@/components/Icon"
@@ -56,29 +51,23 @@ const _: VoidComponent = () => {
 		}
 
 		if (value) {
-			promiseDone(
-				navigatonWakeLock().request(),
-				(v) => {
-					wakeLock = v
-					setSettings('keepAwake', true)
-					saveSettings([IDBStoreKeysSettings.keepAwake, true])
-				},
-				() => {
-					openToast(toastWakeLockErrorRef, {
-						duration: 3000
-					})
-					markAsFalse()
-				}
-			)
+			navigator.wakeLock.request()
+			.then((v) => {
+				wakeLock = v
+				setSettings('keepAwake', true)
+				saveSettings([IDBStoreKeysSettings.keepAwake, true])
+			})
+			.catch(() => {
+				openToast(toastWakeLockErrorRef, {
+					duration: 3000
+				})
+				markAsFalse()
+			})
 			return
 		}
 
 		if (wakeLock !== null) {
-			promiseDone(
-				wakeLock.release(),
-				() => markAsFalse(),
-				() => markAsFalse()
-			)
+			wakeLock.release().then(markAsFalse).catch(markAsFalse)
 		}
 		else markAsFalse()
 	}
@@ -87,7 +76,7 @@ const _: VoidComponent = () => {
 		const store = db.writeStore(IDBStoreNames.lastInput)
 		if (!store) return;
 
-		for (const item of items) idbStorePut(store, {
+		for (const item of items) store.put({
 			key: item[0],
 			value: item[1]
 		})
@@ -97,7 +86,7 @@ const _: VoidComponent = () => {
 		const store = db.writeStore(IDBStoreNames.settings)
 		if (!store) return;
 
-		for (const item of items) idbStorePut(store, {
+		for (const item of items) store.put({
 			key: item[0],
 			value: item[1]
 		})
@@ -140,7 +129,7 @@ const _: VoidComponent = () => {
 		) return
 
 		const now = new Date()
-		setStopwatch('ms', dateValueOf(now) - stopwatch.startDate)
+		setStopwatch('ms', now.valueOf() - stopwatch.startDate)
 	}
 
 	function syncTimer(): void {
@@ -150,14 +139,12 @@ const _: VoidComponent = () => {
 
 		const now = new Date()
 		setTimer('seconds',
-			timer.startSeconds - (mathFloor(dateValueOf(now) / 1000) - timer.startDate)
+			timer.startSeconds - (Math.floor(now.valueOf() / 1000) - timer.startDate)
 		)
 	}
 
 	function initEvents(): void {
-		const target = document
-		const eventType = 'visibilitychange'
-		eventListenerAdd(target, eventType, () => {
+		document.addEventListener('visibilitychange', () => {
 			syncStopwatch()
 			syncTimer()
 		})
@@ -167,25 +154,25 @@ const _: VoidComponent = () => {
 		const store = db.readStore(IDBStoreNames.settings)
 		if (!store) return
 
-		promiseDone(db.get<IDBStoreSettings<Pages>>(
+		db.get<IDBStoreSettings<Pages>>(
 			store,
 			IDBStoreKeysSettings.lastPage
-		), (result) => setPage(m => result?.value ?? m))
+		).then((result) => setPage(m => result?.value ?? m))
 
-		promiseDone(db.get<IDBStoreSettings<boolean>>(
+		db.get<IDBStoreSettings<boolean>>(
 			store,
 			IDBStoreKeysSettings.keepAwake
-		), (result) => toggleWakeLock(result?.value ?? settings.keepAwake))
+		).then((result) => toggleWakeLock(result?.value ?? settings.keepAwake))
 	}
 
 	function initLastInput(): void {
 		const store = db.readStore(IDBStoreNames.lastInput)
 		if (!store) return
 
-		promiseDone(db.get<IDBStoreLastInput<number>>(
+		db.get<IDBStoreLastInput<number>>(
 			store,
 			IDBStoreKeysLastInput.timerStartSeconds
-		), (result) => command(
+		).then((result) => command(
 			Commands.updateTimerStartSeconds,
 			result?.value ?? timer.startSeconds
 		))

@@ -2,7 +2,6 @@ import { children, createContext, createMemo, mergeProps, Show, splitProps, useC
 
 import { attrSetIfExist, attrClassList } from "@/utils/attributes"
 import { AppColors } from "@/enums/colors"
-import { typeIsBoolean } from "@/utils/typecheck"
 
 import Icon from "@/components/Icon"
 import Button, { ButtonIndicatorPosition, ButtonVariant, type ButtonProps } from "@/components/Button"
@@ -73,7 +72,7 @@ const SideNavigation: ParentComponent<SideNavigationProps> = ($props) => {
 	const interactiveElement = createMemo(() => props["c:interactiveElements"])
 
 	// hack to solve https://github.com/solidjs/solid/issues/2130
-	const getInteractiveElement = createMemo(() => typeIsBoolean(interactiveElement())
+	const getInteractiveElement = createMemo(() => typeof interactiveElement() === 'boolean'
 		? undefined
 		: interactiveElement() as string | HTMLElement[]
 	)

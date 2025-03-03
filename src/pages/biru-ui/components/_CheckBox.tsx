@@ -3,7 +3,6 @@ import { For, type VoidComponent, createSignal } from "solid-js"
 import CheckBox, { CheckBoxVariant } from "@/components/CheckBox"
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
-import { eventCurrentTarget } from "@/utils/event"
 
 const _: VoidComponent = () => {
 	const [variant, setVariant] = createSignal<CheckBoxVariant>(CheckBoxVariant.check)
@@ -43,7 +42,7 @@ const _: VoidComponent = () => {
 			</Dropdown>
 			<CheckBox
 				checked={disabled()}
-				onChange={ev => setDisabled(eventCurrentTarget(ev).checked)}>
+				onChange={ev => setDisabled(ev.currentTarget.checked)}>
 				Disabled
 			</CheckBox>
 		</PlaygroundOptions>

@@ -1,7 +1,5 @@
 import { createSignal, For, Show, type VoidComponent } from "solid-js"
 
-import { eventCurrentTarget, eventStopPropagation } from "@/utils/event"
-
 import Icon from "@/components/Icon"
 import { IconButton } from "@/components/Button"
 import CheckBox from "@/components/CheckBox"
@@ -30,8 +28,8 @@ const _: VoidComponent = () => {
 						c:subtitle={<Show when={subtitle()}>Deserunt commodo qui aute veniam tempor ipsum.</Show>}
 						c:leading={<Show when={leading()}><Icon c:code={ICON_INFO}/></Show>}
 						c:trailing={<Show when={trailing()}>
-							<IconButton onClick={ev => eventStopPropagation(ev)} c:code={ICON_HISTORY}/>
-							<IconButton onClick={ev => eventStopPropagation(ev)} c:code={ICON_OPEN}/>
+							<IconButton onClick={ev => ev.stopPropagation()} c:code={ICON_HISTORY}/>
+							<IconButton onClick={ev => ev.stopPropagation()} c:code={ICON_OPEN}/>
 						</Show>}>
 						<Show when={title()}>Click to expand</Show>
 					</ExpanderHeader>}
@@ -57,32 +55,32 @@ const _: VoidComponent = () => {
 			</Dropdown>
 			<CheckBox
 				checked={title()}
-				onChange={ev => setTitle(eventCurrentTarget(ev).checked)}>
+				onChange={ev => setTitle(ev.currentTarget.checked)}>
 				Title
 			</CheckBox>
 			<CheckBox
 				checked={subtitle()}
-				onChange={ev => setSubtitle(eventCurrentTarget(ev).checked)}>
+				onChange={ev => setSubtitle(ev.currentTarget.checked)}>
 				Subtitle
 			</CheckBox>
 			<CheckBox
 				checked={leading()}
-				onChange={ev => setLeading(eventCurrentTarget(ev).checked)}>
+				onChange={ev => setLeading(ev.currentTarget.checked)}>
 				Leading
 			</CheckBox>
 			<CheckBox
 				checked={trailing()}
-				onChange={ev => setTrailing(eventCurrentTarget(ev).checked)}>
+				onChange={ev => setTrailing(ev.currentTarget.checked)}>
 				Trailing
 			</CheckBox>
 			<CheckBox
 				checked={useExpandIcon()}
-				onChange={ev => setUseExpandIcon(eventCurrentTarget(ev).checked)}>
+				onChange={ev => setUseExpandIcon(ev.currentTarget.checked)}>
 				Show expand icon
 			</CheckBox>
 			<CheckBox
 				checked={content()}
-				onChange={ev => setContent(eventCurrentTarget(ev).checked)}>
+				onChange={ev => setContent(ev.currentTarget.checked)}>
 				Content
 			</CheckBox>
 		</PlaygroundOptions>

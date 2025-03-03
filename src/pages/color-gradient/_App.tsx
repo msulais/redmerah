@@ -1,20 +1,14 @@
 import { onMount, type VoidComponent } from "solid-js"
-import { createStore } from "solid-js/store"
+import { createStore, produce } from "solid-js/store"
 
 import type { Settings, Gradient, LinearGradient, RadialGradient, ConicGradient, GradientData, ColorStopGradient } from "./_type"
+import { type ObjectStoreColorStopGradient, type ObjectStoreConicGradient, type ObjectStoreGradientData, type ObjectStoreLinearGradient, type ObjectStoreRadialGradient, type ObjectStoreSettings, ObjectStoreNames, ObjectStoreSettingsKeys } from "./_storage"
 import type { HEXColor } from "@/types/color"
 import { removeSplashScreen } from "@/utils/splash"
 import { ColorSpace, Commands, GradientType, HueInterpolationMethod, PolarColorSpace, RadialGradientShape, RectangularColorSpace } from "./_enums"
 import { colorIsValidWithAlpha } from "@/utils/color"
-import { mathAbs, mathMin, mathRound } from "@/utils/math"
-import { IDB, idbStoreDelete, idbStorePut } from "@/utils/indexeddb"
+import { IDB } from "@/utils/indexeddb"
 import { DatabaseNames } from "@/enums/storage"
-import { promiseDone } from "@/utils/object"
-import { arrayAt, arrayConcat, arrayFilter, arrayForEach, arrayLength, arrayMap, arrayPush, arrayReverse, arraySlice, arraySort } from "@/utils/array"
-import { numberParse, numberToString } from "@/utils/number"
-import { stringLength, stringSubstring, stringToUpperCase } from "@/utils/string"
-import { regexTest } from "@/utils/regex"
-import { type ObjectStoreColorStopGradient, type ObjectStoreConicGradient, type ObjectStoreGradientData, type ObjectStoreLinearGradient, type ObjectStoreRadialGradient, type ObjectStoreSettings, ObjectStoreNames, ObjectStoreSettingsKeys } from "./_storage"
 
 import App from "@/components/App"
 import AppBar from "./_AppBar"
@@ -90,20 +84,20 @@ const _: VoidComponent = () => {
 		const store = db.readStore(ObjectStoreNames.settings)
 		if (store == null) return
 
-		promiseDone(db.get<ObjectStoreSettings<number>>(
+		db.get<ObjectStoreSettings<number>>(
 			store,
 			ObjectStoreSettingsKeys.aspectRatio
-		), result => setSettings('aspectRatio', d => result?.value ?? d))
+		).then(result => setSettings('aspectRatio', d => result?.value ?? d))
 
-		promiseDone(db.get<ObjectStoreSettings<number>>(
+		db.get<ObjectStoreSettings<number>>(
 			store,
 			ObjectStoreSettingsKeys.borderRadius
-		), result => setSettings('borderRadius', d => result?.value ?? d))
+		).then(result => setSettings('borderRadius', d => result?.value ?? d))
 
-		promiseDone(db.get<ObjectStoreSettings<ColorSpace>>(
+		db.get<ObjectStoreSettings<ColorSpace>>(
 			store,
 			ObjectStoreSettingsKeys.colorSpace
-		), result => setSettings('colorSpace', d => result?.value ?? d))
+		).then(result => setSettings('colorSpace', d => result?.value ?? d))
 	}
 
 	async function initGradientData(): Promise<void> {
@@ -127,10 +121,10 @@ const _: VoidComponent = () => {
 			const $data: GradientData[] = []
 			const data = await db.getAll<ObjectStoreGradientData>(storeGradientData) ?? []
 			const stops = await db.getAll<ObjectStoreColorStopGradient>(storeColorStopGradient) ?? []
-			if (arrayLength(stops) == 0 || arrayLength(data) == 0) return
+			if (stops.length == 0 || data.length == 0) return
 
-			arraySort(stops, (a, b) => a.id - b.id)
-			arraySort(data, (a, b) => a.id - b.id)
+			stops.sort((a, b) => a.id - b.id)
+			data.sort((a, b) => a.id - b.id)
 			for (const value of data) $data[value.id] = {
 				id: value.id,
 				gradients: []
@@ -139,29 +133,28 @@ const _: VoidComponent = () => {
 			const gradients: (ObjectStoreLinearGradient | ObjectStoreRadialGradient | ObjectStoreConicGradient)[] = []
 			if (storeLinearGradient) {
 				const linear = await db.getAll<ObjectStoreLinearGradient>(storeLinearGradient) ?? []
-				if (arrayLength(linear) > 0) arrayPush(gradients, ...linear)
+				if (linear.length > 0) gradients.push(...linear)
 			}
 			if (storeRadialGradient) {
 				const gradient = await db.getAll<ObjectStoreRadialGradient>(storeRadialGradient) ?? []
-				if (arrayLength(gradient) > 0) arrayPush(gradients, ...gradient)
+				if (gradient.length > 0) gradients.push(...gradient)
 			}
 			if (storeConicGradient) {
 				const conic = await db.getAll<ObjectStoreLinearGradient>(storeConicGradient) ?? []
-				if (arrayLength(conic) > 0) arrayPush(gradients, ...conic)
+				if (conic.length > 0) gradients.push(...conic)
 			}
 
-			arraySort(gradients, (a, b) => a.id - b.id)
+			gradients.sort((a, b) => a.id - b.id)
 			for (const gradient of gradients){
 				if ($data[gradient.dataId] == null) return
 
-				const $stops: ColorStopGradient[] = arrayFilter(stops, stop =>
+				const $stops: ColorStopGradient[] = stops.filter(stop =>
 					stop.gradientType == gradient.type
 					&& stop.gradientId == gradient.id
 				)
+				if ($stops.length == 0) return
 
-				if (arrayLength($stops) == 0) return
-
-				arrayPush($data[gradient.dataId].gradients, (() => {
+				$data[gradient.dataId].gradients.push((() => {
 					const dataId = gradient.dataId
 					const id = gradient.id
 					const colorInterpolationMethod = gradient.colorInterpolationMethod
@@ -193,7 +186,7 @@ const _: VoidComponent = () => {
 				})())
 			}
 
-			setGradientData(arrayReverse(arrayFilter($data, v => v != null)))
+			setGradientData($data.filter(v => v != null).reverse())
 		} catch {}
 	}
 
@@ -234,31 +227,31 @@ const _: VoidComponent = () => {
 	}
 
 	function addColorStop(gradientIndex: number): void {
-		const colorStops = arraySort([...gradients[gradientIndex].colorStopList], (a, b) => a.size - b.size)
+		const colorStops = [...gradients[gradientIndex].colorStopList].sort((a, b) => a.size - b.size)
 		let color: HEXColor = '#000000', size: number = 0, diff: number = 0
 
-		for (let i = -1; i < arrayLength(colorStops); i++) {
+		for (let i = -1; i < colorStops.length; i++) {
 			let $diff = 0
-			if (i == -1) $diff = mathRound(colorStops[i + 1].size / 2)
-			else if (i == arrayLength(colorStops) - 1) $diff = mathRound((100 - colorStops[i].size) / 2)
-			else $diff = mathRound((colorStops[i + 1].size - colorStops[i].size) / 2)
+			if (i == -1) $diff = Math.round(colorStops[i + 1].size / 2)
+			else if (i == colorStops.length - 1) $diff = Math.round((100 - colorStops[i].size) / 2)
+			else $diff = Math.round((colorStops[i + 1].size - colorStops[i].size) / 2)
 
 			if ($diff > diff) {
 				diff = $diff
 				size = (i == -1? 0 : colorStops[i].size) + diff
 				if (i == -1) color = colorStops[0].color
-				else if (i == arrayLength(colorStops) - 1) color = colorStops[i].color
+				else if (i == colorStops.length - 1) color = colorStops[i].color
 				else {
-					const color1 = numberParse(stringSubstring(colorStops[i+1].color, 1, 7), true, 16)
-					const color2 = numberParse(stringSubstring(colorStops[i].color, 1, 7), true, 16)
-					color = '#' + stringToUpperCase(numberToString((
-						mathMin(color1, color2)
-						+ mathAbs(mathRound((color1 - color2) / 2))
-					), 16))
+					const color1 = Number.parseInt(colorStops[i+1].color.substring(1, 7), 16)
+					const color2 = Number.parseInt(colorStops[i].color.substring(1, 7), 16)
+					color = '#' + (
+						Math.min(color1, color2)
+						+ Math.abs(Math.round((color1 - color2) / 2))
+					).toString(16).toUpperCase()
 				}
 
-				if (regexTest(/ff$/i, color) && stringLength(color) > 9) {
-					color = stringSubstring(color, 0, 7) as HEXColor
+				if (/ff$/i.test(color) && color.length > 9) {
+					color = color.substring(0, 7) as HEXColor
 				}
 			}
 		}
@@ -294,26 +287,26 @@ const _: VoidComponent = () => {
 			ObjectStoreNames.radialGradient,
 			ObjectStoreNames.conicGradient,
 		)
-		const get_id = (ids: number[]) => arrayLength(ids) == 0
+		const get_id = (ids: number[]) => ids.length == 0
 			? 1
-			: arrayAt(arraySort([...ids], (a, b) => a - b), -1)! + 1
-		const dataIds: number[] = arrayMap(gradientData, d => d.id)
+			: [...ids].sort((a, b) => a - b).at(-1)! + 1
+		const dataIds: number[] = gradientData.map(d => d.id)
 		const gradientsIds: number[] = []
 		const stopsIds: number[] = []
 		const newData: GradientData = {
 			id: get_id(dataIds),
-			gradients: [...arrayMap(gradients, gradient => ({
+			gradients: [...gradients.map(gradient => ({
 				...gradient,
 				colorStopList: [
-					...arrayMap(gradient.colorStopList, colorStop => ({...colorStop}))
+					...gradient.colorStopList.map(colorStop => ({...colorStop}))
 				]
 			}))]
 		}
 
 		for (const data of gradientData) {
 			for (const gradient of data.gradients) {
-				arrayPush(gradientsIds, gradient.id)
-				arrayPush(stopsIds, ...arrayMap(gradient.colorStopList, v => v.id))
+				gradientsIds.push(gradient.id)
+				stopsIds.push(...gradient.colorStopList.map( v => v.id))
 			}
 		}
 
@@ -324,8 +317,8 @@ const _: VoidComponent = () => {
 			&& storeLinearGradient
 			&& storeRadialGradient
 		) {
-			idbStorePut(storeGradientData, {id: newData.id} satisfies ObjectStoreGradientData)
-			arrayForEach(gradients, (gradient, i) => {
+			storeGradientData.put({id: newData.id} satisfies ObjectStoreGradientData)
+			gradients.forEach((gradient, i) => {
 				const dataId = newData.id
 				const colorInterpolationMethod = gradient.colorInterpolationMethod
 				const type = gradient.type
@@ -333,21 +326,21 @@ const _: VoidComponent = () => {
 				const repeat = gradient.repeat
 				const id = get_id(gradientsIds)
 				const gradientId = id
-				arrayPush(gradientsIds, id)
+				gradientsIds.push(id)
 
-				if (type == GradientType.conic) idbStorePut(storeConicGradient, {
+				if (type == GradientType.conic) storeConicGradient.put({
 					id, colorInterpolationMethod: colorInterpolationMethod, dataId: dataId, hueInterpolationMethod: hueInterpolationMethod, repeat, type,
 					angle: gradient.angle,
 					positionX: gradient.positionX,
 					positionY: gradient.positionY,
 				} satisfies ObjectStoreConicGradient)
 
-				else if (type == GradientType.linear) idbStorePut(storeLinearGradient, {
+				else if (type == GradientType.linear) storeLinearGradient.put({
 					id, colorInterpolationMethod: colorInterpolationMethod, dataId: dataId, hueInterpolationMethod: hueInterpolationMethod, repeat, type,
 					angle: gradient.angle,
 				} satisfies ObjectStoreLinearGradient)
 
-				else if (type == GradientType.radial) idbStorePut(storeRadialGradient, {
+				else if (type == GradientType.radial) storeRadialGradient.put({
 					id, colorInterpolationMethod: colorInterpolationMethod, dataId: dataId, hueInterpolationMethod: hueInterpolationMethod, repeat, type,
 					positionX: gradient.positionX,
 					positionY: gradient.positionY,
@@ -360,17 +353,17 @@ const _: VoidComponent = () => {
 				newData.gradients[i].id = id
 				newData.gradients[i].dataId = dataId
 
-				arrayForEach(gradient.colorStopList, (color_stop, j) => {
+				gradient.colorStopList.forEach((colorStop, j) => {
 					const id = get_id(stopsIds)
-					arrayPush(stopsIds, id)
+					stopsIds.push(id)
 					newData.gradients[i].colorStopList[j].id = id
 					newData.gradients[i].colorStopList[j].gradientId = gradientId
 					newData.gradients[i].colorStopList[j].dataId = dataId
-					idbStorePut(storeColorStopGradient, {
+					storeColorStopGradient.put({
 						id, dataId: dataId, gradientId: gradientId,
-						color: color_stop.color,
+						color: colorStop.color,
 						gradientType: type,
-						size: color_stop.size
+						size: colorStop.size
 					} satisfies ObjectStoreColorStopGradient)
 				})
 			})
@@ -394,42 +387,40 @@ const _: VoidComponent = () => {
 			ObjectStoreNames.conicGradient,
 		)
 
-		storeGradientData != null
-		&& idbStoreDelete(storeGradientData, gradientData.id)
+		storeGradientData?.delete(gradientData.id)
 
 		for (const gradient of gradientData.gradients) {
 			const type = gradient.type
 			const id = gradient.id
 
-			type == GradientType.linear
-			&& storeLinearGradient != null
-			&& idbStoreDelete(storeLinearGradient, id);
+			switch (type) {
+			case GradientType.linear:
+				storeLinearGradient?.delete(id)
+				break
+			case GradientType.radial:
+				storeRadialGradient?.delete(id)
+				break
+			case GradientType.conic:
+				storeConicGradient?.delete(id)
+				break
+			}
 
-			type == GradientType.radial
-			&& storeRadialGradient != null
-			&& idbStoreDelete(storeRadialGradient, id);
-
-			type == GradientType.conic
-			&& storeConicGradient != null
-			&& idbStoreDelete(storeConicGradient, id);
-
-			storeColorStopGradient != null
-			&& arrayForEach(gradient.colorStopList, color_stop => idbStoreDelete(storeColorStopGradient, color_stop.id))
+			if (storeColorStopGradient) {
+				for (const colorStop of gradient.colorStopList) {
+					storeColorStopGradient.delete(colorStop.id)
+				}
+			}
 		}
 
-		setGradientData(data => arrayConcat(
-			arraySlice(data, 0, index),
-			arraySlice(data, index + 1)
-		))
+		setGradientData(produce(data => data.splice(index, 1)))
 	}
 
 	function viewGradientData(gradientData: GradientData): void {
-		setGradient([...arrayMap(
-			gradientData.gradients,
+		setGradient([...gradientData.gradients.map(
 			gradient => ({
 				...gradient,
 				colorStopList: [
-					...arrayMap(gradient.colorStopList, color_stop => ({...color_stop}))
+					...gradient.colorStopList.map(colorStop => ({...colorStop}))
 				]
 			})
 		)])
@@ -439,7 +430,7 @@ const _: VoidComponent = () => {
         const store = db.writeStore(ObjectStoreNames.settings)
 		if (!store) return
 
-		for (const item of items) idbStorePut(store, {
+		for (const item of items) store.put({
 			key: item[0],
 			value: item[1]
 		})
@@ -489,10 +480,7 @@ const _: VoidComponent = () => {
 			const [gradientIndex, colorStopIndex] = args as [number, number]
 			setGradient(
 				gradientIndex, 'colorStopList',
-				list => arrayConcat(
-					arraySlice(list, 0, colorStopIndex),
-					arraySlice(list, colorStopIndex + 1)
-				)
+				produce(list => list.splice(colorStopIndex))
 			)
 			break
 		}
@@ -500,17 +488,14 @@ const _: VoidComponent = () => {
 			const firstGradient = gradients[0]
 			const gradient: Gradient = {
 				...firstGradient,
-				colorStopList: [...arrayMap(firstGradient.colorStopList, v => ({...v}))],
+				colorStopList: [...firstGradient.colorStopList.map(v => ({...v}))],
 			}
 			setGradient(gradients => [gradient, ...gradients])
 			break
 		}
 		case Commands.removeGradient: {
 			const [gradientIndex] = args as [number]
-			setGradient(list => arrayConcat(
-				arraySlice(list, 0, gradientIndex),
-				arraySlice(list, gradientIndex + 1)
-			))
+			setGradient(produce(list => list.splice(gradientIndex)))
 			break
 		}
 		case Commands.updateSettingsColorSpace: {

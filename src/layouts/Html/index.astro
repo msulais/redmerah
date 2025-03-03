@@ -6,7 +6,6 @@ import { CornerData } from '@/enums/corner'
 import { ElementIds } from '@/enums/ids'
 import { PlatformData } from '@/enums/platforms'
 import { AnimationData } from '@/enums/animation'
-import { mathRound } from '@/utils/math'
 import '@/styles/variables.scss'
 import '@/styles/animations.scss'
 import '@/styles/index.scss'
@@ -16,9 +15,9 @@ type Props = {
 	description?: string
 	lang?: string
 	theme?: ThemeData
-	accent_color?: HEXColor
+	accentColor?: HEXColor
 	corner?: CornerData
-	component_count?: number
+	componentCount?: number
 }
 
 const {
@@ -26,15 +25,15 @@ const {
 	description = 'Get things done faster with zero interruptions! Redmerah offers powerful, privacy-focused tools to boost your productivity. Free, secure & data stays local.',
 	lang = 'en-US',
 	theme = ThemeData.system,
-	accent_color = '#FF0000',
+	accentColor = '#FF0000',
 	corner = CornerData.round,
-	component_count = 0
+	componentCount = 0
 } = Astro.props
 
-const colors = colorGeneratePalette(accent_color)
-const color_to_css = (hex: HEXColor) => {
+const colors = colorGeneratePalette(accentColor)
+const colorToCSS = (hex: HEXColor) => {
 	const rgb = colorHexToRgb(hex)
-	return `${mathRound(rgb.r * 0xff)}, ${mathRound(rgb.g * 0xff)}, ${mathRound(rgb.b * 0xff)}`
+	return `${Math.round(rgb.r * 0xff)}, ${Math.round(rgb.g * 0xff)}, ${Math.round(rgb.b * 0xff)}`
 }
 ---
 
@@ -42,10 +41,10 @@ const color_to_css = (hex: HEXColor) => {
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<meta name="theme-color" content={ accent_color } />
+		<meta name="theme-color" content={ accentColor } />
 		<meta name="description" content={ description }>
 		<title>{ title }</title>
-		<style id={ElementIds.colorAccent} set:html={`:root{--g-color-accent-light: ${color_to_css(colors.color)};--g-color-accent-dark: ${color_to_css(colors.colorDark)};--g-color-on-accent-light: ${color_to_css(colors.onColor)};--g-color-on-accent-dark: ${color_to_css(colors.onColorDark)};}`}/>
+		<style id={ElementIds.colorAccent} set:html={`:root{--g-color-accent-light: ${colorToCSS(colors.color)};--g-color-accent-dark: ${colorToCSS(colors.colorDark)};--g-color-on-accent-light: ${colorToCSS(colors.onColor)};--g-color-on-accent-dark: ${colorToCSS(colors.onColorDark)};}`}/>
 		<slot name="favicon">
 			<link rel="shortcut icon" type="image/ico" href="/favicon/favicon.ico" />
 			<link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
@@ -55,7 +54,7 @@ const color_to_css = (hex: HEXColor) => {
 		</slot>
 		<slot name="open-graph-protocol" />
 	</head>
-	<body data-g-component-count={component_count}>
+	<body data-g-component-count={componentCount}>
 		<slot />
 	</body>
 </html>

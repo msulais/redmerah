@@ -1,7 +1,6 @@
 import { createSignal, For, Show, type VoidComponent } from "solid-js"
 
 import { ICON_APPS, ICON_CALL, ICON_GIFT, ICON_HOME, ICON_INFO, ICON_LINE_HORIZONTAL_3, ICON_RECEIPT, ICON_SHIELD_CHECKMARK } from "@/constants/icons"
-import { eventCurrentTarget } from "@/utils/event"
 
 import Button, { ButtonVariant, IconButton } from "@/components/Button"
 import CheckBox from "@/components/CheckBox"
@@ -61,27 +60,27 @@ const _: VoidComponent = () => {
 			</Dropdown>
 			<CheckBox
 				checked={important()}
-				onChange={ev => setImportant(eventCurrentTarget(ev).checked)}>
+				onChange={ev => setImportant(ev.currentTarget.checked)}>
 				Important
 			</CheckBox>
 			<CheckBox
 				checked={hasHeader()}
-				onChange={ev => setHasHeader(eventCurrentTarget(ev).checked)}>
+				onChange={ev => setHasHeader(ev.currentTarget.checked)}>
 				Header
 			</CheckBox>
 			<CheckBox
 				checked={hasFooter()}
-				onChange={ev => setHasFooter(eventCurrentTarget(ev).checked)}>
+				onChange={ev => setHasFooter(ev.currentTarget.checked)}>
 				Footer
 			</CheckBox>
 			<CheckBox
 				checked={hasContent()}
-				onChange={ev => setHasContent(eventCurrentTarget(ev).checked)}>
+				onChange={ev => setHasContent(ev.currentTarget.checked)}>
 				Content
 			</CheckBox>
 			<CheckBox
 				checked={contentAutoFocus()}
-				onChange={ev => setContentAutoFocus(eventCurrentTarget(ev).checked)}>
+				onChange={ev => setContentAutoFocus(ev.currentTarget.checked)}>
 				Content autofocus
 			</CheckBox>
 		</PlaygroundOptions>

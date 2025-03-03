@@ -1,15 +1,11 @@
-import { createStore } from "solid-js/store"
+import { createStore, produce } from "solid-js/store"
 import { Show, createContext, createEffect, createMemo, createSelector, createSignal, mergeProps, onCleanup, splitProps, useContext, type Accessor, type ParentComponent } from "solid-js"
 import { mergeRefs } from "@solid-primitives/refs"
 
-import { elementBySelector, elementDataset, elementFocus, elementRect, elementStyleRemove, elementStyleSet, elementTagName, elementValidTarget } from "@/utils/element"
-import { eventCall, eventCurrentTarget } from "@/utils/event"
-import { arrayConcat, arrayEquals, arrayFilter, arrayFindIndex, arrayJoin, arrayLength, arrayMap, arrayPush, arraySlice, arraySome } from "@/utils/array"
-import { rectWidth } from "@/utils/rect"
-import { documentActive } from "@/utils/document"
-import { typeIsNumber } from "@/utils/typecheck"
-import { stringStartsWith, stringSubstring } from "@/utils/string"
-import { numberParse, numberSafe } from "@/utils/number"
+import { elementValidTarget } from "@/utils/element"
+import { eventCall } from "@/utils/event"
+import { arrayEquals } from "@/utils/array"
+import { numberSafe } from "@/utils/number"
 import { ICON_CHEVRON_DOWN } from "@/constants/icons"
 
 import Menu, { MenuItem, type MenuProps, MenuPosition as DropdownPosition, type MenuItemProps, openMenu, closeMenu, repositionMenu } from "@/components/Menu"
@@ -38,10 +34,10 @@ const DropdownOption: ParentComponent<DropdownOptionProps> = ($props) => {
 	])
 	const context = useContext(DropdownContext)
 	const selected = createMemo<boolean>(() => {
-		const selected_values = context?.selectedValues()
-		return selected_values == undefined
+		const selectedValues = context?.selectedValues()
+		return selectedValues == undefined
 			? false
-			: arraySome(selected_values, v => v === props['c:value'])
+			: selectedValues.some(v => v === props['c:value'])
 	})
 	let value: string | number | null = null
 	let text: string | null = null
@@ -64,7 +60,7 @@ const DropdownOption: ParentComponent<DropdownOptionProps> = ($props) => {
 	return (<MenuItem
 		c:selected={props["c:selected"] ?? context?.multiple()? undefined : selected()}
 		c:checked={props["c:checked"] ?? context?.multiple()? selected() : undefined}
-		data-c-dropdown-value={(typeIsNumber(props['c:value'])? 'number:' : '') + props['c:value']}
+		data-c-dropdown-value={(typeof props['c:value'] === 'number'? 'number:' : '') + props['c:value']}
 		{...other}>
 		{ props.children ?? props['c:text']}
 	</MenuItem>)
@@ -99,7 +95,7 @@ const Dropdown: ParentComponent<DropdownProps> = ($props) => {
 	const [selectedValues, setSelectedValues] = createStore<(string | number)[]>([])
 	const isSelected = createSelector<(string | number)[], string | number>(
 		() => selectedValues,
-		(value, array) => arraySome(array, v => v === value)
+		(value, array) => array.some(v => v === value)
 	)
 	let localValues: (string | number)[] = []
 	let localMultiple: boolean = false
@@ -114,27 +110,24 @@ const Dropdown: ParentComponent<DropdownProps> = ($props) => {
 			position: DropdownPosition.centerBottom,
 			onOpen: () => focusToSelectedOptions()
 		})
-		elementStyleRemove(menuRef, 'width')
-		const buttonWidth = rectWidth(elementRect(buttonRef))
-		const menuWidth = rectWidth(elementRect(menuRef))
-		if (buttonWidth > menuWidth) elementStyleSet(
-			menuRef,
-			'width',
-			`${buttonWidth}px`
-		)
+		menuRef.style.removeProperty('width')
+		const buttonWidth = buttonRef.getBoundingClientRect().width
+		const menuWidth = menuRef.getBoundingClientRect().width
+		if (buttonWidth > menuWidth) menuRef.style.setProperty('width', `${buttonWidth}px`)
+
 		repositionMenu(menuRef)
 	}
 
 	function selectOption(value: string | number): void {
-		const index = arrayFindIndex(selectedValues, v => v === value)
+		const index = selectedValues.findIndex(v => v === value)
 		if (props['c:multiple']) {
-			setSelectedValues(v => index >= 0
-				? arrayConcat(
-					arraySlice(v, 0, index),
-					arraySlice(v, index + 1)
-				)
-				: [...v, value]
-			)
+			setSelectedValues(produce(v => {
+				if (index >= 0) {
+					return v.splice(index, 1)
+				}
+
+				v.push(value)
+			}))
 		}
 		else {
 			closeMenu(menuRef)
@@ -143,23 +136,19 @@ const Dropdown: ParentComponent<DropdownProps> = ($props) => {
 			setSelectedValues([value])
 		}
 
-		props["c:onChange"]?.(arrayFilter(options, o => isSelected(o.value)))
-		elementStyleRemove(menuRef, 'width')
-		const buttonWidth = rectWidth(elementRect(buttonRef))
-		const menuWidth = rectWidth(elementRect(menuRef))
-		if (buttonWidth > menuWidth) elementStyleSet(
-			menuRef,
-			'width',
-			`${buttonWidth}px`
-		)
+		menuRef.style.removeProperty('width')
+		const buttonWidth = buttonRef.getBoundingClientRect().width
+		const menuWidth = menuRef.getBoundingClientRect().width
+		if (buttonWidth > menuWidth) menuRef.style.setProperty('width', `${buttonWidth}px`)
+
 		repositionMenu(menuRef)
 	}
 
 	function focusToSelectedOptions(){
-		const btn = elementBySelector('button[data-c-dropdown-value][data-c-selected]', menuRef)
+		const btn = menuRef.querySelector<HTMLButtonElement>('button[data-c-dropdown-value][data-c-selected]')
 		if (!btn) return
 
-		elementFocus(btn)
+		btn.focus()
 	}
 
 	createEffect(() => {
@@ -168,11 +157,11 @@ const Dropdown: ParentComponent<DropdownProps> = ($props) => {
 
 		if (!arrayEquals(values ?? [], localValues)) {
 			localValues = values ?? []
-			const values2: string[] = []
+			const values2: (string | number)[] = []
 			for (const value of localValues) {
-				if (!arraySome(options, o => o.value === value)) continue
+				if (!options.some(o => o.value === value)) continue
 
-				arrayPush(values2, value)
+				values2.push(value)
 				if (!multiple) break
 			}
 
@@ -181,14 +170,14 @@ const Dropdown: ParentComponent<DropdownProps> = ($props) => {
 		if ((multiple ?? false) != localMultiple) {
 			localMultiple = multiple ?? false
 
-			if (!multiple) setSelectedValues(d => arraySlice(d, 0, 1))
+			if (!multiple) setSelectedValues(d => d.slice(0, 1))
 		}
 	})
 
 	return (<DropdownContext.Provider value={{
 		onMountOption: (value, text) => {
 			let index: number | null = null
-			for (let i = 0; i < arrayLength(options); i++) {
+			for (let i = 0; i < options.length; i++) {
 				const option = options[i]
 				const is_same_value = option.value === value
 				const is_same_text = option.text === text
@@ -202,40 +191,34 @@ const Dropdown: ParentComponent<DropdownProps> = ($props) => {
 
 			// same value but different text
 			if (index != null) setOptions(o => [
-				...arraySlice(o, 0, index),
+				...o.slice(0, index),
 				{value, text},
-				...arraySlice(o, index + 1)
+				...o.slice(index + 1)
 			])
 			else setOptions(d => [...d, {value, text}])
 
-			const selected_values: string[] = []
+			const selectedValues: (string | number)[] = []
 			if (Array.isArray(props['c:values'])){
 				for (const value of props['c:values']) {
-					if (!arraySome(options, v => v.value === value)) continue
+					if (!options.some(v => v.value === value)) continue
 
-					arrayPush(selected_values, value)
+					selectedValues.push(value)
 					if (!localMultiple) break
 				}
 			}
 
-			setSelectedValues([...selected_values])
+			setSelectedValues([...selectedValues])
 		},
 		onCleanUpOption: (value) => {
 			if (value == null) return;
 
-			let index = arrayFindIndex(selectedValues, v => v === value)
-			if (index >= 0) setSelectedValues(d => arrayConcat(
-				arraySlice(d, 0, index),
-				arraySlice(d, index + 1)
-			))
+			let index = selectedValues.findIndex(v => v === value)
+			if (index >= 0) setSelectedValues(produce(d => d.splice(index, 1)))
 
-			index = arrayFindIndex(options, o => o.value === value)
+			index = options.findIndex(o => o.value === value)
 			if (index < 0) return
 
-			setOptions(d => arrayConcat(
-				arraySlice(d, 0, index),
-				arraySlice(d, index + 1)
-			))
+			setOptions(produce(d => d.splice(index, 1)))
 		},
 		multiple: () => props['c:multiple'] ?? false,
 		selectedValues: () => selectedValues,
@@ -256,9 +239,9 @@ const Dropdown: ParentComponent<DropdownProps> = ($props) => {
 			<Show when={props['c:label']}>
 				<div class="c-dropdown-label">{props['c:label']}</div>
 			</Show>
-			{arrayLength(selectedValues) == 0
+			{selectedValues.length == 0
 				? props['c:text']
-				: arrayJoin(arrayMap(arrayFilter(options, v => isSelected(v.value)), v => v.text), ', ')
+				: options.filter(v => isSelected(v.value)).map(v => v.text).join(', ')
 			}
 			<div style="flex:1"/>
 			<Icon c:code={ICON_CHEVRON_DOWN}/>
@@ -270,21 +253,22 @@ const Dropdown: ParentComponent<DropdownProps> = ($props) => {
 			}}
 			onClick={(ev) => {
 				eventCall(ev, menuProps.onClick)
-				const button = documentActive()!
+				const button = document.activeElement! as HTMLButtonElement
 				if (!elementValidTarget(
-					eventCurrentTarget(ev),
+					ev.currentTarget,
 					button,
-					el => elementTagName(el) == 'BUTTON'
+					el => el.tagName == 'BUTTON'
 				)) return
 
-				let dropdown_value: string | number | undefined = elementDataset(button, 'cDropdownValue')
-				if (!dropdown_value) return
+				const dataset = button.dataset
+				let dataDropdownValue: string | number | undefined = dataset.cDropdownValue
+				if (!dataDropdownValue) return
 
-				if (stringStartsWith(dropdown_value, 'number:')) {
-					dropdown_value = numberSafe(numberParse(stringSubstring(dropdown_value, 7)))
+				if (dataDropdownValue.startsWith('number:')) {
+					dataDropdownValue = numberSafe(Number.parseFloat(dataDropdownValue.substring(7)))
 				}
 
-				selectOption(dropdown_value)
+				selectOption(dataDropdownValue)
 			}}
 			ref={mergeRefs(menuProps.ref, r => menuRef = r)}
 			classList={{

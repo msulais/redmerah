@@ -1,15 +1,11 @@
 import { createMemo, createSignal, createUniqueId, onMount, Show, type VoidComponent } from "solid-js"
 
 import type { Settings } from "./_types"
-import { eventListenerAdd, eventCurrentTarget } from "@/utils/event"
-import { attrRemove, attrSet, attrSetIfExist } from "@/utils/attributes"
+import { attrSetIfExist } from "@/utils/attributes"
 import { BodyAttributes } from "@/enums/attributes"
-import { documentActive, documentBody } from "@/utils/document"
-import { windowMatches } from "@/utils/window"
 import { DEFAULT_INPUT_VIEW_OPTION, MIN_EDITOR_WIDTH } from "./_constants"
-import { elementId, elementPointerCaptureRelease, elementPointerCaptureSet, elementTagName, elementValidTarget } from "@/utils/element"
+import { elementValidTarget } from "@/utils/element"
 import { Commands, InputViewOption } from "./_enums"
-import { timeTimerClear, timeTimerSet } from "@/utils/time"
 
 import Button, { ButtonVariant } from "@/components/Button"
 import CSS from './_styles.module.scss'
@@ -25,7 +21,7 @@ const _: VoidComponent<{
 	settings: Settings
 	command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
-	const body = documentBody()
+	const body = document.body
 	const buttonInputSASSId = createUniqueId()
 	const buttonInputSCSSId = createUniqueId()
 	const buttonOutputCSSId = createUniqueId()
@@ -37,7 +33,7 @@ const _: VoidComponent<{
 	const scssText = createMemo(() => props.scssText)
 	const cssText = createMemo(() => props.cssText)
 	const settings = createMemo(() => props.settings)
-	let timeId: number | null
+	let timeId: number | NodeJS.Timeout | null
 	let textAreaRef: HTMLTextAreaElement
 	let isSmallScreen: boolean = false
 
@@ -46,8 +42,8 @@ const _: VoidComponent<{
 	}
 
 	function updateOutput(): void {
-		if (timeId != null) timeTimerClear(timeId)
-		timeId = timeTimerSet(() => {
+		if (timeId != null) clearTimeout(timeId)
+		timeId = setTimeout(() => {
 			const $command = (inputViewOption() == InputViewOption.sass
 				? Commands.updateSASSText
 				: Commands.updateSCSSText
@@ -65,8 +61,8 @@ const _: VoidComponent<{
 
 	function onPointerUp(ev: PointerEvent & {currentTarget: HTMLDivElement}): void {
 		setIsDragging(false)
-		attrRemove(body, BodyAttributes.noPointerEvent)
-		elementPointerCaptureRelease(eventCurrentTarget(ev), ev.pointerId)
+		body.removeAttribute(BodyAttributes.noPointerEvent)
+		ev.currentTarget.releasePointerCapture(ev.pointerId)
 	}
 
 	function initSmallScreenListener(): void {
@@ -75,14 +71,14 @@ const _: VoidComponent<{
 			setOutputViewOption(null)
 		}
 
-		eventListenerAdd<MediaQueryListEvent>(matchMedia(`(max-width: ${MIN_EDITOR_WIDTH}px)`), 'change',  ev => {
+		window.matchMedia(`(max-width: ${MIN_EDITOR_WIDTH}px)`).addEventListener('change',  ev => {
 			isSmallScreen = ev.matches
 			if (!isSmallScreen) return;
 
 			callback()
 		})
 
-		isSmallScreen = windowMatches(`(max-width: ${MIN_EDITOR_WIDTH}px)`)
+		isSmallScreen = window.matchMedia(`(max-width: ${MIN_EDITOR_WIDTH}px)`).matches
 		if (!isSmallScreen) return;
 
 		callback()
@@ -119,14 +115,13 @@ const _: VoidComponent<{
 	return (<div
 		class={CSS.body}
 		onClick={ev => {
-			const button = documentActive()!
+			const button = document.activeElement!
 			if (!elementValidTarget(
-				eventCurrentTarget(ev),
+				ev.currentTarget,
 				button,
-				el => elementTagName(el) == 'BUTTON'
 			)) return
 
-			switch (elementId(button)) {
+			switch (button.id) {
 			case buttonInputSASSId:
 				if (isSmallScreen) {
 					setInputViewOption(InputViewOption.sass)
@@ -194,10 +189,10 @@ const _: VoidComponent<{
 					data-g-keep-pointer-event={attrSetIfExist(isDragging())}
 					class={CSS.body_drag_handle}
 					onPointerDown={(ev) => {
-						attrSet(body, BodyAttributes.noPointerEvent)
+						body.setAttribute(BodyAttributes.noPointerEvent, '')
 						setWidth(ev.clientX)
 						setIsDragging(true)
-						elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
+						ev.currentTarget.setPointerCapture(ev.pointerId)
 					}}
 					onPointerCancel={onPointerUp}
 					onPointerUp={onPointerUp}

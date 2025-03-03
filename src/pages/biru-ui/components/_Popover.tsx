@@ -1,8 +1,6 @@
 import { createSignal, For, Show, type VoidComponent } from "solid-js"
 
-import { eventCurrentTarget } from "@/utils/event"
 import { numberSafe } from "@/utils/number"
-import { arrayIncludes } from "@/utils/array"
 
 import Button, { ButtonVariant } from "@/components/Button"
 import CheckBox from "@/components/CheckBox"
@@ -26,7 +24,7 @@ const _: VoidComponent = () => {
 		description="A popover is a small, temporary window that appears when a user interacts with an element (e.g., hovers over a button). It provides additional information, options, or tools related to the element. Popover content can be triggered by hover, click, or focus.">
 		<Playground>
 			<Button c:variant={ButtonVariant.tonal} onClick={(ev) => openPopover(popoverRef, {
-				anchor: anchor()? eventCurrentTarget(ev) : undefined,
+				anchor: anchor()? ev.currentTarget : undefined,
 				allowHideAnchor: allowHideAnchor(),
 				draggable: draggable(),
 				gap: gap(),
@@ -80,10 +78,10 @@ const _: VoidComponent = () => {
 					style={{width: '100px'}}
 					value={gap()}
 					min={0}
-					onBlur={(ev) => setGap(g => numberSafe(eventCurrentTarget(ev).valueAsNumber, g))}
+					onBlur={(ev) => setGap(g => numberSafe(ev.currentTarget.valueAsNumber, g))}
 					c:label="Gap"
 				/>
-				<Show when={arrayIncludes([
+				<Show when={[
 					PopoverPosition.centerTopToRight,
 					PopoverPosition.centerCenterLeft,
 					PopoverPosition.centerBottomToRight,
@@ -100,33 +98,33 @@ const _: VoidComponent = () => {
 					PopoverPosition.centerCenterBottom,
 					PopoverPosition.centerCenterRightBottom,
 					PopoverPosition.rightCenterToTop
-				], position())}>
+				].includes(position())}>
 					<NumberTextField
 						value={padding()}
 						style={{width: '100px'}}
 						min={0}
-						onBlur={(ev) => setPadding(p => numberSafe(eventCurrentTarget(ev).valueAsNumber, p))}
+						onBlur={(ev) => setPadding(p => numberSafe(ev.currentTarget.valueAsNumber, p))}
 						c:label="Padding"
 					/>
 				</Show>
 				<CheckBox
 					checked={anchor()}
-					onChange={ev => setAnchor(eventCurrentTarget(ev).checked)}>
+					onChange={ev => setAnchor(ev.currentTarget.checked)}>
 					Anchor
 				</CheckBox>
 				<CheckBox
 					checked={draggable()}
-					onChange={ev => setDraggable(eventCurrentTarget(ev).checked)}>
+					onChange={ev => setDraggable(ev.currentTarget.checked)}>
 					Dragable
 				</CheckBox>
 				<CheckBox
 					checked={allowHideAnchor()}
-					onChange={ev => setAllowHideAnchor(eventCurrentTarget(ev).checked)}>
+					onChange={ev => setAllowHideAnchor(ev.currentTarget.checked)}>
 					Allow hide anchor
 				</CheckBox>
 				<CheckBox
 					checked={manualDismiss()}
-					onChange={ev => setManualDismiss(eventCurrentTarget(ev).checked)}>
+					onChange={ev => setManualDismiss(ev.currentTarget.checked)}>
 					Manual dismiss
 				</CheckBox>
 			</Tooltip>

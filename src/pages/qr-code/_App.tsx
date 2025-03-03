@@ -3,16 +3,12 @@ import { toCanvas as dataToQRCanvas, toString as dataToQRString } from "qrcode"
 
 import type { HEXColor } from "@/types/color"
 import type { Settings } from "./_types"
-import { timeTimerClear, timeTimerSet } from "@/utils/time"
 import { Commands, CopyFileType, DownloadFileType, EncodingMode, ErrorCorrectionLevel, Pages } from "./_enums"
 import { createStore } from "solid-js/store"
 import { DEFAULT_BACKGROUND_COLOR, DEFAULT_COLOR, DEFAULT_ENCODING_MODE, DEFAULT_ERROR_CORRECTION_LEVEL, DEFAULT_MARGIN, DEFAULT_VERSION } from "./_constants"
 import { urlDownloadFile } from "@/utils/url"
-import { stringReplace, stringToUpperCase } from "@/utils/string"
-import { promiseDone } from "@/utils/object"
-import { navigatorClipboardWrite, navigatorClipboardWriteText } from "@/utils/navigator"
 import { fileDownload } from "@/utils/file"
-import { IDB, idbStorePut } from "@/utils/indexeddb"
+import { IDB } from "@/utils/indexeddb"
 import { DatabaseNames } from "@/enums/storage"
 import { ObjectStoreKeys, ObjectStoreNames, type ObjectStoreMiscellaneous, type ObjectStoreSettings } from "./_storage"
 import { removeSplashScreen } from "@/utils/splash"
@@ -39,14 +35,14 @@ const _: VoidComponent = () => {
 	})
 	let canvasRef: HTMLCanvasElement
 	let toastCopiedRef: HTMLDivElement
-	let timeId: number | null = null
+	let timeId: number | NodeJS.Timeout | null = null
 
 	function saveSettings(...items: [key: ObjectStoreKeys, value: unknown][]): void {
-		const storeSettings = db.writeStore(ObjectStoreNames.settings)
-		if (!storeSettings) return;
+		const store = db.writeStore(ObjectStoreNames.settings)
+		if (!store) return;
 
 		for (const item of items) {
-			idbStorePut(storeSettings, { key: item[0], value: item[1] })
+			store.put({ key: item[0], value: item[1] })
 		}
 	}
 
@@ -55,14 +51,14 @@ const _: VoidComponent = () => {
 		if (store == null) return;
 
 		for (const item of items) {
-			idbStorePut(store, { key: item[0], value: item[1] })
+			store.put({ key: item[0], value: item[1] })
 		}
 	}
 
 	function generate(): void {
-		if (timeId != null) timeTimerClear(timeId)
+		if (timeId != null) clearTimeout(timeId)
 
-		timeId = timeTimerSet(() => {
+		timeId = setTimeout(() => {
 			dataToQRCanvas(canvasRef, settings.encodingMode == EncodingMode.auto
 				? qrCodeData()
 				: [{data: qrCodeData(), mode: settings.encodingMode as any}],
@@ -103,7 +99,7 @@ const _: VoidComponent = () => {
 			}, (error, svg) => {
 				if (error) return err(error)
 
-				ok(stringReplace(svg, /(?<!\w)(?<=d=)".+?"/gs, (value) => stringToUpperCase(value)))
+				ok(svg.replace(/(?<!\w)(?<=d=)".+?"/gs, (value) => value.toUpperCase()))
 			})
 		})
 	}
@@ -117,7 +113,10 @@ const _: VoidComponent = () => {
 			urlDownloadFile(canvasRef.toDataURL('image/png', 0.95), 'redmerah-qr-code.png')
 			break
 		case DownloadFileType.svg:
-			promiseDone(getSVG(), svg => fileDownload(new Blob([svg], {type: 'image/svg+xml'}), 'redmerah-qr-code.svg'))
+			getSVG().then(svg => fileDownload(
+				new Blob([svg], {type: 'image/svg+xml'}),
+				'redmerah-qr-code.svg'
+			))
 			break
 		}
 	}
@@ -128,17 +127,17 @@ const _: VoidComponent = () => {
 			canvasRef.toBlob((blob) => {
 				if (blob == null) return;
 
-				promiseDone(
-					navigatorClipboardWrite([new ClipboardItem({ 'image/png': blob })]),
-					() => openToast(toastCopiedRef)
-				)
+				navigator
+					.clipboard
+					.write([new ClipboardItem({ 'image/png': blob })])
+					.then(() => openToast(toastCopiedRef))
 			}, 'image/png', 0.95)
 			break
 		case CopyFileType.svg:
-			promiseDone(
-				getSVG(),
-				svg => promiseDone(navigatorClipboardWriteText(svg), () => openToast(toastCopiedRef))
-			)
+			getSVG()
+			.then(svg => navigator.clipboard.writeText(svg).then(
+				() => openToast(toastCopiedRef)
+			))
 			break
 		}
 	}
@@ -237,45 +236,45 @@ const _: VoidComponent = () => {
 		const storeSettings = db.readStore(ObjectStoreNames.settings)
 		if (storeSettings == null) return
 
-		promiseDone(db.get<ObjectStoreSettings<ErrorCorrectionLevel>>(
+		db.get<ObjectStoreSettings<ErrorCorrectionLevel>>(
 			storeSettings,
 			ObjectStoreKeys.settings_errorCorrectionLevel
-		), result => setSettings('errorCorrectionLevel', e => result?.value ?? e))
+		).then(result => setSettings('errorCorrectionLevel', e => result?.value ?? e))
 
-		promiseDone(db.get<ObjectStoreSettings<HEXColor>>(
+		db.get<ObjectStoreSettings<HEXColor>>(
 			storeSettings,
 			ObjectStoreKeys.settings_color
-		), result => setSettings('color', c => result?.value ?? c))
+		).then(result => setSettings('color', c => result?.value ?? c))
 
-		promiseDone(db.get<ObjectStoreSettings<HEXColor>>(
+		db.get<ObjectStoreSettings<HEXColor>>(
 			storeSettings,
 			ObjectStoreKeys.settings_backgroundColor
-		), result => setSettings('backgroundColor', b => result?.value ?? b))
+		).then(result => setSettings('backgroundColor', b => result?.value ?? b))
 
-		promiseDone(db.get<ObjectStoreSettings<Settings['version']>>(
+		db.get<ObjectStoreSettings<Settings['version']>>(
 			storeSettings,
 			ObjectStoreKeys.settings_version
-		), result => setSettings('version', v => result?.value ?? v))
+		).then(result => setSettings('version', v => result?.value ?? v))
 
-		promiseDone(db.get<ObjectStoreSettings<Settings['encodingMode']>>(
+		db.get<ObjectStoreSettings<Settings['encodingMode']>>(
 			storeSettings,
 			ObjectStoreKeys.settings_encodingMode
-		), result => setSettings('encodingMode', e => result?.value ?? e))
+		).then(result => setSettings('encodingMode', e => result?.value ?? e))
 
-		promiseDone(db.get<ObjectStoreSettings<Settings['margin']>>(
+		db.get<ObjectStoreSettings<Settings['margin']>>(
 			storeSettings,
 			ObjectStoreKeys.settings_margin
-		), result => setSettings('margin', m => result?.value ?? m))
+		).then(result => setSettings('margin', m => result?.value ?? m))
 	}
 
 	function initLastPage(): void {
 		const store = db.readStore(ObjectStoreNames.miscellaneous)
 		if (store == null) return
 
-		promiseDone(db.get<ObjectStoreMiscellaneous<Pages>>(
+		db.get<ObjectStoreMiscellaneous<Pages>>(
 			store,
 			ObjectStoreKeys.miscellaneous_lastPage
-		), result => setPage(p => result?.value ?? p))
+		).then(result => setPage(p => result?.value ?? p))
 	}
 
 	onMount(() => {

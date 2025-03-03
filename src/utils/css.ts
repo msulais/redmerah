@@ -1,14 +1,8 @@
-import { elementBySelector } from "./element"
-
 export function cssIsValidSelector(selector: string): boolean {
-	const element = document.createDocumentFragment()
+	const element = document.createDocumentFragment() as unknown as HTMLElement
 	try {
-		elementBySelector(selector, element as unknown as HTMLElement)
+		element.querySelector(selector)
 	} catch { return false }
 
 	return true
-}
-
-export function cssEscape(ident: string): string {
-	return CSS.escape(ident)
 }

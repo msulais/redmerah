@@ -1,7 +1,4 @@
 import { CookieKeys } from "@/enums/cookies"
-import { urlDecode, urlEncode } from "./url"
-import { dateTime, dateTimeSet, dateToUTC } from "./datetime"
-import { stringIndexOf, stringLength, stringSplit, stringSubstring, stringTrim } from "./string"
 
 type CookieOptions = {
 	domain?: string,
@@ -18,15 +15,14 @@ export function cookieSet(
 	value: string,
 	options: CookieOptions = {sameSite: 'Lax', expires: 9999, path: '/'}
 ): void {
-	let cookie = key + "=" + urlEncode(value)
+	let cookie = key + "=" + encodeURI(value)
 
 	if (options.expires) {
-		const expiration_date = new Date()
-		dateTimeSet(
-			expiration_date,
-			dateTime(expiration_date) + (options.expires * 24 * 60 * 60 * 1000)
+		const expirationDate = new Date()
+		expirationDate.setTime(
+			expirationDate.getTime() + (options.expires * 24 * 60 * 60 * 1000)
 		)
-		cookie += ("; expires=" + dateToUTC(expiration_date))
+		cookie += ("; expires=" + expirationDate.toUTCString())
 	}
 	if (options.maxAge  ) cookie += ("; max-age=" + options.maxAge)
 	if (options.path    ) cookie += (`; path=` + options.path)
@@ -40,12 +36,12 @@ export function cookieSet(
 
 export function cookieGet(key: CookieKeys): string | null {
 	const cookieName = key + "="
-	const cookies = stringSplit(document.cookie, ';')
+	const cookies = document.cookie.split(';')
 	for (const i in cookies) {
-		const cookie = stringTrim(cookies[i])
+		const cookie = cookies[i].trim()
 
-		if (stringIndexOf(cookie, cookieName) === 0) {
-			return urlDecode(stringSubstring(cookie, stringLength(cookieName)))
+		if (cookie.indexOf(cookieName) === 0) {
+			return decodeURI(cookie.substring(cookieName.length))
 		}
 	}
 

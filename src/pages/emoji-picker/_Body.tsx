@@ -1,14 +1,10 @@
 import { createSignal, createUniqueId, For, type VoidComponent } from "solid-js"
 
 import { EMOJIS_ACTIVITIES, EMOJIS_ANIMAL_AND_NATURE, EMOJIS_FLAGS, EMOJIS_FOOD_AND_DRINK, EMOJIS_OBJECT, EMOJIS_PERSON_AND_BODY, EMOJIS_SMILEY_AND_EMOTION, EMOJIS_SYMBOLS, EMOJIS_TRAVEL_AND_PLACES } from "@/constants/emoji"
-import { timeTimerClear, timeTimerSet } from "@/utils/time"
 import { Commands } from "./_enums"
-import { navigatorClipboardWriteText } from "@/utils/navigator"
-import { eventCurrentTarget } from "@/utils/event"
-import { promiseDone } from "@/utils/object"
-import { documentActive } from "@/utils/document"
-import { elementAllBySelector, elementDataset, elementId, elementStyle, elementTagName, elementValidTarget } from "@/utils/element"
+import { elementValidTarget } from "@/utils/element"
 import { ICON_CHECKMARK, ICON_COPY } from "@/constants/icons"
+import { keyboardOnFocusIn, keyboardOnFocusOut, keyboardOnKeyDown, keyboardOnKeyDown2D } from "@/utils/keyboard"
 
 import TextField, { updateTextFieldValue, TextFieldButton } from "@/components/TextField"
 import Expander, { ExpanderHeader } from "@/components/Expander"
@@ -16,15 +12,12 @@ import Button from "@/components/Button"
 import Tooltip from "@/components/Tooltip"
 import Icon from "@/components/Icon"
 import CSS from './_index.module.scss'
-import { arrayLength, arrayPush } from "@/utils/array"
-import { keyboardOnFocusIn, keyboardOnFocusOut, keyboardOnKeyDown, keyboardOnKeyDown2D } from "@/utils/keyboard"
-import { stringSplit, stringTrim } from "@/utils/string"
 
 const _: VoidComponent<{
 	text: string
 	command(type: Commands, ...args: unknown[]): unknown
 }> = (props) => {
-	const [timeCopyId, setTimeCopyId] = createSignal<number | null>(null)
+	const [timeCopyId, setTimeCopyId] = createSignal<number | NodeJS.Timeout | null>(null)
 	const elements: HTMLElement[] = []
 	const emojisSmileyAndEmotion: HTMLButtonElement[] = []
 	const emojisPersonAndBody: HTMLButtonElement[] = []
@@ -38,17 +31,17 @@ const _: VoidComponent<{
 	const buttonCopyId = createUniqueId()
 	let textFieldRef: HTMLInputElement
 	let columnCount = 0
-	let timeColumnCountId: number | null = null
+	let timeColumnCountId: number | NodeJS.Timeout | null = null
 
 	function pickEmoji(emoji: string): void {
 		updateTextFieldValue(textFieldRef, textFieldRef.value + emoji)
 	}
 
 	function copy(): void {
-		promiseDone(navigatorClipboardWriteText(textFieldRef.value), () => {
-			if (timeCopyId() != null) timeTimerClear(timeCopyId()!)
+		navigator.clipboard.writeText(textFieldRef.value).then(() => {
+			if (timeCopyId() != null) clearTimeout(timeCopyId()!)
 
-			setTimeCopyId(timeTimerSet(
+			setTimeCopyId(setTimeout(
 				() => setTimeCopyId(null),
 				3000
 			))
@@ -59,9 +52,9 @@ const _: VoidComponent<{
 		ev: FocusEvent & {currentTarget: HTMLDivElement},
 		elements: HTMLElement[]
 	): void {
-		const self = eventCurrentTarget(ev)
-		if (arrayLength(elements) === 0) {
-			arrayPush(elements, ...elementAllBySelector('button', self))
+		const self = ev.currentTarget
+		if (elements.length === 0) {
+			elements.push(...self.querySelectorAll('button'))
 		}
 		keyboardOnFocusIn(ev, elements)
 	}
@@ -78,40 +71,44 @@ const _: VoidComponent<{
 		elements: HTMLElement[]
 	): void {
 		// don't update every key press
-		if (timeColumnCountId === null) columnCount = arrayLength(stringSplit(
-			stringTrim(elementStyle(eventCurrentTarget(ev), "grid-template-columns")),
-			" "
-		))
-		else timeTimerClear(timeColumnCountId)
+		if (timeColumnCountId === null) columnCount = (
+			window
+			.getComputedStyle(ev.currentTarget)
+			.getPropertyValue("grid-template-columns")
+			.trim()
+			.split(' ')
+			.length
+		)
+		else clearTimeout(timeColumnCountId)
 
-		timeColumnCountId = timeTimerSet(() => timeColumnCountId = null, 200)
+		timeColumnCountId = setTimeout(() => timeColumnCountId = null, 200)
 		keyboardOnKeyDown2D(ev, elements, columnCount)
 	}
 
 	return (<main
 		class={CSS.body}
 		onClick={ev => {
-			const button = documentActive()!
+			const button = document.activeElement! as HTMLButtonElement
 			if (!elementValidTarget(
-				eventCurrentTarget(ev),
+				ev.currentTarget,
 				button,
-				el => elementTagName(el) == 'BUTTON'
 			)) return
 
-			switch (elementId(button)) {
+			switch (button.id) {
 			case buttonCopyId:
 				copy()
 				break
 			default:
-				const dataEmoji = elementDataset(button, 'emoji')
+				const dataset = button.dataset
+				const dataEmoji = dataset.emoji
 				if (dataEmoji) return pickEmoji(dataEmoji)
 			}
 		}}>
 		<Tooltip
 			onFocusIn={ev => {
-				const self = eventCurrentTarget(ev)
-				if (arrayLength(elements) === 0) {
-					arrayPush(elements, ...elementAllBySelector('summary', self))
+				const self = ev.currentTarget
+				if (elements.length === 0) {
+					elements.push(...self.querySelectorAll('summary'))
 				}
 
 				keyboardOnFocusIn(ev, elements)
@@ -123,7 +120,7 @@ const _: VoidComponent<{
 					c:label="Emoji"
 					c:autoShowClearButton
 					value={props.text}
-					onInput={ev => props.command(Commands.updateText, eventCurrentTarget(ev).value)}
+					onInput={ev => props.command(Commands.updateText, ev.currentTarget.value)}
 					ref={r => textFieldRef = r}
 					c:trailing={<TextFieldButton
 						id={buttonCopyId}

@@ -5,20 +5,13 @@ import { RootAttributes } from "@/enums/attributes"
 import { CornerData } from "@/enums/corner"
 import { LocalStorageKeys } from "@/enums/storage"
 import { ThemeData } from "@/enums/theme"
-import { storageSet, storageGet } from "@/utils/storage"
-import { attrClassListModule, attrSet } from "@/utils/attributes"
-import { navigatorShare } from "@/utils/navigator"
-import { dateYear } from "@/utils/datetime"
+import { attrClassListModule } from "@/utils/attributes"
 import { RoutesLinks, ExternalLinks } from "@/enums/links"
-import { documentActive, documentRoot } from "@/utils/document"
-import { urlEncode, urlOrigin } from "@/utils/url"
 import { APP_CLOCK as app } from "@/constants/apps"
 import { validEnumValue } from "@/utils/object"
-import { elementValidTarget, elementTagName, elementId, elementDataset } from "@/utils/element"
-import { eventCurrentTarget, eventListenerAdd, eventTarget } from "@/utils/event"
+import { elementValidTarget } from "@/utils/element"
 import { ICON_APPS, ICON_ARROW_MAXIMIZE, ICON_ARROW_MINIMIZE, ICON_CHAT, ICON_CIRCLE, ICON_GIFT, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_LINE_HORIZONTAL_3, ICON_MAXIMIZE, ICON_PHONE_LOCK, ICON_PLAY_CIRCLE_HINT, ICON_RECEIPT, ICON_SETTINGS, ICON_SHARE_ANDROID, ICON_SHIELD_CHECKMARK, ICON_SQUARE, ICON_TEARDROP_BOTTOM_RIGHT, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from "@/constants/icons"
 import { PAGES, SIZE_SIDE_NAVIGATION_NONE } from "./_constant"
-import { windowMatches, windowMatchMedia } from "@/utils/window"
 import { Commands, Pages } from "./_enums"
 import { AnimationData } from "@/enums/animation"
 import logoRedmerah from '@/assets/images/logos/redmerah-logo.svg'
@@ -36,7 +29,7 @@ const _: VoidComponent<{
 	settings: Settings
 	command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
-	const root = documentRoot()
+	const root = document.documentElement
 	const buttonNavigationId = createUniqueId()
 	const buttonInfoId = createUniqueId()
 	const buttonSettingsId = createUniqueId()
@@ -57,53 +50,54 @@ const _: VoidComponent<{
 
 	function updateAnimation(animation: AnimationData): void {
 		setAnimation(animation)
-		attrSet(root, RootAttributes.animation, animation)
-		storageSet(LocalStorageKeys.animation, animation)
+		root.setAttribute(RootAttributes.animation, animation)
+		localStorage.setItem(LocalStorageKeys.animation, animation)
 	}
 
 	function udpateTheme(theme: ThemeData): void {
 		setTheme(theme)
-		attrSet(root, RootAttributes.theme, theme)
-		storageSet(LocalStorageKeys.theme, theme)
+		root.setAttribute(RootAttributes.theme, theme)
+		localStorage.setItem(LocalStorageKeys.theme, theme)
 		closeMenu(menuSettingsRef)
 	}
 
 	function updateCorner(corner: CornerData): void {
 		setCorner(corner)
-		attrSet(root, RootAttributes.corner, corner)
-		storageSet(LocalStorageKeys.corner, corner)
+		root.setAttribute(RootAttributes.corner, corner)
+		localStorage.setItem(LocalStorageKeys.corner, corner)
 		closeMenu(menuSettingsRef)
 	}
 
 	function initTheme(): void {
-		const theme = storageGet(LocalStorageKeys.theme)
+		const theme = localStorage.getItem(LocalStorageKeys.theme)
 		if (theme && validEnumValue(theme, ThemeData)) {
-			attrSet(root, RootAttributes.theme, theme)
+			root.setAttribute(RootAttributes.theme, theme)
 			setTheme(theme as ThemeData)
 		}
 	}
 
 	function initCorner(): void {
-		const corner = storageGet(LocalStorageKeys.corner)
+		const corner = localStorage.getItem(LocalStorageKeys.corner)
 		if (corner && validEnumValue(corner, CornerData)) {
-			attrSet(root, RootAttributes.corner, corner)
+			root.setAttribute(RootAttributes.corner, corner)
 			setCorner(corner as CornerData)
 		}
 	}
 
 	function initSideNavigationListener(): void {
-		setIsSideNavigationHidden(windowMatches(`(max-width: ${SIZE_SIDE_NAVIGATION_NONE}px)`))
-		eventListenerAdd(windowMatchMedia(
-			`(max-width: ${SIZE_SIDE_NAVIGATION_NONE}px)`),
-			'change',
-			ev => setIsSideNavigationHidden((ev as MediaQueryListEvent).matches)
+		setIsSideNavigationHidden(
+			window.matchMedia(`(max-width: ${SIZE_SIDE_NAVIGATION_NONE}px)`).matches
 		)
+
+		window
+		.matchMedia(`(max-width: ${SIZE_SIDE_NAVIGATION_NONE}px)`)
+		.addEventListener('change', ev => setIsSideNavigationHidden(ev.matches))
 	}
 
 	function initAnimation(): void {
-		const animation = storageGet(LocalStorageKeys.animation)
+		const animation = localStorage.getItem(LocalStorageKeys.animation)
 		if (animation && validEnumValue(animation, AnimationData)) {
-			attrSet(root, RootAttributes.animation, animation)
+			root.setAttribute(RootAttributes.animation, animation)
 			setAnimation(animation as AnimationData)
 		}
 	}
@@ -122,22 +116,22 @@ const _: VoidComponent<{
 		return (<>
 			<Menu
 				onClick={(ev) => {
-					const button = documentActive()!
+					const button = document.activeElement!
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
 						el => {
-							const tagname = elementTagName(el)
+							const tagname = el.tagName
 							return tagname == 'BUTTON' || tagname == 'A'
 						}
 					)) return
 
-					switch (elementId(button)) {
+					switch (button.id) {
 					case buttonInfo_shareId:
-						navigatorShare({
+						navigator.share({
 							title: app.name,
 							text: app.name + ' v' + app.buildVersion,
-							url: urlOrigin() + app.link
+							url: document.location.origin + app.link
 						})
 						break
 					}
@@ -180,7 +174,7 @@ const _: VoidComponent<{
 					Share
 				</MenuItem>
 				<LinkMenuItem
-					href={'mailto:' + ExternalLinks.contactEmail + '?subject=' + urlEncode('Tasks')}
+					href={'mailto:' + ExternalLinks.contactEmail + '?subject=' + encodeURI('Tasks')}
 					c:iconCode={ICON_CHAT}>
 					Send feedback
 				</LinkMenuItem>
@@ -190,15 +184,15 @@ const _: VoidComponent<{
 					c:iconCode={ICON_GIFT}>
 					Donate
 				</LinkMenuItem>
-				<MenuHeader>&copy; {dateYear(new Date())} Redmerah</MenuHeader>
+				<MenuHeader>&copy; {new Date().getFullYear()} Redmerah</MenuHeader>
 			</Menu>
 			<Menu
 				ref={r => menuSettingsRef = r}
 				c:onToggleOpen={(v) => setIsMenuSettingsOpen(v)}
 				onChange={ev => {
-					const target = eventTarget(ev) as HTMLInputElement
+					const target = ev.target as HTMLInputElement
 
-					switch (elementId(target)) {
+					switch (target.id) {
 					case inputSettings_animationId:
 						updateAnimation(animation() === AnimationData.on
 							? AnimationData.off
@@ -211,19 +205,20 @@ const _: VoidComponent<{
 					}
 				}}
 				onClick={ev => {
-					const button = documentActive()!
+					const button = document.activeElement! as HTMLButtonElement
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
+						el => el.tagName == 'BUTTON'
 					)) return
 
-					const dataTheme = elementDataset(button, 'theme')
+					const dataset = button.dataset
+					const dataTheme = dataset.theme
 					if (dataTheme
 						&& validEnumValue(dataTheme, ThemeData)
 					) return udpateTheme(dataTheme as ThemeData)
 
-					const dataCorner = elementDataset(button, 'corner')
+					const dataCorner = dataset.corner
 					if (dataCorner
 						&& validEnumValue(dataCorner, CornerData)
 					) return updateCorner(dataCorner as CornerData)
@@ -306,19 +301,20 @@ const _: VoidComponent<{
 		return (<>
 			<Drawer
 				onClick={ev => {
-					const button = documentActive()!
+					const button = document.activeElement! as HTMLButtonElement
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
+						el => el.tagName == 'BUTTON'
 					)) return
 
-					switch (elementId(button)) {
+					switch (button.id) {
 					case buttonNavigation_closeId:
 						closeDrawer(drawerNavigationRef)
 						break
 					default:
-						const dataNavigation = elementDataset(button, 'navigation')
+						const dataset = button.dataset
+						const dataNavigation = dataset.navigation
 						if (dataNavigation
 							&& validEnumValue(dataNavigation, Pages)
 						) {
@@ -352,14 +348,14 @@ const _: VoidComponent<{
 		<Show when={!props.isBodyExpanded}>
 			<AppBar
 				onClick={ev => {
-					const button = documentActive()!
+					const button = document.activeElement! as HTMLButtonElement
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
+						el => el.tagName == 'BUTTON'
 					)) return
 
-					switch (elementId(button)) {
+					switch (button.id) {
 					case buttonNavigationId:
 						if (isSideNavigationHidden()) return openDrawer(drawerNavigationRef)
 

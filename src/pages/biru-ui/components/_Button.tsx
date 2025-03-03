@@ -6,7 +6,6 @@ import Button, { ButtonIndicatorPosition, ButtonVariant, EmojiButton, FloatingAc
 import CheckBox from "@/components/CheckBox"
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
-import { eventCurrentTarget } from "@/utils/event"
 import { ICON_CURSOR_CLICK } from "@/constants/icons"
 
 const _: VoidComponent = () => {
@@ -145,22 +144,22 @@ const _: VoidComponent = () => {
 			</Show>
 			<CheckBox
 				checked={disabled()}
-				onChange={ev => setDisabled(eventCurrentTarget(ev).checked)}>
+				onChange={ev => setDisabled(ev.currentTarget.checked)}>
 				Disabled
 			</CheckBox>
 			<CheckBox
 				checked={focused()}
-				onChange={ev => setFocused(eventCurrentTarget(ev).checked)}>
+				onChange={ev => setFocused(ev.currentTarget.checked)}>
 				Focused
 			</CheckBox>
 			<CheckBox
 				checked={selected()}
-				onChange={ev => setSelected(eventCurrentTarget(ev).checked)}>
+				onChange={ev => setSelected(ev.currentTarget.checked)}>
 				Selected
 			</CheckBox>
 			<CheckBox
 				checked={icon()}
-				onChange={ev => setIcon(eventCurrentTarget(ev).checked)}>
+				onChange={ev => setIcon(ev.currentTarget.checked)}>
 				Show icon
 			</CheckBox>
 		</PlaygroundOptions>

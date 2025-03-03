@@ -2,20 +2,16 @@ import { createEffect, createMemo, createSignal, createUniqueId, For, Match, onM
 
 import type { CalculatorInput, CalculatorOutput, DateCalculatorInput, Settings } from "./_types"
 import { CalculatorType, Commands, DateOperation, NumberType } from "./_enums"
-import { elementAllBySelector, elementChildren, elementDataset, elementFocus, elementId, elementTagName, elementValidTarget } from "@/utils/element"
+import { elementValidTarget } from "@/utils/element"
 import { attrClassListModule, attrSetIfExist, attrClassList } from "@/utils/attributes"
 import { CONVERTER_TYPES } from "./_constants"
 import { ConverterType, UNIT_ANGLE, UNIT_AREA, UNIT_FREQUENCY, UNIT_LENGTH, UNIT_PRESSURE, UNIT_TEMPERATURE, UNIT_TIME, UNIT_VOLUME, UNIT_WEIGHT, type ConverterUnit } from "./_converter"
-import { stringLength, stringMatch, stringSubstring, stringToTitleCase, stringToUpperCase, stringTrim } from "@/utils/string"
-import { eventCurrentTarget, eventPreventDefault, eventTarget } from "@/utils/event"
-import { dateYear, dateTextYMD } from "@/utils/datetime"
-import { numberToBinary, numberFormat, numberParse, numberToRealDigits, numberToString, numberSafe, numberIsNotDefined } from "@/utils/number"
-import { regexTest } from "@/utils/regex"
-import { navigatorClipboardWriteText } from "@/utils/navigator"
-import { documentActive } from "@/utils/document"
+import { stringToTitleCase } from "@/utils/string"
+import { numberToBinary, numberFormat, numberToRealDigits, numberSafe, numberIsNotDefined } from "@/utils/number"
 import { validEnumValue } from "@/utils/object"
-import { arrayLength, arrayPush } from "@/utils/array"
 import { ICON_ADD, ICON_ARROW_RIGHT, ICON_BACKSPACE, ICON_CALENDAR, ICON_COPY, ICON_DISMISS, ICON_LINE_HORIZONTAL_1, ICON_MATH_FORMULA, ICON_SLASH_FORWARD } from "@/constants/icons"
+import { AppColors } from "@/enums/colors"
+import { keyboardOnFocusIn, keyboardOnFocusOut, keyboardOnKeyDown, keyboardOnKeyDown2D } from "@/utils/keyboard"
 
 import { Tooltip } from "@/components/Tooltip"
 import Icon from "@/components/Icon"
@@ -26,7 +22,6 @@ import Dropdown, { DropdownOption } from "@/components/Dropdown"
 import DatePicker, { openDatePicker } from "@/components/DatePicker"
 import CSSMiscellaneous from '@/styles/miscellaneous.module.scss'
 import CSS from './_styles.module.scss'
-import { keyboardOnFocusIn, keyboardOnFocusOut, keyboardOnKeyDown, keyboardOnKeyDown2D } from "@/utils/keyboard"
 
 const ActionButtons: ParentComponent<JSX.HTMLAttributes<HTMLDivElement> & {
 	command: (type: Commands, ...args: unknown[]) => unknown
@@ -51,10 +46,7 @@ const ActionButtons: ParentComponent<JSX.HTMLAttributes<HTMLDivElement> & {
 	}
 
 	onMount(() => {
-		arrayPush(
-			buttons,
-			...elementAllBySelector<HTMLButtonElement>('button', divRef)
-		)
+		buttons.push(...divRef.querySelectorAll<HTMLButtonElement>('button'))
 	})
 
 	return (<div
@@ -75,14 +67,14 @@ const ActionButtons: ParentComponent<JSX.HTMLAttributes<HTMLDivElement> & {
 			class={CSS.input_output_memory_buttons}
 			data-hidden={attrSetIfExist(!settings().memoryButtons)}
 			onClick={ev => {
-				const button = documentActive()!
+				const button = document.activeElement! as HTMLButtonElement
 				if (!elementValidTarget(
-					eventCurrentTarget(ev),
+					ev.currentTarget,
 					button,
-					el => elementTagName(el) == 'BUTTON'
+					el => el.tagName == 'BUTTON'
 				)) return
 
-				switch (elementId(button)) {
+				switch (button.id) {
 				case buttonMemoryId:
 					openMenu(menuMemoryRef, { anchor: button })
 					break
@@ -159,26 +151,26 @@ const BasicCalculator: VoidComponent<{
 
 	function addChar(char: string): void {
 		let value = inputRef.value
-		const prefix = stringSubstring(value, 0, caretPos)
-		const suffix = stringSubstring(value, caretPos)
+		const prefix = value.substring(0, caretPos)
+		const suffix = value.substring(caretPos)
 		value = prefix + char + suffix
 		inputRef.value = value
-		caretPos += stringLength(char)
+		caretPos += char.length
 		inputRef.setSelectionRange(caretPos, caretPos)
-		elementFocus(inputRef)
+		inputRef.focus()
 		command(Commands.updateCalculatorInput, value)
 	}
 
 	function backspace(): void {
 		let value = inputRef.value
-		const prefix = stringSubstring(value, 0, caretPos-1)
-		const suffix = stringSubstring(value, caretPos)
+		const prefix = value.substring(0, caretPos-1)
+		const suffix = value.substring(caretPos)
 		value = prefix + suffix
 		inputRef.value = value
 		--caretPos
 		if (caretPos < 0) caretPos = 0
 		inputRef.setSelectionRange(caretPos, caretPos)
-		elementFocus(inputRef)
+		inputRef.focus()
 		command(Commands.updateCalculatorInput, value)
 	}
 
@@ -186,23 +178,23 @@ const BasicCalculator: VoidComponent<{
 		caretPos = 0
 		inputRef.value = ''
 		inputRef.setSelectionRange(caretPos, caretPos)
-		elementFocus(inputRef)
+		inputRef.focus()
 		command(Commands.updateCalculatorInput, '')
 	}
 
 	function equal(): void {
 		if (output() == null) return;
 
-		caretPos = stringLength(numberToString(output()!))
-		inputRef.value = numberToString(output()!)
+		caretPos = output()!.toString().length
+		inputRef.value = output()!.toString()
 		inputRef.setSelectionRange(caretPos, caretPos)
-		elementFocus(inputRef)
+		inputRef.focus()
 		command(Commands.updateCalculatorInput, numberToRealDigits(output()!))
 	}
 
 	createEffect(() => {
 		inputRef.value = props.input
-		elementFocus(inputRef)
+		inputRef.focus()
 	})
 
 	return (<>
@@ -214,11 +206,11 @@ const BasicCalculator: VoidComponent<{
 			onKeyDown={ev => {
 				if (!(ev.code == "Equal" && !ev.shiftKey)) return
 				equal()
-				eventPreventDefault(ev)
+				ev.preventDefault()
 			}}
-			onFocus={ev => caretPos = eventCurrentTarget(ev).selectionStart ?? caretPos}
-			onBlur={ev => caretPos = eventCurrentTarget(ev).selectionStart ?? caretPos}
-			onInput={ev => command(Commands.updateCalculatorInput, eventCurrentTarget(ev).value)}
+			onFocus={ev => caretPos = ev.currentTarget.selectionStart ?? caretPos}
+			onBlur={ev => caretPos = ev.currentTarget.selectionStart ?? caretPos}
+			onInput={ev => command(Commands.updateCalculatorInput, ev.currentTarget.value)}
 		/>
 		<div
 			class={attrClassList(CSS.input_output_basic_text_output, CSSMiscellaneous.no_scrollbar)}>
@@ -228,8 +220,8 @@ const BasicCalculator: VoidComponent<{
 					decimal: settings().numberFormat.decimal,
 					thousand: settings().numberFormat.grouping
 				})}>
-				{output() != null && (regexTest(/[eE]/, numberToString(output()!))
-					? stringToUpperCase(numberToString(output()!))
+				{output() != null && (/[eE]/.test(output()!.toString())
+					? output()!.toString().toUpperCase()
 					: numberFormat(output()!, {
 						decimal: settings().numberFormat.decimal,
 						thousand: settings().numberFormat.grouping
@@ -247,14 +239,14 @@ const BasicCalculator: VoidComponent<{
 		<div
 			class={CSS.input_output_basic_buttons}
 			onClick={ev => {
-				const button = documentActive()!
+				const button = document.activeElement! as HTMLButtonElement
 				if (!elementValidTarget(
-					eventCurrentTarget(ev),
+					ev.currentTarget,
 					button,
-					el => elementTagName(el) == 'BUTTON'
+					el => el.tagName == 'BUTTON'
 				)) return
 
-				switch (elementId(button)) {
+				switch (button.id) {
 				case buttonClearId:
 					clear()
 					break
@@ -265,15 +257,15 @@ const BasicCalculator: VoidComponent<{
 					equal()
 					break
 				default:
-					const dataChar = elementDataset(button, 'char')
+					const dataset = button.dataset
+					const dataChar = dataset.char
 					if (dataChar) return addChar(dataChar)
 				}
 			}}
 			onFocusIn={ev => {
-				if (arrayLength(buttons) === 0) {
-					arrayPush(
-						buttons,
-						...elementChildren<HTMLButtonElement>(eventCurrentTarget(ev))
+				if (buttons.length === 0) {
+					buttons.push(
+						...ev.currentTarget.children as unknown as HTMLButtonElement[]
 					)
 				}
 				keyboardOnFocusIn(ev, buttons)
@@ -351,26 +343,26 @@ const ScientificCalculator: VoidComponent<{
 
 	function addChar(char: string): void {
 		let value = inputRef.value
-		const prefix = stringSubstring(value, 0, caretPos)
-		const suffix = stringSubstring(value, caretPos)
+		const prefix = value.substring(0, caretPos)
+		const suffix = value.substring(caretPos)
 		value = prefix + char + suffix
 		inputRef.value = value
-		caretPos += stringLength(char)
+		caretPos += char.length
 		inputRef.setSelectionRange(caretPos, caretPos)
-		elementFocus(inputRef)
+		inputRef.focus()
 		command(Commands.updateCalculatorInput, value)
 	}
 
 	function backspace(): void {
 		let value = inputRef.value
-		const prefix = stringSubstring(value, 0, caretPos-1)
-		const suffix = stringSubstring(value, caretPos)
+		const prefix = value.substring(0, caretPos-1)
+		const suffix = value.substring(caretPos)
 		value = prefix + suffix
 		inputRef.value = value
 		--caretPos
 		if (caretPos < 0) caretPos = 0
 		inputRef.setSelectionRange(caretPos, caretPos)
-		elementFocus(inputRef)
+		inputRef.focus()
 		command(Commands.updateCalculatorInput, value)
 	}
 
@@ -378,23 +370,23 @@ const ScientificCalculator: VoidComponent<{
 		caretPos = 0
 		inputRef.value = ''
 		inputRef.setSelectionRange(caretPos, caretPos)
-		elementFocus(inputRef)
+		inputRef.focus()
 		command(Commands.updateCalculatorInput, '')
 	}
 
 	function equal(): void {
 		if (output() == null) return;
 
-		caretPos = stringLength(numberToString(output()!))
-		inputRef.value = numberToString(output()!)
+		caretPos = output()!.toString().length
+		inputRef.value = output()!.toString()
 		inputRef.setSelectionRange(caretPos, caretPos)
-		elementFocus(inputRef)
+		inputRef.focus()
 		command(Commands.updateCalculatorInput, numberToRealDigits(output()!))
 	}
 
 	createEffect(() => {
 		inputRef.value = props.input
-		elementFocus(inputRef)
+		inputRef.focus()
 	})
 
 	return (<>
@@ -406,11 +398,11 @@ const ScientificCalculator: VoidComponent<{
 			onKeyDown={ev => {
 				if (!(ev.code == "Equal" && !ev.shiftKey)) return
 				equal()
-				eventPreventDefault(ev)
+				ev.preventDefault()
 			}}
-			onFocus={ev => caretPos = eventCurrentTarget(ev).selectionStart ?? caretPos}
-			onBlur={ev => caretPos = eventCurrentTarget(ev).selectionStart ?? caretPos}
-			onInput={ev => command(Commands.updateCalculatorInput, eventCurrentTarget(ev).value)}
+			onFocus={ev => caretPos = ev.currentTarget.selectionStart ?? caretPos}
+			onBlur={ev => caretPos = ev.currentTarget.selectionStart ?? caretPos}
+			onInput={ev => command(Commands.updateCalculatorInput, ev.currentTarget.value)}
 		/>
 		<div
 			class={attrClassList(
@@ -423,8 +415,8 @@ const ScientificCalculator: VoidComponent<{
 					decimal: settings().numberFormat.decimal,
 					thousand: settings().numberFormat.grouping
 				})}>
-				{output() != null && (regexTest(/[eE]/, numberToString(output()!))
-					? stringToUpperCase(numberToString(output()!))
+				{output() != null && (/[eE]/.test(output()!.toString())
+					? output()!.toString().toUpperCase()
 					: numberFormat(output()!, {
 						decimal: settings().numberFormat.decimal,
 						thousand: settings().numberFormat.grouping
@@ -439,7 +431,7 @@ const ScientificCalculator: VoidComponent<{
 			settings={settings()}>
 			<Button
 				onClick={ev => openMenu(menuFunctionRef, {
-					anchor: eventCurrentTarget(ev),
+					anchor: ev.currentTarget,
 					position: MenuPosition.centerBottomToRight
 				})}
 				c:focused={isMenuFunctionOpen()}>
@@ -451,14 +443,14 @@ const ScientificCalculator: VoidComponent<{
 				ref={r => menuFunctionRef = r}
 				c:onToggleOpen={(v) => setIsMenuFunctionOpen(v)}
 				onClick={ev => {
-					const button = documentActive()!
+					const button = document.activeElement! as HTMLButtonElement
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
+						el => el.tagName == 'BUTTON'
 					)) return
 
-					switch (elementId(button)) {
+					switch (button.id) {
 					case buttonInverseId:
 						setIsInverse(v => !v)
 						break
@@ -466,17 +458,17 @@ const ScientificCalculator: VoidComponent<{
 						setIsHyperbolic(v => !v)
 						break
 					default:
-						const dataChar = elementDataset(button, 'char')
+						const dataset = button.dataset
+						const dataChar = dataset.char
 						if (dataChar) return addChar(dataChar)
 					}
 				}}>
 				<div
 					class={CSS.input_output_trigonometry_options}
 					onFocusIn={ev => {
-						if (arrayLength(buttonsTrigonometryOptions) === 0) {
-							arrayPush(
-								buttonsTrigonometryOptions,
-								...elementChildren<HTMLButtonElement>(eventCurrentTarget(ev))
+						if (buttonsTrigonometryOptions.length === 0) {
+							buttonsTrigonometryOptions.push(
+								...ev.currentTarget.children as unknown as HTMLButtonElement[]
 							)
 						}
 						keyboardOnFocusIn(ev, buttonsTrigonometryOptions)
@@ -489,15 +481,14 @@ const ScientificCalculator: VoidComponent<{
 				<div
 					class={CSS.input_output_grid_3}
 					onFocusIn={ev => {
-						const self = eventCurrentTarget(ev)
+						const self = ev.currentTarget
 						if (
-							arrayLength(buttonsTrigonometry) === 0
-							|| buttonsTrigonometry[0] !== elementChildren(self)[0]
+							buttonsTrigonometry.length === 0
+							|| buttonsTrigonometry[0] !== self.children[0]
 						) {
 							buttonsTrigonometry.length = 0
-							arrayPush(
-								buttonsTrigonometry,
-								...elementChildren<HTMLButtonElement>(self)
+							buttonsTrigonometry.push(
+								...self.children as unknown as HTMLButtonElement[]
 							)
 						}
 						keyboardOnFocusIn(ev, buttonsTrigonometry)
@@ -510,10 +501,9 @@ const ScientificCalculator: VoidComponent<{
 				<div
 					class={CSS.input_output_grid_3}
 					onFocusIn={ev => {
-						if (arrayLength(buttonsFunction) === 0) {
-							arrayPush(
-								buttonsFunction,
-								...elementChildren<HTMLButtonElement>(eventCurrentTarget(ev))
+						if (buttonsFunction.length === 0) {
+							buttonsFunction.push(
+								...ev.currentTarget.children as unknown as HTMLButtonElement[]
 							)
 						}
 						keyboardOnFocusIn(ev, buttonsFunction)
@@ -538,14 +528,14 @@ const ScientificCalculator: VoidComponent<{
 		<div
 			class={CSS.input_output_scientific_buttons}
 			onClick={ev => {
-				const button = documentActive()!
+				const button = document.activeElement! as HTMLButtonElement
 				if (!elementValidTarget(
-					eventCurrentTarget(ev),
+					ev.currentTarget,
 					button,
-					el => elementTagName(el) == 'BUTTON'
+					el => el.tagName == 'BUTTON'
 				)) return
 
-				switch (elementId(button)) {
+				switch (button.id) {
 				case buttonClearId:
 					clear()
 					break
@@ -556,15 +546,15 @@ const ScientificCalculator: VoidComponent<{
 					equal()
 					break
 				default:
-					const dataChar = elementDataset(button, 'char')
+					const dataset = button.dataset
+					const dataChar = dataset.char
 					if (dataChar) return addChar(dataChar)
 				}
 			}}
 			onFocusIn={ev => {
-				if (arrayLength(buttons) === 0) {
-					arrayPush(
-						buttons,
-						...elementChildren<HTMLButtonElement>(eventCurrentTarget(ev))
+				if (buttons.length === 0) {
+					buttons.push(
+						...ev.currentTarget.children as unknown as HTMLButtonElement[]
 					)
 				}
 				keyboardOnFocusIn(ev, buttons)
@@ -664,26 +654,26 @@ const ConverterCalculator: VoidComponent<{
 
 	function addChar(char: string): void {
 		let value = inputRef.value
-		const prefix = stringSubstring(value, 0, caretPos)
-		const suffix = stringSubstring(value, caretPos)
+		const prefix = value.substring(0, caretPos)
+		const suffix = value.substring(caretPos)
 		value = prefix + char + suffix
 		inputRef.value = value
-		caretPos += stringLength(char)
+		caretPos += char.length
 		inputRef.setSelectionRange(caretPos, caretPos)
-		elementFocus(inputRef)
+		inputRef.focus()
 		command(Commands.updateCalculatorInput, value)
 	}
 
 	function backspace(): void {
 		let value = inputRef.value
-		const prefix = stringSubstring(value, 0, caretPos-1)
-		const suffix = stringSubstring(value, caretPos)
+		const prefix = value.substring(0, caretPos-1)
+		const suffix = value.substring(caretPos)
 		value = prefix + suffix
 		inputRef.value = value
 		--caretPos
 		if (caretPos < 0) caretPos = 0
 		inputRef.setSelectionRange(caretPos, caretPos)
-		elementFocus(inputRef)
+		inputRef.focus()
 		command(Commands.updateCalculatorInput, value)
 	}
 
@@ -691,25 +681,25 @@ const ConverterCalculator: VoidComponent<{
 		caretPos = 0
 		inputRef.value = ''
 		inputRef.setSelectionRange(caretPos, caretPos)
-		elementFocus(inputRef)
+		inputRef.focus()
 		command(Commands.updateCalculatorInput, '')
 	}
 
 	function equal(): void {
 		if (output() == null) return;
 
-		caretPos = stringLength(numberToString(output()!))
-		inputRef.value = numberToString(output()!)
+		caretPos = output()!.toString().length
+		inputRef.value = output()!.toString()
 		inputRef.setSelectionRange(caretPos, caretPos)
-		elementFocus(inputRef)
+		inputRef.focus()
 		command(Commands.updateCalculatorInput, numberToRealDigits(output()!))
 	}
 
 	function plusMinus(): void {
 		const re = /(.*?)([-+]{0,2})(\d*(?:\.\d*)?)$/s
-		const match = stringMatch(stringSubstring(input(), 0, caretPos), re)
+		const match = input().substring(0, caretPos).match(re)
 		let value: string = input()
-		if (stringTrim(input()) == '') {
+		if (input().trim() == '') {
 			value = '-'
 			caretPos = 1
 		}
@@ -733,21 +723,21 @@ const ConverterCalculator: VoidComponent<{
 				|| sign == ''
 			) value = '-' + number
 
-			const prefix = stringSubstring(input(), 0, stringLength(pre))
-			const suffix = stringSubstring(input(), caretPos)
-			caretPos = stringLength(prefix) + stringLength(value)
+			const prefix = input().substring(0, pre.length)
+			const suffix = input().substring(caretPos)
+			caretPos = prefix.length + value.length
 			value = prefix + value + suffix
 		}
 
 		inputRef.value = value
 		inputRef.setSelectionRange(caretPos, caretPos)
-		elementFocus(inputRef)
+		inputRef.focus()
 		command(Commands.updateCalculatorInput, value)
 	}
 
 	createEffect(() => {
 		inputRef.value = input()
-		elementFocus(inputRef)
+		inputRef.focus()
 	})
 
 	return (<>
@@ -759,11 +749,11 @@ const ConverterCalculator: VoidComponent<{
 			onKeyDown={ev => {
 				if (!(ev.code == "Equal" && !ev.shiftKey)) return
 				equal()
-				eventPreventDefault(ev)
+				ev.preventDefault()
 			}}
-			onFocus={ev => caretPos = eventCurrentTarget(ev).selectionStart ?? caretPos}
-			onBlur={ev => caretPos = eventCurrentTarget(ev).selectionStart ?? caretPos}
-			onInput={ev => command(Commands.updateCalculatorInput, eventCurrentTarget(ev).value)}
+			onFocus={ev => caretPos = ev.currentTarget.selectionStart ?? caretPos}
+			onBlur={ev => caretPos = ev.currentTarget.selectionStart ?? caretPos}
+			onInput={ev => command(Commands.updateCalculatorInput, ev.currentTarget.value)}
 		/>
 		<div
 			class={attrClassList(
@@ -776,8 +766,8 @@ const ConverterCalculator: VoidComponent<{
 					decimal: settings().numberFormat.decimal,
 					thousand: settings().numberFormat.grouping
 				})}>
-				{output() != null && (regexTest(/[eE]/, numberToString(output()!))
-					? stringToUpperCase(numberToString(output()!))
+				{output() != null && (/[eE]/.test(output()!.toString())
+					? output()!.toString().toUpperCase()
 					: numberFormat(output()!, {
 						decimal: settings().numberFormat.decimal,
 						thousand: settings().numberFormat.grouping
@@ -794,7 +784,7 @@ const ConverterCalculator: VoidComponent<{
 				data-tooltip="Select converter type"
 				c:focused={isMenuConverterTypeOpen()}
 				onClick={ev => openMenu(menuConverterTypeRef, {
-					anchor: eventCurrentTarget(ev),
+					anchor: ev.currentTarget,
 					position: MenuPosition.centerBottomToRight,
 					allowHideAnchor: false
 				})}
@@ -807,14 +797,15 @@ const ConverterCalculator: VoidComponent<{
 				ref={r => menuConverterTypeRef = r}
 				c:onToggleOpen={v => setIsMenuConverterTypeOpen(v)}
 				onClick={ev => {
-					const button = documentActive()!
+					const button = document.activeElement! as HTMLButtonElement
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
+						el => el.tagName == 'BUTTON'
 					)) return
 
-					const dataType = elementDataset(button, 'type')
+					const dataset = button.dataset
+					const dataType = dataset.type
 					if (dataType
 						&& validEnumValue(dataType, ConverterType)
 					) {
@@ -838,7 +829,7 @@ const ConverterCalculator: VoidComponent<{
 					data-tooltip="Select input unit"
 					c:focused={isMenuInputUnitOpen()}
 					onClick={ev => openMenu(menuInputUnitRef, {
-						anchor: eventCurrentTarget(ev),
+						anchor: ev.currentTarget,
 						position: MenuPosition.centerBottomToRight,
 						allowHideAnchor: false
 					})}
@@ -850,16 +841,17 @@ const ConverterCalculator: VoidComponent<{
 					ref={r => menuInputUnitRef = r}
 					c:onToggleOpen={v => setIsMenuInputUnitOpen(v)}
 					onClick={ev => {
-						const button = documentActive()!
+						const button = document.activeElement! as HTMLButtonElement
 						if (!elementValidTarget(
-							eventCurrentTarget(ev),
+							ev.currentTarget,
 							button,
-							el => elementTagName(el) == "BUTTON"
+							el => el.tagName == "BUTTON"
 						)) return
 
-						const dataIndex = elementDataset(button, 'index')
+						const dataset = button.dataset
+						const dataIndex = dataset.index
 						if (dataIndex) {
-							const index = numberParse(dataIndex, true)
+							const index = Number.parseInt(dataIndex)
 							if (numberIsNotDefined(index)) return
 
 							const unit = getUnits()[index]
@@ -887,11 +879,11 @@ const ConverterCalculator: VoidComponent<{
 					data-tooltip="Select output unit"
 					c:focused={isMenuOutputUnitOpen()}
 					onClick={ev => openMenu(menuOutputUnitRef, {
-						anchor: eventCurrentTarget(ev),
+						anchor: ev.currentTarget,
 						position: MenuPosition.centerBottomToRight,
 						allowHideAnchor: false
 					})}
-					style={{color: 'rgb(var(--g-color-accent))'}}>
+					style={{color: `'rgb(${AppColors.accent})'`}}>
 					{settings().converter.unitOutput.name + ` (${settings().converter.unitOutput.symbol})`}
 				</Button>
 			</div>
@@ -900,16 +892,16 @@ const ConverterCalculator: VoidComponent<{
 				ref={r => menuOutputUnitRef = r}
 				c:onToggleOpen={v => setIsMenuOutputUnitOpen(v)}
 				onClick={ev => {
-					const button = documentActive()!
+					const button = document.activeElement! as HTMLButtonElement
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
-						button,
-						el => elementTagName(el) == "BUTTON"
+						ev.currentTarget,
+						button
 					)) return
 
-					const dataIndex = elementDataset(button, 'index')
+					const dataset = button.dataset
+					const dataIndex = dataset.index
 					if (dataIndex) {
-						const index = numberParse(dataIndex, true)
+						const index = Number.parseInt(dataIndex)
 						if (numberIsNotDefined(index)) return
 
 						const unit = getUnits()[index]
@@ -932,14 +924,14 @@ const ConverterCalculator: VoidComponent<{
 		<div
 			class={CSS.input_output_converter_buttons}
 			onClick={ev => {
-				const button = documentActive()!
+				const button = document.activeElement! as HTMLButtonElement
 				if (!elementValidTarget(
-					eventCurrentTarget(ev),
+					ev.currentTarget,
 					button,
-					el => elementTagName(el) == 'BUTTON'
+					el => el.tagName == 'BUTTON'
 				)) return
 
-				switch (elementId(button)) {
+				switch (button.id) {
 				case buttonClearId:
 					clear()
 					break
@@ -953,15 +945,15 @@ const ConverterCalculator: VoidComponent<{
 					plusMinus()
 					break
 				default:
-					const dataChar = elementDataset(button, 'char')
+					const dataset = button.dataset
+					const dataChar = dataset.char
 					if (dataChar) return addChar(dataChar)
 				}
 			}}
 			onFocusIn={ev => {
-				if (arrayLength(buttons) === 0) {
-					arrayPush(
-						buttons,
-						...elementChildren<HTMLButtonElement>(eventCurrentTarget(ev))
+				if (buttons.length === 0) {
+					buttons.push(
+						...ev.currentTarget.children as unknown as HTMLButtonElement[]
 					)
 				}
 				keyboardOnFocusIn(ev, buttons)
@@ -1003,8 +995,8 @@ const ProgrammerCalculator: VoidComponent<{
 	const outputDecimal = createMemo<string>(() => {
 		if (output() == null) return ''
 
-		if (settings().scientificNotation) return (regexTest(/[eE]/, numberToString(output()!))
-			? stringToUpperCase(numberToString(output()!))
+		if (settings().scientificNotation) return (/[eE]/.test(output()!.toString())
+			? output()!.toString().toUpperCase()
 			: numberFormat(output()!, {
 				decimal: settings().numberFormat.decimal,
 				thousand: settings().numberFormat.grouping
@@ -1021,11 +1013,11 @@ const ProgrammerCalculator: VoidComponent<{
 		: ''
 	)
 	const outputHex = createMemo<string>(() => output() != null
-		? stringToUpperCase(numberToString(numberParse(outputBinary(), true, 2), 16))
+		? Number.parseInt(outputBinary(), 2).toString(16).toUpperCase()
 		: ''
 	)
 	const outputOctal = createMemo<string>(() => output() != null
-		? numberToString(numberParse(outputBinary(), true, 2), 8)
+		? Number.parseInt(outputBinary(), 2).toString(8)
 		: ''
 	)
 	const isDec = createMemo(() => settings().programmer.numberType == NumberType.decimal)
@@ -1048,26 +1040,26 @@ const ProgrammerCalculator: VoidComponent<{
 
 	function addChar(char: string): void {
 		let value = inputRef.value
-		const prefix = stringSubstring(value, 0, caretPos)
-		const suffix = stringSubstring(value, caretPos)
+		const prefix = value.substring(0, caretPos)
+		const suffix = value.substring(caretPos)
 		value = prefix + char + suffix
 		inputRef.value = value
-		caretPos += stringLength(char)
+		caretPos += char.length
 		inputRef.setSelectionRange(caretPos, caretPos)
-		elementFocus(inputRef)
+		inputRef.focus()
 		command(Commands.updateCalculatorInput, value)
 	}
 
 	function backspace(): void {
 		let value = inputRef.value
-		const prefix = stringSubstring(value, 0, caretPos-1)
-		const suffix = stringSubstring(value, caretPos)
+		const prefix = value.substring(0, caretPos-1)
+		const suffix = value.substring(caretPos)
 		value = prefix + suffix
 		inputRef.value = value
 		--caretPos
 		if (caretPos < 0) caretPos = 0
 		inputRef.setSelectionRange(caretPos, caretPos)
-		elementFocus(inputRef)
+		inputRef.focus()
 		command(Commands.updateCalculatorInput, value)
 	}
 
@@ -1075,23 +1067,23 @@ const ProgrammerCalculator: VoidComponent<{
 		caretPos = 0
 		inputRef.value = ''
 		inputRef.setSelectionRange(caretPos, caretPos)
-		elementFocus(inputRef)
+		inputRef.focus()
 		command(Commands.updateCalculatorInput, '')
 	}
 
 	function equal(): void {
 		if (output() == null) return;
 
-		let $output = numberToString(output()!)
+		let $output = output()!.toString()
 		const type = settings().programmer.numberType
 		if (type == NumberType.hexadecimal) $output = outputHex()
 		else if (type == NumberType.octal) $output = outputOctal()
 		else if (type == NumberType.binary) $output = outputBinary()
 
-		caretPos = stringLength($output)
+		caretPos = $output.length
 		inputRef.value = $output
 		inputRef.setSelectionRange(caretPos, caretPos)
-		elementFocus(inputRef)
+		inputRef.focus()
 		command(Commands.updateCalculatorInput, $output)
 	}
 
@@ -1100,8 +1092,13 @@ const ProgrammerCalculator: VoidComponent<{
 		let $value = ''
 
 		if (type == NumberType.decimal) $value = numberToRealDigits(value)
-		else if (type == NumberType.hexadecimal) $value = stringToUpperCase(numberToString(numberParse(numberToBinary(value), true, 2), 16))
-		else if (type == NumberType.octal) $value = numberToString(numberParse(numberToBinary(value), true, 2), 8)
+		else if (type == NumberType.hexadecimal) $value = (Number
+			.parseInt(numberToBinary(value), 2)
+			.toString(16)
+			.toUpperCase())
+		else if (type == NumberType.octal) $value = (Number
+			.parseInt(numberToBinary(value), 2)
+			.toString(8))
 		else if (type == NumberType.binary) $value = numberToBinary(value)
 
 		addChar($value)
@@ -1109,7 +1106,7 @@ const ProgrammerCalculator: VoidComponent<{
 
 	createEffect(() => {
 		inputRef.value = props.input
-		elementFocus(inputRef)
+		inputRef.focus()
 	})
 
 	return (<>
@@ -1121,11 +1118,11 @@ const ProgrammerCalculator: VoidComponent<{
 			onKeyDown={ev => {
 				if (!(ev.code == "Equal" && !ev.shiftKey)) return
 				equal()
-				eventPreventDefault(ev)
+				ev.preventDefault()
 			}}
-			onFocus={ev => caretPos = eventCurrentTarget(ev).selectionStart ?? caretPos}
-			onBlur={ev => caretPos = eventCurrentTarget(ev).selectionStart ?? caretPos}
-			onInput={ev => command(Commands.updateCalculatorInput, eventCurrentTarget(ev).value)}
+			onFocus={ev => caretPos = ev.currentTarget.selectionStart ?? caretPos}
+			onBlur={ev => caretPos = ev.currentTarget.selectionStart ?? caretPos}
+			onInput={ev => command(Commands.updateCalculatorInput, ev.currentTarget.value)}
 		/>
 		<div
 			class={attrClassList(
@@ -1133,10 +1130,9 @@ const ProgrammerCalculator: VoidComponent<{
 				CSSMiscellaneous.no_scrollbar
 			)}
 			onFocusIn={ev => {
-				if (arrayLength(buttonsTypes) === 0) {
-					arrayPush(
-						buttonsTypes,
-						...elementChildren<HTMLButtonElement>(eventCurrentTarget(ev))
+				if (buttonsTypes.length === 0) {
+					buttonsTypes.push(
+						...ev.currentTarget.children as unknown as HTMLButtonElement[]
 					)
 				}
 				keyboardOnFocusIn(ev, buttonsTypes)
@@ -1148,7 +1144,7 @@ const ProgrammerCalculator: VoidComponent<{
 				c:indicatorPosition={ButtonIndicatorPosition.right}
 				onClick={() => command(Commands.updateSettingsProgrammerNumberType, NumberType.decimal)}
 				onContextMenu={(ev) => {
-					eventPreventDefault(ev)
+					ev.preventDefault()
 					textToCopy = outputDecimal()
 					openMenu(menuCopyRef)
 				}}>
@@ -1160,7 +1156,7 @@ const ProgrammerCalculator: VoidComponent<{
 				c:indicatorPosition={ButtonIndicatorPosition.right}
 				onClick={() => command(Commands.updateSettingsProgrammerNumberType, NumberType.hexadecimal)}
 				onContextMenu={(ev) => {
-					eventPreventDefault(ev)
+					ev.preventDefault()
 					if (output() == null) return;
 
 					textToCopy = outputHex()
@@ -1174,7 +1170,7 @@ const ProgrammerCalculator: VoidComponent<{
 				c:indicatorPosition={ButtonIndicatorPosition.right}
 				onClick={() => command(Commands.updateSettingsProgrammerNumberType, NumberType.octal)}
 				onContextMenu={(ev) => {
-					eventPreventDefault(ev)
+					ev.preventDefault()
 					if (output() == null) return;
 
 					textToCopy = outputOctal()
@@ -1188,7 +1184,7 @@ const ProgrammerCalculator: VoidComponent<{
 				c:indicatorPosition={ButtonIndicatorPosition.right}
 				onClick={() => command(Commands.updateSettingsProgrammerNumberType, NumberType.binary)}
 				onContextMenu={(ev) => {
-					eventPreventDefault(ev)
+					ev.preventDefault()
 					if (output() == null) return;
 
 					textToCopy = outputBinary()
@@ -1200,7 +1196,7 @@ const ProgrammerCalculator: VoidComponent<{
 
 			<Menu ref={r => menuCopyRef = r}>
 				<MenuItem onClick={() => {
-					navigatorClipboardWriteText(textToCopy)
+					navigator.clipboard.writeText(textToCopy)
 					closeMenu(menuCopyRef)
 				}} c:leading={<Icon c:code={ICON_COPY}/>}>Copy</MenuItem>
 			</Menu>
@@ -1215,14 +1211,14 @@ const ProgrammerCalculator: VoidComponent<{
 		<div
 			class={CSS.input_output_programmer_buttons}
 			onClick={ev => {
-				const button = documentActive()!
+				const button = document.activeElement! as HTMLButtonElement
 				if (!elementValidTarget(
-					eventCurrentTarget(ev),
+					ev.currentTarget,
 					button,
-					el => elementTagName(el) == 'BUTTON'
+					el => el.tagName == 'BUTTON'
 				)) return
 
-				switch (elementId(button)) {
+				switch (button.id) {
 				case buttonClearId:
 					clear()
 					break
@@ -1233,15 +1229,15 @@ const ProgrammerCalculator: VoidComponent<{
 					equal()
 					break
 				default:
-					const dataChar = elementDataset(button, 'char')
+					const dataset = button.dataset
+					const dataChar = dataset.char
 					if (dataChar) return addChar(dataChar)
 				}
 			}}
 			onFocusIn={ev => {
-				if (arrayLength(buttons) === 0) {
-					arrayPush(
-						buttons,
-						...elementChildren<HTMLButtonElement>(eventCurrentTarget(ev))
+				if (buttons.length === 0) {
+					buttons.push(
+						...ev.currentTarget.children as unknown as HTMLButtonElement[]
 					)
 				}
 				keyboardOnFocusIn(ev, buttons)
@@ -1316,14 +1312,14 @@ const DateCalculator: VoidComponent<{
 	return (<div
 		class={CSS.input_output_date_calculator}
 		onClick={ev => {
-			const button = documentActive()!
+			const button = document.activeElement! as HTMLButtonElement
 			if (!elementValidTarget(
-				eventCurrentTarget(ev),
+				ev.currentTarget,
 				button,
-				el => elementTagName(el) == 'BUTTON'
+				el => el.tagName == 'BUTTON'
 			)) return
 
-			switch (elementId(button)) {
+			switch (button.id) {
 			case buttonFromId:
 				openDatePicker(datePickerFromRef, {
 					anchor: button,
@@ -1339,9 +1335,9 @@ const DateCalculator: VoidComponent<{
 			}
 		}}
 		onFocusOut={ev => {
-			const target = eventTarget(ev) as HTMLInputElement
+			const target = ev.target as HTMLInputElement
 
-			switch (elementId(target)) {
+			switch (target.id) {
 			case inputYearId:
 				command(Commands.updateCalculatorInput, {
 					...input(),
@@ -1378,7 +1374,11 @@ const DateCalculator: VoidComponent<{
 				c:variant={ButtonVariant.tonal}
 				id={buttonFromId}>
 				<Icon c:code={ICON_CALENDAR}/>
-				{dateTextYMD(input().from)}
+				{input().from.toLocaleDateString(undefined, {
+					year: 'numeric',
+					month: 'long',
+					day: 'numeric'
+				})}
 			</Button>
 		</div>
 		<div class={CSS.input_output_date_inputs} data-hide={attrSetIfExist(settings().date.operation == DateOperation.difference)}>
@@ -1407,7 +1407,11 @@ const DateCalculator: VoidComponent<{
 				c:variant={ButtonVariant.tonal}
 				id={buttonToId}>
 				<Icon c:code={ICON_CALENDAR}/>
-				{dateTextYMD(input().to)}
+				{input().to.toLocaleDateString(undefined, {
+					year: 'numeric',
+					month: 'long',
+					day: 'numeric'
+				})}
 			</Button>
 		</div>
 		<div>
@@ -1417,15 +1421,15 @@ const DateCalculator: VoidComponent<{
 		<DatePicker
 			ref={r => datePickerFromRef = r}
 			c:date={input().from}
-			c:firstDate={new Date(dateYear() - 1000, 0, 1)}
-			c:lastDate={new Date(dateYear() + 1000, 11, 31)}
+			c:firstDate={new Date(new Date().getFullYear() - 1000, 0, 1)}
+			c:lastDate={new Date(new Date().getFullYear() + 1000, 11, 31)}
 			c:onSelectDate={(value) => command(Commands.updateCalculatorInput, {...input(), from: value})}
 		/>
 		<DatePicker
 			ref={r => datePickerToRef = r}
 			c:date={input().to}
-			c:firstDate={new Date(dateYear() - 1000, 0, 1)}
-			c:lastDate={new Date(dateYear() + 1000, 11, 31)}
+			c:firstDate={new Date(new Date().getFullYear() - 1000, 0, 1)}
+			c:lastDate={new Date(new Date().getFullYear() + 1000, 11, 31)}
 			c:onSelectDate={(value) => command(Commands.updateCalculatorInput, {...input(), to: value})}
 		/>
 	</div>)

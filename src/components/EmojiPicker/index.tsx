@@ -5,17 +5,9 @@ import { mergeRefs } from '@solid-primitives/refs'
 import type { Emoji } from '@/types/emoji'
 import { EMOJIS_ACTIVITIES, EMOJIS_ANIMAL_AND_NATURE, EMOJIS_FLAGS, EMOJIS_FOOD_AND_DRINK, EMOJIS_OBJECT, EMOJIS_PERSON_AND_BODY, EMOJIS_SMILEY_AND_EMOTION, EMOJIS_SYMBOLS, EMOJIS_TRAVEL_AND_PLACES } from '@/constants/emoji'
 import { attrSetIfExist } from '@/utils/attributes'
-import { eventListenerAdd, eventCurrentTarget, eventListenerRemove } from '@/utils/event'
-import { timeTimerClear, timeTimerSet } from '@/utils/time'
 import { AnimationEffectTiming } from '@/enums/animation'
-import { stringLength, stringLocaleCompare, stringReplace, stringSplit, stringTrim } from '@/utils/string'
-import { arrayConcat, arrayFindIndex, arrayJoin, arrayLength, arrayMap, arraySlice, arraySort, arraySplice } from '@/utils/array'
-import { elementAnimate, elementAppendChild, elementCreate, elementDataset, elementDispatchEvent, elementId, elementIdSet, elementStyleSet, elementStyle, elementTagName } from '@/utils/element'
-import { regexTest } from '@/utils/regex'
-import { promiseDone } from '@/utils/object'
 import { AppColors } from '@/enums/colors'
-import { documentActive, documentBody } from '@/utils/document'
-import { numberParse, numberSafe } from '@/utils/number'
+import { numberSafe } from '@/utils/number'
 import { ElementIds } from '@/enums/ids'
 import { ICON_ANIMAL_CAT, ICON_DISMISS, ICON_DIVERSITY, ICON_EMOJI, ICON_FLAG, ICON_FOOD, ICON_HISTORY, ICON_PERSON, ICON_RUNNING_PERSON, ICON_SYMBOLS, ICON_VEHICLE_CAR } from '@/constants/icons'
 import { animationIsOn } from '@/utils/animation'
@@ -50,75 +42,69 @@ enum EmojiPickerEvents {
 
 enum EmojiPickerListenerEvents {
 	/** @param detail `Emoji` */
-	add_recents = 'custom:emojipickerlistener-addrecents',
+	addRecents = 'custom:emojipickerlistener-addrecents',
 
 	/** @param detail `HTMLElement` */
-	get_recents = 'custom:emojipickerlistener-getrecents'
+	getRecents = 'custom:emojipickerlistener-getrecents'
 }
 
 let LISTENER_REF: HTMLDivElement
 let HAS_EMOJI_LISTENER: boolean = false
-const ALL_EMOJI: Emoji[] = arraySort(
-	arrayMap(
-		arrayConcat(
-			([] as Emoji[]),
-			EMOJIS_SMILEY_AND_EMOTION,
-			EMOJIS_PERSON_AND_BODY,
-			EMOJIS_ANIMAL_AND_NATURE,
-			EMOJIS_FOOD_AND_DRINK,
-			EMOJIS_TRAVEL_AND_PLACES,
-			EMOJIS_ACTIVITIES,
-			EMOJIS_OBJECT,
-			EMOJIS_SYMBOLS,
-			EMOJIS_FLAGS
-		),
-		emoji => [...emoji] // copy
-	),
-	(a, b) => stringLocaleCompare(a[1], b[1])
-)
+const ALL_EMOJI: Emoji[] = ([] as Emoji[])
+	.concat(
+		EMOJIS_SMILEY_AND_EMOTION,
+		EMOJIS_PERSON_AND_BODY,
+		EMOJIS_ANIMAL_AND_NATURE,
+		EMOJIS_FOOD_AND_DRINK,
+		EMOJIS_TRAVEL_AND_PLACES,
+		EMOJIS_ACTIVITIES,
+		EMOJIS_OBJECT,
+		EMOJIS_SYMBOLS,
+		EMOJIS_FLAGS
+	)
+	.sort((a, b) => a[1].localeCompare(b[1]))
+	.map(emoji => [...emoji])
 
 function initEmojiPickerListener(): void {
 	if (HAS_EMOJI_LISTENER) return;
 	HAS_EMOJI_LISTENER = true
 
-	const body = documentBody()
+	const body = document.body
 	let recents: Emoji[] = []
 
 	function createListenerElement(): void {
-		const div = elementCreate('div')
-		elementStyleSet(div, 'display', 'contents')
-		elementIdSet(div, ElementIds.emojiPickerListener)
-		elementAppendChild(body, div)
+		const div = document.createElement('div')
+		div.style.setProperty('display', 'contents')
+		div.id = ElementIds.emojiPickerListener
+		body.appendChild(div)
 
 		LISTENER_REF = div
 	}
 
 	function addRecentEmoji(ev: CustomEvent<Emoji>): void {
 		const emoji = ev.detail
-		const index = arrayFindIndex(recents, v => v[0] == emoji[0])
-		if (index >= 0) arraySplice(recents, index, 1)
+		const index = recents.findIndex(v => v[0] == emoji[0])
+		if (index >= 0) recents.splice(index, 1)
 
-		recents = [emoji, ...arraySlice(recents, 0, 41)]
+		recents = [emoji, ...recents.slice(0, 41)]
 	}
 
 	function getRecentEmoji(ev: CustomEvent<HTMLElement>): void {
 		const element = ev.detail
-		elementDispatchEvent(element, new CustomEvent(
+		element.dispatchEvent(new CustomEvent(
 			EmojiPickerEvents.getrecentsemoji,
 			{detail: {emojis: [...recents]}}
 		))
 	}
 
 	function initEvents(): void {
-		eventListenerAdd<CustomEvent<Emoji>>(
-			LISTENER_REF,
-			EmojiPickerListenerEvents.add_recents,
+		LISTENER_REF.addEventListener(
+			EmojiPickerListenerEvents.addRecents as any,
 			addRecentEmoji
 		)
 
-		eventListenerAdd<CustomEvent<HTMLElement>>(
-			LISTENER_REF,
-			EmojiPickerListenerEvents.get_recents,
+		LISTENER_REF.addEventListener(
+			EmojiPickerListenerEvents.getRecents as any,
 			getRecentEmoji
 		)
 	}
@@ -141,20 +127,20 @@ const EmojiPickerBody: ParentComponent<{
 	const [recents, setRecents] = createSignal<Emoji[]>([])
 	const [searchText, setSearchText] = createSignal<string>('')
 	const getSearchRegex = createMemo<RegExp | null>(() => {
-		let t = searchText()
-		t = stringTrim(t)
-		t = stringReplace(t, / +/g, ' ')
-		t = stringReplace(t, /[^\w- ]/g, '')
-		return stringLength(t) == 0
+		const t = searchText()
+			.trim()
+			.replace(/ +/g, ' ')
+			.replace(/[^\w- ]/g, '')
+		return t.length == 0
 			? null
-			: new RegExp(arrayJoin(stringSplit(t, ' '), '|'), 'gi')
+			: new RegExp(t.split(' ').join('|'), 'gi')
 	})
 	let menuSearchRef: HTMLDivElement
-	let timeId: number | null = null
+	let timeId: number | NodeJS.Timeout | null = null
 
 	function updateRecents(): void {
-		elementDispatchEvent(LISTENER_REF, new CustomEvent(
-			EmojiPickerListenerEvents.get_recents,
+		LISTENER_REF.dispatchEvent(new CustomEvent(
+			EmojiPickerListenerEvents.getRecents,
 			{detail: props.element}
 		))
 	}
@@ -164,16 +150,14 @@ const EmojiPickerBody: ParentComponent<{
 	}
 
 	function initEvents(): void {
-		eventListenerAdd<CustomEvent<{emojis: Emoji[]}>>(
-			props.element,
-			EmojiPickerEvents.getrecentsemoji,
+		props.element.addEventListener(
+			EmojiPickerEvents.getrecentsemoji as any,
 			customOnGetRecentEmoji
 		)
 
 		onCleanup(() => {
-			eventListenerRemove<CustomEvent<{emojis: Emoji[]}>>(
-				props.element,
-				EmojiPickerEvents.getrecentsemoji,
+			props.element.removeEventListener(
+				EmojiPickerEvents.getrecentsemoji as any,
 				customOnGetRecentEmoji
 			)
 		})
@@ -203,7 +187,7 @@ const EmojiPickerBody: ParentComponent<{
 
 	const Emojis: VoidComponent<{category: EmojiCategory, emojis: Emoji[]}> = $props => {
 		const [columnCount, setColumnCount] = createSignal<number>(0)
-		let timeId: number | null = null
+		let timeId: number | NodeJS.Timeout | null = null
 
 		return (<div
 			class='c-emoji-picker-emojis'
@@ -212,25 +196,29 @@ const EmojiPickerBody: ParentComponent<{
 				<FocusableGroup2D
 					c:columnCount={columnCount()}
 					onFocusIn={(ev) => {
-						if (timeId === null) setColumnCount(arrayLength(stringSplit(
-							stringTrim(elementStyle(eventCurrentTarget(ev), "grid-template-columns")),
-							" "
-						)))
-						else timeTimerClear(timeId)
+						if (timeId === null) setColumnCount(
+							window
+							.getComputedStyle(ev.currentTarget)
+							.getPropertyValue("grid-template-columns")
+							.trim()
+							.split(" ")
+							.length
+						)
+						else clearTimeout(timeId)
 
-						timeId = timeTimerSet(() => timeId = null, 200)
+						timeId = setTimeout(() => timeId = null, 200)
 					}}
 					onClick={() => {
-						const button = documentActive()!
-						if (elementTagName(button) != 'BUTTON') return
+						const button = document.activeElement! as HTMLButtonElement
+						if (button.tagName != 'BUTTON') return
 
-						const dataset_index = elementDataset(button, 'index')
-						if (!dataset_index) return
+						const dataIndex = button.dataset.index
+						if (!dataIndex) return
 
-						const index = numberSafe(numberParse(dataset_index, true))
+						const index = numberSafe(Number.parseInt(dataIndex))
 						const emoji = $props.emojis[index]
-						elementDispatchEvent(LISTENER_REF, new CustomEvent(
-							EmojiPickerListenerEvents.add_recents,
+						LISTENER_REF.dispatchEvent(new CustomEvent(
+							EmojiPickerListenerEvents.addRecents,
 							{detail: [...emoji] satisfies Emoji}
 						))
 						updateRecents()
@@ -258,19 +246,19 @@ const EmojiPickerBody: ParentComponent<{
 				left: 'prev', right: 'next'
 			}}
 			onClick={() => {
-				let button = documentActive()!
-				const tagname = elementTagName(button)
+				let button = document.activeElement! as HTMLButtonElement
+				const tagname = button.tagName
 				if (tagname != 'BUTTON') return
 
-				if (elementId(button) == buttonCloseId) {
+				if (button.id == buttonCloseId) {
 					props.onClose()
 					return
 				}
 
-				const dataset_category = elementDataset(button, 'category')
-				if (!dataset_category) return
+				const dataCategory = button.dataset.category
+				if (!dataCategory) return
 
-				setOption(dataset_category as EmojiCategory)
+				setOption(dataCategory as EmojiCategory)
 			}}>
 			<Tooltip>
 				<Show when={props.useCloseButton}>
@@ -297,10 +285,10 @@ const EmojiPickerBody: ParentComponent<{
 			<SearchTextField
 				placeholder='Search emoji'
 				onInput={(ev) => {
-					const text = eventCurrentTarget(ev).value
+					const text = ev.currentTarget.value
 
-					if (timeId != null) timeTimerClear(timeId)
-					timeId = timeTimerSet(() => {
+					if (timeId != null) clearTimeout(timeId)
+					timeId = setTimeout(() => {
 						setSearchText(text)
 					}, 1000)
 				}}
@@ -310,14 +298,13 @@ const EmojiPickerBody: ParentComponent<{
 				c:result={<TransitionGroup
 					onEnter={(el, done) => {
 						if (animationIsOn()){
-							promiseDone(elementAnimate(
-								el as HTMLElement,
+							(el as HTMLElement).animate(
 								[
 									{ transform: 'translateX(-12px)', opacity: 0 },
 									{ tranform: null, opacity: 1 }
 								],
 								{ duration: 200, easing: AnimationEffectTiming.spring }
-							).finished, done)
+							).finished.then(done)
 							return
 						}
 
@@ -325,20 +312,19 @@ const EmojiPickerBody: ParentComponent<{
 					}}
 					onExit={(el, done) => {
 						if (animationIsOn()) {
-							promiseDone(elementAnimate(
-								el as HTMLElement,
+							(el as HTMLElement).animate(
 								{ transform: 'translateX(-12px)', opacity: 0 },
 								{ duration: 200, easing: AnimationEffectTiming.spring }
-							).finished, done)
+							).finished.then(done)
 							return
 						}
 
 						done()
 					}}>
-					<For each={ALL_EMOJI}>{e => <Show when={getSearchRegex() != null && regexTest(getSearchRegex()!, e[1])}>
+					<For each={ALL_EMOJI}>{e => <Show when={getSearchRegex() != null && getSearchRegex()!.test(e[1])}>
 						<SearchMenuItem onClick={() => {
-							elementDispatchEvent(LISTENER_REF, new CustomEvent(
-								EmojiPickerListenerEvents.add_recents,
+							LISTENER_REF.dispatchEvent(new CustomEvent(
+								EmojiPickerListenerEvents.addRecents,
 								{detail: [...e]}
 							))
 							updateRecents()

@@ -1,13 +1,6 @@
 import { KEY_ARROW_UP, KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT } from "@/constants/key-code"
-import { attrGet, attrHas, attrRemove, attrSet } from "./attributes"
-import { documentActive } from "./document"
-import { elementContains, elementFocus, elementId, elementIdSet, elementTabIndex, elementTabIndexSet, elementTagName, elementValidTarget } from "./element"
-import { eventCurrentTarget, eventPreventDefault } from "./event"
-import { timeTimerClear, timeTimerSet } from "./time"
-import { arrayFindIndex, arrayLength, arraySome } from "./array"
 import { createUniqueId } from "solid-js"
-import { typeIsNumber } from "./typecheck"
-import { mathAbs, mathFloor } from "./math"
+import { elementValidTarget } from "./element"
 
 enum ElementCustomAttributes {
 	tabIndex = 'data-tabindex'
@@ -15,16 +8,16 @@ enum ElementCustomAttributes {
 
 const ELEMENTS_DATA: Record<
 	string,
-	{isTabIndexRemoved: boolean, timeRemovedId: number | null}
+	{isTabIndexRemoved: boolean, timeRemovedId: number | NodeJS.Timeout | null}
 > = {}
 
 export function keyboardOnFocusIn(
 	ev: Event & {currentTarget: HTMLDivElement},
 	elements: HTMLElement[]
 ): void {
-	const active = documentActive()!
-	const self = eventCurrentTarget(ev)
-	let id = elementId(self)
+	const active = document.activeElement!
+	const self = ev.currentTarget
+	let id = self.id
 	if (!elementValidTarget(
 		self,
 		active,
@@ -32,22 +25,22 @@ export function keyboardOnFocusIn(
 
 	if (id === '') {
 		id = createUniqueId()
-		elementIdSet(self, id)
+		self.id = id
 	}
 
 	if (ELEMENTS_DATA[id] && !ELEMENTS_DATA[id].isTabIndexRemoved) return
-	if (!arraySome(elements, e => e === active)) return
+	if (!elements.some(e => e === active)) return
 
 	for (const b of elements) {
-		if (attrHas(b, 'tabindex')) {
-			attrSet(b, ElementCustomAttributes.tabIndex, elementTabIndex(b) + '')
+		if (b.hasAttribute('tabindex')) {
+			b.setAttribute(ElementCustomAttributes.tabIndex, b.tabIndex + '')
 		}
 		if (active === b) {
-			elementTabIndexSet(b, 0)
+			b.tabIndex = 0
 			continue
 		}
 
-		elementTabIndexSet(b, -1)
+		b.tabIndex = -1
 	}
 
 	const data = ELEMENTS_DATA[id]
@@ -66,39 +59,39 @@ export function keyboardOnFocusOut(
 	ev: Event & {currentTarget: HTMLDivElement},
 	elements: HTMLElement[]
 ): void {
-	const self = eventCurrentTarget(ev)
-	let id = elementId(self)
+	const self = ev.currentTarget
+	let id = self.id
 	if (id === '') {
 		id = createUniqueId()
-		elementIdSet(self, id)
+		self.id = id
 	}
 
 	const data = ELEMENTS_DATA[id]
 	if (!data) return
 
 	const timeRemovedId = data.timeRemovedId
-	if (typeIsNumber(timeRemovedId)) {
-		timeTimerClear(timeRemovedId!)
+	if (typeof timeRemovedId === 'number') {
+		clearTimeout(timeRemovedId)
 	}
 
-	data.timeRemovedId = timeTimerSet(() => {
+	data.timeRemovedId = setTimeout(() => {
 		data.timeRemovedId = null
-		const active = documentActive()
+		const active = document.activeElement
 		if (active
-			&& elementContains(self, active)
-			&& arraySome(elements, e => e === active)
+			&& self.contains(active)
+			&& elements.some(e => e === active)
 		) return
 
 		for (const el of elements) {
-			if (attrHas(el, ElementCustomAttributes.tabIndex)) {
-				const tabIndex = attrGet(el, ElementCustomAttributes.tabIndex)
-				attrRemove(el, ElementCustomAttributes.tabIndex)
+			if (el.hasAttribute(ElementCustomAttributes.tabIndex)) {
+				const tabIndex = el.getAttribute(ElementCustomAttributes.tabIndex)
+				el.removeAttribute(ElementCustomAttributes.tabIndex)
 				if (tabIndex) {
-					attrSet(el, 'tabindex',  tabIndex)
+					el.setAttribute('tabindex',  tabIndex)
 					continue
 				}
 			}
-			attrRemove(el, 'tabindex')
+			el.removeAttribute('tabindex')
 		}
 
 		delete ELEMENTS_DATA[id]
@@ -115,7 +108,7 @@ export function keyboardOnKeyDown(
 		right?: 'next' | 'prev'
 	}
 ): void {
-	const active = documentActive()
+	const active = document.activeElement
 	if (!options || !active) return
 
 	const keyCode = ev.code
@@ -139,9 +132,9 @@ export function keyboardOnKeyDown(
 		&& keyCode != KEY_ARROW_RIGHT
 		&& keyCode != KEY_ARROW_LEFT
 	)
-	const isChildOfParent = elementContains(eventCurrentTarget(ev), active)
-	const index = arrayFindIndex(elements, e => e === active)
-	const tagName = elementTagName(active)
+	const isChildOfParent = ev.currentTarget.contains(active)
+	const index = elements.findIndex(e => e === active)
+	const tagName = active.tagName
 	if (
 		allOptionsInvalid
 		|| invalidKeys
@@ -163,18 +156,18 @@ export function keyboardOnKeyDown(
 	else if (validLeft) direction = left
 	else if (validRight) direction = right
 
-	const elementsLength = arrayLength(elements)
+	const elementsLength = elements.length
 	let i = direction === 'next'? index + 1 : index - 1
 	while (i !== index) {
 		const target = elements[i]
 		if (target) {
-			elementFocus(target)
-			if (documentActive() === target) {
-				eventPreventDefault(ev) // disable auto scroll
-				elementTabIndexSet(target, 0)
-				elementTabIndexSet(active, -1)
+			target.focus()
+			if (document.activeElement === target) {
+				ev.preventDefault() // disable auto scroll
+				target.tabIndex = 0;
+				(active as HTMLElement).tabIndex = -1
 
-				const tagName = elementTagName(target)
+				const tagName = target.tagName
 				if (tagName === 'INPUT' || tagName === 'TEXTAREA') {
 					keyboardOnFocusOut(ev, elements) // to remove tabindex
 				}
@@ -198,7 +191,7 @@ export function keyboardOnKeyDown2D(
 	elements: HTMLElement[],
 	columnCount: number
 ): void {
-	const active = documentActive()
+	const active = document.activeElement
 	if (!active) return
 
 	const keyCode = ev.code
@@ -212,9 +205,9 @@ export function keyboardOnKeyDown2D(
 		&& !validDown
 		&& !validLeft
 	)
-	const isChildOfParent = elementContains(eventCurrentTarget(ev), active)
-	const index = arrayFindIndex(elements, e => e === active)
-	const tagName = elementTagName(active)
+	const isChildOfParent = ev.currentTarget.contains(active)
+	const index = elements.findIndex(e => e === active)
+	const tagName = active.tagName
 	if (
 		invalidKeys
 		|| !isChildOfParent
@@ -231,7 +224,7 @@ export function keyboardOnKeyDown2D(
 	case KEY_ARROW_LEFT : i = index - 1; break
 	}
 
-	const elementsLength = arrayLength(elements)
+	const elementsLength = elements.length
 	let cache = 0
 	while (i !== index) {
 		++cache
@@ -241,13 +234,13 @@ export function keyboardOnKeyDown2D(
 
 		const target = elements[i]
 		if (target) {
-			elementFocus(target)
-			if (documentActive() === target) {
-				eventPreventDefault(ev) // disable auto scroll
-				elementTabIndexSet(target, 0)
-				elementTabIndexSet(active, -1)
+			target.focus()
+			if (document.activeElement === target) {
+				ev.preventDefault() // disable auto scroll
+				target.tabIndex = 0;
+				(active as HTMLElement).tabIndex = -1
 
-				const tagName = elementTagName(target)
+				const tagName = target.tagName
 				if (tagName === 'INPUT' || tagName === 'TEXTAREA') {
 					keyboardOnFocusOut(ev, elements) // to remove tabindex
 				}
@@ -258,7 +251,10 @@ export function keyboardOnKeyDown2D(
 		switch (keyCode) {
 		case KEY_ARROW_UP:
 			i = i - columnCount
-			if (i < 0) i = (columnCount * mathFloor(elementsLength / columnCount)) + (mathAbs(index) % columnCount)
+			if (i < 0) i = (
+				(columnCount * Math.floor(elementsLength / columnCount))
+				+ (Math.abs(index) % columnCount)
+			)
 
 			break
 		case KEY_ARROW_RIGHT:

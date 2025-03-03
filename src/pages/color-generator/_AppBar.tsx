@@ -6,19 +6,11 @@ import { RootAttributes } from "@/enums/attributes"
 import { CornerData } from "@/enums/corner"
 import { LocalStorageKeys } from "@/enums/storage"
 import { ThemeData } from "@/enums/theme"
-import { storageSet, storageGet } from "@/utils/storage"
 import { RoutesLinks, ExternalLinks } from "@/enums/links"
-import { dateYear } from "@/utils/datetime"
-import { urlEncode, urlOrigin } from "@/utils/url"
-import { promiseDone, validEnumValue } from "@/utils/object"
-import { navigatorClipboardWriteText, navigatorShare } from "@/utils/navigator"
-import { arrayJoin, arrayLength } from "@/utils/array"
-import { attrSet, attrClassListModule } from "@/utils/attributes"
-import { eventCurrentTarget, eventTarget } from "@/utils/event"
-import { timeTimerClear, timeTimerSet } from "@/utils/time"
+import { validEnumValue } from "@/utils/object"
+import { attrClassListModule } from "@/utils/attributes"
 import { APP_COLOR_GENERATOR as app } from "@/constants/apps"
-import { documentActive, documentRoot } from "@/utils/document"
-import { elementValidTarget, elementTagName, elementId, elementDataset } from "@/utils/element"
+import { elementValidTarget } from "@/utils/element"
 import { ICON_APPS, ICON_CHAT, ICON_CHECKMARK, ICON_CIRCLE, ICON_COPY, ICON_GIFT, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_MAXIMIZE, ICON_PLAY_CIRCLE_HINT, ICON_RECEIPT, ICON_SETTINGS, ICON_SHARE_ANDROID, ICON_SHIELD_CHECKMARK, ICON_SQUARE, ICON_TEARDROP_BOTTOM_RIGHT, ICON_TEXT_BULLET_LIST_ADD, ICON_TEXT_BULLET_LIST_SQUARE, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from "@/constants/icons"
 import { AnimationData } from "@/enums/animation"
 import logoRedmerah from '@/assets/images/logos/redmerah-logo.svg'
@@ -41,7 +33,7 @@ const _: VoidComponent<{
 	dialogColorListRef: HTMLDialogElement
 	seed: string
 }> = (props) => {
-	const root = documentRoot()
+	const root = document.documentElement
 	const buttonColorListId = createUniqueId()
 	const buttonSelectColorId = createUniqueId()
 	const buttonColorToListId = createUniqueId()
@@ -49,8 +41,8 @@ const _: VoidComponent<{
 	const buttonSettingsId = createUniqueId()
 	const [theme, setTheme] = createSignal<ThemeData>(ThemeData.system)
 	const [animation, setAnimation] = createSignal<AnimationData>(AnimationData.on)
-	const [timeId, setTimeId] = createSignal<number | null>(null)
-	const [timeCopyId, setTimeCopyId] = createSignal<number | null>(null)
+	const [timeId, setTimeId] = createSignal<number | NodeJS.Timeout | null>(null)
+	const [timeCopyId, setTimeCopyId] = createSignal<number | NodeJS.Timeout | null>(null)
 	const [corner, setCorner] = createSignal<CornerData>(CornerData.round)
 	const [isMenuSettingsOpen, setIsMenuSettingsOpen] = createSignal<boolean>(false)
 	const palette = createMemo(() => props.palette)
@@ -58,61 +50,59 @@ const _: VoidComponent<{
 
 	function copyAll(): void {
 		if (timeCopyId() != null) {
-			timeTimerClear(timeCopyId()!)
+			clearTimeout(timeCopyId()!)
 			setTimeCopyId(null)
 		}
-		promiseDone(
-			navigatorClipboardWriteText(arrayJoin([
-				'--seed: ' + palette().seed,
-				'--accent-light: ' + palette().accentLight,
-				'--on-accent-light: ' + palette().onAccentLight,
-				'--accent-dark: ' + palette().accentDark,
-				'--on-accent-dark: ' + palette().onAccentDark,
-			], ';\n') + ';'),
-			() => setTimeCopyId(timeTimerSet(() => setTimeCopyId(null), 2000))
-		)
+		navigator.clipboard.writeText([
+			'--seed: ' + palette().seed,
+			'--accent-light: ' + palette().accentLight,
+			'--on-accent-light: ' + palette().onAccentLight,
+			'--accent-dark: ' + palette().accentDark,
+			'--on-accent-dark: ' + palette().onAccentDark,
+		].join(';\n') + ';')
+		.then(() => setTimeCopyId(setTimeout(() => setTimeCopyId(null), 2000)))
 	}
 
 	function updateTheme(theme: ThemeData): void {
 		setTheme(theme)
-		attrSet(root, RootAttributes.theme, theme)
-		storageSet(LocalStorageKeys.theme, theme)
+		root.setAttribute(RootAttributes.theme, theme)
+		localStorage.setItem(LocalStorageKeys.theme, theme)
 		closeMenu(menuSettingsRef)
 	}
 
 	function updateAnimation(animation: AnimationData): void {
 		setAnimation(animation)
-		attrSet(root, RootAttributes.animation, animation)
-		storageSet(LocalStorageKeys.animation, animation)
+		root.setAttribute(RootAttributes.animation, animation)
+		localStorage.setItem(LocalStorageKeys.animation, animation)
 	}
 
 	function updateCorner(corner: CornerData): void {
 		setCorner(corner)
-		attrSet(root, RootAttributes.corner, corner)
-		storageSet(LocalStorageKeys.corner, corner)
+		root.setAttribute(RootAttributes.corner, corner)
+		localStorage.setItem(LocalStorageKeys.corner, corner)
 		closeMenu(menuSettingsRef)
 	}
 
 	function initTheme(): void {
-		const theme = storageGet(LocalStorageKeys.theme)
+		const theme = localStorage.getItem(LocalStorageKeys.theme)
 		if (theme && validEnumValue(theme, ThemeData)) {
-			attrSet(root, RootAttributes.theme, theme)
+			root.setAttribute(RootAttributes.theme, theme)
 			setTheme(theme as ThemeData)
 		}
 	}
 
 	function initCorner(): void {
-		const corner = storageGet(LocalStorageKeys.corner)
+		const corner = localStorage.getItem(LocalStorageKeys.corner)
 		if (corner && validEnumValue(corner, CornerData)) {
-			attrSet(root, RootAttributes.corner, corner)
+			root.setAttribute(RootAttributes.corner, corner)
 			setCorner(corner as CornerData)
 		}
 	}
 
 	function initAnimation(): void {
-		const animation = storageGet(LocalStorageKeys.animation)
+		const animation = localStorage.getItem(LocalStorageKeys.animation)
 		if (animation && validEnumValue(animation, AnimationData)) {
-			attrSet(root, RootAttributes.animation, animation)
+			root.setAttribute(RootAttributes.animation, animation)
 			setAnimation(animation as AnimationData)
 		}
 	}
@@ -131,9 +121,9 @@ const _: VoidComponent<{
 				ref={r => menuSettingsRef = r}
 				c:onToggleOpen={(v) => setIsMenuSettingsOpen(v)}
 				onChange={ev => {
-					const target = eventTarget(ev) as HTMLInputElement
+					const target = ev.target as HTMLInputElement
 
-					switch (elementId(target)) {
+					switch (target.id) {
 					case inputSettings_animationId:
 						updateAnimation(animation() === AnimationData.on
 							? AnimationData.off
@@ -143,35 +133,32 @@ const _: VoidComponent<{
 					}
 				}}
 				onClick={(ev) => {
-					const button = documentActive()!
+					const button = document.activeElement! as HTMLButtonElement
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => {
-							const tagname = elementTagName(el)
-							return tagname == 'BUTTON' || tagname == 'A'
-						}
 					)) return
 
-					switch (elementId(button)) {
+					switch (button.id) {
 					case buttonSettings_shareId:
-						navigatorShare({
+						navigator.share({
 							title: app.name,
 							text: app.name + ' v' + app.buildVersion,
-							url: urlOrigin() + app.link
+							url: document.location.origin + app.link
 						})
 						closeMenu(menuSettingsRef)
 						break
 					default:
-						const data_theme = elementDataset(button, 'theme')
-						if (data_theme
-							&& validEnumValue(data_theme, ThemeData)
-						) return updateTheme(data_theme as ThemeData)
+						const dataset = button.dataset
+						const dataTheme = dataset.theme
+						if (dataTheme
+							&& validEnumValue(dataTheme, ThemeData)
+						) return updateTheme(dataTheme as ThemeData)
 
-						const data_corner = elementDataset(button, 'corner')
-						if (data_corner
-							&& validEnumValue(data_corner, CornerData)
-						) return updateCorner(data_corner as CornerData)
+						const dataCorner = dataset.corner
+						if (dataCorner
+							&& validEnumValue(dataCorner, CornerData)
+						) return updateCorner(dataCorner as CornerData)
 					}
 				}}>
 				<SwitchMenuItem
@@ -274,7 +261,7 @@ const _: VoidComponent<{
 					Share
 				</MenuItem>
 				<LinkMenuItem
-					href={'mailto:' + ExternalLinks.contactEmail + '?subject=' + urlEncode('Tasks')}
+					href={'mailto:' + ExternalLinks.contactEmail + '?subject=' + encodeURI('Tasks')}
 					c:iconCode={ICON_CHAT}
 					c:trailing={<MenuIndent />}>
 					Send feedback
@@ -286,7 +273,7 @@ const _: VoidComponent<{
 					c:trailing={<MenuIndent />}>
 					Donate
 				</LinkMenuItem>
-				<MenuHeader>&copy; {dateYear(new Date())} Redmerah</MenuHeader>
+				<MenuHeader>&copy; {new Date().getFullYear()} Redmerah</MenuHeader>
 			</Menu>
 		</>)
 	}
@@ -295,14 +282,13 @@ const _: VoidComponent<{
 		<Tooltip>
 			<AppBar
 				onClick={ev => {
-					const button = documentActive()!
+					const button = document.activeElement! as HTMLButtonElement
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					switch (elementId(button)) {
+					switch (button.id) {
 					case buttonColorListId:
 						openDialog(props.dialogColorListRef)
 						break
@@ -314,11 +300,11 @@ const _: VoidComponent<{
 						break
 					case buttonColorToListId:
 						if (timeId()) {
-							timeTimerClear(timeId()!)
+							clearTimeout(timeId()!)
 							setTimeId(null)
 						}
 						props.onAddColor()
-						setTimeId(timeTimerSet(() => setTimeId(null), 1000))
+						setTimeId(setTimeout(() => setTimeId(null), 1000))
 						break
 					case buttonCopyAllId:
 						copyAll()
@@ -329,14 +315,14 @@ const _: VoidComponent<{
 					}
 				}}
 				c:leading={<>
-					<Show when={arrayLength(props.paletteList) > 0}>
+					<Show when={props.paletteList.length > 0}>
 						<IconButton
 							id={buttonColorListId}
 							data-tooltip="Color list"
 							c:code={ICON_TEXT_BULLET_LIST_SQUARE}
 						/>
 					</Show>
-					<img width={32} src={app.logoUrl} alt={app.name} />
+					<img width={32} src={app.logoUrl} alt={app.name + ' logo'} />
 				</>}
 				c:headline={app.name}
 				c:trailing={<>

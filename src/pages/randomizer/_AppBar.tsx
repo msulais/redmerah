@@ -2,27 +2,19 @@ import { type Component, For, Match, Show, Switch, type VoidComponent, createMem
 import type { SetStoreFunction } from "solid-js/store"
 
 import type { Settings } from "./_types"
-import { timeTimerClear, timeTimerSet } from "@/utils/time"
-import { attrSet, attrSetIfExist, attrClassListModule } from "@/utils/attributes"
+import { attrSetIfExist, attrClassListModule } from "@/utils/attributes"
 import { RootAttributes } from "@/enums/attributes"
 import { ExternalLinks, RoutesLinks } from "@/enums/links"
 import { ThemeData } from "@/enums/theme"
-import { storageGet, storageSet } from "@/utils/storage"
 import { LocalStorageKeys } from "@/enums/storage"
 import { RandomizerType, NumbersRandomizerSort, NumbersRandomizerNumberType, WordsRandomizerWordCase, ColorsRandomizerColorSpace, Commands } from "./_enums"
 import { AnimationData } from "@/enums/animation"
-import { urlEncode, urlOrigin } from "@/utils/url"
 import { CornerData } from "@/enums/corner"
-import { windowMatches } from "@/utils/window"
 import { RANDOMIZER_TYPES, SIZE_SIDE_NAVIGATION_NONE } from "./_constants"
-import { eventListenerAdd, eventCurrentTarget, eventTarget } from "@/utils/event"
-import { documentActive, documentRoot } from "@/utils/document"
-import { navigatorShare } from "@/utils/navigator"
-import { dateYear } from "@/utils/datetime"
 import { APP_RANDOMIZER as app } from "@/constants/apps"
-import { elementValidTarget, elementTagName, elementId, elementDataset } from "@/utils/element"
+import { elementValidTarget } from "@/utils/element"
 import { validEnumValue } from "@/utils/object"
-import { numberIsNotDefined, numberParse, numberSafe } from "@/utils/number"
+import { numberIsNotDefined, numberSafe } from "@/utils/number"
 import { ICON_ALIGN_END_HORIZONTAL, ICON_ALIGN_START_HORIZONTAL, ICON_APPROVALS_APP, ICON_APPS, ICON_ARROW_CLOCKWISE, ICON_ARROW_SHUFFLE, ICON_ARROW_SORT, ICON_ARROW_SYNC, ICON_CHAT, ICON_CHECKMARK, ICON_CIRCLE, ICON_COLOR, ICON_COMMA, ICON_COPY, ICON_DECIMAL_ARROW_LEFT, ICON_DISMISS, ICON_GIFT, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_LINE_HORIZONTAL_3, ICON_MAXIMIZE, ICON_NUMBER_SYMBOL, ICON_PLAY_CIRCLE_HINT, ICON_RECEIPT, ICON_SETTINGS, ICON_SHARE_ANDROID, ICON_SHIELD_CHECKMARK, ICON_SQUARE, ICON_TEARDROP_BOTTOM_RIGHT, ICON_TEXT_CASE_TITLE, ICON_TEXT_SORT_ASCENDING, ICON_TEXT_SORT_DESCENDING, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from "@/constants/icons"
 import logoRedmerah from '@/assets/images/logos/redmerah-logo.svg'
 
@@ -44,12 +36,12 @@ const _: Component<{
 	command: (type: Commands, ...args: unknown[]) => unknown
 	onChangeRandomizer: (type: RandomizerType) => void
 }> = (props) => {
-	const root = documentRoot()
+	const root = document.documentElement
 	const [isMenuInfoOpen, setIsMenuInfoOpen] = createSignal<boolean>(false)
 	const [isMenuSettingsOpen, setIsMenuSettingsOpen] = createSignal<boolean>(false)
 	const [theme, setTheme] = createSignal<ThemeData>(ThemeData.system)
-	const [timeCopyId, setTimeCopyId] = createSignal<number | null>(null)
-	const [timeCopyErrorId, setTimeCopyErrorId] = createSignal<number | null>(null)
+	const [timeCopyId, setTimeCopyId] = createSignal<number | NodeJS.Timeout | null>(null)
+	const [timeCopyErrorId, setTimeCopyErrorId] = createSignal<number | NodeJS.Timeout | null>(null)
 	const [animation, setAnimation] = createSignal<AnimationData>(AnimationData.on)
 	const [corner, setCorner] = createSignal<CornerData>(CornerData.round)
 	const [isSideNavigationHidden, setIsSideNavigationHidden] = createSignal<boolean>(false)
@@ -85,38 +77,38 @@ const _: Component<{
 
 	function updateAnimation(animation: AnimationData): void {
 		setAnimation(animation)
-		attrSet(root, RootAttributes.animation, animation)
-		storageSet(LocalStorageKeys.animation, animation)
+		root.setAttribute(RootAttributes.animation, animation)
+		localStorage.setItem(LocalStorageKeys.animation, animation)
 	}
 
 	function updateTheme(theme: ThemeData): void {
 		setTheme(theme)
-		attrSet(root, RootAttributes.theme, theme)
-		storageSet(LocalStorageKeys.theme, theme)
+		root.setAttribute(RootAttributes.theme, theme)
+		localStorage.setItem(LocalStorageKeys.theme, theme)
 		closeMenu(menuSettingsRef)
 	}
 
 	function updateCorner(corner: CornerData): void {
 		setCorner(corner)
-		attrSet(root, RootAttributes.corner, corner)
-		storageSet(LocalStorageKeys.corner, corner)
+		root.setAttribute(RootAttributes.corner, corner)
+		localStorage.setItem(LocalStorageKeys.corner, corner)
 		closeMenu(menuSettingsRef)
 	}
 
 	function initTheme(): void {
-		const theme = storageGet(LocalStorageKeys.theme)
+		const theme = localStorage.getItem(LocalStorageKeys.theme)
 
 		if (theme && validEnumValue(theme, ThemeData)) {
-			attrSet(root, RootAttributes.theme, theme)
+			root.setAttribute(RootAttributes.theme, theme)
 			setTheme(theme as ThemeData)
 		}
 	}
 
 	function initCorner(): void {
-		const corner = storageGet(LocalStorageKeys.corner)
+		const corner = localStorage.getItem(LocalStorageKeys.corner)
 
 		if (corner && validEnumValue(corner, CornerData)) {
-			attrSet(root, RootAttributes.corner, corner)
+			root.setAttribute(RootAttributes.corner, corner)
 			setCorner(corner as CornerData)
 		}
 	}
@@ -159,14 +151,18 @@ const _: Component<{
 	}
 
 	function initSideNavigationListener(): void {
-		setIsSideNavigationHidden(windowMatches(`(max-width: ${SIZE_SIDE_NAVIGATION_NONE}px)`))
-		eventListenerAdd(matchMedia(`(max-width: ${SIZE_SIDE_NAVIGATION_NONE}px)`), 'change', ev => setIsSideNavigationHidden((ev as MediaQueryListEvent).matches))
+		setIsSideNavigationHidden(
+			window.matchMedia(`(max-width: ${SIZE_SIDE_NAVIGATION_NONE}px)`).matches
+		)
+		window.matchMedia(`(max-width: ${SIZE_SIDE_NAVIGATION_NONE}px)`).addEventListener(
+			'change', ev => setIsSideNavigationHidden(ev.matches)
+		)
 	}
 
 	function initAnimation(): void {
-		const animation = storageGet(LocalStorageKeys.animation)
+		const animation = localStorage.getItem(LocalStorageKeys.animation)
 		if (animation && validEnumValue(animation, AnimationData)) {
-			attrSet(root, RootAttributes.animation, animation)
+			root.setAttribute(RootAttributes.animation, animation)
 			setAnimation(animation as AnimationData)
 		}
 	}
@@ -190,22 +186,18 @@ const _: Component<{
 		return (<>
 			<Menu
 				onClick={(ev) => {
-					const button = documentActive()!
+					const button = document.activeElement!
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
-						button,
-						el => {
-							const tagname = elementTagName(el)
-							return tagname == 'BUTTON' || tagname == 'A'
-						}
+						ev.currentTarget,
+						button
 					)) return
 
-					switch (elementId(button)) {
+					switch (button.id) {
 					case buttonInfo_shareId:
-						navigatorShare({
+						navigator.share({
 							title: app.name,
 							text: app.name + ' v' + app.buildVersion,
-							url: urlOrigin() + app.link
+							url: document.location.origin + app.link
 						})
 						break
 					}
@@ -248,7 +240,7 @@ const _: Component<{
 					Share
 				</MenuItem>
 				<LinkMenuItem
-					href={'mailto:' + ExternalLinks.contactEmail + '?subject=' + urlEncode('Tasks')}
+					href={'mailto:' + ExternalLinks.contactEmail + '?subject=' + encodeURI('Tasks')}
 					c:iconCode={ICON_CHAT}>
 					Send feedback
 				</LinkMenuItem>
@@ -258,15 +250,15 @@ const _: Component<{
 					c:iconCode={ICON_GIFT}>
 					Donate
 				</LinkMenuItem>
-				<MenuHeader>&copy; {dateYear(new Date())} Redmerah</MenuHeader>
+				<MenuHeader>&copy; {new Date().getFullYear()} Redmerah</MenuHeader>
 			</Menu>
 			<Menu
 				ref={r => menuSettingsRef = r}
 				c:onToggleOpen={(v) => setIsMenuSettingsOpen(v)}
 				onFocusOut={ev => {
-					const target = eventTarget(ev) as HTMLInputElement
+					const target = ev.target as HTMLInputElement
 
-					switch (elementId(target)) {
+					switch (target.id) {
 					case inputSettings_prefixId:
 						command(Commands.updateSettingsPrefix, target.value)
 						break
@@ -285,55 +277,52 @@ const _: Component<{
 					}
 				}}
 				onClick={ev => {
-					const button = documentActive()!
+					const button = document.activeElement! as HTMLElement
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
-						button,
-						el => elementTagName(el) == "BUTTON"
+						ev.currentTarget,
+						button
 					)) return
 
-					switch (elementId(button)) {
-					default:
-						const dataNumberSort = elementDataset(button, 'numberSort')
-						if (dataNumberSort
-							&& validEnumValue(dataNumberSort, NumbersRandomizerSort)
-						) return updateNumbersSort(dataNumberSort as NumbersRandomizerSort)
+					const dataset = button.dataset
+					const dataNumberSort = dataset.numberSort
+					if (dataNumberSort
+						&& validEnumValue(dataNumberSort, NumbersRandomizerSort)
+					) return updateNumbersSort(dataNumberSort as NumbersRandomizerSort)
 
-						const dataNumberType = elementDataset(button, 'numberType')
-						if (dataNumberType){
-							const numberType = numberParse(dataNumberType, true)
-							if (
-								numberIsNotDefined(numberType)
-								|| !validEnumValue(numberType, NumbersRandomizerNumberType)
-							) return
+					const dataNumberType = dataset.numberType
+					if (dataNumberType){
+						const numberType = Number.parseInt(dataNumberType)
+						if (
+							numberIsNotDefined(numberType)
+							|| !validEnumValue(numberType, NumbersRandomizerNumberType)
+						) return
 
-							return updateNumberType(dataNumberType as unknown as NumbersRandomizerNumberType)
-						}
-
-						const dataWordsCase = elementDataset(button, 'wordsCase')
-						if (dataWordsCase
-							&& validEnumValue(dataWordsCase, WordsRandomizerWordCase)
-						) return updateWordsWordCase(dataWordsCase as WordsRandomizerWordCase)
-
-						const dataColorsSpace = elementDataset(button, 'colorsSpace')
-						if (dataColorsSpace
-							&& validEnumValue(dataColorsSpace, ColorsRandomizerColorSpace)
-						) return updateColorsSpace(dataColorsSpace as ColorsRandomizerColorSpace)
-
-						const dataTheme = elementDataset(button, 'theme')
-						if (dataTheme
-							&& validEnumValue(dataTheme, ThemeData)
-						) return updateTheme(dataTheme as ThemeData)
-
-						const dataCorner = elementDataset(button, 'corner')
-						if (dataCorner
-							&& validEnumValue(dataCorner, CornerData)
-						) return updateCorner(dataCorner as CornerData)
+						return updateNumberType(dataNumberType as unknown as NumbersRandomizerNumberType)
 					}
+
+					const dataWordsCase = dataset.wordsCase
+					if (dataWordsCase
+						&& validEnumValue(dataWordsCase, WordsRandomizerWordCase)
+					) return updateWordsWordCase(dataWordsCase as WordsRandomizerWordCase)
+
+					const dataColorsSpace = dataset.colorsSpace
+					if (dataColorsSpace
+						&& validEnumValue(dataColorsSpace, ColorsRandomizerColorSpace)
+					) return updateColorsSpace(dataColorsSpace as ColorsRandomizerColorSpace)
+
+					const dataTheme = dataset.theme
+					if (dataTheme
+						&& validEnumValue(dataTheme, ThemeData)
+					) return updateTheme(dataTheme as ThemeData)
+
+					const dataCorner = dataset.corner
+					if (dataCorner
+						&& validEnumValue(dataCorner, CornerData)
+					) return updateCorner(dataCorner as CornerData)
 				}}
 				onChange={ev => {
-					const target = eventTarget(ev) as HTMLInputElement
-					switch (elementId(target)) {
+					const target = ev.target as HTMLInputElement
+					switch (target.id) {
 					case inputSettings_repeatId:
 						command(Commands.toggleSettingsRepeat)
 						break
@@ -599,19 +588,19 @@ const _: Component<{
 		return (<>
 			<Drawer
 				onClick={ev => {
-					const button = documentActive()!
+					const button = document.activeElement! as HTMLButtonElement
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					switch (elementId(button)){
+					switch (button.id){
 					case buttonNavigation_closeId:
 						closeDrawer(drawerNavigationRef)
 						break
 					default:
-						const dataType = elementDataset(button, 'type')
+						const dataset = button.dataset
+						const dataType = dataset.type
 						if (dataType
 							&& validEnumValue(dataType, RandomizerType)
 						) {
@@ -653,14 +642,13 @@ const _: Component<{
 		return (<Tooltip>
 			<AppBar
 				onClick={async ev => {
-					const button = documentActive()!
+					const button = document.activeElement! as HTMLButtonElement
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					switch (elementId(button)) {
+					switch (button.id) {
 					case buttonNavigationId:
 						if (isSideNavigationHidden()) return openDrawer(drawerNavigationRef)
 						command(Commands.toggleNavigationExpand)
@@ -679,17 +667,17 @@ const _: Component<{
 					case buttonCopyResultId:
 						const success = await props.onCopyResult()
 						if (!success) {
-							if (timeCopyErrorId()) timeTimerClear(timeCopyErrorId()!)
+							if (timeCopyErrorId()) clearTimeout(timeCopyErrorId()!)
 
-							setTimeCopyErrorId(timeTimerSet(() => {
+							setTimeCopyErrorId(setTimeout(() => {
 								setTimeCopyErrorId(null)
 							}, 1000))
 							return
 						}
 
-						if (timeCopyId()) timeTimerClear(timeCopyId()!)
+						if (timeCopyId()) clearTimeout(timeCopyId()!)
 
-						setTimeCopyId(timeTimerSet(() => {
+						setTimeCopyId(setTimeout(() => {
 							setTimeCopyId(null)
 						}, 1000))
 						break
@@ -702,9 +690,9 @@ const _: Component<{
 						classList={attrClassListModule(CSSAnimation.btn_shrink_horizontal_icon)}
 						c:code={ICON_LINE_HORIZONTAL_3}
 					/>
-					<img width="32" src={app.logoUrl} alt="Randomizer" />
+					<img width="32" src={app.logoUrl} alt={app.name + ' logo'} />
 				</>}
-				c:headline="Randomizer"
+				c:headline={app.name}
 				c:trailing={<>
 					<Button
 						classList={attrClassListModule(CSSAnimation.btn_rotate_full_icon, CSS.appbar_generate_btn)}

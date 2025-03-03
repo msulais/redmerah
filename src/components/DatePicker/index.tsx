@@ -2,16 +2,11 @@ import { Transition } from "solid-transition-group"
 import { For, Match, Show, Switch, createEffect, createMemo, createSignal, createUniqueId, mergeProps, splitProps, type ParentComponent, type VoidComponent } from "solid-js"
 import { mergeRefs } from "@solid-primitives/refs"
 
-import { dateCurrent, dateYear, dateMonth, dateWeekdayNames, dateOutRangeYMD, dateIsSameYMD, dateMonthNames, dateOutRangeYM, dateIsSameYM, dateOutRangeY, dateIsSameY, dateTextMonth, dateInRangeYM, dateDay, dateMonthSet, dateYearSet, dateDate, dateDateSet } from "@/utils/datetime"
+import { dateWeekdayNames, dateOutRangeYMD, dateIsSameYMD, dateMonthNames, dateOutRangeYM, dateIsSameYM, dateOutRangeY, dateIsSameY, dateInRangeYM } from "@/utils/datetime"
 import { AnimationEffectTiming } from "@/enums/animation"
-import { eventCall, eventCurrentTarget } from "@/utils/event"
-import { arrayFill, arrayIncludes } from "@/utils/array"
-import { stringSubstring } from "@/utils/string"
-import { elementAnimate, elementChildren, elementDataset, elementFocus, elementFocusByArrowKey, elementId, elementSiblingPrevious, elementTabIndexSet, elementTagName, elementValidTarget } from "@/utils/element"
-import { promiseDone } from "@/utils/object"
-import { numberParse, numberSafe } from "@/utils/number"
-import { timeTimerSet } from "@/utils/time"
-import { documentActive } from "@/utils/document"
+import { eventCall } from "@/utils/event"
+import { elementValidTarget } from "@/utils/element"
+import { numberSafe } from "@/utils/number"
 import { ICON_CALENDAR_DATE, ICON_CHEVRON_LEFT, ICON_CHEVRON_RIGHT } from "@/constants/icons"
 import { animationIsOn } from "@/utils/animation"
 
@@ -42,9 +37,9 @@ const DatePickerBody: ParentComponent<{
 	const buttonSelectedId = createUniqueId()
 	const buttonPreviousId = createUniqueId()
 	const buttonNextId = createUniqueId()
-	const [value, setValue] = createSignal<Date>(dateCurrent())
+	const [value, setValue] = createSignal<Date>(new Date())
 	const [dateOption, setDateOption] = createSignal<DatePickerOption>(DatePickerOption.day)
-	const [viewDate, setViewDate] = createSignal<Date>(dateCurrent())
+	const [viewDate, setViewDate] = createSignal<Date>(new Date())
 	const [startDay, setStartDay] = createSignal<number>(0)
 	const [daysPerMonth, setDaysPerMonth] = createSignal<number>(31)
 	let divMonthRef: HTMLDivElement | undefined
@@ -53,41 +48,41 @@ const DatePickerBody: ParentComponent<{
 
 	function updateDateView(): void {
 		let daysPerMonth = 31 // reset to default
-		setStartDay(dateDay(new Date(dateYear(viewDate()), dateMonth(viewDate()), 1)))
+		setStartDay(new Date(viewDate().getFullYear(), viewDate().getMonth(), 1).getDay())
 
 		// february
-		if (dateMonth(viewDate()) == 1) {
+		if (viewDate().getMonth() == 1) {
 			daysPerMonth = 28
-			if (dateYear(viewDate()) % 4 == 0) daysPerMonth = 29
+			if (viewDate().getFullYear() % 4 == 0) daysPerMonth = 29
 		}
 
 		// april, june, september, november
-		else if (arrayIncludes([3, 5, 8, 10], dateMonth(viewDate()))) daysPerMonth = 30
+		else if ([3, 5, 8, 10].includes(viewDate().getMonth())) daysPerMonth = 30
 
 		setDaysPerMonth(daysPerMonth)
 	}
 
 	function next(): void {
-		const new_date = new Date(viewDate())
+		const newDate = new Date(viewDate())
 		switch (dateOption()) {
-			case DatePickerOption.day: dateMonthSet(new_date, dateMonth(new_date) + 1); break
-			case DatePickerOption.month: dateYearSet(new_date, dateYear(new_date) + 1); break
-			case DatePickerOption.year: dateYearSet(new_date, dateYear(new_date) + 16); break
+			case DatePickerOption.day: newDate.setMonth(newDate.getMonth() + 1); break
+			case DatePickerOption.month: newDate.setFullYear(newDate.getFullYear() + 1); break
+			case DatePickerOption.year: newDate.setFullYear(newDate.getFullYear() + 16); break
 		}
-		setViewDate(new_date)
+		setViewDate(newDate)
 		updateDateView()
 		props.onUpdate()
 	}
 
 	function previous(): void {
-		const nexDate = new Date(viewDate())
+		const newDate = new Date(viewDate())
 		switch (dateOption()) {
-			case DatePickerOption.day: dateMonthSet(nexDate, dateMonth(nexDate) - 1); break
-			case DatePickerOption.month: dateYearSet(nexDate, dateYear(nexDate) - 1); break
-			case DatePickerOption.year: dateYearSet(nexDate, dateYear(nexDate) - 16); break
+			case DatePickerOption.day: newDate.setMonth(newDate.getMonth() - 1); break
+			case DatePickerOption.month: newDate.setFullYear(newDate.getFullYear() - 1); break
+			case DatePickerOption.year: newDate.setFullYear(newDate.getFullYear() - 16); break
 		}
 
-		setViewDate(nexDate)
+		setViewDate(newDate)
 		updateDateView()
 		props.onUpdate()
 	}
@@ -112,39 +107,39 @@ const DatePickerBody: ParentComponent<{
 	const DaysDate: VoidComponent = () => {
 		return (<div style="display: contents">
 			<div class="c-date-picker-days-name">
-				<For each={dateWeekdayNames(props.locales)}>{d => <p>{stringSubstring(d, 0, 3)}</p>}</For>
+				<For each={dateWeekdayNames(props.locales)}>{d => <p>{d.substring(0, 3)}</p>}</For>
 			</div>
 			<FocusableGroup2D
 				class="c-date-picker-days"
 				c:columnCount={7}
 				ref={divDateRef}
 				onClick={(ev) => {
-					const button = documentActive()!
+					const button = document.activeElement! as HTMLButtonElement
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
+						el => el.tagName == 'BUTTON'
 					)) return
 
-					const index = numberSafe(numberParse(elementDataset(button, 'index')!, true))
+					const index = numberSafe(Number.parseInt(button.dataset.index!))
 					const date = new Date(
-						dateYear(viewDate()),
-						dateMonth(viewDate()),
+						viewDate().getFullYear(),
+						viewDate().getMonth(),
 						index + 1
 					)
 					const d = new Date(value())
-					dateDateSet(d, dateDate(date))
-					dateMonthSet(d, dateMonth(date))
-					dateYearSet(d, dateYear(date))
+					d.setDate(date.getDate())
+					d.setMonth(date.getMonth())
+					d.setFullYear(date.getFullYear())
 					setValue(d)
 					props.onSelectDate?.(value())
 					props.onClose()
 				}}>
-				<For each={arrayFill(Array(startDay()), 0)}>{_v => <div/>}</For>
-				<For each={arrayFill(Array(daysPerMonth()), 0)}>{(_v, i) => {
+				<For each={Array(startDay()).fill(0)}>{_v => <div/>}</For>
+				<For each={Array(daysPerMonth()).fill(0)}>{(_v, i) => {
 					const date = createMemo(() => new Date(
-						dateYear(viewDate()),
-						dateMonth(viewDate()),
+						viewDate().getFullYear(),
+						viewDate().getMonth(),
 						i() + 1
 					))
 					return (<SquareButton
@@ -152,7 +147,7 @@ const DatePickerBody: ParentComponent<{
 						disabled={dateOutRangeYMD(date(), props.firstDate, props.lastDate)}
 						c:variant={dateIsSameYMD(date(), value())
 							? ButtonVariant.filled
-							: dateIsSameYMD(date(), dateCurrent())
+							: dateIsSameYMD(date(), new Date())
 								? ButtonVariant.outlined
 								: undefined
 						}>
@@ -169,36 +164,36 @@ const DatePickerBody: ParentComponent<{
 			c:columnCount={3}
 			class="c-date-picker-month"
 			onClick={ev => {
-				const button = documentActive()!
+				const button = document.activeElement! as HTMLButtonElement
 				if (!elementValidTarget(
-					eventCurrentTarget(ev),
+					ev.currentTarget,
 					button,
-					el => elementTagName(el) == 'BUTTON'
+					el => el.tagName == 'BUTTON'
 				)) return
 
-				const index = numberSafe(numberParse(elementDataset(button, 'index')!, true))
-				setViewDate(new Date(dateYear(viewDate()), index))
+				const index = numberSafe(Number.parseInt(button.dataset.index!))
+				setViewDate(new Date(viewDate().getFullYear(), index))
 				setDateOption(DatePickerOption.day)
 				updateDateView()
 
-				timeTimerSet(() => {
-					const children = elementChildren<HTMLButtonElement>(divDateRef!)
+				setTimeout(() => {
+					const children = divDateRef!.children as unknown as HTMLButtonElement[]
 					for (const child of children) {
-						if (elementTagName(child) != "BUTTON" || child.disabled) continue
+						if (child.tagName != "BUTTON" || child.disabled) continue
 
-						elementFocus(child)
+						child.focus()
 						break
 					}
 				})
 			}}>
 			<For each={dateMonthNames(props.locales)}>{(m, i) => {
-				const date = createMemo(() => new Date(dateYear(viewDate()), i()))
+				const date = createMemo(() => new Date(viewDate().getFullYear(), i()))
 				return (<Button
 					data-index={i()}
 					disabled={dateOutRangeYM(date(), props.firstDate, props.lastDate)}
 					c:variant={dateIsSameYM(date(), value())
 						? ButtonVariant.filled
-						: dateIsSameYM(date(), dateCurrent())
+						: dateIsSameYM(date(), new Date())
 							? ButtonVariant.outlined
 							: undefined
 					}>{m}</Button>)
@@ -212,43 +207,43 @@ const DatePickerBody: ParentComponent<{
 			class="c-date-picker-year"
 			ref={divYearRef}
 			onClick={(ev) => {
-				const button = documentActive()!
+				const button = document.activeElement! as HTMLButtonElement
 				if (!elementValidTarget(
-					eventCurrentTarget(ev),
+					ev.currentTarget,
 					button,
-					el => elementTagName(el) == 'BUTTON'
+					el => el.tagName == 'BUTTON'
 				)) return
 
-				let index: string | number | undefined = elementDataset(button, 'index')
+				let index: string | number | undefined = button.dataset.index
 				if (!index) return;
 
-				index = numberSafe(numberParse(index, true))
-				setViewDate(new Date(dateYear(viewDate()) + index, 0))
+				index = numberSafe(Number.parseInt(index))
+				setViewDate(new Date(viewDate().getFullYear() + index, 0))
 				setDateOption(DatePickerOption.month)
 				updateDateView()
 
-				timeTimerSet(() => {
-					const children = elementChildren<HTMLButtonElement>(divMonthRef!)
+				setTimeout(() => {
+					const children = divMonthRef!.children as unknown as HTMLButtonElement[]
 					for (const child of children) {
-						if (elementTagName(child) != "BUTTON" || child.disabled) continue
+						if (child.tagName != "BUTTON" || child.disabled) continue
 
-						elementFocus(child)
+						child.focus()
 						break
 					}
 				})
 			}}>
-			<For each={arrayFill(Array(16), 0)}>{(_v, i) => {
-				const date = createMemo(() => new Date(dateYear(viewDate()) + i(), 0))
+			<For each={Array(16).fill(0)}>{(_v, i) => {
+				const date = createMemo(() => new Date(viewDate().getFullYear() + i(), 0))
 				return (<Button
 					data-index={i()}
 					disabled={dateOutRangeY(date(), props.firstDate, props.lastDate)}
 					c:variant={dateIsSameY(date(), value())
 						? ButtonVariant.filled
-						: dateIsSameY(date(), dateCurrent())
+						: dateIsSameY(date(), new Date())
 							? ButtonVariant.outlined
 							: undefined
 					}>
-					{dateYear(viewDate()) + i()}
+					{viewDate().getFullYear() + i()}
 				</Button>)
 			}}</For>
 		</FocusableGroup2D>)
@@ -261,20 +256,15 @@ const DatePickerBody: ParentComponent<{
 				right: 'next'
 			}}
 			class="c-date-picker-header"
-			onKeyDown={(ev) => elementFocusByArrowKey(
-				eventCurrentTarget(ev),
-				ev.code,
-				{ left: 'prev', right: 'next' }
-			)}
 			onClick={(ev) => {
-				const button = documentActive()!
+				const button = document.activeElement!
 				if (!elementValidTarget(
-					eventCurrentTarget(ev),
+					ev.currentTarget,
 					button,
-					el => elementTagName(el) === 'BUTTON')
+					el => el.tagName === 'BUTTON')
 				) return
 
-				switch (elementId(button)) {
+				switch (button.id) {
 				case buttonOptionId:
 					setDateOption(d => {
 						if (d == DatePickerOption.month) return DatePickerOption.year
@@ -282,9 +272,9 @@ const DatePickerBody: ParentComponent<{
 					})
 					break
 				case buttonSelectedId:
-					const sibling = elementSiblingPrevious(button)!
-					elementTabIndexSet(sibling, 0)
-					elementFocus(sibling)
+					const sibling = button.previousElementSibling! as HTMLButtonElement
+					sibling.tabIndex = 0
+					sibling.focus()
 					goToSelectedDate()
 					break
 				case buttonPreviousId:
@@ -300,13 +290,13 @@ const DatePickerBody: ParentComponent<{
 				c:variant={ButtonVariant.tonal}>
 				<Switch>
 					<Match when={dateOption() == DatePickerOption.day}>
-						{dateTextMonth(viewDate(), props.locales) + ' ' + dateYear(viewDate())}
+						{viewDate().toLocaleDateString(props.locales, {month: 'long'}) + ' ' + viewDate().getFullYear()}
 					</Match>
 					<Match when={dateOption() == DatePickerOption.month}>
-						{dateYear(viewDate())}
+						{viewDate().getFullYear()}
 					</Match>
 					<Match when={dateOption() == DatePickerOption.year}>
-						{dateYear(viewDate()) + '-' + (dateYear(viewDate()) + 15)}
+						{viewDate().getFullYear() + '-' + (viewDate().getFullYear() + 15)}
 					</Match>
 				</Switch>
 			</Button>
@@ -314,7 +304,7 @@ const DatePickerBody: ParentComponent<{
 				(
 					(dateOption() == DatePickerOption.day && !dateIsSameYM(viewDate(), value()))
 					|| (dateOption() == DatePickerOption.month && !dateIsSameY(viewDate(), value()))
-					|| (dateOption() == DatePickerOption.year && dateOutRangeY(value(), viewDate(), new Date(dateYear(viewDate()) + 15, 2, 3)))
+					|| (dateOption() == DatePickerOption.year && dateOutRangeY(value(), viewDate(), new Date(viewDate().getFullYear() + 15, 2, 3)))
 				)
 				&& dateInRangeYM(value(), props.firstDate, props.lastDate)}>
 				<IconButton
@@ -335,11 +325,10 @@ const DatePickerBody: ParentComponent<{
 		<Transition
 			onEnter={(el, done) => {
 				if (animationIsOn()) {
-					promiseDone(elementAnimate(
-						el as HTMLElement,
+					(el as HTMLElement).animate(
 						{ opacity: [0, 1], transform: ['translateY(-12px)', 'none'] },
 						{ duration: 200, easing: AnimationEffectTiming.spring }
-					).finished, done)
+					).finished.then(done)
 					return
 				}
 
@@ -367,9 +356,9 @@ type DatePickerProps = ModalProps & {
 const DatePicker: VoidComponent<DatePickerProps> = ($props) => {
 	const $$props = mergeProps({
 		'c:locales':'en-US',
-		'c:date': dateCurrent(),
-		'c:firstDate': new Date(dateYear() - 100, 0, 1),
-		'c:lastDate': new Date(dateYear() + 100, 11, 31),
+		'c:date': new Date(),
+		'c:firstDate': new Date(new Date().getFullYear() - 100, 0, 1),
+		'c:lastDate': new Date(new Date().getFullYear() + 100, 11, 31),
 	}, $props)
 	const [props, other] = splitProps($$props, [
 		'ref', 'c:date', 'c:onSelectDate',
@@ -415,9 +404,9 @@ type PopoverDatePickerProps = PopoverProps & {
 const PopoverDatePicker: VoidComponent<PopoverDatePickerProps> = ($props) => {
 	const $$props = mergeProps({
 		'c:locales':'en-US',
-		'c:date': dateCurrent(),
-		'c:firstDate': new Date(dateYear() - 100, 0, 1),
-		'c:lastDate': new Date(dateYear() + 100, 11, 31),
+		'c:date': new Date(),
+		'c:firstDate': new Date(new Date().getFullYear() - 100, 0, 1),
+		'c:lastDate': new Date(new Date().getFullYear() + 100, 11, 31),
 	}, $props)
 	const [props, other] = splitProps($$props, [
 		'ref', 'c:date', 'c:onSelectDate',

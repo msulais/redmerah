@@ -1,28 +1,23 @@
 import type { RGBColor, HSLColor, HSVColor, HEXColor, HWBColor, CMYKColor } from "@/types/color"
-import { mathFloor, mathMax, mathMin, mathPow, mathRound } from "./math"
-import { regexTest } from "./regex"
-import { stringPadStart, stringSlice, stringStartsWith, stringSubstring } from "./string"
-import { numberParse, numberSafe, numberToString } from "./number"
+import { numberSafe } from "./number"
 import { themeFromSourceColor } from "@material/material-color-utilities"
 
 export function colorIsValidWithAlpha(hex: string): boolean {
-	return regexTest(/^#[0-9a-fA-F]{6}([0-9a-fA-F]{2})?$/i, hex)
+	return /^#[0-9a-fA-F]{6}([0-9a-fA-F]{2})?$/i.test(hex)
 }
 
 export function colorIsValid(hex: string): boolean {
-	return regexTest(/^#[0-9a-fA-F]{6}$/i, hex)
+	return /^#[0-9a-fA-F]{6}$/i.test(hex)
 }
 
 export function colorLuminance(rgb: RGBColor): number {
-	const r = mathPow(rgb.r, 2.2)
-	const g = mathPow(rgb.g, 2.2)
-	const b = mathPow(rgb.b, 2.2)
+	const r = Math.pow(rgb.r, 2.2)
+	const g = Math.pow(rgb.g, 2.2)
+	const b = Math.pow(rgb.b, 2.2)
 	const luminance = r * 0.2126 + g * 0.7152 + b * 0.0722
 
 	return luminance
 }
-
-
 
 /**
  * Result value is between `0` (low contrast) to `100` (high contrast)
@@ -33,12 +28,12 @@ export function colorContrastRatio(rgb1: RGBColor, rgb2: RGBColor): number {
 	 */
 	function yToLStar(Y: number): number {
 		if (Y <= (216 / 24389)) return Y * (24389 / 27)
-		return mathPow(Y, (1 / 3)) * 116 - 16
+		return Math.pow(Y, (1 / 3)) * 116 - 16
 	}
 
 	const L1 = yToLStar(colorLuminance(rgb1))
 	const L2 = yToLStar(colorLuminance(rgb2))
-	const ratio = mathMax(L1, L2) - mathMin(L1, L2)
+	const ratio = Math.max(L1, L2) - Math.min(L1, L2)
 	return ratio
 }
 
@@ -55,7 +50,7 @@ export function colorHwbToRgb(hwb: HWBColor): RGBColor {
 	let w = hwb.w
 	let blackness = hwb.b
 	let v = 1 - blackness
-	let i = mathFloor(h)
+	let i = Math.floor(h)
 	let f = h - i
 	if (i & 1) f = 1 - f
 
@@ -76,15 +71,15 @@ export function colorRgbToHwb(rgb: RGBColor): HWBColor {
 	const red = rgb.r
 	const green = rgb.g
 	const blue = rgb.b
-	const w = mathMin(red, green, blue)
-	const v = mathMax(red, green, blue)
+	const w = Math.min(red, green, blue)
+	const v = Math.max(red, green, blue)
 	const b = 1 - v
 	if (v == w) return {h: 0, w, b}
 
 	const f = red == w
 		? green - blue
 		: ((green == w)? blue - red : red - green)
-	const i = mathFloor(red == w
+	const i = Math.floor(red == w
 		? 3
 		: ((green == w)? 5 : 1))
 	const h = (i - f / (v - w)) / 6
@@ -148,7 +143,7 @@ export function colorRgbToCmyk(rgb: RGBColor): CMYKColor {
 	let c = 1 - r
 	let m = 1 - g
 	let y = 1 - b
-	let k = mathMin(c, m, y)
+	let k = Math.min(c, m, y)
 
 	c = (c - k) / (1 - k)
 	m = (m - k) / (1 - k)
@@ -167,8 +162,8 @@ export function colorRgbToHsl(rgb: RGBColor): HSLColor {
 	const g = rgb.g
 	const b = rgb.b
 
-	const min = mathMin(r, g, b)
-	const max = mathMax(r, g, b)
+	const min = Math.min(r, g, b)
+	const max = Math.max(r, g, b)
 	const delta = max - min
 
 	l = (max + min) / 2
@@ -201,11 +196,11 @@ export function colorHexToRgb(hex: HEXColor): RGBColor {
 		throw new Error("Invalid hex color format!")
 	}
 
-	hex = stringStartsWith(hex, "#") ? stringSlice(hex, 1) : hex as any
+	hex = hex.startsWith("#") ? hex.slice(1) : hex as any
 
-	const r = numberSafe(numberParse(stringSubstring(hex, 0, 2), true, 16), 0) / 0xff
-	const g = numberSafe(numberParse(stringSubstring(hex, 2, 4), true, 16), 0) / 0xff
-	const b = numberSafe(numberParse(stringSubstring(hex, 4, 6), true, 16), 0) / 0xff
+	const r = numberSafe(Number.parseInt(hex.substring(0, 2), 16), 0) / 0xff
+	const g = numberSafe(Number.parseInt(hex.substring(2, 4), 16), 0) / 0xff
+	const b = numberSafe(Number.parseInt(hex.substring(4, 6), 16), 0) / 0xff
 	return { r, g, b }
 }
 
@@ -243,9 +238,9 @@ export function colorHslToHex(hsl: HSLColor): HEXColor {
 
 export function colorRgbToHex(rgb: RGBColor): HEXColor {
 	return ('#'
-		+ stringPadStart(numberToString(mathRound(rgb.r * 0xff), 16), 2, '0')
-		+ stringPadStart(numberToString(mathRound(rgb.g * 0xff), 16), 2, '0')
-		+ stringPadStart(numberToString(mathRound(rgb.b * 0xff), 16), 2, '0')
+		+ Math.round(rgb.r * 0xff).toString(16).padStart(2, '0')
+		+ Math.round(rgb.g * 0xff).toString(16).padStart(2, '0')
+		+ Math.round(rgb.b * 0xff).toString(16).padStart(2, '0')
 	) as HEXColor
 }
 
@@ -266,8 +261,8 @@ export function colorRgbToHsv(rgb: RGBColor): HSVColor {
 	const g = rgb.g
 	const b = rgb.b
 
-	const min = mathMin(r, g, b)
-	const max = mathMax(r, g, b)
+	const min = Math.min(r, g, b)
+	const max = Math.max(r, g, b)
 	const delta = max - min
 
 	v = max
@@ -305,7 +300,7 @@ export function colorHsvToRgb(hsv: HSVColor): RGBColor {
 	let h = hsv.h * 6
 	if (h == 6) h = 0
 
-	const i = mathFloor(h)
+	const i = Math.floor(h)
 	const j = hsv.v * (1 - hsv.s)
 	const k = hsv.v * (1 - hsv.s * (h - i))
 	const l = hsv.v * (1 - hsv.s * (1 - (h - i)))
@@ -322,7 +317,7 @@ export function colorHsvToRgb(hsv: HSVColor): RGBColor {
 
 export function colorHslToHsv(hsl: HSLColor): HSVColor {
 	const h = hsl.h
-	const v = hsl.l + (hsl.s * mathMin(hsl.l, 1 - hsl.l))
+	const v = hsl.l + (hsl.s * Math.min(hsl.l, 1 - hsl.l))
 	const s = v == 0
 		? 0
 		: (2 * (1 - (hsl.l / v)))
@@ -334,13 +329,13 @@ export function colorHsvToHsl(hsv: HSVColor): HSLColor {
 	const l = hsv.v * (1 - (hsv.s / 2))
 	const s = l == 0 || l == 1
 		? 0
-		: ((hsv.v - l) / mathMin(l, 1-l))
+		: ((hsv.v - l) / Math.min(l, 1-l))
 	return { h, s, l }
 }
 
 export function colorHexArgbToRgb(argb: HEXColor): RGBColor {
-	const argbHex = stringStartsWith(argb, '#') ? stringSlice(argb, 1) : argb
-	const argbInt = numberParse(stringPadStart(argbHex, 8, '0'), true, 16)
+	const argbHex = argb.startsWith('#') ? argb.slice(1) : argb
+	const argbInt = Number.parseInt(argbHex.padStart(8, '0'), 16)
 	const r = ((argbInt >> 16) & 0xFF) / 0xff
 	const g = ((argbInt >> 8) & 0xFF) / 0xff
 	const b = (argbInt & 0xFF) / 0xff
@@ -367,12 +362,12 @@ export function colorGeneratePalette(hex: HEXColor): GenerateColorResult {
 		throw new Error("Invalid hex color format!")
 	}
 
-	const theme = themeFromSourceColor(numberParse(stringSubstring(hex, 1), true, 16)).schemes
+	const theme = themeFromSourceColor(Number.parseInt(hex.substring(1), 16)).schemes
 	const [color, onColor, colorDark, onColorDark] = [
-		colorRgbToHex(colorHexArgbToRgb('#' + numberToString(theme.light.primary  , 16) as HEXColor)),
-		colorRgbToHex(colorHexArgbToRgb('#' + numberToString(theme.light.onPrimary, 16) as HEXColor)),
-		colorRgbToHex(colorHexArgbToRgb('#' + numberToString(theme.dark.primary   , 16) as HEXColor)),
-		colorRgbToHex(colorHexArgbToRgb('#' + numberToString(theme.dark.onPrimary , 16) as HEXColor)),
+		colorRgbToHex(colorHexArgbToRgb('#' + theme.light.primary  .toString(16) as HEXColor)),
+		colorRgbToHex(colorHexArgbToRgb('#' + theme.light.onPrimary.toString(16) as HEXColor)),
+		colorRgbToHex(colorHexArgbToRgb('#' + theme.dark.primary   .toString(16) as HEXColor)),
+		colorRgbToHex(colorHexArgbToRgb('#' + theme.dark.onPrimary .toString(16) as HEXColor)),
 	]
 
 	return {color, onColor, colorDark, onColorDark}

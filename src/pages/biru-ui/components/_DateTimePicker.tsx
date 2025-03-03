@@ -1,7 +1,5 @@
 import { For, Show, type VoidComponent, createSignal } from "solid-js"
 
-import { dateYear, dateTextYMD, dateTextYMD_HM } from "@/utils/datetime"
-import { eventCurrentTarget } from "@/utils/event"
 import { ICON_CALENDAR } from "@/constants/icons"
 
 import Tooltip from "@/components/Tooltip"
@@ -14,8 +12,8 @@ import DateTimePicker from "@/components/DateTimePicker"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
 
 const _: VoidComponent = () => {
-	const [firstDate, setFirstDate] = createSignal<Date>(new Date(dateYear() - 100, 0, 1))
-	const [lastDate, setLastDate] = createSignal<Date>(new Date(dateYear() + 100, 11, 31))
+	const [firstDate, setFirstDate] = createSignal<Date>(new Date(new Date().getFullYear() - 100, 0, 1))
+	const [lastDate, setLastDate] = createSignal<Date>(new Date(new Date().getFullYear() + 100, 11, 31))
 	const [date, setDate] = createSignal<Date | null>(null)
 	const [locale, setLocale] = createSignal<Intl.LocalesArgument>('en-US')
 	const [isDateTimePickerOpen, setIsDateTimePickerOpen] = createSignal<boolean>(false)
@@ -25,6 +23,24 @@ const _: VoidComponent = () => {
 	let datePickerFirstDateRef: HTMLDialogElement
 	let datePickerLastDateRef: HTMLDialogElement
 
+	function format_YMD_HM(date: Date, locales?: Intl.LocalesArgument): string {
+		return date.toLocaleTimeString(locales, {
+			year: 'numeric',
+			month: 'long',
+			day: 'numeric',
+			hour: 'numeric',
+			minute: 'numeric'
+		})
+	}
+
+	function format_YMD(date: Date, locales?: Intl.LocalesArgument): string {
+		return date.toLocaleDateString(locales, {
+			year: 'numeric',
+			month: 'long',
+			day: 'numeric',
+		})
+	}
+
 	return (<Page
 		title="DateTimePicker"
 		description="A DateTimePicker is a UI element that allows users to select both a date and time. It combines the functionality of a DatePicker and a TimePicker into a single component.">
@@ -33,12 +49,12 @@ const _: VoidComponent = () => {
 				c:focused={isDateTimePickerOpen()}
 				c:variant={ButtonVariant.tonal}
 				onClick={(ev) => openDatePicker(dateTimePickerRef, {
-					anchor: eventCurrentTarget(ev),
+					anchor: ev.currentTarget,
 					gap: 8
 				})}>
 				<Icon c:code={ICON_CALENDAR}/>
 				<Show when={date() != null} fallback="Select datetime">
-					{dateTextYMD_HM(date()!, locale())}
+					{format_YMD_HM(date()!, locale())}
 				</Show>
 			</Button>
 			<DateTimePicker
@@ -74,12 +90,12 @@ const _: VoidComponent = () => {
 					style={{width: '164px'}}
 					c:label={'First date'}
 					readOnly
-					value={dateTextYMD(firstDate(), locale())}
+					value={format_YMD(firstDate(), locale())}
 					c:trailing={<Tooltip>
 						<TextFieldButton
 							data-tooltip="Select first date"
 							c:focused={isDatePickerFirstDateOpen()}
-							onClick={(ev) => openDatePicker(datePickerFirstDateRef, { anchor: eventCurrentTarget(ev) })}>
+							onClick={(ev) => openDatePicker(datePickerFirstDateRef, { anchor: ev.currentTarget })}>
 							<Icon c:code={ICON_CALENDAR}/>
 						</TextFieldButton>
 					</Tooltip>}
@@ -87,7 +103,7 @@ const _: VoidComponent = () => {
 				<DatePicker
 					c:onToggleOpen={o => setIsDatePickerFirstDateOpen(o)}
 					c:lastDate={date() ?? new Date()}
-					c:firstDate={new Date(dateYear(date() ?? new Date()) - 1000, 0, 1)}
+					c:firstDate={new Date((date() ?? new Date()).getFullYear() - 1000, 0, 1)}
 					c:date={firstDate()}
 					c:locales={locale()}
 					c:onSelectDate={(d) => setFirstDate(d)}
@@ -98,14 +114,14 @@ const _: VoidComponent = () => {
 					style={{width: '164px'}}
 					c:label={'Last date'}
 					readOnly
-					value={dateTextYMD(lastDate(), locale())}
+					value={format_YMD(lastDate(), locale())}
 					c:trailing={<Tooltip>
 						<TextFieldButton
 							data-tooltip="Select last date"
 							c:focused={isDatePickerLastDateOpen()}
 							onClick={(ev) => openDatePicker(
 								datePickerLastDateRef,
-								{ anchor: eventCurrentTarget(ev) }
+								{ anchor: ev.currentTarget }
 							)}>
 							<Icon c:code={ICON_CALENDAR}/>
 						</TextFieldButton>
@@ -114,7 +130,7 @@ const _: VoidComponent = () => {
 				<DatePicker
 					c:firstDate={date() ?? new Date()}
 					c:onToggleOpen={o => setIsDatePickerLastDateOpen(o)}
-					c:lastDate={new Date(dateYear(date() ?? new Date()) + 1000, 11, 31)}
+					c:lastDate={new Date((date() ?? new Date()).getFullYear() + 1000, 11, 31)}
 					c:date={lastDate()}
 					c:locales={locale()}
 					c:onSelectDate={(d) => setLastDate(d)}

@@ -1,7 +1,5 @@
 import { createSignal, For, type VoidComponent } from "solid-js"
 
-import { arraySlice } from "@/utils/array"
-import { eventCurrentTarget } from "@/utils/event"
 import { numberSafe } from "@/utils/number"
 
 import CheckBox from "@/components/CheckBox"
@@ -25,7 +23,7 @@ const _: VoidComponent = () => {
 				c:variant={variant()}
 				c:label={label()? "Animals" : undefined}
 				c:text="Select animal">
-				<For each={arraySlice([
+				<For each={[
 					[0, 'Tiger'],
 					[1, 'Lion'],
 					[2, 'Girrafe'],
@@ -36,7 +34,7 @@ const _: VoidComponent = () => {
 					[7, 'Komodo'],
 					[8, 'Orangutan'],
 					[9, 'Fish'],
-				], 0, count()) as [number, string][]}>{option =>
+				].slice(0, count()) as [number, string][]}>{option =>
 				<DropdownOption c:value={option[0]} c:text={option[1]}/>}</For>
 			</Dropdown>
 		</Playground>
@@ -47,7 +45,7 @@ const _: VoidComponent = () => {
 					style={{width: '100px'}}
 					value={10} min={1}
 					max={10}
-					onBlur={(ev) => setCount(c => numberSafe(eventCurrentTarget(ev).valueAsNumber, c))}
+					onBlur={(ev) => setCount(c => numberSafe(ev.currentTarget.valueAsNumber, c))}
 				/>
 				<Dropdown
 					c:label="Variant"
@@ -62,12 +60,12 @@ const _: VoidComponent = () => {
 				</Dropdown>
 				<CheckBox
 					checked={multiple()}
-					onChange={ev => setMultiple(eventCurrentTarget(ev).checked)}>
+					onChange={ev => setMultiple(ev.currentTarget.checked)}>
 					Multiple
 				</CheckBox>
 				<CheckBox
 					checked={label()}
-					onChange={ev => setLabel(eventCurrentTarget(ev).checked)}>
+					onChange={ev => setLabel(ev.currentTarget.checked)}>
 					Label
 				</CheckBox>
 			</Tooltip>

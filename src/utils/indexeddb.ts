@@ -1,5 +1,4 @@
 import type { DatabaseNames } from "@/enums/storage"
-import { arrayFill, arrayIncludes, arrayLength, arrayPush } from "./array"
 
 type CreateObjectStoreParams<T> = {
 	name: string
@@ -32,7 +31,7 @@ export class IDB {
 				return
 			}
 
-			const request = idbOpen(this.databaseName, this.version)
+			const request = indexedDB.open(this.databaseName, this.version)
 			request.onblocked = (ev) => {
 				this._db = request.result
 				listeners?.onBlocked?.(ev, this)
@@ -65,7 +64,7 @@ export class IDB {
 	}
 
 	close(): void {
-		if (this._db) idbClose(this._db)
+		if (this._db) this._db.close()
 		this._isOpen = false
 	}
 
@@ -77,40 +76,41 @@ export class IDB {
 		keyPath = String(keyPath)
 
 		let store = this.writeStore(name)
-		if (idbStoreNames(this._db).contains(name)) {
+		if (this._db.objectStoreNames.contains(name)) {
 			if (store == null) return store
 
-			const $indexs = idbStoreIndexNames(store)
+			const $indexs = store.indexNames
 			for (const index of indexs) {
-				const index_name = String(index)
-				if ($indexs.contains(index_name)) continue
-				idbStoreCreateIndex(store, index_name, index_name)
+				const indexName = String(index)
+				if ($indexs.contains(indexName)) continue
+
+				store.createIndex(indexName, indexName)
 			}
 
 			for (const index of $indexs) {
-				if (arrayIncludes(indexs, index as keyof T) || index == keyPath) continue
-				idbStoreDeleteIndex(store, index)
+				if (indexs.includes(index as keyof T) || index === keyPath) continue
+
+				store.deleteIndex(index)
 			}
 		}
 		else {
-			store = idbCreateStore(this._db, name, {
+			store = this._db.createObjectStore(name, {
 				autoIncrement: true,
 				keyPath: keyPath
 			})
 
 			for (const index of indexs) {
-				const index_name = String(index)
-				idbStoreCreateIndex(
-					store,
-					index_name,
-					index_name,
-					{unique: index_name == keyPath}
+				const indexName = String(index)
+				store.createIndex(
+					indexName,
+					indexName,
+					{unique: indexName === keyPath}
 				)
 			}
 		}
 
-		if (!arrayIncludes(indexs, keyPath as keyof T)) {
-			idbStoreCreateIndex(store, keyPath, keyPath, {unique: true})
+		if (!indexs.includes(keyPath as keyof T)) {
+			store.createIndex(keyPath, keyPath, {unique: true})
 		}
 
 		return store
@@ -118,7 +118,7 @@ export class IDB {
 
 	async get<T>(store: IDBObjectStore, query: IDBValidKey | IDBKeyRange): Promise<T | undefined> {
 		return new Promise<T | undefined>((ok, err) => {
-			const request = idbStoreGet(store, query)
+			const request = store.get(query)
 			request.onsuccess = () => ok(request.result as T)
 			request.onerror = ev => err(ev)
 		})
@@ -130,7 +130,7 @@ export class IDB {
 		count?: number
 	): Promise<T[]> {
 		return new Promise<T[]>((ok, err) => {
-			const request = idbStoreGetAll(store, query, count)
+			const request = store.getAll(query, count)
 			request.onsuccess = () => ok(request.result as T[])
 			request.onerror = ev => err(ev)
 		})
@@ -138,7 +138,7 @@ export class IDB {
 
 	async put<T>(store: IDBObjectStore, value: T, key?: IDBValidKey): Promise<Event> {
 		return new Promise<Event>((ok, err) => {
-			const request = idbStorePut(store, value, key)
+			const request = store.put(value, key)
 			request.onsuccess = ev => ok(ev)
 			request.onerror = ev => err(ev)
 		})
@@ -146,7 +146,7 @@ export class IDB {
 
 	async add<T>(store: IDBObjectStore, value: T, key?: IDBValidKey): Promise<Event> {
 		return new Promise<Event>((ok, err) => {
-			const request = idbStoreAdd(store, value, key)
+			const request = store.add(value, key)
 			request.onsuccess = (ev) => ok(ev)
 			request.onerror = (ev) => err(ev)
 		})
@@ -154,7 +154,7 @@ export class IDB {
 
 	async delete(store: IDBObjectStore, query: IDBValidKey | IDBKeyRange): Promise<Event> {
 		return new Promise<Event>((ok, err) => {
-			const request = idbStoreDelete(store, query)
+			const request = store.delete(query)
 			request.onsuccess = (ev) => ok(ev)
 			request.onerror = (ev) => err(ev)
 		})
@@ -167,8 +167,7 @@ export class IDB {
 		direction?: IDBCursorDirection
 	): Promise<void> {
 		return new Promise((ok, err) => {
-			const request = idbStoreCursor(store, query, direction)
-
+			const request = store.openCursor(query, direction)
 			request.onerror = ev => err(ev)
 			request.onsuccess = ev => {
 				const cursor = request.result
@@ -187,7 +186,7 @@ export class IDB {
 
 	removeDatabase(listeners?: Listeners): void {
 		this.close()
-		const request = idbDelete(this.databaseName)
+		const request = indexedDB.deleteDatabase(this.databaseName)
 
 		request.onblocked = (ev) => listeners?.onBlocked?.(ev, this)
 		request.onerror = (ev) => listeners?.onError?.(ev, this)
@@ -200,10 +199,10 @@ export class IDB {
 		mode?: IDBTransactionMode,
 		options?: IDBTransactionOptions
 	): IDBTransaction | null {
-		if (!this._db) return null;
+		if (!this._db) return null
 
 		try {
-			return idbTransaction(this._db, store, mode, options)
+			return this._db.transaction(store, mode, options)
 		} catch { return null }
 	}
 
@@ -211,13 +210,13 @@ export class IDB {
 		const transaction = this.transaction(names, mode)
 		const stores: (IDBObjectStore | null)[] = []
 
-		if (transaction == null) return arrayFill(new Array(arrayLength(names)), null)
+		if (transaction === null) return new Array(names.length).fill(null)
 
 		for (const name of names) {
 			try {
-				const store = idbTransactionStore(transaction, name)
-				arrayPush(stores, store)
-			} catch { arrayPush(stores, null) }
+				const store = transaction.objectStore(name)
+				stores.push(store)
+			} catch { stores.push(null) }
 		}
 
 		return stores
@@ -225,16 +224,16 @@ export class IDB {
 
 	readStore(store: string, options?: IDBTransactionOptions): IDBObjectStore | null {
 		const transaction = this.transaction(store, 'readonly', options)
-		if (transaction == null) return null
+		if (transaction === null) return null
 
-		return idbTransactionStore(transaction, store)
+		return transaction.objectStore(store)
 	}
 
 	writeStore(store: string, options?: IDBTransactionOptions): IDBObjectStore | null {
 		const transaction = this.transaction(store, 'readwrite', options)
-		if (transaction == null) return null
+		if (transaction === null) return null
 
-		return idbTransactionStore(transaction, store)
+		return transaction.objectStore(store)
 	}
 
 	get isOpen(): boolean {
@@ -248,119 +247,6 @@ export class IDB {
 	get storeNames(): DOMStringList | null {
 		if (this._db == null) return null
 
-		return idbStoreNames(this._db)
+		return this._db.objectStoreNames
 	}
-}
-
-export function idbStorePut<T>(
-	store: IDBObjectStore,
-	value: T,
-	key?: IDBValidKey
-): IDBRequest<IDBValidKey> {
-	return store.put(value, key)
-}
-
-export function idbStoreAdd<T>(
-	store: IDBObjectStore,
-	value: T,
-	key?: IDBValidKey
-): IDBRequest<IDBValidKey> {
-	return store.add(value, key)
-}
-
-export function idbStoreGet<T>(
-	store: IDBObjectStore,
-	query: IDBValidKey | IDBKeyRange
-): IDBRequest<T> {
-	return store.get(query)
-}
-
-export function idbStoreGetAll<T>(
-	store: IDBObjectStore,
-	query?: IDBValidKey | IDBKeyRange | null,
-	count?: number
-): IDBRequest<T[]> {
-	return store.getAll(query, count)
-}
-
-export function idbStoreDelete(
-	store: IDBObjectStore,
-	query: IDBValidKey | IDBKeyRange
-): IDBRequest<undefined> {
-	return store.delete(query)
-}
-
-export function idbStoreClear(store: IDBObjectStore): IDBRequest<undefined> {
-	return store.clear()
-}
-
-export function idbStoreCursor(
-	store: IDBObjectStore,
-	query?: IDBValidKey | IDBKeyRange | null,
-	direction?: IDBCursorDirection
-): IDBRequest<IDBCursorWithValue | null> {
-	return store.openCursor(query, direction)
-}
-
-export function idbStoreIndexNames(store: IDBObjectStore): DOMStringList {
-	return store.indexNames
-}
-
-export function idbStoreCreateIndex(
-	store: IDBObjectStore,
-	name: string,
-	key_path: string | string[],
-	options?: IDBIndexParameters
-): IDBIndex {
-	return store.createIndex(name, key_path, options)
-}
-
-export function idbStoreDeleteIndex(
-	store: IDBObjectStore,
-	name: string
-): void {
-	return store.deleteIndex(name)
-}
-
-export function idbStoreNames(db: IDBDatabase): DOMStringList {
-	return db.objectStoreNames
-}
-
-export function idbOpen(
-	name: string,
-	version?: number
-): IDBOpenDBRequest {
-	return indexedDB.open(name, version)
-}
-
-export function idbClose(db: IDBDatabase): void {
-	return db.close()
-}
-
-export function idbCreateStore(
-	db: IDBDatabase,
-	name: string,
-	options?: IDBObjectStoreParameters
-): IDBObjectStore {
-	return db.createObjectStore(name, options)
-}
-
-export function idbDelete(name: string): IDBOpenDBRequest {
-	return indexedDB.deleteDatabase(name)
-}
-
-export function idbTransaction(
-	db: IDBDatabase,
-	store_names: string | string[],
-	mode?: IDBTransactionMode,
-	options?: IDBTransactionOptions
-): IDBTransaction {
-	return db.transaction(store_names, mode, options)
-}
-
-export function idbTransactionStore(
-	transaction: IDBTransaction,
-	name: string
-): IDBObjectStore {
-	return transaction.objectStore(name)
 }

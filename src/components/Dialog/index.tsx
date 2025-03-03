@@ -1,10 +1,7 @@
 import { type JSX, type ParentComponent, splitProps, children, Show, createMemo } from "solid-js"
 
 import { AnimationEffectTiming } from "@/enums/animation"
-import { elementAnimate } from "@/utils/element"
-import { promiseDone } from "@/utils/object"
 import { animationIsOn } from "@/utils/animation"
-import { typeIsBoolean } from "@/utils/typecheck"
 
 import { closeModal, focusModal, Modal, openModal, type ModalProps } from "@/components/Modal"
 import FocusableGroup from "@/components/FocusableGroup"
@@ -32,7 +29,7 @@ const Dialog: ParentComponent<DialogProps> = ($props) => {
 	const actionInteractiveElements = createMemo(() => props["c:actions_interactiveElements"])
 
 	// hack to solve https://github.com/solidjs/solid/issues/2130
-	const getActionInteractiveElement = createMemo(() => typeIsBoolean(actionInteractiveElements())
+	const getActionInteractiveElement = createMemo(() => typeof actionInteractiveElements() === 'boolean'
 		? undefined
 		: actionInteractiveElements() as string | HTMLElement[]
 	)
@@ -52,11 +49,10 @@ const Dialog: ParentComponent<DialogProps> = ($props) => {
 		c:openAnimation={(el, done) => {
 			if (animationIsOn()) {
 				if (props['c:openAnimation']) props['c:openAnimation'](el, done)
-				else promiseDone(elementAnimate(
-					el,
+				else el.animate(
 					{ transform: ['translate(-50%, calc(-50% - 12px))', 'translate(-50%, -50%)'] },
 					animationOptions
-				).finished, done)
+				).finished.then(done)
 				return
 			}
 
@@ -65,11 +61,10 @@ const Dialog: ParentComponent<DialogProps> = ($props) => {
 		c:closeAnimation={(el, done) => {
 			if (animationIsOn()) {
 				if (props['c:closeAnimation']) props['c:closeAnimation'](el, done)
-				else promiseDone(elementAnimate(
-					el,
+				else el.animate(
 					{ transform: ['translate(-50%, -50%)', 'translate(-50%, calc(-50% - 12px))'] },
 					animationOptions
-				).finished, done)
+				).finished.then(done)
 				return
 			}
 

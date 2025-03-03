@@ -1,19 +1,14 @@
 import { createMemo, createSignal, createUniqueId, onMount, Show, type VoidComponent } from "solid-js"
 
 import type { Settings } from "./_types"
-import { eventListenerAdd, eventCurrentTarget } from "@/utils/event"
-import { attrRemove, attrSet, attrSetIfExist } from "@/utils/attributes"
 import { BodyAttributes } from "@/enums/attributes"
-import { timeTimerClear, timeTimerSet } from "@/utils/time"
 import { Commands } from "./_enums"
 import { MIN_EDITOR_WIDTH } from "./_constants"
-import { windowMatches } from "@/utils/window"
-import { documentActive, documentBody } from "@/utils/document"
-import { elementId, elementPointerCaptureRelease, elementPointerCaptureSet, elementTagName, elementValidTarget } from "@/utils/element"
-import { consoleAssert } from "@/utils/console"
 
 import Button, { ButtonVariant } from "@/components/Button"
 import CSS from './_styles.module.scss'
+import { elementValidTarget } from "@/utils/element"
+import { attrSetIfExist } from "@/utils/attributes"
 
 enum InputViewOption {
 	unescape
@@ -29,7 +24,7 @@ const _: VoidComponent<{
 	unescapedText: string
 	command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
-	const body = documentBody()
+	const body = document.body
 	const [width, setWidth] = createSignal<number | null>(null)
 	const [isDragging, setIsDragging] = createSignal<boolean>(false)
 	const [inputViewOption, setInputViewOption] = createSignal<InputViewOption | null>(InputViewOption.unescape)
@@ -37,7 +32,7 @@ const _: VoidComponent<{
 	const settings = createMemo(() => props.settings)
 	const buttonInput_unescapeId = createUniqueId()
 	const buttonOutput_escapeId = createUniqueId()
-	let timeId: number | null
+	let timeId: number | NodeJS.Timeout | null
 	let textAreaUnescapeRef: HTMLTextAreaElement
 	let textAreaEscapeRef: HTMLTextAreaElement
 	let isSmallScreen: boolean = false
@@ -48,9 +43,9 @@ const _: VoidComponent<{
 	}
 
 	function updateOutput(): void {
-		if (timeId !== null) timeTimerClear(timeId)
-		timeId = timeTimerSet(() => {
-			consoleAssert(
+		if (timeId !== null) clearTimeout(timeId)
+		timeId = setTimeout(() => {
+			console.assert(
 				lastFocusTextArea !== undefined,
 				'lastFocusTextArea is not defined'
 			)
@@ -71,24 +66,26 @@ const _: VoidComponent<{
 
 	function onPointerUp(ev: PointerEvent & {currentTarget: HTMLDivElement}): void {
 		setIsDragging(false)
-		attrRemove(body, BodyAttributes.noPointerEvent)
-		elementPointerCaptureRelease(eventCurrentTarget(ev), ev.pointerId)
+		body.removeAttribute(BodyAttributes.noPointerEvent)
+		ev.currentTarget.releasePointerCapture(ev.pointerId)
 	}
 
 	function initSmallScreenListener(): void {
 		const callback = () => {
-			if (inputViewOption() == null || outputViewOption() == null) return;
+			if (inputViewOption() === null || outputViewOption() === null) return;
 			setOutputViewOption(null)
 		}
 
-		eventListenerAdd<MediaQueryListEvent>(matchMedia(`(max-width: ${MIN_EDITOR_WIDTH}px)`), 'change',  ev => {
+		window
+		.window.matchMedia(`(max-width: ${MIN_EDITOR_WIDTH}px)`)
+		.addEventListener('change', ev => {
 			isSmallScreen = ev.matches
 			if (!isSmallScreen) return;
 
 			callback()
 		})
 
-		isSmallScreen = windowMatches(`(max-width: ${MIN_EDITOR_WIDTH}px)`)
+		isSmallScreen = window.window.matchMedia(`(max-width: ${MIN_EDITOR_WIDTH}px)`).matches
 		if (!isSmallScreen) return;
 
 		callback()
@@ -119,14 +116,13 @@ const _: VoidComponent<{
 	return (<div
 		class={CSS.body}
 		onClick={ev => {
-			const button = documentActive()!
+			const button = document.activeElement!
 			if (!elementValidTarget(
-				eventCurrentTarget(ev),
-				button,
-				el => elementTagName(el) === 'BUTTON'
+				ev.currentTarget,
+				button
 			)) return
 
-			switch (elementId(button)) {
+			switch (button.id) {
 			case buttonInput_unescapeId:
 				if (isSmallScreen) {
 					setInputViewOption(InputViewOption.unescape)
@@ -163,12 +159,12 @@ const _: VoidComponent<{
 		}}>
 		<div
 			class={CSS.body_input}
-			data-hidden={attrSetIfExist(inputViewOption() == null)}
-			data-output-hidden={attrSetIfExist(outputViewOption() == null)}
-			style={{width: width() == null? undefined : width() + 'px'}}>
+			data-hidden={attrSetIfExist(inputViewOption() === null)}
+			data-output-hidden={attrSetIfExist(outputViewOption() === null)}
+			style={{width: width() === null? undefined : width() + 'px'}}>
 			<div class={CSS.body_tabs}>
 				<InputTabButtons/>
-				<Show when={outputViewOption() == null}>
+				<Show when={outputViewOption() === null}>
 					<OutputTabButtons/>
 				</Show>
 			</div>
@@ -187,10 +183,10 @@ const _: VoidComponent<{
 					data-g-keep-pointer-event={attrSetIfExist(isDragging())}
 					class={CSS.body_drag_handle}
 					onPointerDown={(ev) => {
-						attrSet(body, BodyAttributes.noPointerEvent)
+						body.setAttribute(BodyAttributes.noPointerEvent, '')
 						setWidth(ev.clientX)
 						setIsDragging(true)
-						elementPointerCaptureSet(eventCurrentTarget(ev), ev.pointerId)
+						ev.currentTarget.setPointerCapture(ev.pointerId)
 					}}
 					onPointerCancel={onPointerUp}
 					onPointerUp={onPointerUp}
@@ -201,9 +197,9 @@ const _: VoidComponent<{
 		</div>
 		<div
 			class={CSS.body_output}
-			data-hidden={attrSetIfExist(outputViewOption() == null)}>
+			data-hidden={attrSetIfExist(outputViewOption() === null)}>
 			<div class={CSS.body_tabs}>
-				<Show when={inputViewOption() == null}>
+				<Show when={inputViewOption() === null}>
 					<InputTabButtons/>
 				</Show>
 				<OutputTabButtons/>

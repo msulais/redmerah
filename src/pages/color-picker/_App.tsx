@@ -4,13 +4,11 @@ import { createStore as $store } from "solid-js/store"
 import type { Settings } from "./_types"
 import { removeSplashScreen } from "@/utils/splash"
 import { ColorPickerMode, Commands } from "./_enums"
-import { IDB, idbStorePut } from "@/utils/indexeddb"
+import { IDB } from "@/utils/indexeddb"
 import { DatabaseNames } from "@/enums/storage"
 import type { HEXColor, HSLColor } from "@/types/color"
 import { IDBStoreKeysLastInput, IDBStoreKeysSettings, IDBStoreNames, type IDBStoreSettings, type IDBStoreLastInput } from "./_storage"
 import { colorHexToHsl, colorHslToHex } from "@/utils/color"
-import { timeTimerClear, timeTimerSet } from "@/utils/time"
-import { promiseDone } from "@/utils/object"
 
 import App from "@/components/App"
 import AppBar from './_AppBar'
@@ -24,7 +22,7 @@ const _: VoidComponent = () => {
 	const [settings, setSettings] = $store<Settings>({
 		mode: ColorPickerMode.image
 	})
-	let timeSaveLastInputId: number | null = null
+	let timeSaveLastInputId: number | NodeJS.Timeout | null = null
 
 	function initDatabase(): void {
 		db.open({
@@ -51,20 +49,20 @@ const _: VoidComponent = () => {
 		const store = db.readStore(IDBStoreNames.settings)
 		if (!store) return
 
-		promiseDone(db.get<IDBStoreSettings<ColorPickerMode>>(
+		db.get<IDBStoreSettings<ColorPickerMode>>(
 			store,
 			IDBStoreKeysSettings.mode
-		), (result) => setSettings('mode', m => result?.value ?? m))
+		).then((result) => setSettings('mode', m => result?.value ?? m))
 	}
 
 	function initLastInput(): void {
 		const store = db.readStore(IDBStoreNames.lastInput)
 		if (!store) return
 
-		promiseDone(db.get<IDBStoreLastInput<HEXColor>>(
+		db.get<IDBStoreLastInput<HEXColor>>(
 			store,
 			IDBStoreKeysLastInput.hexColor
-		), (result) => setInput(m => result? colorHexToHsl(result.value) : m))
+		).then((result) => setInput(m => result? colorHexToHsl(result.value) : m))
 	}
 
 	function saveSettings(...items: [key: IDBStoreKeysSettings, value: unknown][]): void {
@@ -72,7 +70,7 @@ const _: VoidComponent = () => {
 		if (!store) return;
 
 		for (const item of items) {
-			idbStorePut(store, {
+			store.put({
 				key: item[0],
 				value: item[1]
 			})
@@ -84,7 +82,7 @@ const _: VoidComponent = () => {
 		if (!store) return;
 
 		for (const item of items) {
-			idbStorePut(store, {
+			store.put({
 				key: item[0],
 				value: item[1]
 			})
@@ -103,10 +101,10 @@ const _: VoidComponent = () => {
 			const [input] = args as [HSLColor]
 			setInput(input)
 			if (timeSaveLastInputId != null) {
-				timeTimerClear(timeSaveLastInputId)
+				clearTimeout(timeSaveLastInputId)
 			}
 
-			timeSaveLastInputId = timeTimerSet(() => {
+			timeSaveLastInputId = setTimeout(() => {
 				saveLastInput([IDBStoreKeysLastInput.hexColor, colorHslToHex(input)])
 				timeSaveLastInputId = null
 			}, 200)

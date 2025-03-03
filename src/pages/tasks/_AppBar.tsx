@@ -6,23 +6,13 @@ import { RootAttributes } from "@/enums/attributes"
 import { CornerData } from "@/enums/corner"
 import { LocalStorageKeys } from "@/enums/storage"
 import { ThemeData } from "@/enums/theme"
-import { storageSet, storageGet } from "@/utils/storage"
-import { attrSet, attrSetIfExist, attrClassListModule } from "@/utils/attributes"
+import { attrSetIfExist, attrClassListModule } from "@/utils/attributes"
 import { DEFAULT_TASK_LIST, SIZE_SIDE_NAVIGATION_NONE, TASKS_PAGES } from "./_constants"
-import { windowMatches, windowMatchMedia } from "@/utils/window"
-import { eventListenerAdd, eventCurrentTarget, eventTarget } from '@/utils/event'
-import { timeTimerClear, timeTimerSet, timeWait } from "@/utils/time"
 import { RoutesLinks, ExternalLinks } from "@/enums/links"
-import { urlEncode, urlOrigin } from "@/utils/url"
-import { elementBlur, elementDataset, elementFocus, elementId, elementTagName, elementValidTarget } from "@/utils/element"
-import { stringReplace, stringTrim } from "@/utils/string"
-import { documentActive, documentRoot } from "@/utils/document"
-import { arrayFilter, arrayIncludes, arrayLength, arrayPush, arraySlice } from "@/utils/array"
-import { regexTest } from "@/utils/regex"
-import { dateYear } from "@/utils/datetime"
-import { navigatorShare } from "@/utils/navigator"
+import { elementValidTarget } from "@/utils/element"
 import { validEnumValue } from "@/utils/object"
-import { numberIsNotDefined, numberParse } from "@/utils/number"
+import { numberIsNotDefined } from "@/utils/number"
+import { timeWait } from "@/utils/time"
 import { AnimationData } from "@/enums/animation"
 import { APP_TASKS as app } from "@/constants/apps"
 import { ICON_ADD, ICON_APPS, ICON_CHAT, ICON_CIRCLE, ICON_DISMISS, ICON_GIFT, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_LINE_HORIZONTAL_3, ICON_MAXIMIZE, ICON_PLAY_CIRCLE_HINT, ICON_RECEIPT, ICON_SEARCH, ICON_SETTINGS, ICON_SHARE_ANDROID, ICON_SHIELD_CHECKMARK, ICON_SQUARE, ICON_TAG, ICON_TEARDROP_BOTTOM_RIGHT, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from "@/constants/icons"
@@ -47,7 +37,7 @@ const _: VoidComponent<{
 	settings: Settings
 	command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
-	const root = documentRoot()
+	const root = document.documentElement
 	const [isMenuInfoOpen, setIsMenuInfoOpen] = createSignal<boolean>(false)
 	const [isMenuSettingsOpen, setIsMenuSettingsOpen] = createSignal<boolean>(false)
 	const [isSearching, setIsSearching] = createSignal<boolean>(false)
@@ -61,30 +51,25 @@ const _: VoidComponent<{
 	const getSearchResult = createMemo<(Omit<TaskList, 'tasks'> & {index: number, tasks: (Task & {index: number})[]})[]>(() => {
 		if (searchText() == '') return []
 
-		const regex = new RegExp(stringReplace(
-			stringReplace(
-				searchText(),
-				/[\\\.\[\]\(\)$*^+?\{\}|]/gs,
-				s => '\\' + s
-			),
-			/ +/gs,
-			'|'
-		), 'i')
+		const regex = new RegExp(searchText()
+			.replace(/[\\\.\[\]\(\)$*^+?\{\}|]/gs,s => '\\' + s)
+			.replace(/ +/gs, '|'), 'i'
+		)
 
 		const result: (Omit<TaskList, 'tasks'> & {index: number, tasks: (Task & {index: number})[]})[] = []
-		for (let i = 0; i < arrayLength(taskLists()); i++) {
+		for (let i = 0; i < taskLists().length; i++) {
 			const list = taskLists()[i]
 			const tasks: (Task & {index: number})[] = []
-			tasks: for (let j = 0; j < arrayLength(list.tasks); j++) {
+			tasks: for (let j = 0; j < list.tasks.length; j++) {
 				const task = list.tasks[j]
-				if (!regexTest(regex, task.name)) continue tasks;
+				if (!regex.test(task.name)) continue tasks;
 
-				arrayPush(tasks, {...task, index: j})
+				tasks.push({...task, index: j})
 			}
 
-			if (arrayLength(tasks) == 0) continue;
+			if (tasks.length == 0) continue;
 
-			arrayPush(result, {
+			result.push({
 				emoji: list.emoji,
 				id: list.id,
 				index: i,
@@ -96,7 +81,7 @@ const _: VoidComponent<{
 		return result
 	})
 	let isSearchTextField_MenuOpen = false
-	let timeSearchId: number | null = null
+	let timeSearchId: number | NodeJS.Timeout | null = null
 	let drawerNavigationRef: HTMLDialogElement
 	let menuInfoRef: HTMLDialogElement
 	let menuSettingsRef: HTMLDialogElement
@@ -108,9 +93,14 @@ const _: VoidComponent<{
 	}
 
 	function initSideNavigationListener(): void {
-		setIsSideNavigationHidden(windowMatches(`(max-width: ${SIZE_SIDE_NAVIGATION_NONE}px)`))
-		eventListenerAdd(
-			windowMatchMedia(`(max-width: ${SIZE_SIDE_NAVIGATION_NONE}px)`),
+		setIsSideNavigationHidden(window
+			.window.matchMedia(`(max-width: ${SIZE_SIDE_NAVIGATION_NONE}px)`)
+			.matches
+		)
+
+		window
+		.window.matchMedia(`(max-width: ${SIZE_SIDE_NAVIGATION_NONE}px)`)
+		.addEventListener(
 			'change',
 			ev => setIsSideNavigationHidden((ev as MediaQueryListEvent).matches)
 		)
@@ -118,44 +108,44 @@ const _: VoidComponent<{
 
 	function updateAnimation(animation: AnimationData): void {
 		setAnimation(animation)
-		attrSet(root, RootAttributes.animation, animation)
-		storageSet(LocalStorageKeys.animation, animation)
+		root.setAttribute(RootAttributes.animation, animation)
+		localStorage.setItem(LocalStorageKeys.animation, animation)
 	}
 
 	function updateTheme(theme: ThemeData): void {
 		setTheme(theme)
-		attrSet(root, RootAttributes.theme, theme)
-		storageSet(LocalStorageKeys.theme, theme)
+		root.setAttribute(RootAttributes.theme, theme)
+		localStorage.setItem(LocalStorageKeys.theme, theme)
 		closeMenu(menuSettingsRef)
 	}
 
 	function updateCorner(corner: CornerData): void {
 		setCorner(corner)
-		attrSet(root, RootAttributes.corner, corner)
-		storageSet(LocalStorageKeys.corner, corner)
+		root.setAttribute(RootAttributes.corner, corner)
+		localStorage.setItem(LocalStorageKeys.corner, corner)
 		closeMenu(menuSettingsRef)
 	}
 
 	function initTheme(): void {
-		const theme = storageGet(LocalStorageKeys.theme)
+		const theme = localStorage.getItem(LocalStorageKeys.theme)
 		if (theme && validEnumValue(theme, ThemeData)) {
-			attrSet(root, RootAttributes.theme, theme)
+			root.setAttribute(RootAttributes.theme, theme)
 			setTheme(theme as ThemeData)
 		}
 	}
 
 	function initCorner(): void {
-		const corner = storageGet(LocalStorageKeys.corner)
+		const corner = localStorage.getItem(LocalStorageKeys.corner)
 		if (corner && validEnumValue(corner, CornerData)) {
-			attrSet(root, RootAttributes.corner, corner)
+			root.setAttribute(RootAttributes.corner, corner)
 			setCorner(corner as CornerData)
 		}
 	}
 
 	function initAnimation(): void {
-		const animation = storageGet(LocalStorageKeys.animation)
+		const animation = localStorage.getItem(LocalStorageKeys.animation)
 		if (animation && validEnumValue(animation, AnimationData)) {
-			attrSet(root, RootAttributes.animation, animation)
+			root.setAttribute(RootAttributes.animation, animation)
 			setAnimation(animation as AnimationData)
 		}
 	}
@@ -175,22 +165,19 @@ const _: VoidComponent<{
 		return (<>
 			<Menu
 				onClick={(ev) => {
-					const button = documentActive()!
+					const button = document.activeElement!
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => {
-							const tagname = elementTagName(el)
-							return tagname == 'BUTTON' || tagname == 'A'
-						}
 					)) return
 
-					switch (elementId(button)) {
+					switch (button.id) {
 					case buttonMore_shareId:
-						navigatorShare({
+
+						navigator.share({
 							title: app.name,
 							text: app.name + ' v' + app.buildVersion,
-							url: urlOrigin() + app.link
+							url: document.location.origin + app.link
 						})
 						break
 					}
@@ -233,7 +220,7 @@ const _: VoidComponent<{
 					Share
 				</MenuItem>
 				<LinkMenuItem
-					href={'mailto:' + ExternalLinks.contactEmail + '?subject=' + urlEncode('Tasks')}
+					href={'mailto:' + ExternalLinks.contactEmail + '?subject=' + encodeURI('Tasks')}
 					c:iconCode={ICON_CHAT}>
 					Send feedback
 				</LinkMenuItem>
@@ -243,15 +230,15 @@ const _: VoidComponent<{
 					c:iconCode={ICON_GIFT}>
 					Donate
 				</LinkMenuItem>
-				<MenuHeader>&copy; {dateYear(new Date())} Redmerah</MenuHeader>
+				<MenuHeader>&copy; {new Date().getFullYear()} Redmerah</MenuHeader>
 			</Menu>
 			<Menu
 				ref={r => menuSettingsRef = r}
 				c:onToggleOpen={(v) => setIsMenuSettingsOpen(v)}
 				onChange={ev => {
-					const target = eventTarget(ev) as HTMLInputElement
+					const target = ev.target as HTMLInputElement
 
-					switch (elementId(target)) {
+					switch (target.id) {
 					case inputSettings_animationId:
 						updateAnimation(animation() === AnimationData.on
 							? AnimationData.off
@@ -261,14 +248,13 @@ const _: VoidComponent<{
 					}
 				}}
 				onClick={ev => {
-					const button = documentActive()!
+					const button = document.activeElement! as HTMLButtonElement
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					switch (elementId(button)) {
+					switch (button.id) {
 					case buttonSettings_labelId:
 						closeMenu(menuSettingsRef)
 						command(Commands.showLabelsOptions)
@@ -277,20 +263,21 @@ const _: VoidComponent<{
 						command(Commands.toggleDeleteTaskWarning)
 						break
 					default:
-						const dataTheme = elementDataset(button, 'theme')
+						const dataset = button.dataset
+						const dataTheme = dataset.theme
 						if (dataTheme) return updateTheme(dataTheme as ThemeData)
 
-						const dataCorner = elementDataset(button, 'corner')
+						const dataCorner = dataset.corner
 						if (dataCorner) return updateCorner(dataCorner as CornerData)
 
-						const dataPageIndex = elementDataset(button, 'pageIndex')
+						const dataPageIndex = dataset.pageIndex
 						if (dataPageIndex) {
-							const page = arraySlice(TASKS_PAGES, 1)[numberParse(dataPageIndex)]
+							const page = TASKS_PAGES.slice(1)[Number.parseFloat(dataPageIndex)]
 							const pageType = page.type
 							const hiddenNavigation = settings().hiddenNavigation
-							const hidden = arrayIncludes(hiddenNavigation, pageType)
+							const hidden = hiddenNavigation.includes(pageType)
 							command(Commands.updateHiddenNavigation, hidden
-								? arrayFilter(hiddenNavigation, a => a != pageType)
+								? hiddenNavigation.filter(a => a != pageType)
 								: [...hiddenNavigation, pageType]
 							)
 							return
@@ -365,10 +352,10 @@ const _: VoidComponent<{
 				</MenuItem>
 				<MenuDivider />
 				<MenuHeader>Navigation</MenuHeader>
-				<For each={arraySlice(TASKS_PAGES, 1)}>{(page, i) =>
+				<For each={TASKS_PAGES.slice(1)}>{(page, i) =>
 					<MenuItem
 						data-page-index={i()}
-						c:checked={!arrayIncludes(settings().hiddenNavigation, page.type)}>
+						c:checked={!settings().hiddenNavigation.includes(page.type)}>
 						{page.text}
 					</MenuItem>
 				}</For>
@@ -394,14 +381,13 @@ const _: VoidComponent<{
 				data-search={attrSetIfExist(isSearching())}
 				classList={attrClassListModule(CSS.appbar)}
 				onClick={ev => {
-					const button = documentActive()!
+					const button = document.activeElement! as HTMLButtonElement
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					switch (elementId(button)) {
+					switch (button.id) {
 					case buttonAppBar_menuListId:
 						if (isSideNavigationHidden()) return openDrawer(drawerNavigationRef)
 
@@ -409,7 +395,7 @@ const _: VoidComponent<{
 						break
 					case buttonAppBar_searchId:
 						setIsSearching(true)
-						elementFocus(searchTextFieldRef)
+						searchTextFieldRef.focus()
 						break
 					case buttonAppBar_menuInfoId:
 						openMenu(menuInfoRef, {anchor: button})
@@ -429,9 +415,9 @@ const _: VoidComponent<{
 						classList={attrClassListModule(CSSAnimation.btn_shrink_horizontal_icon)}
 						c:code={ICON_LINE_HORIZONTAL_3}
 					/>
-					<img alt="Tasks logo" width={32} src={app.logoUrl} />
+					<img alt={app.name + ' logo'} width={32} src={app.logoUrl} />
 				</>}
-				c:headline="Tasks"
+				c:headline={app.name}
 				c:trailing={<>
 					<IconButton
 						data-tooltip="Search tasks"
@@ -460,22 +446,21 @@ const _: VoidComponent<{
 						c:leading={<Icon c:code={ICON_SEARCH}/>}
 						c:attrMenu={{
 							ref: r => searchTextField_menuRef = r,
-							'c:onToggleOpen': is_open => isSearchTextField_MenuOpen = is_open,
+							'c:onToggleOpen': isOpen => isSearchTextField_MenuOpen = isOpen,
 							onClick: async (ev) => {
-								const button = documentActive()!
+								const button = document.activeElement! as HTMLButtonElement
 								if (!elementValidTarget(
-									eventCurrentTarget(ev),
+									ev.currentTarget,
 									button,
-									el => elementTagName(el) == 'BUTTON'
 								)) return
 
-								const dataListId = elementDataset(button, 'listId')
+								const dataListId = button.dataset.listId
 								if (!dataListId) return
 
-								const listId = numberParse(dataListId)
+								const listId = Number.parseFloat(dataListId)
 								if (numberIsNotDefined(listId)) return
 
-								elementBlur(searchTextFieldRef)
+								searchTextFieldRef.blur()
 								if (isSearchTextField_MenuOpen) {
 									closeSearchTextFieldMenu(searchTextField_menuRef)
 									await timeWait(200)
@@ -499,11 +484,11 @@ const _: VoidComponent<{
 							}</For>
 						</>}</For>}
 						onInput={(ev) => {
-							const text = eventCurrentTarget(ev).value
-							if (timeSearchId != null) timeTimerClear(timeSearchId)
+							const text = ev.currentTarget.value
+							if (timeSearchId != null) clearTimeout(timeSearchId)
 
-							timeSearchId = timeTimerSet(() => {
-								setSearchText(stringTrim(text))
+							timeSearchId = setTimeout(() => {
+								setSearchText(text.trim())
 								timeSearchId = null
 							}, 1000)
 						}}
@@ -512,7 +497,7 @@ const _: VoidComponent<{
 							<SearchTextFieldButton
 								data-tooltip="Close search"
 								onClick={async () => {
-									elementBlur(searchTextFieldRef)
+									searchTextFieldRef.blur()
 									if (isSearchTextField_MenuOpen) {
 										closeSearchTextFieldMenu(searchTextField_menuRef)
 										await timeWait(200)
@@ -533,14 +518,13 @@ const _: VoidComponent<{
 		const buttonDrawer_newListId = createUniqueId()
 		return (<Drawer
 			onClick={ev => {
-				const button = documentActive()!
+				const button = document.activeElement! as HTMLButtonElement
 				if (!elementValidTarget(
-					eventCurrentTarget(ev),
+					ev.currentTarget,
 					button,
-					el => elementTagName(el) == 'BUTTON'
 				)) return
 
-				switch (elementId(button)) {
+				switch (button.id) {
 				case buttonDrawer_closeId:
 					closeDrawer(drawerNavigationRef)
 					break
@@ -549,7 +533,8 @@ const _: VoidComponent<{
 					command(Commands.addTaskList)
 					break
 				default:
-					const dataPage = elementDataset(button, 'page')
+					const dataset = button.dataset
+					const dataPage = dataset.page
 					if (dataPage) {
 						closeDrawer(drawerNavigationRef)
 						if (props.page == dataPage) return;
@@ -558,15 +543,15 @@ const _: VoidComponent<{
 						return
 					}
 
-					const dataListId = elementDataset(button, 'listId')
+					const dataListId = dataset.listId
 					if (dataListId) {
-						const list_id = numberParse(dataListId)
-						if (numberIsNotDefined(list_id)) return
+						const listId = Number.parseFloat(dataListId)
+						if (numberIsNotDefined(listId)) return
 
 						closeDrawer(drawerNavigationRef)
-						if (props.page == list_id) return
+						if (props.page == listId) return
 
-						command(Commands.updatePage, list_id)
+						command(Commands.updatePage, listId)
 						return
 					}
 				}
@@ -585,7 +570,7 @@ const _: VoidComponent<{
 				New list
 			</DrawerItem>}
 			ref={r => drawerNavigationRef = r}>
-			<For each={arrayFilter(TASKS_PAGES, page => !arrayIncludes(settings().hiddenNavigation, page.type))}>{p =>
+			<For each={TASKS_PAGES.filter(page => !settings().hiddenNavigation.includes(page.type))}>{p =>
 				<DrawerItem
 					c:iconCode={p.icon}
 					c:selected={props.page == p.type}
@@ -593,8 +578,8 @@ const _: VoidComponent<{
 					{p.text}
 				</DrawerItem>
 			}</For>
-			<Show when={arrayLength(taskLists()) - 1 > 0}><Divider /></Show>
-			<For each={arrayFilter(taskLists(), v => v.id != DEFAULT_TASK_LIST.id)}>{p =>
+			<Show when={taskLists().length - 1 > 0}><Divider /></Show>
+			<For each={taskLists().filter(v => v.id != DEFAULT_TASK_LIST.id)}>{p =>
 				<DrawerItem
 					c:leading={<Show when={p.emoji != null}><Emoji c:emoji={p.emoji!} /></Show>}
 					c:selected={props.page == p.id}

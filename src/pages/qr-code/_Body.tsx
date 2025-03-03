@@ -2,18 +2,12 @@ import { createMemo, createSignal, createUniqueId, Show, type VoidComponent } fr
 import { BrowserQRCodeReader } from '@zxing/browser'
 import { BarcodeFormat, DecodeHintType } from "@zxing/library"
 
-import { timeTimerSet } from "@/utils/time"
 import { Commands, CopyFileType, DownloadFileType, Pages } from "./_enums"
-import { eventCurrentTarget, eventPreventDefault, eventTarget } from "@/utils/event"
 import { attrSetIfExist } from "@/utils/attributes"
 import { fileOpen } from "@/utils/file"
-import { urlCreate, urlRevoke } from "@/utils/url"
 import { isMobile } from "@/utils/platforms"
-import { promiseDone, validEnumValue } from "@/utils/object"
-import { arrayLength, arrayPush } from "@/utils/array"
-import { stringLength, stringStartsWith } from "@/utils/string"
-import { documentActive } from "@/utils/document"
-import { elementChildren, elementDataset, elementId, elementTagName, elementValidTarget } from "@/utils/element"
+import { validEnumValue } from "@/utils/object"
+import { elementValidTarget } from "@/utils/element"
 import { keyboardOnFocusIn, keyboardOnFocusOut, keyboardOnKeyDown } from "@/utils/keyboard"
 import { ICON_ARROW_DOWNLOAD, ICON_CAMERA_ADD, ICON_COPY, ICON_DISMISS, ICON_IMAGE, ICON_IMAGE_ADD, ICON_IMAGE_CIRCLE, ICON_QR_CODE, ICON_SCAN_TEXT, ICON_WARNING } from "@/constants/icons"
 
@@ -81,50 +75,47 @@ const _: VoidComponent<{
 	}
 
 	function chooseFile(capture?: string): void {
-		promiseDone(
-			fileOpen('image/*', false, capture),
-			(files) => {
-				if (files == null || arrayLength(files as unknown as File[]) == 0) return
+		fileOpen('image/*', false, capture).then((files) => {
+			if (files == null || files.length == 0) return
 
-				for (const file of files) {
-					if (!stringStartsWith(file.type, 'image')) continue
+			for (const file of files) {
+				if (!file.type.startsWith('image')) continue
 
-					if (QRCodeImageSource() != null) urlRevoke(QRCodeImageSource()!)
-					setQRCodeImageSource(urlCreate(file))
-					scanQRCodeImage()
-				}
+				if (QRCodeImageSource() != null) URL.revokeObjectURL(QRCodeImageSource()!)
+				setQRCodeImageSource(URL.createObjectURL(file))
+				scanQRCodeImage()
 			}
-		)
+		})
 	}
 
 	const Menus: VoidComponent = () => {
 		return (<Menu
 			ref={r => menuCanvasActionsRef = r}
 			onClick={ev => {
-				const button = documentActive()!
+				const button = document.activeElement! as HTMLButtonElement
 				if (!elementValidTarget(
-					eventCurrentTarget(ev),
+					ev.currentTarget,
 					button,
-					el => elementTagName(el) == 'BUTTON'
 				)) return
 
-				const dataDownload = elementDataset(button, 'download')
+				const dataset = button.dataset
+				const dataDownload = dataset.download
 				if (dataDownload
 					&& validEnumValue(dataDownload, DownloadFileType)
 				) {
 					command(Commands.downloadQRCode, dataDownload as DownloadFileType)
 					closeSubMenu(subMenuCanvasActions_downloadRef)
-					timeTimerSet(() => closeMenu(menuCanvasActionsRef), 200)
+					setTimeout(() => closeMenu(menuCanvasActionsRef), 200)
 					return
 				}
 
-				const dataCopy = elementDataset(button, 'copy')
+				const dataCopy = dataset.copy
 				if (dataCopy
 					&& validEnumValue(dataCopy, CopyFileType)
 				) {
 					command(Commands.copyQRCode, dataCopy as CopyFileType)
 					closeSubMenu(subMenuCanvasActions_copyRef)
-					timeTimerSet(() => closeMenu(menuCanvasActionsRef), 200)
+					setTimeout(() => closeMenu(menuCanvasActionsRef), 200)
 					return
 				}
 			}}>
@@ -195,9 +186,9 @@ const _: VoidComponent<{
 		return (<div
 			class={CSS.body_options}
 			onFocusIn={ev => {
-				const self = eventCurrentTarget(ev)
-				if (arrayLength(buttons) === 0) {
-					arrayPush(buttons, ...elementChildren(self))
+				const self = ev.currentTarget
+				if (buttons.length === 0) {
+					buttons.push(...(self.children as unknown as HTMLButtonElement[]))
 				}
 				keyboardOnFocusIn(ev, buttons)
 			}}
@@ -221,7 +212,7 @@ const _: VoidComponent<{
 			<TextField
 				c:label="Data"
 				placeholder="Link, email, or any text"
-				onInput={ev => command(Commands.updateQRCodeData, eventCurrentTarget(ev).value)}
+				onInput={ev => command(Commands.updateQRCodeData, ev.currentTarget.value)}
 				c:attrWrapper={{ class: CSS.body_input }}
 			/>
 			<canvas
@@ -244,7 +235,7 @@ const _: VoidComponent<{
 				tabindex="0"
 				onDrop={ev => {
 					setIsDragEnter(false)
-					eventPreventDefault(ev)
+					ev.preventDefault()
 					const dataTransfer = ev.dataTransfer
 					if (dataTransfer == null) return;
 
@@ -253,23 +244,23 @@ const _: VoidComponent<{
 						if (item.kind != 'file') continue
 
 						const file = item.getAsFile()
-						if (!file || !stringStartsWith(file.type, 'image')) continue
+						if (!file || !file.type.startsWith('image')) continue
 						$file = file
 						break
 					}
 					else for (const file of dataTransfer.files) {
-						if (!stringStartsWith(file.type, 'image')) continue
+						if (!file.type.startsWith('image')) continue
 						$file = file
 						break
 					}
 
 					if ($file == null) return;
-					if (!stringStartsWith($file.type, 'image')) return
-					if (QRCodeImageSource() != null) urlRevoke(QRCodeImageSource()!)
-					setQRCodeImageSource(urlCreate($file))
+					if (!$file.type.startsWith('image')) return
+					if (QRCodeImageSource() != null) URL.revokeObjectURL(QRCodeImageSource()!)
+					setQRCodeImageSource(URL.createObjectURL($file))
 					scanQRCodeImage()
 				}}
-				onDragOver={ev => eventPreventDefault(ev)}
+				onDragOver={ev => ev.preventDefault()}
 				onDragEnter={() => setIsDragEnter(true)}
 				onDragLeave={() => setIsDragEnter(false)}>
 				<div data-g-no-pointer-event={attrSetIfExist(isDragEnter())}>
@@ -311,9 +302,9 @@ const _: VoidComponent<{
 				</div>
 			</div>
 			<h2>{
-				(stringLength(QRCodeDecodedText()) > 0? '"' : '')
+				(QRCodeDecodedText().length > 0? '"' : '')
 				+ QRCodeDecodedText()
-				+ (stringLength(QRCodeDecodedText()) > 0? '"' : '')
+				+ (QRCodeDecodedText().length > 0? '"' : '')
 			}</h2>
 		</div>)
 	}
@@ -321,13 +312,13 @@ const _: VoidComponent<{
 	return (<main
 		class={CSS.body}
 		onClick={ev => {
-			const button = documentActive()!
+			const button = document.activeElement!
 			if (!elementValidTarget(
-				eventCurrentTarget(ev),
+				ev.currentTarget,
 				button,
 			)) return
 
-			switch (elementId(button)) {
+			switch (button.id) {
 			case buttonOption_generateId:
 				command(Commands.updatePage, Pages.generate)
 				break
@@ -346,7 +337,7 @@ const _: VoidComponent<{
 				chooseFile()
 				break
 			case buttonScan_dismissId:
-				urlRevoke(QRCodeImageSource()!)
+				URL.revokeObjectURL(QRCodeImageSource()!)
 				setQRCodeImageSource(null)
 				setQRCodeDecodedText('')
 				break
@@ -359,12 +350,12 @@ const _: VoidComponent<{
 			}
 		}}
 		onContextMenu={ev => {
-			const target = eventTarget(ev) as HTMLElement
-			switch (elementId(target)) {
+			const target = ev.target as HTMLElement
+			switch (target.id) {
 			case canvasGenerateOutputId:
 				if (props.isGenerateError) return
 
-				eventPreventDefault(ev)
+				ev.preventDefault()
 				openMenu(
 					menuCanvasActionsRef,
 					{position: MenuPosition.centerBottomToRight}

@@ -3,16 +3,13 @@ import { TransitionGroup } from "solid-transition-group"
 
 import type { Settings, TaskList } from "./_types"
 import { DEFAULT_TASK_LIST, TASKS_PAGES } from "./_constants"
-import { elementAnimate, elementDataset, elementFirstChild, elementId, elementTagName, elementValidTarget } from "@/utils/element"
+import { elementValidTarget } from "@/utils/element"
 import { Commands, Pages } from "./_enums"
-import { eventCurrentTarget, eventPreventDefault } from "@/utils/event"
 import { AnimationEffectTiming } from "@/enums/animation"
-import { arrayFilter, arrayIncludes, arrayLength } from "@/utils/array"
 import { attrClassListModule } from "@/utils/attributes"
-import { promiseDone } from "@/utils/object"
-import { documentActive } from "@/utils/document"
-import { numberIsNotDefined, numberParse, numberSafe } from "@/utils/number"
+import { numberIsNotDefined, numberSafe } from "@/utils/number"
 import { ICON_ADD, ICON_DELETE, ICON_TASK_LIST_SQUARE_LTR, ICON_TEXT_EDIT_STYLE } from "@/constants/icons"
+import { animationIsOn } from "@/utils/animation"
 
 import { Tooltip } from "@/components/Tooltip"
 import Divider from "@/components/Divider"
@@ -20,7 +17,6 @@ import Emoji from "@/components/Emoji"
 import Menu, { closeMenu, MenuItem, MenuPosition, openMenu } from "@/components/Menu"
 import SideNavigation, { SideNavigationItem } from "@/components/SideNavigation"
 import CSS from './_styles.module.scss'
-import { animationIsOn } from "@/utils/animation"
 
 const _: VoidComponent<{
 	expanded: boolean
@@ -35,7 +31,7 @@ const _: VoidComponent<{
 	}
 	const expanded = createMemo(() => props.expanded)
 	const buttonNewListId = createUniqueId()
-	let selectdTaskListIndex = 0
+	let selectedTaskListIndex = 0
 	let menuListActionRef: HTMLDialogElement
 
 	function command(type: Commands, ...args: unknown[]): unknown {
@@ -78,20 +74,19 @@ const _: VoidComponent<{
 			<Menu
 				ref={r => menuListActionRef = r}
 				onClick={ev => {
-					const button = documentActive()!
+					const button = document.activeElement!
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					switch (elementId(button)) {
+					switch (button.id) {
 					case buttonRenameListId:
-						command(Commands.renameTaskList, selectdTaskListIndex)
+						command(Commands.renameTaskList, selectedTaskListIndex)
 						closeMenu(menuListActionRef)
 						break
 					case buttonDeleteListId:
-						command(Commands.deleteTaskList, selectdTaskListIndex)
+						command(Commands.deleteTaskList, selectedTaskListIndex)
 						closeMenu(menuListActionRef)
 						break
 					}
@@ -115,49 +110,47 @@ const _: VoidComponent<{
 		classList={attrClassListModule(CSS.side_navigation)}
 		c:expanded={expanded()}
 		onClick={ev => {
-			const button = documentActive()!
+			const button = document.activeElement! as HTMLButtonElement
 			if (!elementValidTarget(
-				eventCurrentTarget(ev),
+				ev.currentTarget,
 				button,
-				el => elementTagName(el) == 'BUTTON'
 			)) return
 
-			switch (elementId(button)) {
+			switch (button.id) {
 			case buttonNewListId:
 				command(Commands.addTaskList)
 				break
 			default:
-				const data_list_id = elementDataset(button, 'listId')
-				if (data_list_id) {
-					const list_id = numberParse(data_list_id)
-					if (numberIsNotDefined(list_id)) return
+				const dataListId = button.dataset.listId
+				if (dataListId) {
+					const listId = Number.parseInt(dataListId)
+					if (numberIsNotDefined(listId)) return
 
-					command(Commands.updatePage, list_id)
+					command(Commands.updatePage, listId)
 				}
 
-				const data_page = elementDataset(button, 'page')
-				if (data_page) {
-					command(Commands.updatePage, data_page)
+				const dataPage = button.dataset.page
+				if (dataPage) {
+					command(Commands.updatePage, dataPage)
 					return
 				}
 			}
 		}}
 		onContextMenu={ev => {
-			const button = documentActive()!
+			const button = document.activeElement! as HTMLButtonElement
 			if (!elementValidTarget(
-				eventCurrentTarget(ev),
+				ev.currentTarget,
 				button,
-				el => elementTagName(el) == 'BUTTON'
 			)) return
 
-			const data_list_id = elementDataset(button, 'listId')
-			if (data_list_id) {
-				eventPreventDefault(ev)
+			const dataListId = button.dataset.listId
+			if (dataListId) {
+				ev.preventDefault()
 				openMenu(menuListActionRef, {position: MenuPosition.centerBottomToRight})
-				const data_index = elementDataset(button, 'index')
-				if (data_index) {
-					const index = numberSafe(numberParse(data_index))
-					selectdTaskListIndex = index
+				const dataIndex = button.dataset.index
+				if (dataIndex) {
+					const index = numberSafe(Number.parseInt(dataIndex))
+					selectedTaskListIndex = index
 				}
 			}
 		}}
@@ -166,26 +159,26 @@ const _: VoidComponent<{
 			onEnter={(el, done) => {
 				if (!animationIsOn()) return done()
 
-				promiseDone(elementAnimate(
-					elementFirstChild(el as HTMLElement)!,
+				el.firstElementChild!.animate(
 					{ opacity: [0, 1], transform: ['translate(-12px)', 'none'] },
 					animationOptions
-				).finished, done)
+				).finished.then(done)
 			}}
 			onExit={(el, done) => {
 				if (!animationIsOn()) return done()
 
-				promiseDone(elementAnimate(
-					elementFirstChild(el as HTMLElement)!,
+				el.firstElementChild?.animate(
 					{ opacity: 0, transform: 'translate(-12px)'},
 					animationOptions
-				).finished, done)
+				).finished.then(done)
 			}}>
-			<For each={arrayFilter(TASKS_PAGES, page => !arrayIncludes(props.settings.hiddenNavigation, page.type))}>
+			<For each={TASKS_PAGES.filter(
+				page => !props.settings.hiddenNavigation.includes(page.type)
+			)}>
 				{p => <Page {...p}/>}
 			</For>
 		</TransitionGroup>
-		<Show when={arrayLength(props.tasklists) - 1 > 0}><Divider /></Show>
+		<Show when={props.tasklists.length - 1 > 0}><Divider /></Show>
 		<For each={props.tasklists}>{(p, i) =>
 			<Show when={p.id != DEFAULT_TASK_LIST.id}>
 				<Item {...p} index={i()}/>

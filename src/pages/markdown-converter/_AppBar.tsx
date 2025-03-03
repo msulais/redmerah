@@ -6,20 +6,11 @@ import { CornerData } from "@/enums/corner"
 import { RoutesLinks, ExternalLinks } from "@/enums/links"
 import { LocalStorageKeys } from "@/enums/storage"
 import { ThemeData } from "@/enums/theme"
-import { storageSet, storageGet } from "@/utils/storage"
-import { urlEncode, urlOrigin } from "@/utils/url"
-import { setAttribute } from "solid-js/web"
 import { Commands } from "./_enums"
 import { NumberTextField } from "@/components/TextField"
 import { IFRAME_PREVIEW_ID } from "./_constants"
-import { elementById, elementDataset, elementId, elementTagName, elementValidTarget } from "@/utils/element"
-import { navigatorShare } from "@/utils/navigator"
-import { documentActive, documentRoot } from "@/utils/document"
-import { dateYear } from "@/utils/datetime"
+import { elementValidTarget } from "@/utils/element"
 import { numberSafe } from "@/utils/number"
-import { eventCurrentTarget, eventTarget } from "@/utils/event"
-import { attrSet } from "@/utils/attributes"
-import { arrayIncludes } from "@/utils/array"
 import { validEnumValue } from "@/utils/object"
 import { AnimationData } from "@/enums/animation"
 import { APP_MARKDOWN_CONVERTER as app } from "@/constants/apps"
@@ -38,7 +29,7 @@ const _: VoidComponent<{
 	settings: Settings
 	command: (type: Commands, ...args: unknown[]) => unknown
 }> = (props) => {
-	const root = documentRoot()
+	const root = document.documentElement
 	const buttonInfoId = createUniqueId()
 	const buttonSettingsId = createUniqueId()
 	const buttonMoreActionsId = createUniqueId()
@@ -59,44 +50,44 @@ const _: VoidComponent<{
 
 	function updateTheme(theme: ThemeData): void {
 		setTheme(theme)
-		setAttribute(root, RootAttributes.theme, theme)
-		storageSet(LocalStorageKeys.theme, theme)
+		root.setAttribute(RootAttributes.theme, theme)
+		localStorage.setItem(LocalStorageKeys.theme, theme)
 		closeMenu(menuSettingsRef)
 	}
 
 	function updateAnimation(animation: AnimationData): void {
 		setAnimation(animation)
-		attrSet(root, RootAttributes.animation, animation)
-		storageSet(LocalStorageKeys.animation, animation)
+		root.setAttribute(RootAttributes.animation, animation)
+		localStorage.setItem(LocalStorageKeys.animation, animation)
 	}
 
 	function updateCorner(corner: CornerData): void {
 		setCorner(corner)
-		setAttribute(root, RootAttributes.corner, corner)
-		storageSet(LocalStorageKeys.corner, corner)
+		root.setAttribute(RootAttributes.corner, corner)
+		localStorage.setItem(LocalStorageKeys.corner, corner)
 		closeMenu(menuSettingsRef)
 	}
 
 	function initTheme(): void {
-		const theme = storageGet(LocalStorageKeys.theme)
+		const theme = localStorage.getItem(LocalStorageKeys.theme)
 		if (theme && validEnumValue(theme, ThemeData)) {
-			attrSet(root, RootAttributes.theme, theme)
+			root.setAttribute(RootAttributes.theme, theme)
 			setTheme(theme as ThemeData)
 		}
 	}
 
 	function initCorner(): void {
-		const corner = storageGet(LocalStorageKeys.corner)
+		const corner = localStorage.getItem(LocalStorageKeys.corner)
 		if (corner && validEnumValue(corner, CornerData)) {
-			attrSet(root, RootAttributes.corner, corner)
+			root.setAttribute(RootAttributes.corner, corner)
 			setCorner(corner as CornerData)
 		}
 	}
 
 	function initAnimation(): void {
-		const animation = storageGet(LocalStorageKeys.animation)
+		const animation = localStorage.getItem(LocalStorageKeys.animation)
 		if (animation && validEnumValue(animation, AnimationData)) {
-			attrSet(root, RootAttributes.animation, animation)
+			root.setAttribute(RootAttributes.animation, animation)
 			setAnimation(animation as AnimationData)
 		}
 	}
@@ -126,22 +117,18 @@ const _: VoidComponent<{
 		return (<>
 			<Menu
 				onClick={(ev) => {
-					const button = documentActive()!
+					const button = document.activeElement!
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => {
-							const tagname = elementTagName(el)
-							return tagname == 'BUTTON' || tagname == 'A'
-						}
 					)) return
 
-					switch (elementId(button)) {
+					switch (button.id) {
 					case buttonInfo_shareId:
-						navigatorShare({
+						navigator.share({
 							title: app.name,
 							text: app.name + ' v' + app.buildVersion,
-							url: urlOrigin() + app.link
+							url: document.location.origin + app.link
 						})
 						break
 					}
@@ -184,7 +171,7 @@ const _: VoidComponent<{
 					Share
 				</MenuItem>
 				<LinkMenuItem
-					href={'mailto:' + ExternalLinks.contactEmail + '?subject=' + urlEncode('Tasks')}
+					href={'mailto:' + ExternalLinks.contactEmail + '?subject=' + encodeURI('Tasks')}
 					c:iconCode={ICON_CHAT}>
 					Send feedback
 				</LinkMenuItem>
@@ -194,15 +181,15 @@ const _: VoidComponent<{
 					c:iconCode={ICON_GIFT}>
 					Donate
 				</LinkMenuItem>
-				<MenuHeader>&copy; {dateYear(new Date())} Redmerah</MenuHeader>
+				<MenuHeader>&copy; {new Date().getFullYear()} Redmerah</MenuHeader>
 			</Menu>
 			<Menu
 				ref={r => menuSettingsRef = r}
 				c:onToggleOpen={(v) => setIsMenuSettingsOpen(v)}
 				onChange={ev => {
-					const target = eventTarget(ev) as HTMLInputElement
+					const target = ev.target as HTMLInputElement
 
-					switch (elementId(target)) {
+					switch (target.id) {
 					case inputSettings_animationId:
 						updateAnimation(animation() === AnimationData.on
 							? AnimationData.off
@@ -212,19 +199,19 @@ const _: VoidComponent<{
 					}
 				}}
 				onClick={ev => {
-					const button = documentActive()!
+					const button = document.activeElement! as HTMLButtonElement
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					const dataTheme = elementDataset(button, 'theme')
+					const dataset = button.dataset
+					const dataTheme = dataset.theme
 					if (dataTheme
 						&& validEnumValue(dataTheme, ThemeData)
 					) return updateTheme(dataTheme as ThemeData)
 
-					const dataCorner = elementDataset(button, 'corner')
+					const dataCorner = dataset.corner
 					if (dataCorner
 						&& validEnumValue(dataCorner, CornerData)
 					) return updateCorner(dataCorner as CornerData)
@@ -306,7 +293,7 @@ const _: VoidComponent<{
 							value={settings().fontSize}
 							onBlur={ev => command(
 								Commands.updateFontSize,
-								numberSafe(eventCurrentTarget(ev).valueAsNumber, settings().fontSize)
+								numberSafe(ev.currentTarget.valueAsNumber, settings().fontSize)
 							)}
 						/>
 					</Tooltip>
@@ -317,17 +304,16 @@ const _: VoidComponent<{
 				c:onToggleOpen={isOpen => setIsMenuMoreActionsOpen(isOpen)}
 				ref={r => menuMoreActionsRef = r}
 				onClick={ev => {
-					const button = documentActive()!
+					const button = document.activeElement! as HTMLButtonElement
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					switch (elementId(button)) {
+					switch (button.id) {
 					case buttonMoreActions_printId: {
 						closeMenu(menuMoreActionsRef)
-						const iframe = elementById(IFRAME_PREVIEW_ID) as HTMLIFrameElement
+						const iframe = document.getElementById(IFRAME_PREVIEW_ID) as HTMLIFrameElement
 						iframe?.contentWindow?.print()
 						break
 					}
@@ -340,14 +326,15 @@ const _: VoidComponent<{
 						command(Commands.resetInputs)
 						break
 					default:
-						const dataDownload = elementDataset(button, 'download')
+						const dataset = button.dataset
+						const dataDownload = dataset.download
 						if (dataDownload
-							&& arrayIncludes(['markdown', 'html', 'css'], dataDownload)
+							&& ['markdown', 'html', 'css'].includes(dataDownload)
 						) return downloadFile(dataDownload as ('markdown' | 'html' | 'css'))
 
-						const dataCopy = elementDataset(button, 'copy')
+						const dataCopy = dataset.copy
 						if (dataCopy
-							&& arrayIncludes(['markdown', 'html', 'css'], dataCopy)
+							&& ['markdown', 'html', 'css'].includes(dataCopy)
 						) return copyAll(dataCopy as ('markdown' | 'html' | 'css'))
 					}
 				}}>
@@ -420,17 +407,16 @@ const _: VoidComponent<{
 
 	return (<>
 		<AppBar
-			c:leading={<img alt="Markdown converter logo" width={32} src={app.logoUrl} />}
-			c:headline="Markdown Converter"
+			c:leading={<img alt={app.name + ' logo'} width={32} src={app.logoUrl} />}
+			c:headline={app.name}
 			onClick={ev => {
-				const button = documentActive()!
+				const button = document.activeElement! as HTMLButtonElement
 				if (!elementValidTarget(
-					eventCurrentTarget(ev),
+					ev.currentTarget,
 					button,
-					el => elementTagName(el) == 'BUTTON'
 				)) return
 
-				switch (elementId(button)) {
+				switch (button.id) {
 				case buttonInfoId:
 					openMenu(menuInfoRef, { anchor: button })
 					break

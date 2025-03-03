@@ -1,17 +1,10 @@
 import { For, Show, createMemo, createSelector, createSignal, onMount, type VoidComponent } from "solid-js"
 
 import type { AppItem } from "@/types/apps"
-import { storageGet, storageSet } from "@/utils/storage"
 import { LocalStorageKeys } from "@/enums/storage"
 import { APPS } from "@/constants/apps"
-import { eventCurrentTarget, eventPreventDefault } from "@/utils/event"
 import { tryRemoveSplashScreen } from "@/utils/splash"
-import { arrayFilter, arrayJoin, arrayLength, arraySome, arraySort } from "@/utils/array"
-import { stringLocaleCompare, stringSplit, stringToLowerCase, stringTrim } from "@/utils/string"
-import { navigatorClipboardWriteText, navigatorShare } from "@/utils/navigator"
-import { regexTest } from "@/utils/regex"
 import { ICON_COPY, ICON_INFO, ICON_OPEN, ICON_OPEN_FOLDER, ICON_PIN, ICON_PIN_OFF, ICON_SEARCH, ICON_SHARE_ANDROID } from "@/constants/icons"
-import { timeTimerClear, timeTimerSet } from "@/utils/time"
 
 import Icon from "@/components/Icon"
 import Button, { ButtonVariant, LinkButton } from "@/components/Button"
@@ -20,8 +13,6 @@ import Menu, { closeMenu, LinkMenuItem, MenuDivider, MenuItem, MenuPosition, ope
 import Tooltip from "@/components/Tooltip"
 import Dialog, { closeDialog, openDialog } from "@/components/Dialog"
 import CSS from './_index.module.scss'
-import { elementAnimate, elementStyle, elementStyleRemove, elementStyleSet } from "@/utils/element"
-import { promiseDone } from "@/utils/object"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { FocusableGroup2D } from "@/components/FocusableGroup"
 import { animationIsOn } from "@/utils/animation"
@@ -32,28 +23,28 @@ export const MainElement: VoidComponent = () => {
 	const [selectedApp, setSelectedApp] = createSignal<AppItem | null>(null)
 	const [searchText, setSearchText] = createSignal<string>('')
 	const [columnCount, setColumnCount] = createSignal<number>(0)
-	const isSelected = createSelector<string[], string>(pinnedApps, (a, b) => arraySome(b, (v) => v == a))
+	const isSelected = createSelector<string[], string>(pinnedApps, (a, b) => b.some((v) => v == a))
 	const getSelectedLink = createMemo(() => selectedApp()? selectedApp()!.link : '')
 	const getSelectedName = createMemo(() => selectedApp()? selectedApp()!.name : '')
 	let dialogInfoRef: HTMLDialogElement
 	let menuActionsRef: HTMLDialogElement
-	let timeId: number | null = null
-	let timeColumnCountId: number | null = null
+	let timeId: number | NodeJS.Timeout | null = null
+	let timeColumnCountId: number | NodeJS.Timeout | null = null
 
 	function pinApp(link: string): void {
-		setPinnedApps(v => isSelected(link)? arrayFilter(v, a => a != link) :  [...v, link])
-		storageSet(LocalStorageKeys.pinnedApps, arrayJoin(pinnedApps(), ';'))
+		setPinnedApps(v => isSelected(link)? v.filter(a => a != link) :  [...v, link])
+		localStorage.setItem(LocalStorageKeys.pinnedApps, pinnedApps().join(';'))
 	}
 
 	function initPinnedApp(): void {
-		const pinned_apps = storageGet(LocalStorageKeys.pinnedApps)
-		if (!pinned_apps) return;
+		const pinnedApps = localStorage.getItem(LocalStorageKeys.pinnedApps)
+		if (!pinnedApps) return;
 
-		setPinnedApps(stringSplit(pinned_apps!, ';'))
+		setPinnedApps(pinnedApps.split(';'))
 	}
 
 	function share(): void {
-		navigatorShare({
+		navigator.share({
 			text: getSelectedName(),
 			url: getSelectedLink()
 		})
@@ -69,10 +60,10 @@ export const MainElement: VoidComponent = () => {
 		<Tooltip>
 			<TextField
 				onInput={(ev) => {
-					if (timeId != null) timeTimerClear(timeId)
+					if (timeId != null) clearTimeout(timeId)
 
-					const text = eventCurrentTarget(ev).value
-					timeId = timeTimerSet(() => {
+					const text = ev.currentTarget.value
+					timeId = setTimeout(() => {
 						setSearchText(text)
 						timeId = null
 					}, 500)
@@ -85,24 +76,23 @@ export const MainElement: VoidComponent = () => {
 		<FocusableGroup2D
 			c:columnCount={columnCount()}
 			onFocusIn={(ev) => {
-				if (timeColumnCountId === null) setColumnCount(arrayLength(stringSplit(
-					stringTrim(elementStyle(eventCurrentTarget(ev), "grid-template-columns")),
-					" "
-				)))
-				else timeTimerClear(timeColumnCountId)
+				if (timeColumnCountId === null) setColumnCount(
+					window
+					.getComputedStyle(ev.currentTarget)
+					.getPropertyValue("grid-template-columns")
+					.trim()
+					.split(" ").length)
+				else clearTimeout(timeColumnCountId)
 
-				timeColumnCountId = timeTimerSet(() => timeColumnCountId = null, 200)
+				timeColumnCountId = setTimeout(() => timeColumnCountId = null, 200)
 			}}>
-			<For each={arraySort(
-				arraySort(APPS, (a, b) => stringLocaleCompare(a.name, b.name)),
+			<For each={APPS.sort((a, b) => a.name.localeCompare(b.name)).sort(
 				(a) => isSelected(a.link)? -1 : 1
 			)}>{(app, i) =>
 				<Show when={
-					stringTrim(searchText()) == ''
-					|| regexTest(
-						new RegExp(arrayJoin(stringSplit(stringTrim(stringToLowerCase(searchText())), ' '), '|')),
-						stringToLowerCase(app.name)
-					)
+					searchText().trim() == ''
+					|| new RegExp(searchText().toLowerCase().trim().split(' ').join('|'))
+						.test(app.name.toLowerCase())
 				}>
 					<LinkButton
 						href={app.link}
@@ -112,7 +102,7 @@ export const MainElement: VoidComponent = () => {
 							openMenu(menuActionsRef, {
 								position: MenuPosition.centerBottomToRight,
 							})
-							eventPreventDefault(ev)
+							ev.preventDefault()
 						}}>
 						<img
 							data-i={i()}
@@ -123,26 +113,21 @@ export const MainElement: VoidComponent = () => {
 							src={app.logoUrl}
 							alt={app.name}
 							onLoad={ev => {
-								const img = eventCurrentTarget(ev)
+								const img = ev.currentTarget
 								if (!animationIsOn()) {
-									elementStyleRemove(img, 'will-change')
-									elementStyleRemove(img, 'transform')
+									img.style.removeProperty('will-change')
+									img.style.removeProperty('transform')
 									return
 								}
 
-								elementStyleSet(img, 'will-change', 'transform')
-								promiseDone(
-									elementAnimate(img, {
-										transform: ['scale(0)', 'scale(1)']
-									}, {
-										duration: 300,
-										easing: AnimationEffectTiming.spring,
-									}).finished,
-									() => {
-										elementStyleRemove(img, 'will-change')
-										elementStyleRemove(img, 'transform')
-									}
-								)
+								img.style.setProperty('will-change', 'transform')
+								img.animate({transform: ['scale(0)', 'scale(1)']}, {
+									duration: 300,
+									easing: AnimationEffectTiming.spring,
+								}).finished.then(() => {
+									img.style.removeProperty('will-change')
+									img.style.removeProperty('transform')
+								})
 							}}
 						/>
 						{app.name}
@@ -175,7 +160,7 @@ export const MainElement: VoidComponent = () => {
 			<MenuDivider/>
 			<MenuItem
 				onClick={() => {
-					navigatorClipboardWriteText('https://' + location.hostname + (getSelectedLink() ?? '#'))
+					navigator.clipboard.writeText('https://' + location.hostname + (getSelectedLink() ?? '#'))
 					closeMenu(menuActionsRef)
 				}}
 				c:leading={<Icon c:code={ICON_COPY}/>}>

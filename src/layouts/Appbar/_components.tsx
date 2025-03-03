@@ -9,21 +9,15 @@ import CSSAnimation from '@/styles/animation.module.scss'
 import CSS from './_index.module.scss'
 
 import type { HEXColor, RGBColor } from "@/types/color"
-import { storageGet, storageSet } from "@/utils/storage"
 import { colorGeneratePalette, colorHexToRgb, colorIsValid } from "@/utils/color"
-import { attrSet, attrClassListModule } from "@/utils/attributes"
+import { attrClassListModule } from "@/utils/attributes"
 import { ExternalLinks, RoutesLinks } from "@/enums/links"
 import { LocalStorageKeys } from "@/enums/storage"
 import { RootAttributes } from "@/enums/attributes"
-import { elementClosest, elementById, elementId, elementDataset } from "@/utils/element"
 import { ElementIds } from "@/enums/ids"
 import { CornerData } from "@/enums/corner"
 import { ThemeData } from "@/enums/theme"
-import { timeTimerClear, timeTimerSet } from "@/utils/time"
 import { tryRemoveSplashScreen } from "@/utils/splash"
-import { mathRound } from "@/utils/math"
-import { eventCurrentTarget, eventTarget } from "@/utils/event"
-import { documentRoot } from "@/utils/document"
 import { ICON_APPS, ICON_CIRCLE, ICON_GIFT, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_LINE_HORIZONTAL_3, ICON_MAXIMIZE, ICON_RECEIPT, ICON_SETTINGS, ICON_SHIELD_CHECKMARK, ICON_SQUARE, ICON_TEARDROP_BOTTOM_RIGHT, ICON_VIDEO_CLIP, ICON_VIDEO_CLIP_OFF, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from "@/constants/icons"
 import Drawer, { closeDrawer, LinkDrawerItem, openDrawer } from "@/components/Drawer"
 import { validEnumValue } from "@/utils/object"
@@ -96,7 +90,7 @@ export const NavigationDrawer: VoidComponent<NavigationDrawerProps> = (props) =>
 }
 
 export const SettingsElement: VoidComponent = () => {
-	const root = documentRoot()
+	const root = document.documentElement
 	const menuItemAccentId = createUniqueId()
 	const [color, setColor] = createSignal<HEXColor>('#FF0000')
 	const [animation, setAnimation] = createSignal<AnimationData>(AnimationData.on)
@@ -106,73 +100,73 @@ export const SettingsElement: VoidComponent = () => {
 	const [isColorPickerOpen, setIsColorPickerOpen] = createSignal<boolean>(false)
 	let menuSettingsRef: HTMLDialogElement
 	let colorPickerRef: HTMLDivElement
-	let timeColorId: number | null = null
+	let timeColorId: number | NodeJS.Timeout | null = null
 
 	function updateTheme(theme: ThemeData): void {
 		setTheme(theme)
-		attrSet(root, RootAttributes.theme, theme)
-		storageSet(LocalStorageKeys.theme, theme)
+		root.setAttribute(RootAttributes.theme, theme)
+		localStorage.setItem(LocalStorageKeys.theme, theme)
 		closeMenu(menuSettingsRef)
 	}
 
 	function updateAnimation(animation: AnimationData): void {
 		setAnimation(animation)
-		attrSet(root, RootAttributes.animation, animation)
-		storageSet(LocalStorageKeys.animation, animation)
+		root.setAttribute(RootAttributes.animation, animation)
+		localStorage.setItem(LocalStorageKeys.animation, animation)
 		closeMenu(menuSettingsRef)
 	}
 
 	function updateCorner(corner: CornerData): void {
 		setCorner(corner)
-		attrSet(root, RootAttributes.corner, corner)
-		storageSet(LocalStorageKeys.corner, corner)
+		root.setAttribute(RootAttributes.corner, corner)
+		localStorage.setItem(LocalStorageKeys.corner, corner)
 		closeMenu(menuSettingsRef)
 	}
 
 	function initTheme(): void {
-		const theme = storageGet(LocalStorageKeys.theme)
+		const theme = localStorage.getItem(LocalStorageKeys.theme)
 		if (theme && validEnumValue(theme, ThemeData)) {
-			attrSet(root, RootAttributes.theme, theme)
+			root.setAttribute(RootAttributes.theme, theme)
 			setTheme(theme as ThemeData)
 		}
 	}
 
 	function initCorner(): void {
-		const corner = storageGet(LocalStorageKeys.corner)
+		const corner = localStorage.getItem(LocalStorageKeys.corner)
 		if (corner && validEnumValue(corner, CornerData)) {
-			attrSet(root, RootAttributes.corner, corner)
+			root.setAttribute(RootAttributes.corner, corner)
 			setCorner(corner as CornerData)
 		}
 	}
 
 	function initAnimation(): void {
-		const animation = storageGet(LocalStorageKeys.animation)
+		const animation = localStorage.getItem(LocalStorageKeys.animation)
 		if (animation && validEnumValue(animation, AnimationData)) {
-			attrSet(root, RootAttributes.animation, animation)
+			root.setAttribute(RootAttributes.animation, animation)
 			setAnimation(animation as AnimationData)
 		}
 	}
 
 	function rgbToCSS(rgb: RGBColor): string {
-		return `${mathRound(rgb.r * 0xff)}, ${mathRound(rgb.g * 0xff)}, ${mathRound(rgb.b * 0xff)}`
+		return `${Math.round(rgb.r * 0xff)}, ${Math.round(rgb.g * 0xff)}, ${Math.round(rgb.b * 0xff)}`
 	}
 
 	function updateColor(color: HEXColor): void {
 		setColor(color)
 		const acc = colorGeneratePalette(color)
-		const accentColorElement = elementById(ElementIds.colorAccent)!
+		const accentColorElement = document.getElementById(ElementIds.colorAccent)!
 		accentColorElement.innerHTML = `:root{--g-color-accent-light: ${rgbToCSS(colorHexToRgb(acc.color))};--g-color-accent-dark: ${rgbToCSS(colorHexToRgb(acc.colorDark))};--g-color-on-accent-light: ${rgbToCSS(colorHexToRgb(acc.onColor))};--g-color-on-accent-dark: ${rgbToCSS(colorHexToRgb(acc.onColorDark))};}`;
 
-		if (timeColorId != null) timeTimerClear(timeColorId)
-		timeColorId = timeTimerSet(() => {
-			storageSet(LocalStorageKeys.color, color)
+		if (timeColorId != null) clearTimeout(timeColorId)
+		timeColorId = setTimeout(() => {
+			localStorage.setItem(LocalStorageKeys.color, color)
 			timeColorId = null
 		}, 100)
 		closeMenu(menuSettingsRef)
 	}
 
 	function initColor(): void {
-		const color = storageGet(LocalStorageKeys.color)
+		const color = localStorage.getItem(LocalStorageKeys.color)
 		if (!colorIsValid(color ?? '')) return;
 
 		updateColor(color as HEXColor)
@@ -193,7 +187,7 @@ export const SettingsElement: VoidComponent = () => {
 				classList={attrClassListModule(CSSAnimation.btn_rotate_icon)}
 				c:focused={isMenuSettingsOpen()}
 				onClick={(ev) => openMenu(menuSettingsRef, {
-					anchor: eventCurrentTarget(ev),
+					anchor: ev.currentTarget,
 					padding: 0,
 				})}
 				c:code={ICON_SETTINGS}
@@ -204,10 +198,10 @@ export const SettingsElement: VoidComponent = () => {
 			ref={r => menuSettingsRef = r}
 			c:onToggleOpen={(v) => setIsMenuSettingsOpen(v)}
 			onClick={ev => {
-				const button = elementClosest(eventTarget(ev) as HTMLElement, 'button')
+				const button = (ev.target as HTMLElement).closest('button')
 				if (!button) return
 
-				switch (elementId(button)) {
+				switch (button.id) {
 				case menuItemAccentId:
 					closeMenu(menuSettingsRef)
 					openPopoverColorPicker(colorPickerRef, {
@@ -215,17 +209,18 @@ export const SettingsElement: VoidComponent = () => {
 					})
 					break
 				default:
-					const dataTheme = elementDataset(button, 'theme')
+					const dataset = button.dataset
+					const dataTheme = dataset.theme
 					if (dataTheme
 						&& validEnumValue(dataTheme, ThemeData)
 					) return updateTheme(dataTheme as ThemeData)
 
-					const dataCorner = elementDataset(button, 'corner')
+					const dataCorner = dataset.corner
 					if (dataCorner
 						&& validEnumValue(dataCorner, CornerData)
 					) return updateCorner(dataCorner as CornerData)
 
-					const dataAnimation = elementDataset(button, 'animation')
+					const dataAnimation = dataset.animation
 					if (dataAnimation
 						&& validEnumValue(dataAnimation, AnimationData)
 					) return updateAnimation(dataAnimation as AnimationData)

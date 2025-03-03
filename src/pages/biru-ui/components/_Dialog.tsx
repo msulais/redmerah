@@ -5,7 +5,6 @@ import CheckBox from "@/components/CheckBox"
 import TextField from "@/components/TextField"
 import Dialog, { closeDialog, openDialog } from "@/components/Dialog"
 import { Page, Playground, PlaygroundOptions } from "../_Body"
-import { eventCurrentTarget } from "@/utils/event"
 
 const _: VoidComponent = () => {
 	const [important, setImportant] = createSignal<boolean>(false)
@@ -47,34 +46,34 @@ const _: VoidComponent = () => {
 		</Playground>
 		<PlaygroundOptions>
 			<Show when={hasHeader()}>
-				<TextField c:label="Header text" value="Header" onInput={ev => setHeaderText(eventCurrentTarget(ev).value)}/>
+				<TextField c:label="Header text" value="Header" onInput={ev => setHeaderText(ev.currentTarget.value)}/>
 			</Show>
 			<Show when={hasContent()}>
-				<TextField c:label="Content text" value="Cupidatat aliqua est quis enim commodo. Aute Lorem occaecat commodo nisi amet dolor ut cupidatat qui ipsum magna in. In aliquip voluptate nulla aliquip duis cillum consectetur eiusmod adipisicing reprehenderit officia reprehenderit adipisicing dolor." onInput={ev => setContentText(eventCurrentTarget(ev).value)}/>
+				<TextField c:label="Content text" value="Cupidatat aliqua est quis enim commodo. Aute Lorem occaecat commodo nisi amet dolor ut cupidatat qui ipsum magna in. In aliquip voluptate nulla aliquip duis cillum consectetur eiusmod adipisicing reprehenderit officia reprehenderit adipisicing dolor." onInput={ev => setContentText(ev.currentTarget.value)}/>
 			</Show>
 			<CheckBox
 				checked={important()}
-				onChange={ev => setImportant(eventCurrentTarget(ev).checked)}>
+				onChange={ev => setImportant(ev.currentTarget.checked)}>
 				Important
 			</CheckBox>
 			<CheckBox
 				checked={contentAutoFocus()}
-				onChange={ev => setContentAutoFocus(eventCurrentTarget(ev).checked)}>
+				onChange={ev => setContentAutoFocus(ev.currentTarget.checked)}>
 				Content autofocus
 			</CheckBox>
 			<CheckBox
 				checked={hasHeader()}
-				onChange={ev => setHasHeader(eventCurrentTarget(ev).checked)}>
+				onChange={ev => setHasHeader(ev.currentTarget.checked)}>
 				Header
 			</CheckBox>
 			<CheckBox
 				checked={hasActions()}
-				onChange={ev => setHasActions(eventCurrentTarget(ev).checked)}>
+				onChange={ev => setHasActions(ev.currentTarget.checked)}>
 				Actions
 			</CheckBox>
 			<CheckBox
 				checked={hasContent()}
-				onChange={ev => setHasContent(eventCurrentTarget(ev).checked)}>
+				onChange={ev => setHasContent(ev.currentTarget.checked)}>
 				Content
 			</CheckBox>
 		</PlaygroundOptions>

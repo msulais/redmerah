@@ -3,27 +3,20 @@ import { createSignal, createUniqueId, For, onMount, Show, type VoidComponent } 
 import type { HEXColor } from "@/types/color"
 import type { ItemList, Result, Settings } from "./_types"
 import { colorRgbToHex, colorHslToHex } from "@/utils/color"
-import { timeIntervalSet, timeIntervalClear } from "@/utils/time"
-import { createStore } from "solid-js/store"
+import { createStore, produce } from "solid-js/store"
 import { RandomizerType, WordsRandomizerWordCase, NumbersRandomizerNumberType, NumbersRandomizerSort, ColorsRandomizerColorSpace, Commands } from "./_enums"
-import { mathFloor, mathRandom, mathRound } from "@/utils/math"
 import { PERSON_NAMES, TEAMS_NAMES, ANIMALS, LOREM_IPSUM, DEFAULT_LISTS } from "./_constants"
 import { ObjectStoreNames, ObjectStoreKeys, type ObjectStoreLists, type ObjectStoreSettings, type ObjectStoreLastResult } from "./_storage"
-import { stringToLowerCase, stringToUpperCase, stringToToggleCase, stringToTitleCase, stringLength, stringPadStart, stringTrim, stringSplit, stringLocaleCompare } from "@/utils/string"
-import { urlCreate, urlDownloadFile, urlRevoke } from "@/utils/url"
-import { elementDataset, elementFocus, elementId, elementTagName, elementValidTarget } from "@/utils/element"
+import { stringToToggleCase, stringToTitleCase } from "@/utils/string"
+import { urlDownloadFile } from "@/utils/url"
+import { elementValidTarget } from "@/utils/element"
 import { fileOpen, fileReadAsText } from "@/utils/file"
-import { IDB, idbStoreDelete, idbStorePut } from "@/utils/indexeddb"
+import { IDB } from "@/utils/indexeddb"
 import { DatabaseNames } from "@/enums/storage"
-import { attrRemove, attrSet, attrSetIfExist, attrClassListModule } from "@/utils/attributes"
+import { attrSetIfExist, attrClassListModule } from "@/utils/attributes"
 import { BodyAttributes } from "@/enums/attributes"
 import { removeSplashScreen } from "@/utils/splash"
-import { arrayConcat, arrayFilter, arrayFindIndex, arrayIncludes, arrayJoin, arrayLength, arrayMap, arrayPush, arraySlice, arraySort, arraySplice } from "@/utils/array"
-import { numberIsNotDefined, numberParse, numberToString } from "@/utils/number"
-import { navigatorClipboardWriteText } from "@/utils/navigator"
-import { documentActive, documentBody } from "@/utils/document"
-import { eventCurrentTarget } from "@/utils/event"
-import { promiseDone } from "@/utils/object"
+import { numberIsNotDefined } from "@/utils/number"
 import { ICON_APPS_LIST_DETAIL, ICON_ARROW_EXPORT_UP, ICON_ARROW_SYNC, ICON_DELETE, ICON_EDIT, ICON_EYE, ICON_TASK_LIST_SQUARE_LTR, ICON_WARNING } from "@/constants/icons"
 
 import App from "@/components/App"
@@ -44,14 +37,14 @@ import CSS from './_styles.module.scss'
 
 const _: VoidComponent = () => {
 	const db = new IDB(DatabaseNames.randomizer, 1)
-	const body = documentBody()
+	const body = document.body
 	const [randomizer, setRandomizer] = createSignal<RandomizerType>(RandomizerType.string)
 	const [listViewItem, setListViewItem] = createSignal<ItemList>({id: -1, items: [], name: ''})
 	const [selectedListToDelete, setSelectedListToDelete] = createSignal<ItemList>({id: -1, items: [], name: ''})
 	const [selectedListToEdit, setSelectedListToEdit] = createSignal<ItemList>({id: -1, items: [], name: ''})
 	const [isSideNavigationExpanded, setIsSideNavigationExpanded] = createSignal<boolean>(true)
 	const [isGenerating, setIsGenerating] = createSignal<boolean>(false)
-	const [lists, setlists] = createStore<ItemList[]>(arrayMap(DEFAULT_LISTS, l => ({id: l.id, name: l.name, items: [...l.items]})))
+	const [lists, setlists] = createStore<ItemList[]>(DEFAULT_LISTS.map(l => ({id: l.id, name: l.name, items: [...l.items]})))
 	const [settings, setSettings] = createStore<Settings>({
 		string: {
 			instant: false,
@@ -127,7 +120,7 @@ const _: VoidComponent = () => {
 		teams: [],
 		words: ''
 	})
-	let timeIntervalId: number | null = null
+	let timeIntervalId: number | NodeJS.Timeout | null = null
 	let dialogListsRef: HTMLDialogElement
 	let dialogDeleteListWarningRef: HTMLDialogElement
 	let dialogAddRef: HTMLDialogElement
@@ -161,7 +154,7 @@ const _: VoidComponent = () => {
 			if (characters.custom) charlist += characters.custom
 
 			for (let i = 0; i < $settings.length; i++) {
-				text += charlist[mathFloor(mathRandom() * stringLength(charlist))]
+				text += charlist[Math.floor(Math.random() * charlist.length)]
 			}
 
 			setOutput('string', text)
@@ -175,37 +168,36 @@ const _: VoidComponent = () => {
 			const range: number = $settings.range.max - min
 
 			for (let i = 0; i < count; i++) {
-				const v: number = min + 1 + mathFloor(mathRandom() * range)
+				const v: number = min + 1 + Math.floor(Math.random() * range)
 
-				if (!$settings.repeat && arrayIncludes(numbers, v)) continue
+				if (!$settings.repeat && numbers.includes(v)) continue
 
-				arrayPush(numbers, v)
+				numbers.push(v)
 			}
 
 			let iteration = 0
-			while (arrayLength(numbers) < count && iteration < count + 0xff){
-				const v: number = min + 1 + mathFloor(mathRandom() * range)
+			while (numbers.length < count && iteration < count + 0xff){
+				const v: number = min + 1 + Math.floor(Math.random() * range)
 
 				if (!$settings.repeat &&
-					arrayIncludes(numbers, v) &&
-					arrayLength(numbers) < range) continue;
+					numbers.includes(v) &&
+					numbers.length < range) continue;
 
-				arrayPush(numbers, v)
+				numbers.push(v)
 				++iteration
 			}
 
-			if ($settings.sort != NumbersRandomizerSort.none) arraySort(
-				numbers,
+			if ($settings.sort != NumbersRandomizerSort.none) numbers.sort(
 				(a, b) => $settings.sort == NumbersRandomizerSort.ascending
 					? a - b
 					: b - a
 			)
 
-			setOutput('numbers', arrayJoin(arrayMap([...numbers], v =>
+			setOutput('numbers', [...numbers].map(v =>
 				$settings.prefix +
-				stringToUpperCase(stringPadStart(numberToString(v, $settings.type), $settings.minDigits, '0')) +
+				v.toString($settings.type).padStart($settings.minDigits, '0').toUpperCase() +
 				$settings.suffix
-			), $settings.separator))
+			).join($settings.separator))
 			break
 		}
 		case RandomizerType.words: {
@@ -215,37 +207,37 @@ const _: VoidComponent = () => {
 			let members: string[] = [...items]
 
 			for (let i = 0; i < $settings.count; i++) {
-				if (i >= arrayLength(items) && !$settings.repeat) break;
+				if (i >= items.length && !$settings.repeat) break;
 
-				const index = mathFloor(mathRandom() * (arrayLength(members) - 1))
+				const index = Math.floor(Math.random() * (members.length - 1))
 				const member = members[index]
 
 				if (!$settings.repeat) {
-					arraySplice(members, index, 1)
+					members.splice(index, 1)
 
-					if (arrayIncludes(words, member)) continue
+					if (words.includes(member)) continue
 				}
 
-				arrayPush(words, member)
+				words.push(member)
 			}
 
 			members = [...items]
-			for (let i = 0; i < $settings.count - arrayLength(words); i++) {
-				const index = mathFloor(mathRandom() * (arrayLength(members) - 1))
-				arrayPush(words, members[index])
+			for (let i = 0; i < $settings.count - words.length; i++) {
+				const index = Math.floor(Math.random() * (members.length - 1))
+				words.push(members[index])
 			}
 
-			setOutput('words', arrayJoin(arrayMap(words, text => {
+			setOutput('words', words.map(text => {
 				switch ($settings.wordCase) {
-					case WordsRandomizerWordCase.uppercase: text = stringToUpperCase(text); break
-					case WordsRandomizerWordCase.lowercase: text = stringToLowerCase(text); break
-					case WordsRandomizerWordCase.titlecase: text = stringToTitleCase(text); break
-					case WordsRandomizerWordCase.togglecase: text = stringToToggleCase(text); break
-					case WordsRandomizerWordCase.none:
+				case WordsRandomizerWordCase.uppercase: text = text.toUpperCase(); break
+				case WordsRandomizerWordCase.lowercase: text = text.toLowerCase(); break
+				case WordsRandomizerWordCase.titlecase: text = stringToTitleCase(text); break
+				case WordsRandomizerWordCase.togglecase: text = stringToToggleCase(text); break
+				case WordsRandomizerWordCase.none:
 				}
 
 				return $settings.prefix + text + $settings.suffix
-			}), $settings.separator))
+			}).join($settings.separator))
 			break
 		}
 		case RandomizerType.selection: {
@@ -254,15 +246,15 @@ const _: VoidComponent = () => {
 			const items = [...$settings.list.items]
 			const selectedItems: string[] = []
 
-			if (count == arrayLength(items)) {
+			if (count == items.length) {
 				setOutput('selection', items)
 				return
 			}
 
 			for (let i = 0; i < count; i++) {
-				const index = mathFloor(mathRandom() * (arrayLength(items) - 1))
-				arrayPush(selectedItems, items[index])
-				arraySplice(items, index, 1)
+				const index = Math.floor(Math.random() * (items.length - 1))
+				selectedItems.push(items[index])
+				items.splice(index, 1)
 			}
 
 			setOutput('selection', selectedItems)
@@ -274,40 +266,39 @@ const _: VoidComponent = () => {
 			const count = $settings.count
 			const random_number = (min: number, max: number): number => {
 				const range = max - min
-				const value = min + 1 + mathFloor(mathRandom() * range)
-				return mathRound(value)
+				const value = min + 1 + Math.floor(Math.random() * range)
+				return Math.round(value)
 			}
 
 			switch ($settings.space) {
-				case ColorsRandomizerColorSpace.rgb: {
-					const rgb = $settings.range.rgb
-					for (let i = 0; i < count; i++) {
-						const r = random_number(rgb.r.min, rgb.r.max) / 0xff
-						const g = random_number(rgb.g.min, rgb.g.max) / 0xff
-						const b = random_number(rgb.b.min, rgb.b.max) / 0xff
-						arrayPush(colors, colorRgbToHex({r, g, b}))
-					}
-					break
+			case ColorsRandomizerColorSpace.rgb: {
+				const rgb = $settings.range.rgb
+				for (let i = 0; i < count; i++) {
+					const r = random_number(rgb.r.min, rgb.r.max) / 0xff
+					const g = random_number(rgb.g.min, rgb.g.max) / 0xff
+					const b = random_number(rgb.b.min, rgb.b.max) / 0xff
+					colors.push(colorRgbToHex({r, g, b}))
 				}
-				case ColorsRandomizerColorSpace.hsl: {
-					const hsl = $settings.range.hsl
-					for (let i = 0; i < count; i++) {
-						const hue = random_number(hsl.h.min, hsl.h.max) / 360
-						const saturation = random_number(hsl.s.min, hsl.s.max) / 100
-						const lightness = random_number(hsl.l.min, hsl.l.max) / 100
-						arrayPush(colors, colorHslToHex({h: hue, s: saturation, l: lightness}))
-					}
-					break
-				}
-				case ColorsRandomizerColorSpace.hex: {
-					const hex = $settings.range.hex
-					for (let i = 0; i < count; i++) {
-						const value = random_number(hex.min, hex.max)
-						arrayPush(colors, '#' + stringPadStart(numberToString(value, 16), 6, '0') as HEXColor)
-					}
-					break
-				}
+				break
 			}
+			case ColorsRandomizerColorSpace.hsl: {
+				const hsl = $settings.range.hsl
+				for (let i = 0; i < count; i++) {
+					const hue = random_number(hsl.h.min, hsl.h.max) / 360
+					const saturation = random_number(hsl.s.min, hsl.s.max) / 100
+					const lightness = random_number(hsl.l.min, hsl.l.max) / 100
+					colors.push(colorHslToHex({h: hue, s: saturation, l: lightness}))
+				}
+				break
+			}
+			case ColorsRandomizerColorSpace.hex: {
+				const hex = $settings.range.hex
+				for (let i = 0; i < count; i++) {
+					const value = random_number(hex.min, hex.max)
+					colors.push('#' + value.toString(16).padStart(6, '0') as HEXColor)
+				}
+				break
+			}}
 
 			setOutput('colors', colors)
 			break
@@ -318,34 +309,34 @@ const _: VoidComponent = () => {
 			const names: string[] = [...$settings.listNames.items]
 			const members: string[] = [...$settings.listMembers.items]
 			const teams: {name: string; members: string[]}[] = []
-			const minMembers = mathFloor(arrayLength(members) / count)
+			const minMembers = Math.floor(members.length / count)
 
-			if (arrayLength(names) > count) {
-				arraySplice(names, arrayLength(names) - (arrayLength(names) - count))
+			if (names.length > count) {
+				names.splice(names.length - (names.length - count))
 			}
 
-			arraySort(names)
+			names.sort()
 
-			const range = count - arrayLength(names)
+			const range = count - names.length
 			for (let i = 0; i < range; i++) {
-				arrayPush(names, 'Team #' + (i + 1))
+				names.push('Team #' + (i + 1))
 			}
 
 			for (const name of names) {
 				const m: string[] = []
 
 				for (let i = 0; i < minMembers; i++) {
-					const index = mathFloor(mathRandom() * (arrayLength(members) - 1))
-					arrayPush(m, members[index])
-					arraySplice(members, index, 1)
+					const index = Math.floor(Math.random() * (members.length - 1))
+					m.push(members[index])
+					members.splice(index, 1)
 				}
 
-				arraySort(m)
-				arrayPush(teams, {name, members: m})
+				m.sort()
+				teams.push({name, members: m})
 			}
 
 			for (const i in members) {
-				arrayPush(teams[i].members, members[i])
+				teams[i].members.push(members[i])
 			}
 
 			setOutput('teams', teams)
@@ -354,7 +345,7 @@ const _: VoidComponent = () => {
 
 	async function onGenerate(): Promise<void> { return new Promise((ok) => {
 		setIsGenerating(true)
-		attrSet(body, BodyAttributes.noPointerEvent)
+		body.setAttribute(BodyAttributes.noPointerEvent, '')
 
 		let type = 'string'
 		switch (randomizer()) {
@@ -395,14 +386,14 @@ const _: VoidComponent = () => {
 			const duration = 3000
 			const step = 250
 			let i = 0
-			timeIntervalId = timeIntervalSet(() => {
+			timeIntervalId = setInterval(() => {
 
 				// max duration: 3 seconds
 				if (i >= duration / step) {
-					timeIntervalClear(timeIntervalId!)
+					clearInterval(timeIntervalId!)
 					saveOutput()
 					setIsGenerating(false)
-					attrRemove(body, BodyAttributes.noPointerEvent)
+					body.removeAttribute(BodyAttributes.noPointerEvent)
 					return ok()
 				}
 				generate()
@@ -413,15 +404,15 @@ const _: VoidComponent = () => {
 
 		generate()
 		saveOutput()
-		attrRemove(body, BodyAttributes.noPointerEvent)
+		body.removeAttribute(BodyAttributes.noPointerEvent)
 		setIsGenerating(false)
 		ok()
 	})}
 
 	function onStopGenerate(): void {
 		setIsGenerating(false)
-		attrRemove(body, BodyAttributes.noPointerEvent)
-		timeIntervalClear(timeIntervalId!)
+		body.removeAttribute(BodyAttributes.noPointerEvent)
+		clearInterval(timeIntervalId!)
 		saveOutput()
 	}
 
@@ -440,21 +431,19 @@ const _: VoidComponent = () => {
 				text = output.words
 				break
 			case RandomizerType.selection:
-				text = arrayJoin(arrayMap(
-					settings.selection.list.items,
-					v => arrayIncludes(output.selection, v)? (v + ' [selected]') : v
-				), '\n')
+				text = settings.selection.list.items
+					.map(v => output.selection.includes(v)? (v + ' [selected]') : v)
+					.join('\n')
 				break
 			case RandomizerType.colors:
-				text = arrayJoin(output.colors, '\n')
+				text = output.colors.join('\n')
 				break
 			case RandomizerType.teams:
-				text = arrayJoin(arrayMap(
-					output.teams,
-					v => '# ' + v.name + '\n' + arrayJoin(v.members, '\n')
-				), '\n\n')
+				text = output.teams.map(
+					v => '# ' + v.name + '\n' + v.members.join('\n')
+				).join('\n\n')
 			}
-			await navigatorClipboardWriteText(text)
+			await navigator.clipboard.writeText(text)
 			return true
 		} catch (e) {}
 
@@ -463,10 +452,8 @@ const _: VoidComponent = () => {
 
 	function onUpdateRandomizer(type: RandomizerType): void {
 		setRandomizer(type)
-		const storeSettings = db.writeStore(ObjectStoreNames.settings)
-		if (storeSettings == null) return
-
-		idbStorePut(storeSettings, {
+		const store = db.writeStore(ObjectStoreNames.settings)
+		store?.put({
 			key: ObjectStoreKeys.settings_lastPage,
 			value: randomizer()
 		})
@@ -502,11 +489,11 @@ const _: VoidComponent = () => {
 			break
 		case RandomizerType.teams:
 			key = ObjectStoreKeys.lastOutput_teams
-			value = [...arrayMap(output.teams, v => ({name: v.name, members: [...v.members]}))]
+			value = [...output.teams.map(v => ({name: v.name, members: [...v.members]}))]
 			break
 		}
 
-		idbStorePut(storeLastOutput, {key, value})
+		storeLastOutput.put({key, value})
 	}
 
 	async function initDatabase(): Promise<void> {
@@ -534,7 +521,7 @@ const _: VoidComponent = () => {
 					indexs: ['id', 'name', 'items']
 				})
 
-				for (const list of DEFAULT_LISTS) idbStorePut($lists!, {
+				for (const list of DEFAULT_LISTS) $lists!.put({
 					id: list.id,
 					name: list.name,
 					items: [...list.items]
@@ -547,52 +534,52 @@ const _: VoidComponent = () => {
 		const storeSettings = db.readStore(ObjectStoreNames.settings)
 		if (storeSettings == null) return;
 
-		promiseDone(db.get<{key: string; value: RandomizerType}>(
+		db.get<{key: string; value: RandomizerType}>(
 			storeSettings,
 			ObjectStoreKeys.settings_lastPage
-		), (result) => setRandomizer(r => result?.value ?? r))
+		).then((result) => setRandomizer(r => result?.value ?? r))
 	}
 
 	function initLastOutput(): void {
 		const storeLastOutput = db.readStore(ObjectStoreNames.lastOutput)
 		if (storeLastOutput == null) return
 
-		promiseDone(db.get<{key: string; value: string}>(
+		db.get<{key: string; value: string}>(
 			storeLastOutput,
 			ObjectStoreKeys.lastOutput_string
-		), (result) => setOutput('string', s => result?.value ??s))
+		).then((result) => setOutput('string', s => result?.value ??s))
 
-		promiseDone(db.get<{key: string; value: string}>(
+		db.get<{key: string; value: string}>(
 			storeLastOutput,
 			ObjectStoreKeys.lastOutput_numbers
-		), (result) => setOutput('numbers', n => result?.value ?? n))
+		).then((result) => setOutput('numbers', n => result?.value ?? n))
 
-		promiseDone(db.get<{key: string; value: string}>(
+		db.get<{key: string; value: string}>(
 			storeLastOutput,
 			ObjectStoreKeys.lastOutput_words
-		), (result) => setOutput('words', w => result?.value ?? w))
+		).then((result) => setOutput('words', w => result?.value ?? w))
 
-		promiseDone(db.get<{key:string; value: string[]}>(
+		db.get<{key:string; value: string[]}>(
 			storeLastOutput,
 			ObjectStoreKeys.lastOutput_selection
-		), (result) => setOutput('selection', s => result?.value ?? s))
+		).then((result) => setOutput('selection', s => result?.value ?? s))
 
-		promiseDone(db.get<{key: string; value: HEXColor[]}>(
+		db.get<{key: string; value: HEXColor[]}>(
 			storeLastOutput,
 			ObjectStoreKeys.lastOutput_colors
-		), (result) => setOutput('colors', c => result?.value ?? c))
+		).then((result) => setOutput('colors', c => result?.value ?? c))
 
-		promiseDone(db.get<{key: string; value: {name: string;members: string[]}[]}>(
+		db.get<{key: string; value: {name: string;members: string[]}[]}>(
 			storeLastOutput,
 			ObjectStoreKeys.lastOutput_teams
-		), (result) => setOutput('teams', t => result?.value ?? t))
+		).then((result) => setOutput('teams', t => result?.value ?? t))
 	}
 
 	function getLists(): void {
 		const storeLists = db.readStore(ObjectStoreNames.lists)
 		if (storeLists == null) return
 
-		promiseDone(db.getAll<ObjectStoreLists>(storeLists), (result) => {
+		db.getAll<ObjectStoreLists>(storeLists).then((result) => {
 			if (!result) return;
 			setlists([...result])
 			getListsSettings()
@@ -603,10 +590,10 @@ const _: VoidComponent = () => {
 		const storeSettings = db.readStore(ObjectStoreNames.settings)
 		if (storeSettings == null) return
 
-		promiseDone(db.get<ObjectStoreSettings>(
+		db.get<ObjectStoreSettings>(
 			storeSettings,
 			ObjectStoreKeys.settings_wordsListId
-		), (result) => {
+		).then((result) => {
 			if (!result) return;
 
 			const id = result.value as number
@@ -617,10 +604,10 @@ const _: VoidComponent = () => {
 			return setSettings('words', 'list', {id: -1, items: [], name: ''})
 		})
 
-		promiseDone(db.get<ObjectStoreSettings>(
+		db.get<ObjectStoreSettings>(
 			storeSettings,
 			ObjectStoreKeys.settings_selectionListId
-		), (result) => {
+		).then((result) => {
 			if (!result) return;
 
 			const id = result.value as number
@@ -631,10 +618,10 @@ const _: VoidComponent = () => {
 			return setSettings('selection', 'list', {id: -1, items: [], name: ''})
 		})
 
-		promiseDone(db.get<ObjectStoreSettings>(
+		db.get<ObjectStoreSettings>(
 			storeSettings,
 			ObjectStoreKeys.settings_teamsListNamesId
-		), (result) => {
+		).then((result) => {
 			if (!result) return;
 
 			const id = result.value as number
@@ -645,10 +632,10 @@ const _: VoidComponent = () => {
 			return setSettings('teams', 'listNames', {id: -1, items: [], name: ''})
 		})
 
-		promiseDone(db.get<ObjectStoreSettings>(
+		db.get<ObjectStoreSettings>(
 			storeSettings,
 			ObjectStoreKeys.settings_teamsListMembersId
-		), (result) => {
+		).then((result) => {
 			if (!result) return;
 
 			const id = result.value as number
@@ -735,38 +722,37 @@ const _: VoidComponent = () => {
 	}
 
 	function saveSettings(...items: [key: ObjectStoreKeys, value: unknown][]): void {
-		const storeSettings = db.writeStore(ObjectStoreNames.settings)
-		if (storeSettings == null) return
+		const store = db.writeStore(ObjectStoreNames.settings)
+		if (store == null) return
 
 		for (const item of items) {
-			idbStorePut(storeSettings, { key: item[0], value: item[1] })
+			store.put({ key: item[0], value: item[1] })
 		}
 	}
 
 	function exportList(list: ItemList): void {
-		const url = urlCreate(new Blob(
-			[arrayJoin(list.items, '\n')],
+		const url = URL.createObjectURL(new Blob(
+			[list.items.join('\n')],
 			{ type: 'text/csv'}
 		))
 		urlDownloadFile(url, 'list.csv')
-		urlRevoke(url)
+		URL.revokeObjectURL(url)
 	}
 
 	function editList(): void {
-		const name = stringTrim(textFieldEditListNameRef.value)
+		const name = textFieldEditListNameRef.value.trim()
 		const id = selectedListToEdit().id
-		if (stringLength(name) == 0) {
-			elementFocus(textFieldEditListNameRef)
+		if (name.length == 0) {
+			textFieldEditListNameRef.focus()
 			openToast(toastListNameEmptyRef)
 			return
 		}
 
-		const items: string[] = arrayFilter(
-			stringSplit(areaTextFieldExitItemListRef.value, /[\n,]/gs),
-			v => stringLength(stringTrim(v)) > 0
+		const items: string[] = areaTextFieldExitItemListRef.value.split(/[\n,]/gs).filter(
+			v => v.trim().length > 0
 		)
-		if (arrayLength(items) == 0) {
-			elementFocus(areaTextFieldExitItemListRef)
+		if (items.length == 0) {
+			areaTextFieldExitItemListRef.focus()
 			openToast(toastListHaveNoItemsRef)
 			return
 		}
@@ -774,7 +760,7 @@ const _: VoidComponent = () => {
 		for (const list of lists) {
 			if (list.name != name || list.id == id) continue;
 
-			elementFocus(textFieldEditListNameRef)
+			textFieldEditListNameRef.focus()
 			openToast(toastListNameAlreadyExistRef)
 			return
 		}
@@ -782,11 +768,12 @@ const _: VoidComponent = () => {
 		closeDialog(dialogEditRef)
 
 		const newList: ItemList = {id, name, items}
-		const index = arrayFindIndex(lists, list => list.id == id)
-		if (index >= 0) setlists(lists => arraySort([
-			...arrayConcat(arraySlice(lists, 0, index), arraySlice(lists, index + 1)),
-			newList
-		], (a, b) => stringLocaleCompare(a.name, b.name)))
+		const index = lists.findIndex(list => list.id == id)
+		if (index >= 0) setlists(produce(lists => {
+			lists.splice(index, 1)
+			lists.push(newList)
+			lists.sort((a, b) => a.name.localeCompare(b.name))
+		}))
 
 		if (settings.words.list.id == id) command(Commands.updateSettingsWordsList, newList)
 		if (settings.selection.list.id == id) command(Commands.updateSettingsSelectionList, newList)
@@ -795,26 +782,26 @@ const _: VoidComponent = () => {
 
 		openToast(toastListEditedRef)
 
-		const storeLists = db.writeStore(ObjectStoreNames.lists)
-		if (storeLists) idbStorePut(storeLists, newList)
+		const store = db.writeStore(ObjectStoreNames.lists)
+		store?.put(newList)
 	}
 
 	function openEditDialog(list: ItemList): void {
 		setSelectedListToEdit(list)
 		updateTextFieldValue(textFieldEditListNameRef, list.name)
-		updateAreaTextFieldValue(areaTextFieldExitItemListRef, arrayJoin(list.items, ', '))
+		updateAreaTextFieldValue(areaTextFieldExitItemListRef, list.items.join(', '))
 		openDialog(dialogEditRef, {
 			important: true
 		})
 	}
 
 	function deleteList(list: ItemList): void {
-		const index = arrayFindIndex(lists, v => v.id == list.id)
+		const index = lists.findIndex(v => v.id == list.id)
 		if (index < 0) return;
 
-		setlists(lists => arrayConcat(arraySlice(lists, 0, index), arraySlice(lists, index + 1)))
+		setlists(produce(lists => lists.splice(index, 1)))
 
-		const isNoMoreLists = arrayLength(lists) == 0
+		const isNoMoreLists = lists.length == 0
 		const newList = isNoMoreLists? {id: -1, name: '', items: []} : lists[0]
 		if (isNoMoreLists) closeDialog(dialogListsRef)
 
@@ -825,8 +812,8 @@ const _: VoidComponent = () => {
 
 		openToast(toastListDeletedRef)
 
-		const storeLists = db.writeStore(ObjectStoreNames.lists)
-		if (storeLists) idbStoreDelete(storeLists, list.id)
+		const store = db.writeStore(ObjectStoreNames.lists)
+		store?.delete(list.id)
 	}
 
 	function openDeleteDialog(list: ItemList): void {
@@ -838,19 +825,18 @@ const _: VoidComponent = () => {
 
 	function addNewList(): void {
 		const value = textFieldNewListNameRef.value
-		const name = stringTrim(value)
-		if (stringLength(name) == 0) {
-			elementFocus(textFieldNewListNameRef)
+		const name = value.trim()
+		if (name.length == 0) {
+			textFieldNewListNameRef.focus()
 			openToast(toastListNameEmptyRef)
 			return
 		}
 
-		const items: string[] = arrayFilter(
-			stringSplit(value, /[\n,]/gs),
-			v => stringLength(stringTrim(v)) > 0
+		const items: string[] = value.split(/[\n,]/gs).filter(
+			v => v.trim().length > 0
 		)
-		if (arrayLength(items) == 0) {
-			elementFocus(areaTextFieldNewItemListRef)
+		if (items.length == 0) {
+			areaTextFieldNewItemListRef.focus()
 			openToast(toastListHaveNoItemsRef)
 			return
 		}
@@ -858,7 +844,7 @@ const _: VoidComponent = () => {
 		for (const list of lists) {
 			if (list.name != name) continue;
 
-			elementFocus(textFieldNewListNameRef)
+			textFieldNewListNameRef.focus()
 			openToast(toastListNameAlreadyExistRef)
 			return
 		}
@@ -871,12 +857,15 @@ const _: VoidComponent = () => {
 			id = list.id
 		}
 		id += 1
-		const new_lists: ItemList = {id, name, items}
+		const newLists: ItemList = {id, name, items}
 		openToast(toastNewListAddedRef)
-		setlists(l => arraySort([...l, {id, name, items}], (a, b) => stringLocaleCompare(a.name, b.name)))
+		setlists(produce(lists => {
+			lists.push({id, name, items})
+			lists.sort((a, b) => a.name.localeCompare(b.name))
+		}))
 
-		const storeLists = db.writeStore(ObjectStoreNames.lists)
-		if (storeLists) idbStorePut(storeLists, new_lists)
+		const store = db.writeStore(ObjectStoreNames.lists)
+		store?.put(newLists)
 	}
 
 	function openAddDialog(): void {
@@ -890,7 +879,7 @@ const _: VoidComponent = () => {
 		openDialog(dialogViewItemListRef)
 	}
 
-	async function lsitItemFromCSVFile(): Promise<string[]> {
+	async function listItemFromCSVFile(): Promise<string[]> {
 		let text = ''
 
 		try {
@@ -903,26 +892,25 @@ const _: VoidComponent = () => {
 			}
 		} catch (e) {}
 
-		return arrayFilter(
-			stringSplit(text, /[\n,]/gs),
-			v => stringLength(stringTrim(v)) > 0
+		return text.split(/[\n,]/gs).filter(
+			v => v.trim().length > 0
 		)
 	}
 
 	function resetLists(): void {
-		const defaultListIds = arrayMap(DEFAULT_LISTS, v => v.id)
+		const defaultListIds = DEFAULT_LISTS.map(v => v.id)
 		for (const list of lists) {
-			if (arrayIncludes(defaultListIds, list.id)) continue
+			if (defaultListIds.includes(list.id)) continue
 
 			deleteList(list)
 		}
-		setlists(arrayMap(DEFAULT_LISTS, l => ({id: l.id, name: l.name, items: [...l.items]})))
 
-		const storeLists = db.writeStore(ObjectStoreNames.lists)
-		if (storeLists == null) return
+		setlists(DEFAULT_LISTS.map(l => ({id: l.id, name: l.name, items: [...l.items]})))
+		const store = db.writeStore(ObjectStoreNames.lists)
+		if (store == null) return
 
 		for (const list of lists){
-			idbStorePut(storeLists, {
+			store.put({
 				id: list.id,
 				name: list.name,
 				items: [...list.items]
@@ -945,7 +933,7 @@ const _: VoidComponent = () => {
 		}
 		case Commands.editList: {
 			const [list] = args as [ItemList | undefined]
-			if (arrayLength(args) > 0) return openEditDialog(list!)
+			if (args.length > 0) return openEditDialog(list!)
 			openDialog(dialogListsRef)
 			break
 		}
@@ -961,37 +949,36 @@ const _: VoidComponent = () => {
 		}
 		case Commands.toggleSettingsAnimation: {
 			switch (randomizer()) {
-				case RandomizerType.numbers: {
-					setSettings('numbers', 'instant', a => !a)
-					saveSettings([ObjectStoreKeys.settings_numbersInstant, settings.numbers.instant])
-					break
-				}
-				case RandomizerType.words: {
-					setSettings('words', 'instant', a => !a)
-					saveSettings([ObjectStoreKeys.settings_wordsInstant, settings.words.instant])
-					break
-				}
-				case RandomizerType.string: {
-					setSettings('string', 'instant', a => !a)
-					saveSettings([ObjectStoreKeys.settings_stringInstant, settings.string.instant])
-					break
-				}
-				case RandomizerType.selection: {
-					setSettings('selection', 'instant', a => !a)
-					saveSettings([ObjectStoreKeys.settings_selectionInstant, settings.selection.instant])
-					break
-				}
-				case RandomizerType.colors: {
-					setSettings('colors', 'instant', a => !a)
-					saveSettings([ObjectStoreKeys.settings_colorsInstant, settings.colors.instant])
-					break
-				}
-				case RandomizerType.teams: {
-					setSettings('teams', 'instant', a => !a)
-					saveSettings([ObjectStoreKeys.settings_teamsInstant, settings.teams.instant])
-					break
-				}
+			case RandomizerType.numbers: {
+				setSettings('numbers', 'instant', a => !a)
+				saveSettings([ObjectStoreKeys.settings_numbersInstant, settings.numbers.instant])
+				break
 			}
+			case RandomizerType.words: {
+				setSettings('words', 'instant', a => !a)
+				saveSettings([ObjectStoreKeys.settings_wordsInstant, settings.words.instant])
+				break
+			}
+			case RandomizerType.string: {
+				setSettings('string', 'instant', a => !a)
+				saveSettings([ObjectStoreKeys.settings_stringInstant, settings.string.instant])
+				break
+			}
+			case RandomizerType.selection: {
+				setSettings('selection', 'instant', a => !a)
+				saveSettings([ObjectStoreKeys.settings_selectionInstant, settings.selection.instant])
+				break
+			}
+			case RandomizerType.colors: {
+				setSettings('colors', 'instant', a => !a)
+				saveSettings([ObjectStoreKeys.settings_colorsInstant, settings.colors.instant])
+				break
+			}
+			case RandomizerType.teams: {
+				setSettings('teams', 'instant', a => !a)
+				saveSettings([ObjectStoreKeys.settings_teamsInstant, settings.teams.instant])
+				break
+			}}
 			break
 		}
 		case Commands.toggleSettingsRepeat: {
@@ -1211,19 +1198,19 @@ const _: VoidComponent = () => {
 		}
 		case Commands.updateSettingsSelectionList: {
 			const [list] = args as [ItemList]
-			const list_length = arrayLength(list.items)
-			const list_id = list.id
+			const listLength = list.items.length
+			const listId = list.id
 			setSettings('selection', 'list', list)
-			if (list_length < settings.selection.count) {
-				setSettings('selection', 'count', list_length)
+			if (listLength < settings.selection.count) {
+				setSettings('selection', 'count', listLength)
 				saveSettings(
-					[ObjectStoreKeys.settings_selectionListId, list_id],
-					[ObjectStoreKeys.settings_selectionCount, list_length]
+					[ObjectStoreKeys.settings_selectionListId, listId],
+					[ObjectStoreKeys.settings_selectionCount, listLength]
 				)
 				return
 			}
 
-			saveSettings([ObjectStoreKeys.settings_selectionListId, list_id])
+			saveSettings([ObjectStoreKeys.settings_selectionListId, listId])
 			break
 		}
 		case Commands.updateSettingsSelectionCount: {
@@ -1240,7 +1227,7 @@ const _: VoidComponent = () => {
 		}
 		case Commands.updateSettingsTeamsListMembers: {
 			const [list] = args as [ItemList]
-			const listLength = arrayLength(list.items)
+			const listLength = list.items.length
 			const listId = list.id
 			setSettings('teams', 'listMembers', list)
 			if (listLength < settings.teams.count) {
@@ -1298,14 +1285,13 @@ const _: VoidComponent = () => {
 				ref={r => dialogListsRef = r}
 				c:header="Lists"
 				onClick={ev => {
-					const button = documentActive()!
+					const button = document.activeElement! as HTMLButtonElement
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					switch (elementId(button)) {
+					switch (button.id) {
 					case buttonLists_closeId:
 						closeDialog(dialogListsRef)
 						break
@@ -1314,36 +1300,37 @@ const _: VoidComponent = () => {
 						openAddDialog()
 						break
 					default:
-						const dataListExportIndex = elementDataset(button, 'listExportIndex')
+						const dataset = button.dataset
+						const dataListExportIndex = dataset.listExportIndex
 						if (dataListExportIndex) {
-							const index = numberParse(dataListExportIndex, true)
+							const index = Number.parseInt(dataListExportIndex)
 							if (numberIsNotDefined(index)) return
 
 							exportList(lists[index])
 							return
 						}
 
-						const dataListViewIndex = elementDataset(button, 'listViewIndex')
+						const dataListViewIndex = dataset.listViewIndex
 						if (dataListViewIndex) {
-							const index = numberParse(dataListViewIndex, true)
+							const index = Number.parseInt(dataListViewIndex)
 							if (numberIsNotDefined(index)) return
 
 							viewList(lists[index])
 							return
 						}
 
-						const dataListEditIndex = elementDataset(button, 'listEditIndex')
+						const dataListEditIndex = dataset.listEditIndex
 						if (dataListEditIndex) {
-							const index = numberParse(dataListEditIndex, true)
+							const index = Number.parseInt(dataListEditIndex)
 							if (numberIsNotDefined(index)) return
 
 							openEditDialog(lists[index])
 							return
 						}
 
-						const dataListDeleteIndex = elementDataset(button, 'listDeleteIndex')
+						const dataListDeleteIndex = dataset.listDeleteIndex
 						if (dataListDeleteIndex) {
-							const index = numberParse(dataListDeleteIndex, true)
+							const index = Number.parseInt(dataListDeleteIndex)
 							if (numberIsNotDefined(index)) return
 
 							openDeleteDialog(lists[index])
@@ -1373,7 +1360,7 @@ const _: VoidComponent = () => {
 								<IconButton data-list-edit-index={i()} data-tooltip="Edit list" c:code={ICON_EDIT}/>
 								<IconButton data-list-delete-index={i()} data-tooltip="Delete list" c:code={ICON_DELETE}/>
 							</>}
-							c:subtitle={arrayLength(list.items) + ' item' + (arrayLength(list.items) > 1? 's' : '')}>
+							c:subtitle={list.items.length + ' item' + (list.items.length > 1? 's' : '')}>
 							{list.name}
 						</List>
 					</>}</For>
@@ -1382,14 +1369,13 @@ const _: VoidComponent = () => {
 			<Dialog
 				ref={r => dialogDeleteListWarningRef = r}
 				onClick={ev => {
-					const button = documentActive()!
+					const button = document.activeElement!
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					switch (elementId(button)) {
+					switch (button.id) {
 					case buttonDeleteListWarning_cancelId:
 						closeDialog(dialogDeleteListWarningRef)
 						break
@@ -1415,7 +1401,11 @@ const _: VoidComponent = () => {
 				Are you sure want to delete this list?
 				<List
 					classList={attrClassListModule(CSS.app_delete_list)}
-					c:subtitle={arrayLength(selectedListToDelete().items) + ' item' + (arrayLength(selectedListToDelete().items) > 1? 's' : '')}>
+					c:subtitle={
+						selectedListToDelete().items.length
+						+ ' item'
+						+ (selectedListToDelete().items.length > 1? 's' : '')
+					}>
 					{selectedListToDelete().name}
 				</List>
 			</Dialog>
@@ -1423,34 +1413,31 @@ const _: VoidComponent = () => {
 				ref={r => dialogAddRef = r}
 				style={{width: '500px'}}
 				onClick={async ev => {
-					const button = documentActive()!
+					const button = document.activeElement!
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					switch (elementId(button)) {
+					switch (button.id) {
 					case buttonAdd_cancelId:
 						closeDialog(dialogAddRef)
 						break
 					case buttonAdd_importCSVId:
-						const text = await lsitItemFromCSVFile()
+						const text = await listItemFromCSVFile()
 						updateAreaTextFieldValue(
 							areaTextFieldNewItemListRef,
-							arrayJoin(arrayFilter(
-								[areaTextFieldNewItemListRef.value, ...text],
-								v => stringLength(stringTrim(v)) > 0
-							), ', ')
+							[areaTextFieldNewItemListRef.value, ...text]
+								.filter(v => v.trim().length > 0)
+								.join(', ')
 						)
 						break
 					case buttonAdd_previewId:
 						setListViewItem({
 							id: -1,
 							name: textFieldNewListNameRef.value,
-							items: arrayFilter(
-								stringSplit(areaTextFieldNewItemListRef.value, /[\n,]/gs),
-								v => stringLength(stringTrim(v)) > 0
+							items: areaTextFieldNewItemListRef.value.split(/[\n,]/gs).filter(
+								v => v.trim().length > 0
 							)
 						})
 						openDialog(dialogPreviewItemListRef)
@@ -1498,34 +1485,31 @@ const _: VoidComponent = () => {
 				ref={r => dialogEditRef = r}
 				style={{width: '500px'}}
 				onClick={async ev => {
-					const button = documentActive()!
+					const button = document.activeElement!
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					switch (elementId(button)) {
+					switch (button.id) {
 					case buttonEdit_cancelId:
 						closeDialog(dialogEditRef)
 						break
 					case buttonEdit_importCSVId:
-						const text = await lsitItemFromCSVFile()
+						const text = await listItemFromCSVFile()
 						updateAreaTextFieldValue(
 							areaTextFieldExitItemListRef,
-							arrayJoin(arrayFilter(
-								[areaTextFieldNewItemListRef.value, ...text],
-								v => stringLength(stringTrim(v)) > 0
-							), ', ')
+							[areaTextFieldNewItemListRef.value, ...text]
+								.filter(v => v.trim().length > 0)
+								.join(', ')
 						)
 						break
 					case buttonEdit_previewId:
 						setListViewItem({
 							id: -1,
 							name: textFieldEditListNameRef.value,
-							items: arrayFilter(
-								stringSplit(areaTextFieldExitItemListRef.value, /[\n,]/gs),
-								v => stringLength(stringTrim(v)) > 0
+							items: areaTextFieldExitItemListRef.value.split(/[\n,]/gs).filter(
+								v => v.trim().length > 0
 							)
 						})
 						openDialog(dialogPreviewItemListRef)
@@ -1567,7 +1551,7 @@ const _: VoidComponent = () => {
 				<AreaTextField
 					ref={r => areaTextFieldExitItemListRef = r}
 					c:label="Items"
-					placeholder={arrayJoin(selectedListToEdit().items, ', ')}
+					placeholder={selectedListToEdit().items.join(', ')}
 					c:minLine={5}
 					c:maxLine={5}
 				/>
@@ -1577,14 +1561,13 @@ const _: VoidComponent = () => {
 				ref={r => dialogViewItemListRef = r}
 				style={{width: '720px'}}
 				onClick={ev => {
-					const button = documentActive()!
+					const button = document.activeElement!
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					switch (elementId(button)) {
+					switch (button.id) {
 					case buttonViewItemList_closeId:
 						closeDialog(dialogViewItemListRef)
 						break

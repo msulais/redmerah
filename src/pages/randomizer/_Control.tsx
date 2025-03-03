@@ -2,15 +2,10 @@ import { For, Match, Show, Switch, type VoidComponent, createEffect, createMemo,
 import type { SetStoreFunction, Store } from "solid-js/store"
 
 import type { ItemList, Settings } from "./_types"
-import { elementDataset, elementId, elementRect, elementTagName, elementValidTarget } from "@/utils/element"
+import { elementValidTarget } from "@/utils/element"
 import { RandomizerType, ColorsRandomizerColorSpace, Commands } from "./_enums"
-import { eventCurrentTarget, eventPreventDefault } from "@/utils/event"
-import { arrayFind, arrayJoin, arrayLength, arrayPush } from "@/utils/array"
-import { numberIsNotDefined, numberParse, numberSafe } from "@/utils/number"
-import { stringLength, stringMatch, stringReplace } from "@/utils/string"
-import { documentActive } from "@/utils/document"
+import { numberIsNotDefined, numberSafe } from "@/utils/number"
 import { mathClamp } from "@/utils/math"
-import { rectWidth } from "@/utils/rect"
 import { ICON_ADD, ICON_APPS_LIST_DETAIL, ICON_ARROW_EXPORT_UP, ICON_CHECKBOX_CHECKED, ICON_CHEVRON_DOWN, ICON_DELETE, ICON_EYE, ICON_TEXT_BULLET_LIST_SQUARE_CLOCK, ICON_TEXT_BULLET_LIST_SQUARE_EDIT } from "@/constants/icons"
 
 import Icon from "@/components/Icon"
@@ -52,14 +47,14 @@ const Teams: VoidComponent<{
 		const items: [number, string, string][] = []
 
 		for (const l of list) {
-			arrayPush(items, [l.id, l.name, arrayLength(l.items) + ''])
+			items.push([l.id, l.name, l.items.length + ''])
 		}
 
 		return items
 	}
 
 	function updateListNames(id: number): void {
-		const $list = arrayFind(lists(), list => list.id == id)
+		const $list = lists().find(list => list.id == id)
 		if ($list == undefined) return;
 
 		setLists($list)
@@ -67,7 +62,7 @@ const Teams: VoidComponent<{
 	}
 
 	function updateListMembers(id: number): void {
-		const $list = arrayFind(lists(), list => list.id == id)
+		const $list = lists().find(list => list.id == id)
 		if ($list == undefined) return;
 
 		setLists($list)
@@ -78,16 +73,16 @@ const Teams: VoidComponent<{
 		currentTarget: HTMLDialogElement
 		target: Element
 	}, listNames: boolean): void {
-		const button = documentActive()!
+		const button = document.activeElement! as HTMLButtonElement
 		if (!elementValidTarget(
-			eventCurrentTarget(ev),
+			ev.currentTarget,
 			button,
-			el => elementTagName(el) == 'BUTTON'
 		)) return
 
-		const dataListIndex = elementDataset(button, 'listIndex')
+		const dataset = button.dataset
+		const dataListIndex = dataset.listIndex
 		if (dataListIndex) {
-			const index = numberParse(dataListIndex, true)
+			const index = Number.parseInt(dataListIndex)
 			if (numberIsNotDefined(index)) return
 
 			const option = itemListToDropdownList(lists())[index]
@@ -100,7 +95,7 @@ const Teams: VoidComponent<{
 			openMenu(menuActionRef, {
 				position: MenuPosition.centerBottomToRight
 			})
-			eventPreventDefault(ev)
+			ev.preventDefault()
 			return
 		}
 	}
@@ -109,10 +104,10 @@ const Teams: VoidComponent<{
 		<NumberTextField
 			c:label="Count"
 			min={1}
-			max={arrayLength(settings().listMembers.items)}
+			max={settings().listMembers.items.length}
 			onBlur={ev => command(
 				Commands.updateSettingsTeamsCount,
-				numberSafe(eventCurrentTarget(ev).valueAsNumber, settings().count)
+				numberSafe(ev.currentTarget.valueAsNumber, settings().count)
 			)}
 			c:attrWrapper={{ style: { width: 'min(100%, 164px)' } }}
 			value={settings().count}
@@ -125,14 +120,13 @@ const Teams: VoidComponent<{
 				ref: (r) => dropdownMenu_listNamesRef = r,
 				onContextMenu: ev => onContextMenuDropdownItem(ev, true),
 				onClick: ev => {
-					const button = documentActive()!
+					const button = document.activeElement!
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					switch (elementId(button)) {
+					switch (button.id) {
 					case buttonNames_addNewListId:
 						command(Commands.addList)
 						closeMenu(dropdownMenu_listNamesRef)
@@ -164,7 +158,7 @@ const Teams: VoidComponent<{
 				Edit list
 			</MenuItem>
 			<MenuDivider />
-			<Show when={arrayLength(lists()) > 0}>
+			<Show when={lists().length > 0}>
 				<MenuHeader>Select list</MenuHeader>
 			</Show>
 			<For each={itemListToDropdownList(lists())}>{(option, i) =>
@@ -183,14 +177,13 @@ const Teams: VoidComponent<{
 			c:attrMenu={{
 				ref: (r) => dropdownMenu_ListMembersRef = r,
 				onClick: ev => {
-					const button = documentActive()!
+					const button = document.activeElement!
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					switch (elementId(button)) {
+					switch (button.id) {
 					case buttonMembers_addNewListId:
 						command(Commands.addList)
 						closeMenu(dropdownMenu_ListMembersRef)
@@ -223,7 +216,7 @@ const Teams: VoidComponent<{
 				Edit list
 			</MenuItem>
 			<MenuDivider />
-			<Show when={arrayLength(lists()) > 0}>
+			<Show when={lists().length > 0}>
 				<MenuHeader>Select list</MenuHeader>
 			</Show>
 			<For each={itemListToDropdownList(lists())}>{(option, i) =>
@@ -239,11 +232,10 @@ const Teams: VoidComponent<{
 			ref={r => menuActionRef = r}
 			style={{width: '164px'}}
 			onClick={ev => {
-				const button = documentActive()!
+				const button = document.activeElement!
 				if (!elementValidTarget(
-					eventCurrentTarget(ev),
+					ev.currentTarget,
 					button,
-					el => elementTagName(el) == 'BUTTON'
 				)) return
 
 				const closeAll = () => {
@@ -252,7 +244,7 @@ const Teams: VoidComponent<{
 					closeMenu(dropdownMenu_ListMembersRef)
 				}
 
-				switch (elementId(button)) {
+				switch (button.id) {
 				case buttonAction_selectId:
 					closeAll()
 					if (isActionOpenForListNames()) updateListNames(list()!.id)
@@ -336,7 +328,7 @@ const Selection: VoidComponent<{
 		const items: [number, string, string][] = []
 
 		for (const l of list) {
-			arrayPush(items, [l.id, l.name, arrayLength(l.items) + ''])
+			items.push([l.id, l.name, l.items.length + ''])
 		}
 
 		return items
@@ -359,14 +351,13 @@ const Selection: VoidComponent<{
 			c:attrMenu={{
 				ref: (r) => menuDropdownRef = r,
 				onClick: ev => {
-					const button = documentActive()!
+					const button = document.activeElement!
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					switch (elementId(button)) {
+					switch (button.id) {
 					case buttonList_addNewListId:
 						command(Commands.addList)
 						closeMenu(menuDropdownRef)
@@ -382,16 +373,16 @@ const Selection: VoidComponent<{
 					}
 				},
 				onContextMenu: ev => {
-					const button = documentActive()!
+					const button = document.activeElement! as HTMLButtonElement
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					const dataListIndex = elementDataset(button, 'listIndex')
+					const dataset = button.dataset
+					const dataListIndex = dataset.listIndex
 					if (dataListIndex) {
-						const index = numberParse(dataListIndex, true)
+						const index = Number.parseInt(dataListIndex)
 						if (numberIsNotDefined(index)) return
 
 						const option = itemListToDropdownList(lists())[index]
@@ -403,7 +394,7 @@ const Selection: VoidComponent<{
 						openMenu(menuActionRef, {
 							position: MenuPosition.centerBottomToRight
 						})
-						eventPreventDefault(ev)
+						ev.preventDefault()
 						return
 					}
 				}
@@ -424,7 +415,7 @@ const Selection: VoidComponent<{
 				Edit list
 			</MenuItem>
 			<MenuDivider />
-			<Show when={arrayLength(lists()) > 0}>
+			<Show when={lists().length > 0}>
 				<MenuHeader>Select list</MenuHeader>
 			</Show>
 			<For each={itemListToDropdownList(lists())}>{(option, i) =>
@@ -440,14 +431,13 @@ const Selection: VoidComponent<{
 			ref={r => menuActionRef = r}
 			style={{width: '164px'}}
 			onClick={ev => {
-				const button = documentActive()!
+				const button = document.activeElement!
 				if (!elementValidTarget(
-					eventCurrentTarget(ev),
+					ev.currentTarget,
 					button,
-					el => elementTagName(el) == 'BUTTON'
 				)) return
 
-				switch (elementId(button)) {
+				switch (button.id) {
 				case buttonActions_selectId:
 					closeMenu(menuActionRef)
 					closeMenu(menuDropdownRef)
@@ -508,10 +498,10 @@ const Selection: VoidComponent<{
 		<NumberTextField
 			c:label="Count"
 			min={1}
-			max={arrayLength(settings().list.items)}
+			max={settings().list.items.length}
 			onBlur={ev => command(
 				Commands.updateSettingsSelectionCount,
-				numberSafe(eventCurrentTarget(ev).valueAsNumber, settings().count)
+				numberSafe(ev.currentTarget.valueAsNumber, settings().count)
 			)}
 			c:attrWrapper={{ style: { width: 'min(100%, 164px)' } }}
 			value={settings().count}
@@ -541,7 +531,7 @@ const Words: VoidComponent<{
 		const items: [number, string, string][] = []
 
 		for (const l of list) {
-			arrayPush(items, [l.id, l.name, arrayLength(l.items) + ''])
+			items.push([l.id, l.name, l.items.length + ''])
 		}
 
 		return items
@@ -564,14 +554,13 @@ const Words: VoidComponent<{
 			c:attrMenu={{
 				ref: (r) => menuDropdownRef = r,
 				onClick: ev => {
-					const button = documentActive()!
+					const button = document.activeElement!
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					switch (elementId(button)) {
+					switch (button.id) {
 					case buttonList_addNewListId:
 						command(Commands.addList)
 						closeMenu(menuDropdownRef)
@@ -587,16 +576,16 @@ const Words: VoidComponent<{
 					}
 				},
 				onContextMenu: ev => {
-					const button = documentActive()!
+					const button = document.activeElement! as HTMLButtonElement
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					const dataListIndex = elementDataset(button, 'listIndex')
+					const dataset = button.dataset
+					const dataListIndex = dataset.listIndex
 					if (dataListIndex) {
-						const index = numberParse(dataListIndex, true)
+						const index = Number.parseInt(dataListIndex)
 						if (numberIsNotDefined(index)) return
 
 						const option = itemListToDropdownList(lists())[index]
@@ -608,7 +597,7 @@ const Words: VoidComponent<{
 						openMenu(menuActionRef, {
 							position: MenuPosition.centerBottomToRight
 						})
-						eventPreventDefault(ev)
+						ev.preventDefault()
 						return
 					}
 				}
@@ -629,7 +618,7 @@ const Words: VoidComponent<{
 				Edit list
 			</MenuItem>
 			<MenuDivider />
-			<Show when={arrayLength(lists()) > 0}>
+			<Show when={lists().length > 0}>
 				<MenuHeader>Select list</MenuHeader>
 			</Show>
 			<For each={itemListToDropdownList(lists())}>{(option, i) =>
@@ -697,7 +686,7 @@ const Words: VoidComponent<{
 			min={1}
 			onBlur={ev => command(
 				Commands.updateSettingsWordsCount,
-				numberSafe(eventCurrentTarget(ev).valueAsNumber, settings().count)
+				numberSafe(ev.currentTarget.valueAsNumber, settings().count)
 			)}
 			c:attrWrapper={{ style: { width: 'min(100%, 164px)' } }}
 			value={settings().count}
@@ -724,11 +713,11 @@ const Colors: VoidComponent<{
 		let max: number = defaultValue.max
 		const unnecesaryChar = /[^\d-.]|(?<=\d)\.\d+|(?<!\d)\.(?=\d)/gs
 		const rangeRegex = /([-+]?\d+?) ?- ?([-+]?\d+)/
-		const r =  stringMatch(stringReplace(value, unnecesaryChar, ''), rangeRegex)
+		const r =  value.replace(unnecesaryChar, '').match(rangeRegex)
 		if (r == null) return {min, max}
 
-		min = mathClamp(numberSafe(numberParse(r[1], true), defaultValue.min), 0, maxValue)
-		max = mathClamp(numberSafe(numberParse(r[2], true), defaultValue.max), 0, maxValue)
+		min = mathClamp(numberSafe(Number.parseInt(r[1]), defaultValue.min), 0, maxValue)
+		max = mathClamp(numberSafe(Number.parseInt(r[2]), defaultValue.max), 0, maxValue)
 
 		if (min > max) min = max
 		return {min, max}
@@ -741,7 +730,7 @@ const Colors: VoidComponent<{
 			value={settings().count}
 			onBlur={ev => command(
 				Commands.updateSettingsColorsCount,
-				numberSafe(eventCurrentTarget(ev).valueAsNumber, settings().count)
+				numberSafe(ev.currentTarget.valueAsNumber, settings().count)
 			)}
 		/>
 		<Switch>
@@ -750,7 +739,7 @@ const Colors: VoidComponent<{
 					c:label="Hex"
 					placeholder="0-16777215 - 0-16777215"
 					onBlur={(ev) => {
-						const self = eventCurrentTarget(ev)
+						const self = ev.currentTarget
 						const values = getMinMax(
 							self.value,
 							0xffffff,
@@ -760,12 +749,12 @@ const Colors: VoidComponent<{
 							}
 						)
 						command(Commands.updateSettingsColorsRangeHex, values.min, values.max)
-						updateTextFieldValue(self, arrayJoin([values.min, values.max], ' - '))
+						updateTextFieldValue(self, [values.min, values.max].join(' - '))
 					}}
-					value={arrayJoin([
+					value={[
 						settings().range.hex.min,
 						settings().range.hex.max
-					], ' - ')}
+					].join(' - ')}
 				/>
 			</Match>
 			<Match when={settings().space == ColorsRandomizerColorSpace.hsl}>
@@ -773,7 +762,7 @@ const Colors: VoidComponent<{
 					c:label="Hue"
 					placeholder="0-360 - 0-360"
 					onBlur={(ev) => {
-						const self = eventCurrentTarget(ev)
+						const self = ev.currentTarget
 						const values = getMinMax(
 							self.value,
 							360,
@@ -783,18 +772,18 @@ const Colors: VoidComponent<{
 							}
 						)
 						command(Commands.updateSettingsColorsRangeHslH, values.min, values.max)
-						updateTextFieldValue(self, arrayJoin([values.min, values.max], ' - '))
+						updateTextFieldValue(self, [values.min, values.max].join(' - '))
 					}}
-					value={arrayJoin([
+					value={[
 						settings().range.hsl.h.min,
 						settings().range.hsl.h.max
-					], ' - ')}
+					].join(' - ')}
 				/>
 				<TextField
 					c:label="Saturation"
 					placeholder="0-100 - 0-100"
 					onBlur={(ev) => {
-						const self = eventCurrentTarget(ev)
+						const self = ev.currentTarget
 						const values = getMinMax(
 							self.value,
 							100,
@@ -804,18 +793,18 @@ const Colors: VoidComponent<{
 							}
 						)
 						command(Commands.updateSettingsColorsRangeHslS, values.min, values.max)
-						updateTextFieldValue(self, arrayJoin([values.min, values.max], ' - '))
+						updateTextFieldValue(self, [values.min, values.max].join(' - '))
 					}}
-					value={arrayJoin([
+					value={[
 						settings().range.hsl.s.min,
 						settings().range.hsl.s.max
-					], ' - ')}
+					].join(' - ')}
 				/>
 				<TextField
 					c:label="Lightness"
 					placeholder="0-100 - 0-100"
 					onBlur={(ev) => {
-						const self = eventCurrentTarget(ev)
+						const self = ev.currentTarget
 						const values = getMinMax(
 							self.value,
 							100,
@@ -825,12 +814,12 @@ const Colors: VoidComponent<{
 							}
 						)
 						command(Commands.updateSettingsColorsRangeHslL, values.min, values.max)
-						updateTextFieldValue(self, arrayJoin([values.min, values.max], ' - '))
+						updateTextFieldValue(self, [values.min, values.max].join(' - '))
 					}}
-					value={arrayJoin([
+					value={[
 						settings().range.hsl.l.min,
 						settings().range.hsl.l.max
-					], ' - ')}
+					].join(' - ')}
 				/>
 			</Match>
 			<Match when={settings().space == ColorsRandomizerColorSpace.rgb}>
@@ -838,7 +827,7 @@ const Colors: VoidComponent<{
 					c:label="Red"
 					placeholder="0-225 - 0-255"
 					onBlur={(ev) => {
-						const self = eventCurrentTarget(ev)
+						const self = ev.currentTarget
 						const values = getMinMax(
 							self.value,
 							255,
@@ -848,18 +837,18 @@ const Colors: VoidComponent<{
 							}
 						)
 						command(Commands.updateSettingsColorsRangeRgbR, values.min, values.max)
-						updateTextFieldValue(self, arrayJoin([values.min, values.max], ' - '))
+						updateTextFieldValue(self, [values.min, values.max].join(' - '))
 					}}
-					value={arrayJoin([
+					value={[
 						settings().range.rgb.r.min,
 						settings().range.rgb.r.max
-					], ' - ')}
+					].join(' - ')}
 				/>
 				<TextField
 					c:label="Green"
 					placeholder="0-225 - 0-255"
 					onBlur={(ev) => {
-						const self = eventCurrentTarget(ev)
+						const self = ev.currentTarget
 						const values = getMinMax(
 							self.value,
 							255,
@@ -869,18 +858,18 @@ const Colors: VoidComponent<{
 							}
 						)
 						command(Commands.updateSettingsColorsRangeRgbG, values.min, values.max)
-						updateTextFieldValue(self, arrayJoin([values.min, values.max], ' - '))
+						updateTextFieldValue(self, [values.min, values.max].join(' - '))
 					}}
-					value={arrayJoin([
+					value={[
 						settings().range.rgb.g.min,
 						settings().range.rgb.g.max
-					], ' - ')}
+					].join(' - ')}
 				/>
 				<TextField
 					c:label="Blue"
 					placeholder="0-225 - 0-255"
 					onBlur={(ev) => {
-						const self = eventCurrentTarget(ev)
+						const self = ev.currentTarget
 						const values = getMinMax(
 							self.value,
 							255,
@@ -890,12 +879,12 @@ const Colors: VoidComponent<{
 							}
 						)
 						command(Commands.updateSettingsColorsRangeRgbB, values.min, values.max)
-						updateTextFieldValue(self, arrayJoin([values.min, values.max], ' - '))
+						updateTextFieldValue(self, [values.min, values.max].join(' - '))
 					}}
-					value={arrayJoin([
+					value={[
 						settings().range.rgb.b.min,
 						settings().range.rgb.b.max
-					], ' - ')}
+					].join(' - ')}
 				/>
 			</Match>
 		</Switch>
@@ -913,22 +902,22 @@ const Numbers: VoidComponent<{
 	}
 
 	function onBlurRange(ev: FocusEvent & {currentTarget: HTMLInputElement; target: HTMLInputElement}): void {
-		const self = eventCurrentTarget(ev)
+		const self = ev.currentTarget
 		const rangeRegex = /([-+]?\d+?) ?- ?([-+]?\d+)/
 		const unnecesaryChar = /[^\d-.]|(?<=\d)\.\d+|(?<!\d)\.(?=\d)/gs
-		const r = stringMatch(stringReplace(self.value, unnecesaryChar, ''), rangeRegex)
+		const r = self.value.replace(unnecesaryChar, '').match(rangeRegex)
 		if (r == null) return updateTextFieldValue(
 			self,
-			arrayJoin([settings().range.min, settings().range.max], ' - ')
+			[settings().range.min, settings().range.max].join(' - ')
 		)
 
-		const max = numberParse(r[2], true)
-		let min = numberParse(r[1], true)
+		const max = Number.parseInt(r[2])
+		let min = Number.parseInt(r[1])
 
 		if (min > max) min = max
 
 		command(Commands.updateSettingsNumbersRange, min, max)
-		updateTextFieldValue(self, arrayJoin([min, max], ' - '))
+		updateTextFieldValue(self, [min, max].join(' - '))
 	}
 
 	return (<>
@@ -936,14 +925,14 @@ const Numbers: VoidComponent<{
 			c:label="Range"
 			onBlur={onBlurRange}
 			c:attrWrapper={{ style: { width: 'min(100%, 164px)' } }}
-			value={arrayJoin([settings().range.min, settings().range.max], ' - ')}
+			value={[settings().range.min, settings().range.max].join(' - ')}
 		/>
 		<NumberTextField
 			c:label="Count"
 			min={1}
 			onBlur={ev => command(
 				Commands.updateSettingsNumbersCount,
-				numberSafe(eventCurrentTarget(ev).valueAsNumber, settings().count)
+				numberSafe(ev.currentTarget.valueAsNumber, settings().count)
 			)}
 			c:attrWrapper={{ style: { width: 'min(100%, 164px)' } }}
 			value={settings().count}
@@ -978,18 +967,18 @@ const $String: VoidComponent<{
 		const symbols = characters.symbols
 		const custom = characters.custom
 
-		if (!lowercase && !uppercase && !numbers && !symbols && stringLength(custom) == 0) {
+		if (!lowercase && !uppercase && !numbers && !symbols && custom.length == 0) {
 			command(Commands.updateSettingsStringCharactersDefault)
 		}
 
 		const text: string[] = []
-		if (uppercase) arrayPush(text, 'A-Z')
-		if (lowercase) arrayPush(text, 'a-z')
-		if (numbers) arrayPush(text, '0-9')
-		if (symbols) arrayPush(text, '<({[!@#$%^&*_-+=~`\\|"\':;?/.,]})>')
-		if (stringLength(custom) > 0) arrayPush(text, custom)
+		if (uppercase) text.push('A-Z')
+		if (lowercase) text.push('a-z')
+		if (numbers) text.push('0-9')
+		if (symbols) text.push('<({[!@#$%^&*_-+=~`\\|"\':;?/.,]})>')
+		if (custom.length > 0) text.push(custom)
 
-		updateTextFieldValue(inputCharactersRef, arrayJoin(text, ', '))
+		updateTextFieldValue(inputCharactersRef, text.join(', '))
 	})
 
 	return (<>
@@ -998,7 +987,7 @@ const $String: VoidComponent<{
 			value={settings().length}
 			onBlur={ev => command(
 				Commands.updateSettingsStringLength,
-				numberSafe(eventCurrentTarget(ev).valueAsNumber, settings().length)
+				numberSafe(ev.currentTarget.valueAsNumber, settings().length)
 			)}
 			min={1}
 			c:label="Length"
@@ -1017,9 +1006,9 @@ const $String: VoidComponent<{
 				data-tooltip="More character options"
 				c:focused={isMenuCharactersOpen()}
 				onClick={(ev) => {
-					setMenuCharactersWidth(rectWidth(elementRect(labelCharactersRef!)))
+					setMenuCharactersWidth(labelCharactersRef.getBoundingClientRect().width)
 					openMenu(menuCharactersRef, {
-						anchor: eventCurrentTarget(ev),
+						anchor: ev.currentTarget,
 						position: MenuPosition.centerBottomToLeft,
 						padding: 6.5,
 						gap: 8,
@@ -1033,14 +1022,13 @@ const $String: VoidComponent<{
 			c:onToggleOpen={(v) => setIsMenuCharactersOpen(v)}
 			style={{"min-width": `${menuCharactersWidth()}px`}}
 			onClick={ev => {
-				const button = documentActive()!
+				const button = document.activeElement!
 				if (!elementValidTarget(
-					eventCurrentTarget(ev),
+					ev.currentTarget,
 					button,
-					el => elementTagName(el) == 'BUTTON'
 				)) return
 
-				switch (elementId(button)) {
+				switch (button.id) {
 				case buttonCharacters_uppercaseId:
 					command(Commands.toggleSettingsStringCharactersUppercase)
 					break
@@ -1087,7 +1075,7 @@ const $String: VoidComponent<{
 				<TextField
 					c:label="Custom characters"
 					placeholder="#d(23'[])sdf"
-					onInput={(ev) => command(Commands.updateSettingsStringCharactersCustom, eventCurrentTarget(ev).value)}
+					onInput={(ev) => command(Commands.updateSettingsStringCharactersCustom, ev.currentTarget.value)}
 					value={settings().characters.custom}
 				/>
 			</div>

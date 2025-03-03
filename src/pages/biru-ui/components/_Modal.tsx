@@ -1,8 +1,6 @@
 import { createSignal, For, Show, type VoidComponent } from "solid-js"
 
 import { numberSafe } from "@/utils/number"
-import { arrayIncludes } from "@/utils/array"
-import { eventCurrentTarget } from "@/utils/event"
 
 import Button, { ButtonVariant } from "@/components/Button"
 import CheckBox from "@/components/CheckBox"
@@ -28,7 +26,7 @@ const _: VoidComponent = () => {
 		description="A modal is an overlay window that appears on top of the main content, blocking user interaction with the underlying elements until it is dismissed. Modals are often used for critical tasks or to present important information.">
 		<Playground>
 			<Button c:variant={ButtonVariant.tonal} onClick={(ev) => openModal(modalRef, {
-				anchor: anchor()? eventCurrentTarget(ev) : undefined,
+				anchor: anchor()? ev.currentTarget : undefined,
 				allowHideAnchor: allowHideAnchor(),
 				draggable: draggable(),
 				gap: gap(),
@@ -83,10 +81,10 @@ const _: VoidComponent = () => {
 					style={{width: '100px'}}
 					value={gap()}
 					min={0}
-					onBlur={(ev) => setGap(g => numberSafe(eventCurrentTarget(ev).valueAsNumber, g))}
+					onBlur={(ev) => setGap(g => numberSafe(ev.currentTarget.valueAsNumber, g))}
 					c:label="Gap"
 				/>
-				<Show when={arrayIncludes([
+				<Show when={[
 					ModalPosition.centerTopToRight,
 					ModalPosition.centerCenterLeft,
 					ModalPosition.centerBottomToRight,
@@ -103,38 +101,38 @@ const _: VoidComponent = () => {
 					ModalPosition.centerCenterBottom,
 					ModalPosition.centerCenterRightBottom,
 					ModalPosition.rightCenterToTop
-				], position())}>
+				].includes(position())}>
 					<NumberTextField
 						value={padding()}
 						style={{width: '100px'}}
 						min={0}
-						onBlur={(ev) => setPadding(p => numberSafe(eventCurrentTarget(ev).valueAsNumber, p))}
+						onBlur={(ev) => setPadding(p => numberSafe(ev.currentTarget.valueAsNumber, p))}
 						c:label="Padding"
 					/>
 				</Show>
 				<CheckBox
 					checked={anchor()}
-					onChange={ev => setAnchor(eventCurrentTarget(ev).checked)}>
+					onChange={ev => setAnchor(ev.currentTarget.checked)}>
 					Anchor
 				</CheckBox>
 				<CheckBox
 					checked={important()}
-					onChange={ev => setImportant(eventCurrentTarget(ev).checked)}>
+					onChange={ev => setImportant(ev.currentTarget.checked)}>
 					Important
 				</CheckBox>
 				<CheckBox
 					checked={contentAutoFocus()}
-					onChange={ev => setContentAutoFocus(eventCurrentTarget(ev).checked)}>
+					onChange={ev => setContentAutoFocus(ev.currentTarget.checked)}>
 					Input Autofocus
 				</CheckBox>
 				<CheckBox
 					checked={draggable()}
-					onChange={ev => setDraggable(eventCurrentTarget(ev).checked)}>
+					onChange={ev => setDraggable(ev.currentTarget.checked)}>
 					Draggable
 				</CheckBox>
 				<CheckBox
 					checked={allowHideAnchor()}
-					onChange={ev => setAllowHideAnchor(eventCurrentTarget(ev).checked)}>
+					onChange={ev => setAllowHideAnchor(ev.currentTarget.checked)}>
 					Allow hide anchor
 				</CheckBox>
 			</Tooltip>

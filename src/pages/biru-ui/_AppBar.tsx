@@ -4,19 +4,12 @@ import { RootAttributes } from "@/enums/attributes"
 import { CornerData } from "@/enums/corner"
 import { LocalStorageKeys } from "@/enums/storage"
 import { ThemeData } from "@/enums/theme"
-import { storageSet, storageGet } from "@/utils/storage"
-import { attrSet, attrClassListModule } from "@/utils/attributes"
-import { windowMatches, windowMatchMedia } from "@/utils/window"
-import { eventListenerAdd, eventCurrentTarget } from '@/utils/event'
+import { attrClassListModule } from "@/utils/attributes"
 import { Commands, Pages } from "./_enums"
 import { PAGES, SIZE_SIDE_NAVIGATION_NONE } from "./_constants"
 import { RoutesLinks, ExternalLinks } from "@/enums/links"
-import { urlEncode } from "@/utils/url"
 import { isMobile } from "@/utils/platforms"
-import { navigatorShare } from "@/utils/navigator"
-import { dateYear } from "@/utils/datetime"
 import { PlatformData } from "@/enums/platforms"
-import { documentRoot } from "@/utils/document"
 import { ICON_APPS, ICON_CHAT, ICON_CIRCLE, ICON_DESKTOP, ICON_DESKTOP_TOWER, ICON_GIFT, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_LINE_HORIZONTAL_3, ICON_MAXIMIZE, ICON_PHONE, ICON_PHONE_LAPTOP, ICON_PLAY_CIRCLE_HINT, ICON_RECEIPT, ICON_SETTINGS, ICON_SHARE_ANDROID, ICON_SHIELD_CHECKMARK, ICON_SQUARE, ICON_TEARDROP_BOTTOM_RIGHT, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from "@/constants/icons"
 import { AnimationData } from "@/enums/animation"
 import { validEnumValue } from "@/utils/object"
@@ -34,7 +27,7 @@ const _: VoidComponent<{
 	command: (type: Commands, ...args: unknown[]) => unknown
 	page: Pages
 }> = (props) => {
-	const root = documentRoot()
+	const root = document.documentElement
 	const [isMenuInfoOpen, setIsMenuInfoOpen] = createSignal<boolean>(false)
 	const [isMenuSettingsOpen, setIsMenuSettingsOpen] = createSignal<boolean>(false)
 	const [isSideNavigationHidden, setIsSideNavigationHidden] = createSignal<boolean>(false)
@@ -47,60 +40,58 @@ const _: VoidComponent<{
 	let menuSettingsRef: HTMLDialogElement
 
 	function initSideNavigationListener(): void {
-		setIsSideNavigationHidden(windowMatches(`(max-width: ${SIZE_SIDE_NAVIGATION_NONE}px)`))
-		eventListenerAdd(
-			windowMatchMedia(`(max-width: ${SIZE_SIDE_NAVIGATION_NONE}px)`),
-			'change',
-			ev => setIsSideNavigationHidden((ev as MediaQueryListEvent).matches)
+		setIsSideNavigationHidden(window.matchMedia(`(max-width: ${SIZE_SIDE_NAVIGATION_NONE}px)`).matches)
+		window.matchMedia(`(max-width: ${SIZE_SIDE_NAVIGATION_NONE}px)`).addEventListener(
+			'change', ev => setIsSideNavigationHidden(ev.matches)
 		)
 	}
 
 	function updatePlatform(platform: PlatformData): void {
 		setPlatform(platform)
-		attrSet(root, RootAttributes.platform, platform)
+		root.setAttribute(RootAttributes.platform, platform)
 		closeMenu(menuSettingsRef)
 	}
 
 	function updateTheme(theme: ThemeData): void {
 		setTheme(theme)
-		attrSet(root, RootAttributes.theme, theme)
-		storageSet(LocalStorageKeys.theme, theme)
+		root.setAttribute(RootAttributes.theme, theme)
+		localStorage.setItem(LocalStorageKeys.theme, theme)
 		closeMenu(menuSettingsRef)
 	}
 
 	function updateCorner(corner: CornerData): void {
 		setCorner(corner)
-		attrSet(root, RootAttributes.corner, corner)
-		storageSet(LocalStorageKeys.corner, corner)
+		root.setAttribute(RootAttributes.corner, corner)
+		localStorage.setItem(LocalStorageKeys.corner, corner)
 		closeMenu(menuSettingsRef)
 	}
 
 	function updateAnimation(animation: AnimationData): void {
 		setAnimation(animation)
-		attrSet(root, RootAttributes.animation, animation)
-		storageSet(LocalStorageKeys.animation, animation)
+		root.setAttribute(RootAttributes.animation, animation)
+		localStorage.setItem(LocalStorageKeys.animation, animation)
 	}
 
 	function initTheme(): void {
-		const theme = storageGet(LocalStorageKeys.theme)
+		const theme = localStorage.getItem(LocalStorageKeys.theme)
 		if (theme && validEnumValue(theme, ThemeData)) {
-			attrSet(root, RootAttributes.theme, theme)
+			root.setAttribute(RootAttributes.theme, theme)
 			setTheme(theme as ThemeData)
 		}
 	}
 
 	function initCorner(): void {
-		const corner = storageGet(LocalStorageKeys.corner)
+		const corner = localStorage.getItem(LocalStorageKeys.corner)
 		if (corner && validEnumValue(corner, CornerData)) {
-			attrSet(root, RootAttributes.corner, corner)
+			root.setAttribute(RootAttributes.corner, corner)
 			setCorner(corner as CornerData)
 		}
 	}
 
 	function initAnimation(): void {
-		const animation = storageGet(LocalStorageKeys.animation)
+		const animation = localStorage.getItem(LocalStorageKeys.animation)
 		if (animation && validEnumValue(animation, AnimationData)) {
-			attrSet(root, RootAttributes.animation, animation)
+			root.setAttribute(RootAttributes.animation, animation)
 			setAnimation(animation as AnimationData)
 		}
 	}
@@ -160,7 +151,7 @@ const _: VoidComponent<{
 				<MenuDivider />
 				<MenuItem
 					onClick={() => {
-						navigatorShare({ title: 'BiruUI', text: 'BiruUI', url: document.URL })
+						navigator.share({ title: 'BiruUI', text: 'BiruUI', url: document.URL })
 						closeMenu(menuInfoRef)
 					}}
 					c:iconCode={ICON_SHARE_ANDROID}>
@@ -168,7 +159,7 @@ const _: VoidComponent<{
 				</MenuItem>
 				<LinkMenuItem
 					onClick={() => closeMenu(menuInfoRef)}
-					href={'mailto:' + ExternalLinks.contactEmail + '?subject=' + urlEncode('BiruUI')}
+					href={'mailto:' + ExternalLinks.contactEmail + '?subject=' + encodeURI('BiruUI')}
 					c:iconCode={ICON_CHAT}>
 					Send feedback
 				</LinkMenuItem>
@@ -179,7 +170,7 @@ const _: VoidComponent<{
 					c:iconCode={ICON_GIFT}>
 					Donate
 				</LinkMenuItem>
-				<MenuHeader>&copy; {dateYear(new Date())} Redmerah</MenuHeader>
+				<MenuHeader>&copy; {new Date().getFullYear()} Redmerah</MenuHeader>
 			</Menu>
 			<Menu
 				ref={r => menuSettingsRef = r}
@@ -299,7 +290,7 @@ const _: VoidComponent<{
 					c:focused={isMenuInfoOpen()}
 					c:code={ICON_INFO}
 					onClick={(ev) => openMenu( menuInfoRef, {
-						anchor: eventCurrentTarget(ev),
+						anchor: ev.currentTarget,
 					})}
 				/>
 				<IconButton
@@ -308,7 +299,7 @@ const _: VoidComponent<{
 					c:focused={isMenuSettingsOpen()}
 					c:code={ICON_SETTINGS}
 					onClick={(ev) => openMenu(menuSettingsRef, {
-						anchor: eventCurrentTarget(ev),
+						anchor: ev.currentTarget,
 					})}
 				/>
 			</Tooltip>}

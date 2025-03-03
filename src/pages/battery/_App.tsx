@@ -1,11 +1,7 @@
 import { createSignal, onMount, Show, type VoidComponent } from "solid-js"
 
 import type { BatteryManager } from "@/interfaces/battery"
-import { timeTimerSet } from "@/utils/time"
 import { removeSplashScreen } from "@/utils/splash"
-import { eventListenerAdd } from "@/utils/event"
-import { mathFloor } from "@/utils/math"
-import { promiseDone } from "@/utils/object"
 import { ICON_BATTERY_5, ICON_BATTERY_CHARGE, ICON_DISMISS, ICON_QUESTION_CIRCLE, ICON_WARNING } from "@/constants/icons"
 
 import Tooltip from "@/components/Tooltip"
@@ -29,15 +25,15 @@ const _: VoidComponent = () => {
 		const SECOND_PER_HOUR = SECOND_PER_MINUTE * 60
 		let text = ''
 		if (seconds >= SECOND_PER_HOUR) {
-			const n = mathFloor(seconds / SECOND_PER_HOUR)
+			const n = Math.floor(seconds / SECOND_PER_HOUR)
 			text = text + `${n} hour${n > 1? "s" : ""}`
-			seconds = mathFloor(seconds % SECOND_PER_HOUR)
+			seconds = Math.floor(seconds % SECOND_PER_HOUR)
 		}
 		if (seconds >= SECOND_PER_MINUTE) {
 			if (text != '') text += ", "
-			const n = mathFloor(seconds / SECOND_PER_MINUTE)
+			const n = Math.floor(seconds / SECOND_PER_MINUTE)
 			text = text + `${n} minute${n > 1? "s" : ""}`
-			seconds = mathFloor(seconds % SECOND_PER_MINUTE)
+			seconds = Math.floor(seconds % SECOND_PER_MINUTE)
 		}
 		if (seconds > 0) {
 			if (text != '') text += ", "
@@ -48,14 +44,13 @@ const _: VoidComponent = () => {
 
 	function initBattery(): void {
 		if (!(navigator as any).getBattery) {
-			timeTimerSet(() => openToast(toastBrowserNotSupportRef, {
+			setTimeout(() => openToast(toastBrowserNotSupportRef, {
 				autoclose: false
 			}))
 			return
-		}
-		promiseDone(
-			((navigator as any).getBattery() as Promise<BatteryManager>),
-			battery => {
+		};
+
+		((navigator as any).getBattery() as Promise<BatteryManager>).then(battery => {
 				const update = () => {
 					setIsCharging(battery.charging)
 					setLevel(battery.level * 100)
@@ -63,13 +58,12 @@ const _: VoidComponent = () => {
 					setDischargingTime(battery.dischargingTime == Infinity? null : battery.dischargingTime)
 				}
 				update()
-				eventListenerAdd(battery, 'chargingchange', () => update())
-				eventListenerAdd(battery, 'levelchange', () => update())
-				eventListenerAdd(battery, 'chargingtimechange', () => update())
-				eventListenerAdd(battery, 'dischargingtimechange', () => update())
+				battery.addEventListener('chargingchange', () => update())
+				battery.addEventListener('levelchange', () => update())
+				battery.addEventListener('chargingtimechange', () => update())
+				battery.addEventListener('dischargingtimechange', () => update())
 			},
-			() => openToast(toastBatterStatusErrorRef, {duration: 8E3})
-		)
+		).catch(() => openToast(toastBatterStatusErrorRef, {duration: 8E3}))
 	}
 
 	onMount(() => {

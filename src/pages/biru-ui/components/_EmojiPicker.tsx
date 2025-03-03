@@ -2,8 +2,6 @@ import { createSignal, For, Show, type VoidComponent } from "solid-js"
 
 import type { Emoji } from "@/types/emoji"
 import { numberSafe } from "@/utils/number"
-import { arrayIncludes } from "@/utils/array"
-import { eventCurrentTarget } from "@/utils/event"
 import { ICON_EMOJI_ADD } from "@/constants/icons"
 
 import { Page, Playground, PlaygroundOptions } from "../_Body"
@@ -35,7 +33,7 @@ const _: VoidComponent = () => {
 			<Button
 				c:variant={ButtonVariant.tonal}
 				onClick={ev => openEmojiPicker(emojiPickerRef, {
-					anchor: anchor()? eventCurrentTarget(ev) : undefined,
+					anchor: anchor()? ev.currentTarget : undefined,
 					allowHideAnchor: allowHideAnchor(),
 					draggable: draggable(),
 					gap: gap(),
@@ -93,10 +91,10 @@ const _: VoidComponent = () => {
 					style={{width: '100px'}}
 					value={gap()}
 					min={0}
-					onBlur={(ev) => setGap(g => numberSafe(eventCurrentTarget(ev).valueAsNumber, g))}
+					onBlur={(ev) => setGap(g => numberSafe(ev.currentTarget.valueAsNumber, g))}
 					c:label="Gap"
 				/>
-				<Show when={arrayIncludes([
+				<Show when={[
 					EmojiPickerPosition.centerTopToRight,
 					EmojiPickerPosition.centerCenterLeft,
 					EmojiPickerPosition.centerBottomToRight,
@@ -113,43 +111,43 @@ const _: VoidComponent = () => {
 					EmojiPickerPosition.centerCenterBottom,
 					EmojiPickerPosition.centerCenterRightBottom,
 					EmojiPickerPosition.rightCenterToTop
-				], position())}>
+				].includes(position())}>
 					<NumberTextField
 						value={padding()}
 						style={{width: '100px'}}
 						min={0}
-						onBlur={(ev) => setPadding(p => numberSafe(eventCurrentTarget(ev).valueAsNumber, p))}
+						onBlur={(ev) => setPadding(p => numberSafe(ev.currentTarget.valueAsNumber, p))}
 						c:label="Padding"
 					/>
 				</Show>
 				<CheckBox
 					checked={anchor()}
-					onChange={ev => setAnchor(eventCurrentTarget(ev).checked)}>
+					onChange={ev => setAnchor(ev.currentTarget.checked)}>
 					Anchor
 				</CheckBox>
 				<CheckBox
 					checked={important()}
-					onChange={ev => setImportant(eventCurrentTarget(ev).checked)}>
+					onChange={ev => setImportant(ev.currentTarget.checked)}>
 					Important
 				</CheckBox>
 				<CheckBox
 					checked={draggable()}
-					onChange={ev => setDraggable(eventCurrentTarget(ev).checked)}>
+					onChange={ev => setDraggable(ev.currentTarget.checked)}>
 					Dragable
 				</CheckBox>
 				<CheckBox
 					checked={allowHideAnchor()}
-					onChange={ev => setAllowHideAnchor(eventCurrentTarget(ev).checked)}>
+					onChange={ev => setAllowHideAnchor(ev.currentTarget.checked)}>
 					Allow hide anchor
 				</CheckBox>
 				<CheckBox
 					checked={multiple()}
-					onChange={ev => setMultiple(eventCurrentTarget(ev).checked)}>
+					onChange={ev => setMultiple(ev.currentTarget.checked)}>
 					Multiple
 				</CheckBox>
 				<CheckBox
 					checked={showCloseButton()}
-					onChange={ev => setShowCloseButton(eventCurrentTarget(ev).checked)}>
+					onChange={ev => setShowCloseButton(ev.currentTarget.checked)}>
 					Show close button
 				</CheckBox>
 			</Tooltip>

@@ -1,16 +1,13 @@
+import { createStore } from "solid-js/store"
 import { createSignal, onMount, type VoidComponent } from "solid-js"
 
 import type { Settings } from "./_types"
-import { IDB, idbStorePut } from "@/utils/indexeddb"
+import { IDB } from "@/utils/indexeddb"
 import { DatabaseNames } from "@/enums/storage"
 import { ObjectStoreKeys, ObjectStoreNames, type ObjectStoreLastInput, type ObjectStoreSettings } from "./_storage"
-import { createStore } from "solid-js/store"
 import { Commands, TextTypes } from "./_enums"
 import { DEFAULT_UNESCAPE_XML_TEXT } from "./_unescape-xml"
 import { removeSplashScreen } from "@/utils/splash"
-import { promiseDone } from "@/utils/object"
-import { stringReplace } from "@/utils/string"
-import { navigatorClipboardWriteText } from "@/utils/navigator"
 import { ICON_COPY } from "@/constants/icons"
 
 import Icon from "@/components/Icon"
@@ -34,7 +31,7 @@ const _: VoidComponent = () => {
 		if (!store) return;
 
 		for (const item of items) {
-			idbStorePut(store, { key: item[0], value: item[1] })
+			store.put({ key: item[0], value: item[1] })
 		}
 	}
 
@@ -43,30 +40,32 @@ const _: VoidComponent = () => {
 		if (!store) return;
 
 		for (const item of items) {
-			idbStorePut(store, { key: item[0], value: item[1] })
+			store.put({ key: item[0], value: item[1] })
 		}
 	}
 
 	function updateOutputAndSave(source: TextTypes): void {
 		switch (source) {
 		case TextTypes.escape: {
-			let text = escapeText()
-			text = stringReplace(text,  /&amp;/g, '&' )
-			text = stringReplace(text, /&quot;/g, '"' )
-			text = stringReplace(text, /&apos;/g, '\'')
-			text = stringReplace(text,   /&lt;/g, '<' )
-			text = stringReplace(text,   /&gt;/g, '>' )
-			setUnescapeText(text)
+			setUnescapeText(
+				escapeText()
+				.replace(/&amp;/g, '&' )
+				.replace(/&quot;/g, '"' )
+				.replace(/&apos;/g, '\'')
+				.replace(/&lt;/g, '<' )
+				.replace(/&gt;/g, '>' )
+			)
 			break
 		}
 		case TextTypes.unescape: {
-			let text = unescapeText()
-			text = stringReplace(text, /&/g, '&amp;') // must first
-			text = stringReplace(text, /'/g, '&apos;')
-			text = stringReplace(text, /"/g, '&quot;')
-			text = stringReplace(text, /</g, '&lt;')
-			text = stringReplace(text, />/g, '&gt;')
-			setEscapeText(text)
+			setEscapeText(
+				unescapeText()
+				.replace(/&/g, '&amp;') // must first
+				.replace(/'/g, '&apos;')
+				.replace(/"/g, '&quot;')
+				.replace(/</g, '&lt;')
+				.replace(/>/g, '&gt;')
+			)
 		}}
 
 		storeLastInput([ObjectStoreKeys.lastInput_unescapeText, unescapeText()])
@@ -113,10 +112,8 @@ const _: VoidComponent = () => {
 				break
 			}
 
-			promiseDone(
-				navigatorClipboardWriteText(text),
-				() => openToast(toastCopiedRef)
-			)
+			navigator.clipboard.writeText(text)
+			.then(() => openToast(toastCopiedRef))
 			break
 		}}
 		return
@@ -124,27 +121,27 @@ const _: VoidComponent = () => {
 
 	function initSettings(): void {
 		const store = db.readStore(ObjectStoreNames.settings)
-		if (store == null) return
+		if (store === null) return
 
-		promiseDone(db.get<ObjectStoreSettings<boolean>>(
+		db.get<ObjectStoreSettings<boolean>>(
 			store,
 			ObjectStoreKeys.settings_textWrap
-		),  result => setSettings('textWrap', t => result?.value ?? t))
+		).then(result => setSettings('textWrap', t => result?.value ?? t))
 
-		promiseDone(db.get<ObjectStoreSettings<number>>(
+		db.get<ObjectStoreSettings<number>>(
 			store,
 			ObjectStoreKeys.settings_fontSize
-		), result => setSettings('fontSize', f => result?.value ?? f))
+		).then(result => setSettings('fontSize', f => result?.value ?? f))
 	}
 
 	function initLastInput(): void {
 		const store = db.readStore(ObjectStoreNames.lastInput)
-		if (store == null) return
+		if (store === null) return
 
-		promiseDone(db.get<ObjectStoreLastInput<string>>(
+		db.get<ObjectStoreLastInput<string>>(
 			store,
 			ObjectStoreKeys.lastInput_unescapeText
-		), result => {
+		).then(result => {
 			setUnescapeText(result?.value ?? DEFAULT_UNESCAPE_XML_TEXT)
 			updateOutputAndSave(TextTypes.unescape)
 		})

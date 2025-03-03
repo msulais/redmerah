@@ -1,7 +1,6 @@
 import { createSignal, type VoidComponent } from "solid-js"
 
 import { ICON_ALERT, ICON_SYMBOLS } from "@/constants/icons"
-import { eventCurrentTarget } from "@/utils/event"
 
 import Icon from "@/components/Icon"
 import CheckBox from "@/components/CheckBox"
@@ -26,7 +25,7 @@ const _: VoidComponent = () => {
 			<Icon c:code={ICON_SYMBOLS} c:filled={filled()}/>
 		</Playground>
 		<PlaygroundOptions>
-			<CheckBox checked={filled()} onChange={ev => setFilled(eventCurrentTarget(ev).checked)}>Filled</CheckBox>
+			<CheckBox checked={filled()} onChange={ev => setFilled(ev.currentTarget.checked)}>Filled</CheckBox>
 		</PlaygroundOptions>
 	</Page>)
 }

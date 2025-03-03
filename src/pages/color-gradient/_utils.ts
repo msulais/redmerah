@@ -1,46 +1,42 @@
 import { RectangularColorSpace, PolarColorSpace, HueInterpolationMethod, GradientType, RadialGradientShape, ColorSpace } from "./_enums"
 import type { Gradient } from "./_type"
 import type { HEXColor } from "@/types/color"
-import { mathRound } from "@/utils/math"
 import { colorHexToHsl, colorHexToRgb } from "@/utils/color"
-import { stringLength, stringPadStart, stringSubstring } from "@/utils/string"
-import { numberParse, numberToFixed } from "@/utils/number"
-import { arrayIncludes, arrayJoin, arrayMap, arraySort } from "@/utils/array"
 
 export function convertColorByColorSpace(color: HEXColor, space: ColorSpace, keepOpacity: boolean = false): string {
-	const opacity = (stringLength(color) > 7
-		? numberParse(stringPadStart(stringSubstring(color, 7), 2, '0'), true, 16) / 255
+	const opacity = (color.length > 7
+		? Number.parseInt(color.substring(7).padStart(2, '0'), 16) / 0xff
 		: 1
 	)
 	switch (space) {
 	case ColorSpace.hex: break
 	case ColorSpace.rgba:
-		const rgb = colorHexToRgb(stringSubstring(color, 0, 7) as HEXColor)
-		return arrayJoin([
+		const rgb = colorHexToRgb(color.substring(0, 7) as HEXColor)
+		return [
 			'rgb',
 			opacity < 1 || keepOpacity? 'a' : '',
 			'(',
-			mathRound(rgb.r * 0xff), ', ',
-			mathRound(rgb.g * 0xff), ', ',
-			mathRound(rgb.b * 0xff),
-			opacity < 1 || keepOpacity? ', ' + numberParse(numberToFixed(opacity, 2)) : '',
+			Math.round(rgb.r * 0xff), ', ',
+			Math.round(rgb.g * 0xff), ', ',
+			Math.round(rgb.b * 0xff),
+			opacity < 1 || keepOpacity? ', ' + Number.parseFloat(opacity.toFixed(2)) : '',
 			')'
-		], '')
+		].join('')
 	case ColorSpace.hsla:
-		const hsl = colorHexToHsl(stringSubstring(color, 0, 7) as HEXColor)
-		return arrayJoin([
+		const hsl = colorHexToHsl(color.substring(0, 7) as HEXColor)
+		return [
 			'hsl',
 			opacity < 1 || keepOpacity? 'a' : '',
 			'(',
-			mathRound(hsl.h * 360),
+			Math.round(hsl.h * 360),
 			', ',
-			mathRound(hsl.s * 100),
+			Math.round(hsl.s * 100),
 			'%, ',
-			mathRound(hsl.l * 100),
+			Math.round(hsl.l * 100),
 			'%',
-			opacity < 1 || keepOpacity? ', ' + numberParse(numberToFixed(opacity, 2)) : '',
+			opacity < 1 || keepOpacity? ', ' + Number.parseFloat(opacity.toFixed(2)) : '',
 			')'
-		], '')
+		].join('')
 	}
 	return color
 }
@@ -56,12 +52,11 @@ export function gradientToCSSText(
 	if (gradient.colorInterpolationMethod != RectangularColorSpace.auto) {
 		colorInterpolationMethod = ` in ${gradient.colorInterpolationMethod}`
 
-		const is_polar_colorspace = arrayIncludes([
+		const isPolarColorSpace = [
 			PolarColorSpace.hsl, PolarColorSpace.hwb,
 			PolarColorSpace.lch, PolarColorSpace.oklch
-		], gradient.colorInterpolationMethod as PolarColorSpace)
-
-		if (is_polar_colorspace && gradient.hueInterpolationMethod != HueInterpolationMethod.auto) {
+		].includes(gradient.colorInterpolationMethod as PolarColorSpace)
+		if (isPolarColorSpace && gradient.hueInterpolationMethod != HueInterpolationMethod.auto) {
 			colorInterpolationMethod += ` ${gradient.hueInterpolationMethod} hue`
 		}
 	}
@@ -70,13 +65,10 @@ export function gradientToCSSText(
 	switch (type) {
 	case GradientType.linear: {
 		const angle = gradient.angle
-		const colorStopList = arrayJoin(
-			arrayMap(
-				arraySort([...gradient.colorStopList], (a, b) => a.size - b.size),
-				v => `${convertColorByColorSpace(v.color, model, false)} ${v.size}%`
-			),
-			format? ',\n    ' : ', '
-		)
+		const colorStopList = [...gradient.colorStopList]
+			.sort((a, b) => a.size - b.size)
+			.map(v => `${convertColorByColorSpace(v.color, model, false)} ${v.size}%`)
+			.join(format? ',\n    ' : ', ')
 
 		text = `${repeat}linear-gradient(${format? '\n    ' : ''}${angle}deg${colorInterpolationMethod},${format? '\n    ' : ' '}${colorStopList}${format? '\n' : ''})`
 		break
@@ -85,13 +77,10 @@ export function gradientToCSSText(
 		const shape = gradient.shape
 		const position = `${gradient.positionX}% ${gradient.positionY}%`
 		const size = shape == RadialGradientShape.circle ? `${gradient.sizeLength}px` : `${gradient.sizeWidth}% ${gradient.sizeHeight}%`
-		const colorStopList = arrayJoin(
-			arrayMap(
-				arraySort([...gradient.colorStopList], (a, b) => a.size - b.size),
-				v => `${convertColorByColorSpace(v.color, model, false)} ${v.size}%`
-			),
-			format? ',\n    ' : ', '
-		)
+		const colorStopList = [...gradient.colorStopList]
+			.sort((a, b) => a.size - b.size)
+			.map(v => `${convertColorByColorSpace(v.color, model, false)} ${v.size}%`)
+			.join(format? ',\n    ' : ', ')
 
 		text = `${repeat}radial-gradient(${format? '\n    ' : ''}${shape} ${size} at ${position}${colorInterpolationMethod},${format? '\n    ' : ' '}${colorStopList}${format? '\n' : ''})`
 		break
@@ -99,13 +88,10 @@ export function gradientToCSSText(
 	case GradientType.conic: {
 		const angle = gradient.angle
 		const position = `${gradient.positionX}% ${gradient.positionY}%`
-		const colorStopList = arrayJoin(
-			arrayMap(
-				arraySort([...gradient.colorStopList], (a, b) => a.size - b.size),
-				v => `${convertColorByColorSpace(v.color, model, false)} ${mathRound(v.size * 360 / 100)}deg`
-			),
-			format? ',\n    ' : ', '
-		)
+		const colorStopList = [...gradient.colorStopList]
+			.sort((a, b) => a.size - b.size)
+			.map(v => `${convertColorByColorSpace(v.color, model, false)} ${Math.round(v.size * 360 / 100)}deg`)
+			.join(format? ',\n    ' : ', ')
 
 		text = `${repeat}conic-gradient(${format? '\n    ' : ''}from ${angle}deg at ${position}${colorInterpolationMethod},${format? '\n    ' : ' '}${colorStopList}${format? '\n' : ''})`
 		break

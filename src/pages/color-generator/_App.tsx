@@ -3,24 +3,15 @@ import { createStore } from 'solid-js/store'
 
 import type { HEXColor, RGBColor } from '@/types/color'
 import type { Palette } from './_types'
-import { timeTimerClear, timeTimerSet } from '@/utils/time'
 import { colorGeneratePalette, colorHexToRgb, colorIsValid } from '@/utils/color'
-import { elementAnimate, elementById, elementDataset, elementFirstChild, elementId, elementTextContentSet, elementTagName, elementValidTarget, elementAllBySelector } from '@/utils/element'
+import { elementValidTarget } from '@/utils/element'
 import { DatabaseNames, LocalStorageKeys } from '@/enums/storage'
-import { storageGet, storageSet } from '@/utils/storage'
 import { ElementIds } from '@/enums/ids'
-import { IDB, idbStoreClear, idbStoreDelete, idbStorePut } from '@/utils/indexeddb'
+import { IDB } from '@/utils/indexeddb'
 import { ObjectStoreNames, type ObjectStorePaletteList } from './_storage'
 import { removeSplashScreen } from '@/utils/splash'
-import { stringToUpperCase } from '@/utils/string'
-import { arrayFilter, arrayJoin, arrayLength, arrayPush } from '@/utils/array'
-import { navigatorClipboardWriteText } from '@/utils/navigator'
-import { promiseDone } from '@/utils/object'
-import { mathRound } from '@/utils/math'
-import { eventCurrentTarget } from '@/utils/event'
 import { attrClassListModule } from '@/utils/attributes'
-import { documentActive } from '@/utils/document'
-import { numberIsNotDefined, numberParse } from '@/utils/number'
+import { numberIsNotDefined } from '@/utils/number'
 import { AnimationEffectTiming } from '@/enums/animation'
 import { ICON_CHECKMARK, ICON_COPY, ICON_DELETE } from '@/constants/icons'
 
@@ -47,7 +38,7 @@ const _: VoidComponent = () => {
 		onAccentDark: '#000000'
 	})
 	const [paletteList, setPaletteList] = createSignal<Palette[]>([])
-	const [timeId, setTimeId] = createSignal<number | null>(null)
+	const [timeId, setTimeId] = createSignal<number | NodeJS.Timeout | null>(null)
 	const [colorPickerRef, setColorPickerRef] = createSignal<HTMLDialogElement | null>(null)
 	const [dialogColorListRef, setDialogColorListRef] = createSignal<HTMLDialogElement | null>(null)
 	const timeCopyList: Record<string, number> = {}
@@ -56,49 +47,48 @@ const _: VoidComponent = () => {
 	function deleteAllPaletteList(): void {
 		setPaletteList([])
 		const storePaletteList = db.writeStore(ObjectStoreNames.paletteList)
-		if (storePaletteList) idbStoreClear(storePaletteList)
+		storePaletteList?.clear()
 	}
 
 	function rgbToCSSValue(rgb: RGBColor): string {
-		return `${mathRound(rgb.r * 0xff)}, ${mathRound(rgb.g * 0xff)}, ${mathRound(rgb.b * 0xff)}`
+		return `${Math.round(rgb.r * 0xff)}, ${Math.round(rgb.g * 0xff)}, ${Math.round(rgb.b * 0xff)}`
 	}
 
 	function onColorChange(color: HEXColor): void {
 		const generatedColor = colorGeneratePalette(color)
-		const elementAccentColorStyle = elementById(ElementIds.colorAccent)!
+		const elementAccentColorStyle = document.getElementById(ElementIds.colorAccent)!
 		elementAccentColorStyle.innerHTML = `:root{--g-color-accent-light: ${rgbToCSSValue(colorHexToRgb(generatedColor.color))};--g-color-accent-dark: ${rgbToCSSValue(colorHexToRgb(generatedColor.colorDark))};--g-color-on-accent-light: ${rgbToCSSValue(colorHexToRgb(generatedColor.onColor))};--g-color-on-accent-dark: ${rgbToCSSValue(colorHexToRgb(generatedColor.onColorDark))};}`;
-		storageSet(LocalStorageKeys.color, color)
+		localStorage.setItem(LocalStorageKeys.color, color)
 		setPalette({
-			seed: stringToUpperCase(color) as HEXColor,
-			accentLight: stringToUpperCase(generatedColor.color) as HEXColor,
-			onAccentLight: stringToUpperCase(generatedColor.onColor) as HEXColor,
-			accentDark: stringToUpperCase(generatedColor.colorDark) as HEXColor,
-			onAccentDark: stringToUpperCase(generatedColor.onColorDark) as HEXColor
+			seed: color.toUpperCase() as HEXColor,
+			accentLight: generatedColor.color.toUpperCase() as HEXColor,
+			onAccentLight: generatedColor.onColor.toUpperCase() as HEXColor,
+			accentDark: generatedColor.colorDark.toUpperCase() as HEXColor,
+			onAccentDark: generatedColor.onColorDark.toUpperCase() as HEXColor
 		})
 	}
 
 	function copyAllPaletteList(): void {
 		if (timeId()) {
-			timeTimerClear(timeId()!)
+			clearTimeout(timeId()!)
 			setTimeId(null)
 		}
 
 		const colorsText: string[] = []
 		for (const i in paletteList()) {
 			const palette = paletteList()[i]
-			arrayPush(colorsText, arrayJoin([
+			colorsText.push([
 				`--seed-${i + 1}: ` + palette.seed,
 				`--accent-light-${i + 1}: ` + palette.accentLight,
 				`--on-accent-light-${i + 1}: ` + palette.onAccentLight,
 				`--accent-dark-${i + 1}: ` + palette.accentDark,
 				`--on-accent-dark-${i + 1}: ` + palette.onAccentDark,
-			], ';\n') + ';')
+			].join(';\n') + ';')
 		}
 
-		promiseDone(
-			navigatorClipboardWriteText(arrayJoin(colorsText, '\n\n')),
-			() => setTimeId(timeTimerSet(() => setTimeId(null), 2000))
-		)
+		navigator.clipboard
+		.writeText(colorsText.join('\n\n'))
+		.then(() => setTimeId(setTimeout(() => setTimeId(null), 2000)))
 	}
 
 	function onAddColor(): void {
@@ -108,11 +98,11 @@ const _: VoidComponent = () => {
 
 		setPaletteList(l => [...l, {...palette}])
 		const storePaletteList = db.writeStore(ObjectStoreNames.paletteList)
-		if (storePaletteList) idbStorePut(storePaletteList, {...palette})
+		storePaletteList?.put({...palette})
 	}
 
 	function initColor(): void {
-		const color = storageGet(LocalStorageKeys.color)
+		const color = localStorage.getItem(LocalStorageKeys.color)
 		if (!colorIsValid(color ?? '')) return;
 
 		onColorChange(color as HEXColor)
@@ -123,10 +113,8 @@ const _: VoidComponent = () => {
 		const store_palettelist = db.readStore(ObjectStoreNames.paletteList)
 		if (store_palettelist == null) return;
 
-		promiseDone(
-			db.getAll<ObjectStorePaletteList>(store_palettelist),
-			(result) => setPaletteList(v => result? [...result] : v)
-		)
+		db.getAll<ObjectStorePaletteList>(store_palettelist)
+		.then((result) => setPaletteList(v => result? [...result] : v))
 	}
 
 	function initDatabase(): void {
@@ -148,45 +136,40 @@ const _: VoidComponent = () => {
 		const palette = paletteList()[index]
 		if (timeCopyList[palette.seed]) return
 
-		promiseDone(
-			navigatorClipboardWriteText(arrayJoin([
-				'--seed: ' + palette.seed,
-				'--accent-light: ' + palette.accentLight,
-				'--on-accent-light: ' + palette.onAccentLight,
-				'--accent-dark: ' + palette.accentDark,
-				'--on-accent-dark: ' + palette.onAccentDark,
-			], ';\n') + ';'), () => {
-			const icon = elementFirstChild(button)
+		navigator.clipboard
+		.writeText([
+			'--seed: ' + palette.seed,
+			'--accent-light: ' + palette.accentLight,
+			'--on-accent-light: ' + palette.onAccentLight,
+			'--accent-dark: ' + palette.accentDark,
+			'--on-accent-dark: ' + palette.onAccentDark,
+		].join(';\n') + ';')
+		.then(() => {
+			const icon = button.firstElementChild
 			if (!icon) return
 
 			timeCopyList[palette.seed] = 1
-			const animation_option = {
+			const animationOptions = {
 				duration: 150,
 				easing: AnimationEffectTiming.spring
 			}
 
 			if (!animationIsOn()){
-				elementTextContentSet(icon, String.fromCharCode(ICON_CHECKMARK))
-				timeTimerSet(() => {
-					elementTextContentSet(icon, String.fromCharCode(ICON_COPY))
-					elementAnimate(icon, {scale: [0, 1]}, animation_option)
+				icon.textContent = String.fromCharCode(ICON_CHECKMARK)
+				setTimeout(() => {
+					icon.textContent = String.fromCharCode(ICON_COPY)
+					icon.animate({scale: [0, 1]}, animationOptions)
 					delete timeCopyList[palette.seed]
 				}, 1000)
 				return
 			}
 
-			promiseDone(
-				elementAnimate(icon, {scale: [1, 0]}, animation_option).finished,
-			() => {
-				elementTextContentSet(icon, String.fromCharCode(ICON_CHECKMARK))
-				promiseDone(
-					elementAnimate(icon, {scale: [0, 1]}, animation_option).finished,
-				() =>  timeTimerSet(() => {
-					promiseDone(
-						elementAnimate(icon, {scale: [1, 0]}, animation_option).finished,
-					() => {
-						elementTextContentSet(icon, String.fromCharCode(ICON_COPY))
-						elementAnimate(icon, {scale: [0, 1]}, animation_option)
+			icon.animate({scale: [1, 0]}, animationOptions).finished.then(() => {
+				icon.textContent = String.fromCharCode(ICON_CHECKMARK)
+				icon.animate({scale: [0, 1]}, animationOptions).finished.then(() => setTimeout(() => {
+					icon.animate({scale: [1, 0]}, animationOptions).finished.then(() => {
+						icon.textContent = String.fromCharCode(ICON_COPY)
+						icon.animate({scale: [0, 1]}, animationOptions)
 						delete timeCopyList[palette.seed]
 					})
 				}, 1000))
@@ -252,14 +235,13 @@ const _: VoidComponent = () => {
 				style={{width: '640px'}}
 				c:header="Color list"
 				onClick={ev => {
-					const button = documentActive()!
+					const button = document.activeElement! as HTMLButtonElement
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					switch (elementId(button)) {
+					switch (button.id) {
 					case buttonColorList_deleteAllId:
 						openDialog(dialogDeleteAllRef, {important: true})
 						break
@@ -270,28 +252,29 @@ const _: VoidComponent = () => {
 						closeDialog(dialogColorListRef()!)
 						break
 					default:
-						const dataListitemCopy = elementDataset(button, 'listitemCopy')
+						const dataset = button.dataset
+						const dataListitemCopy = dataset.listitemCopy
 						if (dataListitemCopy) {
-							const index = numberParse(dataListitemCopy, true)
+							const index = Number.parseInt(dataListitemCopy)
 							if (numberIsNotDefined(index)) return
 
 							copyList(button, index)
 							return
 						}
 
-						const dataListitemDelete = elementDataset(button, 'listitemDelete')
+						const dataListitemDelete = dataset.listitemDelete
 						if (dataListitemDelete) {
-							const index = numberParse(dataListitemDelete, true)
+							const index = Number.parseInt(dataListitemDelete)
 							if (numberIsNotDefined(index)) return
 
 							const palette = paletteList()[index]
-							setPaletteList(l => arrayFilter(l, v => v.seed != palette.seed))
-							if (arrayLength(paletteList()) == 0) {
+							setPaletteList(l => l.filter(v => v.seed != palette.seed))
+							if (paletteList().length == 0) {
 								closeColorPicker(dialogColorListRef()!)
 							}
 
 							const storePaletteList = db.writeStore(ObjectStoreNames.paletteList)
-							if (storePaletteList) idbStoreDelete(storePaletteList, palette.seed)
+							storePaletteList?.delete(palette.seed)
 							return
 						}
 					}
@@ -315,15 +298,14 @@ const _: VoidComponent = () => {
 				</>}>
 				<Tooltip
 					onFocusIn={ev => {
-						const self = eventCurrentTarget(ev)
+						const self = ev.currentTarget
 						if (
-							arrayLength(colorPaletteList) === 0
-							|| colorPaletteList[0] !== elementFirstChild(self)
+							colorPaletteList.length === 0
+							|| colorPaletteList[0] !== self.firstElementChild
 						) {
 							colorPaletteList.length = 0
-							arrayPush(
-								colorPaletteList,
-								...elementAllBySelector<HTMLDivElement>('.c-list', self)
+							colorPaletteList.push(
+								...self.querySelectorAll<HTMLDivElement>('.c-list')
 							)
 						}
 						keyboardOnFocusIn(ev, colorPaletteList)
@@ -340,14 +322,13 @@ const _: VoidComponent = () => {
 				ref={r => dialogDeleteAllRef = r}
 				c:header="Delete all"
 				onClick={ev => {
-					const button = documentActive()!
+					const button = document.activeElement!
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					switch (elementId(button)) {
+					switch (button.id) {
 					case buttonDeleteAll_cancelId:
 						closeDialog(dialogDeleteAllRef)
 						break
@@ -390,7 +371,7 @@ const _: VoidComponent = () => {
 				classList={attrClassListModule(CSS.app_fab)}
 				c:variant={ButtonVariant.filled}
 				onClick={(ev) => openColorPicker(colorPickerRef()!, {
-					anchor: eventCurrentTarget(ev),
+					anchor: ev.currentTarget,
 					color: palette.seed as HEXColor
 				})}>
 				{palette.seed}

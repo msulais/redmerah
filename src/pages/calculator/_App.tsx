@@ -3,21 +3,17 @@ import { createStore } from "solid-js/store"
 
 import type { CalculatorInput, CalculatorOutput, DateCalculatorInput, Settings } from "./_types"
 import { CalculatorType, Commands, DateOperation, DecimalNumberFormat, GroupingNumberFormat, NumberType, ScientificAngleType } from "./_enums"
-import { IDB, idbStorePut } from "@/utils/indexeddb"
+import { IDB } from "@/utils/indexeddb"
 import { DatabaseNames } from "@/enums/storage"
 import { ObjectStoreKeys, type ObjectStoreLastInput, type ObjectStoreLastOutput, type ObjectStoreMiscellaneous, ObjectStoreNames, type ObjectStoreSettings } from "./_storage"
-import { dateDiffInDays, dateCurrent, dateDate, dateMonth, dateYear, dateTextYMD, dateISO, dateParse } from "@/utils/datetime"
-import { timeTimerClear, timeTimerSet } from "@/utils/time"
-import { stringCount, stringMatch, stringRepeat, stringReplace, stringReplaceAll, stringReverse, stringToUpperCase } from "@/utils/string"
+import { dateDiffInDays } from "@/utils/datetime"
 import { KEY_DIVISION, KEY_MULTIPLY } from "./_constants"
-import { mathAbs, mathAcos, mathACosH, mathACot, mathACotH, mathACsc, mathACscH, mathASec, mathASecH, mathASin, mathASinH, mathATan, mathATanH, mathCeil, mathCos, mathCosH, mathCot, mathCotH, mathCsc, mathCscH, mathFloor, mathLn, mathLog, mathNot, mathPow, mathRound, mathSec, mathSecH, mathSin, mathSinH, mathSqrt, mathTan, mathTanH } from "@/utils/math"
+import { mathACot, mathACotH, mathACsc, mathACscH, mathASec, mathASecH, mathCot, mathCotH, mathCsc, mathCscH, mathSec, mathSecH } from "@/utils/math"
 import { ConverterType, ConverterUnit, UNIT_ANGLE, UNIT_ANGLE_DEGREE, UNIT_ANGLE_GRADIAN, UNIT_ANGLE_RADIAN, UNIT_AREA, UNIT_FREQUENCY, UNIT_LENGTH, UNIT_LENGTH_KILOMETER, UNIT_LENGTH_METER, UNIT_PRESSURE, UNIT_TEMPERATURE, UNIT_TEMPERATURE_CELCIUS, UNIT_TEMPERATURE_DELISLE, UNIT_TEMPERATURE_FAHRENHEIT, UNIT_TEMPERATURE_KELVIN, UNIT_TEMPERATURE_RANKINE, UNIT_TEMPERATURE_REAMUR, UNIT_TEMPERATURE_ROMER, UNIT_TIME, UNIT_VOLUME, UNIT_WEIGHT, type ConverterUnitType } from "./_converter"
 import { FUNCTION_REGEX, NUMBER_REGEX } from "./_regex"
 import { removeSplashScreen } from "@/utils/splash"
-import { arrayPush } from "@/utils/array"
-import { regexTest } from "@/utils/regex"
-import { numberFormat, numberParse, numberToBinary, numberToRealDigits, numberToString } from "@/utils/number"
-import { promiseDone } from "@/utils/object"
+import { numberFormat, numberToBinary, numberToRealDigits } from "@/utils/number"
+import { stringCount, stringReverse } from "@/utils/string"
 
 import App from "@/components/App"
 import AppBar from "./_AppBar"
@@ -60,8 +56,8 @@ const _: VoidComponent = () => {
 		scientific: '',
 		programmer: '',
 		date: {
-			from: dateCurrent(),
-			to: dateCurrent(),
+			from: new Date(),
+			to: new Date(),
 			year: 0,
 			day: 0,
 			month: 0
@@ -92,13 +88,13 @@ const _: VoidComponent = () => {
 		case CalculatorType.date: return inputs.date
 		}
 	})
-	let timeId: null | number = null
-	let timeNoteId: null | number = null
+	let timeId: null | NodeJS.Timeout | number = null
+	let timeNoteId: null | NodeJS.Timeout | number = null
 
 	function onChangeCalculator(type: CalculatorType): void {
 		setCalculator(type)
-		const storeMiscellaneous = db.writeStore(ObjectStoreNames.miscellaneous)
-		if (storeMiscellaneous) idbStorePut(storeMiscellaneous, {
+		const store = db.writeStore(ObjectStoreNames.miscellaneous)
+		store?.put({
 			key: ObjectStoreKeys.miscellaneous_lastPage,
 			value: type
 		})
@@ -106,32 +102,29 @@ const _: VoidComponent = () => {
 
 	function onNoteChanged(value: string): void {
 		setNote(value)
-		if (timeNoteId != null) timeTimerClear(timeNoteId)
-		timeNoteId = timeTimerSet(() => {
+		if (timeNoteId != null) clearTimeout(timeNoteId)
+		timeNoteId = setTimeout(() => {
 			timeNoteId = null
-			const storeMiscellaneous = db.writeStore(ObjectStoreNames.miscellaneous)
-			if (storeMiscellaneous) idbStorePut(
-				storeMiscellaneous,
-				{key: ObjectStoreKeys.miscellaneous_note, value}
-			)
+			const store = db.writeStore(ObjectStoreNames.miscellaneous)
+			store?.put({key: ObjectStoreKeys.miscellaneous_note, value})
 		}, 1000)
 	}
 
 	function saveSettings(...items: [key: ObjectStoreKeys, value: unknown][]): void {
-		const storeSettings = db.writeStore(ObjectStoreNames.settings)
-		if (!storeSettings) return;
+		const store = db.writeStore(ObjectStoreNames.settings)
+		if (!store) return;
 
 		for (const item of items) {
-			idbStorePut(storeSettings, { key: item[0], value: item[1] })
+			store.put({ key: item[0], value: item[1] })
 		}
 	}
 
 	function saveInputs(...items: [key: ObjectStoreKeys, value: unknown][]): void {
-		const storeLastInput = db.writeStore(ObjectStoreNames.lastInput)
-		if (!storeLastInput) return;
+		const store = db.writeStore(ObjectStoreNames.lastInput)
+		if (!store) return;
 
 		for (const item of items) {
-			idbStorePut(storeLastInput, { key: item[0], value: item[1] })
+			store.put({ key: item[0], value: item[1] })
 		}
 	}
 
@@ -157,7 +150,7 @@ const _: VoidComponent = () => {
 						? DecimalNumberFormat.point
 						: DecimalNumberFormat.comma
 				)
-				arrayPush(items, [
+				items.push([
 					ObjectStoreKeys.settings_numberFormatDecimal,
 					settings.numberFormat.decimal
 				])
@@ -178,7 +171,7 @@ const _: VoidComponent = () => {
 					? GroupingNumberFormat.point
 					: GroupingNumberFormat.comma
 				)
-				arrayPush(items, [
+				items.push([
 					ObjectStoreKeys.settings_numberFormatGrouping,
 					settings.numberFormat.grouping
 				])
@@ -197,9 +190,9 @@ const _: VoidComponent = () => {
 			break
 		case Commands.updateCalculatorInput: {
 			const [value] = args as [string | DateCalculatorInput]
-			if (timeId) timeTimerClear(timeId)
+			if (timeId) clearTimeout(timeId)
 
-			timeId = timeTimerSet(() => {
+			timeId = setTimeout(() => {
 				switch (calculator()) {
 				case CalculatorType.basic:
 					setInputs('basic', value as string)
@@ -221,8 +214,8 @@ const _: VoidComponent = () => {
 					const $value = value as DateCalculatorInput
 					setInputs('date', {...$value})
 					saveInputs(
-						[ObjectStoreKeys.lastInput_dateFrom, dateISO($value.from)],
-						[ObjectStoreKeys.lastInput_dateTo, dateISO($value.to)],
+						[ObjectStoreKeys.lastInput_dateFrom, $value.from.toISOString()],
+						[ObjectStoreKeys.lastInput_dateTo, $value.to.toISOString()],
 						[ObjectStoreKeys.lastInput_dateYear, $value.year],
 						[ObjectStoreKeys.lastInput_date_month, $value.month],
 						[ObjectStoreKeys.lastInput_date_day, $value.day],
@@ -253,8 +246,8 @@ const _: VoidComponent = () => {
 			setSettings('scientific', 'angle', value)
 			saveSettings([ObjectStoreKeys.settings_scientificAngle, value])
 
-			if (timeId) timeTimerClear(timeId)
-			timeId = timeTimerSet(() => {
+			if (timeId) clearTimeout(timeId)
+			timeId = setTimeout(() => {
 				generateOutput()
 				timeId = null
 			}, 200)
@@ -324,22 +317,27 @@ const _: VoidComponent = () => {
 			let input: null | string = null
 			if (outputs.programmer != null){
 				if (type == NumberType.decimal) {
-					if (settings.scientificNotation && regexTest(/[eE]/, numberToString(outputs.programmer)))
-						input = stringToUpperCase(numberToString(outputs.programmer))
+					if (settings.scientificNotation && /[eE]/.test(outputs.programmer.toString()))
+						input = outputs.programmer.toString().toString()
 					else input = numberFormat(outputs.programmer, {
 						decimal: settings.numberFormat.decimal,
 						thousand: settings.numberFormat.grouping
 					})
 				}
 				else {
-					if (type == NumberType.hexadecimal) input = stringToUpperCase(numberToString(numberParse(numberToBinary(outputs.programmer), true, 2), 16))
-					else if (type == NumberType.octal) input = numberToString(numberParse(numberToBinary(outputs.programmer), true, 2), 8)
+					if (type == NumberType.hexadecimal) input = (Number
+						.parseInt(numberToBinary(outputs.programmer), 2)
+						.toString(16)
+						.toUpperCase())
+					else if (type == NumberType.octal) input = (Number
+						.parseInt(numberToBinary(outputs.programmer), 2)
+						.toString(8))
 					else if (type == NumberType.binary) input = numberToBinary(outputs.programmer)
 
-					input = stringReplace(input!, /\./g, settings.numberFormat.decimal)
+					input = input!.replace(/\./g, settings.numberFormat.decimal)
 				}
 
-				arrayPush(settingsKeys, [ObjectStoreKeys.lastInput_programmer, input ?? ''])
+				settingsKeys.push([ObjectStoreKeys.lastInput_programmer, input ?? ''])
 				setInputs('programmer', input ?? '')
 			}
 
@@ -372,42 +370,41 @@ const _: VoidComponent = () => {
 
 		// '234))' => '((234))'
 		if (openBracketCount < closeBracketCount) {
-			input = stringRepeat("(", closeBracketCount - openBracketCount) + input
+			input = "(".repeat(closeBracketCount - openBracketCount) + input
 		}
 
 		// '((234' => '((234))'
 		else if (openBracketCount > closeBracketCount) {
-			input = input + stringRepeat(")", openBracketCount - closeBracketCount)
+			input = input + ")".repeat(openBracketCount - closeBracketCount)
 		}
 
 		// '123 456 789' => '123456789'
-		input = stringReplace(input, /\s/g, '')
+		input = input.replace(/\s/g, '')
 
 		// '123,456,789' => '123456789'
-		input = stringReplaceAll(input, settings.numberFormat.grouping, '')
+		input = input.replaceAll(settings.numberFormat.grouping, '')
 
 		// '123456,789' => '123456.789'
-		input = stringReplaceAll(input, settings.numberFormat.decimal, '.')
+		input = input.replaceAll(settings.numberFormat.decimal, '.')
 
 		// '.234' => '0.234'
-		input = stringReplace(input, /(?<!\d)\.\d+/g, (s) => '0' + s)
+		input = input.replace(/(?<!\d)\.\d+/g, (s) => '0' + s)
 
 		// '123.' => '123'
-		input = stringReplace(input, /(\d+)\.(?!\d)/g, (_, grp1) => grp1)
+		input = input.replace(/(\d+)\.(?!\d)/g, (_, grp1) => grp1)
 
 		// '1.23E+5' => '1.23×100000'
-		input = stringReplace(
-			input,
+		input = input.replace(
 			/(\d+(?:\.\d+)?)E([+\-])?(\d+)/g,
 			(_, group1, group2, group3) => {
-				const is_minus = group2 == '-'
-				const power = numberParse(group3, true)
+				const isMinus = group2 == '-'
+				const power = Number.parseInt(group3)
 				return group1
 					+ (power > 0
-						? (is_minus
+						? (isMinus
 							? KEY_DIVISION
 							: KEY_MULTIPLY
-						) + '1' + stringRepeat('0', power)
+						) + '1' + '0'.repeat(power)
 						: ''
 					)
 			}
@@ -418,7 +415,7 @@ const _: VoidComponent = () => {
 			/(ceil|sec)\(/g,
 			/\\e/g, // use in the last part
 		]
-		input = stringReplace(input, nonEulerEscapeRegex[0], (r) => stringReplace(r, 'e', '\\e'))
+		input = input.replace(nonEulerEscapeRegex[0], (r) => r.replace('e', '\\e'))
 
 		// '123(456)' => '123×(456)'
 		const implicitMultiplyRegex = [
@@ -427,16 +424,14 @@ const _: VoidComponent = () => {
 		]
 		let iterator = 0
 		while (
-			regexTest(implicitMultiplyRegex[0], input)
-			|| regexTest(implicitMultiplyRegex[1], input)
+			implicitMultiplyRegex[0].test(input)
+			|| implicitMultiplyRegex[1].test(input)
 		) {
-			input = stringReplace(
-				input,
+			input = input.replace(
 				implicitMultiplyRegex[0],
 				(_, group1, group2) => group1 + KEY_MULTIPLY + group2
 			)
-			input = stringReplace(
-				input,
+			input = input.replace(
 				implicitMultiplyRegex[1],
 				(_, group1, group2) => group1 + KEY_MULTIPLY + group2
 			)
@@ -455,13 +450,13 @@ const _: VoidComponent = () => {
 		}
 
 		// 'e' => '2.718281828459045'
-		input = stringReplace(input, /(?<!\\)e/g, numberToString(Math.E))
+		input = input.replace(/(?<!\\)e/g, Math.E.toString())
 
 		// 'π' => '3.141592653589793'
-		input = stringReplace(input, /π/g, numberToString(Math.PI))
+		input = input.replace(/π/g, Math.PI.toString())
 
 		// 'c\eil(12)' => 'ceil(12)'
-		input = stringReplace(input, nonEulerEscapeRegex[1], 'e')
+		input = input.replace(nonEulerEscapeRegex[1], 'e')
 
 		return input
 	}
@@ -513,42 +508,50 @@ const _: VoidComponent = () => {
 		switch (operation) {
 		case DateOperation.add: {
 			const d = inputs.date.from
-			setOutputs('date', dateTextYMD(new Date(
-				dateYear(d) + inputs.date.year,
-				dateMonth(d) + inputs.date.month,
-				dateDate(d) + inputs.date.day
-			)))
+			setOutputs('date', new Date(
+				d.getFullYear() + inputs.date.year,
+				d.getMonth() + inputs.date.month,
+				d.getDate() + inputs.date.day
+			).toLocaleDateString(undefined, {
+				year: 'numeric',
+				month: 'long',
+				day: 'numeric'
+			}))
 			break
 		}
 		case DateOperation.subtract: {
 			const d = inputs.date.from
-			setOutputs('date', dateTextYMD(new Date(
-				dateYear(d) - inputs.date.year,
-				dateMonth(d) - inputs.date.month,
-				dateDate(d) - inputs.date.day
-			)))
+			setOutputs('date', new Date(
+				d.getFullYear() - inputs.date.year,
+				d.getMonth() - inputs.date.month,
+				d.getDate() - inputs.date.day
+			).toLocaleDateString(undefined, {
+				year: 'numeric',
+				month: 'long',
+				day: 'numeric'
+			}))
 			break
 		}
 		case DateOperation.difference: {
 			let output: string = ""
-			let days: number = mathAbs(dateDiffInDays(inputs.date.from, inputs.date.to))
+			let days: number = Math.abs(dateDiffInDays(inputs.date.from, inputs.date.to))
 			const diff_in_days = days
 			if (days >= 365.25){
-				const n = mathFloor(days / 365.25)
+				const n = Math.floor(days / 365.25)
 				output = `${n} year${n > 1? "s" : ""}`
-				days = mathFloor(days % 365.25)
+				days = Math.floor(days % 365.25)
 			}
 			if (days >= 30.437){
 				if (output != '') output += ", "
-				const n = mathFloor(days / 30.437)
+				const n = Math.floor(days / 30.437)
 				output += `${n} month${n > 1? "s" : ""}`
-				days = mathFloor(days % 30.437);
+				days = Math.floor(days % 30.437);
 			}
 			if (days >= 7){
 				if (output != '') output += ", "
-				const n = mathFloor(days / 7)
+				const n = Math.floor(days / 7)
 				output += `${n} week${n > 1? "s" : ""}`
-				days = mathFloor(days % 7)
+				days = Math.floor(days % 7)
 			}
 			if (days > 0){
 				if (output != '') output += ", "
@@ -564,23 +567,23 @@ const _: VoidComponent = () => {
 
 	function inputToDecimal(input: string): string {
 		const type = settings.programmer.numberType
-		if (type != NumberType.decimal) input = stringReplace(input, /[,\.]+/g, '')
+		if (type != NumberType.decimal) input = input.replace(/[,\.]+/g, '')
 
 		if (type == NumberType.hexadecimal) {
 			const re = /[0-9A-F]+/g
-			input = stringReplace(input, re, (v) => numberToString(numberParse(v, true, 16)))
+			input = input.replace(re, (v) => Number.parseInt(v, 16).toString())
 		}
 		else if (type == NumberType.octal) {
-			if (regexTest(/[89]/, input)) throw Error()
+			if (/[89]/.test(input)) throw Error()
 
 			const re = /[0-7]+/g
-			input = stringReplace(input, re, (v) => numberToString(numberParse(v, true, 8)))
+			input = input.replace(re, (v) => Number.parseInt(v, 8).toString())
 		}
 		else if (type == NumberType.binary) {
-			if (regexTest(/[2-9]/, input)) throw Error()
+			if (/[2-9]/.test(input)) throw Error()
 
 			const re = /[01]+/g
-			input = stringReplace(input, re, (v) => numberToString(numberParse(v, true, 2)))
+			input = input.replace(re, (v) => Number.parseInt(v, 2).toString())
 		}
 		return input
 	}
@@ -598,10 +601,10 @@ const _: VoidComponent = () => {
 
 			// function operation
 			const functionRegex = new RegExp(String.raw`(${FUNCTION_REGEX})\(([+-]?${NUMBER_REGEX})\)`)
-			while (regexTest(functionRegex, input)) {
+			while (functionRegex.test(input)) {
 				hasOperation = true
-				input = stringReplace(input, functionRegex, (_, fnName, value) => {
-					let parsedValue: number = numberParse(value)
+				input = input.replace(functionRegex, (_, fnName, value) => {
+					let parsedValue: number = Number.parseFloat(value)
 					const angleToRadian = (value: number) => {
 						if (calculator() != CalculatorType.scientific) return value
 
@@ -624,35 +627,35 @@ const _: VoidComponent = () => {
 					}
 
 					switch (fnName) {
-					case 'not': parsedValue = mathNot(parsedValue); break
-					case 'abs': parsedValue = mathAbs(parsedValue); break
-					case 'log': parsedValue = mathLog(parsedValue); break
-					case 'ln': parsedValue = mathLn(parsedValue); break
-					case 'ceil': parsedValue = mathCeil(parsedValue); break
-					case 'floor': parsedValue = mathFloor(parsedValue); break
-					case 'round': parsedValue = mathRound(parsedValue); break
-					case 'sqrt': parsedValue = mathSqrt(parsedValue); break
-					case 'sin': parsedValue = mathSin(angleToRadian(parsedValue)); break
-					case 'cos': parsedValue = mathCos(angleToRadian(parsedValue)); break
-					case 'tan': parsedValue = mathTan(angleToRadian(parsedValue)); break
+					case 'not': parsedValue = ~parsedValue; break
+					case 'abs': parsedValue = Math.abs(parsedValue); break
+					case 'log': parsedValue = Math.log10(parsedValue); break
+					case 'ln': parsedValue = Math.log(parsedValue); break
+					case 'ceil': parsedValue = Math.ceil(parsedValue); break
+					case 'floor': parsedValue = Math.floor(parsedValue); break
+					case 'round': parsedValue = Math.round(parsedValue); break
+					case 'sqrt': parsedValue = Math.sqrt(parsedValue); break
+					case 'sin': parsedValue = Math.sin(angleToRadian(parsedValue)); break
+					case 'cos': parsedValue = Math.cos(angleToRadian(parsedValue)); break
+					case 'tan': parsedValue = Math.tan(angleToRadian(parsedValue)); break
 					case 'csc': parsedValue = mathCsc(angleToRadian(parsedValue)); break
 					case 'sec': parsedValue = mathSec(angleToRadian(parsedValue)); break
 					case 'cot': parsedValue = mathCot(angleToRadian(parsedValue)); break
-					case 'sinh': parsedValue = mathSinH(angleToRadian(parsedValue)); break
-					case 'cosh': parsedValue = mathCosH(angleToRadian(parsedValue)); break
-					case 'tanh': parsedValue = mathTanH(angleToRadian(parsedValue)); break
+					case 'sinh': parsedValue = Math.sinh(angleToRadian(parsedValue)); break
+					case 'cosh': parsedValue = Math.cosh(angleToRadian(parsedValue)); break
+					case 'tanh': parsedValue = Math.tanh(angleToRadian(parsedValue)); break
 					case 'csch': parsedValue = mathCscH(angleToRadian(parsedValue)); break
 					case 'sech': parsedValue = mathSecH(angleToRadian(parsedValue)); break
 					case 'coth': parsedValue = mathCotH(angleToRadian(parsedValue)); break
-					case 'asin': parsedValue = radianToAngle(mathASin(parsedValue)); break
-					case 'acos': parsedValue = radianToAngle(mathAcos(parsedValue)); break
-					case 'atan': parsedValue = radianToAngle(mathATan(parsedValue)); break
+					case 'asin': parsedValue = radianToAngle(Math.asin(parsedValue)); break
+					case 'acos': parsedValue = radianToAngle(Math.acos(parsedValue)); break
+					case 'atan': parsedValue = radianToAngle(Math.atan(parsedValue)); break
 					case 'acsc': parsedValue = radianToAngle(mathACsc(parsedValue)); break
 					case 'asec': parsedValue = radianToAngle(mathASec(parsedValue)); break
 					case 'acot': parsedValue = radianToAngle(mathACot(parsedValue)); break
-					case 'asinh': parsedValue = radianToAngle(mathASinH(parsedValue)); break
-					case 'acosh': parsedValue = radianToAngle(mathACosH(parsedValue)); break
-					case 'atanh': parsedValue = radianToAngle(mathATanH(parsedValue)); break
+					case 'asinh': parsedValue = radianToAngle(Math.asinh(parsedValue)); break
+					case 'acosh': parsedValue = radianToAngle(Math.acosh(parsedValue)); break
+					case 'atanh': parsedValue = radianToAngle(Math.atanh(parsedValue)); break
 					case 'acsch': parsedValue = radianToAngle(mathACscH(parsedValue)); break
 					case 'asech': parsedValue = radianToAngle(mathASecH(parsedValue)); break
 					case 'acoth': parsedValue = radianToAngle(mathACotH(parsedValue)); break
@@ -663,40 +666,39 @@ const _: VoidComponent = () => {
 
 			// remove brackets
 			const bracketsRegex = new RegExp(String.raw`(?<!${FUNCTION_REGEX})\(([+-]?${NUMBER_REGEX})\)`)
-			while (regexTest(bracketsRegex, input)) {
+			while (bracketsRegex.test(input)) {
 				hasOperation = true
-				input = stringReplace(input, bracketsRegex, (_, num1) => num1)
+				input = input.replace(bracketsRegex, (_, num1) => num1)
 			}
 
 			// square root operation
 			const sqrtRegex = /√([-+]?\d+(?:\.\d+)?)/g
-			while (regexTest(sqrtRegex, input)){
+			while (sqrtRegex.test(input)){
 				hasOperation = true
-				input = stringReplace(input, sqrtRegex, (_, num1) => {
-					const parsedValue = numberParse(num1)
+				input = input.replace(sqrtRegex, (_, num1) => {
+					const parsedValue = Number.parseFloat(num1)
 					if (parsedValue < 0) throw Error()
-					return numberToRealDigits(mathSqrt(parsedValue))
+					return numberToRealDigits(Math.sqrt(parsedValue))
 				})
 			}
 
 			// percentage operation
 			const percentageRegex = /(\d+(?:\.\d+)?)%/g
-			while (regexTest(percentageRegex, input)){
+			while (percentageRegex.test(input)){
 				hasOperation = true
-				input = stringReplace(
-					input,
+				input = input.replace(
 					percentageRegex,
-					(_, num1) => numberToRealDigits(numberParse(num1) / 100)
+					(_, num1) => numberToRealDigits(Number.parseFloat(num1) / 100)
 				)
 			}
 
 			// factorial operation
 			const factorialRegex = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)!/g
-			while (regexTest(factorialRegex, input)){
+			while (factorialRegex.test(input)){
 				hasOperation = true
-				input = stringReplace(input, factorialRegex, (_, num1) => {
-					let n = numberParse(num1)
-					if (regexTest(/\./, numberToRealDigits(n)) || n < 0) throw Error()
+				input = input.replace(factorialRegex, (_, num1) => {
+					let n = Number.parseFloat(num1)
+					if (/\./.test(numberToRealDigits(n)) || n < 0) throw Error()
 
 					let result = 1
 					while (n > 0) {
@@ -710,18 +712,17 @@ const _: VoidComponent = () => {
 			// exponential operation
 			const expRegex = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)\^([+-]?\d+(?:\.\d+)?)/
 			const expReverseRegex = /((?:\d+\.)?\d+[+-]?)\^((?:\d+\.)?\d+(?:[-+](?!\d))?)/
-			const match = stringMatch(input, expRegex)
+			const match = input.match(expRegex)
 			if (match) {
 				hasOperation = true
 				input = stringReverse(input)
 
-				while (regexTest(expReverseRegex, input)) {
-					input = stringReplace(
-						input,
+				while (expReverseRegex.test(input)) {
+					input = input.replace(
 						expReverseRegex,
-						(_, num2, num1) => stringReverse(numberToRealDigits(mathPow(
-							numberParse(stringReverse(num1)),
-							numberParse(stringReverse(num2))
+						(_, num2, num1) => stringReverse(numberToRealDigits(Math.pow(
+							Number.parseFloat(stringReverse(num1)),
+							Number.parseFloat(stringReverse(num2))
 						)))
 					)
 				}
@@ -730,12 +731,12 @@ const _: VoidComponent = () => {
 
 			// division & multiplication & modulus operation
 			const divMulModRegex = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)([*×\/÷]|mod)([+-]?\d+(?:\.\d+)?)/
-			while (regexTest(divMulModRegex, input)) {
+			while (divMulModRegex.test(input)) {
 				hasOperation = true
-				input = stringReplace(input, divMulModRegex, (_, num1, operator, num2) => {
-					if (operator == 'mod') return numberToRealDigits(numberParse(num1) % numberParse(num2))
-					else if (regexTest(/[*×]/, operator)) return numberToRealDigits(numberParse(num1) * numberParse(num2))
-					else if (regexTest(/[\/÷]/, operator)) return numberToRealDigits(numberParse(num1) / numberParse(num2))
+				input = input.replace(divMulModRegex, (_, num1, operator, num2) => {
+					if (operator == 'mod') return numberToRealDigits(Number.parseFloat(num1) % Number.parseFloat(num2))
+					else if (/[*×]/.test(operator)) return numberToRealDigits(Number.parseFloat(num1) * Number.parseFloat(num2))
+					else if (/[\/÷]/.test(operator)) return numberToRealDigits(Number.parseFloat(num1) / Number.parseFloat(num2))
 					return _
 				})
 			}
@@ -743,82 +744,82 @@ const _: VoidComponent = () => {
 
 			// addition & substraction operation
 			const addSubRegex = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)([+-])([+-]?\d+(?:\.\d+)?)/
-			while (regexTest(addSubRegex, input)) {
+			while (addSubRegex.test(input)) {
 				hasOperation = true
-				input = stringReplace(input, addSubRegex, (_, num1, operator, num2) => {
-					if (operator == '+') return numberToRealDigits(numberParse(num1) + numberParse(num2))
-					if (operator == '-') return numberToRealDigits(numberParse(num1) - numberParse(num2))
+				input = input.replace(addSubRegex, (_, num1, operator, num2) => {
+					if (operator == '+') return numberToRealDigits(Number.parseFloat(num1) + Number.parseFloat(num2))
+					if (operator == '-') return numberToRealDigits(Number.parseFloat(num1) - Number.parseFloat(num2))
 					return _
 				})
 			}
 
 			// shifting operation
 			const lshRshRegex = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)(lsh|rsh|<<|>>)([+-]?\d+(?:\.\d+)?)/
-			while (regexTest(lshRshRegex, input)) {
+			while (lshRshRegex.test(input)) {
 				hasOperation = true
-				input = stringReplace(input, lshRshRegex, (_, num1, operator, num2) => {
-					const $num1: number = numberParse(num1)
-					const $num2: number = numberParse(num2)
-					if (regexTest(/\./, num1) || regexTest(/\./, num2)) throw Error()
-					if (regexTest(/^(lsh|<<)$/, operator)) return numberToRealDigits($num1 << $num2)
-					if (regexTest(/^(rsh|>>)$/, operator)) return numberToRealDigits($num1 >> $num2)
+				input = input.replace(lshRshRegex, (_, num1, operator, num2) => {
+					const $num1: number = Number.parseFloat(num1)
+					const $num2: number = Number.parseFloat(num2)
+					if (/\./.test(num1) || /\./.test(num2)) throw Error()
+					if (/^(lsh|<<)$/.test(operator)) return numberToRealDigits($num1 << $num2)
+					if (/^(rsh|>>)$/.test(operator)) return numberToRealDigits($num1 >> $num2)
 					return _
 				})
 			}
 
 			// and operation
 			const andRegex = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)(?:&|and)([+-]?\d+(?:\.\d+)?)/
-			while (regexTest(andRegex, input)) {
+			while (andRegex.test(input)) {
 				hasOperation = true
-				input = stringReplace(input, andRegex, (_, num1, num2) =>  {
-					if (regexTest(/\./, num1) || regexTest(/\./, num2)) throw Error()
-					return numberToRealDigits(numberParse(num1) & numberParse(num2))
+				input = input.replace(andRegex, (_, num1, num2) =>  {
+					if (/\./.test(num1) || /\./.test(num2)) throw Error()
+					return numberToRealDigits(Number.parseFloat(num1) & Number.parseFloat(num2))
 				})
 			}
 
 			// xor operation
 			const xorRegex = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)xor([+-]?\d+(?:\.\d+)?)/
-			while (regexTest(xorRegex, input)) {
+			while (xorRegex.test(input)) {
 				hasOperation = true
-				input = stringReplace(input, xorRegex, (_, num1, num2) => {
-					if (regexTest(/\./, num1) || regexTest(/\./, num2)) throw Error()
-					return numberToRealDigits(numberParse(num1) ^ numberParse(num2))
+				input = input.replace(xorRegex, (_, num1, num2) => {
+					if (/\./.test(num1) || /\./.test(num2)) throw Error()
+					return numberToRealDigits(Number.parseFloat(num1) ^ Number.parseFloat(num2))
 				})
 			}
 
 			// or operation
 			const orRegex = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)(?:\||or)([+-]?\d+(?:\.\d+)?)/
-			while (regexTest(orRegex, input)) {
+			while (orRegex.test(input)) {
 				hasOperation = true
-				input = stringReplace(input, orRegex, (_, num1, num2) => {
-					if (regexTest(/\./, num1) || regexTest(/\./, num2)) throw Error()
-					return numberToRealDigits(numberParse(num1) | numberParse(num2))
+				input = input.replace(orRegex, (_, num1, num2) => {
+					if (/\./.test(num1) || /\./.test(num2)) throw Error()
+					return numberToRealDigits(Number.parseFloat(num1) | Number.parseFloat(num2))
 				})
 			}
 
 			if (!hasOperation) break
 		}
 
-		const isValidValue = (v: string) => regexTest(/^[+-]?\d+(?:\.\d+)?$/, v)
+		const isValidValue = (v: string) => /^[+-]?\d+(?:\.\d+)?$/.test(v)
 
-		if (calculator() == CalculatorType.basic) setOutputs('basic', isValidValue(input)? numberParse(input) : null)
-		else if (calculator() == CalculatorType.scientific) setOutputs('scientific', isValidValue(input)? numberParse(input) : null)
-		else if (calculator() == CalculatorType.programmer) setOutputs('programmer', isValidValue(input)? numberParse(input) : null)
+		if (calculator() == CalculatorType.basic) setOutputs('basic', isValidValue(input)? Number.parseFloat(input) : null)
+		else if (calculator() == CalculatorType.scientific) setOutputs('scientific', isValidValue(input)? Number.parseFloat(input) : null)
+		else if (calculator() == CalculatorType.programmer) setOutputs('programmer', isValidValue(input)? Number.parseFloat(input) : null)
 		else if (calculator() == CalculatorType.converter) {
 			const converter = settings.converter
 			input = numberToRealDigits(convertUnit(
-				numberParse(input),
+				Number.parseFloat(input),
 				converter.unitInput,
 				converter.unitOutput,
 				converter.type
 			))
-			setOutputs('converter', isValidValue(input)? numberParse(input) : null)
+			setOutputs('converter', isValidValue(input)? Number.parseFloat(input) : null)
 		}
 	}
 
 	function saveOutput(): void {
-		const storeLastOutput = db.writeStore(ObjectStoreNames.lastOutput)
-		if (storeLastOutput == null) return
+		const store = db.writeStore(ObjectStoreNames.lastOutput)
+		if (store == null) return
 
 		let key = ObjectStoreKeys.lastOutput_basic
 		let value = null
@@ -845,7 +846,7 @@ const _: VoidComponent = () => {
 			break
 		}
 
-		idbStorePut(storeLastOutput, {key, value})
+		store.put({key, value})
 	}
 
 	function generateOutput(): void {
@@ -866,158 +867,158 @@ const _: VoidComponent = () => {
 	}
 
 	function initNote(): void {
-		const storeMiscellaneous = db.readStore(ObjectStoreNames.miscellaneous)
-		if (storeMiscellaneous == null) return
+		const store = db.readStore(ObjectStoreNames.miscellaneous)
+		if (store == null) return
 
-		promiseDone(db.get<ObjectStoreMiscellaneous<string>>(
-			storeMiscellaneous,
+		db.get<ObjectStoreMiscellaneous<string>>(
+			store,
 			ObjectStoreKeys.miscellaneous_note
-		), (result) => setNote(r => result?.value ?? r))
+		).then((result) => setNote(r => result?.value ?? r))
 	}
 
 	function initLastPage(): void {
-		const storeMiscellaneous = db.readStore(ObjectStoreNames.miscellaneous)
-		if (storeMiscellaneous == null) return
+		const store = db.readStore(ObjectStoreNames.miscellaneous)
+		if (store == null) return
 
-		promiseDone(db.get<ObjectStoreMiscellaneous<CalculatorType>>(
-			storeMiscellaneous,
+		db.get<ObjectStoreMiscellaneous<CalculatorType>>(
+			store,
 			ObjectStoreKeys.miscellaneous_lastPage
-		), (result) => setCalculator(r => result?.value ?? r))
+		).then((result) => setCalculator(r => result?.value ?? r))
 	}
 
 	function initSettings(): void {
-		const storeSettings = db.readStore(ObjectStoreNames.settings)
-		if (storeSettings == null) return;
+		const store = db.readStore(ObjectStoreNames.settings)
+		if (store == null) return;
 
-		promiseDone(db.get<ObjectStoreSettings<DecimalNumberFormat>>(
-			storeSettings,
+		db.get<ObjectStoreSettings<DecimalNumberFormat>>(
+			store,
 			ObjectStoreKeys.settings_numberFormatDecimal
-		), (result) => setSettings('numberFormat', 'decimal', d => result?.value ?? d))
+		).then((result) => setSettings('numberFormat', 'decimal', d => result?.value ?? d))
 
-		promiseDone(db.get<ObjectStoreSettings<GroupingNumberFormat>>(
-			storeSettings,
+		db.get<ObjectStoreSettings<GroupingNumberFormat>>(
+			store,
 			ObjectStoreKeys.settings_numberFormatGrouping
-		), (result) => setSettings('numberFormat', 'grouping', d => result?.value ?? d))
+		).then((result) => setSettings('numberFormat', 'grouping', d => result?.value ?? d))
 
-		promiseDone(db.get<ObjectStoreSettings<boolean>>(
-			storeSettings,
+		db.get<ObjectStoreSettings<boolean>>(
+			store,
 			ObjectStoreKeys.settings_scientificNotation
-		), (result) => setSettings('scientificNotation', d => result?.value ?? d))
+		).then((result) => setSettings('scientificNotation', d => result?.value ?? d))
 
-		promiseDone(db.get<ObjectStoreSettings<boolean>>(
-			storeSettings,
+		db.get<ObjectStoreSettings<boolean>>(
+			store,
 			ObjectStoreKeys.settings_memoryButtons
-		), (result) => setSettings('memoryButtons', d => result?.value ?? d))
+		).then((result) => setSettings('memoryButtons', d => result?.value ?? d))
 
-		promiseDone(db.get<ObjectStoreSettings<ConverterType>>(
-			storeSettings,
+		db.get<ObjectStoreSettings<ConverterType>>(
+			store,
 			ObjectStoreKeys.settings_converterType
-		), (result) => setSettings('converter', 'type', d => result?.value ?? d))
+		).then((result) => setSettings('converter', 'type', d => result?.value ?? d))
 
-		promiseDone(db.get<ObjectStoreSettings<ConverterUnitType>>(
-			storeSettings,
+		db.get<ObjectStoreSettings<ConverterUnitType>>(
+			store,
 			ObjectStoreKeys.settings_converterUnitInput
-		), (result) => setSettings('converter', 'unitInput', d => result? ConverterUnit.parseJSON(result.value) : d))
+		).then((result) => setSettings('converter', 'unitInput', d => result? ConverterUnit.parseJSON(result.value) : d))
 
-		promiseDone(db.get<ObjectStoreSettings<ConverterUnitType>>(
-			storeSettings,
+		db.get<ObjectStoreSettings<ConverterUnitType>>(
+			store,
 			ObjectStoreKeys.settings_converterUnitOutput
-		), (result) => setSettings('converter', 'unitOutput', d => result? ConverterUnit.parseJSON(result.value) : d))
+		).then((result) => setSettings('converter', 'unitOutput', d => result? ConverterUnit.parseJSON(result.value) : d))
 
-		promiseDone(db.get<ObjectStoreSettings<ScientificAngleType>>(
-			storeSettings,
+		db.get<ObjectStoreSettings<ScientificAngleType>>(
+			store,
 			ObjectStoreKeys.settings_scientificAngle
-		), (result) => setSettings('scientific', 'angle', d => result?.value ?? d))
+		).then((result) => setSettings('scientific', 'angle', d => result?.value ?? d))
 
-		promiseDone(db.get<ObjectStoreSettings<NumberType>>(
-			storeSettings,
+		db.get<ObjectStoreSettings<NumberType>>(
+			store,
 			ObjectStoreKeys.settings_programmerNumberType
-		), (result) => setSettings('programmer', 'numberType', d => result?.value ?? d))
+		).then((result) => setSettings('programmer', 'numberType', d => result?.value ?? d))
 
-		promiseDone(db.get<ObjectStoreSettings<DateOperation>>(
-			storeSettings,
+		db.get<ObjectStoreSettings<DateOperation>>(
+			store,
 			ObjectStoreKeys.settings_dateOperation
-		), (result) => setSettings('date', 'operation', d => result?.value ?? d))
+		).then((result) => setSettings('date', 'operation', d => result?.value ?? d))
 	}
 
 	function initLastOutput(): void {
 		const storeLastOutput = db.readStore(ObjectStoreNames.lastOutput)
 		if (storeLastOutput == null) return
 
-		promiseDone(db.get<ObjectStoreLastOutput<number>>(
+		db.get<ObjectStoreLastOutput<number>>(
 			storeLastOutput,
 			ObjectStoreKeys.lastOutput_basic
-		), (result) => setOutputs('basic', o => result?.value ?? o))
+		).then((result) => setOutputs('basic', o => result?.value ?? o))
 
-		promiseDone(db.get<ObjectStoreLastOutput<number>>(
+		db.get<ObjectStoreLastOutput<number>>(
 			storeLastOutput,
 			ObjectStoreKeys.lastOutput_scientific
-		), (result) => setOutputs('scientific', o => result?.value ?? o))
+		).then((result) => setOutputs('scientific', o => result?.value ?? o))
 
-		promiseDone(db.get<ObjectStoreLastOutput<number>>(
+		db.get<ObjectStoreLastOutput<number>>(
 			storeLastOutput,
 			ObjectStoreKeys.lastOutput_converter
-		), (result) => setOutputs('converter', o => result?.value ?? o))
+		).then((result) => setOutputs('converter', o => result?.value ?? o))
 
-		promiseDone(db.get<ObjectStoreLastOutput<number>>(
+		db.get<ObjectStoreLastOutput<number>>(
 			storeLastOutput,
 			ObjectStoreKeys.lastOutput_programmer
-		), (result) => setOutputs('programmer', o => result?.value ?? o))
+		).then((result) => setOutputs('programmer', o => result?.value ?? o))
 
-		promiseDone(db.get<ObjectStoreLastOutput<string>>(
+		db.get<ObjectStoreLastOutput<string>>(
 			storeLastOutput,
 			ObjectStoreKeys.lastOutput_date
-		), (result) => setOutputs('date', o => result?.value ?? o))
+		).then((result) => setOutputs('date', o => result?.value ?? o))
 	}
 
 	function initLastInput(): void {
-		const storeLastInput = db.readStore(ObjectStoreNames.lastInput)
-		if (storeLastInput == null) return;
+		const store = db.readStore(ObjectStoreNames.lastInput)
+		if (store == null) return;
 
-		promiseDone(db.get<ObjectStoreLastInput<string>>(
-			storeLastInput,
+		db.get<ObjectStoreLastInput<string>>(
+			store,
 			ObjectStoreKeys.lastInput_basic
-		), (result) => setInputs('basic', i => result?.value ?? i))
+		).then((result) => setInputs('basic', i => result?.value ?? i))
 
-		promiseDone(db.get<ObjectStoreLastInput<string>>(
-			storeLastInput,
+		db.get<ObjectStoreLastInput<string>>(
+			store,
 			ObjectStoreKeys.lastInput_scientific
-		), (result) => setInputs('scientific', i => result?.value ?? i))
+		).then((result) => setInputs('scientific', i => result?.value ?? i))
 
-		promiseDone(db.get<ObjectStoreLastInput<string>>(
-			storeLastInput,
+		db.get<ObjectStoreLastInput<string>>(
+			store,
 			ObjectStoreKeys.lastInput_converter
-		), (result) => setInputs('converter', i => result?.value ?? i))
+		).then((result) => setInputs('converter', i => result?.value ?? i))
 
-		promiseDone(db.get<ObjectStoreLastInput<string>>(
-			storeLastInput,
+		db.get<ObjectStoreLastInput<string>>(
+			store,
 			ObjectStoreKeys.lastInput_programmer
-		), (result) => setInputs('programmer', i => result?.value ?? i))
+		).then((result) => setInputs('programmer', i => result?.value ?? i))
 
-		promiseDone(db.get<ObjectStoreLastInput<number>>(
-			storeLastInput,
+		db.get<ObjectStoreLastInput<number>>(
+			store,
 			ObjectStoreKeys.lastInput_dateYear
-		), (result) => setInputs('date', 'year', i => result?.value ?? i))
+		).then((result) => setInputs('date', 'year', i => result?.value ?? i))
 
-		promiseDone(db.get<ObjectStoreLastInput<number>>(
-			storeLastInput,
+		db.get<ObjectStoreLastInput<number>>(
+			store,
 			ObjectStoreKeys.lastInput_date_month
-		), (result) => setInputs('date', 'month', i => result?.value ?? i))
+		).then((result) => setInputs('date', 'month', i => result?.value ?? i))
 
-		promiseDone(db.get<ObjectStoreLastInput<number>>(
-			storeLastInput,
+		db.get<ObjectStoreLastInput<number>>(
+			store,
 			ObjectStoreKeys.lastInput_date_day
-		), (result) => setInputs('date', 'day', i => result?.value ?? i))
+		).then((result) => setInputs('date', 'day', i => result?.value ?? i))
 
-		promiseDone(db.get<ObjectStoreLastInput<string>>(
-			storeLastInput,
+		db.get<ObjectStoreLastInput<string>>(
+			store,
 			ObjectStoreKeys.lastInput_dateFrom
-		), (result) => setInputs('date', 'from', i => result? new Date(dateParse(result.value)) : i))
+		).then((result) => setInputs('date', 'from', i => result? new Date(Date.parse(result.value)) : i))
 
-		promiseDone(db.get<ObjectStoreLastInput<string>>(
-			storeLastInput,
+		db.get<ObjectStoreLastInput<string>>(
+			store,
 			ObjectStoreKeys.lastInput_dateTo
-		), (result) => setInputs('date', 'to', i => result? new Date(dateParse(result.value)) : i))
+		).then((result) => setInputs('date', 'to', i => result? new Date(Date.parse(result.value)) : i))
 	}
 
 	function initDatabase(): void {

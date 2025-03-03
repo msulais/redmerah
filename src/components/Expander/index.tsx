@@ -2,14 +2,10 @@ import { createContext, createEffect, createSignal, mergeProps, Show, splitProps
 import { mergeRefs } from "@solid-primitives/refs"
 
 import { attrSetIfExist, attrClassList } from "@/utils/attributes"
-import { elementAnimate, elementRect, elementStyle } from "@/utils/element"
-import { eventCall, eventPreventDefault } from "@/utils/event"
-import { promiseDone } from "@/utils/object"
+import { eventCall } from "@/utils/event"
 import { ICON_CHEVRON_DOWN } from "@/constants/icons"
-import { rectHeight } from "@/utils/rect"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { animationIsOn } from "@/utils/animation"
-import { arrayJoin } from "@/utils/array"
 
 import { RawIconButton } from "@/components/Button"
 import { List, RawList, type ListProps, type RawListProps } from "@/components/List"
@@ -142,38 +138,36 @@ const Expander: ParentComponent<ExpanderProps> = ($props) => {
 				class={attrClassList('c-expander-header', headerProps.class)}
 				onClick={(ev) => {
 					eventCall(ev, headerProps.onClick)
-					eventPreventDefault(ev)
+					ev.preventDefault()
 					if (!isAnimationDone) return
 
 					const options: KeyframeAnimationOptions = {
 						duration: 300,
 						easing: AnimationEffectTiming.spring
 					}
-					const rect = elementRect(contentRef)
-					const paddingTop = elementStyle(contentRef, 'padding-top')
-					const paddingBottom = elementStyle(contentRef, 'padding-bottom')
-					const paddingRight = elementStyle(contentRef, 'padding-right')
-					const paddingLeft = elementStyle(contentRef, 'padding-left')
-					const padding = arrayJoin(
-						[paddingTop, paddingRight, paddingBottom, paddingLeft], ' '
+					const rect = contentRef.getBoundingClientRect()
+					const style = (el: HTMLElement, property: string) => (
+						window
+						.getComputedStyle(el)
+						.getPropertyValue(property)
 					)
-					const padding2 = arrayJoin(
-						['0px', paddingRight, '0px', paddingLeft], ' '
-					)
+					const paddingTop = style(contentRef, 'padding-top')
+					const paddingBottom = style(contentRef, 'padding-bottom')
+					const paddingRight = style(contentRef, 'padding-right')
+					const paddingLeft = style(contentRef, 'padding-left')
+					const padding = [paddingTop, paddingRight, paddingBottom, paddingLeft].join(' ')
+					const padding2 = ['0px', paddingRight, '0px', paddingLeft].join(' ')
 					isAnimationDone = false
 					if (isOpen()) {
 						if (animationIsOn()){
-							promiseDone(
-								elementAnimate(contentRef, {
-									opacity: [1, 0],
-									height: [rectHeight(rect) + 'px', '0px'],
-									padding: [padding, padding2]
-								}, options).finished,
-								() => {
-									isAnimationDone = true
-									setIsOpen(false)
-								}
-							)
+							contentRef.animate({
+								opacity: [1, 0],
+								height: [rect.height + 'px', '0px'],
+								padding: [padding, padding2]
+							}, options).finished.then(() => {
+								isAnimationDone = true
+								setIsOpen(false)
+							})
 							return
 						}
 
@@ -184,14 +178,11 @@ const Expander: ParentComponent<ExpanderProps> = ($props) => {
 
 					setIsOpen(true)
 					if (animationIsOn()) {
-						promiseDone(
-							elementAnimate(contentRef, {
-								opacity: [0, 1],
-								height: ['0px', rectHeight(rect) + 'px'],
-								padding: [padding2, padding]
-							}, options).finished,
-							() => isAnimationDone = true
-						)
+						contentRef.animate({
+							opacity: [0, 1],
+							height: ['0px', rect.height + 'px'],
+							padding: [padding2, padding]
+						}, options).finished.then(() => isAnimationDone = true)
 						return
 					}
 

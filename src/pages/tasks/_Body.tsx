@@ -1,25 +1,18 @@
 import type { DOMElement } from "solid-js/jsx-runtime"
 import { createEffect, createMemo, createSignal, createUniqueId, For, Match, Show, Switch, type JSX, type VoidComponent } from "solid-js"
-import { createStore } from "solid-js/store"
+import { createStore, produce } from "solid-js/store"
 
 import type { TaskLabel, Settings, Task, TaskList, SubTask, TaskFileMetaData } from "./_types"
 import { Commands, Pages, SortBy, SortMode } from "./_enums"
-import { dateCurrent, dateYear, dateTextYMD_HM, dateOutRangeYMD_HM } from "@/utils/datetime"
-import { eventCurrentTarget, eventPreventDefault, eventStopPropagation, eventTarget } from "@/utils/event"
+import { dateOutRangeYMD_HM } from "@/utils/datetime"
 import { DEFAULT_TASK_LIST } from "./_constants"
 import { attrSetIfExist, attrClassListModule } from "@/utils/attributes"
-import { stringReplace, stringSplit, stringStartsWith, stringToTitleCase, stringTrim } from "@/utils/string"
-import { elementBySelector, elementClick, elementClosest, elementDataset, elementFocus, elementId, elementSiblingNext, elementSiblingPrevious, elementTagName, elementValidTarget } from "@/utils/element"
-import { typeIsNumber } from "@/utils/typecheck"
+import { stringToTitleCase } from "@/utils/string"
+import { elementValidTarget } from "@/utils/element"
 import { fileOpen, fileReadAsText } from "@/utils/file"
-import { urlCreate, urlRevoke } from "@/utils/url"
-import { arrayConcat, arrayFindIndex, arrayIncludes, arrayJoin, arrayLength, arraySlice, arraySome } from "@/utils/array"
-import { regexTest } from "@/utils/regex"
-import { numberIsNotDefined, numberParse, numberToFixed } from "@/utils/number"
-import { promiseDone } from "@/utils/object"
+import { numberIsNotDefined } from "@/utils/number"
 import { KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT, KEY_ARROW_UP, KEY_ENTER, KEY_SPACE } from "@/constants/key-code"
 import { AppColors } from "@/enums/colors"
-import { documentActive } from "@/utils/document"
 import { ICON_ADD, ICON_ADD_CIRCLE, ICON_ADD_SQUARE, ICON_ALERT, ICON_ALERT_BADGE, ICON_ALERT_OFF, ICON_ALERT_URGENT, ICON_APPS_LIST_DETAIL, ICON_ARROW_DOWNLOAD, ICON_ARROW_RIGHT, ICON_ARROW_SORT, ICON_ATTACH, ICON_CALENDAR, ICON_CALENDAR_EDIT, ICON_CHECKBOX_CHECKED, ICON_CHECKBOX_UNCHECKED, ICON_CIRCLE, ICON_COPY, ICON_DELETE, ICON_DELETE_DISMISS, ICON_DELETE_LINES, ICON_DISMISS, ICON_EDIT, ICON_EYE, ICON_HOME, ICON_MORE_VERTICAL, ICON_STAR, ICON_TAG, ICON_TASK_LIST_SQUARE_LTR, ICON_TEXT_CASE_TITLE, ICON_TEXT_EDIT_STYLE, ICON_TEXT_SORT_ASCENDING, ICON_TEXT_SORT_DESCENDING } from "@/constants/icons"
 
 import Divider from "@/components/Divider"
@@ -96,19 +89,19 @@ const AppbarTasks: VoidComponent<{
 				ref={r => menuSortRef = r}
 				c:onToggleOpen={(v) => setIsMenuSortOpen(v)}
 				onClick={ev => {
-					const button = documentActive()!
+					const button = document.activeElement! as HTMLButtonElement
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					const dataSortby = elementDataset(button, 'sortby')
+					const dataset = button.dataset
+					const dataSortby = dataset.sortby
 					if (dataSortby) {
 						return updateSortBy(dataSortby as SortBy)
 					}
 
-					const dataSortmode = elementDataset(button, 'sortmode')
+					const dataSortmode = dataset.sortmode
 					if (dataSortmode) {
 						return updateSortMode(dataSortmode as SortMode)
 					}
@@ -137,14 +130,13 @@ const AppbarTasks: VoidComponent<{
 				ref={r => menuMoreRef = r}
 				c:onToggleOpen={(v) => setIsMenuMoreOpen(v)}
 				onClick={ev => {
-					const button = documentActive()!
+					const button = document.activeElement! as HTMLButtonElement
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					switch (elementId(button)) {
+					switch (button.id) {
 					case buttonMarkAllCompletedId:
 						closeMenu(menuMoreRef)
 						command(Commands.markAllCompleted, props.taskListIndex)
@@ -200,7 +192,7 @@ const AppbarTasks: VoidComponent<{
 						Delete completed tasks
 					</MenuItem>
 				</Show>
-				<Show when={typeIsNumber(props.page)}>
+				<Show when={typeof props.page === 'number'}>
 					<Show when={props.isAnyTask}><MenuDivider /></Show>
 					<MenuItem
 						id={buttonRenameListId}
@@ -228,14 +220,13 @@ const AppbarTasks: VoidComponent<{
 				c:header="Clear tasks"
 				style={{width: '500px'}}
 				onClick={ev => {
-					const button = documentActive()!
+					const button = document.activeElement!
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == "BUTTON"
 					)) return
 
-					switch (elementId(button)) {
+					switch (button.id) {
 					case buttonClearTasksCancelId:
 						closeDialog(dialogClearTasksRef)
 						break
@@ -264,14 +255,13 @@ const AppbarTasks: VoidComponent<{
 				ref={r => dialogDeleteCompletedTasksRef = r}
 				c:header={"Delete completed tasks"}
 				onClick={ev => {
-					const button = documentActive()!
+					const button = document.activeElement!
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == "BUTTON"
 					)) return
 
-					switch (elementId(button)) {
+					switch (button.id) {
 					case buttonDeleteCompletedTasksCancelId:
 						closeDialog(dialogDeleteCompletedTasksRef)
 						break
@@ -307,14 +297,13 @@ const AppbarTasks: VoidComponent<{
 			c:leading={props.leading}
 			c:headline={props.headline}
 			onClick={ev => {
-				const button = documentActive()!
+				const button = document.activeElement! as HTMLButtonElement
 				if (!elementValidTarget(
-					eventCurrentTarget(ev),
+					ev.currentTarget,
 					button,
-					el => elementTagName(el) == "BUTTON"
 				)) return
 
-				switch (elementId(button)) {
+				switch (button.id) {
 				case buttonSortById:
 					openMenu(menuSortRef, {anchor: button})
 					break
@@ -341,7 +330,7 @@ const AppbarTasks: VoidComponent<{
 						c:code={ICON_COPY}
 					/>
 				</Show>
-				<Show when={!props.isGroup && ((props.page == Pages.tasks && props.isAnyTask) || typeIsNumber(props.page))}>
+				<Show when={!props.isGroup && ((props.page == Pages.tasks && props.isAnyTask) || typeof props.page === 'number')}>
 					<IconButton
 						data-tooltip="More options"
 						id={buttonMoreOptionsId}
@@ -378,35 +367,35 @@ const TaskItem: VoidComponent<{
 
 	return (<div
 		tabindex={0}
-		data-taskitem={arrayJoin([taskListIndex(), taskIndex()], ',')}
+		data-taskitem={[taskListIndex(), taskIndex()].join(',')}
 		class={CSS.body_task_item}
 		data-done={attrSetIfExist(task().complete)}>
 		<List
 			c:leading={<IconButton
 				data-tooltip={`Mark as ${task().complete? 'un' : ''}completed`}
-				data-taskitem-complete={arrayJoin([taskListIndex(), taskIndex()], ',')}
+				data-taskitem-complete={[taskListIndex(), taskIndex()].join(',')}
 				c:code={task().complete? ICON_CHECKBOX_CHECKED : ICON_CHECKBOX_UNCHECKED}
 			/>}
 			c:trailing={<>
 				<IconButton
 					data-tooltip={`Mark as ${task().important? 'not ' : ''}important`}
-					data-taskitem-important={arrayJoin([taskListIndex(), taskIndex()], ',')}
+					data-taskitem-important={[taskListIndex(), taskIndex()].join(',')}
 					c:filled={task().important}
 					c:code={ICON_STAR}
 				/>
 				<IconButton
 					data-tooltip="Delete task"
-					data-taskitem-delete={arrayJoin([taskListIndex(), taskIndex()], ',')}
+					data-taskitem-delete={[taskListIndex(), taskIndex()].join(',')}
 					c:code={ICON_DELETE}
 				/>
 			</>}
 			c:subtitle={<>
 				{ task().description }
 				<Show when={
-					arrayLength(task().subtasks) > 0
+					task().subtasks.length > 0
 					|| task().reminder != null
-					|| arrayLength(task().files) > 0
-					|| arrayLength(task().labelIds) > 0
+					|| task().files.length > 0
+					|| task().labelIds.length > 0
 				}>
 					<div class={CSS.body_task_item_tags}>
 						<Show when={task().reminder != null}>
@@ -414,28 +403,34 @@ const TaskItem: VoidComponent<{
 								data-tooltip={
 									"Task reminder" + (dateOutRangeYMD_HM(
 										task().reminder!,
-										dateCurrent(),
-										new Date(dateYear() + 100, 2, 2)
+										new Date(),
+										new Date(new Date().getFullYear() + 100, 2, 2)
 									)? " (outdated)" : "")}
 								style={{
 									"border-color": dateOutRangeYMD_HM(
 										task().reminder!,
-										dateCurrent(),
-										new Date(dateYear() + 100, 2, 2)
+										new Date(),
+										new Date(new Date().getFullYear() + 100, 2, 2)
 									)? 'rgb(var(--g-color-error))' : undefined
 								}}
-								data-taskitem-reminder={arrayJoin([taskListIndex(), taskIndex()], ',')}
+								data-taskitem-reminder={[taskListIndex(), taskIndex()].join(',')}
 								c:variant={ButtonVariant.outlined}>
 								<Icon c:filled c:code={ICON_ALERT_URGENT} c:inline/>
-								{dateTextYMD_HM(task().reminder!)}
+								{task().reminder!.toLocaleTimeString(undefined, {
+									year: 'numeric',
+									month: 'long',
+									day: 'numeric',
+									hour: 'numeric',
+									minute: 'numeric',
+								})}
 							</Button>
 						</Show>
-						<Show when={arrayLength(task().files) > 0}>
+						<Show when={task().files.length > 0}>
 							<Button
-								data-taskitem-files={arrayJoin([taskListIndex(), taskIndex()], ',')}
+								data-taskitem-files={[taskListIndex(), taskIndex()].join(',')}
 								c:variant={ButtonVariant.outlined}>
 								<Icon c:filled c:code={ICON_ATTACH} c:inline/>
-								{arrayLength(task().files)} file{arrayLength(task().files) > 1? "s" : ''}
+								{task().files.length} file{task().files.length > 1? "s" : ''}
 							</Button>
 						</Show>
 						<For each={task().labelIds}>{label_id =>
@@ -447,7 +442,7 @@ const TaskItem: VoidComponent<{
 											? labels()[label_id]!.color + '14'
 											: undefined
 									}}
-									data-taskitem-label={arrayJoin([taskListIndex(), taskIndex(), label_id], ',')}
+									data-taskitem-label={[taskListIndex(), taskIndex(), label_id].join(',')}
 									c:variant={ButtonVariant.outlined}>
 									<Icon c:filled c:code={ICON_TAG} c:inline/>
 									{labels()[label_id]!.name}
@@ -459,11 +454,11 @@ const TaskItem: VoidComponent<{
 			</>}>
 			{task().name}
 		</List>
-		<Show when={arrayLength(task().subtasks) > 0}>
-			<div class={CSS.body_task_item_subtasks} onClick={ev => eventStopPropagation(ev)}>
+		<Show when={task().subtasks.length > 0}>
+			<div class={CSS.body_task_item_subtasks} onClick={ev => ev.stopPropagation()}>
 				<For each={task().subtasks}>{(subtask, index) => <CheckBox
 					checked={subtask.complete}
-					data-taskitem-subtask={arrayJoin([taskListIndex(), taskIndex(), index()], ',')}>
+					data-taskitem-subtask={[taskListIndex(), taskIndex(), index()].join(',')}>
 					{subtask.name}
 				</CheckBox>}</For>
 			</div>
@@ -486,7 +481,7 @@ const EmptyTasks: VoidComponent<{page: Pages | number}> = (props) => {
 	const getText = createMemo<string>(() => {
 		let t = ''
 		const page = props.page
-		if (arrayIncludes([Pages.completed, Pages.uncompleted, Pages.important, Pages.planned], page as Pages)) {
+		if ([Pages.completed, Pages.uncompleted, Pages.important, Pages.planned].includes(page as Pages)) {
 			t = stringToTitleCase(page as Pages)
 		}
 		return `No ${t} Tasks`
@@ -511,7 +506,7 @@ const SingleTaskList: VoidComponent<{
 	const page = createMemo(() => props.page)
 	const taskList = createMemo(() => props.taskList)
 	const getHeadline = createMemo<string>(() => page() != Pages.tasks? taskList().name : 'Tasks')
-	const isAnyTask = createMemo<boolean>(() => arrayLength(taskList().tasks) > 0)
+	const isAnyTask = createMemo<boolean>(() => taskList().tasks.length > 0)
 	let textFieldNewTaskRef: HTMLInputElement
 
 	function command(type: Commands, ...args: unknown[]): unknown {
@@ -520,8 +515,8 @@ const SingleTaskList: VoidComponent<{
 
 	function addTask(): void {
 		if (
-			!(page() == Pages.tasks || typeIsNumber(page()))
-			|| stringTrim(textFieldNewTaskRef.value) == ''
+			!(page() == Pages.tasks || typeof page() === 'number')
+			|| textFieldNewTaskRef.value.trim() == ''
 		) return;
 
 		const listId: number = (page() == Pages.tasks
@@ -537,13 +532,13 @@ const SingleTaskList: VoidComponent<{
 			important: false,
 			labelIds: [],
 			listId: listId,
-			name: stringTrim(textFieldNewTaskRef.value),
+			name: textFieldNewTaskRef.value.trim(),
 			reminder: null,
 			subtasks: []
 		} satisfies Task, props.taskListIndex)
 		updateTextFieldValue(textFieldNewTaskRef, '')
 
-		elementFocus(textFieldNewTaskRef)
+		textFieldNewTaskRef.focus()
 	}
 
 	createEffect(() => {
@@ -596,7 +591,7 @@ const SingleTaskList: VoidComponent<{
 		<Show when={isAnyTask()}><div style={{flex: '1'}}></div></Show>
 		<form onSubmit={ev => {
 			addTask()
-			eventPreventDefault(ev)
+			ev.preventDefault()
 		}}>
 			<Tooltip>
 				<TextField
@@ -639,13 +634,13 @@ const GroupTaskList: VoidComponent<{
 	const isNotEmpty = createMemo<boolean>(() => {
 		const $page = page()
 		const taskLists = props.taskLists
-		return arraySome(taskLists, tasklist => {
+		return taskLists.some(tasklist => {
 			const tasks = tasklist.tasks
-			if ($page == Pages.all) return arrayLength(tasks) > 0
-			if ($page == Pages.completed) return arraySome(tasks, task => task.complete)
-			if ($page == Pages.uncompleted) return arraySome(tasks, task => !task.complete)
-			if ($page == Pages.important) return arraySome(tasks, task => task.important)
-			if ($page == Pages.planned) return arraySome(tasks, task => task.reminder != null)
+			if ($page == Pages.all) return tasks.length > 0
+			if ($page == Pages.completed) return tasks.some(task => task.complete)
+			if ($page == Pages.uncompleted) return tasks.some(task => !task.complete)
+			if ($page == Pages.important) return tasks.some(task => task.important)
+			if ($page == Pages.planned) return tasks.some(task => task.reminder != null)
 			return false
 		})
 	})
@@ -666,11 +661,11 @@ const GroupTaskList: VoidComponent<{
 		const isAnyTask = createMemo<boolean>(() => {
 			const $page = page()
 			const tasks = taskList().tasks
-			if ($page == Pages.all) return arrayLength(tasks) > 0
-			if ($page == Pages.completed) return arraySome(tasks, task => task.complete)
-			if ($page == Pages.uncompleted) return arraySome(tasks, task => !task.complete)
-			if ($page == Pages.important) return arraySome(tasks, task => task.important)
-			if ($page == Pages.planned) return arraySome(tasks, task => task.reminder != null)
+			if ($page == Pages.all) return tasks.length > 0
+			if ($page == Pages.completed) return tasks.some(task => task.complete)
+			if ($page == Pages.uncompleted) return tasks.some(task => !task.complete)
+			if ($page == Pages.important) return tasks.some(task => task.important)
+			if ($page == Pages.planned) return tasks.some(task => task.reminder != null)
 			return false
 		})
 
@@ -699,7 +694,7 @@ const GroupTaskList: VoidComponent<{
 				c:focused={isMenuMoreOpen() && selectedTaskListToAction.taskListIndex == taskListIndex()}
 				onClick={ev => {
 					setSelectedTaskListToAction({list: taskList(), taskListIndex: taskListIndex()})
-					openMenu(menuMoreRef, {anchor: eventCurrentTarget(ev)})
+					openMenu(menuMoreRef, {anchor: ev.currentTarget})
 				}}
 				c:code={ICON_MORE_VERTICAL}
 			/>}
@@ -834,10 +829,10 @@ const _: VoidComponent<{
 	const settings = createMemo(() => props.settings)
 	const getTaskListIndex = createMemo<number | null>(() => {
 		const $taskLists = taskLists()
-		for (let i = 0; i < arrayLength($taskLists); i++) {
+		for (let i = 0; i < $taskLists.length; i++) {
 			const taskList = $taskLists[i]
 			if (page() == Pages.tasks && taskList.id == DEFAULT_TASK_LIST.id) return i
-			if (typeIsNumber(page()) && taskList.id == page()) return i
+			if (typeof page() === 'number' && taskList.id == page()) return i
 		}
 		return null
 	})
@@ -908,9 +903,9 @@ const _: VoidComponent<{
 		) as (Blob | null))
 		if (blob == null) return;
 
-		setFileURLOrContent(stringStartsWith(selectedFileToView.file.type, 'text')
+		setFileURLOrContent(selectedFileToView.file.type.startsWith('text')
 			? await fileReadAsText(blob)
-			: urlCreate(blob)
+			: URL.createObjectURL(blob)
 		)
 		openDialog(dialogViewFileRef)
 	}
@@ -918,10 +913,9 @@ const _: VoidComponent<{
 	function deleteSubTask(index: number): void {
 		setSelectedTaskToEdit(
 			'task', 'subtasks',
-			subtasks => arrayConcat(
-				arraySlice(subtasks, 0, index),
-				arraySlice(subtasks, index + 1)
-			)
+			subtasks => subtasks
+				.slice(0, index)
+				.concat(subtasks.slice(index + 1))
 		)
 		command(
 			Commands.editTask,
@@ -950,7 +944,7 @@ const _: VoidComponent<{
 		closeDialog(dialogEditSubTaskRef)
 		command(
 			Commands.editSubTask,
-			{...selectedSubTaskToEdit.subTask, name: stringTrim(textSubTask())} satisfies SubTask,
+			{...selectedSubTaskToEdit.subTask, name: textSubTask().trim()} satisfies SubTask,
 			selectedSubTaskToEdit.taskListIndex,
 			selectedSubTaskToEdit.taskIndex,
 			selectedSubTaskToEdit.subTaskIndex
@@ -973,7 +967,7 @@ const _: VoidComponent<{
 			{   complete: false,
 				id: -1,
 				listId: task.listId,
-				name: stringTrim(textSubTask()),
+				name: textSubTask().trim(),
 				taskId: task.id
 			} satisfies SubTask,
 			taskListIndex,
@@ -994,7 +988,7 @@ const _: VoidComponent<{
 		const newFile: TaskFileMetaData = {
 			id: file.id,
 			listId: file.listId,
-			name: stringTrim(textFile()) + '.' + stringReplace(file.name, /^[^\.]+\./gs, ''),
+			name: textFile().trim() + '.' + file.name.replace(/^[^\.]+\./gs, ''),
 			size: file.size,
 			taskId: file.taskId,
 			type: file.type
@@ -1019,21 +1013,22 @@ const _: VoidComponent<{
 		currentTarget: HTMLDivElement
 		target: DOMElement
 	}): void {
-		const button = documentActive()!
+		const button = document.activeElement! as HTMLButtonElement
 		if (!elementValidTarget(
-			eventCurrentTarget(ev),
+			ev.currentTarget,
 			button,
 		)) return
 
-		const dataTaskitemFiles = elementDataset(button, 'taskitemFiles')
+		const dataset = button.dataset
+		const dataTaskitemFiles = dataset.taskitemFiles
 		if (dataTaskitemFiles) {
-			let [taskListIndex, taskIndex] = stringSplit(
-				dataTaskitemFiles, ','
+			let [taskListIndex, taskIndex] = dataTaskitemFiles.split(
+				','
 			) as [string|number|undefined, string|number|undefined]
 			if (!taskListIndex || !taskIndex) return
 
-			taskListIndex = numberParse(taskListIndex as string, true)
-			taskIndex = numberParse(taskIndex as string, true)
+			taskListIndex = Number.parseInt(taskListIndex as string)
+			taskIndex = Number.parseInt(taskIndex as string)
 			if (
 				numberIsNotDefined(taskListIndex)
 				|| numberIsNotDefined(taskIndex)
@@ -1048,15 +1043,15 @@ const _: VoidComponent<{
 			return
 		}
 
-		const dataTaskitemReminder = elementDataset(button, 'taskitemReminder')
+		const dataTaskitemReminder = dataset.taskitemReminder
 		if (dataTaskitemReminder) {
-			let [taskListIndex, taskIndex] = stringSplit(
-				dataTaskitemReminder, ','
+			let [taskListIndex, taskIndex] = dataTaskitemReminder.split(
+				','
 			) as [string|number|undefined, string|number|undefined]
 			if (!taskListIndex || !taskIndex) return
 
-			taskListIndex = numberParse(taskListIndex as string, true)
-			taskIndex = numberParse(taskIndex as string, true)
+			taskListIndex = Number.parseInt(taskListIndex as string)
+			taskIndex = Number.parseInt(taskIndex as string)
 			if (
 				numberIsNotDefined(taskListIndex)
 				|| numberIsNotDefined(taskIndex)
@@ -1071,15 +1066,15 @@ const _: VoidComponent<{
 			return
 		}
 
-		const dataTaskitemDelete = elementDataset(button, 'taskitemDelete')
+		const dataTaskitemDelete = dataset.taskitemDelete
 		if (dataTaskitemDelete) {
-			let [taskListIndex, taskIndex] = stringSplit(
-				dataTaskitemDelete, ','
+			let [taskListIndex, taskIndex] = dataTaskitemDelete.split(
+				','
 			) as [string|number|undefined, string|number|undefined]
 			if (!taskListIndex || !taskIndex) return
 
-			taskListIndex = numberParse(taskListIndex as string, true)
-			taskIndex = numberParse(taskIndex as string, true)
+			taskListIndex = Number.parseInt(taskListIndex as string)
+			taskIndex = Number.parseInt(taskIndex as string)
 			if (
 				numberIsNotDefined(taskListIndex)
 				|| numberIsNotDefined(taskIndex)
@@ -1090,15 +1085,15 @@ const _: VoidComponent<{
 			return
 		}
 
-		const dataTaskitemImportant = elementDataset(button, 'taskitemImportant')
+		const dataTaskitemImportant = dataset.taskitemImportant
 		if (dataTaskitemImportant) {
-			let [taskListIndex, taskIndex] = stringSplit(
-				dataTaskitemImportant, ','
+			let [taskListIndex, taskIndex] = dataTaskitemImportant.split(
+				','
 			) as [string|number|undefined, string|number|undefined]
 			if (!taskListIndex || !taskIndex) return
 
-			taskListIndex = numberParse(taskListIndex as string, true)
-			taskIndex = numberParse(taskIndex as string, true)
+			taskListIndex = Number.parseInt(taskListIndex as string)
+			taskIndex = Number.parseInt(taskIndex as string)
 			if (
 				numberIsNotDefined(taskListIndex)
 				|| numberIsNotDefined(taskIndex)
@@ -1114,15 +1109,15 @@ const _: VoidComponent<{
 			return
 		}
 
-		const dataTaskitem = elementDataset(button, 'taskitem')
+		const dataTaskitem = dataset.taskitem
 		if (dataTaskitem) {
-			let [taskListIndex, taskIndex] = stringSplit(
-				dataTaskitem, ','
+			let [taskListIndex, taskIndex] = dataTaskitem.split(
+				','
 			) as [string|number|undefined, string|number|undefined]
 			if (!taskListIndex || !taskIndex) return
 
-			taskListIndex = numberParse(taskListIndex as string, true)
-			taskIndex = numberParse(taskIndex as string, true)
+			taskListIndex = Number.parseInt(taskListIndex as string)
+			taskIndex = Number.parseInt(taskIndex as string)
 			if (
 				numberIsNotDefined(taskListIndex)
 				|| numberIsNotDefined(taskIndex)
@@ -1133,15 +1128,15 @@ const _: VoidComponent<{
 			return
 		}
 
-		const dataTaskItemComplete = elementDataset(button, 'taskitemComplete')
+		const dataTaskItemComplete = dataset.taskitemComplete
 		if (dataTaskItemComplete) {
-			let [taskListIndex, taskIndex] = stringSplit(
-				dataTaskItemComplete, ','
+			let [taskListIndex, taskIndex] = dataTaskItemComplete.split(
+				','
 			) as [string|number|undefined, string|number|undefined]
 			if (!taskListIndex || !taskIndex) return
 
-			taskListIndex = numberParse(taskListIndex as string, true)
-			taskIndex = numberParse(taskIndex as string, true)
+			taskListIndex = Number.parseInt(taskListIndex as string)
+			taskIndex = Number.parseInt(taskIndex as string)
 			if (
 				numberIsNotDefined(taskListIndex)
 				|| numberIsNotDefined(taskIndex)
@@ -1157,16 +1152,16 @@ const _: VoidComponent<{
 			return
 		}
 
-		const dataTaskitemLabel = elementDataset(button, 'taskitemLabel')
+		const dataTaskitemLabel = dataset.taskitemLabel
 		if (dataTaskitemLabel) {
-			let [taskListIndex, taskIndex, labelId] = stringSplit(
-				dataTaskitemLabel, ','
+			let [taskListIndex, taskIndex, labelId] = dataTaskitemLabel.split(
+				','
 			) as [string|number|undefined, string|number|undefined, string|number|undefined]
 			if (!taskListIndex || !taskIndex) return
 
-			taskListIndex = numberParse(taskListIndex as string, true)
-			taskIndex = numberParse(taskIndex as string, true)
-			labelId = numberParse(labelId as string, true)
+			taskListIndex = Number.parseInt(taskListIndex as string)
+			taskIndex = Number.parseInt(taskIndex as string)
+			labelId = Number.parseInt(labelId as string)
 			if (
 				numberIsNotDefined(taskListIndex)
 				|| numberIsNotDefined(taskIndex)
@@ -1190,20 +1185,21 @@ const _: VoidComponent<{
 		target: DOMElement
 	}): void {
 		const code = ev.code
-		const target = eventTarget(ev) as HTMLElement
+		const target = ev.target as HTMLElement
 		const isPressKey = code == KEY_SPACE || code == KEY_ENTER
 		const isArrowUp = code == KEY_ARROW_UP
 		const isArrowDown = code == KEY_ARROW_DOWN
 		const isArrowRight = code == KEY_ARROW_RIGHT
 		const isArrowLeft = code == KEY_ARROW_LEFT
 		const isArrowKey = isArrowUp || isArrowDown || isArrowRight || isArrowLeft
+		const dataset = target.dataset
 
 		// handle custom interactive element using keyboard
 		if (isPressKey) {
-			const data_taskitem = elementDataset(target, 'taskitem')
+			const data_taskitem = dataset.taskitem
 			if (data_taskitem) {
-				eventPreventDefault(ev)
-				elementClick(target)
+				ev.preventDefault()
+				target.click()
 				return
 			}
 		}
@@ -1211,32 +1207,32 @@ const _: VoidComponent<{
 		// handle move focus
 		if (isArrowKey) {
 			// Move between subtasks
-			const dataTaskitemSubtask = elementDataset(target, 'taskitemSubtask')
+			const dataTaskitemSubtask = dataset.taskitemSubtask
 			if (dataTaskitemSubtask && (isArrowDown || isArrowUp)) {
-				const label = elementClosest(target, 'label')!
+				const label = target.closest('label')!
 
-				let sibling: HTMLElement | null = isArrowUp
-					? elementSiblingPrevious(label)
-					: elementSiblingNext(label)
+				let sibling: Element | null = isArrowUp
+					? label.previousElementSibling
+					: label.nextElementSibling
 				if (!sibling) return
 
-				sibling = elementBySelector('input', sibling)
+				sibling = sibling.querySelector('input')
 				if (!sibling) return
 
-				eventPreventDefault(ev)
-				elementFocus(sibling)
+				ev.preventDefault();
+				(sibling as HTMLElement).focus()
 				return
 			}
 
-			const dataTaskitem = elementDataset(target, 'taskitem')
+			const dataTaskitem = dataset.taskitem
 			if (dataTaskitem && (isArrowDown || isArrowUp)) {
-				const sibling: HTMLElement | null = isArrowUp
-					? elementSiblingPrevious(target)
-					: elementSiblingNext(target)
+				const sibling: Element | null = isArrowUp
+					? target.previousElementSibling
+					: target.nextElementSibling
 				if (!sibling) return
 
-				eventPreventDefault(ev)
-				elementFocus(sibling)
+				ev.preventDefault();
+				(sibling as HTMLElement).focus()
 				return
 			}
 			return
@@ -1247,21 +1243,22 @@ const _: VoidComponent<{
 		currentTarget: HTMLDivElement
 		target: DOMElement
 	}): void {
-		const target = documentActive()!
+		const target = document.activeElement! as HTMLElement
 		if (!elementValidTarget(
-			eventCurrentTarget(ev),
+			ev.currentTarget,
 			target,
 		)) return
 
-		const dataTaskItem = elementDataset(target, 'taskitem')
+		const dataset = target.dataset
+		const dataTaskItem = dataset.taskitem
 		if (dataTaskItem) {
-			let [taskListIndex, taskIndex] = stringSplit(
-				dataTaskItem, ','
+			let [taskListIndex, taskIndex] = dataTaskItem.split(
+				','
 			) as [string|number|undefined, string|number|undefined]
 			if (!taskListIndex || !taskIndex) return
 
-			taskListIndex = numberParse(taskListIndex as string, true)
-			taskIndex = numberParse(taskIndex as string, true)
+			taskListIndex = Number.parseInt(taskListIndex as string)
+			taskIndex = Number.parseInt(taskIndex as string)
 			if (
 				numberIsNotDefined(taskListIndex)
 				|| numberIsNotDefined(taskIndex)
@@ -1269,7 +1266,7 @@ const _: VoidComponent<{
 
 			const task = taskLists()[taskListIndex].tasks[taskIndex]
 			onContextMenuTask(task, taskListIndex, taskIndex)
-			eventPreventDefault(ev)
+			ev.preventDefault()
 			return
 		}
 	}
@@ -1278,19 +1275,20 @@ const _: VoidComponent<{
 		currentTarget: HTMLDivElement
 		target: Element
 	}): void {
-		const target = eventTarget(ev) as HTMLElement
+		const target = ev.target as HTMLElement
+		const dataset = target.dataset
 
 		// subtask
-		const dataTaskitemSubtask = elementDataset(target, 'taskitemSubtask')
+		const dataTaskitemSubtask = dataset.taskitemSubtask
 		if (dataTaskitemSubtask) {
-			let [taskListIndex, taskIndex, subTaskIndex] = stringSplit(
-				dataTaskitemSubtask, ','
+			let [taskListIndex, taskIndex, subTaskIndex] = dataTaskitemSubtask.split(
+				','
 			) as [string|number|undefined, string|number|undefined, string|number|undefined]
 			if (!taskListIndex || !taskIndex || !subTaskIndex) return
 
-			taskListIndex = numberParse(taskListIndex as string, true)
-			taskIndex = numberParse(taskIndex as string, true)
-			subTaskIndex = numberParse(subTaskIndex as string, true)
+			taskListIndex = Number.parseInt(taskListIndex as string)
+			taskIndex = Number.parseInt(taskIndex as string)
+			subTaskIndex = Number.parseInt(subTaskIndex as string)
 			if (
 				numberIsNotDefined(taskListIndex)
 				|| numberIsNotDefined(taskIndex)
@@ -1340,7 +1338,7 @@ const _: VoidComponent<{
 	const FileItem: VoidComponent<{index: number}> = ($props) => {
 		const fileIndex = createMemo(() => $props.index)
 		const file = createMemo(() => selectedTaskToEdit.task.files[fileIndex()])
-		const isTypeNotSupported = createMemo<boolean>(() => !regexTest(/^(audio|image|video|text)/, file().type))
+		const isTypeNotSupported = createMemo<boolean>(() => !/^(audio|image|video|text)/.test(file().type))
 		const getSizeText = createMemo(() => {
 			const value = file().size
 			const TERA = 1_000_000_000_000
@@ -1349,10 +1347,10 @@ const _: VoidComponent<{
 			const KILO = 1_000
 			let unitValue = value + ' B'
 
-			if      (value >= TERA) unitValue = numberParse(numberToFixed(value / TERA, 2)) + ' TB'
-			else if (value >= GIGA) unitValue = numberParse(numberToFixed(value / GIGA, 2)) + ' GB'
-			else if (value >= MEGA) unitValue = numberParse(numberToFixed(value / MEGA, 2)) + ' MB'
-			else if (value >= KILO) unitValue = numberParse(numberToFixed(value / KILO, 2)) + ' KB'
+			if      (value >= TERA) unitValue = Number.parseFloat((value / TERA).toFixed()) + ' TB'
+			else if (value >= GIGA) unitValue = Number.parseFloat((value / GIGA).toFixed()) + ' GB'
+			else if (value >= MEGA) unitValue = Number.parseFloat((value / MEGA).toFixed()) + ' MB'
+			else if (value >= KILO) unitValue = Number.parseFloat((value / KILO).toFixed()) + ' KB'
 			return unitValue
 		})
 
@@ -1372,7 +1370,7 @@ const _: VoidComponent<{
 					c:code={ICON_MORE_VERTICAL}
 				/>
 			</>}
-			c:subtitle={arrayJoin([getSizeText(), stringReplace(file().type, /\/.+$/gs, '')], " • ")}>
+			c:subtitle={[getSizeText(), file().type.replace(/\/.+$/gs, '')].join(" • ")}>
 			{file().name}
 		</List>)
 	}
@@ -1430,17 +1428,16 @@ const _: VoidComponent<{
 				style={{width: '500px'}}
 				classList={attrClassListModule(CSS.body_dialog_edit)}
 				onClick={ev => {
-					const button = documentActive()!
+					const button = document.activeElement! as HTMLButtonElement
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
 					)) return
 
 					const task = selectedTaskToEdit.task
 					const taskListIndex = selectedTaskToEdit.taskListIndex
 					const taskIndex = selectedTaskToEdit.taskIndex
-					switch (elementId(button)) {
+					switch (button.id) {
 					case button_editTask_closeId:
 						closeDialog(dialogEditTaskRef)
 						break
@@ -1484,7 +1481,7 @@ const _: VoidComponent<{
 						command(Commands.editTask, task, taskListIndex, taskIndex)
 						break
 					case button_editTask_addFileId:
-						promiseDone(fileOpen(null, true), async (files) => {
+						fileOpen(null, true).then(async (files) => {
 							if (files == null) return;
 							const result = (await command(
 								Commands.addFiles,
@@ -1504,9 +1501,10 @@ const _: VoidComponent<{
 						deleteTask(task, taskListIndex, taskIndex)
 						break
 					default:
-						const dataSubtaskEditIndex = elementDataset(button, 'subtaskEditIndex')
+						const dataset = button.dataset
+						const dataSubtaskEditIndex = dataset.subtaskEditIndex
 						if (dataSubtaskEditIndex) {
-							const index = numberParse(dataSubtaskEditIndex, true)
+							const index = Number.parseInt(dataSubtaskEditIndex)
 							if (numberIsNotDefined(index)) return
 
 							editSubTask(
@@ -1515,18 +1513,18 @@ const _: VoidComponent<{
 							return
 						}
 
-						const dataSubtaskDeleteIndex = elementDataset(button, 'subtaskDeleteIndex')
+						const dataSubtaskDeleteIndex = dataset.subtaskDeleteIndex
 						if (dataSubtaskDeleteIndex) {
-							const index = numberParse(dataSubtaskDeleteIndex, true)
+							const index = Number.parseInt(dataSubtaskDeleteIndex)
 							if (numberIsNotDefined(index)) return
 
 							deleteSubTask(index)
 							return
 						}
 
-						const dataSubTaskCompleteIndex = elementDataset(button, 'subtaskCompleteIndex')
+						const dataSubTaskCompleteIndex = dataset.subtaskCompleteIndex
 						if (dataSubTaskCompleteIndex) {
-							const index = numberParse(dataSubTaskCompleteIndex, true)
+							const index = Number.parseInt(dataSubTaskCompleteIndex)
 							if (numberIsNotDefined(index)) return
 
 							const subtask = task.subtasks[index]
@@ -1541,9 +1539,9 @@ const _: VoidComponent<{
 							return
 						}
 
-						const dataLabelEditIndex = elementDataset(button, 'labelEditIndex')
+						const dataLabelEditIndex = dataset.labelEditIndex
 						if (dataLabelEditIndex) {
-							const index = numberParse(dataLabelEditIndex, true)
+							const index = Number.parseInt(dataLabelEditIndex)
 							if (numberIsNotDefined(index)) return
 
 							setSelectedLabel(props.labels[index]!)
@@ -1551,37 +1549,35 @@ const _: VoidComponent<{
 							return
 						}
 
-						const dataLabelRemoveIndex = elementDataset(button, 'labelRemoveIndex')
+						const dataLabelRemoveIndex = dataset.labelRemoveIndex
 						if (dataLabelRemoveIndex) {
-							const index = numberParse(dataLabelRemoveIndex, true)
+							const index = Number.parseInt(dataLabelRemoveIndex)
 							if (numberIsNotDefined(index)) return
 
-							const i = arrayFindIndex(
-								selectedTaskToEdit.task.labelIds,
+							const i = selectedTaskToEdit.task.labelIds.findIndex(
 								$id => $id == props.labels[index]!.id
 							)
 							if (i < 0) return
 
-							setSelectedTaskToEdit('task', 'labelIds', ids => arrayConcat(
-								arraySlice(ids, 0, i),
-								arraySlice(ids, i + 1)
-							))
+							setSelectedTaskToEdit('task', 'labelIds', produce((ids) => {
+								ids.splice(i, 1)
+							}))
 							command(Commands.editTask, task, taskListIndex, taskIndex)
 							return
 						}
 
-						const dataFileViewIndex = elementDataset(button, 'fileViewIndex')
+						const dataFileViewIndex = dataset.fileViewIndex
 						if (dataFileViewIndex) {
-							const index = numberParse(dataFileViewIndex, true)
+							const index = Number.parseInt(dataFileViewIndex)
 							if (numberIsNotDefined(index)) return
 
 							viewFile(task.files[index], taskListIndex, taskIndex, index)
 							return
 						}
 
-						const dataFileActionIndex = elementDataset(button, 'fileActionIndex')
+						const dataFileActionIndex = dataset.fileActionIndex
 						if (dataFileActionIndex) {
-							const index = numberParse(dataFileActionIndex, true)
+							const index = Number.parseInt(dataFileActionIndex)
 							if (numberIsNotDefined(index)) return
 
 							setSelectedFileToAction({
@@ -1596,11 +1592,11 @@ const _: VoidComponent<{
 					}
 				}}
 				onFocusOut={ev => {
-					const input = eventTarget(ev) as HTMLInputElement
+					const input = ev.target as HTMLInputElement
 					const task = selectedTaskToEdit.task
 					const taskListIndex = selectedTaskToEdit.taskListIndex
 					const taskIndex = selectedTaskToEdit.taskIndex
-					switch (elementId(input)) {
+					switch (input.id) {
 					case input_editTask_taskId:
 						if (input.value == task.name) return
 
@@ -1692,10 +1688,16 @@ const _: VoidComponent<{
 							<span style={{
 								color: dateOutRangeYMD_HM(
 									selectedTaskToEdit.task.reminder!,
-									dateCurrent(),
-									new Date(dateYear() + 100, 2, 2)
+									new Date(),
+									new Date(new Date().getFullYear() + 100, 2, 2)
 								)? 'rgb(var(--g-color-error))' : undefined
-							}}>{dateTextYMD_HM(selectedTaskToEdit.task.reminder!)}</span>
+							}}>{selectedTaskToEdit.task.reminder!.toLocaleTimeString(undefined, {
+									year: 'numeric',
+									month: 'long',
+									day: 'numeric',
+									hour: 'numeric',
+									minute: 'numeric',
+								})}</span>
 						</List>
 					</Show>
 				</div>
@@ -1733,17 +1735,16 @@ const _: VoidComponent<{
 				style={{width: '560px'}}
 				ref={r => dialogDeleteTaskWarningRef = r}
 				onClick={ev => {
-					const button = documentActive()!
+					const button = document.activeElement!
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == "BUTTON"
 					)) return
 
 					const task = selectedTaskToDelete.task
 					const taskListIndex = selectedTaskToDelete.taskListIndex
 					const taskIndex = selectedTaskToDelete.taskIndex
-					switch (elementId(button)) {
+					switch (button.id) {
 					case button_deleteTask_cancelId:
 						closeDialog(dialogDeleteTaskWarningRef)
 						break
@@ -1770,7 +1771,7 @@ const _: VoidComponent<{
 				Are you sure want to delete <q><span style={{color: `rgb(${AppColors.accent})`, "font-weight": 'bold'}}>{(selectedTaskToDelete.task.name) || ''}</span></q> task?
 				<CheckBox
 					c:attrLabel={{style: "margin-top: 16px"}}
-					onChange={ev => command(Commands.toggleDeleteTaskWarning, !eventCurrentTarget(ev).checked)}>
+					onChange={ev => command(Commands.toggleDeleteTaskWarning, !ev.currentTarget.checked)}>
 					Don't remind me again
 				</CheckBox>
 			</Dialog>
@@ -1779,14 +1780,13 @@ const _: VoidComponent<{
 				style={{width: '500px'}}
 				c:header="Rename file"
 				onClick={ev => {
-					const button = documentActive()!
+					const button = document.activeElement!
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == "BUTTON"
 					)) return
 
-					switch (elementId(button)) {
+					switch (button.id) {
 					case button_fileRename_cancelId:
 						closeDialog(dialogFileRenameRef)
 						break
@@ -1804,20 +1804,20 @@ const _: VoidComponent<{
 					<Button
 						c:variant={ButtonVariant.filled}
 						id={button_fileRename_renameId}
-						disabled={stringTrim(textFile()) == ''}>
+						disabled={textFile().trim() == ''}>
 						Rename
 					</Button>
 				</>}>
 				<form onSubmit={ev => {
-					eventPreventDefault(ev)
-					if (stringTrim(textFile()) == '') return;
+					ev.preventDefault()
+					if (textFile().trim() == '') return;
 
 					confirmFileRename()
 				}}>
 					<TextField
 						ref={r => textFieldRenamefileRef = r}
 						autofocus
-						onInput={ev => setTextFile(eventCurrentTarget(ev).value)}
+						onInput={ev => setTextFile(ev.currentTarget.value)}
 						placeholder="File name"
 					/>
 				</form>
@@ -1826,22 +1826,23 @@ const _: VoidComponent<{
 				style={{width: '720px'}}
 				ref={r => dialogViewFileRef = r}
 				onClose={() => {
-					if (!stringStartsWith(selectedFileToView.file.type, 'text')) urlRevoke(fileURLOrContent())
+					if (!selectedFileToView.file.type.startsWith('text')) {
+						URL.revokeObjectURL(fileURLOrContent())
+					}
 					setFileURLOrContent('')
 				}}
 				onClick={ev => {
-					const button = documentActive()!
+					const button = document.activeElement!
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == "BUTTON"
 					)) return
 
 					const file = selectedFileToView.file
 					const taskListIndex = selectedFileToView.taskListIndex
 					const taskIndex = selectedFileToView.taskIndex
 					const fileIndex = selectedFileToView.fileIndex
-					switch (elementId(button)) {
+					switch (button.id) {
 					case button_viewFile_closeId:
 						closeDialog(dialogViewFileRef)
 						break
@@ -1867,16 +1868,16 @@ const _: VoidComponent<{
 				</>}>
 				<Show when={fileURLOrContent() != ''}>
 					<Switch>
-						<Match when={stringStartsWith(selectedFileToView.file.type, 'image')}>
+						<Match when={selectedFileToView.file.type.startsWith('image')}>
 							<img src={fileURLOrContent()} width={'100%'}/>
 						</Match>
-						<Match when={stringStartsWith(selectedFileToView.file.type, 'video')}>
+						<Match when={selectedFileToView.file.type.startsWith('video')}>
 							<video src={fileURLOrContent()} autoplay controls width={'100%'}></video>
 						</Match>
-						<Match when={stringStartsWith(selectedFileToView.file.type, 'audio')}>
+						<Match when={selectedFileToView.file.type.startsWith('audio')}>
 							<audio src={fileURLOrContent()} autoplay controls style={{width: '100%'}}></audio>
 						</Match>
-						<Match when={stringStartsWith(selectedFileToView.file.type, 'text')}>
+						<Match when={selectedFileToView.file.type.startsWith('text')}>
 							<pre><code style="white-space:normal">{fileURLOrContent()}</code></pre>
 						</Match>
 					</Switch>
@@ -1891,14 +1892,13 @@ const _: VoidComponent<{
 					updateTextFieldValue(textFieldNewSubTaskRef, '')
 				}}
 				onClick={ev => {
-					const button = documentActive()!
+					const button = document.activeElement!
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == "BUTTON"
 					)) return
 
-					switch (elementId(button)) {
+					switch (button.id) {
 					case button_newSubTask_closeId:
 						closeDialog(dialogNewSubTaskRef)
 						break
@@ -1916,21 +1916,21 @@ const _: VoidComponent<{
 					<Button
 						c:variant={ButtonVariant.filled}
 						id={button_newSubTask_addId}
-						disabled={stringTrim(textSubTask()) == ''}>
+						disabled={textSubTask().trim() == ''}>
 						Add
 					</Button>
 				</>}>
 				<form onSubmit={ev => {
-					eventPreventDefault(ev)
-					if (stringTrim(textSubTask()) == '') return;
+					ev.preventDefault()
+					if (textSubTask().trim() == '') return;
 
 					confirmAddSubTask()
 				}}>
 					<TextField
 						ref={r => textFieldNewSubTaskRef = r}
 						placeholder="Subtask name"
-						onFocus={ev => setTextSubTask(eventCurrentTarget(ev).value)}
-						onInput={ev => setTextSubTask(eventCurrentTarget(ev).value)}
+						onFocus={ev => setTextSubTask(ev.currentTarget.value)}
+						onInput={ev => setTextSubTask(ev.currentTarget.value)}
 					/>
 				</form>
 			</Dialog>
@@ -1943,14 +1943,13 @@ const _: VoidComponent<{
 					updateTextFieldValue(textFieldEditSubTaskRef, '')
 				}}
 				onClick={ev => {
-					const button = documentActive()!
+					const button = document.activeElement!
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == "BUTTON"
 					)) return
 
-					switch (elementId(button)) {
+					switch (button.id) {
 					case button_editSubTask_closeId:
 						closeDialog(dialogEditSubTaskRef)
 						break
@@ -1968,20 +1967,20 @@ const _: VoidComponent<{
 					<Button
 						id={button_editSubTask_editId}
 						c:variant={ButtonVariant.filled}
-						disabled={stringTrim(textSubTask()) == ''}>
+						disabled={textSubTask().trim() == ''}>
 						Edit
 					</Button>
 				</>}>
 				<form style="display:contents" onSubmit={ev => {
-					eventPreventDefault(ev)
-					if (stringTrim(textSubTask()) == '') return;
+					ev.preventDefault()
+					if (textSubTask().trim() == '') return;
 					confirmEditSubTask()
 				}}>
 					<TextField
 						ref={r => textFieldEditSubTaskRef = r}
 						placeholder="Subtask name"
-						onFocus={ev => setTextSubTask(eventCurrentTarget(ev).value)}
-						onInput={ev => setTextSubTask(eventCurrentTarget(ev).value)}
+						onFocus={ev => setTextSubTask(ev.currentTarget.value)}
+						onInput={ev => setTextSubTask(ev.currentTarget.value)}
 					/>
 				</form>
 			</Dialog>
@@ -2015,17 +2014,16 @@ const _: VoidComponent<{
 			<Menu
 				ref={r => menuTaskActionRef = r}
 				onClick={ev => {
-					const button = documentActive()!
+					const button = document.activeElement! as HTMLButtonElement
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
 					)) return
 					const task = selectedTaskToAction.task
 					const taskListIndex = selectedTaskToAction.taskListIndex
 					const taskIndex = selectedTaskToAction.taskIndex
 
-					switch (elementId(button)){
+					switch (button.id){
 					case button_taskActions_markCompleteId:
 						closeMenu(menuTaskActionRef)
 						command(Commands.editTask,
@@ -2042,7 +2040,7 @@ const _: VoidComponent<{
 						break
 					case button_taskActions_addFileId:
 						closeMenu(menuTaskActionRef)
-						promiseDone(fileOpen(null, true), async (files) => {
+						fileOpen(null, true).then(async (files) => {
 							if (files == null) return;
 							const result = await command(Commands.addFiles,
 								files, task, taskListIndex, taskIndex
@@ -2071,26 +2069,27 @@ const _: VoidComponent<{
 						deleteTask(task, taskListIndex, taskIndex)
 						break
 					default:
-						const dataLabelId = elementDataset(button, 'labelId')
+						const dataset = button.dataset
+						const dataLabelId = dataset.labelId
 						if (dataLabelId) {
-							const labelId = numberParse(dataLabelId, true)
+							const labelId = Number.parseInt(dataLabelId)
 							if (numberIsNotDefined(labelId)) return
 
-							const index = arrayFindIndex(task.labelIds, id => id == labelId)
-							setSelectedTaskToAction('task', 'labelIds', ids => index >= 0
-								? arrayConcat(
-									arraySlice(ids, 0, index),
-									arraySlice(ids, index + 1)
-								)
-								: [...ids, labelId]
-							)
+							const index = task.labelIds.findIndex(id => id == labelId)
+							setSelectedTaskToAction('task', 'labelIds', produce(ids => {
+								if (index >= 0) {
+									ids.splice(index, 1)
+									return
+								}
+								ids.push(labelId)
+							}))
 							command(Commands.editTask, task, taskListIndex, taskIndex)
 							return
 						}
 
-						const dataTasklistIndex = elementDataset(button, 'tasklistIndex')
+						const dataTasklistIndex = dataset.tasklistIndex
 						if (dataTasklistIndex) {
-							const i = numberParse(dataTasklistIndex, true)
+							const i = Number.parseInt(dataTasklistIndex)
 							if (numberIsNotDefined(i)) return
 
 							command(Commands.moveTask, task, taskListIndex, taskIndex, i)
@@ -2135,7 +2134,7 @@ const _: VoidComponent<{
 						Add reminder
 					</MenuItem>
 				</Show>
-				<Show when={arrayLength(props.labels) > 0}>
+				<Show when={props.labels.length > 0}>
 					<SubMenu
 						c:onToggleOpen={v => setIsMenuTaskActionAddLabelOpen(v)}
 						c:item={<SubMenuItem
@@ -2146,7 +2145,7 @@ const _: VoidComponent<{
 						<For each={props.labels}>{label => <Show when={label != undefined}>
 							<MenuItem
 								c:leading={<Icon style={{color: label!.color ?? undefined}} c:code={ICON_CIRCLE}/>}
-								c:checked={arrayIncludes(selectedTaskToAction.task.labelIds, label!.id)}
+								c:checked={selectedTaskToAction.task.labelIds.includes(label!.id)}
 								data-label-id={label!.id}>
 								{label!.name}
 							</MenuItem>
@@ -2180,7 +2179,7 @@ const _: VoidComponent<{
 							c:selected={i() == getTaskListIndex()}>
 							{list.name}
 						</MenuItem>
-						<Show when={arrayLength(props.taskLists) > 1 && list.id == DEFAULT_TASK_LIST.id}>
+						<Show when={props.taskLists.length > 1 && list.id == DEFAULT_TASK_LIST.id}>
 							<MenuDivider style={{order: '-1'}}/>
 						</Show>
 					</>}</For>
@@ -2202,14 +2201,13 @@ const _: VoidComponent<{
 			<Menu
 				ref={r => menuReminderRef = r}
 				onClick={ev => {
-					const button = documentActive()!
+					const button = document.activeElement!
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					switch (elementId(button)) {
+					switch (button.id) {
 					case button_reminder_changedId:
 						closeMenu(menuReminderRef)
 						setChangeReminderOption('chip')
@@ -2242,17 +2240,16 @@ const _: VoidComponent<{
 				ref={r => menuLabelsRef = r}
 				c:onToggleOpen={is_open => setIsMenuLabelsOpen(is_open)}
 				onClick={ev => {
-					const button = documentActive()!
+					const button = document.activeElement! as HTMLButtonElement
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
 					)) return
 
 					const task = selectedTaskToEdit.task
 					const taskListIndex = selectedTaskToEdit.taskListIndex
 					const taskIndex = selectedTaskToEdit.taskIndex
-					switch (elementId(button)) {
+					switch (button.id) {
 						case button_labels_newId:
 							command(Commands.addLabel)
 							break
@@ -2262,41 +2259,42 @@ const _: VoidComponent<{
 							command(Commands.showLabelsOptions)
 							break
 						default:
-							const dataLabelIndex = elementDataset(button, 'labelIndex')
+							const dataset = button.dataset
+							const dataLabelIndex = dataset.labelIndex
 							if (dataLabelIndex) {
-								const labelIndex = numberParse(dataLabelIndex, true)
+								const labelIndex = Number.parseInt(dataLabelIndex)
 								if (numberIsNotDefined(labelIndex)) return
 
 								const labelId = props.labels![labelIndex]!.id
-								const index = arrayFindIndex(task.labelIds, id => id == labelId)
-								setSelectedTaskToEdit('task', 'labelIds', ids => index < 0
-									? [...ids, labelId]
-									: arrayConcat(
-										arraySlice(ids, 0, index),
-										arraySlice(ids, index + 1)
-									)
-								)
+								const index = task.labelIds.findIndex(id => id == labelId)
+								setSelectedTaskToEdit('task', 'labelIds', produce(ids => {
+									if (index < 0) {
+										ids.push(labelId)
+										return
+									}
+									ids.splice(index, 1)
+								}))
 								command(Commands.editTask, task, taskListIndex, taskIndex)
 								return
 							}
 					}
 				}}
 				onContextMenu={ev => {
-					const button = documentActive()!
+					const button = document.activeElement! as HTMLButtonElement
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					const dataLabelIndex = elementDataset(button, 'labelIndex')
+					const dataset = button.dataset
+					const dataLabelIndex = dataset.labelIndex
 					if (dataLabelIndex) {
-						const label_index = numberParse(dataLabelIndex, true)
-						if (numberIsNotDefined(label_index)) return
+						const labelIndex = Number.parseInt(dataLabelIndex)
+						if (numberIsNotDefined(labelIndex)) return
 
-						const label = props.labels![label_index]!
+						const label = props.labels![labelIndex]!
 						setSelectedLabel(label)
-						eventPreventDefault(ev)
+						ev.preventDefault()
 						openMenu(menuLabelActionRef, {position: MenuPosition.centerBottomToRight})
 						return
 					}
@@ -2306,7 +2304,7 @@ const _: VoidComponent<{
 					c:iconCode={ICON_ADD}>
 					New label
 				</MenuItem>
-				<Show when={arrayLength(props.labels) > 0}>
+				<Show when={props.labels.length > 0}>
 					<MenuItem
 						id={button_labels_editId}
 						c:iconCode={ICON_EDIT}>
@@ -2317,7 +2315,7 @@ const _: VoidComponent<{
 				<For each={props.labels}>{(label, i) => <Show when={label != undefined}>
 					<MenuItem
 						c:leading={<Icon style={{color: label!.color ?? undefined}} c:code={ICON_CIRCLE}/>}
-						c:checked={arrayIncludes(selectedTaskToEdit.task.labelIds, label!.id)}
+						c:checked={selectedTaskToEdit.task.labelIds.includes(label!.id)}
 						data-label-index={i()}>
 						{label!.name}
 					</MenuItem>
@@ -2326,14 +2324,13 @@ const _: VoidComponent<{
 			<Menu
 				ref={r => menuLabelActionRef = r}
 				onClick={ev => {
-					const button = documentActive()!
+					const button = document.activeElement!
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					switch (elementId(button)) {
+					switch (button.id) {
 					case button_labelActions_editId:
 						closeMenu(menuLabelActionRef)
 						command(Commands.editLabel, selectedLabel)
@@ -2358,30 +2355,28 @@ const _: VoidComponent<{
 			<Menu
 				ref={r => menuLabelAction2Ref = r}
 				onClick={ev => {
-					const button = documentActive()!
+					const button = document.activeElement!
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
 					)) return
 
 					const task = selectedTaskToEditLabel.task
 					const taskListIndex = selectedTaskToEditLabel.taskListIndex
 					const taskIndex = selectedTaskToEditLabel.taskIndex
-					switch (elementId(button)) {
+					switch (button.id) {
 					case button_labelActions_edit2Id:
 						closeMenu(menuLabelAction2Ref)
 						command(Commands.editLabel, selectedLabel)
 						break
 					case button_labelActions_delete2Id:
 						closeMenu(menuLabelAction2Ref)
-						const index = arrayFindIndex(task.labelIds, v => v == selectedLabel.id)
+						const index = task.labelIds.findIndex(v => v == selectedLabel.id)
 						if (index < 0) return;
 
-						setSelectedTaskToEditLabel('task', 'labelIds', ids => arrayConcat(
-							arraySlice(ids, 0, index),
-							arraySlice(ids, index + 1)
-						))
+						setSelectedTaskToEditLabel('task', 'labelIds', produce(ids => {
+							ids.splice(index, 1)
+						}))
 						command(Commands.editTask, task, taskListIndex, taskIndex)
 						break
 					}
@@ -2401,18 +2396,17 @@ const _: VoidComponent<{
 				ref={r => menuFileActionRef = r}
 				c:onToggleOpen={is_open => setIsMenuFileActionOpen(is_open)}
 				onClick={ev => {
-					const button = documentActive()!
+					const button = document.activeElement!
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
 					)) return
 
 					const file = selectedFileToAction.file
 					const taskListIndex = selectedFileToAction.taskListIndex
 					const taskIndex = selectedFileToAction.taskIndex
 					const fileIndex = selectedFileToAction.fileIndex
-					switch (elementId(button)) {
+					switch (button.id) {
 					case button_fileAction_downloadId:
 						closeMenu(menuFileActionRef)
 						command(Commands.downloadFile,
@@ -2422,7 +2416,7 @@ const _: VoidComponent<{
 					case button_fileAction_renameId:
 						closeMenu(menuFileActionRef)
 
-						const text = stringReplace(file.name, /\.[^\.]*$/, '')
+						const text = file.name.replace(/\.[^\.]*$/, '')
 						updateTextFieldValue(textFieldRenamefileRef, text)
 						setTextFile(text)
 						setSelectedFileToRename({...selectedFileToAction})
@@ -2434,10 +2428,9 @@ const _: VoidComponent<{
 						break
 					case button_fileAction_deleteId:
 						closeMenu(menuFileActionRef)
-						setSelectedTaskToEdit('task', 'files', files => [
-							...arraySlice(files, 0, fileIndex),
-							...arraySlice(files, fileIndex + 1)
-						])
+						setSelectedTaskToEdit('task', 'files', produce(files => {
+							files.splice(fileIndex, 1)
+						}))
 						command(Commands.editTask,
 							props.taskLists[taskListIndex].tasks[taskIndex],
 							taskListIndex, taskIndex
@@ -2465,16 +2458,16 @@ const _: VoidComponent<{
 				style={{'min-width': '164px'}}
 				ref={r => menuFileAction2Ref = r}
 				onClick={ev => {
-					const button = documentActive()!
+					const button = document.activeElement! as HTMLButtonElement
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					const dataFileIndex = elementDataset(button, 'fileIndex')
+					const dataset = button.dataset
+					const dataFileIndex = dataset.fileIndex
 					if (dataFileIndex) {
-						const file_index = numberParse(dataFileIndex, true)
+						const file_index = Number.parseInt(dataFileIndex)
 						if (numberIsNotDefined(file_index)) return
 
 						setSelectedFileToAction2({
@@ -2484,7 +2477,7 @@ const _: VoidComponent<{
 							taskListIndex: selectedTaskToFileAction.taskListIndex
 						})
 						openMenu(menuFileAction3Ref, {
-							anchor: eventCurrentTarget(ev),
+							anchor: ev.currentTarget,
 							position: MenuPosition.rightCenterToBottom
 						})
 						return
@@ -2501,11 +2494,10 @@ const _: VoidComponent<{
 			<Menu
 				style={{'min-width': '164px'}}
 				onClick={ev => {
-					const button = documentActive()!
+					const button = document.activeElement!
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
 					)) return
 
 					const file = selectedFileToAction2.file
@@ -2513,7 +2505,7 @@ const _: VoidComponent<{
 					const taskIndex = selectedFileToAction2.taskIndex
 					const fileIndex = selectedFileToAction2.fileIndex
 					const task = props.taskLists[taskListIndex].tasks[taskIndex]
-					switch (elementId(button)) {
+					switch (button.id) {
 					case button_fileAction3_viewId:
 						closeMenu(menuFileAction3Ref)
 						viewFile(file, taskListIndex, taskIndex, fileIndex)
@@ -2521,7 +2513,7 @@ const _: VoidComponent<{
 					case button_fileAction3_renameId:
 						closeMenu(menuFileAction3Ref)
 
-						const text = stringReplace(file.name, /\.[^\.]*$/, '')
+						const text = file.name.replace(/\.[^\.]*$/, '')
 						updateTextFieldValue(textFieldRenamefileRef, text)
 						setTextFile(text)
 						setSelectedFileToRename({...selectedFileToAction2})
@@ -2539,19 +2531,18 @@ const _: VoidComponent<{
 						break
 					case button_fileAction3_deleteId:
 						closeMenu(menuFileAction3Ref)
-						if (arrayLength(task.files) == 1) closeMenu(menuFileAction2Ref)
+						if (task.files.length == 1) closeMenu(menuFileAction2Ref)
 
-						setSelectedTaskToFileAction('task', 'files', files => [
-							...arraySlice(files, 0, fileIndex),
-							...arraySlice(files, fileIndex + 1)
-						])
+						setSelectedTaskToFileAction('task', 'files', produce(files => {
+							files.splice(fileIndex, 1)
+						}))
 						command(Commands.editTask, task, taskListIndex, taskIndex)
 						break
 					}
 				}}
 				ref={r => menuFileAction3Ref = r}
 				c:onToggleOpen={(is_open) => setIsMenuFileAction3Open(is_open)}>
-				<Show when={regexTest(/^(audio|image|video|text)/, selectedFileToAction2.file.type)}>
+				<Show when={/^(audio|image|video|text)/.test(selectedFileToAction2.file.type)}>
 					<MenuItem
 						c:iconCode={ICON_EYE}
 						id={button_fileAction3_viewId}>

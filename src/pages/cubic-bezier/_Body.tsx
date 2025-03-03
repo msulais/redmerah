@@ -2,19 +2,11 @@ import { batch, createMemo, createSelector, createUniqueId, Show, type VoidCompo
 
 import type { CubicBezier, Keyframes, Position } from "./_types"
 import { ICON_COPY, ICON_DATA_SCATTER, ICON_PLAY } from "@/constants/icons"
-import { promiseDone } from "@/utils/object"
 import { AppColors } from "@/enums/colors"
-import { elementAnimate, elementId, elementPointerCaptureRelease, elementPointerCaptureSet, elementScrollIntoView, elementValidTarget } from "@/utils/element"
-import { eventCurrentTarget, eventTarget } from "@/utils/event"
-import { consoleAssert } from "@/utils/console"
-import { rectHeight, rectLeft, rectTop, rectWidth } from "@/utils/rect"
+import { elementValidTarget } from "@/utils/element"
 import { mathClamp } from "@/utils/math"
-import { numberParse, numberSafe, numberToFixed, numberToString } from "@/utils/number"
+import { numberSafe } from "@/utils/number"
 import { AnimationType, Commands } from "./_enums"
-import { arrayJoin, arrayLength, arrayMap, arrayPush, arraySome } from "@/utils/array"
-import { navigatorClipboardWriteText } from "@/utils/navigator"
-import { stringPadStart, stringReplace, stringSplit, stringToUpperCase, stringTrim } from "@/utils/string"
-import { documentActive } from "@/utils/document"
 
 import TextField, { NumberTextField, TextFieldButton, updateTextFieldValue } from "@/components/TextField"
 import Button, { ButtonVariant } from "@/components/Button"
@@ -68,7 +60,7 @@ const _: VoidComponent<{
 	const keyframes = createMemo(() => props.keyframes)
 	const isAnimationSelected = createSelector<AnimationType[], AnimationType>(
 		animationTypes,
-		(a, sources) => arraySome(sources, v => v === a)
+		(a, sources) => sources.some(v => v === a)
 	)
 	const getStartPoint = createMemo<[x: number, y: number]>(() => {
 		const [x, y] = startPoint()
@@ -113,22 +105,21 @@ const _: VoidComponent<{
 		if (isAnimationSelected(AnimationType.opacity)) $keyframes.opacity = keyframes().opacity
 		if (isAnimationSelected(AnimationType.rotate )) $keyframes.rotate = keyframes().rotate
 		if (isAnimationSelected(AnimationType.scale  )) $keyframes.scale = keyframes().scale
-		if (isAnimationSelected(AnimationType.move   )) $keyframes.translate = arrayMap(
-			keyframes().move,
-			v => arrayJoin(v, ' ')
+		if (isAnimationSelected(AnimationType.move   )) $keyframes.translate = keyframes().move.map(
+			v => v.join(' ')
 		)
 
-		elementScrollIntoView(divAnimationBoxWrapperRef, {
+		divAnimationBoxWrapperRef.scrollIntoView({
 			behavior: 'instant'
 		})
-		animation = elementAnimate(divAnimationBoxRef, $keyframes, {
+		animation = divAnimationBoxRef.animate($keyframes, {
 			duration: duration(),
 			easing: 'cubic-bezier(' + cubicBezier() + ')',
 		})
 	}
 
 	function updateText(): string {
-		const simplify = (x: number) => numberParse(numberToFixed(numberSafe(x), 2))
+		const simplify = (x: number) => Number.parseFloat(numberSafe(x).toFixed(2))
 		const distanceX = endPoint()[0] - startPoint()[0]
 		const distanceY = endPoint()[1] - startPoint()[1]
 		const x1 = simplify((startHandlePoint()[0] - startPoint()[0]) / distanceX)
@@ -137,11 +128,11 @@ const _: VoidComponent<{
 		const y2 = simplify((endHandlePoint()[1] - startPoint()[1]) / distanceY)
 		command(Commands.updateCubicBezier, [x1, y1, x2, y2])
 
-		return arrayJoin([x1, y1, x2, y2], ', ')
+		return [x1, y1, x2, y2].join(', ')
 	}
 
 	function onPointerUp(ev: PointerEvent & { currentTarget: SVGRectElement }): void {
-		elementPointerCaptureRelease(eventCurrentTarget(ev as any), ev.pointerId)
+		ev.currentTarget.releasePointerCapture(ev.pointerId)
 		isStartPointDragged
 		= isEndPointDragged
 		= isStartHandlePointDragged
@@ -157,14 +148,14 @@ const _: VoidComponent<{
 		) return
 
 		batch(() => {
-			consoleAssert(Boolean(rect), 'rect is not defined')
+			console.assert(Boolean(rect), 'rect is not defined')
 
 			const pX = ev.clientX
 			const pY = ev.clientY
-			const rHeight = rectHeight(rect)
-			const rWidth = rectWidth(rect)
-			const rLeft = rectLeft(rect)
-			const rTop = rectTop(rect)
+			const rHeight = rect.height
+			const rWidth = rect.width
+			const rLeft = rect.left
+			const rTop = rect.top
 			let x = (pX - rLeft) / rWidth
 			let y = (rHeight - (pY - rTop)) / rHeight
 
@@ -212,7 +203,7 @@ const _: VoidComponent<{
 		type: 'start' | 'end' | 'start-handle' | 'end-handle'
 	): void {
 		rect = rectRef.getBoundingClientRect()
-		elementPointerCaptureSet(eventCurrentTarget(ev as any), ev.pointerId)
+		ev.currentTarget.setPointerCapture(ev.pointerId)
 		isStartPointDragged = type === 'start'
 		isEndPointDragged = type === 'end'
 		isStartHandlePointDragged = type === 'start-handle'
@@ -224,21 +215,18 @@ const _: VoidComponent<{
 		key: keyof Keyframes,
 		suffix: string
 	): void {
-		const text = stringReplace(stringTrim(el.value), /,$/g, '')
-		const values = arrayMap(
-			stringSplit(text, ','),
-			v => numberSafe(numberParse(v))
+		const text = el.value.trim().replace(/,$/g, '')
+		const values = text.split(',').map(
+			v => numberSafe(Number.parseFloat(v))
 		)
-		if (arrayLength(values) <= 0) arrayPush(values, 0)
+		if (values.length <= 0) values.push(0)
 
-		command(Commands.updateKeyframes, key, arrayMap(
-			values,
+		command(Commands.updateKeyframes, key, values.map(
 			v => v + suffix
 		))
-		updateTextFieldValue(el, arrayJoin(arrayMap(
-			values,
+		updateTextFieldValue(el, values.map(
 			v => v + suffix
-		), ', '))
+		).join(', '))
 	}
 
 	function tidyUpGraph(): void {
@@ -393,21 +381,21 @@ const _: VoidComponent<{
 				}}
 				class={CSS.bodyOptions}
 				onClick={(ev) => {
-					const button = documentActive()! as HTMLButtonElement
+					const button = document.activeElement! as HTMLButtonElement
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button
 					)) return
 
-					switch (elementId(button)) {
+					switch (button.id) {
 					case buttonPlayId:
 						playAnimation()
 						break
 					case buttonCopyId:
-						promiseDone(
-							navigatorClipboardWriteText(updateText()),
-							() => openToast(toastCopiedRef)
-						)
+						navigator
+						.clipboard
+						.writeText(updateText())
+						.then(() => openToast(toastCopiedRef))
 						break
 					case buttonTidyUpId:
 						tidyUpGraph()
@@ -415,8 +403,8 @@ const _: VoidComponent<{
 					}
 				}}
 				onFocusOut={ev => {
-					const target = eventTarget(ev) as HTMLInputElement
-					switch (elementId(target)) {
+					const target = ev.target as HTMLInputElement
+					switch (target.id) {
 					case inputCubicBezierId:
 						updateTextFieldValue(target, updateText())
 						break
@@ -426,42 +414,36 @@ const _: VoidComponent<{
 						break
 					}
 					case inputColorId: {
-						const text = stringReplace(target.value, /[^0-9A-Fa-f,]|,$/g, '')
-						const values = arrayMap(
-							stringSplit(text, ','),
-							v => {
-								let d = numberParse(v, true, 16)
-								d = numberSafe(d)
-								d = mathClamp(d, 0, 0xffffff)
+						const text = target.value.replace(/[^0-9A-Fa-f,]|,$/g, '')
+						const values = text.split(',').map(v => {
+							let d = Number.parseInt(v, 16)
+							d = numberSafe(d)
+							d = mathClamp(d, 0, 0xffffff)
 
-								let e = numberToString(d, 16)
-								e = stringPadStart(e, 6, '0')
-								e = stringToUpperCase(e)
-								e = '#' + e
+							let e = d.toString(16)
+							e = e.padStart(6, '0')
+							e = e.toUpperCase()
+							e = '#' + e
 
-								return e
-							}
-						)
+							return e
+						})
 
 						command(Commands.updateKeyframes, 'color', values)
-						updateTextFieldValue(target, arrayJoin(values, ', '))
+						updateTextFieldValue(target, values.join(', '))
 						break
 					}
 					case inputMoveId: {
-						const text = stringReplace(stringTrim(target.value), /,$/g, '')
-						const values = arrayMap(stringSplit(text, ','), v => {
-							const d = stringSplit(stringTrim(v), / +/)
-							while (arrayLength(d) < 2) arrayPush(d, '0')
-							if (arrayLength(d) > 2) d.length = 2
+						const text = target.value.trim().replace(/,$/g, '')
+						const values = text.split(',').map(v => {
+							const d = v.trim().split(/ +/)
+							while (d.length < 2) d.push('0')
+							if (d.length > 2) d.length = 2
 
-							return arrayMap(d, v => numberSafe(numberParse(v)) + 'px')
+							return d.map(v => numberSafe(Number.parseFloat(v)) + 'px')
 						})
 
 						command(Commands.updateKeyframes, 'move', values)
-						updateTextFieldValue(target, arrayJoin(arrayMap(
-							values,
-							v => arrayJoin(v, ' ')
-						), ', '))
+						updateTextFieldValue(target, values.map(v => v.join(' ')).join(', '))
 						break
 					}
 					case inputOpacityId:
@@ -481,7 +463,7 @@ const _: VoidComponent<{
 						break
 					}
 				}}>
-				<Show when={arrayLength(animationTypes()) > 0}>
+				<Show when={animationTypes().length > 0}>
 					<Button
 						c:variant={ButtonVariant.filled}
 						id={buttonPlayId}>
@@ -493,14 +475,13 @@ const _: VoidComponent<{
 					c:label="Cubic bezier"
 					placeholder="x1, y1, x2, y2"
 					id={inputCubicBezierId}
-					value={arrayJoin(cubicBezier(), ', ')}
+					value={cubicBezier().join(', ')}
 					onInput={ev => {
-						const self = eventCurrentTarget(ev)
-						const texts = arrayMap(
-							stringSplit(self.value, ','),
-							v => numberSafe(numberParse(v))
+						const self = ev.currentTarget
+						const texts = self.value.split(',').map(
+							v => numberSafe(Number.parseFloat(v))
 						)
-						while (arrayLength(texts) < 4) arrayPush(texts, 0)
+						while (texts.length < 4) texts.push(0)
 
 						const [x1, y1, x2, y2] = texts
 						const distanceX = endPoint()[0] - startPoint()[0]
@@ -544,7 +525,7 @@ const _: VoidComponent<{
 					c:label="Animation type"
 					c:onChange={values => command(
 						Commands.updateAnimationTypes,
-						arrayMap(values, v => v.value)
+						values.map(v => v.value)
 					)}>
 					<DropdownOption c:value={AnimationType.color} c:text="Color" />
 					<DropdownOption c:value={AnimationType.height} c:text="Height" />
@@ -554,7 +535,7 @@ const _: VoidComponent<{
 					<DropdownOption c:value={AnimationType.rotate} c:text="Rotate" />
 					<DropdownOption c:value={AnimationType.width} c:text="Width" />
 				</Dropdown>
-				<Show when={arrayLength(animationTypes()) > 0}>
+				<Show when={animationTypes().length > 0}>
 					<NumberTextField
 						c:label="Duration (ms)"
 						value={duration()}
@@ -569,16 +550,13 @@ const _: VoidComponent<{
 							<TextField
 								c:label="Color"
 								id={inputColorId}
-								value={arrayJoin(keyframes().color, ', ')}
+								value={keyframes().color.join(', ')}
 							/>
 						</Show>
 						<Show when={isAnimationSelected(AnimationType.move)}>
 							<TextField
 								c:label="Move"
-								value={arrayJoin(arrayMap(
-									keyframes().move,
-									v => arrayJoin(v, ' ')
-								), ', ')}
+								value={keyframes().move.map(v => v.join(' ')).join(', ')}
 								id={inputMoveId}
 							/>
 						</Show>
@@ -586,35 +564,35 @@ const _: VoidComponent<{
 							<TextField
 								c:label="Opacity"
 								id={inputOpacityId}
-								value={arrayJoin(keyframes().opacity, ', ')}
+								value={keyframes().opacity.join(', ')}
 							/>
 						</Show>
 						<Show when={isAnimationSelected(AnimationType.rotate)}>
 							<TextField
 								c:label="Rotate"
 								id={inputRotateId}
-								value={arrayJoin(keyframes().rotate, ', ')}
+								value={keyframes().rotate.join(', ')}
 							/>
 						</Show>
 						<Show when={isAnimationSelected(AnimationType.scale)}>
 							<TextField
 								c:label="Scale"
 								id={inputScaleId}
-								value={arrayJoin(keyframes().scale, ', ')}
+								value={keyframes().scale.join(', ')}
 							/>
 						</Show>
 						<Show when={isAnimationSelected(AnimationType.height)}>
 							<TextField
 								c:label="Height"
 								id={inputHeightId}
-								value={arrayJoin(keyframes().height, ', ')}
+								value={keyframes().height.join(', ')}
 							/>
 						</Show>
 						<Show when={isAnimationSelected(AnimationType.width)}>
 							<TextField
 								c:label="Width"
 								id={inputWidthId}
-								value={arrayJoin(keyframes().width, ', ')}
+								value={keyframes().width.join(', ')}
 							/>
 						</Show>
 					</Expander>
@@ -630,7 +608,7 @@ const _: VoidComponent<{
 					scale: isAnimationSelected(AnimationType.scale)? keyframes().scale[0] : undefined,
 					rotate: isAnimationSelected(AnimationType.rotate)? keyframes().rotate[0] : undefined,
 					opacity: isAnimationSelected(AnimationType.opacity)? keyframes().opacity[0] : undefined,
-					translate: isAnimationSelected(AnimationType.move)? arrayJoin(keyframes().move[0], ' ') : undefined,
+					translate: isAnimationSelected(AnimationType.move)? keyframes().move[0].join(' ') : undefined,
 					"background-color": isAnimationSelected(AnimationType.color)? keyframes().color[0] : undefined,
 				}}
 			/>

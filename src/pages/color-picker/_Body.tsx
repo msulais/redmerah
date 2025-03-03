@@ -4,16 +4,10 @@ import type { HEXColor, HSLColor } from "@/types/color"
 import type { Settings } from "./_types"
 import { ColorPickerMode, Commands } from "./_enums"
 import { ImagePicker, PalettePicker, RectangleHSLPicker, RectanglePicker, SliderCMYKPicker, SliderHEXPicker, SliderHSLPicker, SliderHSVPicker, SliderHWBPicker, SliderRGBPicker, SpectrumPicker, WheelPicker } from "./_Pickers"
-import { stringLength, stringPadStart, stringReplace, stringSplit, stringSubstring, stringToUpperCase, stringTrim } from "@/utils/string"
 import { colorCmykToHsl, colorHexToHsl, colorHslToCmyk, colorHslToHex, colorHslToHsv, colorHslToHwb, colorHslToRgb, colorHsvToHsl, colorHwbToHsl, colorRgbToHsl } from "@/utils/color"
-import { mathClamp, mathRound } from "@/utils/math"
-import { arrayJoin, arrayLength, arrayMap, arrayPush } from "@/utils/array"
-import { numberParse, numberSafe } from "@/utils/number"
-import { navigatorClipboardWriteText } from "@/utils/navigator"
-import { eventCurrentTarget, eventTarget } from "@/utils/event"
-import { elementAllBySelector, elementDataset, elementId, elementTagName, elementValidTarget } from "@/utils/element"
-import { documentActive } from "@/utils/document"
-import { promiseDone } from "@/utils/object"
+import { mathClamp } from "@/utils/math"
+import { numberSafe } from "@/utils/number"
+import { elementValidTarget } from "@/utils/element"
 import { ICON_COPY } from "@/constants/icons"
 
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
@@ -88,30 +82,30 @@ const ColorInput: VoidComponent<{
 		const mode = settings().mode
 		return mode == ColorPickerMode.palette || mode == ColorPickerMode.image
 	})
-	const getHEXColor = createMemo(() => stringToUpperCase(colorHslToHex(input())))
+	const getHEXColor = createMemo(() => colorHslToHex(input()).toUpperCase())
 	const getRGBColor = createMemo(() => {
 		const {r, g, b} = colorHslToRgb(input())
-		return arrayJoin([
-			mathRound(r * 0xff),
-			mathRound(g * 0xff),
-			mathRound(b * 0xff)
-		], ', ')
+		return [
+			Math.round(r * 0xff),
+			Math.round(g * 0xff),
+			Math.round(b * 0xff)
+		].join(', ')
 	})
 	const getHSLColor = createMemo(() => {
 		const {h, s, l} = input()
-		return `${mathRound(h * 360)}°, ${mathRound(s * 100)}%, ${mathRound(l * 100)}%`
+		return `${Math.round(h * 360)}°, ${Math.round(s * 100)}%, ${Math.round(l * 100)}%`
 	})
 	const getHSVColor = createMemo(() => {
 		const {h, s, v} = colorHslToHsv(input())
-		return `${mathRound(h * 360)}°, ${mathRound(s * 100)}%, ${mathRound(v * 100)}%`
+		return `${Math.round(h * 360)}°, ${Math.round(s * 100)}%, ${Math.round(v * 100)}%`
 	})
 	const getHWBColor = createMemo(() => {
 		const {h, w, b} = colorHslToHwb(input())
-		return `${mathRound(h * 360)}°, ${mathRound(w * 100)}%, ${mathRound(b * 100)}%`
+		return `${Math.round(h * 360)}°, ${Math.round(w * 100)}%, ${Math.round(b * 100)}%`
 	})
 	const getCMYKColor = createMemo(() => {
 		const {c, m, y, k} = colorHslToCmyk(input())
-		return `${mathRound(c * 100)}%, ${mathRound(m * 100)}%, ${mathRound(y * 100)}%, ${mathRound(k * 100)}%`
+		return `${Math.round(c * 100)}%, ${Math.round(m * 100)}%, ${Math.round(y * 100)}%, ${Math.round(k * 100)}%`
 	})
 	const [hexColor, setHEXColor] = createSignal<string>('#000000')
 	const [rgbColor, setRGBColor] = createSignal<string>('0, 0, 0')
@@ -153,22 +147,20 @@ const ColorInput: VoidComponent<{
 
 	return (<div class={CSS.color_input}
 		onClick={ev => {
-			const button = documentActive()!
+			const button = document.activeElement! as HTMLButtonElement
 			if (!elementValidTarget(
-				eventCurrentTarget(ev),
+				ev.currentTarget,
 				button,
-				el => elementTagName(el) == 'BUTTON'
 			)) return
 
-			const data_copy = elementDataset(button, 'copy')
-			if (data_copy) return promiseDone(
-				navigatorClipboardWriteText(data_copy),
-				() => openToast(toastCopiedRef)
-			)
+			const dataset = button.dataset
+			const dataCopy = dataset.copy
+			if (dataCopy) return navigator.clipboard.writeText(dataCopy)
+				.then(() => openToast(toastCopiedRef))
 		}}
 		onFocusIn={ev => {
-			const target = eventTarget(ev) as HTMLInputElement
-			switch (elementId(target)) {
+			const target = ev.target as HTMLInputElement
+			switch (target.id) {
 			case inputHEXId: isHEXColorFocused = true; break
 			case inputRGBId: isRGBColorFocused = true; break
 			case inputHSLId: isHSLColorFocused = true; break
@@ -178,8 +170,8 @@ const ColorInput: VoidComponent<{
 			}
 		}}
 		onFocusOut={ev => {
-			const target = eventTarget(ev) as HTMLInputElement
-			switch (elementId(target)) {
+			const target = ev.target as HTMLInputElement
+			switch (target.id) {
 			case inputHEXId:
 				setHEXColor(getHEXColor())
 				isHEXColorFocused = false
@@ -216,9 +208,9 @@ const ColorInput: VoidComponent<{
 		</Toast>
 		<Tooltip
 			onFocusIn={ev => {
-				const self = eventCurrentTarget(ev)
-				if (arrayLength(textFields) === 0) {
-					arrayPush(textFields, ...elementAllBySelector('input[type=text]', self))
+				const self = ev.currentTarget
+				if (textFields.length === 0) {
+					textFields.push(...self.querySelectorAll<HTMLInputElement>('input[type=text]'))
 				}
 				keyboardOnFocusIn(ev, textFields)
 			}}
@@ -230,13 +222,13 @@ const ColorInput: VoidComponent<{
 				value={hexColor()}
 				readOnly={readOnly()}
 				onInput={(ev) => {
-					let text = eventCurrentTarget(ev).value
-					text = stringTrim(text)
-					text = stringReplace(text, /[^0-9A-Fa-f]/g, '')
-					if (stringLength(text) == 0) text = '0'
+					let text = ev.currentTarget.value
+					text = text.trim()
+					text = text.replace(/[^0-9A-Fa-f]/g, '')
+					if (text.length == 0) text = '0'
 
-					text = stringPadStart(text, 6, '0')
-					if (stringLength(text) > 6) text = stringSubstring(text, 0, 6)
+					text = text.padStart(6, '0')
+					if (text.length > 6) text = text.substring(0, 6)
 
 					text = '#' + text
 					command(Commands.updateInput, colorHexToHsl(text as HEXColor))
@@ -253,20 +245,17 @@ const ColorInput: VoidComponent<{
 				id={inputRGBId}
 				value={rgbColor()}
 				onInput={(ev) => {
-					let text = eventCurrentTarget(ev).value
-					text = stringTrim(text)
-					text = stringReplace(text, /[^\d,]/g, '')
-					const rgb_array: number[] = arrayMap(
-						stringSplit(text, ','),
-						v => mathClamp(numberSafe(numberParse(v, true), 0), 0, 0xff)
+					let text = ev.currentTarget.value
+					text = text.trim()
+					text = text.replace(/[^\d,]/g, '')
+					const rgbArray: number[] = text.split(',').map(
+						v => mathClamp(numberSafe(Number.parseInt(v), 0), 0, 0xff)
 					)
-					while (arrayLength(rgb_array) < 3) {
-						arrayPush(rgb_array, 0)
-					}
+					while (rgbArray.length < 3) rgbArray.push(0)
 
-					const r = rgb_array[0] / 0xff
-					const g = rgb_array[1] / 0xff
-					const b = rgb_array[2] / 0xff
+					const r = rgbArray[0] / 0xff
+					const g = rgbArray[1] / 0xff
+					const b = rgbArray[2] / 0xff
 					command(Commands.updateInput, colorRgbToHsl({r, g, b}))
 				}}
 				c:trailing={<TextFieldButton
@@ -281,20 +270,17 @@ const ColorInput: VoidComponent<{
 				id={inputHSLId}
 				value={hslColor()}
 				onInput={(ev) => {
-					let text = eventCurrentTarget(ev).value
-					text = stringTrim(text)
-					text = stringReplace(text, /[^\d,]/g, '')
-					const hsl_array: number[] = arrayMap(
-						stringSplit(text, ','),
-						v => numberSafe(numberParse(v, true), 0)
+					let text = ev.currentTarget.value
+					text = text.trim()
+					text = text.replace(/[^\d,]/g, '')
+					const hslArray: number[] = text.split(',').map(
+						v => numberSafe(Number.parseInt(v), 0)
 					)
-					while (arrayLength(hsl_array) < 3) {
-						arrayPush(hsl_array, 0)
-					}
+					while (hslArray.length < 3) hslArray.push(0)
 
-					const h = mathClamp(hsl_array[0], 0, 360) / 360
-					const s = mathClamp(hsl_array[1], 0, 100) / 100
-					const l = mathClamp(hsl_array[2], 0, 100) / 100
+					const h = mathClamp(hslArray[0], 0, 360) / 360
+					const s = mathClamp(hslArray[1], 0, 100) / 100
+					const l = mathClamp(hslArray[2], 0, 100) / 100
 					command(Commands.updateInput, {h, s, l} satisfies HSLColor)
 				}}
 				c:trailing={<TextFieldButton
@@ -309,20 +295,17 @@ const ColorInput: VoidComponent<{
 				id={inputHSVId}
 				value={hsvColor()}
 				onInput={(ev) => {
-					let text = eventCurrentTarget(ev).value
-					text = stringTrim(text)
-					text = stringReplace(text, /[^\d,]/g, '')
-					const hsv_array: number[] = arrayMap(
-						stringSplit(text, ','),
-						v => numberSafe(numberParse(v, true), 0)
+					let text = ev.currentTarget.value
+					text = text.trim()
+					text = text.replace(/[^\d,]/g, '')
+					const hsvArray: number[] = text.split(',').map(
+						v => numberSafe(Number.parseInt(v), 0)
 					)
-					while (arrayLength(hsv_array) < 3) {
-						arrayPush(hsv_array, 0)
-					}
+					while (hsvArray.length < 3) hsvArray.push(0)
 
-					const h = mathClamp(hsv_array[0], 0, 360) / 360
-					const s = mathClamp(hsv_array[1], 0, 100) / 100
-					const v = mathClamp(hsv_array[2], 0, 100) / 100
+					const h = mathClamp(hsvArray[0], 0, 360) / 360
+					const s = mathClamp(hsvArray[1], 0, 100) / 100
+					const v = mathClamp(hsvArray[2], 0, 100) / 100
 					command(Commands.updateInput, colorHsvToHsl({h, s, v}))
 				}}
 				c:trailing={<TextFieldButton
@@ -337,20 +320,17 @@ const ColorInput: VoidComponent<{
 				id={inputHWBId}
 				value={HWBColor()}
 				onInput={(ev) => {
-					let text = eventCurrentTarget(ev).value
-					text = stringTrim(text)
-					text = stringReplace(text, /[^\d,]/g, '')
-					const hwb_array: number[] = arrayMap(
-						stringSplit(text, ','),
-						v => numberSafe(numberParse(v, true), 0)
+					let text = ev.currentTarget.value
+					text = text.trim()
+					text = text.replace(/[^\d,]/g, '')
+					const hwbArray: number[] = text.split(',').map(
+						v => numberSafe(Number.parseInt(v), 0)
 					)
-					while (arrayLength(hwb_array) < 3) {
-						arrayPush(hwb_array, 0)
-					}
+					while (hwbArray.length < 3) hwbArray.push(0)
 
-					const h = mathClamp(hwb_array[0], 0, 360) / 360
-					const w = mathClamp(hwb_array[1], 0, 100) / 100
-					const b = mathClamp(hwb_array[2], 0, 100 - (w * 100)) / 100
+					const h = mathClamp(hwbArray[0], 0, 360) / 360
+					const w = mathClamp(hwbArray[1], 0, 100) / 100
+					const b = mathClamp(hwbArray[2], 0, 100 - (w * 100)) / 100
 					command(Commands.updateInput, colorHwbToHsl({h, w, b}))
 				}}
 				c:trailing={<TextFieldButton
@@ -365,21 +345,18 @@ const ColorInput: VoidComponent<{
 				id={inputCMYKId}
 				value={cmykColor()}
 				onInput={(ev) => {
-					let text = eventCurrentTarget(ev).value
-					text = stringTrim(text)
-					text = stringReplace(text, /[^\d,]/g, '')
-					const hwb_array: number[] = arrayMap(
-						stringSplit(text, ','),
-						v => numberSafe(numberParse(v, true), 0)
+					let text = ev.currentTarget.value
+					text = text.trim()
+					text = text.replace(/[^\d,]/g, '')
+					const hwbArray: number[] = text.split(',').map(
+						v => numberSafe(Number.parseInt(v), 0)
 					)
-					while (arrayLength(hwb_array) < 4) {
-						arrayPush(hwb_array, 0)
-					}
+					while (hwbArray.length < 4) hwbArray.push(0)
 
-					const c = mathClamp(hwb_array[0], 0, 100) / 100
-					const m = mathClamp(hwb_array[1], 0, 100) / 100
-					const y = mathClamp(hwb_array[2], 0, 100) / 100
-					const k = mathClamp(hwb_array[3], 0, 100) / 100
+					const c = mathClamp(hwbArray[0], 0, 100) / 100
+					const m = mathClamp(hwbArray[1], 0, 100) / 100
+					const y = mathClamp(hwbArray[2], 0, 100) / 100
+					const k = mathClamp(hwbArray[3], 0, 100) / 100
 					command(Commands.updateInput, colorCmykToHsl({c, m, y, k}))
 				}}
 				c:trailing={<TextFieldButton

@@ -66,26 +66,21 @@ const { route } = Astro.props
 </header>
 
 <script>
-	import { eventListenerAdd } from "@/utils/event"
-	import { elementById, elementStyleRemove, elementStyleSet } from "@/utils/element"
-	import { attrToggle } from "@/utils/attributes"
-	import { windowScrollY } from "@/utils/window"
-
-	const appbar = elementById('_appbar') as HTMLElement
-	let isTop = windowScrollY() <= 16
+	const appbar = document.getElementById('_appbar') as HTMLElement
+	let isTop = window.scrollY <= 16
 
 	appbar.ontransitionend = () => {
-		elementStyleRemove(appbar, 'will-change')
+		appbar.style.removeProperty('will-change')
 	}
 
-	attrToggle(appbar, 'data-top', isTop)
-	eventListenerAdd(window, 'scroll', () => {
-		const localIsTop = windowScrollY() <= 16
+	appbar.toggleAttribute('data-top', isTop)
+	window.addEventListener('scroll', () => {
+		const localIsTop = window.scrollY <= 16
 
 		if (isTop === localIsTop) return
 		isTop = localIsTop
 
-		elementStyleSet(appbar, 'will-change', 'border-color, background-color, box-shadow, transform, max-width')
-		attrToggle(appbar, 'data-top', isTop)
+		appbar.style.setProperty('will-change', 'border-color, background-color, box-shadow, transform, max-width')
+		appbar.toggleAttribute('data-top', isTop)
 	})
 </script>

@@ -4,21 +4,10 @@ import { batch, createEffect, createMemo, createSignal, createUniqueId, For, Mat
 import type { Stopwatch, Timer } from "./_types"
 import { Commands, Pages, StopwatchState, TimerState } from "./_enums"
 import { attrSetIfExist } from "@/utils/attributes"
-import { numberToString } from "@/utils/number"
-import { stringMatch, stringPadStart, stringReplace, stringTrim } from "@/utils/string"
-import { dateHours, dateMinutes, dateSeconds, dateValueOf } from "@/utils/datetime"
-import { timeIntervalClear, timeIntervalSet, timeTimerClear, timeTimerSet } from "@/utils/time"
-import { eventCurrentTarget, eventListenerAdd, eventListenerRemove } from "@/utils/event"
 import { ICON_ARROW_RESET, ICON_CHEVRON_DOWN, ICON_CHEVRON_UP, ICON_COPY, ICON_DISMISS, ICON_DOCUMENT_ARROW_UP, ICON_EDIT, ICON_FLAG, ICON_MORE_VERTICAL, ICON_PAUSE, ICON_PLAY, ICON_TIMER } from "@/constants/icons"
 import { KEY_ARROW_DOWN, KEY_ARROW_UP, KEY_DIGIT_0, KEY_DIGIT_1, KEY_DIGIT_2, KEY_DIGIT_3, KEY_DIGIT_4, KEY_DIGIT_5, KEY_DIGIT_6, KEY_DIGIT_7, KEY_DIGIT_8, KEY_DIGIT_9 } from "@/constants/key-code"
-import { mathFloor } from "@/utils/math"
-import { navigatorClipboardWriteText } from "@/utils/navigator"
-import { promiseDone } from "@/utils/object"
-import { regexTest } from "@/utils/regex"
 import { fileDownload } from "@/utils/file"
-import { documentActive } from "@/utils/document"
-import { elementById, elementDataset, elementFocus, elementId, elementTagName, elementValidTarget } from "@/utils/element"
-import { arrayIncludes, arrayLength, arrayPush, arrayReverse } from "@/utils/array"
+import { elementValidTarget } from "@/utils/element"
 import { openModal } from "@/components/Modal"
 import ringtone from '@/assets/audio/simple-ringtone-84595.mp3'
 
@@ -35,12 +24,12 @@ const BodyClock: VoidComponent = () => {
 	const [hour, setHour] = createSignal(0)
 	const [minute, setMinute] = createSignal(0)
 	const [second, setSecond] = createSignal(0)
-	const pad = (t: number) => stringPadStart(numberToString(t), 2, '0')
+	const pad = (t: number) => t.toString().padStart(2, '0')
 	const getTime = createMemo(() => {
 		return pad(hour()) + ':' + pad(minute()) + ':' + pad(second())
 	})
 	const [date, setDate] = createSignal<Date>(new Date)
-	let timeIntervalId: number | null = null
+	let timeIntervalId: number | NodeJS.Timeout | null = null
 	let [$hour, $minute, $second] = [0, 0, 0]
 
 	function updateDateTime(): void {
@@ -48,15 +37,15 @@ const BodyClock: VoidComponent = () => {
 
 		const d = new Date()
 		setDate(d)
-		$hour = dateHours(d)
-		$minute = dateMinutes(d)
-		$second = dateSeconds(d)
+		$hour = d.getHours()
+		$minute = d.getMinutes()
+		$second = d.getSeconds()
 		setHour($hour)
 		setMinute($minute)
 		setSecond($second)
 
 		let i = 0
-		timeIntervalId = timeIntervalSet(() => {
+		timeIntervalId = setInterval(() => {
 			if (i >= 60) updateDateTime() // update date
 
 			$second += 1
@@ -79,16 +68,14 @@ const BodyClock: VoidComponent = () => {
 	}
 
 	function clearTimeInterval(): void {
-		if (timeIntervalId !== null) timeIntervalClear(timeIntervalId)
+		if (timeIntervalId !== null) clearInterval(timeIntervalId)
 	}
 
 	function initEvents(): void {
-		const target = document
-		const eventType = 'visibilitychange'
-		eventListenerAdd(target, eventType, updateDateTime)
+		document.addEventListener('visibilitychange', updateDateTime)
 
 		onCleanup(() => {
-			eventListenerRemove(target, eventType, updateDateTime)
+			document.removeEventListener('visibilitychange', updateDateTime)
 		})
 	}
 
@@ -115,7 +102,7 @@ const BodyTimer: VoidComponent<{
 	const buttonStartId = createUniqueId()
 	const buttonPauseId = createUniqueId()
 	const buttonResetId = createUniqueId()
-	const pad = (t: number, l: number = 2) => stringPadStart(numberToString(t), l, '0')
+	const pad = (t: number, l: number = 2) => t.toString().padStart(l, '0')
 	const [inputHours, setInputHours] = createSignal(0)
 	const [inputMinutes, setInputMinutes] = createSignal(0)
 	const [inputSeconds, setInputSeconds] = createSignal(0)
@@ -131,10 +118,10 @@ const BodyTimer: VoidComponent<{
 		let seconds = $seconds
 		if (seconds >= 60) seconds %= 60
 
-		let minutes = mathFloor($seconds / 60)
+		let minutes = Math.floor($seconds / 60)
 		if (minutes >= 60) minutes %= 60
 
-		let hours = mathFloor($seconds / 3_600)
+		let hours = Math.floor($seconds / 3_600)
 		return pad(hours) + ':' + pad(minutes) + ':' + pad(seconds)
 	})
 	const getFormattedTimeFromStartSeconds = createMemo(() => {
@@ -144,20 +131,20 @@ const BodyTimer: VoidComponent<{
 		if (seconds >= 60) seconds %= 60
 		if (seconds > 0) text = seconds + (seconds > 1? ' seconds' : ' second')
 
-		let minutes = mathFloor($seconds / 60)
+		let minutes = Math.floor($seconds / 60)
 		if (minutes >= 60) minutes %= 60
 		if (minutes > 0) text = minutes + (minutes > 1? ' minutes' : ' minute') + ' ' + text
 
-		let hours = mathFloor($seconds / 3_600)
+		let hours = Math.floor($seconds / 3_600)
 		if (hours > 0) text = hours + (hours > 1? ' hours' : ' hour') + ' ' + text
 
-		return stringTrim(stringReplace(text, /\s+/g, ' '))
+		return text.replace(/\s+/g, ' ').trim()
 	})
 	let dialogEditRef: HTMLDialogElement
 	let dialogFinishRef: HTMLDialogElement
 	let audioRef: HTMLAudioElement
-	let timeTimerPressId: null | number = null
-	let timeIntervalPressId: null | number = null
+	let timeTimerPressId: null | NodeJS.Timeout | number = null
+	let timeIntervalPressId: null | NodeJS.Timeout | number = null
 
 	function command(type: Commands, ...args: unknown[]): unknown {
 		return props.command(type, ...args)
@@ -166,23 +153,23 @@ const BodyTimer: VoidComponent<{
 	function startTimer(): void {
 		setTimer()(produce(value => {
 			if (value.seconds === value.startSeconds) {
-				value.startDate = mathFloor(dateValueOf(new Date) / 1000)
+				value.startDate = Math.floor(new Date().valueOf() / 1000)
 			}
 			if (value.startDate !== null && value.pauseDate !== null) {
-				const diff = mathFloor(dateValueOf(new Date) / 1000) - value.pauseDate
+				const diff = Math.floor(new Date().valueOf() / 1000) - value.pauseDate
 				value.startDate += diff
 			}
 
 			value.state = TimerState.running
 		}))
-		elementFocus(elementById(buttonPauseId)!)
+		document.getElementById(buttonPauseId)?.focus()
 		clearTimeInterval()
 		setTimer()('seconds', s => s - 1)
 		if (getSeconds() <= 0) {
 			finishTimer()
 			return
 		}
-		setTimer()('timeIntervalId', timeIntervalSet(() => {
+		setTimer()('timeIntervalId', setInterval(() => {
 			setTimer()('seconds', s => s - 1)
 			if (getSeconds() <= 0) {
 				finishTimer()
@@ -203,9 +190,9 @@ const BodyTimer: VoidComponent<{
 	function pauseTimer(): void {
 		setTimer()(produce(value => {
 			value.state = TimerState.stopped
-			value.pauseDate = mathFloor(dateValueOf(new Date) / 1000)
+			value.pauseDate = Math.floor(new Date().valueOf() / 1000)
 		}))
-		elementFocus(elementById(buttonStartId)!)
+		document.getElementById(buttonStartId)?.focus()
 		clearTimeInterval()
 	}
 
@@ -216,13 +203,13 @@ const BodyTimer: VoidComponent<{
 			value.pauseDate = null
 			value.seconds = getStartSeconds()
 		}))
-		if (getStartSeconds() > 0) elementFocus(elementById(buttonStartId)!)
+		if (getStartSeconds() > 0) document.getElementById(buttonStartId)?.focus()
 		clearTimeInterval()
 		audioRef.pause()
 	}
 
 	function clearTimeInterval(): void {
-		if (getTimeIntervalId() !== null) timeIntervalClear(getTimeIntervalId()!)
+		if (getTimeIntervalId() !== null) clearInterval(getTimeIntervalId()!)
 	}
 
 	function updateInputs(): void {
@@ -232,10 +219,10 @@ const BodyTimer: VoidComponent<{
 			let seconds = $seconds
 			if (seconds >= 60) seconds %= 60
 
-			let minutes = mathFloor($seconds / 60)
+			let minutes = Math.floor($seconds / 60)
 			if (minutes >= 60) minutes %= 60
 
-			let hours = mathFloor($seconds / 3_600)
+			let hours = Math.floor($seconds / 3_600)
 			setInputSeconds(seconds)
 			setInputMinutes(minutes)
 			setInputHours(hours)
@@ -245,23 +232,23 @@ const BodyTimer: VoidComponent<{
 	function onPointerDownInput(ev: PointerEvent & {currentTarget: HTMLDialogElement}): void {
 
 		// let focus behaviour pass to button first
-		timeTimerSet(() => {
-			const button = documentActive()!
+		setTimeout(() => {
+			const button = document.activeElement! as HTMLButtonElement
 			if (!elementValidTarget(
-				eventCurrentTarget(ev),
+				ev.currentTarget,
 				button,
 				el => {
-					const isButton = elementTagName(el) === 'BUTTON'
-					const dataInputAction = elementDataset(el, 'inputAction')
+					const isButton = el.tagName === 'BUTTON'
+					const dataInputAction = (el as HTMLElement).dataset.inputAction
 					const validData = dataInputAction
-						? regexTest(/(up|down):(hour|minute|second)s/, dataInputAction)
+						? /(up|down):(hour|minute|second)s/.test(dataInputAction)
 						: false
 					return isButton && Boolean(dataInputAction) && validData
 				}
 			)) return
 
-			const dataInputAction = elementDataset(button, 'inputAction')!
-			const match = stringMatch(dataInputAction, /(up|down):(hours|minutes|seconds)/)!
+			const dataInputAction = button.dataset.inputAction!
+			const match = dataInputAction.match(/(up|down):(hours|minutes|seconds)/)!
 			const direction = match[1]
 			const type = match[2]
 			let value = 0
@@ -271,13 +258,13 @@ const BodyTimer: VoidComponent<{
 			case 'seconds': value = inputSeconds(); break
 			}
 
-			if (timeTimerPressId !== null) timeTimerClear(timeTimerPressId)
+			if (timeTimerPressId !== null) clearTimeout(timeTimerPressId)
 
-			timeTimerPressId = timeTimerSet(() => {
+			timeTimerPressId = setTimeout(() => {
 				timeTimerPressId = null
-				if (timeIntervalPressId !== null) timeIntervalClear(timeIntervalPressId)
+				if (timeIntervalPressId !== null) clearInterval(timeIntervalPressId)
 
-				timeIntervalPressId = timeIntervalSet(() => {
+				timeIntervalPressId = setInterval(() => {
 					switch (direction) {
 					case 'up'  : ++value; break
 					case 'down': --value; break
@@ -297,22 +284,22 @@ const BodyTimer: VoidComponent<{
 	}
 
 	function onPointerUpInput(ev: PointerEvent & {currentTarget: HTMLDialogElement}): void {
-		const button = documentActive()!
+		const button = document.activeElement! as HTMLElement
 		if (!elementValidTarget(
-			eventCurrentTarget(ev),
+			ev.currentTarget,
 			button,
 			el => {
-				const isButton = elementTagName(el) === 'BUTTON'
-				const dataInputAction = elementDataset(el, 'inputAction')
+				const isButton = el.tagName === 'BUTTON'
+				const dataInputAction = (el as HTMLElement).dataset.inputAction
 				const validData = dataInputAction
-					? regexTest(/(up|down):(hour|minute|second)s/, dataInputAction)
+					? /(up|down):(hour|minute|second)s/.test(dataInputAction)
 					: false
 				return isButton && Boolean(dataInputAction) && validData
 			}
 		)) return
 
-		const dataInputAction = elementDataset(button, 'inputAction')!
-		const match = stringMatch(dataInputAction, /(up|down):(hours|minutes|seconds)/)!
+		const dataInputAction = button.dataset.inputAction!
+		const match = dataInputAction.match(/(up|down):(hours|minutes|seconds)/)!
 		const direction = match[1]
 		const type = match[2]
 		let value = 0
@@ -322,8 +309,8 @@ const BodyTimer: VoidComponent<{
 		case 'seconds': value = inputSeconds(); break
 		}
 
-		if (timeTimerPressId !== null) timeTimerClear(timeTimerPressId)
-		if (timeIntervalPressId !== null) timeIntervalClear(timeIntervalPressId)
+		if (timeTimerPressId !== null) clearTimeout(timeTimerPressId)
+		if (timeIntervalPressId !== null) clearInterval(timeIntervalPressId)
 
 		timeTimerPressId = timeIntervalPressId = null
 		switch (direction) {
@@ -350,14 +337,14 @@ const BodyTimer: VoidComponent<{
 		<audio ref={r => audioRef = r} loop src={ringtone}></audio>
 		<Tooltip
 			onClick={ev => {
-				const button = documentActive()!
+				const button = document.activeElement!
 				if (!elementValidTarget(
-					eventCurrentTarget(ev),
+					ev.currentTarget,
 					button,
-					el => elementTagName(el) === 'BUTTON'
+					el => el.tagName === 'BUTTON'
 				)) return
 
-				switch (elementId(button)) {
+				switch (button.id) {
 				case buttonPauseId:
 					pauseTimer()
 					break
@@ -417,14 +404,15 @@ const BodyTimer: VoidComponent<{
 			</>}
 			onClose={() => updateInputs()}
 			onClick={ev => {
-				const button = documentActive()!
+				const button = document.activeElement! as HTMLButtonElement
 				if (!elementValidTarget(
-					eventCurrentTarget(ev),
+					ev.currentTarget,
 					button,
-					el => elementTagName(el) === 'BUTTON'
+					el => el.tagName === 'BUTTON'
 				)) return
 
-				const dataAction = elementDataset(button, 'action')
+				const dataset = button.dataset
+				const dataAction = dataset.action
 				if (dataAction) {
 					switch (dataAction) {
 					case 'cancel':
@@ -444,15 +432,15 @@ const BodyTimer: VoidComponent<{
 			}}
 			onKeyDown={ev => {
 				const code = ev.code
-				const button = documentActive()!
+				const button = document.activeElement! as HTMLButtonElement
 				let value = 0
 				if (!elementValidTarget(
-					eventCurrentTarget(ev),
+					ev.currentTarget,
 					button,
-					el => elementTagName(el) === 'BUTTON' && Boolean(elementDataset(el, 'input'))
+					el => el.tagName === 'BUTTON' && Boolean((el as HTMLButtonElement).dataset.input)
 				)) return
 
-				const dataInput = elementDataset(button, 'input')
+				const dataInput = button.dataset.input
 				const isByArrowKey = code === KEY_ARROW_UP || code === KEY_ARROW_DOWN
 				switch (dataInput) {
 				case 'hours': value = inputHours(); break
@@ -500,19 +488,19 @@ const BodyTimer: VoidComponent<{
 				<Button
 					data-input="hours"
 					c:variant={ButtonVariant.tonal}>
-					{stringPadStart(inputHours() + '', 2, '0')}
+					{(inputHours() + '').padStart(2, '0')}
 				</Button>
 				:
 				<Button
 					data-input="minutes"
 					c:variant={ButtonVariant.tonal}>
-					{stringPadStart(inputMinutes() + '', 2, '0')}
+					{(inputMinutes() + '').padStart(2, '0')}
 				</Button>
 				:
 				<Button
 					data-input="seconds"
 					c:variant={ButtonVariant.tonal}>
-					{stringPadStart(inputSeconds() + '', 2, '0')}
+					{(inputSeconds() + '').padStart(2, '0')}
 				</Button>
 			</FocusableGroup>
 			<FocusableGroup
@@ -545,7 +533,7 @@ const BodyTimer: VoidComponent<{
 const BodyStopwatch: VoidComponent<{
 	stopwatch: [get: Store<Stopwatch>, set: SetStoreFunction<Stopwatch>]
 }> = (props) => {
-	const pad = (t: number, l: number = 2) => stringPadStart(numberToString(t), l, '0')
+	const pad = (t: number, l: number = 2) => t.toString().padStart(l, '0')
 	const buttonStartId = createUniqueId()
 	const buttonPauseId = createUniqueId()
 	const buttonLapId = createUniqueId()
@@ -557,39 +545,39 @@ const BodyStopwatch: VoidComponent<{
 	const getTimeIntervalId = createMemo(() => getStopwatch().timeIntervalId)
 	const getMs = createMemo(() => getStopwatch().ms)
 	const getState = createMemo(() => getStopwatch().state)
-	const getReversedLaps = createMemo(() => arrayReverse([...getStopwatch().laps]))
+	const getReversedLaps = createMemo(() => [...getStopwatch().laps].reverse())
 	const getMinutesDigits = createMemo<number>(() => {
-		const m = mathFloor(getReversedLaps()[0] / 60_000)
+		const m = Math.floor(getReversedLaps()[0] / 60_000)
 		return m >= 10? 2 : m > 0? 1 : 0
 	})
-	const getSecondsDigits = createMemo<number>(() => mathFloor(getReversedLaps()[0] / 1000) >= 10? 2 : 1)
+	const getSecondsDigits = createMemo<number>(() => Math.floor(getReversedLaps()[0] / 1000) >= 10? 2 : 1)
 	const getHoursDigits = createMemo<number>(() => {
-		const h = mathFloor(getReversedLaps()[0] / 3_600_000)
+		const h = Math.floor(getReversedLaps()[0] / 3_600_000)
 		return h >= 100? 3 : h >= 10? 2 : h > 0? 1 : 0
 	})
 	const getTimeText = createMemo<string>(() => {
 		let text = ''
-		let seconds = mathFloor(getMs() / 1000)
+		let seconds = Math.floor(getMs() / 1000)
 		if (seconds >= 60) {
 			seconds %= 60
 			text = pad(seconds)
 		}
 		else text = seconds + ''
 
-		let minutes = mathFloor(getMs() / 60_000)
+		let minutes = Math.floor(getMs() / 60_000)
 		if (minutes >= 60) {
 			minutes %= 60
 			text = pad(minutes) + ':' + text
 		}
 		else if (minutes > 0) text = minutes + ':' + text
 
-		let hours = mathFloor(getMs() / 3_600_000)
+		let hours = Math.floor(getMs() / 3_600_000)
 		if (hours > 0) text = hours + ':' + text
 
 		return text
 	})
 	const getMillisecondsText = createMemo<string>(() => {
-		let milliseconds = mathFloor(getMs() / 10)
+		let milliseconds = Math.floor(getMs() / 10)
 		if (milliseconds >= 100) milliseconds %= 100
 
 		return pad(milliseconds)
@@ -598,17 +586,17 @@ const BodyStopwatch: VoidComponent<{
 
 	function startStopwatch(): void {
 		setStopwatch()(produce(value => {
-			if (value.ms === 0) value.startDate = dateValueOf(new Date)
+			if (value.ms === 0) value.startDate = new Date().valueOf()
 			if (value.startDate !== null && value.pauseDate !== null) {
-				const diff = dateValueOf(new Date) - value.pauseDate
+				const diff = new Date().valueOf() - value.pauseDate
 				value.startDate += diff
 			}
 
 			value.state = StopwatchState.running
 		}))
-		elementFocus(elementById(buttonPauseId)!)
+		document.getElementById(buttonPauseId)?.focus()
 		clearTimeInterval()
-		setStopwatch()('timeIntervalId', timeIntervalSet(
+		setStopwatch()('timeIntervalId', setInterval(
 			() => setStopwatch()('ms', v => v + 10),
 			10
 		))
@@ -617,9 +605,9 @@ const BodyStopwatch: VoidComponent<{
 	function pauseStopwatch(): void {
 		setStopwatch()(produce(value => {
 			value.state = StopwatchState.stopped
-			value.pauseDate = dateValueOf(new Date)
+			value.pauseDate = new Date().valueOf()
 		}))
-		elementFocus(elementById(buttonStartId)!)
+		document.getElementById(buttonStartId)?.focus()
 		clearTimeInterval()
 	}
 
@@ -631,22 +619,22 @@ const BodyStopwatch: VoidComponent<{
 			value.ms = 0
 			value.laps = []
 		}))
-		elementFocus(elementById(buttonStartId)!)
+		document.getElementById(buttonStartId)?.focus()
 		clearTimeInterval()
 	}
 
 	function addStopwatchLap(): void {
 		setStopwatch()(produce(value => {
-			arrayPush(value.laps, value.ms)
+			value.laps.push(value.ms)
 		}))
 	}
 
 	function clearTimeInterval(): void {
-		if (getTimeIntervalId() !== null) timeIntervalClear(getTimeIntervalId()!)
+		if (getTimeIntervalId() !== null) clearInterval(getTimeIntervalId()!)
 	}
 
 	function exportAsCSV(useMilliseconds: boolean = false): void {
-		const lapsLength = arrayLength(getStopwatch().laps)
+		const lapsLength = getStopwatch().laps.length
 		let text = 'Laps,Time,Total'
 
 		for (let i = 0; i < lapsLength; i++) {
@@ -678,7 +666,7 @@ const BodyStopwatch: VoidComponent<{
 		useTotal: boolean = true,
 		useMilliseconds: boolean = false
 	): void {
-		const lapsLength = arrayLength(getStopwatch().laps)
+		const lapsLength = getStopwatch().laps.length
 		let text = ''
 
 		if (useTime && useTotal) text += 'Laps\tTime\tTotal'
@@ -709,10 +697,7 @@ const BodyStopwatch: VoidComponent<{
 			else if (useTotal) text += ('\n' + msText)
 		}
 
-		promiseDone(
-			navigatorClipboardWriteText(text),
-			() => closeMenu(menuMoreActionRef)
-		)
+		navigator.clipboard.writeText(text).then(() => closeMenu(menuMoreActionRef))
 	}
 
 	function formatStopwatchTime(
@@ -722,12 +707,12 @@ const BodyStopwatch: VoidComponent<{
 		hourDigits: number
 	): string {
 		let text = '00'
-		let milliseconds = mathFloor(ms / 10)
+		let milliseconds = Math.floor(ms / 10)
 		if (milliseconds >= 100) milliseconds %= 100
 
 		text = pad(milliseconds) + ''
 
-		let seconds = mathFloor(ms / 1000)
+		let seconds = Math.floor(ms / 1000)
 		if (seconds >= 60) {
 			seconds %= 60
 			text = pad(seconds) + ',' + text
@@ -735,7 +720,7 @@ const BodyStopwatch: VoidComponent<{
 		else if (secondDigits >= 2) text = pad(seconds, secondDigits) + ',' + text
 		else text = seconds + ',' + text
 
-		let minutes = mathFloor(ms / 60_000)
+		let minutes = Math.floor(ms / 60_000)
 		if (minutes >= 60) {
 			minutes %= 60
 			text = pad(minutes) + ':' + text
@@ -744,7 +729,7 @@ const BodyStopwatch: VoidComponent<{
 		else if (minuteDigits >= 1) text = minutes + ':' + text
 		else if (minutes > 0) text = minutes + ':' + text
 
-		let hours = mathFloor(ms / 3_600_000)
+		let hours = Math.floor(ms / 3_600_000)
 		if (hourDigits >= 2) text = pad(hours, hourDigits) + ':' + text
 		else if (hourDigits >= 1) text = hours + ':' + text
 		else if (hours > 0) text = hours + ':' + text
@@ -756,9 +741,9 @@ const BodyStopwatch: VoidComponent<{
 		const i = createMemo(() => props.i)
 		const lap = createMemo(() => props.lap)
 		return (<div>
-			<span>{arrayLength(getStopwatch().laps) - i()}</span>
+			<span>{getStopwatch().laps.length - i()}</span>
 			<span>{formatStopwatchTime(
-				lap() - (i() < arrayLength(getStopwatch().laps)-1
+				lap() - (i() < getStopwatch().laps.length - 1
 					? getReversedLaps()[i() + 1]
 					: 0
 				),
@@ -772,14 +757,14 @@ const BodyStopwatch: VoidComponent<{
 		<h2>{getTimeText()},<small>{getMillisecondsText()}</small></h2>
 		<Tooltip
 			onClick={ev => {
-				const button = documentActive()!
+				const button = document.activeElement! as HTMLButtonElement
 				if (!elementValidTarget(
-					eventCurrentTarget(ev),
+					ev.currentTarget,
 					button,
-					el => elementTagName(el) === 'BUTTON'
+					el => el.tagName === 'BUTTON'
 				)) return
 
-				switch (elementId(button)) {
+				switch (button.id) {
 				case buttonLapId:
 					addStopwatchLap()
 					break
@@ -830,7 +815,7 @@ const BodyStopwatch: VoidComponent<{
 						c:variant={ButtonVariant.tonal}
 					/>
 				</Show>
-				<Show when={arrayLength(getStopwatch().laps) > 0}>
+				<Show when={getStopwatch().laps.length > 0}>
 					<IconButton
 						data-tooltip="More actions"
 						id={buttonMoreId}
@@ -841,7 +826,7 @@ const BodyStopwatch: VoidComponent<{
 				</Show>
 			</FocusableGroup>
 		</Tooltip>
-		<Show when={arrayLength(getStopwatch().laps) > 0}>
+		<Show when={getStopwatch().laps.length > 0}>
 			<div data-laps>
 				<div>
 					<span>Laps</span>
@@ -859,28 +844,27 @@ const BodyStopwatch: VoidComponent<{
 			ref={r => menuMoreActionRef = r}
 			c:onToggleOpen={o => setIsMenuMoreActionOpen(o)}
 			onClick={ev => {
-				const button = documentActive()!
+				const button = document.activeElement! as HTMLButtonElement
 				if (!elementValidTarget(
-					eventCurrentTarget(ev),
+					ev.currentTarget,
 					button,
-					el => elementTagName(el) === 'BUTTON'
 				)) return
 
-				const dataCopy = elementDataset(button, 'copy')
-				if (dataCopy && arrayIncludes(
-					['time', 'ms:time', 'total', 'ms:total', 'all', 'ms:all'],
-					dataCopy
-				)) {
+				const dataset = button.dataset
+				const dataCopy = dataset.copy
+				if (dataCopy
+					&& ['time', 'ms:time', 'total', 'ms:total', 'all', 'ms:all'].includes(dataCopy)
+				) {
 					return copyLaps(
-						regexTest(/time|all/, dataCopy),
-						regexTest(/total|all/, dataCopy),
-						regexTest(/^ms/, dataCopy),
+						/time|all/.test(dataCopy),
+						/total|all/.test(dataCopy),
+						/^ms/.test(dataCopy),
 					)
 				}
 
-				const dataExport = elementDataset(button, 'export')
+				const dataExport = dataset.export
 				if (dataExport) {
-					return exportAsCSV(regexTest(/^ms/, dataExport))
+					return exportAsCSV(/^ms/.test(dataExport))
 				}
 			}}>
 			<MenuItem

@@ -1,4 +1,4 @@
-import { createStore } from "solid-js/store"
+import { createStore, produce } from "solid-js/store"
 import { createMemo, createSignal, createUniqueId, For, onMount, Show, type VoidComponent } from "solid-js"
 
 import type { TaskList, TaskLabel, Settings, Task, TaskFileMetaData, SubTask } from "./_types"
@@ -7,20 +7,12 @@ import { type ObjectStoreTaskLists, type ObjectStoreSettings, type ObjectStoreSu
 import { Commands, Pages, SortBy, SortMode } from "./_enums"
 import { DatabaseNames } from "@/enums/storage"
 import { DEFAULT_TASK_LIST } from "./_constants"
-import { IDB, idbStoreDelete, idbStorePut } from "@/utils/indexeddb"
-import { dateTextYMD_HM } from "@/utils/datetime"
+import { IDB } from "@/utils/indexeddb"
 import { fileDownload } from "@/utils/file"
-import { eventCurrentTarget, eventPreventDefault } from "@/utils/event"
-import { arrayConcat, arrayEvery, arrayFilter, arrayFindIndex, arrayIncludes, arrayJoin, arrayLength, arrayMap, arrayPush, arraySlice, arraySort, arraySplice } from "@/utils/array"
-import { stringLocaleCompare, stringTrim } from "@/utils/string"
-import { navigatorClipboardWriteText } from "@/utils/navigator"
-import { promiseDone } from "@/utils/object"
-import { numberIsNotDefined, numberParse } from "@/utils/number"
+import { numberIsNotDefined } from "@/utils/number"
 import { removeSplashScreen } from "@/utils/splash"
 import { AppColors } from "@/enums/colors"
-import { documentActive } from "@/utils/document"
-import { elementDataset, elementId, elementTagName, elementValidTarget } from "@/utils/element"
-import { typeIsString } from "@/utils/typecheck"
+import { elementValidTarget } from "@/utils/element"
 import { ICON_CIRCLE, ICON_CIRCLE_ERASER, ICON_DELETE, ICON_DISMISS, ICON_DOCUMENT_ERROR, ICON_EDIT, ICON_EMOJI_ADD } from "@/constants/icons"
 
 import { Tooltip } from "@/components/Tooltip"
@@ -83,29 +75,28 @@ const _: VoidComponent = () => {
 		const isReverse = settings.sortMode == SortMode.descending
 		switch (settings.sortBy) {
 			case SortBy.name: {
-			arraySort(
-				tasks,
-				(a, b) => stringLocaleCompare(a.name, b.name) * (isReverse? -1 : 1)
+			tasks.sort(
+				(a, b) => a.name.localeCompare(b.name) * (isReverse? -1 : 1)
 			)
 			break
 		}
 		case SortBy.importance: {
-			arraySort(tasks, (a, b) => stringLocaleCompare(a.name, b.name) * (isReverse? 1 : -1))
-			arraySort(tasks, (a) => (a.important? -1 : 1) * (isReverse? -1 : 1))
+			tasks.sort((a, b) => a.name.localeCompare(b.name) * (isReverse? 1 : -1))
+			tasks.sort((a) => (a.important? -1 : 1) * (isReverse? -1 : 1))
 			break
 		}
 		case SortBy.creationDate: {
-			arraySort(tasks, (a, b) => !isReverse? b.id - a.id : a.id - b.id)
+			tasks.sort((a, b) => !isReverse? b.id - a.id : a.id - b.id)
 			break
 		}
 		case SortBy.completed: {
-			arraySort(tasks, (a, b) => stringLocaleCompare(a.name, b.name) * (isReverse? 1 : -1))
-			arraySort(tasks, (a) => (a.complete? -1 : 1) * (isReverse? -1 : 1))
+			tasks.sort((a, b) => a.name.localeCompare(b.name) * (isReverse? 1 : -1))
+			tasks.sort((a) => (a.complete? -1 : 1) * (isReverse? -1 : 1))
 			break
 		}
 		case SortBy.uncompleted: {
-			arraySort(tasks, (a, b) => stringLocaleCompare(b.name, a.name) * (isReverse? 1 : -1))
-			arraySort(tasks, (a) => (!a.complete? -1 : 1) * (isReverse? -1 : 1))
+			tasks.sort((a, b) => b.name.localeCompare(a.name) * (isReverse? 1 : -1))
+			tasks.sort((a) => (!a.complete? -1 : 1) * (isReverse? -1 : 1))
 			break
 		}}
 
@@ -120,21 +111,21 @@ const _: VoidComponent = () => {
 
 		for (const task of taskLists[taskListIndex].tasks){
 			if (task.complete == complete) {
-				arrayPush(tasks, task)
+				tasks.push(task)
 				continue
 			}
 
 			const t: Task = {
 				...task,
 				complete: complete,
-				subtasks: [...arrayMap(task.subtasks, (v) => {
+				subtasks: [...task.subtasks.map((v) => {
 					const subtask = {...v}
 					subtask.complete = complete
-					if (storeSubTasks) idbStorePut(storeSubTasks, {...v} satisfies ObjectStoreSubTasks)
+					if (storeSubTasks) storeSubTasks.put({...v} satisfies ObjectStoreSubTasks)
 					return subtask
 				})]
 			}
-			if (storeTasks) idbStorePut(storeTasks, {
+			storeTasks?.put({
 				id: t.id,
 				complete: t.complete,
 				description: t.description,
@@ -144,12 +135,12 @@ const _: VoidComponent = () => {
 				name: t.name,
 				reminder: t.reminder
 			} satisfies ObjectStoreTasks)
-			arrayPush(tasks, t)
+			tasks.push(t)
 		}
 		setTaskLists(
 			taskListIndex,
 			'tasks',
-			arrayIncludes([SortBy.completed, SortBy.uncompleted], settings.sortBy)
+			[SortBy.completed, SortBy.uncompleted].includes(settings.sortBy)
 				? sortTasks(tasks)
 				: tasks
 		)
@@ -166,18 +157,18 @@ const _: VoidComponent = () => {
 
 		for (const task of taskLists[taskListIndex].tasks){
 			if (!task.complete) {
-				arrayPush(tasks, task)
+				tasks.push(task)
 				continue
 			}
-			if (storeTasks) idbStoreDelete(storeTasks, task.id)
-			if (storeSubTasks){
-				for (const subtask of task.subtasks) {
-					idbStoreDelete(storeSubTasks, subtask.id)
-				}
+
+			storeTasks?.delete(task.id)
+			if (storeSubTasks) for (const subtask of task.subtasks) {
+				storeSubTasks.delete(subtask.id)
 			}
-			for (const file of task.files) {
-				if (storeFileMetaData) idbStoreDelete(storeFileMetaData, file.id)
-				if (storeFiles) idbStoreDelete(storeFiles, file.id)
+
+			if (storeFileMetaData || storeFiles) for (const file of task.files) {
+				storeFileMetaData?.delete(file.id)
+				storeFiles?.delete(file.id)
 			}
 		}
 		setTaskLists(taskListIndex, 'tasks', tasks)
@@ -194,15 +185,14 @@ const _: VoidComponent = () => {
 		setTaskLists(taskListIndex, 'tasks', [])
 
 		for (const task of taskLists[taskListIndex].tasks){
-			if (storeTasks) idbStoreDelete(storeTasks, task.id)
-			if (storeSubTasks){
-				for (const subtask of task.subtasks) {
-					idbStoreDelete(storeSubTasks, subtask.id)
-				}
+			storeTasks?.delete(task.id)
+			if (storeSubTasks) for (const subtask of task.subtasks) {
+				storeSubTasks.delete(subtask.id)
 			}
-			for (const file of task.files) {
-				if (storeFileMetaData) idbStoreDelete(storeFileMetaData, file.id)
-				if (storeFiles) idbStoreDelete(storeFiles, file.id)
+
+			if (storeFileMetaData || storeFiles) for (const file of task.files) {
+				storeFileMetaData?.delete(file.id)
+				storeFiles?.delete(file.id)
 			}
 		}
 	}
@@ -212,7 +202,7 @@ const _: VoidComponent = () => {
 		if (!store) return
 
 		for (const item of items) {
-			idbStorePut(store, { key: item[0], value: item[1] })
+			store.put({ key: item[0], value: item[1] })
 		}
 	}
 
@@ -221,7 +211,7 @@ const _: VoidComponent = () => {
 		if (store == null) return
 
 		for (const item of items) {
-			idbStorePut(store, { key: item[0], value: item[1] })
+			store.put({ key: item[0], value: item[1] })
 		}
 	}
 
@@ -271,24 +261,24 @@ const _: VoidComponent = () => {
 
 		if (isNameChanged){
 			subTasks[subTaskIndex] = subTask
-			arraySort(subTasks, (a, b) => stringLocaleCompare(a.name, b.name))
+			subTasks.sort((a, b) => a.name.localeCompare(b.name))
 		}
 
 		if (isNameChanged) setTaskLists(taskListIndex, 'tasks', taskIndex, 'subtasks', subTasks)
 		else setTaskLists(taskListIndex, 'tasks', taskIndex, 'subtasks', subTaskIndex, {...subTask})
 
-		if (storeSubTasks) idbStorePut(storeSubTasks, {...subTask})
+		storeSubTasks?.put({...subTask})
 		if (!(!subTask.complete && taskLists[taskListIndex].tasks[taskIndex].complete)) return;
 
 		const task: Task = {...taskLists[taskListIndex].tasks[taskIndex], complete: false}
-		if (arrayIncludes([SortBy.completed, SortBy.uncompleted], settings.sortBy)) {
+		if ([SortBy.completed, SortBy.uncompleted].includes(settings.sortBy)) {
 			const tasks: Task[] = [...taskLists[taskListIndex].tasks]
 			tasks[taskIndex] = task
 			setTaskLists(taskListIndex, 'tasks', sortTasks(tasks))
 		}
 		else setTaskLists(taskListIndex, 'tasks', taskIndex, task)
 
-		if (storeTasks) idbStorePut(storeTasks, {
+		storeTasks?.put({
 			id: task.id,
 			description: task.description,
 			complete: task.complete,
@@ -314,12 +304,12 @@ const _: VoidComponent = () => {
 
 		if (isNameChanged) {
 			files[fileIndex] = {...file}
-			arraySort(files, (a, b) => stringLocaleCompare(a.name, b.name))
+			files.sort((a, b) => a.name.localeCompare(b.name))
 		}
 
 		setTaskLists(taskListIndex, 'tasks', taskIndex, 'files', files)
 		const storeFileMetaData = db.writeStore(ObjectStoreNames.filemetadata)
-		if (storeFileMetaData) idbStorePut(storeFileMetaData, {...file})
+		storeFileMetaData?.put({...file})
 	}
 
 	/**
@@ -331,7 +321,7 @@ const _: VoidComponent = () => {
 		const isTaskImportanceStatusChanged = pastTask.important != task.important
 		const isTaskNameChanged = pastTask.name != task.name
 		const changedSubTasks: SubTask[] = (isTaskCompleteStatusChanged
-			? arrayMap(task.subtasks, subtask => ({...subtask, complete: !pastTask.complete && task.complete} satisfies SubTask))
+			? task.subtasks.map(subtask => ({...subtask, complete: !pastTask.complete && task.complete} satisfies SubTask))
 			: [])
 		const deletedSubTasks: SubTask[] = []
 		const deletedFiles: TaskFileMetaData[] = []
@@ -342,23 +332,23 @@ const _: VoidComponent = () => {
 			ObjectStoreNames.filemetadata,
 		)
 
-		if (arrayLength(pastTask.subtasks) > arrayLength(task.subtasks)) {
-			const ids = arrayMap(task.subtasks, subtask => subtask.id)
+		if (pastTask.subtasks.length > task.subtasks.length) {
+			const ids = task.subtasks.map(subtask => subtask.id)
 
-			for (let i = 0; i < arrayLength(pastTask.subtasks); i++) {
-				if (arrayIncludes(ids, pastTask.subtasks[i].id)) continue;
+			for (let i = 0; i < pastTask.subtasks.length; i++) {
+				if (ids.includes(pastTask.subtasks[i].id)) continue;
 
-				arrayPush(deletedSubTasks, pastTask.subtasks[i])
+				deletedSubTasks.push(pastTask.subtasks[i])
 			}
 		}
 
-		if (arrayLength(pastTask.files) > arrayLength(task.files)) {
-			const ids = arrayMap(task.files, file => file.id)
+		if (pastTask.files.length > task.files.length) {
+			const ids = task.files.map(file => file.id)
 
-			for (let i = 0; i < arrayLength(pastTask.files); i++) {
-				if (arrayIncludes(ids, pastTask.files[i].id)) continue;
+			for (let i = 0; i < pastTask.files.length; i++) {
+				if (ids.includes(pastTask.files[i].id)) continue;
 
-				arrayPush(deletedFiles, pastTask.files[i])
+				deletedFiles.push(pastTask.files[i])
 			}
 		}
 
@@ -371,7 +361,7 @@ const _: VoidComponent = () => {
 		}
 
 		if (
-			(isTaskCompleteStatusChanged && arrayIncludes([SortBy.uncompleted, SortBy.completed], settings.sortBy))
+			(isTaskCompleteStatusChanged && [SortBy.uncompleted, SortBy.completed].includes(settings.sortBy))
 			|| (isTaskImportanceStatusChanged && settings.sortBy == SortBy.importance)
 			|| (isTaskNameChanged && settings.sortBy == SortBy.name)
 		){
@@ -385,20 +375,20 @@ const _: VoidComponent = () => {
 
 		if (storeSubTasks) {
 			for (const SubTask of changedSubTasks) {
-				idbStorePut(storeSubTasks, {...SubTask})
+				storeSubTasks.put({...SubTask})
 			}
 
 			for (const SubTask of deletedSubTasks) {
-				idbStoreDelete(storeSubTasks, SubTask.id)
+				storeSubTasks.delete(SubTask.id)
 			}
 		}
 
-		for (const file of deletedFiles) {
-			if (storeFileMetaData != null) idbStoreDelete(storeFileMetaData, file.id)
-			if (storeFiles != null) idbStoreDelete(storeFiles, file.id)
+		if (storeFileMetaData || storeFiles) for (const file of deletedFiles) {
+			storeFileMetaData?.delete(file.id)
+			storeFiles?.delete(file.id)
 		}
 
-		if (storeTasks) idbStorePut(storeTasks, {
+		storeTasks?.put({
 			id: task.id,
 			description: task.description,
 			complete: task.complete,
@@ -421,35 +411,34 @@ const _: VoidComponent = () => {
 		setTaskLists(
 			taskListIndex,
 			'tasks',
-			tasks => [
-				...arraySlice(tasks, 0, taskIndex),
-				...arraySlice(tasks, taskIndex + 1)
-			]
+			produce(tasks => {
+				tasks.splice(taskIndex, 1)
+			})
 		)
 
-		if (storeTasks) idbStoreDelete(storeTasks, task.id)
+		storeTasks?.delete(task.id)
 		if (storeSubtasks) for (const subtask of task.subtasks) {
-			idbStoreDelete(storeSubtasks, subtask.id)
+			storeSubtasks.delete(subtask.id)
 		}
 
-		for (const file of task.files) {
-			if (storeFiles) idbStoreDelete(storeFiles, file.id)
-			if (storeFileMetaData) idbStoreDelete(storeFileMetaData, file.id)
+		if (storeFiles || storeFileMetaData) for (const file of task.files) {
+			storeFiles?.delete(file.id)
+			storeFileMetaData?.delete(file.id)
 		}
 	}
 
 	function copyTasks(taskListIndex?: number): void {
-		const isGrouping = arrayIncludes([
+		const isGrouping = [
 			Pages.all, Pages.completed, Pages.uncompleted,
 			Pages.important, Pages.planned
-		], page() as Pages)
+		].includes(page() as Pages)
 
 		let text: string = ''
 		const getTextPerTaskList = (taskListIndex: number) => {
 			const tasklist = taskLists[taskListIndex]
 			text += `${tasklist.emoji != null ? tasklist.emoji : '📑'} ${tasklist.name}`
 
-			for (let i = 0; i < arrayLength(tasklist.tasks); i++) {
+			for (let i = 0; i < tasklist.tasks.length; i++) {
 				const task: Task = tasklist.tasks[i]
 				const taskComplete = task.complete
 				const taskImportant = task.important
@@ -471,19 +460,25 @@ const _: VoidComponent = () => {
 
 				if (taskDescription != '') additional += `[🗒️ ${taskDescription}]`
 				if (taskImportant) additional +=  '[⭐ important]'
-				if (taksReminder != null) additional += `[🕒 ${dateTextYMD_HM(taksReminder!)}]`
+				if (taksReminder != null) additional += `[🕒 ${taksReminder.toLocaleTimeString(undefined, {
+					year: 'numeric',
+					month: 'long',
+					day: 'numeric',
+					hour: 'numeric',
+					minute: 'numeric'
+				})}]`
 				for (const file of task.files) additional += `[💾 ${file.name}]`
 
 				let j = 0
 				labels: for (const id of task.labelIds) {
 					if (labels[id] == undefined) continue labels;
-					if (j >= arrayLength(task.labelIds)) break labels;
+					if (j >= task.labelIds.length) break labels;
 
 					additional += `[🔖 ${labels[id].name}]`
 					j++
 				}
 
-				if (additional != '') text = arrayJoin([text, additional], ' ')
+				if (additional != '') text = [text, additional].join(' ')
 				for (const subtask of task.subtasks) {
 					text += (`\n➡️${subtask.complete ? '✔️' : '❌'} ${subtask.name}`)
 				}
@@ -492,16 +487,16 @@ const _: VoidComponent = () => {
 
 		if (taskListIndex == null) {
 			let j = 0
-			for (let i = 0; i < arrayLength(taskLists); i++) {
+			for (let i = 0; i < taskLists.length; i++) {
 				const taskList: TaskList = taskLists[i]
 				const tasks = taskList.tasks
-				if (arrayLength(tasks) == 0) continue;
+				if (tasks.length == 0) continue;
 				if (isGrouping
 					&& (
-						(page() == Pages.completed      && arrayEvery(tasks, task => !task.complete))
-						|| (page() == Pages.uncompleted && arrayEvery(tasks, task => task.complete))
-						|| (page() == Pages.important   && arrayEvery(tasks, task => !task.important))
-						|| (page() == Pages.planned     && arrayEvery(tasks, task => task.reminder == null))
+						(page() == Pages.completed      && tasks.every(task => !task.complete))
+						|| (page() == Pages.uncompleted && tasks.every(task => task.complete))
+						|| (page() == Pages.important   && tasks.every(task => !task.important))
+						|| (page() == Pages.planned     && tasks.every(task => task.reminder == null))
 					)
 				) continue;
 				if (j > 0) text += '\n\n'
@@ -516,7 +511,7 @@ const _: VoidComponent = () => {
 		// ➡️✔️ subtask-name
 		// ➡️❌ subtask-name
 		// ❌ task-name
-		navigatorClipboardWriteText(text)
+		navigator.clipboard.writeText(text)
 	}
 
 	async function addLabel(name: string, color: HEXColor | null): Promise<void> {
@@ -529,7 +524,7 @@ const _: VoidComponent = () => {
 			// since key generator value never decrease,
 			// we have to check empty key to use it.
 			// keep the labels compact.
-			for (let i = 1; i < arrayLength(labels); i++) {
+			for (let i = 1; i < labels.length; i++) {
 				if (labels[i] != undefined) continue;
 
 				isAdded = true
@@ -561,7 +556,7 @@ const _: VoidComponent = () => {
 		setLabels($labels)
 
 		const storeLabels = db.writeStore(ObjectStoreNames.labels)
-		if (storeLabels) idbStorePut(storeLabels, {...label})
+		storeLabels?.put({...label})
 	}
 
 	function deleteLabel(label: TaskLabel): void {
@@ -570,22 +565,22 @@ const _: VoidComponent = () => {
 			ObjectStoreNames.labels
 		)
 		const $labels = [...labels]
-		arraySplice($labels, label.id, 1)
+		$labels.splice(label.id, 1)
 
-		for (let i = 0; i < arrayLength(taskLists); i++) {
+		for (let i = 0; i < taskLists.length; i++) {
 			const tasks = taskLists[i].tasks
-			tasks: for (let j = 0; j < arrayLength(tasks); j++) {
+			tasks: for (let j = 0; j < tasks.length; j++) {
 				const task = tasks[j]
 				const taskLabelIds = tasks[j].labelIds
-				const index = arrayFindIndex(taskLabelIds, id => id == label.id)
+				const index = taskLabelIds.findIndex(id => id == label.id)
 				if (index < 0) continue tasks
 
-				const labelIds = arrayConcat(
-					arraySlice(taskLabelIds, 0, index),
-					arraySlice(taskLabelIds, index + 1)
-				)
+				const labelIds = taskLabelIds
+					.slice(0, index)
+					.concat(taskLabelIds.slice(index + 1))
+
 				setTaskLists(i, 'tasks', j, 'labelIds', labelIds)
-				if (storeTasks) idbStorePut(storeTasks, {
+				storeTasks?.put({
 					id: task.id,
 					description: task.description,
 					complete: task.complete,
@@ -598,7 +593,7 @@ const _: VoidComponent = () => {
 			}
 		}
 		setLabels($labels)
-		if (storeLabels) idbStoreDelete(storeLabels, label.id)
+		storeLabels?.delete(label.id)
 	}
 
 	async function addFiles(
@@ -607,7 +602,7 @@ const _: VoidComponent = () => {
 		taskListIndex: number,
 		taskIndex: number
 	): Promise<TaskFileMetaData[]> {
-		if (arrayLength(files as unknown as any[]) == 0) return []
+		if (files.length == 0) return []
 
 		const [storeFiles, storeFileMetaData] = db.stores('readwrite',
 			ObjectStoreNames.files,
@@ -626,12 +621,12 @@ const _: VoidComponent = () => {
 					type: file.type
 				})).target! as any).result as number
 
-				idbStorePut(storeFiles, {
+				storeFiles.put({
 					id,
 					blob: new Blob([file])
 				} satisfies ObjectStoreFiles)
 
-				arrayPush($files, {
+				$files.push({
 					id: id,
 					listId: task.listId,
 					name: file.name,
@@ -642,7 +637,7 @@ const _: VoidComponent = () => {
 			}
 			setTaskLists(
 				taskListIndex, 'tasks', taskIndex, 'files',
-				arraySort($files, (a, b) => stringLocaleCompare(a.name, b.name))
+				$files.sort((a, b) => a.name.localeCompare(b.name))
 			)
 		} catch {}
 
@@ -661,16 +656,15 @@ const _: VoidComponent = () => {
 		)
 		if (storeFiles == null || storeFileMetaData == null) return;
 
-		promiseDone(db.get<ObjectStoreFiles>(storeFiles, file.id), (result) => {
+		db.get<ObjectStoreFiles>(storeFiles, file.id).then((result) => {
 			if (!result) {
 				if (file.id == taskLists[taskListIndex].tasks[taskIndex].files[fileIndex].id) {
 
 					// This statement not update the file lists in <dialog>
-					setTaskLists(taskListIndex, 'tasks', taskIndex, 'files', files => [
-						...arraySlice(files, 0, fileIndex),
-						...arraySlice(files, fileIndex + 1)
-					])
-					idbStoreDelete(storeFileMetaData, file.id)
+					setTaskLists(taskListIndex, 'tasks', taskIndex, 'files', produce(files => {
+						files.splice(fileIndex, 1)
+					}))
+					storeFileMetaData.delete(file.id)
 				}
 
 				openToast(toastNoFileRef)
@@ -701,12 +695,11 @@ const _: VoidComponent = () => {
 					// This statement not update the file lists in <dialog>
 					setTaskLists(
 						taskListIndex, 'tasks', taskIndex, 'files',
-						files => arrayConcat(
-							arraySlice(files, 0, fileIndex),
-							arraySlice(files, fileIndex + 1)
-						),
+						produce(files => {
+							files.splice(fileIndex, 1)
+						})
 					)
-					idbStoreDelete(storeFileMetaData, file.id)
+					storeFileMetaData.delete(file.id)
 				}
 
 				openToast(toastNoFileRef)
@@ -744,12 +737,12 @@ const _: VoidComponent = () => {
 			$subtask.id = id
 			setTaskLists(
 				taskListIndex, 'tasks', taskIndex, 'subtasks',
-				subtasks => arraySort([...subtasks, $subtask], (a, b) => stringLocaleCompare(a.name, b.name))
+				subtasks => [...subtasks, $subtask].sort((a, b) => a.name.localeCompare(b.name))
 			)
 
 			if (taskLists[taskListIndex].tasks[taskIndex].complete) {
 				const task: Task = {...taskLists[taskListIndex].tasks[taskIndex], complete: false}
-				if (arrayIncludes([SortBy.completed, SortBy.uncompleted], settings.sortBy)) {
+				if ([SortBy.completed, SortBy.uncompleted].includes(settings.sortBy)) {
 					const tasks: Task[] = [...taskLists[taskListIndex].tasks]
 					tasks[taskIndex] = task
 					setTaskLists(taskListIndex, 'tasks', sortTasks(tasks))
@@ -762,13 +755,13 @@ const _: VoidComponent = () => {
 	}
 
 	function sortAllTasks(): void {
-		for (let i = 0; i < arrayLength(taskLists); i++) {
+		for (let i = 0; i < taskLists.length; i++) {
 			setTaskLists(i, 'tasks', sortTasks([...taskLists[i].tasks]))
 		}
 	}
 
 	function reverseAllTasks(): void {
-		for (let i = 0; i < arrayLength(taskLists); i++) {
+		for (let i = 0; i < taskLists.length; i++) {
 			setTaskLists(i, 'tasks', sortTasks([...taskLists[i].tasks]))
 		}
 	}
@@ -777,7 +770,7 @@ const _: VoidComponent = () => {
 		const storeTaskLists = db.writeStore(ObjectStoreNames.tasklists)
 		let count = 0
 
-		name = stringTrim(name)
+		name = name.trim()
 		for (const list of taskLists) {
 			if (count == 0 && list.name == name) ++count
 			if (list.name == name + ` (${count})`) ++count
@@ -799,20 +792,20 @@ const _: VoidComponent = () => {
 			}
 
 			// make the default list always on top
-			const index = arrayFindIndex(taskLists, list => list.id == DEFAULT_TASK_LIST.id)
+			const index = taskLists.findIndex(list => list.id == DEFAULT_TASK_LIST.id)
 			if (index >= 0) {
-				const otherLists = arrayConcat(
-					arraySlice(taskLists, 0, index),
-					arraySlice(taskLists, index + 1),
+				const otherLists = ([] as TaskList[]).concat(
+					taskLists.slice(0, index),
+					taskLists.slice(index + 1),
 					[{ id, emoji, name, tasks: []} satisfies TaskList]
 				)
-				arraySort(otherLists, (a, b) => stringLocaleCompare(a.name, b.name))
-				setTaskLists(arrayConcat([taskLists[index]], otherLists))
+				otherLists.sort((a, b) => a.name.localeCompare(b.name))
+				setTaskLists([taskLists[index]].concat(otherLists))
 			}
-			else setTaskLists(values => arraySort([
+			else setTaskLists(values => [
 				...values,
 				{ id, emoji, name, tasks: []} satisfies TaskList
-			], (a, b) => stringLocaleCompare(a.name, b.name)))
+			].sort((a, b) => a.name.localeCompare(b.name)))
 			changePage(id)
 		} catch {}
 	}
@@ -866,7 +859,7 @@ const _: VoidComponent = () => {
 		}
 		case Commands.updateHiddenNavigation: {
 			const [pages] = args as [Pages[]]
-			if (typeof page() == (typeof Pages.tasks) && arrayIncludes(pages, page() as Pages)) {
+			if (typeof page() == (typeof Pages.tasks) && pages.includes(page() as Pages)) {
 				changePage(Pages.tasks)
 			}
 			setSettings('hiddenNavigation', pages)
@@ -1027,13 +1020,11 @@ const _: VoidComponent = () => {
 
 		// Update manually if list has tasks, because
 		// `getTasks()` function only update empty list.
-		if (arrayLength(targetList.tasks) > 0) {
-			const subTasks = arrayMap(
-				task.subtasks,
+		if (targetList.tasks.length > 0) {
+			const subTasks = task.subtasks.map(
 				subtask => ({...subtask, listId: targetList.id} satisfies SubTask)
 			)
-			const files = arrayMap(
-				task.files,
+			const files = task.files.map(
 				file => ({...file, listId: targetList.id} satisfies TaskFileMetaData)
 			)
 			const $task: Task = {...task, subtasks: subTasks, files}
@@ -1046,12 +1037,9 @@ const _: VoidComponent = () => {
 		setTaskLists(
 			taskListIndex,
 			'tasks',
-			tasks => arrayConcat(
-				arraySlice(tasks, 0, taskIndex),
-				arraySlice(tasks, taskIndex + 1)
-			)
+			produce(tasks => tasks.splice(taskIndex, 1))
 		)
-		if (storeTasks) idbStorePut(storeTasks, {
+		storeTasks?.put({
 			complete: task.complete,
 			description: task.description,
 			id: task.id,
@@ -1062,12 +1050,12 @@ const _: VoidComponent = () => {
 			reminder: task.reminder
 		} satisfies ObjectStoreTasks)
 
-		if (storeSubTasks) for (const subtask of task.subtasks) idbStorePut(storeSubTasks, {
+		if (storeSubTasks) for (const subtask of task.subtasks) storeSubTasks.put({
 			...subtask,
 			listId: targetList.id
 		} satisfies ObjectStoreSubTasks)
 
-		if (storeFileMetaData) for (const file of task.files) idbStorePut(storeFileMetaData, {
+		if (storeFileMetaData) for (const file of task.files) storeFileMetaData.put({
 			...file,
 			listId: targetList.id
 		} satisfies ObjectStoreTaskFileMetaData)
@@ -1092,7 +1080,7 @@ const _: VoidComponent = () => {
 					indexs: ['id', 'name', 'emoji']
 				})
 
-				idbStorePut(store!, {
+				store!.put({
 					id: DEFAULT_TASK_LIST.id,
 					name: DEFAULT_TASK_LIST.name,
 					emoji: DEFAULT_TASK_LIST.emoji,
@@ -1141,10 +1129,10 @@ const _: VoidComponent = () => {
 		const storeMiscellaneous = db.readStore(ObjectStoreNames.miscellaneous)
 		if (storeMiscellaneous == null) return;
 
-		promiseDone(db.get<ObjectStoreMiscellaneous<Pages | number>>(
+		db.get<ObjectStoreMiscellaneous<Pages | number>>(
 			storeMiscellaneous,
 			ObjectStoreKeys.miscellaneous_lastPage
-		), (result) => {
+		).then((result) => {
 			if (!result) return getTasks()
 
 			setPage(result.value)
@@ -1156,58 +1144,58 @@ const _: VoidComponent = () => {
 		const storeMiscellaneous = db.readStore(ObjectStoreNames.miscellaneous)
 		if (storeMiscellaneous == null) return;
 
-		promiseDone(db.get<ObjectStoreMiscellaneous<boolean>>(
+		db.get<ObjectStoreMiscellaneous<boolean>>(
 			storeMiscellaneous,
 			ObjectStoreKeys.miscellaneous_isSideNavigationExpanded
-		), (result) => setIsSideNavigationExpanded(d => result?.value ?? d))
+		).then((result) => setIsSideNavigationExpanded(d => result?.value ?? d))
 	}
 
 	function initSettings(): void {
 		const storeSettings = db.readStore(ObjectStoreNames.settings)
 		if (storeSettings == null) return;
 
-		promiseDone(db.get<ObjectStoreSettings<SortBy>>(
+		db.get<ObjectStoreSettings<SortBy>>(
 			storeSettings,
 			ObjectStoreKeys.settings_sortBy
-		), (result) => setSettings('sortBy', d => result?.value ?? d))
+		).then((result) => setSettings('sortBy', d => result?.value ?? d))
 
-		promiseDone(db.get<ObjectStoreSettings<SortMode>>(
+		db.get<ObjectStoreSettings<SortMode>>(
 			storeSettings,
 			ObjectStoreKeys.settings_sortMode
-		), (result) => setSettings('sortMode', d => result?.value ?? d))
+		).then((result) => setSettings('sortMode', d => result?.value ?? d))
 
-		promiseDone(db.get<ObjectStoreSettings<boolean>>(
+		db.get<ObjectStoreSettings<boolean>>(
 			storeSettings,
 			ObjectStoreKeys.settings_showDeleteTaskWarning
-		), (result) => setSettings('showDeleteTaskWarning', d => result?.value ?? d))
+		).then((result) => setSettings('showDeleteTaskWarning', d => result?.value ?? d))
 
-		promiseDone(db.get<ObjectStoreSettings<Pages[]>>(
+		db.get<ObjectStoreSettings<Pages[]>>(
 			storeSettings,
 			ObjectStoreKeys.settings_hiddenNavigation
-		), (result) => setSettings('hiddenNavigation', d => result? [...result.value] : d))
+		).then((result) => setSettings('hiddenNavigation', d => result? [...result.value] : d))
 	}
 
 	function initTaskLists(): void {
 		const storeTaskLists = db.readStore(ObjectStoreNames.tasklists)
 		if (storeTaskLists == null) return;
 
-		promiseDone(db.getAll<ObjectStoreTaskLists>(storeTaskLists), (result) => {
+		db.getAll<ObjectStoreTaskLists>(storeTaskLists).then((result) => {
 			if (!result) return;
 
 			let lists: TaskList[] = []
-			for (const i of result) arrayPush(lists, {...i, tasks: []})
+			for (const i of result) lists.push({...i, tasks: []})
 
 			// just assume user able to explicitly delete default task list
-			const index = arrayFindIndex(lists, list => list.id == DEFAULT_TASK_LIST.id)
+			const index = lists.findIndex(list => list.id == DEFAULT_TASK_LIST.id)
 			if (index >= 0) {
-				const other_lists = arrayConcat(
-					arraySlice(lists, 0, index),
-					arraySlice(lists, index + 1)
+				const otherLists = ([] as TaskList[]).concat(
+					lists.slice(0, index),
+					lists.slice(index + 1)
 				)
-				arraySort(other_lists, (a, b) => stringLocaleCompare(a.name, b.name))
-				lists = arrayConcat([lists[index]], other_lists)
+				otherLists.sort((a, b) => a.name.localeCompare(b.name))
+				lists = [lists[index]].concat(otherLists)
 			}
-			else arraySort(lists, (a, b) => stringLocaleCompare(a.name, b.name))
+			else lists.sort((a, b) => a.name.localeCompare(b.name))
 
 			setTaskLists(lists)
 			initLastpage()
@@ -1218,10 +1206,11 @@ const _: VoidComponent = () => {
 		const storeLabels = db.readStore(ObjectStoreNames.labels)
 		if (storeLabels == null) return;
 
-		promiseDone(db.getAll<ObjectStoreTaskLabels>(storeLabels), (v) => {
+		db.getAll<ObjectStoreTaskLabels>(storeLabels).then((v) => {
 			if (!v) return;
+
 			const values: TaskLabel[] = []
-			for (const label of arraySort([...v], (a, b) => stringLocaleCompare(a.name, b.name))) {
+			for (const label of [...v].sort((a, b) => a.name.localeCompare(b.name))) {
 				values[label.id] = label
 			}
 			setLabels(values)
@@ -1242,26 +1231,22 @@ const _: VoidComponent = () => {
 		const list = taskLists[selectedTaskListIndexToDelete()]
 		changePage(Pages.tasks)
 
-		if (storeTaskLists) idbStoreDelete(storeTaskLists, list.id)
+		storeTaskLists?.delete(list.id)
 
 		for (const task of list.tasks) {
-			if (storeTasks) idbStoreDelete(storeTasks, task.id)
+			storeTasks?.delete(task.id)
 
 			if (storeSubTasks) {
-				for (const subtask of task.subtasks)
-					idbStoreDelete(storeSubTasks, subtask.id)
+				for (const subtask of task.subtasks) storeSubTasks.delete(subtask.id)
 			}
 
-			for (const file of task.files) {
-				if (storeFileMetaData) idbStoreDelete(storeFileMetaData, file.id)
-				if (storeFiles) idbStoreDelete(storeFiles, file.id)
+			if (storeFileMetaData || storeFiles) for (const file of task.files) {
+				storeFileMetaData?.delete(file.id)
+				storeFiles?.delete(file.id)
 			}
 		}
 
-		setTaskLists(lists => arrayConcat(
-			arraySlice(lists, 0, selectedTaskListIndexToDelete()),
-			arraySlice(lists, selectedTaskListIndexToDelete() + 1)
-		))
+		setTaskLists(produce(lists => lists.splice(selectedTaskListIndexToDelete(), 1)))
 	}
 
 	// FIXME: To many iteration and I hate it. I don't find any better solution currently
@@ -1276,17 +1261,16 @@ const _: VoidComponent = () => {
 			ObjectStoreNames.filemetadata,
 		)
 		const isGetAll = (
-			arrayIncludes([
-				Pages.all, Pages.completed, Pages.uncompleted,
+			[	Pages.all, Pages.completed, Pages.uncompleted,
 				Pages.important, Pages.planned
-			], page() as Pages)
+			].includes(page() as Pages)
 			|| all
 		)
 		const listId = page() == Pages.tasks? DEFAULT_TASK_LIST.id : page() as number
 		const listIdIndex: {[id: number]: number} = {}
 
-		for (let i = 0; i < arrayLength(taskLists); i++) {
-			if (arrayLength(taskLists[i].tasks) > 0) continue
+		for (let i = 0; i < taskLists.length; i++) {
+			if (taskLists[i].tasks.length > 0) continue
 			if (isGetAll) listIdIndex[taskLists[i].id] = i
 			else if (taskLists[i].id == listId) {
 				listIdIndex[taskLists[i].id] = i
@@ -1294,7 +1278,7 @@ const _: VoidComponent = () => {
 			}
 		}
 
-		isEveryTaskLoaded = arrayLength(Object.keys(listIdIndex)) == 0
+		isEveryTaskLoaded = Object.keys(listIdIndex).length == 0
 		if (isEveryTaskLoaded || storeTasks == null) return;
 
 		try {
@@ -1307,14 +1291,14 @@ const _: VoidComponent = () => {
 				const task = cursor.value as ObjectStoreTasks
 				const add = () => {
 					if (listIdIndex[task.listId] == undefined) return;
-					arrayPush(tasks, {...task, files: [], subtasks: []})
+					tasks.push({...task, files: [], subtasks: []})
 				}
 				if (isGetAll) add()
 				else if (task.listId == listId) add()
 				return true
 			})
 			sortTasks(tasks)
-			for (let i = 0; i < arrayLength(tasks); i++) {
+			for (let i = 0; i < tasks.length; i++) {
 				tasksIdIndex[tasks[i].id] = i
 			}
 
@@ -1325,15 +1309,15 @@ const _: VoidComponent = () => {
 				const subtask = cursor.value as ObjectStoreSubTasks
 				const add = () => {
 					if (listIdIndex[subtask.listId] == undefined) return;
-					arrayPush(subTasks, subtask)
+					subTasks.push(subtask)
 				}
 				if (isGetAll) add()
 				else if (subtask.listId == listId) add()
 				return true
 			})
-			arraySort(subTasks, (a, b) => stringLocaleCompare(a.name, b.name))
+			subTasks.sort((a, b) => a.name.localeCompare(b.name))
 			for (const subTask of subTasks) {
-				arrayPush(tasks[tasksIdIndex[subTask.taskId]].subtasks, subTask)
+				tasks[tasksIdIndex[subTask.taskId]].subtasks.push(subTask)
 			}
 
 			// FILES
@@ -1343,19 +1327,19 @@ const _: VoidComponent = () => {
 				const filemetadata = cursor.value as ObjectStoreTaskFileMetaData
 				const add = () => {
 					if (listIdIndex[filemetadata.listId] == undefined) return;
-					arrayPush(fileMetaDatas, {...filemetadata})
+					fileMetaDatas.push({...filemetadata})
 				}
 				if (isGetAll) add()
 				else if (filemetadata.listId == listId) add()
 				return true
 			})
-			arraySort(fileMetaDatas, (a, b) => stringLocaleCompare(a.name, b.name))
+			fileMetaDatas.sort((a, b) => a.name.localeCompare(b.name))
 			for (const fileMetaData of fileMetaDatas) {
-				arrayPush(tasks[tasksIdIndex[fileMetaData.taskId]].files, fileMetaData)
+				tasks[tasksIdIndex[fileMetaData.taskId]].files.push(fileMetaData)
 			}
 
-			for (const id of arrayMap(Object.keys(listIdIndex), v => numberParse(v, true))) {
-				setTaskLists(listIdIndex[id], 'tasks', arrayFilter(tasks, task => task.listId == id))
+			for (const id of Object.keys(listIdIndex).map(v => Number.parseInt(v))) {
+				setTaskLists(listIdIndex[id], 'tasks', tasks.filter(task => task.listId == id))
 			}
 
 		} catch (e) {console.log(e)}
@@ -1366,9 +1350,7 @@ const _: VoidComponent = () => {
 		getTasks()
 
 		const storeMiscellaneous = db.writeStore(ObjectStoreNames.miscellaneous)
-		if (storeMiscellaneous == null) return;
-
-		idbStorePut(storeMiscellaneous, {
+		storeMiscellaneous?.put({
 			key: ObjectStoreKeys.miscellaneous_lastPage,
 			value: page
 		})
@@ -1379,7 +1361,7 @@ const _: VoidComponent = () => {
 		const list = taskLists[selectedTaskListIndexToRename()]
 		const id = list.id
 		const emoji = editListEmoji()
-		let name = stringTrim(editListNameText())
+		let name = editListNameText().trim()
 
 		if (name != list.name) {
 			let count = 0
@@ -1394,19 +1376,19 @@ const _: VoidComponent = () => {
 		$lists[selectedTaskListIndexToRename()] = {...$lists[selectedTaskListIndexToRename()], emoji, name}
 
 		// keep general tasks on top
-		const index = arrayFindIndex($lists, list => list.id == DEFAULT_TASK_LIST.id)
+		const index = $lists.findIndex(list => list.id == DEFAULT_TASK_LIST.id)
 		if (index >= 0) {
-			const otherLists = arrayConcat(
-				arraySlice($lists, 0, index),
-				arraySlice($lists, index + 1)
+			const otherLists = ([] as TaskList[]).concat(
+				$lists.slice(0, index),
+				$lists.slice(index + 1)
 			)
-			arraySort(otherLists, (a, b) => stringLocaleCompare(a.name, b.name))
-			$lists = arrayConcat([$lists[index]], otherLists)
+			otherLists.sort((a, b) => a.name.localeCompare(b.name))
+			$lists = [$lists[index]].concat(otherLists)
 		}
-		else arraySort($lists, (a, b) => stringLocaleCompare(a.name, b.name))
+		else $lists.sort((a, b) => a.name.localeCompare(b.name))
 
 		setTaskLists($lists)
-		if (storeTaskLists) idbStorePut(storeTaskLists, {emoji, id, name} satisfies ObjectStoreTaskLists)
+		storeTaskLists?.put({emoji, id, name} satisfies ObjectStoreTaskLists)
 	}
 
 	onMount(() => {
@@ -1461,14 +1443,13 @@ const _: VoidComponent = () => {
 				ref={r => dialogLabelsRef = r}
 				c:header="Labels"
 				onClick={(ev) => {
-					const button = documentActive()!
+					const button = document.activeElement! as HTMLButtonElement
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					switch (elementId(button)) {
+					switch (button.id) {
 					case button_dialogLabels_closeId:
 						closeDialog(dialogLabelsRef)
 						break
@@ -1481,18 +1462,19 @@ const _: VoidComponent = () => {
 
 					// handle actions
 					default:
-						const data_index = elementDataset(button, 'index')
-						const data_edit = elementDataset(button, 'edit')
-						const data_delete = elementDataset(button, 'delete')
-						if (!data_index)  return
+						const dataset = button.dataset
+						const dataIndex = dataset.index
+						const dataEdit = dataset.edit
+						const dataDelete = dataset.delete
+						if (!dataIndex)  return
 
-						let index = numberParse(data_index, true)
+						let index = Number.parseInt(dataIndex)
 						if (numberIsNotDefined(index)) return
 
-						if (typeIsString(data_edit)) {
+						if (typeof dataEdit === 'string') {
 							command(Commands.editLabel, labels[index])
 						}
-						else if (typeIsString(data_delete)) {
+						else if (typeof dataDelete === 'string') {
 							command(Commands.deleteLabel, labels[index])
 						}
 					}
@@ -1524,16 +1506,15 @@ const _: VoidComponent = () => {
 					setSelectedlabelToAdd('color', null)
 				}}
 				onClick={(ev) => {
-					const button = documentActive()!
+					const button = document.activeElement! as HTMLButtonElement
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					switch (elementId(button)) {
+					switch (button.id) {
 					case button_dialogNewLabel_addId:
-						addLabel(stringTrim(selectedLabelToAdd.name), selectedLabelToAdd.color)
+						addLabel(selectedLabelToAdd.name.trim(), selectedLabelToAdd.color)
 						closeDialog(dialogNewLabelRef)
 						break
 					case button_dialogNewLabel_cancelId:
@@ -1555,7 +1536,7 @@ const _: VoidComponent = () => {
 					</Button>
 					<Button
 						id={button_dialogNewLabel_addId}
-						disabled={stringTrim(selectedLabelToAdd.name) == ''}
+						disabled={selectedLabelToAdd.name.trim() == ''}
 						c:variant={ButtonVariant.filled}>
 						Add
 					</Button>
@@ -1563,10 +1544,10 @@ const _: VoidComponent = () => {
 				<form
 					style={{ display: 'contents' }}
 					onSubmit={ev => {
-						eventPreventDefault(ev)
-						if (stringTrim(selectedLabelToAdd.name) == '') return;
+						ev.preventDefault()
+						if (selectedLabelToAdd.name.trim() == '') return;
 
-						addLabel(stringTrim(selectedLabelToAdd.name), selectedLabelToAdd.color)
+						addLabel(selectedLabelToAdd.name.trim(), selectedLabelToAdd.color)
 						closeDialog(dialogNewLabelRef)
 					}}>
 					<Tooltip>
@@ -1593,21 +1574,20 @@ const _: VoidComponent = () => {
 				ref={r => dialogEditLabelRef = r}
 				c:header="Edit label"
 				onClick={(ev) => {
-					const button = documentActive()!
+					const button = document.activeElement! as HTMLButtonElement
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					switch (elementId(button)) {
+					switch (button.id) {
 					case button_dialogEditLabel_cancelId:
 						closeDialog(dialogEditLabelRef)
 						break
 					case button_dialogEditLabel_editId:
 						editLabel({
 							...selectedLabelToEdit,
-							name: stringTrim(selectedLabelToEdit.name),
+							name: selectedLabelToEdit.name.trim(),
 						} satisfies TaskLabel)
 						closeDialog(dialogEditLabelRef)
 						break
@@ -1627,7 +1607,7 @@ const _: VoidComponent = () => {
 					</Button>
 					<Button
 						id={button_dialogEditLabel_editId}
-						disabled={stringTrim(selectedLabelToEdit.name) == ''}
+						disabled={selectedLabelToEdit.name.trim() == ''}
 						c:variant={ButtonVariant.filled}>
 						Edit
 					</Button>
@@ -1635,12 +1615,13 @@ const _: VoidComponent = () => {
 				<form
 					style={{display: 'contents'}}
 					onSubmit={ev => {
-						eventPreventDefault(ev)
-						if (stringTrim(selectedLabelToEdit.name) == '') return;
+						ev.preventDefault()
+						const name = selectedLabelToEdit.name.trim()
+						if (name == '') return;
 
 						editLabel({
 							...selectedLabelToEdit,
-							name: stringTrim(selectedLabelToEdit.name),
+							name,
 						} satisfies TaskLabel)
 						closeDialog(dialogEditLabelRef)
 					}}>
@@ -1672,14 +1653,13 @@ const _: VoidComponent = () => {
 					updateTextFieldValue(textFieldNewListRef, '')
 				}}
 				onClick={(ev) => {
-					const button = documentActive()!
+					const button = document.activeElement!
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					switch (elementId(button)) {
+					switch (button.id) {
 					case button_dialogNewList_cancelId:
 						closeDialog(dialogNewListRef)
 						break
@@ -1701,7 +1681,7 @@ const _: VoidComponent = () => {
 					</Button>
 					<Button
 						id={button_dialogNewList_addId}
-						disabled={stringTrim(newListNameText()) == ''}
+						disabled={newListNameText().trim() == ''}
 						c:variant={ButtonVariant.filled}>
 						Add
 					</Button>
@@ -1709,8 +1689,8 @@ const _: VoidComponent = () => {
 				<form
 					style={{display: 'contents'}}
 					onSubmit={(ev) => {
-						eventPreventDefault(ev)
-						if (stringTrim(newListNameText()) == '') return;
+						ev.preventDefault()
+						if (newListNameText().trim() == '') return;
 
 						addNewTaskList(newListNameText(), newListEmoji())
 						closeDialog(dialogNewListRef)
@@ -1718,8 +1698,8 @@ const _: VoidComponent = () => {
 					<TextField
 						ref={r => textFieldNewListRef = r}
 						placeholder="List name"
-						onInput={ev => setNewListNameText(eventCurrentTarget(ev).value)}
-						onFocus={ev => setNewListNameText(eventCurrentTarget(ev).value)}
+						onInput={ev => setNewListNameText(ev.currentTarget.value)}
+						onFocus={ev => setNewListNameText(ev.currentTarget.value)}
 						c:trailing={<TextFieldButton
 							id={button_dialogNewList_emojiId}>
 							<Show
@@ -1736,25 +1716,24 @@ const _: VoidComponent = () => {
 				c:header="Rename list"
 				style={{width: '500px'}}
 				onClick={(ev) => {
-					const button = documentActive()!
+					const button = document.activeElement!
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					switch (elementId(button)) {
-						case button_dialogEditList_cancelId:
-							closeDialog(dialogEditListRef)
-							break
-						case button_dialogEditList_renameId:
-							renameTaskList()
-							closeDialog(dialogEditListRef)
-							break
-						case button_dialogEditList_emojiId:
-							setIsEmojiPickerEditListOpen(true)
-							openEmojiPicker(emojiPickerRef)
-							break
+					switch (button.id) {
+					case button_dialogEditList_cancelId:
+						closeDialog(dialogEditListRef)
+						break
+					case button_dialogEditList_renameId:
+						renameTaskList()
+						closeDialog(dialogEditListRef)
+						break
+					case button_dialogEditList_emojiId:
+						setIsEmojiPickerEditListOpen(true)
+						openEmojiPicker(emojiPickerRef)
+						break
 					}
 				}}
 				c:actions={<>
@@ -1766,9 +1745,9 @@ const _: VoidComponent = () => {
 					<Button
 						id={button_dialogEditList_renameId}
 						disabled={
-							stringTrim(editListNameText()) == ''
+							editListNameText().trim() == ''
 							|| (
-								stringTrim(editListNameText()) == taskLists[selectedTaskListIndexToRename()].name
+								editListNameText().trim() == taskLists[selectedTaskListIndexToRename()].name
 								&& editListEmoji() == taskLists[selectedTaskListIndexToRename()].emoji
 							)
 						}
@@ -1779,10 +1758,10 @@ const _: VoidComponent = () => {
 				<form
 					style={{display: 'contents'}}
 					onSubmit={(ev) => {
-						eventPreventDefault(ev)
-						if (stringTrim(editListNameText()) == ''
+						ev.preventDefault()
+						if (editListNameText().trim() == ''
 							|| (
-								stringTrim(editListNameText()) == taskLists[selectedTaskListIndexToRename()].name
+								editListNameText().trim() == taskLists[selectedTaskListIndexToRename()].name
 								&& editListEmoji() == taskLists[selectedTaskListIndexToRename()].emoji
 							)
 						) return;
@@ -1792,8 +1771,8 @@ const _: VoidComponent = () => {
 					<TextField
 						ref={r => textFieldEditListRef = r}
 						placeholder="List name"
-						onInput={ev => setEditListNameText(eventCurrentTarget(ev).value)}
-						onFocus={ev => setEditListNameText(eventCurrentTarget(ev).value)}
+						onInput={ev => setEditListNameText(ev.currentTarget.value)}
+						onFocus={ev => setEditListNameText(ev.currentTarget.value)}
 						c:trailing={<TextFieldButton
 							id={button_dialogEditList_emojiId}>
 							<Show
@@ -1810,21 +1789,20 @@ const _: VoidComponent = () => {
 				style={{width: '500px'}}
 				c:header="Delete list"
 				onClick={(ev) => {
-					const button = documentActive()!
+					const button = document.activeElement!
 					if (!elementValidTarget(
-						eventCurrentTarget(ev),
+						ev.currentTarget,
 						button,
-						el => elementTagName(el) == 'BUTTON'
 					)) return
 
-					switch (elementId(button)) {
-						case button_dialogDeleteList_cancelId:
-							closeDialog(dialogDeleteListRef)
-							break
-						case button_dialogDeleteList_deleteId:
-							closeDialog(dialogDeleteListRef)
-							deleteTaskList()
-							break
+					switch (button.id) {
+					case button_dialogDeleteList_cancelId:
+						closeDialog(dialogDeleteListRef)
+						break
+					case button_dialogDeleteList_deleteId:
+						closeDialog(dialogDeleteListRef)
+						deleteTaskList()
+						break
 					}
 				}}
 				c:actions={<>
@@ -1841,8 +1819,8 @@ const _: VoidComponent = () => {
 				</>}>
 				<Show when={taskLists[selectedTaskListIndexToDelete()]}>
 					<>Are you sure want to delete <q style={{"font-weight": 'bold', color: `rgb(${AppColors.accent})`}}>{taskLists[selectedTaskListIndexToDelete()].name}</q> list? </>
-					<>This list contains {arrayLength(arrayFilter(taskLists[selectedTaskListIndexToDelete()].tasks, v => !v.complete))} uncompleted tasks </>
-					<>and {arrayLength(arrayFilter(taskLists[selectedTaskListIndexToDelete()].tasks, v => v.complete))} completed tasks</>
+					<>This list contains {taskLists[selectedTaskListIndexToDelete()].tasks.filter(v => !v.complete).length} uncompleted tasks </>
+					<>and {taskLists[selectedTaskListIndexToDelete()].tasks.filter(v => v.complete).length} completed tasks</>
 				</Show>
 			</Dialog>
 		</>)

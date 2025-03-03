@@ -3,13 +3,7 @@ import { type VoidComponent, type Signal, createSignal, Show, createMemo, create
 import type { HEXColor } from "@/types/color"
 import type { Palette } from "./_types"
 import { colorHexToRgb } from "@/utils/color"
-import { timeTimerClear, timeTimerSet } from "@/utils/time"
-import { navigatorClipboardWriteText } from "@/utils/navigator"
-import { promiseDone } from "@/utils/object"
-import { mathRound } from "@/utils/math"
-import { eventCurrentTarget } from "@/utils/event"
-import { documentActive } from "@/utils/document"
-import { elementValidTarget, elementTagName, elementId } from "@/utils/element"
+import { elementValidTarget } from "@/utils/element"
 import { ICON_CHECKMARK, ICON_COPY } from "@/constants/icons"
 
 import Icon from "@/components/Icon"
@@ -17,10 +11,10 @@ import Button, { ButtonVariant } from "@/components/Button"
 import CSS from './_styles.module.scss'
 
 const _: VoidComponent<Palette> = (props) => {
-	const timeAccentLightId: Signal<number | null> = createSignal<number | null>(null)
-	const timeOnAccentLightId: Signal<number | null> = createSignal<number | null>(null)
-	const timeAccentDarkId: Signal<number | null> = createSignal<number | null>(null)
-	const timeOnAccentDarkId: Signal<number | null> = createSignal<number | null>(null)
+	const timeAccentLightId = createSignal<number | NodeJS.Timeout | null>(null)
+	const timeOnAccentLightId = createSignal<number | NodeJS.Timeout | null>(null)
+	const timeAccentDarkId = createSignal<number | NodeJS.Timeout | null>(null)
+	const timeOnAccentDarkId = createSignal<number | NodeJS.Timeout | null>(null)
 	const accentLight = createMemo(() => props.accentLight)
 	const onAccentLight = createMemo(() => props.onAccentLight)
 	const accentDark = createMemo(() => props.accentDark)
@@ -30,34 +24,32 @@ const _: VoidComponent<Palette> = (props) => {
 	const buttonAccentDarkId = createUniqueId()
 	const buttonOnAccentDarkId = createUniqueId()
 
-	function copyColor(color: string, [timeId, setTimeId]: Signal<number | null>): void {
+	function copyColor(color: string, [timeId, setTimeId]: Signal<number | NodeJS.Timeout | null>): void {
 		if (timeId()) {
-			timeTimerClear(timeId()!)
+			clearTimeout(timeId()!)
 			setTimeId(null)
 		}
 
-		promiseDone(
-			navigatorClipboardWriteText(color),
-			() => setTimeId(timeTimerSet(() => setTimeId(null), 1000))
-		)
+		navigator.clipboard
+		.writeText(color)
+		.then(() => setTimeId(setTimeout(() => setTimeId(null), 1000)))
 	}
 
 	function hexToCSSValue(hex: HEXColor): string {
 		const rgb = colorHexToRgb(hex)
-		return `${mathRound(rgb.r * 0xff)}, ${mathRound(rgb.g * 0xff)}, ${mathRound(rgb.b * 0xff)}`
+		return `${Math.round(rgb.r * 0xff)}, ${Math.round(rgb.g * 0xff)}, ${Math.round(rgb.b * 0xff)}`
 	}
 
 	return (<main
 		class={CSS.body_main}
 		onClick={ev => {
-			const button = documentActive()!
+			const button = document.activeElement!
 			if (!elementValidTarget(
-				eventCurrentTarget(ev),
+				ev.currentTarget,
 				button,
-				el => elementTagName(el) == 'BUTTON'
 			)) return
 
-			switch (elementId(button)) {
+			switch (button.id) {
 			case buttonAccentLightId:
 				copyColor(accentLight(), timeAccentLightId)
 				break

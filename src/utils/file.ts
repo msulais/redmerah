@@ -1,6 +1,4 @@
-import { elementCreate, elementClick, elementRemove } from "./element"
-import { eventTarget } from "./event"
-import { urlCreate, urlDownloadFile, urlRevoke } from "./url"
+import { urlDownloadFile } from "./url"
 
 export async function fileOpen(
 	accept: string | null,
@@ -8,29 +6,29 @@ export async function fileOpen(
 	capture?: string
 ): Promise<FileList | null> {
 	return new Promise<FileList | null>((ok) => {
-		const input = elementCreate('input')
+		const input = document.createElement('input')
 		input.type = 'file'
 		if (accept != null) input.accept = accept
 		if (capture != null) input.capture = capture
 
 		input.multiple = multiple
-		elementClick(input)
+		input.click()
 
 		input.onchange = () => {
 			ok(input.files)
-			elementRemove(input)
+			input.remove()
 		}
 		input.oncancel = () =>{
 			ok(null)
-			elementRemove(input)
+			input.remove()
 		}
 	})
 }
 
 export function fileDownload(blob: Blob, filename: string): void {
-	const url = urlCreate(blob)
+	const url = URL.createObjectURL(blob)
 	urlDownloadFile(url, filename)
-	urlRevoke(url)
+	URL.revokeObjectURL(url)
 }
 
 export function fileReadAsText(blob: Blob, encoding?: string): Promise<string> {
@@ -38,7 +36,7 @@ export function fileReadAsText(blob: Blob, encoding?: string): Promise<string> {
 		const reader = new FileReader()
 		reader.readAsText(blob, encoding)
 		reader.onload = (ev) => {
-			const t = eventTarget(ev)
+			const t = ev.target
 			if (!t) return ok('');
 
 			ok(t.result as string)

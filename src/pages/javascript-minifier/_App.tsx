@@ -3,7 +3,7 @@ import { minify, type ECMA } from 'terser'
 import beautify from 'js-beautify'
 
 import type { Settings } from "./_types"
-import { IDB, idbStorePut } from "@/utils/indexeddb"
+import { IDB } from "@/utils/indexeddb"
 import { DatabaseNames } from "@/enums/storage"
 import { ObjectStoreKeys, ObjectStoreNames, type ObjectStoreLastInput, type ObjectStoreSettings } from "./_storage"
 import { createStore } from "solid-js/store"
@@ -11,9 +11,6 @@ import { Commands, TextTypes } from "./_enums"
 import { DEFAULT_JAVASCRIPT_INPUT_TEXT } from "./_javascript"
 import { fileDownload, fileOpen, fileReadAsText } from "@/utils/file"
 import { removeSplashScreen } from "@/utils/splash"
-import { promiseDone } from "@/utils/object"
-import { arrayLength } from "@/utils/array"
-import { navigatorClipboardWriteText } from "@/utils/navigator"
 import { ICON_COPY, ICON_DOCUMENT_ERROR, ICON_SCAN_TEXT, ICON_WARNING } from "@/constants/icons"
 
 import Icon from "@/components/Icon"
@@ -51,7 +48,7 @@ const _: VoidComponent = () => {
 		if (!store) return;
 
 		for (const item of items) {
-			idbStorePut(store, { key: item[0], value: item[1] })
+			store.put({ key: item[0], value: item[1] })
 		}
 	}
 
@@ -60,40 +57,36 @@ const _: VoidComponent = () => {
 		if (!store) return;
 
 		for (const item of items) {
-			idbStorePut(store, { key: item[0], value: item[1] })
+			store.put({ key: item[0], value: item[1] })
 		}
 	}
 
 	function updateOutput(): void {
 		const options = settings.minifyOptions
-		promiseDone(
-			minify(inputText(), {
-				ecma: options.ecma,
-				ie8: options.ie8,
-				toplevel: options.topLevel,
-				keep_classnames: options.keepClassNames,
-				keep_fnames: options.keepFunctionNames,
-				safari10: options.safari10,
-				module: options.module
-			}),
-			(data) => {
-				setOutputText(d => {
-					let text = data.code ?? d
-					if (options.beautify) {
-						text = beautify(text)
-					}
-					return text
-				})
-				closeToast(toastCompileErrorRef)
-			},
-			(er) => {
-				setErrorText(er + '')
-				openToast(toastCompileErrorRef, {
-					autoclose: false,
-					position: ToastPosition.rightBottom
-				})
-			}
-		)
+		minify(inputText(), {
+			ecma: options.ecma,
+			ie8: options.ie8,
+			toplevel: options.topLevel,
+			keep_classnames: options.keepClassNames,
+			keep_fnames: options.keepFunctionNames,
+			safari10: options.safari10,
+			module: options.module
+		}).then((data) => {
+			setOutputText(d => {
+				let text = data.code ?? d
+				if (options.beautify) {
+					text = beautify(text)
+				}
+				return text
+			})
+			closeToast(toastCompileErrorRef)
+		}).catch((er) => {
+			setErrorText(er + '')
+			openToast(toastCompileErrorRef, {
+				autoclose: false,
+				position: ToastPosition.rightBottom
+			})
+		})
 	}
 
 	function command(type: Commands, ...args: unknown[]): unknown {
@@ -123,15 +116,15 @@ const _: VoidComponent = () => {
 			updateOutput()
 			break
 		case Commands.openFile: {
-			promiseDone(fileOpen('text/javascript', true), async (files) => {
-				if (files == null || arrayLength(files as unknown as any[]) == 0) {
+			fileOpen('text/javascript', true).then(async (files) => {
+				if (files == null || files.length == 0) {
 					openToast(toastNoFileSelectedRef)
 					return
 				}
 
 				let text: string = ''
 				try {
-					for (let i = 0; i < arrayLength(files as unknown as any[]); i++) {
+					for (let i = 0; i < files.length; i++) {
 						if (i > 0) text += '\n\n'
 
 						const file = files[i]
@@ -161,10 +154,7 @@ const _: VoidComponent = () => {
 				break
 			}
 
-			promiseDone(
-				navigatorClipboardWriteText(text),
-				() => openToast(toastCopiedRef)
-			)
+			navigator.clipboard.writeText(text).then(() => openToast(toastCopiedRef))
 			break
 		}
 		case Commands.downloadFile: {
@@ -248,65 +238,65 @@ const _: VoidComponent = () => {
 		const store = db.readStore(ObjectStoreNames.settings)
 		if (store == null) return
 
-		promiseDone(db.get<ObjectStoreSettings<boolean>>(
+		db.get<ObjectStoreSettings<boolean>>(
 			store,
 			ObjectStoreKeys.settings_textWrap
-		),  result => setSettings('textWrap', t => result?.value ?? t))
+		).then(result => setSettings('textWrap', t => result?.value ?? t))
 
-		promiseDone(db.get<ObjectStoreSettings<number>>(
+		db.get<ObjectStoreSettings<number>>(
 			store,
 			ObjectStoreKeys.settings_fontSize
-		), result => setSettings('fontSize', f => result?.value ?? f))
+		).then(result => setSettings('fontSize', f => result?.value ?? f))
 
-		promiseDone(db.get<ObjectStoreSettings<boolean>>(
+		db.get<ObjectStoreSettings<boolean>>(
 			store,
 			ObjectStoreKeys.settings_minifyBeautify
-		), result => setSettings('minifyOptions', 'beautify', f => result?.value ?? f))
+		).then(result => setSettings('minifyOptions', 'beautify', f => result?.value ?? f))
 
-		promiseDone(db.get<ObjectStoreSettings<ECMA>>(
+		db.get<ObjectStoreSettings<ECMA>>(
 			store,
 			ObjectStoreKeys.settings_minifyEcma
-		), result => setSettings('minifyOptions', 'ecma', f => result?.value ?? f))
+		).then(result => setSettings('minifyOptions', 'ecma', f => result?.value ?? f))
 
-		promiseDone(db.get<ObjectStoreSettings<boolean>>(
+		db.get<ObjectStoreSettings<boolean>>(
 			store,
 			ObjectStoreKeys.settings_minifyModule
-		), result => setSettings('minifyOptions', 'module', f => result?.value ?? f))
+		).then(result => setSettings('minifyOptions', 'module', f => result?.value ?? f))
 
-		promiseDone(db.get<ObjectStoreSettings<boolean>>(
+		db.get<ObjectStoreSettings<boolean>>(
 			store,
 			ObjectStoreKeys.settings_minifyToplevel
-		), result => setSettings('minifyOptions', 'topLevel', f => result?.value ?? f))
+		).then(result => setSettings('minifyOptions', 'topLevel', f => result?.value ?? f))
 
-		promiseDone(db.get<ObjectStoreSettings<boolean>>(
+		db.get<ObjectStoreSettings<boolean>>(
 			store,
 			ObjectStoreKeys.settings_minifyIE8
-		), result => setSettings('minifyOptions', 'ie8', f => result?.value ?? f))
+		).then(result => setSettings('minifyOptions', 'ie8', f => result?.value ?? f))
 
-		promiseDone(db.get<ObjectStoreSettings<boolean>>(
+		db.get<ObjectStoreSettings<boolean>>(
 			store,
 			ObjectStoreKeys.settings_minifyKeepClassNames
-		), result => setSettings('minifyOptions', 'keepClassNames', f => result?.value ?? f))
+		).then(result => setSettings('minifyOptions', 'keepClassNames', f => result?.value ?? f))
 
-		promiseDone(db.get<ObjectStoreSettings<boolean>>(
+		db.get<ObjectStoreSettings<boolean>>(
 			store,
 			ObjectStoreKeys.settings_minifyKeepFunctionNames
-		), result => setSettings('minifyOptions', 'keepFunctionNames', f => result?.value ?? f))
+		).then(result => setSettings('minifyOptions', 'keepFunctionNames', f => result?.value ?? f))
 
-		promiseDone(db.get<ObjectStoreSettings<boolean>>(
+		db.get<ObjectStoreSettings<boolean>>(
 			store,
 			ObjectStoreKeys.settings_minifySafari10
-		), result => setSettings('minifyOptions', 'safari10', f => result?.value ?? f))
+		).then(result => setSettings('minifyOptions', 'safari10', f => result?.value ?? f))
 	}
 
 	function initLastInput(): void {
 		const store = db.readStore(ObjectStoreNames.lastInput)
 		if (store == null) return
 
-		promiseDone(db.get<ObjectStoreLastInput<string>>(
+		db.get<ObjectStoreLastInput<string>>(
 			store,
 			ObjectStoreKeys.lastInput_inputText
-		), result => {
+		).then(result => {
 			setInputText(result?.value ?? DEFAULT_JAVASCRIPT_INPUT_TEXT)
 			updateOutput()
 		})

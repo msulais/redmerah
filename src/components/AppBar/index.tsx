@@ -1,7 +1,6 @@
 import { children, createMemo, Show, splitProps, type JSX, type ParentComponent } from "solid-js"
 
 import { attrClassList } from "@/utils/attributes"
-import { typeIsBoolean } from "@/utils/typecheck"
 
 import FocusableGroup from "@/components/FocusableGroup"
 import './index.scss'
@@ -21,7 +20,7 @@ const AppBar: ParentComponent<AppBarProps> = ($props) => {
 	const interactiveElement = createMemo(() => props["c:interactiveElements"])
 
 	// hack to solve https://github.com/solidjs/solid/issues/2130
-	const getInteractiveElement = createMemo(() => typeIsBoolean(interactiveElement())
+	const getInteractiveElement = createMemo(() => typeof interactiveElement() === 'boolean'
 		? undefined
 		: interactiveElement() as string | HTMLElement[]
 	)

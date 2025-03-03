@@ -9,10 +9,7 @@ import { fileOpen, fileReadAsText, fileDownload } from "@/utils/file"
 import { ObjectStoreKeys, ObjectStoreNames, type ObjectStoreSettings, type ObjectStoreLastInput } from "./_storage"
 import { DatabaseNames } from "@/enums/storage"
 import { DEFAULT_INPUT_VIEW_OPTION, DEFAULT_SASS_INPUT, DEFAULT_SCSS_INPUT } from "./_constants"
-import { IDB, idbStorePut } from "@/utils/indexeddb"
-import { promiseDone } from "@/utils/object"
-import { arrayLength } from "@/utils/array"
-import { navigatorClipboardWriteText } from "@/utils/navigator"
+import { IDB } from "@/utils/indexeddb"
 import { ICON_COPY, ICON_DOCUMENT_ERROR, ICON_SCAN_TEXT } from "@/constants/icons"
 
 import Icon from "@/components/Icon"
@@ -37,20 +34,20 @@ const _: VoidComponent = () => {
 	let toastCopiedRef: HTMLDivElement
 
 	function saveSettings(...items: [key: ObjectStoreKeys, value: unknown][]): void {
-		const storeSettings = db.writeStore(ObjectStoreNames.settings)
-		if (!storeSettings) return;
+		const store = db.writeStore(ObjectStoreNames.settings)
+		if (!store) return;
 
 		for (const item of items) {
-			idbStorePut(storeSettings, { key: item[0], value: item[1] })
+			store.put({ key: item[0], value: item[1] })
 		}
 	}
 
 	function saveLastInput(...items: [key: ObjectStoreKeys, value: unknown][]): void {
-		const storeLastInput = db.writeStore(ObjectStoreNames.lastInput)
-		if (!storeLastInput) return;
+		const store = db.writeStore(ObjectStoreNames.lastInput)
+		if (!store) return;
 
 		for (const item of items) {
-			idbStorePut(storeLastInput, { key: item[0], value: item[1] })
+			store.put({ key: item[0], value: item[1] })
 		}
 	}
 
@@ -103,15 +100,15 @@ const _: VoidComponent = () => {
 			updateOutput()
 			break
 		case Commands.openFile:
-			promiseDone(fileOpen('text/*', true), async (files) => {
-				if (files == null || arrayLength(files as unknown as any[]) == 0) {
+			fileOpen('text/*', true).then(async (files) => {
+				if (files == null || files.length == 0) {
 					openToast(toastNoFileSelectedRef)
 					return
 				}
 
 				let text: string = ''
 				try {
-					for (let i = 0; i < arrayLength(files as unknown as any[]); i++) {
+					for (let i = 0; i < files.length; i++) {
 						if (i > 0) text += '\n\n'
 
 						const file = files[i]
@@ -140,10 +137,7 @@ const _: VoidComponent = () => {
 			else if (type == 'scss') text = scssText()
 			else if (type == 'css') text = cssText()
 
-			promiseDone(
-				navigatorClipboardWriteText(text),
-				() => openToast(toastCopiedRef)
-			)
+			navigator.clipboard.writeText(text).then(() => openToast(toastCopiedRef))
 			break
 		}
 		case Commands.downloadFile: {
@@ -175,35 +169,35 @@ const _: VoidComponent = () => {
 		const storeSettings = db.readStore(ObjectStoreNames.settings)
 		if (storeSettings == null) return
 
-		promiseDone(db.get<ObjectStoreSettings<boolean>>(
+		db.get<ObjectStoreSettings<boolean>>(
 			storeSettings,
 			ObjectStoreKeys.settings_textWrap
-		), result => setSettings('textWrap', w => result?.value ?? w))
+		).then(result => setSettings('textWrap', w => result?.value ?? w))
 
-		promiseDone(db.get<ObjectStoreSettings<number>>(
+		db.get<ObjectStoreSettings<number>>(
 			storeSettings,
 			ObjectStoreKeys.settings_fontSize
-		), result => setSettings('fontSize', d => result?.value ?? d))
+		).then(result => setSettings('fontSize', d => result?.value ?? d))
 
-		promiseDone(db.get<ObjectStoreSettings<boolean>>(
+		db.get<ObjectStoreSettings<boolean>>(
 			storeSettings,
 			ObjectStoreKeys.settings_minify
-		), result => setSettings('minify', m => result?.value ?? m))
+		).then(result => setSettings('minify', m => result?.value ?? m))
 	}
 
 	function initLastInputs(): void {
 		const storeLastInput = db.readStore(ObjectStoreNames.lastInput)
 		if (storeLastInput == null) return
 
-		promiseDone(db.get<ObjectStoreLastInput<string>>(
+		db.get<ObjectStoreLastInput<string>>(
 			storeLastInput,
 			ObjectStoreKeys.lastInput_scss
-		), result => setSCSSText(result?.value ?? DEFAULT_SCSS_INPUT))
+		).then(result => setSCSSText(result?.value ?? DEFAULT_SCSS_INPUT))
 
-		promiseDone(db.get<ObjectStoreLastInput<string>>(
+		db.get<ObjectStoreLastInput<string>>(
 			storeLastInput,
 			ObjectStoreKeys.lastInput_sass
-		), result => {
+		).then(result => {
 			setSASSText(result?.value ?? DEFAULT_SASS_INPUT)
 			updateOutput() // SASS is the default view
 		})

@@ -1,19 +1,11 @@
 import { createSignal, createUniqueId, For, onMount, type VoidComponent } from "solid-js"
 import { createStore, produce } from "solid-js/store"
 
-import type { USBDevice } from "@/interfaces/usb"
+import type { USB, USBDevice } from "@/interfaces/usb"
 import { ICON_CONNECTOR, ICON_DELETE, ICON_DISMISS, ICON_WARNING } from "@/constants/icons"
-import { stringLocaleCompare, stringToUpperCase } from "@/utils/string"
-import { promiseDone } from "@/utils/object"
-import { arrayLength, arrayPush, arraySome, arraySort, arraySplice } from "@/utils/array"
-import { navigatorUSB } from "@/utils/navigator"
-import { documentActive } from "@/utils/document"
-import { elementDataset, elementId, elementTagName, elementValidTarget } from "@/utils/element"
-import { eventCurrentTarget } from "@/utils/event"
-import { numberParse } from "@/utils/number"
 import { removeSplashScreen } from "@/utils/splash"
 import { AppColors } from "@/enums/colors"
-import { timeTimerSet } from "@/utils/time"
+import { elementValidTarget } from "@/utils/element"
 
 import Button, { ButtonVariant, IconButton } from "@/components/Button"
 import Expander, { ExpanderHeader, ExpanderVariant } from "@/components/Expander"
@@ -23,57 +15,50 @@ import Tooltip from "@/components/Tooltip"
 import CSS from './_styles.module.scss'
 
 const _: VoidComponent = () => {
-	const usb = navigatorUSB()
+	const usb = (navigator as any).usb as USB
 	const buttonConnectId = createUniqueId()
 	const [devices, setDevices] = createStore<USBDevice[]>([])
 	const [isBrowserNotSupport, setIsBrowserNotSupport] = createSignal<boolean>(false)
 	let toastBrowserNotSupportRef: HTMLDivElement
 
 	function updateDevice(device: USBDevice): void {
-		if (arraySome(devices, d => d.productId === device.productId)) return
+		if (devices.some(d => d.productId === device.productId)) return
 
 		setDevices(produce(devices => {
-			arrayPush(devices, device)
-			arraySort(devices, (a, b) => stringLocaleCompare(
-				a.productName,
-				b.productName
-			))
+			devices.push(device)
+			devices.sort((a, b) => a.productName.localeCompare(b.productName))
 		}))
 	}
 
 	function initUSBDevices(): void {
 		if (!usb) {
 			setIsBrowserNotSupport(true)
-			timeTimerSet(() => openToast(toastBrowserNotSupportRef, {
+			setTimeout(() => openToast(toastBrowserNotSupportRef, {
 				autoclose: false
 			}))
 			return
 		}
 		usb.ondisconnect = ev => {
-			for (let i = 0; i < arrayLength(devices); i++) {
+			for (let i = 0; i < devices.length; i++) {
 				if (devices[i] !== ev.device) continue
 
 				setDevices(produce(devices => {
-					arraySplice(devices, i, 1)
+					devices.splice(i, 1)
 				}))
 				break
 			}
 		}
-		promiseDone(
-			usb.getDevices(),
-			devices => {
-				for (const device of devices) updateDevice(device)
+		usb.getDevices().then((devices) => {
+			for (const device of devices) {
+				updateDevice(device)
 			}
-		)
+		})
 	}
 
 	function connectUSBDevice(): void {
-		promiseDone(
-			navigatorUSB().requestDevice({filters:[]}),
-			(device) => {
-				updateDevice(device)
-			}
-		)
+		usb
+		.requestDevice({filters: []})
+		.then((device) => updateDevice(device))
 	}
 
 	onMount(() => {
@@ -107,27 +92,23 @@ const _: VoidComponent = () => {
 	return (<main class={CSS.body}>
 		<div
 			onClick={ev => {
-				const button = documentActive()!
+				const button = document.activeElement! as HTMLButtonElement
 				if (!elementValidTarget(
-					eventCurrentTarget(ev),
+					ev.currentTarget,
 					button,
-					el => elementTagName(el) === 'BUTTON'
 				)) return
 
-				switch (elementId(button)) {
+				switch (button.id) {
 				case buttonConnectId:
 					connectUSBDevice()
 					break
 				default:
-					const data_forget = elementDataset(button, 'forget')
-					if (data_forget) {
-						const i = numberParse(data_forget, true)
-						return promiseDone(
-							devices[i]?.forget(),
-							() => setDevices(produce(devices => {
-								arraySplice(devices, i, 1)
-							}))
-						)
+					const dataForget = button.dataset.forget
+					if (dataForget) {
+						const i = Number.parseInt(dataForget)
+						return devices[i]?.forget().then(() => setDevices(produce(devices => {
+							devices.splice(i, 1)
+						})))
 					}
 				}
 			}}>
@@ -155,7 +136,7 @@ const _: VoidComponent = () => {
 						<li><span>Device version minor</span>: {device.deviceVersionMinor}</li>
 						<li><span>Device version subminor</span>: {device.deviceVersionSubminor}</li>
 						<li><span>Manufacturer name</span>: {device.manufacturerName ?? 'Unknown'}</li>
-						<li><span>Opened</span>: {stringToUpperCase(String(device.opened))}</li>
+						<li><span>Opened</span>: {String(device.opened).toUpperCase()}</li>
 						<li><span>Product ID</span>: {device.productId}</li>
 						<li><span>Product name</span>: {device.productName}</li>
 						<li><span>Serial number</span>: {device.serialNumber ?? 'Unknown'}</li>

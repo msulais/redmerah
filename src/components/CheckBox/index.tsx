@@ -3,9 +3,7 @@ import { mergeRefs } from "@solid-primitives/refs"
 
 import { AnimationEffectTiming } from "@/enums/animation"
 import { attrSetIfExist, attrClassList } from "@/utils/attributes"
-import { elementAnimate, elementDispatchEvent, elementIsSame, elementAllBySelector } from "@/utils/element"
-import { eventListenerAdd, eventCall, eventCurrentTarget, eventListenerRemove } from "@/utils/event"
-import { promiseDone } from "@/utils/object"
+import { eventCall } from "@/utils/event"
 import { ICON_CHECKBOX_CHECKED, ICON_CHECKBOX_UNCHECKED, ICON_RADIO_BUTTON } from "@/constants/icons"
 import { animationIsOn } from "@/utils/animation"
 
@@ -56,16 +54,12 @@ const CheckBox: ParentComponent<CheckBoxProps> = ($props) => {
 		if (animation != null) animation.cancel()
 
 		if (animationIsOn()) {
-			animation = elementAnimate(iconRef, {scale: [1, 0]}, animationOptions)
-			promiseDone(animation.finished, () => {
+			animation = iconRef.animate({scale: [1, 0]}, animationOptions)
+			animation.finished.then(() => {
 				$isChecked = checked
 				setIsChecked(checked)
-				animation = elementAnimate(iconRef, {scale: [0, 1]}, animationOptions)
-				promiseDone(
-					animation.finished,
-					() => animation = null,
-					() => {}
-				)
+				animation = iconRef.animate({scale: [0, 1]}, animationOptions)
+				animation.finished.then(() => animation = null).catch(() => {})
 			}, () => {})
 			return
 		}
@@ -75,14 +69,13 @@ const CheckBox: ParentComponent<CheckBoxProps> = ($props) => {
 	}
 
 	function onChangeRadioOff(ev: CustomEvent<HTMLInputElement>): void {
-		if (elementIsSame(ev.detail, inputRef) || !isChecked()) return
+		if (ev.detail === inputRef || !isChecked()) return
 		changeCheckedState(inputRef.checked)
 	}
 
 	onMount(() => {
-		eventListenerAdd<CustomEvent<HTMLInputElement>>(
-			inputRef,
-			CheckBoxEvents.changestate,
+		inputRef.addEventListener(
+			CheckBoxEvents.changestate as any,
 			onChangeRadioOff
 		)
 	})
@@ -103,9 +96,8 @@ const CheckBox: ParentComponent<CheckBoxProps> = ($props) => {
 	})
 
 	onCleanup(() => {
-		eventListenerRemove<CustomEvent<HTMLInputElement>>(
-			inputRef,
-			CheckBoxEvents.changestate,
+		inputRef.removeEventListener(
+			CheckBoxEvents.changestate as any,
 			onChangeRadioOff
 		)
 	})
@@ -121,11 +113,11 @@ const CheckBox: ParentComponent<CheckBoxProps> = ($props) => {
 			id={props.id}
 			onChange={(ev) => {
 				eventCall(ev, props.onChange)
-				const isChecked = eventCurrentTarget(ev).checked
+				const isChecked = ev.currentTarget.checked
 
 				if (props['c:variant'] == CheckBoxVariant.radio && other.name != null) {
-					const getAllRadioWithSameName = elementAllBySelector(`input[type=radio][name=${CSS.escape(other.name)}]`)
-					for (const el of getAllRadioWithSameName) elementDispatchEvent(el as HTMLElement, new CustomEvent(
+					const getAllRadioWithSameName = document.querySelectorAll(`input[type=radio][name=${CSS.escape(other.name)}]`)
+					for (const el of getAllRadioWithSameName) (el as HTMLElement).dispatchEvent(new CustomEvent(
 						CheckBoxEvents.changestate,
 						{detail: inputRef}
 					))

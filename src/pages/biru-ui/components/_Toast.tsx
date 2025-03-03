@@ -1,7 +1,6 @@
 import { createSignal, For, Show, type VoidComponent } from "solid-js"
 
 import { numberSafe } from "@/utils/number"
-import { eventCurrentTarget } from "@/utils/event"
 
 import Icon from "@/components/Icon"
 import Button, { ButtonVariant, IconButton } from "@/components/Button"
@@ -62,7 +61,7 @@ const _: VoidComponent = () => {
 						value={duration()}
 						step={100}
 						min={100}
-						onBlur={ev => setDuration(d => numberSafe(eventCurrentTarget(ev).valueAsNumber, d))}
+						onBlur={ev => setDuration(d => numberSafe(ev.currentTarget.valueAsNumber, d))}
 						c:trailing="ms"
 					/>
 				</Tooltip>
@@ -82,32 +81,32 @@ const _: VoidComponent = () => {
 			</Dropdown>
 			<CheckBox
 				checked={header()}
-				onChange={ev => setHeader(eventCurrentTarget(ev).checked)}>
+				onChange={ev => setHeader(ev.currentTarget.checked)}>
 				Header
 			</CheckBox>
 			<CheckBox
 				checked={actions()}
-				onChange={ev => setActions(eventCurrentTarget(ev).checked)}>
+				onChange={ev => setActions(ev.currentTarget.checked)}>
 				Actions
 			</CheckBox>
 			<CheckBox
 				checked={leading()}
-				onChange={ev => setLeading(eventCurrentTarget(ev).checked)}>
+				onChange={ev => setLeading(ev.currentTarget.checked)}>
 				Leading
 			</CheckBox>
 			<CheckBox
 				checked={trailing()}
-				onChange={ev => setTrailing(eventCurrentTarget(ev).checked)}>
+				onChange={ev => setTrailing(ev.currentTarget.checked)}>
 				Trailing
 			</CheckBox>
 			<CheckBox
 				checked={content()}
-				onChange={ev => setContent(eventCurrentTarget(ev).checked)}>
+				onChange={ev => setContent(ev.currentTarget.checked)}>
 				Content
 			</CheckBox>
 			<CheckBox
 				checked={autoclose()}
-				onChange={ev => setAutoclose(eventCurrentTarget(ev).checked)}>
+				onChange={ev => setAutoclose(ev.currentTarget.checked)}>
 				Auto close
 			</CheckBox>
 		</PlaygroundOptions>

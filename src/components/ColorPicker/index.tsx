@@ -1,19 +1,13 @@
-import { type Component, type ParentComponent, Show, createEffect, createMemo, createSignal, createUniqueId, mergeProps, onCleanup, onMount, splitProps } from "solid-js"
+import { type Component, type ParentComponent, Show, batch, createEffect, createMemo, createSignal, createUniqueId, mergeProps, onCleanup, onMount, splitProps } from "solid-js"
 import { mergeRefs } from "@solid-primitives/refs"
 
 import type { HEXColor, HSLColor, RGBColor } from "@/types/color"
-import { timeTimerSet } from "@/utils/time"
-import { attrRemove, attrSet, attrSetIfExist } from "@/utils/attributes"
-import { elementDispatchEvent, elementRect, elementTagName, elementId, elementPointerCaptureSet, elementPointerCaptureRelease, elementValidTarget } from "@/utils/element"
-import { eventListenerAdd, eventCurrentTarget, eventPreventDefault, eventListenerRemove } from '@/utils/event'
+import { attrSetIfExist } from "@/utils/attributes"
+import { elementValidTarget } from "@/utils/element"
 import { BodyAttributes } from "@/enums/attributes"
-import { mathClamp, mathRound } from "@/utils/math"
-import { numberIsNotDefined, numberParse, numberSafe, numberToString } from "@/utils/number"
-import { stringLength, stringPadStart, stringReplace, stringSplit, stringSubstring, stringToUpperCase, stringTrim } from "@/utils/string"
+import { mathClamp } from "@/utils/math"
+import { numberIsNotDefined, numberSafe } from "@/utils/number"
 import { colorContrastRatio, colorHexToHsl, colorHexToRgb, colorHslToHex, colorHslToHsv, colorHslToRgb, colorHsvToHsl, colorIsValidWithAlpha, colorRgbToHsl } from "@/utils/color"
-import { documentActive, documentBody } from "@/utils/document"
-import { arrayJoin, arrayLength, arrayPush } from "@/utils/array"
-import { rectHeight, rectLeft, rectTop, rectWidth } from "@/utils/rect"
 import { KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT, KEY_ARROW_UP } from "@/constants/key-code"
 
 import Button, { ButtonVariant } from "@/components/Button"
@@ -34,7 +28,7 @@ function openColorPicker(
 	colorPicker: HTMLDialogElement,
 	options?: Omit<ModalOpenDetail, 'event'> & { color?: HEXColor }
 ): void {
-	if (options?.color != null) changeColorPickerValue(colorPicker, options.color)
+	if (options?.color != null) updateColorPickerValue(colorPicker, options.color)
 
 	openModal(colorPicker, options)
 }
@@ -43,16 +37,16 @@ function openPopoverColorPicker(
 	colorPicker: HTMLDivElement,
 	options?: Omit<ModalOpenDetail, 'event'> & { color?: HEXColor }
 ): void {
-	if (options?.color != null) changeColorPickerValue(colorPicker, options.color)
+	if (options?.color != null) updateColorPickerValue(colorPicker, options.color)
 
 	openPopover(colorPicker, options)
 }
 
-function changeColorPickerValue(
+function updateColorPickerValue(
 	colorPicker: HTMLDivElement | HTMLDialogElement,
 	color: HEXColor
 ): void {
-	elementDispatchEvent(colorPicker, new CustomEvent(
+	colorPicker.dispatchEvent(new CustomEvent(
 		ColorPickerEvents.changecolor,
 		{ detail: color }
 	))
@@ -89,7 +83,7 @@ const ColorPickerBody: ParentComponent<{
 	let localColorSpace: 'HEX' | 'RGB' | 'HSL' = 'HEX'
 	let localHSL: HSLColor = {h: 0, s: 1, l: 0.5}
 	let [keyLeftPressed, keyRightPressed, keyUpPressed, keyDownPressed] = [false, false, false, false]
-	const body = documentBody()
+	const body = document.body
 	const [colorSpace, setColorSpace2] = createSignal<'HEX' | 'RGB' | 'HSL'>('HEX')
 	const [hsl, setHsl2] = createSignal<HSLColor>({h: 0, s: 1, l: .5})
 	const [opacity, setOpacity] = createSignal<number>(1) // [0-100]
@@ -120,9 +114,9 @@ const ColorPickerBody: ParentComponent<{
 	const getHexColor = createMemo<HEXColor>(() => {
 		const $opacity: string = opacity() == 100 || isDisabledOpacityControl()
 			? ''
-			: stringPadStart(numberToString(mathRound(opacity() / 100 * 255), 16), 2, '0')
+			: Math.round(opacity() / 100 * 255).toString(16).padStart(2, '0')
 		;
-		const hex_color = stringToUpperCase(colorHslToHex(getHSLColor()) + $opacity)
+		const hex_color = (colorHslToHex(getHSLColor()) + $opacity).toUpperCase()
 		localColor = hex_color as HEXColor
 		return hex_color as HEXColor
 	})
@@ -174,45 +168,45 @@ const ColorPickerBody: ParentComponent<{
 		switch (colorSpace()) {
 		case "RGB":
 			const rgb = colorHslToRgb(getHSLColor())
-			textFieldColorRef.value = `${mathRound(rgb.r * 0xff)}, ${mathRound(rgb.g * 0xff)}, ${mathRound(rgb.b * 0xff)}`
+			textFieldColorRef.value = `${Math.round(rgb.r * 0xff)}, ${Math.round(rgb.g * 0xff)}, ${Math.round(rgb.b * 0xff)}`
 			break
 		case "HSL":
-			textFieldColorRef.value = arrayJoin([
-				mathRound(getHSLColor().h * 360),
-				mathRound(getHSLColor().s * 100) + '%',
-				mathRound(getHSLColor().l * 100) + '%',
-			], ', ')
+			textFieldColorRef.value = [
+				Math.round(getHSLColor().h * 360),
+				Math.round(getHSLColor().s * 100) + '%',
+				Math.round(getHSLColor().l * 100) + '%',
+			].join(', ')
 			break
 		case "HEX":
-			textFieldColorRef.value = stringSubstring(getHexColor(), 0, 7)
+			textFieldColorRef.value = getHexColor().substring(0, 7)
 			break
 		}
 
-		if (textFieldOpacityRef) textFieldOpacityRef.value = mathRound(opacity()) + '%'
+		if (textFieldOpacityRef) textFieldOpacityRef.value = Math.round(opacity()) + '%'
 	}
 
 	function setPosition(x: number, y: number): void {
 		if (colorDragged) {
-			x = (x - rectLeft(colorRect)) / rectWidth(colorRect) * 100
+			x = (x - colorRect.left) / colorRect.width * 100
 			x = mathClamp(x, 0, 100)
 			setLeft(x)
 
-			y = (y - rectTop(colorRect)) / rectHeight(colorRect) * 100
+			y = (y - colorRect.top) / colorRect.height * 100
 			y = mathClamp(y, 0, 100)
 			setTop(y)
 		}
 		else if (hueDragged) {
 			let v = isDisabledColorControl()? x : y
-			let rect_offset = isDisabledColorControl()? rectLeft(hueRect) : rectTop(hueRect)
-			let rect_size = isDisabledColorControl()? rectWidth(hueRect) : rectHeight(hueRect)
-			v = (v - rect_offset) / rect_size * 100
+			let rectOffset = isDisabledColorControl()? hueRect.left : hueRect.top
+			let rectSize = isDisabledColorControl()? hueRect.width : hueRect.height
+			v = (v - rectOffset) / rectSize * 100
 			v = mathClamp(v, 0, 100)
 			setHue(v)
 		}
 		else if (opacityDragged) {
 			let v = isDisabledColorControl()? x : y
-			let rect_offset = isDisabledColorControl()? rectLeft(opacityRect) : rectTop(opacityRect)
-			let rect_size = isDisabledColorControl()? rectWidth(opacityRect) : rectHeight(opacityRect)
+			let rect_offset = isDisabledColorControl()? opacityRect.left : opacityRect.top
+			let rect_size = isDisabledColorControl()? opacityRect.width : opacityRect.height
 			v = (v - rect_offset) / rect_size * 100
 			v = mathClamp(v, 0, 100)
 			setOpacity(100 - v)
@@ -232,14 +226,14 @@ const ColorPickerBody: ParentComponent<{
 
 	function onPointerUp(ev: PointerEvent): void {
 		const pointerId = ev.pointerId
-		if (colorDragged) elementPointerCaptureRelease(colorRef!, pointerId)
-		if (opacityDragged) elementPointerCaptureRelease(opacityRef!, pointerId)
-		if (hueDragged) elementPointerCaptureRelease(hueRef!, pointerId)
+		if (colorDragged) colorRef?.releasePointerCapture(pointerId)
+		if (opacityDragged) opacityRef?.releasePointerCapture(pointerId)
+		if (hueDragged) hueRef?.releasePointerCapture(pointerId)
 
 		colorDragged = hueDragged = opacityDragged = false
 		// should be run last because <Modal> will mark this to close
 		// when mouse position outside
-		timeTimerSet(() => attrRemove(body, BodyAttributes.noPointerEvent))
+		setTimeout(() => body.removeAttribute(BodyAttributes.noPointerEvent))
 	}
 
 	function onChangeColor(ev: CustomEvent<HEXColor>): void {
@@ -249,23 +243,23 @@ const ColorPickerBody: ParentComponent<{
 	}
 
 	function initEvents() {
-		eventListenerAdd<CustomEvent>(props.element, ColorPickerEvents.changecolor, onChangeColor)
+		props.element.addEventListener(ColorPickerEvents.changecolor as any, onChangeColor)
 
 		onCleanup(() => {
-			eventListenerRemove<CustomEvent>(props.element, ColorPickerEvents.changecolor, onChangeColor)
+			props.element.removeEventListener(ColorPickerEvents.changecolor as any, onChangeColor)
 		})
 	}
 
 	function updateColor(color: HEXColor): void {
 		if (!colorIsValidWithAlpha(color)) return;
 		const hsl = colorHexToHsl(
-			stringSubstring(color, 0, 7) as HEXColor
+			color.substring(0, 7) as HEXColor
 		)
 		setHsl({...hsl})
 
-		if (stringLength(color) == 9 && !isDisabledOpacityControl()) {
-			const opacity = numberParse(stringSubstring(color, 7, 9), true, 16) / 255
-			setOpacity(mathRound(opacity * 100))
+		if (color.length == 9 && !isDisabledOpacityControl()) {
+			const opacity = Number.parseInt(color.substring(7, 9), 16) / 255
+			setOpacity(Math.round(opacity * 100))
 		}
 
 		if (isDisabledColorControl()) setHsl({ h: hsl.h, s: 1, l: 0.5 })
@@ -278,11 +272,11 @@ const ColorPickerBody: ParentComponent<{
 		switch (colorSpace()) {
 		case "RGB": {
 			const rgb: RGBColor = { r: 0, g: 0, b: 0 }
-			const rgbArray: string[] = stringSplit(stringReplace(value, /[^0-9,.]/g, ''), ',')
-			while (arrayLength(rgbArray) < 3) arrayPush(rgbArray, '0')
+			const rgbArray: string[] = value.replace(/[^0-9,.]/g, '').split(',')
+			while (rgbArray.length < 3) rgbArray.push('0')
 
 			const parse = (value: string | number): number => {
-				value = numberParse(`${value}`, true)
+				value = Number.parseInt(`${value}`)
 				value = numberSafe(value, 0)
 				value = mathClamp(value, 0, 255)
 				value = value / 0xff
@@ -304,22 +298,22 @@ const ColorPickerBody: ParentComponent<{
 		}
 		case "HSL": {
 			const hsl: HSLColor = { h: 0, s: 0, l: 0 }
-			const hslArray: string[] = stringSplit(stringReplace(value, /[^0-9,.]/g, ''), ',')
-			while (arrayLength(hslArray) < 3) arrayPush(hslArray, "0")
+			const hslArray: string[] = value.replace(/[^0-9,.]/g, '').split(',')
+			while (hslArray.length < 3) hslArray.push("0")
 
-			let $value: number = numberParse(hslArray[0])
+			let $value: number = Number.parseFloat(hslArray[0])
 			$value = numberSafe($value, 0)
 			$value = mathClamp($value, 0, 360)
 
 			hsl.h = $value / 360
 
-			$value = numberParse(hslArray[1])
+			$value = Number.parseFloat(hslArray[1])
 			$value = numberSafe($value, 0)
 			$value = mathClamp($value, 0, 100)
 
 			hsl.s = $value / 100
 
-			$value = numberParse(hslArray[2])
+			$value = Number.parseFloat(hslArray[2])
 			$value = numberSafe($value, 0)
 			$value = mathClamp($value, 0, 100)
 
@@ -333,19 +327,14 @@ const ColorPickerBody: ParentComponent<{
 			break
 		}
 		case "HEX": {
-			value = stringReplace(value, /[^0-9a-fA-F]/g, '')
-			if (stringLength(stringTrim(value)) == 0) value = '0'
+			value = value.replace(/[^0-9a-fA-F]/g, '')
+			if (value.trim().length == 0) value = '0'
 
 			const $value: number = mathClamp(
-				numberSafe(numberParse(value, true, 16), 0),
-				0,
-				0xffffff
+				numberSafe(Number.parseInt(value, 16), 0),
+				0, 0xffffff
 			)
-
-			value = stringSubstring(
-				stringPadStart(`${numberToString($value, 16)}`, 6, '0'),
-				0, 6
-			)
+			value = `${$value.toString(16)}`.padStart(6, '0').substring(0, 6)
 
 			const hsl = colorRgbToHsl(colorHexToRgb(('#' + value) as HEXColor))
 			if (isDisabledColorControl()) {
@@ -361,11 +350,10 @@ const ColorPickerBody: ParentComponent<{
 	}
 
 	function onOpacityInputChange(value: string): void {
-		let $opacity: number = numberParse(value)
-
+		let $opacity: number = Number.parseFloat(value)
 		if (numberIsNotDefined($opacity)) return
 
-		$opacity = mathRound(mathClamp($opacity, 0, 100))
+		$opacity = Math.round(mathClamp($opacity, 0, 100))
 		setOpacity($opacity)
 		updatePosition()
 		if (props.isColorPickerOpen) props.onUpdateColor?.(getHexColor())
@@ -391,29 +379,29 @@ const ColorPickerBody: ParentComponent<{
 				hsl = {h: hsl.h, s: 1, l: 0.5}
 			}
 
-			if (stringLength(localColor) > 7 && !$isDisabledOpacityControl) {
-				opacity = numberSafe(numberParse(stringSubstring(localColor, 7, 9), true, 16))
+			if (localColor.length > 7 && !$isDisabledOpacityControl) {
+				opacity = numberSafe(Number.parseInt(localColor.substring(7, 9), 16))
 				opacity = opacity / 0xff * 100
 				opacity = mathClamp(opacity, 0, 100)
 			}
 
 			if (textFieldColorRef) {
 				let text = ''
-				if (localColorSpace == 'HSL') text = arrayJoin([
-					mathRound(hsl.h * 360),
-					mathRound(hsl.s * 100) + '%',
-					mathRound(hsl.l * 100) + '%',
-				], ', ')
+				if (localColorSpace == 'HSL') text = [
+					Math.round(hsl.h * 360),
+					Math.round(hsl.s * 100) + '%',
+					Math.round(hsl.l * 100) + '%',
+				].join(', ')
 				else if (localColorSpace == 'HEX') {
-					text = stringToUpperCase(colorHslToHex(hsl))
+					text = colorHslToHex(hsl).toUpperCase()
 				}
 				else if (localColorSpace == 'RGB') {
 					const {r, g, b} = colorHslToRgb(hsl)
-					text = arrayJoin([
-						mathRound(r * 0xff),
-						mathRound(g * 0xff),
-						mathRound(b * 0xff),
-					], ', ')
+					text = [
+						Math.round(r * 0xff),
+						Math.round(g * 0xff),
+						Math.round(b * 0xff),
+					].join(', ')
 				}
 
 				textFieldColorRef.value = text
@@ -434,21 +422,21 @@ const ColorPickerBody: ParentComponent<{
 			const hsl: HSLColor = {h: localHSL.h, s: 1, l: 0.5}
 			if (textFieldColorRef) {
 				let text = ''
-				if (localColorSpace == 'HSL') text = arrayJoin([
-					mathRound(hsl.h * 360),
-					mathRound(hsl.s * 100) + '%',
-					mathRound(hsl.l * 100) + '%',
-				], ', ')
+				if (localColorSpace == 'HSL') text = [
+					Math.round(hsl.h * 360),
+					Math.round(hsl.s * 100) + '%',
+					Math.round(hsl.l * 100) + '%',
+				].join(', ')
 				else if (localColorSpace == 'HEX') {
-					text = stringToUpperCase(colorHslToHex(hsl))
+					text = colorHslToHex(hsl).toUpperCase()
 				}
 				else if (localColorSpace == 'RGB') {
 					const {r, g, b} = colorHslToRgb(hsl)
-					text = arrayJoin([
-						mathRound(r * 0xff),
-						mathRound(g * 0xff),
-						mathRound(b * 0xff),
-					], ', ')
+					text = [
+						Math.round(r * 0xff),
+						Math.round(g * 0xff),
+						Math.round(b * 0xff),
+					].join(', ')
 				}
 
 				textFieldColorRef.value = text
@@ -467,9 +455,11 @@ const ColorPickerBody: ParentComponent<{
 			setOpacity(100)
 		}
 
-		handleColor()
-		handleDisableColorControl()
-		handleDisableOpacityControl()
+		batch(() => {
+			handleColor()
+			handleDisableColorControl()
+			handleDisableOpacityControl()
+		})
 	})
 
 	const Control: Component = () => {
@@ -481,12 +471,12 @@ const ColorPickerBody: ParentComponent<{
 				ref={colorRef}
 				style={{ '--c-color-picker-color': colorHslToHex({...hsl(), s: 1, l: .5}) }}
 				onPointerDown={(ev) => {
-					const self = eventCurrentTarget(ev)
+					const self = ev.currentTarget
 					colorDragged = true
-					colorRect = elementRect(self)
-					elementPointerCaptureSet(self, ev.pointerId)
+					colorRect = self.getBoundingClientRect()
+					self.setPointerCapture(ev.pointerId)
 					setPosition(ev.clientX, ev.clientY)
-					attrSet(body, BodyAttributes.noPointerEvent)
+					body.setAttribute(BodyAttributes.noPointerEvent, '')
 				}}
 				onPointerMove={onPointerMove}
 				onPointerUp={onPointerUp}
@@ -520,18 +510,18 @@ const ColorPickerBody: ParentComponent<{
 
 
 					colorDragged = true
-					colorRect = elementRect(eventCurrentTarget(ev))
-					const onePercentX = rectWidth(colorRect) / 100
-					const onePercentY = rectHeight(colorRect) / 100
-					let x = rectLeft(colorRect) + (left() * onePercentX)
-					let y = rectTop(colorRect) + (top() * onePercentY)
+					colorRect = ev.currentTarget.getBoundingClientRect()
+					const onePercentX = colorRect.width / 100
+					const onePercentY = colorRect.height / 100
+					let x = colorRect.left + (left() * onePercentX)
+					let y = colorRect.top + (top() * onePercentY)
 
 					if (keyUpPressed) y -= onePercentY
 					if (keyDownPressed) y += onePercentY
 					if (keyLeftPressed) x -= onePercentX
 					if (keyRightPressed) x += onePercentX
 
-					eventPreventDefault(ev)
+					ev.preventDefault()
 					setPosition(x, y)
 				}}
 				onKeyUp={(ev) => {
@@ -579,12 +569,12 @@ const ColorPickerBody: ParentComponent<{
 						class="c-color-picker-hue"
 						ref={hueRef}
 						onPointerDown={(ev) => {
-							const self = eventCurrentTarget(ev)
+							const self = ev.currentTarget
 							hueDragged = true
-							hueRect = elementRect(self)
-							elementPointerCaptureSet(self, ev.pointerId)
+							hueRect = self.getBoundingClientRect()
+							self.setPointerCapture(ev.pointerId)
 							setPosition(ev.clientX, ev.clientY)
-							attrSet(body, BodyAttributes.noPointerEvent)
+							body.setAttribute(BodyAttributes.noPointerEvent, '')
 						}}
 						onPointerMove={onPointerMove}
 						onPointerUp={onPointerUp}
@@ -599,18 +589,18 @@ const ColorPickerBody: ParentComponent<{
 							if (!is_arrow_key) return;
 
 							hueDragged = true
-							hueRect = elementRect(eventCurrentTarget(ev))
-							const one_percent_x = rectWidth(hueRect) / 100
-							const one_percent_y = rectHeight(hueRect) / 100
-							let x = rectLeft(hueRect) + (hue() * one_percent_x)
-							let y = rectTop(hueRect) + (hue() * one_percent_y)
+							hueRect = ev.currentTarget.getBoundingClientRect()
+							const one_percent_x = hueRect.width / 100
+							const one_percent_y = hueRect.height / 100
+							let x = hueRect.left + (hue() * one_percent_x)
+							let y = hueRect.top + (hue() * one_percent_y)
 
 							if (code == KEY_ARROW_UP) y -= one_percent_y
 							else if (code == KEY_ARROW_DOWN) y += one_percent_y
 							else if (code == KEY_ARROW_LEFT) x -= one_percent_x
 							else if (code == KEY_ARROW_RIGHT) x += one_percent_x
 
-							eventPreventDefault(ev)
+							ev.preventDefault()
 							setPosition(x, y)
 						}}
 						onKeyUp={(ev) => {
@@ -641,38 +631,38 @@ const ColorPickerBody: ParentComponent<{
 						class="c-color-picker-opacity"
 						ref={opacityRef}
 						onPointerDown={(ev) => {
-							const self = eventCurrentTarget(ev)
+							const self = ev.currentTarget
 							opacityDragged = true
-							opacityRect = elementRect(self)
-							elementPointerCaptureSet(self, ev.pointerId)
+							opacityRect = self.getBoundingClientRect()
+							self.setPointerCapture(ev.pointerId)
 							setPosition(ev.clientX, ev.clientY)
-							attrSet(body, BodyAttributes.noPointerEvent)
+							body.setAttribute(BodyAttributes.noPointerEvent, '')
 						}}
 						onPointerMove={onPointerMove}
 						onPointerUp={onPointerUp}
 						onPointerCancel={onPointerUp}
 						onKeyDown={(ev) => {
 							const code = ev.code
-							const is_arrow_key = (isDisabledColorControl()
+							const isArrowKey = (isDisabledColorControl()
 								? code == KEY_ARROW_LEFT || code == KEY_ARROW_RIGHT
 								: code == KEY_ARROW_UP || code == KEY_ARROW_DOWN
 							)
 
-							if (!is_arrow_key) return;
+							if (!isArrowKey) return;
 
 							opacityDragged = true
-							opacityRect = elementRect(eventCurrentTarget(ev))
-							const one_percent_x = rectWidth(opacityRect) / 100
-							const one_percent_y = rectHeight(opacityRect) / 100
-							let x = rectLeft(opacityRect) + ((100 - opacity()) * one_percent_x)
-							let y = rectTop(opacityRect) + ((100 - opacity()) * one_percent_y)
+							opacityRect = ev.currentTarget.getBoundingClientRect()
+							const onePercentX = opacityRect.width / 100
+							const onePercentY = opacityRect.height / 100
+							let x = opacityRect.left + ((100 - opacity()) * onePercentX)
+							let y = opacityRect.top + ((100 - opacity()) * onePercentY)
 
-							if (code == KEY_ARROW_UP) y -= one_percent_y
-							else if (code == KEY_ARROW_DOWN) y += one_percent_y
-							else if (code == KEY_ARROW_LEFT) x -= one_percent_x
-							else if (code == KEY_ARROW_RIGHT) x += one_percent_x
+							if (code == KEY_ARROW_UP) y -= onePercentY
+							else if (code == KEY_ARROW_DOWN) y += onePercentY
+							else if (code == KEY_ARROW_LEFT) x -= onePercentX
+							else if (code == KEY_ARROW_RIGHT) x += onePercentX
 
-							eventPreventDefault(ev)
+							ev.preventDefault()
 							setPosition(x, y)
 						}}
 						onKeyUp={(ev) => {
@@ -711,12 +701,12 @@ const ColorPickerBody: ParentComponent<{
 			onFocusOut={() => updateInputs()}>
 			<TextField
 				ref={r => textFieldColorRef = r}
-				onInput={(ev) => onColorInputChange(eventCurrentTarget(ev).value)}
+				onInput={(ev) => onColorInputChange(ev.currentTarget.value)}
 				c:label={colorSpace() == 'RGB' ? 'RGB' : colorSpace() == 'HEX' ? 'Hex' : 'HSL'}
 				placeholder={colorSpace() == 'RGB' ? "0-255, 0-255, 0-255" : colorSpace() == 'HEX' ? '#FF0000' : '0-360, 0-100%, 0-100%'}
 			/>
 			<TextField
-				onInput={(ev) => onOpacityInputChange(eventCurrentTarget(ev).value)}
+				onInput={(ev) => onOpacityInputChange(ev.currentTarget.value)}
 				ref={r => textFieldOpacityRef = r}
 				c:label="Opacity"
 				value="100%"
@@ -735,14 +725,14 @@ const ColorPickerBody: ParentComponent<{
 			c:arrowOptions={{ right: 'next', left: 'prev' }}
 			data-c-disabled={attrSetIfExist(props.disabledActions)}
 			onClick={(ev) => {
-				const button = documentActive()!
+				const button = document.activeElement!
 				if (!elementValidTarget(
-					eventCurrentTarget(ev),
+					ev.currentTarget,
 					button,
-					el => elementTagName(el) == 'BUTTON'
+					el => el.tagName == 'BUTTON'
 				)) return
 
-				switch (elementId(button)) {
+				switch (button.id) {
 				case button_colormodel_id:
 					changeColorSpace()
 					break
@@ -885,8 +875,8 @@ const PopoverColorPicker: ParentComponent<PopoverColorPickerProps> = ($props) =>
 export {
 	ColorPicker,
 	PopoverColorPicker,
-	changeColorPickerValue as changeColorPickerValue,
-	changeColorPickerValue as changePopoverColorPickerValue,
+	updateColorPickerValue as updateColorPickerValue,
+	updateColorPickerValue as updatePopoverColorPickerValue,
 	openColorPicker,
 	openPopoverColorPicker,
 	isModalOpen as isColorPickerOpen,

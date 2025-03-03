@@ -1,6 +1,5 @@
 import { createSignal, Show, type VoidComponent } from "solid-js"
 
-import { eventCurrentTarget, eventStopPropagation } from "@/utils/event"
 import { ICON_HISTORY, ICON_INFO, ICON_OPEN } from "@/constants/icons"
 
 import Icon from "@/components/Icon"
@@ -22,8 +21,8 @@ const _: VoidComponent = () => {
 				c:subtitle={<Show when={subtitle()}>Deserunt commodo qui aute veniam tempor ipsum.</Show>}
 				c:leading={<Show when={leading()}><Icon c:code={ICON_INFO}/></Show>}
 				c:trailing={<Show when={trailing()}>
-					<IconButton onClick={ev => eventStopPropagation(ev)} c:code={ICON_HISTORY}/>
-					<IconButton onClick={ev => eventStopPropagation(ev)} c:code={ICON_OPEN}/>
+					<IconButton onClick={ev => ev.stopPropagation()} c:code={ICON_HISTORY}/>
+					<IconButton onClick={ev => ev.stopPropagation()} c:code={ICON_OPEN}/>
 				</Show>}>
 				<Show when={title()}>
 					Amet ad ad sint deserunt fugiat
@@ -33,8 +32,8 @@ const _: VoidComponent = () => {
 				c:subtitle={<Show when={subtitle()}>Anim ea ad dolor pariatur laboris et ipsum nisi aute eu eu.</Show>}
 				c:leading={<Show when={leading()}><Icon c:code={ICON_INFO}/></Show>}
 				c:trailing={<Show when={trailing()}>
-					<IconButton onClick={ev => eventStopPropagation(ev)} c:code={ICON_HISTORY}/>
-					<IconButton onClick={ev => eventStopPropagation(ev)} c:code={ICON_OPEN}/>
+					<IconButton onClick={ev => ev.stopPropagation()} c:code={ICON_HISTORY}/>
+					<IconButton onClick={ev => ev.stopPropagation()} c:code={ICON_OPEN}/>
 				</Show>}>
 				<Show when={title()}>
 					Tempor ut est adipisicing amet laborum
@@ -44,8 +43,8 @@ const _: VoidComponent = () => {
 				c:subtitle={<Show when={subtitle()}>Culpa elit enim aliquip aliqua est et adipisicing Lorem laboris nulla.</Show>}
 				c:leading={<Show when={leading()}><Icon c:code={ICON_INFO}/></Show>}
 				c:trailing={<Show when={trailing()}>
-					<IconButton onClick={ev => eventStopPropagation(ev)} c:code={ICON_HISTORY}/>
-					<IconButton onClick={ev => eventStopPropagation(ev)} c:code={ICON_OPEN}/>
+					<IconButton onClick={ev => ev.stopPropagation()} c:code={ICON_HISTORY}/>
+					<IconButton onClick={ev => ev.stopPropagation()} c:code={ICON_OPEN}/>
 				</Show>}>
 				<Show when={title()}>
 					Aute commodo eiusmod exercitation nulla amet
@@ -55,22 +54,22 @@ const _: VoidComponent = () => {
 		<PlaygroundOptions>
 			<CheckBox
 				checked={title()}
-				onChange={ev => setTitle(eventCurrentTarget(ev).checked)}>
+				onChange={ev => setTitle(ev.currentTarget.checked)}>
 				Title
 			</CheckBox>
 			<CheckBox
 				checked={subtitle()}
-				onChange={ev => setSubtitle(eventCurrentTarget(ev).checked)}>
+				onChange={ev => setSubtitle(ev.currentTarget.checked)}>
 				Subtitle
 			</CheckBox>
 			<CheckBox
 				checked={leading()}
-				onChange={ev => setLeading(eventCurrentTarget(ev).checked)}>
+				onChange={ev => setLeading(ev.currentTarget.checked)}>
 				Leading
 			</CheckBox>
 			<CheckBox
 				checked={trailing()}
-				onChange={ev => setTrailing(eventCurrentTarget(ev).checked)}>
+				onChange={ev => setTrailing(ev.currentTarget.checked)}>
 				Trailing
 			</CheckBox>
 		</PlaygroundOptions>

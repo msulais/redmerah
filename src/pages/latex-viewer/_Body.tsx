@@ -2,16 +2,10 @@ import { createEffect, createMemo, Index, type Accessor, type VoidComponent } fr
 import katex from 'katex'
 
 import type { Settings } from "./_types"
-import { timeTimerClear, timeTimerSet } from "@/utils/time"
 import { Commands } from "./_enums"
 import { attrSetIfExist } from "@/utils/attributes"
-import { navigatorClipboardWriteText } from "@/utils/navigator"
-import { promiseDone } from "@/utils/object"
-import { elementChildren, elementDataset, elementTagName, elementValidTarget } from "@/utils/element"
-import { arrayLength, arrayPush } from "@/utils/array"
-import { documentActive } from "@/utils/document"
-import { eventCurrentTarget } from "@/utils/event"
-import { numberIsNotDefined, numberParse } from "@/utils/number"
+import { elementValidTarget } from "@/utils/element"
+import { numberIsNotDefined } from "@/utils/number"
 import { keyboardOnFocusIn, keyboardOnFocusOut, keyboardOnKeyDown } from "@/utils/keyboard"
 import { ICON_ADD, ICON_COPY, ICON_DELETE } from "@/constants/icons"
 
@@ -32,12 +26,12 @@ const LatexEditor: VoidComponent<{
 	const settings = createMemo(() => props.settings)
 	const index = createMemo(() => props.index)
 	const buttons: HTMLButtonElement[] = []
-	let timeUpdateId: number | null = null
+	let timeUpdateId: number | NodeJS.Timeout | null = null
 	let textAreaRef: HTMLTextAreaElement
 
 	function save_input(): void {
-		if (timeUpdateId != null) timeTimerClear(timeUpdateId)
-		timeUpdateId = timeTimerSet(() => {
+		if (timeUpdateId != null) clearTimeout(timeUpdateId)
+		timeUpdateId = setTimeout(() => {
 			const text = textAreaRef.value
 			props.command(Commands.updateLatexInput, text, index())
 			timeUpdateId = null
@@ -70,9 +64,9 @@ const LatexEditor: VoidComponent<{
 		<div
 			class={CSS.body_new_equation_bottom}
 			onFocusIn={ev => {
-				const self = eventCurrentTarget(ev)
-				if (arrayLength(buttons) === 0) {
-					arrayPush(buttons, ...elementChildren(self))
+				const self = ev.currentTarget
+				if (buttons.length === 0) {
+					buttons.push(...self.children as unknown as HTMLButtonElement[])
 				}
 				keyboardOnFocusIn(ev, buttons)
 			}}
@@ -119,44 +113,41 @@ const _: VoidComponent<{
 	return (<main
 		class={CSS.body}
 		onClick={ev => {
-			const button = documentActive()!
+			const button = document.activeElement! as HTMLButtonElement
 			if (!elementValidTarget(
-				eventCurrentTarget(ev),
+				ev.currentTarget,
 				button,
-				el => elementTagName(el) == 'BUTTON'
 			)) return
 
-			const dataNew = elementDataset(button, 'new')
+			const dataset = button.dataset
+			const dataNew = dataset.new
 			if (dataNew) {
-				const index = numberParse(dataNew, true)
+				const index = Number.parseInt(dataNew)
 				if (numberIsNotDefined(index)) return
 
 				command(Commands.addEquation, index + 1)
 				return
 			}
 
-			const dataDelete = elementDataset(button, 'delete')
+			const dataDelete = dataset.delete
 			if (dataDelete) {
-				const index = numberParse(dataDelete, true)
+				const index = Number.parseInt(dataDelete)
 				if (numberIsNotDefined(index)) return
 
 				command(Commands.deleteEquation, index)
 				return
 			}
 
-			const dataCopy = elementDataset(button, 'copy')
+			const dataCopy = dataset.copy
 			if (dataCopy) {
-				const index = numberParse(dataCopy, true)
+				const index = Number.parseInt(dataCopy)
 				if (numberIsNotDefined(index)) return
 
-				promiseDone(
-					navigatorClipboardWriteText(
-						settings().prefix
-						+ latex()[index]
-						+ settings().suffix
-					),
-					() => openToast(toastCopyRef)
-				)
+				navigator.clipboard.writeText(
+					settings().prefix
+					+ latex()[index]
+					+ settings().suffix
+				).then(() => openToast(toastCopyRef))
 				return
 			}
 		}}>
@@ -172,7 +163,7 @@ const _: VoidComponent<{
 				command={command}
 				latex={l}
 				index={i}
-				isOnlyOne={arrayLength(latex()) == 1}
+				isOnlyOne={latex().length == 1}
 				settings={props.settings}
 			/>}</Index>
 		</Tooltip>
