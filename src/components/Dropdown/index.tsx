@@ -136,6 +136,7 @@ const Dropdown: ParentComponent<DropdownProps> = ($props) => {
 			setSelectedValues([value])
 		}
 
+		props["c:onChange"]?.(options.filter(o => isSelected(o.value)))
 		menuRef.style.removeProperty('width')
 		const buttonWidth = buttonRef.getBoundingClientRect().width
 		const menuWidth = menuRef.getBoundingClientRect().width
