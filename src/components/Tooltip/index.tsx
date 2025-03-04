@@ -20,11 +20,6 @@ enum TooltipListenerEvents {
 	stopProcess = 'custom:tooltiplistener-stopprocess'
 }
 
-enum TooltipAttributes {
-	open = 'data-c-open',
-	openDone = 'data-c-open-done',
-}
-
 let LISTENER_REF: HTMLDivElement
 let TOOLTIP_HAS_LISTENER: boolean = false
 let TOOLTIP_TARGET: Element | null = null
@@ -166,19 +161,24 @@ function initTooltip(): void {
 			}
 		}
 
-		tooltipTextRef.removeAttribute(TooltipAttributes.open)
-		tooltipTextRef.removeAttribute(TooltipAttributes.openDone)
 		anchorElement = null
-
+		tooltipTextRef.style.removeProperty('opacity')
 		if (!animationIsOn()) {
 			return tooltipTextRef.hidePopover()
 		}
 
+		tooltipTextRef.style.setProperty('will-change', 'transform,opacity')
 		// don't remove keyword `await`
 		await tooltipTextRef.animate(
-			{ transform: `translate(${translate.left}px, ${translate.top}px)` },
+			{
+				transform: `translate(${translate.left}px, ${translate.top}px)`,
+				opacity: [1, 0]
+			},
 			{ duration: 200, easing: AnimationEffectTiming.springBounce }
-		).finished.then(() => tooltipTextRef.hidePopover())
+		).finished.then(() => {
+			tooltipTextRef.hidePopover()
+			tooltipTextRef.style.removeProperty('will-change')
+		})
 	}
 
 	function closeTooltip(ev: CustomEvent<TooltipCloseDetail>): void {
@@ -324,16 +324,18 @@ function initTooltip(): void {
 
 			tooltipTextRef.style.setProperty('top', pos.top + 'px')
 			tooltipTextRef.style.setProperty('left', pos.left + 'px')
-			tooltipTextRef.setAttribute(TooltipAttributes.open, '')
-			if (!animationIsOn()) {
-				return tooltipTextRef.setAttribute(TooltipAttributes.openDone, '')
-			}
+			tooltipTextRef.style.setProperty('opacity', '1')
+			if (!animationIsOn()) return
 
+			tooltipTextRef.style.setProperty('will-change', 'transform,opacity')
 			tooltipTextRef.animate(
-				{ transform: [`translate(${translate.left}px, ${translate.top}px)`, 'none'] },
+				{
+					transform: [`translate(${translate.left}px, ${translate.top}px)`, 'none'],
+					opacity: [0, 1]
+				},
 				{ duration: 200, easing: AnimationEffectTiming.springBounce }
 			).finished.then(() => {
-				tooltipTextRef.setAttribute(TooltipAttributes.openDone, '')
+				tooltipTextRef.style.removeProperty('will-change')
 			})
 		}, startDelayDuration)
 	}
@@ -504,7 +506,6 @@ const Tooltip: FlowComponent<TooltipProps> = ($props) => {
 }
 
 export {
-	TooltipAttributes,
 	Tooltip,
 	TooltipPosition,
 }

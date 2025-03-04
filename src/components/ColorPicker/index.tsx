@@ -12,7 +12,7 @@ import { KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT, KEY_ARROW_UP } from "@
 
 import Button, { ButtonVariant } from "@/components/Button"
 import TextField from "@/components/TextField"
-import Modal, { type ModalProps, ModalPosition as ColorPickerPosition, type ModalOpenDetail, openModal, closeModal, focusModal, isModalOpen, repositionModal } from "@/components/Modal"
+import Modal, { type ModalProps, ModalPosition as ColorPickerPosition, type ModalOpenOptions, openModal, closeModal, focusModal, isModalOpen, repositionModal } from "@/components/Modal"
 import Popover, { closePopover, isPopoverOpen, openPopover, repositionPopover, type PopoverProps } from "@/components/Popover"
 import FocusableGroup from "@/components/FocusableGroup"
 import './index.scss'
@@ -26,7 +26,7 @@ enum ColorPickerEvents {
 
 function openColorPicker(
 	colorPicker: HTMLDialogElement,
-	options?: Omit<ModalOpenDetail, 'event'> & { color?: HEXColor }
+	options?: Omit<ModalOpenOptions, 'event'> & { color?: HEXColor }
 ): void {
 	if (options?.color != null) updateColorPickerValue(colorPicker, options.color)
 
@@ -35,7 +35,7 @@ function openColorPicker(
 
 function openPopoverColorPicker(
 	colorPicker: HTMLDivElement,
-	options?: Omit<ModalOpenDetail, 'event'> & { color?: HEXColor }
+	options?: Omit<ModalOpenOptions, 'event'> & { color?: HEXColor }
 ): void {
 	if (options?.color != null) updateColorPickerValue(colorPicker, options.color)
 

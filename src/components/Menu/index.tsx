@@ -4,10 +4,8 @@ import { mergeRefs } from "@solid-primitives/refs"
 import { attrSetIfExist, attrClassList } from "@/utils/attributes"
 import { objectHasValue } from "@/utils/object"
 import { eventCall } from "@/utils/event"
-import { timeWait } from "@/utils/time"
 import { elementFocusAny } from "@/utils/element"
 import { KEY_ARROW_LEFT, KEY_ARROW_RIGHT } from "@/constants/key-code"
-import { animationIsOn } from "@/utils/animation"
 import { AppColors } from "@/enums/colors"
 import { ICON_CHECKBOX_CHECKED, ICON_CHECKBOX_UNCHECKED, ICON_CHEVRON_RIGHT } from "@/constants/icons"
 
@@ -285,14 +283,13 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 			firstChild = divRef.firstElementChild as HTMLElement
 			if (!firstChild) return
 
-			let removed = false
 			const siblings = document.querySelectorAll<HTMLDivElement>(`[data-c-menu-parent=${parentId}]:not(#${other.id}):popover-open`)
-			for (const submenu of siblings) {
-				removed = true
-				closePopover(submenu)
+			for (let i = 0; i < siblings.length; i++) {
+				const submenu = siblings[i]
+				if (i === siblings.length-1) await closePopover(submenu)
+				else closePopover(submenu)
 			}
 
-			if (removed && animationIsOn()) await timeWait(500) // wait for animation end
 			openPopover(popoverRef, {
 				anchor: firstChild,
 				position: props["c:position"] ?? SubMenuPosition.rightCenterToBottom,

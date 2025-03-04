@@ -1,4 +1,4 @@
-import { type JSX, type ParentComponent, Show, splitProps, children, mergeProps, createMemo } from "solid-js"
+import { type JSX, type ParentComponent, Show, splitProps, children, mergeProps, createMemo, createSignal } from "solid-js"
 
 import { attrSetIfExist } from "@/utils/attributes"
 import { objectHasValue } from "@/utils/object"
@@ -103,14 +103,14 @@ type DrawerProps = Omit<ModalProps, 'style' | 'c:position'> & {
 	style?: JSX.CSSProperties
 }
 const Drawer: ParentComponent<DrawerProps> = ($props) => {
-	const animation_option = {duration: 200, easing: AnimationEffectTiming.spring}
+	const animationOptions = {duration: 300, easing: AnimationEffectTiming.spring}
 	const $$props = mergeProps({
 		'c:position': DrawerPosition.left,
 	}, $props)
 	const [props, other] = splitProps($$props, [
 		'c:header', 'c:footer', 'children', 'c:position',
 		'classList', 'c:openAnimation', 'c:closeAnimation',
-		'style', 'c:interactiveElements'
+		'style', 'c:interactiveElements', 'c:repositionAnimation'
 	])
 	const interactiveElement = createMemo(() => props["c:interactiveElements"])
 
@@ -119,6 +119,7 @@ const Drawer: ParentComponent<DrawerProps> = ($props) => {
 		? undefined
 		: interactiveElement() as string | HTMLElement[]
 	)
+	const [styleWillChange, setStyleWillChange] = createSignal<string | undefined>()
 	const position = createMemo(() => props['c:position'])
 	const header = children(() => props['c:header'])
 	const footer = children(() => props['c:footer'])
@@ -147,21 +148,32 @@ const Drawer: ParentComponent<DrawerProps> = ($props) => {
 		}}
 		style={{
 			...props.style,
+			"will-change": props.style?.["will-change"] ?? styleWillChange(),
 			left: props.style?.left ?? position() == DrawerPosition.left? 0 : 'auto',
 			top: props.style?.top ?? '0px',
 			right: props.style?.right ?? position() == DrawerPosition.right? 0 : 'auto',
 		}}
+		c:repositionAnimation={props["c:repositionAnimation"] ?? (() => {})}
 		c:openAnimation={(el, done) => {
 			if (animationIsOn()) {
 				if (props["c:openAnimation"]) props["c:openAnimation"](el, done)
-				else el.animate(
-					{ transform: [
-						position() == DrawerPosition.left
-							? 'translateX(-100%)'
-							: 'translateX(100%)',
-					'none'] },
-					animation_option
-				).finished.then(done)
+				else {
+					setStyleWillChange('transform')
+					el.animate(
+						{opacity: [0, 1]},
+						{...animationOptions, pseudoElement: '::backdrop'}
+					)
+					el.animate(
+						{ transform: [
+							position() == DrawerPosition.left? 'translateX(-100%)' : 'translateX(100%)',
+							'none'
+						]},
+						animationOptions
+					).finished.then(() => {
+						setStyleWillChange(undefined)
+						done()
+					})
+				}
 				return
 			}
 
@@ -170,15 +182,23 @@ const Drawer: ParentComponent<DrawerProps> = ($props) => {
 		c:closeAnimation={(el, done) => {
 			if (animationIsOn()){
 				if (props["c:closeAnimation"]) props["c:closeAnimation"](el, done)
-				else el.animate(
-					{ transform: [
-						'none',
-						props['c:position'] == DrawerPosition.left
-							? 'translateX(-100%)'
-							: 'translateX(100%)',
-					] },
-					animation_option
-				).finished.then(done)
+				else {
+					setStyleWillChange('transform')
+					el.animate(
+						{opacity: [1, 0]},
+						{...animationOptions, pseudoElement: '::backdrop'}
+					)
+					el.animate(
+						{ transform: [
+							'none',
+							props['c:position'] == DrawerPosition.left? 'translateX(-100%)' : 'translateX(100%)',
+						] },
+						animationOptions
+					).finished.then(() => {
+						setStyleWillChange(undefined)
+						done()
+					})
+				}
 				return
 			}
 

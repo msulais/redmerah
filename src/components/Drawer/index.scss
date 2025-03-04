@@ -6,8 +6,10 @@
 	max-height: 100dvh;
 	width: 280px;
 	max-width: min(280px, calc(100% - 80px));
-	opacity: 1;
-	transform: translateX(-100%);
+
+	&::backdrop {
+		background-color: rgba(0, 0, 0, var(--g-opacity-inv5));
+	}
 
 	:root[data-platform=mobile] & {
 		width: 360px;
@@ -18,24 +20,9 @@
 	:root[data-corner=full-round] & { border-radius: 0 24px 24px 0 }
 
 	&[data-c-right] {
-		transform: translateX(100%);
 		border-radius: 12px 0 0 12px;
 		:root[data-corner=semi-round] & { border-radius: 8px 0 0 8px }
 		:root[data-corner=full-round] & { border-radius: 24px 0 0 24px }
-	}
-
-	&::backdrop {
-		:root[data-animation=on] & {
-			transition-duration: .2s;
-		}
-	}
-
-	&[data-c-open]{
-		transform: none;
-
-		&::backdrop {
-			background-color: rgba(0, 0, 0, var(--g-opacity-inv5));
-		}
 	}
 
 	> div {

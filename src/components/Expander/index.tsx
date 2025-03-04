@@ -113,8 +113,9 @@ const Expander: ParentComponent<ExpanderProps> = ($props) => {
 	)
 	const [bodyProps, otherBodyProps] = splitProps(
 		props['c:attrBody']! ?? {},
-		['class', 'ref']
+		['class', 'ref', 'style']
 	)
+	const [styleWillChange, setStyleWillChange] = createSignal<string | undefined>(undefined)
 	const [isOpen, setIsOpen] = createSignal<boolean>(false)
 	let contentRef: HTMLDivElement
 	let isAnimationDone = true
@@ -160,6 +161,7 @@ const Expander: ParentComponent<ExpanderProps> = ($props) => {
 					isAnimationDone = false
 					if (isOpen()) {
 						if (animationIsOn()){
+							setStyleWillChange('opacity,height,padding')
 							contentRef.animate({
 								opacity: [1, 0],
 								height: [rect.height + 'px', '0px'],
@@ -167,6 +169,7 @@ const Expander: ParentComponent<ExpanderProps> = ($props) => {
 							}, options).finished.then(() => {
 								isAnimationDone = true
 								setIsOpen(false)
+								setStyleWillChange(undefined)
 							})
 							return
 						}
@@ -178,11 +181,15 @@ const Expander: ParentComponent<ExpanderProps> = ($props) => {
 
 					setIsOpen(true)
 					if (animationIsOn()) {
+						setStyleWillChange('opacity,height,padding')
 						contentRef.animate({
 							opacity: [0, 1],
 							height: ['0px', rect.height + 'px'],
 							padding: [padding2, padding]
-						}, options).finished.then(() => isAnimationDone = true)
+						}, options).finished.then(() => {
+							isAnimationDone = true
+							setStyleWillChange(undefined)
+						})
 						return
 					}
 
@@ -196,6 +203,10 @@ const Expander: ParentComponent<ExpanderProps> = ($props) => {
 				data-c-variant={props['c:variant']}
 				data-c-open={attrSetIfExist(isOpen())}
 				ref={mergeRefs(bodyProps.ref, r => contentRef = r)}
+				style={typeof bodyProps.style === 'string'? bodyProps.style : {
+					...(bodyProps.style ?? {}),
+					"will-change": bodyProps.style?.["will-change"] ?? styleWillChange()
+				}}
 				{...otherBodyProps}>
 				{props.children}
 			</div>

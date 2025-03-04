@@ -4,26 +4,13 @@
 	width: max-content;
 	box-shadow: var(--g-elevation5);
 	transform: translate(-50%, -50%);
-
-	:root[data-animation=on] & {
-		transition-duration: .2s;
+	&::backdrop {
+		background-color: rgba(0, 0, 0, var(--g-opacity-inv5));
 	}
 
 	:root[data-corner=sharp] & { border-radius: 0 }
 	:root[data-corner=semi-round] & { border-radius: 8px }
 	:root[data-corner=full-round] & { border-radius: 44px }
-
-	&::backdrop {
-		:root[data-animation=on] & {
-			transition-duration: .2s;
-		}
-	}
-
-	&[data-c-open] {
-		&::backdrop {
-			background-color: rgba(0, 0, 0, var(--g-opacity-inv5));
-		}
-	}
 
 	> div {
 		overflow: hidden;

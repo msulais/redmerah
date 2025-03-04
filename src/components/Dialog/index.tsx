@@ -1,4 +1,4 @@
-import { type JSX, type ParentComponent, splitProps, children, Show, createMemo } from "solid-js"
+import { type JSX, type ParentComponent, splitProps, children, Show, createMemo, createSignal } from "solid-js"
 
 import { AnimationEffectTiming } from "@/enums/animation"
 import { animationIsOn } from "@/utils/animation"
@@ -20,11 +20,11 @@ type DialogProps = ModalProps & {
 	'c:actions_interactiveElements'?: string | HTMLElement[] | boolean
 }
 const Dialog: ParentComponent<DialogProps> = ($props) => {
-	const animationOptions = {duration: 200, easing: AnimationEffectTiming.springBounce}
+	const animationOptions = {duration: 300, easing: AnimationEffectTiming.springBounce}
 	const [props, other] = splitProps($props, [
 		'c:header', 'c:actions', 'children', 'classList',
 		'style', 'c:openAnimation', 'c:closeAnimation',
-		'c:actions_interactiveElements'
+		'c:actions_interactiveElements', 'c:repositionAnimation'
 	])
 	const actionInteractiveElements = createMemo(() => props["c:actions_interactiveElements"])
 
@@ -33,6 +33,7 @@ const Dialog: ParentComponent<DialogProps> = ($props) => {
 		? undefined
 		: actionInteractiveElements() as string | HTMLElement[]
 	)
+	const [styleWillChange, setStyleWillChange] = createSignal<string | undefined>()
 	const actions = children(() => props['c:actions'])
 	const header = children(() => props['c:header'])
 
@@ -43,16 +44,31 @@ const Dialog: ParentComponent<DialogProps> = ($props) => {
 		}}
 		style={{
 			...props.style,
+			"will-change": props.style?.["will-change"] ?? styleWillChange(),
 			top: props.style?.top ?? '50%',
 			left: props.style?.left ?? '50%',
 		}}
+		c:repositionAnimation={props["c:repositionAnimation"] ?? (() => {})}
 		c:openAnimation={(el, done) => {
 			if (animationIsOn()) {
 				if (props['c:openAnimation']) props['c:openAnimation'](el, done)
-				else el.animate(
-					{ transform: ['translate(-50%, calc(-50% - 12px))', 'translate(-50%, -50%)'] },
-					animationOptions
-				).finished.then(done)
+				else {
+					setStyleWillChange('transform,opacity')
+					el.animate(
+						{opacity: [0, 1]},
+						{...animationOptions, pseudoElement: '::backdrop'}
+					)
+					el.animate(
+						{
+							transform: ['translate(-50%, calc(-50% - 12px))', 'translate(-50%, -50%)'],
+							opacity: [0, 1]
+						},
+						animationOptions
+					).finished.then(() => {
+						setStyleWillChange(undefined)
+						done()
+					})
+				}
 				return
 			}
 
@@ -61,10 +77,23 @@ const Dialog: ParentComponent<DialogProps> = ($props) => {
 		c:closeAnimation={(el, done) => {
 			if (animationIsOn()) {
 				if (props['c:closeAnimation']) props['c:closeAnimation'](el, done)
-				else el.animate(
-					{ transform: ['translate(-50%, -50%)', 'translate(-50%, calc(-50% - 12px))'] },
-					animationOptions
-				).finished.then(done)
+				else {
+					setStyleWillChange('transform,opacity')
+					el.animate(
+						{opacity: [1, 0]},
+						{...animationOptions, pseudoElement: '::backdrop'}
+					)
+					el.animate(
+						{
+							transform: ['translate(-50%, -50%)', 'translate(-50%, calc(-50% - 12px))'],
+							opacity: [1, 0]
+						},
+						animationOptions
+					).finished.then(() => {
+						done()
+						setStyleWillChange(undefined)
+					})
+				}
 				return
 			}
 

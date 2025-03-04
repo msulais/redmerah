@@ -119,10 +119,6 @@
 	padding: 12px;
 	border-radius: 8px;
 
-	:root[data-animation=on] & {
-		transition-duration: .2s;
-	}
-
 	:root[data-corner=sharp] & {border-radius: 0}
 	:root[data-corner=semi-round] & {border-radius: 4px}
 	:root[data-corner=full-round] & {border-radius: 20px}

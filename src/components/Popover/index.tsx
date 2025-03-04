@@ -1,4 +1,4 @@
-import { createMemo, createSignal, createUniqueId, mergeProps, onCleanup, onMount, Show, splitProps, type JSX, type ParentComponent, type VoidComponent } from 'solid-js'
+import { batch, createMemo, createSignal, createUniqueId, mergeProps, onCleanup, onMount, Show, splitProps, type JSX, type ParentComponent, type VoidComponent } from 'solid-js'
 import { mergeRefs } from '@solid-primitives/refs'
 import { Portal } from 'solid-js/web'
 
@@ -15,7 +15,7 @@ import { animationIsOn } from '@/utils/animation'
 
 import './index.scss'
 
-type PopoverOpenDetail = {
+type PopoverOpenOptions = {
 	anchor?: HTMLElement
 
 	/** Use this if you want to override the `PopoverOpenDetail.anchor` `DOMRect` */
@@ -27,7 +27,6 @@ type PopoverOpenDetail = {
 	draggable?: boolean
 	manualDismiss?: boolean
 	contentAutoFocus?: boolean
-	onOpen?(): unknown
 
 	/**
 	 * Custom pointer position. Only works if `PopoverOpenDetail.anchor` and
@@ -39,8 +38,16 @@ type PopoverOpenDetail = {
 	}
 }
 
-type PopoverCloseDetail = {
-	onClose?(): unknown
+type PopoverOpenDetails = PopoverOpenOptions & {
+	onDone(): unknown
+}
+
+type PopoverCloseDetails = {
+	onDone(): unknown
+}
+
+type PopoverRepositionDetails = {
+	onDone(): unknown
 }
 
 enum PopoverAttributes {
@@ -51,7 +58,7 @@ enum PopoverEvents {
 	close = 'custom:popover-close',
 	reposition = 'custom:popover-reposition',
 
-	/** @param {PopoverOpenDetail} detail `PopoverOpenDetail` */
+	/** @param {PopoverOpenOptions} detail `PopoverOpenDetail` */
 	open = 'custom:popover-open'
 }
 
@@ -63,27 +70,14 @@ enum PopoverListenerEvents {
 	close = 'custom:popoverlistener-close'
 }
 
+const OPENED_POPOVERS: HTMLDivElement[] = []
+const POPOVER_CLASS = 'c-popover'
+const POPOVER_MARGIN = 8
 let LISTENER_REF: HTMLDivElement
 let STOP_GLOBAL_CLICK: boolean = false
 let HAS_POPOVER_LISTENER: boolean = false
 let POINTER_X: number = 0
 let POINTER_Y: number = 0
-const POPOVER_CLASS = 'c-popover'
-const POPOVER_MARGIN = 8
-
-function isPopoverOpen(popover: HTMLDivElement): boolean {
-	return popover.dataset.cOpen != undefined
-}
-
-function openPopover(
-	popover: HTMLDivElement,
-	options?: PopoverOpenDetail
-): void {
-	popover.dispatchEvent(new CustomEvent(
-		PopoverEvents.open,
-		{detail: {...options} satisfies PopoverOpenDetail}
-	))
-}
 
 function initPopoverListener(): void {
 	if (HAS_POPOVER_LISTENER) return;
@@ -91,7 +85,6 @@ function initPopoverListener(): void {
 
 	const body = document.body
 	const selector: string = 'div.c-popover:popover-open'
-	const popovers: HTMLDivElement[] = []
 	let isNoPointerEvent: boolean = false
 	let timeId: number | NodeJS.Timeout | null = null
 
@@ -107,9 +100,9 @@ function initPopoverListener(): void {
 	function repositionAllPopover(): void {
 		if (timeId != null) clearTimeout(timeId)
 
-		timeId = setTimeout(() => {
+		timeId = setTimeout(async () => {
 			for (const popover of document.querySelectorAll(selector)) {
-				repositionPopover(popover as HTMLDivElement)
+				await repositionPopover(popover as HTMLDivElement)
 			}
 			timeId = null
 		}, 250)
@@ -118,19 +111,19 @@ function initPopoverListener(): void {
 	// when `globalClick()` below will fire, this must call after it
 	function open(ev: CustomEvent<HTMLDivElement>): void {
 		const element = ev.detail
-		const isExist = popovers.some(popover => popover === element)
+		const isExist = OPENED_POPOVERS.some(popover => popover === element)
 		STOP_GLOBAL_CLICK = false
 		if (isExist) return;
 
-		popovers.push(element)
+		OPENED_POPOVERS.push(element)
 	}
 
 	function close(ev: CustomEvent<HTMLDivElement>): void {
 		const element = ev.detail
-		const index = popovers.findIndex(popover => popover === element)
+		const index = OPENED_POPOVERS.findIndex(popover => popover === element)
 		if (index < 0) return;
 
-		popovers.splice(index, 1)
+		OPENED_POPOVERS.splice(index, 1)
 	}
 
 	function globalClick(ev: MouseEvent): void {
@@ -144,12 +137,12 @@ function initPopoverListener(): void {
 		// if you have popover but `<body>` has `[data-g-no-pointer-event]`.
 		// Or when you drag something, popover will not automatically closed.
 		if (isNoPointerEvent
-			|| popovers.length == 0
+			|| OPENED_POPOVERS.length == 0
 			|| !(ev as any).pointerType
 		) return;
 
 		const target = ev.target as HTMLElement
-		for (const popover of popovers) {
+		for (const popover of OPENED_POPOVERS) {
 			const isClickedInside = popover.contains(target)
 			if (isClickedInside || popover.hasAttribute(PopoverAttributes.manual)) return;
 
@@ -158,26 +151,17 @@ function initPopoverListener(): void {
 	}
 
 	function initEvents(): void {
-		LISTENER_REF.addEventListener(
-			PopoverListenerEvents.open as any,
-			open
-		)
-
-		LISTENER_REF.addEventListener(
-			PopoverListenerEvents.close as any,
-			close
-		)
-
+		LISTENER_REF.addEventListener(PopoverListenerEvents.open as any, open)
+		LISTENER_REF.addEventListener(PopoverListenerEvents.close as any, close)
 		document.addEventListener('click', globalClick)
-
 		document.addEventListener('scroll', () => {
-			if (popovers.length == 0) return
+			if (OPENED_POPOVERS.length == 0) return
 
 			repositionAllPopover()
 		})
 
 		window.addEventListener('resize', () => {
-			if (popovers.length == 0) return;
+			if (OPENED_POPOVERS.length == 0) return;
 			repositionAllPopover()
 		})
 
@@ -198,15 +182,32 @@ function initPopoverListener(): void {
 	initObserver()
 }
 
-function repositionPopover(popover: HTMLDivElement): void {
-	popover.dispatchEvent(new CustomEvent(PopoverEvents.reposition))
+function isPopoverOpen(popover: HTMLDivElement): boolean {
+	return OPENED_POPOVERS.some(v => v === popover)
 }
 
-function closePopover(popover: HTMLDivElement, options?: PopoverCloseDetail): void {
-	popover.dispatchEvent(new CustomEvent(
+function openPopover(
+	popover: HTMLDivElement,
+	options?: PopoverOpenOptions
+): Promise<void> {
+	return new Promise((ok) => popover.dispatchEvent(new CustomEvent(
+		PopoverEvents.open,
+		{detail: {...options, onDone: () => ok()} satisfies PopoverOpenDetails}
+	)))
+}
+
+function repositionPopover(popover: HTMLDivElement): Promise<void> {
+	return new Promise((ok) => popover.dispatchEvent(new CustomEvent(
+		PopoverEvents.reposition,
+		{detail: {onDone: () => ok()} satisfies PopoverRepositionDetails}
+	)))
+}
+
+function closePopover(popover: HTMLDivElement): Promise<void> {
+	return new Promise((ok) => popover.dispatchEvent(new CustomEvent(
 		PopoverEvents.close,
-		{detail: {...options} }
-	))
+		{detail: {onDone: () => ok()} satisfies PopoverCloseDetails }
+	)))
 }
 
 type PopoverProps = Omit<JSX.HTMLAttributes<HTMLDivElement>, 'style'> & {
@@ -223,7 +224,8 @@ type PopoverProps = Omit<JSX.HTMLAttributes<HTMLDivElement>, 'style'> & {
 	'c:attrContentWrapper'?: JSX.HTMLAttributes<HTMLDivElement>
 	'c:onOpen'?(): unknown
 	'c:onClose'?(): unknown
-	'c:onToggleOpen'?(is_open: boolean): unknown
+	'c:onToggleOpen'?(isOpen: boolean): unknown
+	'c:repositionAnimation'?(el: HTMLDivElement, done: () => void): unknown
 	'c:openAnimation'?(el: HTMLDivElement, done: () => void): unknown
 	'c:closeAnimation'?(el: HTMLDivElement, done: () => void): unknown
 }
@@ -236,7 +238,7 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 		'c:allowHideAnchor', 'c:draggable', 'c:manualDismiss',
 		'c:onOpen', 'c:onClose', 'tabindex', 'onKeyDown',
 		'c:attrContentWrapper', 'c:portalMount',
-		'c:contentAutoFocus'
+		'c:contentAutoFocus', 'c:repositionAnimation'
 	])
 	const body = document.body
 	const style = createMemo(() => props.style)
@@ -248,8 +250,7 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 	const [maxWidth, setMaxWidth] = createSignal<number | undefined>(undefined)
 	const [maxHeight, setMaxHeight] = createSignal<number | undefined>(undefined)
 	const [allowHideAnchor, setAllowHideAnchor] = createSignal<boolean>(true)
-	const [attrOpen, setAttrOpen] = createSignal<boolean>(false)
-	const [attrOpenDone, setAttrOpenDone] = createSignal<boolean>(false)
+	const [styleWillChange, setStyleWillChange] = createSignal<string | undefined>()
 	let pointerX: number = 0
 	let pointerY: number = 0
 	let isOpen: boolean = false
@@ -267,15 +268,41 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 	let diffPositionX: number = 0
 	let diffPositionY: number = 0
 
-	function fixPosition(): void {
+	function fixPosition(details?: PopoverRepositionDetails): void {
 		const rect = popoverRef.getBoundingClientRect()
 		const screenWidth = body.clientWidth
 		const screenHeight = window.innerHeight
 
-		if (rect.left < POPOVER_MARGIN) setLeft(POPOVER_MARGIN)
-		if (rect.top < POPOVER_MARGIN) setTop(POPOVER_MARGIN)
-		if (rect.right > screenWidth) setLeft(screenWidth - rect.width - POPOVER_MARGIN)
-		if (rect.bottom > screenHeight) setTop(screenHeight - rect.height - POPOVER_MARGIN)
+		batch(() => {
+			const [x, y] = [left(), top()]
+			if (rect.left < POPOVER_MARGIN) setLeft(POPOVER_MARGIN)
+			if (rect.top < POPOVER_MARGIN) setTop(POPOVER_MARGIN)
+			if (rect.right > screenWidth) setLeft(screenWidth - rect.width - POPOVER_MARGIN)
+			if (rect.bottom > screenHeight) setTop(screenHeight - rect.height - POPOVER_MARGIN)
+			if (!animationIsOn()) {
+				details?.onDone()
+				return
+			}
+
+			if (props['c:repositionAnimation']) {
+				return props['c:repositionAnimation'](popoverRef, () => details?.onDone())
+			}
+
+			setStyleWillChange('top,left')
+			popoverRef.animate(
+				{
+					top: [y + 'px', top() + 'px'],
+					left: [x + 'px', left() + 'px'],
+				},
+				{
+					duration: 300,
+					easing: AnimationEffectTiming.spring
+				}
+			).finished.then(() => {
+				setStyleWillChange(undefined)
+				details?.onDone()
+			})
+		})
 	}
 
 	function updatePosition(x: number, y: number) {
@@ -299,16 +326,16 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 		STOP_GLOBAL_CLICK = true
 	}
 
-	function customOnClose(ev: CustomEvent<PopoverCloseDetail>): void {
+	function customOnClose(ev: CustomEvent<PopoverCloseDetails>): void {
 		closePopover(ev.detail)
 	}
 
-	function customOnOpen(ev: CustomEvent<PopoverOpenDetail>): void {
+	function customOnOpen(ev: CustomEvent<PopoverOpenDetails>): void {
 		openPopover(ev.detail)
 	}
 
-	function customOnReposition(_ev: CustomEvent): void {
-		repositionPopover()
+	function customOnReposition(ev: CustomEvent<PopoverRepositionDetails>): void {
+		repositionPopover(ev.detail)
 	}
 
 	function initEvents(): void {
@@ -323,10 +350,11 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 		popoverRef.removeEventListener(PopoverEvents.reposition as any, customOnReposition)
 	}
 
-	function closePopover(options: PopoverCloseDetail): void {
+	function closePopover(details: PopoverCloseDetails): void {
 		const {
-			onClose
-		} = options
+			onDone
+		} = details;
+
 		if (!isOpen) return;
 		isOpen = false
 
@@ -398,8 +426,6 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 			}
 		}
 
-		setAttrOpen(false)
-		setAttrOpenDone(false)
 		anchorRef = null
 		LISTENER_REF.dispatchEvent(new CustomEvent(
 			PopoverListenerEvents.close,
@@ -408,21 +434,34 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 		props['c:onClose']?.()
 		if (!animationIsOn()) {
 			popoverRef.hidePopover()
+			onDone()
 			return
 		}
 
-		onClose?.()
 		if (props['c:closeAnimation'] != null) props['c:closeAnimation'](
 			popoverRef,
-			() => popoverRef.hidePopover()
+			() => {
+				popoverRef.hidePopover()
+				onDone()
+			}
 		)
-		else popoverRef.animate(
-			{ transform: `translate(${translateX}px, ${translateY}px)` },
-			{ duration: 300, easing: AnimationEffectTiming.springBounce }
-		).finished.then(() => popoverRef.hidePopover())
+		else {
+			setStyleWillChange('transform, opacity')
+			popoverRef.animate(
+				{
+					transform: `translate(${translateX}px, ${translateY}px)`,
+					opacity: 0
+				},
+				{ duration: 300, easing: AnimationEffectTiming.springBounce }
+			).finished.then(() => {
+				popoverRef.hidePopover()
+				setStyleWillChange(undefined)
+				onDone()
+			})
+		}
 	}
 
-	function openPopover(options: PopoverOpenDetail): void {
+	function openPopover(options: PopoverOpenDetails): void {
 		if (isOpen) return
 
 		const active = document.activeElement
@@ -437,7 +476,7 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 			position: inputPosition = props['c:position'] ?? PopoverPosition.centerBottom,
 			manualDismiss = props['c:manualDismiss'] ?? false,
 			contentAutoFocus = props['c:contentAutoFocus'] ?? true,
-			onOpen
+			onDone
 		} = options;
 
 		setIsManualDismiss(manualDismiss)
@@ -473,155 +512,161 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 			position: inputPosition
 		}) as DOMRect
 
-		if (!allowHideAnchor && anchor != null) {
+		batch(() => {
+			if (!allowHideAnchor && anchor != null) {
+				const popoverPosition = {
+					...pos,
+					bottom: pos.top + popoverRect.height,
+					right: pos.left + popoverRect.width
+				}
+				const anchorMidPosition = {
+					x: $anchorRect!.left + ($anchorRect!.width / 2),
+					y: $anchorRect!.top + ($anchorRect!.height / 2),
+				}
+				const popoverMidPosition = {
+					x: popoverPosition.left + (popoverRect.width / 2),
+					y: popoverPosition.top + (popoverRect.height / 2),
+				}
+				const rangeX = Math.abs(popoverMidPosition.x - anchorMidPosition.x)
+				const rangeY = Math.abs(popoverMidPosition.y - anchorMidPosition.y)
+				const isLeftSide = popoverMidPosition.x < anchorMidPosition.x
+				const isRightSide = popoverMidPosition.x > anchorMidPosition.x
+				const isTopSide = popoverMidPosition.y < anchorMidPosition.y
+				const isBottomSide = popoverMidPosition.y > anchorMidPosition.y
+
+				if (rangeX > rangeY){
+					// left side
+					if (isLeftSide && popoverPosition.right > $anchorRect!.left) {
+						setMaxWidth($anchorRect!.left - POPOVER_MARGIN - inputGap)
+						setMaxHeight(undefined)
+					}
+
+					// right side
+					else if (isRightSide && popoverPosition.left < $anchorRect!.right) {
+						setMaxWidth((body.clientWidth - $anchorRect!.right) - POPOVER_MARGIN - inputGap)
+						setMaxHeight(undefined)
+					}
+				}
+				else {
+					// top side
+					if (isTopSide && popoverPosition.bottom > $anchorRect!.top) {
+						setMaxHeight($anchorRect!.top - POPOVER_MARGIN - inputGap)
+						setMaxWidth(undefined)
+					}
+
+					// bottom side
+					else if (isBottomSide && popoverPosition.top < $anchorRect!.bottom) {
+						setMaxHeight((window.innerHeight - $anchorRect!.bottom) - POPOVER_MARGIN - inputGap)
+						setMaxWidth(undefined)
+					}
+				}
+
+				pos = getFlyoutPosition({
+					flyout: popoverRef.getBoundingClientRect(),
+					anchor: $anchorRect,
+					gap: inputGap,
+					pointer: $anchorRect? undefined : {
+						x: pointerX,
+						y: pointerY
+					},
+					padding: inputPadding,
+					position: inputPosition
+				}) as DOMRect
+			}
+
 			const popoverPosition = {
 				...pos,
 				bottom: pos.top + popoverRect.height,
 				right: pos.left + popoverRect.width
 			}
-			const anchorMidPosition = {
-				x: $anchorRect!.left + ($anchorRect!.width / 2),
-				y: $anchorRect!.top + ($anchorRect!.height / 2),
-			}
 			const popoverMidPosition = {
 				x: popoverPosition.left + (popoverRect.width / 2),
 				y: popoverPosition.top + (popoverRect.height / 2),
 			}
-			const rangeX = Math.abs(popoverMidPosition.x - anchorMidPosition.x)
-			const rangeY = Math.abs(popoverMidPosition.y - anchorMidPosition.y)
-			const isLeftSide = popoverMidPosition.x < anchorMidPosition.x
-			const isRightSide = popoverMidPosition.x > anchorMidPosition.x
-			const isTopSide = popoverMidPosition.y < anchorMidPosition.y
-			const isBottomSide = popoverMidPosition.y > anchorMidPosition.y
+			const translate = {
+				left: 0,
+				top: 0
+			}
 
-			if (rangeX > rangeY){
-				// left side
-				if (isLeftSide && popoverPosition.right > $anchorRect!.left) {
-					setMaxWidth($anchorRect!.left - POPOVER_MARGIN - inputGap)
-					setMaxHeight(undefined)
+			let anchorCenterLeft = pointerX
+			let anchorCenterTop = pointerY
+
+			if ($anchorRect) {
+				anchorCenterLeft = $anchorRect.left + ($anchorRect.width / 2)
+				anchorCenterTop = $anchorRect.top + ($anchorRect.height / 2)
+			}
+
+			const rangeX = Math.abs(popoverMidPosition.x - anchorCenterLeft)
+			const rangeY = Math.abs(popoverMidPosition.y - anchorCenterTop)
+
+			if (rangeX > rangeY) {
+				if ((popoverMidPosition.x < anchorCenterTop || popoverMidPosition.x > anchorCenterTop) && (
+					inputPosition == PopoverPosition.centerBottom
+					|| inputPosition == PopoverPosition.centerBottomToLeft
+					|| inputPosition == PopoverPosition.centerBottomToRight
+					|| inputPosition == PopoverPosition.centerTop
+					|| inputPosition == PopoverPosition.centerTopToLeft
+					|| inputPosition == PopoverPosition.centerTopToRight
+				)) {
+					if (popoverMidPosition.y > anchorCenterTop ) translate.top = -12
+					if (popoverMidPosition.y < anchorCenterTop ) translate.top = 12
+				} else {
+					if (popoverMidPosition.x > anchorCenterLeft) translate.left = -12
+					if (popoverMidPosition.x < anchorCenterLeft) translate.left = 12
 				}
-
-				// right side
-				else if (isRightSide && popoverPosition.left < $anchorRect!.right) {
-					setMaxWidth((body.clientWidth - $anchorRect!.right) - POPOVER_MARGIN - inputGap)
-					setMaxHeight(undefined)
+			} else {
+				if ((popoverMidPosition.y < anchorCenterLeft || popoverMidPosition.y > anchorCenterLeft) && (
+					inputPosition == PopoverPosition.leftCenter
+					|| inputPosition == PopoverPosition.leftCenterToBottom
+					|| inputPosition == PopoverPosition.leftCenterToTop
+					|| inputPosition == PopoverPosition.rightCenter
+					|| inputPosition == PopoverPosition.rightCenterToBottom
+					|| inputPosition == PopoverPosition.rightCenterToTop
+				)) {
+					if (popoverMidPosition.x > anchorCenterLeft) translate.left = -12
+					if (popoverMidPosition.x < anchorCenterLeft) translate.left = 12
+				} else {
+					if (popoverMidPosition.y > anchorCenterTop ) translate.top = -12
+					if (popoverMidPosition.y < anchorCenterTop ) translate.top = 12
 				}
 			}
+
+			setTop(pos.top)
+			setLeft(pos.left)
+			props['c:onOpen']?.()
+			STOP_GLOBAL_CLICK = true
+
+			// run after document.onclick
+			setTimeout(() => LISTENER_REF.dispatchEvent(new CustomEvent(
+				PopoverListenerEvents.open,
+				{ detail: popoverRef }
+			)))
+
+			if (!animationIsOn()) {
+				onDone()
+				return
+			}
+
+			if (props['c:openAnimation']) props['c:openAnimation'](popoverRef, () => onDone())
 			else {
-				// top side
-				if (isTopSide && popoverPosition.bottom > $anchorRect!.top) {
-					setMaxHeight($anchorRect!.top - POPOVER_MARGIN - inputGap)
-					setMaxWidth(undefined)
-				}
-
-				// bottom side
-				else if (isBottomSide && popoverPosition.top < $anchorRect!.bottom) {
-					setMaxHeight((window.innerHeight - $anchorRect!.bottom) - POPOVER_MARGIN - inputGap)
-					setMaxWidth(undefined)
-				}
+				setStyleWillChange('transform,opacity')
+				popoverRef.animate(
+					{
+						transform: [`translate(${translate.left}px, ${translate.top}px)`, 'translate(0px, 0px)'],
+						opacity: [0, 1]
+					},
+					{ duration: 300, easing: AnimationEffectTiming.springBounce }
+				).finished.then(() => {
+					setStyleWillChange(undefined)
+					onDone()
+				})
 			}
-
-			pos = getFlyoutPosition({
-				flyout: popoverRef.getBoundingClientRect(),
-				anchor: $anchorRect,
-				gap: inputGap,
-				pointer: $anchorRect? undefined : {
-					x: pointerX,
-					y: pointerY
-				},
-				padding: inputPadding,
-				position: inputPosition
-			}) as DOMRect
-		}
-
-		const popoverPosition = {
-			...pos,
-			bottom: pos.top + popoverRect.height,
-			right: pos.left + popoverRect.width
-		}
-		const popoverMidPosition = {
-			x: popoverPosition.left + (popoverRect.width / 2),
-			y: popoverPosition.top + (popoverRect.height / 2),
-		}
-		const translate = {
-			left: 0,
-			top: 0
-		}
-
-		let anchorCenterLeft = pointerX
-		let anchorCenterTop = pointerY
-
-		if ($anchorRect) {
-			anchorCenterLeft = $anchorRect.left + ($anchorRect.width / 2)
-			anchorCenterTop = $anchorRect.top + ($anchorRect.height / 2)
-		}
-
-		const rangeX = Math.abs(popoverMidPosition.x - anchorCenterLeft)
-		const rangeY = Math.abs(popoverMidPosition.y - anchorCenterTop)
-
-		if (rangeX > rangeY) {
-			if ((popoverMidPosition.x < anchorCenterTop || popoverMidPosition.x > anchorCenterTop) && (
-				inputPosition == PopoverPosition.centerBottom
-				|| inputPosition == PopoverPosition.centerBottomToLeft
-				|| inputPosition == PopoverPosition.centerBottomToRight
-				|| inputPosition == PopoverPosition.centerTop
-				|| inputPosition == PopoverPosition.centerTopToLeft
-				|| inputPosition == PopoverPosition.centerTopToRight
-			)) {
-				if (popoverMidPosition.y > anchorCenterTop ) translate.top = -12
-				if (popoverMidPosition.y < anchorCenterTop ) translate.top = 12
-			} else {
-				if (popoverMidPosition.x > anchorCenterLeft) translate.left = -12
-				if (popoverMidPosition.x < anchorCenterLeft) translate.left = 12
-			}
-		} else {
-			if ((popoverMidPosition.y < anchorCenterLeft || popoverMidPosition.y > anchorCenterLeft) && (
-				inputPosition == PopoverPosition.leftCenter
-				|| inputPosition == PopoverPosition.leftCenterToBottom
-				|| inputPosition == PopoverPosition.leftCenterToTop
-				|| inputPosition == PopoverPosition.rightCenter
-				|| inputPosition == PopoverPosition.rightCenterToBottom
-				|| inputPosition == PopoverPosition.rightCenterToTop
-			)) {
-				if (popoverMidPosition.x > anchorCenterLeft) translate.left = -12
-				if (popoverMidPosition.x < anchorCenterLeft) translate.left = 12
-			} else {
-				if (popoverMidPosition.y > anchorCenterTop ) translate.top = -12
-				if (popoverMidPosition.y < anchorCenterTop ) translate.top = 12
-			}
-		}
-
-		setTop(pos.top)
-		setLeft(pos.left)
-		setAttrOpen(true)
-		props['c:onOpen']?.()
-		onOpen?.()
-		if (!animationIsOn()) {
-			setAttrOpenDone(true)
-		}
-		else {
-			if (props['c:openAnimation'] != null) props['c:openAnimation'](
-				popoverRef,
-				() => setAttrOpenDone(true)
-			)
-			else popoverRef.animate(
-				{ transform: [`translate(${translate.left}px, ${translate.top}px)`, 'none'] },
-				{ duration: 300, easing: AnimationEffectTiming.springBounce }
-			).finished.then(() => setAttrOpenDone(true))
-		}
-
-		STOP_GLOBAL_CLICK = true
-
-		// run after document.onclick
-		setTimeout(() => LISTENER_REF.dispatchEvent(new CustomEvent(
-			PopoverListenerEvents.open,
-			{ detail: popoverRef }
-		)))
+		})
 	}
 
-	function repositionPopover(): void {
+	function repositionPopover(details?: PopoverRepositionDetails): void {
 		if (anchorRef == null) {
-			fixPosition()
+			fixPosition(details)
 			return
 		}
 
@@ -636,65 +681,91 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 			padding: padding
 		}) as DOMRect
 
-		if (!allowHideAnchor()) {
-			const popoverPosition = {
-				...pos,
-				bottom: pos.top + popoverRect.height,
-				right: pos.left + popoverRect.width
-			}
-			const anchorMidPosition = {
-				x: anchorRect!.left + (anchorRect!.width / 2),
-				y: anchorRect!.top + (anchorRect!.height / 2),
-			}
-			const popoverMidPosition = {
-				x: popoverPosition.left + (popoverRect.width / 2),
-				y: popoverPosition.top + (popoverRect.height / 2),
-			}
-			const rangeX = Math.abs(popoverMidPosition.x - anchorMidPosition.x)
-			const rangeY = Math.abs(popoverMidPosition.y - anchorMidPosition.y)
-			const isLeftSide = popoverMidPosition.x < anchorMidPosition.x
-			const isRightSide = popoverMidPosition.x > anchorMidPosition.x
-			const isTopSide = popoverMidPosition.y < anchorMidPosition.y
-			const isBottomSide = popoverMidPosition.y > anchorMidPosition.y
+		batch(() => {
+			if (!allowHideAnchor()) {
+				const popoverPosition = {
+					...pos,
+					bottom: pos.top + popoverRect.height,
+					right: pos.left + popoverRect.width
+				}
+				const anchorMidPosition = {
+					x: anchorRect!.left + (anchorRect!.width / 2),
+					y: anchorRect!.top + (anchorRect!.height / 2),
+				}
+				const popoverMidPosition = {
+					x: popoverPosition.left + (popoverRect.width / 2),
+					y: popoverPosition.top + (popoverRect.height / 2),
+				}
+				const rangeX = Math.abs(popoverMidPosition.x - anchorMidPosition.x)
+				const rangeY = Math.abs(popoverMidPosition.y - anchorMidPosition.y)
+				const isLeftSide = popoverMidPosition.x < anchorMidPosition.x
+				const isRightSide = popoverMidPosition.x > anchorMidPosition.x
+				const isTopSide = popoverMidPosition.y < anchorMidPosition.y
+				const isBottomSide = popoverMidPosition.y > anchorMidPosition.y
 
-			if (rangeX > rangeY){
-				// left side
-				if (isLeftSide && popoverPosition.right > anchorRect!.left) {
-					setMaxWidth(anchorRect!.left - POPOVER_MARGIN - gap)
-					setMaxHeight(undefined)
+				if (rangeX > rangeY){
+					// left side
+					if (isLeftSide && popoverPosition.right > anchorRect!.left) {
+						setMaxWidth(anchorRect!.left - POPOVER_MARGIN - gap)
+						setMaxHeight(undefined)
+					}
+
+					// right side
+					else if (isRightSide && popoverPosition.left < anchorRect!.right) {
+						setMaxWidth((body.clientWidth - anchorRect!.right) - POPOVER_MARGIN - gap)
+						setMaxHeight(undefined)
+					}
+				}
+				else {
+					// top side
+					if (isTopSide && popoverPosition.bottom > anchorRect!.top) {
+						setMaxHeight(anchorRect!.top - POPOVER_MARGIN - gap)
+						setMaxWidth(undefined)
+					}
+
+					// bottom side
+					else if (isBottomSide && popoverPosition.top < anchorRect!.bottom) {
+						setMaxHeight((window.innerHeight - anchorRect!.bottom) - POPOVER_MARGIN - gap)
+						setMaxWidth(undefined)
+					}
 				}
 
-				// right side
-				else if (isRightSide && popoverPosition.left < anchorRect!.right) {
-					setMaxWidth((body.clientWidth - anchorRect!.right) - POPOVER_MARGIN - gap)
-					setMaxHeight(undefined)
-				}
-			}
-			else {
-				// top side
-				if (isTopSide && popoverPosition.bottom > anchorRect!.top) {
-					setMaxHeight(anchorRect!.top - POPOVER_MARGIN - gap)
-					setMaxWidth(undefined)
-				}
-
-				// bottom side
-				else if (isBottomSide && popoverPosition.top < anchorRect!.bottom) {
-					setMaxHeight((window.innerHeight - anchorRect!.bottom) - POPOVER_MARGIN - gap)
-					setMaxWidth(undefined)
-				}
+				pos = getFlyoutPosition({
+					flyout: popoverRef.getBoundingClientRect(),
+					anchor: anchorRect,
+					gap: gap,
+					position: position,
+					padding: padding
+				}) as DOMRect
 			}
 
-			pos = getFlyoutPosition({
-				flyout: popoverRef.getBoundingClientRect(),
-				anchor: anchorRect,
-				gap: gap,
-				position: position,
-				padding: padding
-			}) as DOMRect
-		}
+			const [x, y] = [left(), top()]
+			setTop(pos.top)
+			setLeft(pos.left)
+			if (!animationIsOn()) {
+				details?.onDone()
+				return
+			}
 
-		setTop(pos.top)
-		setLeft(pos.left)
+			if (props['c:repositionAnimation']) {
+				return props['c:repositionAnimation'](popoverRef, () => details?.onDone())
+			}
+
+			setStyleWillChange('top,left')
+			popoverRef.animate(
+				{
+					top: [y + 'px', pos.top + 'px'],
+					left: [x + 'px', pos.left + 'px'],
+				},
+				{
+					duration: 300,
+					easing: AnimationEffectTiming.spring
+				}
+			).finished.then(() => {
+				setStyleWillChange(undefined)
+				details?.onDone()
+			})
+		})
 	}
 
 	function onMoveWithArrowKey(ev: KeyboardEvent): void {
@@ -712,22 +783,22 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 			timeScreenSizeId = setTimeout(() => timeScreenSizeId = null)
 		}
 
-		const width_one_percent = screenWidth / 100
-		const height_one_percent = screenHeight / 100
+		const onePercentWidth = screenWidth / 100
+		const onePercentHeight = screenHeight / 100
 		ev.preventDefault()
 		switch (code) {
-			case KEY_ARROW_UP:
-				setTop(t => t - height_one_percent)
-				break
-			case KEY_ARROW_DOWN:
-				setTop(t => t + height_one_percent)
-				break
-			case KEY_ARROW_LEFT:
-				setLeft(l => l - width_one_percent)
-				break
-			case KEY_ARROW_RIGHT:
-				setLeft(l => l + width_one_percent)
-				break
+		case KEY_ARROW_UP:
+			setTop(t => t - onePercentHeight)
+			break
+		case KEY_ARROW_DOWN:
+			setTop(t => t + onePercentHeight)
+			break
+		case KEY_ARROW_LEFT:
+			setLeft(l => l - onePercentWidth)
+			break
+		case KEY_ARROW_RIGHT:
+			setLeft(l => l + onePercentWidth)
+			break
 		}
 		if (timeFixPositionId != null) clearTimeout(timeFixPositionId)
 
@@ -744,7 +815,7 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 
 	onCleanup(() => {
 		removeEvents()
-		closePopover({})
+		closePopover({onDone(){}})
 	})
 
 	const C: VoidComponent = () => (<div
@@ -754,12 +825,13 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 			if (ev.code != KEY_ESCAPE || isManualDismiss()) return
 			if (anchorRef) anchorRef.focus()
 
-			closePopover({})
+			closePopover({onDone(){}})
 		}}
 		class={attrClassList(POPOVER_CLASS, props.class ?? '')}
 		ref={mergeRefs(props.ref, r => popoverRef = r)}
 		style={{
 			...style(),
+			"will-change": style()?.['will-change'] ?? styleWillChange(),
 			top: style()?.top ?? top() + 'px',
 			left: style()?.left ?? left() + 'px',
 			"max-width": !allowHideAnchor()
@@ -780,8 +852,6 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 			props['c:onToggleOpen']?.(isOpen)
 		}}
 		data-c-draggable={attrSetIfExist(isDraggable())}
-		data-c-open={attrSetIfExist(attrOpen())}
-		data-c-open-done={attrSetIfExist(attrOpenDone())}
 		data-c-drag={attrSetIfExist(isDragging())}
 		data-c-manual={attrSetIfExist(isManualDismiss())}
 		{...other}>
@@ -831,8 +901,7 @@ export {
 	POPOVER_CLASS
 }
 export type {
-	PopoverOpenDetail,
-	PopoverCloseDetail,
+	PopoverOpenOptions,
 	PopoverProps
 }
 export default Popover

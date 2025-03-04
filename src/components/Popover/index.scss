@@ -6,17 +6,11 @@
 	left: 0;
 	max-height: calc(100dvh - 16px);
 	max-width: calc(100% - 16px);
-	opacity: 0;
 	position: fixed;
 	outline: none;
 	overflow: hidden;
 	top: 0;
 	box-shadow: var(--g-elevation3);
-	transition-property: opacity;
-
-	:root[data-animation=on] & {
-		transition-duration: .2s;
-	}
 
 	:root[data-corner=sharp] & {border-radius: 0}
 	:root[data-corner=semi-round] & {border-radius: 8px}
@@ -36,20 +30,8 @@
 		background-color: transparent;
 	}
 
-	&[data-c-open] {
-		opacity: 1;
-	}
-
-	&[data-c-open-done] {
-		transition-property: all;
-	}
-
 	&[data-c-drag] {
-		transition-property: all, top, left;
-
-		:root[data-animation=on] & {
-			transition-duration: .2s, 0s, 0s;
-		}
+		will-change: top, left;
 	}
 
 	> div {

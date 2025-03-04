@@ -87,7 +87,7 @@ const Dropdown: ParentComponent<DropdownProps> = ($props) => {
 		props["c:attrMenu"]! ?? {},
 		[
 			'c:onToggleOpen', 'ref', 'classList',
-			'onClick'
+			'onClick', 'c:repositionAnimation'
 		]
 	)
 	const [isOpen, setIsOpen] = createSignal<boolean>(false)
@@ -108,8 +108,9 @@ const Dropdown: ParentComponent<DropdownProps> = ($props) => {
 			padding: 0,
 			gap: 4,
 			position: DropdownPosition.centerBottom,
-			onOpen: () => focusToSelectedOptions()
 		})
+
+		focusToSelectedOptions()
 		menuRef.style.removeProperty('width')
 		const buttonWidth = buttonRef.getBoundingClientRect().width
 		const menuWidth = menuRef.getBoundingClientRect().width
@@ -252,6 +253,7 @@ const Dropdown: ParentComponent<DropdownProps> = ($props) => {
 				setIsOpen(v)
 				menuProps["c:onToggleOpen"]?.(v)
 			}}
+			c:repositionAnimation={menuProps["c:repositionAnimation"] ?? (() => {})}
 			onClick={(ev) => {
 				eventCall(ev, menuProps.onClick)
 				const button = document.activeElement! as HTMLButtonElement

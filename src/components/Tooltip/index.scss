@@ -5,11 +5,11 @@
 	box-shadow: var(--g-elevation2);
 	display: flex;
 	inset: unset;
+	opacity: 0;
 	color: rgb(var(--g-color-surface));
 	background-color: rgb(var(--g-color-on-surface));
 	max-height: calc(100dvh - 16px);
 	max-width: calc(100% - 16px);
-	opacity: 0;
 	padding: 6px 8px;
 	font-size: var(--g-font-size-s);
 	font-weight: 500;
@@ -24,18 +24,8 @@
 	position: fixed;
 	z-index: 99;
 
-	:root[data-animation=on] & {
-		transition-property: opacity;
-		transition-duration: .2s;
-		transition-timing-function: var(--g-transition-spring-bounce);
-	}
-
 	:root[data-corner=sharp] & { border-radius: 0 }
 	:root[data-corner=full-round] & { border-radius: 14px }
-
-	&[data-c-open] {
-		opacity: 1;
-	}
 }
 
 .c-popover.c-rich-tooltip {

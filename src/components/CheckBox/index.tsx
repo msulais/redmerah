@@ -41,8 +41,11 @@ const CheckBox: ParentComponent<CheckBoxProps> = ($props) => {
 		'c:attrIcon', 'onChange', 'ref', 'id'
 	])
 	const [labelProps, otherLabelProps] = splitProps(props['c:attrLabel'] ?? {}, ['class'])
-	const [iconProps, otherIconProps] = splitProps(props['c:attrIcon']! ?? {}, ['ref', 'c:filled', 'c:code'])
+	const [iconProps, otherIconProps] = splitProps(props['c:attrIcon']! ?? {}, [
+		'ref', 'c:filled', 'c:code', 'style'
+	])
 	const [isChecked, setIsChecked] = createSignal<boolean>(false)
+	const [styleWillChange, setStyleWillChange] = createSignal<string | undefined>()
 	const isDisabled = createMemo(() => other.disabled == true)
 	let $isChecked: boolean = false
 	let isMounted: boolean = false
@@ -54,12 +57,16 @@ const CheckBox: ParentComponent<CheckBoxProps> = ($props) => {
 		if (animation != null) animation.cancel()
 
 		if (animationIsOn()) {
+			setStyleWillChange('scale')
 			animation = iconRef.animate({scale: [1, 0]}, animationOptions)
 			animation.finished.then(() => {
 				$isChecked = checked
 				setIsChecked(checked)
 				animation = iconRef.animate({scale: [0, 1]}, animationOptions)
-				animation.finished.then(() => animation = null).catch(() => {})
+				animation.finished.then(() => {
+					animation = null
+					setStyleWillChange(undefined)
+				}).catch(() => setStyleWillChange(undefined))
 			}, () => {})
 			return
 		}
@@ -131,6 +138,10 @@ const CheckBox: ParentComponent<CheckBoxProps> = ($props) => {
 			ref={mergeRefs(iconProps.ref, r => iconRef = r)}
 			c:code={iconProps["c:code"] ?? (props['c:variant'] == CheckBoxVariant.check? (isChecked()? ICON_CHECKBOX_CHECKED : ICON_CHECKBOX_UNCHECKED) : ICON_RADIO_BUTTON)}
 			c:filled={iconProps["c:filled"] ?? isChecked()}
+			style={typeof iconProps.style === 'string'? iconProps.style : {
+				...(iconProps.style ?? {}),
+				"will-change": iconProps.style?.["will-change"] ?? styleWillChange()
+			}}
 			{...otherIconProps}
 		/>
 		{props.children}

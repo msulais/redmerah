@@ -1,4 +1,4 @@
-import { createMemo, createSignal, createUniqueId, mergeProps, onCleanup, onMount, Show, splitProps, type JSX, type ParentComponent } from 'solid-js'
+import { batch, createMemo, createSignal, createUniqueId, mergeProps, onCleanup, onMount, Show, splitProps, type JSX, type ParentComponent } from 'solid-js'
 import { mergeRefs } from '@solid-primitives/refs'
 import { Portal } from 'solid-js/web'
 
@@ -14,7 +14,7 @@ import { KEY_ARROW_UP, KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT } from '@
 
 import './index.scss'
 
-type ModalOpenDetail = {
+type ModalOpenOptions = {
 	anchor?: HTMLElement
 
 	/** Use this if you want to override the `ModalOpenDetail.anchor` `DOMRect` */
@@ -26,7 +26,6 @@ type ModalOpenDetail = {
 	allowHideAnchor?: boolean
 	draggable?: boolean
 	contentAutoFocus?: boolean
-	onOpen?(): unknown
 
 	/**
 	 * Custom pointer position. Only works if `ModalOpenDetail.anchor` and
@@ -38,21 +37,36 @@ type ModalOpenDetail = {
 	}
 }
 
-type ModalCloseDetail = {
+type ModalCloseOptions = {
 	/** if the modal is important, it will not closed */
 	soft?: boolean
-	onClose?(): unknown
+}
+
+type ModalOpenDetails = ModalOpenOptions & {
+	onDone: () => unknown
+}
+
+type ModalCloseDetails = ModalCloseOptions & {
+	onDone: () => unknown
+}
+
+type ModalRepositionDetails = {
+	onDone: () => unknown
+}
+
+type ModalFocusDetails = {
+	onDone: () => unknown
 }
 
 enum ModalEvents {
 	shortfocus = 'custom:modal-shortfocus',
 
-	/** @param {ModalCloseDetail} detail `ModalCloseDetail` */
+	/** @param {ModalCloseOptions} detail `ModalCloseDetail` */
 	close = 'custom:modal-close',
 
 	reposition = 'custom:modal-reposition',
 
-	/** @param {ModalOpenDetail} detail `ModalOpenDetail` */
+	/** @param {ModalOpenOptions} detail `ModalOpenDetail` */
 	open = 'custom:modal-open'
 }
 
@@ -64,27 +78,14 @@ enum ModalListenerEvents {
 	close = 'custom:modallistener-close'
 }
 
+const OPENED_MODALS: HTMLDialogElement[] = []
+const MODAL_CLASS = 'c-modal'
+const MODAL_MARGIN = 8
 let LISTENER_REF: HTMLDivElement
 let STOP_GLOBAL_CLICK: boolean = false
 let HAS_MODAL_LISTENER: boolean = false
 let POINTER_X: number = 0
 let POINTER_Y: number = 0
-const MODAL_CLASS = 'c-modal'
-const MODAL_MARGIN = 8
-
-function isModalOpen(modal: HTMLDialogElement): boolean {
-	return modal.dataset.cOpen != undefined
-}
-
-function openModal(
-	modal: HTMLDialogElement,
-	options?: Omit<ModalOpenDetail, 'event'>
-): void {
-	modal.dispatchEvent(new CustomEvent(
-		ModalEvents.open,
-		{detail: {...options} satisfies ModalOpenDetail}
-	))
-}
 
 function initModalListener(): void {
 	if (HAS_MODAL_LISTENER) return;
@@ -92,7 +93,6 @@ function initModalListener(): void {
 
 	const body = document.body
 	const selector: string = 'dialog.c-modal[open]'
-	const modals: HTMLDialogElement[] = []
 	let isNoPointerEvent: boolean = false
 	let scrollTopValue: number = 0
 	let timeId: number | NodeJS.Timeout | null = null
@@ -111,12 +111,12 @@ function initModalListener(): void {
 	}
 
 	function repositionAllModal(): void {
-		if (modals.length == 0) return;
+		if (OPENED_MODALS.length == 0) return;
 		if (timeId != null) clearTimeout(timeId)
 
-		timeId = setTimeout(() => {
+		timeId = setTimeout(async () => {
 			for (const modal of document.querySelectorAll(selector)) {
-				repositionModal(modal as HTMLDialogElement)
+				await repositionModal(modal as HTMLDialogElement)
 			}
 			timeId = null
 		}, 250)
@@ -125,20 +125,20 @@ function initModalListener(): void {
 	// when `globalClick()` below will fire, this must call after it
 	function open(ev: CustomEvent<HTMLDialogElement>): void {
 		const element: HTMLDialogElement = ev.detail
-		const isExist = modals.some(modal => modal === element)
+		const isExist = OPENED_MODALS.some(modal => modal === element)
 		STOP_GLOBAL_CLICK = false
 		if (isExist) return;
 
-		modals.push(element)
+		OPENED_MODALS.push(element)
 	}
 
 	function close(ev: CustomEvent<HTMLDialogElement>): void {
 		const element = ev.detail
-		const index = modals.findIndex(modal => modal === element)
+		const index = OPENED_MODALS.findIndex(modal => modal === element)
 		if (index < 0) return;
 
-		modals.splice(index, 1)
-		removed = modals.length > 0
+		OPENED_MODALS.splice(index, 1)
+		removed = OPENED_MODALS.length > 0
 		if (!removed) return
 		if (timeCloseId != null) clearTimeout(timeCloseId)
 
@@ -160,13 +160,13 @@ function initModalListener(): void {
 		// Or when you drag something, modal will not automatically closed.
 		if (
 			isNoPointerEvent
-			|| modals.length == 0
+			|| OPENED_MODALS.length == 0
 			|| removed
 			|| !(ev as any).pointerType) {
 			removed = false
 			return
 		}
-		const modal: HTMLDialogElement = modals.at(-1)!
+		const modal: HTMLDialogElement = OPENED_MODALS.at(-1)!
 		const isClickedInside = modal !== ev.target
 		if (isClickedInside) return
 
@@ -174,7 +174,7 @@ function initModalListener(): void {
 	}
 
 	function globalScroll(): void {
-		if (modals.length == 0) {
+		if (OPENED_MODALS.length == 0) {
 
 			scrollTopValue = window.scrollY || document.documentElement.scrollTop
 			return
@@ -210,19 +210,36 @@ function initModalListener(): void {
 	initObserver()
 }
 
-function repositionModal(modal: HTMLDialogElement): void {
-	modal.dispatchEvent(new CustomEvent(ModalEvents.reposition))
+function isModalOpen(modal: HTMLDialogElement): boolean {
+	return OPENED_MODALS.some(v => v === modal)
 }
 
-function focusModal(modal: HTMLDialogElement): void {
-	modal.dispatchEvent(new CustomEvent(ModalEvents.shortfocus))
+function openModal(modal: HTMLDialogElement, options?: ModalOpenOptions): Promise<void> {
+	return new Promise((ok) => modal.dispatchEvent(new CustomEvent(
+		ModalEvents.open,
+		{ detail: { ...options, onDone: () => ok() } satisfies ModalOpenDetails }
+	)))
 }
 
-function closeModal(modal: HTMLDialogElement, options?: ModalCloseDetail): void {
-	modal.dispatchEvent(new CustomEvent(
+function repositionModal(modal: HTMLDialogElement): Promise<void> {
+	return new Promise((ok) => modal.dispatchEvent(new CustomEvent(
+		ModalEvents.reposition,
+		{detail: {onDone: () => ok()} satisfies ModalRepositionDetails}
+	)))
+}
+
+function focusModal(modal: HTMLDialogElement): Promise<void> {
+	return new Promise((ok) => modal.dispatchEvent(new CustomEvent(
+		ModalEvents.shortfocus,
+		{detail: {onDone: () => ok()} satisfies ModalFocusDetails}
+	)))
+}
+
+function closeModal(modal: HTMLDialogElement, options?: ModalCloseOptions): Promise<void> {
+	return new Promise((ok) => modal.dispatchEvent(new CustomEvent(
 		ModalEvents.close,
-		{detail: {...options}}
-	))
+		{detail: {...options, onDone: () => ok()} satisfies ModalCloseDetails}
+	)))
 }
 
 type ModalProps = Omit<JSX.DialogHtmlAttributes<HTMLDialogElement>, 'style'> & {
@@ -238,7 +255,8 @@ type ModalProps = Omit<JSX.DialogHtmlAttributes<HTMLDialogElement>, 'style'> & {
 	'c:attrContentWrappwer'?: JSX.HTMLAttributes<HTMLDivElement>
 	'c:onOpen'?(): unknown
 	'c:onClose'?(): unknown
-	'c:onToggleOpen'?(is_open: boolean): unknown
+	'c:onToggleOpen'?(isOpen: boolean): unknown
+	'c:repositionAnimation'?(el: HTMLDialogElement, done: () => unknown): unknown
 	'c:openAnimation'?(el: HTMLDialogElement, done: () => unknown): unknown
 	'c:closeAnimation'?(el: HTMLDialogElement, done: () => unknown): unknown
 }
@@ -251,7 +269,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 		'c:important', 'c:position', 'c:allowHideAnchor',
 		'c:draggable', 'c:contentAutoFocus', 'c:onOpen',
 		'c:onClose', 'c:attrContentWrappwer',
-		'c:portalMount'
+		'c:portalMount', 'c:repositionAnimation'
 	])
 	const style = createMemo(() => props.style)
 	const [isDragging, setIsDragging] = createSignal<boolean>(false)
@@ -261,9 +279,8 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 	const [maxWidth, setMaxWidth] = createSignal<number | undefined>(undefined)
 	const [maxHeight, setMaxHeight] = createSignal<number | undefined>(undefined)
 	const [allowHideAnchor, setAllowHideAnchor] = createSignal<boolean>(true)
-	const [attrOpen, setAttrOpen] = createSignal<boolean>(false)
-	const [attrOpenDone, setAttrOpenDone] = createSignal<boolean>(false)
 	const [attrFocus, setAttrFocus] = createSignal<boolean>(false)
+	const [styleWillChange, setStyleWillChange] = createSignal<string | undefined>()
 	const body = document.body
 	let pointerX: number = 0
 	let pointerY: number = 0
@@ -284,15 +301,41 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 	let diffPositionX: number = 0
 	let diffPositionY: number = 0
 
-	function fixPosition(): void {
+	function fixPosition(details?: ModalRepositionDetails): void {
 		const modalRect = modalRef.getBoundingClientRect()
 		const screenWidth = body.clientWidth
 		const screenHeight = window.innerHeight
 
-		if (modalRect.left < MODAL_MARGIN) setLeft(MODAL_MARGIN)
-		if (modalRect.top < MODAL_MARGIN) setTop(MODAL_MARGIN)
-		if (modalRect.right > screenWidth) setLeft(screenWidth - modalRect.width - MODAL_MARGIN)
-		if (modalRect.bottom > screenHeight) setTop(screenHeight - modalRect.height - MODAL_MARGIN)
+		batch(() => {
+			const [x, y] = [left(), top()]
+			if (modalRect.left < MODAL_MARGIN) setLeft(MODAL_MARGIN)
+			if (modalRect.top < MODAL_MARGIN) setTop(MODAL_MARGIN)
+			if (modalRect.right > screenWidth) setLeft(screenWidth - modalRect.width - MODAL_MARGIN)
+			if (modalRect.bottom > screenHeight) setTop(screenHeight - modalRect.height - MODAL_MARGIN)
+			if (!animationIsOn()) {
+				details?.onDone()
+				return
+			}
+
+			if (props['c:repositionAnimation']) {
+				return props['c:repositionAnimation'](modalRef, () => details?.onDone())
+			}
+
+			setStyleWillChange('top,left')
+			modalRef.animate(
+				{
+					top: [y + 'px', top() + 'px'],
+					left: [x + 'px', left() + 'px'],
+				},
+				{
+					duration: 300,
+					easing: AnimationEffectTiming.spring
+				}
+			).finished.then(() => {
+				setStyleWillChange(undefined)
+				details?.onDone()
+			})
+		})
 	}
 
 	function updatePosition(x: number, y: number) {
@@ -316,20 +359,20 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 		STOP_GLOBAL_CLICK = true
 	}
 
-	function customOnShortFocus(): void {
-		shortFocusModal()
+	function customOnShortFocus(ev: CustomEvent<ModalFocusDetails>): void {
+		shortFocusModal(ev.detail)
 	}
 
-	function customOnClose(ev: CustomEvent<ModalCloseDetail>): void {
+	function customOnClose(ev: CustomEvent<ModalCloseDetails>): void {
 		closeModal(ev.detail)
 	}
 
-	function customOnOpen(ev: CustomEvent<ModalOpenDetail>): void {
+	function customOnOpen(ev: CustomEvent<ModalOpenDetails>): void {
 		openModal(ev.detail)
 	}
 
-	function customOnReposition(): void {
-		repositionModal()
+	function customOnReposition(ev: CustomEvent<ModalRepositionDetails>): void {
+		repositionModal(ev.detail)
 	}
 
 	function initEvents(): void {
@@ -346,11 +389,11 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 		modalRef.removeEventListener(ModalEvents.reposition as any, customOnReposition)
 	}
 
-	function closeModal(detail: ModalCloseDetail): void {
+	function closeModal(details: ModalCloseDetails): void {
 		const {
 			soft = false,
-			onClose
-		} = detail;
+			onDone
+		} = details;
 
 		if (soft && important && isOpen) {
 			focusModal(modalRef)
@@ -432,48 +475,60 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 			}
 		}
 
-		setAttrOpen(false)
-		setAttrOpenDone(false)
 		anchorRef = null
 		LISTENER_REF.dispatchEvent(new CustomEvent(
 			ModalListenerEvents.close,
 			{detail: modalRef}
 		))
 		props['c:onClose']?.()
-		onClose?.()
 		if (!animationIsOn()) {
 			modalRef.close()
+			onDone()
 			return
 		}
 
 		if (props['c:closeAnimation'] != null) props['c:closeAnimation'](
 			modalRef,
-			() => modalRef.close()
+			() => {
+				modalRef.close()
+				onDone()
+			}
 		)
-		else modalRef.animate(
-			{ transform: `translate(${translate.left}px, ${translate.top}px)` },
-			{ duration: 300, easing: AnimationEffectTiming.springBounce }
-		).finished.then(() => modalRef.close())
+		else {
+			setStyleWillChange('transform, opacity')
+			modalRef.animate(
+				{
+					transform: `translate(${translate.left}px, ${translate.top}px)`,
+					opacity: 0
+				},
+				{ duration: 300, easing: AnimationEffectTiming.springBounce }
+			).finished.then(() => {
+				modalRef.close()
+				setStyleWillChange(undefined)
+				onDone()
+			})
+		}
 	}
 
-	function shortFocusModal(): void {
+	function shortFocusModal(details: ModalFocusDetails): void {
 		if (timeFocusId != null) clearTimeout(timeFocusId)
 		setAttrFocus(true)
 
 		timeFocusId = setTimeout(() => {
 			setAttrFocus(false)
 			timeFocusId = null
+			details.onDone()
 		}, 1000)
 	}
 
-	function openModal(detail: ModalOpenDetail): void {
+	function openModal(detail: ModalOpenDetails): void {
 		if (isOpen) return;
 		props['c:onToggleOpen']?.(true)
 
 		const {
 			pointer,
 			anchorRect,
-			onOpen,
+			onDone,
 			allowHideAnchor = props['c:allowHideAnchor'] ?? true,
 			anchor = null,
 			draggable = props['c:draggable'] ?? false,
@@ -515,155 +570,161 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 			position: inputPosition
 		}) as DOMRect
 
-		if (!allowHideAnchor && anchor != null) {
+		batch(() => {
+			if (!allowHideAnchor && anchor != null) {
+				const modalPosition = {
+					...pos,
+					bottom: pos.top + modalRect.height,
+					right: pos.left + modalRect.width
+				}
+				const anchorMidPosition = {
+					x: $anchorRect!.left + ($anchorRect!.width / 2),
+					y: $anchorRect!.top + ($anchorRect!.height / 2),
+				}
+				const modalMidPosition = {
+					x: modalPosition.left + (modalRect.width / 2),
+					y: modalPosition.top + (modalRect.height / 2),
+				}
+				const rangeX = Math.abs(modalMidPosition.x - anchorMidPosition.x)
+				const rangeY = Math.abs(modalMidPosition.y - anchorMidPosition.y)
+				const isLeftSide = modalMidPosition.x < anchorMidPosition.x
+				const isRightSide = modalMidPosition.x > anchorMidPosition.x
+				const isTopSide = modalMidPosition.y < anchorMidPosition.y
+				const isBottomSide = modalMidPosition.y > anchorMidPosition.y
+
+				if (rangeX > rangeY){
+					// left side
+					if (isLeftSide && modalPosition.right > $anchorRect!.left) {
+						setMaxWidth($anchorRect!.left - MODAL_MARGIN - inputGap)
+						setMaxHeight(undefined)
+					}
+
+					// right side
+					else if (isRightSide && modalPosition.left < $anchorRect!.right) {
+						setMaxWidth((body.clientWidth - $anchorRect!.right) - MODAL_MARGIN - inputGap)
+						setMaxHeight(undefined)
+					}
+				}
+				else {
+					// top side
+					if (isTopSide && modalPosition.bottom > $anchorRect!.top) {
+						setMaxHeight($anchorRect!.top - MODAL_MARGIN - inputGap)
+						setMaxWidth(undefined)
+					}
+
+					// bottom side
+					else if (isBottomSide && modalPosition.top < $anchorRect!.bottom) {
+						setMaxHeight((window.innerHeight - $anchorRect!.bottom) - MODAL_MARGIN - inputGap)
+						setMaxWidth(undefined)
+					}
+				}
+
+				pos = getFlyoutPosition({
+					flyout: modalRef.getBoundingClientRect(),
+					anchor: $anchorRect,
+					gap: inputGap,
+					pointer: $anchorRect? undefined : {
+						x: pointerX,
+						y: pointerY
+					},
+					padding: inputPadding,
+					position: inputPosition
+				}) as DOMRect
+			}
+
 			const modalPosition = {
 				...pos,
 				bottom: pos.top + modalRect.height,
 				right: pos.left + modalRect.width
 			}
-			const anchorMidPosition = {
-				x: $anchorRect!.left + ($anchorRect!.width / 2),
-				y: $anchorRect!.top + ($anchorRect!.height / 2),
-			}
 			const modalMidPosition = {
 				x: modalPosition.left + (modalRect.width / 2),
 				y: modalPosition.top + (modalRect.height / 2),
 			}
-			const rangeX = Math.abs(modalMidPosition.x - anchorMidPosition.x)
-			const rangeY = Math.abs(modalMidPosition.y - anchorMidPosition.y)
-			const isLeftSide = modalMidPosition.x < anchorMidPosition.x
-			const isRightSide = modalMidPosition.x > anchorMidPosition.x
-			const isTopSide = modalMidPosition.y < anchorMidPosition.y
-			const isBottomSide = modalMidPosition.y > anchorMidPosition.y
+			const translate = {
+				left: 0,
+				top: 0
+			}
 
-			if (rangeX > rangeY){
-				// left side
-				if (isLeftSide && modalPosition.right > $anchorRect!.left) {
-					setMaxWidth($anchorRect!.left - MODAL_MARGIN - inputGap)
-					setMaxHeight(undefined)
+			let anchorCenterLeft = pointerX
+			let anchorCenterTop = pointerY
+
+			if (anchorRect) {
+				anchorCenterLeft = anchorRect.left + (anchorRect.width / 2)
+				anchorCenterTop = anchorRect.top + (anchorRect.height / 2)
+			}
+
+			const rangeX = Math.abs(modalMidPosition.x - anchorCenterLeft)
+			const rangeY = Math.abs(modalMidPosition.y - anchorCenterTop)
+
+			if (rangeX > rangeY) {
+				if ((modalMidPosition.x < anchorCenterTop || modalMidPosition.x > anchorCenterTop) && (
+					position == ModalPosition.centerBottom
+					|| position == ModalPosition.centerBottomToLeft
+					|| position == ModalPosition.centerBottomToRight
+					|| position == ModalPosition.centerTop
+					|| position == ModalPosition.centerTopToLeft
+					|| position == ModalPosition.centerTopToRight
+				)) {
+					if (modalMidPosition.y > anchorCenterTop ) translate.top = -12
+					if (modalMidPosition.y < anchorCenterTop ) translate.top = 12
+				} else {
+					if (modalMidPosition.x > anchorCenterLeft) translate.left = -12
+					if (modalMidPosition.x < anchorCenterLeft) translate.left = 12
 				}
-
-				// right side
-				else if (isRightSide && modalPosition.left < $anchorRect!.right) {
-					setMaxWidth((body.clientWidth - $anchorRect!.right) - MODAL_MARGIN - inputGap)
-					setMaxHeight(undefined)
+			} else {
+				if ((modalMidPosition.y < anchorCenterLeft || modalMidPosition.y > anchorCenterLeft) && (
+					position == ModalPosition.leftCenter
+					|| position == ModalPosition.leftCenterToBottom
+					|| position == ModalPosition.leftCenterToTop
+					|| position == ModalPosition.rightCenter
+					|| position == ModalPosition.rightCenterToBottom
+					|| position == ModalPosition.rightCenterToTop
+				)) {
+					if (modalMidPosition.x > anchorCenterLeft) translate.left = -12
+					if (modalMidPosition.x < anchorCenterLeft) translate.left = 12
+				} else {
+					if (modalMidPosition.y > anchorCenterTop ) translate.top = -12
+					if (modalMidPosition.y < anchorCenterTop ) translate.top = 12
 				}
 			}
+
+			setTop(pos.top)
+			setLeft(pos.left)
+			props['c:onOpen']?.()
+			STOP_GLOBAL_CLICK = true
+
+			// run after document.onclick
+			setTimeout(() => LISTENER_REF.dispatchEvent(new CustomEvent(
+				ModalListenerEvents.open,
+				{detail: modalRef}
+			)))
+
+			if (!animationIsOn()) {
+				onDone()
+				return
+			}
+
+			if (props['c:openAnimation']) props['c:openAnimation'](modalRef, () => onDone())
 			else {
-				// top side
-				if (isTopSide && modalPosition.bottom > $anchorRect!.top) {
-					setMaxHeight($anchorRect!.top - MODAL_MARGIN - inputGap)
-					setMaxWidth(undefined)
-				}
-
-				// bottom side
-				else if (isBottomSide && modalPosition.top < $anchorRect!.bottom) {
-					setMaxHeight((window.innerHeight - $anchorRect!.bottom) - MODAL_MARGIN - inputGap)
-					setMaxWidth(undefined)
-				}
+				setStyleWillChange('transform,opacity')
+				modalRef.animate(
+					{
+						transform: [`translate(${translate.left}px, ${translate.top}px)`, 'translate(0px, 0px)'],
+						opacity: [0, 1]
+					},
+					{ duration: 300, easing: AnimationEffectTiming.springBounce }
+				).finished.then(() => {
+					setStyleWillChange(undefined)
+					onDone()
+				})
 			}
-
-			pos = getFlyoutPosition({
-				flyout: modalRef.getBoundingClientRect(),
-				anchor: $anchorRect,
-				gap: inputGap,
-				pointer: $anchorRect? undefined : {
-					x: pointerX,
-					y: pointerY
-				},
-				padding: inputPadding,
-				position: inputPosition
-			}) as DOMRect
-		}
-
-		const modalPosition = {
-			...pos,
-			bottom: pos.top + modalRect.height,
-			right: pos.left + modalRect.width
-		}
-		const modalMidPosition = {
-			x: modalPosition.left + (modalRect.width / 2),
-			y: modalPosition.top + (modalRect.height / 2),
-		}
-		const translate = {
-			left: 0,
-			top: 0
-		}
-
-		let anchorCenterLeft = pointerX
-		let anchorCenterTop = pointerY
-
-		if (anchorRect) {
-			anchorCenterLeft = anchorRect.left + (anchorRect.width / 2)
-			anchorCenterTop = anchorRect.top + (anchorRect.height / 2)
-		}
-
-		const rangeX = Math.abs(modalMidPosition.x - anchorCenterLeft)
-		const rangeY = Math.abs(modalMidPosition.y - anchorCenterTop)
-
-		if (rangeX > rangeY) {
-			if ((modalMidPosition.x < anchorCenterTop || modalMidPosition.x > anchorCenterTop) && (
-				position == ModalPosition.centerBottom
-				|| position == ModalPosition.centerBottomToLeft
-				|| position == ModalPosition.centerBottomToRight
-				|| position == ModalPosition.centerTop
-				|| position == ModalPosition.centerTopToLeft
-				|| position == ModalPosition.centerTopToRight
-			)) {
-				if (modalMidPosition.y > anchorCenterTop ) translate.top = -12
-				if (modalMidPosition.y < anchorCenterTop ) translate.top = 12
-			} else {
-				if (modalMidPosition.x > anchorCenterLeft) translate.left = -12
-				if (modalMidPosition.x < anchorCenterLeft) translate.left = 12
-			}
-		} else {
-			if ((modalMidPosition.y < anchorCenterLeft || modalMidPosition.y > anchorCenterLeft) && (
-				position == ModalPosition.leftCenter
-				|| position == ModalPosition.leftCenterToBottom
-				|| position == ModalPosition.leftCenterToTop
-				|| position == ModalPosition.rightCenter
-				|| position == ModalPosition.rightCenterToBottom
-				|| position == ModalPosition.rightCenterToTop
-			)) {
-				if (modalMidPosition.x > anchorCenterLeft) translate.left = -12
-				if (modalMidPosition.x < anchorCenterLeft) translate.left = 12
-			} else {
-				if (modalMidPosition.y > anchorCenterTop ) translate.top = -12
-				if (modalMidPosition.y < anchorCenterTop ) translate.top = 12
-			}
-		}
-
-		setTop(pos.top)
-		setLeft(pos.left)
-		setAttrOpen(true)
-		props['c:onOpen']?.()
-		onOpen?.()
-		if (!animationIsOn()) {
-			setAttrOpenDone(true)
-		}
-		else {
-			if (props['c:openAnimation'] != null) props['c:openAnimation'](
-				modalRef,
-				() => setAttrOpenDone(true)
-			)
-			else modalRef.animate(
-				{ transform: [`translate(${translate.left}px, ${translate.top}px)`, 'none'] },
-				{ duration: 300, easing: AnimationEffectTiming.springBounce }
-			).finished.then(() => setAttrOpenDone(true))
-		}
-
-		STOP_GLOBAL_CLICK = true
-
-		// run after document.onclick
-		setTimeout(() => LISTENER_REF.dispatchEvent(new CustomEvent(
-			ModalListenerEvents.open,
-			{detail: modalRef}
-		)))
+		})
 	}
 
-	function repositionModal(): void {
+	function repositionModal(details?: ModalRepositionDetails): void {
 		if (anchorRef == null) {
-			fixPosition()
+			fixPosition(details)
 			return
 		}
 
@@ -678,65 +739,91 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 			padding: padding
 		}) as DOMRect
 
-		if (!allowHideAnchor()) {
-			const modalPosition = {
-				...pos,
-				bottom: pos.top + modalRect.height,
-				right: pos.left + modalRect.width
-			}
-			const anchorMidPosition = {
-				x: anchorRect!.left + (anchorRect!.width / 2),
-				y: anchorRect!.top + (anchorRect!.height / 2),
-			}
-			const modalMidPosition = {
-				x: modalPosition.left + (modalRect.width / 2),
-				y: modalPosition.top + (modalRect.height / 2),
-			}
-			const rangeX = Math.abs(modalMidPosition.x - anchorMidPosition.x)
-			const rangeY = Math.abs(modalMidPosition.y - anchorMidPosition.y)
-			const isLeftSide = modalMidPosition.x < anchorMidPosition.x
-			const isRightSide = modalMidPosition.x > anchorMidPosition.x
-			const isTopSide = modalMidPosition.y < anchorMidPosition.y
-			const isBottomSide = modalMidPosition.y > anchorMidPosition.y
+		batch(() => {
+			if (!allowHideAnchor()) {
+				const modalPosition = {
+					...pos,
+					bottom: pos.top + modalRect.height,
+					right: pos.left + modalRect.width
+				}
+				const anchorMidPosition = {
+					x: anchorRect!.left + (anchorRect!.width / 2),
+					y: anchorRect!.top + (anchorRect!.height / 2),
+				}
+				const modalMidPosition = {
+					x: modalPosition.left + (modalRect.width / 2),
+					y: modalPosition.top + (modalRect.height / 2),
+				}
+				const rangeX = Math.abs(modalMidPosition.x - anchorMidPosition.x)
+				const rangeY = Math.abs(modalMidPosition.y - anchorMidPosition.y)
+				const isLeftSide = modalMidPosition.x < anchorMidPosition.x
+				const isRightSide = modalMidPosition.x > anchorMidPosition.x
+				const isTopSide = modalMidPosition.y < anchorMidPosition.y
+				const isBottomSide = modalMidPosition.y > anchorMidPosition.y
 
-			if (rangeX > rangeY){
-				// left side
-				if (isLeftSide && modalPosition.right > anchorRect!.left) {
-					setMaxWidth(anchorRect!.left - MODAL_MARGIN - gap)
-					setMaxHeight(undefined)
+				if (rangeX > rangeY){
+					// left side
+					if (isLeftSide && modalPosition.right > anchorRect!.left) {
+						setMaxWidth(anchorRect!.left - MODAL_MARGIN - gap)
+						setMaxHeight(undefined)
+					}
+
+					// right side
+					else if (isRightSide && modalPosition.left < anchorRect!.right) {
+						setMaxWidth((body.clientWidth - anchorRect!.right) - MODAL_MARGIN - gap)
+						setMaxHeight(undefined)
+					}
+				}
+				else {
+					// top side
+					if (isTopSide && modalPosition.bottom > anchorRect!.top) {
+						setMaxHeight(anchorRect!.top - MODAL_MARGIN - gap)
+						setMaxWidth(undefined)
+					}
+
+					// bottom side
+					else if (isBottomSide && modalPosition.top < anchorRect!.bottom) {
+						setMaxHeight((window.innerHeight - anchorRect!.bottom) - MODAL_MARGIN - gap)
+						setMaxWidth(undefined)
+					}
 				}
 
-				// right side
-				else if (isRightSide && modalPosition.left < anchorRect!.right) {
-					setMaxWidth((body.clientWidth - anchorRect!.right) - MODAL_MARGIN - gap)
-					setMaxHeight(undefined)
-				}
-			}
-			else {
-				// top side
-				if (isTopSide && modalPosition.bottom > anchorRect!.top) {
-					setMaxHeight(anchorRect!.top - MODAL_MARGIN - gap)
-					setMaxWidth(undefined)
-				}
-
-				// bottom side
-				else if (isBottomSide && modalPosition.top < anchorRect!.bottom) {
-					setMaxHeight((window.innerHeight - anchorRect!.bottom) - MODAL_MARGIN - gap)
-					setMaxWidth(undefined)
-				}
+				pos = getFlyoutPosition({
+					flyout: modalRef.getBoundingClientRect(),
+					anchor: anchorRect,
+					gap: gap,
+					position: position,
+					padding: padding
+				}) as DOMRect
 			}
 
-			pos = getFlyoutPosition({
-				flyout: modalRef.getBoundingClientRect(),
-				anchor: anchorRect,
-				gap: gap,
-				position: position,
-				padding: padding
-			}) as DOMRect
-		}
+			const [x, y] = [left(), top()]
+			setTop(pos.top)
+			setLeft(pos.left)
+			if (!animationIsOn()) {
+				details?.onDone()
+				return
+			}
 
-		setTop(pos.top)
-		setLeft(pos.left)
+			if (props['c:repositionAnimation']) {
+				return props['c:repositionAnimation'](modalRef, () => details?.onDone())
+			}
+
+			setStyleWillChange('top,left')
+			modalRef.animate(
+				{
+					top: [y + 'px', pos.top + 'px'],
+					left: [x + 'px', pos.left + 'px'],
+				},
+				{
+					duration: 300,
+					easing: AnimationEffectTiming.spring
+				}
+			).finished.then(() => {
+				setStyleWillChange(undefined)
+				details?.onDone()
+			})
+		})
 	}
 
 	function onMoveWithArrowKey(ev: KeyboardEvent): void {
@@ -754,22 +841,22 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 			timeScreenSizeId = setTimeout(() => timeScreenSizeId = null)
 		}
 
-		const width_one_percent = screenWidth / 100
-		const height_one_percent = screenHeight / 100
+		const onePercentWidth = screenWidth / 100
+		const onePercentHeight = screenHeight / 100
 		ev.preventDefault()
 		switch (code) {
-			case KEY_ARROW_UP:
-				setTop(t => t - height_one_percent)
-				break
-			case KEY_ARROW_DOWN:
-				setTop(t => t + height_one_percent)
-				break
-			case KEY_ARROW_LEFT:
-				setLeft(l => l - width_one_percent)
-				break
-			case KEY_ARROW_RIGHT:
-				setLeft(l => l + width_one_percent)
-				break
+		case KEY_ARROW_UP:
+			setTop(t => t - onePercentHeight)
+			break
+		case KEY_ARROW_DOWN:
+			setTop(t => t + onePercentHeight)
+			break
+		case KEY_ARROW_LEFT:
+			setLeft(l => l - onePercentWidth)
+			break
+		case KEY_ARROW_RIGHT:
+			setLeft(l => l + onePercentWidth)
+			break
 		}
 		if (timeFixPositionId != null) clearTimeout(timeFixPositionId)
 
@@ -786,7 +873,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 
 	onCleanup(() => {
 		removeEvents()
-		closeModal({})
+		closeModal({onDone() {}})
 	})
 
 	return (<Portal mount={props['c:portalMount']}><dialog
@@ -794,6 +881,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 		ref={mergeRefs(props.ref, r => modalRef = r)}
 		style={{
 			...style(),
+			"will-change": style()?.['will-change'] ?? styleWillChange(),
 			top: style()?.top ?? top() + 'px',
 			left: style()?.left ?? left() + 'px',
 			"max-width": !allowHideAnchor()
@@ -826,7 +914,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 				ev.preventDefault()
 				return
 			}
-			closeModal({soft: true})
+			closeModal({soft: true, onDone: () => {}})
 			ev.preventDefault()
 		}}
 		onClose={(ev) => {
@@ -837,8 +925,6 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 		data-c-draggable={attrSetIfExist(isDraggable())}
 		data-c-drag={attrSetIfExist(isDragging())}
 		data-c-focus={attrSetIfExist(attrFocus())}
-		data-c-open={attrSetIfExist(attrOpen())}
-		data-c-open-done={attrSetIfExist(attrOpenDone())}
 		{...other}>
 		<Show when={isDraggable()}>
 			<span
@@ -881,7 +967,7 @@ export {
 }
 export type {
 	ModalProps,
-	ModalOpenDetail,
-	ModalCloseDetail
+	ModalOpenOptions,
+	ModalCloseOptions
 }
 export default Modal
