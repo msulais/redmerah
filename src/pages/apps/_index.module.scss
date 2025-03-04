@@ -31,6 +31,27 @@
 			text-transform: capitalize;
 			position: relative;
 			width: 100%;
+
+			:root[data-animation=on] & {
+				border-color: transparent !important;
+				background-color: transparent !important;
+				transition-duration: 0s, .2s, .2s;
+				transition-property: all, transform, scale;
+
+				@media (hover:hover) {
+					&:hover {
+						transform: translateY(-12px);
+					}
+				}
+
+				&[data-c-focused] {
+					transform: translateY(-12px);
+				}
+
+				&:active {
+					scale: .85;
+				}
+			}
 		}
 
 		& :global(.c-icon) {
