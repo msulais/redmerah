@@ -1,0 +1,17 @@
+---
+import { attrClassList } from '@/utils/attributes'
+import {
+	type DividerProps,
+	DividerClasses
+} from '.'
+import './index.scss'
+
+type Props = DividerProps
+
+const {
+	'class': className,
+	...other
+} = Astro.props
+---
+
+<div class={attrClassList(DividerClasses.divider, className)} {...other}/>
