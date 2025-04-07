@@ -1,0 +1,59 @@
+---
+import { attrClassList } from '@/utils/attributes'
+import { ModalClasses, type ModalProps } from './index'
+
+import './index.scss'
+
+type Props = ModalProps
+
+const {
+	'c:anchorBy': anchorBy,
+	'c:draggable': draggable,
+	'c:important': important,
+	'c:autoFocus': autoFocus,
+	'c:animation': animation,
+	'c:gap': gap,
+	'c:padding': padding,
+	'c:position': position,
+	'c:attrDragHandle': attrDragHandle,
+	'c:attrContent': attrContent,
+	'class': className,
+	...other
+} = Astro.props
+
+const {
+	'class': dragHandleClassName,
+	tabindex = 0,
+	...dragHandleOther
+} = attrDragHandle ?? {}
+
+const {
+	'class': contentClassName,
+	...contentOther
+} = attrContent ?? {}
+
+---
+<dialog
+	class={attrClassList(ModalClasses.modal, className)}
+	data-c-anchorby={anchorBy}
+	data-c-draggable={draggable? '' : undefined}
+	data-c-important={important? '' : undefined}
+	data-c-autofocus={autoFocus? '' : undefined}
+	data-c-animation={animation? '' : undefined}
+	data-c-gap={gap}
+	data-c-padding={padding}
+	data-c-position={position}
+	{...other}>
+	<div
+		class={attrClassList(ModalClasses.content, contentClassName)}
+		{...contentOther}>
+		<slot />
+	</div>
+
+	<!-- Keep below content to avoid auto focus -->
+	<div
+		class={attrClassList(ModalClasses.dragHandle, dragHandleClassName)}
+		tabindex={tabindex}
+		{...dragHandleOther}
+	/>
+</dialog>

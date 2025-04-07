@@ -1,9 +1,4 @@
 * {
-	--g-background-color: transparent; // rgb value (eg. '9, 23, 200')
-	--g-background-color-opacity: 0;
-
-	background-color: transparent;
-	background-color: rgba(var(--g-background-color), var(--g-background-color-opacity));
 	box-sizing: border-box;
 	color: inherit;
 	font-family: inherit;
@@ -86,4 +81,8 @@ pre > code {
 	appearance: none;
 	-moz-appearance: none;
 	-webkit-appearance: none;
+}
+
+@view-transition {
+	navigation: auto;
 }

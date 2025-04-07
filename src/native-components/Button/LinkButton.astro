@@ -1,0 +1,27 @@
+---
+import { attrClassList } from '@/utils/attributes'
+import { type LinkButtonProps, ButtonClasses } from './index'
+
+import './index.scss'
+
+type Props = LinkButtonProps
+
+const {
+	'c:newTab': newTab,
+	'c:variant': variant,
+	'c:focused': focused,
+	'class': className,
+	target,
+	rel,
+	...other
+} = Astro.props
+---
+<a
+	class={attrClassList(ButtonClasses.btn, className)}
+	data-c-variant={variant}
+	data-c-focused={focused? '' : undefined}
+	target={target ?? (newTab? '_blank' : undefined)}
+	rel={rel ?? (newTab? 'noopener noreferrer' : undefined)}
+	{...other}>
+	<slot />
+</a>

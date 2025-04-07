@@ -1,0 +1,63 @@
+---
+import { attrClassList } from '@/utils/attributes'
+import { PopoverClasses, type PopoverProps } from '.'
+
+import './index.scss'
+
+type Props = PopoverProps
+
+const {
+	'c:anchorBy': anchorBy,
+	'c:draggable': draggable,
+	'c:important': important,
+	'c:autoFocus': autoFocus = true,
+	'c:animation': animation,
+	'c:gap': gap,
+	'c:padding': padding,
+	'c:position': position,
+	'c:attrDragHandle': attrDragHandle,
+	'c:attrContent': attrContent,
+	'class': className,
+	popover,
+	...other
+} = Astro.props
+
+const {
+	'class': dragHandleClassName,
+	...dragHandleOther
+} = attrDragHandle ?? {}
+
+const {
+	'class': contentClassName,
+	...contentOther
+} = attrContent ?? {}
+
+---
+<div
+	class={attrClassList(PopoverClasses.popover, className)}
+	popover={popover ?? 'manual'}
+	data-c-anchorby={anchorBy}
+	data-c-draggable={draggable? '' : undefined}
+	data-c-important={important? '' : undefined}
+	data-c-autofocus={autoFocus? '' : undefined}
+	data-c-animation={animation? '' : undefined}
+	data-c-gap={gap}
+	data-c-padding={padding}
+	data-c-position={position}
+	{...other}>
+	<div
+		class={attrClassList(PopoverClasses.content, contentClassName)}
+		{...contentOther}>
+		<slot />
+	</div>
+
+	<!-- Keep below content to avoid auto focus -->
+	<div
+		class={attrClassList(PopoverClasses.dragHandle, dragHandleClassName)}
+		{...dragHandleOther}
+	/>
+</div>
+<script>
+	import { registerPopover } from "."
+	registerPopover()
+</script>

@@ -1,0 +1,16 @@
+---
+import { attrClassList } from '@/utils/attributes'
+import { LabelClasses, type LabelProps } from '.'
+import './index.scss'
+
+type Props = LabelProps
+
+const {
+	'class': className,
+	...other
+} = Astro.props
+---
+
+<span class={attrClassList(LabelClasses.label, className)} {...other}>
+	<slot />
+</span>

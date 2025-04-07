@@ -1,0 +1,46 @@
+---
+import { attrClassList } from '@/utils/attributes'
+import { AppBarClasses, type AppBarProps } from '.'
+import './index.scss'
+
+type Props = AppBarProps
+const {
+	'c:tagName': tagName = 'header',
+	'class': className,
+	'c:attrLeading': attrLeading = {},
+	'c:attrTrailing': attrTrailing = {},
+	'c:attrContent': attrContent = {},
+	'c:attrHeading': attrHeading = {},
+	...other
+} = Astro.props
+const {'class': contentClassName, ...contentOther} = attrContent
+const {'class': headingClassName, ...headingOther} = attrHeading
+const {'class': leadingClassName, ...leadingOther} = attrLeading
+const {'class': trailingClassName, ...trailingOther} = attrTrailing
+
+const Dynamic = tagName as 'header'
+---
+<Dynamic
+	class={attrClassList(AppBarClasses.appbar, className)}
+	{...other}>
+	{Astro.slots.has('leading') &&
+		<div class={attrClassList(AppBarClasses.leading, leadingClassName)} {...leadingOther}>
+			<slot name='leading'/>
+		</div>
+	}
+	<div class={attrClassList(AppBarClasses.content, contentClassName)} {...contentOther}>
+		{Astro.slots.has('headline') &&
+			<h2
+				class={attrClassList(AppBarClasses.headline, headingClassName)}
+				{...headingOther}>
+				<slot name='headline'/>
+			</h2>
+		}
+		<slot />
+	</div>
+	{Astro.slots.has('trailing') &&
+		<div class={attrClassList(AppBarClasses.trailing, trailingClassName)} {...trailingOther}>
+			<slot name='trailing'/>
+		</div>
+	}
+</Dynamic>

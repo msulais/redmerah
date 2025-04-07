@@ -1,0 +1,49 @@
+---
+import {
+	type SideNavigationProps,
+	SideNavigationClasses,
+} from '.'
+import { attrClassList } from '@/utils/attributes'
+import './index.scss'
+
+type Props = SideNavigationProps
+
+const {
+	'c:tagName': tagName = 'div',
+	'class': className = 'class',
+	'c:minimized': minimized,
+	'c:attrContent': attrContent = {},
+	'c:attrHeader': attrHeader = {},
+	'c:attrFooter': attrFooter = {},
+	...other
+} = Astro.props
+const {'class': contentClassName, ...contentOther} = attrContent
+const {'class': headerClassName, ...headerOther} = attrHeader
+const {'class': footerClassName, ...footerOther} = attrFooter
+const Dynamic = tagName as 'div'
+---
+
+<Dynamic
+	class={attrClassList(SideNavigationClasses.sideNavigation, className)}
+	data-c-minimized={minimized? '' : undefined}
+	{...other}>
+	{Astro.slots.has('header') &&
+		<div
+			class={attrClassList(SideNavigationClasses.header, headerClassName)}
+			{...headerOther}>
+			<slot name="header"/>
+		</div>
+	}
+	<div
+		class={attrClassList(SideNavigationClasses.content, contentClassName)}
+		{...contentOther}>
+		<slot />
+	</div>
+	{Astro.slots.has('footer') &&
+		<div
+			class={attrClassList(SideNavigationClasses.footer, footerClassName)}
+			{...footerOther}>
+			<slot name="footer"/>
+		</div>
+	}
+</Dynamic>

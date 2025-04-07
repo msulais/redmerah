@@ -1,0 +1,84 @@
+.c-popover {
+	position: fixed;
+	background-color: rgb(var(--g-color-surface));
+	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity3));
+	box-sizing: content-box;
+	border-radius: 8px;
+	left: 0;
+	max-height: calc(100dvh - 16px);
+	max-width: calc(100% - 16px);
+	width: max-content;
+	outline: none;
+	overflow: hidden;
+	top: 0;
+	box-shadow: var(--g-elevation3);
+
+	:root[data-theme=dark] & {
+		border: 1px solid rgba(0, 0, 0, var(--g-opacity-inv5));
+		background-color: rgb(46, 46, 46);
+	}
+	:root[data-theme=system] & {
+		@media (prefers-color-scheme: dark) {
+			border: 1px solid rgba(0, 0, 0, var(--g-opacity-inv5));
+			background-color: rgb(46, 46, 46);
+		}
+	}
+
+	&::backdrop {
+		background-color: transparent;
+	}
+
+	&:not([data-c-draggable]) > .c-popover-draghandle {
+		display: none;
+	}
+
+	&[data-c-dragging] {
+		will-change: top, left;
+	}
+}
+
+.c-popover-content {
+	position: relative;
+	max-height: inherit;
+	max-width: 100%;
+	width: 100%;
+	overflow: auto;
+	border-radius: inherit;
+}
+
+.c-popover-draghandle {
+	--c-border-radius: 16px;
+	--c-width-base: calc(100% - (var(--c-border-radius) * 2));
+	--c-width: calc(var(--c-width-base) + 32px);
+	--c-width-hover: calc(var(--c-width-base) + 8px);
+
+	width: min(64px, var(--c-width));
+	height: 4px;
+	position: absolute;
+	top: 4px;
+	left: 50%;
+	transform: translateX(-50%);
+	box-shadow: var(--g-elevation2);
+	touch-action: none !important;
+	z-index: 5;
+	border-radius: 999px;
+	background-color: rgb(var(--g-color-accent));
+
+	:root[data-animation=on] & {
+		transition-duration: .2s;
+	}
+
+	@media (hover: hover) {
+		&:hover {
+			cursor: grab;
+			width: min(88px, var(--c-width-hover));
+			height: 8px;
+		}
+	}
+
+	&:active {
+		cursor: grabbing;
+		height: 8px;
+		width: min(80px, calc(var(--c-width-hover) - 16px));
+	}
+}

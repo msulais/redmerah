@@ -1,0 +1,46 @@
+.c-popover.c-menu {
+	&[data-c-draggable] > div {
+		padding-top: 12px;
+	}
+
+	> .c-popover-content {
+		padding: 4px 0;
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+		align-items: stretch;
+		justify-content: flex-start;
+	}
+}
+
+
+.c-menu-header {
+	padding: 0 8px;
+	margin: 0 4px;
+	min-height: 24px;
+	display: flex;
+	text-wrap: nowrap;
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: center;
+	font-size: var(--g-font-size-s);
+	color: rgba(var(--g-color-on-surface), var(--g-opacity-inv2));
+}
+
+.c-menu-indent {
+	min-width: 20px;
+	max-width: 20px;
+}
+
+.c-btn.c-menu-item {
+	outline-offset: 0;
+	padding: 0 8px;
+	justify-content: flex-start;
+	margin: 0 4px;
+	width: calc(100% - 8px);
+	white-space: nowrap;
+}
+
+.c-menu-item-content {
+	flex: 1;
+}

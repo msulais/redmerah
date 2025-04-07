@@ -1,5 +1,5 @@
 import { type ParentComponent, type JSX, mergeProps, splitProps, type VoidComponent, type ValidComponent, createMemo } from 'solid-js'
-import { Dynamic, type DynamicProps } from 'solid-js/web'
+// import { Dynamic, type DynamicProps } from 'solid-js/web'
 
 import { attrClassList, attrSetIfExist } from '@/utils/attributes'
 import { eventCall } from '@/utils/event'

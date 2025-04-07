@@ -1,0 +1,32 @@
+---
+import LinkButton from './LinkButton.astro'
+import Icon from '@/native-components/Icon/index.astro'
+import { attrClassList } from '@/utils/attributes'
+import { ButtonClasses, type LinkIconButtonProps } from '.'
+
+import './index.scss'
+
+type Props = LinkIconButtonProps
+
+const {
+	'class': className,
+	'c:icon': icon,
+	'c:filled': filled,
+	'c:attrIcon': attrIcon = {},
+	...other
+} = Astro.props
+const {
+	'c:filled': filledIcon,
+	'c:icon': iconIcon,
+	...iconOther
+} = attrIcon
+---
+<LinkButton
+	class={attrClassList(ButtonClasses.icon, className)}
+	{...other}>
+	<Icon
+		c:icon={iconIcon ?? icon}
+		c:filled={filledIcon ?? filled}
+		{...iconOther}
+	/>
+</LinkButton>

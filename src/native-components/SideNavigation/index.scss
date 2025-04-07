@@ -1,0 +1,45 @@
+.c-side-navigation {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	height: 100%;
+	width: 280px;
+	padding: 4px;
+	max-width: 280px;
+	max-height: 100%;
+
+	:root[data-animation=on] & {
+		transition-duration: .2s;
+	}
+}
+
+.c-side-navigation-content {
+	flex: 1;
+	overflow: auto;
+	display: inherit;
+	flex-direction: inherit;
+	gap: inherit;
+	height: inherit;
+	width: 100%;
+	max-width: inherit;
+	max-height: 100%;
+}
+
+.c-btn.c-side-navigation-btn {
+	justify-content: flex-start;
+}
+
+.c-side-navigation-btn-leading {
+	display: none;
+}
+
+.c-side-navigation-btn-content {
+	flex: 1;
+	display: inherit;
+	gap: inherit
+}
+
+.c-side-navigation-footer,
+.c-side-navigation-header {
+	display: contents;
+}

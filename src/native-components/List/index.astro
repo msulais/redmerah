@@ -1,0 +1,42 @@
+---
+import { attrClassList } from '@/utils/attributes'
+import { ListClasses, type ListProps } from '.'
+
+import './index.scss'
+
+type Props = ListProps
+
+const {
+	'class': className,
+	'c:tagName': tagName = 'div',
+	'c:attrLeading': attrLeading = {},
+	'c:attrTrailing': attrTrailing = {},
+	'c:attrContent': attrContent = {},
+	'c:attrDescription': attrDescription = {},
+	...other
+} = Astro.props
+const {'class': leadingClassName, ...leadingOther} = attrContent
+const {'class': trailingClassName, ...trailingOther} = attrContent
+const {'class': contentClassName, ...contentOther} = attrContent
+const {'class': descriptionClassName, ...descriptionOther} = attrDescription
+const Dynamic = tagName as 'div'
+
+---
+<Dynamic class={attrClassList(ListClasses.list, className)} {...other}>
+	<div class={attrClassList(ListClasses.leading, leadingClassName)} {...leadingOther}>
+		<slot name='leading'/>
+	</div>
+	<div class={attrClassList(ListClasses.content, contentClassName)} {...contentOther}>
+		<slot/>
+		{Astro.slots.has('description') &&
+			<div
+				class={attrClassList(ListClasses.description, descriptionClassName)}
+				{...descriptionOther}>
+				<slot name='description'/>
+			</div>
+		}
+	</div>
+	<div class={attrClassList(ListClasses.trailing, trailingClassName)} {...trailingOther}>
+		<slot name='trailing'/>
+	</div>
+</Dynamic>

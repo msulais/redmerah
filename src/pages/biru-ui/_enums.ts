@@ -1,28 +1,9 @@
-export enum Commands {
-	/** @param {Pages} page `Pages` */
-	updatePage
-}
-
-export enum Pages {
-	button = 'button',
-	checkbox = 'checkbox',
-	colorpicker = 'colorpicker',
-	datepicker = 'datepicker',
-	datetimepicker = 'datetimepicker',
-	dialog = 'dialog',
-	divider = 'divider',
-	drawer = 'drawer',
-	dropdown = 'dropdown',
-	emoji = 'emoji',
-	emojipicker = 'emojipicker',
-	expander = 'expander',
-	icon = 'icon',
-	list = 'list',
-	menu = 'menu',
-	modal = 'modal',
-	popover = 'popover',
-	textfield = 'textfield',
-	toast = 'toast',
-	tooltip = 'tooltip',
-	switch = 'switch'
+export enum ElementIds {
+	appbar_info_button = 'g-id-001',
+	appbar_info_menu = 'g-id-002',
+	appbar_settings_button = 'g-id-003',
+	appbar_settings_menu = 'g-id-004',
+	panel_buttons_preview = 'g-id-005',
+	panel_buttons_options_variant = 'g-id-006',
+	panel_buttons_options_variant_label = 'g-id-007',
 }

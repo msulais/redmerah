@@ -1,0 +1,22 @@
+---
+import { MenuClasses, type MenuItemProps } from '.'
+import Button from '@/native-components/Button/index.astro'
+import { attrClassList } from '@/utils/attributes'
+
+import './index.scss'
+
+type Props = MenuItemProps
+
+const {
+	'class': className,
+	role,
+	...other
+} = Astro.props
+---
+
+<Button
+	class={attrClassList(MenuClasses.item, className)}
+	role={role ?? "menuitem"}
+	{...other}>
+	<slot/>
+</Button>

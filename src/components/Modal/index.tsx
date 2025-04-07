@@ -301,7 +301,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 	let diffPositionX: number = 0
 	let diffPositionY: number = 0
 
-	function fixPosition(details?: ModalRepositionDetails): void {
+	function fixPosition(options?: ModalRepositionDetails): void {
 		const modalRect = modalRef.getBoundingClientRect()
 		const screenWidth = body.clientWidth
 		const screenHeight = window.innerHeight
@@ -313,12 +313,12 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 			if (modalRect.right > screenWidth) setLeft(screenWidth - modalRect.width - MODAL_MARGIN)
 			if (modalRect.bottom > screenHeight) setTop(screenHeight - modalRect.height - MODAL_MARGIN)
 			if (!animationIsOn()) {
-				details?.onDone()
+				options?.onDone()
 				return
 			}
 
 			if (props['c:repositionAnimation']) {
-				return props['c:repositionAnimation'](modalRef, () => details?.onDone())
+				return props['c:repositionAnimation'](modalRef, () => options?.onDone())
 			}
 
 			setStyleWillChange('top,left')
@@ -333,7 +333,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 				}
 			).finished.then(() => {
 				setStyleWillChange(undefined)
-				details?.onDone()
+				options?.onDone()
 			})
 		})
 	}

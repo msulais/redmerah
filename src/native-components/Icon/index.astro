@@ -1,0 +1,24 @@
+---
+import { attrClassList } from '@/utils/attributes'
+import { type IconProps, IconClasses } from '.'
+
+import './index.scss'
+
+type Props = IconProps
+
+const {
+	'c:filled': filled,
+	'c:inline': inline,
+	'c:icon': icon,
+	'class': className,
+	translate,
+	...other
+} = Astro.props
+---
+<i
+	class={attrClassList(IconClasses.icon, className)}
+	data-c-inline={inline? '' : undefined}
+	translate={translate ?? 'no'}
+	{...other}>
+	{String.fromCharCode(icon - (filled? 1 : 0))}
+</i>

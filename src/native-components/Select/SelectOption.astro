@@ -1,0 +1,23 @@
+---
+import { attrClassList } from '@/utils/attributes'
+import { type SelectOptionProps, SelectClasses } from '.'
+import Button from '@/native-components/Button/index.astro'
+import './index.scss'
+
+type Props = SelectOptionProps
+const {
+	'class': className,
+	'c:selected': selected,
+	'aria-selected': ariaSelected,
+	role,
+	...other
+} = Astro.props
+---
+
+<Button
+	role={role ?? 'option'}
+	class={attrClassList(SelectClasses.option, className)}
+	aria-selected={ariaSelected ?? selected ?? 'false'}
+	{...other}>
+	<slot />
+</Button>
