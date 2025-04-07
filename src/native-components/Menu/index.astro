@@ -9,6 +9,7 @@ type Props = MenuProps
 
 const {
 	'class': className,
+	'c:gap': gap = 8,
 	role,
 	...other
 } = Astro.props
@@ -17,6 +18,7 @@ const {
 <Popover
 	role={role ?? 'menu'}
 	class={attrClassList(MenuClasses.menu, className)}
+	c:gap={gap}
 	{...other}>
 	<slot />
 </Popover>
