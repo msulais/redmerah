@@ -37,7 +37,7 @@
 	}
 
 	&:is(:disabled,a:not([href])) {
-		color: rgba(var(--g-color-on-surface), var(--g-opacity-inv4));
+		opacity: 0.5;
 		cursor: not-allowed;
 
 		& * {
@@ -87,10 +87,6 @@
 	background-color: rgb(var(--g-color-accent));
 	color: rgb(var(--g-color-on-accent));
 
-	&:is(:disabled,a:not([href])) {
-		background-color: rgba(var(--g-color-on-surface), var(--g-opacity1));
-	}
-
 	&:not(:is(:disabled,a:not([href]))){
 		@media (hover:hover) {
 			&:hover {
@@ -107,10 +103,6 @@
 .c-btn[data-c-variant=tonal] {
 	background-color: rgba(var(--g-color-on-surface), var(--g-opacity2));
 
-	&:is(:disabled,a:not([href])) {
-		background-color: rgba(var(--g-color-on-surface), var(--g-opacity0));
-	}
-
 	&:not(:is(:disabled,a:not([href]))){
 		@media (hover:hover) {
 			&:hover {
@@ -126,9 +118,4 @@
 
 .c-btn[data-c-variant=outlined] {
 	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity-border));
-
-	&:is(:disabled,a:not([href])) {
-		border: none;
-		background-color: rgba(var(--g-color-on-surface), var(--g-opacity0));
-	}
 }
