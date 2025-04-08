@@ -1,0 +1,30 @@
+---
+import { attrClassList } from '@/utils/attributes'
+import {
+	type TooltipProps,
+	TooltipClasses
+} from '.'
+import './index.scss'
+
+type Props = TooltipProps
+const {
+	'class'       : className,
+	'c:startDelay': startDelay,
+	'c:endDelay'  : endDelay,
+	'c:gap'       : gap,
+	'c:useAnchor' : useAnchor,
+	'c:position'  : position,
+	...other
+} = Astro.props
+---
+
+<div
+	class={attrClassList(TooltipClasses.tooltip, className)}
+	data-c-start-delay={startDelay}
+	data-c-end-delay={endDelay}
+	data-c-gap={gap}
+	data-c-position={position}
+	data-c-use-anchor={useAnchor? "" : undefined}
+	{...other}>
+	<slot />
+</div>
