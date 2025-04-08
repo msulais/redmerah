@@ -14,7 +14,7 @@ const {
 	'c:attrContent': attrContent = {},
 	...other
 } = Astro.props
-const {'class': inputClassName, type = 'checkbox', ...inputOther} = attrInput
+const {'class': inputClassName, autocomplete = 'off', type = 'checkbox', ...inputOther} = attrInput
 const {'class': iconClassName, ...iconOther} = attrIcon
 const {'class': contentClassName, ...contentOther} = attrContent
 ---
@@ -22,6 +22,7 @@ const {'class': contentClassName, ...contentOther} = attrContent
 <label class={attrClassList(CheckBoxClasses.checkbox, className)} {...other}>
 	<input
 		class={attrClassList(CheckBoxClasses.input, inputClassName)}
+		autocomplete={autocomplete}
 		type={type}
 		{...inputOther}
 	/>
