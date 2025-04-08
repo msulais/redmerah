@@ -1,4 +1,40 @@
-<label>
-	<input type="checkbox"/>
-	<slot />
+---
+import { attrClassList } from '@/utils/attributes'
+import {
+	type CheckBoxProps,
+	CheckBoxClasses
+} from '.'
+import './index.scss'
+
+type Props = CheckBoxProps
+const {
+	'class': className,
+	'c:attrInput': attrInput = {},
+	'c:attrIcon': attrIcon = {},
+	'c:attrContent': attrContent = {},
+	...other
+} = Astro.props
+const {'class': inputClassName, type = 'checkbox', ...inputOther} = attrInput
+const {'class': iconClassName, ...iconOther} = attrIcon
+const {'class': contentClassName, ...contentOther} = attrContent
+---
+
+<label class={attrClassList(CheckBoxClasses.checkbox, className)} {...other}>
+	<input
+		class={attrClassList(CheckBoxClasses.input, inputClassName)}
+		type={type}
+		{...inputOther}
+	/>
+	<svg
+		class={attrClassList(CheckBoxClasses.icon, iconClassName)}
+		xmlns="http://www.w3.org/2000/svg"
+		viewBox="0 -960 960 960"
+		{...iconOther}>
+		<path d="m389-369 299-299q10.91-11 25.45-11Q728-679 739-668t11 25.58q0 14.58-10.61 25.19L415-292q-10.91 11-25.45 11Q375-281 364-292L221-435q-11-11-11-25.5t11-25.5q11-11 25.67-11 14.66 0 25.33 11l117 117Z"/>
+	</svg>
+	<div
+		class={attrClassList(CheckBoxClasses.content, contentClassName)}
+		{...contentOther}>
+		<slot />
+	</div>
 </label>
