@@ -192,8 +192,8 @@ function _initTooltipListener(): void {
 		const startDelayDuration = numberSafe(Number.parseFloat(
 			$anchor.getAttribute(TooltipTargetAttributes.startDelayDuration)
 			?? tooltip.getAttribute(TooltipAttributes.startDelayDuration)
-			?? `${isOpen? 300 : 500}`
-		), byFocus? 0 : isOpen? 300 : 500)
+			?? `${isOpen? 500 : 1000}`
+		), byFocus? 0 : isOpen? 500 : 1000)
 		stopProcess()
 		timeId = setTimeout(() => {
 			timeId = null
