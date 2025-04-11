@@ -65,6 +65,7 @@ type ModalOpenOptions = {
 type ModalCloseOptions = {
 	/** if the modal is important, it will not closed */
 	soft?: boolean
+	animation?: boolean
 }
 
 type ModalOpenDetails = ModalOpenOptions & {
@@ -101,6 +102,8 @@ enum ModalEvents {
 
 	/** @param details ModalRepositionDetails */
 	reposition = 'modal:reposition',
+	beforeOpen = 'popover:before-open',
+	beforeClose = 'popover:before-close'
 }
 
 enum ModalAttributes {
@@ -313,6 +316,7 @@ function _initModal(modal: HTMLDialogElement): void {
 
 		const autofocus = options.autoFocus ?? attributes.autoFocus
 		const pointer = options.pointer
+		modal.dispatchEvent(new CustomEvent(ModalEvents.beforeOpen))
 		isOpen = true
 		anchorRef = options.anchor ?? attributes.anchor
 		important = options.important ?? attributes.important
@@ -377,6 +381,7 @@ function _initModal(modal: HTMLDialogElement): void {
 			return focus()
 		}
 
+		modal.dispatchEvent(new CustomEvent(ModalEvents.beforeClose))
 		const modalRect = modal.getBoundingClientRect()
 		const anchorRect = anchorRef?.getBoundingClientRect()
 		const flyoutPosition = getFlyoutPosition({
@@ -391,7 +396,7 @@ function _initModal(modal: HTMLDialogElement): void {
 			position
 		})
 
-		if (!animation || !animationIsOn()) {
+		if (options.animation === false || !animation || !animationIsOn()) {
 			modal.close()
 			return options.done()
 		}

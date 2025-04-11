@@ -66,6 +66,7 @@ type PopoverOpenOptions = {
 type PopoverCloseOptions = {
 	/** if the popover is important, it will not closed */
 	soft?: boolean
+	animation?: boolean
 }
 
 type PopoverOpenDetails = PopoverOpenOptions & {
@@ -103,6 +104,8 @@ enum PopoverEvents {
 
 	/** @param detail PopoverRepositionDetails */
 	reposition = 'popover:reposition',
+	beforeOpen = 'popover:before-open',
+	beforeClose = 'popover:before-close'
 }
 
 enum PopoverAttributes {
@@ -341,6 +344,7 @@ function _initPopover(popover: HTMLDivElement): void {
 
 		const autofocus = options.autoFocus ?? attributes.autoFocus
 		const pointer = options.pointer
+		popover.dispatchEvent(new CustomEvent(PopoverEvents.beforeOpen))
 		isOpen    = true
 		anchorRef = options.anchor ?? attributes.anchor
 		important = options.important ?? attributes.important
@@ -406,6 +410,7 @@ function _initPopover(popover: HTMLDivElement): void {
 			return options.done()
 		}
 
+		popover.dispatchEvent(new CustomEvent(PopoverEvents.beforeClose))
 		const popoverRect = popover.getBoundingClientRect()
 		const anchorRect = anchorRef?.getBoundingClientRect()
 		const flyoutPosition = getFlyoutPosition({
@@ -420,7 +425,7 @@ function _initPopover(popover: HTMLDivElement): void {
 			position
 		})
 
-		if (!animation || !animationIsOn()) {
+		if (options.animation === false || !animation || !animationIsOn()) {
 			popover.hidePopover()
 			return options.done()
 		}
