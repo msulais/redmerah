@@ -51,6 +51,7 @@ export const ICON_CHEVRON_LEFT = 0xE42E
 export const ICON_CHEVRON_RIGHT = 0xE430
 export const ICON_CHEVRON_UP = 0xE432
 export const ICON_CHEVRON_UP_DOWN = 0xE434
+export const ICON_CIRCLE_SMALL = 0xE456
 export const ICON_CLIPBOARD_PASTE = 0xE490
 export const ICON_CLOCK = 0xE4A6
 export const ICON_CODE = 0xE4E8
