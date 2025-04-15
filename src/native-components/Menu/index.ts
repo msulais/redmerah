@@ -31,7 +31,8 @@ import {
 	ButtonClasses
 } from "@/native-components/Button"
 import { FlyoutPosition as MenuPosition } from "@/enums/position"
-import { PopoverPosition } from "@/components/Popover"
+import { PopoverPosition } from "@/native-components/Popover"
+import type { IconProps } from "@/native-components/Icon"
 
 type MenuProps = PopoverProps
 type MenuItemProps = ButtonProps
@@ -39,6 +40,13 @@ type LinkMenuItemProps = LinkButtonProps
 
 type SubMenuItemProps = Omit<MenuItemProps, 'aria-controls'> & {
 	'aria-controls': string
+}
+
+type RadioMenuItemProps = astroHTML.JSX.LabelHTMLAttributes & {
+	'c:attrLeading'?: astroHTML.JSX.HTMLAttributes
+	'c:attrInput'  ?: astroHTML.JSX.InputHTMLAttributes
+	'c:attrIcon'   ?: IconProps
+	'c:attrContent'?: astroHTML.JSX.HTMLAttributes
 }
 
 type MenuUpdateOptions = Omit<PopoverUpdateOptions, 'refs'> & {
@@ -69,9 +77,14 @@ type LinkMenuItemUpdateOptions = Omit<LinkButtonUpdateOptions, 'refs'> & {
 }
 
 enum MenuClasses {
-	menu        = 'c-menu',
-	item        = 'c-menu-item',
-	submenuItem = 'c-menu-submenu-item',
+	menu             = 'c-menu',
+	item             = 'c-menu-item',
+	submenuItem      = 'c-menu-submenu-item',
+	radioItem        = 'c-menu-radio-item',
+	radioItemLeading = 'c-menu-radio-item-leading',
+	radioItemIcon    = 'c-menu-radio-item-icon',
+	radioItemInput   = 'c-menu-radio-item-input',
+	radioItemContent = 'c-menu-radio-item-content',
 }
 
 const REGISTERED_SUBMENUITEM: HTMLButtonElement[] = []
@@ -84,6 +97,9 @@ function _initSubMenu(submenuitem: HTMLElement): void {
 	const elements = {
 		get parent() {
 			return submenuitem.closest('.' + MenuClasses.menu) as HTMLDivElement | null
+		},
+		get parentContent() {
+			return submenuitem.closest('.' + PopoverClasses.content) as HTMLDivElement | null
 		},
 		get target() {
 			return document.getElementById(submenuitem.getAttribute('aria-controls') ?? '___NONE___') as HTMLDivElement | null
@@ -128,19 +144,22 @@ function _initSubMenu(submenuitem: HTMLElement): void {
 			timeId = null
 			const parent = elements.parent
 			const target = elements.target
-			if (!target || !parent) return
+			if (!target || !parent || isPopoverOpen(target)) return
 
 			for (const menu of getAllSubMenu(parent)) {
 				if (menu === target) continue
 
-				closePopover(menu, { animation: false })
+				closePopover(menu, { animation: false }).then(() => {
+					document.body.appendChild(menu)
+				})
 			}
 
+			parent.appendChild(target)
 			openPopover(target, {
 				anchor: submenuitem,
 				position: PopoverPosition.rightCenterToBottom,
 				gap: -4,
-				padding: 4,
+				padding: 5, // +1px for border
 				important: true
 			})
 		}, instant? 0 : 300)
@@ -156,27 +175,31 @@ function _initSubMenu(submenuitem: HTMLElement): void {
 			for (const menu of getAllSubMenu(target)) {
 				if (menu === target) continue
 
-				closePopover(menu)
+				closePopover(menu).then(() => {
+					document.body.appendChild(menu)
+				})
 			}
 
 			closePopover(target)
 		}, instant? 0 : 300)
 	}
 
-	function menuOnPointerEnter(): void {
+	function menuContentOnPointerEnter(): void {
 		isParentHovered = true
 		if (!isTargetHovered) {
 			closeSubMenu()
 		}
 	}
 
-	function menuOnPointerLeave(): void {
+	function menuContentOnPointerLeave(): void {
 		isParentHovered = false
 	}
 
 	function menuOnBeforeOpen(ev: Event): void {
 		for (const menu of getAllSubMenu(ev.target as HTMLElement)) {
-			closePopover(menu)
+			closePopover(menu).then(() => {
+				document.body.appendChild(menu)
+			})
 		}
 	}
 
@@ -202,9 +225,11 @@ function _initSubMenu(submenuitem: HTMLElement): void {
 	function subMenuOnToggleOpen(ev: CustomEvent<PopoverToggleOpenDetail>): void {
 		const open = ev.detail.open
 		submenuitem.setAttribute('aria-expanded', String(open))
-		if (submenuitem.classList.contains(ButtonClasses.btn)) updateMenuItem(submenuitem as HTMLButtonElement, {
-			focused: open
-		})
+		if (submenuitem.classList.contains(ButtonClasses.btn)) {
+			updateMenuItem(submenuitem as HTMLButtonElement, {
+				focused: open
+			})
+		}
 	}
 
 	function initEvents(): void {
@@ -212,10 +237,11 @@ function _initSubMenu(submenuitem: HTMLElement): void {
 		parent?.addEventListener(PopoverEvents.toggleOpen, () => {
 			const isOpen = parent.matches(':popover-open')
 			const target = elements.target
+			const content = elements.parentContent
 			if (isOpen) {
-				parent.addEventListener('pointerenter', menuOnPointerEnter)
-				parent.addEventListener('pointerleave', menuOnPointerLeave)
 				parent?.addEventListener(PopoverEvents.beforeClose, menuOnBeforeOpen)
+				content?.addEventListener('pointerenter', menuContentOnPointerEnter)
+				content?.addEventListener('pointerleave', menuContentOnPointerLeave)
 				submenuitem.addEventListener('pointerenter', subMenuOnPointerEnter)
 				submenuitem.addEventListener('pointerleave', subMenuOnPointerLeave)
 				submenuitem.addEventListener('click'       , subMenuOnClick)
@@ -227,8 +253,8 @@ function _initSubMenu(submenuitem: HTMLElement): void {
 				// !important: without this, `PopoverEvents.toggleOpen` event for `target` will
 				// remove before running for the last time
 				setTimeout(() => {
-					parent.removeEventListener('pointerenter', menuOnPointerEnter)
-					parent.removeEventListener('pointerleave', menuOnPointerLeave)
+					content?.removeEventListener('pointerenter', menuContentOnPointerEnter)
+					content?.removeEventListener('pointerleave', menuContentOnPointerLeave)
 					parent?.removeEventListener(PopoverEvents.beforeClose, menuOnBeforeOpen)
 					submenuitem.removeEventListener('pointerenter', subMenuOnPointerEnter)
 					submenuitem.removeEventListener('pointerleave', subMenuOnPointerLeave)
@@ -396,6 +422,7 @@ export {
 	type MenuItemUpdateOptions,
 	type LinkMenuItemUpdateOptions,
 	type SubMenuItemUpdateOptions,
+	type RadioMenuItemProps,
 	MenuClasses,
 	PopoverEvents as MenuEvents,
 	PopoverAttributes as MenuAttributes,
