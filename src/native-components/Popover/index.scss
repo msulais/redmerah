@@ -2,7 +2,6 @@
 	position: fixed;
 	background-color: rgb(var(--g-color-surface));
 	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity3));
-	box-sizing: content-box;
 	border-radius: 8px;
 	left: 0;
 	max-height: calc(100dvh - 16px);
