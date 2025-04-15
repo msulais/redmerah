@@ -833,6 +833,7 @@ export {
 	PopoverEvents,
 	PopoverAttributes,
 	PopoverClasses,
+	PopoverPosition,
 	openPopover,
 	closePopover,
 	repositionPopover,
