@@ -1,0 +1,58 @@
+---
+import { type RadioMenuItemProps, MenuClasses } from '.'
+import { ICON_CIRCLE_SMALL } from '@/constants/icons'
+import { attrClassList } from '@/utils/attributes'
+import { ButtonClasses } from '@/native-components/Button'
+import Icon from '@/native-components/Icon/index.astro'
+import './index.scss'
+
+type Props = RadioMenuItemProps
+const {
+	'class': className,
+	'c:attrLeading': attrLeading = {},
+	'c:attrInput': attrInput = {},
+	'c:attrIcon': attrIcon,
+	'c:attrContent': attrContent = {},
+	...other
+} = Astro.props
+const {'class': leadingClassName, ...leadingOther} = attrLeading
+const {'class': contentClassName, ...contentOther} = attrContent
+const {
+	'class': iconClassName,
+	'c:icon': iconIcon = ICON_CIRCLE_SMALL,
+	'c:filled': iconFilled = true,
+	...iconOther
+} = (attrIcon ?? {})
+const {
+	'class': inputClassName,
+	type: inputType = "radio",
+	role: inputRole = "menuitemradio",
+	...inputOther
+} = attrInput
+---
+<label
+	class={attrClassList(ButtonClasses.btn, MenuClasses.item, MenuClasses.radioItem, className)}
+	{...other}>
+	<div
+		class={attrClassList(MenuClasses.radioItemLeading, leadingClassName)}
+		{...leadingOther}>
+		<slot name="leading"/>
+	</div>
+	<input
+		type={inputType}
+		role={inputRole}
+		class={attrClassList(MenuClasses.radioItemInput, inputClassName)}
+		{...inputOther}
+	/>
+	<Icon
+		class={attrClassList(MenuClasses.radioItemIcon, iconClassName)}
+		c:icon={iconIcon}
+		c:filled={iconFilled}
+		{...iconOther}
+	/>
+	<div
+		class={attrClassList(MenuClasses.radioItemContent, contentClassName)}
+		{...contentOther}>
+		<slot />
+	</div>
+</label>

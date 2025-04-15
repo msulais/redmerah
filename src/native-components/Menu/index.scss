@@ -44,3 +44,36 @@
 .c-menu-item-content {
 	flex: 1;
 }
+
+.c-menu-radio-item.c-btn.c-menu-item {
+	padding-left: 0;
+
+	&:has( > .c-menu-radio-item-input:focus-visible) {
+		outline: auto;
+	}
+}
+
+.c-menu-radio-item-content {
+	display: contents;
+}
+
+.c-menu-radio-item-icon {
+	color: rgb(var(--g-color-accent));
+
+	:root[data-animation=on] & {
+		transition-property: scale;
+		transition-duration: .2s;
+	}
+
+	.c-menu-radio-item-input:not(:checked) + & {
+		scale: 0;
+	}
+}
+
+.c-menu-radio-item-input {
+	appearance: none;
+}
+
+.c-menu-radio-item-leading {
+	display: contents;
+}
