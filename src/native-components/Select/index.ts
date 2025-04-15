@@ -1,4 +1,3 @@
-import { ElementIdsPrefix } from "@/enums/ids"
 import {
 	KEY_ARROW_DOWN,
 	KEY_ARROW_UP,
@@ -16,6 +15,7 @@ import {
 import { AnimationEffectTiming } from "@/enums/animation"
 import { createIcon, type IconProps } from "@/native-components/Icon"
 import { ICON_CHEVRON_DOWN } from "@/constants/icons"
+import { createId } from "@/utils/ids"
 
 type SelectProps = astroHTML.JSX.HTMLAttributes & {
 	'c:variant'        ?: SelectVariant
@@ -78,13 +78,7 @@ enum SelectAttributes {
 const REGISTERED_SELECT: HTMLDivElement[] = []
 let OPENED_SELECT: HTMLDivElement | null = null
 let SELECTED_OPTION_COPY: HTMLElement | null = null
-let OPTION_ID_COUNT: number = 0
 let HAS_LISTENER: boolean = false
-
-function getOptionId(): string {
-	++OPTION_ID_COUNT
-	return ElementIdsPrefix.option + OPTION_ID_COUNT
-}
 
 function checkSelectedOptions(select: HTMLDivElement, ...options: HTMLButtonElement[]): void {
 	if (options.length === 0) {
@@ -114,7 +108,7 @@ function repairOptions(select: HTMLDivElement, ...options: HTMLButtonElement[]):
 		// id
 		let id = option.id
 		if (!id) {
-			option.id = getOptionId()
+			option.id = createId()
 		}
 
 		// aria-selected
@@ -361,7 +355,6 @@ function _initSelect(select: HTMLDivElement): void {
 		}
 	}
 
-	// TODO:
 	function selectOnWheel(ev: WheelEvent): void {
 		if (isExpanded()) return
 
@@ -528,7 +521,7 @@ function createSelectOption(options: Omit<SelectOptionUpdateOptions, 'value'> & 
 function updateSelectOption(option: HTMLButtonElement, options?: SelectOptionUpdateOptions): HTMLButtonElement {
 	option.classList.add(ButtonClasses.btn, SelectClasses.option)
 	if (!option.id) {
-		option.id = getOptionId()
+		option.id = createId()
 	}
 	if (!option.hasAttribute('role')) {
 		option.setAttribute('role', 'option')
@@ -594,7 +587,6 @@ export {
 	createSelectOption,
 	registerSelect,
 	unregisterSelect,
-	getOptionId,
 	openSelect,
 	closeSelect
 }

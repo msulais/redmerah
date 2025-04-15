@@ -1,8 +1,9 @@
 import { AnimationEffectTiming } from "@/enums/animation"
-import { ElementIds, ElementIdsPrefix } from "@/enums/ids"
+import { ElementIds } from "@/enums/ids"
 import { FlyoutPosition as TooltipPosition } from "@/enums/position"
 import { animationIsOn } from "@/utils/animation"
 import { getFlyoutPosition } from "@/utils/flyout"
+import { createId } from "@/utils/ids"
 import { numberSafe } from "@/utils/number"
 import { validEnumValue } from "@/utils/object"
 import { isTouchScreen } from "@/utils/platforms"
@@ -72,12 +73,6 @@ let TOOLTIP_TARGET: Element | null = null
 let TOOLTIP_LISTENER: HTMLDivElement | null = null
 let POINTER_X = 0
 let POINTER_Y = 0
-let TOOLTIP_ID_COUNT: number = 0
-
-function getTooltipId(): string {
-	++TOOLTIP_ID_COUNT
-	return ElementIdsPrefix.tooltip + TOOLTIP_ID_COUNT
-}
 
 function _initTooltipListener(): void {
 	if (TOOLTIP_HAS_LISTENER) return
@@ -167,7 +162,7 @@ function _initTooltipListener(): void {
 		if (!tooltip.contains(target)) return
 
 		if (!tooltip.id) {
-			tooltip.id = getTooltipId()
+			tooltip.id = createId()
 		}
 
 		// NOTE:
@@ -360,7 +355,7 @@ function updateTooltip(tooltip: HTMLDivElement, options?: TooltipUpdateOptions):
 	tooltip.classList.add(TooltipClasses.tooltip)
 
 	if (!tooltip.id) {
-		tooltip.id = getTooltipId()
+		tooltip.id = createId()
 	}
 
 	const startDelay = options?.startDelay
@@ -441,5 +436,4 @@ export {
 	unregisterTooltip,
 	createTooltip,
 	updateTooltip,
-	getTooltipId
 }

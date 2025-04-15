@@ -9,6 +9,8 @@ export enum ElementIds {
 }
 
 export enum ElementIdsPrefix {
-	option = 'c-option-',
-	listbox = 'c-listbox-'
+	// option = 'c-option-',
+	// listbox = 'c-listbox-',
+	// tooltip = 'c-tootlip-',
+	// submenuitem = 'c-submenuitem-'
 }
