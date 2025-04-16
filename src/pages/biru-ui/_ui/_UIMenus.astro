@@ -13,16 +13,16 @@ import logoRedmerah from '@/assets/images/logos/redmerah-logo.svg'
 import { PlatformAnimationMode, PlatformThemeMode } from '@/enums/platforms'
 ---
 
-<Menu id={ELEMENT_ID_PREFIX + ElementIds.appbar_settings_menu}>
+<Menu id={ELEMENT_ID_PREFIX + ElementIds.appbarSettingsMenu}>
 	<SubMenuItem
-		aria-controls={ELEMENT_ID_PREFIX + ElementIds.appbar_settings_animation_menu}>
+		aria-controls={ELEMENT_ID_PREFIX + ElementIds.appbarSettingsAnimationMenu}>
 		<Icon c:icon={ICON_PLAY_CIRCLE_HINT}/>
 		Animation
 		<div style="flex:1"/>
 		<Icon c:icon={ICON_CHEVRON_RIGHT}/>
 	</SubMenuItem>
 	<SubMenuItem
-		aria-controls={ELEMENT_ID_PREFIX + ElementIds.appbar_settings_theme_menu}>
+		aria-controls={ELEMENT_ID_PREFIX + ElementIds.appbarSettingsThemeMenu}>
 		<Icon c:icon={ICON_WEATHER_SUNNY}/>
 		Theme
 		<div style="flex:1"/>
@@ -30,10 +30,10 @@ import { PlatformAnimationMode, PlatformThemeMode } from '@/enums/platforms'
 	</SubMenuItem>
 	<MenuItem>Color accent</MenuItem>
 </Menu>
-<Menu id={ELEMENT_ID_PREFIX + ElementIds.appbar_settings_animation_menu}>
+<Menu id={ELEMENT_ID_PREFIX + ElementIds.appbarSettingsAnimationMenu}>
 	<RadioMenuItem
 		c:attrInput={{
-			name: RadioGroupNames.settings_animation,
+			name: RadioGroupNames.settingsAnimation,
 			checked: true,
 			value: PlatformAnimationMode.auto
 		}}>
@@ -42,7 +42,7 @@ import { PlatformAnimationMode, PlatformThemeMode } from '@/enums/platforms'
 	</RadioMenuItem>
 	<RadioMenuItem
 		c:attrInput={{
-			name: RadioGroupNames.settings_animation,
+			name: RadioGroupNames.settingsAnimation,
 			value: PlatformAnimationMode.on
 		}}>
 		<Icon c:icon={ICON_VIDEO_CLIP}/>
@@ -50,17 +50,17 @@ import { PlatformAnimationMode, PlatformThemeMode } from '@/enums/platforms'
 	</RadioMenuItem>
 	<RadioMenuItem
 		c:attrInput={{
-			name: RadioGroupNames.settings_animation,
+			name: RadioGroupNames.settingsAnimation,
 			value: PlatformAnimationMode.off
 		}}>
 		<Icon c:icon={ICON_VIDEO_CLIP_OFF}/>
 		Off
 	</RadioMenuItem>
 </Menu>
-<Menu id={ELEMENT_ID_PREFIX + ElementIds.appbar_settings_theme_menu}>
+<Menu id={ELEMENT_ID_PREFIX + ElementIds.appbarSettingsThemeMenu}>
 	<RadioMenuItem
 		c:attrInput={{
-			name: RadioGroupNames.settings_theme,
+			name: RadioGroupNames.settingsTheme,
 			checked: true,
 			value: PlatformThemeMode.auto
 		}}>
@@ -69,7 +69,7 @@ import { PlatformAnimationMode, PlatformThemeMode } from '@/enums/platforms'
 	</RadioMenuItem>
 	<RadioMenuItem
 		c:attrInput={{
-			name: RadioGroupNames.settings_theme,
+			name: RadioGroupNames.settingsTheme,
 			value: PlatformThemeMode.light
 		}}>
 		<Icon c:icon={ICON_WEATHER_SUNNY}/>
@@ -77,14 +77,14 @@ import { PlatformAnimationMode, PlatformThemeMode } from '@/enums/platforms'
 	</RadioMenuItem>
 	<RadioMenuItem
 		c:attrInput={{
-			name: RadioGroupNames.settings_theme,
+			name: RadioGroupNames.settingsTheme,
 			value: PlatformThemeMode.dark
 		}}>
 		<Icon c:icon={ICON_WEATHER_MOON}/>
 		Dark
 	</RadioMenuItem>
 </Menu>
-<Menu id={ELEMENT_ID_PREFIX + ElementIds.appbar_info_menu}>
+<Menu id={ELEMENT_ID_PREFIX + ElementIds.appbarInfoMenu}>
 	<LinkMenuItem href="/">
 		<img src={logoRedmerah.src} width="16"/>
 		Redmerah
@@ -107,7 +107,7 @@ import { PlatformAnimationMode, PlatformThemeMode } from '@/enums/platforms'
 		Terms & conditions
 	</LinkMenuItem>
 	<Divider />
-	<MenuItem id={ELEMENT_ID_PREFIX + ElementIds.appbar_info_share_button}>
+	<MenuItem id={ELEMENT_ID_PREFIX + ElementIds.appbarInfoShareButton}>
 		<Icon c:icon={ICON_SHARE_ANDROID}/>
 		Share
 	</MenuItem>

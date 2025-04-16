@@ -13,13 +13,13 @@ const $ = (id: string) => document.getElementById(id)
 const $$ = (selector: string, from = document) => from.querySelector(selector)
 const root = document.documentElement
 const appbar = $(ELEMENT_ID_PREFIX + ElementIds.appbar) as HTMLElement
-const infoButton = $(ELEMENT_ID_PREFIX + ElementIds.appbar_info_button) as HTMLButtonElement
-const shareButton = $(ELEMENT_ID_PREFIX + ElementIds.appbar_info_share_button) as HTMLButtonElement
-const infoMenu = $(ELEMENT_ID_PREFIX + ElementIds.appbar_info_menu) as HTMLDivElement
-const settingsButton = $(ELEMENT_ID_PREFIX + ElementIds.appbar_settings_button) as HTMLButtonElement
-const settingsMenu = $(ELEMENT_ID_PREFIX + ElementIds.appbar_settings_menu) as HTMLDivElement
-const settingsThemeMenu = $(ELEMENT_ID_PREFIX + ElementIds.appbar_settings_theme_menu) as HTMLDivElement
-const settingsAnimationMenu = $(ELEMENT_ID_PREFIX + ElementIds.appbar_settings_animation_menu) as HTMLDivElement
+const infoButton = $(ELEMENT_ID_PREFIX + ElementIds.appbarInfoButton) as HTMLButtonElement
+const shareButton = $(ELEMENT_ID_PREFIX + ElementIds.appbarInfoShareButton) as HTMLButtonElement
+const infoMenu = $(ELEMENT_ID_PREFIX + ElementIds.appbarInfoMenu) as HTMLDivElement
+const settingsButton = $(ELEMENT_ID_PREFIX + ElementIds.appbarSettingsButton) as HTMLButtonElement
+const settingsMenu = $(ELEMENT_ID_PREFIX + ElementIds.appbarSettingsMenu) as HTMLDivElement
+const settingsThemeMenu = $(ELEMENT_ID_PREFIX + ElementIds.appbarSettingsThemeMenu) as HTMLDivElement
+const settingsAnimationMenu = $(ELEMENT_ID_PREFIX + ElementIds.appbarSettingsAnimationMenu) as HTMLDivElement
 
 function initSettings(): void {
 	function initTheme(): void {
@@ -28,10 +28,10 @@ function initSettings(): void {
 
 		root.setAttribute(RootAttributes.theme, theme)
 		const previous = $$(
-			`input[name="${CSS.escape(RadioGroupNames.settings_theme)}"]:checked`
+			`input[name="${CSS.escape(RadioGroupNames.settingsTheme)}"]:checked`
 		) as HTMLInputElement
 		const target = $$(
-			`input[name="${CSS.escape(RadioGroupNames.settings_theme)}"][value="${CSS.escape(theme)}"]`
+			`input[name="${CSS.escape(RadioGroupNames.settingsTheme)}"][value="${CSS.escape(theme)}"]`
 		) as HTMLInputElement
 
 		if (previous === target) return
@@ -45,10 +45,10 @@ function initSettings(): void {
 
 		root.setAttribute(RootAttributes.animation, animation)
 		const previous = $$(
-			`input[name="${CSS.escape(RadioGroupNames.settings_animation)}"]:checked`
+			`input[name="${CSS.escape(RadioGroupNames.settingsAnimation)}"]:checked`
 		) as HTMLInputElement
 		const target = $$(
-			`input[name="${CSS.escape(RadioGroupNames.settings_animation)}"][value="${CSS.escape(animation)}"]`
+			`input[name="${CSS.escape(RadioGroupNames.settingsAnimation)}"][value="${CSS.escape(animation)}"]`
 		) as HTMLInputElement
 
 		if (previous === target) return

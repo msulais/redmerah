@@ -1,0 +1,37 @@
+---
+import SideNavigation from '@/native-components/SideNavigation/index.astro'
+import SideNavigationButton from '@/native-components/SideNavigation/SideNavigationButton.astro'
+import { ButtonVariant } from '@/native-components/Button'
+import { ELEMENT_ID_PREFIX, ElementIds } from '../_scripts/_enums'
+
+const items: {
+	name: string
+	selected: boolean
+	controls: string
+}[] = [
+	{
+		name: 'Buttons',
+		controls: ELEMENT_ID_PREFIX + ElementIds.panelButtons,
+		selected: true,
+	},
+	{
+		name: 'CheckBox',
+		controls: ELEMENT_ID_PREFIX + ElementIds.panelCheckbox,
+		selected: false
+	}
+].sort((a, b) => a.name.localeCompare(b.name))
+---
+
+<SideNavigation
+	role="tablist"
+	id={ELEMENT_ID_PREFIX + ElementIds.navigation}
+	aria-label="Navigation">
+	{items.map(v => <SideNavigationButton
+		role="tab"
+		aria-selected={v.selected}
+		aria-controls={v.controls}
+		c:selected={v.selected}
+		c:variant={v.selected ? ButtonVariant.tonal : undefined}>
+		{v.name}
+	</SideNavigationButton>)}
+</SideNavigation>

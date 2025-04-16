@@ -1,0 +1,44 @@
+---
+import Button from '@/native-components/Button/index.astro'
+import CheckBox from '@/native-components/CheckBox/index.astro'
+import IconButton from '@/native-components/Button/IconButton.astro'
+import Icon from '@/native-components/Icon/index.astro'
+import Tooltip from '@/native-components/Tooltip/index.astro'
+import Select from '@/native-components/Select/index.astro'
+import Label from '@/native-components/Label/index.astro'
+import SelectOption from '@/native-components/Select/SelectOption.astro'
+import { ICON_ADD } from '@/constants/icons'
+import { ButtonVariant } from '@/native-components/Button'
+import { ElementIds, ELEMENT_ID_PREFIX } from '../../_scripts/_enums'
+import CSS from '../../_index.module.scss'
+---
+<div
+	class={CSS.bodyPage}
+	role="tabpanel"
+	id={ELEMENT_ID_PREFIX + ElementIds.panelButtons}>
+	<h2>Buttons</h2>
+	<p>A button is an interactive UI element that triggers a specific action when clicked or tapped. It typically has a clear label indicating its function and provides visual feedback upon interaction. Buttons are essential for guiding users through an interface and facilitating user-system communication.</p>
+	<div class={CSS.bodyPlayground}>
+		<Tooltip>
+			<IconButton data-tooltip="Icon Button" id={ELEMENT_ID_PREFIX + ElementIds.panelButtonsPreview1} c:icon={ICON_ADD}/>
+			<Button id={ELEMENT_ID_PREFIX + ElementIds.panelButtonsPreview2} data-tooltip="Button">
+				Click me
+			</Button>
+			<Button id={ELEMENT_ID_PREFIX + ElementIds.panelButtonsPreview3} data-tooltip="Button">
+				<Icon c:icon={ICON_ADD} data-tooltip="Icon"/>
+				Click me
+			</Button>
+		</Tooltip>
+	</div>
+	<div class={CSS.bodyOptions} id={ELEMENT_ID_PREFIX + ElementIds.panelButtonsOptions}>
+		<Label id={ELEMENT_ID_PREFIX + ElementIds.panelButtonsOptionsVariantLabel}>Variant:</Label>
+		<Select aria-labelledby={ELEMENT_ID_PREFIX + ElementIds.panelButtonsOptionsVariantLabel} id={ELEMENT_ID_PREFIX + ElementIds.panelButtonsOptionsVariant} style="min-width: 140px">
+			<SelectOption value={ButtonVariant.filled}>Filled</SelectOption>
+			<SelectOption value={ButtonVariant.tonal}>Tonal</SelectOption>
+			<SelectOption value={ButtonVariant.transparent} c:selected>Transparent</SelectOption>
+			<SelectOption value={ButtonVariant.outlined}>Outlined</SelectOption>
+		</Select>
+		<CheckBox c:attrInput={{id: ELEMENT_ID_PREFIX + ElementIds.panelButtonsOptionsDisabled}} style="margin-left:12px">Disabled</CheckBox>
+		<CheckBox c:attrInput={{id: ELEMENT_ID_PREFIX + ElementIds.panelButtonsOptionsFocused}}>Focused</CheckBox>
+	</div>
+</div>
