@@ -2,6 +2,7 @@ import {
 	type ButtonUpdateOptions,
 	type ButtonProps,
 	createButton,
+	updateButton,
 } from "@/native-components/Button"
 
 type SideNavigationProps = astroHTML.JSX.HTMLAttributes & {
@@ -134,6 +135,7 @@ function updateSideNavigationButton(
 	options?: SideNavigationButtonUpdateOptions
 ): HTMLButtonElement {
 	const refs = options?.refs
+	updateButton(btn, options)
 	btn.classList.add(SideNavigationClasses.button)
 
 	if (options?.selected !== undefined) {
