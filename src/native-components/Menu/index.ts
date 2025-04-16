@@ -42,11 +42,19 @@ type SubMenuItemProps = Omit<MenuItemProps, 'aria-controls'> & {
 	'aria-controls': string
 }
 
+type MenuIndentProps = astroHTML.JSX.HTMLAttributes
+
 type RadioMenuItemProps = astroHTML.JSX.LabelHTMLAttributes & {
 	'c:attrLeading'?: astroHTML.JSX.HTMLAttributes
 	'c:attrInput'  ?: astroHTML.JSX.InputHTMLAttributes
 	'c:attrIcon'   ?: IconProps
 	'c:attrContent'?: astroHTML.JSX.HTMLAttributes
+}
+
+type MenuIndentUpdateOptions = {
+	refs?: {
+		indent?(el: HTMLDivElement): unknown
+	}
 }
 
 type MenuUpdateOptions = Omit<PopoverUpdateOptions, 'refs'> & {
@@ -79,6 +87,7 @@ type LinkMenuItemUpdateOptions = Omit<LinkButtonUpdateOptions, 'refs'> & {
 enum MenuClasses {
 	menu             = 'c-menu',
 	item             = 'c-menu-item',
+	indent           = 'c-menu-indent',
 	submenuItem      = 'c-menu-submenu-item',
 	radioItem        = 'c-menu-radio-item',
 	radioItemLeading = 'c-menu-radio-item-leading',
@@ -408,6 +417,17 @@ function unregisterSubMenuItem(...submenuitems: HTMLButtonElement[]): void {
 	REGISTERED_SUBMENUITEM.push(...filtered)
 }
 
+function createMenuIndent(options?: MenuIndentUpdateOptions): HTMLDivElement {
+	const indent = document.createElement('div')
+	return updateMenuIndent(indent, options)
+}
+
+function updateMenuIndent(indent: HTMLDivElement, options?: MenuIndentUpdateOptions): HTMLDivElement {
+	indent.classList.add(MenuClasses.indent)
+	options?.refs?.indent?.(indent)
+	return indent
+}
+
 export {
 	type MenuProps,
 	type MenuItemProps,
@@ -423,6 +443,8 @@ export {
 	type LinkMenuItemUpdateOptions,
 	type SubMenuItemUpdateOptions,
 	type RadioMenuItemProps,
+	type MenuIndentProps,
+	type MenuIndentUpdateOptions,
 	MenuClasses,
 	PopoverEvents as MenuEvents,
 	PopoverAttributes as MenuAttributes,
@@ -444,4 +466,6 @@ export {
 	unregisterSubMenuItem,
 	createSubMenuItem,
 	updateSubMenuItem,
+	createMenuIndent,
+	updateMenuIndent
 }

@@ -1,0 +1,13 @@
+---
+import { attrClassList } from '@/utils/attributes'
+import { MenuClasses, type MenuIndentProps } from '.'
+import './index.scss'
+
+type Props = MenuIndentProps
+const {
+	'class': className,
+	...other
+} = Astro.props
+---
+
+<div class={attrClassList(MenuClasses.indent, className)} {...other}></div>
