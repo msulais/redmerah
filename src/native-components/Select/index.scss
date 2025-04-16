@@ -51,6 +51,13 @@
 			transition-duration: .2s;
 			transition-property: height;
 		}
+
+		@media (prefers-reduced-motion: no-preference) {
+			:root[data-animation=system] & {
+				transition-duration: .2s;
+				transition-property: height;
+			}
+		}
 	}
 
 	.c-select:not([data-c-expanded])[data-c-variant=filled] & {

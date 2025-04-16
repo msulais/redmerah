@@ -27,6 +27,7 @@ const {
 	'class': inputClassName,
 	type: inputType = "radio",
 	role: inputRole = "menuitemradio",
+	autocomplete: inputAutocomplete = 'off',
 	...inputOther
 } = attrInput
 ---
@@ -41,6 +42,7 @@ const {
 	<input
 		type={inputType}
 		role={inputRole}
+		autocomplete={inputAutocomplete}
 		class={attrClassList(MenuClasses.radioItemInput, inputClassName)}
 		{...inputOther}
 	/>

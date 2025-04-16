@@ -32,6 +32,13 @@
 		transition-duration: .2s;
 	}
 
+	@media (prefers-reduced-motion: no-preference) {
+		:root[data-animation=system] & {
+			transition-property: background-color;
+			transition-duration: .2s;
+		}
+	}
+
 	& * {
 		user-select: none;
 	}
@@ -63,6 +70,12 @@
 			> .c-icon {
 				:root[data-animation=on] & {
 					animation: var(--c-btn-icon-animation);
+				}
+
+				@media (prefers-reduced-motion: no-preference) {
+					:root[data-animation=system] & {
+						animation: var(--c-btn-icon-animation);
+					}
 				}
 			}
 		}

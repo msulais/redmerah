@@ -67,6 +67,12 @@
 		transition-duration: .2s;
 	}
 
+	@media (prefers-reduced-motion: no-preference) {
+		:root[data-animation=system] & {
+			transition-duration: .2s;
+		}
+	}
+
 	@media (hover: hover) {
 		&:hover {
 			cursor: grab;

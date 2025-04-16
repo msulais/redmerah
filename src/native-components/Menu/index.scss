@@ -30,6 +30,11 @@
 .c-menu-indent {
 	min-width: 20px;
 	max-width: 20px;
+
+	:root[data-platform=mobile] & {
+		min-width: 24px;
+		max-width: 24px;
+	}
 }
 
 .c-btn.c-menu-item {
@@ -63,6 +68,13 @@
 	:root[data-animation=on] & {
 		transition-property: scale;
 		transition-duration: .2s;
+	}
+
+	@media (prefers-reduced-motion: no-preference) {
+		:root[data-animation=system] & {
+			transition-property: scale;
+			transition-duration: .2s;
+		}
 	}
 
 	.c-menu-radio-item-input:not(:checked) + & {

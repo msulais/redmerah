@@ -2,7 +2,12 @@ import { RootAttributes } from "@/enums/attributes"
 import { AnimationData } from "@/enums/animation"
 
 export function animationIsOn(): boolean {
-	return document
-		.documentElement
-		.getAttribute(RootAttributes.animation) === AnimationData.on
+	const animation = document.documentElement.getAttribute(RootAttributes.animation)
+	return (
+		animation === AnimationData.on
+		|| (
+			animation === AnimationData.system
+			&& window.matchMedia('(prefers-reduced-motion: no-preference)').matches
+		)
+	)
 }
