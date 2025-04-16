@@ -16,7 +16,7 @@ import { AnimationEffectTiming } from "@/enums/animation"
 import { createIcon, type IconProps } from "@/native-components/Icon"
 import { ICON_CHEVRON_DOWN } from "@/constants/icons"
 import { createId } from "@/utils/ids"
-import { animationIsOn } from "@/utils/animation"
+import { isAnimationAllowed } from "@/utils/animation"
 
 type SelectProps = astroHTML.JSX.HTMLAttributes & {
 	'c:variant'        ?: SelectVariant
@@ -211,7 +211,7 @@ function openSelect(select: HTMLDivElement): void {
 	OPENED_SELECT = select
 	popover.style.setProperty('left', left + 'px')
 	popover.style.setProperty('top', top + 'px')
-	if (animationIsOn()) {
+	if (isAnimationAllowed()) {
 		popover.animate({opacity: [0, 1]}, {duration: 300, easing: AnimationEffectTiming.spring})
 	}
 }

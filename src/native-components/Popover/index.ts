@@ -1,6 +1,6 @@
 import { AnimationEffectTiming } from "@/enums/animation"
 import { FlyoutPosition as PopoverPosition } from "@/enums/position"
-import { animationIsOn } from "@/utils/animation"
+import { isAnimationAllowed } from "@/utils/animation"
 import { getFlyoutPosition } from "@/utils/flyout"
 import { numberSafe } from "@/utils/number"
 import { validEnumValue } from "@/utils/object"
@@ -321,7 +321,7 @@ function _initPopover(popover: HTMLDivElement): void {
 
 		popover.style.setProperty('left', left + 'px')
 		popover.style.setProperty('top', top + 'px')
-		if (!animationIsOn() || !animation) {
+		if (!isAnimationAllowed() || !animation) {
 			return options?.done()
 		}
 
@@ -375,7 +375,7 @@ function _initPopover(popover: HTMLDivElement): void {
 
 		popover.style.setProperty('left', flyoutPosition.left + 'px')
 		popover.style.setProperty('top', flyoutPosition.top + 'px')
-		if (!animation || !animationIsOn()) {
+		if (!animation || !isAnimationAllowed()) {
 			return options.done()
 		}
 
@@ -425,7 +425,7 @@ function _initPopover(popover: HTMLDivElement): void {
 			position
 		})
 
-		if (options.animation === false || !animation || !animationIsOn()) {
+		if (options.animation === false || !animation || !isAnimationAllowed()) {
 			popover.hidePopover()
 			return options.done()
 		}
@@ -475,7 +475,7 @@ function _initPopover(popover: HTMLDivElement): void {
 		const [x, y] = [popoverRect.left, popoverRect.top]
 		popover.style.setProperty('left', flyoutPosition.left + 'px')
 		popover.style.setProperty('top', flyoutPosition.top + 'px')
-		if (!animationIsOn() || !animation) {
+		if (!isAnimationAllowed() || !animation) {
 			return options?.done()
 		}
 

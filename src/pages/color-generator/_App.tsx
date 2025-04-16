@@ -26,7 +26,7 @@ import AppBar from './_AppBar'
 import Body from './_Body'
 import CSS from './_styles.module.scss'
 import { keyboardOnFocusIn, keyboardOnFocusOut, keyboardOnKeyDown } from '@/utils/keyboard'
-import { animationIsOn } from '@/utils/animation'
+import { isAnimationAllowed } from '@/utils/animation'
 
 const _: VoidComponent = () => {
 	const db = new IDB(DatabaseNames.colorGenerator)
@@ -154,7 +154,7 @@ const _: VoidComponent = () => {
 				easing: AnimationEffectTiming.spring
 			}
 
-			if (!animationIsOn()){
+			if (!isAnimationAllowed()){
 				icon.textContent = String.fromCharCode(ICON_CHECKMARK)
 				setTimeout(() => {
 					icon.textContent = String.fromCharCode(ICON_COPY)

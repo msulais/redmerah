@@ -4,7 +4,7 @@ import { attrSetIfExist } from "@/utils/attributes"
 import { objectHasValue } from "@/utils/object"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { AppColors } from "@/enums/colors"
-import { animationIsOn } from "@/utils/animation"
+import { isAnimationAllowed } from "@/utils/animation"
 
 import Icon from "@/components/Icon"
 import Button, { ButtonIndicatorPosition, ButtonVariant, LinkButton, type ButtonProps, type LinkButtonProps } from "@/components/Button"
@@ -155,7 +155,7 @@ const Drawer: ParentComponent<DrawerProps> = ($props) => {
 		}}
 		c:repositionAnimation={props["c:repositionAnimation"] ?? (() => {})}
 		c:openAnimation={(el, done) => {
-			if (animationIsOn()) {
+			if (isAnimationAllowed()) {
 				if (props["c:openAnimation"]) props["c:openAnimation"](el, done)
 				else {
 					setStyleWillChange('transform')
@@ -180,7 +180,7 @@ const Drawer: ParentComponent<DrawerProps> = ($props) => {
 			done()
 		}}
 		c:closeAnimation={(el, done) => {
-			if (animationIsOn()){
+			if (isAnimationAllowed()){
 				if (props["c:closeAnimation"]) props["c:closeAnimation"](el, done)
 				else {
 					setStyleWillChange('transform')

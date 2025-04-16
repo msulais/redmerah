@@ -1,7 +1,7 @@
 import { AnimationEffectTiming } from "@/enums/animation"
 import { ElementIds } from "@/enums/ids"
 import { FlyoutPosition as TooltipPosition } from "@/enums/position"
-import { animationIsOn } from "@/utils/animation"
+import { isAnimationAllowed } from "@/utils/animation"
 import { getFlyoutPosition } from "@/utils/flyout"
 import { createId } from "@/utils/ids"
 import { numberSafe } from "@/utils/number"
@@ -122,7 +122,7 @@ function _initTooltipListener(): void {
 
 			anchor = null
 
-			if (!animationIsOn()) {
+			if (!isAnimationAllowed()) {
 				tooltipTextRef.hidePopover()
 				return
 			}
@@ -238,7 +238,7 @@ function _initTooltipListener(): void {
 
 			tooltipTextRef.style.setProperty('left', flyoutPosition.left + 'px')
 			tooltipTextRef.style.setProperty('top', flyoutPosition.top + 'px')
-			if (!animationIsOn()) return
+			if (!isAnimationAllowed()) return
 
 			const popoverMidX = flyoutPosition.left + (tooltipRect.width / 2)
 			const popoverMidY = flyoutPosition.top + (tooltipRect.height / 2)

@@ -9,7 +9,7 @@ import { AnimationEffectTiming } from "@/enums/animation"
 import { attrClassListModule } from "@/utils/attributes"
 import { numberIsNotDefined, numberSafe } from "@/utils/number"
 import { ICON_ADD, ICON_DELETE, ICON_TASK_LIST_SQUARE_LTR, ICON_TEXT_EDIT_STYLE } from "@/constants/icons"
-import { animationIsOn } from "@/utils/animation"
+import { isAnimationAllowed } from "@/utils/animation"
 
 import { Tooltip } from "@/components/Tooltip"
 import Divider from "@/components/Divider"
@@ -157,7 +157,7 @@ const _: VoidComponent<{
 		c:footer={<Footer />}>
 		<TransitionGroup
 			onEnter={(el, done) => {
-				if (!animationIsOn()) return done()
+				if (!isAnimationAllowed()) return done()
 
 				el.firstElementChild!.animate(
 					{ opacity: [0, 1], transform: ['translate(-12px)', 'none'] },
@@ -165,7 +165,7 @@ const _: VoidComponent<{
 				).finished.then(done)
 			}}
 			onExit={(el, done) => {
-				if (!animationIsOn()) return done()
+				if (!isAnimationAllowed()) return done()
 
 				el.firstElementChild?.animate(
 					{ opacity: 0, transform: 'translate(-12px)'},

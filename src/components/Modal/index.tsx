@@ -9,7 +9,7 @@ import { attrSetIfExist, attrClassList } from '@/utils/attributes'
 import { BodyAttributes } from '@/enums/attributes'
 import { eventCall } from "@/utils/event"
 import { ElementIds } from '@/enums/ids'
-import { animationIsOn } from '@/utils/animation'
+import { isAnimationAllowed } from '@/utils/animation'
 import { KEY_ARROW_UP, KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT } from '@/constants/key-code'
 
 import './index.scss'
@@ -312,7 +312,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 			if (modalRect.top < MODAL_MARGIN) setTop(MODAL_MARGIN)
 			if (modalRect.right > screenWidth) setLeft(screenWidth - modalRect.width - MODAL_MARGIN)
 			if (modalRect.bottom > screenHeight) setTop(screenHeight - modalRect.height - MODAL_MARGIN)
-			if (!animationIsOn()) {
+			if (!isAnimationAllowed()) {
 				options?.onDone()
 				return
 			}
@@ -481,7 +481,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 			{detail: modalRef}
 		))
 		props['c:onClose']?.()
-		if (!animationIsOn()) {
+		if (!isAnimationAllowed()) {
 			modalRef.close()
 			onDone()
 			return
@@ -700,7 +700,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 				{detail: modalRef}
 			)))
 
-			if (!animationIsOn()) {
+			if (!isAnimationAllowed()) {
 				onDone()
 				return
 			}
@@ -800,7 +800,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 			const [x, y] = [left(), top()]
 			setTop(pos.top)
 			setLeft(pos.left)
-			if (!animationIsOn()) {
+			if (!isAnimationAllowed()) {
 				details?.onDone()
 				return
 			}

@@ -1,7 +1,7 @@
 import { AnimationEffectTiming } from "@/enums/animation"
 import { BodyAttributes } from "@/enums/attributes"
 import { ElementIds } from "@/enums/ids"
-import { animationIsOn } from "@/utils/animation"
+import { isAnimationAllowed } from "@/utils/animation"
 import { numberSafe } from "@/utils/number"
 
 let COMPONENT_COUNT: number = 0
@@ -18,7 +18,7 @@ export function removeSplashScreen(timeout: number = 0): void {
 		splashRef.remove()
 		body.removeAttribute(BodyAttributes.componentCount)
 
-		if (animationIsOn()) {
+		if (isAnimationAllowed()) {
 			window.scrollTo({top: 0, behavior: 'instant'})
 			body.style.setProperty('will-change', 'transform, opacity')
 			body.style.setProperty('overflow', 'hidden')

@@ -7,7 +7,7 @@ import { getFlyoutPosition } from "@/utils/flyout"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { isTouchScreen } from "@/utils/platforms"
 import { ElementIds } from "@/enums/ids"
-import { animationIsOn } from "@/utils/animation"
+import { isAnimationAllowed } from "@/utils/animation"
 
 import './index.scss'
 
@@ -163,7 +163,7 @@ function initTooltip(): void {
 
 		anchorElement = null
 		tooltipTextRef.style.removeProperty('opacity')
-		if (!animationIsOn()) {
+		if (!isAnimationAllowed()) {
 			return tooltipTextRef.hidePopover()
 		}
 
@@ -325,7 +325,7 @@ function initTooltip(): void {
 			tooltipTextRef.style.setProperty('top', pos.top + 'px')
 			tooltipTextRef.style.setProperty('left', pos.left + 'px')
 			tooltipTextRef.style.setProperty('opacity', '1')
-			if (!animationIsOn()) return
+			if (!isAnimationAllowed()) return
 
 			tooltipTextRef.style.setProperty('will-change', 'transform,opacity')
 			tooltipTextRef.animate(

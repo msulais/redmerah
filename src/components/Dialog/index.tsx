@@ -1,7 +1,7 @@
 import { type JSX, type ParentComponent, splitProps, children, Show, createMemo, createSignal } from "solid-js"
 
 import { AnimationEffectTiming } from "@/enums/animation"
-import { animationIsOn } from "@/utils/animation"
+import { isAnimationAllowed } from "@/utils/animation"
 
 import { closeModal, focusModal, Modal, openModal, type ModalProps } from "@/components/Modal"
 import FocusableGroup from "@/components/FocusableGroup"
@@ -50,7 +50,7 @@ const Dialog: ParentComponent<DialogProps> = ($props) => {
 		}}
 		c:repositionAnimation={props["c:repositionAnimation"] ?? (() => {})}
 		c:openAnimation={(el, done) => {
-			if (animationIsOn()) {
+			if (isAnimationAllowed()) {
 				if (props['c:openAnimation']) props['c:openAnimation'](el, done)
 				else {
 					setStyleWillChange('transform,opacity')
@@ -75,7 +75,7 @@ const Dialog: ParentComponent<DialogProps> = ($props) => {
 			done()
 		}}
 		c:closeAnimation={(el, done) => {
-			if (animationIsOn()) {
+			if (isAnimationAllowed()) {
 				if (props['c:closeAnimation']) props['c:closeAnimation'](el, done)
 				else {
 					setStyleWillChange('transform,opacity')

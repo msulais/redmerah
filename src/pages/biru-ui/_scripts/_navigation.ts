@@ -1,7 +1,7 @@
 import { SideNavigationClasses, updateSideNavigationButton } from "@/native-components/SideNavigation"
 import { ELEMENT_ID_PREFIX, ElementIds } from "./_enums"
 import { ButtonVariant } from "@/native-components/Button"
-import { animationIsOn } from "@/utils/animation"
+import { isAnimationAllowed } from "@/utils/animation"
 import { AnimationEffectTiming } from "@/enums/animation"
 
 const $ = (id: string) => document.getElementById(id)
@@ -37,7 +37,7 @@ function initNavigationEvents(): void {
 			const tabPanel = $(ariaControls)
 			tabPanel?.toggleAttribute('hidden', false)
 
-			if (animationIsOn()) {
+			if (isAnimationAllowed()) {
 				tabPanel?.animate({
 					opacity: [0, 1],
 					transform: ['translateY(64px)', 'translateY(0)']

@@ -5,7 +5,7 @@ import { attrSetIfExist, attrClassList } from "@/utils/attributes"
 import { eventCall } from "@/utils/event"
 import { ICON_CHEVRON_DOWN } from "@/constants/icons"
 import { AnimationEffectTiming } from "@/enums/animation"
-import { animationIsOn } from "@/utils/animation"
+import { isAnimationAllowed } from "@/utils/animation"
 
 import { RawIconButton } from "@/components/Button"
 import { List, RawList, type ListProps, type RawListProps } from "@/components/List"
@@ -160,7 +160,7 @@ const Expander: ParentComponent<ExpanderProps> = ($props) => {
 					const padding2 = ['0px', paddingRight, '0px', paddingLeft].join(' ')
 					isAnimationDone = false
 					if (isOpen()) {
-						if (animationIsOn()){
+						if (isAnimationAllowed()){
 							setStyleWillChange('opacity,height,padding')
 							contentRef.animate({
 								opacity: [1, 0],
@@ -180,7 +180,7 @@ const Expander: ParentComponent<ExpanderProps> = ($props) => {
 					}
 
 					setIsOpen(true)
-					if (animationIsOn()) {
+					if (isAnimationAllowed()) {
 						setStyleWillChange('opacity,height,padding')
 						contentRef.animate({
 							opacity: [0, 1],

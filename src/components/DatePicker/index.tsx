@@ -8,7 +8,7 @@ import { eventCall } from "@/utils/event"
 import { elementValidTarget } from "@/utils/element"
 import { numberSafe } from "@/utils/number"
 import { ICON_CALENDAR_DATE, ICON_CHEVRON_LEFT, ICON_CHEVRON_RIGHT } from "@/constants/icons"
-import { animationIsOn } from "@/utils/animation"
+import { isAnimationAllowed } from "@/utils/animation"
 
 import Button, { ButtonVariant, IconButton, SquareButton } from "@/components/Button"
 import { Modal, type ModalProps, ModalPosition as DatePickerPosition, closeModal, focusModal, openModal, repositionModal, isModalOpen } from "@/components/Modal"
@@ -324,7 +324,7 @@ const DatePickerBody: ParentComponent<{
 		<Divider />
 		<Transition
 			onEnter={(el, done) => {
-				if (animationIsOn()) {
+				if (isAnimationAllowed()) {
 					(el as HTMLElement).animate(
 						{ opacity: [0, 1], transform: ['translateY(-12px)', 'none'] },
 						{ duration: 200, easing: AnimationEffectTiming.spring }

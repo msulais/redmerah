@@ -5,7 +5,7 @@ import { AnimationEffectTiming } from "@/enums/animation"
 import { attrSetIfExist, attrClassList } from "@/utils/attributes"
 import { eventCall } from "@/utils/event"
 import { ICON_CHECKBOX_CHECKED, ICON_CHECKBOX_UNCHECKED, ICON_RADIO_BUTTON } from "@/constants/icons"
-import { animationIsOn } from "@/utils/animation"
+import { isAnimationAllowed } from "@/utils/animation"
 
 import Icon, { type IconProps } from "@/components/Icon"
 import '@/components/Button/index.scss'
@@ -56,7 +56,7 @@ const CheckBox: ParentComponent<CheckBoxProps> = ($props) => {
 	function changeCheckedState(checked: boolean): void {
 		if (animation != null) animation.cancel()
 
-		if (animationIsOn()) {
+		if (isAnimationAllowed()) {
 			setStyleWillChange('scale')
 			animation = iconRef.animate({scale: [1, 0]}, animationOptions)
 			animation.finished.then(() => {

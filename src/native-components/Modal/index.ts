@@ -1,6 +1,6 @@
 import { AnimationEffectTiming } from "@/enums/animation"
 import { FlyoutPosition as ModalPosition } from "@/enums/position"
-import { animationIsOn } from "@/utils/animation"
+import { isAnimationAllowed } from "@/utils/animation"
 import { getFlyoutPosition } from "@/utils/flyout"
 import { numberSafe } from "@/utils/number"
 import { validEnumValue } from "@/utils/object"
@@ -293,7 +293,7 @@ function _initModal(modal: HTMLDialogElement): void {
 
 		modal.style.setProperty('left', left + 'px')
 		modal.style.setProperty('top', top + 'px')
-		if (!animationIsOn() || !animation) {
+		if (!isAnimationAllowed() || !animation) {
 			return options?.done()
 		}
 
@@ -345,7 +345,7 @@ function _initModal(modal: HTMLDialogElement): void {
 
 		modal.style.setProperty('left', flyoutPosition.left + 'px')
 		modal.style.setProperty('top', flyoutPosition.top + 'px')
-		if (!animation || !animationIsOn()) {
+		if (!animation || !isAnimationAllowed()) {
 			return options.done()
 		}
 
@@ -396,7 +396,7 @@ function _initModal(modal: HTMLDialogElement): void {
 			position
 		})
 
-		if (options.animation === false || !animation || !animationIsOn()) {
+		if (options.animation === false || !animation || !isAnimationAllowed()) {
 			modal.close()
 			return options.done()
 		}
@@ -446,7 +446,7 @@ function _initModal(modal: HTMLDialogElement): void {
 		const [x, y] = [modalRect.left, modalRect.top]
 		modal.style.setProperty('left', flyoutPosition.left + 'px')
 		modal.style.setProperty('top', flyoutPosition.top + 'px')
-		if (!animationIsOn() || !animation) {
+		if (!isAnimationAllowed() || !animation) {
 			return options?.done()
 		}
 

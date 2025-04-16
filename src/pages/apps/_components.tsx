@@ -15,7 +15,7 @@ import Dialog, { closeDialog, openDialog } from "@/components/Dialog"
 import CSS from './_index.module.scss'
 import { AnimationEffectTiming } from "@/enums/animation"
 import { FocusableGroup2D } from "@/components/FocusableGroup"
-import { animationIsOn } from "@/utils/animation"
+import { isAnimationAllowed } from "@/utils/animation"
 
 export const MainElement: VoidComponent = () => {
 	const [isMenuActionsOpen, setIsMenuActionsOpen] = createSignal<boolean>(false)
@@ -114,7 +114,7 @@ export const MainElement: VoidComponent = () => {
 							alt={app.name}
 							onLoad={ev => {
 								const img = ev.currentTarget
-								if (!animationIsOn()) {
+								if (!isAnimationAllowed()) {
 									img.style.removeProperty('will-change')
 									img.style.removeProperty('transform')
 									return

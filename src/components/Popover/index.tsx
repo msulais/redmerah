@@ -11,7 +11,7 @@ import { eventCall } from "@/utils/event"
 import { AnimationEffectTiming } from '@/enums/animation'
 import { ElementIds } from '@/enums/ids'
 import { KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT, KEY_ARROW_UP, KEY_ESCAPE } from '@/constants/key-code'
-import { animationIsOn } from '@/utils/animation'
+import { isAnimationAllowed } from '@/utils/animation'
 
 import './index.scss'
 
@@ -279,7 +279,7 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 			if (rect.top < POPOVER_MARGIN) setTop(POPOVER_MARGIN)
 			if (rect.right > screenWidth) setLeft(screenWidth - rect.width - POPOVER_MARGIN)
 			if (rect.bottom > screenHeight) setTop(screenHeight - rect.height - POPOVER_MARGIN)
-			if (!animationIsOn()) {
+			if (!isAnimationAllowed()) {
 				details?.onDone()
 				return
 			}
@@ -432,7 +432,7 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 			{ detail: popoverRef }
 		))
 		props['c:onClose']?.()
-		if (!animationIsOn()) {
+		if (!isAnimationAllowed()) {
 			popoverRef.hidePopover()
 			onDone()
 			return
@@ -642,7 +642,7 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 				{ detail: popoverRef }
 			)))
 
-			if (!animationIsOn()) {
+			if (!isAnimationAllowed()) {
 				onDone()
 				return
 			}
@@ -742,7 +742,7 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 			const [x, y] = [left(), top()]
 			setTop(pos.top)
 			setLeft(pos.left)
-			if (!animationIsOn()) {
+			if (!isAnimationAllowed()) {
 				details?.onDone()
 				return
 			}
