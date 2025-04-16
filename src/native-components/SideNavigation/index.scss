@@ -13,7 +13,7 @@
 	}
 
 	@media (prefers-reduced-motion: no-preference) {
-		:root[data-animation=system] & {
+		:root[data-animation=auto] & {
 			transition-duration: .2s;
 		}
 	}

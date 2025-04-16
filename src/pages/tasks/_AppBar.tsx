@@ -109,13 +109,13 @@ const _: VoidComponent<{
 	function updateAnimation(animation: AnimationData): void {
 		setAnimation(animation)
 		root.setAttribute(RootAttributes.animation, animation)
-		localStorage.setItem(LocalStorageKeys.animation, animation)
+		localStorage.setItem(LocalStorageKeys.platformAnimation, animation)
 	}
 
 	function updateTheme(theme: ThemeData): void {
 		setTheme(theme)
 		root.setAttribute(RootAttributes.theme, theme)
-		localStorage.setItem(LocalStorageKeys.theme, theme)
+		localStorage.setItem(LocalStorageKeys.platformTheme, theme)
 		closeMenu(menuSettingsRef)
 	}
 
@@ -127,7 +127,7 @@ const _: VoidComponent<{
 	}
 
 	function initTheme(): void {
-		const theme = localStorage.getItem(LocalStorageKeys.theme)
+		const theme = localStorage.getItem(LocalStorageKeys.platformTheme)
 		if (theme && validEnumValue(theme, ThemeData)) {
 			root.setAttribute(RootAttributes.theme, theme)
 			setTheme(theme as ThemeData)
@@ -143,7 +143,7 @@ const _: VoidComponent<{
 	}
 
 	function initAnimation(): void {
-		const animation = localStorage.getItem(LocalStorageKeys.animation)
+		const animation = localStorage.getItem(LocalStorageKeys.platformAnimation)
 		if (animation && validEnumValue(animation, AnimationData)) {
 			root.setAttribute(RootAttributes.animation, animation)
 			setAnimation(animation as AnimationData)

@@ -1,24 +1,10 @@
 ---
 import Html from '@/layouts/Html/index.astro'
-import Button from '@/native-components/Button/index.astro'
 import App from '@/native-components/App/index.astro'
-import AppBar from '@/native-components/AppBar/index.astro'
-import logo from '@/assets/images/apps/biru-ui.svg'
-import IconButton from '@/native-components/Button/IconButton.astro'
-import Icon from '@/native-components/Icon/index.astro'
-import Menu from '@/native-components/Menu/index.astro'
-import LinkMenuItem from '@/native-components/Menu/LinkMenuItem.astro'
-import MenuItem from '@/native-components/Menu/MenuItem.astro'
-import SideNavigation from '@/native-components/SideNavigation/index.astro'
-import SideNavigationButton from '@/native-components/SideNavigation/SideNavigationButton.astro'
-import Select from '@/native-components/Select/index.astro'
-import Label from '@/native-components/Label/index.astro'
-import SelectOption from '@/native-components/Select/SelectOption.astro'
-import { ICON_ADD, ICON_DESKTOP_TOWER, ICON_INFO, ICON_PLAY_CIRCLE_HINT, ICON_SETTINGS, ICON_WEATHER_SUNNY } from '@/constants/icons'
-import { ButtonVariant } from '@/native-components/Button'
-import CSS from './_index.module.scss'
-import { ElementIds } from './_enums'
-import { RoutesLinks } from '@/enums/links'
+import Menus from './_ui/_Menus.astro'
+import Body from './_ui/_Body.astro'
+import Navigation from './_ui/_Navigation.astro'
+import AppBar from './_ui/_AppBar.astro'
 export const prerender = true
 ---
 
@@ -35,79 +21,10 @@ export const prerender = true
 	</Fragment>
 	<script is:inline src='/scripts/root-settings.min.js'/>
 	<App c:tagName='div'>
-		<AppBar slot='appbar'>
-			<Fragment slot='leading'>
-				<img style="margin:0 8px 0 12px" src={logo.src} width="32" alt="BiruUI logo"/>
-			</Fragment>
-			<Fragment slot='headline'>BiruUI</Fragment>
-			<Fragment slot='trailing'>
-				<IconButton
-					id={ElementIds.appbar_info_button}
-					style="padding:0 10px"
-					c:icon={ICON_INFO}
-					aria-label="Info"
-					aria-haspopup="menu"
-					aria-expanded="false"
-					aria-controls={ElementIds.appbar_info_menu}
-				/>
-				<IconButton
-					id={ElementIds.appbar_settings_button}
-					style="padding:0 10px"
-					c:icon={ICON_SETTINGS}
-					aria-label="Settings"
-					aria-haspopup="menu"
-					aria-expanded="false"
-					aria-controls={ElementIds.appbar_settings_menu}
-				/>
-			</Fragment>
-		</AppBar>
-		<SideNavigation slot='left-sidebar'>
-			<SideNavigationButton c:selected c:variant={ButtonVariant.tonal}>Buttons</SideNavigationButton>
-			{[
-				'CheckBox', 'ColorPicker', 'DatePicker', 'DateTimePicker',
-				'Dialog', 'Divider', 'Drawer', 'Dropdown', 'EmojiPicker',
-				'Expander', 'Icon', 'List', 'Menu', 'Modal', 'Popover',
-				'Switch', 'TextField', 'Toast', 'Tooltip'
-			].map(v => <SideNavigationButton>{v}</SideNavigationButton>)}
-		</SideNavigation>
-		<main class={CSS.body}>
-			<div class={CSS.bodyPage}>
-				<h2>Buttons</h2>
-				<p>A button is an interactive UI element that triggers a specific action when clicked or tapped. It typically has a clear label indicating its function and provides visual feedback upon interaction. Buttons are essential for guiding users through an interface and facilitating user-system communication.</p>
-				<div class={CSS.bodyPlayground}>
-					<Button id={ElementIds.panel_buttons_preview}>
-						<Icon c:icon={ICON_ADD}/>
-						Click me
-					</Button>
-				</div>
-				<div class={CSS.bodyOptions}>
-					<Label id={ElementIds.panel_buttons_options_variant_label}>Variant:</Label>
-					<Select aria-labelledby={ElementIds.panel_buttons_options_variant_label} id={ElementIds.panel_buttons_options_variant} style="min-width: 132px">
-						<SelectOption value={ButtonVariant.filled}>Filled</SelectOption>
-						<SelectOption value={ButtonVariant.tonal}>Tonal</SelectOption>
-						<SelectOption value={ButtonVariant.transparent} c:selected>Transparent</SelectOption>
-						<SelectOption value={ButtonVariant.outlined}>Outlined</SelectOption>
-					</Select>
-				</div>
-			</div>
-		</main>
+		<AppBar slot='appbar'/>
+		<Navigation slot="left-sidebar"/>
+		<Body/>
 	</App>
-	<Menu id={ElementIds.appbar_settings_menu}>
-		<MenuItem><Icon c:icon={ICON_PLAY_CIRCLE_HINT}/>Animation</MenuItem>
-		<MenuItem><Icon c:icon={ICON_WEATHER_SUNNY}/>Theme</MenuItem>
-		<MenuItem><Icon c:icon={ICON_DESKTOP_TOWER}/>Platform</MenuItem>
-	</Menu>
-	<Menu id={ElementIds.appbar_info_menu}>
-		<LinkMenuItem href="/"><Icon c:icon={ICON_PLAY_CIRCLE_HINT}/>Redmerah</LinkMenuItem>
-		<LinkMenuItem href={RoutesLinks.apps}><Icon c:icon={ICON_WEATHER_SUNNY}/>More apps</LinkMenuItem>
-		<LinkMenuItem href={RoutesLinks.about}><Icon c:icon={ICON_DESKTOP_TOWER}/>About us</LinkMenuItem>
-		<hr/>
-		<LinkMenuItem href={RoutesLinks.privacy}><Icon c:icon={ICON_DESKTOP_TOWER}/>Privacy policy</LinkMenuItem>
-		<LinkMenuItem href={RoutesLinks.terms}><Icon c:icon={ICON_DESKTOP_TOWER}/>Terms & conditions</LinkMenuItem>
-		<hr/>
-		<LinkMenuItem><Icon c:icon={ICON_DESKTOP_TOWER}/>Share</LinkMenuItem>
-		<LinkMenuItem><Icon c:icon={ICON_DESKTOP_TOWER}/>Send feedback</LinkMenuItem>
-		<LinkMenuItem><Icon c:icon={ICON_DESKTOP_TOWER}/>Donate</LinkMenuItem>
-	</Menu>
-	<script src="./_index.ts" />
+	<Menus/>
+	<script src="./_scripts/_index.ts" />
 </Html>

@@ -109,7 +109,7 @@
 		color-scheme: dark;
 	}
 
-	&[data-theme="system"] {
+	&[data-theme="auto"] {
 		@media (prefers-color-scheme: dark) {
 			// elevation
 			--g-elevation-color-1: rgba(0, 0, 0, .12);

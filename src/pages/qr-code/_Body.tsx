@@ -5,7 +5,7 @@ import { BarcodeFormat, DecodeHintType } from "@zxing/library"
 import { Commands, CopyFileType, DownloadFileType, Pages } from "./_enums"
 import { attrSetIfExist } from "@/utils/attributes"
 import { fileOpen } from "@/utils/file"
-import { isMobile } from "@/utils/platforms"
+import { isTouchScreen } from "@/utils/platforms"
 import { validEnumValue } from "@/utils/object"
 import { elementValidTarget } from "@/utils/element"
 import { keyboardOnFocusIn, keyboardOnFocusOut, keyboardOnKeyDown } from "@/utils/keyboard"
@@ -288,7 +288,7 @@ const _: VoidComponent<{
 								c:filled={QRCodeImageSource() != null}
 								c:code={ICON_IMAGE_ADD}
 							/>
-							<Show when={isMobile()}>
+							<Show when={isTouchScreen()}>
 								<IconButton
 									id={buttonScan_openCameraId}
 									data-tooltip="Open camera"

@@ -1,3 +1,4 @@
+// TODO: remove when all SolidJS removed
 export enum AnimationData {
 	system = 'system',
 	on = 'on',

@@ -5,7 +5,7 @@ import { eventCall } from "@/utils/event"
 import { FlyoutPosition as TooltipPosition } from "@/enums/position"
 import { getFlyoutPosition } from "@/utils/flyout"
 import { AnimationEffectTiming } from "@/enums/animation"
-import { isMobile } from "@/utils/platforms"
+import { isTouchScreen } from "@/utils/platforms"
 import { ElementIds } from "@/enums/ids"
 import { animationIsOn } from "@/utils/animation"
 
@@ -49,7 +49,7 @@ function initTooltip(): void {
 	if (TOOLTIP_HAS_LISTENER) return;
 	TOOLTIP_HAS_LISTENER = true
 
-	const $isMobile = isMobile()
+	const $isMobile = isTouchScreen()
 	let pointerOpenX: number = 0
 	let pointerOpenY: number = 0
 

@@ -7,10 +7,3 @@ export enum ElementIds {
 	modalListener = 'c-modal-listener',
 	emojiPickerListener = 'c-emoji-picker-listener'
 }
-
-export enum ElementIdsPrefix {
-	// option = 'c-option-',
-	// listbox = 'c-listbox-',
-	// tooltip = 'c-tootlip-',
-	// submenuitem = 'c-submenuitem-'
-}

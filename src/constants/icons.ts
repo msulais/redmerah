@@ -97,6 +97,9 @@ export const ICON_FOOD = 0xE875
 export const ICON_GIFT = 0xE8B9
 
 // H
+export const ICON_HAND_POINT = 0xE913
+export const ICON_HAND_RIGHT = 0xE915
+export const ICON_HAND_RIGHT_OFF = 0xE917
 export const ICON_HISTORY = 0xE95A
 export const ICON_HOME = 0xE95E
 export const ICON_HOURGLASS = 0xE972
@@ -170,6 +173,7 @@ export const ICON_SYMBOLS = 0xF04B
 
 // T
 export const ICON_TAG = 0xF0EB
+export const ICON_TAP_SINGLE = 0xF102
 export const ICON_TASK_LIST_SQUARE_LTR = 0xF118
 export const ICON_TEARDROP_BOTTOM_RIGHT = 0xF124
 export const ICON_TEMPERATURE = 0xF128
@@ -191,6 +195,7 @@ export const ICON_TRANSLATE = 0xF2D1
 export const ICON_VEHICLE_CAR = 0xF30B
 export const ICON_VIDEO_CLIP = 0xF33B
 export const ICON_VIDEO_CLIP_OFF = 0xF33F
+export const ICON_VIDEO_CLIP_OPTIMIZE = 0xF341
 
 // W
 export const ICON_WARNING = 0xF387

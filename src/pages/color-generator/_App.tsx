@@ -58,7 +58,7 @@ const _: VoidComponent = () => {
 		const generatedColor = colorGeneratePalette(color)
 		const elementAccentColorStyle = document.getElementById(ElementIds.colorAccent)!
 		elementAccentColorStyle.innerHTML = `:root{--g-color-accent-light: ${rgbToCSSValue(colorHexToRgb(generatedColor.color))};--g-color-accent-dark: ${rgbToCSSValue(colorHexToRgb(generatedColor.colorDark))};--g-color-on-accent-light: ${rgbToCSSValue(colorHexToRgb(generatedColor.onColor))};--g-color-on-accent-dark: ${rgbToCSSValue(colorHexToRgb(generatedColor.onColorDark))};}`;
-		localStorage.setItem(LocalStorageKeys.color, color)
+		localStorage.setItem(LocalStorageKeys.platformColor, color)
 		setPalette({
 			seed: color.toUpperCase() as HEXColor,
 			accentLight: generatedColor.color.toUpperCase() as HEXColor,
@@ -102,7 +102,7 @@ const _: VoidComponent = () => {
 	}
 
 	function initColor(): void {
-		const color = localStorage.getItem(LocalStorageKeys.color)
+		const color = localStorage.getItem(LocalStorageKeys.platformColor)
 		if (!colorIsValid(color ?? '')) return;
 
 		onColorChange(color as HEXColor)

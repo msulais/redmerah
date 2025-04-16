@@ -1,0 +1,122 @@
+---
+import { ICON_APPS, ICON_CHAT, ICON_CHEVRON_RIGHT, ICON_GIFT, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_PLAY_CIRCLE_HINT, ICON_RECEIPT, ICON_SHARE_ANDROID, ICON_SHIELD_CHECKMARK, ICON_VIDEO_CLIP, ICON_VIDEO_CLIP_OFF, ICON_VIDEO_CLIP_OPTIMIZE, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from '@/constants/icons'
+import { ElementIds, ELEMENT_ID_PREFIX, RadioGroupNames } from '../_scripts/_enums'
+import { ExternalLinks, RoutesLinks } from '@/enums/links'
+import Menu from '@/native-components/Menu/index.astro'
+import SubMenuItem from '@/native-components/Menu/SubMenuItem.astro'
+import RadioMenuItem from '@/native-components/Menu/RadioMenuItem.astro'
+import LinkMenuItem from '@/native-components/Menu/LinkMenuItem.astro'
+import MenuItem from '@/native-components/Menu/MenuItem.astro'
+import Divider from '@/native-components/Divider/index.astro'
+import Icon from '@/native-components/Icon/index.astro'
+import logoRedmerah from '@/assets/images/logos/redmerah-logo.svg'
+import { PlatformAnimationMode, PlatformThemeMode } from '@/enums/platforms'
+---
+
+<Menu id={ELEMENT_ID_PREFIX + ElementIds.appbar_settings_menu}>
+	<SubMenuItem
+		aria-controls={ELEMENT_ID_PREFIX + ElementIds.appbar_settings_animation_menu}>
+		<Icon c:icon={ICON_PLAY_CIRCLE_HINT}/>
+		Animation
+		<div style="flex:1"/>
+		<Icon c:icon={ICON_CHEVRON_RIGHT}/>
+	</SubMenuItem>
+	<SubMenuItem
+		aria-controls={ELEMENT_ID_PREFIX + ElementIds.appbar_settings_theme_menu}>
+		<Icon c:icon={ICON_WEATHER_SUNNY}/>
+		Theme
+		<div style="flex:1"/>
+		<Icon c:icon={ICON_CHEVRON_RIGHT}/>
+	</SubMenuItem>
+	<MenuItem>Color accent</MenuItem>
+</Menu>
+<Menu id={ELEMENT_ID_PREFIX + ElementIds.appbar_settings_animation_menu}>
+	<RadioMenuItem
+		c:attrInput={{
+			name: RadioGroupNames.settings_animation,
+			checked: true,
+			value: PlatformAnimationMode.auto
+		}}>
+		<Icon c:icon={ICON_VIDEO_CLIP_OPTIMIZE}/>
+		Automatic
+	</RadioMenuItem>
+	<RadioMenuItem
+		c:attrInput={{
+			name: RadioGroupNames.settings_animation,
+			value: PlatformAnimationMode.on
+		}}>
+		<Icon c:icon={ICON_VIDEO_CLIP}/>
+		On
+	</RadioMenuItem>
+	<RadioMenuItem
+		c:attrInput={{
+			name: RadioGroupNames.settings_animation,
+			value: PlatformAnimationMode.off
+		}}>
+		<Icon c:icon={ICON_VIDEO_CLIP_OFF}/>
+		Off
+	</RadioMenuItem>
+</Menu>
+<Menu id={ELEMENT_ID_PREFIX + ElementIds.appbar_settings_theme_menu}>
+	<RadioMenuItem
+		c:attrInput={{
+			name: RadioGroupNames.settings_theme,
+			checked: true,
+			value: PlatformThemeMode.auto
+		}}>
+		<Icon c:icon={ICON_LAPTOP_SETTINGS}/>
+		Automatic
+	</RadioMenuItem>
+	<RadioMenuItem
+		c:attrInput={{
+			name: RadioGroupNames.settings_theme,
+			value: PlatformThemeMode.light
+		}}>
+		<Icon c:icon={ICON_WEATHER_SUNNY}/>
+		Light
+	</RadioMenuItem>
+	<RadioMenuItem
+		c:attrInput={{
+			name: RadioGroupNames.settings_theme,
+			value: PlatformThemeMode.dark
+		}}>
+		<Icon c:icon={ICON_WEATHER_MOON}/>
+		Dark
+	</RadioMenuItem>
+</Menu>
+<Menu id={ELEMENT_ID_PREFIX + ElementIds.appbar_info_menu}>
+	<LinkMenuItem href="/">
+		<img src={logoRedmerah.src} width="16"/>
+		Redmerah
+	</LinkMenuItem>
+	<LinkMenuItem href={RoutesLinks.apps}>
+		<Icon c:icon={ICON_APPS}/>
+		More apps
+	</LinkMenuItem>
+	<LinkMenuItem href={RoutesLinks.about}>
+		<Icon c:icon={ICON_INFO}/>
+		About us
+	</LinkMenuItem>
+	<Divider />
+	<LinkMenuItem href={RoutesLinks.privacy}>
+		<Icon c:icon={ICON_SHIELD_CHECKMARK}/>
+		Privacy policy
+	</LinkMenuItem>
+	<LinkMenuItem href={RoutesLinks.terms}>
+		<Icon c:icon={ICON_RECEIPT}/>
+		Terms & conditions
+	</LinkMenuItem>
+	<Divider />
+	<MenuItem id={ELEMENT_ID_PREFIX + ElementIds.appbar_info_share_button}>
+		<Icon c:icon={ICON_SHARE_ANDROID}/>
+		Share
+	</MenuItem>
+	<LinkMenuItem href={'mailto:' + ExternalLinks.contactEmail + '?subject=' + encodeURI('BiruUI')}>
+		<Icon c:icon={ICON_CHAT}/>
+		Send feedback
+	</LinkMenuItem>
+	<LinkMenuItem href={ExternalLinks.donate} c:newTab>
+		<Icon c:icon={ICON_GIFT}/>
+		Donate
+	</LinkMenuItem>
+</Menu>

@@ -1,8 +1,10 @@
 export enum LocalStorageKeys {
-	theme = 'theme',
-	color = 'color',
+	platformTheme = 'platform:theme',
+	platformColor = 'platform:color',
+	platformAnimation = 'platform:animation',
+
+	// TODO: remove when SolidJS removed
 	corner = 'corner',
-	animation = 'animation',
 	pinnedApps = 'pinned-apps'
 }
 

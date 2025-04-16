@@ -1,0 +1,39 @@
+---
+import Appbar from '@/native-components/AppBar/index.astro'
+import logo from '@/assets/images/apps/biru-ui.svg'
+import IconButton from '@/native-components/Button/IconButton.astro'
+import Tooltip from '@/native-components/Tooltip/index.astro'
+import { ICON_INFO, ICON_SETTINGS } from '@/constants/icons'
+import { ElementIds, ELEMENT_ID_PREFIX } from '../_scripts/_enums'
+---
+
+<Appbar id={ELEMENT_ID_PREFIX + ElementIds.appbar}>
+	<Fragment slot='leading'>
+		<img style="margin:0 8px 0 12px" src={logo.src} width="32" alt="BiruUI logo"/>
+	</Fragment>
+	<Fragment slot='headline'>BiruUI</Fragment>
+	<Fragment slot='trailing'>
+		<Tooltip>
+			<IconButton
+				id={ELEMENT_ID_PREFIX + ElementIds.appbar_info_button}
+				data-tooltip="Info"
+				style="padding:0 10px"
+				c:icon={ICON_INFO}
+				aria-label="Info"
+				aria-haspopup="menu"
+				aria-expanded="false"
+				aria-controls={ELEMENT_ID_PREFIX + ElementIds.appbar_info_menu}
+			/>
+			<IconButton
+				id={ELEMENT_ID_PREFIX + ElementIds.appbar_settings_button}
+				data-tooltip="Settings"
+				style="padding:0 10px"
+				c:icon={ICON_SETTINGS}
+				aria-label="Settings"
+				aria-haspopup="menu"
+				aria-expanded="false"
+				aria-controls={ELEMENT_ID_PREFIX + ElementIds.appbar_settings_menu}
+			/>
+		</Tooltip>
+	</Fragment>
+</Appbar>

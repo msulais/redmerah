@@ -33,10 +33,15 @@
 	}
 
 	@media (prefers-reduced-motion: no-preference) {
-		:root[data-animation=system] & {
+		:root[data-animation=auto] & {
 			transition-property: background-color;
 			transition-duration: .2s;
 		}
+	}
+
+	@media (hover: none) {
+		min-height: 40px;
+		border-radius: 8px;
 	}
 
 	& * {
@@ -73,7 +78,7 @@
 				}
 
 				@media (prefers-reduced-motion: no-preference) {
-					:root[data-animation=system] & {
+					:root[data-animation=auto] & {
 						animation: var(--c-btn-icon-animation);
 					}
 				}

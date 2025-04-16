@@ -105,14 +105,14 @@ export const SettingsElement: VoidComponent = () => {
 	function updateTheme(theme: ThemeData): void {
 		setTheme(theme)
 		root.setAttribute(RootAttributes.theme, theme)
-		localStorage.setItem(LocalStorageKeys.theme, theme)
+		localStorage.setItem(LocalStorageKeys.platformTheme, theme)
 		closeMenu(menuSettingsRef)
 	}
 
 	function updateAnimation(animation: AnimationData): void {
 		setAnimation(animation)
 		root.setAttribute(RootAttributes.animation, animation)
-		localStorage.setItem(LocalStorageKeys.animation, animation)
+		localStorage.setItem(LocalStorageKeys.platformAnimation, animation)
 		closeMenu(menuSettingsRef)
 	}
 
@@ -124,7 +124,7 @@ export const SettingsElement: VoidComponent = () => {
 	}
 
 	function initTheme(): void {
-		const theme = localStorage.getItem(LocalStorageKeys.theme)
+		const theme = localStorage.getItem(LocalStorageKeys.platformTheme)
 		if (theme && validEnumValue(theme, ThemeData)) {
 			root.setAttribute(RootAttributes.theme, theme)
 			setTheme(theme as ThemeData)
@@ -140,7 +140,7 @@ export const SettingsElement: VoidComponent = () => {
 	}
 
 	function initAnimation(): void {
-		const animation = localStorage.getItem(LocalStorageKeys.animation)
+		const animation = localStorage.getItem(LocalStorageKeys.platformAnimation)
 		if (animation && validEnumValue(animation, AnimationData)) {
 			root.setAttribute(RootAttributes.animation, animation)
 			setAnimation(animation as AnimationData)
@@ -159,14 +159,14 @@ export const SettingsElement: VoidComponent = () => {
 
 		if (timeColorId != null) clearTimeout(timeColorId)
 		timeColorId = setTimeout(() => {
-			localStorage.setItem(LocalStorageKeys.color, color)
+			localStorage.setItem(LocalStorageKeys.platformColor, color)
 			timeColorId = null
 		}, 100)
 		closeMenu(menuSettingsRef)
 	}
 
 	function initColor(): void {
-		const color = localStorage.getItem(LocalStorageKeys.color)
+		const color = localStorage.getItem(LocalStorageKeys.platformColor)
 		if (!colorIsValid(color ?? '')) return;
 
 		updateColor(color as HEXColor)
