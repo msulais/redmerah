@@ -19,24 +19,11 @@
 	}
 
 	&:has( > .c-checkbox-input:disabled) {
-		color: rgba(var(--g-color-on-surface), var(--g-opacity-inv5));
+		opacity: .5;
 		cursor: not-allowed;
 
 		& * {
 			cursor: not-allowed;
-		}
-
-		> .c-checkbox-input {
-			border-color: rgba(var(--g-color-on-surface), var(--g-opacity-inv5));
-
-			&:checked {
-				border-color: transparent;
-				background-color: rgba(var(--g-color-on-surface), var(--g-opacity4));
-			}
-		}
-
-		> .c-checkbox-icon {
-			fill: rgba(var(--g-color-on-surface), var(--g-opacity-inv5));
 		}
 	}
 
