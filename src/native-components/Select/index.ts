@@ -410,7 +410,7 @@ function _initSelect(select: HTMLDivElement): void {
 		})
 
 		select.addEventListener('keydown', selectOnKeyDown)
-		select.addEventListener('wheel', selectOnWheel)
+		select.addEventListener('wheel', selectOnWheel, {passive: true})
 	}
 
 	initEvents()

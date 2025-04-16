@@ -331,6 +331,8 @@ function _initTooltip(tooltip: HTMLDivElement): void {
 			POINTER_X = touches[0].clientX
 			POINTER_Y = touches[0].clientY
 			openTooltip(ev)
+		}, {
+			passive: true
 		})
 		tooltip.addEventListener('pointerleave', () => {
 			closeTooltip()
