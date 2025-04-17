@@ -1,0 +1,71 @@
+---
+import Tooltip from '@/native-components/Tooltip/index.astro'
+import TextField from '@/native-components/TextField/index.astro'
+import TextFieldButton from '@/native-components/TextField/TextFieldButton.astro'
+import CheckBox from '@/native-components/CheckBox/index.astro'
+import Icon from '@/native-components/Icon/index.astro'
+import { ElementIds, ELEMENT_ID_PREFIX } from '../../_scripts/_enums'
+import CSS from '../../_index.module.scss'
+import { ICON_ATTACH, ICON_SEARCH } from '@/constants/icons'
+---
+<div
+	class={CSS.bodyPage}
+	role="tabpanel"
+	id={ELEMENT_ID_PREFIX + ElementIds.panelTextfield}>
+	<h2>TextField</h2>
+	<p>A TextField is a UI element that allows users to input text. It typically includes a text box for entering content and may have additional features like labels, placeholders, and validation rules.</p>
+	<div class={CSS.bodyPlayground}>
+		<Tooltip>
+			<TextField
+				id={ELEMENT_ID_PREFIX + ElementIds.panelTextfieldPreview}
+				c:attrInput={{
+					style: "padding:0",
+					placeholder: 'Type here ...',
+					id: ELEMENT_ID_PREFIX + ElementIds.panelTextfieldPreviewInput
+				}}>
+				<Icon
+					data-tooltip="Icon"
+					style="margin-left:8px"
+					c:icon={ICON_ATTACH}
+					slot="leading"
+					id={ELEMENT_ID_PREFIX + ElementIds.panelTextfieldPreviewLeading}
+				/>
+				<TextFieldButton
+					aria-label="Search"
+					data-tooltip="TextFieldButton"
+					style="margin-right:4px"
+					slot="trailing"
+					id={ELEMENT_ID_PREFIX + ElementIds.panelTextfieldPreviewTrailing}>
+					<Icon c:icon={ICON_SEARCH}/>
+				</TextFieldButton>
+			</TextField>
+		</Tooltip>
+	</div>
+	<div class={CSS.bodyOptions} id={ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptions}>
+		<CheckBox
+			c:attrInput={{
+				id: ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptionsLeading,
+				checked: true
+			}}>
+			Leading
+		</CheckBox>
+		<CheckBox
+			c:attrInput={{
+				id: ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptionsTrailing,
+				checked: true
+			}}>
+			Trailing
+		</CheckBox>
+		<CheckBox
+			c:attrInput={{id: ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptionsReadonly}}>
+			Read only
+		</CheckBox>
+		<CheckBox
+			c:attrInput={{
+				id: ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptionsPlaceholder,
+				checked: true
+			}}>
+			Placeholder
+		</CheckBox>
+	</div>
+</div>

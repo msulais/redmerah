@@ -10,6 +10,7 @@ export enum ElementIds {
 	appbarSettingsMenu,
 	appbarSettingsAnimationMenu,
 	appbarSettingsThemeMenu,
+	navigation,
 	panelButtons,
 	panelButtonsPreview1,
 	panelButtonsPreview2,
@@ -25,7 +26,16 @@ export enum ElementIds {
 	panelCheckboxPreview2,
 	panelCheckboxPreview3,
 	panelCheckboxOptionsDisabled,
-	navigation
+	panelTextfield,
+	panelTextfieldPreview,
+	panelTextfieldPreviewInput,
+	panelTextfieldPreviewLeading,
+	panelTextfieldPreviewTrailing,
+	panelTextfieldOptions,
+	panelTextfieldOptionsLeading,
+	panelTextfieldOptionsTrailing,
+	panelTextfieldOptionsReadonly,
+	panelTextfieldOptionsPlaceholder,
 }
 
 export enum RadioGroupNames {

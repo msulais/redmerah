@@ -1,5 +1,7 @@
 import { updateButton, type ButtonVariant } from "@/native-components/Button"
 import { ELEMENT_ID_PREFIX, ElementIds } from "./_enums"
+import { AnimationEffectTiming } from "@/enums/animation"
+import { isAnimationAllowed } from "@/utils/animation"
 
 const $ = (id: string) => document.getElementById(id)
 
@@ -52,9 +54,78 @@ function checkBoxPanel(): void {
 	})
 }
 
+function textFieldPanel(): void {
+	const animationOptions = {duration: 200, easing: AnimationEffectTiming.spring}
+	const textField = $(ELEMENT_ID_PREFIX + ElementIds.panelTextfieldPreview) as HTMLDivElement
+	const input = $(ELEMENT_ID_PREFIX + ElementIds.panelTextfieldPreviewInput) as HTMLInputElement
+	const leading = $(ELEMENT_ID_PREFIX + ElementIds.panelTextfieldPreviewLeading) as HTMLElement
+	const trailing = $(ELEMENT_ID_PREFIX + ElementIds.panelTextfieldPreviewTrailing) as HTMLButtonElement
+	const options = $(ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptions)
+	const optionLeading = $(ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptionsLeading) as HTMLInputElement
+	const optionTrailing = $(ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptionsTrailing) as HTMLInputElement
+	const optionReadonly = $(ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptionsReadonly) as HTMLInputElement
+	const optionPlaceholder = $(ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptionsPlaceholder) as HTMLInputElement
+
+	options?.addEventListener('change', ev => {
+		const target = ev.target as HTMLInputElement
+		const checked = target.checked
+		const textFieldRect = textField.getBoundingClientRect()
+		const inputRect = input.getBoundingClientRect()
+		const trailingRect = trailing.getBoundingClientRect()
+		switch (target) {
+		case optionLeading:
+			leading.style.setProperty('display', checked? null : "none")
+			input.style.setProperty('padding-left', checked? '0px' : '12px')
+			if (isAnimationAllowed() && checked) leading.animate({
+				scale: [0, 1]
+			}, animationOptions)
+			break
+		case optionTrailing:
+			trailing.style.setProperty('display', checked? null : "none")
+			input.style.setProperty('padding-right', checked? '0px' : '12px')
+			if (isAnimationAllowed() && checked) trailing.animate({
+				scale: [0, 1]
+			}, animationOptions)
+			break
+		case optionReadonly:
+			input.readOnly = checked
+			break
+		case optionPlaceholder:
+			input.placeholder = checked? "Type here ..." : ''
+		}
+
+		if (!isAnimationAllowed()) return
+
+		switch (target) {
+		case optionLeading:
+		case optionTrailing:
+			const inputRect2 = input.getBoundingClientRect()
+			const textFieldRect2 = textField.getBoundingClientRect()
+			const trailingRect2 = trailing.getBoundingClientRect()
+			textField.animate({
+				width: [textFieldRect.width + 'px', textFieldRect2.width + 'px'],
+			}, animationOptions)
+			input.animate({
+				transform: [`translateX(${inputRect.left - inputRect2.left}px)`, 'translateX(0)'],
+				paddingLeft: target === optionLeading? [
+					checked? '12px' : '0px',
+					checked? '0' : '12px'
+				] : [],
+			}, animationOptions)
+			if (trailing.checkVisibility() && target !== optionTrailing) {
+				trailing.animate({
+					transform: [`translateX(${trailingRect.left - trailingRect2.left}px)`, 'translateX(0)']
+				}, animationOptions)
+			}
+			break
+		}
+	})
+}
+
 function _(): void {
 	buttonPanel()
 	checkBoxPanel()
+	textFieldPanel()
 }
 
 export default _

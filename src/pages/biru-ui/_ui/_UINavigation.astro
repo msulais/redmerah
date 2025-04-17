@@ -12,13 +12,18 @@ const items: {
 	{
 		name: 'Buttons',
 		controls: ELEMENT_ID_PREFIX + ElementIds.panelButtons,
-		selected: true,
+		selected: false,
 	},
 	{
 		name: 'CheckBox',
 		controls: ELEMENT_ID_PREFIX + ElementIds.panelCheckbox,
 		selected: false
-	}
+	},
+	{
+		name: 'TextField',
+		controls: ELEMENT_ID_PREFIX + ElementIds.panelTextfield,
+		selected: true
+	},
 ].sort((a, b) => a.name.localeCompare(b.name))
 ---
 
