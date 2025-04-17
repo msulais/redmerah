@@ -1,0 +1,34 @@
+---
+import { attrClassList } from '@/utils/attributes'
+import {
+	type TextFieldProps,
+	TextFieldClasses
+} from '.'
+import './index.scss'
+
+type Props = TextFieldProps
+const {
+	'class': className,
+	'c:attrInput': attrInput = {},
+	'c:attrLeading': attrLeading = {},
+	'c:attrTrailing': attrTrailing = {},
+	...other
+} = Astro.props
+const {'class': inputClassName, type: inputType ="text", ...inputOther} = attrInput
+const {'class': leadingClassName, ...leadingOther} = attrLeading
+const {'class': trailingClassName, ...trailingOther} = attrTrailing
+---
+
+<div class={attrClassList(TextFieldClasses.textfield, className)} {...other}>
+	<div class={attrClassList(TextFieldClasses.leading, leadingClassName)} {...leadingOther}>
+		<slot name="leading"/>
+	</div>
+	<input
+		type={inputType}
+		class={attrClassList(TextFieldClasses.input, inputClassName)}
+		{...inputOther}
+	/>
+	<div class={attrClassList(TextFieldClasses.trailing, trailingClassName)} {...trailingOther}>
+		<slot name="trailing"/>
+	</div>
+</div>

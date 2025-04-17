@@ -1,0 +1,18 @@
+---
+import { type TextFieldButtonProps, TextFieldClasses } from '.'
+import Button from '@/native-components/Button/index.astro'
+import './index.scss'
+import { attrClassList } from '@/utils/attributes'
+
+type Props = TextFieldButtonProps
+const {
+	'class': className,
+	...other
+} = Astro.props
+---
+
+<Button
+	class={attrClassList(TextFieldClasses.button, className)}
+	{...other}>
+	<slot/>
+</Button>

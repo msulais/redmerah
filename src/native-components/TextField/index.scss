@@ -1,0 +1,82 @@
+.c-textfield {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	min-height: 32px;
+	border-radius: 4px;
+	background-color: rgba(var(--g-color-on-surface), var(--g-opacity2));
+	border: 1px solid transparent;
+	border-bottom: 2px solid rgb(var(--g-color-accent));
+
+	@media (hover: none) {
+		min-height: 40px;
+		border-radius: 8px;
+	}
+
+	:root[data-animation=on] & {
+		transition-property: background-color, border-color;
+		transition-duration: .2s;
+	}
+
+	@media (prefers-reduced-motion: no-preference) {
+		:root[data-animation=auto] & {
+			transition-property: background-color, border-color;
+			transition-duration: .2s;
+		}
+	}
+
+	&:has( > .c-textfield-input:focus:read-write) {
+		border-color: rgb(var(--g-color-accent));
+	}
+
+	&:has( > .c-textfield-input:is(:read-only,:disabled)) {
+		border-bottom-color: rgba(var(--g-color-on-surface), var(--g-opacity5));
+	}
+
+	&:has( > .c-textfield-input:read-write) {
+		@media (hover:hover) {
+			&:has( > .c-textfield-input:hover) {
+				background-color: rgba(var(--g-color-on-surface), var(--g-opacity1));
+			}
+		}
+
+		&:has( > .c-textfield-input:active) {
+			background-color: rgba(var(--g-color-on-surface), var(--g-opacity0));
+		}
+	}
+}
+
+.c-textfield-btn {
+	padding: 0 8px;
+	min-height: 24px;
+
+	@media (hover: none) {
+		min-height: 32px;
+	}
+}
+
+.c-textfield-input {
+	font-size: var(--g-font-size-xs);
+	border: none;
+	padding: 0 12px;
+	outline: none;
+	background-color: transparent;
+	height: 100%;
+	min-height: 29px;
+
+	@media (hover: none) {
+		min-height: 37px;
+	}
+
+	&::placeholder {
+		color: rgba(var(--g-color-on-surface), .5);
+	}
+}
+
+.c-textfield-leading {
+	display: contents;
+}
+
+.c-textfield-trailing {
+	display: contents;
+}
