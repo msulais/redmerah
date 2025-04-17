@@ -204,7 +204,8 @@ function _initSubMenu(submenuitem: HTMLElement): void {
 		isParentHovered = false
 	}
 
-	function menuOnBeforeOpen(ev: Event): void {
+	function menuOnBeforeClose(ev: Event): void {
+		if (timeId !== null) clearTimeout(timeId)
 		for (const menu of getAllSubMenu(ev.target as HTMLElement)) {
 			closePopover(menu).then(() => {
 				document.body.appendChild(menu)
@@ -248,7 +249,7 @@ function _initSubMenu(submenuitem: HTMLElement): void {
 			const target = elements.target
 			const content = elements.parentContent
 			if (isOpen) {
-				parent?.addEventListener(PopoverEvents.beforeClose, menuOnBeforeOpen)
+				parent?.addEventListener(PopoverEvents.beforeClose, menuOnBeforeClose)
 				content?.addEventListener('pointerenter', menuContentOnPointerEnter)
 				content?.addEventListener('pointerleave', menuContentOnPointerLeave)
 				submenuitem.addEventListener('pointerenter', subMenuOnPointerEnter)
@@ -264,7 +265,7 @@ function _initSubMenu(submenuitem: HTMLElement): void {
 				setTimeout(() => {
 					content?.removeEventListener('pointerenter', menuContentOnPointerEnter)
 					content?.removeEventListener('pointerleave', menuContentOnPointerLeave)
-					parent?.removeEventListener(PopoverEvents.beforeClose, menuOnBeforeOpen)
+					parent?.removeEventListener(PopoverEvents.beforeClose, menuOnBeforeClose)
 					submenuitem.removeEventListener('pointerenter', subMenuOnPointerEnter)
 					submenuitem.removeEventListener('pointerleave', subMenuOnPointerLeave)
 					submenuitem.removeEventListener('click'       , subMenuOnClick)
