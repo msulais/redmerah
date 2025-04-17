@@ -41,6 +41,10 @@ kbd {
 	box-shadow: 0 .1em .3em -.15em rgba(var(--g-color-on-surface), 1);
 }
 
+label {
+	font-size: 14px;
+}
+
 pre > code {
 	font-family: var(--g-font-family-monospace);
 	white-space: pre;

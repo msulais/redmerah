@@ -5,7 +5,6 @@ import IconButton from '@/native-components/Button/IconButton.astro'
 import Icon from '@/native-components/Icon/index.astro'
 import Tooltip from '@/native-components/Tooltip/index.astro'
 import Select from '@/native-components/Select/index.astro'
-import Label from '@/native-components/Label/index.astro'
 import SelectOption from '@/native-components/Select/SelectOption.astro'
 import { ICON_ADD } from '@/constants/icons'
 import { ButtonVariant } from '@/native-components/Button'
@@ -32,7 +31,7 @@ import CSS from '../../_index.module.scss'
 		</Tooltip>
 	</div>
 	<div class={CSS.bodyOptions} id={ELEMENT_ID_PREFIX + ElementIds.panelButtonsOptions}>
-		<Label id={ELEMENT_ID_PREFIX + ElementIds.panelButtonsOptionsVariantLabel}>Variant:</Label>
+		<label id={ELEMENT_ID_PREFIX + ElementIds.panelButtonsOptionsVariantLabel}>Variant:</label>
 		<Select aria-labelledby={ELEMENT_ID_PREFIX + ElementIds.panelButtonsOptionsVariantLabel} id={ELEMENT_ID_PREFIX + ElementIds.panelButtonsOptionsVariant} style="min-width: 140px">
 			<SelectOption value={ButtonVariant.filled}>Filled</SelectOption>
 			<SelectOption value={ButtonVariant.tonal}>Tonal</SelectOption>
