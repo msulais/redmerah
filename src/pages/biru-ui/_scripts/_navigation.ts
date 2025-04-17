@@ -42,7 +42,7 @@ function initNavigationEvents(): void {
 					opacity: [0, 1],
 					transform: ['translateY(64px)', 'translateY(0)']
 				}, {
-					duration: 300,
+					duration: 500,
 					easing: AnimationEffectTiming.spring
 				})
 			}
