@@ -6,23 +6,22 @@
 // - Active (pressed)
 // - Disabled
 
-.c-btn {
-	--c-btn-border-radius: 4px;
-	--c-btn-icon-animation: none;
+.c-button {
+	--c-button-border-radius: 4px;
+	--c-button-icon-animation: none;
 
 	padding: 4px 12px;
 	border: none;
 	display: flex;
 	background-color: transparent;
 	align-items: center;
-	border-radius: var(--c-btn-border-radius);
+	border-radius: var(--c-button-border-radius);
 	display: flex;
 	gap: 8px;
 	font-size: var(--g-font-size-xs);
 	line-height: normal;
 	justify-content: center;
 	min-height: 32px;
-	position: relative;
 	scrollbar-width: none;
 	user-select: none;
 	-ms-overflow-style: none;
@@ -58,7 +57,7 @@
 	}
 
 	&:not(:is(:disabled,a:not([href]))){
-		&[data-c-focused]:not([data-c-focused=false]) {
+		&[data-c-button-focused] {
 			background-color: rgba(var(--g-color-on-surface), var(--g-opacity2));
 		}
 
@@ -74,12 +73,12 @@
 
 			> .c-icon {
 				:root[data-animation=on] & {
-					animation: var(--c-btn-icon-animation);
+					animation: var(--c-button-icon-animation);
 				}
 
 				@media (prefers-reduced-motion: no-preference) {
 					:root[data-animation=auto] & {
-						animation: var(--c-btn-icon-animation);
+						animation: var(--c-button-icon-animation);
 					}
 				}
 			}
@@ -87,21 +86,21 @@
 	}
 }
 
-.c-btn[data-c-focused] {
+.c-button[data-c-button-focused] {
 	&:not(:is(:disabled,a:not([href]))) {
 		background-color: rgba(var(--g-color-on-surface), var(--g-opacity2));
 
-		&[data-c-variant=filled] {
+		&[data-c-button-variant=filled] {
 			background-color: rgba(var(--g-color-accent), var(--g-opacity-inv3));
 		}
 
-		&[data-c-variant=tonal] {
+		&[data-c-button-variant=tonal] {
 			background-color: rgba(var(--g-color-on-surface), var(--g-opacity1));
 		}
 	}
 }
 
-.c-btn[data-c-variant=filled] {
+.c-button[data-c-button-variant=filled] {
 	background-color: rgb(var(--g-color-accent));
 	color: rgb(var(--g-color-on-accent));
 
@@ -118,7 +117,7 @@
 	}
 }
 
-.c-btn[data-c-variant=tonal] {
+.c-button[data-c-button-variant=tonal] {
 	background-color: rgba(var(--g-color-on-surface), var(--g-opacity2));
 
 	&:not(:is(:disabled,a:not([href]))){
@@ -134,6 +133,6 @@
 	}
 }
 
-.c-btn[data-c-variant=outlined] {
+.c-button[data-c-button-variant=outlined] {
 	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity-border));
 }

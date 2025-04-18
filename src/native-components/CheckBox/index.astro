@@ -9,14 +9,14 @@ import './index.scss'
 type Props = CheckBoxProps
 const {
 	'class': className,
-	'c:attrInput': attrInput = {},
-	'c:attrIcon': attrIcon = {},
-	'c:attrContent': attrContent = {},
+	CheckBoxInputAttr   = {},
+	CheckBoxIconAttr    = {},
+	CheckBoxContentAttr = {},
 	...other
 } = Astro.props
-const {'class': inputClassName, autocomplete = 'off', type = 'checkbox', ...inputOther} = attrInput
-const {'class': iconClassName, ...iconOther} = attrIcon
-const {'class': contentClassName, ...contentOther} = attrContent
+const {'class': inputClassName, autocomplete = 'off', type = 'checkbox', ...inputOther} = CheckBoxInputAttr
+const {'class': iconClassName, ...iconOther} = CheckBoxIconAttr
+const {'class': contentClassName, ...contentOther} = CheckBoxContentAttr
 ---
 
 <label class={attrClassList(CheckBoxClasses.checkbox, className)} {...other}>

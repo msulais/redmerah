@@ -9,14 +9,14 @@ import './index.scss'
 type Props = TextFieldProps
 const {
 	'class': className,
-	'c:attrInput': attrInput = {},
-	'c:attrLeading': attrLeading = {},
-	'c:attrTrailing': attrTrailing = {},
+	TextFieldInputAttr    = {},
+	TextFieldLeadingAttr  = {},
+	TextFieldTrailingAttr = {},
 	...other
 } = Astro.props
-const {'class': inputClassName, type: inputType ="text", ...inputOther} = attrInput
-const {'class': leadingClassName, ...leadingOther} = attrLeading
-const {'class': trailingClassName, ...trailingOther} = attrTrailing
+const {'class': inputClassName   , type: inputType ="text", ...inputOther} = TextFieldInputAttr
+const {'class': leadingClassName , ...leadingOther } = TextFieldLeadingAttr
+const {'class': trailingClassName, ...trailingOther} = TextFieldTrailingAttr
 ---
 
 <div class={attrClassList(TextFieldClasses.textfield, className)} {...other}>

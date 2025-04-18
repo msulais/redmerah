@@ -45,55 +45,58 @@ type SubMenuItemProps = Omit<MenuItemProps, 'aria-controls'> & {
 type MenuIndentProps = astroHTML.JSX.HTMLAttributes
 
 type RadioMenuItemProps = astroHTML.JSX.LabelHTMLAttributes & {
-	'c:attrLeading'?: astroHTML.JSX.HTMLAttributes
-	'c:attrInput'  ?: astroHTML.JSX.InputHTMLAttributes
-	'c:attrIcon'   ?: IconProps
-	'c:attrContent'?: astroHTML.JSX.HTMLAttributes
+	RadioMenuItemLeadingAttr?: astroHTML.JSX.HTMLAttributes
+	RadioMenuItemInputAttr  ?: astroHTML.JSX.InputHTMLAttributes
+	RadioMenuItemIconAttr   ?: IconProps
+	RadioMenuItemContentAttr?: astroHTML.JSX.HTMLAttributes
 }
 
 type MenuIndentUpdateOptions = {
-	refs?: {
+	MenuIndentRefs?: {
 		indent?(el: HTMLDivElement): unknown
 	}
 }
 
-type MenuUpdateOptions = Omit<PopoverUpdateOptions, 'refs'> & {
-	role?: astroHTML.JSX.AriaRole | boolean
-	refs?: PopoverUpdateOptions['refs'] & {
+type MenuUpdateOptions = PopoverUpdateOptions & {
+	MenuRole?: astroHTML.JSX.AriaRole | boolean
+	MenuRefs?: {
 		menu?(el: HTMLDivElement): unknown
 	}
 }
 
-type MenuItemUpdateOptions = Omit<ButtonUpdateOptions, 'refs'> & {
-	role?: astroHTML.JSX.AriaRole | boolean
-	refs?: ButtonUpdateOptions['refs'] & {
+type MenuItemUpdateOptions = ButtonUpdateOptions & {
+	MenuItemRole?: astroHTML.JSX.AriaRole | boolean
+	MenuItemRefs?: {
 		menuitem?(el: HTMLButtonElement): unknown
 	}
 }
 
 type SubMenuItemUpdateOptions = MenuItemUpdateOptions & {
-	ariaExpanded?: astroHTML.JSX.AriaAttributes['aria-expanded'] | boolean
-	ariaControls?: astroHTML.JSX.AriaAttributes['aria-controls'] | boolean
-	ariaHaspopup?: astroHTML.JSX.AriaAttributes['aria-haspopup'] | boolean
+	SubMenuItemAriaExpanded?: astroHTML.JSX.AriaAttributes['aria-expanded'] | boolean
+	SubMenuItemAriaControls?: astroHTML.JSX.AriaAttributes['aria-controls'] | boolean
+	SubMenuAriaHaspopup    ?: astroHTML.JSX.AriaAttributes['aria-haspopup'] | boolean
+	SubMenuRefs            ?: {
+		menuitem?(el: HTMLButtonElement): unknown
+	}
 }
 
-type LinkMenuItemUpdateOptions = Omit<LinkButtonUpdateOptions, 'refs'> & {
-	role?: astroHTML.JSX.AriaRole | boolean
-	refs?: LinkButtonUpdateOptions['refs'] & {
+type LinkMenuItemUpdateOptions = LinkButtonUpdateOptions & {
+	LinkMenuItemRole?: astroHTML.JSX.AriaRole | boolean
+	LinkMenuItemRefs?: {
 		menuitem?(el: HTMLAnchorElement): unknown
 	}
 }
 
 enum MenuClasses {
 	menu             = 'c-menu',
-	item             = 'c-menu-item',
-	indent           = 'c-menu-indent',
-	submenuItem      = 'c-menu-submenu-item',
-	radioItem        = 'c-menu-radio-item',
-	radioItemLeading = 'c-menu-radio-item-leading',
-	radioItemIcon    = 'c-menu-radio-item-icon',
-	radioItemInput   = 'c-menu-radio-item-input',
-	radioItemContent = 'c-menu-radio-item-content',
+	item             = menu + '-item',
+	indent           = menu + '-indent',
+	submenuItem      = menu + '-submenu-item',
+	radioItem        = menu + '-radio-item',
+	radioItemLeading = radioItem + '-leading',
+	radioItemIcon    = radioItem + '-icon',
+	radioItemInput   = radioItem + '-input',
+	radioItemContent = radioItem + '-content',
 }
 
 const REGISTERED_SUBMENUITEM: HTMLButtonElement[] = []
@@ -235,9 +238,9 @@ function _initSubMenu(submenuitem: HTMLElement): void {
 	function subMenuOnToggleOpen(ev: CustomEvent<PopoverToggleOpenDetail>): void {
 		const open = ev.detail.open
 		submenuitem.setAttribute('aria-expanded', String(open))
-		if (submenuitem.classList.contains(ButtonClasses.btn)) {
+		if (submenuitem.classList.contains(ButtonClasses.button)) {
 			updateMenuItem(submenuitem as HTMLButtonElement, {
-				focused: open
+				ButtonFocused: open
 			})
 		}
 	}
@@ -292,7 +295,7 @@ function updateMenu(menu: HTMLDivElement, options?: MenuUpdateOptions): HTMLDivE
 		menu.setAttribute('role', 'menu')
 	}
 
-	const role = options?.role
+	const role = options?.MenuRole
 	if (role === false) {
 
 		// NOTE:
@@ -304,7 +307,7 @@ function updateMenu(menu: HTMLDivElement, options?: MenuUpdateOptions): HTMLDivE
 		menu.setAttribute('role', role)
 	}
 
-	options?.refs?.menu?.(menu)
+	options?.MenuRefs?.menu?.(menu)
 	return menu
 }
 
@@ -320,7 +323,7 @@ function updateMenuItem(menuitem: HTMLButtonElement, options?: MenuItemUpdateOpt
 		menuitem.setAttribute('role', 'menuitem')
 	}
 
-	const role = options?.role
+	const role = options?.MenuItemRole
 	if (role === false) {
 
 		// NOTE:
@@ -332,7 +335,7 @@ function updateMenuItem(menuitem: HTMLButtonElement, options?: MenuItemUpdateOpt
 		menuitem.setAttribute('role', role)
 	}
 
-	options?.refs?.menuitem?.(menuitem)
+	options?.MenuItemRefs?.menuitem?.(menuitem)
 	return menuitem
 }
 
@@ -348,7 +351,7 @@ function updateLinkMenuItem(menuitem: HTMLAnchorElement, options: LinkMenuItemUp
 		menuitem.setAttribute('role', 'menuitem')
 	}
 
-	const role = options?.role
+	const role = options?.LinkMenuItemRole
 	if (role === false) {
 
 		// NOTE:
@@ -359,6 +362,7 @@ function updateLinkMenuItem(menuitem: HTMLAnchorElement, options: LinkMenuItemUp
 	else if (role && role !== true) {
 		menuitem.setAttribute('role', role)
 	}
+	options.LinkMenuItemRefs?.menuitem?.(menuitem)
 	return menuitem
 }
 
@@ -371,7 +375,7 @@ function createSubMenuItem(options: Omit<SubMenuItemUpdateOptions, 'ariaControls
 function updateSubMenuItem(submenuitem: HTMLButtonElement, options?: SubMenuItemUpdateOptions): HTMLButtonElement {
 	updateMenuItem(submenuitem)
 	submenuitem.classList.add(MenuClasses.submenuItem)
-	const ariaControls = options?.ariaControls
+	const ariaControls = options?.SubMenuItemAriaControls
 	if (ariaControls === false) {
 		submenuitem.removeAttribute('aria-controls')
 	}
@@ -379,7 +383,7 @@ function updateSubMenuItem(submenuitem: HTMLButtonElement, options?: SubMenuItem
 		submenuitem.setAttribute('aria-controls', ariaControls)
 	}
 
-	const ariaExpanded = options?.ariaExpanded
+	const ariaExpanded = options?.SubMenuItemAriaExpanded
 	if (ariaExpanded === false) {
 		submenuitem.removeAttribute('aria-expanded')
 	}
@@ -387,13 +391,15 @@ function updateSubMenuItem(submenuitem: HTMLButtonElement, options?: SubMenuItem
 		submenuitem.setAttribute('aria-expanded', ariaExpanded)
 	}
 
-	const ariaHaspopup = options?.ariaHaspopup
+	const ariaHaspopup = options?.SubMenuAriaHaspopup
 	if (ariaHaspopup === false) {
 		submenuitem.removeAttribute('aria-haspopup')
 	}
 	else if (ariaHaspopup && ariaHaspopup !== true) {
 		submenuitem.setAttribute('aria-haspopup', ariaHaspopup)
 	}
+
+	options?.SubMenuRefs?.menuitem?.(submenuitem)
 	return submenuitem
 }
 
@@ -425,7 +431,7 @@ function createMenuIndent(options?: MenuIndentUpdateOptions): HTMLDivElement {
 
 function updateMenuIndent(indent: HTMLDivElement, options?: MenuIndentUpdateOptions): HTMLDivElement {
 	indent.classList.add(MenuClasses.indent)
-	options?.refs?.indent?.(indent)
+	options?.MenuIndentRefs?.indent?.(indent)
 	return indent
 }
 

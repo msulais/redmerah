@@ -1,10 +1,10 @@
 .c-select {
+	--c-select-z-index: var(--g-z-index-select-popover);
 	position: relative;
-	--c-z-index: var(--g-z-index-select-popover);
 }
 
 .c-select-content {
-	.c-select[data-c-expanded] & {
+	.c-select[data-c-select-expanded] & {
 		max-height: calc(100dvh - 16px);
 		max-width: 100%;
 		width: 100%;
@@ -24,13 +24,14 @@
 	transform: translateY(-50%);
 	pointer-events: none;
 
-	.c-select:not([data-c-use-icon]) &,
-	.c-select[data-c-expanded] & {
+	.c-select:not([data-c-select-use-icon]) &,
+	.c-select[data-c-select-expanded] & {
 		display: none;
 	}
 }
 
-.c-select-option.c-btn {
+.c-select-option.c-button {
+	position: relative;
 	width: 100%;
 	justify-content: flex-start;
 
@@ -60,16 +61,12 @@
 		}
 	}
 
-	.c-select:not([data-c-expanded])[data-c-variant=filled] & {
+	.c-select:not([data-c-select-expanded])[data-c-select-variant=filled] & {
 		background-color: rgb(var(--g-color-accent));
 		color: rgb(var(--g-color-on-accent));
 
-		&:is(:disabled,[data-c-disabled]:not([data-c-disabled=false])) {
-			background-color: rgba(var(--g-color-on-surface), var(--g-opacity1));
-		}
-
-		&:not(:is(:disabled,[data-c-disabled]:not([data-c-disabled=false]))){
-			&[data-c-focused]:not([data-c-focused=false]) {
+		&:not(:disabled){
+			&[data-c-button-focused] {
 				background-color: rgba(var(--g-color-accent), var(--g-opacity-inv3));
 			}
 
@@ -85,15 +82,11 @@
 		}
 	}
 
-	.c-select:not([data-c-expanded])[data-c-variant=tonal] & {
+	.c-select:not([data-c-select-expanded])[data-c-select-variant=tonal] & {
 		background-color: rgba(var(--g-color-on-surface), var(--g-opacity2));
 
-		&:is(:disabled,[data-c-disabled]:not([data-c-disabled=false])) {
-			background-color: rgba(var(--g-color-on-surface), var(--g-opacity0));
-		}
-
-		&:not(:is(:disabled,[data-c-disabled]:not([data-c-disabled=false]))){
-			&[data-c-focused]:not([data-c-focused=false]) {
+		&:not(:disabled){
+			&[data-c-button-focused] {
 				background-color: rgba(var(--g-color-on-surface), var(--g-opacity1));
 			}
 
@@ -109,27 +102,12 @@
 		}
 	}
 
-	.c-select:not([data-c-expanded])[data-c-variant=outlined] & {
+	.c-select:not([data-c-select-expanded])[data-c-select-variant=outlined] & {
 		border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity-border));
-
-		&:is(:disabled,[data-c-disabled]:not([data-c-disabled=false])) {
-			border: none;
-			background-color: rgba(var(--g-color-on-surface), var(--g-opacity0));
-		}
 	}
 
-	.c-select[data-c-expanded] & {
+	.c-select[data-c-select-expanded] & {
 		outline-offset: 0px;
-
-		&:disabled {
-			color: rgba(var(--g-color-on-surface), var(--g-opacity-inv4));
-			cursor: not-allowed;
-			background-color: transparent !important;
-
-			& * {
-				cursor: not-allowed;
-			}
-		}
 	}
 
 	&:is([aria-selected=false],:disabled) {
@@ -139,26 +117,22 @@
 			min-height: 40px;
 		}
 
-		.c-select:not([data-c-expanded]) & {
+		.c-select:not([data-c-select-expanded]) & {
 			display: none;
 		}
 	}
 
 	&[aria-selected=true]:not(:disabled) {
-		.c-select[data-c-use-icon]:not([data-c-expanded]) & {
+		.c-select[data-c-select-use-icon]:not([data-c-select-expanded]) & {
 			padding-right: 48px;
 		}
 
-		.c-select[data-c-expanded] & {
+		.c-select[data-c-select-expanded] & {
 			// .c-tonal-btn {
 			background-color: rgba(var(--g-color-on-surface), var(--g-opacity2));
 
-			&:is(:disabled,[data-c-disabled]:not([data-c-disabled=false])) {
-				background-color: rgba(var(--g-color-on-surface), var(--g-opacity0));
-			}
-
-			&:not(:is(:disabled,[data-c-disabled]:not([data-c-disabled=false]))) {
-				&[data-c-focused]:not([data-c-focused=false]) {
+			&:not(:disabled) {
+				&[data-c-button-focused] {
 					background-color: rgba(var(--g-color-on-surface), var(--g-opacity1));
 				}
 
@@ -181,27 +155,22 @@
 				@media (hover: none) {
 					height: calc(100% - 20px);
 				}
-
 			}
 		}
 	}
 }
 
-.c-select-placeholder.c-btn {
-	.c-select[data-c-use-icon] & {
+.c-select-placeholder.c-button {
+	.c-select[data-c-select-use-icon] & {
 		padding-right: 48px;
 	}
 
-	.c-select:not([data-c-expanded])[data-c-variant=filled] & {
+	.c-select:not([data-c-select-expanded])[data-c-select-variant=filled] & {
 		background-color: rgb(var(--g-color-accent));
 		color: rgb(var(--g-color-on-accent));
 
-		&:is(:disabled,[data-c-disabled]:not([data-c-disabled=false])) {
-			background-color: rgba(var(--g-color-on-surface), var(--g-opacity1));
-		}
-
-		&:not(:is(:disabled,[data-c-disabled]:not([data-c-disabled=false]))){
-			&[data-c-focused]:not([data-c-focused=false]) {
+		&:not(:disabled){
+			&[data-c-button-focused] {
 				background-color: rgba(var(--g-color-accent), var(--g-opacity-inv3));
 			}
 
@@ -217,15 +186,11 @@
 		}
 	}
 
-	.c-select:not([data-c-expanded])[data-c-variant=tonal] & {
+	.c-select:not([data-c-select-expanded])[data-c-select-variant=tonal] & {
 		background-color: rgba(var(--g-color-on-surface), var(--g-opacity2));
 
-		&:is(:disabled,[data-c-disabled]:not([data-c-disabled=false])) {
-			background-color: rgba(var(--g-color-on-surface), var(--g-opacity0));
-		}
-
-		&:not(:is(:disabled,[data-c-disabled]:not([data-c-disabled=false]))){
-			&[data-c-focused]:not([data-c-focused=false]) {
+		&:not(:disabled){
+			&[data-c-button-focused] {
 				background-color: rgba(var(--g-color-on-surface), var(--g-opacity1));
 			}
 
@@ -241,16 +206,11 @@
 		}
 	}
 
-	.c-select:not([data-c-expanded])[data-c-variant=outlined] & {
+	.c-select:not([data-c-select-expanded])[data-c-select-variant=outlined] & {
 		border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity-border));
-
-		&:is(:disabled,[data-c-disabled]:not([data-c-disabled=false])) {
-			border: none;
-			background-color: rgba(var(--g-color-on-surface), var(--g-opacity0));
-		}
 	}
 
-	.c-select[data-c-expanded] & {
+	.c-select[data-c-select-expanded] & {
 		display: none;
 	}
 
@@ -267,7 +227,7 @@
 	}
 
 
-	.c-select[data-c-expanded] & {
+	.c-select[data-c-select-expanded] & {
 		max-height: calc(100dvh - 16px);
 		max-width: calc(100dvw - 16px);
 		width: max-content;
@@ -277,7 +237,7 @@
 		top: 0;
 		left: 0;
 		box-shadow: var(--g-elevation3);
-		z-index: var(--c-z-index);
+		z-index: var(--c-select-z-index);
 		background-color: rgb(var(--g-color-surface));
 		border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity3));
 

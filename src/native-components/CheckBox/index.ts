@@ -1,14 +1,14 @@
 type CheckBoxProps = astroHTML.JSX.LabelHTMLAttributes & {
-	'c:attrInput'  ?: astroHTML.JSX.InputHTMLAttributes
-	'c:attrIcon'   ?: astroHTML.JSX.SVGAttributes
-	'c:attrContent'?: astroHTML.JSX.HTMLAttributes
+	CheckBoxInputAttr  ?: astroHTML.JSX.InputHTMLAttributes
+	CheckBoxIconAttr   ?: astroHTML.JSX.SVGAttributes
+	CheckBoxContentAttr?: astroHTML.JSX.HTMLAttributes
 }
 
 type CheckBoxUpdateOptions = {
-	children?: (string | Node)[] | boolean
-	disabled?: boolean
-	checked ?: boolean
-	refs    ?: {
+	CheckBoxChildren?: (string | Node)[] | boolean
+	CheckBoxDisabled?: boolean
+	CheckBoxChecked ?: boolean
+	CheckBoxRefs    ?: {
 		checkbox?(el: HTMLLabelElement): unknown
 		input   ?(el: HTMLInputElement): unknown
 		icon    ?(el: SVGSVGElement   ): unknown
@@ -18,9 +18,9 @@ type CheckBoxUpdateOptions = {
 
 enum CheckBoxClasses {
 	checkbox = 'c-checkbox',
-	input    = 'c-checkbox-input',
-	icon     = 'c-checkbox-icon',
-	content  = 'c-checkbox-content'
+	input    = checkbox + '-input',
+	icon     = checkbox + '-icon',
+	content  = checkbox + '-content'
 }
 
 function createCheckBox(options?: CheckBoxUpdateOptions): HTMLLabelElement {
@@ -32,7 +32,7 @@ function updateCheckBox(
 	checkbox: HTMLLabelElement,
 	options?: CheckBoxUpdateOptions
 ): HTMLLabelElement {
-	const refs = options?.refs
+	const refs = options?.CheckBoxRefs
 	checkbox.classList.add(CheckBoxClasses.checkbox)
 
 	// input
@@ -43,12 +43,12 @@ function updateCheckBox(
 		input.classList.add(CheckBoxClasses.input)
 	}
 
-	if (options?.checked !== undefined) {
-		input.checked = options.checked
+	if (options?.CheckBoxChecked !== undefined) {
+		input.checked = options.CheckBoxChecked
 	}
 
-	if (options?.disabled !== undefined) {
-		input.disabled = options.disabled
+	if (options?.CheckBoxDisabled !== undefined) {
+		input.disabled = options.CheckBoxDisabled
 	}
 
 	// icon
@@ -70,7 +70,7 @@ function updateCheckBox(
 		content.classList.add(CheckBoxClasses.content)
 	}
 
-	const children = options?.children
+	const children = options?.CheckBoxChildren
 	if (children === false) {
 		content.replaceChildren()
 	}

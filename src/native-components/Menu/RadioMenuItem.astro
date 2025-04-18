@@ -9,30 +9,30 @@ import './index.scss'
 type Props = RadioMenuItemProps
 const {
 	'class': className,
-	'c:attrLeading': attrLeading = {},
-	'c:attrInput': attrInput = {},
-	'c:attrIcon': attrIcon,
-	'c:attrContent': attrContent = {},
+	RadioMenuItemLeadingAttr = {},
+	RadioMenuItemInputAttr = {},
+	RadioMenuItemIconAttr,
+	RadioMenuItemContentAttr = {},
 	...other
 } = Astro.props
-const {'class': leadingClassName, ...leadingOther} = attrLeading
-const {'class': contentClassName, ...contentOther} = attrContent
+const {'class': leadingClassName, ...leadingOther} = RadioMenuItemLeadingAttr
+const {'class': contentClassName, ...contentOther} = RadioMenuItemContentAttr
 const {
 	'class': iconClassName,
-	'c:icon': iconIcon = ICON_CIRCLE_SMALL,
-	'c:filled': iconFilled = true,
+	IconCode: iconIcon = ICON_CIRCLE_SMALL,
+	IconFilled: iconFilled = true,
 	...iconOther
-} = (attrIcon ?? {})
+} = RadioMenuItemIconAttr ?? {}
 const {
 	'class': inputClassName,
 	type: inputType = "radio",
 	role: inputRole = "menuitemradio",
 	autocomplete: inputAutocomplete = 'off',
 	...inputOther
-} = attrInput
+} = RadioMenuItemInputAttr
 ---
 <label
-	class={attrClassList(ButtonClasses.btn, MenuClasses.item, MenuClasses.radioItem, className)}
+	class={attrClassList(ButtonClasses.button, MenuClasses.item, MenuClasses.radioItem, className)}
 	{...other}>
 	<div
 		class={attrClassList(MenuClasses.radioItemLeading, leadingClassName)}
@@ -48,8 +48,8 @@ const {
 	/>
 	<Icon
 		class={attrClassList(MenuClasses.radioItemIcon, iconClassName)}
-		c:icon={iconIcon}
-		c:filled={iconFilled}
+		IconCode={iconIcon}
+		IconFilled={iconFilled}
 		{...iconOther}
 	/>
 	<div

@@ -1,4 +1,4 @@
-.c-side-navigation {
+.c-sidebar {
 	display: flex;
 	flex-direction: column;
 	gap: 4px;
@@ -19,7 +19,7 @@
 	}
 }
 
-.c-side-navigation-content {
+.c-sidebar-content {
 	flex: 1;
 	overflow: auto;
 	display: inherit;
@@ -31,8 +31,9 @@
 	max-height: 100%;
 }
 
-.c-btn.c-side-navigation-btn {
+.c-sidebar-button.c-button {
 	justify-content: flex-start;
+	position: relative;
 
 	&::before {
 		content: '';
@@ -60,7 +61,7 @@
 		}
 	}
 
-	&[data-c-selected]::before {
+	&[data-c-sidebar-button-selected]::before {
 		height: calc(100% - 16px);
 		opacity: 1;
 
@@ -70,17 +71,17 @@
 	}
 }
 
-.c-side-navigation-btn-leading {
+.c-sidebar-button-leading {
 	display: none;
 }
 
-.c-side-navigation-btn-content {
+.c-sidebar-button-content {
 	flex: 1;
 	display: inherit;
 	gap: inherit
 }
 
-.c-side-navigation-footer,
-.c-side-navigation-header {
+.c-sidebar-footer,
+.c-sidebar-header {
 	display: contents;
 }

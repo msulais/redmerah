@@ -7,18 +7,18 @@ import './index.scss'
 type Props = IconProps
 
 const {
-	'c:filled': filled,
-	'c:inline': inline,
-	'c:icon': icon,
 	'class': className,
+	IconFilled,
+	IconInline,
+	IconCode,
 	translate,
 	...other
 } = Astro.props
 ---
 <i
 	class={attrClassList(IconClasses.icon, className)}
-	data-c-inline={inline? '' : undefined}
+	data-c-icon-inline={IconInline? '' : undefined}
 	translate={translate ?? 'no'}
 	{...other}>
-	{String.fromCharCode(icon - (filled? 1 : 0))}
+	{String.fromCharCode(IconCode - (IconFilled? 1 : 0))}
 </i>

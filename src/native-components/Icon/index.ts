@@ -1,20 +1,20 @@
 type IconProps = astroHTML.JSX.HTMLAttributes & {
-	'c:icon'   : number
-	'c:filled'?: boolean
-	'c:inline'?: boolean
+	IconCode   : number
+	IconFilled?: boolean
+	IconInline?: boolean
 }
 
 type IconUpdateOptions = {
-	icon  ?: number
-	filled?: boolean
-	inline?: boolean
-	refs  ?: {
+	IconCode  ?: number
+	IconFilled?: boolean
+	IconInline?: boolean
+	IconRefs  ?: {
 		icon?(el: HTMLElement): unknown
 	}
 }
 
 enum IconAttributes {
-	inline = 'data-c-inline'
+	inline = 'data-c-icon-inline'
 }
 
 enum IconClasses {
@@ -22,7 +22,7 @@ enum IconClasses {
 }
 
 function createIcon(
-	options: Omit<IconUpdateOptions, 'icon'> & { icon: number }
+	options: Omit<IconUpdateOptions, 'IconCode'> & { IconCode: number }
 ): HTMLElement {
 	const icon = document.createElement('i')
 	return updateIcon(icon, options)
@@ -32,14 +32,14 @@ function updateIcon(icon: HTMLElement, options?: IconUpdateOptions): HTMLElement
 	const classList = icon.classList
 	classList.add(IconClasses.icon)
 	icon.translate = false
-	if (options?.inline !== undefined) {
-		icon.toggleAttribute(IconAttributes.inline, options.inline)
+	if (options?.IconInline !== undefined) {
+		icon.toggleAttribute(IconAttributes.inline, options.IconInline)
 	}
-	if (options?.icon) {
-		icon.textContent = String.fromCharCode(options.icon - (options.filled? 1 : 0))
+	if (options?.IconCode) {
+		icon.textContent = String.fromCharCode(options.IconCode - (options.IconFilled? 1 : 0))
 	}
 
-	options?.refs?.icon?.(icon)
+	options?.IconRefs?.icon?.(icon)
 	return icon
 }
 

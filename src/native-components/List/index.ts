@@ -1,17 +1,17 @@
 type ListProps = astroHTML.JSX.HTMLAttributes & {
-	'c:tagName'        ?: string
-	'c:attrContent'    ?: astroHTML.JSX.HTMLAttributes
-	'c:attrLeading'    ?: astroHTML.JSX.HTMLAttributes
-	'c:attrTrailing'   ?: astroHTML.JSX.HTMLAttributes
-	'c:attrDescription'?: astroHTML.JSX.HTMLAttributes
+	ListTagName        ?: string
+	ListContentAttr    ?: astroHTML.JSX.HTMLAttributes
+	ListLeadingAttr    ?: astroHTML.JSX.HTMLAttributes
+	ListTrailingAttr   ?: astroHTML.JSX.HTMLAttributes
+	ListDescriptionAttr?: astroHTML.JSX.HTMLAttributes
 }
 
 type ListUpdateOptions = {
-	leading    ?: (Node | string)[] | boolean
-	children   ?: (Node | string)[] | boolean
-	description?: (Node | string)[] | boolean
-	trailing   ?: (Node | string)[] | boolean
-	refs       ?: {
+	ListLeading    ?: (Node | string)[] | boolean
+	ListChildren   ?: (Node | string)[] | boolean
+	ListDescription?: (Node | string)[] | boolean
+	ListTrailing   ?: (Node | string)[] | boolean
+	ListRefs       ?: {
 		list       ?(el: HTMLElement   ): unknown
 		content    ?(el: HTMLDivElement): unknown
 		description?(el: HTMLDivElement): unknown
@@ -22,10 +22,10 @@ type ListUpdateOptions = {
 
 enum ListClasses {
 	list        = 'c-list',
-	leading     = 'c-list-leading',
-	trailing    = 'c-list-trailing',
-	content     = 'c-list-content',
-	description = 'c-list-description'
+	leading     = list + '-leading',
+	trailing    = list + '-trailing',
+	content     = list + '-content',
+	description = list + '-description'
 }
 
 function createList<T extends HTMLElement>(
@@ -37,21 +37,21 @@ function createList<T extends HTMLElement>(
 }
 
 function updateList<T extends HTMLElement>(list: T, options?: ListUpdateOptions): T {
-	const refs = options?.refs
+	const refs = options?.ListRefs
 	list.classList.add(ListClasses.list)
 
 	// leading
 	let leading = list.querySelector(`.${ListClasses.leading}`) as HTMLDivElement | null
-	if (options?.leading === false) {
+	if (options?.ListLeading === false) {
 		leading?.replaceChildren()
 	}
-	else if (options?.leading && options.leading !== true) {
+	else if (options?.ListLeading && options.ListLeading !== true) {
 		if (!leading) {
 			leading = document.createElement('div')
 			leading.classList.add(ListClasses.leading)
 		}
 
-		leading.replaceChildren(...options.leading)
+		leading.replaceChildren(...options.ListLeading)
 	}
 
 	// content
@@ -63,16 +63,16 @@ function updateList<T extends HTMLElement>(list: T, options?: ListUpdateOptions)
 
 	// content -> description
 	let description = list.querySelector(`.${ListClasses.description}`) as HTMLDivElement | null
-	if (options?.description === false) {
+	if (options?.ListDescription === false) {
 		description?.replaceChildren()
 	}
-	else if (options?.description && options.description !== true) {
+	else if (options?.ListDescription && options.ListDescription !== true) {
 		if (!description) {
 			description = document.createElement('div')
 			description.classList.add(ListClasses.description)
 		}
 
-		description.replaceChildren(...options.description)
+		description.replaceChildren(...options.ListDescription)
 	}
 
 	// content -> children
@@ -83,12 +83,12 @@ function updateList<T extends HTMLElement>(list: T, options?: ListUpdateOptions)
 		children.push(node)
 	}
 
-	if (options?.children === false) {
+	if (options?.ListChildren === false) {
 		children.length = 0
 	}
-	else if (options?.children && options.children !== true) {
+	else if (options?.ListChildren && options.ListChildren !== true) {
 		children.length = 0
-		children.push(...options.children)
+		children.push(...options.ListChildren)
 	}
 
 	content.replaceChildren(...[...children, description].filter(
@@ -97,16 +97,16 @@ function updateList<T extends HTMLElement>(list: T, options?: ListUpdateOptions)
 
 	// trailing
 	let trailing = list.querySelector(`.${ListClasses.trailing}`) as HTMLDivElement | null
-	if (options?.trailing === false) {
+	if (options?.ListTrailing === false) {
 		trailing?.replaceChildren()
 	}
-	else if (options?.trailing && options.trailing !== true) {
+	else if (options?.ListTrailing && options.ListTrailing !== true) {
 		if (!trailing) {
 			trailing = document.createElement('div')
 			trailing.classList.add(ListClasses.trailing)
 		}
 
-		trailing.replaceChildren(...options.trailing)
+		trailing.replaceChildren(...options.ListTrailing)
 	}
 
 	list.replaceChildren(...[leading, content, trailing].filter(

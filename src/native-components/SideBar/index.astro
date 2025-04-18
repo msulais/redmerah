@@ -1,0 +1,49 @@
+---
+import {
+	type SideBarProps,
+	SideBarClasses,
+} from '.'
+import { attrClassList } from '@/utils/attributes'
+import './index.scss'
+
+type Props = SideBarProps
+
+const {
+	'class': className,
+	SideBarMinimized,
+	SideBarTagName     = 'div',
+	SideBarContentAttr = {},
+	SideBarHeaderAttr  = {},
+	SideBarFooterAttr  = {},
+	...other
+} = Astro.props
+const {'class': contentClassName, ...contentOther} = SideBarContentAttr
+const {'class': headerClassName , ...headerOther } = SideBarHeaderAttr
+const {'class': footerClassName , ...footerOther } = SideBarFooterAttr
+const Dynamic = SideBarTagName as 'div'
+---
+
+<Dynamic
+	class={attrClassList(SideBarClasses.sideBar, className)}
+	data-c-sidebar-minimized={SideBarMinimized? '' : undefined}
+	{...other}>
+	{Astro.slots.has('header') &&
+		<div
+			class={attrClassList(SideBarClasses.header, headerClassName)}
+			{...headerOther}>
+			<slot name="header"/>
+		</div>
+	}
+	<div
+		class={attrClassList(SideBarClasses.content, contentClassName)}
+		{...contentOther}>
+		<slot />
+	</div>
+	{Astro.slots.has('footer') &&
+		<div
+			class={attrClassList(SideBarClasses.footer, footerClassName)}
+			{...footerOther}>
+			<slot name="footer"/>
+		</div>
+	}
+</Dynamic>

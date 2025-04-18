@@ -8,18 +8,18 @@ type Props = ListProps
 
 const {
 	'class': className,
-	'c:tagName': tagName = 'div',
-	'c:attrLeading': attrLeading = {},
-	'c:attrTrailing': attrTrailing = {},
-	'c:attrContent': attrContent = {},
-	'c:attrDescription': attrDescription = {},
+	ListTagName         = 'div',
+	ListLeadingAttr     = {},
+	ListTrailingAttr    = {},
+	ListContentAttr     = {},
+	ListDescriptionAttr = {},
 	...other
 } = Astro.props
-const {'class': leadingClassName, ...leadingOther} = attrContent
-const {'class': trailingClassName, ...trailingOther} = attrContent
-const {'class': contentClassName, ...contentOther} = attrContent
-const {'class': descriptionClassName, ...descriptionOther} = attrDescription
-const Dynamic = tagName as 'div'
+const {'class': leadingClassName    , ...leadingOther    } = ListLeadingAttr
+const {'class': trailingClassName   , ...trailingOther   } = ListTrailingAttr
+const {'class': contentClassName    , ...contentOther    } = ListContentAttr
+const {'class': descriptionClassName, ...descriptionOther} = ListDescriptionAttr
+const Dynamic = ListTagName as 'div'
 
 ---
 <Dynamic class={attrClassList(ListClasses.list, className)} {...other}>

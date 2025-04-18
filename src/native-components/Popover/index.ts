@@ -14,30 +14,30 @@ import {
 import { elementFocusAny } from "@/utils/element"
 
 type PopoverProps = astroHTML.JSX.DialogHTMLAttributes & {
-	'c:anchorBy'      ?: string
-	'c:draggable'     ?: boolean
-	'c:important'     ?: boolean
-	'c:autoFocus'     ?: boolean
-	'c:animation'     ?: boolean
-	'c:gap'           ?: number
-	'c:padding'       ?: number
-	'c:position'      ?: PopoverPosition
-	'c:attrDragHandle'?: astroHTML.JSX.HTMLAttributes
-	'c:attrContent'   ?: astroHTML.JSX.HTMLAttributes
+	PopoverAnchorBy      ?: string
+	PopoverDraggable     ?: boolean
+	PopoverImportant     ?: boolean
+	PopoverAutoFocus     ?: boolean
+	PopoverAnimation     ?: boolean
+	PopoverGap           ?: number
+	PopoverPadding       ?: number
+	PopoverPosition      ?: PopoverPosition
+	PopoverDragHandleAttr?: astroHTML.JSX.HTMLAttributes
+	PopoverContentAttr   ?: astroHTML.JSX.HTMLAttributes
 }
 
 type PopoverUpdateOptions = {
-	children ?: (Node | string)[] | boolean
-	anchorBy ?: string | boolean
-	draggable?: boolean
-	important?: boolean
-	autoFocus?: boolean
-	animation?: boolean
-	gap      ?: number | boolean
-	padding  ?: number | boolean
-	position ?: PopoverPosition | boolean
-	popover  ?: 'auto' | 'manual'
-	refs     ?: {
+	PopoverChildren ?: (Node | string)[] | boolean
+	PopoverAnchorBy ?: string | boolean
+	PopoverDraggable?: boolean
+	PopoverImportant?: boolean
+	PopoverAutoFocus?: boolean
+	PopoverAnimation?: boolean
+	PopoverGap      ?: number | boolean
+	PopoverPadding  ?: number | boolean
+	PopoverPosition ?: PopoverPosition | boolean
+	PopoverPopover  ?: 'auto' | 'manual'
+	PopoverRefs     ?: {
 		popover   ?(el: HTMLDivElement): unknown
 		content   ?(el: HTMLDivElement): unknown
 		dragHandle?(el: HTMLDivElement): unknown
@@ -110,25 +110,25 @@ enum PopoverEvents {
 
 enum PopoverAttributes {
 	/** @param id `string` */
-	anchorBy  = 'data-c-anchorby',
+	anchorBy  = 'data-c-popover-anchorby',
 
 	/** @param value `boolean` */
-	animation = 'data-c-animation',
+	animation = 'data-c-popover-animation',
 
 	/** Useful for other component */
-	draggable = 'data-c-draggable',
-	important = 'data-c-important',
-	autoFocus = 'data-c-autofocus',
-	dragging  = 'data-c-dragging',
+	draggable = 'data-c-popover-draggable',
+	important = 'data-c-popover-important',
+	autoFocus = 'data-c-popover-autofocus',
+	dragging  = 'data-c-popover-dragging',
 
 	/** @param value `number` */
-	gap       = 'data-c-gap',
+	gap       = 'data-c-popover-gap',
 
 	/** @param value `number` */
-	padding   = 'data-c-padding',
+	padding   = 'data-c-popover-padding',
 
 	/** @param value `PopoverPosition` */
-	position  = 'data-c-position',
+	position  = 'data-c-popover-position',
 }
 
 enum PopoverClasses {
@@ -155,7 +155,7 @@ let HAS_LISTENER: boolean = false
 // MutationObserver only exist in client side
 let MUTATION_OBSERVER: MutationObserver | null = null
 
-function initMutationObserver(): void {
+function _initMutationObserver(): void {
 	if (MUTATION_OBSERVER) return
 
 	MUTATION_OBSERVER = new MutationObserver((entries) => {
@@ -171,7 +171,7 @@ function initMutationObserver(): void {
 	})
 }
 
-function initPopoverListener(): void {
+function _initPopoverListener(): void {
 	if (HAS_LISTENER) return
 
 	let timeoutId: number | NodeJS.Timeout | null = null
@@ -717,52 +717,52 @@ function updatePopover(popover: HTMLDivElement, options?: PopoverUpdateOptions):
 		popover.popover = 'manual'
 	}
 
-	if (options?.popover) {
-		popover.popover = options.popover
+	if (options?.PopoverPopover) {
+		popover.popover = options.PopoverPopover
 	}
 
-	if (options?.draggable !== undefined) {
-		popover.toggleAttribute(PopoverAttributes.draggable, options?.draggable)
+	if (options?.PopoverDraggable !== undefined) {
+		popover.toggleAttribute(PopoverAttributes.draggable, options?.PopoverDraggable)
 	}
 
-	if (options?.important !== undefined) {
-		popover.toggleAttribute(PopoverAttributes.important, options?.important)
+	if (options?.PopoverImportant !== undefined) {
+		popover.toggleAttribute(PopoverAttributes.important, options?.PopoverImportant)
 	}
 
-	if (options?.autoFocus !== undefined) {
-		popover.toggleAttribute(PopoverAttributes.autoFocus, options?.autoFocus)
+	if (options?.PopoverAutoFocus !== undefined) {
+		popover.toggleAttribute(PopoverAttributes.autoFocus, options?.PopoverAutoFocus)
 	}
 
-	if (options?.animation !== undefined) {
-		popover.setAttribute(PopoverAttributes.animation, String(options.animation))
+	if (options?.PopoverAnimation !== undefined) {
+		popover.setAttribute(PopoverAttributes.animation, String(options.PopoverAnimation))
 	}
 
-	if (options?.anchorBy === false) {
+	if (options?.PopoverAnchorBy === false) {
 		popover.removeAttribute(PopoverAttributes.anchorBy)
 	}
-	else if (options?.anchorBy && options.anchorBy !== true) {
-		popover.setAttribute(PopoverAttributes.anchorBy, options.anchorBy)
+	else if (options?.PopoverAnchorBy && options.PopoverAnchorBy !== true) {
+		popover.setAttribute(PopoverAttributes.anchorBy, options.PopoverAnchorBy)
 	}
 
-	if (options?.gap === false) {
+	if (options?.PopoverGap === false) {
 		popover.removeAttribute(PopoverAttributes.gap)
 	}
-	else if (options?.gap && options.gap !== true) {
-		popover.setAttribute(PopoverAttributes.gap, options.gap + '')
+	else if (options?.PopoverGap && options.PopoverGap !== true) {
+		popover.setAttribute(PopoverAttributes.gap, options.PopoverGap + '')
 	}
 
-	if (options?.padding === false) {
+	if (options?.PopoverPadding === false) {
 		popover.removeAttribute(PopoverAttributes.padding)
 	}
-	else if (options?.padding && options.padding !== true) {
-		popover.setAttribute(PopoverAttributes.padding, options.padding + '')
+	else if (options?.PopoverPadding && options.PopoverPadding !== true) {
+		popover.setAttribute(PopoverAttributes.padding, options.PopoverPadding + '')
 	}
 
-	if (options?.position === false) {
+	if (options?.PopoverPosition === false) {
 		popover.removeAttribute(PopoverAttributes.position)
 	}
-	else if (options?.position && options.position !== true) {
-		popover.setAttribute(PopoverAttributes.position, options.position)
+	else if (options?.PopoverPosition && options.PopoverPosition !== true) {
+		popover.setAttribute(PopoverAttributes.position, options.PopoverPosition)
 	}
 
 	let content = popover.querySelector(`.${PopoverClasses.content}`) as HTMLDivElement | null
@@ -771,11 +771,11 @@ function updatePopover(popover: HTMLDivElement, options?: PopoverUpdateOptions):
 		content.classList.add(PopoverClasses.content)
 	}
 
-	if (options?.children === false) {
+	if (options?.PopoverChildren === false) {
 		content.replaceChildren()
 	}
-	else if (options?.children && options.children !== true) {
-		content.replaceChildren(...options.children)
+	else if (options?.PopoverChildren && options.PopoverChildren !== true) {
+		content.replaceChildren(...options.PopoverChildren)
 	}
 
 	let dragHandle = popover.querySelector(`.${PopoverClasses.dragHandle}`) as HTMLDivElement | null
@@ -786,15 +786,15 @@ function updatePopover(popover: HTMLDivElement, options?: PopoverUpdateOptions):
 	}
 
 	popover.replaceChildren(content, dragHandle)
-	options?.refs?.content?.(content)
-	options?.refs?.popover?.(popover)
-	options?.refs?.dragHandle?.(dragHandle)
+	options?.PopoverRefs?.content?.(content)
+	options?.PopoverRefs?.popover?.(popover)
+	options?.PopoverRefs?.dragHandle?.(dragHandle)
 	return popover
 }
 
 function registerPopover(...popovers: HTMLDivElement[]): void {
-	initPopoverListener()
-	initMutationObserver()
+	_initPopoverListener()
+	_initMutationObserver()
 	if (popovers.length === 0) {
 		popovers = [...document.querySelectorAll<HTMLDivElement>('div.' + PopoverClasses.popover)]
 	}

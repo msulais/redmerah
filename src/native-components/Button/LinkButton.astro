@@ -7,21 +7,21 @@ import './index.scss'
 type Props = LinkButtonProps
 
 const {
-	'c:newTab': newTab,
-	'c:variant': variant,
-	'c:focused': focused,
 	'class': className,
+	LinkButtonNewTab,
+	LinkButtonVariant,
+	LinkButtonFocused,
 	target,
 	rel,
 	...other
 } = Astro.props
 ---
 <a
-	class={attrClassList(ButtonClasses.btn, className)}
-	data-c-variant={variant}
-	data-c-focused={focused? '' : undefined}
-	target={target ?? (newTab? '_blank' : undefined)}
-	rel={rel ?? (newTab? 'noopener noreferrer' : undefined)}
+	class={attrClassList(ButtonClasses.button, className)}
+	data-c-button-variant={LinkButtonVariant}
+	data-c-button-focused={LinkButtonFocused? '' : undefined}
+	target={target ?? (LinkButtonNewTab? '_blank' : undefined)}
+	rel={rel ?? (LinkButtonNewTab? 'noopener noreferrer' : undefined)}
 	{...other}>
 	<slot />
 </a>

@@ -7,43 +7,36 @@ import './index.scss'
 type Props = PopoverProps
 
 const {
-	'c:anchorBy': anchorBy,
-	'c:draggable': draggable,
-	'c:important': important,
-	'c:autoFocus': autoFocus = true,
-	'c:animation': animation,
-	'c:gap': gap,
-	'c:padding': padding,
-	'c:position': position,
-	'c:attrDragHandle': attrDragHandle,
-	'c:attrContent': attrContent,
+	PopoverAnchorBy,
+	PopoverDraggable,
+	PopoverImportant,
+	PopoverAutoFocus = true,
+	PopoverAnimation,
+	PopoverGap,
+	PopoverPadding,
+	PopoverPosition,
+	PopoverDragHandleAttr = {},
+	PopoverContentAttr = {},
 	'class': className,
 	popover,
 	...other
 } = Astro.props
 
-const {
-	'class': dragHandleClassName,
-	...dragHandleOther
-} = attrDragHandle ?? {}
-
-const {
-	'class': contentClassName,
-	...contentOther
-} = attrContent ?? {}
+const {'class': dragHandleClassName, ...dragHandleOther} = PopoverDragHandleAttr
+const {'class': contentClassName   , ...contentOther   } = PopoverContentAttr
 
 ---
 <div
 	class={attrClassList(PopoverClasses.popover, className)}
 	popover={popover ?? 'manual'}
-	data-c-anchorby={anchorBy}
-	data-c-draggable={draggable? '' : undefined}
-	data-c-important={important? '' : undefined}
-	data-c-autofocus={autoFocus? '' : undefined}
-	data-c-animation={animation? '' : undefined}
-	data-c-gap={gap}
-	data-c-padding={padding}
-	data-c-position={position}
+	data-c-popover-anchorby={PopoverAnchorBy}
+	data-c-popover-draggable={PopoverDraggable? '' : undefined}
+	data-c-popover-important={PopoverImportant? '' : undefined}
+	data-c-popover-autofocus={PopoverAutoFocus? '' : undefined}
+	data-c-popover-animation={PopoverAnimation? '' : undefined}
+	data-c-popover-gap={PopoverGap}
+	data-c-popover-padding={PopoverPadding}
+	data-c-popover-position={PopoverPosition}
 	{...other}>
 	<div
 		class={attrClassList(PopoverClasses.content, contentClassName)}
@@ -51,13 +44,13 @@ const {
 		<slot />
 	</div>
 
-	<!-- Keep below content to avoid auto focus -->
+	{/* Keep below content to avoid auto focus */}
 	<div
 		class={attrClassList(PopoverClasses.dragHandle, dragHandleClassName)}
 		{...dragHandleOther}
 	/>
 </div>
 <script>
-	import { registerPopover } from "."
+	import { registerPopover } from '.'
 	registerPopover()
 </script>

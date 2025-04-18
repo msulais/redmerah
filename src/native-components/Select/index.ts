@@ -11,6 +11,7 @@ import {
 	ButtonClasses,
 	createButton,
 	ButtonVariant as SelectVariant,
+	updateButton,
 } from "@/native-components/Button"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { createIcon, type IconProps } from "@/native-components/Icon"
@@ -19,26 +20,26 @@ import { createId } from "@/utils/ids"
 import { isAnimationAllowed } from "@/utils/animation"
 
 type SelectProps = astroHTML.JSX.HTMLAttributes & {
-	'c:variant'        ?: SelectVariant
-	'c:useIcon'        ?: boolean
-	'c:attrContent'    ?: astroHTML.JSX.HTMLAttributes
-	'c:attrPopover'    ?: astroHTML.JSX.HTMLAttributes
-	'c:attrPlaceholder'?: astroHTML.JSX.HTMLAttributes
-	'c:attrIcon'       ?: Omit<IconProps, 'c:icon'>
+	SelectVariant        ?: SelectVariant
+	SelectUseIcon        ?: boolean
+	SelectContentAttr    ?: astroHTML.JSX.HTMLAttributes
+	SelectPopoverAttr    ?: astroHTML.JSX.HTMLAttributes
+	SelectPlaceholderAttr?: astroHTML.JSX.HTMLAttributes
+	SelectIconAttr       ?: Omit<IconProps, 'IconCode'>
 }
 
 type SelectOptionProps = Omit<ButtonProps, 'value'> & {
-	'c:selected'?: boolean
-	value        : string
+	SelectOptionSelected?: boolean
+	value                : string
 }
 
 type SelectUpdateOptions = {
-	children   ?: (string | Node)[] | boolean
-	placeholder?: (string | Node)[] | boolean
-	variant    ?: SelectVariant | boolean
-	role       ?: astroHTML.JSX.AriaRole | boolean
-	useIcon    ?: boolean
-	refs       ?: {
+	SelectChildren   ?: (string | Node)[] | boolean
+	SelectPlaceholder?: (string | Node)[] | boolean
+	SelectVariant    ?: SelectVariant | boolean
+	SelectRole       ?: astroHTML.JSX.AriaRole | boolean
+	SelectUseIcon    ?: boolean
+	SelectRefs       ?: {
 		select     ?(el: HTMLDivElement): unknown
 		content    ?(el: HTMLDivElement): unknown
 		popover    ?(el: HTMLDivElement): unknown
@@ -47,33 +48,29 @@ type SelectUpdateOptions = {
 	}
 }
 
-type SelectOptionUpdateOptions = Omit<ButtonUpdateOptions, 'refs'> & {
-	value   ?: string
-	selected?: boolean
-	role    ?: astroHTML.JSX.AriaRole | boolean
-	refs    ?: ButtonUpdateOptions['refs'] & {
+type SelectOptionUpdateOptions = ButtonUpdateOptions & {
+	SelectOptionValue   ?: string
+	SelectOptionSelected?: boolean
+	SelectOptionRole    ?: astroHTML.JSX.AriaRole | boolean
+	SelectOptionRefs    ?: {
 		option?(e: HTMLButtonElement): unknown
 	}
 }
 
 enum SelectClasses {
 	select      = 'c-select',
-	popover     = 'c-select-popover',
-	content     = 'c-select-content',
-	option      = 'c-select-option',
-	placeholder = 'c-select-placeholder',
-	icon        = 'c-select-icon'
+	popover     = select + '-popover',
+	content     = select + '-content',
+	option      = select + '-option',
+	placeholder = select + '-placeholder',
+	icon        = select + '-icon'
 }
 
 enum SelectAttributes {
-	expanded = 'data-c-expanded',
-	variant  = 'data-c-variant',
-	useIcon = 'data-c-use-icon',
-
-	// NOTE:
-	// this attribute will be accessable by global (not just component). It will be better
-	// if we make it simpler like `select.dataset.value`.
-	value    = 'data-value'
+	expanded = 'data-c-select-expanded',
+	variant  = 'data-c-select-variant',
+	useIcon  = 'data-c-select-use-icon',
+	value    = 'data-c-select-value'
 }
 
 const REGISTERED_SELECT: HTMLDivElement[] = []
@@ -423,13 +420,13 @@ function createSelect(options?: SelectUpdateOptions): HTMLDivElement {
 }
 
 function updateSelect(select: HTMLDivElement, options?: SelectUpdateOptions): HTMLDivElement {
-	const refs = options?.refs
+	const refs = options?.SelectRefs
 	select.classList.add(SelectClasses.select)
 	if (!select.hasAttribute('role')) {
 		select.setAttribute('role', 'listbox')
 	}
 
-	const role = options?.role
+	const role = options?.SelectRole
 	if (role === false) {
 		select.removeAttribute('role')
 	}
@@ -437,7 +434,7 @@ function updateSelect(select: HTMLDivElement, options?: SelectUpdateOptions): HT
 		select.setAttribute('role', role)
 	}
 
-	const variant = options?.variant
+	const variant = options?.SelectVariant
 	if (variant === false) {
 		select.removeAttribute(SelectAttributes.variant)
 	}
@@ -445,8 +442,8 @@ function updateSelect(select: HTMLDivElement, options?: SelectUpdateOptions): HT
 		select.setAttribute(SelectAttributes.variant, variant)
 	}
 
-	if (options?.useIcon !== undefined) {
-		select.toggleAttribute(SelectAttributes.useIcon, options.useIcon)
+	if (options?.SelectUseIcon !== undefined) {
+		select.toggleAttribute(SelectAttributes.useIcon, options.SelectUseIcon)
 	}
 
 	// popover
@@ -459,7 +456,7 @@ function updateSelect(select: HTMLDivElement, options?: SelectUpdateOptions): HT
 	// icon
 	let icon = select.querySelector(`.${SelectClasses.icon}`) as HTMLElement | null
 	if (!icon) {
-		icon = createIcon({icon: ICON_CHEVRON_DOWN})
+		icon = createIcon({IconCode: ICON_CHEVRON_DOWN})
 		icon.classList.add(SelectClasses.icon)
 	}
 
@@ -474,14 +471,14 @@ function updateSelect(select: HTMLDivElement, options?: SelectUpdateOptions): HT
 	let placeholder = select.querySelector(`.${SelectClasses.placeholder}`) as HTMLDivElement | null
 	if (!placeholder) {
 		placeholder = document.createElement('div')
-		placeholder.classList.add(ButtonClasses.btn, SelectClasses.placeholder)
+		placeholder.classList.add(ButtonClasses.button, SelectClasses.placeholder)
 	}
 
-	if (options?.placeholder === false) {
+	if (options?.SelectPlaceholder === false) {
 		placeholder.replaceChildren()
 	}
-	else if (options?.placeholder && options.placeholder !== true) {
-		placeholder.replaceChildren(...options.placeholder)
+	else if (options?.SelectPlaceholder && options.SelectPlaceholder !== true) {
+		placeholder.replaceChildren(...options.SelectPlaceholder)
 	}
 
 	// content -> children
@@ -492,12 +489,12 @@ function updateSelect(select: HTMLDivElement, options?: SelectUpdateOptions): HT
 		children.push(node)
 	}
 
-	if (options?.children === false) {
+	if (options?.SelectChildren === false) {
 		children.length = 0
 	}
-	else if (options?.children && options.children !== true) {
+	else if (options?.SelectChildren && options.SelectChildren !== true) {
 		children.length = 0
-		children.push(...options.children)
+		children.push(...options.SelectChildren)
 	}
 
 	content.replaceChildren(...[...children, placeholder].filter(
@@ -522,7 +519,8 @@ function createSelectOption(options: Omit<SelectOptionUpdateOptions, 'value'> & 
 }
 
 function updateSelectOption(option: HTMLButtonElement, options?: SelectOptionUpdateOptions): HTMLButtonElement {
-	option.classList.add(ButtonClasses.btn, SelectClasses.option)
+	updateButton(option, options)
+	option.classList.add(SelectClasses.option)
 	if (!option.id) {
 		option.id = createId()
 	}
@@ -530,7 +528,7 @@ function updateSelectOption(option: HTMLButtonElement, options?: SelectOptionUpd
 		option.setAttribute('role', 'option')
 	}
 
-	const role = options?.role
+	const role = options?.SelectOptionRole
 	if (role === false) {
 		option.removeAttribute('role')
 	}
@@ -538,14 +536,14 @@ function updateSelectOption(option: HTMLButtonElement, options?: SelectOptionUpd
 		option.setAttribute('role', role)
 	}
 
-	if (options?.value) {
-		option.value = options.value
+	if (options?.SelectOptionValue) {
+		option.value = options.SelectOptionValue
 	}
-	if (options?.selected !== undefined) {
-		option.setAttribute('aria-selected', String(options.selected))
+	if (options?.SelectOptionSelected !== undefined) {
+		option.setAttribute('aria-selected', String(options.SelectOptionSelected))
 	}
 
-	options?.refs?.option?.(option)
+	options?.SelectOptionRefs?.option?.(option)
 	const select = option.closest('.' + SelectClasses.select)
 	if (select) repairOptions(select as HTMLDivElement)
 

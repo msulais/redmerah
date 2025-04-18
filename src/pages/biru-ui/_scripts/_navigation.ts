@@ -1,4 +1,4 @@
-import { SideNavigationClasses, updateSideNavigationButton } from "@/native-components/SideNavigation"
+import { SideBarClasses, updateSideBarButton } from "@/native-components/SideBar"
 import { ELEMENT_ID_PREFIX, ElementIds } from "./_enums"
 import { ButtonVariant } from "@/native-components/Button"
 import { isAnimationAllowed } from "@/utils/animation"
@@ -12,25 +12,25 @@ function initNavigationEvents(): void {
 		const tab = document.activeElement
 		if (
 			!tab
-			|| !tab.classList.contains(SideNavigationClasses.button)
+			|| !tab.classList.contains(SideBarClasses.button)
 			|| tab.getAttribute('aria-selected') === 'true'
 		) return
 
-		const prevTab = navigation.querySelector(`.${SideNavigationClasses.button}[aria-selected=true]`)
+		const prevTab = navigation.querySelector(`.${SideBarClasses.button}[aria-selected=true]`)
 		if (prevTab) {
 			prevTab.setAttribute('aria-selected', 'false')
-			updateSideNavigationButton(prevTab as HTMLButtonElement, {
-				variant: false,
-				selected: false
+			updateSideBarButton(prevTab as HTMLButtonElement, {
+				ButtonVariant: false,
+				SideBarButtonSelected: false
 			})
 			const prevAriaControls = prevTab.getAttribute('aria-controls')
 			if (prevAriaControls) $(prevAriaControls)?.toggleAttribute('hidden', true)
 		}
 
 		tab.setAttribute('aria-selected', 'true')
-		updateSideNavigationButton(tab as HTMLButtonElement, {
-			variant: ButtonVariant.tonal,
-			selected: true
+		updateSideBarButton(tab as HTMLButtonElement, {
+			ButtonVariant: ButtonVariant.tonal,
+			SideBarButtonSelected: true
 		})
 		const ariaControls = tab.getAttribute('aria-controls')
 		if (ariaControls) {

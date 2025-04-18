@@ -1,6 +1,6 @@
 ---
-import SideNavigation from '@/native-components/SideNavigation/index.astro'
-import SideNavigationButton from '@/native-components/SideNavigation/SideNavigationButton.astro'
+import SideBar from '@/native-components/SideBar/index.astro'
+import SideBarButton from '@/native-components/SideBar/SideBarButton.astro'
 import { ButtonVariant } from '@/native-components/Button'
 import { ELEMENT_ID_PREFIX, ElementIds } from '../_scripts/_enums'
 
@@ -27,16 +27,16 @@ const items: {
 ].sort((a, b) => a.name.localeCompare(b.name))
 ---
 
-<SideNavigation
+<SideBar
 	role="tablist"
 	id={ELEMENT_ID_PREFIX + ElementIds.navigation}
 	aria-label="Navigation">
-	{items.map(v => <SideNavigationButton
+	{items.map(v => <SideBarButton
 		role="tab"
 		aria-selected={v.selected}
 		aria-controls={v.controls}
-		c:selected={v.selected}
-		c:variant={v.selected ? ButtonVariant.tonal : undefined}>
+		SideBarButtonSelected={v.selected}
+		ButtonVariant={v.selected ? ButtonVariant.tonal : undefined}>
 		{v.name}
-	</SideNavigationButton>)}
-</SideNavigation>
+	</SideBarButton>)}
+</SideBar>

@@ -18,7 +18,7 @@ import { ICON_ATTACH, ICON_SEARCH } from '@/constants/icons'
 		<Tooltip>
 			<TextField
 				id={ELEMENT_ID_PREFIX + ElementIds.panelTextfieldPreview}
-				c:attrInput={{
+				TextFieldInputAttr={{
 					style: "padding:0",
 					placeholder: 'Type here ...',
 					id: ELEMENT_ID_PREFIX + ElementIds.panelTextfieldPreviewInput
@@ -26,7 +26,7 @@ import { ICON_ATTACH, ICON_SEARCH } from '@/constants/icons'
 				<Icon
 					data-tooltip="Icon"
 					style="margin-left:8px"
-					c:icon={ICON_ATTACH}
+					IconCode={ICON_ATTACH}
 					slot="leading"
 					id={ELEMENT_ID_PREFIX + ElementIds.panelTextfieldPreviewLeading}
 				/>
@@ -36,32 +36,32 @@ import { ICON_ATTACH, ICON_SEARCH } from '@/constants/icons'
 					style="margin-right:4px"
 					slot="trailing"
 					id={ELEMENT_ID_PREFIX + ElementIds.panelTextfieldPreviewTrailing}>
-					<Icon c:icon={ICON_SEARCH}/>
+					<Icon IconCode={ICON_SEARCH}/>
 				</TextFieldButton>
 			</TextField>
 		</Tooltip>
 	</div>
 	<div class={CSS.bodyOptions} id={ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptions}>
 		<CheckBox
-			c:attrInput={{
+			CheckBoxInputAttr={{
 				id: ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptionsLeading,
 				checked: true
 			}}>
 			Leading
 		</CheckBox>
 		<CheckBox
-			c:attrInput={{
+			CheckBoxInputAttr={{
 				id: ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptionsTrailing,
 				checked: true
 			}}>
 			Trailing
 		</CheckBox>
 		<CheckBox
-			c:attrInput={{id: ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptionsReadonly}}>
+			CheckBoxInputAttr={{id: ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptionsReadonly}}>
 			Read only
 		</CheckBox>
 		<CheckBox
-			c:attrInput={{
+			CheckBoxInputAttr={{
 				id: ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptionsPlaceholder,
 				checked: true
 			}}>

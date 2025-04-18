@@ -120,13 +120,13 @@ function initGlobalMenuEvents(): void {
 		case settingsMenu:
 			settingsButton.setAttribute('aria-expanded', String(open))
 			updateButton(settingsButton, {
-				focused: open
+				ButtonFocused: open
 			})
 			break
 		case infoMenu:
 			infoButton.setAttribute('aria-expanded', String(open))
 			updateButton(infoButton, {
-				focused: open
+				ButtonFocused: open
 			})
 			break
 		}

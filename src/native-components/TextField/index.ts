@@ -1,9 +1,9 @@
 import { updateButton, type ButtonProps, type ButtonUpdateOptions } from "@/native-components/Button"
 
 type TextFieldProps = astroHTML.JSX.HTMLAttributes & {
-	'c:attrInput'?: astroHTML.JSX.InputHTMLAttributes
-	'c:attrLeading'?: astroHTML.JSX.HTMLAttributes
-	'c:attrTrailing'?: astroHTML.JSX.HTMLAttributes
+	TextFieldInputAttr   ?: astroHTML.JSX.InputHTMLAttributes
+	TextFieldLeadingAttr ?: astroHTML.JSX.HTMLAttributes
+	TextFieldTrailingAttr?: astroHTML.JSX.HTMLAttributes
 }
 
 type TextFieldButtonProps = ButtonProps
@@ -11,12 +11,12 @@ type TextFieldButtonProps = ButtonProps
 type TextFieldButtonUpdateOptions = ButtonUpdateOptions
 
 type TextFieldUpdateOptions = {
-	leading    ?: (string | Node)[] | boolean
-	trailing   ?: (string | Node)[] | boolean
-	readOnly   ?: boolean
-	placeholder?: string | boolean
-	value      ?: string | boolean
-	refs       ?: {
+	TextFieldLeading    ?: (string | Node)[] | boolean
+	TextFieldTrailing   ?: (string | Node)[] | boolean
+	TextFieldReadOnly   ?: boolean
+	TextFieldPlaceholder?: string | boolean
+	TextFieldValue      ?: string | boolean
+	TextFieldRefs       ?: {
 		textfield?(el: HTMLDivElement  ): unknown
 		leading  ?(el: HTMLDivElement  ): unknown
 		trailing ?(el: HTMLDivElement  ): unknown
@@ -26,10 +26,10 @@ type TextFieldUpdateOptions = {
 
 enum TextFieldClasses {
 	textfield = 'c-textfield',
-	leading   = 'c-textfield-leading',
-	input     = 'c-textfield-input',
-	trailing  = 'c-textfield-trailing',
-	button    = 'c-textfield-btn'
+	leading   = textfield + '-leading',
+	input     = textfield + '-input',
+	trailing  = textfield + '-trailing',
+	button    = textfield + '-button'
 }
 
 function createTextField(options?: TextFieldUpdateOptions): HTMLDivElement {
@@ -38,7 +38,7 @@ function createTextField(options?: TextFieldUpdateOptions): HTMLDivElement {
 }
 
 function updateTextField(textfield: HTMLDivElement, options?: TextFieldUpdateOptions): HTMLDivElement {
-	const refs = options?.refs
+	const refs = options?.TextFieldRefs
 	textfield.classList.add(TextFieldClasses.textfield)
 
 	// leading
@@ -48,11 +48,11 @@ function updateTextField(textfield: HTMLDivElement, options?: TextFieldUpdateOpt
 		leading.classList.add(TextFieldClasses.leading)
 	}
 
-	if (options?.leading === false) {
+	if (options?.TextFieldLeading === false) {
 		leading.replaceChildren()
 	}
-	else if (options?.leading && options.leading !== true) {
-		leading.replaceChildren(...options.leading)
+	else if (options?.TextFieldLeading && options.TextFieldLeading !== true) {
+		leading.replaceChildren(...options.TextFieldLeading)
 	}
 
 	// input
@@ -63,12 +63,12 @@ function updateTextField(textfield: HTMLDivElement, options?: TextFieldUpdateOpt
 		input.type = 'text'
 	}
 
-	const readonly = options?.readOnly
+	const readonly = options?.TextFieldReadOnly
 	if (readonly !== undefined) {
 		input.readOnly = readonly
 	}
 
-	const placeholder = options?.placeholder
+	const placeholder = options?.TextFieldPlaceholder
 	if (placeholder === false) {
 		input.placeholder = ''
 	}
@@ -76,7 +76,7 @@ function updateTextField(textfield: HTMLDivElement, options?: TextFieldUpdateOpt
 		input.placeholder = placeholder
 	}
 
-	const value = options?.value
+	const value = options?.TextFieldValue
 	if (value === false) {
 		input.value = ''
 	}
@@ -91,11 +91,11 @@ function updateTextField(textfield: HTMLDivElement, options?: TextFieldUpdateOpt
 		trailing.classList.add(TextFieldClasses.trailing)
 	}
 
-	if (options?.trailing === false) {
+	if (options?.TextFieldTrailing === false) {
 		trailing.replaceChildren()
 	}
-	else if (options?.trailing && options.trailing !== true) {
-		trailing.replaceChildren(...options.trailing)
+	else if (options?.TextFieldTrailing && options.TextFieldTrailing !== true) {
+		trailing.replaceChildren(...options.TextFieldTrailing)
 	}
 	textfield.replaceChildren(leading, input, trailing)
 	refs?.input?.(input)

@@ -7,19 +7,19 @@ import './index.scss'
 type Props = ButtonProps
 
 const {
-	'c:variant': variant,
-	'c:focused': focused,
 	'class': className,
+	ButtonVariant,
+	ButtonFocused,
 	...other
 } = Astro.props
 ---
 <button
 	class={attrClassList(
-		ButtonClasses.btn,
+		ButtonClasses.button,
 		className
 	)}
-	data-c-variant={variant}
-	data-c-focused={focused? '' : undefined}
+	data-c-button-variant={ButtonVariant}
+	data-c-button-focused={ButtonFocused? '' : undefined}
 	{...other}>
 	<slot />
 </button>

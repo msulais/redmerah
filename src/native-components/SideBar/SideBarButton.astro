@@ -1,0 +1,39 @@
+---
+import {
+	type SideBarButtonProps,
+	SideBarClasses,
+} from '.'
+import { attrClassList } from '@/utils/attributes'
+import Button from '@/native-components/Button/index.astro'
+import './index.scss'
+
+type Props = SideBarButtonProps
+
+const {
+	'class': className,
+	SideBarButtonSelected,
+	SideBarButtonLeadingAttr = {},
+	SideBarButtonContentAttr = {},
+	...other
+} = Astro.props
+const {'class': leadingClassName, ...leadingOther} = SideBarButtonLeadingAttr
+const {'class': contentClassName, ...contentOther} = SideBarButtonContentAttr
+---
+
+<Button
+	class={attrClassList(SideBarClasses.button, className)}
+	data-c-sidebar-button-selected={SideBarButtonSelected? '' : undefined}
+	{...other}>
+	{Astro.slots.has('leading') &&
+		<div
+			class={attrClassList(SideBarClasses.buttonLeading, leadingClassName)}
+			{...leadingOther}>
+			<slot name="leading"/>
+		</div>
+	}
+	<div
+		class={attrClassList(SideBarClasses.buttonContent, contentClassName)}
+		{...contentOther}>
+		<slot />
+	</div>
+</Button>

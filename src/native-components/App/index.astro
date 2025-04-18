@@ -6,23 +6,23 @@ import './index.scss'
 type Props = AppProps
 const {
 	'class': className,
-	'c:tagName': tagName = 'div',
-	'c:attrAppBar': attrAppBar = {},
-	'c:attrBottomBar': attrBottomBar = {},
-	'c:attrBody': attrBody = {},
-	'c:attrContainer': attrContainer = {},
-	'c:attrLeftSideBar': attrLeftSideBar = {},
-	'c:attrRightSideBar': attrRightSideBar = {},
+	AppTagName          = 'div',
+	AppAppBarAttr       = {},
+	AppBottomBarAttr    = {},
+	AppBodyAttr         = {},
+	AppContainerAttr    = {},
+	AppLeftSideBarAttr  = {},
+	AppRightSideBarAttr = {},
 	...other
 } = Astro.props
-const {'class': appBarClassName, ...appBarOther} = attrAppBar
-const {'class': bottomBarClassName, ...bottomBarOther} = attrBottomBar
-const {'class': bodyClassName, ...bodyOther} = attrBody
-const {'class': containerClassName, ...containerOther} = attrContainer
-const {'class': leftSideBarClassName, ...leftSideBarOther} = attrLeftSideBar
-const {'class': rightSideBarClassName, ...rightSideBarOther} = attrRightSideBar
+const {'class': appBarClassName      , ...appBarOther      } = AppAppBarAttr
+const {'class': bottomBarClassName   , ...bottomBarOther   } = AppBottomBarAttr
+const {'class': bodyClassName        , ...bodyOther        } = AppBodyAttr
+const {'class': containerClassName   , ...containerOther   } = AppContainerAttr
+const {'class': leftSideBarClassName , ...leftSideBarOther } = AppLeftSideBarAttr
+const {'class': rightSideBarClassName, ...rightSideBarOther} = AppRightSideBarAttr
 
-const AppDynamic = tagName as 'div'
+const AppDynamic = AppTagName as 'div'
 ---
 
 <AppDynamic class={attrClassList(AppClasses.app, className)} {...other}>

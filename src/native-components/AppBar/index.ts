@@ -1,17 +1,17 @@
 type AppBarProps = astroHTML.JSX.HTMLAttributes & {
-	'c:tagName'     ?: string
-	'c:attrContent' ?: astroHTML.JSX.HTMLAttributes
-	'c:attrLeading' ?: astroHTML.JSX.HTMLAttributes
-	'c:attrTrailing'?: astroHTML.JSX.HTMLAttributes
-	'c:attrHeading' ?: astroHTML.JSX.HTMLAttributes
+	AppTagName     ?: string
+	AppContentAttr ?: astroHTML.JSX.HTMLAttributes
+	AppLeadingAttr ?: astroHTML.JSX.HTMLAttributes
+	AppTrailingAttr?: astroHTML.JSX.HTMLAttributes
+	AppHeadingAttr ?: astroHTML.JSX.HTMLAttributes
 }
 
 type AppBarUpdateOptions = {
-	children?: (Node | string)[] | boolean
-	leading ?: (Node | string)[] | boolean
-	headline?: (Node | string)[] | boolean
-	trailing?: (Node | string)[] | boolean
-	refs?: {
+	AppBarChildren?: (Node | string)[] | boolean
+	AppBarLeading ?: (Node | string)[] | boolean
+	AppBarHeadline?: (Node | string)[] | boolean
+	AppBarTrailing?: (Node | string)[] | boolean
+	AppBarRefs?: {
 		appBar  ?(el: HTMLElement       ): unknown
 		leading ?(el: HTMLDivElement    ): unknown
 		trailing?(el: HTMLDivElement    ): unknown
@@ -22,35 +22,35 @@ type AppBarUpdateOptions = {
 
 enum AppBarClasses {
 	appbar   = 'c-appbar',
-	leading  = 'c-appbar-leading',
-	trailing = 'c-appbar-trailing',
-	content  = 'c-appbar-content',
-	headline = 'c-appbar-headline'
+	leading  = appbar + '-leading',
+	trailing = appbar + '-trailing',
+	content  = appbar + '-content',
+	headline = appbar + '-headline'
 }
 
 function createAppBar<T extends HTMLElement>(
-	options?: AppBarUpdateOptions & {tagName?: keyof HTMLElementTagNameMap}
+	options?: AppBarUpdateOptions & {AppBarTagName?: keyof HTMLElementTagNameMap}
 ): T {
-	const appbar = document.createElement(options?.tagName ?? 'header')
+	const appbar = document.createElement(options?.AppBarTagName ?? 'header')
 	return updateAppBar(appbar, options) as T
 }
 
 function updateAppBar<T extends HTMLElement>(appBar: T, options?: AppBarUpdateOptions): T {
-	const refs = options?.refs
+	const refs = options?.AppBarRefs
 	appBar.classList.add(AppBarClasses.appbar)
 
 	// leading
 	let leading = appBar.querySelector(`.${AppBarClasses.leading}`) as HTMLDivElement | null
-	if (options?.leading === false) {
+	if (options?.AppBarLeading === false) {
 		leading?.replaceChildren()
 	}
-	else if (options?.leading && options.leading !== true) {
+	else if (options?.AppBarLeading && options.AppBarLeading !== true) {
 		if (!leading) {
 			leading = document.createElement('div')
 			leading.classList.add(AppBarClasses.leading)
 		}
 
-		leading.replaceChildren(...options.leading)
+		leading.replaceChildren(...options.AppBarLeading)
 	}
 
 	// content
@@ -62,16 +62,16 @@ function updateAppBar<T extends HTMLElement>(appBar: T, options?: AppBarUpdateOp
 
 	// content -> headline
 	let headline = appBar.querySelector(`.${AppBarClasses.headline}`) as HTMLHeadingElement | null
-	if (options?.headline === false) {
+	if (options?.AppBarHeadline === false) {
 		headline?.replaceChildren()
 	}
-	else if (options?.headline && options.headline !== true) {
+	else if (options?.AppBarHeadline && options.AppBarHeadline !== true) {
 		if (!headline) {
 			headline = document.createElement('h2')
 			headline.classList.add(AppBarClasses.headline)
 		}
 
-		headline.replaceChildren(...options.headline)
+		headline.replaceChildren(...options.AppBarHeadline)
 	}
 
 	// content -> children
@@ -82,12 +82,12 @@ function updateAppBar<T extends HTMLElement>(appBar: T, options?: AppBarUpdateOp
 		children.push(node)
 	}
 
-	if (options?.children === false) {
+	if (options?.AppBarChildren === false) {
 		children.length = 0
 	}
-	else if (options?.children && options.children !== true) {
+	else if (options?.AppBarChildren && options.AppBarChildren !== true) {
 		children.length = 0
-		children.push(...options.children)
+		children.push(...options.AppBarChildren)
 	}
 
 	content.replaceChildren(...[headline, ...children].filter(
@@ -96,16 +96,16 @@ function updateAppBar<T extends HTMLElement>(appBar: T, options?: AppBarUpdateOp
 
 	// trailing
 	let trailing = appBar.querySelector(`.${AppBarClasses.trailing}`) as HTMLDivElement | null
-	if (options?.trailing === false) {
+	if (options?.AppBarTrailing === false) {
 		trailing?.replaceChildren()
 	}
-	else if (options?.trailing && options.trailing !== true) {
+	else if (options?.AppBarTrailing && options.AppBarTrailing !== true) {
 		if (!trailing) {
 			trailing = document.createElement('div')
 			trailing.classList.add(AppBarClasses.trailing)
 		}
 
-		trailing.replaceChildren(...options.trailing)
+		trailing.replaceChildren(...options.AppBarTrailing)
 	}
 
 	appBar.replaceChildren(...[leading, content, trailing].filter(

@@ -15,7 +15,7 @@ import CSS from '../../_index.module.scss'
 		<Tooltip>
 			<CheckBox
 				data-tooltip="CheckBox"
-				c:attrInput={{
+				CheckBoxInputAttr={{
 					id: ELEMENT_ID_PREFIX + ElementIds.panelCheckboxPreview1,
 					checked: true
 				}}>
@@ -23,19 +23,19 @@ import CSS from '../../_index.module.scss'
 			</CheckBox>
 			<CheckBox
 				data-tooltip="CheckBox"
-				c:attrInput={{id: ELEMENT_ID_PREFIX + ElementIds.panelCheckboxPreview2}}>
+				CheckBoxInputAttr={{id: ELEMENT_ID_PREFIX + ElementIds.panelCheckboxPreview2}}>
 				Option 2
 			</CheckBox>
 			<CheckBox
 				data-tooltip="CheckBox"
-				c:attrInput={{id: ELEMENT_ID_PREFIX + ElementIds.panelCheckboxPreview3}}>
+				CheckBoxInputAttr={{id: ELEMENT_ID_PREFIX + ElementIds.panelCheckboxPreview3}}>
 				Option 3
 			</CheckBox>
 		</Tooltip>
 	</div>
 	<div class={CSS.bodyOptions} id={ELEMENT_ID_PREFIX + ElementIds.panelCheckboxOptions}>
 		<CheckBox
-			c:attrInput={{id: ELEMENT_ID_PREFIX + ElementIds.panelCheckboxOptionsDisabled}}>
+			CheckBoxInputAttr={{id: ELEMENT_ID_PREFIX + ElementIds.panelCheckboxOptionsDisabled}}>
 			Disabled
 		</CheckBox>
 	</div>

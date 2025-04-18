@@ -16,71 +16,71 @@ import { PlatformAnimationMode, PlatformThemeMode } from '@/enums/platforms'
 <Menu id={ELEMENT_ID_PREFIX + ElementIds.appbarSettingsMenu}>
 	<SubMenuItem
 		aria-controls={ELEMENT_ID_PREFIX + ElementIds.appbarSettingsAnimationMenu}>
-		<Icon c:icon={ICON_PLAY_CIRCLE_HINT}/>
+		<Icon IconCode={ICON_PLAY_CIRCLE_HINT}/>
 		Animation
 		<div style="flex:1"/>
-		<Icon c:icon={ICON_CHEVRON_RIGHT}/>
+		<Icon IconCode={ICON_CHEVRON_RIGHT}/>
 	</SubMenuItem>
 	<SubMenuItem
 		aria-controls={ELEMENT_ID_PREFIX + ElementIds.appbarSettingsThemeMenu}>
-		<Icon c:icon={ICON_WEATHER_SUNNY}/>
+		<Icon IconCode={ICON_WEATHER_SUNNY}/>
 		Theme
 		<div style="flex:1"/>
-		<Icon c:icon={ICON_CHEVRON_RIGHT}/>
+		<Icon IconCode={ICON_CHEVRON_RIGHT}/>
 	</SubMenuItem>
 	<MenuItem>Color accent</MenuItem>
 </Menu>
 <Menu id={ELEMENT_ID_PREFIX + ElementIds.appbarSettingsAnimationMenu}>
 	<RadioMenuItem
-		c:attrInput={{
+		RadioMenuItemInputAttr={{
 			name: RadioGroupNames.settingsAnimation,
 			checked: true,
 			value: PlatformAnimationMode.auto
 		}}>
-		<Icon c:icon={ICON_VIDEO_CLIP_OPTIMIZE}/>
+		<Icon IconCode={ICON_VIDEO_CLIP_OPTIMIZE}/>
 		Automatic
 	</RadioMenuItem>
 	<RadioMenuItem
-		c:attrInput={{
+		RadioMenuItemInputAttr={{
 			name: RadioGroupNames.settingsAnimation,
 			value: PlatformAnimationMode.on
 		}}>
-		<Icon c:icon={ICON_VIDEO_CLIP}/>
+		<Icon IconCode={ICON_VIDEO_CLIP}/>
 		On
 	</RadioMenuItem>
 	<RadioMenuItem
-		c:attrInput={{
+		RadioMenuItemInputAttr={{
 			name: RadioGroupNames.settingsAnimation,
 			value: PlatformAnimationMode.off
 		}}>
-		<Icon c:icon={ICON_VIDEO_CLIP_OFF}/>
+		<Icon IconCode={ICON_VIDEO_CLIP_OFF}/>
 		Off
 	</RadioMenuItem>
 </Menu>
 <Menu id={ELEMENT_ID_PREFIX + ElementIds.appbarSettingsThemeMenu}>
 	<RadioMenuItem
-		c:attrInput={{
+		RadioMenuItemInputAttr={{
 			name: RadioGroupNames.settingsTheme,
 			checked: true,
 			value: PlatformThemeMode.auto
 		}}>
-		<Icon c:icon={ICON_LAPTOP_SETTINGS}/>
+		<Icon IconCode={ICON_LAPTOP_SETTINGS}/>
 		Automatic
 	</RadioMenuItem>
 	<RadioMenuItem
-		c:attrInput={{
+		RadioMenuItemInputAttr={{
 			name: RadioGroupNames.settingsTheme,
 			value: PlatformThemeMode.light
 		}}>
-		<Icon c:icon={ICON_WEATHER_SUNNY}/>
+		<Icon IconCode={ICON_WEATHER_SUNNY}/>
 		Light
 	</RadioMenuItem>
 	<RadioMenuItem
-		c:attrInput={{
+		RadioMenuItemInputAttr={{
 			name: RadioGroupNames.settingsTheme,
 			value: PlatformThemeMode.dark
 		}}>
-		<Icon c:icon={ICON_WEATHER_MOON}/>
+		<Icon IconCode={ICON_WEATHER_MOON}/>
 		Dark
 	</RadioMenuItem>
 </Menu>
@@ -90,33 +90,33 @@ import { PlatformAnimationMode, PlatformThemeMode } from '@/enums/platforms'
 		Redmerah
 	</LinkMenuItem>
 	<LinkMenuItem href={RoutesLinks.apps}>
-		<Icon c:icon={ICON_APPS}/>
+		<Icon IconCode={ICON_APPS}/>
 		More apps
 	</LinkMenuItem>
 	<LinkMenuItem href={RoutesLinks.about}>
-		<Icon c:icon={ICON_INFO}/>
+		<Icon IconCode={ICON_INFO}/>
 		About us
 	</LinkMenuItem>
 	<Divider />
 	<LinkMenuItem href={RoutesLinks.privacy}>
-		<Icon c:icon={ICON_SHIELD_CHECKMARK}/>
+		<Icon IconCode={ICON_SHIELD_CHECKMARK}/>
 		Privacy policy
 	</LinkMenuItem>
 	<LinkMenuItem href={RoutesLinks.terms}>
-		<Icon c:icon={ICON_RECEIPT}/>
+		<Icon IconCode={ICON_RECEIPT}/>
 		Terms & conditions
 	</LinkMenuItem>
 	<Divider />
 	<MenuItem id={ELEMENT_ID_PREFIX + ElementIds.appbarInfoShareButton}>
-		<Icon c:icon={ICON_SHARE_ANDROID}/>
+		<Icon IconCode={ICON_SHARE_ANDROID}/>
 		Share
 	</MenuItem>
 	<LinkMenuItem href={'mailto:' + ExternalLinks.contactEmail + '?subject=' + encodeURI('BiruUI')}>
-		<Icon c:icon={ICON_CHAT}/>
+		<Icon IconCode={ICON_CHAT}/>
 		Send feedback
 	</LinkMenuItem>
-	<LinkMenuItem href={ExternalLinks.donate} c:newTab>
-		<Icon c:icon={ICON_GIFT}/>
+	<LinkMenuItem href={ExternalLinks.donate} LinkButtonNewTab>
+		<Icon IconCode={ICON_GIFT}/>
 		Donate
 	</LinkMenuItem>
 </Menu>

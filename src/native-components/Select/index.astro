@@ -5,7 +5,7 @@ import Icon from '@/native-components/Icon/index.astro'
 import {
 	type SelectProps,
 	SelectClasses,
-	SelectVariant
+	SelectVariant as SSelectVariant
 } from '.'
 import './index.scss'
 import { ICON_CHEVRON_DOWN } from '@/constants/icons'
@@ -13,27 +13,27 @@ import { ICON_CHEVRON_DOWN } from '@/constants/icons'
 type Props = SelectProps
 
 const {
+	SelectContentAttr     = {},
+	SelectPopoverAttr     = {},
+	SelectPlaceholderAttr = {},
+	SelectIconAttr        = {},
+	SelectVariant         = SSelectVariant.tonal,
+	SelectUseIcon         = true,
 	'class': className,
-	'c:attrContent': attrContent = {},
-	'c:attrPopover': attrPopover = {},
-	'c:attrPlaceholder': attrPlaceholder = {},
-	'c:attrIcon': attrIcon = {},
-	'c:variant': variant = SelectVariant.tonal,
-	'c:useIcon': useIcon = true,
 	role,
 	...other
 } = Astro.props
 
-const {'class': iconClassName, ...iconOther} = attrIcon
-const {'class': contentClassName, ...contentOther} = attrContent
-const {'class': popoverClassName, ...popoverOther} = attrPopover
-const {'class': placeholderClassName, tabindex, ...placeholderOther} = attrPlaceholder
+const {'class': iconClassName       , ...iconOther   } = SelectIconAttr
+const {'class': contentClassName    , ...contentOther} = SelectContentAttr
+const {'class': popoverClassName    , ...popoverOther} = SelectPopoverAttr
+const {'class': placeholderClassName, tabindex, ...placeholderOther} = SelectPlaceholderAttr
 ---
 
 <div
 	class={attrClassList(SelectClasses.select, className)}
-	data-c-variant={variant}
-	data-c-use-icon={useIcon? '' : undefined}
+	data-c-select-variant={SelectVariant}
+	data-c-select-use-icon={SelectUseIcon? '' : undefined}
 	role={role ?? 'listbox'}
 	{...other}>
 	<div
@@ -45,7 +45,7 @@ const {'class': placeholderClassName, tabindex, ...placeholderOther} = attrPlace
 			<slot/>
 			<div
 				class={attrClassList(
-					ButtonClasses.btn,
+					ButtonClasses.button,
 					SelectClasses.placeholder,
 					placeholderClassName
 				)}
@@ -62,7 +62,11 @@ const {'class': placeholderClassName, tabindex, ...placeholderOther} = attrPlace
 			SelectClasses.icon,
 			iconClassName
 		)}
-		c:icon={ICON_CHEVRON_DOWN}
+		IconCode={ICON_CHEVRON_DOWN}
 		{...iconOther}
 	/>
 </div>
+<script>
+	import { registerSelect } from '.'
+	registerSelect()
+</script>

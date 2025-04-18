@@ -9,11 +9,11 @@ import { validEnumValue } from "@/utils/object"
 import { isTouchScreen } from "@/utils/platforms"
 
 type TooltipProps = astroHTML.JSX.HTMLAttributes & {
-	'c:startDelay'?: number
-	'c:endDelay'  ?: number
-	'c:gap'       ?: number
-	'c:useAnchor' ?: boolean
-	'c:position'  ?: TooltipPosition
+	TooltipStartDelay?: number
+	TooltipEndDelay  ?: number
+	TooltipGap       ?: number
+	TooltipUseAnchor ?: boolean
+	TooltipPosition  ?: TooltipPosition
 }
 
 type _TooltipOpenDetail = {
@@ -22,13 +22,13 @@ type _TooltipOpenDetail = {
 }
 
 type TooltipUpdateOptions = {
-	children  ?: (string | Node)[] | boolean
-	startDelay?: number | boolean
-	endDelay  ?: number | boolean
-	gap       ?: number | boolean
-	useAnchor ?: boolean
-	position  ?: TooltipPosition | boolean
-	refs      ?: {
+	TooltipChildren  ?: (string | Node)[] | boolean
+	TooltipStartDelay?: number | boolean
+	TooltipEndDelay  ?: number | boolean
+	TooltipGap       ?: number | boolean
+	TooltipUseAnchor ?: boolean
+	TooltipPosition  ?: TooltipPosition | boolean
+	TooltipRefs      ?: {
 		tooltip?(el: HTMLDivElement): unknown
 	}
 }
@@ -38,27 +38,27 @@ enum TooltipClasses {
 }
 
 enum TooltipTargetAttributes {
-	startDelayDuration = 'data-tooltip-start-delay',
-	endDelayDuration   = 'data-tooltip-end-delay',
 	tooltip            = 'data-tooltip',
-	gap                = 'data-tooltip-gap',
-	position           = 'data-tooltip-position',
-	useAnchor          = 'data-tooltip-use-anchor'
+	startDelayDuration = tooltip + '-start-delay',
+	endDelayDuration   = tooltip + '-end-delay',
+	gap                = tooltip + '-gap',
+	position           = tooltip + '-position',
+	useAnchor          = tooltip + '-use-anchor'
 }
 
 enum TooltipAttributes {
 	/** @param delay `number` */
-	startDelayDuration = 'data-c-start-delay',
+	startDelayDuration = 'data-c-tooltip-start-delay',
 
 	/** @param delay `number` */
-	endDelayDuration   = 'data-c-end-delay',
+	endDelayDuration   = 'data-c-tooltip-end-delay',
 
 	/** @param value `number` */
-	gap                = 'data-c-gap',
+	gap                = 'data-c-tooltip-gap',
 
 	/** @param position `TooltipPosition` */
-	position           = 'data-c-position',
-	useAnchor          = 'data-c-use-anchor'
+	position           = 'data-c-tooltip-position',
+	useAnchor          = 'data-c-tooltip-use-anchor'
 }
 
 enum _TooltipListenerEvents {
@@ -360,7 +360,7 @@ function updateTooltip(tooltip: HTMLDivElement, options?: TooltipUpdateOptions):
 		tooltip.id = createId()
 	}
 
-	const startDelay = options?.startDelay
+	const startDelay = options?.TooltipStartDelay
 	if (startDelay === false) {
 		tooltip.removeAttribute(TooltipAttributes.startDelayDuration)
 	}
@@ -368,7 +368,7 @@ function updateTooltip(tooltip: HTMLDivElement, options?: TooltipUpdateOptions):
 		tooltip.setAttribute(TooltipAttributes.startDelayDuration, startDelay + '')
 	}
 
-	const endDelay = options?.endDelay
+	const endDelay = options?.TooltipEndDelay
 	if (endDelay === false) {
 		tooltip.removeAttribute(TooltipAttributes.endDelayDuration)
 	}
@@ -376,7 +376,7 @@ function updateTooltip(tooltip: HTMLDivElement, options?: TooltipUpdateOptions):
 		tooltip.setAttribute(TooltipAttributes.endDelayDuration, endDelay + '')
 	}
 
-	const gap = options?.gap
+	const gap = options?.TooltipGap
 	if (gap === false) {
 		tooltip.removeAttribute(TooltipAttributes.gap)
 	}
@@ -384,7 +384,7 @@ function updateTooltip(tooltip: HTMLDivElement, options?: TooltipUpdateOptions):
 		tooltip.setAttribute(TooltipAttributes.gap, gap + '')
 	}
 
-	const position = options?.position
+	const position = options?.TooltipPosition
 	if (position === false) {
 		tooltip.removeAttribute(TooltipAttributes.position)
 	}
@@ -392,12 +392,12 @@ function updateTooltip(tooltip: HTMLDivElement, options?: TooltipUpdateOptions):
 		tooltip.setAttribute(TooltipAttributes.position, position)
 	}
 
-	const useAnchor = options?.useAnchor
+	const useAnchor = options?.TooltipUseAnchor
 	if (useAnchor !== undefined) {
 		tooltip.toggleAttribute(TooltipAttributes.useAnchor, useAnchor)
 	}
 
-	const children = options?.children
+	const children = options?.TooltipChildren
 	if (children === false) {
 		tooltip.replaceChildren()
 	}
@@ -405,7 +405,7 @@ function updateTooltip(tooltip: HTMLDivElement, options?: TooltipUpdateOptions):
 		tooltip.replaceChildren(...children)
 	}
 
-	options?.refs?.tooltip?.(tooltip)
+	options?.TooltipRefs?.tooltip?.(tooltip)
 	return tooltip
 }
 
@@ -434,6 +434,7 @@ export {
 	TooltipClasses,
 	TooltipAttributes,
 	TooltipTargetAttributes,
+	TooltipPosition,
 	registerTooltip,
 	unregisterTooltip,
 	createTooltip,

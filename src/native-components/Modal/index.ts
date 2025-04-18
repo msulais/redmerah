@@ -14,29 +14,29 @@ import {
 import { BodyAttributes, GlobalAttributes } from "@/enums/attributes"
 
 type ModalProps = astroHTML.JSX.DialogHTMLAttributes & {
-	'c:anchorBy'      ?: string
-	'c:draggable'     ?: boolean
-	'c:important'     ?: boolean
-	'c:autoFocus'     ?: boolean
-	'c:animation'     ?: boolean
-	'c:gap'           ?: number
-	'c:padding'       ?: number
-	'c:position'      ?: ModalPosition
-	'c:attrDragHandle'?: astroHTML.JSX.HTMLAttributes
-	'c:attrContent'   ?: astroHTML.JSX.HTMLAttributes
+	ModalAnchorBy      ?: string
+	ModalDraggable     ?: boolean
+	ModalImportant     ?: boolean
+	ModalAutoFocus     ?: boolean
+	ModalAnimation     ?: boolean
+	ModalGap           ?: number
+	ModalPadding       ?: number
+	ModalPosition      ?: ModalPosition
+	ModalDragHandleAttr?: astroHTML.JSX.HTMLAttributes
+	ModalContentAttr   ?: astroHTML.JSX.HTMLAttributes
 }
 
 type ModalUpdateOptions = {
-	children ?: (Node | string)[] | boolean
-	anchorBy ?: string | boolean
-	draggable?: boolean
-	important?: boolean
-	autoFocus?: boolean
-	animation?: boolean
-	gap      ?: number | boolean
-	padding  ?: number | boolean
-	position ?: ModalPosition | boolean
-	refs     ?: {
+	ModalChildren ?: (Node | string)[] | boolean
+	ModalAnchorBy ?: string | boolean
+	ModalDraggable?: boolean
+	ModalImportant?: boolean
+	ModalAutoFocus?: boolean
+	ModalAnimation?: boolean
+	ModalGap      ?: number | boolean
+	ModalPadding  ?: number | boolean
+	ModalPosition ?: ModalPosition | boolean
+	ModalRefs     ?: {
 		modal     ?(el: HTMLDialogElement): unknown
 		content   ?(el: HTMLDivElement   ): unknown
 		dragHandle?(el: HTMLDivElement   ): unknown
@@ -108,34 +108,32 @@ enum ModalEvents {
 
 enum ModalAttributes {
 	/** @param id `string` */
-	anchorBy = 'data-c-anchorby',
+	anchorBy   = 'data-c-modal-anchorby',
 
 	/** @param value `boolean` */
-	animation = 'data-c-animation',
+	animation  = 'data-c-modal-animation',
 
-	/** Useful for other component
-	 * @param value `'' | 'true' | 'false'` */
-	draggable = 'data-c-draggable',
-	important = 'data-c-important',
-	autoFocus = 'data-c-autofocus',
-	focus     = 'data-c-focus',
-	dragging  = 'data-c-dragging',
-
-	/** @param value `number` */
-	gap = 'data-c-gap',
+	/** Useful for other component */
+	draggable  = 'data-c-modal-draggable',
+	important  = 'data-c-modal-important',
+	autoFocus  = 'data-c-modal-autofocus',
+	focus      = 'data-c-modal-focus',
+	dragging   = 'data-c-modal-dragging',
 
 	/** @param value `number` */
-	padding = 'data-c-padding',
+	gap        = 'data-c-modal-gap',
+
+	/** @param value `number` */
+	padding    = 'data-c-modal-padding',
 
 	/** @param value `ModalPosition` */
-	position = 'data-c-position',
+	position   = 'data-c-modal-position',
 }
 
 enum ModalClasses {
-	modal          = 'c-modal',
-	content        = 'c-modal-content',
-	dragHandle     = 'c-modal-draghandle',
-	data_draggable = 'attr:draggable'
+	modal      = 'c-modal',
+	content    = 'c-modal-content',
+	dragHandle = 'c-modal-draghandle',
 }
 
 const LISTENED_ATTRIBUTES: string[] = [
@@ -157,7 +155,7 @@ let HAS_LISTENER: boolean = false
 // MutationObserver only exist in client side
 let MUTATION_OBSERVER: MutationObserver | null = null
 
-function initMutationObserver(): void {
+function _initMutationObserver(): void {
 	if (MUTATION_OBSERVER) return
 
 	MUTATION_OBSERVER = new MutationObserver((entries) => {
@@ -723,23 +721,23 @@ function createModal(options?: ModalUpdateOptions): HTMLDialogElement {
 
 function updateModal(modal: HTMLDialogElement, options?: ModalUpdateOptions): HTMLDialogElement {
 	modal.classList.add(ModalClasses.modal)
-	if (options?.draggable !== undefined) {
-		modal.toggleAttribute(ModalAttributes.draggable, options.draggable)
+	if (options?.ModalDraggable !== undefined) {
+		modal.toggleAttribute(ModalAttributes.draggable, options.ModalDraggable)
 	}
 
-	if (options?.important !== undefined) {
-		modal.toggleAttribute(ModalAttributes.important, options.important)
+	if (options?.ModalImportant !== undefined) {
+		modal.toggleAttribute(ModalAttributes.important, options.ModalImportant)
 	}
 
-	if (options?.autoFocus !== undefined) {
-		modal.toggleAttribute(ModalAttributes.autoFocus, options.autoFocus)
+	if (options?.ModalAutoFocus !== undefined) {
+		modal.toggleAttribute(ModalAttributes.autoFocus, options.ModalAutoFocus)
 	}
 
-	if (options?.animation !== undefined) {
-		modal.setAttribute(ModalAttributes.animation, String(options.animation))
+	if (options?.ModalAnimation !== undefined) {
+		modal.setAttribute(ModalAttributes.animation, String(options.ModalAnimation))
 	}
 
-	const anchorBy = options?.anchorBy
+	const anchorBy = options?.ModalAnchorBy
 	if (anchorBy === false) {
 		modal.removeAttribute(ModalAttributes.anchorBy)
 	}
@@ -747,7 +745,7 @@ function updateModal(modal: HTMLDialogElement, options?: ModalUpdateOptions): HT
 		modal.setAttribute(ModalAttributes.anchorBy, anchorBy)
 	}
 
-	const gap = options?.gap
+	const gap = options?.ModalGap
 	if (gap === false) {
 		modal.removeAttribute(ModalAttributes.gap)
 	}
@@ -755,7 +753,7 @@ function updateModal(modal: HTMLDialogElement, options?: ModalUpdateOptions): HT
 		modal.setAttribute(ModalAttributes.gap, gap.toString())
 	}
 
-	const padding = options?.padding
+	const padding = options?.ModalPadding
 	if (padding === false) {
 		modal.removeAttribute(ModalAttributes.padding)
 	}
@@ -763,7 +761,7 @@ function updateModal(modal: HTMLDialogElement, options?: ModalUpdateOptions): HT
 		modal.setAttribute(ModalAttributes.padding, padding.toString())
 	}
 
-	const position = options?.position
+	const position = options?.ModalPosition
 	if (position === false) {
 		modal.removeAttribute(ModalAttributes.position)
 	}
@@ -777,7 +775,7 @@ function updateModal(modal: HTMLDialogElement, options?: ModalUpdateOptions): HT
 		content.classList.add(ModalClasses.content)
 	}
 
-	const children = options?.children
+	const children = options?.ModalChildren
 	if (children === false) {
 		content.replaceChildren()
 	}
@@ -793,15 +791,15 @@ function updateModal(modal: HTMLDialogElement, options?: ModalUpdateOptions): HT
 	}
 
 	modal.replaceChildren(content, dragHandle)
-	options?.refs?.content?.(content)
-	options?.refs?.modal?.(modal)
-	options?.refs?.dragHandle?.(dragHandle)
+	options?.ModalRefs?.content?.(content)
+	options?.ModalRefs?.modal?.(modal)
+	options?.ModalRefs?.dragHandle?.(dragHandle)
 	return modal
 }
 
 function registerModal(...modals: HTMLDialogElement[]): void {
 	_initModalListener()
-	initMutationObserver()
+	_initMutationObserver()
 	if (modals.length === 0) {
 		modals = [...document.querySelectorAll<HTMLDialogElement>('dialog.' + ModalClasses.modal)]
 	}
@@ -839,6 +837,7 @@ export {
 	ModalEvents,
 	ModalAttributes,
 	ModalClasses,
+	ModalPosition,
 	openModal,
 	closeModal,
 	repositionModal,

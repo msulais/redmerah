@@ -10,23 +10,23 @@ type Props = LinkIconButtonProps
 
 const {
 	'class': className,
-	'c:icon': icon,
-	'c:filled': filled,
-	'c:attrIcon': attrIcon = {},
+	LinkIconButtonCode,
+	LinkIconButtonFilled,
+	LinkIconButtonIconAttr = {},
 	...other
 } = Astro.props
 const {
-	'c:filled': filledIcon,
-	'c:icon': iconIcon,
+	IconFilled,
+	IconCode,
 	...iconOther
-} = attrIcon
+} = LinkIconButtonIconAttr
 ---
 <LinkButton
 	class={attrClassList(ButtonClasses.icon, className)}
 	{...other}>
 	<Icon
-		c:icon={iconIcon ?? icon}
-		c:filled={filledIcon ?? filled}
+		IconCode={IconCode ?? LinkIconButtonCode}
+		IconFilled={IconFilled ?? LinkIconButtonFilled}
 		{...iconOther}
 	/>
 </LinkButton>

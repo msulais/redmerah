@@ -7,42 +7,42 @@ import './index.scss'
 type Props = ModalProps
 
 const {
-	'c:anchorBy': anchorBy,
-	'c:draggable': draggable,
-	'c:important': important,
-	'c:autoFocus': autoFocus,
-	'c:animation': animation,
-	'c:gap': gap,
-	'c:padding': padding,
-	'c:position': position,
-	'c:attrDragHandle': attrDragHandle,
-	'c:attrContent': attrContent,
+	ModalAnchorBy,
+	ModalDraggable,
+	ModalImportant,
+	ModalAutoFocus,
+	ModalAnimation,
+	ModalGap,
+	ModalPadding,
+	ModalPosition,
+	ModalDragHandleAttr = {},
+	ModalContentAttr = {},
 	'class': className,
 	...other
 } = Astro.props
 
 const {
 	'class': dragHandleClassName,
-	tabindex = 0,
+	tabindex: dragHandleTabIndex = 0,
 	...dragHandleOther
-} = attrDragHandle ?? {}
+} = ModalDragHandleAttr ?? {}
 
 const {
 	'class': contentClassName,
 	...contentOther
-} = attrContent ?? {}
+} = ModalContentAttr ?? {}
 
 ---
 <dialog
 	class={attrClassList(ModalClasses.modal, className)}
-	data-c-anchorby={anchorBy}
-	data-c-draggable={draggable? '' : undefined}
-	data-c-important={important? '' : undefined}
-	data-c-autofocus={autoFocus? '' : undefined}
-	data-c-animation={animation? '' : undefined}
-	data-c-gap={gap}
-	data-c-padding={padding}
-	data-c-position={position}
+	data-c-modal-anchorby={ModalAnchorBy}
+	data-c-modal-draggable={ModalDraggable? '' : undefined}
+	data-c-modal-important={ModalImportant? '' : undefined}
+	data-c-modal-autofocus={ModalAutoFocus? '' : undefined}
+	data-c-modal-animation={ModalAnimation? '' : undefined}
+	data-c-modal-gap={ModalGap}
+	data-c-modal-padding={ModalPadding}
+	data-c-modal-position={ModalPosition}
 	{...other}>
 	<div
 		class={attrClassList(ModalClasses.content, contentClassName)}
@@ -50,10 +50,14 @@ const {
 		<slot />
 	</div>
 
-	<!-- Keep below content to avoid auto focus -->
+	{/* Keep below content to avoid auto focus */}
 	<div
 		class={attrClassList(ModalClasses.dragHandle, dragHandleClassName)}
-		tabindex={tabindex}
+		tabindex={dragHandleTabIndex}
 		{...dragHandleOther}
 	/>
 </dialog>
+<script>
+	import { registerModal } from '.'
+	registerModal()
+</script>

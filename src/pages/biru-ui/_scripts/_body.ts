@@ -2,6 +2,7 @@ import { updateButton, type ButtonVariant } from "@/native-components/Button"
 import { ELEMENT_ID_PREFIX, ElementIds } from "./_enums"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { isAnimationAllowed } from "@/utils/animation"
+import { SelectAttributes } from "@/native-components/Select"
 
 const $ = (id: string) => document.getElementById(id)
 
@@ -17,24 +18,24 @@ function buttonPanel(): void {
 		const target = ev.target
 		switch (target) {
 		case optionVariant: {
-			const value = (target as HTMLDivElement).dataset.value
-			updateButton(btn1, {variant: value as ButtonVariant})
-			updateButton(btn2, {variant: value as ButtonVariant})
-			updateButton(btn3, {variant: value as ButtonVariant})
+			const value = (target as HTMLDivElement).getAttribute(SelectAttributes.value)
+			updateButton(btn1, {ButtonVariant: value as ButtonVariant})
+			updateButton(btn2, {ButtonVariant: value as ButtonVariant})
+			updateButton(btn3, {ButtonVariant: value as ButtonVariant})
 			break
 		}
 		case optionDisabled: {
 			const value = (target as HTMLInputElement).checked
-			updateButton(btn1, {disabled: value})
-			updateButton(btn2, {disabled: value})
-			updateButton(btn3, {disabled: value})
+			updateButton(btn1, {ButtonDisabled: value})
+			updateButton(btn2, {ButtonDisabled: value})
+			updateButton(btn3, {ButtonDisabled: value})
 			break
 		}
 		case optionFocused: {
 			const value = (target as HTMLInputElement).checked
-			updateButton(btn1, {focused: value})
-			updateButton(btn2, {focused: value})
-			updateButton(btn3, {focused: value})
+			updateButton(btn1, {ButtonFocused: value})
+			updateButton(btn2, {ButtonFocused: value})
+			updateButton(btn3, {ButtonFocused: value})
 			break
 		}}
 	})
@@ -114,7 +115,7 @@ function textFieldPanel(): void {
 			}, animationOptions)
 			if (trailing.checkVisibility() && target !== optionTrailing) {
 				trailing.animate({
-					transform: [`translateX(${trailingRect.left - trailingRect2.left}px)`, 'translateX(0)']
+					transform: [`translateX(${(trailingRect.left + (checked? 0 : 12)) - (trailingRect2.left + (checked? 12 : 0))}px)`, 'translateX(0)']
 				}, animationOptions)
 			}
 			break

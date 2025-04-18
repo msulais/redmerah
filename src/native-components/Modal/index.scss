@@ -31,15 +31,15 @@
 		background-color: transparent;
 	}
 
-	&:not([data-c-draggable]) > .c-modal-draghandle {
+	&:not([data-c-modal-draggable]) > .c-modal-draghandle {
 		display: none;
 	}
 
-	&[data-c-dragging] {
+	&[data-c-modal-dragging] {
 		will-change: top, left;
 	}
 
-	&[data-c-focus] > .c-modal-content {
+	&[data-c-modal-focus] > .c-modal-content {
 		outline-color: rgb(var(--g-color-accent));
 		outline-width: 4px;
 		outline-offset: -4px;
@@ -67,12 +67,12 @@
 }
 
 .c-modal-draghandle {
-	--c-border-radius: 16px;
-	--c-width-base: calc(100% - (var(--c-border-radius) * 2));
-	--c-width: calc(var(--c-width-base) + 32px);
-	--c-width-hover: calc(var(--c-width-base) + 8px);
+	--c-modal-draghandle-border-radius: 16px;
+	--c-modal-draghandle-width-base: calc(100% - (var(--c-modal-draghandle-border-radius) * 2));
+	--c-modal-draghandle-width: calc(var(--c-modal-draghandle-width-base) + 32px);
+	--c-modal-draghandle-width-hover: calc(var(--c-modal-draghandle-width-base) + 8px);
 
-	width: min(64px, var(--c-width));
+	width: min(64px, var(--c-modal-draghandle-width));
 	height: 4px;
 	position: absolute;
 	top: 4px;
@@ -97,7 +97,7 @@
 	@media (hover: hover) {
 		&:hover {
 			cursor: grab;
-			width: min(88px, var(--c-width-hover));
+			width: min(88px, var(--c-modal-draghandle-width-hover));
 			height: 8px;
 		}
 	}
@@ -105,7 +105,7 @@
 	&:active {
 		cursor: grabbing;
 		height: 8px;
-		width: min(80px, calc(var(--c-width-hover) - 16px));
+		width: min(80px, calc(var(--c-modal-draghandle-width-hover) - 16px));
 	}
 }
 

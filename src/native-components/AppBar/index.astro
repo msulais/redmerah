@@ -5,20 +5,20 @@ import './index.scss'
 
 type Props = AppBarProps
 const {
-	'c:tagName': tagName = 'header',
 	'class': className,
-	'c:attrLeading': attrLeading = {},
-	'c:attrTrailing': attrTrailing = {},
-	'c:attrContent': attrContent = {},
-	'c:attrHeading': attrHeading = {},
+	AppTagName      = 'header',
+	AppLeadingAttr  = {},
+	AppTrailingAttr = {},
+	AppContentAttr  = {},
+	AppHeadingAttr  = {},
 	...other
 } = Astro.props
-const {'class': contentClassName, ...contentOther} = attrContent
-const {'class': headingClassName, ...headingOther} = attrHeading
-const {'class': leadingClassName, ...leadingOther} = attrLeading
-const {'class': trailingClassName, ...trailingOther} = attrTrailing
+const {'class': contentClassName , ...contentOther } = AppContentAttr
+const {'class': headingClassName , ...headingOther } = AppHeadingAttr
+const {'class': leadingClassName , ...leadingOther } = AppLeadingAttr
+const {'class': trailingClassName, ...trailingOther} = AppTrailingAttr
 
-const Dynamic = tagName as 'header'
+const Dynamic = AppTagName as 'header'
 ---
 <Dynamic
 	class={attrClassList(AppBarClasses.appbar, className)}
