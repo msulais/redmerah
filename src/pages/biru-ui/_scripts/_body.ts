@@ -62,6 +62,7 @@ function textFieldPanel(): void {
 	const leading = $(ELEMENT_ID_PREFIX + ElementIds.panelTextfieldPreviewLeading) as HTMLElement
 	const trailing = $(ELEMENT_ID_PREFIX + ElementIds.panelTextfieldPreviewTrailing) as HTMLButtonElement
 	const options = $(ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptions)
+	const optionType = $(ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptionsType) as HTMLDivElement
 	const optionLeading = $(ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptionsLeading) as HTMLInputElement
 	const optionTrailing = $(ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptionsTrailing) as HTMLInputElement
 	const optionReadonly = $(ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptionsReadonly) as HTMLInputElement
@@ -93,6 +94,9 @@ function textFieldPanel(): void {
 			break
 		case optionPlaceholder:
 			input.placeholder = checked? "Type here ..." : ''
+			break
+		case optionType:
+			input.type = optionType.getAttribute(SelectAttributes.value) ?? 'text'
 		}
 
 		if (!isAnimationAllowed()) return

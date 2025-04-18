@@ -32,6 +32,8 @@ export enum ElementIds {
 	panelTextfieldPreviewLeading,
 	panelTextfieldPreviewTrailing,
 	panelTextfieldOptions,
+	panelTextfieldOptionsType,
+	panelTextfieldOptionsTypeLabel,
 	panelTextfieldOptionsLeading,
 	panelTextfieldOptionsTrailing,
 	panelTextfieldOptionsReadonly,

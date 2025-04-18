@@ -4,9 +4,18 @@ import TextField from '@/native-components/TextField/index.astro'
 import TextFieldButton from '@/native-components/TextField/TextFieldButton.astro'
 import CheckBox from '@/native-components/CheckBox/index.astro'
 import Icon from '@/native-components/Icon/index.astro'
+import Select from '@/native-components/Select/index.astro'
+import SelectOption from '@/native-components/Select/SelectOption.astro'
+import { ICON_ATTACH, ICON_SEARCH } from '@/constants/icons'
 import { ElementIds, ELEMENT_ID_PREFIX } from '../../_scripts/_enums'
 import CSS from '../../_index.module.scss'
-import { ICON_ATTACH, ICON_SEARCH } from '@/constants/icons'
+
+const types = [
+	'button', 'checkbox', 'color', 'date', 'datetime-local',
+	'email', 'file', 'hidden', 'image', 'month', 'number',
+	'password', 'radio', 'range', 'reset', 'search', 'submit',
+	'tel', 'text', 'time', 'url', 'week'
+].sort((a, b) => a.localeCompare(b))
 ---
 <div
 	class={CSS.bodyPage}
@@ -42,6 +51,15 @@ import { ICON_ATTACH, ICON_SEARCH } from '@/constants/icons'
 		</Tooltip>
 	</div>
 	<div class={CSS.bodyOptions} id={ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptions}>
+		<label id={ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptionsTypeLabel}>Type:</label>
+		<Select
+			aria-labelledby={ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptionsTypeLabel}
+			id={ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptionsType}
+			style="min-width:150px">
+			{types.map(v =>
+				<SelectOption value={v} SelectOptionSelected={v === 'text'}>{v}</SelectOption>
+			)}
+		</Select>
 		<CheckBox
 			CheckBoxInputAttr={{
 				id: ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptionsLeading,
