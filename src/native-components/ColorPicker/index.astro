@@ -1,0 +1,154 @@
+---
+import { ICON_CHEVRON_UP_DOWN, ICON_EYEDROPPER } from '@/constants/icons'
+import Icon from '@/native-components/Icon/index.astro'
+import Popover from '@/native-components/Popover/index.astro'
+import IconButton from '@/native-components/Button/IconButton.astro'
+import TextField from '@/native-components/TextField/index.astro'
+import TextFieldButton from '@/native-components/TextField/TextFieldButton.astro'
+import { attrClassList } from '@/utils/attributes'
+import { type ColorPickerProps, ColorPickerClasses } from '.'
+import { ButtonVariant } from '../Button'
+import './index.scss'
+
+type Props = ColorPickerProps
+const {
+	'class': className,
+	ColorPickerValue = '#ff0000',
+	ColorPickerColorSpace,
+	ColorPickerDisabledOpacity,
+	ColorPickerHueOnly,
+	ColorPickerContentAttr,
+	ColorPickerRectAttr,
+	ColorPickerOptionsAttr,
+	ColorPickerPreviewAttr,
+	ColorPickerEyeDropperAttr,
+	ColorPickerSliderAttr,
+	ColorPickerSliderHueAttr,
+	ColorPickerSliderOpacityAttr,
+	ColorPickerInputAttr,
+	ColorPickerLabelAttr,
+	ColorPickerLabelColorAttr,
+	ColorPickerLabelOpacityAttr,
+	ColorPickerTextFieldAttr,
+	ColorPickerTextFieldColorAttr,
+	ColorPickerTextFieldOpacityAttr,
+	ColorPickerSwapAttr,
+	ColorPickerSwapIconAttr,
+	...other
+} = Astro.props
+const {'class': rectClassName, draggable: rectDraggable = 'false', tabindex: rectTabindex = '0', ...rectOther} = ColorPickerRectAttr ?? {}
+const {'class': contentClassName, ...contentOther} = ColorPickerContentAttr ?? {}
+const {'class': optionsClassName, ...optionsOther} = ColorPickerOptionsAttr ?? {}
+const {'class': previewClassName, ...previewOther} = ColorPickerPreviewAttr ?? {}
+const {'class': eyeDropperClassName, ButtonVariant: eyeDropperVariant = ButtonVariant.tonal, IconButtonCode: eyeDropperIcon=ICON_EYEDROPPER, ...eyeDropperOther} = ColorPickerEyeDropperAttr ?? {}
+const {'class': sliderClassName, ...sliderOther} = ColorPickerSliderAttr ?? {}
+const {'class': sliderHueClassName, min: sliderHueMin = 0, max: sliderHueMax = 360, type: sliderHueType = 'range', name: sliderHueName = 'Hue', ...sliderHueOther} = ColorPickerSliderHueAttr ?? {}
+const {'class': sliderOpacityClassName, min: sliderOpacityMin = 0, max: sliderOpacityMax = 100, type: sliderOpacityType = 'range', name: sliderOpacityName = 'Opacity', ...sliderOpacityOther} = ColorPickerSliderOpacityAttr ?? {}
+const {'class': inputClassName, ...inputOther} = ColorPickerInputAttr ?? {}
+const {'class': labelClassName, ...labelOther} = ColorPickerLabelAttr ?? {}
+const {'class': labelColorClassName, ...labelColorOther} = ColorPickerLabelColorAttr ?? {}
+const {'class': labelOpacityClassName, ...labelOpacityOther} = ColorPickerLabelOpacityAttr ?? {}
+const {'class': textfieldClassName, ...textfieldOther} = ColorPickerTextFieldAttr ?? {}
+const {'class': textfieldColorClassName, ...textfieldColorOther} = ColorPickerTextFieldColorAttr ?? {}
+const {'class': textfieldOpacityClassName, ...textfieldOpacityOther} = ColorPickerTextFieldOpacityAttr ?? {}
+const {'class': swapClassName, ...swapOther} = ColorPickerSwapAttr ?? {}
+const {'class': swapIconClassName, IconCode: swapIconCode = ICON_CHEVRON_UP_DOWN, ...swapIconOther} = ColorPickerSwapIconAttr ?? {}
+---
+
+<Popover
+	class={attrClassList(ColorPickerClasses.colorpicker)}
+	data-c-colorpicker-value={ColorPickerValue}
+	data-c-colorpicker-colorspace={ColorPickerColorSpace}
+	data-c-colorpicker-disabled-opacity={ColorPickerDisabledOpacity? '' : undefined}
+	data-c-colorpicker-hueonly={ColorPickerHueOnly? '' : undefined}
+	{...other}>
+	<div
+		class={attrClassList(ColorPickerClasses.rect, rectClassName)}
+		tabindex={rectTabindex}
+		draggable={rectDraggable}
+		{...rectOther}
+	/>
+	<div
+		class={attrClassList(ColorPickerClasses.options, optionsClassName)}
+		{...optionsOther}>
+		<div
+			class={attrClassList(ColorPickerClasses.preview, previewClassName)}
+			{...previewOther}
+		/>
+		<IconButton
+			class={attrClassList(ColorPickerClasses.eyedropper, eyeDropperClassName)}
+			IconButtonCode={eyeDropperIcon}
+			ButtonVariant={eyeDropperVariant}
+			{...eyeDropperOther}
+		/>
+		<div
+			class={attrClassList(ColorPickerClasses.slider, sliderClassName)}
+			{...sliderOther}>
+			<input
+				class={attrClassList(ColorPickerClasses.sliderHue, sliderHueClassName)}
+				name={sliderHueName}
+				type={sliderHueType}
+				min={sliderHueMin}
+				max={sliderHueMax}
+				{...sliderHueOther}
+			/>
+			<input
+				class={attrClassList(ColorPickerClasses.sliderOpacity, sliderOpacityClassName)}
+				name={sliderOpacityName}
+				type={sliderOpacityType}
+				min={sliderOpacityMin}
+				max={sliderOpacityMax}
+				{...sliderOpacityOther}
+			/>
+		</div>
+	</div>
+	<div
+		class={attrClassList(ColorPickerClasses.input, inputClassName)}
+		{...inputOther}>
+		<div
+			class={attrClassList(ColorPickerClasses.label, labelClassName)}
+			{...labelOther}>
+			<label
+				class={attrClassList(ColorPickerClasses.labelColor, labelColorClassName)}
+				{...labelColorOther}>
+				HEX:
+			</label>
+			<label
+				class={attrClassList(ColorPickerClasses.labelOpacity, labelOpacityClassName)}
+				{...labelOpacityOther}>
+				Opacity:
+			</label>
+		</div>
+		<div
+			class={attrClassList(ColorPickerClasses.textfield, textfieldClassName)}
+			{...textfieldOther}>
+			<TextField
+				class={attrClassList(ColorPickerClasses.textfieldColor, textfieldColorClassName)}
+				{...textfieldColorOther}>
+				<TextFieldButton
+					slot="trailing"
+					class={attrClassList(ColorPickerClasses.swap, swapClassName)}
+					{...swapOther}>
+					<Icon
+						IconCode={swapIconCode}
+						class={attrClassList(ColorPickerClasses.swapIcon, swapIconClassName)}
+						{...swapIconOther}
+					/>
+				</TextFieldButton>
+			</TextField>
+			<TextField
+				class={attrClassList(ColorPickerClasses.textfieldOpacity, textfieldOpacityClassName)}
+				{...textfieldOpacityOther}
+			/>
+		</div>
+	</div>
+	<div
+		class={attrClassList(ColorPickerClasses.content, contentClassName)}
+		{...contentOther}>
+		<slot/>
+	</div>
+</Popover>
+<script>
+	import { registerColorPicker } from '.'
+	registerColorPicker()
+</script>
