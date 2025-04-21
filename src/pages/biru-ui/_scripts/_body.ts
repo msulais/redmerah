@@ -7,6 +7,7 @@ import { openPopover } from "@/native-components/Popover"
 import { ColorPickerAttributes, ColorPickerEvents } from "@/native-components/ColorPicker"
 import { colorContrastRatio, colorHexToRgb } from "@/utils/color"
 import type { HEXColor } from "@/types/color"
+import { IconClasses, updateIcon } from "@/native-components/Icon"
 
 const $ = (id: string) => document.getElementById(id)
 
@@ -175,11 +176,28 @@ function colorPickerPanel(): void {
 	})
 }
 
+function iconPanel(): void {
+	const previewRef = $(ELEMENT_ID_PREFIX + ElementIds.panelIconPreview) as HTMLDivElement
+	const optionsRef = $(ELEMENT_ID_PREFIX + ElementIds.panelIconOptions)
+	const filledOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelIconOptionsFilled)
+	optionsRef?.addEventListener('change', ev => {
+		const target = ev.target as HTMLInputElement
+		const checked = target.checked
+		switch (target) {
+		case filledOptionRef:
+			for (const icon of previewRef.querySelectorAll<HTMLElement>(`.${IconClasses.icon}`)) {
+				updateIcon(icon, {IconFilled: checked})
+			}
+		}
+	})
+}
+
 function _(): void {
 	buttonPanel()
 	checkBoxPanel()
 	textFieldPanel()
 	colorPickerPanel()
+	iconPanel()
 }
 
 export default _

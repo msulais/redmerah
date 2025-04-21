@@ -1,0 +1,37 @@
+---
+import CheckBox from '@/native-components/CheckBox/index.astro'
+import Tooltip from '@/native-components/Tooltip/index.astro'
+import Icon from '@/native-components/Icon/index.astro'
+import ColorPicker from '@/native-components/ColorPicker/index.astro'
+import { ElementIds, ELEMENT_ID_PREFIX } from '../../_scripts/_enums'
+import CSS from '../../_index.module.scss'
+import { ICON_ADD, ICON_ALERT_BADGE, ICON_APPROVALS_APP, ICON_ARROW_SHUFFLE, ICON_BATTERY_5, ICON_VEHICLE_CAR, ICON_VIDEO_CLIP, ICON_WARNING } from '@/constants/icons'
+---
+<div
+	class={CSS.bodyPage}
+	role="tabpanel"
+	id={ELEMENT_ID_PREFIX + ElementIds.panelIcon}>
+	<h2>Icon</h2>
+	<p>An icon is a small graphic symbol representing an action, object, or concept. Icons are used to enhance user understanding and interaction within an interface.</p>
+	<div class={CSS.bodyPlayground} id={ELEMENT_ID_PREFIX + ElementIds.panelIconPreview}>
+		<Tooltip>
+			<Icon IconCode={ICON_ADD}/>
+			<Icon IconCode={ICON_VEHICLE_CAR}/>
+			<Icon IconCode={ICON_ALERT_BADGE}/>
+			<Icon IconCode={ICON_APPROVALS_APP}/>
+			<Icon IconCode={ICON_WARNING}/>
+			<Icon IconCode={ICON_VIDEO_CLIP}/>
+			<Icon IconCode={ICON_ARROW_SHUFFLE}/>
+			<Icon IconCode={ICON_BATTERY_5}/>
+		</Tooltip>
+		<ColorPicker id={ELEMENT_ID_PREFIX + ElementIds.panelColorpickerPreviewColorPicker}/>
+	</div>
+	<div class={CSS.bodyOptions} id={ELEMENT_ID_PREFIX + ElementIds.panelIconOptions}>
+		<CheckBox
+			CheckBoxInputAttr={{
+				id: ELEMENT_ID_PREFIX + ElementIds.panelIconOptionsFilled
+			}}>
+			Filled
+		</CheckBox>
+	</div>
+</div>

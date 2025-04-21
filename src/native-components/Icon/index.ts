@@ -35,6 +35,12 @@ function updateIcon(icon: HTMLElement, options?: IconUpdateOptions): HTMLElement
 	if (options?.IconInline !== undefined) {
 		icon.toggleAttribute(IconAttributes.inline, options.IconInline)
 	}
+
+	const filled = options?.IconFilled
+	if (filled !== undefined && icon.textContent && icon.textContent.trim().length > 0) {
+		const code = icon.textContent.trim().charCodeAt(0)
+		icon.textContent = String.fromCharCode(code + (filled? -1 : 1))
+	}
 	if (options?.IconCode) {
 		icon.textContent = String.fromCharCode(options.IconCode - (options.IconFilled? 1 : 0))
 	}
