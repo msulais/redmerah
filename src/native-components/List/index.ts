@@ -1,5 +1,6 @@
 type ListProps = astroHTML.JSX.HTMLAttributes & {
 	ListTagName     ?: string
+	ListVariant     ?: ListVariant
 	ListContentAttr ?: astroHTML.JSX.HTMLAttributes
 	ListLeadingAttr ?: astroHTML.JSX.HTMLAttributes
 	ListTrailingAttr?: astroHTML.JSX.HTMLAttributes
@@ -11,6 +12,7 @@ type ListUpdateOptions = {
 	ListChildren   ?: (Node | string)[] | boolean
 	ListSubtitle   ?: (Node | string)[] | boolean
 	ListTrailing   ?: (Node | string)[] | boolean
+	ListVariant    ?: ListVariant | boolean
 	ListRefs       ?: {
 		list    ?(el: HTMLElement   ): unknown
 		content ?(el: HTMLDivElement): unknown
@@ -28,6 +30,17 @@ enum ListClasses {
 	subtitle = list + '-subtitle'
 }
 
+enum ListVariant {
+	transparent = 'transparent',
+	tonal = 'tonal',
+	filled = 'filled',
+	outlined = 'outlined'
+}
+
+enum ListAttributes {
+	variant = 'data-c-list-variant'
+}
+
 function createList<T extends HTMLElement>(
 	options?: ListUpdateOptions & {tagName?: keyof HTMLElementTagNameMap}
 ): T {
@@ -39,6 +52,13 @@ function createList<T extends HTMLElement>(
 function updateList<T extends HTMLElement>(list: T, options?: ListUpdateOptions): T {
 	const refs = options?.ListRefs
 	list.classList.add(ListClasses.list)
+
+	const variant = options?.ListVariant
+	if (variant === false) {
+		list.removeAttribute(ListAttributes.variant)
+	} else if (variant && variant !== true) {
+		list.setAttribute(ListAttributes.variant, variant)
+	}
 
 	// leading
 	let leading = list.querySelector(`.${ListClasses.leading}`) as HTMLDivElement | null
@@ -124,6 +144,8 @@ export {
 	type ListProps,
 	type ListUpdateOptions,
 	ListClasses,
+	ListVariant,
+	ListAttributes,
 	createList,
 	updateList
 }

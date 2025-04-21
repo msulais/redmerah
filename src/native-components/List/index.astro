@@ -8,6 +8,7 @@ type Props = ListProps
 
 const {
 	'class': className,
+	ListVariant,
 	ListTagName      = 'div',
 	ListLeadingAttr  = {},
 	ListTrailingAttr = {},
@@ -22,7 +23,10 @@ const {'class': subtitleClassName, ...subtitleOther} = ListSubtitleAttr
 const Dynamic = ListTagName as 'div'
 
 ---
-<Dynamic class={attrClassList(ListClasses.list, className)} {...other}>
+<Dynamic
+	class={attrClassList(ListClasses.list, className)}
+	data-c-list-variant={ListVariant}
+	{...other}>
 	<div class={attrClassList(ListClasses.leading, leadingClassName)} {...leadingOther}>
 		<slot name='leading'/>
 	</div>
