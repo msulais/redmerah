@@ -17,6 +17,14 @@ import { AppColors } from '@/enums/colors'
 ---
 
 <Menu id={ELEMENT_ID_PREFIX + ElementIds.appbarSettingsMenu}>
+	<MenuItem
+		id={ELEMENT_ID_PREFIX + ElementIds.appbarSettingsAccentButton}
+		aria-controls={ELEMENT_ID_PREFIX + ElementIds.appbarColorPicker}>
+		<Icon style={`color: rgb(${AppColors.accent})`} IconCode={ICON_CIRCLE} IconFilled/>
+		Color accent
+		<div style="flex:1"/>
+		<MenuIndent/>
+	</MenuItem>
 	<SubMenuItem
 		aria-controls={ELEMENT_ID_PREFIX + ElementIds.appbarSettingsAnimationMenu}>
 		<Icon IconCode={ICON_PLAY_CIRCLE_HINT}/>
@@ -31,14 +39,6 @@ import { AppColors } from '@/enums/colors'
 		<div style="flex:1"/>
 		<Icon IconCode={ICON_CHEVRON_RIGHT}/>
 	</SubMenuItem>
-	<MenuItem
-		id={ELEMENT_ID_PREFIX + ElementIds.appbarSettingsAccentButton}
-		aria-controls={ELEMENT_ID_PREFIX + ElementIds.appbarColorPicker}>
-		<Icon style={`color: rgb(${AppColors.accent})`} IconCode={ICON_CIRCLE} IconFilled/>
-		Color accent
-		<div style="flex:1"/>
-		<MenuIndent/>
-	</MenuItem>
 </Menu>
 <ColorPicker
 	PopoverDraggable
