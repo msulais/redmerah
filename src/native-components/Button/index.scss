@@ -136,3 +136,7 @@
 .c-button[data-c-button-variant=outlined] {
 	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity-border));
 }
+
+.c-icon-button {
+	padding: 4px 10px;
+}
