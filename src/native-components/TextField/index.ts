@@ -14,6 +14,7 @@ type TextFieldUpdateOptions = {
 	TextFieldLeading    ?: (string | Node)[] | boolean
 	TextFieldTrailing   ?: (string | Node)[] | boolean
 	TextFieldReadOnly   ?: boolean
+	TextFieldType       ?: astroHTML.JSX.HTMLInputTypeAttribute
 	TextFieldPlaceholder?: string | boolean
 	TextFieldValue      ?: string | boolean
 	TextFieldRefs       ?: {
@@ -60,7 +61,7 @@ function updateTextField(textfield: HTMLDivElement, options?: TextFieldUpdateOpt
 	if (!input) {
 		input = document.createElement('input')
 		input.classList.add(TextFieldClasses.input)
-		input.type = 'text'
+		input.type = options?.TextFieldType ?? 'text'
 	}
 
 	const readonly = options?.TextFieldReadOnly

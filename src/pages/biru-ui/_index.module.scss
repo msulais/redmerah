@@ -9,6 +9,8 @@ $side-navigation-none: 680px;
 	border-bottom: none;
 	border-right: none;
 	height: 100%;
+	max-height: 100%;
+	overflow: auto;
 	border-radius: 8px 0 0 0;
 
 	@media (max-width: $side-navigation-none) {
