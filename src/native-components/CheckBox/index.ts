@@ -74,7 +74,7 @@ function updateCheckBox(
 	if (children === false) {
 		content.replaceChildren()
 	}
-	else if (children && children !== true) {
+	else if (children !== undefined && children !== true) {
 		content.replaceChildren(...children)
 	}
 

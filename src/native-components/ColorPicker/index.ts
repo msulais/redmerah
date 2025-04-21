@@ -631,7 +631,7 @@ function updateColorPicker(colorPickerRef: HTMLDivElement, options?: ColorPicker
 	if (value === false) {
 		colorPickerRef.removeAttribute(ColorPickerAttributes.value)
 	}
-	else if (value && value !== true) {
+	else if (value !== undefined && value !== true) {
 		colorPickerRef.setAttribute(ColorPickerAttributes.value, value)
 	}
 
@@ -844,7 +844,8 @@ function updateColorPicker(colorPickerRef: HTMLDivElement, options?: ColorPicker
 	const children = options?.ColorPickerChildren
 	if (children === false) {
 		contentRef.replaceChildren()
-	} else if (children && children !== true) {
+	}
+	else if (children !== undefined && children !== true) {
 		contentRef.replaceChildren(...children)
 	}
 

@@ -741,7 +741,7 @@ function updateModal(modal: HTMLDialogElement, options?: ModalUpdateOptions): HT
 	if (anchorBy === false) {
 		modal.removeAttribute(ModalAttributes.anchorBy)
 	}
-	else if (anchorBy && anchorBy !== true) {
+	else if (anchorBy !== undefined && anchorBy !== true) {
 		modal.setAttribute(ModalAttributes.anchorBy, anchorBy)
 	}
 
@@ -749,7 +749,7 @@ function updateModal(modal: HTMLDialogElement, options?: ModalUpdateOptions): HT
 	if (gap === false) {
 		modal.removeAttribute(ModalAttributes.gap)
 	}
-	else if (gap && gap !== true) {
+	else if (gap !== undefined && gap !== true) {
 		modal.setAttribute(ModalAttributes.gap, gap.toString())
 	}
 
@@ -757,7 +757,7 @@ function updateModal(modal: HTMLDialogElement, options?: ModalUpdateOptions): HT
 	if (padding === false) {
 		modal.removeAttribute(ModalAttributes.padding)
 	}
-	else if (padding && padding !== true) {
+	else if (padding !== undefined && padding !== true) {
 		modal.setAttribute(ModalAttributes.padding, padding.toString())
 	}
 
@@ -765,7 +765,7 @@ function updateModal(modal: HTMLDialogElement, options?: ModalUpdateOptions): HT
 	if (position === false) {
 		modal.removeAttribute(ModalAttributes.position)
 	}
-	else if (position && position !== true) {
+	else if (position !== undefined && position !== true) {
 		modal.setAttribute(ModalAttributes.position, position)
 	}
 
@@ -779,7 +779,7 @@ function updateModal(modal: HTMLDialogElement, options?: ModalUpdateOptions): HT
 	if (children === false) {
 		content.replaceChildren()
 	}
-	else if (children && children !== true) {
+	else if (children !== undefined && children !== true) {
 		content.replaceChildren(...children)
 	}
 

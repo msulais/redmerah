@@ -740,28 +740,28 @@ function updatePopover(popover: HTMLDivElement, options?: PopoverUpdateOptions):
 	if (options?.PopoverAnchorBy === false) {
 		popover.removeAttribute(PopoverAttributes.anchorBy)
 	}
-	else if (options?.PopoverAnchorBy && options.PopoverAnchorBy !== true) {
+	else if (options?.PopoverAnchorBy !== undefined && options.PopoverAnchorBy !== true) {
 		popover.setAttribute(PopoverAttributes.anchorBy, options.PopoverAnchorBy)
 	}
 
 	if (options?.PopoverGap === false) {
 		popover.removeAttribute(PopoverAttributes.gap)
 	}
-	else if (options?.PopoverGap && options.PopoverGap !== true) {
+	else if (options?.PopoverGap !== undefined && options.PopoverGap !== true) {
 		popover.setAttribute(PopoverAttributes.gap, options.PopoverGap + '')
 	}
 
 	if (options?.PopoverPadding === false) {
 		popover.removeAttribute(PopoverAttributes.padding)
 	}
-	else if (options?.PopoverPadding && options.PopoverPadding !== true) {
+	else if (options?.PopoverPadding !== undefined && options.PopoverPadding !== true) {
 		popover.setAttribute(PopoverAttributes.padding, options.PopoverPadding + '')
 	}
 
 	if (options?.PopoverPosition === false) {
 		popover.removeAttribute(PopoverAttributes.position)
 	}
-	else if (options?.PopoverPosition && options.PopoverPosition !== true) {
+	else if (options?.PopoverPosition !== undefined && options.PopoverPosition !== true) {
 		popover.setAttribute(PopoverAttributes.position, options.PopoverPosition)
 	}
 
@@ -774,7 +774,7 @@ function updatePopover(popover: HTMLDivElement, options?: PopoverUpdateOptions):
 	if (options?.PopoverChildren === false) {
 		content.replaceChildren()
 	}
-	else if (options?.PopoverChildren && options.PopoverChildren !== true) {
+	else if (options?.PopoverChildren !== undefined && options.PopoverChildren !== true) {
 		content.replaceChildren(...options.PopoverChildren)
 	}
 

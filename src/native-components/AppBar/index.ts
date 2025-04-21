@@ -44,7 +44,7 @@ function updateAppBar<T extends HTMLElement>(appBar: T, options?: AppBarUpdateOp
 	if (options?.AppBarLeading === false) {
 		leading?.replaceChildren()
 	}
-	else if (options?.AppBarLeading && options.AppBarLeading !== true) {
+	else if (options?.AppBarLeading !== undefined && options.AppBarLeading !== true) {
 		if (!leading) {
 			leading = document.createElement('div')
 			leading.classList.add(AppBarClasses.leading)
@@ -65,7 +65,7 @@ function updateAppBar<T extends HTMLElement>(appBar: T, options?: AppBarUpdateOp
 	if (options?.AppBarHeadline === false) {
 		headline?.replaceChildren()
 	}
-	else if (options?.AppBarHeadline && options.AppBarHeadline !== true) {
+	else if (options?.AppBarHeadline !== undefined && options.AppBarHeadline !== true) {
 		if (!headline) {
 			headline = document.createElement('h2')
 			headline.classList.add(AppBarClasses.headline)
@@ -85,7 +85,7 @@ function updateAppBar<T extends HTMLElement>(appBar: T, options?: AppBarUpdateOp
 	if (options?.AppBarChildren === false) {
 		children.length = 0
 	}
-	else if (options?.AppBarChildren && options.AppBarChildren !== true) {
+	else if (options?.AppBarChildren !== undefined && options.AppBarChildren !== true) {
 		children.length = 0
 		children.push(...options.AppBarChildren)
 	}
@@ -99,7 +99,7 @@ function updateAppBar<T extends HTMLElement>(appBar: T, options?: AppBarUpdateOp
 	if (options?.AppBarTrailing === false) {
 		trailing?.replaceChildren()
 	}
-	else if (options?.AppBarTrailing && options.AppBarTrailing !== true) {
+	else if (options?.AppBarTrailing !== undefined && options.AppBarTrailing !== true) {
 		if (!trailing) {
 			trailing = document.createElement('div')
 			trailing.classList.add(AppBarClasses.trailing)

@@ -435,7 +435,7 @@ function updateSelect(select: HTMLDivElement, options?: SelectUpdateOptions): HT
 	if (role === false) {
 		select.removeAttribute('role')
 	}
-	else if (role && role !== true) {
+	else if (role !== undefined && role !== true) {
 		select.setAttribute('role', role)
 	}
 
@@ -443,7 +443,7 @@ function updateSelect(select: HTMLDivElement, options?: SelectUpdateOptions): HT
 	if (variant === false) {
 		select.removeAttribute(SelectAttributes.variant)
 	}
-	else if (variant && variant !== true) {
+	else if (variant !== undefined && variant !== true) {
 		select.setAttribute(SelectAttributes.variant, variant)
 	}
 
@@ -482,7 +482,7 @@ function updateSelect(select: HTMLDivElement, options?: SelectUpdateOptions): HT
 	if (options?.SelectPlaceholder === false) {
 		placeholder.replaceChildren()
 	}
-	else if (options?.SelectPlaceholder && options.SelectPlaceholder !== true) {
+	else if (options?.SelectPlaceholder !== undefined && options.SelectPlaceholder !== true) {
 		placeholder.replaceChildren(...options.SelectPlaceholder)
 	}
 
@@ -497,7 +497,7 @@ function updateSelect(select: HTMLDivElement, options?: SelectUpdateOptions): HT
 	if (options?.SelectChildren === false) {
 		children.length = 0
 	}
-	else if (options?.SelectChildren && options.SelectChildren !== true) {
+	else if (options?.SelectChildren !== undefined && options.SelectChildren !== true) {
 		children.length = 0
 		children.push(...options.SelectChildren)
 	}
@@ -537,11 +537,11 @@ function updateSelectOption(option: HTMLButtonElement, options?: SelectOptionUpd
 	if (role === false) {
 		option.removeAttribute('role')
 	}
-	else if (role && role !== true) {
+	else if (role !== undefined && role !== true) {
 		option.setAttribute('role', role)
 	}
 
-	if (options?.SelectOptionValue) {
+	if (options?.SelectOptionValue !== undefined) {
 		option.value = options.SelectOptionValue
 	}
 	if (options?.SelectOptionSelected !== undefined) {

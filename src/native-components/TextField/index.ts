@@ -51,7 +51,7 @@ function updateTextField(textfield: HTMLDivElement, options?: TextFieldUpdateOpt
 	if (options?.TextFieldLeading === false) {
 		leading.replaceChildren()
 	}
-	else if (options?.TextFieldLeading && options.TextFieldLeading !== true) {
+	else if (options?.TextFieldLeading !== undefined && options.TextFieldLeading !== true) {
 		leading.replaceChildren(...options.TextFieldLeading)
 	}
 
@@ -72,7 +72,7 @@ function updateTextField(textfield: HTMLDivElement, options?: TextFieldUpdateOpt
 	if (placeholder === false) {
 		input.placeholder = ''
 	}
-	else if (placeholder && placeholder !== true) {
+	else if (placeholder !== undefined && placeholder !== true) {
 		input.placeholder = placeholder
 	}
 
@@ -80,7 +80,7 @@ function updateTextField(textfield: HTMLDivElement, options?: TextFieldUpdateOpt
 	if (value === false) {
 		input.value = ''
 	}
-	else if (value && value !== true) {
+	else if (value !== undefined && value !== true) {
 		input.value = value
 	}
 
@@ -94,7 +94,7 @@ function updateTextField(textfield: HTMLDivElement, options?: TextFieldUpdateOpt
 	if (options?.TextFieldTrailing === false) {
 		trailing.replaceChildren()
 	}
-	else if (options?.TextFieldTrailing && options.TextFieldTrailing !== true) {
+	else if (options?.TextFieldTrailing !== undefined && options.TextFieldTrailing !== true) {
 		trailing.replaceChildren(...options.TextFieldTrailing)
 	}
 	textfield.replaceChildren(leading, input, trailing)

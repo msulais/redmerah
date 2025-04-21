@@ -56,7 +56,7 @@ function updateList<T extends HTMLElement>(list: T, options?: ListUpdateOptions)
 	const variant = options?.ListVariant
 	if (variant === false) {
 		list.removeAttribute(ListAttributes.variant)
-	} else if (variant && variant !== true) {
+	} else if (variant !== undefined && variant !== true) {
 		list.setAttribute(ListAttributes.variant, variant)
 	}
 
@@ -65,7 +65,7 @@ function updateList<T extends HTMLElement>(list: T, options?: ListUpdateOptions)
 	if (options?.ListLeading === false) {
 		leading?.replaceChildren()
 	}
-	else if (options?.ListLeading && options.ListLeading !== true) {
+	else if (options?.ListLeading !== undefined && options.ListLeading !== true) {
 		if (!leading) {
 			leading = document.createElement('div')
 			leading.classList.add(ListClasses.leading)
@@ -86,7 +86,7 @@ function updateList<T extends HTMLElement>(list: T, options?: ListUpdateOptions)
 	if (options?.ListSubtitle === false) {
 		subtitle?.replaceChildren()
 	}
-	else if (options?.ListSubtitle && options.ListSubtitle !== true) {
+	else if (options?.ListSubtitle !== undefined && options.ListSubtitle !== true) {
 		if (!subtitle) {
 			subtitle = document.createElement('div')
 			subtitle.classList.add(ListClasses.subtitle)
@@ -106,7 +106,7 @@ function updateList<T extends HTMLElement>(list: T, options?: ListUpdateOptions)
 	if (options?.ListChildren === false) {
 		children.length = 0
 	}
-	else if (options?.ListChildren && options.ListChildren !== true) {
+	else if (options?.ListChildren !== undefined && options.ListChildren !== true) {
 		children.length = 0
 		children.push(...options.ListChildren)
 	}

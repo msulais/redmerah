@@ -41,7 +41,7 @@ function updateIcon(icon: HTMLElement, options?: IconUpdateOptions): HTMLElement
 		const code = icon.textContent.trim().charCodeAt(0)
 		icon.textContent = String.fromCharCode(code + (filled? -1 : 1))
 	}
-	if (options?.IconCode) {
+	if (options?.IconCode !== undefined) {
 		icon.textContent = String.fromCharCode(options.IconCode - (options.IconFilled? 1 : 0))
 	}
 

@@ -102,7 +102,7 @@ function updateButton(button: HTMLButtonElement, options?: ButtonUpdateOptions):
 	if (variant === false) {
 		button.removeAttribute(ButtonAttributes.variant)
 	}
-	else if (variant && variant !== true) {
+	else if (variant !== undefined && variant !== true) {
 		button.setAttribute(ButtonAttributes.variant, variant)
 	}
 
@@ -120,7 +120,7 @@ function updateButton(button: HTMLButtonElement, options?: ButtonUpdateOptions):
 	if (children === false) {
 		button.replaceChildren()
 	}
-	else if (children && children !== true) {
+	else if (children !== undefined && children !== true) {
 		button.replaceChildren(...children)
 	}
 
@@ -142,7 +142,7 @@ function updateLinkButton(link: HTMLAnchorElement, options?: LinkButtonUpdateOpt
 	if (href === false) {
 		link.removeAttribute('href')
 	}
-	else if (href && href !== true) {
+	else if (href !== undefined && href !== true) {
 		link.href = href
 	}
 
@@ -150,7 +150,7 @@ function updateLinkButton(link: HTMLAnchorElement, options?: LinkButtonUpdateOpt
 	if (variant === false) {
 		link.removeAttribute(ButtonAttributes.variant)
 	}
-	else if (variant && variant !== true) {
+	else if (variant !== undefined && variant !== true) {
 		link.setAttribute(ButtonAttributes.variant, variant)
 	}
 
@@ -173,7 +173,7 @@ function updateLinkButton(link: HTMLAnchorElement, options?: LinkButtonUpdateOpt
 	if (children === false) {
 		link.replaceChildren()
 	}
-	else if (children && children !== true) {
+	else if (children !== undefined && children !== true) {
 		link.replaceChildren(...children)
 	}
 

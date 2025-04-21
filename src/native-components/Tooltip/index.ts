@@ -364,7 +364,7 @@ function updateTooltip(tooltip: HTMLDivElement, options?: TooltipUpdateOptions):
 	if (startDelay === false) {
 		tooltip.removeAttribute(TooltipAttributes.startDelayDuration)
 	}
-	else if (startDelay && startDelay !== true) {
+	else if (startDelay !== undefined && startDelay !== true) {
 		tooltip.setAttribute(TooltipAttributes.startDelayDuration, startDelay + '')
 	}
 
@@ -372,7 +372,7 @@ function updateTooltip(tooltip: HTMLDivElement, options?: TooltipUpdateOptions):
 	if (endDelay === false) {
 		tooltip.removeAttribute(TooltipAttributes.endDelayDuration)
 	}
-	else if (endDelay && endDelay !== true) {
+	else if (endDelay !== undefined && endDelay !== true) {
 		tooltip.setAttribute(TooltipAttributes.endDelayDuration, endDelay + '')
 	}
 
@@ -380,7 +380,7 @@ function updateTooltip(tooltip: HTMLDivElement, options?: TooltipUpdateOptions):
 	if (gap === false) {
 		tooltip.removeAttribute(TooltipAttributes.gap)
 	}
-	else if (gap && gap !== true) {
+	else if (gap !== undefined && gap !== true) {
 		tooltip.setAttribute(TooltipAttributes.gap, gap + '')
 	}
 
@@ -388,7 +388,7 @@ function updateTooltip(tooltip: HTMLDivElement, options?: TooltipUpdateOptions):
 	if (position === false) {
 		tooltip.removeAttribute(TooltipAttributes.position)
 	}
-	else if (position && position !== true) {
+	else if (position !== undefined && position !== true) {
 		tooltip.setAttribute(TooltipAttributes.position, position)
 	}
 
@@ -401,7 +401,7 @@ function updateTooltip(tooltip: HTMLDivElement, options?: TooltipUpdateOptions):
 	if (children === false) {
 		tooltip.replaceChildren()
 	}
-	else if (children && children !== true) {
+	else if (children !== undefined && children !== true) {
 		tooltip.replaceChildren(...children)
 	}
 

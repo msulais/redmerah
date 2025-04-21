@@ -79,7 +79,7 @@ function updateSideBar<T extends HTMLElement>(
 	if (options?.SideBarHeader === false) {
 		header?.replaceChildren()
 	}
-	else if (options?.SideBarHeader && options.SideBarHeader !== true) {
+	else if (options?.SideBarHeader !== undefined && options.SideBarHeader !== true) {
 		if (!header) {
 			header = document.createElement('div')
 			header.classList.add(SideBarClasses.header)
@@ -98,7 +98,7 @@ function updateSideBar<T extends HTMLElement>(
 	if (options?.SideBarChildren === false) {
 		content.replaceChildren()
 	}
-	else if (options?.SideBarChildren && options.SideBarChildren !== true) {
+	else if (options?.SideBarChildren !== undefined && options.SideBarChildren !== true) {
 		content.replaceChildren(...options.SideBarChildren)
 	}
 
@@ -107,7 +107,7 @@ function updateSideBar<T extends HTMLElement>(
 	if (options?.SideBarFooter === false) {
 		footer?.replaceChildren()
 	}
-	else if (options?.SideBarFooter && options.SideBarFooter !== true) {
+	else if (options?.SideBarFooter !== undefined && options.SideBarFooter !== true) {
 		if (!footer) {
 			footer = document.createElement('div')
 			footer.classList.add(SideBarClasses.footer)
@@ -148,7 +148,7 @@ function updateSideBarButton(
 	if (options?.SideBarButtonLeading === false) {
 		leading?.replaceChildren()
 	}
-	else if (options?.SideBarButtonLeading && options.SideBarButtonLeading !== true) {
+	else if (options?.SideBarButtonLeading !== undefined && options.SideBarButtonLeading !== true) {
 		if (!leading) {
 			leading = document.createElement('div')
 			leading.classList.add(SideBarClasses.buttonLeading)
@@ -167,7 +167,7 @@ function updateSideBarButton(
 	if (options?.ButtonChildren === false) {
 		content.replaceChildren()
 	}
-	else if (options?.ButtonChildren && options.ButtonChildren !== true) {
+	else if (options?.ButtonChildren !== undefined && options.ButtonChildren !== true) {
 		content.replaceChildren(...options.ButtonChildren)
 	}
 

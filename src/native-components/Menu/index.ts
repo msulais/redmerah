@@ -303,7 +303,7 @@ function updateMenu(menu: HTMLDivElement, options?: MenuUpdateOptions): HTMLDivE
 		// If we want without role, just use regular <Popover>. Or update with `updatePopover()`.
 		menu.removeAttribute('role')
 	}
-	else if (role && role !== true) {
+	else if (role !== undefined && role !== true) {
 		menu.setAttribute('role', role)
 	}
 
@@ -331,7 +331,7 @@ function updateMenuItem(menuitem: HTMLButtonElement, options?: MenuItemUpdateOpt
 		// If we want without role, just use regular <Button>. Or update with `updateButton()`.
 		menuitem.removeAttribute('role')
 	}
-	else if (role && role !== true) {
+	else if (role !== undefined && role !== true) {
 		menuitem.setAttribute('role', role)
 	}
 
@@ -359,7 +359,7 @@ function updateLinkMenuItem(menuitem: HTMLAnchorElement, options: LinkMenuItemUp
 		// If we want without role, just use regular <Button>. Or update with `updateLinkButton()`.
 		menuitem.removeAttribute('role')
 	}
-	else if (role && role !== true) {
+	else if (role !== undefined && role !== true) {
 		menuitem.setAttribute('role', role)
 	}
 	options.LinkMenuItemRefs?.menuitem?.(menuitem)
@@ -379,7 +379,7 @@ function updateSubMenuItem(submenuitem: HTMLButtonElement, options?: SubMenuItem
 	if (ariaControls === false) {
 		submenuitem.removeAttribute('aria-controls')
 	}
-	else if (ariaControls && ariaControls !== true) {
+	else if (ariaControls !== undefined && ariaControls !== null && ariaControls !== true) {
 		submenuitem.setAttribute('aria-controls', ariaControls)
 	}
 
@@ -387,7 +387,7 @@ function updateSubMenuItem(submenuitem: HTMLButtonElement, options?: SubMenuItem
 	if (ariaExpanded === false) {
 		submenuitem.removeAttribute('aria-expanded')
 	}
-	else if (ariaExpanded && ariaExpanded !== true) {
+	else if (ariaExpanded !== undefined && ariaExpanded !== null && ariaExpanded !== true) {
 		submenuitem.setAttribute('aria-expanded', ariaExpanded)
 	}
 
@@ -395,7 +395,7 @@ function updateSubMenuItem(submenuitem: HTMLButtonElement, options?: SubMenuItem
 	if (ariaHaspopup === false) {
 		submenuitem.removeAttribute('aria-haspopup')
 	}
-	else if (ariaHaspopup && ariaHaspopup !== true) {
+	else if (ariaHaspopup !== undefined && ariaHaspopup !== null && ariaHaspopup !== true) {
 		submenuitem.setAttribute('aria-haspopup', ariaHaspopup)
 	}
 

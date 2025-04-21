@@ -51,7 +51,7 @@ function updateApp<T extends HTMLElement>(app: T, options?: AppUpdateOptions): T
 	if (options?.AppAppBar === false) {
 		appBar?.replaceChildren()
 	}
-	else if (options?.AppAppBar && options.AppAppBar !== true) {
+	else if (options?.AppAppBar !== undefined && options.AppAppBar !== true) {
 		if (!appBar) {
 			appBar = document.createElement('div')
 			appBar.classList.add(AppClasses.appBar)
@@ -72,7 +72,7 @@ function updateApp<T extends HTMLElement>(app: T, options?: AppUpdateOptions): T
 	if (options?.AppLeftSideBar === false) {
 		leftSideBar?.replaceChildren()
 	}
-	else if (options?.AppLeftSideBar && options?.AppLeftSideBar !== true) {
+	else if (options?.AppLeftSideBar !== undefined && options?.AppLeftSideBar !== true) {
 		if (!leftSideBar) {
 			leftSideBar = document.createElement('div')
 			leftSideBar.classList.add(AppClasses.leftSideBar)
@@ -91,7 +91,7 @@ function updateApp<T extends HTMLElement>(app: T, options?: AppUpdateOptions): T
 	if (options?.AppChildren === false) {
 		body.replaceChildren()
 	}
-	else if (options?.AppChildren && options.AppChildren !== true) {
+	else if (options?.AppChildren !== undefined && options.AppChildren !== true) {
 		body.replaceChildren(...options.AppChildren)
 	}
 
@@ -100,7 +100,7 @@ function updateApp<T extends HTMLElement>(app: T, options?: AppUpdateOptions): T
 	if (options?.AppRightSideBar === false) {
 		rightSideBar?.replaceChildren()
 	}
-	else if (options?.AppRightSideBar && options.AppRightSideBar !== true) {
+	else if (options?.AppRightSideBar !== undefined && options.AppRightSideBar !== true) {
 		if (!rightSideBar) {
 			rightSideBar = document.createElement('div')
 			rightSideBar.classList.add(AppClasses.rightSideBar)
@@ -118,7 +118,7 @@ function updateApp<T extends HTMLElement>(app: T, options?: AppUpdateOptions): T
 	if (options?.AppBottomBar === false) {
 		bottomBar?.replaceChildren()
 	}
-	else if (options?.AppBottomBar && options.AppBottomBar !== true) {
+	else if (options?.AppBottomBar !== undefined && options.AppBottomBar !== true) {
 		if (!bottomBar) {
 			bottomBar = document.createElement('div')
 			bottomBar.classList.add(AppClasses.bottomBar)
