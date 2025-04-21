@@ -1,0 +1,85 @@
+---
+import CheckBox from '@/native-components/CheckBox/index.astro'
+import Tooltip from '@/native-components/Tooltip/index.astro'
+import Icon from '@/native-components/Icon/index.astro'
+import List from '@/native-components/List/index.astro'
+import Button from '@/native-components/Button/index.astro'
+import Select from '@/native-components/Select/index.astro'
+import SelectOption from '@/native-components/Select/SelectOption.astro'
+import IconButton from '@/native-components/Button/IconButton.astro'
+import { ElementIds, ELEMENT_ID_PREFIX } from '../../_scripts/_enums'
+import CSS from '../../_index.module.scss'
+import { ICON_ALERT, ICON_CHEVRON_DOWN } from '@/constants/icons'
+import { ButtonVariant } from '@/native-components/Button'
+import { ListVariant } from '@/native-components/List'
+---
+<div
+	class={CSS.bodyPage}
+	role="tabpanel"
+	id={ELEMENT_ID_PREFIX + ElementIds.panelList}>
+	<h2>List</h2>
+	<p>A list is a UI element that displays a collection of items in a sequential order. It typically includes components like title, subtitle, leading icon (placed before the title), and trailing buttons (placed after the title).</p>
+	<div class={CSS.bodyPlayground}>
+		<Tooltip>
+			<List
+				id={ELEMENT_ID_PREFIX + ElementIds.panelListPreviewList}
+				style="padding-right:4px"
+				ListVariant={ListVariant.tonal}
+				ListTrailingAttr={{
+					id: ELEMENT_ID_PREFIX + ElementIds.panelListPreviewTrailing,
+					style: 'display:flex;align-items:center;gap:4px;'
+				}}
+				ListLeadingAttr={{
+					id: ELEMENT_ID_PREFIX + ElementIds.panelListPreviewLeading
+				}}
+				ListSubtitleAttr={{
+					id: ELEMENT_ID_PREFIX + ElementIds.panelListPreviewSubtitle
+				}}>
+				<Icon data-tooltip="Icon" IconCode={ICON_ALERT} slot="leading"/>
+				<p id={ELEMENT_ID_PREFIX + ElementIds.panelListPreviewTitle} data-tooltip="Title">Ullamco Lorem amet culpa ad quis duis enim ut magna.</p>
+				<p slot="subtitle" data-tooltip="Subtitle">Duis commodo ad laboris tempor incididunt excepteur et esse ipsum irure tempor.</p>
+				<Fragment slot="trailing">
+					<Button data-tooltip="Button" ButtonVariant={ButtonVariant.filled}>Show more</Button>
+					<IconButton data-tooltip="IconButton" IconButtonCode={ICON_CHEVRON_DOWN}/>
+				</Fragment>
+			</List>
+		</Tooltip>
+	</div>
+	<div class={CSS.bodyOptions} id={ELEMENT_ID_PREFIX + ElementIds.panelListOptions}>
+		<label id={ELEMENT_ID_PREFIX + ElementIds.panelListOptionsVariantLabel}>Variant:</label>
+		<Select aria-labelledby={ELEMENT_ID_PREFIX + ElementIds.panelListOptionsVariantLabel} id={ELEMENT_ID_PREFIX + ElementIds.panelListOptionsVariant} style="min-width: 140px">
+			<SelectOption value={ListVariant.filled}>Filled</SelectOption>
+			<SelectOption value={ListVariant.tonal} SelectOptionSelected>Tonal</SelectOption>
+			<SelectOption value={ListVariant.transparent}>Transparent</SelectOption>
+			<SelectOption value={ListVariant.outlined}>Outlined</SelectOption>
+		</Select>
+		<CheckBox
+			CheckBoxInputAttr={{
+				id: ELEMENT_ID_PREFIX + ElementIds.panelListOptionsLeading,
+				checked: true
+			}}>
+			Leading
+		</CheckBox>
+		<CheckBox
+			CheckBoxInputAttr={{
+				id: ELEMENT_ID_PREFIX + ElementIds.panelListOptionsTrailing,
+				checked: true
+			}}>
+			Trailing
+		</CheckBox>
+		<CheckBox
+			CheckBoxInputAttr={{
+				id: ELEMENT_ID_PREFIX + ElementIds.panelListOptionsTitle,
+				checked: true
+			}}>
+			Title
+		</CheckBox>
+		<CheckBox
+			CheckBoxInputAttr={{
+				id: ELEMENT_ID_PREFIX + ElementIds.panelListOptionsSubtitle,
+				checked: true
+			}}>
+			Subtitle
+		</CheckBox>
+	</div>
+</div>

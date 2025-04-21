@@ -8,6 +8,7 @@ import { ColorPickerAttributes, ColorPickerEvents } from "@/native-components/Co
 import { colorContrastRatio, colorHexToRgb } from "@/utils/color"
 import type { HEXColor } from "@/types/color"
 import { IconClasses, updateIcon } from "@/native-components/Icon"
+import { ListVariant, updateList } from "@/native-components/List"
 
 const $ = (id: string) => document.getElementById(id)
 
@@ -65,7 +66,7 @@ function checkBoxPanel(): void {
 }
 
 function textFieldPanel(): void {
-	const animationOptions = {duration: 200, easing: AnimationEffectTiming.spring}
+	const animationOptions = {duration: 250, easing: AnimationEffectTiming.spring}
 	const textField = $(ELEMENT_ID_PREFIX + ElementIds.panelTextfieldPreview) as HTMLDivElement
 	const input = $(ELEMENT_ID_PREFIX + ElementIds.panelTextfieldPreviewInput) as HTMLInputElement
 	const leading = $(ELEMENT_ID_PREFIX + ElementIds.panelTextfieldPreviewLeading) as HTMLElement
@@ -192,12 +193,124 @@ function iconPanel(): void {
 	})
 }
 
+function listPanel(): void {
+	const animationOptions = {duration: 250, easing: AnimationEffectTiming.spring}
+	const optionsRef = $(ELEMENT_ID_PREFIX + ElementIds.panelListOptions)!
+	const listPreview = $(ELEMENT_ID_PREFIX + ElementIds.panelListPreviewList)!
+	const leadingPreview = $(ELEMENT_ID_PREFIX + ElementIds.panelListPreviewLeading)!
+	const titlePreview = $(ELEMENT_ID_PREFIX + ElementIds.panelListPreviewTitle)!
+	const trailingPreview = $(ELEMENT_ID_PREFIX + ElementIds.panelListPreviewTrailing)!
+	const subtitlePreview = $(ELEMENT_ID_PREFIX + ElementIds.panelListPreviewSubtitle)!
+	const leadingOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelListOptionsLeading)!
+	const trailingOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelListOptionsTrailing)!
+	const subtitleOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelListOptionsSubtitle)!
+	const titleOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelListOptionsTitle)!
+	const variantOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelListOptionsVariant)!
+	optionsRef?.addEventListener(SelectEvents.change, ev => {
+		const target = ev.target as HTMLDivElement
+		const value = target.getAttribute(SelectAttributes.value)
+
+		switch (target) {
+		case variantOptionRef:
+			updateList(listPreview!, {
+				ListVariant: value as ListVariant
+			})
+		}
+	})
+	optionsRef?.addEventListener('change', ev => {
+		const target = ev.target as HTMLInputElement
+		const checked = target.checked
+		const leadingRects = [...leadingPreview.children].map(v => v.getBoundingClientRect())
+		const trailingRects = [...trailingPreview.children].map(v => v.getBoundingClientRect())
+		const subtitleRects = [...subtitlePreview.children].map(v => v.getBoundingClientRect())
+		const titlePreviewRect = titlePreview.getBoundingClientRect()
+		const listPreviewRect = listPreview.getBoundingClientRect()
+
+		switch (target) {
+		case leadingOptionRef:
+			leadingPreview?.style.setProperty('display', checked? null : 'none')
+			if (isAnimationAllowed()) {
+				for (const child of leadingPreview!.children) {
+					child.animate({scale: [0, 1]}, animationOptions)
+				}
+			}
+			break
+		case trailingOptionRef:
+			trailingPreview?.style.setProperty('display', checked? 'flex' : 'none')
+			listPreview?.style.setProperty('padding-right', checked? '4px' : null)
+			if (isAnimationAllowed()) {
+				for (const child of trailingPreview!.children) {
+					child.animate({scale: [0, 1]}, animationOptions)
+				}
+			}
+			break
+		case subtitleOptionRef:
+			subtitlePreview?.style.setProperty('display', checked? null : 'none')
+			if (isAnimationAllowed()) {
+				for (const child of subtitlePreview!.children) {
+					child.animate({
+						opacity: [0, 1],
+						transform: ['translateY(-8px)', 'translateY(0)']
+					}, animationOptions)
+				}
+			}
+			break
+		case titleOptionRef:
+			titlePreview?.style.setProperty('display', checked? null : 'none')
+			if (isAnimationAllowed()) {
+				titlePreview?.animate({
+					opacity: [0, 1],
+					transform: ['translateY(8px)', 'translateY(0)']
+				}, animationOptions)
+			}
+			break
+		}
+
+		if (!isAnimationAllowed()) return
+
+		if (target === titleOptionRef || target === leadingOptionRef){
+			const subtitleRects2 = [...subtitlePreview.children].map(v => v.getBoundingClientRect())
+			for (let i = 0; i < subtitleRects2.length; i++) {
+				const rect1 = subtitleRects[i]
+				const rect2 = subtitleRects2[i]
+				const child = subtitlePreview.children.item(i)
+				if (!child || !rect2 || !rect1) continue
+
+				child.animate({
+					transform: [
+						`translate(${rect1.left - rect2.left}px,${rect1.top - rect2.top}px)`,
+						`translate(0,0)`
+					]
+				}, animationOptions)
+			}
+		}
+
+		if (target === subtitleOptionRef || target === leadingOptionRef) {
+			const titlePreviewRect2 = titlePreview.getBoundingClientRect()
+			titlePreview.animate({
+				transform: [
+					`translate(${titlePreviewRect.left - titlePreviewRect2.left}px,${titlePreviewRect.top - titlePreviewRect2.top}px)`,
+					`translate(0,0)`
+				]
+			}, animationOptions)
+		}
+
+		if (target === subtitleOptionRef || target === titleOptionRef) {
+			const listPreviewRect2 = listPreview.getBoundingClientRect()
+			listPreview.animate({
+				height: [listPreviewRect.height + 'px', listPreviewRect2.height + 'px']
+			}, animationOptions)
+		}
+	})
+}
+
 function _(): void {
 	buttonPanel()
 	checkBoxPanel()
 	textFieldPanel()
 	colorPickerPanel()
 	iconPanel()
+	listPanel()
 }
 
 export default _
