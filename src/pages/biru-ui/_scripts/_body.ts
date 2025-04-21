@@ -3,6 +3,10 @@ import { ELEMENT_ID_PREFIX, ElementIds } from "./_enums"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { isAnimationAllowed } from "@/utils/animation"
 import { SelectAttributes } from "@/native-components/Select"
+import { openPopover } from "@/native-components/Popover"
+import { ColorPickerAttributes, ColorPickerEvents } from "@/native-components/ColorPicker"
+import { colorContrastRatio, colorHexToRgb } from "@/utils/color"
+import type { HEXColor } from "@/types/color"
 
 const $ = (id: string) => document.getElementById(id)
 
@@ -127,10 +131,45 @@ function textFieldPanel(): void {
 	})
 }
 
+function colorPickerPanel(): void {
+	const options = $(ELEMENT_ID_PREFIX + ElementIds.panelColorpickerOptions)
+	const button = $(ELEMENT_ID_PREFIX + ElementIds.panelColorpickerPreviewButton) as HTMLButtonElement
+	const colorpicker = $(ELEMENT_ID_PREFIX + ElementIds.panelColorpickerPreviewColorPicker) as HTMLDivElement
+	const optionHueOnly = $(ELEMENT_ID_PREFIX + ElementIds.panelColorpickerOptionsHueOnly) as HTMLInputElement
+	const optionDisabledOpacity = $(ELEMENT_ID_PREFIX + ElementIds.panelColorpickerOptionsDisabledOpacity) as HTMLInputElement
+	button.addEventListener('click', () => {
+		openPopover(colorpicker, {
+			anchor: button
+		})
+	})
+
+	colorpicker.addEventListener(ColorPickerEvents.change, () => {
+		const value = colorpicker.getAttribute(ColorPickerAttributes.value)!
+		button.textContent = value
+		button.setAttribute('data-tooltip', 'Pick color')
+		button.style.setProperty('background-color', value)
+		button.style.setProperty('color', colorContrastRatio(colorHexToRgb(value as HEXColor), {r: 0, g: 0, b: 0}) > 50 ? '#000' : '#fff')
+	})
+
+	options?.addEventListener('change', ev => {
+		const target = ev.target as HTMLInputElement
+		const checked = target.checked
+		switch (target) {
+		case optionHueOnly:
+			colorpicker.toggleAttribute(ColorPickerAttributes.hueOnly, checked)
+			break
+		case optionDisabledOpacity:
+			colorpicker.toggleAttribute(ColorPickerAttributes.disabledOpacity, checked)
+			break
+		}
+	})
+}
+
 function _(): void {
 	buttonPanel()
 	checkBoxPanel()
 	textFieldPanel()
+	colorPickerPanel()
 }
 
 export default _

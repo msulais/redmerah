@@ -1,0 +1,40 @@
+---
+import CheckBox from '@/native-components/CheckBox/index.astro'
+import Tooltip from '@/native-components/Tooltip/index.astro'
+import Button from '@/native-components/Button/index.astro'
+import ColorPicker from '@/native-components/ColorPicker/index.astro'
+import { ElementIds, ELEMENT_ID_PREFIX } from '../../_scripts/_enums'
+import CSS from '../../_index.module.scss'
+import { ButtonVariant } from '@/native-components/Button'
+---
+<div
+	class={CSS.bodyPage}
+	role="tabpanel"
+	id={ELEMENT_ID_PREFIX + ElementIds.panelColorpicker}>
+	<h2>ColorPicker</h2>
+	<p>A color picker is a UI element that allows users to select a color from a defined color space. It typically provides a visual representation of colors and offers various methods for color selection, such as palettes, sliders, or color wheels.</p>
+	<div class={CSS.bodyPlayground}>
+		<Tooltip>
+			<Button
+				id={ELEMENT_ID_PREFIX + ElementIds.panelColorpickerPreviewButton}
+				ButtonVariant={ButtonVariant.tonal}>
+				Pick color
+			</Button>
+		</Tooltip>
+		<ColorPicker id={ELEMENT_ID_PREFIX + ElementIds.panelColorpickerPreviewColorPicker}/>
+	</div>
+	<div class={CSS.bodyOptions} id={ELEMENT_ID_PREFIX + ElementIds.panelColorpickerOptions}>
+		<CheckBox
+			CheckBoxInputAttr={{
+				id: ELEMENT_ID_PREFIX + ElementIds.panelColorpickerOptionsHueOnly,
+			}}>
+			Hue only
+		</CheckBox>
+		<CheckBox
+			CheckBoxInputAttr={{
+				id: ELEMENT_ID_PREFIX + ElementIds.panelColorpickerOptionsDisabledOpacity,
+			}}>
+			Disabled opacity
+		</CheckBox>
+	</div>
+</div>
