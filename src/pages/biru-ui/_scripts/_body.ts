@@ -3,12 +3,13 @@ import { ELEMENT_ID_PREFIX, ElementIds } from "./_enums"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { isAnimationAllowed } from "@/utils/animation"
 import { SelectAttributes, SelectEvents } from "@/native-components/Select"
-import { openPopover } from "@/native-components/Popover"
+import { closePopover, openPopover, PopoverPosition, updatePopover } from "@/native-components/Popover"
 import { ColorPickerAttributes, ColorPickerEvents } from "@/native-components/ColorPicker"
 import { colorContrastRatio, colorHexToRgb } from "@/utils/color"
 import type { HEXColor } from "@/types/color"
 import { IconClasses, updateIcon } from "@/native-components/Icon"
 import { ListVariant, updateList } from "@/native-components/List"
+import { numberSafe } from "@/utils/number"
 
 const $ = (id: string) => document.getElementById(id)
 
@@ -302,6 +303,70 @@ function listPanel(): void {
 	})
 }
 
+function popoverPanel(): void {
+	const optionsRef = $(ELEMENT_ID_PREFIX + ElementIds.panelPopoverOptions) as HTMLDivElement
+	const openButtonRef = $(ELEMENT_ID_PREFIX + ElementIds.panelPopoverPreviewButtonOpen) as HTMLButtonElement
+	const closeButtonRef = $(ELEMENT_ID_PREFIX + ElementIds.panelPopoverPreviewButtonClose) as HTMLButtonElement
+	const popoverRef = $(ELEMENT_ID_PREFIX + ElementIds.panelPopoverPreviewPopover) as HTMLDivElement
+	const positionOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelPopoverOptionsPosition) as HTMLDivElement
+	const paddingOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelPopoverOptionsPadding) as HTMLInputElement
+	const gapOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelPopoverOptionsGap) as HTMLInputElement
+	const anchorOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelPopoverOptionsAnchor) as HTMLInputElement
+	const autofocusOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelPopoverOptionsAutofocus) as HTMLInputElement
+	const importantOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelPopoverOptionsImportant) as HTMLInputElement
+	const draggableOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelPopoverOptionsDraggable) as HTMLInputElement
+
+	openButtonRef.addEventListener('click', () => openPopover(popoverRef))
+	closeButtonRef.addEventListener('click', () => closePopover(popoverRef))
+	optionsRef.addEventListener(SelectEvents.change, ev => {
+		const target = ev.target as HTMLDivElement
+		const value = target.getAttribute(SelectAttributes.value)!
+		switch (target) {
+		case positionOptionRef:
+			updatePopover(popoverRef, {
+				PopoverPosition: value as PopoverPosition
+			})
+			break
+		}
+	})
+
+	optionsRef.addEventListener('focusout', ev => {
+		switch (ev.target) {
+		case paddingOptionRef:
+			updatePopover(popoverRef, {
+				PopoverPadding: numberSafe(paddingOptionRef.valueAsNumber)
+			})
+			break
+		case gapOptionRef:
+			updatePopover(popoverRef, {
+				PopoverGap: gapOptionRef.valueAsNumber
+			})
+			break
+		}
+	})
+
+	optionsRef.addEventListener('change', ev => {
+		const target = ev.target as HTMLInputElement
+		const checked = target.checked
+		switch (target) {
+		case anchorOptionRef:
+			updatePopover(popoverRef, {
+				PopoverAnchorBy: checked? openButtonRef.id : false
+			})
+			break
+		case autofocusOptionRef:
+			updatePopover(popoverRef, {PopoverAutoFocus: checked})
+			break
+		case importantOptionRef:
+			updatePopover(popoverRef, {PopoverImportant: checked})
+			break
+		case draggableOptionRef:
+			updatePopover(popoverRef, {PopoverDraggable: checked})
+			break
+		}
+	})
+}
+
 function _(): void {
 	buttonPanel()
 	checkBoxPanel()
@@ -309,6 +374,7 @@ function _(): void {
 	colorPickerPanel()
 	iconPanel()
 	listPanel()
+	popoverPanel()
 }
 
 export default _
