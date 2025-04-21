@@ -2,7 +2,7 @@ import { updateButton, type ButtonVariant } from "@/native-components/Button"
 import { ELEMENT_ID_PREFIX, ElementIds } from "./_enums"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { isAnimationAllowed } from "@/utils/animation"
-import { SelectAttributes } from "@/native-components/Select"
+import { SelectAttributes, SelectEvents } from "@/native-components/Select"
 import { openPopover } from "@/native-components/Popover"
 import { ColorPickerAttributes, ColorPickerEvents } from "@/native-components/ColorPicker"
 import { colorContrastRatio, colorHexToRgb } from "@/utils/color"
@@ -18,7 +18,7 @@ function buttonPanel(): void {
 	const optionVariant = $(ELEMENT_ID_PREFIX + ElementIds.panelButtonsOptionsVariant)
 	const optionDisabled = $(ELEMENT_ID_PREFIX + ElementIds.panelButtonsOptionsDisabled)
 	const optionFocused = $(ELEMENT_ID_PREFIX + ElementIds.panelButtonsOptionsFocused)
-	options.addEventListener('change', ev => {
+	options.addEventListener(SelectEvents.change, ev => {
 		const target = ev.target
 		switch (target) {
 		case optionVariant: {
@@ -72,7 +72,7 @@ function textFieldPanel(): void {
 	const optionReadonly = $(ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptionsReadonly) as HTMLInputElement
 	const optionPlaceholder = $(ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptionsPlaceholder) as HTMLInputElement
 
-	options?.addEventListener('change', ev => {
+	options?.addEventListener(SelectEvents.change, ev => {
 		const target = ev.target as HTMLInputElement
 		const checked = target.checked
 		const textFieldRect = textField.getBoundingClientRect()

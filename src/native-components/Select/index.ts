@@ -73,6 +73,10 @@ enum SelectAttributes {
 	value    = 'data-c-select-value'
 }
 
+enum SelectEvents {
+	change = 'select:change'
+}
+
 const REGISTERED_SELECT: HTMLDivElement[] = []
 let OPENED_SELECT: HTMLDivElement | null = null
 let SELECTED_OPTION_COPY: HTMLElement | null = null
@@ -274,7 +278,8 @@ function _initSelect(select: HTMLDivElement): void {
 		option.setAttribute('aria-selected', 'true')
 		select.setAttribute('aria-activedescendant', option.id)
 		select.setAttribute(SelectAttributes.value, option.value)
-		select.dispatchEvent(new Event('change', {
+
+		select.dispatchEvent(new CustomEvent(SelectEvents.change, {
 			bubbles: true
 		}))
 	}
@@ -580,6 +585,7 @@ export {
 	SelectClasses,
 	SelectAttributes,
 	SelectVariant,
+	SelectEvents,
 	createSelect,
 	checkSelectedOptions,
 	repairOptions,
