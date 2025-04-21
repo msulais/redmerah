@@ -2,6 +2,7 @@ export enum LocalStorageKeys {
 	platformTheme = 'platform:theme',
 	platformColor = 'platform:color',
 	platformAnimation = 'platform:animation',
+	platformAccentColor = 'platform:accent-color',
 
 	// TODO: remove when SolidJS removed
 	corner = 'corner',

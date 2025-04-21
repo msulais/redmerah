@@ -8,8 +8,8 @@ import { LocalStorageKeys } from "@/enums/storage"
 import { validEnumValue } from "@/utils/object"
 import { RootAttributes } from "@/enums/attributes"
 import { PlatformAnimationMode, PlatformThemeMode } from "@/enums/platforms"
-import { ColorPickerAttributes, ColorPickerEvents, ColorPickerPosition, openColorPicker } from "@/native-components/ColorPicker"
-import { colorGeneratePalette, colorHexToRgb } from "@/utils/color"
+import { ColorPickerAttributes, ColorPickerEvents, ColorPickerPosition, openColorPicker, updateColorPicker } from "@/native-components/ColorPicker"
+import { colorGeneratePalette, colorHexToRgb, colorIsValid } from "@/utils/color"
 import type { HEXColor, RGBColor } from "@/types/color"
 import { GlobalElementIds } from "@/enums/ids"
 
@@ -47,8 +47,10 @@ function initSettingsMenu(): void {
 		if (timeAccentId !== null) clearTimeout(timeAccentId)
 
 		timeAccentId = setTimeout(() => {
-			const acc = colorGeneratePalette(colorPickerRef.getAttribute(ColorPickerAttributes.value)! as HEXColor)
-			accentColorElement.innerHTML = `:root{--g-color-accent-light: ${rgbToCSS(colorHexToRgb(acc.color))};--g-color-accent-dark: ${rgbToCSS(colorHexToRgb(acc.colorDark))};--g-color-on-accent-light: ${rgbToCSS(colorHexToRgb(acc.onColor))};--g-color-on-accent-dark: ${rgbToCSS(colorHexToRgb(acc.onColorDark))};}`;
+			const accent = colorPickerRef.getAttribute(ColorPickerAttributes.value)! as HEXColor
+			const palette = colorGeneratePalette(accent)
+			accentColorElement.innerHTML = `:root{--g-color-accent-light: ${rgbToCSS(colorHexToRgb(palette.color))};--g-color-accent-dark: ${rgbToCSS(colorHexToRgb(palette.colorDark))};--g-color-on-accent-light: ${rgbToCSS(colorHexToRgb(palette.onColor))};--g-color-on-accent-dark: ${rgbToCSS(colorHexToRgb(palette.onColorDark))};}`;
+			localStorage.setItem(LocalStorageKeys.platformAccentColor, accent)
 		}, 10)
 	})
 }
@@ -88,8 +90,23 @@ function initSettings(): void {
 		if (target) target.checked = true
 	}
 
+	function initAccentColor(): void {
+		const accent = localStorage.getItem(LocalStorageKeys.platformAccentColor)
+		if (!accent || !colorIsValid(accent)) return
+
+		const rgbToCSS = (rgb: RGBColor) => `${Math.round(rgb.r * 0xff)}, ${Math.round(rgb.g * 0xff)}, ${Math.round(rgb.b * 0xff)}`
+		const accentColorElement = $(GlobalElementIds.colorAccent) as HTMLStyleElement
+		const colorPickerRef = $(ELEMENT_ID_PREFIX + ElementIds.appbarColorPicker) as HTMLDivElement
+		const palette = colorGeneratePalette(accent as HEXColor)
+		accentColorElement.innerHTML = `:root{--g-color-accent-light: ${rgbToCSS(colorHexToRgb(palette.color))};--g-color-accent-dark: ${rgbToCSS(colorHexToRgb(palette.colorDark))};--g-color-on-accent-light: ${rgbToCSS(colorHexToRgb(palette.onColor))};--g-color-on-accent-dark: ${rgbToCSS(colorHexToRgb(palette.onColorDark))};}`;
+		updateColorPicker(colorPickerRef, {
+			ColorPickerValue: accent as HEXColor
+		})
+	}
+
 	initTheme()
 	initAnimation()
+	initAccentColor()
 }
 
 function initSettingsAnimationMenuEvents(): void {
