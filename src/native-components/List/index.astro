@@ -8,17 +8,17 @@ type Props = ListProps
 
 const {
 	'class': className,
-	ListTagName         = 'div',
-	ListLeadingAttr     = {},
-	ListTrailingAttr    = {},
-	ListContentAttr     = {},
-	ListDescriptionAttr = {},
+	ListTagName      = 'div',
+	ListLeadingAttr  = {},
+	ListTrailingAttr = {},
+	ListContentAttr  = {},
+	ListSubtitleAttr = {},
 	...other
 } = Astro.props
-const {'class': leadingClassName    , ...leadingOther    } = ListLeadingAttr
-const {'class': trailingClassName   , ...trailingOther   } = ListTrailingAttr
-const {'class': contentClassName    , ...contentOther    } = ListContentAttr
-const {'class': descriptionClassName, ...descriptionOther} = ListDescriptionAttr
+const {'class': leadingClassName , ...leadingOther } = ListLeadingAttr
+const {'class': trailingClassName, ...trailingOther} = ListTrailingAttr
+const {'class': contentClassName , ...contentOther } = ListContentAttr
+const {'class': subtitleClassName, ...subtitleOther} = ListSubtitleAttr
 const Dynamic = ListTagName as 'div'
 
 ---
@@ -28,11 +28,11 @@ const Dynamic = ListTagName as 'div'
 	</div>
 	<div class={attrClassList(ListClasses.content, contentClassName)} {...contentOther}>
 		<slot/>
-		{Astro.slots.has('description') &&
+		{Astro.slots.has('subtitle') &&
 			<div
-				class={attrClassList(ListClasses.description, descriptionClassName)}
-				{...descriptionOther}>
-				<slot name='description'/>
+				class={attrClassList(ListClasses.subtitle, subtitleClassName)}
+				{...subtitleOther}>
+				<slot name='subtitle'/>
 			</div>
 		}
 	</div>

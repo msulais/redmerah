@@ -1,31 +1,31 @@
 type ListProps = astroHTML.JSX.HTMLAttributes & {
-	ListTagName        ?: string
-	ListContentAttr    ?: astroHTML.JSX.HTMLAttributes
-	ListLeadingAttr    ?: astroHTML.JSX.HTMLAttributes
-	ListTrailingAttr   ?: astroHTML.JSX.HTMLAttributes
-	ListDescriptionAttr?: astroHTML.JSX.HTMLAttributes
+	ListTagName     ?: string
+	ListContentAttr ?: astroHTML.JSX.HTMLAttributes
+	ListLeadingAttr ?: astroHTML.JSX.HTMLAttributes
+	ListTrailingAttr?: astroHTML.JSX.HTMLAttributes
+	ListSubtitleAttr?: astroHTML.JSX.HTMLAttributes
 }
 
 type ListUpdateOptions = {
 	ListLeading    ?: (Node | string)[] | boolean
 	ListChildren   ?: (Node | string)[] | boolean
-	ListDescription?: (Node | string)[] | boolean
+	ListSubtitle   ?: (Node | string)[] | boolean
 	ListTrailing   ?: (Node | string)[] | boolean
 	ListRefs       ?: {
-		list       ?(el: HTMLElement   ): unknown
-		content    ?(el: HTMLDivElement): unknown
-		description?(el: HTMLDivElement): unknown
-		leading    ?(el: HTMLDivElement): unknown
-		trailing   ?(el: HTMLDivElement): unknown
+		list    ?(el: HTMLElement   ): unknown
+		content ?(el: HTMLDivElement): unknown
+		subtitle?(el: HTMLDivElement): unknown
+		leading ?(el: HTMLDivElement): unknown
+		trailing?(el: HTMLDivElement): unknown
 	}
 }
 
 enum ListClasses {
-	list        = 'c-list',
-	leading     = list + '-leading',
-	trailing    = list + '-trailing',
-	content     = list + '-content',
-	description = list + '-description'
+	list     = 'c-list',
+	leading  = list + '-leading',
+	trailing = list + '-trailing',
+	content  = list + '-content',
+	subtitle = list + '-subtitle'
 }
 
 function createList<T extends HTMLElement>(
@@ -61,24 +61,24 @@ function updateList<T extends HTMLElement>(list: T, options?: ListUpdateOptions)
 		content.classList.add(ListClasses.content)
 	}
 
-	// content -> description
-	let description = list.querySelector(`.${ListClasses.description}`) as HTMLDivElement | null
-	if (options?.ListDescription === false) {
-		description?.replaceChildren()
+	// content -> subtitle
+	let subtitle = list.querySelector(`.${ListClasses.subtitle}`) as HTMLDivElement | null
+	if (options?.ListSubtitle === false) {
+		subtitle?.replaceChildren()
 	}
-	else if (options?.ListDescription && options.ListDescription !== true) {
-		if (!description) {
-			description = document.createElement('div')
-			description.classList.add(ListClasses.description)
+	else if (options?.ListSubtitle && options.ListSubtitle !== true) {
+		if (!subtitle) {
+			subtitle = document.createElement('div')
+			subtitle.classList.add(ListClasses.subtitle)
 		}
 
-		description.replaceChildren(...options.ListDescription)
+		subtitle.replaceChildren(...options.ListSubtitle)
 	}
 
 	// content -> children
 	const children: (Node | string)[] = []
 	for (const node of content.childNodes) {
-		if (description && node === description) continue
+		if (subtitle && node === subtitle) continue
 
 		children.push(node)
 	}
@@ -91,7 +91,7 @@ function updateList<T extends HTMLElement>(list: T, options?: ListUpdateOptions)
 		children.push(...options.ListChildren)
 	}
 
-	content.replaceChildren(...[...children, description].filter(
+	content.replaceChildren(...[...children, subtitle].filter(
 		v => typeof v === 'string' || v instanceof Node
 	))
 
@@ -115,7 +115,7 @@ function updateList<T extends HTMLElement>(list: T, options?: ListUpdateOptions)
 	refs?.list?.(list)
 	refs?.content?.(content)
 	if (leading) refs?.leading?.(leading)
-	if (description) refs?.description?.(description)
+	if (subtitle) refs?.subtitle?.(subtitle)
 	if (trailing) refs?.trailing?.(trailing)
 	return list
 }
