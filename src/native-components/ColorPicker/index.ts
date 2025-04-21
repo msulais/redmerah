@@ -384,7 +384,6 @@ function _initColorPicker(colorPickerRef: HTMLDivElement): void {
 
 	function rectRefOnKeyDown(ev: KeyboardEvent): void {
 		const key = ev.key
-		console.log(key)
 		switch (key) {
 		case KEY_ARROW_RIGHT:
 			++rectX
