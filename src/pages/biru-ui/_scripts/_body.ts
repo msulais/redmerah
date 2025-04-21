@@ -18,6 +18,24 @@ function buttonPanel(): void {
 	const optionVariant = $(ELEMENT_ID_PREFIX + ElementIds.panelButtonsOptionsVariant)
 	const optionDisabled = $(ELEMENT_ID_PREFIX + ElementIds.panelButtonsOptionsDisabled)
 	const optionFocused = $(ELEMENT_ID_PREFIX + ElementIds.panelButtonsOptionsFocused)
+	options.addEventListener('change', ev => {
+		const target = ev.target as HTMLInputElement
+		const checked = target.checked
+		switch (target) {
+		case optionDisabled: {
+			updateButton(btn1, {ButtonDisabled: checked})
+			updateButton(btn2, {ButtonDisabled: checked})
+			updateButton(btn3, {ButtonDisabled: checked})
+			break
+		}
+		case optionFocused: {
+			updateButton(btn1, {ButtonFocused: checked})
+			updateButton(btn2, {ButtonFocused: checked})
+			updateButton(btn3, {ButtonFocused: checked})
+			break
+		}}
+	})
+
 	options.addEventListener(SelectEvents.change, ev => {
 		const target = ev.target
 		switch (target) {
@@ -26,20 +44,6 @@ function buttonPanel(): void {
 			updateButton(btn1, {ButtonVariant: value as ButtonVariant})
 			updateButton(btn2, {ButtonVariant: value as ButtonVariant})
 			updateButton(btn3, {ButtonVariant: value as ButtonVariant})
-			break
-		}
-		case optionDisabled: {
-			const value = (target as HTMLInputElement).checked
-			updateButton(btn1, {ButtonDisabled: value})
-			updateButton(btn2, {ButtonDisabled: value})
-			updateButton(btn3, {ButtonDisabled: value})
-			break
-		}
-		case optionFocused: {
-			const value = (target as HTMLInputElement).checked
-			updateButton(btn1, {ButtonFocused: value})
-			updateButton(btn2, {ButtonFocused: value})
-			updateButton(btn3, {ButtonFocused: value})
 			break
 		}}
 	})
@@ -73,6 +77,14 @@ function textFieldPanel(): void {
 	const optionPlaceholder = $(ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptionsPlaceholder) as HTMLInputElement
 
 	options?.addEventListener(SelectEvents.change, ev => {
+		const target = ev.target
+		switch (target) {
+		case optionType:
+			input.type = optionType.getAttribute(SelectAttributes.value) ?? 'text'
+		}
+	})
+
+	options?.addEventListener('change', ev => {
 		const target = ev.target as HTMLInputElement
 		const checked = target.checked
 		const textFieldRect = textField.getBoundingClientRect()
@@ -99,8 +111,6 @@ function textFieldPanel(): void {
 		case optionPlaceholder:
 			input.placeholder = checked? "Type here ..." : ''
 			break
-		case optionType:
-			input.type = optionType.getAttribute(SelectAttributes.value) ?? 'text'
 		}
 
 		if (!isAnimationAllowed()) return
