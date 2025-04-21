@@ -8,6 +8,10 @@ import { LocalStorageKeys } from "@/enums/storage"
 import { validEnumValue } from "@/utils/object"
 import { RootAttributes } from "@/enums/attributes"
 import { PlatformAnimationMode, PlatformThemeMode } from "@/enums/platforms"
+import { ColorPickerAttributes, ColorPickerEvents, ColorPickerPosition, openColorPicker } from "@/native-components/ColorPicker"
+import { colorGeneratePalette, colorHexToRgb } from "@/utils/color"
+import type { HEXColor, RGBColor } from "@/types/color"
+import { GlobalElementIds } from "@/enums/ids"
 
 const $ = (id: string) => document.getElementById(id)
 const $$ = (selector: string, from = document) => from.querySelector(selector)
@@ -20,6 +24,34 @@ const settingsButton = $(ELEMENT_ID_PREFIX + ElementIds.appbarSettingsButton) as
 const settingsMenu = $(ELEMENT_ID_PREFIX + ElementIds.appbarSettingsMenu) as HTMLDivElement
 const settingsThemeMenu = $(ELEMENT_ID_PREFIX + ElementIds.appbarSettingsThemeMenu) as HTMLDivElement
 const settingsAnimationMenu = $(ELEMENT_ID_PREFIX + ElementIds.appbarSettingsAnimationMenu) as HTMLDivElement
+
+function initSettingsMenu(): void {
+	const rgbToCSS = (rgb: RGBColor) => `${Math.round(rgb.r * 0xff)}, ${Math.round(rgb.g * 0xff)}, ${Math.round(rgb.b * 0xff)}`
+	const accentButtonRef = $(ELEMENT_ID_PREFIX + ElementIds.appbarSettingsAccentButton) as HTMLButtonElement
+	const colorPickerRef = $(ELEMENT_ID_PREFIX + ElementIds.appbarColorPicker) as HTMLDivElement
+	const accentColorElement = $(GlobalElementIds.colorAccent) as HTMLStyleElement
+	let timeAccentId: number | NodeJS.Timeout | null = null
+
+	settingsMenu.addEventListener('click', () => {
+		switch (document.activeElement) {
+		case accentButtonRef:
+			openColorPicker(colorPickerRef, {
+				anchor: document.body,
+				position: ColorPickerPosition.centerCenterRightTop
+			}).then(() => closeMenu(settingsMenu))
+			break
+		}
+	})
+
+	colorPickerRef.addEventListener(ColorPickerEvents.input, () => {
+		if (timeAccentId !== null) clearTimeout(timeAccentId)
+
+		timeAccentId = setTimeout(() => {
+			const acc = colorGeneratePalette(colorPickerRef.getAttribute(ColorPickerAttributes.value)! as HEXColor)
+			accentColorElement.innerHTML = `:root{--g-color-accent-light: ${rgbToCSS(colorHexToRgb(acc.color))};--g-color-accent-dark: ${rgbToCSS(colorHexToRgb(acc.colorDark))};--g-color-on-accent-light: ${rgbToCSS(colorHexToRgb(acc.onColor))};--g-color-on-accent-dark: ${rgbToCSS(colorHexToRgb(acc.onColorDark))};}`;
+		}, 10)
+	})
+}
 
 function initSettings(): void {
 	function initTheme(): void {
@@ -140,6 +172,7 @@ const _ = () => {
 	initSettings()
 	initSettingsAnimationMenuEvents()
 	initSettingsThemeMenuEvents()
+	initSettingsMenu()
 }
 
 export default _

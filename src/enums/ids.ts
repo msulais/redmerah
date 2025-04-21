@@ -1,4 +1,4 @@
-export enum ElementIds {
+export enum GlobalElementIds {
 	colorAccent = 'g-color-accent',
 	splash = 'g-splash',
 	textTooltip = 'c-text-tooltip',

@@ -9,7 +9,7 @@ import { elementFocusAny } from '@/utils/element'
 import { BodyAttributes } from '@/enums/attributes'
 import { eventCall } from "@/utils/event"
 import { AnimationEffectTiming } from '@/enums/animation'
-import { ElementIds } from '@/enums/ids'
+import { GlobalElementIds } from '@/enums/ids'
 import { KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT, KEY_ARROW_UP, KEY_ESCAPE } from '@/constants/key-code'
 import { isAnimationAllowed } from '@/utils/animation'
 
@@ -91,7 +91,7 @@ function initPopoverListener(): void {
 	function createListenerElement(): void {
 		const div = document.createElement('div')
 		div.style.setProperty('display', 'contents')
-		div.id = ElementIds.popoverListener
+		div.id = GlobalElementIds.popoverListener
 		body.appendChild(div)
 
 		LISTENER_REF = div

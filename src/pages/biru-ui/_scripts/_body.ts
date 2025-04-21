@@ -220,8 +220,6 @@ function listPanel(): void {
 	optionsRef?.addEventListener('change', ev => {
 		const target = ev.target as HTMLInputElement
 		const checked = target.checked
-		const leadingRects = [...leadingPreview.children].map(v => v.getBoundingClientRect())
-		const trailingRects = [...trailingPreview.children].map(v => v.getBoundingClientRect())
 		const subtitleRects = [...subtitlePreview.children].map(v => v.getBoundingClientRect())
 		const titlePreviewRect = titlePreview.getBoundingClientRect()
 		const listPreviewRect = listPreview.getBoundingClientRect()

@@ -10,6 +10,8 @@ export enum ElementIds {
 	appbarSettingsMenu,
 	appbarSettingsAnimationMenu,
 	appbarSettingsThemeMenu,
+	appbarSettingsAccentButton,
+	appbarColorPicker,
 	navigation,
 	panelButtons,
 	panelButtonsPreview1,

@@ -1,6 +1,6 @@
 import { AnimationEffectTiming } from "@/enums/animation"
 import { BodyAttributes } from "@/enums/attributes"
-import { ElementIds } from "@/enums/ids"
+import { GlobalElementIds } from "@/enums/ids"
 import { isAnimationAllowed } from "@/utils/animation"
 import { numberSafe } from "@/utils/number"
 
@@ -9,7 +9,7 @@ let COMPONENT_COUNT_MAX: number | null = null
 
 export function removeSplashScreen(timeout: number = 0): void {
 	setTimeout(() => {
-		const splashRef = document.getElementById(ElementIds.splash)
+		const splashRef = document.getElementById(GlobalElementIds.splash)
 		if (!splashRef) return;
 
 		const scrollY = window.scrollY // original scroll offset Y

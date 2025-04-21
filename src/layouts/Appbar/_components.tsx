@@ -14,7 +14,7 @@ import { attrClassListModule } from "@/utils/attributes"
 import { ExternalLinks, RoutesLinks } from "@/enums/links"
 import { LocalStorageKeys } from "@/enums/storage"
 import { RootAttributes } from "@/enums/attributes"
-import { ElementIds } from "@/enums/ids"
+import { GlobalElementIds } from "@/enums/ids"
 import { CornerData } from "@/enums/corner"
 import { ThemeData } from "@/enums/theme"
 import { tryRemoveSplashScreen } from "@/utils/splash"
@@ -154,7 +154,7 @@ export const SettingsElement: VoidComponent = () => {
 	function updateColor(color: HEXColor): void {
 		setColor(color)
 		const acc = colorGeneratePalette(color)
-		const accentColorElement = document.getElementById(ElementIds.colorAccent)!
+		const accentColorElement = document.getElementById(GlobalElementIds.colorAccent)!
 		accentColorElement.innerHTML = `:root{--g-color-accent-light: ${rgbToCSS(colorHexToRgb(acc.color))};--g-color-accent-dark: ${rgbToCSS(colorHexToRgb(acc.colorDark))};--g-color-on-accent-light: ${rgbToCSS(colorHexToRgb(acc.onColor))};--g-color-on-accent-dark: ${rgbToCSS(colorHexToRgb(acc.onColorDark))};}`;
 
 		if (timeColorId != null) clearTimeout(timeColorId)

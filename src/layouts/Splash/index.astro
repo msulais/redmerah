@@ -1,5 +1,5 @@
 ---
-import { ElementIds } from '@/enums/ids'
+import { GlobalElementIds } from '@/enums/ids'
 
 type Props = {
 	src: string
@@ -11,7 +11,7 @@ const {
 } = Astro.props
 ---
 <div
-	id={ElementIds.splash}
+	id={GlobalElementIds.splash}
 	style={{
 		zIndex: 999,
 		width: '100%',

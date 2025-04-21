@@ -6,7 +6,7 @@ import { FlyoutPosition as TooltipPosition } from "@/enums/position"
 import { getFlyoutPosition } from "@/utils/flyout"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { isTouchScreen } from "@/utils/platforms"
-import { ElementIds } from "@/enums/ids"
+import { GlobalElementIds } from "@/enums/ids"
 import { isAnimationAllowed } from "@/utils/animation"
 
 import './index.scss'
@@ -67,7 +67,7 @@ function initTooltip(): void {
 
 	function createTooltipListener(): void {
 		const div = document.createElement('div')
-		div.id = ElementIds.tooltipListener
+		div.id = GlobalElementIds.tooltipListener
 		div.style.setProperty('display', 'contents')
 		document.body.appendChild(div)
 		LISTENER_REF = div
@@ -75,7 +75,7 @@ function initTooltip(): void {
 
 	function createTooltipText(): void {
 		const div = document.createElement('div')
-		div.id = ElementIds.textTooltip
+		div.id = GlobalElementIds.textTooltip
 		div.popover = 'manual'
 		document.body.appendChild(div)
 

@@ -8,7 +8,7 @@ import { attrSetIfExist } from '@/utils/attributes'
 import { AnimationEffectTiming } from '@/enums/animation'
 import { AppColors } from '@/enums/colors'
 import { numberSafe } from '@/utils/number'
-import { ElementIds } from '@/enums/ids'
+import { GlobalElementIds } from '@/enums/ids'
 import { ICON_ANIMAL_CAT, ICON_DISMISS, ICON_DIVERSITY, ICON_EMOJI, ICON_FLAG, ICON_FOOD, ICON_HISTORY, ICON_PERSON, ICON_RUNNING_PERSON, ICON_SYMBOLS, ICON_VEHICLE_CAR } from '@/constants/icons'
 import { isAnimationAllowed } from '@/utils/animation'
 
@@ -75,7 +75,7 @@ function initEmojiPickerListener(): void {
 	function createListenerElement(): void {
 		const div = document.createElement('div')
 		div.style.setProperty('display', 'contents')
-		div.id = ElementIds.emojiPickerListener
+		div.id = GlobalElementIds.emojiPickerListener
 		body.appendChild(div)
 
 		LISTENER_REF = div

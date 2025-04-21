@@ -8,7 +8,7 @@ import { getFlyoutPosition } from '@/utils/flyout'
 import { attrSetIfExist, attrClassList } from '@/utils/attributes'
 import { BodyAttributes } from '@/enums/attributes'
 import { eventCall } from "@/utils/event"
-import { ElementIds } from '@/enums/ids'
+import { GlobalElementIds } from '@/enums/ids'
 import { isAnimationAllowed } from '@/utils/animation'
 import { KEY_ARROW_UP, KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT } from '@/constants/key-code'
 
@@ -104,7 +104,7 @@ function initModalListener(): void {
 	function createListenerElement(): void {
 		const div = document.createElement('div')
 		div.style.setProperty('display', 'contents')
-		div.id = ElementIds.modalListener
+		div.id = GlobalElementIds.modalListener
 		body.appendChild(div)
 
 		LISTENER_REF = div

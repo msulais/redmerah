@@ -1,5 +1,5 @@
 import { AnimationEffectTiming } from "@/enums/animation"
-import { ElementIds } from "@/enums/ids"
+import { GlobalElementIds } from "@/enums/ids"
 import { FlyoutPosition as TooltipPosition } from "@/enums/position"
 import { isAnimationAllowed } from "@/utils/animation"
 import { getFlyoutPosition } from "@/utils/flyout"
@@ -93,7 +93,7 @@ function _initTooltipListener(): void {
 
 	function createTooltipText(): void {
 		tooltipTextRef = document.createElement('div')
-		tooltipTextRef.id = ElementIds.textTooltip
+		tooltipTextRef.id = GlobalElementIds.textTooltip
 		tooltipTextRef.popover = 'manual'
 		document.body.appendChild(tooltipTextRef)
 	}

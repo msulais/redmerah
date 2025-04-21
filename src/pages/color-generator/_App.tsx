@@ -6,7 +6,7 @@ import type { Palette } from './_types'
 import { colorGeneratePalette, colorHexToRgb, colorIsValid } from '@/utils/color'
 import { elementValidTarget } from '@/utils/element'
 import { DatabaseNames, LocalStorageKeys } from '@/enums/storage'
-import { ElementIds } from '@/enums/ids'
+import { GlobalElementIds } from '@/enums/ids'
 import { IDB } from '@/utils/indexeddb'
 import { ObjectStoreNames, type ObjectStorePaletteList } from './_storage'
 import { removeSplashScreen } from '@/utils/splash'
@@ -56,7 +56,7 @@ const _: VoidComponent = () => {
 
 	function onColorChange(color: HEXColor): void {
 		const generatedColor = colorGeneratePalette(color)
-		const elementAccentColorStyle = document.getElementById(ElementIds.colorAccent)!
+		const elementAccentColorStyle = document.getElementById(GlobalElementIds.colorAccent)!
 		elementAccentColorStyle.innerHTML = `:root{--g-color-accent-light: ${rgbToCSSValue(colorHexToRgb(generatedColor.color))};--g-color-accent-dark: ${rgbToCSSValue(colorHexToRgb(generatedColor.colorDark))};--g-color-on-accent-light: ${rgbToCSSValue(colorHexToRgb(generatedColor.onColor))};--g-color-on-accent-dark: ${rgbToCSSValue(colorHexToRgb(generatedColor.onColorDark))};}`;
 		localStorage.setItem(LocalStorageKeys.platformColor, color)
 		setPalette({

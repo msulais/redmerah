@@ -3,7 +3,7 @@ import type { HEXColor } from '@/types/color'
 import { ThemeData } from '@/enums/theme'
 import { colorGeneratePalette, colorHexToRgb } from '@/utils/color'
 import { CornerData } from '@/enums/corner'
-import { ElementIds } from '@/enums/ids'
+import { GlobalElementIds } from '@/enums/ids'
 import { PlatformData } from '@/enums/platforms'
 import { AnimationData } from '@/enums/animation'
 import '@/styles/variables.scss'
@@ -44,7 +44,7 @@ const colorToCSS = (hex: HEXColor) => {
 		<meta name="theme-color" content={ accentColor } />
 		<meta name="description" content={ description }>
 		<title>{ title }</title>
-		<style id={ElementIds.colorAccent} set:html={`:root{--g-color-accent-light: ${colorToCSS(colors.color)};--g-color-accent-dark: ${colorToCSS(colors.colorDark)};--g-color-on-accent-light: ${colorToCSS(colors.onColor)};--g-color-on-accent-dark: ${colorToCSS(colors.onColorDark)};}`}/>
+		<style id={GlobalElementIds.colorAccent} set:html={`:root{--g-color-accent-light: ${colorToCSS(colors.color)};--g-color-accent-dark: ${colorToCSS(colors.colorDark)};--g-color-on-accent-light: ${colorToCSS(colors.onColor)};--g-color-on-accent-dark: ${colorToCSS(colors.onColorDark)};}`}/>
 		<slot name="favicon">
 			<link rel="shortcut icon" type="image/ico" href="/favicon/favicon.ico" />
 			<link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">

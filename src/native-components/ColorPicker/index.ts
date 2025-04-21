@@ -1,4 +1,21 @@
-import { PopoverEvents, registerPopover, updatePopover, type PopoverProps, type PopoverToggleOpenDetail, type PopoverUpdateOptions } from "@/native-components/Popover"
+import {
+	type PopoverProps,
+	type PopoverUpdateOptions,
+	type PopoverOpenOptions,
+	type PopoverCloseOptions,
+	type PopoverOpenDetails,
+	type PopoverCloseDetails,
+	type PopoverRepositionDetails,
+	type PopoverToggleOpenDetail,
+	PopoverEvents,
+	PopoverPosition,
+	openPopover,
+	closePopover,
+	repositionPopover,
+	isPopoverOpen,
+	updatePopover,
+	registerPopover,
+} from "@/native-components/Popover"
 import { ButtonVariant, createIconButton, type IconButtonProps } from "../Button"
 import { createTextField, createTextFieldButton, TextFieldClasses, updateTextField, updateTextFieldButton, type TextFieldButtonProps, type TextFieldProps } from "../TextField"
 import { createIcon, type IconProps } from "../Icon"
@@ -856,6 +873,11 @@ function updateColorPicker(colorPickerRef: HTMLDivElement, options?: ColorPicker
 }
 
 export {
+	type PopoverOpenOptions as ColorPickerOpenOptions,
+	type PopoverCloseOptions as ColorPickerCloseOptions,
+	type PopoverOpenDetails as ColorPickerOpenDetails,
+	type PopoverCloseDetails as ColorPickerCloseDetails,
+	type PopoverRepositionDetails as ColorPickerRepositionDetails,
 	type ColorPickerProps,
 	type ColorPickerUpdateOptions,
 	ColorPickerAttributes,
@@ -863,6 +885,11 @@ export {
 	ColorPickerCSSVariables,
 	ColorPickerClasses,
 	ColorPickerColorSpace,
+	PopoverPosition as ColorPickerPosition,
+	openPopover as openColorPicker,
+	closePopover as closeColorPicker,
+	repositionPopover as repositionColorPicker,
+	isPopoverOpen as isColorPickerOpen,
 	registerColorPicker,
 	unregisterColorPicker,
 	createColorPicker,
