@@ -1,0 +1,55 @@
+---
+import Button from '@/native-components/Button/index.astro'
+import Select from '@/native-components/Select/index.astro'
+import SelectOption from '@/native-components/Select/SelectOption.astro'
+import { ElementIds, ELEMENT_ID_PREFIX } from '../../_scripts/_enums'
+import CSS from '../../_index.module.scss'
+import { SelectVariant } from '@/native-components/Select'
+import { ButtonVariant } from '@/native-components/Button'
+---
+<div
+	class={CSS.bodyPage}
+	role="tabpanel"
+	id={ELEMENT_ID_PREFIX + ElementIds.panelSelect}>
+	<h2>Select</h2>
+	<p>A Select is a UI element that displays a list of options when clicked. It provides a compact way to present multiple choices while saving screen space.</p>
+	<div class={CSS.bodyPlayground}>
+		<Select
+			id={ELEMENT_ID_PREFIX + ElementIds.panelSelectPreview}
+			style="min-width:120px">
+			{[
+				['a', 'Bird'],
+				['b', 'Monkey'],
+				['c', 'Whale'],
+				['d', 'Tiger'],
+				['e', 'Anoa'],
+				['f', 'Lion'],
+				['g', 'Komodo'],
+				['h', 'Elephant'],
+				['i', 'Dolphin'],
+				['j', 'Fish'],
+			].map(v =>
+				<SelectOption value={v[0]}>{v[1]}</SelectOption>
+			)}
+			<Fragment slot="placeholder">Select animal</Fragment>
+		</Select>
+	</div>
+	<div class={CSS.bodyOptions} id={ELEMENT_ID_PREFIX + ElementIds.panelSelectOptions}>
+		<Button
+			id={ELEMENT_ID_PREFIX + ElementIds.panelSelectOptionsReset}
+			ButtonVariant={ButtonVariant.filled}
+			style="margin-right:8px;display:none">
+			Reset selection
+		</Button>
+		<label id={ELEMENT_ID_PREFIX + ElementIds.panelSelectOptionsVariantLabel}>Variant:</label>
+		<Select
+			aria-labelledby={ELEMENT_ID_PREFIX + ElementIds.panelSelectOptionsVariantLabel}
+			id={ELEMENT_ID_PREFIX + ElementIds.panelSelectOptionsVariant}
+			style="min-width: 140px">
+			<SelectOption value={SelectVariant.filled}>Filled</SelectOption>
+			<SelectOption value={SelectVariant.tonal} SelectOptionSelected>Tonal</SelectOption>
+			<SelectOption value={SelectVariant.transparent}>Transparent</SelectOption>
+			<SelectOption value={SelectVariant.outlined}>Outlined</SelectOption>
+		</Select>
+	</div>
+</div>

@@ -2,7 +2,7 @@ import { updateButton, type ButtonVariant } from "@/native-components/Button"
 import { ELEMENT_ID_PREFIX, ElementIds } from "./_enums"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { isAnimationAllowed } from "@/utils/animation"
-import { SelectAttributes, SelectEvents } from "@/native-components/Select"
+import { SelectAttributes, SelectEvents, SelectVariant, updateSelect } from "@/native-components/Select"
 import { closePopover, openPopover, PopoverPosition, updatePopover } from "@/native-components/Popover"
 import { ColorPickerAttributes, ColorPickerEvents } from "@/native-components/ColorPicker"
 import { colorContrastRatio, colorHexToRgb } from "@/utils/color"
@@ -12,6 +12,7 @@ import { ListVariant, updateList } from "@/native-components/List"
 import { numberSafe } from "@/utils/number"
 import { closeModal, ModalPosition, openModal, updateModal } from "@/native-components/Modal"
 
+const animationOptions = {duration: 250, easing: AnimationEffectTiming.spring}
 const $ = (id: string) => document.getElementById(id)
 
 function buttonPanel(): void {
@@ -196,7 +197,6 @@ function iconPanel(): void {
 }
 
 function listPanel(): void {
-	const animationOptions = {duration: 250, easing: AnimationEffectTiming.spring}
 	const optionsRef = $(ELEMENT_ID_PREFIX + ElementIds.panelListOptions)!
 	const listPreview = $(ELEMENT_ID_PREFIX + ElementIds.panelListPreviewList)!
 	const leadingPreview = $(ELEMENT_ID_PREFIX + ElementIds.panelListPreviewLeading)!
@@ -431,6 +431,79 @@ function modalPanel(): void {
 	})
 }
 
+function selectPanel(): void {
+	const previewRef = $(ELEMENT_ID_PREFIX + ElementIds.panelSelectPreview) as HTMLDivElement
+	const optionsRef = $(ELEMENT_ID_PREFIX + ElementIds.panelSelectOptions) as HTMLDivElement
+	const variantOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelSelectOptionsVariant) as HTMLDivElement
+	const resetOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelSelectOptionsReset) as HTMLButtonElement
+	let firstTime = true
+	previewRef.addEventListener(SelectEvents.change, () => {
+		if (!firstTime) return
+
+		const children = [...optionsRef.children].filter(v => v !== resetOptionRef)
+		const rects: DOMRect[] = children.map(v => v.getBoundingClientRect())
+		firstTime = false
+		resetOptionRef.style.removeProperty('display')
+		if (isAnimationAllowed()) {
+			const rects2: DOMRect[] = children.map(v => v.getBoundingClientRect())
+			resetOptionRef.animate({
+				scale: [0, 1]
+			}, animationOptions)
+			for (let i = 0; i < children.length; i++) {
+				const child = children[i]
+				const rect = rects[i]
+				const rect2 = rects2[i]
+				child.animate({
+					transform: [
+						`translate(${rect.left - rect2.left}px,${rect.top - rect2.top}px)`, 'translate(0,0)'
+					]
+				}, animationOptions)
+			}
+		}
+	})
+
+	optionsRef.addEventListener(SelectEvents.change, ev => {
+		const target = ev.target as HTMLDivElement
+		const value = target.getAttribute(SelectAttributes.value)!
+		switch (target) {
+		case variantOptionRef:
+			updateSelect(previewRef, {
+				SelectVariant: value as SelectVariant
+			})
+			break
+		}
+	})
+
+	optionsRef.addEventListener('click', () => {
+		switch (document.activeElement) {
+		case resetOptionRef:
+			const children = [...optionsRef.children].filter(v => v !== resetOptionRef)
+			const rects: DOMRect[] = children.map(v => v.getBoundingClientRect())
+			previewRef.setAttribute(SelectAttributes.value, '')
+			resetOptionRef.style.setProperty('display', 'none')
+			firstTime = true
+			for (const option of previewRef.querySelectorAll('[aria-selected=true]')) {
+				option.setAttribute('aria-selected', 'false')
+			}
+
+			if (isAnimationAllowed()) {
+				const rects2: DOMRect[] = children.map(v => v.getBoundingClientRect())
+				for (let i = 0; i < children.length; i++) {
+					const child = children[i]
+					const rect = rects[i]
+					const rect2 = rects2[i]
+					child.animate({
+						transform: [
+							`translate(${rect.left - rect2.left}px,${rect.top - rect2.top}px)`, 'translate(0,0)'
+						]
+					}, animationOptions)
+				}
+			}
+			break
+		}
+	})
+}
+
 function _(): void {
 	buttonPanel()
 	checkBoxPanel()
@@ -440,6 +513,7 @@ function _(): void {
 	listPanel()
 	popoverPanel()
 	modalPanel()
+	selectPanel()
 }
 
 export default _
