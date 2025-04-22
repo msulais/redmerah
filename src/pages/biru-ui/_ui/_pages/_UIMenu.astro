@@ -4,6 +4,7 @@ import TextField from '@/native-components/TextField/index.astro'
 import Menu from '@/native-components/Menu/index.astro'
 import Icon from '@/native-components/Icon/index.astro'
 import MenuItem from '@/native-components/Menu/MenuItem.astro'
+import MenuHeader from '@/native-components/Menu/MenuHeader.astro'
 import SubMenuItem from '@/native-components/Menu/SubMenuItem.astro'
 import RadioMenuItem from '@/native-components/Menu/RadioMenuItem.astro'
 import MenuIndent from '@/native-components/Menu/MenuIndent.astro'
@@ -36,6 +37,7 @@ import { MenuPosition } from '@/native-components/Menu'
 			PopoverPosition={MenuPosition.centerBottomToRight}
 			PopoverAnchorBy={ELEMENT_ID_PREFIX + ElementIds.panelMenuPreviewButton}
 			id={ELEMENT_ID_PREFIX + ElementIds.panelMenuPreviewMenu}>
+			<MenuHeader>Actions</MenuHeader>
 			<MenuItem>
 				<Icon IconCode={ICON_COPY}/>
 				Copy
@@ -55,6 +57,7 @@ import { MenuPosition } from '@/native-components/Menu'
 				<MenuIndent/>
 			</MenuItem>
 			<Divider/>
+			<MenuHeader>Font family</MenuHeader>
 			<RadioMenuItem
 				RadioMenuItemInputAttr={{name: RadioGroupNames.panelMenuPreview, checked: true}}>
 				Sans serif
@@ -74,6 +77,7 @@ import { MenuPosition } from '@/native-components/Menu'
 				<MenuIndent/>
 			</RadioMenuItem>
 			<Divider/>
+			<MenuHeader>Sub menus</MenuHeader>
 			<SubMenuItem aria-controls={ELEMENT_ID_PREFIX + ElementIds.panelMenuPreviewMenu2}>
 				<MenuIndent/>
 				Level 1
