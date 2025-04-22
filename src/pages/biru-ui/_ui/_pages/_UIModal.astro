@@ -1,7 +1,7 @@
 ---
 import CheckBox from '@/native-components/CheckBox/index.astro'
 import TextField from '@/native-components/TextField/index.astro'
-import Popover from '@/native-components/Popover/index.astro'
+import Modal from '@/native-components/Modal/index.astro'
 import Button from '@/native-components/Button/index.astro'
 import Select from '@/native-components/Select/index.astro'
 import SelectOption from '@/native-components/Select/SelectOption.astro'
@@ -13,27 +13,26 @@ import { FlyoutPosition } from '@/enums/position'
 <div
 	class={CSS.bodyPage}
 	role="tabpanel"
-	id={ELEMENT_ID_PREFIX + ElementIds.panelPopover}
-	hidden>
-	<h2>Popover</h2>
-	<p>A popover is a small, temporary window that appears when a user interacts with an element (e.g., hovers over a button). It provides additional information, options, or tools related to the element.</p>
+	id={ELEMENT_ID_PREFIX + ElementIds.panelModal}>
+	<h2>Modal</h2>
+	<p>A modal is an overlay window that appears on top of the main content, blocking user interaction with the underlying elements until it is dismissed. Modals are often used for critical tasks or to present important information.</p>
 	<div class={CSS.bodyPlayground}>
 		<Button
 			ButtonVariant={ButtonVariant.tonal}
-			id={ELEMENT_ID_PREFIX + ElementIds.panelPopoverPreviewButtonOpen}
-			aria-controls={ELEMENT_ID_PREFIX + ElementIds.panelPopoverPreviewPopover}
+			id={ELEMENT_ID_PREFIX + ElementIds.panelModalPreviewButtonOpen}
+			aria-controls={ELEMENT_ID_PREFIX + ElementIds.panelModalPreviewModal}
 			aria-haspopup="true">
 			Open popover
 		</Button>
-		<Popover
-			aria-label="Popover"
-			id={ELEMENT_ID_PREFIX + ElementIds.panelPopoverPreviewPopover}
-			PopoverAnchorBy={ELEMENT_ID_PREFIX + ElementIds.panelPopoverPreviewButtonOpen}
-			PopoverContentAttr={{
+		<Modal
+			aria-label="Modal"
+			id={ELEMENT_ID_PREFIX + ElementIds.panelModalPreviewModal}
+			ModalAnchorBy={ELEMENT_ID_PREFIX + ElementIds.panelModalPreviewButtonOpen}
+			ModalContentAttr={{
 				style: "padding: 16px;width: 280px"
 			}}
-			PopoverPadding={16}
-			PopoverGap={8}>
+			ModalPadding={16}
+			ModalGap={8}>
 			<TextField
 				TextFieldInputAttr={{
 					placeholder: 'Feedback',
@@ -42,18 +41,18 @@ import { FlyoutPosition } from '@/enums/position'
 			/>
 			<p style="padding:8px 0 16px 0">Consequat commodo sint incididunt nulla duis commodo elit enim aliquip ex occaecat eiusmod.</p>
 			<Button
-				id={ELEMENT_ID_PREFIX + ElementIds.panelPopoverPreviewButtonClose}
-				aria-controls={ELEMENT_ID_PREFIX + ElementIds.panelPopoverPreviewPopover}
+				id={ELEMENT_ID_PREFIX + ElementIds.panelModalPreviewButtonClose}
+				aria-controls={ELEMENT_ID_PREFIX + ElementIds.panelModalPreviewModal}
 				ButtonVariant={ButtonVariant.filled}>
 				Close popover
 			</Button>
-		</Popover>
+		</Modal>
 	</div>
-	<div class={CSS.bodyOptions} id={ELEMENT_ID_PREFIX + ElementIds.panelPopoverOptions}>
-		<label id={ELEMENT_ID_PREFIX + ElementIds.panelPopoverOptionsPositionLabel}>Position:</label>
+	<div class={CSS.bodyOptions} id={ELEMENT_ID_PREFIX + ElementIds.panelModalOptions}>
+		<label id={ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsPositionLabel}>Position:</label>
 		<Select
-			aria-labelledby={ELEMENT_ID_PREFIX + ElementIds.panelPopoverOptionsPositionLabel}
-			id={ELEMENT_ID_PREFIX + ElementIds.panelPopoverOptionsPosition}>
+			aria-labelledby={ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsPositionLabel}
+			id={ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsPosition}>
 			{[
 				[FlyoutPosition.centerBottom, 'Center bottom'],
 				[FlyoutPosition.centerBottomToLeft, 'Center bottom to left'],
@@ -86,7 +85,7 @@ import { FlyoutPosition } from '@/enums/position'
 		</Select>
 		<label
 			style="margin-left:12px"
-			for={ELEMENT_ID_PREFIX + ElementIds.panelPopoverOptionsPadding}>
+			for={ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsPadding}>
 			Padding:
 		</label>
 		<TextField
@@ -95,12 +94,12 @@ import { FlyoutPosition } from '@/enums/position'
 				type: 'number',
 				min: 0,
 				style: 'width:100px;padding-right:4px',
-				id: ELEMENT_ID_PREFIX + ElementIds.panelPopoverOptionsPadding
+				id: ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsPadding
 			}}
 		/>
 		<label
 			style="margin-left:12px"
-			for={ELEMENT_ID_PREFIX + ElementIds.panelPopoverOptionsGap}>
+			for={ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsGap}>
 			Gap:
 		</label>
 		<TextField
@@ -109,33 +108,33 @@ import { FlyoutPosition } from '@/enums/position'
 				type: 'number',
 				min: 0,
 				style: 'width:100px;padding-right:4px',
-				id: ELEMENT_ID_PREFIX + ElementIds.panelPopoverOptionsGap
+				id: ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsGap
 			}}
 		/>
 		<CheckBox
 			style={"margin-left:8px"}
 			CheckBoxInputAttr={{
-				id: ELEMENT_ID_PREFIX + ElementIds.panelPopoverOptionsAnchor,
+				id: ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsAnchor,
 				checked: true
 			}}>
 			Anchor
 		</CheckBox>
 		<CheckBox
 			CheckBoxInputAttr={{
-				id: ELEMENT_ID_PREFIX + ElementIds.panelPopoverOptionsAutofocus,
+				id: ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsAutofocus,
 				checked: true
 			}}>
 			Autofocus
 		</CheckBox>
 		<CheckBox
 			CheckBoxInputAttr={{
-				id: ELEMENT_ID_PREFIX + ElementIds.panelPopoverOptionsImportant,
+				id: ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsImportant,
 			}}>
 			Important
 		</CheckBox>
 		<CheckBox
 			CheckBoxInputAttr={{
-				id: ELEMENT_ID_PREFIX + ElementIds.panelPopoverOptionsDraggable,
+				id: ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsDraggable,
 			}}>
 			Draggable
 		</CheckBox>

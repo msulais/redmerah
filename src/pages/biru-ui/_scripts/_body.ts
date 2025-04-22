@@ -10,6 +10,7 @@ import type { HEXColor } from "@/types/color"
 import { IconClasses, updateIcon } from "@/native-components/Icon"
 import { ListVariant, updateList } from "@/native-components/List"
 import { numberSafe } from "@/utils/number"
+import { closeModal, ModalPosition, openModal, updateModal } from "@/native-components/Modal"
 
 const $ = (id: string) => document.getElementById(id)
 
@@ -366,6 +367,69 @@ function popoverPanel(): void {
 		}
 	})
 }
+function modalPanel(): void {
+	const optionsRef = $(ELEMENT_ID_PREFIX + ElementIds.panelModalOptions) as HTMLDivElement
+	const openButtonRef = $(ELEMENT_ID_PREFIX + ElementIds.panelModalPreviewButtonOpen) as HTMLButtonElement
+	const closeButtonRef = $(ELEMENT_ID_PREFIX + ElementIds.panelModalPreviewButtonClose) as HTMLButtonElement
+	const modalRef = $(ELEMENT_ID_PREFIX + ElementIds.panelModalPreviewModal) as HTMLDialogElement
+	const positionOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsPosition) as HTMLDivElement
+	const paddingOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsPadding) as HTMLInputElement
+	const gapOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsGap) as HTMLInputElement
+	const anchorOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsAnchor) as HTMLInputElement
+	const autofocusOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsAutofocus) as HTMLInputElement
+	const importantOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsImportant) as HTMLInputElement
+	const draggableOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsDraggable) as HTMLInputElement
+
+	openButtonRef.addEventListener('click', () => openModal(modalRef))
+	closeButtonRef.addEventListener('click', () => closeModal(modalRef))
+	optionsRef.addEventListener(SelectEvents.change, ev => {
+		const target = ev.target as HTMLDivElement
+		const value = target.getAttribute(SelectAttributes.value)!
+		switch (target) {
+		case positionOptionRef:
+			updateModal(modalRef, {
+				ModalPosition: value as ModalPosition
+			})
+			break
+		}
+	})
+
+	optionsRef.addEventListener('focusout', ev => {
+		switch (ev.target) {
+		case paddingOptionRef:
+			updateModal(modalRef, {
+				ModalPadding: numberSafe(paddingOptionRef.valueAsNumber)
+			})
+			break
+		case gapOptionRef:
+			updateModal(modalRef, {
+				ModalGap: gapOptionRef.valueAsNumber
+			})
+			break
+		}
+	})
+
+	optionsRef.addEventListener('change', ev => {
+		const target = ev.target as HTMLInputElement
+		const checked = target.checked
+		switch (target) {
+		case anchorOptionRef:
+			updateModal(modalRef, {
+				ModalAnchorBy: checked? openButtonRef.id : false
+			})
+			break
+		case autofocusOptionRef:
+			updateModal(modalRef, {ModalAutoFocus: checked})
+			break
+		case importantOptionRef:
+			updateModal(modalRef, {ModalImportant: checked})
+			break
+		case draggableOptionRef:
+			updateModal(modalRef, {ModalDraggable: checked})
+			break
+		}
+	})
+}
 
 function _(): void {
 	buttonPanel()
@@ -375,6 +439,7 @@ function _(): void {
 	iconPanel()
 	listPanel()
 	popoverPanel()
+	modalPanel()
 }
 
 export default _
