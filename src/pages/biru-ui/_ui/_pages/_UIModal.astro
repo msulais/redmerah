@@ -50,70 +50,74 @@ import { FlyoutPosition } from '@/enums/position'
 		</Modal>
 	</div>
 	<div class={CSS.bodyOptions} id={ELEMENT_ID_PREFIX + ElementIds.panelModalOptions}>
-		<label id={ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsPositionLabel}>Position:</label>
-		<Select
-			aria-labelledby={ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsPositionLabel}
-			id={ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsPosition}>
-			{[
-				[FlyoutPosition.centerBottom, 'Center bottom'],
-				[FlyoutPosition.centerBottomToLeft, 'Center bottom to left'],
-				[FlyoutPosition.centerBottomToRight, 'Center bottom to right'],
-				[FlyoutPosition.centerCenter, 'Center center'],
-				[FlyoutPosition.centerCenterBottom, 'Center center bottom'],
-				[FlyoutPosition.centerCenterLeft, 'Center center left'],
-				[FlyoutPosition.centerCenterLeftBottom, 'Center center left bottom'],
-				[FlyoutPosition.centerCenterLeftTop, 'Center center left top'],
-				[FlyoutPosition.centerCenterRight, 'Center center right'],
-				[FlyoutPosition.centerCenterRightBottom, 'Center center right bottom'],
-				[FlyoutPosition.centerCenterRightTop, 'Center center right top'],
-				[FlyoutPosition.centerCenterTop, 'Center center top'],
-				[FlyoutPosition.centerTop, 'Center top'],
-				[FlyoutPosition.centerTopToLeft, 'Center top to left'],
-				[FlyoutPosition.centerTopToRight, 'Center top to right'],
-				[FlyoutPosition.leftBottom, 'Left bottom'],
-				[FlyoutPosition.leftCenter, 'Left center'],
-				[FlyoutPosition.leftCenterToBottom, 'Left center to bottom'],
-				[FlyoutPosition.leftCenterToTop, 'Left center to top'],
-				[FlyoutPosition.leftTop, 'Left top'],
-				[FlyoutPosition.rightBottom, 'Right bottom'],
-				[FlyoutPosition.rightCenter, 'Right center'],
-				[FlyoutPosition.rightCenterToBottom, 'Right center to bottom'],
-				[FlyoutPosition.rightCenterToTop, 'Right center to top'],
-				[FlyoutPosition.rightTop, 'Right top'],
-			].map(v =>
-				<SelectOption value={v[0]} SelectOptionSelected={v[0] === FlyoutPosition.centerBottom}>{v[1]}</SelectOption>
-			)}
-		</Select>
-		<label
-			style="margin-left:12px"
-			for={ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsPadding}>
-			Padding:
-		</label>
-		<TextField
-			TextFieldInputAttr={{
-				value: '16',
-				type: 'number',
-				min: 0,
-				style: 'width:100px;padding-right:4px',
-				id: ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsPadding
-			}}
-		/>
-		<label
-			style="margin-left:12px"
-			for={ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsGap}>
-			Gap:
-		</label>
-		<TextField
-			TextFieldInputAttr={{
-				value: '8',
-				type: 'number',
-				min: 0,
-				style: 'width:100px;padding-right:4px',
-				id: ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsGap
-			}}
-		/>
+		<div class={CSS.bodyOptionsGroup}>
+			<label id={ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsPositionLabel}>Position:</label>
+			<Select
+				aria-labelledby={ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsPositionLabel}
+				id={ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsPosition}
+				style="margin-right:12px">
+				{[
+					[FlyoutPosition.centerBottom, 'Center bottom'],
+					[FlyoutPosition.centerBottomToLeft, 'Center bottom to left'],
+					[FlyoutPosition.centerBottomToRight, 'Center bottom to right'],
+					[FlyoutPosition.centerCenter, 'Center center'],
+					[FlyoutPosition.centerCenterBottom, 'Center center bottom'],
+					[FlyoutPosition.centerCenterLeft, 'Center center left'],
+					[FlyoutPosition.centerCenterLeftBottom, 'Center center left bottom'],
+					[FlyoutPosition.centerCenterLeftTop, 'Center center left top'],
+					[FlyoutPosition.centerCenterRight, 'Center center right'],
+					[FlyoutPosition.centerCenterRightBottom, 'Center center right bottom'],
+					[FlyoutPosition.centerCenterRightTop, 'Center center right top'],
+					[FlyoutPosition.centerCenterTop, 'Center center top'],
+					[FlyoutPosition.centerTop, 'Center top'],
+					[FlyoutPosition.centerTopToLeft, 'Center top to left'],
+					[FlyoutPosition.centerTopToRight, 'Center top to right'],
+					[FlyoutPosition.leftBottom, 'Left bottom'],
+					[FlyoutPosition.leftCenter, 'Left center'],
+					[FlyoutPosition.leftCenterToBottom, 'Left center to bottom'],
+					[FlyoutPosition.leftCenterToTop, 'Left center to top'],
+					[FlyoutPosition.leftTop, 'Left top'],
+					[FlyoutPosition.rightBottom, 'Right bottom'],
+					[FlyoutPosition.rightCenter, 'Right center'],
+					[FlyoutPosition.rightCenterToBottom, 'Right center to bottom'],
+					[FlyoutPosition.rightCenterToTop, 'Right center to top'],
+					[FlyoutPosition.rightTop, 'Right top'],
+				].map(v =>
+					<SelectOption value={v[0]} SelectOptionSelected={v[0] === FlyoutPosition.centerBottom}>{v[1]}</SelectOption>
+				)}
+			</Select>
+		</div>
+		<div class={CSS.bodyOptionsGroup} style="margin-right:12px">
+			<label
+				for={ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsPadding}>
+				Padding:
+			</label>
+			<TextField
+				TextFieldInputAttr={{
+					value: '16',
+					type: 'number',
+					min: 0,
+					style: 'width:100px',
+					id: ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsPadding
+				}}
+			/>
+		</div>
+		<div class={CSS.bodyOptionsGroup} style="margin-right:12px">
+			<label
+				for={ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsGap}>
+				Gap:
+			</label>
+			<TextField
+				TextFieldInputAttr={{
+					value: '8',
+					type: 'number',
+					min: 0,
+					style: 'width:100px;',
+					id: ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsGap
+				}}
+			/>
+		</div>
 		<CheckBox
-			style={"margin-left:8px"}
 			CheckBoxInputAttr={{
 				id: ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsAnchor,
 				checked: true

@@ -35,16 +35,20 @@ import CSS from '../../_index.module.scss'
 		</Tooltip>
 	</div>
 	<div class={CSS.bodyOptions} id={ELEMENT_ID_PREFIX + ElementIds.panelButtonsOptions}>
-		<label id={ELEMENT_ID_PREFIX + ElementIds.panelButtonsOptionsVariantLabel}>Variant:</label>
-		<Select aria-labelledby={ELEMENT_ID_PREFIX + ElementIds.panelButtonsOptionsVariantLabel} id={ELEMENT_ID_PREFIX + ElementIds.panelButtonsOptionsVariant} style="min-width: 140px">
-			<SelectOption value={ButtonVariant.filled}>Filled</SelectOption>
-			<SelectOption value={ButtonVariant.tonal}>Tonal</SelectOption>
-			<SelectOption value={ButtonVariant.transparent} SelectOptionSelected>Transparent</SelectOption>
-			<SelectOption value={ButtonVariant.outlined}>Outlined</SelectOption>
-		</Select>
+		<div class={CSS.bodyOptionsGroup}>
+			<label id={ELEMENT_ID_PREFIX + ElementIds.panelButtonsOptionsVariantLabel}>Variant:</label>
+			<Select
+				aria-labelledby={ELEMENT_ID_PREFIX + ElementIds.panelButtonsOptionsVariantLabel}
+				id={ELEMENT_ID_PREFIX + ElementIds.panelButtonsOptionsVariant}
+				style="min-width:140px;margin-right:12px">
+				<SelectOption value={ButtonVariant.filled}>Filled</SelectOption>
+				<SelectOption value={ButtonVariant.tonal}>Tonal</SelectOption>
+				<SelectOption value={ButtonVariant.transparent} SelectOptionSelected>Transparent</SelectOption>
+				<SelectOption value={ButtonVariant.outlined}>Outlined</SelectOption>
+			</Select>
+		</div>
 		<CheckBox
-			CheckBoxInputAttr={{id: ELEMENT_ID_PREFIX + ElementIds.panelButtonsOptionsDisabled}}
-			style="margin-left:12px">
+			CheckBoxInputAttr={{id: ELEMENT_ID_PREFIX + ElementIds.panelButtonsOptionsDisabled}}>
 			Disabled
 		</CheckBox>
 		<CheckBox

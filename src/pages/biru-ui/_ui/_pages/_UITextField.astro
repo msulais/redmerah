@@ -52,15 +52,17 @@ const types = [
 		</Tooltip>
 	</div>
 	<div class={CSS.bodyOptions} id={ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptions}>
-		<label id={ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptionsTypeLabel}>Type:</label>
-		<Select
-			aria-labelledby={ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptionsTypeLabel}
-			id={ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptionsType}
-			style="min-width:150px">
-			{types.map(v =>
-				<SelectOption value={v} SelectOptionSelected={v === 'text'}>{v}</SelectOption>
-			)}
-		</Select>
+		<div class={CSS.bodyOptions} style="margin-right:12px">
+			<label id={ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptionsTypeLabel}>Type:</label>
+			<Select
+				aria-labelledby={ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptionsTypeLabel}
+				id={ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptionsType}
+				style="min-width:150px">
+				{types.map(v =>
+					<SelectOption value={v} SelectOptionSelected={v === 'text'}>{v}</SelectOption>
+				)}
+			</Select>
+		</div>
 		<CheckBox
 			CheckBoxInputAttr={{
 				id: ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptionsLeading,

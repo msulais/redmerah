@@ -47,13 +47,18 @@ import { ListVariant } from '@/native-components/List'
 		</Tooltip>
 	</div>
 	<div class={CSS.bodyOptions} id={ELEMENT_ID_PREFIX + ElementIds.panelListOptions}>
-		<label id={ELEMENT_ID_PREFIX + ElementIds.panelListOptionsVariantLabel}>Variant:</label>
-		<Select aria-labelledby={ELEMENT_ID_PREFIX + ElementIds.panelListOptionsVariantLabel} id={ELEMENT_ID_PREFIX + ElementIds.panelListOptionsVariant} style="min-width: 140px">
-			<SelectOption value={ListVariant.filled}>Filled</SelectOption>
-			<SelectOption value={ListVariant.tonal} SelectOptionSelected>Tonal</SelectOption>
-			<SelectOption value={ListVariant.transparent}>Transparent</SelectOption>
-			<SelectOption value={ListVariant.outlined}>Outlined</SelectOption>
-		</Select>
+		<div class={CSS.bodyOptionsGroup}>
+			<label id={ELEMENT_ID_PREFIX + ElementIds.panelListOptionsVariantLabel}>Variant:</label>
+			<Select
+				aria-labelledby={ELEMENT_ID_PREFIX + ElementIds.panelListOptionsVariantLabel}
+				id={ELEMENT_ID_PREFIX + ElementIds.panelListOptionsVariant}
+				style="min-width: 140px; margin-right: 12px">
+				<SelectOption value={ListVariant.filled}>Filled</SelectOption>
+				<SelectOption value={ListVariant.tonal} SelectOptionSelected>Tonal</SelectOption>
+				<SelectOption value={ListVariant.transparent}>Transparent</SelectOption>
+				<SelectOption value={ListVariant.outlined}>Outlined</SelectOption>
+			</Select>
+		</div>
 		<CheckBox
 			CheckBoxInputAttr={{
 				id: ELEMENT_ID_PREFIX + ElementIds.panelListOptionsLeading,
