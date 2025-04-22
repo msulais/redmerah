@@ -68,6 +68,10 @@
 	height: 100%;
 	min-height: 29px;
 
+	&[type=number] {
+		padding: 0 4px 0 12px;
+	}
+
 	@media (hover: none) {
 		min-height: 37px;
 	}
