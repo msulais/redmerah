@@ -51,6 +51,20 @@ export enum ElementIds {
 	panelListOptionsLeading,
 	panelListOptionsSubtitle,
 	panelListOptionsTitle,
+	panelMenu,
+	panelMenuPreviewMenu,
+	panelMenuPreviewMenu2,
+	panelMenuPreviewMenu3,
+	panelMenuPreviewMenu4,
+	panelMenuPreviewMenu5,
+	panelMenuPreviewMenu6,
+	panelMenuPreviewMenu7,
+	panelMenuPreviewButton,
+	panelMenuOptions,
+	panelMenuOptionsPosition,
+	panelMenuOptionsPositionLabel,
+	panelMenuOptionsGap,
+	panelMenuOptionsAnchor,
 	panelPopover,
 	panelPopoverPreviewPopover,
 	panelPopoverPreviewButtonOpen,
@@ -109,4 +123,5 @@ export enum ElementIds {
 export enum RadioGroupNames {
 	settingsAnimation = 'settings:animation',
 	settingsTheme = 'settings:theme',
+	panelMenuPreview = 'p:menu:preview'
 }

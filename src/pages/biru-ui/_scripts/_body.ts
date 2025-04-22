@@ -12,6 +12,7 @@ import { ListVariant, updateList } from "@/native-components/List"
 import { numberSafe } from "@/utils/number"
 import { closeModal, ModalPosition, openModal, updateModal } from "@/native-components/Modal"
 import { TooltipPosition, updateTooltip } from "@/native-components/Tooltip"
+import { MenuPosition, openMenu, updateMenu } from "@/native-components/Menu"
 
 const animationOptions = {duration: 250, easing: AnimationEffectTiming.spring}
 const $ = (id: string) => document.getElementById(id)
@@ -571,7 +572,58 @@ function tooltipPanel(): void {
 	})
 }
 
+function menuPanel(): void {
+	const optionsRef = $(ELEMENT_ID_PREFIX + ElementIds.panelMenuOptions) as HTMLDivElement
+	const buttonRef = $(ELEMENT_ID_PREFIX + ElementIds.panelMenuPreviewButton) as HTMLButtonElement
+	const menuRef = $(ELEMENT_ID_PREFIX + ElementIds.panelMenuPreviewMenu) as HTMLDivElement
+	const positionOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelMenuOptionsPosition) as HTMLDivElement
+	const anchorOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelMenuOptionsAnchor) as HTMLInputElement
+	const gapOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelMenuOptionsGap) as HTMLInputElement
+
+	buttonRef.addEventListener('click', () => openMenu(menuRef))
+	buttonRef.addEventListener('contextmenu', ev => {
+		ev.preventDefault()
+		openMenu(menuRef)
+	})
+
+	optionsRef.addEventListener('focusout', ev => {
+		const target = ev.target as HTMLElement
+		switch (target) {
+		case gapOptionRef:
+			updateMenu(menuRef, {
+				PopoverGap: numberSafe(gapOptionRef.valueAsNumber)
+			})
+			break
+		}
+	})
+
+	optionsRef.addEventListener('change', ev => {
+		const target = ev.target as HTMLInputElement
+		const checked = target.checked
+		switch (target) {
+		case anchorOptionRef:
+			updateMenu(menuRef, {
+				PopoverAnchorBy: checked? buttonRef.id : false
+			})
+			break
+		}
+	})
+
+	optionsRef.addEventListener(SelectEvents.change, ev => {
+		const target = ev.target as HTMLDivElement
+		const value = target.getAttribute(SelectAttributes.value)!
+		switch (target) {
+		case positionOptionRef:
+			updateMenu(menuRef, {
+				PopoverPosition: value as MenuPosition
+			})
+			break
+		}
+	})
+}
+
 function _(): void {
+	menuPanel()
 	tooltipPanel()
 	buttonPanel()
 	checkBoxPanel()
