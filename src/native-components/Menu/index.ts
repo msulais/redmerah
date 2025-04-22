@@ -237,6 +237,9 @@ function _initSubMenu(submenuitem: HTMLElement): void {
 
 	function subMenuOnToggleOpen(ev: CustomEvent<PopoverToggleOpenDetail>): void {
 		const open = ev.detail.open
+
+		// toggleopen can bubbles
+		if ((ev.target as any).id !== submenuitem.getAttribute('aria-controls')) return
 		submenuitem.setAttribute('aria-expanded', String(open))
 		if (submenuitem.classList.contains(ButtonClasses.button)) {
 			updateMenuItem(submenuitem as HTMLButtonElement, {
