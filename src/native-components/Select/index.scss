@@ -25,6 +25,10 @@
 	transform: translateY(-50%);
 	pointer-events: none;
 
+	.c-select[data-c-select-variant=filled] & {
+		color: rgb(var(--g-color-on-accent))
+	}
+
 	.c-select:not([data-c-select-use-icon]) &,
 	.c-select[data-c-select-expanded] & {
 		display: none;
