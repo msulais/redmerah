@@ -10,7 +10,6 @@ import {
 	type ButtonUpdateOptions,
 	ButtonClasses,
 	createButton,
-	ButtonVariant as SelectVariant,
 	updateButton,
 } from "@/native-components/Button"
 import { AnimationEffectTiming } from "@/enums/animation"
@@ -75,6 +74,13 @@ enum SelectAttributes {
 
 enum SelectEvents {
 	change = 'select:change'
+}
+
+enum SelectVariant {
+	filled      = 'filled',
+	outlined    = 'outlined',
+	tonal       = 'tonal',
+	transparent = 'transparent',
 }
 
 const REGISTERED_SELECT: HTMLDivElement[] = []
