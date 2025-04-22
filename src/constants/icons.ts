@@ -63,6 +63,7 @@ export const ICON_CONNECTOR = 0xE54B
 export const ICON_COPY = 0xE567
 export const ICON_CUBE = 0xE581
 export const ICON_CURSOR_CLICK = 0xE599
+export const ICON_CUT = 0xE5A1
 
 // D
 export const ICON_DATA_SCATTER = 0xE5BB
