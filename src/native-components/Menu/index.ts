@@ -38,6 +38,8 @@ type MenuProps = PopoverProps
 type MenuItemProps = ButtonProps
 type LinkMenuItemProps = LinkButtonProps
 
+type MenuHeaderProps = astroHTML.JSX.HTMLAttributes
+
 type SubMenuItemProps = Omit<MenuItemProps, 'aria-controls'> & {
 	'aria-controls': string
 }
@@ -54,6 +56,13 @@ type RadioMenuItemProps = astroHTML.JSX.LabelHTMLAttributes & {
 type MenuIndentUpdateOptions = {
 	MenuIndentRefs?: {
 		indent?(el: HTMLDivElement): unknown
+	}
+}
+
+type MenuHeaderUpdateOptions = {
+	MenuHeaderChildren?: (string | Node)[] | boolean
+	MenuHeaderRefs    ?: {
+		header?(el: HTMLDivElement): unknown
 	}
 }
 
@@ -89,6 +98,7 @@ type LinkMenuItemUpdateOptions = LinkButtonUpdateOptions & {
 
 enum MenuClasses {
 	menu             = 'c-menu',
+	header           = menu + '-header',
 	item             = menu + '-item',
 	indent           = menu + '-indent',
 	submenuItem      = menu + '-submenu-item',
@@ -438,6 +448,26 @@ function updateMenuIndent(indent: HTMLDivElement, options?: MenuIndentUpdateOpti
 	return indent
 }
 
+function createMenuHeader(options?: MenuHeaderUpdateOptions): HTMLDivElement {
+	const indent = document.createElement('div')
+	return updateMenuHeader(indent, options)
+}
+
+function updateMenuHeader(headerRef: HTMLDivElement, options?: MenuHeaderUpdateOptions): HTMLDivElement {
+	headerRef.classList.add(MenuClasses.header)
+
+	const children = options?.MenuHeaderChildren
+	if (children === false) {
+		headerRef.replaceChildren()
+	}
+	else if (children !== undefined && children !== true) {
+		headerRef.replaceChildren(...children)
+	}
+
+	options?.MenuHeaderRefs?.header?.(headerRef)
+	return headerRef
+}
+
 export {
 	type MenuProps,
 	type MenuItemProps,
@@ -453,8 +483,10 @@ export {
 	type LinkMenuItemUpdateOptions,
 	type SubMenuItemUpdateOptions,
 	type RadioMenuItemProps,
+	type MenuHeaderProps,
 	type MenuIndentProps,
 	type MenuIndentUpdateOptions,
+	type MenuHeaderUpdateOptions,
 	MenuClasses,
 	PopoverEvents as MenuEvents,
 	PopoverAttributes as MenuAttributes,
@@ -477,5 +509,7 @@ export {
 	createSubMenuItem,
 	updateSubMenuItem,
 	createMenuIndent,
-	updateMenuIndent
+	updateMenuIndent,
+	createMenuHeader,
+	updateMenuHeader
 }
