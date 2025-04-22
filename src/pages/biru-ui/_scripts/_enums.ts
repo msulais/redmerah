@@ -95,6 +95,15 @@ export enum ElementIds {
 	panelTextfieldOptionsTrailing,
 	panelTextfieldOptionsReadonly,
 	panelTextfieldOptionsPlaceholder,
+	panelTooltip,
+	panelTooltipPreview,
+	panelTooltipOptions,
+	panelTooltipOptionsAnchor,
+	panelTooltipOptionsStartDelay,
+	panelTooltipOptionsEndDelay,
+	panelTooltipOptionsPosition,
+	panelTooltipOptionsPositionLabel,
+	panelTooltipOptionsGap,
 }
 
 export enum RadioGroupNames {

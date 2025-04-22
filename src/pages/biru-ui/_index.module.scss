@@ -26,6 +26,12 @@ $side-navigation-none: 680px;
 	align-items: center;
 }
 
+.bodyOptionsGroup {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
 .bodyPage {
 	width: 820px;
 	max-width: 100%;

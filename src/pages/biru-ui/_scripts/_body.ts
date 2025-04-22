@@ -11,6 +11,7 @@ import { IconClasses, updateIcon } from "@/native-components/Icon"
 import { ListVariant, updateList } from "@/native-components/List"
 import { numberSafe } from "@/utils/number"
 import { closeModal, ModalPosition, openModal, updateModal } from "@/native-components/Modal"
+import { TooltipPosition, updateTooltip } from "@/native-components/Tooltip"
 
 const animationOptions = {duration: 250, easing: AnimationEffectTiming.spring}
 const $ = (id: string) => document.getElementById(id)
@@ -504,7 +505,74 @@ function selectPanel(): void {
 	})
 }
 
+function tooltipPanel(): void {
+	const optionsRef = $(ELEMENT_ID_PREFIX + ElementIds.panelTooltipOptions) as HTMLDivElement
+	const anchorOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelTooltipOptionsAnchor) as HTMLInputElement
+	const previewRef = $(ELEMENT_ID_PREFIX + ElementIds.panelTooltipPreview) as HTMLDivElement
+	const positionOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelTooltipOptionsPosition) as HTMLDivElement
+	const gapOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelTooltipOptionsGap) as HTMLInputElement
+	const startDelayOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelTooltipOptionsStartDelay) as HTMLInputElement
+	const endDelayOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelTooltipOptionsEndDelay) as HTMLInputElement
+	let timeGapId: number | NodeJS.Timeout | null = null
+	let timeStartDelayId: number | NodeJS.Timeout | null = null
+	let timeEndDelayId: number | NodeJS.Timeout | null = null
+
+	startDelayOptionRef.addEventListener('input', () => {
+		if (timeStartDelayId !== null) clearTimeout(timeStartDelayId)
+
+		timeStartDelayId = setTimeout(() => {
+			updateTooltip(previewRef, {
+				TooltipStartDelay: numberSafe(startDelayOptionRef.valueAsNumber)
+			})
+		}, 50)
+	})
+
+	endDelayOptionRef.addEventListener('input', () => {
+		if (timeEndDelayId !== null) clearTimeout(timeEndDelayId)
+
+		timeEndDelayId = setTimeout(() => {
+			updateTooltip(previewRef, {
+				TooltipEndDelay: numberSafe(endDelayOptionRef.valueAsNumber)
+			})
+		}, 50)
+	})
+
+	gapOptionRef.addEventListener('input', () => {
+		if (timeGapId !== null) clearTimeout(timeGapId)
+
+		timeGapId = setTimeout(() => {
+			updateTooltip(previewRef, {
+				TooltipGap: numberSafe(gapOptionRef.valueAsNumber)
+			})
+		}, 50)
+	})
+
+	optionsRef.addEventListener(SelectEvents.change, ev => {
+		const target = ev.target as HTMLDivElement
+		const value = target.getAttribute(SelectAttributes.value)!
+		switch (target) {
+		case positionOptionRef:
+			updateTooltip(previewRef, {
+				TooltipPosition: value as TooltipPosition
+			})
+			break
+		}
+	})
+
+	optionsRef.addEventListener('change', ev => {
+		const target = ev.target as HTMLInputElement
+		const checked = target.checked
+		switch (target) {
+		case anchorOptionRef:
+			updateTooltip(previewRef, {
+				TooltipUseAnchor: checked
+			})
+		}
+	})
+}
+
 function _(): void {
+	tooltipPanel()
 	buttonPanel()
 	checkBoxPanel()
 	textFieldPanel()
