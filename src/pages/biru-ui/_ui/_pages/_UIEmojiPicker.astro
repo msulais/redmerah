@@ -1,0 +1,37 @@
+---
+import Tooltip from '@/native-components/Tooltip/index.astro'
+import Button from '@/native-components/Button/index.astro'
+import CheckBox from '@/native-components/CheckBox/index.astro'
+import EmojiPicker from '@/native-components/EmojiPicker/index.astro'
+import { ElementIds, ELEMENT_ID_PREFIX } from '../../_scripts/_enums'
+import CSS from '../../_index.module.scss'
+import { ButtonVariant } from '@/native-components/Button'
+---
+<div
+	class={CSS.bodyPage}
+	role="tabpanel"
+	id={ELEMENT_ID_PREFIX + ElementIds.panelEmojipicker}>
+	<h2>EmojiPicker</h2>
+	<p>An EmojiPicker is a UI element that allows users to select and insert emojis into text fields or other input areas. It typically presents a grid of emojis that can be searched, filtered, or categorized for easy selection.</p>
+	<div class={CSS.bodyPlayground}>
+		<Tooltip>
+			<Button
+				id={ELEMENT_ID_PREFIX + ElementIds.panelEmojipickerPreviewButton}
+				aria-controls={ELEMENT_ID_PREFIX + ElementIds.panelEmojipickerPreviewEmojiPicker}
+				aria-haspopup={true}
+				ButtonVariant={ButtonVariant.tonal}>
+				Pick emoji
+			</Button>
+		</Tooltip>
+		<EmojiPicker PopoverDraggable id={ELEMENT_ID_PREFIX + ElementIds.panelEmojipickerPreviewEmojiPicker}/>
+	</div>
+	<div class={CSS.bodyOptions} id={ELEMENT_ID_PREFIX + ElementIds.panelEmojipickerOptions}>
+		<CheckBox
+			CheckBoxInputAttr={{
+				id: ELEMENT_ID_PREFIX + ElementIds.panelEmojipickerOptionsAutoclose,
+				checked: true
+			}}>
+			Autoclose
+		</CheckBox>
+	</div>
+</div>

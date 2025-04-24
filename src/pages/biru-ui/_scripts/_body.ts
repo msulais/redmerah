@@ -13,6 +13,7 @@ import { numberSafe } from "@/utils/number"
 import { closeModal, ModalPosition, openModal, updateModal } from "@/native-components/Modal"
 import { TooltipPosition, updateTooltip } from "@/native-components/Tooltip"
 import { MenuPosition, openMenu, updateMenu } from "@/native-components/Menu"
+import { EmojiPickerAttributes, EmojiPickerEvents } from "@/native-components/EmojiPicker"
 
 const animationOptions = {duration: 250, easing: AnimationEffectTiming.spring}
 const $ = (id: string) => document.getElementById(id)
@@ -622,7 +623,39 @@ function menuPanel(): void {
 	})
 }
 
+function panelEmojiPicker(): void {
+	const optionsRef = $(ELEMENT_ID_PREFIX + ElementIds.panelEmojipickerOptions) as HTMLDivElement
+	const autocloseOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelEmojipickerOptionsAutoclose) as HTMLInputElement
+	const buttonRef = $(ELEMENT_ID_PREFIX + ElementIds.panelEmojipickerPreviewButton) as HTMLButtonElement
+	const emojipickerRef = $(ELEMENT_ID_PREFIX + ElementIds.panelEmojipickerPreviewEmojiPicker) as HTMLDivElement
+
+	buttonRef.addEventListener('click', () => {
+		openPopover(emojipickerRef, {
+			anchor: buttonRef
+		})
+	})
+
+	emojipickerRef.addEventListener(EmojiPickerEvents.change, ev => {
+		if (ev.target !== emojipickerRef) return
+
+		const emoji = emojipickerRef.getAttribute(EmojiPickerAttributes.emoji)!
+		const name = emojipickerRef.getAttribute(EmojiPickerAttributes.emojiName)!
+		buttonRef.textContent = emoji + ' ' + name
+	})
+
+	optionsRef.addEventListener('change', ev => {
+		const target = ev.target as HTMLInputElement
+		const checked = target.checked
+		switch (target) {
+		case autocloseOptionRef:
+			emojipickerRef.toggleAttribute(EmojiPickerAttributes.autoclose, checked)
+			break
+		}
+	})
+}
+
 function _(): void {
+	panelEmojiPicker()
 	menuPanel()
 	tooltipPanel()
 	buttonPanel()
