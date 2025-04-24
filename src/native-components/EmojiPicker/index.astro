@@ -1,0 +1,225 @@
+---
+import {
+	ICON_ANIMAL_CAT,
+	ICON_DISMISS,
+	ICON_DIVERSITY,
+	ICON_EMOJI,
+	ICON_FLAG,
+	ICON_FOOD,
+	ICON_HISTORY,
+	ICON_PERSON,
+	ICON_RUNNING_PERSON,
+	ICON_SEARCH,
+	ICON_SYMBOLS,
+	ICON_VEHICLE_CAR } from '@/constants/icons'
+import {
+	EMOJIS_ACTIVITIES,
+	EMOJIS_ANIMAL_AND_NATURE,
+	EMOJIS_FLAGS,
+	EMOJIS_FOOD_AND_DRINK,
+	EMOJIS_OBJECT,
+	EMOJIS_PERSON_AND_BODY,
+	EMOJIS_SMILEY_AND_EMOTION,
+	EMOJIS_SYMBOLS,
+	EMOJIS_TRAVEL_AND_PLACES } from '@/constants/emoji'
+import {
+	type EmojiPickerProps,
+	EmojiPickerClasses } from '.'
+import IconButton from '@/native-components/Button/IconButton.astro'
+import Button from '@/native-components/Button/index.astro'
+import Popover from '@/native-components/Popover/index.astro'
+import Divider from '@/native-components/Divider/index.astro'
+import Icon from '@/native-components/Icon/index.astro'
+import Tooltip from '@/native-components/Tooltip/index.astro'
+import TextField from '@/native-components/TextField/index.astro'
+import TextFieldButton from '@/native-components/TextField/TextFieldButton.astro'
+import './index.scss'
+import { attrClassList } from '@/utils/attributes'
+import { ButtonVariant } from '../Button'
+
+type Props = EmojiPickerProps
+const {
+	'class': className,
+	EmojiPickerAutoClose = true,
+	EmojiPickerTooltipAttr,
+	EmojiPickerHeaderAttr,
+	EmojiPickerHeaderTextAttr,
+	EmojiPickerHeaderButtonAttr,
+	EmojiPickerTabsAttr,
+	EmojiPickerTabAttr = [],
+	EmojiPickerFormAttr,
+	EmojiPickerSearchAttr,
+	EmojiPickerSearchButtonAttr,
+	EmojiPickerSearchButtonIconAttr,
+	EmojiPickerContentAttr,
+	EmojiPickerTitleAttr,
+	EmojiPickerDividerAttr,
+	EmojiPickerGroup = [],
+	EmojiPickerEmoji = [],
+	...other
+} = Astro.props
+const {'class': tooltipClass, ...tooltipOther} = EmojiPickerTooltipAttr ?? {}
+const {'class': headerClass, ...headerOther} = EmojiPickerHeaderAttr ?? {}
+const {'class': headerTextClass, ...headerTextOther} = EmojiPickerHeaderTextAttr ?? {}
+const {'class': headerButtonClass, IconButtonCode: headerButtonCode = ICON_DISMISS, ...headerButtonOther} = EmojiPickerHeaderButtonAttr ?? {}
+const {'class': tabsClass, role: tabsRole = 'tablist', ...tabsOther} = EmojiPickerTabsAttr ?? {}
+const {'class': formClass, ...formOther} = EmojiPickerFormAttr ?? {}
+const {'class': searchClass, TextFieldInputAttr: searchInputAttr, ...searchOther} = EmojiPickerSearchAttr ?? {}
+const {placeholder: searchInputPlaceholder = 'Search emoji', required: searchInputRequired = true, ...searchInputOther} = searchInputAttr ?? {}
+const {'class': searchButtonClass, ButtonVariant: searchButtonVariant = ButtonVariant.tonal, ...searchButtonOther} = EmojiPickerSearchButtonAttr ?? {}
+const {'class': searchButtonIconClass, IconCode: searchButtonIconCode = ICON_SEARCH, ...searchButtonIconOther} = EmojiPickerSearchButtonIconAttr ?? {}
+const {'class': contentClass, ...contentOther} = EmojiPickerContentAttr ?? {}
+const {'class': dividerClass, ...dividerOther} = EmojiPickerDividerAttr ?? {}
+const {'class': titleClass, ...titleOther} = EmojiPickerTitleAttr ?? {}
+---
+
+<Popover
+	class={attrClassList(EmojiPickerClasses.emojipicker, className)}
+	data-c-emojipicker-autoclose={EmojiPickerAutoClose? '' : undefined}
+	{...other}>
+	<Tooltip
+		class={attrClassList(EmojiPickerClasses.tooltip, tooltipClass)}
+		{...tooltipOther}>
+		<div
+			class={attrClassList(EmojiPickerClasses.header, headerClass)}
+			{...headerOther}>
+			<span
+				class={attrClassList(EmojiPickerClasses.headerText, headerTextClass)}
+				{...headerTextOther}>
+				Emoji
+			</span>
+			<IconButton
+				data-tooltip="Close"
+				class={attrClassList(EmojiPickerClasses.headerButton, headerButtonClass)}
+				IconButtonCode={headerButtonCode}
+				{...headerButtonOther}
+			/>
+		</div>
+		<div
+			class={attrClassList(EmojiPickerClasses.tabs, tabsClass)}
+			role={tabsRole}
+			{...tabsOther}>
+			{[
+				[ICON_HISTORY       , 'Recents'            ],
+				[ICON_SEARCH        , 'Search result'      ],
+				[ICON_EMOJI         , 'Smiley & emotion'   ],
+				[ICON_PERSON        , 'Person & body parts'],
+				[ICON_ANIMAL_CAT    , 'Animal & nature'    ],
+				[ICON_FOOD          , 'Food & drink'       ],
+				[ICON_VEHICLE_CAR   , 'Travel & places'    ],
+				[ICON_RUNNING_PERSON, 'Activities'         ],
+				[ICON_DIVERSITY     , 'Objects'            ],
+				[ICON_SYMBOLS       , 'Symbols'            ],
+				[ICON_FLAG          , 'Flags'              ],
+			].map((v, i) => {
+				const {
+					'class': className,
+					'aria-label': ariaLabel = v[1] as string,
+					'aria-selected': ariaSelected = i === 2,
+					'data-tooltip': tooltip = v[1] as string,
+					IconButtonCode = v[0] as number,
+					IconButtonFilled = i === 2,
+					hidden = i < 2,
+					ButtonVariant: variant = i === 2? ButtonVariant.tonal : undefined,
+					role = 'tab',
+					...other
+				} = (EmojiPickerTabAttr[i] ?? {}) as any
+				return <IconButton
+					hidden={hidden}
+					class={attrClassList(
+						EmojiPickerClasses.tab,
+						i === 0? EmojiPickerClasses.tabRecent : undefined,
+						i === 1? EmojiPickerClasses.tabSearch : undefined,
+						className
+					)}
+					role={role}
+					IconButtonFilled={IconButtonFilled}
+					ButtonVariant={variant}
+					IconButtonCode={IconButtonCode}
+					data-tooltip={tooltip}
+					aria-label={ariaLabel}
+					aria-selected={ariaSelected}
+					{...other}
+				/>
+			})}
+		</div>
+		<form
+			class={attrClassList(EmojiPickerClasses.form, formClass)}
+			{...formOther}>
+			<TextField
+				class={attrClassList(EmojiPickerClasses.search, searchClass)}
+				TextFieldInputAttr={{
+					placeholder: searchInputPlaceholder,
+					required: searchInputRequired,
+					...searchInputOther
+				}}
+				{...searchOther}>
+				<TextFieldButton
+					slot="trailing"
+					class={attrClassList(EmojiPickerClasses.searchButton, searchButtonClass)}
+					ButtonVariant={searchButtonVariant}
+					data-tooltip="Search"
+					{...searchButtonOther}>
+					<Icon
+						class={attrClassList(EmojiPickerClasses.searchButtonIcon, searchButtonIconClass)}
+						IconCode={searchButtonIconCode}
+						{...searchButtonIconOther}
+					/>
+				</TextFieldButton>
+			</TextField>
+		</form>
+		<div
+			class={attrClassList(EmojiPickerClasses.content, contentClass)}
+			{...contentOther}>
+			<slot />
+		</div>
+		<Divider
+			class={attrClassList(EmojiPickerClasses.divider, dividerClass)}
+			{...dividerOther}
+		/>
+		<h3
+			class={attrClassList(EmojiPickerClasses.title, titleClass)}
+			{...titleOther}>
+			Smiley & emotion
+		</h3>
+		{[
+			[],
+			[],
+			EMOJIS_SMILEY_AND_EMOTION,
+			EMOJIS_PERSON_AND_BODY,
+			EMOJIS_ANIMAL_AND_NATURE,
+			EMOJIS_FOOD_AND_DRINK,
+			EMOJIS_TRAVEL_AND_PLACES,
+			EMOJIS_ACTIVITIES,
+			EMOJIS_OBJECT,
+			EMOJIS_SYMBOLS,
+			EMOJIS_FLAGS
+		].map((v, i) => {
+			const {'class': className, role = 'tabpanel', hidden = i !== 2, ...other} = EmojiPickerGroup[i] ?? {}
+			return <div
+				class={attrClassList(
+					EmojiPickerClasses.group,
+					i === 0? EmojiPickerClasses.groupRecent : undefined,
+					i === 1? EmojiPickerClasses.groupSearch : undefined,
+					className
+				)}
+				role={role}
+				hidden={hidden}
+				{...other}>
+				{v.map((d, j) => {
+					const {'class': className, 'data-tooltip': tooltip = d[1], ...other} = EmojiPickerEmoji[i]?.[j] ?? {}
+					return <Button
+						class={attrClassList(EmojiPickerClasses.emoji, className)}
+						data-tooltip={tooltip}
+						{...other}>
+						{d[0]}
+					</Button>
+				})}
+			</div>
+		})}
+	</Tooltip>
+</Popover>
+<script>
+	import { registerEmojiPicker } from '.'
+	registerEmojiPicker()
+</script>
