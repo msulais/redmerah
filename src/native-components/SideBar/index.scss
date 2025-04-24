@@ -62,12 +62,8 @@
 	}
 
 	&[data-c-sidebar-button-selected]::before {
-		height: calc(100% - 16px);
 		opacity: 1;
-
-		@media (hover: none) {
-			height: calc(100% - 20px);
-		}
+		height: max(50%, 3px);
 	}
 }
 
