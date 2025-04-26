@@ -1,0 +1,24 @@
+---
+import {
+	type DrawerButtonProps,
+	DrawerClasses
+} from '.'
+import { attrClassList } from '@/utils/attributes'
+import Button from '@/native-components/Button/index.astro'
+import './index.scss'
+
+type Props = DrawerButtonProps
+
+const {
+	'class': className,
+	DrawerButtonSelected,
+	...other
+} = Astro.props
+---
+
+<Button
+	class={attrClassList(DrawerClasses.button, className)}
+	data-c-drawer-button-selected={DrawerButtonSelected? '' : undefined}
+	{...other}>
+	<slot/>
+</Button>

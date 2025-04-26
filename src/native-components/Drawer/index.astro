@@ -1,0 +1,48 @@
+---
+import { attrClassList } from '@/utils/attributes'
+import {
+	type DrawerProps,
+	DrawerClasses
+} from '.'
+import './index.scss'
+
+type Props = DrawerProps
+const {
+	'class': className,
+	popover = 'auto',
+	DrawerContainerAttr,
+	DrawerHeaderAttr,
+	DrawerContentAttr,
+	DrawerFooterAttr,
+	...other
+} = Astro.props
+const {'class': containerClass, ...containerOther} = DrawerContainerAttr ?? {}
+const {'class': headerClass   , ...headerOther   } = DrawerHeaderAttr    ?? {}
+const {'class': contentClass  , ...contentOther  } = DrawerContentAttr   ?? {}
+const {'class': footerClass   , ...footerOther   } = DrawerFooterAttr    ?? {}
+---
+
+<div
+	class={attrClassList(DrawerClasses.drawer, className)}
+	popover={popover}
+	{...other}>
+	<div
+		class={attrClassList(DrawerClasses.container, containerClass)}
+		{...containerOther}>
+		<div
+			class={attrClassList(DrawerClasses.header, headerClass)}
+			{...headerOther}>
+			<slot name="header"/>
+		</div>
+		<div
+			class={attrClassList(DrawerClasses.content, contentClass)}
+			{...contentOther}>
+			<slot/>
+		</div>
+		<div
+			class={attrClassList(DrawerClasses.footer, footerClass)}
+			{...footerOther}>
+			<slot name="footer"/>
+		</div>
+	</div>
+</div>
