@@ -118,10 +118,6 @@
 	&:is([aria-selected=false],:disabled) {
 		min-height: 28px;
 
-		@media (hover: none) {
-			min-height: 40px;
-		}
-
 		.c-select:not([data-c-select-expanded]) & {
 			display: none;
 		}
@@ -224,11 +220,6 @@
 
 .c-select-popover {
 	border-radius: 8px;
-
-	@media (hover: none) {
-		border-radius: 12px;
-	}
-
 
 	.c-select[data-c-select-expanded] & {
 		max-height: calc(100dvh - 16px);

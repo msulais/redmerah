@@ -8,11 +8,6 @@
 	border: 2px solid transparent;
 	border-bottom-color: rgb(var(--g-color-accent));
 
-	@media (hover: none) {
-		min-height: 40px;
-		border-radius: 8px;
-	}
-
 	:root[data-animation=on] & {
 		transition-property: background-color, border-color;
 		transition-duration: .2s;
@@ -53,10 +48,6 @@
 .c-textfield-button {
 	padding: 0 4px;
 	min-height: 24px;
-
-	@media (hover: none) {
-		min-height: 32px;
-	}
 }
 
 .c-textfield-input {
@@ -70,10 +61,6 @@
 
 	&[type=number] {
 		padding: 0 4px 0 12px;
-	}
-
-	@media (hover: none) {
-		min-height: 37px;
 	}
 
 	&::placeholder {

@@ -9,11 +9,6 @@
 	position: relative;
 	user-select: none;
 
-	@media (hover: none) {
-		min-height: 40px;
-		border-radius: 8px;
-	}
-
 	&:has( > .c-checkbox-input:focus-visible) {
 		outline: auto;
 	}
@@ -95,10 +90,6 @@
 			transition-property: background-color, opacity;
 			transition-duration: .2s;
 		}
-	}
-
-	@media (hover: none) {
-		border-radius: 10px;
 	}
 
 	&:focus-visible {

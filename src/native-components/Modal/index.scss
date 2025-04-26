@@ -12,10 +12,6 @@
 	top: 0;
 	box-shadow: var(--g-elevation3);
 
-	@media (hover: none) {
-		border-radius: 12px;
-	}
-
 	:root[data-theme=dark] & {
 		border: 1px solid rgba(0, 0, 0, var(--g-opacity-inv5));
 		background-color: rgb(46, 46, 46);
