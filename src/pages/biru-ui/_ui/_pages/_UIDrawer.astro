@@ -1,0 +1,82 @@
+---
+import Tooltip from '@/native-components/Tooltip/index.astro'
+import Button from '@/native-components/Button/index.astro'
+import TextField from '@/native-components/TextField/index.astro'
+import TextFieldButton from '@/native-components/TextField/TextFieldButton.astro'
+import Icon from '@/native-components/Icon/index.astro'
+import Drawer from '@/native-components/Drawer/index.astro'
+import DrawerButton from '@/native-components/Drawer/DrawerButton.astro'
+import { ElementIds, ELEMENT_ID_PREFIX } from '../../_scripts/_enums'
+import CSS from '../../_index.module.scss'
+import { ButtonVariant } from '@/native-components/Button'
+import { ICON_APPS, ICON_DISMISS, ICON_HOME, ICON_INFO, ICON_PERSON, ICON_SEARCH, ICON_SETTINGS } from '@/constants/icons'
+import { ICON_CALL } from '@/constants/icons'
+---
+<div
+	class={CSS.bodyPage}
+	role="tabpanel"
+	id={ELEMENT_ID_PREFIX + ElementIds.panelDrawer}>
+	<h2>Drawer</h2>
+	<p>A drawer is a navigation pattern that slides in from the edge of the screen, typically revealing a list of options or actions. It's often used to conserve screen space and provide access to secondary functions.</p>
+	<div class={CSS.bodyPlayground}>
+		<Tooltip>
+			<Button
+				popovertarget={ELEMENT_ID_PREFIX + ElementIds.panelDrawerPreviewDrawer}
+				ButtonVariant={ButtonVariant.tonal}>
+				Open drawer
+			</Button>
+		</Tooltip>
+		<Drawer id={ELEMENT_ID_PREFIX + ElementIds.panelDrawerPreviewDrawer}>
+			<Fragment slot="header">
+				<Button
+					style="width:min-content"
+					popovertarget={ELEMENT_ID_PREFIX + ElementIds.panelDrawerPreviewDrawer}
+					popovertargetaction='hide'
+					aria-label="Close drawer">
+					<Icon IconCode={ICON_DISMISS}/>
+				</Button>
+				<TextField
+					style="width:calc(100% - 24px);margin:8px 12px;padding-right: 4px"
+					TextFieldInputAttr={{
+						placeholder: 'Search',
+						style: 'width:100%',
+						autofocus: true
+					}}>
+					<TextFieldButton slot='trailing'>
+						<Icon IconCode={ICON_SEARCH}/>
+					</TextFieldButton>
+				</TextField>
+			</Fragment>
+			<DrawerButton
+				DrawerButtonSelected
+				ButtonVariant={ButtonVariant.tonal}>
+				<Icon IconCode={ICON_HOME}/>
+				Home
+			</DrawerButton>
+			<DrawerButton>
+				<Icon IconCode={ICON_INFO}/>
+				About
+			</DrawerButton>
+			<DrawerButton>
+				<Icon IconCode={ICON_APPS}/>
+				Apps
+			</DrawerButton>
+			<DrawerButton>
+				<Icon IconCode={ICON_CALL}/>
+				Contact
+			</DrawerButton>
+			<Fragment slot='footer'>
+				<DrawerButton>
+					<Icon IconCode={ICON_PERSON}/>
+					Account
+				</DrawerButton>
+				<DrawerButton>
+					<Icon IconCode={ICON_SETTINGS}/>
+					Settings
+				</DrawerButton>
+			</Fragment>
+		</Drawer>
+	</div>
+	<div class={CSS.bodyOptions} id={ELEMENT_ID_PREFIX + ElementIds.panelDrawerOptions}>
+	</div>
+</div>
