@@ -1,4 +1,4 @@
-import { updateButton, type ButtonProps, type ButtonUpdateOptions } from "../Button"
+import { updateButton, updateLinkButton, type ButtonProps, type ButtonUpdateOptions, type LinkButtonUpdateOptions } from "../Button"
 
 type DrawerProps = astroHTML.JSX.HTMLAttributes & {
 	DrawerContainerAttr?: astroHTML.JSX.HTMLAttributes
@@ -11,10 +11,21 @@ type DrawerButtonProps = ButtonProps & {
 	DrawerButtonSelected?: boolean
 }
 
+type LinkDrawerButtonProps = ButtonProps & {
+	LinkDrawerButtonSelected?: boolean
+}
+
 type DrawerButtonUpdateOptions = ButtonUpdateOptions & {
 	DrawerButtonSelected?: boolean
 	DrawerButtonRefs    ?: {
 		button?(el: HTMLButtonElement): unknown
+	}
+}
+
+type LinkDrawerButtonUpdateOptions = LinkButtonUpdateOptions & {
+	DrawerButtonSelected?: boolean
+	DrawerButtonRefs    ?: {
+		link?(el: HTMLAnchorElement): unknown
 	}
 }
 
@@ -147,11 +158,32 @@ function updateDrawerButton(drawerButtonRef: HTMLButtonElement, options?: Drawer
 	return drawerButtonRef
 }
 
+function createLinkDrawerButton(options?: LinkDrawerButtonUpdateOptions): HTMLAnchorElement {
+	const linkRef = document.createElement('a')
+	return updateLinkDrawerButton(linkRef, options)
+}
+
+function updateLinkDrawerButton(linkRef: HTMLAnchorElement, options?: LinkDrawerButtonUpdateOptions): HTMLAnchorElement {
+	const refs = options?.DrawerButtonRefs
+	updateLinkButton(linkRef, options)
+	linkRef.classList.add(DrawerClasses.button)
+
+	const selected = options?.DrawerButtonSelected
+	if (selected !== undefined) {
+		linkRef.toggleAttribute(DrawerButtonAttributes.selected, selected)
+	}
+
+	refs?.link?.(linkRef)
+	return linkRef
+}
+
 export {
 	type DrawerProps,
 	type DrawerButtonProps,
 	type DrawerUpdateOptions,
 	type DrawerButtonUpdateOptions,
+	type LinkDrawerButtonProps,
+	type LinkDrawerButtonUpdateOptions,
 	DrawerClasses,
 	DrawerButtonAttributes,
 	openDrawer,
@@ -160,5 +192,7 @@ export {
 	createDrawer,
 	updateDrawer,
 	createDrawerButton,
-	updateDrawerButton
+	updateDrawerButton,
+	createLinkDrawerButton,
+	updateLinkDrawerButton
 }
