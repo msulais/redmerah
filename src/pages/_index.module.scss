@@ -42,7 +42,7 @@
 		:root[data-theme=dark] & { --color-accent: var(--color-accent-dark) }
 
 		@media (prefers-color-scheme: dark) {
-			:root[data-theme=system] & {
+			:root[data-theme=auto] & {
 				--color-accent: var(--color-accent-dark)
 			}
 		}
@@ -73,16 +73,10 @@
 				transition-duration: .2s;
 			}
 
-			:root[data-corner=sharp] & {
-				border-radius: 0;
-			}
-
-			:root[data-corner=semi-round] & {
-				border-radius: 8px;
-			}
-
-			:root[data-corner=full-round] & {
-				border-radius: 36px;
+			@media (prefers-reduced-motion: no-preference) {
+				:root[data-animation=auto] & {
+					transition-duration: .2s;
+				}
 			}
 		}
 
@@ -91,24 +85,26 @@
 			background-color: var(--color-accent);
 		}
 
+		@media (prefers-reduced-motion: reduce) {
+			:root[data-animation=auto] & {
+				background: none;
+				background-color: var(--color-accent);
+			}
+		}
+
 		:root[data-animation=on] & {
 			transition-duration: .2s;
 			animation: rotate1 5s linear infinite;
 		}
 
-		:root[data-corner=sharp] & {
-			border-radius: 0;
+		@media (prefers-reduced-motion: no-preference) {
+			:root[data-animation=auto] & {
+				transition-duration: .2s;
+				animation: rotate1 5s linear infinite;
+			}
 		}
 
-		:root[data-corner=semi-round] & {
-			border-radius: 12px;
-		}
-
-		:root[data-corner=full-round] & {
-			border-radius: 40px;
-		}
-
-		> :global(.c-btn) {
+		> :global(.c-button) {
 			position: absolute;
 			top: 20px;
 			right: 20px;
@@ -188,13 +184,12 @@
 }
 
 .header {
-	width: 840px;
+	width: 1000px;
 	max-width: 100%;
 	padding: 64px 16px;
 
 	> h1 {
 		font-size: var(--g-font-size-xxd);
-		font-weight: 100;
 		margin-bottom: 32px;
 
 		@media (max-width: 600px) {
@@ -215,6 +210,12 @@
 
 			:root[data-animation=on] & {
 				animation: textShine 2s ease-in-out infinite alternate;
+			}
+
+			@media (prefers-reduced-motion: no-preference) {
+				:root[data-animation=auto] & {
+					animation: textShine 2s ease-in-out infinite alternate;
+				}
 			}
 
 			&[data-color=green] {
@@ -276,6 +277,12 @@
 
 		:root[data-animation=on] & {
 			transition-duration: .2s;
+		}
+
+		@media (prefers-reduced-motion: no-preference) {
+			:root[data-animation=auto] & {
+				transition-duration: .2s;
+			}
 		}
 
 		@media (hover: hover) {

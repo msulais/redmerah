@@ -4,15 +4,13 @@ import { RoutesLinks } from '@/enums/links'
 import { APPS } from '@/constants/apps'
 import { colorGeneratePalette } from '@/utils/color'
 import { ICON_ARROW_RIGHT, ICON_DATABASE_PERSON, ICON_OPEN_FOLDER, ICON_SETTINGS_COG_MULTIPLE, ICON_SPARKLE } from '@/constants/icons'
-import logo from '@/assets/images/logos/redmerah-logo.svg'
 
 import Html from '@/layouts/Html/index.astro'
-import Icon from '@/components/Icon/index.astro'
-import LinkButton from '@/components/Button/LinkButton.astro'
-import { ButtonVariant } from '@/components/Button'
+import Icon from '@/native-components/Icon/index.astro'
+import LinkButton from '@/native-components/Button/LinkButton.astro'
+import { ButtonVariant } from '@/native-components/Button'
 import Appbar from '@/layouts/Appbar/index.astro'
 import BottomBar from '@/layouts/BottomBar/index.astro'
-import Splash from '@/layouts/Splash/index.astro'
 import CSSAnimation from '@/styles/animation.module.scss'
 import CSS from './_index.module.scss'
 
@@ -40,10 +38,9 @@ function color_app_background(color: HEXColor): string {
 }
 ---
 
-<Html componentCount={2}>
+<Html>
 	<script is:inline src='/scripts/root-settings.min.js'/>
-	<Splash src={logo.src} alt={`Redmerah splash icon`} />
-	<Appbar />
+	<Appbar route={RoutesLinks.home}/>
 	<div class={CSS.body}>
 		<div class={CSS.header}>
 			<h1>📱✅🔥🚀<br/>Discover a suite of powerful <span data-color=green>apps</span> designed to simplify your <span data-color=blue>tasks</span> and enhance your <span data-color=red>productivity</span>.</h1>
@@ -56,20 +53,23 @@ function color_app_background(color: HEXColor): string {
 					<img src={v.logoUrl} alt={v.name} />
 					<h3>{v.name}</h3>
 					<p>{v.description}</p>
-					<LinkButton classList={[CSSAnimation.btn_scale_up_icon]} variant={ButtonVariant.outlined} href={v.link}>Open <Icon code={ICON_OPEN_FOLDER}/></LinkButton>
+					<LinkButton
+						class={CSSAnimation.btn_scale_up_icon}
+						LinkButtonVariant={ButtonVariant.outlined}
+						href={v.link}>Open <Icon IconCode={ICON_OPEN_FOLDER}/></LinkButton>
 				</div>}</>)}
 			</section>
 			<LinkButton
-				classList={[CSS.more_apps, CSSAnimation.btn_move_right_icon]}
-				variant={ButtonVariant.filled}
+				class={[CSS.more_apps, CSSAnimation.btn_move_right_icon].join(' ')}
+				LinkButtonVariant={ButtonVariant.filled}
 				href={RoutesLinks.apps}>
 				See more apps
-				<Icon filled code={ICON_ARROW_RIGHT}/>
+				<Icon IconFilled IconCode={ICON_ARROW_RIGHT}/>
 			</LinkButton>
 			<section class={CSS.features}>
 				<h2>Features</h2>
 				{features.map(v => <div>
-					<Icon code={v.icon}/>
+					<Icon IconCode={v.icon}/>
 					<div>
 						<h3>{v.title}</h3>
 						<p>{v.description}</p>
@@ -85,12 +85,12 @@ function color_app_background(color: HEXColor): string {
 </Html>
 
 <script>
-	import { animationIsOn } from "@/utils/animation"
+	import { isAnimationAllowed } from "@/utils/animation"
 
 	const quote = document.getElementById('quote') as HTMLParagraphElement
 	const spans = document.querySelectorAll<HTMLSpanElement>('#quote span')
 	const observer = new IntersectionObserver((entries) => {
-		if (!animationIsOn()) return
+		if (!isAnimationAllowed()) return
 
 		for (const entry of entries) {
 			if (!entry.isIntersecting) continue;

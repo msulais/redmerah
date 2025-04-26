@@ -1,4 +1,4 @@
-import { updateButton, updateLinkButton, type ButtonProps, type ButtonUpdateOptions, type LinkButtonUpdateOptions } from "../Button"
+import { updateButton, updateLinkButton, type ButtonProps, type ButtonUpdateOptions, type LinkButtonProps, type LinkButtonUpdateOptions } from "../Button"
 
 type DrawerProps = astroHTML.JSX.HTMLAttributes & {
 	DrawerContainerAttr?: astroHTML.JSX.HTMLAttributes
@@ -11,7 +11,7 @@ type DrawerButtonProps = ButtonProps & {
 	DrawerButtonSelected?: boolean
 }
 
-type LinkDrawerButtonProps = ButtonProps & {
+type LinkDrawerButtonProps = LinkButtonProps & {
 	LinkDrawerButtonSelected?: boolean
 }
 
