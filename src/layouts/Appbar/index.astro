@@ -1,12 +1,19 @@
 ---
-import Icon from '@/components/Icon/index.astro'
-import LinkButton from '@/components/Button/LinkButton.astro'
-import { ButtonVariant } from '@/components/Button'
-import { SettingsElement, NavigationDrawer } from './_components'
+import Icon from '@/native-components/Icon/index.astro'
+import Tooltip from '@/native-components/Tooltip/index.astro'
+import Drawer from '@/native-components/Drawer/index.astro'
+import Divider from '@/native-components/Divider/index.astro'
+import Button from '@/native-components/Button/index.astro'
+import LinkDrawerButton from '@/native-components/Drawer/LinkDrawerButton.astro'
+import LinkButton from '@/native-components/Button/LinkButton.astro'
+import IconButton from '@/native-components/Button/IconButton.astro'
+import { ButtonVariant } from '@/native-components/Button'
+import UIMenus from './_ui/_UIMenus.astro'
 import CSS from './_index.module.scss'
 
 import { RoutesLinks, ExternalLinks } from '@/enums/links'
-import { ICON_APPS, ICON_ARROW_RIGHT_UP, ICON_GIFT, ICON_INFO } from '@/constants/icons'
+import { ICON_APPS, ICON_ARROW_RIGHT_UP, ICON_SETTINGS, ICON_GIFT, ICON_INFO, ICON_LINE_HORIZONTAL_3, ICON_HOME, ICON_SHIELD_CHECKMARK, ICON_RECEIPT, ICON_CALL } from '@/constants/icons'
+import { ElementIds, ID } from './_scripts/_enums'
 
 type Props = {
 	route?: RoutesLinks
@@ -15,9 +22,20 @@ type Props = {
 const { route } = Astro.props
 ---
 
-<header class={CSS.header} id="_appbar" data-top>
-	<LinkButton href={RoutesLinks.home}>
-		<svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<header class={CSS.header} id={ID + ElementIds.appbar}>
+	<Tooltip>
+		<IconButton
+			class={CSS.mobile_only}
+			data-tooltip="Navigation"
+			aria-label="Open navigation"
+			popovertarget={ID + ElementIds.drawer}
+			IconButtonCode={ICON_LINE_HORIZONTAL_3}
+		/>
+	</Tooltip>
+	<LinkButton
+		href={RoutesLinks.home}
+		style="padding-left:4px;font-size:var(--g-font-size-m)">
+		<svg width=24 height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
 			<rect y="10" width="8" height="22" rx="2" fill="rgb(var(--g-color-accent))"/>
 			<path d="M14.1504 19.4785C12.7754 18.4093 12.0879 17.8747 12.0142 17.4068C11.9505 17.0018 12.1036 16.5932 12.4224 16.3179C12.7906 16 13.6786 16 15.4544 16H29.9394C30.6607 16 31.0213 16 31.2968 16.1336C31.5391 16.251 31.7362 16.4385 31.8596 16.669C32 16.9311 32 17.2743 32 17.9605V29.2243C32 30.5454 32 31.2059 31.7161 31.5421C31.4693 31.8344 31.0954 32.0031 30.7013 32C30.2481 31.9963 29.7105 31.5783 28.6354 30.7423L14.1504 19.4785Z" fill="rgba(var(--g-color-accent),.64)"/>
 			<rect x="22" width="8" height="22" rx="2" transform="rotate(90 22 0)" fill="rgba(var(--g-color-accent),.64)"/>
@@ -27,60 +45,107 @@ const { route } = Astro.props
 	</LinkButton>
 	<nav>
 		<LinkButton
-			classList={[CSS.desktop_only]}
-			variant={route == RoutesLinks.apps? ButtonVariant.tonal : undefined}
-			selected={route == RoutesLinks.apps}
+			class={CSS.desktop_only}
+			LinkButtonVariant={route == RoutesLinks.apps? ButtonVariant.filled : undefined}
 			href={RoutesLinks.apps}>
 			<Icon
-				code={ICON_APPS}
-				filled={route == RoutesLinks.apps}
-				style={route == RoutesLinks.apps? 'color:rgb(var(--g-color-accent))' : undefined}
+				IconCode={ICON_APPS}
+				IconFilled={route == RoutesLinks.apps}
 			/>
 			Apps
 		</LinkButton>
 		<LinkButton
-			classList={[CSS.desktop_only]}
-			variant={route == RoutesLinks.about? ButtonVariant.tonal : undefined}
-			selected={route == RoutesLinks.about}
+			class={CSS.desktop_only}
+			LinkButtonVariant={route == RoutesLinks.about? ButtonVariant.filled : undefined}
 			href={RoutesLinks.about}>
 			<Icon
-				code={ICON_INFO}
-				filled={route == RoutesLinks.about}
-				style={route == RoutesLinks.about? 'color:rgb(var(--g-color-accent))' : undefined}
+				IconCode={ICON_INFO}
+				IconFilled={route == RoutesLinks.about}
 			/>
 			About
 		</LinkButton>
 		<LinkButton
-			classList={[CSS.desktop_only]}
+			class={CSS.desktop_only}
 			href={ExternalLinks.donate}
-			openInNewTab>
-			<Icon code={ICON_GIFT}/>
+			LinkButtonVariant={ButtonVariant.tonal}
+			LinkButtonNewTab>
+			<Icon IconCode={ICON_GIFT}/>
 			Donate
-			<Icon code={ICON_ARROW_RIGHT_UP} inline/>
+			<Icon IconCode={ICON_ARROW_RIGHT_UP} IconInline/>
 		</LinkButton>
 	</nav>
-	<div>
-		<SettingsElement client:only="solid-js"/>
-		<NavigationDrawer client:only="solid-js" route={route}/>
-	</div>
+	<Tooltip>
+		<IconButton
+			data-tooltip="Settings"
+			aria-label="Open settings"
+			IconButtonCode={ICON_SETTINGS}
+			id={ID + ElementIds.appbarSettingsButton}
+			aria-haspopup="menu"
+			aria-expanded="false"
+			aria-controls={ID + ElementIds.appbarSettingsMenu}
+		/>
+	</Tooltip>
 </header>
-
-<script>
-	const appbar = document.getElementById('_appbar') as HTMLElement
-	let isTop = window.scrollY <= 16
-
-	appbar.ontransitionend = () => {
-		appbar.style.removeProperty('will-change')
-	}
-
-	appbar.toggleAttribute('data-top', isTop)
-	window.addEventListener('scroll', () => {
-		const localIsTop = window.scrollY <= 16
-
-		if (isTop === localIsTop) return
-		isTop = localIsTop
-
-		appbar.style.setProperty('will-change', 'border-color, background-color, box-shadow, transform, max-width')
-		appbar.toggleAttribute('data-top', isTop)
-	})
-</script>
+<Drawer id={ID + ElementIds.drawer}>
+	<Tooltip slot="header">
+		<Button
+			popovertarget={ID + ElementIds.drawer}
+			aria-label="Hide navigation"
+			style="width:min-content"
+			data-tooltip="Close"
+			popovertargetaction="hide">
+			<Icon IconCode={ICON_LINE_HORIZONTAL_3}/>
+		</Button>
+	</Tooltip>
+	<LinkDrawerButton
+		href={RoutesLinks.home}
+		LinkDrawerButtonSelected={route === RoutesLinks.home}
+		LinkButtonVariant={route === RoutesLinks.home? ButtonVariant.tonal : undefined}>
+		<Icon IconCode={ICON_HOME}/>
+		Home
+	</LinkDrawerButton>
+	<LinkDrawerButton
+		href={RoutesLinks.apps}
+		LinkDrawerButtonSelected={route === RoutesLinks.apps}
+		LinkButtonVariant={route === RoutesLinks.apps? ButtonVariant.tonal : undefined}>
+		<Icon IconCode={ICON_APPS}/>
+		Apps
+	</LinkDrawerButton>
+	<LinkDrawerButton
+		href={RoutesLinks.about}
+		LinkDrawerButtonSelected={route === RoutesLinks.about}
+		LinkButtonVariant={route === RoutesLinks.about? ButtonVariant.tonal : undefined}>
+		<Icon IconCode={ICON_INFO}/>
+		About
+	</LinkDrawerButton>
+	<LinkDrawerButton
+		href={RoutesLinks.privacy}
+		LinkDrawerButtonSelected={route === RoutesLinks.privacy}
+		LinkButtonVariant={route === RoutesLinks.privacy? ButtonVariant.tonal : undefined}>
+		<Icon IconCode={ICON_SHIELD_CHECKMARK}/>
+		Privacy policy
+	</LinkDrawerButton>
+	<LinkDrawerButton
+		href={RoutesLinks.terms}
+		LinkDrawerButtonSelected={route === RoutesLinks.terms}
+		LinkButtonVariant={route === RoutesLinks.terms? ButtonVariant.tonal : undefined}>
+		<Icon IconCode={ICON_RECEIPT}/>
+		Terms & conditions
+	</LinkDrawerButton>
+	<Fragment slot="footer">
+		<Divider />
+		<LinkDrawerButton
+			href={'mailto:' + ExternalLinks.contactEmail}>
+			<Icon IconCode={ICON_CALL}/>
+			Contact
+		</LinkDrawerButton>
+		<LinkDrawerButton
+			href={ExternalLinks.donate}
+			LinkButtonNewTab>
+			<Icon IconCode={ICON_GIFT}/>
+			Donate
+		</LinkDrawerButton>
+	</Fragment>
+</Drawer>
+<UIMenus/>
+<script src="./_scripts/_index.ts"/>

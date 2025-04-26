@@ -1,0 +1,100 @@
+---
+import { ICON_CHEVRON_RIGHT, ICON_CIRCLE, ICON_LAPTOP_SETTINGS, ICON_PLAY_CIRCLE_HINT, ICON_VIDEO_CLIP, ICON_VIDEO_CLIP_OFF, ICON_VIDEO_CLIP_OPTIMIZE, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from '@/constants/icons'
+import { ElementIds, ID, RadioGroupNames } from '../_scripts/_enums'
+import ColorPicker from '@/native-components/ColorPicker/index.astro'
+import Menu from '@/native-components/Menu/index.astro'
+import SubMenuItem from '@/native-components/Menu/SubMenuItem.astro'
+import RadioMenuItem from '@/native-components/Menu/RadioMenuItem.astro'
+import MenuIndent from '@/native-components/Menu/MenuIndent.astro'
+import MenuItem from '@/native-components/Menu/MenuItem.astro'
+import Icon from '@/native-components/Icon/index.astro'
+import { PlatformAnimationMode, PlatformThemeMode } from '@/enums/platforms'
+import { AppColors } from '@/enums/colors'
+---
+
+<Menu id={ID + ElementIds.appbarSettingsMenu}>
+	<MenuItem
+		id={ID + ElementIds.appbarSettingsAccentButton}
+		aria-controls={ID + ElementIds.appbarColorPicker}>
+		<Icon style={`color: rgb(${AppColors.accent})`} IconCode={ICON_CIRCLE} IconFilled/>
+		Color accent
+		<div style="flex:1"/>
+		<MenuIndent/>
+	</MenuItem>
+	<SubMenuItem
+		aria-controls={ID + ElementIds.appbarSettingsAnimationMenu}>
+		<Icon IconCode={ICON_PLAY_CIRCLE_HINT}/>
+		Animation
+		<div style="flex:1"/>
+		<Icon IconCode={ICON_CHEVRON_RIGHT}/>
+	</SubMenuItem>
+	<SubMenuItem
+		aria-controls={ID + ElementIds.appbarSettingsThemeMenu}>
+		<Icon IconCode={ICON_WEATHER_SUNNY}/>
+		Theme
+		<div style="flex:1"/>
+		<Icon IconCode={ICON_CHEVRON_RIGHT}/>
+	</SubMenuItem>
+</Menu>
+<ColorPicker
+	PopoverDraggable
+	ColorPickerValue='#FF0000'
+	ColorPickerDisabledOpacity
+	ColorPickerHueOnly
+	id={ID + ElementIds.appbarColorPicker}
+	aria-labelledby={ID + ElementIds.appbarSettingsAccentButton}
+/>
+<Menu id={ID + ElementIds.appbarSettingsAnimationMenu}>
+	<RadioMenuItem
+		RadioMenuItemInputAttr={{
+			name: RadioGroupNames.settingsAnimation,
+			checked: true,
+			value: PlatformAnimationMode.auto
+		}}>
+		<Icon IconCode={ICON_VIDEO_CLIP_OPTIMIZE}/>
+		Automatic
+	</RadioMenuItem>
+	<RadioMenuItem
+		RadioMenuItemInputAttr={{
+			name: RadioGroupNames.settingsAnimation,
+			value: PlatformAnimationMode.on
+		}}>
+		<Icon IconCode={ICON_VIDEO_CLIP}/>
+		On
+	</RadioMenuItem>
+	<RadioMenuItem
+		RadioMenuItemInputAttr={{
+			name: RadioGroupNames.settingsAnimation,
+			value: PlatformAnimationMode.off
+		}}>
+		<Icon IconCode={ICON_VIDEO_CLIP_OFF}/>
+		Off
+	</RadioMenuItem>
+</Menu>
+<Menu id={ID + ElementIds.appbarSettingsThemeMenu}>
+	<RadioMenuItem
+		RadioMenuItemInputAttr={{
+			name: RadioGroupNames.settingsTheme,
+			checked: true,
+			value: PlatformThemeMode.auto
+		}}>
+		<Icon IconCode={ICON_LAPTOP_SETTINGS}/>
+		Automatic
+	</RadioMenuItem>
+	<RadioMenuItem
+		RadioMenuItemInputAttr={{
+			name: RadioGroupNames.settingsTheme,
+			value: PlatformThemeMode.light
+		}}>
+		<Icon IconCode={ICON_WEATHER_SUNNY}/>
+		Light
+	</RadioMenuItem>
+	<RadioMenuItem
+		RadioMenuItemInputAttr={{
+			name: RadioGroupNames.settingsTheme,
+			value: PlatformThemeMode.dark
+		}}>
+		<Icon IconCode={ICON_WEATHER_MOON}/>
+		Dark
+	</RadioMenuItem>
+</Menu>
