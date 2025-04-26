@@ -157,6 +157,8 @@ function _initEmojiPicker(emojiPickerRef: HTMLDivElement): void {
 		const prevTab = emojiPickerRef.querySelector(`.${EmojiPickerClasses.tab}[aria-selected=true]`)
 		const prevTabIcon = emojiPickerRef.querySelector(`.${EmojiPickerClasses.tab}[aria-selected=true]>.${IconClasses.icon}`)
 		const prevTabpanel = emojiPickerRef.querySelector(`.${EmojiPickerClasses.group}:not([hidden])`)
+		if (prevTab === tab) return
+
 		prevTab?.setAttribute('aria-selected', 'false')
 		prevTabpanel?.toggleAttribute('hidden', true)
 		tabPanel.removeAttribute('hidden')
@@ -211,8 +213,18 @@ function _initEmojiPicker(emojiPickerRef: HTMLDivElement): void {
 			}
 		}
 
-		const searchTab = emojiPickerRef.querySelector(`.${EmojiPickerClasses.tabSearch}`)
+		const tabRect: Map<HTMLButtonElement, DOMRect> = new Map()
+		const searchTab = emojiPickerRef.querySelector<HTMLButtonElement>(`.${EmojiPickerClasses.tabSearch}`)
 		const searchGroup = emojiPickerRef.querySelector(`.${EmojiPickerClasses.groupSearch}`)
+		const isHidden = searchTab?.hidden ?? true
+		if (isHidden) {
+			for (const tab of emojiPickerRef.querySelectorAll<HTMLButtonElement>(`.${EmojiPickerClasses.tab}:not([hidden])`)) {
+				if (tab === searchTab) continue
+
+				tabRect.set(tab, tab.getBoundingClientRect())
+			}
+		}
+
 		searchTab?.toggleAttribute('hidden', false)
 
 		result.sort((a, b) => a[1].localeCompare(b[1]))
@@ -230,9 +242,18 @@ function _initEmojiPicker(emojiPickerRef: HTMLDivElement): void {
 
 		if (!isAnimationAllowed()) return
 
-		searchTab?.animate({
-			scale: [0, 1]
-		}, animationOptions)
+		if (isHidden) {
+			searchTab?.animate({
+				scale: [0, 1]
+			}, animationOptions)
+
+			tabRect.forEach((rect, element) => {
+				const rect2 = element.getBoundingClientRect()
+				element.animate({
+					'transform': [`translate(${rect.left - rect2.left}px,${rect.top - rect2.top}px)`, 'translate(0,0)']
+				}, animationOptions)
+			})
+		}
 
 		for (const button of children) {
 			button.animate({
