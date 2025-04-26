@@ -3,51 +3,96 @@ import { ELEMENT_ID_PREFIX, ElementIds } from "./_enums"
 import { ButtonVariant } from "@/native-components/Button"
 import { isAnimationAllowed } from "@/utils/animation"
 import { AnimationEffectTiming } from "@/enums/animation"
+import { elementValidTarget } from "@/utils/element"
+import { closeDrawer, DrawerClasses, updateDrawerButton } from "@/native-components/Drawer"
+import CSS from '../_index.module.scss'
 
 const $ = (id: string) => document.getElementById(id)
-const navigation = $(ELEMENT_ID_PREFIX + ElementIds.navigation)
 
 function initNavigationEvents(): void {
-	navigation?.addEventListener('click', () => {
-		const tab = document.activeElement
-		if (
-			!tab
-			|| !tab.classList.contains(SideBarClasses.button)
-			|| tab.getAttribute('aria-selected') === 'true'
-		) return
+	const navigation = $(ELEMENT_ID_PREFIX + ElementIds.navigationSideBar)
+	const drawer = $(ELEMENT_ID_PREFIX + ElementIds.navigationDrawer)
 
-		const prevTab = navigation.querySelector(`.${SideBarClasses.button}[aria-selected=true]`)
-		if (prevTab) {
-			prevTab.setAttribute('aria-selected', 'false')
-			updateSideBarButton(prevTab as HTMLButtonElement, {
-				ButtonVariant: false,
-				SideBarButtonSelected: false
-			})
-			const prevAriaControls = prevTab.getAttribute('aria-controls')
-			if (prevAriaControls) $(prevAriaControls)?.toggleAttribute('hidden', true)
+	function onClick(parent: HTMLElement): void {
+		const tab = document.activeElement as HTMLButtonElement
+		if (!elementValidTarget(
+			parent, tab,
+			(el) => {
+				const classList = el.classList
+				return classList.contains(DrawerClasses.button) || classList.contains(SideBarClasses.button)
+			}
+		)) return
+
+		if (tab.getAttribute('aria-selected') === 'true') {
+			if (parent.classList.contains(DrawerClasses.drawer)) closeDrawer(parent as HTMLDivElement)
+			return
 		}
 
-		tab.setAttribute('aria-selected', 'true')
-		updateSideBarButton(tab as HTMLButtonElement, {
-			ButtonVariant: ButtonVariant.tonal,
-			SideBarButtonSelected: true
-		})
-		const ariaControls = tab.getAttribute('aria-controls')
-		if (ariaControls) {
-			const tabPanel = $(ariaControls)
-			tabPanel?.toggleAttribute('hidden', false)
+		const panelId = tab.getAttribute('aria-controls')
+		if (!panelId) return
 
-			if (isAnimationAllowed()) {
-				tabPanel?.animate({
-					opacity: [0, 1],
-					transform: ['translateY(64px)', 'translateY(0)']
-				}, {
-					duration: 500,
-					easing: AnimationEffectTiming.spring
+		const targetPanel = $(panelId)
+		if (!targetPanel) return
+
+		const selectedPanel = document.querySelector<HTMLDivElement>(`.${CSS.bodyPage}[role=tabpanel]:not([hidden])`)
+		const selectedTabs = document.querySelectorAll<HTMLButtonElement>(`:is(.${SideBarClasses.button},.${DrawerClasses.button})[aria-selected=true]`)
+		const targetTabs = document.querySelectorAll<HTMLButtonElement>(`:is(.${SideBarClasses.button},.${DrawerClasses.button})[aria-controls="${panelId}"]`)
+
+		targetPanel.hidden = false
+		if (selectedPanel) {
+			selectedPanel.hidden = true
+		}
+		if (parent.classList.contains(DrawerClasses.drawer)) {
+			closeDrawer(parent as HTMLDivElement)
+		}
+
+		for (const tab of targetTabs) {
+			const classList = tab.classList
+			tab.setAttribute('aria-selected', 'true')
+			if (classList.contains(SideBarClasses.button)) {
+				updateSideBarButton(tab, {
+					ButtonVariant: ButtonVariant.tonal,
+					SideBarButtonSelected: true
+				})
+			}
+			else if (classList.contains(DrawerClasses.button)) {
+				updateDrawerButton(tab, {
+					ButtonVariant: ButtonVariant.tonal,
+					DrawerButtonSelected: true
 				})
 			}
 		}
-	})
+
+		for (const tab of selectedTabs) {
+			const classList = tab.classList
+			tab.setAttribute('aria-selected', 'false')
+			if (classList.contains(SideBarClasses.button)) {
+				updateSideBarButton(tab, {
+					ButtonVariant: ButtonVariant.transparent,
+					SideBarButtonSelected: false
+				})
+			}
+			else if (classList.contains(DrawerClasses.button)) {
+				updateDrawerButton(tab, {
+					ButtonVariant: ButtonVariant.transparent,
+					DrawerButtonSelected: false
+				})
+			}
+		}
+
+		if (!isAnimationAllowed()) return
+
+		targetPanel.animate({
+			transform: ['translateY(64px)', 'translateY(0)'],
+			opacity: [0, 1]
+		}, {
+			duration: 500,
+			easing: AnimationEffectTiming.spring
+		})
+	}
+
+	drawer?.addEventListener('click', () => onClick(drawer))
+	navigation?.addEventListener('click', () => onClick(navigation))
 }
 
 function _(): void {

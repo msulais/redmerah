@@ -1,5 +1,19 @@
 $side-navigation-none: 680px;
 
+.appbarDrawer {
+	@media (min-width: ($side-navigation-none + 1px)) {
+		display: none;
+	}
+}
+
+.appbarLogo {
+	margin: 0 8px 0 12px;
+
+	@media (max-width: $side-navigation-none) {
+		margin-left: 0;
+	}
+}
+
 .body {
 	display: flex;
 	flex-direction: column;
@@ -65,4 +79,10 @@ $side-navigation-none: 680px;
 	flex-wrap: wrap;
 	gap: 8px;
 	align-items: center;
+}
+
+.sidebar {
+	@media (max-width: $side-navigation-none) {
+		display: none !important;
+	}
 }

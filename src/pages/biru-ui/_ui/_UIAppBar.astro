@@ -3,13 +3,19 @@ import Appbar from '@/native-components/AppBar/index.astro'
 import logo from '@/assets/images/apps/biru-ui.svg'
 import IconButton from '@/native-components/Button/IconButton.astro'
 import Tooltip from '@/native-components/Tooltip/index.astro'
-import { ICON_INFO, ICON_SETTINGS } from '@/constants/icons'
+import { ICON_INFO, ICON_SETTINGS, ICON_LINE_HORIZONTAL_3 } from '@/constants/icons'
 import { ElementIds, ELEMENT_ID_PREFIX } from '../_scripts/_enums'
+import CSS from '../_index.module.scss'
 ---
 
 <Appbar id={ELEMENT_ID_PREFIX + ElementIds.appbar}>
 	<Fragment slot='leading'>
-		<img style="margin:0 8px 0 12px" src={logo.src} width="32" alt="BiruUI logo"/>
+		<IconButton
+			class={CSS.appbarDrawer}
+			IconButtonCode={ICON_LINE_HORIZONTAL_3}
+			popovertarget={ELEMENT_ID_PREFIX + ElementIds.navigationDrawer}
+		/>
+		<img class={CSS.appbarLogo} src={logo.src} width="32" alt="BiruUI logo"/>
 	</Fragment>
 	<Fragment slot='headline'>BiruUI</Fragment>
 	<Fragment slot='trailing'>

@@ -1,8 +1,14 @@
 ---
 import SideBar from '@/native-components/SideBar/index.astro'
+import Drawer from '@/native-components/Drawer/index.astro'
+import Button from '@/native-components/Button/index.astro'
+import Icon from '@/native-components/Icon/index.astro'
+import DrawerButton from '@/native-components/Drawer/DrawerButton.astro'
 import SideBarButton from '@/native-components/SideBar/SideBarButton.astro'
 import { ButtonVariant } from '@/native-components/Button'
 import { ELEMENT_ID_PREFIX, ElementIds } from '../_scripts/_enums'
+import { ICON_LINE_HORIZONTAL_3 } from '@/constants/icons'
+import CSS from '../_index.module.scss'
 
 const items: {
 	name: string
@@ -78,8 +84,9 @@ const items: {
 ---
 
 <SideBar
+	class={CSS.sidebar}
 	role="tablist"
-	id={ELEMENT_ID_PREFIX + ElementIds.navigation}
+	id={ELEMENT_ID_PREFIX + ElementIds.navigationSideBar}
 	aria-label="Navigation">
 	{items.map(v => <SideBarButton
 		role="tab"
@@ -90,3 +97,21 @@ const items: {
 		{v.name}
 	</SideBarButton>)}
 </SideBar>
+<Drawer
+	id={ELEMENT_ID_PREFIX + ElementIds.navigationDrawer}
+	aria-label="Navigation">
+	<Button
+		slot="header"
+		style="width:min-content"
+		popovertarget={ELEMENT_ID_PREFIX + ElementIds.navigationDrawer}
+		popovertargetaction="hide">
+		<Icon IconCode={ICON_LINE_HORIZONTAL_3}/>
+	</Button>
+	{items.map(v => <DrawerButton
+		aria-selected={v.selected}
+		aria-controls={v.controls}
+		DrawerButtonSelected={v.selected}
+		ButtonVariant={v.selected ? ButtonVariant.tonal : undefined}>
+		{v.name}
+	</DrawerButton>)}
+</Drawer>
