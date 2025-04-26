@@ -42,15 +42,17 @@ import { ButtonVariant } from '@/native-components/Button'
 			style="margin-right:8px;display:none">
 			Reset selection
 		</Button>
-		<label id={ELEMENT_ID_PREFIX + ElementIds.panelSelectOptionsVariantLabel}>Variant:</label>
-		<Select
-			aria-labelledby={ELEMENT_ID_PREFIX + ElementIds.panelSelectOptionsVariantLabel}
-			id={ELEMENT_ID_PREFIX + ElementIds.panelSelectOptionsVariant}
-			style="min-width: 140px">
-			<SelectOption value={SelectVariant.filled}>Filled</SelectOption>
-			<SelectOption value={SelectVariant.tonal} SelectOptionSelected>Tonal</SelectOption>
-			<SelectOption value={SelectVariant.transparent}>Transparent</SelectOption>
-			<SelectOption value={SelectVariant.outlined}>Outlined</SelectOption>
-		</Select>
+		<div class={CSS.bodyOptionsGroup}>
+			<label id={ELEMENT_ID_PREFIX + ElementIds.panelSelectOptionsVariantLabel}>Variant:</label>
+			<Select
+				aria-labelledby={ELEMENT_ID_PREFIX + ElementIds.panelSelectOptionsVariantLabel}
+				id={ELEMENT_ID_PREFIX + ElementIds.panelSelectOptionsVariant}
+				style="min-width: 140px">
+				<SelectOption value={SelectVariant.filled}>Filled</SelectOption>
+				<SelectOption value={SelectVariant.tonal} SelectOptionSelected>Tonal</SelectOption>
+				<SelectOption value={SelectVariant.transparent}>Transparent</SelectOption>
+				<SelectOption value={SelectVariant.outlined}>Outlined</SelectOption>
+			</Select>
+		</div>
 	</div>
 </div>
