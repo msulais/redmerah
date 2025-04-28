@@ -132,7 +132,7 @@ function _initSubMenu(submenuitem: HTMLElement): void {
 	let timeId: number | NodeJS.Timeout | null = null
 
 	function getAllSubMenu(from: HTMLElement): HTMLDivElement[] {
-		const menus: HTMLDivElement[] = []
+		const menus: Set<HTMLDivElement> = new Set<HTMLDivElement>()
 		const traverseDown = (popover: HTMLElement) => {
 			const submenuItems = popover.querySelectorAll<HTMLButtonElement>(`.${MenuClasses.submenuItem}[aria-controls]`)
 			for (const item of submenuItems) {
@@ -146,18 +146,18 @@ function _initSubMenu(submenuitem: HTMLElement): void {
 				if (
 					!menu
 					|| !menu.classList.contains(MenuClasses.menu)
-					|| menus.some(v => v === menu)
+					|| menus.has(menu)
 				) {
 					continue
 				}
 
-				menus.push(menu)
+				menus.add(menu)
 				traverseDown(menu)
 			}
 		}
 
 		traverseDown(from)
-		return menus
+		return [...menus.values()]
 	}
 
 	function openSubMenu(instant: boolean = false): void {
@@ -172,6 +172,7 @@ function _initSubMenu(submenuitem: HTMLElement): void {
 				if (menu === target) continue
 
 				closePopover(menu, { animation: false }).then(() => {
+					// BUG: when close parent by function it wont do anything
 					document.body.appendChild(menu)
 				})
 			}
@@ -260,7 +261,9 @@ function _initSubMenu(submenuitem: HTMLElement): void {
 
 	function initEvents(): void {
 		const parent = elements.parent
-		parent?.addEventListener(PopoverEvents.toggleOpen, () => {
+		parent?.addEventListener(PopoverEvents.toggleOpen, (ev) => {
+			if (ev.target !== parent) return
+
 			const isOpen = parent.matches(':popover-open')
 			const target = elements.target
 			const content = elements.parentContent
