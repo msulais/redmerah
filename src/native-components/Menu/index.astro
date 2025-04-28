@@ -1,12 +1,14 @@
 ---
-import { MenuClasses, type MenuProps } from '.'
-import Popover from '@/native-components/Popover/index.astro'
 import { attrClassList } from '@/utils/attributes'
 
+import {
+	MenuClasses,
+	type MenuProps
+} from '.'
+import Popover from '@/native-components/Popover/index.astro'
 import './index.scss'
 
 type Props = MenuProps
-
 const {
 	'class': className,
 	PopoverGap = 8,
@@ -25,6 +27,6 @@ const {
 	<slot />
 </Popover>
 <script>
-	import {registerMenu} from '.'
-	registerMenu()
+	import { registerMenuRef } from '.'
+	registerMenuRef()
 </script>

@@ -1,9 +1,10 @@
 ---
+import { attrClassList } from '@/utils/attributes'
+
 import {
 	type SideBarButtonProps,
 	SideBarClasses,
 } from '.'
-import { attrClassList } from '@/utils/attributes'
 import Button from '@/native-components/Button/index.astro'
 import './index.scss'
 
@@ -16,8 +17,8 @@ const {
 	SideBarButtonContentAttr = {},
 	...other
 } = Astro.props
-const {'class': leadingClassName, ...leadingOther} = SideBarButtonLeadingAttr
-const {'class': contentClassName, ...contentOther} = SideBarButtonContentAttr
+const {'class': leadingClass, ...leadingOther} = SideBarButtonLeadingAttr
+const {'class': contentClass, ...contentOther} = SideBarButtonContentAttr
 ---
 
 <Button
@@ -26,13 +27,13 @@ const {'class': contentClassName, ...contentOther} = SideBarButtonContentAttr
 	{...other}>
 	{Astro.slots.has('leading') &&
 		<div
-			class={attrClassList(SideBarClasses.buttonLeading, leadingClassName)}
+			class={attrClassList(SideBarClasses.buttonLeading, leadingClass)}
 			{...leadingOther}>
 			<slot name="leading"/>
 		</div>
 	}
 	<div
-		class={attrClassList(SideBarClasses.buttonContent, contentClassName)}
+		class={attrClassList(SideBarClasses.buttonContent, contentClass)}
 		{...contentOther}>
 		<slot />
 	</div>

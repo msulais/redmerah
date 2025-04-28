@@ -1,6 +1,8 @@
 ---
-import { ButtonClasses } from '@/native-components/Button'
 import { attrClassList } from '@/utils/attributes'
+import { ICON_CHEVRON_DOWN } from '@/constants/icons'
+
+import { ButtonClasses } from '@/native-components/Button'
 import Icon from '@/native-components/Icon/index.astro'
 import {
 	type SelectProps,
@@ -8,10 +10,8 @@ import {
 	SelectVariant as SSelectVariant
 } from '.'
 import './index.scss'
-import { ICON_CHEVRON_DOWN } from '@/constants/icons'
 
 type Props = SelectProps
-
 const {
 	SelectContentAttr     = {},
 	SelectPopoverAttr     = {},
@@ -24,10 +24,10 @@ const {
 	...other
 } = Astro.props
 
-const {'class': iconClassName       , ...iconOther   } = SelectIconAttr
-const {'class': contentClassName    , ...contentOther} = SelectContentAttr
-const {'class': popoverClassName    , ...popoverOther} = SelectPopoverAttr
-const {'class': placeholderClassName, tabindex, ...placeholderOther} = SelectPlaceholderAttr
+const {'class': iconClass       , ...iconOther   } = SelectIconAttr
+const {'class': contentClass    , ...contentOther} = SelectContentAttr
+const {'class': popoverClass    , ...popoverOther} = SelectPopoverAttr
+const {'class': placeholderClass, tabindex, ...placeholderOther} = SelectPlaceholderAttr
 ---
 
 <div
@@ -37,17 +37,17 @@ const {'class': placeholderClassName, tabindex, ...placeholderOther} = SelectPla
 	role={role ?? 'listbox'}
 	{...other}>
 	<div
-		class={attrClassList(SelectClasses.popover, popoverClassName)}
+		class={attrClassList(SelectClasses.popover, popoverClass)}
 		{...popoverOther}>
 		<div
-			class={attrClassList(SelectClasses.content, contentClassName)}
+			class={attrClassList(SelectClasses.content, contentClass)}
 			{...contentOther}>
 			<slot/>
 			<div
 				class={attrClassList(
 					ButtonClasses.button,
 					SelectClasses.placeholder,
-					placeholderClassName
+					placeholderClass
 				)}
 				tabindex={tabindex ?? 0}
 				{...placeholderOther}>
@@ -60,13 +60,13 @@ const {'class': placeholderClassName, tabindex, ...placeholderOther} = SelectPla
 	<Icon
 		class={attrClassList(
 			SelectClasses.icon,
-			iconClassName
+			iconClass
 		)}
 		IconCode={ICON_CHEVRON_DOWN}
 		{...iconOther}
 	/>
 </div>
 <script>
-	import { registerSelect } from '.'
-	registerSelect()
+	import { registerSelectRef } from '.'
+	registerSelectRef()
 </script>

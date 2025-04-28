@@ -1,6 +1,10 @@
 ---
 import { attrClassList } from '@/utils/attributes'
-import { MenuClasses, type SubMenuItemProps } from '.'
+
+import {
+	MenuClasses,
+	type SubMenuItemProps
+} from '.'
 import MenuItem from './MenuItem.astro'
 import './index.scss'
 
@@ -21,6 +25,6 @@ const {
 	<slot />
 </MenuItem>
 <script>
-	import { registerSubMenuItem } from '.'
-	registerSubMenuItem()
+	import { registerSubMenuItemRef } from '.'
+	registerSubMenuItemRef()
 </script>

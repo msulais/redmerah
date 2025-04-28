@@ -1,11 +1,13 @@
 ---
 import { attrClassList } from '@/utils/attributes'
-import { ModalClasses, type ModalProps } from './index'
 
+import {
+	ModalClasses,
+	type ModalProps
+} from './index'
 import './index.scss'
 
 type Props = ModalProps
-
 const {
 	ModalAnchorBy,
 	ModalDraggable,
@@ -20,15 +22,14 @@ const {
 	'class': className,
 	...other
 } = Astro.props
-
 const {
-	'class': dragHandleClassName,
+	'class': dragHandleClass,
 	tabindex: dragHandleTabIndex = 0,
+	draggable: dragHandleDraggable = 'false',
 	...dragHandleOther
 } = ModalDragHandleAttr ?? {}
-
 const {
-	'class': contentClassName,
+	'class': contentClass,
 	...contentOther
 } = ModalContentAttr ?? {}
 
@@ -45,19 +46,20 @@ const {
 	data-c-modal-position={ModalPosition}
 	{...other}>
 	<div
-		class={attrClassList(ModalClasses.content, contentClassName)}
+		class={attrClassList(ModalClasses.content, contentClass)}
 		{...contentOther}>
 		<slot />
 	</div>
 
 	{/* Keep below content to avoid auto focus */}
 	<div
-		class={attrClassList(ModalClasses.dragHandle, dragHandleClassName)}
+		class={attrClassList(ModalClasses.dragHandle, dragHandleClass)}
 		tabindex={dragHandleTabIndex}
+		draggable={dragHandleDraggable}
 		{...dragHandleOther}
 	/>
 </dialog>
 <script>
-	import { registerModal } from '.'
-	registerModal()
+	import { registerModalRef } from '.'
+	registerModalRef()
 </script>

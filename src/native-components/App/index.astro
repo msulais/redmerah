@@ -1,6 +1,10 @@
 ---
 import { attrClassList } from '@/utils/attributes'
-import { AppClasses, type AppProps } from '.'
+
+import {
+	AppClasses,
+	type AppProps
+} from '.'
 import './index.scss'
 
 type Props = AppProps
@@ -15,12 +19,12 @@ const {
 	AppRightSideBarAttr = {},
 	...other
 } = Astro.props
-const {'class': appBarClassName      , ...appBarOther      } = AppAppBarAttr
-const {'class': bottomBarClassName   , ...bottomBarOther   } = AppBottomBarAttr
-const {'class': bodyClassName        , ...bodyOther        } = AppBodyAttr
-const {'class': containerClassName   , ...containerOther   } = AppContainerAttr
-const {'class': leftSideBarClassName , ...leftSideBarOther } = AppLeftSideBarAttr
-const {'class': rightSideBarClassName, ...rightSideBarOther} = AppRightSideBarAttr
+const {'class': appBarClass      , ...appBarOther      } = AppAppBarAttr
+const {'class': bottomBarClass   , ...bottomBarOther   } = AppBottomBarAttr
+const {'class': bodyClass        , ...bodyOther        } = AppBodyAttr
+const {'class': containerClass   , ...containerOther   } = AppContainerAttr
+const {'class': leftSideBarClass , ...leftSideBarOther } = AppLeftSideBarAttr
+const {'class': rightSideBarClass, ...rightSideBarOther} = AppRightSideBarAttr
 
 const AppDynamic = AppTagName as 'div'
 ---
@@ -28,17 +32,17 @@ const AppDynamic = AppTagName as 'div'
 <AppDynamic class={attrClassList(AppClasses.app, className)} {...other}>
 	{Astro.slots.has('appbar') &&
 		<div
-			class={attrClassList(AppClasses.appBar, appBarClassName)}
+			class={attrClassList(AppClasses.appBar, appBarClass)}
 			{...appBarOther}>
 			<slot name='appbar'/>
 		</div>
 	}
 	<div
-		class={attrClassList(AppClasses.container, containerClassName)}
+		class={attrClassList(AppClasses.container, containerClass)}
 		{...containerOther}>
 		{Astro.slots.has('left-sidebar') &&
 			<div
-				class={attrClassList(AppClasses.leftSideBar, leftSideBarClassName)}
+				class={attrClassList(AppClasses.leftSideBar, leftSideBarClass)}
 				{...leftSideBarOther}>
 				<slot name='left-sidebar'/>
 			</div>
@@ -50,7 +54,7 @@ const AppDynamic = AppTagName as 'div'
 		</div>
 		{Astro.slots.has('right-sidebar') &&
 			<div
-				class={attrClassList(AppClasses.rightSideBar, rightSideBarClassName)}
+				class={attrClassList(AppClasses.rightSideBar, rightSideBarClass)}
 				{...rightSideBarOther}>
 				<slot name='right-sidebar'/>
 			</div>
@@ -58,7 +62,7 @@ const AppDynamic = AppTagName as 'div'
 	</div>
 	{Astro.slots.has('bottombar') &&
 		<div
-			class={attrClassList(AppClasses.bottomBar, bottomBarClassName)}
+			class={attrClassList(AppClasses.bottomBar, bottomBarClass)}
 			{...bottomBarOther}>
 			<slot name='bottombar'/>
 		</div>

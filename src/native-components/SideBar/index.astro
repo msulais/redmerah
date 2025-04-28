@@ -1,9 +1,10 @@
 ---
+import { attrClassList } from '@/utils/attributes'
+
 import {
 	type SideBarProps,
 	SideBarClasses,
 } from '.'
-import { attrClassList } from '@/utils/attributes'
 import './index.scss'
 
 type Props = SideBarProps
@@ -17,9 +18,9 @@ const {
 	SideBarFooterAttr  = {},
 	...other
 } = Astro.props
-const {'class': contentClassName, ...contentOther} = SideBarContentAttr
-const {'class': headerClassName , ...headerOther } = SideBarHeaderAttr
-const {'class': footerClassName , ...footerOther } = SideBarFooterAttr
+const {'class': contentClass, ...contentOther} = SideBarContentAttr
+const {'class': headerClass , ...headerOther } = SideBarHeaderAttr
+const {'class': footerClass , ...footerOther } = SideBarFooterAttr
 const Dynamic = SideBarTagName as 'div'
 ---
 
@@ -29,19 +30,19 @@ const Dynamic = SideBarTagName as 'div'
 	{...other}>
 	{Astro.slots.has('header') &&
 		<div
-			class={attrClassList(SideBarClasses.header, headerClassName)}
+			class={attrClassList(SideBarClasses.header, headerClass)}
 			{...headerOther}>
 			<slot name="header"/>
 		</div>
 	}
 	<div
-		class={attrClassList(SideBarClasses.content, contentClassName)}
+		class={attrClassList(SideBarClasses.content, contentClass)}
 		{...contentOther}>
 		<slot />
 	</div>
 	{Astro.slots.has('footer') &&
 		<div
-			class={attrClassList(SideBarClasses.footer, footerClassName)}
+			class={attrClassList(SideBarClasses.footer, footerClass)}
 			{...footerOther}>
 			<slot name="footer"/>
 		</div>

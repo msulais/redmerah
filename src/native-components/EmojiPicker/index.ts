@@ -1,16 +1,80 @@
+import type { Emoji } from "@/types/emoji"
 import { createId } from "@/utils/ids"
-import { ButtonVariant, createButton, createIconButton, updateButton, type ButtonProps, type IconButtonProps } from "../Button"
-import { createDivider, type DividerProps } from "../Divider"
-import { createIcon, IconClasses, updateIcon, type IconProps } from "../Icon"
-import { closePopover, PopoverEvents, registerPopover, updatePopover, type PopoverProps, type PopoverToggleOpenDetail, type PopoverUpdateOptions } from "../Popover"
-import { createTextField, createTextFieldButton, TextFieldClasses, updateTextField, updateTextFieldButton, type TextFieldButtonProps, type TextFieldProps } from "../TextField"
+import {
+	EMOJIS_ACTIVITIES,
+	EMOJIS_ANIMAL_AND_NATURE,
+	EMOJIS_FLAGS,
+	EMOJIS_FOOD_AND_DRINK,
+	EMOJIS_OBJECT,
+	EMOJIS_PERSON_AND_BODY,
+	EMOJIS_SMILEY_AND_EMOTION,
+	EMOJIS_SYMBOLS,
+	EMOJIS_TRAVEL_AND_PLACES
+} from "@/constants/emoji"
+import {
+	ICON_ANIMAL_CAT,
+	ICON_DISMISS,
+	ICON_DIVERSITY,
+	ICON_EMOJI,
+	ICON_FLAG,
+	ICON_FOOD,
+	ICON_HISTORY,
+	ICON_PERSON,
+	ICON_RUNNING_PERSON,
+	ICON_SEARCH,
+	ICON_SYMBOLS,
+	ICON_VEHICLE_CAR
+} from "@/constants/icons"
 import { elementValidTarget } from "@/utils/element"
 import { isAnimationAllowed } from "@/utils/animation"
 import { AnimationEffectTiming } from "@/enums/animation"
-import { createTooltip, updateTooltip, type TooltipProps } from "../Tooltip"
-import type { Emoji } from "@/types/emoji"
-import { EMOJIS_ACTIVITIES, EMOJIS_ANIMAL_AND_NATURE, EMOJIS_FLAGS, EMOJIS_FOOD_AND_DRINK, EMOJIS_OBJECT, EMOJIS_PERSON_AND_BODY, EMOJIS_SMILEY_AND_EMOTION, EMOJIS_SYMBOLS, EMOJIS_TRAVEL_AND_PLACES } from "@/constants/emoji"
-import { ICON_ANIMAL_CAT, ICON_DISMISS, ICON_DIVERSITY, ICON_EMOJI, ICON_FLAG, ICON_FOOD, ICON_HISTORY, ICON_PERSON, ICON_RUNNING_PERSON, ICON_SEARCH, ICON_SYMBOLS, ICON_VEHICLE_CAR } from "@/constants/icons"
+
+import {
+	ButtonVariant,
+	createButtonRef,
+	createIconButtonRef,
+	updateButtonRef,
+	type ButtonProps,
+	type IconButtonProps } from "@/native-components/Button"
+import {
+	type DividerProps,
+	createDividerRef } from "@/native-components/Divider"
+import {
+	type IconProps,
+	createIconRef,
+	IconClasses,
+	updateIconRef } from "@/native-components/Icon"
+import {
+	type PopoverCloseDetails,
+	type PopoverCloseOptions,
+	type PopoverOpenDetails,
+	type PopoverOpenOptions,
+	type PopoverProps,
+	type PopoverRepositionDetails,
+	type PopoverToggleOpenDetail,
+	type PopoverUpdateOptions,
+	closePopoverRef,
+	isPopoverRefOpen,
+	openPopoverRef,
+	PopoverEvents,
+	PopoverPosition,
+	registerPopoverRef,
+	repositionPopoverRef,
+	updatePopoverRef } from "@/native-components/Popover"
+import {
+	createTextFieldRef,
+	createTextFieldButtonRef,
+	TextFieldClasses,
+	updateTextFieldRef,
+	updateTextFieldButtonRef,
+	type TextFieldButtonProps,
+	type TextFieldProps
+} from "@/native-components/TextField"
+import {
+	createTooltipRef,
+	updateTooltipRef,
+	type TooltipProps
+} from "@/native-components/Tooltip"
 
 type EmojiPickerProps = PopoverProps & {
 	EmojiPickerAutoClose           ?: boolean
@@ -35,21 +99,21 @@ type EmojiPickerUpdateOptions = PopoverUpdateOptions & {
 	EmojiPickerAutoClose?: boolean
 	EmojiPickerChildren ?: (string | Node)[] | boolean
 	EmojiPickerRefs     ?: {
-		emojipicker     (el: HTMLDivElement       ): unknown
-		tooltip         (el: HTMLDivElement       ): unknown
-		header          (el: HTMLDivElement       ): unknown
-		headerText      (el: HTMLSpanElement      ): unknown
-		headerButton    (el: HTMLButtonElement    ): unknown
-		tabs            (el: HTMLDivElement       ): unknown
-		tab             (el: HTMLButtonElement[]  ): unknown
-		form            (el: HTMLFormElement      ): unknown
-		search          (el: HTMLDivElement       ): unknown
-		searchButton    (el: HTMLButtonElement    ): unknown
-		searchButtonIcon(el: HTMLElement          ): unknown
-		content         (el: HTMLDivElement       ): unknown
-		divider         (el: HTMLDivElement       ): unknown
-		group           (el: HTMLDivElement[]     ): unknown
-		emoji           (el: HTMLButtonElement[][]): unknown
+		emojipicker     (ref: HTMLDivElement       ): unknown
+		tooltip         (ref: HTMLDivElement       ): unknown
+		header          (ref: HTMLDivElement       ): unknown
+		headerText      (ref: HTMLSpanElement      ): unknown
+		headerButton    (ref: HTMLButtonElement    ): unknown
+		tabs            (ref: HTMLDivElement       ): unknown
+		tab             (ref: HTMLButtonElement[]  ): unknown
+		form            (ref: HTMLFormElement      ): unknown
+		search          (ref: HTMLDivElement       ): unknown
+		searchButton    (ref: HTMLButtonElement    ): unknown
+		searchButtonIcon(ref: HTMLElement          ): unknown
+		content         (ref: HTMLDivElement       ): unknown
+		divider         (ref: HTMLDivElement       ): unknown
+		group           (ref: HTMLDivElement[]     ): unknown
+		emoji           (ref: HTMLButtonElement[][]): unknown
 	}
 }
 
@@ -99,7 +163,7 @@ const ALL_EMOJIS = [
 ]
 const REGISTERED_EMOJIPICKER: Set<HTMLDivElement> = new Set<HTMLDivElement>()
 
-function _initEmojiPicker(emojiPickerRef: HTMLDivElement): void {
+function _initEmojiPickerRef(emojiPickerRef: HTMLDivElement): void {
 	const animationOptions = {duration: 250, easing: AnimationEffectTiming.spring}
 	const attributes = {
 		get emoji() {
@@ -113,77 +177,77 @@ function _initEmojiPicker(emojiPickerRef: HTMLDivElement): void {
 		},
 	}
 	let recentEmoji: string[] = []
-	let searchInput: HTMLInputElement
-	let formInput: HTMLFormElement
+	let searchInputRef: HTMLInputElement
+	let formInputRef: HTMLFormElement
 	let lastSearchText = ''
 
 	function initStructure(): void {
-		const tabs = emojiPickerRef.querySelectorAll<HTMLDivElement>('.' + EmojiPickerClasses.tab)
-		const tabpanels = emojiPickerRef.querySelectorAll<HTMLDivElement>('.' + EmojiPickerClasses.group)
-		searchInput = emojiPickerRef.querySelector<HTMLInputElement>(`.${EmojiPickerClasses.search} .${TextFieldClasses.input}`)!
-		formInput = emojiPickerRef.querySelector<HTMLFormElement>(`.${EmojiPickerClasses.form}`)!
+		const tabsRefs = emojiPickerRef.querySelectorAll<HTMLDivElement>('.' + EmojiPickerClasses.tab)
+		const tabpanelsRefs = emojiPickerRef.querySelectorAll<HTMLDivElement>('.' + EmojiPickerClasses.group)
+		searchInputRef = emojiPickerRef.querySelector<HTMLInputElement>(`.${EmojiPickerClasses.search} .${TextFieldClasses.input}`)!
+		formInputRef = emojiPickerRef.querySelector<HTMLFormElement>(`.${EmojiPickerClasses.form}`)!
 
-		for (let i = 0; i < tabs.length; i++) {
-			const tab = tabs.item(i)
-			const tabpanel = tabpanels.item(i)
-			if (!tab || !tabpanel) continue
+		for (let i = 0; i < tabsRefs.length; i++) {
+			const tabRef = tabsRefs.item(i)
+			const tabpanelRef = tabpanelsRefs.item(i)
+			if (!tabRef || !tabpanelRef) continue
 
-			let tabId = tab.id
+			let tabId = tabRef.id
 			if (!tabId) {
 				tabId = createId()
-				tab.id = tabId
+				tabRef.id = tabId
 			}
 
-			let tabpanelId = tabpanel.id
+			let tabpanelId = tabpanelRef.id
 			if (!tabpanelId) {
 				tabpanelId = createId()
-				tabpanel.id = tabpanelId
+				tabpanelRef.id = tabpanelId
 			}
 
-			tab.setAttribute('aria-controls', tabpanelId)
-			tabpanel.setAttribute('aria-labelledby', tabId)
+			tabRef.setAttribute('aria-controls', tabpanelId)
+			tabpanelRef.setAttribute('aria-labelledby', tabId)
 		}
 	}
 
-	function selectTab(tab: HTMLButtonElement): void {
-		const ariaControls = tab.getAttribute('aria-controls')
+	function selectTabRef(tabRef: HTMLButtonElement): void {
+		const ariaControls = tabRef.getAttribute('aria-controls')
 		if (!ariaControls) return
 
-		const tabPanel = document.getElementById(ariaControls.trim())
-		if (!tabPanel) return
+		const tabPanelRef = document.getElementById(ariaControls.trim())
+		if (!tabPanelRef) return
 
-		const icon = tab.firstElementChild
-		const title = emojiPickerRef.querySelector(`.${EmojiPickerClasses.title}`)
-		const prevTab = emojiPickerRef.querySelector(`.${EmojiPickerClasses.tab}[aria-selected=true]`)
-		const prevTabIcon = emojiPickerRef.querySelector(`.${EmojiPickerClasses.tab}[aria-selected=true]>.${IconClasses.icon}`)
-		const prevTabpanel = emojiPickerRef.querySelector(`.${EmojiPickerClasses.group}:not([hidden])`)
-		if (prevTab === tab) return
+		const iconRef = tabRef.firstElementChild
+		const titleRef = emojiPickerRef.querySelector(`.${EmojiPickerClasses.title}`)
+		const prevTabRef = emojiPickerRef.querySelector(`.${EmojiPickerClasses.tab}[aria-selected=true]`)
+		const prevTabIconRef = emojiPickerRef.querySelector(`.${EmojiPickerClasses.tab}[aria-selected=true]>.${IconClasses.icon}`)
+		const prevTabpanelRef = emojiPickerRef.querySelector(`.${EmojiPickerClasses.group}:not([hidden])`)
+		if (prevTabRef === tabRef) return
 
-		prevTab?.setAttribute('aria-selected', 'false')
-		prevTabpanel?.toggleAttribute('hidden', true)
-		tabPanel.removeAttribute('hidden')
-		tab.scrollIntoView({behavior: 'smooth'})
-		tab.setAttribute('aria-selected', 'true')
-		if (title) {
-			title.textContent = tab.getAttribute('aria-label') ?? title.textContent
+		prevTabRef?.setAttribute('aria-selected', 'false')
+		prevTabpanelRef?.toggleAttribute('hidden', true)
+		tabPanelRef.removeAttribute('hidden')
+		tabRef.scrollIntoView({behavior: 'smooth'})
+		tabRef.setAttribute('aria-selected', 'true')
+		if (titleRef) {
+			titleRef.textContent = tabRef.getAttribute('aria-label') ?? titleRef.textContent
 		}
 
-		if (icon) updateIcon(icon as HTMLElement, {
+		if (iconRef) updateIconRef(iconRef as HTMLElement, {
 			IconFilled: true
 		})
-		if (prevTabIcon) updateIcon(prevTabIcon as HTMLElement, {
+		if (prevTabIconRef) updateIconRef(prevTabIconRef as HTMLElement, {
 			IconFilled: false
 		})
 
-		updateButton(tab, {
+		updateButtonRef(tabRef, {
 			ButtonVariant: ButtonVariant.tonal
 		})
-		if (prevTab) updateButton(prevTab as HTMLButtonElement, {
+		if (prevTabRef) updateButtonRef(prevTabRef as HTMLButtonElement, {
 			ButtonVariant: ButtonVariant.transparent
 		})
 		if (!isAnimationAllowed()) return
 
-		title?.animate({
+		titleRef?.animate({
 			opacity: [0, 1],
 			transform: ['translateY(12px)', 'translateY(0)']
 		}, animationOptions)
@@ -191,7 +255,7 @@ function _initEmojiPicker(emojiPickerRef: HTMLDivElement): void {
 
 	function formInputOnSubmit(ev: SubmitEvent): void {
 		ev.preventDefault()
-		const value = searchInput
+		const value = searchInputRef
 			.value
 			.trim()
 			.replace(/\s+/gs, '|')
@@ -200,11 +264,7 @@ function _initEmojiPicker(emojiPickerRef: HTMLDivElement): void {
 		if (value === lastSearchText) return
 
 		lastSearchText = value
-		const regex = new RegExp(
-			value,
-			'gis'
-		)
-
+		const regex = new RegExp(value, 'gis')
 		const result: Emoji[] = []
 		for (let i = 0; i < ALL_EMOJIS.length; i++) {
 			const emoji = ALL_EMOJIS[i]
@@ -214,36 +274,35 @@ function _initEmojiPicker(emojiPickerRef: HTMLDivElement): void {
 		}
 
 		const tabRect: Map<HTMLButtonElement, DOMRect> = new Map()
-		const searchTab = emojiPickerRef.querySelector<HTMLButtonElement>(`.${EmojiPickerClasses.tabSearch}`)
-		const searchGroup = emojiPickerRef.querySelector(`.${EmojiPickerClasses.groupSearch}`)
-		const isHidden = searchTab?.hidden ?? true
+		const searchTabRef = emojiPickerRef.querySelector<HTMLButtonElement>(`.${EmojiPickerClasses.tabSearch}`)
+		const searchGroupRef = emojiPickerRef.querySelector(`.${EmojiPickerClasses.groupSearch}`)
+		const isHidden = searchTabRef?.hidden ?? true
 		if (isHidden) {
-			for (const tab of emojiPickerRef.querySelectorAll<HTMLButtonElement>(`.${EmojiPickerClasses.tab}:not([hidden])`)) {
-				if (tab === searchTab) continue
+			for (const tabRef of emojiPickerRef.querySelectorAll<HTMLButtonElement>(`.${EmojiPickerClasses.tab}:not([hidden])`)) {
+				if (tabRef === searchTabRef) continue
 
-				tabRect.set(tab, tab.getBoundingClientRect())
+				tabRect.set(tabRef, tabRef.getBoundingClientRect())
 			}
 		}
 
-		searchTab?.toggleAttribute('hidden', false)
-
+		searchTabRef?.toggleAttribute('hidden', false)
 		result.sort((a, b) => a[1].localeCompare(b[1]))
-		const children: HTMLButtonElement[] = []
+		const childrenRefs: HTMLButtonElement[] = []
 		for (const emoji of result) {
-			const button = createButton({
+			const buttonRef = createButtonRef({
 				ButtonChildren: [emoji[0]]
 			})
-			button.classList.add(EmojiPickerClasses.emoji)
-			button.setAttribute('data-tooltip', emoji[1])
-			children.push(button)
+			buttonRef.classList.add(EmojiPickerClasses.emoji)
+			buttonRef.setAttribute('data-tooltip', emoji[1])
+			childrenRefs.push(buttonRef)
 		}
-		searchGroup?.replaceChildren(...children)
-		if (searchTab) selectTab(searchTab as HTMLButtonElement)
+		searchGroupRef?.replaceChildren(...childrenRefs)
+		if (searchTabRef) selectTabRef(searchTabRef as HTMLButtonElement)
 
 		if (!isAnimationAllowed()) return
 
 		if (isHidden) {
-			searchTab?.animate({
+			searchTabRef?.animate({
 				scale: [0, 1]
 			}, animationOptions)
 
@@ -255,36 +314,36 @@ function _initEmojiPicker(emojiPickerRef: HTMLDivElement): void {
 			})
 		}
 
-		for (const button of children) {
-			button.animate({
+		for (const buttonRef of childrenRefs) {
+			buttonRef.animate({
 				scale: [0, 1]
 			}, animationOptions)
 		}
 	}
 
 	function addRecentEmoji(emoji: string, name: string): void {
-		const recentTab = emojiPickerRef.querySelector(`.${EmojiPickerClasses.tabRecent}`)
-		const recentGroup = emojiPickerRef.querySelector(`.${EmojiPickerClasses.groupRecent}`)
-		if (!recentTab || !recentGroup || recentEmoji[0] === emoji) return
+		const recentTabRef = emojiPickerRef.querySelector(`.${EmojiPickerClasses.tabRecent}`)
+		const recentGroupRef = emojiPickerRef.querySelector(`.${EmojiPickerClasses.groupRecent}`)
+		if (!recentTabRef || !recentGroupRef || recentEmoji[0] === emoji) return
 
-		const isHidden = recentTab.hasAttribute('hidden')
-		let children = recentGroup.children
-		const childrenRects = new Map<Element,DOMRect>([...children].map(v => [v, v.getBoundingClientRect()]))
-		const button = createButton({
+		const isHidden = recentTabRef.hasAttribute('hidden')
+		let childrenRefs = recentGroupRef.children
+		const childrenRects = new Map<Element,DOMRect>([...childrenRefs].map(v => [v, v.getBoundingClientRect()]))
+		const buttonRef = createButtonRef({
 			ButtonChildren: [emoji]
 		})
-		recentTab.toggleAttribute('hidden', false)
-		button.classList.add(EmojiPickerClasses.emoji)
-		button.setAttribute('data-tooltip', name)
-		for (let i = 0; i < children.length; i++) {
-			const item = children.item(i)
-			if (item?.textContent?.trim() === emoji) {
-				item.remove()
-				childrenRects.delete(item)
+		recentTabRef.toggleAttribute('hidden', false)
+		buttonRef.classList.add(EmojiPickerClasses.emoji)
+		buttonRef.setAttribute('data-tooltip', name)
+		for (let i = 0; i < childrenRefs.length; i++) {
+			const itemRef = childrenRefs.item(i)
+			if (itemRef?.textContent?.trim() === emoji) {
+				itemRef.remove()
+				childrenRects.delete(itemRef)
 			}
 		}
 
-		recentGroup.replaceChildren(button, ...children)
+		recentGroupRef.replaceChildren(buttonRef, ...childrenRefs)
 		const index = recentEmoji.findIndex(v => v === emoji)
 		if (index >= 0) {
 			recentEmoji.splice(index, 1)
@@ -293,9 +352,9 @@ function _initEmojiPicker(emojiPickerRef: HTMLDivElement): void {
 		recentEmoji = [emoji, ...recentEmoji]
 		if (recentEmoji.length > 36) recentEmoji.length = 36
 
-		children = recentGroup.children
-		if (children.length > 35) {
-			const item = children.item(35)
+		childrenRefs = recentGroupRef.children
+		if (childrenRefs.length > 35) {
+			const item = childrenRefs.item(35)
 			if (item) {
 				item.remove()
 				childrenRects.delete(item)
@@ -304,17 +363,17 @@ function _initEmojiPicker(emojiPickerRef: HTMLDivElement): void {
 
 		if (!isAnimationAllowed()) return
 
-		if (isHidden) recentTab.animate({
+		if (isHidden) recentTabRef.animate({
 			scale: [0, 1]
 		}, animationOptions)
 
-		button.animate({
+		buttonRef.animate({
 			scale: [0, 1]
 		}, animationOptions)
-		children = recentGroup.children
-		const childrenRects2 = new Map<Element,DOMRect>([...children].map(v => [v, v.getBoundingClientRect()]))
-		for (let i = 0; i < children.length; i++) {
-			const item = children.item(i)
+		childrenRefs = recentGroupRef.children
+		const childrenRects2 = new Map<Element,DOMRect>([...childrenRefs].map(v => [v, v.getBoundingClientRect()]))
+		for (let i = 0; i < childrenRefs.length; i++) {
+			const item = childrenRefs.item(i)
 			if (!item) continue
 
 			const rect1 = childrenRects.get(item)
@@ -328,23 +387,23 @@ function _initEmojiPicker(emojiPickerRef: HTMLDivElement): void {
 	}
 
 	function emojiPickerRefOnClick(): void {
-		const btn = document.activeElement as HTMLButtonElement
-		if (!elementValidTarget(emojiPickerRef, btn, el => el.tagName === 'BUTTON')) return
+		const buttonRef = document.activeElement as HTMLButtonElement
+		if (!elementValidTarget(emojiPickerRef, buttonRef, el => el.tagName === 'BUTTON')) return
 
-		const classList = btn.classList
+		const classList = buttonRef.classList
 		if (classList.contains(EmojiPickerClasses.headerButton)) {
-			closePopover(emojiPickerRef)
+			closePopoverRef(emojiPickerRef)
 			return
 		}
 
-		if (classList.contains(EmojiPickerClasses.tab) && btn.getAttribute('aria-selected') !== 'true') {
-			selectTab(btn)
+		if (classList.contains(EmojiPickerClasses.tab) && buttonRef.getAttribute('aria-selected') !== 'true') {
+			selectTabRef(buttonRef)
 			return
 		}
 
 		if (classList.contains(EmojiPickerClasses.emoji)) {
-			const emoji = btn.textContent?.trim()
-			const name = btn.dataset.tooltip
+			const emoji = buttonRef.textContent?.trim()
+			const name = buttonRef.dataset.tooltip
 			if (!emoji || !name) return
 
 			emojiPickerRef.setAttribute(EmojiPickerAttributes.emoji, emoji)
@@ -352,7 +411,7 @@ function _initEmojiPicker(emojiPickerRef: HTMLDivElement): void {
 			emojiPickerRef.dispatchEvent(new CustomEvent(EmojiPickerEvents.change, {bubbles: true}))
 			addRecentEmoji(emoji, name)
 			if (attributes.autoclose) {
-				closePopover(emojiPickerRef)
+				closePopoverRef(emojiPickerRef)
 			}
 			return
 		}
@@ -365,11 +424,11 @@ function _initEmojiPicker(emojiPickerRef: HTMLDivElement): void {
 			const isOpen = ev.detail.open
 			if (isOpen) {
 				emojiPickerRef.addEventListener('click', emojiPickerRefOnClick)
-				formInput.addEventListener('submit', formInputOnSubmit)
+				formInputRef.addEventListener('submit', formInputOnSubmit)
 			}
 			else {
 				emojiPickerRef.removeEventListener('click', emojiPickerRefOnClick)
-				formInput.removeEventListener('submit', formInputOnSubmit)
+				formInputRef.removeEventListener('submit', formInputOnSubmit)
 			}
 		})
 	}
@@ -378,47 +437,47 @@ function _initEmojiPicker(emojiPickerRef: HTMLDivElement): void {
 	initEvents()
 }
 
-function registerEmojiPicker(...emojiPickerRefs: HTMLDivElement[]): void {
+function registerEmojiPickerRef(...emojiPickerRefs: HTMLDivElement[]): void {
 	if (emojiPickerRefs.length === 0) {
 		emojiPickerRefs = [...document.querySelectorAll<HTMLDivElement>('.' + EmojiPickerClasses.emojipicker)]
 	}
 
-	registerPopover(...emojiPickerRefs)
+	registerPopoverRef(...emojiPickerRefs)
 	for (const popover of emojiPickerRefs){
 		if (REGISTERED_EMOJIPICKER.has(popover)) {
 			continue
 		}
 
 		REGISTERED_EMOJIPICKER.add(popover)
-		_initEmojiPicker(popover)
+		_initEmojiPickerRef(popover)
 	}
 }
 
-function unregisterEmojiPicker(...emojiPickerRef: HTMLDivElement[]): void {
-	for (const emojipicker of emojiPickerRef) {
-		REGISTERED_EMOJIPICKER.delete(emojipicker)
+function unregisterEmojiPickerRef(...emojiPickerRefs: HTMLDivElement[]): void {
+	for (const emojiPickerRef of emojiPickerRefs) {
+		REGISTERED_EMOJIPICKER.delete(emojiPickerRef)
 	}
 }
 
-function createEmojiPicker(options?: EmojiPickerUpdateOptions): HTMLDivElement {
+function createEmojiPickerRef(options?: EmojiPickerUpdateOptions): HTMLDivElement {
 	const emojiPickerRef = document.createElement('div')
-	return updateEmojiPicker(emojiPickerRef, options)
+	return updateEmojiPickerRef(emojiPickerRef, options)
 }
 
-function updateEmojiPicker(emojiPickerRef: HTMLDivElement, options?: EmojiPickerUpdateOptions): HTMLDivElement {
+function updateEmojiPickerRef(emojiPickerRef: HTMLDivElement, options?: EmojiPickerUpdateOptions): HTMLDivElement {
 	const refs = options?.EmojiPickerRefs
-	updatePopover(emojiPickerRef, options)
+	updatePopoverRef(emojiPickerRef, options)
 	emojiPickerRef.classList.add(EmojiPickerClasses.emojipicker)
 
-	const autoclose = options?.EmojiPickerAutoClose
-	if (autoclose !== undefined) {
-		emojiPickerRef.toggleAttribute(EmojiPickerAttributes.autoclose, autoclose)
+	const autocloseOption = options?.EmojiPickerAutoClose
+	if (autocloseOption !== undefined) {
+		emojiPickerRef.toggleAttribute(EmojiPickerAttributes.autoclose, autocloseOption)
 	}
 
 	// tooltip
 	let tooltipRef = emojiPickerRef.querySelector<HTMLDivElement>(`.${EmojiPickerClasses.tooltip}`)
 	if (!tooltipRef) {
-		tooltipRef = createTooltip()
+		tooltipRef = createTooltipRef()
 		tooltipRef.classList.add(EmojiPickerClasses.tooltip)
 	}
 
@@ -440,7 +499,7 @@ function updateEmojiPicker(emojiPickerRef: HTMLDivElement, options?: EmojiPicker
 	// tooltip -> header -> button
 	let headerButtonRef = headerRef.querySelector<HTMLButtonElement>(`.${EmojiPickerClasses.headerButton}`)
 	if (!headerButtonRef) {
-		headerButtonRef = createIconButton({IconButtonIcon: {IconCode: ICON_DISMISS}})
+		headerButtonRef = createIconButtonRef({IconButtonIcon: {IconCode: ICON_DISMISS}})
 		headerButtonRef.classList.add(EmojiPickerClasses.headerButton)
 		headerButtonRef.setAttribute('data-tooltip', 'Close')
 	}
@@ -457,7 +516,7 @@ function updateEmojiPicker(emojiPickerRef: HTMLDivElement, options?: EmojiPicker
 	// tooltip -> tabs -> tab.recent
 	let tabRecentRef = tabsRef.querySelector<HTMLButtonElement>(`.${EmojiPickerClasses.tabRecent}`)
 	if (!tabRecentRef) {
-		tabRecentRef = createIconButton({IconButtonIcon: {IconCode: ICON_HISTORY}})
+		tabRecentRef = createIconButtonRef({IconButtonIcon: {IconCode: ICON_HISTORY}})
 		tabRecentRef.classList.add(EmojiPickerClasses.tab, EmojiPickerClasses.tabRecent)
 		tabRecentRef.setAttribute('aria-label', 'Recents')
 		tabRecentRef.setAttribute('data-tooltip', 'Recents')
@@ -469,7 +528,7 @@ function updateEmojiPicker(emojiPickerRef: HTMLDivElement, options?: EmojiPicker
 	// tooltip -> tabs -> tab.search
 	let tabSearchRef = tabsRef.querySelector<HTMLButtonElement>(`.${EmojiPickerClasses.tabSearch}`)
 	if (!tabSearchRef) {
-		tabSearchRef = createIconButton({IconButtonIcon: {IconCode: ICON_SEARCH}})
+		tabSearchRef = createIconButtonRef({IconButtonIcon: {IconCode: ICON_SEARCH}})
 		tabSearchRef.classList.add(EmojiPickerClasses.tab, EmojiPickerClasses.tabSearch)
 		tabSearchRef.setAttribute('aria-label', 'Search result')
 		tabSearchRef.setAttribute('data-tooltip', 'Search result')
@@ -493,17 +552,17 @@ function updateEmojiPicker(emojiPickerRef: HTMLDivElement, options?: EmojiPicker
 			[ICON_SYMBOLS       , 'Symbols'            ],
 			[ICON_FLAG          , 'Flags'              ]
 		]) {
-			const t = createIconButton({
+			const iconButtonRef = createIconButtonRef({
 				ButtonVariant: i === 0? ButtonVariant.tonal : undefined,
 				IconButtonIcon: {IconCode: tab[0] as number}
 			})
-			t.classList.add(EmojiPickerClasses.tab)
-			t.setAttribute('aria-label', tab[1] as string)
-			t.setAttribute('data-tooltip', tab[1] as string)
-			t.setAttribute('aria-selected', String(i === 0))
-			t.setAttribute('role', 'tab')
-			t.toggleAttribute('hidden', i > 0)
-			tabsTabRef.push(t)
+			iconButtonRef.classList.add(EmojiPickerClasses.tab)
+			iconButtonRef.setAttribute('aria-label', tab[1] as string)
+			iconButtonRef.setAttribute('data-tooltip', tab[1] as string)
+			iconButtonRef.setAttribute('aria-selected', String(i === 0))
+			iconButtonRef.setAttribute('role', 'tab')
+			iconButtonRef.toggleAttribute('hidden', i > 0)
+			tabsTabRef.push(iconButtonRef)
 			++i
 		}
 	}
@@ -520,7 +579,7 @@ function updateEmojiPicker(emojiPickerRef: HTMLDivElement, options?: EmojiPicker
 	// tooltip -> form -> search
 	let searchRef = formRef.querySelector<HTMLDivElement>(`.${EmojiPickerClasses.search}`)
 	if (!searchRef) {
-		searchRef = createTextField({
+		searchRef = createTextFieldRef({
 			TextFieldPlaceholder: 'Search emoji',
 			TextFieldRefs: {
 				input(el) {
@@ -534,7 +593,7 @@ function updateEmojiPicker(emojiPickerRef: HTMLDivElement, options?: EmojiPicker
 	// tooltip -> form -> search -> button
 	let searchButtonRef = searchRef.querySelector<HTMLButtonElement>(`.${EmojiPickerClasses.searchButton}`)
 	if (!searchButtonRef) {
-		searchButtonRef = createTextFieldButton({
+		searchButtonRef = createTextFieldButtonRef({
 			ButtonVariant: ButtonVariant.tonal
 		})
 		searchButtonRef.classList.add(EmojiPickerClasses.searchButton)
@@ -544,17 +603,17 @@ function updateEmojiPicker(emojiPickerRef: HTMLDivElement, options?: EmojiPicker
 	// tooltip -> form -> search -> button -> icon
 	let searchButtonIconRef = searchButtonRef.querySelector<HTMLElement>(`.${EmojiPickerClasses.searchButtonIcon}`)
 	if (!searchButtonIconRef) {
-		searchButtonIconRef = createIcon({
+		searchButtonIconRef = createIconRef({
 			IconCode: ICON_SEARCH
 		})
 		searchButtonIconRef.classList.add(EmojiPickerClasses.searchButtonIcon)
 	}
 
-	updateTextFieldButton(searchButtonRef, {
+	updateTextFieldButtonRef(searchButtonRef, {
 		ButtonChildren: [searchButtonIconRef]
 	})
 
-	updateTextField(searchRef, {
+	updateTextFieldRef(searchRef, {
 		TextFieldTrailing: [searchButtonRef]
 	})
 	formRef.replaceChildren(searchRef)
@@ -566,18 +625,18 @@ function updateEmojiPicker(emojiPickerRef: HTMLDivElement, options?: EmojiPicker
 		contentRef.classList.add(EmojiPickerClasses.content)
 	}
 
-	const children = options?.EmojiPickerChildren
-	if (children === false) {
+	const childrenOption = options?.EmojiPickerChildren
+	if (childrenOption === false) {
 		contentRef.replaceChildren()
 	}
-	else if (children !== undefined && children !== true) {
-		contentRef.replaceChildren(...children)
+	else if (childrenOption !== undefined && childrenOption !== true) {
+		contentRef.replaceChildren(...childrenOption)
 	}
 
 	// tooltip -> divider
 	let dividerRef = tooltipRef.querySelector<HTMLDivElement>(`.${EmojiPickerClasses.divider}`)
 	if (!dividerRef) {
-		dividerRef = createDivider()
+		dividerRef = createDividerRef()
 		dividerRef.classList.add(EmojiPickerClasses.divider)
 	}
 
@@ -625,12 +684,12 @@ function updateEmojiPicker(emojiPickerRef: HTMLDivElement, options?: EmojiPicker
 			g.toggleAttribute('hidden', i !== 0)
 			groupRefs.push(g)
 			for (const emoji of emojis) {
-				const btn = createButton({
+				const buttonRef = createButtonRef({
 					ButtonChildren: [emoji[0]]
 				})
-				btn.classList.add(EmojiPickerClasses.emoji)
-				btn.setAttribute('data-tooltip', emoji[1])
-				g.append(btn)
+				buttonRef.classList.add(EmojiPickerClasses.emoji)
+				buttonRef.setAttribute('data-tooltip', emoji[1])
+				g.append(buttonRef)
 			}
 			++i
 		}
@@ -643,7 +702,7 @@ function updateEmojiPicker(emojiPickerRef: HTMLDivElement, options?: EmojiPicker
 		}
 	}
 
-	updateTooltip(tooltipRef, {TooltipChildren: [
+	updateTooltipRef(tooltipRef, {TooltipChildren: [
 		headerRef,
 		tabsRef,
 		formRef,
@@ -655,7 +714,7 @@ function updateEmojiPicker(emojiPickerRef: HTMLDivElement, options?: EmojiPicker
 		...groupRefs
 	]})
 
-	updatePopover(emojiPickerRef, {
+	updatePopoverRef(emojiPickerRef, {
 		PopoverChildren: [tooltipRef]
 	})
 	refs?.emojipicker(emojiPickerRef)
@@ -677,13 +736,23 @@ function updateEmojiPicker(emojiPickerRef: HTMLDivElement, options?: EmojiPicker
 }
 
 export {
+	type PopoverOpenOptions as EmojiPickerOpenOptions,
+	type PopoverCloseOptions as EmojiPickerCloseOptions,
+	type PopoverOpenDetails as EmojiPickerOpenDetails,
+	type PopoverCloseDetails as EmojiPickerCloseDetails,
+	type PopoverRepositionDetails as EmojiPickerRepositionDetails,
 	type EmojiPickerProps,
 	type EmojiPickerUpdateOptions,
+	PopoverPosition as EmojiPickerPosition,
 	EmojiPickerAttributes,
 	EmojiPickerClasses,
 	EmojiPickerEvents,
-	registerEmojiPicker,
-	unregisterEmojiPicker,
-	createEmojiPicker,
-	updateEmojiPicker
+	openPopoverRef as openEmojiPickerRef,
+	closePopoverRef as closeEmojiPickerRef,
+	repositionPopoverRef as repositionEmojiPickerRef,
+	isPopoverRefOpen as isEmojiPickerRefOpen,
+	registerEmojiPickerRef,
+	unregisterEmojiPickerRef,
+	createEmojiPickerRef,
+	updateEmojiPickerRef
 }

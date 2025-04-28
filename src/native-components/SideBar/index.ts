@@ -1,8 +1,8 @@
 import {
 	type ButtonUpdateOptions,
 	type ButtonProps,
-	createButton,
-	updateButton,
+	createButtonRef,
+	updateButtonRef,
 } from "@/native-components/Button"
 
 type SideBarProps = astroHTML.JSX.HTMLAttributes & {
@@ -24,10 +24,10 @@ type SideBarUpdateOptions = {
 	SideBarHeader  ?: (Node | string)[] | boolean
 	SideBarFooter  ?: (Node | string)[] | boolean
 	SideBarRefs    ?: {
-		sideBar?(el: HTMLElement   ): unknown
-		content?(el: HTMLDivElement): unknown
-		header ?(el: HTMLDivElement): unknown
-		footer ?(el: HTMLDivElement): unknown
+		sideBar?(ref: HTMLElement   ): unknown
+		content?(ref: HTMLDivElement): unknown
+		header ?(ref: HTMLDivElement): unknown
+		footer ?(ref: HTMLDivElement): unknown
 	}
 }
 
@@ -35,9 +35,9 @@ type SideBarButtonUpdateOptions = ButtonUpdateOptions & {
 	SideBarButtonSelected?: boolean
 	SideBarButtonLeading ?: (string | Node)[] | boolean
 	SideBarButtonRefs    ?: {
-		button ?(el: HTMLButtonElement): unknown
-		content?(el: HTMLDivElement): unknown
-		leading?(el: HTMLDivElement): unknown
+		button ?(ref: HTMLButtonElement): unknown
+		content?(ref: HTMLDivElement): unknown
+		leading?(ref: HTMLDivElement): unknown
 	}
 }
 
@@ -59,126 +59,132 @@ enum SideBarClasses {
 	buttonLeading = button + '-leading',
 }
 
-function createSideBar<T extends HTMLElement>(
-	options?: SideBarUpdateOptions & {tagName?: string}
+function createSideBarRef<T extends HTMLElement>(
+	options?: SideBarUpdateOptions & {SideBarTagName?: string}
 ): T {
-	const sideBar = document.createElement(options?.tagName ?? 'div')
-	updateSideBar(sideBar, options)
-	return sideBar as T
+	const sideBarRef = document.createElement(options?.SideBarTagName ?? 'div')
+	updateSideBarRef(sideBarRef, options)
+	return sideBarRef as T
 }
 
-function updateSideBar<T extends HTMLElement>(
-	sideBar: T,
+function updateSideBarRef<T extends HTMLElement>(
+	sideBarRef: T,
 	options?: SideBarUpdateOptions
 ): T {
 	const refs = options?.SideBarRefs
-	sideBar.classList.add(SideBarClasses.sideBar)
+	sideBarRef.classList.add(SideBarClasses.sideBar)
 
 	// header
-	let header = sideBar.querySelector(`.${SideBarClasses.header}`) as HTMLDivElement | null
-	if (options?.SideBarHeader === false) {
-		header?.replaceChildren()
+	const headerOption = options?.SideBarHeader
+	let headerRef = sideBarRef.querySelector<HTMLDivElement>(`.${SideBarClasses.header}`)
+	if (headerOption === false) {
+		headerRef?.replaceChildren()
 	}
-	else if (options?.SideBarHeader !== undefined && options.SideBarHeader !== true) {
-		if (!header) {
-			header = document.createElement('div')
-			header.classList.add(SideBarClasses.header)
+	else if (headerOption !== undefined && headerOption !== true) {
+		if (!headerRef) {
+			headerRef = document.createElement('div')
+			headerRef.classList.add(SideBarClasses.header)
 		}
 
-		header.replaceChildren(...options.SideBarHeader)
+		headerRef.replaceChildren(...headerOption)
 	}
 
 	// content
-	let content = sideBar.querySelector(`.${SideBarClasses.content}`) as HTMLDivElement | null
-	if (!content) {
-		content = document.createElement('div')
-		content.classList.add(SideBarClasses.content)
+	let contentRef = sideBarRef.querySelector<HTMLDivElement>(`.${SideBarClasses.content}`)
+	if (!contentRef) {
+		contentRef = document.createElement('div')
+		contentRef.classList.add(SideBarClasses.content)
 	}
 
-	if (options?.SideBarChildren === false) {
-		content.replaceChildren()
+	const childrenOption = options?.SideBarChildren
+	if (childrenOption === false) {
+		contentRef.replaceChildren()
 	}
-	else if (options?.SideBarChildren !== undefined && options.SideBarChildren !== true) {
-		content.replaceChildren(...options.SideBarChildren)
+	else if (childrenOption !== undefined && childrenOption !== true) {
+		contentRef.replaceChildren(...childrenOption)
 	}
 
 	// footer
-	let footer = sideBar.querySelector(`.${SideBarClasses.footer}`) as HTMLDivElement | null
-	if (options?.SideBarFooter === false) {
-		footer?.replaceChildren()
+	const footerOption = options?.SideBarFooter
+	let footerRef = sideBarRef.querySelector<HTMLDivElement>(`.${SideBarClasses.footer}`)
+	if (footerOption === false) {
+		footerRef?.replaceChildren()
 	}
-	else if (options?.SideBarFooter !== undefined && options.SideBarFooter !== true) {
-		if (!footer) {
-			footer = document.createElement('div')
-			footer.classList.add(SideBarClasses.footer)
+	else if (footerOption !== undefined && footerOption !== true) {
+		if (!footerRef) {
+			footerRef = document.createElement('div')
+			footerRef.classList.add(SideBarClasses.footer)
 		}
 
-		footer.replaceChildren(...options.SideBarFooter)
+		footerRef.replaceChildren(...footerOption)
 	}
 
-	sideBar.replaceChildren(...[header, content, footer].filter(
+	sideBarRef.replaceChildren(...[headerRef, contentRef, footerRef].filter(
 		v => typeof v === 'string' || v instanceof Node
 	))
-	refs?.content?.(content)
-	refs?.sideBar?.(sideBar)
-	if (header) refs?.header?.(header)
-	if (footer) refs?.footer?.(footer)
-	return sideBar
+	refs?.content?.(contentRef)
+	refs?.sideBar?.(sideBarRef)
+	if (headerRef) refs?.header?.(headerRef)
+	if (footerRef) refs?.footer?.(footerRef)
+	return sideBarRef
 }
 
-function createSideBarButton(options?: SideBarButtonUpdateOptions): HTMLButtonElement {
-	const button = createButton(options)
-	return updateSideBarButton(button, options)
+function createSideBarButtonRef(options?: SideBarButtonUpdateOptions): HTMLButtonElement {
+	const sideBarButtonRef = createButtonRef(options)
+	return updateSideBarButtonRef(sideBarButtonRef, options)
 }
 
-function updateSideBarButton(
-	button: HTMLButtonElement,
+function updateSideBarButtonRef(
+	sideBarButtonRef: HTMLButtonElement,
 	options?: SideBarButtonUpdateOptions
 ): HTMLButtonElement {
 	const refs = options?.SideBarButtonRefs
-	updateButton(button, options)
-	button.classList.add(SideBarClasses.button)
+	updateButtonRef(sideBarButtonRef, options)
+	sideBarButtonRef.classList.add(SideBarClasses.button)
 
-	if (options?.SideBarButtonSelected !== undefined) {
-		button.toggleAttribute(SideBarButtonAttributes.selected, options.SideBarButtonSelected)
+	const selectedOption = options?.SideBarButtonSelected
+	if (selectedOption !== undefined) {
+		sideBarButtonRef.toggleAttribute(SideBarButtonAttributes.selected, selectedOption)
 	}
 
 	// leading
-	let leading = button.querySelector(`.${SideBarClasses.buttonLeading}`) as HTMLDivElement | null
-	if (options?.SideBarButtonLeading === false) {
-		leading?.replaceChildren()
+	const leadingOption = options?.SideBarButtonLeading
+	let leadingRef = sideBarButtonRef.querySelector<HTMLDivElement>(`.${SideBarClasses.buttonLeading}`)
+	if (leadingOption === false) {
+		leadingRef?.replaceChildren()
 	}
-	else if (options?.SideBarButtonLeading !== undefined && options.SideBarButtonLeading !== true) {
-		if (!leading) {
-			leading = document.createElement('div')
-			leading.classList.add(SideBarClasses.buttonLeading)
+	else if (leadingOption !== undefined && leadingOption !== true) {
+		if (!leadingRef) {
+			leadingRef = document.createElement('div')
+			leadingRef.classList.add(SideBarClasses.buttonLeading)
 		}
 
-		leading.replaceChildren(...options.SideBarButtonLeading)
+		leadingRef.replaceChildren(...leadingOption)
 	}
 
 	// content
-	let content = button.querySelector(`.${SideBarClasses.buttonContent}`) as HTMLDivElement | null
-	if (!content) {
-		content = document.createElement('div')
-		content.classList.add(SideBarClasses.content)
+	let contentRef = sideBarButtonRef.querySelector<HTMLDivElement>(`.${SideBarClasses.buttonContent}`)
+	if (!contentRef) {
+		contentRef = document.createElement('div')
+		contentRef.classList.add(SideBarClasses.content)
 	}
 
-	if (options?.ButtonChildren === false) {
-		content.replaceChildren()
+	const childrenOption = options?.ButtonChildren
+	if (childrenOption === false) {
+		contentRef.replaceChildren()
 	}
-	else if (options?.ButtonChildren !== undefined && options.ButtonChildren !== true) {
-		content.replaceChildren(...options.ButtonChildren)
+	else if (childrenOption !== undefined && childrenOption !== true) {
+		contentRef.replaceChildren(...childrenOption)
 	}
 
-	button.replaceChildren(...[leading, content].filter(
+	sideBarButtonRef.replaceChildren(...[leadingRef, contentRef].filter(
 		v => typeof v === 'string' || v instanceof Node
 	))
-	refs?.button?.(button)
-	refs?.content?.(content)
-	refs?.button?.(button)
-	if (leading) refs?.leading?.(leading)
-	return button
+	refs?.button?.(sideBarButtonRef)
+	refs?.content?.(contentRef)
+	refs?.button?.(sideBarButtonRef)
+	if (leadingRef) refs?.leading?.(leadingRef)
+	return sideBarButtonRef
 }
 
 export {
@@ -189,8 +195,8 @@ export {
 	SideBarClasses,
 	SideBarAttributes,
 	SideBarButtonAttributes,
-	createSideBar,
-	createSideBarButton,
-	updateSideBar,
-	updateSideBarButton
+	createSideBarRef,
+	createSideBarButtonRef,
+	updateSideBarRef,
+	updateSideBarButtonRef
 }

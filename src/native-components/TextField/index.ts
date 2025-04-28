@@ -1,4 +1,8 @@
-import { updateButton, type ButtonProps, type ButtonUpdateOptions } from "@/native-components/Button"
+import {
+	updateButtonRef,
+	type ButtonProps,
+	type ButtonUpdateOptions
+} from "@/native-components/Button"
 
 type TextFieldProps = astroHTML.JSX.HTMLAttributes & {
 	TextFieldInputAttr   ?: astroHTML.JSX.InputHTMLAttributes
@@ -18,10 +22,10 @@ type TextFieldUpdateOptions = {
 	TextFieldPlaceholder?: string | boolean
 	TextFieldValue      ?: string | boolean
 	TextFieldRefs       ?: {
-		textfield?(el: HTMLDivElement  ): unknown
-		leading  ?(el: HTMLDivElement  ): unknown
-		trailing ?(el: HTMLDivElement  ): unknown
-		input    ?(el: HTMLInputElement): unknown
+		textfield?(ref: HTMLDivElement  ): unknown
+		leading  ?(ref: HTMLDivElement  ): unknown
+		trailing ?(ref: HTMLDivElement  ): unknown
+		input    ?(ref: HTMLInputElement): unknown
 	}
 }
 
@@ -33,88 +37,98 @@ enum TextFieldClasses {
 	button    = textfield + '-button'
 }
 
-function createTextField(options?: TextFieldUpdateOptions): HTMLDivElement {
-	const textfield = document.createElement('div')
-	return updateTextField(textfield, options)
+function createTextFieldRef(options?: TextFieldUpdateOptions): HTMLDivElement {
+	const textFieldRef = document.createElement('div')
+	return updateTextFieldRef(textFieldRef, options)
 }
 
-function updateTextField(textfield: HTMLDivElement, options?: TextFieldUpdateOptions): HTMLDivElement {
+function updateTextFieldRef(textFieldRef: HTMLDivElement, options?: TextFieldUpdateOptions): HTMLDivElement {
 	const refs = options?.TextFieldRefs
-	textfield.classList.add(TextFieldClasses.textfield)
+	textFieldRef.classList.add(TextFieldClasses.textfield)
 
 	// leading
-	let leading = textfield.querySelector(`.${TextFieldClasses.leading}`) as HTMLDivElement | null
-	if (!leading) {
-		leading = document.createElement('div')
-		leading.classList.add(TextFieldClasses.leading)
+	let leadingRef = textFieldRef.querySelector<HTMLDivElement>(`.${TextFieldClasses.leading}`)
+	if (!leadingRef) {
+		leadingRef = document.createElement('div')
+		leadingRef.classList.add(TextFieldClasses.leading)
 	}
 
-	if (options?.TextFieldLeading === false) {
-		leading.replaceChildren()
+	const leadingOption = options?.TextFieldLeading
+	if (leadingOption === false) {
+		leadingRef.replaceChildren()
 	}
-	else if (options?.TextFieldLeading !== undefined && options.TextFieldLeading !== true) {
-		leading.replaceChildren(...options.TextFieldLeading)
+	else if (leadingOption !== undefined && leadingOption !== true) {
+		leadingRef.replaceChildren(...leadingOption)
 	}
 
 	// input
-	let input = textfield.querySelector(`.${TextFieldClasses.input}`) as HTMLInputElement | null
-	if (!input) {
-		input = document.createElement('input')
-		input.classList.add(TextFieldClasses.input)
-		input.type = options?.TextFieldType ?? 'text'
+	let inputRef = textFieldRef.querySelector<HTMLInputElement>(`.${TextFieldClasses.input}`)
+	if (!inputRef) {
+		inputRef = document.createElement('input')
+		inputRef.classList.add(TextFieldClasses.input)
 	}
 
-	const readonly = options?.TextFieldReadOnly
-	if (readonly !== undefined) {
-		input.readOnly = readonly
+	const typeOption = options?.TextFieldType
+	if (typeOption !== undefined) {
+		inputRef.type = typeOption ?? 'text'
 	}
 
-	const placeholder = options?.TextFieldPlaceholder
-	if (placeholder === false) {
-		input.placeholder = ''
-	}
-	else if (placeholder !== undefined && placeholder !== true) {
-		input.placeholder = placeholder
+	const readOnlyOption = options?.TextFieldReadOnly
+	if (readOnlyOption !== undefined) {
+		inputRef.readOnly = readOnlyOption
 	}
 
-	const value = options?.TextFieldValue
-	if (value === false) {
-		input.value = ''
+	const placeholderOption = options?.TextFieldPlaceholder
+	if (placeholderOption === false) {
+		inputRef.placeholder = ''
 	}
-	else if (value !== undefined && value !== true) {
-		input.value = value
+	else if (placeholderOption !== undefined && placeholderOption !== true) {
+		inputRef.placeholder = placeholderOption
+	}
+
+	const valueOption = options?.TextFieldValue
+	if (valueOption === false) {
+		inputRef.value = ''
+	}
+	else if (valueOption !== undefined && valueOption !== true) {
+		inputRef.value = valueOption
 	}
 
 	// trailing
-	let trailing = textfield.querySelector(`.${TextFieldClasses.trailing}`) as HTMLDivElement | null
-	if (!trailing) {
-		trailing = document.createElement('div')
-		trailing.classList.add(TextFieldClasses.trailing)
+	let trailingRef = textFieldRef.querySelector<HTMLDivElement>(`.${TextFieldClasses.trailing}`)
+	if (!trailingRef) {
+		trailingRef = document.createElement('div')
+		trailingRef.classList.add(TextFieldClasses.trailing)
 	}
 
-	if (options?.TextFieldTrailing === false) {
-		trailing.replaceChildren()
+	const trailingOption = options?.TextFieldTrailing
+	if (trailingOption === false) {
+		trailingRef.replaceChildren()
 	}
-	else if (options?.TextFieldTrailing !== undefined && options.TextFieldTrailing !== true) {
-		trailing.replaceChildren(...options.TextFieldTrailing)
+	else if (trailingOption !== undefined && trailingOption !== true) {
+		trailingRef.replaceChildren(...trailingOption)
 	}
-	textfield.replaceChildren(leading, input, trailing)
-	refs?.input?.(input)
-	refs?.leading?.(leading)
-	refs?.textfield?.(textfield)
-	refs?.trailing?.(trailing)
-	return textfield
+
+	textFieldRef.replaceChildren(leadingRef, inputRef, trailingRef)
+	refs?.input?.(inputRef)
+	refs?.leading?.(leadingRef)
+	refs?.textfield?.(textFieldRef)
+	refs?.trailing?.(trailingRef)
+	return textFieldRef
 }
 
-function createTextFieldButton(options?: TextFieldButtonUpdateOptions): HTMLButtonElement {
-	const button = document.createElement('button')
-	return updateTextFieldButton(button, options)
+function createTextFieldButtonRef(options?: TextFieldButtonUpdateOptions): HTMLButtonElement {
+	const textFieldButtonRef = document.createElement('button')
+	return updateTextFieldButtonRef(textFieldButtonRef, options)
 }
 
-function updateTextFieldButton(button: HTMLButtonElement, options?: TextFieldButtonUpdateOptions): HTMLButtonElement {
-	updateButton(button, options)
-	button.classList.add(TextFieldClasses.button)
-	return button
+function updateTextFieldButtonRef(
+	textFieldButtonRef: HTMLButtonElement,
+	options?: TextFieldButtonUpdateOptions
+): HTMLButtonElement {
+	updateButtonRef(textFieldButtonRef, options)
+	textFieldButtonRef.classList.add(TextFieldClasses.button)
+	return textFieldButtonRef
 }
 
 export {
@@ -122,8 +136,8 @@ export {
 	type TextFieldUpdateOptions,
 	type TextFieldButtonProps,
 	TextFieldClasses,
-	createTextField,
-	updateTextField,
-	createTextFieldButton,
-	updateTextFieldButton
+	createTextFieldRef,
+	updateTextFieldRef,
+	createTextFieldButtonRef,
+	updateTextFieldButtonRef
 }

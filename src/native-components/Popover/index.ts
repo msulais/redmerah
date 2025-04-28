@@ -38,9 +38,9 @@ type PopoverUpdateOptions = {
 	PopoverPosition ?: PopoverPosition | boolean
 	PopoverPopover  ?: 'auto' | 'manual'
 	PopoverRefs     ?: {
-		popover   ?(el: HTMLDivElement): unknown
-		content   ?(el: HTMLDivElement): unknown
-		dragHandle?(el: HTMLDivElement): unknown
+		popover   ?(ref: HTMLDivElement): unknown
+		content   ?(ref: HTMLDivElement): unknown
+		dragHandle?(ref: HTMLDivElement): unknown
 	}
 }
 
@@ -171,12 +171,12 @@ function _initMutationObserver(): void {
 	})
 }
 
-function _initPopoverListener(): void {
+function _initPopoverRefListener(): void {
 	if (HAS_LISTENER) return
 
 	let timeoutId: number | NodeJS.Timeout | null = null
 	let isPointerClick = false
-	const selectedPopovers: Set<HTMLDivElement> = new Set<HTMLDivElement>()
+	const selectedPopoverRefs: Set<HTMLDivElement> = new Set<HTMLDivElement>()
 	HAS_LISTENER = true
 
 	function handleWindowResize(): void {
@@ -185,20 +185,20 @@ function _initPopoverListener(): void {
 
 		timeoutId = setTimeout(async () => {
 			for (const popover of OPENED_POPOVER) {
-				await repositionPopover(popover)
+				await repositionPopoverRef(popover)
 			}
 			timeoutId = null
 		}, 100)
 	}
 
 	function handleOutsideClick(): void {
-		if (OPENED_POPOVER.size === 0 || selectedPopovers.size === 0) return
+		if (OPENED_POPOVER.size === 0 || selectedPopoverRefs.size === 0) return
 
-		for (const popover of selectedPopovers) {
-			closePopover(popover, {soft: true})
+		for (const popover of selectedPopoverRefs) {
+			closePopoverRef(popover, {soft: true})
 		}
 
-		selectedPopovers.clear()
+		selectedPopoverRefs.clear()
 	}
 
 	function initEvents(): void {
@@ -210,12 +210,12 @@ function _initPopoverListener(): void {
 			isPointerClick = true
 			if (OPENED_POPOVER.size === 0) return
 
-			selectedPopovers.clear()
-			for (const popover of OPENED_POPOVER) {
-				const inRange = popover.contains(ev.target as Node)
+			selectedPopoverRefs.clear()
+			for (const popoverRef of OPENED_POPOVER) {
+				const inRange = popoverRef.contains(ev.target as Node)
 				if (inRange) continue
 
-				selectedPopovers.add(popover)
+				selectedPopoverRefs.add(popoverRef)
 			}
 		})
 
@@ -223,11 +223,11 @@ function _initPopoverListener(): void {
 		document.addEventListener('click', (ev) => {
 			if (OPENED_POPOVER.size === 0) return
 			if (!isPointerClick) {
-				for (const popover of OPENED_POPOVER) {
-					const inRange = popover.contains(ev.target as Node)
+				for (const popoverRef of OPENED_POPOVER) {
+					const inRange = popoverRef.contains(ev.target as Node)
 					if (inRange) continue
 
-					closePopover(popover, {soft: true})
+					closePopoverRef(popoverRef, {soft: true})
 				}
 			}
 			isPointerClick = false
@@ -240,44 +240,44 @@ function _initPopoverListener(): void {
 	initEvents()
 }
 
-function _initPopover(popover: HTMLDivElement): void {
-	const body = document.body
+function _initPopoverRef(popoverRef: HTMLDivElement): void {
+	const bodyRef = document.body
 	const attributes = {
 		get anchor(): HTMLElement | null {
-			const value = popover.getAttribute(PopoverAttributes.anchorBy)
+			const value = popoverRef.getAttribute(PopoverAttributes.anchorBy)
 			if (!value) return null
 
 			return document.getElementById(value)
 		},
 		get gap(): number {
-			const value = popover.getAttribute(PopoverAttributes.gap)
+			const value = popoverRef.getAttribute(PopoverAttributes.gap)
 			if (!value) return 0
 
 			return numberSafe(Number.parseFloat(value))
 		},
 		get padding(): number {
-			const value = popover.getAttribute(PopoverAttributes.padding)
+			const value = popoverRef.getAttribute(PopoverAttributes.padding)
 			if (!value) return 0
 
 			return numberSafe(Number.parseFloat(value))
 		},
 		get position(): PopoverPosition {
-			const value = popover.getAttribute(PopoverAttributes.position)
+			const value = popoverRef.getAttribute(PopoverAttributes.position)
 			if (!value || !validEnumValue(value, PopoverPosition)) return PopoverPosition.centerBottom
 
 			return value as PopoverPosition
 		},
 		get draggable(): boolean {
-			return popover.hasAttribute(PopoverAttributes.draggable)
+			return popoverRef.hasAttribute(PopoverAttributes.draggable)
 		},
 		get autoFocus(): boolean {
-			return popover.hasAttribute(PopoverAttributes.autoFocus)
+			return popoverRef.hasAttribute(PopoverAttributes.autoFocus)
 		},
 		get important(): boolean {
-			return popover.hasAttribute(PopoverAttributes.important)
+			return popoverRef.hasAttribute(PopoverAttributes.important)
 		},
 		get animation(): boolean {
-			return popover.getAttribute(PopoverAttributes.animation) !== 'false'
+			return popoverRef.getAttribute(PopoverAttributes.animation) !== 'false'
 		}
 	}
 	let isOpen: boolean = false
@@ -294,7 +294,7 @@ function _initPopover(popover: HTMLDivElement): void {
 	let isDragging: boolean = false
 	let timeoutScreenSizeId: number | NodeJS.Timeout | null = null
 	let timeoutFixPositionId: number | NodeJS.Timeout | null = null
-	let screenWidth = body.clientWidth
+	let screenWidth = bodyRef.clientWidth
 	let screenHeight = window.innerHeight
 	let keyTop = 0
 	let keyLeft = 0
@@ -305,12 +305,12 @@ function _initPopover(popover: HTMLDivElement): void {
 
 	function toggleDragging(drag: boolean): void {
 		isDragging = drag
-		popover.toggleAttribute(PopoverAttributes.dragging, drag)
+		popoverRef.toggleAttribute(PopoverAttributes.dragging, drag)
 	}
 
 	function fixPosition(options?: PopoverRepositionDetails): void {
-		const popoverRect = popover.getBoundingClientRect()
-		const screenWidth = body.clientWidth
+		const popoverRect = popoverRef.getBoundingClientRect()
+		const screenWidth = bodyRef.clientWidth
 		const screenHeight = window.innerHeight
 		const [x, y] = [popoverRect.left, popoverRect.top]
 		let [left, top] = [x, y]
@@ -319,13 +319,13 @@ function _initPopover(popover: HTMLDivElement): void {
 		if (popoverRect.right > screenWidth) left = screenWidth - popoverRect.width - POPOVER_MARGIN
 		if (popoverRect.bottom > screenHeight) top = screenHeight - popoverRect.height - POPOVER_MARGIN
 
-		popover.style.setProperty('left', left + 'px')
-		popover.style.setProperty('top', top + 'px')
+		popoverRef.style.setProperty('left', left + 'px')
+		popoverRef.style.setProperty('top', top + 'px')
 		if (!isAnimationAllowed() || !animation) {
 			return options?.done()
 		}
 
-		popover.animate({
+		popoverRef.animate({
 			transform: [
 				`translate(${x - left}px,${y - top}px)`,
 				`translate(0,0)`
@@ -344,7 +344,7 @@ function _initPopover(popover: HTMLDivElement): void {
 
 		const autofocus = options.autoFocus ?? attributes.autoFocus
 		const pointer = options.pointer
-		popover.dispatchEvent(new CustomEvent(PopoverEvents.beforeOpen))
+		popoverRef.dispatchEvent(new CustomEvent(PopoverEvents.beforeOpen))
 		isOpen    = true
 		anchorRef = options.anchor ?? attributes.anchor
 		important = options.important ?? attributes.important
@@ -353,13 +353,13 @@ function _initPopover(popover: HTMLDivElement): void {
 		padding   = options.padding ?? attributes.padding
 		pointerX  = pointer?.x ?? POINTER_X
 		pointerY  = pointer?.y ?? POINTER_Y
-		popover.toggleAttribute(PopoverAttributes.draggable, options.draggable ?? attributes.draggable)
-		popover.showPopover()
+		popoverRef.toggleAttribute(PopoverAttributes.draggable, options.draggable ?? attributes.draggable)
+		popoverRef.showPopover()
 		if (autofocus) {
-			elementFocusAny(popover)
+			elementFocusAny(popoverRef)
 		}
 
-		const popoverRect = popover.getBoundingClientRect()
+		const popoverRect = popoverRef.getBoundingClientRect()
 		const anchorRect = anchorRef?.getBoundingClientRect()
 		const flyoutPosition = getFlyoutPosition({
 			flyout: popoverRect,
@@ -373,8 +373,8 @@ function _initPopover(popover: HTMLDivElement): void {
 			position
 		})
 
-		popover.style.setProperty('left', flyoutPosition.left + 'px')
-		popover.style.setProperty('top', flyoutPosition.top + 'px')
+		popoverRef.style.setProperty('left', flyoutPosition.left + 'px')
+		popoverRef.style.setProperty('top', flyoutPosition.top + 'px')
 		if (!animation || !isAnimationAllowed()) {
 			return options.done()
 		}
@@ -395,7 +395,7 @@ function _initPopover(popover: HTMLDivElement): void {
 		}
 		// keep if 'rangeX === rangeY'
 
-		popover.animate({
+		popoverRef.animate({
 			transform: [`translate(${translateX}px,${translateY}px)`, 'translate(0,0)'],
 			opacity: [0, 1]
 		}, { duration: 300, easing: AnimationEffectTiming.springBounce })
@@ -410,8 +410,8 @@ function _initPopover(popover: HTMLDivElement): void {
 			return options.done()
 		}
 
-		popover.dispatchEvent(new CustomEvent(PopoverEvents.beforeClose))
-		const popoverRect = popover.getBoundingClientRect()
+		popoverRef.dispatchEvent(new CustomEvent(PopoverEvents.beforeClose))
+		const popoverRect = popoverRef.getBoundingClientRect()
 		const anchorRect = anchorRef?.getBoundingClientRect()
 		const flyoutPosition = getFlyoutPosition({
 			flyout: popoverRect,
@@ -426,7 +426,7 @@ function _initPopover(popover: HTMLDivElement): void {
 		})
 
 		if (options.animation === false || !animation || !isAnimationAllowed()) {
-			popover.hidePopover()
+			popoverRef.hidePopover()
 			return options.done()
 		}
 
@@ -446,12 +446,12 @@ function _initPopover(popover: HTMLDivElement): void {
 		}
 		// keep if 'rangeX === rangeY'
 
-		popover.animate({
+		popoverRef.animate({
 			transform: ['translate(0,0)', `translate(${translateX}px,${translateY}px)`],
 			opacity: [1, 0]
 		}, { duration: 300, easing: AnimationEffectTiming.springBounce })
 		.finished.then(() => {
-			popover.hidePopover()
+			popoverRef.hidePopover()
 			options.done()
 		})
 	}
@@ -462,7 +462,7 @@ function _initPopover(popover: HTMLDivElement): void {
 			return fixPosition(options)
 		}
 
-		const popoverRect = popover.getBoundingClientRect()
+		const popoverRect = popoverRef.getBoundingClientRect()
 		const anchorRect = anchorRef.getBoundingClientRect()
 		const flyoutPosition = getFlyoutPosition({
 			flyout: popoverRect,
@@ -473,13 +473,13 @@ function _initPopover(popover: HTMLDivElement): void {
 		})
 
 		const [x, y] = [popoverRect.left, popoverRect.top]
-		popover.style.setProperty('left', flyoutPosition.left + 'px')
-		popover.style.setProperty('top', flyoutPosition.top + 'px')
+		popoverRef.style.setProperty('left', flyoutPosition.left + 'px')
+		popoverRef.style.setProperty('top', flyoutPosition.top + 'px')
 		if (!isAnimationAllowed() || !animation) {
 			return options?.done()
 		}
 
-		popover.animate({
+		popoverRef.animate({
 			transform: [
 				`translate(${x - flyoutPosition.left}px,${y - flyoutPosition.top}px)`,
 				`translate(0,0)`
@@ -492,7 +492,7 @@ function _initPopover(popover: HTMLDivElement): void {
 		})
 	}
 
-	function dragOnKeyDown(ev: KeyboardEvent): void {
+	function dragHandleRefOnKeyDown(ev: KeyboardEvent): void {
 		const code = ev.code
 		if (
 			code !== KEY_ARROW_UP
@@ -506,10 +506,10 @@ function _initPopover(popover: HTMLDivElement): void {
 		ev.preventDefault() // disable scroll
 
 		if (timeoutScreenSizeId === null) {
-			const rect = popover.getBoundingClientRect()
+			const rect = popoverRef.getBoundingClientRect()
 			keyTop = rect.top
 			keyLeft = rect.left
-			screenWidth = body.clientWidth
+			screenWidth = bodyRef.clientWidth
 			screenHeight = window.innerHeight
 			timeoutScreenSizeId = setTimeout(() => timeoutScreenSizeId = null, 1000)
 		}
@@ -529,8 +529,8 @@ function _initPopover(popover: HTMLDivElement): void {
 			break
 		}
 
-		popover.style.setProperty('left', keyLeft + 'px')
-		popover.style.setProperty('top', keyTop + 'px')
+		popoverRef.style.setProperty('left', keyLeft + 'px')
+		popoverRef.style.setProperty('top', keyTop + 'px')
 		if (timeoutFixPositionId !== null) clearTimeout(timeoutFixPositionId)
 
 		timeoutFixPositionId = setTimeout(() => {
@@ -539,32 +539,32 @@ function _initPopover(popover: HTMLDivElement): void {
 		}, 200)
 	}
 
-	function dragOnPointerMove(ev: PointerEvent): void {
+	function dragHandleRefOnPointerMove(ev: PointerEvent): void {
 		if (!isDragging) return
 
-		popover.style.setProperty('left', ev.clientX - diffPositionX + 'px')
-		popover.style.setProperty('top', ev.clientY - diffPositionY + 'px')
+		popoverRef.style.setProperty('left', ev.clientX - diffPositionX + 'px')
+		popoverRef.style.setProperty('top', ev.clientY - diffPositionY + 'px')
 	}
 
-	function dragOnPointerUp(ev: PointerEvent): void {
+	function dragHandleRefOnPointerUp(ev: PointerEvent): void {
 		dragHandleRef?.releasePointerCapture(ev.pointerId)
 		fixPosition()
 		toggleDragging(false)
 	}
 
-	function dragOnPointerDown(ev: PointerEvent): void {
-		const rect = popover.getBoundingClientRect()
+	function dragHandleRefOnPointerDown(ev: PointerEvent): void {
+		const rect = popoverRef.getBoundingClientRect()
 		toggleDragging(true)
 		dragHandleRef?.setPointerCapture(ev.pointerId)
 		diffPositionX = ev.clientX - rect.x
 		diffPositionY = ev.clientY - rect.y
 	}
 
-	function dragOnDblClick(): void {
+	function dragHandleRefOnDblClick(): void {
 		reposition()
 	}
 
-	function popoverOnKeyDown(ev: KeyboardEvent): void {
+	function popoverRefOnKeyDown(ev: KeyboardEvent): void {
 		if (ev.code !== KEY_ESCAPE || important) return
 		if (anchorRef) anchorRef.focus()
 
@@ -572,7 +572,7 @@ function _initPopover(popover: HTMLDivElement): void {
 	}
 
 	function initEvents(): void {
-		(popover as any).addEventListener(PopoverEvents.attributeChange, (ev: CustomEvent<PopoverAttributeChangeDetail>) => {
+		popoverRef.addEventListener(PopoverEvents.attributeChange as any, (ev: CustomEvent<PopoverAttributeChangeDetail>) => {
 			const attr = ev.detail.attributeName
 			switch (attr) {
 			case PopoverAttributes.anchorBy:
@@ -598,12 +598,12 @@ function _initPopover(popover: HTMLDivElement): void {
 				reposition()
 				break
 			}
-		});
-		(popover as any).addEventListener(PopoverEvents.open, open);
-		(popover as any).addEventListener(PopoverEvents.close, close);
-		popover.addEventListener('toggle', ev => {
+		})
+		popoverRef.addEventListener(PopoverEvents.open as any, open);
+		popoverRef.addEventListener(PopoverEvents.close as any, close);
+		popoverRef.addEventListener('toggle', ev => {
 			isOpen = (ev as ToggleEvent).newState === "open"
-			popover.dispatchEvent(new CustomEvent<PopoverToggleOpenDetail>(
+			popoverRef.dispatchEvent(new CustomEvent<PopoverToggleOpenDetail>(
 				PopoverEvents.toggleOpen,
 				{
 					detail: {open: isOpen},
@@ -611,24 +611,24 @@ function _initPopover(popover: HTMLDivElement): void {
 				}
 			))
 			if (isOpen) {
-				OPENED_POPOVER.add(popover)
-				popover.addEventListener(PopoverEvents.reposition as any, reposition);
-				popover.addEventListener('keydown', popoverOnKeyDown)
-				dragHandleRef?.addEventListener('keydown', dragOnKeyDown)
-				dragHandleRef?.addEventListener('pointerdown', dragOnPointerDown)
-				dragHandleRef?.addEventListener('pointerup', dragOnPointerUp)
-				dragHandleRef?.addEventListener('pointermove', dragOnPointerMove)
-				dragHandleRef?.addEventListener('dblclick', dragOnDblClick)
+				OPENED_POPOVER.add(popoverRef)
+				popoverRef.addEventListener(PopoverEvents.reposition as any, reposition);
+				popoverRef.addEventListener('keydown', popoverRefOnKeyDown)
+				dragHandleRef?.addEventListener('keydown', dragHandleRefOnKeyDown)
+				dragHandleRef?.addEventListener('pointerdown', dragHandleRefOnPointerDown)
+				dragHandleRef?.addEventListener('pointerup', dragHandleRefOnPointerUp)
+				dragHandleRef?.addEventListener('pointermove', dragHandleRefOnPointerMove)
+				dragHandleRef?.addEventListener('dblclick', dragHandleRefOnDblClick)
 			}
 			else {
-				OPENED_POPOVER.delete(popover)
-				popover.removeEventListener(PopoverEvents.reposition as any, reposition);
-				popover.removeEventListener('keydown', popoverOnKeyDown)
-				dragHandleRef?.removeEventListener('keydown', dragOnKeyDown)
-				dragHandleRef?.removeEventListener('pointerdown', dragOnPointerDown)
-				dragHandleRef?.removeEventListener('pointerup', dragOnPointerUp)
-				dragHandleRef?.removeEventListener('pointermove', dragOnPointerMove)
-				dragHandleRef?.removeEventListener('dblclick', dragOnDblClick)
+				OPENED_POPOVER.delete(popoverRef)
+				popoverRef.removeEventListener(PopoverEvents.reposition as any, reposition);
+				popoverRef.removeEventListener('keydown', popoverRefOnKeyDown)
+				dragHandleRef?.removeEventListener('keydown', dragHandleRefOnKeyDown)
+				dragHandleRef?.removeEventListener('pointerdown', dragHandleRefOnPointerDown)
+				dragHandleRef?.removeEventListener('pointerup', dragHandleRefOnPointerUp)
+				dragHandleRef?.removeEventListener('pointermove', dragHandleRefOnPointerMove)
+				dragHandleRef?.removeEventListener('dblclick', dragHandleRefOnDblClick)
 			}
 		})
 	}
@@ -641,7 +641,7 @@ function _initPopover(popover: HTMLDivElement): void {
 	 *     > div.c-popover-content
 	 */
 	function checkContentStructure(): void {
-		const children = popover.children
+		const children = popoverRef.children
 		const rest: Element[] = []
 		for (let i = 0; i < children.length; i++) {
 			const child = children.item(i)!
@@ -669,151 +669,161 @@ function _initPopover(popover: HTMLDivElement): void {
 		dragHandleRef.tabIndex = 0
 		dragHandleRef.draggable = false
 		contentRef.append(...rest)
-		popover.replaceChildren(contentRef, dragHandleRef)
+		popoverRef.replaceChildren(contentRef, dragHandleRef)
 	}
 
 	checkContentStructure()
 	initEvents()
 }
 
-async function openPopover(popover: HTMLDivElement, options?: PopoverOpenOptions): Promise<void> {
-	return new Promise((done) => popover.dispatchEvent(new CustomEvent(
+async function openPopoverRef(popoverRef: HTMLDivElement, options?: PopoverOpenOptions): Promise<void> {
+	return new Promise((done) => popoverRef.dispatchEvent(new CustomEvent(
 		PopoverEvents.open,
 		{detail: {...options, done} satisfies PopoverOpenDetails}
 	)))
 }
 
-async function closePopover(popover: HTMLDivElement, options?: PopoverCloseOptions): Promise<void> {
-	return new Promise((done) => popover.dispatchEvent(new CustomEvent(
+async function closePopoverRef(popoverRef: HTMLDivElement, options?: PopoverCloseOptions): Promise<void> {
+	return new Promise((done) => popoverRef.dispatchEvent(new CustomEvent(
 		PopoverEvents.close,
 		{detail: {...options, done} satisfies PopoverCloseDetails}
 	)))
 }
 
-async function repositionPopover(popover: HTMLDivElement): Promise<void> {
-	return new Promise((done) => popover.dispatchEvent(new CustomEvent(
+async function repositionPopoverRef(popoverRef: HTMLDivElement): Promise<void> {
+	return new Promise((done) => popoverRef.dispatchEvent(new CustomEvent(
 		PopoverEvents.reposition,
 		{detail: {done} satisfies PopoverRepositionDetails}
 	)))
 }
 
-function isPopoverOpen(popover: HTMLDivElement): boolean {
-	return popover.matches(':popover-open')
+function isPopoverRefOpen(popoverRef: HTMLDivElement): boolean {
+	return popoverRef.matches(':popover-open')
 }
 
-function createPopover(options?: PopoverUpdateOptions): HTMLDivElement {
+function createPopoverRef(options?: PopoverUpdateOptions): HTMLDivElement {
 	const popover = document.createElement('div')
-	return updatePopover(popover, options)
+	return updatePopoverRef(popover, options)
 }
 
-function updatePopover(popover: HTMLDivElement, options?: PopoverUpdateOptions): HTMLDivElement {
-	popover.classList.add(PopoverClasses.popover)
+function updatePopoverRef(popoverRef: HTMLDivElement, options?: PopoverUpdateOptions): HTMLDivElement {
+	popoverRef.classList.add(PopoverClasses.popover)
 
-	if (!popover.hasAttribute('popover')) {
-		popover.popover = 'manual'
+	if (!popoverRef.hasAttribute('popover')) {
+		popoverRef.popover = 'manual'
 	}
 
 	if (options?.PopoverPopover) {
-		popover.popover = options.PopoverPopover
+		popoverRef.popover = options.PopoverPopover
 	}
 
-	if (options?.PopoverDraggable !== undefined) {
-		popover.toggleAttribute(PopoverAttributes.draggable, options?.PopoverDraggable)
+	const draggableOption = options?.PopoverDraggable
+	if (draggableOption !== undefined) {
+		popoverRef.toggleAttribute(PopoverAttributes.draggable, draggableOption)
 	}
 
-	if (options?.PopoverImportant !== undefined) {
-		popover.toggleAttribute(PopoverAttributes.important, options?.PopoverImportant)
+	const importantOption = options?.PopoverImportant
+	if (importantOption !== undefined) {
+		popoverRef.toggleAttribute(PopoverAttributes.important, importantOption)
 	}
 
-	if (options?.PopoverAutoFocus !== undefined) {
-		popover.toggleAttribute(PopoverAttributes.autoFocus, options?.PopoverAutoFocus)
+	const autoFocusOption = options?.PopoverAutoFocus
+	if (autoFocusOption !== undefined) {
+		popoverRef.toggleAttribute(PopoverAttributes.autoFocus, autoFocusOption)
 	}
 
-	if (options?.PopoverAnimation !== undefined) {
-		popover.setAttribute(PopoverAttributes.animation, String(options.PopoverAnimation))
+	const animationOption = options?.PopoverAnimation
+	if (animationOption !== undefined) {
+		popoverRef.setAttribute(PopoverAttributes.animation, String(animationOption))
 	}
 
-	if (options?.PopoverAnchorBy === false) {
-		popover.removeAttribute(PopoverAttributes.anchorBy)
+	const anchorByOption = options?.PopoverAnchorBy
+	if (anchorByOption === false) {
+		popoverRef.removeAttribute(PopoverAttributes.anchorBy)
 	}
-	else if (options?.PopoverAnchorBy !== undefined && options.PopoverAnchorBy !== true) {
-		popover.setAttribute(PopoverAttributes.anchorBy, options.PopoverAnchorBy)
-	}
-
-	if (options?.PopoverGap === false) {
-		popover.removeAttribute(PopoverAttributes.gap)
-	}
-	else if (options?.PopoverGap !== undefined && options.PopoverGap !== true) {
-		popover.setAttribute(PopoverAttributes.gap, options.PopoverGap + '')
+	else if (anchorByOption !== undefined && anchorByOption !== true) {
+		popoverRef.setAttribute(PopoverAttributes.anchorBy, anchorByOption)
 	}
 
-	if (options?.PopoverPadding === false) {
-		popover.removeAttribute(PopoverAttributes.padding)
+	const gapOption = options?.PopoverGap
+	if (gapOption === false) {
+		popoverRef.removeAttribute(PopoverAttributes.gap)
 	}
-	else if (options?.PopoverPadding !== undefined && options.PopoverPadding !== true) {
-		popover.setAttribute(PopoverAttributes.padding, options.PopoverPadding + '')
-	}
-
-	if (options?.PopoverPosition === false) {
-		popover.removeAttribute(PopoverAttributes.position)
-	}
-	else if (options?.PopoverPosition !== undefined && options.PopoverPosition !== true) {
-		popover.setAttribute(PopoverAttributes.position, options.PopoverPosition)
+	else if (gapOption !== undefined && gapOption !== true) {
+		popoverRef.setAttribute(PopoverAttributes.gap, gapOption + '')
 	}
 
-	let content = popover.querySelector(`.${PopoverClasses.content}`) as HTMLDivElement | null
-	if (!content) {
-		content = document.createElement('div')
-		content.classList.add(PopoverClasses.content)
+	const paddingOption = options?.PopoverPadding
+	if (paddingOption === false) {
+		popoverRef.removeAttribute(PopoverAttributes.padding)
+	}
+	else if (paddingOption !== undefined && paddingOption !== true) {
+		popoverRef.setAttribute(PopoverAttributes.padding, paddingOption + '')
 	}
 
-	if (options?.PopoverChildren === false) {
-		content.replaceChildren()
+	const positionOption = options?.PopoverPosition
+	if (positionOption === false) {
+		popoverRef.removeAttribute(PopoverAttributes.position)
 	}
-	else if (options?.PopoverChildren !== undefined && options.PopoverChildren !== true) {
-		content.replaceChildren(...options.PopoverChildren)
-	}
-
-	let dragHandle = popover.querySelector(`.${PopoverClasses.dragHandle}`) as HTMLDivElement | null
-	if (!dragHandle) {
-		dragHandle = document.createElement('div')
-		dragHandle.classList.add(PopoverClasses.dragHandle)
-		dragHandle.setAttribute('tabindex', '0')
+	else if (positionOption !== undefined && positionOption !== true) {
+		popoverRef.setAttribute(PopoverAttributes.position, positionOption)
 	}
 
-	popover.replaceChildren(content, dragHandle)
-	options?.PopoverRefs?.content?.(content)
-	options?.PopoverRefs?.popover?.(popover)
-	options?.PopoverRefs?.dragHandle?.(dragHandle)
-	return popover
+	let contentRef = popoverRef.querySelector<HTMLDivElement>(`.${PopoverClasses.content}`)
+	if (!contentRef) {
+		contentRef = document.createElement('div')
+		contentRef.classList.add(PopoverClasses.content)
+	}
+
+	const childrenOption = options?.PopoverChildren
+	if (childrenOption === false) {
+		contentRef.replaceChildren()
+	}
+	else if (childrenOption !== undefined && childrenOption !== true) {
+		contentRef.replaceChildren(...childrenOption)
+	}
+
+	let dragHandleRef = popoverRef.querySelector<HTMLDivElement>(`.${PopoverClasses.dragHandle}`)
+	if (!dragHandleRef) {
+		dragHandleRef = document.createElement('div')
+		dragHandleRef.classList.add(PopoverClasses.dragHandle)
+		dragHandleRef.setAttribute('tabindex', '0')
+		dragHandleRef.setAttribute('draggable', 'false')
+	}
+
+	popoverRef.replaceChildren(contentRef, dragHandleRef)
+	options?.PopoverRefs?.content?.(contentRef)
+	options?.PopoverRefs?.popover?.(popoverRef)
+	options?.PopoverRefs?.dragHandle?.(dragHandleRef)
+	return popoverRef
 }
 
-function registerPopover(...popovers: HTMLDivElement[]): void {
-	_initPopoverListener()
+function registerPopoverRef(...popoverRefs: HTMLDivElement[]): void {
+	_initPopoverRefListener()
 	_initMutationObserver()
-	if (popovers.length === 0) {
-		popovers = [...document.querySelectorAll<HTMLDivElement>('div.' + PopoverClasses.popover)]
+	if (popoverRefs.length === 0) {
+		popoverRefs = [...document.querySelectorAll<HTMLDivElement>('div.' + PopoverClasses.popover)]
 	}
 
-	for (const popover of popovers){
-		if (REGISTERED_POPOVER.has(popover)) {
+	for (const popoverRef of popoverRefs){
+		if (REGISTERED_POPOVER.has(popoverRef)) {
 			continue
 		}
 
-		REGISTERED_POPOVER.add(popover)
-		MUTATION_OBSERVER?.observe(popover, {attributeFilter: LISTENED_ATTRIBUTES})
-		_initPopover(popover)
+		REGISTERED_POPOVER.add(popoverRef)
+		MUTATION_OBSERVER?.observe(popoverRef, {attributeFilter: LISTENED_ATTRIBUTES})
+		_initPopoverRef(popoverRef)
 	}
 }
 
-function unregisterPopover(...popovers: HTMLDivElement[]): void {
+function unregisterPopoverRef(...popoverRefs: HTMLDivElement[]): void {
 	MUTATION_OBSERVER?.disconnect()
-	for (const popover of popovers) {
-		REGISTERED_POPOVER.delete(popover)
+	for (const popoverRef of popoverRefs) {
+		REGISTERED_POPOVER.delete(popoverRef)
 	}
 
-	for (const popover of REGISTERED_POPOVER) {
-		MUTATION_OBSERVER?.observe(popover, {attributeFilter: LISTENED_ATTRIBUTES})
+	for (const popoverRef of REGISTERED_POPOVER) {
+		MUTATION_OBSERVER?.observe(popoverRef, {attributeFilter: LISTENED_ATTRIBUTES})
 	}
 }
 
@@ -831,12 +841,12 @@ export {
 	PopoverAttributes,
 	PopoverClasses,
 	PopoverPosition,
-	openPopover,
-	closePopover,
-	repositionPopover,
-	isPopoverOpen,
-	createPopover,
-	updatePopover,
-	registerPopover,
-	unregisterPopover
+	openPopoverRef,
+	closePopoverRef,
+	repositionPopoverRef,
+	isPopoverRefOpen,
+	createPopoverRef,
+	updatePopoverRef,
+	registerPopoverRef,
+	unregisterPopoverRef
 }

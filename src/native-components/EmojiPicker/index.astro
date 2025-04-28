@@ -11,7 +11,8 @@ import {
 	ICON_RUNNING_PERSON,
 	ICON_SEARCH,
 	ICON_SYMBOLS,
-	ICON_VEHICLE_CAR } from '@/constants/icons'
+	ICON_VEHICLE_CAR
+} from '@/constants/icons'
 import {
 	EMOJIS_ACTIVITIES,
 	EMOJIS_ANIMAL_AND_NATURE,
@@ -21,10 +22,14 @@ import {
 	EMOJIS_PERSON_AND_BODY,
 	EMOJIS_SMILEY_AND_EMOTION,
 	EMOJIS_SYMBOLS,
-	EMOJIS_TRAVEL_AND_PLACES } from '@/constants/emoji'
+	EMOJIS_TRAVEL_AND_PLACES
+} from '@/constants/emoji'
+import { attrClassList } from '@/utils/attributes'
+
 import {
 	type EmojiPickerProps,
-	EmojiPickerClasses } from '.'
+	EmojiPickerClasses
+} from '.'
 import IconButton from '@/native-components/Button/IconButton.astro'
 import Button from '@/native-components/Button/index.astro'
 import Popover from '@/native-components/Popover/index.astro'
@@ -33,9 +38,8 @@ import Icon from '@/native-components/Icon/index.astro'
 import Tooltip from '@/native-components/Tooltip/index.astro'
 import TextField from '@/native-components/TextField/index.astro'
 import TextFieldButton from '@/native-components/TextField/TextFieldButton.astro'
+import { ButtonVariant } from '@/native-components/Button'
 import './index.scss'
-import { attrClassList } from '@/utils/attributes'
-import { ButtonVariant } from '../Button'
 
 type Props = EmojiPickerProps
 const {
@@ -220,6 +224,6 @@ const {'class': titleClass, ...titleOther} = EmojiPickerTitleAttr ?? {}
 	</Tooltip>
 </Popover>
 <script>
-	import { registerEmojiPicker } from '.'
-	registerEmojiPicker()
+	import { registerEmojiPickerRef } from '.'
+	registerEmojiPickerRef()
 </script>

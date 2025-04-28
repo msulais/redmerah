@@ -14,11 +14,11 @@ type ListUpdateOptions = {
 	ListTrailing   ?: (Node | string)[] | boolean
 	ListVariant    ?: ListVariant | boolean
 	ListRefs       ?: {
-		list    ?(el: HTMLElement   ): unknown
-		content ?(el: HTMLDivElement): unknown
-		subtitle?(el: HTMLDivElement): unknown
-		leading ?(el: HTMLDivElement): unknown
-		trailing?(el: HTMLDivElement): unknown
+		list    ?(ref: HTMLElement   ): unknown
+		content ?(ref: HTMLDivElement): unknown
+		subtitle?(ref: HTMLDivElement): unknown
+		leading ?(ref: HTMLDivElement): unknown
+		trailing?(ref: HTMLDivElement): unknown
 	}
 }
 
@@ -32,112 +32,117 @@ enum ListClasses {
 
 enum ListVariant {
 	transparent = 'transparent',
-	tonal = 'tonal',
-	filled = 'filled',
-	outlined = 'outlined'
+	tonal       = 'tonal',
+	filled      = 'filled',
+	outlined    = 'outlined'
 }
 
 enum ListAttributes {
 	variant = 'data-c-list-variant'
 }
 
-function createList<T extends HTMLElement>(
-	options?: ListUpdateOptions & {tagName?: keyof HTMLElementTagNameMap}
+function createListRef<T extends HTMLElement>(
+	options?: ListUpdateOptions & {ListTagName?: keyof HTMLElementTagNameMap}
 ): T {
-	const list = document.createElement(options?.tagName ?? 'div')
-	updateList(list, options)
-	return list as T
+	const listRef = document.createElement(options?.ListTagName ?? 'div')
+	updateListRef(listRef, options)
+	return listRef as T
 }
 
-function updateList<T extends HTMLElement>(list: T, options?: ListUpdateOptions): T {
+function updateListRef<T extends HTMLElement>(listRef: T, options?: ListUpdateOptions): T {
 	const refs = options?.ListRefs
-	list.classList.add(ListClasses.list)
+	listRef.classList.add(ListClasses.list)
 
-	const variant = options?.ListVariant
-	if (variant === false) {
-		list.removeAttribute(ListAttributes.variant)
-	} else if (variant !== undefined && variant !== true) {
-		list.setAttribute(ListAttributes.variant, variant)
+	const variantOption = options?.ListVariant
+	if (variantOption === false) {
+		listRef.removeAttribute(ListAttributes.variant)
+	}
+	else if (variantOption !== undefined && variantOption !== true) {
+		listRef.setAttribute(ListAttributes.variant, variantOption)
 	}
 
 	// leading
-	let leading = list.querySelector(`.${ListClasses.leading}`) as HTMLDivElement | null
-	if (options?.ListLeading === false) {
-		leading?.replaceChildren()
+	const leadingOption = options?.ListLeading
+	let leadingRef = listRef.querySelector<HTMLDivElement>(`.${ListClasses.leading}`)
+	if (leadingOption === false) {
+		leadingRef?.replaceChildren()
 	}
-	else if (options?.ListLeading !== undefined && options.ListLeading !== true) {
-		if (!leading) {
-			leading = document.createElement('div')
-			leading.classList.add(ListClasses.leading)
+	else if (leadingOption !== undefined && leadingOption !== true) {
+		if (!leadingRef) {
+			leadingRef = document.createElement('div')
+			leadingRef.classList.add(ListClasses.leading)
 		}
 
-		leading.replaceChildren(...options.ListLeading)
+		leadingRef.replaceChildren(...leadingOption)
 	}
 
 	// content
-	let content = list.querySelector(`.${ListClasses.content}`) as HTMLDivElement | null
-	if (!content) {
-		content = document.createElement('div')
-		content.classList.add(ListClasses.content)
+	let contentRef = listRef.querySelector<HTMLDivElement>(`.${ListClasses.content}`)
+	if (!contentRef) {
+		contentRef = document.createElement('div')
+		contentRef.classList.add(ListClasses.content)
 	}
 
 	// content -> subtitle
-	let subtitle = list.querySelector(`.${ListClasses.subtitle}`) as HTMLDivElement | null
-	if (options?.ListSubtitle === false) {
-		subtitle?.replaceChildren()
+	const subtitleOption = options?.ListSubtitle
+	let subtitleRef = contentRef.querySelector<HTMLDivElement>(`.${ListClasses.subtitle}`)
+	if (subtitleOption === false) {
+		subtitleRef?.replaceChildren()
 	}
-	else if (options?.ListSubtitle !== undefined && options.ListSubtitle !== true) {
-		if (!subtitle) {
-			subtitle = document.createElement('div')
-			subtitle.classList.add(ListClasses.subtitle)
+	else if (subtitleOption !== undefined && subtitleOption !== true) {
+		if (!subtitleRef) {
+			subtitleRef = document.createElement('div')
+			subtitleRef.classList.add(ListClasses.subtitle)
 		}
 
-		subtitle.replaceChildren(...options.ListSubtitle)
+		subtitleRef.replaceChildren(...subtitleOption)
 	}
 
 	// content -> children
-	const children: (Node | string)[] = []
-	for (const node of content.childNodes) {
-		if (subtitle && node === subtitle) continue
+	const childrenRefs: (Node | string)[] = []
+	for (const node of contentRef.childNodes) {
+		if (subtitleRef && node === subtitleRef) continue
 
-		children.push(node)
+		childrenRefs.push(node)
 	}
 
-	if (options?.ListChildren === false) {
-		children.length = 0
+	const childrenOption = options?.ListChildren
+	if (childrenOption === false) {
+		childrenRefs.length = 0
 	}
-	else if (options?.ListChildren !== undefined && options.ListChildren !== true) {
-		children.length = 0
-		children.push(...options.ListChildren)
+	else if (childrenOption !== undefined && childrenOption !== true) {
+		childrenRefs.length = 0
+		childrenRefs.push(...childrenOption)
 	}
 
-	content.replaceChildren(...[...children, subtitle].filter(
+	contentRef.replaceChildren(...[...childrenRefs, subtitleRef].filter(
 		v => typeof v === 'string' || v instanceof Node
 	))
 
 	// trailing
-	let trailing = list.querySelector(`.${ListClasses.trailing}`) as HTMLDivElement | null
-	if (options?.ListTrailing === false) {
-		trailing?.replaceChildren()
+	const trailingOption = options?.ListTrailing
+	let trailingRef = listRef.querySelector<HTMLDivElement>(`.${ListClasses.trailing}`)
+	if (trailingOption === false) {
+		trailingRef?.replaceChildren()
 	}
-	else if (options?.ListTrailing && options.ListTrailing !== true) {
-		if (!trailing) {
-			trailing = document.createElement('div')
-			trailing.classList.add(ListClasses.trailing)
+	else if (trailingOption && trailingOption !== true) {
+		if (!trailingRef) {
+			trailingRef = document.createElement('div')
+			trailingRef.classList.add(ListClasses.trailing)
 		}
 
-		trailing.replaceChildren(...options.ListTrailing)
+		trailingRef.replaceChildren(...trailingOption)
 	}
 
-	list.replaceChildren(...[leading, content, trailing].filter(
+	listRef.replaceChildren(...[leadingRef, contentRef, trailingRef].filter(
 		v => typeof v === 'string' || v instanceof Node
 	))
-	refs?.list?.(list)
-	refs?.content?.(content)
-	if (leading) refs?.leading?.(leading)
-	if (subtitle) refs?.subtitle?.(subtitle)
-	if (trailing) refs?.trailing?.(trailing)
-	return list
+	refs?.list?.(listRef)
+	refs?.content?.(contentRef)
+	if (leadingRef) refs?.leading?.(leadingRef)
+	if (subtitleRef) refs?.subtitle?.(subtitleRef)
+	if (trailingRef) refs?.trailing?.(trailingRef)
+	return listRef
 }
 
 export {
@@ -146,6 +151,6 @@ export {
 	ListClasses,
 	ListVariant,
 	ListAttributes,
-	createList,
-	updateList
+	createListRef,
+	updateListRef
 }

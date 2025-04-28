@@ -1,12 +1,14 @@
 ---
-import { MenuClasses, type MenuItemProps } from '.'
-import Button from '@/native-components/Button/index.astro'
 import { attrClassList } from '@/utils/attributes'
 
+import {
+	MenuClasses,
+	type MenuItemProps
+} from '.'
+import Button from '@/native-components/Button/index.astro'
 import './index.scss'
 
 type Props = MenuItemProps
-
 const {
 	'class': className,
 	role,

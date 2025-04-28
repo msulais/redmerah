@@ -1,12 +1,14 @@
 ---
-import { MenuClasses, type LinkMenuItemProps } from '.'
-import LinkButton from '@/native-components/Button/LinkButton.astro'
 import { attrClassList } from '@/utils/attributes'
 
+import {
+	MenuClasses,
+	type LinkMenuItemProps
+} from '.'
+import LinkButton from '@/native-components/Button/LinkButton.astro'
 import './index.scss'
 
 type Props = LinkMenuItemProps
-
 const {
 	'class': className,
 	role,

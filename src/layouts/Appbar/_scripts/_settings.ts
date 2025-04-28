@@ -1,13 +1,13 @@
-import { closeMenu, isMenuOpen, MenuEvents, openMenu } from "@/native-components/Menu"
+import { closeMenuRef, isMenuRefOpen, MenuEvents, openMenuRef } from "@/native-components/Menu"
 import { ElementIds, ID, RadioGroupNames } from "./_enums"
-import { updateIconButton } from "@/native-components/Button"
+import { updateIconButtonRef } from "@/native-components/Button"
 import { validEnumValue } from "@/utils/object"
 import { PlatformAnimationMode, PlatformThemeMode } from "@/enums/platforms"
 import { LocalStorageKeys } from "@/enums/storage"
 import { RootAttributes } from "@/enums/attributes"
 import { colorGeneratePalette, colorHexToRgb, colorIsValid } from "@/utils/color"
 import { GlobalElementIds } from "@/enums/ids"
-import { ColorPickerAttributes, ColorPickerEvents, ColorPickerPosition, openColorPicker, updateColorPicker } from "@/native-components/ColorPicker"
+import { ColorPickerAttributes, ColorPickerEvents, ColorPickerPosition, openColorPickerRef, updateColorPickerRef } from "@/native-components/ColorPicker"
 import type { RGBColor, HEXColor } from "@/types/color"
 
 const $ = (id: string) => document.getElementById(id)
@@ -58,7 +58,7 @@ function initSettings(): void {
 		const colorPickerRef = $(ID + ElementIds.appbarColorPicker) as HTMLDivElement
 		const palette = colorGeneratePalette(accent as HEXColor)
 		accentColorElement.innerHTML = `:root{--g-color-accent-light: ${rgbToCSS(colorHexToRgb(palette.color))};--g-color-accent-dark: ${rgbToCSS(colorHexToRgb(palette.colorDark))};--g-color-on-accent-light: ${rgbToCSS(colorHexToRgb(palette.onColor))};--g-color-on-accent-dark: ${rgbToCSS(colorHexToRgb(palette.onColorDark))};}`;
-		updateColorPicker(colorPickerRef, {
+		updateColorPickerRef(colorPickerRef, {
 			ColorPickerValue: accent as HEXColor
 		})
 	}
@@ -78,17 +78,17 @@ function initSettingsMenu(): void {const rgbToCSS = (rgb: RGBColor) => `${Math.r
 	const accentColorElement = $(GlobalElementIds.colorAccent) as HTMLStyleElement
 	let timeAccentId: number | NodeJS.Timeout | null = null
 
-	buttonRef.addEventListener('click', () => openMenu(menuRef, {
+	buttonRef.addEventListener('click', () => openMenuRef(menuRef, {
 		anchor: buttonRef
 	}))
 
 	menuRef.addEventListener('click', () => {
 		switch (document.activeElement) {
 		case accentButtonRef:
-			openColorPicker(colorPickerRef, {
+			openColorPickerRef(colorPickerRef, {
 				anchor: document.body,
 				position: ColorPickerPosition.centerCenterRightTop
-			}).then(() => closeMenu(menuRef))
+			}).then(() => closeMenuRef(menuRef))
 			break
 		}
 	})
@@ -96,9 +96,9 @@ function initSettingsMenu(): void {const rgbToCSS = (rgb: RGBColor) => `${Math.r
 	menuRef.addEventListener(MenuEvents.toggleOpen, ev => {
 		if (ev.target !== menuRef) return
 
-		const isOpen = isMenuOpen(menuRef)
+		const isOpen = isMenuRefOpen(menuRef)
 		buttonRef.setAttribute('aria-expanded', String(isOpen))
-		updateIconButton(buttonRef, {
+		updateIconButtonRef(buttonRef, {
 			ButtonFocused: isOpen
 		})
 	})
@@ -110,7 +110,7 @@ function initSettingsMenu(): void {const rgbToCSS = (rgb: RGBColor) => `${Math.r
 
 		localStorage.setItem(LocalStorageKeys.platformAnimation, value)
 		root.setAttribute(RootAttributes.animation, value)
-		closeMenu(menuRef)
+		closeMenuRef(menuRef)
 	})
 
 	themeMenuRef.addEventListener('change', ev => {
@@ -120,7 +120,7 @@ function initSettingsMenu(): void {const rgbToCSS = (rgb: RGBColor) => `${Math.r
 
 		localStorage.setItem(LocalStorageKeys.platformTheme, value)
 		root.setAttribute(RootAttributes.theme, value)
-		closeMenu(menuRef)
+		closeMenuRef(menuRef)
 	})
 
 	colorPickerRef.addEventListener(ColorPickerEvents.input, () => {

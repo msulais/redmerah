@@ -1,18 +1,18 @@
-import { updateButton, type ButtonVariant } from "@/native-components/Button"
+import { updateButtonRef, type ButtonVariant } from "@/native-components/Button"
 import { ELEMENT_ID_PREFIX, ElementIds } from "./_enums"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { isAnimationAllowed } from "@/utils/animation"
-import { SelectAttributes, SelectEvents, SelectVariant, updateSelect } from "@/native-components/Select"
-import { closePopover, openPopover, PopoverPosition, updatePopover } from "@/native-components/Popover"
+import { SelectAttributes, SelectEvents, SelectVariant, updateSelectRef } from "@/native-components/Select"
+import { closePopoverRef, openPopoverRef, PopoverPosition, updatePopoverRef } from "@/native-components/Popover"
 import { ColorPickerAttributes, ColorPickerEvents } from "@/native-components/ColorPicker"
 import { colorContrastRatio, colorHexToRgb } from "@/utils/color"
 import type { HEXColor } from "@/types/color"
-import { IconClasses, updateIcon } from "@/native-components/Icon"
-import { ListVariant, updateList } from "@/native-components/List"
+import { IconClasses, updateIconRef } from "@/native-components/Icon"
+import { ListVariant, updateListRef } from "@/native-components/List"
 import { numberSafe } from "@/utils/number"
-import { closeModal, ModalPosition, openModal, updateModal } from "@/native-components/Modal"
-import { TooltipPosition, updateTooltip } from "@/native-components/Tooltip"
-import { MenuPosition, openMenu, updateMenu } from "@/native-components/Menu"
+import { closeModalRef, ModalPosition, openModalRef, updateModalRef } from "@/native-components/Modal"
+import { TooltipPosition, updateTooltipRef } from "@/native-components/Tooltip"
+import { MenuPosition, openMenuRef, updateMenuRef } from "@/native-components/Menu"
 import { EmojiPickerAttributes, EmojiPickerEvents } from "@/native-components/EmojiPicker"
 
 const animationOptions = {duration: 250, easing: AnimationEffectTiming.spring}
@@ -31,15 +31,15 @@ function buttonPanel(): void {
 		const checked = target.checked
 		switch (target) {
 		case optionDisabled: {
-			updateButton(btn1, {ButtonDisabled: checked})
-			updateButton(btn2, {ButtonDisabled: checked})
-			updateButton(btn3, {ButtonDisabled: checked})
+			updateButtonRef(btn1, {ButtonDisabled: checked})
+			updateButtonRef(btn2, {ButtonDisabled: checked})
+			updateButtonRef(btn3, {ButtonDisabled: checked})
 			break
 		}
 		case optionFocused: {
-			updateButton(btn1, {ButtonFocused: checked})
-			updateButton(btn2, {ButtonFocused: checked})
-			updateButton(btn3, {ButtonFocused: checked})
+			updateButtonRef(btn1, {ButtonFocused: checked})
+			updateButtonRef(btn2, {ButtonFocused: checked})
+			updateButtonRef(btn3, {ButtonFocused: checked})
 			break
 		}}
 	})
@@ -49,9 +49,9 @@ function buttonPanel(): void {
 		switch (target) {
 		case optionVariant: {
 			const value = (target as HTMLDivElement).getAttribute(SelectAttributes.value)
-			updateButton(btn1, {ButtonVariant: value as ButtonVariant})
-			updateButton(btn2, {ButtonVariant: value as ButtonVariant})
-			updateButton(btn3, {ButtonVariant: value as ButtonVariant})
+			updateButtonRef(btn1, {ButtonVariant: value as ButtonVariant})
+			updateButtonRef(btn2, {ButtonVariant: value as ButtonVariant})
+			updateButtonRef(btn3, {ButtonVariant: value as ButtonVariant})
 			break
 		}}
 	})
@@ -156,7 +156,7 @@ function colorPickerPanel(): void {
 	const optionHueOnly = $(ELEMENT_ID_PREFIX + ElementIds.panelColorpickerOptionsHueOnly) as HTMLInputElement
 	const optionDisabledOpacity = $(ELEMENT_ID_PREFIX + ElementIds.panelColorpickerOptionsDisabledOpacity) as HTMLInputElement
 	button.addEventListener('click', () => {
-		openPopover(colorpicker, {
+		openPopoverRef(colorpicker, {
 			anchor: button
 		})
 	})
@@ -193,7 +193,7 @@ function iconPanel(): void {
 		switch (target) {
 		case filledOptionRef:
 			for (const icon of previewRef.querySelectorAll<HTMLElement>(`.${IconClasses.icon}`)) {
-				updateIcon(icon, {IconFilled: checked})
+				updateIconRef(icon, {IconFilled: checked})
 			}
 		}
 	})
@@ -217,7 +217,7 @@ function listPanel(): void {
 
 		switch (target) {
 		case variantOptionRef:
-			updateList(listPreview!, {
+			updateListRef(listPreview!, {
 				ListVariant: value as ListVariant
 			})
 		}
@@ -320,14 +320,14 @@ function popoverPanel(): void {
 	const importantOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelPopoverOptionsImportant) as HTMLInputElement
 	const draggableOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelPopoverOptionsDraggable) as HTMLInputElement
 
-	openButtonRef.addEventListener('click', () => openPopover(popoverRef))
-	closeButtonRef.addEventListener('click', () => closePopover(popoverRef))
+	openButtonRef.addEventListener('click', () => openPopoverRef(popoverRef))
+	closeButtonRef.addEventListener('click', () => closePopoverRef(popoverRef))
 	optionsRef.addEventListener(SelectEvents.change, ev => {
 		const target = ev.target as HTMLDivElement
 		const value = target.getAttribute(SelectAttributes.value)!
 		switch (target) {
 		case positionOptionRef:
-			updatePopover(popoverRef, {
+			updatePopoverRef(popoverRef, {
 				PopoverPosition: value as PopoverPosition
 			})
 			break
@@ -337,12 +337,12 @@ function popoverPanel(): void {
 	optionsRef.addEventListener('focusout', ev => {
 		switch (ev.target) {
 		case paddingOptionRef:
-			updatePopover(popoverRef, {
+			updatePopoverRef(popoverRef, {
 				PopoverPadding: numberSafe(paddingOptionRef.valueAsNumber)
 			})
 			break
 		case gapOptionRef:
-			updatePopover(popoverRef, {
+			updatePopoverRef(popoverRef, {
 				PopoverGap: gapOptionRef.valueAsNumber
 			})
 			break
@@ -354,18 +354,18 @@ function popoverPanel(): void {
 		const checked = target.checked
 		switch (target) {
 		case anchorOptionRef:
-			updatePopover(popoverRef, {
+			updatePopoverRef(popoverRef, {
 				PopoverAnchorBy: checked? openButtonRef.id : false
 			})
 			break
 		case autofocusOptionRef:
-			updatePopover(popoverRef, {PopoverAutoFocus: checked})
+			updatePopoverRef(popoverRef, {PopoverAutoFocus: checked})
 			break
 		case importantOptionRef:
-			updatePopover(popoverRef, {PopoverImportant: checked})
+			updatePopoverRef(popoverRef, {PopoverImportant: checked})
 			break
 		case draggableOptionRef:
-			updatePopover(popoverRef, {PopoverDraggable: checked})
+			updatePopoverRef(popoverRef, {PopoverDraggable: checked})
 			break
 		}
 	})
@@ -383,14 +383,14 @@ function modalPanel(): void {
 	const importantOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsImportant) as HTMLInputElement
 	const draggableOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsDraggable) as HTMLInputElement
 
-	openButtonRef.addEventListener('click', () => openModal(modalRef))
-	closeButtonRef.addEventListener('click', () => closeModal(modalRef))
+	openButtonRef.addEventListener('click', () => openModalRef(modalRef))
+	closeButtonRef.addEventListener('click', () => closeModalRef(modalRef))
 	optionsRef.addEventListener(SelectEvents.change, ev => {
 		const target = ev.target as HTMLDivElement
 		const value = target.getAttribute(SelectAttributes.value)!
 		switch (target) {
 		case positionOptionRef:
-			updateModal(modalRef, {
+			updateModalRef(modalRef, {
 				ModalPosition: value as ModalPosition
 			})
 			break
@@ -400,12 +400,12 @@ function modalPanel(): void {
 	optionsRef.addEventListener('focusout', ev => {
 		switch (ev.target) {
 		case paddingOptionRef:
-			updateModal(modalRef, {
+			updateModalRef(modalRef, {
 				ModalPadding: numberSafe(paddingOptionRef.valueAsNumber)
 			})
 			break
 		case gapOptionRef:
-			updateModal(modalRef, {
+			updateModalRef(modalRef, {
 				ModalGap: gapOptionRef.valueAsNumber
 			})
 			break
@@ -417,18 +417,18 @@ function modalPanel(): void {
 		const checked = target.checked
 		switch (target) {
 		case anchorOptionRef:
-			updateModal(modalRef, {
+			updateModalRef(modalRef, {
 				ModalAnchorBy: checked? openButtonRef.id : false
 			})
 			break
 		case autofocusOptionRef:
-			updateModal(modalRef, {ModalAutoFocus: checked})
+			updateModalRef(modalRef, {ModalAutoFocus: checked})
 			break
 		case importantOptionRef:
-			updateModal(modalRef, {ModalImportant: checked})
+			updateModalRef(modalRef, {ModalImportant: checked})
 			break
 		case draggableOptionRef:
-			updateModal(modalRef, {ModalDraggable: checked})
+			updateModalRef(modalRef, {ModalDraggable: checked})
 			break
 		}
 	})
@@ -470,7 +470,7 @@ function selectPanel(): void {
 		const value = target.getAttribute(SelectAttributes.value)!
 		switch (target) {
 		case variantOptionRef:
-			updateSelect(previewRef, {
+			updateSelectRef(previewRef, {
 				SelectVariant: value as SelectVariant
 			})
 			break
@@ -523,7 +523,7 @@ function tooltipPanel(): void {
 		if (timeStartDelayId !== null) clearTimeout(timeStartDelayId)
 
 		timeStartDelayId = setTimeout(() => {
-			updateTooltip(previewRef, {
+			updateTooltipRef(previewRef, {
 				TooltipStartDelay: numberSafe(startDelayOptionRef.valueAsNumber)
 			})
 		}, 50)
@@ -533,7 +533,7 @@ function tooltipPanel(): void {
 		if (timeEndDelayId !== null) clearTimeout(timeEndDelayId)
 
 		timeEndDelayId = setTimeout(() => {
-			updateTooltip(previewRef, {
+			updateTooltipRef(previewRef, {
 				TooltipEndDelay: numberSafe(endDelayOptionRef.valueAsNumber)
 			})
 		}, 50)
@@ -543,7 +543,7 @@ function tooltipPanel(): void {
 		if (timeGapId !== null) clearTimeout(timeGapId)
 
 		timeGapId = setTimeout(() => {
-			updateTooltip(previewRef, {
+			updateTooltipRef(previewRef, {
 				TooltipGap: numberSafe(gapOptionRef.valueAsNumber)
 			})
 		}, 50)
@@ -554,7 +554,7 @@ function tooltipPanel(): void {
 		const value = target.getAttribute(SelectAttributes.value)!
 		switch (target) {
 		case positionOptionRef:
-			updateTooltip(previewRef, {
+			updateTooltipRef(previewRef, {
 				TooltipPosition: value as TooltipPosition
 			})
 			break
@@ -566,7 +566,7 @@ function tooltipPanel(): void {
 		const checked = target.checked
 		switch (target) {
 		case anchorOptionRef:
-			updateTooltip(previewRef, {
+			updateTooltipRef(previewRef, {
 				TooltipUseAnchor: checked
 			})
 		}
@@ -581,17 +581,17 @@ function menuPanel(): void {
 	const anchorOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelMenuOptionsAnchor) as HTMLInputElement
 	const gapOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelMenuOptionsGap) as HTMLInputElement
 
-	buttonRef.addEventListener('click', () => openMenu(menuRef))
+	buttonRef.addEventListener('click', () => openMenuRef(menuRef))
 	buttonRef.addEventListener('contextmenu', ev => {
 		ev.preventDefault()
-		openMenu(menuRef)
+		openMenuRef(menuRef)
 	})
 
 	optionsRef.addEventListener('focusout', ev => {
 		const target = ev.target as HTMLElement
 		switch (target) {
 		case gapOptionRef:
-			updateMenu(menuRef, {
+			updateMenuRef(menuRef, {
 				PopoverGap: numberSafe(gapOptionRef.valueAsNumber)
 			})
 			break
@@ -603,7 +603,7 @@ function menuPanel(): void {
 		const checked = target.checked
 		switch (target) {
 		case anchorOptionRef:
-			updateMenu(menuRef, {
+			updateMenuRef(menuRef, {
 				PopoverAnchorBy: checked? buttonRef.id : false
 			})
 			break
@@ -615,7 +615,7 @@ function menuPanel(): void {
 		const value = target.getAttribute(SelectAttributes.value)!
 		switch (target) {
 		case positionOptionRef:
-			updateMenu(menuRef, {
+			updateMenuRef(menuRef, {
 				PopoverPosition: value as MenuPosition
 			})
 			break
@@ -630,7 +630,7 @@ function panelEmojiPicker(): void {
 	const emojipickerRef = $(ELEMENT_ID_PREFIX + ElementIds.panelEmojipickerPreviewEmojiPicker) as HTMLDivElement
 
 	buttonRef.addEventListener('click', () => {
-		openPopover(emojipickerRef, {
+		openPopoverRef(emojipickerRef, {
 			anchor: buttonRef
 		})
 	})

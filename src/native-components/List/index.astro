@@ -1,11 +1,14 @@
 ---
 import { attrClassList } from '@/utils/attributes'
-import { ListClasses, type ListProps } from '.'
+
+import {
+	ListClasses,
+	type ListProps
+} from '.'
 
 import './index.scss'
 
 type Props = ListProps
-
 const {
 	'class': className,
 	ListVariant,
@@ -16,10 +19,10 @@ const {
 	ListSubtitleAttr = {},
 	...other
 } = Astro.props
-const {'class': leadingClassName , ...leadingOther } = ListLeadingAttr
-const {'class': trailingClassName, ...trailingOther} = ListTrailingAttr
-const {'class': contentClassName , ...contentOther } = ListContentAttr
-const {'class': subtitleClassName, ...subtitleOther} = ListSubtitleAttr
+const {'class': leadingClass , ...leadingOther } = ListLeadingAttr
+const {'class': trailingClass, ...trailingOther} = ListTrailingAttr
+const {'class': contentClass , ...contentOther } = ListContentAttr
+const {'class': subtitleClass, ...subtitleOther} = ListSubtitleAttr
 const Dynamic = ListTagName as 'div'
 
 ---
@@ -27,20 +30,20 @@ const Dynamic = ListTagName as 'div'
 	class={attrClassList(ListClasses.list, className)}
 	data-c-list-variant={ListVariant}
 	{...other}>
-	<div class={attrClassList(ListClasses.leading, leadingClassName)} {...leadingOther}>
+	<div class={attrClassList(ListClasses.leading, leadingClass)} {...leadingOther}>
 		<slot name='leading'/>
 	</div>
-	<div class={attrClassList(ListClasses.content, contentClassName)} {...contentOther}>
+	<div class={attrClassList(ListClasses.content, contentClass)} {...contentOther}>
 		<slot/>
 		{Astro.slots.has('subtitle') &&
 			<div
-				class={attrClassList(ListClasses.subtitle, subtitleClassName)}
+				class={attrClassList(ListClasses.subtitle, subtitleClass)}
 				{...subtitleOther}>
 				<slot name='subtitle'/>
 			</div>
 		}
 	</div>
-	<div class={attrClassList(ListClasses.trailing, trailingClassName)} {...trailingOther}>
+	<div class={attrClassList(ListClasses.trailing, trailingClass)} {...trailingOther}>
 		<slot name='trailing'/>
 	</div>
 </Dynamic>

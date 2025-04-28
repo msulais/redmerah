@@ -1,4 +1,11 @@
-import { updateButton, updateLinkButton, type ButtonProps, type ButtonUpdateOptions, type LinkButtonProps, type LinkButtonUpdateOptions } from "../Button"
+import {
+	updateButtonRef,
+	updateLinkButtonRef,
+	type ButtonProps,
+	type ButtonUpdateOptions,
+	type LinkButtonProps,
+	type LinkButtonUpdateOptions
+} from "@/native-components/Button"
 
 type DrawerProps = astroHTML.JSX.HTMLAttributes & {
 	DrawerContainerAttr?: astroHTML.JSX.HTMLAttributes
@@ -18,14 +25,14 @@ type LinkDrawerButtonProps = LinkButtonProps & {
 type DrawerButtonUpdateOptions = ButtonUpdateOptions & {
 	DrawerButtonSelected?: boolean
 	DrawerButtonRefs    ?: {
-		button?(el: HTMLButtonElement): unknown
+		button?(ref: HTMLButtonElement): unknown
 	}
 }
 
 type LinkDrawerButtonUpdateOptions = LinkButtonUpdateOptions & {
 	DrawerButtonSelected?: boolean
 	DrawerButtonRefs    ?: {
-		link?(el: HTMLAnchorElement): unknown
+		link?(ref: HTMLAnchorElement): unknown
 	}
 }
 
@@ -34,11 +41,11 @@ type DrawerUpdateOptions = {
 	DrawerHeader  ?: (string | Node)[] | boolean
 	DrawerFooter  ?: (string | Node)[] | boolean
 	DrawerRefs    ?: {
-		drawer   ?(el: HTMLDivElement): unknown
-		container?(el: HTMLDivElement): unknown
-		header   ?(el: HTMLDivElement): unknown
-		content  ?(el: HTMLDivElement): unknown
-		footer   ?(el: HTMLDivElement): unknown
+		drawer   ?(ref: HTMLDivElement): unknown
+		container?(ref: HTMLDivElement): unknown
+		header   ?(ref: HTMLDivElement): unknown
+		content  ?(ref: HTMLDivElement): unknown
+		footer   ?(ref: HTMLDivElement): unknown
 	}
 }
 
@@ -55,24 +62,24 @@ enum DrawerButtonAttributes {
 	selected = 'data-c-drawer-button-selected'
 }
 
-function openDrawer(drawerRef: HTMLDivElement): void {
+function openDrawerRef(drawerRef: HTMLDivElement): void {
 	drawerRef.showPopover()
 }
 
-function closeDrawer(drawerRef: HTMLDivElement): void {
+function closeDrawerRef(drawerRef: HTMLDivElement): void {
 	drawerRef.hidePopover()
 }
 
-function isDrawerOpen(drawerRef: HTMLDivElement): boolean {
+function isDrawerRefOpen(drawerRef: HTMLDivElement): boolean {
 	return drawerRef.matches(':popover-open')
 }
 
-function createDrawer(options?: DrawerUpdateOptions): HTMLDivElement {
+function createDrawerRef(options?: DrawerUpdateOptions): HTMLDivElement {
 	const drawerRef = document.createElement('div')
-	return updateDrawer(drawerRef, options)
+	return updateDrawerRef(drawerRef, options)
 }
 
-function updateDrawer(drawerRef: HTMLDivElement, options?: DrawerUpdateOptions): HTMLDivElement {
+function updateDrawerRef(drawerRef: HTMLDivElement, options?: DrawerUpdateOptions): HTMLDivElement {
 	const refs = options?.DrawerRefs
 	drawerRef.classList.add(DrawerClasses.drawer)
 	drawerRef.popover = 'auto'
@@ -91,12 +98,12 @@ function updateDrawer(drawerRef: HTMLDivElement, options?: DrawerUpdateOptions):
 		headerRef.classList.add(DrawerClasses.header)
 	}
 
-	const header = options?.DrawerHeader
-	if (header === false) {
+	const headerOption = options?.DrawerHeader
+	if (headerOption === false) {
 		headerRef.replaceChildren()
 	}
-	else if (header !== undefined && header !== true) {
-		headerRef.replaceChildren(...header)
+	else if (headerOption !== undefined && headerOption !== true) {
+		headerRef.replaceChildren(...headerOption)
 	}
 
 	// container -> content
@@ -106,12 +113,12 @@ function updateDrawer(drawerRef: HTMLDivElement, options?: DrawerUpdateOptions):
 		contentRef.classList.add(DrawerClasses.content)
 	}
 
-	const children = options?.DrawerChildren
-	if (children === false) {
+	const childrenOption = options?.DrawerChildren
+	if (childrenOption === false) {
 		contentRef.replaceChildren()
 	}
-	else if (children !== undefined && children !== true) {
-		contentRef.replaceChildren(...children)
+	else if (childrenOption !== undefined && childrenOption !== true) {
+		contentRef.replaceChildren(...childrenOption)
 	}
 
 	// container -> footer
@@ -121,12 +128,12 @@ function updateDrawer(drawerRef: HTMLDivElement, options?: DrawerUpdateOptions):
 		footerRef.classList.add(DrawerClasses.footer)
 	}
 
-	const footer = options?.DrawerFooter
-	if (footer === false) {
+	const footerOption = options?.DrawerFooter
+	if (footerOption === false) {
 		footerRef.replaceChildren()
 	}
-	else if (footer !== undefined && footer !== true) {
-		footerRef.replaceChildren(...footer)
+	else if (footerOption !== undefined && footerOption !== true) {
+		footerRef.replaceChildren(...footerOption)
 	}
 
 	containerRef.replaceChildren(headerRef, contentRef, footerRef)
@@ -139,42 +146,42 @@ function updateDrawer(drawerRef: HTMLDivElement, options?: DrawerUpdateOptions):
 	return drawerRef
 }
 
-function createDrawerButton(options?: DrawerButtonUpdateOptions): HTMLButtonElement {
+function createDrawerButtonRef(options?: DrawerButtonUpdateOptions): HTMLButtonElement {
 	const buttonRef = document.createElement('button')
-	return updateDrawerButton(buttonRef, options)
+	return updateDrawerButtonRef(buttonRef, options)
 }
 
-function updateDrawerButton(drawerButtonRef: HTMLButtonElement, options?: DrawerButtonUpdateOptions): HTMLButtonElement {
+function updateDrawerButtonRef(drawerButtonRef: HTMLButtonElement, options?: DrawerButtonUpdateOptions): HTMLButtonElement {
 	const refs = options?.DrawerButtonRefs
-	updateButton(drawerButtonRef, options)
+	updateButtonRef(drawerButtonRef, options)
 	drawerButtonRef.classList.add(DrawerClasses.button)
 
-	const selected = options?.DrawerButtonSelected
-	if (selected !== undefined) {
-		drawerButtonRef.toggleAttribute(DrawerButtonAttributes.selected, selected)
+	const selectedOption = options?.DrawerButtonSelected
+	if (selectedOption !== undefined) {
+		drawerButtonRef.toggleAttribute(DrawerButtonAttributes.selected, selectedOption)
 	}
 
 	refs?.button?.(drawerButtonRef)
 	return drawerButtonRef
 }
 
-function createLinkDrawerButton(options?: LinkDrawerButtonUpdateOptions): HTMLAnchorElement {
+function createLinkDrawerButtonRef(options?: LinkDrawerButtonUpdateOptions): HTMLAnchorElement {
 	const linkRef = document.createElement('a')
-	return updateLinkDrawerButton(linkRef, options)
+	return updateLinkDrawerButtonRef(linkRef, options)
 }
 
-function updateLinkDrawerButton(linkRef: HTMLAnchorElement, options?: LinkDrawerButtonUpdateOptions): HTMLAnchorElement {
+function updateLinkDrawerButtonRef(linkDrawerButtonRef: HTMLAnchorElement, options?: LinkDrawerButtonUpdateOptions): HTMLAnchorElement {
 	const refs = options?.DrawerButtonRefs
-	updateLinkButton(linkRef, options)
-	linkRef.classList.add(DrawerClasses.button)
+	updateLinkButtonRef(linkDrawerButtonRef, options)
+	linkDrawerButtonRef.classList.add(DrawerClasses.button)
 
-	const selected = options?.DrawerButtonSelected
-	if (selected !== undefined) {
-		linkRef.toggleAttribute(DrawerButtonAttributes.selected, selected)
+	const selectedOption = options?.DrawerButtonSelected
+	if (selectedOption !== undefined) {
+		linkDrawerButtonRef.toggleAttribute(DrawerButtonAttributes.selected, selectedOption)
 	}
 
-	refs?.link?.(linkRef)
-	return linkRef
+	refs?.link?.(linkDrawerButtonRef)
+	return linkDrawerButtonRef
 }
 
 export {
@@ -186,13 +193,13 @@ export {
 	type LinkDrawerButtonUpdateOptions,
 	DrawerClasses,
 	DrawerButtonAttributes,
-	openDrawer,
-	closeDrawer,
-	isDrawerOpen,
-	createDrawer,
-	updateDrawer,
-	createDrawerButton,
-	updateDrawerButton,
-	createLinkDrawerButton,
-	updateLinkDrawerButton
+	openDrawerRef,
+	closeDrawerRef,
+	isDrawerRefOpen,
+	createDrawerRef,
+	updateDrawerRef,
+	createDrawerButtonRef,
+	updateDrawerButtonRef,
+	createLinkDrawerButtonRef,
+	updateLinkDrawerButtonRef
 }

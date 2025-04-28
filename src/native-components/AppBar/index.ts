@@ -12,11 +12,11 @@ type AppBarUpdateOptions = {
 	AppBarHeadline?: (Node | string)[] | boolean
 	AppBarTrailing?: (Node | string)[] | boolean
 	AppBarRefs?: {
-		appBar  ?(el: HTMLElement       ): unknown
-		leading ?(el: HTMLDivElement    ): unknown
-		trailing?(el: HTMLDivElement    ): unknown
-		content ?(el: HTMLDivElement    ): unknown
-		headline?(el: HTMLHeadingElement): unknown
+		appBar  ?(ref: HTMLElement       ): unknown
+		leading ?(ref: HTMLDivElement    ): unknown
+		trailing?(ref: HTMLDivElement    ): unknown
+		content ?(ref: HTMLDivElement    ): unknown
+		headline?(ref: HTMLHeadingElement): unknown
 	}
 }
 
@@ -28,101 +28,105 @@ enum AppBarClasses {
 	headline = appbar + '-headline'
 }
 
-function createAppBar<T extends HTMLElement>(
+function createAppBarRef<T extends HTMLElement>(
 	options?: AppBarUpdateOptions & {AppBarTagName?: keyof HTMLElementTagNameMap}
 ): T {
-	const appbar = document.createElement(options?.AppBarTagName ?? 'header')
-	return updateAppBar(appbar, options) as T
+	const appBarRef = document.createElement(options?.AppBarTagName ?? 'header')
+	return updateAppBarRef(appBarRef, options) as T
 }
 
-function updateAppBar<T extends HTMLElement>(appBar: T, options?: AppBarUpdateOptions): T {
+function updateAppBarRef<T extends HTMLElement>(appBarRef: T, options?: AppBarUpdateOptions): T {
 	const refs = options?.AppBarRefs
-	appBar.classList.add(AppBarClasses.appbar)
+	appBarRef.classList.add(AppBarClasses.appbar)
 
 	// leading
-	let leading = appBar.querySelector(`.${AppBarClasses.leading}`) as HTMLDivElement | null
-	if (options?.AppBarLeading === false) {
-		leading?.replaceChildren()
+	const leadingOption = options?.AppBarLeading
+	let leadingRef = appBarRef.querySelector(`.${AppBarClasses.leading}`) as HTMLDivElement | null
+	if (leadingOption === false) {
+		leadingRef?.replaceChildren()
 	}
-	else if (options?.AppBarLeading !== undefined && options.AppBarLeading !== true) {
-		if (!leading) {
-			leading = document.createElement('div')
-			leading.classList.add(AppBarClasses.leading)
+	else if (leadingOption !== undefined && leadingOption !== true) {
+		if (!leadingRef) {
+			leadingRef = document.createElement('div')
+			leadingRef.classList.add(AppBarClasses.leading)
 		}
 
-		leading.replaceChildren(...options.AppBarLeading)
+		leadingRef.replaceChildren(...leadingOption)
 	}
 
 	// content
-	let content = appBar.querySelector(`.${AppBarClasses.content}`) as HTMLDivElement | null
-	if (!content) {
-		content = document.createElement('div')
-		content.classList.add(AppBarClasses.content)
+	let contentRef = appBarRef.querySelector(`.${AppBarClasses.content}`) as HTMLDivElement | null
+	if (!contentRef) {
+		contentRef = document.createElement('div')
+		contentRef.classList.add(AppBarClasses.content)
 	}
 
 	// content -> headline
-	let headline = appBar.querySelector(`.${AppBarClasses.headline}`) as HTMLHeadingElement | null
-	if (options?.AppBarHeadline === false) {
-		headline?.replaceChildren()
+	const headlineOption = options?.AppBarHeadline
+	let headlineRef = contentRef.querySelector(`.${AppBarClasses.headline}`) as HTMLHeadingElement | null
+	if (headlineOption === false) {
+		headlineRef?.replaceChildren()
 	}
-	else if (options?.AppBarHeadline !== undefined && options.AppBarHeadline !== true) {
-		if (!headline) {
-			headline = document.createElement('h2')
-			headline.classList.add(AppBarClasses.headline)
+	else if (headlineOption !== undefined && headlineOption !== true) {
+		if (!headlineRef) {
+			headlineRef = document.createElement('h2')
+			headlineRef.classList.add(AppBarClasses.headline)
 		}
 
-		headline.replaceChildren(...options.AppBarHeadline)
+		headlineRef.replaceChildren(...headlineOption)
 	}
 
 	// content -> children
 	const children: (Node | string)[] = []
-	for (const node of content.childNodes) {
-		if (headline && node === headline) continue
+	for (const node of contentRef.childNodes) {
+		if (headlineRef && node === headlineRef) continue
 
 		children.push(node)
 	}
 
-	if (options?.AppBarChildren === false) {
+	const childrenOption = options?.AppBarChildren
+	if (childrenOption === false) {
 		children.length = 0
 	}
-	else if (options?.AppBarChildren !== undefined && options.AppBarChildren !== true) {
+	else if (childrenOption !== undefined && childrenOption !== true) {
 		children.length = 0
-		children.push(...options.AppBarChildren)
+		children.push(...childrenOption)
 	}
 
-	content.replaceChildren(...[headline, ...children].filter(
+	contentRef.replaceChildren(...[headlineRef, ...children].filter(
 		v => typeof v === 'string' || v instanceof Node
 	))
 
 	// trailing
-	let trailing = appBar.querySelector(`.${AppBarClasses.trailing}`) as HTMLDivElement | null
-	if (options?.AppBarTrailing === false) {
-		trailing?.replaceChildren()
+	const trailingOption = options?.AppBarTrailing
+	let trailingRef = appBarRef.querySelector(`.${AppBarClasses.trailing}`) as HTMLDivElement | null
+	if (trailingOption === false) {
+		trailingRef?.replaceChildren()
 	}
-	else if (options?.AppBarTrailing !== undefined && options.AppBarTrailing !== true) {
-		if (!trailing) {
-			trailing = document.createElement('div')
-			trailing.classList.add(AppBarClasses.trailing)
+	else if (trailingOption !== undefined && trailingOption !== true) {
+		if (!trailingRef) {
+			trailingRef = document.createElement('div')
+			trailingRef.classList.add(AppBarClasses.trailing)
 		}
 
-		trailing.replaceChildren(...options.AppBarTrailing)
+		trailingRef.replaceChildren(...trailingOption)
 	}
 
-	appBar.replaceChildren(...[leading, content, trailing].filter(
+	appBarRef.replaceChildren(...[leadingRef, contentRef, trailingRef].filter(
 		v => typeof v === 'string' || v instanceof Node
 	))
-	refs?.appBar?.(appBar)
-	refs?.content?.(content)
-	if (leading) refs?.leading?.(leading)
-	if (headline) refs?.headline?.(headline)
-	if (trailing) refs?.trailing?.(trailing)
-	return appBar
+	refs?.appBar?.(appBarRef)
+	refs?.content?.(contentRef)
+	if (leadingRef) refs?.leading?.(leadingRef)
+	if (headlineRef) refs?.headline?.(headlineRef)
+	if (trailingRef) refs?.trailing?.(trailingRef)
+	return appBarRef
 }
 
 export {
 	type AppBarProps,
 	type AppBarUpdateOptions,
 	AppBarClasses,
-	createAppBar,
-	updateAppBar
+	createAppBarRef,
+	updateAppBarRef
 }

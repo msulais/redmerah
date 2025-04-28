@@ -1,3 +1,5 @@
+import { FlyoutPosition as MenuPosition } from "@/enums/position"
+
 import {
 	type PopoverProps,
 	type PopoverOpenOptions,
@@ -9,14 +11,14 @@ import {
 	PopoverEvents,
 	PopoverAttributes,
 	PopoverClasses,
-	openPopover,
-	closePopover,
-	repositionPopover,
-	isPopoverOpen,
-	createPopover,
-	registerPopover,
-	updatePopover,
-	unregisterPopover,
+	openPopoverRef,
+	closePopoverRef,
+	repositionPopoverRef,
+	isPopoverRefOpen,
+	createPopoverRef,
+	registerPopoverRef,
+	updatePopoverRef,
+	unregisterPopoverRef,
 	type PopoverToggleOpenDetail
 } from "@/native-components/Popover"
 import {
@@ -24,20 +26,18 @@ import {
 	type ButtonProps,
 	type LinkButtonUpdateOptions,
 	type LinkButtonProps,
-	createButton,
-	createLinkButton,
-	updateButton,
-	updateLinkButton,
+	createButtonRef,
+	createLinkButtonRef,
+	updateButtonRef,
+	updateLinkButtonRef,
 	ButtonClasses
 } from "@/native-components/Button"
-import { FlyoutPosition as MenuPosition } from "@/enums/position"
 import { PopoverPosition } from "@/native-components/Popover"
 import type { IconProps } from "@/native-components/Icon"
 
 type MenuProps = PopoverProps
 type MenuItemProps = ButtonProps
 type LinkMenuItemProps = LinkButtonProps
-
 type MenuHeaderProps = astroHTML.JSX.HTMLAttributes
 
 type SubMenuItemProps = Omit<MenuItemProps, 'aria-controls'> & {
@@ -55,28 +55,28 @@ type RadioMenuItemProps = astroHTML.JSX.LabelHTMLAttributes & {
 
 type MenuIndentUpdateOptions = {
 	MenuIndentRefs?: {
-		indent?(el: HTMLDivElement): unknown
+		indent?(ref: HTMLDivElement): unknown
 	}
 }
 
 type MenuHeaderUpdateOptions = {
 	MenuHeaderChildren?: (string | Node)[] | boolean
 	MenuHeaderRefs    ?: {
-		header?(el: HTMLDivElement): unknown
+		header?(ref: HTMLDivElement): unknown
 	}
 }
 
 type MenuUpdateOptions = PopoverUpdateOptions & {
 	MenuRole?: astroHTML.JSX.AriaRole | boolean
 	MenuRefs?: {
-		menu?(el: HTMLDivElement): unknown
+		menu?(ref: HTMLDivElement): unknown
 	}
 }
 
 type MenuItemUpdateOptions = ButtonUpdateOptions & {
 	MenuItemRole?: astroHTML.JSX.AriaRole | boolean
 	MenuItemRefs?: {
-		menuitem?(el: HTMLButtonElement): unknown
+		menuitem?(ref: HTMLButtonElement): unknown
 	}
 }
 
@@ -85,14 +85,14 @@ type SubMenuItemUpdateOptions = MenuItemUpdateOptions & {
 	SubMenuItemAriaControls?: astroHTML.JSX.AriaAttributes['aria-controls'] | boolean
 	SubMenuAriaHaspopup    ?: astroHTML.JSX.AriaAttributes['aria-haspopup'] | boolean
 	SubMenuRefs            ?: {
-		menuitem?(el: HTMLButtonElement): unknown
+		menuitem?(ref: HTMLButtonElement): unknown
 	}
 }
 
 type LinkMenuItemUpdateOptions = LinkButtonUpdateOptions & {
 	LinkMenuItemRole?: astroHTML.JSX.AriaRole | boolean
 	LinkMenuItemRefs?: {
-		menuitem?(el: HTMLAnchorElement): unknown
+		menuitem?(ref: HTMLAnchorElement): unknown
 	}
 }
 
@@ -113,25 +113,25 @@ const REGISTERED_SUBMENUITEM: Set<HTMLButtonElement> = new Set<HTMLButtonElement
 
 /**
  * Any element is possible as long have class `MenuClasses.submenu`
- * @param submenuitem
+ * @param subMenuItemRef
  */
-function _initSubMenu(submenuitem: HTMLElement): void {
+function _initSubMenuItemRef(subMenuItemRef: HTMLElement): void {
 	const elements = {
 		get parent() {
-			return submenuitem.closest('.' + MenuClasses.menu) as HTMLDivElement | null
+			return subMenuItemRef.closest('.' + MenuClasses.menu) as HTMLDivElement | null
 		},
 		get parentContent() {
-			return submenuitem.closest('.' + PopoverClasses.content) as HTMLDivElement | null
+			return subMenuItemRef.closest('.' + PopoverClasses.content) as HTMLDivElement | null
 		},
 		get target() {
-			return document.getElementById(submenuitem.getAttribute('aria-controls') ?? '___NONE___') as HTMLDivElement | null
+			return document.getElementById(subMenuItemRef.getAttribute('aria-controls') ?? '___NONE___') as HTMLDivElement | null
 		}
 	}
 	let isParentHovered = false
 	let isTargetHovered = false
 	let timeId: number | NodeJS.Timeout | null = null
 
-	function getAllSubMenu(from: HTMLElement): HTMLDivElement[] {
+	function getAllSubMenuRefs(from: HTMLElement): HTMLDivElement[] {
 		const menus: Set<HTMLDivElement> = new Set<HTMLDivElement>()
 		const traverseDown = (popover: HTMLElement) => {
 			const submenuItems = popover.querySelectorAll<HTMLButtonElement>(`.${MenuClasses.submenuItem}[aria-controls]`)
@@ -160,26 +160,25 @@ function _initSubMenu(submenuitem: HTMLElement): void {
 		return [...menus.values()]
 	}
 
-	function openSubMenu(instant: boolean = false): void {
+	function openSubMenuRef(instant: boolean = false): void {
 		if (timeId !== null) clearTimeout(timeId)
 		timeId = setTimeout(() => {
 			timeId = null
-			const parent = elements.parent
-			const target = elements.target
-			if (!target || !parent || isPopoverOpen(target)) return
+			const parentRef = elements.parent
+			const targetRef = elements.target
+			if (!targetRef || !parentRef || isPopoverRefOpen(targetRef)) return
 
-			for (const menu of getAllSubMenu(parent)) {
-				if (menu === target) continue
+			for (const menuRef of getAllSubMenuRefs(parentRef)) {
+				if (menuRef === targetRef) continue
 
-				closePopover(menu, { animation: false }).then(() => {
-					// BUG: when close parent by function it wont do anything
-					document.body.appendChild(menu)
+				closePopoverRef(menuRef, { animation: false }).then(() => {
+					document.body.appendChild(menuRef)
 				})
 			}
 
-			parent.appendChild(target)
-			openPopover(target, {
-				anchor: submenuitem,
+			parentRef.appendChild(targetRef)
+			openPopoverRef(targetRef, {
+				anchor: subMenuItemRef,
 				position: PopoverPosition.rightCenterToBottom,
 				gap: -4,
 				padding: 5, // +1px for border
@@ -188,109 +187,110 @@ function _initSubMenu(submenuitem: HTMLElement): void {
 		}, instant? 0 : 300)
 	}
 
-	function closeSubMenu(instant: boolean = false): void {
+	function closeSubMenuRef(instant: boolean = false): void {
 		if (timeId !== null) clearTimeout(timeId)
 		timeId = setTimeout(() => {
 			timeId = null
-			const target = elements.target
-			if (!target) return
+			const targetRef = elements.target
+			if (!targetRef) return
 
-			for (const menu of getAllSubMenu(target)) {
-				if (menu === target) continue
+			for (const menuRef of getAllSubMenuRefs(targetRef)) {
+				if (menuRef === targetRef) continue
 
-				closePopover(menu).then(() => {
-					document.body.appendChild(menu)
+				closePopoverRef(menuRef).then(() => {
+					document.body.appendChild(menuRef)
 				})
 			}
 
-			closePopover(target)
+			closePopoverRef(targetRef)
+			document.body.appendChild(targetRef)
 		}, instant? 0 : 300)
 	}
 
-	function menuContentOnPointerEnter(): void {
+	function menuContentRefOnPointerEnter(): void {
 		isParentHovered = true
 		if (!isTargetHovered) {
-			closeSubMenu()
+			closeSubMenuRef()
 		}
 	}
 
-	function menuContentOnPointerLeave(): void {
+	function menuContentRefOnPointerLeave(): void {
 		isParentHovered = false
 	}
 
-	function menuOnBeforeClose(ev: Event): void {
+	function menuRefOnBeforeClose(ev: Event): void {
 		if (timeId !== null) clearTimeout(timeId)
-		for (const menu of getAllSubMenu(ev.target as HTMLElement)) {
-			closePopover(menu).then(() => {
-				document.body.appendChild(menu)
+		for (const menuRef of getAllSubMenuRefs(ev.target as HTMLElement)) {
+			closePopoverRef(menuRef).then(() => {
+				document.body.appendChild(menuRef)
 			})
 		}
 	}
 
-	function subMenuOnPointerEnter(): void {
+	function subMenuRefOnPointerEnter(): void {
 		isTargetHovered = true
-		openSubMenu()
+		openSubMenuRef()
 	}
 
-	function subMenuOnPointerLeave(): void {
+	function subMenuRefOnPointerLeave(): void {
 		isTargetHovered = false
 		if (isParentHovered) {
-			closeSubMenu()
+			closeSubMenuRef()
 		}
 		else {
-			openSubMenu()
+			openSubMenuRef()
 		}
 	}
 
-	function subMenuOnClick(): void {
-		openSubMenu(true)
+	function subMenuRefOnClick(): void {
+		openSubMenuRef(true)
 	}
 
-	function subMenuOnToggleOpen(ev: CustomEvent<PopoverToggleOpenDetail>): void {
+	function subMenuRefOnToggleOpen(ev: CustomEvent<PopoverToggleOpenDetail>): void {
 		const open = ev.detail.open
 
 		// toggleopen can bubbles
-		if ((ev.target as any).id !== submenuitem.getAttribute('aria-controls')) return
-		submenuitem.setAttribute('aria-expanded', String(open))
-		if (submenuitem.classList.contains(ButtonClasses.button)) {
-			updateMenuItem(submenuitem as HTMLButtonElement, {
+		if ((ev.target as any).id !== subMenuItemRef.getAttribute('aria-controls')) return
+		subMenuItemRef.setAttribute('aria-expanded', String(open))
+		if (subMenuItemRef.classList.contains(ButtonClasses.button)) {
+			updateMenuItemRef(subMenuItemRef as HTMLButtonElement, {
 				ButtonFocused: open
 			})
 		}
 	}
 
 	function initEvents(): void {
-		const parent = elements.parent
-		parent?.addEventListener(PopoverEvents.toggleOpen, (ev) => {
-			if (ev.target !== parent) return
+		const parentRef = elements.parent
+		parentRef?.addEventListener(PopoverEvents.toggleOpen, (ev) => {
+			if (ev.target !== parentRef) return
 
-			const isOpen = parent.matches(':popover-open')
-			const target = elements.target
-			const content = elements.parentContent
+			const isOpen = parentRef.matches(':popover-open')
+			const targetRef = elements.target
+			const contentRef = elements.parentContent
 			if (isOpen) {
-				parent?.addEventListener(PopoverEvents.beforeClose, menuOnBeforeClose)
-				content?.addEventListener('pointerenter', menuContentOnPointerEnter)
-				content?.addEventListener('pointerleave', menuContentOnPointerLeave)
-				submenuitem.addEventListener('pointerenter', subMenuOnPointerEnter)
-				submenuitem.addEventListener('pointerleave', subMenuOnPointerLeave)
-				submenuitem.addEventListener('click'       , subMenuOnClick)
-				target?.addEventListener('pointerenter', subMenuOnPointerEnter)
-				target?.addEventListener('pointerleave', subMenuOnPointerLeave)
-				target?.addEventListener(PopoverEvents.toggleOpen as any, subMenuOnToggleOpen)
+				parentRef?.addEventListener(PopoverEvents.beforeClose, menuRefOnBeforeClose)
+				contentRef?.addEventListener('pointerenter', menuContentRefOnPointerEnter)
+				contentRef?.addEventListener('pointerleave', menuContentRefOnPointerLeave)
+				subMenuItemRef.addEventListener('pointerenter', subMenuRefOnPointerEnter)
+				subMenuItemRef.addEventListener('pointerleave', subMenuRefOnPointerLeave)
+				subMenuItemRef.addEventListener('click'       , subMenuRefOnClick)
+				targetRef?.addEventListener('pointerenter', subMenuRefOnPointerEnter)
+				targetRef?.addEventListener('pointerleave', subMenuRefOnPointerLeave)
+				targetRef?.addEventListener(PopoverEvents.toggleOpen as any, subMenuRefOnToggleOpen)
 			}
 			else {
 				// !important: without this, `PopoverEvents.toggleOpen` event for `target` will
 				// remove before running for the last time
 				setTimeout(() => {
-					content?.removeEventListener('pointerenter', menuContentOnPointerEnter)
-					content?.removeEventListener('pointerleave', menuContentOnPointerLeave)
-					parent?.removeEventListener(PopoverEvents.beforeClose, menuOnBeforeClose)
-					submenuitem.removeEventListener('pointerenter', subMenuOnPointerEnter)
-					submenuitem.removeEventListener('pointerleave', subMenuOnPointerLeave)
-					submenuitem.removeEventListener('click'       , subMenuOnClick)
-					target?.removeEventListener('pointerenter', subMenuOnPointerEnter)
-					target?.removeEventListener('pointerleave', subMenuOnPointerLeave)
-					target?.removeEventListener(PopoverEvents.toggleOpen as any, subMenuOnToggleOpen)
+					contentRef?.removeEventListener('pointerenter', menuContentRefOnPointerEnter)
+					contentRef?.removeEventListener('pointerleave', menuContentRefOnPointerLeave)
+					parentRef?.removeEventListener(PopoverEvents.beforeClose, menuRefOnBeforeClose)
+					subMenuItemRef.removeEventListener('pointerenter', subMenuRefOnPointerEnter)
+					subMenuItemRef.removeEventListener('pointerleave', subMenuRefOnPointerLeave)
+					subMenuItemRef.removeEventListener('click'       , subMenuRefOnClick)
+					targetRef?.removeEventListener('pointerenter', subMenuRefOnPointerEnter)
+					targetRef?.removeEventListener('pointerleave', subMenuRefOnPointerLeave)
+					targetRef?.removeEventListener(PopoverEvents.toggleOpen as any, subMenuRefOnToggleOpen)
 				})
 			}
 		})
@@ -299,16 +299,16 @@ function _initSubMenu(submenuitem: HTMLElement): void {
 	initEvents()
 }
 
-function createMenu(options?: PopoverUpdateOptions): HTMLDivElement {
-	const menu = createPopover(options)
-	return updateMenu(menu)
+function createMenuRef(options?: MenuUpdateOptions): HTMLDivElement {
+	const menuRef = createPopoverRef(options)
+	return updateMenuRef(menuRef)
 }
 
-function updateMenu(menu: HTMLDivElement, options?: MenuUpdateOptions): HTMLDivElement {
-	updatePopover(menu, options)
-	menu.classList.add(MenuClasses.menu)
-	if (!menu.hasAttribute('role')) {
-		menu.setAttribute('role', 'menu')
+function updateMenuRef(menuRef: HTMLDivElement, options?: MenuUpdateOptions): HTMLDivElement {
+	updatePopoverRef(menuRef, options)
+	menuRef.classList.add(MenuClasses.menu)
+	if (!menuRef.hasAttribute('role')) {
+		menuRef.setAttribute('role', 'menu')
 	}
 
 	const role = options?.MenuRole
@@ -317,26 +317,29 @@ function updateMenu(menu: HTMLDivElement, options?: MenuUpdateOptions): HTMLDivE
 		// NOTE:
 		// If we update menu with `role=undefined`, it will back to `role=menu` anyway.
 		// If we want without role, just use regular <Popover>. Or update with `updatePopover()`.
-		menu.removeAttribute('role')
+		menuRef.removeAttribute('role')
 	}
 	else if (role !== undefined && role !== true) {
-		menu.setAttribute('role', role)
+		menuRef.setAttribute('role', role)
 	}
 
-	options?.MenuRefs?.menu?.(menu)
-	return menu
+	options?.MenuRefs?.menu?.(menuRef)
+	return menuRef
 }
 
-function createMenuItem(options?: MenuItemUpdateOptions): HTMLButtonElement {
-	const menuitem = createButton(options)
-	return updateMenuItem(menuitem)
+function createMenuItemRef(options?: MenuItemUpdateOptions): HTMLButtonElement {
+	const menuItemRef = createButtonRef(options)
+	return updateMenuItemRef(menuItemRef)
 }
 
-function updateMenuItem(menuitem: HTMLButtonElement, options?: MenuItemUpdateOptions): HTMLButtonElement {
-	updateButton(menuitem, options)
-	menuitem.classList.add(MenuClasses.item)
-	if (!menuitem.hasAttribute('role')) {
-		menuitem.setAttribute('role', 'menuitem')
+function updateMenuItemRef(
+	menuItemRef: HTMLButtonElement,
+	options?: MenuItemUpdateOptions
+): HTMLButtonElement {
+	updateButtonRef(menuItemRef, options)
+	menuItemRef.classList.add(MenuClasses.item)
+	if (!menuItemRef.hasAttribute('role')) {
+		menuItemRef.setAttribute('role', 'menuitem')
 	}
 
 	const role = options?.MenuItemRole
@@ -345,26 +348,29 @@ function updateMenuItem(menuitem: HTMLButtonElement, options?: MenuItemUpdateOpt
 		// NOTE:
 		// If we update menu with `role=undefined`, it will back to `role=menuitem` anyway.
 		// If we want without role, just use regular <Button>. Or update with `updateButton()`.
-		menuitem.removeAttribute('role')
+		menuItemRef.removeAttribute('role')
 	}
 	else if (role !== undefined && role !== true) {
-		menuitem.setAttribute('role', role)
+		menuItemRef.setAttribute('role', role)
 	}
 
-	options?.MenuItemRefs?.menuitem?.(menuitem)
-	return menuitem
+	options?.MenuItemRefs?.menuitem?.(menuItemRef)
+	return menuItemRef
 }
 
-function createLinkMenuItem(options: LinkMenuItemUpdateOptions): HTMLAnchorElement {
-	const menuitem = createLinkButton(options)
-	return updateLinkMenuItem(menuitem, options)
+function createLinkMenuItemRef(options: LinkMenuItemUpdateOptions): HTMLAnchorElement {
+	const linkMenuItemRef = createLinkButtonRef(options)
+	return updateLinkMenuItemRef(linkMenuItemRef, options)
 }
 
-function updateLinkMenuItem(menuitem: HTMLAnchorElement, options: LinkMenuItemUpdateOptions): HTMLAnchorElement {
-	updateLinkButton(menuitem, options)
-	menuitem.classList.add(MenuClasses.item)
-	if (!menuitem.hasAttribute('role')) {
-		menuitem.setAttribute('role', 'menuitem')
+function updateLinkMenuItemRef(
+	linkMenuItemRef: HTMLAnchorElement,
+	options: LinkMenuItemUpdateOptions
+): HTMLAnchorElement {
+	updateLinkButtonRef(linkMenuItemRef, options)
+	linkMenuItemRef.classList.add(MenuClasses.item)
+	if (!linkMenuItemRef.hasAttribute('role')) {
+		linkMenuItemRef.setAttribute('role', 'menuitem')
 	}
 
 	const role = options?.LinkMenuItemRole
@@ -373,98 +379,107 @@ function updateLinkMenuItem(menuitem: HTMLAnchorElement, options: LinkMenuItemUp
 		// NOTE:
 		// If we update menu with `role=undefined`, it will back to `role=menuitem` anyway.
 		// If we want without role, just use regular <Button>. Or update with `updateLinkButton()`.
-		menuitem.removeAttribute('role')
+		linkMenuItemRef.removeAttribute('role')
 	}
 	else if (role !== undefined && role !== true) {
-		menuitem.setAttribute('role', role)
+		linkMenuItemRef.setAttribute('role', role)
 	}
-	options.LinkMenuItemRefs?.menuitem?.(menuitem)
-	return menuitem
+	options.LinkMenuItemRefs?.menuitem?.(linkMenuItemRef)
+	return linkMenuItemRef
 }
 
-function createSubMenuItem(options: Omit<SubMenuItemUpdateOptions, 'ariaControls'> & {
+function createSubMenuItemRef(options: Omit<SubMenuItemUpdateOptions, 'ariaControls'> & {
 	ariaControls: astroHTML.JSX.AriaAttributes['aria-controls']
 }): HTMLButtonElement {
-	return updateSubMenuItem(createMenuItem(options))
+	return updateSubMenuItemRef(createMenuItemRef(options))
 }
 
-function updateSubMenuItem(submenuitem: HTMLButtonElement, options?: SubMenuItemUpdateOptions): HTMLButtonElement {
-	updateMenuItem(submenuitem)
-	submenuitem.classList.add(MenuClasses.submenuItem)
+function updateSubMenuItemRef(
+	subMenuItemRef: HTMLButtonElement,
+	options?: SubMenuItemUpdateOptions
+): HTMLButtonElement {
+	updateMenuItemRef(subMenuItemRef)
+	subMenuItemRef.classList.add(MenuClasses.submenuItem)
 	const ariaControls = options?.SubMenuItemAriaControls
 	if (ariaControls === false) {
-		submenuitem.removeAttribute('aria-controls')
+		subMenuItemRef.removeAttribute('aria-controls')
 	}
 	else if (ariaControls !== undefined && ariaControls !== null && ariaControls !== true) {
-		submenuitem.setAttribute('aria-controls', ariaControls)
+		subMenuItemRef.setAttribute('aria-controls', ariaControls)
 	}
 
 	const ariaExpanded = options?.SubMenuItemAriaExpanded
 	if (ariaExpanded === false) {
-		submenuitem.removeAttribute('aria-expanded')
+		subMenuItemRef.removeAttribute('aria-expanded')
 	}
 	else if (ariaExpanded !== undefined && ariaExpanded !== null && ariaExpanded !== true) {
-		submenuitem.setAttribute('aria-expanded', ariaExpanded)
+		subMenuItemRef.setAttribute('aria-expanded', ariaExpanded)
 	}
 
 	const ariaHaspopup = options?.SubMenuAriaHaspopup
 	if (ariaHaspopup === false) {
-		submenuitem.removeAttribute('aria-haspopup')
+		subMenuItemRef.removeAttribute('aria-haspopup')
 	}
 	else if (ariaHaspopup !== undefined && ariaHaspopup !== null && ariaHaspopup !== true) {
-		submenuitem.setAttribute('aria-haspopup', ariaHaspopup)
+		subMenuItemRef.setAttribute('aria-haspopup', ariaHaspopup)
 	}
 
-	options?.SubMenuRefs?.menuitem?.(submenuitem)
-	return submenuitem
+	options?.SubMenuRefs?.menuitem?.(subMenuItemRef)
+	return subMenuItemRef
 }
 
-function registerSubMenuItem(...submenuitems: HTMLButtonElement[]): void {
-	if (submenuitems.length === 0) {
-		submenuitems = [...document.querySelectorAll<HTMLButtonElement>('.' + MenuClasses.submenuItem)]
+function registerSubMenuItemRef(...subMenuItemRefs: HTMLButtonElement[]): void {
+	if (subMenuItemRefs.length === 0) {
+		subMenuItemRefs = [...document.querySelectorAll<HTMLButtonElement>('.' + MenuClasses.submenuItem)]
 	}
 
-	for (const submenu of submenuitems){
-		if (REGISTERED_SUBMENUITEM.has(submenu)) {
+	for (const subMenuItemRef of subMenuItemRefs){
+		if (REGISTERED_SUBMENUITEM.has(subMenuItemRef)) {
 			continue
 		}
 
-		REGISTERED_SUBMENUITEM.add(submenu)
-		_initSubMenu(submenu)
+		REGISTERED_SUBMENUITEM.add(subMenuItemRef)
+		_initSubMenuItemRef(subMenuItemRef)
 	}
 }
 
-function unregisterSubMenuItem(...submenuitems: HTMLButtonElement[]): void {
-	for (const submenuitem of submenuitems) {
-		REGISTERED_SUBMENUITEM.delete(submenuitem)
+function unregisterSubMenuItemRef(...subMenuItemRefs: HTMLButtonElement[]): void {
+	for (const subMenuItemRef of subMenuItemRefs) {
+		REGISTERED_SUBMENUITEM.delete(subMenuItemRef)
 	}
 }
 
-function createMenuIndent(options?: MenuIndentUpdateOptions): HTMLDivElement {
-	const indent = document.createElement('div')
-	return updateMenuIndent(indent, options)
+function createMenuIndentRef(options?: MenuIndentUpdateOptions): HTMLDivElement {
+	const indentRef = document.createElement('div')
+	return updateMenuIndentRef(indentRef, options)
 }
 
-function updateMenuIndent(indent: HTMLDivElement, options?: MenuIndentUpdateOptions): HTMLDivElement {
-	indent.classList.add(MenuClasses.indent)
-	options?.MenuIndentRefs?.indent?.(indent)
-	return indent
+function updateMenuIndentRef(
+	indentRef: HTMLDivElement,
+	options?: MenuIndentUpdateOptions
+): HTMLDivElement {
+	indentRef.classList.add(MenuClasses.indent)
+	options?.MenuIndentRefs?.indent?.(indentRef)
+	return indentRef
 }
 
-function createMenuHeader(options?: MenuHeaderUpdateOptions): HTMLDivElement {
-	const indent = document.createElement('div')
-	return updateMenuHeader(indent, options)
+function createMenuHeaderRef(options?: MenuHeaderUpdateOptions): HTMLDivElement {
+	const menuHeaderRef = document.createElement('div')
+	return updateMenuHeaderRef(menuHeaderRef, options)
 }
 
-function updateMenuHeader(headerRef: HTMLDivElement, options?: MenuHeaderUpdateOptions): HTMLDivElement {
+function updateMenuHeaderRef(
+	headerRef: HTMLDivElement,
+	options?: MenuHeaderUpdateOptions
+): HTMLDivElement {
 	headerRef.classList.add(MenuClasses.header)
 
-	const children = options?.MenuHeaderChildren
-	if (children === false) {
+	const childrenOption = options?.MenuHeaderChildren
+	if (childrenOption === false) {
 		headerRef.replaceChildren()
 	}
-	else if (children !== undefined && children !== true) {
-		headerRef.replaceChildren(...children)
+	else if (childrenOption !== undefined && childrenOption !== true) {
+		headerRef.replaceChildren(...childrenOption)
 	}
 
 	options?.MenuHeaderRefs?.header?.(headerRef)
@@ -495,24 +510,24 @@ export {
 	PopoverAttributes as MenuAttributes,
 	PopoverClasses,
 	MenuPosition,
-	openPopover as openMenu,
-	closePopover as closeMenu,
-	repositionPopover as repositionMenu,
-	isPopoverOpen as isMenuOpen,
-	registerPopover as registerMenu,
-	unregisterPopover as unregisterMenu,
-	createMenu,
-	updateMenu,
-	updateMenuItem,
-	updateLinkMenuItem,
-	createMenuItem,
-	createLinkMenuItem,
-	registerSubMenuItem,
-	unregisterSubMenuItem,
-	createSubMenuItem,
-	updateSubMenuItem,
-	createMenuIndent,
-	updateMenuIndent,
-	createMenuHeader,
-	updateMenuHeader
+	openPopoverRef as openMenuRef,
+	closePopoverRef as closeMenuRef,
+	repositionPopoverRef as repositionMenuRef,
+	isPopoverRefOpen as isMenuRefOpen,
+	registerPopoverRef as registerMenuRef,
+	unregisterPopoverRef as unregisterMenuRef,
+	createMenuRef,
+	updateMenuRef,
+	updateMenuItemRef,
+	updateLinkMenuItemRef,
+	createMenuItemRef,
+	createLinkMenuItemRef,
+	registerSubMenuItemRef,
+	unregisterSubMenuItemRef,
+	createSubMenuItemRef,
+	updateSubMenuItemRef,
+	createMenuIndentRef,
+	updateMenuIndentRef,
+	createMenuHeaderRef,
+	updateMenuHeaderRef
 }

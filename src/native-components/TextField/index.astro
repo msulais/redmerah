@@ -1,5 +1,6 @@
 ---
 import { attrClassList } from '@/utils/attributes'
+
 import {
 	type TextFieldProps,
 	TextFieldClasses
@@ -14,21 +15,21 @@ const {
 	TextFieldTrailingAttr = {},
 	...other
 } = Astro.props
-const {'class': inputClassName   , type: inputType ="text", ...inputOther} = TextFieldInputAttr
-const {'class': leadingClassName , ...leadingOther } = TextFieldLeadingAttr
-const {'class': trailingClassName, ...trailingOther} = TextFieldTrailingAttr
+const {'class': inputClass   , type: inputType = "text", ...inputOther} = TextFieldInputAttr
+const {'class': leadingClass , ...leadingOther } = TextFieldLeadingAttr
+const {'class': trailingClass, ...trailingOther} = TextFieldTrailingAttr
 ---
 
 <div class={attrClassList(TextFieldClasses.textfield, className)} {...other}>
-	<div class={attrClassList(TextFieldClasses.leading, leadingClassName)} {...leadingOther}>
+	<div class={attrClassList(TextFieldClasses.leading, leadingClass)} {...leadingOther}>
 		<slot name="leading"/>
 	</div>
 	<input
 		type={inputType}
-		class={attrClassList(TextFieldClasses.input, inputClassName)}
+		class={attrClassList(TextFieldClasses.input, inputClass)}
 		{...inputOther}
 	/>
-	<div class={attrClassList(TextFieldClasses.trailing, trailingClassName)} {...trailingOther}>
+	<div class={attrClassList(TextFieldClasses.trailing, trailingClass)} {...trailingOther}>
 		<slot name="trailing"/>
 	</div>
 </div>

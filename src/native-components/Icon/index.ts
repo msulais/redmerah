@@ -9,7 +9,7 @@ type IconUpdateOptions = {
 	IconFilled?: boolean
 	IconInline?: boolean
 	IconRefs  ?: {
-		icon?(el: HTMLElement): unknown
+		icon?(ref: HTMLElement): unknown
 	}
 }
 
@@ -21,32 +21,34 @@ enum IconClasses {
 	icon = 'c-icon',
 }
 
-function createIcon(
+function createIconRef(
 	options: Omit<IconUpdateOptions, 'IconCode'> & { IconCode: number }
 ): HTMLElement {
-	const icon = document.createElement('i')
-	return updateIcon(icon, options)
+	const iconRef = document.createElement('i')
+	return updateIconRef(iconRef, options)
 }
 
-function updateIcon(icon: HTMLElement, options?: IconUpdateOptions): HTMLElement {
-	const classList = icon.classList
+function updateIconRef(iconRef: HTMLElement, options?: IconUpdateOptions): HTMLElement {
+	const classList = iconRef.classList
 	classList.add(IconClasses.icon)
-	icon.translate = false
-	if (options?.IconInline !== undefined) {
-		icon.toggleAttribute(IconAttributes.inline, options.IconInline)
+	iconRef.translate = false
+
+	const inlineOption = options?.IconInline
+	if (inlineOption !== undefined) {
+		iconRef.toggleAttribute(IconAttributes.inline, inlineOption)
 	}
 
-	const filled = options?.IconFilled
-	if (filled !== undefined && icon.textContent && icon.textContent.trim().length > 0) {
-		const code = icon.textContent.trim().charCodeAt(0)
-		icon.textContent = String.fromCharCode(code + (filled? -1 : 1))
+	const filledOption = options?.IconFilled
+	if (filledOption !== undefined && iconRef.textContent && iconRef.textContent.trim().length > 0) {
+		const code = iconRef.textContent.trim().charCodeAt(0)
+		iconRef.textContent = String.fromCharCode(code + (filledOption? -1 : 1))
 	}
 	if (options?.IconCode !== undefined) {
-		icon.textContent = String.fromCharCode(options.IconCode - (options.IconFilled? 1 : 0))
+		iconRef.textContent = String.fromCharCode(options.IconCode - (options.IconFilled? 1 : 0))
 	}
 
-	options?.IconRefs?.icon?.(icon)
-	return icon
+	options?.IconRefs?.icon?.(iconRef)
+	return iconRef
 }
 
 export {
@@ -54,6 +56,6 @@ export {
 	type IconUpdateOptions,
 	IconClasses,
 	IconAttributes,
-	createIcon,
-	updateIcon
+	createIconRef,
+	updateIconRef
 }

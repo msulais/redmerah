@@ -1,6 +1,10 @@
 ---
 import { attrClassList } from '@/utils/attributes'
-import { AppBarClasses, type AppBarProps } from '.'
+
+import {
+	AppBarClasses,
+	type AppBarProps
+} from '.'
 import './index.scss'
 
 type Props = AppBarProps
@@ -13,10 +17,10 @@ const {
 	AppHeadingAttr  = {},
 	...other
 } = Astro.props
-const {'class': contentClassName , ...contentOther } = AppContentAttr
-const {'class': headingClassName , ...headingOther } = AppHeadingAttr
-const {'class': leadingClassName , ...leadingOther } = AppLeadingAttr
-const {'class': trailingClassName, ...trailingOther} = AppTrailingAttr
+const {'class': contentClass , ...contentOther } = AppContentAttr
+const {'class': headingClass , ...headingOther } = AppHeadingAttr
+const {'class': leadingClass , ...leadingOther } = AppLeadingAttr
+const {'class': trailingClass, ...trailingOther} = AppTrailingAttr
 
 const Dynamic = AppTagName as 'header'
 ---
@@ -24,14 +28,14 @@ const Dynamic = AppTagName as 'header'
 	class={attrClassList(AppBarClasses.appbar, className)}
 	{...other}>
 	{Astro.slots.has('leading') &&
-		<div class={attrClassList(AppBarClasses.leading, leadingClassName)} {...leadingOther}>
+		<div class={attrClassList(AppBarClasses.leading, leadingClass)} {...leadingOther}>
 			<slot name='leading'/>
 		</div>
 	}
-	<div class={attrClassList(AppBarClasses.content, contentClassName)} {...contentOther}>
+	<div class={attrClassList(AppBarClasses.content, contentClass)} {...contentOther}>
 		{Astro.slots.has('headline') &&
 			<h2
-				class={attrClassList(AppBarClasses.headline, headingClassName)}
+				class={attrClassList(AppBarClasses.headline, headingClass)}
 				{...headingOther}>
 				<slot name='headline'/>
 			</h2>
@@ -39,7 +43,7 @@ const Dynamic = AppTagName as 'header'
 		<slot />
 	</div>
 	{Astro.slots.has('trailing') &&
-		<div class={attrClassList(AppBarClasses.trailing, trailingClassName)} {...trailingOther}>
+		<div class={attrClassList(AppBarClasses.trailing, trailingClass)} {...trailingOther}>
 			<slot name='trailing'/>
 		</div>
 	}

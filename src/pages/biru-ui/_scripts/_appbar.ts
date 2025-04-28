@@ -1,6 +1,6 @@
-import { openPopover } from "@/native-components/Popover"
-import { updateButton } from "@/native-components/Button"
-import { closeMenu, MenuEvents } from "@/native-components/Menu"
+import { openPopoverRef } from "@/native-components/Popover"
+import { updateButtonRef } from "@/native-components/Button"
+import { closeMenuRef, MenuEvents } from "@/native-components/Menu"
 import type { PopoverToggleOpenDetail } from "@/native-components/Popover"
 import { elementValidTarget } from "@/utils/element"
 import { ELEMENT_ID_PREFIX, ElementIds, RadioGroupNames } from "./_enums"
@@ -8,7 +8,7 @@ import { LocalStorageKeys } from "@/enums/storage"
 import { validEnumValue } from "@/utils/object"
 import { RootAttributes } from "@/enums/attributes"
 import { PlatformAnimationMode, PlatformThemeMode } from "@/enums/platforms"
-import { ColorPickerAttributes, ColorPickerEvents, ColorPickerPosition, openColorPicker, updateColorPicker } from "@/native-components/ColorPicker"
+import { ColorPickerAttributes, ColorPickerEvents, ColorPickerPosition, openColorPickerRef, updateColorPickerRef } from "@/native-components/ColorPicker"
 import { colorGeneratePalette, colorHexToRgb, colorIsValid } from "@/utils/color"
 import type { HEXColor, RGBColor } from "@/types/color"
 import { GlobalElementIds } from "@/enums/ids"
@@ -35,10 +35,10 @@ function initSettingsMenu(): void {
 	settingsMenu.addEventListener('click', () => {
 		switch (document.activeElement) {
 		case accentButtonRef:
-			openColorPicker(colorPickerRef, {
+			openColorPickerRef(colorPickerRef, {
 				anchor: document.body,
 				position: ColorPickerPosition.centerCenterRightTop
-			}).then(() => closeMenu(settingsMenu))
+			}).then(() => closeMenuRef(settingsMenu))
 			break
 		}
 	})
@@ -99,7 +99,7 @@ function initSettings(): void {
 		const colorPickerRef = $(ELEMENT_ID_PREFIX + ElementIds.appbarColorPicker) as HTMLDivElement
 		const palette = colorGeneratePalette(accent as HEXColor)
 		accentColorElement.innerHTML = `:root{--g-color-accent-light: ${rgbToCSS(colorHexToRgb(palette.color))};--g-color-accent-dark: ${rgbToCSS(colorHexToRgb(palette.colorDark))};--g-color-on-accent-light: ${rgbToCSS(colorHexToRgb(palette.onColor))};--g-color-on-accent-dark: ${rgbToCSS(colorHexToRgb(palette.onColorDark))};}`;
-		updateColorPicker(colorPickerRef, {
+		updateColorPickerRef(colorPickerRef, {
 			ColorPickerValue: accent as HEXColor
 		})
 	}
@@ -117,7 +117,7 @@ function initSettingsAnimationMenuEvents(): void {
 
 		localStorage.setItem(LocalStorageKeys.platformAnimation, value)
 		root.setAttribute(RootAttributes.animation, value)
-		closeMenu(settingsMenu)
+		closeMenuRef(settingsMenu)
 	})
 }
 
@@ -129,7 +129,7 @@ function initSettingsThemeMenuEvents(): void {
 
 		localStorage.setItem(LocalStorageKeys.platformTheme, value)
 		root.setAttribute(RootAttributes.theme, value)
-		closeMenu(settingsMenu)
+		closeMenuRef(settingsMenu)
 	})
 }
 
@@ -140,7 +140,7 @@ function initInfoMenuEvents(): void {
 			url: document.URL,
 			text: 'BiruUI'
 		})
-		closeMenu(infoMenu)
+		closeMenuRef(infoMenu)
 	})
 }
 
@@ -150,10 +150,10 @@ function initAppBarEvents(): void {
 		if (!elementValidTarget(appbar, button, el => el.tagName === 'BUTTON')) return
 
 		switch (button) {
-		case settingsButton: return openPopover(settingsMenu, {
+		case settingsButton: return openPopoverRef(settingsMenu, {
 			anchor: settingsButton
 		})
-		case infoButton: return openPopover(infoMenu, {
+		case infoButton: return openPopoverRef(infoMenu, {
 			anchor: infoButton
 		})
 		}
@@ -168,13 +168,13 @@ function initGlobalMenuEvents(): void {
 		switch (popover) {
 		case settingsMenu:
 			settingsButton.setAttribute('aria-expanded', String(open))
-			updateButton(settingsButton, {
+			updateButtonRef(settingsButton, {
 				ButtonFocused: open
 			})
 			break
 		case infoMenu:
 			infoButton.setAttribute('aria-expanded', String(open))
-			updateButton(infoButton, {
+			updateButtonRef(infoButton, {
 				ButtonFocused: open
 			})
 			break

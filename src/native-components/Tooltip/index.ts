@@ -29,7 +29,7 @@ type TooltipUpdateOptions = {
 	TooltipUseAnchor ?: boolean
 	TooltipPosition  ?: TooltipPosition | boolean
 	TooltipRefs      ?: {
-		tooltip?(el: HTMLDivElement): unknown
+		tooltip?(ref: HTMLDivElement): unknown
 	}
 }
 
@@ -74,16 +74,15 @@ let TOOLTIP_LISTENER: HTMLDivElement | null = null
 let POINTER_X = 0
 let POINTER_Y = 0
 
-function _initTooltipListener(): void {
+function _initTooltipRefListener(): void {
 	if (TOOLTIP_HAS_LISTENER) return
 
 	TOOLTIP_HAS_LISTENER = true
-	const mobile = isTouchScreen()
 	const body = document.body
 	let endDelayDuration: number = 0
 	let pointerOpenX: number = 0
 	let pointerOpenY: number = 0
-	let anchor: HTMLElement | null = null
+	let anchorRef: HTMLElement | null = null
 	let useAnchor: boolean = false
 	let position: TooltipPosition = TooltipPosition.centerTop
 	let gap: number = 40
@@ -91,22 +90,22 @@ function _initTooltipListener(): void {
 	let tooltipTextRef: HTMLDivElement
 	let timeId: number | NodeJS.Timeout | null = null
 
-	function createTooltipText(): void {
+	function createTooltipTextRef(): void {
 		tooltipTextRef = document.createElement('div')
 		tooltipTextRef.id = GlobalElementIds.textTooltip
 		tooltipTextRef.popover = 'manual'
 		document.body.appendChild(tooltipTextRef)
 	}
 
-	function closeTooltip(): void {
+	function closeTooltipRef(): void {
 		stopProcess()
 		timeId = setTimeout(() => {
 			isOpen = false
 			timeId = null
-			if (!anchor) return
+			if (!anchorRef) return
 
 			const anchorRect: DOMRect | undefined = useAnchor
-				? anchor.getBoundingClientRect()
+				? anchorRef.getBoundingClientRect()
 				: undefined
 			const tooltipRect = tooltipTextRef.getBoundingClientRect()
 			const flyoutPosition = getFlyoutPosition({
@@ -120,7 +119,7 @@ function _initTooltipListener(): void {
 				position: position
 			}) as DOMRect
 
-			anchor = null
+			anchorRef = null
 
 			if (!isAnimationAllowed()) {
 				tooltipTextRef.hidePopover()
@@ -153,7 +152,7 @@ function _initTooltipListener(): void {
 		}, endDelayDuration)
 	}
 
-	function openTooltip(ev: CustomEvent<_TooltipOpenDetail>): void {
+	function openTooltipRef(ev: CustomEvent<_TooltipOpenDetail>): void {
 		const detail = ev.detail
 		const byFocus = detail.byFocus
 		const event = detail.event
@@ -170,8 +169,8 @@ function _initTooltipListener(): void {
 		let $anchor = target.closest(
 			`#${CSS.escape(tooltip.id)} :is([${TooltipTargetAttributes.tooltip}])`
 		) as HTMLElement
-		if (!$anchor) return closeTooltip()
-		if ($anchor === anchor) return
+		if (!$anchor) return closeTooltipRef()
+		if ($anchor === anchorRef) return
 
 		const text = $anchor.dataset.tooltip
 		if (!text) return
@@ -193,19 +192,19 @@ function _initTooltipListener(): void {
 		timeId = setTimeout(() => {
 			timeId = null
 			isOpen = true
-			anchor = $anchor
+			anchorRef = $anchor
 			gap = numberSafe(Number.parseFloat(
-				anchor.getAttribute(TooltipTargetAttributes.gap)
+				anchorRef.getAttribute(TooltipTargetAttributes.gap)
 				?? tooltip.getAttribute(TooltipAttributes.gap)
 				?? '40'
 			), 40)
 			endDelayDuration = numberSafe(Number.parseFloat(
-				anchor.getAttribute(TooltipTargetAttributes.endDelayDuration)
+				anchorRef.getAttribute(TooltipTargetAttributes.endDelayDuration)
 				?? tooltip.getAttribute(TooltipAttributes.endDelayDuration)
-				?? `${mobile? 1500 : 200}`
-			), mobile? 1500 : 200)
+				?? `${isTouchScreen()? 1500 : 200}`
+			), isTouchScreen()? 1500 : 200)
 			position = (
-				anchor.getAttribute(TooltipTargetAttributes.position)
+				anchorRef.getAttribute(TooltipTargetAttributes.position)
 				?? tooltip.getAttribute(TooltipAttributes.position)
 				?? TooltipPosition.centerTop
 			) as TooltipPosition
@@ -214,13 +213,13 @@ function _initTooltipListener(): void {
 			}
 
 			useAnchor = (
-				anchor.hasAttribute(TooltipTargetAttributes.useAnchor)
+				anchorRef.hasAttribute(TooltipTargetAttributes.useAnchor)
 				|| tooltip.hasAttribute(TooltipAttributes.useAnchor)
 			)
 			tooltipTextRef.textContent = text
 			tooltipTextRef.showPopover()
 			const tooltipRect: DOMRect = tooltipTextRef.getBoundingClientRect()
-			const anchorRect: DOMRect | undefined = useAnchor? anchor.getBoundingClientRect() : undefined
+			const anchorRect: DOMRect | undefined = useAnchor? anchorRef.getBoundingClientRect() : undefined
 			const flyoutPosition = getFlyoutPosition({
 				flyout: tooltipRect,
 				anchor: useAnchor? anchorRect : undefined,
@@ -270,20 +269,20 @@ function _initTooltipListener(): void {
 	}
 
 	function initEvents(): void {
-		body.addEventListener(_TooltipListenerEvents.open as any, openTooltip)
-		body.addEventListener(_TooltipListenerEvents.close, closeTooltip)
+		body.addEventListener(_TooltipListenerEvents.open as any, openTooltipRef)
+		body.addEventListener(_TooltipListenerEvents.close, closeTooltipRef)
 		document.addEventListener('pointermove', ev => {
 			POINTER_X = ev.x
 			POINTER_Y = ev.y
 		})
 	}
 
-	createTooltipText()
+	createTooltipTextRef()
 	initEvents()
 }
 
-function _initTooltip(tooltip: HTMLDivElement): void {
-	const body = document.body
+function _initTooltipRef(tooltipRef: HTMLDivElement): void {
+	const bodyRef = document.body
 
 	function openTooltip(ev: Event, byFocus: boolean = false): void {
 		const self = ev.currentTarget as HTMLDivElement
@@ -298,7 +297,7 @@ function _initTooltip(tooltip: HTMLDivElement): void {
 
 		TOOLTIP_LISTENER = self
 		TOOLTIP_TARGET = target
-		body.dispatchEvent(new CustomEvent<_TooltipOpenDetail>(_TooltipListenerEvents.open, {
+		bodyRef.dispatchEvent(new CustomEvent<_TooltipOpenDetail>(_TooltipListenerEvents.open, {
 			detail: {
 				event: ev,
 				byFocus
@@ -308,25 +307,25 @@ function _initTooltip(tooltip: HTMLDivElement): void {
 
 	function closeTooltip(): void {
 		TOOLTIP_LISTENER = null
-		body.dispatchEvent(new CustomEvent(_TooltipListenerEvents.close))
+		bodyRef.dispatchEvent(new CustomEvent(_TooltipListenerEvents.close))
 	}
 
 	function initEvents(): void {
-		tooltip.addEventListener('focusin', ev => {
+		tooltipRef.addEventListener('focusin', ev => {
 			const target = ev.target as HTMLElement
 			if (!target.matches(':focus-visible')) return
 
 			openTooltip(ev, true)
 		})
-		tooltip.addEventListener('focusout', () => {
+		tooltipRef.addEventListener('focusout', () => {
 			closeTooltip()
 		})
-		tooltip.addEventListener('pointerover', ev => {
+		tooltipRef.addEventListener('pointerover', ev => {
 			POINTER_X = ev.x
 			POINTER_Y = ev.y
 			openTooltip(ev)
 		})
-		tooltip.addEventListener('touchstart', ev => {
+		tooltipRef.addEventListener('touchstart', ev => {
 			const touches = ev.touches
 			POINTER_X = touches[0].clientX
 			POINTER_Y = touches[0].clientY
@@ -334,13 +333,13 @@ function _initTooltip(tooltip: HTMLDivElement): void {
 		}, {
 			passive: true
 		})
-		tooltip.addEventListener('pointerleave', () => {
+		tooltipRef.addEventListener('pointerleave', () => {
 			closeTooltip()
 		})
-		tooltip.addEventListener('mousedown', () => {
+		tooltipRef.addEventListener('mousedown', () => {
 			closeTooltip()
 		})
-		tooltip.addEventListener('pointerup', () => {
+		tooltipRef.addEventListener('pointerup', () => {
 			closeTooltip()
 		})
 	}
@@ -348,83 +347,83 @@ function _initTooltip(tooltip: HTMLDivElement): void {
 	initEvents()
 }
 
-function createTooltip(options?: TooltipUpdateOptions): HTMLDivElement {
-	const tooltip = document.createElement('div')
-	return updateTooltip(tooltip, options)
+function createTooltipRef(options?: TooltipUpdateOptions): HTMLDivElement {
+	const tooltipRef = document.createElement('div')
+	return updateTooltipRef(tooltipRef, options)
 }
 
-function updateTooltip(tooltip: HTMLDivElement, options?: TooltipUpdateOptions): HTMLDivElement {
-	tooltip.classList.add(TooltipClasses.tooltip)
+function updateTooltipRef(tooltipRef: HTMLDivElement, options?: TooltipUpdateOptions): HTMLDivElement {
+	tooltipRef.classList.add(TooltipClasses.tooltip)
 
-	if (!tooltip.id) {
-		tooltip.id = createId()
-	}
-
-	const startDelay = options?.TooltipStartDelay
-	if (startDelay === false) {
-		tooltip.removeAttribute(TooltipAttributes.startDelayDuration)
-	}
-	else if (startDelay !== undefined && startDelay !== true) {
-		tooltip.setAttribute(TooltipAttributes.startDelayDuration, startDelay + '')
+	if (!tooltipRef.id) {
+		tooltipRef.id = createId()
 	}
 
-	const endDelay = options?.TooltipEndDelay
-	if (endDelay === false) {
-		tooltip.removeAttribute(TooltipAttributes.endDelayDuration)
+	const startDelayOption = options?.TooltipStartDelay
+	if (startDelayOption === false) {
+		tooltipRef.removeAttribute(TooltipAttributes.startDelayDuration)
 	}
-	else if (endDelay !== undefined && endDelay !== true) {
-		tooltip.setAttribute(TooltipAttributes.endDelayDuration, endDelay + '')
-	}
-
-	const gap = options?.TooltipGap
-	if (gap === false) {
-		tooltip.removeAttribute(TooltipAttributes.gap)
-	}
-	else if (gap !== undefined && gap !== true) {
-		tooltip.setAttribute(TooltipAttributes.gap, gap + '')
+	else if (startDelayOption !== undefined && startDelayOption !== true) {
+		tooltipRef.setAttribute(TooltipAttributes.startDelayDuration, startDelayOption + '')
 	}
 
-	const position = options?.TooltipPosition
-	if (position === false) {
-		tooltip.removeAttribute(TooltipAttributes.position)
+	const endDelayOption = options?.TooltipEndDelay
+	if (endDelayOption === false) {
+		tooltipRef.removeAttribute(TooltipAttributes.endDelayDuration)
 	}
-	else if (position !== undefined && position !== true) {
-		tooltip.setAttribute(TooltipAttributes.position, position)
-	}
-
-	const useAnchor = options?.TooltipUseAnchor
-	if (useAnchor !== undefined) {
-		tooltip.toggleAttribute(TooltipAttributes.useAnchor, useAnchor)
+	else if (endDelayOption !== undefined && endDelayOption !== true) {
+		tooltipRef.setAttribute(TooltipAttributes.endDelayDuration, endDelayOption + '')
 	}
 
-	const children = options?.TooltipChildren
-	if (children === false) {
-		tooltip.replaceChildren()
+	const gapOption = options?.TooltipGap
+	if (gapOption === false) {
+		tooltipRef.removeAttribute(TooltipAttributes.gap)
 	}
-	else if (children !== undefined && children !== true) {
-		tooltip.replaceChildren(...children)
+	else if (gapOption !== undefined && gapOption !== true) {
+		tooltipRef.setAttribute(TooltipAttributes.gap, gapOption + '')
 	}
 
-	options?.TooltipRefs?.tooltip?.(tooltip)
-	return tooltip
+	const positionOption = options?.TooltipPosition
+	if (positionOption === false) {
+		tooltipRef.removeAttribute(TooltipAttributes.position)
+	}
+	else if (positionOption !== undefined && positionOption !== true) {
+		tooltipRef.setAttribute(TooltipAttributes.position, positionOption)
+	}
+
+	const useAnchorOption = options?.TooltipUseAnchor
+	if (useAnchorOption !== undefined) {
+		tooltipRef.toggleAttribute(TooltipAttributes.useAnchor, useAnchorOption)
+	}
+
+	const childrenOption = options?.TooltipChildren
+	if (childrenOption === false) {
+		tooltipRef.replaceChildren()
+	}
+	else if (childrenOption !== undefined && childrenOption !== true) {
+		tooltipRef.replaceChildren(...childrenOption)
+	}
+
+	options?.TooltipRefs?.tooltip?.(tooltipRef)
+	return tooltipRef
 }
 
-function registerTooltip(...tooltips: HTMLDivElement[]): void {
-	_initTooltipListener()
-	if (tooltips.length === 0) {
-		tooltips = [...document.querySelectorAll<HTMLDivElement>('.' + TooltipClasses.tooltip)]
+function registerTooltipRef(...tooltipRefs: HTMLDivElement[]): void {
+	_initTooltipRefListener()
+	if (tooltipRefs.length === 0) {
+		tooltipRefs = [...document.querySelectorAll<HTMLDivElement>('.' + TooltipClasses.tooltip)]
 	}
 
-	for (const tooltip of tooltips) {
+	for (const tooltip of tooltipRefs) {
 		if (REGISTERED_TOOLTIP.has(tooltip)) continue
 
 		REGISTERED_TOOLTIP.add(tooltip)
-		_initTooltip(tooltip)
+		_initTooltipRef(tooltip)
 	}
 }
 
-function unregisterTooltip(...tooltips: HTMLDivElement[]): void {
-	for (const tooltip of tooltips) {
+function unregisterTooltipRef(...tooltipRefs: HTMLDivElement[]): void {
+	for (const tooltip of tooltipRefs) {
 		REGISTERED_TOOLTIP.delete(tooltip)
 	}
 }
@@ -436,8 +435,8 @@ export {
 	TooltipAttributes,
 	TooltipTargetAttributes,
 	TooltipPosition,
-	registerTooltip,
-	unregisterTooltip,
-	createTooltip,
-	updateTooltip,
+	registerTooltipRef,
+	unregisterTooltipRef,
+	createTooltipRef,
+	updateTooltipRef,
 }

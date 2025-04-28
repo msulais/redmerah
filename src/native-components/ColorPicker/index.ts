@@ -1,4 +1,38 @@
 import {
+	type HEXColor,
+	type HSLColor
+} from "@/types/color"
+import {
+	colorContrastRatio,
+	colorHexToHsl,
+	colorHslToHex,
+	colorHslToHsv,
+	colorHslToRgb,
+	colorHsvToHsl,
+	colorIsValidWithAlpha,
+	colorRgbToHsl
+} from "@/utils/color"
+import { numberSafe } from "@/utils/number"
+import { mathClamp } from "@/utils/math"
+import { createId } from "@/utils/ids"
+import { isAnimationAllowed } from "@/utils/animation"
+import { AnimationEffectTiming } from "@/enums/animation"
+import {
+	type EyeDropper as EyeDropperInterface
+} from "@/interfaces/eye-dropper"
+import { validEnumValue } from "@/utils/object"
+import {
+	KEY_ARROW_DOWN,
+	KEY_ARROW_LEFT,
+	KEY_ARROW_RIGHT,
+	KEY_ARROW_UP
+} from "@/constants/keyboard-value"
+import {
+	ICON_CHEVRON_UP_DOWN,
+	ICON_EYEDROPPER
+} from "@/constants/icons"
+
+import {
 	type PopoverProps,
 	type PopoverUpdateOptions,
 	type PopoverOpenOptions,
@@ -9,27 +43,31 @@ import {
 	type PopoverToggleOpenDetail,
 	PopoverEvents,
 	PopoverPosition,
-	openPopover,
-	closePopover,
-	repositionPopover,
-	isPopoverOpen,
-	updatePopover,
-	registerPopover,
+	openPopoverRef,
+	closePopoverRef,
+	repositionPopoverRef,
+	isPopoverRefOpen,
+	updatePopoverRef,
+	registerPopoverRef
 } from "@/native-components/Popover"
-import { ButtonVariant, createIconButton, type IconButtonProps } from "../Button"
-import { createTextField, createTextFieldButton, TextFieldClasses, updateTextField, updateTextFieldButton, type TextFieldButtonProps, type TextFieldProps } from "../TextField"
-import { createIcon, type IconProps } from "../Icon"
-import type { HEXColor, HSLColor } from "@/types/color"
-import { colorContrastRatio, colorHexToHsl, colorHslToHex, colorHslToHsv, colorHslToRgb, colorHsvToHsl, colorIsValidWithAlpha, colorRgbToHsl } from "@/utils/color"
-import { numberSafe } from "@/utils/number"
-import { mathClamp } from "@/utils/math"
-import { createId } from "@/utils/ids"
-import { isAnimationAllowed } from "@/utils/animation"
-import { AnimationEffectTiming } from "@/enums/animation"
-import { type EyeDropper as EyeDropperInterface } from "@/interfaces/eye-dropper"
-import { validEnumValue } from "@/utils/object"
-import { KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT, KEY_ARROW_UP } from "@/constants/keyboard-value"
-import { ICON_CHEVRON_UP_DOWN, ICON_EYEDROPPER } from "@/constants/icons"
+import {
+	ButtonVariant,
+	createIconButtonRef,
+	type IconButtonProps
+} from "@/native-components/Button"
+import {
+	createTextFieldRef,
+	createTextFieldButtonRef,
+	TextFieldClasses,
+	updateTextFieldRef,
+	updateTextFieldButtonRef,
+	type TextFieldButtonProps,
+	type TextFieldProps
+} from "@/native-components/TextField"
+import {
+	createIconRef,
+	type IconProps
+} from "@/native-components/Icon"
 
 type ColorPickerProps = PopoverProps & {
 	ColorPickerValue               ?: HEXColor
@@ -62,23 +100,23 @@ type ColorPickerUpdateOptions = Omit<PopoverUpdateOptions, 'PopoverChildren'> & 
 	ColorPickerColorSpace     ?: ColorPickerColorSpace | boolean
 	ColorPickerChildren       ?: (string | Node)[] | boolean
 	ColorPickerRefs           ?: {
-		colorpicker     ?(el: HTMLDivElement   ): unknown
-		content         ?(el: HTMLDivElement   ): unknown
-		eyedropper      ?(el: HTMLButtonElement): unknown
-		input           ?(el: HTMLDivElement   ): unknown
-		labelColor      ?(el: HTMLLabelElement ): unknown
-		labelOpacity    ?(el: HTMLLabelElement ): unknown
-		options         ?(el: HTMLDivElement   ): unknown
-		preview         ?(el: HTMLDivElement   ): unknown
-		rect            ?(el: HTMLDivElement   ): unknown
-		slider          ?(el: HTMLDivElement   ): unknown
-		sliderHue       ?(el: HTMLInputElement ): unknown
-		sliderOpacity   ?(el: HTMLInputElement ): unknown
-		swap            ?(el: HTMLButtonElement): unknown
-		swapIcon        ?(el: HTMLElement      ): unknown
-		textfield       ?(el: HTMLDivElement   ): unknown
-		textfieldColor  ?(el: HTMLDivElement   ): unknown
-		textfieldOpacity?(el: HTMLDivElement   ): unknown
+		colorpicker     ?(ref: HTMLDivElement   ): unknown
+		content         ?(ref: HTMLDivElement   ): unknown
+		eyedropper      ?(ref: HTMLButtonElement): unknown
+		input           ?(ref: HTMLDivElement   ): unknown
+		labelColor      ?(ref: HTMLLabelElement ): unknown
+		labelOpacity    ?(ref: HTMLLabelElement ): unknown
+		options         ?(ref: HTMLDivElement   ): unknown
+		preview         ?(ref: HTMLDivElement   ): unknown
+		rect            ?(ref: HTMLDivElement   ): unknown
+		slider          ?(ref: HTMLDivElement   ): unknown
+		sliderHue       ?(ref: HTMLInputElement ): unknown
+		sliderOpacity   ?(ref: HTMLInputElement ): unknown
+		swap            ?(ref: HTMLButtonElement): unknown
+		swapIcon        ?(ref: HTMLElement      ): unknown
+		textfield       ?(ref: HTMLDivElement   ): unknown
+		textfieldColor  ?(ref: HTMLDivElement   ): unknown
+		textfieldOpacity?(ref: HTMLDivElement   ): unknown
 	}
 }
 
@@ -133,7 +171,7 @@ enum ColorPickerColorSpace {
 
 const REGISTERED_COLORPICKER: Set<HTMLDivElement> = new Set<HTMLDivElement>()
 
-function _initColorPicker(colorPickerRef: HTMLDivElement): void {
+function _initColorPickerRef(colorPickerRef: HTMLDivElement): void {
 	const attributes = {
 		get value(): HEXColor {
 			return (colorPickerRef.getAttribute(ColorPickerAttributes.value) ?? '#FF0000') as HEXColor
@@ -518,7 +556,7 @@ function _initColorPicker(colorPickerRef: HTMLDivElement): void {
 	}
 
 	function initStructure(): void {
-		updateColorPicker(colorPickerRef)
+		updateColorPickerRef(colorPickerRef)
 		rectRef = colorPickerRef.querySelector<HTMLDivElement>('.' + ColorPickerClasses.rect)
 		eyeDropperRef = colorPickerRef.querySelector<HTMLButtonElement>('.' + ColorPickerClasses.eyedropper)
 		sliderHueRef = colorPickerRef.querySelector<HTMLInputElement>('.' + ColorPickerClasses.sliderHue)
@@ -551,6 +589,8 @@ function _initColorPicker(colorPickerRef: HTMLDivElement): void {
 
 	function initEvents(): void {
 		colorPickerRef.addEventListener(PopoverEvents.toggleOpen as any, (ev: CustomEvent<PopoverToggleOpenDetail>) => {
+			if (ev.target !== colorPickerRef) return
+
 			const isOpen = ev.detail.open
 			if (isOpen) {
 				initColor()
@@ -594,62 +634,65 @@ function _initColorPicker(colorPickerRef: HTMLDivElement): void {
 	checkEyeDropperAPI()
 }
 
-function registerColorPicker(...popovers: HTMLDivElement[]): void {
-	if (popovers.length === 0) {
-		popovers = [...document.querySelectorAll<HTMLDivElement>('.' + ColorPickerClasses.colorpicker)]
+function registerColorPickerRef(...colorPickerRefs: HTMLDivElement[]): void {
+	if (colorPickerRefs.length === 0) {
+		colorPickerRefs = [...document.querySelectorAll<HTMLDivElement>('.' + ColorPickerClasses.colorpicker)]
 	}
 
-	registerPopover(...popovers)
-	for (const popover of popovers){
+	registerPopoverRef(...colorPickerRefs)
+	for (const popover of colorPickerRefs){
 		if (REGISTERED_COLORPICKER.has(popover)) {
 			continue
 		}
 
 		REGISTERED_COLORPICKER.add(popover)
-		_initColorPicker(popover)
+		_initColorPickerRef(popover)
 	}
 }
 
-function unregisterColorPicker(...popovers: HTMLDivElement[]): void {
-	for (const colorpicker of popovers) {
+function unregisterColorPickerRef(...colorPickerRefs: HTMLDivElement[]): void {
+	for (const colorpicker of colorPickerRefs) {
 		REGISTERED_COLORPICKER.delete(colorpicker)
 	}
 }
 
-function createColorPicker(options?: ColorPickerUpdateOptions): HTMLDivElement {
+function createColorPickerRef(options?: ColorPickerUpdateOptions): HTMLDivElement {
 	const colorPickerRef = document.createElement('div')
-	return updateColorPicker(colorPickerRef, options)
+	return updateColorPickerRef(colorPickerRef, options)
 }
 
-function updateColorPicker(colorPickerRef: HTMLDivElement, options?: ColorPickerUpdateOptions): HTMLDivElement {
+function updateColorPickerRef(
+	colorPickerRef: HTMLDivElement,
+	options?: ColorPickerUpdateOptions
+): HTMLDivElement {
 	const refs = options?.ColorPickerRefs
-	updatePopover(colorPickerRef, options)
+	updatePopoverRef(colorPickerRef, options)
 	colorPickerRef.classList.add(ColorPickerClasses.colorpicker)
 
-	const value = options?.ColorPickerValue
-	if (value === false) {
+	const valueOption = options?.ColorPickerValue
+	if (valueOption === false) {
 		colorPickerRef.removeAttribute(ColorPickerAttributes.value)
 	}
-	else if (value !== undefined && value !== true) {
-		colorPickerRef.setAttribute(ColorPickerAttributes.value, value)
+	else if (valueOption !== undefined && valueOption !== true) {
+		colorPickerRef.setAttribute(ColorPickerAttributes.value, valueOption)
 	}
 
-	const colorSpace = options?.ColorPickerColorSpace
-	if (colorSpace === false) {
+	const colorSpaceOption = options?.ColorPickerColorSpace
+	if (colorSpaceOption === false) {
 		colorPickerRef.removeAttribute(ColorPickerAttributes.colorSpace)
 	}
-	else if (colorSpace && colorSpace !== true) {
-		colorPickerRef.setAttribute(ColorPickerAttributes.colorSpace, colorSpace)
+	else if (colorSpaceOption && colorSpaceOption !== true) {
+		colorPickerRef.setAttribute(ColorPickerAttributes.colorSpace, colorSpaceOption)
 	}
 
-	const disabledOpacity = options?.ColorPickerDisabledOpacity
-	if (disabledOpacity !== undefined) {
-		colorPickerRef.toggleAttribute(ColorPickerAttributes.disabledOpacity, disabledOpacity)
+	const disabledOpacityOption = options?.ColorPickerDisabledOpacity
+	if (disabledOpacityOption !== undefined) {
+		colorPickerRef.toggleAttribute(ColorPickerAttributes.disabledOpacity, disabledOpacityOption)
 	}
 
-	const hueOnly = options?.ColorPickerHueOnly
-	if (hueOnly !== undefined) {
-		colorPickerRef.toggleAttribute(ColorPickerAttributes.hueOnly, hueOnly)
+	const hueOnlyOption = options?.ColorPickerHueOnly
+	if (hueOnlyOption !== undefined) {
+		colorPickerRef.toggleAttribute(ColorPickerAttributes.hueOnly, hueOnlyOption)
 	}
 
 	// rect
@@ -686,7 +729,7 @@ function updateColorPicker(colorPickerRef: HTMLDivElement, options?: ColorPicker
 		`.${ColorPickerClasses.eyedropper}`
 	)
 	if (!eyeDropperRef) {
-		eyeDropperRef = createIconButton({
+		eyeDropperRef = createIconButtonRef({
 			IconButtonIcon: {
 				IconCode: ICON_EYEDROPPER
 			},
@@ -787,7 +830,7 @@ function updateColorPicker(colorPickerRef: HTMLDivElement, options?: ColorPicker
 		`.${ColorPickerClasses.textfieldColor}`
 	)
 	if (!textfieldColorRef) {
-		textfieldColorRef = createTextField()
+		textfieldColorRef = createTextFieldRef()
 		textfieldColorRef.classList.add(ColorPickerClasses.textfieldColor)
 	}
 
@@ -796,7 +839,7 @@ function updateColorPicker(colorPickerRef: HTMLDivElement, options?: ColorPicker
 		`.${ColorPickerClasses.swap}`
 	)
 	if (!swapRef) {
-		swapRef = createTextFieldButton({ButtonVariant: ButtonVariant.tonal})
+		swapRef = createTextFieldButtonRef({ButtonVariant: ButtonVariant.tonal})
 		swapRef.classList.add(ColorPickerClasses.swap)
 	}
 
@@ -805,17 +848,17 @@ function updateColorPicker(colorPickerRef: HTMLDivElement, options?: ColorPicker
 		`.${ColorPickerClasses.swapIcon}`
 	)
 	if (!swapIconRef) {
-		swapIconRef = createIcon({
+		swapIconRef = createIconRef({
 			IconCode: ICON_CHEVRON_UP_DOWN
 		})
 		swapIconRef.classList.add(ColorPickerClasses.swapIcon)
 	}
 
-	updateTextFieldButton(swapRef, {
+	updateTextFieldButtonRef(swapRef, {
 		ButtonChildren: [swapIconRef]
 	})
 
-	updateTextField(textfieldColorRef, {
+	updateTextFieldRef(textfieldColorRef, {
 		TextFieldTrailing: [swapRef]
 	})
 
@@ -824,7 +867,7 @@ function updateColorPicker(colorPickerRef: HTMLDivElement, options?: ColorPicker
 		`.${ColorPickerClasses.textfieldOpacity}`
 	)
 	if (!textfieldOpacityRef) {
-		textfieldOpacityRef = createTextField()
+		textfieldOpacityRef = createTextFieldRef()
 		textfieldOpacityRef.classList.add(ColorPickerClasses.textfieldOpacity)
 	}
 
@@ -848,7 +891,7 @@ function updateColorPicker(colorPickerRef: HTMLDivElement, options?: ColorPicker
 		contentRef.replaceChildren(...children)
 	}
 
-	updatePopover(colorPickerRef, {
+	updatePopoverRef(colorPickerRef, {
 		PopoverChildren: [rectRef, optionsRef, inputRef, contentRef]
 	})
 
@@ -886,12 +929,12 @@ export {
 	ColorPickerClasses,
 	ColorPickerColorSpace,
 	PopoverPosition as ColorPickerPosition,
-	openPopover as openColorPicker,
-	closePopover as closeColorPicker,
-	repositionPopover as repositionColorPicker,
-	isPopoverOpen as isColorPickerOpen,
-	registerColorPicker,
-	unregisterColorPicker,
-	createColorPicker,
-	updateColorPicker
+	openPopoverRef as openColorPickerRef,
+	closePopoverRef as closeColorPickerRef,
+	repositionPopoverRef as repositionColorPickerRef,
+	isPopoverRefOpen as isColorPickerRefOpen,
+	registerColorPickerRef,
+	unregisterColorPickerRef,
+	createColorPickerRef,
+	updateColorPickerRef
 }

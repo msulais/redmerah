@@ -1,7 +1,10 @@
 ---
 import { attrClassList } from '@/utils/attributes'
-import { PopoverClasses, type PopoverProps } from '.'
 
+import {
+	PopoverClasses,
+	type PopoverProps
+} from '.'
 import './index.scss'
 
 type Props = PopoverProps
@@ -22,8 +25,8 @@ const {
 	...other
 } = Astro.props
 
-const {'class': dragHandleClassName, ...dragHandleOther} = PopoverDragHandleAttr
-const {'class': contentClassName   , ...contentOther   } = PopoverContentAttr
+const {'class': dragHandleClass, draggable: dragHandleDraggable = 'false', ...dragHandleOther} = PopoverDragHandleAttr
+const {'class': contentClass   , ...contentOther   } = PopoverContentAttr
 
 ---
 <div
@@ -39,18 +42,20 @@ const {'class': contentClassName   , ...contentOther   } = PopoverContentAttr
 	data-c-popover-position={PopoverPosition}
 	{...other}>
 	<div
-		class={attrClassList(PopoverClasses.content, contentClassName)}
+		class={attrClassList(PopoverClasses.content, contentClass)}
 		{...contentOther}>
 		<slot />
 	</div>
 
 	{/* Keep below content to avoid auto focus */}
 	<div
-		class={attrClassList(PopoverClasses.dragHandle, dragHandleClassName)}
+		class={attrClassList(PopoverClasses.dragHandle, dragHandleClass)}
+		draggable={dragHandleDraggable}
+		tabindex="0"
 		{...dragHandleOther}
 	/>
 </div>
 <script>
-	import { registerPopover } from '.'
-	registerPopover()
+	import { registerPopoverRef } from '.'
+	registerPopoverRef()
 </script>

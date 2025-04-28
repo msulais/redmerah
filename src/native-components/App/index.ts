@@ -15,13 +15,13 @@ type AppUpdateOptions = {
 	AppLeftSideBar ?: (Node | string)[] | boolean
 	AppRightSideBar?: (Node | string)[] | boolean
 	AppRefs?: {
-		app         ?(el: HTMLElement   ): unknown
-		appBar      ?(el: HTMLDivElement): unknown
-		container   ?(el: HTMLDivElement): unknown
-		leftSideBar ?(el: HTMLDivElement): unknown
-		body        ?(el: HTMLDivElement): unknown
-		rightSideBar?(el: HTMLDivElement): unknown
-		bottomBar   ?(el: HTMLDivElement): unknown
+		app         ?(ref: HTMLElement   ): unknown
+		appBar      ?(ref: HTMLDivElement): unknown
+		container   ?(ref: HTMLDivElement): unknown
+		leftSideBar ?(ref: HTMLDivElement): unknown
+		body        ?(ref: HTMLDivElement): unknown
+		rightSideBar?(ref: HTMLDivElement): unknown
+		bottomBar   ?(ref: HTMLDivElement): unknown
 	}
 }
 
@@ -35,115 +35,120 @@ enum AppClasses {
 	body         = app + '-body'
 }
 
-function createApp<T extends HTMLElement>(
+function createAppRef<T extends HTMLElement>(
 	options?: AppUpdateOptions & {AppTagName?: keyof HTMLElementTagNameMap}
 ): T {
-	const app = document.createElement(options?.AppTagName ?? 'div')
-	return updateApp(app, options) as T
+	const appRef = document.createElement(options?.AppTagName ?? 'div')
+	return updateAppRef(appRef, options) as T
 }
 
-function updateApp<T extends HTMLElement>(app: T, options?: AppUpdateOptions): T {
+function updateAppRef<T extends HTMLElement>(appRef: T, options?: AppUpdateOptions): T {
 	const refs = options?.AppRefs
-	app.classList.add(AppClasses.app)
+	appRef.classList.add(AppClasses.app)
 
 	// appbar
-	let appBar = app.querySelector(`.${AppClasses.appBar}`) as HTMLDivElement | null
-	if (options?.AppAppBar === false) {
-		appBar?.replaceChildren()
+	const appBarOption = options?.AppAppBar
+	let appBarRef = appRef.querySelector(`.${AppClasses.appBar}`) as HTMLDivElement | null
+	if (appBarOption === false) {
+		appBarRef?.replaceChildren()
 	}
-	else if (options?.AppAppBar !== undefined && options.AppAppBar !== true) {
-		if (!appBar) {
-			appBar = document.createElement('div')
-			appBar.classList.add(AppClasses.appBar)
+	else if (appBarOption !== undefined && appBarOption !== true) {
+		if (!appBarRef) {
+			appBarRef = document.createElement('div')
+			appBarRef.classList.add(AppClasses.appBar)
 		}
 
-		appBar.replaceChildren(...options.AppAppBar)
+		appBarRef.replaceChildren(...appBarOption)
 	}
 
 	// container
-	let container = app.querySelector(`.${AppClasses.container}`) as HTMLDivElement | null
-	if (!container) {
-		container = document.createElement('div')
-		container.classList.add(AppClasses.container)
+	let containerRef = appRef.querySelector(`.${AppClasses.container}`) as HTMLDivElement | null
+	if (!containerRef) {
+		containerRef = document.createElement('div')
+		containerRef.classList.add(AppClasses.container)
 	}
 
 	// container -> leftsidebar
-	let leftSideBar = app.querySelector(`.${AppClasses.leftSideBar}`) as HTMLDivElement | null
-	if (options?.AppLeftSideBar === false) {
-		leftSideBar?.replaceChildren()
+	const leftSideBarOption = options?.AppLeftSideBar
+	let leftSideBarRef = containerRef.querySelector(`.${AppClasses.leftSideBar}`) as HTMLDivElement | null
+	if (leftSideBarOption === false) {
+		leftSideBarRef?.replaceChildren()
 	}
-	else if (options?.AppLeftSideBar !== undefined && options?.AppLeftSideBar !== true) {
-		if (!leftSideBar) {
-			leftSideBar = document.createElement('div')
-			leftSideBar.classList.add(AppClasses.leftSideBar)
+	else if (leftSideBarOption !== undefined && leftSideBarOption !== true) {
+		if (!leftSideBarRef) {
+			leftSideBarRef = document.createElement('div')
+			leftSideBarRef.classList.add(AppClasses.leftSideBar)
 		}
 
-		leftSideBar.replaceChildren(...options.AppLeftSideBar)
+		leftSideBarRef.replaceChildren(...leftSideBarOption)
 	}
 
 	// container -> body
-	let body = app.querySelector(`.${AppClasses.body}`) as HTMLDivElement | null
-	if (!body) {
-		body = document.createElement('div')
-		body.classList.add(AppClasses.body)
+	let bodyRef = appRef.querySelector(`.${AppClasses.body}`) as HTMLDivElement | null
+	if (!bodyRef) {
+		bodyRef = document.createElement('div')
+		bodyRef.classList.add(AppClasses.body)
 	}
 
-	if (options?.AppChildren === false) {
-		body.replaceChildren()
+	const childrenOption = options?.AppChildren
+	if (childrenOption === false) {
+		bodyRef.replaceChildren()
 	}
-	else if (options?.AppChildren !== undefined && options.AppChildren !== true) {
-		body.replaceChildren(...options.AppChildren)
+	else if (childrenOption !== undefined && childrenOption !== true) {
+		bodyRef.replaceChildren(...childrenOption)
 	}
 
 	// container -> rightsidebar
-	let rightSideBar = app.querySelector(`.${AppClasses.rightSideBar}`) as HTMLDivElement | null
-	if (options?.AppRightSideBar === false) {
-		rightSideBar?.replaceChildren()
+	const rightSideBarOption = options?.AppRightSideBar
+	let rightSideBarRef = appRef.querySelector(`.${AppClasses.rightSideBar}`) as HTMLDivElement | null
+	if (rightSideBarOption === false) {
+		rightSideBarRef?.replaceChildren()
 	}
-	else if (options?.AppRightSideBar !== undefined && options.AppRightSideBar !== true) {
-		if (!rightSideBar) {
-			rightSideBar = document.createElement('div')
-			rightSideBar.classList.add(AppClasses.rightSideBar)
+	else if (rightSideBarOption !== undefined && rightSideBarOption !== true) {
+		if (!rightSideBarRef) {
+			rightSideBarRef = document.createElement('div')
+			rightSideBarRef.classList.add(AppClasses.rightSideBar)
 		}
 
-		rightSideBar.replaceChildren(...options.AppRightSideBar)
+		rightSideBarRef.replaceChildren(...rightSideBarOption)
 	}
 
-	container.replaceChildren(...[leftSideBar, body, rightSideBar].filter(
+	containerRef.replaceChildren(...[leftSideBarRef, bodyRef, rightSideBarRef].filter(
 		v => typeof v === 'string' || v instanceof Node
 	))
 
 	// bottombar
-	let bottomBar = app.querySelector(`.${AppClasses.bottomBar}`) as HTMLDivElement | null
-	if (options?.AppBottomBar === false) {
-		bottomBar?.replaceChildren()
+	const bottomBarOption = options?.AppBottomBar
+	let bottomBarRef = appRef.querySelector(`.${AppClasses.bottomBar}`) as HTMLDivElement | null
+	if (bottomBarOption === false) {
+		bottomBarRef?.replaceChildren()
 	}
-	else if (options?.AppBottomBar !== undefined && options.AppBottomBar !== true) {
-		if (!bottomBar) {
-			bottomBar = document.createElement('div')
-			bottomBar.classList.add(AppClasses.bottomBar)
+	else if (bottomBarOption !== undefined && bottomBarOption !== true) {
+		if (!bottomBarRef) {
+			bottomBarRef = document.createElement('div')
+			bottomBarRef.classList.add(AppClasses.bottomBar)
 		}
 
-		bottomBar.replaceChildren(...options.AppBottomBar)
+		bottomBarRef.replaceChildren(...bottomBarOption)
 	}
 
-	app.replaceChildren(...[appBar, container, bottomBar].filter(
+	appRef.replaceChildren(...[appBarRef, containerRef, bottomBarRef].filter(
 		v => typeof v === 'string' || v instanceof Node
 	))
-	refs?.app?.(app)
-	refs?.container?.(container)
-	refs?.body?.(body)
-	if (appBar) refs?.appBar?.(appBar)
-	if (leftSideBar) refs?.leftSideBar?.(leftSideBar)
-	if (rightSideBar) refs?.rightSideBar?.(rightSideBar)
-	if (bottomBar) refs?.bottomBar?.(bottomBar)
-	return app
+	refs?.app?.(appRef)
+	refs?.container?.(containerRef)
+	refs?.body?.(bodyRef)
+	if (appBarRef) refs?.appBar?.(appBarRef)
+	if (leftSideBarRef) refs?.leftSideBar?.(leftSideBarRef)
+	if (rightSideBarRef) refs?.rightSideBar?.(rightSideBarRef)
+	if (bottomBarRef) refs?.bottomBar?.(bottomBarRef)
+	return appRef
 }
 
 export {
 	type AppProps,
 	type AppUpdateOptions,
 	AppClasses,
-	createApp,
-	updateApp
+	createAppRef,
+	updateAppRef
 }

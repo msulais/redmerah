@@ -2,7 +2,7 @@ type DividerProps = astroHTML.JSX.HTMLAttributes
 
 type DividerUpdateOptions = {
 	DividerRefs?: {
-		divider?(el: HTMLDivElement): unknown
+		divider?(ref: HTMLDivElement): unknown
 	}
 }
 
@@ -10,20 +10,20 @@ enum DividerClasses {
 	divider = 'c-divider'
 }
 
-function createDivider(options?: DividerUpdateOptions): HTMLDivElement {
-	const divider = document.createElement('div')
-	return updateDivider(divider, options)
+function createDividerRef(options?: DividerUpdateOptions): HTMLDivElement {
+	const dividerRef = document.createElement('div')
+	return updateDividerRef(dividerRef, options)
 }
 
-function updateDivider(divider: HTMLDivElement, options?: DividerUpdateOptions): HTMLDivElement {
-	options?.DividerRefs?.divider?.(divider)
-	return divider
+function updateDividerRef(dividerRef: HTMLDivElement, options?: DividerUpdateOptions): HTMLDivElement {
+	options?.DividerRefs?.divider?.(dividerRef)
+	return dividerRef
 }
 
 export {
 	type DividerProps,
 	type DividerUpdateOptions,
 	DividerClasses,
-	createDivider,
-	updateDivider
+	createDividerRef,
+	updateDividerRef
 }

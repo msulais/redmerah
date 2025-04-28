@@ -37,9 +37,9 @@ type ModalUpdateOptions = {
 	ModalPadding  ?: number | boolean
 	ModalPosition ?: ModalPosition | boolean
 	ModalRefs     ?: {
-		modal     ?(el: HTMLDialogElement): unknown
-		content   ?(el: HTMLDivElement   ): unknown
-		dragHandle?(el: HTMLDivElement   ): unknown
+		modal     ?(ref: HTMLDialogElement): unknown
+		content   ?(ref: HTMLDivElement   ): unknown
+		dragHandle?(ref: HTMLDivElement   ): unknown
 	}
 }
 
@@ -89,21 +89,21 @@ enum ModalEvents {
 	attributeChange = 'modal:attribute-change',
 
 	/** @param isOpen `boolean` */
-	toggleOpen = 'modal:toggle-open',
+	toggleOpen      = 'modal:toggle-open',
 
 	/** @param details ModalOpenDetails */
-	open = 'modal:open',
+	open            = 'modal:open',
 
 	/** @param details ModalCloseDetails */
-	close = 'modal:close',
+	close           = 'modal:close',
 
 	/** @param details ModalFocusDetails */
-	focus = 'modal:focus',
+	focus           = 'modal:focus',
 
 	/** @param details ModalRepositionDetails */
-	reposition = 'modal:reposition',
-	beforeOpen = 'popover:before-open',
-	beforeClose = 'popover:before-close'
+	reposition      = 'modal:reposition',
+	beforeOpen      = 'popover:before-open',
+	beforeClose     = 'popover:before-close'
 }
 
 enum ModalAttributes {
@@ -147,7 +147,7 @@ const LISTENED_ATTRIBUTES: string[] = [
 ]
 const MODAL_MARGIN = 8
 
-// DON'T USE `Set()`. Order matters
+// !important: Don't use `Set()`. Order matter!
 const OPENED_MODAL: HTMLDialogElement[] = []
 const REGISTERED_MODAL: Set<HTMLDialogElement> = new Set<HTMLDialogElement>()
 let POINTER_X: number = 0
@@ -168,7 +168,7 @@ function _initMutationObserver(): void {
 	})
 }
 
-function _initModalListener(): void {
+function _initModalRefListener(): void {
 	if (HAS_LISTENER) return
 
 	let timeoutId: number | NodeJS.Timeout | null = null
@@ -181,7 +181,7 @@ function _initModalListener(): void {
 
 		timeoutId = setTimeout(async () => {
 			for (const modal of OPENED_MODAL) {
-				await repositionModal(modal)
+				await repositionModalRef(modal)
 			}
 			timeoutId = null
 		}, 250)
@@ -190,7 +190,7 @@ function _initModalListener(): void {
 	function handleOutsideClick(): void {
 		if (OPENED_MODAL.length === 0 || pointerInRange) return
 
-		closeModal(OPENED_MODAL[OPENED_MODAL.length-1], {soft: true})
+		closeModalRef(OPENED_MODAL[OPENED_MODAL.length-1], {soft: true})
 	}
 
 	function initEvents(): void {
@@ -211,44 +211,44 @@ function _initModalListener(): void {
 	initEvents()
 }
 
-function _initModal(modal: HTMLDialogElement): void {
-	const body = document.body
+function _initModalRef(modalRef: HTMLDialogElement): void {
+	const bodyRef = document.body
 	const attributes = {
 		get anchor(): HTMLElement | null {
-			const value = modal.getAttribute(ModalAttributes.anchorBy)
+			const value = modalRef.getAttribute(ModalAttributes.anchorBy)
 			if (!value) return null
 
 			return document.getElementById(value)
 		},
 		get gap(): number {
-			const value = modal.getAttribute(ModalAttributes.gap)
+			const value = modalRef.getAttribute(ModalAttributes.gap)
 			if (!value) return 0
 
 			return numberSafe(Number.parseFloat(value))
 		},
 		get padding(): number {
-			const value = modal.getAttribute(ModalAttributes.padding)
+			const value = modalRef.getAttribute(ModalAttributes.padding)
 			if (!value) return 0
 
 			return numberSafe(Number.parseFloat(value))
 		},
 		get position(): ModalPosition {
-			const value = modal.getAttribute(ModalAttributes.position)
+			const value = modalRef.getAttribute(ModalAttributes.position)
 			if (!value || !validEnumValue(value, ModalPosition)) return ModalPosition.centerBottom
 
 			return value as ModalPosition
 		},
 		get draggable(): boolean {
-			return modal.hasAttribute(ModalAttributes.draggable)
+			return modalRef.hasAttribute(ModalAttributes.draggable)
 		},
 		get autoFocus(): boolean {
-			return modal.hasAttribute(ModalAttributes.autoFocus)
+			return modalRef.hasAttribute(ModalAttributes.autoFocus)
 		},
 		get important(): boolean {
-			return modal.hasAttribute(ModalAttributes.important)
+			return modalRef.hasAttribute(ModalAttributes.important)
 		},
 		get animation(): boolean {
-			return modal.getAttribute(ModalAttributes.animation) !== 'false'
+			return modalRef.getAttribute(ModalAttributes.animation) !== 'false'
 		}
 	}
 	let isOpen: boolean = false
@@ -266,7 +266,7 @@ function _initModal(modal: HTMLDialogElement): void {
 	let timeoutFocusId: number | NodeJS.Timeout | null = null
 	let timeoutScreenSizeId: number | NodeJS.Timeout | null = null
 	let timeoutFixPositionId: number | NodeJS.Timeout | null = null
-	let screenWidth = body.clientWidth
+	let screenWidth = bodyRef.clientWidth
 	let screenHeight = window.innerHeight
 	let keyTop = 0
 	let keyLeft = 0
@@ -277,27 +277,27 @@ function _initModal(modal: HTMLDialogElement): void {
 
 	function toggleDragging(drag: boolean): void {
 		isDragging = drag
-		modal.toggleAttribute(ModalAttributes.dragging, drag)
+		modalRef.toggleAttribute(ModalAttributes.dragging, drag)
 	}
 
 	function fixPosition(options?: ModalRepositionDetails): void {
-		const modalRect = modal.getBoundingClientRect()
-		const screenWidth = body.clientWidth
+		const modalRefRect = modalRef.getBoundingClientRect()
+		const screenWidth = bodyRef.clientWidth
 		const screenHeight = window.innerHeight
-		const [x, y] = [modalRect.left, modalRect.top]
+		const [x, y] = [modalRefRect.left, modalRefRect.top]
 		let [left, top] = [x, y]
-		if (modalRect.left < MODAL_MARGIN) left = MODAL_MARGIN
-		if (modalRect.top < MODAL_MARGIN) top = MODAL_MARGIN
-		if (modalRect.right > screenWidth) left = screenWidth - modalRect.width - MODAL_MARGIN
-		if (modalRect.bottom > screenHeight) top = screenHeight - modalRect.height - MODAL_MARGIN
+		if (modalRefRect.left < MODAL_MARGIN) left = MODAL_MARGIN
+		if (modalRefRect.top < MODAL_MARGIN) top = MODAL_MARGIN
+		if (modalRefRect.right > screenWidth) left = screenWidth - modalRefRect.width - MODAL_MARGIN
+		if (modalRefRect.bottom > screenHeight) top = screenHeight - modalRefRect.height - MODAL_MARGIN
 
-		modal.style.setProperty('left', left + 'px')
-		modal.style.setProperty('top', top + 'px')
+		modalRef.style.setProperty('left', left + 'px')
+		modalRef.style.setProperty('top', top + 'px')
 		if (!isAnimationAllowed() || !animation) {
 			return options?.done()
 		}
 
-		modal.animate({
+		modalRef.animate({
 			transform: [
 				`translate(${x - left}px,${y - top}px)`,
 				`translate(0,0)`
@@ -316,7 +316,7 @@ function _initModal(modal: HTMLDialogElement): void {
 
 		const autofocus = options.autoFocus ?? attributes.autoFocus
 		const pointer = options.pointer
-		modal.dispatchEvent(new CustomEvent(ModalEvents.beforeOpen))
+		modalRef.dispatchEvent(new CustomEvent(ModalEvents.beforeOpen))
 		isOpen = true
 		anchorRef = options.anchor ?? attributes.anchor
 		important = options.important ?? attributes.important
@@ -325,11 +325,11 @@ function _initModal(modal: HTMLDialogElement): void {
 		padding = options.padding ?? attributes.padding
 		pointerX = pointer?.x ?? POINTER_X
 		pointerY = pointer?.y ?? POINTER_Y
-		modal.toggleAttribute(ModalAttributes.draggable, options.draggable ?? attributes.draggable)
-		modal.showModal()
-		if (!autofocus) modal.focus()
+		modalRef.toggleAttribute(ModalAttributes.draggable, options.draggable ?? attributes.draggable)
+		modalRef.showModal()
+		if (!autofocus) modalRef.focus()
 
-		const modalRect = modal.getBoundingClientRect()
+		const modalRect = modalRef.getBoundingClientRect()
 		const anchorRect = anchorRef?.getBoundingClientRect()
 		const flyoutPosition = getFlyoutPosition({
 			flyout: modalRect,
@@ -343,8 +343,8 @@ function _initModal(modal: HTMLDialogElement): void {
 			position
 		})
 
-		modal.style.setProperty('left', flyoutPosition.left + 'px')
-		modal.style.setProperty('top', flyoutPosition.top + 'px')
+		modalRef.style.setProperty('left', flyoutPosition.left + 'px')
+		modalRef.style.setProperty('top', flyoutPosition.top + 'px')
 		if (!animation || !isAnimationAllowed()) {
 			return options.done()
 		}
@@ -365,7 +365,7 @@ function _initModal(modal: HTMLDialogElement): void {
 		}
 		// keep if 'rangeX === rangeY'
 
-		modal.animate({
+		modalRef.animate({
 			transform: [`translate(${translateX}px,${translateY}px)`, 'translate(0,0)'],
 			opacity: [0, 1]
 		}, { duration: 300, easing: AnimationEffectTiming.springBounce })
@@ -381,8 +381,8 @@ function _initModal(modal: HTMLDialogElement): void {
 			return focus()
 		}
 
-		modal.dispatchEvent(new CustomEvent(ModalEvents.beforeClose))
-		const modalRect = modal.getBoundingClientRect()
+		modalRef.dispatchEvent(new CustomEvent(ModalEvents.beforeClose))
+		const modalRect = modalRef.getBoundingClientRect()
 		const anchorRect = anchorRef?.getBoundingClientRect()
 		const flyoutPosition = getFlyoutPosition({
 			flyout: modalRect,
@@ -397,7 +397,7 @@ function _initModal(modal: HTMLDialogElement): void {
 		})
 
 		if (options.animation === false || !animation || !isAnimationAllowed()) {
-			modal.close()
+			modalRef.close()
 			return options.done()
 		}
 
@@ -417,12 +417,12 @@ function _initModal(modal: HTMLDialogElement): void {
 		}
 		// keep if 'rangeX === rangeY'
 
-		modal.animate({
+		modalRef.animate({
 			transform: ['translate(0,0)', `translate(${translateX}px,${translateY}px)`],
 			opacity: [1, 0]
 		}, { duration: 300, easing: AnimationEffectTiming.springBounce })
 		.finished.then(() => {
-			modal.close()
+			modalRef.close()
 			options.done()
 		})
 	}
@@ -433,7 +433,7 @@ function _initModal(modal: HTMLDialogElement): void {
 			return fixPosition(options)
 		}
 
-		const modalRect = modal.getBoundingClientRect()
+		const modalRect = modalRef.getBoundingClientRect()
 		const anchorRect = anchorRef.getBoundingClientRect()
 		const flyoutPosition = getFlyoutPosition({
 			flyout: modalRect,
@@ -444,13 +444,13 @@ function _initModal(modal: HTMLDialogElement): void {
 		})
 
 		const [x, y] = [modalRect.left, modalRect.top]
-		modal.style.setProperty('left', flyoutPosition.left + 'px')
-		modal.style.setProperty('top', flyoutPosition.top + 'px')
+		modalRef.style.setProperty('left', flyoutPosition.left + 'px')
+		modalRef.style.setProperty('top', flyoutPosition.top + 'px')
 		if (!isAnimationAllowed() || !animation) {
 			return options?.done()
 		}
 
-		modal.animate({
+		modalRef.animate({
 			transform: [
 				`translate(${x - flyoutPosition.left}px,${y - flyoutPosition.top}px)`,
 				`translate(0,0)`
@@ -467,15 +467,15 @@ function _initModal(modal: HTMLDialogElement): void {
 		const options = ev?.detail
 		if (timeoutFocusId !== null) clearTimeout(timeoutFocusId)
 
-		modal.setAttribute(ModalAttributes.focus, '')
+		modalRef.setAttribute(ModalAttributes.focus, '')
 		timeoutFocusId = setTimeout(() => {
-			modal.removeAttribute(ModalAttributes.focus)
+			modalRef.removeAttribute(ModalAttributes.focus)
 			timeoutFocusId = null
 			options?.done()
 		}, 1000)
 	}
 
-	function dragOnKeyDown(ev: KeyboardEvent): void {
+	function dragHandleRefOnKeyDown(ev: KeyboardEvent): void {
 		const code = ev.code
 		if (
 			code !== KEY_ARROW_UP
@@ -489,10 +489,10 @@ function _initModal(modal: HTMLDialogElement): void {
 		ev.preventDefault() // disable scroll
 
 		if (timeoutScreenSizeId === null) {
-			const rect = modal.getBoundingClientRect()
+			const rect = modalRef.getBoundingClientRect()
 			keyTop = rect.top
 			keyLeft = rect.left
-			screenWidth = body.clientWidth
+			screenWidth = bodyRef.clientWidth
 			screenHeight = window.innerHeight
 			timeoutScreenSizeId = setTimeout(() => timeoutScreenSizeId = null, 1000)
 		}
@@ -512,8 +512,8 @@ function _initModal(modal: HTMLDialogElement): void {
 			break
 		}
 
-		modal.style.setProperty('left', keyLeft + 'px')
-		modal.style.setProperty('top', keyTop + 'px')
+		modalRef.style.setProperty('left', keyLeft + 'px')
+		modalRef.style.setProperty('top', keyTop + 'px')
 		if (timeoutFixPositionId !== null) clearTimeout(timeoutFixPositionId)
 
 		timeoutFixPositionId = setTimeout(() => {
@@ -522,32 +522,32 @@ function _initModal(modal: HTMLDialogElement): void {
 		}, 200)
 	}
 
-	function dragOnPointerMove(ev: PointerEvent): void {
+	function dragHandleRefOnPointerMove(ev: PointerEvent): void {
 		if (!isDragging) return
 
-		modal.style.setProperty('left', ev.clientX - diffPositionX + 'px')
-		modal.style.setProperty('top', ev.clientY - diffPositionY + 'px')
+		modalRef.style.setProperty('left', ev.clientX - diffPositionX + 'px')
+		modalRef.style.setProperty('top', ev.clientY - diffPositionY + 'px')
 	}
 
-	function dragOnPointerUp(ev: PointerEvent): void {
+	function dragHandleRefOnPointerUp(ev: PointerEvent): void {
 		dragHandleRef?.releasePointerCapture(ev.pointerId)
 		fixPosition()
 		toggleDragging(false)
 	}
 
-	function dragOnPointerDown(ev: PointerEvent): void {
-		const rect = modal.getBoundingClientRect()
+	function dragHandleRefOnPointerDown(ev: PointerEvent): void {
+		const rect = modalRef.getBoundingClientRect()
 		toggleDragging(true)
 		dragHandleRef?.setPointerCapture(ev.pointerId)
 		diffPositionX = ev.clientX - rect.x
 		diffPositionY = ev.clientY - rect.y
 	}
 
-	function dragOnDblClick(): void {
+	function dragHandleRefOnDblClick(): void {
 		reposition()
 	}
 
-	function modalOnKeyDown(ev: KeyboardEvent): void {
+	function modalRefOnKeyDown(ev: KeyboardEvent): void {
 		const code = ev.code
 		if (code === KEY_ESCAPE
 			&& !ev.altKey
@@ -561,7 +561,7 @@ function _initModal(modal: HTMLDialogElement): void {
 		}
 	}
 
-	function modalOnCancel(ev: Event): void {
+	function modalRefOnCancel(ev: Event): void {
 		if (important) {
 			return ev.preventDefault()
 		}
@@ -571,30 +571,30 @@ function _initModal(modal: HTMLDialogElement): void {
 	}
 
 	function initEvents(): void {
-		(modal as any).addEventListener(ModalEvents.attributeChange, (ev: CustomEvent<string>) => {
+		modalRef.addEventListener(ModalEvents.attributeChange as any, (ev: CustomEvent<string>) => {
 			const attr = ev.detail
 			switch (attr) {
 			case 'open':
 				const body = document.body
-				isOpen = modal.open
-				modal.dispatchEvent(new CustomEvent<boolean>(ModalEvents.toggleOpen, {detail: isOpen}))
+				isOpen = modalRef.open
+				modalRef.dispatchEvent(new CustomEvent<boolean>(ModalEvents.toggleOpen, {detail: isOpen}))
 				if (isOpen) {
-					OPENED_MODAL.push(modal)
-					modal.toggleAttribute(GlobalAttributes.keepPointerEvent, true)
+					OPENED_MODAL.push(modalRef)
+					modalRef.toggleAttribute(GlobalAttributes.keepPointerEvent, true)
 					body.toggleAttribute(BodyAttributes.noPointerEvent, true);
-					(modal as any).addEventListener(ModalEvents.focus, focus);
-					(modal as any).addEventListener(ModalEvents.reposition, reposition);
-					modal.addEventListener('cancel', modalOnCancel)
-					modal.addEventListener('keydown', modalOnKeyDown)
-					dragHandleRef?.addEventListener('keydown', dragOnKeyDown)
-					dragHandleRef?.addEventListener('pointerdown', dragOnPointerDown)
-					dragHandleRef?.addEventListener('pointerup', dragOnPointerUp)
-					dragHandleRef?.addEventListener('pointermove', dragOnPointerMove)
-					dragHandleRef?.addEventListener('dblclick', dragOnDblClick)
+					modalRef.addEventListener(ModalEvents.focus as any, focus);
+					modalRef.addEventListener(ModalEvents.reposition as any, reposition);
+					modalRef.addEventListener('cancel', modalRefOnCancel)
+					modalRef.addEventListener('keydown', modalRefOnKeyDown)
+					dragHandleRef?.addEventListener('keydown', dragHandleRefOnKeyDown)
+					dragHandleRef?.addEventListener('pointerdown', dragHandleRefOnPointerDown)
+					dragHandleRef?.addEventListener('pointerup', dragHandleRefOnPointerUp)
+					dragHandleRef?.addEventListener('pointermove', dragHandleRefOnPointerMove)
+					dragHandleRef?.addEventListener('dblclick', dragHandleRefOnDblClick)
 				}
 				else {
-					const index = OPENED_MODAL.findIndex(v => v === modal)
-					modal.toggleAttribute(GlobalAttributes.keepPointerEvent, false)
+					const index = OPENED_MODAL.findIndex(v => v === modalRef)
+					modalRef.toggleAttribute(GlobalAttributes.keepPointerEvent, false)
 					if (index >= 0) {
 						OPENED_MODAL.splice(index, 1)
 					}
@@ -602,15 +602,15 @@ function _initModal(modal: HTMLDialogElement): void {
 						body.toggleAttribute(BodyAttributes.noPointerEvent, false);
 					}
 
-					(modal as any).removeEventListener(ModalEvents.focus, focus);
-					(modal as any).removeEventListener(ModalEvents.reposition, reposition);
-					modal.removeEventListener('cancel', modalOnCancel)
-					modal.removeEventListener('keydown', modalOnKeyDown)
-					dragHandleRef?.removeEventListener('keydown', dragOnKeyDown)
-					dragHandleRef?.removeEventListener('pointerdown', dragOnPointerDown)
-					dragHandleRef?.removeEventListener('pointerup', dragOnPointerUp)
-					dragHandleRef?.removeEventListener('pointermove', dragOnPointerMove)
-					dragHandleRef?.removeEventListener('dblclick', dragOnDblClick)
+					modalRef.removeEventListener(ModalEvents.focus as any, focus);
+					modalRef.removeEventListener(ModalEvents.reposition as any, reposition);
+					modalRef.removeEventListener('cancel', modalRefOnCancel)
+					modalRef.removeEventListener('keydown', modalRefOnKeyDown)
+					dragHandleRef?.removeEventListener('keydown', dragHandleRefOnKeyDown)
+					dragHandleRef?.removeEventListener('pointerdown', dragHandleRefOnPointerDown)
+					dragHandleRef?.removeEventListener('pointerup', dragHandleRefOnPointerUp)
+					dragHandleRef?.removeEventListener('pointermove', dragHandleRefOnPointerMove)
+					dragHandleRef?.removeEventListener('dblclick', dragHandleRefOnDblClick)
 				}
 				break
 			case ModalAttributes.anchorBy:
@@ -637,8 +637,8 @@ function _initModal(modal: HTMLDialogElement): void {
 				break
 			}
 		});
-		(modal as any).addEventListener(ModalEvents.open, open);
-		(modal as any).addEventListener(ModalEvents.close, close);
+		(modalRef as any).addEventListener(ModalEvents.open, open);
+		(modalRef as any).addEventListener(ModalEvents.close, close);
 	}
 
 	/**
@@ -649,7 +649,7 @@ function _initModal(modal: HTMLDialogElement): void {
 	 *     > div.c-modal-draghandle
 	 */
 	function checkContentStructure(): void {
-		const children = modal.children
+		const children = modalRef.children
 		const rest: Element[] = []
 		for (let i = 0; i < children.length; i++) {
 			const child = children.item(i)!
@@ -677,153 +677,159 @@ function _initModal(modal: HTMLDialogElement): void {
 		dragHandleRef.tabIndex = 0
 		dragHandleRef.draggable = false
 		contentRef.append(...rest)
-		modal.replaceChildren(contentRef, dragHandleRef)
+		modalRef.replaceChildren(contentRef, dragHandleRef)
 	}
 
 	checkContentStructure()
 	initEvents()
 }
 
-async function openModal(modal: HTMLDialogElement, options?: ModalOpenOptions): Promise<void> {
-	return new Promise((done) => modal.dispatchEvent(new CustomEvent(
+async function openModalRef(modalRef: HTMLDialogElement, options?: ModalOpenOptions): Promise<void> {
+	return new Promise((done) => modalRef.dispatchEvent(new CustomEvent(
 		ModalEvents.open,
 		{detail: {...options, done} satisfies ModalOpenDetails}
 	)))
 }
 
-async function closeModal(modal: HTMLDialogElement, options?: ModalCloseOptions): Promise<void> {
-	return new Promise((done) => modal.dispatchEvent(new CustomEvent(
+async function closeModalRef(modalRef: HTMLDialogElement, options?: ModalCloseOptions): Promise<void> {
+	return new Promise((done) => modalRef.dispatchEvent(new CustomEvent(
 		ModalEvents.close,
 		{detail: {...options, done} satisfies ModalCloseDetails}
 	)))
 }
 
-async function repositionModal(modal: HTMLDialogElement): Promise<void> {
-	return new Promise((done) => modal.dispatchEvent(new CustomEvent(
+async function repositionModalRef(modalRef: HTMLDialogElement): Promise<void> {
+	return new Promise((done) => modalRef.dispatchEvent(new CustomEvent(
 		ModalEvents.reposition,
 		{detail: {done} satisfies ModalRepositionDetails}
 	)))
 }
 
-async function focusModal(modal: HTMLDialogElement): Promise<void> {
-	return new Promise((done) => modal.dispatchEvent(new CustomEvent(
+async function focusModalRef(modalRef: HTMLDialogElement): Promise<void> {
+	return new Promise((done) => modalRef.dispatchEvent(new CustomEvent(
 		ModalEvents.focus,
 		{detail: {done} satisfies ModalRepositionDetails}
 	)))
 }
 
-function isModalOpen(modal: HTMLDialogElement): boolean {
-	return modal.open
+function isModalRefOpen(modalRef: HTMLDialogElement): boolean {
+	return modalRef.open
 }
 
-function createModal(options?: ModalUpdateOptions): HTMLDialogElement {
-	const modal = document.createElement('dialog')
-	return updateModal(modal, options)
+function createModalRef(options?: ModalUpdateOptions): HTMLDialogElement {
+	const modalRef = document.createElement('dialog')
+	return updateModalRef(modalRef, options)
 }
 
-function updateModal(modal: HTMLDialogElement, options?: ModalUpdateOptions): HTMLDialogElement {
-	modal.classList.add(ModalClasses.modal)
-	if (options?.ModalDraggable !== undefined) {
-		modal.toggleAttribute(ModalAttributes.draggable, options.ModalDraggable)
+function updateModalRef(modalRef: HTMLDialogElement, options?: ModalUpdateOptions): HTMLDialogElement {
+	modalRef.classList.add(ModalClasses.modal)
+
+	const draggableOption = options?.ModalDraggable
+	if (draggableOption !== undefined) {
+		modalRef.toggleAttribute(ModalAttributes.draggable, draggableOption)
 	}
 
-	if (options?.ModalImportant !== undefined) {
-		modal.toggleAttribute(ModalAttributes.important, options.ModalImportant)
+	const importantOption = options?.ModalImportant
+	if (importantOption !== undefined) {
+		modalRef.toggleAttribute(ModalAttributes.important, importantOption)
 	}
 
-	if (options?.ModalAutoFocus !== undefined) {
-		modal.toggleAttribute(ModalAttributes.autoFocus, options.ModalAutoFocus)
+	const autoFocusOption = options?.ModalAutoFocus
+	if (autoFocusOption !== undefined) {
+		modalRef.toggleAttribute(ModalAttributes.autoFocus, autoFocusOption)
 	}
 
-	if (options?.ModalAnimation !== undefined) {
-		modal.setAttribute(ModalAttributes.animation, String(options.ModalAnimation))
+	const animationOption = options?.ModalAnimation
+	if (animationOption !== undefined) {
+		modalRef.setAttribute(ModalAttributes.animation, String(animationOption))
 	}
 
-	const anchorBy = options?.ModalAnchorBy
-	if (anchorBy === false) {
-		modal.removeAttribute(ModalAttributes.anchorBy)
+	const anchorByOption = options?.ModalAnchorBy
+	if (anchorByOption === false) {
+		modalRef.removeAttribute(ModalAttributes.anchorBy)
 	}
-	else if (anchorBy !== undefined && anchorBy !== true) {
-		modal.setAttribute(ModalAttributes.anchorBy, anchorBy)
-	}
-
-	const gap = options?.ModalGap
-	if (gap === false) {
-		modal.removeAttribute(ModalAttributes.gap)
-	}
-	else if (gap !== undefined && gap !== true) {
-		modal.setAttribute(ModalAttributes.gap, gap.toString())
+	else if (anchorByOption !== undefined && anchorByOption !== true) {
+		modalRef.setAttribute(ModalAttributes.anchorBy, anchorByOption)
 	}
 
-	const padding = options?.ModalPadding
-	if (padding === false) {
-		modal.removeAttribute(ModalAttributes.padding)
+	const gapOption = options?.ModalGap
+	if (gapOption === false) {
+		modalRef.removeAttribute(ModalAttributes.gap)
 	}
-	else if (padding !== undefined && padding !== true) {
-		modal.setAttribute(ModalAttributes.padding, padding.toString())
-	}
-
-	const position = options?.ModalPosition
-	if (position === false) {
-		modal.removeAttribute(ModalAttributes.position)
-	}
-	else if (position !== undefined && position !== true) {
-		modal.setAttribute(ModalAttributes.position, position)
+	else if (gapOption !== undefined && gapOption !== true) {
+		modalRef.setAttribute(ModalAttributes.gap, gapOption.toString())
 	}
 
-	let content = modal.querySelector(`.${ModalClasses.content}`) as HTMLDivElement | null
-	if (!content) {
-		content = document.createElement('div')
-		content.classList.add(ModalClasses.content)
+	const paddingOption = options?.ModalPadding
+	if (paddingOption === false) {
+		modalRef.removeAttribute(ModalAttributes.padding)
+	}
+	else if (paddingOption !== undefined && paddingOption !== true) {
+		modalRef.setAttribute(ModalAttributes.padding, paddingOption.toString())
 	}
 
-	const children = options?.ModalChildren
-	if (children === false) {
-		content.replaceChildren()
+	const positionOption = options?.ModalPosition
+	if (positionOption === false) {
+		modalRef.removeAttribute(ModalAttributes.position)
 	}
-	else if (children !== undefined && children !== true) {
-		content.replaceChildren(...children)
-	}
-
-	let dragHandle = modal.querySelector(`.${ModalClasses.dragHandle}`) as HTMLDivElement | null
-	if (!dragHandle) {
-		dragHandle = document.createElement('div')
-		dragHandle.classList.add(ModalClasses.dragHandle)
-		dragHandle.setAttribute('tabindex', '0')
+	else if (positionOption !== undefined && positionOption !== true) {
+		modalRef.setAttribute(ModalAttributes.position, positionOption)
 	}
 
-	modal.replaceChildren(content, dragHandle)
-	options?.ModalRefs?.content?.(content)
-	options?.ModalRefs?.modal?.(modal)
-	options?.ModalRefs?.dragHandle?.(dragHandle)
-	return modal
+	let contentRef = modalRef.querySelector<HTMLDivElement>(`.${ModalClasses.content}`)
+	if (!contentRef) {
+		contentRef = document.createElement('div')
+		contentRef.classList.add(ModalClasses.content)
+	}
+
+	const childrenOption = options?.ModalChildren
+	if (childrenOption === false) {
+		contentRef.replaceChildren()
+	}
+	else if (childrenOption !== undefined && childrenOption !== true) {
+		contentRef.replaceChildren(...childrenOption)
+	}
+
+	let dragHandleRef = modalRef.querySelector<HTMLDivElement>(`.${ModalClasses.dragHandle}`)
+	if (!dragHandleRef) {
+		dragHandleRef = document.createElement('div')
+		dragHandleRef.classList.add(ModalClasses.dragHandle)
+		dragHandleRef.setAttribute('tabindex', '0')
+		dragHandleRef.setAttribute('draggable', 'false')
+	}
+
+	modalRef.replaceChildren(contentRef, dragHandleRef)
+	options?.ModalRefs?.content?.(contentRef)
+	options?.ModalRefs?.modal?.(modalRef)
+	options?.ModalRefs?.dragHandle?.(dragHandleRef)
+	return modalRef
 }
 
-function registerModal(...modals: HTMLDialogElement[]): void {
-	_initModalListener()
+function registerModalRef(...modalRefs: HTMLDialogElement[]): void {
+	_initModalRefListener()
 	_initMutationObserver()
-	if (modals.length === 0) {
-		modals = [...document.querySelectorAll<HTMLDialogElement>('dialog.' + ModalClasses.modal)]
+	if (modalRefs.length === 0) {
+		modalRefs = [...document.querySelectorAll<HTMLDialogElement>('.' + ModalClasses.modal)]
 	}
 
-	for (const modal of modals){
-		if (REGISTERED_MODAL.has(modal)) {
+	for (const modalRef of modalRefs){
+		if (REGISTERED_MODAL.has(modalRef)) {
 			continue
 		}
 
-		REGISTERED_MODAL.add(modal)
-		MUTATION_OBSERVER?.observe(modal, {attributeFilter: LISTENED_ATTRIBUTES})
-		_initModal(modal)
+		REGISTERED_MODAL.add(modalRef)
+		MUTATION_OBSERVER?.observe(modalRef, {attributeFilter: LISTENED_ATTRIBUTES})
+		_initModalRef(modalRef)
 	}
 }
 
-function unregisterModal(...modals: HTMLDialogElement[]): void {
+function unregisterModalRef(...modalRefs: HTMLDialogElement[]): void {
 	MUTATION_OBSERVER?.disconnect()
-	for (const modal of modals) {
-		REGISTERED_MODAL.delete(modal)
+	for (const modalRef of modalRefs) {
+		REGISTERED_MODAL.delete(modalRef)
 	}
-	for (const popover of REGISTERED_MODAL) {
-		MUTATION_OBSERVER?.observe(popover, {attributeFilter: LISTENED_ATTRIBUTES})
+	for (const modalRef of REGISTERED_MODAL) {
+		MUTATION_OBSERVER?.observe(modalRef, {attributeFilter: LISTENED_ATTRIBUTES})
 	}
 }
 
@@ -840,13 +846,13 @@ export {
 	ModalAttributes,
 	ModalClasses,
 	ModalPosition,
-	openModal,
-	closeModal,
-	repositionModal,
-	focusModal,
-	isModalOpen,
-	createModal,
-	updateModal,
-	registerModal,
-	unregisterModal
+	openModalRef,
+	closeModalRef,
+	repositionModalRef,
+	focusModalRef,
+	isModalRefOpen,
+	createModalRef,
+	updateModalRef,
+	registerModalRef,
+	unregisterModalRef
 }

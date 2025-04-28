@@ -1,10 +1,11 @@
 import { ICON_ADD } from "@/constants/icons"
+
 import {
 	type IconUpdateOptions,
 	type IconProps,
-	createIcon,
+	createIconRef,
 	IconClasses,
-	updateIcon
+	updateIconRef
 } from "@/native-components/Icon"
 
 type ButtonProps = astroHTML.JSX.ButtonHTMLAttributes & {
@@ -40,7 +41,7 @@ type ButtonUpdateOptions = {
 	ButtonFocused ?: boolean
 	ButtonDisabled?: boolean
 	ButtonRefs    ?: {
-		button?(el: HTMLButtonElement): unknown
+		button?(ref: HTMLButtonElement): unknown
 	}
 }
 
@@ -51,23 +52,23 @@ type LinkButtonUpdateOptions = {
 	LinkButtonVariant ?: ButtonVariant | boolean
 	LinkButtonFocused ?: boolean
 	LinkButtonRefs    ?: {
-		link?(el: HTMLAnchorElement): unknown
+		link?(ref: HTMLAnchorElement): unknown
 	}
 }
 
 type LinkIconButtonUpdateOptions = Omit<LinkButtonUpdateOptions, 'LinkButtonChildren'> & {
 	LinkIconButtonIcon?: IconUpdateOptions
 	LinkIconButtonRefs?: {
-		link?(el: HTMLAnchorElement): unknown
-		icon?(el: HTMLElement): unknown
+		link?(ref: HTMLAnchorElement): unknown
+		icon?(ref: HTMLElement): unknown
 	}
 }
 
 type IconButtonUpdateOptions = Omit<ButtonUpdateOptions, 'ButtonChildren'> & {
 	IconButtonIcon?: IconUpdateOptions
 	IconButtonRefs?: {
-		button?(el: HTMLButtonElement): unknown
-		icon  ?(el: HTMLElement): unknown
+		button?(ref: HTMLButtonElement): unknown
+		icon  ?(ref: HTMLElement): unknown
 	}
 }
 
@@ -88,158 +89,156 @@ enum ButtonClasses {
 	icon    = 'c-icon-button'
 }
 
-function createButton(options?: ButtonUpdateOptions): HTMLButtonElement {
-	const btn = document.createElement('button')
-	return updateButton(btn, options)
+function createButtonRef(options?: ButtonUpdateOptions): HTMLButtonElement {
+	const buttonRef = document.createElement('button')
+	return updateButtonRef(buttonRef, options)
 }
 
-function updateButton(button: HTMLButtonElement, options?: ButtonUpdateOptions): HTMLButtonElement {
+function updateButtonRef(buttonRef: HTMLButtonElement, options?: ButtonUpdateOptions): HTMLButtonElement {
 	const refs = options?.ButtonRefs
-	const classList = button.classList
-	classList.add(ButtonClasses.button)
+	buttonRef.classList.add(ButtonClasses.button)
 
-	const variant = options?.ButtonVariant
-	if (variant === false) {
-		button.removeAttribute(ButtonAttributes.variant)
+	const variantOption = options?.ButtonVariant
+	if (variantOption === false) {
+		buttonRef.removeAttribute(ButtonAttributes.variant)
 	}
-	else if (variant !== undefined && variant !== true) {
-		button.setAttribute(ButtonAttributes.variant, variant)
-	}
-
-	const focused = options?.ButtonFocused
-	if (focused !== undefined) {
-		button.toggleAttribute(ButtonAttributes.focused, focused)
+	else if (variantOption !== undefined && variantOption !== true) {
+		buttonRef.setAttribute(ButtonAttributes.variant, variantOption)
 	}
 
-	const disabled = options?.ButtonDisabled
-	if (disabled !== undefined) {
-		button.disabled = disabled
+	const focusedOption = options?.ButtonFocused
+	if (focusedOption !== undefined) {
+		buttonRef.toggleAttribute(ButtonAttributes.focused, focusedOption)
 	}
 
-	const children = options?.ButtonChildren
-	if (children === false) {
-		button.replaceChildren()
-	}
-	else if (children !== undefined && children !== true) {
-		button.replaceChildren(...children)
+	const disabledOption = options?.ButtonDisabled
+	if (disabledOption !== undefined) {
+		buttonRef.disabled = disabledOption
 	}
 
-	refs?.button?.(button)
-	return button
+	const childrenOption = options?.ButtonChildren
+	if (childrenOption === false) {
+		buttonRef.replaceChildren()
+	}
+	else if (childrenOption !== undefined && childrenOption !== true) {
+		buttonRef.replaceChildren(...childrenOption)
+	}
+
+	refs?.button?.(buttonRef)
+	return buttonRef
 }
 
-function createLinkButton(options?: LinkButtonUpdateOptions): HTMLAnchorElement {
-	const link = document.createElement('a')
-	return updateLinkButton(link, options)
+function createLinkButtonRef(options?: LinkButtonUpdateOptions): HTMLAnchorElement {
+	const linkRef = document.createElement('a')
+	return updateLinkButtonRef(linkRef, options)
 }
 
-function updateLinkButton(link: HTMLAnchorElement, options?: LinkButtonUpdateOptions): HTMLAnchorElement {
-	const classList = link.classList
+function updateLinkButtonRef(linkRef: HTMLAnchorElement, options?: LinkButtonUpdateOptions): HTMLAnchorElement {
 	const refs = options?.LinkButtonRefs
-	classList.add(ButtonClasses.button)
+	linkRef.classList.add(ButtonClasses.button)
 
-	const href = options?.LinkButtonHref
-	if (href === false) {
-		link.removeAttribute('href')
+	const hrefOption = options?.LinkButtonHref
+	if (hrefOption === false) {
+		linkRef.removeAttribute('href')
 	}
-	else if (href !== undefined && href !== true) {
-		link.href = href
-	}
-
-	const variant = options?.LinkButtonVariant
-	if (variant === false) {
-		link.removeAttribute(ButtonAttributes.variant)
-	}
-	else if (variant !== undefined && variant !== true) {
-		link.setAttribute(ButtonAttributes.variant, variant)
+	else if (hrefOption !== undefined && hrefOption !== true) {
+		linkRef.href = hrefOption
 	}
 
-	const newTab = options?.LinkButtonNewTab
-	if (newTab) {
-		link.setAttribute('target', '_blank')
-		link.setAttribute('rel', 'noopener noreferrer')
+	const variantOption = options?.LinkButtonVariant
+	if (variantOption === false) {
+		linkRef.removeAttribute(ButtonAttributes.variant)
 	}
-	else if (newTab === false) {
-		link.removeAttribute('target')
-		link.removeAttribute('rel')
+	else if (variantOption !== undefined && variantOption !== true) {
+		linkRef.setAttribute(ButtonAttributes.variant, variantOption)
 	}
 
-	const focused = options?.LinkButtonFocused
-	if (focused !== undefined) {
-		link.toggleAttribute(ButtonAttributes.focused, focused)
+	const newTabOption = options?.LinkButtonNewTab
+	if (newTabOption) {
+		linkRef.setAttribute('target', '_blank')
+		linkRef.setAttribute('rel', 'noopener noreferrer')
+	}
+	else if (newTabOption === false) {
+		linkRef.removeAttribute('target')
+		linkRef.removeAttribute('rel')
 	}
 
-	const children = options?.LinkButtonChildren
-	if (children === false) {
-		link.replaceChildren()
-	}
-	else if (children !== undefined && children !== true) {
-		link.replaceChildren(...children)
+	const focusedOption = options?.LinkButtonFocused
+	if (focusedOption !== undefined) {
+		linkRef.toggleAttribute(ButtonAttributes.focused, focusedOption)
 	}
 
-	refs?.link?.(link)
-	return link
+	const childrenOption = options?.LinkButtonChildren
+	if (childrenOption === false) {
+		linkRef.replaceChildren()
+	}
+	else if (childrenOption !== undefined && childrenOption !== true) {
+		linkRef.replaceChildren(...childrenOption)
+	}
+
+	refs?.link?.(linkRef)
+	return linkRef
 }
 
-function createIconButton(
+function createIconButtonRef(
 	options: Omit<IconButtonUpdateOptions, 'IconButtonIcon'> & {
 		IconButtonIcon: Omit<IconUpdateOptions, 'IconCode'> & { IconCode: number }
 	}
 ): HTMLButtonElement {
-	const btn = createButton(options)
-	return updateIconButton(btn, options)
+	const iconButtonRef = createButtonRef(options)
+	return updateIconButtonRef(iconButtonRef, options)
 }
 
-function updateIconButton(button: HTMLButtonElement, options?: IconButtonUpdateOptions): HTMLButtonElement {
-	const classList = button.classList
+function updateIconButtonRef(iconButtonRef: HTMLButtonElement, options?: IconButtonUpdateOptions): HTMLButtonElement {
 	const refs = options?.IconButtonRefs
-	updateButton(button, options)
-	classList.add(ButtonClasses.icon)
+	updateButtonRef(iconButtonRef, options)
+	iconButtonRef.classList.add(ButtonClasses.icon)
 
-	let icon = button.querySelector(`.${IconClasses.icon}`) as HTMLElement | null
-	if (icon) {
-		updateIcon(icon, options?.IconButtonIcon)
+	const iconOption = options?.IconButtonIcon
+	let iconRef = iconButtonRef.querySelector(`.${IconClasses.icon}`) as HTMLElement | null
+	if (iconRef) {
+		updateIconRef(iconRef, iconOption)
 	}
 	else {
-		icon = createIcon({IconCode: ICON_ADD, ...options?.IconButtonIcon})
-		button.replaceChildren(icon)
+		iconRef = createIconRef({IconCode: ICON_ADD, ...iconOption})
+		iconButtonRef.replaceChildren(iconRef)
 	}
 
-	refs?.button?.(button)
-	refs?.icon?.(icon)
-	return button
+	refs?.button?.(iconButtonRef)
+	refs?.icon?.(iconRef)
+	return iconButtonRef
 }
 
-function createLinkIconButton(
+function createLinkIconButtonRef(
 	options: Omit<LinkIconButtonUpdateOptions, 'LinkIconButtonIcon'> & {
 		LinkIconButtonIcon: Omit<IconUpdateOptions, 'IconCode'> & { IconCode: number }
 	}
 ): HTMLAnchorElement {
-	const link = createLinkButton(options)
-	return updateLinkIconButton(link, options)
+	const linkIconButtonRef = createLinkButtonRef(options)
+	return updateLinkIconButtonRef(linkIconButtonRef, options)
 }
 
-function updateLinkIconButton(
-	link: HTMLAnchorElement,
+function updateLinkIconButtonRef(
+	linkIconButtonRef: HTMLAnchorElement,
 	options?: LinkIconButtonUpdateOptions
 ): HTMLAnchorElement {
-	const classList = link.classList
 	const refs = options?.LinkIconButtonRefs
-	updateLinkButton(link, options)
-	classList.add(ButtonClasses.icon)
+	updateLinkButtonRef(linkIconButtonRef, options)
+	linkIconButtonRef.classList.add(ButtonClasses.icon)
 
-	let icon = link.querySelector(`.${IconClasses.icon}`) as HTMLElement | null
-	if (icon) {
-		updateIcon(icon, options?.LinkIconButtonIcon)
+	const iconOption = options?.LinkIconButtonIcon
+	let iconRef = linkIconButtonRef.querySelector(`.${IconClasses.icon}`) as HTMLElement | null
+	if (iconRef) {
+		updateIconRef(iconRef, iconOption)
 	}
 	else {
-		icon = createIcon({IconCode: ICON_ADD, ...options?.LinkIconButtonIcon})
-		link.replaceChildren(icon)
+		iconRef = createIconRef({IconCode: ICON_ADD, ...iconOption})
+		linkIconButtonRef.replaceChildren(iconRef)
 	}
 
-	refs?.link?.(link)
-	refs?.icon?.(icon)
-	return link
+	refs?.link?.(linkIconButtonRef)
+	refs?.icon?.(iconRef)
+	return linkIconButtonRef
 }
 
 export {
@@ -254,11 +253,11 @@ export {
 	ButtonVariant,
 	ButtonClasses,
 	ButtonAttributes,
-	updateButton,
-	updateLinkButton,
-	createButton,
-	createIconButton,
-	createLinkButton,
-	createLinkIconButton,
-	updateIconButton
+	updateButtonRef,
+	updateLinkButtonRef,
+	createButtonRef,
+	createIconButtonRef,
+	createLinkButtonRef,
+	createLinkIconButtonRef,
+	updateIconButtonRef
 }

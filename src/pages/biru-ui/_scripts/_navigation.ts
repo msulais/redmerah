@@ -1,10 +1,10 @@
-import { SideBarClasses, updateSideBarButton } from "@/native-components/SideBar"
+import { SideBarClasses, updateSideBarButtonRef } from "@/native-components/SideBar"
 import { ELEMENT_ID_PREFIX, ElementIds } from "./_enums"
 import { ButtonVariant } from "@/native-components/Button"
 import { isAnimationAllowed } from "@/utils/animation"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { elementValidTarget } from "@/utils/element"
-import { closeDrawer, DrawerClasses, updateDrawerButton } from "@/native-components/Drawer"
+import { closeDrawerRef, DrawerClasses, updateDrawerButtonRef } from "@/native-components/Drawer"
 import CSS from '../_index.module.scss'
 
 const $ = (id: string) => document.getElementById(id)
@@ -24,7 +24,7 @@ function initNavigationEvents(): void {
 		)) return
 
 		if (tab.getAttribute('aria-selected') === 'true') {
-			if (parent.classList.contains(DrawerClasses.drawer)) closeDrawer(parent as HTMLDivElement)
+			if (parent.classList.contains(DrawerClasses.drawer)) closeDrawerRef(parent as HTMLDivElement)
 			return
 		}
 
@@ -43,20 +43,20 @@ function initNavigationEvents(): void {
 			selectedPanel.hidden = true
 		}
 		if (parent.classList.contains(DrawerClasses.drawer)) {
-			closeDrawer(parent as HTMLDivElement)
+			closeDrawerRef(parent as HTMLDivElement)
 		}
 
 		for (const tab of targetTabs) {
 			const classList = tab.classList
 			tab.setAttribute('aria-selected', 'true')
 			if (classList.contains(SideBarClasses.button)) {
-				updateSideBarButton(tab, {
+				updateSideBarButtonRef(tab, {
 					ButtonVariant: ButtonVariant.tonal,
 					SideBarButtonSelected: true
 				})
 			}
 			else if (classList.contains(DrawerClasses.button)) {
-				updateDrawerButton(tab, {
+				updateDrawerButtonRef(tab, {
 					ButtonVariant: ButtonVariant.tonal,
 					DrawerButtonSelected: true
 				})
@@ -67,13 +67,13 @@ function initNavigationEvents(): void {
 			const classList = tab.classList
 			tab.setAttribute('aria-selected', 'false')
 			if (classList.contains(SideBarClasses.button)) {
-				updateSideBarButton(tab, {
+				updateSideBarButtonRef(tab, {
 					ButtonVariant: ButtonVariant.transparent,
 					SideBarButtonSelected: false
 				})
 			}
 			else if (classList.contains(DrawerClasses.button)) {
-				updateDrawerButton(tab, {
+				updateDrawerButtonRef(tab, {
 					ButtonVariant: ButtonVariant.transparent,
 					DrawerButtonSelected: false
 				})
