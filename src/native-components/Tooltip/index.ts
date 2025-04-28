@@ -67,7 +67,7 @@ enum _TooltipListenerEvents {
 	close = 'tooltiplistener:close',
 }
 
-const REGISTERED_TOOLTIP: HTMLDivElement[] = []
+const REGISTERED_TOOLTIP: Set<HTMLDivElement> = new Set<HTMLDivElement>()
 let TOOLTIP_HAS_LISTENER: boolean = false
 let TOOLTIP_TARGET: Element | null = null
 let TOOLTIP_LISTENER: HTMLDivElement | null = null
@@ -416,16 +416,17 @@ function registerTooltip(...tooltips: HTMLDivElement[]): void {
 	}
 
 	for (const tooltip of tooltips) {
-		if (REGISTERED_TOOLTIP.some(v => v === tooltip)) continue
+		if (REGISTERED_TOOLTIP.has(tooltip)) continue
 
+		REGISTERED_TOOLTIP.add(tooltip)
 		_initTooltip(tooltip)
 	}
 }
 
 function unregisterTooltip(...tooltips: HTMLDivElement[]): void {
-	const filtered = REGISTERED_TOOLTIP.filter(a => tooltips.every(b => a !== b))
-	REGISTERED_TOOLTIP.length = 0
-	REGISTERED_TOOLTIP.push(...filtered)
+	for (const tooltip of tooltips) {
+		REGISTERED_TOOLTIP.delete(tooltip)
+	}
 }
 
 export {

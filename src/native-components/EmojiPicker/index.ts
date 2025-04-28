@@ -97,7 +97,7 @@ const ALL_EMOJIS = [
 	...EMOJIS_SYMBOLS,
 	...EMOJIS_FLAGS
 ]
-const REGISTERED_EMOJIPICKER: HTMLDivElement[] = []
+const REGISTERED_EMOJIPICKER: Set<HTMLDivElement> = new Set<HTMLDivElement>()
 
 function _initEmojiPicker(emojiPickerRef: HTMLDivElement): void {
 	const animationOptions = {duration: 250, easing: AnimationEffectTiming.spring}
@@ -385,19 +385,19 @@ function registerEmojiPicker(...emojiPickerRefs: HTMLDivElement[]): void {
 
 	registerPopover(...emojiPickerRefs)
 	for (const popover of emojiPickerRefs){
-		if (REGISTERED_EMOJIPICKER.some(v => v === popover)) {
+		if (REGISTERED_EMOJIPICKER.has(popover)) {
 			continue
 		}
 
-		REGISTERED_EMOJIPICKER.push(popover)
+		REGISTERED_EMOJIPICKER.add(popover)
 		_initEmojiPicker(popover)
 	}
 }
 
 function unregisterEmojiPicker(...emojiPickerRef: HTMLDivElement[]): void {
-	const filtered = REGISTERED_EMOJIPICKER.filter(a => emojiPickerRef.every(b => a !== b))
-	REGISTERED_EMOJIPICKER.length = 0
-	REGISTERED_EMOJIPICKER.push(...filtered)
+	for (const emojipicker of emojiPickerRef) {
+		REGISTERED_EMOJIPICKER.delete(emojipicker)
+	}
 }
 
 function createEmojiPicker(options?: EmojiPickerUpdateOptions): HTMLDivElement {

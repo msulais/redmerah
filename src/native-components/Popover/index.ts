@@ -146,8 +146,8 @@ const LISTENED_ATTRIBUTES: string[] = [
 	PopoverAttributes.position,
 ]
 const POPOVER_MARGIN = 8
-const OPENED_POPOVER: HTMLDivElement[] = []
-const REGISTERED_POPOVER: HTMLDivElement[] = []
+const OPENED_POPOVER: Set<HTMLDivElement> = new Set<HTMLDivElement>()
+const REGISTERED_POPOVER: Set<HTMLDivElement> = new Set<HTMLDivElement>()
 let POINTER_X: number = 0
 let POINTER_Y: number = 0
 let HAS_LISTENER: boolean = false
@@ -176,11 +176,11 @@ function _initPopoverListener(): void {
 
 	let timeoutId: number | NodeJS.Timeout | null = null
 	let isPointerClick = false
-	const selectedPopovers: HTMLDivElement[] = []
+	const selectedPopovers: Set<HTMLDivElement> = new Set<HTMLDivElement>()
 	HAS_LISTENER = true
 
 	function handleWindowResize(): void {
-		if (OPENED_POPOVER.length === 0) return
+		if (OPENED_POPOVER.size === 0) return
 		if (timeoutId !== null) clearTimeout(timeoutId)
 
 		timeoutId = setTimeout(async () => {
@@ -192,13 +192,13 @@ function _initPopoverListener(): void {
 	}
 
 	function handleOutsideClick(): void {
-		if (OPENED_POPOVER.length === 0 || selectedPopovers.length === 0) return
+		if (OPENED_POPOVER.size === 0 || selectedPopovers.size === 0) return
 
 		for (const popover of selectedPopovers) {
 			closePopover(popover, {soft: true})
 		}
 
-		selectedPopovers.length = 0
+		selectedPopovers.clear()
 	}
 
 	function initEvents(): void {
@@ -208,20 +208,20 @@ function _initPopoverListener(): void {
 		})
 		document.addEventListener('pointerdown', (ev) => {
 			isPointerClick = true
-			if (OPENED_POPOVER.length === 0) return
+			if (OPENED_POPOVER.size === 0) return
 
-			selectedPopovers.length = 0
+			selectedPopovers.clear()
 			for (const popover of OPENED_POPOVER) {
 				const inRange = popover.contains(ev.target as Node)
 				if (inRange) continue
 
-				selectedPopovers.push(popover)
+				selectedPopovers.add(popover)
 			}
 		})
 
 		// handle click not by pointer
 		document.addEventListener('click', (ev) => {
-			if (OPENED_POPOVER.length === 0) return
+			if (OPENED_POPOVER.size === 0) return
 			if (!isPointerClick) {
 				for (const popover of OPENED_POPOVER) {
 					const inRange = popover.contains(ev.target as Node)
@@ -611,8 +611,8 @@ function _initPopover(popover: HTMLDivElement): void {
 				}
 			))
 			if (isOpen) {
-				OPENED_POPOVER.push(popover);
-				(popover as any).addEventListener(PopoverEvents.reposition, reposition);
+				OPENED_POPOVER.add(popover)
+				popover.addEventListener(PopoverEvents.reposition as any, reposition);
 				popover.addEventListener('keydown', popoverOnKeyDown)
 				dragHandleRef?.addEventListener('keydown', dragOnKeyDown)
 				dragHandleRef?.addEventListener('pointerdown', dragOnPointerDown)
@@ -621,12 +621,8 @@ function _initPopover(popover: HTMLDivElement): void {
 				dragHandleRef?.addEventListener('dblclick', dragOnDblClick)
 			}
 			else {
-				const index = OPENED_POPOVER.findIndex(v => v === popover)
-				if (index >= 0) {
-					OPENED_POPOVER.splice(index, 1)
-				}
-
-				(popover as any).removeEventListener(PopoverEvents.reposition, reposition);
+				OPENED_POPOVER.delete(popover)
+				popover.removeEventListener(PopoverEvents.reposition as any, reposition);
 				popover.removeEventListener('keydown', popoverOnKeyDown)
 				dragHandleRef?.removeEventListener('keydown', dragOnKeyDown)
 				dragHandleRef?.removeEventListener('pointerdown', dragOnPointerDown)
@@ -800,21 +796,22 @@ function registerPopover(...popovers: HTMLDivElement[]): void {
 	}
 
 	for (const popover of popovers){
-		if (REGISTERED_POPOVER.some(v => v === popover)) {
+		if (REGISTERED_POPOVER.has(popover)) {
 			continue
 		}
 
-		REGISTERED_POPOVER.push(popover)
+		REGISTERED_POPOVER.add(popover)
 		MUTATION_OBSERVER?.observe(popover, {attributeFilter: LISTENED_ATTRIBUTES})
 		_initPopover(popover)
 	}
 }
 
 function unregisterPopover(...popovers: HTMLDivElement[]): void {
-	const filtered = REGISTERED_POPOVER.filter(a => popovers.every(b => a !== b))
 	MUTATION_OBSERVER?.disconnect()
-	REGISTERED_POPOVER.length = 0
-	REGISTERED_POPOVER.push(...filtered)
+	for (const popover of popovers) {
+		REGISTERED_POPOVER.delete(popover)
+	}
+
 	for (const popover of REGISTERED_POPOVER) {
 		MUTATION_OBSERVER?.observe(popover, {attributeFilter: LISTENED_ATTRIBUTES})
 	}

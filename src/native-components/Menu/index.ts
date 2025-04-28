@@ -109,7 +109,7 @@ enum MenuClasses {
 	radioItemContent = radioItem + '-content',
 }
 
-const REGISTERED_SUBMENUITEM: HTMLButtonElement[] = []
+const REGISTERED_SUBMENUITEM: Set<HTMLButtonElement> = new Set<HTMLButtonElement>()
 
 /**
  * Any element is possible as long have class `MenuClasses.submenu`
@@ -425,19 +425,19 @@ function registerSubMenuItem(...submenuitems: HTMLButtonElement[]): void {
 	}
 
 	for (const submenu of submenuitems){
-		if (REGISTERED_SUBMENUITEM.some(v => v === submenu)) {
+		if (REGISTERED_SUBMENUITEM.has(submenu)) {
 			continue
 		}
 
-		REGISTERED_SUBMENUITEM.push(submenu)
+		REGISTERED_SUBMENUITEM.add(submenu)
 		_initSubMenu(submenu)
 	}
 }
 
 function unregisterSubMenuItem(...submenuitems: HTMLButtonElement[]): void {
-	const filtered = REGISTERED_SUBMENUITEM.filter(a => submenuitems.every(b => a !== b))
-	REGISTERED_SUBMENUITEM.length = 0
-	REGISTERED_SUBMENUITEM.push(...filtered)
+	for (const submenuitem of submenuitems) {
+		REGISTERED_SUBMENUITEM.delete(submenuitem)
+	}
 }
 
 function createMenuIndent(options?: MenuIndentUpdateOptions): HTMLDivElement {

@@ -146,8 +146,10 @@ const LISTENED_ATTRIBUTES: string[] = [
 	ModalAttributes.position,
 ]
 const MODAL_MARGIN = 8
+
+// DON'T USE `Set()`. Order matters
 const OPENED_MODAL: HTMLDialogElement[] = []
-const REGISTERED_MODAL: HTMLDialogElement[] = []
+const REGISTERED_MODAL: Set<HTMLDialogElement> = new Set<HTMLDialogElement>()
 let POINTER_X: number = 0
 let POINTER_Y: number = 0
 let HAS_LISTENER: boolean = false
@@ -805,21 +807,21 @@ function registerModal(...modals: HTMLDialogElement[]): void {
 	}
 
 	for (const modal of modals){
-		if (REGISTERED_MODAL.some(v => v === modal)) {
+		if (REGISTERED_MODAL.has(modal)) {
 			continue
 		}
 
-		REGISTERED_MODAL.push(modal)
+		REGISTERED_MODAL.add(modal)
 		MUTATION_OBSERVER?.observe(modal, {attributeFilter: LISTENED_ATTRIBUTES})
 		_initModal(modal)
 	}
 }
 
 function unregisterModal(...modals: HTMLDialogElement[]): void {
-	const filtered = REGISTERED_MODAL.filter(a => modals.every(b => a !== b))
 	MUTATION_OBSERVER?.disconnect()
-	REGISTERED_MODAL.length = 0
-	REGISTERED_MODAL.push(...filtered)
+	for (const modal of modals) {
+		REGISTERED_MODAL.delete(modal)
+	}
 	for (const popover of REGISTERED_MODAL) {
 		MUTATION_OBSERVER?.observe(popover, {attributeFilter: LISTENED_ATTRIBUTES})
 	}

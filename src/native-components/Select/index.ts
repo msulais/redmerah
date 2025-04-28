@@ -83,7 +83,7 @@ enum SelectVariant {
 	transparent = 'transparent',
 }
 
-const REGISTERED_SELECT: HTMLDivElement[] = []
+const REGISTERED_SELECT: Set<HTMLDivElement> = new Set<HTMLDivElement>()
 let OPENED_SELECT: HTMLDivElement | null = null
 let SELECTED_OPTION_COPY: HTMLElement | null = null
 let HAS_LISTENER: boolean = false
@@ -568,19 +568,19 @@ function registerSelect(...selects: HTMLDivElement[]): void {
 	}
 
 	for (const select of selects) {
-		if (REGISTERED_SELECT.some(v => v === select)) {
+		if (REGISTERED_SELECT.has(select)) {
 			continue
 		}
 
-		REGISTERED_SELECT.push(select)
+		REGISTERED_SELECT.add(select)
 		_initSelect(select)
 	}
 }
 
 function unregisterSelect(...selects: HTMLDivElement[]): void {
-	const filtered = REGISTERED_SELECT.filter(a => selects.every(b => a !== b))
-	REGISTERED_SELECT.length = 0
-	REGISTERED_SELECT.push(...filtered)
+	for (const select of selects) {
+		REGISTERED_SELECT.delete(select)
+	}
 }
 
 export {

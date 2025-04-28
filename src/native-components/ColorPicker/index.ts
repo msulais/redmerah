@@ -131,7 +131,7 @@ enum ColorPickerColorSpace {
 	hex = 'hex'
 }
 
-const REGISTERED_COLORPICKER: HTMLDivElement[] = []
+const REGISTERED_COLORPICKER: Set<HTMLDivElement> = new Set<HTMLDivElement>()
 
 function _initColorPicker(colorPickerRef: HTMLDivElement): void {
 	const attributes = {
@@ -601,19 +601,19 @@ function registerColorPicker(...popovers: HTMLDivElement[]): void {
 
 	registerPopover(...popovers)
 	for (const popover of popovers){
-		if (REGISTERED_COLORPICKER.some(v => v === popover)) {
+		if (REGISTERED_COLORPICKER.has(popover)) {
 			continue
 		}
 
-		REGISTERED_COLORPICKER.push(popover)
+		REGISTERED_COLORPICKER.add(popover)
 		_initColorPicker(popover)
 	}
 }
 
 function unregisterColorPicker(...popovers: HTMLDivElement[]): void {
-	const filtered = REGISTERED_COLORPICKER.filter(a => popovers.every(b => a !== b))
-	REGISTERED_COLORPICKER.length = 0
-	REGISTERED_COLORPICKER.push(...filtered)
+	for (const colorpicker of popovers) {
+		REGISTERED_COLORPICKER.delete(colorpicker)
+	}
 }
 
 function createColorPicker(options?: ColorPickerUpdateOptions): HTMLDivElement {
