@@ -199,8 +199,9 @@ function _initSubMenuItemRef(subMenuItemRef: HTMLElement): void {
 				})
 			}
 
-			closePopoverRef(targetRef)
-			document.body.appendChild(targetRef)
+			closePopoverRef(targetRef).then(() => {
+				document.body.appendChild(targetRef)
+			})
 		}, instant? 0 : 300)
 	}
 
@@ -245,9 +246,6 @@ function _initSubMenuItemRef(subMenuItemRef: HTMLElement): void {
 
 	function subMenuRefOnToggleOpen(ev: CustomEvent<PopoverToggleOpenEventDetail>): void {
 		const open = ev.detail.open
-
-		// toggleopen can bubbles
-		if ((ev.target as any).id !== subMenuItemRef.getAttribute('aria-controls')) return
 		subMenuItemRef.setAttribute('aria-expanded', String(open))
 		if (subMenuItemRef.classList.contains(ButtonClasses.button)) {
 			updateMenuItemRef(subMenuItemRef as HTMLButtonElement, {
