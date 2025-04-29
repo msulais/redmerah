@@ -216,15 +216,6 @@ function _initSubMenuItemRef(subMenuItemRef: HTMLElement): void {
 		isParentHovered = false
 	}
 
-	function menuRefOnBeforeClose(ev: Event): void {
-		if (timeId !== null) clearTimeout(timeId)
-		for (const menuRef of getAllSubMenuRefs(ev.target as HTMLElement)) {
-			closePopoverRef(menuRef).then(() => {
-				document.body.appendChild(menuRef)
-			})
-		}
-	}
-
 	function subMenuRefOnPointerEnter(): void {
 		isTargetHovered = true
 		openSubMenuRef()
@@ -261,7 +252,6 @@ function _initSubMenuItemRef(subMenuItemRef: HTMLElement): void {
 			const targetRef = elements.target
 			const contentRef = elements.parentContent
 			if (isOpen) {
-				parentRef?.addEventListener(PopoverEvents.beforeClose, menuRefOnBeforeClose)
 				contentRef?.addEventListener('pointerenter', menuContentRefOnPointerEnter)
 				contentRef?.addEventListener('pointerleave', menuContentRefOnPointerLeave)
 				subMenuItemRef.addEventListener('pointerenter', subMenuRefOnPointerEnter)
@@ -274,10 +264,15 @@ function _initSubMenuItemRef(subMenuItemRef: HTMLElement): void {
 			else {
 				// !important: without this, `PopoverEvents.toggleOpen` event for `target` will
 				// remove before running for the last time
+				if (timeId !== null) clearTimeout(timeId)
+				for (const menuRef of getAllSubMenuRefs(ev.target as HTMLElement)) {
+					closePopoverRef(menuRef).then(() => {
+						document.body.appendChild(menuRef)
+					})
+				}
 				setTimeout(() => {
 					contentRef?.removeEventListener('pointerenter', menuContentRefOnPointerEnter)
 					contentRef?.removeEventListener('pointerleave', menuContentRefOnPointerLeave)
-					parentRef?.removeEventListener(PopoverEvents.beforeClose, menuRefOnBeforeClose)
 					subMenuItemRef.removeEventListener('pointerenter', subMenuRefOnPointerEnter)
 					subMenuItemRef.removeEventListener('pointerleave', subMenuRefOnPointerLeave)
 					subMenuItemRef.removeEventListener('click'       , subMenuRefOnClick)
