@@ -348,7 +348,7 @@ function _initPopoverRef(popoverRef: HTMLDivElement): void {
 
 		const autofocus = options.autoFocus ?? attributes.autoFocus
 		const pointer = options.pointer
-		popoverRef.dispatchEvent(new CustomEvent(PopoverEvents.beforeOpen))
+		popoverRef.dispatchEvent(new CustomEvent(PopoverEvents.beforeOpen, {cancelable: true}))
 		isOpen    = true
 		anchorRef = options.anchor ?? attributes.anchor
 		important = options.important ?? attributes.important
@@ -414,7 +414,7 @@ function _initPopoverRef(popoverRef: HTMLDivElement): void {
 			return options.done()
 		}
 
-		popoverRef.dispatchEvent(new CustomEvent(PopoverEvents.beforeClose))
+		popoverRef.dispatchEvent(new CustomEvent(PopoverEvents.beforeClose, {cancelable: true}))
 		const popoverRect = popoverRef.getBoundingClientRect()
 		const anchorRect = anchorRef?.getBoundingClientRect()
 		const flyoutPosition = getFlyoutPosition({
