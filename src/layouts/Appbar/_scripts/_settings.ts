@@ -7,7 +7,7 @@ import { LocalStorageKeys } from "@/enums/storage"
 import { RootAttributes } from "@/enums/attributes"
 import { colorGeneratePalette, colorHexToRgb, colorIsValid } from "@/utils/color"
 import { GlobalElementIds } from "@/enums/ids"
-import { ColorPickerAttributes, ColorPickerEvents, ColorPickerPosition, openColorPickerRef, updateColorPickerRef } from "@/native-components/ColorPicker"
+import { ColorPickerAttributes, ColorPickerEvents, openColorPickerRef, updateColorPickerRef } from "@/native-components/ColorPicker"
 import type { RGBColor, HEXColor } from "@/types/color"
 
 const $ = (id: string) => document.getElementById(id)
@@ -86,8 +86,7 @@ function initSettingsMenu(): void {const rgbToCSS = (rgb: RGBColor) => `${Math.r
 		switch (document.activeElement) {
 		case accentButtonRef:
 			openColorPickerRef(colorPickerRef, {
-				anchor: document.body,
-				position: ColorPickerPosition.centerCenterRightTop
+				anchor: buttonRef,
 			}).then(() => closeMenuRef(menuRef))
 			break
 		}
