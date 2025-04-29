@@ -1,5 +1,5 @@
 import { children, type JSX, type ParentComponent, Show, splitProps, type ValidComponent } from "solid-js"
-// import { Dynamic, type DynamicProps } from "solid-js/web"
+import { Dynamic, type DynamicProps } from "solid-js/web"
 
 import { attrSetIfExist, attrClassList } from '@/utils/attributes'
 
