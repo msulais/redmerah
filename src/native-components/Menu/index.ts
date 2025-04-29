@@ -109,7 +109,7 @@ enum MenuClasses {
 const REGISTERED_SUBMENUITEM: Set<HTMLButtonElement> = new Set<HTMLButtonElement>()
 
 /**
- * Any element is possible as long have class `MenuClasses.submenu`
+ * Any element is possible as long have class `MenuClasses.submenuItem`
  * @param subMenuItemRef
  */
 function _initSubMenuItemRef(subMenuItemRef: HTMLElement): void {
@@ -262,14 +262,25 @@ function _initSubMenuItemRef(subMenuItemRef: HTMLElement): void {
 				targetRef?.addEventListener(PopoverEvents.toggleOpen as any, subMenuRefOnToggleOpen)
 			}
 			else {
-				// !important: without this, `PopoverEvents.toggleOpen` event for `target` will
-				// remove before running for the last time
 				if (timeId !== null) clearTimeout(timeId)
 				for (const menuRef of getAllSubMenuRefs(ev.target as HTMLElement)) {
 					closePopoverRef(menuRef).then(() => {
 						document.body.appendChild(menuRef)
+						const id = menuRef.id
+						if (!id) return
+
+						const subMenuItemRefs = document.querySelectorAll<HTMLButtonElement>(
+							`.${MenuClasses.submenuItem}[aria-controls="${id}"]`
+						)
+						for (const subMenuItemRef of subMenuItemRefs) {
+							updateSubMenuItemRef(subMenuItemRef, {
+								ButtonFocused: false
+							})
+						}
 					})
 				}
+				// !important: without this, `PopoverEvents.toggleOpen` event for `target` will
+				// remove before running for the last time
 				setTimeout(() => {
 					contentRef?.removeEventListener('pointerenter', menuContentRefOnPointerEnter)
 					contentRef?.removeEventListener('pointerleave', menuContentRefOnPointerLeave)
@@ -386,7 +397,7 @@ function updateSubMenuItemRef(
 	subMenuItemRef: HTMLButtonElement,
 	options?: SubMenuItemUpdateOptions
 ): HTMLButtonElement {
-	updateMenuItemRef(subMenuItemRef)
+	updateMenuItemRef(subMenuItemRef, options)
 	subMenuItemRef.classList.add(MenuClasses.submenuItem)
 	const ariaControls = options?.SubMenuItemAriaControls
 	if (ariaControls === false) {
