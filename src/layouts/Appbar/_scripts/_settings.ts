@@ -1,4 +1,4 @@
-import { closeMenuRef, isMenuRefOpen, MenuEvents, openMenuRef } from "@/native-components/Menu"
+import { closeMenuRef, MenuEvents, openMenuRef, type MenuToggleOpenEventDetail } from "@/native-components/Menu"
 import { ElementIds, ID, RadioGroupNames } from "./_enums"
 import { updateIconButtonRef } from "@/native-components/Button"
 import { validEnumValue } from "@/utils/object"
@@ -93,10 +93,8 @@ function initSettingsMenu(): void {const rgbToCSS = (rgb: RGBColor) => `${Math.r
 		}
 	})
 
-	menuRef.addEventListener(MenuEvents.toggleOpen, ev => {
-		if (ev.target !== menuRef) return
-
-		const isOpen = isMenuRefOpen(menuRef)
+	menuRef.addEventListener(MenuEvents.toggleOpen as any, (ev: CustomEvent<MenuToggleOpenEventDetail>) => {
+		const isOpen = ev.detail.open
 		buttonRef.setAttribute('aria-expanded', String(isOpen))
 		updateIconButtonRef(buttonRef, {
 			ButtonFocused: isOpen

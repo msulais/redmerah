@@ -69,42 +69,46 @@ type PopoverCloseOptions = {
 	animation?: boolean
 }
 
-type PopoverOpenDetails = PopoverOpenOptions & {
+type _PopoverOpenEventDetail = PopoverOpenOptions & {
 	done: () => void
 }
 
-type PopoverCloseDetails = PopoverCloseOptions & {
+type _PopoverCloseEventDetail = PopoverCloseOptions & {
 	done: () => void
 }
 
-type PopoverRepositionDetails = {
+type _PopoverRepositionEventDetail = {
 	done: () => void
 }
 
-type PopoverToggleOpenDetail = {
+type PopoverToggleOpenEventDetail = {
 	open: boolean
 }
 
-type PopoverAttributeChangeDetail = {
+type _PopoverAttributeChangeEventDetail = {
 	attributeName: string | null
 }
 
 enum PopoverEvents {
-	/** @param detail `PopoverAttributeChangeDetail` */
+	/** `!bubbles | !cancelable | detail: _PopoverAttributeChangeEventDetail` */
 	attributeChange = 'popover:attribute-change',
 
-	/** @param detail `PopopverToggleOpenDetail` */
+	/** `!bubbles | !cancelable | detail: PopoverToggleOpenEventDetail` */
 	toggleOpen = 'popover:toggle-open',
 
-	/** @param detail PopoverOpenDetails */
+	/** `!bubbles | !cancelable | detail: _PopoverOpenEventDetail` */
 	open = 'popover:open',
 
-	/** @param detail PopoverCloseDetails */
+	/** `!bubbles | !cancelable | detail: _PopoverCloseEventDetail` */
 	close = 'popover:close',
 
-	/** @param detail PopoverRepositionDetails */
+	/** `!bubbles | !cancelable | detail: _PopoverRepositionEventDetail` */
 	reposition = 'popover:reposition',
+
+	/** `!bubbles | !cancelable | !detail` */
 	beforeOpen = 'popover:before-open',
+
+	/** `!bubbles | !cancelable | !detail` */
 	beforeClose = 'popover:before-close'
 }
 
@@ -161,7 +165,7 @@ function _initMutationObserver(): void {
 	MUTATION_OBSERVER = new MutationObserver((entries) => {
 		for (const entry of entries) {
 			const attr = entry.attributeName
-			entry.target.dispatchEvent(new CustomEvent<PopoverAttributeChangeDetail>(
+			entry.target.dispatchEvent(new CustomEvent<_PopoverAttributeChangeEventDetail>(
 				PopoverEvents.attributeChange,
 				{detail: {
 					attributeName: attr
@@ -308,7 +312,7 @@ function _initPopoverRef(popoverRef: HTMLDivElement): void {
 		popoverRef.toggleAttribute(PopoverAttributes.dragging, drag)
 	}
 
-	function fixPosition(options?: PopoverRepositionDetails): void {
+	function fixPosition(options?: _PopoverRepositionEventDetail): void {
 		const popoverRect = popoverRef.getBoundingClientRect()
 		const screenWidth = bodyRef.clientWidth
 		const screenHeight = window.innerHeight
@@ -338,7 +342,7 @@ function _initPopoverRef(popoverRef: HTMLDivElement): void {
 		})
 	}
 
-	function open(ev: CustomEvent<PopoverOpenDetails>): void {
+	function open(ev: CustomEvent<_PopoverOpenEventDetail>): void {
 		const options = ev.detail
 		if (isOpen) return options.done()
 
@@ -404,7 +408,7 @@ function _initPopoverRef(popoverRef: HTMLDivElement): void {
 		})
 	}
 
-	function close(ev: CustomEvent<PopoverCloseDetails>): void {
+	function close(ev: CustomEvent<_PopoverCloseEventDetail>): void {
 		const options = ev.detail
 		if ((options.soft ?? false) && important && isOpen) {
 			return options.done()
@@ -456,7 +460,7 @@ function _initPopoverRef(popoverRef: HTMLDivElement): void {
 		})
 	}
 
-	function reposition(ev?: CustomEvent<PopoverRepositionDetails>): void {
+	function reposition(ev?: CustomEvent<_PopoverRepositionEventDetail>): void {
 		const options = ev?.detail
 		if (!anchorRef) {
 			return fixPosition(options)
@@ -572,7 +576,7 @@ function _initPopoverRef(popoverRef: HTMLDivElement): void {
 	}
 
 	function initEvents(): void {
-		popoverRef.addEventListener(PopoverEvents.attributeChange as any, (ev: CustomEvent<PopoverAttributeChangeDetail>) => {
+		popoverRef.addEventListener(PopoverEvents.attributeChange as any, (ev: CustomEvent<_PopoverAttributeChangeEventDetail>) => {
 			const attr = ev.detail.attributeName
 			switch (attr) {
 			case PopoverAttributes.anchorBy:
@@ -603,12 +607,9 @@ function _initPopoverRef(popoverRef: HTMLDivElement): void {
 		popoverRef.addEventListener(PopoverEvents.close as any, close);
 		popoverRef.addEventListener('toggle', ev => {
 			isOpen = (ev as ToggleEvent).newState === "open"
-			popoverRef.dispatchEvent(new CustomEvent<PopoverToggleOpenDetail>(
+			popoverRef.dispatchEvent(new CustomEvent<PopoverToggleOpenEventDetail>(
 				PopoverEvents.toggleOpen,
-				{
-					detail: {open: isOpen},
-					bubbles: true
-				}
+				{detail: {open: isOpen}}
 			))
 			if (isOpen) {
 				OPENED_POPOVER.add(popoverRef)
@@ -679,21 +680,21 @@ function _initPopoverRef(popoverRef: HTMLDivElement): void {
 async function openPopoverRef(popoverRef: HTMLDivElement, options?: PopoverOpenOptions): Promise<void> {
 	return new Promise((done) => popoverRef.dispatchEvent(new CustomEvent(
 		PopoverEvents.open,
-		{detail: {...options, done} satisfies PopoverOpenDetails}
+		{detail: {...options, done} satisfies _PopoverOpenEventDetail}
 	)))
 }
 
 async function closePopoverRef(popoverRef: HTMLDivElement, options?: PopoverCloseOptions): Promise<void> {
 	return new Promise((done) => popoverRef.dispatchEvent(new CustomEvent(
 		PopoverEvents.close,
-		{detail: {...options, done} satisfies PopoverCloseDetails}
+		{detail: {...options, done} satisfies _PopoverCloseEventDetail}
 	)))
 }
 
 async function repositionPopoverRef(popoverRef: HTMLDivElement): Promise<void> {
 	return new Promise((done) => popoverRef.dispatchEvent(new CustomEvent(
 		PopoverEvents.reposition,
-		{detail: {done} satisfies PopoverRepositionDetails}
+		{detail: {done} satisfies _PopoverRepositionEventDetail}
 	)))
 }
 
@@ -832,11 +833,7 @@ export {
 	type PopoverUpdateOptions,
 	type PopoverOpenOptions,
 	type PopoverCloseOptions,
-	type PopoverOpenDetails,
-	type PopoverCloseDetails,
-	type PopoverRepositionDetails,
-	type PopoverToggleOpenDetail,
-	type PopoverAttributeChangeDetail,
+	type PopoverToggleOpenEventDetail,
 	PopoverEvents,
 	PopoverAttributes,
 	PopoverClasses,

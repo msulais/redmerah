@@ -74,6 +74,7 @@ enum SelectAttributes {
 }
 
 enum SelectEvents {
+	/** `bubbles | !cancelable | !detail` */
 	change = 'select:change'
 }
 

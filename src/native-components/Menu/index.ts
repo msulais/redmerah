@@ -4,10 +4,8 @@ import {
 	type PopoverProps,
 	type PopoverOpenOptions,
 	type PopoverCloseOptions,
-	type PopoverOpenDetails,
-	type PopoverCloseDetails,
-	type PopoverRepositionDetails,
 	type PopoverUpdateOptions,
+	type PopoverToggleOpenEventDetail,
 	PopoverEvents,
 	PopoverAttributes,
 	PopoverClasses,
@@ -19,7 +17,6 @@ import {
 	registerPopoverRef,
 	updatePopoverRef,
 	unregisterPopoverRef,
-	type PopoverToggleOpenDetail
 } from "@/native-components/Popover"
 import {
 	type ButtonUpdateOptions,
@@ -246,7 +243,7 @@ function _initSubMenuItemRef(subMenuItemRef: HTMLElement): void {
 		openSubMenuRef(true)
 	}
 
-	function subMenuRefOnToggleOpen(ev: CustomEvent<PopoverToggleOpenDetail>): void {
+	function subMenuRefOnToggleOpen(ev: CustomEvent<PopoverToggleOpenEventDetail>): void {
 		const open = ev.detail.open
 
 		// toggleopen can bubbles
@@ -261,10 +258,8 @@ function _initSubMenuItemRef(subMenuItemRef: HTMLElement): void {
 
 	function initEvents(): void {
 		const parentRef = elements.parent
-		parentRef?.addEventListener(PopoverEvents.toggleOpen, (ev) => {
-			if (ev.target !== parentRef) return
-
-			const isOpen = parentRef.matches(':popover-open')
+		parentRef?.addEventListener(PopoverEvents.toggleOpen as any, (ev: CustomEvent<PopoverToggleOpenEventDetail>) => {
+			const isOpen = ev.detail.open
 			const targetRef = elements.target
 			const contentRef = elements.parentContent
 			if (isOpen) {
@@ -493,9 +488,6 @@ export {
 	type SubMenuItemProps,
 	type PopoverOpenOptions as MenuOpenOptions,
 	type PopoverCloseOptions as MenuCloseOptions,
-	type PopoverOpenDetails as MenuOpenDetails,
-	type PopoverCloseDetails as MenuCloseDetails,
-	type PopoverRepositionDetails as MenuRepositionDetails,
 	type MenuUpdateOptions,
 	type MenuItemUpdateOptions,
 	type LinkMenuItemUpdateOptions,
@@ -505,6 +497,7 @@ export {
 	type MenuIndentProps,
 	type MenuIndentUpdateOptions,
 	type MenuHeaderUpdateOptions,
+	type PopoverToggleOpenEventDetail as MenuToggleOpenEventDetail,
 	MenuClasses,
 	PopoverEvents as MenuEvents,
 	PopoverAttributes as MenuAttributes,

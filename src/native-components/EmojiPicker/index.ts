@@ -45,13 +45,10 @@ import {
 	IconClasses,
 	updateIconRef } from "@/native-components/Icon"
 import {
-	type PopoverCloseDetails,
-	type PopoverCloseOptions,
-	type PopoverOpenDetails,
-	type PopoverOpenOptions,
 	type PopoverProps,
-	type PopoverRepositionDetails,
-	type PopoverToggleOpenDetail,
+	type PopoverToggleOpenEventDetail,
+	type PopoverOpenOptions,
+	type PopoverCloseOptions,
 	type PopoverUpdateOptions,
 	closePopoverRef,
 	isPopoverRefOpen,
@@ -147,7 +144,8 @@ enum EmojiPickerAttributes {
 }
 
 enum EmojiPickerEvents {
-	change = 'emojipicker:value'
+	/** `!bubbles | !cancelable | !detail` */
+	change = 'emojipicker:change'
 }
 
 const ALL_EMOJIS = [
@@ -408,7 +406,7 @@ function _initEmojiPickerRef(emojiPickerRef: HTMLDivElement): void {
 
 			emojiPickerRef.setAttribute(EmojiPickerAttributes.emoji, emoji)
 			emojiPickerRef.setAttribute(EmojiPickerAttributes.emojiName, name)
-			emojiPickerRef.dispatchEvent(new CustomEvent(EmojiPickerEvents.change, {bubbles: true}))
+			emojiPickerRef.dispatchEvent(new CustomEvent(EmojiPickerEvents.change))
 			addRecentEmoji(emoji, name)
 			if (attributes.autoclose) {
 				closePopoverRef(emojiPickerRef)
@@ -418,9 +416,7 @@ function _initEmojiPickerRef(emojiPickerRef: HTMLDivElement): void {
 	}
 
 	function initEvents(): void {
-		emojiPickerRef.addEventListener(PopoverEvents.toggleOpen as any, (ev: CustomEvent<PopoverToggleOpenDetail>) => {
-			if (ev.target !== emojiPickerRef) return
-
+		emojiPickerRef.addEventListener(PopoverEvents.toggleOpen as any, (ev: CustomEvent<PopoverToggleOpenEventDetail>) => {
 			const isOpen = ev.detail.open
 			if (isOpen) {
 				emojiPickerRef.addEventListener('click', emojiPickerRefOnClick)
@@ -736,13 +732,11 @@ function updateEmojiPickerRef(emojiPickerRef: HTMLDivElement, options?: EmojiPic
 }
 
 export {
-	type PopoverOpenOptions as EmojiPickerOpenOptions,
-	type PopoverCloseOptions as EmojiPickerCloseOptions,
-	type PopoverOpenDetails as EmojiPickerOpenDetails,
-	type PopoverCloseDetails as EmojiPickerCloseDetails,
-	type PopoverRepositionDetails as EmojiPickerRepositionDetails,
 	type EmojiPickerProps,
 	type EmojiPickerUpdateOptions,
+	type PopoverToggleOpenEventDetail as EmojiPickerToggleOpenEventDetail,
+	type PopoverOpenOptions as EmojiPickerOpenOptions,
+	type PopoverCloseOptions as EmojiPickerCloseOptions,
 	PopoverPosition as EmojiPickerPosition,
 	EmojiPickerAttributes,
 	EmojiPickerClasses,

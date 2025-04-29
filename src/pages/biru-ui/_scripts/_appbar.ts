@@ -1,7 +1,6 @@
 import { openPopoverRef } from "@/native-components/Popover"
 import { updateButtonRef } from "@/native-components/Button"
-import { closeMenuRef, MenuEvents } from "@/native-components/Menu"
-import type { PopoverToggleOpenDetail } from "@/native-components/Popover"
+import { closeMenuRef, MenuEvents, type MenuToggleOpenEventDetail } from "@/native-components/Menu"
 import { elementValidTarget } from "@/utils/element"
 import { ELEMENT_ID_PREFIX, ElementIds, RadioGroupNames } from "./_enums"
 import { LocalStorageKeys } from "@/enums/storage"
@@ -161,24 +160,20 @@ function initAppBarEvents(): void {
 }
 
 function initGlobalMenuEvents(): void {
-	document.body.addEventListener(MenuEvents.toggleOpen, ev => {
-		const open = (ev as CustomEvent<PopoverToggleOpenDetail>).detail.open
-		const popover = ev.target as HTMLDivElement
+	settingsMenu.addEventListener(MenuEvents.toggleOpen as any, (ev: CustomEvent<MenuToggleOpenEventDetail>) => {
+		const open = ev.detail.open
+		settingsButton.setAttribute('aria-expanded', String(open))
+		updateButtonRef(settingsButton, {
+			ButtonFocused: open
+		})
+	})
 
-		switch (popover) {
-		case settingsMenu:
-			settingsButton.setAttribute('aria-expanded', String(open))
-			updateButtonRef(settingsButton, {
-				ButtonFocused: open
-			})
-			break
-		case infoMenu:
-			infoButton.setAttribute('aria-expanded', String(open))
-			updateButtonRef(infoButton, {
-				ButtonFocused: open
-			})
-			break
-		}
+	infoMenu.addEventListener(MenuEvents.toggleOpen as any, (ev: CustomEvent<MenuToggleOpenEventDetail>) => {
+		const open = ev.detail.open
+		infoButton.setAttribute('aria-expanded', String(open))
+		updateButtonRef(infoButton, {
+			ButtonFocused: open
+		})
 	})
 }
 

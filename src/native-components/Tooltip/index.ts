@@ -62,8 +62,10 @@ enum TooltipAttributes {
 }
 
 enum _TooltipListenerEvents {
-	/** @param detail `_TooltipOpenDetail` */
+	/** `!bubbles | !cancelable | detail = _TooltipOpenDetail` */
 	open  = 'tooltiplistener:open',
+
+	/** `!bubbles | !cancelable | !detail` */
 	close = 'tooltiplistener:close',
 }
 

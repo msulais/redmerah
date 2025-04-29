@@ -68,42 +68,54 @@ type ModalCloseOptions = {
 	animation?: boolean
 }
 
-type ModalOpenDetails = ModalOpenOptions & {
+type _ModalOpenEventDetail = ModalOpenOptions & {
 	done: () => void
 }
 
-type ModalCloseDetails = ModalCloseOptions & {
+type _ModalCloseEventDetail = ModalCloseOptions & {
 	done: () => void
 }
 
-type ModalRepositionDetails = {
+type _ModalRepositionEventDetail = {
 	done: () => void
 }
 
-type ModalFocusDetails = {
+type _ModalFocusEventDetail = {
 	done: () => void
+}
+
+type _ModalAttributeChangeEventDetail = {
+	attributeName: string
+}
+
+type ModalToggleOpenEventDetail = {
+	isOpen: boolean
 }
 
 enum ModalEvents {
-	/** @param attributeName `string` */
+	/** `!bubbles | !cancelable | detail: _ModalAttributeChangeEventDetail` */
 	attributeChange = 'modal:attribute-change',
 
-	/** @param isOpen `boolean` */
+	/** `!bubbles | !cancelable | detail: ModalToggleOpenEventDetail` */
 	toggleOpen      = 'modal:toggle-open',
 
-	/** @param details ModalOpenDetails */
+	/** `!bubbles | !cancelable | detail: _ModalOpenEventDetail` */
 	open            = 'modal:open',
 
-	/** @param details ModalCloseDetails */
+	/** `!bubbles | !cancelable | detail: _ModalCloseEventDetail` */
 	close           = 'modal:close',
 
-	/** @param details ModalFocusDetails */
+	/** `!bubbles | !cancelable | detail: _ModalFocusEventDetail` */
 	focus           = 'modal:focus',
 
-	/** @param details ModalRepositionDetails */
+	/** `!bubbles | !cancelable | detail: _ModalRepositionEventDetail` */
 	reposition      = 'modal:reposition',
-	beforeOpen      = 'popover:before-open',
-	beforeClose     = 'popover:before-close'
+
+	/** `!bubbles | !cancelable | !detail` */
+	beforeOpen      = 'modal:before-open',
+
+	/** `!bubbles | !cancelable | !detail` */
+	beforeClose     = 'modal:before-close'
 }
 
 enum ModalAttributes {
@@ -163,7 +175,9 @@ function _initMutationObserver(): void {
 	MUTATION_OBSERVER = new MutationObserver((entries) => {
 		for (const entry of entries) {
 			const attr = entry.attributeName
-			entry.target.dispatchEvent(new CustomEvent(ModalEvents.attributeChange, {detail: attr}))
+			if (!attr) continue
+
+			entry.target.dispatchEvent(new CustomEvent<_ModalAttributeChangeEventDetail>(ModalEvents.attributeChange, {detail: {attributeName: attr}}))
 		}
 	})
 }
@@ -280,7 +294,7 @@ function _initModalRef(modalRef: HTMLDialogElement): void {
 		modalRef.toggleAttribute(ModalAttributes.dragging, drag)
 	}
 
-	function fixPosition(options?: ModalRepositionDetails): void {
+	function fixPosition(options?: _ModalRepositionEventDetail): void {
 		const modalRefRect = modalRef.getBoundingClientRect()
 		const screenWidth = bodyRef.clientWidth
 		const screenHeight = window.innerHeight
@@ -310,7 +324,7 @@ function _initModalRef(modalRef: HTMLDialogElement): void {
 		})
 	}
 
-	function open(ev: CustomEvent<ModalOpenDetails>): void {
+	function open(ev: CustomEvent<_ModalOpenEventDetail>): void {
 		const options = ev.detail
 		if (isOpen) return options.done()
 
@@ -374,7 +388,7 @@ function _initModalRef(modalRef: HTMLDialogElement): void {
 		})
 	}
 
-	function close(ev: CustomEvent<ModalCloseDetails>): void {
+	function close(ev: CustomEvent<_ModalCloseEventDetail>): void {
 		const options = ev.detail
 		if ((options.soft ?? false) && important && isOpen) {
 			options.done()
@@ -427,7 +441,7 @@ function _initModalRef(modalRef: HTMLDialogElement): void {
 		})
 	}
 
-	function reposition(ev?: CustomEvent<ModalRepositionDetails>): void {
+	function reposition(ev?: CustomEvent<_ModalRepositionEventDetail>): void {
 		const options = ev?.detail
 		if (!anchorRef) {
 			return fixPosition(options)
@@ -463,7 +477,7 @@ function _initModalRef(modalRef: HTMLDialogElement): void {
 		})
 	}
 
-	function focus(ev?: CustomEvent<ModalFocusDetails>): void {
+	function focus(ev?: CustomEvent<_ModalFocusEventDetail>): void {
 		const options = ev?.detail
 		if (timeoutFocusId !== null) clearTimeout(timeoutFocusId)
 
@@ -566,18 +580,20 @@ function _initModalRef(modalRef: HTMLDialogElement): void {
 			return ev.preventDefault()
 		}
 
-		close(new CustomEvent<ModalCloseDetails>('', {detail: {soft: true, done(){}}}))
+		close(new CustomEvent<_ModalCloseEventDetail>('', {detail: {soft: true, done(){}}}))
 		ev.preventDefault()
 	}
 
 	function initEvents(): void {
-		modalRef.addEventListener(ModalEvents.attributeChange as any, (ev: CustomEvent<string>) => {
-			const attr = ev.detail
+		modalRef.addEventListener(ModalEvents.attributeChange as any, (ev: CustomEvent<_ModalAttributeChangeEventDetail>) => {
+			const attr = ev.detail.attributeName
 			switch (attr) {
 			case 'open':
 				const body = document.body
 				isOpen = modalRef.open
-				modalRef.dispatchEvent(new CustomEvent<boolean>(ModalEvents.toggleOpen, {detail: isOpen}))
+				modalRef.dispatchEvent(new CustomEvent<ModalToggleOpenEventDetail>(
+					ModalEvents.toggleOpen, {detail: {isOpen}}
+				))
 				if (isOpen) {
 					OPENED_MODAL.push(modalRef)
 					modalRef.toggleAttribute(GlobalAttributes.keepPointerEvent, true)
@@ -685,30 +701,30 @@ function _initModalRef(modalRef: HTMLDialogElement): void {
 }
 
 async function openModalRef(modalRef: HTMLDialogElement, options?: ModalOpenOptions): Promise<void> {
-	return new Promise((done) => modalRef.dispatchEvent(new CustomEvent(
+	return new Promise((done) => modalRef.dispatchEvent(new CustomEvent<_ModalOpenEventDetail>(
 		ModalEvents.open,
-		{detail: {...options, done} satisfies ModalOpenDetails}
+		{detail: {...options, done}}
 	)))
 }
 
 async function closeModalRef(modalRef: HTMLDialogElement, options?: ModalCloseOptions): Promise<void> {
-	return new Promise((done) => modalRef.dispatchEvent(new CustomEvent(
+	return new Promise((done) => modalRef.dispatchEvent(new CustomEvent<_ModalCloseEventDetail>(
 		ModalEvents.close,
-		{detail: {...options, done} satisfies ModalCloseDetails}
+		{detail: {...options, done}}
 	)))
 }
 
 async function repositionModalRef(modalRef: HTMLDialogElement): Promise<void> {
-	return new Promise((done) => modalRef.dispatchEvent(new CustomEvent(
+	return new Promise((done) => modalRef.dispatchEvent(new CustomEvent<_ModalRepositionEventDetail>(
 		ModalEvents.reposition,
-		{detail: {done} satisfies ModalRepositionDetails}
+		{detail: {done}}
 	)))
 }
 
 async function focusModalRef(modalRef: HTMLDialogElement): Promise<void> {
-	return new Promise((done) => modalRef.dispatchEvent(new CustomEvent(
+	return new Promise((done) => modalRef.dispatchEvent(new CustomEvent<_ModalRepositionEventDetail>(
 		ModalEvents.focus,
-		{detail: {done} satisfies ModalRepositionDetails}
+		{detail: {done}}
 	)))
 }
 
@@ -838,10 +854,7 @@ export {
 	type ModalUpdateOptions,
 	type ModalOpenOptions,
 	type ModalCloseOptions,
-	type ModalOpenDetails,
-	type ModalCloseDetails,
-	type ModalRepositionDetails,
-	type ModalFocusDetails,
+	type ModalToggleOpenEventDetail,
 	ModalEvents,
 	ModalAttributes,
 	ModalClasses,

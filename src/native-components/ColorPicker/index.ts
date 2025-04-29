@@ -37,10 +37,7 @@ import {
 	type PopoverUpdateOptions,
 	type PopoverOpenOptions,
 	type PopoverCloseOptions,
-	type PopoverOpenDetails,
-	type PopoverCloseDetails,
-	type PopoverRepositionDetails,
-	type PopoverToggleOpenDetail,
+	type PopoverToggleOpenEventDetail,
 	PopoverEvents,
 	PopoverPosition,
 	openPopoverRef,
@@ -149,7 +146,10 @@ enum ColorPickerClasses {
 }
 
 enum ColorPickerEvents {
+	/** `!bubbles | !cancelable | !detail` */
 	input  = 'colorpicker:input',
+
+	/** `!bubbles | !cancelable | !detail` */
 	change = 'colorpicker:change'
 }
 
@@ -320,9 +320,7 @@ function _initColorPickerRef(colorPickerRef: HTMLDivElement): void {
 		}
 
 		if (options?.inputEvent ?? true) {
-			colorPickerRef.dispatchEvent(new CustomEvent(ColorPickerEvents.input, {
-				bubbles: false
-			}))
+			colorPickerRef.dispatchEvent(new CustomEvent(ColorPickerEvents.input))
 		}
 	}
 
@@ -588,9 +586,7 @@ function _initColorPickerRef(colorPickerRef: HTMLDivElement): void {
 	}
 
 	function initEvents(): void {
-		colorPickerRef.addEventListener(PopoverEvents.toggleOpen as any, (ev: CustomEvent<PopoverToggleOpenDetail>) => {
-			if (ev.target !== colorPickerRef) return
-
+		colorPickerRef.addEventListener(PopoverEvents.toggleOpen as any, (ev: CustomEvent<PopoverToggleOpenEventDetail>) => {
 			const isOpen = ev.detail.open
 			if (isOpen) {
 				initColor()
@@ -623,7 +619,7 @@ function _initColorPickerRef(colorPickerRef: HTMLDivElement): void {
 				inputColorRef   ?.removeEventListener('blur', inputColorRefOnBlur)
 				inputOpacityRef ?.removeEventListener('blur', inputOpacityRefOnBlur)
 				if (startColor !== attributes.value) {
-					colorPickerRef.dispatchEvent(new CustomEvent(ColorPickerEvents.change, {bubbles: true}))
+					colorPickerRef.dispatchEvent(new CustomEvent(ColorPickerEvents.change))
 				}
 			}
 		})
@@ -918,9 +914,6 @@ function updateColorPickerRef(
 export {
 	type PopoverOpenOptions as ColorPickerOpenOptions,
 	type PopoverCloseOptions as ColorPickerCloseOptions,
-	type PopoverOpenDetails as ColorPickerOpenDetails,
-	type PopoverCloseDetails as ColorPickerCloseDetails,
-	type PopoverRepositionDetails as ColorPickerRepositionDetails,
 	type ColorPickerProps,
 	type ColorPickerUpdateOptions,
 	ColorPickerAttributes,
