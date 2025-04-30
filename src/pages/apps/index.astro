@@ -19,7 +19,7 @@ export const prerender = true
 		<h1>Select app</h1>
 		<div class={CSSClasses.content}>
 			<Tooltip>
-				{APPS.sort((a,b) => a.name.localeCompare(b.name)).map(app =>
+				{[...APPS].sort((a,b) => a.name.localeCompare(b.name)).map(app =>
 					<LinkButton href={app.link} LinkButtonVariant={ButtonVariant.tonal}>
 						<img loading="eager" src={app.logoUrl} width="48" height="48" alt={app.name + ' logo'}/>
 						<span data-tooltip={app.name} >{app.name}</span>
