@@ -1,26 +1,22 @@
 ---
 import { RoutesLinks, ExternalLinks } from '@/enums/links'
-import logo from '@/assets/images/logos/redmerah-logo.svg'
 
 import Html from '@/layouts/Html/index.astro'
 import Appbar from '@/layouts/Appbar/index.astro'
 import BottomBar from '@/layouts/BottomBar/index.astro'
 import Main from '@/layouts/Main/index.astro'
-import Splash from '@/layouts/Splash/index.astro'
-import CSS from './_index.module.scss'
+import { CSSClasses } from './_css'
 
 export const prerender = true
 ---
 
 <Html
-	componentCount={2}
-	title="About Us | Redmerah"
+	title="About Us • Redmerah"
 	description="Welcome to Redmerah, your one-stop for becoming a productivity powerhouse. We're more than just a platform; we're your partner in streamlining your workflow and conquering your to-do list. Ever feel overwhelmed by a overflowing task list? Redmerah can help. With the right tools at your fingertips, you can tackle any project with confidence.">
 	<script is:inline src='/scripts/root-settings.min.js'/>
-	<Splash src={logo.src} alt={`Redmerah splash icon`} />
 	<Appbar route={RoutesLinks.about} />
 	<Main>
-		<article class={CSS.article}>
+		<article class={CSSClasses.article}>
 			<h1>👋<br/>About Us</h1>
 			<p>Welcome to Redmerah, your one-stop for becoming a productivity powerhouse. We're more than just a platform; we're your partner in streamlining your workflow and conquering your to-do list. Ever feel overwhelmed by a overflowing task list? Redmerah can help. With the right tools at your fingertips, you can tackle any project with confidence.</p>
 			<section>
