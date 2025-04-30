@@ -1,21 +1,32 @@
 ---
-import logo from '@/assets/images/logos/redmerah-logo.svg'
-
 import { RoutesLinks } from '@/enums/links'
-
+import { CSSClasses } from './_scripts/_css'
 import Html from '@/layouts/Html/index.astro'
 import Appbar from '@/layouts/Appbar/index.astro'
 import BottomBar from '@/layouts/BottomBar/index.astro'
-import Splash from '@/layouts/Splash/index.astro'
-import { MainElement } from './_components'
+import Tooltip from '@/native-components/Tooltip/index.astro'
+import LinkButton from '@/native-components/Button/LinkButton.astro'
+import { APPS } from "@/constants/apps"
+import { ButtonVariant } from '@/native-components/Button'
 
 export const prerender = true
 ---
 
-<Html componentCount={3} title="Apps | Redmerah">
+<Html title="Apps • Redmerah">
 	<script is:inline src='/scripts/root-settings.min.js'/>
-	<Splash src={logo.src} alt={`Redmerah splash icon`} />
 	<Appbar route={RoutesLinks.apps}/>
-	<MainElement client:only="solid-js"/>
+	<main class={CSSClasses.main}>
+		<h1>Select app</h1>
+		<div class={CSSClasses.content}>
+			<Tooltip>
+				{APPS.sort((a,b) => a.name.localeCompare(b.name)).map(app =>
+					<LinkButton href={app.link} LinkButtonVariant={ButtonVariant.tonal}>
+						<img loading="eager" src={app.logoUrl} width="48" height="48" alt={app.name + ' logo'}/>
+						<span data-tooltip={app.name} >{app.name}</span>
+					</LinkButton>
+				)}
+			</Tooltip>
+		</div>
+	</main>
 	<BottomBar/>
 </Html>

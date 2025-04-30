@@ -1,3 +1,38 @@
+.content {
+	display: grid;
+	margin-top: 32px;
+	gap: 8px;
+	grid-template-columns: repeat(auto-fill, minmax(124px, 1fr));
+
+	& img {
+		width: 48px;
+	}
+
+	& :global(.c-button){
+		padding: 12px;
+		flex-direction: column;
+		text-align: center;
+		justify-content: center;
+		text-transform: capitalize;
+		position: relative;
+		width: 100%;
+
+		> span {
+			text-overflow: ellipsis;
+			overflow: hidden;
+			white-space: nowrap;
+			max-width: 100%;
+		}
+	}
+
+	& :global(.c-icon) {
+		position: absolute;
+		top: 0;
+		left: 50%;
+		transform: translateX(calc(-50% + 40px));
+	}
+}
+
 .main {
 	min-height: calc(100dvh - 180px);
 	width: 796px;
@@ -5,60 +40,7 @@
 	padding-bottom: 64px;
 	max-width: 100%;
 
-	> div :global(.c-textfield) {
-		width: 100%;
-		margin-bottom: 16px;
-	}
-
-	> div:last-child {
-		display: grid;
-		gap: 4px;
-		grid-template-columns: repeat(auto-fill, minmax(124px, 1fr));
-
-		&:empty {
-			display: none;
-		}
-
-		& img {
-			width: 48px;
-		}
-
-		& :global(.c-btn){
-			padding: 12px;
-			flex-direction: column;
-			text-align: center;
-			justify-content: flex-start;
-			text-transform: capitalize;
-			position: relative;
-			width: 100%;
-
-			:root[data-animation=on] & {
-				border-color: transparent !important;
-				background-color: transparent !important;
-				transition-duration: 0s, .2s, .2s;
-				transition-property: all, transform, scale;
-
-				@media (hover:hover) {
-					&:hover {
-						transform: translateY(-12px);
-					}
-				}
-
-				&[data-c-focused] {
-					transform: translateY(-12px);
-				}
-
-				&:active {
-					scale: .85;
-				}
-			}
-		}
-
-		& :global(.c-icon) {
-			position: absolute;
-			top: 0;
-			left: 50%;
-			transform: translateX(calc(-50% + 40px));
-		}
+	> h1 {
+		font-size: var(--g-font-size-d)
 	}
 }

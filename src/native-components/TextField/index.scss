@@ -51,6 +51,8 @@
 }
 
 .c-textfield-input {
+	width: 100%;
+	flex: 1;
 	font-size: var(--g-font-size-xs);
 	border: none;
 	padding: 0 12px;
