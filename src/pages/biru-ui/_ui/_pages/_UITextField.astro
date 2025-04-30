@@ -7,7 +7,7 @@ import Icon from '@/native-components/Icon/index.astro'
 import Select from '@/native-components/Select/index.astro'
 import SelectOption from '@/native-components/Select/SelectOption.astro'
 import { ICON_ATTACH, ICON_SEARCH } from '@/constants/icons'
-import { ElementIds, ELEMENT_ID_PREFIX } from '../../_scripts/_enums'
+import { ElementIds, ID } from '../../_scripts/_enums'
 import CSS from '../../_index.module.scss'
 
 const types = [
@@ -20,43 +20,43 @@ const types = [
 <div
 	class={CSS.bodyPage}
 	role="tabpanel"
-	id={ELEMENT_ID_PREFIX + ElementIds.panelTextfield}
+	id={ID + ElementIds.panelTextfield}
 	hidden>
 	<h2>TextField</h2>
 	<p>A TextField is a UI element that allows users to input text. It typically includes a text box for entering content and may have additional features like labels, placeholders, and validation rules.</p>
 	<div class={CSS.bodyPlayground}>
 		<Tooltip>
 			<TextField
-				id={ELEMENT_ID_PREFIX + ElementIds.panelTextfieldPreview}
+				id={ID + ElementIds.panelTextfieldPreview}
 				TextFieldInputAttr={{
 					style: "padding:0",
 					placeholder: 'Type here ...',
-					id: ELEMENT_ID_PREFIX + ElementIds.panelTextfieldPreviewInput
+					id: ID + ElementIds.panelTextfieldPreviewInput
 				}}>
 				<Icon
 					data-tooltip="Icon"
 					style="margin-left:8px"
 					IconCode={ICON_ATTACH}
 					slot="leading"
-					id={ELEMENT_ID_PREFIX + ElementIds.panelTextfieldPreviewLeading}
+					id={ID + ElementIds.panelTextfieldPreviewLeading}
 				/>
 				<TextFieldButton
 					aria-label="Search"
 					data-tooltip="TextFieldButton"
 					style="margin-right:4px"
 					slot="trailing"
-					id={ELEMENT_ID_PREFIX + ElementIds.panelTextfieldPreviewTrailing}>
+					id={ID + ElementIds.panelTextfieldPreviewTrailing}>
 					<Icon IconCode={ICON_SEARCH}/>
 				</TextFieldButton>
 			</TextField>
 		</Tooltip>
 	</div>
-	<div class={CSS.bodyOptions} id={ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptions}>
+	<div class={CSS.bodyOptions} id={ID + ElementIds.panelTextfieldOptions}>
 		<div class={CSS.bodyOptions} style="margin-right:12px">
-			<label id={ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptionsTypeLabel}>Type:</label>
+			<label id={ID + ElementIds.panelTextfieldOptionsTypeLabel}>Type:</label>
 			<Select
-				aria-labelledby={ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptionsTypeLabel}
-				id={ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptionsType}
+				aria-labelledby={ID + ElementIds.panelTextfieldOptionsTypeLabel}
+				id={ID + ElementIds.panelTextfieldOptionsType}
 				style="min-width:150px">
 				{types.map(v =>
 					<SelectOption value={v} SelectOptionSelected={v === 'text'}>{v}</SelectOption>
@@ -65,25 +65,25 @@ const types = [
 		</div>
 		<CheckBox
 			CheckBoxInputAttr={{
-				id: ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptionsLeading,
+				id: ID + ElementIds.panelTextfieldOptionsLeading,
 				checked: true
 			}}>
 			Leading
 		</CheckBox>
 		<CheckBox
 			CheckBoxInputAttr={{
-				id: ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptionsTrailing,
+				id: ID + ElementIds.panelTextfieldOptionsTrailing,
 				checked: true
 			}}>
 			Trailing
 		</CheckBox>
 		<CheckBox
-			CheckBoxInputAttr={{id: ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptionsReadonly}}>
+			CheckBoxInputAttr={{id: ID + ElementIds.panelTextfieldOptionsReadonly}}>
 			Read only
 		</CheckBox>
 		<CheckBox
 			CheckBoxInputAttr={{
-				id: ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptionsPlaceholder,
+				id: ID + ElementIds.panelTextfieldOptionsPlaceholder,
 				checked: true
 			}}>
 			Placeholder

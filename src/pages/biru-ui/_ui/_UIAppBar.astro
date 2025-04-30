@@ -4,16 +4,16 @@ import logo from '@/assets/images/apps/biru-ui.svg'
 import IconButton from '@/native-components/Button/IconButton.astro'
 import Tooltip from '@/native-components/Tooltip/index.astro'
 import { ICON_INFO, ICON_SETTINGS, ICON_LINE_HORIZONTAL_3 } from '@/constants/icons'
-import { ElementIds, ELEMENT_ID_PREFIX } from '../_scripts/_enums'
+import { ElementIds, ID } from '../_scripts/_enums'
 import CSS from '../_index.module.scss'
 ---
 
-<Appbar id={ELEMENT_ID_PREFIX + ElementIds.appbar}>
+<Appbar id={ID + ElementIds.appbar}>
 	<Fragment slot='leading'>
 		<IconButton
 			class={CSS.appbarDrawer}
 			IconButtonCode={ICON_LINE_HORIZONTAL_3}
-			popovertarget={ELEMENT_ID_PREFIX + ElementIds.navigationDrawer}
+			popovertarget={ID + ElementIds.navigationDrawer}
 		/>
 		<img class={CSS.appbarLogo} src={logo.src} width="32" alt="BiruUI logo"/>
 	</Fragment>
@@ -21,24 +21,24 @@ import CSS from '../_index.module.scss'
 	<Fragment slot='trailing'>
 		<Tooltip>
 			<IconButton
-				id={ELEMENT_ID_PREFIX + ElementIds.appbarInfoButton}
+				id={ID + ElementIds.appbarInfoButton}
 				data-tooltip="Info"
 				style="padding:0 10px"
 				IconButtonCode={ICON_INFO}
 				aria-label="Info"
 				aria-haspopup="menu"
 				aria-expanded="false"
-				aria-controls={ELEMENT_ID_PREFIX + ElementIds.appbarInfoMenu}
+				aria-controls={ID + ElementIds.appbarInfoMenu}
 			/>
 			<IconButton
-				id={ELEMENT_ID_PREFIX + ElementIds.appbarSettingsButton}
+				id={ID + ElementIds.appbarSettingsButton}
 				data-tooltip="Settings"
 				style="padding:0 10px"
 				IconButtonCode={ICON_SETTINGS}
 				aria-label="Settings"
 				aria-haspopup="menu"
 				aria-expanded="false"
-				aria-controls={ELEMENT_ID_PREFIX + ElementIds.appbarSettingsMenu}
+				aria-controls={ID + ElementIds.appbarSettingsMenu}
 			/>
 		</Tooltip>
 	</Fragment>

@@ -2,7 +2,7 @@ import { openPopoverRef } from "@/native-components/Popover"
 import { updateButtonRef } from "@/native-components/Button"
 import { closeMenuRef, MenuEvents, type MenuToggleOpenEventDetail } from "@/native-components/Menu"
 import { elementValidTarget } from "@/utils/element"
-import { ELEMENT_ID_PREFIX, ElementIds, RadioGroupNames } from "./_enums"
+import { ID, ElementIds, RadioGroupNames } from "./_enums"
 import { LocalStorageKeys } from "@/enums/storage"
 import { validEnumValue } from "@/utils/object"
 import { RootAttributes } from "@/enums/attributes"
@@ -15,19 +15,19 @@ import { GlobalElementIds } from "@/enums/ids"
 const $ = (id: string) => document.getElementById(id)
 const $$ = (selector: string, from = document) => from.querySelector(selector)
 const root = document.documentElement
-const appbar = $(ELEMENT_ID_PREFIX + ElementIds.appbar) as HTMLElement
-const infoButton = $(ELEMENT_ID_PREFIX + ElementIds.appbarInfoButton) as HTMLButtonElement
-const shareButton = $(ELEMENT_ID_PREFIX + ElementIds.appbarInfoShareButton) as HTMLButtonElement
-const infoMenu = $(ELEMENT_ID_PREFIX + ElementIds.appbarInfoMenu) as HTMLDivElement
-const settingsButton = $(ELEMENT_ID_PREFIX + ElementIds.appbarSettingsButton) as HTMLButtonElement
-const settingsMenu = $(ELEMENT_ID_PREFIX + ElementIds.appbarSettingsMenu) as HTMLDivElement
-const settingsThemeMenu = $(ELEMENT_ID_PREFIX + ElementIds.appbarSettingsThemeMenu) as HTMLDivElement
-const settingsAnimationMenu = $(ELEMENT_ID_PREFIX + ElementIds.appbarSettingsAnimationMenu) as HTMLDivElement
+const appbar = $(ID + ElementIds.appbar) as HTMLElement
+const infoButton = $(ID + ElementIds.appbarInfoButton) as HTMLButtonElement
+const shareButton = $(ID + ElementIds.appbarInfoShareButton) as HTMLButtonElement
+const infoMenu = $(ID + ElementIds.appbarInfoMenu) as HTMLDivElement
+const settingsButton = $(ID + ElementIds.appbarSettingsButton) as HTMLButtonElement
+const settingsMenu = $(ID + ElementIds.appbarSettingsMenu) as HTMLDivElement
+const settingsThemeMenu = $(ID + ElementIds.appbarSettingsThemeMenu) as HTMLDivElement
+const settingsAnimationMenu = $(ID + ElementIds.appbarSettingsAnimationMenu) as HTMLDivElement
 
 function initSettingsMenu(): void {
 	const rgbToCSS = (rgb: RGBColor) => `${Math.round(rgb.r * 0xff)}, ${Math.round(rgb.g * 0xff)}, ${Math.round(rgb.b * 0xff)}`
-	const accentButtonRef = $(ELEMENT_ID_PREFIX + ElementIds.appbarSettingsAccentButton) as HTMLButtonElement
-	const colorPickerRef = $(ELEMENT_ID_PREFIX + ElementIds.appbarColorPicker) as HTMLDivElement
+	const accentButtonRef = $(ID + ElementIds.appbarSettingsAccentButton) as HTMLButtonElement
+	const colorPickerRef = $(ID + ElementIds.appbarColorPicker) as HTMLDivElement
 	const accentColorElement = $(GlobalElementIds.colorAccent) as HTMLStyleElement
 	let timeAccentId: number | NodeJS.Timeout | null = null
 
@@ -95,7 +95,7 @@ function initSettings(): void {
 
 		const rgbToCSS = (rgb: RGBColor) => `${Math.round(rgb.r * 0xff)}, ${Math.round(rgb.g * 0xff)}, ${Math.round(rgb.b * 0xff)}`
 		const accentColorElement = $(GlobalElementIds.colorAccent) as HTMLStyleElement
-		const colorPickerRef = $(ELEMENT_ID_PREFIX + ElementIds.appbarColorPicker) as HTMLDivElement
+		const colorPickerRef = $(ID + ElementIds.appbarColorPicker) as HTMLDivElement
 		const palette = colorGeneratePalette(accent as HEXColor)
 		accentColorElement.innerHTML = `:root{--g-color-accent-light: ${rgbToCSS(colorHexToRgb(palette.color))};--g-color-accent-dark: ${rgbToCSS(colorHexToRgb(palette.colorDark))};--g-color-on-accent-light: ${rgbToCSS(colorHexToRgb(palette.onColor))};--g-color-on-accent-dark: ${rgbToCSS(colorHexToRgb(palette.onColorDark))};}`;
 		updateColorPickerRef(colorPickerRef, {

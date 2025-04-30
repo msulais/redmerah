@@ -5,7 +5,7 @@ import Modal from '@/native-components/Modal/index.astro'
 import Button from '@/native-components/Button/index.astro'
 import Select from '@/native-components/Select/index.astro'
 import SelectOption from '@/native-components/Select/SelectOption.astro'
-import { ElementIds, ELEMENT_ID_PREFIX } from '../../_scripts/_enums'
+import { ElementIds, ID } from '../../_scripts/_enums'
 import CSS from '../../_index.module.scss'
 import { ButtonVariant } from '@/native-components/Button'
 import { FlyoutPosition } from '@/enums/position'
@@ -13,22 +13,22 @@ import { FlyoutPosition } from '@/enums/position'
 <div
 	class={CSS.bodyPage}
 	role="tabpanel"
-	id={ELEMENT_ID_PREFIX + ElementIds.panelModal}
+	id={ID + ElementIds.panelModal}
 	hidden>
 	<h2>Modal</h2>
 	<p>A modal is an overlay window that appears on top of the main content, blocking user interaction with the underlying elements until it is dismissed. Modals are often used for critical tasks or to present important information.</p>
 	<div class={CSS.bodyPlayground}>
 		<Button
 			ButtonVariant={ButtonVariant.tonal}
-			id={ELEMENT_ID_PREFIX + ElementIds.panelModalPreviewButtonOpen}
-			aria-controls={ELEMENT_ID_PREFIX + ElementIds.panelModalPreviewModal}
+			id={ID + ElementIds.panelModalPreviewButtonOpen}
+			aria-controls={ID + ElementIds.panelModalPreviewModal}
 			aria-haspopup="true">
 			Open popover
 		</Button>
 		<Modal
 			aria-label="Modal"
-			id={ELEMENT_ID_PREFIX + ElementIds.panelModalPreviewModal}
-			ModalAnchorBy={ELEMENT_ID_PREFIX + ElementIds.panelModalPreviewButtonOpen}
+			id={ID + ElementIds.panelModalPreviewModal}
+			ModalAnchorBy={ID + ElementIds.panelModalPreviewButtonOpen}
 			ModalContentAttr={{
 				style: "padding: 16px;width: 280px"
 			}}
@@ -42,19 +42,19 @@ import { FlyoutPosition } from '@/enums/position'
 			/>
 			<p style="padding:8px 0 16px 0">Consequat commodo sint incididunt nulla duis commodo elit enim aliquip ex occaecat eiusmod.</p>
 			<Button
-				id={ELEMENT_ID_PREFIX + ElementIds.panelModalPreviewButtonClose}
-				aria-controls={ELEMENT_ID_PREFIX + ElementIds.panelModalPreviewModal}
+				id={ID + ElementIds.panelModalPreviewButtonClose}
+				aria-controls={ID + ElementIds.panelModalPreviewModal}
 				ButtonVariant={ButtonVariant.filled}>
 				Close popover
 			</Button>
 		</Modal>
 	</div>
-	<div class={CSS.bodyOptions} id={ELEMENT_ID_PREFIX + ElementIds.panelModalOptions}>
+	<div class={CSS.bodyOptions} id={ID + ElementIds.panelModalOptions}>
 		<div class={CSS.bodyOptionsGroup}>
-			<label id={ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsPositionLabel}>Position:</label>
+			<label id={ID + ElementIds.panelModalOptionsPositionLabel}>Position:</label>
 			<Select
-				aria-labelledby={ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsPositionLabel}
-				id={ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsPosition}
+				aria-labelledby={ID + ElementIds.panelModalOptionsPositionLabel}
+				id={ID + ElementIds.panelModalOptionsPosition}
 				style="margin-right:12px">
 				{[
 					[FlyoutPosition.centerBottom, 'Center bottom'],
@@ -89,7 +89,7 @@ import { FlyoutPosition } from '@/enums/position'
 		</div>
 		<div class={CSS.bodyOptionsGroup} style="margin-right:12px">
 			<label
-				for={ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsPadding}>
+				for={ID + ElementIds.panelModalOptionsPadding}>
 				Padding:
 			</label>
 			<TextField
@@ -98,13 +98,13 @@ import { FlyoutPosition } from '@/enums/position'
 					type: 'number',
 					min: 0,
 					style: 'width:100px',
-					id: ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsPadding
+					id: ID + ElementIds.panelModalOptionsPadding
 				}}
 			/>
 		</div>
 		<div class={CSS.bodyOptionsGroup} style="margin-right:12px">
 			<label
-				for={ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsGap}>
+				for={ID + ElementIds.panelModalOptionsGap}>
 				Gap:
 			</label>
 			<TextField
@@ -113,33 +113,33 @@ import { FlyoutPosition } from '@/enums/position'
 					type: 'number',
 					min: 0,
 					style: 'width:100px;',
-					id: ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsGap
+					id: ID + ElementIds.panelModalOptionsGap
 				}}
 			/>
 		</div>
 		<CheckBox
 			CheckBoxInputAttr={{
-				id: ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsAnchor,
+				id: ID + ElementIds.panelModalOptionsAnchor,
 				checked: true
 			}}>
 			Anchor
 		</CheckBox>
 		<CheckBox
 			CheckBoxInputAttr={{
-				id: ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsAutofocus,
+				id: ID + ElementIds.panelModalOptionsAutofocus,
 				checked: true
 			}}>
 			Autofocus
 		</CheckBox>
 		<CheckBox
 			CheckBoxInputAttr={{
-				id: ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsImportant,
+				id: ID + ElementIds.panelModalOptionsImportant,
 			}}>
 			Important
 		</CheckBox>
 		<CheckBox
 			CheckBoxInputAttr={{
-				id: ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsDraggable,
+				id: ID + ElementIds.panelModalOptionsDraggable,
 			}}>
 			Draggable
 		</CheckBox>

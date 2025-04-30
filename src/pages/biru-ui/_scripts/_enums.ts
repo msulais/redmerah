@@ -1,4 +1,4 @@
-export const ELEMENT_ID_PREFIX = 'ID-'
+export const ID = 'ID-'
 
 /** must prefix with `'ID-'` */
 export enum ElementIds {

@@ -6,7 +6,7 @@ import Icon from '@/native-components/Icon/index.astro'
 import Button from '@/native-components/Button/index.astro'
 import Select from '@/native-components/Select/index.astro'
 import SelectOption from '@/native-components/Select/SelectOption.astro'
-import { ElementIds, ELEMENT_ID_PREFIX } from '../../_scripts/_enums'
+import { ElementIds, ID } from '../../_scripts/_enums'
 import CSS from '../../_index.module.scss'
 import { ButtonVariant } from '@/native-components/Button'
 import { FlyoutPosition } from '@/enums/position'
@@ -16,13 +16,13 @@ import { TooltipPosition } from '@/native-components/Tooltip'
 <div
 	class={CSS.bodyPage}
 	role="tabpanel"
-	id={ELEMENT_ID_PREFIX + ElementIds.panelTooltip}
+	id={ID + ElementIds.panelTooltip}
 	hidden>
 	<h2>Tooltip</h2>
 	<p>A tooltip is a small, temporary window that appears when a user hovers over an element. It provides a brief explanation or description of the element's purpose or function. Tooltips are often used to clarify the meaning of icons, buttons, or other UI elements.</p>
 	<div class={CSS.bodyPlayground}>
 		<Tooltip
-			id={ELEMENT_ID_PREFIX + ElementIds.panelTooltipPreview}
+			id={ID + ElementIds.panelTooltipPreview}
 			TooltipEndDelay={200}
 			TooltipGap={40}
 			TooltipStartDelay={1000}
@@ -36,12 +36,12 @@ import { TooltipPosition } from '@/native-components/Tooltip'
 			</Button>
 		</Tooltip>
 	</div>
-	<div class={CSS.bodyOptions} id={ELEMENT_ID_PREFIX + ElementIds.panelTooltipOptions}>
-		<label id={ELEMENT_ID_PREFIX + ElementIds.panelTooltipOptionsPositionLabel}>Position:</label>
+	<div class={CSS.bodyOptions} id={ID + ElementIds.panelTooltipOptions}>
+		<label id={ID + ElementIds.panelTooltipOptionsPositionLabel}>Position:</label>
 		<Select
-			aria-labelledby={ELEMENT_ID_PREFIX + ElementIds.panelTooltipOptionsPositionLabel}
+			aria-labelledby={ID + ElementIds.panelTooltipOptionsPositionLabel}
 			style="margin-right:12px"
-			id={ELEMENT_ID_PREFIX + ElementIds.panelTooltipOptionsPosition}>
+			id={ID + ElementIds.panelTooltipOptionsPosition}>
 			{[
 				[FlyoutPosition.centerBottom, 'Center bottom'],
 				[FlyoutPosition.centerBottomToLeft, 'Center bottom to left'],
@@ -74,7 +74,7 @@ import { TooltipPosition } from '@/native-components/Tooltip'
 		</Select>
 		<div class={CSS.bodyOptionsGroup}>
 			<label
-				for={ELEMENT_ID_PREFIX + ElementIds.panelTooltipOptionsGap}>
+				for={ID + ElementIds.panelTooltipOptionsGap}>
 				Gap:
 			</label>
 			<TextField
@@ -84,13 +84,13 @@ import { TooltipPosition } from '@/native-components/Tooltip'
 					type: 'number',
 					min: 0,
 					style: 'width:100px',
-					id: ELEMENT_ID_PREFIX + ElementIds.panelTooltipOptionsGap
+					id: ID + ElementIds.panelTooltipOptionsGap
 				}}
 			/>
 		</div>
 		<div class={CSS.bodyOptionsGroup}>
 			<label
-				for={ELEMENT_ID_PREFIX + ElementIds.panelTooltipOptionsStartDelay}>
+				for={ID + ElementIds.panelTooltipOptionsStartDelay}>
 				Start delay (ms):
 			</label>
 			<TextField
@@ -101,13 +101,13 @@ import { TooltipPosition } from '@/native-components/Tooltip'
 					min: 0,
 					step: 50,
 					style: 'width:100px',
-					id: ELEMENT_ID_PREFIX + ElementIds.panelTooltipOptionsStartDelay
+					id: ID + ElementIds.panelTooltipOptionsStartDelay
 				}}
 			/>
 		</div>
 		<div class={CSS.bodyOptionsGroup}>
 			<label
-				for={ELEMENT_ID_PREFIX + ElementIds.panelTooltipOptionsEndDelay}>
+				for={ID + ElementIds.panelTooltipOptionsEndDelay}>
 				End delay (ms):
 			</label>
 			<TextField
@@ -118,13 +118,13 @@ import { TooltipPosition } from '@/native-components/Tooltip'
 					min: 0,
 					step: 50,
 					style: 'width:100px',
-					id: ELEMENT_ID_PREFIX + ElementIds.panelTooltipOptionsEndDelay
+					id: ID + ElementIds.panelTooltipOptionsEndDelay
 				}}
 			/>
 		</div>
 		<CheckBox
 			CheckBoxInputAttr={{
-				id: ELEMENT_ID_PREFIX + ElementIds.panelTooltipOptionsAnchor,
+				id: ID + ElementIds.panelTooltipOptionsAnchor,
 			}}>
 			Anchor
 		</CheckBox>

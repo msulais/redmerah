@@ -7,7 +7,7 @@ import Button from '@/native-components/Button/index.astro'
 import Select from '@/native-components/Select/index.astro'
 import SelectOption from '@/native-components/Select/SelectOption.astro'
 import IconButton from '@/native-components/Button/IconButton.astro'
-import { ElementIds, ELEMENT_ID_PREFIX } from '../../_scripts/_enums'
+import { ElementIds, ID } from '../../_scripts/_enums'
 import CSS from '../../_index.module.scss'
 import { ICON_ALERT, ICON_CHEVRON_DOWN } from '@/constants/icons'
 import { ButtonVariant } from '@/native-components/Button'
@@ -16,28 +16,28 @@ import { ListVariant } from '@/native-components/List'
 <div
 	class={CSS.bodyPage}
 	role="tabpanel"
-	id={ELEMENT_ID_PREFIX + ElementIds.panelList}
+	id={ID + ElementIds.panelList}
 	hidden>
 	<h2>List</h2>
 	<p>A list is a UI element that displays a collection of items in a sequential order. It typically includes components like title, subtitle, leading icon (placed before the title), and trailing buttons (placed after the title).</p>
 	<div class={CSS.bodyPlayground}>
 		<Tooltip>
 			<List
-				id={ELEMENT_ID_PREFIX + ElementIds.panelListPreviewList}
+				id={ID + ElementIds.panelListPreviewList}
 				style="padding-right:4px"
 				ListVariant={ListVariant.tonal}
 				ListTrailingAttr={{
-					id: ELEMENT_ID_PREFIX + ElementIds.panelListPreviewTrailing,
+					id: ID + ElementIds.panelListPreviewTrailing,
 					style: 'display:flex;align-items:center;gap:4px;'
 				}}
 				ListLeadingAttr={{
-					id: ELEMENT_ID_PREFIX + ElementIds.panelListPreviewLeading
+					id: ID + ElementIds.panelListPreviewLeading
 				}}
 				ListSubtitleAttr={{
-					id: ELEMENT_ID_PREFIX + ElementIds.panelListPreviewSubtitle
+					id: ID + ElementIds.panelListPreviewSubtitle
 				}}>
 				<Icon data-tooltip="Icon" IconCode={ICON_ALERT} slot="leading"/>
-				<p id={ELEMENT_ID_PREFIX + ElementIds.panelListPreviewTitle} data-tooltip="Title">Ullamco Lorem amet culpa ad quis duis enim ut magna.</p>
+				<p id={ID + ElementIds.panelListPreviewTitle} data-tooltip="Title">Ullamco Lorem amet culpa ad quis duis enim ut magna.</p>
 				<p slot="subtitle" data-tooltip="Subtitle">Duis commodo ad laboris tempor incididunt excepteur et esse ipsum irure tempor.</p>
 				<Fragment slot="trailing">
 					<Button data-tooltip="Button" ButtonVariant={ButtonVariant.filled}>Show more</Button>
@@ -46,12 +46,12 @@ import { ListVariant } from '@/native-components/List'
 			</List>
 		</Tooltip>
 	</div>
-	<div class={CSS.bodyOptions} id={ELEMENT_ID_PREFIX + ElementIds.panelListOptions}>
+	<div class={CSS.bodyOptions} id={ID + ElementIds.panelListOptions}>
 		<div class={CSS.bodyOptionsGroup}>
-			<label id={ELEMENT_ID_PREFIX + ElementIds.panelListOptionsVariantLabel}>Variant:</label>
+			<label id={ID + ElementIds.panelListOptionsVariantLabel}>Variant:</label>
 			<Select
-				aria-labelledby={ELEMENT_ID_PREFIX + ElementIds.panelListOptionsVariantLabel}
-				id={ELEMENT_ID_PREFIX + ElementIds.panelListOptionsVariant}
+				aria-labelledby={ID + ElementIds.panelListOptionsVariantLabel}
+				id={ID + ElementIds.panelListOptionsVariant}
 				style="min-width: 140px; margin-right: 12px">
 				<SelectOption value={ListVariant.filled}>Filled</SelectOption>
 				<SelectOption value={ListVariant.tonal} SelectOptionSelected>Tonal</SelectOption>
@@ -61,28 +61,28 @@ import { ListVariant } from '@/native-components/List'
 		</div>
 		<CheckBox
 			CheckBoxInputAttr={{
-				id: ELEMENT_ID_PREFIX + ElementIds.panelListOptionsLeading,
+				id: ID + ElementIds.panelListOptionsLeading,
 				checked: true
 			}}>
 			Leading
 		</CheckBox>
 		<CheckBox
 			CheckBoxInputAttr={{
-				id: ELEMENT_ID_PREFIX + ElementIds.panelListOptionsTrailing,
+				id: ID + ElementIds.panelListOptionsTrailing,
 				checked: true
 			}}>
 			Trailing
 		</CheckBox>
 		<CheckBox
 			CheckBoxInputAttr={{
-				id: ELEMENT_ID_PREFIX + ElementIds.panelListOptionsTitle,
+				id: ID + ElementIds.panelListOptionsTitle,
 				checked: true
 			}}>
 			Title
 		</CheckBox>
 		<CheckBox
 			CheckBoxInputAttr={{
-				id: ELEMENT_ID_PREFIX + ElementIds.panelListOptionsSubtitle,
+				id: ID + ElementIds.panelListOptionsSubtitle,
 				checked: true
 			}}>
 			Subtitle

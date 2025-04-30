@@ -12,7 +12,7 @@ import Divider from '@/native-components/Divider/index.astro'
 import Button from '@/native-components/Button/index.astro'
 import Select from '@/native-components/Select/index.astro'
 import SelectOption from '@/native-components/Select/SelectOption.astro'
-import { ElementIds, ELEMENT_ID_PREFIX, RadioGroupNames } from '../../_scripts/_enums'
+import { ElementIds, ID, RadioGroupNames } from '../../_scripts/_enums'
 import CSS from '../../_index.module.scss'
 import { ButtonVariant } from '@/native-components/Button'
 import { FlyoutPosition } from '@/enums/position'
@@ -22,22 +22,22 @@ import { MenuPosition } from '@/native-components/Menu'
 <div
 	class={CSS.bodyPage}
 	role="tabpanel"
-	id={ELEMENT_ID_PREFIX + ElementIds.panelMenu}
+	id={ID + ElementIds.panelMenu}
 	hidden>
 	<h2>Menu</h2>
 	<p>A menu is a collection of options or commands that are presented to the user. It can be a simple list of items, a hierarchical structure, or a combination of both. Menus are commonly used for navigation, actions, or settings.</p>
 	<div class={CSS.bodyPlayground}>
 		<Button
 			ButtonVariant={ButtonVariant.tonal}
-			id={ELEMENT_ID_PREFIX + ElementIds.panelMenuPreviewButton}
-			aria-controls={ELEMENT_ID_PREFIX + ElementIds.panelMenuPreviewMenu}
+			id={ID + ElementIds.panelMenuPreviewButton}
+			aria-controls={ID + ElementIds.panelMenuPreviewMenu}
 			aria-haspopup="menu">
 			Open menu
 		</Button>
 		<Menu
 			PopoverPosition={MenuPosition.centerBottomToRight}
-			PopoverAnchorBy={ELEMENT_ID_PREFIX + ElementIds.panelMenuPreviewButton}
-			id={ELEMENT_ID_PREFIX + ElementIds.panelMenuPreviewMenu}>
+			PopoverAnchorBy={ID + ElementIds.panelMenuPreviewButton}
+			id={ID + ElementIds.panelMenuPreviewMenu}>
 			<MenuHeader>Actions</MenuHeader>
 			<MenuItem>
 				<Icon IconCode={ICON_COPY}/>
@@ -79,26 +79,26 @@ import { MenuPosition } from '@/native-components/Menu'
 			</RadioMenuItem>
 			<Divider/>
 			<MenuHeader>Sub menus</MenuHeader>
-			<SubMenuItem aria-controls={ELEMENT_ID_PREFIX + ElementIds.panelMenuPreviewMenu2}>
+			<SubMenuItem aria-controls={ID + ElementIds.panelMenuPreviewMenu2}>
 				<MenuIndent/>
 				Level 1
 				<div style="flex:1"/>
 				<Icon IconCode={ICON_CHEVRON_RIGHT}/>
 			</SubMenuItem>
-			<SubMenuItem aria-controls={ELEMENT_ID_PREFIX + ElementIds.panelMenuPreviewMenu3}>
+			<SubMenuItem aria-controls={ID + ElementIds.panelMenuPreviewMenu3}>
 				<MenuIndent/>
 				Level 2
 				<div style="flex:1"/>
 				<Icon IconCode={ICON_CHEVRON_RIGHT}/>
 			</SubMenuItem>
-			<SubMenuItem aria-controls={ELEMENT_ID_PREFIX + ElementIds.panelMenuPreviewMenu4}>
+			<SubMenuItem aria-controls={ID + ElementIds.panelMenuPreviewMenu4}>
 				<MenuIndent/>
 				Level 3
 				<div style="flex:1"/>
 				<Icon IconCode={ICON_CHEVRON_RIGHT}/>
 			</SubMenuItem>
 		</Menu>
-		<Menu id={ELEMENT_ID_PREFIX + ElementIds.panelMenuPreviewMenu2}>
+		<Menu id={ID + ElementIds.panelMenuPreviewMenu2}>
 			<MenuItem>
 				<Icon IconCode={ICON_COPY}/>
 				Copy
@@ -118,34 +118,7 @@ import { MenuPosition } from '@/native-components/Menu'
 				<MenuIndent/>
 			</MenuItem>
 		</Menu>
-		<Menu id={ELEMENT_ID_PREFIX + ElementIds.panelMenuPreviewMenu3}>
-			<MenuItem>
-				<Icon IconCode={ICON_COPY}/>
-				Copy
-				<div style="flex:1"/>
-				<MenuIndent/>
-			</MenuItem>
-			<MenuItem>
-				<Icon IconCode={ICON_CLIPBOARD_PASTE}/>
-				Paste
-				<div style="flex:1"/>
-				<MenuIndent/>
-			</MenuItem>
-			<MenuItem>
-				<Icon IconCode={ICON_CUT}/>
-				Cut
-				<div style="flex:1"/>
-				<MenuIndent/>
-			</MenuItem>
-			<Divider />
-			<SubMenuItem aria-controls={ELEMENT_ID_PREFIX + ElementIds.panelMenuPreviewMenu5}>
-				<MenuIndent/>
-				Next level
-				<div style="flex:1"/>
-				<Icon IconCode={ICON_CHEVRON_RIGHT}/>
-			</SubMenuItem>
-		</Menu>
-		<Menu id={ELEMENT_ID_PREFIX + ElementIds.panelMenuPreviewMenu4}>
+		<Menu id={ID + ElementIds.panelMenuPreviewMenu3}>
 			<MenuItem>
 				<Icon IconCode={ICON_COPY}/>
 				Copy
@@ -165,34 +138,14 @@ import { MenuPosition } from '@/native-components/Menu'
 				<MenuIndent/>
 			</MenuItem>
 			<Divider />
-			<SubMenuItem aria-controls={ELEMENT_ID_PREFIX + ElementIds.panelMenuPreviewMenu6}>
+			<SubMenuItem aria-controls={ID + ElementIds.panelMenuPreviewMenu5}>
 				<MenuIndent/>
 				Next level
 				<div style="flex:1"/>
 				<Icon IconCode={ICON_CHEVRON_RIGHT}/>
 			</SubMenuItem>
 		</Menu>
-		<Menu id={ELEMENT_ID_PREFIX + ElementIds.panelMenuPreviewMenu5}>
-			<MenuItem>
-				<Icon IconCode={ICON_COPY}/>
-				Copy
-				<div style="flex:1"/>
-				<MenuIndent/>
-			</MenuItem>
-			<MenuItem>
-				<Icon IconCode={ICON_CLIPBOARD_PASTE}/>
-				Paste
-				<div style="flex:1"/>
-				<MenuIndent/>
-			</MenuItem>
-			<MenuItem>
-				<Icon IconCode={ICON_CUT}/>
-				Cut
-				<div style="flex:1"/>
-				<MenuIndent/>
-			</MenuItem>
-		</Menu>
-		<Menu id={ELEMENT_ID_PREFIX + ElementIds.panelMenuPreviewMenu6}>
+		<Menu id={ID + ElementIds.panelMenuPreviewMenu4}>
 			<MenuItem>
 				<Icon IconCode={ICON_COPY}/>
 				Copy
@@ -212,14 +165,61 @@ import { MenuPosition } from '@/native-components/Menu'
 				<MenuIndent/>
 			</MenuItem>
 			<Divider />
-			<SubMenuItem aria-controls={ELEMENT_ID_PREFIX + ElementIds.panelMenuPreviewMenu7}>
+			<SubMenuItem aria-controls={ID + ElementIds.panelMenuPreviewMenu6}>
 				<MenuIndent/>
 				Next level
 				<div style="flex:1"/>
 				<Icon IconCode={ICON_CHEVRON_RIGHT}/>
 			</SubMenuItem>
 		</Menu>
-		<Menu id={ELEMENT_ID_PREFIX + ElementIds.panelMenuPreviewMenu7}>
+		<Menu id={ID + ElementIds.panelMenuPreviewMenu5}>
+			<MenuItem>
+				<Icon IconCode={ICON_COPY}/>
+				Copy
+				<div style="flex:1"/>
+				<MenuIndent/>
+			</MenuItem>
+			<MenuItem>
+				<Icon IconCode={ICON_CLIPBOARD_PASTE}/>
+				Paste
+				<div style="flex:1"/>
+				<MenuIndent/>
+			</MenuItem>
+			<MenuItem>
+				<Icon IconCode={ICON_CUT}/>
+				Cut
+				<div style="flex:1"/>
+				<MenuIndent/>
+			</MenuItem>
+		</Menu>
+		<Menu id={ID + ElementIds.panelMenuPreviewMenu6}>
+			<MenuItem>
+				<Icon IconCode={ICON_COPY}/>
+				Copy
+				<div style="flex:1"/>
+				<MenuIndent/>
+			</MenuItem>
+			<MenuItem>
+				<Icon IconCode={ICON_CLIPBOARD_PASTE}/>
+				Paste
+				<div style="flex:1"/>
+				<MenuIndent/>
+			</MenuItem>
+			<MenuItem>
+				<Icon IconCode={ICON_CUT}/>
+				Cut
+				<div style="flex:1"/>
+				<MenuIndent/>
+			</MenuItem>
+			<Divider />
+			<SubMenuItem aria-controls={ID + ElementIds.panelMenuPreviewMenu7}>
+				<MenuIndent/>
+				Next level
+				<div style="flex:1"/>
+				<Icon IconCode={ICON_CHEVRON_RIGHT}/>
+			</SubMenuItem>
+		</Menu>
+		<Menu id={ID + ElementIds.panelMenuPreviewMenu7}>
 			<MenuItem>
 				<Icon IconCode={ICON_COPY}/>
 				Copy
@@ -240,12 +240,12 @@ import { MenuPosition } from '@/native-components/Menu'
 			</MenuItem>
 		</Menu>
 	</div>
-	<div class={CSS.bodyOptions} id={ELEMENT_ID_PREFIX + ElementIds.panelMenuOptions}>
+	<div class={CSS.bodyOptions} id={ID + ElementIds.panelMenuOptions}>
 		<div class={CSS.bodyOptionsGroup} style="margin-right:12px">
-			<label id={ELEMENT_ID_PREFIX + ElementIds.panelMenuOptionsPositionLabel}>Position:</label>
+			<label id={ID + ElementIds.panelMenuOptionsPositionLabel}>Position:</label>
 			<Select
-				aria-labelledby={ELEMENT_ID_PREFIX + ElementIds.panelMenuOptionsPositionLabel}
-				id={ELEMENT_ID_PREFIX + ElementIds.panelMenuOptionsPosition}>
+				aria-labelledby={ID + ElementIds.panelMenuOptionsPositionLabel}
+				id={ID + ElementIds.panelMenuOptionsPosition}>
 				{[
 					[FlyoutPosition.centerBottom, 'Center bottom'],
 					[FlyoutPosition.centerBottomToLeft, 'Center bottom to left'],
@@ -279,7 +279,7 @@ import { MenuPosition } from '@/native-components/Menu'
 		</div>
 		<div class={CSS.bodyOptionsGroup} style="margin-right:12px">
 			<label
-				for={ELEMENT_ID_PREFIX + ElementIds.panelMenuOptionsGap}>
+				for={ID + ElementIds.panelMenuOptionsGap}>
 				Gap:
 			</label>
 			<TextField
@@ -288,13 +288,13 @@ import { MenuPosition } from '@/native-components/Menu'
 					type: 'number',
 					min: 0,
 					style: 'width:100px',
-					id: ELEMENT_ID_PREFIX + ElementIds.panelMenuOptionsGap
+					id: ID + ElementIds.panelMenuOptionsGap
 				}}
 			/>
 		</div>
 		<CheckBox
 			CheckBoxInputAttr={{
-				id: ELEMENT_ID_PREFIX + ElementIds.panelMenuOptionsAnchor,
+				id: ID + ElementIds.panelMenuOptionsAnchor,
 				checked: true
 			}}>
 			Anchor

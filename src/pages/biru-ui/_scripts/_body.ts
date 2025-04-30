@@ -1,5 +1,5 @@
 import { updateButtonRef, type ButtonVariant } from "@/native-components/Button"
-import { ELEMENT_ID_PREFIX, ElementIds } from "./_enums"
+import { ID, ElementIds } from "./_enums"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { isAnimationAllowed } from "@/utils/animation"
 import { SelectAttributes, SelectEvents, SelectVariant, updateSelectRef } from "@/native-components/Select"
@@ -19,13 +19,13 @@ const animationOptions = {duration: 250, easing: AnimationEffectTiming.spring}
 const $ = (id: string) => document.getElementById(id)
 
 function buttonPanel(): void {
-	const options = $(ELEMENT_ID_PREFIX + ElementIds.panelButtonsOptions) as HTMLDivElement
-	const btn1 = $(ELEMENT_ID_PREFIX + ElementIds.panelButtonsPreview1) as HTMLButtonElement
-	const btn2 = $(ELEMENT_ID_PREFIX + ElementIds.panelButtonsPreview2) as HTMLButtonElement
-	const btn3 = $(ELEMENT_ID_PREFIX + ElementIds.panelButtonsPreview3) as HTMLButtonElement
-	const optionVariant = $(ELEMENT_ID_PREFIX + ElementIds.panelButtonsOptionsVariant)
-	const optionDisabled = $(ELEMENT_ID_PREFIX + ElementIds.panelButtonsOptionsDisabled)
-	const optionFocused = $(ELEMENT_ID_PREFIX + ElementIds.panelButtonsOptionsFocused)
+	const options = $(ID + ElementIds.panelButtonsOptions) as HTMLDivElement
+	const btn1 = $(ID + ElementIds.panelButtonsPreview1) as HTMLButtonElement
+	const btn2 = $(ID + ElementIds.panelButtonsPreview2) as HTMLButtonElement
+	const btn3 = $(ID + ElementIds.panelButtonsPreview3) as HTMLButtonElement
+	const optionVariant = $(ID + ElementIds.panelButtonsOptionsVariant)
+	const optionDisabled = $(ID + ElementIds.panelButtonsOptionsDisabled)
+	const optionFocused = $(ID + ElementIds.panelButtonsOptionsFocused)
 	options.addEventListener('change', ev => {
 		const target = ev.target as HTMLInputElement
 		const checked = target.checked
@@ -58,10 +58,10 @@ function buttonPanel(): void {
 }
 
 function checkBoxPanel(): void {
-	const checkbox1 = $(ELEMENT_ID_PREFIX + ElementIds.panelCheckboxPreview1) as HTMLInputElement
-	const checkbox2 = $(ELEMENT_ID_PREFIX + ElementIds.panelCheckboxPreview2) as HTMLInputElement
-	const checkbox3 = $(ELEMENT_ID_PREFIX + ElementIds.panelCheckboxPreview3) as HTMLInputElement
-	const options = $(ELEMENT_ID_PREFIX + ElementIds.panelCheckboxOptions)
+	const checkbox1 = $(ID + ElementIds.panelCheckboxPreview1) as HTMLInputElement
+	const checkbox2 = $(ID + ElementIds.panelCheckboxPreview2) as HTMLInputElement
+	const checkbox3 = $(ID + ElementIds.panelCheckboxPreview3) as HTMLInputElement
+	const options = $(ID + ElementIds.panelCheckboxOptions)
 
 	options?.addEventListener('change', ev => {
 		const target = ev.target as HTMLInputElement
@@ -73,16 +73,16 @@ function checkBoxPanel(): void {
 
 function textFieldPanel(): void {
 	const animationOptions = {duration: 250, easing: AnimationEffectTiming.spring}
-	const textField = $(ELEMENT_ID_PREFIX + ElementIds.panelTextfieldPreview) as HTMLDivElement
-	const input = $(ELEMENT_ID_PREFIX + ElementIds.panelTextfieldPreviewInput) as HTMLInputElement
-	const leading = $(ELEMENT_ID_PREFIX + ElementIds.panelTextfieldPreviewLeading) as HTMLElement
-	const trailing = $(ELEMENT_ID_PREFIX + ElementIds.panelTextfieldPreviewTrailing) as HTMLButtonElement
-	const options = $(ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptions)
-	const optionType = $(ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptionsType) as HTMLDivElement
-	const optionLeading = $(ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptionsLeading) as HTMLInputElement
-	const optionTrailing = $(ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptionsTrailing) as HTMLInputElement
-	const optionReadonly = $(ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptionsReadonly) as HTMLInputElement
-	const optionPlaceholder = $(ELEMENT_ID_PREFIX + ElementIds.panelTextfieldOptionsPlaceholder) as HTMLInputElement
+	const textField = $(ID + ElementIds.panelTextfieldPreview) as HTMLDivElement
+	const input = $(ID + ElementIds.panelTextfieldPreviewInput) as HTMLInputElement
+	const leading = $(ID + ElementIds.panelTextfieldPreviewLeading) as HTMLElement
+	const trailing = $(ID + ElementIds.panelTextfieldPreviewTrailing) as HTMLButtonElement
+	const options = $(ID + ElementIds.panelTextfieldOptions)
+	const optionType = $(ID + ElementIds.panelTextfieldOptionsType) as HTMLDivElement
+	const optionLeading = $(ID + ElementIds.panelTextfieldOptionsLeading) as HTMLInputElement
+	const optionTrailing = $(ID + ElementIds.panelTextfieldOptionsTrailing) as HTMLInputElement
+	const optionReadonly = $(ID + ElementIds.panelTextfieldOptionsReadonly) as HTMLInputElement
+	const optionPlaceholder = $(ID + ElementIds.panelTextfieldOptionsPlaceholder) as HTMLInputElement
 
 	options?.addEventListener(SelectEvents.change, ev => {
 		const target = ev.target
@@ -150,11 +150,11 @@ function textFieldPanel(): void {
 }
 
 function colorPickerPanel(): void {
-	const options = $(ELEMENT_ID_PREFIX + ElementIds.panelColorpickerOptions)
-	const button = $(ELEMENT_ID_PREFIX + ElementIds.panelColorpickerPreviewButton) as HTMLButtonElement
-	const colorpicker = $(ELEMENT_ID_PREFIX + ElementIds.panelColorpickerPreviewColorPicker) as HTMLDivElement
-	const optionHueOnly = $(ELEMENT_ID_PREFIX + ElementIds.panelColorpickerOptionsHueOnly) as HTMLInputElement
-	const optionDisabledOpacity = $(ELEMENT_ID_PREFIX + ElementIds.panelColorpickerOptionsDisabledOpacity) as HTMLInputElement
+	const options = $(ID + ElementIds.panelColorpickerOptions)
+	const button = $(ID + ElementIds.panelColorpickerPreviewButton) as HTMLButtonElement
+	const colorpicker = $(ID + ElementIds.panelColorpickerPreviewColorPicker) as HTMLDivElement
+	const optionHueOnly = $(ID + ElementIds.panelColorpickerOptionsHueOnly) as HTMLInputElement
+	const optionDisabledOpacity = $(ID + ElementIds.panelColorpickerOptionsDisabledOpacity) as HTMLInputElement
 	button.addEventListener('click', () => {
 		openPopoverRef(colorpicker, {
 			anchor: button
@@ -184,9 +184,9 @@ function colorPickerPanel(): void {
 }
 
 function iconPanel(): void {
-	const previewRef = $(ELEMENT_ID_PREFIX + ElementIds.panelIconPreview) as HTMLDivElement
-	const optionsRef = $(ELEMENT_ID_PREFIX + ElementIds.panelIconOptions)
-	const filledOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelIconOptionsFilled)
+	const previewRef = $(ID + ElementIds.panelIconPreview) as HTMLDivElement
+	const optionsRef = $(ID + ElementIds.panelIconOptions)
+	const filledOptionRef = $(ID + ElementIds.panelIconOptionsFilled)
 	optionsRef?.addEventListener('change', ev => {
 		const target = ev.target as HTMLInputElement
 		const checked = target.checked
@@ -200,17 +200,17 @@ function iconPanel(): void {
 }
 
 function listPanel(): void {
-	const optionsRef = $(ELEMENT_ID_PREFIX + ElementIds.panelListOptions)!
-	const listPreview = $(ELEMENT_ID_PREFIX + ElementIds.panelListPreviewList)!
-	const leadingPreview = $(ELEMENT_ID_PREFIX + ElementIds.panelListPreviewLeading)!
-	const titlePreview = $(ELEMENT_ID_PREFIX + ElementIds.panelListPreviewTitle)!
-	const trailingPreview = $(ELEMENT_ID_PREFIX + ElementIds.panelListPreviewTrailing)!
-	const subtitlePreview = $(ELEMENT_ID_PREFIX + ElementIds.panelListPreviewSubtitle)!
-	const leadingOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelListOptionsLeading)!
-	const trailingOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelListOptionsTrailing)!
-	const subtitleOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelListOptionsSubtitle)!
-	const titleOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelListOptionsTitle)!
-	const variantOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelListOptionsVariant)!
+	const optionsRef = $(ID + ElementIds.panelListOptions)!
+	const listPreview = $(ID + ElementIds.panelListPreviewList)!
+	const leadingPreview = $(ID + ElementIds.panelListPreviewLeading)!
+	const titlePreview = $(ID + ElementIds.panelListPreviewTitle)!
+	const trailingPreview = $(ID + ElementIds.panelListPreviewTrailing)!
+	const subtitlePreview = $(ID + ElementIds.panelListPreviewSubtitle)!
+	const leadingOptionRef = $(ID + ElementIds.panelListOptionsLeading)!
+	const trailingOptionRef = $(ID + ElementIds.panelListOptionsTrailing)!
+	const subtitleOptionRef = $(ID + ElementIds.panelListOptionsSubtitle)!
+	const titleOptionRef = $(ID + ElementIds.panelListOptionsTitle)!
+	const variantOptionRef = $(ID + ElementIds.panelListOptionsVariant)!
 	optionsRef?.addEventListener(SelectEvents.change, ev => {
 		const target = ev.target as HTMLDivElement
 		const value = target.getAttribute(SelectAttributes.value)
@@ -308,17 +308,17 @@ function listPanel(): void {
 }
 
 function popoverPanel(): void {
-	const optionsRef = $(ELEMENT_ID_PREFIX + ElementIds.panelPopoverOptions) as HTMLDivElement
-	const openButtonRef = $(ELEMENT_ID_PREFIX + ElementIds.panelPopoverPreviewButtonOpen) as HTMLButtonElement
-	const closeButtonRef = $(ELEMENT_ID_PREFIX + ElementIds.panelPopoverPreviewButtonClose) as HTMLButtonElement
-	const popoverRef = $(ELEMENT_ID_PREFIX + ElementIds.panelPopoverPreviewPopover) as HTMLDivElement
-	const positionOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelPopoverOptionsPosition) as HTMLDivElement
-	const paddingOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelPopoverOptionsPadding) as HTMLInputElement
-	const gapOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelPopoverOptionsGap) as HTMLInputElement
-	const anchorOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelPopoverOptionsAnchor) as HTMLInputElement
-	const autofocusOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelPopoverOptionsAutofocus) as HTMLInputElement
-	const importantOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelPopoverOptionsImportant) as HTMLInputElement
-	const draggableOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelPopoverOptionsDraggable) as HTMLInputElement
+	const optionsRef = $(ID + ElementIds.panelPopoverOptions) as HTMLDivElement
+	const openButtonRef = $(ID + ElementIds.panelPopoverPreviewButtonOpen) as HTMLButtonElement
+	const closeButtonRef = $(ID + ElementIds.panelPopoverPreviewButtonClose) as HTMLButtonElement
+	const popoverRef = $(ID + ElementIds.panelPopoverPreviewPopover) as HTMLDivElement
+	const positionOptionRef = $(ID + ElementIds.panelPopoverOptionsPosition) as HTMLDivElement
+	const paddingOptionRef = $(ID + ElementIds.panelPopoverOptionsPadding) as HTMLInputElement
+	const gapOptionRef = $(ID + ElementIds.panelPopoverOptionsGap) as HTMLInputElement
+	const anchorOptionRef = $(ID + ElementIds.panelPopoverOptionsAnchor) as HTMLInputElement
+	const autofocusOptionRef = $(ID + ElementIds.panelPopoverOptionsAutofocus) as HTMLInputElement
+	const importantOptionRef = $(ID + ElementIds.panelPopoverOptionsImportant) as HTMLInputElement
+	const draggableOptionRef = $(ID + ElementIds.panelPopoverOptionsDraggable) as HTMLInputElement
 
 	openButtonRef.addEventListener('click', () => openPopoverRef(popoverRef))
 	closeButtonRef.addEventListener('click', () => closePopoverRef(popoverRef))
@@ -371,17 +371,17 @@ function popoverPanel(): void {
 	})
 }
 function modalPanel(): void {
-	const optionsRef = $(ELEMENT_ID_PREFIX + ElementIds.panelModalOptions) as HTMLDivElement
-	const openButtonRef = $(ELEMENT_ID_PREFIX + ElementIds.panelModalPreviewButtonOpen) as HTMLButtonElement
-	const closeButtonRef = $(ELEMENT_ID_PREFIX + ElementIds.panelModalPreviewButtonClose) as HTMLButtonElement
-	const modalRef = $(ELEMENT_ID_PREFIX + ElementIds.panelModalPreviewModal) as HTMLDialogElement
-	const positionOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsPosition) as HTMLDivElement
-	const paddingOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsPadding) as HTMLInputElement
-	const gapOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsGap) as HTMLInputElement
-	const anchorOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsAnchor) as HTMLInputElement
-	const autofocusOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsAutofocus) as HTMLInputElement
-	const importantOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsImportant) as HTMLInputElement
-	const draggableOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelModalOptionsDraggable) as HTMLInputElement
+	const optionsRef = $(ID + ElementIds.panelModalOptions) as HTMLDivElement
+	const openButtonRef = $(ID + ElementIds.panelModalPreviewButtonOpen) as HTMLButtonElement
+	const closeButtonRef = $(ID + ElementIds.panelModalPreviewButtonClose) as HTMLButtonElement
+	const modalRef = $(ID + ElementIds.panelModalPreviewModal) as HTMLDialogElement
+	const positionOptionRef = $(ID + ElementIds.panelModalOptionsPosition) as HTMLDivElement
+	const paddingOptionRef = $(ID + ElementIds.panelModalOptionsPadding) as HTMLInputElement
+	const gapOptionRef = $(ID + ElementIds.panelModalOptionsGap) as HTMLInputElement
+	const anchorOptionRef = $(ID + ElementIds.panelModalOptionsAnchor) as HTMLInputElement
+	const autofocusOptionRef = $(ID + ElementIds.panelModalOptionsAutofocus) as HTMLInputElement
+	const importantOptionRef = $(ID + ElementIds.panelModalOptionsImportant) as HTMLInputElement
+	const draggableOptionRef = $(ID + ElementIds.panelModalOptionsDraggable) as HTMLInputElement
 
 	openButtonRef.addEventListener('click', () => openModalRef(modalRef))
 	closeButtonRef.addEventListener('click', () => closeModalRef(modalRef))
@@ -435,10 +435,10 @@ function modalPanel(): void {
 }
 
 function selectPanel(): void {
-	const previewRef = $(ELEMENT_ID_PREFIX + ElementIds.panelSelectPreview) as HTMLDivElement
-	const optionsRef = $(ELEMENT_ID_PREFIX + ElementIds.panelSelectOptions) as HTMLDivElement
-	const variantOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelSelectOptionsVariant) as HTMLDivElement
-	const resetOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelSelectOptionsReset) as HTMLButtonElement
+	const previewRef = $(ID + ElementIds.panelSelectPreview) as HTMLDivElement
+	const optionsRef = $(ID + ElementIds.panelSelectOptions) as HTMLDivElement
+	const variantOptionRef = $(ID + ElementIds.panelSelectOptionsVariant) as HTMLDivElement
+	const resetOptionRef = $(ID + ElementIds.panelSelectOptionsReset) as HTMLButtonElement
 	let firstTime = true
 	previewRef.addEventListener(SelectEvents.change, () => {
 		if (!firstTime) return
@@ -508,13 +508,13 @@ function selectPanel(): void {
 }
 
 function tooltipPanel(): void {
-	const optionsRef = $(ELEMENT_ID_PREFIX + ElementIds.panelTooltipOptions) as HTMLDivElement
-	const anchorOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelTooltipOptionsAnchor) as HTMLInputElement
-	const previewRef = $(ELEMENT_ID_PREFIX + ElementIds.panelTooltipPreview) as HTMLDivElement
-	const positionOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelTooltipOptionsPosition) as HTMLDivElement
-	const gapOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelTooltipOptionsGap) as HTMLInputElement
-	const startDelayOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelTooltipOptionsStartDelay) as HTMLInputElement
-	const endDelayOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelTooltipOptionsEndDelay) as HTMLInputElement
+	const optionsRef = $(ID + ElementIds.panelTooltipOptions) as HTMLDivElement
+	const anchorOptionRef = $(ID + ElementIds.panelTooltipOptionsAnchor) as HTMLInputElement
+	const previewRef = $(ID + ElementIds.panelTooltipPreview) as HTMLDivElement
+	const positionOptionRef = $(ID + ElementIds.panelTooltipOptionsPosition) as HTMLDivElement
+	const gapOptionRef = $(ID + ElementIds.panelTooltipOptionsGap) as HTMLInputElement
+	const startDelayOptionRef = $(ID + ElementIds.panelTooltipOptionsStartDelay) as HTMLInputElement
+	const endDelayOptionRef = $(ID + ElementIds.panelTooltipOptionsEndDelay) as HTMLInputElement
 	let timeGapId: number | NodeJS.Timeout | null = null
 	let timeStartDelayId: number | NodeJS.Timeout | null = null
 	let timeEndDelayId: number | NodeJS.Timeout | null = null
@@ -574,12 +574,12 @@ function tooltipPanel(): void {
 }
 
 function menuPanel(): void {
-	const optionsRef = $(ELEMENT_ID_PREFIX + ElementIds.panelMenuOptions) as HTMLDivElement
-	const buttonRef = $(ELEMENT_ID_PREFIX + ElementIds.panelMenuPreviewButton) as HTMLButtonElement
-	const menuRef = $(ELEMENT_ID_PREFIX + ElementIds.panelMenuPreviewMenu) as HTMLDivElement
-	const positionOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelMenuOptionsPosition) as HTMLDivElement
-	const anchorOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelMenuOptionsAnchor) as HTMLInputElement
-	const gapOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelMenuOptionsGap) as HTMLInputElement
+	const optionsRef = $(ID + ElementIds.panelMenuOptions) as HTMLDivElement
+	const buttonRef = $(ID + ElementIds.panelMenuPreviewButton) as HTMLButtonElement
+	const menuRef = $(ID + ElementIds.panelMenuPreviewMenu) as HTMLDivElement
+	const positionOptionRef = $(ID + ElementIds.panelMenuOptionsPosition) as HTMLDivElement
+	const anchorOptionRef = $(ID + ElementIds.panelMenuOptionsAnchor) as HTMLInputElement
+	const gapOptionRef = $(ID + ElementIds.panelMenuOptionsGap) as HTMLInputElement
 
 	buttonRef.addEventListener('click', () => openMenuRef(menuRef))
 	buttonRef.addEventListener('contextmenu', ev => {
@@ -624,10 +624,10 @@ function menuPanel(): void {
 }
 
 function panelEmojiPicker(): void {
-	const optionsRef = $(ELEMENT_ID_PREFIX + ElementIds.panelEmojipickerOptions) as HTMLDivElement
-	const autocloseOptionRef = $(ELEMENT_ID_PREFIX + ElementIds.panelEmojipickerOptionsAutoclose) as HTMLInputElement
-	const buttonRef = $(ELEMENT_ID_PREFIX + ElementIds.panelEmojipickerPreviewButton) as HTMLButtonElement
-	const emojipickerRef = $(ELEMENT_ID_PREFIX + ElementIds.panelEmojipickerPreviewEmojiPicker) as HTMLDivElement
+	const optionsRef = $(ID + ElementIds.panelEmojipickerOptions) as HTMLDivElement
+	const autocloseOptionRef = $(ID + ElementIds.panelEmojipickerOptionsAutoclose) as HTMLInputElement
+	const buttonRef = $(ID + ElementIds.panelEmojipickerPreviewButton) as HTMLButtonElement
+	const emojipickerRef = $(ID + ElementIds.panelEmojipickerPreviewEmojiPicker) as HTMLDivElement
 
 	buttonRef.addEventListener('click', () => {
 		openPopoverRef(emojipickerRef, {

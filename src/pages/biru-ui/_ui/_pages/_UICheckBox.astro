@@ -1,13 +1,13 @@
 ---
 import CheckBox from '@/native-components/CheckBox/index.astro'
 import Tooltip from '@/native-components/Tooltip/index.astro'
-import { ElementIds, ELEMENT_ID_PREFIX } from '../../_scripts/_enums'
+import { ElementIds, ID } from '../../_scripts/_enums'
 import CSS from '../../_index.module.scss'
 ---
 <div
 	class={CSS.bodyPage}
 	role="tabpanel"
-	id={ELEMENT_ID_PREFIX + ElementIds.panelCheckbox}
+	id={ID + ElementIds.panelCheckbox}
 	hidden>
 	<h2>CheckBox</h2>
 	<p>A checkbox is a UI element that allows users to select multiple options from a list. It typically displays a square box that can be checked or unchecked to indicate selection or deselection.</p>
@@ -16,26 +16,26 @@ import CSS from '../../_index.module.scss'
 			<CheckBox
 				data-tooltip="CheckBox"
 				CheckBoxInputAttr={{
-					id: ELEMENT_ID_PREFIX + ElementIds.panelCheckboxPreview1,
+					id: ID + ElementIds.panelCheckboxPreview1,
 					checked: true
 				}}>
 				Option 1
 			</CheckBox>
 			<CheckBox
 				data-tooltip="CheckBox"
-				CheckBoxInputAttr={{id: ELEMENT_ID_PREFIX + ElementIds.panelCheckboxPreview2}}>
+				CheckBoxInputAttr={{id: ID + ElementIds.panelCheckboxPreview2}}>
 				Option 2
 			</CheckBox>
 			<CheckBox
 				data-tooltip="CheckBox"
-				CheckBoxInputAttr={{id: ELEMENT_ID_PREFIX + ElementIds.panelCheckboxPreview3}}>
+				CheckBoxInputAttr={{id: ID + ElementIds.panelCheckboxPreview3}}>
 				Option 3
 			</CheckBox>
 		</Tooltip>
 	</div>
-	<div class={CSS.bodyOptions} id={ELEMENT_ID_PREFIX + ElementIds.panelCheckboxOptions}>
+	<div class={CSS.bodyOptions} id={ID + ElementIds.panelCheckboxOptions}>
 		<CheckBox
-			CheckBoxInputAttr={{id: ELEMENT_ID_PREFIX + ElementIds.panelCheckboxOptionsDisabled}}>
+			CheckBoxInputAttr={{id: ID + ElementIds.panelCheckboxOptionsDisabled}}>
 			Disabled
 		</CheckBox>
 	</div>

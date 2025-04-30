@@ -8,13 +8,13 @@ import Select from '@/native-components/Select/index.astro'
 import SelectOption from '@/native-components/Select/SelectOption.astro'
 import { ICON_ADD } from '@/constants/icons'
 import { ButtonVariant } from '@/native-components/Button'
-import { ElementIds, ELEMENT_ID_PREFIX } from '../../_scripts/_enums'
+import { ElementIds, ID } from '../../_scripts/_enums'
 import CSS from '../../_index.module.scss'
 ---
 <div
 	class={CSS.bodyPage}
 	role="tabpanel"
-	id={ELEMENT_ID_PREFIX + ElementIds.panelButtons}
+	id={ID + ElementIds.panelButtons}
 	hidden>
 	<h2>Buttons</h2>
 	<p>A button is an interactive UI element that triggers a specific action when clicked or tapped. It typically has a clear label indicating its function and provides visual feedback upon interaction. Buttons are essential for guiding users through an interface and facilitating user-system communication.</p>
@@ -22,24 +22,24 @@ import CSS from '../../_index.module.scss'
 		<Tooltip>
 			<IconButton
 				data-tooltip="Icon Button"
-				id={ELEMENT_ID_PREFIX + ElementIds.panelButtonsPreview1}
+				id={ID + ElementIds.panelButtonsPreview1}
 				IconButtonCode={ICON_ADD}
 			/>
-			<Button id={ELEMENT_ID_PREFIX + ElementIds.panelButtonsPreview2} data-tooltip="Button">
+			<Button id={ID + ElementIds.panelButtonsPreview2} data-tooltip="Button">
 				Click me
 			</Button>
-			<Button id={ELEMENT_ID_PREFIX + ElementIds.panelButtonsPreview3} data-tooltip="Button">
+			<Button id={ID + ElementIds.panelButtonsPreview3} data-tooltip="Button">
 				<Icon IconCode={ICON_ADD} data-tooltip="Icon"/>
 				Click me
 			</Button>
 		</Tooltip>
 	</div>
-	<div class={CSS.bodyOptions} id={ELEMENT_ID_PREFIX + ElementIds.panelButtonsOptions}>
+	<div class={CSS.bodyOptions} id={ID + ElementIds.panelButtonsOptions}>
 		<div class={CSS.bodyOptionsGroup}>
-			<label id={ELEMENT_ID_PREFIX + ElementIds.panelButtonsOptionsVariantLabel}>Variant:</label>
+			<label id={ID + ElementIds.panelButtonsOptionsVariantLabel}>Variant:</label>
 			<Select
-				aria-labelledby={ELEMENT_ID_PREFIX + ElementIds.panelButtonsOptionsVariantLabel}
-				id={ELEMENT_ID_PREFIX + ElementIds.panelButtonsOptionsVariant}
+				aria-labelledby={ID + ElementIds.panelButtonsOptionsVariantLabel}
+				id={ID + ElementIds.panelButtonsOptionsVariant}
 				style="min-width:140px;margin-right:12px">
 				<SelectOption value={ButtonVariant.filled}>Filled</SelectOption>
 				<SelectOption value={ButtonVariant.tonal}>Tonal</SelectOption>
@@ -48,11 +48,11 @@ import CSS from '../../_index.module.scss'
 			</Select>
 		</div>
 		<CheckBox
-			CheckBoxInputAttr={{id: ELEMENT_ID_PREFIX + ElementIds.panelButtonsOptionsDisabled}}>
+			CheckBoxInputAttr={{id: ID + ElementIds.panelButtonsOptionsDisabled}}>
 			Disabled
 		</CheckBox>
 		<CheckBox
-			CheckBoxInputAttr={{id: ELEMENT_ID_PREFIX + ElementIds.panelButtonsOptionsFocused}}>
+			CheckBoxInputAttr={{id: ID + ElementIds.panelButtonsOptionsFocused}}>
 			Focused
 		</CheckBox>
 	</div>

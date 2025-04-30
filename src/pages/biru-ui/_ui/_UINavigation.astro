@@ -6,7 +6,7 @@ import Icon from '@/native-components/Icon/index.astro'
 import DrawerButton from '@/native-components/Drawer/DrawerButton.astro'
 import SideBarButton from '@/native-components/SideBar/SideBarButton.astro'
 import { ButtonVariant } from '@/native-components/Button'
-import { ELEMENT_ID_PREFIX, ElementIds } from '../_scripts/_enums'
+import { ID, ElementIds } from '../_scripts/_enums'
 import { ICON_LINE_HORIZONTAL_3 } from '@/constants/icons'
 import CSS from '../_index.module.scss'
 
@@ -17,67 +17,67 @@ const items: {
 }[] = [
 	{
 		name: 'Buttons',
-		controls: ELEMENT_ID_PREFIX + ElementIds.panelButtons,
+		controls: ID + ElementIds.panelButtons,
 		selected: false,
 	},
 	{
 		name: 'CheckBox',
-		controls: ELEMENT_ID_PREFIX + ElementIds.panelCheckbox,
+		controls: ID + ElementIds.panelCheckbox,
 		selected: false
 	},
 	{
 		name: 'TextField',
-		controls: ELEMENT_ID_PREFIX + ElementIds.panelTextfield,
+		controls: ID + ElementIds.panelTextfield,
 		selected: false
 	},
 	{
 		name: 'ColorPicker',
-		controls: ELEMENT_ID_PREFIX + ElementIds.panelColorpicker,
+		controls: ID + ElementIds.panelColorpicker,
 		selected: false
 	},
 	{
 		name: 'Icon',
-		controls: ELEMENT_ID_PREFIX + ElementIds.panelIcon,
+		controls: ID + ElementIds.panelIcon,
 		selected: false
 	},
 	{
 		name: 'List',
-		controls: ELEMENT_ID_PREFIX + ElementIds.panelList,
+		controls: ID + ElementIds.panelList,
 		selected: false
 	},
 	{
 		name: 'Popover',
-		controls: ELEMENT_ID_PREFIX + ElementIds.panelPopover,
+		controls: ID + ElementIds.panelPopover,
 		selected: false
 	},
 	{
 		name: 'Modal',
-		controls: ELEMENT_ID_PREFIX + ElementIds.panelModal,
+		controls: ID + ElementIds.panelModal,
 		selected: false
 	},
 	{
 		name: 'Select',
-		controls: ELEMENT_ID_PREFIX + ElementIds.panelSelect,
+		controls: ID + ElementIds.panelSelect,
 		selected: false
 	},
 	{
 		name: 'Tooltip',
-		controls: ELEMENT_ID_PREFIX + ElementIds.panelTooltip,
+		controls: ID + ElementIds.panelTooltip,
 		selected: false
 	},
 	{
 		name: 'Menu',
-		controls: ELEMENT_ID_PREFIX + ElementIds.panelMenu,
+		controls: ID + ElementIds.panelMenu,
 		selected: false
 	},
 	{
 		name: 'EmojiPicker',
-		controls: ELEMENT_ID_PREFIX + ElementIds.panelEmojipicker,
+		controls: ID + ElementIds.panelEmojipicker,
 		selected: false
 	},
 	{
 		name: 'Drawer',
-		controls: ELEMENT_ID_PREFIX + ElementIds.panelDrawer,
+		controls: ID + ElementIds.panelDrawer,
 		selected: true
 	},
 ].sort((a, b) => a.name.localeCompare(b.name))
@@ -86,7 +86,7 @@ const items: {
 <SideBar
 	class={CSS.sidebar}
 	role="tablist"
-	id={ELEMENT_ID_PREFIX + ElementIds.navigationSideBar}
+	id={ID + ElementIds.navigationSideBar}
 	aria-label="Navigation">
 	{items.map(v => <SideBarButton
 		role="tab"
@@ -98,12 +98,12 @@ const items: {
 	</SideBarButton>)}
 </SideBar>
 <Drawer
-	id={ELEMENT_ID_PREFIX + ElementIds.navigationDrawer}
+	id={ID + ElementIds.navigationDrawer}
 	aria-label="Navigation">
 	<Button
 		slot="header"
 		style="width:min-content"
-		popovertarget={ELEMENT_ID_PREFIX + ElementIds.navigationDrawer}
+		popovertarget={ID + ElementIds.navigationDrawer}
 		popovertargetaction="hide">
 		<Icon IconCode={ICON_LINE_HORIZONTAL_3}/>
 	</Button>
