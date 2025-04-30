@@ -3,17 +3,14 @@ import Html from '@/layouts/Html/index.astro'
 import Appbar from '@/layouts/Appbar/index.astro'
 import BottomBar from '@/layouts/BottomBar/index.astro'
 import Main from '@/layouts/Main/index.astro'
-import CSS from './_index.module.scss'
-import logo from '@/assets/images/logos/redmerah-logo.svg'
-import Splash from '@/layouts/Splash/index.astro'
+import { CSSClasses } from './_styles/_css'
 ---
 
-<Html componentCount={2} title="Terms & Conditions | Redmerah" description="Understand the terms and conditions governing your use of Redmerah's services. This page outlines important legal information.">
+<Html title="Terms & Conditions • Redmerah" description="Understand the terms and conditions governing your use of Redmerah's services. This page outlines important legal information.">
 	<script is:inline src='/scripts/root-settings.min.js'/>
-	<Splash src={logo.src} alt={`Redmerah splash icon`} />
 	<Appbar/>
 	<Main>
-		<article class={CSS.article}>
+		<article class={CSSClasses.article}>
 			<h1>📜<br/>Terms & Conditions</h1>
 			<p>Welcome to Redmerah!</p>
 			<p>These terms and conditions outline the rules and regulations for the use of Redmerah's Website, located at <a href="https://redmerah.com">https://redmerah.com</a>.</p>

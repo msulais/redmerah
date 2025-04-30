@@ -19,6 +19,12 @@
 				transition-duration: .2s;
 			}
 
+			@media (prefers-reduced-motion: no-preference) {
+				:root[data-animation=auto] & {
+					transition-duration: .2s;
+				}
+			}
+
 			@media (hover: hover) {
 				&:hover {
 					border-bottom-style: dashed;
@@ -29,6 +35,7 @@
 				border-bottom-style: solid;
 				background-color: rgb(var(--g-color-accent));
 				color: rgb(var(--g-color-on-accent));
+				border-radius: 4px;
 				padding: 0 .3em;
 			}
 		}
@@ -51,6 +58,12 @@
 		> a {
 			:root[data-animation=on] & {
 				transition-duration: .2s;
+			}
+
+			@media (prefers-reduced-motion: no-preference) {
+				:root[data-animation=auto] & {
+					transition-duration: .2s;
+				}
 			}
 
 			@media (hover: hover) {
