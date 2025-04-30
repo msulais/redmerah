@@ -26,6 +26,12 @@
 			transition-duration: .2s;
 		}
 
+		@media (prefers-reduced-motion: no-preference) {
+			:root[data-animation=auto] & {
+				transition-duration: .2s;
+			}
+		}
+
 		@media (hover: hover) {
 			&:hover {
 				color: rgb(var(--g-color-accent));
