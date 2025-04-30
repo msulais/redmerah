@@ -68,7 +68,8 @@ function initSettings(): void {
 	initAccentColor()
 }
 
-function initSettingsMenu(): void {const rgbToCSS = (rgb: RGBColor) => `${Math.round(rgb.r * 0xff)}, ${Math.round(rgb.g * 0xff)}, ${Math.round(rgb.b * 0xff)}`
+function initSettingsMenu(): void {
+	const rgbToCSS = (rgb: RGBColor) => `${Math.round(rgb.r * 0xff)}, ${Math.round(rgb.g * 0xff)}, ${Math.round(rgb.b * 0xff)}`
 	const buttonRef = $(ID + ElementIds.appbarSettingsButton) as HTMLButtonElement
 	const menuRef = $(ID + ElementIds.appbarSettingsMenu) as HTMLDivElement
 	const animationMenuRef = $(ID + ElementIds.appbarSettingsAnimationMenu) as HTMLDivElement
