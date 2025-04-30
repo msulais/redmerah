@@ -1,4 +1,4 @@
-import CSS from '../_index.module.scss'
+import CSS from './_index.module.scss'
 
 export class CSSClasses {
 	static readonly main = CSS.main
