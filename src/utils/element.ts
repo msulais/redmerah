@@ -1,3 +1,4 @@
+import { AnimationEffectTiming } from "@/enums/animation"
 import { numberIsDefined } from "./number"
 
 export function elementIsOverflowX(element: HTMLElement): boolean {
@@ -10,6 +11,66 @@ export function elementIsOverflowY(element: HTMLElement): boolean {
 
 export function elementIsOverflow(element: HTMLElement): boolean {
 	return elementIsOverflowX(element) || elementIsOverflowY(element)
+}
+
+export function elementAnimateUpdateText(element: HTMLElement, text: string): void {
+	const oldText = element.textContent ?? ''
+	const newText = text
+	if (oldText === newText) return
+
+	const added: [type: 'add' | 'keep', txt: string][] = []
+	let keepTxt = ''
+	let addTxt = ''
+	let lastIndex = 0
+	for (let i = 0; i < newText.length; i++) {
+		const char = newText[i]
+		let match = false
+		lvl2: for (let j = lastIndex; j < oldText.length; j++) {
+			match = oldText[j] === char
+			if (match) {
+				lastIndex = j
+				break lvl2
+			}
+		}
+
+		if (match) {
+			if (addTxt.length > 0) added.push(['add', addTxt])
+			addTxt = ''
+			keepTxt += char
+		}
+		else {
+			if (keepTxt.length > 0) added.push(['keep', keepTxt])
+			keepTxt = ''
+			addTxt += char
+		}
+	}
+
+	if (addTxt.length > 0) added.push(['add', addTxt])
+	if (keepTxt.length > 0) added.push(['keep', keepTxt])
+
+	const spans: HTMLSpanElement[] = []
+ 	const nodes = added.map(v => {
+		const type = v[0]
+		const text = v[1]
+		if (type === 'add') {
+			const span = document.createElement('span')
+			span.textContent = text
+			span.style.setProperty('display', 'inline-block')
+			spans.push(span)
+			return span
+		}
+
+		return text
+	})
+
+	element.replaceChildren(...nodes)
+	for (const span of spans) {
+		span.animate({
+			// scale: [0, 1],
+			transform: ['translateY(0.5em)', 'translateY(0)'],
+			opacity: [0, 1]
+		}, {duration: 250, easing: AnimationEffectTiming.spring})
+	}
 }
 
 export function elementFocusAny(
