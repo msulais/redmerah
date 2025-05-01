@@ -14,6 +14,7 @@ import { closeModalRef, ModalPosition, openModalRef, updateModalRef } from "@/na
 import { TooltipPosition, updateTooltipRef } from "@/native-components/Tooltip"
 import { MenuPosition, openMenuRef, updateMenuRef } from "@/native-components/Menu"
 import { EmojiPickerAttributes, EmojiPickerEvents } from "@/native-components/EmojiPicker"
+import { updateDialogRef } from "@/native-components/Dialog"
 
 const animationOptions = {duration: 250, easing: AnimationEffectTiming.spring}
 const $ = (id: string) => document.getElementById(id)
@@ -654,7 +655,31 @@ function panelEmojiPicker(): void {
 	})
 }
 
+function panelDialog(): void {
+	const buttonRef = $(ID + ElementIds.panelDialogPreviewButton) as HTMLButtonElement
+	const dialogRef = $(ID + ElementIds.panelDialogPreviewDialog) as HTMLDialogElement
+	const optionsRef = $(ID + ElementIds.panelDialogOptions) as HTMLDivElement
+	const importantOptionRef = $(ID + ElementIds.panelDialogOptionsImportant) as HTMLInputElement
+
+	optionsRef.addEventListener('change', ev => {
+		const target = ev.target as HTMLInputElement
+		const checked = target.checked
+		switch (target) {
+		case importantOptionRef:
+			updateDialogRef(dialogRef, {
+				DialogImportant: checked
+			})
+			break
+		}
+	})
+
+	buttonRef.addEventListener('click', () => {
+		dialogRef.showModal()
+	})
+}
+
 function _(): void {
+	panelDialog()
 	panelEmojiPicker()
 	menuPanel()
 	tooltipPanel()
