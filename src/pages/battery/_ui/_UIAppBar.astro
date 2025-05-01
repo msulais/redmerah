@@ -1,0 +1,40 @@
+---
+import AppBar from '@/native-components/AppBar/index.astro'
+import IconButton from '@/native-components/Button/IconButton.astro'
+import Tooltip from '@/native-components/Tooltip/index.astro'
+import { APP_BATTERY as APP } from '@/constants/apps'
+import { ICON_INFO, ICON_SETTINGS } from '@/constants/icons'
+import { ElementIds, ID } from '../_scripts/_enums'
+---
+
+<AppBar id={ID + ElementIds.appbar}>
+	<Fragment slot="leading">
+		<img
+			src={APP.logoUrl}
+			alt={APP.name + ' logo'}
+			width={32}
+			style="margin: 0 8px"
+		/>
+	</Fragment>
+	<Fragment slot="headline">{APP.name}</Fragment>
+	<Tooltip slot="trailing">
+		<IconButton
+			id={ID + ElementIds.appbarInfoButton}
+			data-tooltip="Info"
+			IconButtonCode={ICON_INFO}
+			aria-label="Info"
+			aria-haspopup="menu"
+			aria-controls={ID + ElementIds.appbarInfoMenu}
+			aria-expanded="false"
+		/>
+		<IconButton
+			id={ID + ElementIds.appbarSettingsButton}
+			data-tooltip="Settings"
+			IconButtonCode={ICON_SETTINGS}
+			aria-label="Settings"
+			aria-haspopup="menu"
+			aria-controls={ID + ElementIds.appbarSettingsMenu}
+			aria-expanded="false"
+		/>
+	</Tooltip>
+</AppBar>

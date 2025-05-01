@@ -1,0 +1,133 @@
+---
+import { ICON_APPS, ICON_CHAT, ICON_CHEVRON_RIGHT, ICON_GIFT, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_OPEN, ICON_PLAY_CIRCLE_HINT, ICON_RECEIPT, ICON_SHARE_ANDROID, ICON_SHIELD_CHECKMARK, ICON_VIDEO_CLIP, ICON_VIDEO_CLIP_OFF, ICON_VIDEO_CLIP_OPTIMIZE, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY, ICON_WINDOW_SETTINGS } from '@/constants/icons'
+import { ElementIds, ID, Links, RadioGroupNames } from '../_scripts/_enums'
+import Menu from '@/native-components/Menu/index.astro'
+import SubMenuItem from '@/native-components/Menu/SubMenuItem.astro'
+import RadioMenuItem from '@/native-components/Menu/RadioMenuItem.astro'
+import MenuIndent from '@/native-components/Menu/MenuIndent.astro'
+import MenuHeader from '@/native-components/Menu/MenuHeader.astro'
+import MenuItem from '@/native-components/Menu/MenuItem.astro'
+import Icon from '@/native-components/Icon/index.astro'
+import LinkMenuItem from '@/native-components/Menu/LinkMenuItem.astro'
+import Divider from '@/native-components/Divider/index.astro'
+import { PlatformAnimationMode, PlatformThemeMode } from '@/enums/platforms'
+import logoRedmerah from '@/assets/images/logos/redmerah-logo.svg'
+import { APP_BATTERY as APP } from '@/constants/apps'
+import { RoutesLinks, ExternalLinks } from '@/enums/links'
+---
+
+<Menu id={ID + ElementIds.appbarSettingsMenu}>
+	<SubMenuItem
+		aria-controls={ID + ElementIds.appbarSettingsAnimationMenu}>
+		<Icon IconCode={ICON_PLAY_CIRCLE_HINT}/>
+		Animation
+		<div style="flex:1"/>
+		<Icon IconCode={ICON_CHEVRON_RIGHT}/>
+	</SubMenuItem>
+	<SubMenuItem
+		aria-controls={ID + ElementIds.appbarSettingsThemeMenu}>
+		<Icon IconCode={ICON_WEATHER_SUNNY}/>
+		Theme
+		<div style="flex:1"/>
+		<Icon IconCode={ICON_CHEVRON_RIGHT}/>
+	</SubMenuItem>
+</Menu>
+<Menu id={ID + ElementIds.appbarSettingsAnimationMenu}>
+	<RadioMenuItem
+		RadioMenuItemInputAttr={{
+			name: RadioGroupNames.settingsAnimation,
+			checked: true,
+			value: PlatformAnimationMode.auto
+		}}>
+		<Icon IconCode={ICON_VIDEO_CLIP_OPTIMIZE}/>
+		Automatic
+	</RadioMenuItem>
+	<RadioMenuItem
+		RadioMenuItemInputAttr={{
+			name: RadioGroupNames.settingsAnimation,
+			value: PlatformAnimationMode.on
+		}}>
+		<Icon IconCode={ICON_VIDEO_CLIP}/>
+		On
+	</RadioMenuItem>
+	<RadioMenuItem
+		RadioMenuItemInputAttr={{
+			name: RadioGroupNames.settingsAnimation,
+			value: PlatformAnimationMode.off
+		}}>
+		<Icon IconCode={ICON_VIDEO_CLIP_OFF}/>
+		Off
+	</RadioMenuItem>
+</Menu>
+<Menu id={ID + ElementIds.appbarSettingsThemeMenu}>
+	<RadioMenuItem
+		RadioMenuItemInputAttr={{
+			name: RadioGroupNames.settingsTheme,
+			checked: true,
+			value: PlatformThemeMode.auto
+		}}>
+		<Icon IconCode={ICON_LAPTOP_SETTINGS}/>
+		Automatic
+	</RadioMenuItem>
+	<RadioMenuItem
+		RadioMenuItemInputAttr={{
+			name: RadioGroupNames.settingsTheme,
+			value: PlatformThemeMode.light
+		}}>
+		<Icon IconCode={ICON_WEATHER_SUNNY}/>
+		Light
+	</RadioMenuItem>
+	<RadioMenuItem
+		RadioMenuItemInputAttr={{
+			name: RadioGroupNames.settingsTheme,
+			value: PlatformThemeMode.dark
+		}}>
+		<Icon IconCode={ICON_WEATHER_MOON}/>
+		Dark
+	</RadioMenuItem>
+</Menu>
+<Menu id={ID + ElementIds.appbarInfoMenu}>
+	<LinkMenuItem href="/">
+		<img src={logoRedmerah.src} width="16"/>
+		Redmerah
+	</LinkMenuItem>
+	<LinkMenuItem href={RoutesLinks.apps}>
+		<Icon IconCode={ICON_APPS}/>
+		More apps
+	</LinkMenuItem>
+	<LinkMenuItem href={RoutesLinks.about}>
+		<Icon IconCode={ICON_INFO}/>
+		About us
+	</LinkMenuItem>
+	<Divider />
+	<LinkMenuItem href={RoutesLinks.privacy}>
+		<Icon IconCode={ICON_SHIELD_CHECKMARK}/>
+		Privacy policy
+	</LinkMenuItem>
+	<LinkMenuItem href={RoutesLinks.terms}>
+		<Icon IconCode={ICON_RECEIPT}/>
+		Terms & conditions
+	</LinkMenuItem>
+	<Divider />
+	<LinkMenuItem
+		LinkButtonNewTab
+		href={Links.broswerCompatibility}>
+		<Icon IconCode={ICON_WINDOW_SETTINGS}/>
+		Browser compatibility
+		<MenuIndent/>
+		<Icon IconCode={ICON_OPEN}/>
+	</LinkMenuItem>
+	<MenuItem id={ID + ElementIds.appbarInfoMenuShareButton}>
+		<Icon IconCode={ICON_SHARE_ANDROID}/>
+		Share
+	</MenuItem>
+	<LinkMenuItem href={'mailto:' + ExternalLinks.contactEmail + '?subject=' + encodeURI(APP.name)}>
+		<Icon IconCode={ICON_CHAT}/>
+		Send feedback
+	</LinkMenuItem>
+	<LinkMenuItem href={ExternalLinks.donate} LinkButtonNewTab>
+		<Icon IconCode={ICON_GIFT}/>
+		Donate
+	</LinkMenuItem>
+	<MenuHeader>&copy; {new Date().getFullYear()} Redmerah</MenuHeader>
+</Menu>

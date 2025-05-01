@@ -1,18 +1,15 @@
 ---
 import { APP_BATTERY as app } from '@/constants/apps'
 
-import UIAppBar from './_ui/_UIAppBar.astro'
-import UIBody from './_ui/_UIBody.astro'
-import UIMenus from './_ui/_UIMenus.astro'
-import UIDialog from './_ui/_UIDialog.astro'
-import App from '@/native-components/App/index.astro'
 import Html from '@/layouts/Html/index.astro'
+import Splash from '@/layouts/Splash/index.astro'
+import App from './_App'
 
 export const prerender = true
 ---
 
 <Html
-	title={app.name + ' • Redmerah'}
+	title={app.name + ' | Redmerah'}
 	accentColor={app.color}
 	description={app.description}>
 	<Fragment slot="favicon">
@@ -23,11 +20,6 @@ export const prerender = true
 		<link rel="manifest" href={`/favicon${app.link}/site.webmanifest`}>
 	</Fragment>
 	<script is:inline src='/scripts/root-settings.min.js'/>
-	<App>
-		<UIAppBar slot="appbar"/>
-		<UIBody />
-	</App>
-	<UIMenus />
-	<UIDialog />
-	<script src="./_scripts/_index.ts"/>
+	<Splash src={app.logoUrl} alt={`${app.name} splash icon`} />
+	<App client:only="solid-js"/>
 </Html>
