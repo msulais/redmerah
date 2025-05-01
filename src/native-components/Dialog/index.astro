@@ -1,0 +1,44 @@
+---
+import { attrClassList } from '@/utils/attributes'
+import {
+	type DialogProps,
+	DialogClasses
+} from '.'
+import './index.scss'
+
+type Props = DialogProps
+const {
+	'class': className,
+	DialogImportant,
+	DialogContainerAttr,
+	DialogHeaderAttr,
+	DialogContentAttr,
+	DialogFooterAttr,
+	...other
+} = Astro.props
+const {'class': containerClass, ...containerOther} = DialogContainerAttr ?? {}
+const {'class': headerClass   , ...headerOther   } = DialogHeaderAttr    ?? {}
+const {'class': contentClass  , ...contentOther  } = DialogContentAttr   ?? {}
+const {'class': footerClass   , ...footerOther   } = DialogFooterAttr    ?? {}
+---
+
+<dialog
+	class={attrClassList(DialogClasses.dialog, className)}
+	data-c-dialog-important={DialogImportant? '' : undefined}
+	{...other}>
+	<div class={attrClassList(DialogClasses.container, containerClass)} {...containerOther}>
+		<div class={attrClassList(DialogClasses.header, headerClass)} {...headerOther}>
+			<slot name="header"/>
+		</div>
+		<div class={attrClassList(DialogClasses.content, contentClass)} {...contentOther}>
+			<slot />
+		</div>
+		<div class={attrClassList(DialogClasses.footer, footerClass)} {...footerOther}>
+			<slot name="footer"/>
+		</div>
+	</div>
+</dialog>
+<script>
+	import { registerDialogRef } from '.'
+	registerDialogRef()
+</script>
