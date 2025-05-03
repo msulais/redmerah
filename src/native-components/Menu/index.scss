@@ -101,6 +101,16 @@
 	&:has( > .c-menu-radio-item-input:focus-visible) {
 		outline: auto;
 	}
+
+	&:has( > .c-menu-radio-item-input:disabled) {
+		filter: grayscale(1) opacity(0.5);
+		cursor: not-allowed;
+		background-color: transparent !important;
+
+		& * {
+			cursor: not-allowed;
+		}
+	}
 }
 
 .c-menu-radio-item-content {
