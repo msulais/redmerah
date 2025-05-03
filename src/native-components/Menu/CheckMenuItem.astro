@@ -1,0 +1,56 @@
+---
+import { AppColors } from '@/enums/colors'
+import { attrClassList } from '@/utils/attributes'
+
+import { ButtonClasses } from '../Button'
+import {
+	type CheckMenuItemProps,
+	MenuClasses
+} from '.'
+import './index.scss'
+
+type Props = CheckMenuItemProps
+const {
+	'class': className,
+	CheckMenuItemChecked,
+	CheckMenuItemDisabled,
+	CheckMenuItemLeadingAttr,
+	CheckMenuItemInputAttr,
+	CheckMenuItemIconAttr,
+	CheckMenuItemContentAttr,
+	...other
+} = Astro.props
+const {'class': inputClass  , checked: inputChecked = CheckMenuItemChecked, disabled: inputDisabled = CheckMenuItemDisabled, autocomplete: inputAutocomplete = 'off', type: inputType = 'checkbox', role: inputRole = 'menuitemcheckbox', ...inputOther  } = CheckMenuItemInputAttr   ?? {}
+const {'class': leadingClass, ...leadingOther} = CheckMenuItemLeadingAttr ?? {}
+const {'class': iconClass   , ...iconOther   } = CheckMenuItemIconAttr    ?? {}
+const {'class': contentClass, ...contentOther} = CheckMenuItemContentAttr ?? {}
+---
+
+<label
+	class={attrClassList(ButtonClasses.button, MenuClasses.item, MenuClasses.checkItem, className)}
+	{...other}>
+	<div class={attrClassList(MenuClasses.checkItemLeading, leadingClass)} {...leadingOther}>
+		<slot name="leading"/>
+	</div>
+	<input
+		class={attrClassList(MenuClasses.checkItemInput, inputClass)}
+		checked={inputChecked}
+		type={inputType}
+		autocomplete={inputAutocomplete}
+		role={inputRole}
+		disabled={inputDisabled}
+		{...inputOther}
+	/>
+	<svg
+		class={attrClassList(MenuClasses.checkItemIcon, iconClass)}
+		xmlns="http://www.w3.org/2000/svg"
+		viewBox="0 -960 960 960"
+		width="20"
+		height="20"
+		{...iconOther}>
+		<path fill={`rgb(${AppColors.accent})`} d="m389-369 299-299q10.91-11 25.45-11Q728-679 739-668t11 25.58q0 14.58-10.61 25.19L415-292q-10.91 11-25.45 11Q375-281 364-292L221-435q-11-11-11-25.5t11-25.5q11-11 25.67-11 14.66 0 25.33 11l117 117Z"/>
+	</svg>
+	<div class={attrClassList(MenuClasses.checkItemContent, contentClass)} {...contentOther}>
+		<slot />
+	</div>
+</label>

@@ -13,6 +13,55 @@
 	}
 }
 
+.c-menu-check-item.c-button.c-menu-item {
+	padding-left: 0;
+
+	&:has( > .c-menu-check-item-input:focus-visible) {
+		outline: auto;
+	}
+
+	&:has( > .c-menu-check-item-input:disabled) {
+		filter: grayscale(1) opacity(0.5);
+		cursor: not-allowed;
+		background-color: transparent !important;
+
+		& * {
+			cursor: not-allowed;
+		}
+	}
+}
+
+.c-menu-check-item-content {
+	display: contents;
+}
+
+.c-menu-check-item-input {
+	appearance: none;
+
+	&:checked + .c-menu-check-item-icon {
+		scale: 1;
+	}
+}
+
+.c-menu-check-item-icon {
+	scale: 0;
+
+	:root[data-animation=on] & {
+		transition-property: scale;
+		transition-duration: .25s;
+	}
+
+	@media (prefers-reduced-motion: no-preference) {
+		:root[data-animation=auto] & {
+			transition-property: scale;
+			transition-duration: .25s;
+		}
+	}
+}
+
+.c-menu-check-item-leading {
+	display: contents;
+}
 
 .c-menu-header {
 	padding: 0 8px;

@@ -31,6 +31,7 @@ import {
 } from "@/native-components/Button"
 import { PopoverPosition } from "@/native-components/Popover"
 import type { IconProps } from "@/native-components/Icon"
+import { AppColors } from "@/enums/colors"
 
 type MenuProps = PopoverProps
 type MenuItemProps = ButtonProps
@@ -48,6 +49,28 @@ type RadioMenuItemProps = astroHTML.JSX.LabelHTMLAttributes & {
 	RadioMenuItemInputAttr  ?: astroHTML.JSX.InputHTMLAttributes
 	RadioMenuItemIconAttr   ?: IconProps
 	RadioMenuItemContentAttr?: astroHTML.JSX.HTMLAttributes
+}
+
+type CheckMenuItemProps = astroHTML.JSX.LabelHTMLAttributes & {
+	CheckMenuItemChecked    ?: boolean
+	CheckMenuItemDisabled   ?: boolean
+	CheckMenuItemLeadingAttr?: astroHTML.JSX.HTMLAttributes
+	CheckMenuItemInputAttr  ?: astroHTML.JSX.InputHTMLAttributes
+	CheckMenuItemIconAttr   ?: astroHTML.JSX.SVGAttributes
+	CheckMenuItemContentAttr?: astroHTML.JSX.HTMLAttributes
+}
+
+type CheckMenuItemUpdateOptions = {
+	CheckMenuItemChecked ?: boolean
+	CheckMenuItemDisabled?: boolean
+	CheckMenuItemLeading ?: (string | Node[]) | boolean
+	CheckMenuItemChildren?: (string | Node[]) | boolean
+	CheckMenuItemRefs    ?: {
+		checkmenuitem?(ref: HTMLLabelElement): unknown
+		leading      ?(ref: HTMLDivElement  ): unknown
+		icon         ?(ref: SVGSVGElement   ): unknown
+		content      ?(ref: HTMLDivElement  ): unknown
+	}
 }
 
 type MenuIndentUpdateOptions = {
@@ -104,6 +127,11 @@ enum MenuClasses {
 	radioItemIcon    = radioItem + '-icon',
 	radioItemInput   = radioItem + '-input',
 	radioItemContent = radioItem + '-content',
+	checkItem        = menu + '-check-item',
+	checkItemLeading = checkItem + '-leading',
+	checkItemInput   = checkItem + '-input',
+	checkItemIcon    = checkItem + '-icon',
+	checkItemContent = checkItem + '-content'
 }
 
 const REGISTERED_SUBMENUITEM: Set<HTMLButtonElement> = new Set<HTMLButtonElement>()
@@ -485,6 +513,86 @@ function updateMenuHeaderRef(
 	return headerRef
 }
 
+function createCheckMenuItem(options?: CheckMenuItemUpdateOptions): HTMLLabelElement {
+	const checkMenuItemRef = document.createElement('label')
+	return updateCheckMenuItem(checkMenuItemRef, options)
+}
+
+function updateCheckMenuItem(checkMenuItemRef: HTMLLabelElement, options?: CheckMenuItemUpdateOptions): HTMLLabelElement {
+	const refs = options?.CheckMenuItemRefs
+	checkMenuItemRef.classList.add(ButtonClasses.button, MenuClasses.item, MenuClasses.checkItem)
+
+	// leading
+	const leadingOption = options?.CheckMenuItemLeading
+	let leadingRef = checkMenuItemRef.querySelector<HTMLDivElement>(`.${MenuClasses.checkItemLeading}`)
+	if (!leadingRef) {
+		leadingRef = document.createElement('div')
+		leadingRef.classList.add(MenuClasses.checkItemLeading)
+	}
+	if (leadingOption === false) {
+		leadingRef.replaceChildren()
+	}
+	else if (leadingOption !== undefined && leadingOption !== true) {
+		leadingRef.replaceChildren(...leadingOption)
+	}
+
+	// input
+	let inputRef = checkMenuItemRef.querySelector<HTMLInputElement>(`.${MenuClasses.checkItemInput}`)
+	if (!inputRef) {
+		inputRef = document.createElement('input')
+		inputRef.classList.add(MenuClasses.checkItemInput)
+		inputRef.autocomplete = 'off'
+		inputRef.role = 'menuitemcheckbox'
+		inputRef.type = 'checkbox'
+	}
+
+	const checkedOption = options?.CheckMenuItemChecked
+	if (checkedOption !== undefined) {
+		inputRef.checked = checkedOption
+	}
+
+	const disabledOption = options?.CheckMenuItemDisabled
+	if (disabledOption !== undefined) {
+		inputRef.disabled = disabledOption
+	}
+
+	// icon
+	let iconRef = checkMenuItemRef.querySelector<SVGSVGElement>('.' + MenuClasses.checkItemIcon)
+	if (!iconRef) {
+		iconRef = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+		iconRef.classList.add(MenuClasses.checkItemIcon)
+		iconRef.setAttribute('viewBox', '0 -960 960 960')
+		iconRef.setAttribute('width', '20')
+		iconRef.setAttribute('height', '20')
+
+		const pathRef = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+		pathRef.setAttribute('d', 'm389-369 299-299q10.91-11 25.45-11Q728-679 739-668t11 25.58q0 14.58-10.61 25.19L415-292q-10.91 11-25.45 11Q375-281 364-292L221-435q-11-11-11-25.5t11-25.5q11-11 25.67-11 14.66 0 25.33 11l117 117Z')
+		pathRef.setAttribute('fill', `rgb(${AppColors.accent})`)
+		iconRef.append(pathRef)
+	}
+
+	// content
+	const childrenOption = options?.CheckMenuItemChildren
+	let contentRef = checkMenuItemRef.querySelector<HTMLDivElement>(`.${MenuClasses.checkItemContent}`)
+	if (!contentRef) {
+		contentRef = document.createElement('div')
+		contentRef.classList.add(MenuClasses.checkItemContent)
+	}
+	if (childrenOption === false) {
+		contentRef.replaceChildren()
+	}
+	else if (childrenOption !== undefined && childrenOption !== true) {
+		contentRef.replaceChildren(...childrenOption)
+	}
+
+	checkMenuItemRef.replaceChildren(leadingRef, inputRef, iconRef, contentRef)
+	refs?.checkmenuitem?.(checkMenuItemRef)
+	refs?.content?.(contentRef)
+	refs?.icon?.(iconRef)
+	refs?.leading?.(leadingRef)
+	return checkMenuItemRef
+}
+
 export {
 	type MenuProps,
 	type MenuItemProps,
@@ -501,7 +609,9 @@ export {
 	type MenuIndentProps,
 	type MenuIndentUpdateOptions,
 	type MenuHeaderUpdateOptions,
+	type CheckMenuItemProps,
 	type PopoverToggleOpenEventDetail as MenuToggleOpenEventDetail,
+	type CheckMenuItemUpdateOptions,
 	MenuClasses,
 	PopoverEvents as MenuEvents,
 	PopoverAttributes as MenuAttributes,
@@ -526,5 +636,7 @@ export {
 	createMenuIndentRef,
 	updateMenuIndentRef,
 	createMenuHeaderRef,
-	updateMenuHeaderRef
+	updateMenuHeaderRef,
+	createCheckMenuItem,
+	updateCheckMenuItem,
 }
