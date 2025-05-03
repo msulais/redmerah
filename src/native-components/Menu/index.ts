@@ -531,12 +531,12 @@ function updateMenuHeaderRef(
 	return headerRef
 }
 
-function createCheckMenuItem(options?: CheckMenuItemUpdateOptions): HTMLLabelElement {
+function createCheckMenuItemRef(options?: CheckMenuItemUpdateOptions): HTMLLabelElement {
 	const checkMenuItemRef = document.createElement('label')
-	return updateCheckMenuItem(checkMenuItemRef, options)
+	return updateCheckMenuItemRef(checkMenuItemRef, options)
 }
 
-function updateCheckMenuItem(checkMenuItemRef: HTMLLabelElement, options?: CheckMenuItemUpdateOptions): HTMLLabelElement {
+function updateCheckMenuItemRef(checkMenuItemRef: HTMLLabelElement, options?: CheckMenuItemUpdateOptions): HTMLLabelElement {
 	const refs = options?.CheckMenuItemRefs
 	checkMenuItemRef.classList.add(ButtonClasses.button, MenuClasses.item, MenuClasses.checkItem)
 
@@ -737,8 +737,8 @@ export {
 	updateMenuIndentRef,
 	createMenuHeaderRef,
 	updateMenuHeaderRef,
-	createCheckMenuItem,
-	updateCheckMenuItem,
+	createCheckMenuItemRef,
+	updateCheckMenuItemRef,
 	createRadioMenuItemRef,
 	updateRadioMenuItemRef
 }
