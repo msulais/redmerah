@@ -30,8 +30,9 @@ import {
 	ButtonClasses
 } from "@/native-components/Button"
 import { PopoverPosition } from "@/native-components/Popover"
-import type { IconProps } from "@/native-components/Icon"
+import { createIconRef, type IconProps } from "@/native-components/Icon"
 import { AppColors } from "@/enums/colors"
+import { ICON_CIRCLE_SMALL } from "@/constants/icons"
 
 type MenuProps = PopoverProps
 type MenuItemProps = ButtonProps
@@ -72,6 +73,20 @@ type CheckMenuItemUpdateOptions = {
 		checkmenuitem?(ref: HTMLLabelElement): unknown
 		leading      ?(ref: HTMLDivElement  ): unknown
 		icon         ?(ref: SVGSVGElement   ): unknown
+		content      ?(ref: HTMLDivElement  ): unknown
+	}
+}
+
+type RadioMenuItemUpdateOptions = {
+	RadioMenuItemChecked ?: boolean
+	RadioMenuItemDisabled?: boolean
+	RadioMenuItemName    ?: string
+	RadioMenuItemLeading ?: (string | Node[]) | boolean
+	RadioMenuItemChildren?: (string | Node[]) | boolean
+	RadioMenuItemRefs    ?: {
+		radiomenuitem?(ref: HTMLLabelElement): unknown
+		leading      ?(ref: HTMLDivElement  ): unknown
+		icon         ?(ref: HTMLElement     ): unknown
 		content      ?(ref: HTMLDivElement  ): unknown
 	}
 }
@@ -596,6 +611,87 @@ function updateCheckMenuItem(checkMenuItemRef: HTMLLabelElement, options?: Check
 	return checkMenuItemRef
 }
 
+function createRadioMenuItemRef(options?: RadioMenuItemUpdateOptions): HTMLLabelElement {
+	const radioMenuItemRef = document.createElement('label')
+	return updateRadioMenuItemRef(radioMenuItemRef, options)
+}
+
+function updateRadioMenuItemRef(radioMenuItemRef: HTMLLabelElement, options?: RadioMenuItemUpdateOptions): HTMLLabelElement {
+	radioMenuItemRef.classList.add(ButtonClasses.button, MenuClasses.item, MenuClasses.radioItem)
+
+	// leading
+	const leadingOption = options?.RadioMenuItemLeading
+	let leadingRef = radioMenuItemRef.querySelector<HTMLDivElement>(`.${MenuClasses.radioItemLeading}`)
+	if (!leadingRef) {
+		leadingRef = document.createElement('div')
+		leadingRef.classList.add(MenuClasses.radioItemLeading)
+	}
+	if (leadingOption === false) {
+		leadingRef.replaceChildren()
+	}
+	else if (leadingOption !== undefined && leadingOption !== true) {
+		leadingRef.replaceChildren(...leadingOption)
+	}
+
+	// input
+	let inputRef = radioMenuItemRef.querySelector<HTMLInputElement>(`.${MenuClasses.radioItemInput}`)
+	if (!inputRef) {
+		inputRef = document.createElement('input')
+		inputRef.classList.add(MenuClasses.radioItemInput)
+		inputRef.role = 'menuitemradio'
+		inputRef.type = 'radio'
+		inputRef.autocomplete = 'off'
+	}
+
+	const nameOption = options?.RadioMenuItemName
+	if (nameOption) {
+		inputRef.name = nameOption
+	}
+
+	const checkedOption = options?.RadioMenuItemChecked
+	if (checkedOption !== undefined) {
+		inputRef.checked = checkedOption
+	}
+
+	const disabledOption = options?.RadioMenuItemDisabled
+	if (disabledOption !== undefined) {
+		inputRef.disabled = disabledOption
+	}
+
+	// icon
+	let iconRef = radioMenuItemRef.querySelector<HTMLElement>(`.${MenuClasses.radioItemIcon}`)
+	if (!iconRef) {
+		iconRef = createIconRef({
+			IconCode: ICON_CIRCLE_SMALL,
+			IconFilled: true
+		})
+		iconRef.classList.add(MenuClasses.radioItemIcon)
+	}
+
+	// content
+	const childrenOption = options?.RadioMenuItemChildren
+	let contentRef = radioMenuItemRef.querySelector<HTMLDivElement>(`.${MenuClasses.radioItemContent}`)
+	if (!contentRef) {
+		contentRef = document.createElement('div')
+		contentRef.classList.add(MenuClasses.radioItemContent)
+	}
+	if (childrenOption === false) {
+		contentRef.replaceChildren()
+	}
+	else if (childrenOption !== undefined && childrenOption !== true) {
+		contentRef.replaceChildren(...childrenOption)
+	}
+
+	radioMenuItemRef.replaceChildren(leadingRef, inputRef, iconRef, contentRef)
+
+	const refs = options?.RadioMenuItemRefs
+	refs?.content?.(contentRef)
+	refs?.icon?.(iconRef)
+	refs?.leading?.(leadingRef)
+	refs?.radiomenuitem?.(radioMenuItemRef)
+	return radioMenuItemRef
+}
+
 export {
 	type MenuProps,
 	type MenuItemProps,
@@ -615,6 +711,7 @@ export {
 	type CheckMenuItemProps,
 	type PopoverToggleOpenEventDetail as MenuToggleOpenEventDetail,
 	type CheckMenuItemUpdateOptions,
+	type RadioMenuItemUpdateOptions,
 	MenuClasses,
 	PopoverEvents as MenuEvents,
 	PopoverAttributes as MenuAttributes,
@@ -642,4 +739,6 @@ export {
 	updateMenuHeaderRef,
 	createCheckMenuItem,
 	updateCheckMenuItem,
+	createRadioMenuItemRef,
+	updateRadioMenuItemRef
 }
