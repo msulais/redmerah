@@ -45,6 +45,9 @@ type SubMenuItemProps = Omit<MenuItemProps, 'aria-controls'> & {
 type MenuIndentProps = astroHTML.JSX.HTMLAttributes
 
 type RadioMenuItemProps = astroHTML.JSX.LabelHTMLAttributes & {
+	RadioMenuItemChecked    ?: boolean
+	RadioMenuItemDisabled   ?: boolean
+	RadioMenuItemName       ?: string
 	RadioMenuItemLeadingAttr?: astroHTML.JSX.HTMLAttributes
 	RadioMenuItemInputAttr  ?: astroHTML.JSX.InputHTMLAttributes
 	RadioMenuItemIconAttr   ?: IconProps

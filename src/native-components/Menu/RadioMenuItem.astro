@@ -13,6 +13,9 @@ import './index.scss'
 type Props = RadioMenuItemProps
 const {
 	'class': className,
+	RadioMenuItemChecked,
+	RadioMenuItemDisabled,
+	RadioMenuItemName,
 	RadioMenuItemLeadingAttr = {},
 	RadioMenuItemInputAttr = {},
 	RadioMenuItemIconAttr,
@@ -29,6 +32,9 @@ const {
 } = RadioMenuItemIconAttr ?? {}
 const {
 	'class': inputClassName,
+	name: inputName = RadioMenuItemName,
+	checked: inputChecked = RadioMenuItemChecked,
+	disabled: inputDisabled = RadioMenuItemDisabled,
 	type: inputType = "radio",
 	role: inputRole = "menuitemradio",
 	autocomplete: inputAutocomplete = 'off',
@@ -44,6 +50,9 @@ const {
 		<slot name="leading"/>
 	</div>
 	<input
+		name={inputName}
+		checked={inputChecked}
+		disabled={inputDisabled}
 		type={inputType}
 		role={inputRole}
 		autocomplete={inputAutocomplete}
