@@ -7,6 +7,7 @@ import MenuItem from '@/native-components/Menu/MenuItem.astro'
 import MenuHeader from '@/native-components/Menu/MenuHeader.astro'
 import SubMenuItem from '@/native-components/Menu/SubMenuItem.astro'
 import RadioMenuItem from '@/native-components/Menu/RadioMenuItem.astro'
+import CheckMenuItem from '@/native-components/Menu/CheckMenuItem.astro'
 import MenuIndent from '@/native-components/Menu/MenuIndent.astro'
 import Divider from '@/native-components/Divider/index.astro'
 import Button from '@/native-components/Button/index.astro'
@@ -22,8 +23,7 @@ import { MenuPosition } from '@/native-components/Menu'
 <div
 	class={CSS.bodyPage}
 	role="tabpanel"
-	id={ID + ElementIds.panelMenu}
-	hidden>
+	id={ID + ElementIds.panelMenu}>
 	<h2>Menu</h2>
 	<p>A menu is a collection of options or commands that are presented to the user. It can be a simple list of items, a hierarchical structure, or a combination of both. Menus are commonly used for navigation, actions, or settings.</p>
 	<div class={CSS.bodyPlayground}>
@@ -57,6 +57,9 @@ import { MenuPosition } from '@/native-components/Menu'
 				<div style="flex:1"/>
 				<MenuIndent/>
 			</MenuItem>
+			<Divider/>
+			<CheckMenuItem CheckMenuItemChecked>Auto correct<MenuIndent/></CheckMenuItem>
+			<CheckMenuItem>Show error<MenuIndent/></CheckMenuItem>
 			<Divider/>
 			<MenuHeader>Font family</MenuHeader>
 			<RadioMenuItem
