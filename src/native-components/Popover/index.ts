@@ -9,14 +9,11 @@ import {
 	KEY_ARROW_LEFT,
 	KEY_ARROW_RIGHT,
 	KEY_ARROW_UP,
-	KEY_ESCAPE
 } from "@/constants/key-code"
-import { elementFocusAny } from "@/utils/element"
 
 type PopoverProps = astroHTML.JSX.DialogHTMLAttributes & {
 	PopoverAnchorBy      ?: string
 	PopoverDraggable     ?: boolean
-	PopoverImportant     ?: boolean
 	PopoverAutoFocus     ?: boolean
 	PopoverAnimation     ?: boolean
 	PopoverGap           ?: number
@@ -30,9 +27,6 @@ type PopoverUpdateOptions = {
 	PopoverChildren ?: (Node | string)[] | boolean
 	PopoverAnchorBy ?: string | boolean
 	PopoverDraggable?: boolean
-	PopoverImportant?: boolean
-	PopoverAutoFocus?: boolean
-	PopoverAnimation?: boolean
 	PopoverGap      ?: number | boolean
 	PopoverPadding  ?: number | boolean
 	PopoverPosition ?: PopoverPosition | boolean
@@ -44,85 +38,28 @@ type PopoverUpdateOptions = {
 	}
 }
 
-type PopoverOpenOptions = {
-	anchor   ?: HTMLElement
-	gap      ?: number
-	padding  ?: number
-	important?: boolean
-	position ?: PopoverPosition
-	draggable?: boolean
-	autoFocus?: boolean
-	animation?: boolean
-
-	/**
-	 * Custom pointer position. Only works if `PopoverOpenOptions.anchor` set to `undefined`
-	 * */
-	pointer  ?: {
-		x: number
-		y: number
-	}
-}
-
-type PopoverCloseOptions = {
-	/** if the popover is important, it will not closed */
-	soft?: boolean
-	animation?: boolean
-}
-
-type _PopoverOpenEventDetail = PopoverOpenOptions & {
-	done: () => void
-}
-
-type _PopoverCloseEventDetail = PopoverCloseOptions & {
-	done: () => void
-}
-
 type _PopoverRepositionEventDetail = {
 	done: () => void
-}
-
-type PopoverToggleOpenEventDetail = {
-	open: boolean
 }
 
 type _PopoverAttributeChangeEventDetail = {
 	attributeName: string | null
 }
 
-enum PopoverEvents {
+enum _PopoverEvents {
 	/** `!bubbles | !cancelable | detail: _PopoverAttributeChangeEventDetail` */
 	attributeChange = 'popover:attribute-change',
 
-	/** `!bubbles | !cancelable | detail: PopoverToggleOpenEventDetail` */
-	toggleOpen = 'popover:toggle-open',
-
-	/** `!bubbles | !cancelable | detail: _PopoverOpenEventDetail` */
-	open = 'popover:open',
-
-	/** `!bubbles | !cancelable | detail: _PopoverCloseEventDetail` */
-	close = 'popover:close',
-
 	/** `!bubbles | !cancelable | detail: _PopoverRepositionEventDetail` */
 	reposition = 'popover:reposition',
-
-	/** `!bubbles | !cancelable | !detail` */
-	beforeOpen = 'popover:before-open',
-
-	/** `!bubbles | !cancelable | !detail` */
-	beforeClose = 'popover:before-close'
 }
 
 enum PopoverAttributes {
 	/** @param id `string` */
 	anchorBy  = 'data-c-popover-anchorby',
 
-	/** @param value `boolean` */
-	animation = 'data-c-popover-animation',
-
 	/** Useful for other component */
 	draggable = 'data-c-popover-draggable',
-	important = 'data-c-popover-important',
-	autoFocus = 'data-c-popover-autofocus',
 	dragging  = 'data-c-popover-dragging',
 
 	/** @param value `number` */
@@ -143,9 +80,7 @@ enum PopoverClasses {
 
 const LISTENED_ATTRIBUTES: string[] = [
 	PopoverAttributes.anchorBy,
-	PopoverAttributes.animation,
 	PopoverAttributes.gap,
-	PopoverAttributes.important,
 	PopoverAttributes.padding,
 	PopoverAttributes.position,
 ]
@@ -166,7 +101,7 @@ function _initMutationObserver(): void {
 		for (const entry of entries) {
 			const attr = entry.attributeName
 			entry.target.dispatchEvent(new CustomEvent<_PopoverAttributeChangeEventDetail>(
-				PopoverEvents.attributeChange,
+				_PopoverEvents.attributeChange,
 				{detail: {
 					attributeName: attr
 				}}
@@ -179,8 +114,6 @@ function _initPopoverRefListener(): void {
 	if (HAS_LISTENER) return
 
 	let timeoutId: number | NodeJS.Timeout | null = null
-	let isPointerClick = false
-	const selectedPopoverRefs: Set<HTMLDivElement> = new Set<HTMLDivElement>()
 	HAS_LISTENER = true
 
 	function handleWindowResize(): void {
@@ -188,21 +121,11 @@ function _initPopoverRefListener(): void {
 		if (timeoutId !== null) clearTimeout(timeoutId)
 
 		timeoutId = setTimeout(async () => {
+			timeoutId = null
 			for (const popover of OPENED_POPOVER) {
 				await repositionPopoverRef(popover)
 			}
-			timeoutId = null
 		}, 100)
-	}
-
-	function handleOutsideClick(): void {
-		if (OPENED_POPOVER.size === 0 || selectedPopoverRefs.size === 0) return
-
-		for (const popover of selectedPopoverRefs) {
-			closePopoverRef(popover, {soft: true})
-		}
-
-		selectedPopoverRefs.clear()
 	}
 
 	function initEvents(): void {
@@ -210,34 +133,6 @@ function _initPopoverRefListener(): void {
 			POINTER_X = ev.clientX
 			POINTER_Y = ev.clientY
 		})
-		document.addEventListener('pointerdown', (ev) => {
-			isPointerClick = true
-			if (OPENED_POPOVER.size === 0) return
-
-			selectedPopoverRefs.clear()
-			for (const popoverRef of OPENED_POPOVER) {
-				const inRange = popoverRef.contains(ev.target as Node)
-				if (inRange) continue
-
-				selectedPopoverRefs.add(popoverRef)
-			}
-		})
-
-		// handle click not by pointer
-		document.addEventListener('click', (ev) => {
-			if (OPENED_POPOVER.size === 0) return
-			if (!isPointerClick) {
-				for (const popoverRef of OPENED_POPOVER) {
-					const inRange = popoverRef.contains(ev.target as Node)
-					if (inRange) continue
-
-					closePopoverRef(popoverRef, {soft: true})
-				}
-			}
-			isPointerClick = false
-		})
-		document.addEventListener('pointercancel', handleOutsideClick)
-		document.addEventListener('pointerup', handleOutsideClick)
 		window.addEventListener('resize', handleWindowResize)
 	}
 
@@ -274,27 +169,9 @@ function _initPopoverRef(popoverRef: HTMLDivElement): void {
 		get draggable(): boolean {
 			return popoverRef.hasAttribute(PopoverAttributes.draggable)
 		},
-		get autoFocus(): boolean {
-			return popoverRef.hasAttribute(PopoverAttributes.autoFocus)
-		},
-		get important(): boolean {
-			return popoverRef.hasAttribute(PopoverAttributes.important)
-		},
-		get animation(): boolean {
-			return popoverRef.getAttribute(PopoverAttributes.animation) !== 'false'
-		}
 	}
-	let isOpen: boolean = false
 	let contentRef: HTMLDivElement | null = null
 	let dragHandleRef: HTMLDivElement | null = null
-	let animation: boolean = true
-	let anchorRef: HTMLElement | null = null
-	let position: PopoverPosition = PopoverPosition.centerBottom
-	let gap: number = 0
-	let padding: number = 0
-	let pointerX: number = 0
-	let pointerY: number = 0
-	let important: boolean = false
 	let isDragging: boolean = false
 	let timeoutScreenSizeId: number | NodeJS.Timeout | null = null
 	let timeoutFixPositionId: number | NodeJS.Timeout | null = null
@@ -325,7 +202,7 @@ function _initPopoverRef(popoverRef: HTMLDivElement): void {
 
 		popoverRef.style.setProperty('left', left + 'px')
 		popoverRef.style.setProperty('top', top + 'px')
-		if (!isAnimationAllowed() || !animation) {
+		if (!isAnimationAllowed()) {
 			return options?.done()
 		}
 
@@ -342,144 +219,28 @@ function _initPopoverRef(popoverRef: HTMLDivElement): void {
 		})
 	}
 
-	function open(ev: CustomEvent<_PopoverOpenEventDetail>): void {
-		const options = ev.detail
-		if (isOpen) return options.done()
-
-		const autofocus = options.autoFocus ?? attributes.autoFocus
-		const pointer = options.pointer
-		popoverRef.dispatchEvent(new CustomEvent(PopoverEvents.beforeOpen, {cancelable: true}))
-		isOpen    = true
-		anchorRef = options.anchor ?? attributes.anchor
-		important = options.important ?? attributes.important
-		position  = options.position ?? attributes.position
-		gap       = options.gap ?? attributes.gap
-		padding   = options.padding ?? attributes.padding
-		pointerX  = pointer?.x ?? POINTER_X
-		pointerY  = pointer?.y ?? POINTER_Y
-		popoverRef.toggleAttribute(PopoverAttributes.draggable, options.draggable ?? attributes.draggable)
-		popoverRef.showPopover()
-		if (autofocus) {
-			elementFocusAny(popoverRef)
-		}
-
-		const popoverRect = popoverRef.getBoundingClientRect()
-		const anchorRect = anchorRef?.getBoundingClientRect()
-		const flyoutPosition = getFlyoutPosition({
-			flyout: popoverRect,
-			anchor: anchorRect,
-			pointer: anchorRect? undefined : {
-				x: pointerX,
-				y: pointerY
-			},
-			gap,
-			padding,
-			position
-		})
-
-		popoverRef.style.setProperty('left', flyoutPosition.left + 'px')
-		popoverRef.style.setProperty('top', flyoutPosition.top + 'px')
-		if (!animation || !isAnimationAllowed()) {
-			return options.done()
-		}
-
-		const popoverMidX = flyoutPosition.left + (popoverRect.width / 2)
-		const popoverMidY = flyoutPosition.top + (popoverRect.height / 2)
-		const anchorMidX = anchorRect? (anchorRect.left + (anchorRect.width / 2)) : pointerX
-		const anchorMidY = anchorRect? (anchorRect.top + (anchorRect.height / 2)) : pointerY
-		const rangeX = Math.abs(popoverMidX - anchorMidX)
-		const rangeY = Math.abs(popoverMidY - anchorMidY)
-		let translateX = 0
-		let translateY = 0
-		if (rangeX > rangeY) {
-			translateX = popoverMidX < anchorMidX? 12 : -12
-		}
-		else if (rangeX < rangeY) {
-			translateY = popoverMidY < anchorMidY? 12 : -12
-		}
-		// keep if 'rangeX === rangeY'
-
-		popoverRef.animate({
-			transform: [`translate(${translateX}px,${translateY}px)`, 'translate(0,0)'],
-			opacity: [0, 1]
-		}, { duration: 300, easing: AnimationEffectTiming.springBounce })
-		.finished.then(() => {
-			options.done()
-		})
-	}
-
-	function close(ev: CustomEvent<_PopoverCloseEventDetail>): void {
-		const options = ev.detail
-		if ((options.soft ?? false) && important && isOpen) {
-			return options.done()
-		}
-
-		popoverRef.dispatchEvent(new CustomEvent(PopoverEvents.beforeClose, {cancelable: true}))
-		const popoverRect = popoverRef.getBoundingClientRect()
-		const anchorRect = anchorRef?.getBoundingClientRect()
-		const flyoutPosition = getFlyoutPosition({
-			flyout: popoverRect,
-			anchor: anchorRect,
-			pointer: anchorRect? undefined : {
-				x: pointerX,
-				y: pointerY
-			},
-			gap,
-			padding,
-			position
-		})
-
-		if (options.animation === false || !animation || !isAnimationAllowed()) {
-			popoverRef.hidePopover()
-			return options.done()
-		}
-
-		const popoverMidX = flyoutPosition.left + (popoverRect.width / 2)
-		const popoverMidY = flyoutPosition.top + (popoverRect.height / 2)
-		const anchorMidX = anchorRect? (anchorRect.left + (anchorRect.width / 2)) : pointerX
-		const anchorMidY = anchorRect? (anchorRect.top + (anchorRect.height / 2)) : pointerY
-		const rangeX = Math.abs(popoverMidX - anchorMidX)
-		const rangeY = Math.abs(popoverMidY - anchorMidY)
-		let translateX = 0
-		let translateY = 0
-		if (rangeX > rangeY) {
-			translateX = popoverMidX < anchorMidX? 12 : -12
-		}
-		else if (rangeX < rangeY) {
-			translateY = popoverMidY < anchorMidY? 12 : -12
-		}
-		// keep if 'rangeX === rangeY'
-
-		popoverRef.animate({
-			transform: ['translate(0,0)', `translate(${translateX}px,${translateY}px)`],
-			opacity: [1, 0]
-		}, { duration: 300, easing: AnimationEffectTiming.springBounce })
-		.finished.then(() => {
-			popoverRef.hidePopover()
-			options.done()
-		})
-	}
-
 	function reposition(ev?: CustomEvent<_PopoverRepositionEventDetail>): void {
 		const options = ev?.detail
-		if (!anchorRef) {
+		if (!isPopoverRefOpen(popoverRef)) return
+
+		if (!attributes.anchor) {
 			return fixPosition(options)
 		}
 
 		const popoverRect = popoverRef.getBoundingClientRect()
-		const anchorRect = anchorRef.getBoundingClientRect()
+		const anchorRect = attributes.anchor.getBoundingClientRect()
 		const flyoutPosition = getFlyoutPosition({
 			flyout: popoverRect,
 			anchor: anchorRect,
-			gap,
-			position,
-			padding
+			gap: attributes.gap,
+			position: attributes.position,
+			padding: attributes.padding
 		})
 
 		const [x, y] = [popoverRect.left, popoverRect.top]
 		popoverRef.style.setProperty('left', flyoutPosition.left + 'px')
 		popoverRef.style.setProperty('top', flyoutPosition.top + 'px')
-		if (!isAnimationAllowed() || !animation) {
+		if (!isAnimationAllowed()) {
 			return options?.done()
 		}
 
@@ -494,6 +255,81 @@ function _initPopoverRef(popoverRef: HTMLDivElement): void {
 		}).finished.then(() => {
 			options?.done()
 		})
+	}
+
+	function closeAnimation(): void {
+		if (!isAnimationAllowed()) return
+
+		const popoverRect = popoverRef.getBoundingClientRect()
+		const anchorRect = attributes.anchor?.getBoundingClientRect()
+		const flyoutPosition = getFlyoutPosition({
+			flyout: popoverRect,
+			anchor: anchorRect,
+			gap: attributes.gap,
+			position: attributes.position,
+			padding: attributes.padding,
+			pointer: anchorRect? undefined : {x: POINTER_X, y: POINTER_Y}
+		})
+
+		const modalMidX = flyoutPosition.left + (popoverRect.width / 2)
+		const modalMidY = flyoutPosition.top + (popoverRect.height / 2)
+		const anchorMidX = anchorRect? (anchorRect.left + (anchorRect.width / 2)) : POINTER_X
+		const anchorMidY = anchorRect? (anchorRect.top + (anchorRect.height / 2)) : POINTER_Y
+		const rangeX = Math.abs(modalMidX - anchorMidX)
+		const rangeY = Math.abs(modalMidY - anchorMidY)
+		let translateX = 0
+		let translateY = 0
+		if (rangeX > rangeY) {
+			translateX = modalMidX < anchorMidX? 12 : -12
+		}
+		else if (rangeX < rangeY) {
+			translateY = modalMidY < anchorMidY? 12 : -12
+		}
+
+		popoverRef.animate({
+			transform: ['translate(0,0)', `translate(${translateX}px,${translateY}px)`],
+			opacity: [1, 0]
+		}, { duration: 250, easing: AnimationEffectTiming.springBounce })
+	}
+
+	function setOpenPosition(): void {
+		const popoverRect = popoverRef.getBoundingClientRect()
+		const anchorRect = attributes.anchor?.getBoundingClientRect()
+		const flyoutPosition = getFlyoutPosition({
+			flyout: popoverRect,
+			anchor: anchorRect,
+			gap: attributes.gap,
+			position: attributes.position,
+			padding: attributes.padding,
+			pointer: anchorRect? undefined : {x: POINTER_X, y: POINTER_Y}
+		})
+
+		popoverRef.style.setProperty('left', flyoutPosition.left + 'px')
+		popoverRef.style.setProperty('top', flyoutPosition.top + 'px')
+
+		// `visibility` property set in 'beforetoggle' event
+		popoverRef.style.removeProperty('visibility')
+		if (!isAnimationAllowed()) return
+
+		const modalMidX = flyoutPosition.left + (popoverRect.width / 2)
+		const modalMidY = flyoutPosition.top + (popoverRect.height / 2)
+		const anchorMidX = anchorRect? (anchorRect.left + (anchorRect.width / 2)) : POINTER_X
+		const anchorMidY = anchorRect? (anchorRect.top + (anchorRect.height / 2)) : POINTER_Y
+		const rangeX = Math.abs(modalMidX - anchorMidX)
+		const rangeY = Math.abs(modalMidY - anchorMidY)
+		let translateX = 0
+		let translateY = 0
+		if (rangeX > rangeY) {
+			translateX = modalMidX < anchorMidX? 12 : -12
+		}
+		else if (rangeX < rangeY) {
+			translateY = modalMidY < anchorMidY? 12 : -12
+		}
+
+		popoverRef.animate({
+			transform: [`translate(${translateX}px,${translateY}px)`, 'translate(0,0)'],
+			opacity: [0, 1]
+		}, { duration: 250, easing: AnimationEffectTiming.springBounce })
 	}
 
 	function dragHandleRefOnKeyDown(ev: KeyboardEvent): void {
@@ -568,53 +404,42 @@ function _initPopoverRef(popoverRef: HTMLDivElement): void {
 		reposition()
 	}
 
-	function popoverRefOnKeyDown(ev: KeyboardEvent): void {
-		if (ev.code !== KEY_ESCAPE || important) return
-		if (anchorRef) anchorRef.focus()
-
-		close(new CustomEvent('', {detail: {done(){}}}))
-	}
-
 	function initEvents(): void {
-		popoverRef.addEventListener(PopoverEvents.attributeChange as any, (ev: CustomEvent<_PopoverAttributeChangeEventDetail>) => {
+		popoverRef.addEventListener(_PopoverEvents.attributeChange as any, (ev: CustomEvent<_PopoverAttributeChangeEventDetail>) => {
 			const attr = ev.detail.attributeName
+			if (!isPopoverRefOpen(popoverRef)) {
+				return
+			}
+
 			switch (attr) {
-			case PopoverAttributes.anchorBy:
-				anchorRef = attributes.anchor ?? anchorRef
-				reposition()
-				break
-			case PopoverAttributes.animation:
-				animation = attributes.animation
-				break
 			case PopoverAttributes.gap:
-				gap = attributes.gap
 				reposition()
-				break
-			case PopoverAttributes.important:
-				important = attributes.important
 				break
 			case PopoverAttributes.padding:
-				padding = attributes.padding
 				reposition()
 				break
 			case PopoverAttributes.position:
-				position = attributes.position
 				reposition()
 				break
 			}
 		})
-		popoverRef.addEventListener(PopoverEvents.open as any, open);
-		popoverRef.addEventListener(PopoverEvents.close as any, close);
-		popoverRef.addEventListener('toggle', ev => {
-			isOpen = (ev as ToggleEvent).newState === "open"
-			popoverRef.dispatchEvent(new CustomEvent<PopoverToggleOpenEventDetail>(
-				PopoverEvents.toggleOpen,
-				{detail: {open: isOpen}}
-			))
+		popoverRef.addEventListener('beforetoggle', ev => {
+			const isOpen = (ev as ToggleEvent).newState === 'open'
 			if (isOpen) {
+
+				// avoid jump view if animation disabled
+				popoverRef.style.setProperty('visibility', 'hidden')
+				return
+			}
+
+			closeAnimation()
+		})
+		popoverRef.addEventListener('toggle', ev => {
+			const isOpen = (ev as ToggleEvent).newState === "open"
+			if (isOpen) {
+				setOpenPosition()
 				OPENED_POPOVER.add(popoverRef)
-				popoverRef.addEventListener(PopoverEvents.reposition as any, reposition);
-				popoverRef.addEventListener('keydown', popoverRefOnKeyDown)
+				popoverRef.addEventListener(_PopoverEvents.reposition as any, reposition);
 				dragHandleRef?.addEventListener('keydown', dragHandleRefOnKeyDown)
 				dragHandleRef?.addEventListener('pointerdown', dragHandleRefOnPointerDown)
 				dragHandleRef?.addEventListener('pointerup', dragHandleRefOnPointerUp)
@@ -623,8 +448,7 @@ function _initPopoverRef(popoverRef: HTMLDivElement): void {
 			}
 			else {
 				OPENED_POPOVER.delete(popoverRef)
-				popoverRef.removeEventListener(PopoverEvents.reposition as any, reposition);
-				popoverRef.removeEventListener('keydown', popoverRefOnKeyDown)
+				popoverRef.removeEventListener(_PopoverEvents.reposition as any, reposition);
 				dragHandleRef?.removeEventListener('keydown', dragHandleRefOnKeyDown)
 				dragHandleRef?.removeEventListener('pointerdown', dragHandleRefOnPointerDown)
 				dragHandleRef?.removeEventListener('pointerup', dragHandleRefOnPointerUp)
@@ -677,23 +501,17 @@ function _initPopoverRef(popoverRef: HTMLDivElement): void {
 	initEvents()
 }
 
-async function openPopoverRef(popoverRef: HTMLDivElement, options?: PopoverOpenOptions): Promise<void> {
-	return new Promise((done) => popoverRef.dispatchEvent(new CustomEvent(
-		PopoverEvents.open,
-		{detail: {...options, done} satisfies _PopoverOpenEventDetail}
-	)))
+function openPopoverRef(popoverRef: HTMLDivElement): void {
+	popoverRef.showPopover()
 }
 
-async function closePopoverRef(popoverRef: HTMLDivElement, options?: PopoverCloseOptions): Promise<void> {
-	return new Promise((done) => popoverRef.dispatchEvent(new CustomEvent(
-		PopoverEvents.close,
-		{detail: {...options, done} satisfies _PopoverCloseEventDetail}
-	)))
+function closePopoverRef(popoverRef: HTMLDivElement): void {
+	popoverRef.hidePopover()
 }
 
 async function repositionPopoverRef(popoverRef: HTMLDivElement): Promise<void> {
 	return new Promise((done) => popoverRef.dispatchEvent(new CustomEvent(
-		PopoverEvents.reposition,
+		_PopoverEvents.reposition,
 		{detail: {done} satisfies _PopoverRepositionEventDetail}
 	)))
 }
@@ -711,7 +529,7 @@ function updatePopoverRef(popoverRef: HTMLDivElement, options?: PopoverUpdateOpt
 	popoverRef.classList.add(PopoverClasses.popover)
 
 	if (!popoverRef.hasAttribute('popover')) {
-		popoverRef.popover = 'manual'
+		popoverRef.popover = 'auto'
 	}
 
 	if (options?.PopoverPopover) {
@@ -721,21 +539,6 @@ function updatePopoverRef(popoverRef: HTMLDivElement, options?: PopoverUpdateOpt
 	const draggableOption = options?.PopoverDraggable
 	if (draggableOption !== undefined) {
 		popoverRef.toggleAttribute(PopoverAttributes.draggable, draggableOption)
-	}
-
-	const importantOption = options?.PopoverImportant
-	if (importantOption !== undefined) {
-		popoverRef.toggleAttribute(PopoverAttributes.important, importantOption)
-	}
-
-	const autoFocusOption = options?.PopoverAutoFocus
-	if (autoFocusOption !== undefined) {
-		popoverRef.toggleAttribute(PopoverAttributes.autoFocus, autoFocusOption)
-	}
-
-	const animationOption = options?.PopoverAnimation
-	if (animationOption !== undefined) {
-		popoverRef.setAttribute(PopoverAttributes.animation, String(animationOption))
 	}
 
 	const anchorByOption = options?.PopoverAnchorBy
@@ -831,10 +634,6 @@ function unregisterPopoverRef(...popoverRefs: HTMLDivElement[]): void {
 export {
 	type PopoverProps,
 	type PopoverUpdateOptions,
-	type PopoverOpenOptions,
-	type PopoverCloseOptions,
-	type PopoverToggleOpenEventDetail,
-	PopoverEvents,
 	PopoverAttributes,
 	PopoverClasses,
 	PopoverPosition,

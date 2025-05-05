@@ -46,14 +46,10 @@ import {
 	updateIconRef } from "@/native-components/Icon"
 import {
 	type PopoverProps,
-	type PopoverToggleOpenEventDetail,
-	type PopoverOpenOptions,
-	type PopoverCloseOptions,
 	type PopoverUpdateOptions,
 	closePopoverRef,
 	isPopoverRefOpen,
 	openPopoverRef,
-	PopoverEvents,
 	PopoverPosition,
 	registerPopoverRef,
 	repositionPopoverRef,
@@ -416,8 +412,8 @@ function _initEmojiPickerRef(emojiPickerRef: HTMLDivElement): void {
 	}
 
 	function initEvents(): void {
-		emojiPickerRef.addEventListener(PopoverEvents.toggleOpen as any, (ev: CustomEvent<PopoverToggleOpenEventDetail>) => {
-			const isOpen = ev.detail.open
+		emojiPickerRef.addEventListener('toggle', ev => {
+			const isOpen = (ev as ToggleEvent).newState === 'open'
 			if (isOpen) {
 				emojiPickerRef.addEventListener('click', emojiPickerRefOnClick)
 				formInputRef.addEventListener('submit', formInputOnSubmit)
@@ -734,9 +730,6 @@ function updateEmojiPickerRef(emojiPickerRef: HTMLDivElement, options?: EmojiPic
 export {
 	type EmojiPickerProps,
 	type EmojiPickerUpdateOptions,
-	type PopoverToggleOpenEventDetail as EmojiPickerToggleOpenEventDetail,
-	type PopoverOpenOptions as EmojiPickerOpenOptions,
-	type PopoverCloseOptions as EmojiPickerCloseOptions,
 	PopoverPosition as EmojiPickerPosition,
 	EmojiPickerAttributes,
 	EmojiPickerClasses,

@@ -29,6 +29,7 @@ import CSS from '../_index.module.scss'
 				aria-haspopup="menu"
 				aria-expanded="false"
 				aria-controls={ID + ElementIds.appbarInfoMenu}
+				popovertarget={ID + ElementIds.appbarInfoMenu}
 			/>
 			<IconButton
 				id={ID + ElementIds.appbarSettingsButton}
@@ -39,6 +40,7 @@ import CSS from '../_index.module.scss'
 				aria-haspopup="menu"
 				aria-expanded="false"
 				aria-controls={ID + ElementIds.appbarSettingsMenu}
+				popovertarget={ID + ElementIds.appbarSettingsMenu}
 			/>
 		</Tooltip>
 	</Fragment>

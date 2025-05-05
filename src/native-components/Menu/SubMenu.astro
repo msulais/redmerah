@@ -1,0 +1,27 @@
+---
+import { attrClassList } from '@/utils/attributes'
+
+import { type SubMenuProps, MenuClasses } from '.'
+import Menu from './index.astro'
+import './index.scss'
+import { PopoverPosition } from '../Popover'
+
+type Props = SubMenuProps
+const {
+	'class': className,
+	PopoverGap = -4,
+	popover = 'manual',
+	PopoverPosition: position = PopoverPosition.rightCenterToBottom,
+	...other
+} = Astro.props
+---
+
+<Menu
+	class={attrClassList(MenuClasses.submenu, className)}
+	PopoverPosition={position}
+	PopoverGap={PopoverGap}
+	popover={popover}
+	{...other}>
+	<slot />
+	<slot name="submenus" slot="submenus"/>
+</Menu>

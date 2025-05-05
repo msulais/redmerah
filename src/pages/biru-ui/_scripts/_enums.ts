@@ -89,8 +89,6 @@ export enum ElementIds {
 	panelPopoverOptionsPadding,
 	panelPopoverOptionsGap,
 	panelPopoverOptionsAnchor,
-	panelPopoverOptionsAutofocus,
-	panelPopoverOptionsImportant,
 	panelPopoverOptionsDraggable,
 	panelModal,
 	panelModalPreviewModal,

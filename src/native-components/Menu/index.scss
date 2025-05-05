@@ -1,4 +1,4 @@
-.c-popover.c-menu {
+.c-menu.c-popover {
 	&[data-c-popover-draggable] > div {
 		padding-top: 12px;
 	}
@@ -48,18 +48,22 @@
 
 	:root[data-animation=on] & {
 		transition-property: scale;
-		transition-duration: .25s;
+		transition-duration: .2s;
 	}
 
 	@media (prefers-reduced-motion: no-preference) {
 		:root[data-animation=auto] & {
 			transition-property: scale;
-			transition-duration: .25s;
+			transition-duration: .2s;
 		}
 	}
 }
 
 .c-menu-check-item-leading {
+	display: contents;
+}
+
+.c-menu-content {
 	display: contents;
 }
 
@@ -142,5 +146,9 @@
 }
 
 .c-menu-radio-item-leading {
+	display: contents;
+}
+
+.c-menu-submenus {
 	display: contents;
 }

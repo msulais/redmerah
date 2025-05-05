@@ -4,6 +4,7 @@ import { ElementIds, ID, RadioGroupNames } from '../_scripts/_enums'
 import { ExternalLinks, RoutesLinks } from '@/enums/links'
 import ColorPicker from '@/native-components/ColorPicker/index.astro'
 import Menu from '@/native-components/Menu/index.astro'
+import SubMenu from '@/native-components/Menu/SubMenu.astro'
 import SubMenuItem from '@/native-components/Menu/SubMenuItem.astro'
 import RadioMenuItem from '@/native-components/Menu/RadioMenuItem.astro'
 import LinkMenuItem from '@/native-components/Menu/LinkMenuItem.astro'
@@ -14,9 +15,10 @@ import Icon from '@/native-components/Icon/index.astro'
 import logoRedmerah from '@/assets/images/logos/redmerah-logo.svg'
 import { PlatformAnimationMode, PlatformThemeMode } from '@/enums/platforms'
 import { AppColors } from '@/enums/colors'
+import { PopoverPosition } from '@/native-components/Popover'
 ---
 
-<Menu id={ID + ElementIds.appbarSettingsMenu}>
+<Menu id={ID + ElementIds.appbarSettingsMenu} PopoverAnchorBy={ID + ElementIds.appbarSettingsButton}>
 	<MenuItem
 		id={ID + ElementIds.appbarSettingsAccentButton}
 		aria-controls={ID + ElementIds.appbarColorPicker}>
@@ -32,6 +34,34 @@ import { AppColors } from '@/enums/colors'
 		<div style="flex:1"/>
 		<Icon IconCode={ICON_CHEVRON_RIGHT}/>
 	</SubMenuItem>
+	<SubMenu slot="submenus" id={ID + ElementIds.appbarSettingsAnimationMenu}>
+		<RadioMenuItem
+			RadioMenuItemInputAttr={{
+				name: RadioGroupNames.settingsAnimation,
+				checked: true,
+				value: PlatformAnimationMode.auto
+			}}>
+			<Icon IconCode={ICON_VIDEO_CLIP_OPTIMIZE}/>
+			Automatic
+		</RadioMenuItem>
+		<RadioMenuItem
+			RadioMenuItemInputAttr={{
+				name: RadioGroupNames.settingsAnimation,
+				value: PlatformAnimationMode.on
+			}}>
+			<Icon IconCode={ICON_VIDEO_CLIP}/>
+			On
+		</RadioMenuItem>
+		<RadioMenuItem
+			RadioMenuItemInputAttr={{
+				name: RadioGroupNames.settingsAnimation,
+				value: PlatformAnimationMode.off
+			}}>
+			<Icon IconCode={ICON_VIDEO_CLIP_OFF}/>
+			Off
+		</RadioMenuItem>
+	</SubMenu>
+
 	<SubMenuItem
 		aria-controls={ID + ElementIds.appbarSettingsThemeMenu}>
 		<Icon IconCode={ICON_WEATHER_SUNNY}/>
@@ -39,70 +69,45 @@ import { AppColors } from '@/enums/colors'
 		<div style="flex:1"/>
 		<Icon IconCode={ICON_CHEVRON_RIGHT}/>
 	</SubMenuItem>
+	<SubMenu slot="submenus" id={ID + ElementIds.appbarSettingsThemeMenu}>
+		<RadioMenuItem
+			RadioMenuItemInputAttr={{
+				name: RadioGroupNames.settingsTheme,
+				checked: true,
+				value: PlatformThemeMode.auto
+			}}>
+			<Icon IconCode={ICON_LAPTOP_SETTINGS}/>
+			Automatic
+		</RadioMenuItem>
+		<RadioMenuItem
+			RadioMenuItemInputAttr={{
+				name: RadioGroupNames.settingsTheme,
+				value: PlatformThemeMode.light
+			}}>
+			<Icon IconCode={ICON_WEATHER_SUNNY}/>
+			Light
+		</RadioMenuItem>
+		<RadioMenuItem
+			RadioMenuItemInputAttr={{
+				name: RadioGroupNames.settingsTheme,
+				value: PlatformThemeMode.dark
+			}}>
+			<Icon IconCode={ICON_WEATHER_MOON}/>
+			Dark
+		</RadioMenuItem>
+	</SubMenu>
 </Menu>
 <ColorPicker
 	PopoverDraggable
 	ColorPickerValue='#0093FF'
 	ColorPickerDisabledOpacity
 	ColorPickerHueOnly
+	PopoverPosition={PopoverPosition.centerCenterRightTop}
+	PopoverAnchorBy={ID + ElementIds.appbarSettingsButton}
 	id={ID + ElementIds.appbarColorPicker}
 	aria-labelledby={ID + ElementIds.appbarSettingsAccentButton}
 />
-<Menu id={ID + ElementIds.appbarSettingsAnimationMenu}>
-	<RadioMenuItem
-		RadioMenuItemInputAttr={{
-			name: RadioGroupNames.settingsAnimation,
-			checked: true,
-			value: PlatformAnimationMode.auto
-		}}>
-		<Icon IconCode={ICON_VIDEO_CLIP_OPTIMIZE}/>
-		Automatic
-	</RadioMenuItem>
-	<RadioMenuItem
-		RadioMenuItemInputAttr={{
-			name: RadioGroupNames.settingsAnimation,
-			value: PlatformAnimationMode.on
-		}}>
-		<Icon IconCode={ICON_VIDEO_CLIP}/>
-		On
-	</RadioMenuItem>
-	<RadioMenuItem
-		RadioMenuItemInputAttr={{
-			name: RadioGroupNames.settingsAnimation,
-			value: PlatformAnimationMode.off
-		}}>
-		<Icon IconCode={ICON_VIDEO_CLIP_OFF}/>
-		Off
-	</RadioMenuItem>
-</Menu>
-<Menu id={ID + ElementIds.appbarSettingsThemeMenu}>
-	<RadioMenuItem
-		RadioMenuItemInputAttr={{
-			name: RadioGroupNames.settingsTheme,
-			checked: true,
-			value: PlatformThemeMode.auto
-		}}>
-		<Icon IconCode={ICON_LAPTOP_SETTINGS}/>
-		Automatic
-	</RadioMenuItem>
-	<RadioMenuItem
-		RadioMenuItemInputAttr={{
-			name: RadioGroupNames.settingsTheme,
-			value: PlatformThemeMode.light
-		}}>
-		<Icon IconCode={ICON_WEATHER_SUNNY}/>
-		Light
-	</RadioMenuItem>
-	<RadioMenuItem
-		RadioMenuItemInputAttr={{
-			name: RadioGroupNames.settingsTheme,
-			value: PlatformThemeMode.dark
-		}}>
-		<Icon IconCode={ICON_WEATHER_MOON}/>
-		Dark
-	</RadioMenuItem>
-</Menu>
-<Menu id={ID + ElementIds.appbarInfoMenu}>
+<Menu id={ID + ElementIds.appbarInfoMenu} PopoverAnchorBy={ID + ElementIds.appbarInfoButton}>
 	<LinkMenuItem href="/">
 		<img src={logoRedmerah.src} width="16"/>
 		Redmerah

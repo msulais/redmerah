@@ -2,6 +2,7 @@
 import { ICON_APPS, ICON_CHAT, ICON_CHEVRON_RIGHT, ICON_GIFT, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_OPEN, ICON_PLAY_CIRCLE_HINT, ICON_RECEIPT, ICON_SHARE_ANDROID, ICON_SHIELD_CHECKMARK, ICON_VIDEO_CLIP, ICON_VIDEO_CLIP_OFF, ICON_VIDEO_CLIP_OPTIMIZE, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY, ICON_WINDOW_SETTINGS } from '@/constants/icons'
 import { ElementIds, ID, Links, RadioGroupNames } from '../_scripts/_enums'
 import Menu from '@/native-components/Menu/index.astro'
+import SubMenu from '@/native-components/Menu/SubMenu.astro'
 import SubMenuItem from '@/native-components/Menu/SubMenuItem.astro'
 import RadioMenuItem from '@/native-components/Menu/RadioMenuItem.astro'
 import MenuIndent from '@/native-components/Menu/MenuIndent.astro'
@@ -16,7 +17,7 @@ import { APP_BATTERY as APP } from '@/constants/apps'
 import { RoutesLinks, ExternalLinks } from '@/enums/links'
 ---
 
-<Menu id={ID + ElementIds.appbarSettingsMenu}>
+<Menu id={ID + ElementIds.appbarSettingsMenu} PopoverAnchorBy={ID + ElementIds.appbarSettingsButton}>
 	<SubMenuItem
 		aria-controls={ID + ElementIds.appbarSettingsAnimationMenu}>
 		<Icon IconCode={ICON_PLAY_CIRCLE_HINT}/>
@@ -24,6 +25,34 @@ import { RoutesLinks, ExternalLinks } from '@/enums/links'
 		<div style="flex:1"/>
 		<Icon IconCode={ICON_CHEVRON_RIGHT}/>
 	</SubMenuItem>
+	<SubMenu slot="submenus" id={ID + ElementIds.appbarSettingsAnimationMenu}>
+		<RadioMenuItem
+			RadioMenuItemInputAttr={{
+				name: RadioGroupNames.settingsAnimation,
+				checked: true,
+				value: PlatformAnimationMode.auto
+			}}>
+			<Icon IconCode={ICON_VIDEO_CLIP_OPTIMIZE}/>
+			Automatic
+		</RadioMenuItem>
+		<RadioMenuItem
+			RadioMenuItemInputAttr={{
+				name: RadioGroupNames.settingsAnimation,
+				value: PlatformAnimationMode.on
+			}}>
+			<Icon IconCode={ICON_VIDEO_CLIP}/>
+			On
+		</RadioMenuItem>
+		<RadioMenuItem
+			RadioMenuItemInputAttr={{
+				name: RadioGroupNames.settingsAnimation,
+				value: PlatformAnimationMode.off
+			}}>
+			<Icon IconCode={ICON_VIDEO_CLIP_OFF}/>
+			Off
+		</RadioMenuItem>
+	</SubMenu>
+
 	<SubMenuItem
 		aria-controls={ID + ElementIds.appbarSettingsThemeMenu}>
 		<Icon IconCode={ICON_WEATHER_SUNNY}/>
@@ -31,62 +60,35 @@ import { RoutesLinks, ExternalLinks } from '@/enums/links'
 		<div style="flex:1"/>
 		<Icon IconCode={ICON_CHEVRON_RIGHT}/>
 	</SubMenuItem>
+	<SubMenu slot="submenus" id={ID + ElementIds.appbarSettingsThemeMenu}>
+		<RadioMenuItem
+			RadioMenuItemInputAttr={{
+				name: RadioGroupNames.settingsTheme,
+				checked: true,
+				value: PlatformThemeMode.auto
+			}}>
+			<Icon IconCode={ICON_LAPTOP_SETTINGS}/>
+			Automatic
+		</RadioMenuItem>
+		<RadioMenuItem
+			RadioMenuItemInputAttr={{
+				name: RadioGroupNames.settingsTheme,
+				value: PlatformThemeMode.light
+			}}>
+			<Icon IconCode={ICON_WEATHER_SUNNY}/>
+			Light
+		</RadioMenuItem>
+		<RadioMenuItem
+			RadioMenuItemInputAttr={{
+				name: RadioGroupNames.settingsTheme,
+				value: PlatformThemeMode.dark
+			}}>
+			<Icon IconCode={ICON_WEATHER_MOON}/>
+			Dark
+		</RadioMenuItem>
+	</SubMenu>
 </Menu>
-<Menu id={ID + ElementIds.appbarSettingsAnimationMenu}>
-	<RadioMenuItem
-		RadioMenuItemInputAttr={{
-			name: RadioGroupNames.settingsAnimation,
-			checked: true,
-			value: PlatformAnimationMode.auto
-		}}>
-		<Icon IconCode={ICON_VIDEO_CLIP_OPTIMIZE}/>
-		Automatic
-	</RadioMenuItem>
-	<RadioMenuItem
-		RadioMenuItemInputAttr={{
-			name: RadioGroupNames.settingsAnimation,
-			value: PlatformAnimationMode.on
-		}}>
-		<Icon IconCode={ICON_VIDEO_CLIP}/>
-		On
-	</RadioMenuItem>
-	<RadioMenuItem
-		RadioMenuItemInputAttr={{
-			name: RadioGroupNames.settingsAnimation,
-			value: PlatformAnimationMode.off
-		}}>
-		<Icon IconCode={ICON_VIDEO_CLIP_OFF}/>
-		Off
-	</RadioMenuItem>
-</Menu>
-<Menu id={ID + ElementIds.appbarSettingsThemeMenu}>
-	<RadioMenuItem
-		RadioMenuItemInputAttr={{
-			name: RadioGroupNames.settingsTheme,
-			checked: true,
-			value: PlatformThemeMode.auto
-		}}>
-		<Icon IconCode={ICON_LAPTOP_SETTINGS}/>
-		Automatic
-	</RadioMenuItem>
-	<RadioMenuItem
-		RadioMenuItemInputAttr={{
-			name: RadioGroupNames.settingsTheme,
-			value: PlatformThemeMode.light
-		}}>
-		<Icon IconCode={ICON_WEATHER_SUNNY}/>
-		Light
-	</RadioMenuItem>
-	<RadioMenuItem
-		RadioMenuItemInputAttr={{
-			name: RadioGroupNames.settingsTheme,
-			value: PlatformThemeMode.dark
-		}}>
-		<Icon IconCode={ICON_WEATHER_MOON}/>
-		Dark
-	</RadioMenuItem>
-</Menu>
-<Menu id={ID + ElementIds.appbarInfoMenu}>
+<Menu id={ID + ElementIds.appbarInfoMenu} PopoverAnchorBy={ID + ElementIds.appbarInfoButton}>
 	<LinkMenuItem href="/">
 		<img src={logoRedmerah.src} width="16"/>
 		Redmerah

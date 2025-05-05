@@ -24,8 +24,9 @@ import { ElementIds, ID } from '../_scripts/_enums'
 			IconButtonCode={ICON_INFO}
 			aria-label="Info"
 			aria-haspopup="menu"
-			aria-controls={ID + ElementIds.appbarInfoMenu}
 			aria-expanded="false"
+			aria-controls={ID + ElementIds.appbarInfoMenu}
+			popovertarget={ID + ElementIds.appbarInfoMenu}
 		/>
 		<IconButton
 			id={ID + ElementIds.appbarSettingsButton}
@@ -33,8 +34,9 @@ import { ElementIds, ID } from '../_scripts/_enums'
 			IconButtonCode={ICON_SETTINGS}
 			aria-label="Settings"
 			aria-haspopup="menu"
-			aria-controls={ID + ElementIds.appbarSettingsMenu}
 			aria-expanded="false"
+			aria-controls={ID + ElementIds.appbarSettingsMenu}
+			popovertarget={ID + ElementIds.appbarSettingsMenu}
 		/>
 	</Tooltip>
 </AppBar>

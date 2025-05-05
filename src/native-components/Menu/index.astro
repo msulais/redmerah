@@ -11,11 +11,15 @@ import './index.scss'
 type Props = MenuProps
 const {
 	'class': className,
+	MenuContentAttr,
+	MenuSubMenusAttr,
 	PopoverGap = 8,
 	PopoverPadding = 5, // +1px border
 	role,
 	...other
 } = Astro.props
+const {'class': contentClass, ...contentOther} = MenuContentAttr ?? {}
+const {'class': submenusClass, ...submenusOther} = MenuSubMenusAttr ?? {}
 ---
 
 <Popover
@@ -24,7 +28,12 @@ const {
 	PopoverGap={PopoverGap}
 	PopoverPadding={PopoverPadding}
 	{...other}>
-	<slot />
+	<div class={attrClassList(MenuClasses.content, contentClass)} {...contentOther}>
+		<slot />
+	</div>
+	<div class={attrClassList(MenuClasses.submenus, submenusClass)} {...submenusOther}>
+		<slot name="submenus"/>
+	</div>
 </Popover>
 <script>
 	import { registerMenuRef } from '.'

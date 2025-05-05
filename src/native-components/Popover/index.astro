@@ -12,9 +12,6 @@ type Props = PopoverProps
 const {
 	PopoverAnchorBy,
 	PopoverDraggable,
-	PopoverImportant,
-	PopoverAutoFocus = true,
-	PopoverAnimation,
 	PopoverGap,
 	PopoverPadding,
 	PopoverPosition,
@@ -31,12 +28,9 @@ const {'class': contentClass   , ...contentOther   } = PopoverContentAttr
 ---
 <div
 	class={attrClassList(PopoverClasses.popover, className)}
-	popover={popover ?? 'manual'}
+	popover={popover ?? 'auto'}
 	data-c-popover-anchorby={PopoverAnchorBy}
 	data-c-popover-draggable={PopoverDraggable? '' : undefined}
-	data-c-popover-important={PopoverImportant? '' : undefined}
-	data-c-popover-autofocus={PopoverAutoFocus? '' : undefined}
-	data-c-popover-animation={PopoverAnimation? '' : undefined}
 	data-c-popover-gap={PopoverGap}
 	data-c-popover-padding={PopoverPadding}
 	data-c-popover-position={PopoverPosition}

@@ -35,10 +35,6 @@ import {
 import {
 	type PopoverProps,
 	type PopoverUpdateOptions,
-	type PopoverOpenOptions,
-	type PopoverCloseOptions,
-	type PopoverToggleOpenEventDetail,
-	PopoverEvents,
 	PopoverPosition,
 	openPopoverRef,
 	closePopoverRef,
@@ -586,8 +582,8 @@ function _initColorPickerRef(colorPickerRef: HTMLDivElement): void {
 	}
 
 	function initEvents(): void {
-		colorPickerRef.addEventListener(PopoverEvents.toggleOpen as any, (ev: CustomEvent<PopoverToggleOpenEventDetail>) => {
-			const isOpen = ev.detail.open
+		colorPickerRef.addEventListener('toggle', ev => {
+			const isOpen = (ev as ToggleEvent).newState === 'open'
 			if (isOpen) {
 				initColor()
 				swapRef         ?.addEventListener('click', swapRefOnClick)
@@ -912,8 +908,6 @@ function updateColorPickerRef(
 }
 
 export {
-	type PopoverOpenOptions as ColorPickerOpenOptions,
-	type PopoverCloseOptions as ColorPickerCloseOptions,
 	type ColorPickerProps,
 	type ColorPickerUpdateOptions,
 	ColorPickerAttributes,

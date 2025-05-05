@@ -2,6 +2,7 @@
 import CheckBox from '@/native-components/CheckBox/index.astro'
 import TextField from '@/native-components/TextField/index.astro'
 import Menu from '@/native-components/Menu/index.astro'
+import SubMenu from '@/native-components/Menu/SubMenu.astro'
 import Icon from '@/native-components/Icon/index.astro'
 import MenuItem from '@/native-components/Menu/MenuItem.astro'
 import MenuHeader from '@/native-components/Menu/MenuHeader.astro'
@@ -31,7 +32,8 @@ import { MenuPosition } from '@/native-components/Menu'
 			ButtonVariant={ButtonVariant.tonal}
 			id={ID + ElementIds.panelMenuPreviewButton}
 			aria-controls={ID + ElementIds.panelMenuPreviewMenu}
-			aria-haspopup="menu">
+			aria-haspopup="menu"
+			popovertarget={ID + ElementIds.panelMenuPreviewMenu}>
 			Open menu
 		</Button>
 		<Menu
@@ -88,159 +90,161 @@ import { MenuPosition } from '@/native-components/Menu'
 				<div style="flex:1"/>
 				<Icon IconCode={ICON_CHEVRON_RIGHT}/>
 			</SubMenuItem>
+			<SubMenu id={ID + ElementIds.panelMenuPreviewMenu2} slot="submenus">
+				<MenuItem>
+					<Icon IconCode={ICON_COPY}/>
+					Copy
+					<div style="flex:1"/>
+					<MenuIndent/>
+				</MenuItem>
+				<MenuItem>
+					<Icon IconCode={ICON_CLIPBOARD_PASTE}/>
+					Paste
+					<div style="flex:1"/>
+					<MenuIndent/>
+				</MenuItem>
+				<MenuItem>
+					<Icon IconCode={ICON_CUT}/>
+					Cut
+					<div style="flex:1"/>
+					<MenuIndent/>
+				</MenuItem>
+			</SubMenu>
+
 			<SubMenuItem aria-controls={ID + ElementIds.panelMenuPreviewMenu3}>
 				<MenuIndent/>
 				Level 2
 				<div style="flex:1"/>
 				<Icon IconCode={ICON_CHEVRON_RIGHT}/>
 			</SubMenuItem>
+			<SubMenu id={ID + ElementIds.panelMenuPreviewMenu3} slot='submenus'>
+				<MenuItem>
+					<Icon IconCode={ICON_COPY}/>
+					Copy
+					<div style="flex:1"/>
+					<MenuIndent/>
+				</MenuItem>
+				<MenuItem>
+					<Icon IconCode={ICON_CLIPBOARD_PASTE}/>
+					Paste
+					<div style="flex:1"/>
+					<MenuIndent/>
+				</MenuItem>
+				<MenuItem>
+					<Icon IconCode={ICON_CUT}/>
+					Cut
+					<div style="flex:1"/>
+					<MenuIndent/>
+				</MenuItem>
+				<Divider />
+				<SubMenuItem aria-controls={ID + ElementIds.panelMenuPreviewMenu5}>
+					<MenuIndent/>
+					Next level
+					<div style="flex:1"/>
+					<Icon IconCode={ICON_CHEVRON_RIGHT}/>
+				</SubMenuItem>
+				<SubMenu id={ID + ElementIds.panelMenuPreviewMenu5} slot='submenus'>
+					<MenuItem>
+						<Icon IconCode={ICON_COPY}/>
+						Copy
+						<div style="flex:1"/>
+						<MenuIndent/>
+					</MenuItem>
+					<MenuItem>
+						<Icon IconCode={ICON_CLIPBOARD_PASTE}/>
+						Paste
+						<div style="flex:1"/>
+						<MenuIndent/>
+					</MenuItem>
+					<MenuItem>
+						<Icon IconCode={ICON_CUT}/>
+						Cut
+						<div style="flex:1"/>
+						<MenuIndent/>
+					</MenuItem>
+				</SubMenu>
+			</SubMenu>
+
 			<SubMenuItem aria-controls={ID + ElementIds.panelMenuPreviewMenu4}>
 				<MenuIndent/>
 				Level 3
 				<div style="flex:1"/>
 				<Icon IconCode={ICON_CHEVRON_RIGHT}/>
 			</SubMenuItem>
-		</Menu>
-		<Menu id={ID + ElementIds.panelMenuPreviewMenu2}>
-			<MenuItem>
-				<Icon IconCode={ICON_COPY}/>
-				Copy
-				<div style="flex:1"/>
-				<MenuIndent/>
-			</MenuItem>
-			<MenuItem>
-				<Icon IconCode={ICON_CLIPBOARD_PASTE}/>
-				Paste
-				<div style="flex:1"/>
-				<MenuIndent/>
-			</MenuItem>
-			<MenuItem>
-				<Icon IconCode={ICON_CUT}/>
-				Cut
-				<div style="flex:1"/>
-				<MenuIndent/>
-			</MenuItem>
-		</Menu>
-		<Menu id={ID + ElementIds.panelMenuPreviewMenu3}>
-			<MenuItem>
-				<Icon IconCode={ICON_COPY}/>
-				Copy
-				<div style="flex:1"/>
-				<MenuIndent/>
-			</MenuItem>
-			<MenuItem>
-				<Icon IconCode={ICON_CLIPBOARD_PASTE}/>
-				Paste
-				<div style="flex:1"/>
-				<MenuIndent/>
-			</MenuItem>
-			<MenuItem>
-				<Icon IconCode={ICON_CUT}/>
-				Cut
-				<div style="flex:1"/>
-				<MenuIndent/>
-			</MenuItem>
-			<Divider />
-			<SubMenuItem aria-controls={ID + ElementIds.panelMenuPreviewMenu5}>
-				<MenuIndent/>
-				Next level
-				<div style="flex:1"/>
-				<Icon IconCode={ICON_CHEVRON_RIGHT}/>
-			</SubMenuItem>
-		</Menu>
-		<Menu id={ID + ElementIds.panelMenuPreviewMenu4}>
-			<MenuItem>
-				<Icon IconCode={ICON_COPY}/>
-				Copy
-				<div style="flex:1"/>
-				<MenuIndent/>
-			</MenuItem>
-			<MenuItem>
-				<Icon IconCode={ICON_CLIPBOARD_PASTE}/>
-				Paste
-				<div style="flex:1"/>
-				<MenuIndent/>
-			</MenuItem>
-			<MenuItem>
-				<Icon IconCode={ICON_CUT}/>
-				Cut
-				<div style="flex:1"/>
-				<MenuIndent/>
-			</MenuItem>
-			<Divider />
-			<SubMenuItem aria-controls={ID + ElementIds.panelMenuPreviewMenu6}>
-				<MenuIndent/>
-				Next level
-				<div style="flex:1"/>
-				<Icon IconCode={ICON_CHEVRON_RIGHT}/>
-			</SubMenuItem>
-		</Menu>
-		<Menu id={ID + ElementIds.panelMenuPreviewMenu5}>
-			<MenuItem>
-				<Icon IconCode={ICON_COPY}/>
-				Copy
-				<div style="flex:1"/>
-				<MenuIndent/>
-			</MenuItem>
-			<MenuItem>
-				<Icon IconCode={ICON_CLIPBOARD_PASTE}/>
-				Paste
-				<div style="flex:1"/>
-				<MenuIndent/>
-			</MenuItem>
-			<MenuItem>
-				<Icon IconCode={ICON_CUT}/>
-				Cut
-				<div style="flex:1"/>
-				<MenuIndent/>
-			</MenuItem>
-		</Menu>
-		<Menu id={ID + ElementIds.panelMenuPreviewMenu6}>
-			<MenuItem>
-				<Icon IconCode={ICON_COPY}/>
-				Copy
-				<div style="flex:1"/>
-				<MenuIndent/>
-			</MenuItem>
-			<MenuItem>
-				<Icon IconCode={ICON_CLIPBOARD_PASTE}/>
-				Paste
-				<div style="flex:1"/>
-				<MenuIndent/>
-			</MenuItem>
-			<MenuItem>
-				<Icon IconCode={ICON_CUT}/>
-				Cut
-				<div style="flex:1"/>
-				<MenuIndent/>
-			</MenuItem>
-			<Divider />
-			<SubMenuItem aria-controls={ID + ElementIds.panelMenuPreviewMenu7}>
-				<MenuIndent/>
-				Next level
-				<div style="flex:1"/>
-				<Icon IconCode={ICON_CHEVRON_RIGHT}/>
-			</SubMenuItem>
-		</Menu>
-		<Menu id={ID + ElementIds.panelMenuPreviewMenu7}>
-			<MenuItem>
-				<Icon IconCode={ICON_COPY}/>
-				Copy
-				<div style="flex:1"/>
-				<MenuIndent/>
-			</MenuItem>
-			<MenuItem>
-				<Icon IconCode={ICON_CLIPBOARD_PASTE}/>
-				Paste
-				<div style="flex:1"/>
-				<MenuIndent/>
-			</MenuItem>
-			<MenuItem>
-				<Icon IconCode={ICON_CUT}/>
-				Cut
-				<div style="flex:1"/>
-				<MenuIndent/>
-			</MenuItem>
+			<SubMenu id={ID + ElementIds.panelMenuPreviewMenu4} slot="submenus">
+				<MenuItem>
+					<Icon IconCode={ICON_COPY}/>
+					Copy
+					<div style="flex:1"/>
+					<MenuIndent/>
+				</MenuItem>
+				<MenuItem>
+					<Icon IconCode={ICON_CLIPBOARD_PASTE}/>
+					Paste
+					<div style="flex:1"/>
+					<MenuIndent/>
+				</MenuItem>
+				<MenuItem>
+					<Icon IconCode={ICON_CUT}/>
+					Cut
+					<div style="flex:1"/>
+					<MenuIndent/>
+				</MenuItem>
+				<Divider />
+				<SubMenuItem aria-controls={ID + ElementIds.panelMenuPreviewMenu6}>
+					<MenuIndent/>
+					Next level
+					<div style="flex:1"/>
+					<Icon IconCode={ICON_CHEVRON_RIGHT}/>
+				</SubMenuItem>
+				<SubMenu id={ID + ElementIds.panelMenuPreviewMenu6} slot='submenus'>
+					<MenuItem>
+						<Icon IconCode={ICON_COPY}/>
+						Copy
+						<div style="flex:1"/>
+						<MenuIndent/>
+					</MenuItem>
+					<MenuItem>
+						<Icon IconCode={ICON_CLIPBOARD_PASTE}/>
+						Paste
+						<div style="flex:1"/>
+						<MenuIndent/>
+					</MenuItem>
+					<MenuItem>
+						<Icon IconCode={ICON_CUT}/>
+						Cut
+						<div style="flex:1"/>
+						<MenuIndent/>
+					</MenuItem>
+					<Divider />
+					<SubMenuItem aria-controls={ID + ElementIds.panelMenuPreviewMenu7}>
+						<MenuIndent/>
+						Next level
+						<div style="flex:1"/>
+						<Icon IconCode={ICON_CHEVRON_RIGHT}/>
+					</SubMenuItem>
+					<SubMenu id={ID + ElementIds.panelMenuPreviewMenu7} slot='submenus'>
+						<MenuItem>
+							<Icon IconCode={ICON_COPY}/>
+							Copy
+							<div style="flex:1"/>
+							<MenuIndent/>
+						</MenuItem>
+						<MenuItem>
+							<Icon IconCode={ICON_CLIPBOARD_PASTE}/>
+							Paste
+							<div style="flex:1"/>
+							<MenuIndent/>
+						</MenuItem>
+						<MenuItem>
+							<Icon IconCode={ICON_CUT}/>
+							Cut
+							<div style="flex:1"/>
+							<MenuIndent/>
+						</MenuItem>
+					</SubMenu>
+				</SubMenu>
+			</SubMenu>
 		</Menu>
 	</div>
 	<div class={CSS.bodyOptions} id={ID + ElementIds.panelMenuOptions}>

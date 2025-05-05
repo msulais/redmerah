@@ -1,5 +1,4 @@
 import { updateIconButtonRef } from "@/native-components/Button"
-import { closeMenuRef, MenuEvents, openMenuRef, type MenuToggleOpenEventDetail } from "@/native-components/Menu"
 import { elementValidTarget } from "@/utils/element"
 import { ID, ElementIds, RadioGroupNames } from "./_enums"
 import { LocalStorageKeys } from "@/enums/storage"
@@ -11,7 +10,6 @@ import { APP_BATTERY as APP } from "@/constants/apps"
 const $ = (id: string) => document.getElementById(id)
 const $$ = (selector: string, from = document) => from.querySelector(selector)
 const rootRef = document.documentElement
-const appbarRef = $(ID + ElementIds.appbar) as HTMLElement
 const appbarInfoButtonRef = $(ID + ElementIds.appbarInfoButton) as HTMLButtonElement
 const appbarInfoMenuShareButtonRef = $(ID + ElementIds.appbarInfoMenuShareButton) as HTMLButtonElement
 const appbarInfoMenuRef = $(ID + ElementIds.appbarInfoMenu) as HTMLDivElement
@@ -60,8 +58,8 @@ function initSettings(): void {
 }
 
 function initSettingsMenu(): void {
-	appbarSettingsMenuRef.addEventListener(MenuEvents.toggleOpen as any, (ev: CustomEvent<MenuToggleOpenEventDetail>) => {
-		const isOpen = ev.detail.open
+	appbarSettingsMenuRef.addEventListener('toggle', ev => {
+		const isOpen = (ev as ToggleEvent).newState === 'open'
 		appbarSettingsButtonRef.setAttribute('aria-expanded', String(isOpen))
 		updateIconButtonRef(appbarSettingsButtonRef, {
 			ButtonFocused: isOpen
@@ -75,7 +73,7 @@ function initSettingsMenu(): void {
 
 		localStorage.setItem(LocalStorageKeys.platformAnimation, value)
 		rootRef.setAttribute(RootAttributes.animation, value)
-		closeMenuRef(appbarSettingsMenuRef)
+		appbarSettingsMenuRef.hidePopover()
 	})
 
 	appbarSettingsThemeMenuRef.addEventListener('change', ev => {
@@ -85,13 +83,13 @@ function initSettingsMenu(): void {
 
 		localStorage.setItem(LocalStorageKeys.platformTheme, value)
 		rootRef.setAttribute(RootAttributes.theme, value)
-		closeMenuRef(appbarSettingsMenuRef)
+		appbarSettingsMenuRef.hidePopover()
 	})
 }
 
 function initInfoMenu(): void {
-	appbarInfoMenuRef.addEventListener(MenuEvents.toggleOpen as any, (ev: CustomEvent<MenuToggleOpenEventDetail>) => {
-		const isOpen = ev.detail.open
+	appbarInfoMenuRef.addEventListener('toggle', ev => {
+		const isOpen = (ev as ToggleEvent).newState === 'open'
 		appbarInfoButtonRef.setAttribute('aria-expanded', String(isOpen))
 		updateIconButtonRef(appbarInfoButtonRef, {
 			ButtonFocused: isOpen
@@ -109,25 +107,12 @@ function initInfoMenu(): void {
 				url: document.URL,
 				text: APP.name
 			})
-			closeMenuRef(appbarInfoMenuRef)
-		}
-	})
-}
-
-function initAppBar(): void {
-	appbarRef.addEventListener('click', () => {
-		const button = document.activeElement as HTMLElement
-		if (!elementValidTarget(appbarRef, button, el => el.tagName === 'BUTTON')) return
-
-		switch (button) {
-		case appbarSettingsButtonRef: return openMenuRef(appbarSettingsMenuRef, { anchor: button })
-		case appbarInfoButtonRef: return openMenuRef(appbarInfoMenuRef, { anchor: button })
+			appbarInfoMenuRef.hidePopover()
 		}
 	})
 }
 
 const _ = () => {
-	initAppBar()
 	initSettings()
 	initSettingsMenu()
 	initInfoMenu()

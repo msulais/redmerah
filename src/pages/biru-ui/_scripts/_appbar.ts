@@ -1,13 +1,11 @@
-import { openPopoverRef } from "@/native-components/Popover"
 import { updateButtonRef } from "@/native-components/Button"
-import { closeMenuRef, MenuEvents, type MenuToggleOpenEventDetail } from "@/native-components/Menu"
-import { elementValidTarget } from "@/utils/element"
+import { closeMenuRef } from "@/native-components/Menu"
 import { ID, ElementIds, RadioGroupNames } from "./_enums"
 import { LocalStorageKeys } from "@/enums/storage"
 import { validEnumValue } from "@/utils/object"
 import { RootAttributes } from "@/enums/attributes"
 import { PlatformAnimationMode, PlatformThemeMode } from "@/enums/platforms"
-import { ColorPickerAttributes, ColorPickerEvents, ColorPickerPosition, openColorPickerRef, updateColorPickerRef } from "@/native-components/ColorPicker"
+import { ColorPickerAttributes, ColorPickerEvents, openColorPickerRef, updateColorPickerRef } from "@/native-components/ColorPicker"
 import { colorGeneratePalette, colorHexToRgb, colorIsValid } from "@/utils/color"
 import type { HEXColor, RGBColor } from "@/types/color"
 import { GlobalElementIds } from "@/enums/ids"
@@ -15,7 +13,6 @@ import { GlobalElementIds } from "@/enums/ids"
 const $ = (id: string) => document.getElementById(id)
 const $$ = (selector: string, from = document) => from.querySelector(selector)
 const root = document.documentElement
-const appbar = $(ID + ElementIds.appbar) as HTMLElement
 const infoButton = $(ID + ElementIds.appbarInfoButton) as HTMLButtonElement
 const shareButton = $(ID + ElementIds.appbarInfoShareButton) as HTMLButtonElement
 const infoMenu = $(ID + ElementIds.appbarInfoMenu) as HTMLDivElement
@@ -34,10 +31,8 @@ function initSettingsMenu(): void {
 	settingsMenu.addEventListener('click', () => {
 		switch (document.activeElement) {
 		case accentButtonRef:
-			openColorPickerRef(colorPickerRef, {
-				anchor: document.body,
-				position: ColorPickerPosition.centerCenterRightTop
-			}).then(() => closeMenuRef(settingsMenu))
+			openColorPickerRef(colorPickerRef)
+			closeMenuRef(settingsMenu)
 			break
 		}
 	})
@@ -143,33 +138,17 @@ function initInfoMenuEvents(): void {
 	})
 }
 
-function initAppBarEvents(): void {
-	appbar.addEventListener('click', () => {
-		const button = document.activeElement
-		if (!elementValidTarget(appbar, button, el => el.tagName === 'BUTTON')) return
-
-		switch (button) {
-		case settingsButton: return openPopoverRef(settingsMenu, {
-			anchor: settingsButton
-		})
-		case infoButton: return openPopoverRef(infoMenu, {
-			anchor: infoButton
-		})
-		}
-	})
-}
-
 function initGlobalMenuEvents(): void {
-	settingsMenu.addEventListener(MenuEvents.toggleOpen as any, (ev: CustomEvent<MenuToggleOpenEventDetail>) => {
-		const open = ev.detail.open
+	settingsMenu.addEventListener('toggle', ev => {
+		const open = (ev as ToggleEvent).newState === 'open'
 		settingsButton.setAttribute('aria-expanded', String(open))
 		updateButtonRef(settingsButton, {
 			ButtonFocused: open
 		})
 	})
 
-	infoMenu.addEventListener(MenuEvents.toggleOpen as any, (ev: CustomEvent<MenuToggleOpenEventDetail>) => {
-		const open = ev.detail.open
+	infoMenu.addEventListener('toggle', ev => {
+		const open = (ev as ToggleEvent).newState === 'open'
 		infoButton.setAttribute('aria-expanded', String(open))
 		updateButtonRef(infoButton, {
 			ButtonFocused: open
@@ -178,7 +157,6 @@ function initGlobalMenuEvents(): void {
 }
 
 const _ = () => {
-	initAppBarEvents()
 	initGlobalMenuEvents()
 	initInfoMenuEvents()
 	initSettings()

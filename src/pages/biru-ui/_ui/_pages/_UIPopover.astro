@@ -22,7 +22,8 @@ import { FlyoutPosition } from '@/enums/position'
 			ButtonVariant={ButtonVariant.tonal}
 			id={ID + ElementIds.panelPopoverPreviewButtonOpen}
 			aria-controls={ID + ElementIds.panelPopoverPreviewPopover}
-			aria-haspopup="true">
+			aria-haspopup="true"
+			popovertarget={ID + ElementIds.panelPopoverPreviewPopover}>
 			Open popover
 		</Button>
 		<Popover
@@ -44,7 +45,9 @@ import { FlyoutPosition } from '@/enums/position'
 			<Button
 				id={ID + ElementIds.panelPopoverPreviewButtonClose}
 				aria-controls={ID + ElementIds.panelPopoverPreviewPopover}
-				ButtonVariant={ButtonVariant.filled}>
+				ButtonVariant={ButtonVariant.filled}
+				popovertarget={ID + ElementIds.panelPopoverPreviewPopover}
+				popovertargetaction={'hide'}>
 				Close popover
 			</Button>
 		</Popover>
@@ -122,19 +125,6 @@ import { FlyoutPosition } from '@/enums/position'
 				checked: true
 			}}>
 			Anchor
-		</CheckBox>
-		<CheckBox
-			CheckBoxInputAttr={{
-				id: ID + ElementIds.panelPopoverOptionsAutofocus,
-				checked: true
-			}}>
-			Autofocus
-		</CheckBox>
-		<CheckBox
-			CheckBoxInputAttr={{
-				id: ID + ElementIds.panelPopoverOptionsImportant,
-			}}>
-			Important
 		</CheckBox>
 		<CheckBox
 			CheckBoxInputAttr={{

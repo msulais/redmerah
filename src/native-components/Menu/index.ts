@@ -2,11 +2,7 @@ import { FlyoutPosition as MenuPosition } from "@/enums/position"
 
 import {
 	type PopoverProps,
-	type PopoverOpenOptions,
-	type PopoverCloseOptions,
 	type PopoverUpdateOptions,
-	type PopoverToggleOpenEventDetail,
-	PopoverEvents,
 	PopoverAttributes,
 	PopoverClasses,
 	openPopoverRef,
@@ -29,12 +25,18 @@ import {
 	updateLinkButtonRef,
 	ButtonClasses
 } from "@/native-components/Button"
-import { PopoverPosition } from "@/native-components/Popover"
 import { createIconRef, type IconProps } from "@/native-components/Icon"
 import { AppColors } from "@/enums/colors"
 import { ICON_CIRCLE_SMALL } from "@/constants/icons"
+import { createId } from "@/utils/ids"
 
-type MenuProps = PopoverProps
+type MenuProps = PopoverProps & {
+	MenuContentAttr ?: astroHTML.JSX.HTMLAttributes
+	MenuSubMenusAttr?: astroHTML.JSX.HTMLAttributes
+}
+
+type SubMenuProps = MenuProps
+
 type MenuItemProps = ButtonProps
 type LinkMenuItemProps = LinkButtonProps
 type MenuHeaderProps = astroHTML.JSX.HTMLAttributes
@@ -104,12 +106,18 @@ type MenuHeaderUpdateOptions = {
 	}
 }
 
-type MenuUpdateOptions = PopoverUpdateOptions & {
-	MenuRole?: astroHTML.JSX.AriaRole | boolean
-	MenuRefs?: {
-		menu?(ref: HTMLDivElement): unknown
+type MenuUpdateOptions = Omit<PopoverUpdateOptions, 'PopoverChildren'> & {
+	MenuChildren?: (string | Node)[] | boolean
+	MenuSubMenus?: (string | Node)[] | boolean
+	MenuRole    ?: astroHTML.JSX.AriaRole | boolean
+	MenuRefs    ?: {
+		menu    ?(ref: HTMLDivElement): unknown
+		content ?(ref: HTMLDivElement): unknown
+		submenus?(ref: HTMLDivElement): unknown
 	}
 }
+
+type SubMenuUpdateOptions = MenuUpdateOptions
 
 type MenuItemUpdateOptions = ButtonUpdateOptions & {
 	MenuItemRole?: astroHTML.JSX.AriaRole | boolean
@@ -136,16 +144,19 @@ type LinkMenuItemUpdateOptions = LinkButtonUpdateOptions & {
 
 enum MenuClasses {
 	menu             = 'c-menu',
+	content          = menu + '-content',
 	header           = menu + '-header',
 	item             = menu + '-item',
 	indent           = menu + '-indent',
-	submenuItem      = menu + '-submenu-item',
 	radioItem        = menu + '-radio-item',
+	submenu          = menu + '-submenu',
+	checkItem        = menu + '-check-item',
+	submenus         = menu + '-submenus',
+	submenuItem      = submenu + '-item',
 	radioItemLeading = radioItem + '-leading',
 	radioItemIcon    = radioItem + '-icon',
 	radioItemInput   = radioItem + '-input',
 	radioItemContent = radioItem + '-content',
-	checkItem        = menu + '-check-item',
 	checkItemLeading = checkItem + '-leading',
 	checkItemInput   = checkItem + '-input',
 	checkItemIcon    = checkItem + '-icon',
@@ -164,7 +175,7 @@ function _initSubMenuItemRef(subMenuItemRef: HTMLElement): void {
 			return subMenuItemRef.closest('.' + MenuClasses.menu) as HTMLDivElement | null
 		},
 		get parentContent() {
-			return subMenuItemRef.closest('.' + PopoverClasses.content) as HTMLDivElement | null
+			return subMenuItemRef.closest('.' + MenuClasses.content) as HTMLDivElement | null
 		},
 		get target() {
 			return document.getElementById(subMenuItemRef.getAttribute('aria-controls') ?? '___NONE___') as HTMLDivElement | null
@@ -214,19 +225,19 @@ function _initSubMenuItemRef(subMenuItemRef: HTMLElement): void {
 			for (const menuRef of getAllSubMenuRefs(parentRef)) {
 				if (menuRef === targetRef) continue
 
-				closePopoverRef(menuRef, { animation: false }).then(() => {
-					document.body.appendChild(menuRef)
-				})
+				menuRef.hidePopover()
 			}
 
-			parentRef.appendChild(targetRef)
-			openPopoverRef(targetRef, {
-				anchor: subMenuItemRef,
-				position: PopoverPosition.rightCenterToBottom,
-				gap: -4,
-				padding: 5, // +1px for border
-				important: true
+			let id = subMenuItemRef.id
+			if (!id) {
+				id = createId()
+				subMenuItemRef.id = id
+			}
+
+			updateSubMenuRef(targetRef, {
+				PopoverAnchorBy: id
 			})
+			targetRef.showPopover()
 		}, instant? 0 : 300)
 	}
 
@@ -240,14 +251,10 @@ function _initSubMenuItemRef(subMenuItemRef: HTMLElement): void {
 			for (const menuRef of getAllSubMenuRefs(targetRef)) {
 				if (menuRef === targetRef) continue
 
-				closePopoverRef(menuRef).then(() => {
-					document.body.appendChild(menuRef)
-				})
+				menuRef.hidePopover()
 			}
 
-			closePopoverRef(targetRef).then(() => {
-				document.body.appendChild(targetRef)
-			})
+			targetRef.hidePopover()
 		}, instant? 0 : 300)
 	}
 
@@ -285,8 +292,8 @@ function _initSubMenuItemRef(subMenuItemRef: HTMLElement): void {
 		openSubMenuRef(true)
 	}
 
-	function subMenuRefOnToggleOpen(ev: CustomEvent<PopoverToggleOpenEventDetail>): void {
-		const open = ev.detail.open
+	function subMenuRefOnToggleOpen(ev: Event): void {
+		const open = (ev as ToggleEvent).newState === 'open'
 		subMenuItemRef.setAttribute('aria-expanded', String(open))
 		if (subMenuItemRef.classList.contains(ButtonClasses.button)) {
 			updateMenuItemRef(subMenuItemRef as HTMLButtonElement, {
@@ -295,25 +302,23 @@ function _initSubMenuItemRef(subMenuItemRef: HTMLElement): void {
 		}
 	}
 
-	function parentRefOnBeforeClose(ev: CustomEvent): void {
+	function parentRefOnBeforeClose(ev: Event): void {
 		if (timeId !== null) clearTimeout(timeId)
 
 		timeId = null
 		for (const menuRef of getAllSubMenuRefs(ev.target as HTMLElement)) {
-			closePopoverRef(menuRef).then(() => {
-				document.body.appendChild(menuRef)
-			})
+			menuRef.hidePopover()
 		}
 	}
 
 	function initEvents(): void {
 		const parentRef = elements.parent
-		parentRef?.addEventListener(PopoverEvents.toggleOpen as any, (ev: CustomEvent<PopoverToggleOpenEventDetail>) => {
-			const isOpen = ev.detail.open
+		parentRef?.addEventListener('toggle', ev => {
+			const isOpen = (ev as ToggleEvent).newState === 'open'
 			const targetRef = elements.target
 			const contentRef = elements.parentContent
 			if (isOpen) {
-				parentRef.addEventListener(PopoverEvents.beforeClose as any, parentRefOnBeforeClose)
+				parentRef.addEventListener('beforetoggle', parentRefOnBeforeClose)
 				contentRef?.addEventListener('pointerenter', menuContentRefOnPointerEnter)
 				contentRef?.addEventListener('pointerleave', menuContentRefOnPointerLeave)
 				subMenuItemRef.addEventListener('pointerenter', subMenuItemRefOnPointerEnter)
@@ -321,13 +326,13 @@ function _initSubMenuItemRef(subMenuItemRef: HTMLElement): void {
 				subMenuItemRef.addEventListener('click'       , subMenuRefOnClick)
 				targetRef?.addEventListener('pointerenter', subMenuRefOnPointerEnter)
 				targetRef?.addEventListener('pointerleave', subMenuRefOnPointerLeave)
-				targetRef?.addEventListener(PopoverEvents.toggleOpen as any, subMenuRefOnToggleOpen)
+				targetRef?.addEventListener('toggle', subMenuRefOnToggleOpen)
 			}
 			else {
 				// !important: without this, `PopoverEvents.toggleOpen` event for `target` will
 				// remove before running for the last time
 				setTimeout(() => {
-					parentRef.removeEventListener(PopoverEvents.beforeClose as any, parentRefOnBeforeClose)
+					parentRef.removeEventListener('beforetoggle', parentRefOnBeforeClose)
 					contentRef?.removeEventListener('pointerenter', menuContentRefOnPointerEnter)
 					contentRef?.removeEventListener('pointerleave', menuContentRefOnPointerLeave)
 					subMenuItemRef.removeEventListener('pointerenter', subMenuItemRefOnPointerEnter)
@@ -335,7 +340,7 @@ function _initSubMenuItemRef(subMenuItemRef: HTMLElement): void {
 					subMenuItemRef.removeEventListener('click'       , subMenuRefOnClick)
 					targetRef?.removeEventListener('pointerenter', subMenuRefOnPointerEnter)
 					targetRef?.removeEventListener('pointerleave', subMenuRefOnPointerLeave)
-					targetRef?.removeEventListener(PopoverEvents.toggleOpen as any, subMenuRefOnToggleOpen)
+					targetRef?.removeEventListener('toggle', subMenuRefOnToggleOpen)
 				})
 			}
 		})
@@ -350,7 +355,17 @@ function createMenuRef(options?: MenuUpdateOptions): HTMLDivElement {
 }
 
 function updateMenuRef(menuRef: HTMLDivElement, options?: MenuUpdateOptions): HTMLDivElement {
-	updatePopoverRef(menuRef, options)
+	let popoverContentRef: HTMLDivElement
+	updatePopoverRef(menuRef, {
+		...options,
+		PopoverRefs: {
+			...options?.PopoverRefs,
+			content(ref) {
+				popoverContentRef = ref
+				options?.PopoverRefs?.content?.(ref)
+			},
+		}
+	})
 	menuRef.classList.add(MenuClasses.menu)
 	if (!menuRef.hasAttribute('role')) {
 		menuRef.setAttribute('role', 'menu')
@@ -358,17 +373,46 @@ function updateMenuRef(menuRef: HTMLDivElement, options?: MenuUpdateOptions): HT
 
 	const role = options?.MenuRole
 	if (role === false) {
-
-		// NOTE:
-		// If we update menu with `role=undefined`, it will back to `role=menu` anyway.
-		// If we want without role, just use regular <Popover>. Or update with `updatePopover()`.
 		menuRef.removeAttribute('role')
 	}
 	else if (role !== undefined && role !== true) {
 		menuRef.setAttribute('role', role)
 	}
 
-	options?.MenuRefs?.menu?.(menuRef)
+	// content
+	const childrenOption = options?.MenuChildren
+	let contentRef = popoverContentRef!.querySelector<HTMLDivElement>(`.${MenuClasses.content}`)
+	if (!contentRef) {
+		contentRef = document.createElement('div')
+		contentRef.classList.add(MenuClasses.content)
+	}
+	if (childrenOption === false) {
+		contentRef.replaceChildren()
+	}
+	else if (childrenOption !== undefined && childrenOption !== true) {
+		contentRef.replaceChildren(...childrenOption)
+	}
+
+	// submenus
+	const submenusOption = options?.MenuSubMenus
+	let submenusRef = popoverContentRef!.querySelector<HTMLDivElement>(`.${MenuClasses.submenus}`)
+	if (!submenusRef) {
+		submenusRef = document.createElement('div')
+		submenusRef.classList.add(MenuClasses.submenus)
+	}
+	if (submenusOption === false) {
+		submenusRef.replaceChildren()
+	}
+	else if (submenusOption !== undefined && submenusOption !== true) {
+		submenusRef.replaceChildren(...submenusOption)
+	}
+
+	popoverContentRef!.replaceChildren(contentRef, submenusRef)
+
+	const refs = options?.MenuRefs
+	refs?.menu?.(menuRef)
+	refs?.content?.(contentRef)
+	refs?.submenus?.(submenusRef)
 	return menuRef
 }
 
@@ -389,10 +433,6 @@ function updateMenuItemRef(
 
 	const role = options?.MenuItemRole
 	if (role === false) {
-
-		// NOTE:
-		// If we update menu with `role=undefined`, it will back to `role=menuitem` anyway.
-		// If we want without role, just use regular <Button>. Or update with `updateButton()`.
 		menuItemRef.removeAttribute('role')
 	}
 	else if (role !== undefined && role !== true) {
@@ -420,10 +460,6 @@ function updateLinkMenuItemRef(
 
 	const role = options?.LinkMenuItemRole
 	if (role === false) {
-
-		// NOTE:
-		// If we update menu with `role=undefined`, it will back to `role=menuitem` anyway.
-		// If we want without role, just use regular <Button>. Or update with `updateLinkButton()`.
 		linkMenuItemRef.removeAttribute('role')
 	}
 	else if (role !== undefined && role !== true) {
@@ -692,13 +728,23 @@ function updateRadioMenuItemRef(radioMenuItemRef: HTMLLabelElement, options?: Ra
 	return radioMenuItemRef
 }
 
+function createSubMenuRef(options?: SubMenuUpdateOptions): HTMLDivElement {
+	const subMenuRef = document.createElement('div')
+	return updateSubMenuRef(subMenuRef, options)
+}
+
+function updateSubMenuRef(subMenuRef: HTMLDivElement, options?: SubMenuUpdateOptions): HTMLDivElement {
+	updateMenuRef(subMenuRef, options)
+	subMenuRef.classList.add(MenuClasses.submenu)
+	return subMenuRef
+}
+
 export {
 	type MenuProps,
 	type MenuItemProps,
+	type SubMenuUpdateOptions,
 	type LinkMenuItemProps,
 	type SubMenuItemProps,
-	type PopoverOpenOptions as MenuOpenOptions,
-	type PopoverCloseOptions as MenuCloseOptions,
 	type MenuUpdateOptions,
 	type MenuItemUpdateOptions,
 	type LinkMenuItemUpdateOptions,
@@ -709,11 +755,10 @@ export {
 	type MenuIndentUpdateOptions,
 	type MenuHeaderUpdateOptions,
 	type CheckMenuItemProps,
-	type PopoverToggleOpenEventDetail as MenuToggleOpenEventDetail,
 	type CheckMenuItemUpdateOptions,
 	type RadioMenuItemUpdateOptions,
+	type SubMenuProps,
 	MenuClasses,
-	PopoverEvents as MenuEvents,
 	PopoverAttributes as MenuAttributes,
 	PopoverClasses,
 	MenuPosition,
@@ -740,5 +785,7 @@ export {
 	createCheckMenuItemRef,
 	updateCheckMenuItemRef,
 	createRadioMenuItemRef,
-	updateRadioMenuItemRef
+	updateRadioMenuItemRef,
+	createSubMenuRef,
+	updateSubMenuRef
 }

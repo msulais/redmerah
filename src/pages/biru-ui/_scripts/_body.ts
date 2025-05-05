@@ -3,7 +3,7 @@ import { ID, ElementIds } from "./_enums"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { isAnimationAllowed } from "@/utils/animation"
 import { SelectAttributes, SelectEvents, SelectVariant, updateSelectRef } from "@/native-components/Select"
-import { closePopoverRef, openPopoverRef, PopoverPosition, updatePopoverRef } from "@/native-components/Popover"
+import { PopoverPosition, updatePopoverRef } from "@/native-components/Popover"
 import { ColorPickerAttributes, ColorPickerEvents } from "@/native-components/ColorPicker"
 import { colorContrastRatio, colorHexToRgb } from "@/utils/color"
 import type { HEXColor } from "@/types/color"
@@ -12,7 +12,7 @@ import { ListVariant, updateListRef } from "@/native-components/List"
 import { numberSafe } from "@/utils/number"
 import { closeModalRef, ModalPosition, openModalRef, updateModalRef } from "@/native-components/Modal"
 import { TooltipPosition, updateTooltipRef } from "@/native-components/Tooltip"
-import { MenuPosition, openMenuRef, updateMenuRef } from "@/native-components/Menu"
+import { MenuPosition, updateMenuRef } from "@/native-components/Menu"
 import { EmojiPickerAttributes, EmojiPickerEvents } from "@/native-components/EmojiPicker"
 import { updateDialogRef } from "@/native-components/Dialog"
 
@@ -156,11 +156,6 @@ function colorPickerPanel(): void {
 	const colorpicker = $(ID + ElementIds.panelColorpickerPreviewColorPicker) as HTMLDivElement
 	const optionHueOnly = $(ID + ElementIds.panelColorpickerOptionsHueOnly) as HTMLInputElement
 	const optionDisabledOpacity = $(ID + ElementIds.panelColorpickerOptionsDisabledOpacity) as HTMLInputElement
-	button.addEventListener('click', () => {
-		openPopoverRef(colorpicker, {
-			anchor: button
-		})
-	})
 
 	colorpicker.addEventListener(ColorPickerEvents.change, () => {
 		const value = colorpicker.getAttribute(ColorPickerAttributes.value)!
@@ -311,18 +306,13 @@ function listPanel(): void {
 function popoverPanel(): void {
 	const optionsRef = $(ID + ElementIds.panelPopoverOptions) as HTMLDivElement
 	const openButtonRef = $(ID + ElementIds.panelPopoverPreviewButtonOpen) as HTMLButtonElement
-	const closeButtonRef = $(ID + ElementIds.panelPopoverPreviewButtonClose) as HTMLButtonElement
 	const popoverRef = $(ID + ElementIds.panelPopoverPreviewPopover) as HTMLDivElement
 	const positionOptionRef = $(ID + ElementIds.panelPopoverOptionsPosition) as HTMLDivElement
 	const paddingOptionRef = $(ID + ElementIds.panelPopoverOptionsPadding) as HTMLInputElement
 	const gapOptionRef = $(ID + ElementIds.panelPopoverOptionsGap) as HTMLInputElement
 	const anchorOptionRef = $(ID + ElementIds.panelPopoverOptionsAnchor) as HTMLInputElement
-	const autofocusOptionRef = $(ID + ElementIds.panelPopoverOptionsAutofocus) as HTMLInputElement
-	const importantOptionRef = $(ID + ElementIds.panelPopoverOptionsImportant) as HTMLInputElement
 	const draggableOptionRef = $(ID + ElementIds.panelPopoverOptionsDraggable) as HTMLInputElement
 
-	openButtonRef.addEventListener('click', () => openPopoverRef(popoverRef))
-	closeButtonRef.addEventListener('click', () => closePopoverRef(popoverRef))
 	optionsRef.addEventListener(SelectEvents.change, ev => {
 		const target = ev.target as HTMLDivElement
 		const value = target.getAttribute(SelectAttributes.value)!
@@ -358,12 +348,6 @@ function popoverPanel(): void {
 			updatePopoverRef(popoverRef, {
 				PopoverAnchorBy: checked? openButtonRef.id : false
 			})
-			break
-		case autofocusOptionRef:
-			updatePopoverRef(popoverRef, {PopoverAutoFocus: checked})
-			break
-		case importantOptionRef:
-			updatePopoverRef(popoverRef, {PopoverImportant: checked})
 			break
 		case draggableOptionRef:
 			updatePopoverRef(popoverRef, {PopoverDraggable: checked})
@@ -582,12 +566,6 @@ function menuPanel(): void {
 	const anchorOptionRef = $(ID + ElementIds.panelMenuOptionsAnchor) as HTMLInputElement
 	const gapOptionRef = $(ID + ElementIds.panelMenuOptionsGap) as HTMLInputElement
 
-	buttonRef.addEventListener('click', () => openMenuRef(menuRef))
-	buttonRef.addEventListener('contextmenu', ev => {
-		ev.preventDefault()
-		openMenuRef(menuRef)
-	})
-
 	optionsRef.addEventListener('focusout', ev => {
 		const target = ev.target as HTMLElement
 		switch (target) {
@@ -629,12 +607,6 @@ function panelEmojiPicker(): void {
 	const autocloseOptionRef = $(ID + ElementIds.panelEmojipickerOptionsAutoclose) as HTMLInputElement
 	const buttonRef = $(ID + ElementIds.panelEmojipickerPreviewButton) as HTMLButtonElement
 	const emojipickerRef = $(ID + ElementIds.panelEmojipickerPreviewEmojiPicker) as HTMLDivElement
-
-	buttonRef.addEventListener('click', () => {
-		openPopoverRef(emojipickerRef, {
-			anchor: buttonRef
-		})
-	})
 
 	emojipickerRef.addEventListener(EmojiPickerEvents.change, ev => {
 		if (ev.target !== emojipickerRef) return
