@@ -1,4 +1,3 @@
-import { closeMenuRef, MenuEvents, openMenuRef, type MenuToggleOpenEventDetail } from "@/native-components/Menu"
 import { ElementIds, ID, RadioGroupNames } from "./_enums"
 import { updateIconButtonRef } from "@/native-components/Button"
 import { validEnumValue } from "@/utils/object"
@@ -7,7 +6,7 @@ import { LocalStorageKeys } from "@/enums/storage"
 import { RootAttributes } from "@/enums/attributes"
 import { colorGeneratePalette, colorHexToRgb, colorIsValid } from "@/utils/color"
 import { GlobalElementIds } from "@/enums/ids"
-import { ColorPickerAttributes, ColorPickerEvents, openColorPickerRef, updateColorPickerRef } from "@/native-components/ColorPicker"
+import { ColorPickerAttributes, ColorPickerEvents, updateColorPickerRef } from "@/native-components/ColorPicker"
 import type { RGBColor, HEXColor } from "@/types/color"
 
 const $ = (id: string) => document.getElementById(id)
@@ -79,22 +78,16 @@ function initSettingsMenu(): void {
 	const accentColorElement = $(GlobalElementIds.colorAccent) as HTMLStyleElement
 	let timeAccentId: number | NodeJS.Timeout | null = null
 
-	buttonRef.addEventListener('click', () => openMenuRef(menuRef, {
-		anchor: buttonRef
-	}))
-
 	menuRef.addEventListener('click', () => {
 		switch (document.activeElement) {
 		case accentButtonRef:
-			openColorPickerRef(colorPickerRef, {
-				anchor: buttonRef,
-			}).then(() => closeMenuRef(menuRef))
+			menuRef.hidePopover()
 			break
 		}
 	})
 
-	menuRef.addEventListener(MenuEvents.toggleOpen as any, (ev: CustomEvent<MenuToggleOpenEventDetail>) => {
-		const isOpen = ev.detail.open
+	menuRef.addEventListener('toggle', ev => {
+		const isOpen = (ev as ToggleEvent).newState === 'open'
 		buttonRef.setAttribute('aria-expanded', String(isOpen))
 		updateIconButtonRef(buttonRef, {
 			ButtonFocused: isOpen
@@ -108,7 +101,7 @@ function initSettingsMenu(): void {
 
 		localStorage.setItem(LocalStorageKeys.platformAnimation, value)
 		root.setAttribute(RootAttributes.animation, value)
-		closeMenuRef(menuRef)
+		menuRef.hidePopover()
 	})
 
 	themeMenuRef.addEventListener('change', ev => {
@@ -118,7 +111,7 @@ function initSettingsMenu(): void {
 
 		localStorage.setItem(LocalStorageKeys.platformTheme, value)
 		root.setAttribute(RootAttributes.theme, value)
-		closeMenuRef(menuRef)
+		menuRef.hidePopover()
 	})
 
 	colorPickerRef.addEventListener(ColorPickerEvents.input, () => {
