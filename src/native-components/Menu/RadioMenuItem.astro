@@ -16,6 +16,7 @@ const {
 	RadioMenuItemChecked,
 	RadioMenuItemDisabled,
 	RadioMenuItemName,
+	RadioMenuItemValue,
 	RadioMenuItemLeadingAttr = {},
 	RadioMenuItemInputAttr = {},
 	RadioMenuItemIconAttr,
@@ -37,6 +38,7 @@ const {
 	disabled: inputDisabled = RadioMenuItemDisabled,
 	type: inputType = "radio",
 	role: inputRole = "menuitemradio",
+	value: inputValue = RadioMenuItemValue,
 	autocomplete: inputAutocomplete = 'off',
 	...inputOther
 } = RadioMenuItemInputAttr
@@ -55,6 +57,7 @@ const {
 		disabled={inputDisabled}
 		type={inputType}
 		role={inputRole}
+		value={inputValue}
 		autocomplete={inputAutocomplete}
 		class={attrClassList(MenuClasses.radioItemInput, inputClassName)}
 		{...inputOther}

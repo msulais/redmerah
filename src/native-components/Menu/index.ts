@@ -51,6 +51,7 @@ type RadioMenuItemProps = astroHTML.JSX.LabelHTMLAttributes & {
 	RadioMenuItemChecked    ?: boolean
 	RadioMenuItemDisabled   ?: boolean
 	RadioMenuItemName       ?: string
+	RadioMenuItemValue      ?: string
 	RadioMenuItemLeadingAttr?: astroHTML.JSX.HTMLAttributes
 	RadioMenuItemInputAttr  ?: astroHTML.JSX.InputHTMLAttributes
 	RadioMenuItemIconAttr   ?: IconProps
@@ -83,6 +84,7 @@ type RadioMenuItemUpdateOptions = {
 	RadioMenuItemChecked ?: boolean
 	RadioMenuItemDisabled?: boolean
 	RadioMenuItemName    ?: string
+	RadioMenuItemValue   ?: string
 	RadioMenuItemLeading ?: (string | Node[]) | boolean
 	RadioMenuItemChildren?: (string | Node[]) | boolean
 	RadioMenuItemRefs    ?: {
@@ -682,6 +684,11 @@ function updateRadioMenuItemRef(radioMenuItemRef: HTMLLabelElement, options?: Ra
 	const nameOption = options?.RadioMenuItemName
 	if (nameOption) {
 		inputRef.name = nameOption
+	}
+
+	const valueOption = options?.RadioMenuItemValue
+	if (valueOption) {
+		inputRef.value = valueOption
 	}
 
 	const checkedOption = options?.RadioMenuItemChecked
