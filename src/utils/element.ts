@@ -18,9 +18,11 @@ export function elementAnimateUpdateText(element: HTMLElement, text: string): vo
 	const newText = text
 	if (oldText === newText) return
 
+	const keepIndexs: [start: number, end: number][] = []
 	const added: [type: 'add' | 'keep', txt: string][] = []
 	let keepTxt = ''
 	let addTxt = ''
+	let startIndex: number | null = null
 	let lastIndex = 0
 	for (let i = 0; i < newText.length; i++) {
 		const char = newText[i]
@@ -28,7 +30,9 @@ export function elementAnimateUpdateText(element: HTMLElement, text: string): vo
 		lvl2: for (let j = lastIndex; j < oldText.length; j++) {
 			match = oldText[j] === char
 			if (match) {
-				lastIndex = j
+				lastIndex = j + 1
+				if (startIndex === null) startIndex = j
+
 				break lvl2
 			}
 		}
@@ -39,36 +43,80 @@ export function elementAnimateUpdateText(element: HTMLElement, text: string): vo
 			keepTxt += char
 		}
 		else {
-			if (keepTxt.length > 0) added.push(['keep', keepTxt])
+			if (keepTxt.length > 0) {
+				added.push(['keep', keepTxt])
+				keepIndexs.push([startIndex!, startIndex! + keepTxt.length])
+			}
 			keepTxt = ''
 			addTxt += char
+			startIndex = null
 		}
 	}
 
+
 	if (addTxt.length > 0) added.push(['add', addTxt])
-	if (keepTxt.length > 0) added.push(['keep', keepTxt])
+	if (keepTxt.length > 0) {
+		added.push(['keep', keepTxt])
+		keepIndexs.push([startIndex!, startIndex! + keepTxt.length])
+	}
 
 	const spans: HTMLSpanElement[] = []
+	const preChildren: (Node | string)[] = []
+	for (const i in keepIndexs) {
+		const start = keepIndexs[i][0]
+		const end = keepIndexs[i][1]
+		const before = oldText.substring(Number(i) === 0? 0 : keepIndexs[Number(i)-1][1], start)
+		const span = document.createElement('span')
+		span.textContent = oldText.substring(start, end).replaceAll(' ', '\xa0')
+		preChildren.push(before, span)
+		spans.push(span)
+
+		if (Number(i) === keepIndexs.length-1) {
+			const next = oldText.substring(end)
+			preChildren.push(next)
+		}
+	}
+
+	element.replaceChildren(...preChildren)
+
+	// after replace children
+	const keepRects: DOMRect[] = spans.map(v => v.getBoundingClientRect())
+	spans.length = 0
+
+	const additional: HTMLSpanElement[] = []
  	const nodes = added.map(v => {
 		const type = v[0]
 		const text = v[1]
+		const span = document.createElement('span')
+		span.textContent = text.replaceAll(' ', '\xa0')
 		if (type === 'add') {
-			const span = document.createElement('span')
-			span.textContent = text
-			span.style.setProperty('display', 'inline-block')
+			additional.push(span)
+		} else {
 			spans.push(span)
-			return span
 		}
 
-		return text
+		return span
 	})
 
 	element.replaceChildren(...nodes)
-	for (const span of spans) {
+
+	// after replace children
+	const keepRects2: DOMRect[] = spans.map(v => v.getBoundingClientRect())
+	for (const i in spans) {
+		const span = spans[i]
+		const rect1 = keepRects[i]
+		const rect2 = keepRects2[i]
+		if (!span || !rect1 || !rect2) continue
+
 		span.animate({
-			// scale: [0, 1],
-			transform: ['translateY(0.5em)', 'translateY(0)'],
-			opacity: [0, 1]
+			translate: [`${rect1.x - rect2.x}px ${rect1.y - rect2.y}px`, '0 0']
+		}, {duration: 250, easing: AnimationEffectTiming.spring})
+	}
+
+	for (const span of additional) {
+		span.animate({
+			opacity: [0, 1],
+			transform: ['translateY(0.5em)', 'translateY(0)']
 		}, {duration: 250, easing: AnimationEffectTiming.spring})
 	}
 }
