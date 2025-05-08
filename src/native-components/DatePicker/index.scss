@@ -1,0 +1,88 @@
+.c-datepicker {
+	width: 280px;
+}
+
+.c-datepicker-content {
+	display: contents;
+}
+
+.c-datepicker-date {
+	grid-template-columns: repeat(7, 1fr);
+	gap: 4px;
+	padding: 0 12px 8px 12px;
+	display: grid;
+
+	.c-datepicker:not([data-c-datepicker-viewtype=day]) & {
+		display: none;
+	}
+}
+
+.c-datepicker-date-empty {}
+
+.c-datepicker-date-button.c-button {
+	padding: 0;
+}
+
+.c-datepicker-day {
+	display: block;
+	text-align: center;
+	font-size: var(--g-font-size-xs);
+	color: rgb(var(--g-color-accent));
+	user-select: none;
+}
+
+.c-datepicker-days {
+	grid-template-columns: repeat(7, 1fr);
+	padding: 0 12px 8px 12px;
+	display: grid;
+
+	.c-datepicker:not([data-c-datepicker-viewtype=day]) & {
+		display: none;
+	}
+}
+
+.c-datepicker-divider {
+	margin-bottom: 12px;
+}
+
+.c-datepicker-header {
+	display: flex;
+	gap: 4px;
+	padding: 12px;
+}
+
+.c-datepicker-month {
+	grid-template-columns: repeat(3, 1fr);
+	padding: 0 12px 12px 12px;
+	display: grid;
+
+	.c-datepicker:not([data-c-datepicker-viewtype=month]) & {
+		display: none;
+	}
+}
+
+.c-datepicker-month-button {}
+
+.c-datepicker-next {}
+
+.c-datepicker-previous {}
+
+.c-datepicker-title.c-button {
+	flex: 1;
+	gap: 0;
+}
+
+.c-datepicker-year {
+	grid-template-columns: repeat(4, 1fr);
+	gap: 4px;
+	padding: 0 12px 12px 12px;
+	display: grid;
+
+	.c-datepicker:not([data-c-datepicker-viewtype=year]) & {
+		display: none;
+	}
+}
+
+.c-datepicker-year-button {
+	gap: 0;
+}
