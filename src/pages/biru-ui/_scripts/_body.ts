@@ -15,6 +15,7 @@ import { TooltipPosition, updateTooltipRef } from "@/native-components/Tooltip"
 import { MenuPosition, updateMenuRef } from "@/native-components/Menu"
 import { EmojiPickerAttributes, EmojiPickerEvents } from "@/native-components/EmojiPicker"
 import { updateDialogRef } from "@/native-components/Dialog"
+import { DatePickerAttributes, DatePickerEvents, updateDatePickerRef } from "@/native-components/DatePicker"
 
 const animationOptions = {duration: 250, easing: AnimationEffectTiming.spring}
 const $ = (id: string) => document.getElementById(id)
@@ -355,6 +356,7 @@ function popoverPanel(): void {
 		}
 	})
 }
+
 function modalPanel(): void {
 	const optionsRef = $(ID + ElementIds.panelModalOptions) as HTMLDivElement
 	const openButtonRef = $(ID + ElementIds.panelModalPreviewButtonOpen) as HTMLButtonElement
@@ -650,7 +652,49 @@ function panelDialog(): void {
 	})
 }
 
+function datePickerPanel(): void {
+	const previewDatePickerRef = $(ID + ElementIds.panelDatePickerPreviewDatePicker) as HTMLDivElement
+	const previewButtonRef = $(ID + ElementIds.panelDatePickerPreviewButton) as HTMLButtonElement
+	const startOptionRef = $(ID + ElementIds.panelDatePickerOptionsStartPicker) as HTMLDivElement
+	const startButtonOptionRef = $(ID + ElementIds.panelDatePickerOptionsStartButton) as HTMLDivElement
+	const endOptionRef = $(ID + ElementIds.panelDatePickerOptionsEndPicker) as HTMLDivElement
+	const endButtonOptionRef = $(ID + ElementIds.panelDatePickerOptionsEndButton) as HTMLDivElement
+
+	previewDatePickerRef.addEventListener(DatePickerEvents.change, () => {
+		previewButtonRef.textContent = new Date(
+			previewDatePickerRef.getAttribute(DatePickerAttributes.value)!
+		).toLocaleDateString('en', {day: 'numeric', month: 'long', year: 'numeric'})
+	})
+
+	startOptionRef.addEventListener(DatePickerEvents.change, () => {
+		const date = new Date(
+			startOptionRef.getAttribute(DatePickerAttributes.value)!
+		)
+
+		updateDatePickerRef(previewDatePickerRef, {
+			DatePickerStartDate: date
+		})
+
+		const s = startButtonOptionRef.querySelector<HTMLSpanElement>('span')
+		s!.textContent = date.toLocaleDateString('en', {day: 'numeric', month: 'long', year: 'numeric'})
+	})
+
+	endOptionRef.addEventListener(DatePickerEvents.change, () => {
+		const date = new Date(
+			endOptionRef.getAttribute(DatePickerAttributes.value)!
+		)
+
+		updateDatePickerRef(previewDatePickerRef, {
+			DatePickerEndDate: date
+		})
+
+		const s = endButtonOptionRef.querySelector<HTMLSpanElement>('span')
+		s!.textContent = date.toLocaleDateString('en', {day: 'numeric', month: 'long', year: 'numeric'})
+	})
+}
+
 function _(): void {
+	datePickerPanel()
 	panelDialog()
 	panelEmojiPicker()
 	menuPanel()

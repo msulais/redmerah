@@ -68,7 +68,7 @@ const items: {
 	{
 		name: 'Menu',
 		controls: ID + ElementIds.panelMenu,
-		selected: true
+		selected: false
 	},
 	{
 		name: 'EmojiPicker',
@@ -84,6 +84,11 @@ const items: {
 		name: 'Dialog',
 		controls: ID + ElementIds.panelDialog,
 		selected: false
+	},
+	{
+		name: 'DatePicker',
+		controls: ID + ElementIds.panelDatePicker,
+		selected: true
 	},
 ].sort((a, b) => a.name.localeCompare(b.name))
 ---
