@@ -115,8 +115,7 @@ export function elementAnimateUpdateText(element: HTMLElement, text: string): vo
 
 	for (const span of additional) {
 		span.animate({
-			opacity: [0, 1],
-			// transform: ['translateY(0.5em)', 'translateY(0)']
+			scale: [0.75, 1],
 		}, {duration: 250, easing: AnimationEffectTiming.spring})
 	}
 }
