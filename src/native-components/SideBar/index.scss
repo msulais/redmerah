@@ -7,14 +7,22 @@
 	padding: 4px;
 	max-width: 280px;
 	max-height: 100%;
+	overflow-x: hidden;
+
+	&[data-c-sidebar-minimized] {
+		width: 48px;
+		max-width: 48px;
+	}
 
 	:root[data-animation=on] & {
-		transition-duration: .2s;
+		transition-property: width, max-width;
+		transition-duration: .25s;
 	}
 
 	@media (prefers-reduced-motion: no-preference) {
 		:root[data-animation=auto] & {
-			transition-duration: .2s;
+			transition-property: width, max-width;
+			transition-duration: .25s;
 		}
 	}
 }
@@ -29,6 +37,7 @@
 	width: 100%;
 	max-width: inherit;
 	max-height: 100%;
+	overflow-x: hidden;
 }
 
 .c-sidebar-button.c-button {
@@ -73,7 +82,11 @@
 .c-sidebar-button-content {
 	flex: 1;
 	display: inherit;
-	gap: inherit
+	gap: inherit;
+
+	.c-sidebar[data-c-sidebar-minimized] & {
+		display: none;
+	}
 }
 
 .c-sidebar-footer,

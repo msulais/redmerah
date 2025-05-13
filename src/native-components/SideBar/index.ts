@@ -20,10 +20,11 @@ type SideBarButtonProps = ButtonProps & {
 }
 
 type SideBarUpdateOptions = {
-	SideBarChildren?: (Node | string)[] | boolean
-	SideBarHeader  ?: (Node | string)[] | boolean
-	SideBarFooter  ?: (Node | string)[] | boolean
-	SideBarRefs    ?: {
+	SideBarMinimized?: boolean
+	SideBarChildren ?: (Node | string)[] | boolean
+	SideBarHeader   ?: (Node | string)[] | boolean
+	SideBarFooter   ?: (Node | string)[] | boolean
+	SideBarRefs     ?: {
 		sideBar?(ref: HTMLElement   ): unknown
 		content?(ref: HTMLDivElement): unknown
 		header ?(ref: HTMLDivElement): unknown
@@ -73,6 +74,11 @@ function updateSideBarRef<T extends HTMLElement>(
 ): T {
 	const refs = options?.SideBarRefs
 	sideBarRef.classList.add(SideBarClasses.sideBar)
+
+	const minimizedOption = options?.SideBarMinimized
+	if (minimizedOption !== undefined) {
+		sideBarRef.toggleAttribute(SideBarAttributes.minimized, minimizedOption)
+	}
 
 	// header
 	const headerOption = options?.SideBarHeader
