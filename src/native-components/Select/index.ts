@@ -131,6 +131,33 @@ function repairOptionRefs(selectRef: HTMLDivElement, ...optionRefs: HTMLButtonEl
 	checkSelectedOptionRefs(selectRef, ...optionRefs)
 }
 
+function updateSelectRefValue(selectRef: HTMLDivElement, value: string): void {
+	const options = [...selectRef.querySelectorAll<HTMLButtonElement>(`.${SelectClasses.option}`)]
+	const selectedOptionRefs = options.filter(o => {
+		const selected = o.getAttribute('aria-selected') === 'true'
+		const disabled = o.disabled
+		return selected && !disabled
+	})
+
+	const targetOptionRef = selectRef.querySelector<HTMLButtonElement>(`.${SelectClasses.option}[value="${CSS.escape(value)}"]`)
+	if (!targetOptionRef) return
+
+	targetOptionRef.setAttribute('aria-selected', 'true')
+	let id = targetOptionRef.id
+	if (!id) {
+		id = createId()
+		targetOptionRef.id = id
+	}
+
+	selectRef.setAttribute('aria-activedescendant', id)
+	selectRef.setAttribute(SelectAttributes.value, targetOptionRef.value)
+	for (const ref of selectedOptionRefs) {
+		ref.setAttribute('aria-selected', 'false')
+	}
+
+	repairOptionRefs(selectRef)
+}
+
 function openSelectRef(selectRef: HTMLDivElement): void {
 	if (OPENED_SELECT) {
 		closeSelectRef(OPENED_SELECT)
@@ -528,7 +555,7 @@ function updateSelectRef(selectRef: HTMLDivElement, options?: SelectUpdateOption
 	return selectRef
 }
 
-function createSelectOptionRef(options: Omit<SelectOptionUpdateOptions, 'value'> & {value: string}): HTMLButtonElement {
+function createSelectOptionRef(options: Omit<SelectOptionUpdateOptions, 'value'> & {SelectOptionValue: string}): HTMLButtonElement {
 	const optionRef = createButtonRef(options)
 	return updateSelectOptionRef(optionRef, options)
 }
@@ -608,5 +635,6 @@ export {
 	registerSelectRef,
 	unregisterSelectRef,
 	openSelectRef,
-	closeSelectRef
+	closeSelectRef,
+	updateSelectRefValue
 }
