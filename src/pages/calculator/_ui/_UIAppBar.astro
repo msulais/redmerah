@@ -1,0 +1,233 @@
+---
+import AppBar from '@/native-components/AppBar/index.astro'
+import IconButton from '@/native-components/Button/IconButton.astro'
+import Tooltip from '@/native-components/Tooltip/index.astro'
+import { APP_CALCULATOR as APP } from '@/constants/apps'
+import { DecimalNumberFormat, GroupingNumberFormat, ElementIds, RadioGroupNames } from '../_scripts/_enums'
+import Menu from '@/native-components/Menu/index.astro'
+import SubMenu from '@/native-components/Menu/SubMenu.astro'
+import SubMenuItem from '@/native-components/Menu/SubMenuItem.astro'
+import RadioMenuItem from '@/native-components/Menu/RadioMenuItem.astro'
+import MenuHeader from '@/native-components/Menu/MenuHeader.astro'
+import MenuItem from '@/native-components/Menu/MenuItem.astro'
+import MenuIndent from '@/native-components/Menu/MenuIndent.astro'
+import Icon from '@/native-components/Icon/index.astro'
+import LinkMenuItem from '@/native-components/Menu/LinkMenuItem.astro'
+import Divider from '@/native-components/Divider/index.astro'
+import { PlatformAnimationMode, PlatformThemeMode } from '@/enums/platforms'
+import logoRedmerah from '@/assets/images/logos/redmerah-logo.svg'
+import { RoutesLinks, ExternalLinks } from '@/enums/links'
+import { IconCodes } from '@/enums/icons'
+---
+
+<AppBar id={ElementIds.appbar}>
+	<Fragment slot="leading">
+		<IconButton
+			id={ElementIds.appbarSideBarButton}
+			IconButtonCode={IconCodes.lineHorizontal3}
+		/>
+		<img
+			src={APP.logoUrl}
+			alt={APP.name + ' logo'}
+			width={32}
+			style="margin: 0 8px 0 0"
+		/>
+	</Fragment>
+	<Fragment slot="headline">{APP.name}</Fragment>
+	<Tooltip slot="trailing">
+		<IconButton
+			id={ElementIds.appbarInfoButton}
+			data-tooltip="Info"
+			IconButtonCode={IconCodes.info}
+			aria-label="Info"
+			aria-haspopup="menu"
+			aria-controls={ElementIds.appbarInfoMenu}
+			popovertarget={ElementIds.appbarInfoMenu}
+			aria-expanded="false"
+		/>
+		<Menu id={ElementIds.appbarInfoMenu} PopoverAnchorBy={ElementIds.appbarInfoButton}>
+			<LinkMenuItem href="/">
+				<img src={logoRedmerah.src} width="16"/>
+				Redmerah
+				<MenuIndent />
+			</LinkMenuItem>
+			<LinkMenuItem href={RoutesLinks.apps}>
+				<Icon IconCode={IconCodes.apps}/>
+				More apps
+				<MenuIndent />
+			</LinkMenuItem>
+			<LinkMenuItem href={RoutesLinks.about}>
+				<Icon IconCode={IconCodes.info}/>
+				About us
+				<MenuIndent />
+			</LinkMenuItem>
+			<Divider />
+			<LinkMenuItem href={RoutesLinks.privacy}>
+				<Icon IconCode={IconCodes.shieldCheckmark}/>
+				Privacy policy
+				<MenuIndent />
+			</LinkMenuItem>
+			<LinkMenuItem href={RoutesLinks.terms}>
+				<Icon IconCode={IconCodes.receipt}/>
+				Terms & conditions
+				<MenuIndent />
+			</LinkMenuItem>
+			<Divider />
+			<MenuItem id={ElementIds.appbarInfoMenuShareButton}>
+				<Icon IconCode={IconCodes.shareAndroid}/>
+				Share
+				<MenuIndent />
+			</MenuItem>
+			<LinkMenuItem href={'mailto:' + ExternalLinks.contactEmail + '?subject=' + encodeURI(APP.name)}>
+				<Icon IconCode={IconCodes.chat}/>
+				Send feedback
+				<MenuIndent />
+			</LinkMenuItem>
+			<LinkMenuItem href={ExternalLinks.donate} LinkButtonNewTab>
+				<Icon IconCode={IconCodes.gift}/>
+				Donate
+				<MenuIndent />
+			</LinkMenuItem>
+			<MenuHeader>&copy; {new Date().getFullYear()} Redmerah</MenuHeader>
+		</Menu>
+
+		<IconButton
+			id={ElementIds.appbarSettingsButton}
+			data-tooltip="Settings"
+			IconButtonCode={IconCodes.settings}
+			aria-label="Settings"
+			aria-haspopup="menu"
+			aria-controls={ElementIds.appbarSettingsMenu}
+			popovertarget={ElementIds.appbarSettingsMenu}
+			aria-expanded="false"
+		/>
+		<Menu id={ElementIds.appbarSettingsMenu} PopoverAnchorBy={ElementIds.appbarSettingsButton}>
+			<SubMenuItem
+				aria-controls={ElementIds.appbarSettingsAnimationMenu}>
+				<Icon IconCode={IconCodes.playCircleHint}/>
+				Animation
+				<div style="flex:1"/>
+				<Icon IconCode={IconCodes.chevronRight}/>
+			</SubMenuItem>
+			<SubMenu slot="submenus" style="width:150px" id={ElementIds.appbarSettingsAnimationMenu}>
+				<RadioMenuItem
+					RadioMenuItemInputAttr={{
+						name: RadioGroupNames.settingsAnimation,
+						checked: true,
+						value: PlatformAnimationMode.auto
+					}}>
+					<Icon IconCode={IconCodes.videoClipOptimize}/>
+					Automatic
+				</RadioMenuItem>
+				<RadioMenuItem
+					RadioMenuItemInputAttr={{
+						name: RadioGroupNames.settingsAnimation,
+						value: PlatformAnimationMode.on
+					}}>
+					<Icon IconCode={IconCodes.videoClip}/>
+					On
+				</RadioMenuItem>
+				<RadioMenuItem
+					RadioMenuItemInputAttr={{
+						name: RadioGroupNames.settingsAnimation,
+						value: PlatformAnimationMode.off
+					}}>
+					<Icon IconCode={IconCodes.videoClipOff}/>
+					Off
+				</RadioMenuItem>
+			</SubMenu>
+
+			<SubMenuItem
+				aria-controls={ElementIds.appbarSettingsThemeMenu}>
+				<Icon IconCode={IconCodes.weatherSunny}/>
+				Theme
+				<div style="flex:1"/>
+				<Icon IconCode={IconCodes.chevronRight}/>
+			</SubMenuItem>
+			<SubMenu slot="submenus" style="width:150px" id={ElementIds.appbarSettingsThemeMenu}>
+				<RadioMenuItem
+					RadioMenuItemInputAttr={{
+						name: RadioGroupNames.settingsTheme,
+						checked: true,
+						value: PlatformThemeMode.auto
+					}}>
+					<Icon IconCode={IconCodes.laptopSettings}/>
+					Automatic
+				</RadioMenuItem>
+				<RadioMenuItem
+					RadioMenuItemInputAttr={{
+						name: RadioGroupNames.settingsTheme,
+						value: PlatformThemeMode.light
+					}}>
+					<Icon IconCode={IconCodes.weatherSunny}/>
+					Light
+				</RadioMenuItem>
+				<RadioMenuItem
+					RadioMenuItemInputAttr={{
+						name: RadioGroupNames.settingsTheme,
+						value: PlatformThemeMode.dark
+					}}>
+					<Icon IconCode={IconCodes.weatherMoon}/>
+					Dark
+				</RadioMenuItem>
+			</SubMenu>
+
+			<SubMenuItem
+				aria-controls={ElementIds.appbarSettingsGroupMenu}>
+				<Icon IconCode={IconCodes.numberRow}/>
+				Grouping
+				<div style="flex:1"/>
+				<Icon IconCode={IconCodes.chevronRight}/>
+			</SubMenuItem>
+			<SubMenu style="width:150px" slot="submenus" id={ElementIds.appbarSettingsGroupMenu}>
+				<RadioMenuItem
+					RadioMenuItemName={RadioGroupNames.settingsGrouping}
+					RadioMenuItemValue={GroupingNumberFormat.comma}
+					RadioMenuItemChecked>
+					Comma
+				</RadioMenuItem>
+				<RadioMenuItem
+					RadioMenuItemName={RadioGroupNames.settingsGrouping}
+					RadioMenuItemValue={GroupingNumberFormat.point}>
+					Point
+				</RadioMenuItem>
+				<RadioMenuItem
+					RadioMenuItemName={RadioGroupNames.settingsGrouping}
+					RadioMenuItemValue={GroupingNumberFormat.space}>
+					Space
+				</RadioMenuItem>
+				<RadioMenuItem
+					RadioMenuItemName={RadioGroupNames.settingsGrouping}
+					RadioMenuItemValue={GroupingNumberFormat.none}>
+					None
+				</RadioMenuItem>
+				<RadioMenuItem
+					RadioMenuItemName={RadioGroupNames.settingsGrouping}
+					RadioMenuItemValue={GroupingNumberFormat.underscore}>
+					Underscore
+				</RadioMenuItem>
+			</SubMenu>
+
+			<SubMenuItem
+				aria-controls={ElementIds.appbarSettingsDecimalMenu}>
+				<Icon IconCode={IconCodes.decimalArrowLeft}/>
+				Decimal
+				<div style="flex:1"/>
+				<Icon IconCode={IconCodes.chevronRight}/>
+			</SubMenuItem>
+			<SubMenu slot="submenus" style="width:150px" id={ElementIds.appbarSettingsDecimalMenu}>
+				<RadioMenuItem
+					RadioMenuItemName={RadioGroupNames.settingsDecimal}
+					RadioMenuItemValue={DecimalNumberFormat.comma}>
+					Comma
+				</RadioMenuItem>
+				<RadioMenuItem
+					RadioMenuItemName={RadioGroupNames.settingsDecimal}
+					RadioMenuItemValue={DecimalNumberFormat.point}
+					RadioMenuItemChecked>
+					Point
+				</RadioMenuItem>
+			</SubMenu>
+		</Menu>
+	</Tooltip>
+</AppBar>

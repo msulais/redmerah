@@ -1,0 +1,73 @@
+---
+import Button from '@/native-components/Button/index.astro'
+import IconButton from '@/native-components/Button/IconButton.astro'
+import Tooltip from '@/native-components/Tooltip/index.astro'
+import Icon from '@/native-components/Icon/index.astro'
+import Select from '@/native-components/Select/index.astro'
+import Option from '@/native-components/Select/SelectOption.astro'
+import { CSSClasses } from "../../_styles/_css"
+import { AppColors } from '@/enums/colors'
+import { ButtonVariant } from '@/native-components/Button'
+import { Commands, ConverterType, ElementIds, LengthUnits } from '../../_scripts/_enums'
+import { IconCodes } from '@/enums/icons'
+import { SelectVariant } from '@/native-components/Select'
+import { CONVERTER_TYPES } from '../../_scripts/_constant'
+---
+<div class={CSSClasses.bodyPage} role="tabpanel" id={ElementIds.bodyConverter}>
+	<div class={CSSClasses.bodyPageInput}>
+		<input id={ElementIds.bodyConverterInput} readonly placeholder="0" class={CSSClasses.bodyInputField}/>
+		<input id={ElementIds.bodyConverterOutput} readonly value="0" class={CSSClasses.bodyOutputField}/>
+	</div>
+	<div class={CSSClasses.bodyPageOptions} id={ElementIds.bodyConverterOptions}>
+		<div class={CSSClasses.bodyPageOptionsGroup}>
+			<Tooltip>
+				<Button data-command={Commands.memoryClear} data-tooltip="Memory clear (Ctrl+Shift+C)">MC</Button>
+				<Button data-command={Commands.memoryAdd} data-tooltip="Memory add (Ctrl+Shift+&quot;+&quot;)">M+</Button>
+				<Button data-command={Commands.memorySubtract} data-tooltip="Memory subtract (Ctrl+Shift+&quot;-&quot;)">M-</Button>
+				<Button class={CSSClasses.bodyPageMemoryPreview} data-command={Commands.memoryRecall} data-tooltip="Memory recall (Ctrl+Shift+R)">MR: 0</Button>
+			</Tooltip>
+		</div>
+		<div class={CSSClasses.bodyPageOptionsGroup}>
+			<label style="margin:0 8px 0 12px">Type:</label>
+			<Select id={ElementIds.bodyConverterType} aria-label="Converter type" style="width:186px" SelectVariant={SelectVariant.outlined}>
+				{CONVERTER_TYPES.map(c =>
+					<Option value={c.type} SelectOptionSelected={c.type === ConverterType.length}><Icon style={`color:rgb(${AppColors.accent})`} IconCode={c.icon}/>{c.text}</Option>
+				)}
+			</Select>
+		</div>
+		<div class={CSSClasses.bodyPageOptionsGroup} style="display:grid;grid-template-columns:1fr 40px 1fr;gap:4px">
+			<Select id={ElementIds.bodyConverterInputUnit} aria-label="Unit from">
+				{LengthUnits.all.map(c =>
+					<Option value={c.name} SelectOptionSelected={c.equals(LengthUnits.meter)}>{c.name} ({c.symbol})</Option>
+				)}
+			</Select>
+			<IconButton data-command={Commands.keyUnitSwap} id={ElementIds.bodyConverterSwap} aria-label="Swap unit" IconButtonCode={IconCodes.arrowRight}/>
+			<Select id={ElementIds.bodyConverterOutputUnit} aria-label="Unit To">
+				{LengthUnits.all.map(c =>
+					<Option value={c.name} SelectOptionSelected={c.equals(LengthUnits.kilometer)}>{c.name} ({c.symbol})</Option>
+				)}
+			</Select>
+		</div>
+	</div>
+	<div class={CSSClasses.bodyPageButtons} style="grid-template-columns: repeat(3, 1fr);">
+		<Button data-command={Commands.keyPlusMinus} ButtonVariant={ButtonVariant.tonal}>±</Button>
+		<Button data-command={Commands.keyClear} ButtonVariant={ButtonVariant.tonal} style={`color:rgb(${AppColors.accent})`}>C</Button>
+		<Button data-command={Commands.keyBackspace} ButtonVariant={ButtonVariant.tonal} style={`color:rgb(${AppColors.accent})`}><Icon IconCode={IconCodes.backspace}/></Button>
+
+		<Button data-command={Commands.keyChar} data-char="7" data-type="number" ButtonVariant={ButtonVariant.tonal}>7</Button>
+		<Button data-command={Commands.keyChar} data-char="8" data-type="number" ButtonVariant={ButtonVariant.tonal}>8</Button>
+		<Button data-command={Commands.keyChar} data-char="9" data-type="number" ButtonVariant={ButtonVariant.tonal}>9</Button>
+
+		<Button data-command={Commands.keyChar} data-char="4" data-type="number" ButtonVariant={ButtonVariant.tonal}>4</Button>
+		<Button data-command={Commands.keyChar} data-char="5" data-type="number" ButtonVariant={ButtonVariant.tonal}>5</Button>
+		<Button data-command={Commands.keyChar} data-char="6" data-type="number" ButtonVariant={ButtonVariant.tonal}>6</Button>
+
+		<Button data-command={Commands.keyChar} data-char="1" data-type="number" ButtonVariant={ButtonVariant.tonal}>1</Button>
+		<Button data-command={Commands.keyChar} data-char="2" data-type="number" ButtonVariant={ButtonVariant.tonal}>2</Button>
+		<Button data-command={Commands.keyChar} data-char="3" data-type="number" ButtonVariant={ButtonVariant.tonal}>3</Button>
+
+		<Button data-command={Commands.keyDecimal} ButtonVariant={ButtonVariant.tonal}>.</Button>
+		<Button data-command={Commands.keyChar} data-char="0" data-type="number" ButtonVariant={ButtonVariant.tonal}>0</Button>
+		<Button data-command={Commands.keyEqual} ButtonVariant={ButtonVariant.filled} style="font-weight:bold">=</Button>
+	</div>
+</div>

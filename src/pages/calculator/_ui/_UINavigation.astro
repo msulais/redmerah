@@ -1,0 +1,105 @@
+---
+import SideBar from '@/native-components/SideBar/index.astro'
+import Tooltip from '@/native-components/Tooltip/index.astro'
+import Icon from '@/native-components/Icon/index.astro'
+import Drawer from '@/native-components/Drawer/index.astro'
+import DrawerButton from '@/native-components/Drawer/DrawerButton.astro'
+import Button from '@/native-components/Button/index.astro'
+import SideBarButton from '@/native-components/SideBar/SideBarButton.astro'
+import { ButtonVariant } from '@/native-components/Button'
+import { IconCodes } from '@/enums/icons'
+import { Commands, ElementIds, Pages } from '../_scripts/_enums'
+import { CSSClasses } from '../_styles/_css'
+
+const items: {
+	icon: number
+	name: string
+	page: Pages
+	selected: boolean
+	controls: string
+}[] = [
+	{
+		icon: IconCodes.calculator,
+		name: 'Basic',
+		page: Pages.basic,
+		controls: ElementIds.bodyBasic,
+		selected: false
+	},
+	{
+		icon: IconCodes.beaker,
+		name: 'Scientific',
+		page: Pages.scientific,
+		controls: ElementIds.bodyScientific,
+		selected: false,
+	},
+	{
+		icon: IconCodes.arrowSort,
+		name: 'Converter',
+		page: Pages.converter,
+		controls: ElementIds.bodyConverter,
+		selected: false,
+	},
+	{
+		icon: IconCodes.code,
+		name: 'Programmer',
+		page: Pages.programmer,
+		controls: ElementIds.bodyProgrammer,
+		selected: true,
+	},
+	{
+		icon: IconCodes.calendar,
+		name: 'Date',
+		page: Pages.date,
+		controls: ElementIds.bodyDate,
+		selected: false,
+	},
+]
+---
+
+<SideBar
+	role="tablist"
+	class={CSSClasses.navigationSideBar}
+	id={ElementIds.navigationSideBar}
+	aria-label="Navigation">
+	<Tooltip>
+		{items.map(v => <SideBarButton
+			role="tab"
+			style="padding-left: 10px"
+			data-page={v.page}
+			data-command={Commands.changePage}
+			aria-selected={v.selected}
+			aria-controls={v.controls}
+			SideBarButtonSelected={v.selected}
+			ButtonVariant={v.selected ? ButtonVariant.tonal : undefined}>
+			<Icon
+				slot="leading"
+				IconCode={v.icon}
+				data-tooltip={v.name}
+			/>
+			{v.name}
+		</SideBarButton>)}
+	</Tooltip>
+</SideBar>
+<Drawer
+	id={ElementIds.navigationDrawer}
+	aria-label="Navigation">
+	<Button
+		slot="header"
+		style="width:min-content"
+		popovertarget={ElementIds.navigationDrawer}
+		popovertargetaction="hide">
+		<Icon IconCode={IconCodes.lineHorizontal3}/>
+	</Button>
+	{items.map(v => <DrawerButton
+		aria-selected={v.selected}
+		aria-controls={v.controls}
+		data-command={Commands.changePage}
+		data-page={v.page}
+		DrawerButtonSelected={v.selected}
+		ButtonVariant={v.selected ? ButtonVariant.tonal : undefined}>
+		<Icon
+			IconCode={v.icon}
+		/>
+		{v.name}
+	</DrawerButton>)}
+</Drawer>
