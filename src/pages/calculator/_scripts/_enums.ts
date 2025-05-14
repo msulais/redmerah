@@ -38,6 +38,7 @@ export class ElementIds {
 	static readonly bodyDateOutput = _generateId()
 	static readonly bodyProgrammer = _generateId()
 	static readonly bodyProgrammerInput = _generateId()
+	static readonly bodyProgrammerOutput = _generateId()
 	static readonly bodyProgrammerOutputDec = _generateId()
 	static readonly bodyProgrammerOutputHex = _generateId()
 	static readonly bodyProgrammerOutputOct = _generateId()
@@ -75,6 +76,9 @@ export enum Commands {
 	memorySubtract = 'memory-subtract',
 	memoryRecall = 'memory-recall',
 	memoryClear = 'memory-clear',
+
+	/** @param options `CommandChangeProgrammerTypeDetail` */
+	changeProgrammerType = 'change-programmer-type',
 
 	/** @param options `CommandChangeConverterTypeDetail` */
 	changeConverterType = 'change-converter-type',

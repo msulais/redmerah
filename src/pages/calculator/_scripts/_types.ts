@@ -12,6 +12,10 @@ export type CommandDetail = {
 	type: Commands
 }
 
+export type CommandChangeProgrammerTypeDetail = CommandDetail & {
+	programmer: NumberType
+}
+
 export type CommandChangeConverterTypeDetail = CommandDetail & {
 	converter: ConverterType
 	inputUnit: ConverterUnit

@@ -2,15 +2,16 @@ import { KeyboardCode, KeyboardValue } from '@/enums/keyboard'
 import appbar from './_appbar'
 import pageScientific from './pages/_scientific'
 import pageConverter from './pages/_converter'
-import { AngleUnits, BodyEvents, Commands, ConverterType, DateOperation, DecimalNumberFormat, ElementAttributes, ElementIds, GroupingNumberFormat, Pages, RadioGroupNames, ScientificAngleType, TemperatureUnits } from './_enums'
+import pageProgrammer from './pages/_programmer'
+import { AngleUnits, BodyEvents, Commands, ConverterType, DateOperation, DecimalNumberFormat, ElementAttributes, ElementIds, GroupingNumberFormat, NumberType, Pages, RadioGroupNames, ScientificAngleType, TemperatureUnits } from './_enums'
 import navigation from './_navigation'
-import type { CommandChangeConverterTypeDetail, CommandChangeDecimalFormatDetail, CommandChangeGroupingFormatDetail, CommandChangePageDetail, CommandChangeUnitDetail, CommandDetail, CommandKeyCharDetail, CommandScientificAngleDetail } from './_types'
+import type { CommandChangeConverterTypeDetail, CommandChangeDecimalFormatDetail, CommandChangeGroupingFormatDetail, CommandChangePageDetail, CommandChangeProgrammerTypeDetail, CommandChangeUnitDetail, CommandDetail, CommandKeyCharDetail, CommandScientificAngleDetail } from './_types'
 import { validEnumValue } from '@/utils/object'
 import { command } from './_utils'
 import { stringCount, stringReverse } from '@/utils/string'
 import { DIVISION_CHAR, FUNCTION_REGEX, MULTIPLY_CHAR, NUMBER_REGEX } from './_constant'
 import { mathCsc, mathSec, mathCot, mathCscH, mathSecH, mathCotH, mathACsc, mathASec, mathACot, mathACscH, mathASecH, mathACotH } from '@/utils/math'
-import { numberFormat, numberToRealDigits } from '@/utils/number'
+import { numberFormat, numberIsDefined, numberToBinary, numberToRealDigits } from '@/utils/number'
 import { CSSClasses } from '../_styles/_css'
 import { isAnimationAllowed } from '@/utils/animation'
 import { elementAnimateUpdateText } from '@/utils/element'
@@ -93,12 +94,14 @@ function _initCommands(): void {
 			command(type, {})
 			break
 		}
-		case Commands.changeDecimalFormat: break
-		case Commands.changeGroupingFormat: break
-		case Commands.changeInputUnit: break
-		case Commands.changeOutputUnit: break
-		case Commands.scientificAngle: break
-		case Commands.changeConverterType: break
+		case Commands.changeProgrammerType:
+		case Commands.changeDecimalFormat:
+		case Commands.changeGroupingFormat:
+		case Commands.changeInputUnit:
+		case Commands.changeOutputUnit:
+		case Commands.scientificAngle:
+		case Commands.changeConverterType:
+			break
 		case Commands.keyChar: {
 			const char = dataset.char
 			if (!char) return
@@ -135,9 +138,11 @@ function _initCommands(): void {
 			break
 		case Commands.changeDecimalFormat:
 			_changeDecimalFormat((detail as CommandChangeDecimalFormatDetail).format)
+			_updateMemoryPreview()
 			break
 		case Commands.changeGroupingFormat:
 			_changeGroupingFormat((detail as CommandChangeGroupingFormatDetail).format)
+			_updateMemoryPreview()
 			break
 		case Commands.changePage:
 			_changePage((detail as CommandChangePageDetail).page)
@@ -176,8 +181,26 @@ function _initCommands(): void {
 			const options = (detail as CommandChangeConverterTypeDetail)
 			_updateConverterType(options.converter, options.inputUnit, options.outputUnit)
 			}; break
+		case Commands.changeProgrammerType:
+			_changeProgrammerType((detail as CommandChangeProgrammerTypeDetail).programmer)
+			break
 		}
 	})
+}
+
+function _changeProgrammerType(type: NumberType): void {
+	G_SETTINGS.programmer.numberType = type
+	let value = _programmerOutputDecRef.value
+	switch (type) {
+	case NumberType.decimal: value = _programmerOutputDecRef.value; break
+	case NumberType.hexadecimal: value = _programmerOutputHexRef.value; break
+	case NumberType.octal: value = _programmerOutputOctRef.value; break
+	case NumberType.binary: value = _programmerOutputBinRef.value; break
+	}
+
+	_programmerInputRef.value = value
+	_scrollInputToEnd()
+	_calculate()
 }
 
 function _updateConverterType(type: ConverterType, inputUnit: ConverterUnit, outputUnit: ConverterUnit): void {
@@ -262,9 +285,9 @@ function _updateMemoryPreview(): void {
 	const animation = isAnimationAllowed()
 	for (const ref of document.querySelectorAll<HTMLElement>(`.${CSSClasses.bodyPageMemoryPreview}`)) {
 		if (animation) {
-			elementAnimateUpdateText(ref, 'MR: ' + _memoryValue)
+			elementAnimateUpdateText(ref, 'MR: ' + _formatOutput(_memoryValue))
 		} else {
-			ref.textContent = 'MR: ' + _memoryValue
+			ref.textContent = 'MR: ' + _formatOutput(_memoryValue)
 		}
 	}
 }
@@ -570,7 +593,27 @@ function _calculateDate(): void {
 }
 
 function _inputToDecimal(input: string): string {
-	// TODO:
+	const type = G_SETTINGS.programmer.numberType
+	if (type !== NumberType.decimal) {
+		input = input.replace(/[,\.]+/g, '')
+	}
+
+	switch (type) {
+	case NumberType.decimal: break
+	case NumberType.hexadecimal:
+		input = input.replace(/[0-9A-F]+/g, (v) => Number.parseInt(v, 16).toString())
+		break
+	case NumberType.octal:
+		if (/[89]/.test(input)) throw Error()
+
+		input = input.replace(/[0-7]+/g, (v) => Number.parseInt(v, 8).toString())
+		break
+	case NumberType.binary:
+		if (/[2-9]/.test(input)) throw Error()
+
+		input = input.replace(/[01]+/g, (v) => Number.parseInt(v, 2).toString())
+		break
+	}
 	return input
 }
 
@@ -594,7 +637,12 @@ function _setOutput(input: string = ''): void {
 		break
 	case Pages.programmer: {
 		_programmerOutput = Number.parseFloat(input)
-		// TODO:
+		const bin = numberToBinary(_programmerOutput)
+		const parsedBin = Number.parseInt(bin, 2)
+		_programmerOutputBinRef.value = numberIsDefined(_programmerOutput)? bin : ''
+		_programmerOutputDecRef.value = isValidValue(input)? _formatOutput(_programmerOutput) : ''
+		_programmerOutputHexRef.value = numberIsDefined(parsedBin)? parsedBin.toString(16).toUpperCase() : ''
+		_programmerOutputOctRef.value = numberIsDefined(parsedBin)? parsedBin.toString(8).toUpperCase() : ''
 		break
 	}
 	case Pages.converter:
@@ -931,6 +979,7 @@ function _(): void {
 	navigation()
 	pageScientific()
 	pageConverter()
+	pageProgrammer()
 }
 
 _()

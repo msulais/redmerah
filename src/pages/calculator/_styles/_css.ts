@@ -10,6 +10,11 @@ export class CSSClasses {
 	static readonly bodyPageDate = CSS.bodyPageDate
 	static readonly bodyPageScientificMenuGrid = CSS.bodyPageScientificMenuGrid
 	static readonly bodyPageScientificTrigonometry = CSS.bodyPageScientificTrigonometry
+	static readonly bodyPageProgrammerButtonValue = 'bppb-value'
+	static readonly bodyPageProgrammerButtonHex = 'bppb-hex'
+	static readonly bodyPageProgrammerButtonDec = 'bppb-dec'
+	static readonly bodyPageProgrammerButtonOct = 'bppb-oct'
+	static readonly bodyPageProgrammerButtonBin = 'bppb-bin'
 	static readonly bodyPageProgrammerOutputGroup = CSS.bodyPageProgrammerOutputGroup
 	static readonly bodyPageInput = CSS.bodyPageInput
 	static readonly bodyPageOptions = CSS.bodyPageOptions

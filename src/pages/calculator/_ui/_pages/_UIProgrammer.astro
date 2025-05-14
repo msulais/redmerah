@@ -7,19 +7,20 @@ import { AppColors } from '@/enums/colors'
 import { ButtonVariant } from '@/native-components/Button'
 import { Commands, ElementIds } from '../../_scripts/_enums'
 import { IconCodes } from '@/enums/icons'
+const btnVal = CSSClasses.bodyPageProgrammerButtonValue
+const btnHex = CSSClasses.bodyPageProgrammerButtonHex
+const btnDec = CSSClasses.bodyPageProgrammerButtonDec
+const btnOct = CSSClasses.bodyPageProgrammerButtonOct
+const btnBin = CSSClasses.bodyPageProgrammerButtonBin
 ---
-<div class={CSSClasses.bodyPage} role="tabpanel" id={ElementIds.bodyProgrammer} hidden>
+<div class={CSSClasses.bodyPage} role="tabpanel" id={ElementIds.bodyProgrammer}>
 	<div class={CSSClasses.bodyPageInput}>
 		<input readonly placeholder="0" id={ElementIds.bodyProgrammerInput} class={CSSClasses.bodyInputField}/>
-		<div style="display:contents" role="listbox" aria-activedescendant={ElementIds.bodyProgrammerOutputDec}>
-			<div
-				id={ElementIds.bodyProgrammerOutputDec}
-				class={CSSClasses.bodyPageProgrammerOutputGroup}
-				role="option"
-				aria-selected="true">
-				<input type="text" value="0" readonly/>
-				<Button ButtonVariant={ButtonVariant.filled}>DEC</Button>
-			</div>
+		<div
+			style="display:contents"
+			role="listbox"
+			aria-activedescendant={ElementIds.bodyProgrammerOutputDec}
+			id={ElementIds.bodyProgrammerOutput}>
 			<div
 				id={ElementIds.bodyProgrammerOutputHex}
 				class={CSSClasses.bodyPageProgrammerOutputGroup}
@@ -27,6 +28,14 @@ import { IconCodes } from '@/enums/icons'
 				aria-selected="false">
 				<input type="text" value="0" readonly/>
 				<Button>HEX</Button>
+			</div>
+			<div
+				id={ElementIds.bodyProgrammerOutputDec}
+				class={CSSClasses.bodyPageProgrammerOutputGroup}
+				role="option"
+				aria-selected="true">
+				<input type="text" value="0" readonly/>
+				<Button ButtonVariant={ButtonVariant.filled}>DEC</Button>
 			</div>
 			<div
 				id={ElementIds.bodyProgrammerOutputOct}
@@ -63,39 +72,39 @@ import { IconCodes } from '@/enums/icons'
 		<Button data-command={Commands.keyClear} ButtonVariant={ButtonVariant.tonal} style={`color:rgb(${AppColors.accent})`}>C</Button>
 		<Button data-command={Commands.keyBackspace} ButtonVariant={ButtonVariant.tonal} style={`color:rgb(${AppColors.accent})`}><Icon IconCode={IconCodes.backspace}/></Button>
 
-		<Button data-command={Commands.keyChar} data-char="F" data-type="number" ButtonVariant={ButtonVariant.tonal}>F</Button>
+		<Button data-command={Commands.keyChar} data-char="F" class={[btnVal, btnHex].join(' ')} data-type="number" disabled ButtonVariant={ButtonVariant.tonal}>F</Button>
 		<Button data-command={Commands.keyChar} data-char="not(" ButtonVariant={ButtonVariant.tonal}>not</Button>
 		<Button data-command={Commands.keyChar} data-char="mod" ButtonVariant={ButtonVariant.tonal}>mod</Button>
 		<Button data-command={Commands.keyChar} data-char="lsh" ButtonVariant={ButtonVariant.tonal}>lsh</Button>
 		<Button data-command={Commands.keyChar} data-char="rsh" ButtonVariant={ButtonVariant.tonal}>rsh</Button>
 
-		<Button data-command={Commands.keyChar} data-char="E" data-type="number" ButtonVariant={ButtonVariant.tonal}>E</Button>
+		<Button data-command={Commands.keyChar} class={[btnVal, btnHex].join(' ')} data-char="E" data-type="number" disabled ButtonVariant={ButtonVariant.tonal}>E</Button>
 		<Button data-command={Commands.keyChar} data-char="or" ButtonVariant={ButtonVariant.tonal}>or</Button>
 		<Button data-command={Commands.keyChar} data-char="and" ButtonVariant={ButtonVariant.tonal}>and</Button>
 		<Button data-command={Commands.keyChar} data-char="xor" ButtonVariant={ButtonVariant.tonal}>xor</Button>
 		<Button data-command={Commands.keyChar} data-char="^" ButtonVariant={ButtonVariant.tonal}><Icon IconCode={IconCodes.chevronUp}/></Button>
 
-		<Button data-command={Commands.keyChar} data-char="D" data-type="number" ButtonVariant={ButtonVariant.tonal}>D</Button>
-		<Button data-command={Commands.keyChar} data-char="7" data-type="number" ButtonVariant={ButtonVariant.tonal}>7</Button>
-		<Button data-command={Commands.keyChar} data-char="8" data-type="number" ButtonVariant={ButtonVariant.tonal}>8</Button>
-		<Button data-command={Commands.keyChar} data-char="9" data-type="number" ButtonVariant={ButtonVariant.tonal}>9</Button>
+		<Button data-command={Commands.keyChar} class={[btnVal, btnHex].join(' ')} data-char="D" data-type="number" disabled ButtonVariant={ButtonVariant.tonal}>D</Button>
+		<Button data-command={Commands.keyChar} class={[btnVal, btnHex, btnDec, btnOct].join(' ')} data-char="7" data-type="number" ButtonVariant={ButtonVariant.tonal}>7</Button>
+		<Button data-command={Commands.keyChar} class={[btnVal, btnHex, btnDec].join(' ')} data-char="8" data-type="number" ButtonVariant={ButtonVariant.tonal}>8</Button>
+		<Button data-command={Commands.keyChar} class={[btnVal, btnHex, btnDec].join(' ')} data-char="9" data-type="number" ButtonVariant={ButtonVariant.tonal}>9</Button>
 		<Button data-command={Commands.keyChar} data-char="÷" ButtonVariant={ButtonVariant.tonal}><Icon IconCode={IconCodes.slashForward}/></Button>
 
-		<Button data-command={Commands.keyChar} data-char="C" data-type="number" ButtonVariant={ButtonVariant.tonal}>C</Button>
-		<Button data-command={Commands.keyChar} data-char="4" data-type="number" ButtonVariant={ButtonVariant.tonal}>4</Button>
-		<Button data-command={Commands.keyChar} data-char="5" data-type="number" ButtonVariant={ButtonVariant.tonal}>5</Button>
-		<Button data-command={Commands.keyChar} data-char="6" data-type="number" ButtonVariant={ButtonVariant.tonal}>6</Button>
+		<Button data-command={Commands.keyChar} class={[btnVal, btnHex].join(' ')} data-char="C" data-type="number" disabled ButtonVariant={ButtonVariant.tonal}>C</Button>
+		<Button data-command={Commands.keyChar} class={[btnVal, btnHex, btnDec, btnOct].join(' ')} data-char="4" data-type="number" ButtonVariant={ButtonVariant.tonal}>4</Button>
+		<Button data-command={Commands.keyChar} class={[btnVal, btnHex, btnDec, btnOct].join(' ')} data-char="5" data-type="number" ButtonVariant={ButtonVariant.tonal}>5</Button>
+		<Button data-command={Commands.keyChar} class={[btnVal, btnHex, btnDec, btnOct].join(' ')} data-char="6" data-type="number" ButtonVariant={ButtonVariant.tonal}>6</Button>
 		<Button data-command={Commands.keyChar} data-char="×" ButtonVariant={ButtonVariant.tonal}><Icon IconCode={IconCodes.dismiss}/></Button>
 
-		<Button data-command={Commands.keyChar} data-char="B" data-type="number" ButtonVariant={ButtonVariant.tonal}>B</Button>
-		<Button data-command={Commands.keyChar} data-char="1" data-type="number" ButtonVariant={ButtonVariant.tonal}>1</Button>
-		<Button data-command={Commands.keyChar} data-char="2" data-type="number" ButtonVariant={ButtonVariant.tonal}>2</Button>
-		<Button data-command={Commands.keyChar} data-char="3" data-type="number" ButtonVariant={ButtonVariant.tonal}>3</Button>
+		<Button data-command={Commands.keyChar} class={[btnVal, btnHex].join(' ')} data-char="B" data-type="number" disabled ButtonVariant={ButtonVariant.tonal}>B</Button>
+		<Button data-command={Commands.keyChar} class={[btnVal, btnHex, btnDec, btnOct, btnBin].join(' ')} data-char="1" data-type="number" ButtonVariant={ButtonVariant.tonal}>1</Button>
+		<Button data-command={Commands.keyChar} class={[btnVal, btnHex, btnDec, btnOct].join(' ')} data-char="2" data-type="number" ButtonVariant={ButtonVariant.tonal}>2</Button>
+		<Button data-command={Commands.keyChar} class={[btnVal, btnHex, btnDec, btnOct].join(' ')} data-char="3" data-type="number" ButtonVariant={ButtonVariant.tonal}>3</Button>
 		<Button data-command={Commands.keyChar} data-char="-" ButtonVariant={ButtonVariant.tonal}><Icon IconCode={IconCodes.lineHorizontal1}/></Button>
 
-		<Button data-command={Commands.keyChar} data-char="A" data-type="number" ButtonVariant={ButtonVariant.tonal}>A</Button>
-		<Button data-command={Commands.keyDecimal} ButtonVariant={ButtonVariant.tonal}>.</Button>
-		<Button data-command={Commands.keyChar} data-char="0" data-type="number" ButtonVariant={ButtonVariant.tonal}>0</Button>
+		<Button data-command={Commands.keyChar} class={[btnVal, btnHex].join(' ')} data-char="A" data-type="number" disabled ButtonVariant={ButtonVariant.tonal}>A</Button>
+		<Button data-command={Commands.keyChar} class={[btnVal, btnHex, btnDec, btnOct, btnBin].join(' ')} data-char="0" data-type="number" ButtonVariant={ButtonVariant.tonal}>0</Button>
+		<Button data-command={Commands.keyDecimal} class={[btnVal, btnDec].join(' ')} ButtonVariant={ButtonVariant.tonal}>.</Button>
 		<Button data-command={Commands.keyEqual} ButtonVariant={ButtonVariant.filled} style="font-weight:bold">=</Button>
 		<Button data-command={Commands.keyChar} data-char="+" ButtonVariant={ButtonVariant.tonal}><Icon IconCode={IconCodes.add}/></Button>
 	</div>
