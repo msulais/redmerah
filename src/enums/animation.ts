@@ -6,6 +6,6 @@ export enum AnimationData {
 }
 
 export enum AnimationEffectTiming {
-	spring = 'cubic-bezier(.15,0,0,1)',
-	springBounce = 'cubic-bezier(.15,0,0,2)'
+	spring = 'cubic-bezier(.25,0,0,1)',
+	springBounce = 'cubic-bezier(.25,0,0,2)'
 }
