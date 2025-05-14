@@ -256,18 +256,18 @@ export class TemperatureUnits {
 }
 
 export class TimeUnits {
-	static readonly century = new ConverterUnit("Century", 'century', 3.168808781402895E-10)
-	static readonly decade = new ConverterUnit("Decade", 'decade', 3.168808781402895E-9)
-	static readonly year = new ConverterUnit("Year", 'y', 3.168808781402895E-8)
-	static readonly month = new ConverterUnit("Month", 'm', 3.802570537683474e-7)
-	static readonly week = new ConverterUnit("Week", 'w', 0.00003802910052910053)
-	static readonly day = new ConverterUnit("Day", 'd', 0.000011574074074074073)
-	static readonly hour = new ConverterUnit("Hour", 'h', 0.0002777777777777778)
-	static readonly minute = new ConverterUnit("Minute", 'min', 0.016666666666666666)
-	static readonly second = new ConverterUnit("Second", 's', 1)
-	static readonly millisecond = new ConverterUnit("Millisecond", 'ms', 1E3)
-	static readonly microsecond = new ConverterUnit("Microsecond", 'μs', 1E6)
-	static readonly nanosecond = new ConverterUnit("Nanosecond", 'ns', 1E9)
+	static readonly century = new ConverterUnit("Century", 'century', 1)
+	static readonly decade = new ConverterUnit("Decade", 'decade', 10)
+	static readonly year = new ConverterUnit("Year", 'y', 100)
+	static readonly month = new ConverterUnit("Month", 'm', 12 * 100)
+	static readonly week = new ConverterUnit("Week", 'w', 365.25 * 100 / 7)
+	static readonly day = new ConverterUnit("Day", 'd', 365.25 * 100)
+	static readonly hour = new ConverterUnit("Hour", 'h', 365.25 * 100 * 24)
+	static readonly minute = new ConverterUnit("Minute", 'min', 365.25 * 100 * 24 * 60)
+	static readonly second = new ConverterUnit("Second", 's', 365.25 * 100 * 24 * 60 * 60)
+	static readonly millisecond = new ConverterUnit("Millisecond", 'ms', 365.25 * 100 * 24 * 60 * 60 * 1E3)
+	static readonly microsecond = new ConverterUnit("Microsecond", 'μs', 365.25 * 100 * 24 * 60 * 60 * 1E6)
+	static readonly nanosecond = new ConverterUnit("Nanosecond", 'ns', 365.25 * 100 * 24 * 60 * 60 * 1E9)
 	static readonly all = [
 		this.century    , this.decade     , this.year,
 		this.month      , this.week       , this.day,
@@ -337,9 +337,9 @@ export class PressureUnits {
 }
 
 export class AngleUnits {
-	static readonly gradian = new ConverterUnit("Gradian", 'ᵍ', 63.662)
+	static readonly gradian = new ConverterUnit("Gradian", 'ᵍ', 400 / 2)
 	static readonly radian = new ConverterUnit("Radian", 'rad', 1)
-	static readonly degree = new ConverterUnit("Degree", '°', 57.2958)
+	static readonly degree = new ConverterUnit("Degree", '°', 180 / Math.PI)
 	static readonly all = [
 		this.gradian, this.radian, this.degree
 	]
