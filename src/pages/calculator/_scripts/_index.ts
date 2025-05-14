@@ -3,9 +3,10 @@ import appbar from './_appbar'
 import pageScientific from './pages/_scientific'
 import pageConverter from './pages/_converter'
 import pageProgrammer from './pages/_programmer'
+import pageDate from './pages/_date'
 import { AngleUnits, BodyEvents, Commands, ConverterType, DateOperation, DecimalNumberFormat, ElementAttributes, ElementIds, GroupingNumberFormat, NumberType, Pages, RadioGroupNames, ScientificAngleType, TemperatureUnits } from './_enums'
 import navigation from './_navigation'
-import type { CommandChangeConverterTypeDetail, CommandChangeDecimalFormatDetail, CommandChangeGroupingFormatDetail, CommandChangePageDetail, CommandChangeProgrammerTypeDetail, CommandChangeUnitDetail, CommandDetail, CommandKeyCharDetail, CommandScientificAngleDetail } from './_types'
+import type { CommandChangeConverterTypeDetail, CommandChangeDateFromDetail, CommandChangeDateOperationDetail, CommandChangeDateToDetail, CommandChangeDecimalFormatDetail, CommandChangeGroupingFormatDetail, CommandChangePageDetail, CommandChangeProgrammerTypeDetail, CommandChangeUnitDetail, CommandDetail, CommandKeyCharDetail, CommandScientificAngleDetail } from './_types'
 import { validEnumValue } from '@/utils/object'
 import { command } from './_utils'
 import { stringCount, stringReverse } from '@/utils/string'
@@ -17,6 +18,7 @@ import { isAnimationAllowed } from '@/utils/animation'
 import { elementAnimateUpdateText } from '@/utils/element'
 import { G_SETTINGS } from './_global-vars'
 import type { ConverterUnit } from './classes'
+import { dateDiffInDays } from '@/utils/datetime'
 
 const $ = (id: string) => document.getElementById(id)
 const $$ = <T extends Element>(selectors: string) => document.querySelector<T>(selectors)
@@ -26,6 +28,9 @@ const _basicInputRef      = $(ElementIds.bodyBasicInput     ) as HTMLInputElemen
 const _scientificInputRef = $(ElementIds.bodyScientificInput) as HTMLInputElement
 const _converterInputRef  = $(ElementIds.bodyConverterInput ) as HTMLInputElement
 const _programmerInputRef = $(ElementIds.bodyProgrammerInput) as HTMLInputElement
+const _dateInputYears = $(ElementIds.bodyDateInputYears) as HTMLInputElement
+const _dateInputMonths = $(ElementIds.bodyDateInputMonths) as HTMLInputElement
+const _dateInputDays = $(ElementIds.bodyDateInputDays) as HTMLInputElement
 const _basicOutputRef = $(ElementIds.bodyBasicOutput) as HTMLInputElement
 const _scientificOutputRef = $(ElementIds.bodyScientificOutput) as HTMLInputElement
 const _converterOutputRef = $(ElementIds.bodyConverterOutput) as HTMLInputElement
@@ -34,7 +39,11 @@ const _programmerOutputOctRef = $$(`#${ElementIds.bodyProgrammerOutputOct} input
 const _programmerOutputHexRef = $$(`#${ElementIds.bodyProgrammerOutputHex} input`) as HTMLInputElement
 const _programmerOutputBinRef = $$(`#${ElementIds.bodyProgrammerOutputBin} input`) as HTMLInputElement
 const _dateOutputRef = $(ElementIds.bodyDateOutput) as HTMLOutputElement
-let _page: Pages = Pages.programmer
+const _dateInput = {
+	from: new Date(),
+	to: new Date(),
+}
+let _page: Pages = Pages.date
 let _memoryValue = 0
 let _basicOutput = 0
 let _scientificOutput = 0
@@ -90,17 +99,20 @@ function _initCommands(): void {
 		case Commands.keyDecimal:
 		case Commands.keyPlusMinus:
 		case Commands.keyUnitSwap:
-		case Commands.keyEqual: {
+		case Commands.keyEqual:
+		case Commands.calculate:
 			command(type, {})
 			break
-		}
 		case Commands.changeProgrammerType:
 		case Commands.changeDecimalFormat:
 		case Commands.changeGroupingFormat:
 		case Commands.changeInputUnit:
 		case Commands.changeOutputUnit:
 		case Commands.scientificAngle:
+		case Commands.changeDateFrom:
+		case Commands.changeDateTo:
 		case Commands.changeConverterType:
+		case Commands.changeDateOperation:
 			break
 		case Commands.keyChar: {
 			const char = dataset.char
@@ -184,8 +196,27 @@ function _initCommands(): void {
 		case Commands.changeProgrammerType:
 			_changeProgrammerType((detail as CommandChangeProgrammerTypeDetail).programmer)
 			break
+		case Commands.changeDateFrom:
+			_dateInput.from = (detail as CommandChangeDateFromDetail).date
+			_calculate()
+			break
+		case Commands.changeDateTo:
+			_dateInput.to = (detail as CommandChangeDateToDetail).date
+			_calculate()
+			break
+		case Commands.changeDateOperation:
+			_changeDateOperation((detail as CommandChangeDateOperationDetail).operation)
+			break
+		case Commands.calculate:
+			_calculate()
+			break
 		}
 	})
+}
+
+function _changeDateOperation(operation: DateOperation): void {
+	G_SETTINGS.date.operation = operation
+	_calculate()
 }
 
 function _changeProgrammerType(type: NumberType): void {
@@ -370,13 +401,14 @@ function _initDatabase(): void {
 
 function _initKeyDown(): void {
 	_bodyRef.addEventListener('keydown', ev => {
+		if (_page === Pages.date) return
+
 		const key = ev.key
 		const target = ev.target as HTMLElement
 		const code = ev.code
 		const tagName = target.tagName
 		const shiftKey = ev.shiftKey
 		const ctrlKey = ev.ctrlKey
-		ev.preventDefault()
 		if (
 			[KeyboardValue.space, KeyboardValue.enter].includes(key as KeyboardValue)
 			&& (
@@ -434,7 +466,7 @@ function _initKeyDown(): void {
 		}
 
 		// Shift, alt, etc
-		if (key.length > 1 || !/[\w!%^×*÷/()\-+., ]/.test(key)) return
+		if (key.length > 1 || !/[\w!%^×*÷<>|&/()\-+., ]/.test(key)) return
 
 		command<CommandKeyCharDetail>(Commands.keyChar, {char: key})
 	})
@@ -584,11 +616,55 @@ function _convertUnit(
 }
 
 function _calculateDate(): void {
-	switch (G_SETTINGS.date.operation) {
-	// TODO:
-	case DateOperation.add: break
-	case DateOperation.subtract: break
-	case DateOperation.difference: break
+	let output = ''
+	const operation = G_SETTINGS.date.operation
+	switch (operation) {
+	case DateOperation.add:
+	case DateOperation.subtract:
+		const d = _dateInput.from
+		const years = Math.floor(numberSafe(_dateInputYears.valueAsNumber))
+		const months = Math.floor(numberSafe(_dateInputMonths.valueAsNumber))
+		const days = Math.floor(numberSafe(_dateInputDays.valueAsNumber))
+		output = new Date(
+			d.getFullYear() + (years * (operation === DateOperation.subtract? -1 : 1)),
+			d.getMonth() + (months * (operation === DateOperation.subtract? -1 : 1)),
+			d.getDate() + (days * (operation === DateOperation.subtract? -1 : 1))
+		).toLocaleDateString('en', {
+			year: 'numeric',
+			month: 'long',
+			day: 'numeric'
+		})
+		_dateOutputRef.textContent = output
+		break
+	case DateOperation.difference: {
+		let days = Math.abs(dateDiffInDays(_dateInput.from, _dateInput.to))
+		const diffInDays = days
+		if (days >= 365.25) {
+				const n = Math.floor(days / 365.25)
+				output = `${n} year${n > 1? "s" : ""}`
+				days = Math.floor(days % 365.25)
+			}
+			if (days >= 30.437){
+				if (output != '') output += ", "
+				const n = Math.floor(days / 30.437)
+				output += `${n} month${n > 1? "s" : ""}`
+				days = Math.floor(days % 30.437);
+			}
+			if (days >= 7){
+				if (output != '') output += ", "
+				const n = Math.floor(days / 7)
+				output += `${n} week${n > 1? "s" : ""}`
+				days = Math.floor(days % 7)
+			}
+			if (days > 0){
+				if (output != '') output += ", "
+				output += `${days} day${days > 1? "s" : ""}`
+			}
+			if (diffInDays == 0) output = "Same date"
+			else if (diffInDays >= 7) output += ` (${diffInDays} day${diffInDays > 1? "s" : ""})`
+
+			_dateOutputRef.textContent = output
+		} break
 	}
 }
 
@@ -980,6 +1056,7 @@ function _(): void {
 	pageScientific()
 	pageConverter()
 	pageProgrammer()
+	pageDate()
 }
 
 _()

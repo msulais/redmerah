@@ -31,6 +31,12 @@ export class ElementIds {
 	static readonly bodyConverterInputUnit = _generateId()
 	static readonly bodyConverterOutputUnit = _generateId()
 	static readonly bodyDate = _generateId()
+	static readonly bodyDateOperation = _generateId()
+	static readonly bodyDateOperationDifference = _generateId()
+	static readonly bodyDateOperationAddSubtract = _generateId()
+	static readonly bodyDateInputYears = _generateId()
+	static readonly bodyDateInputMonths = _generateId()
+	static readonly bodyDateInputDays = _generateId()
 	static readonly bodyDateInputFromButton = _generateId()
 	static readonly bodyDateInputToButton = _generateId()
 	static readonly bodyDateInputFromDatePicker = _generateId()
@@ -76,6 +82,16 @@ export enum Commands {
 	memorySubtract = 'memory-subtract',
 	memoryRecall = 'memory-recall',
 	memoryClear = 'memory-clear',
+	calculate = 'calculate',
+
+	/** @param options `CommandChangeDateOperationDetail` */
+	changeDateOperation = 'change-date-operation',
+
+	/** @param options `CommandChangeDateFromDetail` */
+	changeDateFrom = 'change-date-from',
+
+	/** @param options `CommandChangeDateToDetail` */
+	changeDateTo = 'change-date-to',
 
 	/** @param options `CommandChangeProgrammerTypeDetail` */
 	changeProgrammerType = 'change-programmer-type',
@@ -149,8 +165,6 @@ export enum DecimalNumberFormat {
 	point = '.',
 	comma = ','
 }
-
-
 
 export enum ConverterType {
 	length      = 'length',

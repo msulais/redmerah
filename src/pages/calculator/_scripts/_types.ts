@@ -12,6 +12,18 @@ export type CommandDetail = {
 	type: Commands
 }
 
+export type CommandChangeDateOperationDetail = CommandDetail & {
+	operation: DateOperation
+}
+
+export type CommandChangeDateFromDetail = CommandDetail & {
+	date: Date
+}
+
+export type CommandChangeDateToDetail = CommandDetail & {
+	date: Date
+}
+
 export type CommandChangeProgrammerTypeDetail = CommandDetail & {
 	programmer: NumberType
 }

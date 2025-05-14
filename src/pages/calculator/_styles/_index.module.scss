@@ -90,13 +90,13 @@ $SCREEN_WIDTH_SMALL: 650px;
 		border: none;
 	}
 
-	> label {
-		color: rgb(var(--g-color-accent));
-	}
-
 	> output {
 		display: block;
 		font-size: var(--g-font-size-xm);
+	}
+
+	& label {
+		color: rgb(var(--g-color-accent));
 	}
 }
 
