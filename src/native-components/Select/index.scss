@@ -117,6 +117,7 @@
 
 	&:is([aria-selected=false],:disabled) {
 		min-height: 28px;
+		padding: 0 12px;
 
 		.c-select:not([data-c-select-expanded]) & {
 			display: none;
