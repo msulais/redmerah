@@ -390,9 +390,31 @@ function _replaceInputWithOutput(): void {
 	case Pages.converter:
 		_converterInputRef.value = _formatOutput(_converterOutput)
 		break
-	case Pages.programmer: break // TODO:
+	case Pages.programmer:
+		let value = ''
+		const bin = () => numberToBinary(_programmerOutput)
+		const parsedBin = () => Number.parseInt(bin(), 2)
+		switch (G_SETTINGS.programmer.numberType) {
+		case NumberType.decimal:
+			_programmerInputRef.value = _formatOutput(_programmerOutput)
+			return
+		case NumberType.hexadecimal:
+			value = parsedBin().toString(16).toUpperCase()
+			break
+		case NumberType.octal:
+			value = parsedBin().toString(8)
+			break
+		case NumberType.binary:
+			value = parsedBin().toString(2)
+			break
+		}
+
+		_programmerInputRef.value = value
+		break
 	case Pages.date: break
 	}
+
+	_calculate()
 }
 
 function _initDatabase(): void {
