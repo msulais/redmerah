@@ -11,7 +11,7 @@ import { command } from './_utils'
 import { stringCount, stringReverse } from '@/utils/string'
 import { DIVISION_CHAR, FUNCTION_REGEX, MULTIPLY_CHAR, NUMBER_REGEX } from './_constant'
 import { mathCsc, mathSec, mathCot, mathCscH, mathSecH, mathCotH, mathACsc, mathASec, mathACot, mathACscH, mathASecH, mathACotH } from '@/utils/math'
-import { numberFormat, numberIsDefined, numberToBinary, numberToRealDigits } from '@/utils/number'
+import { numberFormat, numberIsDefined, numberSafe, numberToBinary, numberToRealDigits } from '@/utils/number'
 import { CSSClasses } from '../_styles/_css'
 import { isAnimationAllowed } from '@/utils/animation'
 import { elementAnimateUpdateText } from '@/utils/element'
@@ -122,11 +122,11 @@ function _initCommands(): void {
 		const detail = ev.detail
 		switch (detail.type) {
 		case Commands.memoryAdd:
-			_memoryValue += _getOutput()
+			_memoryValue += numberSafe(_getOutput())
 			_updateMemoryPreview()
 			break
 		case Commands.memorySubtract:
-			_memoryValue -= _getOutput()
+			_memoryValue -= numberSafe(_getOutput())
 			_updateMemoryPreview()
 			break
 		case Commands.memoryRecall:
