@@ -78,7 +78,7 @@ function _initSettingsMenu(): void {
 	_appbarSettingsDecimalMenuRef.addEventListener('change', ev => {
 		const target = ev.target as HTMLInputElement
 		const value = target?.value
-		if (!value || !validEnumValue(value, DecimalNumberFormat)) return
+		if (!validEnumValue(value, DecimalNumberFormat)) return
 
 		command<CommandChangeDecimalFormatDetail>(Commands.changeDecimalFormat, {
 			format: value as DecimalNumberFormat
@@ -89,7 +89,7 @@ function _initSettingsMenu(): void {
 	_appbarSettingsGroupMenuRef.addEventListener('change', ev => {
 		const target = ev.target as HTMLInputElement
 		const value = target?.value
-		if (!value || !validEnumValue(value, GroupingNumberFormat)) return
+		if (!validEnumValue(value, GroupingNumberFormat)) return
 
 		command<CommandChangeGroupingFormatDetail>(Commands.changeGroupingFormat, {
 			format: value as GroupingNumberFormat
