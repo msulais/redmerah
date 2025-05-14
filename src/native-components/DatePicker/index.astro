@@ -13,8 +13,8 @@ import { attrClassList } from '@/utils/attributes'
 type Props = DatePickerProps
 const {
 	'class': className,
-	DatePickerStartDate = new Date(0),
-	DatePickerEndDate,
+	DatePickerStartDate = new Date(-864000000000000),
+	DatePickerEndDate = new Date(864000000000000),
 	DatePickerValue,
 	DatePickerHeaderAttr,
 	DatePickerTitleAttr,
