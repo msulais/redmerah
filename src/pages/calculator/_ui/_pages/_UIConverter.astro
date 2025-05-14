@@ -13,7 +13,7 @@ import { IconCodes } from '@/enums/icons'
 import { SelectVariant } from '@/native-components/Select'
 import { CONVERTER_TYPES } from '../../_scripts/_constant'
 ---
-<div class={CSSClasses.bodyPage} role="tabpanel" id={ElementIds.bodyConverter}>
+<div class={CSSClasses.bodyPage} role="tabpanel" id={ElementIds.bodyConverter} hidden>
 	<div class={CSSClasses.bodyPageInput}>
 		<input id={ElementIds.bodyConverterInput} readonly placeholder="0" class={CSSClasses.bodyInputField}/>
 		<input id={ElementIds.bodyConverterOutput} readonly value="0" class={CSSClasses.bodyOutputField}/>
@@ -66,8 +66,8 @@ import { CONVERTER_TYPES } from '../../_scripts/_constant'
 		<Button data-command={Commands.keyChar} data-char="2" data-type="number" ButtonVariant={ButtonVariant.tonal}>2</Button>
 		<Button data-command={Commands.keyChar} data-char="3" data-type="number" ButtonVariant={ButtonVariant.tonal}>3</Button>
 
-		<Button data-command={Commands.keyDecimal} ButtonVariant={ButtonVariant.tonal}>.</Button>
 		<Button data-command={Commands.keyChar} data-char="0" data-type="number" ButtonVariant={ButtonVariant.tonal}>0</Button>
+		<Button data-command={Commands.keyDecimal} ButtonVariant={ButtonVariant.tonal}>.</Button>
 		<Button data-command={Commands.keyEqual} ButtonVariant={ButtonVariant.filled} style="font-weight:bold">=</Button>
 	</div>
 </div>
