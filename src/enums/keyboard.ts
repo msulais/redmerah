@@ -11,6 +11,7 @@ export enum KeyboardValue {
 	backspace  = 'Backspace',
 	enter      = 'Enter',
 	delete     = 'Delete',
+	equal      = '=',
 	space      = ' ',
 	plus       = '+',
 	minus      = '-',
