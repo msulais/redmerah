@@ -112,12 +112,6 @@ export function elementAnimateUpdateText(element: HTMLElement, text: string): vo
 			translate: [`${rect1.x - rect2.x}px ${rect1.y - rect2.y}px`, '0 0']
 		}, {duration: 250, easing: AnimationEffectTiming.spring})
 	}
-
-	for (const span of additional) {
-		span.animate({
-			scale: [0.75, 1],
-		}, {duration: 250, easing: AnimationEffectTiming.spring})
-	}
 }
 
 export function elementFocusAny(
