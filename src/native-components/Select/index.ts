@@ -134,7 +134,13 @@ function repairOptionRefs(selectRef: SelectElement, ...optionRefs: SelectOptionE
 	checkSelectedOptionRefs(selectRef, ...optionRefs)
 }
 
+function getSelectRefValue(selectRef: SelectElement): string {
+	return selectRef.getAttribute(SelectAttributes.value) ?? ''
+}
+
 function updateSelectRefValue(selectRef: SelectElement, value: string): void {
+	repairOptionRefs(selectRef)
+
 	const options = [...selectRef.querySelectorAll<SelectOptionElement>(`.${SelectClasses.option}`)]
 	const selectedOptionRefs = options.filter(o => {
 		const selected = o.getAttribute('aria-selected') === 'true'
@@ -157,8 +163,6 @@ function updateSelectRefValue(selectRef: SelectElement, value: string): void {
 	for (const ref of selectedOptionRefs) {
 		ref.setAttribute('aria-selected', 'false')
 	}
-
-	repairOptionRefs(selectRef)
 }
 
 function openSelectRef(selectRef: SelectElement): void {
@@ -646,5 +650,6 @@ export {
 	unregisterSelectRef,
 	openSelectRef,
 	closeSelectRef,
-	updateSelectRefValue
+	updateSelectRefValue,
+	getSelectRefValue
 }
