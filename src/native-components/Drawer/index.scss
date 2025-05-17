@@ -5,7 +5,7 @@
 	width: 280px;
 	min-width: 280px;
 	position: fixed;
-	background-color: rgba(var(--g-color-surface), .5);
+	background-color: rgba(var(--g-color-surface), var(--g-opacity-glass));
 	backdrop-filter: blur(32px);
 	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity3));
 	border-radius: 8px;
@@ -41,12 +41,12 @@
 
 	:root[data-theme=dark] & {
 		border: 1px solid rgba(0, 0, 0, var(--g-opacity-inv5));
-		background-color: rgba(46, 46, 46, .5);
+		background-color: rgba(46, 46, 46, var(--g-opacity-glass));
 	}
 	:root[data-theme=auto] & {
 		@media (prefers-color-scheme: dark) {
 			border: 1px solid rgba(0, 0, 0, var(--g-opacity-inv5));
-			background-color: rgba(46, 46, 46, .5);
+			background-color: rgba(46, 46, 46, var(--g-opacity-glass));
 		}
 	}
 }
