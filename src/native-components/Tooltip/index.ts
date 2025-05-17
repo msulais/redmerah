@@ -16,6 +16,8 @@ type TooltipProps = astroHTML.JSX.HTMLAttributes & {
 	TooltipPosition  ?: TooltipPosition
 }
 
+type TooltipElement = HTMLDivElement
+
 type _TooltipOpenDetail = {
 	event   : Event
 	byFocus?: boolean
@@ -29,7 +31,7 @@ type TooltipUpdateOptions = {
 	TooltipUseAnchor ?: boolean
 	TooltipPosition  ?: TooltipPosition | boolean
 	TooltipRefs      ?: {
-		tooltip?(ref: HTMLDivElement): unknown
+		tooltip?(ref: TooltipElement): unknown
 	}
 }
 
@@ -69,7 +71,7 @@ enum _TooltipListenerEvents {
 	close = 'tooltiplistener:close',
 }
 
-const REGISTERED_TOOLTIP: Set<HTMLDivElement> = new Set<HTMLDivElement>()
+const REGISTERED_TOOLTIP: Set<TooltipElement> = new Set<TooltipElement>()
 let TOOLTIP_HAS_LISTENER: boolean = false
 let TOOLTIP_TARGET: Element | null = null
 let TOOLTIP_LISTENER: HTMLDivElement | null = null
@@ -159,7 +161,7 @@ function _initTooltipRefListener(): void {
 		const byFocus = detail.byFocus
 		const event = detail.event
 		const target = event.target as HTMLElement
-		const tooltip = event.currentTarget as HTMLDivElement
+		const tooltip = event.currentTarget as TooltipElement
 		if (!tooltip.contains(target)) return
 
 		if (!tooltip.id) {
@@ -283,7 +285,7 @@ function _initTooltipRefListener(): void {
 	initEvents()
 }
 
-function _initTooltipRef(tooltipRef: HTMLDivElement): void {
+function _initTooltipRef(tooltipRef: TooltipElement): void {
 	const bodyRef = document.body
 
 	function openTooltip(ev: Event, byFocus: boolean = false): void {
@@ -349,12 +351,12 @@ function _initTooltipRef(tooltipRef: HTMLDivElement): void {
 	initEvents()
 }
 
-function createTooltipRef(options?: TooltipUpdateOptions): HTMLDivElement {
+function createTooltipRef(options?: TooltipUpdateOptions): TooltipElement {
 	const tooltipRef = document.createElement('div')
 	return updateTooltipRef(tooltipRef, options)
 }
 
-function updateTooltipRef(tooltipRef: HTMLDivElement, options?: TooltipUpdateOptions): HTMLDivElement {
+function updateTooltipRef(tooltipRef: TooltipElement, options?: TooltipUpdateOptions): TooltipElement {
 	tooltipRef.classList.add(TooltipClasses.tooltip)
 
 	if (!tooltipRef.id) {
@@ -410,10 +412,10 @@ function updateTooltipRef(tooltipRef: HTMLDivElement, options?: TooltipUpdateOpt
 	return tooltipRef
 }
 
-function registerTooltipRef(...tooltipRefs: HTMLDivElement[]): void {
+function registerTooltipRef(...tooltipRefs: TooltipElement[]): void {
 	_initTooltipRefListener()
 	if (tooltipRefs.length === 0) {
-		tooltipRefs = [...document.querySelectorAll<HTMLDivElement>('.' + TooltipClasses.tooltip)]
+		tooltipRefs = [...document.querySelectorAll<TooltipElement>('.' + TooltipClasses.tooltip)]
 	}
 
 	for (const tooltip of tooltipRefs) {
@@ -424,7 +426,7 @@ function registerTooltipRef(...tooltipRefs: HTMLDivElement[]): void {
 	}
 }
 
-function unregisterTooltipRef(...tooltipRefs: HTMLDivElement[]): void {
+function unregisterTooltipRef(...tooltipRefs: TooltipElement[]): void {
 	for (const tooltip of tooltipRefs) {
 		REGISTERED_TOOLTIP.delete(tooltip)
 	}
@@ -433,6 +435,7 @@ function unregisterTooltipRef(...tooltipRefs: HTMLDivElement[]): void {
 export {
 	type TooltipProps,
 	type TooltipUpdateOptions,
+	type TooltipElement,
 	TooltipClasses,
 	TooltipAttributes,
 	TooltipTargetAttributes,

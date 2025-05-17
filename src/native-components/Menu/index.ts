@@ -13,6 +13,7 @@ import {
 	registerPopoverRef,
 	updatePopoverRef,
 	unregisterPopoverRef,
+	type PopoverElement,
 } from "@/native-components/Popover"
 import {
 	type ButtonUpdateOptions,
@@ -23,9 +24,11 @@ import {
 	createLinkButtonRef,
 	updateButtonRef,
 	updateLinkButtonRef,
-	ButtonClasses
+	ButtonClasses,
+	type LinkButtonElement,
+	type ButtonElement
 } from "@/native-components/Button"
-import { createIconRef, type IconProps } from "@/native-components/Icon"
+import { createIconRef, type IconElement, type IconProps } from "@/native-components/Icon"
 import { AppColors } from "@/enums/colors"
 import { ICON_CIRCLE_SMALL } from "@/constants/icons"
 import { createId } from "@/utils/ids"
@@ -67,16 +70,26 @@ type CheckMenuItemProps = astroHTML.JSX.LabelHTMLAttributes & {
 	CheckMenuItemContentAttr?: astroHTML.JSX.HTMLAttributes
 }
 
+type MenuElement = PopoverElement
+type CheckMenuItemElement = HTMLLabelElement
+type LinkMenuItemElement = LinkButtonElement
+type MenuHeaderElement = HTMLDivElement
+type MenuIndentElement = HTMLDivElement
+type MenuItemElement = ButtonElement
+type RadioMenuItemElement = HTMLLabelElement
+type SubMenuElement = PopoverElement
+type SubMenuItemElement = MenuItemElement
+
 type CheckMenuItemUpdateOptions = {
 	CheckMenuItemChecked ?: boolean
 	CheckMenuItemDisabled?: boolean
 	CheckMenuItemLeading ?: (string | Node[]) | boolean
 	CheckMenuItemChildren?: (string | Node[]) | boolean
 	CheckMenuItemRefs    ?: {
-		checkmenuitem?(ref: HTMLLabelElement): unknown
-		leading      ?(ref: HTMLDivElement  ): unknown
-		icon         ?(ref: SVGSVGElement   ): unknown
-		content      ?(ref: HTMLDivElement  ): unknown
+		checkmenuitem?(ref: CheckMenuItemElement): unknown
+		leading      ?(ref: HTMLDivElement      ): unknown
+		icon         ?(ref: SVGSVGElement       ): unknown
+		content      ?(ref: HTMLDivElement      ): unknown
 	}
 }
 
@@ -88,23 +101,23 @@ type RadioMenuItemUpdateOptions = {
 	RadioMenuItemLeading ?: (string | Node[]) | boolean
 	RadioMenuItemChildren?: (string | Node[]) | boolean
 	RadioMenuItemRefs    ?: {
-		radiomenuitem?(ref: HTMLLabelElement): unknown
-		leading      ?(ref: HTMLDivElement  ): unknown
-		icon         ?(ref: HTMLElement     ): unknown
-		content      ?(ref: HTMLDivElement  ): unknown
+		radiomenuitem?(ref: RadioMenuItemElement): unknown
+		leading      ?(ref: HTMLDivElement      ): unknown
+		icon         ?(ref: IconElement         ): unknown
+		content      ?(ref: HTMLDivElement      ): unknown
 	}
 }
 
 type MenuIndentUpdateOptions = {
 	MenuIndentRefs?: {
-		indent?(ref: HTMLDivElement): unknown
+		indent?(ref: MenuIndentElement): unknown
 	}
 }
 
 type MenuHeaderUpdateOptions = {
 	MenuHeaderChildren?: (string | Node)[] | boolean
 	MenuHeaderRefs    ?: {
-		header?(ref: HTMLDivElement): unknown
+		header?(ref: MenuHeaderElement): unknown
 	}
 }
 
@@ -113,7 +126,7 @@ type MenuUpdateOptions = Omit<PopoverUpdateOptions, 'PopoverChildren'> & {
 	MenuSubMenus?: (string | Node)[] | boolean
 	MenuRole    ?: astroHTML.JSX.AriaRole | boolean
 	MenuRefs    ?: {
-		menu    ?(ref: HTMLDivElement): unknown
+		menu    ?(ref: MenuElement   ): unknown
 		content ?(ref: HTMLDivElement): unknown
 		submenus?(ref: HTMLDivElement): unknown
 	}
@@ -124,7 +137,7 @@ type SubMenuUpdateOptions = MenuUpdateOptions
 type MenuItemUpdateOptions = ButtonUpdateOptions & {
 	MenuItemRole?: astroHTML.JSX.AriaRole | boolean
 	MenuItemRefs?: {
-		menuitem?(ref: HTMLButtonElement): unknown
+		menuitem?(ref: MenuItemElement): unknown
 	}
 }
 
@@ -133,14 +146,14 @@ type SubMenuItemUpdateOptions = MenuItemUpdateOptions & {
 	SubMenuItemAriaControls?: astroHTML.JSX.AriaAttributes['aria-controls'] | boolean
 	SubMenuAriaHaspopup    ?: astroHTML.JSX.AriaAttributes['aria-haspopup'] | boolean
 	SubMenuRefs            ?: {
-		menuitem?(ref: HTMLButtonElement): unknown
+		menuitem?(ref: SubMenuItemElement): unknown
 	}
 }
 
 type LinkMenuItemUpdateOptions = LinkButtonUpdateOptions & {
 	LinkMenuItemRole?: astroHTML.JSX.AriaRole | boolean
 	LinkMenuItemRefs?: {
-		menuitem?(ref: HTMLAnchorElement): unknown
+		menuitem?(ref: LinkMenuItemElement): unknown
 	}
 }
 
@@ -165,32 +178,32 @@ enum MenuClasses {
 	checkItemContent = checkItem + '-content'
 }
 
-const REGISTERED_SUBMENUITEM: Set<HTMLButtonElement> = new Set<HTMLButtonElement>()
+const REGISTERED_SUBMENUITEM: Set<SubMenuItemElement> = new Set<SubMenuItemElement>()
 
 /**
  * Any element is possible as long have class `MenuClasses.submenuItem`
  * @param subMenuItemRef
  */
-function _initSubMenuItemRef(subMenuItemRef: HTMLElement): void {
+function _initSubMenuItemRef(subMenuItemRef: SubMenuItemElement): void {
 	const elements = {
 		get parent() {
-			return subMenuItemRef.closest('.' + MenuClasses.menu) as HTMLDivElement | null
+			return subMenuItemRef.closest('.' + MenuClasses.menu) as MenuElement | null
 		},
 		get parentContent() {
 			return subMenuItemRef.closest('.' + MenuClasses.content) as HTMLDivElement | null
 		},
 		get target() {
-			return document.getElementById(subMenuItemRef.getAttribute('aria-controls') ?? '___NONE___') as HTMLDivElement | null
+			return document.getElementById(subMenuItemRef.getAttribute('aria-controls') ?? '___NONE___') as SubMenuElement | null
 		}
 	}
 	let isParentHovered = false
 	let isTargetHovered = false
 	let timeId: number | NodeJS.Timeout | null = null
 
-	function getAllSubMenuRefs(from: HTMLElement): HTMLDivElement[] {
-		const menus: Set<HTMLDivElement> = new Set<HTMLDivElement>()
+	function getAllSubMenuRefs(from: HTMLElement): SubMenuElement[] {
+		const menus = new Set<SubMenuElement>()
 		const traverseDown = (popover: HTMLElement) => {
-			const submenuItems = popover.querySelectorAll<HTMLButtonElement>(`.${MenuClasses.submenuItem}[aria-controls]`)
+			const submenuItems = popover.querySelectorAll<SubMenuItemElement>(`.${MenuClasses.submenuItem}[aria-controls]`)
 			for (const item of submenuItems) {
 
 				// handle nested <Menu>
@@ -198,7 +211,7 @@ function _initSubMenuItemRef(subMenuItemRef: HTMLElement): void {
 				if (m !== popover) continue
 
 				const id = item.getAttribute('aria-controls') ?? '___NONE___'
-				const menu = document.getElementById(id) as HTMLDivElement | null
+				const menu = document.getElementById(id) as SubMenuElement | null
 				if (
 					!menu
 					|| !menu.classList.contains(MenuClasses.menu)
@@ -298,7 +311,7 @@ function _initSubMenuItemRef(subMenuItemRef: HTMLElement): void {
 		const open = (ev as ToggleEvent).newState === 'open'
 		subMenuItemRef.setAttribute('aria-expanded', String(open))
 		if (subMenuItemRef.classList.contains(ButtonClasses.button)) {
-			updateMenuItemRef(subMenuItemRef as HTMLButtonElement, {
+			updateMenuItemRef(subMenuItemRef as SubMenuItemElement, {
 				ButtonFocused: open
 			})
 		}
@@ -351,12 +364,12 @@ function _initSubMenuItemRef(subMenuItemRef: HTMLElement): void {
 	initEvents()
 }
 
-function createMenuRef(options?: MenuUpdateOptions): HTMLDivElement {
+function createMenuRef(options?: MenuUpdateOptions): MenuElement {
 	const menuRef = createPopoverRef(options)
 	return updateMenuRef(menuRef)
 }
 
-function updateMenuRef(menuRef: HTMLDivElement, options?: MenuUpdateOptions): HTMLDivElement {
+function updateMenuRef(menuRef: MenuElement, options?: MenuUpdateOptions): MenuElement {
 	let popoverContentRef: HTMLDivElement
 	updatePopoverRef(menuRef, {
 		...options,
@@ -418,15 +431,15 @@ function updateMenuRef(menuRef: HTMLDivElement, options?: MenuUpdateOptions): HT
 	return menuRef
 }
 
-function createMenuItemRef(options?: MenuItemUpdateOptions): HTMLButtonElement {
+function createMenuItemRef(options?: MenuItemUpdateOptions): MenuItemElement {
 	const menuItemRef = createButtonRef(options)
 	return updateMenuItemRef(menuItemRef)
 }
 
 function updateMenuItemRef(
-	menuItemRef: HTMLButtonElement,
+	menuItemRef: MenuItemElement,
 	options?: MenuItemUpdateOptions
-): HTMLButtonElement {
+): MenuItemElement {
 	updateButtonRef(menuItemRef, options)
 	menuItemRef.classList.add(MenuClasses.item)
 	if (!menuItemRef.hasAttribute('role')) {
@@ -445,15 +458,15 @@ function updateMenuItemRef(
 	return menuItemRef
 }
 
-function createLinkMenuItemRef(options: LinkMenuItemUpdateOptions): HTMLAnchorElement {
+function createLinkMenuItemRef(options: LinkMenuItemUpdateOptions): LinkMenuItemElement {
 	const linkMenuItemRef = createLinkButtonRef(options)
 	return updateLinkMenuItemRef(linkMenuItemRef, options)
 }
 
 function updateLinkMenuItemRef(
-	linkMenuItemRef: HTMLAnchorElement,
+	linkMenuItemRef: LinkMenuItemElement,
 	options: LinkMenuItemUpdateOptions
-): HTMLAnchorElement {
+): LinkMenuItemElement {
 	updateLinkButtonRef(linkMenuItemRef, options)
 	linkMenuItemRef.classList.add(MenuClasses.item)
 	if (!linkMenuItemRef.hasAttribute('role')) {
@@ -473,14 +486,14 @@ function updateLinkMenuItemRef(
 
 function createSubMenuItemRef(options: Omit<SubMenuItemUpdateOptions, 'ariaControls'> & {
 	ariaControls: astroHTML.JSX.AriaAttributes['aria-controls']
-}): HTMLButtonElement {
+}): SubMenuItemElement {
 	return updateSubMenuItemRef(createMenuItemRef(options))
 }
 
 function updateSubMenuItemRef(
-	subMenuItemRef: HTMLButtonElement,
+	subMenuItemRef: SubMenuItemElement,
 	options?: SubMenuItemUpdateOptions
-): HTMLButtonElement {
+): SubMenuItemElement {
 	updateMenuItemRef(subMenuItemRef, options)
 	subMenuItemRef.classList.add(MenuClasses.submenuItem)
 	const ariaControls = options?.SubMenuItemAriaControls
@@ -511,9 +524,9 @@ function updateSubMenuItemRef(
 	return subMenuItemRef
 }
 
-function registerSubMenuItemRef(...subMenuItemRefs: HTMLButtonElement[]): void {
+function registerSubMenuItemRef(...subMenuItemRefs: SubMenuItemElement[]): void {
 	if (subMenuItemRefs.length === 0) {
-		subMenuItemRefs = [...document.querySelectorAll<HTMLButtonElement>('.' + MenuClasses.submenuItem)]
+		subMenuItemRefs = [...document.querySelectorAll<SubMenuItemElement>('.' + MenuClasses.submenuItem)]
 	}
 
 	for (const subMenuItemRef of subMenuItemRefs){
@@ -526,35 +539,35 @@ function registerSubMenuItemRef(...subMenuItemRefs: HTMLButtonElement[]): void {
 	}
 }
 
-function unregisterSubMenuItemRef(...subMenuItemRefs: HTMLButtonElement[]): void {
+function unregisterSubMenuItemRef(...subMenuItemRefs: SubMenuItemElement[]): void {
 	for (const subMenuItemRef of subMenuItemRefs) {
 		REGISTERED_SUBMENUITEM.delete(subMenuItemRef)
 	}
 }
 
-function createMenuIndentRef(options?: MenuIndentUpdateOptions): HTMLDivElement {
+function createMenuIndentRef(options?: MenuIndentUpdateOptions): MenuIndentElement {
 	const indentRef = document.createElement('div')
 	return updateMenuIndentRef(indentRef, options)
 }
 
 function updateMenuIndentRef(
-	indentRef: HTMLDivElement,
+	indentRef: MenuIndentElement,
 	options?: MenuIndentUpdateOptions
-): HTMLDivElement {
+): MenuIndentElement {
 	indentRef.classList.add(MenuClasses.indent)
 	options?.MenuIndentRefs?.indent?.(indentRef)
 	return indentRef
 }
 
-function createMenuHeaderRef(options?: MenuHeaderUpdateOptions): HTMLDivElement {
+function createMenuHeaderRef(options?: MenuHeaderUpdateOptions): MenuHeaderElement {
 	const menuHeaderRef = document.createElement('div')
 	return updateMenuHeaderRef(menuHeaderRef, options)
 }
 
 function updateMenuHeaderRef(
-	headerRef: HTMLDivElement,
+	headerRef: MenuHeaderElement,
 	options?: MenuHeaderUpdateOptions
-): HTMLDivElement {
+): MenuHeaderElement {
 	headerRef.classList.add(MenuClasses.header)
 
 	const childrenOption = options?.MenuHeaderChildren
@@ -569,12 +582,15 @@ function updateMenuHeaderRef(
 	return headerRef
 }
 
-function createCheckMenuItemRef(options?: CheckMenuItemUpdateOptions): HTMLLabelElement {
+function createCheckMenuItemRef(options?: CheckMenuItemUpdateOptions): CheckMenuItemElement {
 	const checkMenuItemRef = document.createElement('label')
 	return updateCheckMenuItemRef(checkMenuItemRef, options)
 }
 
-function updateCheckMenuItemRef(checkMenuItemRef: HTMLLabelElement, options?: CheckMenuItemUpdateOptions): HTMLLabelElement {
+function updateCheckMenuItemRef(
+	checkMenuItemRef: CheckMenuItemElement,
+	options?: CheckMenuItemUpdateOptions
+): CheckMenuItemElement {
 	const refs = options?.CheckMenuItemRefs
 	checkMenuItemRef.classList.add(ButtonClasses.button, MenuClasses.item, MenuClasses.checkItem)
 
@@ -649,12 +665,15 @@ function updateCheckMenuItemRef(checkMenuItemRef: HTMLLabelElement, options?: Ch
 	return checkMenuItemRef
 }
 
-function createRadioMenuItemRef(options?: RadioMenuItemUpdateOptions): HTMLLabelElement {
+function createRadioMenuItemRef(options?: RadioMenuItemUpdateOptions): RadioMenuItemElement {
 	const radioMenuItemRef = document.createElement('label')
 	return updateRadioMenuItemRef(radioMenuItemRef, options)
 }
 
-function updateRadioMenuItemRef(radioMenuItemRef: HTMLLabelElement, options?: RadioMenuItemUpdateOptions): HTMLLabelElement {
+function updateRadioMenuItemRef(
+	radioMenuItemRef: RadioMenuItemElement,
+	options?: RadioMenuItemUpdateOptions
+): RadioMenuItemElement {
 	radioMenuItemRef.classList.add(ButtonClasses.button, MenuClasses.item, MenuClasses.radioItem)
 
 	// leading
@@ -702,7 +721,7 @@ function updateRadioMenuItemRef(radioMenuItemRef: HTMLLabelElement, options?: Ra
 	}
 
 	// icon
-	let iconRef = radioMenuItemRef.querySelector<HTMLElement>(`.${MenuClasses.radioItemIcon}`)
+	let iconRef = radioMenuItemRef.querySelector<IconElement>(`.${MenuClasses.radioItemIcon}`)
 	if (!iconRef) {
 		iconRef = createIconRef({
 			IconCode: ICON_CIRCLE_SMALL,
@@ -735,12 +754,12 @@ function updateRadioMenuItemRef(radioMenuItemRef: HTMLLabelElement, options?: Ra
 	return radioMenuItemRef
 }
 
-function createSubMenuRef(options?: SubMenuUpdateOptions): HTMLDivElement {
+function createSubMenuRef(options?: SubMenuUpdateOptions): SubMenuElement {
 	const subMenuRef = document.createElement('div')
 	return updateSubMenuRef(subMenuRef, options)
 }
 
-function updateSubMenuRef(subMenuRef: HTMLDivElement, options?: SubMenuUpdateOptions): HTMLDivElement {
+function updateSubMenuRef(subMenuRef: SubMenuElement, options?: SubMenuUpdateOptions): SubMenuElement {
 	updateMenuRef(subMenuRef, options)
 	subMenuRef.classList.add(MenuClasses.submenu)
 	return subMenuRef
@@ -765,6 +784,15 @@ export {
 	type CheckMenuItemUpdateOptions,
 	type RadioMenuItemUpdateOptions,
 	type SubMenuProps,
+	type MenuElement,
+	type CheckMenuItemElement,
+	type LinkMenuItemElement,
+	type MenuHeaderElement,
+	type MenuIndentElement,
+	type MenuItemElement,
+	type RadioMenuItemElement,
+	type SubMenuElement,
+	type SubMenuItemElement,
 	MenuClasses,
 	PopoverAttributes as MenuAttributes,
 	PopoverClasses,

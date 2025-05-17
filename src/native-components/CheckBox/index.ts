@@ -4,12 +4,14 @@ type CheckBoxProps = astroHTML.JSX.LabelHTMLAttributes & {
 	CheckBoxContentAttr?: astroHTML.JSX.HTMLAttributes
 }
 
+type CheckBoxElement = HTMLLabelElement
+
 type CheckBoxUpdateOptions = {
 	CheckBoxChildren?: (string | Node)[] | boolean
 	CheckBoxDisabled?: boolean
 	CheckBoxChecked ?: boolean
 	CheckBoxRefs    ?: {
-		checkbox?(ref: HTMLLabelElement): unknown
+		checkbox?(ref: CheckBoxElement ): unknown
 		input   ?(ref: HTMLInputElement): unknown
 		icon    ?(ref: SVGSVGElement   ): unknown
 		content ?(ref: HTMLDivElement  ): unknown
@@ -23,15 +25,15 @@ enum CheckBoxClasses {
 	content  = checkbox + '-content'
 }
 
-function createCheckBoxRef(options?: CheckBoxUpdateOptions): HTMLLabelElement {
+function createCheckBoxRef(options?: CheckBoxUpdateOptions): CheckBoxElement {
 	const checkBoxRef = document.createElement('label')
 	return updateCheckBoxRef(checkBoxRef, options)
 }
 
 function updateCheckBoxRef(
-	checkBoxRef: HTMLLabelElement,
+	checkBoxRef: CheckBoxElement,
 	options?: CheckBoxUpdateOptions
-): HTMLLabelElement {
+): CheckBoxElement {
 	const refs = options?.CheckBoxRefs
 	checkBoxRef.classList.add(CheckBoxClasses.checkbox)
 
@@ -91,6 +93,7 @@ function updateCheckBoxRef(
 export {
 	type CheckBoxProps,
 	type CheckBoxUpdateOptions,
+	type CheckBoxElement,
 	CheckBoxClasses,
 	createCheckBoxRef,
 	updateCheckBoxRef,

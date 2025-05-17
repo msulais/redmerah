@@ -1,8 +1,10 @@
 import {
 	updateButtonRef,
 	updateLinkButtonRef,
+	type ButtonElement,
 	type ButtonProps,
 	type ButtonUpdateOptions,
+	type LinkButtonElement,
 	type LinkButtonProps,
 	type LinkButtonUpdateOptions
 } from "@/native-components/Button"
@@ -13,6 +15,10 @@ type DrawerProps = astroHTML.JSX.HTMLAttributes & {
 	DrawerContentAttr  ?: astroHTML.JSX.HTMLAttributes
 	DrawerFooterAttr   ?: astroHTML.JSX.HTMLAttributes
 }
+
+type DrawerElement = HTMLDivElement
+type DrawerButtonElement = ButtonElement
+type LinkDrawerButtonElement = LinkButtonElement
 
 type DrawerButtonProps = ButtonProps & {
 	DrawerButtonSelected?: boolean
@@ -25,14 +31,14 @@ type LinkDrawerButtonProps = LinkButtonProps & {
 type DrawerButtonUpdateOptions = ButtonUpdateOptions & {
 	DrawerButtonSelected?: boolean
 	DrawerButtonRefs    ?: {
-		button?(ref: HTMLButtonElement): unknown
+		button?(ref: DrawerButtonElement): unknown
 	}
 }
 
 type LinkDrawerButtonUpdateOptions = LinkButtonUpdateOptions & {
 	DrawerButtonSelected?: boolean
 	DrawerButtonRefs    ?: {
-		link?(ref: HTMLAnchorElement): unknown
+		link?(ref: LinkDrawerButtonElement): unknown
 	}
 }
 
@@ -41,7 +47,7 @@ type DrawerUpdateOptions = {
 	DrawerHeader  ?: (string | Node)[] | boolean
 	DrawerFooter  ?: (string | Node)[] | boolean
 	DrawerRefs    ?: {
-		drawer   ?(ref: HTMLDivElement): unknown
+		drawer   ?(ref: DrawerElement ): unknown
 		container?(ref: HTMLDivElement): unknown
 		header   ?(ref: HTMLDivElement): unknown
 		content  ?(ref: HTMLDivElement): unknown
@@ -62,24 +68,24 @@ enum DrawerButtonAttributes {
 	selected = 'data-c-drawer-button-selected'
 }
 
-function openDrawerRef(drawerRef: HTMLDivElement): void {
+function openDrawerRef(drawerRef: DrawerElement): void {
 	drawerRef.showPopover()
 }
 
-function closeDrawerRef(drawerRef: HTMLDivElement): void {
+function closeDrawerRef(drawerRef: DrawerElement): void {
 	drawerRef.hidePopover()
 }
 
-function isDrawerRefOpen(drawerRef: HTMLDivElement): boolean {
+function isDrawerRefOpen(drawerRef: DrawerElement): boolean {
 	return drawerRef.matches(':popover-open')
 }
 
-function createDrawerRef(options?: DrawerUpdateOptions): HTMLDivElement {
+function createDrawerRef(options?: DrawerUpdateOptions): DrawerElement {
 	const drawerRef = document.createElement('div')
 	return updateDrawerRef(drawerRef, options)
 }
 
-function updateDrawerRef(drawerRef: HTMLDivElement, options?: DrawerUpdateOptions): HTMLDivElement {
+function updateDrawerRef(drawerRef: DrawerElement, options?: DrawerUpdateOptions): DrawerElement {
 	const refs = options?.DrawerRefs
 	drawerRef.classList.add(DrawerClasses.drawer)
 	drawerRef.popover = 'auto'
@@ -146,12 +152,12 @@ function updateDrawerRef(drawerRef: HTMLDivElement, options?: DrawerUpdateOption
 	return drawerRef
 }
 
-function createDrawerButtonRef(options?: DrawerButtonUpdateOptions): HTMLButtonElement {
+function createDrawerButtonRef(options?: DrawerButtonUpdateOptions): DrawerButtonElement {
 	const buttonRef = document.createElement('button')
 	return updateDrawerButtonRef(buttonRef, options)
 }
 
-function updateDrawerButtonRef(drawerButtonRef: HTMLButtonElement, options?: DrawerButtonUpdateOptions): HTMLButtonElement {
+function updateDrawerButtonRef(drawerButtonRef: DrawerButtonElement, options?: DrawerButtonUpdateOptions): DrawerButtonElement {
 	const refs = options?.DrawerButtonRefs
 	updateButtonRef(drawerButtonRef, options)
 	drawerButtonRef.classList.add(DrawerClasses.button)
@@ -165,12 +171,15 @@ function updateDrawerButtonRef(drawerButtonRef: HTMLButtonElement, options?: Dra
 	return drawerButtonRef
 }
 
-function createLinkDrawerButtonRef(options?: LinkDrawerButtonUpdateOptions): HTMLAnchorElement {
+function createLinkDrawerButtonRef(options?: LinkDrawerButtonUpdateOptions): LinkDrawerButtonElement {
 	const linkRef = document.createElement('a')
 	return updateLinkDrawerButtonRef(linkRef, options)
 }
 
-function updateLinkDrawerButtonRef(linkDrawerButtonRef: HTMLAnchorElement, options?: LinkDrawerButtonUpdateOptions): HTMLAnchorElement {
+function updateLinkDrawerButtonRef(
+	linkDrawerButtonRef: LinkDrawerButtonElement,
+	options?: LinkDrawerButtonUpdateOptions
+): LinkDrawerButtonElement {
 	const refs = options?.DrawerButtonRefs
 	updateLinkButtonRef(linkDrawerButtonRef, options)
 	linkDrawerButtonRef.classList.add(DrawerClasses.button)
@@ -191,6 +200,9 @@ export {
 	type DrawerButtonUpdateOptions,
 	type LinkDrawerButtonProps,
 	type LinkDrawerButtonUpdateOptions,
+	type DrawerElement,
+	type DrawerButtonElement,
+	type LinkDrawerButtonElement,
 	DrawerClasses,
 	DrawerButtonAttributes,
 	openDrawerRef,

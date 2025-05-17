@@ -8,13 +8,15 @@ type DialogProps = astroHTML.JSX.DialogHTMLAttributes & {
 	DialogFooterAttr   ?: astroHTML.JSX.HTMLAttributes
 }
 
+type DialogElement = HTMLDialogElement
+
 type DialogUpdateOptions = {
 	DialogImportant?: boolean
 	DialogHeader   ?: (string | Node)[] | boolean
 	DialogChildren ?: (string | Node)[] | boolean
 	DialogFooter   ?: (string | Node)[] | boolean
 	DialogRefs     ?: {
-		dialog   ?(ref: HTMLDialogElement): unknown
+		dialog   ?(ref: DialogElement ): unknown
 		container?(ref: HTMLDivElement): unknown
 		header   ?(ref: HTMLDivElement): unknown
 		content  ?(ref: HTMLDivElement): unknown
@@ -52,7 +54,7 @@ enum DialogEvents {
 }
 
 const LISTENED_ATTRIBUTES: string[] = ['open']
-const REGISTERED_DIALOG: Set<HTMLDialogElement> = new Set<HTMLDialogElement>()
+const REGISTERED_DIALOG: Set<DialogElement> = new Set<DialogElement>()
 
 // MutationObserver only exist in client side
 let MUTATION_OBSERVER: MutationObserver | null = null
@@ -65,12 +67,17 @@ function _initMutationObserver(): void {
 			const attr = entry.attributeName
 			if (!attr) continue
 
-			entry.target.dispatchEvent(new CustomEvent<_DialogAttributeChangeEventDetail>(DialogEvents.attributeChange, {detail: {attributeName: attr}}))
+			entry.target.dispatchEvent(
+				new CustomEvent<_DialogAttributeChangeEventDetail>(
+					DialogEvents.attributeChange,
+					{detail: {attributeName: attr}}
+				)
+			)
 		}
 	})
 }
 
-function _initDialogRef(dialogRef: HTMLDialogElement): void {
+function _initDialogRef(dialogRef: DialogElement): void {
 	const attributes = {
 		get important(): boolean {
 			return dialogRef.hasAttribute(DialogAttributes.important)
@@ -134,12 +141,12 @@ function _initDialogRef(dialogRef: HTMLDialogElement): void {
 	initEvents()
 }
 
-function createDialogRef(options?: DialogUpdateOptions): HTMLDialogElement {
+function createDialogRef(options?: DialogUpdateOptions): DialogElement {
 	const dialogRef = document.createElement('dialog')
 	return updateDialogRef(dialogRef, options)
 }
 
-function updateDialogRef(dialogRef: HTMLDialogElement, options?: DialogUpdateOptions): HTMLDialogElement {
+function updateDialogRef(dialogRef: DialogElement, options?: DialogUpdateOptions): DialogElement {
 	const refs = options?.DialogRefs
 	dialogRef.classList.add(DialogClasses.dialog)
 
@@ -207,10 +214,10 @@ function updateDialogRef(dialogRef: HTMLDialogElement, options?: DialogUpdateOpt
 	return dialogRef
 }
 
-function registerDialogRef(...dialogRefs: HTMLDialogElement[]): void {
+function registerDialogRef(...dialogRefs: DialogElement[]): void {
 	_initMutationObserver()
 	if (dialogRefs.length === 0) {
-		dialogRefs = [...document.querySelectorAll<HTMLDialogElement>('.' + DialogClasses.dialog)]
+		dialogRefs = [...document.querySelectorAll<DialogElement>('.' + DialogClasses.dialog)]
 	}
 
 	for (const dialogRef of dialogRefs){
@@ -224,7 +231,7 @@ function registerDialogRef(...dialogRefs: HTMLDialogElement[]): void {
 	}
 }
 
-function unregisterDialogRef(...dialogRefs: HTMLDialogElement[]): void {
+function unregisterDialogRef(...dialogRefs: DialogElement[]): void {
 	MUTATION_OBSERVER?.disconnect()
 	for (const dialogRef of dialogRefs) {
 		REGISTERED_DIALOG.delete(dialogRef)
@@ -238,6 +245,7 @@ export {
 	type DialogProps,
 	type DialogToggleOpenEventDetail,
 	type DialogUpdateOptions,
+	type DialogElement,
 	DialogClasses,
 	DialogAttributes,
 	DialogEvents,

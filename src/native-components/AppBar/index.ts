@@ -6,13 +6,15 @@ type AppBarProps = astroHTML.JSX.HTMLAttributes & {
 	AppHeadingAttr ?: astroHTML.JSX.HTMLAttributes
 }
 
-type AppBarUpdateOptions = {
+type AppBarElement<T extends HTMLElement> = T
+
+type AppBarUpdateOptions<T extends AppBarElement<HTMLElement>> = {
 	AppBarChildren?: (Node | string)[] | boolean
 	AppBarLeading ?: (Node | string)[] | boolean
 	AppBarHeadline?: (Node | string)[] | boolean
 	AppBarTrailing?: (Node | string)[] | boolean
 	AppBarRefs?: {
-		appBar  ?(ref: HTMLElement       ): unknown
+		appBar  ?(ref: T                 ): unknown
 		leading ?(ref: HTMLDivElement    ): unknown
 		trailing?(ref: HTMLDivElement    ): unknown
 		content ?(ref: HTMLDivElement    ): unknown
@@ -28,14 +30,17 @@ enum AppBarClasses {
 	headline = appbar + '-headline'
 }
 
-function createAppBarRef<T extends HTMLElement>(
-	options?: AppBarUpdateOptions & {AppBarTagName?: keyof HTMLElementTagNameMap}
+function createAppBarRef<T extends AppBarElement<HTMLElement>>(
+	options?: AppBarUpdateOptions<T> & {AppBarTagName?: keyof HTMLElementTagNameMap}
 ): T {
 	const appBarRef = document.createElement(options?.AppBarTagName ?? 'header')
 	return updateAppBarRef(appBarRef, options) as T
 }
 
-function updateAppBarRef<T extends HTMLElement>(appBarRef: T, options?: AppBarUpdateOptions): T {
+function updateAppBarRef<T extends AppBarElement<HTMLElement>>(
+	appBarRef: T,
+	options?: AppBarUpdateOptions<T>
+): T {
 	const refs = options?.AppBarRefs
 	appBarRef.classList.add(AppBarClasses.appbar)
 
@@ -126,6 +131,7 @@ function updateAppBarRef<T extends HTMLElement>(appBarRef: T, options?: AppBarUp
 export {
 	type AppBarProps,
 	type AppBarUpdateOptions,
+	type AppBarElement,
 	AppBarClasses,
 	createAppBarRef,
 	updateAppBarRef

@@ -7,14 +7,16 @@ type ListProps = astroHTML.JSX.HTMLAttributes & {
 	ListSubtitleAttr?: astroHTML.JSX.HTMLAttributes
 }
 
-type ListUpdateOptions = {
+type ListElement<T extends HTMLElement> = T
+
+type ListUpdateOptions<T extends ListElement<HTMLElement>> = {
 	ListLeading    ?: (Node | string)[] | boolean
 	ListChildren   ?: (Node | string)[] | boolean
 	ListSubtitle   ?: (Node | string)[] | boolean
 	ListTrailing   ?: (Node | string)[] | boolean
 	ListVariant    ?: ListVariant | boolean
 	ListRefs       ?: {
-		list    ?(ref: HTMLElement   ): unknown
+		list    ?(ref: T             ): unknown
 		content ?(ref: HTMLDivElement): unknown
 		subtitle?(ref: HTMLDivElement): unknown
 		leading ?(ref: HTMLDivElement): unknown
@@ -41,15 +43,15 @@ enum ListAttributes {
 	variant = 'data-c-list-variant'
 }
 
-function createListRef<T extends HTMLElement>(
-	options?: ListUpdateOptions & {ListTagName?: keyof HTMLElementTagNameMap}
+function createListRef<T extends ListElement<HTMLElement>>(
+	options?: ListUpdateOptions<T> & {ListTagName?: keyof HTMLElementTagNameMap}
 ): T {
 	const listRef = document.createElement(options?.ListTagName ?? 'div')
 	updateListRef(listRef, options)
 	return listRef as T
 }
 
-function updateListRef<T extends HTMLElement>(listRef: T, options?: ListUpdateOptions): T {
+function updateListRef<T extends ListElement<HTMLElement>>(listRef: T, options?: ListUpdateOptions<T>): T {
 	const refs = options?.ListRefs
 	listRef.classList.add(ListClasses.list)
 
@@ -148,6 +150,7 @@ function updateListRef<T extends HTMLElement>(listRef: T, options?: ListUpdateOp
 export {
 	type ListProps,
 	type ListUpdateOptions,
+	type ListElement,
 	ListClasses,
 	ListVariant,
 	ListAttributes,

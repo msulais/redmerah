@@ -1,11 +1,11 @@
 import { ICON_ADD } from "@/constants/icons"
-
 import {
 	type IconUpdateOptions,
 	type IconProps,
 	createIconRef,
 	IconClasses,
-	updateIconRef
+	updateIconRef,
+	type IconElement
 } from "@/native-components/Icon"
 
 type ButtonProps = astroHTML.JSX.ButtonHTMLAttributes & {
@@ -35,13 +35,18 @@ type LinkIconButtonProps = LinkButtonProps & {
 	}
 }
 
+type ButtonElement = HTMLButtonElement
+type LinkButtonElement = HTMLAnchorElement
+type IconButtonElement = ButtonElement
+type LinkIconButtonElement = LinkButtonElement
+
 type ButtonUpdateOptions = {
 	ButtonChildren?: (Node | string)[] | boolean
 	ButtonVariant ?: ButtonVariant | boolean
 	ButtonFocused ?: boolean
 	ButtonDisabled?: boolean
 	ButtonRefs    ?: {
-		button?(ref: HTMLButtonElement): unknown
+		button?(ref: ButtonElement): unknown
 	}
 }
 
@@ -52,23 +57,23 @@ type LinkButtonUpdateOptions = {
 	LinkButtonVariant ?: ButtonVariant | boolean
 	LinkButtonFocused ?: boolean
 	LinkButtonRefs    ?: {
-		link?(ref: HTMLAnchorElement): unknown
+		link?(ref: LinkButtonElement): unknown
 	}
 }
 
 type LinkIconButtonUpdateOptions = Omit<LinkButtonUpdateOptions, 'LinkButtonChildren'> & {
 	LinkIconButtonIcon?: IconUpdateOptions
 	LinkIconButtonRefs?: {
-		link?(ref: HTMLAnchorElement): unknown
-		icon?(ref: HTMLElement): unknown
+		link?(ref: LinkIconButtonElement): unknown
+		icon?(ref: IconElement): unknown
 	}
 }
 
 type IconButtonUpdateOptions = Omit<ButtonUpdateOptions, 'ButtonChildren'> & {
 	IconButtonIcon?: IconUpdateOptions
 	IconButtonRefs?: {
-		button?(ref: HTMLButtonElement): unknown
-		icon  ?(ref: HTMLElement): unknown
+		button?(ref: IconButtonElement): unknown
+		icon  ?(ref: IconElement): unknown
 	}
 }
 
@@ -89,12 +94,12 @@ enum ButtonClasses {
 	icon    = 'c-icon-button'
 }
 
-function createButtonRef(options?: ButtonUpdateOptions): HTMLButtonElement {
+function createButtonRef(options?: ButtonUpdateOptions): ButtonElement {
 	const buttonRef = document.createElement('button')
 	return updateButtonRef(buttonRef, options)
 }
 
-function updateButtonRef(buttonRef: HTMLButtonElement, options?: ButtonUpdateOptions): HTMLButtonElement {
+function updateButtonRef(buttonRef: ButtonElement, options?: ButtonUpdateOptions): ButtonElement {
 	const refs = options?.ButtonRefs
 	buttonRef.classList.add(ButtonClasses.button)
 
@@ -128,12 +133,15 @@ function updateButtonRef(buttonRef: HTMLButtonElement, options?: ButtonUpdateOpt
 	return buttonRef
 }
 
-function createLinkButtonRef(options?: LinkButtonUpdateOptions): HTMLAnchorElement {
+function createLinkButtonRef(options?: LinkButtonUpdateOptions): LinkButtonElement {
 	const linkRef = document.createElement('a')
 	return updateLinkButtonRef(linkRef, options)
 }
 
-function updateLinkButtonRef(linkRef: HTMLAnchorElement, options?: LinkButtonUpdateOptions): HTMLAnchorElement {
+function updateLinkButtonRef(
+	linkRef: LinkButtonElement,
+	options?: LinkButtonUpdateOptions
+): LinkButtonElement {
 	const refs = options?.LinkButtonRefs
 	linkRef.classList.add(ButtonClasses.button)
 
@@ -184,18 +192,21 @@ function createIconButtonRef(
 	options: Omit<IconButtonUpdateOptions, 'IconButtonIcon'> & {
 		IconButtonIcon: Omit<IconUpdateOptions, 'IconCode'> & { IconCode: number }
 	}
-): HTMLButtonElement {
+): IconButtonElement {
 	const iconButtonRef = createButtonRef(options)
 	return updateIconButtonRef(iconButtonRef, options)
 }
 
-function updateIconButtonRef(iconButtonRef: HTMLButtonElement, options?: IconButtonUpdateOptions): HTMLButtonElement {
+function updateIconButtonRef(
+	iconButtonRef: IconButtonElement,
+	options?: IconButtonUpdateOptions
+): IconButtonElement {
 	const refs = options?.IconButtonRefs
 	updateButtonRef(iconButtonRef, options)
 	iconButtonRef.classList.add(ButtonClasses.icon)
 
 	const iconOption = options?.IconButtonIcon
-	let iconRef = iconButtonRef.querySelector(`.${IconClasses.icon}`) as HTMLElement | null
+	let iconRef = iconButtonRef.querySelector(`.${IconClasses.icon}`) as IconElement | null
 	if (iconRef) {
 		updateIconRef(iconRef, iconOption)
 	}
@@ -213,21 +224,21 @@ function createLinkIconButtonRef(
 	options: Omit<LinkIconButtonUpdateOptions, 'LinkIconButtonIcon'> & {
 		LinkIconButtonIcon: Omit<IconUpdateOptions, 'IconCode'> & { IconCode: number }
 	}
-): HTMLAnchorElement {
+): LinkIconButtonElement {
 	const linkIconButtonRef = createLinkButtonRef(options)
 	return updateLinkIconButtonRef(linkIconButtonRef, options)
 }
 
 function updateLinkIconButtonRef(
-	linkIconButtonRef: HTMLAnchorElement,
+	linkIconButtonRef: LinkIconButtonElement,
 	options?: LinkIconButtonUpdateOptions
-): HTMLAnchorElement {
+): LinkIconButtonElement {
 	const refs = options?.LinkIconButtonRefs
 	updateLinkButtonRef(linkIconButtonRef, options)
 	linkIconButtonRef.classList.add(ButtonClasses.icon)
 
 	const iconOption = options?.LinkIconButtonIcon
-	let iconRef = linkIconButtonRef.querySelector(`.${IconClasses.icon}`) as HTMLElement | null
+	let iconRef = linkIconButtonRef.querySelector(`.${IconClasses.icon}`) as IconElement | null
 	if (iconRef) {
 		updateIconRef(iconRef, iconOption)
 	}
@@ -250,6 +261,10 @@ export {
 	type IconButtonUpdateOptions,
 	type LinkButtonUpdateOptions,
 	type LinkIconButtonUpdateOptions,
+	type ButtonElement,
+	type LinkButtonElement,
+	type IconButtonElement,
+	type LinkIconButtonElement,
 	ButtonVariant,
 	ButtonClasses,
 	ButtonAttributes,

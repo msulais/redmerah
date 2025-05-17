@@ -10,7 +10,7 @@ import { ICON_CHEVRON_DOWN } from "@/constants/icons"
 import { createId } from "@/utils/ids"
 import { isAnimationAllowed } from "@/utils/animation"
 
-import { createIconRef, type IconProps } from "@/native-components/Icon"
+import { createIconRef, type IconElement, type IconProps } from "@/native-components/Icon"
 import {
 	type ButtonProps,
 	type ButtonUpdateOptions,
@@ -33,6 +33,9 @@ type SelectOptionProps = Omit<ButtonProps, 'value'> & {
 	value                : string
 }
 
+type SelectElement = HTMLDivElement
+type SelectOptionElement = HTMLButtonElement
+
 type SelectUpdateOptions = {
 	SelectChildren   ?: (string | Node)[] | boolean
 	SelectPlaceholder?: (string | Node)[] | boolean
@@ -40,7 +43,7 @@ type SelectUpdateOptions = {
 	SelectRole       ?: astroHTML.JSX.AriaRole | boolean
 	SelectUseIcon    ?: boolean
 	SelectRefs       ?: {
-		select     ?(ref: HTMLDivElement): unknown
+		select     ?(ref: SelectElement ): unknown
 		content    ?(ref: HTMLDivElement): unknown
 		popover    ?(ref: HTMLDivElement): unknown
 		placeholder?(ref: HTMLDivElement): unknown
@@ -53,7 +56,7 @@ type SelectOptionUpdateOptions = ButtonUpdateOptions & {
 	SelectOptionSelected?: boolean
 	SelectOptionRole    ?: astroHTML.JSX.AriaRole | boolean
 	SelectOptionRefs    ?: {
-		option?(ref: HTMLButtonElement): unknown
+		option?(ref: SelectOptionElement): unknown
 	}
 }
 
@@ -85,14 +88,14 @@ enum SelectVariant {
 	transparent = 'transparent',
 }
 
-const REGISTERED_SELECT: Set<HTMLDivElement> = new Set<HTMLDivElement>()
-let OPENED_SELECT: HTMLDivElement | null = null
+const REGISTERED_SELECT: Set<SelectElement> = new Set<SelectElement>()
+let OPENED_SELECT: SelectElement | null = null
 let SELECTED_OPTION_COPY: HTMLElement | null = null
 let HAS_LISTENER: boolean = false
 
-function checkSelectedOptionRefs(selectRef: HTMLDivElement, ...options: HTMLButtonElement[]): void {
+function checkSelectedOptionRefs(selectRef: SelectElement, ...options: SelectOptionElement[]): void {
 	if (options.length === 0) {
-		options.push(...selectRef.querySelectorAll<HTMLButtonElement>(`.${SelectClasses.option}`))
+		options.push(...selectRef.querySelectorAll<SelectOptionElement>(`.${SelectClasses.option}`))
 	}
 
 	const selectedOptionRefs = options.filter(o => {
@@ -109,9 +112,9 @@ function checkSelectedOptionRefs(selectRef: HTMLDivElement, ...options: HTMLButt
 	}
 }
 
-function repairOptionRefs(selectRef: HTMLDivElement, ...optionRefs: HTMLButtonElement[]): void {
+function repairOptionRefs(selectRef: SelectElement, ...optionRefs: SelectOptionElement[]): void {
 	if (optionRefs.length === 0) {
-		optionRefs.push(...selectRef.querySelectorAll<HTMLButtonElement>(`.${SelectClasses.option}`))
+		optionRefs.push(...selectRef.querySelectorAll<SelectOptionElement>(`.${SelectClasses.option}`))
 	}
 
 	for (const optionRef of optionRefs) {
@@ -131,15 +134,15 @@ function repairOptionRefs(selectRef: HTMLDivElement, ...optionRefs: HTMLButtonEl
 	checkSelectedOptionRefs(selectRef, ...optionRefs)
 }
 
-function updateSelectRefValue(selectRef: HTMLDivElement, value: string): void {
-	const options = [...selectRef.querySelectorAll<HTMLButtonElement>(`.${SelectClasses.option}`)]
+function updateSelectRefValue(selectRef: SelectElement, value: string): void {
+	const options = [...selectRef.querySelectorAll<SelectOptionElement>(`.${SelectClasses.option}`)]
 	const selectedOptionRefs = options.filter(o => {
 		const selected = o.getAttribute('aria-selected') === 'true'
 		const disabled = o.disabled
 		return selected && !disabled
 	})
 
-	const targetOptionRef = selectRef.querySelector<HTMLButtonElement>(`.${SelectClasses.option}[value="${CSS.escape(value)}"]`)
+	const targetOptionRef = selectRef.querySelector<SelectOptionElement>(`.${SelectClasses.option}[value="${CSS.escape(value)}"]`)
 	if (!targetOptionRef) return
 
 	targetOptionRef.setAttribute('aria-selected', 'true')
@@ -158,7 +161,7 @@ function updateSelectRefValue(selectRef: HTMLDivElement, value: string): void {
 	repairOptionRefs(selectRef)
 }
 
-function openSelectRef(selectRef: HTMLDivElement): void {
+function openSelectRef(selectRef: SelectElement): void {
 	if (OPENED_SELECT) {
 		closeSelectRef(OPENED_SELECT)
 	}
@@ -252,7 +255,7 @@ function openSelectRef(selectRef: HTMLDivElement): void {
 	}
 }
 
-function closeSelectRef(selectRef: HTMLDivElement): void {
+function closeSelectRef(selectRef: SelectElement): void {
 	if (SELECTED_OPTION_COPY) {
 		SELECTED_OPTION_COPY.remove()
 		SELECTED_OPTION_COPY = null
@@ -296,13 +299,13 @@ function _initSelectPopoverRefListener(): void {
 	initEvents()
 }
 
-function _initSelectRef(selectRef: HTMLDivElement): void {
-	const optionRefs: HTMLButtonElement[] = []
+function _initSelectRef(selectRef: SelectElement): void {
+	const optionRefs: SelectOptionElement[] = []
 	const isExpanded = () => OPENED_SELECT === selectRef
 	let disableClickEvent = false
 	let timeOptionsId: NodeJS.Timeout | number | null = null
 
-	function selectOptionRef(optionRef: HTMLButtonElement): void {
+	function selectOptionRef(optionRef: SelectOptionElement): void {
 		const selectedOptionRefs = selectRef.querySelectorAll(
 			`.${SelectClasses.option}[aria-selected=true]`
 		)
@@ -318,7 +321,7 @@ function _initSelectRef(selectRef: HTMLDivElement): void {
 		}))
 	}
 
-	function isOptionRef(optionRef: HTMLButtonElement | null): boolean {
+	function isOptionRef(optionRef: SelectOptionElement | null): boolean {
 		if (
 			!optionRef
 			|| !optionRef.classList.contains(SelectClasses.option)
@@ -342,7 +345,7 @@ function _initSelectRef(selectRef: HTMLDivElement): void {
 			KEY_ENTER
 		].includes(key)) return
 
-		const optionRef = document.activeElement as HTMLButtonElement | null
+		const optionRef = document.activeElement as SelectOptionElement | null
 		if ([KEY_ARROW_DOWN, KEY_ARROW_UP].includes(key)){
 			if (ev.altKey) {
 				return isExpanded()? closeSelectRef(selectRef) : openSelectRef(selectRef)
@@ -351,7 +354,7 @@ function _initSelectRef(selectRef: HTMLDivElement): void {
 			if (!isOptionRef(optionRef)) return
 			if (timeOptionsId === null) {
 				optionRefs.length = 0
-				optionRefs.push(...selectRef.querySelectorAll<HTMLButtonElement>(`.${SelectClasses.option}`))
+				optionRefs.push(...selectRef.querySelectorAll<SelectOptionElement>(`.${SelectClasses.option}`))
 				timeOptionsId = setTimeout(() => {
 					timeOptionsId = null
 				}, 100)
@@ -377,7 +380,7 @@ function _initSelectRef(selectRef: HTMLDivElement): void {
 		}
 		else if (key === KEY_ESCAPE) {
 			closeSelectRef(selectRef)
-			selectRef.querySelector<HTMLButtonElement>(
+			selectRef.querySelector<SelectOptionElement>(
 				`.${SelectClasses.option}[aria-selected=true]:not(:disabled)`
 			)?.focus()
 		}
@@ -404,7 +407,7 @@ function _initSelectRef(selectRef: HTMLDivElement): void {
 
 		if (timeOptionsId === null) {
 			optionRefs.length = 0
-			optionRefs.push(...selectRef.querySelectorAll<HTMLButtonElement>(`.${SelectClasses.option}`))
+			optionRefs.push(...selectRef.querySelectorAll<SelectOptionElement>(`.${SelectClasses.option}`))
 			timeOptionsId = setTimeout(() => {
 				timeOptionsId = null
 			}, 100)
@@ -438,7 +441,7 @@ function _initSelectRef(selectRef: HTMLDivElement): void {
 				return openSelectRef(selectRef)
 			}
 
-			const optionRef = document.activeElement as HTMLButtonElement | null
+			const optionRef = document.activeElement as SelectOptionElement | null
 			if (!isOptionRef(optionRef)) return
 
 			selectOptionRef(optionRef!)
@@ -453,12 +456,12 @@ function _initSelectRef(selectRef: HTMLDivElement): void {
 	repairOptionRefs(selectRef)
 }
 
-function createSelectRef(options?: SelectUpdateOptions): HTMLDivElement {
+function createSelectRef(options?: SelectUpdateOptions): SelectElement {
 	const selectRef = document.createElement('div')
 	return updateSelectRef(selectRef, options)
 }
 
-function updateSelectRef(selectRef: HTMLDivElement, options?: SelectUpdateOptions): HTMLDivElement {
+function updateSelectRef(selectRef: SelectElement, options?: SelectUpdateOptions): SelectElement {
 	const refs = options?.SelectRefs
 	selectRef.classList.add(SelectClasses.select)
 	if (!selectRef.hasAttribute('role')) {
@@ -494,7 +497,7 @@ function updateSelectRef(selectRef: HTMLDivElement, options?: SelectUpdateOption
 	}
 
 	// icon
-	let iconRef = selectRef.querySelector<HTMLElement>(`.${SelectClasses.icon}`)
+	let iconRef = selectRef.querySelector<IconElement>(`.${SelectClasses.icon}`)
 	if (!iconRef) {
 		iconRef = createIconRef({IconCode: ICON_CHEVRON_DOWN})
 		iconRef.classList.add(SelectClasses.icon)
@@ -555,12 +558,17 @@ function updateSelectRef(selectRef: HTMLDivElement, options?: SelectUpdateOption
 	return selectRef
 }
 
-function createSelectOptionRef(options: Omit<SelectOptionUpdateOptions, 'value'> & {SelectOptionValue: string}): HTMLButtonElement {
+function createSelectOptionRef(
+	options: Omit<SelectOptionUpdateOptions, 'value'> & {SelectOptionValue: string}
+): SelectOptionElement {
 	const optionRef = createButtonRef(options)
 	return updateSelectOptionRef(optionRef, options)
 }
 
-function updateSelectOptionRef(optionRef: HTMLButtonElement, options?: SelectOptionUpdateOptions): HTMLButtonElement {
+function updateSelectOptionRef(
+	optionRef: SelectOptionElement,
+	options?: SelectOptionUpdateOptions
+): SelectOptionElement {
 	updateButtonRef(optionRef, options)
 	optionRef.classList.add(SelectClasses.option)
 	if (!optionRef.id) {
@@ -590,15 +598,15 @@ function updateSelectOptionRef(optionRef: HTMLButtonElement, options?: SelectOpt
 
 	options?.SelectOptionRefs?.option?.(optionRef)
 	const selectRef = optionRef.closest('.' + SelectClasses.select)
-	if (selectRef) repairOptionRefs(selectRef as HTMLDivElement)
+	if (selectRef) repairOptionRefs(selectRef as SelectElement)
 
 	return optionRef
 }
 
-function registerSelectRef(...selectRefs: HTMLDivElement[]): void {
+function registerSelectRef(...selectRefs: SelectElement[]): void {
 	_initSelectPopoverRefListener()
 	if (selectRefs.length === 0) {
-		selectRefs = [...document.querySelectorAll<HTMLDivElement>('.' + SelectClasses.select)]
+		selectRefs = [...document.querySelectorAll<SelectElement>('.' + SelectClasses.select)]
 	}
 
 	for (const selectRef of selectRefs) {
@@ -611,7 +619,7 @@ function registerSelectRef(...selectRefs: HTMLDivElement[]): void {
 	}
 }
 
-function unregisterSelectRef(...selects: HTMLDivElement[]): void {
+function unregisterSelectRef(...selects: SelectElement[]): void {
 	for (const select of selects) {
 		REGISTERED_SELECT.delete(select)
 	}
@@ -622,6 +630,8 @@ export {
 	type SelectUpdateOptions,
 	type SelectOptionProps,
 	type SelectOptionUpdateOptions,
+	type SelectElement,
+	type SelectOptionElement,
 	SelectClasses,
 	SelectAttributes,
 	SelectVariant,

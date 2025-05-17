@@ -4,12 +4,14 @@ type IconProps = astroHTML.JSX.HTMLAttributes & {
 	IconInline?: boolean
 }
 
+type IconElement = HTMLElement
+
 type IconUpdateOptions = {
 	IconCode  ?: number
 	IconFilled?: boolean
 	IconInline?: boolean
 	IconRefs  ?: {
-		icon?(ref: HTMLElement): unknown
+		icon?(ref: IconElement): unknown
 	}
 }
 
@@ -23,12 +25,12 @@ enum IconClasses {
 
 function createIconRef(
 	options: Omit<IconUpdateOptions, 'IconCode'> & { IconCode: number }
-): HTMLElement {
+): IconElement {
 	const iconRef = document.createElement('i')
 	return updateIconRef(iconRef, options)
 }
 
-function updateIconRef(iconRef: HTMLElement, options?: IconUpdateOptions): HTMLElement {
+function updateIconRef(iconRef: IconElement, options?: IconUpdateOptions): IconElement {
 	const classList = iconRef.classList
 	classList.add(IconClasses.icon)
 	iconRef.translate = false
@@ -54,6 +56,7 @@ function updateIconRef(iconRef: HTMLElement, options?: IconUpdateOptions): HTMLE
 export {
 	type IconProps,
 	type IconUpdateOptions,
+	type IconElement,
 	IconClasses,
 	IconAttributes,
 	createIconRef,

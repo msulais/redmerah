@@ -3,6 +3,7 @@ import {
 	type ButtonProps,
 	createButtonRef,
 	updateButtonRef,
+	type ButtonElement,
 } from "@/native-components/Button"
 
 type SideBarProps = astroHTML.JSX.HTMLAttributes & {
@@ -19,13 +20,16 @@ type SideBarButtonProps = ButtonProps & {
 	SideBarButtonLeadingAttr?: astroHTML.JSX.HTMLAttributes
 }
 
-type SideBarUpdateOptions = {
+type SideBarElement<T extends HTMLElement> = T
+type SideBarButtonElement = ButtonElement
+
+type SideBarUpdateOptions<T extends SideBarElement<HTMLElement>> = {
 	SideBarMinimized?: boolean
 	SideBarChildren ?: (Node | string)[] | boolean
 	SideBarHeader   ?: (Node | string)[] | boolean
 	SideBarFooter   ?: (Node | string)[] | boolean
 	SideBarRefs     ?: {
-		sideBar?(ref: HTMLElement   ): unknown
+		sideBar?(ref: T             ): unknown
 		content?(ref: HTMLDivElement): unknown
 		header ?(ref: HTMLDivElement): unknown
 		footer ?(ref: HTMLDivElement): unknown
@@ -36,7 +40,7 @@ type SideBarButtonUpdateOptions = ButtonUpdateOptions & {
 	SideBarButtonSelected?: boolean
 	SideBarButtonLeading ?: (string | Node)[] | boolean
 	SideBarButtonRefs    ?: {
-		button ?(ref: HTMLButtonElement): unknown
+		button ?(ref: SideBarButtonElement): unknown
 		content?(ref: HTMLDivElement): unknown
 		leading?(ref: HTMLDivElement): unknown
 	}
@@ -60,17 +64,16 @@ enum SideBarClasses {
 	buttonLeading = button + '-leading',
 }
 
-function createSideBarRef<T extends HTMLElement>(
-	options?: SideBarUpdateOptions & {SideBarTagName?: string}
+function createSideBarRef<T extends SideBarElement<HTMLElement>>(
+	options?: SideBarUpdateOptions<T> & {SideBarTagName?: string}
 ): T {
-	const sideBarRef = document.createElement(options?.SideBarTagName ?? 'div')
-	updateSideBarRef(sideBarRef, options)
-	return sideBarRef as T
+	const sideBarRef = document.createElement(options?.SideBarTagName ?? 'div') as T
+	return updateSideBarRef<T>(sideBarRef, options)
 }
 
-function updateSideBarRef<T extends HTMLElement>(
+function updateSideBarRef<T extends SideBarElement<HTMLElement>>(
 	sideBarRef: T,
-	options?: SideBarUpdateOptions
+	options?: SideBarUpdateOptions<T>
 ): T {
 	const refs = options?.SideBarRefs
 	sideBarRef.classList.add(SideBarClasses.sideBar)
@@ -135,15 +138,15 @@ function updateSideBarRef<T extends HTMLElement>(
 	return sideBarRef
 }
 
-function createSideBarButtonRef(options?: SideBarButtonUpdateOptions): HTMLButtonElement {
+function createSideBarButtonRef(options?: SideBarButtonUpdateOptions): SideBarButtonElement {
 	const sideBarButtonRef = createButtonRef(options)
 	return updateSideBarButtonRef(sideBarButtonRef, options)
 }
 
 function updateSideBarButtonRef(
-	sideBarButtonRef: HTMLButtonElement,
+	sideBarButtonRef: SideBarButtonElement,
 	options?: SideBarButtonUpdateOptions
-): HTMLButtonElement {
+): SideBarButtonElement {
 	const refs = options?.SideBarButtonRefs
 	updateButtonRef(sideBarButtonRef, options)
 	sideBarButtonRef.classList.add(SideBarClasses.button)
@@ -198,6 +201,8 @@ export {
 	type SideBarButtonProps,
 	type SideBarUpdateOptions,
 	type SideBarButtonUpdateOptions,
+	type SideBarElement,
+	type SideBarButtonElement,
 	SideBarClasses,
 	SideBarAttributes,
 	SideBarButtonAttributes,

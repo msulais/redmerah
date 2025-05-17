@@ -41,11 +41,13 @@ import {
 	repositionPopoverRef,
 	isPopoverRefOpen,
 	updatePopoverRef,
-	registerPopoverRef
+	registerPopoverRef,
+	type PopoverElement
 } from "@/native-components/Popover"
 import {
 	ButtonVariant,
 	createIconButtonRef,
+	type IconButtonElement,
 	type IconButtonProps
 } from "@/native-components/Button"
 import {
@@ -55,10 +57,13 @@ import {
 	updateTextFieldRef,
 	updateTextFieldButtonRef,
 	type TextFieldButtonProps,
-	type TextFieldProps
+	type TextFieldProps,
+	type TextFieldButtonElement,
+	type TextFieldElement
 } from "@/native-components/TextField"
 import {
 	createIconRef,
+	type IconElement,
 	type IconProps
 } from "@/native-components/Icon"
 
@@ -86,6 +91,8 @@ type ColorPickerProps = PopoverProps & {
 	ColorPickerSwapIconAttr        ?: IconProps
 }
 
+type ColorPickerElement = PopoverElement
+
 type ColorPickerUpdateOptions = Omit<PopoverUpdateOptions, 'PopoverChildren'> & {
 	ColorPickerValue          ?: HEXColor | boolean
 	ColorPickerDisabledOpacity?: boolean
@@ -93,23 +100,23 @@ type ColorPickerUpdateOptions = Omit<PopoverUpdateOptions, 'PopoverChildren'> & 
 	ColorPickerColorSpace     ?: ColorPickerColorSpace | boolean
 	ColorPickerChildren       ?: (string | Node)[] | boolean
 	ColorPickerRefs           ?: {
-		colorpicker     ?(ref: HTMLDivElement   ): unknown
-		content         ?(ref: HTMLDivElement   ): unknown
-		eyedropper      ?(ref: HTMLButtonElement): unknown
-		input           ?(ref: HTMLDivElement   ): unknown
-		labelColor      ?(ref: HTMLLabelElement ): unknown
-		labelOpacity    ?(ref: HTMLLabelElement ): unknown
-		options         ?(ref: HTMLDivElement   ): unknown
-		preview         ?(ref: HTMLDivElement   ): unknown
-		rect            ?(ref: HTMLDivElement   ): unknown
-		slider          ?(ref: HTMLDivElement   ): unknown
-		sliderHue       ?(ref: HTMLInputElement ): unknown
-		sliderOpacity   ?(ref: HTMLInputElement ): unknown
-		swap            ?(ref: HTMLButtonElement): unknown
-		swapIcon        ?(ref: HTMLElement      ): unknown
-		textfield       ?(ref: HTMLDivElement   ): unknown
-		textfieldColor  ?(ref: HTMLDivElement   ): unknown
-		textfieldOpacity?(ref: HTMLDivElement   ): unknown
+		colorpicker     ?(ref: HTMLDivElement        ): unknown
+		content         ?(ref: HTMLDivElement        ): unknown
+		eyedropper      ?(ref: IconButtonElement     ): unknown
+		input           ?(ref: HTMLDivElement        ): unknown
+		labelColor      ?(ref: HTMLLabelElement      ): unknown
+		labelOpacity    ?(ref: HTMLLabelElement      ): unknown
+		options         ?(ref: HTMLDivElement        ): unknown
+		preview         ?(ref: HTMLDivElement        ): unknown
+		rect            ?(ref: HTMLDivElement        ): unknown
+		slider          ?(ref: HTMLDivElement        ): unknown
+		sliderHue       ?(ref: HTMLInputElement      ): unknown
+		sliderOpacity   ?(ref: HTMLInputElement      ): unknown
+		swap            ?(ref: TextFieldButtonElement): unknown
+		swapIcon        ?(ref: IconElement           ): unknown
+		textfield       ?(ref: HTMLDivElement        ): unknown
+		textfieldColor  ?(ref: TextFieldElement      ): unknown
+		textfieldOpacity?(ref: TextFieldElement      ): unknown
 	}
 }
 
@@ -165,9 +172,9 @@ enum ColorPickerColorSpace {
 	hex = 'hex'
 }
 
-const REGISTERED_COLORPICKER: Set<HTMLDivElement> = new Set<HTMLDivElement>()
+const REGISTERED_COLORPICKER: Set<ColorPickerElement> = new Set<ColorPickerElement>()
 
-function _initColorPickerRef(colorPickerRef: HTMLDivElement): void {
+function _initColorPickerRef(colorPickerRef: ColorPickerElement): void {
 	const attributes = {
 		get value(): HEXColor {
 			return (colorPickerRef.getAttribute(ColorPickerAttributes.value) ?? '#FF0000') as HEXColor
@@ -194,12 +201,12 @@ function _initColorPickerRef(colorPickerRef: HTMLDivElement): void {
 	let colorSpace: ColorPickerColorSpace = ColorPickerColorSpace.hex
 	let rectRef: HTMLDivElement | null = null
 	let rectRect: DOMRect | null = null
-	let eyeDropperRef: HTMLButtonElement | null = null
+	let eyeDropperRef: IconButtonElement | null = null
 	let labelColorRef: HTMLLabelElement | null = null
 	let labelOpacityRef: HTMLLabelElement | null = null
 	let inputColorRef: HTMLInputElement | null = null
 	let inputOpacityRef: HTMLInputElement | null = null
-	let swapRef: HTMLButtonElement | null = null
+	let swapRef: TextFieldButtonElement | null = null
 	let sliderHueRef: HTMLInputElement | null = null
 	let sliderOpacityRef: HTMLInputElement | null = null
 	let rectDragging = false
@@ -552,12 +559,12 @@ function _initColorPickerRef(colorPickerRef: HTMLDivElement): void {
 	function initStructure(): void {
 		updateColorPickerRef(colorPickerRef)
 		rectRef = colorPickerRef.querySelector<HTMLDivElement>('.' + ColorPickerClasses.rect)
-		eyeDropperRef = colorPickerRef.querySelector<HTMLButtonElement>('.' + ColorPickerClasses.eyedropper)
+		eyeDropperRef = colorPickerRef.querySelector<IconButtonElement>('.' + ColorPickerClasses.eyedropper)
 		sliderHueRef = colorPickerRef.querySelector<HTMLInputElement>('.' + ColorPickerClasses.sliderHue)
 		sliderOpacityRef = colorPickerRef.querySelector<HTMLInputElement>('.' + ColorPickerClasses.sliderOpacity)
 		labelColorRef = colorPickerRef.querySelector<HTMLLabelElement>('.' + ColorPickerClasses.labelColor)
 		labelOpacityRef = colorPickerRef.querySelector<HTMLLabelElement>('.' + ColorPickerClasses.labelOpacity)
-		swapRef = colorPickerRef.querySelector<HTMLButtonElement>('.' + ColorPickerClasses.swap)
+		swapRef = colorPickerRef.querySelector<TextFieldButtonElement>('.' + ColorPickerClasses.swap)
 		inputColorRef = colorPickerRef.querySelector<HTMLInputElement>(`.${ColorPickerClasses.textfieldColor} .${TextFieldClasses.input}`)
 		inputOpacityRef = colorPickerRef.querySelector<HTMLInputElement>(`.${ColorPickerClasses.textfieldOpacity} .${TextFieldClasses.input}`)
 
@@ -626,9 +633,9 @@ function _initColorPickerRef(colorPickerRef: HTMLDivElement): void {
 	checkEyeDropperAPI()
 }
 
-function registerColorPickerRef(...colorPickerRefs: HTMLDivElement[]): void {
+function registerColorPickerRef(...colorPickerRefs: ColorPickerElement[]): void {
 	if (colorPickerRefs.length === 0) {
-		colorPickerRefs = [...document.querySelectorAll<HTMLDivElement>('.' + ColorPickerClasses.colorpicker)]
+		colorPickerRefs = [...document.querySelectorAll<ColorPickerElement>('.' + ColorPickerClasses.colorpicker)]
 	}
 
 	registerPopoverRef(...colorPickerRefs)
@@ -642,21 +649,21 @@ function registerColorPickerRef(...colorPickerRefs: HTMLDivElement[]): void {
 	}
 }
 
-function unregisterColorPickerRef(...colorPickerRefs: HTMLDivElement[]): void {
+function unregisterColorPickerRef(...colorPickerRefs: ColorPickerElement[]): void {
 	for (const colorpicker of colorPickerRefs) {
 		REGISTERED_COLORPICKER.delete(colorpicker)
 	}
 }
 
-function createColorPickerRef(options?: ColorPickerUpdateOptions): HTMLDivElement {
+function createColorPickerRef(options?: ColorPickerUpdateOptions): ColorPickerElement {
 	const colorPickerRef = document.createElement('div')
 	return updateColorPickerRef(colorPickerRef, options)
 }
 
 function updateColorPickerRef(
-	colorPickerRef: HTMLDivElement,
+	colorPickerRef: ColorPickerElement,
 	options?: ColorPickerUpdateOptions
-): HTMLDivElement {
+): ColorPickerElement {
 	const refs = options?.ColorPickerRefs
 	updatePopoverRef(colorPickerRef, options)
 	colorPickerRef.classList.add(ColorPickerClasses.colorpicker)
@@ -717,7 +724,7 @@ function updateColorPickerRef(
 	}
 
 	// options -> eyedropper
-	let eyeDropperRef = optionsRef.querySelector<HTMLButtonElement>(
+	let eyeDropperRef = optionsRef.querySelector<IconButtonElement>(
 		`.${ColorPickerClasses.eyedropper}`
 	)
 	if (!eyeDropperRef) {
@@ -818,7 +825,7 @@ function updateColorPickerRef(
 	}
 
 	// input -> textfield -> color
-	let textfieldColorRef = textfieldRef.querySelector<HTMLDivElement>(
+	let textfieldColorRef = textfieldRef.querySelector<TextFieldElement>(
 		`.${ColorPickerClasses.textfieldColor}`
 	)
 	if (!textfieldColorRef) {
@@ -827,7 +834,7 @@ function updateColorPickerRef(
 	}
 
 	// input -> textfield -> color -> swap
-	let swapRef = textfieldColorRef.querySelector<HTMLButtonElement>(
+	let swapRef = textfieldColorRef.querySelector<TextFieldButtonElement>(
 		`.${ColorPickerClasses.swap}`
 	)
 	if (!swapRef) {
@@ -836,7 +843,7 @@ function updateColorPickerRef(
 	}
 
 	// input -> textfield -> color -> swap -> icon
-	let swapIconRef = swapRef.querySelector<HTMLElement>(
+	let swapIconRef = swapRef.querySelector<IconElement>(
 		`.${ColorPickerClasses.swapIcon}`
 	)
 	if (!swapIconRef) {
@@ -855,7 +862,7 @@ function updateColorPickerRef(
 	})
 
 	// input -> textfield -> opacity
-	let textfieldOpacityRef = textfieldRef.querySelector<HTMLDivElement>(
+	let textfieldOpacityRef = textfieldRef.querySelector<TextFieldElement>(
 		`.${ColorPickerClasses.textfieldOpacity}`
 	)
 	if (!textfieldOpacityRef) {
@@ -910,6 +917,7 @@ function updateColorPickerRef(
 export {
 	type ColorPickerProps,
 	type ColorPickerUpdateOptions,
+	type ColorPickerElement,
 	ColorPickerAttributes,
 	ColorPickerEvents,
 	ColorPickerCSSVariables,

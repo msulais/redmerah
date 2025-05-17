@@ -1,8 +1,8 @@
 import { numberIsNotDefined } from "@/utils/number"
-import { ButtonVariant, createButtonRef, createIconButtonRef, updateButtonRef, type ButtonProps, type IconButtonProps } from "../Button"
-import { registerPopoverRef, repositionPopoverRef, updatePopoverRef, type PopoverProps, type PopoverUpdateOptions } from "../Popover"
-import { createTooltipRef, registerTooltipRef, type TooltipProps } from "../Tooltip"
-import { createDividerRef, type DividerProps } from "../Divider"
+import { ButtonVariant, createButtonRef, createIconButtonRef, updateButtonRef, type ButtonElement, type ButtonProps, type IconButtonElement, type IconButtonProps } from "../Button"
+import { registerPopoverRef, repositionPopoverRef, updatePopoverRef, type PopoverElement, type PopoverProps, type PopoverUpdateOptions } from "../Popover"
+import { createTooltipRef, registerTooltipRef, type TooltipElement, type TooltipProps } from "../Tooltip"
+import { createDividerRef, type DividerElement, type DividerProps } from "../Divider"
 import { validEnumValue } from "@/utils/object"
 import { isAnimationAllowed } from "@/utils/animation"
 import { elementAnimateUpdateText } from "@/utils/element"
@@ -31,27 +31,29 @@ type DatePickerProps = PopoverProps & {
 	DatePickerContentAttr    ?: astroHTML.JSX.HTMLAttributes
 }
 
+type DatePickerElement = PopoverElement
+
 type DatePickerUpdateOptions = PopoverUpdateOptions & {
 	DatePickerStartDate?: Date
 	DatePickerEndDate  ?: Date
 	DatePickerValue    ?: Date
 	DatePickerChildren ?: (string | Node)[] | boolean
 	DatePickerRefs     ?: {
-		header     ?(ref : HTMLDivElement     ): unknown
-		title      ?(ref : HTMLButtonElement  ): unknown
-		previous   ?(ref : HTMLButtonElement  ): unknown
-		next       ?(ref : HTMLButtonElement  ): unknown
-		days       ?(ref : HTMLDivElement     ): unknown
-		day        ?(refs: HTMLSpanElement[]  ): unknown
-		divider    ?(ref : HTMLDivElement     ): unknown
-		year       ?(ref : HTMLDivElement     ): unknown
-		yearButton ?(refs: HTMLButtonElement[]): unknown
-		month      ?(ref : HTMLDivElement     ): unknown
-		monthButton?(refs: HTMLButtonElement[]): unknown
-		date       ?(ref : HTMLDivElement     ): unknown
-		dateButton ?(refs: HTMLButtonElement[]): unknown
-		dateEmpty  ?(refs: HTMLDivElement[]   ): unknown
-		content    ?(ref : HTMLDivElement     ): unknown
+		header     ?(ref : HTMLDivElement   ): unknown
+		title      ?(ref : ButtonElement    ): unknown
+		previous   ?(ref : IconButtonElement): unknown
+		next       ?(ref : IconButtonElement): unknown
+		days       ?(ref : TooltipElement   ): unknown
+		day        ?(refs: HTMLSpanElement[]): unknown
+		divider    ?(ref : DividerElement   ): unknown
+		year       ?(ref : HTMLDivElement   ): unknown
+		yearButton ?(refs: ButtonElement[]  ): unknown
+		month      ?(ref : HTMLDivElement   ): unknown
+		monthButton?(refs: ButtonElement[]  ): unknown
+		date       ?(ref : HTMLDivElement   ): unknown
+		dateButton ?(refs: ButtonElement[]  ): unknown
+		dateEmpty  ?(refs: HTMLDivElement[] ): unknown
+		content    ?(ref : HTMLDivElement   ): unknown
 	}
 }
 
@@ -98,9 +100,9 @@ enum DatePickerEvents {
 	change = 'datepicker:change'
 }
 
-const REGISTERED_DATEPICKER: Set<HTMLDivElement> = new Set<HTMLDivElement>()
+const REGISTERED_DATEPICKER: Set<DatePickerElement> = new Set<DatePickerElement>()
 
-function _initDatePickerRef(datePickerRef: HTMLDivElement): void {
+function _initDatePickerRef(datePickerRef: DatePickerElement): void {
 	const attributes = {
 		get startDate(): Date | null {
 			const startDate = datePickerRef.getAttribute(DatePickerAttributes.start)
@@ -177,7 +179,7 @@ function _initDatePickerRef(datePickerRef: HTMLDivElement): void {
 		// april, june, september, november
 		else if ([3, 5, 8, 10].includes(currentView.getMonth())) daysPerMonth = 30
 
-		const titleRef = datePickerRef.querySelector<HTMLDivElement>('.' + DatePickerClasses.title)!
+		const titleRef = datePickerRef.querySelector<ButtonElement>('.' + DatePickerClasses.title)!
 		const value = attributes.value!
 		const now = new Date()
 		const startDate = attributes.startDate!
@@ -193,7 +195,7 @@ function _initDatePickerRef(datePickerRef: HTMLDivElement): void {
 			}
 
 			const emptyDate = datePickerRef.querySelectorAll<HTMLDivElement>('.' + DatePickerClasses.dateEmpty)
-			const dates = datePickerRef.querySelectorAll<HTMLButtonElement>('.' + DatePickerClasses.dateButton)
+			const dates = datePickerRef.querySelectorAll<ButtonElement>('.' + DatePickerClasses.dateButton)
 			for (let i = 0; i < emptyDate.length; i++) {
 				const item = emptyDate.item(i)
 				if (i < startDay) {
@@ -248,7 +250,7 @@ function _initDatePickerRef(datePickerRef: HTMLDivElement): void {
 				titleRef.textContent = titleText
 			}
 
-			const monthButtonRefs = datePickerRef.querySelectorAll<HTMLButtonElement>('.' + DatePickerClasses.monthButton)
+			const monthButtonRefs = datePickerRef.querySelectorAll<ButtonElement>('.' + DatePickerClasses.monthButton)
 			for (let i = 0; i < monthButtonRefs.length; i++) {
 				const buttonRef = monthButtonRefs.item(i)
 				const date = new Date(year, i, 1)
@@ -282,7 +284,7 @@ function _initDatePickerRef(datePickerRef: HTMLDivElement): void {
 				titleRef.textContent = titleText
 			}
 
-			const yearButtonRefs = datePickerRef.querySelectorAll<HTMLButtonElement>('.' + DatePickerClasses.yearButton)
+			const yearButtonRefs = datePickerRef.querySelectorAll<ButtonElement>('.' + DatePickerClasses.yearButton)
 			for (let i = 0; i < yearButtonRefs.length; i++) {
 				const buttonRef = yearButtonRefs.item(i)
 				const date = new Date(year + i, 0, 1)
@@ -427,9 +429,9 @@ function _initDatePickerRef(datePickerRef: HTMLDivElement): void {
 	initEvents()
 }
 
-function registerDatePickerRef(...datePickerRefs: HTMLDivElement[]): void {
+function registerDatePickerRef(...datePickerRefs: DatePickerElement[]): void {
 	if (datePickerRefs.length === 0) {
-		datePickerRefs = [...document.querySelectorAll<HTMLDivElement>('.' + DatePickerClasses.datepicker)]
+		datePickerRefs = [...document.querySelectorAll<DatePickerElement>('.' + DatePickerClasses.datepicker)]
 	}
 
 	registerPopoverRef(...datePickerRefs)
@@ -443,18 +445,21 @@ function registerDatePickerRef(...datePickerRefs: HTMLDivElement[]): void {
 	}
 }
 
-function unregisterDatePickerRef(...datePickerRefs: HTMLDivElement[]): void {
+function unregisterDatePickerRef(...datePickerRefs: DatePickerElement[]): void {
 	for (const emojiPickerRef of datePickerRefs) {
 		REGISTERED_DATEPICKER.delete(emojiPickerRef)
 	}
 }
 
-function createDatePickerRef(options?: DatePickerUpdateOptions): HTMLDivElement {
+function createDatePickerRef(options?: DatePickerUpdateOptions): DatePickerElement {
 	const datePickerRef = document.createElement('div')
 	return updateDatePickerRef(datePickerRef, options)
 }
 
-function updateDatePickerRef(datePickerRef: HTMLDivElement, options?: DatePickerUpdateOptions): HTMLDivElement {
+function updateDatePickerRef(
+	datePickerRef: DatePickerElement,
+	options?: DatePickerUpdateOptions
+): DatePickerElement {
 	updatePopoverRef(datePickerRef, options)
 	datePickerRef.classList.add(DatePickerClasses.datepicker)
 	datePickerRef.setAttribute(DatePickerAttributes.viewType, DatePickerViewType.day)
@@ -494,14 +499,14 @@ function updateDatePickerRef(datePickerRef: HTMLDivElement, options?: DatePicker
 	}
 
 	// header -> title
-	let titleRef = headerRef.querySelector<HTMLButtonElement>('.' + DatePickerClasses.title)
+	let titleRef = headerRef.querySelector<ButtonElement>('.' + DatePickerClasses.title)
 	if (!titleRef) {
 		titleRef = createButtonRef({ButtonVariant: ButtonVariant.filled})
 		titleRef.classList.add(DatePickerClasses.title)
 	}
 
 	// header -> previous
-	let previousRef = headerRef.querySelector<HTMLButtonElement>('.' + DatePickerClasses.previous)
+	let previousRef = headerRef.querySelector<IconButtonElement>('.' + DatePickerClasses.previous)
 	if (!previousRef) {
 		previousRef = createIconButtonRef({
 			IconButtonIcon: { IconCode: IconCodes.chevronLeft },
@@ -511,7 +516,7 @@ function updateDatePickerRef(datePickerRef: HTMLDivElement, options?: DatePicker
 	}
 
 	// header -> next
-	let nextRef = headerRef.querySelector<HTMLButtonElement>('.' + DatePickerClasses.next)
+	let nextRef = headerRef.querySelector<IconButtonElement>('.' + DatePickerClasses.next)
 	if (!nextRef) {
 		nextRef = createIconButtonRef({
 			IconButtonIcon: { IconCode: IconCodes.chevronRight },
@@ -521,7 +526,7 @@ function updateDatePickerRef(datePickerRef: HTMLDivElement, options?: DatePicker
 	}
 
 	// days
-	let daysRef = datePickerRef.querySelector<HTMLDivElement>('.' + DatePickerClasses.days)
+	let daysRef = datePickerRef.querySelector<TooltipElement>('.' + DatePickerClasses.days)
 	if (!daysRef) {
 		daysRef = createTooltipRef()
 		daysRef.classList.add(DatePickerClasses.days)
@@ -542,7 +547,7 @@ function updateDatePickerRef(datePickerRef: HTMLDivElement, options?: DatePicker
 	}
 
 	// divider
-	let dividerRef = datePickerRef.querySelector<HTMLDivElement>('.' + DatePickerClasses.divider)
+	let dividerRef = datePickerRef.querySelector<DividerElement>('.' + DatePickerClasses.divider)
 	if (!dividerRef) {
 		dividerRef = createDividerRef()
 		dividerRef.classList.add(DatePickerClasses.divider)
@@ -556,7 +561,7 @@ function updateDatePickerRef(datePickerRef: HTMLDivElement, options?: DatePicker
 	}
 
 	// year -> yearButton[]
-	let yearButtonRefs = [...yearRef.querySelectorAll<HTMLButtonElement>('.' + DatePickerClasses.yearButton)]
+	let yearButtonRefs = [...yearRef.querySelectorAll<ButtonElement>('.' + DatePickerClasses.yearButton)]
 	if (yearButtonRefs.length < 16) {
 		yearButtonRefs.length = 0
 		for (let i = 0; i < 16; i++) {
@@ -574,7 +579,7 @@ function updateDatePickerRef(datePickerRef: HTMLDivElement, options?: DatePicker
 	}
 
 	// month -> monthButton[]
-	let monthButtonRefs = [...monthRef.querySelectorAll<HTMLButtonElement>('.' + DatePickerClasses.monthButton)]
+	let monthButtonRefs = [...monthRef.querySelectorAll<ButtonElement>('.' + DatePickerClasses.monthButton)]
 	if (monthButtonRefs.length < 12) {
 		monthButtonRefs.length = 0
 		for (const monthName of [
@@ -609,7 +614,7 @@ function updateDatePickerRef(datePickerRef: HTMLDivElement, options?: DatePicker
 	}
 
 	// date -> dateButton[]
-	let dateButtonRefs = [...dateRef.querySelectorAll<HTMLButtonElement>('.' + DatePickerClasses.dateButton)]
+	let dateButtonRefs = [...dateRef.querySelectorAll<ButtonElement>('.' + DatePickerClasses.dateButton)]
 	if (dateButtonRefs.length < 31) {
 		dateButtonRefs.length = 0
 		for (let i = 0; i < 31; i++) {
@@ -669,6 +674,7 @@ function updateDatePickerRef(datePickerRef: HTMLDivElement, options?: DatePicker
 export {
 	type DatePickerProps,
 	type DatePickerUpdateOptions,
+	type DatePickerElement,
 	DatePickerEvents,
 	DatePickerViewType,
 	DatePickerClasses,

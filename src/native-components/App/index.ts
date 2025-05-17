@@ -8,14 +8,16 @@ type AppProps = astroHTML.JSX.HTMLAttributes & {
 	AppRightSideBarAttr?: astroHTML.JSX.HTMLAttributes
 }
 
-type AppUpdateOptions = {
+type AppElement<T extends HTMLElement> = T
+
+type AppUpdateOptions<T extends AppElement<HTMLElement>> = {
 	AppChildren    ?: (Node | string)[] | boolean
 	AppAppBar      ?: (Node | string)[] | boolean
 	AppBottomBar   ?: (Node | string)[] | boolean
 	AppLeftSideBar ?: (Node | string)[] | boolean
 	AppRightSideBar?: (Node | string)[] | boolean
 	AppRefs?: {
-		app         ?(ref: HTMLElement   ): unknown
+		app         ?(ref: T             ): unknown
 		appBar      ?(ref: HTMLDivElement): unknown
 		container   ?(ref: HTMLDivElement): unknown
 		leftSideBar ?(ref: HTMLDivElement): unknown
@@ -35,14 +37,14 @@ enum AppClasses {
 	body         = app + '-body'
 }
 
-function createAppRef<T extends HTMLElement>(
-	options?: AppUpdateOptions & {AppTagName?: keyof HTMLElementTagNameMap}
+function createAppRef<T extends AppElement<HTMLElement>>(
+	options?: AppUpdateOptions<T> & {AppTagName?: keyof HTMLElementTagNameMap}
 ): T {
 	const appRef = document.createElement(options?.AppTagName ?? 'div')
 	return updateAppRef(appRef, options) as T
 }
 
-function updateAppRef<T extends HTMLElement>(appRef: T, options?: AppUpdateOptions): T {
+function updateAppRef<T extends AppElement<HTMLElement>>(appRef: T, options?: AppUpdateOptions<T>): T {
 	const refs = options?.AppRefs
 	appRef.classList.add(AppClasses.app)
 
@@ -148,6 +150,7 @@ function updateAppRef<T extends HTMLElement>(appRef: T, options?: AppUpdateOptio
 export {
 	type AppProps,
 	type AppUpdateOptions,
+	type AppElement,
 	AppClasses,
 	createAppRef,
 	updateAppRef

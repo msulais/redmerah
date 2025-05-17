@@ -26,6 +26,8 @@ type ModalProps = astroHTML.JSX.DialogHTMLAttributes & {
 	ModalContentAttr   ?: astroHTML.JSX.HTMLAttributes
 }
 
+type ModalElement = HTMLDialogElement
+
 type ModalUpdateOptions = {
 	ModalChildren ?: (Node | string)[] | boolean
 	ModalAnchorBy ?: string | boolean
@@ -37,9 +39,9 @@ type ModalUpdateOptions = {
 	ModalPadding  ?: number | boolean
 	ModalPosition ?: ModalPosition | boolean
 	ModalRefs     ?: {
-		modal     ?(ref: HTMLDialogElement): unknown
-		content   ?(ref: HTMLDivElement   ): unknown
-		dragHandle?(ref: HTMLDivElement   ): unknown
+		modal     ?(ref: ModalElement  ): unknown
+		content   ?(ref: HTMLDivElement): unknown
+		dragHandle?(ref: HTMLDivElement): unknown
 	}
 }
 
@@ -160,8 +162,8 @@ const LISTENED_ATTRIBUTES: string[] = [
 const MODAL_MARGIN = 8
 
 // !important: Don't use `Set()`. Order matter!
-const OPENED_MODAL: HTMLDialogElement[] = []
-const REGISTERED_MODAL: Set<HTMLDialogElement> = new Set<HTMLDialogElement>()
+const OPENED_MODAL: ModalElement[] = []
+const REGISTERED_MODAL: Set<ModalElement> = new Set<ModalElement>()
 let POINTER_X: number = 0
 let POINTER_Y: number = 0
 let HAS_LISTENER: boolean = false
@@ -225,7 +227,7 @@ function _initModalRefListener(): void {
 	initEvents()
 }
 
-function _initModalRef(modalRef: HTMLDialogElement): void {
+function _initModalRef(modalRef: ModalElement): void {
 	const bodyRef = document.body
 	const attributes = {
 		get anchor(): HTMLElement | null {
@@ -700,44 +702,44 @@ function _initModalRef(modalRef: HTMLDialogElement): void {
 	initEvents()
 }
 
-async function openModalRef(modalRef: HTMLDialogElement, options?: ModalOpenOptions): Promise<void> {
+async function openModalRef(modalRef: ModalElement, options?: ModalOpenOptions): Promise<void> {
 	return new Promise((done) => modalRef.dispatchEvent(new CustomEvent<_ModalOpenEventDetail>(
 		ModalEvents.open,
 		{detail: {...options, done}}
 	)))
 }
 
-async function closeModalRef(modalRef: HTMLDialogElement, options?: ModalCloseOptions): Promise<void> {
+async function closeModalRef(modalRef: ModalElement, options?: ModalCloseOptions): Promise<void> {
 	return new Promise((done) => modalRef.dispatchEvent(new CustomEvent<_ModalCloseEventDetail>(
 		ModalEvents.close,
 		{detail: {...options, done}}
 	)))
 }
 
-async function repositionModalRef(modalRef: HTMLDialogElement): Promise<void> {
+async function repositionModalRef(modalRef: ModalElement): Promise<void> {
 	return new Promise((done) => modalRef.dispatchEvent(new CustomEvent<_ModalRepositionEventDetail>(
 		ModalEvents.reposition,
 		{detail: {done}}
 	)))
 }
 
-async function focusModalRef(modalRef: HTMLDialogElement): Promise<void> {
+async function focusModalRef(modalRef: ModalElement): Promise<void> {
 	return new Promise((done) => modalRef.dispatchEvent(new CustomEvent<_ModalRepositionEventDetail>(
 		ModalEvents.focus,
 		{detail: {done}}
 	)))
 }
 
-function isModalRefOpen(modalRef: HTMLDialogElement): boolean {
+function isModalRefOpen(modalRef: ModalElement): boolean {
 	return modalRef.open
 }
 
-function createModalRef(options?: ModalUpdateOptions): HTMLDialogElement {
+function createModalRef(options?: ModalUpdateOptions): ModalElement {
 	const modalRef = document.createElement('dialog')
 	return updateModalRef(modalRef, options)
 }
 
-function updateModalRef(modalRef: HTMLDialogElement, options?: ModalUpdateOptions): HTMLDialogElement {
+function updateModalRef(modalRef: ModalElement, options?: ModalUpdateOptions): ModalElement {
 	modalRef.classList.add(ModalClasses.modal)
 
 	const draggableOption = options?.ModalDraggable
@@ -821,11 +823,11 @@ function updateModalRef(modalRef: HTMLDialogElement, options?: ModalUpdateOption
 	return modalRef
 }
 
-function registerModalRef(...modalRefs: HTMLDialogElement[]): void {
+function registerModalRef(...modalRefs: ModalElement[]): void {
 	_initModalRefListener()
 	_initMutationObserver()
 	if (modalRefs.length === 0) {
-		modalRefs = [...document.querySelectorAll<HTMLDialogElement>('.' + ModalClasses.modal)]
+		modalRefs = [...document.querySelectorAll<ModalElement>('.' + ModalClasses.modal)]
 	}
 
 	for (const modalRef of modalRefs){
@@ -839,7 +841,7 @@ function registerModalRef(...modalRefs: HTMLDialogElement[]): void {
 	}
 }
 
-function unregisterModalRef(...modalRefs: HTMLDialogElement[]): void {
+function unregisterModalRef(...modalRefs: ModalElement[]): void {
 	MUTATION_OBSERVER?.disconnect()
 	for (const modalRef of modalRefs) {
 		REGISTERED_MODAL.delete(modalRef)
@@ -855,6 +857,7 @@ export {
 	type ModalOpenOptions,
 	type ModalCloseOptions,
 	type ModalToggleOpenEventDetail,
+	type ModalElement,
 	ModalEvents,
 	ModalAttributes,
 	ModalClasses,

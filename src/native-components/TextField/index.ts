@@ -1,5 +1,6 @@
 import {
 	updateButtonRef,
+	type ButtonElement,
 	type ButtonProps,
 	type ButtonUpdateOptions
 } from "@/native-components/Button"
@@ -9,6 +10,9 @@ type TextFieldProps = astroHTML.JSX.HTMLAttributes & {
 	TextFieldLeadingAttr ?: astroHTML.JSX.HTMLAttributes
 	TextFieldTrailingAttr?: astroHTML.JSX.HTMLAttributes
 }
+
+type TextFieldElement = HTMLDivElement
+type TextFieldButtonElement = ButtonElement
 
 type TextFieldButtonProps = ButtonProps
 
@@ -22,7 +26,7 @@ type TextFieldUpdateOptions = {
 	TextFieldPlaceholder?: string | boolean
 	TextFieldValue      ?: string | boolean
 	TextFieldRefs       ?: {
-		textfield?(ref: HTMLDivElement  ): unknown
+		textfield?(ref: TextFieldElement): unknown
 		leading  ?(ref: HTMLDivElement  ): unknown
 		trailing ?(ref: HTMLDivElement  ): unknown
 		input    ?(ref: HTMLInputElement): unknown
@@ -37,12 +41,15 @@ enum TextFieldClasses {
 	button    = textfield + '-button'
 }
 
-function createTextFieldRef(options?: TextFieldUpdateOptions): HTMLDivElement {
+function createTextFieldRef(options?: TextFieldUpdateOptions): TextFieldElement {
 	const textFieldRef = document.createElement('div')
 	return updateTextFieldRef(textFieldRef, options)
 }
 
-function updateTextFieldRef(textFieldRef: HTMLDivElement, options?: TextFieldUpdateOptions): HTMLDivElement {
+function updateTextFieldRef(
+	textFieldRef: TextFieldElement,
+	options?: TextFieldUpdateOptions
+): TextFieldElement {
 	const refs = options?.TextFieldRefs
 	textFieldRef.classList.add(TextFieldClasses.textfield)
 
@@ -117,15 +124,15 @@ function updateTextFieldRef(textFieldRef: HTMLDivElement, options?: TextFieldUpd
 	return textFieldRef
 }
 
-function createTextFieldButtonRef(options?: TextFieldButtonUpdateOptions): HTMLButtonElement {
+function createTextFieldButtonRef(options?: TextFieldButtonUpdateOptions): TextFieldButtonElement {
 	const textFieldButtonRef = document.createElement('button')
 	return updateTextFieldButtonRef(textFieldButtonRef, options)
 }
 
 function updateTextFieldButtonRef(
-	textFieldButtonRef: HTMLButtonElement,
+	textFieldButtonRef: TextFieldButtonElement,
 	options?: TextFieldButtonUpdateOptions
-): HTMLButtonElement {
+): TextFieldButtonElement {
 	updateButtonRef(textFieldButtonRef, options)
 	textFieldButtonRef.classList.add(TextFieldClasses.button)
 	return textFieldButtonRef
@@ -135,6 +142,8 @@ export {
 	type TextFieldProps,
 	type TextFieldUpdateOptions,
 	type TextFieldButtonProps,
+	type TextFieldElement,
+	type TextFieldButtonElement,
 	TextFieldClasses,
 	createTextFieldRef,
 	updateTextFieldRef,

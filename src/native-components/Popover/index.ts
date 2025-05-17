@@ -23,6 +23,8 @@ type PopoverProps = astroHTML.JSX.DialogHTMLAttributes & {
 	PopoverContentAttr   ?: astroHTML.JSX.HTMLAttributes
 }
 
+type PopoverElement = HTMLDivElement
+
 type PopoverUpdateOptions = {
 	PopoverChildren ?: (Node | string)[] | boolean
 	PopoverAnchorBy ?: string | boolean
@@ -32,7 +34,7 @@ type PopoverUpdateOptions = {
 	PopoverPosition ?: PopoverPosition | boolean
 	PopoverPopover  ?: 'auto' | 'manual'
 	PopoverRefs     ?: {
-		popover   ?(ref: HTMLDivElement): unknown
+		popover   ?(ref: PopoverElement): unknown
 		content   ?(ref: HTMLDivElement): unknown
 		dragHandle?(ref: HTMLDivElement): unknown
 	}
@@ -85,8 +87,8 @@ const LISTENED_ATTRIBUTES: string[] = [
 	PopoverAttributes.position,
 ]
 const POPOVER_MARGIN = 8
-const OPENED_POPOVER: Set<HTMLDivElement> = new Set<HTMLDivElement>()
-const REGISTERED_POPOVER: Set<HTMLDivElement> = new Set<HTMLDivElement>()
+const OPENED_POPOVER: Set<PopoverElement> = new Set<PopoverElement>()
+const REGISTERED_POPOVER: Set<PopoverElement> = new Set<PopoverElement>()
 let POINTER_X: number = 0
 let POINTER_Y: number = 0
 let HAS_LISTENER: boolean = false
@@ -139,7 +141,7 @@ function _initPopoverRefListener(): void {
 	initEvents()
 }
 
-function _initPopoverRef(popoverRef: HTMLDivElement): void {
+function _initPopoverRef(popoverRef: PopoverElement): void {
 	const bodyRef = document.body
 	const attributes = {
 		get anchor(): HTMLElement | null {
@@ -501,31 +503,31 @@ function _initPopoverRef(popoverRef: HTMLDivElement): void {
 	initEvents()
 }
 
-function openPopoverRef(popoverRef: HTMLDivElement): void {
+function openPopoverRef(popoverRef: PopoverElement): void {
 	popoverRef.showPopover()
 }
 
-function closePopoverRef(popoverRef: HTMLDivElement): void {
+function closePopoverRef(popoverRef: PopoverElement): void {
 	popoverRef.hidePopover()
 }
 
-async function repositionPopoverRef(popoverRef: HTMLDivElement): Promise<void> {
+async function repositionPopoverRef(popoverRef: PopoverElement): Promise<void> {
 	return new Promise((done) => popoverRef.dispatchEvent(new CustomEvent(
 		_PopoverEvents.reposition,
 		{detail: {done} satisfies _PopoverRepositionEventDetail}
 	)))
 }
 
-function isPopoverRefOpen(popoverRef: HTMLDivElement): boolean {
+function isPopoverRefOpen(popoverRef: PopoverElement): boolean {
 	return popoverRef.matches(':popover-open')
 }
 
-function createPopoverRef(options?: PopoverUpdateOptions): HTMLDivElement {
+function createPopoverRef(options?: PopoverUpdateOptions): PopoverElement {
 	const popover = document.createElement('div')
 	return updatePopoverRef(popover, options)
 }
 
-function updatePopoverRef(popoverRef: HTMLDivElement, options?: PopoverUpdateOptions): HTMLDivElement {
+function updatePopoverRef(popoverRef: PopoverElement, options?: PopoverUpdateOptions): PopoverElement {
 	popoverRef.classList.add(PopoverClasses.popover)
 
 	if (!popoverRef.hasAttribute('popover')) {
@@ -602,11 +604,11 @@ function updatePopoverRef(popoverRef: HTMLDivElement, options?: PopoverUpdateOpt
 	return popoverRef
 }
 
-function registerPopoverRef(...popoverRefs: HTMLDivElement[]): void {
+function registerPopoverRef(...popoverRefs: PopoverElement[]): void {
 	_initPopoverRefListener()
 	_initMutationObserver()
 	if (popoverRefs.length === 0) {
-		popoverRefs = [...document.querySelectorAll<HTMLDivElement>('div.' + PopoverClasses.popover)]
+		popoverRefs = [...document.querySelectorAll<PopoverElement>('div.' + PopoverClasses.popover)]
 	}
 
 	for (const popoverRef of popoverRefs){
@@ -620,7 +622,7 @@ function registerPopoverRef(...popoverRefs: HTMLDivElement[]): void {
 	}
 }
 
-function unregisterPopoverRef(...popoverRefs: HTMLDivElement[]): void {
+function unregisterPopoverRef(...popoverRefs: PopoverElement[]): void {
 	MUTATION_OBSERVER?.disconnect()
 	for (const popoverRef of popoverRefs) {
 		REGISTERED_POPOVER.delete(popoverRef)
@@ -634,6 +636,7 @@ function unregisterPopoverRef(...popoverRefs: HTMLDivElement[]): void {
 export {
 	type PopoverProps,
 	type PopoverUpdateOptions,
+	type PopoverElement,
 	PopoverAttributes,
 	PopoverClasses,
 	PopoverPosition,
