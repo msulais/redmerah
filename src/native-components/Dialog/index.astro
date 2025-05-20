@@ -33,9 +33,9 @@ const {'class': footerClass   , ...footerOther   } = DialogFooterAttr    ?? {}
 		<div class={attrClassList(DialogClasses.content, contentClass)} {...contentOther}>
 			<slot />
 		</div>
-		<div class={attrClassList(DialogClasses.footer, footerClass)} {...footerOther}>
-			<slot name="footer"/>
-		</div>
+		<div
+			class={attrClassList(DialogClasses.footer, footerClass)}
+			{...footerOther}><slot name="footer"/></div>
 	</div>
 </dialog>
 <script>
