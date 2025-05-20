@@ -1,19 +1,5 @@
 ---
 import {
-	ICON_ANIMAL_CAT,
-	ICON_DISMISS,
-	ICON_DIVERSITY,
-	ICON_EMOJI,
-	ICON_FLAG,
-	ICON_FOOD,
-	ICON_HISTORY,
-	ICON_PERSON,
-	ICON_RUNNING_PERSON,
-	ICON_SEARCH,
-	ICON_SYMBOLS,
-	ICON_VEHICLE_CAR
-} from '@/constants/icons'
-import {
 	EMOJIS_ACTIVITIES,
 	EMOJIS_ANIMAL_AND_NATURE,
 	EMOJIS_FLAGS,
@@ -25,6 +11,7 @@ import {
 	EMOJIS_TRAVEL_AND_PLACES
 } from '@/constants/emoji'
 import { attrClassList } from '@/utils/attributes'
+import { IconCodes } from '@/enums/icons'
 
 import {
 	type EmojiPickerProps,
@@ -65,13 +52,13 @@ const {
 const {'class': tooltipClass, ...tooltipOther} = EmojiPickerTooltipAttr ?? {}
 const {'class': headerClass, ...headerOther} = EmojiPickerHeaderAttr ?? {}
 const {'class': headerTextClass, ...headerTextOther} = EmojiPickerHeaderTextAttr ?? {}
-const {'class': headerButtonClass, IconButtonCode: headerButtonCode = ICON_DISMISS, ...headerButtonOther} = EmojiPickerHeaderButtonAttr ?? {}
+const {'class': headerButtonClass, IconButtonCode: headerButtonCode = IconCodes.dismiss, ...headerButtonOther} = EmojiPickerHeaderButtonAttr ?? {}
 const {'class': tabsClass, role: tabsRole = 'tablist', ...tabsOther} = EmojiPickerTabsAttr ?? {}
 const {'class': formClass, ...formOther} = EmojiPickerFormAttr ?? {}
 const {'class': searchClass, TextFieldInputAttr: searchInputAttr, ...searchOther} = EmojiPickerSearchAttr ?? {}
 const {placeholder: searchInputPlaceholder = 'Search emoji', required: searchInputRequired = true, ...searchInputOther} = searchInputAttr ?? {}
 const {'class': searchButtonClass, ButtonVariant: searchButtonVariant = ButtonVariant.tonal, ...searchButtonOther} = EmojiPickerSearchButtonAttr ?? {}
-const {'class': searchButtonIconClass, IconCode: searchButtonIconCode = ICON_SEARCH, ...searchButtonIconOther} = EmojiPickerSearchButtonIconAttr ?? {}
+const {'class': searchButtonIconClass, IconCode: searchButtonIconCode = IconCodes.search, ...searchButtonIconOther} = EmojiPickerSearchButtonIconAttr ?? {}
 const {'class': contentClass, ...contentOther} = EmojiPickerContentAttr ?? {}
 const {'class': dividerClass, ...dividerOther} = EmojiPickerDividerAttr ?? {}
 const {'class': titleClass, ...titleOther} = EmojiPickerTitleAttr ?? {}
@@ -104,17 +91,17 @@ const {'class': titleClass, ...titleOther} = EmojiPickerTitleAttr ?? {}
 			role={tabsRole}
 			{...tabsOther}>
 			{[
-				[ICON_HISTORY       , 'Recents'            ],
-				[ICON_SEARCH        , 'Search result'      ],
-				[ICON_EMOJI         , 'Smiley & emotion'   ],
-				[ICON_PERSON        , 'Person & body parts'],
-				[ICON_ANIMAL_CAT    , 'Animal & nature'    ],
-				[ICON_FOOD          , 'Food & drink'       ],
-				[ICON_VEHICLE_CAR   , 'Travel & places'    ],
-				[ICON_RUNNING_PERSON, 'Activities'         ],
-				[ICON_DIVERSITY     , 'Objects'            ],
-				[ICON_SYMBOLS       , 'Symbols'            ],
-				[ICON_FLAG          , 'Flags'              ],
+				[IconCodes.history       , 'Recents'            ],
+				[IconCodes.search        , 'Search result'      ],
+				[IconCodes.emoji         , 'Smiley & emotion'   ],
+				[IconCodes.person        , 'Person & body parts'],
+				[IconCodes.animalCat    , 'Animal & nature'    ],
+				[IconCodes.food          , 'Food & drink'       ],
+				[IconCodes.vehicleCar   , 'Travel & places'    ],
+				[IconCodes.runningPerson, 'Activities'         ],
+				[IconCodes.diversity     , 'Objects'            ],
+				[IconCodes.symbols       , 'Symbols'            ],
+				[IconCodes.flag          , 'Flags'              ],
 			].map((v, i) => {
 				const {
 					'class': className,

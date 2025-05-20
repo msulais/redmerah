@@ -1,4 +1,4 @@
-import { ICON_ADD } from "@/constants/icons"
+import { IconCodes } from "@/enums/icons"
 import {
 	type IconUpdateOptions,
 	type IconProps,
@@ -211,7 +211,7 @@ function updateIconButtonRef(
 		updateIconRef(iconRef, iconOption)
 	}
 	else {
-		iconRef = createIconRef({IconCode: ICON_ADD, ...iconOption})
+		iconRef = createIconRef({IconCode: IconCodes.add, ...iconOption})
 		iconButtonRef.replaceChildren(iconRef)
 	}
 
@@ -243,7 +243,7 @@ function updateLinkIconButtonRef(
 		updateIconRef(iconRef, iconOption)
 	}
 	else {
-		iconRef = createIconRef({IconCode: ICON_ADD, ...iconOption})
+		iconRef = createIconRef({IconCode: IconCodes.add, ...iconOption})
 		linkIconButtonRef.replaceChildren(iconRef)
 	}
 

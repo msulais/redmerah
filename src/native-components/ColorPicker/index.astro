@@ -1,9 +1,6 @@
 ---
-import {
-	ICON_CHEVRON_UP_DOWN,
-	ICON_EYEDROPPER
-} from '@/constants/icons'
 import { attrClassList } from '@/utils/attributes'
+import { IconCodes } from '@/enums/icons'
 
 import Icon from '@/native-components/Icon/index.astro'
 import Popover from '@/native-components/Popover/index.astro'
@@ -47,7 +44,7 @@ const {'class': rectClass, draggable: rectDraggable = 'false', tabindex: rectTab
 const {'class': contentClass, ...contentOther} = ColorPickerContentAttr ?? {}
 const {'class': optionsClass, ...optionsOther} = ColorPickerOptionsAttr ?? {}
 const {'class': previewClass, ...previewOther} = ColorPickerPreviewAttr ?? {}
-const {'class': eyeDropperClass, ButtonVariant: eyeDropperVariant = ButtonVariant.tonal, IconButtonCode: eyeDropperIcon=ICON_EYEDROPPER, ...eyeDropperOther} = ColorPickerEyeDropperAttr ?? {}
+const {'class': eyeDropperClass, ButtonVariant: eyeDropperVariant = ButtonVariant.tonal, IconButtonCode: eyeDropperIcon = IconCodes.eyedropper, ...eyeDropperOther} = ColorPickerEyeDropperAttr ?? {}
 const {'class': sliderClass, ...sliderOther} = ColorPickerSliderAttr ?? {}
 const {'class': sliderHueClass, min: sliderHueMin = 0, max: sliderHueMax = 360, type: sliderHueType = 'range', name: sliderHueName = 'Hue', ...sliderHueOther} = ColorPickerSliderHueAttr ?? {}
 const {'class': sliderOpacityClass, min: sliderOpacityMin = 0, max: sliderOpacityMax = 100, type: sliderOpacityType = 'range', name: sliderOpacityName = 'Opacity', ...sliderOpacityOther} = ColorPickerSliderOpacityAttr ?? {}
@@ -59,7 +56,7 @@ const {'class': textfieldClass, ...textfieldOther} = ColorPickerTextFieldAttr ??
 const {'class': textfieldColorClass, ...textfieldColorOther} = ColorPickerTextFieldColorAttr ?? {}
 const {'class': textfieldOpacityClass, ...textfieldOpacityOther} = ColorPickerTextFieldOpacityAttr ?? {}
 const {'class': swapClass, ...swapOther} = ColorPickerSwapAttr ?? {}
-const {'class': swapIconClass, IconCode: swapIconCode = ICON_CHEVRON_UP_DOWN, ...swapIconOther} = ColorPickerSwapIconAttr ?? {}
+const {'class': swapIconClass, IconCode: swapIconCode = IconCodes.chevronUpDown, ...swapIconOther} = ColorPickerSwapIconAttr ?? {}
 ---
 
 <Popover

@@ -27,10 +27,6 @@ import {
 	KEY_ARROW_RIGHT,
 	KEY_ARROW_UP
 } from "@/constants/keyboard-value"
-import {
-	ICON_CHEVRON_UP_DOWN,
-	ICON_EYEDROPPER
-} from "@/constants/icons"
 
 import {
 	type PopoverProps,
@@ -66,6 +62,7 @@ import {
 	type IconElement,
 	type IconProps
 } from "@/native-components/Icon"
+import { IconCodes } from "@/enums/icons"
 
 type ColorPickerProps = PopoverProps & {
 	ColorPickerValue               ?: HEXColor
@@ -730,7 +727,7 @@ function updateColorPickerRef(
 	if (!eyeDropperRef) {
 		eyeDropperRef = createIconButtonRef({
 			IconButtonIcon: {
-				IconCode: ICON_EYEDROPPER
+				IconCode: IconCodes.eyedropper
 			},
 			ButtonVariant: ButtonVariant.tonal
 		})
@@ -848,7 +845,7 @@ function updateColorPickerRef(
 	)
 	if (!swapIconRef) {
 		swapIconRef = createIconRef({
-			IconCode: ICON_CHEVRON_UP_DOWN
+			IconCode: IconCodes.chevronUpDown
 		})
 		swapIconRef.classList.add(ColorPickerClasses.swapIcon)
 	}

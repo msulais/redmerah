@@ -30,8 +30,8 @@ import {
 } from "@/native-components/Button"
 import { createIconRef, type IconElement, type IconProps } from "@/native-components/Icon"
 import { AppCSSColors } from "@/enums/app-data"
-import { ICON_CIRCLE_SMALL } from "@/constants/icons"
 import { createId } from "@/utils/ids"
+import { IconCodes } from "@/enums/icons"
 
 type MenuProps = PopoverProps & {
 	MenuContentAttr ?: astroHTML.JSX.HTMLAttributes
@@ -724,7 +724,7 @@ function updateRadioMenuItemRef(
 	let iconRef = radioMenuItemRef.querySelector<IconElement>(`.${MenuClasses.radioItemIcon}`)
 	if (!iconRef) {
 		iconRef = createIconRef({
-			IconCode: ICON_CIRCLE_SMALL,
+			IconCode: IconCodes.circleSmall,
 			IconFilled: true
 		})
 		iconRef.classList.add(MenuClasses.radioItemIcon)

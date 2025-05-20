@@ -6,7 +6,6 @@ import {
 	KEY_SPACE
 } from "@/constants/keyboard-value"
 import { AnimationEffectTiming } from "@/enums/animation"
-import { ICON_CHEVRON_DOWN } from "@/constants/icons"
 import { createId } from "@/utils/ids"
 import { isAnimationAllowed } from "@/utils/animation"
 
@@ -18,6 +17,7 @@ import {
 	createButtonRef,
 	updateButtonRef,
 } from "@/native-components/Button"
+import { IconCodes } from "@/enums/icons"
 
 type SelectProps = astroHTML.JSX.HTMLAttributes & {
 	SelectVariant        ?: SelectVariant
@@ -503,7 +503,7 @@ function updateSelectRef(selectRef: SelectElement, options?: SelectUpdateOptions
 	// icon
 	let iconRef = selectRef.querySelector<IconElement>(`.${SelectClasses.icon}`)
 	if (!iconRef) {
-		iconRef = createIconRef({IconCode: ICON_CHEVRON_DOWN})
+		iconRef = createIconRef({IconCode: IconCodes.chevronDown})
 		iconRef.classList.add(SelectClasses.icon)
 	}
 

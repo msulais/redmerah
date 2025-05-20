@@ -11,20 +11,6 @@ import {
 	EMOJIS_SYMBOLS,
 	EMOJIS_TRAVEL_AND_PLACES
 } from "@/constants/emoji"
-import {
-	ICON_ANIMAL_CAT,
-	ICON_DISMISS,
-	ICON_DIVERSITY,
-	ICON_EMOJI,
-	ICON_FLAG,
-	ICON_FOOD,
-	ICON_HISTORY,
-	ICON_PERSON,
-	ICON_RUNNING_PERSON,
-	ICON_SEARCH,
-	ICON_SYMBOLS,
-	ICON_VEHICLE_CAR
-} from "@/constants/icons"
 import { elementValidTarget } from "@/utils/element"
 import { isAnimationAllowed } from "@/utils/animation"
 import { AnimationEffectTiming } from "@/enums/animation"
@@ -76,6 +62,7 @@ import {
 	type TooltipElement,
 	type TooltipProps
 } from "@/native-components/Tooltip"
+import { IconCodes } from "@/enums/icons"
 
 type EmojiPickerProps = PopoverProps & {
 	EmojiPickerAutoClose           ?: boolean
@@ -501,7 +488,7 @@ function updateEmojiPickerRef(emojiPickerRef: EmojiPickerElement, options?: Emoj
 	// tooltip -> header -> button
 	let headerButtonRef = headerRef.querySelector<IconButtonElement>(`.${EmojiPickerClasses.headerButton}`)
 	if (!headerButtonRef) {
-		headerButtonRef = createIconButtonRef({IconButtonIcon: {IconCode: ICON_DISMISS}})
+		headerButtonRef = createIconButtonRef({IconButtonIcon: {IconCode: IconCodes.dismiss}})
 		headerButtonRef.classList.add(EmojiPickerClasses.headerButton)
 		headerButtonRef.setAttribute('data-tooltip', 'Close')
 	}
@@ -518,7 +505,7 @@ function updateEmojiPickerRef(emojiPickerRef: EmojiPickerElement, options?: Emoj
 	// tooltip -> tabs -> tab.recent
 	let tabRecentRef = tabsRef.querySelector<IconButtonElement>(`.${EmojiPickerClasses.tabRecent}`)
 	if (!tabRecentRef) {
-		tabRecentRef = createIconButtonRef({IconButtonIcon: {IconCode: ICON_HISTORY}})
+		tabRecentRef = createIconButtonRef({IconButtonIcon: {IconCode: IconCodes.history}})
 		tabRecentRef.classList.add(EmojiPickerClasses.tab, EmojiPickerClasses.tabRecent)
 		tabRecentRef.setAttribute('aria-label', 'Recents')
 		tabRecentRef.setAttribute('data-tooltip', 'Recents')
@@ -530,7 +517,7 @@ function updateEmojiPickerRef(emojiPickerRef: EmojiPickerElement, options?: Emoj
 	// tooltip -> tabs -> tab.search
 	let tabSearchRef = tabsRef.querySelector<IconButtonElement>(`.${EmojiPickerClasses.tabSearch}`)
 	if (!tabSearchRef) {
-		tabSearchRef = createIconButtonRef({IconButtonIcon: {IconCode: ICON_SEARCH}})
+		tabSearchRef = createIconButtonRef({IconButtonIcon: {IconCode: IconCodes.search}})
 		tabSearchRef.classList.add(EmojiPickerClasses.tab, EmojiPickerClasses.tabSearch)
 		tabSearchRef.setAttribute('aria-label', 'Search result')
 		tabSearchRef.setAttribute('data-tooltip', 'Search result')
@@ -544,15 +531,15 @@ function updateEmojiPickerRef(emojiPickerRef: EmojiPickerElement, options?: Emoj
 	if (tabsTabRef.length === 0) {
 		let i = 0
 		for (const tab of [
-			[ICON_EMOJI         , 'Smiley & emotion'   ],
-			[ICON_PERSON        , 'Person & body parts'],
-			[ICON_ANIMAL_CAT    , 'Animal & nature'    ],
-			[ICON_FOOD          , 'Food & drink'       ],
-			[ICON_VEHICLE_CAR   , 'Travel & places'    ],
-			[ICON_RUNNING_PERSON, 'Activities'         ],
-			[ICON_DIVERSITY     , 'Objects'            ],
-			[ICON_SYMBOLS       , 'Symbols'            ],
-			[ICON_FLAG          , 'Flags'              ]
+			[IconCodes.emoji         , 'Smiley & emotion'   ],
+			[IconCodes.person        , 'Person & body parts'],
+			[IconCodes.animalCat    , 'Animal & nature'    ],
+			[IconCodes.food          , 'Food & drink'       ],
+			[IconCodes.vehicleCar   , 'Travel & places'    ],
+			[IconCodes.runningPerson, 'Activities'         ],
+			[IconCodes.diversity     , 'Objects'            ],
+			[IconCodes.symbols       , 'Symbols'            ],
+			[IconCodes.flag          , 'Flags'              ]
 		]) {
 			const iconButtonRef = createIconButtonRef({
 				ButtonVariant: i === 0? ButtonVariant.tonal : undefined,
@@ -606,7 +593,7 @@ function updateEmojiPickerRef(emojiPickerRef: EmojiPickerElement, options?: Emoj
 	let searchButtonIconRef = searchButtonRef.querySelector<IconElement>(`.${EmojiPickerClasses.searchButtonIcon}`)
 	if (!searchButtonIconRef) {
 		searchButtonIconRef = createIconRef({
-			IconCode: ICON_SEARCH
+			IconCode: IconCodes.search
 		})
 		searchButtonIconRef.classList.add(EmojiPickerClasses.searchButtonIcon)
 	}
