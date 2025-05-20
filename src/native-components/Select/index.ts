@@ -161,7 +161,7 @@ function updateSelectRefValue(selectRef: SelectElement, value: string): void {
 	selectRef.setAttribute('aria-activedescendant', id)
 	selectRef.setAttribute(SelectAttributes.value, targetOptionRef.value)
 	for (const ref of selectedOptionRefs) {
-		ref.setAttribute('aria-selected', 'false')
+		if (ref !== targetOptionRef) ref.setAttribute('aria-selected', 'false')
 	}
 }
 
