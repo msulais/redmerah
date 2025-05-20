@@ -2,13 +2,14 @@
 import Button from '@/native-components/Button/index.astro'
 import Tooltip from '@/native-components/Tooltip/index.astro'
 import Icon from '@/native-components/Icon/index.astro'
-import { CSSClasses } from "../../_styles/_css"
-import { AppColors } from '@/enums/colors'
 import { ButtonVariant } from '@/native-components/Button'
-import { Commands, ElementIds } from '../../_scripts/_enums'
+import { AppColors } from '@/enums/colors'
 import { IconCodes } from '@/enums/icons'
+import { ElementIds } from '../../_scripts/_shared/_ids'
+import { Commands } from '../../_scripts/_shared/_commands'
+import { CSSClasses } from "../../_styles/_css"
 ---
-<div class={CSSClasses.bodyPage} role="tabpanel" id={ElementIds.bodyBasic} hidden>
+<div class={CSSClasses.bodyPage} role="tabpanel" id={ElementIds.bodyBasic}>
 	<div class={CSSClasses.bodyPageInput}>
 		<input id={ElementIds.bodyBasicInput} readonly placeholder="0" class={CSSClasses.bodyInputField}/>
 		<input id={ElementIds.bodyBasicOutput} readonly value="0" class={CSSClasses.bodyOutputField}/>

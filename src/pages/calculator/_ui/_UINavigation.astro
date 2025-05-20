@@ -8,8 +8,9 @@ import Button from '@/native-components/Button/index.astro'
 import SideBarButton from '@/native-components/SideBar/SideBarButton.astro'
 import { ButtonVariant } from '@/native-components/Button'
 import { IconCodes } from '@/enums/icons'
-import { Commands, ElementIds, Pages } from '../_scripts/_enums'
 import { CSSClasses } from '../_styles/_css'
+import { Pages } from '../_scripts/_shared/_enums'
+import { ElementIds } from '../_scripts/_shared/_ids'
 
 const items: {
 	icon: number
@@ -23,7 +24,7 @@ const items: {
 		name: 'Basic',
 		page: Pages.basic,
 		controls: ElementIds.bodyBasic,
-		selected: false
+		selected: true
 	},
 	{
 		icon: IconCodes.beaker,
@@ -51,7 +52,7 @@ const items: {
 		name: 'Date',
 		page: Pages.date,
 		controls: ElementIds.bodyDate,
-		selected: true,
+		selected: false,
 	},
 ]
 ---
@@ -66,7 +67,6 @@ const items: {
 			role="tab"
 			style="padding-left: 10px"
 			data-page={v.page}
-			data-command={Commands.changePage}
 			aria-selected={v.selected}
 			aria-controls={v.controls}
 			SideBarButtonSelected={v.selected}
@@ -93,7 +93,6 @@ const items: {
 	{items.map(v => <DrawerButton
 		aria-selected={v.selected}
 		aria-controls={v.controls}
-		data-command={Commands.changePage}
 		data-page={v.page}
 		DrawerButtonSelected={v.selected}
 		ButtonVariant={v.selected ? ButtonVariant.tonal : undefined}>

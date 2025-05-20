@@ -5,14 +5,15 @@ import DatePicker from '@/native-components/DatePicker/index.astro'
 import Icon from '@/native-components/Icon/index.astro'
 import TextField from '@/native-components/TextField/index.astro'
 import SelectOption from '@/native-components/Select/SelectOption.astro'
-import { DateOperation, ElementIds } from "../../_scripts/_enums"
 import { CSSClasses } from "../../_styles/_css"
 import { ButtonVariant } from '@/native-components/Button'
 import { IconCodes } from '@/enums/icons'
 import { FlyoutPosition } from '@/enums/position'
+import { ElementIds } from '../../_scripts/_shared/_ids'
+import { DateOperation } from '../../_scripts/_shared/_enums'
 ---
 
-<div id={ElementIds.bodyDate} role="tabpanel" class={CSSClasses.bodyPageDate}>
+<div id={ElementIds.bodyDate} role="tabpanel" class={CSSClasses.bodyPageDate} hidden>
 	<label for={ElementIds.bodyDateOperation}>Operation</label>
 	<Select id={ElementIds.bodyDateOperation} style="width:256px;margin-top:4px;margin-bottom:16px">
 		<SelectOption value={DateOperation.add}>Add</SelectOption>

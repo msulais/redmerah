@@ -1,0 +1,257 @@
+import { PlatformAnimationMode, PlatformThemeMode } from "@/enums/platforms"
+import { ObservableStore } from "@/utils/store"
+import { BasicStore } from "../_features/_basic"
+import { $, $$, $$$ } from "./_dom-utils"
+import { ElementIds } from "../_shared/_ids"
+import { LocalStorageKeys } from "@/enums/storage"
+import { validEnumValue } from "@/utils/object"
+import { DEFAULT_THEME } from "../_shared/_constant"
+import { RootAttributes } from "@/enums/attributes"
+import { RadioNames } from "../_shared/_input-names"
+import { DecimalNumberFormat, GroupingNumberFormat, NumberType } from "../_shared/_enums"
+import { ScientificStore } from "../_features/_scientific"
+import { ConverterStore } from "../_features/_converter"
+import { ProgrammerStore } from "../_features/_programmer"
+import { MemoryStore } from "./_memory"
+import { Commands } from "../_shared/_commands"
+import { saveStorageItem } from "./_database"
+
+export type SettingsStoreType = Readonly<{
+	theme            : PlatformThemeMode
+	animation        : PlatformAnimationMode
+	decimalFormat    : DecimalNumberFormat
+	groupingFormat   : GroupingNumberFormat
+}>
+
+export const SettingsStore = new ObservableStore<SettingsStoreType>({
+	theme            : PlatformThemeMode.auto,
+	animation        : PlatformAnimationMode.auto,
+	decimalFormat    : DecimalNumberFormat.point,
+	groupingFormat   : GroupingNumberFormat.comma
+})
+const _decimalToken = '@_decimal_@'
+const _groupingToken = '@_grouping_@'
+const _rootRef = document.documentElement
+const _themeRef = $(ElementIds.appbarSettingsThemeMenu) as HTMLDivElement
+const _animationRef = $(ElementIds.appbarSettingsAnimationMenu) as HTMLDivElement
+const _decimalFormatRef = $(ElementIds.appbarSettingsDecimalMenu) as HTMLDivElement
+const _groupingFormatRef = $(ElementIds.appbarSettingsGroupMenu) as HTMLDivElement
+const _settingsMenuRef = $(ElementIds.appbarSettingsMenu) as HTMLDivElement
+
+function _initEvents(): void {
+	_groupingFormatRef.addEventListener('change', ev => {
+		const target = ev.target as HTMLInputElement
+		const value = target?.value as GroupingNumberFormat
+		if (!validEnumValue(value, GroupingNumberFormat)) return
+
+		SettingsStore.update(v => ({...v, groupingFormat: value}))
+		_settingsMenuRef.hidePopover()
+	})
+
+	_decimalFormatRef.addEventListener('change', ev => {
+		const target = ev.target as HTMLInputElement
+		const value = target?.value as DecimalNumberFormat
+		if (!validEnumValue(value, DecimalNumberFormat)) return
+
+		SettingsStore.update(v => ({...v, decimalFormat: value}))
+		_settingsMenuRef.hidePopover()
+	})
+
+	_themeRef.addEventListener('change', ev => {
+		const target = ev.target as HTMLInputElement
+		const value = target?.value as PlatformThemeMode
+		if (!value || !validEnumValue(value, PlatformThemeMode)) {return}
+
+		_rootRef.setAttribute(RootAttributes.theme, value)
+		_settingsMenuRef.hidePopover()
+		localStorage.setItem(LocalStorageKeys.platformTheme, value)
+		SettingsStore.update(v => ({...v, theme: value}), null)
+	})
+
+	_animationRef.addEventListener('change', ev => {
+		const target = ev.target as HTMLInputElement
+		const value = target?.value as PlatformAnimationMode
+		if (!value || !validEnumValue(value, PlatformAnimationMode)) {return}
+
+		_rootRef.setAttribute(RootAttributes.animation, value)
+		_settingsMenuRef.hidePopover()
+		localStorage.setItem(LocalStorageKeys.platformAnimation, value)
+		SettingsStore.update(v => ({...v, animation: value}), null)
+	})
+}
+
+function _initTheme(): void {
+	const theme = localStorage.getItem(LocalStorageKeys.platformTheme)
+	if (!theme || !validEnumValue(theme, PlatformThemeMode) || theme === DEFAULT_THEME) return
+
+	_rootRef.setAttribute(RootAttributes.theme, theme)
+	const previousRef = $$(
+		`input[name="${CSS.escape(RadioNames.settingsTheme)}"]:checked`
+	) as HTMLInputElement
+	const targetRef = $$(
+		`input[name="${CSS.escape(RadioNames.settingsTheme)}"][value="${CSS.escape(theme)}"]`
+	) as HTMLInputElement
+
+	if (previousRef === targetRef) {return}
+	if (previousRef) previousRef.checked = false
+	if (targetRef) targetRef.checked = true
+}
+
+function _initAnimation(): void {
+	const animation = localStorage.getItem(LocalStorageKeys.platformAnimation)
+	if (!animation || !validEnumValue(animation, PlatformAnimationMode)) return
+
+	_rootRef.setAttribute(RootAttributes.animation, animation)
+	const previousRef = $$(
+		`input[name="${CSS.escape(RadioNames.settingsAnimation)}"]:checked`
+	) as HTMLInputElement
+	const targetRef = $$(
+		`input[name="${CSS.escape(RadioNames.settingsAnimation)}"][value="${CSS.escape(animation)}"]`
+	) as HTMLInputElement
+
+	if (previousRef === targetRef) {return}
+	if (previousRef) previousRef.checked = false
+	if (targetRef) targetRef.checked = true
+}
+
+function _subscribeRecalculate(v: SettingsStoreType, o: SettingsStoreType): void {
+	if (
+		v.decimalFormat === o.decimalFormat
+		&& v.groupingFormat === o.groupingFormat
+	) return
+
+	BasicStore.notify()
+	ScientificStore.notify()
+	ConverterStore.notify()
+	ProgrammerStore.notify()
+	MemoryStore.notify()
+}
+
+function _subscribeDecimalFormatChanges(v: SettingsStoreType, o: SettingsStoreType): void {
+	const decimalFormat = v.decimalFormat
+	const oldDecimalFormat = o.decimalFormat
+	const oldGroupingFormat = o.groupingFormat
+	if (decimalFormat === oldDecimalFormat) return
+
+	let grouping = oldGroupingFormat
+	saveStorageItem('settings/decimal', decimalFormat)
+
+	// @ts-ignore
+	if (decimalFormat === oldGroupingFormat) {
+		switch (decimalFormat) {
+		case DecimalNumberFormat.point:
+			grouping = GroupingNumberFormat.comma
+			break
+		case DecimalNumberFormat.comma:
+			grouping = GroupingNumberFormat.point
+			break
+		}
+
+		SettingsStore.update(v => ({...v, groupingFormat: grouping}))
+	}
+
+	const format = (input: string) => (input
+		.replaceAll(oldDecimalFormat, _decimalToken)
+		.replaceAll(oldGroupingFormat, _groupingToken)
+
+		.replaceAll(_decimalToken, decimalFormat)
+		.replaceAll(_groupingToken, grouping)
+	)
+
+	BasicStore.update(v => ({...v, input: format(v.input)}))
+	ScientificStore.update(v => ({...v, input: format(v.input)}))
+	ConverterStore.update(v => ({...v, input: format(v.input)}))
+	if (ProgrammerStore.value.numberType === NumberType.decimal) {
+		ProgrammerStore.update(v => ({...v, input: format(v.input)}))
+	}
+}
+
+function _subscribeGroupingFormatChanges(v: SettingsStoreType, o: SettingsStoreType): void {
+	const groupingFormat = v.groupingFormat
+	const oldDecimalFormat = o.decimalFormat
+	const oldGroupingFormat = o.groupingFormat
+	if (groupingFormat === oldGroupingFormat) return
+
+	let decimal = oldDecimalFormat
+	saveStorageItem('settings/grouping', groupingFormat)
+
+	// @ts-ignore
+	if (groupingFormat === oldDecimalFormat) {
+		switch (groupingFormat) {
+		case GroupingNumberFormat.none:
+		case GroupingNumberFormat.space:
+		case GroupingNumberFormat.underscore:
+			break
+		case GroupingNumberFormat.point:
+			decimal = DecimalNumberFormat.comma
+			break
+		case GroupingNumberFormat.comma:
+			decimal = DecimalNumberFormat.point
+			break
+		}
+
+		SettingsStore.update(v => ({...v, decimalFormat: decimal}))
+	}
+
+	const format = (input: string) => (input
+		.replaceAll(oldDecimalFormat, _decimalToken)
+		.replaceAll(oldGroupingFormat, _groupingToken)
+
+		.replaceAll(_decimalToken, decimal)
+		.replaceAll(_groupingToken, groupingFormat)
+	)
+
+	BasicStore.update(v => ({...v, input: format(v.input)}))
+	ScientificStore.update(v => ({...v, input: format(v.input)}))
+	ConverterStore.update(v => ({...v, input: format(v.input)}))
+	if (ProgrammerStore.value.numberType === NumberType.decimal) {
+		ProgrammerStore.update(v => ({...v, input: format(v.input)}))
+	}
+}
+
+function _subscribeDecimalFormatRefView(v: SettingsStoreType, o: SettingsStoreType): void {
+	const decimalFormat = v.decimalFormat
+	if (decimalFormat === o.decimalFormat) return
+
+	for (const ref of $$$<HTMLButtonElement>(`[data-command=${Commands.keyDecimal}]`)) {
+		ref.textContent = v.decimalFormat
+	}
+
+	const prevRef = $$<HTMLInputElement>(`input[name="${RadioNames.settingsDecimal}"]:checked`)
+	const targetRef = $$<HTMLInputElement>(
+		`input[name="${RadioNames.settingsDecimal}"][value="${decimalFormat}"]`
+	)
+
+	if (prevRef === targetRef) return
+	if (prevRef) prevRef.checked = false
+	if (targetRef) targetRef.checked = true
+}
+
+function _subscribeGroupingFormatRefView(v: SettingsStoreType, o: SettingsStoreType): void {
+	const groupingFormat = v.groupingFormat
+	if (groupingFormat === o.groupingFormat) return
+
+	const prevRef = $$<HTMLInputElement>(`input[name="${RadioNames.settingsGrouping}"]:checked`)
+	const targetRef = $$<HTMLInputElement>(
+		`input[name="${RadioNames.settingsGrouping}"][value="${groupingFormat}"]`
+	)
+
+	if (prevRef === targetRef) return
+	if (prevRef) prevRef.checked = false
+	if (targetRef) targetRef.checked = true
+}
+
+function _initSubscriber(): void {
+	SettingsStore.subscribe(_subscribeRecalculate)
+	SettingsStore.subscribe(_subscribeDecimalFormatChanges)
+	SettingsStore.subscribe(_subscribeGroupingFormatChanges)
+	SettingsStore.subscribe(_subscribeDecimalFormatRefView)
+	SettingsStore.subscribe(_subscribeGroupingFormatRefView)
+}
+
+export default () => {
+	_initSubscriber()
+	_initTheme()
+	_initAnimation()
+	_initEvents()
+}

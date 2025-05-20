@@ -10,9 +10,11 @@ import Option from '@/native-components/Select/SelectOption.astro'
 import { CSSClasses } from "../../_styles/_css"
 import { AppColors } from '@/enums/colors'
 import { ButtonVariant } from '@/native-components/Button'
-import { Commands, ElementIds, ScientificAngleType } from '../../_scripts/_enums'
 import { PopoverPosition } from '@/native-components/Popover'
 import { IconCodes } from '@/enums/icons'
+import { ElementIds } from '../../_scripts/_shared/_ids'
+import { Commands } from '../../_scripts/_shared/_commands'
+import { ScientificAngleType } from '../../_scripts/_shared/_enums'
 ---
 <div class={CSSClasses.bodyPage} role="tabpanel" id={ElementIds.bodyScientific} hidden>
 	<div class={CSSClasses.bodyPageInput}>

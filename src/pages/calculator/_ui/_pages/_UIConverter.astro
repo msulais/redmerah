@@ -8,10 +8,12 @@ import Option from '@/native-components/Select/SelectOption.astro'
 import { CSSClasses } from "../../_styles/_css"
 import { AppColors } from '@/enums/colors'
 import { ButtonVariant } from '@/native-components/Button'
-import { Commands, ConverterType, ElementIds, LengthUnits } from '../../_scripts/_enums'
 import { IconCodes } from '@/enums/icons'
 import { SelectVariant } from '@/native-components/Select'
-import { CONVERTER_TYPES } from '../../_scripts/_constant'
+import { ElementIds } from '../../_scripts/_shared/_ids'
+import { Commands } from '../../_scripts/_shared/_commands'
+import { CONVERTER_TYPES, DEFAULT_CONVERTER_INPUT_UNIT, DEFAULT_CONVERTER_OUTPUT_UNIT, DEFAULT_CONVERTER_TYPE } from '../../_scripts/_shared/_constant'
+import { LengthUnits } from '../../_scripts/_shared/_units'
 ---
 <div class={CSSClasses.bodyPage} role="tabpanel" id={ElementIds.bodyConverter} hidden>
 	<div class={CSSClasses.bodyPageInput}>
@@ -31,20 +33,28 @@ import { CONVERTER_TYPES } from '../../_scripts/_constant'
 			<label style="margin:0 8px 0 12px">Type:</label>
 			<Select id={ElementIds.bodyConverterType} aria-label="Converter type" style="width:186px" SelectVariant={SelectVariant.outlined}>
 				{CONVERTER_TYPES.map(c =>
-					<Option value={c.type} SelectOptionSelected={c.type === ConverterType.length}><Icon style={`color:rgb(${AppColors.accent})`} IconCode={c.icon}/>{c.text}</Option>
+					<Option value={c.type}
+						SelectOptionSelected={c.type === DEFAULT_CONVERTER_TYPE}>
+						<Icon style={`color:rgb(${AppColors.accent})`} IconCode={c.icon}/>
+						{c.text}
+					</Option>
 				)}
 			</Select>
 		</div>
 		<div class={CSSClasses.bodyPageOptionsGroup} style="display:grid;grid-template-columns:1fr 40px 1fr;gap:4px">
 			<Select id={ElementIds.bodyConverterInputUnit} aria-label="Unit from">
 				{LengthUnits.all.map(c =>
-					<Option value={c.name} SelectOptionSelected={c.equals(LengthUnits.meter)}>{c.name} ({c.symbol})</Option>
+					<Option value={c.id} style="gap:0" SelectOptionSelected={c.equals(DEFAULT_CONVERTER_INPUT_UNIT)}>
+						{c.name} [&nbsp;<span style={`color:rgb(${AppColors.accent})`}>{c.symbol}</span>&nbsp;]
+					</Option>
 				)}
 			</Select>
 			<IconButton data-command={Commands.keyUnitSwap} id={ElementIds.bodyConverterSwap} aria-label="Swap unit" IconButtonCode={IconCodes.arrowRight}/>
 			<Select id={ElementIds.bodyConverterOutputUnit} aria-label="Unit To">
 				{LengthUnits.all.map(c =>
-					<Option value={c.name} SelectOptionSelected={c.equals(LengthUnits.kilometer)}>{c.name} ({c.symbol})</Option>
+					<Option value={c.id} style="gap:0" SelectOptionSelected={c.equals(DEFAULT_CONVERTER_OUTPUT_UNIT)}>
+						{c.name} [&nbsp;<span style={`color:rgb(${AppColors.accent})`}>{c.symbol}</span>&nbsp;]
+					</Option>
 				)}
 			</Select>
 		</div>

@@ -3,7 +3,6 @@ import AppBar from '@/native-components/AppBar/index.astro'
 import IconButton from '@/native-components/Button/IconButton.astro'
 import Tooltip from '@/native-components/Tooltip/index.astro'
 import { APP_CALCULATOR as APP } from '@/constants/apps'
-import { DecimalNumberFormat, GroupingNumberFormat, ElementIds, RadioGroupNames } from '../_scripts/_enums'
 import Menu from '@/native-components/Menu/index.astro'
 import SubMenu from '@/native-components/Menu/SubMenu.astro'
 import SubMenuItem from '@/native-components/Menu/SubMenuItem.astro'
@@ -18,6 +17,9 @@ import { PlatformAnimationMode, PlatformThemeMode } from '@/enums/platforms'
 import logoRedmerah from '@/assets/images/logos/redmerah-logo.svg'
 import { RoutesLinks, ExternalLinks } from '@/enums/links'
 import { IconCodes } from '@/enums/icons'
+import { ElementIds } from '../_scripts/_shared/_ids'
+import { RadioNames } from '../_scripts/_shared/_input-names'
+import { DecimalNumberFormat, GroupingNumberFormat } from '../_scripts/_shared/_enums'
 ---
 
 <AppBar id={ElementIds.appbar}>
@@ -112,7 +114,7 @@ import { IconCodes } from '@/enums/icons'
 			<SubMenu slot="submenus" style="width:150px" id={ElementIds.appbarSettingsAnimationMenu}>
 				<RadioMenuItem
 					RadioMenuItemInputAttr={{
-						name: RadioGroupNames.settingsAnimation,
+						name: RadioNames.settingsAnimation,
 						checked: true,
 						value: PlatformAnimationMode.auto
 					}}>
@@ -121,7 +123,7 @@ import { IconCodes } from '@/enums/icons'
 				</RadioMenuItem>
 				<RadioMenuItem
 					RadioMenuItemInputAttr={{
-						name: RadioGroupNames.settingsAnimation,
+						name: RadioNames.settingsAnimation,
 						value: PlatformAnimationMode.on
 					}}>
 					<Icon IconCode={IconCodes.videoClip}/>
@@ -129,7 +131,7 @@ import { IconCodes } from '@/enums/icons'
 				</RadioMenuItem>
 				<RadioMenuItem
 					RadioMenuItemInputAttr={{
-						name: RadioGroupNames.settingsAnimation,
+						name: RadioNames.settingsAnimation,
 						value: PlatformAnimationMode.off
 					}}>
 					<Icon IconCode={IconCodes.videoClipOff}/>
@@ -147,7 +149,7 @@ import { IconCodes } from '@/enums/icons'
 			<SubMenu slot="submenus" style="width:150px" id={ElementIds.appbarSettingsThemeMenu}>
 				<RadioMenuItem
 					RadioMenuItemInputAttr={{
-						name: RadioGroupNames.settingsTheme,
+						name: RadioNames.settingsTheme,
 						checked: true,
 						value: PlatformThemeMode.auto
 					}}>
@@ -156,7 +158,7 @@ import { IconCodes } from '@/enums/icons'
 				</RadioMenuItem>
 				<RadioMenuItem
 					RadioMenuItemInputAttr={{
-						name: RadioGroupNames.settingsTheme,
+						name: RadioNames.settingsTheme,
 						value: PlatformThemeMode.light
 					}}>
 					<Icon IconCode={IconCodes.weatherSunny}/>
@@ -164,7 +166,7 @@ import { IconCodes } from '@/enums/icons'
 				</RadioMenuItem>
 				<RadioMenuItem
 					RadioMenuItemInputAttr={{
-						name: RadioGroupNames.settingsTheme,
+						name: RadioNames.settingsTheme,
 						value: PlatformThemeMode.dark
 					}}>
 					<Icon IconCode={IconCodes.weatherMoon}/>
@@ -181,28 +183,28 @@ import { IconCodes } from '@/enums/icons'
 			</SubMenuItem>
 			<SubMenu style="width:150px" slot="submenus" id={ElementIds.appbarSettingsGroupMenu}>
 				<RadioMenuItem
-					RadioMenuItemName={RadioGroupNames.settingsGrouping}
+					RadioMenuItemName={RadioNames.settingsGrouping}
 					RadioMenuItemValue={GroupingNumberFormat.comma}
 					RadioMenuItemChecked>
 					Comma
 				</RadioMenuItem>
 				<RadioMenuItem
-					RadioMenuItemName={RadioGroupNames.settingsGrouping}
+					RadioMenuItemName={RadioNames.settingsGrouping}
 					RadioMenuItemValue={GroupingNumberFormat.point}>
 					Point
 				</RadioMenuItem>
 				<RadioMenuItem
-					RadioMenuItemName={RadioGroupNames.settingsGrouping}
+					RadioMenuItemName={RadioNames.settingsGrouping}
 					RadioMenuItemValue={GroupingNumberFormat.space}>
 					Space
 				</RadioMenuItem>
 				<RadioMenuItem
-					RadioMenuItemName={RadioGroupNames.settingsGrouping}
+					RadioMenuItemName={RadioNames.settingsGrouping}
 					RadioMenuItemValue={GroupingNumberFormat.none}>
 					None
 				</RadioMenuItem>
 				<RadioMenuItem
-					RadioMenuItemName={RadioGroupNames.settingsGrouping}
+					RadioMenuItemName={RadioNames.settingsGrouping}
 					RadioMenuItemValue={GroupingNumberFormat.underscore}>
 					Underscore
 				</RadioMenuItem>
@@ -217,12 +219,12 @@ import { IconCodes } from '@/enums/icons'
 			</SubMenuItem>
 			<SubMenu slot="submenus" style="width:150px" id={ElementIds.appbarSettingsDecimalMenu}>
 				<RadioMenuItem
-					RadioMenuItemName={RadioGroupNames.settingsDecimal}
+					RadioMenuItemName={RadioNames.settingsDecimal}
 					RadioMenuItemValue={DecimalNumberFormat.comma}>
 					Comma
 				</RadioMenuItem>
 				<RadioMenuItem
-					RadioMenuItemName={RadioGroupNames.settingsDecimal}
+					RadioMenuItemName={RadioNames.settingsDecimal}
 					RadioMenuItemValue={DecimalNumberFormat.point}
 					RadioMenuItemChecked>
 					Point
