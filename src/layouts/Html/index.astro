@@ -6,9 +6,16 @@ import { CornerData } from '@/enums/corner'
 import { GlobalElementIds } from '@/enums/ids'
 import { PlatformData } from '@/enums/platforms'
 import { AnimationData } from '@/enums/animation'
+import Dialog from '@/native-components/Dialog/index.astro'
+import Icon from '@/native-components/Icon/index.astro'
+import Button from '@/native-components/Button/index.astro'
+import LinkButton from '@/native-components/Button/LinkButton.astro'
 import '@/styles/variables.scss'
 import '@/styles/animations.scss'
 import '@/styles/index.scss'
+import { IconCodes } from '@/enums/icons'
+import { AppColors } from '@/enums/colors'
+import { ButtonVariant } from '@/native-components/Button'
 
 type Props = {
 	title?: string
@@ -56,5 +63,20 @@ const colorToCSS = (hex: HEXColor) => {
 	</head>
 	<body data-g-component-count={componentCount}>
 		<slot />
+		<Dialog
+			id={GlobalElementIds.popoverWarningNotice}
+			style="width:512px"
+			DialogHeaderAttr={{style: 'opacity:var(--g-opacity-inv2)'}}>
+			<Fragment slot="header">
+				<Icon IconCode={IconCodes.warning} style="font-size:32px"/>
+				Browser Compatibility Notice
+			</Fragment>
+			<p>This web app heavily utilizes the <a style={`border-bottom:1px solid rgb(${AppColors.accent})`} href="https://developer.mozilla.org/en-US/docs/Web/API/Popover_API">Popover API</a>, which may not be fully supported by your browser. Some features might not function as expected. Please consider using a modern browser for the best experience.</p>
+			<form slot="footer" style="display:contents" method="dialog">
+				<Button ButtonVariant={ButtonVariant.tonal}>Close</Button>
+				<LinkButton LinkButtonNewTab autofocus LinkButtonVariant={ButtonVariant.filled} href="https://developer.mozilla.org/en-US/docs/Web/API/Popover_API#browser_compatibility">Check browser</LinkButton>
+			</form>
+		</Dialog>
+		<script src="./_popover-api-check.ts" />
 	</body>
 </html>
