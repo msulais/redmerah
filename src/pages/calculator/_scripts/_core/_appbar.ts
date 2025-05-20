@@ -1,4 +1,5 @@
 import { updateIconButtonRef } from "@/native-components/Button"
+import { APP_CALCULATOR as app } from "@/constants/apps"
 import { $ } from "./_dom-utils"
 import { ElementIds } from "../_shared/_ids"
 import { SCREEN_WIDTH_SMALL } from "../_shared/_constant"
@@ -11,6 +12,7 @@ const _settingsButtonRef = $(ElementIds.appbarSettingsButton) as HTMLButtonEleme
 const _sideBarButtonRef = $(ElementIds.appbarSideBarButton) as HTMLButtonElement
 const _sideBarRef = $(ElementIds.navigationSideBar) as HTMLDivElement
 const _drawerRef = $(ElementIds.navigationDrawer) as HTMLDivElement
+const _shareButtonRef = $(ElementIds.appbarInfoMenuShareButton) as HTMLButtonElement
 
 function _initMenuToggle(): void {
 	_infoMenuRef.addEventListener('beforetoggle', ev => {
@@ -43,7 +45,18 @@ function _initSideBarButton(): void {
 	})
 }
 
+function _initShareButtonEvents(): void {
+	_shareButtonRef.addEventListener('click', () => {
+		_settingsMenuRef.hidePopover()
+		navigator.share({
+			text: app.name,
+			url: document.URL
+		})
+	})
+}
+
 export default () => {
 	_initMenuToggle()
 	_initSideBarButton()
+	_initShareButtonEvents()
 }
