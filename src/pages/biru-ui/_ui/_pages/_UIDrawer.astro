@@ -9,8 +9,7 @@ import DrawerButton from '@/native-components/Drawer/DrawerButton.astro'
 import { ElementIds, ID } from '../../_scripts/_enums'
 import CSS from '../../_index.module.scss'
 import { ButtonVariant } from '@/native-components/Button'
-import { ICON_APPS, ICON_DISMISS, ICON_HOME, ICON_INFO, ICON_PERSON, ICON_SEARCH, ICON_SETTINGS } from '@/constants/icons'
-import { ICON_CALL } from '@/constants/icons'
+import { IconCodes } from '@/enums/icons'
 ---
 <div
 	class={CSS.bodyPage}
@@ -34,7 +33,7 @@ import { ICON_CALL } from '@/constants/icons'
 					popovertarget={ID + ElementIds.panelDrawerPreviewDrawer}
 					popovertargetaction='hide'
 					aria-label="Close drawer">
-					<Icon IconCode={ICON_DISMISS}/>
+					<Icon IconCode={IconCodes.dismiss}/>
 				</Button>
 				<TextField
 					style="width:calc(100% - 24px);margin:8px 12px;padding-right: 4px"
@@ -44,35 +43,35 @@ import { ICON_CALL } from '@/constants/icons'
 						autofocus: true
 					}}>
 					<TextFieldButton slot='trailing'>
-						<Icon IconCode={ICON_SEARCH}/>
+						<Icon IconCode={IconCodes.search}/>
 					</TextFieldButton>
 				</TextField>
 			</Fragment>
 			<DrawerButton
 				DrawerButtonSelected
 				ButtonVariant={ButtonVariant.tonal}>
-				<Icon IconCode={ICON_HOME}/>
+				<Icon IconCode={IconCodes.home}/>
 				Home
 			</DrawerButton>
 			<DrawerButton>
-				<Icon IconCode={ICON_INFO}/>
+				<Icon IconCode={IconCodes.info}/>
 				About
 			</DrawerButton>
 			<DrawerButton>
-				<Icon IconCode={ICON_APPS}/>
+				<Icon IconCode={IconCodes.apps}/>
 				Apps
 			</DrawerButton>
 			<DrawerButton>
-				<Icon IconCode={ICON_CALL}/>
+				<Icon IconCode={IconCodes.call}/>
 				Contact
 			</DrawerButton>
 			<Fragment slot='footer'>
 				<DrawerButton>
-					<Icon IconCode={ICON_PERSON}/>
+					<Icon IconCode={IconCodes.person}/>
 					Account
 				</DrawerButton>
 				<DrawerButton>
-					<Icon IconCode={ICON_SETTINGS}/>
+					<Icon IconCode={IconCodes.settings}/>
 					Settings
 				</DrawerButton>
 			</Fragment>

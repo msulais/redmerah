@@ -2,9 +2,9 @@ import type { BatteryManager } from '@/interfaces/battery'
 import appbar from './_appbar'
 import { ElementIds, ID } from './_enums'
 import { updateIconRef } from '@/native-components/Icon'
-import { ICON_BATTERY_5, ICON_BATTERY_CHARGE } from '@/constants/icons'
 import { isAnimationAllowed } from '@/utils/animation'
 import { elementAnimateUpdateText } from '@/utils/element'
+import { IconCodes } from '@/enums/icons'
 
 const $ = (id: string) => document.getElementById(id)
 
@@ -35,7 +35,7 @@ function initEvents(): void {
 				statusTextRef.textContent = charging? 'Charging' : 'Discharging'
 			}
 			updateIconRef(statusIconRef, {
-				IconCode: charging? ICON_BATTERY_CHARGE : ICON_BATTERY_5
+				IconCode: charging? IconCodes.batteryCharge : IconCodes.battery5
 			})
 		}
 		update()

@@ -2,13 +2,13 @@
 import Icon from '@/native-components/Icon/index.astro'
 import { ElementIds, ID } from "../_scripts/_enums";
 import { CSSClasses } from "../_styles/_css";
-import { ICON_QUESTION_CIRCLE } from '@/constants/icons';
+import { IconCodes } from '@/enums/icons';
 ---
 
 <main class={CSSClasses.body}>
 	<h1 id={ID + ElementIds.bodyLevelText}>100%</h1>
 	<div class={CSSClasses.bodyStatus} aria-label="Status">
-		<Icon id={ID + ElementIds.bodyStatusIcon} IconCode={ICON_QUESTION_CIRCLE}/>
+		<Icon id={ID + ElementIds.bodyStatusIcon} IconCode={IconCodes.questionCircle}/>
 		<span id={ID + ElementIds.bodyStatusText}>Unknown</span>
 	</div>
 </main>

@@ -10,8 +10,8 @@ import { ElementIds, ID } from '../../_scripts/_enums'
 import CSS from '../../_index.module.scss'
 import { ButtonVariant } from '@/native-components/Button'
 import { FlyoutPosition } from '@/enums/position'
-import { ICON_ANIMAL_CAT } from '@/constants/icons'
 import { TooltipPosition } from '@/native-components/Tooltip'
+import { IconCodes } from '@/enums/icons'
 ---
 <div
 	class={CSS.bodyPage}
@@ -31,7 +31,7 @@ import { TooltipPosition } from '@/native-components/Tooltip'
 			<Button
 				ButtonVariant={ButtonVariant.tonal}
 				data-tooltip="Button">
-				<Icon IconFilled IconCode={ICON_ANIMAL_CAT} data-tooltip="Icon"/>
+				<Icon IconFilled IconCode={IconCodes.animalCat} data-tooltip="Icon"/>
 				Hover me
 			</Button>
 		</Tooltip>

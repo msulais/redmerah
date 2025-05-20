@@ -9,9 +9,9 @@ import SelectOption from '@/native-components/Select/SelectOption.astro'
 import IconButton from '@/native-components/Button/IconButton.astro'
 import { ElementIds, ID } from '../../_scripts/_enums'
 import CSS from '../../_index.module.scss'
-import { ICON_ALERT, ICON_CHEVRON_DOWN } from '@/constants/icons'
 import { ButtonVariant } from '@/native-components/Button'
 import { ListVariant } from '@/native-components/List'
+import { IconCodes } from '@/enums/icons'
 ---
 <div
 	class={CSS.bodyPage}
@@ -36,12 +36,12 @@ import { ListVariant } from '@/native-components/List'
 				ListSubtitleAttr={{
 					id: ID + ElementIds.panelListPreviewSubtitle
 				}}>
-				<Icon data-tooltip="Icon" IconCode={ICON_ALERT} slot="leading"/>
+				<Icon data-tooltip="Icon" IconCode={IconCodes.alert} slot="leading"/>
 				<p id={ID + ElementIds.panelListPreviewTitle} data-tooltip="Title">Ullamco Lorem amet culpa ad quis duis enim ut magna.</p>
 				<p slot="subtitle" data-tooltip="Subtitle">Duis commodo ad laboris tempor incididunt excepteur et esse ipsum irure tempor.</p>
 				<Fragment slot="trailing">
 					<Button data-tooltip="Button" ButtonVariant={ButtonVariant.filled}>Show more</Button>
-					<IconButton data-tooltip="IconButton" IconButtonCode={ICON_CHEVRON_DOWN}/>
+					<IconButton data-tooltip="IconButton" IconButtonCode={IconCodes.chevronDown}/>
 				</Fragment>
 			</List>
 		</Tooltip>

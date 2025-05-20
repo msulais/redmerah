@@ -6,10 +6,10 @@ import Icon from '@/native-components/Icon/index.astro'
 import Tooltip from '@/native-components/Tooltip/index.astro'
 import Select from '@/native-components/Select/index.astro'
 import SelectOption from '@/native-components/Select/SelectOption.astro'
-import { ICON_ADD } from '@/constants/icons'
 import { ButtonVariant } from '@/native-components/Button'
 import { ElementIds, ID } from '../../_scripts/_enums'
 import CSS from '../../_index.module.scss'
+import { IconCodes } from '@/enums/icons'
 ---
 <div
 	class={CSS.bodyPage}
@@ -23,13 +23,13 @@ import CSS from '../../_index.module.scss'
 			<IconButton
 				data-tooltip="Icon Button"
 				id={ID + ElementIds.panelButtonsPreview1}
-				IconButtonCode={ICON_ADD}
+				IconButtonCode={IconCodes.add}
 			/>
 			<Button id={ID + ElementIds.panelButtonsPreview2} data-tooltip="Button">
 				Click me
 			</Button>
 			<Button id={ID + ElementIds.panelButtonsPreview3} data-tooltip="Button">
-				<Icon IconCode={ICON_ADD} data-tooltip="Icon"/>
+				<Icon IconCode={IconCodes.add} data-tooltip="Icon"/>
 				Click me
 			</Button>
 		</Tooltip>

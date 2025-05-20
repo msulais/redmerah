@@ -3,8 +3,8 @@ import AppBar from '@/native-components/AppBar/index.astro'
 import IconButton from '@/native-components/Button/IconButton.astro'
 import Tooltip from '@/native-components/Tooltip/index.astro'
 import { APP_BATTERY as APP } from '@/constants/apps'
-import { ICON_INFO, ICON_SETTINGS } from '@/constants/icons'
 import { ElementIds, ID } from '../_scripts/_enums'
+import { IconCodes } from '@/enums/icons'
 ---
 
 <AppBar id={ID + ElementIds.appbar}>
@@ -21,7 +21,7 @@ import { ElementIds, ID } from '../_scripts/_enums'
 		<IconButton
 			id={ID + ElementIds.appbarInfoButton}
 			data-tooltip="Info"
-			IconButtonCode={ICON_INFO}
+			IconButtonCode={IconCodes.info}
 			aria-label="Info"
 			aria-haspopup="menu"
 			aria-expanded="false"
@@ -31,7 +31,7 @@ import { ElementIds, ID } from '../_scripts/_enums'
 		<IconButton
 			id={ID + ElementIds.appbarSettingsButton}
 			data-tooltip="Settings"
-			IconButtonCode={ICON_SETTINGS}
+			IconButtonCode={IconCodes.settings}
 			aria-label="Settings"
 			aria-haspopup="menu"
 			aria-expanded="false"

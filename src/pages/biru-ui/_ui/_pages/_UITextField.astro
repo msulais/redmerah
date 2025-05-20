@@ -6,9 +6,9 @@ import CheckBox from '@/native-components/CheckBox/index.astro'
 import Icon from '@/native-components/Icon/index.astro'
 import Select from '@/native-components/Select/index.astro'
 import SelectOption from '@/native-components/Select/SelectOption.astro'
-import { ICON_ATTACH, ICON_SEARCH } from '@/constants/icons'
 import { ElementIds, ID } from '../../_scripts/_enums'
 import CSS from '../../_index.module.scss'
+import { IconCodes } from '@/enums/icons'
 
 const types = [
 	'button', 'checkbox', 'color', 'date', 'datetime-local',
@@ -36,7 +36,7 @@ const types = [
 				<Icon
 					data-tooltip="Icon"
 					style="margin-left:8px"
-					IconCode={ICON_ATTACH}
+					IconCode={IconCodes.attach}
 					slot="leading"
 					id={ID + ElementIds.panelTextfieldPreviewLeading}
 				/>
@@ -46,7 +46,7 @@ const types = [
 					style="margin-right:4px"
 					slot="trailing"
 					id={ID + ElementIds.panelTextfieldPreviewTrailing}>
-					<Icon IconCode={ICON_SEARCH}/>
+					<Icon IconCode={IconCodes.search}/>
 				</TextFieldButton>
 			</TextField>
 		</Tooltip>

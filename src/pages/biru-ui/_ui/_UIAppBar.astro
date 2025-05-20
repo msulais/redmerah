@@ -3,16 +3,16 @@ import Appbar from '@/native-components/AppBar/index.astro'
 import logo from '@/assets/images/apps/biru-ui.svg'
 import IconButton from '@/native-components/Button/IconButton.astro'
 import Tooltip from '@/native-components/Tooltip/index.astro'
-import { ICON_INFO, ICON_SETTINGS, ICON_LINE_HORIZONTAL_3 } from '@/constants/icons'
 import { ElementIds, ID } from '../_scripts/_enums'
 import CSS from '../_index.module.scss'
+import { IconCodes } from '@/enums/icons'
 ---
 
 <Appbar id={ID + ElementIds.appbar}>
 	<Fragment slot='leading'>
 		<IconButton
 			class={CSS.appbarDrawer}
-			IconButtonCode={ICON_LINE_HORIZONTAL_3}
+			IconButtonCode={IconCodes.lineHorizontal3}
 			popovertarget={ID + ElementIds.navigationDrawer}
 		/>
 		<img class={CSS.appbarLogo} src={logo.src} width="32" alt="BiruUI logo"/>
@@ -24,7 +24,7 @@ import CSS from '../_index.module.scss'
 				id={ID + ElementIds.appbarInfoButton}
 				data-tooltip="Info"
 				style="padding:0 10px"
-				IconButtonCode={ICON_INFO}
+				IconButtonCode={IconCodes.info}
 				aria-label="Info"
 				aria-haspopup="menu"
 				aria-expanded="false"
@@ -35,7 +35,7 @@ import CSS from '../_index.module.scss'
 				id={ID + ElementIds.appbarSettingsButton}
 				data-tooltip="Settings"
 				style="padding:0 10px"
-				IconButtonCode={ICON_SETTINGS}
+				IconButtonCode={IconCodes.settings}
 				aria-label="Settings"
 				aria-haspopup="menu"
 				aria-expanded="false"

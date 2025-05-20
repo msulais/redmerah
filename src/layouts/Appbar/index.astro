@@ -12,8 +12,8 @@ import UIMenus from './_ui/_UIMenus.astro'
 import CSS from './_index.module.scss'
 
 import { RoutesLinks, ExternalLinks } from '@/enums/links'
-import { ICON_APPS, ICON_ARROW_RIGHT_UP, ICON_SETTINGS, ICON_GIFT, ICON_INFO, ICON_LINE_HORIZONTAL_3, ICON_HOME, ICON_SHIELD_CHECKMARK, ICON_RECEIPT, ICON_CALL } from '@/constants/icons'
 import { ElementIds, ID } from './_scripts/_enums'
+import { IconCodes } from '@/enums/icons'
 
 type Props = {
 	route?: RoutesLinks
@@ -29,7 +29,7 @@ const { route } = Astro.props
 			data-tooltip="Navigation"
 			aria-label="Open navigation"
 			popovertarget={ID + ElementIds.drawer}
-			IconButtonCode={ICON_LINE_HORIZONTAL_3}
+			IconButtonCode={IconCodes.lineHorizontal3}
 		/>
 	</Tooltip>
 	<LinkButton
@@ -49,7 +49,7 @@ const { route } = Astro.props
 			LinkButtonVariant={route == RoutesLinks.apps? ButtonVariant.filled : undefined}
 			href={RoutesLinks.apps}>
 			<Icon
-				IconCode={ICON_APPS}
+				IconCode={IconCodes.apps}
 				IconFilled={route == RoutesLinks.apps}
 			/>
 			Apps
@@ -59,7 +59,7 @@ const { route } = Astro.props
 			LinkButtonVariant={route == RoutesLinks.about? ButtonVariant.filled : undefined}
 			href={RoutesLinks.about}>
 			<Icon
-				IconCode={ICON_INFO}
+				IconCode={IconCodes.info}
 				IconFilled={route == RoutesLinks.about}
 			/>
 			About
@@ -69,16 +69,16 @@ const { route } = Astro.props
 			href={ExternalLinks.donate}
 			LinkButtonVariant={ButtonVariant.tonal}
 			LinkButtonNewTab>
-			<Icon IconCode={ICON_GIFT}/>
+			<Icon IconCode={IconCodes.gift}/>
 			Donate
-			<Icon IconCode={ICON_ARROW_RIGHT_UP} IconInline/>
+			<Icon IconCode={IconCodes.arrowRightUp} IconInline/>
 		</LinkButton>
 	</nav>
 	<Tooltip>
 		<IconButton
 			data-tooltip="Settings"
 			aria-label="Open settings"
-			IconButtonCode={ICON_SETTINGS}
+			IconButtonCode={IconCodes.settings}
 			id={ID + ElementIds.appbarSettingsButton}
 			aria-haspopup="menu"
 			aria-expanded="false"
@@ -95,55 +95,55 @@ const { route } = Astro.props
 			style="width:min-content"
 			data-tooltip="Close"
 			popovertargetaction="hide">
-			<Icon IconCode={ICON_LINE_HORIZONTAL_3}/>
+			<Icon IconCode={IconCodes.lineHorizontal3}/>
 		</Button>
 	</Tooltip>
 	<LinkDrawerButton
 		href={RoutesLinks.home}
 		LinkDrawerButtonSelected={route === RoutesLinks.home}
 		LinkButtonVariant={route === RoutesLinks.home? ButtonVariant.tonal : undefined}>
-		<Icon IconCode={ICON_HOME}/>
+		<Icon IconCode={IconCodes.home}/>
 		Home
 	</LinkDrawerButton>
 	<LinkDrawerButton
 		href={RoutesLinks.apps}
 		LinkDrawerButtonSelected={route === RoutesLinks.apps}
 		LinkButtonVariant={route === RoutesLinks.apps? ButtonVariant.tonal : undefined}>
-		<Icon IconCode={ICON_APPS}/>
+		<Icon IconCode={IconCodes.apps}/>
 		Apps
 	</LinkDrawerButton>
 	<LinkDrawerButton
 		href={RoutesLinks.about}
 		LinkDrawerButtonSelected={route === RoutesLinks.about}
 		LinkButtonVariant={route === RoutesLinks.about? ButtonVariant.tonal : undefined}>
-		<Icon IconCode={ICON_INFO}/>
+		<Icon IconCode={IconCodes.info}/>
 		About
 	</LinkDrawerButton>
 	<LinkDrawerButton
 		href={RoutesLinks.privacy}
 		LinkDrawerButtonSelected={route === RoutesLinks.privacy}
 		LinkButtonVariant={route === RoutesLinks.privacy? ButtonVariant.tonal : undefined}>
-		<Icon IconCode={ICON_SHIELD_CHECKMARK}/>
+		<Icon IconCode={IconCodes.shieldCheckmark}/>
 		Privacy policy
 	</LinkDrawerButton>
 	<LinkDrawerButton
 		href={RoutesLinks.terms}
 		LinkDrawerButtonSelected={route === RoutesLinks.terms}
 		LinkButtonVariant={route === RoutesLinks.terms? ButtonVariant.tonal : undefined}>
-		<Icon IconCode={ICON_RECEIPT}/>
+		<Icon IconCode={IconCodes.receipt}/>
 		Terms & conditions
 	</LinkDrawerButton>
 	<Fragment slot="footer">
 		<Divider />
 		<LinkDrawerButton
 			href={'mailto:' + ExternalLinks.contactEmail}>
-			<Icon IconCode={ICON_CALL}/>
+			<Icon IconCode={IconCodes.call}/>
 			Contact
 		</LinkDrawerButton>
 		<LinkDrawerButton
 			href={ExternalLinks.donate}
 			LinkButtonNewTab>
-			<Icon IconCode={ICON_GIFT}/>
+			<Icon IconCode={IconCodes.gift}/>
 			Donate
 		</LinkDrawerButton>
 	</Fragment>

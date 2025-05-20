@@ -1,5 +1,4 @@
 ---
-import { ICON_APPS, ICON_CHAT, ICON_CHEVRON_RIGHT, ICON_CIRCLE, ICON_GIFT, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_PLAY_CIRCLE_HINT, ICON_RECEIPT, ICON_SHARE_ANDROID, ICON_SHIELD_CHECKMARK, ICON_VIDEO_CLIP, ICON_VIDEO_CLIP_OFF, ICON_VIDEO_CLIP_OPTIMIZE, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from '@/constants/icons'
 import { ElementIds, ID, RadioGroupNames } from '../_scripts/_enums'
 import { ExternalLinks, RoutesLinks } from '@/enums/links'
 import ColorPicker from '@/native-components/ColorPicker/index.astro'
@@ -16,23 +15,24 @@ import logoRedmerah from '@/assets/images/logos/redmerah-logo.svg'
 import { PlatformAnimationMode, PlatformThemeMode } from '@/enums/platforms'
 import { AppCSSColors } from '@/enums/app-data'
 import { PopoverPosition } from '@/native-components/Popover'
+import { IconCodes } from '@/enums/icons'
 ---
 
 <Menu id={ID + ElementIds.appbarSettingsMenu} PopoverAnchorBy={ID + ElementIds.appbarSettingsButton}>
 	<MenuItem
 		id={ID + ElementIds.appbarSettingsAccentButton}
 		aria-controls={ID + ElementIds.appbarColorPicker}>
-		<Icon style={`color: rgb(${AppCSSColors.accent})`} IconCode={ICON_CIRCLE} IconFilled/>
+		<Icon style={`color: rgb(${AppCSSColors.accent})`} IconCode={IconCodes.circle} IconFilled/>
 		Color accent
 		<div style="flex:1"/>
 		<MenuIndent/>
 	</MenuItem>
 	<SubMenuItem
 		aria-controls={ID + ElementIds.appbarSettingsAnimationMenu}>
-		<Icon IconCode={ICON_PLAY_CIRCLE_HINT}/>
+		<Icon IconCode={IconCodes.playCircleHint}/>
 		Animation
 		<div style="flex:1"/>
-		<Icon IconCode={ICON_CHEVRON_RIGHT}/>
+		<Icon IconCode={IconCodes.chevronRight}/>
 	</SubMenuItem>
 	<SubMenu slot="submenus" id={ID + ElementIds.appbarSettingsAnimationMenu}>
 		<RadioMenuItem
@@ -41,7 +41,7 @@ import { PopoverPosition } from '@/native-components/Popover'
 				checked: true,
 				value: PlatformAnimationMode.auto
 			}}>
-			<Icon IconCode={ICON_VIDEO_CLIP_OPTIMIZE}/>
+			<Icon IconCode={IconCodes.videoClipOptimize}/>
 			Automatic
 		</RadioMenuItem>
 		<RadioMenuItem
@@ -49,7 +49,7 @@ import { PopoverPosition } from '@/native-components/Popover'
 				name: RadioGroupNames.settingsAnimation,
 				value: PlatformAnimationMode.on
 			}}>
-			<Icon IconCode={ICON_VIDEO_CLIP}/>
+			<Icon IconCode={IconCodes.videoClip}/>
 			On
 		</RadioMenuItem>
 		<RadioMenuItem
@@ -57,17 +57,17 @@ import { PopoverPosition } from '@/native-components/Popover'
 				name: RadioGroupNames.settingsAnimation,
 				value: PlatformAnimationMode.off
 			}}>
-			<Icon IconCode={ICON_VIDEO_CLIP_OFF}/>
+			<Icon IconCode={IconCodes.videoClipOff}/>
 			Off
 		</RadioMenuItem>
 	</SubMenu>
 
 	<SubMenuItem
 		aria-controls={ID + ElementIds.appbarSettingsThemeMenu}>
-		<Icon IconCode={ICON_WEATHER_SUNNY}/>
+		<Icon IconCode={IconCodes.weatherSunny}/>
 		Theme
 		<div style="flex:1"/>
-		<Icon IconCode={ICON_CHEVRON_RIGHT}/>
+		<Icon IconCode={IconCodes.chevronRight}/>
 	</SubMenuItem>
 	<SubMenu slot="submenus" id={ID + ElementIds.appbarSettingsThemeMenu}>
 		<RadioMenuItem
@@ -76,7 +76,7 @@ import { PopoverPosition } from '@/native-components/Popover'
 				checked: true,
 				value: PlatformThemeMode.auto
 			}}>
-			<Icon IconCode={ICON_LAPTOP_SETTINGS}/>
+			<Icon IconCode={IconCodes.laptopSettings}/>
 			Automatic
 		</RadioMenuItem>
 		<RadioMenuItem
@@ -84,7 +84,7 @@ import { PopoverPosition } from '@/native-components/Popover'
 				name: RadioGroupNames.settingsTheme,
 				value: PlatformThemeMode.light
 			}}>
-			<Icon IconCode={ICON_WEATHER_SUNNY}/>
+			<Icon IconCode={IconCodes.weatherSunny}/>
 			Light
 		</RadioMenuItem>
 		<RadioMenuItem
@@ -92,7 +92,7 @@ import { PopoverPosition } from '@/native-components/Popover'
 				name: RadioGroupNames.settingsTheme,
 				value: PlatformThemeMode.dark
 			}}>
-			<Icon IconCode={ICON_WEATHER_MOON}/>
+			<Icon IconCode={IconCodes.weatherMoon}/>
 			Dark
 		</RadioMenuItem>
 	</SubMenu>
@@ -113,33 +113,33 @@ import { PopoverPosition } from '@/native-components/Popover'
 		Redmerah
 	</LinkMenuItem>
 	<LinkMenuItem href={RoutesLinks.apps}>
-		<Icon IconCode={ICON_APPS}/>
+		<Icon IconCode={IconCodes.apps}/>
 		More apps
 	</LinkMenuItem>
 	<LinkMenuItem href={RoutesLinks.about}>
-		<Icon IconCode={ICON_INFO}/>
+		<Icon IconCode={IconCodes.info}/>
 		About us
 	</LinkMenuItem>
 	<Divider />
 	<LinkMenuItem href={RoutesLinks.privacy}>
-		<Icon IconCode={ICON_SHIELD_CHECKMARK}/>
+		<Icon IconCode={IconCodes.shieldCheckmark}/>
 		Privacy policy
 	</LinkMenuItem>
 	<LinkMenuItem href={RoutesLinks.terms}>
-		<Icon IconCode={ICON_RECEIPT}/>
+		<Icon IconCode={IconCodes.receipt}/>
 		Terms & conditions
 	</LinkMenuItem>
 	<Divider />
 	<MenuItem id={ID + ElementIds.appbarInfoShareButton}>
-		<Icon IconCode={ICON_SHARE_ANDROID}/>
+		<Icon IconCode={IconCodes.shareAndroid}/>
 		Share
 	</MenuItem>
 	<LinkMenuItem href={'mailto:' + ExternalLinks.contactEmail + '?subject=' + encodeURI('BiruUI')}>
-		<Icon IconCode={ICON_CHAT}/>
+		<Icon IconCode={IconCodes.chat}/>
 		Send feedback
 	</LinkMenuItem>
 	<LinkMenuItem href={ExternalLinks.donate} LinkButtonNewTab>
-		<Icon IconCode={ICON_GIFT}/>
+		<Icon IconCode={IconCodes.gift}/>
 		Donate
 	</LinkMenuItem>
 </Menu>

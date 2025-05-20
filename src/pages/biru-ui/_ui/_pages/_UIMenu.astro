@@ -18,8 +18,8 @@ import { ElementIds, ID, RadioGroupNames } from '../../_scripts/_enums'
 import CSS from '../../_index.module.scss'
 import { ButtonVariant } from '@/native-components/Button'
 import { FlyoutPosition } from '@/enums/position'
-import { ICON_CHEVRON_RIGHT, ICON_CLIPBOARD_PASTE, ICON_COPY, ICON_CUT } from '@/constants/icons'
 import { MenuPosition } from '@/native-components/Menu'
+import { IconCodes } from '@/enums/icons'
 ---
 <div
 	class={CSS.bodyPage}
@@ -43,19 +43,19 @@ import { MenuPosition } from '@/native-components/Menu'
 			id={ID + ElementIds.panelMenuPreviewMenu}>
 			<MenuHeader>Actions</MenuHeader>
 			<MenuItem>
-				<Icon IconCode={ICON_COPY}/>
+				<Icon IconCode={IconCodes.copy}/>
 				Copy
 				<div style="flex:1"/>
 				<MenuIndent/>
 			</MenuItem>
 			<MenuItem>
-				<Icon IconCode={ICON_CLIPBOARD_PASTE}/>
+				<Icon IconCode={IconCodes.clipboardPaste}/>
 				Paste
 				<div style="flex:1"/>
 				<MenuIndent/>
 			</MenuItem>
 			<MenuItem>
-				<Icon IconCode={ICON_CUT}/>
+				<Icon IconCode={IconCodes.cut}/>
 				Cut
 				<div style="flex:1"/>
 				<MenuIndent/>
@@ -89,23 +89,23 @@ import { MenuPosition } from '@/native-components/Menu'
 				<MenuIndent/>
 				Level 1
 				<div style="flex:1"/>
-				<Icon IconCode={ICON_CHEVRON_RIGHT}/>
+				<Icon IconCode={IconCodes.chevronRight}/>
 			</SubMenuItem>
 			<SubMenu id={ID + ElementIds.panelMenuPreviewMenu2} slot="submenus">
 				<MenuItem>
-					<Icon IconCode={ICON_COPY}/>
+					<Icon IconCode={IconCodes.copy}/>
 					Copy
 					<div style="flex:1"/>
 					<MenuIndent/>
 				</MenuItem>
 				<MenuItem>
-					<Icon IconCode={ICON_CLIPBOARD_PASTE}/>
+					<Icon IconCode={IconCodes.clipboardPaste}/>
 					Paste
 					<div style="flex:1"/>
 					<MenuIndent/>
 				</MenuItem>
 				<MenuItem>
-					<Icon IconCode={ICON_CUT}/>
+					<Icon IconCode={IconCodes.cut}/>
 					Cut
 					<div style="flex:1"/>
 					<MenuIndent/>
@@ -116,23 +116,23 @@ import { MenuPosition } from '@/native-components/Menu'
 				<MenuIndent/>
 				Level 2
 				<div style="flex:1"/>
-				<Icon IconCode={ICON_CHEVRON_RIGHT}/>
+				<Icon IconCode={IconCodes.chevronRight}/>
 			</SubMenuItem>
 			<SubMenu id={ID + ElementIds.panelMenuPreviewMenu3} slot='submenus'>
 				<MenuItem>
-					<Icon IconCode={ICON_COPY}/>
+					<Icon IconCode={IconCodes.copy}/>
 					Copy
 					<div style="flex:1"/>
 					<MenuIndent/>
 				</MenuItem>
 				<MenuItem>
-					<Icon IconCode={ICON_CLIPBOARD_PASTE}/>
+					<Icon IconCode={IconCodes.clipboardPaste}/>
 					Paste
 					<div style="flex:1"/>
 					<MenuIndent/>
 				</MenuItem>
 				<MenuItem>
-					<Icon IconCode={ICON_CUT}/>
+					<Icon IconCode={IconCodes.cut}/>
 					Cut
 					<div style="flex:1"/>
 					<MenuIndent/>
@@ -142,23 +142,23 @@ import { MenuPosition } from '@/native-components/Menu'
 					<MenuIndent/>
 					Next level
 					<div style="flex:1"/>
-					<Icon IconCode={ICON_CHEVRON_RIGHT}/>
+					<Icon IconCode={IconCodes.chevronRight}/>
 				</SubMenuItem>
 				<SubMenu id={ID + ElementIds.panelMenuPreviewMenu5} slot='submenus'>
 					<MenuItem>
-						<Icon IconCode={ICON_COPY}/>
+						<Icon IconCode={IconCodes.copy}/>
 						Copy
 						<div style="flex:1"/>
 						<MenuIndent/>
 					</MenuItem>
 					<MenuItem>
-						<Icon IconCode={ICON_CLIPBOARD_PASTE}/>
+						<Icon IconCode={IconCodes.clipboardPaste}/>
 						Paste
 						<div style="flex:1"/>
 						<MenuIndent/>
 					</MenuItem>
 					<MenuItem>
-						<Icon IconCode={ICON_CUT}/>
+						<Icon IconCode={IconCodes.cut}/>
 						Cut
 						<div style="flex:1"/>
 						<MenuIndent/>
@@ -170,23 +170,23 @@ import { MenuPosition } from '@/native-components/Menu'
 				<MenuIndent/>
 				Level 3
 				<div style="flex:1"/>
-				<Icon IconCode={ICON_CHEVRON_RIGHT}/>
+				<Icon IconCode={IconCodes.chevronRight}/>
 			</SubMenuItem>
 			<SubMenu id={ID + ElementIds.panelMenuPreviewMenu4} slot="submenus">
 				<MenuItem>
-					<Icon IconCode={ICON_COPY}/>
+					<Icon IconCode={IconCodes.copy}/>
 					Copy
 					<div style="flex:1"/>
 					<MenuIndent/>
 				</MenuItem>
 				<MenuItem>
-					<Icon IconCode={ICON_CLIPBOARD_PASTE}/>
+					<Icon IconCode={IconCodes.clipboardPaste}/>
 					Paste
 					<div style="flex:1"/>
 					<MenuIndent/>
 				</MenuItem>
 				<MenuItem>
-					<Icon IconCode={ICON_CUT}/>
+					<Icon IconCode={IconCodes.cut}/>
 					Cut
 					<div style="flex:1"/>
 					<MenuIndent/>
@@ -196,23 +196,23 @@ import { MenuPosition } from '@/native-components/Menu'
 					<MenuIndent/>
 					Next level
 					<div style="flex:1"/>
-					<Icon IconCode={ICON_CHEVRON_RIGHT}/>
+					<Icon IconCode={IconCodes.chevronRight}/>
 				</SubMenuItem>
 				<SubMenu id={ID + ElementIds.panelMenuPreviewMenu6} slot='submenus'>
 					<MenuItem>
-						<Icon IconCode={ICON_COPY}/>
+						<Icon IconCode={IconCodes.copy}/>
 						Copy
 						<div style="flex:1"/>
 						<MenuIndent/>
 					</MenuItem>
 					<MenuItem>
-						<Icon IconCode={ICON_CLIPBOARD_PASTE}/>
+						<Icon IconCode={IconCodes.clipboardPaste}/>
 						Paste
 						<div style="flex:1"/>
 						<MenuIndent/>
 					</MenuItem>
 					<MenuItem>
-						<Icon IconCode={ICON_CUT}/>
+						<Icon IconCode={IconCodes.cut}/>
 						Cut
 						<div style="flex:1"/>
 						<MenuIndent/>
@@ -222,23 +222,23 @@ import { MenuPosition } from '@/native-components/Menu'
 						<MenuIndent/>
 						Next level
 						<div style="flex:1"/>
-						<Icon IconCode={ICON_CHEVRON_RIGHT}/>
+						<Icon IconCode={IconCodes.chevronRight}/>
 					</SubMenuItem>
 					<SubMenu id={ID + ElementIds.panelMenuPreviewMenu7} slot='submenus'>
 						<MenuItem>
-							<Icon IconCode={ICON_COPY}/>
+							<Icon IconCode={IconCodes.copy}/>
 							Copy
 							<div style="flex:1"/>
 							<MenuIndent/>
 						</MenuItem>
 						<MenuItem>
-							<Icon IconCode={ICON_CLIPBOARD_PASTE}/>
+							<Icon IconCode={IconCodes.clipboardPaste}/>
 							Paste
 							<div style="flex:1"/>
 							<MenuIndent/>
 						</MenuItem>
 						<MenuItem>
-							<Icon IconCode={ICON_CUT}/>
+							<Icon IconCode={IconCodes.cut}/>
 							Cut
 							<div style="flex:1"/>
 							<MenuIndent/>

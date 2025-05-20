@@ -5,7 +5,7 @@ import Icon from '@/native-components/Icon/index.astro'
 import ColorPicker from '@/native-components/ColorPicker/index.astro'
 import { ElementIds, ID } from '../../_scripts/_enums'
 import CSS from '../../_index.module.scss'
-import { ICON_ADD, ICON_ALERT_BADGE, ICON_APPROVALS_APP, ICON_ARROW_SHUFFLE, ICON_BATTERY_5, ICON_VEHICLE_CAR, ICON_VIDEO_CLIP, ICON_WARNING } from '@/constants/icons'
+import { IconCodes } from '@/enums/icons'
 ---
 <div
 	class={CSS.bodyPage}
@@ -16,14 +16,14 @@ import { ICON_ADD, ICON_ALERT_BADGE, ICON_APPROVALS_APP, ICON_ARROW_SHUFFLE, ICO
 	<p>An icon is a small graphic symbol representing an action, object, or concept. Icons are used to enhance user understanding and interaction within an interface.</p>
 	<div class={CSS.bodyPlayground} id={ID + ElementIds.panelIconPreview}>
 		<Tooltip>
-			<Icon IconCode={ICON_ADD}/>
-			<Icon IconCode={ICON_VEHICLE_CAR}/>
-			<Icon IconCode={ICON_ALERT_BADGE}/>
-			<Icon IconCode={ICON_APPROVALS_APP}/>
-			<Icon IconCode={ICON_WARNING}/>
-			<Icon IconCode={ICON_VIDEO_CLIP}/>
-			<Icon IconCode={ICON_ARROW_SHUFFLE}/>
-			<Icon IconCode={ICON_BATTERY_5}/>
+			<Icon IconCode={IconCodes.add}/>
+			<Icon IconCode={IconCodes.vehicleCar}/>
+			<Icon IconCode={IconCodes.alertBadge}/>
+			<Icon IconCode={IconCodes.approvalsApp}/>
+			<Icon IconCode={IconCodes.warning}/>
+			<Icon IconCode={IconCodes.videoClip}/>
+			<Icon IconCode={IconCodes.arrowShuffle}/>
+			<Icon IconCode={IconCodes.battery5}/>
 		</Tooltip>
 		<ColorPicker id={ID + ElementIds.panelColorpickerPreviewColorPicker}/>
 	</div>

@@ -7,8 +7,8 @@ import DrawerButton from '@/native-components/Drawer/DrawerButton.astro'
 import SideBarButton from '@/native-components/SideBar/SideBarButton.astro'
 import { ButtonVariant } from '@/native-components/Button'
 import { ID, ElementIds } from '../_scripts/_enums'
-import { ICON_LINE_HORIZONTAL_3 } from '@/constants/icons'
 import CSS from '../_index.module.scss'
+import { IconCodes } from '@/enums/icons'
 
 const items: {
 	name: string
@@ -115,7 +115,7 @@ const items: {
 		style="width:min-content"
 		popovertarget={ID + ElementIds.navigationDrawer}
 		popovertargetaction="hide">
-		<Icon IconCode={ICON_LINE_HORIZONTAL_3}/>
+		<Icon IconCode={IconCodes.lineHorizontal3}/>
 	</Button>
 	{items.map(v => <DrawerButton
 		aria-selected={v.selected}
