@@ -6,7 +6,7 @@ import { objectHasValue } from "@/utils/object"
 import { eventCall } from "@/utils/event"
 import { elementFocusAny } from "@/utils/element"
 import { KEY_ARROW_LEFT, KEY_ARROW_RIGHT } from "@/constants/key-code"
-import { AppColors } from "@/enums/colors"
+import { AppCSSColors } from "@/enums/app-data"
 import { ICON_CHECKBOX_CHECKED, ICON_CHECKBOX_UNCHECKED, ICON_CHEVRON_RIGHT } from "@/constants/icons"
 
 import Divider, { type DividerProps } from "@/components/Divider"
@@ -60,14 +60,14 @@ const MenuItem: ParentComponent<MenuItemProps> = ($props) => {
 		{...other}>
 		<Show when={objectHasValue(props["c:checked"])}>
 			<Icon
-				style={{color: `rgb(${AppColors.accent})`}}
+				style={{color: `rgb(${AppCSSColors.accent})`}}
 				c:filled={props["c:checked"]}
 				c:code={props["c:checked"]? ICON_CHECKBOX_CHECKED : ICON_CHECKBOX_UNCHECKED}
 			/>
 		</Show>
 		<Show when={props["c:iconCode"] != null}>
 			<Icon
-				style={{color: other["c:selected"]? `rgb(${AppColors.accent})` : undefined}}
+				style={{color: other["c:selected"]? `rgb(${AppCSSColors.accent})` : undefined}}
 				c:filled={other["c:selected"]}
 				c:code={props["c:iconCode"]!}
 			/>
@@ -119,14 +119,14 @@ const LinkMenuItem: ParentComponent<LinkMenuItemProps> = ($props) => {
 		{...other}>
 		<Show when={objectHasValue(props["c:checked"])}>
 			<Icon
-				style={{color: props["c:checked"]? `rgb(${AppColors.accent})` : undefined}}
+				style={{color: props["c:checked"]? `rgb(${AppCSSColors.accent})` : undefined}}
 				c:filled={props["c:checked"]}
 				c:code={props["c:checked"]? ICON_CHECKBOX_CHECKED : ICON_CHECKBOX_UNCHECKED}
 			/>
 		</Show>
 		<Show when={props["c:iconCode"] != null}>
 			<Icon
-				style={{color: other["c:selected"]? `rgb(${AppColors.accent})` : undefined}}
+				style={{color: other["c:selected"]? `rgb(${AppCSSColors.accent})` : undefined}}
 				c:filled={other["c:selected"]}
 				c:code={props["c:iconCode"]!}
 			/>

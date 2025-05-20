@@ -1,5 +1,5 @@
 ---
-import { AppColors } from '@/enums/colors'
+import { AppCSSColors } from '@/enums/app-data'
 import { attrClassList } from '@/utils/attributes'
 
 import { ButtonClasses } from '../Button'
@@ -48,7 +48,7 @@ const {'class': contentClass, ...contentOther} = CheckMenuItemContentAttr ?? {}
 		width="20"
 		height="20"
 		{...iconOther}>
-		<path fill={`rgb(${AppColors.accent})`} d="m389-369 299-299q10.91-11 25.45-11Q728-679 739-668t11 25.58q0 14.58-10.61 25.19L415-292q-10.91 11-25.45 11Q375-281 364-292L221-435q-11-11-11-25.5t11-25.5q11-11 25.67-11 14.66 0 25.33 11l117 117Z"/>
+		<path fill={`rgb(${AppCSSColors.accent})`} d="m389-369 299-299q10.91-11 25.45-11Q728-679 739-668t11 25.58q0 14.58-10.61 25.19L415-292q-10.91 11-25.45 11Q375-281 364-292L221-435q-11-11-11-25.5t11-25.5q11-11 25.67-11 14.66 0 25.33 11l117 117Z"/>
 	</svg>
 	<div class={attrClassList(MenuClasses.checkItemContent, contentClass)} {...contentOther}>
 		<slot />

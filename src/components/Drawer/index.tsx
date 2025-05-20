@@ -3,7 +3,7 @@ import { type JSX, type ParentComponent, Show, splitProps, children, mergeProps,
 import { attrSetIfExist } from "@/utils/attributes"
 import { objectHasValue } from "@/utils/object"
 import { AnimationEffectTiming } from "@/enums/animation"
-import { AppColors } from "@/enums/colors"
+import { AppCSSColors } from "@/enums/app-data"
 import { isAnimationAllowed } from "@/utils/animation"
 
 import Icon from "@/components/Icon"
@@ -47,7 +47,7 @@ const DrawerItem: ParentComponent<DrawerItemProps> = ($props) => {
 		{...other}>
 		<Show when={props['c:iconCode'] != null}>
 			<Icon
-				style={{color: selected()? `rgb(${AppColors.accent})` : undefined}}
+				style={{color: selected()? `rgb(${AppCSSColors.accent})` : undefined}}
 				c:filled={selected()}
 				c:code={props['c:iconCode']!}
 			/>
@@ -81,7 +81,7 @@ const LinkDrawerItem: ParentComponent<LinkDrawerItemProps> = ($props) => {
 		{...other}>
 		<Show when={props['c:iconCode'] != null}>
 			<Icon
-				style={{color: selected()? `rgb(${AppColors.accent})` : undefined}}
+				style={{color: selected()? `rgb(${AppCSSColors.accent})` : undefined}}
 				c:filled={selected()}
 				c:code={props['c:iconCode']!}
 			/>

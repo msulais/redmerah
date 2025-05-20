@@ -10,6 +10,7 @@ import { ButtonVariant } from "@/native-components/Button"
 import { isAnimationAllowed } from "@/utils/animation"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { saveStorageItem } from "./_database"
+import { AppCSSColors, AppCSSOpacity } from "@/enums/app-data"
 
 export type NavigationStoreType = Readonly<{
 	page: Pages
@@ -109,8 +110,16 @@ function _subscribePageRefView(v: NavigationStoreType, o: NavigationStoreType): 
 
 	if (!isAnimationAllowed()) return
 
+	const borderColor = `rgba(${AppCSSColors.onSurface},${AppCSSOpacity.o3})`
 	targetPanelRef.animate({
 		transform: ['scale(.9)', 'scale(1)'],
+		borderRadius: ['8px', '8px'],
+		borderRightColor: page === Pages.date
+			? [borderColor, borderColor]
+			: [],
+		borderBottomColor: page === Pages.date
+			? [borderColor, borderColor]
+			: [],
 		opacity: [0, 1]
 	}, {
 		duration: 500,

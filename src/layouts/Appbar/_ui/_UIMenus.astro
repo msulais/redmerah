@@ -11,7 +11,7 @@ import MenuIndent from '@/native-components/Menu/MenuIndent.astro'
 import MenuItem from '@/native-components/Menu/MenuItem.astro'
 import Icon from '@/native-components/Icon/index.astro'
 import { PlatformAnimationMode, PlatformThemeMode } from '@/enums/platforms'
-import { AppColors } from '@/enums/colors'
+import { AppCSSColors } from '@/enums/app-data'
 ---
 
 <Menu id={ID + ElementIds.appbarSettingsMenu} PopoverAnchorBy={ID + ElementIds.appbarSettingsButton}>
@@ -19,7 +19,7 @@ import { AppColors } from '@/enums/colors'
 		id={ID + ElementIds.appbarSettingsAccentButton}
 		aria-controls={ID + ElementIds.appbarColorPicker}
 		popovertarget={ID + ElementIds.appbarColorPicker}>
-		<Icon style={`color: rgb(${AppColors.accent})`} IconCode={ICON_CIRCLE} IconFilled/>
+		<Icon style={`color: rgb(${AppCSSColors.accent})`} IconCode={ICON_CIRCLE} IconFilled/>
 		Color accent
 		<div style="flex:1"/>
 		<MenuIndent/>

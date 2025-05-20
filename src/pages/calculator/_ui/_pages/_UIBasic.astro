@@ -3,7 +3,7 @@ import Button from '@/native-components/Button/index.astro'
 import Tooltip from '@/native-components/Tooltip/index.astro'
 import Icon from '@/native-components/Icon/index.astro'
 import { ButtonVariant } from '@/native-components/Button'
-import { AppColors } from '@/enums/colors'
+import { AppCSSColors } from '@/enums/app-data'
 import { IconCodes } from '@/enums/icons'
 import { ElementIds } from '../../_scripts/_shared/_ids'
 import { Commands } from '../../_scripts/_shared/_commands'
@@ -27,8 +27,8 @@ import { CSSClasses } from "../../_styles/_css"
 	<div class={CSSClasses.bodyPageButtons} style="grid-template-columns: repeat(4, 1fr);">
 		<Button data-command={Commands.keyChar} data-char="%" ButtonVariant={ButtonVariant.tonal}>%</Button>
 		<Button data-command={Commands.keyChar} data-char="√" ButtonVariant={ButtonVariant.tonal}>√</Button>
-		<Button data-command={Commands.keyClear} ButtonVariant={ButtonVariant.tonal} style={`color:rgb(${AppColors.accent})`}>C</Button>
-		<Button data-command={Commands.keyBackspace} ButtonVariant={ButtonVariant.tonal} style={`color:rgb(${AppColors.accent})`}><Icon IconCode={IconCodes.backspace}/></Button>
+		<Button data-command={Commands.keyClear} ButtonVariant={ButtonVariant.tonal} style={`color:rgb(${AppCSSColors.accent})`}>C</Button>
+		<Button data-command={Commands.keyBackspace} ButtonVariant={ButtonVariant.tonal} style={`color:rgb(${AppCSSColors.accent})`}><Icon IconCode={IconCodes.backspace}/></Button>
 
 		<Button data-command={Commands.keyChar} data-char="7" data-type="number" ButtonVariant={ButtonVariant.tonal}>7</Button>
 		<Button data-command={Commands.keyChar} data-char="8" data-type="number" ButtonVariant={ButtonVariant.tonal}>8</Button>

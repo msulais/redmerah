@@ -6,7 +6,7 @@ import Icon from '@/native-components/Icon/index.astro'
 import Select from '@/native-components/Select/index.astro'
 import Option from '@/native-components/Select/SelectOption.astro'
 import { CSSClasses } from "../../_styles/_css"
-import { AppColors } from '@/enums/colors'
+import { AppCSSColors } from '@/enums/app-data'
 import { ButtonVariant } from '@/native-components/Button'
 import { IconCodes } from '@/enums/icons'
 import { SelectVariant } from '@/native-components/Select'
@@ -35,7 +35,7 @@ import { LengthUnits } from '../../_scripts/_shared/_units'
 				{CONVERTER_TYPES.map(c =>
 					<Option value={c.type}
 						SelectOptionSelected={c.type === DEFAULT_CONVERTER_TYPE}>
-						<Icon style={`color:rgb(${AppColors.accent})`} IconCode={c.icon}/>
+						<Icon style={`color:rgb(${AppCSSColors.accent})`} IconCode={c.icon}/>
 						{c.text}
 					</Option>
 				)}
@@ -45,7 +45,7 @@ import { LengthUnits } from '../../_scripts/_shared/_units'
 			<Select id={ElementIds.bodyConverterInputUnit} aria-label="Unit from">
 				{LengthUnits.all.map(c =>
 					<Option value={c.id} style="gap:0" SelectOptionSelected={c.equals(DEFAULT_CONVERTER_INPUT_UNIT)}>
-						{c.name} [&nbsp;<span style={`color:rgb(${AppColors.accent})`}>{c.symbol}</span>&nbsp;]
+						{c.name} [&nbsp;<span style={`color:rgb(${AppCSSColors.accent})`}>{c.symbol}</span>&nbsp;]
 					</Option>
 				)}
 			</Select>
@@ -53,7 +53,7 @@ import { LengthUnits } from '../../_scripts/_shared/_units'
 			<Select id={ElementIds.bodyConverterOutputUnit} aria-label="Unit To">
 				{LengthUnits.all.map(c =>
 					<Option value={c.id} style="gap:0" SelectOptionSelected={c.equals(DEFAULT_CONVERTER_OUTPUT_UNIT)}>
-						{c.name} [&nbsp;<span style={`color:rgb(${AppColors.accent})`}>{c.symbol}</span>&nbsp;]
+						{c.name} [&nbsp;<span style={`color:rgb(${AppCSSColors.accent})`}>{c.symbol}</span>&nbsp;]
 					</Option>
 				)}
 			</Select>
@@ -61,8 +61,8 @@ import { LengthUnits } from '../../_scripts/_shared/_units'
 	</div>
 	<div class={CSSClasses.bodyPageButtons} style="grid-template-columns: repeat(3, 1fr);">
 		<Button data-command={Commands.keyPlusMinus} ButtonVariant={ButtonVariant.tonal}>±</Button>
-		<Button data-command={Commands.keyClear} ButtonVariant={ButtonVariant.tonal} style={`color:rgb(${AppColors.accent})`}>C</Button>
-		<Button data-command={Commands.keyBackspace} ButtonVariant={ButtonVariant.tonal} style={`color:rgb(${AppColors.accent})`}><Icon IconCode={IconCodes.backspace}/></Button>
+		<Button data-command={Commands.keyClear} ButtonVariant={ButtonVariant.tonal} style={`color:rgb(${AppCSSColors.accent})`}>C</Button>
+		<Button data-command={Commands.keyBackspace} ButtonVariant={ButtonVariant.tonal} style={`color:rgb(${AppCSSColors.accent})`}><Icon IconCode={IconCodes.backspace}/></Button>
 
 		<Button data-command={Commands.keyChar} data-char="7" data-type="number" ButtonVariant={ButtonVariant.tonal}>7</Button>
 		<Button data-command={Commands.keyChar} data-char="8" data-type="number" ButtonVariant={ButtonVariant.tonal}>8</Button>

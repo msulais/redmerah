@@ -29,7 +29,7 @@ import {
 	type ButtonElement
 } from "@/native-components/Button"
 import { createIconRef, type IconElement, type IconProps } from "@/native-components/Icon"
-import { AppColors } from "@/enums/colors"
+import { AppCSSColors } from "@/enums/app-data"
 import { ICON_CIRCLE_SMALL } from "@/constants/icons"
 import { createId } from "@/utils/ids"
 
@@ -639,7 +639,7 @@ function updateCheckMenuItemRef(
 
 		const pathRef = document.createElementNS('http://www.w3.org/2000/svg', 'path')
 		pathRef.setAttribute('d', 'm389-369 299-299q10.91-11 25.45-11Q728-679 739-668t11 25.58q0 14.58-10.61 25.19L415-292q-10.91 11-25.45 11Q375-281 364-292L221-435q-11-11-11-25.5t11-25.5q11-11 25.67-11 14.66 0 25.33 11l117 117Z')
-		pathRef.setAttribute('fill', `rgb(${AppColors.accent})`)
+		pathRef.setAttribute('fill', `rgb(${AppCSSColors.accent})`)
 		iconRef.append(pathRef)
 	}
 

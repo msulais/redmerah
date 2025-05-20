@@ -11,7 +11,7 @@ import { IDB } from "@/utils/indexeddb"
 import { fileDownload } from "@/utils/file"
 import { numberIsNotDefined } from "@/utils/number"
 import { removeSplashScreen } from "@/utils/splash"
-import { AppColors } from "@/enums/colors"
+import { AppCSSColors } from "@/enums/app-data"
 import { elementValidTarget } from "@/utils/element"
 import { ICON_CIRCLE, ICON_CIRCLE_ERASER, ICON_DELETE, ICON_DISMISS, ICON_DOCUMENT_ERROR, ICON_EDIT, ICON_EMOJI_ADD } from "@/constants/icons"
 
@@ -1818,7 +1818,7 @@ const _: VoidComponent = () => {
 					</Button>
 				</>}>
 				<Show when={taskLists[selectedTaskListIndexToDelete()]}>
-					<>Are you sure want to delete <q style={{"font-weight": 'bold', color: `rgb(${AppColors.accent})`}}>{taskLists[selectedTaskListIndexToDelete()].name}</q> list? </>
+					<>Are you sure want to delete <q style={{"font-weight": 'bold', color: `rgb(${AppCSSColors.accent})`}}>{taskLists[selectedTaskListIndexToDelete()].name}</q> list? </>
 					<>This list contains {taskLists[selectedTaskListIndexToDelete()].tasks.filter(v => !v.complete).length} uncompleted tasks </>
 					<>and {taskLists[selectedTaskListIndexToDelete()].tasks.filter(v => v.complete).length} completed tasks</>
 				</Show>

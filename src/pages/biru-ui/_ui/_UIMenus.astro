@@ -14,7 +14,7 @@ import Divider from '@/native-components/Divider/index.astro'
 import Icon from '@/native-components/Icon/index.astro'
 import logoRedmerah from '@/assets/images/logos/redmerah-logo.svg'
 import { PlatformAnimationMode, PlatformThemeMode } from '@/enums/platforms'
-import { AppColors } from '@/enums/colors'
+import { AppCSSColors } from '@/enums/app-data'
 import { PopoverPosition } from '@/native-components/Popover'
 ---
 
@@ -22,7 +22,7 @@ import { PopoverPosition } from '@/native-components/Popover'
 	<MenuItem
 		id={ID + ElementIds.appbarSettingsAccentButton}
 		aria-controls={ID + ElementIds.appbarColorPicker}>
-		<Icon style={`color: rgb(${AppColors.accent})`} IconCode={ICON_CIRCLE} IconFilled/>
+		<Icon style={`color: rgb(${AppCSSColors.accent})`} IconCode={ICON_CIRCLE} IconFilled/>
 		Color accent
 		<div style="flex:1"/>
 		<MenuIndent/>

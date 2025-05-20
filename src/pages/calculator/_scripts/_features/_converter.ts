@@ -9,7 +9,7 @@ import { formatOutput } from "../_core/_string-utils"
 import { ElementIds } from "../_shared/_ids"
 import { createSelectOptionRef, getSelectRefValue, SelectEvents, updateSelectRef, updateSelectRefValue, type SelectElement } from "@/native-components/Select"
 import { validEnumValue } from "@/utils/object"
-import { AppColors } from "@/enums/colors"
+import { AppCSSColors } from "@/enums/app-data"
 import { saveStorageItem } from "../_core/_database"
 
 export type ConverterStoreType = Readonly<{
@@ -95,7 +95,7 @@ function _subscribeConverterChanges(value: ConverterStoreType, old: ConverterSto
 	const outputOptionRefs: HTMLButtonElement[] = []
 	for (const i in units) {
 		const inputSpan = document.createElement('span')
-		inputSpan.style.setProperty('color', `rgb(${AppColors.accent})`)
+		inputSpan.style.setProperty('color', `rgb(${AppCSSColors.accent})`)
 		inputSpan.textContent = units[i].symbol
 		const inputOptionRef = createSelectOptionRef({
 			SelectOptionValue: units[i].id,
@@ -106,7 +106,7 @@ function _subscribeConverterChanges(value: ConverterStoreType, old: ConverterSto
 		inputOptionRefs.push(inputOptionRef)
 
 		const outputSpan = document.createElement('span')
-		outputSpan.style.setProperty('color', `rgb(${AppColors.accent})`)
+		outputSpan.style.setProperty('color', `rgb(${AppCSSColors.accent})`)
 		outputSpan.textContent = units[i].symbol
 		const outputOptionRef = createSelectOptionRef({
 			SelectOptionValue: units[i].id,

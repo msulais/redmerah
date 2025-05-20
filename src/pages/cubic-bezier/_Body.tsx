@@ -2,7 +2,7 @@ import { batch, createMemo, createSelector, createUniqueId, Show, type VoidCompo
 
 import type { CubicBezier, Keyframes, Position } from "./_types"
 import { ICON_COPY, ICON_DATA_SCATTER, ICON_PLAY } from "@/constants/icons"
-import { AppColors } from "@/enums/colors"
+import { AppCSSColors } from "@/enums/app-data"
 import { elementValidTarget } from "@/utils/element"
 import { mathClamp } from "@/utils/math"
 import { numberSafe } from "@/utils/number"
@@ -37,7 +37,7 @@ const _: VoidComponent<{
 	const HANDLE_STROKE = 4
 	const HANDLE_SIZE = 24 - HANDLE_STROKE
 	const HALF_HANDLE_SIZE = HANDLE_SIZE / 2
-	const DECORATION_STROKE_COLOR = `rgba(${AppColors.onSurface}, var(--g-opacity-border))`
+	const DECORATION_STROKE_COLOR = `rgba(${AppCSSColors.onSurface}, var(--g-opacity-border))`
 	const buttonPlayId = createUniqueId()
 	const buttonCopyId = createUniqueId()
 	const buttonTidyUpId = createUniqueId()
@@ -277,7 +277,7 @@ const _: VoidComponent<{
 				<rect ref={r => rectRef = r} x="0" y="0"
 					width={MAX_SIZE}
 					height={MAX_SIZE}
-					fill={`rgb(${AppColors.surface})`}
+					fill={`rgb(${AppCSSColors.surface})`}
 					stroke={DECORATION_STROKE_COLOR}
 				/>
 				<path d={`M${QUARTER_SIZE}  0V${MAX_SIZE}`} stroke={DECORATION_STROKE_COLOR}/>
@@ -294,7 +294,7 @@ const _: VoidComponent<{
 						`M${startPoint()[0] * MAX_SIZE} ${(1 - startPoint()[1]) * MAX_SIZE}` +
 						`L${startHandlePoint()[0] * MAX_SIZE} ${(1 - startHandlePoint()[1]) * MAX_SIZE}`
 					}
-					stroke={`rgb(${AppColors.accent})`}
+					stroke={`rgb(${AppCSSColors.accent})`}
 					stroke-width={PATH_STROKE_SIZE}
 				/>
 
@@ -304,7 +304,7 @@ const _: VoidComponent<{
 						`M${endPoint()[0] * MAX_SIZE} ${(1 - endPoint()[1]) * MAX_SIZE}` +
 						`L${endHandlePoint()[0] * MAX_SIZE} ${(1 - endHandlePoint()[1]) * MAX_SIZE}`
 					}
-					stroke={`rgb(${AppColors.error})`}
+					stroke={`rgb(${AppCSSColors.error})`}
 					stroke-width={PATH_STROKE_SIZE}
 				/>
 
@@ -316,7 +316,7 @@ const _: VoidComponent<{
 						+ `${endHandlePoint()[0] * MAX_SIZE} ${(1 - endHandlePoint()[1]) * MAX_SIZE},`
 						+ `${endPoint()[0] * MAX_SIZE} ${(1 - endPoint()[1]) * MAX_SIZE}`
 					}
-					stroke={`rgb(${AppColors.onSurface})`}
+					stroke={`rgb(${AppCSSColors.onSurface})`}
 					stroke-width={PATH_STROKE_SIZE}
 				/>
 
@@ -330,7 +330,7 @@ const _: VoidComponent<{
 					x={getStartPoint()[0]} y={getStartPoint()[1]}
 					width={INDICATOR_SIZE} height={INDICATOR_SIZE}
 					rx={HALF_INDICATOR_SIZE}
-					fill={`rgb(${AppColors.onSurface})`}
+					fill={`rgb(${AppCSSColors.onSurface})`}
 				/>
 
 				{/* end */}
@@ -343,7 +343,7 @@ const _: VoidComponent<{
 					x={getEndPoint()[0]} y={getEndPoint()[1]}
 					width={INDICATOR_SIZE} height={INDICATOR_SIZE}
 					rx={HALF_INDICATOR_SIZE}
-					fill={`rgb(${AppColors.onSurface})`}
+					fill={`rgb(${AppCSSColors.onSurface})`}
 				/>
 
 				{/* start handle */}
@@ -356,8 +356,8 @@ const _: VoidComponent<{
 					x={getStartHandlePoint()[0]} y={getStartHandlePoint()[1]}
 					width={HANDLE_SIZE} height={HANDLE_SIZE}
 					rx={HALF_HANDLE_SIZE}
-					fill={`rgb(${AppColors.onAccent})`}
-					stroke={`rgb(${AppColors.accent})`} stroke-width={HANDLE_STROKE}
+					fill={`rgb(${AppCSSColors.onAccent})`}
+					stroke={`rgb(${AppCSSColors.accent})`} stroke-width={HANDLE_STROKE}
 				/>
 
 				{/* end handle */}
@@ -370,8 +370,8 @@ const _: VoidComponent<{
 					x={getEndHandlePoint()[0]} y={getEndHandlePoint()[1]}
 					width={HANDLE_SIZE} height={HANDLE_SIZE}
 					rx={HALF_HANDLE_SIZE}
-					fill={`rgb(${AppColors.onError})`}
-					stroke={`rgb(${AppColors.error})`} stroke-width={HANDLE_STROKE}
+					fill={`rgb(${AppCSSColors.onError})`}
+					stroke={`rgb(${AppCSSColors.error})`} stroke-width={HANDLE_STROKE}
 				/>
 			</svg>
 			<FocusableGroup

@@ -4,7 +4,7 @@ import { createStore, produce } from "solid-js/store"
 import type { USB, USBDevice } from "@/interfaces/usb"
 import { ICON_CONNECTOR, ICON_DELETE, ICON_DISMISS, ICON_WARNING } from "@/constants/icons"
 import { removeSplashScreen } from "@/utils/splash"
-import { AppColors } from "@/enums/colors"
+import { AppCSSColors } from "@/enums/app-data"
 import { elementValidTarget } from "@/utils/element"
 
 import Button, { ButtonVariant, IconButton } from "@/components/Button"
@@ -81,7 +81,7 @@ const _: VoidComponent = () => {
 			Browser not supported. See <a
 				style={{
 					"text-decoration": 'underline',
-					color: `rgb(${AppColors.accent})`
+					color: `rgb(${AppCSSColors.accent})`
 				}}
 				target={"_blank"}
 				rel={"noopener noreferrer"}

@@ -80,8 +80,8 @@ $SCREEN_WIDTH_SMALL: 650px;
 	border-radius: 8px 0 0 0;
 	background-color: rgb(var(--g-color-surface));
 	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity3));
-	border-bottom: none;
-	border-right: none;
+	border-bottom-color: transparent;
+	border-right-color: transparent;
 	padding: 16px;
 
 	@media (max-width: $SCREEN_WIDTH_SMALL) {

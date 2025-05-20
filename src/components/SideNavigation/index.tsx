@@ -1,7 +1,7 @@
 import { children, createContext, createMemo, mergeProps, Show, splitProps, useContext, type Accessor, type JSX, type ParentComponent, type VoidComponent } from "solid-js"
 
 import { attrSetIfExist, attrClassList } from "@/utils/attributes"
-import { AppColors } from "@/enums/colors"
+import { AppCSSColors } from "@/enums/app-data"
 
 import Icon from "@/components/Icon"
 import Button, { ButtonIndicatorPosition, ButtonVariant, type ButtonProps } from "@/components/Button"
@@ -39,7 +39,7 @@ const SideNavigationItem: ParentComponent<SideNavigationItemProps> = ($props) =>
 		{...other}>
 		<Show when={props['c:iconCode'] != null}>
 			<Icon
-				style={{color: props["c:selected"]? `rgb(${AppColors.accent})` : undefined}}
+				style={{color: props["c:selected"]? `rgb(${AppCSSColors.accent})` : undefined}}
 				c:filled={props["c:selected"]}
 				c:code={props['c:iconCode']!}
 			/>

@@ -6,7 +6,7 @@ import type { Emoji } from '@/types/emoji'
 import { EMOJIS_ACTIVITIES, EMOJIS_ANIMAL_AND_NATURE, EMOJIS_FLAGS, EMOJIS_FOOD_AND_DRINK, EMOJIS_OBJECT, EMOJIS_PERSON_AND_BODY, EMOJIS_SMILEY_AND_EMOTION, EMOJIS_SYMBOLS, EMOJIS_TRAVEL_AND_PLACES } from '@/constants/emoji'
 import { attrSetIfExist } from '@/utils/attributes'
 import { AnimationEffectTiming } from '@/enums/animation'
-import { AppColors } from '@/enums/colors'
+import { AppCSSColors } from '@/enums/app-data'
 import { numberSafe } from '@/utils/number'
 import { GlobalElementIds } from '@/enums/ids'
 import { ICON_ANIMAL_CAT, ICON_DISMISS, ICON_DIVERSITY, ICON_EMOJI, ICON_FLAG, ICON_FOOD, ICON_HISTORY, ICON_PERSON, ICON_RUNNING_PERSON, ICON_SYMBOLS, ICON_VEHICLE_CAR } from '@/constants/icons'
@@ -180,7 +180,7 @@ const EmojiPickerBody: ParentComponent<{
 			c:filled={selected()}
 			c:variant={selected()? ButtonVariant.tonal : undefined}
 			style={{
-				color: selected()? `rgb(${AppColors.accent})` : undefined
+				color: selected()? `rgb(${AppCSSColors.accent})` : undefined
 			}}
 		/>)
 	}

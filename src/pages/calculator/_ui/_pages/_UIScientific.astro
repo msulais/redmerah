@@ -8,7 +8,7 @@ import CheckBox from '@/native-components/CheckBox/index.astro'
 import Divider from '@/native-components/Divider/index.astro'
 import Option from '@/native-components/Select/SelectOption.astro'
 import { CSSClasses } from "../../_styles/_css"
-import { AppColors } from '@/enums/colors'
+import { AppCSSColors } from '@/enums/app-data'
 import { ButtonVariant } from '@/native-components/Button'
 import { PopoverPosition } from '@/native-components/Popover'
 import { IconCodes } from '@/enums/icons'
@@ -84,8 +84,8 @@ import { ScientificAngleType } from '../../_scripts/_shared/_enums'
 		<Button data-command={Commands.keyChar} data-char="mod" ButtonVariant={ButtonVariant.tonal}>mod</Button>
 		<Button data-command={Commands.keyChar} data-char="(" ButtonVariant={ButtonVariant.tonal}>(</Button>
 		<Button data-command={Commands.keyChar} data-char=")" ButtonVariant={ButtonVariant.tonal}>)</Button>
-		<Button data-command={Commands.keyClear} ButtonVariant={ButtonVariant.tonal} style={`color:rgb(${AppColors.accent})`}>C</Button>
-		<Button data-command={Commands.keyBackspace} ButtonVariant={ButtonVariant.tonal} style={`color:rgb(${AppColors.accent})`}><Icon IconCode={IconCodes.backspace}/></Button>
+		<Button data-command={Commands.keyClear} ButtonVariant={ButtonVariant.tonal} style={`color:rgb(${AppCSSColors.accent})`}>C</Button>
+		<Button data-command={Commands.keyBackspace} ButtonVariant={ButtonVariant.tonal} style={`color:rgb(${AppCSSColors.accent})`}><Icon IconCode={IconCodes.backspace}/></Button>
 
 		<Button data-command={Commands.keyChar} data-char="%" ButtonVariant={ButtonVariant.tonal}>%</Button>
 		<Button data-command={Commands.keyChar} data-char="10^" ButtonVariant={ButtonVariant.tonal}>10^</Button>
