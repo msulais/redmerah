@@ -309,8 +309,8 @@ function _initPopoverRef(popoverRef: PopoverElement): void {
 		popoverRef.style.setProperty('left', flyoutPosition.left + 'px')
 		popoverRef.style.setProperty('top', flyoutPosition.top + 'px')
 
-		// `visibility` property set in 'beforetoggle' event
-		popoverRef.style.removeProperty('visibility')
+		// `opacity` property set in 'beforetoggle' event
+		popoverRef.style.removeProperty('opacity')
 		if (!isAnimationAllowed()) return
 
 		const modalMidX = flyoutPosition.left + (popoverRect.width / 2)
@@ -430,7 +430,7 @@ function _initPopoverRef(popoverRef: PopoverElement): void {
 			if (isOpen) {
 
 				// avoid jump view if animation disabled
-				popoverRef.style.setProperty('visibility', 'hidden')
+				popoverRef.style.setProperty('opacity', '0')
 				return
 			}
 
