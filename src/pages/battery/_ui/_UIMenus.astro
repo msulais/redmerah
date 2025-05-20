@@ -19,7 +19,7 @@ import { IconCodes } from '@/enums/icons'
 
 <Menu id={ID + ElementIds.appbarSettingsMenu} PopoverAnchorBy={ID + ElementIds.appbarSettingsButton}>
 	<SubMenuItem
-		aria-controls={ID + ElementIds.appbarSettingsAnimationMenu}>
+		popovertarget={ID + ElementIds.appbarSettingsAnimationMenu}>
 		<Icon IconCode={IconCodes.playCircleHint}/>
 		Animation
 		<div style="flex:1"/>
@@ -54,7 +54,7 @@ import { IconCodes } from '@/enums/icons'
 	</SubMenu>
 
 	<SubMenuItem
-		aria-controls={ID + ElementIds.appbarSettingsThemeMenu}>
+		popovertarget={ID + ElementIds.appbarSettingsThemeMenu}>
 		<Icon IconCode={IconCodes.weatherSunny}/>
 		Theme
 		<div style="flex:1"/>

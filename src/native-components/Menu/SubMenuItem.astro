@@ -11,16 +11,12 @@ import './index.scss'
 type Props = SubMenuItemProps
 const {
 	'class': className,
-	'aria-expanded': ariaExpanded = 'false',
-	'aria-haspopup': ariaHaspopup = 'menu',
 	...other
 } = Astro.props
 ---
 
 <MenuItem
 	class={attrClassList(MenuClasses.submenuItem, className)}
-	aria-expanded={ariaExpanded}
-	aria-haspopup={ariaHaspopup}
 	{...other}>
 	<slot />
 </MenuItem>

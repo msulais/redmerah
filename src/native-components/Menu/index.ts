@@ -44,8 +44,8 @@ type MenuItemProps = ButtonProps
 type LinkMenuItemProps = LinkButtonProps
 type MenuHeaderProps = astroHTML.JSX.HTMLAttributes
 
-type SubMenuItemProps = Omit<MenuItemProps, 'aria-controls'> & {
-	'aria-controls': string
+type SubMenuItemProps = Omit<MenuItemProps, 'popovertarget'> & {
+	'popovertarget': string
 }
 
 type MenuIndentProps = astroHTML.JSX.HTMLAttributes
@@ -142,10 +142,8 @@ type MenuItemUpdateOptions = ButtonUpdateOptions & {
 }
 
 type SubMenuItemUpdateOptions = MenuItemUpdateOptions & {
-	SubMenuItemAriaExpanded?: astroHTML.JSX.AriaAttributes['aria-expanded'] | boolean
-	SubMenuItemAriaControls?: astroHTML.JSX.AriaAttributes['aria-controls'] | boolean
-	SubMenuAriaHaspopup    ?: astroHTML.JSX.AriaAttributes['aria-haspopup'] | boolean
-	SubMenuRefs            ?: {
+	SubMenuItemPopoverId?: string
+	SubMenuItemRefs     ?: {
 		menuitem?(ref: SubMenuItemElement): unknown
 	}
 }
@@ -193,7 +191,7 @@ function _initSubMenuItemRef(subMenuItemRef: SubMenuItemElement): void {
 			return subMenuItemRef.closest('.' + MenuClasses.content) as HTMLDivElement | null
 		},
 		get target() {
-			return document.getElementById(subMenuItemRef.getAttribute('aria-controls') ?? '___NONE___') as SubMenuElement | null
+			return subMenuItemRef.popoverTargetElement as SubMenuElement | null
 		}
 	}
 	let isParentHovered = false
@@ -203,15 +201,14 @@ function _initSubMenuItemRef(subMenuItemRef: SubMenuItemElement): void {
 	function getAllSubMenuRefs(from: HTMLElement): SubMenuElement[] {
 		const menus = new Set<SubMenuElement>()
 		const traverseDown = (popover: HTMLElement) => {
-			const submenuItems = popover.querySelectorAll<SubMenuItemElement>(`.${MenuClasses.submenuItem}[aria-controls]`)
+			const submenuItems = popover.querySelectorAll<SubMenuItemElement>(`.${MenuClasses.submenuItem}`)
 			for (const item of submenuItems) {
 
 				// handle nested <Menu>
 				const m = item.closest(`.${MenuClasses.menu}`)
 				if (m !== popover) continue
 
-				const id = item.getAttribute('aria-controls') ?? '___NONE___'
-				const menu = document.getElementById(id) as SubMenuElement | null
+				const menu = item.popoverTargetElement as SubMenuElement | null
 				if (
 					!menu
 					|| !menu.classList.contains(MenuClasses.menu)
@@ -303,13 +300,8 @@ function _initSubMenuItemRef(subMenuItemRef: SubMenuItemElement): void {
 		}
 	}
 
-	function subMenuRefOnClick(): void {
-		openSubMenuRef(true)
-	}
-
 	function subMenuRefOnToggleOpen(ev: Event): void {
 		const open = (ev as ToggleEvent).newState === 'open'
-		subMenuItemRef.setAttribute('aria-expanded', String(open))
 		if (subMenuItemRef.classList.contains(ButtonClasses.button)) {
 			updateMenuItemRef(subMenuItemRef as SubMenuItemElement, {
 				ButtonFocused: open
@@ -338,7 +330,6 @@ function _initSubMenuItemRef(subMenuItemRef: SubMenuItemElement): void {
 				contentRef?.addEventListener('pointerleave', menuContentRefOnPointerLeave)
 				subMenuItemRef.addEventListener('pointerenter', subMenuItemRefOnPointerEnter)
 				subMenuItemRef.addEventListener('pointerleave', subMenuRefOnPointerLeave)
-				subMenuItemRef.addEventListener('click'       , subMenuRefOnClick)
 				targetRef?.addEventListener('pointerenter', subMenuRefOnPointerEnter)
 				targetRef?.addEventListener('pointerleave', subMenuRefOnPointerLeave)
 				targetRef?.addEventListener('toggle', subMenuRefOnToggleOpen)
@@ -352,7 +343,6 @@ function _initSubMenuItemRef(subMenuItemRef: SubMenuItemElement): void {
 					contentRef?.removeEventListener('pointerleave', menuContentRefOnPointerLeave)
 					subMenuItemRef.removeEventListener('pointerenter', subMenuItemRefOnPointerEnter)
 					subMenuItemRef.removeEventListener('pointerleave', subMenuRefOnPointerLeave)
-					subMenuItemRef.removeEventListener('click'       , subMenuRefOnClick)
 					targetRef?.removeEventListener('pointerenter', subMenuRefOnPointerEnter)
 					targetRef?.removeEventListener('pointerleave', subMenuRefOnPointerLeave)
 					targetRef?.removeEventListener('toggle', subMenuRefOnToggleOpen)
@@ -484,8 +474,8 @@ function updateLinkMenuItemRef(
 	return linkMenuItemRef
 }
 
-function createSubMenuItemRef(options: Omit<SubMenuItemUpdateOptions, 'ariaControls'> & {
-	ariaControls: astroHTML.JSX.AriaAttributes['aria-controls']
+function createSubMenuItemRef(options: Omit<SubMenuItemUpdateOptions, 'SubMenuItemPopoverId'> & {
+	SubMenuItemPopoverId: string
 }): SubMenuItemElement {
 	return updateSubMenuItemRef(createMenuItemRef(options))
 }
@@ -496,31 +486,12 @@ function updateSubMenuItemRef(
 ): SubMenuItemElement {
 	updateMenuItemRef(subMenuItemRef, options)
 	subMenuItemRef.classList.add(MenuClasses.submenuItem)
-	const ariaControls = options?.SubMenuItemAriaControls
-	if (ariaControls === false) {
-		subMenuItemRef.removeAttribute('aria-controls')
-	}
-	else if (ariaControls !== undefined && ariaControls !== null && ariaControls !== true) {
-		subMenuItemRef.setAttribute('aria-controls', ariaControls)
+	const popoverIdOption = options?.SubMenuItemPopoverId
+	if (popoverIdOption) {
+		subMenuItemRef.setAttribute('popovertarget', popoverIdOption)
 	}
 
-	const ariaExpanded = options?.SubMenuItemAriaExpanded
-	if (ariaExpanded === false) {
-		subMenuItemRef.removeAttribute('aria-expanded')
-	}
-	else if (ariaExpanded !== undefined && ariaExpanded !== null && ariaExpanded !== true) {
-		subMenuItemRef.setAttribute('aria-expanded', ariaExpanded)
-	}
-
-	const ariaHaspopup = options?.SubMenuAriaHaspopup
-	if (ariaHaspopup === false) {
-		subMenuItemRef.removeAttribute('aria-haspopup')
-	}
-	else if (ariaHaspopup !== undefined && ariaHaspopup !== null && ariaHaspopup !== true) {
-		subMenuItemRef.setAttribute('aria-haspopup', ariaHaspopup)
-	}
-
-	options?.SubMenuRefs?.menuitem?.(subMenuItemRef)
+	options?.SubMenuItemRefs?.menuitem?.(subMenuItemRef)
 	return subMenuItemRef
 }
 

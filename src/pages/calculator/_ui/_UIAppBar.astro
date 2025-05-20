@@ -105,7 +105,7 @@ import { DecimalNumberFormat, GroupingNumberFormat } from '../_scripts/_shared/_
 		/>
 		<Menu id={ElementIds.appbarSettingsMenu} PopoverAnchorBy={ElementIds.appbarSettingsButton}>
 			<SubMenuItem
-				aria-controls={ElementIds.appbarSettingsAnimationMenu}>
+				popovertarget={ElementIds.appbarSettingsAnimationMenu}>
 				<Icon IconCode={IconCodes.playCircleHint}/>
 				Animation
 				<div style="flex:1"/>
@@ -140,7 +140,7 @@ import { DecimalNumberFormat, GroupingNumberFormat } from '../_scripts/_shared/_
 			</SubMenu>
 
 			<SubMenuItem
-				aria-controls={ElementIds.appbarSettingsThemeMenu}>
+				popovertarget={ElementIds.appbarSettingsThemeMenu}>
 				<Icon IconCode={IconCodes.weatherSunny}/>
 				Theme
 				<div style="flex:1"/>
@@ -175,7 +175,7 @@ import { DecimalNumberFormat, GroupingNumberFormat } from '../_scripts/_shared/_
 			</SubMenu>
 
 			<SubMenuItem
-				aria-controls={ElementIds.appbarSettingsGroupMenu}>
+				popovertarget={ElementIds.appbarSettingsGroupMenu}>
 				<Icon IconCode={IconCodes.numberRow}/>
 				Grouping
 				<div style="flex:1"/>
@@ -211,7 +211,7 @@ import { DecimalNumberFormat, GroupingNumberFormat } from '../_scripts/_shared/_
 			</SubMenu>
 
 			<SubMenuItem
-				aria-controls={ElementIds.appbarSettingsDecimalMenu}>
+				popovertarget={ElementIds.appbarSettingsDecimalMenu}>
 				<Icon IconCode={IconCodes.decimalArrowLeft}/>
 				Decimal
 				<div style="flex:1"/>
