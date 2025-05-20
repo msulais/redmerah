@@ -1,4 +1,4 @@
-import { numberIsNotDefined } from "@/utils/number"
+import { numberIsDefined, numberIsNotDefined } from "@/utils/number"
 import { ButtonVariant, createButtonRef, createIconButtonRef, updateButtonRef, type ButtonElement, type ButtonProps, type IconButtonElement, type IconButtonProps } from "../Button"
 import { registerPopoverRef, repositionPopoverRef, updatePopoverRef, type PopoverElement, type PopoverProps, type PopoverUpdateOptions } from "../Popover"
 import { createTooltipRef, registerTooltipRef, type TooltipElement, type TooltipProps } from "../Tooltip"
@@ -671,6 +671,18 @@ function updateDatePickerRef(
 	return datePickerRef
 }
 
+function getDatePickerRefValue(datePickerRef: DatePickerElement): Date | null {
+	const value = datePickerRef.getAttribute(DatePickerAttributes.value)
+	if (value) {
+		const date = new Date(value)
+		if (numberIsDefined(date.valueOf())) {
+			return date
+		}
+	}
+
+	return null
+}
+
 export {
 	type DatePickerProps,
 	type DatePickerUpdateOptions,
@@ -682,5 +694,6 @@ export {
 	registerDatePickerRef,
 	unregisterDatePickerRef,
 	createDatePickerRef,
-	updateDatePickerRef
+	updateDatePickerRef,
+	getDatePickerRefValue
 }
