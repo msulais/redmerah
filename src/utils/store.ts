@@ -1,0 +1,73 @@
+type Listener<T> = (state: T, oldState: T) => void
+
+let _KEY_ID = 0
+function _createKey() {
+	++_KEY_ID
+	return _KEY_ID + ''
+}
+
+export class ObservableStore<T extends object> {
+	private warningCount = 0
+	private state: T
+	private timeId: null | NodeJS.Timeout | number = null
+	private listeners = new Map<string, Listener<T>>()
+
+	constructor(initialState: T) {
+		this.state = initialState
+	}
+
+	get value() {
+		return this.state
+	}
+
+	get listenerKeys() {
+		return [...this.listeners.keys()]
+	}
+
+	/**
+	 * Update state
+	 * @param updater
+	 * @param notifyKeys Keys of listener. Order matter. It is possible to repeat key.
+	 */
+	update(updater: (state: T) => T, notifyKeys: string[] | null = []) {
+		const oldState = this.state
+		this.state = updater(this.state)
+		if (notifyKeys !== null) {
+			this.notify(notifyKeys, oldState)
+		}
+	}
+
+	subscribe(listener: Listener<T>, key = _createKey()) {
+		this.listeners.set(key, listener)
+		return () => this.listeners.delete(key)
+	}
+
+	unsubscribe(key: string) {
+		return this.listeners.delete(key)
+	}
+
+	/**
+	 * Notify changes
+	 * @param keys Keys of listener. Order matter. It is possible to repeat key.
+	 * @param oldState
+	 */
+	notify(keys: string[] = [], oldState: T = this.state) {
+		++this.warningCount
+		if (this.timeId !== null) {
+			clearTimeout(this.timeId)
+		}
+
+		this.timeId = setTimeout(() => {
+			this.warningCount = 0
+			this.timeId = null
+		}, 1000)
+		if (this.warningCount > 0xfff) {
+			console.warn('A process has occurred that exceeds the maximum looping limit. Store:', this)
+			return
+		}
+
+		for (const key of (keys.length == 0? this.listeners.keys() : keys)) {
+			this.listeners.get(key)?.(this.state, oldState)
+		}
+	}
+}
