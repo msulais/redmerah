@@ -1,0 +1,45 @@
+---
+import List from '@/native-components/List/index.astro'
+import { ListVariant } from '@/native-components/List'
+import { attrClassList } from '@/utils/attributes'
+import { ToastClasses, ToastPosition, type ToastProps } from '.'
+import './index.scss'
+
+type Props = ToastProps
+const {
+	'class': className,
+	popover = 'auto',
+	ToastAutoclose = true,
+	ToastCloseDelay = 5000,
+	ToastPosition: position = ToastPosition.topCenter,
+	ToastContentAttr,
+	...other
+} = Astro.props
+const {
+	'class': contentClass,
+	ListVariant: contentVariant = ListVariant.transparent,
+	...toastOther
+} = ToastContentAttr ?? {}
+---
+
+<div
+	popover={popover}
+	class={attrClassList(ToastClasses.toast, className)}
+	data-c-toast-position={position}
+	data-c-toast-close-delay={ToastCloseDelay}
+	data-c-toast-autoclose={ToastAutoclose? '' : undefined}
+	{...other}>
+	<List
+		ListVariant={contentVariant}
+		class={attrClassList(ToastClasses.content, contentClass)}
+		{...toastOther}>
+		<slot />
+		<slot name="leading" slot="leading"/>
+		<slot name="subtitle" slot="subtitle"/>
+		<slot name="trailing" slot="trailing"/>
+	</List>
+</div>
+<script>
+	import { registerToastRef } from '.'
+	registerToastRef()
+</script>
