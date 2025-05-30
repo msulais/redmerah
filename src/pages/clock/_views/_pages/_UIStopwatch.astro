@@ -1,0 +1,105 @@
+---
+import Tooltip from '@/native-components/Tooltip/index.astro'
+import Button from '@/native-components/Button/index.astro'
+import IconButton from '@/native-components/Button/IconButton.astro'
+import Icon from '@/native-components/Icon/index.astro'
+import Menu from '@/native-components/Menu/index.astro'
+import MenuItem from '@/native-components/Menu/MenuItem.astro'
+import MenuIndent from '@/native-components/Menu/MenuIndent.astro'
+import SubMenuItem from '@/native-components/Menu/SubMenuItem.astro'
+import SubMenu from '@/native-components/Menu/SubMenu.astro'
+import Divider from '@/native-components/Divider/index.astro'
+import { ElementIds } from '../../_scripts/_shared/_ids'
+import { CSSClasses } from '../../_styles/_css'
+import { ButtonVariant } from '@/native-components/Button'
+import { IconCodes } from '@/enums/icons'
+import { Commands } from '../../_scripts/_shared/_commands'
+---
+
+<div
+	id={ElementIds.bodyStopwatch}
+	class={[CSSClasses.bodyPage, CSSClasses.bodyPageStopwatch].join(' ')}
+	role="tabpanel"
+	hidden>
+	<h2>
+		<span
+			id={ElementIds.bodyStopwatchHHMMSS}>0:00:00</span
+		>,<small id={ElementIds.bodyStopwatchMS}>00</small>
+	</h2>
+	<Tooltip style="display:flex;justify-content:center;gap:8px;padding-bottom:16px">
+		<Button
+			style="width:92px"
+			id={ElementIds.bodyStopwatchPlayOrPause}
+			ButtonVariant={ButtonVariant.filled}>
+			<Icon IconCode={IconCodes.play} IconFilled/>
+			<span>Start</span>
+		</Button>
+		<IconButton
+			style="display:none"
+			id={ElementIds.bodyStopwatchResetOrLap}
+			ButtonVariant={ButtonVariant.tonal}
+			IconButtonCode={IconCodes.arrowReset}
+			data-tooltip="Reset"
+			aria-label="Reset"
+		/>
+		<IconButton
+			style="display:none"
+			popovertarget={ElementIds.bodyStopwatchMoreMenu} id={ElementIds.bodyStopwatchMoreButton} ButtonVariant={ButtonVariant.tonal}
+			IconButtonCode={IconCodes.moreVertical}
+			data-tooltip="More actions"
+			aria-label="More actions"
+		/>
+		<Menu
+			id={ElementIds.bodyStopwatchMoreMenu}
+			PopoverAnchorBy={ElementIds.bodyStopwatchMoreButton}>
+			<MenuItem data-command={Commands.stopwatchCopyLapTime}>
+				<Icon IconCode={IconCodes.copy}/>
+				Copy time
+				<div style="flex:1"/>
+				<MenuIndent/>
+			</MenuItem>
+			<MenuItem data-command={Commands.stopwatchCopyLapTotal}>
+				<Icon IconCode={IconCodes.copy}/>
+				Copy total
+				<div style="flex:1"/>
+				<MenuIndent/>
+			</MenuItem>
+			<MenuItem data-command={Commands.stopwatchCopyLapAll}>
+				<Icon IconCode={IconCodes.copy}/>
+				Copy all
+				<div style="flex:1"/>
+				<MenuIndent/>
+			</MenuItem>
+			<Divider />
+			<SubMenuItem popovertarget={ElementIds.bodyStopwatchMoreMillisecondsMenu}>
+				<Icon IconCode={IconCodes.timer}/>
+				Milliseconds
+				<div style="flex:1"/>
+				<Icon IconCode={IconCodes.chevronRight}/>
+			</SubMenuItem>
+			<SubMenu id={ElementIds.bodyStopwatchMoreMillisecondsMenu} slot="submenus">
+				<MenuItem data-command={Commands.stopwatchCopyLapTimeMS}>
+					<Icon IconCode={IconCodes.copy}/>
+					Copy time
+				</MenuItem>
+				<MenuItem data-command={Commands.stopwatchCopyLapTotalMS}>
+					<Icon IconCode={IconCodes.copy}/>
+					Copy total
+				</MenuItem>
+				<MenuItem data-command={Commands.stopwatchCopyLapAllMS}>
+					<Icon IconCode={IconCodes.copy}/>
+					Copy all
+				</MenuItem>
+			</SubMenu>
+		</Menu>
+	</Tooltip>
+	<div class={CSSClasses.bodyPageStopwatchLaps} id={ElementIds.bodyStopwatchLaps}>
+		<div>
+			<span>Laps</span>
+			<span>Time</span>
+			<span>Total</span>
+		</div>
+		<div id={ElementIds.bodyStopwatchLapsContent}>
+		</div>
+	</div>
+</div>

@@ -1,5 +1,5 @@
 import { updateIconButtonRef } from "@/native-components/Button"
-import { APP_CALCULATOR as app } from "@/constants/apps"
+import { APP_CLOCK as app } from "@/constants/apps"
 import { $ } from "./_dom-utils"
 import { ElementIds } from "../_shared/_ids"
 import { SCREEN_WIDTH_SMALL } from "../_shared/_constant"
@@ -14,10 +14,9 @@ const _sideBarRef = $(ElementIds.navigationSideBar) as HTMLDivElement
 const _drawerRef = $(ElementIds.navigationDrawer) as HTMLDivElement
 const _shareButtonRef = $(ElementIds.appbarInfoMenuShareButton) as HTMLButtonElement
 
-function _initMenuToggle(): void {
+function _initMenuEvents(): void {
 	_infoMenuRef.addEventListener('beforetoggle', ev => {
 		const isOpen = (ev as ToggleEvent).newState === 'open'
-		_infoButtonRef.setAttribute('aria-expanded', String(isOpen))
 		updateIconButtonRef(_infoButtonRef, {
 			ButtonFocused: isOpen
 		})
@@ -25,14 +24,13 @@ function _initMenuToggle(): void {
 
 	_settingsMenuRef.addEventListener('beforetoggle', ev => {
 		const isOpen = (ev as ToggleEvent).newState === 'open'
-		_settingsButtonRef.setAttribute('aria-expanded', String(isOpen))
 		updateIconButtonRef(_settingsButtonRef, {
 			ButtonFocused: isOpen
 		})
 	})
 }
 
-function _initSideBarButton(): void {
+function _initSideBarButtonEvents(): void {
 	_sideBarButtonRef.addEventListener('click', () => {
 		if (window.matchMedia(`(max-width: ${SCREEN_WIDTH_SMALL}px)`).matches) {
 			_drawerRef.togglePopover()
@@ -56,7 +54,7 @@ function _initShareButtonEvents(): void {
 }
 
 export default () => {
-	_initMenuToggle()
-	_initSideBarButton()
+	_initMenuEvents()
+	_initSideBarButtonEvents()
 	_initShareButtonEvents()
 }

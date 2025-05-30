@@ -148,8 +148,9 @@ function _initTooltipRefListener(): void {
 
 			tooltipTextRef.animate({
 				transform: ['translate(0,0)', `translate(${translateX}px,${translateY}px)`],
-				opacity: [1, 0]
-			}, { duration: 300, easing: AnimationEffectTiming.springBounce })
+				opacity: [1, 0],
+				scale: [1, .75]
+			}, { duration: 250, easing: AnimationEffectTiming.springBounceInverse })
 			.finished.then(() => {
 				tooltipTextRef.hidePopover()
 			})
@@ -261,8 +262,9 @@ function _initTooltipRefListener(): void {
 
 			tooltipTextRef.animate({
 				transform: [`translate(${translateX}px,${translateY}px)`, 'translate(0,0)'],
-				opacity: [0, 1]
-			}, { duration: 300, easing: AnimationEffectTiming.springBounce })
+				opacity: [0, 1],
+				scale: [.75, 1],
+			}, { duration: 250, easing: AnimationEffectTiming.springBounce })
 		}, startDelayDuration)
 	}
 
