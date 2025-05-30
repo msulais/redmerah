@@ -47,7 +47,7 @@ function _initSideBarButton(): void {
 
 function _initShareButtonEvents(): void {
 	_shareButtonRef.addEventListener('click', () => {
-		_settingsMenuRef.hidePopover()
+		_infoMenuRef.hidePopover()
 		navigator.share({
 			text: app.name,
 			url: document.URL
