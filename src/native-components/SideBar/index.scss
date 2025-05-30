@@ -10,8 +10,8 @@
 	overflow-x: hidden;
 
 	&[data-c-sidebar-minimized] {
-		width: 48px;
-		max-width: 48px;
+		width: 50px;
+		max-width: 50px;
 	}
 
 	:root[data-animation=on] & {
