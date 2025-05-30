@@ -7,9 +7,7 @@ function _createKey() {
 }
 
 export class ObservableStore<T extends object> {
-	private warningCount = 0
 	private state: T
-	private timeId: null | NodeJS.Timeout | number = null
 	private listeners = new Map<string, Listener<T>>()
 
 	constructor(initialState: T) {
@@ -37,7 +35,15 @@ export class ObservableStore<T extends object> {
 		}
 	}
 
-	subscribe(listener: Listener<T>, key = _createKey()) {
+	subscribe(listener: Listener<T>, key?: string) {
+		if (this.listeners.values().some(v => v === listener)) {
+			return
+		}
+
+		if (!key) {
+			key = _createKey()
+		}
+
 		this.listeners.set(key, listener)
 		return () => this.listeners.delete(key)
 	}
@@ -52,20 +58,6 @@ export class ObservableStore<T extends object> {
 	 * @param oldState
 	 */
 	notify(keys: string[] = [], oldState: T = this.state) {
-		++this.warningCount
-		if (this.timeId !== null) {
-			clearTimeout(this.timeId)
-		}
-
-		this.timeId = setTimeout(() => {
-			this.warningCount = 0
-			this.timeId = null
-		}, 1000)
-		if (this.warningCount > 0xfff) {
-			console.warn('A process has occurred that exceeds the maximum looping limit. Store:', this)
-			return
-		}
-
 		for (const key of (keys.length == 0? this.listeners.keys() : keys)) {
 			this.listeners.get(key)?.(this.state, oldState)
 		}
