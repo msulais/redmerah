@@ -4,28 +4,28 @@ import Button from '@/native-components/Button/index.astro'
 import CheckBox from '@/native-components/CheckBox/index.astro'
 import Dialog from '@/native-components/Dialog/index.astro'
 import TextField from '@/native-components/TextField/index.astro'
-import { ElementIds, ID } from '../../_scripts/_enums'
+import { ElementIds } from '../../_scripts/_enums'
 import CSS from '../../_index.module.scss'
 import { ButtonVariant } from '@/native-components/Button'
 ---
 <div
 	class={CSS.bodyPage}
 	role="tabpanel"
-	id={ID + ElementIds.panelDialog}
+	id={ElementIds.panelDialog}
 	hidden>
 	<h2>Dialog</h2>
 	<p>A dialog is an overlay window that interrupts the user's main workflow to deliver important information or request user input. It typically contains a title, content area, and buttons for user actions.</p>
 	<div class={CSS.bodyPlayground}>
 		<Tooltip>
 			<Button
-				id={ID + ElementIds.panelDialogPreviewButton}
+				id={ElementIds.panelDialogPreviewButton}
 				ButtonVariant={ButtonVariant.tonal}
 				aria-haspopup="dialog"
-				aria-controls={ID + ElementIds.panelDialogPreviewDialog}>
+				aria-controls={ElementIds.panelDialogPreviewDialog}>
 				Open dialog
 			</Button>
 		</Tooltip>
-		<Dialog style="width:500px" id={ID + ElementIds.panelDialogPreviewDialog} aria-label="Dialog title">
+		<Dialog style="width:500px" id={ElementIds.panelDialogPreviewDialog} aria-label="Dialog title">
 			<Fragment slot="header">Do You Like Cookies?</Fragment>
 			<TextField style="margin-bottom:8px" TextFieldInputAttr={{placeholder: 'Type something ...', autofocus: true}}/>
 			<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis repellat aliquid iste vel laudantium iusto quos qui debitis quod libero veniam nobis repudiandae aperiam nulla earum, est porro suscipit delectus!</p>
@@ -36,9 +36,9 @@ import { ButtonVariant } from '@/native-components/Button'
 			</form>
 		</Dialog>
 	</div>
-	<div class={CSS.bodyOptions} id={ID + ElementIds.panelDialogOptions}>
+	<div class={CSS.bodyOptions} id={ElementIds.panelDialogOptions}>
 		<CheckBox
-			CheckBoxInputAttr={{id: ID + ElementIds.panelDialogOptionsImportant}}>
+			CheckBoxInputAttr={{id: ElementIds.panelDialogOptionsImportant}}>
 			Important
 		</CheckBox>
 	</div>

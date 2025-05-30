@@ -1,143 +1,147 @@
-export const ID = 'ID-'
+let _ID_INDEX = 0
 
-/** must prefix with `'ID-'` */
-export enum ElementIds {
-	appbar,
-	appbarInfoButton,
-	appbarInfoMenu,
-	appbarInfoShareButton,
-	appbarSettingsButton,
-	appbarSettingsMenu,
-	appbarSettingsAnimationMenu,
-	appbarSettingsThemeMenu,
-	appbarSettingsAccentButton,
-	appbarColorPicker,
-	navigationSideBar,
-	navigationDrawer,
-	panelButtons,
-	panelButtonsPreview1,
-	panelButtonsPreview2,
-	panelButtonsPreview3,
-	panelButtonsOptions,
-	panelButtonsOptionsVariant,
-	panelButtonsOptionsVariantLabel,
-	panelButtonsOptionsDisabled,
-	panelButtonsOptionsFocused,
-	panelCheckbox,
-	panelCheckboxOptions,
-	panelCheckboxPreview1,
-	panelCheckboxPreview2,
-	panelCheckboxPreview3,
-	panelCheckboxOptionsDisabled,
-	panelColorpicker,
-	panelColorpickerOptions,
-	panelColorpickerOptionsHueOnly,
-	panelColorpickerOptionsDisabledOpacity,
-	panelColorpickerPreviewButton,
-	panelColorpickerPreviewColorPicker,
-	panelDatePicker,
-	panelDatePickerOptions,
-	panelDatePickerOptionsStartButton,
-	panelDatePickerOptionsStartPicker,
-	panelDatePickerOptionsEndButton,
-	panelDatePickerOptionsEndPicker,
-	panelDatePickerPreviewButton,
-	panelDatePickerPreviewDatePicker,
-	panelDialog,
-	panelDialogOptions,
-	panelDialogOptionsImportant,
-	panelDialogPreviewButton,
-	panelDialogPreviewDialog,
-	panelDrawer,
-	panelDrawerOptions,
-	panelDrawerPreviewDrawer,
-	panelEmojipicker,
-	panelEmojipickerOptions,
-	panelEmojipickerOptionsAutoclose,
-	panelEmojipickerPreviewButton,
-	panelEmojipickerPreviewEmojiPicker,
-	panelIcon,
-	panelIconPreview,
-	panelIconOptions,
-	panelIconOptionsFilled,
-	panelList,
-	panelListPreviewList,
-	panelListPreviewTitle,
-	panelListPreviewLeading,
-	panelListPreviewTrailing,
-	panelListPreviewSubtitle,
-	panelListOptions,
-	panelListOptionsVariant,
-	panelListOptionsVariantLabel,
-	panelListOptionsTrailing,
-	panelListOptionsLeading,
-	panelListOptionsSubtitle,
-	panelListOptionsTitle,
-	panelMenu,
-	panelMenuPreviewMenu,
-	panelMenuPreviewMenu2,
-	panelMenuPreviewMenu3,
-	panelMenuPreviewMenu4,
-	panelMenuPreviewMenu5,
-	panelMenuPreviewMenu6,
-	panelMenuPreviewMenu7,
-	panelMenuPreviewButton,
-	panelMenuOptions,
-	panelMenuOptionsPosition,
-	panelMenuOptionsPositionLabel,
-	panelMenuOptionsGap,
-	panelMenuOptionsAnchor,
-	panelPopover,
-	panelPopoverPreviewPopover,
-	panelPopoverPreviewButtonOpen,
-	panelPopoverPreviewButtonClose,
-	panelPopoverOptions,
-	panelPopoverOptionsPosition,
-	panelPopoverOptionsPositionLabel,
-	panelPopoverOptionsPadding,
-	panelPopoverOptionsGap,
-	panelPopoverOptionsAnchor,
-	panelPopoverOptionsDraggable,
-	panelModal,
-	panelModalPreviewModal,
-	panelModalPreviewButtonOpen,
-	panelModalPreviewButtonClose,
-	panelModalOptions,
-	panelModalOptionsPosition,
-	panelModalOptionsPositionLabel,
-	panelModalOptionsPadding,
-	panelModalOptionsGap,
-	panelModalOptionsAnchor,
-	panelModalOptionsAutofocus,
-	panelModalOptionsImportant,
-	panelModalOptionsDraggable,
-	panelSelect,
-	panelSelectPreview,
-	panelSelectOptions,
-	panelSelectOptionsReset,
-	panelSelectOptionsVariant,
-	panelSelectOptionsVariantLabel,
-	panelTextfield,
-	panelTextfieldPreview,
-	panelTextfieldPreviewInput,
-	panelTextfieldPreviewLeading,
-	panelTextfieldPreviewTrailing,
-	panelTextfieldOptions,
-	panelTextfieldOptionsType,
-	panelTextfieldOptionsTypeLabel,
-	panelTextfieldOptionsLeading,
-	panelTextfieldOptionsTrailing,
-	panelTextfieldOptionsReadonly,
-	panelTextfieldOptionsPlaceholder,
-	panelTooltip,
-	panelTooltipPreview,
-	panelTooltipOptions,
-	panelTooltipOptionsAnchor,
-	panelTooltipOptionsStartDelay,
-	panelTooltipOptionsEndDelay,
-	panelTooltipOptionsPosition,
-	panelTooltipOptionsPositionLabel,
-	panelTooltipOptionsGap,
+function _createId(): string {
+	++_ID_INDEX
+	return 'app-' + _ID_INDEX
+}
+
+export class ElementIds {
+	static readonly appbar = _createId()
+	static readonly appbarInfoButton = _createId()
+	static readonly appbarInfoMenu = _createId()
+	static readonly appbarInfoShareButton = _createId()
+	static readonly appbarSettingsButton = _createId()
+	static readonly appbarSettingsMenu = _createId()
+	static readonly appbarSettingsAnimationMenu = _createId()
+	static readonly appbarSettingsThemeMenu = _createId()
+	static readonly appbarSettingsAccentButton = _createId()
+	static readonly appbarColorPicker = _createId()
+	static readonly navigationSideBar = _createId()
+	static readonly navigationDrawer = _createId()
+	static readonly panelButtons = _createId()
+	static readonly panelButtonsPreview1 = _createId()
+	static readonly panelButtonsPreview2 = _createId()
+	static readonly panelButtonsPreview3 = _createId()
+	static readonly panelButtonsOptions = _createId()
+	static readonly panelButtonsOptionsVariant = _createId()
+	static readonly panelButtonsOptionsVariantLabel = _createId()
+	static readonly panelButtonsOptionsDisabled = _createId()
+	static readonly panelButtonsOptionsFocused = _createId()
+	static readonly panelCheckbox = _createId()
+	static readonly panelCheckboxOptions = _createId()
+	static readonly panelCheckboxPreview1 = _createId()
+	static readonly panelCheckboxPreview2 = _createId()
+	static readonly panelCheckboxPreview3 = _createId()
+	static readonly panelCheckboxOptionsDisabled = _createId()
+	static readonly panelColorpicker = _createId()
+	static readonly panelColorpickerOptions = _createId()
+	static readonly panelColorpickerOptionsHueOnly = _createId()
+	static readonly panelColorpickerOptionsDisabledOpacity = _createId()
+	static readonly panelColorpickerPreviewButton = _createId()
+	static readonly panelColorpickerPreviewColorPicker = _createId()
+	static readonly panelDatePicker = _createId()
+	static readonly panelDatePickerOptions = _createId()
+	static readonly panelDatePickerOptionsStartButton = _createId()
+	static readonly panelDatePickerOptionsStartPicker = _createId()
+	static readonly panelDatePickerOptionsEndButton = _createId()
+	static readonly panelDatePickerOptionsEndPicker = _createId()
+	static readonly panelDatePickerPreviewButton = _createId()
+	static readonly panelDatePickerPreviewDatePicker = _createId()
+	static readonly panelDialog = _createId()
+	static readonly panelDialogOptions = _createId()
+	static readonly panelDialogOptionsImportant = _createId()
+	static readonly panelDialogPreviewButton = _createId()
+	static readonly panelDialogPreviewDialog = _createId()
+	static readonly panelDrawer = _createId()
+	static readonly panelDrawerOptions = _createId()
+	static readonly panelDrawerPreviewDrawer = _createId()
+	static readonly panelEmojipicker = _createId()
+	static readonly panelEmojipickerOptions = _createId()
+	static readonly panelEmojipickerOptionsAutoclose = _createId()
+	static readonly panelEmojipickerPreviewButton = _createId()
+	static readonly panelEmojipickerPreviewEmojiPicker = _createId()
+	static readonly panelIcon = _createId()
+	static readonly panelIconPreview = _createId()
+	static readonly panelIconOptions = _createId()
+	static readonly panelIconOptionsFilled = _createId()
+	static readonly panelList = _createId()
+	static readonly panelListPreviewList = _createId()
+	static readonly panelListPreviewTitle = _createId()
+	static readonly panelListPreviewLeading = _createId()
+	static readonly panelListPreviewTrailing = _createId()
+	static readonly panelListPreviewSubtitle = _createId()
+	static readonly panelListOptions = _createId()
+	static readonly panelListOptionsVariant = _createId()
+	static readonly panelListOptionsVariantLabel = _createId()
+	static readonly panelListOptionsTrailing = _createId()
+	static readonly panelListOptionsLeading = _createId()
+	static readonly panelListOptionsSubtitle = _createId()
+	static readonly panelListOptionsTitle = _createId()
+	static readonly panelMenu = _createId()
+	static readonly panelMenuPreviewMenu = _createId()
+	static readonly panelMenuPreviewMenu2 = _createId()
+	static readonly panelMenuPreviewMenu3 = _createId()
+	static readonly panelMenuPreviewMenu4 = _createId()
+	static readonly panelMenuPreviewMenu5 = _createId()
+	static readonly panelMenuPreviewMenu6 = _createId()
+	static readonly panelMenuPreviewMenu7 = _createId()
+	static readonly panelMenuPreviewButton = _createId()
+	static readonly panelMenuOptions = _createId()
+	static readonly panelMenuOptionsPosition = _createId()
+	static readonly panelMenuOptionsPositionLabel = _createId()
+	static readonly panelMenuOptionsGap = _createId()
+	static readonly panelMenuOptionsAnchor = _createId()
+	static readonly panelPopover = _createId()
+	static readonly panelPopoverPreviewPopover = _createId()
+	static readonly panelPopoverPreviewButtonOpen = _createId()
+	static readonly panelPopoverPreviewButtonClose = _createId()
+	static readonly panelPopoverOptions = _createId()
+	static readonly panelPopoverOptionsPosition = _createId()
+	static readonly panelPopoverOptionsPositionLabel = _createId()
+	static readonly panelPopoverOptionsPadding = _createId()
+	static readonly panelPopoverOptionsGap = _createId()
+	static readonly panelPopoverOptionsAnchor = _createId()
+	static readonly panelPopoverOptionsDraggable = _createId()
+	static readonly panelModal = _createId()
+	static readonly panelModalPreviewModal = _createId()
+	static readonly panelModalPreviewButtonOpen = _createId()
+	static readonly panelModalPreviewButtonClose = _createId()
+	static readonly panelModalOptions = _createId()
+	static readonly panelModalOptionsPosition = _createId()
+	static readonly panelModalOptionsPositionLabel = _createId()
+	static readonly panelModalOptionsPadding = _createId()
+	static readonly panelModalOptionsGap = _createId()
+	static readonly panelModalOptionsAnchor = _createId()
+	static readonly panelModalOptionsAutofocus = _createId()
+	static readonly panelModalOptionsImportant = _createId()
+	static readonly panelModalOptionsDraggable = _createId()
+	static readonly panelSelect = _createId()
+	static readonly panelSelectPreview = _createId()
+	static readonly panelSelectOptions = _createId()
+	static readonly panelSelectOptionsReset = _createId()
+	static readonly panelSelectOptionsVariant = _createId()
+	static readonly panelSelectOptionsVariantLabel = _createId()
+	static readonly panelTextfield = _createId()
+	static readonly panelTextfieldPreview = _createId()
+	static readonly panelTextfieldPreviewInput = _createId()
+	static readonly panelTextfieldPreviewLeading = _createId()
+	static readonly panelTextfieldPreviewTrailing = _createId()
+	static readonly panelTextfieldOptions = _createId()
+	static readonly panelTextfieldOptionsType = _createId()
+	static readonly panelTextfieldOptionsTypeLabel = _createId()
+	static readonly panelTextfieldOptionsLeading = _createId()
+	static readonly panelTextfieldOptionsTrailing = _createId()
+	static readonly panelTextfieldOptionsReadonly = _createId()
+	static readonly panelTextfieldOptionsPlaceholder = _createId()
+	static readonly panelTooltip = _createId()
+	static readonly panelTooltipPreview = _createId()
+	static readonly panelTooltipOptions = _createId()
+	static readonly panelTooltipOptionsAnchor = _createId()
+	static readonly panelTooltipOptionsStartDelay = _createId()
+	static readonly panelTooltipOptionsEndDelay = _createId()
+	static readonly panelTooltipOptionsPosition = _createId()
+	static readonly panelTooltipOptionsPositionLabel = _createId()
+	static readonly panelTooltipOptionsGap = _createId()
 }
 
 export enum RadioGroupNames {

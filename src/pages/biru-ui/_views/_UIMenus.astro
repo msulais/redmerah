@@ -1,5 +1,5 @@
 ---
-import { ElementIds, ID, RadioGroupNames } from '../_scripts/_enums'
+import { ElementIds, RadioGroupNames } from '../_scripts/_enums'
 import { ExternalLinks, RoutesLinks } from '@/enums/links'
 import ColorPicker from '@/native-components/ColorPicker/index.astro'
 import Menu from '@/native-components/Menu/index.astro'
@@ -18,23 +18,23 @@ import { PopoverPosition } from '@/native-components/Popover'
 import { IconCodes } from '@/enums/icons'
 ---
 
-<Menu id={ID + ElementIds.appbarSettingsMenu} PopoverAnchorBy={ID + ElementIds.appbarSettingsButton}>
+<Menu id={ElementIds.appbarSettingsMenu} PopoverAnchorBy={ElementIds.appbarSettingsButton}>
 	<MenuItem
-		id={ID + ElementIds.appbarSettingsAccentButton}
-		aria-controls={ID + ElementIds.appbarColorPicker}>
+		id={ElementIds.appbarSettingsAccentButton}
+		aria-controls={ElementIds.appbarColorPicker}>
 		<Icon style={`color: rgb(${AppCSSColors.accent})`} IconCode={IconCodes.circle} IconFilled/>
 		Color accent
 		<div style="flex:1"/>
 		<MenuIndent/>
 	</MenuItem>
 	<SubMenuItem
-		popovertarget={ID + ElementIds.appbarSettingsAnimationMenu}>
+		popovertarget={ElementIds.appbarSettingsAnimationMenu}>
 		<Icon IconCode={IconCodes.playCircleHint}/>
 		Animation
 		<div style="flex:1"/>
 		<Icon IconCode={IconCodes.chevronRight}/>
 	</SubMenuItem>
-	<SubMenu slot="submenus" id={ID + ElementIds.appbarSettingsAnimationMenu}>
+	<SubMenu slot="submenus" id={ElementIds.appbarSettingsAnimationMenu}>
 		<RadioMenuItem
 			RadioMenuItemInputAttr={{
 				name: RadioGroupNames.settingsAnimation,
@@ -63,13 +63,13 @@ import { IconCodes } from '@/enums/icons'
 	</SubMenu>
 
 	<SubMenuItem
-		popovertarget={ID + ElementIds.appbarSettingsThemeMenu}>
+		popovertarget={ElementIds.appbarSettingsThemeMenu}>
 		<Icon IconCode={IconCodes.weatherSunny}/>
 		Theme
 		<div style="flex:1"/>
 		<Icon IconCode={IconCodes.chevronRight}/>
 	</SubMenuItem>
-	<SubMenu slot="submenus" id={ID + ElementIds.appbarSettingsThemeMenu}>
+	<SubMenu slot="submenus" id={ElementIds.appbarSettingsThemeMenu}>
 		<RadioMenuItem
 			RadioMenuItemInputAttr={{
 				name: RadioGroupNames.settingsTheme,
@@ -103,11 +103,11 @@ import { IconCodes } from '@/enums/icons'
 	ColorPickerDisabledOpacity
 	ColorPickerHueOnly
 	PopoverPosition={PopoverPosition.centerCenterRightTop}
-	PopoverAnchorBy={ID + ElementIds.appbarSettingsButton}
-	id={ID + ElementIds.appbarColorPicker}
-	aria-labelledby={ID + ElementIds.appbarSettingsAccentButton}
+	PopoverAnchorBy={ElementIds.appbarSettingsButton}
+	id={ElementIds.appbarColorPicker}
+	aria-labelledby={ElementIds.appbarSettingsAccentButton}
 />
-<Menu id={ID + ElementIds.appbarInfoMenu} PopoverAnchorBy={ID + ElementIds.appbarInfoButton}>
+<Menu id={ElementIds.appbarInfoMenu} PopoverAnchorBy={ElementIds.appbarInfoButton}>
 	<LinkMenuItem href="/">
 		<img src={logoRedmerah.src} width="16"/>
 		Redmerah
@@ -130,7 +130,7 @@ import { IconCodes } from '@/enums/icons'
 		Terms & conditions
 	</LinkMenuItem>
 	<Divider />
-	<MenuItem id={ID + ElementIds.appbarInfoShareButton}>
+	<MenuItem id={ElementIds.appbarInfoShareButton}>
 		<Icon IconCode={IconCodes.shareAndroid}/>
 		Share
 	</MenuItem>

@@ -1,7 +1,6 @@
 import { AppBarAttributes, ElementIds, ID } from "./_enums"
 
-
-function _(): void {
+export default () => {
 	const appbar = document.getElementById(ID + ElementIds.appbar) as HTMLElement
 	let isTop = window.scrollY <= 16
 
@@ -15,5 +14,3 @@ function _(): void {
 		appbar.toggleAttribute(AppBarAttributes.top, isTop)
 	})
 }
-
-export default _

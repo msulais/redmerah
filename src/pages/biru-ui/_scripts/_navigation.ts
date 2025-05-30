@@ -1,5 +1,5 @@
 import { SideBarClasses, updateSideBarButtonRef } from "@/native-components/SideBar"
-import { ID, ElementIds } from "./_enums"
+import { ElementIds } from "./_enums"
 import { ButtonVariant } from "@/native-components/Button"
 import { isAnimationAllowed } from "@/utils/animation"
 import { AnimationEffectTiming } from "@/enums/animation"
@@ -10,8 +10,8 @@ import CSS from '../_index.module.scss'
 const $ = (id: string) => document.getElementById(id)
 
 function initNavigationEvents(): void {
-	const navigation = $(ID + ElementIds.navigationSideBar)
-	const drawer = $(ID + ElementIds.navigationDrawer)
+	const navigation = $(ElementIds.navigationSideBar)
+	const drawer = $(ElementIds.navigationDrawer)
 
 	function onClick(parent: HTMLElement): void {
 		const tab = document.activeElement as HTMLButtonElement
@@ -95,8 +95,6 @@ function initNavigationEvents(): void {
 	navigation?.addEventListener('click', () => onClick(navigation))
 }
 
-function _(): void {
+export default () => {
 	initNavigationEvents()
 }
-
-export default _

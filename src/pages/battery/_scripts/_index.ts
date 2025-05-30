@@ -1,6 +1,6 @@
 import type { BatteryManager } from '@/interfaces/battery'
 import appbar from './_appbar'
-import { ElementIds, ID } from './_enums'
+import { ElementIds } from './_enums'
 import { updateIconRef } from '@/native-components/Icon'
 import { isAnimationAllowed } from '@/utils/animation'
 import { elementAnimateUpdateText } from '@/utils/element'
@@ -8,21 +8,21 @@ import { IconCodes } from '@/enums/icons'
 
 const $ = (id: string) => document.getElementById(id)
 
-function checkBrowserCompatibility(): void {
+function _checkBrowserCompatibility(): void {
 	const supported = 'getBattery' in navigator
 	if (supported) return
 
-	const dialog = $(ID + ElementIds.dialogBrowserNotSupported) as HTMLDialogElement
+	const dialog = $(ElementIds.dialogBrowserNotSupported) as HTMLDialogElement
 	dialog.showModal()
 }
 
-function initEvents(): void {
+function _initEvents(): void {
 	const supported = 'getBattery' in navigator
 	if (!supported) return
 
-	const levelTextRef = $(ID + ElementIds.bodyLevelText) as HTMLHeadingElement
-	const statusIconRef = $(ID + ElementIds.bodyStatusIcon) as HTMLElement
-	const statusTextRef = $(ID + ElementIds.bodyStatusText) as HTMLSpanElement
+	const levelTextRef = $(ElementIds.bodyLevelText) as HTMLHeadingElement
+	const statusIconRef = $(ElementIds.bodyStatusIcon) as HTMLElement
+	const statusTextRef = $(ElementIds.bodyStatusText) as HTMLSpanElement
 	;((navigator as any).getBattery() as Promise<BatteryManager>).then((battery) => {
 		const update = () => {
 			const charging = battery.charging
@@ -50,8 +50,8 @@ function initEvents(): void {
 
 function main(): void {
 	appbar()
-	checkBrowserCompatibility()
-	initEvents()
+	_checkBrowserCompatibility()
+	_initEvents()
 }
 
 main()

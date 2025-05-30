@@ -5,7 +5,7 @@ import Popover from '@/native-components/Popover/index.astro'
 import Button from '@/native-components/Button/index.astro'
 import Select from '@/native-components/Select/index.astro'
 import SelectOption from '@/native-components/Select/SelectOption.astro'
-import { ElementIds, ID } from '../../_scripts/_enums'
+import { ElementIds } from '../../_scripts/_enums'
 import CSS from '../../_index.module.scss'
 import { ButtonVariant } from '@/native-components/Button'
 import { FlyoutPosition } from '@/enums/position'
@@ -13,23 +13,23 @@ import { FlyoutPosition } from '@/enums/position'
 <div
 	class={CSS.bodyPage}
 	role="tabpanel"
-	id={ID + ElementIds.panelPopover}
+	id={ElementIds.panelPopover}
 	hidden>
 	<h2>Popover</h2>
 	<p>A popover is a small, temporary window that appears when a user interacts with an element (e.g., hovers over a button). It provides additional information, options, or tools related to the element.</p>
 	<div class={CSS.bodyPlayground}>
 		<Button
 			ButtonVariant={ButtonVariant.tonal}
-			id={ID + ElementIds.panelPopoverPreviewButtonOpen}
-			aria-controls={ID + ElementIds.panelPopoverPreviewPopover}
+			id={ElementIds.panelPopoverPreviewButtonOpen}
+			aria-controls={ElementIds.panelPopoverPreviewPopover}
 			aria-haspopup="true"
-			popovertarget={ID + ElementIds.panelPopoverPreviewPopover}>
+			popovertarget={ElementIds.panelPopoverPreviewPopover}>
 			Open popover
 		</Button>
 		<Popover
 			aria-label="Popover"
-			id={ID + ElementIds.panelPopoverPreviewPopover}
-			PopoverAnchorBy={ID + ElementIds.panelPopoverPreviewButtonOpen}
+			id={ElementIds.panelPopoverPreviewPopover}
+			PopoverAnchorBy={ElementIds.panelPopoverPreviewButtonOpen}
 			PopoverContentAttr={{
 				style: "padding: 16px;width: 280px"
 			}}
@@ -43,21 +43,21 @@ import { FlyoutPosition } from '@/enums/position'
 			/>
 			<p style="padding:8px 0 16px 0">Consequat commodo sint incididunt nulla duis commodo elit enim aliquip ex occaecat eiusmod.</p>
 			<Button
-				id={ID + ElementIds.panelPopoverPreviewButtonClose}
-				aria-controls={ID + ElementIds.panelPopoverPreviewPopover}
+				id={ElementIds.panelPopoverPreviewButtonClose}
+				aria-controls={ElementIds.panelPopoverPreviewPopover}
 				ButtonVariant={ButtonVariant.filled}
-				popovertarget={ID + ElementIds.panelPopoverPreviewPopover}
+				popovertarget={ElementIds.panelPopoverPreviewPopover}
 				popovertargetaction={'hide'}>
 				Close popover
 			</Button>
 		</Popover>
 	</div>
-	<div class={CSS.bodyOptions} id={ID + ElementIds.panelPopoverOptions}>
+	<div class={CSS.bodyOptions} id={ElementIds.panelPopoverOptions}>
 		<div class={CSS.bodyOptionsGroup} style="margin-right:12px">
-			<label id={ID + ElementIds.panelPopoverOptionsPositionLabel}>Position:</label>
+			<label id={ElementIds.panelPopoverOptionsPositionLabel}>Position:</label>
 			<Select
-				aria-labelledby={ID + ElementIds.panelPopoverOptionsPositionLabel}
-				id={ID + ElementIds.panelPopoverOptionsPosition}>
+				aria-labelledby={ElementIds.panelPopoverOptionsPositionLabel}
+				id={ElementIds.panelPopoverOptionsPosition}>
 				{[
 					[FlyoutPosition.centerBottom, 'Center bottom'],
 					[FlyoutPosition.centerBottomToLeft, 'Center bottom to left'],
@@ -91,7 +91,7 @@ import { FlyoutPosition } from '@/enums/position'
 		</div>
 		<div class={CSS.bodyOptionsGroup} style="margin-right:12px">
 			<label
-				for={ID + ElementIds.panelPopoverOptionsPadding}>
+				for={ElementIds.panelPopoverOptionsPadding}>
 				Padding:
 			</label>
 			<TextField
@@ -100,13 +100,13 @@ import { FlyoutPosition } from '@/enums/position'
 					type: 'number',
 					min: 0,
 					style: 'width:100px',
-					id: ID + ElementIds.panelPopoverOptionsPadding
+					id: ElementIds.panelPopoverOptionsPadding
 				}}
 			/>
 		</div>
 		<div class={CSS.bodyOptionsGroup} style="margin-right:12px">
 			<label
-				for={ID + ElementIds.panelPopoverOptionsGap}>
+				for={ElementIds.panelPopoverOptionsGap}>
 				Gap:
 			</label>
 			<TextField
@@ -115,20 +115,20 @@ import { FlyoutPosition } from '@/enums/position'
 					type: 'number',
 					min: 0,
 					style: 'width:100px',
-					id: ID + ElementIds.panelPopoverOptionsGap
+					id: ElementIds.panelPopoverOptionsGap
 				}}
 			/>
 		</div>
 		<CheckBox
 			CheckBoxInputAttr={{
-				id: ID + ElementIds.panelPopoverOptionsAnchor,
+				id: ElementIds.panelPopoverOptionsAnchor,
 				checked: true
 			}}>
 			Anchor
 		</CheckBox>
 		<CheckBox
 			CheckBoxInputAttr={{
-				id: ID + ElementIds.panelPopoverOptionsDraggable,
+				id: ElementIds.panelPopoverOptionsDraggable,
 			}}>
 			Draggable
 		</CheckBox>

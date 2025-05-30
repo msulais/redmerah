@@ -14,7 +14,7 @@ import Divider from '@/native-components/Divider/index.astro'
 import Button from '@/native-components/Button/index.astro'
 import Select from '@/native-components/Select/index.astro'
 import SelectOption from '@/native-components/Select/SelectOption.astro'
-import { ElementIds, ID, RadioGroupNames } from '../../_scripts/_enums'
+import { ElementIds, RadioGroupNames } from '../../_scripts/_enums'
 import CSS from '../../_index.module.scss'
 import { ButtonVariant } from '@/native-components/Button'
 import { FlyoutPosition } from '@/enums/position'
@@ -24,23 +24,23 @@ import { IconCodes } from '@/enums/icons'
 <div
 	class={CSS.bodyPage}
 	role="tabpanel"
-	id={ID + ElementIds.panelMenu}
+	id={ElementIds.panelMenu}
 	hidden>
 	<h2>Menu</h2>
 	<p>A menu is a collection of options or commands that are presented to the user. It can be a simple list of items, a hierarchical structure, or a combination of both. Menus are commonly used for navigation, actions, or settings.</p>
 	<div class={CSS.bodyPlayground}>
 		<Button
 			ButtonVariant={ButtonVariant.tonal}
-			id={ID + ElementIds.panelMenuPreviewButton}
-			aria-controls={ID + ElementIds.panelMenuPreviewMenu}
+			id={ElementIds.panelMenuPreviewButton}
+			aria-controls={ElementIds.panelMenuPreviewMenu}
 			aria-haspopup="menu"
-			popovertarget={ID + ElementIds.panelMenuPreviewMenu}>
+			popovertarget={ElementIds.panelMenuPreviewMenu}>
 			Open menu
 		</Button>
 		<Menu
 			PopoverPosition={MenuPosition.centerBottomToRight}
-			PopoverAnchorBy={ID + ElementIds.panelMenuPreviewButton}
-			id={ID + ElementIds.panelMenuPreviewMenu}>
+			PopoverAnchorBy={ElementIds.panelMenuPreviewButton}
+			id={ElementIds.panelMenuPreviewMenu}>
 			<MenuHeader>Actions</MenuHeader>
 			<MenuItem>
 				<Icon IconCode={IconCodes.copy}/>
@@ -85,13 +85,13 @@ import { IconCodes } from '@/enums/icons'
 			</RadioMenuItem>
 			<Divider/>
 			<MenuHeader>Sub menus</MenuHeader>
-			<SubMenuItem popovertarget={ID + ElementIds.panelMenuPreviewMenu2}>
+			<SubMenuItem popovertarget={ElementIds.panelMenuPreviewMenu2}>
 				<MenuIndent/>
 				Level 1
 				<div style="flex:1"/>
 				<Icon IconCode={IconCodes.chevronRight}/>
 			</SubMenuItem>
-			<SubMenu id={ID + ElementIds.panelMenuPreviewMenu2} slot="submenus">
+			<SubMenu id={ElementIds.panelMenuPreviewMenu2} slot="submenus">
 				<MenuItem>
 					<Icon IconCode={IconCodes.copy}/>
 					Copy
@@ -112,13 +112,13 @@ import { IconCodes } from '@/enums/icons'
 				</MenuItem>
 			</SubMenu>
 
-			<SubMenuItem popovertarget={ID + ElementIds.panelMenuPreviewMenu3}>
+			<SubMenuItem popovertarget={ElementIds.panelMenuPreviewMenu3}>
 				<MenuIndent/>
 				Level 2
 				<div style="flex:1"/>
 				<Icon IconCode={IconCodes.chevronRight}/>
 			</SubMenuItem>
-			<SubMenu id={ID + ElementIds.panelMenuPreviewMenu3} slot='submenus'>
+			<SubMenu id={ElementIds.panelMenuPreviewMenu3} slot='submenus'>
 				<MenuItem>
 					<Icon IconCode={IconCodes.copy}/>
 					Copy
@@ -138,13 +138,13 @@ import { IconCodes } from '@/enums/icons'
 					<MenuIndent/>
 				</MenuItem>
 				<Divider />
-				<SubMenuItem popovertarget={ID + ElementIds.panelMenuPreviewMenu5}>
+				<SubMenuItem popovertarget={ElementIds.panelMenuPreviewMenu5}>
 					<MenuIndent/>
 					Next level
 					<div style="flex:1"/>
 					<Icon IconCode={IconCodes.chevronRight}/>
 				</SubMenuItem>
-				<SubMenu id={ID + ElementIds.panelMenuPreviewMenu5} slot='submenus'>
+				<SubMenu id={ElementIds.panelMenuPreviewMenu5} slot='submenus'>
 					<MenuItem>
 						<Icon IconCode={IconCodes.copy}/>
 						Copy
@@ -166,13 +166,13 @@ import { IconCodes } from '@/enums/icons'
 				</SubMenu>
 			</SubMenu>
 
-			<SubMenuItem popovertarget={ID + ElementIds.panelMenuPreviewMenu4}>
+			<SubMenuItem popovertarget={ElementIds.panelMenuPreviewMenu4}>
 				<MenuIndent/>
 				Level 3
 				<div style="flex:1"/>
 				<Icon IconCode={IconCodes.chevronRight}/>
 			</SubMenuItem>
-			<SubMenu id={ID + ElementIds.panelMenuPreviewMenu4} slot="submenus">
+			<SubMenu id={ElementIds.panelMenuPreviewMenu4} slot="submenus">
 				<MenuItem>
 					<Icon IconCode={IconCodes.copy}/>
 					Copy
@@ -192,13 +192,13 @@ import { IconCodes } from '@/enums/icons'
 					<MenuIndent/>
 				</MenuItem>
 				<Divider />
-				<SubMenuItem popovertarget={ID + ElementIds.panelMenuPreviewMenu6}>
+				<SubMenuItem popovertarget={ElementIds.panelMenuPreviewMenu6}>
 					<MenuIndent/>
 					Next level
 					<div style="flex:1"/>
 					<Icon IconCode={IconCodes.chevronRight}/>
 				</SubMenuItem>
-				<SubMenu id={ID + ElementIds.panelMenuPreviewMenu6} slot='submenus'>
+				<SubMenu id={ElementIds.panelMenuPreviewMenu6} slot='submenus'>
 					<MenuItem>
 						<Icon IconCode={IconCodes.copy}/>
 						Copy
@@ -218,13 +218,13 @@ import { IconCodes } from '@/enums/icons'
 						<MenuIndent/>
 					</MenuItem>
 					<Divider />
-					<SubMenuItem popovertarget={ID + ElementIds.panelMenuPreviewMenu7}>
+					<SubMenuItem popovertarget={ElementIds.panelMenuPreviewMenu7}>
 						<MenuIndent/>
 						Next level
 						<div style="flex:1"/>
 						<Icon IconCode={IconCodes.chevronRight}/>
 					</SubMenuItem>
-					<SubMenu id={ID + ElementIds.panelMenuPreviewMenu7} slot='submenus'>
+					<SubMenu id={ElementIds.panelMenuPreviewMenu7} slot='submenus'>
 						<MenuItem>
 							<Icon IconCode={IconCodes.copy}/>
 							Copy
@@ -248,12 +248,12 @@ import { IconCodes } from '@/enums/icons'
 			</SubMenu>
 		</Menu>
 	</div>
-	<div class={CSS.bodyOptions} id={ID + ElementIds.panelMenuOptions}>
+	<div class={CSS.bodyOptions} id={ElementIds.panelMenuOptions}>
 		<div class={CSS.bodyOptionsGroup} style="margin-right:12px">
-			<label id={ID + ElementIds.panelMenuOptionsPositionLabel}>Position:</label>
+			<label id={ElementIds.panelMenuOptionsPositionLabel}>Position:</label>
 			<Select
-				aria-labelledby={ID + ElementIds.panelMenuOptionsPositionLabel}
-				id={ID + ElementIds.panelMenuOptionsPosition}>
+				aria-labelledby={ElementIds.panelMenuOptionsPositionLabel}
+				id={ElementIds.panelMenuOptionsPosition}>
 				{[
 					[FlyoutPosition.centerBottom, 'Center bottom'],
 					[FlyoutPosition.centerBottomToLeft, 'Center bottom to left'],
@@ -287,7 +287,7 @@ import { IconCodes } from '@/enums/icons'
 		</div>
 		<div class={CSS.bodyOptionsGroup} style="margin-right:12px">
 			<label
-				for={ID + ElementIds.panelMenuOptionsGap}>
+				for={ElementIds.panelMenuOptionsGap}>
 				Gap:
 			</label>
 			<TextField
@@ -296,13 +296,13 @@ import { IconCodes } from '@/enums/icons'
 					type: 'number',
 					min: 0,
 					style: 'width:100px',
-					id: ID + ElementIds.panelMenuOptionsGap
+					id: ElementIds.panelMenuOptionsGap
 				}}
 			/>
 		</div>
 		<CheckBox
 			CheckBoxInputAttr={{
-				id: ID + ElementIds.panelMenuOptionsAnchor,
+				id: ElementIds.panelMenuOptionsAnchor,
 				checked: true
 			}}>
 			Anchor

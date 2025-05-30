@@ -3,11 +3,11 @@ import AppBar from '@/native-components/AppBar/index.astro'
 import IconButton from '@/native-components/Button/IconButton.astro'
 import Tooltip from '@/native-components/Tooltip/index.astro'
 import { APP_BATTERY as APP } from '@/constants/apps'
-import { ElementIds, ID } from '../_scripts/_enums'
+import { ElementIds } from '../_scripts/_enums'
 import { IconCodes } from '@/enums/icons'
 ---
 
-<AppBar id={ID + ElementIds.appbar}>
+<AppBar id={ElementIds.appbar}>
 	<Fragment slot="leading">
 		<img
 			src={APP.logoUrl}
@@ -19,24 +19,18 @@ import { IconCodes } from '@/enums/icons'
 	<Fragment slot="headline">{APP.name}</Fragment>
 	<Tooltip slot="trailing">
 		<IconButton
-			id={ID + ElementIds.appbarInfoButton}
+			id={ElementIds.appbarInfoButton}
 			data-tooltip="Info"
 			IconButtonCode={IconCodes.info}
 			aria-label="Info"
-			aria-haspopup="menu"
-			aria-expanded="false"
-			aria-controls={ID + ElementIds.appbarInfoMenu}
-			popovertarget={ID + ElementIds.appbarInfoMenu}
+			popovertarget={ElementIds.appbarInfoMenu}
 		/>
 		<IconButton
-			id={ID + ElementIds.appbarSettingsButton}
+			id={ElementIds.appbarSettingsButton}
 			data-tooltip="Settings"
 			IconButtonCode={IconCodes.settings}
 			aria-label="Settings"
-			aria-haspopup="menu"
-			aria-expanded="false"
-			aria-controls={ID + ElementIds.appbarSettingsMenu}
-			popovertarget={ID + ElementIds.appbarSettingsMenu}
+			popovertarget={ElementIds.appbarSettingsMenu}
 		/>
 	</Tooltip>
 </AppBar>

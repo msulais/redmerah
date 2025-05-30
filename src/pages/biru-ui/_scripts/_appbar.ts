@@ -1,6 +1,6 @@
 import { updateButtonRef } from "@/native-components/Button"
 import { closeMenuRef } from "@/native-components/Menu"
-import { ID, ElementIds, RadioGroupNames } from "./_enums"
+import { ElementIds, RadioGroupNames } from "./_enums"
 import { LocalStorageKeys } from "@/enums/storage"
 import { validEnumValue } from "@/utils/object"
 import { RootAttributes } from "@/enums/attributes"
@@ -12,49 +12,29 @@ import { GlobalElementIds } from "@/enums/ids"
 
 const $ = (id: string) => document.getElementById(id)
 const $$ = (selector: string, from = document) => from.querySelector(selector)
-const root = document.documentElement
-const infoButton = $(ID + ElementIds.appbarInfoButton) as HTMLButtonElement
-const shareButton = $(ID + ElementIds.appbarInfoShareButton) as HTMLButtonElement
-const infoMenu = $(ID + ElementIds.appbarInfoMenu) as HTMLDivElement
-const settingsButton = $(ID + ElementIds.appbarSettingsButton) as HTMLButtonElement
-const settingsMenu = $(ID + ElementIds.appbarSettingsMenu) as HTMLDivElement
-const settingsThemeMenu = $(ID + ElementIds.appbarSettingsThemeMenu) as HTMLDivElement
-const settingsAnimationMenu = $(ID + ElementIds.appbarSettingsAnimationMenu) as HTMLDivElement
+const _rootRef = document.documentElement
+const _infoButtonRef = $(ElementIds.appbarInfoButton) as HTMLButtonElement
+const _shareButtonRef = $(ElementIds.appbarInfoShareButton) as HTMLButtonElement
+const _infoMenuRef = $(ElementIds.appbarInfoMenu) as HTMLDivElement
+const _settingsButtonRef = $(ElementIds.appbarSettingsButton) as HTMLButtonElement
+const _settingsMenuRef = $(ElementIds.appbarSettingsMenu) as HTMLDivElement
+const _settingsThemeMenuRef = $(ElementIds.appbarSettingsThemeMenu) as HTMLDivElement
+const _settingsAnimationMenuRef = $(ElementIds.appbarSettingsAnimationMenu) as HTMLDivElement
+const _accentButtonRef = $(ElementIds.appbarSettingsAccentButton) as HTMLButtonElement
+const _colorPickerRef = $(ElementIds.appbarColorPicker) as HTMLDivElement
+const _accentColorElement = $(GlobalElementIds.colorAccent) as HTMLStyleElement
+let _timeAccentId: number | NodeJS.Timeout | null = null
 
-function initSettingsMenu(): void {
-	const rgbToCSS = (rgb: RGBColor) => `${Math.round(rgb.r * 0xff)}, ${Math.round(rgb.g * 0xff)}, ${Math.round(rgb.b * 0xff)}`
-	const accentButtonRef = $(ID + ElementIds.appbarSettingsAccentButton) as HTMLButtonElement
-	const colorPickerRef = $(ID + ElementIds.appbarColorPicker) as HTMLDivElement
-	const accentColorElement = $(GlobalElementIds.colorAccent) as HTMLStyleElement
-	let timeAccentId: number | NodeJS.Timeout | null = null
-
-	settingsMenu.addEventListener('click', () => {
-		switch (document.activeElement) {
-		case accentButtonRef:
-			openColorPickerRef(colorPickerRef)
-			closeMenuRef(settingsMenu)
-			break
-		}
-	})
-
-	colorPickerRef.addEventListener(ColorPickerEvents.input, () => {
-		if (timeAccentId !== null) clearTimeout(timeAccentId)
-
-		timeAccentId = setTimeout(() => {
-			const accent = colorPickerRef.getAttribute(ColorPickerAttributes.value)! as HEXColor
-			const palette = colorGeneratePalette(accent)
-			accentColorElement.innerHTML = `:root{--g-color-accent-light: ${rgbToCSS(colorHexToRgb(palette.color))};--g-color-accent-dark: ${rgbToCSS(colorHexToRgb(palette.colorDark))};--g-color-on-accent-light: ${rgbToCSS(colorHexToRgb(palette.onColor))};--g-color-on-accent-dark: ${rgbToCSS(colorHexToRgb(palette.onColorDark))};}`;
-			localStorage.setItem(LocalStorageKeys.platformAccentColor, accent)
-		}, 10)
-	})
+function _rgbToCSS(rgb: RGBColor) {
+	return `${Math.round(rgb.r * 0xff)}, ${Math.round(rgb.g * 0xff)}, ${Math.round(rgb.b * 0xff)}`
 }
 
-function initSettings(): void {
+function _initSettings(): void {
 	function initTheme(): void {
 		const theme = localStorage.getItem(LocalStorageKeys.platformTheme)
 		if (!theme || !validEnumValue(theme, PlatformThemeMode)) return
 
-		root.setAttribute(RootAttributes.theme, theme)
+		_rootRef.setAttribute(RootAttributes.theme, theme)
 		const previous = $$(
 			`input[name="${CSS.escape(RadioGroupNames.settingsTheme)}"]:checked`
 		) as HTMLInputElement
@@ -71,7 +51,7 @@ function initSettings(): void {
 		const animation = localStorage.getItem(LocalStorageKeys.platformAnimation)
 		if (!animation || !validEnumValue(animation, PlatformAnimationMode)) return
 
-		root.setAttribute(RootAttributes.animation, animation)
+		_rootRef.setAttribute(RootAttributes.animation, animation)
 		const previous = $$(
 			`input[name="${CSS.escape(RadioGroupNames.settingsAnimation)}"]:checked`
 		) as HTMLInputElement
@@ -90,7 +70,7 @@ function initSettings(): void {
 
 		const rgbToCSS = (rgb: RGBColor) => `${Math.round(rgb.r * 0xff)}, ${Math.round(rgb.g * 0xff)}, ${Math.round(rgb.b * 0xff)}`
 		const accentColorElement = $(GlobalElementIds.colorAccent) as HTMLStyleElement
-		const colorPickerRef = $(ID + ElementIds.appbarColorPicker) as HTMLDivElement
+		const colorPickerRef = $(ElementIds.appbarColorPicker) as HTMLDivElement
 		const palette = colorGeneratePalette(accent as HEXColor)
 		accentColorElement.innerHTML = `:root{--g-color-accent-light: ${rgbToCSS(colorHexToRgb(palette.color))};--g-color-accent-dark: ${rgbToCSS(colorHexToRgb(palette.colorDark))};--g-color-on-accent-light: ${rgbToCSS(colorHexToRgb(palette.onColor))};--g-color-on-accent-dark: ${rgbToCSS(colorHexToRgb(palette.onColorDark))};}`;
 		updateColorPickerRef(colorPickerRef, {
@@ -103,66 +83,72 @@ function initSettings(): void {
 	initAccentColor()
 }
 
-function initSettingsAnimationMenuEvents(): void {
-	settingsAnimationMenu.addEventListener('change', ev => {
-		const target = ev.target as HTMLInputElement
-		const value = target?.value
-		if (!value || !validEnumValue(value, PlatformAnimationMode)) return
-
-		localStorage.setItem(LocalStorageKeys.platformAnimation, value)
-		root.setAttribute(RootAttributes.animation, value)
-		closeMenuRef(settingsMenu)
+function _initEvents(): void {
+	_settingsMenuRef.addEventListener('click', () => {
+		switch (document.activeElement) {
+		case _accentButtonRef:
+			openColorPickerRef(_colorPickerRef)
+			closeMenuRef(_settingsMenuRef)
+			break
+		}
 	})
-}
 
-function initSettingsThemeMenuEvents(): void {
-	settingsThemeMenu.addEventListener('change', ev => {
-		const target = ev.target as HTMLInputElement
-		const value = target?.value
-		if (!value || !validEnumValue(value, PlatformThemeMode)) return
+	_colorPickerRef.addEventListener(ColorPickerEvents.input, () => {
+		if (_timeAccentId !== null) clearTimeout(_timeAccentId)
 
-		localStorage.setItem(LocalStorageKeys.platformTheme, value)
-		root.setAttribute(RootAttributes.theme, value)
-		closeMenuRef(settingsMenu)
+		_timeAccentId = setTimeout(() => {
+			const accent = _colorPickerRef.getAttribute(ColorPickerAttributes.value)! as HEXColor
+			const palette = colorGeneratePalette(accent)
+			_accentColorElement.innerHTML = `:root{--g-color-accent-light: ${_rgbToCSS(colorHexToRgb(palette.color))};--g-color-accent-dark: ${_rgbToCSS(colorHexToRgb(palette.colorDark))};--g-color-on-accent-light: ${_rgbToCSS(colorHexToRgb(palette.onColor))};--g-color-on-accent-dark: ${_rgbToCSS(colorHexToRgb(palette.onColorDark))};}`;
+			localStorage.setItem(LocalStorageKeys.platformAccentColor, accent)
+		}, 50)
 	})
-}
 
-function initInfoMenuEvents(): void {
-	shareButton.addEventListener('click', () => {
+	_settingsMenuRef.addEventListener('toggle', ev => {
+		const open = (ev as ToggleEvent).newState === 'open'
+		updateButtonRef(_settingsButtonRef, {
+			ButtonFocused: open
+		})
+	})
+
+	_infoMenuRef.addEventListener('toggle', ev => {
+		const open = (ev as ToggleEvent).newState === 'open'
+		updateButtonRef(_infoButtonRef, {
+			ButtonFocused: open
+		})
+	})
+
+	_shareButtonRef.addEventListener('click', () => {
 		navigator.share({
 			title: 'BiruUI',
 			url: document.URL,
 			text: 'BiruUI'
 		})
-		closeMenuRef(infoMenu)
+		closeMenuRef(_infoMenuRef)
+	})
+
+	_settingsThemeMenuRef.addEventListener('change', ev => {
+		const target = ev.target as HTMLInputElement
+		const value = target?.value
+		if (!value || !validEnumValue(value, PlatformThemeMode)) return
+
+		localStorage.setItem(LocalStorageKeys.platformTheme, value)
+		_rootRef.setAttribute(RootAttributes.theme, value)
+		closeMenuRef(_settingsMenuRef)
+	})
+
+	_settingsAnimationMenuRef.addEventListener('change', ev => {
+		const target = ev.target as HTMLInputElement
+		const value = target?.value
+		if (!value || !validEnumValue(value, PlatformAnimationMode)) return
+
+		localStorage.setItem(LocalStorageKeys.platformAnimation, value)
+		_rootRef.setAttribute(RootAttributes.animation, value)
+		closeMenuRef(_settingsMenuRef)
 	})
 }
 
-function initGlobalMenuEvents(): void {
-	settingsMenu.addEventListener('toggle', ev => {
-		const open = (ev as ToggleEvent).newState === 'open'
-		settingsButton.setAttribute('aria-expanded', String(open))
-		updateButtonRef(settingsButton, {
-			ButtonFocused: open
-		})
-	})
-
-	infoMenu.addEventListener('toggle', ev => {
-		const open = (ev as ToggleEvent).newState === 'open'
-		infoButton.setAttribute('aria-expanded', String(open))
-		updateButtonRef(infoButton, {
-			ButtonFocused: open
-		})
-	})
+export default () => {
+	_initEvents()
+	_initSettings()
 }
-
-const _ = () => {
-	initGlobalMenuEvents()
-	initInfoMenuEvents()
-	initSettings()
-	initSettingsAnimationMenuEvents()
-	initSettingsThemeMenuEvents()
-	initSettingsMenu()
-}
-
-export default _

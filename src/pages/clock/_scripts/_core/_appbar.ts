@@ -14,7 +14,26 @@ const _sideBarRef = $(ElementIds.navigationSideBar) as HTMLDivElement
 const _drawerRef = $(ElementIds.navigationDrawer) as HTMLDivElement
 const _shareButtonRef = $(ElementIds.appbarInfoMenuShareButton) as HTMLButtonElement
 
-function _initMenuEvents(): void {
+function _initEvents(): void {
+	_shareButtonRef.addEventListener('click', () => {
+		_infoMenuRef.hidePopover()
+		navigator.share({
+			text: app.name,
+			url: document.URL
+		})
+	})
+
+	_sideBarButtonRef.addEventListener('click', () => {
+		if (window.matchMedia(`(max-width: ${SCREEN_WIDTH_SMALL}px)`).matches) {
+			_drawerRef.togglePopover()
+			return
+		}
+
+		updateSideBarRef(_sideBarRef, {
+			SideBarMinimized: !_sideBarRef.hasAttribute(SideBarAttributes.minimized)
+		})
+	})
+
 	_infoMenuRef.addEventListener('beforetoggle', ev => {
 		const isOpen = (ev as ToggleEvent).newState === 'open'
 		updateIconButtonRef(_infoButtonRef, {
@@ -30,31 +49,6 @@ function _initMenuEvents(): void {
 	})
 }
 
-function _initSideBarButtonEvents(): void {
-	_sideBarButtonRef.addEventListener('click', () => {
-		if (window.matchMedia(`(max-width: ${SCREEN_WIDTH_SMALL}px)`).matches) {
-			_drawerRef.togglePopover()
-			return
-		}
-
-		updateSideBarRef(_sideBarRef, {
-			SideBarMinimized: !_sideBarRef.hasAttribute(SideBarAttributes.minimized)
-		})
-	})
-}
-
-function _initShareButtonEvents(): void {
-	_shareButtonRef.addEventListener('click', () => {
-		_infoMenuRef.hidePopover()
-		navigator.share({
-			text: app.name,
-			url: document.URL
-		})
-	})
-}
-
 export default () => {
-	_initMenuEvents()
-	_initSideBarButtonEvents()
-	_initShareButtonEvents()
+	_initEvents()
 }

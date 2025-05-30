@@ -3,41 +3,41 @@ import CheckBox from '@/native-components/CheckBox/index.astro'
 import Tooltip from '@/native-components/Tooltip/index.astro'
 import Button from '@/native-components/Button/index.astro'
 import ColorPicker from '@/native-components/ColorPicker/index.astro'
-import { ElementIds, ID } from '../../_scripts/_enums'
+import { ElementIds } from '../../_scripts/_enums'
 import CSS from '../../_index.module.scss'
 import { ButtonVariant } from '@/native-components/Button'
 ---
 <div
 	class={CSS.bodyPage}
 	role="tabpanel"
-	id={ID + ElementIds.panelColorpicker}
+	id={ElementIds.panelColorpicker}
 	hidden>
 	<h2>ColorPicker</h2>
 	<p>A color picker is a UI element that allows users to select a color from a defined color space. It typically provides a visual representation of colors and offers various methods for color selection, such as palettes, sliders, or color wheels.</p>
 	<div class={CSS.bodyPlayground}>
 		<Tooltip>
 			<Button
-				id={ID + ElementIds.panelColorpickerPreviewButton}
+				id={ElementIds.panelColorpickerPreviewButton}
 				ButtonVariant={ButtonVariant.tonal}
-				popovertarget={ID + ElementIds.panelColorpickerPreviewColorPicker}>
+				popovertarget={ElementIds.panelColorpickerPreviewColorPicker}>
 				Pick color
 			</Button>
 		</Tooltip>
 		<ColorPicker
-			PopoverAnchorBy={ID + ElementIds.panelColorpickerPreviewButton}
-			id={ID + ElementIds.panelColorpickerPreviewColorPicker}
+			PopoverAnchorBy={ElementIds.panelColorpickerPreviewButton}
+			id={ElementIds.panelColorpickerPreviewColorPicker}
 		/>
 	</div>
-	<div class={CSS.bodyOptions} id={ID + ElementIds.panelColorpickerOptions}>
+	<div class={CSS.bodyOptions} id={ElementIds.panelColorpickerOptions}>
 		<CheckBox
 			CheckBoxInputAttr={{
-				id: ID + ElementIds.panelColorpickerOptionsHueOnly,
+				id: ElementIds.panelColorpickerOptionsHueOnly,
 			}}>
 			Hue only
 		</CheckBox>
 		<CheckBox
 			CheckBoxInputAttr={{
-				id: ID + ElementIds.panelColorpickerOptionsDisabledOpacity,
+				id: ElementIds.panelColorpickerOptionsDisabledOpacity,
 			}}>
 			Disabled opacity
 		</CheckBox>

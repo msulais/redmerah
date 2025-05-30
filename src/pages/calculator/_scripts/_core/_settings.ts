@@ -17,17 +17,17 @@ import { Commands } from "../_shared/_commands"
 import { saveStorageItem } from "./_database"
 
 export type SettingsStoreType = Readonly<{
-	theme            : PlatformThemeMode
-	animation        : PlatformAnimationMode
-	decimalFormat    : DecimalNumberFormat
-	groupingFormat   : GroupingNumberFormat
+	theme         : PlatformThemeMode
+	animation     : PlatformAnimationMode
+	decimalFormat : DecimalNumberFormat
+	groupingFormat: GroupingNumberFormat
 }>
 
 export const SettingsStore = new ObservableStore<SettingsStoreType>({
-	theme            : PlatformThemeMode.auto,
-	animation        : PlatformAnimationMode.auto,
-	decimalFormat    : DecimalNumberFormat.point,
-	groupingFormat   : GroupingNumberFormat.comma
+	theme         : PlatformThemeMode.auto,
+	animation     : PlatformAnimationMode.auto,
+	decimalFormat : DecimalNumberFormat.point,
+	groupingFormat: GroupingNumberFormat.comma
 })
 const _decimalToken = '@_decimal_@'
 const _groupingToken = '@_grouping_@'

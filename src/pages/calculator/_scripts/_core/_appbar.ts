@@ -14,10 +14,9 @@ const _sideBarRef = $(ElementIds.navigationSideBar) as HTMLDivElement
 const _drawerRef = $(ElementIds.navigationDrawer) as HTMLDivElement
 const _shareButtonRef = $(ElementIds.appbarInfoMenuShareButton) as HTMLButtonElement
 
-function _initMenuToggle(): void {
+function _initEvents(): void {
 	_infoMenuRef.addEventListener('beforetoggle', ev => {
 		const isOpen = (ev as ToggleEvent).newState === 'open'
-		_infoButtonRef.setAttribute('aria-expanded', String(isOpen))
 		updateIconButtonRef(_infoButtonRef, {
 			ButtonFocused: isOpen
 		})
@@ -25,14 +24,19 @@ function _initMenuToggle(): void {
 
 	_settingsMenuRef.addEventListener('beforetoggle', ev => {
 		const isOpen = (ev as ToggleEvent).newState === 'open'
-		_settingsButtonRef.setAttribute('aria-expanded', String(isOpen))
 		updateIconButtonRef(_settingsButtonRef, {
 			ButtonFocused: isOpen
 		})
 	})
-}
 
-function _initSideBarButton(): void {
+	_shareButtonRef.addEventListener('click', () => {
+		_infoMenuRef.hidePopover()
+		navigator.share({
+			text: app.name,
+			url: document.URL
+		})
+	})
+
 	_sideBarButtonRef.addEventListener('click', () => {
 		if (window.matchMedia(`(max-width: ${SCREEN_WIDTH_SMALL}px)`).matches) {
 			_drawerRef.togglePopover()
@@ -45,18 +49,6 @@ function _initSideBarButton(): void {
 	})
 }
 
-function _initShareButtonEvents(): void {
-	_shareButtonRef.addEventListener('click', () => {
-		_infoMenuRef.hidePopover()
-		navigator.share({
-			text: app.name,
-			url: document.URL
-		})
-	})
-}
-
 export default () => {
-	_initMenuToggle()
-	_initSideBarButton()
-	_initShareButtonEvents()
+	_initEvents()
 }

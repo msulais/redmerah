@@ -6,7 +6,7 @@ import Icon from '@/native-components/Icon/index.astro'
 import Button from '@/native-components/Button/index.astro'
 import Select from '@/native-components/Select/index.astro'
 import SelectOption from '@/native-components/Select/SelectOption.astro'
-import { ElementIds, ID } from '../../_scripts/_enums'
+import { ElementIds } from '../../_scripts/_enums'
 import CSS from '../../_index.module.scss'
 import { ButtonVariant } from '@/native-components/Button'
 import { FlyoutPosition } from '@/enums/position'
@@ -16,13 +16,13 @@ import { IconCodes } from '@/enums/icons'
 <div
 	class={CSS.bodyPage}
 	role="tabpanel"
-	id={ID + ElementIds.panelTooltip}
+	id={ElementIds.panelTooltip}
 	hidden>
 	<h2>Tooltip</h2>
 	<p>A tooltip is a small, temporary window that appears when a user hovers over an element. It provides a brief explanation or description of the element's purpose or function. Tooltips are often used to clarify the meaning of icons, buttons, or other UI elements.</p>
 	<div class={CSS.bodyPlayground}>
 		<Tooltip
-			id={ID + ElementIds.panelTooltipPreview}
+			id={ElementIds.panelTooltipPreview}
 			TooltipEndDelay={200}
 			TooltipGap={40}
 			TooltipStartDelay={1000}
@@ -36,12 +36,12 @@ import { IconCodes } from '@/enums/icons'
 			</Button>
 		</Tooltip>
 	</div>
-	<div class={CSS.bodyOptions} id={ID + ElementIds.panelTooltipOptions}>
-		<label id={ID + ElementIds.panelTooltipOptionsPositionLabel}>Position:</label>
+	<div class={CSS.bodyOptions} id={ElementIds.panelTooltipOptions}>
+		<label id={ElementIds.panelTooltipOptionsPositionLabel}>Position:</label>
 		<Select
-			aria-labelledby={ID + ElementIds.panelTooltipOptionsPositionLabel}
+			aria-labelledby={ElementIds.panelTooltipOptionsPositionLabel}
 			style="margin-right:12px"
-			id={ID + ElementIds.panelTooltipOptionsPosition}>
+			id={ElementIds.panelTooltipOptionsPosition}>
 			{[
 				[FlyoutPosition.centerBottom, 'Center bottom'],
 				[FlyoutPosition.centerBottomToLeft, 'Center bottom to left'],
@@ -74,7 +74,7 @@ import { IconCodes } from '@/enums/icons'
 		</Select>
 		<div class={CSS.bodyOptionsGroup}>
 			<label
-				for={ID + ElementIds.panelTooltipOptionsGap}>
+				for={ElementIds.panelTooltipOptionsGap}>
 				Gap:
 			</label>
 			<TextField
@@ -84,13 +84,13 @@ import { IconCodes } from '@/enums/icons'
 					type: 'number',
 					min: 0,
 					style: 'width:100px',
-					id: ID + ElementIds.panelTooltipOptionsGap
+					id: ElementIds.panelTooltipOptionsGap
 				}}
 			/>
 		</div>
 		<div class={CSS.bodyOptionsGroup}>
 			<label
-				for={ID + ElementIds.panelTooltipOptionsStartDelay}>
+				for={ElementIds.panelTooltipOptionsStartDelay}>
 				Start delay (ms):
 			</label>
 			<TextField
@@ -101,13 +101,13 @@ import { IconCodes } from '@/enums/icons'
 					min: 0,
 					step: 50,
 					style: 'width:100px',
-					id: ID + ElementIds.panelTooltipOptionsStartDelay
+					id: ElementIds.panelTooltipOptionsStartDelay
 				}}
 			/>
 		</div>
 		<div class={CSS.bodyOptionsGroup}>
 			<label
-				for={ID + ElementIds.panelTooltipOptionsEndDelay}>
+				for={ElementIds.panelTooltipOptionsEndDelay}>
 				End delay (ms):
 			</label>
 			<TextField
@@ -118,13 +118,13 @@ import { IconCodes } from '@/enums/icons'
 					min: 0,
 					step: 50,
 					style: 'width:100px',
-					id: ID + ElementIds.panelTooltipOptionsEndDelay
+					id: ElementIds.panelTooltipOptionsEndDelay
 				}}
 			/>
 		</div>
 		<CheckBox
 			CheckBoxInputAttr={{
-				id: ID + ElementIds.panelTooltipOptionsAnchor,
+				id: ElementIds.panelTooltipOptionsAnchor,
 			}}>
 			Anchor
 		</CheckBox>

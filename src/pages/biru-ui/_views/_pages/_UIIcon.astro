@@ -3,18 +3,18 @@ import CheckBox from '@/native-components/CheckBox/index.astro'
 import Tooltip from '@/native-components/Tooltip/index.astro'
 import Icon from '@/native-components/Icon/index.astro'
 import ColorPicker from '@/native-components/ColorPicker/index.astro'
-import { ElementIds, ID } from '../../_scripts/_enums'
+import { ElementIds } from '../../_scripts/_enums'
 import CSS from '../../_index.module.scss'
 import { IconCodes } from '@/enums/icons'
 ---
 <div
 	class={CSS.bodyPage}
 	role="tabpanel"
-	id={ID + ElementIds.panelIcon}
+	id={ElementIds.panelIcon}
 	hidden>
 	<h2>Icon</h2>
 	<p>An icon is a small graphic symbol representing an action, object, or concept. Icons are used to enhance user understanding and interaction within an interface.</p>
-	<div class={CSS.bodyPlayground} id={ID + ElementIds.panelIconPreview}>
+	<div class={CSS.bodyPlayground} id={ElementIds.panelIconPreview}>
 		<Tooltip>
 			<Icon IconCode={IconCodes.add}/>
 			<Icon IconCode={IconCodes.vehicleCar}/>
@@ -25,12 +25,12 @@ import { IconCodes } from '@/enums/icons'
 			<Icon IconCode={IconCodes.arrowShuffle}/>
 			<Icon IconCode={IconCodes.battery5}/>
 		</Tooltip>
-		<ColorPicker id={ID + ElementIds.panelColorpickerPreviewColorPicker}/>
+		<ColorPicker id={ElementIds.panelColorpickerPreviewColorPicker}/>
 	</div>
-	<div class={CSS.bodyOptions} id={ID + ElementIds.panelIconOptions}>
+	<div class={CSS.bodyOptions} id={ElementIds.panelIconOptions}>
 		<CheckBox
 			CheckBoxInputAttr={{
-				id: ID + ElementIds.panelIconOptionsFilled
+				id: ElementIds.panelIconOptionsFilled
 			}}>
 			Filled
 		</CheckBox>

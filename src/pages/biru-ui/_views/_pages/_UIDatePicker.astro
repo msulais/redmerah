@@ -3,7 +3,7 @@ import Tooltip from '@/native-components/Tooltip/index.astro'
 import Button from '@/native-components/Button/index.astro'
 import Icon from '@/native-components/Icon/index.astro'
 import DatePicker from '@/native-components/DatePicker/index.astro'
-import { ElementIds, ID } from '../../_scripts/_enums'
+import { ElementIds } from '../../_scripts/_enums'
 import CSS from '../../_index.module.scss'
 import { ButtonVariant } from '@/native-components/Button'
 import { IconCodes } from '@/enums/icons'
@@ -12,43 +12,43 @@ import { FlyoutPosition } from '@/enums/position'
 <div
 	class={CSS.bodyPage}
 	role="tabpanel"
-	id={ID + ElementIds.panelDatePicker}>
+	id={ElementIds.panelDatePicker}>
 	<h2>DatePicker</h2>
 	<p>A DatePicker is a UI element that allows users to select a specific date. It typically presents a calendar interface for easy navigation and selection.</p>
 	<div class={CSS.bodyPlayground}>
 		<Tooltip>
 			<Button
-				id={ID + ElementIds.panelDatePickerPreviewButton}
-				popovertarget={ID + ElementIds.panelDatePickerPreviewDatePicker}
+				id={ElementIds.panelDatePickerPreviewButton}
+				popovertarget={ElementIds.panelDatePickerPreviewDatePicker}
 				ButtonVariant={ButtonVariant.tonal}>
 				Pick date
 			</Button>
 		</Tooltip>
 		<DatePicker
-			id={ID + ElementIds.panelDatePickerPreviewDatePicker}
-			PopoverAnchorBy={ID + ElementIds.panelDatePickerPreviewButton}
+			id={ElementIds.panelDatePickerPreviewDatePicker}
+			PopoverAnchorBy={ElementIds.panelDatePickerPreviewButton}
 			DatePickerEndDate={new Date(2100, 0, 1)}
 			PopoverPosition={FlyoutPosition.centerCenterLeftTop}
 			PopoverGap={8}
 			PopoverPadding={13}
 		/>
 	</div>
-	<div class={CSS.bodyOptions} id={ID + ElementIds.panelDatePickerOptions}>
+	<div class={CSS.bodyOptions} id={ElementIds.panelDatePickerOptions}>
 		<div class={CSS.bodyOptionsGroup} style="margin-right: 12px">
-			<label for={ID + ElementIds.panelDatePickerOptionsStartButton}>Start date:</label>
+			<label for={ElementIds.panelDatePickerOptionsStartButton}>Start date:</label>
 			<Button
 				ButtonVariant={ButtonVariant.tonal}
 				style="padding-left:8px"
-				id={ID + ElementIds.panelDatePickerOptionsStartButton}
-				popovertarget={ID + ElementIds.panelDatePickerOptionsStartPicker}>
+				id={ElementIds.panelDatePickerOptionsStartButton}
+				popovertarget={ElementIds.panelDatePickerOptionsStartPicker}>
 				<Icon IconCode={IconCodes.calendar}/>
 				<span>
 					{new Date(0).toLocaleDateString('en', {day: 'numeric', month: 'long', year: 'numeric'})}
 				</span>
 			</Button>
 			<DatePicker
-				id={ID + ElementIds.panelDatePickerOptionsStartPicker}
-				PopoverAnchorBy={ID + ElementIds.panelDatePickerOptionsStartButton}
+				id={ElementIds.panelDatePickerOptionsStartPicker}
+				PopoverAnchorBy={ElementIds.panelDatePickerOptionsStartButton}
 				DatePickerValue={new Date(0)}
 				PopoverGap={8}
 				PopoverPadding={13}
@@ -56,20 +56,20 @@ import { FlyoutPosition } from '@/enums/position'
 			/>
 		</div>
 		<div class={CSS.bodyOptionsGroup}>
-			<label for={ID + ElementIds.panelDatePickerOptionsEndButton}>End date:</label>
+			<label for={ElementIds.panelDatePickerOptionsEndButton}>End date:</label>
 			<Button
 				ButtonVariant={ButtonVariant.tonal}
 				style="padding-left:8px"
-				id={ID + ElementIds.panelDatePickerOptionsEndButton}
-				popovertarget={ID + ElementIds.panelDatePickerOptionsEndPicker}>
+				id={ElementIds.panelDatePickerOptionsEndButton}
+				popovertarget={ElementIds.panelDatePickerOptionsEndPicker}>
 				<Icon IconCode={IconCodes.calendar}/>
 				<span>
 					{new Date(2100, 0, 1).toLocaleDateString('en', {day: 'numeric', month: 'long', year: 'numeric'})}
 				</span>
 			</Button>
 			<DatePicker
-				id={ID + ElementIds.panelDatePickerOptionsEndPicker}
-				PopoverAnchorBy={ID + ElementIds.panelDatePickerOptionsEndButton}
+				id={ElementIds.panelDatePickerOptionsEndPicker}
+				PopoverAnchorBy={ElementIds.panelDatePickerOptionsEndButton}
 				DatePickerValue={new Date(2100, 0, 1)}
 				PopoverGap={8}
 				PopoverPadding={13}

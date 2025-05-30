@@ -6,7 +6,7 @@ import TextFieldButton from '@/native-components/TextField/TextFieldButton.astro
 import Icon from '@/native-components/Icon/index.astro'
 import Drawer from '@/native-components/Drawer/index.astro'
 import DrawerButton from '@/native-components/Drawer/DrawerButton.astro'
-import { ElementIds, ID } from '../../_scripts/_enums'
+import { ElementIds } from '../../_scripts/_enums'
 import CSS from '../../_index.module.scss'
 import { ButtonVariant } from '@/native-components/Button'
 import { IconCodes } from '@/enums/icons'
@@ -14,23 +14,23 @@ import { IconCodes } from '@/enums/icons'
 <div
 	class={CSS.bodyPage}
 	role="tabpanel"
-	id={ID + ElementIds.panelDrawer}
+	id={ElementIds.panelDrawer}
 	hidden>
 	<h2>Drawer</h2>
 	<p>A drawer is a navigation pattern that slides in from the edge of the screen, typically revealing a list of options or actions. It's often used to conserve screen space and provide access to secondary functions.</p>
 	<div class={CSS.bodyPlayground}>
 		<Tooltip>
 			<Button
-				popovertarget={ID + ElementIds.panelDrawerPreviewDrawer}
+				popovertarget={ElementIds.panelDrawerPreviewDrawer}
 				ButtonVariant={ButtonVariant.tonal}>
 				Open drawer
 			</Button>
 		</Tooltip>
-		<Drawer id={ID + ElementIds.panelDrawerPreviewDrawer}>
+		<Drawer id={ElementIds.panelDrawerPreviewDrawer}>
 			<Fragment slot="header">
 				<Button
 					style="width:min-content"
-					popovertarget={ID + ElementIds.panelDrawerPreviewDrawer}
+					popovertarget={ElementIds.panelDrawerPreviewDrawer}
 					popovertargetaction='hide'
 					aria-label="Close drawer">
 					<Icon IconCode={IconCodes.dismiss}/>
@@ -77,6 +77,6 @@ import { IconCodes } from '@/enums/icons'
 			</Fragment>
 		</Drawer>
 	</div>
-	<div class={CSS.bodyOptions} id={ID + ElementIds.panelDrawerOptions}>
+	<div class={CSS.bodyOptions} id={ElementIds.panelDrawerOptions}>
 	</div>
 </div>

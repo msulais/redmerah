@@ -3,38 +3,38 @@ import Tooltip from '@/native-components/Tooltip/index.astro'
 import Button from '@/native-components/Button/index.astro'
 import CheckBox from '@/native-components/CheckBox/index.astro'
 import EmojiPicker from '@/native-components/EmojiPicker/index.astro'
-import { ElementIds, ID } from '../../_scripts/_enums'
+import { ElementIds } from '../../_scripts/_enums'
 import CSS from '../../_index.module.scss'
 import { ButtonVariant } from '@/native-components/Button'
 ---
 <div
 	class={CSS.bodyPage}
 	role="tabpanel"
-	id={ID + ElementIds.panelEmojipicker}
+	id={ElementIds.panelEmojipicker}
 	hidden>
 	<h2>EmojiPicker</h2>
 	<p>An EmojiPicker is a UI element that allows users to select and insert emojis into text fields or other input areas. It typically presents a grid of emojis that can be searched, filtered, or categorized for easy selection.</p>
 	<div class={CSS.bodyPlayground}>
 		<Tooltip>
 			<Button
-				id={ID + ElementIds.panelEmojipickerPreviewButton}
-				aria-controls={ID + ElementIds.panelEmojipickerPreviewEmojiPicker}
+				id={ElementIds.panelEmojipickerPreviewButton}
+				aria-controls={ElementIds.panelEmojipickerPreviewEmojiPicker}
 				aria-haspopup={true}
 				ButtonVariant={ButtonVariant.tonal}
-				popovertarget={ID + ElementIds.panelEmojipickerPreviewEmojiPicker}>
+				popovertarget={ElementIds.panelEmojipickerPreviewEmojiPicker}>
 				Pick emoji
 			</Button>
 		</Tooltip>
 		<EmojiPicker
 			PopoverDraggable
-			PopoverAnchorBy={ID + ElementIds.panelEmojipickerPreviewButton}
-			id={ID + ElementIds.panelEmojipickerPreviewEmojiPicker}
+			PopoverAnchorBy={ElementIds.panelEmojipickerPreviewButton}
+			id={ElementIds.panelEmojipickerPreviewEmojiPicker}
 		/>
 	</div>
-	<div class={CSS.bodyOptions} id={ID + ElementIds.panelEmojipickerOptions}>
+	<div class={CSS.bodyOptions} id={ElementIds.panelEmojipickerOptions}>
 		<CheckBox
 			CheckBoxInputAttr={{
-				id: ID + ElementIds.panelEmojipickerOptionsAutoclose,
+				id: ElementIds.panelEmojipickerOptionsAutoclose,
 				checked: true
 			}}>
 			Autoclose

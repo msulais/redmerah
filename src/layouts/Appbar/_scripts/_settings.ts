@@ -11,14 +11,14 @@ import type { RGBColor, HEXColor } from "@/types/color"
 
 const $ = (id: string) => document.getElementById(id)
 const $$ = (selector: string, from = document) => from.querySelector(selector)
-const root = document.documentElement
+const _rootRef = document.documentElement
 
-function initSettings(): void {
+function _initSettings(): void {
 	function initTheme(): void {
 		const theme = localStorage.getItem(LocalStorageKeys.platformTheme)
 		if (!theme || !validEnumValue(theme, PlatformThemeMode)) return
 
-		root.setAttribute(RootAttributes.theme, theme)
+		_rootRef.setAttribute(RootAttributes.theme, theme)
 		const previous = $$(
 			`input[name="${CSS.escape(RadioGroupNames.settingsTheme)}"]:checked`
 		) as HTMLInputElement
@@ -35,7 +35,7 @@ function initSettings(): void {
 		const animation = localStorage.getItem(LocalStorageKeys.platformAnimation)
 		if (!animation || !validEnumValue(animation, PlatformAnimationMode)) return
 
-		root.setAttribute(RootAttributes.animation, animation)
+		_rootRef.setAttribute(RootAttributes.animation, animation)
 		const previous = $$(
 			`input[name="${CSS.escape(RadioGroupNames.settingsAnimation)}"]:checked`
 		) as HTMLInputElement
@@ -67,7 +67,7 @@ function initSettings(): void {
 	initAccentColor()
 }
 
-function initSettingsMenu(): void {
+function _initSettingsMenu(): void {
 	const rgbToCSS = (rgb: RGBColor) => `${Math.round(rgb.r * 0xff)}, ${Math.round(rgb.g * 0xff)}, ${Math.round(rgb.b * 0xff)}`
 	const buttonRef = $(ID + ElementIds.appbarSettingsButton) as HTMLButtonElement
 	const menuRef = $(ID + ElementIds.appbarSettingsMenu) as HTMLDivElement
@@ -88,7 +88,6 @@ function initSettingsMenu(): void {
 
 	menuRef.addEventListener('toggle', ev => {
 		const isOpen = (ev as ToggleEvent).newState === 'open'
-		buttonRef.setAttribute('aria-expanded', String(isOpen))
 		updateIconButtonRef(buttonRef, {
 			ButtonFocused: isOpen
 		})
@@ -100,7 +99,7 @@ function initSettingsMenu(): void {
 		if (!value || !validEnumValue(value, PlatformAnimationMode)) return
 
 		localStorage.setItem(LocalStorageKeys.platformAnimation, value)
-		root.setAttribute(RootAttributes.animation, value)
+		_rootRef.setAttribute(RootAttributes.animation, value)
 		menuRef.hidePopover()
 	})
 
@@ -110,7 +109,7 @@ function initSettingsMenu(): void {
 		if (!value || !validEnumValue(value, PlatformThemeMode)) return
 
 		localStorage.setItem(LocalStorageKeys.platformTheme, value)
-		root.setAttribute(RootAttributes.theme, value)
+		_rootRef.setAttribute(RootAttributes.theme, value)
 		menuRef.hidePopover()
 	})
 
@@ -122,13 +121,11 @@ function initSettingsMenu(): void {
 			const palette = colorGeneratePalette(accent)
 			accentColorElement.innerHTML = `:root{--g-color-accent-light: ${rgbToCSS(colorHexToRgb(palette.color))};--g-color-accent-dark: ${rgbToCSS(colorHexToRgb(palette.colorDark))};--g-color-on-accent-light: ${rgbToCSS(colorHexToRgb(palette.onColor))};--g-color-on-accent-dark: ${rgbToCSS(colorHexToRgb(palette.onColorDark))};}`;
 			localStorage.setItem(LocalStorageKeys.platformAccentColor, accent)
-		}, 10)
+		}, 50)
 	})
 }
 
-function _(): void {
-	initSettings()
-	initSettingsMenu()
+export default () => {
+	_initSettings()
+	_initSettingsMenu()
 }
-
-export default _

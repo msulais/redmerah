@@ -2,7 +2,7 @@
 import Button from '@/native-components/Button/index.astro'
 import Select from '@/native-components/Select/index.astro'
 import SelectOption from '@/native-components/Select/SelectOption.astro'
-import { ElementIds, ID } from '../../_scripts/_enums'
+import { ElementIds } from '../../_scripts/_enums'
 import CSS from '../../_index.module.scss'
 import { SelectVariant } from '@/native-components/Select'
 import { ButtonVariant } from '@/native-components/Button'
@@ -10,13 +10,13 @@ import { ButtonVariant } from '@/native-components/Button'
 <div
 	class={CSS.bodyPage}
 	role="tabpanel"
-	id={ID + ElementIds.panelSelect}
+	id={ElementIds.panelSelect}
 	hidden>
 	<h2>Select</h2>
 	<p>A Select is a UI element that displays a list of options when clicked. It provides a compact way to present multiple choices while saving screen space.</p>
 	<div class={CSS.bodyPlayground}>
 		<Select
-			id={ID + ElementIds.panelSelectPreview}
+			id={ElementIds.panelSelectPreview}
 			style="min-width:120px">
 			{[
 				['a', 'Bird'],
@@ -35,18 +35,18 @@ import { ButtonVariant } from '@/native-components/Button'
 			<Fragment slot="placeholder">Select animal</Fragment>
 		</Select>
 	</div>
-	<div class={CSS.bodyOptions} id={ID + ElementIds.panelSelectOptions}>
+	<div class={CSS.bodyOptions} id={ElementIds.panelSelectOptions}>
 		<Button
-			id={ID + ElementIds.panelSelectOptionsReset}
+			id={ElementIds.panelSelectOptionsReset}
 			ButtonVariant={ButtonVariant.filled}
 			style="margin-right:8px;display:none">
 			Reset selection
 		</Button>
 		<div class={CSS.bodyOptionsGroup}>
-			<label id={ID + ElementIds.panelSelectOptionsVariantLabel}>Variant:</label>
+			<label id={ElementIds.panelSelectOptionsVariantLabel}>Variant:</label>
 			<Select
-				aria-labelledby={ID + ElementIds.panelSelectOptionsVariantLabel}
-				id={ID + ElementIds.panelSelectOptionsVariant}
+				aria-labelledby={ElementIds.panelSelectOptionsVariantLabel}
+				id={ElementIds.panelSelectOptionsVariant}
 				style="min-width: 140px">
 				<SelectOption value={SelectVariant.filled}>Filled</SelectOption>
 				<SelectOption value={SelectVariant.tonal} SelectOptionSelected>Tonal</SelectOption>

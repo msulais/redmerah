@@ -1,25 +1,11 @@
 // Browser compatibility: https://caniuse.com/webusb
 // API source           : https://wicg.github.io/webusb
 
-export type USBEndpointType = 'bulk' | 'interrupt' | 'isochronous'
-
-export type USBDirection = 'in' | 'out'
-
-export type USBRecipient = 'device' | 'interface' | 'endpoint' | 'other'
-
-export type USBRequestType = 'standard' | 'class' | 'vendor'
-
-export type USBTransferStatus = 'ok' | 'stall' | 'babble'
-
 export interface USB extends EventTarget {
 	onconnect(ev: USBConnectionEvent): any
 	ondisconnect(ev: USBConnectionEvent): any
 	getDevices(): Promise<USBDevice[]>
 	requestDevice(options: USBDeviceRequestOptions): Promise<USBDevice>
-}
-
-export interface USBConnectionEvent extends Event {
-	readonly device: USBDevice
 }
 
 export interface USBAlternateInterface {
@@ -37,69 +23,16 @@ export interface USBConfiguration {
 	readonly interfaces: USBInterface[]
 }
 
+export interface USBConnectionEvent extends Event {
+	readonly device: USBDevice
+}
+
 export interface USBControlTransferParameters {
 	requestType: USBRequestType
 	recipient: USBRecipient
 	request: number
 	value: number
 	index: number
-}
-
-export interface USBDeviceFilter {
-	venderId: number
-	productId: number
-	classCode: number
-	subclassCode: number
-	protocolCode: number
-	serialNumber: string
-}
-
-export interface USBDeviceRequestOptions {
-	filters: USBDeviceFilter[]
-	exclusionFilters?: USBDeviceFilter[]
-}
-
-export interface USBEndpoint {
-	readonly endpointNumber: number
-	readonly direction: USBDirection
-	readonly type: USBEndpointType
-	readonly packetSize: number
-}
-
-export interface USBInTransferResult {
-	readonly data: DataView
-	readonly status: USBTransferStatus
-}
-
-export interface USBInterface {
-	readonly interfaceNumber: number
-	readonly alternate: USBAlternateInterface
-	readonly alternates: USBAlternateInterface[]
-	readonly claimed: boolean
-}
-
-export interface USBIsochronousInTransferPacket {
-	readonly data?: DataView
-	readonly status: USBTransferStatus
-}
-
-export interface USBIsochronousOutTransferPacket {
-	readonly bytesWritten: number
-	readonly status: USBTransferStatus
-}
-
-export interface USBOutTransferResult {
-	readonly bytesWritten: number
-	status: USBTransferStatus
-}
-
-export interface USBIsochronousInTransferResult {
-	readonly data?: DataView
-	readonly packets: USBIsochronousInTransferPacket[]
-}
-
-export interface USBIsochronousOutTransferResult {
-	readonly packets: USBIsochronousOutTransferPacket[]
 }
 
 export interface USBDevice {
@@ -137,7 +70,74 @@ export interface USBDevice {
 	reset(): Promise<any>
 }
 
+export interface USBDeviceFilter {
+	venderId: number
+	productId: number
+	classCode: number
+	subclassCode: number
+	protocolCode: number
+	serialNumber: string
+}
+
+export interface USBDeviceRequestOptions {
+	filters: USBDeviceFilter[]
+	exclusionFilters?: USBDeviceFilter[]
+}
+
+export type USBDirection = 'in' | 'out'
+
+export interface USBEndpoint {
+	readonly endpointNumber: number
+	readonly direction: USBDirection
+	readonly type: USBEndpointType
+	readonly packetSize: number
+}
+
+export type USBEndpointType = 'bulk' | 'interrupt' | 'isochronous'
+
 export interface USBEventTargetEventMap {
 	connect: Event
 	disconnect: Event
 }
+
+export interface USBInterface {
+	readonly interfaceNumber: number
+	readonly alternate: USBAlternateInterface
+	readonly alternates: USBAlternateInterface[]
+	readonly claimed: boolean
+}
+
+export interface USBIsochronousInTransferPacket {
+	readonly data?: DataView
+	readonly status: USBTransferStatus
+}
+
+export interface USBIsochronousInTransferResult {
+	readonly data?: DataView
+	readonly packets: USBIsochronousInTransferPacket[]
+}
+
+export interface USBIsochronousOutTransferPacket {
+	readonly bytesWritten: number
+	readonly status: USBTransferStatus
+}
+
+export interface USBIsochronousOutTransferResult {
+	readonly packets: USBIsochronousOutTransferPacket[]
+}
+
+export interface USBOutTransferResult {
+	readonly bytesWritten: number
+	status: USBTransferStatus
+}
+
+export type USBRecipient = 'device' | 'interface' | 'endpoint' | 'other'
+
+export type USBRequestType = 'standard' | 'class' | 'vendor'
+
+export interface USBInTransferResult {
+	readonly data: DataView
+	readonly status: USBTransferStatus
+}
+
+export type USBTransferStatus = 'ok' | 'stall' | 'babble'
