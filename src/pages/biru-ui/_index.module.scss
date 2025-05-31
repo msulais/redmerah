@@ -29,7 +29,8 @@ $side-navigation-none: 680px;
 
 	@media (max-width: $side-navigation-none) {
 		border-radius: 0 !important;
-		border-left: none;
+		border: none;
+		background-color: transparent;
 	}
 }
 
