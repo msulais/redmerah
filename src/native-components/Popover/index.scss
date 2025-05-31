@@ -13,9 +13,11 @@
 	top: 0;
 	opacity: 0;
 	box-shadow: var(--g-elevation3);
+	transition-timing-function: var(--g-transition-spring-bounce-inverse);
 
 	&:popover-open {
 		opacity: 1;
+		transition-timing-function: var(--g-transition-spring-bounce);
 	}
 
 	:root[data-animation=on] & {

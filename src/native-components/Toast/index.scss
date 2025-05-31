@@ -13,6 +13,7 @@
 	opacity: 0;
 	scale: .85;
 	box-shadow: var(--g-elevation3);
+	transition-timing-function: var(--g-transition-spring-inverse);
 
 	&[data-c-toast-position=top-left] {
 		top: 8px;
@@ -54,6 +55,7 @@
 		scale: 1;
 		opacity: 1;
 		translate: 0 0;
+		transition-timing-function: var(--g-transition-spring);
 
 		&[data-c-toast-position*=center] {
 			translate: -50% 0;
