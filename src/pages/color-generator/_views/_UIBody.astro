@@ -1,0 +1,86 @@
+---
+import { IconCodes } from '@/enums/icons'
+import { ButtonVariant } from '@/native-components/Button'
+import Button from '@/native-components/Button/index.astro'
+import IconButton from '@/native-components/Button/IconButton.astro'
+import Icon from '@/native-components/Icon/index.astro'
+import Toast from '@/native-components/Toast/index.astro'
+import ColorPicker from '@/native-components/ColorPicker/index.astro'
+import Tooltip from '@/native-components/Tooltip/index.astro'
+import { CSSClasses } from '../_styles/_css'
+import { DEFAULT_COLOR } from '../_scripts/_shared/_constant'
+import { ElementIds } from '../_scripts/_shared/_ids'
+---
+<main class={CSSClasses.body}>
+	<div class={CSSClasses.bodyControl}>
+		<Tooltip style={{
+			display: 'flex',
+			gap: '4px'
+		}}>
+			<Button
+				ButtonVariant={ButtonVariant.filled}
+				id={ElementIds.bodyColorPickerButton}
+				popovertarget={ElementIds.bodyColorPickerPopover}
+				data-tooltip="Pick color">
+				<Icon IconCode={IconCodes.eyedropper} IconFilled/>
+				<span style="font-weight:bold" id={ElementIds.bodyColorPickerButtonSpan}>{DEFAULT_COLOR}</span>
+			</Button>
+			<IconButton
+				id={ElementIds.bodySaveButton}
+				ButtonVariant={ButtonVariant.tonal}
+				IconButtonCode={IconCodes.save}
+				aria-label="Save palette"
+				data-tooltip="Save palette"
+			/>
+		</Tooltip>
+		<p>Light mode:</p>
+		<div
+			data-css-color
+			style={{
+				backgroundColor: 'rgb(var(--g-color-accent-light))'
+			}}>
+			<span style={{color: 'rgb(var(--g-color-on-accent-light))'}}>
+				Accent Light<br/><span id={ElementIds.bodyColorAccentLight}>#00658F</span>
+			</span>
+			<span style={{
+				backgroundColor: 'rgb(var(--g-color-on-accent-light))',
+				color: 'rgb(var(--g-color-accent-light))',
+			}}>
+				On Accent Light<br/><span id={ElementIds.bodyColorOnAccentLight}>#FFFFFF</span>
+			</span>
+		</div>
+		<p>Dark mode:</p>
+		<div
+			data-css-color
+			style={{
+				backgroundColor: 'rgb(var(--g-color-accent-dark))'
+			}}>
+			<span style={{color: 'rgb(var(--g-color-on-accent-dark))'}}>
+				Accent Dark<br/><span id={ElementIds.bodyColorAccentDark}>#86CEFF</span>
+			</span>
+			<span style={{
+				backgroundColor: 'rgb(var(--g-color-on-accent-dark))',
+				color: 'rgb(var(--g-color-accent-dark))',
+			}}>
+				On Accent Dark<br/><span id={ElementIds.bodyColorOnAccentDark}>#00344C</span>
+			</span>
+		</div>
+	</div>
+	<Tooltip>
+		<ul class={CSSClasses.bodyList}>
+		</ul>
+	</Tooltip>
+</main>
+<ColorPicker
+	ColorPickerValue={DEFAULT_COLOR}
+	id={ElementIds.bodyColorPickerPopover}
+	PopoverDraggable
+	ColorPickerDisabledOpacity
+	PopoverAnchorBy={ElementIds.bodyColorPickerButton}
+	PopoverGap={8}
+	PopoverPadding={12}
+/>
+<Toast id={ElementIds.bodyToastCopied} ToastCloseDelay={1500}>
+	<Icon IconCode={IconCodes.copy} slot="leading"/>
+	Copied
+</Toast>

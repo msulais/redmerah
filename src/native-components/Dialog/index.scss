@@ -14,6 +14,7 @@
 	box-shadow: var(--g-elevation5);
 	opacity: 0;
 	scale: .85;
+	transition-timing-function: var(--g-transition-spring-inverse);
 
 	:root[data-theme=dark] & {
 		border: 1px solid rgba(0, 0, 0, var(--g-opacity-inv5));
@@ -29,6 +30,7 @@
 	&[open] {
 		opacity: 1;
 		scale: 1;
+		transition-timing-function: var(--g-transition-spring);
 
 		&::backdrop {
 			background-color: rgba(0, 0, 0, var(--g-opacity-inv5));

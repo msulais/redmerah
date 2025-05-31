@@ -1,10 +1,8 @@
 import { DatabaseNames } from "@/enums/storage"
 import { IDB } from "@/utils/indexeddb"
-import { NavigationStore } from "./_navigation"
-import { validEnumValue } from "@/utils/object"
-import { SettingsStore, type SettingsStoreType } from "./_settings"
-import { Pages } from "../_shared/_enums"
-import { TimerStore, type TimerStoreType } from "../_features/_timer"
+import { ColorsStore, type ColorsStoreType } from "./_colors"
+import { colorIsValid } from "@/utils/color"
+import type { HEXColor } from "@/types/color"
 
 type _IDBStoreStorage<T = unknown> = {
 	key: string
@@ -12,9 +10,8 @@ type _IDBStoreStorage<T = unknown> = {
 }
 
 type _StorageItems = {
-	page: Pages
-	'settings/keep-awake': SettingsStoreType['keepAwake']
-	'timer/seconds': TimerStoreType['timerInSeconds']
+	'colors/seed': ColorsStoreType['seed']
+	'colors/palette': ColorsStoreType['palette']
 }
 
 type _StorageKeys = keyof _StorageItems
@@ -23,7 +20,7 @@ enum _ObjectStoreNames {
 	storage = 'storage'
 }
 
-const _db = new IDB(DatabaseNames.clock)
+const _db = new IDB(DatabaseNames.colorGenerator)
 
 export function saveStorageItem<K extends _StorageKeys>(key: K, value: _StorageItems[K]) {
 	return _db
@@ -37,22 +34,17 @@ function _readStorageAll(store: IDBObjectStore): void {
 		const value = cursor?.value.value
 		if (value === null || value === undefined) return true
 
-		const isNumber = typeof value === 'number'
-		const isBoolean = typeof value === 'boolean'
+		const isString = typeof value === 'string'
+		const isArray = Array.isArray(value)
 		switch (key as _StorageKeys) {
-		case "page":
-			if (validEnumValue(value, Pages)) {
-				NavigationStore.update(v => ({...v, page: value as Pages}))
+		case "colors/seed":
+			if (isString && colorIsValid(value)) {
+				ColorsStore.update(v => ({...v, seed: value as HEXColor}))
 			}
 			break
-		case "settings/keep-awake":
-			if (isBoolean) {
-				SettingsStore.update(v => ({...v, keepAwake: value}))
-			}
-			break
-		case "timer/seconds":
-			if (isNumber) {
-				TimerStore.update(v => ({...v, currentSeconds: value, timerInSeconds: value}))
+		case "colors/palette":
+			if (isArray) {
+				ColorsStore.update(v => ({...v, palette: value.filter(v => colorIsValid(v))}))
 			}
 			break
 		}

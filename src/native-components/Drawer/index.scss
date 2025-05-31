@@ -16,9 +16,11 @@
 	overflow: hidden;
 	top: 8px;
 	translate: calc(-100% - 8px) 0;
+	transition-timing-function: var(--g-transition-spring-inverse);
 
 	&:popover-open {
 		translate: 0 0;
+		transition-timing-function: var(--g-transition-spring);
 	}
 
 	&::backdrop {

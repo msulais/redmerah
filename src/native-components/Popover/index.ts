@@ -291,7 +291,7 @@ function _initPopoverRef(popoverRef: PopoverElement): void {
 		popoverRef.animate({
 			transform: ['translate(0,0)', `translate(${translateX}px,${translateY}px)`],
 			opacity: [1, 0]
-		}, { duration: 250, easing: AnimationEffectTiming.springBounce })
+		}, { duration: 250, easing: AnimationEffectTiming.springBounceInverse })
 	}
 
 	function setOpenPosition(): void {
