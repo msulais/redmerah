@@ -23,7 +23,7 @@ enum _ObjectStoreNames {
 	storage = 'storage'
 }
 
-const _db = new IDB(DatabaseNames.calculator)
+const _db = new IDB(DatabaseNames.clock)
 
 export function saveStorageItem<K extends _StorageKeys>(key: K, value: _StorageItems[K]) {
 	return _db
