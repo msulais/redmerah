@@ -50,6 +50,8 @@
 	// transitions
 	--g-transition-spring: cubic-bezier(.25, 0, 0, 1);
 	--g-transition-spring-bounce: cubic-bezier(.25, 0, 0, 2);
+	--g-transition-spring-inverse: cubic-bezier(1, 0, 0.75, 1);
+	--g-transition-spring-bounce-inverse: cubic-bezier(1, -1, 0.75, 1);
 
 	// font sizes
 
