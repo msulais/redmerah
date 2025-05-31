@@ -911,6 +911,10 @@ function updateColorPickerRef(
 	return colorPickerRef
 }
 
+function getColorPickerRefValue(colorPickerRef: ColorPickerElement): HEXColor {
+	return (colorPickerRef.getAttribute(ColorPickerAttributes.value) as HEXColor) ?? '#FFFFFF'
+}
+
 export {
 	type ColorPickerProps,
 	type ColorPickerUpdateOptions,
@@ -928,5 +932,6 @@ export {
 	registerColorPickerRef,
 	unregisterColorPickerRef,
 	createColorPickerRef,
-	updateColorPickerRef
+	updateColorPickerRef,
+	getColorPickerRefValue
 }
