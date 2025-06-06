@@ -1,0 +1,154 @@
+---
+import Button from '@/native-components/Button/index.astro'
+import Tooltip from '@/native-components/Tooltip/index.astro'
+import TextField from '@/native-components/TextField/index.astro'
+import Icon from '@/native-components/Icon/index.astro'
+import TextFieldButton from '@/native-components/TextField/TextFieldButton.astro'
+import Toast from '@/native-components/Toast/index.astro'
+import { EMOJIS_ACTIVITIES, EMOJIS_ANIMAL_AND_NATURE, EMOJIS_FLAGS, EMOJIS_FOOD_AND_DRINK, EMOJIS_OBJECT, EMOJIS_PERSON_AND_BODY, EMOJIS_PERSON_AND_BODY_DARK_SKIN_TONE, EMOJIS_PERSON_AND_BODY_LIGHT_SKIN_TONE, EMOJIS_PERSON_AND_BODY_MEDIUM_DARK_SKIN_TONE, EMOJIS_PERSON_AND_BODY_MEDIUM_LIGHT_SKIN_TONE, EMOJIS_PERSON_AND_BODY_MEDIUM_SKIN_TONE, EMOJIS_SMILEY_AND_EMOTION, EMOJIS_SYMBOLS, EMOJIS_TRAVEL_AND_PLACES } from "@/constants/emoji"
+import { CSSClasses } from '../_styles/_css'
+import { ButtonClasses, ButtonVariant } from '@/native-components/Button'
+import { IconCodes } from '@/enums/icons'
+import { AppCSSColors } from '@/enums/app-data'
+import { ElementIds } from '../_scripts/_shared/_ids'
+import { SkinToneEmoji } from '../_scripts/_shared/_enums'
+import { RadioNames } from '../_scripts/_shared/_input-names'
+
+const maxEmojiList = Math.max(
+	EMOJIS_SMILEY_AND_EMOTION.length,
+	EMOJIS_PERSON_AND_BODY.length,
+	EMOJIS_PERSON_AND_BODY_LIGHT_SKIN_TONE.length,
+	EMOJIS_PERSON_AND_BODY_MEDIUM_LIGHT_SKIN_TONE.length,
+	EMOJIS_PERSON_AND_BODY_MEDIUM_SKIN_TONE.length,
+	EMOJIS_PERSON_AND_BODY_MEDIUM_DARK_SKIN_TONE.length,
+	EMOJIS_PERSON_AND_BODY_DARK_SKIN_TONE.length,
+	EMOJIS_ANIMAL_AND_NATURE.length,
+	EMOJIS_FOOD_AND_DRINK.length,
+	EMOJIS_TRAVEL_AND_PLACES.length,
+	EMOJIS_ACTIVITIES.length,
+	EMOJIS_OBJECT.length,
+	EMOJIS_SYMBOLS.length,
+	EMOJIS_FLAGS.length
+)
+
+const skinTones: {
+	checked: boolean
+	name: string
+	skinTone: SkinToneEmoji
+	color: string
+}[] = [
+	{
+		checked: true,
+		name: 'Skin Tone: None',
+		color: '#FFC64E',
+		skinTone: SkinToneEmoji.none
+	},
+	{
+		checked: false,
+		name: 'Skin Tone: Light',
+		color: '#F7C1B0',
+		skinTone: SkinToneEmoji.light
+	},
+	{
+		checked: false,
+		name: 'Skin Tone: Medium Light',
+		color: '#E4AB94',
+		skinTone: SkinToneEmoji.mediumLight
+	},
+	{
+		checked: false,
+		name: 'Skin Tone: Medium',
+		color: '#B18378',
+		skinTone: SkinToneEmoji.medium
+	},
+	{
+		checked: false,
+		name: 'Skin Tone: Medium Dark',
+		color: '#8A5D5C',
+		skinTone: SkinToneEmoji.mediumDark
+	},
+	{
+		checked: false,
+		name: 'Skin Tone: Dark',
+		color: '#4B3234',
+		skinTone: SkinToneEmoji.dark
+	},
+]
+---
+<main class={CSSClasses.body} id={ElementIds.body}>
+	<section>
+		<div style={{
+			padding: '4px 0 16px 0',
+			position: 'sticky',
+			borderRadius: '0 0 1px 1px',
+			top: '0',
+			backgroundColor: `rgb(${AppCSSColors.background})`
+		}}>
+			<h1 id={ElementIds.bodyTitle}>Smiley & Emotion</h1>
+			<TextField
+				TextFieldInputAttr={{
+					placeholder: '😃😗😪💕💤',
+					style: 'padding-left:6px;padding-right:4px;font-size:var(--g-font-size-xm);min-height:36px',
+					id: ElementIds.bodyTextField
+				}}>
+				<Tooltip slot='trailing' style="display:flex; align-items:center; gap:4px">
+					<TextFieldButton
+						id={ElementIds.bodyTextFieldDismiss}
+						data-tooltip="Clear"
+						aria-label="Clear text">
+						<Icon IconCode={IconCodes.dismiss}/>
+					</TextFieldButton>
+					<TextFieldButton
+						id={ElementIds.bodyTextFieldCopy}
+						data-tooltip="Copy"
+						aria-label="Copy text"
+						style="margin-right:4px">
+						<Icon IconCode={IconCodes.copy}/>
+					</TextFieldButton>
+				</Tooltip>
+			</TextField>
+			<Tooltip
+				id={ElementIds.bodySkinTone}
+				class={CSSClasses.bodySkinTone}
+				style={{
+					display: 'none',
+					alignItems: 'center',
+					gap: '4px',
+					marginTop: '4px'
+				}}>
+				{skinTones.map(v =>
+					<label
+						class={[ButtonClasses.button, ButtonClasses.icon].join(' ')}
+						aria-label={v.name}
+						data-tooltip={v.name}>
+						<input
+							name={RadioNames.settingsSkinTone}
+							type="radio"
+							checked={v.checked}
+							autocomplete="off"
+							value={v.skinTone}
+						/>
+						<Icon style={{
+							color: v.color
+						}} IconCode={IconCodes.circle} IconFilled/>
+					</label>
+				)}
+			</Tooltip>
+		</div>
+		<Tooltip>
+			<ul id={ElementIds.bodyEmojiList}>
+				{new Array(maxEmojiList).fill(0).map((_, i) => {
+					const v = EMOJIS_SMILEY_AND_EMOTION[i]
+					return (<li style={v ? undefined : 'display:none'}><Button
+						ButtonVariant={ButtonVariant.tonal}
+						data-tooltip={v?.[1] ?? ''}
+						data-emoji={v?.[0] ?? ''}>{v?.[0] ?? ''}</Button></li>)
+				})}
+			</ul>
+		</Tooltip>
+	</section>
+</main>
+<Toast id={ElementIds.bodyToastCopied} ToastCloseDelay={1500}>
+	<Icon IconCode={IconCodes.copy} slot="leading"/>
+	Copied
+</Toast>
