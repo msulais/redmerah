@@ -82,7 +82,7 @@ export const APP_EMOJI_PICKER: AppItem = {
 	name: 'Emoji Picker',
 	description: 'Emoji Picker is your ultimate emoji companion. Browse, search, and copy emojis with ease. Express yourself with the perfect emoji every time.',
 	link: RoutesLinks.emojiPicker,
-	color: '#00B0FF',
+	color: '#EEB62F',
 	buildNumber: 2,
 	buildVersion: '0.0.2',
 }
