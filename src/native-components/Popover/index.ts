@@ -80,6 +80,11 @@ enum PopoverClasses {
 	dragHandle = 'c-popover-draghandle',
 }
 
+enum PopoverCSSVariables {
+	left = '--c-popover-left',
+	top = '--c-popover-top',
+}
+
 const LISTENED_ATTRIBUTES: string[] = [
 	PopoverAttributes.anchorBy,
 	PopoverAttributes.gap,
@@ -202,8 +207,8 @@ function _initPopoverRef(popoverRef: PopoverElement): void {
 		if (popoverRect.right > screenWidth) left = screenWidth - popoverRect.width - POPOVER_MARGIN
 		if (popoverRect.bottom > screenHeight) top = screenHeight - popoverRect.height - POPOVER_MARGIN
 
-		popoverRef.style.setProperty('left', left + 'px')
-		popoverRef.style.setProperty('top', top + 'px')
+		popoverRef.style.setProperty(PopoverCSSVariables.left, left + 'px')
+		popoverRef.style.setProperty(PopoverCSSVariables.top, top + 'px')
 		if (!isAnimationAllowed()) {
 			return options?.done()
 		}
@@ -240,8 +245,8 @@ function _initPopoverRef(popoverRef: PopoverElement): void {
 		})
 
 		const [x, y] = [popoverRect.left, popoverRect.top]
-		popoverRef.style.setProperty('left', flyoutPosition.left + 'px')
-		popoverRef.style.setProperty('top', flyoutPosition.top + 'px')
+		popoverRef.style.setProperty(PopoverCSSVariables.left, flyoutPosition.left + 'px')
+		popoverRef.style.setProperty(PopoverCSSVariables.top, flyoutPosition.top + 'px')
 		if (!isAnimationAllowed()) {
 			return options?.done()
 		}
@@ -306,8 +311,8 @@ function _initPopoverRef(popoverRef: PopoverElement): void {
 			pointer: anchorRect? undefined : {x: POINTER_X, y: POINTER_Y}
 		})
 
-		popoverRef.style.setProperty('left', flyoutPosition.left + 'px')
-		popoverRef.style.setProperty('top', flyoutPosition.top + 'px')
+		popoverRef.style.setProperty(PopoverCSSVariables.left, flyoutPosition.left + 'px')
+		popoverRef.style.setProperty(PopoverCSSVariables.top, flyoutPosition.top + 'px')
 
 		// `opacity` property set in 'beforetoggle' event
 		popoverRef.style.removeProperty('opacity')
@@ -371,8 +376,8 @@ function _initPopoverRef(popoverRef: PopoverElement): void {
 			break
 		}
 
-		popoverRef.style.setProperty('left', keyLeft + 'px')
-		popoverRef.style.setProperty('top', keyTop + 'px')
+		popoverRef.style.setProperty(PopoverCSSVariables.left, keyLeft + 'px')
+		popoverRef.style.setProperty(PopoverCSSVariables.top, keyTop + 'px')
 		if (timeoutFixPositionId !== null) clearTimeout(timeoutFixPositionId)
 
 		timeoutFixPositionId = setTimeout(() => {
@@ -384,8 +389,8 @@ function _initPopoverRef(popoverRef: PopoverElement): void {
 	function dragHandleRefOnPointerMove(ev: PointerEvent): void {
 		if (!isDragging) return
 
-		popoverRef.style.setProperty('left', ev.clientX - diffPositionX + 'px')
-		popoverRef.style.setProperty('top', ev.clientY - diffPositionY + 'px')
+		popoverRef.style.setProperty(PopoverCSSVariables.left, ev.clientX - diffPositionX + 'px')
+		popoverRef.style.setProperty(PopoverCSSVariables.top, ev.clientY - diffPositionY + 'px')
 	}
 
 	function dragHandleRefOnPointerUp(ev: PointerEvent): void {
@@ -637,6 +642,7 @@ export {
 	type PopoverProps,
 	type PopoverUpdateOptions,
 	type PopoverElement,
+	PopoverCSSVariables,
 	PopoverAttributes,
 	PopoverClasses,
 	PopoverPosition,

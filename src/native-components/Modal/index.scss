@@ -1,16 +1,18 @@
 .c-modal {
+	--c-modal-left: 0;
+	--c-modal-top: 0;
 	position: fixed;
 	background-color: rgba(var(--g-color-surface), var(--g-opacity-glass));
 	backdrop-filter: blur(var(--g-blur-glass));
 	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity3));
 	border-radius: 8px;
-	left: 0;
+	left: var(--c-modal-left);
 	max-height: calc(100dvh - 16px);
 	max-width: calc(100% - 16px);
 	width: max-content;
 	outline: none;
 	overflow: hidden;
-	top: 0;
+	top: var(--c-modal-top);
 	box-shadow: var(--g-elevation3);
 
 	:root[data-theme=dark] & {

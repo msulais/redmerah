@@ -150,6 +150,11 @@ enum ModalClasses {
 	dragHandle = 'c-modal-draghandle',
 }
 
+enum ModalCSSVariables {
+	left = '--c-modal-left',
+	top = '--c-modal-top'
+}
+
 const LISTENED_ATTRIBUTES: string[] = [
 	'open',
 	ModalAttributes.anchorBy,
@@ -307,8 +312,8 @@ function _initModalRef(modalRef: ModalElement): void {
 		if (modalRefRect.right > screenWidth) left = screenWidth - modalRefRect.width - MODAL_MARGIN
 		if (modalRefRect.bottom > screenHeight) top = screenHeight - modalRefRect.height - MODAL_MARGIN
 
-		modalRef.style.setProperty('left', left + 'px')
-		modalRef.style.setProperty('top', top + 'px')
+		modalRef.style.setProperty(ModalCSSVariables.left, left + 'px')
+		modalRef.style.setProperty(ModalCSSVariables.top, top + 'px')
 		if (!isAnimationAllowed() || !animation) {
 			return options?.done()
 		}
@@ -359,8 +364,8 @@ function _initModalRef(modalRef: ModalElement): void {
 			position
 		})
 
-		modalRef.style.setProperty('left', flyoutPosition.left + 'px')
-		modalRef.style.setProperty('top', flyoutPosition.top + 'px')
+		modalRef.style.setProperty(ModalCSSVariables.left, flyoutPosition.left + 'px')
+		modalRef.style.setProperty(ModalCSSVariables.top, flyoutPosition.top + 'px')
 		if (!animation || !isAnimationAllowed()) {
 			return options.done()
 		}
@@ -460,8 +465,8 @@ function _initModalRef(modalRef: ModalElement): void {
 		})
 
 		const [x, y] = [modalRect.left, modalRect.top]
-		modalRef.style.setProperty('left', flyoutPosition.left + 'px')
-		modalRef.style.setProperty('top', flyoutPosition.top + 'px')
+		modalRef.style.setProperty(ModalCSSVariables.left, flyoutPosition.left + 'px')
+		modalRef.style.setProperty(ModalCSSVariables.top, flyoutPosition.top + 'px')
 		if (!isAnimationAllowed() || !animation) {
 			return options?.done()
 		}
@@ -528,8 +533,8 @@ function _initModalRef(modalRef: ModalElement): void {
 			break
 		}
 
-		modalRef.style.setProperty('left', keyLeft + 'px')
-		modalRef.style.setProperty('top', keyTop + 'px')
+		modalRef.style.setProperty(ModalCSSVariables.left, keyLeft + 'px')
+		modalRef.style.setProperty(ModalCSSVariables.top, keyTop + 'px')
 		if (timeoutFixPositionId !== null) clearTimeout(timeoutFixPositionId)
 
 		timeoutFixPositionId = setTimeout(() => {
@@ -541,8 +546,8 @@ function _initModalRef(modalRef: ModalElement): void {
 	function dragHandleRefOnPointerMove(ev: PointerEvent): void {
 		if (!isDragging) return
 
-		modalRef.style.setProperty('left', ev.clientX - diffPositionX + 'px')
-		modalRef.style.setProperty('top', ev.clientY - diffPositionY + 'px')
+		modalRef.style.setProperty(ModalCSSVariables.left, ev.clientX - diffPositionX + 'px')
+		modalRef.style.setProperty(ModalCSSVariables.top, ev.clientY - diffPositionY + 'px')
 	}
 
 	function dragHandleRefOnPointerUp(ev: PointerEvent): void {
@@ -859,6 +864,7 @@ export {
 	type ModalToggleOpenEventDetail,
 	type ModalElement,
 	ModalEvents,
+	ModalCSSVariables,
 	ModalAttributes,
 	ModalClasses,
 	ModalPosition,

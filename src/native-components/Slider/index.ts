@@ -18,6 +18,10 @@ enum SliderClasses {
 	slider = 'c-slider'
 }
 
+enum SliderCSSVariables {
+	percent = '--c-slider-percent'
+}
+
 const REGISTERED_SLIDER: Set<SliderElement> = new Set<SliderElement>()
 
 function _initSliderRef(sliderRef: SliderElement): void {
@@ -65,7 +69,7 @@ function updateSliderRefValue(sliderRef: SliderElement, value?: number): void {
 
 	const v = numberSafe(sliderRef.valueAsNumber, 0)
 	const range = mathClamp(v / (Math.max(min, max) - Math.min(min, max)) * 100, 0, 100)
-	sliderRef.style.setProperty('--c-slider-percent', range + '%')
+	sliderRef.style.setProperty(SliderCSSVariables.percent, range + '%')
 }
 
 function createSliderRef(options?: SliderUpdateOptions): SliderElement {
@@ -107,6 +111,7 @@ export {
 	type SliderUpdateOptions,
 	type SliderElement,
 	SliderClasses,
+	SliderCSSVariables,
 	registerSliderRef,
 	unregisterSliderRef,
 	updateSliderRefValue,
