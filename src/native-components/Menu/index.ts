@@ -198,6 +198,10 @@ function _initSubMenuItemRef(subMenuItemRef: SubMenuItemElement): void {
 	let isTargetHovered = false
 	let timeId: number | NodeJS.Timeout | null = null
 
+	function isDisabled(): boolean {
+		return subMenuItemRef.disabled || subMenuItemRef.getAttribute('aria-disabled') === 'true'
+	}
+
 	function getAllSubMenuRefs(from: HTMLElement): SubMenuElement[] {
 		const menus = new Set<SubMenuElement>()
 		const traverseDown = (popover: HTMLElement) => {
@@ -228,6 +232,9 @@ function _initSubMenuItemRef(subMenuItemRef: SubMenuItemElement): void {
 
 	function openSubMenuRef(instant: boolean = false): void {
 		if (timeId !== null) clearTimeout(timeId)
+
+		if (isDisabled()) {return}
+
 		timeId = setTimeout(() => {
 			timeId = null
 			const parentRef = elements.parent

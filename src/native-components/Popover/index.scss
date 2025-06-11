@@ -1,7 +1,7 @@
 .c-popover {
 	position: fixed;
 	background-color: rgba(var(--g-color-surface), var(--g-opacity-glass));
-	backdrop-filter: blur(32px);
+	backdrop-filter: blur(var(--g-blur-glass));
 	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity3));
 	border-radius: 8px;
 	left: 0;
