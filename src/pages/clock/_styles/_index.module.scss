@@ -91,7 +91,7 @@ $SCREEN_WIDTH_SMALL: 650px;
 		border-radius: 4px;
 		border: 1px solid rgb(var(--g-color-on-surface), var(--g-opacity2));
 		background-color: rgb(var(--g-color-on-surface), var(--g-opacity2));
-		backdrop-filter: blur(32px);
+		backdrop-filter: blur(var(--g-blur-glass));
 
 		> span {
 			display: block;
