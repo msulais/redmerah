@@ -1,0 +1,27 @@
+---
+import { attrClassList } from '@/utils/attributes'
+import { SliderClasses, type SliderProps } from '.'
+import './index.scss'
+
+type Props = SliderProps
+const {
+	'class': className,
+	max = '100',
+	value = '0',
+	min = '0',
+	...other
+} = Astro.props
+---
+
+<input
+	class={attrClassList(SliderClasses.slider, className)}
+	type="range"
+	value={value}
+	min={min}
+	max={max}
+	{...other}
+/>
+<script>
+	import { registerSliderRef } from "."
+	registerSliderRef()
+</script>

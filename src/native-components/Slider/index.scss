@@ -1,0 +1,155 @@
+.c-slider {
+	--c-slider-percent: 0%;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	width: 200px;
+	height: 20px;
+	background-color: transparent;
+	cursor: pointer;
+
+	@media (hover: hover) {
+		&:hover::-webkit-slider-runnable-track {
+			opacity: var(--g-opacity-inv2);
+		}
+
+		&:hover::-moz-range-track {
+			opacity: var(--g-opacity-inv2);
+		}
+	}
+
+	&:active::-webkit-slider-runnable-track {
+		opacity: 1;
+	}
+
+	&:active::-moz-range-track {
+		opacity: 1;
+	}
+
+	&::-webkit-slider-runnable-track {
+		-moz-appearance: none;
+		-webkit-appearance: none;
+		appearance: none;
+		height: 4px;
+		border-radius: 999px;
+		background: linear-gradient(
+			to right,
+			rgb(var(--g-color-accent)) var(--c-slider-percent),
+			rgba(var(--g-color-on-surface), var(--g-opacity5)) var(--c-slider-percent)
+		);
+
+		:root[data-animation=on] & {
+			transition-property: opacity;
+			transition-duration: .25s;
+		}
+
+		@media (prefers-reduced-motion: no-preference) {
+			:root[data-animation=auto] & {
+				transition-property: opacity;
+				transition-duration: .25s;
+			}
+		}
+	}
+
+	&::-moz-range-track {
+		-moz-appearance: none;
+		-webkit-appearance: none;
+		appearance: none;
+		height: 4px;
+		border-radius: 999px;
+		background: linear-gradient(
+			to right,
+			rgb(var(--g-color-accent)) var(--c-slider-percent),
+			rgba(var(--g-color-on-surface), var(--g-opacity5)) var(--c-slider-percent)
+		);
+
+		:root[data-animation=on] & {
+			transition-property: opacity;
+			transition-duration: .25s;
+		}
+
+		@media (prefers-reduced-motion: no-preference) {
+			:root[data-animation=auto] & {
+				transition-property: opacity;
+				transition-duration: .25s;
+			}
+		}
+	}
+
+	&::-webkit-slider-thumb {
+		-moz-appearance: none;
+		-webkit-appearance: none;
+		appearance: none;
+		border: 4px solid rgba(var(--g-color-surface), var(--g-opacity-inv2));
+		box-sizing: border-box;
+		border-radius: 50%;
+		height: 20px;
+		width: 20px;
+		position: relative;
+		bottom: 8px;
+		box-shadow: var(--g-elevation2);
+		background: rgb(var(--g-color-accent));
+
+		:root[data-animation=on] & {
+			transition-property: border-width;
+			transition-duration: .25s;
+		}
+
+		@media (prefers-reduced-motion: no-preference) {
+			:root[data-animation=auto] & {
+				transition-property: border-width;
+				transition-duration: .25s;
+			}
+		}
+
+		@media (hover: hover) {
+			&:hover {
+				border-width: 3px;
+			}
+		}
+
+		&:active {
+			border-width: 5px;
+		}
+	}
+
+
+	// same as ::-webkit-slider-thumb. idk why chrome (137) wont let me
+	// do `&::-webkit-slider-thumb,&::-moz-range-thumb`.
+	&::-moz-range-thumb {
+		-moz-appearance: none;
+		-webkit-appearance: none;
+		appearance: none;
+		border: 4px solid rgba(var(--g-color-surface), var(--g-opacity-inv2));
+		box-sizing: border-box;
+		border-radius: 50%;
+		height: 19px;
+		width: 19px;
+		position: relative;
+		bottom: 8px;
+		box-shadow: var(--g-elevation2);
+		background: rgb(var(--g-color-accent));
+
+		:root[data-animation=on] & {
+			transition-property: border-width;
+			transition-duration: .25s;
+		}
+
+		@media (prefers-reduced-motion: no-preference) {
+			:root[data-animation=auto] & {
+				transition-property: border-width;
+				transition-duration: .25s;
+			}
+		}
+
+		@media (hover: hover) {
+			&:hover {
+				border-width: 3px;
+			}
+		}
+
+		&:active {
+			border-width: 5px;
+		}
+	}
+}
