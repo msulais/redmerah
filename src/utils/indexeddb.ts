@@ -1,8 +1,8 @@
 import type { DatabaseNames } from "@/enums/storage"
 
-type CreateObjectStoreParams<T> = {
+type CreateObjectStoreParams<T extends object> = {
 	name: string
-	keyPath: (keyof T) | string
+	keyPath: (keyof T)
 	indexs: (keyof T)[]
 }
 
@@ -71,9 +71,9 @@ export class IDB {
 	/**
 	 * Only called this inside `on_upgrade_needed()`
 	 */
-	createStore<T>({name, indexs, keyPath}: CreateObjectStoreParams<T>): IDBObjectStore | null {
+	createStore<T extends object>({name, indexs, keyPath}: CreateObjectStoreParams<T>): IDBObjectStore | null {
 		if (!this._db) return null
-		keyPath = String(keyPath)
+		keyPath = String(keyPath) as keyof T
 
 		let store = this.writeStore(name)
 		if (this._db.objectStoreNames.contains(name)) {
@@ -96,7 +96,7 @@ export class IDB {
 		else {
 			store = this._db.createObjectStore(name, {
 				autoIncrement: true,
-				keyPath: keyPath
+				keyPath: keyPath as string
 			})
 
 			for (const index of indexs) {
@@ -110,7 +110,7 @@ export class IDB {
 		}
 
 		if (!indexs.includes(keyPath as keyof T)) {
-			store.createIndex(keyPath, keyPath, {unique: true})
+			store.createIndex(keyPath as string, keyPath as string, {unique: true})
 		}
 
 		return store
