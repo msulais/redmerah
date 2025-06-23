@@ -1,0 +1,141 @@
+---
+import LinkButton from '@/native-components/Button/LinkButton.astro'
+import Divider from '@/native-components/Divider/index.astro'
+import Icon from '@/native-components/Icon/index.astro'
+import TextField from '@/native-components/TextField/index.astro'
+import Menu from '@/native-components/Menu/index.astro'
+import MenuItem from '@/native-components/Menu/MenuItem.astro'
+import Toast from '@/native-components/Toast/index.astro'
+import UIGradient from './_body/_UIGradient.astro'
+import { CSSClasses } from '../_styles/_css'
+import { IconCodes } from '@/enums/icons'
+import { ButtonClasses, ButtonVariant } from '@/native-components/Button'
+import { AppCSSColors } from '@/enums/app-data'
+import { ElementIds } from '../_scripts/_shared/_ids'
+import { DEFAULT_PREVIEW_BORDER_RADIUS, DEFAULT_PREVIEW_HEIGHT, DEFAULT_PREVIEW_WIDTH, DEFAULT_STOP_COLOR_1, DEFAULT_STOP_COLOR_2 } from '../_scripts/_shared/_constant'
+import { FlyoutPosition } from '@/enums/position'
+---
+
+<main class={CSSClasses.body}>
+	<div class={CSSClasses.bodyPreviewContainer}>
+		<div
+			class={CSSClasses.bodyPreview}
+			id={ElementIds.bd_preview}
+			style={{
+				borderRadius: DEFAULT_PREVIEW_BORDER_RADIUS + 'px',
+				minWidth: DEFAULT_PREVIEW_WIDTH + 'px',
+				minHeight: DEFAULT_PREVIEW_HEIGHT + 'px',
+				background: `linear-gradient(0deg,${DEFAULT_STOP_COLOR_1} 0%, ${DEFAULT_STOP_COLOR_2} 100%)`
+			}}
+		/>
+	</div>
+	<div class={CSSClasses.bodyEditor}>
+		<details>
+			<summary
+				class={ButtonClasses.button}>
+				Saved gradient
+				<Icon IconCode={IconCodes.chevronDown}/>
+			</summary>
+			<ul style="padding:12px" data-css-content class={CSSClasses.bodySavedGradient}>{/*
+				<li>
+					<Button
+						data-command={Commands.grad_use}
+						popovertarget={ElementIds.bdSave_actionMenu}
+						popovertargetaction='show'>
+						<span style="background-color:rgb(var(--g-color-accent))"/>
+					</Button>
+				</li>
+			*/}</ul>
+			<Menu
+				style="width:128px"
+				id={ElementIds.bdSave_actionMenu}
+				PopoverPosition={FlyoutPosition.centerBottomToRight}>
+				<MenuItem id={ElementIds.bdSave_actionView}><Icon IconCode={IconCodes.eye}/>View</MenuItem>
+				<MenuItem id={ElementIds.bdSave_actionCopy}><Icon IconCode={IconCodes.copy}/>Copy</MenuItem>
+				<Divider />
+				<MenuItem id={ElementIds.bdSave_actionDelete}><Icon IconCode={IconCodes.delete}/>Delete</MenuItem>
+			</Menu>
+		</details>
+		<Divider/>
+		<details open>
+			<summary
+				class={ButtonClasses.button}
+				data-c-button-variant={ButtonVariant.filled}>
+				Properties
+				<Icon IconCode={IconCodes.chevronDown}/>
+			</summary>
+			<div data-css-content class={CSSClasses.bodyProperties}>
+				<label for={ElementIds.bdProp_borderRadius}>Border radius (px):</label>
+				<TextField TextFieldInputAttr={{
+					id: ElementIds.bdProp_borderRadius,
+					type: 'number',
+					min: 0,
+					value: DEFAULT_PREVIEW_BORDER_RADIUS
+				}}/>
+				<div style={{
+					display: 'grid',
+					gridTemplateColumns: '1fr 1fr',
+					gap: '8px',
+					marginTop: '8px'
+				}}>
+					<div>
+						<label for={ElementIds.bdProp_width}>Width (px):</label>
+						<TextField TextFieldInputAttr={{
+							id: ElementIds.bdProp_width,
+							type: 'number',
+							min: 0,
+							value: DEFAULT_PREVIEW_WIDTH
+						}}/>
+					</div>
+					<div>
+						<label for={ElementIds.bdProp_height}>Height (px):</label>
+						<TextField TextFieldInputAttr={{
+							id: ElementIds.bdProp_height,
+							type: 'number',
+							min: 0,
+							value: DEFAULT_PREVIEW_HEIGHT
+						}}/>
+					</div>
+				</div>
+				<label for={ElementIds.bdProp_clipPath}>Clip path:</label>
+				<TextField TextFieldInputAttr={{
+					id: ElementIds.bdProp_clipPath,
+				}}/>
+				<LinkButton
+					style={{
+						minHeight: '24px',
+						width: 'fit-content',
+						marginTop: '2px',
+						translate: '-8px 0',
+						padding: '2px 8px',
+						color: `rgb(${AppCSSColors.accent})`
+					}}
+					href="https://developer.mozilla.org/en-US/docs/Web/CSS/clip-path"
+					LinkButtonNewTab>
+					<Icon IconCode={IconCodes.info}/>
+					How to use clip path
+				</LinkButton>
+			</div>
+		</details>
+		<Divider/>
+		<details open>
+			<summary
+				class={ButtonClasses.button}
+				data-c-button-variant={ButtonVariant.filled}>
+				Gradient
+				<Icon IconCode={IconCodes.chevronDown}/>
+			</summary>
+			<div style="padding:4px 0 0 0" data-css-content class={CSSClasses.bodyGradients}>
+				<UIGradient />
+			</div>
+		</details>
+	</div>
+</main>
+<Toast id={ElementIds.bdToas_copied} ToastCloseDelay={1500}>
+	<Icon IconCode={IconCodes.copy} slot="leading"/>
+	Copied
+</Toast>
+<Toast id={ElementIds.bdToas_saved} ToastCloseDelay={1500}>
+	<Icon IconCode={IconCodes.save} slot="leading"/>
+	Saved
+</Toast>

@@ -1,7 +1,7 @@
-import { RectangularColorSpace, PolarColorSpace, HueInterpolationMethod, GradientType, RadialGradientShape, ColorSpace } from "./_enums"
-import type { Gradient } from "./_type"
 import type { HEXColor } from "@/types/color"
 import { colorHexToHsl, colorHexToRgb } from "@/utils/color"
+import { ColorSpace, GradientType, HueInterpolationMethod, PolarColorSpace, RadialGradientShape, RectangularColorSpace } from "../_shared/_enums"
+import type { GradientItem } from "./_gradients"
 
 export function convertColorByColorSpace(color: HEXColor, space: ColorSpace, keepOpacity: boolean = false): string {
 	const opacity = (color.length > 7
@@ -42,22 +42,22 @@ export function convertColorByColorSpace(color: HEXColor, space: ColorSpace, kee
 }
 
 export function gradientToCSSText(
-	gradient: Gradient,
+	gradient: GradientItem,
 	model: ColorSpace = ColorSpace.hex,
 	format: boolean = false
 ): string {
 	const repeat = gradient.repeat ? 'repeating-' : ''
 	const type = gradient.type
 	let colorInterpolationMethod = ''
-	if (gradient.colorInterpolationMethod != RectangularColorSpace.auto) {
-		colorInterpolationMethod = ` in ${gradient.colorInterpolationMethod}`
+	if (gradient.colorMethod !== RectangularColorSpace.auto) {
+		colorInterpolationMethod = ` in ${gradient.colorMethod}`
 
 		const isPolarColorSpace = [
 			PolarColorSpace.hsl, PolarColorSpace.hwb,
 			PolarColorSpace.lch, PolarColorSpace.oklch
-		].includes(gradient.colorInterpolationMethod as PolarColorSpace)
-		if (isPolarColorSpace && gradient.hueInterpolationMethod != HueInterpolationMethod.auto) {
-			colorInterpolationMethod += ` ${gradient.hueInterpolationMethod} hue`
+		].includes(gradient.colorMethod as PolarColorSpace)
+		if (isPolarColorSpace && gradient.hueMethod != HueInterpolationMethod.auto) {
+			colorInterpolationMethod += ` ${gradient.hueMethod} hue`
 		}
 	}
 
@@ -65,35 +65,35 @@ export function gradientToCSSText(
 	switch (type) {
 	case GradientType.linear: {
 		const angle = gradient.angle
-		const colorStopList = [...gradient.colorStopList]
+		const colorStopList = [...gradient.stops]
 			.sort((a, b) => a.size - b.size)
 			.map(v => `${convertColorByColorSpace(v.color, model, false)} ${v.size}%`)
-			.join(format? ',\n    ' : ', ')
+			.join(format? ',\n\t' : ', ')
 
-		text = `${repeat}linear-gradient(${format? '\n    ' : ''}${angle}deg${colorInterpolationMethod},${format? '\n    ' : ' '}${colorStopList}${format? '\n' : ''})`
+		text = `${repeat}linear-gradient(${format? '\n\t' : ''}${angle}deg${colorInterpolationMethod},${format? '\n\t' : ' '}${colorStopList}${format? '\n' : ''})`
 		break
 	}
 	case GradientType.radial: {
 		const shape = gradient.shape
 		const position = `${gradient.positionX}% ${gradient.positionY}%`
-		const size = shape == RadialGradientShape.circle ? `${gradient.sizeLength}px` : `${gradient.sizeWidth}% ${gradient.sizeHeight}%`
-		const colorStopList = [...gradient.colorStopList]
+		const size = shape == RadialGradientShape.circle ? `${gradient.size}px` : `${gradient.width}% ${gradient.height}%`
+		const colorStopList = [...gradient.stops]
 			.sort((a, b) => a.size - b.size)
 			.map(v => `${convertColorByColorSpace(v.color, model, false)} ${v.size}%`)
-			.join(format? ',\n    ' : ', ')
+			.join(format? ',\n\t' : ', ')
 
-		text = `${repeat}radial-gradient(${format? '\n    ' : ''}${shape} ${size} at ${position}${colorInterpolationMethod},${format? '\n    ' : ' '}${colorStopList}${format? '\n' : ''})`
+		text = `${repeat}radial-gradient(${format? '\n\t' : ''}${shape} ${size} at ${position}${colorInterpolationMethod},${format? '\n\t' : ' '}${colorStopList}${format? '\n' : ''})`
 		break
 	}
 	case GradientType.conic: {
 		const angle = gradient.angle
 		const position = `${gradient.positionX}% ${gradient.positionY}%`
-		const colorStopList = [...gradient.colorStopList]
+		const colorStopList = [...gradient.stops]
 			.sort((a, b) => a.size - b.size)
-			.map(v => `${convertColorByColorSpace(v.color, model, false)} ${Math.round(v.size * 360 / 100)}deg`)
-			.join(format? ',\n    ' : ', ')
+			.map(v => `${convertColorByColorSpace(v.color, model, false)} ${v.size * 360 / 100}deg`)
+			.join(format? ',\n\t' : ', ')
 
-		text = `${repeat}conic-gradient(${format? '\n    ' : ''}from ${angle}deg at ${position}${colorInterpolationMethod},${format? '\n    ' : ' '}${colorStopList}${format? '\n' : ''})`
+		text = `${repeat}conic-gradient(${format? '\n\t' : ''}from ${angle}deg at ${position}${colorInterpolationMethod},${format? '\n\t' : ' '}${colorStopList}${format? '\n' : ''})`
 		break
 	}}
 
