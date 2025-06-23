@@ -92,7 +92,7 @@ export const APP_COLOR_GRADIENT: AppItem = {
 	name: 'Color Gradient',
 	description: 'Design beautiful color gradients with our intuitive app. Choose from linear and radial gradients, and stack them for complex effects. Generate clean CSS code to implement your designs.',
 	link: RoutesLinks.colorGradient,
-	color: '#F5FF00',
+	color: '#7BFF2D',
 	buildNumber: 5,
 	buildVersion: '0.0.9',
 }
