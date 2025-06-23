@@ -1,0 +1,17 @@
+---
+import { ComboBoxClasses, type ComboBoxOptionProps } from '.'
+import { attrClassList } from '@/utils/attributes'
+import { ButtonClasses } from '../Button'
+import './index.scss'
+
+type Props = ComboBoxOptionProps
+const {
+	'class': className,
+	...other
+} = Astro.props
+---
+<option
+	class={attrClassList(ButtonClasses.button, ComboBoxClasses.option, className)}
+	{...other}>
+	<slot />
+</option>
