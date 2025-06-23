@@ -2,9 +2,9 @@ import { ObservableStore } from "@/utils/store"
 import { GradientStore, type GradientItem } from "./_gradients"
 import { $, $$, $$$ } from "./_dom-utils"
 import { CSSClasses } from "../../_styles/_css"
-import { elementValidTarget } from "@/utils/element"
+import { isTargetValidElement } from "@/utils/element"
 import { Commands } from "../_shared/_commands"
-import { createId } from "@/utils/ids"
+import { createElementId } from "@/utils/ids"
 import { updateMenuRef, type MenuElement, type MenuItemElement } from "@/native-components/Menu"
 import { ElementIds } from "../_shared/_ids"
 import { isPopoverRefOpen } from "@/native-components/Popover"
@@ -81,12 +81,12 @@ function _subscribeGradientsRefView(v: SavedGradientsType): void {
 function _initEvents(): void {
 	_savedGradientListRef?.addEventListener('click', (ev) => {
 		const buttonRef = document.activeElement as HTMLButtonElement
-		if (!elementValidTarget(_savedGradientListRef, buttonRef)) {return}
+		if (!isTargetValidElement(_savedGradientListRef, buttonRef)) {return}
 
 		const getButtonId = () => {
 			let id = buttonRef.id
 			if (!id) {
-				buttonRef.id = (id = createId())
+				buttonRef.id = (id = createElementId())
 			}
 			return id
 		}

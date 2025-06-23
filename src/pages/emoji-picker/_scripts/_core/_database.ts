@@ -3,7 +3,7 @@ import { IDB } from "@/utils/indexeddb"
 import { $ } from "./_dom-utils"
 import { ElementIds } from "../_shared/_ids"
 import { Pages, SkinToneEmoji } from "../_shared/_enums"
-import { validEnumValue } from "@/utils/object"
+import { isValidEnumValue } from "@/utils/object"
 import { NavigationStore, type NavigationStoreType } from "./_navigation"
 import { SettingsStore, type SettingsStoreType } from "./_settings"
 
@@ -47,12 +47,12 @@ function _readStorageAll(store: IDBObjectStore): void {
 			}
 			break
 		case "page":
-			if (isString && validEnumValue(value, Pages)) {
+			if (isString && isValidEnumValue(value, Pages)) {
 				NavigationStore.update(v => ({...v, page: value as Pages}))
 			}
 			break
 		case 'settings/skin-tone':
-			if (isString && validEnumValue(value, SkinToneEmoji)) {
+			if (isString && isValidEnumValue(value, SkinToneEmoji)) {
 				SettingsStore.update(v => ({...v, skinTone: value as SkinToneEmoji}))
 			}
 		}

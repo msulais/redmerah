@@ -1,7 +1,7 @@
 import type { TextFieldButtonElement } from "@/native-components/TextField"
 import { ElementIds } from "../_shared/_ids"
 import { $, $$$ } from "./_dom-utils"
-import { elementValidTarget } from "@/utils/element"
+import { isTargetValidElement } from "@/utils/element"
 import { openToastRef, type ToastElement } from "@/native-components/Toast"
 import { ButtonVariant } from "@/native-components/Button"
 import { EMOJIS_SMILEY_AND_EMOTION, EMOJIS_PERSON_AND_BODY, EMOJIS_ANIMAL_AND_NATURE, EMOJIS_FOOD_AND_DRINK, EMOJIS_TRAVEL_AND_PLACES, EMOJIS_ACTIVITIES, EMOJIS_OBJECT, EMOJIS_SYMBOLS, EMOJIS_FLAGS, EMOJIS_PERSON_AND_BODY_LIGHT_SKIN_TONE, EMOJIS_PERSON_AND_BODY_MEDIUM_LIGHT_SKIN_TONE, EMOJIS_PERSON_AND_BODY_MEDIUM_SKIN_TONE, EMOJIS_PERSON_AND_BODY_MEDIUM_DARK_SKIN_TONE, EMOJIS_PERSON_AND_BODY_DARK_SKIN_TONE } from "@/constants/emoji"
@@ -35,7 +35,7 @@ let _prevEmojiList = EMOJIS_SMILEY_AND_EMOTION.map(v => v[0]).join()
 function _initEvents(): void {
 	_bodyRef.addEventListener('click', () => {
 		const buttonRef = document.activeElement as HTMLButtonElement
-		if (!elementValidTarget(_bodyRef, buttonRef)) {return}
+		if (!isTargetValidElement(_bodyRef, buttonRef)) {return}
 
 		const dataEmoji = buttonRef.dataset.emoji
 		if (!dataEmoji) {return}

@@ -3,7 +3,7 @@ import appbar from './_appbar'
 import { ElementIds } from './_enums'
 import { updateIconRef } from '@/native-components/Icon'
 import { isAnimationAllowed } from '@/utils/animation'
-import { elementAnimateUpdateText } from '@/utils/element'
+import { animateUpdateTextElement } from '@/utils/element'
 import { IconCodes } from '@/enums/icons'
 
 const $ = (id: string) => document.getElementById(id)
@@ -27,8 +27,8 @@ function _initEvents(): void {
 		const update = () => {
 			const charging = battery.charging
 			if (isAnimationAllowed()) {
-				elementAnimateUpdateText(levelTextRef, (battery.level * 100) + '%')
-				elementAnimateUpdateText(statusTextRef, charging? 'Charging' : 'Discharging')
+				animateUpdateTextElement(levelTextRef, (battery.level * 100) + '%')
+				animateUpdateTextElement(statusTextRef, charging? 'Charging' : 'Discharging')
 			}
 			else {
 				levelTextRef.textContent = (battery.level * 100) + '%'

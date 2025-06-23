@@ -3,11 +3,11 @@ import { NumberType } from "../_shared/_enums"
 import { DEFAULT_PROGRAMMER_NUMBER_TYPE } from "../_shared/_constant"
 import { ElementIds } from "../_shared/_ids"
 import { $, $$, $$$, scrollInputToEnd } from "../_core/_dom-utils"
-import { elementValidTarget } from "@/utils/element"
+import { isTargetValidElement } from "@/utils/element"
 import { CSSClasses } from "@/pages/calculator/_styles/_css"
 import { ButtonVariant, updateButtonRef } from "@/native-components/Button"
 import { calculate } from "../_core/_calculator"
-import { numberIsDefined, numberToBinary } from "@/utils/number"
+import { isNumberDefined, numberToBinary } from "@/utils/number"
 import { formatOutput } from "../_core/_string-utils"
 import { saveStorageItem } from "../_core/_database"
 
@@ -84,7 +84,7 @@ function _calculate(): void {
 		const parsedOutput = Number.parseFloat(output)
 		ProgrammerStore.update(v => ({
 			...v,
-			output: numberIsDefined(parsedOutput)? parsedOutput : null
+			output: isNumberDefined(parsedOutput)? parsedOutput : null
 		}))
 	}, 50)
 }
@@ -243,7 +243,7 @@ function _initSubscriber(): void {
 function _numberTypeEvents(): void {
 	_outputRef.addEventListener('click', () => {
 		const buttonRef = document.activeElement as HTMLButtonElement
-		if (!elementValidTarget(_outputRef, buttonRef, el => el.tagName === 'BUTTON')) return
+		if (!isTargetValidElement(_outputRef, buttonRef, el => el.tagName === 'BUTTON')) return
 
 		let type: NumberType = NumberType.decimal
 		switch (buttonRef) {

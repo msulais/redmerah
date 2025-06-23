@@ -1,5 +1,5 @@
 ---
-import { attrClassList } from '@/utils/attributes'
+import { joinClassList } from '@/utils/attributes'
 
 import {
 	ListClasses,
@@ -27,23 +27,23 @@ const Dynamic = ListTagName as 'div'
 
 ---
 <Dynamic
-	class={attrClassList(ListClasses.list, className)}
+	class={joinClassList(ListClasses.list, className)}
 	data-c-list-variant={ListVariant}
 	{...other}>
-	<div class={attrClassList(ListClasses.leading, leadingClass)} {...leadingOther}>
+	<div class={joinClassList(ListClasses.leading, leadingClass)} {...leadingOther}>
 		<slot name='leading'/>
 	</div>
-	<div class={attrClassList(ListClasses.content, contentClass)} {...contentOther}>
+	<div class={joinClassList(ListClasses.content, contentClass)} {...contentOther}>
 		<slot/>
 		{Astro.slots.has('subtitle') &&
 			<div
-				class={attrClassList(ListClasses.subtitle, subtitleClass)}
+				class={joinClassList(ListClasses.subtitle, subtitleClass)}
 				{...subtitleOther}>
 				<slot name='subtitle'/>
 			</div>
 		}
 	</div>
-	<div class={attrClassList(ListClasses.trailing, trailingClass)} {...trailingOther}>
+	<div class={joinClassList(ListClasses.trailing, trailingClass)} {...trailingOther}>
 		<slot name='trailing'/>
 	</div>
 </Dynamic>

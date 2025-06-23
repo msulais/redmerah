@@ -1,6 +1,6 @@
-import { validEnumValue } from "@/utils/object"
+import { isValidEnumValue } from "@/utils/object"
 import { createListRef, updateListRef, type ListElement, type ListProps } from "../List"
-import { numberSafe } from "@/utils/number"
+import { safeNumber } from "@/utils/number"
 
 type ToastProps = astroHTML.JSX.HTMLAttributes & {
 	ToastContentAttr?: ListProps
@@ -54,7 +54,7 @@ function _initToastRef(toastRef: ToastElement): void {
 		},
 		get closeDelay(): number {
 			const num = toastRef.getAttribute(ToastAttributes.closeDelay) ?? '5000'
-			return numberSafe(Number.parseInt(num), 5000)
+			return safeNumber(Number.parseInt(num), 5000)
 		}
 	}
 	let timeCloseId: number | null | NodeJS.Timeout = null
@@ -117,7 +117,7 @@ function updateToastRef(toastRef: ToastElement, options?: ToastUpdateOptions): T
 	}
 
 	const positionOption = options?.ToastPosition
-	if (positionOption && validEnumValue(positionOption, ToastPosition)) {
+	if (positionOption && isValidEnumValue(positionOption, ToastPosition)) {
 		toastRef.setAttribute(ToastAttributes.position, positionOption)
 	}
 

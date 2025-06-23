@@ -5,10 +5,10 @@ import { $, $$, $$$ } from "./_dom-utils"
 import { ElementIds } from "../_shared/_ids"
 import { ColorPickerEvents, getColorPickerRefValue, updateColorPickerRef, type ColorPickerElement } from "@/native-components/ColorPicker"
 import { GlobalElementIds } from "@/enums/ids"
-import { colorGeneratePalette, colorHexToRgb, colorIsValid } from "@/utils/color"
+import { generateColorPalette, hexToRgb, isColorValid } from "@/utils/color"
 import type { ToastElement } from "@/native-components/Toast"
 import { CSSClasses } from "../../_styles/_css"
-import { elementValidTarget } from "@/utils/element"
+import { isTargetValidElement } from "@/utils/element"
 import { Commands } from "../_shared/_commands"
 import { createIconButtonRef, type IconButtonElement } from "@/native-components/Button"
 import { createIconRef } from "@/native-components/Icon"
@@ -59,7 +59,7 @@ function _subscribePaletteRefView(v: ColorsStoreType, o: ColorsStoreType): void 
 		for (let i = 0; i < length - oldLength; i++) {
 			const children = [..._paletteListRef.children]
 			const seed = palette[i]
-			const pal = colorGeneratePalette(seed)
+			const pal = generateColorPalette(seed)
 
 			const icon = createIconRef({
 				IconCode: IconCodes.circle,
@@ -174,12 +174,12 @@ function _subscribeColorRefView(v: ColorsStoreType, o: ColorsStoreType): void {
 
 	_timeAccentId = setTimeout(() => {
 		_timeAccentId = null
-		const palette = colorGeneratePalette(color)
+		const palette = generateColorPalette(color)
 		_colorAccentRef.innerHTML = ':root{'
-			+ `--g-color-accent-light: ${_rgbToCSS(colorHexToRgb(palette.color))};`
-			+ `--g-color-accent-dark: ${_rgbToCSS(colorHexToRgb(palette.colorDark))};`
-			+ `--g-color-on-accent-light: ${_rgbToCSS(colorHexToRgb(palette.onColor))};`
-			+ `--g-color-on-accent-dark: ${_rgbToCSS(colorHexToRgb(palette.onColorDark))};`
+			+ `--g-color-accent-light: ${_rgbToCSS(hexToRgb(palette.color))};`
+			+ `--g-color-accent-dark: ${_rgbToCSS(hexToRgb(palette.colorDark))};`
+			+ `--g-color-on-accent-light: ${_rgbToCSS(hexToRgb(palette.onColor))};`
+			+ `--g-color-on-accent-dark: ${_rgbToCSS(hexToRgb(palette.onColorDark))};`
 			+ '}'
 		;
 		const hex = color.toUpperCase() as HEXColor
@@ -223,13 +223,13 @@ function _initEvents(): void {
 
 	_paletteListRef.addEventListener('click', () => {
 		const buttonRef = document.activeElement as HTMLButtonElement
-		if (!elementValidTarget(_paletteListRef, buttonRef)) {return}
+		if (!isTargetValidElement(_paletteListRef, buttonRef)) {return}
 
 		const command = buttonRef.dataset.command as Commands
 		const getSeedColor = () => {
 			const li = buttonRef.closest('[data-seed-color]')
 			const seed = li?.getAttribute('data-seed-color')
-			if (!seed || !colorIsValid(seed)) return null
+			if (!seed || !isColorValid(seed)) return null
 
 			return seed as HEXColor
 		}
@@ -262,7 +262,7 @@ function _initEvents(): void {
 }
 
 export function copyColorPalette(color: HEXColor = ColorsStore.value.seed): void {
-	const palette = colorGeneratePalette(color)
+	const palette = generateColorPalette(color)
 	const text = [
 		'--seed           : ' + color              .toUpperCase(),
 		'--accent-light   : ' + palette.color      .toUpperCase(),

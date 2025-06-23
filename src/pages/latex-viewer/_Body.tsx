@@ -3,9 +3,9 @@ import katex from 'katex'
 
 import type { Settings } from "./_types"
 import { Commands } from "./_enums"
-import { attrSetIfExist } from "@/utils/attributes"
-import { elementValidTarget } from "@/utils/element"
-import { numberIsNotDefined } from "@/utils/number"
+import { setAttrIfExist } from "@/utils/attributes"
+import { isTargetValidElement } from "@/utils/element"
+import { isNumberNotDefined } from "@/utils/number"
 import { keyboardOnFocusIn, keyboardOnFocusOut, keyboardOnKeyDown } from "@/utils/keyboard"
 import { ICON_ADD, ICON_COPY, ICON_DELETE } from "@/constants/icons"
 
@@ -50,7 +50,7 @@ const LatexEditor: VoidComponent<{
 			ref={r => textAreaRef = r}
 			placeholder="Type your LaTeX here ..."
 			value={props.latex()}
-			data-text-wrap={attrSetIfExist(settings().textWrap)}
+			data-text-wrap={setAttrIfExist(settings().textWrap)}
 			style={{
 				"font-size": settings().fontSize + 'px',
 			}}
@@ -114,7 +114,7 @@ const _: VoidComponent<{
 		class={CSS.body}
 		onClick={ev => {
 			const button = document.activeElement! as HTMLButtonElement
-			if (!elementValidTarget(
+			if (!isTargetValidElement(
 				ev.currentTarget,
 				button,
 			)) return
@@ -123,7 +123,7 @@ const _: VoidComponent<{
 			const dataNew = dataset.new
 			if (dataNew) {
 				const index = Number.parseInt(dataNew)
-				if (numberIsNotDefined(index)) return
+				if (isNumberNotDefined(index)) return
 
 				command(Commands.addEquation, index + 1)
 				return
@@ -132,7 +132,7 @@ const _: VoidComponent<{
 			const dataDelete = dataset.delete
 			if (dataDelete) {
 				const index = Number.parseInt(dataDelete)
-				if (numberIsNotDefined(index)) return
+				if (isNumberNotDefined(index)) return
 
 				command(Commands.deleteEquation, index)
 				return
@@ -141,7 +141,7 @@ const _: VoidComponent<{
 			const dataCopy = dataset.copy
 			if (dataCopy) {
 				const index = Number.parseInt(dataCopy)
-				if (numberIsNotDefined(index)) return
+				if (isNumberNotDefined(index)) return
 
 				navigator.clipboard.writeText(
 					settings().prefix

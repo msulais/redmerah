@@ -2,7 +2,7 @@ import { AnimationEffectTiming } from "@/enums/animation"
 import { BodyAttributes } from "@/enums/attributes"
 import { GlobalElementIds } from "@/enums/ids"
 import { isAnimationAllowed } from "@/utils/animation"
-import { numberSafe } from "@/utils/number"
+import { safeNumber } from "@/utils/number"
 
 let COMPONENT_COUNT: number = 0
 let COMPONENT_COUNT_MAX: number | null = null
@@ -38,7 +38,7 @@ export function removeSplashScreen(timeout: number = 0): void {
 export function tryRemoveSplashScreen(timeout: number = 0): void {
 	const body = document.body
 	++COMPONENT_COUNT
-	if (COMPONENT_COUNT_MAX === null) COMPONENT_COUNT_MAX = numberSafe(
+	if (COMPONENT_COUNT_MAX === null) COMPONENT_COUNT_MAX = safeNumber(
 		Number.parseFloat(body.getAttribute(BodyAttributes.componentCount) ?? '0')
 	)
 

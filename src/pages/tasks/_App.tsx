@@ -8,11 +8,11 @@ import { Commands, Pages, SortBy, SortMode } from "./_enums"
 import { DatabaseNames } from "@/enums/storage"
 import { DEFAULT_TASK_LIST } from "./_constants"
 import { IDB } from "@/utils/indexeddb"
-import { fileDownload } from "@/utils/file"
-import { numberIsNotDefined } from "@/utils/number"
+import { downloadFile } from "@/utils/file"
+import { isNumberNotDefined } from "@/utils/number"
 import { removeSplashScreen } from "@/utils/splash"
 import { AppCSSColors } from "@/enums/app-data"
-import { elementValidTarget } from "@/utils/element"
+import { isTargetValidElement } from "@/utils/element"
 import { ICON_CIRCLE, ICON_CIRCLE_ERASER, ICON_DELETE, ICON_DISMISS, ICON_DOCUMENT_ERROR, ICON_EDIT, ICON_EMOJI_ADD } from "@/constants/icons"
 
 import { Tooltip } from "@/components/Tooltip"
@@ -671,7 +671,7 @@ const _: VoidComponent = () => {
 				return;
 			}
 
-			fileDownload(new Blob([result.blob]), file.name)
+			downloadFile(new Blob([result.blob]), file.name)
 		})
 	}
 
@@ -1444,7 +1444,7 @@ const _: VoidComponent = () => {
 				c:header="Labels"
 				onClick={(ev) => {
 					const button = document.activeElement! as HTMLButtonElement
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -1469,7 +1469,7 @@ const _: VoidComponent = () => {
 						if (!dataIndex)  return
 
 						let index = Number.parseInt(dataIndex)
-						if (numberIsNotDefined(index)) return
+						if (isNumberNotDefined(index)) return
 
 						if (typeof dataEdit === 'string') {
 							command(Commands.editLabel, labels[index])
@@ -1507,7 +1507,7 @@ const _: VoidComponent = () => {
 				}}
 				onClick={(ev) => {
 					const button = document.activeElement! as HTMLButtonElement
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -1575,7 +1575,7 @@ const _: VoidComponent = () => {
 				c:header="Edit label"
 				onClick={(ev) => {
 					const button = document.activeElement! as HTMLButtonElement
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -1654,7 +1654,7 @@ const _: VoidComponent = () => {
 				}}
 				onClick={(ev) => {
 					const button = document.activeElement!
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -1717,7 +1717,7 @@ const _: VoidComponent = () => {
 				style={{width: '500px'}}
 				onClick={(ev) => {
 					const button = document.activeElement!
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -1790,7 +1790,7 @@ const _: VoidComponent = () => {
 				c:header="Delete list"
 				onClick={(ev) => {
 					const button = document.activeElement!
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return

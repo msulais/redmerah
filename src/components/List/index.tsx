@@ -1,7 +1,7 @@
 import { children, type JSX, type ParentComponent, Show, splitProps, type ValidComponent } from "solid-js"
 import { Dynamic, type DynamicProps } from "solid-js/web"
 
-import { attrSetIfExist, attrClassList } from '@/utils/attributes'
+import { setAttrIfExist, joinClassList } from '@/utils/attributes'
 
 import './index.scss'
 
@@ -21,8 +21,8 @@ const List: ParentComponent<ListProps> = ($props) => {
 	const subtitle = children(() => props['c:subtitle'])
 
 	return (<div
-		class={attrClassList('c-list', props.class)}
-		data-c-trailing={attrSetIfExist(trailing())}
+		class={joinClassList('c-list', props.class)}
+		data-c-trailing={setAttrIfExist(trailing())}
 		{...other}>
 		<Show when={leading()}>
 			<div class='c-list-leading'>{leading()}</div>
@@ -59,8 +59,8 @@ const RawList: ParentComponent<RawListProps> = ($props) => {
 	const subtitle = children(() => props['c:subtitle'])
 
 	return (<Dynamic
-		class={attrClassList('c-list', props.class)}
-		data-c-trailing={attrSetIfExist(trailing())}
+		class={joinClassList('c-list', props.class)}
+		data-c-trailing={setAttrIfExist(trailing())}
 		{...other}>
 		<Show when={leading()}>
 			<div class='c-list-leading'>{leading()}</div>

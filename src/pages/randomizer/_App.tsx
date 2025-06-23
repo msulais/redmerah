@@ -2,21 +2,21 @@ import { createSignal, createUniqueId, For, onMount, Show, type VoidComponent } 
 
 import type { HEXColor } from "@/types/color"
 import type { ItemList, Result, Settings } from "./_types"
-import { colorRgbToHex, colorHslToHex } from "@/utils/color"
+import { rgbToHex, hslToHex } from "@/utils/color"
 import { createStore, produce } from "solid-js/store"
 import { RandomizerType, WordsRandomizerWordCase, NumbersRandomizerNumberType, NumbersRandomizerSort, ColorsRandomizerColorSpace, Commands } from "./_enums"
 import { PERSON_NAMES, TEAMS_NAMES, ANIMALS, LOREM_IPSUM, DEFAULT_LISTS } from "./_constants"
 import { ObjectStoreNames, ObjectStoreKeys, type ObjectStoreLists, type ObjectStoreSettings, type ObjectStoreLastResult } from "./_storage"
 import { stringToToggleCase, stringToTitleCase } from "@/utils/string"
-import { urlDownloadFile } from "@/utils/url"
-import { elementValidTarget } from "@/utils/element"
-import { fileOpen, fileReadAsText } from "@/utils/file"
+import { downloadFileByUrl } from "@/utils/url"
+import { isTargetValidElement } from "@/utils/element"
+import { pickFile, readFileAsText } from "@/utils/file"
 import { IDB } from "@/utils/indexeddb"
 import { DatabaseNames } from "@/enums/storage"
-import { attrSetIfExist, attrClassListModule } from "@/utils/attributes"
+import { setAttrIfExist, joinClassListModule } from "@/utils/attributes"
 import { BodyAttributes } from "@/enums/attributes"
 import { removeSplashScreen } from "@/utils/splash"
-import { numberIsNotDefined } from "@/utils/number"
+import { isNumberNotDefined } from "@/utils/number"
 import { ICON_APPS_LIST_DETAIL, ICON_ARROW_EXPORT_UP, ICON_ARROW_SYNC, ICON_DELETE, ICON_EDIT, ICON_EYE, ICON_TASK_LIST_SQUARE_LTR, ICON_WARNING } from "@/constants/icons"
 
 import App from "@/components/App"
@@ -277,7 +277,7 @@ const _: VoidComponent = () => {
 					const r = random_number(rgb.r.min, rgb.r.max) / 0xff
 					const g = random_number(rgb.g.min, rgb.g.max) / 0xff
 					const b = random_number(rgb.b.min, rgb.b.max) / 0xff
-					colors.push(colorRgbToHex({r, g, b}))
+					colors.push(rgbToHex({r, g, b}))
 				}
 				break
 			}
@@ -287,7 +287,7 @@ const _: VoidComponent = () => {
 					const hue = random_number(hsl.h.min, hsl.h.max) / 360
 					const saturation = random_number(hsl.s.min, hsl.s.max) / 100
 					const lightness = random_number(hsl.l.min, hsl.l.max) / 100
-					colors.push(colorHslToHex({h: hue, s: saturation, l: lightness}))
+					colors.push(hslToHex({h: hue, s: saturation, l: lightness}))
 				}
 				break
 			}
@@ -735,7 +735,7 @@ const _: VoidComponent = () => {
 			[list.items.join('\n')],
 			{ type: 'text/csv'}
 		))
-		urlDownloadFile(url, 'list.csv')
+		downloadFileByUrl(url, 'list.csv')
 		URL.revokeObjectURL(url)
 	}
 
@@ -883,12 +883,12 @@ const _: VoidComponent = () => {
 		let text = ''
 
 		try {
-			const files = await fileOpen('text/csv', true)
+			const files = await pickFile('text/csv', true)
 			if (!files) return [];
 
 			for (const file of files!) {
 				if (file.type != 'text/csv') continue;
-				text += await fileReadAsText(file)
+				text += await readFileAsText(file)
 			}
 		} catch (e) {}
 
@@ -1286,7 +1286,7 @@ const _: VoidComponent = () => {
 				c:header="Lists"
 				onClick={ev => {
 					const button = document.activeElement! as HTMLButtonElement
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -1304,7 +1304,7 @@ const _: VoidComponent = () => {
 						const dataListExportIndex = dataset.listExportIndex
 						if (dataListExportIndex) {
 							const index = Number.parseInt(dataListExportIndex)
-							if (numberIsNotDefined(index)) return
+							if (isNumberNotDefined(index)) return
 
 							exportList(lists[index])
 							return
@@ -1313,7 +1313,7 @@ const _: VoidComponent = () => {
 						const dataListViewIndex = dataset.listViewIndex
 						if (dataListViewIndex) {
 							const index = Number.parseInt(dataListViewIndex)
-							if (numberIsNotDefined(index)) return
+							if (isNumberNotDefined(index)) return
 
 							viewList(lists[index])
 							return
@@ -1322,7 +1322,7 @@ const _: VoidComponent = () => {
 						const dataListEditIndex = dataset.listEditIndex
 						if (dataListEditIndex) {
 							const index = Number.parseInt(dataListEditIndex)
-							if (numberIsNotDefined(index)) return
+							if (isNumberNotDefined(index)) return
 
 							openEditDialog(lists[index])
 							return
@@ -1331,7 +1331,7 @@ const _: VoidComponent = () => {
 						const dataListDeleteIndex = dataset.listDeleteIndex
 						if (dataListDeleteIndex) {
 							const index = Number.parseInt(dataListDeleteIndex)
-							if (numberIsNotDefined(index)) return
+							if (isNumberNotDefined(index)) return
 
 							openDeleteDialog(lists[index])
 							return
@@ -1370,7 +1370,7 @@ const _: VoidComponent = () => {
 				ref={r => dialogDeleteListWarningRef = r}
 				onClick={ev => {
 					const button = document.activeElement!
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -1400,7 +1400,7 @@ const _: VoidComponent = () => {
 				c:header="Delete list">
 				Are you sure want to delete this list?
 				<List
-					classList={attrClassListModule(CSS.app_delete_list)}
+					classList={joinClassListModule(CSS.app_delete_list)}
 					c:subtitle={
 						selectedListToDelete().items.length
 						+ ' item'
@@ -1414,7 +1414,7 @@ const _: VoidComponent = () => {
 				style={{width: '500px'}}
 				onClick={async ev => {
 					const button = document.activeElement!
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -1486,7 +1486,7 @@ const _: VoidComponent = () => {
 				style={{width: '500px'}}
 				onClick={async ev => {
 					const button = document.activeElement!
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -1562,7 +1562,7 @@ const _: VoidComponent = () => {
 				style={{width: '720px'}}
 				onClick={ev => {
 					const button = document.activeElement!
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -1645,8 +1645,8 @@ const _: VoidComponent = () => {
 				onChangeRandomizer={onUpdateRandomizer}
 			/>}
 			c:floatingActionButton={<FloatingActionButton
-				classList={attrClassListModule(CSSAnimation.btn_rotate_full_icon, CSS.app_fab)}
-				data-g-keep-pointer-event={attrSetIfExist(isGenerating())}
+				classList={joinClassListModule(CSSAnimation.btn_rotate_full_icon, CSS.app_fab)}
+				data-g-keep-pointer-event={setAttrIfExist(isGenerating())}
 				c:variant={ButtonVariant.filled}
 				onClick={() => {
 					if (isGenerating()) return command(Commands.stopGenerate)
@@ -1654,8 +1654,8 @@ const _: VoidComponent = () => {
 				}}>
 				<Icon
 					c:filled
-					classList={attrClassListModule(CSS.app_generate_icon)}
-					data-rotate={attrSetIfExist(isGenerating())}
+					classList={joinClassListModule(CSS.app_generate_icon)}
+					data-rotate={setAttrIfExist(isGenerating())}
 					c:code={ICON_ARROW_SYNC}
 				/>
 				<Show when={isGenerating()} fallback="Generate">Generating</Show>

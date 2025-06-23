@@ -5,11 +5,11 @@ import { isAnimationAllowed } from "@/utils/animation"
 import { getSelectRefValue, SelectAttributes, SelectEvents, SelectVariant, updateSelectRef, type SelectElement } from "@/native-components/Select"
 import { PopoverPosition, updatePopoverRef } from "@/native-components/Popover"
 import { ColorPickerAttributes, ColorPickerEvents } from "@/native-components/ColorPicker"
-import { colorContrastRatio, colorHexToRgb } from "@/utils/color"
+import { colorContrastRatio, hexToRgb } from "@/utils/color"
 import type { HEXColor } from "@/types/color"
 import { IconClasses, updateIconRef } from "@/native-components/Icon"
 import { ListVariant, updateListRef } from "@/native-components/List"
-import { numberSafe } from "@/utils/number"
+import { safeNumber } from "@/utils/number"
 import { closeModalRef, ModalPosition, openModalRef, updateModalRef } from "@/native-components/Modal"
 import { TooltipPosition, updateTooltipRef } from "@/native-components/Tooltip"
 import { MenuPosition, updateMenuRef } from "@/native-components/Menu"
@@ -163,7 +163,7 @@ function _colorPicker(): void {
 		button.textContent = value
 		button.setAttribute('data-tooltip', 'Pick color')
 		button.style.setProperty('background-color', value)
-		button.style.setProperty('color', colorContrastRatio(colorHexToRgb(value as HEXColor), {r: 0, g: 0, b: 0}) > 50 ? '#000' : '#fff')
+		button.style.setProperty('color', colorContrastRatio(hexToRgb(value as HEXColor), {r: 0, g: 0, b: 0}) > 50 ? '#000' : '#fff')
 	})
 
 	options?.addEventListener('change', ev => {
@@ -330,7 +330,7 @@ function _popover(): void {
 		switch (ev.target) {
 		case paddingOptionRef:
 			updatePopoverRef(popoverRef, {
-				PopoverPadding: numberSafe(paddingOptionRef.valueAsNumber)
+				PopoverPadding: safeNumber(paddingOptionRef.valueAsNumber)
 			})
 			break
 		case gapOptionRef:
@@ -388,7 +388,7 @@ function _modal(): void {
 		switch (ev.target) {
 		case paddingOptionRef:
 			updateModalRef(modalRef, {
-				ModalPadding: numberSafe(paddingOptionRef.valueAsNumber)
+				ModalPadding: safeNumber(paddingOptionRef.valueAsNumber)
 			})
 			break
 		case gapOptionRef:
@@ -511,7 +511,7 @@ function _tooltip(): void {
 
 		timeStartDelayId = setTimeout(() => {
 			updateTooltipRef(previewRef, {
-				TooltipStartDelay: numberSafe(startDelayOptionRef.valueAsNumber)
+				TooltipStartDelay: safeNumber(startDelayOptionRef.valueAsNumber)
 			})
 		}, 50)
 	})
@@ -521,7 +521,7 @@ function _tooltip(): void {
 
 		timeEndDelayId = setTimeout(() => {
 			updateTooltipRef(previewRef, {
-				TooltipEndDelay: numberSafe(endDelayOptionRef.valueAsNumber)
+				TooltipEndDelay: safeNumber(endDelayOptionRef.valueAsNumber)
 			})
 		}, 50)
 	})
@@ -531,7 +531,7 @@ function _tooltip(): void {
 
 		timeGapId = setTimeout(() => {
 			updateTooltipRef(previewRef, {
-				TooltipGap: numberSafe(gapOptionRef.valueAsNumber)
+				TooltipGap: safeNumber(gapOptionRef.valueAsNumber)
 			})
 		}, 50)
 	})
@@ -573,7 +573,7 @@ function _menu(): void {
 		switch (target) {
 		case gapOptionRef:
 			updateMenuRef(menuRef, {
-				PopoverGap: numberSafe(gapOptionRef.valueAsNumber)
+				PopoverGap: safeNumber(gapOptionRef.valueAsNumber)
 			})
 			break
 		}

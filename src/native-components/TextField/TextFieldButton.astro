@@ -1,5 +1,5 @@
 ---
-import { attrClassList } from '@/utils/attributes'
+import { joinClassList } from '@/utils/attributes'
 
 import {
 	type TextFieldButtonProps,
@@ -16,7 +16,7 @@ const {
 ---
 
 <Button
-	class={attrClassList(TextFieldClasses.button, className)}
+	class={joinClassList(TextFieldClasses.button, className)}
 	{...other}>
 	<slot/>
 </Button>

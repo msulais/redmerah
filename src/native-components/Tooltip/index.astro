@@ -1,5 +1,5 @@
 ---
-import { attrClassList } from '@/utils/attributes'
+import { joinClassList } from '@/utils/attributes'
 
 import {
 	type TooltipProps,
@@ -20,7 +20,7 @@ const {
 ---
 
 <div
-	class={attrClassList(TooltipClasses.tooltip, className)}
+	class={joinClassList(TooltipClasses.tooltip, className)}
 	data-c-tooltip-start-delay={TooltipStartDelay}
 	data-c-tooltip-end-delay={TooltipEndDelay}
 	data-c-tooltip-gap={TooltipGap}

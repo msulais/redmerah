@@ -3,9 +3,9 @@ import { GlobalElementIds } from "@/enums/ids"
 import { FlyoutPosition as TooltipPosition } from "@/enums/position"
 import { isAnimationAllowed } from "@/utils/animation"
 import { getFlyoutPosition } from "@/utils/flyout"
-import { createId } from "@/utils/ids"
-import { numberSafe } from "@/utils/number"
-import { validEnumValue } from "@/utils/object"
+import { createElementId } from "@/utils/ids"
+import { safeNumber } from "@/utils/number"
+import { isValidEnumValue } from "@/utils/object"
 import { isTouchScreen } from "@/utils/platforms"
 
 type TooltipProps = astroHTML.JSX.HTMLAttributes & {
@@ -166,7 +166,7 @@ function _initTooltipRefListener(): void {
 		if (!tooltip.contains(target)) return
 
 		if (!tooltip.id) {
-			tooltip.id = createId()
+			tooltip.id = createElementId()
 		}
 
 		// NOTE:
@@ -188,7 +188,7 @@ function _initTooltipRefListener(): void {
 			POINTER_Y = rect.top + rect.height / 2
 		}
 
-		const startDelayDuration = numberSafe(Number.parseFloat(
+		const startDelayDuration = safeNumber(Number.parseFloat(
 			$anchor.getAttribute(TooltipTargetAttributes.startDelayDuration)
 			?? tooltip.getAttribute(TooltipAttributes.startDelayDuration)
 			?? `${isOpen? 500 : 1000}`
@@ -198,12 +198,12 @@ function _initTooltipRefListener(): void {
 			timeId = null
 			isOpen = true
 			anchorRef = $anchor
-			gap = numberSafe(Number.parseFloat(
+			gap = safeNumber(Number.parseFloat(
 				anchorRef.getAttribute(TooltipTargetAttributes.gap)
 				?? tooltip.getAttribute(TooltipAttributes.gap)
 				?? '40'
 			), 40)
-			endDelayDuration = numberSafe(Number.parseFloat(
+			endDelayDuration = safeNumber(Number.parseFloat(
 				anchorRef.getAttribute(TooltipTargetAttributes.endDelayDuration)
 				?? tooltip.getAttribute(TooltipAttributes.endDelayDuration)
 				?? `${isTouchScreen()? 1500 : 200}`
@@ -213,7 +213,7 @@ function _initTooltipRefListener(): void {
 				?? tooltip.getAttribute(TooltipAttributes.position)
 				?? TooltipPosition.centerTop
 			) as TooltipPosition
-			if (!validEnumValue(position, TooltipPosition)) {
+			if (!isValidEnumValue(position, TooltipPosition)) {
 				position = TooltipPosition.centerTop
 			}
 
@@ -362,7 +362,7 @@ function updateTooltipRef(tooltipRef: TooltipElement, options?: TooltipUpdateOpt
 	tooltipRef.classList.add(TooltipClasses.tooltip)
 
 	if (!tooltipRef.id) {
-		tooltipRef.id = createId()
+		tooltipRef.id = createElementId()
 	}
 
 	const startDelayOption = options?.TooltipStartDelay

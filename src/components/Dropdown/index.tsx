@@ -2,10 +2,10 @@ import { createStore, produce } from "solid-js/store"
 import { Show, createContext, createEffect, createMemo, createSelector, createSignal, mergeProps, onCleanup, splitProps, useContext, type Accessor, type ParentComponent } from "solid-js"
 import { mergeRefs } from "@solid-primitives/refs"
 
-import { elementValidTarget } from "@/utils/element"
+import { isTargetValidElement } from "@/utils/element"
 import { eventCall } from "@/utils/event"
-import { arrayEquals } from "@/utils/array"
-import { numberSafe } from "@/utils/number"
+import { isArrayEqual } from "@/utils/array"
+import { safeNumber } from "@/utils/number"
 import { ICON_CHEVRON_DOWN } from "@/constants/icons"
 
 import Menu, { MenuItem, type MenuProps, MenuPosition as DropdownPosition, type MenuItemProps, openMenu, closeMenu, repositionMenu } from "@/components/Menu"
@@ -157,7 +157,7 @@ const Dropdown: ParentComponent<DropdownProps> = ($props) => {
 		const values = props['c:values']
 		const multiple = props['c:multiple']
 
-		if (!arrayEquals(values ?? [], localValues)) {
+		if (!isArrayEqual(values ?? [], localValues)) {
 			localValues = values ?? []
 			const values2: (string | number)[] = []
 			for (const value of localValues) {
@@ -257,7 +257,7 @@ const Dropdown: ParentComponent<DropdownProps> = ($props) => {
 			onClick={(ev) => {
 				eventCall(ev, menuProps.onClick)
 				const button = document.activeElement! as HTMLButtonElement
-				if (!elementValidTarget(
+				if (!isTargetValidElement(
 					ev.currentTarget,
 					button,
 					el => el.tagName == 'BUTTON'
@@ -268,7 +268,7 @@ const Dropdown: ParentComponent<DropdownProps> = ($props) => {
 				if (!dataDropdownValue) return
 
 				if (dataDropdownValue.startsWith('number:')) {
-					dataDropdownValue = numberSafe(Number.parseFloat(dataDropdownValue.substring(7)))
+					dataDropdownValue = safeNumber(Number.parseFloat(dataDropdownValue.substring(7)))
 				}
 
 				selectOption(dataDropdownValue)

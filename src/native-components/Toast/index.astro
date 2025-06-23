@@ -1,7 +1,7 @@
 ---
 import List from '@/native-components/List/index.astro'
 import { ListVariant } from '@/native-components/List'
-import { attrClassList } from '@/utils/attributes'
+import { joinClassList } from '@/utils/attributes'
 import { ToastClasses, ToastPosition, type ToastProps } from '.'
 import './index.scss'
 
@@ -24,14 +24,14 @@ const {
 
 <div
 	popover={popover}
-	class={attrClassList(ToastClasses.toast, className)}
+	class={joinClassList(ToastClasses.toast, className)}
 	data-c-toast-position={position}
 	data-c-toast-close-delay={ToastCloseDelay}
 	data-c-toast-autoclose={ToastAutoclose? '' : undefined}
 	{...other}>
 	<List
 		ListVariant={contentVariant}
-		class={attrClassList(ToastClasses.content, contentClass)}
+		class={joinClassList(ToastClasses.content, contentClass)}
 		{...toastOther}>
 		<slot />
 		<slot name="leading" slot="leading"/>

@@ -2,12 +2,12 @@ import { type Component, type ParentComponent, Show, batch, createEffect, create
 import { mergeRefs } from "@solid-primitives/refs"
 
 import type { HEXColor, HSLColor, RGBColor } from "@/types/color"
-import { attrSetIfExist } from "@/utils/attributes"
-import { elementValidTarget } from "@/utils/element"
+import { setAttrIfExist } from "@/utils/attributes"
+import { isTargetValidElement } from "@/utils/element"
 import { BodyAttributes } from "@/enums/attributes"
-import { mathClamp } from "@/utils/math"
-import { numberIsNotDefined, numberSafe } from "@/utils/number"
-import { colorContrastRatio, colorHexToHsl, colorHexToRgb, colorHslToHex, colorHslToHsv, colorHslToRgb, colorHsvToHsl, colorIsValidWithAlpha, colorRgbToHsl } from "@/utils/color"
+import { Math_clamp } from "@/utils/math"
+import { isNumberNotDefined, safeNumber } from "@/utils/number"
+import { colorContrastRatio, hexToHsl, hexToRgb, hslToHex, hslToHsv, hslToRgb, hsvToHsl, isColorValidWithAlpha, rgbToHsl } from "@/utils/color"
 import { KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT, KEY_ARROW_UP } from "@/constants/key-code"
 
 import Button, { ButtonVariant } from "@/components/Button"
@@ -98,7 +98,7 @@ const ColorPickerBody: ParentComponent<{
 		let l = 0.5
 		if (!isDisabledColorControl()) {
 			if (colorSpace() != 'HSL') {
-				const hsl = colorHsvToHsl({
+				const hsl = hsvToHsl({
 					h, s: left() / 100, v: (100 - top()) / 100
 				})
 				s = hsl.s
@@ -116,7 +116,7 @@ const ColorPickerBody: ParentComponent<{
 			? ''
 			: Math.round(opacity() / 100 * 255).toString(16).padStart(2, '0')
 		;
-		const hex_color = (colorHslToHex(getHSLColor()) + $opacity).toUpperCase()
+		const hex_color = (hslToHex(getHSLColor()) + $opacity).toUpperCase()
 		localColor = hex_color as HEXColor
 		return hex_color as HEXColor
 	})
@@ -141,12 +141,12 @@ const ColorPickerBody: ParentComponent<{
 		let left = s * 100
 		let top = (1 - l) * 100
 		if (colorSpace() != 'HSL') {
-			const {s, v} = colorHslToHsv(hsl())
+			const {s, v} = hslToHsv(hsl())
 			left = s * 100
 			top = (1 - v) * 100
 		}
 
-		if (opacity) setOpacity(mathClamp(opacity, 0, 1) * 100)
+		if (opacity) setOpacity(Math_clamp(opacity, 0, 1) * 100)
 
 		setLeft(left)
 		setTop(top)
@@ -167,7 +167,7 @@ const ColorPickerBody: ParentComponent<{
 	function updateInputs(): void {
 		switch (colorSpace()) {
 		case "RGB":
-			const rgb = colorHslToRgb(getHSLColor())
+			const rgb = hslToRgb(getHSLColor())
 			textFieldColorRef.value = `${Math.round(rgb.r * 0xff)}, ${Math.round(rgb.g * 0xff)}, ${Math.round(rgb.b * 0xff)}`
 			break
 		case "HSL":
@@ -188,11 +188,11 @@ const ColorPickerBody: ParentComponent<{
 	function setPosition(x: number, y: number): void {
 		if (colorDragged) {
 			x = (x - colorRect.left) / colorRect.width * 100
-			x = mathClamp(x, 0, 100)
+			x = Math_clamp(x, 0, 100)
 			setLeft(x)
 
 			y = (y - colorRect.top) / colorRect.height * 100
-			y = mathClamp(y, 0, 100)
+			y = Math_clamp(y, 0, 100)
 			setTop(y)
 		}
 		else if (hueDragged) {
@@ -200,7 +200,7 @@ const ColorPickerBody: ParentComponent<{
 			let rectOffset = isDisabledColorControl()? hueRect.left : hueRect.top
 			let rectSize = isDisabledColorControl()? hueRect.width : hueRect.height
 			v = (v - rectOffset) / rectSize * 100
-			v = mathClamp(v, 0, 100)
+			v = Math_clamp(v, 0, 100)
 			setHue(v)
 		}
 		else if (opacityDragged) {
@@ -208,7 +208,7 @@ const ColorPickerBody: ParentComponent<{
 			let rect_offset = isDisabledColorControl()? opacityRect.left : opacityRect.top
 			let rect_size = isDisabledColorControl()? opacityRect.width : opacityRect.height
 			v = (v - rect_offset) / rect_size * 100
-			v = mathClamp(v, 0, 100)
+			v = Math_clamp(v, 0, 100)
 			setOpacity(100 - v)
 		}
 
@@ -238,7 +238,7 @@ const ColorPickerBody: ParentComponent<{
 
 	function onChangeColor(ev: CustomEvent<HEXColor>): void {
 		const color = ev.detail
-		if (!colorIsValidWithAlpha(color)) return;
+		if (!isColorValidWithAlpha(color)) return;
 		updateColor(color)
 	}
 
@@ -251,8 +251,8 @@ const ColorPickerBody: ParentComponent<{
 	}
 
 	function updateColor(color: HEXColor): void {
-		if (!colorIsValidWithAlpha(color)) return;
-		const hsl = colorHexToHsl(
+		if (!isColorValidWithAlpha(color)) return;
+		const hsl = hexToHsl(
 			color.substring(0, 7) as HEXColor
 		)
 		setHsl({...hsl})
@@ -277,8 +277,8 @@ const ColorPickerBody: ParentComponent<{
 
 			const parse = (value: string | number): number => {
 				value = Number.parseInt(`${value}`)
-				value = numberSafe(value, 0)
-				value = mathClamp(value, 0, 255)
+				value = safeNumber(value, 0)
+				value = Math_clamp(value, 0, 255)
 				value = value / 0xff
 				return value as number
 			}
@@ -287,7 +287,7 @@ const ColorPickerBody: ParentComponent<{
 			rgb.g = parse(rgbArray[1])
 			rgb.b = parse(rgbArray[2])
 
-			const hsl = colorRgbToHsl(rgb)
+			const hsl = rgbToHsl(rgb)
 			if (isDisabledColorControl()) {
 				hsl.s = 1
 				hsl.l = 0.5
@@ -302,20 +302,20 @@ const ColorPickerBody: ParentComponent<{
 			while (hslArray.length < 3) hslArray.push("0")
 
 			let $value: number = Number.parseFloat(hslArray[0])
-			$value = numberSafe($value, 0)
-			$value = mathClamp($value, 0, 360)
+			$value = safeNumber($value, 0)
+			$value = Math_clamp($value, 0, 360)
 
 			hsl.h = $value / 360
 
 			$value = Number.parseFloat(hslArray[1])
-			$value = numberSafe($value, 0)
-			$value = mathClamp($value, 0, 100)
+			$value = safeNumber($value, 0)
+			$value = Math_clamp($value, 0, 100)
 
 			hsl.s = $value / 100
 
 			$value = Number.parseFloat(hslArray[2])
-			$value = numberSafe($value, 0)
-			$value = mathClamp($value, 0, 100)
+			$value = safeNumber($value, 0)
+			$value = Math_clamp($value, 0, 100)
 
 			hsl.l = $value / 100
 
@@ -330,13 +330,13 @@ const ColorPickerBody: ParentComponent<{
 			value = value.replace(/[^0-9a-fA-F]/g, '')
 			if (value.trim().length == 0) value = '0'
 
-			const $value: number = mathClamp(
-				numberSafe(Number.parseInt(value, 16), 0),
+			const $value: number = Math_clamp(
+				safeNumber(Number.parseInt(value, 16), 0),
 				0, 0xffffff
 			)
 			value = `${$value.toString(16)}`.padStart(6, '0').substring(0, 6)
 
-			const hsl = colorRgbToHsl(colorHexToRgb(('#' + value) as HEXColor))
+			const hsl = rgbToHsl(hexToRgb(('#' + value) as HEXColor))
 			if (isDisabledColorControl()) {
 				hsl.s = 1
 				hsl.l = 0.5
@@ -351,9 +351,9 @@ const ColorPickerBody: ParentComponent<{
 
 	function onOpacityInputChange(value: string): void {
 		let $opacity: number = Number.parseFloat(value)
-		if (numberIsNotDefined($opacity)) return
+		if (isNumberNotDefined($opacity)) return
 
-		$opacity = Math.round(mathClamp($opacity, 0, 100))
+		$opacity = Math.round(Math_clamp($opacity, 0, 100))
 		setOpacity($opacity)
 		updatePosition()
 		if (props.isColorPickerOpen) props.onUpdateColor?.(getHexColor())
@@ -371,18 +371,18 @@ const ColorPickerBody: ParentComponent<{
 			if (color == localColor) return
 
 			localColor = color
-			if (!colorIsValidWithAlpha(localColor)) return
+			if (!isColorValidWithAlpha(localColor)) return
 
-			let hsl = colorHexToHsl(localColor)
+			let hsl = hexToHsl(localColor)
 			let opacity = 100
 			if ($isDisabledColorControl) {
 				hsl = {h: hsl.h, s: 1, l: 0.5}
 			}
 
 			if (localColor.length > 7 && !$isDisabledOpacityControl) {
-				opacity = numberSafe(Number.parseInt(localColor.substring(7, 9), 16))
+				opacity = safeNumber(Number.parseInt(localColor.substring(7, 9), 16))
 				opacity = opacity / 0xff * 100
-				opacity = mathClamp(opacity, 0, 100)
+				opacity = Math_clamp(opacity, 0, 100)
 			}
 
 			if (textFieldColorRef) {
@@ -393,10 +393,10 @@ const ColorPickerBody: ParentComponent<{
 					Math.round(hsl.l * 100) + '%',
 				].join(', ')
 				else if (localColorSpace == 'HEX') {
-					text = colorHslToHex(hsl).toUpperCase()
+					text = hslToHex(hsl).toUpperCase()
 				}
 				else if (localColorSpace == 'RGB') {
-					const {r, g, b} = colorHslToRgb(hsl)
+					const {r, g, b} = hslToRgb(hsl)
 					text = [
 						Math.round(r * 0xff),
 						Math.round(g * 0xff),
@@ -428,10 +428,10 @@ const ColorPickerBody: ParentComponent<{
 					Math.round(hsl.l * 100) + '%',
 				].join(', ')
 				else if (localColorSpace == 'HEX') {
-					text = colorHslToHex(hsl).toUpperCase()
+					text = hslToHex(hsl).toUpperCase()
 				}
 				else if (localColorSpace == 'RGB') {
-					const {r, g, b} = colorHslToRgb(hsl)
+					const {r, g, b} = hslToRgb(hsl)
 					text = [
 						Math.round(r * 0xff),
 						Math.round(g * 0xff),
@@ -465,11 +465,11 @@ const ColorPickerBody: ParentComponent<{
 	const Control: Component = () => {
 		return (<div
 			class="c-color-picker-control"
-			data-c-hide-color={attrSetIfExist(isDisabledColorControl())}>
+			data-c-hide-color={setAttrIfExist(isDisabledColorControl())}>
 			<div
 				class="c-color-picker-color"
 				ref={colorRef}
-				style={{ '--c-color-picker-color': colorHslToHex({...hsl(), s: 1, l: .5}) }}
+				style={{ '--c-color-picker-color': hslToHex({...hsl(), s: 1, l: .5}) }}
 				onPointerDown={(ev) => {
 					const self = ev.currentTarget
 					colorDragged = true
@@ -481,7 +481,7 @@ const ColorPickerBody: ParentComponent<{
 				onPointerMove={onPointerMove}
 				onPointerUp={onPointerUp}
 				onPointerCancel={onPointerUp}
-				data-c-hsl={attrSetIfExist(colorSpace() == 'HSL')}
+				data-c-hsl={setAttrIfExist(colorSpace() == 'HSL')}
 				onKeyDown={(ev) => {
 					const code = ev.code
 					if (code == KEY_ARROW_UP) {
@@ -544,10 +544,10 @@ const ColorPickerBody: ParentComponent<{
 					tabindex="0"
 					class="c-color-picker-indicator"
 					style={{
-						"background-color": colorHslToHex(hsl()),
+						"background-color": hslToHex(hsl()),
 						top: top() + '%',
 						left: left() + '%',
-						"border-color": colorContrastRatio(colorHslToRgb(getHSLColor()), {r: 0, g: 0, b: 0}) > 50
+						"border-color": colorContrastRatio(hslToRgb(getHSLColor()), {r: 0, g: 0, b: 0}) > 50
 							? '#000'
 							: '#fff',
 						transform: 'translate(-12px, -12px)',
@@ -556,15 +556,15 @@ const ColorPickerBody: ParentComponent<{
 			</div>
 			<div>
 				<div
-					data-c-hide-color={attrSetIfExist(isDisabledColorControl())}
-					data-c-hide-opacity={attrSetIfExist(isDisabledOpacityControl())}
+					data-c-hide-color={setAttrIfExist(isDisabledColorControl())}
+					data-c-hide-opacity={setAttrIfExist(isDisabledOpacityControl())}
 					class="c-color-picker-selected-color"
 					style={{ 'background-color': getHexColor() }}
 				/>
 				<div
 					class="c-color-picker-range"
-					data-c-hide-color={attrSetIfExist(isDisabledColorControl())}
-					data-c-hide-opacity={attrSetIfExist(isDisabledOpacityControl())}>
+					data-c-hide-color={setAttrIfExist(isDisabledColorControl())}
+					data-c-hide-opacity={setAttrIfExist(isDisabledOpacityControl())}>
 					<div
 						class="c-color-picker-hue"
 						ref={hueRef}
@@ -620,7 +620,7 @@ const ColorPickerBody: ParentComponent<{
 								"background-color": `hsl(${hue() / 100 * 360}, 100%, 50%)`,
 								top: isDisabledColorControl()? undefined : hue() + '%',
 								left: isDisabledColorControl()? hue() + '%' : undefined,
-								"border-color": colorContrastRatio(colorHslToRgb({h: hue() / 100, s: 1, l: 0.5}), {r: 0, g: 0, b: 0}) > 50
+								"border-color": colorContrastRatio(hslToRgb({h: hue() / 100, s: 1, l: 0.5}), {r: 0, g: 0, b: 0}) > 50
 									? '#000'
 									: '#fff',
 								transform: isDisabledColorControl()? 'translate(-50%, -4px)' : 'translate(-4px, -50%)'
@@ -682,7 +682,7 @@ const ColorPickerBody: ParentComponent<{
 								"background-color": `hsla(0, 0%, ${opacity()}%)`,
 								top: isDisabledColorControl()? undefined : (100 - opacity()) + '%',
 								left: isDisabledColorControl()? (100 - opacity()) + '%' : undefined,
-								"border-color": colorContrastRatio(colorHslToRgb({h: 0, s: 0, l: opacity() / 100}), {r: 0, g: 0, b: 0}) > 50
+								"border-color": colorContrastRatio(hslToRgb({h: 0, s: 0, l: opacity() / 100}), {r: 0, g: 0, b: 0}) > 50
 									? '#000'
 									: '#fff',
 								transform: isDisabledColorControl()? 'translate(-50%, -4px)' : 'translate(-4px, -50%)'
@@ -697,7 +697,7 @@ const ColorPickerBody: ParentComponent<{
 	const Input: Component = () => {
 		return (<div
 			class="c-color-picker-input"
-			data-c-hide-opacity={attrSetIfExist(isDisabledOpacityControl())}
+			data-c-hide-opacity={setAttrIfExist(isDisabledOpacityControl())}
 			onFocusOut={() => updateInputs()}>
 			<TextField
 				ref={r => textFieldColorRef = r}
@@ -723,10 +723,10 @@ const ColorPickerBody: ParentComponent<{
 		return (<FocusableGroup
 			class="c-color-picker-actions"
 			c:arrowOptions={{ right: 'next', left: 'prev' }}
-			data-c-disabled={attrSetIfExist(props.disabledActions)}
+			data-c-disabled={setAttrIfExist(props.disabledActions)}
 			onClick={(ev) => {
 				const button = document.activeElement!
-				if (!elementValidTarget(
+				if (!isTargetValidElement(
 					ev.currentTarget,
 					button,
 					el => el.tagName == 'BUTTON'

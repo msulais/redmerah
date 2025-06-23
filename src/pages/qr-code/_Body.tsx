@@ -3,11 +3,11 @@ import { BrowserQRCodeReader } from '@zxing/browser'
 import { BarcodeFormat, DecodeHintType } from "@zxing/library"
 
 import { Commands, CopyFileType, DownloadFileType, Pages } from "./_enums"
-import { attrSetIfExist } from "@/utils/attributes"
-import { fileOpen } from "@/utils/file"
+import { setAttrIfExist } from "@/utils/attributes"
+import { pickFile } from "@/utils/file"
 import { isTouchScreen } from "@/utils/platforms"
-import { validEnumValue } from "@/utils/object"
-import { elementValidTarget } from "@/utils/element"
+import { isValidEnumValue } from "@/utils/object"
+import { isTargetValidElement } from "@/utils/element"
 import { keyboardOnFocusIn, keyboardOnFocusOut, keyboardOnKeyDown } from "@/utils/keyboard"
 import { ICON_ARROW_DOWNLOAD, ICON_CAMERA_ADD, ICON_COPY, ICON_DISMISS, ICON_IMAGE, ICON_IMAGE_ADD, ICON_IMAGE_CIRCLE, ICON_QR_CODE, ICON_SCAN_TEXT, ICON_WARNING } from "@/constants/icons"
 
@@ -75,7 +75,7 @@ const _: VoidComponent<{
 	}
 
 	function chooseFile(capture?: string): void {
-		fileOpen('image/*', false, capture).then((files) => {
+		pickFile('image/*', false, capture).then((files) => {
 			if (files == null || files.length == 0) return
 
 			for (const file of files) {
@@ -93,7 +93,7 @@ const _: VoidComponent<{
 			ref={r => menuCanvasActionsRef = r}
 			onClick={ev => {
 				const button = document.activeElement! as HTMLButtonElement
-				if (!elementValidTarget(
+				if (!isTargetValidElement(
 					ev.currentTarget,
 					button,
 				)) return
@@ -101,7 +101,7 @@ const _: VoidComponent<{
 				const dataset = button.dataset
 				const dataDownload = dataset.download
 				if (dataDownload
-					&& validEnumValue(dataDownload, DownloadFileType)
+					&& isValidEnumValue(dataDownload, DownloadFileType)
 				) {
 					command(Commands.downloadQRCode, dataDownload as DownloadFileType)
 					closeSubMenu(subMenuCanvasActions_downloadRef)
@@ -111,7 +111,7 @@ const _: VoidComponent<{
 
 				const dataCopy = dataset.copy
 				if (dataCopy
-					&& validEnumValue(dataCopy, CopyFileType)
+					&& isValidEnumValue(dataCopy, CopyFileType)
 				) {
 					command(Commands.copyQRCode, dataCopy as CopyFileType)
 					closeSubMenu(subMenuCanvasActions_copyRef)
@@ -219,7 +219,7 @@ const _: VoidComponent<{
 				class={CSS.body_canvas_output}
 				id={canvasGenerateOutputId}
 				ref={props.canvasRef}
-				data-empty={attrSetIfExist(props.isGenerateError)}
+				data-empty={setAttrIfExist(props.isGenerateError)}
 			/>
 		</div>)
 	}
@@ -231,7 +231,7 @@ const _: VoidComponent<{
 			<div
 				class={CSS.body_image}
 				id={divScan_imageId}
-				data-drag-over={attrSetIfExist(isDragEnter())}
+				data-drag-over={setAttrIfExist(isDragEnter())}
 				tabindex="0"
 				onDrop={ev => {
 					setIsDragEnter(false)
@@ -263,7 +263,7 @@ const _: VoidComponent<{
 				onDragOver={ev => ev.preventDefault()}
 				onDragEnter={() => setIsDragEnter(true)}
 				onDragLeave={() => setIsDragEnter(false)}>
-				<div data-g-no-pointer-event={attrSetIfExist(isDragEnter())}>
+				<div data-g-no-pointer-event={setAttrIfExist(isDragEnter())}>
 					<Show when={QRCodeImageSource() == null}>
 						<p><Icon c:code={ICON_QR_CODE}/>Drag QR code image here</p>
 					</Show>
@@ -313,7 +313,7 @@ const _: VoidComponent<{
 		class={CSS.body}
 		onClick={ev => {
 			const button = document.activeElement!
-			if (!elementValidTarget(
+			if (!isTargetValidElement(
 				ev.currentTarget,
 				button,
 			)) return

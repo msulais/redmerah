@@ -3,11 +3,11 @@ import { DateOperation } from "../_shared/_enums"
 import { ElementIds } from "../_shared/_ids"
 import { $, $$ } from "../_core/_dom-utils"
 import { DatePickerEvents, getDatePickerRefValue, updateDatePickerRef, type DatePickerElement } from "@/native-components/DatePicker"
-import { dateDiffInDays, dateIsSameYMD } from "@/utils/datetime"
+import { dateDiffInDays, isDateEqual_YMD } from "@/utils/datetime"
 import { ButtonVariant, updateButtonRef } from "@/native-components/Button"
 import { getSelectRefValue, SelectEvents, updateSelectRefValue, type SelectElement } from "@/native-components/Select"
-import { validEnumValue } from "@/utils/object"
-import { numberSafe } from "@/utils/number"
+import { isValidEnumValue } from "@/utils/object"
+import { safeNumber } from "@/utils/number"
 import { saveStorageItem } from "../_core/_database"
 
 export type DateStoreType = Readonly<{
@@ -183,7 +183,7 @@ function _subscribeInputDaysRefView(v: DateStoreType): void {
 
 function _subscribeInputDateFromChanges(v: DateStoreType, o: DateStoreType): void {
 	const date = v.inputFrom
-	if (dateIsSameYMD(date, o.inputFrom)) return
+	if (isDateEqual_YMD(date, o.inputFrom)) return
 
 	_calculate()
 	saveStorageItem('calc/date/input-from', date.toISOString())
@@ -191,7 +191,7 @@ function _subscribeInputDateFromChanges(v: DateStoreType, o: DateStoreType): voi
 
 function _subscribeInputDateFromRefView(v: DateStoreType, o: DateStoreType): void {
 	const date = v.inputFrom
-	if (dateIsSameYMD(date, o.inputFrom)) return
+	if (isDateEqual_YMD(date, o.inputFrom)) return
 
 	updateDatePickerRef(_datePickerFromRef, {
 		DatePickerValue: date
@@ -205,7 +205,7 @@ function _subscribeInputDateFromRefView(v: DateStoreType, o: DateStoreType): voi
 
 function _subscribeInputDateToChanges(v: DateStoreType, o: DateStoreType): void {
 	const date = v.inputTo
-	if (dateIsSameYMD(date, o.inputTo)) return
+	if (isDateEqual_YMD(date, o.inputTo)) return
 
 	_calculate()
 	saveStorageItem("calc/date/input-to", date.toISOString())
@@ -213,7 +213,7 @@ function _subscribeInputDateToChanges(v: DateStoreType, o: DateStoreType): void 
 
 function _subscribeInputDateToRefView(v: DateStoreType, o: DateStoreType): void {
 	const date = v.inputTo
-	if (dateIsSameYMD(date, o.inputTo)) return
+	if (isDateEqual_YMD(date, o.inputTo)) return
 
 	updateDatePickerRef(_datePickerToRef, {
 		DatePickerValue: date
@@ -309,25 +309,25 @@ function _initEvents(): void {
 
 	_operationRef.addEventListener(SelectEvents.change, () => {
 		const value = getSelectRefValue(_operationRef) as DateOperation
-		if (!validEnumValue(value, DateOperation)) return
+		if (!isValidEnumValue(value, DateOperation)) return
 
 		DateStore.update(v => ({...v, operation: value}))
 	})
 
 	_inputYearsRef.addEventListener('input', () => {
-		const value = Math.floor(numberSafe(_inputYearsRef.valueAsNumber, DateStore.value.inputYears))
+		const value = Math.floor(safeNumber(_inputYearsRef.valueAsNumber, DateStore.value.inputYears))
 
 		DateStore.update(v => ({...v, inputYears: value}))
 	})
 
 	_inputMonthsRef.addEventListener('input', () => {
-		const value = Math.floor(numberSafe(_inputMonthsRef.valueAsNumber, DateStore.value.inputMonths))
+		const value = Math.floor(safeNumber(_inputMonthsRef.valueAsNumber, DateStore.value.inputMonths))
 
 		DateStore.update(v => ({...v, inputMonths: value}))
 	})
 
 	_inputDaysRef.addEventListener('input', () => {
-		const value = Math.floor(numberSafe(_inputDaysRef.valueAsNumber, DateStore.value.inputDays))
+		const value = Math.floor(safeNumber(_inputDaysRef.valueAsNumber, DateStore.value.inputDays))
 
 		DateStore.update(v => ({...v, inputDays: value}))
 	})

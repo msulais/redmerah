@@ -1,5 +1,5 @@
 ---
-import { attrClassList } from '@/utils/attributes'
+import { joinClassList } from '@/utils/attributes'
 
 import {
 	type SideBarProps,
@@ -25,24 +25,24 @@ const Dynamic = SideBarTagName as 'div'
 ---
 
 <Dynamic
-	class={attrClassList(SideBarClasses.sideBar, className)}
+	class={joinClassList(SideBarClasses.sideBar, className)}
 	data-c-sidebar-minimized={SideBarMinimized? '' : undefined}
 	{...other}>
 	{Astro.slots.has('header') &&
 		<div
-			class={attrClassList(SideBarClasses.header, headerClass)}
+			class={joinClassList(SideBarClasses.header, headerClass)}
 			{...headerOther}>
 			<slot name="header"/>
 		</div>
 	}
 	<div
-		class={attrClassList(SideBarClasses.content, contentClass)}
+		class={joinClassList(SideBarClasses.content, contentClass)}
 		{...contentOther}>
 		<slot />
 	</div>
 	{Astro.slots.has('footer') &&
 		<div
-			class={attrClassList(SideBarClasses.footer, footerClass)}
+			class={joinClassList(SideBarClasses.footer, footerClass)}
 			{...footerOther}>
 			<slot name="footer"/>
 		</div>

@@ -17,10 +17,10 @@ export function stringToToggleCase(text: string): string {
 	return result.join('')
 }
 
-export function stringCount(text: string, regex: RegExp): number {
+export function countString(text: string, regex: RegExp): number {
 	return (text.match(regex) || []).length
 }
 
-export function stringReverse(text: string): string {
+export function reverseString(text: string): string {
 	return [...text].reverse().join('')
 }

@@ -1,7 +1,7 @@
 import { DatabaseNames } from "@/enums/storage"
 import { IDB } from "@/utils/indexeddb"
 import { NavigationStore } from "./_navigation"
-import { validEnumValue } from "@/utils/object"
+import { isValidEnumValue } from "@/utils/object"
 import { SettingsStore, type SettingsStoreType } from "./_settings"
 import { Pages } from "../_shared/_enums"
 import { TimerStore, type TimerStoreType } from "../_features/_timer"
@@ -41,7 +41,7 @@ function _readStorageAll(store: IDBObjectStore): void {
 		const isBoolean = typeof value === 'boolean'
 		switch (key as _StorageKeys) {
 		case "page":
-			if (validEnumValue(value, Pages)) {
+			if (isValidEnumValue(value, Pages)) {
 				NavigationStore.update(v => ({...v, page: value as Pages}))
 			}
 			break

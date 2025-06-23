@@ -1,6 +1,6 @@
 import { splitProps, type Component, type JSX } from "solid-js"
 
-import { attrSetIfExist, attrClassList } from "@/utils/attributes"
+import { setAttrIfExist, joinClassList } from "@/utils/attributes"
 
 import './index.scss'
 
@@ -11,8 +11,8 @@ const Divider: Component<DividerProps> = ($props) => {
 	const [props, other] = splitProps($props, ['class', 'c:vertical'])
 
 	return (<div
-		data-c-vertical={attrSetIfExist(props['c:vertical'])}
-		class={attrClassList('c-divider', props.class)}
+		data-c-vertical={setAttrIfExist(props['c:vertical'])}
+		class={joinClassList('c-divider', props.class)}
 		{...other}
 	/>)
 }

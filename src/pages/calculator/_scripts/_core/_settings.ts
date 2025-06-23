@@ -4,7 +4,7 @@ import { BasicStore } from "../_features/_basic"
 import { $, $$, $$$ } from "./_dom-utils"
 import { ElementIds } from "../_shared/_ids"
 import { LocalStorageKeys } from "@/enums/storage"
-import { validEnumValue } from "@/utils/object"
+import { isValidEnumValue } from "@/utils/object"
 import { DEFAULT_THEME } from "../_shared/_constant"
 import { RootAttributes } from "@/enums/attributes"
 import { RadioNames } from "../_shared/_input-names"
@@ -42,7 +42,7 @@ function _initEvents(): void {
 	_groupingFormatRef.addEventListener('change', ev => {
 		const target = ev.target as HTMLInputElement
 		const value = target?.value as GroupingNumberFormat
-		if (!validEnumValue(value, GroupingNumberFormat)) return
+		if (!isValidEnumValue(value, GroupingNumberFormat)) return
 
 		SettingsStore.update(v => ({...v, groupingFormat: value}))
 		_settingsMenuRef.hidePopover()
@@ -51,7 +51,7 @@ function _initEvents(): void {
 	_decimalFormatRef.addEventListener('change', ev => {
 		const target = ev.target as HTMLInputElement
 		const value = target?.value as DecimalNumberFormat
-		if (!validEnumValue(value, DecimalNumberFormat)) return
+		if (!isValidEnumValue(value, DecimalNumberFormat)) return
 
 		SettingsStore.update(v => ({...v, decimalFormat: value}))
 		_settingsMenuRef.hidePopover()
@@ -60,7 +60,7 @@ function _initEvents(): void {
 	_themeRef.addEventListener('change', ev => {
 		const target = ev.target as HTMLInputElement
 		const value = target?.value as PlatformThemeMode
-		if (!value || !validEnumValue(value, PlatformThemeMode)) {return}
+		if (!value || !isValidEnumValue(value, PlatformThemeMode)) {return}
 
 		_rootRef.setAttribute(RootAttributes.theme, value)
 		_settingsMenuRef.hidePopover()
@@ -71,7 +71,7 @@ function _initEvents(): void {
 	_animationRef.addEventListener('change', ev => {
 		const target = ev.target as HTMLInputElement
 		const value = target?.value as PlatformAnimationMode
-		if (!value || !validEnumValue(value, PlatformAnimationMode)) {return}
+		if (!value || !isValidEnumValue(value, PlatformAnimationMode)) {return}
 
 		_rootRef.setAttribute(RootAttributes.animation, value)
 		_settingsMenuRef.hidePopover()
@@ -82,7 +82,7 @@ function _initEvents(): void {
 
 function _initTheme(): void {
 	const theme = localStorage.getItem(LocalStorageKeys.platformTheme)
-	if (!theme || !validEnumValue(theme, PlatformThemeMode) || theme === DEFAULT_THEME) return
+	if (!theme || !isValidEnumValue(theme, PlatformThemeMode) || theme === DEFAULT_THEME) return
 
 	_rootRef.setAttribute(RootAttributes.theme, theme)
 	const previousRef = $$(
@@ -99,7 +99,7 @@ function _initTheme(): void {
 
 function _initAnimation(): void {
 	const animation = localStorage.getItem(LocalStorageKeys.platformAnimation)
-	if (!animation || !validEnumValue(animation, PlatformAnimationMode)) return
+	if (!animation || !isValidEnumValue(animation, PlatformAnimationMode)) return
 
 	_rootRef.setAttribute(RootAttributes.animation, animation)
 	const previousRef = $$(

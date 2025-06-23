@@ -3,16 +3,16 @@ import { ScientificAngleType } from "../_shared/_enums"
 import { $, scrollInputToEnd } from "../_core/_dom-utils"
 import { ElementIds } from "../_shared/_ids"
 import { calculate } from "../_core/_calculator"
-import { numberIsDefined } from "@/utils/number"
+import { isNumberDefined } from "@/utils/number"
 import { formatOutput } from "../_core/_string-utils"
 import { getSelectRefValue, SelectAttributes, SelectEvents, updateSelectRefValue, type SelectElement } from "@/native-components/Select"
-import { validEnumValue } from "@/utils/object"
+import { isValidEnumValue } from "@/utils/object"
 import { DEFAULT_SCIENTIFIC_ANGLE } from "../_shared/_constant"
 import { ButtonVariant, updateButtonRef } from "@/native-components/Button"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { isAnimationAllowed } from "@/utils/animation"
 import { CSSClasses } from "../../_styles/_css"
-import { elementAnimateUpdateText } from "@/utils/element"
+import { animateUpdateTextElement } from "@/utils/element"
 import { IconClasses } from "@/native-components/Icon"
 import { saveStorageItem } from "../_core/_database"
 
@@ -44,7 +44,7 @@ function _calculate(): void {
 		const parsedOutput = Number.parseFloat(output)
 		ScientificStore.update(v => ({
 			...v,
-			output: numberIsDefined(parsedOutput)? parsedOutput : null
+			output: isNumberDefined(parsedOutput)? parsedOutput : null
 		}))
 	}, 50)
 }
@@ -113,7 +113,7 @@ function _initSubscriber(): void {
 function _initAngleEvents(): void {
 	_angleRef.addEventListener(SelectEvents.change, () => {
 		const value = _angleRef.getAttribute(SelectAttributes.value)! as ScientificAngleType
-		if (!validEnumValue(value, ScientificAngleType)) return
+		if (!isValidEnumValue(value, ScientificAngleType)) return
 
 		ScientificStore.update(v => ({
 			...v,
@@ -167,7 +167,7 @@ function _initFunctionButtonEvents(): void {
 
 				ref.setAttribute('data-char', char + '(')
 				if (animation) {
-					elementAnimateUpdateText(ref, char + '(x)')
+					animateUpdateTextElement(ref, char + '(x)')
 				} else {
 					ref.textContent = char + '(x)'
 				}

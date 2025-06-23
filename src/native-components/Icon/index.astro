@@ -1,5 +1,5 @@
 ---
-import { attrClassList } from '@/utils/attributes'
+import { joinClassList } from '@/utils/attributes'
 
 import {
 	type IconProps,
@@ -20,7 +20,7 @@ const {
 } = Astro.props
 ---
 <i
-	class={attrClassList(IconClasses.icon, className)}
+	class={joinClassList(IconClasses.icon, className)}
 	data-c-icon-inline={IconInline? '' : undefined}
 	translate={translate ?? 'no'}
 	{...other}>

@@ -5,7 +5,7 @@ import type { USB, USBDevice } from "@/interfaces/usb"
 import { ICON_CONNECTOR, ICON_DELETE, ICON_DISMISS, ICON_WARNING } from "@/constants/icons"
 import { removeSplashScreen } from "@/utils/splash"
 import { AppCSSColors } from "@/enums/app-data"
-import { elementValidTarget } from "@/utils/element"
+import { isTargetValidElement } from "@/utils/element"
 
 import Button, { ButtonVariant, IconButton } from "@/components/Button"
 import Expander, { ExpanderHeader, ExpanderVariant } from "@/components/Expander"
@@ -93,7 +93,7 @@ const _: VoidComponent = () => {
 		<div
 			onClick={ev => {
 				const button = document.activeElement! as HTMLButtonElement
-				if (!elementValidTarget(
+				if (!isTargetValidElement(
 					ev.currentTarget,
 					button,
 				)) return

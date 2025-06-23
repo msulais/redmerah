@@ -1,5 +1,5 @@
 ---
-import { attrClassList } from '@/utils/attributes'
+import { joinClassList } from '@/utils/attributes'
 
 import { ButtonClasses } from '@/native-components/Button'
 import Icon from '@/native-components/Icon/index.astro'
@@ -31,20 +31,20 @@ const {'class': placeholderClass, tabindex, ...placeholderOther} = SelectPlaceho
 ---
 
 <div
-	class={attrClassList(SelectClasses.select, className)}
+	class={joinClassList(SelectClasses.select, className)}
 	data-c-select-variant={SelectVariant}
 	data-c-select-use-icon={SelectUseIcon? '' : undefined}
 	role={role ?? 'listbox'}
 	{...other}>
 	<div
-		class={attrClassList(SelectClasses.popover, popoverClass)}
+		class={joinClassList(SelectClasses.popover, popoverClass)}
 		{...popoverOther}>
 		<div
-			class={attrClassList(SelectClasses.content, contentClass)}
+			class={joinClassList(SelectClasses.content, contentClass)}
 			{...contentOther}>
 			<slot/>
 			<div
-				class={attrClassList(
+				class={joinClassList(
 					ButtonClasses.button,
 					SelectClasses.placeholder,
 					placeholderClass
@@ -58,7 +58,7 @@ const {'class': placeholderClass, tabindex, ...placeholderOther} = SelectPlaceho
 		</div>
 	</div>
 	<Icon
-		class={attrClassList(
+		class={joinClassList(
 			SelectClasses.icon,
 			iconClass
 		)}

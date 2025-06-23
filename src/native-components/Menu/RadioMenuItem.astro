@@ -1,5 +1,5 @@
 ---
-import { attrClassList } from '@/utils/attributes'
+import { joinClassList } from '@/utils/attributes'
 import { IconCodes } from '@/enums/icons'
 
 import {
@@ -44,10 +44,10 @@ const {
 } = RadioMenuItemInputAttr
 ---
 <label
-	class={attrClassList(ButtonClasses.button, MenuClasses.item, MenuClasses.radioItem, className)}
+	class={joinClassList(ButtonClasses.button, MenuClasses.item, MenuClasses.radioItem, className)}
 	{...other}>
 	<div
-		class={attrClassList(MenuClasses.radioItemLeading, leadingClassName)}
+		class={joinClassList(MenuClasses.radioItemLeading, leadingClassName)}
 		{...leadingOther}>
 		<slot name="leading"/>
 	</div>
@@ -59,17 +59,17 @@ const {
 		role={inputRole}
 		value={inputValue}
 		autocomplete={inputAutocomplete}
-		class={attrClassList(MenuClasses.radioItemInput, inputClassName)}
+		class={joinClassList(MenuClasses.radioItemInput, inputClassName)}
 		{...inputOther}
 	/>
 	<Icon
-		class={attrClassList(MenuClasses.radioItemIcon, iconClassName)}
+		class={joinClassList(MenuClasses.radioItemIcon, iconClassName)}
 		IconCode={iconIcon}
 		IconFilled={iconFilled}
 		{...iconOther}
 	/>
 	<div
-		class={attrClassList(MenuClasses.radioItemContent, contentClassName)}
+		class={joinClassList(MenuClasses.radioItemContent, contentClassName)}
 		{...contentOther}>
 		<slot />
 	</div>

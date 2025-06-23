@@ -4,13 +4,13 @@ import { createStore, produce } from "solid-js/store"
 
 import type { TaskLabel, Settings, Task, TaskList, SubTask, TaskFileMetaData } from "./_types"
 import { Commands, Pages, SortBy, SortMode } from "./_enums"
-import { dateOutRangeYMD_HM } from "@/utils/datetime"
+import { isDateOutRange_YMD_HM } from "@/utils/datetime"
 import { DEFAULT_TASK_LIST } from "./_constants"
-import { attrSetIfExist, attrClassListModule } from "@/utils/attributes"
+import { setAttrIfExist, joinClassListModule } from "@/utils/attributes"
 import { stringToTitleCase } from "@/utils/string"
-import { elementValidTarget } from "@/utils/element"
-import { fileOpen, fileReadAsText } from "@/utils/file"
-import { numberIsNotDefined } from "@/utils/number"
+import { isTargetValidElement } from "@/utils/element"
+import { pickFile, readFileAsText } from "@/utils/file"
+import { isNumberNotDefined } from "@/utils/number"
 import { KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT, KEY_ARROW_UP, KEY_ENTER, KEY_SPACE } from "@/constants/key-code"
 import { AppCSSColors } from "@/enums/app-data"
 import { ICON_ADD, ICON_ADD_CIRCLE, ICON_ADD_SQUARE, ICON_ALERT, ICON_ALERT_BADGE, ICON_ALERT_OFF, ICON_ALERT_URGENT, ICON_APPS_LIST_DETAIL, ICON_ARROW_DOWNLOAD, ICON_ARROW_RIGHT, ICON_ARROW_SORT, ICON_ATTACH, ICON_CALENDAR, ICON_CALENDAR_EDIT, ICON_CHECKBOX_CHECKED, ICON_CHECKBOX_UNCHECKED, ICON_CIRCLE, ICON_COPY, ICON_DELETE, ICON_DELETE_DISMISS, ICON_DELETE_LINES, ICON_DISMISS, ICON_EDIT, ICON_EYE, ICON_HOME, ICON_MORE_VERTICAL, ICON_STAR, ICON_TAG, ICON_TASK_LIST_SQUARE_LTR, ICON_TEXT_CASE_TITLE, ICON_TEXT_EDIT_STYLE, ICON_TEXT_SORT_ASCENDING, ICON_TEXT_SORT_DESCENDING } from "@/constants/icons"
@@ -90,7 +90,7 @@ const AppbarTasks: VoidComponent<{
 				c:onToggleOpen={(v) => setIsMenuSortOpen(v)}
 				onClick={ev => {
 					const button = document.activeElement! as HTMLButtonElement
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -131,7 +131,7 @@ const AppbarTasks: VoidComponent<{
 				c:onToggleOpen={(v) => setIsMenuMoreOpen(v)}
 				onClick={ev => {
 					const button = document.activeElement! as HTMLButtonElement
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -221,7 +221,7 @@ const AppbarTasks: VoidComponent<{
 				style={{width: '500px'}}
 				onClick={ev => {
 					const button = document.activeElement!
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -256,7 +256,7 @@ const AppbarTasks: VoidComponent<{
 				c:header={"Delete completed tasks"}
 				onClick={ev => {
 					const button = document.activeElement!
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -293,12 +293,12 @@ const AppbarTasks: VoidComponent<{
 		const buttonCopyTasksId = createUniqueId()
 		const buttonMoreOptionsId = createUniqueId()
 		return (<AppBar
-			classList={attrClassListModule(CSS.body_appbar)}
+			classList={joinClassListModule(CSS.body_appbar)}
 			c:leading={props.leading}
 			c:headline={props.headline}
 			onClick={ev => {
 				const button = document.activeElement! as HTMLButtonElement
-				if (!elementValidTarget(
+				if (!isTargetValidElement(
 					ev.currentTarget,
 					button,
 				)) return
@@ -369,7 +369,7 @@ const TaskItem: VoidComponent<{
 		tabindex={0}
 		data-taskitem={[taskListIndex(), taskIndex()].join(',')}
 		class={CSS.body_task_item}
-		data-done={attrSetIfExist(task().complete)}>
+		data-done={setAttrIfExist(task().complete)}>
 		<List
 			c:leading={<IconButton
 				data-tooltip={`Mark as ${task().complete? 'un' : ''}completed`}
@@ -401,13 +401,13 @@ const TaskItem: VoidComponent<{
 						<Show when={task().reminder != null}>
 							<Button
 								data-tooltip={
-									"Task reminder" + (dateOutRangeYMD_HM(
+									"Task reminder" + (isDateOutRange_YMD_HM(
 										task().reminder!,
 										new Date(),
 										new Date(new Date().getFullYear() + 100, 2, 2)
 									)? " (outdated)" : "")}
 								style={{
-									"border-color": dateOutRangeYMD_HM(
+									"border-color": isDateOutRange_YMD_HM(
 										task().reminder!,
 										new Date(),
 										new Date(new Date().getFullYear() + 100, 2, 2)
@@ -558,7 +558,7 @@ const SingleTaskList: VoidComponent<{
 
 	return (<div
 		class={CSS.body_single_task_list}
-		data-empty={attrSetIfExist(!isAnyTask())}>
+		data-empty={setAttrIfExist(!isAnyTask())}>
 		<AppbarTasks
 			command={command}
 			taskListIndex={props.taskListIndex}
@@ -719,7 +719,7 @@ const GroupTaskList: VoidComponent<{
 
 	return (<div
 		class={CSS.body_group_task_list}
-		data-empty={attrSetIfExist(!isNotEmpty())}>
+		data-empty={setAttrIfExist(!isNotEmpty())}>
 		<AppbarTasks
 			taskListIndex={-1}
 			isAnyTask={isNotEmpty()}
@@ -904,7 +904,7 @@ const _: VoidComponent<{
 		if (blob == null) return;
 
 		setFileURLOrContent(selectedFileToView.file.type.startsWith('text')
-			? await fileReadAsText(blob)
+			? await readFileAsText(blob)
 			: URL.createObjectURL(blob)
 		)
 		openDialog(dialogViewFileRef)
@@ -1014,7 +1014,7 @@ const _: VoidComponent<{
 		target: DOMElement
 	}): void {
 		const button = document.activeElement! as HTMLButtonElement
-		if (!elementValidTarget(
+		if (!isTargetValidElement(
 			ev.currentTarget,
 			button,
 		)) return
@@ -1030,8 +1030,8 @@ const _: VoidComponent<{
 			taskListIndex = Number.parseInt(taskListIndex as string)
 			taskIndex = Number.parseInt(taskIndex as string)
 			if (
-				numberIsNotDefined(taskListIndex)
-				|| numberIsNotDefined(taskIndex)
+				isNumberNotDefined(taskListIndex)
+				|| isNumberNotDefined(taskIndex)
 			) return
 
 			const task = taskLists()[taskListIndex].tasks[taskIndex]
@@ -1053,8 +1053,8 @@ const _: VoidComponent<{
 			taskListIndex = Number.parseInt(taskListIndex as string)
 			taskIndex = Number.parseInt(taskIndex as string)
 			if (
-				numberIsNotDefined(taskListIndex)
-				|| numberIsNotDefined(taskIndex)
+				isNumberNotDefined(taskListIndex)
+				|| isNumberNotDefined(taskIndex)
 			) return
 
 			const task = taskLists()[taskListIndex].tasks[taskIndex]
@@ -1076,8 +1076,8 @@ const _: VoidComponent<{
 			taskListIndex = Number.parseInt(taskListIndex as string)
 			taskIndex = Number.parseInt(taskIndex as string)
 			if (
-				numberIsNotDefined(taskListIndex)
-				|| numberIsNotDefined(taskIndex)
+				isNumberNotDefined(taskListIndex)
+				|| isNumberNotDefined(taskIndex)
 			) return
 
 			const task = taskLists()[taskListIndex].tasks[taskIndex]
@@ -1095,8 +1095,8 @@ const _: VoidComponent<{
 			taskListIndex = Number.parseInt(taskListIndex as string)
 			taskIndex = Number.parseInt(taskIndex as string)
 			if (
-				numberIsNotDefined(taskListIndex)
-				|| numberIsNotDefined(taskIndex)
+				isNumberNotDefined(taskListIndex)
+				|| isNumberNotDefined(taskIndex)
 			) return
 
 			const task = taskLists()[taskListIndex].tasks[taskIndex]
@@ -1119,8 +1119,8 @@ const _: VoidComponent<{
 			taskListIndex = Number.parseInt(taskListIndex as string)
 			taskIndex = Number.parseInt(taskIndex as string)
 			if (
-				numberIsNotDefined(taskListIndex)
-				|| numberIsNotDefined(taskIndex)
+				isNumberNotDefined(taskListIndex)
+				|| isNumberNotDefined(taskIndex)
 			) return
 
 			const task = taskLists()[taskListIndex].tasks[taskIndex]
@@ -1138,8 +1138,8 @@ const _: VoidComponent<{
 			taskListIndex = Number.parseInt(taskListIndex as string)
 			taskIndex = Number.parseInt(taskIndex as string)
 			if (
-				numberIsNotDefined(taskListIndex)
-				|| numberIsNotDefined(taskIndex)
+				isNumberNotDefined(taskListIndex)
+				|| isNumberNotDefined(taskIndex)
 			) return
 
 			const task = taskLists()[taskListIndex].tasks[taskIndex]
@@ -1163,9 +1163,9 @@ const _: VoidComponent<{
 			taskIndex = Number.parseInt(taskIndex as string)
 			labelId = Number.parseInt(labelId as string)
 			if (
-				numberIsNotDefined(taskListIndex)
-				|| numberIsNotDefined(taskIndex)
-				|| numberIsNotDefined(labelId)
+				isNumberNotDefined(taskListIndex)
+				|| isNumberNotDefined(taskIndex)
+				|| isNumberNotDefined(labelId)
 			) return
 
 			const task = taskLists()[taskListIndex].tasks[taskIndex]
@@ -1244,7 +1244,7 @@ const _: VoidComponent<{
 		target: DOMElement
 	}): void {
 		const target = document.activeElement! as HTMLElement
-		if (!elementValidTarget(
+		if (!isTargetValidElement(
 			ev.currentTarget,
 			target,
 		)) return
@@ -1260,8 +1260,8 @@ const _: VoidComponent<{
 			taskListIndex = Number.parseInt(taskListIndex as string)
 			taskIndex = Number.parseInt(taskIndex as string)
 			if (
-				numberIsNotDefined(taskListIndex)
-				|| numberIsNotDefined(taskIndex)
+				isNumberNotDefined(taskListIndex)
+				|| isNumberNotDefined(taskIndex)
 			) return
 
 			const task = taskLists()[taskListIndex].tasks[taskIndex]
@@ -1290,9 +1290,9 @@ const _: VoidComponent<{
 			taskIndex = Number.parseInt(taskIndex as string)
 			subTaskIndex = Number.parseInt(subTaskIndex as string)
 			if (
-				numberIsNotDefined(taskListIndex)
-				|| numberIsNotDefined(taskIndex)
-				|| numberIsNotDefined(subTaskIndex)
+				isNumberNotDefined(taskListIndex)
+				|| isNumberNotDefined(taskIndex)
+				|| isNumberNotDefined(subTaskIndex)
 			) return
 
 			const subtask = props.taskLists[taskListIndex].tasks[taskIndex].subtasks[subTaskIndex]
@@ -1355,7 +1355,7 @@ const _: VoidComponent<{
 		})
 
 		return (<List
-			classList={attrClassListModule(CSS.body_file_list_item)}
+			classList={joinClassListModule(CSS.body_file_list_item)}
 			c:trailing={<>
 				<IconButton
 					data-tooltip={"View file" + (isTypeNotSupported()? ' (not supported)' : '')}
@@ -1426,10 +1426,10 @@ const _: VoidComponent<{
 				ref={r => dialogEditTaskRef = r}
 				c:header='Edit task'
 				style={{width: '500px'}}
-				classList={attrClassListModule(CSS.body_dialog_edit)}
+				classList={joinClassListModule(CSS.body_dialog_edit)}
 				onClick={ev => {
 					const button = document.activeElement! as HTMLButtonElement
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -1481,7 +1481,7 @@ const _: VoidComponent<{
 						command(Commands.editTask, task, taskListIndex, taskIndex)
 						break
 					case button_editTask_addFileId:
-						fileOpen(null, true).then(async (files) => {
+						pickFile(null, true).then(async (files) => {
 							if (files == null) return;
 							const result = (await command(
 								Commands.addFiles,
@@ -1505,7 +1505,7 @@ const _: VoidComponent<{
 						const dataSubtaskEditIndex = dataset.subtaskEditIndex
 						if (dataSubtaskEditIndex) {
 							const index = Number.parseInt(dataSubtaskEditIndex)
-							if (numberIsNotDefined(index)) return
+							if (isNumberNotDefined(index)) return
 
 							editSubTask(
 								task.subtasks[index], taskListIndex, taskIndex, index
@@ -1516,7 +1516,7 @@ const _: VoidComponent<{
 						const dataSubtaskDeleteIndex = dataset.subtaskDeleteIndex
 						if (dataSubtaskDeleteIndex) {
 							const index = Number.parseInt(dataSubtaskDeleteIndex)
-							if (numberIsNotDefined(index)) return
+							if (isNumberNotDefined(index)) return
 
 							deleteSubTask(index)
 							return
@@ -1525,7 +1525,7 @@ const _: VoidComponent<{
 						const dataSubTaskCompleteIndex = dataset.subtaskCompleteIndex
 						if (dataSubTaskCompleteIndex) {
 							const index = Number.parseInt(dataSubTaskCompleteIndex)
-							if (numberIsNotDefined(index)) return
+							if (isNumberNotDefined(index)) return
 
 							const subtask = task.subtasks[index]
 							const $subtask: SubTask = {
@@ -1542,7 +1542,7 @@ const _: VoidComponent<{
 						const dataLabelEditIndex = dataset.labelEditIndex
 						if (dataLabelEditIndex) {
 							const index = Number.parseInt(dataLabelEditIndex)
-							if (numberIsNotDefined(index)) return
+							if (isNumberNotDefined(index)) return
 
 							setSelectedLabel(props.labels[index]!)
 							command(Commands.editLabel, selectedLabel)
@@ -1552,7 +1552,7 @@ const _: VoidComponent<{
 						const dataLabelRemoveIndex = dataset.labelRemoveIndex
 						if (dataLabelRemoveIndex) {
 							const index = Number.parseInt(dataLabelRemoveIndex)
-							if (numberIsNotDefined(index)) return
+							if (isNumberNotDefined(index)) return
 
 							const i = selectedTaskToEdit.task.labelIds.findIndex(
 								$id => $id == props.labels[index]!.id
@@ -1569,7 +1569,7 @@ const _: VoidComponent<{
 						const dataFileViewIndex = dataset.fileViewIndex
 						if (dataFileViewIndex) {
 							const index = Number.parseInt(dataFileViewIndex)
-							if (numberIsNotDefined(index)) return
+							if (isNumberNotDefined(index)) return
 
 							viewFile(task.files[index], taskListIndex, taskIndex, index)
 							return
@@ -1578,7 +1578,7 @@ const _: VoidComponent<{
 						const dataFileActionIndex = dataset.fileActionIndex
 						if (dataFileActionIndex) {
 							const index = Number.parseInt(dataFileActionIndex)
-							if (numberIsNotDefined(index)) return
+							if (isNumberNotDefined(index)) return
 
 							setSelectedFileToAction({
 								file: task.files[index],
@@ -1686,7 +1686,7 @@ const _: VoidComponent<{
 							</Tooltip>}
 							c:leading={<Icon c:code={ICON_ALERT_URGENT}/>}>
 							<span style={{
-								color: dateOutRangeYMD_HM(
+								color: isDateOutRange_YMD_HM(
 									selectedTaskToEdit.task.reminder!,
 									new Date(),
 									new Date(new Date().getFullYear() + 100, 2, 2)
@@ -1736,7 +1736,7 @@ const _: VoidComponent<{
 				ref={r => dialogDeleteTaskWarningRef = r}
 				onClick={ev => {
 					const button = document.activeElement!
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -1781,7 +1781,7 @@ const _: VoidComponent<{
 				c:header="Rename file"
 				onClick={ev => {
 					const button = document.activeElement!
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -1833,7 +1833,7 @@ const _: VoidComponent<{
 				}}
 				onClick={ev => {
 					const button = document.activeElement!
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -1893,7 +1893,7 @@ const _: VoidComponent<{
 				}}
 				onClick={ev => {
 					const button = document.activeElement!
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -1944,7 +1944,7 @@ const _: VoidComponent<{
 				}}
 				onClick={ev => {
 					const button = document.activeElement!
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -2015,7 +2015,7 @@ const _: VoidComponent<{
 				ref={r => menuTaskActionRef = r}
 				onClick={ev => {
 					const button = document.activeElement! as HTMLButtonElement
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -2040,7 +2040,7 @@ const _: VoidComponent<{
 						break
 					case button_taskActions_addFileId:
 						closeMenu(menuTaskActionRef)
-						fileOpen(null, true).then(async (files) => {
+						pickFile(null, true).then(async (files) => {
 							if (files == null) return;
 							const result = await command(Commands.addFiles,
 								files, task, taskListIndex, taskIndex
@@ -2073,7 +2073,7 @@ const _: VoidComponent<{
 						const dataLabelId = dataset.labelId
 						if (dataLabelId) {
 							const labelId = Number.parseInt(dataLabelId)
-							if (numberIsNotDefined(labelId)) return
+							if (isNumberNotDefined(labelId)) return
 
 							const index = task.labelIds.findIndex(id => id == labelId)
 							setSelectedTaskToAction('task', 'labelIds', produce(ids => {
@@ -2090,7 +2090,7 @@ const _: VoidComponent<{
 						const dataTasklistIndex = dataset.tasklistIndex
 						if (dataTasklistIndex) {
 							const i = Number.parseInt(dataTasklistIndex)
-							if (numberIsNotDefined(i)) return
+							if (isNumberNotDefined(i)) return
 
 							command(Commands.moveTask, task, taskListIndex, taskIndex, i)
 							closeSubMenu(subMenuMoveTaskRef)
@@ -2202,7 +2202,7 @@ const _: VoidComponent<{
 				ref={r => menuReminderRef = r}
 				onClick={ev => {
 					const button = document.activeElement!
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -2241,7 +2241,7 @@ const _: VoidComponent<{
 				c:onToggleOpen={is_open => setIsMenuLabelsOpen(is_open)}
 				onClick={ev => {
 					const button = document.activeElement! as HTMLButtonElement
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -2263,7 +2263,7 @@ const _: VoidComponent<{
 							const dataLabelIndex = dataset.labelIndex
 							if (dataLabelIndex) {
 								const labelIndex = Number.parseInt(dataLabelIndex)
-								if (numberIsNotDefined(labelIndex)) return
+								if (isNumberNotDefined(labelIndex)) return
 
 								const labelId = props.labels![labelIndex]!.id
 								const index = task.labelIds.findIndex(id => id == labelId)
@@ -2281,7 +2281,7 @@ const _: VoidComponent<{
 				}}
 				onContextMenu={ev => {
 					const button = document.activeElement! as HTMLButtonElement
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -2290,7 +2290,7 @@ const _: VoidComponent<{
 					const dataLabelIndex = dataset.labelIndex
 					if (dataLabelIndex) {
 						const labelIndex = Number.parseInt(dataLabelIndex)
-						if (numberIsNotDefined(labelIndex)) return
+						if (isNumberNotDefined(labelIndex)) return
 
 						const label = props.labels![labelIndex]!
 						setSelectedLabel(label)
@@ -2325,7 +2325,7 @@ const _: VoidComponent<{
 				ref={r => menuLabelActionRef = r}
 				onClick={ev => {
 					const button = document.activeElement!
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -2356,7 +2356,7 @@ const _: VoidComponent<{
 				ref={r => menuLabelAction2Ref = r}
 				onClick={ev => {
 					const button = document.activeElement!
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -2397,7 +2397,7 @@ const _: VoidComponent<{
 				c:onToggleOpen={is_open => setIsMenuFileActionOpen(is_open)}
 				onClick={ev => {
 					const button = document.activeElement!
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -2459,7 +2459,7 @@ const _: VoidComponent<{
 				ref={r => menuFileAction2Ref = r}
 				onClick={ev => {
 					const button = document.activeElement! as HTMLButtonElement
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -2468,7 +2468,7 @@ const _: VoidComponent<{
 					const dataFileIndex = dataset.fileIndex
 					if (dataFileIndex) {
 						const file_index = Number.parseInt(dataFileIndex)
-						if (numberIsNotDefined(file_index)) return
+						if (isNumberNotDefined(file_index)) return
 
 						setSelectedFileToAction2({
 							file: selectedTaskToFileAction.task.files[file_index],
@@ -2495,7 +2495,7 @@ const _: VoidComponent<{
 				style={{'min-width': '164px'}}
 				onClick={ev => {
 					const button = document.activeElement!
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return

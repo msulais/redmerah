@@ -1,12 +1,12 @@
 import type { RGBColor, HSLColor, HSVColor, HEXColor, HWBColor, CMYKColor } from "@/types/color"
-import { numberSafe } from "./number"
+import { safeNumber } from "./number"
 import { themeFromSourceColor } from "@material/material-color-utilities"
 
-export function colorIsValidWithAlpha(hex: string): boolean {
+export function isColorValidWithAlpha(hex: string): boolean {
 	return /^#[0-9a-fA-F]{6}([0-9a-fA-F]{2})?$/i.test(hex)
 }
 
-export function colorIsValid(hex: string): boolean {
+export function isColorValid(hex: string): boolean {
 	return /^#[0-9a-fA-F]{6}$/i.test(hex)
 }
 
@@ -37,15 +37,15 @@ export function colorContrastRatio(rgb1: RGBColor, rgb2: RGBColor): number {
 	return ratio
 }
 
-export function colorHexToHwb(hex: HEXColor): HWBColor {
-	return colorRgbToHwb(colorHexToRgb(hex))
+export function hexToHwb(hex: HEXColor): HWBColor {
+	return rgbToHwb(hexToRgb(hex))
 }
 
-export function colorHwbToHex(hwb: HWBColor): HEXColor {
-	return colorRgbToHex(colorHwbToRgb(hwb))
+export function hwbToHex(hwb: HWBColor): HEXColor {
+	return rgbToHex(hwbToRgb(hwb))
 }
 
-export function colorHwbToRgb(hwb: HWBColor): RGBColor {
+export function hwbToRgb(hwb: HWBColor): RGBColor {
 	let h = hwb.h * 6
 	let w = hwb.w
 	let blackness = hwb.b
@@ -67,7 +67,7 @@ export function colorHwbToRgb(hwb: HWBColor): RGBColor {
 	return {r, g, b}
 }
 
-export function colorRgbToHwb(rgb: RGBColor): HWBColor {
+export function rgbToHwb(rgb: RGBColor): HWBColor {
 	const red = rgb.r
 	const green = rgb.g
 	const blue = rgb.b
@@ -86,52 +86,52 @@ export function colorRgbToHwb(rgb: RGBColor): HWBColor {
 	return {h, w, b}
 }
 
-export function colorHsvToHwb(hsv: HSVColor): HWBColor {
+export function hsvToHwb(hsv: HSVColor): HWBColor {
 	const h = hsv.h
 	const w = (1 - hsv.s) * hsv.v
 	const b = 1 - hsv.v
 	return {h, w, b}
 }
 
-export function colorHwbToHsv(hwb: HWBColor): HSVColor {
+export function hwbToHsv(hwb: HWBColor): HSVColor {
 	const h = hwb.h
 	const s = 1 - (hwb.w / (1 - hwb.b))
 	const v = 1 - hwb.b
 	return {h, s, v}
 }
 
-export function colorHslToHwb(hsl: HSLColor): HWBColor {
-	return {...colorHsvToHwb(colorHslToHsv(hsl)), h: hsl.h}
+export function hslToHwb(hsl: HSLColor): HWBColor {
+	return {...hsvToHwb(hslToHsv(hsl)), h: hsl.h}
 }
 
-export function colorHwbToHsl(hwb: HWBColor): HSLColor {
-	return {...colorHsvToHsl(colorHwbToHsv(hwb)), h: hwb.h}
+export function hwbToHsl(hwb: HWBColor): HSLColor {
+	return {...hsvToHsl(hwbToHsv(hwb)), h: hwb.h}
 }
 
-export function colorHslToCmyk(hsl: HSLColor): CMYKColor {
-	return colorRgbToCmyk(colorHslToRgb(hsl))
+export function hslToCmyk(hsl: HSLColor): CMYKColor {
+	return rgbToCmyk(hslToRgb(hsl))
 }
 
-export function colorCmykToHsl(cmyk: CMYKColor): HSLColor {
-	return colorRgbToHsl(colorCmykToRgb(cmyk))
+export function cmykToHsl(cmyk: CMYKColor): HSLColor {
+	return rgbToHsl(cmykToRgb(cmyk))
 }
 
-export function colorHexToCmyk(hex: HEXColor): CMYKColor {
-	return colorRgbToCmyk(colorHexToRgb(hex))
+export function hexToCmyk(hex: HEXColor): CMYKColor {
+	return rgbToCmyk(hexToRgb(hex))
 }
 
-export function colorCmykToHex(cmyk: CMYKColor): HEXColor {
-	return colorRgbToHex(colorCmykToRgb(cmyk))
+export function cmykToHex(cmyk: CMYKColor): HEXColor {
+	return rgbToHex(cmykToRgb(cmyk))
 }
 
-export function colorCmykToRgb(cmyk: CMYKColor): RGBColor {
+export function cmykToRgb(cmyk: CMYKColor): RGBColor {
 	const r = (1 - cmyk.c) * (1 - cmyk.k)
 	const g = (1 - cmyk.m) * (1 - cmyk.k)
 	const b = (1 - cmyk.y) * (1 - cmyk.k)
 	return {r, g, b}
 }
 
-export function colorRgbToCmyk(rgb: RGBColor): CMYKColor {
+export function rgbToCmyk(rgb: RGBColor): CMYKColor {
 	const r = rgb.r
 	const g = rgb.g
 	const b = rgb.b
@@ -152,11 +152,11 @@ export function colorRgbToCmyk(rgb: RGBColor): CMYKColor {
 	return {c, m, y, k}
 }
 
-export function colorHexToHsl(hex: HEXColor): HSLColor {
-	return colorRgbToHsl(colorHexToRgb(hex))
+export function hexToHsl(hex: HEXColor): HSLColor {
+	return rgbToHsl(hexToRgb(hex))
 }
 
-export function colorRgbToHsl(rgb: RGBColor): HSLColor {
+export function rgbToHsl(rgb: RGBColor): HSLColor {
 	let h = 0, s = 0, l = 0
 	const r = rgb.r
 	const g = rgb.g
@@ -191,20 +191,20 @@ export function colorRgbToHsl(rgb: RGBColor): HSLColor {
 	return {h, s, l}
 }
 
-export function colorHexToRgb(hex: HEXColor): RGBColor {
-	if (!colorIsValid(hex)) {
+export function hexToRgb(hex: HEXColor): RGBColor {
+	if (!isColorValid(hex)) {
 		throw new Error("Invalid hex color format!")
 	}
 
 	hex = hex.startsWith("#") ? hex.slice(1) : hex as any
 
-	const r = numberSafe(Number.parseInt(hex.substring(0, 2), 16), 0) / 0xff
-	const g = numberSafe(Number.parseInt(hex.substring(2, 4), 16), 0) / 0xff
-	const b = numberSafe(Number.parseInt(hex.substring(4, 6), 16), 0) / 0xff
+	const r = safeNumber(Number.parseInt(hex.substring(0, 2), 16), 0) / 0xff
+	const g = safeNumber(Number.parseInt(hex.substring(2, 4), 16), 0) / 0xff
+	const b = safeNumber(Number.parseInt(hex.substring(4, 6), 16), 0) / 0xff
 	return { r, g, b }
 }
 
-export function colorHslToRgb(hsl: HSLColor): RGBColor {
+export function hslToRgb(hsl: HSLColor): RGBColor {
 	let r, g, b
 
 	function rgbValue(v1: number, v2: number, vH: number): number {
@@ -232,11 +232,11 @@ export function colorHslToRgb(hsl: HSLColor): RGBColor {
 	return {r, g, b}
 }
 
-export function colorHslToHex(hsl: HSLColor): HEXColor {
-	return colorRgbToHex(colorHslToRgb(hsl))
+export function hslToHex(hsl: HSLColor): HEXColor {
+	return rgbToHex(hslToRgb(hsl))
 }
 
-export function colorRgbToHex(rgb: RGBColor): HEXColor {
+export function rgbToHex(rgb: RGBColor): HEXColor {
 	return ('#'
 		+ Math.round(rgb.r * 0xff).toString(16).padStart(2, '0')
 		+ Math.round(rgb.g * 0xff).toString(16).padStart(2, '0')
@@ -244,15 +244,15 @@ export function colorRgbToHex(rgb: RGBColor): HEXColor {
 	) as HEXColor
 }
 
-export function colorHsvToHex(hsv: HSVColor): HEXColor {
-	return colorRgbToHex(colorHsvToRgb(hsv))
+export function hsvToHex(hsv: HSVColor): HEXColor {
+	return rgbToHex(hsvToRgb(hsv))
 }
 
-export function colorHexToHsv(hex: HEXColor): HSVColor {
-	return colorRgbToHsv(colorHexToRgb(hex))
+export function hexToHsv(hex: HEXColor): HSVColor {
+	return rgbToHsv(hexToRgb(hex))
 }
 
-export function colorRgbToHsv(rgb: RGBColor): HSVColor {
+export function rgbToHsv(rgb: RGBColor): HSVColor {
 	let h: number = 0
 	let s: number = 0
 	let v: number = 0
@@ -289,7 +289,7 @@ export function colorRgbToHsv(rgb: RGBColor): HSVColor {
 	return {h, s, v}
 }
 
-export function colorHsvToRgb(hsv: HSVColor): RGBColor {
+export function hsvToRgb(hsv: HSVColor): RGBColor {
 	let r, g, b
 
 	if (hsv.s == 0) {
@@ -315,7 +315,7 @@ export function colorHsvToRgb(hsv: HSVColor): RGBColor {
 	return {r, g, b}
 }
 
-export function colorHslToHsv(hsl: HSLColor): HSVColor {
+export function hslToHsv(hsl: HSLColor): HSVColor {
 	const h = hsl.h
 	const v = hsl.l + (hsl.s * Math.min(hsl.l, 1 - hsl.l))
 	const s = v == 0
@@ -324,7 +324,7 @@ export function colorHslToHsv(hsl: HSLColor): HSVColor {
 	return {h, s, v}
 }
 
-export function colorHsvToHsl(hsv: HSVColor): HSLColor {
+export function hsvToHsl(hsv: HSVColor): HSLColor {
 	const h = hsv.h
 	const l = hsv.v * (1 - (hsv.s / 2))
 	const s = l == 0 || l == 1
@@ -333,7 +333,7 @@ export function colorHsvToHsl(hsv: HSVColor): HSLColor {
 	return { h, s, l }
 }
 
-export function colorHexArgbToRgb(argb: HEXColor): RGBColor {
+export function hexArgbToRgb(argb: HEXColor): RGBColor {
 	const argbHex = argb.startsWith('#') ? argb.slice(1) : argb
 	const argbInt = Number.parseInt(argbHex.padStart(8, '0'), 16)
 	const r = ((argbInt >> 16) & 0xFF) / 0xff
@@ -357,17 +357,17 @@ type GenerateColorResult = {
  * - Color Dark
  * - On Color Dark
 */
-export function colorGeneratePalette(hex: HEXColor): GenerateColorResult {
-	if (!colorIsValid(hex)) {
+export function generateColorPalette(hex: HEXColor): GenerateColorResult {
+	if (!isColorValid(hex)) {
 		throw new Error("Invalid hex color format!")
 	}
 
 	const theme = themeFromSourceColor(Number.parseInt(hex.substring(1), 16)).schemes
 	const [color, onColor, colorDark, onColorDark] = [
-		colorRgbToHex(colorHexArgbToRgb('#' + theme.light.primary  .toString(16) as HEXColor)),
-		colorRgbToHex(colorHexArgbToRgb('#' + theme.light.onPrimary.toString(16) as HEXColor)),
-		colorRgbToHex(colorHexArgbToRgb('#' + theme.dark.primary   .toString(16) as HEXColor)),
-		colorRgbToHex(colorHexArgbToRgb('#' + theme.dark.onPrimary .toString(16) as HEXColor)),
+		rgbToHex(hexArgbToRgb('#' + theme.light.primary  .toString(16) as HEXColor)),
+		rgbToHex(hexArgbToRgb('#' + theme.light.onPrimary.toString(16) as HEXColor)),
+		rgbToHex(hexArgbToRgb('#' + theme.dark.primary   .toString(16) as HEXColor)),
+		rgbToHex(hexArgbToRgb('#' + theme.dark.onPrimary .toString(16) as HEXColor)),
 	]
 
 	return {color, onColor, colorDark, onColorDark}

@@ -1,7 +1,7 @@
 import { type JSX, type ParentComponent, Show, splitProps, children, mergeProps, createMemo, createSignal } from "solid-js"
 
-import { attrSetIfExist } from "@/utils/attributes"
-import { objectHasValue } from "@/utils/object"
+import { setAttrIfExist } from "@/utils/attributes"
+import { isObjectHasValue } from "@/utils/object"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { AppCSSColors } from "@/enums/app-data"
 import { isAnimationAllowed } from "@/utils/animation"
@@ -42,7 +42,7 @@ const DrawerItem: ParentComponent<DrawerItemProps> = ($props) => {
 
 	return (<Button
 		c:variant={props["c:variant"] ?? (selected()? ButtonVariant.tonal : undefined)}
-		c:indicatorPosition={props["c:indicatorPosition"] ?? (objectHasValue(selected())? (props["c:indicatorPosition"] ?? ButtonIndicatorPosition.left) : undefined)}
+		c:indicatorPosition={props["c:indicatorPosition"] ?? (isObjectHasValue(selected())? (props["c:indicatorPosition"] ?? ButtonIndicatorPosition.left) : undefined)}
 		classList={{'c-drawer-item': true, ...props.classList}}
 		{...other}>
 		<Show when={props['c:iconCode'] != null}>
@@ -76,7 +76,7 @@ const LinkDrawerItem: ParentComponent<LinkDrawerItemProps> = ($props) => {
 
 	return (<LinkButton
 		c:variant={props["c:variant"] ?? (selected()? ButtonVariant.tonal : undefined)}
-		c:indicatorPosition={props["c:indicatorPosition"] ?? (objectHasValue(selected())? (props["c:indicatorPosition"] ?? ButtonIndicatorPosition.left) : undefined)}
+		c:indicatorPosition={props["c:indicatorPosition"] ?? (isObjectHasValue(selected())? (props["c:indicatorPosition"] ?? ButtonIndicatorPosition.left) : undefined)}
 		classList={{'c-drawer-item': true, ...props.classList}}
 		{...other}>
 		<Show when={props['c:iconCode'] != null}>
@@ -141,7 +141,7 @@ const Drawer: ParentComponent<DrawerProps> = ($props) => {
 	</>)
 
 	return (<Modal
-		data-c-right={attrSetIfExist(position() == DrawerPosition.right)}
+		data-c-right={setAttrIfExist(position() == DrawerPosition.right)}
 		classList={{
 			'c-drawer': true,
 			...props.classList

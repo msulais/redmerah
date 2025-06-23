@@ -4,23 +4,23 @@ import {
 } from "@/types/color"
 import {
 	colorContrastRatio,
-	colorHexToHsl,
-	colorHslToHex,
-	colorHslToHsv,
-	colorHslToRgb,
-	colorHsvToHsl,
-	colorIsValidWithAlpha,
-	colorRgbToHsl
+	hexToHsl,
+	hslToHex,
+	hslToHsv,
+	hslToRgb,
+	hsvToHsl,
+	isColorValidWithAlpha,
+	rgbToHsl
 } from "@/utils/color"
-import { numberSafe } from "@/utils/number"
-import { mathClamp } from "@/utils/math"
-import { createId } from "@/utils/ids"
+import { safeNumber } from "@/utils/number"
+import { Math_clamp } from "@/utils/math"
+import { createElementId } from "@/utils/ids"
 import { isAnimationAllowed } from "@/utils/animation"
 import { AnimationEffectTiming } from "@/enums/animation"
 import {
 	type EyeDropper as EyeDropperInterface
 } from "@/interfaces/eye-dropper"
-import { validEnumValue } from "@/utils/object"
+import { isValidEnumValue } from "@/utils/object"
 import {
 	KEY_ARROW_DOWN,
 	KEY_ARROW_LEFT,
@@ -191,7 +191,7 @@ function _initColorPickerRef(colorPickerRef: ColorPickerElement): void {
 		},
 		get colorSpace(): ColorPickerColorSpace {
 			const space = colorPickerRef.getAttribute(ColorPickerAttributes.colorSpace)
-			return validEnumValue(space, ColorPickerColorSpace)
+			return isValidEnumValue(space, ColorPickerColorSpace)
 				? (space as ColorPickerColorSpace)
 				: ColorPickerColorSpace.hex
 		}
@@ -232,21 +232,21 @@ function _initColorPickerRef(colorPickerRef: ColorPickerElement): void {
 			hsla.l = 0.5
 		}
 
-		const hexColor = colorHslToHex(hsla).toUpperCase()
+		const hexColor = hslToHex(hsla).toUpperCase()
 		const hexColorWithAlpha = hexColor + Math.round(hsla.a * 0xff).toString(16).padStart(2, '0').toUpperCase()
-		const hueHexColor = colorHslToHex({h: hsla.h, s: 1, l: 0.5}).toUpperCase()
+		const hueHexColor = hslToHex({h: hsla.h, s: 1, l: 0.5}).toUpperCase()
 		requestAnimationFrame(() => {
 			colorPickerRef.style.setProperty(ColorPickerCSSVariables.color, hexColor)
 			colorPickerRef.style.setProperty(ColorPickerCSSVariables.colorWithAlpha, hexColorWithAlpha)
 			colorPickerRef.style.setProperty(ColorPickerCSSVariables.hue, hueHexColor)
 			colorPickerRef.style.setProperty(
 				ColorPickerCSSVariables.rectBorderColor,
-				colorContrastRatio(colorHslToRgb(hsla), {r: 0, g: 0, b: 0}) > 50
+				colorContrastRatio(hslToRgb(hsla), {r: 0, g: 0, b: 0}) > 50
 					? '#000' : '#fff'
 			)
 			colorPickerRef.style.setProperty(
 				ColorPickerCSSVariables.sliderHueBorderColor,
-				colorContrastRatio(colorHslToRgb({...hsla, s: 1, l: 0.5}), {r: 0, g: 0, b: 0}) > 50
+				colorContrastRatio(hslToRgb({...hsla, s: 1, l: 0.5}), {r: 0, g: 0, b: 0}) > 50
 					? '#000' : '#fff'
 			)
 		})
@@ -257,7 +257,7 @@ function _initColorPickerRef(colorPickerRef: ColorPickerElement): void {
 				rectX = hsla.s * 100
 				rectY = (1 - hsla.l) * 100
 			} else {
-				const hsv = colorHslToHsv(hsla)
+				const hsv = hslToHsv(hsla)
 				rectX = hsv.s * 100
 				rectY = (1 - hsv.v) * 100
 			}
@@ -283,7 +283,7 @@ function _initColorPickerRef(colorPickerRef: ColorPickerElement): void {
 			let name = ''
 			switch (colorSpace) {
 			case ColorPickerColorSpace.rgb:
-				const rgb = colorHslToRgb(hsla)
+				const rgb = hslToRgb(hsla)
 				text = [
 					Math.round(rgb.r * 0xff),
 					Math.round(rgb.g * 0xff),
@@ -351,10 +351,10 @@ function _initColorPickerRef(colorPickerRef: ColorPickerElement): void {
 			value = value.replace(/[^\d,]/g, '').trim()
 			const rgbArr: number[] = (value
 				.split(',')
-				.map(v => mathClamp(numberSafe(Number.parseInt(v)), 0, 0xff) / 0xff)
+				.map(v => Math_clamp(safeNumber(Number.parseInt(v)), 0, 0xff) / 0xff)
 			)
 			while (rgbArr.length < 3) rgbArr.push(0)
-			hsl = colorRgbToHsl({
+			hsl = rgbToHsl({
 				r: rgbArr[0],
 				g: rgbArr[1],
 				b: rgbArr[2],
@@ -365,8 +365,8 @@ function _initColorPickerRef(colorPickerRef: ColorPickerElement): void {
 			value = value.replace(/[^\d,]/g, '').trim()
 			const hslArr: number[] = (value
 				.split(',')
-				.map((v, i) => mathClamp(
-					numberSafe(Number.parseInt(v)),
+				.map((v, i) => Math_clamp(
+					safeNumber(Number.parseInt(v)),
 					0,
 					i === 0? 360 : 100
 				) / (i === 0? 360 : 100))
@@ -379,7 +379,7 @@ function _initColorPickerRef(colorPickerRef: ColorPickerElement): void {
 			break
 		case ColorPickerColorSpace.hex:
 			value = '#' + value.replace(/[^\da-fA-F]/g, '').padEnd(6, '0').substring(0, 6).trim()
-			hsl = colorHexToHsl(value as HEXColor)
+			hsl = hexToHsl(value as HEXColor)
 			break
 		}
 
@@ -394,8 +394,8 @@ function _initColorPickerRef(colorPickerRef: ColorPickerElement): void {
 	}
 
 	function inputOpacityRefOnInput(): void {
-		const value = mathClamp(
-			numberSafe(Number.parseInt(inputOpacityRef!.value), hsla.a * 100),
+		const value = Math_clamp(
+			safeNumber(Number.parseInt(inputOpacityRef!.value), hsla.a * 100),
 			0,
 			100
 		)
@@ -408,8 +408,8 @@ function _initColorPickerRef(colorPickerRef: ColorPickerElement): void {
 	function updateRectPosition(x: number, y: number): void {
 		x = (x - rectRect!.left) / rectRect!.width * 100
 		y = (y - rectRect!.top) / rectRect!.height * 100
-		rectX = mathClamp(x, 0, 100)
-		rectY = mathClamp(y, 0, 100)
+		rectX = Math_clamp(x, 0, 100)
+		rectY = Math_clamp(y, 0, 100)
 		requestAnimationFrame(() => {
 			colorPickerRef.style.setProperty(ColorPickerCSSVariables.rectX, rectX + '%')
 			colorPickerRef.style.setProperty(ColorPickerCSSVariables.rectY, rectY + '%')
@@ -419,7 +419,7 @@ function _initColorPickerRef(colorPickerRef: ColorPickerElement): void {
 			hsla.s = rectX / 100
 			hsla.l = 1 - (rectY / 100)
 		} else {
-			const hsl = colorHsvToHsl({h: hsla.h, s: rectX / 100, v: 1 - (rectY / 100)})
+			const hsl = hsvToHsl({h: hsla.h, s: rectX / 100, v: 1 - (rectY / 100)})
 			hsla.s = hsl.s
 			hsla.l = hsl.l
 		}
@@ -448,8 +448,8 @@ function _initColorPickerRef(colorPickerRef: ColorPickerElement): void {
 			--rectY
 			break
 		}
-		rectX = mathClamp(rectX, 0, 100)
-		rectY = mathClamp(rectY, 0, 100)
+		rectX = Math_clamp(rectX, 0, 100)
+		rectY = Math_clamp(rectY, 0, 100)
 		requestAnimationFrame(() => {
 			colorPickerRef.style.setProperty(ColorPickerCSSVariables.rectX, rectX + '%')
 			colorPickerRef.style.setProperty(ColorPickerCSSVariables.rectY, rectY + '%')
@@ -459,7 +459,7 @@ function _initColorPickerRef(colorPickerRef: ColorPickerElement): void {
 			hsla.s = rectX / 100
 			hsla.l = 1 - (rectY / 100)
 		} else {
-			const hsl = colorHsvToHsl({h: hsla.h, s: rectX / 100, v: 1 - (rectY / 100)})
+			const hsl = hsvToHsl({h: hsla.h, s: rectX / 100, v: 1 - (rectY / 100)})
 			hsla.s = hsl.s
 			hsla.l = hsl.l
 		}
@@ -516,14 +516,14 @@ function _initColorPickerRef(colorPickerRef: ColorPickerElement): void {
 	}
 
 	function sliderHueRefOnInput(): void {
-		const value = numberSafe(Number.parseInt(sliderHueRef?.value ?? ''))
-		hsla.h = mathClamp(value / 360, 0, 1)
+		const value = safeNumber(Number.parseInt(sliderHueRef?.value ?? ''))
+		hsla.h = Math_clamp(value / 360, 0, 1)
 		updateColor({sliderHue: false})
 	}
 
 	function sliderOpacityRefOnInput(): void {
-		const value = numberSafe(Number.parseInt(sliderOpacityRef?.value ?? ''))
-		hsla.a = mathClamp(value / 100, 0, 1)
+		const value = safeNumber(Number.parseInt(sliderOpacityRef?.value ?? ''))
+		hsla.a = Math_clamp(value / 100, 0, 1)
 		updateColor({sliderOpacity: false})
 	}
 
@@ -532,7 +532,7 @@ function _initColorPickerRef(colorPickerRef: ColorPickerElement): void {
 		const eyeDropper: EyeDropperInterface = new EyeDropper()
 		eyeDropper.open().then(result => {
 			const hex = result.sRGBHex as HEXColor
-			const hsl = colorHexToHsl(hex)
+			const hsl = hexToHsl(hex)
 			hsla.h = hsl.h
 			hsla.s = hsl.s
 			hsla.l = hsl.l
@@ -548,7 +548,7 @@ function _initColorPickerRef(colorPickerRef: ColorPickerElement): void {
 
 	function initColor(): void {
 		const value = colorPickerRef.getAttribute(ColorPickerAttributes.value)
-		if (value && colorIsValidWithAlpha(value)) {
+		if (value && isColorValidWithAlpha(value)) {
 			let alpha = 1
 
 			// '#RRGGBBAA'
@@ -556,7 +556,7 @@ function _initColorPickerRef(colorPickerRef: ColorPickerElement): void {
 				alpha = Number.parseInt(value.substring(7), 16) / 0xff
 			}
 
-			const hsl = colorHexToHsl(value.substring(0, 7) as HEXColor)
+			const hsl = hexToHsl(value.substring(0, 7) as HEXColor)
 			hsla.h = hsl.h
 			hsla.s = hsl.s
 			hsla.l = hsl.l
@@ -584,7 +584,7 @@ function _initColorPickerRef(colorPickerRef: ColorPickerElement): void {
 		if (inputColorRef) {
 			let id = inputColorRef.id
 			if (!id) {
-				id = createId()
+				id = createElementId()
 				inputColorRef.id = id
 			}
 
@@ -593,7 +593,7 @@ function _initColorPickerRef(colorPickerRef: ColorPickerElement): void {
 		if (inputOpacityRef) {
 			let id = inputOpacityRef.id
 			if (!id) {
-				id = createId()
+				id = createElementId()
 				inputOpacityRef.id = id
 			}
 
@@ -689,7 +689,7 @@ function updateColorPickerRef(
 	if (valueOption === false) {
 		colorPickerRef.removeAttribute(ColorPickerAttributes.value)
 	}
-	else if (valueOption !== undefined && valueOption !== true && colorIsValidWithAlpha(valueOption)) {
+	else if (valueOption !== undefined && valueOption !== true && isColorValidWithAlpha(valueOption)) {
 		colorPickerRef.setAttribute(ColorPickerAttributes.value, valueOption)
 		colorPickerRef.dispatchEvent(new CustomEvent<_UpdateEventDetail>(ColorPickerEvents.update, {
 			bubbles: false, cancelable: false,

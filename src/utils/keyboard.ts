@@ -1,6 +1,6 @@
 import { KEY_ARROW_UP, KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT } from "@/constants/key-code"
 import { createUniqueId } from "solid-js"
-import { elementValidTarget } from "./element"
+import { isTargetValidElement } from "./element"
 
 enum ElementCustomAttributes {
 	tabIndex = 'data-tabindex'
@@ -18,7 +18,7 @@ export function keyboardOnFocusIn(
 	const active = document.activeElement!
 	const self = ev.currentTarget
 	let id = self.id
-	if (!elementValidTarget(
+	if (!isTargetValidElement(
 		self,
 		active,
 	)) return

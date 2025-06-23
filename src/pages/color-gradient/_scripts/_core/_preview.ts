@@ -2,7 +2,7 @@ import { ObservableStore } from "@/utils/store"
 import { DEFAULT_PREVIEW_BORDER_RADIUS, DEFAULT_PREVIEW_HEIGHT, DEFAULT_PREVIEW_WIDTH } from "../_shared/_constant"
 import { $ } from "./_dom-utils"
 import { ElementIds } from "../_shared/_ids"
-import { numberSafe } from "@/utils/number"
+import { safeNumber } from "@/utils/number"
 import { saveStorageItem } from "./_database"
 
 export type PreviewStoreType = Readonly<{
@@ -138,17 +138,17 @@ function _subscribeClipPathRefView(v: PreviewStoreType, o: PreviewStoreType): vo
 
 function _initEvents(): void {
 	_propertyBorderRadiusRef.addEventListener('input', () => {
-		const value = numberSafe(_propertyBorderRadiusRef.valueAsNumber)
+		const value = safeNumber(_propertyBorderRadiusRef.valueAsNumber)
 		PreviewStore.update(v => ({...v, borderRadius: value}))
 	})
 
 	_propertyWidthRef.addEventListener('input', () => {
-		const value = numberSafe(_propertyWidthRef.valueAsNumber)
+		const value = safeNumber(_propertyWidthRef.valueAsNumber)
 		PreviewStore.update(v => ({...v, width: value}))
 	})
 
 	_propertyHeightRef.addEventListener('input', () => {
-		const value = numberSafe(_propertyHeightRef.valueAsNumber)
+		const value = safeNumber(_propertyHeightRef.valueAsNumber)
 		PreviewStore.update(v => ({...v, height: value}))
 	})
 

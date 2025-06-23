@@ -1,5 +1,5 @@
 ---
-import { attrClassList } from '@/utils/attributes'
+import { joinClassList } from '@/utils/attributes'
 
 import {
 	MenuClasses,
@@ -24,14 +24,14 @@ const {'class': submenusClass, ...submenusOther} = MenuSubMenusAttr ?? {}
 
 <Popover
 	role={role ?? 'menu'}
-	class={attrClassList(MenuClasses.menu, className)}
+	class={joinClassList(MenuClasses.menu, className)}
 	PopoverGap={PopoverGap}
 	PopoverPadding={PopoverPadding}
 	{...other}>
-	<div class={attrClassList(MenuClasses.content, contentClass)} {...contentOther}>
+	<div class={joinClassList(MenuClasses.content, contentClass)} {...contentOther}>
 		<slot />
 	</div>
-	<div class={attrClassList(MenuClasses.submenus, submenusClass)} {...submenusOther}>
+	<div class={joinClassList(MenuClasses.submenus, submenusClass)} {...submenusOther}>
 		<slot name="submenus"/>
 	</div>
 </Popover>

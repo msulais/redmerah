@@ -2,11 +2,11 @@ import { updateButtonRef } from "@/native-components/Button"
 import { closeMenuRef } from "@/native-components/Menu"
 import { ElementIds, RadioGroupNames } from "./_enums"
 import { LocalStorageKeys } from "@/enums/storage"
-import { validEnumValue } from "@/utils/object"
+import { isValidEnumValue } from "@/utils/object"
 import { RootAttributes } from "@/enums/attributes"
 import { PlatformAnimationMode, PlatformThemeMode } from "@/enums/platforms"
 import { ColorPickerAttributes, ColorPickerEvents, openColorPickerRef, updateColorPickerRef } from "@/native-components/ColorPicker"
-import { colorGeneratePalette, colorHexToRgb, colorIsValid } from "@/utils/color"
+import { generateColorPalette, hexToRgb, isColorValid } from "@/utils/color"
 import type { HEXColor, RGBColor } from "@/types/color"
 import { GlobalElementIds } from "@/enums/ids"
 
@@ -32,7 +32,7 @@ function _rgbToCSS(rgb: RGBColor) {
 function _initSettings(): void {
 	function initTheme(): void {
 		const theme = localStorage.getItem(LocalStorageKeys.platformTheme)
-		if (!theme || !validEnumValue(theme, PlatformThemeMode)) return
+		if (!theme || !isValidEnumValue(theme, PlatformThemeMode)) return
 
 		_rootRef.setAttribute(RootAttributes.theme, theme)
 		const previous = $$(
@@ -49,7 +49,7 @@ function _initSettings(): void {
 
 	function initAnimation(): void {
 		const animation = localStorage.getItem(LocalStorageKeys.platformAnimation)
-		if (!animation || !validEnumValue(animation, PlatformAnimationMode)) return
+		if (!animation || !isValidEnumValue(animation, PlatformAnimationMode)) return
 
 		_rootRef.setAttribute(RootAttributes.animation, animation)
 		const previous = $$(
@@ -66,13 +66,13 @@ function _initSettings(): void {
 
 	function initAccentColor(): void {
 		const accent = localStorage.getItem(LocalStorageKeys.platformAccentColor)
-		if (!accent || !colorIsValid(accent)) return
+		if (!accent || !isColorValid(accent)) return
 
 		const rgbToCSS = (rgb: RGBColor) => `${Math.round(rgb.r * 0xff)}, ${Math.round(rgb.g * 0xff)}, ${Math.round(rgb.b * 0xff)}`
 		const accentColorElement = $(GlobalElementIds.colorAccent) as HTMLStyleElement
 		const colorPickerRef = $(ElementIds.appbarColorPicker) as HTMLDivElement
-		const palette = colorGeneratePalette(accent as HEXColor)
-		accentColorElement.innerHTML = `:root{--g-color-accent-light: ${rgbToCSS(colorHexToRgb(palette.color))};--g-color-accent-dark: ${rgbToCSS(colorHexToRgb(palette.colorDark))};--g-color-on-accent-light: ${rgbToCSS(colorHexToRgb(palette.onColor))};--g-color-on-accent-dark: ${rgbToCSS(colorHexToRgb(palette.onColorDark))};}`;
+		const palette = generateColorPalette(accent as HEXColor)
+		accentColorElement.innerHTML = `:root{--g-color-accent-light: ${rgbToCSS(hexToRgb(palette.color))};--g-color-accent-dark: ${rgbToCSS(hexToRgb(palette.colorDark))};--g-color-on-accent-light: ${rgbToCSS(hexToRgb(palette.onColor))};--g-color-on-accent-dark: ${rgbToCSS(hexToRgb(palette.onColorDark))};}`;
 		updateColorPickerRef(colorPickerRef, {
 			ColorPickerValue: accent as HEXColor
 		})
@@ -98,8 +98,8 @@ function _initEvents(): void {
 
 		_timeAccentId = setTimeout(() => {
 			const accent = _colorPickerRef.getAttribute(ColorPickerAttributes.value)! as HEXColor
-			const palette = colorGeneratePalette(accent)
-			_accentColorElement.innerHTML = `:root{--g-color-accent-light: ${_rgbToCSS(colorHexToRgb(palette.color))};--g-color-accent-dark: ${_rgbToCSS(colorHexToRgb(palette.colorDark))};--g-color-on-accent-light: ${_rgbToCSS(colorHexToRgb(palette.onColor))};--g-color-on-accent-dark: ${_rgbToCSS(colorHexToRgb(palette.onColorDark))};}`;
+			const palette = generateColorPalette(accent)
+			_accentColorElement.innerHTML = `:root{--g-color-accent-light: ${_rgbToCSS(hexToRgb(palette.color))};--g-color-accent-dark: ${_rgbToCSS(hexToRgb(palette.colorDark))};--g-color-on-accent-light: ${_rgbToCSS(hexToRgb(palette.onColor))};--g-color-on-accent-dark: ${_rgbToCSS(hexToRgb(palette.onColorDark))};}`;
 			localStorage.setItem(LocalStorageKeys.platformAccentColor, accent)
 		}, 50)
 	})
@@ -130,7 +130,7 @@ function _initEvents(): void {
 	_settingsThemeMenuRef.addEventListener('change', ev => {
 		const target = ev.target as HTMLInputElement
 		const value = target?.value
-		if (!value || !validEnumValue(value, PlatformThemeMode)) return
+		if (!value || !isValidEnumValue(value, PlatformThemeMode)) return
 
 		localStorage.setItem(LocalStorageKeys.platformTheme, value)
 		_rootRef.setAttribute(RootAttributes.theme, value)
@@ -140,7 +140,7 @@ function _initEvents(): void {
 	_settingsAnimationMenuRef.addEventListener('change', ev => {
 		const target = ev.target as HTMLInputElement
 		const value = target?.value
-		if (!value || !validEnumValue(value, PlatformAnimationMode)) return
+		if (!value || !isValidEnumValue(value, PlatformAnimationMode)) return
 
 		localStorage.setItem(LocalStorageKeys.platformAnimation, value)
 		_rootRef.setAttribute(RootAttributes.animation, value)

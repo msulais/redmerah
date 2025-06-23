@@ -6,7 +6,7 @@ import {
 	KEY_SPACE
 } from "@/constants/keyboard-value"
 import { AnimationEffectTiming } from "@/enums/animation"
-import { createId } from "@/utils/ids"
+import { createElementId } from "@/utils/ids"
 import { isAnimationAllowed } from "@/utils/animation"
 
 import { createIconRef, type IconElement, type IconProps } from "@/native-components/Icon"
@@ -121,7 +121,7 @@ function repairOptionRefs(selectRef: SelectElement, ...optionRefs: SelectOptionE
 		// id
 		let id = optionRef.id
 		if (!id) {
-			optionRef.id = createId()
+			optionRef.id = createElementId()
 		}
 
 		// aria-selected
@@ -154,7 +154,7 @@ function updateSelectRefValue(selectRef: SelectElement, value: string): void {
 	targetOptionRef.setAttribute('aria-selected', 'true')
 	let id = targetOptionRef.id
 	if (!id) {
-		id = createId()
+		id = createElementId()
 		targetOptionRef.id = id
 	}
 
@@ -576,7 +576,7 @@ function updateSelectOptionRef(
 	updateButtonRef(optionRef, options)
 	optionRef.classList.add(SelectClasses.option)
 	if (!optionRef.id) {
-		optionRef.id = createId()
+		optionRef.id = createElementId()
 	}
 	if (!optionRef.hasAttribute('role')) {
 		optionRef.setAttribute('role', 'option')

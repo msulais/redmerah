@@ -3,9 +3,9 @@ import { batch, createMemo, createSelector, createUniqueId, Show, type VoidCompo
 import type { CubicBezier, Keyframes, Position } from "./_types"
 import { ICON_COPY, ICON_DATA_SCATTER, ICON_PLAY } from "@/constants/icons"
 import { AppCSSColors } from "@/enums/app-data"
-import { elementValidTarget } from "@/utils/element"
-import { mathClamp } from "@/utils/math"
-import { numberSafe } from "@/utils/number"
+import { isTargetValidElement } from "@/utils/element"
+import { Math_clamp } from "@/utils/math"
+import { safeNumber } from "@/utils/number"
 import { AnimationType, Commands } from "./_enums"
 
 import TextField, { NumberTextField, TextFieldButton, updateTextFieldValue } from "@/components/TextField"
@@ -119,7 +119,7 @@ const _: VoidComponent<{
 	}
 
 	function updateText(): string {
-		const simplify = (x: number) => Number.parseFloat(numberSafe(x).toFixed(2))
+		const simplify = (x: number) => Number.parseFloat(safeNumber(x).toFixed(2))
 		const distanceX = endPoint()[0] - startPoint()[0]
 		const distanceY = endPoint()[1] - startPoint()[1]
 		const x1 = simplify((startHandlePoint()[0] - startPoint()[0]) / distanceX)
@@ -160,37 +160,37 @@ const _: VoidComponent<{
 			let y = (rHeight - (pY - rTop)) / rHeight
 
 			if (isStartPointDragged) {
-				x = mathClamp(x, 0, endPoint()[0])
-				y = mathClamp(y, 0, endPoint()[1])
+				x = Math_clamp(x, 0, endPoint()[0])
+				y = Math_clamp(y, 0, endPoint()[1])
 				command(Commands.updateStartPoint, [x, y])
 				command(Commands.updateStartHandlePoint, [
-					mathClamp(startHandlePoint()[0], x, endPoint()[0]),
+					Math_clamp(startHandlePoint()[0], x, endPoint()[0]),
 					startHandlePoint()[1]
 				])
 				command(Commands.updateEndHandlePoint, [
-					mathClamp(endHandlePoint()[0], x, endPoint()[0]),
+					Math_clamp(endHandlePoint()[0], x, endPoint()[0]),
 					endHandlePoint()[1]
 				])
 			}
 			else if (isEndPointDragged) {
-				x = mathClamp(x, startPoint()[0], 1)
-				y = mathClamp(y, startPoint()[1], 1)
+				x = Math_clamp(x, startPoint()[0], 1)
+				y = Math_clamp(y, startPoint()[1], 1)
 				command(Commands.updateEndPoint, [x, y])
 				command(Commands.updateStartHandlePoint, [
-					mathClamp(startHandlePoint()[0], startPoint()[0], x),
+					Math_clamp(startHandlePoint()[0], startPoint()[0], x),
 					startHandlePoint()[1]
 				])
 				command(Commands.updateEndHandlePoint, [
-					mathClamp(endHandlePoint()[0], startPoint()[0], x),
+					Math_clamp(endHandlePoint()[0], startPoint()[0], x),
 					endHandlePoint()[1]
 				])
 			}
 			else if (isStartHandlePointDragged) {
-				x = mathClamp(x, startPoint()[0], endPoint()[0])
+				x = Math_clamp(x, startPoint()[0], endPoint()[0])
 				command(Commands.updateStartHandlePoint, [x, y])
 			}
 			else if (isEndHandlePointDragged) {
-				x = mathClamp(x, startPoint()[0], endPoint()[0])
+				x = Math_clamp(x, startPoint()[0], endPoint()[0])
 				command(Commands.updateEndHandlePoint, [x, y])
 			}
 
@@ -217,7 +217,7 @@ const _: VoidComponent<{
 	): void {
 		const text = el.value.trim().replace(/,$/g, '')
 		const values = text.split(',').map(
-			v => numberSafe(Number.parseFloat(v))
+			v => safeNumber(Number.parseFloat(v))
 		)
 		if (values.length <= 0) values.push(0)
 
@@ -382,7 +382,7 @@ const _: VoidComponent<{
 				class={CSS.bodyOptions}
 				onClick={(ev) => {
 					const button = document.activeElement! as HTMLButtonElement
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button
 					)) return
@@ -409,7 +409,7 @@ const _: VoidComponent<{
 						updateTextFieldValue(target, updateText())
 						break
 					case inputDurationId: {
-						const value = numberSafe(target.valueAsNumber)
+						const value = safeNumber(target.valueAsNumber)
 						command(Commands.updateDuration, value)
 						break
 					}
@@ -417,8 +417,8 @@ const _: VoidComponent<{
 						const text = target.value.replace(/[^0-9A-Fa-f,]|,$/g, '')
 						const values = text.split(',').map(v => {
 							let d = Number.parseInt(v, 16)
-							d = numberSafe(d)
-							d = mathClamp(d, 0, 0xffffff)
+							d = safeNumber(d)
+							d = Math_clamp(d, 0, 0xffffff)
 
 							let e = d.toString(16)
 							e = e.padStart(6, '0')
@@ -439,7 +439,7 @@ const _: VoidComponent<{
 							while (d.length < 2) d.push('0')
 							if (d.length > 2) d.length = 2
 
-							return d.map(v => numberSafe(Number.parseFloat(v)) + 'px')
+							return d.map(v => safeNumber(Number.parseFloat(v)) + 'px')
 						})
 
 						command(Commands.updateKeyframes, 'move', values)
@@ -479,7 +479,7 @@ const _: VoidComponent<{
 					onInput={ev => {
 						const self = ev.currentTarget
 						const texts = self.value.split(',').map(
-							v => numberSafe(Number.parseFloat(v))
+							v => safeNumber(Number.parseFloat(v))
 						)
 						while (texts.length < 4) texts.push(0)
 
@@ -489,11 +489,11 @@ const _: VoidComponent<{
 
 						batch(() => {
 							command(Commands.updateStartHandlePoint, [
-								mathClamp(distanceX * x1 + startPoint()[0], 0, endPoint()[0]),
+								Math_clamp(distanceX * x1 + startPoint()[0], 0, endPoint()[0]),
 								distanceY * y1 + startPoint()[1]
 							])
 							command(Commands.updateEndHandlePoint, [
-								mathClamp(distanceX * x2 + startPoint()[0], startPoint()[0], 1),
+								Math_clamp(distanceX * x2 + startPoint()[0], startPoint()[0], 1),
 								distanceY * y2 + startPoint()[1]
 							])
 						})

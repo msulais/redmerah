@@ -1,5 +1,5 @@
 ---
-import { attrClassList } from '@/utils/attributes'
+import { joinClassList } from '@/utils/attributes'
 
 import {
 	ButtonClasses,
@@ -25,7 +25,7 @@ const {
 } = IconButtonIconAttr
 ---
 <Button
-	class={attrClassList(ButtonClasses.icon, className)}
+	class={joinClassList(ButtonClasses.icon, className)}
 	{...other}>
 	<Icon
 		IconCode={IconCode ?? IconButtonCode}

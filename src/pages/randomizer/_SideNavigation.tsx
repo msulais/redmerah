@@ -1,15 +1,15 @@
 import { createMemo, For, type VoidComponent } from "solid-js"
 
 import { RandomizerType } from "./_enums"
-import { attrClassListModule } from "@/utils/attributes"
+import { joinClassListModule } from "@/utils/attributes"
 import { RANDOMIZER_TYPES } from "./_constants"
-import { elementValidTarget } from "@/utils/element"
+import { isTargetValidElement } from "@/utils/element"
 
 import Icon from "@/components/Icon"
 import {Tooltip} from "@/components/Tooltip"
 import SideNavigation, { SideNavigationItem } from "@/components/SideNavigation"
 import CSS from './_styles.module.scss'
-import { validEnumValue } from "@/utils/object"
+import { isValidEnumValue } from "@/utils/object"
 
 const _: VoidComponent<{
 	randomizer: RandomizerType
@@ -20,10 +20,10 @@ const _: VoidComponent<{
 	const randomizer = createMemo(() => props.randomizer)
 	return (<SideNavigation
 		c:expanded={expanded()}
-		classList={attrClassListModule(CSS.side_navigation)}
+		classList={joinClassListModule(CSS.side_navigation)}
 		onClick={ev => {
 			const button = document.activeElement! as HTMLButtonElement
-			if (!elementValidTarget(
+			if (!isTargetValidElement(
 				ev.currentTarget,
 				button,
 			)) return
@@ -31,7 +31,7 @@ const _: VoidComponent<{
 			const dataset = button.dataset
 			const dataType = dataset.type
 			if (dataType
-				&& validEnumValue(dataType, RandomizerType)
+				&& isValidEnumValue(dataType, RandomizerType)
 				&& randomizer() != dataType
 			) {
 				props.onChangeRandomizer(dataType as RandomizerType)

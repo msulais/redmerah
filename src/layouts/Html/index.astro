@@ -1,7 +1,7 @@
 ---
 import type { HEXColor } from '@/types/color'
 import { ThemeData } from '@/enums/theme'
-import { colorGeneratePalette, colorHexToRgb } from '@/utils/color'
+import { generateColorPalette, hexToRgb } from '@/utils/color'
 import { CornerData } from '@/enums/corner'
 import { GlobalElementIds } from '@/enums/ids'
 import { PlatformData } from '@/enums/platforms'
@@ -37,9 +37,9 @@ const {
 	componentCount = 0
 } = Astro.props
 
-const colors = colorGeneratePalette(accentColor)
+const colors = generateColorPalette(accentColor)
 const colorToCSS = (hex: HEXColor) => {
-	const rgb = colorHexToRgb(hex)
+	const rgb = hexToRgb(hex)
 	return `${Math.round(rgb.r * 0xff)}, ${Math.round(rgb.g * 0xff)}, ${Math.round(rgb.b * 0xff)}`
 }
 ---

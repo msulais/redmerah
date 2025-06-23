@@ -5,7 +5,7 @@ import { compileString } from 'sass'
 import type { Settings } from "./_types"
 import { removeSplashScreen } from "@/utils/splash"
 import { Commands, InputViewOption } from "./_enums"
-import { fileOpen, fileReadAsText, fileDownload } from "@/utils/file"
+import { pickFile, readFileAsText, downloadFile } from "@/utils/file"
 import { ObjectStoreKeys, ObjectStoreNames, type ObjectStoreSettings, type ObjectStoreLastInput } from "./_storage"
 import { DatabaseNames } from "@/enums/storage"
 import { DEFAULT_INPUT_VIEW_OPTION, DEFAULT_SASS_INPUT, DEFAULT_SCSS_INPUT } from "./_constants"
@@ -100,7 +100,7 @@ const _: VoidComponent = () => {
 			updateOutput()
 			break
 		case Commands.openFile:
-			fileOpen('text/*', true).then(async (files) => {
+			pickFile('text/*', true).then(async (files) => {
 				if (files == null || files.length == 0) {
 					openToast(toastNoFileSelectedRef)
 					return
@@ -112,7 +112,7 @@ const _: VoidComponent = () => {
 						if (i > 0) text += '\n\n'
 
 						const file = files[i]
-						text += await fileReadAsText(file)
+						text += await readFileAsText(file)
 					}
 				} catch {
 					openToast(toastErrorReadingFilesRef)
@@ -148,7 +148,7 @@ const _: VoidComponent = () => {
 			else if (type == 'scss') text = scssText(), filename = 'sassy-cascading-style-sheets.scss'
 			else if (type == 'css') text = cssText(), filename = 'cascading-style-sheets.css'
 
-			fileDownload(new Blob([text]), filename)
+			downloadFile(new Blob([text]), filename)
 			break
 		}
 		case Commands.changeInputViewOption: {

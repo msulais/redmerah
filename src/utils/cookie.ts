@@ -10,7 +10,7 @@ type CookieOptions = {
 	httpOnly?: boolean
 }
 
-export function cookieSet(
+export function setCookie(
 	key: CookieKeys,
 	value: string,
 	options: CookieOptions = {sameSite: 'Lax', expires: 9999, path: '/'}
@@ -34,7 +34,7 @@ export function cookieSet(
 	document.cookie = cookie
 }
 
-export function cookieGet(key: CookieKeys): string | null {
+export function getCookie(key: CookieKeys): string | null {
 	const cookieName = key + "="
 	const cookies = document.cookie.split(';')
 	for (const i in cookies) {

@@ -1,6 +1,6 @@
 import { type JSX, splitProps, type VoidComponent } from "solid-js"
 
-import { attrSetIfExist, attrClassList } from '@/utils/attributes'
+import { setAttrIfExist, joinClassList } from '@/utils/attributes'
 
 import './index.scss'
 
@@ -15,8 +15,8 @@ const Emoji: VoidComponent<EmojiProps> = ($props) => {
 	])
 
 	return (<i
-		class={attrClassList('c-emoji', props.class)}
-		data-c-inline={attrSetIfExist(props['c:inline'])}
+		class={joinClassList('c-emoji', props.class)}
+		data-c-inline={setAttrIfExist(props['c:inline'])}
 		translate={props.translate ?? "no"}
 		{...other}>
 		{ props["c:emoji"] }

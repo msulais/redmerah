@@ -1,6 +1,6 @@
 import { createUniqueId, mergeProps, onCleanup, onMount, splitProps, type FlowComponent, type JSX } from "solid-js"
 
-import { attrClassList } from "@/utils/attributes"
+import { joinClassList } from "@/utils/attributes"
 import { eventCall } from "@/utils/event"
 import { FlyoutPosition as TooltipPosition } from "@/enums/position"
 import { getFlyoutPosition } from "@/utils/flyout"
@@ -463,7 +463,7 @@ const Tooltip: FlowComponent<TooltipProps> = ($props) => {
 	})
 
 	return (<div
-		class={attrClassList(TOOLTIP_CLASS, props.class)}
+		class={joinClassList(TOOLTIP_CLASS, props.class)}
 		id={props.id}
 		onFocusIn={ev => {
 			eventCall(ev, props.onFocusIn)

@@ -1,7 +1,7 @@
 import { createEffect, createMemo, createSignal, createUniqueId, mergeProps, splitProps, type JSX, type ValidComponent, type VoidComponent } from "solid-js"
 import { Dynamic, type DynamicProps } from "solid-js/web"
 
-import { attrSetIfExist, attrClassList } from "@/utils/attributes"
+import { setAttrIfExist, joinClassList } from "@/utils/attributes"
 import { eventCall } from "@/utils/event"
 
 import './index.scss'
@@ -25,9 +25,9 @@ const Switch: VoidComponent<SwitchProps> = ($props) => {
 	})
 
 	return (<label
-		class={attrClassList('c-switch', labelProps.class ?? '')}
-		data-c-disabled={attrSetIfExist(isDisabled())}
-		data-c-checked={attrSetIfExist(isChecked())}
+		class={joinClassList('c-switch', labelProps.class ?? '')}
+		data-c-disabled={setAttrIfExist(isDisabled())}
+		data-c-checked={setAttrIfExist(isChecked())}
 		for={props.id}
 		{...otherLabelProps}>
 		<input
@@ -62,9 +62,9 @@ const RawSwitch: VoidComponent<RawSwitchProps> = ($props) => {
 
 	return (<Dynamic
 		component={props.component ?? 'label'}
-		class={attrClassList('c-switch', wrapperProps.class ?? '')}
-		data-c-disabled={attrSetIfExist(isDisabled())}
-		data-c-checked={attrSetIfExist(isChecked())}
+		class={joinClassList('c-switch', wrapperProps.class ?? '')}
+		data-c-disabled={setAttrIfExist(isDisabled())}
+		data-c-checked={setAttrIfExist(isChecked())}
 		{...otherWrapperProps}>
 		<input
 			type="checkbox"

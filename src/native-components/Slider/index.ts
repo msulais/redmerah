@@ -1,5 +1,5 @@
-import { mathClamp } from "@/utils/math"
-import { numberSafe } from "@/utils/number"
+import { Math_clamp } from "@/utils/math"
+import { safeNumber } from "@/utils/number"
 import './index.scss'
 
 type SliderProps = astroHTML.JSX.InputHTMLAttributes
@@ -62,14 +62,14 @@ function unregisterSliderRef(...sliderRefs: SliderElement[]): void {
 }
 
 function updateSliderRefValue(sliderRef: SliderElement, value?: number): void {
-	const min = numberSafe(Number.parseFloat(sliderRef.min), 0)
-	const max = numberSafe(Number.parseFloat(sliderRef.max), 100)
+	const min = safeNumber(Number.parseFloat(sliderRef.min), 0)
+	const max = safeNumber(Number.parseFloat(sliderRef.max), 100)
 	if (typeof value === 'number') {
 		sliderRef.value = value + ''
 	}
 
-	const v = numberSafe(sliderRef.valueAsNumber, 0)
-	const range = mathClamp(v / (Math.max(min, max) - Math.min(min, max)) * 100, 0, 100)
+	const v = safeNumber(sliderRef.valueAsNumber, 0)
+	const range = Math_clamp(v / (Math.max(min, max) - Math.min(min, max)) * 100, 0, 100)
 	requestAnimationFrame(() => {
 		sliderRef.style.setProperty(SliderCSSVariables.percent, range + '%')
 	})

@@ -2,8 +2,8 @@ import { AnimationEffectTiming } from "@/enums/animation"
 import { FlyoutPosition as ModalPosition } from "@/enums/position"
 import { isAnimationAllowed } from "@/utils/animation"
 import { getFlyoutPosition } from "@/utils/flyout"
-import { numberSafe } from "@/utils/number"
-import { validEnumValue } from "@/utils/object"
+import { safeNumber } from "@/utils/number"
+import { isValidEnumValue } from "@/utils/object"
 import {
 	KEY_ARROW_DOWN,
 	KEY_ARROW_LEFT,
@@ -245,17 +245,17 @@ function _initModalRef(modalRef: ModalElement): void {
 			const value = modalRef.getAttribute(ModalAttributes.gap)
 			if (!value) return 0
 
-			return numberSafe(Number.parseFloat(value))
+			return safeNumber(Number.parseFloat(value))
 		},
 		get padding(): number {
 			const value = modalRef.getAttribute(ModalAttributes.padding)
 			if (!value) return 0
 
-			return numberSafe(Number.parseFloat(value))
+			return safeNumber(Number.parseFloat(value))
 		},
 		get position(): ModalPosition {
 			const value = modalRef.getAttribute(ModalAttributes.position)
-			if (!value || !validEnumValue(value, ModalPosition)) return ModalPosition.centerBottom
+			if (!value || !isValidEnumValue(value, ModalPosition)) return ModalPosition.centerBottom
 
 			return value as ModalPosition
 		},

@@ -2,7 +2,7 @@ import { ObservableStore } from "@/utils/store"
 import { $, scrollInputToEnd } from "../_core/_dom-utils"
 import { ElementIds } from "../_shared/_ids"
 import { calculate } from "../_core/_calculator"
-import { numberIsDefined } from "@/utils/number"
+import { isNumberDefined } from "@/utils/number"
 import { formatOutput } from "../_core/_string-utils"
 import { saveStorageItem } from "../_core/_database"
 
@@ -31,7 +31,7 @@ function _calculate(): void {
 		const parsedOutput = Number.parseFloat(output)
 		BasicStore.update(v => ({
 			...v,
-			output: numberIsDefined(parsedOutput)? parsedOutput : null
+			output: isNumberDefined(parsedOutput)? parsedOutput : null
 		}))
 	}, 50)
 }

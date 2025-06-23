@@ -2,8 +2,8 @@ import { AnimationEffectTiming } from "@/enums/animation"
 import { FlyoutPosition as PopoverPosition } from "@/enums/position"
 import { isAnimationAllowed } from "@/utils/animation"
 import { getFlyoutPosition } from "@/utils/flyout"
-import { numberSafe } from "@/utils/number"
-import { validEnumValue } from "@/utils/object"
+import { safeNumber } from "@/utils/number"
+import { isValidEnumValue } from "@/utils/object"
 import {
 	KEY_ARROW_DOWN,
 	KEY_ARROW_LEFT,
@@ -159,17 +159,17 @@ function _initPopoverRef(popoverRef: PopoverElement): void {
 			const value = popoverRef.getAttribute(PopoverAttributes.gap)
 			if (!value) return 0
 
-			return numberSafe(Number.parseFloat(value))
+			return safeNumber(Number.parseFloat(value))
 		},
 		get padding(): number {
 			const value = popoverRef.getAttribute(PopoverAttributes.padding)
 			if (!value) return 0
 
-			return numberSafe(Number.parseFloat(value))
+			return safeNumber(Number.parseFloat(value))
 		},
 		get position(): PopoverPosition {
 			const value = popoverRef.getAttribute(PopoverAttributes.position)
-			if (!value || !validEnumValue(value, PopoverPosition)) return PopoverPosition.centerBottom
+			if (!value || !isValidEnumValue(value, PopoverPosition)) return PopoverPosition.centerBottom
 
 			return value as PopoverPosition
 		},

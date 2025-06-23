@@ -1,5 +1,5 @@
 ---
-import { attrClassList } from '@/utils/attributes'
+import { joinClassList } from '@/utils/attributes'
 
 import {
 	type SelectOptionProps,
@@ -20,7 +20,7 @@ const {
 
 <Button
 	role={role ?? 'option'}
-	class={attrClassList(SelectClasses.option, className)}
+	class={joinClassList(SelectClasses.option, className)}
 	aria-selected={ariaSelected ?? SelectOptionSelected ?? 'false'}
 	{...other}>
 	<slot />

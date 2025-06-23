@@ -1,4 +1,4 @@
-export function dateIsSameYMD(date1: Date, date2: Date): boolean {
+export function isDateEqual_YMD(date1: Date, date2: Date): boolean {
 	return (
 		date1.getFullYear() === date2.getFullYear() &&
 		date1.getMonth() === date2.getMonth() &&
@@ -6,20 +6,20 @@ export function dateIsSameYMD(date1: Date, date2: Date): boolean {
 	)
 }
 
-export function dateIsSameYM(date1: Date, date2: Date): boolean {
+export function isDateEqual_YM(date1: Date, date2: Date): boolean {
 	return (
 		date1.getFullYear() === date2.getFullYear() &&
 		date1.getMonth() === date2.getMonth()
 	)
 }
 
-export function dateIsSameY(date1: Date, date2: Date): boolean {
+export function isDateEqual_Y(date1: Date, date2: Date): boolean {
 	return (
 		date1.getFullYear() === date2.getFullYear()
 	)
 }
 
-export function dateInRangeYMD(date: Date, min: Date, max: Date): boolean {
+export function isDateInRange_YMD(date: Date, min: Date, max: Date): boolean {
 	const v = new Date(date.getFullYear(), date.getMonth(), date.getDate()).valueOf()
 	const vMin = new Date(min.getFullYear(), min.getMonth(), min.getDate()).valueOf()
 	const vMax = new Date(max.getFullYear(), max.getMonth(), max.getDate()).valueOf()
@@ -27,7 +27,7 @@ export function dateInRangeYMD(date: Date, min: Date, max: Date): boolean {
 	return vMin <= v && v <= vMax
 }
 
-export function dateInRangeYMD_HM(date: Date, min: Date, max: Date): boolean {
+export function isDateInRange_YMD_HM(date: Date, min: Date, max: Date): boolean {
 	const v = new Date(
 		date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes()
 	).valueOf()
@@ -41,15 +41,15 @@ export function dateInRangeYMD_HM(date: Date, min: Date, max: Date): boolean {
 	return vMin <= v && v <= vMax
 }
 
-export function dateOutRangeYMD(date: Date, min: Date, max: Date): boolean {
-	return !dateInRangeYMD(date, min, max)
+export function isDateOutRange_YMD(date: Date, min: Date, max: Date): boolean {
+	return !isDateInRange_YMD(date, min, max)
 }
 
-export function dateOutRangeYMD_HM(date: Date, min: Date, max: Date): boolean {
-	return !dateInRangeYMD_HM(date, min, max)
+export function isDateOutRange_YMD_HM(date: Date, min: Date, max: Date): boolean {
+	return !isDateInRange_YMD_HM(date, min, max)
 }
 
-export function dateInRangeYM(date: Date, min: Date, max: Date): boolean {
+export function isDateInRange_YM(date: Date, min: Date, max: Date): boolean {
 	const v = new Date(date.getFullYear(), date.getMonth()).valueOf()
 	const vMin = new Date(min.getFullYear(), min.getMonth()).valueOf()
 	const vMax = new Date(max.getFullYear(), max.getMonth()).valueOf()
@@ -57,11 +57,11 @@ export function dateInRangeYM(date: Date, min: Date, max: Date): boolean {
 	return vMin <= v && v <= vMax
 }
 
-export function dateOutRangeYM(date: Date, min: Date, max: Date): boolean {
-	return !dateInRangeYM(date, min, max)
+export function isDateOutRange_YM(date: Date, min: Date, max: Date): boolean {
+	return !isDateInRange_YM(date, min, max)
 }
 
-export function dateInRangeY(date: Date, min: Date, max: Date): boolean {
+export function isDateInRange_Y(date: Date, min: Date, max: Date): boolean {
 	const v = date.getFullYear()
 	const vMin = min.getFullYear()
 	const vMax = max.getFullYear()
@@ -69,11 +69,11 @@ export function dateInRangeY(date: Date, min: Date, max: Date): boolean {
 	return vMin <= v && v <= vMax
 }
 
-export function dateOutRangeY(date: Date, min: Date, max: Date): boolean {
-	return !dateInRangeY(date, min, max)
+export function isDateOutRange_Y(date: Date, min: Date, max: Date): boolean {
+	return !isDateInRange_Y(date, min, max)
 }
 
-export function dateWeekdayNames(locales: Intl.LocalesArgument = 'en-US'): string[] {
+export function localWeekdayNames(locales: Intl.LocalesArgument = 'en-US'): string[] {
 	const weekdays: string[] = []
 	const formatter = new Intl.DateTimeFormat(locales, { weekday: 'long' })
 
@@ -85,7 +85,7 @@ export function dateWeekdayNames(locales: Intl.LocalesArgument = 'en-US'): strin
 	return weekdays
 }
 
-export function dateMonthNames(locales: Intl.LocalesArgument = 'en-US'): string[] {
+export function localMonthNames(locales: Intl.LocalesArgument = 'en-US'): string[] {
 	const months: string[] = []
 	const formatter = new Intl.DateTimeFormat(locales, { month: 'long' })
 

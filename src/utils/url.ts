@@ -8,7 +8,7 @@ export function urlQueries(url: string): {[key: string]: string} {
 	return queryObject
 }
 
-export function urlQuery(url: string, key: string): string | null {
+export function queryUrl(url: string, key: string): string | null {
 	const queries = urlQueries(url)
 
 	for (const $key in queries) {
@@ -18,7 +18,7 @@ export function urlQuery(url: string, key: string): string | null {
 	return null
 }
 
-export function urlDownloadFile(url: string, filename: string): void {
+export function downloadFileByUrl(url: string, filename: string): void {
 	const link = document.createElement("a")
 	link.href = url
 	link.download = filename

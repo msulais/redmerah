@@ -1,19 +1,19 @@
 import { AnimationEffectTiming } from "@/enums/animation"
-import { numberIsDefined } from "./number"
+import { isNumberDefined } from "./number"
 
-export function elementIsOverflowX(element: HTMLElement): boolean {
+export function isElementOverflowX(element: Element): boolean {
 	return element.clientWidth < element.scrollWidth
 }
 
-export function elementIsOverflowY(element: HTMLElement): boolean {
+export function isElementOverflowY(element: Element): boolean {
 	return element.clientHeight < element.scrollHeight
 }
 
-export function elementIsOverflow(element: HTMLElement): boolean {
-	return elementIsOverflowX(element) || elementIsOverflowY(element)
+export function isElementOverflow(element: Element): boolean {
+	return isElementOverflowX(element) || isElementOverflowY(element)
 }
 
-export function elementAnimateUpdateText(element: HTMLElement, text: string): void {
+export function animateUpdateTextElement(element: Element, text: string): void {
 	const oldText = element.textContent ?? ''
 	const newText = text
 	if (oldText === newText) return
@@ -114,9 +114,9 @@ export function elementAnimateUpdateText(element: HTMLElement, text: string): vo
 	}
 }
 
-export function elementFocusAny(
-	parent: HTMLElement,
-	condition?: (el: HTMLElement) => boolean
+export function focusAnyElement(
+	parent: Element,
+	condition?: (el: Element) => boolean
 ): void {
 	const selector = ':is(' +  [
 		'[contenteditable]',
@@ -129,16 +129,19 @@ export function elementFocusAny(
 		'textarea:not(:disabled)',
 		'iframe:not(:disabled)',
 	].join(',') + ')'
-	const elements = parent.querySelectorAll(selector)
+	const elements = parent.querySelectorAll<Element>(selector)
 	for (const el of elements) {
-		if (condition && !condition(el as HTMLElement)) continue;
+		if (condition && !condition(el)) continue;
 
-		(el as HTMLElement).focus()
+		try {
+			(el as HTMLElement).focus()
+		} catch {}
+
 		if (document.activeElement === el) break
 	}
 }
 
-export function elementIsFocusable(element: HTMLElement): boolean {
+export function isElementFocusable(element: Element): boolean {
 	const visible = element.checkVisibility({
 		contentVisibilityAuto: true,
 		visibilityProperty: true,
@@ -165,10 +168,13 @@ export function elementIsFocusable(element: HTMLElement): boolean {
 		&& element.matches('[href]')
 	) return true
 
-	if (element.isContentEditable) return true
+	try {
+		if ((element as HTMLElement).isContentEditable) return true
+	} catch {}
+
 	if (element.matches('[tabindex]')) {
 		const tabindex = element.getAttribute('tabindex')
-		if (tabindex && numberIsDefined(Number.parseInt(tabindex))) {
+		if (tabindex && isNumberDefined(Number.parseInt(tabindex))) {
 			return true
 		}
 	}
@@ -183,7 +189,7 @@ export function elementIsFocusable(element: HTMLElement): boolean {
  * @param condition
  * @returns
  */
-export function elementValidTarget(
+export function isTargetValidElement(
 	parent: Element,
 	target?: Element | null,
 	condition?: (el: Element) => boolean

@@ -1,5 +1,5 @@
 import { children, Show, splitProps, type JSX, type ParentComponent } from "solid-js"
-import { attrClassList } from "@/utils/attributes"
+import { joinClassList } from "@/utils/attributes"
 
 import '@/styles/variables.scss'
 import '@/styles/animations.scss'
@@ -25,7 +25,7 @@ const App: ParentComponent<AppProps> = ($props) => {
 	const bottomBar = children(() => props['c:bottomBar'])
 	const floatingActionButton = children(() => props['c:floatingActionButton'])
 
-	return (<div class={attrClassList('c-app', props.class ?? '')} {...other}>
+	return (<div class={joinClassList('c-app', props.class ?? '')} {...other}>
 		<Show when={appBar()}>
 			<div class="c-app-appbar">{appBar()}</div>
 		</Show>

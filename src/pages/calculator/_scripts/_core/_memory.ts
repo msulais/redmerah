@@ -2,7 +2,7 @@ import { ObservableStore } from "@/utils/store"
 import { $$$ } from "./_dom-utils"
 import { CSSClasses } from "../../_styles/_css"
 import { isAnimationAllowed } from "@/utils/animation"
-import { elementAnimateUpdateText } from "@/utils/element"
+import { animateUpdateTextElement } from "@/utils/element"
 import { formatOutput } from "./_string-utils"
 import { NavigationStore } from "./_navigation"
 import { NumberType, Pages } from "../_shared/_enums"
@@ -105,7 +105,7 @@ function _subscribeValueRefView(v: MemoryStoreType, o: MemoryStoreType): void {
 	const animation = isAnimationAllowed()
 	for (const ref of _memoryRecallRefs) {
 		if (animation) {
-			elementAnimateUpdateText(ref, formattedValue)
+			animateUpdateTextElement(ref, formattedValue)
 		} else {
 			ref.textContent = formattedValue
 		}

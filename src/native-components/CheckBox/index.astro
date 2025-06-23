@@ -1,5 +1,5 @@
 ---
-import { attrClassList } from '@/utils/attributes'
+import { joinClassList } from '@/utils/attributes'
 
 import {
 	type CheckBoxProps,
@@ -20,22 +20,22 @@ const {'class': iconClass   , ...iconOther   } = CheckBoxIconAttr
 const {'class': contentClass, ...contentOther} = CheckBoxContentAttr
 ---
 
-<label class={attrClassList(CheckBoxClasses.checkbox, className)} {...other}>
+<label class={joinClassList(CheckBoxClasses.checkbox, className)} {...other}>
 	<input
-		class={attrClassList(CheckBoxClasses.input, inputClass)}
+		class={joinClassList(CheckBoxClasses.input, inputClass)}
 		autocomplete={autocomplete}
 		type={type}
 		{...inputOther}
 	/>
 	<svg
-		class={attrClassList(CheckBoxClasses.icon, iconClass)}
+		class={joinClassList(CheckBoxClasses.icon, iconClass)}
 		xmlns="http://www.w3.org/2000/svg"
 		viewBox="0 -960 960 960"
 		{...iconOther}>
 		<path d="m389-369 299-299q10.91-11 25.45-11Q728-679 739-668t11 25.58q0 14.58-10.61 25.19L415-292q-10.91 11-25.45 11Q375-281 364-292L221-435q-11-11-11-25.5t11-25.5q11-11 25.67-11 14.66 0 25.33 11l117 117Z"/>
 	</svg>
 	<div
-		class={attrClassList(CheckBoxClasses.content, contentClass)}
+		class={joinClassList(CheckBoxClasses.content, contentClass)}
 		{...contentOther}>
 		<slot />
 	</div>

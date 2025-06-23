@@ -1,5 +1,5 @@
 ---
-import { attrClassList } from '@/utils/attributes'
+import { joinClassList } from '@/utils/attributes'
 
 import {
 	type MenuHeaderProps,
@@ -14,6 +14,6 @@ const {
 } = Astro.props
 ---
 
-<div class={attrClassList(MenuClasses.header, className)} {...other}>
+<div class={joinClassList(MenuClasses.header, className)} {...other}>
 	<slot/>
 </div>

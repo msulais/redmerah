@@ -1,6 +1,6 @@
 import { type JSX, splitProps, type VoidComponent } from "solid-js"
 
-import { attrSetIfExist, attrClassList } from '@/utils/attributes'
+import { setAttrIfExist, joinClassList } from '@/utils/attributes'
 
 import './index.scss'
 
@@ -17,8 +17,8 @@ const Icon: VoidComponent<IconProps> = ($props) => {
 	])
 
 	return (<i
-		class={attrClassList('c-icon', props.class)}
-		data-c-inline={attrSetIfExist(props['c:inline'])}
+		class={joinClassList('c-icon', props.class)}
+		data-c-inline={setAttrIfExist(props['c:inline'])}
 		translate={props.translate ?? "no"}
 		{...other}>
 		{ String.fromCharCode(props['c:code'] - (props['c:filled']? 1 : 0)) }

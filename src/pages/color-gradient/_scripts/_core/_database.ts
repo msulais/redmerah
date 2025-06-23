@@ -1,12 +1,12 @@
 import { DatabaseNames } from "@/enums/storage"
 import { IDB } from "@/utils/indexeddb"
-import { validEnumValue } from "@/utils/object"
+import { isValidEnumValue } from "@/utils/object"
 import { SettingsStore, type SettingsStoreType } from "./_settings"
 import { ColorSpace, GradientType, HueInterpolationMethod, PolarColorSpace, RadialGradientShape, RectangularColorSpace } from "../_shared/_enums"
 import { PreviewStore, type PreviewStoreType } from "./_preview"
 import { SavedGradients, type SavedGradientsType } from "./_saved-gradients"
 import type { ColorStopGradient, GradientItem } from "./_gradients"
-import { colorIsValidWithAlpha } from "@/utils/color"
+import { isColorValidWithAlpha } from "@/utils/color"
 
 type _IDBStoreStorage<T = unknown> = {
 	key: string
@@ -64,7 +64,7 @@ function _readStorageAll(store: IDBObjectStore): void {
 		const isNumber = typeof value === 'number'
 		switch (key as _StorageKeys) {
 		case 'settings:color-space':
-			if (isString && validEnumValue(value, ColorSpace)) {
+			if (isString && isValidEnumValue(value, ColorSpace)) {
 				SettingsStore.update(v => ({...v, colorSpace: value as ColorSpace}))
 			}
 			break
@@ -120,13 +120,13 @@ function _readGradients(): void {
 					|| typeof g.size !== 'number'
 					|| typeof g.type !== 'string'
 					|| typeof g.width !== 'number'
-					|| !validEnumValue(g.type, GradientType)
-					|| !validEnumValue(g.colorMethod, [
+					|| !isValidEnumValue(g.type, GradientType)
+					|| !isValidEnumValue(g.colorMethod, [
 						...Object.values(PolarColorSpace),
 						...Object.values(RectangularColorSpace)
 					])
-					|| !validEnumValue(g.hueMethod, HueInterpolationMethod)
-					|| !validEnumValue(g.shape, RadialGradientShape)
+					|| !isValidEnumValue(g.hueMethod, HueInterpolationMethod)
+					|| !isValidEnumValue(g.shape, RadialGradientShape)
 					|| !Array.isArray(g.stops)
 				)
 				if (invalid) { continue level_2 }
@@ -136,7 +136,7 @@ function _readGradients(): void {
 					const invalid = (
 						typeof s.color !== 'string'
 						|| typeof s.size !== 'number'
-						|| !colorIsValidWithAlpha(s.color)
+						|| !isColorValidWithAlpha(s.color)
 					)
 					if (invalid) { continue level_3 }
 

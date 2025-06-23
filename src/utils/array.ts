@@ -1,4 +1,4 @@
-export function arrayBinarySearch(array: number[], target: number): number | null {
+export function binarySearch(array: number[], target: number): number | null {
 	let left = 0
 	let right = array.length - 1
 
@@ -12,6 +12,6 @@ export function arrayBinarySearch(array: number[], target: number): number | nul
 	return null
 }
 
-export function arrayEquals<T, U>(arr: T[], target: U[]): boolean {
+export function isArrayEqual<T, U>(arr: T[], target: U[]): boolean {
 	return arr.toString() === target.toString()
 }

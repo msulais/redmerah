@@ -4,10 +4,10 @@ import type { HEXColor, HSLColor } from "@/types/color"
 import type { Settings } from "./_types"
 import { ColorPickerMode, Commands } from "./_enums"
 import { ImagePicker, PalettePicker, RectangleHSLPicker, RectanglePicker, SliderCMYKPicker, SliderHEXPicker, SliderHSLPicker, SliderHSVPicker, SliderHWBPicker, SliderRGBPicker, SpectrumPicker, WheelPicker } from "./_Pickers"
-import { colorCmykToHsl, colorHexToHsl, colorHslToCmyk, colorHslToHex, colorHslToHsv, colorHslToHwb, colorHslToRgb, colorHsvToHsl, colorHwbToHsl, colorRgbToHsl } from "@/utils/color"
-import { mathClamp } from "@/utils/math"
-import { numberSafe } from "@/utils/number"
-import { elementValidTarget } from "@/utils/element"
+import { cmykToHsl, hexToHsl, hslToCmyk, hslToHex, hslToHsv, hslToHwb, hslToRgb, hsvToHsl, hwbToHsl, rgbToHsl } from "@/utils/color"
+import { Math_clamp } from "@/utils/math"
+import { safeNumber } from "@/utils/number"
+import { isTargetValidElement } from "@/utils/element"
 import { ICON_COPY } from "@/constants/icons"
 
 import Dropdown, { DropdownOption } from "@/components/Dropdown"
@@ -82,9 +82,9 @@ const ColorInput: VoidComponent<{
 		const mode = settings().mode
 		return mode == ColorPickerMode.palette || mode == ColorPickerMode.image
 	})
-	const getHEXColor = createMemo(() => colorHslToHex(input()).toUpperCase())
+	const getHEXColor = createMemo(() => hslToHex(input()).toUpperCase())
 	const getRGBColor = createMemo(() => {
-		const {r, g, b} = colorHslToRgb(input())
+		const {r, g, b} = hslToRgb(input())
 		return [
 			Math.round(r * 0xff),
 			Math.round(g * 0xff),
@@ -96,15 +96,15 @@ const ColorInput: VoidComponent<{
 		return `${Math.round(h * 360)}°, ${Math.round(s * 100)}%, ${Math.round(l * 100)}%`
 	})
 	const getHSVColor = createMemo(() => {
-		const {h, s, v} = colorHslToHsv(input())
+		const {h, s, v} = hslToHsv(input())
 		return `${Math.round(h * 360)}°, ${Math.round(s * 100)}%, ${Math.round(v * 100)}%`
 	})
 	const getHWBColor = createMemo(() => {
-		const {h, w, b} = colorHslToHwb(input())
+		const {h, w, b} = hslToHwb(input())
 		return `${Math.round(h * 360)}°, ${Math.round(w * 100)}%, ${Math.round(b * 100)}%`
 	})
 	const getCMYKColor = createMemo(() => {
-		const {c, m, y, k} = colorHslToCmyk(input())
+		const {c, m, y, k} = hslToCmyk(input())
 		return `${Math.round(c * 100)}%, ${Math.round(m * 100)}%, ${Math.round(y * 100)}%, ${Math.round(k * 100)}%`
 	})
 	const [hexColor, setHEXColor] = createSignal<string>('#000000')
@@ -148,7 +148,7 @@ const ColorInput: VoidComponent<{
 	return (<div class={CSS.color_input}
 		onClick={ev => {
 			const button = document.activeElement! as HTMLButtonElement
-			if (!elementValidTarget(
+			if (!isTargetValidElement(
 				ev.currentTarget,
 				button,
 			)) return
@@ -199,7 +199,7 @@ const ColorInput: VoidComponent<{
 			}
 		}}>
 		<div style={{
-			"background-color": colorHslToHex(input())
+			"background-color": hslToHex(input())
 		}}></div>
 		<Toast
 			ref={r => toastCopiedRef = r}
@@ -231,7 +231,7 @@ const ColorInput: VoidComponent<{
 					if (text.length > 6) text = text.substring(0, 6)
 
 					text = '#' + text
-					command(Commands.updateInput, colorHexToHsl(text as HEXColor))
+					command(Commands.updateInput, hexToHsl(text as HEXColor))
 				}}
 				c:trailing={<TextFieldButton
 					data-tooltip="Copy"
@@ -249,14 +249,14 @@ const ColorInput: VoidComponent<{
 					text = text.trim()
 					text = text.replace(/[^\d,]/g, '')
 					const rgbArray: number[] = text.split(',').map(
-						v => mathClamp(numberSafe(Number.parseInt(v), 0), 0, 0xff)
+						v => Math_clamp(safeNumber(Number.parseInt(v), 0), 0, 0xff)
 					)
 					while (rgbArray.length < 3) rgbArray.push(0)
 
 					const r = rgbArray[0] / 0xff
 					const g = rgbArray[1] / 0xff
 					const b = rgbArray[2] / 0xff
-					command(Commands.updateInput, colorRgbToHsl({r, g, b}))
+					command(Commands.updateInput, rgbToHsl({r, g, b}))
 				}}
 				c:trailing={<TextFieldButton
 					data-tooltip="Copy"
@@ -274,13 +274,13 @@ const ColorInput: VoidComponent<{
 					text = text.trim()
 					text = text.replace(/[^\d,]/g, '')
 					const hslArray: number[] = text.split(',').map(
-						v => numberSafe(Number.parseInt(v), 0)
+						v => safeNumber(Number.parseInt(v), 0)
 					)
 					while (hslArray.length < 3) hslArray.push(0)
 
-					const h = mathClamp(hslArray[0], 0, 360) / 360
-					const s = mathClamp(hslArray[1], 0, 100) / 100
-					const l = mathClamp(hslArray[2], 0, 100) / 100
+					const h = Math_clamp(hslArray[0], 0, 360) / 360
+					const s = Math_clamp(hslArray[1], 0, 100) / 100
+					const l = Math_clamp(hslArray[2], 0, 100) / 100
 					command(Commands.updateInput, {h, s, l} satisfies HSLColor)
 				}}
 				c:trailing={<TextFieldButton
@@ -299,14 +299,14 @@ const ColorInput: VoidComponent<{
 					text = text.trim()
 					text = text.replace(/[^\d,]/g, '')
 					const hsvArray: number[] = text.split(',').map(
-						v => numberSafe(Number.parseInt(v), 0)
+						v => safeNumber(Number.parseInt(v), 0)
 					)
 					while (hsvArray.length < 3) hsvArray.push(0)
 
-					const h = mathClamp(hsvArray[0], 0, 360) / 360
-					const s = mathClamp(hsvArray[1], 0, 100) / 100
-					const v = mathClamp(hsvArray[2], 0, 100) / 100
-					command(Commands.updateInput, colorHsvToHsl({h, s, v}))
+					const h = Math_clamp(hsvArray[0], 0, 360) / 360
+					const s = Math_clamp(hsvArray[1], 0, 100) / 100
+					const v = Math_clamp(hsvArray[2], 0, 100) / 100
+					command(Commands.updateInput, hsvToHsl({h, s, v}))
 				}}
 				c:trailing={<TextFieldButton
 					data-tooltip="Copy"
@@ -324,14 +324,14 @@ const ColorInput: VoidComponent<{
 					text = text.trim()
 					text = text.replace(/[^\d,]/g, '')
 					const hwbArray: number[] = text.split(',').map(
-						v => numberSafe(Number.parseInt(v), 0)
+						v => safeNumber(Number.parseInt(v), 0)
 					)
 					while (hwbArray.length < 3) hwbArray.push(0)
 
-					const h = mathClamp(hwbArray[0], 0, 360) / 360
-					const w = mathClamp(hwbArray[1], 0, 100) / 100
-					const b = mathClamp(hwbArray[2], 0, 100 - (w * 100)) / 100
-					command(Commands.updateInput, colorHwbToHsl({h, w, b}))
+					const h = Math_clamp(hwbArray[0], 0, 360) / 360
+					const w = Math_clamp(hwbArray[1], 0, 100) / 100
+					const b = Math_clamp(hwbArray[2], 0, 100 - (w * 100)) / 100
+					command(Commands.updateInput, hwbToHsl({h, w, b}))
 				}}
 				c:trailing={<TextFieldButton
 					data-tooltip="Copy"
@@ -349,15 +349,15 @@ const ColorInput: VoidComponent<{
 					text = text.trim()
 					text = text.replace(/[^\d,]/g, '')
 					const hwbArray: number[] = text.split(',').map(
-						v => numberSafe(Number.parseInt(v), 0)
+						v => safeNumber(Number.parseInt(v), 0)
 					)
 					while (hwbArray.length < 4) hwbArray.push(0)
 
-					const c = mathClamp(hwbArray[0], 0, 100) / 100
-					const m = mathClamp(hwbArray[1], 0, 100) / 100
-					const y = mathClamp(hwbArray[2], 0, 100) / 100
-					const k = mathClamp(hwbArray[3], 0, 100) / 100
-					command(Commands.updateInput, colorCmykToHsl({c, m, y, k}))
+					const c = Math_clamp(hwbArray[0], 0, 100) / 100
+					const m = Math_clamp(hwbArray[1], 0, 100) / 100
+					const y = Math_clamp(hwbArray[2], 0, 100) / 100
+					const k = Math_clamp(hwbArray[3], 0, 100) / 100
+					command(Commands.updateInput, cmykToHsl({c, m, y, k}))
 				}}
 				c:trailing={<TextFieldButton
 					data-tooltip="Copy"

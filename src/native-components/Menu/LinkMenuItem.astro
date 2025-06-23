@@ -1,5 +1,5 @@
 ---
-import { attrClassList } from '@/utils/attributes'
+import { joinClassList } from '@/utils/attributes'
 
 import {
 	MenuClasses,
@@ -17,7 +17,7 @@ const {
 ---
 
 <LinkButton
-	class={attrClassList(MenuClasses.item, className)}
+	class={joinClassList(MenuClasses.item, className)}
 	role={role ?? "menuitem"}
 	{...other}>
 	<slot/>

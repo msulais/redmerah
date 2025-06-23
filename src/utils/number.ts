@@ -1,16 +1,16 @@
-export function numberSafe(num: number, fallback: number = 0): number {
-	return numberIsNotDefined(num)? fallback : num
+export function safeNumber(num: number, fallback: number = 0): number {
+	return isNumberNotDefined(num)? fallback : num
 }
 
-export function numberIsNotDefined(num: number): boolean {
+export function isNumberNotDefined(num: number): boolean {
 	return Number.isNaN(num) as boolean || !Number.isFinite(num)
 }
 
-export function numberIsDefined(num: number): boolean {
-	return !numberIsNotDefined(num)
+export function isNumberDefined(num: number): boolean {
+	return !isNumberNotDefined(num)
 }
 
-export function numberFormat(num: number, separator: {
+export function formatNumber(num: number, separator: {
 	thousand?: string
 	decimal?: string
 } = {}): string {

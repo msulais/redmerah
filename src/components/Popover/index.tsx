@@ -4,8 +4,8 @@ import { Portal } from 'solid-js/web'
 
 import { FlyoutPosition as PopoverPosition } from '@/enums/position'
 import { getFlyoutPosition } from '@/utils/flyout'
-import { attrSetIfExist, attrClassList } from '@/utils/attributes'
-import { elementFocusAny } from '@/utils/element'
+import { setAttrIfExist, joinClassList } from '@/utils/attributes'
+import { focusAnyElement } from '@/utils/element'
 import { BodyAttributes } from '@/enums/attributes'
 import { eventCall } from "@/utils/event"
 import { AnimationEffectTiming } from '@/enums/animation'
@@ -488,7 +488,7 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 		padding = inputPadding
 		setIsDraggable(draggable)
 		popoverRef.showPopover()
-		if (contentAutoFocus) elementFocusAny(popoverRef)
+		if (contentAutoFocus) focusAnyElement(popoverRef)
 		else if (active) (active as HTMLElement).focus()
 		else popoverRef.focus()
 
@@ -827,7 +827,7 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 
 			closePopover({onDone(){}})
 		}}
-		class={attrClassList(POPOVER_CLASS, props.class ?? '')}
+		class={joinClassList(POPOVER_CLASS, props.class ?? '')}
 		ref={mergeRefs(props.ref, r => popoverRef = r)}
 		style={{
 			...style(),
@@ -851,15 +851,15 @@ const Popover: ParentComponent<PopoverProps> = ($props) => {
 			isOpen = ev.newState == 'open'
 			props['c:onToggleOpen']?.(isOpen)
 		}}
-		data-c-draggable={attrSetIfExist(isDraggable())}
-		data-c-drag={attrSetIfExist(isDragging())}
-		data-c-manual={attrSetIfExist(isManualDismiss())}
+		data-c-draggable={setAttrIfExist(isDraggable())}
+		data-c-drag={setAttrIfExist(isDragging())}
+		data-c-manual={setAttrIfExist(isManualDismiss())}
 		{...other}>
 		<Show when={isDraggable()}>
 			<span
 				tabindex="0"
 				class="c-popover-drag-handle"
-				data-g-keep-pointer-event={attrSetIfExist(isDragging())}
+				data-g-keep-pointer-event={setAttrIfExist(isDragging())}
 				draggable={false}
 				onKeyDown={onMoveWithArrowKey}
 				onPointerDown={(ev) => {

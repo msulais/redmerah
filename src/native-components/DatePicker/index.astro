@@ -8,7 +8,7 @@ import { IconCodes } from '@/enums/icons'
 import { ButtonVariant } from '../Button'
 import './index.scss'
 import { type DatePickerProps, DatePickerViewType, DatePickerClasses } from '.'
-import { attrClassList } from '@/utils/attributes'
+import { joinClassList } from '@/utils/attributes'
 
 type Props = DatePickerProps
 const {
@@ -56,36 +56,36 @@ const {'class': contentClass, ...contentOther} = DatePickerContentAttr ?? {}
 ---
 
 <Popover
-	class={attrClassList(DatePickerClasses.datepicker, className)}
+	class={joinClassList(DatePickerClasses.datepicker, className)}
 	data-c-datepicker-start={DatePickerStartDate.toISOString()}
 	data-c-datepicker-end={DatePickerEndDate?.toISOString()}
 	data-c-datepicker-value={DatePickerValue?.toISOString()}
 	data-c-datepicker-viewtype={DatePickerViewType.day}
 	{...other}>
 	<div
-		class={attrClassList(DatePickerClasses.header, headerClass)}
+		class={joinClassList(DatePickerClasses.header, headerClass)}
 		{...headerOther}>
 		<Button
 			ButtonVariant={titleVariant}
-			class={attrClassList(DatePickerClasses.title, titleClass)}
+			class={joinClassList(DatePickerClasses.title, titleClass)}
 			{...titleOther}>
 			January 2025
 		</Button>
 		<IconButton
 			ButtonVariant={previousVariant}
-			class={attrClassList(DatePickerClasses.previous, previousClass)}
+			class={joinClassList(DatePickerClasses.previous, previousClass)}
 			IconButtonCode={previousIconCode}
 			{...previousOther}
 		/>
 		<IconButton
 			ButtonVariant={nextVariant}
-			class={attrClassList(DatePickerClasses.next, nextClass)}
+			class={joinClassList(DatePickerClasses.next, nextClass)}
 			IconButtonCode={nextIconCode}
 			{...nextOther}
 		/>
 	</div>
-	<Divider class={attrClassList(DatePickerClasses.divider, dividerClass)} {...dividerOther}/>
-	<Tooltip class={attrClassList(DatePickerClasses.days, daysClass)} {...daysOther}>
+	<Divider class={joinClassList(DatePickerClasses.divider, dividerClass)} {...dividerOther}/>
+	<Tooltip class={joinClassList(DatePickerClasses.days, daysClass)} {...daysOther}>
 		{['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((v, i) => {
 			const {
 				'class': className,
@@ -93,7 +93,7 @@ const {'class': contentClass, ...contentOther} = DatePickerContentAttr ?? {}
 				...other
 			} = DatePickerDayAttr[i] ?? {}
 			return <span
-				class={attrClassList(DatePickerClasses.day, className)}
+				class={joinClassList(DatePickerClasses.day, className)}
 				data-tooltip={tooltip}
 				{...other}>
 				{v.substring(0, 3)}
@@ -101,7 +101,7 @@ const {'class': contentClass, ...contentOther} = DatePickerContentAttr ?? {}
 		})}
 	</Tooltip>
 	<div
-		class={attrClassList(DatePickerClasses.year, yearClass)}
+		class={joinClassList(DatePickerClasses.year, yearClass)}
 		{...yearOther}>
 		{Array(16).fill(2025).map((v, i) => {
 			const {
@@ -109,14 +109,14 @@ const {'class': contentClass, ...contentOther} = DatePickerContentAttr ?? {}
 				...other
 			} = DatePickerYearButtonAttr[i] ?? {}
 			return <Button
-				class={attrClassList(DatePickerClasses.yearButton, className)}
+				class={joinClassList(DatePickerClasses.yearButton, className)}
 				{...other}>
 				{v + i}
 			</Button>
 		})}
 	</div>
 	<div
-		class={attrClassList(DatePickerClasses.month, monthClass)}
+		class={joinClassList(DatePickerClasses.month, monthClass)}
 		{...monthOther}>
 		{[
 			'January', 'February', 'March', 'April',
@@ -125,16 +125,16 @@ const {'class': contentClass, ...contentOther} = DatePickerContentAttr ?? {}
 		{
 			const {'class': className, ...other} = DatePickerMonthButtonAttr[i] ?? {}
 			return <Button
-				class={attrClassList(DatePickerClasses.monthButton, className)}
+				class={joinClassList(DatePickerClasses.monthButton, className)}
 				{...other}>
 				{v}
 			</Button>
 		})}
 	</div>
-	<div class={attrClassList(DatePickerClasses.date, dateClass)} {...dateOther}>
+	<div class={joinClassList(DatePickerClasses.date, dateClass)} {...dateOther}>
 		{Array(6).fill(0).map((_, i) => {
 			const {'class': className, ...other} = DatePickerDateEmptyAttr[i] ?? {}
-			return <div class={attrClassList(DatePickerClasses.dateEmpty, className)} {...other}></div>
+			return <div class={joinClassList(DatePickerClasses.dateEmpty, className)} {...other}></div>
 		})}
 		{Array(31).fill(0).map((_, i) => {
 			const {
@@ -142,14 +142,14 @@ const {'class': contentClass, ...contentOther} = DatePickerContentAttr ?? {}
 				...other
 			} = DatePickerDateButtonAttr[i] ?? {}
 			return <Button
-				class={attrClassList(DatePickerClasses.dateButton, className)}
+				class={joinClassList(DatePickerClasses.dateButton, className)}
 				{...other}>
 				{i + 1}
 			</Button>
 		})}
 	</div>
 	<div
-		class={attrClassList(DatePickerClasses.content, contentClass)}
+		class={joinClassList(DatePickerClasses.content, contentClass)}
 		{...contentOther}>
 		<slot />
 	</div>

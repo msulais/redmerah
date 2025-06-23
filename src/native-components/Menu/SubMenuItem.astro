@@ -1,5 +1,5 @@
 ---
-import { attrClassList } from '@/utils/attributes'
+import { joinClassList } from '@/utils/attributes'
 
 import {
 	MenuClasses,
@@ -16,7 +16,7 @@ const {
 ---
 
 <MenuItem
-	class={attrClassList(MenuClasses.submenuItem, className)}
+	class={joinClassList(MenuClasses.submenuItem, className)}
 	{...other}>
 	<slot />
 </MenuItem>

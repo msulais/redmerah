@@ -1,10 +1,10 @@
 import { type Component, type JSX, type ParentComponent, Show, mergeProps, splitProps, type VoidComponent, For, children, createUniqueId, createMemo, createContext, useContext, type Accessor, createSignal, createEffect } from "solid-js"
 import { mergeRefs } from "@solid-primitives/refs"
 
-import { attrSetIfExist, attrClassList } from "@/utils/attributes"
-import { objectHasValue } from "@/utils/object"
+import { setAttrIfExist, joinClassList } from "@/utils/attributes"
+import { isObjectHasValue } from "@/utils/object"
 import { eventCall } from "@/utils/event"
-import { elementFocusAny } from "@/utils/element"
+import { focusAnyElement } from "@/utils/element"
 import { KEY_ARROW_LEFT, KEY_ARROW_RIGHT } from "@/constants/key-code"
 import { AppCSSColors } from "@/enums/app-data"
 import { ICON_CHECKBOX_CHECKED, ICON_CHECKBOX_UNCHECKED, ICON_CHEVRON_RIGHT } from "@/constants/icons"
@@ -58,7 +58,7 @@ const MenuItem: ParentComponent<MenuItemProps> = ($props) => {
 		c:indicatorPosition={props['c:indicatorPosition'] ?? ButtonIndicatorPosition.left}
 		classList={{'c-menu-item': true, ...props.classList}}
 		{...other}>
-		<Show when={objectHasValue(props["c:checked"])}>
+		<Show when={isObjectHasValue(props["c:checked"])}>
 			<Icon
 				style={{color: `rgb(${AppCSSColors.accent})`}}
 				c:filled={props["c:checked"]}
@@ -117,7 +117,7 @@ const LinkMenuItem: ParentComponent<LinkMenuItemProps> = ($props) => {
 		c:indicatorPosition={props['c:indicatorPosition'] ?? ButtonIndicatorPosition.left}
 		classList={{'c-menu-item': true, ...props.classList}}
 		{...other}>
-		<Show when={objectHasValue(props["c:checked"])}>
+		<Show when={isObjectHasValue(props["c:checked"])}>
 			<Icon
 				style={{color: props["c:checked"]? `rgb(${AppCSSColors.accent})` : undefined}}
 				c:filled={props["c:checked"]}
@@ -142,7 +142,7 @@ const LinkMenuItem: ParentComponent<LinkMenuItemProps> = ($props) => {
 
 const MenuIndent: Component<JSX.HTMLAttributes<HTMLDivElement>> = ($props) => {
 	const [props, other] = splitProps($props, ['class'])
-	return (<div class={attrClassList("c-menu-indent", props.class)} {...other}/>)
+	return (<div class={joinClassList("c-menu-indent", props.class)} {...other}/>)
 }
 
 const MenuDivider: Component<DividerProps> = (props) => {
@@ -151,7 +151,7 @@ const MenuDivider: Component<DividerProps> = (props) => {
 
 const MenuHeader: ParentComponent<JSX.HTMLAttributes<HTMLDivElement>> = ($props) => {
 	const [props, other] = splitProps($props, ['class'])
-	return (<div class={attrClassList("c-menu-header", props.class)} {...other}/>)
+	return (<div class={joinClassList("c-menu-header", props.class)} {...other}/>)
 }
 
 type SwitchMenuItemProps = Omit<JSX.LabelHTMLAttributes<HTMLLabelElement>, 'for'> & {
@@ -182,8 +182,8 @@ const SwitchMenuItem: ParentComponent<SwitchMenuItemProps> = ($props) => {
 	const variant = createMemo(() => props['c:variant'])
 
 	return (<label
-		class={attrClassList('c-btn', 'c-menu-item', 'c-switch-menu-item', props.class)}
-		data-c-disabled={attrSetIfExist(props['c:disabled'])}
+		class={joinClassList('c-btn', 'c-menu-item', 'c-switch-menu-item', props.class)}
+		data-c-disabled={setAttrIfExist(props['c:disabled'])}
 		for={switchProps.id}
 		classList={{
 			'c-filled-btn': variant() == ButtonVariant.filled,
@@ -191,7 +191,7 @@ const SwitchMenuItem: ParentComponent<SwitchMenuItemProps> = ($props) => {
 			'c-outlined-btn': variant() == ButtonVariant.outlined,
 			...props.classList
 		}}
-		data-c-focused={attrSetIfExist(props['c:focused'])}
+		data-c-focused={setAttrIfExist(props['c:focused'])}
 		{...other}>
 		{ props['c:leading'] }
 		<Show when={props["c:iconCode"] != null}>
@@ -265,9 +265,9 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 			if (fromKey) {
 				if (firstChild) {
 					firstChild.focus()
-					if (document.activeElement !== firstChild) elementFocusAny(document.getElementById(parentId ?? '')!)
+					if (document.activeElement !== firstChild) focusAnyElement(document.getElementById(parentId ?? '')!)
 				}
-				else elementFocusAny(document.getElementById(parentId ?? '')!)
+				else focusAnyElement(document.getElementById(parentId ?? '')!)
 			}
 
 			timeId = null
@@ -314,7 +314,7 @@ const SubMenu: ParentComponent<SubMenuProps> = ($props) => {
 	})
 
 	return (<div
-		class={attrClassList(SUBMENU_CLASSNAME, wrapperProps.class)}
+		class={joinClassList(SUBMENU_CLASSNAME, wrapperProps.class)}
 		ref={mergeRefs(wrapperProps.ref, r => divRef = r)}
 		onKeyDown={ev => {
 			eventCall(ev, wrapperProps.onKeyDown)

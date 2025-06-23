@@ -2,7 +2,7 @@ import { ObservableStore } from "@/utils/store"
 import { Pages } from "../_shared/_enums"
 import { ElementIds } from "../_shared/_ids"
 import { $, $$, $$$ } from "./_dom-utils"
-import { validEnumValue } from "@/utils/object"
+import { isValidEnumValue } from "@/utils/object"
 import { DrawerClasses, updateDrawerButtonRef } from "@/native-components/Drawer"
 import { SideBarClasses, updateSideBarButtonRef } from "@/native-components/SideBar"
 import { CSSClasses } from "../../_styles/_css"
@@ -29,7 +29,7 @@ function _initDrawerEvents(): void {
 		if (!targetRef) return
 
 		const page = targetRef.dataset.page
-		if (!validEnumValue(page, Pages)) return
+		if (!isValidEnumValue(page, Pages)) return
 
 		_drawerRef.hidePopover()
 		NavigationStore.update(v => ({...v, page: page as Pages}))
@@ -42,7 +42,7 @@ function _initSideBarEvents(): void {
 		if (!targetRef) return
 
 		const page = targetRef.dataset.page
-		if (!validEnumValue(page, Pages)) return
+		if (!isValidEnumValue(page, Pages)) return
 
 		NavigationStore.update(v => ({...v, page: page as Pages}))
 	})

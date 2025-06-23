@@ -2,10 +2,10 @@ import { For, Match, Show, Switch, type VoidComponent, createEffect, createMemo,
 import type { SetStoreFunction, Store } from "solid-js/store"
 
 import type { ItemList, Settings } from "./_types"
-import { elementValidTarget } from "@/utils/element"
+import { isTargetValidElement } from "@/utils/element"
 import { RandomizerType, ColorsRandomizerColorSpace, Commands } from "./_enums"
-import { numberIsNotDefined, numberSafe } from "@/utils/number"
-import { mathClamp } from "@/utils/math"
+import { isNumberNotDefined, safeNumber } from "@/utils/number"
+import { Math_clamp } from "@/utils/math"
 import { ICON_ADD, ICON_APPS_LIST_DETAIL, ICON_ARROW_EXPORT_UP, ICON_CHECKBOX_CHECKED, ICON_CHEVRON_DOWN, ICON_DELETE, ICON_EYE, ICON_TEXT_BULLET_LIST_SQUARE_CLOCK, ICON_TEXT_BULLET_LIST_SQUARE_EDIT } from "@/constants/icons"
 
 import Icon from "@/components/Icon"
@@ -74,7 +74,7 @@ const Teams: VoidComponent<{
 		target: Element
 	}, listNames: boolean): void {
 		const button = document.activeElement! as HTMLButtonElement
-		if (!elementValidTarget(
+		if (!isTargetValidElement(
 			ev.currentTarget,
 			button,
 		)) return
@@ -83,7 +83,7 @@ const Teams: VoidComponent<{
 		const dataListIndex = dataset.listIndex
 		if (dataListIndex) {
 			const index = Number.parseInt(dataListIndex)
-			if (numberIsNotDefined(index)) return
+			if (isNumberNotDefined(index)) return
 
 			const option = itemListToDropdownList(lists())[index]
 			for (const li of lists()) {
@@ -107,7 +107,7 @@ const Teams: VoidComponent<{
 			max={settings().listMembers.items.length}
 			onBlur={ev => command(
 				Commands.updateSettingsTeamsCount,
-				numberSafe(ev.currentTarget.valueAsNumber, settings().count)
+				safeNumber(ev.currentTarget.valueAsNumber, settings().count)
 			)}
 			c:attrWrapper={{ style: { width: 'min(100%, 164px)' } }}
 			value={settings().count}
@@ -121,7 +121,7 @@ const Teams: VoidComponent<{
 				onContextMenu: ev => onContextMenuDropdownItem(ev, true),
 				onClick: ev => {
 					const button = document.activeElement!
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -178,7 +178,7 @@ const Teams: VoidComponent<{
 				ref: (r) => dropdownMenu_ListMembersRef = r,
 				onClick: ev => {
 					const button = document.activeElement!
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -233,7 +233,7 @@ const Teams: VoidComponent<{
 			style={{width: '164px'}}
 			onClick={ev => {
 				const button = document.activeElement!
-				if (!elementValidTarget(
+				if (!isTargetValidElement(
 					ev.currentTarget,
 					button,
 				)) return
@@ -352,7 +352,7 @@ const Selection: VoidComponent<{
 				ref: (r) => menuDropdownRef = r,
 				onClick: ev => {
 					const button = document.activeElement!
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -374,7 +374,7 @@ const Selection: VoidComponent<{
 				},
 				onContextMenu: ev => {
 					const button = document.activeElement! as HTMLButtonElement
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -383,7 +383,7 @@ const Selection: VoidComponent<{
 					const dataListIndex = dataset.listIndex
 					if (dataListIndex) {
 						const index = Number.parseInt(dataListIndex)
-						if (numberIsNotDefined(index)) return
+						if (isNumberNotDefined(index)) return
 
 						const option = itemListToDropdownList(lists())[index]
 						for (const li of lists()) {
@@ -432,7 +432,7 @@ const Selection: VoidComponent<{
 			style={{width: '164px'}}
 			onClick={ev => {
 				const button = document.activeElement!
-				if (!elementValidTarget(
+				if (!isTargetValidElement(
 					ev.currentTarget,
 					button,
 				)) return
@@ -501,7 +501,7 @@ const Selection: VoidComponent<{
 			max={settings().list.items.length}
 			onBlur={ev => command(
 				Commands.updateSettingsSelectionCount,
-				numberSafe(ev.currentTarget.valueAsNumber, settings().count)
+				safeNumber(ev.currentTarget.valueAsNumber, settings().count)
 			)}
 			c:attrWrapper={{ style: { width: 'min(100%, 164px)' } }}
 			value={settings().count}
@@ -555,7 +555,7 @@ const Words: VoidComponent<{
 				ref: (r) => menuDropdownRef = r,
 				onClick: ev => {
 					const button = document.activeElement!
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -577,7 +577,7 @@ const Words: VoidComponent<{
 				},
 				onContextMenu: ev => {
 					const button = document.activeElement! as HTMLButtonElement
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -586,7 +586,7 @@ const Words: VoidComponent<{
 					const dataListIndex = dataset.listIndex
 					if (dataListIndex) {
 						const index = Number.parseInt(dataListIndex)
-						if (numberIsNotDefined(index)) return
+						if (isNumberNotDefined(index)) return
 
 						const option = itemListToDropdownList(lists())[index]
 						for (const li of lists()) {
@@ -686,7 +686,7 @@ const Words: VoidComponent<{
 			min={1}
 			onBlur={ev => command(
 				Commands.updateSettingsWordsCount,
-				numberSafe(ev.currentTarget.valueAsNumber, settings().count)
+				safeNumber(ev.currentTarget.valueAsNumber, settings().count)
 			)}
 			c:attrWrapper={{ style: { width: 'min(100%, 164px)' } }}
 			value={settings().count}
@@ -716,8 +716,8 @@ const Colors: VoidComponent<{
 		const r =  value.replace(unnecesaryChar, '').match(rangeRegex)
 		if (r == null) return {min, max}
 
-		min = mathClamp(numberSafe(Number.parseInt(r[1]), defaultValue.min), 0, maxValue)
-		max = mathClamp(numberSafe(Number.parseInt(r[2]), defaultValue.max), 0, maxValue)
+		min = Math_clamp(safeNumber(Number.parseInt(r[1]), defaultValue.min), 0, maxValue)
+		max = Math_clamp(safeNumber(Number.parseInt(r[2]), defaultValue.max), 0, maxValue)
 
 		if (min > max) min = max
 		return {min, max}
@@ -730,7 +730,7 @@ const Colors: VoidComponent<{
 			value={settings().count}
 			onBlur={ev => command(
 				Commands.updateSettingsColorsCount,
-				numberSafe(ev.currentTarget.valueAsNumber, settings().count)
+				safeNumber(ev.currentTarget.valueAsNumber, settings().count)
 			)}
 		/>
 		<Switch>
@@ -932,7 +932,7 @@ const Numbers: VoidComponent<{
 			min={1}
 			onBlur={ev => command(
 				Commands.updateSettingsNumbersCount,
-				numberSafe(ev.currentTarget.valueAsNumber, settings().count)
+				safeNumber(ev.currentTarget.valueAsNumber, settings().count)
 			)}
 			c:attrWrapper={{ style: { width: 'min(100%, 164px)' } }}
 			value={settings().count}
@@ -987,7 +987,7 @@ const $String: VoidComponent<{
 			value={settings().length}
 			onBlur={ev => command(
 				Commands.updateSettingsStringLength,
-				numberSafe(ev.currentTarget.valueAsNumber, settings().length)
+				safeNumber(ev.currentTarget.valueAsNumber, settings().length)
 			)}
 			min={1}
 			c:label="Length"
@@ -1023,7 +1023,7 @@ const $String: VoidComponent<{
 			style={{"min-width": `${menuCharactersWidth()}px`}}
 			onClick={ev => {
 				const button = document.activeElement!
-				if (!elementValidTarget(
+				if (!isTargetValidElement(
 					ev.currentTarget,
 					button,
 				)) return

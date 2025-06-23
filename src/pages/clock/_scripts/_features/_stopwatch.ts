@@ -2,7 +2,7 @@ import { ObservableStore } from "@/utils/store"
 import { $, $$, $$$ } from "../_core/_dom-utils"
 import { ElementIds } from "../_shared/_ids"
 import { IconClasses, updateIconRef, type IconElement } from "@/native-components/Icon"
-import { elementValidTarget } from "@/utils/element"
+import { isTargetValidElement } from "@/utils/element"
 import { IconCodes } from "@/enums/icons"
 import { isAnimationAllowed } from "@/utils/animation"
 import { AnimationEffectTiming } from "@/enums/animation"
@@ -300,7 +300,7 @@ function _copyLaps(time: boolean, total: boolean, ms: boolean = false): void {
 function _initEvents(): void {
 	_pageRef.addEventListener('click', () => {
 		const buttonRef = document.activeElement as HTMLButtonElement
-		if (!elementValidTarget(_pageRef, buttonRef)) {
+		if (!isTargetValidElement(_pageRef, buttonRef)) {
 			return
 		}
 
@@ -332,7 +332,7 @@ function _initEvents(): void {
 
 	_moreMenuRef.addEventListener('click', () => {
 		const buttonRef = document.activeElement as HTMLButtonElement
-		if (!elementValidTarget(_moreMenuRef, buttonRef)) return
+		if (!isTargetValidElement(_moreMenuRef, buttonRef)) return
 
 		const command = buttonRef.dataset.command
 		const closeMenu = () => _moreMenuRef.hidePopover()

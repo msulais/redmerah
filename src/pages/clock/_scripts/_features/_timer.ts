@@ -3,7 +3,7 @@ import { $, $$, $$$ } from "../_core/_dom-utils"
 import { ElementIds } from "../_shared/_ids"
 import { type ButtonElement, type IconButtonElement } from "@/native-components/Button"
 import { IconClasses, updateIconRef, type IconElement } from "@/native-components/Icon"
-import { elementValidTarget } from "@/utils/element"
+import { isTargetValidElement } from "@/utils/element"
 import { AppCSSColors } from "@/enums/app-data"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { isAnimationAllowed } from "@/utils/animation"
@@ -12,7 +12,7 @@ import { SideBarClasses } from "@/native-components/SideBar"
 import { Pages } from "../_shared/_enums"
 import { DrawerClasses } from "@/native-components/Drawer"
 import type { DialogElement } from "@/native-components/Dialog"
-import { numberSafe } from "@/utils/number"
+import { safeNumber } from "@/utils/number"
 import { saveStorageItem } from "../_core/_database"
 
 export type TimerStoreType = Readonly<{
@@ -210,7 +210,7 @@ function _showEditModal(): void {
 function _initEvents(): void {
 	_pageRef.addEventListener('click', () => {
 		const buttonRef = document.activeElement
-		if (!elementValidTarget(_pageRef, buttonRef)) return
+		if (!isTargetValidElement(_pageRef, buttonRef)) return
 
 		const value = TimerStore.value
 		switch (buttonRef) {
@@ -242,7 +242,7 @@ function _initEvents(): void {
 	})
 
 	_editSaveButtonRef.addEventListener('click', () => {
-		const seconds = Math.floor(numberSafe(
+		const seconds = Math.floor(safeNumber(
 			(_editHoursRef.valueAsNumber * 3600)
 			+ (_editMinutesRef.valueAsNumber * 60)
 			+ _editSecondsRef.valueAsNumber

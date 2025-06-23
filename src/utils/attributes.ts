@@ -1,7 +1,7 @@
-import { objectHasValue } from "./object"
+import { isObjectHasValue } from "./object"
 
-export function attrSetIfExist(value: unknown, keepValue: boolean = false): string | undefined {
-	if (!objectHasValue(value))
+export function setAttrIfExist(value: unknown, keepValue: boolean = false): string | undefined {
+	if (!isObjectHasValue(value))
 		return undefined
 
 	if (typeof value === 'boolean' && !keepValue)
@@ -10,14 +10,14 @@ export function attrSetIfExist(value: unknown, keepValue: boolean = false): stri
 	return keepValue? `${ value }` : ''
 }
 
-export function attrClassList(...classes: (string | undefined | null)[]): string {
+export function joinClassList(...classes: (string | undefined | null)[]): string {
 	return classes
 		.filter(n => typeof n === 'string')
 		.join(' ')
 		.trim()
 }
 
-export function attrClassListModule(...arr: string[]): Record<string, boolean> {
+export function joinClassListModule(...arr: string[]): Record<string, boolean> {
 	const classlist: Record<string, boolean> = {}
 	for (const i in arr) {
 		classlist[arr[i]] = true

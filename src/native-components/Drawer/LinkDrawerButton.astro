@@ -1,5 +1,5 @@
 ---
-import { attrClassList } from '@/utils/attributes'
+import { joinClassList } from '@/utils/attributes'
 
 import {
 	type LinkDrawerButtonProps,
@@ -18,7 +18,7 @@ const {
 ---
 
 <LinkButton
-	class={attrClassList(DrawerClasses.button, className)}
+	class={joinClassList(DrawerClasses.button, className)}
 	data-c-drawer-button-selected={LinkDrawerButtonSelected? '' : undefined}
 	{...other}>
 	<slot/>

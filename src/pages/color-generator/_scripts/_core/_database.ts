@@ -1,7 +1,7 @@
 import { DatabaseNames } from "@/enums/storage"
 import { IDB } from "@/utils/indexeddb"
 import { ColorsStore, type ColorsStoreType } from "./_colors"
-import { colorIsValid } from "@/utils/color"
+import { isColorValid } from "@/utils/color"
 import type { HEXColor } from "@/types/color"
 
 type _IDBStoreStorage<T = unknown> = {
@@ -38,13 +38,13 @@ function _readStorageAll(store: IDBObjectStore): void {
 		const isArray = Array.isArray(value)
 		switch (key as _StorageKeys) {
 		case "colors/seed":
-			if (isString && colorIsValid(value)) {
+			if (isString && isColorValid(value)) {
 				ColorsStore.update(v => ({...v, seed: value as HEXColor}))
 			}
 			break
 		case "colors/palette":
 			if (isArray) {
-				ColorsStore.update(v => ({...v, palette: value.filter(v => colorIsValid(v))}))
+				ColorsStore.update(v => ({...v, palette: value.filter(v => isColorValid(v))}))
 			}
 			break
 		}

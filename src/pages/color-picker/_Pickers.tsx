@@ -2,10 +2,10 @@ import { createSignal, onCleanup, onMount, type VoidComponent, createMemo, creat
 
 import type { HSLColor, HEXColor } from "@/types/color"
 import { BodyAttributes } from "@/enums/attributes"
-import { mathClamp } from "@/utils/math"
-import { colorCmykToHsl, colorContrastRatio, colorHexToHsl, colorHexToRgb, colorHslToCmyk, colorHslToHex, colorHslToHsv, colorHslToHwb, colorHslToRgb, colorHsvToHex, colorHsvToHsl, colorHwbToHsl, colorRgbToHsl } from "@/utils/color"
+import { Math_clamp } from "@/utils/math"
+import { cmykToHsl, colorContrastRatio, hexToHsl, hexToRgb, hslToCmyk, hslToHex, hslToHsv, hslToHwb, hslToRgb, hsvToHex, hsvToHsl, hwbToHsl, rgbToHsl } from "@/utils/color"
 import { Commands } from "./_enums"
-import { fileOpen } from "@/utils/file"
+import { pickFile } from "@/utils/file"
 import { ICON_IMAGE } from "@/constants/icons"
 
 import Button, { ButtonVariant } from "@/components/Button"
@@ -27,7 +27,7 @@ export const RectanglePicker: VoidComponent<{
 			left() / 100,
 			(100 - top()) / 100
 		]
-		return {...colorHsvToHsl({ h, s, v }), h}
+		return {...hsvToHsl({ h, s, v }), h}
 	})
 	const getHEXColor = createMemo<HEXColor>(() => {
 		const [h, s, v] = [
@@ -35,7 +35,7 @@ export const RectanglePicker: VoidComponent<{
 			left() / 100,
 			(100 - top()) / 100
 		]
-		return colorHsvToHex({ h, s, v })
+		return hsvToHex({ h, s, v })
 	})
 	let colorDragged = false
 	let hueDragged = false
@@ -53,18 +53,18 @@ export const RectanglePicker: VoidComponent<{
 		if (colorDragged) {
 			isUpdateLocally = true
 			let x = (ev.clientX - colorRect.left) / colorRect.width * 100
-			x = mathClamp(x, 0, 100)
+			x = Math_clamp(x, 0, 100)
 			setLeft(x)
 
 			let y = (ev.clientY - colorRect.top) / colorRect.height * 100
-			y = mathClamp(y, 0, 100)
+			y = Math_clamp(y, 0, 100)
 			setTop(y)
 			command(Commands.updateInput, getHSLColor())
 		}
 		else if (hueDragged) {
 			isUpdateLocally = true
 			let x = (ev.clientX - hueRect.left) / hueRect.width * 100
-			x = mathClamp(x, 0, 100)
+			x = Math_clamp(x, 0, 100)
 			setHue(x)
 			command(Commands.updateInput, getHSLColor())
 		}
@@ -95,8 +95,8 @@ export const RectanglePicker: VoidComponent<{
 			case KEY_ARROW_LEFT: x -= 1; break
 			}
 
-			x = mathClamp(x, 0, 100)
-			y = mathClamp(y, 0, 100)
+			x = Math_clamp(x, 0, 100)
+			y = Math_clamp(y, 0, 100)
 			setLeft(x)
 			setTop(y)
 			command(Commands.updateInput, getHSLColor())
@@ -114,7 +114,7 @@ export const RectanglePicker: VoidComponent<{
 			case KEY_ARROW_LEFT: x -= 1; break
 			}
 
-			x = mathClamp(x, 0, 100)
+			x = Math_clamp(x, 0, 100)
 			setHue(x)
 			command(Commands.updateInput, getHSLColor())
 			hueRef.firstElementChild!.scrollIntoView({
@@ -132,7 +132,7 @@ export const RectanglePicker: VoidComponent<{
 			isUpdateLocally = false
 			return
 		}
-		const {s, v} = colorHslToHsv(input)
+		const {s, v} = hslToHsv(input)
 		setHue(input.h * 100)
 		setLeft(s * 100)
 		setTop((1 - v) * 100)
@@ -154,8 +154,8 @@ export const RectanglePicker: VoidComponent<{
 				isUpdateLocally = true
 				colorDragged = true
 				colorRect = colorRef.getBoundingClientRect()
-				setLeft(mathClamp((ev.clientX - colorRect.left) / colorRect.width * 100, 0, 100))
-				setTop(mathClamp((ev.clientY - colorRect.top) / colorRect.height * 100, 0, 100))
+				setLeft(Math_clamp((ev.clientX - colorRect.left) / colorRect.width * 100, 0, 100))
+				setTop(Math_clamp((ev.clientY - colorRect.top) / colorRect.height * 100, 0, 100))
 				ev.currentTarget.setPointerCapture(ev.pointerId)
 				body.setAttribute(BodyAttributes.noPointerEvent, '')
 				command(Commands.updateInput, getHSLColor())
@@ -175,7 +175,7 @@ export const RectanglePicker: VoidComponent<{
 				class={CSS.picker_indicator}
 				style={{
 					"background-color": getHEXColor(),
-					"border-color": colorContrastRatio(colorHexToRgb(getHEXColor()), {r: 0, g: 0, b: 0}) > 50
+					"border-color": colorContrastRatio(hexToRgb(getHEXColor()), {r: 0, g: 0, b: 0}) > 50
 						? '#000'
 						: '#fff',
 					left: left() + '%',
@@ -192,7 +192,7 @@ export const RectanglePicker: VoidComponent<{
 				isUpdateLocally = true
 				hueDragged = true
 				hueRect = hueRef.getBoundingClientRect()
-				setHue(mathClamp((ev.clientX - hueRect.left) / hueRect.width * 100, 0, 100))
+				setHue(Math_clamp((ev.clientX - hueRect.left) / hueRect.width * 100, 0, 100))
 				ev.currentTarget.setPointerCapture(ev.pointerId)
 				body.setAttribute(BodyAttributes.noPointerEvent, '')
 				command(Commands.updateInput, getHSLColor())
@@ -213,7 +213,7 @@ export const RectanglePicker: VoidComponent<{
 				style={{
 					"background-color": `hsl(${hue() / 100 * 360}, 100%, 50%)`,
 					left: hue() + '%',
-					"border-color": colorContrastRatio(colorHslToRgb({h: hue() / 100, s: 1, l: 0.5}), {r: 0, g: 0, b: 0}) > 50
+					"border-color": colorContrastRatio(hslToRgb({h: hue() / 100, s: 1, l: 0.5}), {r: 0, g: 0, b: 0}) > 50
 						? '#000'
 						: '#fff',
 					transform: 'translate(-50%, -5px)'
@@ -245,7 +245,7 @@ export const RectangleHSLPicker: VoidComponent<{
 			left() / 100,
 			(100 - top()) / 100
 		]
-		return colorHslToHex({ h, s, l })
+		return hslToHex({ h, s, l })
 	})
 	let colorDragged = false
 	let hueDragged = false
@@ -263,18 +263,18 @@ export const RectangleHSLPicker: VoidComponent<{
 		if (colorDragged) {
 			isUpdateLocally = true
 			let x = (ev.clientX - colorRect.left) / colorRect.width * 100
-			x = mathClamp(x, 0, 100)
+			x = Math_clamp(x, 0, 100)
 			setLeft(x)
 
 			let y = (ev.clientY - colorRect.top) / colorRect.height * 100
-			y = mathClamp(y, 0, 100)
+			y = Math_clamp(y, 0, 100)
 			setTop(y)
 			command(Commands.updateInput, getHSLColor())
 		}
 		else if (hueDragged) {
 			isUpdateLocally = true
 			let x = (ev.clientX - hueRect.left) / hueRect.width * 100
-			x = mathClamp(x, 0, 100)
+			x = Math_clamp(x, 0, 100)
 			setHue(x)
 			command(Commands.updateInput, getHSLColor())
 		}
@@ -305,8 +305,8 @@ export const RectangleHSLPicker: VoidComponent<{
 			case KEY_ARROW_LEFT: x -= 1; break
 			}
 
-			x = mathClamp(x, 0, 100)
-			y = mathClamp(y, 0, 100)
+			x = Math_clamp(x, 0, 100)
+			y = Math_clamp(y, 0, 100)
 			setLeft(x)
 			setTop(y)
 			command(Commands.updateInput, getHSLColor())
@@ -324,7 +324,7 @@ export const RectangleHSLPicker: VoidComponent<{
 			case KEY_ARROW_LEFT: x -= 1; break
 			}
 
-			x = mathClamp(x, 0, 100)
+			x = Math_clamp(x, 0, 100)
 			setHue(x)
 			command(Commands.updateInput, getHSLColor())
 			hueRef.firstElementChild?.scrollIntoView({
@@ -363,8 +363,8 @@ export const RectangleHSLPicker: VoidComponent<{
 				isUpdateLocally = true
 				colorDragged = true
 				colorRect = colorRef.getBoundingClientRect()
-				setLeft(mathClamp((ev.clientX - colorRect.left) / colorRect.width * 100, 0, 100))
-				setTop(mathClamp((ev.clientY - colorRect.top) / colorRect.height * 100, 0, 100))
+				setLeft(Math_clamp((ev.clientX - colorRect.left) / colorRect.width * 100, 0, 100))
+				setTop(Math_clamp((ev.clientY - colorRect.top) / colorRect.height * 100, 0, 100))
 				body.setAttribute(BodyAttributes.noPointerEvent, '')
 				command(Commands.updateInput, getHSLColor())
 				isUpdateLocally = false
@@ -384,7 +384,7 @@ export const RectangleHSLPicker: VoidComponent<{
 				class={CSS.picker_indicator}
 				style={{
 					"background-color": getHEXColor(),
-					"border-color": colorContrastRatio(colorHexToRgb(getHEXColor()), {r: 0, g: 0, b: 0}) > 50
+					"border-color": colorContrastRatio(hexToRgb(getHEXColor()), {r: 0, g: 0, b: 0}) > 50
 						? '#000'
 						: '#fff',
 					left: left() + '%',
@@ -401,7 +401,7 @@ export const RectangleHSLPicker: VoidComponent<{
 				isUpdateLocally = true
 				hueDragged = true
 				hueRect = hueRef.getBoundingClientRect()
-				setHue(mathClamp((ev.clientX - hueRect.left) / hueRect.width * 100, 0, 100))
+				setHue(Math_clamp((ev.clientX - hueRect.left) / hueRect.width * 100, 0, 100))
 				body.setAttribute(BodyAttributes.noPointerEvent, '')
 				command(Commands.updateInput, getHSLColor())
 				isUpdateLocally = false
@@ -422,7 +422,7 @@ export const RectangleHSLPicker: VoidComponent<{
 				style={{
 					"background-color": `hsl(${hue() / 100 * 360}, 100%, 50%)`,
 					left: hue() + '%',
-					"border-color": colorContrastRatio(colorHslToRgb({h: hue() / 100, s: 1, l: 0.5}), {r: 0, g: 0, b: 0}) > 50
+					"border-color": colorContrastRatio(hslToRgb({h: hue() / 100, s: 1, l: 0.5}), {r: 0, g: 0, b: 0}) > 50
 						? '#000'
 						: '#fff',
 					transform: 'translate(-50%, -5px)'
@@ -440,7 +440,7 @@ export const ImagePicker: VoidComponent<{
 	const [left, setLeft] = createSignal(0) // 0 -> 100
 	const [top, setTop] = createSignal(0) // 0 -> 100
 	const [anyImage, setAnyImage] = createSignal(false)
-	const getHSLColor = createMemo(() => colorHexToHsl(hexColor()))
+	const getHSLColor = createMemo(() => hexToHsl(hexColor()))
 	const image = new Image()
 	let canvasRef: HTMLCanvasElement
 	let canvasContext: CanvasRenderingContext2D
@@ -465,11 +465,11 @@ export const ImagePicker: VoidComponent<{
 	function onPointerMove(ev: PointerEvent): void {
 		if (imageDragged) {
 			let x = (ev.clientX - imageRect.left) / imageRect.width * 100
-			x = mathClamp(x, 0, 100)
+			x = Math_clamp(x, 0, 100)
 			setLeft(x)
 
 			let y = (ev.clientY - imageRect.top) / imageRect.height * 100
-			y = mathClamp(y, 0, 100)
+			y = Math_clamp(y, 0, 100)
 			setTop(y)
 			pickColor()
 			command(Commands.updateInput, getHSLColor())
@@ -500,8 +500,8 @@ export const ImagePicker: VoidComponent<{
 			case KEY_ARROW_LEFT: x -= 1; break
 			}
 
-			x = mathClamp(x, 0, 100)
-			y = mathClamp(y, 0, 100)
+			x = Math_clamp(x, 0, 100)
+			y = Math_clamp(y, 0, 100)
 			setLeft(x)
 			setTop(y)
 			pickColor()
@@ -530,7 +530,7 @@ export const ImagePicker: VoidComponent<{
 	}
 
 	function pickImage(): void {
-		fileOpen('image/*', false).then((files) => {
+		pickFile('image/*', false).then((files) => {
 			if (!files || files?.length == 0) return;
 
 			for (const file of files) {
@@ -562,8 +562,8 @@ export const ImagePicker: VoidComponent<{
 				imageRect = imageRef.getBoundingClientRect()
 				if (!anyImage()) return;
 
-				setLeft(mathClamp((ev.clientX - imageRect.left) / imageRect.width * 100, 0, 100))
-				setTop(mathClamp((ev.clientY - imageRect.top) / imageRect.height * 100, 0, 100))
+				setLeft(Math_clamp((ev.clientX - imageRect.left) / imageRect.width * 100, 0, 100))
+				setTop(Math_clamp((ev.clientY - imageRect.top) / imageRect.height * 100, 0, 100))
 				body.setAttribute(BodyAttributes.noPointerEvent, '')
 				pickColor()
 				command(Commands.updateInput, getHSLColor())
@@ -589,7 +589,7 @@ export const ImagePicker: VoidComponent<{
 					style={{
 						"background-color": hexColor(),
 						"border-color": colorContrastRatio(
-							colorHexToRgb(hexColor()),
+							hexToRgb(hexColor()),
 							{r: 0, g: 0, b: 0}) > 50
 								? '#000'
 								: '#fff',
@@ -655,18 +655,18 @@ export const SpectrumPicker: VoidComponent<{
 		if (spectrumDragged) {
 			isUpdateLocally = true
 			let x = (ev.clientX - spectrumRect.left) / spectrumRect.width * 100
-			x = mathClamp(x, 0, 100)
+			x = Math_clamp(x, 0, 100)
 			setLeft(x)
 
 			let y = (ev.clientY - spectrumRect.top) / spectrumRect.height * 100
-			y = mathClamp(y, 0, 100)
+			y = Math_clamp(y, 0, 100)
 			setTop(y)
 			command(Commands.updateInput, getHSLColor())
 		}
 		else if (blacknessDragged) {
 			isUpdateLocally = true
 			let x = (ev.clientX - blacknessRect.left) / blacknessRect.width * 100
-			x = mathClamp(x, 0, 100)
+			x = Math_clamp(x, 0, 100)
 			setBlackness(x)
 			command(Commands.updateInput, getHSLColor())
 		}
@@ -697,8 +697,8 @@ export const SpectrumPicker: VoidComponent<{
 			case KEY_ARROW_LEFT: x -= 1; break
 			}
 
-			x = mathClamp(x, 0, 100)
-			y = mathClamp(y, 0, 100)
+			x = Math_clamp(x, 0, 100)
+			y = Math_clamp(y, 0, 100)
 			setLeft(x)
 			setTop(y)
 			command(Commands.updateInput, getHSLColor())
@@ -716,7 +716,7 @@ export const SpectrumPicker: VoidComponent<{
 			case KEY_ARROW_LEFT: x -= 1; break
 			}
 
-			x = mathClamp(x, 0, 100)
+			x = Math_clamp(x, 0, 100)
 			setBlackness(x)
 			command(Commands.updateInput, getHSLColor())
 			blacknessRef.firstElementChild?.scrollIntoView({
@@ -754,8 +754,8 @@ export const SpectrumPicker: VoidComponent<{
 				isUpdateLocally = true
 				spectrumDragged = true
 				spectrumRect = spectrumRef.getBoundingClientRect()
-				setLeft(mathClamp((ev.clientX - spectrumRect.left) / spectrumRect.width * 100, 0, 100))
-				setTop(mathClamp((ev.clientY - spectrumRect.top) / spectrumRect.height * 100, 0, 100))
+				setLeft(Math_clamp((ev.clientX - spectrumRect.left) / spectrumRect.width * 100, 0, 100))
+				setTop(Math_clamp((ev.clientY - spectrumRect.top) / spectrumRect.height * 100, 0, 100))
 				body.setAttribute(BodyAttributes.noPointerEvent, '')
 				command(Commands.updateInput, getHSLColor())
 				isUpdateLocally = false
@@ -776,7 +776,7 @@ export const SpectrumPicker: VoidComponent<{
 				style={{
 					"background-color": `hsl(${getHue()}, 100%, ${50 + (top() / 2)}%)`,
 					"border-color": colorContrastRatio(
-						colorHslToRgb({
+						hslToRgb({
 							h: getHue() / 360,
 							s: 1,
 							l: 0.5 + (top() / 100 / 2)
@@ -797,7 +797,7 @@ export const SpectrumPicker: VoidComponent<{
 				blacknessRect = blacknessRef.getBoundingClientRect()
 				isUpdateLocally = true
 				blacknessDragged = true
-				setBlackness(mathClamp((ev.clientX - blacknessRect.left) / blacknessRect.width * 100, 0, 100))
+				setBlackness(Math_clamp((ev.clientX - blacknessRect.left) / blacknessRect.width * 100, 0, 100))
 				body.setAttribute(BodyAttributes.noPointerEvent, '')
 				command(Commands.updateInput, getHSLColor())
 				isUpdateLocally = false
@@ -820,7 +820,7 @@ export const SpectrumPicker: VoidComponent<{
 					"background-color": `hsl(${getHue()}, ${100 - top()}%, ${((top() / 2) + 50) - ((top() / 2) + 50) * (blackness() / 100)}%)`,
 					left: blackness() + '%',
 					"border-color": colorContrastRatio(
-						colorHslToRgb({
+						hslToRgb({
 							h: getHue() / 360,
 							s: (100 - top()) / 100,
 							l: (((top() / 2) + 50) - ((top() / 2) + 50) * (blackness() / 100)) / 100
@@ -853,7 +853,7 @@ export const SliderRGBPicker: VoidComponent<{
 		const r = red() / 100
 		const g = green() / 100
 		const b = blue() / 100
-		return colorRgbToHsl({r, g, b})
+		return rgbToHsl({r, g, b})
 	})
 	let isUpdateLocally = false // to avoid unnecesary recalculate in `createEffect()`
 	let redDragged = false
@@ -874,21 +874,21 @@ export const SliderRGBPicker: VoidComponent<{
 		if (redDragged) {
 			isUpdateLocally = true
 			let x = (ev.clientX - redRect.left) / redRect.width * 100
-			x = mathClamp(x, 0, 100)
+			x = Math_clamp(x, 0, 100)
 			setRed(x)
 			command(Commands.updateInput, getHSLColor())
 		}
 		else if (blueDragged) {
 			isUpdateLocally = true
 			let x = (ev.clientX - blueRect.left) / blueRect.width * 100
-			x = mathClamp(x, 0, 100)
+			x = Math_clamp(x, 0, 100)
 			setBlue(x)
 			command(Commands.updateInput, getHSLColor())
 		}
 		else if (greenDragged) {
 			isUpdateLocally = true
 			let x = (ev.clientX - greenRect.left) / greenRect.width * 100
-			x = mathClamp(x, 0, 100)
+			x = Math_clamp(x, 0, 100)
 			setGreen(x)
 			command(Commands.updateInput, getHSLColor())
 		}
@@ -920,7 +920,7 @@ export const SliderRGBPicker: VoidComponent<{
 		case KEY_ARROW_LEFT: x -= 1; break
 		}
 
-		x = mathClamp(x, 0, 100)
+		x = Math_clamp(x, 0, 100)
 		if (redDragged) {
 			setRed(x)
 			ref = redRef
@@ -952,7 +952,7 @@ export const SliderRGBPicker: VoidComponent<{
 			return
 		}
 
-		const {r, g, b} = colorHslToRgb(input)
+		const {r, g, b} = hslToRgb(input)
 		setRed(r * 100)
 		setGreen(g * 100)
 		setBlue(b * 100)
@@ -972,7 +972,7 @@ export const SliderRGBPicker: VoidComponent<{
 				isUpdateLocally = true
 				redDragged = true
 				redRect = redRef.getBoundingClientRect()
-				setRed(mathClamp((ev.clientX - redRect.left) / redRect.width * 100, 0, 100))
+				setRed(Math_clamp((ev.clientX - redRect.left) / redRect.width * 100, 0, 100))
 				body.setAttribute(BodyAttributes.noPointerEvent, '')
 				command(Commands.updateInput, getHSLColor())
 				isUpdateLocally = false
@@ -994,7 +994,7 @@ export const SliderRGBPicker: VoidComponent<{
 					"background-color": `hsl(0, 100%, ${red() / 100 * 50}%)`,
 					left: red() + '%',
 					"border-color": colorContrastRatio(
-						colorHslToRgb({h: 0, s: 1, l: (red() / 100 * 50) / 100}),
+						hslToRgb({h: 0, s: 1, l: (red() / 100 * 50) / 100}),
 						{r: 0, g: 0, b: 0}
 					) > 50 ? '#000' : '#fff',
 					transform: 'translate(-50%, -5px)'
@@ -1010,7 +1010,7 @@ export const SliderRGBPicker: VoidComponent<{
 				isUpdateLocally = true
 				greenDragged = true
 				greenRect = greenRef.getBoundingClientRect()
-				setGreen(mathClamp((ev.clientX - greenRect.left) / greenRect.width * 100, 0, 100))
+				setGreen(Math_clamp((ev.clientX - greenRect.left) / greenRect.width * 100, 0, 100))
 				body.setAttribute(BodyAttributes.noPointerEvent, '')
 				command(Commands.updateInput, getHSLColor())
 				isUpdateLocally = false
@@ -1032,7 +1032,7 @@ export const SliderRGBPicker: VoidComponent<{
 					"background-color": `hsl(120, 100%, ${green() / 100 * 50}%)`,
 					left: green() + '%',
 					"border-color": colorContrastRatio(
-						colorHslToRgb({h: 120 / 360, s: 1, l: (green() / 100 * 50) / 100}),
+						hslToRgb({h: 120 / 360, s: 1, l: (green() / 100 * 50) / 100}),
 						{r: 0, g: 0, b: 0}
 					) > 50 ? '#000' : '#fff',
 					transform: 'translate(-50%, -5px)'
@@ -1048,7 +1048,7 @@ export const SliderRGBPicker: VoidComponent<{
 				blueDragged = true
 				isUpdateLocally = true
 				blueRect = blueRef.getBoundingClientRect()
-				setBlue(mathClamp((ev.clientX - blueRect.left) / blueRect.width * 100, 0, 100))
+				setBlue(Math_clamp((ev.clientX - blueRect.left) / blueRect.width * 100, 0, 100))
 				body.setAttribute(BodyAttributes.noPointerEvent, '')
 				command(Commands.updateInput, getHSLColor())
 				isUpdateLocally = false
@@ -1070,7 +1070,7 @@ export const SliderRGBPicker: VoidComponent<{
 					"background-color": `hsl(240, 100%, ${blue() / 100 * 50}%)`,
 					left: blue() + '%',
 					"border-color": colorContrastRatio(
-						colorHslToRgb({h: 240 / 360, s: 1, l: (blue() / 100 * 50) / 100}),
+						hslToRgb({h: 240 / 360, s: 1, l: (blue() / 100 * 50) / 100}),
 						{r: 0, g: 0, b: 0}
 					) > 50 ? '#000' : '#fff',
 					transform: 'translate(-50%, -5px)'
@@ -1117,21 +1117,21 @@ export const SliderHSLPicker: VoidComponent<{
 		if (hueDragged) {
 			isUpdateLocally = true
 			let x = (ev.clientX - hueRect.left) / hueRect.width * 100
-			x = mathClamp(x, 0, 100)
+			x = Math_clamp(x, 0, 100)
 			setHue(x)
 			command(Commands.updateInput, getHSLColor())
 		}
 		else if (lightnessDragged) {
 			isUpdateLocally = true
 			let x = (ev.clientX - lightnessRect.left) / lightnessRect.width * 100
-			x = mathClamp(x, 0, 100)
+			x = Math_clamp(x, 0, 100)
 			setLightness(x)
 			command(Commands.updateInput, getHSLColor())
 		}
 		else if (saturationDragged) {
 			isUpdateLocally = true
 			let x = (ev.clientX - saturationRect.left) / saturationRect.width * 100
-			x = mathClamp(x, 0, 100)
+			x = Math_clamp(x, 0, 100)
 			setSaturation(x)
 			command(Commands.updateInput, getHSLColor())
 		}
@@ -1163,7 +1163,7 @@ export const SliderHSLPicker: VoidComponent<{
 		case KEY_ARROW_LEFT: x -= 1; break
 		}
 
-		x = mathClamp(x, 0, 100)
+		x = Math_clamp(x, 0, 100)
 		if (hueDragged) {
 			setHue(x)
 			ref = hueRef
@@ -1214,7 +1214,7 @@ export const SliderHSLPicker: VoidComponent<{
 				isUpdateLocally = true
 				hueDragged = true
 				hueRect = hueRef.getBoundingClientRect()
-				setHue(mathClamp((ev.clientX - hueRect.left) / hueRect.width * 100, 0, 100))
+				setHue(Math_clamp((ev.clientX - hueRect.left) / hueRect.width * 100, 0, 100))
 				body.setAttribute(BodyAttributes.noPointerEvent, '')
 				command(Commands.updateInput, getHSLColor())
 				isUpdateLocally = false
@@ -1236,7 +1236,7 @@ export const SliderHSLPicker: VoidComponent<{
 					"background-color": `hsl(${getHue()}, 100%, 50%)`,
 					left: hue() + '%',
 					"border-color": colorContrastRatio(
-						colorHslToRgb({h: hue() / 100, s: 1, l: .5}),
+						hslToRgb({h: hue() / 100, s: 1, l: .5}),
 						{r: 0, g: 0, b: 0}
 					) > 50 ? '#000' : '#fff',
 					transform: 'translate(-50%, -5px)'
@@ -1252,7 +1252,7 @@ export const SliderHSLPicker: VoidComponent<{
 				isUpdateLocally = true
 				saturationDragged = true
 				saturationRect = saturationRef.getBoundingClientRect()
-				setSaturation(mathClamp((ev.clientX - saturationRect.left) / saturationRect.width * 100, 0, 100))
+				setSaturation(Math_clamp((ev.clientX - saturationRect.left) / saturationRect.width * 100, 0, 100))
 				body.setAttribute(BodyAttributes.noPointerEvent, '')
 				command(Commands.updateInput, getHSLColor())
 				isUpdateLocally = false
@@ -1274,7 +1274,7 @@ export const SliderHSLPicker: VoidComponent<{
 					"background-color": `hsl(${getHue()}, ${saturation()}%, 50%)`,
 					left: saturation() + '%',
 					"border-color": colorContrastRatio(
-						colorHslToRgb({h: hue() / 100, s: saturation() / 100, l: .5}),
+						hslToRgb({h: hue() / 100, s: saturation() / 100, l: .5}),
 						{r: 0, g: 0, b: 0}
 					) > 50 ? '#000' : '#fff',
 					transform: 'translate(-50%, -5px)'
@@ -1290,7 +1290,7 @@ export const SliderHSLPicker: VoidComponent<{
 				isUpdateLocally = true
 				lightnessDragged = true
 				lightnessRect = lightnessRef.getBoundingClientRect()
-				setLightness(mathClamp((ev.clientX - lightnessRect.left) / lightnessRect.width * 100, 0, 100))
+				setLightness(Math_clamp((ev.clientX - lightnessRect.left) / lightnessRect.width * 100, 0, 100))
 				body.setAttribute(BodyAttributes.noPointerEvent, '')
 				command(Commands.updateInput, getHSLColor())
 				isUpdateLocally = false
@@ -1312,7 +1312,7 @@ export const SliderHSLPicker: VoidComponent<{
 					left: lightness() + '%',
 					"background-color": `hsl(0, 0%, ${lightness()}%)`,
 					"border-color": colorContrastRatio(
-						colorHslToRgb({h: 0, s: 1, l: lightness()/ 100}),
+						hslToRgb({h: 0, s: 1, l: lightness()/ 100}),
 						{r: 0, g: 0, b: 0}
 					) > 50 ? '#000' : '#fff',
 					transform: 'translate(-50%, -5px)'
@@ -1337,7 +1337,7 @@ export const SliderCMYKPicker: VoidComponent<{
 		const y = yellow() / 100
 		const k = (100 - key()) / 100
 
-		return colorCmykToHsl({c, m, y, k})
+		return cmykToHsl({c, m, y, k})
 	})
 	let isUpdateLocally = false // to avoid unnecesary recalculate in `createEffect()`
 	let cyanDragged = false
@@ -1361,28 +1361,28 @@ export const SliderCMYKPicker: VoidComponent<{
 		if (cyanDragged) {
 			isUpdateLocally = true
 			let x = (ev.clientX - cyanRect.left) / cyanRect.width * 100
-			x = mathClamp(x, 0, 100)
+			x = Math_clamp(x, 0, 100)
 			setCyan(x)
 			command(Commands.updateInput, getHSLColor())
 		}
 		else if (yellowDragged) {
 			isUpdateLocally = true
 			let x = (ev.clientX - yellowRect.left) / yellowRect.width * 100
-			x = mathClamp(x, 0, 100)
+			x = Math_clamp(x, 0, 100)
 			setYellow(x)
 			command(Commands.updateInput, getHSLColor())
 		}
 		else if (magentaDragged) {
 			isUpdateLocally = true
 			let x = (ev.clientX - magentaRect.left) / magentaRect.width * 100
-			x = mathClamp(x, 0, 100)
+			x = Math_clamp(x, 0, 100)
 			setMagenta(x)
 			command(Commands.updateInput, getHSLColor())
 		}
 		else if (keyDragged) {
 			isUpdateLocally = true
 			let x = (ev.clientX - keyRect.left) / keyRect.width * 100
-			x = mathClamp(x, 0, 100)
+			x = Math_clamp(x, 0, 100)
 			setKey(x)
 			command(Commands.updateInput, getHSLColor())
 		}
@@ -1415,7 +1415,7 @@ export const SliderCMYKPicker: VoidComponent<{
 		case KEY_ARROW_LEFT: x -= 1; break
 		}
 
-		x = mathClamp(x, 0, 100)
+		x = Math_clamp(x, 0, 100)
 		if (cyanDragged) {
 			setCyan(x)
 			ref = cyanRef
@@ -1451,7 +1451,7 @@ export const SliderCMYKPicker: VoidComponent<{
 			return
 		}
 
-		const {c, m, y, k} = colorHslToCmyk(input)
+		const {c, m, y, k} = hslToCmyk(input)
 		setCyan(c * 100)
 		setMagenta(m * 100)
 		setYellow(y * 100)
@@ -1472,7 +1472,7 @@ export const SliderCMYKPicker: VoidComponent<{
 				isUpdateLocally = true
 				cyanDragged = true
 				cyanRect = cyanRef.getBoundingClientRect()
-				setCyan(mathClamp((ev.clientX - cyanRect.left) / cyanRect.width * 100, 0, 100))
+				setCyan(Math_clamp((ev.clientX - cyanRect.left) / cyanRect.width * 100, 0, 100))
 				body.setAttribute(BodyAttributes.noPointerEvent, '')
 				command(Commands.updateInput, getHSLColor())
 				isUpdateLocally = false
@@ -1494,7 +1494,7 @@ export const SliderCMYKPicker: VoidComponent<{
 					left: cyan() + '%',
 					"background-color": `hsl(180, 100%, ${cyan() / 100 * 50}%)`,
 					"border-color": colorContrastRatio(
-						colorHslToRgb({h: 180 / 360, s: 1, l: cyan() / 100 * 0.5}),
+						hslToRgb({h: 180 / 360, s: 1, l: cyan() / 100 * 0.5}),
 						{r: 0, g: 0, b: 0}
 					) > 50 ? '#000' : '#fff',
 					transform: 'translate(-50%, -5px)'
@@ -1510,7 +1510,7 @@ export const SliderCMYKPicker: VoidComponent<{
 				isUpdateLocally = true
 				magentaDragged = true
 				magentaRect = magentaRef.getBoundingClientRect()
-				setMagenta(mathClamp((ev.clientX - magentaRect.left) / magentaRect.width * 100, 0, 100))
+				setMagenta(Math_clamp((ev.clientX - magentaRect.left) / magentaRect.width * 100, 0, 100))
 				body.setAttribute(BodyAttributes.noPointerEvent, '')
 				command(Commands.updateInput, getHSLColor())
 				isUpdateLocally = false
@@ -1532,7 +1532,7 @@ export const SliderCMYKPicker: VoidComponent<{
 					left: magenta() + '%',
 					"background-color": `hsl(300, 100%, ${magenta() / 100 * 50}%)`,
 					"border-color": colorContrastRatio(
-						colorHslToRgb({h: 300 / 360, s: 1, l: magenta() / 100 * 0.5}),
+						hslToRgb({h: 300 / 360, s: 1, l: magenta() / 100 * 0.5}),
 						{r: 0, g: 0, b: 0}
 					) > 50 ? '#000' : '#fff',
 					transform: 'translate(-50%, -5px)'
@@ -1548,7 +1548,7 @@ export const SliderCMYKPicker: VoidComponent<{
 				isUpdateLocally = true
 				yellowDragged = true
 				yellowRect = yellowRef.getBoundingClientRect()
-				setYellow(mathClamp((ev.clientX - yellowRect.left) / yellowRect.width * 100, 0, 100))
+				setYellow(Math_clamp((ev.clientX - yellowRect.left) / yellowRect.width * 100, 0, 100))
 				body.setAttribute(BodyAttributes.noPointerEvent, '')
 				command(Commands.updateInput, getHSLColor())
 				isUpdateLocally = false
@@ -1570,7 +1570,7 @@ export const SliderCMYKPicker: VoidComponent<{
 					"background-color": `hsl(60, 100%, ${yellow() / 100 * 50}%)`,
 					left: yellow() + '%',
 					"border-color": colorContrastRatio(
-						colorHslToRgb({h: 60 / 360, s: 1, l: yellow() / 100 * 0.5}),
+						hslToRgb({h: 60 / 360, s: 1, l: yellow() / 100 * 0.5}),
 						{r: 0, g: 0, b: 0}
 					) > 50 ? '#000' : '#fff',
 					transform: 'translate(-50%, -5px)'
@@ -1586,7 +1586,7 @@ export const SliderCMYKPicker: VoidComponent<{
 				isUpdateLocally = true
 				keyDragged = true
 				keyRect = keyRef.getBoundingClientRect()
-				setKey(mathClamp((ev.clientX - keyRect.left) / keyRect.width * 100, 0, 100))
+				setKey(Math_clamp((ev.clientX - keyRect.left) / keyRect.width * 100, 0, 100))
 				body.setAttribute(BodyAttributes.noPointerEvent, '')
 				command(Commands.updateInput, getHSLColor())
 				isUpdateLocally = false
@@ -1608,7 +1608,7 @@ export const SliderCMYKPicker: VoidComponent<{
 					left: key() + '%',
 					"background-color": `hsl(0, 0%, ${key()}%)`,
 					"border-color": colorContrastRatio(
-						colorHslToRgb({h: 0, s: 1, l: key() / 100}),
+						hslToRgb({h: 0, s: 1, l: key() / 100}),
 						{r: 0, g: 0, b: 0}
 					) > 50 ? '#000' : '#fff',
 					transform: 'translate(-50%, -5px)'
@@ -1629,7 +1629,7 @@ export const SliderHEXPicker: VoidComponent<{
 	})
 	const getHSLColor = createMemo<HSLColor>(() => {
 		const h = getHEXColor()
-		return colorHexToHsl(h)
+		return hexToHsl(h)
 	})
 	let isUpdateLocally = false // to avoid unnecesary recalculate in `createEffect()`
 	let hexDragged = false
@@ -1644,7 +1644,7 @@ export const SliderHEXPicker: VoidComponent<{
 		if (hexDragged) {
 			isUpdateLocally = true
 			let x = (ev.clientX - hexRect.left) / hexRect.width * 100
-			x = mathClamp(x, 0, 100)
+			x = Math_clamp(x, 0, 100)
 			setHex(x)
 			command(Commands.updateInput, getHSLColor())
 		}
@@ -1674,7 +1674,7 @@ export const SliderHEXPicker: VoidComponent<{
 		case KEY_ARROW_LEFT: x -= 1; break
 		}
 
-		x = mathClamp(x, 0, 100)
+		x = Math_clamp(x, 0, 100)
 		if (hexDragged) {
 			setHex(x)
 			ref = hexRef
@@ -1698,7 +1698,7 @@ export const SliderHEXPicker: VoidComponent<{
 			return
 		}
 
-		const hex = Number.parseInt(colorHslToHex(input).substring(1), 16) / 0xffffff
+		const hex = Number.parseInt(hslToHex(input).substring(1), 16) / 0xffffff
 		setHex(hex * 100)
 	}
 
@@ -1716,7 +1716,7 @@ export const SliderHEXPicker: VoidComponent<{
 				isUpdateLocally = true
 				hexDragged = true
 				hexRect = hexRef.getBoundingClientRect()
-				setHex(mathClamp((ev.clientX - hexRect.left) / hexRect.width * 100, 0, 100))
+				setHex(Math_clamp((ev.clientX - hexRect.left) / hexRect.width * 100, 0, 100))
 				body.setAttribute(BodyAttributes.noPointerEvent, '')
 				command(Commands.updateInput, getHSLColor())
 				isUpdateLocally = false
@@ -1738,7 +1738,7 @@ export const SliderHEXPicker: VoidComponent<{
 					left: hex() + '%',
 					"background-color": getHEXColor(),
 					"border-color": colorContrastRatio(
-						colorHexToRgb(getHEXColor()),
+						hexToRgb(getHEXColor()),
 						{r: 0, g: 0, b: 0}
 					) > 50 ? '#000' : '#fff',
 					transform: 'translate(-50%, -5px)'
@@ -1764,7 +1764,7 @@ export const SliderHSVPicker: VoidComponent<{
 		const s = saturation() / 100
 		const v = value() / 100
 
-		return colorHsvToHsl({h, s, v})
+		return hsvToHsl({h, s, v})
 	})
 	let isUpdateLocally = false // to avoid unnecesary recalculate in `createEffect()`
 	let hueDragged = false
@@ -1785,21 +1785,21 @@ export const SliderHSVPicker: VoidComponent<{
 		if (hueDragged) {
 			isUpdateLocally = true
 			let x = (ev.clientX - hueRect.left) / hueRect.width * 100
-			x = mathClamp(x, 0, 100)
+			x = Math_clamp(x, 0, 100)
 			setHue(x)
 			command(Commands.updateInput, getHSLColor())
 		}
 		else if (valueDragged) {
 			isUpdateLocally = true
 			let x = (ev.clientX - valueRect.left) / valueRect.width * 100
-			x = mathClamp(x, 0, 100)
+			x = Math_clamp(x, 0, 100)
 			setValue(x)
 			command(Commands.updateInput, getHSLColor())
 		}
 		else if (saturationDragged) {
 			isUpdateLocally = true
 			let x = (ev.clientX - saturationRect.left) / saturationRect.width * 100
-			x = mathClamp(x, 0, 100)
+			x = Math_clamp(x, 0, 100)
 			setSaturation(x)
 			command(Commands.updateInput, getHSLColor())
 		}
@@ -1831,7 +1831,7 @@ export const SliderHSVPicker: VoidComponent<{
 		case KEY_ARROW_LEFT: x -= 1; break
 		}
 
-		x = mathClamp(x, 0, 100)
+		x = Math_clamp(x, 0, 100)
 		if (hueDragged) {
 			setHue(x)
 			ref = hueRef
@@ -1863,7 +1863,7 @@ export const SliderHSVPicker: VoidComponent<{
 			return
 		}
 
-		const {h, s, v} = colorHslToHsv(input)
+		const {h, s, v} = hslToHsv(input)
 		setHue(h * 100)
 		setSaturation(s * 100)
 		setValue(v * 100)
@@ -1883,7 +1883,7 @@ export const SliderHSVPicker: VoidComponent<{
 				isUpdateLocally = true
 				hueDragged = true
 				hueRect = hueRef.getBoundingClientRect()
-				setHue(mathClamp((ev.clientX - hueRect.left) / hueRect.width * 100, 0, 100))
+				setHue(Math_clamp((ev.clientX - hueRect.left) / hueRect.width * 100, 0, 100))
 				body.setAttribute(BodyAttributes.noPointerEvent, '')
 				command(Commands.updateInput, getHSLColor())
 				isUpdateLocally = false
@@ -1905,7 +1905,7 @@ export const SliderHSVPicker: VoidComponent<{
 					"background-color": `hsl(${getHue()}, 100%, 50%)`,
 					left: hue() + '%',
 					"border-color": colorContrastRatio(
-						colorHslToRgb({h: hue() / 100, s: 1, l: .5}),
+						hslToRgb({h: hue() / 100, s: 1, l: .5}),
 						{r: 0, g: 0, b: 0}
 					) > 50 ? '#000' : '#fff',
 					transform: 'translate(-50%, -5px)'
@@ -1921,7 +1921,7 @@ export const SliderHSVPicker: VoidComponent<{
 				isUpdateLocally = true
 				saturationDragged = true
 				saturationRect = saturationRef.getBoundingClientRect()
-				setSaturation(mathClamp((ev.clientX - saturationRect.left) / saturationRect.width * 100, 0, 100))
+				setSaturation(Math_clamp((ev.clientX - saturationRect.left) / saturationRect.width * 100, 0, 100))
 				body.setAttribute(BodyAttributes.noPointerEvent, '')
 				command(Commands.updateInput, getHSLColor())
 				isUpdateLocally = false
@@ -1943,7 +1943,7 @@ export const SliderHSVPicker: VoidComponent<{
 					"background-color": `hsl(${getHue()}, ${saturation()}%, 50%)`,
 					left: saturation() + '%',
 					"border-color": colorContrastRatio(
-						colorHslToRgb({h: hue() / 100, s: saturation() / 100, l: .5}),
+						hslToRgb({h: hue() / 100, s: saturation() / 100, l: .5}),
 						{r: 0, g: 0, b: 0}
 					) > 50 ? '#000' : '#fff',
 					transform: 'translate(-50%, -5px)'
@@ -1959,7 +1959,7 @@ export const SliderHSVPicker: VoidComponent<{
 				isUpdateLocally = true
 				valueDragged = true
 				valueRect = valueRef.getBoundingClientRect()
-				setValue(mathClamp((ev.clientX - valueRect.left) / valueRect.width * 100, 0, 100))
+				setValue(Math_clamp((ev.clientX - valueRect.left) / valueRect.width * 100, 0, 100))
 				body.setAttribute(BodyAttributes.noPointerEvent, '')
 				command(Commands.updateInput, getHSLColor())
 				isUpdateLocally = false
@@ -1981,7 +1981,7 @@ export const SliderHSVPicker: VoidComponent<{
 					left: value() + '%',
 					"background-color": `hsl(0, 0%, ${value()}%)`,
 					"border-color": colorContrastRatio(
-						colorHslToRgb({h: 0, s: 1, l: value()/ 100}),
+						hslToRgb({h: 0, s: 1, l: value()/ 100}),
 						{r: 0, g: 0, b: 0}
 					) > 50 ? '#000' : '#fff',
 					transform: 'translate(-50%, -5px)'
@@ -2004,10 +2004,10 @@ export const SliderHWBPicker: VoidComponent<{
 	})
 	const getHSLColor = createMemo<HSLColor>(() => {
 		const h = hue() / 100
-		const w = mathClamp(whiteness() / 100, 0, 1)
-		const b = mathClamp(blackness() / 100, 0, 1)
+		const w = Math_clamp(whiteness() / 100, 0, 1)
+		const b = Math_clamp(blackness() / 100, 0, 1)
 
-		return colorHwbToHsl({h, w, b})
+		return hwbToHsl({h, w, b})
 	})
 	let isUpdateLocally = false // to avoid unnecesary recalculate in `createEffect()`
 	let hueDragged = false
@@ -2028,24 +2028,24 @@ export const SliderHWBPicker: VoidComponent<{
 		if (hueDragged) {
 			isUpdateLocally = true
 			let x = (ev.clientX - hueRect.left) / hueRect.width * 100
-			x = mathClamp(x, 0, 100)
+			x = Math_clamp(x, 0, 100)
 			setHue(x)
 			command(Commands.updateInput, getHSLColor())
 		}
 		else if (blacknessDragged) {
 			isUpdateLocally = true
 			let x = (ev.clientX - blacknessRect.left) / blacknessRect.width * 100
-			x = mathClamp(x, 0, 100)
+			x = Math_clamp(x, 0, 100)
 			setBlackness(x)
-			setWhiteness(mathClamp(whiteness(), 0, 100 - blackness()))
+			setWhiteness(Math_clamp(whiteness(), 0, 100 - blackness()))
 			command(Commands.updateInput, getHSLColor())
 		}
 		else if (whitenessDragged) {
 			isUpdateLocally = true
 			let x = (ev.clientX - whitenessRect.left) / whitenessRect.width * 100
-			x = mathClamp(x, 0, 100)
+			x = Math_clamp(x, 0, 100)
 			setWhiteness(x)
-			setBlackness(mathClamp(blackness(), 0, 100 - whiteness()))
+			setBlackness(Math_clamp(blackness(), 0, 100 - whiteness()))
 			command(Commands.updateInput, getHSLColor())
 		}
 	}
@@ -2076,19 +2076,19 @@ export const SliderHWBPicker: VoidComponent<{
 		case KEY_ARROW_LEFT: x -= 1; break
 		}
 
-		x = mathClamp(x, 0, 100)
+		x = Math_clamp(x, 0, 100)
 		if (hueDragged) {
 			setHue(x)
 			ref = hueRef
 		}
 		else if (blacknessDragged) {
 			setBlackness(x)
-			setWhiteness(mathClamp(whiteness(), 0, 100 - blackness()))
+			setWhiteness(Math_clamp(whiteness(), 0, 100 - blackness()))
 			ref = blacknessRef
 		}
 		else if (whitenessDragged) {
 			setWhiteness(x)
-			setBlackness(mathClamp(blackness(), 0, 100 - whiteness()))
+			setBlackness(Math_clamp(blackness(), 0, 100 - whiteness()))
 			ref = whitenessRef
 		}
 
@@ -2110,7 +2110,7 @@ export const SliderHWBPicker: VoidComponent<{
 			return
 		}
 
-		const {h, w, b} = colorHslToHwb(input)
+		const {h, w, b} = hslToHwb(input)
 		setHue(h * 100)
 		setWhiteness(w * 100)
 		setBlackness(b * 100)
@@ -2130,7 +2130,7 @@ export const SliderHWBPicker: VoidComponent<{
 				isUpdateLocally = true
 				hueDragged = true
 				hueRect = hueRef.getBoundingClientRect()
-				setHue(mathClamp((ev.clientX - hueRect.left) / hueRect.width * 100, 0, 100))
+				setHue(Math_clamp((ev.clientX - hueRect.left) / hueRect.width * 100, 0, 100))
 				body.setAttribute(BodyAttributes.noPointerEvent, '')
 				command(Commands.updateInput, getHSLColor())
 				ev.currentTarget.setPointerCapture(ev.pointerId)
@@ -2151,7 +2151,7 @@ export const SliderHWBPicker: VoidComponent<{
 					"background-color": `hsl(${getHue()}, 100%, 50%)`,
 					left: hue() + '%',
 					"border-color": colorContrastRatio(
-						colorHslToRgb({h: hue() / 100, s: 1, l: .5}),
+						hslToRgb({h: hue() / 100, s: 1, l: .5}),
 						{r: 0, g: 0, b: 0}
 					) > 50 ? '#000' : '#fff',
 					transform: 'translate(-50%, -5px)'
@@ -2167,8 +2167,8 @@ export const SliderHWBPicker: VoidComponent<{
 				isUpdateLocally = true
 				whitenessDragged = true
 				whitenessRect = whitenessRef.getBoundingClientRect()
-				setWhiteness(mathClamp((ev.clientX - whitenessRect.left) / whitenessRect.width * 100, 0, 100))
-				setBlackness(mathClamp(blackness(), 0, 100 - whiteness()))
+				setWhiteness(Math_clamp((ev.clientX - whitenessRect.left) / whitenessRect.width * 100, 0, 100))
+				setBlackness(Math_clamp(blackness(), 0, 100 - whiteness()))
 				body.setAttribute(BodyAttributes.noPointerEvent, '')
 				command(Commands.updateInput, getHSLColor())
 				isUpdateLocally = false
@@ -2190,7 +2190,7 @@ export const SliderHWBPicker: VoidComponent<{
 					"background-color": `hsl(${getHue()}, 100%, ${50 + (whiteness() / 100 * 50)}%)`,
 					left: whiteness() + '%',
 					"border-color": colorContrastRatio(
-						colorHslToRgb({h: hue() / 100, s: 1, l: 0.5 + (whiteness() / 100 * 0.5)}),
+						hslToRgb({h: hue() / 100, s: 1, l: 0.5 + (whiteness() / 100 * 0.5)}),
 						{r: 0, g: 0, b: 0}
 					) > 50 ? '#000' : '#fff',
 					transform: 'translate(-50%, -5px)'
@@ -2206,8 +2206,8 @@ export const SliderHWBPicker: VoidComponent<{
 				isUpdateLocally = true
 				blacknessDragged = true
 				blacknessRect = blacknessRef.getBoundingClientRect()
-				setBlackness(mathClamp((ev.clientX - blacknessRect.left) / blacknessRect.width * 100, 0, 100))
-				setWhiteness(mathClamp(whiteness(), 0, 100 - blackness()))
+				setBlackness(Math_clamp((ev.clientX - blacknessRect.left) / blacknessRect.width * 100, 0, 100))
+				setWhiteness(Math_clamp(whiteness(), 0, 100 - blackness()))
 				body.setAttribute(BodyAttributes.noPointerEvent, '')
 				command(Commands.updateInput, getHSLColor())
 				isUpdateLocally = false
@@ -2229,7 +2229,7 @@ export const SliderHWBPicker: VoidComponent<{
 					left: blackness() + '%',
 					"background-color": `hsl(${getHue()}, 100%, ${50 - (blackness() / 100 * 50)}%)`,
 					"border-color": colorContrastRatio(
-						colorHslToRgb({h: hue() / 100, s: 1, l: 0.5 - (blackness() / 100 * 0.5)}),
+						hslToRgb({h: hue() / 100, s: 1, l: 0.5 - (blackness() / 100 * 0.5)}),
 						{r: 0, g: 0, b: 0}
 					) > 50 ? '#000' : '#fff',
 					transform: 'translate(-50%, -5px)'

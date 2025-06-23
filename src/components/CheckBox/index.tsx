@@ -2,7 +2,7 @@ import { createEffect, createMemo, createSignal, createUniqueId, mergeProps, onC
 import { mergeRefs } from "@solid-primitives/refs"
 
 import { AnimationEffectTiming } from "@/enums/animation"
-import { attrSetIfExist, attrClassList } from "@/utils/attributes"
+import { setAttrIfExist, joinClassList } from "@/utils/attributes"
 import { eventCall } from "@/utils/event"
 import { ICON_CHECKBOX_CHECKED, ICON_CHECKBOX_UNCHECKED, ICON_RADIO_BUTTON } from "@/constants/icons"
 import { isAnimationAllowed } from "@/utils/animation"
@@ -110,8 +110,8 @@ const CheckBox: ParentComponent<CheckBoxProps> = ($props) => {
 	})
 
 	return (<label
-		class={attrClassList('c-checkbox', 'c-btn', labelProps.class ?? '')}
-		data-c-disabled={attrSetIfExist(isDisabled())}
+		class={joinClassList('c-checkbox', 'c-btn', labelProps.class ?? '')}
+		data-c-disabled={setAttrIfExist(isDisabled())}
 		for={props.id}
 		{...otherLabelProps}>
 		<input

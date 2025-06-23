@@ -3,10 +3,10 @@ import { $, $$, $$$ } from "./_dom-utils"
 import { ElementIds } from "../_shared/_ids"
 import { CSSClasses, CSSGroup } from "../../_styles/_css"
 import type { TooltipElement } from "@/native-components/Tooltip"
-import { elementValidTarget } from "@/utils/element"
-import { moveArrayElement, validEnumValue } from "@/utils/object"
+import { isTargetValidElement } from "@/utils/element"
+import { moveArrayElement, isValidEnumValue } from "@/utils/object"
 import { Commands } from "../_shared/_commands"
-import { createId } from "@/utils/ids"
+import { createElementId } from "@/utils/ids"
 import { isPopoverRefOpen, repositionPopoverRef, updatePopoverRef } from "@/native-components/Popover"
 import { createButtonRef, createIconButtonRef, updateButtonRef, updateIconButtonRef, type ButtonElement, type IconButtonElement } from "@/native-components/Button"
 import type { HEXColor } from "@/types/color"
@@ -17,8 +17,8 @@ import { isAnimationAllowed } from "@/utils/animation"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { DEFAULT_STOP_COLOR_1, DEFAULT_STOP_COLOR_2 } from "../_shared/_constant"
 import { createSliderRef, registerSliderRef, SliderClasses, updateSliderRefValue, type SliderElement } from "@/native-components/Slider"
-import { numberSafe } from "@/utils/number"
-import { mathClamp } from "@/utils/math"
+import { safeNumber } from "@/utils/number"
+import { Math_clamp } from "@/utils/math"
 import { createTextFieldButtonRef, createTextFieldRef, type TextFieldButtonElement } from "@/native-components/TextField"
 import { createIconRef } from "@/native-components/Icon"
 import { IconCodes } from "@/enums/icons"
@@ -284,7 +284,7 @@ function _updateGradientControlView(updateStops = true): void {
 
 		const colorStopList = GradientStore.value.selected.value.stops
 		const index = Number.parseInt(datasetIndex)
-		const value = mathClamp(numberSafe(Number.parseFloat(target.value)), 0, 100)
+		const value = Math_clamp(safeNumber(Number.parseFloat(target.value)), 0, 100)
 		const slider = sizeSliderRefs[index as unknown as number]
 		const stopGradient = colorStopList[index as unknown as number]
 		if (slider) {
@@ -298,7 +298,7 @@ function _updateGradientControlView(updateStops = true): void {
 
 	function stopSizeTextOnBlur(ev: Event): void {
 		const target = ev.currentTarget as HTMLInputElement
-		const value = mathClamp(numberSafe(Number.parseFloat(target.value)), 0, 100)
+		const value = Math_clamp(safeNumber(Number.parseFloat(target.value)), 0, 100)
 		target.value = value + '%'
 	}
 
@@ -309,7 +309,7 @@ function _updateGradientControlView(updateStops = true): void {
 
 		const colorStopList = GradientStore.value.selected.value.stops
 		const index = Number.parseInt(datasetIndex)
-		const value = mathClamp(numberSafe(target.valueAsNumber), 0, 100)
+		const value = Math_clamp(safeNumber(target.valueAsNumber), 0, 100)
 		const input = sizeInputRefs[index as unknown as number]
 		const stopGradient = colorStopList[index as unknown as number]
 		if (input) {
@@ -564,7 +564,7 @@ function _initEvents(): void {
 	function controlProperties(): void {
 		_ctrlProp_colorSpaceRef.addEventListener('change', () => {
 			const value = _ctrlProp_colorSpaceRef.value as PolarColorSpace
-			if (!validEnumValue(value, PolarColorSpace)) {return}
+			if (!isValidEnumValue(value, PolarColorSpace)) {return}
 
 			updateGradient(v => ({...v, colorMethod: value}))
 			_updateGradientControlView(false)
@@ -572,7 +572,7 @@ function _initEvents(): void {
 
 		_ctrlProp_typeRef.addEventListener('change', () => {
 			const value = _ctrlProp_typeRef.value as GradientType
-			if (!validEnumValue(value, GradientType)) {return}
+			if (!isValidEnumValue(value, GradientType)) {return}
 
 			updateGradient(v => {
 				switch (value) {
@@ -601,7 +601,7 @@ function _initEvents(): void {
 
 		_ctrlProp_radialShapeRef.addEventListener('change', () => {
 			const value = _ctrlProp_radialShapeRef.value as RadialGradientShape
-			if (!validEnumValue(value, RadialGradientShape)) {return}
+			if (!isValidEnumValue(value, RadialGradientShape)) {return}
 
 			updateGradient(v => ({...v, shape: value}))
 			_updateGradientControlView(false)
@@ -609,7 +609,7 @@ function _initEvents(): void {
 
 		_ctrlProp_hueInterpolationRef.addEventListener('change', () => {
 			const value = _ctrlProp_hueInterpolationRef.value as HueInterpolationMethod
-			if (!validEnumValue(value, HueInterpolationMethod)) {return}
+			if (!isValidEnumValue(value, HueInterpolationMethod)) {return}
 
 			updateGradient(v => ({...v, hueMethod: value}))
 			_updateGradientControlView(false)
@@ -620,32 +620,32 @@ function _initEvents(): void {
 		})
 
 		_ctrlProp_positionXRef.addEventListener('input', () => {
-			const value = numberSafe(Number.parseFloat(_ctrlProp_positionXRef.value))
+			const value = safeNumber(Number.parseFloat(_ctrlProp_positionXRef.value))
 			updateGradient(v => ({...v, positionX: value}))
 		})
 
 		_ctrlProp_positionYRef.addEventListener('input', () => {
-			const value = numberSafe(Number.parseFloat(_ctrlProp_positionYRef.value))
+			const value = safeNumber(Number.parseFloat(_ctrlProp_positionYRef.value))
 			updateGradient(v => ({...v, positionY: value}))
 		})
 
 		_ctrlProp_widthRef.addEventListener('input', () => {
-			const value = numberSafe(Number.parseFloat(_ctrlProp_widthRef.value))
+			const value = safeNumber(Number.parseFloat(_ctrlProp_widthRef.value))
 			updateGradient(v => ({...v, width: value}))
 		})
 
 		_ctrlProp_heightRef.addEventListener('input', () => {
-			const value = numberSafe(Number.parseFloat(_ctrlProp_heightRef.value))
+			const value = safeNumber(Number.parseFloat(_ctrlProp_heightRef.value))
 			updateGradient(v => ({...v, height: value}))
 		})
 
 		_ctrlProp_sizeRef.addEventListener('input', () => {
-			const value = numberSafe(Number.parseFloat(_ctrlProp_sizeRef.value))
+			const value = safeNumber(Number.parseFloat(_ctrlProp_sizeRef.value))
 			updateGradient(v => ({...v, size: value}))
 		})
 
 		_ctrlProp_angleRef.addEventListener('input', () => {
-			const value = numberSafe(Number.parseFloat(_ctrlProp_angleRef.value))
+			const value = safeNumber(Number.parseFloat(_ctrlProp_angleRef.value))
 			updateGradient(v => ({...v, angle: value}))
 		})
 	}
@@ -777,17 +777,17 @@ function _initEvents(): void {
 	function init(): void {
 		_controlPopoverRef.addEventListener('click', (ev) => {
 			const buttonRef = document.activeElement as HTMLButtonElement
-			if (!elementValidTarget(_gradientBodyRef, buttonRef)) {return}
+			if (!isTargetValidElement(_gradientBodyRef, buttonRef)) {return}
 
 			const command = buttonRef.dataset.command as Commands
-			if (!command || !validEnumValue(command, Commands)) {return}
+			if (!command || !isValidEnumValue(command, Commands)) {return}
 
 			const stops = GradientStore.value.selected.value.stops
 
 			const getButtonId = () => {
 				let id = buttonRef.id
 				if (!id) {
-					buttonRef.id = (id = createId())
+					buttonRef.id = (id = createElementId())
 				}
 				return id
 			}
@@ -877,15 +877,15 @@ function _initEvents(): void {
 
 		_gradientBodyRef.addEventListener('click', (ev) => {
 			const buttonRef = document.activeElement as HTMLButtonElement
-			if (!elementValidTarget(_gradientBodyRef, buttonRef)) {return}
+			if (!isTargetValidElement(_gradientBodyRef, buttonRef)) {return}
 
 			const command = buttonRef.dataset.command as Commands
-			if (!command || !validEnumValue(command, Commands)) {return}
+			if (!command || !isValidEnumValue(command, Commands)) {return}
 
 			const getButtonId = () => {
 				let id = buttonRef.id
 				if (!id) {
-					buttonRef.id = (id = createId())
+					buttonRef.id = (id = createElementId())
 				}
 
 				return id

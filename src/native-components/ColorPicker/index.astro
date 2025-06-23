@@ -1,5 +1,5 @@
 ---
-import { attrClassList } from '@/utils/attributes'
+import { joinClassList } from '@/utils/attributes'
 import { IconCodes } from '@/enums/icons'
 
 import Icon from '@/native-components/Icon/index.astro'
@@ -60,36 +60,36 @@ const {'class': swapIconClass, IconCode: swapIconCode = IconCodes.chevronUpDown,
 ---
 
 <Popover
-	class={attrClassList(ColorPickerClasses.colorpicker)}
+	class={joinClassList(ColorPickerClasses.colorpicker)}
 	data-c-colorpicker-value={ColorPickerValue}
 	data-c-colorpicker-colorspace={ColorPickerColorSpace}
 	data-c-colorpicker-disabled-opacity={ColorPickerDisabledOpacity? '' : undefined}
 	data-c-colorpicker-hueonly={ColorPickerHueOnly? '' : undefined}
 	{...other}>
 	<div
-		class={attrClassList(ColorPickerClasses.rect, rectClass)}
+		class={joinClassList(ColorPickerClasses.rect, rectClass)}
 		tabindex={rectTabindex}
 		draggable={rectDraggable}
 		{...rectOther}
 	/>
 	<div
-		class={attrClassList(ColorPickerClasses.options, optionsClass)}
+		class={joinClassList(ColorPickerClasses.options, optionsClass)}
 		{...optionsOther}>
 		<div
-			class={attrClassList(ColorPickerClasses.preview, previewClass)}
+			class={joinClassList(ColorPickerClasses.preview, previewClass)}
 			{...previewOther}
 		/>
 		<IconButton
-			class={attrClassList(ColorPickerClasses.eyedropper, eyeDropperClass)}
+			class={joinClassList(ColorPickerClasses.eyedropper, eyeDropperClass)}
 			IconButtonCode={eyeDropperIcon}
 			ButtonVariant={eyeDropperVariant}
 			{...eyeDropperOther}
 		/>
 		<div
-			class={attrClassList(ColorPickerClasses.slider, sliderClass)}
+			class={joinClassList(ColorPickerClasses.slider, sliderClass)}
 			{...sliderOther}>
 			<input
-				class={attrClassList(ColorPickerClasses.sliderHue, sliderHueClass)}
+				class={joinClassList(ColorPickerClasses.sliderHue, sliderHueClass)}
 				name={sliderHueName}
 				type={sliderHueType}
 				min={sliderHueMin}
@@ -97,7 +97,7 @@ const {'class': swapIconClass, IconCode: swapIconCode = IconCodes.chevronUpDown,
 				{...sliderHueOther}
 			/>
 			<input
-				class={attrClassList(ColorPickerClasses.sliderOpacity, sliderOpacityClass)}
+				class={joinClassList(ColorPickerClasses.sliderOpacity, sliderOpacityClass)}
 				name={sliderOpacityName}
 				type={sliderOpacityType}
 				min={sliderOpacityMin}
@@ -107,47 +107,47 @@ const {'class': swapIconClass, IconCode: swapIconCode = IconCodes.chevronUpDown,
 		</div>
 	</div>
 	<div
-		class={attrClassList(ColorPickerClasses.input, inputClass)}
+		class={joinClassList(ColorPickerClasses.input, inputClass)}
 		{...inputOther}>
 		<div
-			class={attrClassList(ColorPickerClasses.label, labelClass)}
+			class={joinClassList(ColorPickerClasses.label, labelClass)}
 			{...labelOther}>
 			<label
-				class={attrClassList(ColorPickerClasses.labelColor, labelColorClass)}
+				class={joinClassList(ColorPickerClasses.labelColor, labelColorClass)}
 				{...labelColorOther}>
 				HEX:
 			</label>
 			<label
-				class={attrClassList(ColorPickerClasses.labelOpacity, labelOpacityClass)}
+				class={joinClassList(ColorPickerClasses.labelOpacity, labelOpacityClass)}
 				{...labelOpacityOther}>
 				Opacity:
 			</label>
 		</div>
 		<div
-			class={attrClassList(ColorPickerClasses.textfield, textfieldClass)}
+			class={joinClassList(ColorPickerClasses.textfield, textfieldClass)}
 			{...textfieldOther}>
 			<TextField
-				class={attrClassList(ColorPickerClasses.textfieldColor, textfieldColorClass)}
+				class={joinClassList(ColorPickerClasses.textfieldColor, textfieldColorClass)}
 				{...textfieldColorOther}>
 				<TextFieldButton
 					slot="trailing"
-					class={attrClassList(ColorPickerClasses.swap, swapClass)}
+					class={joinClassList(ColorPickerClasses.swap, swapClass)}
 					{...swapOther}>
 					<Icon
 						IconCode={swapIconCode}
-						class={attrClassList(ColorPickerClasses.swapIcon, swapIconClass)}
+						class={joinClassList(ColorPickerClasses.swapIcon, swapIconClass)}
 						{...swapIconOther}
 					/>
 				</TextFieldButton>
 			</TextField>
 			<TextField
-				class={attrClassList(ColorPickerClasses.textfieldOpacity, textfieldOpacityClass)}
+				class={joinClassList(ColorPickerClasses.textfieldOpacity, textfieldOpacityClass)}
 				{...textfieldOpacityOther}
 			/>
 		</div>
 	</div>
 	<div
-		class={attrClassList(ColorPickerClasses.content, contentClass)}
+		class={joinClassList(ColorPickerClasses.content, contentClass)}
 		{...contentOther}>
 		<slot/>
 	</div>

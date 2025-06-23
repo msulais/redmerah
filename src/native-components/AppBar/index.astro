@@ -1,5 +1,5 @@
 ---
-import { attrClassList } from '@/utils/attributes'
+import { joinClassList } from '@/utils/attributes'
 
 import {
 	AppBarClasses,
@@ -25,17 +25,17 @@ const {'class': trailingClass, ...trailingOther} = AppTrailingAttr
 const Dynamic = AppTagName as 'header'
 ---
 <Dynamic
-	class={attrClassList(AppBarClasses.appbar, className)}
+	class={joinClassList(AppBarClasses.appbar, className)}
 	{...other}>
 	{Astro.slots.has('leading') &&
-		<div class={attrClassList(AppBarClasses.leading, leadingClass)} {...leadingOther}>
+		<div class={joinClassList(AppBarClasses.leading, leadingClass)} {...leadingOther}>
 			<slot name='leading'/>
 		</div>
 	}
-	<div class={attrClassList(AppBarClasses.content, contentClass)} {...contentOther}>
+	<div class={joinClassList(AppBarClasses.content, contentClass)} {...contentOther}>
 		{Astro.slots.has('headline') &&
 			<h2
-				class={attrClassList(AppBarClasses.headline, headingClass)}
+				class={joinClassList(AppBarClasses.headline, headingClass)}
 				{...headingOther}>
 				<slot name='headline'/>
 			</h2>
@@ -43,7 +43,7 @@ const Dynamic = AppTagName as 'header'
 		<slot />
 	</div>
 	{Astro.slots.has('trailing') &&
-		<div class={attrClassList(AppBarClasses.trailing, trailingClass)} {...trailingOther}>
+		<div class={joinClassList(AppBarClasses.trailing, trailingClass)} {...trailingOther}>
 			<slot name='trailing'/>
 		</div>
 	}

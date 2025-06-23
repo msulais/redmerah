@@ -1,7 +1,7 @@
-import { stringCount, stringReverse } from "@/utils/string"
+import { countString, reverseString } from "@/utils/string"
 import { DIVISION_CHAR, FUNCTION_REGEX, MULTIPLY_CHAR, NUMBER_REGEX } from "../_shared/_constant"
 import { SettingsStore } from "./_settings"
-import { mathACot, mathACotH, mathACsc, mathACscH, mathASec, mathASecH, mathCot, mathCotH, mathCsc, mathCscH, mathSec, mathSecH } from "@/utils/math"
+import { Math_acot, Math_acoth, Math_acsc, Math_acsch, Math_asec, Math_asech, Math_cot, Math_coth, Math_csc, Math_csch, Math_sec, Math_sech } from "@/utils/math"
 import { numberToRealDigits } from "@/utils/number"
 import { AngleUnits, ConverterUnit, TemperatureUnits } from "../_shared/_units"
 import { NavigationStore } from "./_navigation"
@@ -10,8 +10,8 @@ import { ConverterType, Pages, ScientificAngleType } from "../_shared/_enums"
 
 export function repairInput(input: string): string {
 	const settings = SettingsStore.value
-	const openBracketCount = stringCount(input, /\(/g)
-	const closeBracketCount = stringCount(input, /\)/g)
+	const openBracketCount = countString(input, /\(/g)
+	const closeBracketCount = countString(input, /\)/g)
 
 	// '234))' => '((234))'
 	if (openBracketCount < closeBracketCount) {
@@ -195,27 +195,27 @@ export function calculate(input: string): string {
 					case 'sin': parsedValue = Math.sin(angleToRadian(parsedValue)); break
 					case 'cos': parsedValue = Math.cos(angleToRadian(parsedValue)); break
 					case 'tan': parsedValue = Math.tan(angleToRadian(parsedValue)); break
-					case 'csc': parsedValue = mathCsc(angleToRadian(parsedValue)); break
-					case 'sec': parsedValue = mathSec(angleToRadian(parsedValue)); break
-					case 'cot': parsedValue = mathCot(angleToRadian(parsedValue)); break
+					case 'csc': parsedValue = Math_csc(angleToRadian(parsedValue)); break
+					case 'sec': parsedValue = Math_sec(angleToRadian(parsedValue)); break
+					case 'cot': parsedValue = Math_cot(angleToRadian(parsedValue)); break
 					case 'sinh': parsedValue = Math.sinh(angleToRadian(parsedValue)); break
 					case 'cosh': parsedValue = Math.cosh(angleToRadian(parsedValue)); break
 					case 'tanh': parsedValue = Math.tanh(angleToRadian(parsedValue)); break
-					case 'csch': parsedValue = mathCscH(angleToRadian(parsedValue)); break
-					case 'sech': parsedValue = mathSecH(angleToRadian(parsedValue)); break
-					case 'coth': parsedValue = mathCotH(angleToRadian(parsedValue)); break
+					case 'csch': parsedValue = Math_csch(angleToRadian(parsedValue)); break
+					case 'sech': parsedValue = Math_sech(angleToRadian(parsedValue)); break
+					case 'coth': parsedValue = Math_coth(angleToRadian(parsedValue)); break
 					case 'asin': parsedValue = radianToAngle(Math.asin(parsedValue)); break
 					case 'acos': parsedValue = radianToAngle(Math.acos(parsedValue)); break
 					case 'atan': parsedValue = radianToAngle(Math.atan(parsedValue)); break
-					case 'acsc': parsedValue = radianToAngle(mathACsc(parsedValue)); break
-					case 'asec': parsedValue = radianToAngle(mathASec(parsedValue)); break
-					case 'acot': parsedValue = radianToAngle(mathACot(parsedValue)); break
+					case 'acsc': parsedValue = radianToAngle(Math_acsc(parsedValue)); break
+					case 'asec': parsedValue = radianToAngle(Math_asec(parsedValue)); break
+					case 'acot': parsedValue = radianToAngle(Math_acot(parsedValue)); break
 					case 'asinh': parsedValue = radianToAngle(Math.asinh(parsedValue)); break
 					case 'acosh': parsedValue = radianToAngle(Math.acosh(parsedValue)); break
 					case 'atanh': parsedValue = radianToAngle(Math.atanh(parsedValue)); break
-					case 'acsch': parsedValue = radianToAngle(mathACscH(parsedValue)); break
-					case 'asech': parsedValue = radianToAngle(mathASecH(parsedValue)); break
-					case 'acoth': parsedValue = radianToAngle(mathACotH(parsedValue)); break
+					case 'acsch': parsedValue = radianToAngle(Math_acsch(parsedValue)); break
+					case 'asech': parsedValue = radianToAngle(Math_asech(parsedValue)); break
+					case 'acoth': parsedValue = radianToAngle(Math_acoth(parsedValue)); break
 					}
 					return numberToRealDigits(parsedValue)
 				})
@@ -272,18 +272,18 @@ export function calculate(input: string): string {
 			const match = input.match(expRegex)
 			if (match) {
 				hasOperation = true
-				input = stringReverse(input)
+				input = reverseString(input)
 
 				while (expReverseRegex.test(input)) {
 					input = input.replace(
 						expReverseRegex,
-						(_, num2, num1) => stringReverse(numberToRealDigits(Math.pow(
-							Number.parseFloat(stringReverse(num1)),
-							Number.parseFloat(stringReverse(num2))
+						(_, num2, num1) => reverseString(numberToRealDigits(Math.pow(
+							Number.parseFloat(reverseString(num1)),
+							Number.parseFloat(reverseString(num2))
 						)))
 					)
 				}
-				input = stringReverse(input)
+				input = reverseString(input)
 			}
 
 			// division & multiplication & modulus operation

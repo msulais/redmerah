@@ -1,5 +1,5 @@
 ---
-import { attrClassList } from '@/utils/attributes'
+import { joinClassList } from '@/utils/attributes'
 
 import {
 	type LinkButtonProps,
@@ -20,7 +20,7 @@ const {
 } = Astro.props
 ---
 <a
-	class={attrClassList(ButtonClasses.button, className)}
+	class={joinClassList(ButtonClasses.button, className)}
 	data-c-button-variant={LinkButtonVariant}
 	data-c-button-focused={LinkButtonFocused? '' : undefined}
 	target={target ?? (LinkButtonNewTab? '_blank' : undefined)}

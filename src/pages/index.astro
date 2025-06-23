@@ -2,7 +2,7 @@
 import type { HEXColor } from '@/types/color'
 import { RoutesLinks } from '@/enums/links'
 import { APPS } from '@/constants/apps'
-import { colorGeneratePalette } from '@/utils/color'
+import { generateColorPalette } from '@/utils/color'
 import { ICON_ARROW_RIGHT, ICON_DATABASE_PERSON, ICON_OPEN_FOLDER, ICON_SETTINGS_COG_MULTIPLE, ICON_SPARKLE } from '@/constants/icons'
 
 import Html from '@/layouts/Html/index.astro'
@@ -33,7 +33,7 @@ const features = [
 ]
 
 function color_app_background(color: HEXColor): string {
-	const theme = colorGeneratePalette(color)
+	const theme = generateColorPalette(color)
 	return `--color-accent-light:${theme.color};--color-accent-dark:${theme.colorDark};`
 }
 ---

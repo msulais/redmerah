@@ -1,7 +1,7 @@
 import { createContext, createEffect, createSignal, mergeProps, Show, splitProps, useContext, type Accessor, type JSX, type ParentComponent } from "solid-js"
 import { mergeRefs } from "@solid-primitives/refs"
 
-import { attrSetIfExist, attrClassList } from "@/utils/attributes"
+import { setAttrIfExist, joinClassList } from "@/utils/attributes"
 import { eventCall } from "@/utils/event"
 import { ICON_CHEVRON_DOWN } from "@/constants/icons"
 import { AnimationEffectTiming } from "@/enums/animation"
@@ -38,8 +38,8 @@ const ExpanderHeader: ParentComponent<ExpanderHeaderProps> = ($props) => {
 	const context = useContext(ExpanderContext)
 
 	return (<List
-		data-c-open={attrSetIfExist(context?.isOpen())}
-		data-c-variant={attrSetIfExist(context?.variant(), context != null)}
+		data-c-open={setAttrIfExist(context?.isOpen())}
+		data-c-variant={setAttrIfExist(context?.variant(), context != null)}
 		c:trailing={<>
 			{props['c:trailing']}
 			<Show when={props['c:useExpandIcon']}>
@@ -51,7 +51,7 @@ const ExpanderHeader: ParentComponent<ExpanderHeaderProps> = ($props) => {
 					component="div"
 					c:code={ICON_CHEVRON_DOWN}
 					class="c-expander-icon"
-					data-c-open={attrSetIfExist(context?.isOpen())}
+					data-c-open={setAttrIfExist(context?.isOpen())}
 				/>
 			</Show>
 		</>}
@@ -72,8 +72,8 @@ const RawExpanderHeader: ParentComponent<RawExpanderHeaderProps> = ($props) => {
 	const context = useContext(ExpanderContext)
 
 	return (<RawList
-		data-c-open={attrSetIfExist(context?.isOpen())}
-		data-c-variant={attrSetIfExist(context?.variant(), context != null)}
+		data-c-open={setAttrIfExist(context?.isOpen())}
+		data-c-variant={setAttrIfExist(context?.variant(), context != null)}
 		c:trailing={<>
 			{props['c:trailing']}
 			<Show when={props['c:useExpandIcon']}>
@@ -85,7 +85,7 @@ const RawExpanderHeader: ParentComponent<RawExpanderHeaderProps> = ($props) => {
 					component="div"
 					c:code={ICON_CHEVRON_DOWN}
 					class="c-expander-icon"
-					data-c-open={attrSetIfExist(context?.isOpen())}
+					data-c-open={setAttrIfExist(context?.isOpen())}
 				/>
 			</Show>
 		</>}
@@ -126,7 +126,7 @@ const Expander: ParentComponent<ExpanderProps> = ($props) => {
 	})
 
 	return (<details
-		class={attrClassList('c-expander', props.class)}
+		class={joinClassList('c-expander', props.class)}
 		data-c-variant={props['c:variant']}
 		open={isOpen()}
 		{...other}>
@@ -136,7 +136,7 @@ const Expander: ParentComponent<ExpanderProps> = ($props) => {
 				variant: () => props['c:variant']
 			}}>
 			<summary
-				class={attrClassList('c-expander-header', headerProps.class)}
+				class={joinClassList('c-expander-header', headerProps.class)}
 				onClick={(ev) => {
 					eventCall(ev, headerProps.onClick)
 					ev.preventDefault()
@@ -199,9 +199,9 @@ const Expander: ParentComponent<ExpanderProps> = ($props) => {
 				{props['c:header']}
 			</summary>
 			<div
-				class={attrClassList('c-expander-body', bodyProps.class)}
+				class={joinClassList('c-expander-body', bodyProps.class)}
 				data-c-variant={props['c:variant']}
-				data-c-open={attrSetIfExist(isOpen())}
+				data-c-open={setAttrIfExist(isOpen())}
 				ref={mergeRefs(bodyProps.ref, r => contentRef = r)}
 				style={typeof bodyProps.style === 'string'? bodyProps.style : {
 					...(bodyProps.style ?? {}),

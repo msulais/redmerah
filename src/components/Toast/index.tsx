@@ -1,7 +1,7 @@
 import { type JSX, type ParentComponent, splitProps, children, onMount, onCleanup, Show, createMemo } from "solid-js"
 import { mergeRefs } from "@solid-primitives/refs"
 
-import { attrSetIfExist } from "@/utils/attributes"
+import { setAttrIfExist } from "@/utils/attributes"
 
 import List from "@/components/List"
 import Popover, { type PopoverProps, repositionPopover, closePopover, openPopover, isPopoverOpen as isToastOpen, PopoverPosition } from "@/components/Popover"
@@ -139,7 +139,7 @@ const Toast: ParentComponent<ToastProps> = ($props) => {
 			'c-toast': true,
 			...props.classList
 		}}
-		data-c-actions={attrSetIfExist(actions())}
+		data-c-actions={setAttrIfExist(actions())}
 		{...other}>
 		<List
 			c:leading={props['c:leading']}

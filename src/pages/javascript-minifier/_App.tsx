@@ -9,7 +9,7 @@ import { ObjectStoreKeys, ObjectStoreNames, type ObjectStoreLastInput, type Obje
 import { createStore } from "solid-js/store"
 import { Commands, TextTypes } from "./_enums"
 import { DEFAULT_JAVASCRIPT_INPUT_TEXT } from "./_javascript"
-import { fileDownload, fileOpen, fileReadAsText } from "@/utils/file"
+import { downloadFile, pickFile, readFileAsText } from "@/utils/file"
 import { removeSplashScreen } from "@/utils/splash"
 import { ICON_COPY, ICON_DOCUMENT_ERROR, ICON_SCAN_TEXT, ICON_WARNING } from "@/constants/icons"
 
@@ -116,7 +116,7 @@ const _: VoidComponent = () => {
 			updateOutput()
 			break
 		case Commands.openFile: {
-			fileOpen('text/javascript', true).then(async (files) => {
+			pickFile('text/javascript', true).then(async (files) => {
 				if (files == null || files.length == 0) {
 					openToast(toastNoFileSelectedRef)
 					return
@@ -128,7 +128,7 @@ const _: VoidComponent = () => {
 						if (i > 0) text += '\n\n'
 
 						const file = files[i]
-						text += await fileReadAsText(file)
+						text += await readFileAsText(file)
 					}
 				} catch {
 					openToast(toastErrorReadingFilesRef)
@@ -172,7 +172,7 @@ const _: VoidComponent = () => {
 				break
 			}
 
-			fileDownload(new Blob([text]), filename)
+			downloadFile(new Blob([text]), filename)
 			break
 		}
 		case Commands.updateSupportIE8: {

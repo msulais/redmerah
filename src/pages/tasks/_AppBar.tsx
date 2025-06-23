@@ -6,12 +6,12 @@ import { RootAttributes } from "@/enums/attributes"
 import { CornerData } from "@/enums/corner"
 import { LocalStorageKeys } from "@/enums/storage"
 import { ThemeData } from "@/enums/theme"
-import { attrSetIfExist, attrClassListModule } from "@/utils/attributes"
+import { setAttrIfExist, joinClassListModule } from "@/utils/attributes"
 import { DEFAULT_TASK_LIST, SIZE_SIDE_NAVIGATION_NONE, TASKS_PAGES } from "./_constants"
 import { RoutesLinks, ExternalLinks } from "@/enums/links"
-import { elementValidTarget } from "@/utils/element"
-import { validEnumValue } from "@/utils/object"
-import { numberIsNotDefined } from "@/utils/number"
+import { isTargetValidElement } from "@/utils/element"
+import { isValidEnumValue } from "@/utils/object"
+import { isNumberNotDefined } from "@/utils/number"
 import { timeWait } from "@/utils/time"
 import { AnimationData } from "@/enums/animation"
 import { APP_TASKS as app } from "@/constants/apps"
@@ -128,7 +128,7 @@ const _: VoidComponent<{
 
 	function initTheme(): void {
 		const theme = localStorage.getItem(LocalStorageKeys.platformTheme)
-		if (theme && validEnumValue(theme, ThemeData)) {
+		if (theme && isValidEnumValue(theme, ThemeData)) {
 			root.setAttribute(RootAttributes.theme, theme)
 			setTheme(theme as ThemeData)
 		}
@@ -136,7 +136,7 @@ const _: VoidComponent<{
 
 	function initCorner(): void {
 		const corner = localStorage.getItem(LocalStorageKeys.corner)
-		if (corner && validEnumValue(corner, CornerData)) {
+		if (corner && isValidEnumValue(corner, CornerData)) {
 			root.setAttribute(RootAttributes.corner, corner)
 			setCorner(corner as CornerData)
 		}
@@ -144,7 +144,7 @@ const _: VoidComponent<{
 
 	function initAnimation(): void {
 		const animation = localStorage.getItem(LocalStorageKeys.platformAnimation)
-		if (animation && validEnumValue(animation, AnimationData)) {
+		if (animation && isValidEnumValue(animation, AnimationData)) {
 			root.setAttribute(RootAttributes.animation, animation)
 			setAnimation(animation as AnimationData)
 		}
@@ -166,7 +166,7 @@ const _: VoidComponent<{
 			<Menu
 				onClick={(ev) => {
 					const button = document.activeElement!
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -249,7 +249,7 @@ const _: VoidComponent<{
 				}}
 				onClick={ev => {
 					const button = document.activeElement! as HTMLButtonElement
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -378,11 +378,11 @@ const _: VoidComponent<{
 		const buttonAppBar_searchId = createUniqueId()
 		return (<Tooltip>
 			<AppBar
-				data-search={attrSetIfExist(isSearching())}
-				classList={attrClassListModule(CSS.appbar)}
+				data-search={setAttrIfExist(isSearching())}
+				classList={joinClassListModule(CSS.appbar)}
 				onClick={ev => {
 					const button = document.activeElement! as HTMLButtonElement
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -412,7 +412,7 @@ const _: VoidComponent<{
 							: `${props.isSideNavigationExpanded? 'Shrink' : 'Expand'} navigation`
 						}
 						id={buttonAppBar_menuListId}
-						classList={attrClassListModule(CSSAnimation.btn_shrink_horizontal_icon)}
+						classList={joinClassListModule(CSSAnimation.btn_shrink_horizontal_icon)}
 						c:code={ICON_LINE_HORIZONTAL_3}
 					/>
 					<img alt={app.name + ' logo'} width={32} src={app.logoUrl} />
@@ -422,7 +422,7 @@ const _: VoidComponent<{
 					<IconButton
 						data-tooltip="Search tasks"
 						id={buttonAppBar_searchId}
-						classList={attrClassListModule(CSS.appbar_search_btn)}
+						classList={joinClassListModule(CSS.appbar_search_btn)}
 						c:code={ICON_SEARCH}
 					/>
 					<IconButton
@@ -434,7 +434,7 @@ const _: VoidComponent<{
 					<IconButton
 						data-tooltip="Settings"
 						id={buttonAppBar_menuSettingsId}
-						classList={attrClassListModule(CSSAnimation.btn_rotate_icon)}
+						classList={joinClassListModule(CSSAnimation.btn_rotate_icon)}
 						c:focused={isMenuSettingsOpen()}
 						c:code={ICON_SETTINGS}
 					/>
@@ -449,7 +449,7 @@ const _: VoidComponent<{
 							'c:onToggleOpen': isOpen => isSearchTextField_MenuOpen = isOpen,
 							onClick: async (ev) => {
 								const button = document.activeElement! as HTMLButtonElement
-								if (!elementValidTarget(
+								if (!isTargetValidElement(
 									ev.currentTarget,
 									button,
 								)) return
@@ -458,7 +458,7 @@ const _: VoidComponent<{
 								if (!dataListId) return
 
 								const listId = Number.parseFloat(dataListId)
-								if (numberIsNotDefined(listId)) return
+								if (isNumberNotDefined(listId)) return
 
 								searchTextFieldRef.blur()
 								if (isSearchTextField_MenuOpen) {
@@ -519,7 +519,7 @@ const _: VoidComponent<{
 		return (<Drawer
 			onClick={ev => {
 				const button = document.activeElement! as HTMLButtonElement
-				if (!elementValidTarget(
+				if (!isTargetValidElement(
 					ev.currentTarget,
 					button,
 				)) return
@@ -546,7 +546,7 @@ const _: VoidComponent<{
 					const dataListId = dataset.listId
 					if (dataListId) {
 						const listId = Number.parseFloat(dataListId)
-						if (numberIsNotDefined(listId)) return
+						if (isNumberNotDefined(listId)) return
 
 						closeDrawer(drawerNavigationRef)
 						if (props.page == listId) return
@@ -560,7 +560,7 @@ const _: VoidComponent<{
 				<IconButton
 					id={buttonDrawer_closeId}
 					data-tooltip="Close navigation"
-					classList={attrClassListModule(CSSAnimation.btn_shrink_horizontal_icon)}
+					classList={joinClassListModule(CSSAnimation.btn_shrink_horizontal_icon)}
 					c:code={ICON_LINE_HORIZONTAL_3}
 				/>
 			</Tooltip>}

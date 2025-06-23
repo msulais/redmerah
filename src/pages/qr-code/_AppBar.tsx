@@ -6,11 +6,11 @@ import { CornerData } from "@/enums/corner"
 import { LocalStorageKeys } from "@/enums/storage"
 import { ThemeData } from "@/enums/theme"
 import { RoutesLinks, ExternalLinks } from "@/enums/links"
-import { numberSafe } from "@/utils/number"
+import { safeNumber } from "@/utils/number"
 import { AnimationData } from "@/enums/animation"
 import { APP_QR_CODE as app } from "@/constants/apps"
-import { validEnumValue } from "@/utils/object"
-import { elementValidTarget } from "@/utils/element"
+import { isValidEnumValue } from "@/utils/object"
+import { isTargetValidElement } from "@/utils/element"
 import { Commands, CopyFileType, DownloadFileType, EncodingMode, ErrorCorrectionLevel, Pages } from "./_enums"
 import { ICON_APPS, ICON_ARROW_DOWNLOAD, ICON_CHAT, ICON_CIRCLE, ICON_COPY, ICON_ERROR_CIRCLE_SETTINGS, ICON_GIFT, ICON_IMAGE, ICON_IMAGE_CIRCLE, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_MAXIMIZE, ICON_MORE_VERTICAL, ICON_NUMBER_ROW, ICON_PLAY_CIRCLE_HINT, ICON_RECEIPT, ICON_SETTINGS, ICON_SHARE_ANDROID, ICON_SHIELD_CHECKMARK, ICON_SQUARE, ICON_TEARDROP_BOTTOM_RIGHT, ICON_TRANSLATE, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from "@/constants/icons"
 import logoRedmerah from '@/assets/images/logos/redmerah-logo.svg'
@@ -86,7 +86,7 @@ const _: VoidComponent<{
 	function initTheme(): void {
 		const theme = localStorage.getItem(LocalStorageKeys.platformTheme)
 
-		if (theme && validEnumValue(theme, ThemeData)) {
+		if (theme && isValidEnumValue(theme, ThemeData)) {
 			root.setAttribute(RootAttributes.theme, theme)
 			setTheme(theme as ThemeData)
 		}
@@ -95,7 +95,7 @@ const _: VoidComponent<{
 	function initCorner(): void {
 		const corner = localStorage.getItem(LocalStorageKeys.corner)
 
-		if (corner && validEnumValue(corner, CornerData)) {
+		if (corner && isValidEnumValue(corner, CornerData)) {
 			root.setAttribute(RootAttributes.corner, corner)
 			setCorner(corner as CornerData)
 		}
@@ -103,7 +103,7 @@ const _: VoidComponent<{
 
 	function initAnimation(): void {
 		const animation = localStorage.getItem(LocalStorageKeys.platformAnimation)
-		if (animation && validEnumValue(animation, AnimationData)) {
+		if (animation && isValidEnumValue(animation, AnimationData)) {
 			root.setAttribute(RootAttributes.animation, animation)
 			setAnimation(animation as AnimationData)
 		}
@@ -127,7 +127,7 @@ const _: VoidComponent<{
 			<Menu
 				onClick={(ev) => {
 					const button = document.activeElement!
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button
 					)) return
@@ -197,7 +197,7 @@ const _: VoidComponent<{
 				c:onToggleOpen={(v) => setIsMenuSettingsOpen(v)}
 				onClick={ev => {
 					const button = document.activeElement! as HTMLButtonElement
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button
 					)) return
@@ -223,22 +223,22 @@ const _: VoidComponent<{
 						const dataset = button.dataset
 						const dataTheme = dataset.theme
 						if (dataTheme
-							&& validEnumValue(dataTheme, ThemeData)
+							&& isValidEnumValue(dataTheme, ThemeData)
 						) return updateTheme(dataTheme as ThemeData)
 
 						const dataCorner = dataset.corner
 						if (dataCorner
-							&& validEnumValue(dataCorner, CornerData)
+							&& isValidEnumValue(dataCorner, CornerData)
 						) return updateCorner(dataCorner as CornerData)
 
 						const dataEcl = dataset.ecl
 						if (dataEcl
-							&& validEnumValue(dataEcl, ErrorCorrectionLevel)
+							&& isValidEnumValue(dataEcl, ErrorCorrectionLevel)
 						) return updateErrorCorrectionlevel(dataEcl as ErrorCorrectionLevel)
 
 						const dataEncoding = dataset.encoding
 						if (dataEncoding
-							&& validEnumValue(dataEncoding, EncodingMode)
+							&& isValidEnumValue(dataEncoding, EncodingMode)
 						) return updateEncodingMode(dataEncoding as EncodingMode)
 					}
 				}}
@@ -248,13 +248,13 @@ const _: VoidComponent<{
 					case inputSettings_marginId:
 						command(
 							Commands.updateSettingsMargin,
-							numberSafe(target.valueAsNumber, settings().margin)
+							safeNumber(target.valueAsNumber, settings().margin)
 						)
 						break
 					case inputSettings_versionId:
 						command(
 							Commands.updateSettingsVersion,
-							numberSafe(target.valueAsNumber, settings().version ?? 1)
+							safeNumber(target.valueAsNumber, settings().version ?? 1)
 						)
 						break
 					}
@@ -467,7 +467,7 @@ const _: VoidComponent<{
 				c:onToggleOpen={v => setIsMenuMoreActionsOpen(v)}
 				onClick={ev => {
 					const button = document.activeElement! as HTMLButtonElement
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -475,7 +475,7 @@ const _: VoidComponent<{
 					const dataset = button.dataset
 					const dataDownload = dataset.download
 					if (dataDownload
-						&& validEnumValue(dataDownload, DownloadFileType)
+						&& isValidEnumValue(dataDownload, DownloadFileType)
 					) {
 						command(Commands.downloadQRCode, dataDownload as DownloadFileType)
 						closeMenu(menuMoreActionsRef)
@@ -484,7 +484,7 @@ const _: VoidComponent<{
 
 					const dataCopy = dataset.copy
 					if (dataCopy
-						&& validEnumValue(dataCopy, CopyFileType)
+						&& isValidEnumValue(dataCopy, CopyFileType)
 					) {
 						command(Commands.copyQRCode, dataCopy as CopyFileType)
 						closeMenu(menuMoreActionsRef)
@@ -560,7 +560,7 @@ const _: VoidComponent<{
 			c:headline={app.name}
 			onClick={ev => {
 				const button = document.activeElement! as HTMLButtonElement
-				if (!elementValidTarget(
+				if (!isTargetValidElement(
 					ev.currentTarget,
 					button,
 				)) return

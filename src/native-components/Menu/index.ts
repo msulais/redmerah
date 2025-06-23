@@ -30,7 +30,7 @@ import {
 } from "@/native-components/Button"
 import { createIconRef, type IconElement, type IconProps } from "@/native-components/Icon"
 import { AppCSSColors } from "@/enums/app-data"
-import { createId } from "@/utils/ids"
+import { createElementId } from "@/utils/ids"
 import { IconCodes } from "@/enums/icons"
 
 type MenuProps = PopoverProps & {
@@ -249,7 +249,7 @@ function _initSubMenuItemRef(subMenuItemRef: SubMenuItemElement): void {
 
 			let id = subMenuItemRef.id
 			if (!id) {
-				id = createId()
+				id = createElementId()
 				subMenuItemRef.id = id
 			}
 

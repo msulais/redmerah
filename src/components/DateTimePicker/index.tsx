@@ -2,11 +2,11 @@ import { Transition } from 'solid-transition-group'
 import { createEffect, createMemo, createSignal, createUniqueId, For, Match, mergeProps, Show, splitProps, Switch, type ParentComponent, type VoidComponent } from 'solid-js'
 import { mergeRefs } from '@solid-primitives/refs'
 
-import { dateWeekdayNames, dateOutRangeYMD, dateIsSameYMD, dateMonthNames, dateOutRangeYM, dateIsSameYM, dateOutRangeY, dateIsSameY, dateInRangeYM } from '@/utils/datetime'
+import { localWeekdayNames, isDateOutRange_YMD, isDateEqual_YMD, localMonthNames, isDateOutRange_YM, isDateEqual_YM, isDateOutRange_Y, isDateEqual_Y, isDateInRange_YM } from '@/utils/datetime'
 import { AnimationEffectTiming } from '@/enums/animation'
 import { eventCall } from '@/utils/event'
-import { elementValidTarget } from '@/utils/element'
-import { numberSafe } from '@/utils/number'
+import { isTargetValidElement } from '@/utils/element'
+import { safeNumber } from '@/utils/number'
 import { ICON_CALENDAR_DATE, ICON_CHEVRON_LEFT, ICON_CHEVRON_RIGHT } from '@/constants/icons'
 import { isAnimationAllowed } from '@/utils/animation'
 
@@ -114,7 +114,7 @@ const DateTimePickerBody: ParentComponent<{
 	const DaysDate: VoidComponent = () => {
 		return (<div style="display: contents">
 			<div class="c-datetime-picker-days-name">
-				<For each={dateWeekdayNames(props.locales)}>{d => <p>{d.substring(0, 3)}</p>}</For>
+				<For each={localWeekdayNames(props.locales)}>{d => <p>{d.substring(0, 3)}</p>}</For>
 			</div>
 			<FocusableGroup2D
 				c:columnCount={7}
@@ -122,13 +122,13 @@ const DateTimePickerBody: ParentComponent<{
 				ref={divDateRef}
 				onClick={(ev) => {
 					const button = document.activeElement! as HTMLButtonElement
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 						el => el.tagName == 'BUTTON'
 					)) return
 
-					const index = numberSafe(Number.parseInt(button.dataset.index!))
+					const index = safeNumber(Number.parseInt(button.dataset.index!))
 					const date = new Date(
 						viewDate().getFullYear(),
 						viewDate().getMonth(),
@@ -149,10 +149,10 @@ const DateTimePickerBody: ParentComponent<{
 					))
 					return (<SquareButton
 						data-index={i()}
-						disabled={dateOutRangeYMD(date(), props.firstDate, props.lastDate)}
-						c:variant={dateIsSameYMD(date(), value())
+						disabled={isDateOutRange_YMD(date(), props.firstDate, props.lastDate)}
+						c:variant={isDateEqual_YMD(date(), value())
 							? ButtonVariant.filled
-							: dateIsSameYMD(date(), new Date())
+							: isDateEqual_YMD(date(), new Date())
 								? ButtonVariant.outlined
 								: undefined
 						}>
@@ -169,13 +169,13 @@ const DateTimePickerBody: ParentComponent<{
 			class="c-datetime-picker-month"
 			onClick={ev => {
 				const button = document.activeElement! as HTMLButtonElement
-				if (!elementValidTarget(
+				if (!isTargetValidElement(
 					ev.currentTarget,
 					button,
 					el => el.tagName == 'BUTTON'
 				)) return
 
-				const index = numberSafe(Number.parseInt(button.dataset.index!))
+				const index = safeNumber(Number.parseInt(button.dataset.index!))
 				setViewDate(new Date(viewDate().getFullYear(), index))
 				setDateOption(DatePickerOption.day)
 				updateDateView()
@@ -190,14 +190,14 @@ const DateTimePickerBody: ParentComponent<{
 					}
 				})
 			}}>
-			<For each={dateMonthNames(props.locales)}>{(m, i) => {
+			<For each={localMonthNames(props.locales)}>{(m, i) => {
 				const date = createMemo(() => new Date(viewDate().getFullYear(), i()))
 				return (<Button
 					data-index={i()}
-					disabled={dateOutRangeYM(date(), props.firstDate, props.lastDate)}
-					c:variant={dateIsSameYM(date(), value())
+					disabled={isDateOutRange_YM(date(), props.firstDate, props.lastDate)}
+					c:variant={isDateEqual_YM(date(), value())
 						? ButtonVariant.filled
-						: dateIsSameYM(date(), new Date())
+						: isDateEqual_YM(date(), new Date())
 							? ButtonVariant.outlined
 							: undefined
 					}>{m}</Button>)
@@ -212,7 +212,7 @@ const DateTimePickerBody: ParentComponent<{
 			c:columnCount={4}
 			onClick={(ev) => {
 				const button = document.activeElement! as HTMLButtonElement
-				if (!elementValidTarget(
+				if (!isTargetValidElement(
 					ev.currentTarget,
 					button,
 					el => el.tagName == 'BUTTON'
@@ -221,7 +221,7 @@ const DateTimePickerBody: ParentComponent<{
 				let index: string | number | undefined = button.dataset.index
 				if (!index) return;
 
-				index = numberSafe(Number.parseInt(index))
+				index = safeNumber(Number.parseInt(index))
 				setViewDate(new Date(viewDate().getFullYear() + index, 0))
 				setDateOption(DatePickerOption.month)
 				updateDateView()
@@ -240,10 +240,10 @@ const DateTimePickerBody: ParentComponent<{
 				const date = createMemo(() => new Date(viewDate().getFullYear() + i(), 0))
 				return (<Button
 					data-index={i()}
-					disabled={dateOutRangeY(date(), props.firstDate, props.lastDate)}
-					c:variant={dateIsSameY(date(), value())
+					disabled={isDateOutRange_Y(date(), props.firstDate, props.lastDate)}
+					c:variant={isDateEqual_Y(date(), value())
 						? ButtonVariant.filled
-						: dateIsSameY(date(), new Date())
+						: isDateEqual_Y(date(), new Date())
 							? ButtonVariant.outlined
 							: undefined
 					}>
@@ -259,7 +259,7 @@ const DateTimePickerBody: ParentComponent<{
 			class="c-datetime-picker-header"
 			onClick={(ev) => {
 				const button = document.activeElement!
-				if (!elementValidTarget(
+				if (!isTargetValidElement(
 					ev.currentTarget,
 					button,
 					el => el.tagName === 'BUTTON')
@@ -303,11 +303,11 @@ const DateTimePickerBody: ParentComponent<{
 			</Button>
 			<Show when={
 				(
-					(dateOption() == DatePickerOption.day && !dateIsSameYM(viewDate(), value()))
-					|| (dateOption() == DatePickerOption.month && !dateIsSameY(viewDate(), value()))
-					|| (dateOption() == DatePickerOption.year && dateOutRangeY(value(), viewDate(), new Date(viewDate().getFullYear() + 15, 2, 3)))
+					(dateOption() == DatePickerOption.day && !isDateEqual_YM(viewDate(), value()))
+					|| (dateOption() == DatePickerOption.month && !isDateEqual_Y(viewDate(), value()))
+					|| (dateOption() == DatePickerOption.year && isDateOutRange_Y(value(), viewDate(), new Date(viewDate().getFullYear() + 15, 2, 3)))
 				)
-				&& dateInRangeYM(value(), props.firstDate, props.lastDate)}>
+				&& isDateInRange_YM(value(), props.firstDate, props.lastDate)}>
 				<IconButton
 					c:code={ICON_CALENDAR_DATE}
 					id={buttonSelectedId}
@@ -414,7 +414,7 @@ const DateTimePickerBody: ParentComponent<{
 			c:arrowOptions={{ left: 'prev', right: 'next' }}
 			onClick={(ev) => {
 				const button = document.activeElement!
-				if (!elementValidTarget(
+				if (!isTargetValidElement(
 					ev.currentTarget,
 					button,
 					el => el.tagName == 'BUTTON'

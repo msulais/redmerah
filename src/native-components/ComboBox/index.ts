@@ -1,4 +1,4 @@
-import { validEnumValue } from "@/utils/object"
+import { isValidEnumValue } from "@/utils/object"
 import { ButtonClasses } from "../Button"
 
 type ComboBoxProps = astroHTML.JSX.SelectHTMLAttributes & {
@@ -54,7 +54,7 @@ function updateComboBoxRef(comboBoxRef: ComboBoxElement, options?: ComboBoxUpdat
 	}
 
 	const variantOption = options?.ComboBoxVariant
-	if (variantOption && validEnumValue(variantOption, ComboBoxVariant)) {
+	if (variantOption && isValidEnumValue(variantOption, ComboBoxVariant)) {
 		comboBoxRef.setAttribute(ComboBoxAttributes.variant, variantOption)
 	}
 

@@ -1,5 +1,5 @@
 ---
-import { attrClassList } from '@/utils/attributes'
+import { joinClassList } from '@/utils/attributes'
 
 import {
 	type TextFieldProps,
@@ -20,16 +20,16 @@ const {'class': leadingClass , ...leadingOther } = TextFieldLeadingAttr
 const {'class': trailingClass, ...trailingOther} = TextFieldTrailingAttr
 ---
 
-<div class={attrClassList(TextFieldClasses.textfield, className)} {...other}>
-	<div class={attrClassList(TextFieldClasses.leading, leadingClass)} {...leadingOther}>
+<div class={joinClassList(TextFieldClasses.textfield, className)} {...other}>
+	<div class={joinClassList(TextFieldClasses.leading, leadingClass)} {...leadingOther}>
 		<slot name="leading"/>
 	</div>
 	<input
 		type={inputType}
-		class={attrClassList(TextFieldClasses.input, inputClass)}
+		class={joinClassList(TextFieldClasses.input, inputClass)}
 		{...inputOther}
 	/>
-	<div class={attrClassList(TextFieldClasses.trailing, trailingClass)} {...trailingOther}>
+	<div class={joinClassList(TextFieldClasses.trailing, trailingClass)} {...trailingOther}>
 		<slot name="trailing"/>
 	</div>
 </div>

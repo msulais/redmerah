@@ -1,5 +1,5 @@
 import type { HEXColor } from "@/types/color"
-import { colorHexToHsl, colorHexToRgb } from "@/utils/color"
+import { hexToHsl, hexToRgb } from "@/utils/color"
 import { ColorSpace, GradientType, HueInterpolationMethod, PolarColorSpace, RadialGradientShape, RectangularColorSpace } from "../_shared/_enums"
 import type { GradientItem } from "./_gradients"
 
@@ -11,7 +11,7 @@ export function convertColorByColorSpace(color: HEXColor, space: ColorSpace, kee
 	switch (space) {
 	case ColorSpace.hex: break
 	case ColorSpace.rgba:
-		const rgb = colorHexToRgb(color.substring(0, 7) as HEXColor)
+		const rgb = hexToRgb(color.substring(0, 7) as HEXColor)
 		return [
 			'rgb',
 			opacity < 1 || keepOpacity? 'a' : '',
@@ -23,7 +23,7 @@ export function convertColorByColorSpace(color: HEXColor, space: ColorSpace, kee
 			')'
 		].join('')
 	case ColorSpace.hsla:
-		const hsl = colorHexToHsl(color.substring(0, 7) as HEXColor)
+		const hsl = hexToHsl(color.substring(0, 7) as HEXColor)
 		return [
 			'hsl',
 			opacity < 1 || keepOpacity? 'a' : '',

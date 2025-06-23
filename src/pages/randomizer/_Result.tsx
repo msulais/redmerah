@@ -3,10 +3,10 @@ import { For, Match, Show, Switch, type VoidComponent, createMemo, createSelecto
 
 import type { HEXColor, HSLColor, RGBColor } from "@/types/color"
 import type { Result, Settings } from "./_types"
-import { colorHexToHsl, colorHexToRgb } from "@/utils/color"
+import { hexToHsl, hexToRgb } from "@/utils/color"
 import { RandomizerType, WordsRandomizerWordCase } from "./_enums"
 import { stringToTitleCase, stringToToggleCase } from "@/utils/string"
-import { attrSetIfExist } from "@/utils/attributes"
+import { setAttrIfExist } from "@/utils/attributes"
 
 import CSS from './_styles.module.scss'
 
@@ -14,8 +14,8 @@ const ColorItem: VoidComponent<{
 	hex: HEXColor
 }> = (props) => {
 	const hex = createMemo(() => props.hex)
-	const hsl = createMemo<HSLColor>(() => colorHexToHsl(hex()))
-	const rgb = createMemo<RGBColor>(() => colorHexToRgb(hex()))
+	const hsl = createMemo<HSLColor>(() => hexToHsl(hex()))
+	const rgb = createMemo<RGBColor>(() => hexToRgb(hex()))
 
 	return (<div style={{"background-color": hex()}}>
 		<code>
@@ -82,7 +82,7 @@ const _: VoidComponent<{
 			<Match when={randomizer() == RandomizerType.selection}>
 				<div class={CSS.result_selection}>
 					<For each={settings().selection.list.items}>{item =>
-						<div data-selected={attrSetIfExist(is_selected(item))}>
+						<div data-selected={setAttrIfExist(is_selected(item))}>
 							{ item }
 						</div>
 					}</For>

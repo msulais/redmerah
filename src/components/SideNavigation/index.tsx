@@ -1,6 +1,6 @@
 import { children, createContext, createMemo, mergeProps, Show, splitProps, useContext, type Accessor, type JSX, type ParentComponent, type VoidComponent } from "solid-js"
 
-import { attrSetIfExist, attrClassList } from "@/utils/attributes"
+import { setAttrIfExist, joinClassList } from "@/utils/attributes"
 import { AppCSSColors } from "@/enums/app-data"
 
 import Icon from "@/components/Icon"
@@ -112,8 +112,8 @@ const SideNavigation: ParentComponent<SideNavigationProps> = ($props) => {
 	}
 
 	return (<div
-		class={attrClassList('c-side-navigation', props.class)}
-		data-c-expanded={attrSetIfExist(props['c:expanded'])}
+		class={joinClassList('c-side-navigation', props.class)}
+		data-c-expanded={setAttrIfExist(props['c:expanded'])}
 		{...other}>
 		<SideNavigationContext.Provider
 			value={{expanded: () => props['c:expanded'] ?? true}}>

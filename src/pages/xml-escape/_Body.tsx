@@ -7,8 +7,8 @@ import { MIN_EDITOR_WIDTH } from "./_constants"
 
 import Button, { ButtonVariant } from "@/components/Button"
 import CSS from './_styles.module.scss'
-import { elementValidTarget } from "@/utils/element"
-import { attrSetIfExist } from "@/utils/attributes"
+import { isTargetValidElement } from "@/utils/element"
+import { setAttrIfExist } from "@/utils/attributes"
 
 enum InputViewOption {
 	unescape
@@ -117,7 +117,7 @@ const _: VoidComponent<{
 		class={CSS.body}
 		onClick={ev => {
 			const button = document.activeElement!
-			if (!elementValidTarget(
+			if (!isTargetValidElement(
 				ev.currentTarget,
 				button
 			)) return
@@ -159,8 +159,8 @@ const _: VoidComponent<{
 		}}>
 		<div
 			class={CSS.body_input}
-			data-hidden={attrSetIfExist(inputViewOption() === null)}
-			data-output-hidden={attrSetIfExist(outputViewOption() === null)}
+			data-hidden={setAttrIfExist(inputViewOption() === null)}
+			data-output-hidden={setAttrIfExist(outputViewOption() === null)}
 			style={{width: width() === null? undefined : width() + 'px'}}>
 			<div class={CSS.body_tabs}>
 				<InputTabButtons/>
@@ -176,11 +176,11 @@ const _: VoidComponent<{
 				value={props.unescapedText}
 				style={{"font-size": settings().fontSize + 'px'}}
 				class={CSS.body_textfield}
-				data-text-wrap={attrSetIfExist(settings().textWrap)}
+				data-text-wrap={setAttrIfExist(settings().textWrap)}
 				placeholder='Type your unescape XML text here ...'></textarea>
 			<Show when={inputViewOption() != null && outputViewOption() != null}>
 				<div
-					data-g-keep-pointer-event={attrSetIfExist(isDragging())}
+					data-g-keep-pointer-event={setAttrIfExist(isDragging())}
 					class={CSS.body_drag_handle}
 					onPointerDown={(ev) => {
 						body.setAttribute(BodyAttributes.noPointerEvent, '')
@@ -197,7 +197,7 @@ const _: VoidComponent<{
 		</div>
 		<div
 			class={CSS.body_output}
-			data-hidden={attrSetIfExist(outputViewOption() === null)}>
+			data-hidden={setAttrIfExist(outputViewOption() === null)}>
 			<div class={CSS.body_tabs}>
 				<Show when={inputViewOption() === null}>
 					<InputTabButtons/>
@@ -211,7 +211,7 @@ const _: VoidComponent<{
 				value={props.escapedText}
 				style={{"font-size": settings().fontSize + 'px'}}
 				class={CSS.body_textfield}
-				data-text-wrap={attrSetIfExist(settings().textWrap)}
+				data-text-wrap={setAttrIfExist(settings().textWrap)}
 				placeholder='Type your escaped XML text here ...'></textarea>
 		</div>
 	</div>)

@@ -4,10 +4,10 @@ import { mergeRefs } from '@solid-primitives/refs'
 
 import type { Emoji } from '@/types/emoji'
 import { EMOJIS_ACTIVITIES, EMOJIS_ANIMAL_AND_NATURE, EMOJIS_FLAGS, EMOJIS_FOOD_AND_DRINK, EMOJIS_OBJECT, EMOJIS_PERSON_AND_BODY, EMOJIS_SMILEY_AND_EMOTION, EMOJIS_SYMBOLS, EMOJIS_TRAVEL_AND_PLACES } from '@/constants/emoji'
-import { attrSetIfExist } from '@/utils/attributes'
+import { setAttrIfExist } from '@/utils/attributes'
 import { AnimationEffectTiming } from '@/enums/animation'
 import { AppCSSColors } from '@/enums/app-data'
-import { numberSafe } from '@/utils/number'
+import { safeNumber } from '@/utils/number'
 import { GlobalElementIds } from '@/enums/ids'
 import { ICON_ANIMAL_CAT, ICON_DISMISS, ICON_DIVERSITY, ICON_EMOJI, ICON_FLAG, ICON_FOOD, ICON_HISTORY, ICON_PERSON, ICON_RUNNING_PERSON, ICON_SYMBOLS, ICON_VEHICLE_CAR } from '@/constants/icons'
 import { isAnimationAllowed } from '@/utils/animation'
@@ -191,7 +191,7 @@ const EmojiPickerBody: ParentComponent<{
 
 		return (<div
 			class='c-emoji-picker-emojis'
-			data-c-hidden={attrSetIfExist($props.category != option())}>
+			data-c-hidden={setAttrIfExist($props.category != option())}>
 			<Show when={$props.category == option() && props.isOpen}>
 				<FocusableGroup2D
 					c:columnCount={columnCount()}
@@ -215,7 +215,7 @@ const EmojiPickerBody: ParentComponent<{
 						const dataIndex = button.dataset.index
 						if (!dataIndex) return
 
-						const index = numberSafe(Number.parseInt(dataIndex))
+						const index = safeNumber(Number.parseInt(dataIndex))
 						const emoji = $props.emojis[index]
 						LISTENER_REF.dispatchEvent(new CustomEvent(
 							EmojiPickerListenerEvents.addRecents,

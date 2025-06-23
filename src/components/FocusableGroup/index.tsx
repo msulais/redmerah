@@ -3,7 +3,7 @@ import { children, createEffect, createMemo, splitProps, type JSX, type ParentCo
 
 import { keyboardOnFocusIn, keyboardOnFocusOut, keyboardOnKeyDown, keyboardOnKeyDown2D } from "@/utils/keyboard"
 import { eventCall } from "@/utils/event"
-import { cssIsValidSelector } from "@/utils/css"
+import { isCSSSelectorValid } from "@/utils/css"
 
 import './index.scss'
 
@@ -62,7 +62,7 @@ const FocusableGroup: ParentComponent<FocusableGroupProps> = ($props) => {
 			elements.length = 0
 			elements.push(...($elements as HTMLElement[]))
 		}
-		else if (typeof $elements === 'string' && cssIsValidSelector($elements as string)) {
+		else if (typeof $elements === 'string' && isCSSSelectorValid($elements as string)) {
 			elements.length = 0
 			elements.push(...divRef.querySelectorAll<HTMLElement>($elements))
 		}
@@ -85,7 +85,7 @@ const FocusableGroup: ParentComponent<FocusableGroupProps> = ($props) => {
 			elements.length = 0
 			elements.push(...($elements as HTMLElement[]))
 		}
-		else if (typeof $elements === 'string' && cssIsValidSelector($elements as string)) {
+		else if (typeof $elements === 'string' && isCSSSelectorValid($elements as string)) {
 			elements.length = 0
 			elements.push(...divRef.querySelectorAll<HTMLElement>($elements))
 		}
@@ -150,7 +150,7 @@ const FocusableGroup2D: ParentComponent<FocusableGroup2DProps> = ($props) => {
 			elements.length = 0
 			elements.push(...($elements as HTMLElement[]))
 		}
-		else if (typeof $elements === 'string' && cssIsValidSelector($elements as string)) {
+		else if (typeof $elements === 'string' && isCSSSelectorValid($elements as string)) {
 			elements.length = 0
 			elements.push(...divRef.querySelectorAll<HTMLElement>($elements))
 		}
@@ -175,7 +175,7 @@ const FocusableGroup2D: ParentComponent<FocusableGroup2DProps> = ($props) => {
 			elements.length = 0
 			elements.push(...($elements as HTMLElement[]))
 		}
-		else if (typeof $elements === 'string' && cssIsValidSelector($elements as string)) {
+		else if (typeof $elements === 'string' && isCSSSelectorValid($elements as string)) {
 			elements.length = 0
 			elements.push(...divRef.querySelectorAll<HTMLElement>($elements))
 		}

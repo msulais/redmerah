@@ -4,11 +4,11 @@ import { AngleUnits, AreaUnits, FrequencyUnits, LengthUnits, PressureUnits, Temp
 import { DEFAULT_CONVERTER_INPUT_UNIT, DEFAULT_CONVERTER_OUTPUT_UNIT, DEFAULT_CONVERTER_TYPE } from "../_shared/_constant"
 import { calculate, convertUnit } from "../_core/_calculator"
 import { $, scrollInputToEnd } from "../_core/_dom-utils"
-import { numberIsDefined } from "@/utils/number"
+import { isNumberDefined } from "@/utils/number"
 import { formatOutput } from "../_core/_string-utils"
 import { ElementIds } from "../_shared/_ids"
 import { createSelectOptionRef, getSelectRefValue, SelectEvents, updateSelectRef, updateSelectRefValue, type SelectElement } from "@/native-components/Select"
-import { validEnumValue } from "@/utils/object"
+import { isValidEnumValue } from "@/utils/object"
 import { AppCSSColors } from "@/enums/app-data"
 import { saveStorageItem } from "../_core/_database"
 
@@ -68,7 +68,7 @@ function _calculate(value: ConverterStoreType): void {
 		const parsedOutput = convertUnit(Number.parseFloat(output), value.converter, value.inputUnit, value.outputUnit)
 		ConverterStore.update(v => ({
 			...v,
-			output: numberIsDefined(parsedOutput)? parsedOutput : null
+			output: isNumberDefined(parsedOutput)? parsedOutput : null
 		}))
 	}, 50)
 }
@@ -213,7 +213,7 @@ function _initSubscriber(): void {
 function _initConverterEvents(): void {
 	_converterRef.addEventListener(SelectEvents.change, () => {
 		const value = getSelectRefValue(_converterRef)
-		if (!validEnumValue(value, ConverterType)) return
+		if (!isValidEnumValue(value, ConverterType)) return
 
 		ConverterStore.update(v => ({
 			...v,

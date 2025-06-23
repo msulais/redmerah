@@ -1,5 +1,5 @@
 ---
-import { attrClassList } from '@/utils/attributes'
+import { joinClassList } from '@/utils/attributes'
 
 import {
 	type DrawerProps,
@@ -24,24 +24,24 @@ const {'class': footerClass   , ...footerOther   } = DrawerFooterAttr    ?? {}
 ---
 
 <div
-	class={attrClassList(DrawerClasses.drawer, className)}
+	class={joinClassList(DrawerClasses.drawer, className)}
 	popover={popover}
 	{...other}>
 	<div
-		class={attrClassList(DrawerClasses.container, containerClass)}
+		class={joinClassList(DrawerClasses.container, containerClass)}
 		{...containerOther}>
 		<div
-			class={attrClassList(DrawerClasses.header, headerClass)}
+			class={joinClassList(DrawerClasses.header, headerClass)}
 			{...headerOther}>
 			<slot name="header"/>
 		</div>
 		<div
-			class={attrClassList(DrawerClasses.content, contentClass)}
+			class={joinClassList(DrawerClasses.content, contentClass)}
 			{...contentOther}>
 			<slot/>
 		</div>
 		<div
-			class={attrClassList(DrawerClasses.footer, footerClass)}
+			class={joinClassList(DrawerClasses.footer, footerClass)}
 			{...footerOther}>
 			<slot name="footer"/>
 		</div>

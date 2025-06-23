@@ -5,7 +5,7 @@ import { Portal } from 'solid-js/web'
 import { AnimationEffectTiming } from '@/enums/animation'
 import { FlyoutPosition as ModalPosition } from '@/enums/position'
 import { getFlyoutPosition } from '@/utils/flyout'
-import { attrSetIfExist, attrClassList } from '@/utils/attributes'
+import { setAttrIfExist, joinClassList } from '@/utils/attributes'
 import { BodyAttributes } from '@/enums/attributes'
 import { eventCall } from "@/utils/event"
 import { GlobalElementIds } from '@/enums/ids'
@@ -877,7 +877,7 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 	})
 
 	return (<Portal mount={props['c:portalMount']}><dialog
-		class={attrClassList(MODAL_CLASS, props.class ?? '')}
+		class={joinClassList(MODAL_CLASS, props.class ?? '')}
 		ref={mergeRefs(props.ref, r => modalRef = r)}
 		style={{
 			...style(),
@@ -922,16 +922,16 @@ const Modal: ParentComponent<ModalProps> = ($props) => {
 			props['c:onToggleOpen']?.(false)
 			isOpen = false
 		}}
-		data-c-draggable={attrSetIfExist(isDraggable())}
-		data-c-drag={attrSetIfExist(isDragging())}
-		data-c-focus={attrSetIfExist(attrFocus())}
+		data-c-draggable={setAttrIfExist(isDraggable())}
+		data-c-drag={setAttrIfExist(isDragging())}
+		data-c-focus={setAttrIfExist(attrFocus())}
 		{...other}>
 		<Show when={isDraggable()}>
 			<span
 				tabindex="0"
 				class="c-modal-drag-handle"
 				draggable={false}
-				data-g-keep-pointer-event={attrSetIfExist(isDragging())}
+				data-g-keep-pointer-event={setAttrIfExist(isDragging())}
 				onKeyDown={onMoveWithArrowKey}
 				onPointerDown={(ev) => {
 					const rect = modalRef.getBoundingClientRect()

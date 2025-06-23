@@ -1,8 +1,8 @@
 import { updateIconButtonRef } from "@/native-components/Button"
-import { elementValidTarget } from "@/utils/element"
+import { isTargetValidElement } from "@/utils/element"
 import { ElementIds, RadioGroupNames } from "./_enums"
 import { LocalStorageKeys } from "@/enums/storage"
-import { validEnumValue } from "@/utils/object"
+import { isValidEnumValue } from "@/utils/object"
 import { RootAttributes } from "@/enums/attributes"
 import { PlatformAnimationMode, PlatformThemeMode } from "@/enums/platforms"
 import { APP_BATTERY as APP } from "@/constants/apps"
@@ -21,7 +21,7 @@ const _settingsAnimationMenuRef = $(ElementIds.appbarSettingsAnimationMenu) as H
 function _initSettings(): void {
 	function initTheme(): void {
 		const theme = localStorage.getItem(LocalStorageKeys.platformTheme)
-		if (!theme || !validEnumValue(theme, PlatformThemeMode)) return
+		if (!theme || !isValidEnumValue(theme, PlatformThemeMode)) return
 
 		_rootRef.setAttribute(RootAttributes.theme, theme)
 		const previous = $$(
@@ -38,7 +38,7 @@ function _initSettings(): void {
 
 	function initAnimation(): void {
 		const animation = localStorage.getItem(LocalStorageKeys.platformAnimation)
-		if (!animation || !validEnumValue(animation, PlatformAnimationMode)) return
+		if (!animation || !isValidEnumValue(animation, PlatformAnimationMode)) return
 
 		_rootRef.setAttribute(RootAttributes.animation, animation)
 		const previous = $$(
@@ -67,7 +67,7 @@ function _initEvents(): void {
 
 	_infoMenuRef.addEventListener('click', () => {
 		const button = document.activeElement as HTMLElement
-		if (!elementValidTarget(_infoMenuRef, button, el => el.tagName === 'BUTTON')) return
+		if (!isTargetValidElement(_infoMenuRef, button, el => el.tagName === 'BUTTON')) return
 
 		switch (button) {
 		case _infoMenuShareButtonRef:
@@ -89,7 +89,7 @@ function _initEvents(): void {
 	_settingsAnimationMenuRef.addEventListener('change', ev => {
 		const target = ev.target as HTMLInputElement
 		const value = target?.value
-		if (!value || !validEnumValue(value, PlatformAnimationMode)) return
+		if (!value || !isValidEnumValue(value, PlatformAnimationMode)) return
 
 		localStorage.setItem(LocalStorageKeys.platformAnimation, value)
 		_rootRef.setAttribute(RootAttributes.animation, value)
@@ -99,7 +99,7 @@ function _initEvents(): void {
 	_settingsThemeMenuRef.addEventListener('change', ev => {
 		const target = ev.target as HTMLInputElement
 		const value = target?.value
-		if (!value || !validEnumValue(value, PlatformThemeMode)) return
+		if (!value || !isValidEnumValue(value, PlatformThemeMode)) return
 
 		localStorage.setItem(LocalStorageKeys.platformTheme, value)
 		_rootRef.setAttribute(RootAttributes.theme, value)

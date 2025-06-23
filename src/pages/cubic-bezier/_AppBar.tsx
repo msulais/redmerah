@@ -6,8 +6,8 @@ import { LocalStorageKeys } from "@/enums/storage"
 import { ThemeData } from "@/enums/theme"
 import { RoutesLinks, ExternalLinks } from "@/enums/links"
 import { APP_CUBIC_BEZIER as app } from "@/constants/apps"
-import { validEnumValue } from "@/utils/object"
-import { elementValidTarget } from "@/utils/element"
+import { isValidEnumValue } from "@/utils/object"
+import { isTargetValidElement } from "@/utils/element"
 import { AnimationData } from "@/enums/animation"
 import { ICON_APPS, ICON_CHAT, ICON_CIRCLE, ICON_GIFT, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_MAXIMIZE, ICON_PLAY_CIRCLE_HINT, ICON_RECEIPT, ICON_SETTINGS, ICON_SHARE_ANDROID, ICON_SHIELD_CHECKMARK, ICON_SQUARE, ICON_TEARDROP_BOTTOM_RIGHT, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from "@/constants/icons"
 import logoRedmerah from '@/assets/images/logos/redmerah-logo.svg'
@@ -52,7 +52,7 @@ const _: VoidComponent = () => {
 
 	function initTheme(): void {
 		const theme = localStorage.getItem(LocalStorageKeys.platformTheme)
-		if (theme && validEnumValue(theme, ThemeData)) {
+		if (theme && isValidEnumValue(theme, ThemeData)) {
 			root.setAttribute(RootAttributes.theme, theme)
 			setTheme(theme as ThemeData)
 		}
@@ -60,7 +60,7 @@ const _: VoidComponent = () => {
 
 	function initCorner(): void {
 		const corner = localStorage.getItem(LocalStorageKeys.corner)
-		if (corner && validEnumValue(corner, CornerData)) {
+		if (corner && isValidEnumValue(corner, CornerData)) {
 			root.setAttribute(RootAttributes.corner, corner)
 			setCorner(corner as CornerData)
 		}
@@ -68,7 +68,7 @@ const _: VoidComponent = () => {
 
 	function initAnimation(): void {
 		const animation = localStorage.getItem(LocalStorageKeys.platformAnimation)
-		if (animation && validEnumValue(animation, AnimationData)) {
+		if (animation && isValidEnumValue(animation, AnimationData)) {
 			root.setAttribute(RootAttributes.animation, animation)
 			setAnimation(animation as AnimationData)
 		}
@@ -87,7 +87,7 @@ const _: VoidComponent = () => {
 			<Menu
 				onClick={(ev) => {
 					const button = document.activeElement!
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -169,7 +169,7 @@ const _: VoidComponent = () => {
 				}}
 				onClick={ev => {
 					const button = document.activeElement! as HTMLButtonElement
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -177,12 +177,12 @@ const _: VoidComponent = () => {
 					const dataset = button.dataset
 					const dataTheme = dataset.theme
 					if (dataTheme
-						&& validEnumValue(dataTheme, ThemeData)
+						&& isValidEnumValue(dataTheme, ThemeData)
 					) return udpateTheme(dataTheme as ThemeData)
 
 					const dataCorner = dataset.corner
 					if (dataCorner
-						&& validEnumValue(dataCorner, CornerData)
+						&& isValidEnumValue(dataCorner, CornerData)
 					) return updateCorner(dataCorner as CornerData)
 				}}>
 				<SwitchMenuItem
@@ -255,7 +255,7 @@ const _: VoidComponent = () => {
 			c:headline={app.name}
 			onClick={ev => {
 				const button = document.activeElement! as HTMLElement
-				if (!elementValidTarget(
+				if (!isTargetValidElement(
 					ev.currentTarget,
 					button,
 				)) return

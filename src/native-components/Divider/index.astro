@@ -1,5 +1,5 @@
 ---
-import { attrClassList } from '@/utils/attributes'
+import { joinClassList } from '@/utils/attributes'
 
 import {
 	type DividerProps,
@@ -14,4 +14,4 @@ const {
 } = Astro.props
 ---
 
-<div class={attrClassList(DividerClasses.divider, className)} {...other}/>
+<div class={joinClassList(DividerClasses.divider, className)} {...other}/>

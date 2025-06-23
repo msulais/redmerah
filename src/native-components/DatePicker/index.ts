@@ -1,12 +1,12 @@
-import { numberIsDefined, numberIsNotDefined } from "@/utils/number"
+import { isNumberDefined, isNumberNotDefined } from "@/utils/number"
 import { ButtonVariant, createButtonRef, createIconButtonRef, updateButtonRef, type ButtonElement, type ButtonProps, type IconButtonElement, type IconButtonProps } from "../Button"
 import { registerPopoverRef, repositionPopoverRef, updatePopoverRef, type PopoverElement, type PopoverProps, type PopoverUpdateOptions } from "../Popover"
 import { createTooltipRef, registerTooltipRef, type TooltipElement, type TooltipProps } from "../Tooltip"
 import { createDividerRef, type DividerElement, type DividerProps } from "../Divider"
-import { validEnumValue } from "@/utils/object"
+import { isValidEnumValue } from "@/utils/object"
 import { isAnimationAllowed } from "@/utils/animation"
-import { elementAnimateUpdateText } from "@/utils/element"
-import { dateIsSameY, dateIsSameYM, dateIsSameYMD, dateOutRangeY, dateOutRangeYM, dateOutRangeYMD } from "@/utils/datetime"
+import { animateUpdateTextElement } from "@/utils/element"
+import { isDateEqual_Y, isDateEqual_YM, isDateEqual_YMD, isDateOutRange_Y, isDateOutRange_YM, isDateOutRange_YMD } from "@/utils/datetime"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { IconCodes } from "@/enums/icons"
 
@@ -109,7 +109,7 @@ function _initDatePickerRef(datePickerRef: DatePickerElement): void {
 			if (!startDate) return null
 
 			const date = Date.parse(startDate)
-			if (numberIsNotDefined(date)) return null
+			if (isNumberNotDefined(date)) return null
 
 			return new Date(date)
 		},
@@ -118,7 +118,7 @@ function _initDatePickerRef(datePickerRef: DatePickerElement): void {
 			if (!endDate) return null
 
 			const date = Date.parse(endDate)
-			if (numberIsNotDefined(date)) return null
+			if (isNumberNotDefined(date)) return null
 
 			return new Date(date)
 		},
@@ -127,13 +127,13 @@ function _initDatePickerRef(datePickerRef: DatePickerElement): void {
 			if (!valueDate) return null
 
 			const date = Date.parse(valueDate)
-			if (numberIsNotDefined(date)) return null
+			if (isNumberNotDefined(date)) return null
 
 			return new Date(date)
 		},
 		get viewtype(): DatePickerViewType {
 			const type = datePickerRef.getAttribute(DatePickerAttributes.viewType)
-			if (!type || !validEnumValue(type, DatePickerViewType)) return DatePickerViewType.day
+			if (!type || !isValidEnumValue(type, DatePickerViewType)) return DatePickerViewType.day
 
 			return type as DatePickerViewType
 		}
@@ -188,7 +188,7 @@ function _initDatePickerRef(datePickerRef: DatePickerElement): void {
 		case DatePickerViewType.day: {
 			const titleText = currentView.toLocaleDateString('en', {month: 'long', year: 'numeric'})
 			if (isAnimationAllowed() && animate) {
-				elementAnimateUpdateText(titleRef, titleText)
+				animateUpdateTextElement(titleRef, titleText)
 			}
 			else {
 				titleRef.textContent = titleText
@@ -221,14 +221,14 @@ function _initDatePickerRef(datePickerRef: DatePickerElement): void {
 					_DatePickerButtonAttributes.date,
 					date.toISOString()
 				)
-				item.disabled = dateOutRangeYMD(date, startDate, endDate)
+				item.disabled = isDateOutRange_YMD(date, startDate, endDate)
 
-				if (dateIsSameYMD(date, value)) {
+				if (isDateEqual_YMD(date, value)) {
 					updateButtonRef(item, {
 						ButtonVariant: ButtonVariant.filled
 					})
 				}
-				else if (dateIsSameYMD(date, now)) {
+				else if (isDateEqual_YMD(date, now)) {
 					updateButtonRef(item, {
 						ButtonVariant: ButtonVariant.outlined
 					})
@@ -244,7 +244,7 @@ function _initDatePickerRef(datePickerRef: DatePickerElement): void {
 			const year = currentView.getFullYear()
 			const titleText = currentView.toLocaleDateString('en', {year: 'numeric'})
 			if (isAnimationAllowed() && animate) {
-				elementAnimateUpdateText(titleRef, titleText)
+				animateUpdateTextElement(titleRef, titleText)
 			}
 			else {
 				titleRef.textContent = titleText
@@ -255,13 +255,13 @@ function _initDatePickerRef(datePickerRef: DatePickerElement): void {
 				const buttonRef = monthButtonRefs.item(i)
 				const date = new Date(year, i, 1)
 				buttonRef.setAttribute(_DatePickerButtonAttributes.date, date.toISOString())
-				buttonRef.disabled = dateOutRangeYM(date, startDate, endDate)
-				if (dateIsSameYM(date, value)) {
+				buttonRef.disabled = isDateOutRange_YM(date, startDate, endDate)
+				if (isDateEqual_YM(date, value)) {
 					updateButtonRef(buttonRef, {
 						ButtonVariant: ButtonVariant.filled
 					})
 				}
-				else if (dateIsSameYM(date, now)) {
+				else if (isDateEqual_YM(date, now)) {
 					updateButtonRef(buttonRef, {
 						ButtonVariant: ButtonVariant.outlined
 					})
@@ -278,7 +278,7 @@ function _initDatePickerRef(datePickerRef: DatePickerElement): void {
 			const titleText = year + '-' + (year + 15)
 			const allowAnimation = isAnimationAllowed() && animate
 			if (allowAnimation) {
-				elementAnimateUpdateText(titleRef, titleText)
+				animateUpdateTextElement(titleRef, titleText)
 			}
 			else {
 				titleRef.textContent = titleText
@@ -290,13 +290,13 @@ function _initDatePickerRef(datePickerRef: DatePickerElement): void {
 				const date = new Date(year + i, 0, 1)
 				buttonRef.textContent = year + i + ''
 				buttonRef.setAttribute(_DatePickerButtonAttributes.date, date.toISOString())
-				buttonRef.disabled = dateOutRangeY(date, startDate, endDate)
-				if (dateIsSameY(date, value)) {
+				buttonRef.disabled = isDateOutRange_Y(date, startDate, endDate)
+				if (isDateEqual_Y(date, value)) {
 					updateButtonRef(buttonRef, {
 						ButtonVariant: ButtonVariant.filled
 					})
 				}
-				else if (dateIsSameY(date, now)) {
+				else if (isDateEqual_Y(date, now)) {
 					updateButtonRef(buttonRef, {
 						ButtonVariant: ButtonVariant.outlined
 					})
@@ -397,7 +397,7 @@ function _initDatePickerRef(datePickerRef: DatePickerElement): void {
 		}
 		else if (button.hasAttribute(_DatePickerButtonAttributes.date)) {
 			const parsed = Date.parse(button.getAttribute(_DatePickerButtonAttributes.date)!)
-			if (numberIsNotDefined(parsed)) return
+			if (isNumberNotDefined(parsed)) return
 
 			const date = new Date(parsed)
 			selectDate(date)
@@ -675,7 +675,7 @@ function getDatePickerRefValue(datePickerRef: DatePickerElement): Date | null {
 	const value = datePickerRef.getAttribute(DatePickerAttributes.value)
 	if (value) {
 		const date = new Date(value)
-		if (numberIsDefined(date.valueOf())) {
+		if (isNumberDefined(date.valueOf())) {
 			return date
 		}
 	}

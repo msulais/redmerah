@@ -1,6 +1,6 @@
-import { urlDownloadFile } from "./url"
+import { downloadFileByUrl } from "./url"
 
-export async function fileOpen(
+export async function pickFile(
 	accept: string | null,
 	multiple: boolean = false,
 	capture?: string
@@ -25,13 +25,13 @@ export async function fileOpen(
 	})
 }
 
-export function fileDownload(blob: Blob, filename: string): void {
+export function downloadFile(blob: Blob, filename: string): void {
 	const url = URL.createObjectURL(blob)
-	urlDownloadFile(url, filename)
+	downloadFileByUrl(url, filename)
 	URL.revokeObjectURL(url)
 }
 
-export function fileReadAsText(blob: Blob, encoding?: string): Promise<string> {
+export function readFileAsText(blob: Blob, encoding?: string): Promise<string> {
 	return new Promise((ok) => {
 		const reader = new FileReader()
 		reader.readAsText(blob, encoding)

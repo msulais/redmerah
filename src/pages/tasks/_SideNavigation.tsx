@@ -3,11 +3,11 @@ import { TransitionGroup } from "solid-transition-group"
 
 import type { Settings, TaskList } from "./_types"
 import { DEFAULT_TASK_LIST, TASKS_PAGES } from "./_constants"
-import { elementValidTarget } from "@/utils/element"
+import { isTargetValidElement } from "@/utils/element"
 import { Commands, Pages } from "./_enums"
 import { AnimationEffectTiming } from "@/enums/animation"
-import { attrClassListModule } from "@/utils/attributes"
-import { numberIsNotDefined, numberSafe } from "@/utils/number"
+import { joinClassListModule } from "@/utils/attributes"
+import { isNumberNotDefined, safeNumber } from "@/utils/number"
 import { ICON_ADD, ICON_DELETE, ICON_TASK_LIST_SQUARE_LTR, ICON_TEXT_EDIT_STYLE } from "@/constants/icons"
 import { isAnimationAllowed } from "@/utils/animation"
 
@@ -75,7 +75,7 @@ const _: VoidComponent<{
 				ref={r => menuListActionRef = r}
 				onClick={ev => {
 					const button = document.activeElement!
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -107,11 +107,11 @@ const _: VoidComponent<{
 
 	return (<Tooltip><SideNavigation
 		style={{"padding-top": '0'}}
-		classList={attrClassListModule(CSS.side_navigation)}
+		classList={joinClassListModule(CSS.side_navigation)}
 		c:expanded={expanded()}
 		onClick={ev => {
 			const button = document.activeElement! as HTMLButtonElement
-			if (!elementValidTarget(
+			if (!isTargetValidElement(
 				ev.currentTarget,
 				button,
 			)) return
@@ -124,7 +124,7 @@ const _: VoidComponent<{
 				const dataListId = button.dataset.listId
 				if (dataListId) {
 					const listId = Number.parseInt(dataListId)
-					if (numberIsNotDefined(listId)) return
+					if (isNumberNotDefined(listId)) return
 
 					command(Commands.updatePage, listId)
 				}
@@ -138,7 +138,7 @@ const _: VoidComponent<{
 		}}
 		onContextMenu={ev => {
 			const button = document.activeElement! as HTMLButtonElement
-			if (!elementValidTarget(
+			if (!isTargetValidElement(
 				ev.currentTarget,
 				button,
 			)) return
@@ -149,7 +149,7 @@ const _: VoidComponent<{
 				openMenu(menuListActionRef, {position: MenuPosition.centerBottomToRight})
 				const dataIndex = button.dataset.index
 				if (dataIndex) {
-					const index = numberSafe(Number.parseInt(dataIndex))
+					const index = safeNumber(Number.parseInt(dataIndex))
 					selectedTaskListIndex = index
 				}
 			}

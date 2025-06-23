@@ -1,5 +1,5 @@
 ---
-import { attrClassList } from '@/utils/attributes'
+import { joinClassList } from '@/utils/attributes'
 import {
 	type DialogProps,
 	DialogClasses
@@ -23,18 +23,18 @@ const {'class': footerClass   , ...footerOther   } = DialogFooterAttr    ?? {}
 ---
 
 <dialog
-	class={attrClassList(DialogClasses.dialog, className)}
+	class={joinClassList(DialogClasses.dialog, className)}
 	data-c-dialog-important={DialogImportant? '' : undefined}
 	{...other}>
-	<div class={attrClassList(DialogClasses.container, containerClass)} {...containerOther}>
-		<div class={attrClassList(DialogClasses.header, headerClass)} {...headerOther}>
+	<div class={joinClassList(DialogClasses.container, containerClass)} {...containerOther}>
+		<div class={joinClassList(DialogClasses.header, headerClass)} {...headerOther}>
 			<slot name="header"/>
 		</div>
-		<div class={attrClassList(DialogClasses.content, contentClass)} {...contentOther}>
+		<div class={joinClassList(DialogClasses.content, contentClass)} {...contentOther}>
 			<slot />
 		</div>
 		<div
-			class={attrClassList(DialogClasses.footer, footerClass)}
+			class={joinClassList(DialogClasses.footer, footerClass)}
 			{...footerOther}><slot name="footer"/></div>
 	</div>
 </dialog>

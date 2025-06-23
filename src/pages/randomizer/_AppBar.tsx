@@ -2,7 +2,7 @@ import { type Component, For, Match, Show, Switch, type VoidComponent, createMem
 import type { SetStoreFunction } from "solid-js/store"
 
 import type { Settings } from "./_types"
-import { attrSetIfExist, attrClassListModule } from "@/utils/attributes"
+import { setAttrIfExist, joinClassListModule } from "@/utils/attributes"
 import { RootAttributes } from "@/enums/attributes"
 import { ExternalLinks, RoutesLinks } from "@/enums/links"
 import { ThemeData } from "@/enums/theme"
@@ -12,9 +12,9 @@ import { AnimationData } from "@/enums/animation"
 import { CornerData } from "@/enums/corner"
 import { RANDOMIZER_TYPES, SIZE_SIDE_NAVIGATION_NONE } from "./_constants"
 import { APP_RANDOMIZER as app } from "@/constants/apps"
-import { elementValidTarget } from "@/utils/element"
-import { validEnumValue } from "@/utils/object"
-import { numberIsNotDefined, numberSafe } from "@/utils/number"
+import { isTargetValidElement } from "@/utils/element"
+import { isValidEnumValue } from "@/utils/object"
+import { isNumberNotDefined, safeNumber } from "@/utils/number"
 import { ICON_ALIGN_END_HORIZONTAL, ICON_ALIGN_START_HORIZONTAL, ICON_APPROVALS_APP, ICON_APPS, ICON_ARROW_CLOCKWISE, ICON_ARROW_SHUFFLE, ICON_ARROW_SORT, ICON_ARROW_SYNC, ICON_CHAT, ICON_CHECKMARK, ICON_CIRCLE, ICON_COLOR, ICON_COMMA, ICON_COPY, ICON_DECIMAL_ARROW_LEFT, ICON_DISMISS, ICON_GIFT, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_LINE_HORIZONTAL_3, ICON_MAXIMIZE, ICON_NUMBER_SYMBOL, ICON_PLAY_CIRCLE_HINT, ICON_RECEIPT, ICON_SETTINGS, ICON_SHARE_ANDROID, ICON_SHIELD_CHECKMARK, ICON_SQUARE, ICON_TEARDROP_BOTTOM_RIGHT, ICON_TEXT_CASE_TITLE, ICON_TEXT_SORT_ASCENDING, ICON_TEXT_SORT_DESCENDING, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from "@/constants/icons"
 import logoRedmerah from '@/assets/images/logos/redmerah-logo.svg'
 
@@ -98,7 +98,7 @@ const _: Component<{
 	function initTheme(): void {
 		const theme = localStorage.getItem(LocalStorageKeys.platformTheme)
 
-		if (theme && validEnumValue(theme, ThemeData)) {
+		if (theme && isValidEnumValue(theme, ThemeData)) {
 			root.setAttribute(RootAttributes.theme, theme)
 			setTheme(theme as ThemeData)
 		}
@@ -107,7 +107,7 @@ const _: Component<{
 	function initCorner(): void {
 		const corner = localStorage.getItem(LocalStorageKeys.corner)
 
-		if (corner && validEnumValue(corner, CornerData)) {
+		if (corner && isValidEnumValue(corner, CornerData)) {
 			root.setAttribute(RootAttributes.corner, corner)
 			setCorner(corner as CornerData)
 		}
@@ -161,7 +161,7 @@ const _: Component<{
 
 	function initAnimation(): void {
 		const animation = localStorage.getItem(LocalStorageKeys.platformAnimation)
-		if (animation && validEnumValue(animation, AnimationData)) {
+		if (animation && isValidEnumValue(animation, AnimationData)) {
 			root.setAttribute(RootAttributes.animation, animation)
 			setAnimation(animation as AnimationData)
 		}
@@ -187,7 +187,7 @@ const _: Component<{
 			<Menu
 				onClick={(ev) => {
 					const button = document.activeElement!
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button
 					)) return
@@ -271,14 +271,14 @@ const _: Component<{
 					case inputSettings_minDigitsId:
 						command(
 							Commands.updateSettingsNumbersMinDigits,
-							numberSafe(target.valueAsNumber)
+							safeNumber(target.valueAsNumber)
 						)
 						break
 					}
 				}}
 				onClick={ev => {
 					const button = document.activeElement! as HTMLElement
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button
 					)) return
@@ -286,15 +286,15 @@ const _: Component<{
 					const dataset = button.dataset
 					const dataNumberSort = dataset.numberSort
 					if (dataNumberSort
-						&& validEnumValue(dataNumberSort, NumbersRandomizerSort)
+						&& isValidEnumValue(dataNumberSort, NumbersRandomizerSort)
 					) return updateNumbersSort(dataNumberSort as NumbersRandomizerSort)
 
 					const dataNumberType = dataset.numberType
 					if (dataNumberType){
 						const numberType = Number.parseInt(dataNumberType)
 						if (
-							numberIsNotDefined(numberType)
-							|| !validEnumValue(numberType, NumbersRandomizerNumberType)
+							isNumberNotDefined(numberType)
+							|| !isValidEnumValue(numberType, NumbersRandomizerNumberType)
 						) return
 
 						return updateNumberType(dataNumberType as unknown as NumbersRandomizerNumberType)
@@ -302,22 +302,22 @@ const _: Component<{
 
 					const dataWordsCase = dataset.wordsCase
 					if (dataWordsCase
-						&& validEnumValue(dataWordsCase, WordsRandomizerWordCase)
+						&& isValidEnumValue(dataWordsCase, WordsRandomizerWordCase)
 					) return updateWordsWordCase(dataWordsCase as WordsRandomizerWordCase)
 
 					const dataColorsSpace = dataset.colorsSpace
 					if (dataColorsSpace
-						&& validEnumValue(dataColorsSpace, ColorsRandomizerColorSpace)
+						&& isValidEnumValue(dataColorsSpace, ColorsRandomizerColorSpace)
 					) return updateColorsSpace(dataColorsSpace as ColorsRandomizerColorSpace)
 
 					const dataTheme = dataset.theme
 					if (dataTheme
-						&& validEnumValue(dataTheme, ThemeData)
+						&& isValidEnumValue(dataTheme, ThemeData)
 					) return updateTheme(dataTheme as ThemeData)
 
 					const dataCorner = dataset.corner
 					if (dataCorner
-						&& validEnumValue(dataCorner, CornerData)
+						&& isValidEnumValue(dataCorner, CornerData)
 					) return updateCorner(dataCorner as CornerData)
 				}}
 				onChange={ev => {
@@ -589,7 +589,7 @@ const _: Component<{
 			<Drawer
 				onClick={ev => {
 					const button = document.activeElement! as HTMLButtonElement
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -602,7 +602,7 @@ const _: Component<{
 						const dataset = button.dataset
 						const dataType = dataset.type
 						if (dataType
-							&& validEnumValue(dataType, RandomizerType)
+							&& isValidEnumValue(dataType, RandomizerType)
 						) {
 							if (randomizer() != dataType) {
 								props.onChangeRandomizer(dataType as RandomizerType)
@@ -616,7 +616,7 @@ const _: Component<{
 					<IconButton
 						id={buttonNavigation_closeId}
 						data-tooltip="Close navigation"
-						classList={attrClassListModule(CSSAnimation.btn_shrink_horizontal_icon)}
+						classList={joinClassListModule(CSSAnimation.btn_shrink_horizontal_icon)}
 						c:code={ICON_LINE_HORIZONTAL_3}
 					/>
 				</Tooltip>}
@@ -643,7 +643,7 @@ const _: Component<{
 			<AppBar
 				onClick={async ev => {
 					const button = document.activeElement! as HTMLButtonElement
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -687,7 +687,7 @@ const _: Component<{
 					<IconButton
 						data-tooltip={isSideNavigationHidden()? "Open navigation" : "Expand/shrink navigation"}
 						id={buttonNavigationId}
-						classList={attrClassListModule(CSSAnimation.btn_shrink_horizontal_icon)}
+						classList={joinClassListModule(CSSAnimation.btn_shrink_horizontal_icon)}
 						c:code={ICON_LINE_HORIZONTAL_3}
 					/>
 					<img width="32" src={app.logoUrl} alt={app.name + ' logo'} />
@@ -695,14 +695,14 @@ const _: Component<{
 				c:headline={app.name}
 				c:trailing={<>
 					<Button
-						classList={attrClassListModule(CSSAnimation.btn_rotate_full_icon, CSS.appbar_generate_btn)}
-						data-g-keep-pointer-event={attrSetIfExist(props.isGenerating)}
+						classList={joinClassListModule(CSSAnimation.btn_rotate_full_icon, CSS.appbar_generate_btn)}
+						data-g-keep-pointer-event={setAttrIfExist(props.isGenerating)}
 						c:variant={ButtonVariant.filled}
 						id={buttonGenerateId}>
 						<Icon
 							c:filled
-							classList={attrClassListModule(CSS.appbar_generate_icon)}
-							data-rotate={attrSetIfExist(props.isGenerating)}
+							classList={joinClassListModule(CSS.appbar_generate_icon)}
+							data-rotate={setAttrIfExist(props.isGenerating)}
 							c:code={ICON_ARROW_SYNC}
 						/>
 						<Show when={props.isGenerating} fallback="Generate">Generating</Show>
@@ -715,7 +715,7 @@ const _: Component<{
 					/>
 					<IconButton
 						data-tooltip="Settings"
-						classList={attrClassListModule(CSSAnimation.btn_rotate_icon)}
+						classList={joinClassListModule(CSSAnimation.btn_rotate_icon)}
 						c:focused={isMenuSettingsOpen()}
 						id={buttonSettingsId}
 						c:code={ICON_SETTINGS}

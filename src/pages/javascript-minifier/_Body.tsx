@@ -1,11 +1,11 @@
 import { createMemo, createSignal, createUniqueId, onMount, Show, type VoidComponent } from "solid-js"
 
 import type { Settings } from "./_types"
-import { attrSetIfExist } from "@/utils/attributes"
+import { setAttrIfExist } from "@/utils/attributes"
 import { BodyAttributes } from "@/enums/attributes"
 import { Commands } from "./_enums"
 import { MIN_EDITOR_WIDTH } from "./_constants"
-import { elementValidTarget } from "@/utils/element"
+import { isTargetValidElement } from "@/utils/element"
 
 import Button, { ButtonVariant } from "@/components/Button"
 import CSS from './_styles.module.scss'
@@ -105,7 +105,7 @@ const _: VoidComponent<{
 		class={CSS.body}
 		onClick={ev => {
 			const button = document.activeElement!
-			if (!elementValidTarget(
+			if (!isTargetValidElement(
 				ev.currentTarget,
 				button,
 			)) return
@@ -142,8 +142,8 @@ const _: VoidComponent<{
 		}}>
 		<div
 			class={CSS.body_input}
-			data-hidden={attrSetIfExist(inputViewOption() === null)}
-			data-output-hidden={attrSetIfExist(outputViewOption() === null)}
+			data-hidden={setAttrIfExist(inputViewOption() === null)}
+			data-output-hidden={setAttrIfExist(outputViewOption() === null)}
 			style={{width: width() == null? undefined : width() + 'px'}}>
 			<div class={CSS.body_tabs}>
 				<InputTabButtons/>
@@ -158,11 +158,11 @@ const _: VoidComponent<{
 				value={props.inputText}
 				style={{"font-size": settings().fontSize + 'px'}}
 				class={CSS.body_textfield}
-				data-text-wrap={attrSetIfExist(settings().textWrap)}
+				data-text-wrap={setAttrIfExist(settings().textWrap)}
 				placeholder={`Type your javascript here ...`}></textarea>
 			<Show when={inputViewOption() !== null && outputViewOption() !== null}>
 				<div
-					data-g-keep-pointer-event={attrSetIfExist(isDragging())}
+					data-g-keep-pointer-event={setAttrIfExist(isDragging())}
 					class={CSS.body_drag_handle}
 					onPointerDown={(ev) => {
 						body.setAttribute(BodyAttributes.noPointerEvent, '')
@@ -179,7 +179,7 @@ const _: VoidComponent<{
 		</div>
 		<div
 			class={CSS.body_output}
-			data-hidden={attrSetIfExist(outputViewOption() === null)}>
+			data-hidden={setAttrIfExist(outputViewOption() === null)}>
 			<div class={CSS.body_tabs}>
 				<Show when={inputViewOption() === null}>
 					<InputTabButtons/>

@@ -1,11 +1,11 @@
 import { type JSX, type ParentComponent, createSignal, createUniqueId, mergeProps, onMount, splitProps, type VoidComponent, children, createEffect, Show, onCleanup, createMemo } from 'solid-js'
 import { mergeRefs } from '@solid-primitives/refs'
 
-import { attrSetIfExist, attrClassList } from '@/utils/attributes'
+import { setAttrIfExist, joinClassList } from '@/utils/attributes'
 import { eventCall } from '@/utils/event'
-import { mathClamp } from '@/utils/math'
-import { elementValidTarget } from '@/utils/element'
-import { numberIsNotDefined, numberSafe } from '@/utils/number'
+import { Math_clamp } from '@/utils/math'
+import { isTargetValidElement } from '@/utils/element'
+import { isNumberNotDefined, safeNumber } from '@/utils/number'
 import { KEY_ARROW_DOWN, KEY_ARROW_UP, KEY_ENTER, KEY_SPACE } from '@/constants/key-code'
 import { ICON_CHEVRON_DOWN, ICON_CHEVRON_UP, ICON_CHEVRON_UP_DOWN, ICON_DISMISS } from '@/constants/icons'
 
@@ -104,7 +104,7 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 	let areaTextFieldRef: HTMLTextAreaElement
 
 	onMount(() => {
-		setLineHeight(numberSafe(Number.parseFloat(
+		setLineHeight(safeNumber(Number.parseFloat(
 			window
 			.getComputedStyle(areaTextFieldRef)
 			.getPropertyValue('line-height')
@@ -120,18 +120,18 @@ const AreaTextField: VoidComponent<AreaTextFieldProps> = ($props) => {
 	})
 
 	return (<div
-		class={attrClassList('c-area-textfield', wrapperProps.class ?? '')}
-		data-c-focused={attrSetIfExist(props['c:focused'] ?? isFocus())}
-		data-c-invalid={attrSetIfExist(!props.disabled && props['c:autoValidation'] && isInvalid())}
-		data-c-disabled={attrSetIfExist(props.disabled)}
-		data-c-trailing={attrSetIfExist(trailing() || (props['c:autoShowClearButton'] && value().length > 0))}
-		data-c-leading={attrSetIfExist(leading())}
-		data-c-readonly={attrSetIfExist(props.readOnly)}
+		class={joinClassList('c-area-textfield', wrapperProps.class ?? '')}
+		data-c-focused={setAttrIfExist(props['c:focused'] ?? isFocus())}
+		data-c-invalid={setAttrIfExist(!props.disabled && props['c:autoValidation'] && isInvalid())}
+		data-c-disabled={setAttrIfExist(props.disabled)}
+		data-c-trailing={setAttrIfExist(trailing() || (props['c:autoShowClearButton'] && value().length > 0))}
+		data-c-leading={setAttrIfExist(leading())}
+		data-c-readonly={setAttrIfExist(props.readOnly)}
 		onClick={ev => {
 			eventCall(ev, wrapperProps.onClick)
 
 			const button = document.activeElement!
-			if (!elementValidTarget(
+			if (!isTargetValidElement(
 				ev.currentTarget,
 				button,
 				el => el.tagName === 'BUTTON'
@@ -255,18 +255,18 @@ const TextField: VoidComponent<TextFieldProps> = ($props) => {
 	})
 
 	return (<div
-		class={attrClassList('c-textfield', wrapperProps.class ?? '')}
-		data-c-focused={attrSetIfExist(props['c:focused'] ?? isFocus())}
-		data-c-invalid={attrSetIfExist(!props.disabled && props['c:autoValidation'] && isInvalid())}
-		data-c-disabled={attrSetIfExist(props.disabled)}
-		data-c-trailing={attrSetIfExist(trailing() || (props['c:autoShowClearButton'] && value().length > 0))}
-		data-c-leading={attrSetIfExist(leading())}
-		data-c-readonly={attrSetIfExist(props.readOnly)}
+		class={joinClassList('c-textfield', wrapperProps.class ?? '')}
+		data-c-focused={setAttrIfExist(props['c:focused'] ?? isFocus())}
+		data-c-invalid={setAttrIfExist(!props.disabled && props['c:autoValidation'] && isInvalid())}
+		data-c-disabled={setAttrIfExist(props.disabled)}
+		data-c-trailing={setAttrIfExist(trailing() || (props['c:autoShowClearButton'] && value().length > 0))}
+		data-c-leading={setAttrIfExist(leading())}
+		data-c-readonly={setAttrIfExist(props.readOnly)}
 		onClick={ev => {
 			eventCall(ev, wrapperProps.onClick)
 
 			const button = document.activeElement!
-			if (!elementValidTarget(
+			if (!isTargetValidElement(
 				ev.currentTarget,
 				button,
 				el => el.tagName === 'BUTTON'
@@ -419,7 +419,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 		let n = numberTextFieldRef.valueAsNumber
 		if (Number.isNaN(n)) n = value()
 
-		n = mathClamp(n, getMin(n), getMax(n))
+		n = Math_clamp(n, getMin(n), getMax(n))
 		if (props['c:integerOnly']) n = Math.round(n)
 
 		setValue(n)
@@ -444,14 +444,14 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 	}
 
 	function fixInputNumber(): void {
-		let n = numberSafe(
+		let n = safeNumber(
 			props['c:integerOnly']
 				? Number.parseInt(numberTextFieldRef.value)
 				: Number.parseFloat(numberTextFieldRef.value),
 			value()
 		)
 
-		n = mathClamp(n, getMin(n), getMax(n))
+		n = Math_clamp(n, getMin(n), getMax(n))
 		if (props['c:integerOnly']) n = Math.round(n)
 
 		setValue(n)
@@ -460,7 +460,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 
 	createEffect(() => {
 		let v = Number.parseFloat(`${props.value}`)
-		if (numberIsNotDefined(v)) return;
+		if (isNumberNotDefined(v)) return;
 
 		const integerOnly = props['c:integerOnly']
 		let max = props.max ?? v
@@ -469,7 +469,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 		if (typeof max === 'string') max = integerOnly? Number.parseInt(max) : Number.parseFloat(max)
 		if (typeof min === 'string') min = integerOnly? Number.parseInt(min) : Number.parseFloat(min)
 
-		v = mathClamp(v, min as number, max as number)
+		v = Math_clamp(v, min as number, max as number)
 		if (integerOnly) v = Math.round(v)
 
 		setValue(v)
@@ -498,8 +498,8 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 					let n = props['c:integerOnly']
 						? Number.parseInt(numberTextFieldRef.value)
 						: Number.parseFloat(numberTextFieldRef.value)
-					n = numberSafe(n, value())
-					n = mathClamp(n, getMin(n), getMax(n))
+					n = safeNumber(n, value())
+					n = Math_clamp(n, getMin(n), getMax(n))
 					if (props['c:integerOnly']) n = Math.round(n)
 					props['c:onInputAsNumber'](ev, n)
 				}
@@ -522,7 +522,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 				</Show>
 				<Show when={props['c:autoShowClearButton'] && value() != 0}>
 					<TextFieldButton data-tooltip={props['c:tooltipClear'] ?? 'Clear'} onClick={(_ev) => {
-						let v = mathClamp(0, getMin(0), getMax())
+						let v = Math_clamp(0, getMin(0), getMax())
 						if (props['c:integerOnly']) v = Math.round(v)
 
 						numberTextFieldRef.value = `${v}`
@@ -552,7 +552,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 				eventCall(ev, actionsProps.onKeyDown)
 				const code = ev.code
 				const button = document.activeElement!
-				if (!elementValidTarget(
+				if (!isTargetValidElement(
 					ev.currentTarget,
 					button,
 					el => el.tagName == 'BUTTON'
@@ -578,7 +578,7 @@ const NumberTextField: VoidComponent<NumberTextFieldProps> = ($props) => {
 				eventCall(ev, actionsProps.onKeyUp)
 				const code = ev.code
 				const button = document.activeElement!
-				if (!elementValidTarget(
+				if (!isTargetValidElement(
 					ev.currentTarget,
 					button,
 					el => el.tagName == 'BUTTON'

@@ -1,7 +1,7 @@
 import { type ParentComponent, type JSX, mergeProps, splitProps, type VoidComponent, type ValidComponent, createMemo } from 'solid-js'
 import { Dynamic, type DynamicProps } from 'solid-js/web'
 
-import { attrClassList, attrSetIfExist } from '@/utils/attributes'
+import { joinClassList, setAttrIfExist } from '@/utils/attributes'
 import { eventCall } from '@/utils/event'
 
 import Icon, { type IconProps } from '@/components/Icon'
@@ -38,7 +38,7 @@ const RawButton: ParentComponent<RawButtonProps> = ($props) => {
 	const variant = createMemo(() => props['c:variant'])
 
 	return (<Dynamic
-		class={attrClassList('c-btn', props.class ?? '')}
+		class={joinClassList('c-btn', props.class ?? '')}
 		classList={{
 			'c-filled-btn': variant() == ButtonVariant.filled,
 			'c-tonal-btn': variant() == ButtonVariant.tonal,
@@ -46,8 +46,8 @@ const RawButton: ParentComponent<RawButtonProps> = ($props) => {
 			...props.classList
 		}}
 		data-c-indicator={props['c:indicatorPosition']}
-		data-c-selected={attrSetIfExist(props['c:selected'])}
-		data-c-focused={attrSetIfExist(props['c:focused'])}
+		data-c-selected={setAttrIfExist(props['c:selected'])}
+		data-c-focused={setAttrIfExist(props['c:focused'])}
 		{...other}>
 		{props.children}
 	</Dynamic>)
@@ -72,7 +72,7 @@ const Button: ParentComponent<ButtonProps> = ($props) => {
 	const variant = createMemo(() => props['c:variant'])
 
 	return (<button
-		class={attrClassList('c-btn', props.class ?? '')}
+		class={joinClassList('c-btn', props.class ?? '')}
 		classList={{
 			'c-filled-btn': variant() == ButtonVariant.filled,
 			'c-tonal-btn': variant() == ButtonVariant.tonal,
@@ -81,8 +81,8 @@ const Button: ParentComponent<ButtonProps> = ($props) => {
 		}}
 		type={props.type as ("button" | "submit" | "reset" | undefined)}
 		data-c-indicator={props['c:indicatorPosition']}
-		data-c-selected={attrSetIfExist(props['c:selected'])}
-		data-c-focused={attrSetIfExist(props['c:focused'])}
+		data-c-selected={setAttrIfExist(props['c:selected'])}
+		data-c-focused={setAttrIfExist(props['c:focused'])}
 		{...other}>
 		{props.children}
 	</button>)
@@ -110,7 +110,7 @@ const LinkButton: ParentComponent<LinkButtonProps> = ($props) => {
 	const variant = createMemo(() => props['c:variant'])
 
 	return (<a
-		class={attrClassList('c-btn', props.class ?? '')}
+		class={joinClassList('c-btn', props.class ?? '')}
 		onClick={(ev) => {
 			eventCall(ev, props.onClick)
 			if (props['c:disabled']) {
@@ -123,10 +123,10 @@ const LinkButton: ParentComponent<LinkButtonProps> = ($props) => {
 			'c-outlined-btn': variant() == ButtonVariant.outlined,
 			...props.classList
 		}}
-		data-c-disabled={attrSetIfExist(props['c:disabled'])}
+		data-c-disabled={setAttrIfExist(props['c:disabled'])}
 		data-c-indicator={props['c:indicatorPosition']}
-		data-c-selected={attrSetIfExist(props['c:selected'])}
-		data-c-focused={attrSetIfExist(props['c:focused'])}
+		data-c-selected={setAttrIfExist(props['c:selected'])}
+		data-c-focused={setAttrIfExist(props['c:focused'])}
 		target={props['c:newTab']? "_blank" : props.target}
 		rel={props['c:newTab']? "noopener noreferrer" : props.rel}
 		{...other}>

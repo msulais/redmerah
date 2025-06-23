@@ -1,5 +1,5 @@
 ---
-import { attrClassList } from '@/utils/attributes'
+import { joinClassList } from '@/utils/attributes'
 import { SliderClasses, type SliderProps } from '.'
 import './index.scss'
 
@@ -15,7 +15,7 @@ const {
 ---
 
 <input
-	class={attrClassList(SliderClasses.slider, className)}
+	class={joinClassList(SliderClasses.slider, className)}
 	type="range"
 	value={value}
 	min={min}

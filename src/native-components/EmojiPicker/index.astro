@@ -10,7 +10,7 @@ import {
 	EMOJIS_SYMBOLS,
 	EMOJIS_TRAVEL_AND_PLACES
 } from '@/constants/emoji'
-import { attrClassList } from '@/utils/attributes'
+import { joinClassList } from '@/utils/attributes'
 import { IconCodes } from '@/enums/icons'
 
 import {
@@ -65,29 +65,29 @@ const {'class': titleClass, ...titleOther} = EmojiPickerTitleAttr ?? {}
 ---
 
 <Popover
-	class={attrClassList(EmojiPickerClasses.emojipicker, className)}
+	class={joinClassList(EmojiPickerClasses.emojipicker, className)}
 	data-c-emojipicker-autoclose={EmojiPickerAutoClose? '' : undefined}
 	{...other}>
 	<Tooltip
-		class={attrClassList(EmojiPickerClasses.tooltip, tooltipClass)}
+		class={joinClassList(EmojiPickerClasses.tooltip, tooltipClass)}
 		{...tooltipOther}>
 		<div
-			class={attrClassList(EmojiPickerClasses.header, headerClass)}
+			class={joinClassList(EmojiPickerClasses.header, headerClass)}
 			{...headerOther}>
 			<span
-				class={attrClassList(EmojiPickerClasses.headerText, headerTextClass)}
+				class={joinClassList(EmojiPickerClasses.headerText, headerTextClass)}
 				{...headerTextOther}>
 				Emoji
 			</span>
 			<IconButton
 				data-tooltip="Close"
-				class={attrClassList(EmojiPickerClasses.headerButton, headerButtonClass)}
+				class={joinClassList(EmojiPickerClasses.headerButton, headerButtonClass)}
 				IconButtonCode={headerButtonCode}
 				{...headerButtonOther}
 			/>
 		</div>
 		<div
-			class={attrClassList(EmojiPickerClasses.tabs, tabsClass)}
+			class={joinClassList(EmojiPickerClasses.tabs, tabsClass)}
 			role={tabsRole}
 			{...tabsOther}>
 			{[
@@ -117,7 +117,7 @@ const {'class': titleClass, ...titleOther} = EmojiPickerTitleAttr ?? {}
 				} = (EmojiPickerTabAttr[i] ?? {}) as any
 				return <IconButton
 					hidden={hidden}
-					class={attrClassList(
+					class={joinClassList(
 						EmojiPickerClasses.tab,
 						i === 0? EmojiPickerClasses.tabRecent : undefined,
 						i === 1? EmojiPickerClasses.tabSearch : undefined,
@@ -135,10 +135,10 @@ const {'class': titleClass, ...titleOther} = EmojiPickerTitleAttr ?? {}
 			})}
 		</div>
 		<form
-			class={attrClassList(EmojiPickerClasses.form, formClass)}
+			class={joinClassList(EmojiPickerClasses.form, formClass)}
 			{...formOther}>
 			<TextField
-				class={attrClassList(EmojiPickerClasses.search, searchClass)}
+				class={joinClassList(EmojiPickerClasses.search, searchClass)}
 				TextFieldInputAttr={{
 					placeholder: searchInputPlaceholder,
 					required: searchInputRequired,
@@ -147,12 +147,12 @@ const {'class': titleClass, ...titleOther} = EmojiPickerTitleAttr ?? {}
 				{...searchOther}>
 				<TextFieldButton
 					slot="trailing"
-					class={attrClassList(EmojiPickerClasses.searchButton, searchButtonClass)}
+					class={joinClassList(EmojiPickerClasses.searchButton, searchButtonClass)}
 					ButtonVariant={searchButtonVariant}
 					data-tooltip="Search"
 					{...searchButtonOther}>
 					<Icon
-						class={attrClassList(EmojiPickerClasses.searchButtonIcon, searchButtonIconClass)}
+						class={joinClassList(EmojiPickerClasses.searchButtonIcon, searchButtonIconClass)}
 						IconCode={searchButtonIconCode}
 						{...searchButtonIconOther}
 					/>
@@ -160,16 +160,16 @@ const {'class': titleClass, ...titleOther} = EmojiPickerTitleAttr ?? {}
 			</TextField>
 		</form>
 		<div
-			class={attrClassList(EmojiPickerClasses.content, contentClass)}
+			class={joinClassList(EmojiPickerClasses.content, contentClass)}
 			{...contentOther}>
 			<slot />
 		</div>
 		<Divider
-			class={attrClassList(EmojiPickerClasses.divider, dividerClass)}
+			class={joinClassList(EmojiPickerClasses.divider, dividerClass)}
 			{...dividerOther}
 		/>
 		<h3
-			class={attrClassList(EmojiPickerClasses.title, titleClass)}
+			class={joinClassList(EmojiPickerClasses.title, titleClass)}
 			{...titleOther}>
 			Smiley & emotion
 		</h3>
@@ -188,7 +188,7 @@ const {'class': titleClass, ...titleOther} = EmojiPickerTitleAttr ?? {}
 		].map((v, i) => {
 			const {'class': className, role = 'tabpanel', hidden = i !== 2, ...other} = EmojiPickerGroup[i] ?? {}
 			return <div
-				class={attrClassList(
+				class={joinClassList(
 					EmojiPickerClasses.group,
 					i === 0? EmojiPickerClasses.groupRecent : undefined,
 					i === 1? EmojiPickerClasses.groupSearch : undefined,
@@ -200,7 +200,7 @@ const {'class': titleClass, ...titleOther} = EmojiPickerTitleAttr ?? {}
 				{v.map((d, j) => {
 					const {'class': className, 'data-tooltip': tooltip = d[1], ...other} = EmojiPickerEmoji[i]?.[j] ?? {}
 					return <Button
-						class={attrClassList(EmojiPickerClasses.emoji, className)}
+						class={joinClassList(EmojiPickerClasses.emoji, className)}
 						data-tooltip={tooltip}
 						{...other}>
 						{d[0]}

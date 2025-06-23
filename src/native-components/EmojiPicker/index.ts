@@ -1,5 +1,5 @@
 import type { Emoji } from "@/types/emoji"
-import { createId } from "@/utils/ids"
+import { createElementId } from "@/utils/ids"
 import {
 	EMOJIS_ACTIVITIES,
 	EMOJIS_ANIMAL_AND_NATURE,
@@ -11,7 +11,7 @@ import {
 	EMOJIS_SYMBOLS,
 	EMOJIS_TRAVEL_AND_PLACES
 } from "@/constants/emoji"
-import { elementValidTarget } from "@/utils/element"
+import { isTargetValidElement } from "@/utils/element"
 import { isAnimationAllowed } from "@/utils/animation"
 import { AnimationEffectTiming } from "@/enums/animation"
 
@@ -185,13 +185,13 @@ function _initEmojiPickerRef(emojiPickerRef: EmojiPickerElement): void {
 
 			let tabId = tabRef.id
 			if (!tabId) {
-				tabId = createId()
+				tabId = createElementId()
 				tabRef.id = tabId
 			}
 
 			let tabpanelId = tabpanelRef.id
 			if (!tabpanelId) {
-				tabpanelId = createId()
+				tabpanelId = createElementId()
 				tabpanelRef.id = tabpanelId
 			}
 
@@ -379,7 +379,7 @@ function _initEmojiPickerRef(emojiPickerRef: EmojiPickerElement): void {
 
 	function emojiPickerRefOnClick(): void {
 		const buttonRef = document.activeElement as (IconButtonElement | ButtonElement)
-		if (!elementValidTarget(emojiPickerRef, buttonRef, el => el.tagName === 'BUTTON')) return
+		if (!isTargetValidElement(emojiPickerRef, buttonRef, el => el.tagName === 'BUTTON')) return
 
 		const classList = buttonRef.classList
 		if (classList.contains(EmojiPickerClasses.headerButton)) {

@@ -1,5 +1,5 @@
 ---
-import { attrClassList } from '@/utils/attributes'
+import { joinClassList } from '@/utils/attributes'
 import { ComboBoxClasses, ComboBoxVariant, type ComboBoxProps } from '.'
 import './index.scss'
 type Props = ComboBoxProps
@@ -11,7 +11,7 @@ const {
 } = Astro.props
 ---
 <select
-	class={attrClassList(ComboBoxClasses.combobox, className)}
+	class={joinClassList(ComboBoxClasses.combobox, className)}
 	data-c-combobox-variant={variant}
 	autocomplete={autocomplete}
 	{...other}>

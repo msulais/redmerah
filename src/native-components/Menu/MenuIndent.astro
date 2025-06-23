@@ -1,5 +1,5 @@
 ---
-import { attrClassList } from '@/utils/attributes'
+import { joinClassList } from '@/utils/attributes'
 
 import {
 	MenuClasses,
@@ -14,4 +14,4 @@ const {
 } = Astro.props
 ---
 
-<div class={attrClassList(MenuClasses.indent, className)} {...other}></div>
+<div class={joinClassList(MenuClasses.indent, className)} {...other}></div>

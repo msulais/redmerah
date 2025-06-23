@@ -1,6 +1,6 @@
 import { children, createMemo, Show, splitProps, type JSX, type ParentComponent } from "solid-js"
 
-import { attrClassList } from "@/utils/attributes"
+import { joinClassList } from "@/utils/attributes"
 
 import FocusableGroup from "@/components/FocusableGroup"
 import './index.scss'
@@ -52,12 +52,12 @@ const AppBar: ParentComponent<AppBarProps> = ($props) => {
 				right: 'next'
 			}}
 			c:elements={getInteractiveElement()}
-			class={attrClassList('c-appbar', props.class ?? '')}
+			class={joinClassList('c-appbar', props.class ?? '')}
 			{...other}>
 			<C/>
 		</FocusableGroup>}>
 		<div
-			class={attrClassList('c-appbar', props.class ?? '')}
+			class={joinClassList('c-appbar', props.class ?? '')}
 			{...other}>
 			<C/>
 		</div>

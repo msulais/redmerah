@@ -1,5 +1,5 @@
 ---
-import { attrClassList } from '@/utils/attributes'
+import { joinClassList } from '@/utils/attributes'
 
 import {
 	type ButtonProps,
@@ -17,7 +17,7 @@ const {
 } = Astro.props
 ---
 <button
-	class={attrClassList(
+	class={joinClassList(
 		ButtonClasses.button,
 		className
 	)}

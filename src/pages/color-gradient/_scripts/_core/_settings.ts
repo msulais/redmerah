@@ -2,7 +2,7 @@ import { PlatformAnimationMode, PlatformThemeMode } from "@/enums/platforms"
 import { ObservableStore } from "@/utils/store"
 import { ElementIds } from "../_shared/_ids"
 import { LocalStorageKeys } from "@/enums/storage"
-import { validEnumValue } from "@/utils/object"
+import { isValidEnumValue } from "@/utils/object"
 import { RootAttributes } from "@/enums/attributes"
 import { RadioNames } from "../_shared/_input-names"
 import { DEFAULT_ANIMATION, DEFAULT_COLOR_SPACE, DEFAULT_THEME } from "../_shared/_constant"
@@ -112,7 +112,7 @@ function _initEvents(): void {
 	_themeRef.addEventListener('change', ev => {
 		const target = ev.target as HTMLInputElement
 		const value = target?.value as PlatformThemeMode
-		if (!value || !validEnumValue(value, PlatformThemeMode)) {return}
+		if (!value || !isValidEnumValue(value, PlatformThemeMode)) {return}
 
 		_settingsMenuRef.hidePopover()
 		SettingsStore.update(v => ({...v, theme: value as PlatformThemeMode}))
@@ -121,7 +121,7 @@ function _initEvents(): void {
 	_animationRef.addEventListener('change', ev => {
 		const target = ev.target as HTMLInputElement
 		const value = target?.value as PlatformAnimationMode
-		if (!value || !validEnumValue(value, PlatformAnimationMode)) {return}
+		if (!value || !isValidEnumValue(value, PlatformAnimationMode)) {return}
 
 		_settingsMenuRef.hidePopover()
 		SettingsStore.update(v => ({...v, animation: value}))
@@ -130,7 +130,7 @@ function _initEvents(): void {
 	_colorSpaceRef.addEventListener('change', (ev) => {
 		const target = ev.target as HTMLInputElement
 		const value = target?.value as ColorSpace
-		if (!value || !validEnumValue(value, ColorSpace)) {return}
+		if (!value || !isValidEnumValue(value, ColorSpace)) {return}
 
 		_settingsMenuRef.hidePopover()
 		SettingsStore.update(v => ({...v, colorSpace: value}))
@@ -139,14 +139,14 @@ function _initEvents(): void {
 
 function _initTheme(): void {
 	const theme = localStorage.getItem(LocalStorageKeys.platformTheme) as PlatformThemeMode
-	if (!theme || !validEnumValue(theme, PlatformThemeMode) || theme === DEFAULT_THEME) return
+	if (!theme || !isValidEnumValue(theme, PlatformThemeMode) || theme === DEFAULT_THEME) return
 
 	SettingsStore.update(v => ({...v, theme}))
 }
 
 function _initAnimation(): void {
 	const animation = localStorage.getItem(LocalStorageKeys.platformAnimation) as PlatformAnimationMode
-	if (!animation || !validEnumValue(animation, PlatformAnimationMode)) return
+	if (!animation || !isValidEnumValue(animation, PlatformAnimationMode)) return
 
 	SettingsStore.update(v => ({...v, animation}))
 }

@@ -6,8 +6,8 @@ import type { Settings } from "./_types"
 import { Commands, CopyFileType, DownloadFileType, EncodingMode, ErrorCorrectionLevel, Pages } from "./_enums"
 import { createStore } from "solid-js/store"
 import { DEFAULT_BACKGROUND_COLOR, DEFAULT_COLOR, DEFAULT_ENCODING_MODE, DEFAULT_ERROR_CORRECTION_LEVEL, DEFAULT_MARGIN, DEFAULT_VERSION } from "./_constants"
-import { urlDownloadFile } from "@/utils/url"
-import { fileDownload } from "@/utils/file"
+import { downloadFileByUrl } from "@/utils/url"
+import { downloadFile } from "@/utils/file"
 import { IDB } from "@/utils/indexeddb"
 import { DatabaseNames } from "@/enums/storage"
 import { ObjectStoreKeys, ObjectStoreNames, type ObjectStoreMiscellaneous, type ObjectStoreSettings } from "./_storage"
@@ -107,13 +107,13 @@ const _: VoidComponent = () => {
 	function downloadQRCode(type: DownloadFileType): void {
 		switch (type) {
 		case DownloadFileType.jpeg:
-			urlDownloadFile(canvasRef.toDataURL('image/jpeg', 0.95), 'redmerah-qr-code.jpeg')
+			downloadFileByUrl(canvasRef.toDataURL('image/jpeg', 0.95), 'redmerah-qr-code.jpeg')
 			break
 		case DownloadFileType.png:
-			urlDownloadFile(canvasRef.toDataURL('image/png', 0.95), 'redmerah-qr-code.png')
+			downloadFileByUrl(canvasRef.toDataURL('image/png', 0.95), 'redmerah-qr-code.png')
 			break
 		case DownloadFileType.svg:
-			getSVG().then(svg => fileDownload(
+			getSVG().then(svg => downloadFile(
 				new Blob([svg], {type: 'image/svg+xml'}),
 				'redmerah-qr-code.svg'
 			))

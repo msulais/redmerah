@@ -3,7 +3,7 @@ import { ElementIds } from "./_enums"
 import { ButtonVariant } from "@/native-components/Button"
 import { isAnimationAllowed } from "@/utils/animation"
 import { AnimationEffectTiming } from "@/enums/animation"
-import { elementValidTarget } from "@/utils/element"
+import { isTargetValidElement } from "@/utils/element"
 import { closeDrawerRef, DrawerClasses, updateDrawerButtonRef } from "@/native-components/Drawer"
 import CSS from '../_index.module.scss'
 
@@ -15,7 +15,7 @@ function initNavigationEvents(): void {
 
 	function onClick(parent: HTMLElement): void {
 		const tab = document.activeElement as HTMLButtonElement
-		if (!elementValidTarget(
+		if (!isTargetValidElement(
 			parent, tab,
 			(el) => {
 				const classList = el.classList

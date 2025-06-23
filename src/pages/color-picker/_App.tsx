@@ -8,7 +8,7 @@ import { IDB } from "@/utils/indexeddb"
 import { DatabaseNames } from "@/enums/storage"
 import type { HEXColor, HSLColor } from "@/types/color"
 import { IDBStoreKeysLastInput, IDBStoreKeysSettings, IDBStoreNames, type IDBStoreSettings, type IDBStoreLastInput } from "./_storage"
-import { colorHexToHsl, colorHslToHex } from "@/utils/color"
+import { hexToHsl, hslToHex } from "@/utils/color"
 
 import App from "@/components/App"
 import AppBar from './_AppBar'
@@ -62,7 +62,7 @@ const _: VoidComponent = () => {
 		db.get<IDBStoreLastInput<HEXColor>>(
 			store,
 			IDBStoreKeysLastInput.hexColor
-		).then((result) => setInput(m => result? colorHexToHsl(result.value) : m))
+		).then((result) => setInput(m => result? hexToHsl(result.value) : m))
 	}
 
 	function saveSettings(...items: [key: IDBStoreKeysSettings, value: unknown][]): void {
@@ -105,7 +105,7 @@ const _: VoidComponent = () => {
 			}
 
 			timeSaveLastInputId = setTimeout(() => {
-				saveLastInput([IDBStoreKeysLastInput.hexColor, colorHslToHex(input)])
+				saveLastInput([IDBStoreKeysLastInput.hexColor, hslToHex(input)])
 				timeSaveLastInputId = null
 			}, 200)
 			break

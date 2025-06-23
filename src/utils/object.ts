@@ -1,8 +1,8 @@
-export function validEnumKey<T, U extends Record<any, any>>(key: T, enums: U): boolean {
+export function isValidEnumKey<T, U extends Record<any, any>>(key: T, enums: U): boolean {
 	return enums[key] !== undefined
 }
 
-export function validEnumValue<
+export function isValidEnumValue<
 	T, U extends Record<string | number, any>
 >(value: T, enums: U | (string | number)[]): boolean {
 	return Object
@@ -10,7 +10,7 @@ export function validEnumValue<
 		.some(v => v === value)
 }
 
-export function objectHasValue(data: unknown): boolean {
+export function isObjectHasValue(data: unknown): boolean {
 	return data != undefined && data != null
 }
 
@@ -44,7 +44,7 @@ export function moveArrayElement<T>(
 	return arr
 }
 
-export function objectCreate<T>(...data: [key: keyof T, value: unknown][]): T {
+export function createObject<T>(...data: [key: keyof T, value: unknown][]): T {
 	const obj = {} as Record<keyof T, unknown>
 
 	for (const i in data) {
@@ -55,7 +55,10 @@ export function objectCreate<T>(...data: [key: keyof T, value: unknown][]): T {
 }
 
 /**
- * Basically switch-case but without `break` keyword
+ * Basically switch-case but without `break` keyword.
+ *
+ * Why do I made this? for simplicity. You know, "MINIFY" javascript.
+ * Althought, I don't use it cause it HARD to use compare to `switch`.
  * @param source
  * @param args
  * @returns

@@ -9,9 +9,9 @@ import { LocalStorageKeys } from "@/enums/storage"
 import { ThemeData } from "@/enums/theme"
 import { Commands, TextTypes } from "./_enums"
 import { NumberTextField } from "@/components/TextField"
-import { elementValidTarget } from "@/utils/element"
-import { numberSafe } from "@/utils/number"
-import { validEnumValue } from "@/utils/object"
+import { isTargetValidElement } from "@/utils/element"
+import { safeNumber } from "@/utils/number"
+import { isValidEnumValue } from "@/utils/object"
 import { APP_JAVASCRIPT_MINIFIER as app } from "@/constants/apps"
 import { ICON_APPS, ICON_ARROW_DOWNLOAD, ICON_ARROW_RESET, ICON_CHAT, ICON_CIRCLE, ICON_COPY, ICON_DOCUMENT_ARROW_RIGHT, ICON_GIFT, ICON_INFO, ICON_LAPTOP_SETTINGS, ICON_MAXIMIZE, ICON_MORE_VERTICAL, ICON_PLAY_CIRCLE_HINT, ICON_RECEIPT, ICON_SETTINGS, ICON_SHARE_ANDROID, ICON_SHIELD_CHECKMARK, ICON_SQUARE, ICON_TEARDROP_BOTTOM_RIGHT, ICON_TEXT_WRAP, ICON_WEATHER_MOON, ICON_WEATHER_SUNNY } from "@/constants/icons"
 import { AnimationData } from "@/enums/animation"
@@ -74,7 +74,7 @@ const _: VoidComponent<{
 
 	function initTheme(): void {
 		const theme = localStorage.getItem(LocalStorageKeys.platformTheme)
-		if (theme && validEnumValue(theme, ThemeData)) {
+		if (theme && isValidEnumValue(theme, ThemeData)) {
 			root.setAttribute(RootAttributes.theme, theme)
 			setTheme(theme as ThemeData)
 		}
@@ -82,7 +82,7 @@ const _: VoidComponent<{
 
 	function initCorner(): void {
 		const corner = localStorage.getItem(LocalStorageKeys.corner)
-		if (corner && validEnumValue(corner, CornerData)) {
+		if (corner && isValidEnumValue(corner, CornerData)) {
 			root.setAttribute(RootAttributes.corner, corner)
 			setCorner(corner as CornerData)
 		}
@@ -100,7 +100,7 @@ const _: VoidComponent<{
 
 	function initAnimation(): void {
 		const animation = localStorage.getItem(LocalStorageKeys.platformAnimation)
-		if (animation && validEnumValue(animation, AnimationData)) {
+		if (animation && isValidEnumValue(animation, AnimationData)) {
 			root.setAttribute(RootAttributes.animation, animation)
 			setAnimation(animation as AnimationData)
 		}
@@ -129,7 +129,7 @@ const _: VoidComponent<{
 			<Menu
 				onClick={(ev) => {
 					const button = document.activeElement!
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -200,7 +200,7 @@ const _: VoidComponent<{
 				c:onToggleOpen={(v) => setIsMenuSettingsOpen(v)}
 				onClick={ev => {
 					const button = document.activeElement! as HTMLButtonElement
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -208,17 +208,17 @@ const _: VoidComponent<{
 					const dataset = button.dataset
 					const dataTheme = dataset.theme
 					if (dataTheme
-						&& validEnumValue(dataTheme, ThemeData)
+						&& isValidEnumValue(dataTheme, ThemeData)
 					) return updateTheme(dataTheme as ThemeData)
 
 					const dataCorner = dataset.corner
 					if (dataCorner
-						&& validEnumValue(dataCorner, CornerData)
+						&& isValidEnumValue(dataCorner, CornerData)
 					) return updateCorner(dataCorner as CornerData)
 
 					const dataEcma = dataset.ecma
 					if (dataEcma) {
-						const ecma = numberSafe(Number.parseFloat(dataEcma), 5)
+						const ecma = safeNumber(Number.parseFloat(dataEcma), 5)
 						if (![5, 2015, 2016, 2017, 2018, 2019, 2020].includes(ecma)) return
 
 						return updateEcma(ecma as ECMA)
@@ -336,7 +336,7 @@ const _: VoidComponent<{
 							value={settings().fontSize}
 							onBlur={ev => command(
 								Commands.updateFontSize,
-								numberSafe(ev.currentTarget.valueAsNumber, settings().fontSize)
+								safeNumber(ev.currentTarget.valueAsNumber, settings().fontSize)
 							)}
 						/>
 					</Tooltip>
@@ -396,7 +396,7 @@ const _: VoidComponent<{
 				ref={r => menuMoreActionsRef = r}
 				onClick={ev => {
 					const button = document.activeElement! as HTMLButtonElement
-					if (!elementValidTarget(
+					if (!isTargetValidElement(
 						ev.currentTarget,
 						button,
 					)) return
@@ -414,12 +414,12 @@ const _: VoidComponent<{
 						const dataset = button.dataset
 						const dataDownload = dataset.download
 						if (dataDownload
-							&& validEnumValue(dataDownload, TextTypes)
+							&& isValidEnumValue(dataDownload, TextTypes)
 						) return downloadFile(dataDownload as TextTypes)
 
 						const dataCopy = dataset.copy
 						if (dataCopy
-							&& validEnumValue(dataCopy, TextTypes)
+							&& isValidEnumValue(dataCopy, TextTypes)
 						) return copyAll(dataCopy as TextTypes)
 					}
 				}}>
@@ -475,7 +475,7 @@ const _: VoidComponent<{
 			c:headline={app.name}
 			onClick={ev => {
 				const button = document.activeElement! as HTMLButtonElement
-				if (!elementValidTarget(
+				if (!isTargetValidElement(
 					ev.currentTarget,
 					button,
 				)) return
