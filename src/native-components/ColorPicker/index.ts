@@ -117,6 +117,10 @@ type ColorPickerUpdateOptions = Omit<PopoverUpdateOptions, 'PopoverChildren'> & 
 	}
 }
 
+type _UpdateEventDetail = {
+	color: HEXColor
+}
+
 enum ColorPickerAttributes {
 	disabledOpacity = 'data-c-colorpicker-disabled-opacity',
 	value           = 'data-c-colorpicker-value',
@@ -150,7 +154,10 @@ enum ColorPickerEvents {
 	input  = 'colorpicker:input',
 
 	/** `!bubbles | !cancelable | !detail` */
-	change = 'colorpicker:change'
+	change = 'colorpicker:change',
+
+	/** `!bubbles | !cancelable | detail = _UpdateEventDetail` */
+	update = 'colorpicker:update'
 }
 
 enum ColorPickerCSSVariables {
@@ -228,19 +235,21 @@ function _initColorPickerRef(colorPickerRef: ColorPickerElement): void {
 		const hexColor = colorHslToHex(hsla).toUpperCase()
 		const hexColorWithAlpha = hexColor + Math.round(hsla.a * 0xff).toString(16).padStart(2, '0').toUpperCase()
 		const hueHexColor = colorHslToHex({h: hsla.h, s: 1, l: 0.5}).toUpperCase()
-		colorPickerRef.style.setProperty(ColorPickerCSSVariables.color, hexColor)
-		colorPickerRef.style.setProperty(ColorPickerCSSVariables.colorWithAlpha, hexColorWithAlpha)
-		colorPickerRef.style.setProperty(ColorPickerCSSVariables.hue, hueHexColor)
-		colorPickerRef.style.setProperty(
-			ColorPickerCSSVariables.rectBorderColor,
-			colorContrastRatio(colorHslToRgb(hsla), {r: 0, g: 0, b: 0}) > 50
-				? '#000' : '#fff'
-		)
-		colorPickerRef.style.setProperty(
-			ColorPickerCSSVariables.sliderHueBorderColor,
-			colorContrastRatio(colorHslToRgb({...hsla, s: 1, l: 0.5}), {r: 0, g: 0, b: 0}) > 50
-				? '#000' : '#fff'
-		)
+		requestAnimationFrame(() => {
+			colorPickerRef.style.setProperty(ColorPickerCSSVariables.color, hexColor)
+			colorPickerRef.style.setProperty(ColorPickerCSSVariables.colorWithAlpha, hexColorWithAlpha)
+			colorPickerRef.style.setProperty(ColorPickerCSSVariables.hue, hueHexColor)
+			colorPickerRef.style.setProperty(
+				ColorPickerCSSVariables.rectBorderColor,
+				colorContrastRatio(colorHslToRgb(hsla), {r: 0, g: 0, b: 0}) > 50
+					? '#000' : '#fff'
+			)
+			colorPickerRef.style.setProperty(
+				ColorPickerCSSVariables.sliderHueBorderColor,
+				colorContrastRatio(colorHslToRgb({...hsla, s: 1, l: 0.5}), {r: 0, g: 0, b: 0}) > 50
+					? '#000' : '#fff'
+			)
+		})
 		if (options?.rect ?? true) {
 			rectX = 0
 			rectY = 0
@@ -252,8 +261,11 @@ function _initColorPickerRef(colorPickerRef: ColorPickerElement): void {
 				rectX = hsv.s * 100
 				rectY = (1 - hsv.v) * 100
 			}
-			colorPickerRef.style.setProperty(ColorPickerCSSVariables.rectX, rectX + '%')
-			colorPickerRef.style.setProperty(ColorPickerCSSVariables.rectY, rectY + '%')
+
+			requestAnimationFrame(() => {
+				colorPickerRef.style.setProperty(ColorPickerCSSVariables.rectX, rectX + '%')
+				colorPickerRef.style.setProperty(ColorPickerCSSVariables.rectY, rectY + '%')
+			})
 		}
 		if ((options?.sliderHue ?? true) && sliderHueRef) {
 			const hue = Math.round(hsla.h * 360)
@@ -398,8 +410,10 @@ function _initColorPickerRef(colorPickerRef: ColorPickerElement): void {
 		y = (y - rectRect!.top) / rectRect!.height * 100
 		rectX = mathClamp(x, 0, 100)
 		rectY = mathClamp(y, 0, 100)
-		colorPickerRef.style.setProperty(ColorPickerCSSVariables.rectX, rectX + '%')
-		colorPickerRef.style.setProperty(ColorPickerCSSVariables.rectY, rectY + '%')
+		requestAnimationFrame(() => {
+			colorPickerRef.style.setProperty(ColorPickerCSSVariables.rectX, rectX + '%')
+			colorPickerRef.style.setProperty(ColorPickerCSSVariables.rectY, rectY + '%')
+		})
 
 		if (colorSpace === ColorPickerColorSpace.hsl) {
 			hsla.s = rectX / 100
@@ -436,8 +450,10 @@ function _initColorPickerRef(colorPickerRef: ColorPickerElement): void {
 		}
 		rectX = mathClamp(rectX, 0, 100)
 		rectY = mathClamp(rectY, 0, 100)
-		colorPickerRef.style.setProperty(ColorPickerCSSVariables.rectX, rectX + '%')
-		colorPickerRef.style.setProperty(ColorPickerCSSVariables.rectY, rectY + '%')
+		requestAnimationFrame(() => {
+			colorPickerRef.style.setProperty(ColorPickerCSSVariables.rectX, rectX + '%')
+			colorPickerRef.style.setProperty(ColorPickerCSSVariables.rectY, rectY + '%')
+		})
 
 		if (colorSpace === ColorPickerColorSpace.hsl) {
 			hsla.s = rectX / 100
@@ -586,6 +602,10 @@ function _initColorPickerRef(colorPickerRef: ColorPickerElement): void {
 	}
 
 	function initEvents(): void {
+		colorPickerRef.addEventListener(ColorPickerEvents.update as any, () => {
+			initColor()
+		})
+
 		colorPickerRef.addEventListener('toggle', ev => {
 			const isOpen = (ev as ToggleEvent).newState === 'open'
 			if (isOpen) {
@@ -669,8 +689,14 @@ function updateColorPickerRef(
 	if (valueOption === false) {
 		colorPickerRef.removeAttribute(ColorPickerAttributes.value)
 	}
-	else if (valueOption !== undefined && valueOption !== true) {
+	else if (valueOption !== undefined && valueOption !== true && colorIsValidWithAlpha(valueOption)) {
 		colorPickerRef.setAttribute(ColorPickerAttributes.value, valueOption)
+		colorPickerRef.dispatchEvent(new CustomEvent<_UpdateEventDetail>(ColorPickerEvents.update, {
+			bubbles: false, cancelable: false,
+			detail: {
+				color: valueOption as HEXColor
+			}
+		}))
 	}
 
 	const colorSpaceOption = options?.ColorPickerColorSpace
