@@ -9,6 +9,7 @@ const {
 	max = '100',
 	value = '0',
 	min = '0',
+	autocomplete = 'off',
 	...other
 } = Astro.props
 ---
@@ -19,6 +20,7 @@ const {
 	value={value}
 	min={min}
 	max={max}
+	autocomplete={autocomplete}
 	{...other}
 />
 <script>
