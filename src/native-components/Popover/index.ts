@@ -389,8 +389,10 @@ function _initPopoverRef(popoverRef: PopoverElement): void {
 	function dragHandleRefOnPointerMove(ev: PointerEvent): void {
 		if (!isDragging) return
 
-		popoverRef.style.setProperty(PopoverCSSVariables.left, ev.clientX - diffPositionX + 'px')
-		popoverRef.style.setProperty(PopoverCSSVariables.top, ev.clientY - diffPositionY + 'px')
+		requestAnimationFrame(() => {
+			popoverRef.style.setProperty(PopoverCSSVariables.left, ev.clientX - diffPositionX + 'px')
+			popoverRef.style.setProperty(PopoverCSSVariables.top, ev.clientY - diffPositionY + 'px')
+		})
 	}
 
 	function dragHandleRefOnPointerUp(ev: PointerEvent): void {
@@ -523,6 +525,32 @@ async function repositionPopoverRef(popoverRef: PopoverElement): Promise<void> {
 	)))
 }
 
+function repositionEdgePopoverRef(popoverRef: PopoverElement): void {
+	const popoverRect = popoverRef.getBoundingClientRect()
+	const screenWidth = document.body.clientWidth
+	const screenHeight = window.innerHeight
+	const [x, y] = [popoverRect.left, popoverRect.top]
+	let [left, top] = [x, y]
+	if (popoverRect.left < POPOVER_MARGIN) left = POPOVER_MARGIN
+	if (popoverRect.top < POPOVER_MARGIN) top = POPOVER_MARGIN
+	if (popoverRect.right > screenWidth) left = screenWidth - popoverRect.width - POPOVER_MARGIN
+	if (popoverRect.bottom > screenHeight) top = screenHeight - popoverRect.height - POPOVER_MARGIN
+
+	popoverRef.style.setProperty(PopoverCSSVariables.left, left + 'px')
+	popoverRef.style.setProperty(PopoverCSSVariables.top, top + 'px')
+	if (!isAnimationAllowed()) {return}
+
+	popoverRef.animate({
+		transform: [
+			`translate(${x - left}px,${y - top}px)`,
+			`translate(0,0)`
+		]
+	}, {
+		duration: 250,
+		easing: AnimationEffectTiming.spring
+	})
+}
+
 function isPopoverRefOpen(popoverRef: PopoverElement): boolean {
 	return popoverRef.matches(':popover-open')
 }
@@ -653,5 +681,6 @@ export {
 	createPopoverRef,
 	updatePopoverRef,
 	registerPopoverRef,
-	unregisterPopoverRef
+	unregisterPopoverRef,
+	repositionEdgePopoverRef
 }
