@@ -5,7 +5,6 @@ import { createTooltipRef, registerTooltipRef, type TooltipElement, type Tooltip
 import { createDividerRef, type DividerElement, type DividerProps } from "../Divider"
 import { isValidEnumValue } from "@/utils/object"
 import { isAnimationAllowed } from "@/utils/animation"
-import { animateUpdateTextElement } from "@/utils/element"
 import { isDateEqual_Y, isDateEqual_YM, isDateEqual_YMD, isDateOutRange_Y, isDateOutRange_YM, isDateOutRange_YMD } from "@/utils/datetime"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { IconCodes } from "@/enums/icons"
@@ -164,7 +163,7 @@ function _initDatePickerRef(datePickerRef: DatePickerElement): void {
 		repositionPopoverRef(datePickerRef)
 	}
 
-	function updateView(date: Date, animate = true): void {
+	function updateView(date: Date): void {
 		currentView = date
 
 		let daysPerMonth = 31 // default
@@ -187,12 +186,7 @@ function _initDatePickerRef(datePickerRef: DatePickerElement): void {
 		switch (attributes.viewtype) {
 		case DatePickerViewType.day: {
 			const titleText = currentView.toLocaleDateString('en', {month: 'long', year: 'numeric'})
-			if (isAnimationAllowed() && animate) {
-				animateUpdateTextElement(titleRef, titleText)
-			}
-			else {
-				titleRef.textContent = titleText
-			}
+			titleRef.textContent = titleText
 
 			const emptyDate = datePickerRef.querySelectorAll<HTMLDivElement>('.' + DatePickerClasses.dateEmpty)
 			const dates = datePickerRef.querySelectorAll<ButtonElement>('.' + DatePickerClasses.dateButton)
@@ -243,12 +237,7 @@ function _initDatePickerRef(datePickerRef: DatePickerElement): void {
 		case DatePickerViewType.month: {
 			const year = currentView.getFullYear()
 			const titleText = currentView.toLocaleDateString('en', {year: 'numeric'})
-			if (isAnimationAllowed() && animate) {
-				animateUpdateTextElement(titleRef, titleText)
-			}
-			else {
-				titleRef.textContent = titleText
-			}
+			titleRef.textContent = titleText
 
 			const monthButtonRefs = datePickerRef.querySelectorAll<ButtonElement>('.' + DatePickerClasses.monthButton)
 			for (let i = 0; i < monthButtonRefs.length; i++) {
@@ -276,13 +265,7 @@ function _initDatePickerRef(datePickerRef: DatePickerElement): void {
 		case DatePickerViewType.year: {
 			const year = currentView.getFullYear()
 			const titleText = year + '-' + (year + 15)
-			const allowAnimation = isAnimationAllowed() && animate
-			if (allowAnimation) {
-				animateUpdateTextElement(titleRef, titleText)
-			}
-			else {
-				titleRef.textContent = titleText
-			}
+			titleRef.textContent = titleText
 
 			const yearButtonRefs = datePickerRef.querySelectorAll<ButtonElement>('.' + DatePickerClasses.yearButton)
 			for (let i = 0; i < yearButtonRefs.length; i++) {
@@ -409,7 +392,7 @@ function _initDatePickerRef(datePickerRef: DatePickerElement): void {
 			const isOpen = (ev as ToggleEvent).newState === 'open'
 			if (isOpen) {
 				initDates()
-				updateView(attributes.value!, false)
+				updateView(attributes.value!)
 			}
 		})
 
