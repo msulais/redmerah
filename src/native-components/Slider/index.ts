@@ -1,5 +1,6 @@
 import { mathClamp } from "@/utils/math"
 import { numberSafe } from "@/utils/number"
+import './index.scss'
 
 type SliderProps = astroHTML.JSX.InputHTMLAttributes
 
@@ -69,7 +70,9 @@ function updateSliderRefValue(sliderRef: SliderElement, value?: number): void {
 
 	const v = numberSafe(sliderRef.valueAsNumber, 0)
 	const range = mathClamp(v / (Math.max(min, max) - Math.min(min, max)) * 100, 0, 100)
-	sliderRef.style.setProperty(SliderCSSVariables.percent, range + '%')
+	requestAnimationFrame(() => {
+		sliderRef.style.setProperty(SliderCSSVariables.percent, range + '%')
+	})
 }
 
 function createSliderRef(options?: SliderUpdateOptions): SliderElement {
@@ -83,6 +86,7 @@ function createSliderRef(options?: SliderUpdateOptions): SliderElement {
 }
 
 function updateSliderRef(sliderRef: SliderElement, options?: SliderUpdateOptions): SliderElement {
+	sliderRef.classList.add(SliderClasses.slider)
 	sliderRef.type = 'range'
 	const minOption = options?.SliderMin
 	if (typeof minOption === 'number') {
