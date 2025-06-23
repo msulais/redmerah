@@ -7,15 +7,14 @@
 // - Disabled
 
 .c-button {
-	--c-button-border-radius: 4px;
 	--c-button-icon-animation: none;
-
 	padding: 4px 12px;
 	border: 1px solid transparent;
 	display: flex;
 	background-color: transparent;
 	align-items: center;
-	border-radius: var(--c-button-border-radius);
+	border-radius: 4px;
+	color: rgb(var(--g-color-on-surface));
 	display: flex;
 	gap: 8px;
 	font-size: var(--g-font-size-xs);
