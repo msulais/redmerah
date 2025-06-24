@@ -16,17 +16,7 @@ import logoUSBChecker from '@/assets/images/apps/usb-checker.svg'
 import logoClock from '@/assets/images/apps/clock.svg'
 import logoXmlEscape from '@/assets/images/apps/xml-escape.svg'
 import logoJavaScriptMinifer from '@/assets/images/apps/javascript-minifier.svg'
-import logoCubicBezier from '@/assets/images/apps/cubic-bezier.svg'
 
-export const APP_CUBIC_BEZIER: AppItem = {
-	logoUrl: logoCubicBezier.src,
-	name: 'Cubic Bezier',
-	description: 'Take control of your CSS animations with Cubic Bezier. This tool allows developers to create and fine-tune cubic-bezier curves, ensuring top-notch performance and user engagement.',
-	link: RoutesLinks.cubicBezier,
-	color: '#00FFFF',
-	buildNumber: 1,
-	buildVersion: '0.0.1',
-}
 export const APP_JAVASCRIPT_MINIFIER: AppItem = {
 	logoUrl: logoJavaScriptMinifer.src,
 	name: 'JavaScript Minifier',
@@ -188,7 +178,6 @@ export const APP_COLOR_PICKER: AppItem = {
 }
 
 export const APPS: AppItem[] = [
-	APP_CUBIC_BEZIER,
 	APP_JAVASCRIPT_MINIFIER,
 	APP_CLOCK,
 	APP_XML_ESCAPE,
