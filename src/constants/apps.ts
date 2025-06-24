@@ -12,7 +12,6 @@ import logoColorGradient from '@/assets/images/apps/color-gradient.svg'
 import logoEmojiPicker from '@/assets/images/apps/emoji-picker.svg'
 import logoLatexViewer from '@/assets/images/apps/latex-viewer.svg'
 import logoColorPicker from '@/assets/images/apps/color-picker.svg'
-import logoUSBChecker from '@/assets/images/apps/usb-checker.svg'
 import logoClock from '@/assets/images/apps/clock.svg'
 import logoXmlEscape from '@/assets/images/apps/xml-escape.svg'
 import logoJavaScriptMinifer from '@/assets/images/apps/javascript-minifier.svg'
@@ -43,16 +42,6 @@ export const APP_CLOCK: AppItem = {
 	description: 'Discover our versatile clock web app! Display current time, set timers, and more. Your all-in-one time management solution.',
 	link: RoutesLinks.clock,
 	color: '#0BEA57',
-	buildNumber: 1,
-	buildVersion: '0.0.1',
-}
-
-export const APP_USB_CHECKER: AppItem = {
-	logoUrl: logoUSBChecker.src,
-	name: 'USB Checker',
-	description: 'Easily check your device\'s USB specifications with our USB Checker web app, powered by the WebUSB API. Ensure compatibility and optimize performance with just a click.',
-	link: RoutesLinks.usbChecker,
-	color: '#297BE6',
 	buildNumber: 1,
 	buildVersion: '0.0.1',
 }
@@ -181,7 +170,6 @@ export const APPS: AppItem[] = [
 	APP_JAVASCRIPT_MINIFIER,
 	APP_CLOCK,
 	APP_XML_ESCAPE,
-	APP_USB_CHECKER,
 	APP_COLOR_PICKER,
 	APP_LATEX_VIEWER,
 	APP_EMOJI_PICKER,
