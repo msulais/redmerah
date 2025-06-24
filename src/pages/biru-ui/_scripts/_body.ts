@@ -2,13 +2,12 @@ import { updateButtonRef, type ButtonVariant } from "@/native-components/Button"
 import { ElementIds } from "./_enums"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { isAnimationAllowed } from "@/utils/animation"
-import { getSelectRefValue, SelectAttributes, SelectEvents, SelectVariant, updateSelectRef, type SelectElement } from "@/native-components/Select"
 import { PopoverPosition, updatePopoverRef } from "@/native-components/Popover"
 import { ColorPickerAttributes, ColorPickerEvents } from "@/native-components/ColorPicker"
 import { colorContrastRatio, hexToRgb } from "@/utils/color"
 import type { HEXColor } from "@/types/color"
 import { IconClasses, updateIconRef } from "@/native-components/Icon"
-import { ListVariant, updateListRef } from "@/native-components/List"
+import { ListVariant, updateListRef, type ListElement } from "@/native-components/List"
 import { safeNumber } from "@/utils/number"
 import { closeModalRef, ModalPosition, openModalRef, updateModalRef } from "@/native-components/Modal"
 import { TooltipPosition, updateTooltipRef } from "@/native-components/Tooltip"
@@ -16,41 +15,51 @@ import { MenuPosition, updateMenuRef } from "@/native-components/Menu"
 import { EmojiPickerAttributes, EmojiPickerEvents } from "@/native-components/EmojiPicker"
 import { updateDialogRef } from "@/native-components/Dialog"
 import { DatePickerAttributes, DatePickerEvents, updateDatePickerRef } from "@/native-components/DatePicker"
+import { ComboBoxVariant, updateComboBoxRef, type ComboBoxElement } from "@/native-components/ComboBox"
+import type { CheckBoxElement } from "@/native-components/CheckBox"
 
 const animationOptions = {duration: 250, easing: AnimationEffectTiming.spring}
 const $ = (id: string) => document.getElementById(id)
 
 function _button(): void {
-	const options = $(ElementIds.panelButtonsOptions) as SelectElement
+	const options = $(ElementIds.panelButtonsOptions) as HTMLDivElement
 	const btn1 = $(ElementIds.panelButtonsPreview1) as HTMLButtonElement
 	const btn2 = $(ElementIds.panelButtonsPreview2) as HTMLButtonElement
 	const btn3 = $(ElementIds.panelButtonsPreview3) as HTMLButtonElement
-	const optionVariant = $(ElementIds.panelButtonsOptionsVariant)
-	const optionDisabled = $(ElementIds.panelButtonsOptionsDisabled)
-	const optionFocused = $(ElementIds.panelButtonsOptionsFocused)
+	const optionVariant = $(ElementIds.panelButtonsOptionsVariant) as ComboBoxElement
+	const optionDisabled = $(ElementIds.panelButtonsOptionsDisabled) as CheckBoxElement
+	const optionFocused = $(ElementIds.panelButtonsOptionsFocused) as CheckBoxElement
 	options.addEventListener('change', ev => {
-		const target = ev.target as HTMLInputElement
-		const checked = target.checked
+		const target = ev.target
 		switch (target) {
 		case optionDisabled: {
+			const checked = (target as HTMLInputElement).checked
 			updateButtonRef(btn1, {ButtonDisabled: checked})
 			updateButtonRef(btn2, {ButtonDisabled: checked})
 			updateButtonRef(btn3, {ButtonDisabled: checked})
 			break
 		}
 		case optionFocused: {
+			const checked = (target as HTMLInputElement).checked
 			updateButtonRef(btn1, {ButtonFocused: checked})
 			updateButtonRef(btn2, {ButtonFocused: checked})
 			updateButtonRef(btn3, {ButtonFocused: checked})
 			break
+		}
+		case optionVariant: {
+			const value = optionVariant.value
+			updateButtonRef(btn1, {ButtonVariant: value as ButtonVariant})
+			updateButtonRef(btn2, {ButtonVariant: value as ButtonVariant})
+			updateButtonRef(btn3, {ButtonVariant: value as ButtonVariant})
+			break
 		}}
 	})
 
-	options.addEventListener(SelectEvents.change, ev => {
+	options.addEventListener('change', ev => {
 		const target = ev.target
 		switch (target) {
 		case optionVariant: {
-			const value = getSelectRefValue(target as HTMLDivElement)
+			const value = optionVariant.value
 			updateButtonRef(btn1, {ButtonVariant: value as ButtonVariant})
 			updateButtonRef(btn2, {ButtonVariant: value as ButtonVariant})
 			updateButtonRef(btn3, {ButtonVariant: value as ButtonVariant})
@@ -80,17 +89,17 @@ function _textField(): void {
 	const leading = $(ElementIds.panelTextfieldPreviewLeading) as HTMLElement
 	const trailing = $(ElementIds.panelTextfieldPreviewTrailing) as HTMLButtonElement
 	const options = $(ElementIds.panelTextfieldOptions)
-	const optionType = $(ElementIds.panelTextfieldOptionsType) as HTMLDivElement
+	const optionType = $(ElementIds.panelTextfieldOptionsType) as ComboBoxElement
 	const optionLeading = $(ElementIds.panelTextfieldOptionsLeading) as HTMLInputElement
 	const optionTrailing = $(ElementIds.panelTextfieldOptionsTrailing) as HTMLInputElement
 	const optionReadonly = $(ElementIds.panelTextfieldOptionsReadonly) as HTMLInputElement
 	const optionPlaceholder = $(ElementIds.panelTextfieldOptionsPlaceholder) as HTMLInputElement
 
-	options?.addEventListener(SelectEvents.change, ev => {
+	options?.addEventListener('change', ev => {
 		const target = ev.target
 		switch (target) {
 		case optionType:
-			input.type = getSelectRefValue(optionType) ?? 'text'
+			input.type = optionType.value ?? 'text'
 		}
 	})
 
@@ -197,27 +206,21 @@ function _icon(): void {
 }
 
 function _list(): void {
-	const optionsRef = $(ElementIds.panelListOptions)!
-	const listPreview = $(ElementIds.panelListPreviewList)!
-	const leadingPreview = $(ElementIds.panelListPreviewLeading)!
-	const titlePreview = $(ElementIds.panelListPreviewTitle)!
-	const trailingPreview = $(ElementIds.panelListPreviewTrailing)!
-	const subtitlePreview = $(ElementIds.panelListPreviewSubtitle)!
-	const leadingOptionRef = $(ElementIds.panelListOptionsLeading)!
-	const trailingOptionRef = $(ElementIds.panelListOptionsTrailing)!
-	const subtitleOptionRef = $(ElementIds.panelListOptionsSubtitle)!
-	const titleOptionRef = $(ElementIds.panelListOptionsTitle)!
-	const variantOptionRef = $(ElementIds.panelListOptionsVariant)!
-	optionsRef?.addEventListener(SelectEvents.change, ev => {
-		const target = ev.target as HTMLDivElement
-		const value = getSelectRefValue(target)
-
-		switch (target) {
-		case variantOptionRef:
-			updateListRef(listPreview!, {
-				ListVariant: value as ListVariant
-			})
-		}
+	const optionsRef = $(ElementIds.panelListOptions)! as HTMLDivElement
+	const listPreview = $(ElementIds.panelListPreviewList)! as ListElement<HTMLDivElement>
+	const leadingPreview = $(ElementIds.panelListPreviewLeading)! as HTMLDivElement
+	const titlePreview = $(ElementIds.panelListPreviewTitle)! as HTMLParagraphElement
+	const trailingPreview = $(ElementIds.panelListPreviewTrailing)! as HTMLDivElement
+	const subtitlePreview = $(ElementIds.panelListPreviewSubtitle)! as HTMLDivElement
+	const leadingOptionRef = $(ElementIds.panelListOptionsLeading)! as HTMLInputElement
+	const trailingOptionRef = $(ElementIds.panelListOptionsTrailing)! as HTMLInputElement
+	const subtitleOptionRef = $(ElementIds.panelListOptionsSubtitle)! as HTMLInputElement
+	const titleOptionRef = $(ElementIds.panelListOptionsTitle)! as HTMLInputElement
+	const variantOptionRef = $(ElementIds.panelListOptionsVariant)! as ComboBoxElement
+	variantOptionRef?.addEventListener('change', () => {
+		updateListRef(listPreview!, {
+			ListVariant: variantOptionRef.value as ListVariant
+		})
 	})
 	optionsRef?.addEventListener('change', ev => {
 		const target = ev.target as HTMLInputElement
@@ -308,19 +311,18 @@ function _popover(): void {
 	const optionsRef = $(ElementIds.panelPopoverOptions) as HTMLDivElement
 	const openButtonRef = $(ElementIds.panelPopoverPreviewButtonOpen) as HTMLButtonElement
 	const popoverRef = $(ElementIds.panelPopoverPreviewPopover) as HTMLDivElement
-	const positionOptionRef = $(ElementIds.panelPopoverOptionsPosition) as HTMLDivElement
+	const positionOptionRef = $(ElementIds.panelPopoverOptionsPosition) as ComboBoxElement
 	const paddingOptionRef = $(ElementIds.panelPopoverOptionsPadding) as HTMLInputElement
 	const gapOptionRef = $(ElementIds.panelPopoverOptionsGap) as HTMLInputElement
 	const anchorOptionRef = $(ElementIds.panelPopoverOptionsAnchor) as HTMLInputElement
 	const draggableOptionRef = $(ElementIds.panelPopoverOptionsDraggable) as HTMLInputElement
 
-	optionsRef.addEventListener(SelectEvents.change, ev => {
-		const target = ev.target as HTMLDivElement
-		const value = getSelectRefValue(target)
+	optionsRef.addEventListener('change', ev => {
+		const target = ev.target
 		switch (target) {
 		case positionOptionRef:
 			updatePopoverRef(popoverRef, {
-				PopoverPosition: value as PopoverPosition
+				PopoverPosition: positionOptionRef.value as PopoverPosition
 			})
 			break
 		}
@@ -362,7 +364,7 @@ function _modal(): void {
 	const openButtonRef = $(ElementIds.panelModalPreviewButtonOpen) as HTMLButtonElement
 	const closeButtonRef = $(ElementIds.panelModalPreviewButtonClose) as HTMLButtonElement
 	const modalRef = $(ElementIds.panelModalPreviewModal) as HTMLDialogElement
-	const positionOptionRef = $(ElementIds.panelModalOptionsPosition) as HTMLDivElement
+	const positionOptionRef = $(ElementIds.panelModalOptionsPosition) as ComboBoxElement
 	const paddingOptionRef = $(ElementIds.panelModalOptionsPadding) as HTMLInputElement
 	const gapOptionRef = $(ElementIds.panelModalOptionsGap) as HTMLInputElement
 	const anchorOptionRef = $(ElementIds.panelModalOptionsAnchor) as HTMLInputElement
@@ -372,13 +374,12 @@ function _modal(): void {
 
 	openButtonRef.addEventListener('click', () => openModalRef(modalRef))
 	closeButtonRef.addEventListener('click', () => closeModalRef(modalRef))
-	optionsRef.addEventListener(SelectEvents.change, ev => {
-		const target = ev.target as HTMLDivElement
-		const value = getSelectRefValue(target)
+	optionsRef.addEventListener('change', ev => {
+		const target = ev.target
 		switch (target) {
 		case positionOptionRef:
 			updateModalRef(modalRef, {
-				ModalPosition: value as ModalPosition
+				ModalPosition: positionOptionRef.value as ModalPosition
 			})
 			break
 		}
@@ -421,74 +422,18 @@ function _modal(): void {
 	})
 }
 
-function _select(): void {
-	const previewRef = $(ElementIds.panelSelectPreview) as HTMLDivElement
-	const optionsRef = $(ElementIds.panelSelectOptions) as HTMLDivElement
-	const variantOptionRef = $(ElementIds.panelSelectOptionsVariant) as HTMLDivElement
-	const resetOptionRef = $(ElementIds.panelSelectOptionsReset) as HTMLButtonElement
-	let firstTime = true
-	previewRef.addEventListener(SelectEvents.change, () => {
-		if (!firstTime) return
+function _comboBox(): void {
+	const previewRef = $(ElementIds.panelComboBoxPreview) as ComboBoxElement
+	const optionsRef = $(ElementIds.panelComboBoxOptions) as HTMLDivElement
+	const variantOptionRef = $(ElementIds.panelComboBoxOptionsVariant) as ComboBoxElement
 
-		const children = [...optionsRef.children].filter(v => v !== resetOptionRef)
-		const rects: DOMRect[] = children.map(v => v.getBoundingClientRect())
-		firstTime = false
-		resetOptionRef.style.removeProperty('display')
-		if (isAnimationAllowed()) {
-			const rects2: DOMRect[] = children.map(v => v.getBoundingClientRect())
-			resetOptionRef.animate({
-				scale: [0, 1]
-			}, animationOptions)
-			for (let i = 0; i < children.length; i++) {
-				const child = children[i]
-				const rect = rects[i]
-				const rect2 = rects2[i]
-				child.animate({
-					transform: [
-						`translate(${rect.left - rect2.left}px,${rect.top - rect2.top}px)`, 'translate(0,0)'
-					]
-				}, animationOptions)
-			}
-		}
-	})
-
-	optionsRef.addEventListener(SelectEvents.change, ev => {
-		const target = ev.target as HTMLDivElement
-		const value = getSelectRefValue(target)
+	optionsRef.addEventListener('change', ev => {
+		const target = ev.target
 		switch (target) {
 		case variantOptionRef:
-			updateSelectRef(previewRef, {
-				SelectVariant: value as SelectVariant
+			updateComboBoxRef(previewRef, {
+				ComboBoxVariant: variantOptionRef.value as ComboBoxVariant
 			})
-			break
-		}
-	})
-
-	optionsRef.addEventListener('click', () => {
-		switch (document.activeElement) {
-		case resetOptionRef:
-			const children = [...optionsRef.children].filter(v => v !== resetOptionRef)
-			const rects: DOMRect[] = children.map(v => v.getBoundingClientRect())
-			previewRef.setAttribute(SelectAttributes.value, '')
-			resetOptionRef.style.setProperty('display', 'none')
-			firstTime = true
-			for (const option of previewRef.querySelectorAll('[aria-selected=true]')) {
-				option.setAttribute('aria-selected', 'false')
-			}
-
-			if (isAnimationAllowed()) {
-				const rects2: DOMRect[] = children.map(v => v.getBoundingClientRect())
-				for (let i = 0; i < children.length; i++) {
-					const child = children[i]
-					const rect = rects[i]
-					const rect2 = rects2[i]
-					child.animate({
-						transform: [
-							`translate(${rect.left - rect2.left}px,${rect.top - rect2.top}px)`, 'translate(0,0)'
-						]
-					}, animationOptions)
-				}
-			}
 			break
 		}
 	})
@@ -498,7 +443,7 @@ function _tooltip(): void {
 	const optionsRef = $(ElementIds.panelTooltipOptions) as HTMLDivElement
 	const anchorOptionRef = $(ElementIds.panelTooltipOptionsAnchor) as HTMLInputElement
 	const previewRef = $(ElementIds.panelTooltipPreview) as HTMLDivElement
-	const positionOptionRef = $(ElementIds.panelTooltipOptionsPosition) as HTMLDivElement
+	const positionOptionRef = $(ElementIds.panelTooltipOptionsPosition) as ComboBoxElement
 	const gapOptionRef = $(ElementIds.panelTooltipOptionsGap) as HTMLInputElement
 	const startDelayOptionRef = $(ElementIds.panelTooltipOptionsStartDelay) as HTMLInputElement
 	const endDelayOptionRef = $(ElementIds.panelTooltipOptionsEndDelay) as HTMLInputElement
@@ -536,13 +481,12 @@ function _tooltip(): void {
 		}, 50)
 	})
 
-	optionsRef.addEventListener(SelectEvents.change, ev => {
-		const target = ev.target as HTMLDivElement
-		const value = getSelectRefValue(target)
+	optionsRef.addEventListener('change', ev => {
+		const target = ev.target
 		switch (target) {
 		case positionOptionRef:
 			updateTooltipRef(previewRef, {
-				TooltipPosition: value as TooltipPosition
+				TooltipPosition: positionOptionRef.value as TooltipPosition
 			})
 			break
 		}
@@ -564,7 +508,7 @@ function _menu(): void {
 	const optionsRef = $(ElementIds.panelMenuOptions) as HTMLDivElement
 	const buttonRef = $(ElementIds.panelMenuPreviewButton) as HTMLButtonElement
 	const menuRef = $(ElementIds.panelMenuPreviewMenu) as HTMLDivElement
-	const positionOptionRef = $(ElementIds.panelMenuOptionsPosition) as HTMLDivElement
+	const positionOptionRef = $(ElementIds.panelMenuOptionsPosition) as ComboBoxElement
 	const anchorOptionRef = $(ElementIds.panelMenuOptionsAnchor) as HTMLInputElement
 	const gapOptionRef = $(ElementIds.panelMenuOptionsGap) as HTMLInputElement
 
@@ -591,13 +535,12 @@ function _menu(): void {
 		}
 	})
 
-	optionsRef.addEventListener(SelectEvents.change, ev => {
-		const target = ev.target as HTMLDivElement
-		const value = getSelectRefValue(target)
+	optionsRef.addEventListener('change', ev => {
+		const target = ev.target
 		switch (target) {
 		case positionOptionRef:
 			updateMenuRef(menuRef, {
-				PopoverPosition: value as MenuPosition
+				PopoverPosition: positionOptionRef.value as MenuPosition
 			})
 			break
 		}
@@ -707,5 +650,5 @@ export default () => {
 	_list()
 	_popover()
 	_modal()
-	_select()
+	_comboBox()
 }

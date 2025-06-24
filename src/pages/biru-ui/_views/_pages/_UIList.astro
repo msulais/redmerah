@@ -4,8 +4,8 @@ import Tooltip from '@/native-components/Tooltip/index.astro'
 import Icon from '@/native-components/Icon/index.astro'
 import List from '@/native-components/List/index.astro'
 import Button from '@/native-components/Button/index.astro'
-import Select from '@/native-components/Select/index.astro'
-import SelectOption from '@/native-components/Select/SelectOption.astro'
+import ComboBox from '@/native-components/ComboBox/index.astro'
+import ComboBoxOption from '@/native-components/ComboBox/ComboBoxOption.astro'
 import IconButton from '@/native-components/Button/IconButton.astro'
 import { ElementIds } from '../../_scripts/_enums'
 import CSS from '../../_index.module.scss'
@@ -48,16 +48,15 @@ import { IconCodes } from '@/enums/icons'
 	</div>
 	<div class={CSS.bodyOptions} id={ElementIds.panelListOptions}>
 		<div class={CSS.bodyOptionsGroup}>
-			<label id={ElementIds.panelListOptionsVariantLabel}>Variant:</label>
-			<Select
-				aria-labelledby={ElementIds.panelListOptionsVariantLabel}
+			<label for={ElementIds.panelListOptionsVariant}>Variant:</label>
+			<ComboBox
 				id={ElementIds.panelListOptionsVariant}
 				style="min-width: 140px; margin-right: 12px">
-				<SelectOption value={ListVariant.filled}>Filled</SelectOption>
-				<SelectOption value={ListVariant.tonal} SelectOptionSelected>Tonal</SelectOption>
-				<SelectOption value={ListVariant.transparent}>Transparent</SelectOption>
-				<SelectOption value={ListVariant.outlined}>Outlined</SelectOption>
-			</Select>
+				<ComboBoxOption value={ListVariant.filled}>Filled</ComboBoxOption>
+				<ComboBoxOption value={ListVariant.tonal} selected>Tonal</ComboBoxOption>
+				<ComboBoxOption value={ListVariant.transparent}>Transparent</ComboBoxOption>
+				<ComboBoxOption value={ListVariant.outlined}>Outlined</ComboBoxOption>
+			</ComboBox>
 		</div>
 		<CheckBox
 			CheckBoxInputAttr={{

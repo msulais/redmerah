@@ -4,8 +4,8 @@ import TextField from '@/native-components/TextField/index.astro'
 import TextFieldButton from '@/native-components/TextField/TextFieldButton.astro'
 import CheckBox from '@/native-components/CheckBox/index.astro'
 import Icon from '@/native-components/Icon/index.astro'
-import Select from '@/native-components/Select/index.astro'
-import SelectOption from '@/native-components/Select/SelectOption.astro'
+import ComboBox from '@/native-components/ComboBox/index.astro'
+import ComboBoxOption from '@/native-components/ComboBox/ComboBoxOption.astro'
 import { ElementIds } from '../../_scripts/_enums'
 import CSS from '../../_index.module.scss'
 import { IconCodes } from '@/enums/icons'
@@ -53,15 +53,14 @@ const types = [
 	</div>
 	<div class={CSS.bodyOptions} id={ElementIds.panelTextfieldOptions}>
 		<div class={CSS.bodyOptions} style="margin-right:12px">
-			<label id={ElementIds.panelTextfieldOptionsTypeLabel}>Type:</label>
-			<Select
-				aria-labelledby={ElementIds.panelTextfieldOptionsTypeLabel}
+			<label for={ElementIds.panelTextfieldOptionsType}>Type:</label>
+			<ComboBox
 				id={ElementIds.panelTextfieldOptionsType}
 				style="min-width:150px">
 				{types.map(v =>
-					<SelectOption value={v} SelectOptionSelected={v === 'text'}>{v}</SelectOption>
+					<ComboBoxOption value={v} selected={v === 'text'}>{v}</ComboBoxOption>
 				)}
-			</Select>
+			</ComboBox>
 		</div>
 		<CheckBox
 			CheckBoxInputAttr={{

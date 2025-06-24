@@ -3,13 +3,13 @@ import Button from '@/native-components/Button/index.astro'
 import IconButton from '@/native-components/Button/IconButton.astro'
 import Tooltip from '@/native-components/Tooltip/index.astro'
 import Icon from '@/native-components/Icon/index.astro'
-import Select from '@/native-components/Select/index.astro'
-import Option from '@/native-components/Select/SelectOption.astro'
+import ComboBox from '@/native-components/ComboBox/index.astro'
+import ComboBoxOption from '@/native-components/ComboBox/ComboBoxOption.astro'
 import { CSSClasses } from "../../_styles/_css"
 import { AppCSSColors } from '@/enums/app-data'
 import { ButtonVariant } from '@/native-components/Button'
 import { IconCodes } from '@/enums/icons'
-import { SelectVariant } from '@/native-components/Select'
+import { ComboBoxVariant } from '@/native-components/ComboBox'
 import { ElementIds } from '../../_scripts/_shared/_ids'
 import { Commands } from '../../_scripts/_shared/_commands'
 import { CONVERTER_TYPES, DEFAULT_CONVERTER_INPUT_UNIT, DEFAULT_CONVERTER_OUTPUT_UNIT, DEFAULT_CONVERTER_TYPE } from '../../_scripts/_shared/_constant'
@@ -30,33 +30,32 @@ import { LengthUnits } from '../../_scripts/_shared/_units'
 			</Tooltip>
 		</div>
 		<div class={CSSClasses.bodyPageOptionsGroup}>
-			<label style="margin:0 8px 0 12px">Type:</label>
-			<Select id={ElementIds.bodyConverterType} aria-label="Converter type" style="width:186px" SelectVariant={SelectVariant.outlined}>
+			<label style="margin:0 8px 0 12px" for={ElementIds.bodyConverterType}>Type:</label>
+			<ComboBox id={ElementIds.bodyConverterType} aria-label="Converter type" style="width:186px" ComboBoxVariant={ComboBoxVariant.outlined}>
 				{CONVERTER_TYPES.map(c =>
-					<Option value={c.type}
-						SelectOptionSelected={c.type === DEFAULT_CONVERTER_TYPE}>
-						<Icon style={`color:rgb(${AppCSSColors.accent})`} IconCode={c.icon}/>
+					<ComboBoxOption value={c.type}
+						selected={c.type === DEFAULT_CONVERTER_TYPE}>
 						{c.text}
-					</Option>
+					</ComboBoxOption>
 				)}
-			</Select>
+			</ComboBox>
 		</div>
 		<div class={CSSClasses.bodyPageOptionsGroup} style="display:grid;grid-template-columns:1fr 40px 1fr;gap:4px">
-			<Select id={ElementIds.bodyConverterInputUnit} aria-label="Unit from">
+			<ComboBox id={ElementIds.bodyConverterInputUnit} aria-label="Unit from">
 				{LengthUnits.all.map(c =>
-					<Option value={c.id} style="gap:0" SelectOptionSelected={c.equals(DEFAULT_CONVERTER_INPUT_UNIT)}>
+					<ComboBoxOption value={c.id} style="gap:0" selected={c.equals(DEFAULT_CONVERTER_INPUT_UNIT)}>
 						{c.name} [&nbsp;<span style={`color:rgb(${AppCSSColors.accent})`}>{c.symbol}</span>&nbsp;]
-					</Option>
+					</ComboBoxOption>
 				)}
-			</Select>
+			</ComboBox>
 			<IconButton data-command={Commands.keyUnitSwap} id={ElementIds.bodyConverterSwap} aria-label="Swap unit" IconButtonCode={IconCodes.arrowRight}/>
-			<Select id={ElementIds.bodyConverterOutputUnit} aria-label="Unit To">
+			<ComboBox id={ElementIds.bodyConverterOutputUnit} aria-label="Unit To">
 				{LengthUnits.all.map(c =>
-					<Option value={c.id} style="gap:0" SelectOptionSelected={c.equals(DEFAULT_CONVERTER_OUTPUT_UNIT)}>
+					<ComboBoxOption value={c.id} style="gap:0" selected={c.equals(DEFAULT_CONVERTER_OUTPUT_UNIT)}>
 						{c.name} [&nbsp;<span style={`color:rgb(${AppCSSColors.accent})`}>{c.symbol}</span>&nbsp;]
-					</Option>
+					</ComboBoxOption>
 				)}
-			</Select>
+			</ComboBox>
 		</div>
 	</div>
 	<div class={CSSClasses.bodyPageButtons} style="grid-template-columns: repeat(3, 1fr);">

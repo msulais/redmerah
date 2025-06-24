@@ -5,7 +5,6 @@ import { ElementIds } from "../_shared/_ids"
 import { calculate } from "../_core/_calculator"
 import { isNumberDefined } from "@/utils/number"
 import { formatOutput } from "../_core/_string-utils"
-import { getSelectRefValue, SelectAttributes, SelectEvents, updateSelectRefValue, type SelectElement } from "@/native-components/Select"
 import { isValidEnumValue } from "@/utils/object"
 import { DEFAULT_SCIENTIFIC_ANGLE } from "../_shared/_constant"
 import { ButtonVariant, updateButtonRef } from "@/native-components/Button"
@@ -15,6 +14,7 @@ import { CSSClasses } from "../../_styles/_css"
 import { animateUpdateTextElement } from "@/utils/element"
 import { IconClasses } from "@/native-components/Icon"
 import { saveStorageItem } from "../_core/_database"
+import type { ComboBoxElement } from "@/native-components/ComboBox"
 
 export type ScientificStoreType = Readonly<{
 	input: string
@@ -27,7 +27,7 @@ export const ScientificStore = new ObservableStore<ScientificStoreType>({
 	input: '',
 	output: null,
 })
-const _angleRef = $(ElementIds.bodyScientificAngle) as SelectElement
+const _angleRef = $(ElementIds.bodyScientificAngle) as ComboBoxElement
 const _inputRef = $(ElementIds.bodyScientificInput) as HTMLInputElement
 const _outputRef = $(ElementIds.bodyScientificOutput) as HTMLInputElement
 let _timeCalculateId: number | null | NodeJS.Timeout = null
@@ -54,7 +54,7 @@ function _subscribeAngleChanges(value: ScientificStoreType, old: ScientificStore
 	if (angle === old.angle) return
 
 	_calculate()
-	updateSelectRefValue(_angleRef, angle)
+	_angleRef.value = angle
 	saveStorageItem('calc/scientific/angle', angle)
 }
 
@@ -97,9 +97,9 @@ function _subscribeOutputRefView(value: ScientificStoreType, old: ScientificStor
 
 function _subscribeAngleRefView(value: ScientificStoreType): void {
 	const angle = value.angle
-	if (angle === getSelectRefValue(_angleRef)) return
+	if (angle === _angleRef.value) return
 
-	updateSelectRefValue(_angleRef, angle)
+	_angleRef.value = angle
 }
 
 function _initSubscriber(): void {
@@ -111,8 +111,8 @@ function _initSubscriber(): void {
 }
 
 function _initAngleEvents(): void {
-	_angleRef.addEventListener(SelectEvents.change, () => {
-		const value = _angleRef.getAttribute(SelectAttributes.value)! as ScientificAngleType
+	_angleRef.addEventListener('change', () => {
+		const value = _angleRef.value as ScientificAngleType
 		if (!isValidEnumValue(value, ScientificAngleType)) return
 
 		ScientificStore.update(v => ({

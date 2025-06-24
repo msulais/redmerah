@@ -5,10 +5,10 @@ import { $, $$ } from "../_core/_dom-utils"
 import { DatePickerEvents, getDatePickerRefValue, updateDatePickerRef, type DatePickerElement } from "@/native-components/DatePicker"
 import { dateDiffInDays, isDateEqual_YMD } from "@/utils/datetime"
 import { ButtonVariant, updateButtonRef } from "@/native-components/Button"
-import { getSelectRefValue, SelectEvents, updateSelectRefValue, type SelectElement } from "@/native-components/Select"
 import { isValidEnumValue } from "@/utils/object"
 import { safeNumber } from "@/utils/number"
 import { saveStorageItem } from "../_core/_database"
+import type { ComboBoxElement } from "@/native-components/ComboBox"
 
 export type DateStoreType = Readonly<{
 	inputFrom: Date
@@ -29,7 +29,7 @@ export const DateStore = new ObservableStore<DateStoreType>({
 	operation: DateOperation.difference,
 	output: 'Same date'
 })
-const _operationRef = $(ElementIds.bodyDateOperation) as SelectElement
+const _operationRef = $(ElementIds.bodyDateOperation) as ComboBoxElement
 const _datePickerFromRef = $(ElementIds.bodyDateInputFromDatePicker) as DatePickerElement
 const _datePickerToRef = $(ElementIds.bodyDateInputToDatePicker) as DatePickerElement
 const _buttonFromRef = $(ElementIds.bodyDateInputFromButton) as HTMLButtonElement
@@ -237,7 +237,7 @@ function _subscribeOperationRefView(v: DateStoreType, o: DateStoreType): void {
 	const operation = v.operation
 	if (operation === o.operation) return
 
-	updateSelectRefValue(_operationRef, operation)
+	_operationRef.value = operation
 	switch (operation) {
 	case DateOperation.add:
 	case DateOperation.subtract:
@@ -307,8 +307,8 @@ function _initEvents(): void {
 		})
 	})
 
-	_operationRef.addEventListener(SelectEvents.change, () => {
-		const value = getSelectRefValue(_operationRef) as DateOperation
+	_operationRef.addEventListener('change', () => {
+		const value = _operationRef.value as DateOperation
 		if (!isValidEnumValue(value, DateOperation)) return
 
 		DateStore.update(v => ({...v, operation: value}))

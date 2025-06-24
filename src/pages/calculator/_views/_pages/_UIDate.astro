@@ -1,10 +1,10 @@
 ---
-import Select from '@/native-components/Select/index.astro'
+import ComboBox from '@/native-components/ComboBox/index.astro'
 import Button from '@/native-components/Button/index.astro'
 import DatePicker from '@/native-components/DatePicker/index.astro'
 import Icon from '@/native-components/Icon/index.astro'
 import TextField from '@/native-components/TextField/index.astro'
-import SelectOption from '@/native-components/Select/SelectOption.astro'
+import ComboBoxOption from '@/native-components/ComboBox/ComboBoxOption.astro'
 import { CSSClasses } from "../../_styles/_css"
 import { ButtonVariant } from '@/native-components/Button'
 import { IconCodes } from '@/enums/icons'
@@ -15,11 +15,11 @@ import { DateOperation } from '../../_scripts/_shared/_enums'
 
 <div id={ElementIds.bodyDate} role="tabpanel" class={CSSClasses.bodyPageDate} hidden>
 	<label for={ElementIds.bodyDateOperation}>Operation</label>
-	<Select id={ElementIds.bodyDateOperation} style="width:256px;margin-top:4px;margin-bottom:16px">
-		<SelectOption value={DateOperation.add}>Add</SelectOption>
-		<SelectOption value={DateOperation.subtract}>Subtract</SelectOption>
-		<SelectOption value={DateOperation.difference} SelectOptionSelected>Difference</SelectOption>
-	</Select>
+	<ComboBox id={ElementIds.bodyDateOperation} style="width:256px;margin-top:4px;margin-bottom:16px">
+		<ComboBoxOption value={DateOperation.add}>Add</ComboBoxOption>
+		<ComboBoxOption value={DateOperation.subtract}>Subtract</ComboBoxOption>
+		<ComboBoxOption value={DateOperation.difference} selected>Difference</ComboBoxOption>
+	</ComboBox>
 	<label for={ElementIds.bodyDateInputFromButton}>From</label>
 	<Button
 		style="margin:4px 0 16px 0;width:256px"

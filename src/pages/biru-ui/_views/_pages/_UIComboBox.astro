@@ -1,0 +1,49 @@
+---
+import ComboBox from '@/native-components/ComboBox/index.astro'
+import ComboBoxOption from '@/native-components/ComboBox/ComboBoxOption.astro'
+import { ElementIds } from '../../_scripts/_enums'
+import CSS from '../../_index.module.scss'
+import { ComboBoxVariant } from '@/native-components/ComboBox'
+---
+<div
+	class={CSS.bodyPage}
+	role="tabpanel"
+	id={ElementIds.panelComboBox}
+	hidden>
+	<h2>ComboBox</h2>
+	<p>A ComboBox is a UI element that displays a list of options when clicked. It provides a compact way to present multiple choices while saving screen space.</p>
+	<div class={CSS.bodyPlayground}>
+		<ComboBox
+			id={ElementIds.panelComboBoxPreview}
+			style="min-width:120px">
+			{[
+				['a', 'Bird'],
+				['b', 'Monkey'],
+				['c', 'Whale'],
+				['d', 'Tiger'],
+				['e', 'Anoa'],
+				['f', 'Lion'],
+				['g', 'Komodo'],
+				['h', 'Elephant'],
+				['i', 'Dolphin'],
+				['j', 'Fish'],
+			].map(v =>
+				<ComboBoxOption value={v[0]}>{v[1]}</ComboBoxOption>
+			)}
+			<Fragment slot="placeholder">Select animal</Fragment>
+		</ComboBox>
+	</div>
+	<div class={CSS.bodyOptions} id={ElementIds.panelComboBoxOptions}>
+		<div class={CSS.bodyOptionsGroup}>
+			<label for={ElementIds.panelComboBoxOptionsVariant}>Variant:</label>
+			<ComboBox
+				id={ElementIds.panelComboBoxOptionsVariant}
+				style="min-width: 140px">
+				<ComboBoxOption value={ComboBoxVariant.filled}>Filled</ComboBoxOption>
+				<ComboBoxOption value={ComboBoxVariant.tonal} selected>Tonal</ComboBoxOption>
+				<ComboBoxOption value={ComboBoxVariant.transparent}>Transparent</ComboBoxOption>
+				<ComboBoxOption value={ComboBoxVariant.outlined}>Outlined</ComboBoxOption>
+			</ComboBox>
+		</div>
+	</div>
+</div>

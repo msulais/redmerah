@@ -4,8 +4,8 @@ import CheckBox from '@/native-components/CheckBox/index.astro'
 import TextField from '@/native-components/TextField/index.astro'
 import Icon from '@/native-components/Icon/index.astro'
 import Button from '@/native-components/Button/index.astro'
-import Select from '@/native-components/Select/index.astro'
-import SelectOption from '@/native-components/Select/SelectOption.astro'
+import ComboBox from '@/native-components/ComboBox/index.astro'
+import ComboBoxOption from '@/native-components/ComboBox/ComboBoxOption.astro'
 import { ElementIds } from '../../_scripts/_enums'
 import CSS from '../../_index.module.scss'
 import { ButtonVariant } from '@/native-components/Button'
@@ -37,9 +37,8 @@ import { IconCodes } from '@/enums/icons'
 		</Tooltip>
 	</div>
 	<div class={CSS.bodyOptions} id={ElementIds.panelTooltipOptions}>
-		<label id={ElementIds.panelTooltipOptionsPositionLabel}>Position:</label>
-		<Select
-			aria-labelledby={ElementIds.panelTooltipOptionsPositionLabel}
+		<label for={ElementIds.panelTooltipOptionsPosition}>Position:</label>
+		<ComboBox
 			style="margin-right:12px"
 			id={ElementIds.panelTooltipOptionsPosition}>
 			{[
@@ -69,9 +68,9 @@ import { IconCodes } from '@/enums/icons'
 				[FlyoutPosition.rightCenterToTop, 'Right center to top'],
 				[FlyoutPosition.rightTop, 'Right top'],
 			].map(v =>
-				<SelectOption value={v[0]} SelectOptionSelected={v[0] === FlyoutPosition.centerTop}>{v[1]}</SelectOption>
+				<ComboBoxOption value={v[0]} selected={v[0] === FlyoutPosition.centerTop}>{v[1]}</ComboBoxOption>
 			)}
-		</Select>
+		</ComboBox>
 		<div class={CSS.bodyOptionsGroup}>
 			<label
 				for={ElementIds.panelTooltipOptionsGap}>

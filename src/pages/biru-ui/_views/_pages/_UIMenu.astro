@@ -12,8 +12,8 @@ import CheckMenuItem from '@/native-components/Menu/CheckMenuItem.astro'
 import MenuIndent from '@/native-components/Menu/MenuIndent.astro'
 import Divider from '@/native-components/Divider/index.astro'
 import Button from '@/native-components/Button/index.astro'
-import Select from '@/native-components/Select/index.astro'
-import SelectOption from '@/native-components/Select/SelectOption.astro'
+import ComboBox from '@/native-components/ComboBox/index.astro'
+import ComboBoxOption from '@/native-components/ComboBox/ComboBoxOption.astro'
 import { ElementIds, RadioGroupNames } from '../../_scripts/_enums'
 import CSS from '../../_index.module.scss'
 import { ButtonVariant } from '@/native-components/Button'
@@ -250,9 +250,8 @@ import { IconCodes } from '@/enums/icons'
 	</div>
 	<div class={CSS.bodyOptions} id={ElementIds.panelMenuOptions}>
 		<div class={CSS.bodyOptionsGroup} style="margin-right:12px">
-			<label id={ElementIds.panelMenuOptionsPositionLabel}>Position:</label>
-			<Select
-				aria-labelledby={ElementIds.panelMenuOptionsPositionLabel}
+			<label for={ElementIds.panelMenuOptionsPosition}>Position:</label>
+			<ComboBox
 				id={ElementIds.panelMenuOptionsPosition}>
 				{[
 					[FlyoutPosition.centerBottom, 'Center bottom'],
@@ -281,9 +280,9 @@ import { IconCodes } from '@/enums/icons'
 					[FlyoutPosition.rightCenterToTop, 'Right center to top'],
 					[FlyoutPosition.rightTop, 'Right top'],
 				].map(v =>
-					<SelectOption value={v[0]} SelectOptionSelected={v[0] === FlyoutPosition.centerBottomToRight}>{v[1]}</SelectOption>
+					<ComboBoxOption value={v[0]} selected={v[0] === FlyoutPosition.centerBottomToRight}>{v[1]}</ComboBoxOption>
 				)}
-			</Select>
+			</ComboBox>
 		</div>
 		<div class={CSS.bodyOptionsGroup} style="margin-right:12px">
 			<label

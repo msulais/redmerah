@@ -7,10 +7,10 @@ import { $, scrollInputToEnd } from "../_core/_dom-utils"
 import { isNumberDefined } from "@/utils/number"
 import { formatOutput } from "../_core/_string-utils"
 import { ElementIds } from "../_shared/_ids"
-import { createSelectOptionRef, getSelectRefValue, SelectEvents, updateSelectRef, updateSelectRefValue, type SelectElement } from "@/native-components/Select"
 import { isValidEnumValue } from "@/utils/object"
 import { AppCSSColors } from "@/enums/app-data"
 import { saveStorageItem } from "../_core/_database"
+import { createComboBoxOptionRef, updateComboBoxRef, type ComboBoxElement, type ComboBoxOptionElement } from "@/native-components/ComboBox"
 
 export type ConverterStoreType = Readonly<{
 	input: string
@@ -29,9 +29,9 @@ export const ConverterStore = new ObservableStore<ConverterStoreType>({
 })
 const _inputRef      = $(ElementIds.bodyConverterInput) as HTMLInputElement
 const _outputRef     = $(ElementIds.bodyConverterOutput) as HTMLInputElement
-const _converterRef  = $(ElementIds.bodyConverterType) as SelectElement
-const _inputUnitRef  = $(ElementIds.bodyConverterInputUnit) as SelectElement
-const _outputUnitRef = $(ElementIds.bodyConverterOutputUnit) as SelectElement
+const _converterRef  = $(ElementIds.bodyConverterType) as ComboBoxElement
+const _inputUnitRef  = $(ElementIds.bodyConverterInputUnit) as ComboBoxElement
+const _outputUnitRef = $(ElementIds.bodyConverterOutputUnit) as ComboBoxElement
 let _timeCalculateId: number | NodeJS.Timeout | null = null
 let _timeSaveInputId: number | NodeJS.Timeout | null = null
 
@@ -91,37 +91,37 @@ function _subscribeConverterChanges(value: ConverterStoreType, old: ConverterSto
 	case ConverterType.angle      : units = AngleUnits      .all; break
 	}
 
-	const inputOptionRefs: HTMLButtonElement[] = []
-	const outputOptionRefs: HTMLButtonElement[] = []
+	const inputOptionRefs: ComboBoxOptionElement[] = []
+	const outputOptionRefs: ComboBoxOptionElement[] = []
 	for (const i in units) {
 		const inputSpan = document.createElement('span')
 		inputSpan.style.setProperty('color', `rgb(${AppCSSColors.accent})`)
 		inputSpan.textContent = units[i].symbol
-		const inputOptionRef = createSelectOptionRef({
-			SelectOptionValue: units[i].id,
-			SelectOptionSelected: Number(i) === 0,
-			ButtonChildren: [`${units[i].name} [\xa0`, inputSpan, '\xa0]']
+		const inputOptionRef = createComboBoxOptionRef({
+			ComboBoxOptionChildren: [`${units[i].name} [\xa0`, inputSpan, '\xa0]']
 		})
+		inputOptionRef.value = units[i].id
+		inputOptionRef.selected = Number(i) === 0
 		inputOptionRef.style.setProperty('gap', '0')
 		inputOptionRefs.push(inputOptionRef)
 
 		const outputSpan = document.createElement('span')
 		outputSpan.style.setProperty('color', `rgb(${AppCSSColors.accent})`)
 		outputSpan.textContent = units[i].symbol
-		const outputOptionRef = createSelectOptionRef({
-			SelectOptionValue: units[i].id,
-			SelectOptionSelected: Number(i) === 1,
-			ButtonChildren: [`${units[i].name} [\xa0`, outputSpan, '\xa0]']
+		const outputOptionRef = createComboBoxOptionRef({
+			ComboBoxOptionChildren: [`${units[i].name} [\xa0`, outputSpan, '\xa0]']
 		})
+		outputOptionRef.value = units[i].id
+		outputOptionRef.selected = Number(i) === 1
 		outputOptionRef.style.setProperty('gap', '0')
 		outputOptionRefs.push(outputOptionRef)
 	}
 
-	updateSelectRef(_inputUnitRef, {
-		SelectChildren: inputOptionRefs
+	updateComboBoxRef(_inputUnitRef, {
+		ComboBoxChildren: inputOptionRefs
 	})
-	updateSelectRef(_outputUnitRef, {
-		SelectChildren: outputOptionRefs
+	updateComboBoxRef(_outputUnitRef, {
+		ComboBoxChildren: outputOptionRefs
 	})
 
 	ConverterStore.update(v => ({
@@ -180,23 +180,23 @@ function _subscribeOutputRefView(value: ConverterStoreType, old: ConverterStoreT
 
 function _subscribeConverterRefView(value: ConverterStoreType): void {
 	const converter = value.converter
-	if (converter === getSelectRefValue(_converterRef)) return
+	if (converter === _converterRef.value) return
 
-	updateSelectRefValue(_converterRef, converter)
+	_converterRef.value = converter
 }
 
 function _subscribeInputUnitRefView(value: ConverterStoreType): void {
 	const id = value.inputUnit.id
-	if (id === getSelectRefValue(_inputUnitRef)) return
+	if (id === _inputUnitRef.value) return
 
-	updateSelectRefValue(_inputUnitRef, id)
+	_inputUnitRef.value = id
 }
 
 function _subscribeOutputUnitRefView(value: ConverterStoreType): void {
 	const id = value.outputUnit.id
-	if (id === getSelectRefValue(_outputUnitRef)) return
+	if (id === _outputUnitRef.value) return
 
-	updateSelectRefValue(_outputUnitRef, id)
+	_outputUnitRef.value = id
 }
 
 function _initSubscriber(): void {
@@ -210,9 +210,9 @@ function _initSubscriber(): void {
 	ConverterStore.subscribe(_subscribeOutputUnitRefView)
 }
 
-function _initConverterEvents(): void {
-	_converterRef.addEventListener(SelectEvents.change, () => {
-		const value = getSelectRefValue(_converterRef)
+function _initEvents(): void {
+	_converterRef.addEventListener('change', () => {
+		const value = _converterRef.value
 		if (!isValidEnumValue(value, ConverterType)) return
 
 		ConverterStore.update(v => ({
@@ -220,27 +220,17 @@ function _initConverterEvents(): void {
 			converter: value as ConverterType
 		}))
 	})
-}
 
-function _initInputUnitEvents(): void {
-	_inputUnitRef.addEventListener(SelectEvents.change, () => {
-		const unitId = getSelectRefValue(_inputUnitRef)
-
-		_changeUnit('input', unitId)
+	_inputUnitRef.addEventListener('change', () => {
+		_changeUnit('input', _inputUnitRef.value)
 	})
-}
 
-function _initOutputUnitEvents(): void {
-	_outputUnitRef.addEventListener(SelectEvents.change, () => {
-		const unitId = getSelectRefValue(_outputUnitRef)
-
-		_changeUnit('output', unitId)
+	_outputUnitRef.addEventListener('change', () => {
+		_changeUnit('output', _outputUnitRef.value)
 	})
 }
 
 export default () => {
 	_initSubscriber()
-	_initConverterEvents()
-	_initInputUnitEvents()
-	_initOutputUnitEvents()
+	_initEvents()
 }

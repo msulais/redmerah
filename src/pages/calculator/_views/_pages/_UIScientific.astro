@@ -3,10 +3,10 @@ import Button from '@/native-components/Button/index.astro'
 import Tooltip from '@/native-components/Tooltip/index.astro'
 import Popover from '@/native-components/Popover/index.astro'
 import Icon from '@/native-components/Icon/index.astro'
-import Select from '@/native-components/Select/index.astro'
+import ComboBox from '@/native-components/ComboBox/index.astro'
 import CheckBox from '@/native-components/CheckBox/index.astro'
 import Divider from '@/native-components/Divider/index.astro'
-import Option from '@/native-components/Select/SelectOption.astro'
+import ComboBoxOption from '@/native-components/ComboBox/ComboBoxOption.astro'
 import { CSSClasses } from "../../_styles/_css"
 import { AppCSSColors } from '@/enums/app-data'
 import { ButtonVariant } from '@/native-components/Button'
@@ -73,11 +73,11 @@ import { ScientificAngleType } from '../../_scripts/_shared/_enums'
 					<Button data-command={Commands.keyChar} data-char="cot(" class={CSSClasses.bodyPageScientificTrigonometry} ButtonVariant={ButtonVariant.tonal}>cot(x)</Button>
 				</div>
 			</Popover>
-			<Select id={ElementIds.bodyScientificAngle}>
-				<Option value={ScientificAngleType.RAD} SelectOptionSelected>RAD</Option>
-				<Option value={ScientificAngleType.DEG}>DEG</Option>
-				<Option value={ScientificAngleType.GRAD}>GRAD</Option>
-			</Select>
+			<ComboBox id={ElementIds.bodyScientificAngle}>
+				<ComboBoxOption value={ScientificAngleType.RAD} selected>RAD</ComboBoxOption>
+				<ComboBoxOption value={ScientificAngleType.DEG}>DEG</ComboBoxOption>
+				<ComboBoxOption value={ScientificAngleType.GRAD}>GRAD</ComboBoxOption>
+			</ComboBox>
 		</div>
 	</div>
 	<div class={CSSClasses.bodyPageButtons} style="grid-template-columns: repeat(5, 1fr);">
